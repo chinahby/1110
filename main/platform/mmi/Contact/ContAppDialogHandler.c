@@ -5532,7 +5532,9 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
 				{
 					if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//×ó
 					{
-						boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_CONTACT,EVT_USER,AVK_SELECT,0);
+						boolean rt;
+						 pMe->m_wSelectCont = IMENUCTL_GetSel(pMenuCtl);
+						rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_CONTACT,EVT_USER,AVK_SELECT,pMe->m_wSelectCont);
 						return rt;
 					}
 					else if(wXPos >= rc.x + (rc.dx/3)   && wXPos < rc.x + (rc.dx/3)*2 )//×ó
@@ -7309,7 +7311,9 @@ static boolean  CContApp_HandleMainMenuDlgEvent( CContApp  *pMe,
 				{
 					if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//×ó
 					{
-						boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_CONTACT,EVT_USER,AVK_SELECT,0);
+						boolean rt;
+						pMe->m_wMainMenuSel = IMENUCTL_GetSel(pMenuCtl);
+					    rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_CONTACT,EVT_USER,AVK_SELECT,pMe->m_wMainMenuSel);
 						return rt;
 					}
 					else if(wXPos >= rc.x + (rc.dx/3)   && wXPos < rc.x + (rc.dx/3)*2 )//×ó
