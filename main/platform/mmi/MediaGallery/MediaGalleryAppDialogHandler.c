@@ -3349,7 +3349,7 @@ static boolean MGAppPopupMenu_OnSetWallpaper(CMediaGalleryApp *pMe,
    MGFileInfo *pSelData = pItemData;
    
    if(!pMe)
-      return FALSE;
+      return FALSE;   
 
    if(pSelData->dwSize >= MG_WALLPAPER_MAX)
    {
@@ -3376,11 +3376,12 @@ static boolean MGAppPopupMenu_OnSetWallpaper(CMediaGalleryApp *pMe,
       
       // Check the image size, too small or to large are not permit. And the
       //animate image also do not permit
+	  
       RELEASEIF(pMe->m_pImage);
       pMe->m_pImage = ISHELL_LoadImage(pMe->m_pShell, pSelData->szName);
       if(pMe->m_pImage)
       {
-          IIMAGE_GetInfo(pMe->m_pImage, &pMe->m_ImgInfo);
+          IIMAGE_GetInfo(pMe->m_pImage, &pMe->m_ImgInfo);		  
       }
    }
    else if(pMe->m_ImgViewOps == MG_OP_WALLPAPER)
@@ -3397,7 +3398,7 @@ static boolean MGAppPopupMenu_OnSetWallpaper(CMediaGalleryApp *pMe,
    {
       /*
        * if call IIMAGE_Notify for png, bmp, it will be async, if for it
-       * is sync. So we must set status before call IIMAGE_Notify */
+       * is sync. So we must set status before call IIMAGE_Notify */	  
       pMe->m_bImgLoadDone = FALSE;
       IIMAGE_Notify(pMe->m_pImage, MGAppUtil_LoadImageNotify, pMe);
    }
@@ -8943,21 +8944,31 @@ static boolean MGAppUtil_WallpaperSettingCheck(IImage *po,
    AEEImageInfo *pi;
 
    if(!(pImgInfo || po) || !ps)
-      return FALSE;
+   {    
+   	 return FALSE;
+   	}
 
    if(pImgInfo)
-      pi = pImgInfo;
-   else{
+   {
+   	pi = pImgInfo;
+   }
+   else
+   {
       IIMAGE_GetInfo(po, &ImgInfo);
       pi = &ImgInfo;
    }
 
    if(pi->bAnimated)
-      return FALSE;
+   {   	
+   	return FALSE;
+   }
 
    ISHELL_GetDeviceInfo(ps, &DevInfo);
    MG_FARF(ADDR, ("DEVINFO CX:%d, CY:%d", DevInfo.cxScreen, DevInfo.cyScreen));
    MG_FARF(ADDR, ("IMGINFO CX:%d, CY:%d", pi->cx,pi->cy));
+
+   MSG_FATAL("***zzg DEVINFO CX:%d, CY:%d***", DevInfo.cxScreen, DevInfo.cyScreen, 0);
+   MSG_FATAL("***zzg IMGINFO CX:%d, CY:%d***",  pi->cx,pi->cy, 0);
 
    if(MG_BETWEEN( pi->cx, MG_WALLPAPER_PIXEL_MIN, MG_WALLPAPER_PIXEL_MAX) && MG_BETWEEN(pi->cy, MG_WALLPAPER_PIXEL_MIN, MG_WALLPAPER_PIXEL_MAX))
       return TRUE;
@@ -9256,6 +9267,17 @@ static boolean MGAppUtil_SetWallpaper(CMediaGalleryApp *pMe,
       MG_FARF(STATE, ("ERR, LoadMediaNotify"));
       return FALSE;
    }
+
+   //Add By zzg 2011_12_09   	
+   if (TRUE == pImgInfo->bAnimated)
+   {
+      MediaGalleryApp_ShowPromptMsgBox(pMe,
+                                       IDS_MG_ANIMATE_CANNOTSET_WALLPAPER,
+                                       MESSAGE_INFORMATION,
+                                       BTBAR_BACK);
+      return FALSE;
+   }
+   //Add End
 
    if(FALSE == MGAppUtil_WallpaperSettingCheck(NULL, pImgInfo, pMe->m_pShell))
    {

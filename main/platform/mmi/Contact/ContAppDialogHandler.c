@@ -4958,11 +4958,13 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
 #endif
     MSG_FATAL("CContApp_HandleListDlgEvent...........",0,0,0);
     pMenuCtl = (IMenuCtl*)IDIALOG_GetControl( pMe->m_pActiveDlg, IDC_LIST_MENU);
-    pTextCtl = (ITextCtl*)IDIALOG_GetControl( pMe->m_pActiveDlg, IDC_LIST_TEXT);   
+    pTextCtl = (ITextCtl*)IDIALOG_GetControl( pMe->m_pActiveDlg, IDC_LIST_TEXT);  
+
+	MSG_FATAL("CContApp_HandleListDlgEvent ITEXTCTL_GetInputMode=%x",ITEXTCTL_GetInputMode(pTextCtl,NULL),0,0);
 
     if(ITEXTCTL_GetInputMode(pTextCtl,NULL) == AEE_TM_SYMBOLS)
     {
-        IMENUCTL_SetActive(pMenuCtl,FALSE);
+        //IMENUCTL_SetActive(pMenuCtl,FALSE);
         return ITEXTCTL_HandleEvent( pTextCtl, eCode, wParam, dwParam);
     }
     pMe->m_nSmartStateType = SMART_STATE_IDD_LIST;
@@ -4972,6 +4974,8 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
     }
     
     CContApp_ListMenuScroll(pMe, pMenuCtl, eCode, wParam);
+
+	MSG_FATAL("CContApp_HandleListDlgEvent eCode=%x",eCode,0,0);
 
     switch (eCode)
     {
@@ -5039,7 +5043,9 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
         {
             //MP_NO_REDRAW
             uint32    dwMask = IMENUCTL_GetProperties(pMenuCtl);
-            IMENUCTL_SetProperties(pMenuCtl, dwMask & (~MP_NO_REDRAW));		
+            IMENUCTL_SetProperties(pMenuCtl, dwMask & (~MP_NO_REDRAW));	
+
+			MSG_FATAL("***zzg contack list EVT_USER_REDRAW***", 0,0,0);
             
 			{
                 //add by xuhui
@@ -5110,6 +5116,8 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
 				boolean b_TextctlActive = ITEXTCTL_IsActive(pTextCtl);
 	            int           n_KeywordsLen =0;
 	            boolean isSearchTextChg = FALSE;
+
+				MSG_FATAL("***zzg reload contack after symbol***", 0,0,0);
 	                   
 	            isSearchTextChg = TRUE; 
 	            FREEIF(pMe->m_szAlpha);

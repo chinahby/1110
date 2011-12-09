@@ -3167,6 +3167,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
         }
         #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM) ||defined(FEATURE_VERSION_S1000T)||defined(FEATURE_LCD_TOUCH_ENABLE)
         case EVT_KEY_HELD:
+			
 			#ifdef FEATURE_LCD_TOUCH_ENABLE
 			if(wParam == AVK_CLR)
 			{

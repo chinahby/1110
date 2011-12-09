@@ -28,6 +28,13 @@
 #ifdef FEATURE_SUPPORT_BT_APP
 #include "Bcmapp_ag.h"
 #endif
+
+//Add By zzg 2011_12_09
+#ifdef FEATURE_APP_MUSICPLAYER
+#include "MusicPlayer.h"
+#endif 
+//Add End
+
 #include "UTKUtils.h"
 
 //Add By zzg 2010_08_03  for Frenduo Send sms
@@ -4373,6 +4380,8 @@ static boolean  CallApp_MsgBox_DlgHandler(CCallApp  *pMe,
         {
             PromptMsg_Param_type m_PromptMsg={0};
             AECHAR  wstrText[MSGBOX_MAXTEXTLEN];
+
+			MSG_FATAL("***zzg CallApp_MSG_Handle m_msg_text_id=%d***", pMe->m_msg_text_id, 0, 0);
             
             switch(pMe->m_msg_text_id)
             {
@@ -10238,7 +10247,18 @@ static void CallApp_ShortcutQuiet(CCallApp *pMe)
     (void)ICONFIG_SetItem(pMe->m_pConfig,
                                 CFGI_MISSED_CALL_ALERT,
                                 &new_return,
-                                sizeof(new_return));      
+                                sizeof(new_return));    
+
+	//Add By zzg 2011_12_09
+	if(GetMp3PlayerStatus() == MP3STATUS_RUNONBACKGROUND)
+    {
+        ISHELL_SendEvent(pMe->m_pShell,
+                         AEECLSID_APP_MUSICPLAYER,
+                         EVT_ALARM,
+                         FALSE,
+                         TRUE);
+    }
+	//Add End
 
 
 }

@@ -3427,6 +3427,7 @@ static void OEMALERT_KeyBeep(IALERT *pMe, AVKType key, boolean bPressed)
 #endif
 
    ASSERT(pMe != NULL);
+
    
    if (gCurStatus.m_bplaying && (NULL != gCurStatus.m_pCurRingerMgr))
    {
@@ -3521,8 +3522,10 @@ static void OEMALERT_KeyBeep(IALERT *pMe, AVKType key, boolean bPressed)
                }               
                ISOUND_Set(pMe->m_pSound, &si);    
                ISOUND_SetVolume(pMe->m_pSound, GET_ISOUND_VOL_LEVEL(btKeyVol));
+
+			   
                if((btKeyVol != OEMSOUND_MUTE_VOL)&&(!headsetPresent))
-               {               
+               {          
                    ISOUND_PlayTone( pMe->m_pSound, td);  
                }  
             } 
@@ -3547,6 +3550,8 @@ static void OEMALERT_KeyBeep(IALERT *pMe, AVKType key, boolean bPressed)
    
                   ISOUND_Set(pMe->m_pSound, &si);    
                   ISOUND_SetVolume(pMe->m_pSound, GET_ISOUND_VOL_LEVEL(btKeyVol));
+
+				  
                   if((btKeyVol != OEMSOUND_MUTE_VOL)&&(!headsetPresent))
                   {                  
                      ISOUND_PlayTone(pMe->m_pSound, td); 
@@ -3563,6 +3568,8 @@ static void OEMALERT_KeyBeep(IALERT *pMe, AVKType key, boolean bPressed)
    
                ISOUND_Set(pMe->m_pSound, &si);    
                ISOUND_SetVolume(pMe->m_pSound, GET_ISOUND_VOL_LEVEL(btKeyVol));
+
+			   
               // if((btKeyVol != OEMSOUND_MUTE_VOL)&&(!headsetPresent))
                if(btKeyVol != OEMSOUND_MUTE_VOL)
                {                

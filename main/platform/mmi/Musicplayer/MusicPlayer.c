@@ -1436,6 +1436,8 @@ static void MP3_CloseKeyBeepVol(CMusicPlayer *pMe)
     byte mute = OEMSOUND_MUTE_VOL;
     byte curBeepVol = 0;
     ICONFIG_GetItem( pMe->m_pConfig, CFGI_BEEP_VOL, &curBeepVol, sizeof(byte));
+
+	
     if(curBeepVol !=0)
     {
         ICONFIG_GetItem( pMe->m_pConfig, CFGI_BEEP_VOL, &pMe->m_keyBeepVol, sizeof(byte));
