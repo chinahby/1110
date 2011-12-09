@@ -933,7 +933,9 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
 #ifdef FEATURE_BREW_CAMERA
             IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_CAMERA, IDS_MULTIMEDIA_CAMERA, NULL, 0);
 #endif
+#ifndef FEATURE_VERSION_C180
             IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_FMRADIO, IDS_MULTIMEDIA_FMRADIO, NULL, 0);
+#endif
 #if defined	(FEATURE_VERSION_FLEXI203) || defined (FEATURE_VERSION_IVIO203) ||defined (FEATURE_VERSION_FLEXI203P)|| defined (FEATURE_VERSION_C500BE)||defined (FEATURE_VERSION_VG68)
             IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_MUSICPLAYER, IDS_MULTIMEDIA_MUSICPLAYER, NULL, 0);
 #endif
@@ -1091,9 +1093,11 @@ static int StartApplet(Multimed *pMe, int i)
         case IDS_MULTIMEDIA_CAMERA:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_CAMERA);
             break;
+        #ifndef FEATURE_VERSION_C180
         case IDS_MULTIMEDIA_FMRADIO:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_FMRADIO);
             break;
+        #endif
         case IDS_MULTIMEDIA_MUSICPLAYER:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_MUSICPLAYER);
             break;
