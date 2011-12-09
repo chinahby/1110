@@ -662,6 +662,8 @@ static boolean PinTu_HandleEvent(IApplet * pi, AEEEvent eCode, uint16 wParam, ui
          if(ProcessKeyEvent(pMe,wParam)) return TRUE;
          else break;
 
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+
       case EVT_PEN_UP:
           {
               AEEDeviceInfo devinfo;
@@ -714,6 +716,7 @@ static boolean PinTu_HandleEvent(IApplet * pi, AEEEvent eCode, uint16 wParam, ui
          #endif //AEE_STATIC    
          }
          break;
+#endif		 
 
       default:
          break;

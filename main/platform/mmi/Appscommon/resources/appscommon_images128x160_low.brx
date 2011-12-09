@@ -10,6 +10,9 @@
 	<Object Id="5003" Name="IDI_VIDEO" MimeType="image/png">
 		<File>..\images\128x160\common\Appscommon\Icon\video.png</File>
 	</Object>
+	<Object Id="5014" Name="IDB_PROMPT_MSG_STATIC_BG">
+		<File>..\images\128x160\common\Appscommon\MessageBox\background_static.bmp</File>
+	</Object>
 	<Object Id="5021" Name="IDB_CHECK_ON" MimeType="image/png">
 		<File>..\images\128x160\common\Appscommon\Icon\check_yes.png</File>
 	</Object>
