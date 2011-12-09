@@ -2588,7 +2588,10 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
         case EVT_DIALOG_INIT:
         {
 			MSG_FATAL("***zzg BTApp_Handle EVT_DIALOG_INIT m_pActiveDlgID=%d***", wParam, 0, 0);
-			
+			if( wParam == OEM_IME_DIALOG)
+			{
+				return TRUE;
+			}
 			pMe->m_bAppIsReady = FALSE;
             pMe->m_pActiveDlg = (IDialog*)dwParam;
             pMe->m_pActiveDlgID = wParam;
@@ -2599,6 +2602,10 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 		
         case EVT_DIALOG_START:
         {
+            if(OEM_IME_DIALOG == wParam)
+			{
+				return TRUE;
+			}
 			return BTApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
         }
 		
@@ -2641,7 +2648,10 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
             {
                 return TRUE;
             }
-			
+			if(OEM_IME_DIALOG == wParam)
+			{
+				return ISHELL_PostEvent(pMe->m_pShell,AEECLSID_BLUETOOTH_APP,EVT_USER_REDRAW,0,0);
+			}              
             pMe->m_bAppIsReady = FALSE;
             (void) BTApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 			
