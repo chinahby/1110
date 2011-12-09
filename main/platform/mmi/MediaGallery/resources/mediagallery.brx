@@ -348,7 +348,10 @@
 	</STRING>
 	<STRING Id="1115" Name="IDS_MG_MOVEING">
 		<Text>Moveing</Text>
-	</STRING>			
+	</STRING>
+	<String Id="1116" Name="IDS_MG_ANIMATE_CANNOTSET_WALLPAPER">
+		<Text>Animation can not set as wallpaper</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<Dialog Id="6001" Name="IDD_MG_MAINMENU" Focus="7001">

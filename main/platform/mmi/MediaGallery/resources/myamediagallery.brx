@@ -331,6 +331,9 @@
 	<String Id="1110" Name="IDS_ADD_SUCCESS">
 		<Text></Text>
 	</String>
+	<String Id="1111" Name="IDS_MG_ANIMATE_CANNOTSET_WALLPAPER">
+		<Text>          </Text>
+	</String>
 </Strings>
 <Dialogs>
 	<Dialog Id="6001" Name="IDD_MG_MAINMENU" Focus="7001">

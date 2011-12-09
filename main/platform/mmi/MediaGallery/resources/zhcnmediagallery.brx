@@ -322,6 +322,9 @@
 	<String Id="1106" Name="IDS_MG_LOADING">
 		<Text>载入中...</Text>
 	</String>
+	<String Id="1107" Name="IDS_MG_ANIMATE_CANNOTSET_WALLPAPER">
+		<Text>不能将动画设置为墙纸！</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<Dialog Id="6001" Name="IDD_MG_MAINMENU" Focus="7001">
