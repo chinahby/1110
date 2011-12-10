@@ -91,6 +91,11 @@
 #define COREAPP_PATH "fs:/mod/coreapp/"
 #include "coreapp.brh"
 #define WMSAPP_RES_FILE ("fs:/mod/wms/" AEE_RES_LANGDIR "wms.bar")
+
+#ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch 
+#define FMRADIOAPP_PT_IN_RECT(a,b,rct)      (boolean)( ((a) >= (rct).x && (a) <= ((rct).x + (rct).dx)) && ((b) >= (rct).y && (b) <= ((rct).y + (rct).dy)) )
+#endif
+
 /*==============================================================================
                                  类型定义
 ==============================================================================*/

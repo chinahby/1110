@@ -935,10 +935,22 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
             (void)ISHELL_CancelTimer( pMe->m_pShell,FmRadio_AppIsReadyCB,pMe);
             return TRUE;
 
-        case EVT_DIALOG_INIT:			
+        case EVT_DIALOG_INIT:
+            if( wParam == OEM_IME_DIALOG)
+			{
+				return TRUE;
+			}
             pMe->m_pActiveDlg = (IDialog*)dwParam;
             pMe->m_pActiveDlgID = wParam;
-        case EVT_DIALOG_START:
+             return FmRadio_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+         case EVT_DIALOG_START:
+			if(OEM_IME_DIALOG == wParam)
+			{
+				return TRUE;
+			}
+            (void) FmRadio_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+
+            return TRUE;
         case EVT_USER_REDRAW:			
             if( eCode == EVT_USER_REDRAW)
             {
@@ -992,6 +1004,10 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
             {
                 return TRUE;
             }
+            if(OEM_IME_DIALOG == wParam)
+			{
+				return ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_FMRADIO,EVT_USER_REDRAW,0,0);
+			}            
             (void) FmRadio_RouteDialogEvent(pMe,eCode,wParam,dwParam);
             pMe->m_pActiveDlg = NULL;
 

@@ -363,6 +363,7 @@ static boolean  HandleFmRadioMainDialogEvent(CFmRadio *pMe,
 				AEERect bottomBarRect;
 				//int ht;
 				int nBarH ;
+                AEERect rc;
 				AEEDeviceInfo devinfo;
 				nBarH = GetBottomBarHeight(pMe->m_pDisplay);
 				
@@ -386,6 +387,19 @@ static boolean  HandleFmRadioMainDialogEvent(CFmRadio *pMe,
 						MSG_FATAL("AVK_SELECT",0,0,0);
 					}
 				}
+                else
+                {
+                    if(ITEXTCTL_IsActive(pMe->pText))//pMe->m_pMenu
+                    {
+                        ITEXTCTL_GetRect(pMe->pText,&rc); 
+       					if(FMRADIOAPP_PT_IN_RECT(wXPos,wYPos,rc))
+       					{
+                            TSIM_NumberKeypad(TRUE);
+                            return ITEXTCTL_HandleEvent(pMe->pText,EVT_PEN_UP,wParam, dwParam);
+       					}                        
+                    }
+
+                }
 			}
 #endif
     switch (eCode)
@@ -406,7 +420,16 @@ static boolean  HandleFmRadioMainDialogEvent(CFmRadio *pMe,
 
         case EVT_USER_REDRAW:
         {
-            paint( pMe);
+        #ifdef FEATURE_LCD_TOUCH_ENABLE  
+            if( pMe->opMode == FM_RADIO_OPMODE_EDIT_CHANNEL)
+            {
+                hideChannelEditingScreen( pMe);
+            }
+            else
+        #endif        
+            {
+                paint( pMe);
+            }
             return TRUE;
         }
 
@@ -418,6 +441,9 @@ static boolean  HandleFmRadioMainDialogEvent(CFmRadio *pMe,
                 pMe->edit_chann_interrupt = 1;
                 ITEXTCTL_GetText( pMe->pText, pMe->EditChannel, sizeof( pMe->EditChannel));
             }
+        #endif
+        #ifdef FEATURE_LCD_TOUCH_ENABLE
+            TSIM_NumberKeypad(FALSE);
         #endif
             hideMenu( pMe);
             ISHELL_CancelTimer( pMe->m_pShell, NULL, (void*)pMe);
