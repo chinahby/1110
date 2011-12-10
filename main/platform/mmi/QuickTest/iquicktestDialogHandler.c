@@ -647,7 +647,11 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 #if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
                         if(pMe->m_testkeycount >=22)
 #elif defined(FEATURE_DISP_128X160) ||defined(FEATURE_DISP_176X220)
+                        #ifdef FEATURE_VERSION_C180
+                        if(pMe->m_testkeycount >=20)
+                        #else
 						if(pMe->m_testkeycount >=22)
+                        #endif
 #elif defined(FEATURE_DISP_240X320) 
 						if(pMe->m_testkeycount >=22)
 #else
@@ -1337,6 +1341,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break; 
 #elif defined(FEATURE_DISP_128X160)
+#ifndef FEATURE_VERSION_C180
 case AVK_CAMERA:
                     {
                         IImage* image   = NULL;
@@ -1352,6 +1357,7 @@ case AVK_CAMERA:
                     IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break; 
 
+#endif
 #endif
 #ifdef FEATURE_NUM_KEY_MID
                 case AVK_2:
