@@ -781,6 +781,10 @@ static boolean SecurityMenu_HandleEvent(ISecurityMenu  *pi,
             return TRUE;
 
         case EVT_DIALOG_INIT:
+            if( wParam == OEM_IME_DIALOG)
+			{
+				return TRUE;
+			}
             pMe->m_bAppIsReady = FALSE;
             pMe->m_pActiveDlg = (IDialog*)dwParam;
             pMe->m_pActiveDlgID = wParam;
@@ -788,6 +792,10 @@ static boolean SecurityMenu_HandleEvent(ISecurityMenu  *pi,
             return SecurityMenu_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_DIALOG_START:
+            if(OEM_IME_DIALOG == wParam)
+			{
+				return TRUE;
+			}
             return SecurityMenu_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_USER_REDRAW:
@@ -817,6 +825,10 @@ static boolean SecurityMenu_HandleEvent(ISecurityMenu  *pi,
             {
                 return TRUE;
             }
+            if(OEM_IME_DIALOG == wParam)
+			{
+				return ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_CONTACT,EVT_USER_REDRAW,0,0);
+			}
             pMe->m_bAppIsReady = FALSE;
             (void) SecurityMenu_RouteDialogEvent(pMe,eCode,wParam,dwParam);
             pMe->m_pActiveDlg = NULL;

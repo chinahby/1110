@@ -12360,6 +12360,7 @@ boolean OEM_HandlePenEvt(OEMCONTEXT hTextField,AEEEvent eCode,uint16 wLwrTime,in
 	TextCtlContext *  pme = (TextCtlContext *)hTextField;
 	boolean           bRet = FALSE;
 	//add by ydc
+    MSG_FATAL("*****OEM_HandlePenEvt*****eCode=%d",eCode,0,0);
 
 	if( eCode == EVT_PEN_STALE_MOVE ){
 		// Potentially the greatest flood of pen messages, so quickly do not handle

@@ -580,6 +580,7 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
         wParam =AVK_CLR;
         dwParam = 1;
     }
+    MSG_FATAL("CTextCtl_HandleEvent-----eCode=%d",eCode,0,0);
 #ifdef FEATURE_LCD_TOUCH_ENABLE   //add by ydc
    //if( eCode >= EVT_PEN_UP  && eCode <= EVT_PEN_STALE_MOVE ){   modi by ydc  090520
 	if (eCode == EVT_PEN_UP){
@@ -2909,7 +2910,6 @@ See Also: none
 static void CTextCtl_SetMaxSize(ITextCtl * pITextCtl, uint16 nMaxSize)
 {
    CTextCtl *pme = (CTextCtl*) pITextCtl;
-
    TextCtl_SetTextSize(pme, nMaxSize);
    pme->m_nMaxChars = nMaxSize;
    if (pme->m_pText)

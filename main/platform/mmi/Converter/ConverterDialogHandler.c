@@ -736,6 +736,8 @@ static boolean  Converter_ConvertEvent(CConverter *pMe, AEEEvent eCode, uint16 w
                 default:
                     return TRUE;
             }
+            ITEXTCTL_SetMaxSize( pMe->pNumber1,MAX_INPUT_NUMBER);
+            ITEXTCTL_SetMaxSize( pMe->pNumber2,MAX_INPUT_NUMBER);
             (void) ISHELL_PostEvent(pMe->m_pShell,
                                     AEECLSID_CONVERTER,
                                     EVT_USER_REDRAW,
@@ -1630,7 +1632,7 @@ static boolean  Converter_ConvertEvent(CConverter *pMe, AEEEvent eCode, uint16 w
                      {
                      TSIM_NumberKeypad(TRUE);
                      pMe->PENUPbRedraw = TRUE;
-                     pMe->PENUPbCalc = TRUE;
+                     pMe->PENUPbCalc = TRUE;                    
 					 return ITEXTCTL_HandleEvent(pMe->pNumber2,EVT_PEN_UP,wParam, dwParam);
                      }	 
                      
