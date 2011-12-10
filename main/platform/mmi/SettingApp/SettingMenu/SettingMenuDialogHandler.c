@@ -5111,10 +5111,11 @@ static boolean  Setting_HandleAuto_Power_DialogEvent(CSettingMenu *pMe,
             return TRUE;
 
         case EVT_KEY:
-            //MSG_FATAL("EVT_KEY_RELEASE", 0, 0, 0);
+            MSG_FATAL("Setting_HandleAuto_Power_DialogEvent EVT_KEY 1", 0, 0, 0);
             //时间控件下处理数字键设置时间
             if (ITIMECTL_IsActive(pMe->m_pTime))
             {
+                MSG_FATAL("Setting_HandleAuto_Power_DialogEvent EVT_KEY 2", 0, 0, 0);
 #if MIN_BREW_VERSION(3,0)
                 // do not want to handle au
                 if (((dwParam & KB_AUTOREPEAT) != 0) &&
@@ -5134,6 +5135,7 @@ static boolean  Setting_HandleAuto_Power_DialogEvent(CSettingMenu *pMe,
             
             if (IMENUCTL_IsActive(pMe->m_pState))
             {
+                MSG_FATAL("Setting_HandleAuto_Power_DialogEvent EVT_KEY 3", 0, 0, 0);
                 if(IMENUCTL_HandleEvent(pMe->m_pState, eCode, wParam, dwParam))
                 {
                     return TRUE;
@@ -5142,6 +5144,7 @@ static boolean  Setting_HandleAuto_Power_DialogEvent(CSettingMenu *pMe,
             
             if (IMENUCTL_IsActive(pMe->m_pStatus))
             {
+                MSG_FATAL("Setting_HandleAuto_Power_DialogEvent EVT_KEY 4", 0, 0, 0);
                 if(IMENUCTL_HandleEvent(pMe->m_pStatus, eCode, wParam, dwParam))
                 {
                     return TRUE;
@@ -5232,26 +5235,89 @@ static boolean  Setting_HandleAuto_Power_DialogEvent(CSettingMenu *pMe,
 			{
 				int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
 				int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
-				if(TOUCH_PT_IN_RECT(wXPos, wYPos, pMe->pL_Rect1))
+                AEEDeviceInfo devinfo;
+                int nBarH ;
+                AEERect rc;
+                AEERect rcStatus;
+                AEERect rcState;
+                AEERect rcTime;
+                MSG_FATAL("Setting_HandleAuto_Power_DialogEvent wXPos=%d ,wYPos=%d",wXPos,wYPos,0);
+                IMENUCTL_GetRect(pMe->m_pStatus,&rcStatus);
+                IMENUCTL_GetRect(pMe->m_pState, &rcState);
+                ITIMECTL_GetRect(pMe->m_pTime, &rcTime);    
+                nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+                MEMSET(&devinfo, 0, sizeof(devinfo));
+                ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+                SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);  
+                if(TOUCH_PT_IN_RECT(wXPos,wYPos,rc))
+                {
+                    if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//左
+                    {
+                        return  Setting_HandleAuto_Power_DialogEvent(pMe,EVT_KEY,AVK_SELECT,0);
+                    } 
+                    else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//右
+                    {                       
+                        return Setting_HandleAuto_Power_DialogEvent(pMe,EVT_KEY,AVK_CLR,0);
+                    }
+                }                
+				else if(TOUCH_PT_IN_RECT(wXPos, wYPos, rcStatus))
 				{
-					boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_SETTINGMENU,EVT_USER,AVK_LEFT,0);
-					return rt;
+                    pMe->m_nCtlID = IDC_AUTO_POWER_STATUS;
+                    SettingMenu_Set_CTL(pMe);
+                    pMe->m_nNumKeyCount = 0; 
+                    pMe->m_nTimeCtlCount = 0;                    
+                    IMENUCTL_HandleEvent(pMe->m_pStatus, EVT_KEY, AVK_LEFT, dwParam); 
+                    if(IMENUCTL_GetSel(pMe->m_pStatus) == IDS_AUTO_POWER_ON_TIME)
+                    {
+                        ICONFIG_GetItem(pMe->m_pConfig, CFGI_AUTO_POWER_ON, (void*)&pMe->m_ClockCfg, sizeof(Auto_Power_Cfg));
+                    }
+                    else if(IMENUCTL_GetSel(pMe->m_pStatus) == IDS_AUTO_POWER_OFF_TIME)
+                    {
+                        IMENUCTL_SetSel(pMe->m_pStatus, IDS_AUTO_POWER_OFF_TIME);
+                        ICONFIG_GetItem(pMe->m_pConfig, CFGI_AUTO_POWER_OFF, (void*)&pMe->m_ClockCfg, sizeof(Auto_Power_Cfg));
+                    }
+                    //STATE为真时,状态选中"开"                        
+        
+                    if(pMe->m_ClockCfg.bStateOn == TRUE)
+                    {
+                        IMENUCTL_SetSel(pMe->m_pState, IDS_ENABLE);
+                    }
+                    else
+                    {
+                        IMENUCTL_SetSel(pMe->m_pState, IDS_DISABLE);
+                    }
+                    //记录响闹时间
+                    pMe->m_dwDispTime =   pMe->m_ClockCfg.dwWATime;
+                    pMe->m_dwHour = pMe->m_dwDispTime/MSSEC_PER_HOUR;
+                    pMe->m_dwMin   = pMe->m_dwDispTime%MSSEC_PER_HOUR;
+                    //设置给定的时间,并刷新屏幕
+                    (void)ITIMECTL_SetTimeEx(pMe->m_pTime,  pMe->m_dwDispTime, TRUE);                         
+                    return TRUE;
 				}
-				else if(TOUCH_PT_IN_RECT(wXPos, wYPos, pMe->pL_Rect2))
+				else if(TOUCH_PT_IN_RECT(wXPos, wYPos, rcState))
 				{
-					boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_SETTINGMENU,EVT_USER,AVK_LEFT,0);
-					return rt;
+                    pMe->m_nCtlID = IDC_AUTO_POWER_STATE;
+                    SettingMenu_Set_CTL(pMe);
+                    if(IMENUCTL_GetSel(pMe->m_pState) == IDS_DISABLE)
+                    {
+                        return IMENUCTL_HandleEvent(pMe->m_pState, EVT_KEY, AVK_RIGHT, dwParam);  
+                    }
+                    else if(IMENUCTL_GetSel(pMe->m_pState) == IDS_ENABLE)
+                    {
+                        return IMENUCTL_HandleEvent(pMe->m_pState, EVT_KEY, AVK_LEFT, dwParam);  
+                    }
+
 				}
-				else if(TOUCH_PT_IN_RECT(wXPos, wYPos, pMe->pR_Rect1))
+				else if(TOUCH_PT_IN_RECT(wXPos, wYPos, rcTime))
 				{
-					boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_SETTINGMENU,EVT_USER,AVK_RIGHT,0);
-					return rt;
-				}
-				else if(TOUCH_PT_IN_RECT(wXPos, wYPos, pMe->pR_Rect2))
-				{
-					boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_SETTINGMENU,EVT_USER,AVK_RIGHT,0);
-					return rt;
-				}
+                    pMe->m_nCtlID = IDC_AUTO_POWER_TIME;
+                    SettingMenu_Set_CTL(pMe);   
+                    ITIMECTL_SetProperties(pMe->m_pTime,
+                                           TP_NO_SECONDS | TP_AUTOREDRAW);
+                    
+                    ITIMECTL_SetEditField(pMe->m_pTime, ITF_HOUR);
+                    return ITIMECTL_HandleEvent(pMe->m_pTime, eCode, wParam, dwParam);
+				}                
 			}
 			break;
 		
@@ -5270,6 +5336,7 @@ static boolean  Setting_HandleAuto_Power_DialogEvent(CSettingMenu *pMe,
         case EVT_FOCUS_SWITCH:
         {
             //处理Clock编辑界面应用左右键切换控件
+            MSG_FATAL("Setting_HandleAuto_Power_DialogEvent EVT_FOCUS_SWITCH",0,0,0);
             Setting_CClockApps_HandleKeyEvent(pMe, wParam);
 
             if( wParam == AVK_UP || wParam == AVK_DOWN || wParam == AVK_INFO || wParam == AVK_STAR)
@@ -5295,6 +5362,7 @@ static boolean  Setting_HandleAuto_Power_DialogEvent(CSettingMenu *pMe,
         }
 #if 1
         case EVT_COMMAND:
+            MSG_FATAL("Setting_HandleAuto_Power_DialogEvent EVT_COMMAND",0,0,0);
             if(IMENUCTL_GetSel(pMe->m_pState) == IDS_ENABLE)
             {
                 pMe->m_ClockCfg.bStateOn = TRUE;
