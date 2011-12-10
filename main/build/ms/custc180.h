@@ -225,7 +225,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #ifdef CUST_EDITION
 //#define FEATURE_DUAL_UIMCARD
 #define FEATRUE_AUTO_SET_NEED_NV_VALUE
-#define FEATURE_FM_RADIO
+//#define FEATURE_FM_RADIO
 #define FEATURE_FM_OEM
 #define FEATURE_TORCH_SUPPORT		// ÷µÁÕ≤
 #define FEATURE_COMBINED_PWR_END_KEYS
