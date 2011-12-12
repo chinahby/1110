@@ -180,7 +180,11 @@ boolean WMS_MMS_Resend(int nIndex,int nKind);
 #define slim_tolower(c) ((int)cSlim_clib_tolower_table_mms[(c)])
 #define slim_toupper(c) ((int)cSlim_clib_toupper_table_mms[(c)])
 
+#ifndef FEATURE_USES_MMS_TEST
+#define POST_TEST ("POST http://mms.movilnet.com.ve HTTP/1.1\r\nHost:http://mms.movilnet.com.ve\r\nAccept-Charset:utf-8\r\nContent-Length:%d\r\nAccept:*/*,application/vnd.wap.mms-message\r\nAccept-Language:en\r\nAccept-Encoding:gzip,deflate\r\nContent-Type:application/vnd.wap.mms-message\r\nUser-Agent: http://mms.movilnet.com.ve/phonemodel.xml\r\nx-wap-profile: \"http://mms.movilnet.com.ve/phonemodel.xml\"\r\nKeep-Alive:300\r\nConnection:Keep-Alive\r\n\r\n")
+#else
 #define POST_TEST ("POST http://mmsc.vnet.mobi HTTP/1.1\r\nHost:10.0.0.200:80\r\nAccept-Charset:utf-8\r\nContent-Length:%d\r\nAccept:*/*,application/vnd.wap.mms-message\r\nAccept-Language:en\r\nAccept-Encoding:gzip,deflate\r\nContent-Type:application/vnd.wap.mms-message\r\nUser-Agent: Nokia6235/1.0 (S190V0200.nep) UP.Browser/6.2.3.2 MMP/2.0\r\nx-wap-profile: \"http://nds1.nds.nokia.com/uaprof/N6235r200.xml\"\r\nKeep-Alive:300\r\nConnection:Keep-Alive\r\n\r\n")
+#endif
 boolean bSocketLock = FALSE;
 IVector* pSocketParam= NULL;
 
@@ -4349,8 +4353,11 @@ static void MMSSocketState(MMSSocket *ps)
     
     if(!ps->bConnected)
     {
-        //MMSSocketConnect(ps,"10.0.0.200",80);
+#ifdef FEATURE_USES_MMS_TEST        
         MMSSocketConnect(ps,"10.0.0.200",80);
+#else
+        MMSSocketConnect(ps,"10.0.0.0",80);
+#endif
         return;
     }
 
