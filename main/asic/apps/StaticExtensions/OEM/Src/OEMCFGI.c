@@ -11586,9 +11586,10 @@ void OEM_SetBAM_ADSAccount(void)
     nv_item_type nvi;
     char username[MAS_BREWSETINT_STRING] = {0};
     char password[MAS_BREWSETINT_STRING] = {0};
-    
-//	MEMCPY(username,"ctwap@mycdma.cn",15);	
-//	MEMCPY(password,"vnet.mobi",9);
+#ifdef FEATURE_USES_MMS_TEST    
+	MEMCPY(username,"ctwap@mycdma.cn",15);	
+	MEMCPY(password,"vnet.mobi",9);
+#endif    
 	//MEMCPY(username,"card",4);	
 	//MEMCPY(password,"card",4);
 	
