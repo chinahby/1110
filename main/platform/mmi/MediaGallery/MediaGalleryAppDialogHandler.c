@@ -2203,7 +2203,12 @@ static boolean MediaGalleryApp_MediaMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
          {
             return TRUE;
          }
-
+#ifdef FEATURE_USES_MMS
+         if(pMe->m_isForMMS && (pMe->m_StartMode == MGSM_VIDEO_BROWSE) && (wParam == AVK_SELECT))
+         {
+            wParam = AVK_INFO;
+         }
+#endif         
          switch(wParam)
          {
             case AVK_CLR:
