@@ -302,7 +302,7 @@ static boolean Recorder_HandleEvent( Recorder* pme, AEEEvent evt, uint16 wParam,
 			}
 			return Recorder_RouteDialogEvent( pme, evt, wParam, dwParam);
 		}
-		#ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
+#ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
 		case EVT_USER:
 		{
 			if (wParam == AVK_CLR)
