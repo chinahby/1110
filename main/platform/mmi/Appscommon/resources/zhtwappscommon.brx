@@ -223,6 +223,9 @@
 	<STRING Id="1025" Name="IDS_NO">
 		<Text>否</Text>
 	</STRING>
+	<String Id="1026" Name="IDS_LOCK">
+		<Text>锁键盘</Text>
+	</String>
 	<String Id="1027" Name="IDS_FACEBOOK">
 		<Text>群组</Text>
 	</String>

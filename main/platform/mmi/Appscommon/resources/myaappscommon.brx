@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="appscommon" VERSION="1">
+<BREWRes Name="myaappscommon" VERSION="1">
 <Strings Encoding="UNICODE">
 	<STRING Id="1" Name="IDS_SELECT">
 		<Text></Text>
@@ -243,6 +243,9 @@
 	</String>
 	<String Id="1032" Name="IDS_MSG_KEYGUARD_SPACE">
 		<Text>Long Press Space Key to Unlock The Keyguard</Text>
+	</String>
+	<String Id="1033" Name="IDS_LOCK">
+		<Text>Lock Keypad</Text>
 	</String>
 	<STRING Id="2001" Name="IDS_SNOOZE">
 		<Text></Text>

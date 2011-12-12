@@ -146,8 +146,8 @@
 		<Text>Call</Text>
 	</STRING>
 	<STRING Id="114" Name="IDS_OPTION_FM">
-                <Text>Opção</Text>
-        </STRING>
+		<Text>Opção</Text>
+	</STRING>
 	<STRING Id="1001" Name="IDS_RECORD">
 		<Text>Gravar</Text>
 	</STRING>
@@ -223,6 +223,9 @@
 	<STRING Id="1025" Name="IDS_NO">
 		<Text>No</Text>
 	</STRING>
+	<String Id="1026" Name="IDS_LOCK">
+		<Text>Lock Keypad</Text>
+	</String>
 	<String Id="1027" Name="IDS_FACEBOOK">
 		<Text>Facebook</Text>
 	</String>

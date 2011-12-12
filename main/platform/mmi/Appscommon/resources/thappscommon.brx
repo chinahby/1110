@@ -223,6 +223,9 @@
 	<STRING Id="1025" Name="IDS_NO">
 		<Text>ตกลง</Text>
 	</STRING>
+	<String Id="1026" Name="IDS_LOCK">
+		<Text>Lock Keypad</Text>
+	</String>
 	<String Id="1027" Name="IDS_FACEBOOK">
 		<Text>ดูเพิ่มเติม</Text>
 	</String>
