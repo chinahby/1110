@@ -8237,8 +8237,10 @@ static boolean MGAppUtil_OnMediaMenuDefaultKeyEvt(CMediaGalleryApp* pMe,
       return FALSE;
    }
 #ifdef FEATURE_USES_MMS   
+    MSG_FATAL("MGAppUtil_OnMediaMenuDefaultKeyEvt m_isForMMS=%d",pMe->m_isForMMS,0,0);
     if((pMe->m_nActiveDlgID == IDD_MG_MUSICETTING) &&
-        ((wParam == AVK_SELECT) || (wParam == AVK_INFO)))
+        ((wParam == AVK_SELECT) || (wParam == AVK_INFO)) &&
+        pMe->m_isForMMS)
     {
        uint16 i = IMENUCTL_GetSel(pMenuCtl);
        MSG_FATAL("i=%d",i,0,0);
