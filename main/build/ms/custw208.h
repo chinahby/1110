@@ -36,6 +36,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 
 //wangliang add!   2011-07-30
 #define FEATURE_USES_MMS
+#define FEATURE_USES_MMS_TEST
 
 
 #define FEATURE_SMS_UDH
