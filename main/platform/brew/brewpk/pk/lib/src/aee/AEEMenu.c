@@ -1057,6 +1057,7 @@ static boolean IMenuCtl_HandleEvent(IMenuCtl * po, AEEEvent eCode, uint16 wParam
 	                     IMenuCtl_SetSelEx((IMenuCtl *)pme, pItem->nItemID, pItem->bIsSel);
 	                     if(!NO_REDRAW(pme))
 	                     {
+	                     	MSG_FATAL("AVK_INFO............",0,0,0);
 	                        IMenuCtl_Redraw((IMenuCtl *)pme);
 	                     }
 	                     return TRUE;
@@ -1219,17 +1220,20 @@ Public Method - Instructs the menu to redraw the contents.
 static boolean IMenuCtl_Redraw(IMenuCtl * po)
 {
    CMenuCtl * pme = (CMenuCtl*)po;
-   
+   MSG_FATAL("IMenuCtl_Redraw......00000",0,0,0);
    switch(pme->m_cls){
 
       case AEECLSID_SOFTKEYCTL:
+	  	 MSG_FATAL("IMenuCtl_Redraw......AEECLSID_SOFTKEYCTL",0,0,0);
          SK_CalcLayout(pme);
          return(SK_Draw(pme));
 
       case AEECLSID_LISTCTL:
+	  	MSG_FATAL("IMenuCtl_Redraw......AEECLSID_LISTCTL",0,0,0);
          return(List_Draw(pme));
 
       case AEECLSID_MENUCTL:
+	  	 MSG_FATAL("IMenuCtl_Redraw......AEECLSID_MENUCTL",0,0,0);
          Menu_Draw(pme);
          Menu_ResetAutoScroll(pme);
 #ifdef FEATURE_MENUTITLE_AUTOSCROLL
@@ -1238,9 +1242,10 @@ static boolean IMenuCtl_Redraw(IMenuCtl * po)
          return(TRUE);
 
       case AEECLSID_ICONVIEWCTL:
+	  	 MSG_FATAL("IMenuCtl_Redraw......AEECLSID_ICONVIEWCTL",0,0,0);
          return(Icon_Draw(pme));
    }
-
+   MSG_FATAL("IMenuCtl_Redraw......11111",0,0,0);
    return(FALSE);
 }
 
@@ -1271,13 +1276,21 @@ static void IMenuCtl_SetActive(IMenuCtl * po, boolean bActive)
 #endif //FEATURE_MENUTITLE_AUTOSCROLL
 
    // Icon views redraw async - If this is a disable, do not allow it!
-
+   		if((pme->m_cls!=AEECLSID_MENUCTL)&&(pme->m_cls!=AEECLSID_LISTCTL)&&
+		   (pme->m_cls!=AEECLSID_ICONVIEWCTL)&&(pme->m_cls!=AEECLSID_SOFTKEYCTL))
+		{
+		MSG_FATAL("pme->m_cls==========%x",pme->m_cls,0,0);
          if(!NO_REDRAW(pme)){
             if(IS_ICON_VIEW(pme) && !bActive)
                Icon_StopAnimation(pme);         // Don't animate if its not selection
             else
-              IMenuCtl_Redraw(po);              // Redraw
+            	{
+            		MSG_FATAL("IMenuCtl_Redraw redraw.......0000",0,0,0);
+              		IMenuCtl_Redraw(po);              // Redraw
+              		MSG_FATAL("IMenuCtl_Redraw redraw.......0000end",0,0,0);
+            	}
          }
+      	}
          // Reset pme->m_nScrollItem (default is 0) in horizontal scroll case
          if (pme->m_bIconHScroll){
             int start, end;
@@ -1893,7 +1906,10 @@ static void  IMenuCtl_Sort(IMenuCtl * po, AEEMenuSortType t, PFNMENUSORTCOMPARE 
    // Only redraw if it's allowed...
 
       if(!NO_REDRAW(pme))
+      	{
+      	 MSG_FATAL("IMenuCtl_Redraw redraw.......1111",0,0,0);
          IMenuCtl_Redraw(po);
+      	}
    }
 }
 
@@ -1981,6 +1997,7 @@ static boolean IMenuCtl_DeleteItem(IMenuCtl * po, uint16 nItemID)
       Menu_Recalc(pme);
 
       // Redraw Menu
+      MSG_FATAL("IMenuCtl_Redraw redraw.......2222",0,0,0);
       IMenuCtl_Redraw(po);
 
       return(TRUE);
@@ -2155,7 +2172,10 @@ static void Menu_SetSelbyIdx(CMenuCtl * pme, uint16 nItemID, int nIdx)
          ITEM_IS_VISIBLE(pme,i))
          Menu_DrawNewSelectItem(pme,nCurr,i);
       else
+      	{
+      	  MSG_FATAL("IMenuCtl_Redraw redraw.......3333",0,0,0);
          IMenuCtl_Redraw((IMenuCtl *)pme);
+      	}
    }
 
    // Notify them that the selection changed.
@@ -3091,6 +3111,7 @@ static boolean Menu_HandlePens(CMenuCtl * pme, AEEEvent evtCode, uint16 wParam, 
                         nPos = nItems - nPageItems;
                      }
                      pme->m_nScrollItem = (uint16)nPos;
+					 MSG_FATAL("IMenuCtl_Redraw redraw.......4444",0,0,0);
                      IMenuCtl_Redraw((IMenuCtl *)pme);
                      if(IS_ICON_VIEW(pme)){
                         // Icons need to redraw text, as focus is not moved!
@@ -3210,10 +3231,9 @@ static boolean Menu_HandlePens(CMenuCtl * pme, AEEEvent evtCode, uint16 wParam, 
 		case EVT_PEN_UP :
 #endif//FEATURE_LCD_TOUCH_ENABLE
 		{
-	  	
 #ifdef FEATURE_LCD_TOUCH_ENABLE//WLH ADD FOR LCD TOUCH 只对EVT_PEN_UP 的响应做处理，这里说的是发送事件回当前applet
 			AEECLSID  pCLSID = ISHELL_ActiveApplet (pme->m_pIShell);
-            MSG_FATAL("Menu_HandlePens, EVT_PEN_UP",0,0,0);
+            MSG_FATAL("Menu_HandlePens, EVT_PEN_UP==%x",pme->m_cls,0,0);
 			if(pme->m_cls != AEECLSID_SOFTKEYCTL)
 		  	{
 			  	AEERect bottomBarRect;
@@ -3238,7 +3258,7 @@ static boolean Menu_HandlePens(CMenuCtl * pme, AEEEvent evtCode, uint16 wParam, 
 				}
 				//bottomBarRect.dx = pme->m_rc.dx;
 				//bottomBarRect.dy = GetBottomBarHeight( pme->m_pIDisplay); 
-				DBGPRINTF("bottomBarRect.y [%d] wXPos [%d] wYPos [%d]",bottomBarRect.y,wXPos,wYPos);
+				MSG_FATAL("bottomBarRect.y [%d] wXPos [%d] wYPos [%d]",bottomBarRect.y,wXPos,wYPos);
 				if( PT_IN_RECT(wXPos, wYPos, bottomBarRect) )
 				{
 					//判断左中右
@@ -5612,6 +5632,7 @@ static boolean Menu_ScrollByPos(CMenuCtl * pme, int nDir, int16 wXPos, int16 wYP
                IMENUCTL_SetFocus((IMenuCtl *)pme, pFocus->nItemID);
             }
             pme->m_dwProps = dwProps;
+			MSG_FATAL("IMenuCtl_Redraw redraw.......55555",0,0,0);
             IMenuCtl_Redraw((IMenuCtl *)pme);
             if(IS_ICON_VIEW(pme)){
                // Icons need to redraw text, as focus is not moved!
@@ -5694,10 +5715,12 @@ static boolean Menu_HandleSelection(CMenuCtl * pme, int nSelect)
          if( IS_MULTI_SEL(pme) ){
             pItem->bIsSel = !pItem->bIsSel;
             IMenuCtl_SetSelEx((IMenuCtl *)pme, pItem->nItemID, pItem->bIsSel);
+			MSG_FATAL("IMenuCtl_Redraw redraw.......66666",0,0,0);
             IMenuCtl_Redraw((IMenuCtl *)pme);
          }
          if(IS_TRI_STATE(pme)){
             pItem->bPressed = TRUE;
+			MSG_FATAL("IMenuCtl_Redraw redraw.......77777",0,0,0);
             IMenuCtl_Redraw((IMenuCtl *)pme);
             pItem->bPressed = FALSE;
          }
