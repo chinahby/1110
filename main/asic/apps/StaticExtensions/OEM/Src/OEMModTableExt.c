@@ -632,9 +632,11 @@ extern int Brick_Load(IShell *ps, void *pHelpers, IModule **pMod);
 #endif
 #if defined( FEATURE_GAME_BLACKJACK)
 extern int BlackJack_Load(IShell *ps, void *pHelpers, IModule **pMod);
+#ifdef FEATURE_VERSION_C180
 //extern int FiveBall_Load(IShell *ps, void *pHelpers, IModule **pMod);
 extern int PinTu_Load(IShell *ps, void *pHelpers, IModule **pMod);
 extern int TetrisMod_Load(IShell *ps, void *pHelpers, IModule **pMod);
+#endif
 //extern int GmFive_Load(IShell *ps, void *pHelpers, IModule **pMod);
 #endif
 #if defined( FEATURE_JEWISH_CALENDAR)
@@ -1069,10 +1071,12 @@ static const AEEStaticMod gOEMStaticModList[] =
 #endif
 #if defined( FEATURE_GAME_BLACKJACK)
     {AEEFS_MIF_DIR"blackjack.mif", BlackJack_Load},
-    //{AEEFS_MIF_DIR"fiveball.mif", FiveBall_Load},
-    {AEEFS_MIF_DIR"pintu.mif", PinTu_Load},
-    {AEEFS_MIF_DIR"tetris.mif", TetrisMod_Load},
-    //{AEEFS_MIF_DIR"gmfive.mif", GmFive_Load},
+//    {AEEFS_MIF_DIR"fiveball.mif", FiveBall_Load},
+#ifdef FEATURE_VERSION_C180
+      {AEEFS_MIF_DIR"pintu.mif", PinTu_Load},
+      {AEEFS_MIF_DIR"tetris.mif", TetrisMod_Load},
+#endif
+//    {AEEFS_MIF_DIR"gmfive.mif", GmFive_Load},
 #endif
 
 #if defined( FEATURE_GAME_LKV)
