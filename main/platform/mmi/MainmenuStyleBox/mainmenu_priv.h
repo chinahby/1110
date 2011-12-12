@@ -59,8 +59,9 @@
 #define  MAX_MATRIX_ITEMS 12
 #define  MAX_MATRIX_ROWS  4
 #define  MAX_MATRIX_COLS  3
-#define  SELECT_ONE_X     70
-#define  SELECT_TWO_X     112
+#define  MAX_MATRIX_PAGE  2
+#define  SELECT_ONE_X     100
+#define  SELECT_TWO_X     140
 #define  SELECT_THR_X     155
 #define  SELECT_Y         20
 #define  DX_MAIN_MOVE     20
@@ -150,6 +151,7 @@ typedef struct _MainMenu
     
     IImage         *m_pImageBg;
     IImage         *m_pImageIcon[MAX_MATRIX_ITEMS];
+	uint16          m_PrsentPage;           
     IImage         *m_pAnimate;
     Point           m_Icondefault_Pt[MAX_MATRIX_ITEMS];
     Point           m_IconFocus_Pt[MAX_MATRIX_ITEMS];
@@ -172,11 +174,12 @@ typedef struct _MainMenu
 #ifdef FEATURE_LCD_TOUCH_ENABLE
 	IImage          *m_pImageSelect;
 	IImage          *m_pImageSelect_foucs;
-	IImage          *m_pImageButtom[MAX_BOTTOM_ITEMS];
+	//IImage          *m_pImageButtom[MAX_BOTTOM_ITEMS];
 	uint16          m_nCurPage;
 	Point           m_IconSelect_Pt[3];
 	Point           m_IconButtom_pt[MAX_BOTTOM_ITEMS];
 	Point           m_Primove_Pt;
+	Point           m_Pdown_Pt;
 	uint16          m_PenPos;
 	boolean         m_bmove;
 #endif
@@ -274,6 +277,21 @@ typedef struct _MainMenu
     #define ICON10_ANI     "fs:/image/mainmenu/qsc1100_10.png"
     #define ICON11_ANI     "fs:/image/mainmenu/qsc1100_11.png"
     #define ICON12_ANI     "fs:/image/mainmenu/qsc1100_12.png"
+	#ifdef FEATURE_LCD_TOUCH_ENABLE
+	#define ICON13_ANI      "fs:/image/mainmenu/qsc1100_13.png"
+    #define ICON14_ANI      "fs:/image/mainmenu/qsc1100_14.png"
+    #define ICON15_ANI      "fs:/image/mainmenu/qsc1100_15.png"
+    #define ICON16_ANI      "fs:/image/mainmenu/qsc1100_16.png"
+    #define ICON17_ANI      "fs:/image/mainmenu/qsc1100_17.png"
+    #define ICON18_ANI      "fs:/image/mainmenu/qsc1100_18.png"
+    #define ICON19_ANI      "fs:/image/mainmenu/qsc1100_19.png"
+    #define ICON20_ANI      "fs:/image/mainmenu/qsc1100_20.png"
+    #define ICON21_ANI      "fs:/image/mainmenu/qsc1100_21.png"
+    #define ICON22_ANI      "fs:/image/mainmenu/qsc1100_22.png"
+    #define ICON23_ANI      "fs:/image/mainmenu/qsc1100_23.png"
+    #define ICON24_ANI      "fs:/image/mainmenu/qsc1100_24.png"
+	#define ICON25_ANI      "fs:/image/mainmenu/qsc1100_25.png"
+	#endif
 #endif    
 #endif
 #if defined (FEATURE_DISP_128X128)
@@ -328,6 +346,21 @@ typedef struct _MainMenu
     #define ICON10_ANI_1     "fs:/image/mainmenu/qsc1100_10_focus.png"
     #define ICON11_ANI_1     "fs:/image/mainmenu/qsc1100_11_focus.png"
     #define ICON12_ANI_1     "fs:/image/mainmenu/qsc1100_12_focus.png"
+	#ifdef FEATURE_LCD_TOUCH_ENABLE
+	#define ICON13_ANI_1      "fs:/image/mainmenu/qsc1100_13_focus.png"
+    #define ICON14_ANI_1      "fs:/image/mainmenu/qsc1100_14_focus.png"
+    #define ICON15_ANI_1      "fs:/image/mainmenu/qsc1100_15_focus.png"
+    #define ICON16_ANI_1      "fs:/image/mainmenu/qsc1100_16_focus.png"
+    #define ICON17_ANI_1      "fs:/image/mainmenu/qsc1100_17_focus.png"
+    #define ICON18_ANI_1      "fs:/image/mainmenu/qsc1100_18_focus.png"
+    #define ICON19_ANI_1      "fs:/image/mainmenu/qsc1100_19_focus.png"
+    #define ICON20_ANI_1      "fs:/image/mainmenu/qsc1100_20_focus.png"
+    #define ICON21_ANI_1      "fs:/image/mainmenu/qsc1100_21_focus.png"
+    #define ICON22_ANI_1      "fs:/image/mainmenu/qsc1100_22_focus.png"
+    #define ICON23_ANI_1      "fs:/image/mainmenu/qsc1100_23_focus.png"
+    #define ICON24_ANI_1      "fs:/image/mainmenu/qsc1100_24_focus.png"
+	#define ICON25_ANI_1      "fs:/image/mainmenu/qsc1100_25_focus.png"
+	#endif 
 #endif    
 #endif
 #if defined (FEATURE_DISP_128X128)

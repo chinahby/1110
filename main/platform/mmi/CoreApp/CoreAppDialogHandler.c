@@ -2945,12 +2945,13 @@ static void CoreApp_ImageNotify(void *po, IImage *pIImage, AEEImageInfo *pii, in
         //CoreApp_DrawMusicName(pMe);
         Core_DrawNameResetScroll(pMe);
 #endif
-
+		
+        // 绘制当前日期、时间信息
+        CoreApp_UpdateDateTime(pMe);
+        
         // 绘制服务提供商名和待机问候语
         CoreApp_DrawBannerMessage((void*)pMe);
     
-        // 绘制当前日期、时间信息
-        CoreApp_UpdateDateTime(pMe);
         #ifndef FEATURE_USES_BLACKBERRY
 			#ifdef FEATURE_LCD_TOUCH_ENABLE
 			CoreApp_DrawTouch_IDLE(pMe);
@@ -4951,6 +4952,30 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
                                   | IDF_TEXT_TRANSPARENT);        
         MSG_FATAL("str_lenth=%d, rc.x=%d", str_lenth, rc.x, 0);
      }
+#elif defined (FEATURE_DISP_240X320) 
+	#ifdef FEATURE_LCD_TOUCH_ENABLE
+	str_lenth = IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL, (const AECHAR *)wszBuf);
+#ifdef FEATURE_OEMOMH    
+        if(hasGetSPN && (str_lenth > 176))
+        {
+            rc.x = step - 10;
+            step -= 10;
+        }
+        else
+#endif     
+		rc.y = 135;
+        rc.x = 15;
+        rc.dx = str_lenth;
+        (void)DrawTextWithProfile(pMe->a.m_pIShell,
+                                  pMe->m_pDisplay,
+                                  RGB_WHITE_NO_TRANS,
+                                  AEE_FONT_NORMAL,
+                                  wszBuf, -1,
+                                  0, 0, &rc, 
+                                  IDF_ALIGN_LEFT
+                                  | IDF_ALIGN_MIDDLE
+                                  | IDF_TEXT_TRANSPARENT);       
+	#endif
 #else
     {
         // Display the string
@@ -5124,7 +5149,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
     int nFont = 33;//VG68默认时间字体大小
 #endif
 
-
+    MSG_FATAL("CoreApp_UpdateDateTime.......................",0,0,0);
     
     if ( pMe == NULL ) 
     {
@@ -5346,6 +5371,108 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 	                              IDF_ALIGN_MIDDLE
 	                              | IDF_ALIGN_LEFT
 	                              | IDF_TEXT_TRANSPARENT);
+#elif defined FEATURE_DISP_240X320
+{
+	#ifdef FEATURE_LCD_TOUCH_ENABLE
+	{
+		 uint16    wHour,len;
+         uint16    Ten = 0;
+		 uint16    Num = 0;
+		 Num = jDate.wMinute%10;
+		 Ten = jDate.wMinute/10;
+		 MSG_FATAL("Num========%d,Ten========%d",Num,Ten,0);
+		 if (bTFmt == OEMNV_TIMEFORM_AMPM)
+    	 {
+         	wHour = jDate.wHour > 12 ? (jDate.wHour - 12) : jDate.wHour;
+			if(jDate.wHour >= 12)
+        	{
+        	   wszDatemat[0] = (AECHAR)'P';
+        	   wszDatemat[1] = (AECHAR)'M';
+        	   wszDatemat[2] = 0;
+        	}
+        	else
+        	{
+        	   wszDatemat[0] = (AECHAR)'A';
+        	   wszDatemat[1] = (AECHAR)'M';
+        	   wszDatemat[2] = 0;
+        	}
+		}
+		else
+		{
+		 	wHour = jDate.wHour;
+		}
+		 IIMAGE_Draw(pMe->m_pImageTimeIcon[11],
+	                    0, 
+	                    25);
+		switch(wHour)
+		{
+			case 0:
+			case 1:
+			case 2:
+			case 3:
+			case 4:
+			case 5:
+			case 6:
+			case 7:
+			case 8:
+			case 9:
+			case 10:
+			case 11:
+			case 12:
+			case 13:
+			case 14:
+			case 15:
+			case 16:
+			case 17:
+			case 18:
+			case 19:
+			case 20:
+			case 21:
+			case 22:
+			case 23:
+			{
+				int Hour_Ten = wHour/10;
+				int Hour_Num = wHour%10;
+				IIMAGE_Draw(pMe->m_pImageTimeIcon[Hour_Ten],
+								IDLE_TIME_HORE_X,
+								IDLE_TIME_Y
+								);
+				IIMAGE_Draw(pMe->m_pImageTimeIcon[Hour_Num],
+								IDLE_TIME_HORE_X+40,
+								IDLE_TIME_Y
+								);
+			}
+			break;
+			default:
+			break;
+		}
+
+		IIMAGE_Draw(pMe->m_pImageTimeIcon[Ten],
+								IDLE_TIME_MIN_X,
+								IDLE_TIME_Y
+								);
+		IIMAGE_Draw(pMe->m_pImageTimeIcon[Num],
+								IDLE_TIME_MIN_X+40,
+								IDLE_TIME_Y
+								);
+		if(jDate.wHour >= 12)
+        {
+        	IIMAGE_Draw(pMe->m_pImageTimeIcon[12],
+								95,
+								130
+								);
+		}
+		else
+		{
+			IIMAGE_Draw(pMe->m_pImageTimeIcon[10],
+								95,
+								130
+								);
+		}
+	
+	}
+	#endif
+}
 #elif defined FEATURE_DISP_320X240
 	DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
 	                              pMe->m_pDisplay,
@@ -5701,6 +5828,19 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                                   | IDF_TEXT_TRANSPARENT); 
 #endif
 #elif defined(FEATURE_DISP_240X320)
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+	rc_date.y = 130;
+	DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
+                                  pMe->m_pDisplay,
+                                  RGB_WHITE_NO_TRANS,
+                                  12,
+                                  &wszDate[0], -1,
+                                  0, 0, &rc_date, 
+                                  IDF_ALIGN_MIDDLE
+                                  | IDF_ALIGN_RIGHT
+                                  | IDF_TEXT_TRANSPARENT); 
+		
+#else
         DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
                                   pMe->m_pDisplay,
                                   RGB_WHITE_NO_TRANS,
@@ -5710,6 +5850,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                                   IDF_ALIGN_MIDDLE
                                   | IDF_ALIGN_RIGHT
                                   | IDF_TEXT_TRANSPARENT); 
+#endif
 #elif defined(FEATURE_DISP_320X240)
         DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
                                   pMe->m_pDisplay,
@@ -5913,6 +6054,20 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 		wszDate[3] = (AECHAR)'\0';
     }
 #endif
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+	rc_week.y = 150;
+	(void)DrawTextWithProfile(pMe->a.m_pIShell,
+                              pMe->m_pDisplay,
+                              RGB_WHITE_NO_TRANS,
+                              AEE_FONT_NORMAL,
+                              wszDate, -1,
+                              0, 0, &rc_week, 
+                              IDF_ALIGN_MIDDLE
+                              | IDF_ALIGN_RIGHT								  
+                              | IDF_ALIGN_LEFT
+                              | IDF_TEXT_TRANSPARENT);
+
+#else
     (void)DrawTextWithProfile(pMe->a.m_pIShell,
                               pMe->m_pDisplay,
                               RGB_WHITE_NO_TRANS,
@@ -5943,6 +6098,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 #endif //FEATURE_DISP_176X220
                               | IDF_TEXT_TRANSPARENT);
 #endif /*FEATURE_CARRIER_SUDAN_SUDATEL*/
+#endif
 #endif
             
 } // CoreApp_UpdateDateTime
@@ -6300,10 +6456,25 @@ static void CoreApp_InitdataTouch(CCoreApp *pMe)
 	pMe->m_pImageTouchIcon[1] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_2);
 	pMe->m_pImageTouchIcon[2] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_3);
 	pMe->m_pImageTouchIcon[3] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_4);
+	/*
 	pMe->m_pImageTouchSelIcon[0] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_SEL_1); 
 	pMe->m_pImageTouchSelIcon[1] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_SEL_2); 
 	pMe->m_pImageTouchSelIcon[2] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_SEL_3); 
-	pMe->m_pImageTouchSelIcon[3] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_SEL_4); 
+	pMe->m_pImageTouchSelIcon[3] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_SEL_4);
+	*/
+	pMe->m_pImageTimeIcon[0] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TIME_0);
+	pMe->m_pImageTimeIcon[1] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TIME_1);
+	pMe->m_pImageTimeIcon[2] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TIME_2);
+	pMe->m_pImageTimeIcon[3] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TIME_3);
+	pMe->m_pImageTimeIcon[4] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TIME_4);
+	pMe->m_pImageTimeIcon[5] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TIME_5);
+	pMe->m_pImageTimeIcon[6] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TIME_6);
+	pMe->m_pImageTimeIcon[7] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TIME_7);
+	pMe->m_pImageTimeIcon[8] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TIME_8);
+	pMe->m_pImageTimeIcon[9] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TIME_9);
+	pMe->m_pImageTimeIcon[10] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TIME_DAY);
+	pMe->m_pImageTimeIcon[11] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TIME_IDLE_TIME_BG);
+	pMe->m_pImageTimeIcon[12] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TIME_NIGHT);
 }
 static void CoreApp_DrawTouch_IDLE(CCoreApp *pMe)
 {
@@ -6352,7 +6523,7 @@ static void CoreApp_DrawTouch_IDLE(CCoreApp *pMe)
 		uint16 nResID = IDS_STR_TOUCH_ONE;// 中
 		//Draw image
 		Draw_x = (IDLE_TOUCH_IDLE_BOTTOM_SPC*(i+1))+(i*IDLE_TOUCH_DRAWDX);
-        IImage_GetInfo(pMe->m_pImageTouchSelIcon[i],&ImgInfo);
+        //IImage_GetInfo(pMe->m_pImageTouchSelIcon[i],&ImgInfo);
     	IIMAGE_Draw(pMe->m_pImageTouchIcon[i],
 	                    Draw_x, 
 	                    Draw_y);

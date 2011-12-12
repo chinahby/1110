@@ -368,6 +368,10 @@
 #define    IDLE_TOUCH_IDLE_BOTTOM_SPC         12
 #define    IDLE_TOUCH_DRAWDX                  45
 #define    IDLE_TOUCH_DRAWDY                  45
+#define    IDLE_TIME_COUNT                    13
+#define    IDLE_TIME_HORE_X                   26
+#define    IDLE_TIME_MIN_X                    134
+#define    IDLE_TIME_Y                        20+25
 #define    IDLE_TOUCH_1                       "fs:/image/core/dialer.png"
 #define    IDLE_TOUCH_SEL_1                   "fs:/image/core/dialer_sel.png"
 #define    IDLE_TOUCH_2                       "fs:/image/core/main.png"
@@ -376,6 +380,21 @@
 #define    IDLE_TOUCH_SEL_3                   "fs:/image/core/messages_sel.png"
 #define    IDLE_TOUCH_4                       "fs:/image/core/contact.png"
 #define    IDLE_TOUCH_SEL_4                   "fs:/image/core/contact_sel.png"
+
+#define    IDLE_TIME_0                        "fs:/image/core/0.png"
+#define    IDLE_TIME_1                        "fs:/image/core/1.png"
+#define    IDLE_TIME_2                        "fs:/image/core/2.png"
+#define    IDLE_TIME_3                        "fs:/image/core/3.png"
+#define    IDLE_TIME_4                        "fs:/image/core/4.png"
+#define    IDLE_TIME_5                        "fs:/image/core/5.png"
+#define    IDLE_TIME_6                        "fs:/image/core/6.png"
+#define    IDLE_TIME_7                        "fs:/image/core/7.png"
+#define    IDLE_TIME_8                        "fs:/image/core/8.png"
+#define    IDLE_TIME_9                        "fs:/image/core/9.png"
+#define    IDLE_TIME_DAY                      "fs:/image/core/day.png"
+#define    IDLE_TIME_IDLE_TIME_BG             "fs:/image/core/idle_time_bg.png"
+#define    IDLE_TIME_NIGHT                    "fs:/image/core/night.png"
+
 #else
 #define    IDLE_TOUCH_ITEMMAX                 4
 #define    IDLE_TOUCH_IDLE_BOTTOM_SPC         12
@@ -389,6 +408,7 @@
 #define    IDLE_TOUCH_SEL_3                   "fs:/image/core/messages_sel.png"
 #define    IDLE_TOUCH_4                       "fs:/image/core/contact.png"
 #define    IDLE_TOUCH_SEL_4                   "fs:/image/core/contact_sel.png"
+
 
 #endif
 #endif
@@ -861,7 +881,8 @@ typedef struct _CCoreApp
 #ifdef FEATURE_LCD_TOUCH_ENABLE
 #ifdef FEATURE_DISP_240X320
 	IImage              *m_pImageTouchIcon[IDLE_TOUCH_ITEMMAX];
-	IImage              *m_pImageTouchSelIcon[IDLE_TOUCH_ITEMMAX];
+	//IImage              *m_pImageTouchSelIcon[IDLE_TOUCH_ITEMMAX];
+	IImage              *m_pImageTimeIcon[IDLE_TIME_COUNT];
 #else
 #endif
 #endif

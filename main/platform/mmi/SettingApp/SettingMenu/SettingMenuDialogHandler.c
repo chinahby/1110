@@ -587,6 +587,7 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
+			MSG_FATAL("HandleMainDialogEvent......start......",0,0,0);
 			//add by yangdecai
 			{
 				AECHAR WTitle[40] = {0};
@@ -625,6 +626,7 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
 
         case EVT_DIALOG_START:
             // 给菜单各菜单项加数字编号图标
+            MSG_FATAL("HandleMainDialogEvent......EVT_DIALOG_START",0,0,0);
             SettingMenu_SetItemNumIcon(pMenu);
 #ifdef FEATRUE_AUTO_POWER
             pMe->m_auto_power = 0;
@@ -637,16 +639,19 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
             IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
 #endif
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
-
+			MSG_FATAL("HandleMainDialogEvent......EVT_DIALOG_START midle",0,0,0);
             (void) ISHELL_PostEvent( pMe->m_pShell,
                                      AEECLSID_APP_SETTINGMENU,
                                      EVT_USER_REDRAW,
                                      0,
                                      0);
+			MSG_FATAL("HandleMainDialogEvent......EVT_DIALOG_START over",0,0,0);
             return TRUE;
 
         case EVT_USER_REDRAW:    
-            (void)IMENUCTL_Redraw(pMenu);
+			MSG_FATAL("HandleMainDialogEvent.EVT_USER_REDRAW....start...",0,0,0);
+            //(void)IMENUCTL_Redraw(pMenu);
+			MSG_FATAL("HandleMainDialogEvent.EVT_USER_REDRAW....over...",0,0,0);
             return TRUE;
 
         case EVT_DIALOG_END:

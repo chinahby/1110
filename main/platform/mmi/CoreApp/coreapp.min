@@ -183,7 +183,19 @@ ifeq ($(USES_LCD_TOUCH),yes)
 		messages_sel.png|fs:/image/core/messages_sel.png \
 		contact.png|fs:/image/core/contact.png \
 		contact_sel.png|fs:/image/core/contact_sel.png \
-		
+		0.png|fs:/image/core/0.png \
+		1.png|fs:/image/core/1.png \
+		2.png|fs:/image/core/2.png \
+		3.png|fs:/image/core/3.png \
+		4.png|fs:/image/core/4.png \
+		5.png|fs:/image/core/5.png \
+		6.png|fs:/image/core/6.png \
+		7.png|fs:/image/core/7.png \
+		8.png|fs:/image/core/8.png \
+		9.png|fs:/image/core/9.png \
+		day.png|fs:/image/core/day.png \
+		idle_time_bg.png|fs:/image/core/idle_time_bg.png \
+		night.png|fs:/image/core/night.png
 endif
 
 # 加入另外一种语言资源文件

@@ -4,6 +4,33 @@
 	<String Id="1001" Name="IDS_MAIN_MENU_STATIC_APPLICATION" Encoding="Unicode">
 		<Text>Application</Text>
 	</String>
+	<String Id="1002" Name="IDS_MAIN_MENU_FM">
+		<Text>Radio</Text>
+	</String>
+	<String Id="1003" Name="IDS_MAIN_MENU_BT">
+		<Text>BT</Text>
+	</String>
+	<String Id="1004" Name="IDS_MAIN_MENU_UNIT">
+		<Text>Unit</Text>
+	</String>
+	<String Id="1005" Name="IDS_MAIN_MENU_WORLDCLO">
+		<Text>WorldClo</Text>
+	</String>
+	<String Id="1006" Name="IDS_MAIN_MENU_PINTU">
+		<Text>Pintu</Text>
+	</String>
+	<String Id="1007" Name="IDS_MAIN_MENU_TETIRS">
+		<Text>Tetirs</Text>
+	</String>
+	<String Id="1008" Name="IDS_MAIN_MENU_BRICKATTACK">
+		<Text>Brickattack</Text>
+	</String>
+	<String Id="1009" Name="IDS_MAIN_MENU_BLACKJACK">
+		<Text>Blackjack</Text>
+	</String>
+	<String Id="1010" Name="IDS_MAIN_MENU_CALIBRA">
+		<Text>Calibra</Text>
+	</String>
 	<STRING Id="1011" Name="IDS_MAIN_MENU_MEDIAGALLERY">
 		<Text>MediaGallery</Text>
 	</STRING>
@@ -59,7 +86,7 @@
 		<Text>Alarm</Text>
 	</String>
 	<String Id="1029" Name="IDS_MAIN_MENU_VIDEOPLAYER">
-		<Text>Video Player</Text>
+		<Text>VideoPlayer</Text>
 	</String>
 	<STRING Id="1034" Name="IDS_MENU_LIST">
 		<Text>Menu</Text>
@@ -100,7 +127,6 @@
 	<String Id="1085" Name="IDS_MAIN_MENU_FRENDUO">
 		<Text>Frenduo</Text>
 	</String>
-
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="0">

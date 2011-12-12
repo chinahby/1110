@@ -227,6 +227,7 @@ void CoreApp_FreeAppData(IApplet* po)
     CCoreApp *pMe = (CCoreApp*)po;
 	int i=0;
 	int j = 0;
+	int k = 0;
     FREEIF(pMe->m_pADNName);
     FREEIF(pMe->m_pADNNumber);
     if (pMe->m_pIAnn) 
@@ -381,10 +382,21 @@ void CoreApp_FreeAppData(IApplet* po)
 			(void)IIMAGE_Release(pMe->m_pImageTouchIcon[j]);
             pMe->m_pImageTouchIcon[j] = NULL;
 		}
+		/*
 		if(pMe->m_pImageTouchSelIcon[j]!=NULL)
 		{
 			(void)IIMAGE_Release(pMe->m_pImageTouchSelIcon[j]);
             pMe->m_pImageTouchSelIcon[j] = NULL;
+		}
+		*/
+		
+	}
+	for(k=0;k<IDLE_TIME_COUNT;k++)
+	{
+		if(pMe->m_pImageTimeIcon[k]!=NULL)
+		{
+			(void)IIMAGE_Release(pMe->m_pImageTimeIcon[k]);
+            pMe->m_pImageTimeIcon[k] = NULL;
 		}
 	}
 #else
@@ -415,7 +427,7 @@ boolean CoreApp_InitAppData(IApplet* po)
 {
     CCoreApp *pMe = (CCoreApp*)po;
     boolean b_FMBackground = FALSE;
-    
+    int i;
     if (NULL == pMe)
     {
         return FALSE;
@@ -566,10 +578,16 @@ boolean CoreApp_InitAppData(IApplet* po)
 	pMe->m_pImageTouchIcon[1] = NULL;
 	pMe->m_pImageTouchIcon[2] = NULL;
 	pMe->m_pImageTouchIcon[3] = NULL;
+	for(i=0;i<IDLE_TIME_COUNT;i++)
+	{
+		pMe->m_pImageTimeIcon[i] = NULL;
+	}
+	/*
 	pMe->m_pImageTouchSelIcon[0] = NULL; 
 	pMe->m_pImageTouchSelIcon[1] = NULL; 
 	pMe->m_pImageTouchSelIcon[2] = NULL; 
 	pMe->m_pImageTouchSelIcon[3] = NULL; 
+	*/
 #else
 #endif
 #endif
