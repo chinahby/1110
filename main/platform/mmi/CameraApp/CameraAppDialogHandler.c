@@ -1992,22 +1992,22 @@ static boolean CameraApp_PopMenu_EnvironmentCommandHandleEvent(CCameraApp *pMe, 
             {
                 case IDS_ENVIR_MODE_AUTO:
                     pMe->m_nCameraEnviroment = OEMNV_CAMERA_ENVIR_AUTO;
-                    dwFPS = 0;
+                    dwFPS = CAM_WB_AUTO;	//0;
                     break;
 
                 case IDS_ENVIR_MODE_NIGHT:
                     pMe->m_nCameraEnviroment = OEMNV_CAMERA_ENVIR_NIGHT;
-                    dwFPS = 3;
+                    dwFPS = CAM_WB_FLUORESCENT; //3;
                     break;
 
                 case IDS_ENVIR_MODE_SUNNY:
                     pMe->m_nCameraEnviroment = OEMNV_CAMERA_ENVIR_SUNNY;
-                    dwFPS = 1;
+                    dwFPS = CAM_WB_DAYLIGHT;	//1;
                     break;
 
                 case IDS_ENVIR_MODE_CLOUDY:
                     pMe->m_nCameraEnviroment = OEMNV_CAMERA_ENVIR_CLOUDY;
-                    dwFPS = 2;
+                    dwFPS = CAM_WB_CLOUDY_DAYLIGHT; //2;
                     break;
 
                 default:
@@ -2027,22 +2027,22 @@ static boolean CameraApp_PopMenu_EnvironmentCommandHandleEvent(CCameraApp *pMe, 
             {
                 case IDS_ENVIR_MODE_AUTO:
                     pMe->m_nCameraEnviroment = OEMNV_CAMERA_ENVIR_AUTO;
-                    dwFPS = 0;
+                    dwFPS = CAM_WB_AUTO;	//0;
                     break;
 
                 case IDS_ENVIR_MODE_NIGHT:
                     pMe->m_nCameraEnviroment = OEMNV_CAMERA_ENVIR_NIGHT;
-                    dwFPS = 3;
+                    dwFPS = CAM_WB_FLUORESCENT;	//3;
                     break;
 
                 case IDS_ENVIR_MODE_SUNNY:
                     pMe->m_nCameraEnviroment = OEMNV_CAMERA_ENVIR_SUNNY;
-                    dwFPS = 1;
+                    dwFPS = CAM_WB_DAYLIGHT;	//1;
                     break;
 
                 case IDS_ENVIR_MODE_CLOUDY:
                     pMe->m_nCameraEnviroment = OEMNV_CAMERA_ENVIR_CLOUDY;
-                    dwFPS = 2;
+                    dwFPS = CAM_WB_CLOUDY_DAYLIGHT;	//2;
                     break;
 
                 default:

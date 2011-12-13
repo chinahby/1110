@@ -94,9 +94,10 @@
 #define AEE_APPSCAMERAAPP_RES_FILE  AEE_RES_LANGDIR CAMERAAPP_RES_FILE
 #if defined(FEATURE_DISP_128X128)
 // camera quality
-#define CAMERA_APP_QUALITY_HIGH  33
-#define CAMERA_APP_QUALITY_MED   67
-#define CAMERA_APP_QUALITY_LOW   100
+#define CAMERA_APP_QUALITY_HIGH  90
+#define CAMERA_APP_QUALITY_MED   75
+#define CAMERA_APP_QUALITY_LOW   25
+
 
 // camera zoom
 #define CAMERA_APP_ZOOM_UP       1
@@ -126,9 +127,9 @@
 //Add End
 #elif defined(FEATURE_DISP_128X160)
 // camera quality
-#define CAMERA_APP_QUALITY_HIGH  33
-#define CAMERA_APP_QUALITY_MED   67
-#define CAMERA_APP_QUALITY_LOW   100
+#define CAMERA_APP_QUALITY_HIGH  90
+#define CAMERA_APP_QUALITY_MED   75
+#define CAMERA_APP_QUALITY_LOW   25
 
 // camera zoom
 #define CAMERA_APP_ZOOM_UP       1
@@ -158,9 +159,10 @@
 //Add End
 #elif defined(FEATURE_DISP_160X128)
 // camera quality
-#define CAMERA_APP_QUALITY_HIGH  33
-#define CAMERA_APP_QUALITY_MED   67
-#define CAMERA_APP_QUALITY_LOW   100
+#define CAMERA_APP_QUALITY_HIGH  90
+#define CAMERA_APP_QUALITY_MED   75
+#define CAMERA_APP_QUALITY_LOW   25
+
 
 // camera zoom
 #define CAMERA_APP_ZOOM_UP       1
@@ -191,9 +193,10 @@
 //Add End
 #elif defined(FEATURE_DISP_176X220)
 // camera quality
-#define CAMERA_APP_QUALITY_HIGH  33
-#define CAMERA_APP_QUALITY_MED   67
-#define CAMERA_APP_QUALITY_LOW   100
+#define CAMERA_APP_QUALITY_HIGH  90
+#define CAMERA_APP_QUALITY_MED   75
+#define CAMERA_APP_QUALITY_LOW   25
+
 
 // camera zoom
 #define CAMERA_APP_ZOOM_UP       1
@@ -224,9 +227,10 @@
 //Add End
 #elif defined(FEATURE_DISP_220X176)
 // camera quality
-#define CAMERA_APP_QUALITY_HIGH  33
-#define CAMERA_APP_QUALITY_MED   67
-#define CAMERA_APP_QUALITY_LOW   100
+#define CAMERA_APP_QUALITY_HIGH  90
+#define CAMERA_APP_QUALITY_MED   75
+#define CAMERA_APP_QUALITY_LOW   25
+
 
 // camera zoom
 #define CAMERA_APP_ZOOM_UP       1
@@ -257,9 +261,10 @@
 //Add End
 #elif defined(FEATURE_DISP_240X320)
 // camera quality
-#define CAMERA_APP_QUALITY_HIGH  33
-#define CAMERA_APP_QUALITY_MED   67
-#define CAMERA_APP_QUALITY_LOW   100
+#define CAMERA_APP_QUALITY_HIGH  90
+#define CAMERA_APP_QUALITY_MED   75
+#define CAMERA_APP_QUALITY_LOW   25
+
 
 // camera zoom
 #define CAMERA_APP_ZOOM_UP       1
@@ -290,9 +295,9 @@
 //Add End
 #elif defined(FEATURE_DISP_320X240)
 // camera quality
-#define CAMERA_APP_QUALITY_HIGH  33
-#define CAMERA_APP_QUALITY_MED   67
-#define CAMERA_APP_QUALITY_LOW   100
+#define CAMERA_APP_QUALITY_HIGH  90
+#define CAMERA_APP_QUALITY_MED   75
+#define CAMERA_APP_QUALITY_LOW   25
 
 // camera zoom
 #define CAMERA_APP_ZOOM_UP       1
@@ -322,9 +327,10 @@
 #define CFGBAR_ARROW_HEIGHT		14
 #elif defined(FEATURE_DISP_320X240)
 // camera quality
-#define CAMERA_APP_QUALITY_HIGH  33
-#define CAMERA_APP_QUALITY_MED   67
-#define CAMERA_APP_QUALITY_LOW   100
+#define CAMERA_APP_QUALITY_HIGH  90
+#define CAMERA_APP_QUALITY_MED   75
+#define CAMERA_APP_QUALITY_LOW   25
+
 
 // camera zoom
 #define CAMERA_APP_ZOOM_UP       1
