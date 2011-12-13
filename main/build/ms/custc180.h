@@ -46,7 +46,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #endif
 
 #ifndef TARGSB2_H
-   #include "targsbw2.h"
+#include "targsb12864.h"
 #endif
 
 //#define FEATURE_DATA_STRIP_ATCOP 
@@ -58,7 +58,8 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_CLKREGIM_1X_MODE 
 #define FEATURE_AUDIO_CONFIGURATION_MINIMAL 
 //Gemsea Remove #define FEATURE_AUDIO_CONFIGURATION_LO_TIER 
-#define FEATURE_IPL_NO_CAMERA
+//#define FEATURE_IPL_NO_CAMERA
+#define FEATURE_IIPL
 #define FEATURE_UIM_QSC1100_LOW_MEMORY 
 #define CM_FEATURE_HSBASED_PLUS_DIAL_DISPLAY 
 #define FEATURE_MMODE_LOW_MEM_TARGET 
@@ -241,36 +242,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 
 #ifdef USES_CAMERA
 #include "custcamera.h"
-#include "custjpeg.h"
-#ifdef FEATURE_VERSION_C180
 
-/*Added support for DCVS for SC2X*/
-#define FEATURE_CAMERA_REGISTER_CLOCK_RESOURCE_III
-
-
-#define FEATURE_CAMERA_YCBCR_ONLY
-#ifdef FEATURE_CAMERA_YCBCR_ONLY
-#undef FEATURE_CAMERA_LPM
-#undef FEATURE_CAMERA_BVCM
-#undef FEATURE_CAMERA_5x5_ASF 
-#undef FEATURE_CAMERA_BESTSHOT_MODE
-#undef FEATURE_CAMERA_HJR
-#endif
-
-#ifndef CUST_EDITION
-#define FEATURE_CAMERA_MOBICAT
-#define FEATURE_CAMERA_MOBICAT_CAMERA_CONFIG_H
-#endif
-
-#define FEATURE_CAMERA_VFE_SNAPSHOT_YCBCR420
-
-#define FEATURE_CAMERA_USE_STANDALONE_DOWNSIZER
-#define FEATURE_CAMIF_INTERNAL_TEST
-#define FEATURE_CAMERA_ENCODE_YCBCR
-//#define CAMERA_USE_GPIO_TLMM_FOR_CAMIF_FLASH
-#define CAMERA_PREVIEW_ROTATION90
-#undef CAMERA_USES_SOFTDSP
-#endif
 
 #define FEATURE_PNG_ENCODER
 #endif
