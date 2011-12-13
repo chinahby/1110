@@ -636,6 +636,8 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                                    uint32 dwParam)
 {
     CCoreApp * pMe = (CCoreApp *)pi;
+
+	MSG_FATAL("***zzg CoreApp_HandleEvent eCode=%x, wParam=%x, dwParam=%x***", eCode, wParam, dwParam);
 	
     switch (eCode)
     {
@@ -970,6 +972,8 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
  
                 case AVK_RWD:
                 {
+					MSG_FATAL("***zzg CoreApp_Handle EVT_HELD AVK_RWD***", 0, 0, 0);
+					
                     // 长按切换情景模式
                     ICONFIG_GetItem(pMe->m_pConfig, CFGI_PROFILE_CUR_NUMBER,&pMe->m_CurProfile, sizeof(pMe->m_CurProfile));//CFGI_ALERT_TYPE
                     
@@ -1342,7 +1346,19 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             break;
 #endif
         case EVT_USER:
-            switch(wParam) {
+			MSG_FATAL("***zzg CoreApp EVT_USER wParam=%x, dwParam=%x***",wParam,dwParam,0);
+            switch(wParam) 
+			{
+
+			//Add By zzg 2011_12_12
+#ifdef FEATURE_VERSION_W208S
+			case 1:
+			{
+				MSG_FATAL("***zzg CoreApp EVT_USER FEATURE_VERSION_W208S***",0,0,0);
+				return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);				
+			}
+#endif
+			//Add End
             case EVT_UI_EXIT:
                 /* AEE is about to exit, set the exit flag to TRUE */
                 pMe->m_bExit = TRUE;

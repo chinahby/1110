@@ -643,10 +643,15 @@ boolean CoreApp_RouteDialogEvent(CCoreApp *pMe,
     uint16  wParam,
     uint32 dwParam)
 {
+	MSG_FATAL("***zzg CoreApp_RouteDialogEvent***",0,0,0);
+	
     if (NULL == pMe->m_pDialogHandler)
     {
+    	MSG_FATAL("***zzg CoreApp_RouteDialogEvent return FALSE***",0,0,0);
         return FALSE;
     }
+
+	MSG_FATAL("***zzg CoreApp_RouteDialogEvent m_pDialogHandler***",0,0,0);
     
     return pMe->m_pDialogHandler((void *)pMe, eCode, wParam, dwParam);
 }
@@ -3166,10 +3171,11 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             }
             return TRUE;            
         }
-        #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM) ||defined(FEATURE_VERSION_S1000T)||defined(FEATURE_LCD_TOUCH_ENABLE)
-        case EVT_KEY_HELD:
+#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM) ||defined(FEATURE_VERSION_S1000T)||defined(FEATURE_LCD_TOUCH_ENABLE)
+		case EVT_KEY_HELD:
+			 MSG_FATAL("***zzg EVT_KEY_HELD wParam=%x, dwParam=%x", wParam, dwParam, 0);
 			
-			#ifdef FEATURE_LCD_TOUCH_ENABLE
+#ifdef FEATURE_LCD_TOUCH_ENABLE
 			if(wParam == AVK_CLR)
 			{
 				MSG_FATAL("evt_key_held============%d",bsupersingal,0,0);
@@ -3188,11 +3194,12 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
           			CLOSE_DIALOG(DLGRET_BATT_INFO)
 				}
 			}
-			#else
+#else
     		if(wParam == AVK_SPACE)
             {
             	boolean bData;
-            	#ifdef FEATURE_KEYGUARD
+				MSG_FATAL("AVK_RWD/......................",0,0,0);
+#ifdef FEATURE_KEYGUARD
         		if(!OEMKeyguard_IsEnabled())
         		{
         			(void) ICONFIG_GetItem(pMe->m_pConfig,
@@ -3204,15 +3211,15 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                         CoreApp_TimeKeyguard(pMe);
             		}
         		}
-				#endif	
+#endif	
 				return TRUE;
             }
             
-      	 #if defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_HITZ181)
+#if defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_HITZ181)
 	     if(wParam == AVK_SHIFT)
-	     #elif defined(FEATURE_VERSION_S1000T)
+#elif defined(FEATURE_VERSION_S1000T) 
 	     if(wParam == AVK_RWD)
-	     #endif
+#endif
             {
             	byte     curProfile;
 			    byte     byte_return[PROFILENUMBER];
@@ -3222,7 +3229,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 			                                CFGI_PROFILE_CUR_NUMBER,
 			                                &curProfile,
 			                                sizeof(curProfile));
-			    #if defined( FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)
+#if defined( FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A) 
 			    if(curProfile == OEMNV_PROFILE_QUIETMODE)
 			    {
 			        curProfile = OEMNV_PROFILE_NORMALMODE;
@@ -3233,7 +3240,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 			        curProfile = OEMNV_PROFILE_QUIETMODE;
 			        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_SILENT);
 			    }
-			    #else
+#else
 			    if(curProfile == OEMNV_PROFILE_MEETING)
 			    {
 			        curProfile = OEMNV_PROFILE_NORMALMODE;
@@ -3246,7 +3253,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 			        pMe->m_nMsgID = IDS_USERPROFILE_MODE;
 			        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_VIBRATOR);
 			    }
-			    #endif
+#endif
 			    ICONFIG_SetItem(pMe->m_pConfig,
 			                        CFGI_PROFILE_CUR_NUMBER,
 			                        &curProfile,
@@ -3336,7 +3343,22 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #endif
             return TRUE;
 
-		
+
+		//Add By zzg 2011_12_12
+#ifdef FEATURE_VERSION_W208S		
+		case EVT_USER:
+		{
+			MSG_FATAL("***zzg IDD_IDLE_Handle EVT_USER wParam=%x***",wParam,0,0);
+			
+			if (wParam == 1)
+			{
+				CoreApp_TimeKeyguard(pMe);
+			}
+
+			return TRUE;
+		}
+#endif		
+		//Add End
 		
         case EVT_KEY_PRESS: 
             if(pMe->m_bemergencymode)
@@ -3928,10 +3950,10 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     }
                 }
 #endif                
-            }
-		MSG_FATAL("EVT_KEY........................000000",0,0,0);
+            }		
 
-            MSG_FATAL("EVT_KEY........................1110000",0,0,0);
+            MSG_FATAL("***zzg EVT_KEY wParam=%x, dwParam=%x", wParam, dwParam, 0);
+			
             if(pMe->m_bemergencymode)
             {
                 switch (wParam)
@@ -4703,6 +4725,9 @@ static void CoreApp_TimeKeyguard(void *pUser)
 {
     CCoreApp    *pMe = (CCoreApp *)pUser;
     pMe->m_b_set_lock = TRUE;
+
+	MSG_FATAL("***zzg CoreApp_TimeKeyguard***", 0, 0, 0);
+	
     if(pMe->m_b_set_lock)
     {
         OEMKeyguard_SetState(TRUE);

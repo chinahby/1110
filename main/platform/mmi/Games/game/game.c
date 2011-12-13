@@ -940,6 +940,8 @@ static boolean Game_ListMenuHandler(Game *pMe, AEEEvent eCode, uint16 wParam, ui
 			#endif
             IMENUCTL_AddItem(pMenu, GAME_RES_FILE_LANG,IDS_GAME_TITLE_BLACKJACK, IDS_GAME_TITLE_BLACKJACK, NULL, 0);
             IMENUCTL_AddItem(pMenu, GAME_RES_FILE_LANG,IDS_GAME_TITLE_BRICK, IDS_GAME_TITLE_BRICK, NULL, 0);
+
+#ifndef FEATURE_VERSION_W208S			
         #ifdef FEATURE_SMARTFREN_MAGIC
             IMENUCTL_AddItem(pMenu, GAME_RES_FILE_LANG,IDS_GAME_TITLE_MAGICSUSHI, IDS_GAME_TITLE_MAGICSUSHI, NULL, 0);
         #endif
@@ -951,6 +953,7 @@ static boolean Game_ListMenuHandler(Game *pMe, AEEEvent eCode, uint16 wParam, ui
             //IMENUCTL_AddItem(pMenu, GAME_RES_FILE_LANG,IDS_GAME_TITLE_GMFIVE, IDS_GAME_TITLE_GMFIVE, NULL, 0);
 			IMENUCTL_AddItem(pMenu, GAME_RES_FILE_LANG,IDS_GAME_TITLE_PINTU, IDS_GAME_TITLE_PINTU, NULL, 0);
             IMENUCTL_AddItem(pMenu, GAME_RES_FILE_LANG,IDS_GAME_TITLE_TETRIS, IDS_GAME_TITLE_TETRIS, NULL, 0);
+#endif			
             return TRUE;
             
         case EVT_DIALOG_START:
