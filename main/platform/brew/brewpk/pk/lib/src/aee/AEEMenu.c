@@ -1277,7 +1277,7 @@ static void IMenuCtl_SetActive(IMenuCtl * po, boolean bActive)
 
    // Icon views redraw async - If this is a disable, do not allow it!
    		if((pme->m_cls!=AEECLSID_MENUCTL)&&(pme->m_cls!=AEECLSID_LISTCTL)&&
-		   (pme->m_cls!=AEECLSID_ICONVIEWCTL)&&(pme->m_cls!=AEECLSID_SOFTKEYCTL))
+		   (pme->m_cls!=AEECLSID_ICONVIEWCTL))
 		{
 		MSG_FATAL("pme->m_cls==========%x",pme->m_cls,0,0);
          if(!NO_REDRAW(pme)){
