@@ -68,8 +68,10 @@ static NextFSMAction Security_StatePinChangeHandler(CSecurityMenu *pMe);
 // 状态 SECURITYMENU_ASKPASSWORD 处理函数
 static NextFSMAction Security_StateAskPasswordHandler(CSecurityMenu *pMe);
 
+#ifdef FEATURE_LCD_TOUCH_ENABLE
 // 状态 SECURITYMENU_TSIMPASSWORDINPUT 处理函数
 static NextFSMAction Security_StateTsimPasswordInputHandler(CSecurityMenu *pMe);    
+#endif
 
 // 状态 SECURITYMENU_ASKPIN 处理函数
 static NextFSMAction Security_StateAskPinHandler(CSecurityMenu *pMe);
@@ -189,9 +191,11 @@ NextFSMAction SecurityMenu_ProcessState(CSecurityMenu *pMe)
         case SECURITYMENU_ASKPASSWORD:
             retVal = Security_StateAskPasswordHandler(pMe);
             break;
+#ifdef FEATURE_LCD_TOUCH_ENABLE
         case SECURITYMENU_TSIMPASSWORDINPUT:
             retVal = Security_StateTsimPasswordInputHandler(pMe);
             break;
+#endif
         case SECURITYMENU_ASKCALLPASSWORD:
             retVal = Security_StateAskCallPasswordHandler(pMe);
             break;
@@ -390,10 +394,11 @@ static NextFSMAction Security_StateMainHandler(CSecurityMenu *pMe)
 		case DLGRET_ARKPASSWORD:
 			MOVE_TO_STATE(SECURITYMENU_ASKPASSWORD)
 			return NFSMACTION_CONTINUE;
+#ifdef FEATURE_LCD_TOUCH_ENABLE
 		case DLGRET_TSIMPASSWORDINPUT:
             MOVE_TO_STATE(SECURITYMENU_TSIMPASSWORDINPUT)
             return NFSMACTION_CONTINUE;
-
+#endif
         default:
             break;
     }
@@ -602,11 +607,11 @@ static NextFSMAction Security_StateCallPassWordInputHandler(CSecurityMenu *pMe)
 
             MOVE_TO_STATE(SECURITYMENU_AFFIRMPASSWORD)
             return NFSMACTION_CONTINUE;
-            
+#ifdef FEATURE_LCD_TOUCH_ENABLE            
         case DLGRET_TSIMPASSWORDINPUT:
             MOVE_TO_STATE(SECURITYMENU_TSIMPASSWORDINPUT); 
-            
             return NFSMACTION_CONTINUE;  
+#endif
         //case DLGRET_OK:
         case DLGRET_CANCELED:
             MOVE_TO_STATE(SECURITYMENU_CHANGECODE)
@@ -705,11 +710,11 @@ static NextFSMAction Security_StatePinChangeHandler(CSecurityMenu *pMe)
             //pMe->m_wMsgID = IDS_MSG_INPUTINVALID;
             Security_ShowMsgBox(pMe, IDS_MSG_INPUTINVALID);
             return NFSMACTION_WAIT; 
-            
+#ifdef FEATURE_LCD_TOUCH_ENABLE            
         case DLGRET_TSIMPASSWORDINPUT:
             MOVE_TO_STATE(SECURITYMENU_TSIMPASSWORDINPUT);          
             return NFSMACTION_CONTINUE;
-            
+#endif            
         case DLGRET_OK:
             MOVE_TO_STATE(SECURITYMENU_PINCHANGE);          
             return NFSMACTION_CONTINUE;
@@ -797,11 +802,11 @@ static NextFSMAction Security_StateAskPasswordHandler(CSecurityMenu *pMe)
         case DLGRET_OK:
             MOVE_TO_STATE(SECURITYMENU_ASKPASSWORD);          
             return NFSMACTION_CONTINUE;
-            
+#ifdef FEATURE_LCD_TOUCH_ENABLE            
         case DLGRET_TSIMPASSWORDINPUT:
             MOVE_TO_STATE(SECURITYMENU_TSIMPASSWORDINPUT);          
             return NFSMACTION_CONTINUE;    
-
+#endif
         case DLGRET_CANCELED:
         MOVE_TO_STATE(SECURITYMENU_EXIT)
         return NFSMACTION_CONTINUE;
@@ -812,6 +817,7 @@ static NextFSMAction Security_StateAskPasswordHandler(CSecurityMenu *pMe)
 
     return NFSMACTION_WAIT;
 } // StateAskPinHandler
+
 
 /*==============================================================================
 函数：
@@ -827,8 +833,8 @@ static NextFSMAction Security_StateAskPasswordHandler(CSecurityMenu *pMe)
        NFSMACTION_WAIT：指示因要显示对话框界面给用户，应挂起状态机。
 
 备注：
-
 ==============================================================================*/
+#ifdef FEATURE_LCD_TOUCH_ENABLE
 static NextFSMAction Security_StateTsimPasswordInputHandler(CSecurityMenu *pMe)
 {
     if (NULL == pMe)
@@ -880,7 +886,7 @@ static NextFSMAction Security_StateTsimPasswordInputHandler(CSecurityMenu *pMe)
     return NFSMACTION_WAIT;
 } // TsimPasswordInput
 
-
+#endif
 /*==============================================================================
 函数：
        StateAskPinHandler
@@ -964,11 +970,11 @@ static NextFSMAction Security_StateAskPinHandler(CSecurityMenu *pMe)
             //pMe->m_wMsgID = IDS_SAVED;
             Security_ShowMsgBox(pMe, IDS_SAVED);
             return NFSMACTION_WAIT; 
-
+#ifdef FEATURE_LCD_TOUCH_ENABLE
         case DLGRET_TSIMPASSWORDINPUT:
             MOVE_TO_STATE(SECURITYMENU_TSIMPASSWORDINPUT);          
             return NFSMACTION_CONTINUE;  
-            
+#endif            
         case DLGRET_MSGBOX_OK:
             if (pMe->m_bIsConfirmPassword)
             {
@@ -1033,9 +1039,11 @@ static NextFSMAction Security_StateAskCallPasswordHandler(CSecurityMenu *pMe)
             //pMe->m_wMsgID = IDS_MSG_INPUTINVALID;
             Security_ShowMsgBox(pMe, IDS_MSG_INPUTINVALID);
             return NFSMACTION_WAIT; 
+#ifdef FEATURE_LCD_TOUCH_ENABLE
         case DLGRET_TSIMPASSWORDINPUT:
             MOVE_TO_STATE(SECURITYMENU_TSIMPASSWORDINPUT);          
             return NFSMACTION_CONTINUE;   
+#endif
         //case DLGRET_OK: 
         case DLGRET_CANCELED:
             MOVE_TO_STATE(SECURITYMENU_CHANGECODE)
@@ -1148,11 +1156,11 @@ static NextFSMAction Security_StateAffirmPassWordHandler(CSecurityMenu *pMe)
             //pMe->m_wMsgID = IDS_MODIFYPIN_FAILED;
             Security_ShowMsgBox(pMe, IDS_MODIFYPIN_FAILED);
             return NFSMACTION_WAIT;
-
+#ifdef FEATURE_LCD_TOUCH_ENABLE
         case DLGRET_TSIMPASSWORDINPUT:
             MOVE_TO_STATE(SECURITYMENU_TSIMPASSWORDINPUT);          
             return NFSMACTION_CONTINUE; 
-            
+#endif            
         case DLGRET_TOSHOWMSG:
             //pMe->m_wMsgID = IDS_PHONE_PASSWORD_CHANGED;
             Security_ShowMsgBox(pMe, IDS_PHONE_PASSWORD_CHANGED);

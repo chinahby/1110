@@ -54,7 +54,9 @@
 //#include "AEEPhone.h"
 #include "AppComFunc.h"
 #include "Appscommon.h"
+#ifdef FEATURE_LCD_TOUCH_ENABLE
 #include "appscommonimages.brh"
+#endif
 //#include "OEMRUIM.h"
 //#include "OEMAppFuncs.h"
 #include "AEEConfig.h"
@@ -134,7 +136,9 @@ typedef enum DLGRetValue
    DLGRET_RESTORE_MESSAGE,
    DLGRET_CHANGECODE,
    DLGRET_DELETE,
+#ifdef FEATURE_LCD_TOUCH_ENABLE
    DLGRET_TSIMPASSWORDINPUT,
+#endif
    DLGRET_ARKPASSWORD
    #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
    ,DLGRET_KEYLOCK
@@ -156,7 +160,9 @@ typedef enum _SecurityMenuState
    SECURITYMENU_PINCHECK,
    SECURITYMENU_PINCHANGE,
    SECURITYMENU_ASKPIN,
+#ifdef FEATURE_LCD_TOUCH_ENABLE
    SECURITYMENU_TSIMPASSWORDINPUT,
+#endif
    SECURITYMENU_ASKPASSWORD,
    SECURITYMENU_ASKCALLPASSWORD,
    SECURITYMENU_AFFIRMPASSWORD,

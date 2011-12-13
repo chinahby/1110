@@ -93,13 +93,13 @@ static boolean  SecurityAskPasswordDlgHandler(CSecurityMenu *pMe,
                                         AEEEvent       eCode,
                                         uint16         wParam,
                                         uint32         dwParam);
-
+#ifdef FEATURE_LCD_TOUCH_ENABLE
 // 对话框 IDD_TSIMINPUTPASSWORD_DIALOG 事件处理函数
 static boolean  SecurityTsimInputPasswordDlgHandler(CSecurityMenu *pMe,
                                         AEEEvent       eCode,
                                         uint16         wParam,
                                         uint32         dwParam);
-
+#endif
 // 对话框 IDD_ASK_PIN_DIALOG 事件处理函数
 static boolean  SecurityAskPinDlgHandler(CSecurityMenu *pMe,
                                         AEEEvent       eCode,
@@ -324,8 +324,10 @@ boolean SecurityMenu_RouteDialogEvent(CSecurityMenu *pMe,
 
         case IDD_ASK_PASSWORD_DIALOG:
            return SecurityAskPasswordDlgHandler(pMe,eCode,wParam,dwParam);
+#ifdef FEATURE_LCD_TOUCH_ENABLE
         case IDD_TSIMINPUT_PASSWORD_DIALOG:
            return SecurityTsimInputPasswordDlgHandler(pMe,eCode,wParam,dwParam); 
+#endif       
         case IDD_ASK_PIN_DIALOG:
            return SecurityAskPinDlgHandler(pMe,eCode,wParam,dwParam);   
 
@@ -2805,6 +2807,7 @@ static boolean  SecurityAskPasswordDlgHandler(CSecurityMenu *pMe,
 备注：
 
 ==============================================================================*/
+#ifdef FEATURE_LCD_TOUCH_ENABLE
 static boolean  SecurityTsimInputPasswordDlgHandler(CSecurityMenu *pMe,
                                          AEEEvent       eCode,
                                          uint16         wParam,
@@ -3226,7 +3229,7 @@ static boolean  SecurityTsimInputPasswordDlgHandler(CSecurityMenu *pMe,
     
     return FALSE;
 } // SecurityTsimInputPasswordDlgHandler
-
+#endif
 /*==============================================================================
 函数：
        SecurityAskPinDlgHandler
