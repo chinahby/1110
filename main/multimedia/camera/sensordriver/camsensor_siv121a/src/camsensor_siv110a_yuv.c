@@ -736,9 +736,9 @@ static void camsensor_sic110a_power_down(void)
 
 static camera_ret_code_type camsensor_sic110a_set_wb(int8 wb)
 {
-    sic110a_i2c_write_byte(0x00,0x03); //bank 3
+    sic110a_i2c_write_byte(0x00,0x02); //bank 3
         
-    MSG_FATAL("camsensor_sic110a_set_wb!",0,0,0);
+    MSG_FATAL("camsensor_sic110a_set_wb =%x!",(camera_wb_type)wb,0,0);
     switch((camera_wb_type)wb)
     {
         case CAMERA_WB_AUTO:
