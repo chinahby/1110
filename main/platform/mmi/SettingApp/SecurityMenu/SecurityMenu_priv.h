@@ -54,6 +54,7 @@
 //#include "AEEPhone.h"
 #include "AppComFunc.h"
 #include "Appscommon.h"
+#include "appscommonimages.brh"
 //#include "OEMRUIM.h"
 //#include "OEMAppFuncs.h"
 #include "AEEConfig.h"
@@ -133,6 +134,7 @@ typedef enum DLGRetValue
    DLGRET_RESTORE_MESSAGE,
    DLGRET_CHANGECODE,
    DLGRET_DELETE,
+   DLGRET_TSIMPASSWORDINPUT,
    DLGRET_ARKPASSWORD
    #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
    ,DLGRET_KEYLOCK
@@ -154,6 +156,7 @@ typedef enum _SecurityMenuState
    SECURITYMENU_PINCHECK,
    SECURITYMENU_PINCHANGE,
    SECURITYMENU_ASKPIN,
+   SECURITYMENU_TSIMPASSWORDINPUT,
    SECURITYMENU_ASKPASSWORD,
    SECURITYMENU_ASKCALLPASSWORD,
    SECURITYMENU_AFFIRMPASSWORD,
@@ -236,6 +239,11 @@ typedef struct _CSecurityMenu
     uint16              m_nSubDlgId; //次级菜单位置
     IStatic             *m_pIStatic;
     IConfig             *m_pConfig;  // IConfig interface
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+    boolean             m_bup;
+    int16               m_i;
+    uint16              m_pActiveTSIMInputID;
+#endif
 
     uint32              ui_esn;
     uint16              m_wMsgID;
@@ -288,6 +296,20 @@ typedef struct _CSecurityMenu
 #define AVK_SEND_TWO     2
 #else
 #define AVK_SEND_TWO     1
+#endif
+
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+#define CALC_ITEM                    15
+#define STARTY                       50
+#define STARX                        0
+#define SPACEX                       0
+#define NUMWINDTH                    80
+#define NUMHEIGHT                    44
+
+#define PWTEXT_MINX                  0
+#define PWTEXT_MINY                  25
+#define PWTEXT_MAXX                  240
+#define PWTEXT_MAXY                  150
 #endif
 
 // Max number of attempts to enter the security code.  This

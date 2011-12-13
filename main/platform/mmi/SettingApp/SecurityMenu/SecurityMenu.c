@@ -618,7 +618,10 @@ static void SecurityMenu_FreeAppData(CSecurityMenu *pMe)
         IANNUNCIATOR_Release(pMe->m_pIAnn);
         pMe->m_pIAnn= NULL;
     }
-
+    if(pMe->m_strPhonePWD)
+    {
+      FREEIF(pMe->m_strPhonePWD);
+    }
     /*if(pMe->m_oldPassword)
     {
         ISTATIC_Release(pMe->m_oldPassword);

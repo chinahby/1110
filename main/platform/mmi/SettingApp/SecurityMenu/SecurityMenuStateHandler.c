@@ -68,6 +68,9 @@ static NextFSMAction Security_StatePinChangeHandler(CSecurityMenu *pMe);
 // 状态 SECURITYMENU_ASKPASSWORD 处理函数
 static NextFSMAction Security_StateAskPasswordHandler(CSecurityMenu *pMe);
 
+// 状态 SECURITYMENU_TSIMPASSWORDINPUT 处理函数
+static NextFSMAction Security_StateTsimPasswordInputHandler(CSecurityMenu *pMe);    
+
 // 状态 SECURITYMENU_ASKPIN 处理函数
 static NextFSMAction Security_StateAskPinHandler(CSecurityMenu *pMe);
 
@@ -186,7 +189,9 @@ NextFSMAction SecurityMenu_ProcessState(CSecurityMenu *pMe)
         case SECURITYMENU_ASKPASSWORD:
             retVal = Security_StateAskPasswordHandler(pMe);
             break;
-            
+        case SECURITYMENU_TSIMPASSWORDINPUT:
+            retVal = Security_StateTsimPasswordInputHandler(pMe);
+            break;
         case SECURITYMENU_ASKCALLPASSWORD:
             retVal = Security_StateAskCallPasswordHandler(pMe);
             break;
@@ -385,8 +390,9 @@ static NextFSMAction Security_StateMainHandler(CSecurityMenu *pMe)
 		case DLGRET_ARKPASSWORD:
 			MOVE_TO_STATE(SECURITYMENU_ASKPASSWORD)
 			return NFSMACTION_CONTINUE;
-				
-
+		case DLGRET_TSIMPASSWORDINPUT:
+            MOVE_TO_STATE(SECURITYMENU_TSIMPASSWORDINPUT)
+            return NFSMACTION_CONTINUE;
 
         default:
             break;
@@ -596,7 +602,11 @@ static NextFSMAction Security_StateCallPassWordInputHandler(CSecurityMenu *pMe)
 
             MOVE_TO_STATE(SECURITYMENU_AFFIRMPASSWORD)
             return NFSMACTION_CONTINUE;
-
+            
+        case DLGRET_TSIMPASSWORDINPUT:
+            MOVE_TO_STATE(SECURITYMENU_TSIMPASSWORDINPUT); 
+            
+            return NFSMACTION_CONTINUE;  
         //case DLGRET_OK:
         case DLGRET_CANCELED:
             MOVE_TO_STATE(SECURITYMENU_CHANGECODE)
@@ -695,7 +705,10 @@ static NextFSMAction Security_StatePinChangeHandler(CSecurityMenu *pMe)
             //pMe->m_wMsgID = IDS_MSG_INPUTINVALID;
             Security_ShowMsgBox(pMe, IDS_MSG_INPUTINVALID);
             return NFSMACTION_WAIT; 
-
+            
+        case DLGRET_TSIMPASSWORDINPUT:
+            MOVE_TO_STATE(SECURITYMENU_TSIMPASSWORDINPUT);          
+            return NFSMACTION_CONTINUE;
             
         case DLGRET_OK:
             MOVE_TO_STATE(SECURITYMENU_PINCHANGE);          
@@ -784,6 +797,10 @@ static NextFSMAction Security_StateAskPasswordHandler(CSecurityMenu *pMe)
         case DLGRET_OK:
             MOVE_TO_STATE(SECURITYMENU_ASKPASSWORD);          
             return NFSMACTION_CONTINUE;
+            
+        case DLGRET_TSIMPASSWORDINPUT:
+            MOVE_TO_STATE(SECURITYMENU_TSIMPASSWORDINPUT);          
+            return NFSMACTION_CONTINUE;    
 
         case DLGRET_CANCELED:
         MOVE_TO_STATE(SECURITYMENU_EXIT)
@@ -796,6 +813,72 @@ static NextFSMAction Security_StateAskPasswordHandler(CSecurityMenu *pMe)
     return NFSMACTION_WAIT;
 } // StateAskPinHandler
 
+/*==============================================================================
+函数：
+       TsimPasswordInput
+说明：
+       SECURITYMENU_TSIMPASSWORDINPUT 状态处理函数
+
+参数：
+       pMe [in]：指向SecurityMenu Applet对象结构的指针。该结构包含小程序的特定信息。
+
+返回值：
+       NFSMACTION_CONTINUE：指示后有子状态，状态机不能停止。
+       NFSMACTION_WAIT：指示因要显示对话框界面给用户，应挂起状态机。
+
+备注：
+
+==============================================================================*/
+static NextFSMAction Security_StateTsimPasswordInputHandler(CSecurityMenu *pMe)
+{
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+    SEC_ERR("Security_StateTsimPasswordInputHandler", 0, 0, 0);
+    switch(pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            SecurityMenu_ShowDialog(pMe, IDD_TSIMINPUT_PASSWORD_DIALOG);
+            return NFSMACTION_WAIT;
+         //add by pyuangui
+         case DLGRET_OK:  
+            if(pMe->m_pActiveTSIMInputID==IDD_ASK_CALL_PASSWORD_DIALOG)
+            MOVE_TO_STATE(SECURITYMENU_ASKCALLPASSWORD)  
+            else if(pMe->m_pActiveTSIMInputID==IDD_PHONE_PASSWORD_INPUT_DIALOG)
+            MOVE_TO_STATE(SECURITYMENU_PHONEPASSWORDINPUT)
+            else if(pMe->m_pActiveTSIMInputID==IDD_AFFIRM_PASSWORD)
+            MOVE_TO_STATE(SECURITYMENU_AFFIRMPASSWORD)
+            else if(pMe->m_pActiveTSIMInputID==IDD_ASK_PIN_DIALOG)
+            MOVE_TO_STATE(SECURITYMENU_ASKPIN)
+            else if(pMe->m_pActiveTSIMInputID==IDD_PIN_CHANGE_DIALOG)
+            MOVE_TO_STATE(SECURITYMENU_PINCHANGE)
+            else 
+            MOVE_TO_STATE(SECURITYMENU_ASKPASSWORD)     
+            return NFSMACTION_CONTINUE;
+
+         case DLGRET_CANCELED:
+            if(pMe->m_pActiveTSIMInputID==IDD_ASK_CALL_PASSWORD_DIALOG)
+            MOVE_TO_STATE(SECURITYMENU_ASKCALLPASSWORD)  
+            else if(pMe->m_pActiveTSIMInputID==IDD_PHONE_PASSWORD_INPUT_DIALOG)
+            MOVE_TO_STATE(SECURITYMENU_PHONEPASSWORDINPUT)
+            else if(pMe->m_pActiveTSIMInputID==IDD_AFFIRM_PASSWORD)
+            MOVE_TO_STATE(SECURITYMENU_AFFIRMPASSWORD)
+            else if(pMe->m_pActiveTSIMInputID==IDD_ASK_PIN_DIALOG)
+            MOVE_TO_STATE(SECURITYMENU_ASKPIN)
+            else if(pMe->m_pActiveTSIMInputID==IDD_PIN_CHANGE_DIALOG)
+            MOVE_TO_STATE(SECURITYMENU_PINCHANGE)
+            else 
+            MOVE_TO_STATE(SECURITYMENU_ASKPASSWORD)     
+            return NFSMACTION_CONTINUE;
+         // add end   
+        default:
+        break;
+    }
+
+    return NFSMACTION_WAIT;
+} // TsimPasswordInput
 
 
 /*==============================================================================
@@ -881,6 +964,10 @@ static NextFSMAction Security_StateAskPinHandler(CSecurityMenu *pMe)
             //pMe->m_wMsgID = IDS_SAVED;
             Security_ShowMsgBox(pMe, IDS_SAVED);
             return NFSMACTION_WAIT; 
+
+        case DLGRET_TSIMPASSWORDINPUT:
+            MOVE_TO_STATE(SECURITYMENU_TSIMPASSWORDINPUT);          
+            return NFSMACTION_CONTINUE;  
             
         case DLGRET_MSGBOX_OK:
             if (pMe->m_bIsConfirmPassword)
@@ -946,7 +1033,9 @@ static NextFSMAction Security_StateAskCallPasswordHandler(CSecurityMenu *pMe)
             //pMe->m_wMsgID = IDS_MSG_INPUTINVALID;
             Security_ShowMsgBox(pMe, IDS_MSG_INPUTINVALID);
             return NFSMACTION_WAIT; 
-
+        case DLGRET_TSIMPASSWORDINPUT:
+            MOVE_TO_STATE(SECURITYMENU_TSIMPASSWORDINPUT);          
+            return NFSMACTION_CONTINUE;   
         //case DLGRET_OK: 
         case DLGRET_CANCELED:
             MOVE_TO_STATE(SECURITYMENU_CHANGECODE)
@@ -1060,6 +1149,10 @@ static NextFSMAction Security_StateAffirmPassWordHandler(CSecurityMenu *pMe)
             Security_ShowMsgBox(pMe, IDS_MODIFYPIN_FAILED);
             return NFSMACTION_WAIT;
 
+        case DLGRET_TSIMPASSWORDINPUT:
+            MOVE_TO_STATE(SECURITYMENU_TSIMPASSWORDINPUT);          
+            return NFSMACTION_CONTINUE; 
+            
         case DLGRET_TOSHOWMSG:
             //pMe->m_wMsgID = IDS_PHONE_PASSWORD_CHANGED;
             Security_ShowMsgBox(pMe, IDS_PHONE_PASSWORD_CHANGED);

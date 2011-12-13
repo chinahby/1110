@@ -94,6 +94,12 @@ static boolean  SecurityAskPasswordDlgHandler(CSecurityMenu *pMe,
                                         uint16         wParam,
                                         uint32         dwParam);
 
+// 对话框 IDD_TSIMINPUTPASSWORD_DIALOG 事件处理函数
+static boolean  SecurityTsimInputPasswordDlgHandler(CSecurityMenu *pMe,
+                                        AEEEvent       eCode,
+                                        uint16         wParam,
+                                        uint32         dwParam);
+
 // 对话框 IDD_ASK_PIN_DIALOG 事件处理函数
 static boolean  SecurityAskPinDlgHandler(CSecurityMenu *pMe,
                                         AEEEvent       eCode,
@@ -271,7 +277,6 @@ boolean SecurityMenu_RouteDialogEvent(CSecurityMenu *pMe,
                                       uint16         wParam,
                                       uint32         dwParam)
 {
-	MSG_FATAL("SecurityMenu_RouteDialogEvent....0000......%x",eCode,0,0);
     if (NULL == pMe)
     {
         return FALSE;
@@ -281,7 +286,7 @@ boolean SecurityMenu_RouteDialogEvent(CSecurityMenu *pMe,
     {
         return FALSE;
     }
-    MSG_FATAL("SecurityMenu_RouteDialogEvent..........%x",eCode,0,0);
+    
     if(wParam == AVK_WITHDRAW &&
         pMe->m_eCurState !=  SECURITYMENU_ASKPUKPASSWORD &&
         pMe->m_eCurState !=  SECURITYMENU_UIMERR &&
@@ -289,7 +294,7 @@ boolean SecurityMenu_RouteDialogEvent(CSecurityMenu *pMe,
     {
         ISHELL_CloseApplet(pMe->m_pShell, TRUE);
     }
-    MSG_FATAL("SecurityMenu_RouteDialogEvent....22......%x,%d",eCode,pMe->m_pActiveDlgID,0);
+    
     //SEC_ERR("%d SecurityMenu_RouteDialogEvent",pMe->m_pActiveDlgID,0,0);
     switch (pMe->m_pActiveDlgID)
     {
@@ -319,7 +324,8 @@ boolean SecurityMenu_RouteDialogEvent(CSecurityMenu *pMe,
 
         case IDD_ASK_PASSWORD_DIALOG:
            return SecurityAskPasswordDlgHandler(pMe,eCode,wParam,dwParam);
-
+        case IDD_TSIMINPUT_PASSWORD_DIALOG:
+           return SecurityTsimInputPasswordDlgHandler(pMe,eCode,wParam,dwParam); 
         case IDD_ASK_PIN_DIALOG:
            return SecurityAskPinDlgHandler(pMe,eCode,wParam,dwParam);   
 
@@ -1387,6 +1393,73 @@ static boolean  SecurityCallPassWordInputDlgHandler(CSecurityMenu *pMe,
                 }
             }
             return TRUE;
+#ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
+        case EVT_PEN_UP:
+            {
+                AEEDeviceInfo devinfo;
+                int nBarH ;
+                AEERect rc;
+                AEERect pwtextrc;
+                AEERect newpwtextrc;
+                int16 wXPos = (int16)AEE_GET_X(dwParam);
+                int16 wYPos = (int16)AEE_GET_Y(dwParam);
+
+                nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+        
+                MEMSET(&devinfo, 0, sizeof(devinfo));
+                ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+                SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+                SETAEERECT(&pwtextrc, PWTEXT_MINX, PWTEXT_MAXY-74, PWTEXT_MAXX, PWTEXT_MAXY-100);
+                SETAEERECT(&newpwtextrc, PWTEXT_MINX, PWTEXT_MAXY-23, PWTEXT_MAXX, PWTEXT_MAXY-100);
+                if(SECURITYMENU_PT_IN_RECT(wXPos,wYPos,rc))
+                {
+                    if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//左
+                    {
+                        boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_SECURITYMENU,EVT_USER,AVK_SELECT,0);
+                        return rt;
+                    }
+                    else if(wXPos >= rc.x + (rc.dx/3)   && wXPos < rc.x + (rc.dx/3)*2 )//左
+                    {
+                         boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_SECURITYMENU,EVT_USER,AVK_INFO,0);
+                         return rt;
+                    }
+                    else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//左
+                    {                       
+                         boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_SECURITYMENU,EVT_USER,AVK_CLR,0);
+                         return rt;
+                    }
+                }
+                else if(SECURITYMENU_PT_IN_RECT(wXPos,wYPos,pwtextrc))
+                {
+                    pMe->m_pActiveTSIMInputID=IDD_PHONE_PASSWORD_INPUT_DIALOG;
+                    MSG_FATAL("DLGRET_TSIMPASSWORDINPUT-----------",0,0,0);
+                    CLOSE_DIALOG(DLGRET_TSIMPASSWORDINPUT);
+                    return TRUE;
+                }
+                else if(SECURITYMENU_PT_IN_RECT(wXPos,wYPos,newpwtextrc))
+                {
+                       nLen = (pMe->m_strPhonePWD == NULL)?(0):(STRLEN(pMe->m_strPhonePWD)); 
+                        if (nLen < 4)
+                        {
+                            return TRUE;
+                        }
+                        
+                        if (NULL != pMe->m_strPhonePWD && nLen>(OEMNV_LOCKCODE_MAXLEN -2))
+                        {
+                            pMe->m_PassWord = EncodePWDToUint16(pMe->m_strPhonePWD);
+                            pMe->nNewPSWLength = nLen;
+                            CLOSE_DIALOG(DLGRET_AFFIRMPASSWORD)//(DLGRET_INPUTSECOND)
+                        }
+                        else
+                        {
+                            CLOSE_DIALOG(DLGRET_VALIDPINFAILED)
+                        }
+                        return TRUE;
+                }
+
+            }
+                                    break;
+#endif//FEATURE_LCD_TOUCH_ENABLE             
             
         default:
             break;
@@ -2151,7 +2224,71 @@ static boolean  SecurityPinChangeDlgHandler(CSecurityMenu *pMe,
                 }
             }
             return TRUE;
+#ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
+        case EVT_PEN_UP:
+            {
+                AEEDeviceInfo devinfo;
+                int nBarH ;
+                AEERect rc;
+                AEERect pwtextrc;
+                AEERect newpwtextrc;
+                int16 wXPos = (int16)AEE_GET_X(dwParam);
+                int16 wYPos = (int16)AEE_GET_Y(dwParam);
 
+                nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+        
+                MEMSET(&devinfo, 0, sizeof(devinfo));
+                ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+                SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+                SETAEERECT(&pwtextrc, PWTEXT_MINX, PWTEXT_MAXY-74, PWTEXT_MAXX, PWTEXT_MAXY-100);
+                SETAEERECT(&newpwtextrc, PWTEXT_MINX, PWTEXT_MAXY-23, PWTEXT_MAXX, PWTEXT_MAXY-100);
+                if(SECURITYMENU_PT_IN_RECT(wXPos,wYPos,rc))
+                {
+                    if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//左
+                    {
+                        boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_SECURITYMENU,EVT_USER,AVK_SELECT,0);
+                        return rt;
+                    }
+                    else if(wXPos >= rc.x + (rc.dx/3)   && wXPos < rc.x + (rc.dx/3)*2 )//左
+                    {
+                         boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_SECURITYMENU,EVT_USER,AVK_INFO,0);
+                         return rt;
+                    }
+                    else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//左
+                    {                       
+                         boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_SECURITYMENU,EVT_USER,AVK_CLR,0);
+                         return rt;
+                    }
+                }
+                else if(SECURITYMENU_PT_IN_RECT(wXPos,wYPos,pwtextrc))
+                {
+                    pMe->m_pActiveTSIMInputID=IDD_PIN_CHANGE_DIALOG;
+                    MSG_FATAL("DLGRET_TSIMPASSWORDINPUT-----------",0,0,0);
+                    CLOSE_DIALOG(DLGRET_TSIMPASSWORDINPUT);
+                    return TRUE;
+                }
+                else if(SECURITYMENU_PT_IN_RECT(wXPos,wYPos,newpwtextrc))
+                {
+                     nLen = (pMe->m_strPhonePWD == NULL)?(0):(STRLEN(pMe->m_strPhonePWD));
+                     if (nLen< 4)
+                     {
+                         //CLOSE_DIALOG(DLGRET_VALIDPINFAILED)
+                         return TRUE;
+                     }
+                     else
+                     {
+                        (void)STRNCPY( pMe->m_Pin, pMe->m_strPhonePWD,sizeof(pMe->m_Pin));
+                        pMe->m_PassWord = EncodePWDToUint16(pMe->m_Pin);
+                        pMe->nNewPSWLength = nLen;
+                        CLOSE_DIALOG(DLGRET_AFFIRMPASSWORD)
+                     }
+                     return TRUE;
+                }
+
+            }
+                                                break;
+#endif//FEATURE_LCD_TOUCH_ENABLE             
+            
         default:
             break;
     }
@@ -2605,9 +2742,378 @@ static boolean  SecurityAskPasswordDlgHandler(CSecurityMenu *pMe,
 				AEEDeviceInfo devinfo;
 				int nBarH ;
 				AEERect rc;
+                AEERect pwtextrc;
 				int16 wXPos = (int16)AEE_GET_X(dwParam);
 				int16 wYPos = (int16)AEE_GET_Y(dwParam);
 
+				nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+        
+				MEMSET(&devinfo, 0, sizeof(devinfo));
+				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+                SETAEERECT(&pwtextrc, PWTEXT_MINX, PWTEXT_MINY, PWTEXT_MAXX, PWTEXT_MAXY);
+				if(SECURITYMENU_PT_IN_RECT(wXPos,wYPos,rc))
+				{
+					if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//左
+					{
+						boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_SECURITYMENU,EVT_USER,AVK_SELECT,0);
+						return rt;
+					}
+					else if(wXPos >= rc.x + (rc.dx/3)   && wXPos < rc.x + (rc.dx/3)*2 )//左
+					{
+						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_SECURITYMENU,EVT_USER,AVK_INFO,0);
+						 return rt;
+					}
+					else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//左
+					{						
+						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_SECURITYMENU,EVT_USER,AVK_CLR,0);
+						 return rt;
+					}
+				}
+                else if(SECURITYMENU_PT_IN_RECT(wXPos,wYPos,pwtextrc))
+                {
+                    MSG_FATAL("DLGRET_TSIMPASSWORDINPUT-----------",0,0,0);
+                    CLOSE_DIALOG(DLGRET_TSIMPASSWORDINPUT);
+                }
+
+			}
+			break;
+#endif//FEATURE_LCD_TOUCH_ENABLE             
+        default:
+            break;
+    }
+    
+    return FALSE;
+} // SecurityAskPinDlgHandler
+
+/*==============================================================================
+函数：
+       SecurityTsimInputPasswordDlgHandler
+说明：
+       IDD_TSIMINPUTPASSWORD_DIALOG 对话框事件处理函数
+
+参数：
+       pMe [in]：指向SecurityMenu Applet对象结构的指针。该结构包含小程序的特定信息。
+       eCode [in]：事件代码。
+       wParam：事件相关数据。
+       dwParam：事件相关数据。
+
+返回值：
+       TRUE：传入事件被处理。
+       FALSE：传入事件被忽略。
+
+备注：
+
+==============================================================================*/
+static boolean  SecurityTsimInputPasswordDlgHandler(CSecurityMenu *pMe,
+                                         AEEEvent       eCode,
+                                         uint16         wParam,
+                                         uint32         dwParam)
+{
+    PARAM_NOT_REF(dwParam)
+    AECHAR         wstrDisplay[OEMNV_LOCKCODE_MAXLEN+2] = {0};
+    int            nLen = 0;
+    char           strDisplay[OEMNV_LOCKCODE_MAXLEN+2] = {0};   
+    SEC_ERR("%x, %x ,%x,SecurityTsimInputPasswordDlgHandler",eCode,wParam,dwParam);
+    
+    if (NULL == pMe)
+    {
+        return FALSE;
+    }
+    
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT:
+            if(NULL == pMe->m_strPhonePWD)
+            {
+                pMe->m_strPhonePWD = (char *)MALLOC((OEMNV_LOCKCODE_MAXLEN + 1)* sizeof(char));
+            }
+            return TRUE;
+            
+        case EVT_DIALOG_START:
+            (void) ISHELL_PostEvent(pMe->m_pShell,
+                                    AEECLSID_APP_SECURITYMENU,
+                                    EVT_USER_REDRAW,
+                                    NULL,
+                                    NULL);
+            return TRUE;
+            
+        case EVT_USER_REDRAW:
+            // 绘制相关信息
+            {
+                AECHAR      text[32] = {0};
+                RGBVAL nOldFontColor;
+                AEERect     rc;
+                IImage *pImageBg = NULL;
+            	AEERect oldClip = {0};
+            	pImageBg = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_DIALER_MAIN);
+            	//IImage_Draw(pImageBg, rect->x, rect->y);
+                IDisplay_GetClipRect(pMe->m_pDisplay, &oldClip);
+                IDisplay_SetClipRect(pMe->m_pDisplay, &pMe->m_rc);
+                IImage_Draw(pImageBg, pMe->m_rc.x, pMe->m_rc.y);
+                IDisplay_SetClipRect(pMe->m_pDisplay, &oldClip);
+            	if(pImageBg != NULL)
+                {
+                    IImage_Release(pImageBg);
+                    pImageBg = NULL;
+                }
+                nLen = (pMe->m_strPhonePWD == NULL)?(0):(STRLEN(pMe->m_strPhonePWD)); 
+                MEMSET(strDisplay, '*', nLen);  
+                strDisplay[nLen] = '|';
+                strDisplay[nLen + 1] = '\0';
+                (void) STRTOWSTR(strDisplay, wstrDisplay, sizeof(wstrDisplay));
+                nOldFontColor = IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
+                IDISPLAY_DrawText(pMe->m_pDisplay, 
+                                AEE_FONT_LARGE, 
+                                wstrDisplay,
+                                -1, 
+                                2*xOffset, 
+                                MENUITEM_HEIGHT/2,
+                                NULL, 
+                                IDF_TEXT_TRANSPARENT);
+                 (void)IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, nOldFontColor);
+                 pImageBg = ISHELL_LoadResImage( pMe->m_pShell,AEE_APPSCOMMONRES_IMAGESFILE,IDB_DIALER_SEL_NOTHING);
+            	 if(pImageBg!=NULL)
+     			  {                  
+     				 IIMAGE_Draw(pImageBg,0,227);
+                     IIMAGE_Release( pImageBg);
+     			  }
+                            
+                // 绘制底条提示
+                if (nLen > 0)
+                {// 确定-----删除
+                    SEC_MENU_DRAW_BOTTOMBAR(BTBAR_OK_DELETE)
+                }
+                else 
+                {// 删除
+                    SEC_MENU_DRAW_BOTTOMBAR(BTBAR_BACK)
+                }
+                // 更新显示
+                IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE); 
+        
+                return TRUE;
+            }
+            
+        case EVT_DIALOG_END:
+            if(!pMe->m_bSuspending)
+            {
+               // FREEIF(pMe->m_strPhonePWD);
+            }
+            return TRUE;
+
+        case EVT_KEY:
+            {
+                char  chEnter = 0;
+                int   nLen = 0;
+                boolean bRedraw = FALSE;
+                
+                switch (wParam)
+                {
+                    case AVK_0:
+                    case AVK_1:
+                    case AVK_2:
+                    case AVK_3:
+                    case AVK_4:
+                    case AVK_5:
+                    case AVK_6:
+                    case AVK_7:
+                    case AVK_8:
+                    case AVK_9:
+                        chEnter = '0' + (wParam - AVK_0);
+                        break;
+
+                    case AVK_STAR:
+                        chEnter = '*';
+                        break;
+ 
+                    case AVK_POUND:
+                        chEnter = '#';
+                        break;
+                    case AVK_SELECT: 
+                        {
+                         CLOSE_DIALOG(DLGRET_OK)
+                        }
+                        return TRUE;
+                    case AVK_CLR:
+                        chEnter = 0;
+                        #ifndef FEATURE_ALL_KEY_PAD
+                        if (pMe->m_strPhonePWD == NULL || STRLEN(pMe->m_strPhonePWD) == 0)
+                        {
+                            CLOSE_DIALOG(DLGRET_CANCELED)
+                            return TRUE;
+                        }
+                        #else
+                        if(dwParam == 0)
+                        {
+                            CLOSE_DIALOG(DLGRET_CANCELED)
+                            return TRUE;
+                        }
+                        else
+                        {
+                        	if (pMe->m_strPhonePWD == NULL || STRLEN(pMe->m_strPhonePWD) == 0)
+                        	{
+                            	CLOSE_DIALOG(DLGRET_CANCELED)
+                            	return TRUE;
+                        	}
+                        }
+                        #endif
+                        break;      
+                        
+                default:
+                    return TRUE;
+                }
+                nLen = (pMe->m_strPhonePWD == NULL)?(0):(STRLEN(pMe->m_strPhonePWD));
+                if (chEnter == 0)
+                {
+                    // 删除字符
+                    if (nLen > 0)
+                    {
+                        bRedraw = TRUE;
+                        pMe->m_strPhonePWD[nLen-1] = chEnter;
+                    }
+                }
+                else if (nLen < OEMNV_LOCKCODE_MAXLEN)
+                {
+                    pMe->m_strPhonePWD[nLen] = chEnter;
+                    nLen++;
+                    pMe->m_strPhonePWD[nLen] = 0;
+                    bRedraw = TRUE;
+                }
+                
+                if (bRedraw)
+                {
+                    (void) ISHELL_PostEvent(pMe->m_pShell,
+                                            AEECLSID_APP_SECURITYMENU,
+                                            EVT_USER_REDRAW,
+                                            NULL,
+                                            NULL);
+                }
+            }
+            return TRUE;
+
+#ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
+        case EVT_PEN_DOWN:
+            {
+				int16 wXPos = (int16)AEE_GET_X(dwParam);
+				int16 wYPos = (int16)AEE_GET_Y(dwParam);
+                
+             	AEERect rc[CALC_ITEM]= 
+					  	{
+					  		{0,STARTY,NUMWINDTH,NUMHEIGHT},
+					  		{NUMWINDTH,STARTY,NUMWINDTH,NUMHEIGHT},
+					  		{(NUMWINDTH)*2,STARTY,NUMWINDTH,NUMHEIGHT},
+					  		{0,STARTY+NUMHEIGHT,NUMWINDTH,NUMHEIGHT},
+					  		{NUMWINDTH,STARTY+NUMHEIGHT,NUMWINDTH,NUMHEIGHT},
+					  		{(NUMWINDTH)*2,STARTY+NUMHEIGHT,NUMWINDTH,NUMHEIGHT},
+					  		{0,(STARTY+(NUMHEIGHT)*2),NUMWINDTH,NUMHEIGHT},
+					  		{NUMWINDTH,(STARTY+(NUMHEIGHT)*2),NUMWINDTH,NUMHEIGHT},
+					  		{(NUMWINDTH)*2,(STARTY+(NUMHEIGHT)*2),NUMWINDTH,NUMHEIGHT},
+					  		{0,(STARTY+(NUMHEIGHT)*3),NUMWINDTH,NUMHEIGHT},
+					  		{NUMWINDTH,(STARTY+(NUMHEIGHT)*3),NUMWINDTH,NUMHEIGHT},
+					  		{(NUMWINDTH)*2,(STARTY+(NUMHEIGHT)*3),NUMWINDTH,NUMHEIGHT},
+					  		{0,(STARTY+(NUMHEIGHT)*4),NUMWINDTH,NUMHEIGHT},
+					  		{NUMWINDTH,(STARTY+(NUMHEIGHT)*4),NUMWINDTH,NUMHEIGHT},
+					  		{(NUMWINDTH)*2,(STARTY+(NUMHEIGHT)*4),NUMWINDTH,NUMHEIGHT}
+					  		
+					  	};
+            	AEEDeviceInfo devinfo;
+            	int nBarH ;
+            	int i = 0;
+            	int j = 0;
+            	
+            	IImage *image = NULL;
+            	//MSG_FATAL("pMe->m_bShowPopMenu========%d",pMe->m_bShowPopMenu,0,0);
+            	pMe->m_i = -1;
+            	//if(!pMe->m_bShowPopMenu)
+            	{
+            	MSG_FATAL("wXPos===%d,     wYPos===%d",wXPos,wYPos,0);
+                for(i = 0;i<CALC_ITEM-3;i++)
+                {
+                	if(TOUCH_PT_IN_RECT(wXPos,wYPos,rc[i]))
+                	{
+                    	image = ISHELL_LoadResImage( pMe->m_pShell,
+                                        AEE_APPSCOMMONRES_IMAGESFILE,
+                                        IDB_DIALER_SEL_1+i);
+            			pMe->m_i = i;
+            			pMe->m_bup = FALSE;
+            			if(image!=NULL)
+            			{
+            				MSG_FATAL("rc[i].x===%d,rc[i].y===%d,i===%d",rc[i].x,rc[i].y,i);
+            				IIMAGE_Draw(image,rc[i].x,rc[i].y);
+            				IIMAGE_Release( image);
+            			}
+                    	break;
+                	}
+                } 
+            	}
+            	IDISPLAY_Update(pMe->m_pDisplay);
+
+            }
+            break;
+        case EVT_PEN_MOVE:
+            {
+        	 AEERect rc[CALC_ITEM]= 
+        					  	{
+        					  		{0,STARTY,NUMWINDTH,NUMHEIGHT},
+        					  		{NUMWINDTH,STARTY,NUMWINDTH,NUMHEIGHT},
+        					  		{(NUMWINDTH)*2,STARTY,NUMWINDTH,NUMHEIGHT},
+        					  		{0,STARTY+NUMHEIGHT,NUMWINDTH,NUMHEIGHT},
+        					  		{NUMWINDTH,STARTY+NUMHEIGHT,NUMWINDTH,NUMHEIGHT},
+        					  		{(NUMWINDTH)*2,STARTY+NUMHEIGHT,NUMWINDTH,NUMHEIGHT},
+        					  		{0,(STARTY+(NUMHEIGHT)*2),NUMWINDTH,NUMHEIGHT},
+        					  		{NUMWINDTH,(STARTY+(NUMHEIGHT)*2),NUMWINDTH,NUMHEIGHT},
+        					  		{(NUMWINDTH)*2,(STARTY+(NUMHEIGHT)*2),NUMWINDTH,NUMHEIGHT},
+        					  		{0,(STARTY+(NUMHEIGHT)*3),NUMWINDTH,NUMHEIGHT},
+        					  		{NUMWINDTH,(STARTY+(NUMHEIGHT)*3),NUMWINDTH,NUMHEIGHT},
+        					  		{(NUMWINDTH)*2,(STARTY+(NUMHEIGHT)*3),NUMWINDTH,NUMHEIGHT},
+        					  		{0,(STARTY+(NUMHEIGHT)*4),NUMWINDTH,NUMHEIGHT},
+        					  		{NUMWINDTH,(STARTY+(NUMHEIGHT)*4),NUMWINDTH,NUMHEIGHT},
+        					  		{(NUMWINDTH)*2,(STARTY+(NUMHEIGHT)*4),NUMWINDTH,NUMHEIGHT}
+        					  		
+        					  	};
+        	int16 wXPos = (int16)AEE_GET_X(dwParam);
+			int16 wYPos = (int16)AEE_GET_Y(dwParam);
+        	if(!pMe->m_bup)
+        	{
+        		if(TOUCH_PT_IN_RECT(wXPos,wYPos,rc[pMe->m_i]))
+        		{
+        			return;
+        		}
+        		else
+        		{
+        			IImage *image = NULL;
+        			pMe->m_i = -1;
+        			pMe->m_bup = TRUE;
+        			image = ISHELL_LoadResImage(pMe->m_pShell,
+                                    AEE_APPSCOMMONRES_IMAGESFILE,
+                                    IDB_DIALER_1+(pMe->m_i));
+        			if(image!=NULL)
+        			{
+        				IIMAGE_Draw(image,rc[pMe->m_i].x,rc[pMe->m_i].y);
+        				IIMAGE_Release(image);
+        			}
+                    (void) ISHELL_PostEvent(pMe->m_pShell,
+                                                  AEECLSID_APP_SECURITYMENU,
+                                                  EVT_USER_REDRAW,
+                                                  NULL,
+                                                  NULL);
+        		}
+        	  }
+            }
+            break;
+		case EVT_PEN_UP:
+			{
+				AEEDeviceInfo devinfo;
+				int nBarH ;
+				AEERect rc;
+                IImage *image = NULL;
+                int i = 0;
+				int16 wXPos = (int16)AEE_GET_X(dwParam);
+				int16 wYPos = (int16)AEE_GET_Y(dwParam);
+                char  chEnter = 0;
+                int   nLen = 0;
+                boolean bRedraw = FALSE;
+                
 				nBarH = GetBottomBarHeight(pMe->m_pDisplay);
         
 				MEMSET(&devinfo, 0, sizeof(devinfo));
@@ -2632,8 +3138,86 @@ static boolean  SecurityAskPasswordDlgHandler(CSecurityMenu *pMe,
 						 return rt;
 					}
 				}
+                
+                //if(!pMe->m_bup)
+            	if(!pMe->m_bup)
+            	{
+                    AEERect rc[CALC_ITEM]= 
+					  	{
+					  		{0,STARTY,NUMWINDTH,NUMHEIGHT},
+					  		{NUMWINDTH,STARTY,NUMWINDTH,NUMHEIGHT},
+					  		{(NUMWINDTH)*2,STARTY,NUMWINDTH,NUMHEIGHT},
+					  		{0,STARTY+NUMHEIGHT,NUMWINDTH,NUMHEIGHT},
+					  		{NUMWINDTH,STARTY+NUMHEIGHT,NUMWINDTH,NUMHEIGHT},
+					  		{(NUMWINDTH)*2,STARTY+NUMHEIGHT,NUMWINDTH,NUMHEIGHT},
+					  		{0,(STARTY+(NUMHEIGHT)*2),NUMWINDTH,NUMHEIGHT},
+					  		{NUMWINDTH,(STARTY+(NUMHEIGHT)*2),NUMWINDTH,NUMHEIGHT},
+					  		{(NUMWINDTH)*2,(STARTY+(NUMHEIGHT)*2),NUMWINDTH,NUMHEIGHT},
+					  		{0,(STARTY+(NUMHEIGHT)*3),NUMWINDTH,NUMHEIGHT},
+					  		{NUMWINDTH,(STARTY+(NUMHEIGHT)*3),NUMWINDTH,NUMHEIGHT},
+					  		{(NUMWINDTH)*2,(STARTY+(NUMHEIGHT)*3),NUMWINDTH,NUMHEIGHT},
+					  		{0,(STARTY+(NUMHEIGHT)*4),NUMWINDTH,NUMHEIGHT},
+					  		{NUMWINDTH,(STARTY+(NUMHEIGHT)*4),NUMWINDTH,NUMHEIGHT},
+					  		{(NUMWINDTH)*2,(STARTY+(NUMHEIGHT)*4),NUMWINDTH,NUMHEIGHT}
+					  		
+					  	};
+            	     pMe->m_bup = TRUE;
+            	for(i = 0;i<CALC_ITEM-3;i++)
+                {
+                	if(TOUCH_PT_IN_RECT(wXPos,wYPos,rc[i]))
+                	{
 
-			}
+                    	image = ISHELL_LoadResImage(pMe->m_pShell,
+                                        AEE_APPSCOMMONRES_IMAGESFILE,
+                                        IDB_DIALER_1+i);
+            			if(image!=NULL)
+            			{
+            				IIMAGE_Draw(image,rc[i].x,rc[i].y);
+            				IIMAGE_Release(image);
+            			}
+                        if(i<9)
+                          chEnter = '1' + i;
+                        else if(i==9)
+                           chEnter = '*' + i; 
+                        else if(i==10)
+                           chEnter = '0'; 
+                        else if(i==11)
+                           chEnter = '#'; 
+                        else
+                        {
+                           return;
+                        }
+
+                         nLen = (pMe->m_strPhonePWD == NULL)?(0):(STRLEN(pMe->m_strPhonePWD));
+                        if (chEnter == 0)
+                        {
+                            // 删除字符
+                            if (nLen > 0)
+                            {
+                                bRedraw = TRUE;
+                                pMe->m_strPhonePWD[nLen-1] = chEnter;
+                            }
+                        }
+                        else if (nLen < OEMNV_LOCKCODE_MAXLEN)
+                        {
+                            pMe->m_strPhonePWD[nLen] = chEnter;
+                            nLen++;
+                            pMe->m_strPhonePWD[nLen] = 0;
+                            bRedraw = TRUE;
+                        }
+
+                        // if (bRedraw)
+                            {
+                                (void) ISHELL_PostEvent(pMe->m_pShell,
+                                                        AEECLSID_APP_SECURITYMENU,
+                                                        EVT_USER_REDRAW,
+                                                        NULL,
+                                                        NULL);
+                            }
+                	}
+            	 }
+            	}
+            			}
 			break;
 #endif//FEATURE_LCD_TOUCH_ENABLE             
         default:
@@ -2641,8 +3225,7 @@ static boolean  SecurityAskPasswordDlgHandler(CSecurityMenu *pMe,
     }
     
     return FALSE;
-} // SecurityAskPinDlgHandler
-
+} // SecurityTsimInputPasswordDlgHandler
 
 /*==============================================================================
 函数：
@@ -3010,39 +3593,87 @@ static boolean  SecurityAskPinDlgHandler(CSecurityMenu *pMe,
                 }
             }
             return TRUE;
-        #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
-			case EVT_PEN_UP:
-			{
-				int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
-				int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
-				AEERect bottomBarRect;
-				//int ht;
-				int nBarH ;
-				AEEDeviceInfo devinfo;
-				nBarH = GetBottomBarHeight(pMe->m_pDisplay);
-				
-				MEMSET(&devinfo, 0, sizeof(devinfo));
-				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
-				SETAEERECT(&bottomBarRect, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
-				if( TOUCH_PT_IN_RECT(wXPos, wYPos, bottomBarRect))
-				{
-					if(wXPos >= bottomBarRect.x + (bottomBarRect.dx/3)*2 && wXPos < bottomBarRect.x + (bottomBarRect.dx/3)*3 )//右
-					{						
-						boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_SECURITYMENU,EVT_USER,AVK_CLR,0);
-						return rt;
-					}
-					else if((wXPos >= bottomBarRect.x) && (wXPos < bottomBarRect.x + (bottomBarRect.dx/3)))//左
-					{						
-						//boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_ALARMCLOCK,EVT_USER,AVK_SELECT,0);
-						//MSG_FATAL("AEECLSID_ALARMCLOCK............",0,0,0);
-						//return rt;
-						//eCode = EVT_KEY;
-						//wParam = AVK_SELECT;
-					}
-				}
-			}
-			break;
-#endif
+#ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
+        case EVT_PEN_UP:
+            {
+                AEEDeviceInfo devinfo;
+                int nBarH ;
+                AEERect rc;
+                AEERect pwtextrc;
+                AEERect newpwtextrc;
+                int16 wXPos = (int16)AEE_GET_X(dwParam);
+                int16 wYPos = (int16)AEE_GET_Y(dwParam);
+
+                nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+        
+                MEMSET(&devinfo, 0, sizeof(devinfo));
+                ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+                SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+                SETAEERECT(&pwtextrc, PWTEXT_MINX, PWTEXT_MINY, PWTEXT_MAXX, PWTEXT_MAXY-80);
+                SETAEERECT(&newpwtextrc, PWTEXT_MINX, PWTEXT_MAXY-74, PWTEXT_MAXX, PWTEXT_MAXY-80);
+                if(SECURITYMENU_PT_IN_RECT(wXPos,wYPos,rc))
+                {
+                    if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//左
+                    {
+                        boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_SECURITYMENU,EVT_USER,AVK_SELECT,0);
+                        return rt;
+                    }
+                    else if(wXPos >= rc.x + (rc.dx/3)   && wXPos < rc.x + (rc.dx/3)*2 )//左
+                    {
+                         boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_SECURITYMENU,EVT_USER,AVK_INFO,0);
+                         return rt;
+                    }
+                    else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//左
+                    {                       
+                         boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_SECURITYMENU,EVT_USER,AVK_CLR,0);
+                         return rt;
+                    }
+                }
+                else if(SECURITYMENU_PT_IN_RECT(wXPos,wYPos,pwtextrc))
+                {
+                    pMe->m_pActiveTSIMInputID=IDD_ASK_PIN_DIALOG;
+                    MSG_FATAL("DLGRET_TSIMPASSWORDINPUT-----------",0,0,0);
+                    CLOSE_DIALOG(DLGRET_TSIMPASSWORDINPUT);
+                    return TRUE;
+                }
+                else if(SECURITYMENU_PT_IN_RECT(wXPos,wYPos,newpwtextrc))
+                {
+                     if(pMe->m_bIsConfirmPassword)
+                        {
+                            return TRUE;                       
+                        }
+                        else
+                        {
+                            nLen = (pMe->m_strPhonePWD == NULL)?(0):(STRLEN(pMe->m_strPhonePWD));
+                            if (nLen < 4)
+                            {
+                                return TRUE;
+                            }
+                        
+                            if(IsRunAsUIMVersion())
+                            {
+                                if (NULL != pMe->m_strPhonePWD)
+                                {         
+                                   if (SecurityMenu_ValidPIN(pMe, pMe->m_strPhonePWD))
+                                    {
+                                        pMe->nOldPSWLength = nLen;
+                                        CLOSE_DIALOG(DLGRET_VALIDPINPASS)
+                                    }
+                                    else
+                                    {
+                                        CLOSE_DIALOG(DLGRET_VALIDPINFAILED)//(DLGRET_OK)  
+
+                                    }   
+                                }
+                            }
+                            return TRUE;
+                        }
+                }
+
+            }
+                                    break;
+#endif//FEATURE_LCD_TOUCH_ENABLE             
+            
         default:
             break;
     }
@@ -3350,39 +3981,83 @@ static boolean  SecurityAskCallPasswordDlgHandler(CSecurityMenu *pMe,
                 }
             }
             return TRUE;
-            #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
-			case EVT_PEN_UP:
-			{
-				int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
-				int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
-				AEERect bottomBarRect;
-				//int ht;
-				int nBarH ;
-				AEEDeviceInfo devinfo;
-				nBarH = GetBottomBarHeight(pMe->m_pDisplay);
-				
-				MEMSET(&devinfo, 0, sizeof(devinfo));
-				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
-				SETAEERECT(&bottomBarRect, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
-				if( TOUCH_PT_IN_RECT(wXPos, wYPos, bottomBarRect))
-				{
-					if(wXPos >= bottomBarRect.x + (bottomBarRect.dx/3)*2 && wXPos < bottomBarRect.x + (bottomBarRect.dx/3)*3 )//右
-					{						
-						boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_SECURITYMENU,EVT_USER,AVK_CLR,0);
-						return rt;
-					}
-					else if((wXPos >= bottomBarRect.x) && (wXPos < bottomBarRect.x + (bottomBarRect.dx/3)))//左
-					{						
-						//boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_ALARMCLOCK,EVT_USER,AVK_SELECT,0);
-						//MSG_FATAL("AEECLSID_ALARMCLOCK............",0,0,0);
-						//return rt;
-						//eCode = EVT_KEY;
-						//wParam = AVK_SELECT;
-					}
-				}
-			}
-			break;
-#endif
+#ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
+        case EVT_PEN_UP:
+            {
+                AEEDeviceInfo devinfo;
+                int nBarH ;
+                AEERect rc;
+                AEERect pwtextrc;
+                AEERect newpwtextrc;
+                int16 wXPos = (int16)AEE_GET_X(dwParam);
+                int16 wYPos = (int16)AEE_GET_Y(dwParam);
+
+                nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+        
+                MEMSET(&devinfo, 0, sizeof(devinfo));
+                ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+                SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+                SETAEERECT(&pwtextrc, PWTEXT_MINX, PWTEXT_MINY, PWTEXT_MAXX, PWTEXT_MAXY-80);
+                SETAEERECT(&newpwtextrc, PWTEXT_MINX, PWTEXT_MAXY-74, PWTEXT_MAXX, PWTEXT_MAXY-80);
+                if(SECURITYMENU_PT_IN_RECT(wXPos,wYPos,rc))
+                {
+                    if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//左
+                    {
+                        boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_SECURITYMENU,EVT_USER,AVK_SELECT,0);
+                        return rt;
+                    }
+                    else if(wXPos >= rc.x + (rc.dx/3)   && wXPos < rc.x + (rc.dx/3)*2 )//左
+                    {
+                         boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_SECURITYMENU,EVT_USER,AVK_INFO,0);
+                         return rt;
+                    }
+                    else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//左
+                    {                       
+                         boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_SECURITYMENU,EVT_USER,AVK_CLR,0);
+                         return rt;
+                    }
+                }
+                else if(SECURITYMENU_PT_IN_RECT(wXPos,wYPos,pwtextrc))
+                {
+                    pMe->m_pActiveTSIMInputID=IDD_ASK_CALL_PASSWORD_DIALOG;
+                    MSG_FATAL("DLGRET_TSIMPASSWORDINPUT-----------",0,0,0);
+                    CLOSE_DIALOG(DLGRET_TSIMPASSWORDINPUT);
+                    return TRUE;
+                }
+                else if(SECURITYMENU_PT_IN_RECT(wXPos,wYPos,newpwtextrc))
+                {
+                     uint16 wPWD=0;
+                     char superpass[6] = {"*#09#"};
+                     nLen = (pMe->m_strPhonePWD == NULL)?(0):(STRLEN(pMe->m_strPhonePWD));
+                     //ISTATIC_Redraw(pMe->m_oldPassword);
+                     if (nLen < 4)
+                     {
+                         return TRUE;
+                     }
+                     
+                     (void) ICONFIG_GetItem(pMe->m_pConfig, 
+                                            CFGI_PHONE_PASSWORD,
+                                            &wPWD,
+                                            sizeof(uint16));
+                     
+                     if (wPWD == EncodePWDToUint16(pMe->m_strPhonePWD)||(0==strcmp(superpass,pMe->m_strPhonePWD)))
+                     {
+                         // 密码符合
+                         pMe->nOldPSWLength = nLen;
+                         CLOSE_DIALOG(DLGRET_VALIDPINPASS)
+                     }
+                     else
+                     {
+                         // 密码错误
+                         CLOSE_DIALOG(DLGRET_VALIDPINFAILED)
+                     }
+                     return TRUE;
+                }
+
+            }
+                        break;
+#endif//FEATURE_LCD_TOUCH_ENABLE             
+            
         default:
             break;
     }
@@ -4025,6 +4700,52 @@ static boolean  SecurityAffirmPassWordHandler(CSecurityMenu *pMe,
                 }
             }
             return TRUE;
+#ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
+        case EVT_PEN_UP:
+            {
+                AEEDeviceInfo devinfo;
+                int nBarH ;
+                AEERect rc;
+                AEERect pwtextrc;
+                int16 wXPos = (int16)AEE_GET_X(dwParam);
+                int16 wYPos = (int16)AEE_GET_Y(dwParam);
+
+                nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+        
+                MEMSET(&devinfo, 0, sizeof(devinfo));
+                ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+                SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+                SETAEERECT(&pwtextrc, PWTEXT_MINX, PWTEXT_MAXY-23, PWTEXT_MAXX, PWTEXT_MAXY-80);
+                if(SECURITYMENU_PT_IN_RECT(wXPos,wYPos,rc))
+                {
+                    if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//左
+                    {
+                        boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_SECURITYMENU,EVT_USER,AVK_SELECT,0);
+                        return rt;
+                    }
+                    else if(wXPos >= rc.x + (rc.dx/3)   && wXPos < rc.x + (rc.dx/3)*2 )//左
+                    {
+                         boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_SECURITYMENU,EVT_USER,AVK_INFO,0);
+                         return rt;
+                    }
+                    else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//左
+                    {                       
+                         boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_SECURITYMENU,EVT_USER,AVK_CLR,0);
+                         return rt;
+                    }
+                }
+                else if(SECURITYMENU_PT_IN_RECT(wXPos,wYPos,pwtextrc))
+                {
+                    pMe->m_pActiveTSIMInputID=IDD_AFFIRM_PASSWORD;
+                    MSG_FATAL("DLGRET_TSIMPASSWORDINPUT-----------",0,0,0);
+                    CLOSE_DIALOG(DLGRET_TSIMPASSWORDINPUT);
+                    return TRUE;
+                }
+
+            }
+           break;
+#endif//FEATURE_LCD_TOUCH_ENABLE             
+            
             
         default:
             break;
@@ -5070,13 +5791,12 @@ static boolean  HandleChangeCodeDialogEvent(CSecurityMenu *pMe,
 {
     PARAM_NOT_REF(dwParam)
     IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,
-                                                    IDC_CHANGECODE);
-	MSG_FATAL("HandleChangeCodeDialogEvent....11......%x",eCode,0,0); 
+                                                      IDC_CHANGECODE);
     if (pMenu == NULL)
     {
         return FALSE;
     }
-	MSG_FATAL("HandleChangeCodeDialogEvent..........%x",eCode,0,0);
+
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
@@ -5154,40 +5874,7 @@ static boolean  HandleChangeCodeDialogEvent(CSecurityMenu *pMe,
             }
 
             return TRUE;
-		#ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
-			case EVT_PEN_UP:
-			{
-				int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
-				int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
-				AEERect bottomBarRect;
-				//int ht;
-				int nBarH ;
-				AEEDeviceInfo devinfo;
-				nBarH = GetBottomBarHeight(pMe->m_pDisplay);
-				MSG_FATAL("EVT_PEN_UP  nBarH====%d",nBarH,0,0);
-				MEMSET(&devinfo, 0, sizeof(devinfo));
-				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
-				SETAEERECT(&bottomBarRect, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
-				MSG_FATAL("EVT_PEN_UP  devinfo.cyScreen====%d,devinfo.cxScreen=%d",devinfo.cyScreen,devinfo.cxScreen,0);
-				if( TOUCH_PT_IN_RECT(wXPos, wYPos, bottomBarRect))
-				{
-					if(wXPos >= bottomBarRect.x + (bottomBarRect.dx/3)*2 && wXPos < bottomBarRect.x + (bottomBarRect.dx/3)*3 )//右
-					{						
-						boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_SECURITYMENU,EVT_USER,AVK_CLR,0);
-						return rt;
-					}
-					else if((wXPos >= bottomBarRect.x) && (wXPos < bottomBarRect.x + (bottomBarRect.dx/3)))//左
-					{						
-						//boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_ALARMCLOCK,EVT_USER,AVK_SELECT,0);
-						//MSG_FATAL("AEECLSID_ALARMCLOCK............",0,0,0);
-						//return rt;
-						//eCode = EVT_KEY;
-						//wParam = AVK_SELECT;
-					}
-				}
-			}
-			break;
-#endif
+
         default:
             break;
     }
