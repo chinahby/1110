@@ -1017,8 +1017,8 @@ static boolean IDD_MAIN_Handler(void        *pUser,
             MENU_ADDITEM(pMenu, IDS_OUTBOX);
             MSG_FATAL("IDD_MAIN_Handler EVT_DIALOG_INIT 4",0,0,0);
 #ifdef FEATURE_USES_MMS  
-            MENU_ADDITEM(pMenu, IDS_OUTBOX_MMS);
             MENU_ADDITEM(pMenu, IDS_INBOX_MMS);
+            MENU_ADDITEM(pMenu, IDS_OUTBOX_MMS);
 #endif
             MSG_FATAL("IDD_MAIN_Handler EVT_DIALOG_INIT 5",0,0,0);
             MENU_ADDITEM(pMenu, IDS_DRAFT);
@@ -3118,8 +3118,8 @@ static boolean IDD_DELETEMSGS_Handler(void *pUser,
             //MENU_ADDITEM(pMenu, IDS_DELETE_READMSG);  
             MENU_ADDITEM(pMenu, IDS_OUTBOX); 
 #ifdef FEATURE_USES_MMS
-            MENU_ADDITEM(pMenu, IDS_OUTBOX_MMS);
             MENU_ADDITEM(pMenu, IDS_INBOX_MMS); 
+            MENU_ADDITEM(pMenu, IDS_OUTBOX_MMS);
 #endif
             MENU_ADDITEM(pMenu, IDS_DRAFT); 
             
