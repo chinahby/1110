@@ -1,9 +1,10 @@
-NEWCLASS_SOURCES=\
-    hx_queryinfo.c
-	
-NEWCLASS_SRC=$(MMIDIR)/NewClass
-vpath %.c $(NEWCLASS_SRC)	
-	
-NEWCLASS_OBJS :=  $(addprefix $(TARGETDIR)/, $(NEWCLASS_SOURCES:%.c=%.o))
+EXTEND_SOURCES=\
+    hx_queryinfo.c    
 
-OBJECTS+=$(NEWCLASS_OBJS)
+	
+EXTEND_SRC=$(MMIDIR)/Extend
+vpath %.c $(EXTEND_SRC)	
+	
+EXTEND_OBJS :=  $(addprefix $(TARGETDIR)/, $(EXTEND_SOURCES:%.c=%.o))
+
+OBJECTS+=$(EXTEND_OBJS)

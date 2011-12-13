@@ -173,4 +173,4 @@ include $(HW_PATH)/Hanwang.min
 include $(ADJUSTPENAPP)/adjustpenapp.min
 endif
 
-#include $(MMIDIR)/NewClass/NewClass.min
+#include $(MMIDIR)/Extend/Extend.min
