@@ -52,6 +52,8 @@ SIDE EFFECTS
   None
 
 ===========================================================================*/
+uint8 camsensor_SIV121A_ycbcr_active(void);
+uint8 camsensor_SIV121A_ycbcr_unactive(void);
 
 boolean camsensor_siv121a_init(camsensor_function_table_type *camsensor_function_table_ptr,
                                camctrl_tbl_type              *camctrl_tbl_ptr);

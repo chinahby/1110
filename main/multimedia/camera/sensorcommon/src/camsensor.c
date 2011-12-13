@@ -421,6 +421,14 @@
 #include "camsensor_SIV120A_yuv.h"
 #endif
 
+#ifdef USE_CAMSENSOR_GC0329
+#include "camsensor_gc0329.h"
+#endif
+
+#ifdef USE_CAMSENSOR_SP0828
+#include "camsensor_sp0828.h"
+#endif
+
 #endif /* FEATURE_NI_GPIO*/
 
 #include "ipl.h"
@@ -671,6 +679,8 @@ LOCAL uint aec_frame_average_bias_table_64[] =  /* Q8 format */
 
 #ifdef FEATURE_CAMERA_MULTI_NEW_AUTO_DETECT
 
+#ifdef FEATURE_CAMERA_MULTI_SENSOR
+
 camsensor_sensor_model_pair_type current_camsensor_pair;
 
 camsensor_sensor_model_pair_id camsensor_pair[] = 
@@ -686,6 +696,7 @@ camsensor_sensor_model_pair_id camsensor_pair[] =
 	{CAMSENSOR_SIV121A_ID,CAMSENSOR_SIV121A_ID},
 	{CAMSENSOR_ID_MAX,CAMSENSOR_ID_MAX},
 };
+#endif
 
 LOCAL camsensor_unactive_fn_type camsensor_unactive_value_table[CAMSENSOR_ID_MAX] = 
 {
@@ -715,6 +726,14 @@ LOCAL camsensor_unactive_fn_type camsensor_unactive_value_table[CAMSENSOR_ID_MAX
 
 #ifdef USE_CAMSENSOR_SIV120A
    camsensor_SIV120A_ycbcr_unactive,
+#endif
+
+#ifdef USE_CAMSENSOR_GC0329
+	camsensor_gc0329_ycbcr_unactive,
+#endif
+
+#ifdef USE_CAMSENSOR_SP0828
+	camsensor_sp0828_ycbcr_unactive,
 #endif
 
 #ifdef USE_CAMSENSOR_OMNI_VISION_9650
@@ -857,6 +876,14 @@ LOCAL camsensor_active_fn_type camsensor_active_value_table[CAMSENSOR_ID_MAX] =
    camsensor_SIV120A_ycbcr_active,
 #endif
 
+#ifdef USE_CAMSENSOR_GC0329
+	camsensor_gc0329_ycbcr_active,
+#endif
+
+#ifdef USE_CAMSENSOR_SP0828
+	camsensor_sp0828_ycbcr_active,
+#endif
+
 #ifdef USE_CAMSENSOR_OMNI_VISION_9650
   NULL,
 #endif /* USE_CAMSENSOR_OMNI_VISION_9650 */
@@ -969,9 +996,11 @@ LOCAL camsensor_active_fn_type camsensor_active_value_table[CAMSENSOR_ID_MAX] =
 
 #endif
 
-
+#ifdef FEATURE_CAMERA_MULTI_NEW_AUTO_DETECT
+camsensor_sensor_model_type camsensor_id = CAMSENSOR_ID_MAX;
+#else
 LOCAL camsensor_sensor_model_type camsensor_id = CAMSENSOR_ID_MAX;
-
+#endif
 /* ********************* WARNING WARNING **************************** */
 /* ********************* WARNING WARNING **************************** */
 /* MUST CHANGE camsensor_sensor_model_type in camsensor.h when        */
@@ -1015,6 +1044,14 @@ LOCAL boolean (*camsensor_detect_table[])(camsensor_function_table_type *, camct
 
 #ifdef USE_CAMSENSOR_SIV120A
   camsensor_siv120a_init,
+#endif
+
+#ifdef USE_CAMSENSOR_GC0329
+	camsensor_gc0329_init,
+#endif
+
+#ifdef USE_CAMSENSOR_SP0828
+	camsensor_sp0828_init,
 #endif
 
 #ifdef USE_CAMSENSOR_OMNI_VISION_9650
@@ -2691,6 +2728,19 @@ else {
 	}
   	(void)camsensor_config_camclk_po(camsensor_camclk_po_hz);
   	camera_timed_wait(13);
+#else
+	camera_timed_wait(13);
+	CAMERA_CONFIG_GPIO(CAMIF_EN_N);
+
+	if ( camsensor_id < CAMSENSOR_ID_MAX)
+	{
+		camsensor_active_fn_type pfn_active = camsensor_active_value_table[camsensor_id];
+
+		if(pfn_active)
+	    {
+		    gpio_out(CAMIF_EN_N, (GPIO_ValueType)pfn_active());
+	    }
+    }
 #endif
 
 #else
@@ -2839,6 +2889,16 @@ else {
 #ifdef FEATURE_CAMERA_MULTI_SENSOR
 	gpio_out(CAMSENSOR1_POWER_PIN, (GPIO_ValueType)(*camsensor_unactive_value_table[camsensor_pair[current_camsensor_pair].camsensor_first])());
   	gpio_out(CAMSENSOR2_POWER_PIN, (GPIO_ValueType)(*camsensor_unactive_value_table[camsensor_pair[current_camsensor_pair].camsensor_second])());
+#else
+	if ( camsensor_id < CAMSENSOR_ID_MAX)
+	{
+		camsensor_unactive_fn_type pfn_unactive = camsensor_unactive_value_table[camsensor_id];
+
+		if(pfn_unactive)
+	    {
+		    gpio_out(CAMIF_EN_N, (GPIO_ValueType)pfn_unactive());
+	    }
+    }
 #endif
 #else
 #ifdef FEATURE_CAMERA_MULTI_SENSOR
@@ -4718,9 +4778,15 @@ boolean camsensor_init (void)
 			camsensor_initialized = (*camsensor_detect_table[camsensor_pair[current_camsensor_pair].camsensor_second])(&camsensor_function_table,&camctrl_tbl);
 		}
 	}
+#else
+
+	if (camsensor_detect_table[camsensor_id])
+	{
+		camctrl_init_tbl();
+		camsensor_init_func_tbl();
+		camsensor_initialized = (*camsensor_detect_table[camsensor_id])(&camsensor_function_table, &camctrl_tbl);
+	}
 #endif /* nFEATURE_CAMERA_MULTI_SENSOR */
-
-
 #else
 #ifdef FEATURE_CAMERA_SENSOR_AUTO_DETECT
 #ifdef FEATURE_CAMERA_MULTI_SENSOR

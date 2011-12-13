@@ -56,6 +56,9 @@ SIDE EFFECTS
 boolean camsensor_sic110a_init(camsensor_function_table_type *camsensor_function_table_ptr,
                                camctrl_tbl_type              *camctrl_tbl_ptr);
 
+uint8 camsensor_sic110a_ycbcr_active(void);
+uint8 camsensor_sic110a_ycbcr_unactive(void);
+
 #endif /* CAMSENSOR_SIV100B_H */
 
 

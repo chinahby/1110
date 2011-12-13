@@ -27,28 +27,6 @@
 #define SIC110A_OUTFORMAT_RGB565
 #endif
 // sensor's chip ID and version
-#ifdef FEATURE_CAMERA_SP0828   //add by yangdecai
-#define SIC110A_SENSOR_ID                   (0x0C)
-//#define SIC110A_SENSOR_VERSION              (0x02)
-
-#define SIC110A_I2C_WRITE_ID                (0x30)
-#define SIC110A_I2C_READ_ID                 (0x31)
-
-/* SENSOR REGISTER DEFINE */
-#define SIC110A_ID_REG                      (0x02)
-#define SIC110A_INFO_REG                    (0x02)
-
-
-#define CAMSENSOR_SIC110A_FULL_SIZE_WIDTH   288 //640
-#define CAMSENSOR_SIC110A_FULL_SIZE_HEIGHT  352 //480
-
-#define MAX_EV_COMP                          25
-
-/* FPS supported by this sensor */
-#define CAMSENSOR_30_FPS                    (30*Q8)
-#define CAMSENSOR_15_FPS                    (15*Q8)
-
-#else
 #define SIC110A_SENSOR_ID                   (0x0D)
 #define SIC110A_SENSOR_VERSION              (0x02)
 
@@ -68,7 +46,6 @@
 /* FPS supported by this sensor */
 #define CAMSENSOR_30_FPS                    (30*Q8)
 #define CAMSENSOR_15_FPS                    (15*Q8)
-#endif
 
 /*============================================================================
     LOCAL Variables 
@@ -105,6 +82,17 @@ static camera_ret_code_type camsensor_sic110a_set_frame_rate(uint16 fps)
     return CAMERA_SUCCESS;
 } /* camsensor_sic110a_set_frame_rate() */
 
+
+uint8 camsensor_sic110a_ycbcr_active(void)
+{
+	return 1;
+}
+
+uint8 camsensor_sic110a_ycbcr_unactive(void)
+{
+	return 0;
+}
+
 boolean camsensor_sic110a_init(camsensor_function_table_type *camsensor_function_table_ptr,
                                camctrl_tbl_type              *camctrl_tbl_ptr)
 {
@@ -126,7 +114,7 @@ boolean camsensor_sic110a_init(camsensor_function_table_type *camsensor_function
     
     /*lint -save -e655 */
     camsensor_i2c_command.options    = (i2c_options_type) (I2C_REG_DEV | I2C_START_BEFORE_READ); 
-#ifndef FEATURE_CAMERA_SP0828   //add by yangdecai 2011-06-20
+
     CAMERA_CONFIG_GPIO(CAMSENSOR_SIC110A_RESET_PIN);
     gpio_out(CAMSENSOR_SIC110A_RESET_PIN,0);
     camera_timed_wait(10);
@@ -167,38 +155,7 @@ boolean camsensor_sic110a_init(camsensor_function_table_type *camsensor_function
 		MSG_FATAL("sensor_id 2 = ......FALSE",0,0,0);
 		return FALSE;
 	} 
-#else
-    
-	i2c_operation_fs_set(25);
-	camera_timed_wait(10);  //ovt
 
-    
-	if( !sic110a_i2c_write_byte(0xfd,0x00)) 
-	 {
-//	 	while(i-->5)
-//        {
-//          rex_wait(100);   
- //       }
-		 MSG_FATAL("Block Select Error!",0,0,0);
-		 return FALSE;
-	 }
-	 
-	 if( !sic110a_i2c_read_byte(SIC110A_ID_REG,&sensor_id)) 
-	 {
-		 MSG_FATAL("read sensor_id failed!",0,0,0);
-		 return FALSE;
-	 }
-	 
-	 MSG_FATAL("sensor_id 1 = %x",sensor_id,0,0);
-	 
-	 /* Check if it matches it with the value in Datasheet */
-	 if ( sensor_id != SIC110A_SENSOR_ID)
-	 {
-		 MSG_FATAL("read sensor_id do not matches!",0,0,0);
-		 return FALSE;
-	 }
-	 
-#endif
     initialize_sic110a_registers(CAMSENSOR_SIC110A_FULL_SIZE_WIDTH, CAMSENSOR_SIC110A_FULL_SIZE_HEIGHT);
     
     /* Register function table: */
@@ -229,309 +186,11 @@ static boolean initialize_sic110a_registers(uint16 dx, uint16 dy)
     
     x = (CAMSENSOR_SIC110A_FULL_SIZE_WIDTH-dx)>>1;
     y = (CAMSENSOR_SIC110A_FULL_SIZE_HEIGHT-dy)>>1;
-#ifndef FEATURE_CAMERA_SP0828
+
     //dy = CAMSENSOR_SIC110A_FULL_SIZE_HEIGHT-y;
-#else
-    if(x<60)
-	{
-		x = 60;
-	}
-	if((dx<128)&&(dy<228)) //sensor internel resize for inprove sharpness by xuegang  
-	{
-		dx=dx*1.4;
-		dy=dy*1.4;
-		internel_resize = TRUE;
-	}
-#endif
+
 #endif
     //Sensor Block Setting  ###Don't Change###
-#ifdef FEATURE_CAMERA_SP0828
-    
-	sic110a_i2c_write_byte(0xfd,0x00);
-	sic110a_i2c_write_byte(0x1c,0x00);//08
-	sic110a_i2c_write_byte(0x30,0x00);//00:不分频 02:2分频
-	sic110a_i2c_write_byte(0x0f,0x2f);//;analog
-	sic110a_i2c_write_byte(0x10,0x2f);
-	//sic110a_i2c_write_byte(0x12,0x6f);
-	sic110a_i2c_write_byte(0x13,0x2f);
-	//sic110a_i2c_write_byte(0x15,0x7f);
-	//sic110a_i2c_write_byte(0x16,0x0f);
-	sic110a_i2c_write_byte(0x22,0xe0);
-	sic110a_i2c_write_byte(0x26,0x08);
-	sic110a_i2c_write_byte(0x27,0xe8);
-	sic110a_i2c_write_byte(0x28,0x03);
-	sic110a_i2c_write_byte(0x32,0x00);
-
-	sic110a_i2c_write_byte(0xfd,0x00);
-	sic110a_i2c_write_byte(0x31,0x00);	 //Upside/mirr/Pclk inv/sub
-	sic110a_i2c_write_byte(0xd8,0x62);  //0x58 pzt 20111102
-	sic110a_i2c_write_byte(0xd9,0x62);  //0x58 pzt 20111102
-	sic110a_i2c_write_byte(0xda,0x58);
-	sic110a_i2c_write_byte(0xdb,0x48);
-
-	sic110a_i2c_write_byte(0x5f,0x11);
-
-
-	sic110a_i2c_write_byte(0xe0,0x00);//;resize
-	sic110a_i2c_write_byte(0xe1,0xdc);
-	sic110a_i2c_write_byte(0xe2,0xb0);
-	sic110a_i2c_write_byte(0xe3,0x00);
-	sic110a_i2c_write_byte(0xe4,0x2e);
-	sic110a_i2c_write_byte(0xe5,0x00);
-	sic110a_i2c_write_byte(0xe6,0x2b);
-	sic110a_i2c_write_byte(0xb7,0x3c);//;LSC
-	sic110a_i2c_write_byte(0xb8,0x50);
-	sic110a_i2c_write_byte(0xfd,0x01);
-	sic110a_i2c_write_byte(0x25,0x1a);//AWB
-	sic110a_i2c_write_byte(0x26,0xfb);
-	sic110a_i2c_write_byte(0x28,0x61);
-	sic110a_i2c_write_byte(0x29,0x49);
-	sic110a_i2c_write_byte(0x31,0x64);
-	sic110a_i2c_write_byte(0x32,0x18);
-	sic110a_i2c_write_byte(0x4d,0xdc);
-	sic110a_i2c_write_byte(0x4e,0x6b);
-	sic110a_i2c_write_byte(0x41,0x8c);
-	sic110a_i2c_write_byte(0x42,0x66);
-	sic110a_i2c_write_byte(0x55,0xff);
-	sic110a_i2c_write_byte(0x56,0x00);
-	sic110a_i2c_write_byte(0x59,0x82);
-	sic110a_i2c_write_byte(0x5a,0x00);
-	sic110a_i2c_write_byte(0x5d,0xff);
-	sic110a_i2c_write_byte(0x5e,0x6f);
-	sic110a_i2c_write_byte(0x57,0xff);
-	sic110a_i2c_write_byte(0x58,0x00);
-	sic110a_i2c_write_byte(0x5b,0xff);
-	sic110a_i2c_write_byte(0x5c,0xa8);
-	sic110a_i2c_write_byte(0x5f,0x75);
-	sic110a_i2c_write_byte(0x60,0x00);
-	sic110a_i2c_write_byte(0x2d,0x00);
-	sic110a_i2c_write_byte(0x2e,0x00);
-	sic110a_i2c_write_byte(0x2f,0x00);
-	sic110a_i2c_write_byte(0x30,0x00);
-	sic110a_i2c_write_byte(0x33,0x00);
-	sic110a_i2c_write_byte(0x34,0x00);
-	sic110a_i2c_write_byte(0x37,0x00);
-	sic110a_i2c_write_byte(0x38,0x00);
-	sic110a_i2c_write_byte(0x39,0x01);
-	sic110a_i2c_write_byte(0x3a,0x07);
-	sic110a_i2c_write_byte(0xfd,0x00);//;BPC
-	sic110a_i2c_write_byte(0x33,0x0f);
-	sic110a_i2c_write_byte(0x51,0x3f);
-	sic110a_i2c_write_byte(0x52,0x09);
-	sic110a_i2c_write_byte(0x53,0x00);
-	sic110a_i2c_write_byte(0x54,0x00);// 4
-	sic110a_i2c_write_byte(0x55,0x10);
-	sic110a_i2c_write_byte(0x4f,0xFF);;//blueedge
-	sic110a_i2c_write_byte(0x50,0xFF);
-	sic110a_i2c_write_byte(0x56,0x70);;//smooth
-	sic110a_i2c_write_byte(0x57,0x40);
-	sic110a_i2c_write_byte(0x58,0x40);
-	sic110a_i2c_write_byte(0x59,0x20);
-	sic110a_i2c_write_byte(0x5a,0x02);
-	sic110a_i2c_write_byte(0x5b,0x05);
-	sic110a_i2c_write_byte(0x5c,0x30);
-	sic110a_i2c_write_byte(0x65,0x03);//sharpness
-	sic110a_i2c_write_byte(0x66,0x01);
-	sic110a_i2c_write_byte(0x67,0x03);
-	sic110a_i2c_write_byte(0x68,0x43);
-	sic110a_i2c_write_byte(0x69,0x7f);
-	sic110a_i2c_write_byte(0x6a,0x01);
-	sic110a_i2c_write_byte(0x6b,0x03);    
-	sic110a_i2c_write_byte(0x6c,0x01);
-	sic110a_i2c_write_byte(0x6d,0x06);  //0x03  pzt 20111102
-	sic110a_i2c_write_byte(0x6e,0x46);  //0x43 pzt 20111102
-	sic110a_i2c_write_byte(0x6f,0x7f);
-	sic110a_i2c_write_byte(0x70,0x01);
-	sic110a_i2c_write_byte(0x71,0x03);
-	sic110a_i2c_write_byte(0x72,0x10);
-	sic110a_i2c_write_byte(0x73,0x03);//3
-	sic110a_i2c_write_byte(0x74,0x43);
-	sic110a_i2c_write_byte(0x75,0x7f);
-	sic110a_i2c_write_byte(0x76,0x01);
-	sic110a_i2c_write_byte(0x7f,0x96);//;colorcorrection
-	sic110a_i2c_write_byte(0x80,0xf2);
-	sic110a_i2c_write_byte(0x81,0xfe); 
-	sic110a_i2c_write_byte(0x82,0xde);
-	sic110a_i2c_write_byte(0x83,0xa3);
-	sic110a_i2c_write_byte(0x84,0xff);
-	sic110a_i2c_write_byte(0x85,0xea);
-	sic110a_i2c_write_byte(0x86,0x81);
-	sic110a_i2c_write_byte(0x87,0x14);
-	sic110a_i2c_write_byte(0x88,0x3c); 
-	sic110a_i2c_write_byte(0x89,0x33);
-	sic110a_i2c_write_byte(0x8a,0x1f); 
-	sic110a_i2c_write_byte(0x8b,0x00);// ;gamma
-	sic110a_i2c_write_byte(0x8c,0x1a);
-	sic110a_i2c_write_byte(0x8d,0x29);
-	sic110a_i2c_write_byte(0x8e,0x41);
-	sic110a_i2c_write_byte(0x8f,0x62);
-	sic110a_i2c_write_byte(0x90,0x7c);
-	sic110a_i2c_write_byte(0x91,0x90);
-	sic110a_i2c_write_byte(0x92,0xa2);
-	sic110a_i2c_write_byte(0x93,0xaf);
-	sic110a_i2c_write_byte(0x94,0xba);
-	sic110a_i2c_write_byte(0x95,0xc4);
-	sic110a_i2c_write_byte(0x96,0xce);
-	sic110a_i2c_write_byte(0x97,0xd6);
-	sic110a_i2c_write_byte(0x98,0xdd);
-	sic110a_i2c_write_byte(0x99,0xe4);
-	sic110a_i2c_write_byte(0x9a,0xea);
-	sic110a_i2c_write_byte(0x9b,0xf1);
-	sic110a_i2c_write_byte(0xfd,0x01);
-	sic110a_i2c_write_byte(0x8d,0xf8);
-	sic110a_i2c_write_byte(0x8e,0xff);
-	sic110a_i2c_write_byte(0xfd,0x00);
-	sic110a_i2c_write_byte(0xca,0xcf);//;saturation
-	sic110a_i2c_write_byte(0xcb,0x07);//;hist-expand
-	sic110a_i2c_write_byte(0xcc,0x04);
-	sic110a_i2c_write_byte(0xce,0xff);
-	sic110a_i2c_write_byte(0xcf,0x10);
-	sic110a_i2c_write_byte(0xd0,0x20);
-	sic110a_i2c_write_byte(0xd1,0x00);
-	sic110a_i2c_write_byte(0xd2,0x1c);
-	sic110a_i2c_write_byte(0xd3,0x16);
-	sic110a_i2c_write_byte(0xd4,0x00);
-	sic110a_i2c_write_byte(0xd6,0x1c);
-	sic110a_i2c_write_byte(0xd7,0x16);
-	sic110a_i2c_write_byte(0xdd,0x70);// ;heq  
-	sic110a_i2c_write_byte(0xde,0x90);
-	sic110a_i2c_write_byte(0xb9,0x00);//;Ygamma 
-	sic110a_i2c_write_byte(0xba,0x04); 
-	sic110a_i2c_write_byte(0xbb,0x08); 
-	sic110a_i2c_write_byte(0xbc,0x10);
-	sic110a_i2c_write_byte(0xbd,0x20);
-	sic110a_i2c_write_byte(0xbe,0x30);
-	sic110a_i2c_write_byte(0xbf,0x40);
-	sic110a_i2c_write_byte(0xc0,0x50);
-	sic110a_i2c_write_byte(0xc1,0x60);
-	sic110a_i2c_write_byte(0xc2,0x70);
-	sic110a_i2c_write_byte(0xc3,0x80);
-	sic110a_i2c_write_byte(0xc4,0x90);
-	sic110a_i2c_write_byte(0xc5,0xA0);
-	sic110a_i2c_write_byte(0xc6,0xB0);
-	sic110a_i2c_write_byte(0xc7,0xC0);
-	sic110a_i2c_write_byte(0xc8,0xD0);
-	sic110a_i2c_write_byte(0xc9,0xE0);
-	sic110a_i2c_write_byte(0xfd,0x01);
-	sic110a_i2c_write_byte(0x89,0xf0);
-	sic110a_i2c_write_byte(0x8a,0xff);
-	sic110a_i2c_write_byte(0xfd,0x00);
-	sic110a_i2c_write_byte(0xe8,0x30);//;AE
-	sic110a_i2c_write_byte(0xe9,0x30);
-	sic110a_i2c_write_byte(0xea,0x40);
-	sic110a_i2c_write_byte(0xf4,0x1b);
-	sic110a_i2c_write_byte(0xf5,0x97);
-	sic110a_i2c_write_byte(0xec,0x4B);
-	sic110a_i2c_write_byte(0xed,0x90);
-	sic110a_i2c_write_byte(0xee,0x3B);
-	sic110a_i2c_write_byte(0xef,0x80);
-	sic110a_i2c_write_byte(0xf7,0x78);//AEtarget
-	sic110a_i2c_write_byte(0xf8,0x63);//AEtarget
-	sic110a_i2c_write_byte(0xf9,0x68);//AEtarget
-	sic110a_i2c_write_byte(0xfa,0x53);//AEtarget
-	sic110a_i2c_write_byte(0xfd,0x01);
-	sic110a_i2c_write_byte(0x09,0x31);	
-	sic110a_i2c_write_byte(0x0a,0x85);
-	sic110a_i2c_write_byte(0x0b,0x0b);	
-	sic110a_i2c_write_byte(0x14,0x20);
-	sic110a_i2c_write_byte(0x15,0x0f); 
-
- // MCLK 2.4M fix5fps maxgain:0x70
-	sic110a_i2c_write_byte(0xfd,0x00);
-	sic110a_i2c_write_byte(0x05,0x0 );
-	sic110a_i2c_write_byte(0x06,0x0 );
-	sic110a_i2c_write_byte(0x09,0x1 );
-	sic110a_i2c_write_byte(0x0a,0xe0);
-	sic110a_i2c_write_byte(0xf0,0x10);
-	sic110a_i2c_write_byte(0xf1,0x0 );
-	sic110a_i2c_write_byte(0xf2,0x38);
-	sic110a_i2c_write_byte(0xf5,0x51);
-	sic110a_i2c_write_byte(0xfd,0x01);
-	sic110a_i2c_write_byte(0x00,0x95);
-	sic110a_i2c_write_byte(0x0f,0x39);
-	sic110a_i2c_write_byte(0x16,0x39);
-	sic110a_i2c_write_byte(0x17,0x85);
-	sic110a_i2c_write_byte(0x18,0x8d);
-	sic110a_i2c_write_byte(0x1b,0x39);
-	sic110a_i2c_write_byte(0x1c,0x8d);
-	sic110a_i2c_write_byte(0xb4,0xf );
-	sic110a_i2c_write_byte(0xb5,0xf );
-	sic110a_i2c_write_byte(0xb6,0xf );
-	sic110a_i2c_write_byte(0xb9,0x40);
-	sic110a_i2c_write_byte(0xba,0x4f);
-	sic110a_i2c_write_byte(0xbb,0x47);
-	sic110a_i2c_write_byte(0xbc,0x45);
-	sic110a_i2c_write_byte(0xbd,0x43);
-	sic110a_i2c_write_byte(0xbe,0x42);
-	sic110a_i2c_write_byte(0xbf,0x42);
-	sic110a_i2c_write_byte(0xc0,0x42);
-	sic110a_i2c_write_byte(0xc1,0x41);
-	sic110a_i2c_write_byte(0xc2,0x41);
-	sic110a_i2c_write_byte(0xc3,0x41);
-	sic110a_i2c_write_byte(0xc4,0x41);
-	sic110a_i2c_write_byte(0xc5,0x41);
-	sic110a_i2c_write_byte(0xc6,0x41);
-	sic110a_i2c_write_byte(0xca,0x70);
-	sic110a_i2c_write_byte(0xcb,0x14);
-	sic110a_i2c_write_byte(0xfd,0x00);
-
-
-
-	sic110a_i2c_write_byte(0xfd,0x00);
-	sic110a_i2c_write_byte(0x32,0x15);
-	sic110a_i2c_write_byte(0x34,0x66);
-	sic110a_i2c_write_byte(0x35,0x04);//out format RGB565
-#if 1
-	sic110a_i2c_write_byte(0x47,(byte)((y>>8)&0xff));		
-	sic110a_i2c_write_byte(0x48,(byte)(y&0xff) );	   
-	sic110a_i2c_write_byte(0x49,(byte)((dy>>8)&0xff)); 	 
-	sic110a_i2c_write_byte(0x4a,(byte)(dy&0xff));	   
-	sic110a_i2c_write_byte(0x4b,(byte)(x&0xff) );	   
-	sic110a_i2c_write_byte(0x4c,(byte)(dx&0xff));	  
-    MSG_FATAL("sic110a_i2c_write_byte y=%d dy=%d",y,dy,0);
-    MSG_FATAL("sic110a_i2c_write_byte x=%d dx=%d",x,dx,0);
-	//if(internel_resize == TRUE)
-	{
-		sic110a_i2c_write_byte(0xe0,0x00);     //02 00 
-		sic110a_i2c_write_byte(0xe1,0x60);
-		sic110a_i2c_write_byte(0xe2,0x80);
-		sic110a_i2c_write_byte(0xe3,0x00);
-		sic110a_i2c_write_byte(0xe4,0x2c);
-		sic110a_i2c_write_byte(0xe5,0x00);
-		sic110a_i2c_write_byte(0xe6,0x2c);
-
-	}
-
-#else
-	
-	//sic110a_i2c_write_byte(0x47,0x0);	   
-	//sic110a_i2c_write_byte(0x48,0x00);		
-	//sic110a_i2c_write_byte(0x49,0x0);	   
-	//sic110a_i2c_write_byte(0x4a,0x60);		
-	//sic110a_i2c_write_byte(0x4b,0x5C);		
-	//sic110a_i2c_write_byte(0x4c,0x80);
-	sic110a_i2c_write_byte(0x47,0x0 );      
-   	sic110a_i2c_write_byte(0x48,0x0 );      
-   	sic110a_i2c_write_byte(0x49,0x0 );      
-   	sic110a_i2c_write_byte(0x4a,0x90);      
-   	sic110a_i2c_write_byte(0x4b,0x30);      
-   	sic110a_i2c_write_byte(0x4c,0xc0);
-   
-   
-   
-   	sic110a_i2c_write_byte(0xe0,0x01);      
-   	sic110a_i2c_write_byte(0xe1,0x60);
-   	sic110a_i2c_write_byte(0xe2,0x80);
-   	sic110a_i2c_write_byte(0xe3,0x00);
-   	sic110a_i2c_write_byte(0xe4,0x30);
-   	sic110a_i2c_write_byte(0xe5,0x00);
-   	sic110a_i2c_write_byte(0xe6,0x30);
- 	
-#endif
-
-	sic110a_i2c_write_byte(0x36,0x80);		
-	sic110a_i2c_write_byte(0x30,0x00);			 
-#else
     sic110a_i2c_write_byte(0x00, 0x00); 
     sic110a_i2c_write_byte(0x04, 0x00); 
     sic110a_i2c_write_byte(0x05, 0x03); 
@@ -622,11 +281,11 @@ static boolean initialize_sic110a_registers(uint16 dx, uint16 dy)
     //IDP Control
     sic110a_i2c_write_byte(0x00, 0x03); 
     sic110a_i2c_write_byte(0x10, 0xEF); 
-    #ifndef T_QSC1110
+#ifndef T_QSC1110
     sic110a_i2c_write_byte(0x11, 0x1d);  // PCLK, HSync, VSync (L,H,L)
-    #else
+#else
     sic110a_i2c_write_byte(0x11, 0x0D);  // PCLK, HSync, VSync (L,H,L)
-    #endif
+#endif
 #ifdef SIC110A_OUTFORMAT_RGB565
     sic110a_i2c_write_byte(0x12, 0x0C); //0x3c
 #else
@@ -634,17 +293,17 @@ static boolean initialize_sic110a_registers(uint16 dx, uint16 dy)
 #endif
 
     //Shading
-    #ifndef T_QSC1110
+#ifndef T_QSC1110
     sic110a_i2c_write_byte(0x27, 0xFD); //0x11 0xFD
     sic110a_i2c_write_byte(0x28, 0xCB); //0x11 0xCB
     sic110a_i2c_write_byte(0x29, 0xA8); //0x55 0xA8
     sic110a_i2c_write_byte(0x2A, 0x64); //0x43 0x64
-    #else
+#else
     sic110a_i2c_write_byte(0x27, 0x11); //0x11 0xFD
     sic110a_i2c_write_byte(0x28, 0x11); //0x11 0xCB
     sic110a_i2c_write_byte(0x29, 0x55); //0x55 0xA8
     sic110a_i2c_write_byte(0x2A, 0x43); //0x43 0x64
-    #endif
+#endif
     sic110a_i2c_write_byte(0x2B, 0x21); //0x21 0x21
     sic110a_i2c_write_byte(0x2C, 0x00); //R left # right
     sic110a_i2c_write_byte(0x2D, 0x00); //R top # bottom 
@@ -790,12 +449,12 @@ static boolean initialize_sic110a_registers(uint16 dx, uint16 dy)
     
     //Sesnor On
     sic110a_i2c_write_byte(0x00, 0x00); 
-    #ifndef T_QSC1110
+#ifndef T_QSC1110
     sic110a_i2c_write_byte(0x03, 0x05);
-    #else
+#else
     sic110a_i2c_write_byte(0x03, 0xf5);
-    #endif
-    #endif
+#endif
+
 
     /*Customer can adjust GAMMA, MIRROR & UPSIDEDOWN here!*/
     return TRUE;
@@ -820,9 +479,9 @@ static boolean camsensor_sic110a_start( camsensor_static_params_type *camsensor_
     //use_camsensor_siv121a = FALSE;
     /* CCD or CMOS */
     camsensor_params->sensor_type   = CAMSENSOR_CMOS;
-    #ifdef T_QSC1110
+#ifdef T_QSC1110
 	camsensor_params->format = CAMIF_YCbCr_Cr_Y_Cb_Y;
-	#endif
+#endif
     /* BAYER or YCbCr */
     camsensor_params->output_format = CAMSENSOR_YCBCR;
 
@@ -969,70 +628,11 @@ static boolean camsensor_sic110a_snapshot_config( camsensor_static_params_type  
     camsensor_params->camif_window_height_config.firstLine = 0;
     camsensor_params->camif_window_height_config.lastLine  = camsensor_params->camif_window_height_config.firstLine+camera_dy;
     camsensor_params->pixel_clock = 1;
-    #ifndef FEATURE_CAMERA_SP0828
-        MSG_FATAL("sic110a_i2c_write_byte y=%d dy=%d",y,camera_dy,0);
+
+	MSG_FATAL("sic110a_i2c_write_byte y=%d dy=%d",y,camera_dy,0);
     MSG_FATAL("sic110a_i2c_write_byte x=%d dx=%d",x,camera_dx,0);
     initialize_sic110a_registers(camera_dx, camera_dy);
-    #else
-    if(camera_dx > CAMSENSOR_SIC110A_FULL_SIZE_WIDTH)
-    {
-        camera_dx = CAMSENSOR_SIC110A_FULL_SIZE_WIDTH;
-    }
-    
-    if(camera_dy > CAMSENSOR_SIC110A_FULL_SIZE_HEIGHT)
-    {
-        camera_dy = CAMSENSOR_SIC110A_FULL_SIZE_HEIGHT;
-    }
-    
-    x = (CAMSENSOR_SIC110A_FULL_SIZE_WIDTH-camera_dx)>>1;
-    y = (CAMSENSOR_SIC110A_FULL_SIZE_HEIGHT-camera_dy)>>1;
-    #ifndef FEATURE_CAMERA_SP0828
-    camera_dy = CAMSENSOR_SIC110A_FULL_SIZE_HEIGHT-y;
-    #else
-        MSG_FATAL("sic110a_i2c_write_byte y=%d dy=%d",y,camera_dy,0);
-    MSG_FATAL("sic110a_i2c_write_byte x=%d dx=%d",x,camera_dx,0);
-    if(x<60)
-	{
-		x = 60;
-	}
-	if((camera_dx<128)&&(camera_dy<228)) //sensor internel resize for inprove sharpness by xuegang  
-	{
-		camera_dx=camera_dx*1.4;
-		camera_dy=camera_dy*1.4;
-		internel_resize = TRUE;
-	}
-	#endif
-    MSG_FATAL("sic110a_i2c_write_byte y=%d dy=%d",y,camera_dy,0);
-    MSG_FATAL("sic110a_i2c_write_byte x=%d dx=%d",x,camera_dx,0);
 
-#ifndef FEATURE_CAMERA_SP0828    
-    sic110a_i2c_write_byte(0x47,(byte)((y>>8)&0xff) );		
-	sic110a_i2c_write_byte(0x48,(byte)(y&0xff) );	   
-	sic110a_i2c_write_byte(0x49,(byte)((camera_dy>>8)&0xff) ); 	 
-	sic110a_i2c_write_byte(0x4a,(byte)(camera_dy&0xff));	   
-	sic110a_i2c_write_byte(0x4b,(byte)(x&0xff));	   
-	sic110a_i2c_write_byte(0x4c,(byte)(camera_dx&0xff));	
-#else
-    if (camera_dy==320||camera_dx==240)
-    {
-        sic110a_i2c_write_byte(0x47,0x0);		
-    	sic110a_i2c_write_byte(0x48,0x0);	   
-    	sic110a_i2c_write_byte(0x49,0x1 ); 	 
-    	sic110a_i2c_write_byte(0x4a,0x40);	   
-    	sic110a_i2c_write_byte(0x4b,0x00);	   
-    	sic110a_i2c_write_byte(0x4c,0xf0);
-    }
-    else
-    {
-        sic110a_i2c_write_byte(0x47,(byte)((y>>8)&0xff) );		
-    	sic110a_i2c_write_byte(0x48,(byte)(y&0xff) );	   
-    	sic110a_i2c_write_byte(0x49,(byte)((camera_dy>>8)&0xff) ); 	 
-    	sic110a_i2c_write_byte(0x4a,(byte)(camera_dy&0xff));	   
-    	sic110a_i2c_write_byte(0x4b,(byte)(x&0xff));	   
-    	sic110a_i2c_write_byte(0x4c,(byte)(camera_dx&0xff));	
-    }
-#endif    
-	#endif
     return TRUE;
 }
 /*===========================================================================
@@ -1165,89 +765,14 @@ None
 ===========================================================================*/
 static void camsensor_sic110a_power_down(void)
 {
-	#ifdef FEATURE_CAMERA_SP0828
-    sic110a_i2c_write_byte(0xfd, 0x00);
-    sic110a_i2c_write_byte(0x03, 0x3e);
-    sic110a_i2c_write_byte(0x1c, 0x0f);//sensor sleep mode
-	#else
     sic110a_i2c_write_byte(0x00, 0x00);
     sic110a_i2c_write_byte(0x03, 0x02); //sensor sleep mode
-    #endif
+
     ERR("camsensor_sic110a_power_down!",0,0,0);
 } /* camsensor_sic110a_power_down */
 
 static camera_ret_code_type camsensor_sic110a_set_wb(int8 wb)
 {
-	#ifdef FEATURE_CAMERA_SP0828
-    ERR("camsensor_sic110a_set_wb!",0,0,0);
-    switch((camera_wb_type)wb)
-    {
-        case CAMERA_WB_AUTO:
-        {
-			//         自动
-			sic110a_i2c_write_byte(0xfd,0x01);                                                          
-			sic110a_i2c_write_byte(0x28,0x61);		                                                       
-			sic110a_i2c_write_byte(0x29,0x49);
-			sic110a_i2c_write_byte(0xfd,0x00);  // AUTO 3000K~7000K                                     
-			sic110a_i2c_write_byte(0x32,0x15);                                                                                                                                                                      
-            break;
-        }
-        
-        case CAMERA_WB_INCANDESCENT:
-        {
-			//  白炽灯 
-			sic110a_i2c_write_byte(0xfd,0x00);  //2800K~3000K                                     
-			sic110a_i2c_write_byte(0x32,0x05);                                                          
-			sic110a_i2c_write_byte(0xfd,0x01);                                                          
-			sic110a_i2c_write_byte(0x28,0x41);		                                                       
-			sic110a_i2c_write_byte(0x29,0x71);		                                                                                                            
-			sic110a_i2c_write_byte(0xfd,0x00);                                                          
-            break;
-        }
-        
-        case CAMERA_WB_FLUORESCENT:
-        {
-			//  荧光灯 
-			sic110a_i2c_write_byte(0xfd,0x00);  //4200K~5000K                                     
-			sic110a_i2c_write_byte(0x32,0x05);                                                          
-			sic110a_i2c_write_byte(0xfd,0x01);                                                          
-			sic110a_i2c_write_byte(0x28,0x5a);		                                                       
-			sic110a_i2c_write_byte(0x29,0x62);		                                                                                                             
-			sic110a_i2c_write_byte(0xfd,0x00);                                                         
-            break;
-        }
-        
-        case CAMERA_WB_DAYLIGHT:
-        {
-			//   白天 
-			sic110a_i2c_write_byte(0xfd,0x00);  //6500K                                     
-			sic110a_i2c_write_byte(0x32,0x05);                                                          
-			sic110a_i2c_write_byte(0xfd,0x01);                                                          
-			sic110a_i2c_write_byte(0x28,0x6b);		                                                       
-			sic110a_i2c_write_byte(0x29,0x48);		                                                                                                             
-			sic110a_i2c_write_byte(0xfd,0x00);                                                         
-            break;
-        }
-        
-        case CAMERA_WB_CLOUDY_DAYLIGHT:
-        {
-			//    阴天
-			sic110a_i2c_write_byte(0xfd,0x00);   //7000K                                     
-			sic110a_i2c_write_byte(0x32,0x05);                                                          
-			sic110a_i2c_write_byte(0xfd,0x01);                                                          
-			sic110a_i2c_write_byte(0x28,0x71);		                                                       
-			sic110a_i2c_write_byte(0x29,0x41);		                                                                                                 
-			sic110a_i2c_write_byte(0xfd,0x00);                                             
-            break;
-        }
-        
-        case CAMERA_WB_TWILIGHT:
-        case CAMERA_WB_SHADE :
-        case CAMERA_WB_CUSTOM:
-        default:
-            return CAMERA_NOT_SUPPORTED;
-    }//end of switch
-	#else
     sic110a_i2c_write_byte(0x00,0x03); //bank 3
     ERR("camsensor_sic110a_set_wb!",0,0,0);
     switch((camera_wb_type)wb)
@@ -1296,7 +821,7 @@ static camera_ret_code_type camsensor_sic110a_set_wb(int8 wb)
         default:
             return CAMERA_NOT_SUPPORTED;
     }//end of switch
-    #endif
+
     return CAMERA_SUCCESS;
 }
 
@@ -1320,68 +845,7 @@ static camera_ret_code_type camsensor_sic110a_set_ev_compensation(int32 compensa
     }
     
     new_luma_target = (uint32) parmVal + max_parmVal;
-    #ifdef FEATURE_CAMERA_SP0828
-    
-    if( new_luma_target >= MAX_EV_COMP)
-    {
-        ret_val=CAMERA_INVALID_PARM;
-    }
-    else
-    {
-        sic110a_i2c_write_byte(0x00,0x02); //bank 1
-        switch(new_luma_target)
-        {
-            case 8:    // -4 EV
-			sic110a_i2c_write_byte(0xfd, 0x00);
-			sic110a_i2c_write_byte(0xdc, 0xc0);
-                break;
-
-            case 9:    // -3 EV
-			sic110a_i2c_write_byte(0xfd, 0x00);
-			sic110a_i2c_write_byte(0xdc, 0xd0);
-                break;
-
-            case 10:    // -2 EV
-			sic110a_i2c_write_byte(0xfd, 0x00);
-			sic110a_i2c_write_byte(0xdc, 0xe0);
-                break;
-
-            case 11:    // -1 EV
-			sic110a_i2c_write_byte(0xfd, 0x00);
-			sic110a_i2c_write_byte(0xdc, 0xf0);
-                break;
-
-            case 12:   // +0 EV
-			sic110a_i2c_write_byte(0xfd, 0x00);
-			sic110a_i2c_write_byte(0xdc, 0x00);
-                break;
-
-            case 13:    // +1 EV
-			sic110a_i2c_write_byte(0xfd, 0x00);
-			sic110a_i2c_write_byte(0xdc, 0x10);
-                break;
-
-            case 14:    // +2 EV
-			sic110a_i2c_write_byte(0xfd, 0x00);
-			sic110a_i2c_write_byte(0xdc, 0x20);
-                break;
-
-            case 15:    // +3 EV
-			sic110a_i2c_write_byte(0xfd, 0x00);
-			sic110a_i2c_write_byte(0xdc, 0x30);
-                break;
-
-            case 16:    // +4 EV
-			sic110a_i2c_write_byte(0xfd, 0x00);
-			sic110a_i2c_write_byte(0xdc, 0x40);
-                break;
-
-            default:
-                break;
-        }
-    }
-    
-    #else
+ 
     if( new_luma_target >= MAX_EV_COMP)
     {
         ret_val=CAMERA_INVALID_PARM;
@@ -1458,7 +922,7 @@ static camera_ret_code_type camsensor_sic110a_set_ev_compensation(int32 compensa
                 break;
         }
     }
-    #endif
+
     return ret_val;
 }
 

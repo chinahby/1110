@@ -89,6 +89,17 @@ static camera_ret_code_type camsensor_siv121a_set_frame_rate(uint16 fps)
     return CAMERA_SUCCESS;
 } /* camsensor_siv121a_set_frame_rate() */
 
+uint8 camsensor_SIV121A_ycbcr_active(void)
+{
+	return 0;
+}
+
+uint8 camsensor_SIV121A_ycbcr_unactive(void)
+{
+	return 1;
+}
+
+
 boolean camsensor_siv121a_init(camsensor_function_table_type *camsensor_function_table_ptr,
                                camctrl_tbl_type              *camctrl_tbl_ptr)
 {
@@ -97,7 +108,7 @@ boolean camsensor_siv121a_init(camsensor_function_table_type *camsensor_function
     ERR("camsensor_siv121a_init!",0,0,0);
     
     /* Input MCLK = 24MHz */
-    camsensor_camclk_po_hz = 2400000;
+    camsensor_camclk_po_hz = 24000000;
     camsensor_camclk_po_hz = camsensor_config_camclk_po(camsensor_camclk_po_hz);
     
     /* Preview must aways be se to quater size */

@@ -77,6 +77,16 @@ static camera_ret_code_type camsensor_sic110a_set_frame_rate(uint16 fps)
     return CAMERA_SUCCESS;
 } /* camsensor_sic110a_set_frame_rate() */
 
+uint8 camsensor_sic110a_ycbcr_active(void)
+{
+	return 1;
+}
+
+uint8 camsensor_sic110a_ycbcr_unactive(void)
+{
+	return 0;
+}
+
 boolean camsensor_sic110a_init(camsensor_function_table_type *camsensor_function_table_ptr,
                                camctrl_tbl_type              *camctrl_tbl_ptr)
 {

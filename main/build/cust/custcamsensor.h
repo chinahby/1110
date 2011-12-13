@@ -39,8 +39,10 @@ when       who     what, where, why
 #define USE_CAMSENSOR_SP0838
 #define USE_CAMSENSOR_SP0A18
 #define USE_CAMSENSOR_MICRON_SIV121D_0M3
+#define USE_CAMSENSOR_GC0329
 #endif
 #define USE_CAMSENSOR_SIC110A
+#define USE_CAMSENSOR_SP0828
 //bool use_camsensor_siv121a = FALSE;
 //bool use_camsensor_sic110a = FALSE;
 //#define USE_CAMSENSOR_OV7675
