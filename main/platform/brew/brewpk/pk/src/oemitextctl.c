@@ -6386,9 +6386,10 @@ static boolean TextCtl_SetNextInputMode(CTextCtl *pme)
 #endif
     for (i=0; i<pme->m_nCurrInputModeCount; i++)
     {
+        MSG_FATAL("setnextinputmode------i=%d",i,0,0);
         if ( pme->m_nCurrInputMode == pme->m_nCurrInputModeList[i] )
         {
-        		
+        	 MSG_FATAL("setnextinputmode------i=%d-----pme->m_nCurrInputMode%d",i,pme->m_nCurrInputMode,0);	
 #if defined FEATURE_CARRIER_THAILAND_HUTCH || defined FEATURE_CARRIER_THAILAND_CAT
             if(pme->m_dwProps & TP_NOSYMBOL)
             {
@@ -6493,9 +6494,9 @@ static boolean TextCtl_SetNextInputMode(CTextCtl *pme)
                 				pme->m_nCurrInputMode = OEM_MODE_T9_RAPID_ENGLISH;
                 			}
                 		}
-                		#else
-                		pme->m_nCurrInputMode = pme->m_nCurrInputModeList[i+1];
                         #endif
+                		#else
+                		pme->m_nCurrInputMode = pme->m_nCurrInputModeList[i+1];                        
                 		#endif
                     }
                 }
