@@ -1168,6 +1168,7 @@ static boolean IMenuCtl_HandleEvent(IMenuCtl * po, AEEEvent eCode, uint16 wParam
 // add these @08.01.16
 #if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
 
+			/*
               else if( !pme->userSetStyle   && 
                        wParam >= AVK_0      && 
                        wParam <= AVK_9      && 
@@ -1175,6 +1176,15 @@ static boolean IMenuCtl_HandleEvent(IMenuCtl * po, AEEEvent eCode, uint16 wParam
                        IS_PROP_SET( pme->m_dwProps, MP_BIND_ITEM_TO_NUMBER_KEY) && 
                        pme->m_nItems <= 10
                )
+               */
+               //Modify by zzg 2011_12_12:  有些菜单有超过10个ITEM
+               else if( !pme->userSetStyle   && 
+                       wParam >= AVK_0      && 
+                       wParam <= AVK_9      && 
+                       IS_MENU( pme)        &&
+                       IS_PROP_SET( pme->m_dwProps, MP_BIND_ITEM_TO_NUMBER_KEY) 
+               )
+               //Modify end
                {
                    int index = (wParam - AVK_1 + 10) % 10;
                    if( index > pme->m_nItems - 1)
