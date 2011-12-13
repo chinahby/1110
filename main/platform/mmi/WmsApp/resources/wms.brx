@@ -637,6 +637,9 @@
 	<String Id="1033" Name="IDS_GETTINGFROM" Encoding="Unicode">
 		<Text>Receiving...</Text>
 	</String>
+	<String Id="1034" Name="IDS_MMS_SIZE_TOO_BIG" Encoding="Unicode">
+		<Text>Size of MMS too large</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN" Focus="7001">

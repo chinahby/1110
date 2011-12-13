@@ -9900,6 +9900,9 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
     ITextCtl *pIText = NULL;   
     AEETextInputMode nInputMode;
     static AEETextInputMode nMode;
+#ifdef FEATURE_USES_MMS    
+    static boolean mmsTotalSizeBig = FALSE;
+#endif
 	AECHAR Annstr[20] = {0};
     WmsApp *pMe = (WmsApp *)pUser;
     boolean m_Issetmod = FALSE;
@@ -9974,7 +9977,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     CtlAddItem ai;
                     AEERect rc={0};
                     AEEDeviceInfo devinfo={0};
-                    MSG_FATAL("IDD_WRITEMSG_Handler EVT_DIALOG_INIT",0,0,0);
+                    MSG_FATAL("IDD_WRITEMSG_Handler EVT_DIALOG_INIT m_insertMMSType=%d",pMe->m_insertMMSType,0,0);
                                  
                     pMe->m_pMMSMenuHasFocus = FALSE;
                     ICONFIG_GetItem(pMe->m_pConfig, CFGI_MMSIMAGE,MMSImagepszPath, sizeof(MMSImagepszPath));
@@ -9991,6 +9994,85 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                         uint8 VideoIndex = VIDEO_MENU_INDEX;
                         char* pszBasename = NULL;
                         AECHAR FileName[30];
+                        
+                        IFile  *pFile;
+                        FileInfo fileInfo;
+                        IFileMgr* pFileMgr = NULL;
+                        int mmsTotalSize = 0;
+                        int result = ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_FILEMGR,(void **)&pFileMgr);
+                        if(result != SUCCESS)
+                        {
+                            return FALSE;
+                        }
+                        if(STRLEN(MMSImagepszPath) != 0)
+                        {
+                            MSG_FATAL("IDD_WRITEMSG_Handler Image too big",0,0,0);
+                            pFile = IFILEMGR_OpenFile(pFileMgr, MMSImagepszPath, _OFM_READ);
+                            if(pFile != NULL)
+                            {
+                                IFILE_GetInfo(pFile, &fileInfo);
+                                mmsTotalSize += fileInfo.dwSize;
+                                MSG_FATAL("IDD_WRITEMSG_Handler Image too big %d",mmsTotalSize,0,0);
+                                if((pMe->m_insertMMSType == 0) && (mmsTotalSize > 380*1024))//最大可以为400K,留20K给文本
+                                {
+                                    char pszPath[50]={'\0'};
+                                    DBGPRINTF("MMSImageName=%s len=%d", pszPath, STRLEN(pszPath));
+                                    ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSIMAGE,pszPath, sizeof(pszPath));   
+                                    RELEASEIF(pFile);                        
+                                    MEMSET(MMSImagepszPath, 0, sizeof(MMSImagepszPath));
+                                    mmsTotalSizeBig = TRUE;    
+                                }
+                                RELEASEIF(pFile);
+                            }
+                        }
+                        if(STRLEN(MMSSoundpszPath) != 0)
+                        {
+                            MSG_FATAL("IDD_WRITEMSG_Handler Sound too big",0,0,0);
+                            pFile = IFILEMGR_OpenFile(pFileMgr, MMSSoundpszPath, _OFM_READ);
+                            if(pFile != NULL)
+                            {
+                                IFILE_GetInfo(pFile, &fileInfo);
+                                mmsTotalSize += fileInfo.dwSize;
+                                MSG_FATAL("IDD_WRITEMSG_Handler Sound too big mmsTotalSize=%d",mmsTotalSize,0,0);
+                                if((pMe->m_insertMMSType == 1) && (mmsTotalSize > 380*1024))
+                                {
+                                    char pszPath[50]={'\0'};
+                                    DBGPRINTF("MMSSoundpszPath=%s len=%d", MMSSoundpszPath, STRLEN(MMSSoundpszPath));
+                                    ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSSOUND,pszPath, sizeof(pszPath)); 
+                                    MSG_FATAL("IDD_WRITEMSG_Handler mms size too big",0,0,0);
+                                    RELEASEIF(pFile);                        
+                                    MSG_FATAL("IDD_WRITEMSG_Handler mms size too big 1",0,0,0);
+                                    MEMSET(MMSSoundpszPath, 0, sizeof(MMSSoundpszPath));
+                                    mmsTotalSizeBig = TRUE;
+                                }
+                                RELEASEIF(pFile);
+                            }
+                        }
+                        
+                        if(STRLEN(MMSVideopszPath) != 0)
+                        {
+                            pFile = IFILEMGR_OpenFile(pFileMgr, MMSVideopszPath, _OFM_READ);
+                            if(pFile != NULL)
+                            {
+                                IFILE_GetInfo(pFile, &fileInfo);
+                                mmsTotalSize += fileInfo.dwSize;
+                                if((pMe->m_insertMMSType == 2) && (mmsTotalSize > 380*1024))
+                                {
+                                    char pszPath[50]={'\0'};
+                                    DBGPRINTF("MMSImageName=%s len=%d", pszPath, STRLEN(pszPath));
+                                    ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSVIDEO,pszPath, sizeof(pszPath));   
+                                    MSG_FATAL("IDD_WRITEMSG_Handler mms size too big",0,0,0);
+                                    RELEASEIF(pFile);                        
+                                    RELEASEIF(pFileMgr);             
+                                    MSG_FATAL("IDD_WRITEMSG_Handler mms size too big 1",0,0,0);
+                                    MEMSET(MMSVideopszPath, 0, sizeof(MMSVideopszPath));
+                                    mmsTotalSizeBig = TRUE;
+                                }
+                            }
+                        }
+                        RELEASEIF(pFile);                        
+                        RELEASEIF(pFileMgr);
+
                         rc = pMe->m_rc;
                         pMe->m_isMMS = TRUE;
                         ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
@@ -10478,8 +10560,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                                     0);
         	}
         	return TRUE;
-        case EVT_DIALOG_START:
-            MSG_FATAL("IDD_WRITEMSG_Handler EVT_DIALOG_START",0,0,0);
+        case EVT_DIALOG_START:         
         	pMe->m_bwriteclr = FALSE;
             (void) ISHELL_PostEventEx(pMe->m_pShell, 
                                     EVTFLG_ASYNC,
@@ -10491,6 +10572,14 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 
         case EVT_USER_REDRAW:          
 #ifdef FEATURE_USES_MMS  
+            MSG_FATAL("IDD_WRITEMSG_Handler EVT_USER_REDRAW mmsTotalSizeBig=%d",mmsTotalSizeBig,0,0);
+            if(mmsTotalSizeBig)
+            {
+                mmsTotalSizeBig = FALSE;
+                CLOSE_DIALOG(DLGRET_SIZETOOBIG_MMS)
+                return TRUE;    
+            }
+
             MSG_FATAL("EVT_USER_REDRAW sel=%d, count=%d",IMENUCTL_GetSel(pMenuCtl),IMENUCTL_GetItemCount(pMenuCtl),0);
             if((pMenuCtl != NULL) && pMe->m_isMMS && ((NULL == pMe->m_pMenu)))
             {
@@ -11144,6 +11233,8 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                 case IDS_INSERT_PICTURE:
                 {
                     char MMSName[MG_MAX_FILE_NAME]={'\0'};
+                    MSG_FATAL("IDS_INSERT_PICTURE",0,0,0);
+                    pMe->m_insertMMSType = 0;
                     DBGPRINTF("MMSName=%s len=%d", MMSName, STRLEN(MMSName));                     
 #ifdef FEATURE_APP_MEDIAGALLERY					
 					CMediaGallery_FileExplorer_ForMMS(GALLERY_IMAGE_SETTING, NULL);
@@ -11155,6 +11246,8 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                 case IDS_INSERT_VIDEO:
                 {
                     char MMSName[MG_MAX_FILE_NAME]={'\0'};
+                    MSG_FATAL("IDS_INSERT_VIDEO",0,0,0);
+                    pMe->m_insertMMSType = 2;
                     DBGPRINTF("MMSName=%s len=%d", MMSName, STRLEN(MMSName));                  
 #ifdef FEATURE_APP_MEDIAGALLERY					
 					CMediaGallery_FileExplorer_ForMMS(GALLERY_VIDEO_BROWSE, NULL);
@@ -11166,6 +11259,8 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                 case IDS_INSERT_SOUND:
                 {
                     char MMSName[MG_MAX_FILE_NAME]={'\0'};
+                    MSG_FATAL("IDS_INSERT_VIDEO",0,0,0);
+                    pMe->m_insertMMSType = 1;
                     DBGPRINTF("MMSName=%s len=%d", MMSName, STRLEN(MMSName));               
 #ifdef FEATURE_APP_MEDIAGALLERY					
 					CMediaGallery_FileExplorer_ForMMS(GALLERY_MUSIC_SETTING, NULL);
@@ -11174,6 +11269,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     return TRUE;
                 }
                 case IDS_INSERT_FILE:
+                    pMe->m_insertMMSType = 3;
 #ifdef FEATURE_APP_MEDIAGALLERY					
 					CMediaGallery_FileExplorer_ForMMS(GALLERY_FILE_SELECT, NULL);
 #endif  

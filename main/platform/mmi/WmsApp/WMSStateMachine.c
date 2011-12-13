@@ -3067,6 +3067,8 @@ static NextFSMAction WMSST_WRITEMSG_Handler(WmsApp *pMe)
                 case IDS_FULL:
                 case IDS_NULLTXTALERT:
                 case IDS_INSUFFICIENCY:
+                case IDS_INBOXSFULL:    /////////////////////
+                case IDS_MMS_SIZE_TOO_BIG:
                     MOVE_TO_STATE(WMSST_WRITEMSG)
                     return NFSMACTION_CONTINUE;
 
@@ -3222,7 +3224,7 @@ static NextFSMAction WMSST_WRITEMSG_Handler(WmsApp *pMe)
 
         case DLGRET_TEXTFULL:
             pMe->m_ePMsgType = MESSAGE_INFORMATIVE;
-            WmsApp_ShowMsgBox(pMe, IDS_TEXTFULL);
+            WmsApp_ShowMsgBox(pMe, IDS_INBOXSFULL);
             return NFSMACTION_WAIT;
 
         case DLGRET_SAVE:
@@ -3365,6 +3367,13 @@ static NextFSMAction WMSST_WRITEMSG_Handler(WmsApp *pMe)
         case DLGRET_WRITEMSG:
             MOVE_TO_STATE(WMSST_WRITEMSG)
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_SIZETOOBIG_MMS:
+            MSG_FATAL("DLGRET_SIZETOOBIG_MMS",0,0,0);
+            pMe->m_ePMsgType = MESSAGE_WARNNING;
+            WmsApp_ShowMsgBox(pMe, IDS_MMS_SIZE_TOO_BIG);
+            return NFSMACTION_WAIT;
+
             
         default:
             // 用退出程序代替宏断言

@@ -622,6 +622,9 @@
 	<String Id="1029" Name="IDS_SENDERVISIBILITY">
 		<Text>MMS Sender Visibility</Text>
 	</String>
+	<String Id="1030" Name="IDS_MMS_SIZE_TOO_BIG">
+		<Text>Size of MMS too large</Text>
+	</String>
 	<String Id="1033" Name="IDS_GETTINGFROM">
 		<Text>Receiving...</Text>
 	</String>

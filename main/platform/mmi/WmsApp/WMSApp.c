@@ -555,6 +555,7 @@ static int CWmsApp_InitAppData(WmsApp *pMe)
     pMe->m_pMMSMenuHasFocus = FALSE;
     pMe->m_CurrentState = PLAYER_IDLE;
     pMe->m_isForward = FALSE;
+    pMe->m_insertMMSType = 0;
 #endif
     // 初始化各成员变量
     pMe->m_prevState = WMSST_NONE;
@@ -949,6 +950,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
 {
     WmsApp *pMe = (WmsApp*)pi;
     AEEAppStart *as=NULL;
+    MSG_FATAL("CWmsApp_HandleEvent eCode=0x%x, wParam=0x%x, dwParam=0x%x",eCode,wParam,dwParam);
     IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
     switch (eCode)
     {

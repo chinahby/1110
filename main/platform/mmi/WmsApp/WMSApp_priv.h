@@ -704,6 +704,7 @@ typedef enum DLGRetValue
    ,DLGRET_CLEARINBOX_MMS
    ,DLGRET_CLEAROUTBOX_MMS
    ,DLGRET_EFSFULL_MMS
+   ,DLGRET_SIZETOOBIG_MMS
 #endif
 /*   
    ,DLGRET_INSERTPICTURE //add by xuhui 2011/08/01
@@ -912,6 +913,7 @@ typedef struct WmsApp
     boolean                        m_pMMSMenuHasFocus;
 	MMSMediaPlayerState      	   m_CurrentState;                    /*播放状态*/
     boolean                        m_isForward;
+    uint8                          m_insertMMSType;//播放MMS的类型，0：图片。 1：声音。 2：视频. 3:文件
 #endif    
 } WmsApp;
 

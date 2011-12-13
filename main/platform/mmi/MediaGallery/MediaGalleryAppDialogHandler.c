@@ -2449,6 +2449,15 @@ static boolean MediaGalleryApp_OnDefaultOperate(CMediaGalleryApp* pMe,
          if(pMe->m_isForMMS) 
          {
             IConfig *pConfig = NULL;
+            if(pCurNode->dwSize >= 300*1024)
+            {
+               MediaGalleryApp_ShowPromptMsgBox(pMe,
+                                                IDS_MG_LARGEFILE,
+                                                MESSAGE_ERR,
+                                                BTBAR_BACK);
+ 
+               return TRUE;
+            }               
             if(SUCCESS == ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_CONFIG, (void **)&pConfig))
             {
                 ICONFIG_SetItem(pConfig, CFGI_MMSVIDEO, pCurNode->szName, sizeof(pCurNode->szName));   
@@ -2470,6 +2479,15 @@ static boolean MediaGalleryApp_OnDefaultOperate(CMediaGalleryApp* pMe,
          if(pMe->m_isForMMS && (MG_BETWEEN(eMimeBase, MG_MIME_VIDEOBASE, MG_MIME_VIDEOMAX))) 
          {
             IConfig *pConfig = NULL;
+            if(pCurNode->dwSize >= 300*1024)
+            {
+               MediaGalleryApp_ShowPromptMsgBox(pMe,
+                                                IDS_MG_LARGEFILE,
+                                                MESSAGE_ERR,
+                                                BTBAR_BACK);
+ 
+               return TRUE;
+            }              
             if(SUCCESS == ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_CONFIG, (void **)&pConfig))
             {
                 ICONFIG_SetItem(pConfig, CFGI_MMSVIDEO, pCurNode->szName, sizeof(pCurNode->szName));   
@@ -8255,6 +8273,15 @@ static boolean MGAppUtil_OnMediaMenuDefaultKeyEvt(CMediaGalleryApp* pMe,
             char  pszTemp[MG_MAX_FILE_NAME]={'/0'};
             MSG_FATAL("MGAppUtil_OnMediaMenuDefaultKeyEvt 0",0,0,0);          
             IMENUCTL_GetItemData(pMenuCtl,i, (uint32*)&pItemData);
+            if(pItemData->dwSize >= 300*1024)
+            {
+               MediaGalleryApp_ShowPromptMsgBox(pMe,
+                                                IDS_MG_LARGEFILE,
+                                                MESSAGE_ERR,
+                                                BTBAR_BACK);
+ 
+               return TRUE;
+            }            
             if(pItemData && pItemData->szName) 
             {
                 IConfig *pConfig = NULL;	
@@ -10630,6 +10657,7 @@ static boolean MGAppPopupMenu_OnSetMMSImage(CMediaGalleryApp *pMe,
 {
    MGFileInfo *pSelData = pItemData;
    IConfig *pConfig = NULL;
+   MSG_FATAL("MGAppPopupMenu_OnSetMMSImage Start",0,0,0);
    if(!pMe)
       return FALSE;
 
@@ -10641,14 +10669,14 @@ static boolean MGAppPopupMenu_OnSetMMSImage(CMediaGalleryApp *pMe,
       return FALSE;
    }
 
-   if(pSelData->dwSize >= MG_WALLPAPER_MAX)
+   if(pSelData->dwSize >= 300*1024)
    {
       MediaGalleryApp_ShowPromptMsgBox(pMe,
                                        IDS_MG_LARGEFILE,
                                        MESSAGE_ERR,
                                        BTBAR_BACK);
 
-      return TRUE;
+      return FALSE;
    }
 
    if(pMe->m_PopupOps != MG_OP_VIEWIMG)
