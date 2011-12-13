@@ -2655,7 +2655,9 @@ static camera_cb_type camera_svcs_translate_ret_val_to_cb
 );
 
 #ifdef FEATURE_CAMERA_MULTI_NEW_AUTO_DETECT
+#ifdef FEATURE_CAMERA_MULTI_SENSOR
 extern camsensor_sensor_model_pair_type current_camsensor_pair;
+#endif
 extern camsensor_sensor_model_type current_camsensor_id;
 static boolean camsensor_sensor_detected = FALSE;
 #endif
@@ -7759,9 +7761,11 @@ camera_ret_code_type camera_svcs_get_parm
       break;
       
 #ifdef FEATURE_CAMERA_MULTI_NEW_AUTO_DETECT
+#ifdef FEATURE_CAMERA_MULTI_SENSOR
 	case CAMERA_PARM_CURRENT_SENSOR:
 	  parm->current_value = current_camsensor_pair;
       break;
+#endif
 #endif
     case CAMERA_PARM_FOCUS_STEP:
       /* AF must be both supported by current sensor and enabled */

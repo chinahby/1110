@@ -535,7 +535,9 @@ static camera_cb_type camera_svcs_translate_ret_val_to_cb
 
 
 #ifdef FEATURE_CAMERA_MULTI_NEW_AUTO_DETECT
+#ifdef FEATURE_CAMERA_MULTI_SENSOR
 extern camsensor_sensor_model_pair_type current_camsensor_pair;
+#endif
 extern camsensor_sensor_model_type current_camsensor_id;
 static boolean camsensor_sensor_detected = FALSE;
 #endif
