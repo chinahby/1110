@@ -89,7 +89,7 @@ LOCAL boolean camsensor_SIV120A_sensor_init(void)
 
 	//Sensor Control Block
 	camsensor_SIV120A_ycbcr_i2c_write_byte(0x00, 0x00);
-	camsensor_SIV120A_ycbcr_i2c_write_byte(0x04, 0x00);
+	camsensor_SIV120A_ycbcr_i2c_write_byte(0x04, 0x01);
 	camsensor_SIV120A_ycbcr_i2c_write_byte(0x10, 0x37);//2010/11/10
 	camsensor_SIV120A_ycbcr_i2c_write_byte(0x12, 0x11);	//BLC _0605
 	camsensor_SIV120A_ycbcr_i2c_write_byte(0x13, 0x00);	//0x1A_Analog //0x17, 0x00);
@@ -590,7 +590,6 @@ boolean camsensor_SIV120A_ycbcr_video_config
 )
 {
 	camsensor_SIV120A_sensor_init();
-
 	/* Sensor output data format */
 	camsensor_params->discardFirstFrame = TRUE;
 	camsensor_params->format = CAMIF_YCbCr_Cr_Y_Cb_Y;
