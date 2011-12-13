@@ -17797,6 +17797,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                 AEEDeviceInfo devinfo={0};
                 IImage* pIImage = NULL;
                 IImage* pISound = NULL;
+                IImage* pIVideo = NULL;
                 MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] EVT_DIALOG_INIT",0 ,0 , 0);
                 MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] g_mmsDataInfoMax=%d", g_mmsDataInfoMax,0,0);
                 pDecdata = &pMe->m_DecData;
@@ -18021,10 +18022,27 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                         }
                         else if(STRISTR(pMimeType, VIDEO_MIME_BASE))
                         {
+                            AECHAR menuItemName[100] = {0};
+                            STRTOWSTR((char*)pDecdata->message.mms_data.fragment[index].hContentName,
+                                menuItemName,
+                                100 * sizeof(AECHAR));                              
                             MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] Video Count++", 0, 0, 0);
                             pMe->m_ResData.videoData.data[pMe->m_ResData.videoData.nCount].nResIndex = index;
                             pMe->m_ResData.videoData.data[pMe->m_ResData.videoData.nCount].type = pMimeType;
                             pMe->m_ResData.videoData.nCount ++;
+                            pISound = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_VIDEO);  
+                            IIMAGE_SetParm(pISound,IPARM_SCALE, 30, 30);                        
+                            MEMSET(&ai, 0, sizeof(ai));
+                            MEMSET(&ai, 0, sizeof(ai));
+                            ai.wItemID   = index;
+                            ai.pImage = pISound;
+                            if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
+                            {
+                               MSG_FATAL("Failed to Add Opts item %d", ai.wItemID,0,0);
+                               return EFAILED;
+                            }                   
+                            MSG_FATAL("SoundIndex=%d", index,0,0);
+                            IMENUCTL_SetItemText(pMenuCtl, index, NULL, 0, menuItemName);                               
                         }
                         else
                         {/*
@@ -18564,7 +18582,21 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                                     MEMSET(FilePath, 0, sizeof(FilePath));
                                     SPRINTF(FilePath,"fs:/hsmm/music/(%d)%s", step++,(char*)(pDecdata->message.mms_data.fragment[MenuSelectdId].hContentName));                                
                                 }  
-                            }    
+                            }   
+                            else if(STRISTR(pMimeType, VIDEO_MIME_BASE))
+                            {
+                                MSG_FATAL("IDS_SAVE VIDEO_MIME_BASE", 0,0,0);
+                                if (SUCCESS != IFILEMGR_Test(pIFileMgr, "fs:/hsmm/video"))
+                            	{
+                            	    (void)IFILEMGR_MkDir(pIFileMgr, "fs:/hsmm/video");
+                            	}                              
+                                SPRINTF(FilePath,"fs:/hsmm/video/%s",(char*)(pDecdata->message.mms_data.fragment[MenuSelectdId].hContentName));
+                                while(SUCCESS == IFILEMGR_Test(pIFileMgr, FilePath))
+                                {
+                                    MEMSET(FilePath, 0, sizeof(FilePath));
+                                    SPRINTF(FilePath,"fs:/hsmm/video/(%d)%s", step++,(char*)(pDecdata->message.mms_data.fragment[MenuSelectdId].hContentName));                                
+                                }  
+                            }                              
                             else
                             {
                                 MSG_FATAL("IDS_SAVE SOUND_MIME_BASE", 0,0,0);
