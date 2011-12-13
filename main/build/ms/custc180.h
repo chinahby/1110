@@ -32,7 +32,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_ICARD_NO_UI_BASE
 #define FEATURE_LANG_ENGLISH
 //#define FEATURE_INPUTMODE_INDONESIAN //Add By zzg 2010_09_06
-#define FEATURE_LANG_CHINESE
+#undef FEATURE_LANG_CHINESE
 //#define FEATURE_NET_LOCK
 //#define FEATURE_SEAMLESS_SMS
 #define FEATURE_OMH_SMS
@@ -40,7 +40,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_CDSMS_CACHE_USELIST
 #define FEATURE_CAMERA_SP0828
 
-
+#define FEATURE_CAMERA_MULTI_NEW_AUTO_DETECT
 //#define FEATURE_SPN_FROM_BSMCCMNC
 //#define FEATURE_LONG_NETLOCK   //add by yangdecai
 #endif

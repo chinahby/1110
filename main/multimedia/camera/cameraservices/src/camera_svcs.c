@@ -2656,7 +2656,7 @@ static camera_cb_type camera_svcs_translate_ret_val_to_cb
 
 #ifdef FEATURE_CAMERA_MULTI_NEW_AUTO_DETECT
 extern camsensor_sensor_model_pair_type current_camsensor_pair;
-extern camsensor_sensor_model_type camsensor_id;
+extern camsensor_sensor_model_type current_camsensor_id;
 static boolean camsensor_sensor_detected = FALSE;
 #endif
 /*===========================================================================
@@ -3024,7 +3024,7 @@ void camera_svcs_init(void)
   		}
   	}
 #else
-	for (camsensor_id = (camsensor_sensor_model_type) 0; camsensor_id < CAMSENSOR_ID_MAX; ++camsensor_id)
+	for (current_camsensor_id = (camsensor_sensor_model_type) 0; current_camsensor_id < CAMSENSOR_ID_MAX; ++current_camsensor_id)
 	{
 		camsensor_power_on();
 		camsensor_power_up();
