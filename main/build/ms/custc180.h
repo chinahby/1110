@@ -46,7 +46,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #endif
 
 #ifndef TARGSB2_H
-#include "targsb12864.h"
+   #include "targsbw2.h"
 #endif
 
 //#define FEATURE_DATA_STRIP_ATCOP 
@@ -58,8 +58,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_CLKREGIM_1X_MODE 
 #define FEATURE_AUDIO_CONFIGURATION_MINIMAL 
 //Gemsea Remove #define FEATURE_AUDIO_CONFIGURATION_LO_TIER 
-//#define FEATURE_IPL_NO_CAMERA
-#define FEATURE_IIPL
+#define FEATURE_IPL_NO_CAMERA
 #define FEATURE_UIM_QSC1100_LOW_MEMORY 
 #define CM_FEATURE_HSBASED_PLUS_DIAL_DISPLAY 
 #define FEATURE_MMODE_LOW_MEM_TARGET 
@@ -242,8 +241,6 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 
 #ifdef USES_CAMERA
 #include "custcamera.h"
-
-
 #define FEATURE_PNG_ENCODER
 #endif
 
