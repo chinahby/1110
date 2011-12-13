@@ -727,5 +727,8 @@
 	<Object Id="7331" Name="IDB_DIALER_SEL_DEL" MimeType="image/png">
 		<File>..\images\240x320\common\dialer\dialer_del.png</File>
 	</Object>
+	<Object Id="7332" Name="IDB_DIALER_SEL_NOTHING" MimeType="image/png">
+		<File>..\images\240x320\common\dialer\nothingdialer.png</File>
+	</Object>	
 </Objects>
 </BREWRes>
