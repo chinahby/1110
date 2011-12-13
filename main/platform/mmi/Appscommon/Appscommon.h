@@ -265,6 +265,7 @@ typedef enum BottomBar_e_Type
    BTBAR_VIEWMORE_BACK,	 // 浏览更多-----返回
    BTBAR_FACEBOOK_CHAT,	 // Facebook-----chat
    //Add End
+   BTBAR_LOCK_BACK,			//锁键盘-返回
    BTBAR_OK_BACK,         // 确定-----返回
    BTBAR_OK_CANCEL,       // 确定-----取消
    BTBAR_OK_DEL,
@@ -347,7 +348,7 @@ typedef enum BottomBar_e_Type
    BTBAR_MENU_SOS,            //主菜单  -----SOS
    BTBAR_UNLOCK,
    BTBAR_LUNLOCK,
-   BTBAR_OPTION_SAVE_BACK,
+   BTBAR_OPTION_SAVE_BACK,   
    BTBAR_PRIVIEW_BACK,
    BTBAR_MODIFY_BACK,
    BTBAR_SELECT_PLAY_BACK,

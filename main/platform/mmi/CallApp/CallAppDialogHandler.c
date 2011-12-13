@@ -684,8 +684,61 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 #else
             Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
 #endif
-            
-            CallApp_Draw_NumEdit_SoftKey(pMe);
+
+#ifdef FEATURE_VERSION_W208S
+			{
+				BottomBar_e_Type  type = BTBAR_NONE;
+				
+				if (pMe->m_b_incall )
+				{
+#ifndef FEATURE_ALL_KEY_PAD
+					type = BTBAR_OPTION_DELETE;
+#else
+					type = BTBAR_OPTION_BACK;
+#endif
+				}
+				else
+				{
+#ifdef FEATRUE_SET_IP_NUMBER
+#ifdef FEATURE_ICM
+					if(pMe->m_b_have_set_ip && !(CallApp_IsEmergencyMode(pMe->m_pICM)
+#else
+					if(pMe->m_b_have_set_ip && !(CallApp_IsEmergencyMode(pMe->m_pITelephone)
+#endif
+					||pMe->idle_info.uimLocked))
+					{
+						type = BTBAR_SAVE_IP_DELETE;
+					}
+					else
+#endif/*FEATRUE_SET_IP_NUMBER*/
+					{
+#ifndef FEATURE_ALL_KEY_PAD
+						type = BTBAR_OPTION_SAVE_DEL; //BTBAR_SAVE_DELETE;
+#else
+						if (0 == WSTRCMP(pMe->m_DialString, L"*"))
+						{
+							type = BTBAR_LOCK_BACK;							
+						}
+						else						
+						{
+							type = BTBAR_OPTION_SAVE_BACK;
+						}
+#endif
+					}
+				}
+
+				if (pMe->m_bShowPopMenu) //menu
+				{
+					return;
+				}
+				//drawBottomBar(pMe->m_pDisplay,AEE_FONT_NORMAL,type);
+
+				MSG_FATAL("***zzg REFUI_DRAW_BOTTOMBAR***", 0, 0, 0);
+				REFUI_DRAW_BOTTOMBAR(type)
+			}
+#else
+			CallApp_Draw_NumEdit_SoftKey(pMe);
+#endif
             CallApp_Display_Number(pMe);
 
 #ifdef WIN32//wlh for virtualkey
@@ -1672,6 +1725,42 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                     //CALL_ERR("AVK_SELECT %d",pMe->m_bShowPopMenu,0,0);
                     if(!pMe->m_bShowPopMenu)
                     {
+//Add By zzg 2011_12_12
+#ifdef FEATURE_VERSION_W208S
+						if (0 == WSTRCMP(pMe->m_DialString, L"*"))
+						{
+							boolean bData;							
+#ifdef FEATURE_KEYGUARD
+							MSG_FATAL("***zzg Dialer_NumEdit  L'*'   ***", 0, 0, 0);
+
+							if(!OEMKeyguard_IsEnabled())
+							{
+								(void) ICONFIG_GetItem(pMe->m_pConfig,
+														CFGI_KEY_LOCK_CHECK/*CFGI_PHONE_KEY_LOCK_CHECK*/,
+														&bData,
+														sizeof(bData));
+								if(bData)
+								{					
+									MSG_FATAL("***zzg Dialer_NumEdit  ISHELL_PostEvent AEECLSID_CORE_APP***", 0, 0, 0);
+									ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CORE_APP);
+									(void) ISHELL_PostEvent(pMe->m_pShell,AEECLSID_CORE_APP,EVT_USER,1,0);
+								}
+								else
+								{
+									MSG_FATAL("***zzg Dialer_NumEdit  bData=FALSE***", 0, 0, 0);
+								}
+							}
+							else
+							{
+								MSG_FATAL("***zzg Dialer_NumEdit  OEMKeyguard_IsEnabled=FALSE***", 0, 0, 0);
+							}
+#endif			
+							CLOSE_DIALOG(DLGRET_OK)
+                            return TRUE;
+						}
+#endif
+//Add End
+					
 #ifdef FEATURE_EDITABLE_NUMBER
                         ISHELL_CancelTimer(pMe->m_pShell, CallApp_Set_Cursor_Blink, pMe);
 #endif
@@ -10643,6 +10732,9 @@ SEE ALSO:
 static void CallApp_Draw_NumEdit_SoftKey(CCallApp *pMe)
 {
     BottomBar_e_Type  type = BTBAR_NONE;
+
+	MSG_FATAL("***zzg CallApp_Draw_NumEdit_SoftKey***", 0, 0, 0);
+	
     if(pMe->m_b_incall )
     {
     	#ifndef FEATURE_ALL_KEY_PAD
