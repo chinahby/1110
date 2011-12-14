@@ -638,7 +638,7 @@ static boolean camsensor_sp0828_video_config(camsensor_static_params_type *camse
 	camsensor_params->camif_window_width_config.firstPixel = 0;
 	camsensor_params->camif_window_width_config.lastPixel  = camsensor_params->camif_window_width_config.firstPixel + camsensor_params->camsensor_width*2 - 1;
 	camsensor_params->camif_window_height_config.firstLine = 0;
-	camsensor_params->camif_window_height_config.lastLine = camsensor_params->camif_window_height_config.firstLine + camsensor_params->camsensor_height1 - 1;
+	camsensor_params->camif_window_height_config.lastLine = camsensor_params->camif_window_height_config.firstLine + camsensor_params->camsensor_height - 1;
 
 	//	camsensor_sp0828_ycbcr_write_sensor (camsensor_preview_resolution);//yty add
 	camsensor_current_resolution = camsensor_preview_resolution;
