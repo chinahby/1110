@@ -6481,12 +6481,7 @@ static void CoreApp_InitdataTouch(CCoreApp *pMe)
 	pMe->m_pImageTouchIcon[1] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_2);
 	pMe->m_pImageTouchIcon[2] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_3);
 	pMe->m_pImageTouchIcon[3] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_4);
-	/*
-	pMe->m_pImageTouchSelIcon[0] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_SEL_1); 
-	pMe->m_pImageTouchSelIcon[1] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_SEL_2); 
-	pMe->m_pImageTouchSelIcon[2] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_SEL_3); 
-	pMe->m_pImageTouchSelIcon[3] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_SEL_4);
-	*/
+
 	pMe->m_pImageTimeIcon[0] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TIME_0);
 	pMe->m_pImageTimeIcon[1] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TIME_1);
 	pMe->m_pImageTimeIcon[2] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TIME_2);
@@ -6548,7 +6543,6 @@ static void CoreApp_DrawTouch_IDLE(CCoreApp *pMe)
 		uint16 nResID = IDS_STR_TOUCH_ONE;// жа
 		//Draw image
 		Draw_x = (IDLE_TOUCH_IDLE_BOTTOM_SPC*(i+1))+(i*IDLE_TOUCH_DRAWDX);
-        //IImage_GetInfo(pMe->m_pImageTouchSelIcon[i],&ImgInfo);
     	IIMAGE_Draw(pMe->m_pImageTouchIcon[i],
 	                    Draw_x, 
 	                    Draw_y);
@@ -6560,9 +6554,9 @@ static void CoreApp_DrawTouch_IDLE(CCoreApp *pMe)
                                     nResID,
                                     wszBottomstr,
                                     sizeof(wszBottomstr));
-		rc.x  = (IDLE_TOUCH_IDLE_BOTTOM_SPC*(i+1))+(i*IDLE_TOUCH_DRAWDX);
+		rc.x  = (IDLE_TOUCH_IDLE_BOTTOM_SPC*(i+1))+(i*IDLE_TOUCH_DRAWDX)-5;
 		rc.y  = SCREEN_HEIGHT - 40;
-		rc.dx = IDLE_TOUCH_DRAWDX;
+		rc.dx = IDLE_TOUCH_DRAWDX+10;
 		rc.dy = IDLE_TOUCH_DRAWDY;
 
 		DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
@@ -6578,20 +6572,8 @@ static void CoreApp_DrawTouch_IDLE(CCoreApp *pMe)
     }
 	if(OEMKeyguard_IsEnabled())
 	{
-	/*
-		IImage *m_bottom_lock_icon = NULL;
-		m_bottom_lock_icon = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_BOTTOM_ICON); 
-		IIMAGE_Draw(m_bottom_lock_icon,
-	                    0, 
-	                    SCREEN_HEIGHT-60);
-		if(m_bottom_lock_icon!=NULL)
-		{
-			(void)IIMAGE_Release(m_bottom_lock_icon);
-            m_bottom_lock_icon = NULL;
-		}
-		*/
-		Appscomm_Draw_Keyguard_BackGroud(pMe->m_pDisplay,0,SCREEN_HEIGHT-60);
-		
+	
+		Appscomm_Draw_Keyguard_BackGroudbar(pMe->m_pDisplay,0,SCREEN_HEIGHT-60);
 	}
 }
 #endif

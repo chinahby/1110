@@ -382,13 +382,6 @@ void CoreApp_FreeAppData(IApplet* po)
 			(void)IIMAGE_Release(pMe->m_pImageTouchIcon[j]);
             pMe->m_pImageTouchIcon[j] = NULL;
 		}
-		/*
-		if(pMe->m_pImageTouchSelIcon[j]!=NULL)
-		{
-			(void)IIMAGE_Release(pMe->m_pImageTouchSelIcon[j]);
-            pMe->m_pImageTouchSelIcon[j] = NULL;
-		}
-		*/
 		
 	}
 	for(k=0;k<IDLE_TIME_COUNT;k++)
@@ -582,12 +575,7 @@ boolean CoreApp_InitAppData(IApplet* po)
 	{
 		pMe->m_pImageTimeIcon[i] = NULL;
 	}
-	/*
-	pMe->m_pImageTouchSelIcon[0] = NULL; 
-	pMe->m_pImageTouchSelIcon[1] = NULL; 
-	pMe->m_pImageTouchSelIcon[2] = NULL; 
-	pMe->m_pImageTouchSelIcon[3] = NULL; 
-	*/
+
 #else
 #endif
 #endif

@@ -881,7 +881,6 @@ typedef struct _CCoreApp
 #ifdef FEATURE_LCD_TOUCH_ENABLE
 #ifdef FEATURE_DISP_240X320
 	IImage              *m_pImageTouchIcon[IDLE_TOUCH_ITEMMAX];
-	//IImage              *m_pImageTouchSelIcon[IDLE_TOUCH_ITEMMAX];
 	IImage              *m_pImageTimeIcon[IDLE_TIME_COUNT];
 #else
 #endif
