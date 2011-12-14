@@ -67,14 +67,11 @@ sdcc_config_mmc_bus_width
       /* invalid mmc bus width */
       return FALSE;
    }
-#ifdef T_QSC1110
    /* program the bus width for the mmc card */
    HWIO_OUTM(MCI_CLK,
              HWIO_FMSK(MCI_CLK, WIDEBUS),
              (bus_width << HWIO_MCI_CLK_WIDEBUS_SHFT));
-#else
-   (void) sdcc_set_sd_bus_width(bus_width);
-#endif
+
    return TRUE;
 } /* sdcc_config_mmc_bus_width */
 

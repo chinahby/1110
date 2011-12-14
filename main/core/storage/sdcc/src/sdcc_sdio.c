@@ -158,7 +158,6 @@ sdcc_find_sdio_card( void )
   sdcc_config_clk(SDCC_IDENTIFICATION_MODE,
                   SDCC_CARD_UNKNOWN);
   
-#ifdef T_QSC1110
   if(sdio_card == SDIO_ATHEROS_MANFID)
   {
     sdcc_mdelay(SDCC_SDIO_WAIT_ATHEROS_CARD_RAMP_UP_TIME_MS);
@@ -180,7 +179,6 @@ sdcc_find_sdio_card( void )
               HWIO_FMSK(MCI_CLK, ENABLE)| HWIO_FMSK(MCI_CLK, PWRSAVE),
              MCI_CLK_ENABLED | MCI_CLK_SET_PWRSAVE);
   }
-#endif
 
   /* power ramp up time: 1ms */
   sdcc_mdelay(1);
@@ -242,7 +240,6 @@ sdcc_find_sdio_card( void )
   }
   return card_type;
 }/* sdcc_find_sdio_card */
-#ifdef T_QSC1110
 /******************************************************************************
 * Name: sdio_pre_init
 *
@@ -1914,4 +1911,3 @@ sdcc_sdio_read_fbr(uint8 devfn)
 
 #endif
 /*lint -restore */
-#endif //#ifndef T_QSC1100

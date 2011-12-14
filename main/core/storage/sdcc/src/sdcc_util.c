@@ -178,10 +178,8 @@ sdcc_data_type sdcc_pdata;
 static sleep_okts_handle sdcc_sleep_okts_handle;
 static boolean sleep_handle_register=FALSE;
 #endif
-#ifdef T_QSC1110
 /* Use for the generic signal */
 static uint32 sdcc_sigs =0;
-#endif
 extern unsigned int sdio_card;
 
 static boolean sdcc_crit_sec_initialized;
@@ -216,11 +214,9 @@ static void sdcc_decode_hc_csd(const uint32 *data, sdcc_csd_type *csd);
 ******************************************************************************/
 void sdcc_timer_cb(unsigned long sdcc_pdata_cb)
 {
-#ifdef T_QSC1110
    sdcc_data_type *sdcc_pdata = (sdcc_data_type *)sdcc_pdata_cb;
    sdcc_sigs |= SDCC_TIMER_TIMEOUT_SIG_VAL;
    (void) rex_set_sigs(sdcc_pdata->sdcc_tcb, SDCC_RW_COMPLETE_SIG);
-#endif
 } /* sdcc_timer_cb */
 
 /******************************************************************************
@@ -326,7 +322,6 @@ sdcc_blk_in_bits(uint32 size)
 SDCC_STATUS
 sdcc_cmd_send_verify( void )
 {
-#ifdef T_QSC1110
   uint32 t      = 0;
   uint32 status = 0;
 
@@ -378,9 +373,7 @@ sdcc_cmd_send_verify( void )
   }
     
   return SDCC_ERR_CMD_SENT;
-#else
-  return SDCC_NO_ERROR;
-#endif
+
 }/* sdcc_cmd_send_verify */
 
 /******************************************************************************
@@ -395,12 +388,10 @@ sdcc_cmd_send_verify( void )
 void
 sdcc_config_dma( void )
 {
-#ifdef T_QSC1110
   HWIO_OUTM(MCI_DMA_CONFIG,
             HWIO_FMSK(MCI_DMA_CONFIG, ENDIAN_CHANGE) |
             HWIO_FMSK(MCI_DMA_CONFIG, ENDIAN_CHANGE),
             0x03);
-#endif    
     /* Don't start the DMA engine here
        HWIO_OUTM(MCI_DATA_CTL,
                  HWIO_FMSK(MCI_DATA_CTL, DMA_ENABLE),
@@ -423,7 +414,6 @@ sdcc_config_clk
   SDCC_CARD_TYPE   card_type
 )
 {
-#ifdef T_QSC1110
 #ifdef FEATURE_SDCC_WLAN_CONFIG_API
   uint32 clk=0;
 #endif
@@ -558,7 +548,6 @@ sdcc_config_clk
   }
 
 #endif
-#endif //#ifdef T_QSC1110
 
 #ifdef  FEATURE_SDCC_VOTE_AGAINST_SLEEP
   /* Get the sleep handle for to vote against sleep */
@@ -636,11 +625,9 @@ sdcc_config_rca( void )
 SDCC_STATUS
 sdcc_get_resp(sdcc_cmd_type *sdcc_cmd)
 {
-#ifdef T_QSC1110
   uint32        count  = 0;
   uint32        i;
   uint32       *resp = NULL;
-#endif
   SDCC_STATUS   rc   = SDCC_NO_ERROR;
 
   /*---------------------------------------------------------------------*/
@@ -648,7 +635,6 @@ sdcc_get_resp(sdcc_cmd_type *sdcc_cmd)
   /* loading command responses */    
   if (sdcc_cmd->resp_type)
   {
-#ifdef T_QSC1110
     count = ( SDCC_RESP_LONG == sdcc_cmd->resp_type ) ? 4 : 1;
     resp  = sdcc_cmd->resp;
     
@@ -657,7 +643,6 @@ sdcc_get_resp(sdcc_cmd_type *sdcc_cmd)
       *resp = HWIO_INI(MCI_RESPn, i);
       resp++;
     }
-#endif
     /* check the R5 response flags */ 
     if (( SD_CMD52_IO_RW_DIRECT   == sdcc_cmd->cmd ) ||
         ( SD_CMD53_IO_RW_EXTENDED == sdcc_cmd->cmd ))
@@ -693,7 +678,6 @@ sdcc_get_resp(sdcc_cmd_type *sdcc_cmd)
 SDCC_STATUS
 sdcc_poll_status(sdcc_cmd_type *sdcc_cmd)
 {
-#ifdef T_QSC1110
   uint32        i      = 0;
   uint32        status = 0;
   SDCC_STATUS   rc     = SDCC_ERR_UNKNOWN;
@@ -745,20 +729,7 @@ sdcc_poll_status(sdcc_cmd_type *sdcc_cmd)
   }
 
   sdcc_cmd->status = status;
-#else
-  SDCC_STATUS   rc;
-  
-  rc = sdcc_cmd->status;
-  if(rc == SDCC_ERR_CMD_CRC_FAIL)
-  {
-    if(( SD_ACMD41_SD_APP_OP_COND == sdcc_cmd->cmd ) ||
-       ( SD_CMD1_SEND_OP_COND     == sdcc_cmd->cmd ) ||
-       ( SD_CMD5_IO_SEND_OP_COND  == sdcc_cmd->cmd ))
-    {
-        rc = SDCC_NO_ERROR;
-    }
-  }
-#endif
+
 
   if( rc != SDCC_NO_ERROR)
   {
@@ -789,7 +760,6 @@ sdcc_poll_status(sdcc_cmd_type *sdcc_cmd)
 SDCC_STATUS
 sdcc_poll_dma( void )
 {
-#ifdef T_QSC1110
   SDCC_STATUS      rc = SDCC_ERR_UNKNOWN;
   volatile uint32  status;
   int              t = 0;
@@ -822,10 +792,7 @@ sdcc_poll_dma( void )
   sdcc_pdata.errno = rc;
   
   return rc;
-#else
-  sdcc_pdata.errno = SDCC_NO_ERROR;
-  return SDCC_NO_ERROR;
-#endif
+
 }/* sdcc_poll_dma */
 
 /******************************************************************************
@@ -859,12 +826,10 @@ sdcc_setup_data_xfer
   /* set data timeout */
   timeout = (SDCC_DATA_READ == direction) ? MCI_READ_TIMEOUT :
                                             MCI_WRITE_TIMEOUT;
-#ifdef T_QSC1110
 #ifdef FEATURE_6275_COMPILE
     HWIO_OUT(MCI_DATA_TIMER, clk_hclk_freq_khz * timeout );
 #else    
     HWIO_OUT(MCI_DATA_TIMER, clk_mclk_freq_mhz * timeout * 1000 );
-#endif
 #endif
     /* Note:
        1. data size in byte_mode should be the power of 2
@@ -875,20 +840,14 @@ sdcc_setup_data_xfer
   if(SDCC_SDIO_BYTE_MODE == sdcc_pdata.block_mode ||
      SDCC_MEM_BYTE_MODE == sdcc_pdata.block_mode)
   {
-#ifdef T_QSC1110
     sdcc_pdata.enable_dma = FALSE;
-#endif
     /* set data length */
     data_length = units;
-#ifdef T_QSC1110
     HWIO_OUT(MCI_DATA_LENGTH, data_length);
-#endif
   }
   else
   {
-#ifdef T_QSC1110
     sdcc_pdata.enable_dma = TRUE;
-#endif
     if(SDCC_CARD_SDIO == sdcc_pdata.card_type)
     {
         blksz = sdcc_pdata.io.fn_blksz;
@@ -901,14 +860,12 @@ sdcc_setup_data_xfer
     
     /* set data length */
     data_length = units * blksz;
-#ifdef T_QSC1110
     HWIO_OUT(MCI_DATA_LENGTH, data_length);
 
 // Targets such as ULC have data cache-enabled MMU. The data 
 // cache is shared and might have stale data.
 #ifdef FEATURE_SDCC_DCACHE_ENABLED
     mmu_dcache_flush_all();
-#endif
 #endif
   }
   if ( data_length )
@@ -919,7 +876,6 @@ sdcc_setup_data_xfer
 #endif
      /* only set TCXO to high if data_length is non-zero */
      sdcc_set_tcxo_clk(TRUE);
-#ifdef T_QSC1110
      /************************************************************************
       *
       *       Setup the TCB for rex signal
@@ -930,7 +886,6 @@ sdcc_setup_data_xfer
 
      if( NULL == sdcc_pdata.sdcc_tcb )
         ASSERT(0);
-#endif
   }
   return data_length;
 
@@ -985,11 +940,7 @@ sdcc_command(sdcc_cmd_type   *sdcc_cmd)
        finished sending command */
   if( SD_CMD0_GO_IDLE_STATE == sdcc_cmd->cmd )
   {
-#ifdef T_QSC1110
     rc =  sdcc_cmd_send_verify();
-#else
-    rc = sdcc_cmd->status;
-#endif
     return rc;
   }
 
@@ -1014,7 +965,6 @@ sdcc_command(sdcc_cmd_type   *sdcc_cmd)
       rc = sdcc_get_resp(sdcc_cmd);
     }
   }
-#ifdef T_QSC1110
   /***********************************************************************
    *
    *     wait for the device is done
@@ -1024,7 +974,6 @@ sdcc_command(sdcc_cmd_type   *sdcc_cmd)
   {
     rc = sdcc_process_interrupts(sdcc_cmd);
   }
-#endif
   return rc;
 
 }/* sdcc_command */
@@ -1046,7 +995,6 @@ sdcc_command(sdcc_cmd_type   *sdcc_cmd)
 ****************************************************************************/
 void sdcc_send_cmd(sdcc_cmd_type *sdcc_cmd)
 {
-#ifdef T_QSC1110
   uint32   command  = 0;
  
   
@@ -1083,97 +1031,7 @@ void sdcc_send_cmd(sdcc_cmd_type *sdcc_cmd)
   HWIO_OUT(MCI_ARGUMENT, sdcc_cmd->cmd_arg);
 
   HWIO_OUT(MCI_CMD, command);
-#else
-    // Send Command
-    static byte cmd[20];
-    register uint32 arg = sdcc_cmd->cmd_arg;
-    
-    cmd[0] = 0x40|(((byte)sdcc_cmd->cmd)&0x3F);
-    cmd[1] = (byte)(arg>>24);
-    cmd[2] = (byte)(arg>>16);
-    cmd[3] = (byte)(arg>>8);
-    cmd[4] = (byte)(arg);
-    cmd[5] = CRC7(cmd, 5);
-    
-    gpio_tlmm_config(GPIO_SDCC_CMD_OUT);
-    sdcc_send_cmd_bytes(cmd, 6);
-    
-    // Get Respond
-    sdcc_cmd->status = SDCC_NO_ERROR;
-    if(sdcc_cmd->resp_type)
-    {
-        gpio_tlmm_config(GPIO_SDCC_CMD_IN);
-        switch(sdcc_cmd->cmd){
-        case SD_ACMD51_SEND_SCR:
-            // 忽略RESPONSE
-            gpio_tlmm_config(GPIO_SDCC_CMD_IN);
-            return;
-            
-        case SD_CMD17_READ_BLOCK:
-        case SD_CMD18_READ_MULTIPLE_BLOCK:
-            // 忽略RESPONSE
-            sdcc_clock_out(2); // Host Control
-            gpio_tlmm_config(GPIO_SDCC_CMD_IN);
-            return;
-            
-        default:
-            gpio_tlmm_config(GPIO_SDCC_CMD_IN);
-            cmd[0] = sdcc_recv_cmd_byte_wait();
-            break;
-        }
-        if(sdcc_cmd->resp_type == SDCC_RESP_SHORT) // 6Bytes
-        {
-            sdcc_recv_cmd_bytes(cmd+1, 5);
-            arg  = cmd[1]<<24;
-            arg |= cmd[2]<<16;
-            arg |= cmd[3]<<8;
-            arg |= cmd[4];
-            sdcc_cmd->resp[0] = arg;
-            if(cmd[0]&0xC0) // 根据协议，回复的高两位应该为0
-            {
-                sdcc_cmd->status = SDCC_ERR_CMD_TIMEOUT;
-            }
-            else if(cmd[5] != CRC7(cmd, 5))
-            {
-                sdcc_cmd->status = SDCC_ERR_CMD_CRC_FAIL;
-            }
-        }
-        else if(sdcc_cmd->resp_type == SDCC_RESP_LONG) // 18Bytes
-        {
-            sdcc_recv_cmd_bytes(cmd+1, 16);
-            arg  = cmd[1]<<24;
-            arg |= cmd[2]<<16;
-            arg |= cmd[3]<<8;
-            arg |= cmd[4];
-            sdcc_cmd->resp[0] = arg;
-            arg  = cmd[5]<<24;
-            arg |= cmd[6]<<16;
-            arg |= cmd[7]<<8;
-            arg |= cmd[8];
-            sdcc_cmd->resp[1] = arg;
-            arg  = cmd[9]<<24;
-            arg |= cmd[10]<<16;
-            arg |= cmd[11]<<8;
-            arg |= cmd[12];
-            sdcc_cmd->resp[2] = arg;
-            arg  = cmd[13]<<24;
-            arg |= cmd[14]<<16;
-            arg |= cmd[15]<<8;
-            arg |= cmd[16];
-            sdcc_cmd->resp[3] = arg;
-            if(cmd[0]&0xC0)// 根据协议，回复的高两位应该为0
-            {
-                sdcc_cmd->status = SDCC_ERR_CMD_TIMEOUT;
-            }
-            else if(cmd[16] != CRC7(cmd+1, 15))
-            {
-                sdcc_cmd->status = SDCC_ERR_CMD_CRC_FAIL;
-            }
-        }
-    }
-    
-    sdcc_clock_out(SDCC_SD_WAIT); // Nrc
-#endif
+
 }/* sdcc_send_cmd */
 
 
@@ -1231,15 +1089,13 @@ SDCC_CARD_STATUS sdcc_send_status( void )
 ****************************************************************************/
 SDCC_STATUS sdcc_wait_prog_done( void )
 {
-#ifdef T_QSC1110
   uint32               t      = 0;
-#endif
   volatile uint32      status = 0;
   SDCC_STATUS          rc          = SDCC_ERR_PROG_DONE;
   SDCC_CARD_STATUS     card_status = SDCC_CARD_IGNORE;
 
   /*--------------------------------------------------------------------*/
-#ifdef T_QSC1110
+
   while (t++ < SDCC_PROG_DONE_MAX  )
   {
     status = HWIO_IN(MCI_STATUS);
@@ -1255,10 +1111,7 @@ SDCC_STATUS sdcc_wait_prog_done( void )
 
     sdcc_udelay(25);
   }
-#else
-  // TODO:
-  rc = SDCC_NO_ERROR;
-#endif
+
   /* CMD13: if no prog_done indication, give it one more
      chance by polling the card directly */
   if(SDCC_NO_ERROR != rc)
@@ -1321,10 +1174,7 @@ sdcc_find_card( void )
    /* lower the clock to < 400KHz for card identification */
    sdcc_config_clk(SDCC_IDENTIFICATION_MODE, SDCC_CARD_UNKNOWN);
    
-#ifndef T_QSC1110
-   // output 74 clock
-   sdcc_clock_out_slow(100);
-#endif
+
    
    /* CMD0: reset card first */
    sdcc_cmd.cmd       = SD_CMD0_GO_IDLE_STATE;
@@ -1491,7 +1341,6 @@ sdcc_find_card( void )
 SDCC_STATUS
 sdcc_process_interrupts( sdcc_cmd_type *sdcc_cmd)
 {
-#ifdef T_QSC1110
    rex_sigs_type      sigs;
    SDCC_STATUS        rc = SDCC_NO_ERROR;
    rex_timer_type    *sdcc_timer_ptr;
@@ -1598,9 +1447,7 @@ sdcc_process_interrupts( sdcc_cmd_type *sdcc_cmd)
    }
    sdcc_pdata.errno = rc;
    return rc;
-#else
-   return SDCC_NO_ERROR;
-#endif
+
 }
 
 /******************************************************************************
@@ -1619,7 +1466,6 @@ sdcc_process_interrupts( sdcc_cmd_type *sdcc_cmd)
 void
 sdcc_enable_int( uint32 int_mask )
 {
-#ifdef T_QSC1110
   uint32  reg_value = 0;
 
   /*
@@ -1651,7 +1497,6 @@ sdcc_enable_int( uint32 int_mask )
      reg_value |= int_mask;
      HWIO_MCI_INT_MASKn_OUTI(0, reg_value);
   }
-#endif
 }/* sdcc_enable_int */
 
 /******************************************************************************
@@ -1670,7 +1515,6 @@ sdcc_enable_int( uint32 int_mask )
 void
 sdcc_disable_int( uint32 int_mask )
 {
-#ifdef T_QSC1110
    uint32  reg_value = 0;
 
    if(MCI_INT_MASK_SDIO_INTR == int_mask)
@@ -1703,7 +1547,6 @@ sdcc_disable_int( uint32 int_mask )
          tramp_set_isr(TRAMP_SDCC_0_ISR, NULL);
       }
    }
-#endif
 }/* sdcc_disable_int */
 
 /******************************************************************************
@@ -1720,7 +1563,6 @@ sdcc_disable_int( uint32 int_mask )
 void
 sdcc_isr(void)
 {
-#ifdef T_QSC1110
   uint32 status;
      
   /*---------------------------------------------------------------------------*/
@@ -1755,7 +1597,6 @@ sdcc_isr(void)
     (void)rex_set_sigs(sdcc_pdata.sdcc_tcb,
                        SDCC_RW_COMPLETE_SIG);
   }
-#endif
 }/* sdcc_isr */
 
 /******************************************************************************
@@ -1772,7 +1613,6 @@ sdcc_isr(void)
 
 void sdio_isr()
 {
-#ifdef T_QSC1110
    uint32 status;
    status = HWIO_IN(MCI_STATUS);
    if(status & HWIO_MCI_STATUS_SDIO_INTR_BMSK)
@@ -1781,7 +1621,6 @@ void sdio_isr()
          (void)sdcc_pdata.io.isr((void*)sdcc_pdata.io.isr_param);
       SDCC_CLR_STATUS(HWIO_MCI_CLEAR_SDIO_INTR_CLR_BMSK);
    }
-#endif
 }
 
 
@@ -1815,11 +1654,8 @@ sdcc_wait_card_ready(void)
           rc = SDCC_NO_ERROR;
           break;
       }
-#ifndef T_QSC1110
-      sdcc_clock_out(256);
-#else
+
       sdcc_udelay(100);
-#endif
   }
 
   return rc;
@@ -2248,7 +2084,6 @@ SDCC_STATUS sdcc_read_fifo
    uint16     length
 )
 {
-#ifdef T_QSC1110
    volatile uint32 status = 0;
    SDCC_STATUS rc = SDCC_NO_ERROR;
    uint32 data_size = (uint32)length;
@@ -2368,16 +2203,7 @@ SDCC_STATUS sdcc_read_fifo
    /* clear the static status bits */
    SDCC_CLR_STATUS(MCI_STATUS_STATIC_MASK);
    return rc;
-#else
-    SDCC_STATUS rc = SDCC_NO_ERROR;
-    
-    if(NULL == buff)
-    {
-       return(SDCC_ERR_READ_FIFO);
-    }
-    
-    return rc;
-#endif
+
 }/* sdcc_read_fifo */
 
 
@@ -2402,7 +2228,6 @@ SDCC_STATUS sdcc_write_fifo
   uint16    length
 )
 {
-#ifdef T_QSC1110
   volatile uint32  status;
   SDCC_STATUS      rc        = SDCC_NO_ERROR;
   uint32           i         = 0;
@@ -2447,12 +2272,7 @@ SDCC_STATUS sdcc_write_fifo
   SDCC_CLR_STATUS(MCI_STATUS_STATIC_MASK);
 
   return rc;
-#else
-    SDCC_STATUS rc = SDCC_NO_ERROR;
-    if(!buff)
-          return(SDCC_ERR_WRITE_FIFO);
-    return rc;
-#endif
+
 }/* sdcc_write_fifo */
 
 /******************************************************************************
@@ -2592,16 +2412,12 @@ sdcc_do_transfer
    uint16             xfer_size
 )
 {
-#ifdef T_QSC1110
    uint8            data_ctrl = 0;
    uint32           blk_in_bits = 0;
-#endif
    SDCC_STATUS      status     = SDCC_NO_ERROR;
    SDCC_STATUS      status_complete = SDCC_NO_ERROR;
    uint16           length     = 0;
-#ifdef T_QSC1110
    boolean          use_dma    = FALSE;
-#endif
    uint32           isave      = 0;
    boolean          send_stop_command;
 
@@ -2626,7 +2442,6 @@ sdcc_do_transfer
       return SDCC_ERR_UNKNOWN;
    }
 
-#ifdef T_QSC1110
    if ( SDCC_MEM_BLK_MODE == sdcc_pdata.block_mode &&
         xfer_size > SDCC_MAX_NO_BLOCKS )
    {
@@ -2659,16 +2474,13 @@ sdcc_do_transfer
    data_ctrl |= (blk_in_bits << HWIO_MCI_DATA_CTL_BLOCKSIZE_SHFT);
    data_ctrl |= MCI_DATA_DPSM_ENABLED;
    data_ctrl |= SDCC_MCI_DIRECTION(xfer_flags);
-#endif
    INTLOCK_SAV(isave);
-#ifdef T_QSC1110
    /* This register needs to be done before sending the command */
    /* on reads and after on writes. */
    if (SDCC_IS_READ_TRANSFER(xfer_flags))
    {
       HWIO_OUT(MCI_DATA_CTL, data_ctrl);
    }
-#endif
    /* Send the command to the memory device.  Note that app. commands use a */
    /* different function since they actually send two commands. */
    if ((xfer_flags & SDCC_APP_COMMAND_FLAG) != 0)
@@ -2679,43 +2491,33 @@ sdcc_do_transfer
    {
       status = sdcc_command(xfer_cmd_ptr);
    }
-#ifdef T_QSC1110
    /* This register needs to be done before sending the command */
    /* on reads and after on writes. */
    if (SDCC_IS_WRITE_TRANSFER(xfer_flags))
    {
       HWIO_OUT(MCI_DATA_CTL, data_ctrl);
    }
-#endif
    INTFREE_SAV(isave);
 
    /* Transfer the data to or from the device, either using DMA or */
    /* by reading or writing the FIFO registers directly */
    if (status == SDCC_NO_ERROR)
    {
-#ifdef T_QSC1110
       if (use_dma)
       {
          status = sdcc_process_interrupts(xfer_cmd_ptr /*don't care*/);
       }
       else
-#endif
       {
          if (SDCC_IS_READ_TRANSFER(xfer_flags))
          {
-#ifdef T_QSC1110
             status = sdcc_read_fifo(buff, length);
-#else
-            status = sdcc_read_data(buff, length);
-#endif
+
          }
          else
          {
-#ifdef T_QSC1110
             status = sdcc_write_fifo(buff, length);
-#else
-            status = sdcc_write_data(buff, length);
-#endif
+
          }
       }
    }
@@ -3033,833 +2835,4 @@ boolean sdcc_silent_reinit()
 }
 /*lint -restore */
 
-#ifndef T_QSC1110
-#include "crc.h"
-
-#define SDCC_MIN_WAIT   1024
-#define SDCC_MAX_WAIT   (1024*1024*8)
-
-static const unsigned char crc7_table[256] = 
-{
-    0x00,0x09,0x12,0x1B,0x24,0x2D,0x36,0x3F,0x48,0x41,0x5A,0x53,0x6C,0x65,0x7E,0x77,
-    0x99,0x90,0x8B,0x82,0xBD,0xB4,0xAF,0xA6,0xD1,0xD8,0xC3,0xCA,0xF5,0xFC,0xE7,0xEE,
-    0x32,0x3B,0x20,0x29,0x16,0x1F,0x04,0x0D,0x7A,0x73,0x68,0x61,0x5E,0x57,0x4C,0x45,
-    0xAB,0xA2,0xB9,0xB0,0x8F,0x86,0x9D,0x94,0xE3,0xEA,0xF1,0xF8,0xC7,0xCE,0xD5,0xDC,
-    0x64,0x6D,0x76,0x7F,0x40,0x49,0x52,0x5B,0x2C,0x25,0x3E,0x37,0x08,0x01,0x1A,0x13,
-    0xFD,0xF4,0xEF,0xE6,0xD9,0xD0,0xCB,0xC2,0xB5,0xBC,0xA7,0xAE,0x91,0x98,0x83,0x8A,
-    0x56,0x5F,0x44,0x4D,0x72,0x7B,0x60,0x69,0x1E,0x17,0x0C,0x05,0x3A,0x33,0x28,0x21,
-    0xCF,0xC6,0xDD,0xD4,0xEB,0xE2,0xF9,0xF0,0x87,0x8E,0x95,0x9C,0xA3,0xAA,0xB1,0xB8,
-    0xC1,0xC8,0xD3,0xDA,0xE5,0xEC,0xF7,0xFE,0x89,0x80,0x9B,0x92,0xAD,0xA4,0xBF,0xB6,
-    0x58,0x51,0x4A,0x43,0x7C,0x75,0x6E,0x67,0x10,0x19,0x02,0x0B,0x34,0x3D,0x26,0x2F,
-    0xF3,0xFA,0xE1,0xE8,0xD7,0xDE,0xC5,0xCC,0xBB,0xB2,0xA9,0xA0,0x9F,0x96,0x8D,0x84,
-    0x6A,0x63,0x78,0x71,0x4E,0x47,0x5C,0x55,0x22,0x2B,0x30,0x39,0x06,0x0F,0x14,0x1D,
-    0xA5,0xAC,0xB7,0xBE,0x81,0x88,0x93,0x9A,0xED,0xE4,0xFF,0xF6,0xC9,0xC0,0xDB,0xD2,
-    0x3C,0x35,0x2E,0x27,0x18,0x11,0x0A,0x03,0x74,0x7D,0x66,0x6F,0x50,0x59,0x42,0x4B,
-    0x97,0x9E,0x85,0x8C,0xB3,0xBA,0xA1,0xA8,0xDF,0xD6,0xCD,0xC4,0xFB,0xF2,0xE9,0xE0,
-    0x0E,0x07,0x1C,0x15,0x2A,0x23,0x38,0x31,0x46,0x4F,0x54,0x5D,0x62,0x6B,0x70,0x79
-};
-
-/******************************************************************************************************
-* FunName : CRC7_T                                                                                                 
-* Function : Get CRC7 value
-* Input    : chr - point to the Arrarybuff; cnt - number needed to workout
-* Output   : CRC value
-******************************************************************************************************/
-unsigned char CRC7( unsigned char * buf_ptr, int len )
-{
-    unsigned char crc = 0; 
-    unsigned char idx;
-    
-    for (; len >= 1; len--, buf_ptr++) {
-        idx = (crc<<1) ^ *buf_ptr;
-        crc = (unsigned char)(crc7_table[idx]);
-    }
-    return((crc<<1)|1); 
-}
-
-/* Mask for CRC-16 4line polynomial:
-**
-**      x^16 + x^12 + x^5 + 1
-**      x^64 + x^48 + x^20 + 1
-**
-** This is more commonly referred to as CCITT-16.
-** Note:  the x^16 tap is left off, it's implicit.
-*/
-static const unsigned long long crc16_4_table[256] = 
-{
-    0x0000000000000000LL,0x0001000000100001LL,0x0002000000200002LL,0x0003000000300003LL,0x0004000000400004LL,0x0005000000500005LL,0x0006000000600006LL,0x0007000000700007LL,
-    0x0008000000800008LL,0x0009000000900009LL,0x000A000000A0000ALL,0x000B000000B0000BLL,0x000C000000C0000CLL,0x000D000000D0000DLL,0x000E000000E0000ELL,0x000F000000F0000FLL,
-    0x0010000001000010LL,0x0011000001100011LL,0x0012000001200012LL,0x0013000001300013LL,0x0014000001400014LL,0x0015000001500015LL,0x0016000001600016LL,0x0017000001700017LL,
-    0x0018000001800018LL,0x0019000001900019LL,0x001A000001A0001ALL,0x001B000001B0001BLL,0x001C000001C0001CLL,0x001D000001D0001DLL,0x001E000001E0001ELL,0x001F000001F0001FLL,
-    0x0020000002000020LL,0x0021000002100021LL,0x0022000002200022LL,0x0023000002300023LL,0x0024000002400024LL,0x0025000002500025LL,0x0026000002600026LL,0x0027000002700027LL,
-    0x0028000002800028LL,0x0029000002900029LL,0x002A000002A0002ALL,0x002B000002B0002BLL,0x002C000002C0002CLL,0x002D000002D0002DLL,0x002E000002E0002ELL,0x002F000002F0002FLL,
-    0x0030000003000030LL,0x0031000003100031LL,0x0032000003200032LL,0x0033000003300033LL,0x0034000003400034LL,0x0035000003500035LL,0x0036000003600036LL,0x0037000003700037LL,
-    0x0038000003800038LL,0x0039000003900039LL,0x003A000003A0003ALL,0x003B000003B0003BLL,0x003C000003C0003CLL,0x003D000003D0003DLL,0x003E000003E0003ELL,0x003F000003F0003FLL,
-    0x0040000004000040LL,0x0041000004100041LL,0x0042000004200042LL,0x0043000004300043LL,0x0044000004400044LL,0x0045000004500045LL,0x0046000004600046LL,0x0047000004700047LL,
-    0x0048000004800048LL,0x0049000004900049LL,0x004A000004A0004ALL,0x004B000004B0004BLL,0x004C000004C0004CLL,0x004D000004D0004DLL,0x004E000004E0004ELL,0x004F000004F0004FLL,
-    0x0050000005000050LL,0x0051000005100051LL,0x0052000005200052LL,0x0053000005300053LL,0x0054000005400054LL,0x0055000005500055LL,0x0056000005600056LL,0x0057000005700057LL,
-    0x0058000005800058LL,0x0059000005900059LL,0x005A000005A0005ALL,0x005B000005B0005BLL,0x005C000005C0005CLL,0x005D000005D0005DLL,0x005E000005E0005ELL,0x005F000005F0005FLL,
-    0x0060000006000060LL,0x0061000006100061LL,0x0062000006200062LL,0x0063000006300063LL,0x0064000006400064LL,0x0065000006500065LL,0x0066000006600066LL,0x0067000006700067LL,
-    0x0068000006800068LL,0x0069000006900069LL,0x006A000006A0006ALL,0x006B000006B0006BLL,0x006C000006C0006CLL,0x006D000006D0006DLL,0x006E000006E0006ELL,0x006F000006F0006FLL,
-    0x0070000007000070LL,0x0071000007100071LL,0x0072000007200072LL,0x0073000007300073LL,0x0074000007400074LL,0x0075000007500075LL,0x0076000007600076LL,0x0077000007700077LL,
-    0x0078000007800078LL,0x0079000007900079LL,0x007A000007A0007ALL,0x007B000007B0007BLL,0x007C000007C0007CLL,0x007D000007D0007DLL,0x007E000007E0007ELL,0x007F000007F0007FLL,
-    0x0080000008000080LL,0x0081000008100081LL,0x0082000008200082LL,0x0083000008300083LL,0x0084000008400084LL,0x0085000008500085LL,0x0086000008600086LL,0x0087000008700087LL,
-    0x0088000008800088LL,0x0089000008900089LL,0x008A000008A0008ALL,0x008B000008B0008BLL,0x008C000008C0008CLL,0x008D000008D0008DLL,0x008E000008E0008ELL,0x008F000008F0008FLL,
-    0x0090000009000090LL,0x0091000009100091LL,0x0092000009200092LL,0x0093000009300093LL,0x0094000009400094LL,0x0095000009500095LL,0x0096000009600096LL,0x0097000009700097LL,
-    0x0098000009800098LL,0x0099000009900099LL,0x009A000009A0009ALL,0x009B000009B0009BLL,0x009C000009C0009CLL,0x009D000009D0009DLL,0x009E000009E0009ELL,0x009F000009F0009FLL,
-    0x00A000000A0000A0LL,0x00A100000A1000A1LL,0x00A200000A2000A2LL,0x00A300000A3000A3LL,0x00A400000A4000A4LL,0x00A500000A5000A5LL,0x00A600000A6000A6LL,0x00A700000A7000A7LL,
-    0x00A800000A8000A8LL,0x00A900000A9000A9LL,0x00AA00000AA000AALL,0x00AB00000AB000ABLL,0x00AC00000AC000ACLL,0x00AD00000AD000ADLL,0x00AE00000AE000AELL,0x00AF00000AF000AFLL,
-    0x00B000000B0000B0LL,0x00B100000B1000B1LL,0x00B200000B2000B2LL,0x00B300000B3000B3LL,0x00B400000B4000B4LL,0x00B500000B5000B5LL,0x00B600000B6000B6LL,0x00B700000B7000B7LL,
-    0x00B800000B8000B8LL,0x00B900000B9000B9LL,0x00BA00000BA000BALL,0x00BB00000BB000BBLL,0x00BC00000BC000BCLL,0x00BD00000BD000BDLL,0x00BE00000BE000BELL,0x00BF00000BF000BFLL,
-    0x00C000000C0000C0LL,0x00C100000C1000C1LL,0x00C200000C2000C2LL,0x00C300000C3000C3LL,0x00C400000C4000C4LL,0x00C500000C5000C5LL,0x00C600000C6000C6LL,0x00C700000C7000C7LL,
-    0x00C800000C8000C8LL,0x00C900000C9000C9LL,0x00CA00000CA000CALL,0x00CB00000CB000CBLL,0x00CC00000CC000CCLL,0x00CD00000CD000CDLL,0x00CE00000CE000CELL,0x00CF00000CF000CFLL,
-    0x00D000000D0000D0LL,0x00D100000D1000D1LL,0x00D200000D2000D2LL,0x00D300000D3000D3LL,0x00D400000D4000D4LL,0x00D500000D5000D5LL,0x00D600000D6000D6LL,0x00D700000D7000D7LL,
-    0x00D800000D8000D8LL,0x00D900000D9000D9LL,0x00DA00000DA000DALL,0x00DB00000DB000DBLL,0x00DC00000DC000DCLL,0x00DD00000DD000DDLL,0x00DE00000DE000DELL,0x00DF00000DF000DFLL,
-    0x00E000000E0000E0LL,0x00E100000E1000E1LL,0x00E200000E2000E2LL,0x00E300000E3000E3LL,0x00E400000E4000E4LL,0x00E500000E5000E5LL,0x00E600000E6000E6LL,0x00E700000E7000E7LL,
-    0x00E800000E8000E8LL,0x00E900000E9000E9LL,0x00EA00000EA000EALL,0x00EB00000EB000EBLL,0x00EC00000EC000ECLL,0x00ED00000ED000EDLL,0x00EE00000EE000EELL,0x00EF00000EF000EFLL,
-    0x00F000000F0000F0LL,0x00F100000F1000F1LL,0x00F200000F2000F2LL,0x00F300000F3000F3LL,0x00F400000F4000F4LL,0x00F500000F5000F5LL,0x00F600000F6000F6LL,0x00F700000F7000F7LL,
-    0x00F800000F8000F8LL,0x00F900000F9000F9LL,0x00FA00000FA000FALL,0x00FB00000FB000FBLL,0x00FC00000FC000FCLL,0x00FD00000FD000FDLL,0x00FE00000FE000FELL,0x00FF00000FF000FFLL
-};
-
-/******************************************************************************************************
-* FunName : CRC16_4                                                                                                 
-* Function : Get CRC16 4line value
-* Input    : chr - point to the Arrarybuff; cnt - number needed to workout
-* Output   : CRC value
-******************************************************************************************************/
-unsigned long long CRC16_4( unsigned char * buf_ptr, int len )
-{
-    unsigned long long crc = 0; 
-    unsigned char *pCrc = (unsigned char *)&crc;
-
-    for (; len >= 1; len--, buf_ptr++) {
-        crc = (unsigned long long)(crc16_4_table[ pCrc[7] ^ *buf_ptr ] ^ (crc << 8));
-    }
-    return(crc); 
-}
-
-static INLINE void sdcc_clock_out(int cnt)
-{
-    register volatile uint32 *pDest = (volatile uint32*)GPIO_SDCC_OUT_ADDR;
-    register uint32 clkl = (*pDest)&GPIO_SDCC_CLK_MASK_I, clkh = (*pDest)|GPIO_SDCC_CLK_MASK;
-    while(cnt)
-    {
-        outpdw(pDest, clkl);
-        cnt--;
-        outpdw(pDest, clkh);
-    }
-}
-
-static INLINE void sdcc_clock_out_slow(int cnt)
-{
-    register volatile uint32 *pDest = (volatile uint32*)GPIO_SDCC_OUT_ADDR;
-    register uint32 clkl = (*pDest)&GPIO_SDCC_CLK_MASK_I, clkh = (*pDest)|GPIO_SDCC_CLK_MASK;
-    
-    while(cnt--)
-    {
-        outpdw(pDest, clkl);
-        outpdw(pDest, clkl);
-        outpdw(pDest, clkl);
-        outpdw(pDest, clkl);
-        outpdw(pDest, clkh);
-        outpdw(pDest, clkh);
-        outpdw(pDest, clkh);
-    }
-}
-
-static INLINE void sdcc_send_cmd_bytes(byte *pdata, int len)
-{
-    register volatile uint32 *pDest = (volatile uint32*)GPIO_SDCC_OUT_ADDR;
-    register uint32 clkh = (GPIO_SDCC_CLK_MASK|(*pDest))&GPIO_SDCC_CMD_MASK_I;
-    register uint32 clkl = GPIO_SDCC_CLK_MASK_I&((*pDest)&GPIO_SDCC_CMD_MASK_I);
-    register byte data;
-    register uint32 mask = GPIO_SDCC_CMD_MASK;
-    
-    while(len--)
-    {
-        data = *pdata;
-        outpdw(pDest, ((data<<22)&mask)|clkl);
-        outpdw(pDest, ((data<<22)&mask)|clkh);
-        outpdw(pDest, ((data<<23)&mask)|clkl);
-        outpdw(pDest, ((data<<23)&mask)|clkh);
-        outpdw(pDest, ((data<<24)&mask)|clkl);
-        outpdw(pDest, ((data<<24)&mask)|clkh);
-        outpdw(pDest, ((data<<25)&mask)|clkl);
-        outpdw(pDest, ((data<<25)&mask)|clkh);
-        outpdw(pDest, ((data<<26)&mask)|clkl);
-        outpdw(pDest, ((data<<26)&mask)|clkh);
-        outpdw(pDest, ((data<<27)&mask)|clkl);
-        outpdw(pDest, ((data<<27)&mask)|clkh);
-        outpdw(pDest, ((data<<28)&mask)|clkl);
-        outpdw(pDest, ((data<<28)&mask)|clkh);
-        outpdw(pDest, ((data<<29)&mask)|clkl);
-        outpdw(pDest, ((data<<29)&mask)|clkh);
-        pdata++;
-    }
-    
-    // Reset CMD to 1
-    outpdw(pDest, clkh|GPIO_SDCC_CMD_MASK);
-}
-
-static INLINE void sdcc_recv_cmd_bytes(byte *pdata, int len)
-{
-    register volatile uint32 *pDest = (volatile uint32*)GPIO_SDCC_OUT_ADDR;
-    register uint32 clkl = (*pDest)&GPIO_SDCC_CLK_MASK_I, clkh = (*pDest)|GPIO_SDCC_CLK_MASK;
-    register volatile byte *pIn = (volatile byte*)GPIO_SDCC_IN_ADDR;
-    register byte data = 0;
-    register byte mask;
-    
-    while(len--)
-    {
-        mask = 0x80;
-        outpdw(pDest, clkl);
-        outpdw(pDest, clkh);
-        data  = (inp(pIn)<<2)&mask;
-        mask  >>= 1;
-        outpdw(pDest, clkl);
-        outpdw(pDest, clkh);
-        data |= (inp(pIn)<<1)&mask;
-        mask  >>= 1;
-        outpdw(pDest, clkl);
-        outpdw(pDest, clkh);
-        data |= (inp(pIn)   )&mask;
-        mask  >>= 1;
-        outpdw(pDest, clkl);
-        outpdw(pDest, clkh);
-        data |= (inp(pIn)>>1)&mask;
-        mask  >>= 1;
-        outpdw(pDest, clkl);
-        outpdw(pDest, clkh);
-        data |= (inp(pIn)>>2)&mask;
-        mask  >>= 1;
-        outpdw(pDest, clkl);
-        outpdw(pDest, clkh);
-        data |= (inp(pIn)>>3)&mask;
-        mask  >>= 1;
-        outpdw(pDest, clkl);
-        outpdw(pDest, clkh);
-        data |= (inp(pIn)>>4)&mask;
-        mask  >>= 1;
-        outpdw(pDest, clkl);
-        outpdw(pDest, clkh);
-        data |= (inp(pIn)>>5)&mask;
-        *pdata++ = data;
-    }
-}
-
-static INLINE byte sdcc_recv_cmd_byte_wait(void)
-{
-    register volatile uint32 *pDest = (volatile uint32*)GPIO_SDCC_OUT_ADDR;
-    register uint32 clkl = (*pDest)&GPIO_SDCC_CLK_MASK_I, clkh = (*pDest)|GPIO_SDCC_CLK_MASK;
-    register volatile byte *pIn = (volatile byte*)GPIO_SDCC_IN_ADDR;
-    register byte data = 0;
-    register byte mask;
-    int i = SDCC_MIN_WAIT; //最大等待周期
-
-    mask = 0x80;
-    while(i--) // Ncr
-    {
-        outpdw(pDest, clkl);
-        outpdw(pDest, clkh);
-        data  = (inp(pIn)<<2)&mask;
-        if(data == 0)
-        {
-            break;
-        }
-    }
-    mask  >>= 1;
-    outpdw(pDest, clkl);
-    outpdw(pDest, clkh);
-    data |= (inp(pIn)<<1)&mask;
-    mask  >>= 1;
-    outpdw(pDest, clkl);
-    outpdw(pDest, clkh);
-    data |= (inp(pIn)   )&mask;
-    mask  >>= 1;
-    outpdw(pDest, clkl);
-    outpdw(pDest, clkh);
-    data |= (inp(pIn)>>1)&mask;
-    mask  >>= 1;
-    outpdw(pDest, clkl);
-    outpdw(pDest, clkh);
-    data |= (inp(pIn)>>2)&mask;
-    mask  >>= 1;
-    outpdw(pDest, clkl);
-    outpdw(pDest, clkh);
-    data |= (inp(pIn)>>3)&mask;
-    mask  >>= 1;
-    outpdw(pDest, clkl);
-    outpdw(pDest, clkh);
-    data |= (inp(pIn)>>4)&mask;
-    mask  >>= 1;
-    outpdw(pDest, clkl);
-    outpdw(pDest, clkh);
-    data |= (inp(pIn)>>5)&mask;
-    return data;
-}
-
-static INLINE SDCC_STATUS sdcc_send_data_bytes(byte *pdata, int len)
-{
-    register volatile uint32 *pDest = (volatile uint32*)GPIO_SDCC_OUT_ADDR;
-    register uint32 clkl = (*pDest)&GPIO_SDCC_CLK_MASK_I, clkh = (*pDest)|GPIO_SDCC_CLK_MASK;
-    register uint32 clkm = clkh&GPIO_SDCC_DAT_0_MASK_I;
-    register uint32 clkn = clkl&GPIO_SDCC_DAT_MASK_I;
-    register volatile byte *pIn = (volatile byte*)GPIO_SDCC_IN_ADDR;
-    register byte data;
-    register uint32 mask = 0x02000000;
-    uint16 wCRC16 = crc_16_bytes(pdata, len);
-    int i; //最大等待周期
-    
-    // START Bit
-    outpdw(pDest, clkn);
-    outpdw(pDest, clkm);
-    
-    // Data
-    while(len--)
-    {
-        data = *pdata++;
-        outpdw(pDest, ((data>>6)<<24)|clkn);
-        outpdw(pDest, ((data>>6)<<24)|clkm);
-        outpdw(pDest, ((data>>5)<<24)|clkn);
-        outpdw(pDest, ((data>>5)<<24)|clkm);
-        outpdw(pDest, ((data>>4)<<24)|clkn);
-        outpdw(pDest, ((data>>4)<<24)|clkm);
-        outpdw(pDest, ((data>>3)<<24)|clkn);
-        outpdw(pDest, ((data>>3)<<24)|clkm);
-        outpdw(pDest, ((data>>2)<<24)|clkn);
-        outpdw(pDest, ((data>>2)<<24)|clkm);
-        outpdw(pDest, ((data<<23)&mask)|clkn);
-        outpdw(pDest, ((data<<23)&mask)|clkm);
-        outpdw(pDest, ((data<<24)&mask)|clkn);
-        outpdw(pDest, ((data<<24)&mask)|clkm);
-        outpdw(pDest, ((data<<25)&mask)|clkn);
-        outpdw(pDest, ((data<<25)&mask)|clkm);
-    }
-    
-    // CRC
-    len = 2;
-    data = (byte)(wCRC16>>8);
-    while(len--)
-    {
-        outpdw(pDest, ((data>>6)<<24)|clkn);
-        outpdw(pDest, ((data>>6)<<24)|clkm);
-        outpdw(pDest, ((data>>5)<<24)|clkn);
-        outpdw(pDest, ((data>>5)<<24)|clkm);
-        outpdw(pDest, ((data>>4)<<24)|clkn);
-        outpdw(pDest, ((data>>4)<<24)|clkm);
-        outpdw(pDest, ((data>>3)<<24)|clkn);
-        outpdw(pDest, ((data>>3)<<24)|clkm);
-        outpdw(pDest, ((data>>2)<<24)|clkn);
-        outpdw(pDest, ((data>>2)<<24)|clkm);
-        outpdw(pDest, ((data<<23)&mask)|clkn);
-        outpdw(pDest, ((data<<23)&mask)|clkm);
-        outpdw(pDest, ((data<<24)&mask)|clkn);
-        outpdw(pDest, ((data<<24)&mask)|clkm);
-        outpdw(pDest, ((data<<25)&mask)|clkn);
-        outpdw(pDest, ((data<<25)&mask)|clkm);
-        data = (byte)wCRC16;
-    }
-    
-    // END Bit
-    outpdw(pDest, clkl);
-    outpdw(pDest, clkh);
-
-    // 2 delay Cycles, HOST control
-    outpdw(pDest, clkl);
-    outpdw(pDest, clkh);
-    outpdw(pDest, clkl);
-    outpdw(pDest, clkh);
-    
-    // Check CRC status
-    gpio_tlmm_config(GPIO_SDCC_DAT_0_IN);
-    
-    // START Bit
-    i = SDCC_MIN_WAIT;
-    while(i)
-    {
-        outpdw(pDest, clkl);
-        i--;
-        outpdw(pDest, clkh);
-        if((inp(pIn) & 0x02) == 0)
-        {
-            break;
-        }
-    }
-    
-    // CRC status
-    outpdw(pDest, clkl);
-    outpdw(pDest, clkh);
-    data  = (inp(pIn)<<1)&0x04;
-    outpdw(pDest, clkl);
-    outpdw(pDest, clkh);
-    data |= (inp(pIn)   )&0x02;
-    outpdw(pDest, clkl);
-    outpdw(pDest, clkh);
-    data |= (inp(pIn)>>1)&0x01;
-    
-    // END Bit
-    outpdw(pDest, clkl);
-    outpdw(pDest, clkh);
-    
-    // Busy Start bit
-    outpdw(pDest, clkl);
-    outpdw(pDest, clkh);
-    if((inp(pIn) & 0x02) == 0)
-    {
-        // Wait until write finished
-        i = SDCC_MAX_WAIT;
-        while(i)
-        {
-            outpdw(pDest, clkl);
-            i--;
-            outpdw(pDest, clkh);
-            if(inp(pIn)&0x02)
-            {
-                // Busy End bit
-                break;
-            }
-        }
-        
-        if(i == 0)
-        {
-            gpio_tlmm_config(GPIO_SDCC_DAT_0_OUT);
-            return SDCC_ERR_DATA_TIMEOUT;
-        }
-    }
-    
-    gpio_tlmm_config(GPIO_SDCC_DAT_0_OUT);
-    if(data != 0x2)
-    {
-        return SDCC_ERR_DATA_CRC_FAIL;
-    }
-    return SDCC_NO_ERROR;
-}
-
-static INLINE SDCC_STATUS sdcc_recv_data_bytes(byte *buff, int len)
-{
-    register volatile uint32 *pDest = (volatile uint32*)GPIO_SDCC_OUT_ADDR;
-    register uint32 clkl = (*pDest)&GPIO_SDCC_CLK_MASK_I, clkh = (*pDest)|GPIO_SDCC_CLK_MASK;
-    register volatile byte *pIn = (volatile byte*)GPIO_SDCC_IN_ADDR;
-    register byte data;
-    register byte mask;
-    register byte *pdata = buff;
-    int i;
-    uint16 wCRC16 = 0;
-    
-    // START Bit
-    i = SDCC_MIN_WAIT*4;
-    while(i--)
-    {
-        outpdw(pDest, clkl);
-        outpdw(pDest, clkh);
-        if((inp(pIn) & 0x02) == 0)
-        {
-            break;
-        }
-    }
-    
-    if(i == 0)
-    {
-        return SDCC_ERR_DATA_TIMEOUT;
-    }
-    
-    // Data
-    i = len;
-    while(i--)
-    {
-        mask = 0x80;
-        outpdw(pDest, clkl);
-        outpdw(pDest, clkh);
-        data  = (inp(pIn)<<6)&mask;
-        mask>>= 1;
-        outpdw(pDest, clkl);
-        outpdw(pDest, clkh);
-        data |= (inp(pIn)<<5)&mask;
-        mask>>= 1;
-        outpdw(pDest, clkl);
-        outpdw(pDest, clkh);
-        data |= (inp(pIn)<<4)&mask;
-        mask>>= 1;
-        outpdw(pDest, clkl);
-        outpdw(pDest, clkh);
-        data |= (inp(pIn)<<3)&mask;
-        mask>>= 1;
-        outpdw(pDest, clkl);
-        outpdw(pDest, clkh);
-        data |= (inp(pIn)<<2)&mask;
-        mask>>= 1;
-        outpdw(pDest, clkl);
-        outpdw(pDest, clkh);
-        data |= (inp(pIn)<<1)&mask;
-        mask>>= 1;
-        outpdw(pDest, clkl);
-        outpdw(pDest, clkh);
-        data |= (inp(pIn)   )&mask;
-        mask>>= 1;
-        outpdw(pDest, clkl);
-        outpdw(pDest, clkh);
-        data |= (inp(pIn)>>1)&mask;
-        *pdata++ = data;
-    }
-    
-    // CRC16
-    i = 2;
-    while(i--)
-    {
-        mask = 0x80;
-        outpdw(pDest, clkl);
-        outpdw(pDest, clkh);
-        data  = (inp(pIn)<<6)&mask;
-        mask>>= 1;
-        outpdw(pDest, clkl);
-        outpdw(pDest, clkh);
-        data |= (inp(pIn)<<5)&mask;
-        mask>>= 1;
-        outpdw(pDest, clkl);
-        outpdw(pDest, clkh);
-        data |= (inp(pIn)<<4)&mask;
-        mask>>= 1;
-        outpdw(pDest, clkl);
-        outpdw(pDest, clkh);
-        data |= (inp(pIn)<<3)&mask;
-        mask>>= 1;
-        outpdw(pDest, clkl);
-        outpdw(pDest, clkh);
-        data |= (inp(pIn)<<2)&mask;
-        mask>>= 1;
-        outpdw(pDest, clkl);
-        outpdw(pDest, clkh);
-        data |= (inp(pIn)<<1)&mask;
-        mask>>= 1;
-        outpdw(pDest, clkl);
-        outpdw(pDest, clkh);
-        data |= (inp(pIn)   )&mask;
-        mask>>= 1;
-        outpdw(pDest, clkl);
-        outpdw(pDest, clkh);
-        data |= (inp(pIn)>>1)&mask;
-        wCRC16 = (wCRC16<<8)|data;
-    }
-    
-    // END Bit, Dont care
-    outpdw(pDest, clkl);
-    outpdw(pDest, clkh);
-    
-    // CRC verify
-    if(wCRC16 != crc_16_bytes(buff, len))
-    {
-        return SDCC_ERR_DATA_CRC_FAIL;
-    }
-    return SDCC_NO_ERROR;
-}
-
-static INLINE SDCC_STATUS sdcc_send_widedata_bytes(byte *pdata, int len)
-{
-    register volatile uint32 *pDest = (volatile uint32*)GPIO_SDCC_OUT_ADDR;
-    register uint32 clkl = (*pDest)&GPIO_SDCC_CLK_MASK_I, clkh = (*pDest)|GPIO_SDCC_CLK_MASK;
-    register uint32 clkm = clkh&GPIO_SDCC_DAT_MASK_I;
-    register uint32 clkn = clkl&GPIO_SDCC_DAT_MASK_I;
-    register volatile byte *pIn = (volatile byte*)GPIO_SDCC_IN_ADDR;
-    register byte data;
-    register byte maskh = 0xF0,maskl=0x0F;
-    uint64 wCRC64 = CRC16_4(pdata, len);
-    int i;
-    
-    // START Bit
-    outpdw(pDest, clkn);
-    outpdw(pDest, clkm);
-    
-    while(len--)
-    {
-        data = *pdata++;
-        outpdw(pDest, ((data&maskh)<<21)|clkn);
-        outpdw(pDest, ((data&maskh)<<21)|clkm);
-        outpdw(pDest, ((data&maskl)<<25)|clkn);
-        outpdw(pDest, ((data&maskl)<<25)|clkm);
-    }
-    
-    // CRC
-    len = 8;
-    pdata = (byte *)&wCRC64;
-    pdata += 7;
-    while(len--)
-    {
-        data = *pdata--;
-        outpdw(pDest, ((data&maskh)<<21)|clkn);
-        outpdw(pDest, ((data&maskh)<<21)|clkm);
-        outpdw(pDest, ((data&maskl)<<25)|clkn);
-        outpdw(pDest, ((data&maskl)<<25)|clkm);
-    }
-    
-    // END Bit
-    outpdw(pDest, clkl);
-    outpdw(pDest, clkh);
-    
-    // Check CRC status
-    gpio_tlmm_config(GPIO_SDCC_DAT_0_IN);
-    
-    // START Bit
-    i = SDCC_MIN_WAIT;
-    while(i)
-    {
-        outpdw(pDest, clkl);
-        i--;
-        outpdw(pDest, clkh);
-        if((inp(pIn) & 0x02) == 0)
-        {
-            break;
-        }
-    }
-    
-    // CRC status
-    outpdw(pDest, clkl);
-    outpdw(pDest, clkh);
-    data  = (inp(pIn)<<1)&0x04;
-    outpdw(pDest, clkl);
-    outpdw(pDest, clkh);
-    data |= (inp(pIn)   )&0x02;
-    outpdw(pDest, clkl);
-    outpdw(pDest, clkh);
-    data |= (inp(pIn)>>1)&0x01;
-    
-    // END Bit
-    outpdw(pDest, clkl);
-    outpdw(pDest, clkh);
-    
-    // Busy Start bit
-    outpdw(pDest, clkl);
-    outpdw(pDest, clkh);
-    if((inp(pIn) & 0x02) == 0)
-    {
-        // Wait until write finished
-        i = SDCC_MAX_WAIT;
-        while(i)
-        {
-            outpdw(pDest, clkl);
-            i--;
-            outpdw(pDest, clkh);
-            if(inp(pIn)&0x02)
-            {
-                // Busy End bit
-                break;
-            }
-        }
-        
-        if(i == 0)
-        {
-            gpio_tlmm_config(GPIO_SDCC_DAT_0_OUT);
-            return SDCC_ERR_DATA_TIMEOUT;
-        }
-    }
-    
-    gpio_tlmm_config(GPIO_SDCC_DAT_0_OUT);
-    if(data != 0x2)
-    {
-        return SDCC_ERR_DATA_CRC_FAIL;
-    }
-    return SDCC_NO_ERROR;
-}
-
-static INLINE SDCC_STATUS sdcc_recv_widedata_bytes(byte *buff, int len)
-{
-    register volatile uint32 *pDest = (volatile uint32*)GPIO_SDCC_OUT_ADDR;
-    register uint32 clkl = (*pDest)&GPIO_SDCC_CLK_MASK_I, clkh = (*pDest)|GPIO_SDCC_CLK_MASK;
-    register volatile byte *pIn = (volatile byte*)GPIO_SDCC_IN_ADDR;
-    register byte data;
-    register byte maskh = 0xF0,maskl=0x0F;
-    register byte *pdata = buff;
-    int i;
-    uint64 wCRC64 = 0;
-    
-    // START Bit
-    i = SDCC_MIN_WAIT*4;
-    while(i--)
-    {
-        outpdw(pDest, clkl);
-        outpdw(pDest, clkh);
-        if((inp(pIn) & 0x1E) == 0)
-        {
-            break;
-        }
-    }
-    
-    if(i == 0)
-    {
-        return SDCC_ERR_DATA_TIMEOUT;
-    }
-    
-    // Data
-    i = len;
-    while(i--)
-    {
-        outpdw(pDest, clkl);
-        outpdw(pDest, clkh);
-        data  = (inp(pIn)<<3)&maskh;
-        outpdw(pDest, clkl);
-        outpdw(pDest, clkh);
-        data |= (inp(pIn)>>1)&maskl;
-        *pdata++ = data;
-    }
-    
-    i = 8;
-    while(i--)
-    {
-        outpdw(pDest, clkl);
-        outpdw(pDest, clkh);
-        data  = (inp(pIn)<<3)&maskh;
-        outpdw(pDest, clkl);
-        outpdw(pDest, clkh);
-        data |= (inp(pIn)>>1)&maskl;
-        wCRC64 = (wCRC64<<8)|data;
-    }
-
-    // END Bit, Dont care
-    outpdw(pDest, clkl);
-    outpdw(pDest, clkh);
-    
-    // CRC verify
-    if(wCRC64 != CRC16_4(buff, len))
-    {
-        return SDCC_ERR_DATA_CRC_FAIL;
-    }
-    return SDCC_NO_ERROR;
-}
-
-SDCC_STATUS sdcc_write_data(byte *buff, uint16 length)
-{
-    SDCC_STATUS rc = SDCC_NO_ERROR;
-    uint32 blksize = sdcc_getblksize(length);
-    
-    if(NULL == buff)
-    {
-        return(SDCC_ERR_WRITE_FIFO);
-    }
-
-    if(length < blksize)
-    {
-        blksize = length;
-    }
-    
-    if(sdcc_pdata.wide_bus)
-    {
-        while(length)
-        {
-            rc = sdcc_send_widedata_bytes(buff, blksize);
-            sdcc_clock_out(SDCC_SD_WAIT);
-            length -= blksize;
-            buff += blksize;
-            if(rc != SDCC_NO_ERROR)
-            {
-                break;
-            }
-        }
-    }
-    else
-    {
-        while(length)
-        {
-            rc = sdcc_send_data_bytes(buff, blksize);
-            sdcc_clock_out(SDCC_SD_WAIT);
-            length -= blksize;
-            buff += blksize;
-            if(rc != SDCC_NO_ERROR)
-            {
-                break;
-            }
-        }
-    }
-    
-    sdcc_clock_out(SDCC_SD_WAIT);
-    return rc;
-}
-
-SDCC_STATUS sdcc_read_data(byte *buff, uint16 length)
-{
-    SDCC_STATUS rc = SDCC_NO_ERROR;
-    uint32 blksize = sdcc_getblksize(length);
-    
-    if(!buff)
-    {
-        return(SDCC_ERR_READ_FIFO);
-    }
-
-    if(length < blksize)
-    {
-        blksize = length;
-    }
-    
-    if(sdcc_pdata.wide_bus)
-    {
-        gpio_tlmm_config(GPIO_SDCC_DAT_0_IN);
-        gpio_tlmm_config(GPIO_SDCC_DATOUT_1_IN);
-        gpio_tlmm_config(GPIO_SDCC_DATOUT_2_IN);
-        gpio_tlmm_config(GPIO_SDCC_DATOUT_3_IN);
-        while(length)
-        {
-            rc = sdcc_recv_widedata_bytes(buff, blksize);
-            length -= blksize;
-            buff += blksize;
-            if(rc != SDCC_NO_ERROR)
-            {
-                break;
-            }
-        }
-        gpio_tlmm_config(GPIO_SDCC_DAT_0_OUT);
-        gpio_tlmm_config(GPIO_SDCC_DATOUT_1_OUT);
-        gpio_tlmm_config(GPIO_SDCC_DATOUT_2_OUT);
-        gpio_tlmm_config(GPIO_SDCC_DATOUT_3_OUT);
-    }
-    else
-    {
-        gpio_tlmm_config(GPIO_SDCC_DAT_0_IN);
-        while(length)
-        {
-            rc = sdcc_recv_data_bytes(buff, blksize);
-            length -= blksize;
-            buff += blksize;
-            if(rc != SDCC_NO_ERROR)
-            {
-                break;
-            }
-        }
-        gpio_tlmm_config(GPIO_SDCC_DAT_0_OUT);
-    }
-    
-    sdcc_clock_out(SDCC_SD_WAIT);
-    return rc;
-}
-
-uint16 sdcc_getblksize(uint16 units)
-{
-  uint16    blksz       = 0;
-  
-    /* Note:
-       1. data size in byte_mode should be the power of 2
-       2. DMA doesn't work for small data size
-       3. units: number of bytes in byte mode
-                 number of blocks in block mode
-    */
-  if(SDCC_SDIO_BYTE_MODE == sdcc_pdata.block_mode ||
-     SDCC_MEM_BYTE_MODE == sdcc_pdata.block_mode)
-  {
-    /* set data length */
-    blksz = units;
-  }
-  else
-  {
-    if(SDCC_CARD_SDIO == sdcc_pdata.card_type)
-    {
-        blksz = sdcc_pdata.io.fn_blksz;
-    }
-    else
-    {
-        blksz = sdcc_pdata.mem.block_len;
-    }
-  }
-  
-  return blksz;
-
-}/* sdcc_getblksize */ 
-
-#endif
 

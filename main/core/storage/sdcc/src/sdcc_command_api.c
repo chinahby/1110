@@ -35,7 +35,6 @@ when         who     what, where, why
 #include "sdcc_priv.h"
 #include "sdcc_util.h"
 
-#ifdef T_QSC1110
 /******************************************************************************
 * Name: sdcc_raw_command
 *
@@ -435,4 +434,3 @@ sdcc_get_relative_card_address
    /* get the internal data rca */
    return sdcc_pdata.rca[sdcc_pdata.curr_sd_drv];
 } /* sdcc_get_relative_card_address */
-#endif //#ifdef T_QSC1110

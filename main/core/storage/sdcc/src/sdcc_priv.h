@@ -81,11 +81,8 @@ when         who     what, where, why
 /*************************************************************/
 /*                     DEFINES                               */
 /*************************************************************/
-#ifdef T_QSC1110
 #define SDCC_RETRY_CNT              1
-#else
-#define SDCC_RETRY_CNT              3
-#endif
+
 
 #define SDCC_CMD8_RETRIES           3
 
@@ -535,19 +532,12 @@ typedef struct {
     SDCC_HOST_STATE     host_state;
     uint16              rca[2];
     SDCC_STATUS         errno;
-#ifdef T_QSC1110
     boolean             enable_dma;
-#else
-    boolean             wide_bus;
-#endif
+
     uint32              block_mode;
-#ifdef T_QSC1110
     rex_tcb_type       *sdcc_tcb;
-#endif
     uint32              status;
-#ifdef T_QSC1110
     rex_timer_type      sdcc_dma_timer;
-#endif
     sdcc_mem_type       mem;
     sdcc_io_type        io;
     uint16              curr_sd_drv;
@@ -649,38 +639,5 @@ SDCC_STATUS       sdcc_process_interrupts(sdcc_cmd_type *sdcc_cmd);
 SDCC_STATUS       sdcc_poll_dma(void);
 uint32            sdcc_blk_in_bits(uint32 size);
 SDCC_CARD_TYPE    sdcc_find_sdio_card( void );
-#ifndef T_QSC1110
-#define GPIO_SDCC_OUT_ADDR      (HWIO_GPIO_OUT_0_ADDR)
-#define GPIO_SDCC_IN_ADDR       (HWIO_GPIO_IN_0_ADDR+3)
-#define GPIO_SDCC_OUT_MASK      0x3F000000
-#define GPIO_SDCC_OUT_MASK_I    0xC0FFFFFF
-#define GPIO_SDCC_CLK_MASK      0x01000000
-#define GPIO_SDCC_CLK_MASK_I    0xFEFFFFFF
-#define GPIO_SDCC_CLK_H_MASK    0x3F000000
-#define GPIO_SDCC_CLK_L_MASK    0x3E000000
-#define GPIO_SDCC_CMD_MASK      0x20000000
-#define GPIO_SDCC_CMD_MASK_I    0xDFFFFFFF
-#define GPIO_SDCC_DAT_0_MASK    0x02000000
-#define GPIO_SDCC_DAT_0_MASK_I  0xFDFFFFFF
-#define GPIO_SDCC_DAT_MASK      0x1E000000
-#define GPIO_SDCC_DAT_MASK_I    0xE1FFFFFF
-
-#define SDCC_SD_WAIT    16
-
-byte   CRC7    ( unsigned char * chr, int cnt );
-uint64 CRC16_4 ( unsigned char * chr, int cnt );
-static INLINE void sdcc_clock_out(int cnt);
-static INLINE void sdcc_clock_out_slow(int cnt);
-static INLINE void sdcc_send_cmd_bytes(byte *pdata, int len);
-static INLINE void sdcc_recv_cmd_bytes(byte *pdata, int len);
-static INLINE byte sdcc_recv_cmd_byte_wait(void);
-static INLINE SDCC_STATUS sdcc_send_data_bytes(byte *pdata, int len);
-static INLINE SDCC_STATUS sdcc_recv_data_bytes(byte *pdata, int len);
-static INLINE SDCC_STATUS sdcc_send_widedata_bytes(byte *pdata, int len);
-static INLINE SDCC_STATUS sdcc_recv_widedata_bytes(byte *pdata, int len);
-SDCC_STATUS sdcc_read_data(byte *buff, uint16 length);
-SDCC_STATUS sdcc_write_data(byte *buff, uint16 length);
-uint16 sdcc_getblksize(uint16 units);
-#endif
 #endif /* ifdef __SDCC_PRIV_H */
 

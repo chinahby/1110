@@ -156,11 +156,9 @@ sdcc_set_sd_bus_width
       DPRINTF(("Invalid bus_width %d setting\n", bus_width));
       return SDCC_ERR_INVALID_PARAM;
    }
-#ifdef T_QSC1110
    HWIO_OUTM(MCI_CLK,
              HWIO_FMSK(MCI_CLK, WIDEBUS),
              (bus_width << HWIO_MCI_CLK_WIDEBUS_SHFT));
-#endif
    sdcc_cmd.resp_type = SDCC_RESP_SHORT;
    sdcc_cmd.prog_scan = 0;
    
@@ -176,12 +174,6 @@ sdcc_set_sd_bus_width
    {
       DPRINTF(("Set bus width %d error %d on SD card\n", bus_width, rc));
    }
-#ifndef T_QSC1110
-   else
-   {
-     sdcc_pdata.wide_bus = (SDCC_SD_BUS_WIDTH_4BIT == bus_width)?TRUE:FALSE;
-   }
-#endif
    return rc;
 } /* sdcc_set_sd_bus_width */
 
