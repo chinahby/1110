@@ -272,7 +272,7 @@
 
 // bar and menu position
 #define TOPBAR_ICON_Y         2
-#define TOPBAR_ICON_WIDTH     17
+#define TOPBAR_ICON_WIDTH     23
 #define TOPBAR_ICON_SPACE     3
 
 #define TOPBAR_TITLE_TEXT_Y   6
