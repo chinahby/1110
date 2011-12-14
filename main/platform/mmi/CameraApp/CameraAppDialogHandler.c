@@ -274,7 +274,8 @@ static const CCameraSize g_CameraSizeCFG[] =
     //{128,160,L"128*160"}, // FULL Screen
     //{176,220,L"176*220"}, // QCIF
     {240,320,L"240*320"}, // QVGA
-    {480,640,L"480*640"}, // VGA   
+    {480,640,L"480*640"}, // VGA 
+    {600,800,L"600*800"}, // VGA
 #elif defined(FEATURE_DISP_320X240)
     //{128,160,L"128*160"}, // FULL Screen
     //{176,220,L"176*220"}, // QCIF
@@ -1877,10 +1878,12 @@ static boolean CameraApp_RoutePopMenuCommandEvent(CCameraApp *pMe, uint16 wParam
 
             case CAMERACFGQUALITY:
                 return CameraApp_PopMenu_QualityCommandHandleEvent(pMe, wParam);
-   
+
+            #ifndef FEATURE_VERSION_X3
             case CAMERACFGSIZE:
                 return CameraApp_PopMenu_SizeCommandHandleEvent(pMe, wParam);
-   
+            #endif
+            
             case CAMERACFGTONE:
                 return CameraApp_PopMenu_ShutterToneCommandHandleEvent(pMe, wParam);
    
@@ -2413,12 +2416,12 @@ static boolean CameraApp_InitpopMenu(CCameraApp *pMe, IMenuCtl *popMenu)
             	MSG_FATAL("CAMERACFGQUALITY",0,0,0);
                 CameraApp_PopMenu_QualityInit(pMe, popMenu);
                 break;
-   
+            #ifndef FEATURE_VERSION_X3
             case CAMERACFGSIZE:
                 MSG_FATAL("CAMERACFGSIZE",0,0,0);
                 CameraApp_PopMenu_SizeInit(pMe, popMenu);
                 break;
-   
+            #endif
             case CAMERACFGTONE:
             	MSG_FATAL("CAMERACFGQUALITY",0,0,0);
                 CameraApp_PopMenu_ShutterToneInit(pMe, popMenu);
@@ -2754,6 +2757,7 @@ static void CameraApp_PopMenu_SizeInit(CCameraApp *pMe, IMenuCtl *popMenu)
             }
             else if(pMe->m_sensor_model == 10)
             {
+                 MSG_FATAL("add SizeItem",0,0,0);
                 if(g_CameraSizeCFG_10[i].dx == 0)
                 {
                     break;
@@ -2768,6 +2772,7 @@ static void CameraApp_PopMenu_SizeInit(CCameraApp *pMe, IMenuCtl *popMenu)
             }
             else
             {
+                 MSG_FATAL("add SizeItem",0,0,0);
             	if(g_CameraSizeCFG_10[i].dx == 0)
                 {
                     break;
@@ -2781,7 +2786,7 @@ static void CameraApp_PopMenu_SizeInit(CCameraApp *pMe, IMenuCtl *popMenu)
                 i++; 
             }
         }
-        
+         MSG_FATAL("CameraApp_SetPopMenuRect",0,0,0);
         CameraApp_SetPopMenuRect(pMe, popMenu, i);
     }
     else
@@ -3218,7 +3223,8 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
 	        nResID[CAMERACFGQUALITY] = IDI_QUALITY_HIGH;
 	        break;
 	}
-    
+
+#ifndef FEATURE_VERSION_X3    
     // size cfgID
     (void)ICONFIG_GetItem(pMe->m_pConfig,
                           CFGI_CAMERA_SIZE,
@@ -3247,7 +3253,7 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
 	        nResID[CAMERACFGSIZE] = IDI_SIZE_160_128;
 	        break;
     }
-
+#endif
     // sound cfgID
     (void)ICONFIG_GetItem(pMe->m_pConfig,
                           CFGI_CAMERA_TONE,
@@ -3427,10 +3433,12 @@ static void CameraApp_DrawCFGPromptText(CCameraApp *pMe)
             case CAMERACFGQUALITY:
                 nResID = IDS_CFG_QUALITY;
                 break;
-                
+
+            #ifndef FEATURE_VERSION_X3      
             case CAMERACFGSIZE:
                 nResID = IDS_CFG_SIZE;
                 break;
+            #endif    
                 
             case CAMERACFGTONE:
                 nResID = IDS_CFG_TONE;
@@ -3443,7 +3451,7 @@ static void CameraApp_DrawCFGPromptText(CCameraApp *pMe)
             case CAMERACFGBANDING:
                 nResID = IDS_CFG_BANDING;
                 break;
-#endif
+           #endif
             case CAMERACFGRESET:
                 nResID = IDS_CFG_RESET;
                 break;
@@ -3521,8 +3529,8 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
 		}
 		else if ( pMe->m_nCameraMulti == OEMNV_CAMERA_MULTI_TWO)
 		{
-			captureSize.cx = 1200;
-		    captureSize.cy = 1600;
+			captureSize.cx = 600;
+		    captureSize.cy = 800;
 		    displaySize.cx = 240;
 		    displaySize.cy = 320;
 		}
