@@ -14,6 +14,10 @@
 /*============================================================================
     TYPE DEFINITIONS 
 ============================================================================*/
+#ifdef FEATURE_VERSION_C180
+#define T_QSC1110
+#endif
+
 #if defined(FEATURE_VERSION_W516)
 #ifdef T_QSC1110
 #define CAMSENSOR_SIC110A_RESET_PIN         GPIO_OUTPUT_10
@@ -21,7 +25,11 @@
 #define CAMSENSOR_SIC110A_RESET_PIN         GPIO_OUTPUT_53
 #endif
 #else
+#ifdef T_QSC1110
+#define CAMSENSOR_SIC110A_RESET_PIN         GPIO_OUTPUT_10
+#else
 #define CAMSENSOR_SIC110A_RESET_PIN         GPIO_OUTPUT_62
+#endif
 #endif
 #ifndef T_QSC1110
 #define SIC110A_OUTFORMAT_RGB565
@@ -95,7 +103,7 @@ uint8 camsensor_sic110a_ycbcr_unactive(void)
 
 boolean camsensor_sic110a_init(camsensor_function_table_type *camsensor_function_table_ptr,
                                camctrl_tbl_type              *camctrl_tbl_ptr)
-{
+{ 
     uint8   sensor_id;
     uint8 i=150;
     MSG_FATAL("camsensor_sic110a_init!",0,0,0);

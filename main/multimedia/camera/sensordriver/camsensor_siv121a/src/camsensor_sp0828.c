@@ -14,6 +14,10 @@
 /*============================================================================
     TYPE DEFINITIONS 
 ============================================================================*/
+#ifdef FEATURE_VERSION_C180
+#define T_QSC1110
+#endif
+
 #if defined(FEATURE_VERSION_W516)
 #ifdef T_QSC1110
 #define CAMSENSOR_SP0828_RESET_PIN         GPIO_OUTPUT_10
@@ -21,7 +25,11 @@
 #define CAMSENSOR_SP0828_RESET_PIN         GPIO_OUTPUT_53
 #endif
 #else
+#ifdef T_QSC1110
+#define CAMSENSOR_SP0828_RESET_PIN         GPIO_OUTPUT_10
+#else
 #define CAMSENSOR_SP0828_RESET_PIN         GPIO_OUTPUT_62
+#endif
 #endif
 #ifndef T_QSC1110
 #define SP0828_OUTFORMAT_RGB565
