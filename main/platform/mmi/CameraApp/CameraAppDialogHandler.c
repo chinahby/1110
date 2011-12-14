@@ -1004,8 +1004,11 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                 // 防止快速按键，导致hotkey Text存在于LCD上 
                 MSG_FATAL("AVK_INFO...................",0,0,0);
                 ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);
+				
+				MSG_FATAL("AVK_INFO...................end",0,0,0);
                 if ( pMe->m_isRecordMode == FALSE)
                 {
+                	
 	                if(!pMe->m_bCanCapture)
 	                {
 	                	if ( pMe->m_isStartFromFacebook == TRUE)
@@ -1032,6 +1035,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
 	                    ICAMERA_Stop(pMe->m_pCamera);
 	                    pMe->m_bIsPreview = FALSE;
 	                    CLOSE_DIALOG(DLGRET_POPMSG);
+						
 	                    return TRUE;
 	                }
 	                
@@ -1061,6 +1065,12 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                 
                 	if(nCameraSelfTime == 0)
                 	{
+                		#ifdef FEATURE_LCD_TOUCH_ENABLE
+                		if(pMe->m_nCameraMulti == OEMNV_CAMERA_MULTI_TWO)
+                		{
+                			ICAMERA_ControlFlash(pMe->m_pCamera,TRUE);
+                		}
+						#endif
 	                    pMe->m_nCameraState = CAM_CAPTURE;
 #ifdef FEATURE_DSP
 	                    CameraApp_RecordSnapShot(pMe);
@@ -1072,6 +1082,9 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
 #else
 	                    ICAMERA_Stop(pMe->m_pCamera);
 #endif
+						#ifdef FEATURE_LCD_TOUCH_ENABLE
+						ICAMERA_ControlFlash(pMe->m_pCamera,FALSE);
+						#endif
 	                }
 	                else
 	                {
@@ -2546,7 +2559,7 @@ static void CameraApp_PopMenu_MultiInit(CCameraApp *pMe,
                                               IMenuCtl *popMenu)
 {
 	IMENUCTL_DeleteAll(popMenu);
-    CameraApp_SetPopMenuRect(pMe, popMenu, 3);
+    CameraApp_SetPopMenuRect(pMe, popMenu, 2);
 	IMENUCTL_AddItem(popMenu, 
                      AEE_APPSCAMERAAPP_RES_FILE, 
                      IDS_MULTI_PRE, 
@@ -3123,7 +3136,9 @@ static void CameraApp_SetPopMenuRect(CCameraApp *pMe, IMenuCtl* popMenu, int men
     }
     
     dx = POPMENU_WIDTH;
-    
+    #ifdef FEATURE_DISP_240X320
+	pMe->m_nItemH = 28;
+	#endif
     // the number of popMenu Item is no more than 4
     if(menuItemSum < 4)
     {
@@ -3898,9 +3913,18 @@ static boolean CameraApp_SelfTimeRecordSnapShot(CCameraApp *pMe)
 
         if(pMe->m_pCamera)
         {
+        	#ifdef FEATURE_LCD_TOUCH_ENABLE
+	   		if(pMe->m_nCameraMulti == OEMNV_CAMERA_MULTI_TWO)
+	   		{
+	   			ICAMERA_ControlFlash(pMe->m_pCamera,TRUE);
+	   		}
+	   		#endif
             pMe->m_nCameraState = CAM_CAPTURE;
             ICAMERA_Stop(pMe->m_pCamera);
             //CameraApp_RecordSnapShot(pMe);
+            #ifdef FEATURE_LCD_TOUCH_ENABLE
+			ICAMERA_ControlFlash(pMe->m_pCamera,FALSE);
+			#endif
         }
         
         return TRUE;

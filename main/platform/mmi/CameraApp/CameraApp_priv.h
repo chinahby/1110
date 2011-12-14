@@ -282,7 +282,7 @@
 #define SCROLLBAR_Y           160
 #define POPMENU_BOTTOM_X      60
 #define POPMENU_BOTTOM_Y      60
-#define POPMENU_WIDTH         100 //117
+#define POPMENU_WIDTH         160 //117
 
 //Add By zzg 2010_07_24
 #define CFGBAR_TEXT_X		   2
