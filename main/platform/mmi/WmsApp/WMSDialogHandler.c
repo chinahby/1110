@@ -3273,7 +3273,7 @@ static boolean IDD_SETTING_Handler(void   *pUser,
 {
     IMenuCtl *pMenu = NULL;
     WmsApp *pMe = (WmsApp *)pUser;
-
+    MSG_FATAL("IDD_SETTING_Handler Start eCode=0x%x", eCode, 0, 0);
     if (NULL == pMe)
     {
         return FALSE;
@@ -3318,6 +3318,7 @@ static boolean IDD_SETTING_Handler(void   *pUser,
 #ifdef FEATURE_RESERVEDMSG  
 #endif                   
 #ifdef FEATURE_CARRIER_TAIWAN_APBW        //add by yangdecai   2010-08-23 
+            MSG_FATAL("IDD_SETTING_Handler EVT_DIALOG_INIT IDS_CALLBACKNUM", 0, 0, 0);
             MENU_ADDITEM(pMenu, IDS_CALLBACKNUM);
 #endif 
 #ifdef FEATURE_USES_MMS  
@@ -3395,6 +3396,7 @@ static boolean IDD_SETTING_Handler(void   *pUser,
 #endif                    
 #ifdef FEATURE_CARRIER_TAIWAN_APBW        //add by yangdecai   2010-08-23 
                 // 发出短信是否带回叫号码
+                MSG_FATAL("IDD_SETTING_Handler EVT_COMMAND IDS_CALLBACKNUM", 0, 0, 0);
                 case IDS_CALLBACKNUM:
                     CLOSE_DIALOG(DLGRET_CALLBACKNUM)
                     return TRUE;
@@ -9019,6 +9021,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                     ISHELL_LoadResString(pMe->m_pShell, AEE_WMSAPPRES_LANGFILE, IDS_DELIVERYREPORTS, wstrText[nControls], sizeof(wstrText));
                     nControls++;
                 }
+#ifdef FEATURE_CARRIER_TAIWAN_APBW 
 
                 if (mask & 0x10)
                 {
@@ -9026,7 +9029,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                     ISHELL_LoadResString(pMe->m_pShell, AEE_WMSAPPRES_LANGFILE, IDS_CALLBACKNUM, wstrText[nControls], sizeof(wstrText));
                     nControls++;
                 }
-                
+#endif                
                 if (mask & 0x01)
                 {
                     wControls[nControls] = IDC_TEXT_CBNUM;
@@ -9373,7 +9376,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                                 IMENUCTL_SetSel((IMenuCtl *)pControl, nSelID);
                             }
                             break;
-                            
+#ifdef FEATURE_CARRIER_TAIWAN_APBW                             
                         case IDC_TEXT_CBNUM:
                             ITEXTCTL_SetProperties((ITextCtl *)pControl, TP_FIXSETRECT|TP_FIXOEM|TP_FOCUS_NOSEL);
                             ITEXTCTL_SetMaxSize((ITextCtl *)pControl, MAX_PH_DIGITS - 1);
@@ -9408,7 +9411,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                             }
                             ITEXTCTL_SetCursorPos((ITextCtl *)pControl, TC_CURSOREND);
                             break;
-                            
+#endif                            
                         default:
                             break;
                     }
@@ -9542,6 +9545,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
 
         case EVT_DIALOG_END:
             {
+#ifdef FEATURE_CARRIER_TAIWAN_APBW                 
                 ITextCtl *pIText = (ITextCtl*)IDIALOG_GetControl(pMe->m_pActiveIDlg, IDC_TEXT_CBNUM);
                 
                 if (NULL != pIText)
@@ -9564,6 +9568,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                         }
                     }
                 }
+#endif                
             }
             return TRUE;
             
@@ -9782,7 +9787,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                     {
                         pMe->m_wPrevMenuSel = wNextFocus;
                     }
-                    
+#ifdef FEATURE_CARRIER_TAIWAN_APBW                    
                     switch (wControls[i])
                     {
                         case IDC_TEXT_CBNUM:
@@ -9805,7 +9810,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                         default:                            
                             break;
                     }
-                    
+#endif                   
                     ICONTROL_SetActive(pControl,FALSE);
                     IDIALOG_SetFocus(pMe->m_pActiveIDlg, pMe->m_wPrevMenuSel);
                             
@@ -18342,7 +18347,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                                 MENU_ADDITEM(pMe->m_pMenu, IDS_REPLY);
                                 MENU_ADDITEM(pMe->m_pMenu, IDS_FORWARD);
                                 MENU_ADDITEM(pMe->m_pMenu, IDS_CALL);
-                                MENU_ADDITEM(pMe->m_pMenu, IDS_SAVE);    //Add By zzg 2010_09_11                     
+                                MENU_ADDITEM(pMe->m_pMenu, IDS_SAVE_CURRENT_ITEM);    //Add By zzg 2010_09_11                     
                                 MENU_ADDITEM(pMe->m_pMenu, IDS_DELETE);
                                 // 设置菜单属性
                                 IMENUCTL_SetPopMenuRect(pMe->m_pMenu);
@@ -18682,7 +18687,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                     }
 
                 //保存
-                case IDS_SAVE:  
+                case IDS_SAVE_CURRENT_ITEM:  
                     {
                         char FilePath[MMS_MAX_CONTENT_NAME];  
                         char* pMimeType = NULL;
