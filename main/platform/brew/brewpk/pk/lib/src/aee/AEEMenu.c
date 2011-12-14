@@ -1286,8 +1286,10 @@ static void IMenuCtl_SetActive(IMenuCtl * po, boolean bActive)
 #endif //FEATURE_MENUTITLE_AUTOSCROLL
 
    // Icon views redraw async - If this is a disable, do not allow it!
+       #ifdef FEATURE_LCD_TOUCH_ENABLE
    		if((pme->m_cls!=AEECLSID_MENUCTL)&&(pme->m_cls!=AEECLSID_LISTCTL)&&
 		   (pme->m_cls!=AEECLSID_ICONVIEWCTL))
+		#endif
 		{
 		MSG_FATAL("pme->m_cls==========%x",pme->m_cls,0,0);
          if(!NO_REDRAW(pme)){
