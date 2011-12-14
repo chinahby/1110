@@ -47,6 +47,10 @@ extern uint8  g_mmsDataInfoMax;
 #define VIDEO_MENU_INDEX 30
 #define OTHER_MENU_INDEX 40
 #endif
+#if defined(FEATURE_VIDEOPLAYER)
+#include "VideoPlayer.h"
+#endif
+
 /*==============================================================================
                                  
                                  宏定义和常数
@@ -17825,6 +17829,29 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                 	MSG_FATAL("[IDD_VIEWMSG_MMS_Handler]: Create FileMgr Failed %x", result,0,0);
                 	return FALSE;
                 }
+                if (SUCCESS == IFILEMGR_Test(pIFileMgr, "fs:/hsmm/MMSVideoTemp"))
+                {
+                    AEEFileInfo myInfo;
+                    if( IFILEMGR_EnumInit(pIFileMgr, "fs:/hsmm/MMSVideoTemp", FALSE ) == SUCCESS )
+                    {
+                        while( IFILEMGR_EnumNext(pIFileMgr, &myInfo ) )
+                        {
+                            result = IFILEMGR_Remove(pIFileMgr, myInfo.szName);
+                            if( result != SUCCESS )
+                            {
+                                DBGPRINTF( "File %s could not be removed result=%d", myInfo.szName, result );
+                                //return result;
+                            }
+                        }
+                        IFILEMGR_RmDir(pIFileMgr, "fs:/hsmm/MMSVideoTemp");
+                    }
+                    if ( pIFile != NULL )
+                    {
+                        IFILE_Release( pIFile);
+                        pIFile = NULL;
+                    }
+                }
+
                 
                 // Init 
                 MEMSET((void*)&pDecdata->message,NULL,sizeof(MMS_WSP_DEC_MESSAGE_RECEIVED));
@@ -18129,13 +18156,35 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
 
         case EVT_USER_REDRAW:
             {
+                char* pMimeType = NULL;
+                uint8 MenuSelectdId = IMENUCTL_GetSel(pMenuCtl);  
+                ISTATIC_Redraw(pStatic);
                 IMENUCTL_SetActive(pMenuCtl, TRUE);
-                IMENUCTL_Redraw(pMenuCtl);  
-                if(ISTATIC_IsActive(pStatic))
-                {
-                    ISTATIC_Redraw(pStatic);
-                }
+                IMENUCTL_Redraw(pMenuCtl);                  
                 MSG_FATAL("pMe->m_CurrentState=%d, soundData.nCount=%d",pMe->m_CurrentState,pMe->m_ResData.soundData.nCount,0);
+                
+                if(pDecdata != NULL)
+                {
+                    DBGPRINTF("AVK_INFO MenuSelectdItem hContentType=%s", (const char*)pDecdata->message.mms_data.fragment[MenuSelectdId].hContentType);
+                    pMimeType = MMS_WSP_MineType2MormalMimeType((const char*)pDecdata->message.mms_data.fragment[MenuSelectdId].hContentType);
+                    if(pMimeType != NULL)
+                    {
+                        DBGPRINTF("pMimeType=%s", pMimeType);
+                        if(STRISTR(pMimeType, VIDEO_MIME_BASE))
+                        {
+                            if(pMe->m_eMBoxType == WMS_MB_OUTBOX_MMS)
+                            {
+                                DRAW_BOTTOMBAR(BTBAR_PLAY_BACK);
+                                return TRUE;
+                            }
+                            else
+                            {
+                                DRAW_BOTTOMBAR(BTBAR_OPTION_PLAY_BACK);
+                                return TRUE;
+                            }
+                        }
+                    }
+                }
                 if(pMe->m_eMBoxType == WMS_MB_OUTBOX_MMS)
                 {
                     if(pMe->m_ResData.soundData.nCount < 1)
@@ -18192,7 +18241,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                         DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
                     }
                 }
-               // IDISPLAY_Update(pMe->m_pDisplay);         
+                IDISPLAY_Update(pMe->m_pDisplay);         
                 return TRUE;
             }
         
@@ -18311,44 +18360,132 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                     case AVK_INFO:
                         if(pMe->m_pMenu == NULL)
                         {
-                            if(pMe->m_pMedia != NULL)
+                            char* pMimeType = NULL;
+                            uint8 MenuSelectdId = IMENUCTL_GetSel(pMenuCtl);  
+                            if(pDecdata != NULL)
                             {
-                                int result = 0;
-                                MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] AVK_INFO m_CurrentState=%d",pMe->m_CurrentState ,0 , 0);
-                                if(pMe->m_CurrentState == PLAYER_PAUSE)
+                                DBGPRINTF("AVK_INFO MenuSelectdItem hContentType=%s", (const char*)pDecdata->message.mms_data.fragment[MenuSelectdId].hContentType);
+                                pMimeType = MMS_WSP_MineType2MormalMimeType((const char*)pDecdata->message.mms_data.fragment[MenuSelectdId].hContentType);
+                                if(pMimeType != NULL)
                                 {
-                                    result = IMedia_Resume(pMe->m_pMedia);
-                                    if(result != SUCCESS)
+                                    DBGPRINTF("pMimeType=%s", pMimeType);
+                                    if(STRISTR(pMimeType, VIDEO_MIME_BASE))
                                     {
-                                        result = IMedia_Stop(pMe->m_pMedia);
-                                        result = IMedia_Play(pMe->m_pMedia);
-                                    }                                    
-                                }
-                                else if(pMe->m_CurrentState == PLAYER_PLAY)
-                                {
-                                    result = IMedia_Pause(pMe->m_pMedia);
-                                }
-                                else if(pMe->m_CurrentState == PLAYER_STOP)
-                                {
-                                    result = IMedia_Play(pMe->m_pMedia);
-                                    if(result != SUCCESS)
+                                        IVideoPlayer *pVideoPlayer = NULL;
+                                        IFile* pIFile = NULL;
+                    		            IFileMgr *pIFileMgr = NULL;
+                                        char FilePath[MMS_MAX_CONTENT_NAME];  
+                                        int result = ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_FILEMGR,(void **)&pIFileMgr);                                        
+                                        if(result != SUCCESS)
+                                        {
+                                            return FALSE;
+                                        }
+                                        if (SUCCESS != IFILEMGR_Test(pIFileMgr, "fs:/hsmm/MMSVideoTemp"))
+                                        {
+                                            (void)IFILEMGR_MkDir(pIFileMgr, "fs:/hsmm/MMSVideoTemp");
+                                        }  
+                                        SPRINTF(FilePath,"fs:/hsmm/MMSVideoTemp/%s",(char*)(pDecdata->message.mms_data.fragment[MenuSelectdId].hContentName));
+                                        DBGPRINTF("FilePath=%s",FilePath);
+                                        result = EBADPARM;
+                                        if(IFILEMGR_Test(pIFileMgr, FilePath) ==  SUCCESS)
+                                        {
+                                            IFILEMGR_Remove(pIFileMgr, FilePath);
+                                        }
+                                        pIFile = IFILEMGR_OpenFile( pIFileMgr, FilePath, _OFM_CREATE);
+                                        result = IFILEMGR_GetLastError(pIFileMgr);
+                                        if ( (pIFile != NULL ) && (result == SUCCESS))
+                                        {
+                                            MSG_FATAL("IDD_VIEWMSG_MMS_Handler VideoPlay 1", 0,0,0);
+                                            IFILE_Write( pIFile, pDecdata->message.mms_data.fragment[MenuSelectdId].pContent, pDecdata->message.mms_data.fragment[MenuSelectdId].size);
+                                            result = IFILEMGR_GetLastError(pIFileMgr);
+                                            MSG_FATAL("size=%d",pDecdata->message.mms_data.fragment[MenuSelectdId].size,0,0);
+                                        }  
+                                        else
+                                        {
+                                            MSG_FATAL("IDD_VIEWMSG_MMS_Handler VideoPlay 2",0,0,0);
+                                            if ( pIFile != NULL )
+                                            {
+                                                IFILE_Release( pIFile);
+                                                pIFile = NULL;
+                                            }
+                                            if ( pIFileMgr != NULL )
+                                            {
+                                                IFILEMGR_Release(pIFileMgr);
+                                                pIFileMgr = NULL;
+                                            }                                            
+                                            return FALSE;
+                                        }
+                                        if ( pIFile != NULL )
+                                        {
+                                            IFILE_Release( pIFile);
+                                            pIFile = NULL;
+                                        }
+                                        if ( pIFileMgr != NULL )
+                                        {
+                                            IFILEMGR_Release(pIFileMgr);
+                                            pIFileMgr = NULL;
+                                        }                                        
+                                        ISHELL_CreateInstance(pMe->m_pShell,
+                                             AEECLSID_VIDEOPLAYER,
+                                             (void**)&pVideoPlayer);
+                                       MSG_FATAL("IDD_VIEWMSG_MMS_Handler VideoPlay 3",0,0,0);
+                                       if(pVideoPlayer != NULL)
+                                       {
+                                          MSG_FATAL("IDD_VIEWMSG_MMS_Handler VideoPlay 4",0,0,0);
+                                          IVideoPlayer_Play(pVideoPlayer, FilePath);
+                                          IVideoPlayer_Release(pVideoPlayer);
+                                          pVideoPlayer = NULL;
+                                       }
+                                       else
+                                       {
+                                          MSG_FATAL("IDD_VIEWMSG_MMS_Handler VideoPlay 5",0,0,0);
+                                          return FALSE;
+                                       }
+                                       return TRUE;        
+                                    }
+                                   // else if(STRISTR(pMimeType, SOUND_MIME_BASE))
                                     {
-                                        result = IMedia_Stop(pMe->m_pMedia);
-                                        result = IMedia_Play(pMe->m_pMedia);
-                                    }                                    
+                                        if(pMe->m_pMedia != NULL)
+                                        {
+                                            int result = 0;
+                                            MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] AVK_INFO m_CurrentState=%d",pMe->m_CurrentState ,0 , 0);
+                                            if(pMe->m_CurrentState == PLAYER_PAUSE)
+                                            {
+                                                result = IMedia_Resume(pMe->m_pMedia);
+                                                if(result != SUCCESS)
+                                                {
+                                                    result = IMedia_Stop(pMe->m_pMedia);
+                                                    result = IMedia_Play(pMe->m_pMedia);
+                                                }                                    
+                                            }
+                                            else if(pMe->m_CurrentState == PLAYER_PLAY)
+                                            {
+                                                result = IMedia_Pause(pMe->m_pMedia);
+                                            }
+                                            else if(pMe->m_CurrentState == PLAYER_STOP)
+                                            {
+                                                result = IMedia_Play(pMe->m_pMedia);
+                                                if(result != SUCCESS)
+                                                {
+                                                    result = IMedia_Stop(pMe->m_pMedia);
+                                                    result = IMedia_Play(pMe->m_pMedia);
+                                                }                                    
+                                            }
+                                            else
+                                            {
+                                                result = IMedia_Stop(pMe->m_pMedia);
+                                            }
+                                            if(result != SUCCESS)
+                                            {
+                                                result = IMedia_Stop(pMe->m_pMedia);
+                                                result = IMedia_Play(pMe->m_pMedia);
+                                            }
+                                            MSG_FATAL("IDD_VIEWMSG_MMS_Handler] State=%d, result=%d", pMe->m_CurrentState, result, 0);
+                                            return TRUE;
+                                        }                                              
+                                    }
                                 }
-                                else
-                                {
-                                    result = IMedia_Stop(pMe->m_pMedia);
-                                }
-                                if(result != SUCCESS)
-                                {
-                                    result = IMedia_Stop(pMe->m_pMedia);
-                                    result = IMedia_Play(pMe->m_pMedia);
-                                }
-                                MSG_FATAL("IDD_VIEWMSG_MMS_Handler] State=%d, result=%d", pMe->m_CurrentState, result, 0);
-                            }                           
-                            return TRUE;
+                            }
                         }
                         return IDD_WRITEMSG_Handler((void *)pMe, EVT_COMMAND, IDS_SEND, 0);
                         
@@ -18462,6 +18599,16 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                                         }
                                         IFILEMGR_RmDir(pIFileMgr, "fs:/hsmm/MMSTemp");
                                     }
+                                    if ( pIFile != NULL )
+                                    {
+                                        IFILE_Release( pIFile);
+                                        pIFile = NULL;
+                                    }
+                                    if ( pIFileMgr != NULL )
+                                    {
+                                        IFILEMGR_Release(pIFileMgr);
+                                        pIFileMgr = NULL;
+                                    }                                    
                                     CLOSE_DIALOG(DLGRET_EFSFULL_MMS)
                                     return TRUE;
                                 }
