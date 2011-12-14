@@ -11040,7 +11040,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                         AEERect rc={0};
                         AEERect Temprc={0};
                         // 将文本控件置于非激活状态
-                        ITEXTCTL_SetActive(pIText, FALSE);
+                        ITEXTCTL_SetActive(pIText, FALSE);				
                         
                         // 动态添加菜单项
                         MENU_ADDITEM(pMe->m_pMenu, IDS_SEND);
@@ -11157,9 +11157,12 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                         IMENUCTL_SetPopMenuRect(pMe->m_pMenu);
 
                         IMENUCTL_SetProperties(pMe->m_pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
+						IMENUCTL_SetOemProperties(pMe->m_pMenu, OEMMP_USE_MENU_STYLE);
+						
                         IMENUCTL_SetBottomBarType(pMe->m_pMenu,BTBAR_SELECT_BACK);
                         
-                        IMENUCTL_SetActive(pMe->m_pMenu, TRUE);
+                        IMENUCTL_SetActive(pMe->m_pMenu, TRUE);						
+    					(void)IMENUCTL_Redraw(pMe->m_pMenu);     						
                         
                         IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     }
@@ -12157,7 +12160,7 @@ static boolean IDD_EDITTEMPLATE_Handler(void *pUser,
 static void SetControlRect(WmsApp *pMe, void  *Ctl)
 {
     AEERect ctlRect;
-
+	
     if (pMe == NULL)
     {
         return;

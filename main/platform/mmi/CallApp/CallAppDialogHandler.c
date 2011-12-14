@@ -684,61 +684,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 #else
             Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
 #endif
-
-#ifdef FEATURE_VERSION_W208S
-			{
-				BottomBar_e_Type  type = BTBAR_NONE;
-				
-				if (pMe->m_b_incall )
-				{
-#ifndef FEATURE_ALL_KEY_PAD
-					type = BTBAR_OPTION_DELETE;
-#else
-					type = BTBAR_OPTION_BACK;
-#endif
-				}
-				else
-				{
-#ifdef FEATRUE_SET_IP_NUMBER
-#ifdef FEATURE_ICM
-					if(pMe->m_b_have_set_ip && !(CallApp_IsEmergencyMode(pMe->m_pICM)
-#else
-					if(pMe->m_b_have_set_ip && !(CallApp_IsEmergencyMode(pMe->m_pITelephone)
-#endif
-					||pMe->idle_info.uimLocked))
-					{
-						type = BTBAR_SAVE_IP_DELETE;
-					}
-					else
-#endif/*FEATRUE_SET_IP_NUMBER*/
-					{
-#ifndef FEATURE_ALL_KEY_PAD
-						type = BTBAR_OPTION_SAVE_DEL; //BTBAR_SAVE_DELETE;
-#else
-						if (0 == WSTRCMP(pMe->m_DialString, L"*"))
-						{
-							type = BTBAR_LOCK_BACK;							
-						}
-						else						
-						{
-							type = BTBAR_OPTION_SAVE_BACK;
-						}
-#endif
-					}
-				}
-
-				if (pMe->m_bShowPopMenu) //menu
-				{
-					return;
-				}
-				//drawBottomBar(pMe->m_pDisplay,AEE_FONT_NORMAL,type);
-
-				MSG_FATAL("***zzg REFUI_DRAW_BOTTOMBAR***", 0, 0, 0);
-				REFUI_DRAW_BOTTOMBAR(type)
-			}
-#else
 			CallApp_Draw_NumEdit_SoftKey(pMe);
-#endif
             CallApp_Display_Number(pMe);
 
 #ifdef WIN32//wlh for virtualkey
@@ -1951,7 +1897,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 #ifdef FEATURE_EDITABLE_RECORD
                    if(pMe->m_bEditRecNumber)
                    {
-                   	   #ifndef FEATURE_ALL_KEY_PAD
+#ifndef FEATURE_ALL_KEY_PAD
                        if(len == 0)
                        {
                        		CallApp_Draw_NumEdit_SoftKey(pMe);
@@ -1961,7 +1907,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                            CLOSE_DIALOG(DLGRET_OK)
                            return TRUE;
                        }
-                       #else
+#else
                        if(dwParam == 0)
                        {
                        		CLOSE_DIALOG(DLGRET_OK)
@@ -1979,7 +1925,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                               return TRUE;
                           }
                        }
-                       #endif
+#endif
                    }
                    else if (len <= 1)
 #else
@@ -10758,11 +10704,26 @@ static void CallApp_Draw_NumEdit_SoftKey(CCallApp *pMe)
         else
 #endif/*FEATRUE_SET_IP_NUMBER*/
         {
-            #ifndef FEATURE_ALL_KEY_PAD
+#ifndef FEATURE_ALL_KEY_PAD
             type = BTBAR_OPTION_SAVE_DEL; //BTBAR_SAVE_DELETE;
-        	#else
-        	type = BTBAR_OPTION_SAVE_BACK;
-        	#endif
+#else
+
+#ifdef FEATURE_VERSION_W208S
+
+			if (0 == WSTRCMP(pMe->m_DialString, L"*"))
+			{
+				type = BTBAR_LOCK_BACK; 						
+			}
+			else						
+			{
+				type = BTBAR_OPTION_SAVE_BACK;
+			}
+#else
+			type = BTBAR_OPTION_SAVE_BACK;
+#endif
+
+        	
+#endif
         }
     }
 
@@ -11122,6 +11083,7 @@ static void CallApp_Process_Spec_Key_Event(CCallApp *pMe,uint16 wp)
     int len = 0;
 
     CALL_FUN_START("CallApp_Process_Spec_Key_Event",0, 0, 0);
+	MSG_FATAL("***zzg CallApp_Process_Spec_Key_Event***",0, 0, 0);
 
     len = WSTRLEN(pMe->m_DialString);
 
