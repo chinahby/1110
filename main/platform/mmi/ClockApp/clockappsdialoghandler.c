@@ -657,7 +657,7 @@ static boolean  HandleAlarmOptionDialogEvent(CClockApps *pMe,
 
         case EVT_USER_REDRAW:
         {
-            (void)IMENUCTL_Redraw( pMenuOption);
+            //(void)IMENUCTL_Redraw( pMenuOption);    //dele by yangdecai
         }
         return TRUE;
 

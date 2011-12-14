@@ -469,7 +469,7 @@ static boolean  HandleMainDialogEvent(CSoundMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);  //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -677,7 +677,7 @@ static boolean  HandleSceneModeSubDialogEvent(CSoundMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -948,7 +948,7 @@ static boolean  HandleSoundMenuProfilesDialogEvent(CSoundMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:        	
@@ -1282,7 +1282,7 @@ static boolean  HandleHintDialogEvent(CSoundMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -2195,7 +2195,7 @@ static boolean  HandleVolumeDialogEvent(CSoundMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -2327,7 +2327,7 @@ static boolean  HandleFMModeDialogEvent(CSoundMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -2507,7 +2507,7 @@ static boolean  HandleOtherSelDialogEvent(CSoundMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);    //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -2713,7 +2713,7 @@ static boolean  HandleKeySndMenuDialogEvent(CSoundMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:

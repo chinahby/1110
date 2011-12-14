@@ -2164,7 +2164,7 @@ IDI_SECURITY_BACKGROUND);
 		
 		case EVT_USER_REDRAW:		
 		{			
-			(void)IMENUCTL_Redraw(pMenu);			
+			//(void)IMENUCTL_Redraw(pMenu);		   //dele by yangdecai	
 			return TRUE;
 		}
 
@@ -2303,7 +2303,7 @@ static boolean HandleDeviceDialogEvent(CBTApp *pMe,
 		
         case EVT_USER_REDRAW:    			
         {
-			(void)IMENUCTL_Redraw(pMenu);
+			//(void)IMENUCTL_Redraw(pMenu);    //dele by yangdecai
             return TRUE;
         }
 
@@ -3099,7 +3099,7 @@ static boolean HandleMyInfoOpitionDialogEvent(CBTApp *pMe,
 
         case EVT_USER_REDRAW:    			
         {
-			(void)IMENUCTL_Redraw(pMenu);
+			//(void)IMENUCTL_Redraw(pMenu);     //dele by yangdecai
             return TRUE;
         }	
 
@@ -3527,7 +3527,7 @@ static boolean  HandleSetSecurityDialogEvent(CBTApp *pMe,
 		
         case EVT_USER_REDRAW:    	
 		{			
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);    //dele by yangdecai
             return TRUE;
         }
 
@@ -3723,7 +3723,7 @@ static boolean  HandleSetDiscoverableDialogEvent(CBTApp *pMe,
 			
 			case EVT_USER_REDRAW:		
 			{			
-				(void)IMENUCTL_Redraw(pMenu);
+				//(void)IMENUCTL_Redraw(pMenu);    //dele by yangdecai
 				return TRUE;
 			}
 	
@@ -3933,7 +3933,7 @@ static boolean  HandleSetIOCapabilityDialogEvent(CBTApp *pMe,
 		
 		case EVT_USER_REDRAW:		
 		{			
-			(void)IMENUCTL_Redraw(pMenu);
+			//(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
 			return TRUE;
 		}
 
@@ -4125,7 +4125,7 @@ static boolean  HandleSetDebugKeyDialogEvent(CBTApp * pMe,
 		
 		case EVT_USER_REDRAW:		
 		{			
-			(void)IMENUCTL_Redraw(pMenu);			
+			//(void)IMENUCTL_Redraw(pMenu);		    //dele by yangdecai	
 			return TRUE;
 		}
 
@@ -4250,7 +4250,7 @@ static boolean  HandleFtpDialogEvent(CBTApp * pMe,
 		
         case EVT_USER_REDRAW:    			
         {
-			(void)IMENUCTL_Redraw(pMenu);
+			//(void)IMENUCTL_Redraw(pMenu);     //dele by yangdecai
             return TRUE;
         }
 
@@ -4436,7 +4436,7 @@ static boolean  HandleFtpServerDialogEvent(CBTApp * pMe,
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
 #endif 
-						MSG_ERROR( "FTP_Deregister() failed with %x", result, 0, 0 );					
+						//MSG_FATAL( "FTP_Deregister() failed with %x", result, 0, 0 );					
 						BTApp_ShowMessage(pMe, IDS_MSG_SVR_DEREG_FAILED, NULL, 3);
 					}
 					else
@@ -4773,7 +4773,7 @@ static boolean  HandleFtpSettingDialogEvent(CBTApp * pMe,
 		
 		case EVT_USER_REDRAW:		
 		{			
-			(void)IMENUCTL_Redraw(pMenu);			
+			//(void)IMENUCTL_Redraw(pMenu);	    //dele by yangdecai		
 			return TRUE;
 		}
 
@@ -4889,7 +4889,7 @@ static boolean  HandleFtpServerRegisterDialogEvent(CBTApp * pMe,
 		
 		case EVT_USER_REDRAW:		
 		{			
-			(void)IMENUCTL_Redraw(pMenu);			
+			//(void)IMENUCTL_Redraw(pMenu);		    //dele by yangdecai	
 			return TRUE;
 		}
 
@@ -5544,7 +5544,7 @@ static boolean HandleFtpBrowseOpitionDialogEvent(CBTApp * pMe,AEEEvent eCode,uin
 		
 		case EVT_USER_REDRAW:		
 		{			
-			(void)IMENUCTL_Redraw(pMenu);			
+			//(void)IMENUCTL_Redraw(pMenu);		    //dele by yangdecai	
 			return TRUE;
 		}
 
@@ -6980,7 +6980,7 @@ static boolean HandleSendFileDialogEvent(CBTApp *pMe,
 
         case EVT_USER_REDRAW:    			
         {
-			(void)IMENUCTL_Redraw(pMenu);
+			//(void)IMENUCTL_Redraw(pMenu);     //dele by yangdecai
             return TRUE;
         }
 

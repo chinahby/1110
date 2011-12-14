@@ -1344,7 +1344,7 @@ static boolean  HandleBacklightingDialogEvent(CDisplayMenu *pMe,
 
             // 统一更新界面
             //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -1554,7 +1554,7 @@ static boolean  HandleContrastDialogEvent(CDisplayMenu *pMe,
 
             // 统一更新界面
             //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -1749,7 +1749,7 @@ static boolean  HandleScreensaverTimeoutDialogEvent(CDisplayMenu *pMe,
 
             // 统一更新界面
             //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -1927,7 +1927,7 @@ static boolean  HandleDesktop_Theme_DialogEvent(CDisplayMenu *pMe,
         }
 
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -3899,7 +3899,7 @@ static boolean HandleMenuStyleDialogEvent(CDisplayMenu *pMe,
         }
 
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -4013,7 +4013,7 @@ static boolean  HandleColorfulMenuDialogEvent(CDisplayMenu *pMe,
         }
 
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -4632,7 +4632,7 @@ static boolean  HandleRENDMenuDialogEvent(CDisplayMenu *pMe,
         }
 
         case EVT_USER_REDRAW:
-			(void)IMENUCTL_Redraw(pMenu);
+			//(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:

@@ -3674,7 +3674,7 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                 return TRUE;
             }
             IMENUCTL_SetActive(pMenuCtl, TRUE);
-            IMENUCTL_Redraw(pMenuCtl);
+            //IMENUCTL_Redraw(pMenuCtl);     //dele by yangdecai
             return TRUE;
             
         case EVT_DIALOG_INIT:

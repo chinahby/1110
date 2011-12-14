@@ -444,7 +444,7 @@ static boolean  SecurityMainDlgHandler(CSecurityMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);  //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -650,7 +650,7 @@ static boolean  SecurityApplicationLockDlgHandler(CSecurityMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -836,7 +836,7 @@ static boolean  SecurityPassWordDlgHandler(CSecurityMenu *pMe,
             return TRUE;
         }
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);    //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -1031,7 +1031,7 @@ static boolean   SecurityKeyLockDlgHandler(CSecurityMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -1552,7 +1552,7 @@ static boolean  SecurityPinCheckDlgHandler(CSecurityMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-           (void)IMENUCTL_Redraw(pMenu);
+           //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
            return TRUE;
 
         case EVT_DIALOG_END:
@@ -5451,7 +5451,7 @@ static boolean  SecurityEmergencyCallHandler(CSecurityMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -5606,7 +5606,7 @@ static boolean  HandleRestoreDialogEvent(CSecurityMenu *pMe,
         case EVT_USER_REDRAW:
             // 统一更新界面
             //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -5838,7 +5838,7 @@ static boolean  HandleChangeCodeDialogEvent(CSecurityMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:

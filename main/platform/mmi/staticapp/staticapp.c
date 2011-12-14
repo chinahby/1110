@@ -1108,7 +1108,7 @@ static boolean Staticapp_ListMenuHandler(Staticapp *pMe, AEEEvent eCode, uint16 
             return TRUE;
             
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);    //dele by yangdecai
             return TRUE;
             
         case EVT_DIALOG_END:
@@ -1208,7 +1208,7 @@ static boolean Staticapp_ListFGualHandler(Staticapp *pMe, AEEEvent eCode, uint16
 
 
 		case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);     //dele by yangdecai
             return TRUE;
             
         case EVT_DIALOG_END:
@@ -1310,7 +1310,7 @@ static boolean Staticapp_ListAplikasiHandler(Staticapp *pMe, AEEEvent eCode, uin
 
 
 		case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);    //dele by yangdecai
             return TRUE;
             
         case EVT_DIALOG_END:

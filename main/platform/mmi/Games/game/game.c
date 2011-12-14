@@ -988,7 +988,7 @@ static boolean Game_ListMenuHandler(Game *pMe, AEEEvent eCode, uint16 wParam, ui
             return TRUE;
             
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);    //dele by yangdecai
             return TRUE;
             
         case EVT_DIALOG_END:

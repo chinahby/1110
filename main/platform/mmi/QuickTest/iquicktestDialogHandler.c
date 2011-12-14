@@ -421,7 +421,7 @@ static boolean  QuickTest_MainMenuHandler(CQuickTest *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);    //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:

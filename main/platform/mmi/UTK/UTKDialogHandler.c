@@ -375,7 +375,7 @@ static boolean  IDD_MAIN_Handler(CUTK *pMe,
             return TRUE;
             
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);    //dele by yangdecai
             IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
             if (IMENUCTL_GetItemCount(pMenu)==0)
             {
@@ -618,7 +618,7 @@ static boolean  IDD_LIST_Handler(CUTK *pMe,
             return TRUE;
             
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);    //dele by yangdecai
             IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
             return TRUE;
             

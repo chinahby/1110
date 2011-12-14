@@ -522,7 +522,7 @@ static boolean CameraApp_MainMenuHandleEvent(CCameraApp *pMe, AEEEvent eCode, ui
             return TRUE;
 
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);
       
             return TRUE;
             
@@ -692,7 +692,7 @@ static boolean CameraApp_CameraPhotoModeHandleEvent(CCameraApp *pMe, AEEEvent eC
             return TRUE;
 
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);
       
             return TRUE;
             

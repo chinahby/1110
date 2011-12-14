@@ -1181,7 +1181,7 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
             return TRUE;
             
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);
             return TRUE;
             
         case EVT_DIALOG_END:
@@ -1296,7 +1296,7 @@ static boolean  Application_FlashlightMenuHandler(Application *pMe, AEEEvent eCo
             return TRUE;
 
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);
             return TRUE;
 
         case EVT_DIALOG_END:

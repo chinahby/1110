@@ -952,7 +952,7 @@ static boolean MainMenu_ListMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
             return TRUE;
             
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);    //dele by yangdecai
             return TRUE;
             
         case EVT_DIALOG_END:

@@ -1182,7 +1182,7 @@ static boolean IDD_MAIN_Handler(void        *pUser,
             
             // 更新界面
             //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);  
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
             return TRUE;
 
         case EVT_CTL_SEL_CHANGED:
@@ -3144,7 +3144,7 @@ static boolean IDD_DELETEMSGS_Handler(void *pUser,
 
             // 更新界面
             //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);  //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -3343,7 +3343,7 @@ static boolean IDD_SETTING_Handler(void   *pUser,
             
             // 更新界面
             //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
             return TRUE;
 
         case EVT_CTL_SEL_CHANGED:
@@ -3570,7 +3570,7 @@ static boolean IDD_RESERVEDMSG_Handler(void   *pUser,
         case EVT_USER_REDRAW:
             // 更新界面
             //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
             return TRUE;
 
         case EVT_CTL_SEL_CHANGED:
@@ -4836,7 +4836,7 @@ static boolean IDD_OUTMSGSAVEOPT_Handler(void *pUser,
             
             // 更新界面
             //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);     //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -4990,7 +4990,7 @@ static boolean IDD_PRIORITY_Handler(void *pUser,
 
             // 更新界面
             //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);    //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -5160,7 +5160,7 @@ static boolean IDD_SENDMODE_Handler(void *pUser,
 
         case EVT_USER_REDRAW:
 
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);    //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -5324,7 +5324,7 @@ static boolean IDD_REPORTS_Handler(void *pUser,
             
             // 更新界面
             //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);    //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -5490,7 +5490,7 @@ static boolean IDD_OPTION_YESNO_Handle(void *pUser,
             
             // 更新界面
             //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -5735,7 +5735,7 @@ static boolean IDD_AUTOREPLACE_Handler(void *pUser,
 
         case EVT_USER_REDRAW:
             // 更新界面
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);    //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -5900,7 +5900,7 @@ static boolean IDD_CALLBACKNUMSWITCH_Handler(void *pUser,
             
             // 更新界面
             //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);    //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -6298,7 +6298,7 @@ static boolean IDD_AUTODELETE_Handler(void *pUser,
             
             // 更新界面
             //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);    //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -6438,7 +6438,7 @@ static boolean IDD_RSVDMSGALERTTIMEOUT_SETTING_Handler(void *pUser,
             
             // 更新界面
             //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);    //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -6598,7 +6598,7 @@ static boolean IDD_STORAGE_Handler(void   *pUser,
             
             // 更新界面
             //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);    //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -6795,7 +6795,7 @@ static boolean IDD_MESSAGEVALIDITY_Handler(void   *pUser,
             
             // 更新界面
             //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);    //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -11828,7 +11828,7 @@ static boolean IDD_TEMPLATES_Handler(void   *pUser,
             //DRAW_BOTTOMBAR(BTBAR_SELECT_BACK)
             
             //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);    //dele by yangdecai
             return TRUE;
 
         case EVT_KEY:
@@ -12392,7 +12392,7 @@ static boolean IDD_MSGOPTS_Handler(void *pUser,
             //DRAW_BOTTOMBAR(BTBAR_SELECT_BACK)
             
             //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);    //dele by yangdecai
             return TRUE;
             
         case EVT_DIALOG_END:
@@ -13958,7 +13958,7 @@ static boolean IDD_EXTARCTDETAILS_Handler(void *pUser,
             return TRUE;
             
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);    //dele by yangdecai
             return TRUE;
             
         case EVT_DIALOG_END:
@@ -14135,7 +14135,7 @@ static boolean IDD_EXTARCTEDITEMLIST_Handler(void *pUser,
             //DRAW_BOTTOMBAR(BTBAR_SELECT_BACK)
             
             //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);    //dele by yangdecai
             return TRUE;
             
         case EVT_DIALOG_END:
@@ -14317,7 +14317,7 @@ static boolean IDD_EXTARCTEDITEM_OPT_Handler(void *pUser,
             //DRAW_BOTTOMBAR(BTBAR_SELECT_BACK)
             
             //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
             return TRUE;
             
         case EVT_DIALOG_END:
@@ -15188,7 +15188,7 @@ static boolean IDD_VOICEMAIL_Handler(void   *pUser,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+           // (void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
             return TRUE;
 
         case EVT_CTL_SEL_CHANGED:
@@ -16366,7 +16366,7 @@ static boolean IDD_MANAGEMENT_Handler(void   *pUser,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);    //dele by yangdecai
             return TRUE;
 
         case EVT_CTL_SEL_CHANGED:
@@ -16513,7 +16513,7 @@ static boolean IDD_COPYINBOX_Handler(void   *pUser,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -16644,7 +16644,7 @@ static boolean IDD_MOVEINBOX_Handler(void   *pUser,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -16760,7 +16760,7 @@ static boolean IDD_SELECTFROMOPT_Handler(void   *pUser,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+           // (void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:

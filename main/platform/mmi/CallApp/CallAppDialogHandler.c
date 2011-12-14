@@ -2204,7 +2204,7 @@ static boolean CallApp_Show_Ip_Number_DlgHandler(CCallApp *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            IMENUCTL_Redraw(pMenu);
+            //IMENUCTL_Redraw(pMenu);
             //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
             return TRUE;
 
@@ -6086,7 +6086,7 @@ static boolean  IDD_USERCONFIRM_Handler(CCallApp *pMe,
             // Draw prompt bar here
             //DrawBottomBar(pMe->m_pShell,  pMe->m_pDisplay, &pMe->m_rc, BTBAR_OK_BACK);
             REFUI_DRAW_BOTTOMBAR(BTBAR_YES_NO)
-            (void)ISTATIC_Redraw(pStatic);
+            //(void)ISTATIC_Redraw(pStatic);
             return TRUE;
 
         case EVT_DIALOG_END:

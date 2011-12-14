@@ -845,7 +845,7 @@ static boolean  HandleCallSettingDialogEvent(CSettingMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -1049,7 +1049,7 @@ static boolean  HandlePhoneSettingDialogEvent(CSettingMenu *pMe,
 
 
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -1390,7 +1390,7 @@ static boolean  HandleCallSettingSelDialogEvent(CSettingMenu *pMe,
         case EVT_USER_REDRAW:
             // 统一更新界面
             //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -1737,7 +1737,7 @@ static boolean  HandleNetworkDialogEvent(CSettingMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -1873,7 +1873,7 @@ static boolean  HandleDivertDialogEvent(CSettingMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -2088,7 +2088,7 @@ static boolean  HandleCallForwardSelDialogEvent(CSettingMenu *pMe,
         case EVT_USER_REDRAW:
             // 统一更新界面
             //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -2670,7 +2670,7 @@ static boolean  HandleAKGDialogEvent(CSettingMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -2988,7 +2988,7 @@ static boolean  HandleTimeDialogEvent(CSettingMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -3147,7 +3147,7 @@ static boolean  HandleDateDialogEvent(CSettingMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);  //dele by yangdecai 
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -3323,7 +3323,7 @@ static boolean HandleSearchModeDialogEvent(CSettingMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);  //dele by yangdecai
 			
             return TRUE;
 
@@ -3463,7 +3463,7 @@ static boolean HandleTimeFontModeDialogEvent(CSettingMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu); //dele by yangdecai
 			
             return TRUE;
 
@@ -3619,7 +3619,7 @@ static boolean HandleSimDialogEvent(CSettingMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);  //dele by yangdecai
 			
             return TRUE;
 
@@ -4020,7 +4020,7 @@ static boolean  HandleLanguageDialogEvent(CSettingMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);  //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -5971,7 +5971,7 @@ static boolean Handle_ANSWER_MODE_DialogEveng(CSettingMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu); //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -6090,7 +6090,7 @@ static boolean Handle_ANSWER_MODE_DialogEveng(CSettingMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);  //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -6350,7 +6350,7 @@ static boolean  HandleFMModeDialogEvent(CSettingMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);  //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -6728,7 +6728,7 @@ static boolean  SettingMenu_HandleKeyToneLengthDialogEvent(CSettingMenu *pMe,
         case EVT_USER_REDRAW:
             // 统一更新界面
             //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -6859,7 +6859,7 @@ static boolean  HandleAutoAnswerSubDialogEvent(CSettingMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -6982,7 +6982,7 @@ static boolean Setting_Handle_Shake(CSettingMenu *pMe,
              return TRUE;
              
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+           // (void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
                     return TRUE;
 
         case EVT_DIALOG_END:    
@@ -7157,7 +7157,7 @@ static boolean Setting_Handle_ShakeSub(CSettingMenu *pMe,
         }
              
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
                     return TRUE;
 
         case EVT_DIALOG_END:    
@@ -7332,7 +7332,7 @@ static boolean  Setting_Handle_CallRestrict(CSettingMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);  //dele by yangdecai
 
             return TRUE;
 
@@ -7476,7 +7476,7 @@ static boolean  Setting_Handle_OutGoing(CSettingMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -7640,7 +7640,7 @@ static boolean  Setting_Handle_Incoming(CSettingMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-           (void)IMENUCTL_Redraw(pMenu);
+           //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
            return TRUE;
 
         case EVT_DIALOG_END:
@@ -8185,7 +8185,7 @@ static boolean  HandlePlaneModeDialogEvent(CSettingMenu *pMe,
             return TRUE;
 
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
