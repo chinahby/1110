@@ -1749,9 +1749,7 @@ int OEMCamera_SetParm(OEMINSTANCE h, int16 nParmID, int32 p1, int32 p2)
             nRet = EBADPARM;
          break;
 
-      case CAM_PARM_FLASH:
-         eParm = CAMERA_PARM_FLASH;
-         break;
+      
 
       case CAM_PARM_RED_EYE_REDUCTION:
          eParm = CAMERA_PARM_RED_EYE_REDUCTION;
@@ -1984,7 +1982,27 @@ int OEMCamera_SetParm(OEMINSTANCE h, int16 nParmID, int32 p1, int32 p2)
 			nRet = EBADPARM;
 		}
 		break;
-
+	#ifdef FEATURE_LCD_TOUCH_ENABLE
+	case CAM_PARM_FLASH:
+		MSG_FATAL("OEMCamera_ContrlFlash....start.....",0,0,0);
+		gpio_tlmm_config(CON_FLASH);
+		if(p1)
+		{
+			MSG_FATAL("ONNNNNNNNNNNNNNN",0,0,0);
+			gpio_out(GPIO_OUTPUT_54,(GPIO_ValueType)GPIO_HIGH_VALUE);
+		}
+		else
+		{
+			MSG_FATAL("OFFFFFFFFFFFFFFF",0,0,0);
+			gpio_out(GPIO_OUTPUT_54,(GPIO_ValueType)GPIO_LOW_VALUE);
+		}
+		MSG_FATAL("OEMCamera_ContrlFlash....end.....",0,0,0);
+		break;
+	#else
+	case CAM_PARM_FLASH:
+         eParm = CAMERA_PARM_FLASH;
+         break;
+	#endif
       case CAM_PARM_IS_SUPPORT:  // Fall through...
       case CAM_PARM_IS_MOVIE: // This cannot be set by user
       case CAM_PARM_PIXEL_COUNT:
@@ -2898,6 +2916,12 @@ int OEMCamera_Stop(OEMINSTANCE h)
    return OEMCamera_AEEError(nCamRet);
    #endif
 }
+
+/*==================================================================
+
+==================================================================*/
+
+
 
 /*==================================================================
 
