@@ -482,6 +482,8 @@ static boolean  MediaGalleryApp_ShowMsgBox(CMediaGalleryApp* pMe,
       return FALSE;
    }
 
+   MSG_FATAL("***zzg MediaGalleryApp_ShowMsgBox***", 0, 0, 0);
+
    MGAppUtil_GetMediaDlgStat(pMe, &eDlgStat);
 
    /*Set the static control text based on the user settings of the
@@ -531,6 +533,8 @@ static boolean  MediaGalleryApp_ShowMsgBox(CMediaGalleryApp* pMe,
    pMe->m_eMsgBoxType = eMsgBoxType;
    pMe->m_eMsgBoxBottomBar = eMsgBoxBottomBar;
    pMe->m_pszMsgBoxResFile = pszResFile;
+
+   MSG_FATAL("***zzg MediaGalleryApp_ShowMsgBox eDlgStat=%x***", eDlgStat, 0, 0);
 
    /*Always start a timer for the message box.*/
    if(eDlgStat == MG_DLGSTAT_MESSAGEBOX)
@@ -2288,6 +2292,17 @@ static boolean MediaGalleryApp_MediaMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
                       MGCLOSE_DIALOG(MGDLGRET_SETTING_SELECT);
                       return TRUE;
                    }
+				   //Add By zzg 2011_12_14
+				   else
+				   {				
+				   	    MSG_FATAL("EVT_DISPLAYDIALOGTIMEOUT 1111",0,0,0); 
+	                    return MGAppUtil_OnMediaMenuMsgBoxTimeOut(pMe,
+	                                              pMenuCtl,
+	                                              wParam,
+	                                              dwParam);
+				   }
+				   //Add End
+				   	
                 }  
                 else
                 {
@@ -2633,6 +2648,7 @@ static boolean MediaGalleryApp_OnPopupMenuCommand(CMediaGalleryApp* pMe,
 
    case IDS_MG_DELETE:
       {
+	  	 MSG_FATAL("***zzg MediaGalleryApp  IDS_MG_DELETE***", 0, 0, 0);
          MediaGalleryApp_SetOps(pMe, MG_OPS_MEDIAMENU, MG_OP_DEL);
          /*check the file is use for setting, such as ringtone, wallpaper,
           * we should ask user.*/

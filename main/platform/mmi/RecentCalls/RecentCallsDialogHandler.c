@@ -2274,6 +2274,7 @@ static boolean RecentCalls_WarnEvent(CRecentCalls *pMe,
                           break;
                           
                        case IDS_ALL_CALLS:
+					   	  MSG_FATAL("***zzg RectnCallsDlg IDS_ALL_CALLS***", 0, 0, 0);
                           if(SUCCESS == ICALLHISTORY_Clear(pMe->m_pCallHistory))
                           {
 							  uint32 value = 0;	
@@ -2329,12 +2330,14 @@ static boolean RecentCalls_WarnEvent(CRecentCalls *pMe,
                           {
                              uint32 value;                              
                              value = 0;
+							 MSG_FATAL("***zzg RecentCallsDlg IDS_RESET_TIME***", 0, 0, 0);
                              if(pMe->m_callsCategory == AEECALLHISTORY_CALL_TYPE_ALL)
                              {
                                  (void) ICONFIG_SetItem(pMe->m_pConfig,
                                                         CFGI_ALL_CALL_TIMER,
                                                         &value,
                                                         sizeof(uint32));
+								 
                              }
                              
                              if(pMe->m_callsCategory == AEECALLHISTORY_CALL_TYPE_ALL ||
@@ -3602,7 +3605,28 @@ static void RecentCalls_CallTimes(CRecentCalls *pMe,AEEConfigItem item)
    }
     if(pMe->selectState == IDS_LAST_CALL)
     {
-        duration = (dword)RecentCalls_GetLastCallTime(pMe);
+    	//Add By zzg 2011_12_14
+		dword in_time,out_time,total_time;
+		(void) ICONFIG_GetItem(pMe->m_pConfig, 
+								CFGI_RECENT_MT_CALL_TIMER, 
+								&in_time, 
+								sizeof(dword));
+		(void) ICONFIG_GetItem(pMe->m_pConfig, 
+								CFGI_RECENT_MO_CALL_TIMER, 
+								&out_time, 
+								sizeof(dword));
+
+		total_time=in_time + out_time;
+
+		if (total_time == 0) 
+		{
+			duration = 0;
+		}
+		else
+		//Add End
+		{
+        	duration = (dword)RecentCalls_GetLastCallTime(pMe);
+		}
     }
     
     // draw call time   
