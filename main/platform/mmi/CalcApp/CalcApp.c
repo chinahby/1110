@@ -1385,6 +1385,9 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
                 case AVK_SOFT2:
                 case AVK_CLR:
 					MSG_FATAL("AVK_CLR............",0,0,0);
+					#ifdef FEATURE_LCD_TOUCH_ENABLE
+					ISHELL_CloseApplet( pme->a.m_pIShell, FALSE);
+					#else
                 	#ifdef FEATURE_ALL_KEY_PAD  //add by yangdecai 
                 	if(dwParam == 1)
                 	#else
@@ -1400,6 +1403,7 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
                     {
                     	ISHELL_CloseApplet( pme->a.m_pIShell, FALSE);
                     }
+					#endif
                     break;
 #if defined(FEATURE_DISP_176X220)
 				case AVK_STAR:
