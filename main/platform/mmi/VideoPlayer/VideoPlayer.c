@@ -369,7 +369,7 @@ static int VideoPlayer_InitAppData(CVideoPlayer *pMe)
     pMe->TickUpdateImg[IDI_SCHEDULE_EMPTY_PRELOAD] = ISHELL_LoadResImage(pMe->m_pShell, VIDEOPLAYER_IMAGES_RES_FILE, IDI_SCHEDULE_EMPTY);
         
     pMe->TickUpdateImg[IDI_GLIDER_PRELOAD] = ISHELL_LoadResImage(pMe->m_pShell, VIDEOPLAYER_IMAGES_RES_FILE, IDI_GLIDER);
-    #ifndef FEATURE_DISP_240X320
+    #if !defined(FEATURE_DISP_240X320) && !defined(FEATURE_DISP_220X176)
     pMe->TickUpdateImg[IDI_TIME_PART_PRELOAD] = ISHELL_LoadResImage(pMe->m_pShell, VIDEOPLAYER_IMAGES_RES_FILE, IDI_TIME_PART);
     #endif
 
@@ -430,7 +430,7 @@ static void VideoPlayer_FreeAppData(CVideoPlayer *pMe)
         
         IIMAGE_Release(pMe->TickUpdateImg[IDI_GLIDER_PRELOAD]);
     }
-    #ifndef FEATURE_DISP_240X320
+    #if !defined (FEATURE_DISP_240X320) && !defined(FEATURE_DISP_220X176)
     if (pMe->TickUpdateImg[IDI_TIME_PART_PRELOAD]!=NULL)
     {
         
