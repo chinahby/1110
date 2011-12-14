@@ -99,16 +99,16 @@ static void MainMenu_RunFSM(MainMenu *pMe);
 static void CalculateScreenParameters(MainMenu *pMe);
 
 static void MainMenu_DrawBackGround(MainMenu *pMe, AEERect *pRect);
-static void MainMenu_DrawSelectIcon(MainMenu *pMe);
+//static void MainMenu_DrawSelectIcon(MainMenu *pMe);
 static void MovePen(MainMenu * pMe,int dx);
 // 初始整个背景及全部初始图标
 static void DrawMatrix(MainMenu *pMe);
 static void DrawFocusIcon(MainMenu *pMe);
 static void MoveCursorTo(MainMenu *pMe, int row, int column);
 static void DrawMatrixBottom(MainMenu *pMe);
-static void DrawMatrixBottomStr(MainMenu *pMe);
+//static void DrawMatrixBottomStr(MainMenu *pMe);
 static void DrawMatrixStr(MainMenu *pMe);
-
+static void AutoMovePage(MainMenu *pMe);
 //移动后选中移动
 //移动后整个界面显示
 static void DrawMatrixMove(MainMenu *pMe,int dx);
@@ -149,61 +149,14 @@ static boolean  MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 w
 static char* ICON_ANI[] =
 {
 
-    ICON1_ANI,
-    ICON2_ANI,
-    ICON3_ANI,
-    ICON4_ANI,
-    ICON5_ANI,
-    ICON6_ANI,
-    ICON7_ANI,
-    ICON8_ANI,
-    ICON9_ANI,
-    ICON10_ANI,
-    ICON11_ANI,
-    ICON12_ANI,
-    ICON13_ANI,
-    ICON14_ANI,
-    ICON15_ANI,
-    ICON16_ANI,
-    ICON17_ANI,
-    ICON18_ANI,
-    ICON19_ANI,
-    ICON20_ANI,
-    ICON21_ANI,
-    ICON22_ANI,
-    ICON23_ANI,
-    ICON24_ANI,
-    ICON25_ANI,
+    ICONBACK1_ANI,
+   // 10,
 };
 
 
 static char* ICON_ANI_1[] =
 {
-    ICON1_ANI_1,
-    ICON2_ANI_1,
-    ICON3_ANI_1,
-    ICON4_ANI_1,
-    ICON5_ANI_1,
-    ICON6_ANI_1,
-    ICON7_ANI_1,
-    ICON8_ANI_1,
-    ICON9_ANI_1,
-    ICON10_ANI_1,
-    ICON11_ANI_1,
-    ICON12_ANI_1, 
-    ICON13_ANI_1,
-    ICON14_ANI_1,
-    ICON15_ANI_1,
-    ICON16_ANI_1,
-    ICON17_ANI_1,
-    ICON18_ANI_1,
-    ICON19_ANI_1,
-    ICON20_ANI_1,
-    ICON21_ANI_1,
-    ICON22_ANI_1,
-    ICON23_ANI_1,
-    ICON24_ANI_1, 
-    ICON25_ANI_1,
+    ICONFOUCS_ANI,
 };
 
 
@@ -458,7 +411,10 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
 	pMe->m_PenPos      = -1;
 	pMe->m_bmove       = FALSE;
 	pMe->m_PrsentPage  = 0;
-
+    pMe->m_bDraOver    = FALSE;
+	pMe->m_step        = 0;
+	pMe->m_bRight      = FALSE;
+	pMe->m_bReraw      = FALSE;
 
     // 接口创建及相关初始化
     if (ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_CONFIG,
@@ -477,12 +433,6 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     {    	
         return EFAILED;
     }
-	//if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
-    //                                        AEECLSID_ANNUNCIATOR,
-    //                                        (void **)&pMe->m_pIAnn))
-    //{    	
-    //    return EFAILED;
-    //}
     
     // 初始化菜单Title
     pMe->m_IconTitle[0]      = IDS_MAIN_MENU_MEDIAGALLERY;
@@ -563,11 +513,20 @@ static void CMainMenu_FreeAppData(MainMenu *pMe)
     {
         int i;
         int j;
-        if (pMe->m_pImageBg !=NULL)
-        {
-            (void) IIMAGE_Release(pMe->m_pImageBg);
-            pMe->m_pImageBg = NULL;
-        }
+		for(i=0;i<MAX_MATRIX_PAGE;i++)
+		{
+	        if (pMe->m_pImageBg[i] !=NULL)
+	        {
+	            (void) IIMAGE_Release(pMe->m_pImageBg[i]);
+	            pMe->m_pImageBg[i] = NULL;
+	        }
+		}
+		if(pMe->m_pImageBgblack !=NULL)
+		{
+			(void)IIMAGE_Release(pMe->m_pImageBgblack);
+            pMe->m_pImageBgblack = NULL;
+		}
+		#if 0
         for(i=0;i<MAX_MATRIX_ITEMS;i++)
         {
             if(pMe->m_pImageIcon[i] != NULL)
@@ -576,7 +535,7 @@ static void CMainMenu_FreeAppData(MainMenu *pMe)
                 pMe->m_pImageIcon[i] = NULL;
             }
         } 
-		#if 0
+		
 		for(j = 0;j<MAX_BOTTOM_ITEMS;j++)
 		{
 			 if(pMe->m_pImageButtom[j] != NULL)
@@ -1077,41 +1036,55 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 
         case EVT_DIALOG_START:
 			MSG_FATAL("MainMenu_IconMenuHandler  EVT_APP_START.......",0,0,0);
-            if(pMe->m_pImageBg == NULL)
+            if(pMe->m_pImageBgblack  == NULL)
             {
-                {
-                    pMe->m_pImageBg = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);//modi by yangdecai                   
-                }
+                    pMe->m_pImageBgblack = ISHELL_LoadImage(pMe->m_pShell,"fs:/image/mainmenu/backgroud.png");//modi by yangdecai  
+				    if(pMe->m_pImageBgblack == NULL)
+				    {
+				    	MSG_FATAL("pMe->m_pImageBg[0] is null",0,0,0);
+				    }
             }
+			if(pMe->m_pImageBg[1] == NULL)
+            {
+				//pMe->m_pImageBg[1] = ISHELL_LoadImage(pMe->m_pShell,
+				//                                  ICONBACK1_ANI);//modi by yangdecai  
+			}
+			if(pMe->m_pImageBgblack ==NULL)
+			{
+				pMe->m_pImageBgblack  = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);
+			}	                                  
 			AEE_CancelTimer(Main_keypadtimer,pMe);
 			AEE_SetTimer(5*1000,Main_keypadtimer,pMe);
-            (void) ISHELL_PostEvent( pMe->m_pShell,
-                                     AEECLSID_MAIN_MENU,
-                                     EVT_USER_REDRAW,
-                                     0,
-                                     0);
-            return TRUE;
-
-
-        case EVT_USER_REDRAW:
             // 初始整个背景及全部初始图标	
             MSG_FATAL("MainMenu_IconMenuHandler  EVT_USER_REDRAW STAR.......",0,0,0);
             DrawMatrix(pMe);
 			MSG_FATAL("MainMenu_IconMenuHandler  EVT_USER_REDRAW mid.......",0,0,0);
             // 绘制聚焦过程动画
             MoveCursorTo(pMe, pMe->m_nRow, pMe->m_nColumn);
-			MSG_FATAL("MainMenu_IconMenuHandler  EVT_USER_REDRAW OVER.......",0,0,0);
+            return TRUE;
+
+
+        case EVT_USER_REDRAW:
             return TRUE;
             
         case EVT_DIALOG_END:
             {
                 int i;
                 int j;
-                if (pMe->m_pImageBg !=NULL)
-                {
-                    (void) IIMAGE_Release(pMe->m_pImageBg);
-                    pMe->m_pImageBg = NULL;
-                }
+				for(i=0;i<MAX_MATRIX_PAGE;i++)
+				{
+	                if (pMe->m_pImageBg[i] !=NULL)
+	                {
+	                    (void) IIMAGE_Release(pMe->m_pImageBg[i]);
+	                    pMe->m_pImageBg[i] = NULL;
+	                }
+				}
+				if(pMe->m_pImageBgblack !=NULL)
+				{
+					(void)IIMAGE_Release(pMe->m_pImageBgblack);
+		            pMe->m_pImageBgblack = NULL;
+				}
+				#if 0
                 for(i=0;i<MAX_MATRIX_ITEMS;i++)
                 {
                     if(pMe->m_pImageIcon[i] != NULL)
@@ -1120,7 +1093,7 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
                         pMe->m_pImageIcon[i] = NULL;
                     }
                 } 
-				#if 0
+				
                 for(j = 0;j<MAX_BOTTOM_ITEMS;j++)
 				{
 					 if(pMe->m_pImageButtom[j] != NULL)
@@ -1365,11 +1338,7 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 						nCol = (pMe->m_PenPos)%MAX_MATRIX_COLS;
 						MoveCursorTo(pMe, nRow, nCol);
 					}
-					else
-					{
-						//最低层 4个快捷键响应
-						
-					}
+					
 					return TRUE;
 				}
 				break;
@@ -1383,6 +1352,7 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 					int wDxPos   = wXPos-pMe->m_Primove_Pt.x;
 					int wDyPos   = wYPos-pMe->m_Primove_Pt.y;
 					uint16 uDxPos = 0;
+					
 					MSG_FATAL("EVT_PEN_MOVE................",0,0,0);
 					if(wDxPos>0)
 					{
@@ -1394,13 +1364,11 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 					}
 					if(uDxPos>DX_MAIN_MOVE)
 					{
-						MovePen(pMe,wDxPos);
-						MSG_FATAL("EVT_PEN_MOVE................ok",0,0,0);
+						MSG_FATAL("EVT_PEN_MOVE...........start.....ok",0,0,0);
 						pMe->m_Primove_Pt.x = wXPos;
 						pMe->m_Primove_Pt.y = wYPos;
 						pMe->m_bmove = TRUE;
 					}
-					
 					return TRUE;
 				}
 				break;
@@ -1415,7 +1383,6 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 				uint16 nRow = 0;
 				uint16 nCol = 0;
 				uint16 j    = 0;
-				int baseBottom = BASE_BOTTON_TITLE;
 				MSG_FATAL("EVT_PEN_UP m_bmove=%d",pMe->m_bmove,0,0);
 				for(i=0;i<MAX_MATRIX_ITEMS;i++)
 				{
@@ -1443,6 +1410,7 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 				else
 				{
 					int m_Downx = pMe->m_Pdown_Pt.x - wXPos;
+					MSG_FATAL("EVT_PEN_UP....................",0,0,0);
 					if(m_Downx>0)
 					{
 						if(m_Downx>DX_MAIN_MOVE)
@@ -1450,11 +1418,14 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 							if(pMe->m_PrsentPage < (MAX_MATRIX_PAGE-1))
 							{
 								pMe->m_PrsentPage++;
+								pMe->m_bReraw = TRUE;
 							}
 							else
 							{
 								pMe->m_PrsentPage = (MAX_MATRIX_PAGE-1);
+								pMe->m_bReraw = FALSE;
 							}
+							pMe->m_bRight = TRUE;
 						}
 					}
 					else
@@ -1465,24 +1436,24 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 							if(pMe->m_PrsentPage>0)
 							{
 								pMe->m_PrsentPage--;
+								pMe->m_bReraw = TRUE;
 							}
 							else
 							{
 								pMe->m_PrsentPage = 0;
+								pMe->m_bReraw = FALSE;
 							}
+							pMe->m_bRight = FALSE;
 						}
 						
 					}
-					MSG_FATAL("pMe->m_PrsentPage=========%d",pMe->m_PrsentPage,0,0);
-					// 初始整个背景及全部初始图标	
-					
-            		DrawMatrix(pMe);
-            		// 绘制聚焦过程动画
-            		MoveCursorTo(pMe, pMe->m_nRow, pMe->m_nColumn);
-					
-					pMe->m_bmove = FALSE;
+					if(pMe->m_bReraw)
+					{
+						AutoMovePage(pMe);
+					}
 				}
 				
+				MSG_FATAL("EVT_PEN_UP m_bmove  end=%d",pMe->m_bmove,0,0);
 				return TRUE;
 			}
 			break;
@@ -1491,6 +1462,52 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
     }
 
     return FALSE;
+}
+static void AutoMovePage(MainMenu *pMe)
+{
+		MSG_FATAL("AutoMovePage........................",0,0,0);
+		if(pMe->m_bDraOver)
+		{
+			ISHELL_CancelTimer(pMe->m_pShell,(PFNNOTIFY)AutoMovePage,pMe);
+			pMe->m_step = 0;
+			pMe->m_bDraOver = FALSE;
+			MSG_FATAL("pMe->m_PrsentPage=========%d",pMe->m_PrsentPage,0,0);
+			// 初始整个背景及全部初始图标	
+			
+    		DrawMatrix(pMe);
+    		// 绘制聚焦过程动画
+    		MoveCursorTo(pMe, pMe->m_nRow, pMe->m_nColumn);
+			//DrawMatrixStr(pMe);
+			pMe->m_bmove = FALSE;
+		}
+		else
+		{
+			if(pMe->m_step<7)
+			{
+				pMe->m_step++;
+			}
+			else
+			{
+				pMe->m_step = 7;
+				pMe->m_bDraOver = TRUE;
+			}
+			MSG_FATAL("ISHELL_SetTimer................",0,0,0);
+			(void)ISHELL_SetTimer(pMe->m_pShell,
+                                    100,
+                                    (PFNNOTIFY)AutoMovePage,
+                                    pMe);
+			if(pMe->m_bRight)
+			{
+				
+				MovePen(pMe,(7-pMe->m_step)*27);
+			}
+			else
+			{
+				MovePen(pMe,-((7-pMe->m_step)*27));	
+			}
+			
+		}
+		IDISPLAY_UpdateEx(pMe->m_pDisplay, TRUE);
 }
 
 static void Main_keypadtimer(void *pUser)
@@ -1546,25 +1563,12 @@ static void CalculateScreenParameters(MainMenu *pMe)
             ( imageInfoIcon.cy + iconSpaceVertical) * ( i / MAX_MATRIX_COLS);
 
         //计算焦点图片的坐标
-        pMe->m_IconFocus_Pt[i].x = pMe->m_Icondefault_Pt[i].x - (ICON_ANIMATED_WIDTH - imageInfoIcon.cx)/2;
+        //pMe->m_IconFocus_Pt[i].x = pMe->m_Icondefault_Pt[i].x - (ICON_ANIMATED_WIDTH - imageInfoIcon.cx)/2;
 
-        pMe->m_IconFocus_Pt[i].y = pMe->m_Icondefault_Pt[i].y - (ICON_ANIMATED_HEIGHT- imageInfoIcon.cy)/2;
+        //pMe->m_IconFocus_Pt[i].y = pMe->m_Icondefault_Pt[i].y - (ICON_ANIMATED_HEIGHT- imageInfoIcon.cy)/2;
         //end added
+        MSG_FATAL("pMe->m_Icondefault_Pt[i].x=%d,pMe->m_Icondefault_Pt[i].y=%d",pMe->m_Icondefault_Pt[i].x,pMe->m_Icondefault_Pt[i].y,0);
     }
-	for(j = 0;j<MAX_BOTTOM_ITEMS;j++)
-	{
-		
-		pMe->m_IconButtom_pt[j].x = (BOTTOM_MID_SPACE*(j+1))+(j*BOTTOM_ICON_WIDTH);
-		MSG_FATAL("pMe->m_IconButtom_pt[j].x ======%d",pMe->m_IconButtom_pt[j].x ,0,0);
-		pMe->m_IconButtom_pt[j].y = SCREEN_HEIGHT-BOTTOM_ICON_HEIGHT-20;
-	}
-	pMe->m_IconSelect_Pt[0].x = SELECT_ONE_X;
-	pMe->m_IconSelect_Pt[0].y = SELECT_Y;
-	pMe->m_IconSelect_Pt[1].x = SELECT_TWO_X;
-	pMe->m_IconSelect_Pt[1].y = SELECT_Y;
-	//pMe->m_IconSelect_Pt[2].x = SELECT_THR_X;
-	//pMe->m_IconSelect_Pt[2].y = SELECT_Y;
-    
 }
 
 static void MainMenu_DrawBackGround(MainMenu *pMe, AEERect *pRect)
@@ -1583,14 +1587,17 @@ static void MainMenu_DrawBackGround(MainMenu *pMe, AEERect *pRect)
     else
 #endif
     {
+    	
         Appscommon_ResetBackground(pMe->m_pDisplay, 
-                                                    pMe->m_pImageBg, 
+                                                    pMe->m_pImageBgblack, 
                                                     APPSCOMMON_BG_COLOR, 
                                                     pRect, 
                                                     0, 
                                                     0);
+		
     } 
 }
+/*
 static void MainMenu_DrawSelectIcon(MainMenu *pMe)
 {
 	int i =0;
@@ -1617,7 +1624,7 @@ static void MainMenu_DrawSelectIcon(MainMenu *pMe)
                         pMe->m_IconSelect_Pt[i].y);
 		}
 	}
-}
+}*/
 
 /*=============================================================================
 FUNCTION:  DrawMatrix
@@ -1639,13 +1646,14 @@ static void DrawMatrix(MainMenu *pMe)
         return;
     }
     //draw bg image
-    MainMenu_DrawBackGround(pMe, &pMe->m_rc);
+    //MainMenu_DrawBackGround(pMe, &pMe->m_rc);
 	//Draw select icon
-	MainMenu_DrawSelectIcon(pMe);
+	//MainMenu_DrawSelectIcon(pMe);
     //Draw icon
     MSG_FATAL("pMe->m_PrsentPage========%d",pMe->m_PrsentPage,0,0);
 	k = (pMe->m_PrsentPage*MAX_MATRIX_ITEMS);
 	MSG_FATAL("k========%d",k,0,0);
+	#if 0
     for (i = 0; i < Max; i ++)
     {
         pMe->m_pImageIcon[i] = ISHELL_LoadImage(pMe->m_pShell,
@@ -1660,8 +1668,29 @@ static void DrawMatrix(MainMenu *pMe)
                         pMe->m_Icondefault_Pt[i].y);
         }
     }  
-    DrawMatrixStr(pMe);
+	#else
+	#if 1
+	if(pMe->m_PrsentPage)
+	{
+			IIMAGE_Draw(pMe->m_pImageBgblack,
+                        -218,
+                        0);
+	}
+	else
+	{
+			IIMAGE_Draw(pMe->m_pImageBgblack,
+                        0,
+                        0);
+	}
+	#else
+	IIMAGE_Draw(pMe->m_pImageBg[pMe->m_PrsentPage],
+                        0,
+                        0);
+	#endif
+	#endif
+
 }
+/*
 static void DrawMatrixBottomStr(MainMenu *pMe)
 {
 	int i = 0;
@@ -1693,6 +1722,7 @@ static void DrawMatrixBottomStr(MainMenu *pMe)
 		
 	}
 }
+*/
 static void DrawMatrixStr(MainMenu *pMe)
 {
 	int i = 0;
@@ -1770,11 +1800,12 @@ static void DrawMatrixMove(MainMenu *pMe,int dx)
         return;
     }
     //draw bg image
-    MainMenu_DrawBackGround(pMe, &pMe->m_rc); 
+    //MainMenu_DrawBackGround(pMe, &pMe->m_rc); 
 	//Draw select icon
-	MainMenu_DrawSelectIcon(pMe);
+	//MainMenu_DrawSelectIcon(pMe);
 	
     //Draw icon
+    #if 0
     for (i = 0; i < MAX_MATRIX_ITEMS; i ++)
     {
         pMe->m_pImageIcon[i] = ISHELL_LoadImage(pMe->m_pShell,
@@ -1787,7 +1818,27 @@ static void DrawMatrixMove(MainMenu *pMe,int dx)
                         pMe->m_Icondefault_Pt[i].y);
         }
     }  
-	DrawMatrixStr_Move(pMe,dx);
+	#else
+	#if 1
+	if(pMe->m_PrsentPage)
+		{
+			IIMAGE_Draw(pMe->m_pImageBgblack,
+                        dx-218,
+                        0);
+		}
+	else
+		{
+			IIMAGE_Draw(pMe->m_pImageBgblack,
+                        dx,
+                        0);
+		}
+	#else
+	IIMAGE_Draw(pMe->m_pImageBg[pMe->m_PrsentPage],
+                        dx,
+                        0);
+	#endif
+	#endif
+	//DrawMatrixStr_Move(pMe,dx);
 }
 
 /*=============================================================================
@@ -1818,17 +1869,22 @@ static void DrawFocusIcon(MainMenu *pMe)
     }      
     if(pMe->m_pAnimate == NULL)
     {
-        pMe->m_pAnimate = ISHELL_LoadImage(pMe->m_pShell, ICON_ANI_1[(pMe->m_PrsentPage*MAX_MATRIX_ITEMS)+theFocus]);
+        pMe->m_pAnimate = ISHELL_LoadImage(pMe->m_pShell, ICON_ANI_1[0]);
     }
-	if( pMe->m_pAnimate != NULL)
+	if((theFocus<0)||(theFocus>=MAX_MATRIX_ITEMS))
+	{
+		theFocus = 0;
+	}
+	if( (pMe->m_pAnimate != NULL))
     {
+    	MSG_FATAL("theFocus====%d,,x=%d,y=%d",theFocus,pMe->m_Icondefault_Pt[theFocus].x,pMe->m_Icondefault_Pt[theFocus].y);
 		IIMAGE_Draw(pMe->m_pAnimate,
                     pMe->m_Icondefault_Pt[theFocus].x, 
                     pMe->m_Icondefault_Pt[theFocus].y);
-	    IIMAGE_Release(pMe->m_pAnimate);
-        pMe->m_pAnimate = NULL;   
+	    //IIMAGE_Release(pMe->m_pAnimate);
+        //pMe->m_pAnimate = NULL;   
 		MSG_FATAL("pMe->m_pDisplay    TURE",0,0,0);
-	    IDISPLAY_UpdateEx(pMe->m_pDisplay, TRUE);
+	    //IDISPLAY_UpdateEx(pMe->m_pDisplay, TRUE);
 	}
 }
 
@@ -1842,9 +1898,13 @@ static void DrawFocusIconMove(MainMenu *pMe,int dx)
     }      
     if(pMe->m_pAnimate == NULL)
     {
-        pMe->m_pAnimate = ISHELL_LoadImage(pMe->m_pShell, ICON_ANI_1[(pMe->m_PrsentPage*MAX_MATRIX_ITEMS)+theFocus]);
+        pMe->m_pAnimate = ISHELL_LoadImage(pMe->m_pShell, ICON_ANI_1[0]);
     }
-	if( pMe->m_pAnimate != NULL)
+	if((theFocus<0)||(theFocus>=MAX_MATRIX_ITEMS))
+	{
+		theFocus = 0;
+	}
+	if( (pMe->m_pAnimate != NULL))
     {
 		IIMAGE_Draw(pMe->m_pAnimate,
                     pMe->m_Icondefault_Pt[theFocus].x+dx, 
@@ -1883,22 +1943,39 @@ static void MoveCursorTo(MainMenu *pMe, int row, int column)
     }
 	*/
     // 绘制聚焦后矩阵初始界面
+    #if 0
     SETAEERECT(&rect, pMe->m_IconFocus_Pt[theFocus].x, 
                       pMe->m_IconFocus_Pt[theFocus].y, 
                       ICON_ANIMATED_WIDTH, 
                       ICON_ANIMATED_HEIGHT);
     
     MainMenu_DrawBackGround(pMe, &rect);
-   
+    
     if (pMe->m_pImageIcon[theFocus])
     {
         IIMAGE_Draw(pMe->m_pImageIcon[theFocus],
                     pMe->m_Icondefault_Pt[theFocus].x, 
                     pMe->m_Icondefault_Pt[theFocus].y);
     }
+	#else
+	if(pMe->m_PrsentPage)
+		{
+			IIMAGE_Draw(pMe->m_pImageBgblack,
+                        -218,
+                        0);
+		}
+	else
+		{
+			IIMAGE_Draw(pMe->m_pImageBgblack,
+                        0,
+                        0);
+		}
+	#endif
     // 开始聚焦动画过程
     SetCursor(pMe, row, column);
     DrawFocusIcon(pMe);
+	DrawMatrixStr(pMe);
+	IDISPLAY_UpdateEx(pMe->m_pDisplay, TRUE);
 }
 static void MoveCursoToMove(MainMenu *pMe, int row, int column,int dx)
 {
@@ -1906,6 +1983,7 @@ static void MoveCursoToMove(MainMenu *pMe, int row, int column,int dx)
     AEERect rect;
     
     // 绘制聚焦后矩阵初始界面
+    #if 0
     SETAEERECT(&rect, pMe->m_IconFocus_Pt[theFocus].x+dx, 
                       pMe->m_IconFocus_Pt[theFocus].y, 
                       ICON_ANIMATED_WIDTH, 
@@ -1919,6 +1997,7 @@ static void MoveCursoToMove(MainMenu *pMe, int row, int column,int dx)
                     pMe->m_Icondefault_Pt[theFocus].x+dx, 
                     pMe->m_Icondefault_Pt[theFocus].y);
     }
+	#endif
     // 开始聚焦动画过程
     SetCursor(pMe, row, column);
     DrawFocusIconMove(pMe,dx);
@@ -1927,7 +2006,7 @@ static void MoveCursoToMove(MainMenu *pMe, int row, int column,int dx)
 static void MovePen(MainMenu * pMe,int dx)
 {
 	DrawMatrixMove(pMe,dx);
-	MoveCursoToMove(pMe,pMe->m_nRow,pMe->m_nColumn,dx);
+	//MoveCursoToMove(pMe,pMe->m_nRow,pMe->m_nColumn,dx);
 }
 
 /*=============================================================================
@@ -2921,7 +3000,7 @@ static void CMainMenu_FreeAppData(MainMenu *pMe)
             (void) IIMAGE_Release(pMe->m_pImageBg);
             pMe->m_pImageBg = NULL;
         }
-
+        
         for(i=0;i<MAX_MATRIX_ITEMS;i++)
         {
             if(pMe->m_pImageIcon[i] != NULL)
@@ -2930,6 +3009,7 @@ static void CMainMenu_FreeAppData(MainMenu *pMe)
                 pMe->m_pImageIcon[i] = NULL;
             }
         } 
+		
 
         if(pMe->m_pAnimate != NULL)
         {
