@@ -18,21 +18,10 @@
 #define T_QSC1110
 #endif
 
-#if defined(FEATURE_VERSION_W516)
-#ifdef T_QSC1110
-#define CAMSENSOR_SP0828_RESET_PIN         GPIO_OUTPUT_10
-#else
-#define CAMSENSOR_SP0828_RESET_PIN         GPIO_OUTPUT_53
-#endif
-#else
-#ifdef T_QSC1110
-#define CAMSENSOR_SP0828_RESET_PIN         GPIO_OUTPUT_10
-#else
+#if defined(FEATURE_VERSION_C180)
 #define CAMSENSOR_SP0828_RESET_PIN         GPIO_OUTPUT_62
-#endif
-#endif
-#ifndef T_QSC1110
-#define SP0828_OUTFORMAT_RGB565
+#else
+#define CAMSENSOR_SP0828_RESET_PIN         GPIO_OUTPUT_10
 #endif
 
 
@@ -48,8 +37,8 @@
 #define SP0828_INFO_REG                    (0x02)
 
 
-#define CAMSENSOR_SP0828_FULL_SIZE_WIDTH   288 //640
-#define CAMSENSOR_SP0828_FULL_SIZE_HEIGHT  352 //480
+#define CAMSENSOR_SP0828_FULL_SIZE_WIDTH   240 //640
+#define CAMSENSOR_SP0828_FULL_SIZE_HEIGHT  320 //480
 
 #define MAX_EV_COMP                          25
 
@@ -164,63 +153,32 @@ boolean camsensor_sp0828_init(camsensor_function_table_type *camsensor_function_
 
 static boolean initialize_sp0828_registers(uint16 dx, uint16 dy)
 {
-#ifndef T_QSC1110
-    uint16 x,y;
-    uint8 internel_resize = FALSE;
-    if(dx > CAMSENSOR_SP0828_FULL_SIZE_WIDTH)
-    {
-        dx = CAMSENSOR_SP0828_FULL_SIZE_WIDTH;
-    }
-    
-    if(dy > CAMSENSOR_SP0828_FULL_SIZE_HEIGHT)
-    {
-        dy = CAMSENSOR_SP0828_FULL_SIZE_HEIGHT;
-    }
-    
-    x = (CAMSENSOR_SP0828_FULL_SIZE_WIDTH-dx)>>1;
-    y = (CAMSENSOR_SP0828_FULL_SIZE_HEIGHT-dy)>>1;
-
-    if(x<60)
-	{
-		x = 60;
-	}
-	
-	if((dx<128)&&(dy<228)) //sensor internel resize for inprove sharpness by xuegang  
-	{
-		dx=dx*1.4;
-		dy=dy*1.4;
-		internel_resize = TRUE;
-	}
-
-#endif
     //Sensor Block Setting  ###Don't Change###
     
 	sp0828_i2c_write_byte(0xfd,0x00);
 	sp0828_i2c_write_byte(0x1c,0x00);//08
-	sp0828_i2c_write_byte(0x30,0x00);//00:不分频 02:2分频
+	sp0828_i2c_write_byte(0x30,0x02);//00:不分频 02:2分频
 	sp0828_i2c_write_byte(0x0f,0x2f);//;analog
 	sp0828_i2c_write_byte(0x10,0x2f);
-	//sp0828_i2c_write_byte(0x12,0x6f);
+	sp0828_i2c_write_byte(0x12,0x7f);
 	sp0828_i2c_write_byte(0x13,0x2f);
-	//sp0828_i2c_write_byte(0x15,0x7f);
-	//sp0828_i2c_write_byte(0x16,0x0f);
+	sp0828_i2c_write_byte(0x15,0x7f);
+	sp0828_i2c_write_byte(0x16,0x0f);
 	sp0828_i2c_write_byte(0x22,0xe0);
 	sp0828_i2c_write_byte(0x26,0x08);
 	sp0828_i2c_write_byte(0x27,0xe8);
-	sp0828_i2c_write_byte(0x28,0x03);
+	sp0828_i2c_write_byte(0x28,0x0b);
 	sp0828_i2c_write_byte(0x32,0x00);
 
 	sp0828_i2c_write_byte(0xfd,0x00);
-	sp0828_i2c_write_byte(0x31,0x00);	 //Upside/mirr/Pclk inv/sub
-	sp0828_i2c_write_byte(0xd8,0x62);  //0x58 pzt 20111102
-	sp0828_i2c_write_byte(0xd9,0x62);  //0x58 pzt 20111102
+	sp0828_i2c_write_byte(0x31,0x50);   //Upside/mirr/Pclk inv/sub
+	sp0828_i2c_write_byte(0xd8,0x58);
+	sp0828_i2c_write_byte(0xd9,0x58);
 	sp0828_i2c_write_byte(0xda,0x58);
-	sp0828_i2c_write_byte(0xdb,0x48);
+	sp0828_i2c_write_byte(0xdb,0x58);
 
 	sp0828_i2c_write_byte(0x5f,0x11);
-
-
-	sp0828_i2c_write_byte(0xe0,0x00);//;resize
+	sp0828_i2c_write_byte(0xe0,0x02);//;resize
 	sp0828_i2c_write_byte(0xe1,0xdc);
 	sp0828_i2c_write_byte(0xe2,0xb0);
 	sp0828_i2c_write_byte(0xe3,0x00);
@@ -237,9 +195,9 @@ static boolean initialize_sp0828_registers(uint16 dx, uint16 dy)
 	sp0828_i2c_write_byte(0x31,0x64);
 	sp0828_i2c_write_byte(0x32,0x18);
 	sp0828_i2c_write_byte(0x4d,0xdc);
-	sp0828_i2c_write_byte(0x4e,0x6b);
+	sp0828_i2c_write_byte(0x4e,0x53);//6b
 	sp0828_i2c_write_byte(0x41,0x8c);
-	sp0828_i2c_write_byte(0x42,0x66);
+	sp0828_i2c_write_byte(0x42,0x57);//66
 	sp0828_i2c_write_byte(0x55,0xff);
 	sp0828_i2c_write_byte(0x56,0x00);
 	sp0828_i2c_write_byte(0x59,0x82);
@@ -269,8 +227,8 @@ static boolean initialize_sp0828_registers(uint16 dx, uint16 dy)
 	sp0828_i2c_write_byte(0x53,0x00);
 	sp0828_i2c_write_byte(0x54,0x00);// 4
 	sp0828_i2c_write_byte(0x55,0x10);
-	sp0828_i2c_write_byte(0x4f,0xFF);;//blueedge
-	sp0828_i2c_write_byte(0x50,0xFF);
+	sp0828_i2c_write_byte(0x4f,0x08);;//blueedge
+	sp0828_i2c_write_byte(0x50,0x08);
 	sp0828_i2c_write_byte(0x56,0x70);;//smooth
 	sp0828_i2c_write_byte(0x57,0x40);
 	sp0828_i2c_write_byte(0x58,0x40);
@@ -284,30 +242,30 @@ static boolean initialize_sp0828_registers(uint16 dx, uint16 dy)
 	sp0828_i2c_write_byte(0x68,0x43);
 	sp0828_i2c_write_byte(0x69,0x7f);
 	sp0828_i2c_write_byte(0x6a,0x01);
-	sp0828_i2c_write_byte(0x6b,0x03);    
+	sp0828_i2c_write_byte(0x6b,0x04);
 	sp0828_i2c_write_byte(0x6c,0x01);
-	sp0828_i2c_write_byte(0x6d,0x06);  //0x03  pzt 20111102
-	sp0828_i2c_write_byte(0x6e,0x46);  //0x43 pzt 20111102
+	sp0828_i2c_write_byte(0x6d,0x03);
+	sp0828_i2c_write_byte(0x6e,0x43);
 	sp0828_i2c_write_byte(0x6f,0x7f);
 	sp0828_i2c_write_byte(0x70,0x01);
-	sp0828_i2c_write_byte(0x71,0x03);
+	sp0828_i2c_write_byte(0x71,0x05);
 	sp0828_i2c_write_byte(0x72,0x10);
 	sp0828_i2c_write_byte(0x73,0x03);//3
 	sp0828_i2c_write_byte(0x74,0x43);
 	sp0828_i2c_write_byte(0x75,0x7f);
 	sp0828_i2c_write_byte(0x76,0x01);
-	sp0828_i2c_write_byte(0x7f,0x96);//;colorcorrection
-	sp0828_i2c_write_byte(0x80,0xf2);
-	sp0828_i2c_write_byte(0x81,0xfe); 
-	sp0828_i2c_write_byte(0x82,0xde);
-	sp0828_i2c_write_byte(0x83,0xa3);
-	sp0828_i2c_write_byte(0x84,0xff);
-	sp0828_i2c_write_byte(0x85,0xea);
-	sp0828_i2c_write_byte(0x86,0x81);
-	sp0828_i2c_write_byte(0x87,0x14);
-	sp0828_i2c_write_byte(0x88,0x3c); 
+	sp0828_i2c_write_byte(0x7f,0xa0);//;colorcorrection
+	sp0828_i2c_write_byte(0x80,0x00);
+	sp0828_i2c_write_byte(0x81,0xe0); 
+	sp0828_i2c_write_byte(0x82,0xed);
+	sp0828_i2c_write_byte(0x83,0xa6);
+	sp0828_i2c_write_byte(0x84,0xed);
+	sp0828_i2c_write_byte(0x85,0xfa);
+	sp0828_i2c_write_byte(0x86,0xba);
+	sp0828_i2c_write_byte(0x87,0xcc);
+	sp0828_i2c_write_byte(0x88,0x30); 
 	sp0828_i2c_write_byte(0x89,0x33);
-	sp0828_i2c_write_byte(0x8a,0x1f); 
+	sp0828_i2c_write_byte(0x8a,0x0f); 
 	sp0828_i2c_write_byte(0x8b,0x00);// ;gamma
 	sp0828_i2c_write_byte(0x8c,0x1a);
 	sp0828_i2c_write_byte(0x8d,0x29);
@@ -341,8 +299,8 @@ static boolean initialize_sp0828_registers(uint16 dx, uint16 dy)
 	sp0828_i2c_write_byte(0xd4,0x00);
 	sp0828_i2c_write_byte(0xd6,0x1c);
 	sp0828_i2c_write_byte(0xd7,0x16);
-	sp0828_i2c_write_byte(0xdd,0x70);// ;heq  
-	sp0828_i2c_write_byte(0xde,0x90);
+	sp0828_i2c_write_byte(0xdd,0x70);// ;heq
+	sp0828_i2c_write_byte(0xde,0xa0);
 	sp0828_i2c_write_byte(0xb9,0x00);//;Ygamma 
 	sp0828_i2c_write_byte(0xba,0x04); 
 	sp0828_i2c_write_byte(0xbb,0x08); 
@@ -369,14 +327,14 @@ static boolean initialize_sp0828_registers(uint16 dx, uint16 dy)
 	sp0828_i2c_write_byte(0xea,0x40);
 	sp0828_i2c_write_byte(0xf4,0x1b);
 	sp0828_i2c_write_byte(0xf5,0x97);
-	sp0828_i2c_write_byte(0xec,0x4B);
-	sp0828_i2c_write_byte(0xed,0x90);
-	sp0828_i2c_write_byte(0xee,0x3B);
-	sp0828_i2c_write_byte(0xef,0x80);
-	sp0828_i2c_write_byte(0xf7,0x78);//AEtarget
-	sp0828_i2c_write_byte(0xf8,0x63);//AEtarget
-	sp0828_i2c_write_byte(0xf9,0x68);//AEtarget
-	sp0828_i2c_write_byte(0xfa,0x53);//AEtarget
+	sp0828_i2c_write_byte(0xec,0x53);
+	sp0828_i2c_write_byte(0xed,0x78);
+	sp0828_i2c_write_byte(0xee,0x47);
+	sp0828_i2c_write_byte(0xef,0x6c);
+	sp0828_i2c_write_byte(0xf7,0x70);//AEtarget
+	sp0828_i2c_write_byte(0xf8,0x5b);//AEtarget
+	sp0828_i2c_write_byte(0xf9,0x64);//AEtarget
+	sp0828_i2c_write_byte(0xfa,0x4f);//AEtarget
 	sp0828_i2c_write_byte(0xfd,0x01);
 	sp0828_i2c_write_byte(0x09,0x31);	
 	sp0828_i2c_write_byte(0x0a,0x85);
@@ -384,27 +342,27 @@ static boolean initialize_sp0828_registers(uint16 dx, uint16 dy)
 	sp0828_i2c_write_byte(0x14,0x20);
 	sp0828_i2c_write_byte(0x15,0x0f); 
 
- // MCLK 2.4M fix5fps maxgain:0x70
+#if 1 // MCLK 12M 20-8fps maxgain:0x70
 	sp0828_i2c_write_byte(0xfd,0x00);
-	sp0828_i2c_write_byte(0x05,0x0 );
-	sp0828_i2c_write_byte(0x06,0x0 );
-	sp0828_i2c_write_byte(0x09,0x1 );
-	sp0828_i2c_write_byte(0x0a,0xe0);
-	sp0828_i2c_write_byte(0xf0,0x10);
-	sp0828_i2c_write_byte(0xf1,0x0 );
-	sp0828_i2c_write_byte(0xf2,0x38);
-	sp0828_i2c_write_byte(0xf5,0x51);
+	sp0828_i2c_write_byte(0x05,0x0	);
+	sp0828_i2c_write_byte(0x06,0x0	);
+	sp0828_i2c_write_byte(0x09,0x2	);
+	sp0828_i2c_write_byte(0x0a,0x8d);
+	sp0828_i2c_write_byte(0xf0,0x42);
+	sp0828_i2c_write_byte(0xf1,0x0	);
+	sp0828_i2c_write_byte(0xf2,0x57);
+	sp0828_i2c_write_byte(0xf5,0x70);
 	sp0828_i2c_write_byte(0xfd,0x01);
-	sp0828_i2c_write_byte(0x00,0x95);
-	sp0828_i2c_write_byte(0x0f,0x39);
-	sp0828_i2c_write_byte(0x16,0x39);
-	sp0828_i2c_write_byte(0x17,0x85);
-	sp0828_i2c_write_byte(0x18,0x8d);
-	sp0828_i2c_write_byte(0x1b,0x39);
-	sp0828_i2c_write_byte(0x1c,0x8d);
-	sp0828_i2c_write_byte(0xb4,0xf );
-	sp0828_i2c_write_byte(0xb5,0xf );
-	sp0828_i2c_write_byte(0xb6,0xf );
+	sp0828_i2c_write_byte(0x00,0xaa);
+	sp0828_i2c_write_byte(0x0f,0x58);
+	sp0828_i2c_write_byte(0x16,0x58);
+	sp0828_i2c_write_byte(0x17,0x9a);
+	sp0828_i2c_write_byte(0x18,0xa2);
+	sp0828_i2c_write_byte(0x1b,0x58);
+	sp0828_i2c_write_byte(0x1c,0xa2);
+	sp0828_i2c_write_byte(0xb4,0x20);
+	sp0828_i2c_write_byte(0xb5,0x3a);
+	sp0828_i2c_write_byte(0xb6,0x3e);
 	sp0828_i2c_write_byte(0xb9,0x40);
 	sp0828_i2c_write_byte(0xba,0x4f);
 	sp0828_i2c_write_byte(0xbb,0x47);
@@ -417,68 +375,19 @@ static boolean initialize_sp0828_registers(uint16 dx, uint16 dy)
 	sp0828_i2c_write_byte(0xc2,0x41);
 	sp0828_i2c_write_byte(0xc3,0x41);
 	sp0828_i2c_write_byte(0xc4,0x41);
-	sp0828_i2c_write_byte(0xc5,0x41);
+	sp0828_i2c_write_byte(0xc5,0x70);
 	sp0828_i2c_write_byte(0xc6,0x41);
 	sp0828_i2c_write_byte(0xca,0x70);
-	sp0828_i2c_write_byte(0xcb,0x14);
+	sp0828_i2c_write_byte(0xcb,0xc	);
 	sp0828_i2c_write_byte(0xfd,0x00);
-
-
+#endif
 
 	sp0828_i2c_write_byte(0xfd,0x00);
 	sp0828_i2c_write_byte(0x32,0x15);
 	sp0828_i2c_write_byte(0x34,0x66);
-	sp0828_i2c_write_byte(0x35,0x04);//out format RGB565
-#ifndef T_QSC1110
-	sp0828_i2c_write_byte(0x47,(byte)((y>>8)&0xff));		
-	sp0828_i2c_write_byte(0x48,(byte)(y&0xff) );	   
-	sp0828_i2c_write_byte(0x49,(byte)((dy>>8)&0xff)); 	 
-	sp0828_i2c_write_byte(0x4a,(byte)(dy&0xff));	   
-	sp0828_i2c_write_byte(0x4b,(byte)(x&0xff) );	   
-	sp0828_i2c_write_byte(0x4c,(byte)(dx&0xff));	  
-    MSG_FATAL("sp0828_i2c_write_byte y=%d dy=%d",y,dy,0);
-    MSG_FATAL("sp0828_i2c_write_byte x=%d dx=%d",x,dx,0);
-	//if(internel_resize == TRUE)
-	{
-		sp0828_i2c_write_byte(0xe0,0x00);     //02 00 
-		sp0828_i2c_write_byte(0xe1,0x60);
-		sp0828_i2c_write_byte(0xe2,0x80);
-		sp0828_i2c_write_byte(0xe3,0x00);
-		sp0828_i2c_write_byte(0xe4,0x2c);
-		sp0828_i2c_write_byte(0xe5,0x00);
-		sp0828_i2c_write_byte(0xe6,0x2c);
-
-	}
-
-#else
-	
-	//sp0828_i2c_write_byte(0x47,0x0);	   
-	//sp0828_i2c_write_byte(0x48,0x00);		
-	//sp0828_i2c_write_byte(0x49,0x0);	   
-	//sp0828_i2c_write_byte(0x4a,0x60);		
-	//sp0828_i2c_write_byte(0x4b,0x5C);		
-	//sp0828_i2c_write_byte(0x4c,0x80);
-	sp0828_i2c_write_byte(0x47,0x0 );      
-   	sp0828_i2c_write_byte(0x48,0x0 );      
-   	sp0828_i2c_write_byte(0x49,0x0 );      
-   	sp0828_i2c_write_byte(0x4a,0x90);      
-   	sp0828_i2c_write_byte(0x4b,0x30);      
-   	sp0828_i2c_write_byte(0x4c,0xc0);
-   
-   
-   
-   	sp0828_i2c_write_byte(0xe0,0x01);      
-   	sp0828_i2c_write_byte(0xe1,0x60);
-   	sp0828_i2c_write_byte(0xe2,0x80);
-   	sp0828_i2c_write_byte(0xe3,0x00);
-   	sp0828_i2c_write_byte(0xe4,0x30);
-   	sp0828_i2c_write_byte(0xe5,0x00);
-   	sp0828_i2c_write_byte(0xe6,0x30);
- 	
-#endif
-
-	sp0828_i2c_write_byte(0x36,0x80);		
-	sp0828_i2c_write_byte(0x30,0x00);			 
+	sp0828_i2c_write_byte(0x35,0x00);//out format
+	sp0828_i2c_write_byte(0x36,0x0c);//delete bad frame
+	sp0828_i2c_write_byte(0x1b,0x07);//drv ability	 
 	
     /*Customer can adjust GAMMA, MIRROR & UPSIDEDOWN here!*/
     return TRUE;
@@ -489,7 +398,7 @@ static boolean camsensor_sp0828_start( camsensor_static_params_type *camsensor_p
     /* Initialize CAMIF operation mode */
     camsensor_params->camif_config.SyncMode    = CAMIF_APS;
     camsensor_params->camif_config.HSyncEdge   = CAMIF_High;
-    camsensor_params->camif_config.VSyncEdge   = CAMIF_Low;
+    camsensor_params->camif_config.VSyncEdge   = CAMIF_High;
     camsensor_params->camif_efs_config.EFS_EOL = 0x0000;
     camsensor_params->camif_efs_config.EFS_SOL = 0x0000;
     camsensor_params->camif_efs_config.EFS_EOF = 0x0000;
@@ -503,9 +412,9 @@ static boolean camsensor_sp0828_start( camsensor_static_params_type *camsensor_p
     //use_camsensor_siv121a = FALSE;
     /* CCD or CMOS */
     camsensor_params->sensor_type   = CAMSENSOR_CMOS;
-    #ifdef T_QSC1110
+
 	camsensor_params->format = CAMIF_YCbCr_Cr_Y_Cb_Y;
-	#endif
+
     /* BAYER or YCbCr */
     camsensor_params->output_format = CAMSENSOR_YCBCR;
 
@@ -635,73 +544,22 @@ SIDE EFFECTS
 
 static boolean camsensor_sp0828_snapshot_config( camsensor_static_params_type  *camsensor_params)
 {
-	uint16 x,y;
-    uint8 internel_resize = FALSE;
-    /* Set the current dimensions */
-    camsensor_params->camsensor_width  = camera_dx;
-    camsensor_params->camsensor_height = camera_dy;
-    
-    /* CAMIF frame */
-    camsensor_params->camif_frame_config.pixelsPerLine = camera_dx*2;
-    camsensor_params->camif_frame_config.linesPerFrame = camera_dy;
-    
-    /* CAMIF Window */
-    camsensor_params->camif_window_width_config.firstPixel = 0; //按CLK
-    camsensor_params->camif_window_width_config.lastPixel  = camsensor_params->camif_window_width_config.firstPixel+(camera_dx*2);
-    
-    camsensor_params->camif_window_height_config.firstLine = 0;
-    camsensor_params->camif_window_height_config.lastLine  = camsensor_params->camif_window_height_config.firstLine+camera_dy;
-    camsensor_params->pixel_clock = 1;
+	/* Sensor output data format */
+	camsensor_params->format = CAMIF_YCbCr_Cr_Y_Cb_Y;
 
-    if(camera_dx > CAMSENSOR_SP0828_FULL_SIZE_WIDTH)
-    {
-        camera_dx = CAMSENSOR_SP0828_FULL_SIZE_WIDTH;
-    }
-    
-    if(camera_dy > CAMSENSOR_SP0828_FULL_SIZE_HEIGHT)
-    {
-        camera_dy = CAMSENSOR_SP0828_FULL_SIZE_HEIGHT;
-    }
-    
-    x = (CAMSENSOR_SP0828_FULL_SIZE_WIDTH-camera_dx)>>1;
-    y = (CAMSENSOR_SP0828_FULL_SIZE_HEIGHT-camera_dy)>>1;
+	/* Set the current dimensions */
+	camsensor_params->camsensor_width = camsensor_params->full_size_width;
+	camsensor_params->camsensor_height = camsensor_params->full_size_height;
+	/* CAMIF frame */
+	camsensor_params->camif_frame_config.pixelsPerLine = CAMSENSOR_SP0828_FULL_SIZE_WIDTH*2;
+	camsensor_params->camif_frame_config.linesPerFrame = CAMSENSOR_SP0828_FULL_SIZE_HEIGHT;
+	
+	/* CAMIF window */
+	camsensor_params->camif_window_width_config.firstPixel = 0;
+	camsensor_params->camif_window_width_config.lastPixel  = camsensor_params->camsensor_width*2 - 1;
+	camsensor_params->camif_window_height_config.firstLine = 0;
+	camsensor_params->camif_window_height_config.lastLine = camsensor_params->camsensor_height - 1;
 
-    MSG_FATAL("sp0828_i2c_write_byte y=%d dy=%d",y,camera_dy,0);
-    MSG_FATAL("sp0828_i2c_write_byte x=%d dx=%d",x,camera_dx,0);
-    if(x<60)
-	{
-		x = 60;
-	}
-	if((camera_dx<128)&&(camera_dy<228)) //sensor internel resize for inprove sharpness by xuegang  
-	{
-		camera_dx=camera_dx*1.4;
-		camera_dy=camera_dy*1.4;
-		internel_resize = TRUE;
-	}
-
-    MSG_FATAL("sp0828_i2c_write_byte y=%d dy=%d",y,camera_dy,0);
-    MSG_FATAL("sp0828_i2c_write_byte x=%d dx=%d",x,camera_dx,0);
-
-
-    if (camera_dy==320||camera_dx==240)
-    {
-        sp0828_i2c_write_byte(0x47,0x0);		
-    	sp0828_i2c_write_byte(0x48,0x0);	   
-    	sp0828_i2c_write_byte(0x49,0x1 ); 	 
-    	sp0828_i2c_write_byte(0x4a,0x40);	   
-    	sp0828_i2c_write_byte(0x4b,0x00);	   
-    	sp0828_i2c_write_byte(0x4c,0xf0);
-    }
-    else
-    {
-        sp0828_i2c_write_byte(0x47,(byte)((y>>8)&0xff) );		
-    	sp0828_i2c_write_byte(0x48,(byte)(y&0xff) );	   
-    	sp0828_i2c_write_byte(0x49,(byte)((camera_dy>>8)&0xff) ); 	 
-    	sp0828_i2c_write_byte(0x4a,(byte)(camera_dy&0xff));	   
-    	sp0828_i2c_write_byte(0x4b,(byte)(x&0xff));	   
-    	sp0828_i2c_write_byte(0x4c,(byte)(camera_dx&0xff));	
-    }
- 
     return TRUE;
 }
 /*===========================================================================
@@ -748,10 +606,7 @@ SIDE EFFECTS
 ===========================================================================*/
 static boolean camsensor_sp0828_video_config(camsensor_static_params_type *camsensor_params)
 {
-        /* Set the current dimensions */
-
     /* Sensor output data format */
-    #ifdef T_QSC1110
 	camsensor_params->discardFirstFrame = TRUE;
 	camsensor_params->format = CAMIF_YCbCr_Cr_Y_Cb_Y;
 
@@ -780,33 +635,14 @@ static boolean camsensor_sp0828_video_config(camsensor_static_params_type *camse
 	} /* camsensor_preview_resolution */
 
 	/* CAMIF window */
-	MSG_FATAL("camsensor_params->camsensor_width=====%d",camsensor_params->camsensor_width,0,0);
-	MSG_FATAL("camsensor_params->camsensor_height=====%d",camsensor_params->camsensor_height,0,0);
 	camsensor_params->camif_window_width_config.firstPixel = 0;
 	camsensor_params->camif_window_width_config.lastPixel  = camsensor_params->camif_window_width_config.firstPixel + camsensor_params->camsensor_width*2 - 1;
 	camsensor_params->camif_window_height_config.firstLine = 0;
-	camsensor_params->camif_window_height_config.lastLine = camsensor_params->camif_window_height_config.firstLine + camsensor_params->camsensor_height*2 - 1;
+	camsensor_params->camif_window_height_config.lastLine = camsensor_params->camif_window_height_config.firstLine + camsensor_params->camsensor_height1 - 1;
 
 	//	camsensor_sp0828_ycbcr_write_sensor (camsensor_preview_resolution);//yty add
 	camsensor_current_resolution = camsensor_preview_resolution;
-	#else
-	 /* Set the current dimensions */
-    camsensor_params->camsensor_width  = camera_preview_dx;
-    camsensor_params->camsensor_height = camera_preview_dy;
 
-    /* CAMIF frame */
-    camsensor_params->camif_frame_config.pixelsPerLine =camera_preview_dx*2;
-    camsensor_params->camif_frame_config.linesPerFrame =camera_preview_dy;
-    
-    /* CAMIF Window */
-    camsensor_params->camif_window_width_config.firstPixel = 0; //按CLK
-    camsensor_params->camif_window_width_config.lastPixel  = camsensor_params->camif_window_width_config.firstPixel+(camera_preview_dx*2);
-
-    camsensor_params->camif_window_height_config.firstLine = 0;
-    camsensor_params->camif_window_height_config.lastLine  = camsensor_params->camif_window_height_config.firstLine+camera_preview_dy;
-    camsensor_params->pixel_clock = 1;
-    initialize_sp0828_registers(camera_preview_dx, camera_preview_dy);
-	#endif
     return TRUE;
 }
 
