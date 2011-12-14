@@ -3367,13 +3367,13 @@ static NextFSMAction WMSST_WRITEMSG_Handler(WmsApp *pMe)
         case DLGRET_WRITEMSG:
             MOVE_TO_STATE(WMSST_WRITEMSG)
             return NFSMACTION_CONTINUE;
-
+#ifdef FEATURE_USES_MMS
         case DLGRET_SIZETOOBIG_MMS:
             MSG_FATAL("DLGRET_SIZETOOBIG_MMS",0,0,0);
             pMe->m_ePMsgType = MESSAGE_WARNNING;
             WmsApp_ShowMsgBox(pMe, IDS_MMS_SIZE_TOO_BIG);
             return NFSMACTION_WAIT;
-
+#endif
             
         default:
             // 用退出程序代替宏断言
