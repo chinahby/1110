@@ -11723,7 +11723,19 @@ static boolean TextCtl_NumbersKey(TextCtlContext *pContext, AEEEvent eCode,AVKTy
 	                return TRUE;
 	            }            
 	            break;	
-#else			
+#else	
+#ifdef FEATURE_VERSION_W208S
+			case AVK_O:	             
+			{
+				MSG_FATAL("***zzg W208S AVK_O +***", 0, 0, 0);
+
+				/* Insert a "NUL" to just delete and insert nothing */
+				TextCtl_AddChar(pContext, 0);
+				TextCtl_NoSelection(pContext);
+				TextCtl_AddChar(pContext,(AECHAR) ('+'));
+				return TRUE;
+			} 
+#endif
 			case AVK_POUND:
 	        case AVK_STAR: 
 #endif
@@ -11742,7 +11754,9 @@ static boolean TextCtl_NumbersKey(TextCtlContext *pContext, AEEEvent eCode,AVKTy
 	        case AVK_Y:
 	        case AVK_U:
 	        case AVK_I:
-	        case AVK_O:
+#ifndef FEATURE_VERSION_W208S
+			case AVK_O:
+#endif					        
 	        case AVK_P:
 	        case AVK_G:
 	        case AVK_H:
