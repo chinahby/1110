@@ -325,9 +325,9 @@
 #define VIDEOPLAYER_NAMEPART_Y 0
 
 //Ê±¼ä
-#define VIDEOPLAYER_TIME_W 40
+#define VIDEOPLAYER_TIME_W 42
 #define VIDEOPLAYER_TIME_H 20
-#define VIDEOPLAYER_TIME_X (SCR_W - 80)//50
+#define VIDEOPLAYER_TIME_X (SCR_W - 84)//50
 #define VIDEOPLAYER_TIME_Y (SCR_H - BOTTOMBAR_HEIGHT-VIDEOPLAYER_TIME_H)//181
 
 //----------------------------------------------------------
