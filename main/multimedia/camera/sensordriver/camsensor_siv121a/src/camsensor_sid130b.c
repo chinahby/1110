@@ -131,8 +131,8 @@ static const char camsensor_SETi_SID130B_sensor_suffix[]= "SID130B_mu2myu";
 /***************************************************************
 * The following defines are used as UI parameters
 ***************************************************************/
-#define CAMSENSOR_SID130B_FULL_SIZE_WIDTH  1600
-#define CAMSENSOR_SID130B_FULL_SIZE_HEIGHT 1200
+#define CAMSENSOR_SID130B_FULL_SIZE_WIDTH  600
+#define CAMSENSOR_SID130B_FULL_SIZE_HEIGHT 800
 
 #define CAMSENSOR_SID130B_QTR_SIZE_WIDTH   240
 #define CAMSENSOR_SID130B_QTR_SIZE_HEIGHT  320
@@ -1095,10 +1095,10 @@ static register_address_value_pair SID130B_mode_full[] =
 //IDP
 	{0x00, 0x03},
 		
-	{0x94, 0x06}, //win size 1600x12600
-	{0x95, 0x40},
-	{0x96, 0x04},
-	{0x97, 0xb0},
+	{0x94, 0x02}, //win size 1600x12600
+	{0x95, 0x58},
+	{0x96, 0x03},
+	{0x97, 0x20},
 };
 
 boolean camsensor_SETi_SID130B_snapshot_config
