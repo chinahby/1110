@@ -559,6 +559,9 @@
 	<String Id="1016" Name="IDS_MMS_SIZE_TOO_BIG">
 		<Text>Size of MMS too large</Text>
 	</String>
+	<String Id="1017" Name="IDS_SAVE_CURRENT_ITEM">
+		<Text>Save the current item</Text>
+	</String>
 	<String Id="1026" Name="IDS_MMSDELIVERYREPORT">
 		<Text>MMS Delivery Report</Text>
 	</String>

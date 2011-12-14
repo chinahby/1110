@@ -559,6 +559,9 @@
 	<String Id="1016" Name="IDS_MMS_SIZE_TOO_BIG">
 		<Text>插入的彩信元素太大了</Text>
 	</String>
+	<String Id="1017" Name="IDS_SAVE_CURRENT_ITEM">
+		<Text>保存当前项</Text>
+	</String>
 	<String Id="1026" Name="IDS_MMSDELIVERYREPORT">
 		<Text>使用彩信发送报告</Text>
 	</String>

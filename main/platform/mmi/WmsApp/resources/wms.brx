@@ -640,6 +640,9 @@
 	<String Id="1034" Name="IDS_MMS_SIZE_TOO_BIG" Encoding="Unicode">
 		<Text>Size of MMS too large</Text>
 	</String>
+	<String Id="1035" Name="IDS_SAVE_CURRENT_ITEM" Encoding="Unicode">
+		<Text>Save the current item</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN" Focus="7001">
