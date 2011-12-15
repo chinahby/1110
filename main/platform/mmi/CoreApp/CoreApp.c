@@ -138,7 +138,53 @@ extern int CCoreApp_DisplayADN(CCoreApp *pMe, uint16 wRecID);
 
                                  函数定义
                                  
+                                 
 ==============================================================================*/
+
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+
+static void CoreApp_InitdataTouch(CCoreApp *pMe)
+{
+	pMe->m_pImageTouchIcon[0] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_1);
+	pMe->m_pImageTouchIcon[1] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_2);
+	pMe->m_pImageTouchIcon[2] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_3);
+	pMe->m_pImageTouchIcon[3] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_4);
+
+	pMe->m_pImageTimeIcon[0] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TIME_0);
+	pMe->m_pImageTimeIcon[1] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TIME_1);
+	pMe->m_pImageTimeIcon[2] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TIME_2);
+	pMe->m_pImageTimeIcon[3] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TIME_3);
+	pMe->m_pImageTimeIcon[4] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TIME_4);
+	pMe->m_pImageTimeIcon[5] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TIME_5);
+	pMe->m_pImageTimeIcon[6] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TIME_6);
+	pMe->m_pImageTimeIcon[7] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TIME_7);
+	pMe->m_pImageTimeIcon[8] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TIME_8);
+	pMe->m_pImageTimeIcon[9] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TIME_9);
+	pMe->m_pImageTimeIcon[10] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TIME_DAY);
+	pMe->m_pImageTimeIcon[11] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TIME_IDLE_TIME_BG);
+	pMe->m_pImageTimeIcon[12] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TIME_NIGHT);
+}
+#endif
+
+#ifdef FEATURE_USES_BLACKBERRY
+static void CoreApp_InitdataBlackBerry(CCoreApp *pMe)
+{
+    MSG_FATAL("CoreApp_InitdataBlackBerry..................",0,0,0);
+	pMe->m_pImageIcon[0]    = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_BLACKBERRY_1);
+	pMe->m_pImageSelIcon[0] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_BLACKBERRY_SEL_1);
+	pMe->m_pImageIcon[1]    = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_BLACKBERRY_2);
+	pMe->m_pImageSelIcon[1] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_BLACKBERRY_SEL_2);
+	pMe->m_pImageIcon[2]    = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_BLACKBERRY_3);
+	pMe->m_pImageSelIcon[2] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_BLACKBERRY_SEL_3);
+	pMe->m_pImageIcon[3]    = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_BLACKBERRY_4);
+	pMe->m_pImageSelIcon[3] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_BLACKBERRY_SEL_4);
+	pMe->m_pImageIcon[4]    = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_BLACKBERRY_5);
+	pMe->m_pImageSelIcon[4] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_BLACKBERRY_SEL_5);
+	pMe->m_pImageIcon[5]    = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_BLACKBERRY_6);
+	pMe->m_pImageSelIcon[5] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_BLACKBERRY_SEL_6);
+}
+#endif
+
 /*==============================================================================
 函数: 
     CoreApp_IsIdle
@@ -592,6 +638,12 @@ boolean CoreApp_InitAppData(IApplet* po)
 	(void)ICONFIG_GetItem(pMe->m_pConfig, CFGI_PROFILE_CUR_NUMBER,&pMe->m_CurProfile, sizeof(pMe->m_CurProfile));//CFGI_ALERT_TYPE
 	(void)ICONFIG_GetItem(pMe->m_pConfig,CFGI_PROFILE_CUR_NUMBER,&pMe->m_active,sizeof(pMe->m_active));
     CoreAppReadNVKeyBeepValue(pMe);
+#ifdef FEATURE_USES_BLACKBERRY
+     CoreApp_InitdataBlackBerry(pMe);
+#endif
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+    CoreApp_InitdataTouch(pMe);
+#endif
     g_pCoreApp = pMe;
     return TRUE;
 } /* End CoreApp_InitAppData */

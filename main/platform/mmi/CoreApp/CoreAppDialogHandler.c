@@ -444,11 +444,9 @@ static void CoreApp_DrawWallPaper(CCoreApp *pMe);
 #ifdef FEATURE_USES_BLACKBERRY
 //»æÖÆºÚÝ®IDLE
 static void CoreApp_DrawBlackBerry_IDLE(CCoreApp *pMe);
-static void CoreApp_InitdataBlackBerry(CCoreApp *pMe);
 #endif
 #ifdef FEATURE_LCD_TOUCH_ENABLE
 static void CoreApp_DrawTouch_IDLE(CCoreApp *pMe);
-static void CoreApp_InitdataTouch(CCoreApp *pMe);
 #endif
 static boolean CoreApp_LaunchApplet(CCoreApp *pMe,  AEECLSID   classID);
 
@@ -3070,12 +3068,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #ifdef FEATRUE_SUPPORT_G_SENSOR
             dword shake;
 #endif
-#ifdef FEATURE_USES_BLACKBERRY
-            CoreApp_InitdataBlackBerry(pMe);
-#endif
-#ifdef FEATURE_LCD_TOUCH_ENABLE
-			CoreApp_InitdataTouch(pMe);
-#endif
+
 #ifndef CUST_EDITION
             if(!((MMI_GSENSOR_SHAKE_OPEN == mmi_g_sensor_state) 
                 ||(MMI_GSENSOR_SHAKE_OPEN_IN_IDLE == mmi_g_sensor_state)))   //ignore if sensor has been open.
@@ -6368,7 +6361,9 @@ static void CoreApp_PlayPwrOffAni(CCoreApp *pMe)
         (void)ISHELL_SendEvent( pMe->a.m_pIShell, AEECLSID_CORE_APP, EVT_DISPLAYDIALOGTIMEOUT, 0, 0);
     }
 }
+
 #ifdef FEATURE_USES_BLACKBERRY
+
 /*==============================================================================
 º¯Êý      :  CoreApp_DrawBlackBerry_IDLE
 
@@ -6456,46 +6451,10 @@ static void CoreApp_DrawBlackBerry_IDLE(CCoreApp *pMe)
 	                              | IDF_TEXT_TRANSPARENT);
     IDisplay_Update(pMe->m_pDisplay);
 }
-static void CoreApp_InitdataBlackBerry(CCoreApp *pMe)
-{
-    MSG_FATAL("CoreApp_InitdataBlackBerry..................",0,0,0);
-	pMe->m_pImageIcon[0]    = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_BLACKBERRY_1);
-	pMe->m_pImageSelIcon[0] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_BLACKBERRY_SEL_1);
-	pMe->m_pImageIcon[1]    = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_BLACKBERRY_2);
-	pMe->m_pImageSelIcon[1] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_BLACKBERRY_SEL_2);
-	pMe->m_pImageIcon[2]    = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_BLACKBERRY_3);
-	pMe->m_pImageSelIcon[2] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_BLACKBERRY_SEL_3);
-	pMe->m_pImageIcon[3]    = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_BLACKBERRY_4);
-	pMe->m_pImageSelIcon[3] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_BLACKBERRY_SEL_4);
-	pMe->m_pImageIcon[4]    = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_BLACKBERRY_5);
-	pMe->m_pImageSelIcon[4] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_BLACKBERRY_SEL_5);
-	pMe->m_pImageIcon[5]    = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_BLACKBERRY_6);
-	pMe->m_pImageSelIcon[5] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_BLACKBERRY_SEL_6);
-}
 
 #endif
 #ifdef FEATURE_LCD_TOUCH_ENABLE
-static void CoreApp_InitdataTouch(CCoreApp *pMe)
-{
-	pMe->m_pImageTouchIcon[0] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_1);
-	pMe->m_pImageTouchIcon[1] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_2);
-	pMe->m_pImageTouchIcon[2] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_3);
-	pMe->m_pImageTouchIcon[3] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_4);
 
-	pMe->m_pImageTimeIcon[0] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TIME_0);
-	pMe->m_pImageTimeIcon[1] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TIME_1);
-	pMe->m_pImageTimeIcon[2] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TIME_2);
-	pMe->m_pImageTimeIcon[3] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TIME_3);
-	pMe->m_pImageTimeIcon[4] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TIME_4);
-	pMe->m_pImageTimeIcon[5] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TIME_5);
-	pMe->m_pImageTimeIcon[6] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TIME_6);
-	pMe->m_pImageTimeIcon[7] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TIME_7);
-	pMe->m_pImageTimeIcon[8] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TIME_8);
-	pMe->m_pImageTimeIcon[9] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TIME_9);
-	pMe->m_pImageTimeIcon[10] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TIME_DAY);
-	pMe->m_pImageTimeIcon[11] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TIME_IDLE_TIME_BG);
-	pMe->m_pImageTimeIcon[12] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TIME_NIGHT);
-}
 static void CoreApp_DrawTouch_IDLE(CCoreApp *pMe)
 {
 	AEEImageInfo   ImgInfo;
