@@ -805,7 +805,7 @@ void Appscomm_Draw_Keyguard_Msg(IDisplay *pIDisplay,IStatic *pStatic,boolean unl
 #ifdef FEATURE_LCD_TOUCH_ENABLE 
 void Appscomm_Draw_Keyguard_Slide(IDisplay *pIDisplay,uint16 x,uint16 y);
 void Appscomm_Draw_Keyguard_BackGroud(IDisplay *pIDisplay,uint16 x,uint16 y);
-
+void Appscomm_Draw_Keyguard_BackGroudbar(IDisplay *pIDisplay,uint16 x,uint16 y);
 #endif
 #endif
 
