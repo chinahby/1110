@@ -727,6 +727,8 @@ static   IAddrRec *  AEEAddrBook_CreateRec(IAddrBook * po, AEEAddrCat c, AEEAddr
          pme->m_nErrno = ENOMEMORY;
          return(NULL);
       }
+
+	 
       
       //Add record into address book
       recID = IOEMADDR_RecordAdd(pme->m_pIOEMAddrBk, c, pFields, nFieldCount,
@@ -1167,6 +1169,7 @@ static   AEEAddrField *   AEEAddrRec_GetField(IAddrRec * po, int nFieldIdx)
 {
    AEEAddrRec *pme = (AEEAddrRec *)po;
 
+
    //Validate Index.
    if(nFieldIdx < 0 || nFieldIdx >= pme->m_nFieldCount)
       return(NULL);
@@ -1272,6 +1275,7 @@ static   int   AEEAddrRec_UpdateAllFields(IAddrRec *po, AEEAddrField *pFields, i
    AEEAddrField    *pOldFields;
    int             nOldCount;
    int             nErr;
+
 
    //Make copy of existing fields. This is so that we can restore if OEM fails to update
    //the record.
@@ -1397,6 +1401,7 @@ static   int   AEEAddrRec_RemoveField(IAddrRec *po, int nFieldIdx)
    //Validate index
    if(nFieldIdx < 0 || nFieldIdx >= pme->m_nFieldCount)
       return(EFAILED);
+
 
    //Get current Field at this position
    oldF = pme->m_pFields[nFieldIdx];
@@ -1537,6 +1542,7 @@ static int AEEAddrRec_SetInfo(IAddrRec *po, uint16 recID,AEEAddrCat c, AEEAddrFi
    if(bFreeExisting)
       AEEAddrRec_FreeBuffer(pme);
 
+
    if(bAllocated)
    {
       //Mem already allocated by us. So, just store the pointers
@@ -1571,6 +1577,8 @@ static int AEEAddrRec_SetInfo(IAddrRec *po, uint16 recID,AEEAddrCat c, AEEAddrFi
       }
      
    }
+
+   
 
    //Initialize other fields
    pme->m_addrCat = c;

@@ -364,6 +364,13 @@ extern sSelectFieldListNode* pCurSelectFieldNode;
 // list menu build index
 #define PUSH_LISTMENU_IDX(w)   (w = (uint16)pMe->m_nCurrIdx)
 #define POP_LISTMENU_IDX(w)    (pMe->m_nCurrIdx = (uint16)w)
+
+
+//Add By zzg 2011_12_15
+#define CONT_PAUSE_AECHAR              ((AECHAR)'P')
+#define CONT_PLUS_AECHAR               ((AECHAR)'+')
+//Add End
+
 /*==============================================================================
                                  类型定义
 ==============================================================================*/
@@ -967,6 +974,7 @@ typedef struct _CContApp
     boolean      m_bADNRUIMSupport;
 #endif
 	boolean      m_boptaleadyView;
+	boolean		 m_bNumberInvalid;		//Add By zzg 2011_12_15
 #ifdef FEATURE_OEMOMH        
    // AEECardSessionReadTpStatus	*m_pReadStatus;
 #endif

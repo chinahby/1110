@@ -885,7 +885,7 @@ vcard_last_error ParseVcfFile(CContApp *pMe, char* vcf, int *cnt)
                         }
                         STRNCPY(temp, vptr, vlen);
                         temp[vlen] = '\0';
-                        STRTOWSTR(temp, pMe->m_pAddNewMobile, (vlen+1)*sizeof(AECHAR));
+                        STRTOWSTR(temp, pMe->m_pAddNewMobile, (vlen+1)*sizeof(AECHAR));						
                     }
                     else
                     {
@@ -906,7 +906,7 @@ vcard_last_error ParseVcfFile(CContApp *pMe, char* vcf, int *cnt)
                     }
                     STRNCPY(temp, vptr, vlen);
                     temp[vlen] = '\0';
-                    STRTOWSTR(temp, pMe->m_pAddNewMobile, (vlen+1)*sizeof(AECHAR));
+                    STRTOWSTR(temp, pMe->m_pAddNewMobile, (vlen+1)*sizeof(AECHAR));					
                 }
                 break;
 
@@ -1524,7 +1524,7 @@ boolean Vcard_CreateVcfFile(CContApp *pMe, int contId, char* filename)
         {
             WSTRTOSTR(pMe->m_pAddNewMobile, temp, VCARD_MAX_VALUE_OF_TEL);
             VCardInsertEntry(temp,VCARD_T_TEL_MOBILE);
-        }
+        }		
     }
     
     //fax
@@ -1744,7 +1744,7 @@ boolean Vcard_CreateVcfFileEx(CContApp *pMe, AEEAddrField *pFields, int nFldCnt,
             case AEE_ADDRFIELD_PHONE_GENERIC:
                 // Get mobile number
                 //FREEIF(pMe->m_pAddNewMobile);
-                pMe->m_pAddNewMobile = WSTRDUP((AECHAR *)fld->pBuffer);
+                pMe->m_pAddNewMobile = WSTRDUP((AECHAR *)fld->pBuffer);						
                 //pMe->m_wFieldMask |= MASK_ADDRFIELD_PHONE_GENERIC;                        
                 break;
                 

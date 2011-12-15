@@ -7,7 +7,7 @@ GENERAL DESCRIPTION:
    This file provides the prorotypes of the functions that OEMs must provide in
    order to support the BREW AddressBook interfaces
 
-        Copyright © 1999-2004 QUALCOMM Incorporated.
+        Copyright ?1999-2004 QUALCOMM Incorporated.
                All Rights Reserved.
             QUALCOMM Proprietary/GTDR
 =====================================================*/
@@ -340,10 +340,13 @@ static uint16 OEMAddr_RecordAdd(AEEAddrCat cat, AEEAddrField * pItems, int nItem
    word              wRecSize;
    int               nErr;
 
+
    if(!pItems)
       return(AEE_ADDR_RECID_NULL);
 
    dbErr = ValidateFieldData(cat, pItems, nItemCount);
+
+   
    if( dbErr != AEE_SUCCESS)
    {
       if(pErr)
@@ -437,6 +440,7 @@ static int OEMAddr_RecordUpdate(uint16 wrecID,AEEAddrCat cat,AEEAddrField * pIte
    byte        *pBuf;
    uint16      wRecSize;
    AEE_DBError dbErr;
+
 
    dbErr = ValidateFieldData(cat, pItems, nItemCount);
    if( dbErr != AEE_SUCCESS)

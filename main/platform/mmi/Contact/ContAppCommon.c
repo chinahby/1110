@@ -1272,18 +1272,19 @@ int CContApp_BuildAddrField( AEEAddrFieldID  wFldID,
                                     AEEAddrField   *pFld,
                                     boolean         bMalloc)
 {
+	
     if ( pData == NULL || pFld == NULL) 
     {
         return EFAILED;
-    }
+    }	
     
     if(wFldID == AEE_ADDRFIELD_NONE)
     {
         return EFAILED;
     }
     
-    pFld->wDataLen = (uint16) WSTRSIZE(pData);
-    
+    pFld->wDataLen = (uint16) WSTRSIZE(pData);	
+	
     if ( bMalloc )
     {
         pFld->pBuffer = MALLOC(pFld->wDataLen);
@@ -2239,6 +2240,7 @@ int CContApp_SetDetailStatic(CContApp *pMe, IStatic *pStatic)
     {
         WSTRCPY(m_sString, m_sMobile);
         WSTRCAT(m_sString, space);
+		
         if (pMe->m_pAddNewMobile)
         {
 #ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
@@ -2254,6 +2256,7 @@ int CContApp_SetDetailStatic(CContApp *pMe, IStatic *pStatic)
           FREEIF(pMe->m_pAddNewMobile);
         }
         WSTRCAT(m_sString, enter);
+
     }  
     if(!IS_RUIM_REC(pMe->m_wSelectCont))
     {
@@ -4183,6 +4186,7 @@ boolean CContApp_GetRecByID(CContApp *pMe, uint16 wContID)
 
     CContApp_FreeBuffer(pMe);
 
+
     if(IS_RUIM_REC(wContID))
     {
 #ifdef FEATURE_RUIM_PHONEBOOK
@@ -4198,6 +4202,7 @@ boolean CContApp_GetRecByID(CContApp *pMe, uint16 wContID)
          //get total fields
             wFldNum  = (uint16)IADDRREC_GetFieldCount(pAddrRec);
             pMe->m_wFieldCount = wFldNum;
+
                 
             if(wFldNum == 0)
             {
@@ -4215,12 +4220,14 @@ boolean CContApp_GetRecByID(CContApp *pMe, uint16 wContID)
              for (j = 1; j < wFldNum; j++)
              {
                //Get number field
-                pNumFld = IADDRREC_GetField(pAddrRec, j);
+                pNumFld = IADDRREC_GetField(pAddrRec, j);  
+
+				CContApp_SetPlusNumber((AECHAR *)pNumFld->pBuffer);	//Add By zzg 2011_12_15				
           
                 // Get mobile number
                 //FREEIF(pMe->m_pAddNewMobile);
                 pMe->m_pAddNewMobile = WSTRDUP((AECHAR *)pNumFld->pBuffer);
-                pMe->m_wFieldMask |= MASK_ADDRFIELD_PHONE_GENERIC;                        
+                pMe->m_wFieldMask |= MASK_ADDRFIELD_PHONE_GENERIC;     
                 
               }            
              //end for(j=0;;)
@@ -4243,6 +4250,7 @@ boolean CContApp_GetRecByID(CContApp *pMe, uint16 wContID)
          //get total fields
             wFldNum  = (uint16)IADDRREC_GetFieldCount(pAddrRec);
             pMe->m_wFieldCount = wFldNum;
+
                 
             if(wFldNum == 0)
             {
@@ -4269,9 +4277,13 @@ boolean CContApp_GetRecByID(CContApp *pMe, uint16 wContID)
                 {
                     case AEE_ADDRFIELD_PHONE_GENERIC:
                         // Get mobile number
-                        //FREEIF(pMe->m_pAddNewMobile);
+                        //FREEIF(pMe->m_pAddNewMobile);						
+
+						CContApp_SetPlusNumber((AECHAR *)pNumFld->pBuffer);	//Add By zzg 2011_12_15			
+						
                         pMe->m_pAddNewMobile = WSTRDUP((AECHAR *)pNumFld->pBuffer);
-                        pMe->m_wFieldMask |= MASK_ADDRFIELD_PHONE_GENERIC;                        
+                        pMe->m_wFieldMask |= MASK_ADDRFIELD_PHONE_GENERIC;      
+
                         break;
                         
                     case AEE_ADDRFIELD_PHONE_HOME:
@@ -4372,6 +4384,8 @@ void CContApp_SetRecByFLDID(CContApp *pMe, uint16 wFLDID)
             case AEE_ADDRFIELD_PHONE_GENERIC:
                  FREEIF(pMe->m_pAddNewMobile);
                  pMe->m_pAddNewMobile = pMe->m_pFldInputBuf;
+
+				 
                  break;
                  
             case AEE_ADDRFIELD_PHONE_HOME:
@@ -4458,14 +4472,16 @@ int CContApp_CreateCont( CContApp *pMe,  boolean bCard)
     
     // Set the number field
     if (NULL !=pMe->m_pAddNewMobile)
-    {
-        if(SUCCESS != CContApp_BuildAddrField( AEE_ADDRFIELD_PHONE_GENERIC,
+    {    	
+
+    	if(SUCCESS != CContApp_BuildAddrField( AEE_ADDRFIELD_PHONE_GENERIC,
                                                pMe->m_pAddNewMobile,
                                                &addrFld[1],
                                                FALSE))
         {
             return EFAILED;
         }
+		
         index = 1;
     }
     else
@@ -4612,12 +4628,12 @@ int CContApp_CreateCont( CContApp *pMe,  boolean bCard)
                                              bCard);
     
     IADDRREC_Release(pAddrRec);
+
     
     // reload all the cont info
     if(STATE_GROUPVIEW_LIST == CContApp_GetReturnState(pMe))
     {
         CContApp_GetGroupCat(pMe, pMe->m_wselGroupId);
-
         CContApp_LoadByCat(pMe, pMe->m_nGroupCat);
     }
     else
@@ -4673,7 +4689,7 @@ boolean CContApp_DisplaySelectField( CContApp  *pMe, byte Field)
             DisplayString = WSTRDUP((AECHAR *)pMe->m_pAddNewName);
             break;
         case MASK_ADDRFIELD_PHONE_GENERIC:
-            DisplayString = WSTRDUP((AECHAR *)pMe->m_pAddNewMobile);
+            DisplayString = WSTRDUP((AECHAR *)pMe->m_pAddNewMobile);			
             break;
         case MASK_ADDRFIELD_PHONE_HOME:
             DisplayString = WSTRDUP((AECHAR *)pMe->m_pAddNewHome);         
@@ -5006,7 +5022,7 @@ boolean CContApp_GetSelectFieldByID(CContApp *pMe, sSelectFieldListNode* pNode, 
 
                 // Get mobile number
                 FREEIF(pNode->SelectFieldInfo.m_pAddNewMobile);
-                pNode->SelectFieldInfo.m_pAddNewMobile = WSTRDUP((AECHAR *)pNumFld->pBuffer);
+                pNode->SelectFieldInfo.m_pAddNewMobile = WSTRDUP((AECHAR *)pNumFld->pBuffer);				
             }            
             //end for(j=0;;)
         }//end if(addrRec==NULL)
@@ -5051,7 +5067,7 @@ boolean CContApp_GetSelectFieldByID(CContApp *pMe, sSelectFieldListNode* pNode, 
                     case AEE_ADDRFIELD_PHONE_GENERIC:
                         // Get mobile number
                         FREEIF(pNode->SelectFieldInfo.m_pAddNewMobile);
-                        pNode->SelectFieldInfo.m_pAddNewMobile = WSTRDUP((AECHAR *)pNumFld->pBuffer);
+                        pNode->SelectFieldInfo.m_pAddNewMobile = WSTRDUP((AECHAR *)pNumFld->pBuffer);						
                         break;
 
                     case AEE_ADDRFIELD_PHONE_HOME:
@@ -5226,7 +5242,7 @@ boolean CContApp_FormatSelectFieldContentListNode(CContApp *pMe, sSelectFieldLis
                     nTotalLen += nLen;
                     wstrFMTED[nTotalLen] = (AECHAR)'\n';
                     nTotalLen++;
-                }
+                }				
             }
         }
         if (pTepNode->SelectFieldInfo.wFieldMask & MASK_ADDRFIELD_PHONE_HOME)
@@ -5447,7 +5463,7 @@ boolean CContApp_FormatSendDirectoryContent(CContApp *pMe)
     }
 
     if (pMe->m_pAddNewMobile)
-    {
+    {	
         nLen = WSTRLEN(m_sMobile) + WSTRLEN(pMe->m_pAddNewMobile);
         if ((nTotalLen+nLen) < MAX_LEN_WMS_BUF)
         {
@@ -6112,6 +6128,7 @@ int CContApp_Create500Cont( CContApp *pMe)
     
     ASSERT(pMe != NULL);
 
+
     for (count = 1; count <=500; count++)
     {
         Name[1] = 0;
@@ -6135,7 +6152,10 @@ int CContApp_Create500Cont( CContApp *pMe)
         {
             return EFAILED;
         }
-        
+
+
+		CContApp_FixPlusNumber(pMe);	//Add By zzg 2011_12_15
+		
         // Set the number field
         if(SUCCESS != CContApp_BuildAddrField( AEE_ADDRFIELD_PHONE_GENERIC,
                                                pMe->m_pAddNewMobile,
@@ -6144,8 +6164,7 @@ int CContApp_Create500Cont( CContApp *pMe)
         {
             return EFAILED;
         }
-
-
+		
         index = 1;
          // Set the home number field
         if (NULL !=pMe->m_pAddNewHome)
@@ -7533,4 +7552,40 @@ void ContApp_ChangePhoneNumberForNameCompare(AECHAR *num)
         }
     }
 }
+
+//Add By zzg 2011_12_15
+void CContApp_FixPlusNumber(CContApp *pMe)
+{	
+	char tempstr[50];
+	AECHAR  buff[50];
+	WSTRTOSTR(pMe->m_pAddNewMobile, tempstr, sizeof(tempstr));
+	DBGPRINTF("***zzg CContApp_FixPlusNumber m_pAddNewMobile = %s***", tempstr);
+
+	if (WSTRNCMP(pMe->m_pAddNewMobile, L"+", 1) == 0) 
+    {
+    	WSTRCPY(buff, L"00");	
+		WSTRCAT(buff, pMe->m_pAddNewMobile+1);
+		WSTRCPY(pMe->m_pAddNewMobile, buff);
+    }	        
+		
+}
+
+void CContApp_SetPlusNumber(AECHAR *pBuffer)
+{	
+	char tempstr[50];
+	AECHAR  buff[50];
+	WSTRTOSTR(pBuffer, tempstr, sizeof(tempstr));
+	DBGPRINTF("***zzg CContApp_SetPlusNumber m_pAddNewMobile = %s***", tempstr);
+
+	if (WSTRNCMP(pBuffer, L"00", 2) == 0) 
+	{
+		WSTRCPY(buff, L"+");	
+		WSTRCAT(buff, pBuffer+2);
+		WSTRCPY(pBuffer, buff);
+	}	              
+		
+}
+
+//Add End
+
 

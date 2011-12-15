@@ -873,7 +873,6 @@ int CContApp_BuildEditMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl, boolean bAll)
     
     ASSERT(pMe != NULL); 
 
-    MSG_FATAL("CContApp_BuildEditMenuMenu Start",0,0,0);
      // Check Parameter
     if(!pMenuCtl)
     {
@@ -1020,6 +1019,7 @@ int CContApp_BuildEditMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl, boolean bAll)
                  return EFAILED;
               }
 
+
               IMENUCTL_SetItemText(pMenuCtl, IDI_EDIT_MENU_NAME, NULL, 0, pMe->m_pAddNewName);
            }
         }
@@ -1037,7 +1037,8 @@ int CContApp_BuildEditMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl, boolean bAll)
              return EFAILED;
           }
 
-       IMENUCTL_SetItemText(pMenuCtl, IDI_EDIT_MENU_MOBILE, NULL, 0, pMe->m_pAddNewMobile);
+
+       	IMENUCTL_SetItemText(pMenuCtl, IDI_EDIT_MENU_MOBILE, NULL, 0, pMe->m_pAddNewMobile);
        }
 
 ///////////////////////////////////// IF RUIM CARD 

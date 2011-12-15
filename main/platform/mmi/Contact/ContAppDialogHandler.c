@@ -321,6 +321,12 @@ static void CContApp_SetGroupItemText(CContApp *pMe, IMenuCtl *pMenuCtl);
 static void CContApp_SetEditGroup(CContApp *pMe, IMenuCtl *pMenuCtl, boolean onlySaveValue, int selectGroup);
 static void CContApp_SetMenuItemText(CContApp *pMe, IMenuCtl *pMenuCtl, int selectEdit);
 static void CContApp_SetInputMode(CContApp *pMe);
+
+//Add By zzg 2011_12_15
+static boolean CContApp_CheckNumberIsInValid(CContApp  *pMe, ITextCtl *pTextCtl);
+static boolean CContApp_Search_HasExceptionalChar(AECHAR* szContNumber);
+//Add End
+
 #ifdef FEATURE_OEMOMH 
 static boolean  CContApp_HandleEmergencyCallDlgEvent( CContApp  *pMe,
                                                 AEEEvent   eCode,
@@ -1697,6 +1703,7 @@ int CContApp_AddField( CContApp       *pMe,
         FARF(ADDR, ("Reach the Max number of this field"));
         return EMAXFIELD;
     }
+
     
     if (SUCCESS != CContApp_BuildAddrField(wFldID, pData, &field, FALSE))
     {
@@ -1816,6 +1823,7 @@ int CContApp_SaveField( CContApp       *pMe,
     
     if(pData)
     {
+		
         if ( SUCCESS != CContApp_BuildAddrField(wFldID, pData, &cf, TRUE) )
         {
             FARF(ADDR, ("Failed to build the field!"));
@@ -4161,6 +4169,7 @@ SEE ALSO:
         
         if(NULL != ringName)
         {
+			
             if ( SUCCESS != CContApp_BuildAddrField(AEE_ADDRFIELD_RINGTONE, (void*)ringName, &cf, TRUE) )
             {
                 FARF(ADDR, ("Failed to build the field!"));
@@ -4221,7 +4230,8 @@ int CContApp_MergeField( CContApp       *pMe,
     {
         return EBADPARM;
     }
-    
+
+	
     // Set field data
     if(SUCCESS != CContApp_BuildAddrField( wFldID,
                                            pFldData,
@@ -6242,6 +6252,7 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
         case EVT_DIALOG_END:
         {
              // Store the menu select if applet is suspended.
+			 
             if(pMe->m_bSuspending)
             {
                 // ÖÐ¶Ï´¦Àí
@@ -6261,9 +6272,9 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
                 pMe->m_wSelectStore = MENU_SELECT_NULL;
             }
             pMe->m_bInputNotComplete = FALSE;
-            #ifdef FEATURE_LCD_TOUCH_ENABLE
+#ifdef FEATURE_LCD_TOUCH_ENABLE
             TSIM_NumberKeypad(FALSE);
-            #endif
+#endif
         }
         return TRUE;
         
@@ -6465,6 +6476,19 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
                 {
                     if( LOCAL_NUMBER_INPUT == pMe->m_nInputMode || OPT_TEXT_INPUT == pMe->m_nInputMode)
                     {
+                    	//Add By zzg 2011_12_15
+                    	if (CContApp_CheckNumberIsInValid(pMe, pTextCtl))
+                    	{
+                    		 pMe->m_bNumberInvalid = TRUE;		
+                    		 CLOSE_DIALOG(DLGRET_NUM_UNAVAILD);
+							 return TRUE;
+						}
+						else
+						{
+							CContApp_FixPlusNumber(pMe);	
+						}
+                    	//Add End
+                    	
                         if(TRUE != CContApp_SaveLocal_Input(pMe, pTextCtl))
                         {
                             return TRUE;
@@ -10485,6 +10509,19 @@ static boolean  CContApp_HandleEditDlgEvent( CContApp  *pMe,
                 case AVK_INFO:
                 case AVK_SELECT:
                 {
+					//Add By zzg 2011_12_15
+                	if (CContApp_CheckNumberIsInValid(pMe, pTextCtl))
+                	{
+                		 pMe->m_bNumberInvalid = TRUE;		
+                		 CLOSE_DIALOG(DLGRET_NUM_UNAVAILD);
+						 return TRUE;
+					}
+					else
+					{
+						CContApp_FixPlusNumber(pMe);	
+					}
+                	//Add End
+                    	
                     if( LOCAL_NUMBER_INPUT == pMe->m_nInputMode || OPT_TEXT_INPUT == pMe->m_nInputMode)
                     {
                         if(TRUE != CContApp_SaveLocal_Input(pMe, pTextCtl))
@@ -12959,6 +12996,8 @@ static boolean  CContApp_HandleDetailDlgEvent( CContApp  *pMe,
 
     /*pStatic = (IStatic*)IDIALOG_GetControl( pMe->m_pActiveDlg,
                                             IDC_DETAIL_STATIC);*/
+
+	
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
@@ -14820,6 +14859,7 @@ static boolean CContApp_SaveLocal_Input(CContApp  *pMe, ITextCtl *pTextCtl)
 {
     FREEIF(pMe->m_pFldInputBuf);
     pMe->m_pFldInputBuf = WSTRDUP(ITEXTCTL_GetTextPtr(pTextCtl));
+
                     
     if(WSTRLEN(pMe->m_pFldInputBuf) == 0)
     {
@@ -16384,6 +16424,40 @@ static void CContApp_SetInputMode(CContApp *pMe)
     }
 
 }
+
+//Add By zzg 2011_12_15
+static boolean CContApp_CheckNumberIsInValid(CContApp  *pMe, ITextCtl *pTextCtl)
+{
+	FREEIF(pMe->m_pFldInputBuf);
+	pMe->m_pFldInputBuf = WSTRDUP(ITEXTCTL_GetTextPtr(pTextCtl));
+
+	return CContApp_Search_HasExceptionalChar(pMe->m_pFldInputBuf);	                  	
+}
+
+
+static boolean CContApp_Search_HasExceptionalChar(AECHAR * szContNumber)
+{
+    int   len = 0;
+    int i;
+    boolean have = FALSE;
+    len = WSTRLEN(szContNumber);
+
+    for(i = 0; i < len; i++)
+    {
+        if((szContNumber[i] == CONT_PAUSE_AECHAR)
+            ||((i != 0) && (szContNumber[i] == CONT_PLUS_AECHAR))
+            )
+        {
+            have = TRUE;
+            break;
+        }
+
+    }
+	MSG_FATAL("***zzg CContApp_Search_HasExceptionalChar i=%d len=%d have=%d***",i,len,have);
+    return have;
+}
+//Add End
+
 
 #ifdef FEATURE_OEMOMH 
 static boolean  CContApp_HandleEmergencyCallDlgEvent(CContApp  *pMe,

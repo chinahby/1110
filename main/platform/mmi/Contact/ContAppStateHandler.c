@@ -3444,8 +3444,17 @@ static NextFSMAction Handler_STATE_ADDNEW_INPUT(CContApp *pMe)
             return NFSMACTION_WAIT;
 
         case DLGRET_NUM_UNAVAILD:
-            pMe->m_eMsgType = MESSAGE_WARNNING;
-            (void)CContApp_ShowMsgBox(pMe,IDS_MSG_NUM_UNAVAILD);
+            pMe->m_eMsgType = MESSAGE_WARNNING; 
+			//Add By zzg 2011_12_15
+			if (pMe->m_bNumberInvalid == TRUE)		
+			{
+				(void)CContApp_ShowMsgBox(pMe,IDS_NUM_INVALID);
+				pMe->m_bNumberInvalid = FALSE;		
+			}
+			else				
+			//Add End
+				(void)CContApp_ShowMsgBox(pMe,IDS_MSG_NUM_UNAVAILD);
+			
             return NFSMACTION_WAIT;
 
         case DLGRET_EMAIL_UNAVAILD:
@@ -3892,6 +3901,15 @@ static NextFSMAction Handler_STATE_ADDNEW(CContApp *pMe)
         // 不能输入点
         case DLGRET_NUM_UNAVAILD:
             pMe->m_eMsgType = MESSAGE_WARNNING;
+			
+			//Add By zzg 2011_12_15
+			if (pMe->m_bNumberInvalid == TRUE)		
+			{
+				(void)CContApp_ShowMsgBox(pMe,IDS_NUM_INVALID);
+				pMe->m_bNumberInvalid = FALSE;	
+			}
+			else				
+			//Add End
             if(SUCCESS != CContApp_ShowMsgBox(pMe, IDS_MSG_NUM_UNAVAILD))
             {
                 MOVE_TO_STATE(STATE_EXIT);
@@ -4329,6 +4347,14 @@ static NextFSMAction Handler_STATE_EDIT(CContApp *pMe)
         // 不能输入点
         case DLGRET_NUM_UNAVAILD:
             pMe->m_eMsgType = MESSAGE_WARNNING;
+			//Add By zzg 2011_12_15
+			if (pMe->m_bNumberInvalid == TRUE)		
+			{
+				(void)CContApp_ShowMsgBox(pMe,IDS_NUM_INVALID);
+				pMe->m_bNumberInvalid = FALSE;	
+			}
+			else				
+			//Add End
             if(SUCCESS != CContApp_ShowMsgBox(pMe, IDS_MSG_NUM_UNAVAILD))
             {
                 MOVE_TO_STATE(STATE_EXIT);
@@ -4469,6 +4495,14 @@ static NextFSMAction Handler_STATE_EDIT_INPUT(CContApp *pMe)
    
         case DLGRET_NUM_UNAVAILD:
             pMe->m_eMsgType = MESSAGE_WARNNING; 
+			//Add By zzg 2011_12_15
+			if (pMe->m_bNumberInvalid == TRUE)		
+			{
+				(void)CContApp_ShowMsgBox(pMe,IDS_NUM_INVALID);
+				pMe->m_bNumberInvalid = FALSE;	
+			}
+			else				
+			//Add End
             if(SUCCESS != CContApp_ShowMsgBox(pMe, IDS_MSG_NUM_UNAVAILD))
             {
                 MOVE_TO_STATE(STATE_EXIT);
@@ -6334,7 +6368,7 @@ static NextFSMAction Handler_STATE_SAVEFLD(CContApp *pMe)
         case DLGRET_OK:
         {
             boolean bCard = (pMe->m_nSaveType == CONTCFG_SAVETYPE_RUIM);
-            
+
             if(SUCCESS == CContApp_CreateCont( pMe, bCard))
             {
                 FREEIF(pMe->m_pAddNewName);                
@@ -6425,6 +6459,14 @@ static NextFSMAction Handler_STATE_SAVEFLD(CContApp *pMe)
         */
         case DLGRET_NUM_UNAVAILD:
             pMe->m_eMsgType = MESSAGE_WARNNING; 
+			//Add By zzg 2011_12_15
+			if (pMe->m_bNumberInvalid == TRUE)		
+			{
+				(void)CContApp_ShowMsgBox(pMe,IDS_NUM_INVALID);
+				pMe->m_bNumberInvalid = FALSE;	
+			}
+			else				
+			//Add End
             (void)CContApp_ShowMsgBox(pMe, IDS_MSG_NUM_UNAVAILD);
             return NFSMACTION_WAIT;
             
@@ -8913,6 +8955,14 @@ static NextFSMAction Handler_STATE_EMERGENCY_CALL(CContApp *pMe)
 
         case DLGRET_NUM_UNAVAILD:
             pMe->m_eMsgType = MESSAGE_WARNNING;
+			//Add By zzg 2011_12_15
+			if (pMe->m_bNumberInvalid == TRUE)		
+			{
+				(void)CContApp_ShowMsgBox(pMe,IDS_NUM_INVALID);
+				pMe->m_bNumberInvalid = FALSE;	
+			}
+			else				
+			//Add End
             (void)CContApp_ShowMsgBox(pMe,IDS_MSG_NUM_UNAVAILD);
             return NFSMACTION_WAIT;
 

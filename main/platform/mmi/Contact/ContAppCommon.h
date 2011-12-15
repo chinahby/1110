@@ -168,5 +168,10 @@ int CContApp_Create500Cont( CContApp *pMe);
 
 int CContApp_SmartItems(CContApp *pMe, IMenuCtl *pMenuCtl, AEEAddCacheInfo *pCache);
 
+//Add By zzg 2011_12_15
+void CContApp_FixPlusNumber(CContApp *pMe);
+void CContApp_SetPlusNumber(AECHAR *pBuffer);
+//Add End
+
 #endif //CONTAPPCOMMON_H
 

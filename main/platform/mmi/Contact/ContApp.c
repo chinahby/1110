@@ -1073,6 +1073,7 @@ static int CContApp_Start(CContApp *pMe)
     pMe->m_nCurrentInputMode = 0;
 #endif
     pMe->m_boptaleadyView = FALSE;
+	pMe->m_bNumberInvalid = FALSE;		//Add By zzg 2011-12_15
     CContApp_CFGCacheInit(pMe, &pMe->m_sCFGCache);
 	
     // Read the config file
@@ -2129,9 +2130,9 @@ static void CContApp_DecodeStartArgs(CContApp *pMe, char *args)
                     break;
                 
                 case STARTARGPREFIX_SAVE_NUMBER:
-                    pMe->m_eFldSaveType = SAVE_NUMBER;
+                    pMe->m_eFldSaveType = SAVE_NUMBER;	
                     FREEIF(pMe->m_pAddNewMobile);
-                    pMe->m_pAddNewMobile =  wStr;
+                    pMe->m_pAddNewMobile =  wStr;	
                     pMe->m_nAddNewFldID = AEE_ADDRFIELD_PHONE_GENERIC;
                     pMe->m_eStartMethod = STARTMETHOD_SAVEFIELD;
                     break;
@@ -2272,7 +2273,7 @@ static int IContApp_SaveNumber( IContApp            *pi,
     CContApp *pMe = (CContApp*)pi;
     char     *args = NULL;
     int       nRet;
-    
+	    
     if ( pMe == NULL ) 
     {
         return EFAILED;
@@ -2285,7 +2286,7 @@ static int IContApp_SaveNumber( IContApp            *pi,
 
     if (NULL != Number)
     {
-        args = CContApp_BuildStartArgs( STARTMETHOD_SAVEFIELD, &saveType, Number);
+        args = CContApp_BuildStartArgs( STARTMETHOD_SAVEFIELD, &saveType, Number);		
     }
     else if (NULL != E_Mail)
     {
@@ -2303,6 +2304,8 @@ static int IContApp_SaveNumber( IContApp            *pi,
         // Decode the arguments if applet have run
         CContApp_DecodeStartArgs(pMe, args);
     }
+
+	
     
     nRet = ISHELL_StartAppletArgs(  pMe->m_pShell,
                                     AEECLSID_APP_CONTACT, 
