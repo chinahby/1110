@@ -359,6 +359,8 @@ typedef struct _CSettingMenu
 
 #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
 #define CONTROL_RECT_START_X    45  //闹钟设置界面的控件开始位置
+#elif defined(FEATURE_LCD_TOUCH_ENABLE)
+#define CONTROL_RECT_START_X    70  //闹钟设置界面的控件开始位置
 #else
 #define CONTROL_RECT_START_X    40  //闹钟设置界面的控件开始位置
 #endif
