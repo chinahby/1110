@@ -1771,13 +1771,13 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 					}
                     szStr[1] = '\0';
                     STR_TO_WSTR(szStr, wStr, sizeof(wStr));
-					#ifndef FEATURE_LCD_TOUCH_ENABLE
+				//	#ifndef FEATURE_LCD_TOUCH_ENABLE
                     if((AVKType)wParam == AVK_POUND||(AVKType)wParam == AVK_STAR|| (AVKType)wParam == AVK_0)
                     {
                         CallApp_Process_Spec_Key_Event(pMe,wParam);
                     }
                     else
-					#endif
+				//	#endif
                     {
                         int    len;
                         //char   szStr[2];
@@ -11268,6 +11268,11 @@ if(wp == AVK_STAR)
 						//return L'W';
 						WSTRCPY(&pMe->m_DialString[len-1], L"w");
 					}
+					if(pMe->m_curpros == 3)
+					{
+						//return L'W';
+						WSTRCPY(&pMe->m_DialString[len-1], L"+");
+					}
 				}
 				else
 				{
@@ -11292,6 +11297,12 @@ if(wp == AVK_STAR)
 						//WSTRCPY(&pMe->m_DialString[len-1], L"w");
 						pMe->m_DialString[len-pMe->m_nCursorPos-1] = L'w';
 					}
+					if(pMe->m_curpros == 3)
+					{
+						//return L'W';
+						//WSTRCPY(&pMe->m_DialString[len-1], L"w");
+						pMe->m_DialString[len-pMe->m_nCursorPos-1] = L'+';
+					}
 				}	
         	}
         	else
@@ -11308,7 +11319,11 @@ if(wp == AVK_STAR)
         			(void)WSTRCPY(&pMe->m_DialString[len-pMe->m_nCursorPos+1], wstrTemp);
 				}
         	}
+            #if defined(FEATURE_VERSION_X3)
+            if(pMe->m_curpros<3)
+            #else
         	if(pMe->m_curpros<2)
+            #endif
         	{
         		pMe->m_curpros ++;
         	}
