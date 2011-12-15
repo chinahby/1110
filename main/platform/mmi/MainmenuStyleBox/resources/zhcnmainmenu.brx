@@ -4,6 +4,33 @@
 	<String Id="1001" Name="IDS_MAIN_MENU_STATIC_APPLICATION">
 		<Text>应用</Text>
 	</String>
+	<String Id="1002" Name="IDS_MAIN_MENU_FM">
+		<Text>收音机</Text>
+	</String>
+	<String Id="1003" Name="IDS_MAIN_MENU_BT">
+		<Text>蓝牙</Text>
+	</String>
+	<String Id="1004" Name="IDS_MAIN_MENU_UNIT">
+		<Text>换算</Text>
+	</String>
+	<String Id="1005" Name="IDS_MAIN_MENU_WORLDCLO">
+		<Text>世界时间</Text>
+	</String>
+	<String Id="1006" Name="IDS_MAIN_MENU_PINTU">
+		<Text>拼图</Text>
+	</String>
+	<String Id="1007" Name="IDS_MAIN_MENU_TETIRS">
+		<Text>俄罗斯方块</Text>
+	</String>
+	<String Id="1008" Name="IDS_MAIN_MENU_BRICKATTACK">
+		<Text>Brickattack</Text>
+	</String>
+	<String Id="1009" Name="IDS_MAIN_MENU_BLACKJACK">
+		<Text>Blackjack</Text>
+	</String>
+	<String Id="1010" Name="IDS_MAIN_MENU_CALIBRA">
+		<Text>校准</Text>
+	</String>
 	<STRING Id="1011" Name="IDS_MAIN_MENU_MEDIAGALLERY">
 		<Text>多媒体中心</Text>
 	</STRING>
