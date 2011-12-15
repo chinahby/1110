@@ -553,7 +553,7 @@ static void SmartEnOnSharp(GBIM *p,void *param)
 	//SMART:
 	if(pis->inputLen ==0)
 	{
-		GBIMW.selectIndex =0;
+		GBIMW.selectIndex =0;		
 		pis->inputString[pis->inputLen++]=L'#';	
 		
 #ifdef VIETNAM

@@ -647,7 +647,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
             {
                 pMe->m_bShowPopMenu = FALSE; // flag of pop menu
                 if((0 == WSTRCMP(pMe->m_DialString, L"0") )||(0 == WSTRCMP(pMe->m_DialString, L"#") )||(0 == WSTRCMP(pMe->m_DialString, L"*") ))
-                {
+                {                	
                     pMe->m_btime_out = MAX_COUNT_TO_CHANGE;
                     //ISHELL_SetTimer(pMe->m_pShell,
                     //                                        500,
@@ -11171,9 +11171,9 @@ if(wp == AVK_POUND)
         {
             if((pMe->m_return_value == RETURN_ZERO)&&(pMe->m_btime_out!=0))
             {
-#ifdef FEATURE_EDITABLE_NUMBER
+#ifdef FEATURE_EDITABLE_NUMBER				
                 pMe->m_DialString[len-pMe->m_nCursorPos-1] = L'#';
-#else
+#else				
                 WSTRCPY(&pMe->m_DialString[len-1], L"#");
 #endif
             }
@@ -11184,7 +11184,7 @@ if(wp == AVK_POUND)
 #ifdef FEATURE_EDITABLE_NUMBER
                 if(pMe->m_nCursorPos == 0)
                 {
-#endif
+#endif			
                 WSTRCPY(&pMe->m_DialString[len], L"#");
 #ifdef FEATURE_EDITABLE_NUMBER
                 }
@@ -11192,7 +11192,7 @@ if(wp == AVK_POUND)
                 {
                     AECHAR wstrTemp[MAX_SIZE_DIALER_TEXT] = {0};
 
-                    (void)WSTRCPY(wstrTemp, &pMe->m_DialString[len-pMe->m_nCursorPos]);
+                    (void)WSTRCPY(wstrTemp, &pMe->m_DialString[len-pMe->m_nCursorPos]);					
                     (void)WSTRCPY(&pMe->m_DialString[len-pMe->m_nCursorPos], L"#");
                     (void)WSTRCPY(&pMe->m_DialString[len-pMe->m_nCursorPos+1], wstrTemp);
                 }
@@ -11220,12 +11220,12 @@ if(wp == AVK_POUND)
                 pMe->m_return_value = RETURN_T;
 #ifdef FEATURE_EDITABLE_NUMBER
                 if(len-pMe->m_nCursorPos > 1)
-                {
+                {                	
                     pMe->m_DialString[len-pMe->m_nCursorPos-1] = L'#';
                 }
 #else
                 if(len > 1)
-                {
+                {                	
                     WSTRCPY(&pMe->m_DialString[len-1], L"#");
                 }
 #endif

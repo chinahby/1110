@@ -3686,7 +3686,7 @@ static void recorder_media_notify_handler( Media* pme, AEEMediaCmdNotify* pCmdNo
             	if( pCmdNotify->nCmd == MM_CMD_PLAY)
             	{
             		debug( ";-----to notify fmradio");
-            		recorder_notify_fmradio( TRUE);
+            		recorder_notify_fmradio( TRUE);					
 					recorder_set_media_device_auto( pme);
             	}
 
@@ -3705,7 +3705,7 @@ static void recorder_media_notify_handler( Media* pme, AEEMediaCmdNotify* pCmdNo
             	if( pCmdNotify->nCmd == MM_CMD_PLAY)
             	{
             		debug( ";-----to notify fmradio");
-
+					
 					recorder_set_media_device_auto_ex( pme);		//Add By zzg 2010_07_28
 					
             		recorder_notify_fmradio( FALSE);
@@ -3806,7 +3806,7 @@ static int32 recorder_set_media_device_auto( Media* pme)
 	boolean         headsetPresent  = FALSE;
 
 	debug( ";--------------------------------------");
-	debug( ";recorder_set_media_device_auto");
+	debug( ";recorder_set_media_device_auto");	
 
 	OEM_GetConfig( CFGI_HEADSET_PRESENT, &headsetPresent, sizeof(boolean));
 	
@@ -4115,7 +4115,7 @@ void recorder_stop_if( Media* pme)
 		int result = 0;
 
 		debug( ";--------------------------------------");
-		debug( ";recorder_stop_if, [%s]", pme->m_pszName);
+		debug( ";recorder_stop_if, [%s]", pme->m_pszName);		
 
 		recorder_set_media_device_auto_ex( pme);		//Add By zzg 2010_07_28,录音未播放结束时退出，recorder_media_notify_handler不能收到MM_STATUS_DONE,所以在这里加
 
@@ -4145,8 +4145,8 @@ void recorder_cancel_record( Media* pme)
 static void recorder_replay( Media* pme)
 {
 
-	int result = 0;
-		
+	int result = 0;	
+	
 	recorder_set_media_device_auto( pme);
 	if( ( result = IMEDIA_Play( pme->m_pMedia)) != SUCCESS)
 	{

@@ -1292,7 +1292,7 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
             CameraApp_DrawTopBar(pMe);   
             CameraApp_DrawCFGPromptText(pMe);                        
             
-            IMENUCTL_Redraw(popMenu);
+            IMENUCTL_Redraw(popMenu);		
 #ifdef FEATURE_DSP
             CameraApp_Update(pMe);
 #endif
