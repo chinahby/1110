@@ -1985,7 +1985,7 @@ int OEMCamera_SetParm(OEMINSTANCE h, int16 nParmID, int32 p1, int32 p2)
 	#ifdef FEATURE_LCD_TOUCH_ENABLE
 	case CAM_PARM_FLASH:
 		MSG_FATAL("OEMCamera_ContrlFlash....start.....",0,0,0);
-		gpio_tlmm_config(CON_FLASH);
+		gpio_tlmm_config(GPIO_OUTPUT_54);
 		if(p1)
 		{
 			MSG_FATAL("ONNNNNNNNNNNNNNN",0,0,0);
