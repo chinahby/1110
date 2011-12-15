@@ -1061,6 +1061,7 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 			MSG_FATAL("MainMenu_IconMenuHandler  EVT_USER_REDRAW mid.......",0,0,0);
             // 绘制聚焦过程动画
             MoveCursorTo(pMe, pMe->m_nRow, pMe->m_nColumn);
+			DrawMatrixStr(pMe);
             return TRUE;
 
 
@@ -1473,11 +1474,11 @@ static void AutoMovePage(MainMenu *pMe)
 			pMe->m_bDraOver = FALSE;
 			MSG_FATAL("pMe->m_PrsentPage=========%d",pMe->m_PrsentPage,0,0);
 			// 初始整个背景及全部初始图标	
-			
     		DrawMatrix(pMe);
+			DrawMatrixStr(pMe);
     		// 绘制聚焦过程动画
     		MoveCursorTo(pMe, pMe->m_nRow, pMe->m_nColumn);
-			//DrawMatrixStr(pMe);
+			
 			pMe->m_bmove = FALSE;
 		}
 		else
@@ -1490,6 +1491,7 @@ static void AutoMovePage(MainMenu *pMe)
 			{
 				pMe->m_step = 7;
 				pMe->m_bDraOver = TRUE;
+				
 			}
 			MSG_FATAL("ISHELL_SetTimer................",0,0,0);
 			(void)ISHELL_SetTimer(pMe->m_pShell,
@@ -1943,38 +1945,39 @@ static void MoveCursorTo(MainMenu *pMe, int row, int column)
     }
 	*/
     // 绘制聚焦后矩阵初始界面
-    #if 0
-    SETAEERECT(&rect, pMe->m_IconFocus_Pt[theFocus].x, 
-                      pMe->m_IconFocus_Pt[theFocus].y, 
-                      ICON_ANIMATED_WIDTH, 
-                      ICON_ANIMATED_HEIGHT);
-    
-    MainMenu_DrawBackGround(pMe, &rect);
-    
-    if (pMe->m_pImageIcon[theFocus])
-    {
-        IIMAGE_Draw(pMe->m_pImageIcon[theFocus],
-                    pMe->m_Icondefault_Pt[theFocus].x, 
-                    pMe->m_Icondefault_Pt[theFocus].y);
-    }
-	#else
+
 	if(pMe->m_PrsentPage)
 		{
+			AEEImageInfo m_ImageInfo;
+		    IImage_GetInfo(pMe->m_pImageBgblack,&m_ImageInfo);
+            IIMAGE_SetOffset(pMe->m_pImageBgblack,pMe->m_Icondefault_Pt[theFocus].x+218,pMe->m_Icondefault_Pt[theFocus].y);
+			IIMAGE_SetDrawSize( pMe->m_pImageBgblack, 55,44);
+			
 			IIMAGE_Draw(pMe->m_pImageBgblack,
-                        -218,
-                        0);
+                        pMe->m_Icondefault_Pt[theFocus].x,
+                        pMe->m_Icondefault_Pt[theFocus].y);
+			IIMAGE_SetOffset( pMe->m_pImageBgblack, 0,0);
+        	//IIMAGE_SetDrawSize( pWallPaper, pMe->m_rc.dx,pMe->m_rc.dy);
+        	IIMAGE_SetDrawSize( pMe->m_pImageBgblack, m_ImageInfo.cx,m_ImageInfo.cy);
 		}
 	else
 		{
+			AEEImageInfo m_ImageInfo;
+		    IImage_GetInfo(pMe->m_pImageBgblack,&m_ImageInfo);
+            IIMAGE_SetOffset(pMe->m_pImageBgblack,pMe->m_Icondefault_Pt[theFocus].x,pMe->m_Icondefault_Pt[theFocus].y);
+			IIMAGE_SetDrawSize( pMe->m_pImageBgblack, 55,44);
 			IIMAGE_Draw(pMe->m_pImageBgblack,
-                        0,
-                        0);
+                        pMe->m_Icondefault_Pt[theFocus].x,
+                        pMe->m_Icondefault_Pt[theFocus].y);
+			IIMAGE_SetOffset( pMe->m_pImageBgblack, 0,0);
+        	//IIMAGE_SetDrawSize( pWallPaper, pMe->m_rc.dx,pMe->m_rc.dy);
+        	IIMAGE_SetDrawSize( pMe->m_pImageBgblack, m_ImageInfo.cx,m_ImageInfo.cy);
 		}
-	#endif
+	
     // 开始聚焦动画过程
     SetCursor(pMe, row, column);
     DrawFocusIcon(pMe);
-	DrawMatrixStr(pMe);
+
 	IDISPLAY_UpdateEx(pMe->m_pDisplay, TRUE);
 }
 static void MoveCursoToMove(MainMenu *pMe, int row, int column,int dx)
@@ -2183,6 +2186,7 @@ static int StartApplet(MainMenu *pMe, int i)
 
 	 case IDS_MAIN_MENU_PINTU:
         Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_PINTU);
+		MSG_FATAL("Result=========%d",Result,0,0);
         break;
 	 case IDS_MAIN_MENU_TETIRS:
         Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_TETRIS);

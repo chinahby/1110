@@ -3479,6 +3479,7 @@ static boolean Menu_HandlePens(CMenuCtl * pme, AEEEvent evtCode, uint16 wParam, 
                      }
                   }
                }
+				  return FALSE;
                break;
             case AEECLSID_ICONVIEWCTL:
                {

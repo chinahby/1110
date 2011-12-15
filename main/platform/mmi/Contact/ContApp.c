@@ -795,6 +795,7 @@ static boolean  IContApp_HandleEvent( IContApp   *pi,
             MSG_FATAL("IContApp_HandleEvent Start CContApp_RunFSM",0,0,0);
             CContApp_RunFSM(pMe);
             return TRUE;
+			break;
 #if defined(FEATURE_SUPPORT_BT_APP) && defined(FEATURE_SUPPORT_VCARD) 
 //#if defined(FEATURE_SUPPORT_VCARD) 	//Modify by zzg 2011_10_25
 
@@ -809,6 +810,7 @@ static boolean  IContApp_HandleEvent( IContApp   *pi,
                 ContApp_ReadVcfFile(pMe, name, &cnt);
             }
             return TRUE;
+			break;
         }
 #endif
         case EVT_FLIP:
@@ -826,7 +828,7 @@ static boolean  IContApp_HandleEvent( IContApp   *pi,
                 }
             }
             return TRUE;
-            
+            break;
         case EVT_APP_STOP:
             MSG_FATAL("IContApp_HandleEvent EVT_APP_STOP",0,0,0);
             pMe->m_bSuspending = TRUE;
@@ -837,13 +839,13 @@ static boolean  IContApp_HandleEvent( IContApp   *pi,
 		 
             (void)ISHELL_CancelTimer(pMe->m_pShell, CContApp_AppIsReadyCB, pMe);
             return TRUE;
-            
+            break;
         case EVT_APP_SUSPEND:
             MSG_FATAL("IContApp_HandleEvent EVT_APP_SUSPEND",0,0,0);
             pMe->m_bSuspending = TRUE;
             (void)ISHELL_CancelTimer(pMe->m_pShell, CContApp_AppIsReadyCB, pMe);
             return TRUE;
-            
+            break;
         case EVT_APP_RESUME:
             MSG_FATAL("IContApp_HandleEvent EVT_APP_RESUME",0,0,0);
 #if defined(AEE_STATIC)
@@ -871,6 +873,7 @@ static boolean  IContApp_HandleEvent( IContApp   *pi,
             
             CContApp_RunFSM(pMe);
             return TRUE;
+			break;
         case EVT_DIALOG_START:
 			if(OEM_IME_DIALOG == wParam)
 			{
@@ -878,7 +881,8 @@ static boolean  IContApp_HandleEvent( IContApp   *pi,
 			}
             (void) CContApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
-            return TRUE;    
+            return TRUE;  
+			break;
         case EVT_DIALOG_INIT:
             if( wParam == OEM_IME_DIALOG)
 			{
@@ -890,7 +894,7 @@ static boolean  IContApp_HandleEvent( IContApp   *pi,
             pMe->m_pActiveDlgID = wParam;
             pMe->m_bAppReady = FALSE;
             return CContApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
-            
+            break;
         case EVT_DIALOG_END:
             MSG_FATAL("IContApp_HandleEvent EVT_DIALOG_END",0,0,0);
             
@@ -920,7 +924,7 @@ static boolean  IContApp_HandleEvent( IContApp   *pi,
             }
 
             return TRUE;
-        
+        	break;
         case EVT_USER_REDRAW:
             (void) CContApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
             (void)ISHELL_SetTimer( pMe->m_pShell,
@@ -928,7 +932,7 @@ static boolean  IContApp_HandleEvent( IContApp   *pi,
                                    CContApp_AppIsReadyCB,
                                    pMe);
             return TRUE;
-            
+            break;
         case EVT_KEY_PRESS:
         case EVT_KEY:
         case EVT_KEY_RELEASE:
@@ -945,12 +949,15 @@ static boolean  IContApp_HandleEvent( IContApp   *pi,
               }
             }
             return CContApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+			break;
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
 		case EVT_PEN_UP:
 		//case EVT_PEN_DOWN:
 			{
+				MSG_FATAL("EVT_PEN_UP...................",0,0,0);
 				return CContApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 			}
+		break;
 
 		case EVT_USER:
 			{

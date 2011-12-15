@@ -502,9 +502,9 @@ static void AdjustPen_DrawScreen(CAdjustPenApp *pMe)
                                   pMe->m_szBuffer,
                                   SIZEOF_AECHARS(256));
 				pMe->m_rctext.x = 0;
-				pMe->m_rctext.y = 80;
-				pMe->m_rctext.dx = 176;
-				pMe->m_rctext.dy = 60;
+				pMe->m_rctext.y = 120;
+				pMe->m_rctext.dx = 240;
+				pMe->m_rctext.dy = 90;
 			}
 			break;
 	case ADJUST_LEFTTOP:    //×óÉÏ
@@ -515,9 +515,9 @@ static void AdjustPen_DrawScreen(CAdjustPenApp *pMe)
                                   pMe->m_szBuffer,
                                   SIZEOF_AECHARS(256));
 				pMe->m_rctext.x = 0;
-				pMe->m_rctext.y = 80;
-				pMe->m_rctext.dx = 176;
-				pMe->m_rctext.dy = 60;
+				pMe->m_rctext.y = 120;
+				pMe->m_rctext.dx = 240;
+				pMe->m_rctext.dy = 90;
 			}
 			break;
 	case ADJUST_CENTER:     //ÕýÖÐ
@@ -529,7 +529,7 @@ static void AdjustPen_DrawScreen(CAdjustPenApp *pMe)
                                   SIZEOF_AECHARS(256));
 				pMe->m_rctext.x = 0;
 				pMe->m_rctext.y = 10;
-				pMe->m_rctext.dx = 176;
+				pMe->m_rctext.dx = 240;
 				pMe->m_rctext.dy = 60;
 			}
 			break;
@@ -541,9 +541,9 @@ static void AdjustPen_DrawScreen(CAdjustPenApp *pMe)
                                   pMe->m_szBuffer,
                                   SIZEOF_AECHARS(256));
 				pMe->m_rctext.x = 0;
-				pMe->m_rctext.y = 80;
-				pMe->m_rctext.dx = 176;
-				pMe->m_rctext.dy = 60;
+				pMe->m_rctext.y = 120;
+				pMe->m_rctext.dx = 240;
+				pMe->m_rctext.dy = 90;
 			}
 			break;
 	case ADJUST_DONE:
