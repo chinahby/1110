@@ -295,6 +295,9 @@
 	<STRING Id="1037" Name="IDS_MOVE_MULTIPE">
 		<Text>Move multiple</Text>
 	</STRING>
+	<String Id="1089" Name="IDS_NUM_INVALID">
+		<Text>Invalid number</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MSGBOX" Focus="0">

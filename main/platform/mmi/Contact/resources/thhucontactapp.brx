@@ -295,6 +295,9 @@
 	<String Id="1037" Name="IDS_MOVE_MULTIPE">
 		<Text>ย้ายบางส่วน</Text>
 	</String>
+	<String Id="1038" Name="IDS_NUM_INVALID">
+		<Text>Invalid number</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MSGBOX" Focus="0">

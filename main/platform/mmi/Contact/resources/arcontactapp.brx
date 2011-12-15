@@ -460,6 +460,9 @@
 	<String Id="1088" Name="IDS_EMERGENCY_CALL">
 		<Text>Emergency Number</Text>
 	</String>
+	<String Id="1089" Name="IDS_NUM_INVALID">
+		<Text>Invalid number</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MSGBOX" Focus="0">
