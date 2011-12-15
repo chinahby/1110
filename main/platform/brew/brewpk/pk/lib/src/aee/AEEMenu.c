@@ -334,6 +334,7 @@ typedef struct
 #define WRAP_SCROLL(p)        IS_PROP_SET(p->m_dwProps,MP_WRAPSCROLL)
 #define MAX_SK_ITEMS(p)       IS_PROP_SET(p->m_dwProps,MP_MAXSOFTKEYITEMS)
 #define NO_REDRAW(p)          IS_PROP_SET(p->m_dwProps,MP_NO_REDRAW)
+#define NO_ACTIVE_REDRAW(p)   IS_PROP_SET(p->m_dwProps,MP_ACTIVE_NO_REDRAW)
 #define IS_CALENDAR_VIEW(p)   IS_PROP_SET(p->m_dwProps,MP_CALENDAR)
 #define AUTO_SCROLL(p)        IS_PROP_SET(p->m_dwProps,MP_AUTOSCROLLTIME)
 #define ALIGN_TEXT_TOP(p)     IS_PROP_SET(p->m_dwProps,MP_ICON_TEXT_TOP)
@@ -1286,26 +1287,40 @@ static void IMenuCtl_SetActive(IMenuCtl * po, boolean bActive)
 #endif //FEATURE_MENUTITLE_AUTOSCROLL
 
    // Icon views redraw async - If this is a disable, do not allow it!
-       #ifdef FEATURE_LCD_TOUCH_ENABLE
-   		if((pme->m_cls!=AEECLSID_MENUCTL)&&(pme->m_cls!=AEECLSID_LISTCTL)&&
-		   (pme->m_cls!=AEECLSID_ICONVIEWCTL))
-		#endif
-		{
+      
 		MSG_FATAL("pme->m_cls==========%x",pme->m_cls,0,0);
          if(!NO_REDRAW(pme)){
             if(IS_ICON_VIEW(pme) && !bActive)
                Icon_StopAnimation(pme);         // Don't animate if its not selection
             else
             	{
-            		MSG_FATAL("IMenuCtl_Redraw redraw.......0000",0,0,0);
-              		IMenuCtl_Redraw(po);              // Redraw
-              		MSG_FATAL("IMenuCtl_Redraw redraw.......0000end",0,0,0);
-            	}
-         }
-      	}
+            		#ifdef FEATURE_LCD_TOUCH_ENABLE
+   					if((pme->m_cls!=AEECLSID_MENUCTL)&&(pme->m_cls!=AEECLSID_LISTCTL)&&
+		   			(pme->m_cls!=AEECLSID_ICONVIEWCTL))
+					#endif
+					{
+            			MSG_FATAL("IMenuCtl_Redraw redraw.......0000",0,0,0);
+              			IMenuCtl_Redraw(po);              // Redraw
+              			MSG_FATAL("IMenuCtl_Redraw redraw.......0000end",0,0,0);
+            		}
+					#ifdef FEATURE_LCD_TOUCH_ENABLE
+					else
+					{
+						uint32 temp = NO_ACTIVE_REDRAW(pme);
+						MSG_FATAL("temp=========%d",temp,0,0);
+						if(!NO_ACTIVE_REDRAW(pme))
+						{
+							MSG_FATAL("IMenuCtl_Redraw redraw.......111111",0,0,0);
+							IMenuCtl_Redraw(po);              // Redraw
+						}
+					}
+					#endif
+         		}
+      		}
          // Reset pme->m_nScrollItem (default is 0) in horizontal scroll case
          if (pme->m_bIconHScroll){
             int start, end;
+			MSG_FATAL("................",0,0,0);
             Icon_CalcStartEndItemIndx(pme, &start, &end);
             pme->m_nScrollItem = start;
          }

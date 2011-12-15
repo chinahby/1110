@@ -119,6 +119,7 @@ static void    OEMKeyguard_Set_Annunciator_Enable(boolean b_state);
 #ifdef FEATURE_LCD_TOUCH_ENABLE
 static void    OEMPriv_DrawPenMoveBar(uint16 x,uint16 y);
 static void    OEMPriv_DrawTouchBackgroundBar(uint16 x,uint16 y);
+static void    OEMPriv_DrawTouchBackground(uint16 x,uint16 y);
 #endif
 /*===========================================================================
 
@@ -132,8 +133,8 @@ static boolean sbMessageActive = FALSE;
 static uint16 m_privpinter_x = 0;
 static uint16 m_privpinter_y = 0;
 static uint16 m_bstartInRect = FALSE;
-static AEERect m_Rct = {16,13,53,30};
-#define MOVE_DY                3
+static AEERect m_Rct = {0,260,89,62};
+#define MOVE_DY                10
 #endif
 #ifdef FEATURE_ICM
 static ICM *spPhone  = NULL;
@@ -706,13 +707,14 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
 #ifdef FEATURE_LCD_TOUCH_ENABLE
 		case EVT_POINTER_DOWN:
 		{
-			AEERect rct_Start = {16,273,52,30};
+			AEERect rct_Start = {33,269,42,44};
+			AEERect rct_Start_d = {0,260,89,62};
 			uint16 wXPos = (int16)AEE_POINTER_GET_X((const char *)dwParam);
 			uint16 wYPos = (int16)AEE_POINTER_GET_Y((const char *)dwParam);
-			m_Rct.x = rct_Start.x;
-			m_Rct.y = rct_Start.y;
-			m_Rct.dx = rct_Start.dx;
-			m_Rct.dy = rct_Start.dy;
+			m_Rct.x = rct_Start_d.x;
+			m_Rct.y = rct_Start_d.y;
+			m_Rct.dx = rct_Start_d.dx;
+			m_Rct.dy = rct_Start_d.dy;
 			if(OEMKEYGUARD_PT_IN_RECT(wXPos,wYPos,rct_Start))
 			{
 				m_privpinter_x = wXPos;
@@ -724,7 +726,7 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
 		case EVT_POINTER_MOVE:
 		{
 			AEERect rct = {0};
-			AEERect rct_Move = {16,273,206,30};
+			AEERect rct_Move = {33,269,138,44};
 			uint16 wXPos = (int16)AEE_POINTER_GET_X((const char *)dwParam);
 			uint16 wYPos = (int16)AEE_POINTER_GET_Y((const char *)dwParam);
 			uint16 m_Move_Dx = wXPos-m_privpinter_x;
@@ -746,7 +748,7 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
 		break;
 		case EVT_POINTER_UP:
 		{
-			AEERect rct_End = {170,273,52,30};
+			AEERect rct_End = {171,270,42,44};
 			uint16 wXPos = (int16)AEE_POINTER_GET_X((const char *)dwParam);
 			uint16 wYPos = (int16)AEE_POINTER_GET_Y((const char *)dwParam);
 			if(m_bstartInRect)
@@ -770,7 +772,7 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
 			}
 			else
 			{
-				OEMPriv_DrawTouchBackgroundBar(0,SCREEN_HEIGHT-60);
+				OEMPriv_DrawTouchBackground(0,SCREEN_HEIGHT-60);
 			}
 			m_bstartInRect = FALSE;	
 		}
@@ -881,6 +883,23 @@ static void    OEMPriv_DrawTouchBackgroundBar(uint16 x,uint16 y)
 	Appscomm_Draw_Keyguard_BackGroud(pd,x,y);
 	IDISPLAY_Release(pd);
 }
+static void    OEMPriv_DrawTouchBackground(uint16 x,uint16 y)
+{
+	
+	IDisplay      *pd;
+    KEYGUARD_ERR("OEMPriv_DrawPenMoveBar %x",sgpShell,0,0);
+    (void) ISHELL_CreateInstance(sgpShell,AEECLSID_DISPLAY,(void**) &pd);
+	if(pd)
+	{
+		AEEDeviceInfo devinfo = {0};
+        IShell      *pShell = AEE_GetShell();
+        
+        ISHELL_GetDeviceInfo(pShell, &devinfo);
+	}
+	Appscomm_Draw_Keyguard_BackGroudbar(pd,x,y);
+	IDISPLAY_Release(pd);
+}
+
 #endif
 
 static void    OEMPriv_DrawKeyguardTime(void)

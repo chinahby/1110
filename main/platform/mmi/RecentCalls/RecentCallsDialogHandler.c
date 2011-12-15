@@ -870,7 +870,7 @@ static boolean RecentCalls_MainMenuEvent(CRecentCalls *pMe,
       
       case EVT_DIALOG_START:
         //IMENUCTL_SetProperties(pMe->pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
-        IMENUCTL_SetProperties(pMe->pMenu, MP_BIND_ITEM_TO_NUMBER_KEY |MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
+        IMENUCTL_SetProperties(pMe->pMenu, MP_BIND_ITEM_TO_NUMBER_KEY |MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_ACTIVE_NO_REDRAW);
         IMENUCTL_SetOemProperties( pMe->pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
         IMENUCTL_SetBackGround(pMe->pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_RECENTCALLS_BACKGROUND);
@@ -1021,11 +1021,11 @@ static boolean RecentCalls_ListRecordEvent(CRecentCalls *pMe,
 
             if(pMe->m_eStartMethod == STARTMETHOD_FINDNUMBER)
             {
-                IMENUCTL_SetProperties(pMe->pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_MULTI_SEL);
+                IMENUCTL_SetProperties(pMe->pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_MULTI_SEL|MP_ACTIVE_NO_REDRAW);
             }
             else
             {
-                IMENUCTL_SetProperties(pMe->pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
+                IMENUCTL_SetProperties(pMe->pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_ACTIVE_NO_REDRAW);
             }
          
             if(pMe->record_count == 0)
@@ -1383,7 +1383,7 @@ static boolean RecentCalls_ListRecordEvent(CRecentCalls *pMe,
                         bSelect = RecentCalls_FindSelectRecordListNode(pMe->record_selected);
                         if((!bSelect) && pMe->m_nRemainWMSNum == 0)
                         {
-                            IMENUCTL_SetProperties(pMe->pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_MULTI_SEL |MP_NO_REDRAW);
+                            IMENUCTL_SetProperties(pMe->pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_MULTI_SEL |MP_NO_REDRAW|MP_ACTIVE_NO_REDRAW);
                             IMENUCTL_SetActive(pMe->pMenu, FALSE);
                             return TRUE;
                         }
@@ -1557,7 +1557,7 @@ static boolean RecentCalls_TimeMenuEvent(CRecentCalls *pMe,
       
       case EVT_DIALOG_START:
         //IMENUCTL_SetProperties(pMe->pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
-        IMENUCTL_SetProperties(pMe->pMenu, MP_BIND_ITEM_TO_NUMBER_KEY |MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
+        IMENUCTL_SetProperties(pMe->pMenu, MP_BIND_ITEM_TO_NUMBER_KEY |MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_ACTIVE_NO_REDRAW);
         IMENUCTL_SetOemProperties( pMe->pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
         IMENUCTL_SetBackGround(pMe->pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_RECENTCALLS_BACKGROUND);
@@ -1669,7 +1669,7 @@ static boolean RecentCalls_DelMenuEvent(CRecentCalls *pMe,
       
       case EVT_DIALOG_START:
         //IMENUCTL_SetProperties(pMe->pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
-        IMENUCTL_SetProperties(pMe->pMenu, MP_BIND_ITEM_TO_NUMBER_KEY |MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
+        IMENUCTL_SetProperties(pMe->pMenu, MP_BIND_ITEM_TO_NUMBER_KEY |MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_ACTIVE_NO_REDRAW);
         IMENUCTL_SetOemProperties( pMe->pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
         IMENUCTL_SetBackGround(pMe->pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_RECENTCALLS_BACKGROUND);
@@ -1829,7 +1829,7 @@ static boolean RecentCalls_DealMenuEvent(CRecentCalls *pMe,
      }
 
          //IMENUCTL_SetPopMenuRect(pMe->pMenu);
-         IMENUCTL_SetProperties(pMe->pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
+         IMENUCTL_SetProperties(pMe->pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY|MP_ACTIVE_NO_REDRAW);
          IMENUCTL_SetBottomBarType(pMe->pMenu,BTBAR_SELECT_BACK);
          (void)ISHELL_PostEvent(pMe->m_pShell, 
                           AEECLSID_APP_RECENTCALL, 

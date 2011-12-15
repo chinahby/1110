@@ -505,7 +505,7 @@ static boolean dialog_handler_of_state_main( Recorder* pme, AEEEvent evt, uint16
                 }
 			}
 			#endif
-            IMENUCTL_SetProperties( pMenu, IMENUCTL_GetProperties( pMenu) | MP_BIND_ITEM_TO_NUMBER_KEY);
+            IMENUCTL_SetProperties( pMenu, IMENUCTL_GetProperties( pMenu) | MP_BIND_ITEM_TO_NUMBER_KEY|MP_ACTIVE_NO_REDRAW);
             IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
             IMENUCTL_SetBottomBarType( pMenu, BTBAR_SELECT_BACK);
             IMENUCTL_SetSel( pMenu, selected);
@@ -2473,7 +2473,7 @@ static boolean  dialog_handler_of_state_record_list( Recorder* pme, AEEEvent evt
 			#endif
 			IMENUCTL_SetOemProperties( pMenu, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY | OEMMP_USE_MENU_STYLE);
 			IMENUCTL_SetBottomBarType( pMenu, BTBAR_BACK);
-            IMENUCTL_SetProperties( pOption, IMENUCTL_GetProperties( pMenu) | MP_BIND_ITEM_TO_NUMBER_KEY);
+            IMENUCTL_SetProperties( pOption, IMENUCTL_GetProperties( pMenu) | MP_BIND_ITEM_TO_NUMBER_KEY|MP_ACTIVE_NO_REDRAW);
 
 			if( pme->m_ePreState == STATE_MAIN && !pme->m_bSuspended && IMENUCTL_GetItemCount( pMenu) > 0)
 			{
@@ -3189,7 +3189,7 @@ static boolean  dialog_handler_of_state_set_as( Recorder* pme, AEEEvent evt, uin
 				IMENUCTL_AddItem( pMenu, AEE_RECORDER_RES_FILE, resId[i], resId[i], 0, 0);
 			}
 
-			IMENUCTL_SetProperties( pMenu, MP_MULTI_SEL | MP_WRAPSCROLL);
+			IMENUCTL_SetProperties( pMenu, MP_MULTI_SEL | MP_WRAPSCROLL|MP_ACTIVE_NO_REDRAW);
 			IMENUCTL_SetOemProperties( pMenu, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY | OEMMP_USE_MENU_STYLE);
 			#if 0
 			IMENUCTL_SetTitle( pMenu, AEE_RECORDER_RES_FILE, IDS_RECORD_LIST_OPTION_SET_AS, 0);

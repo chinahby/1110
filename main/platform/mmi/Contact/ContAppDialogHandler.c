@@ -3674,7 +3674,7 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                 return TRUE;
             }
             IMENUCTL_SetActive(pMenuCtl, TRUE);
-            //IMENUCTL_Redraw(pMenuCtl);     //dele by yangdecai
+            IMENUCTL_Redraw(pMenuCtl);     //dele by yangdecai
             return TRUE;
             
         case EVT_DIALOG_INIT:
@@ -6385,6 +6385,7 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
                         
                         ITEXTCTL_SetActive(pTextCtl, FALSE);
                         IMENUCTL_SetActive(pMenuCtl, TRUE);
+						//IMENUCTL_Redraw(pMenuCtl);
                         IDIALOG_SetFocus(pMe->m_pActiveDlg, IDC_ADDNEW_MENU);
                     }
                     ITEXTCTL_SetActive(pTextCtl, FALSE);
@@ -7178,7 +7179,7 @@ static boolean  CContApp_HandleMainMenuDlgEvent( CContApp  *pMe,
             MSG_FATAL("EVT_DIALOG_START",0,0,0);
             
             //IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL);
-            IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
+            IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY|MP_ACTIVE_NO_REDRAW);
             IMENUCTL_SetOemProperties(pMenuCtl,OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND);

@@ -1099,7 +1099,7 @@ static boolean Staticapp_ListMenuHandler(Staticapp *pMe, AEEEvent eCode, uint16 
                     IMENUCTL_SetItemText(pMenu, wID, NULL, NULL, pwsz);
                 }
                 
-                IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
+                IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_ACTIVE_NO_REDRAW);
                 IMENUCTL_SetOemProperties( pMenu, OEMMP_USE_MENU_STYLE);
                 IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
                 IMENUCTL_SetSel(pMenu, pMe->m_MainSel);
@@ -1198,7 +1198,7 @@ static boolean Staticapp_ListFGualHandler(Staticapp *pMe, AEEEvent eCode, uint16
                 IMENUCTL_SetItemText(pMenu, wID, NULL, NULL, pwsz);
             }
             
-            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
+            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_ACTIVE_NO_REDRAW);
             IMENUCTL_SetOemProperties( pMenu, OEMMP_USE_MENU_STYLE);
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
             IMENUCTL_SetSel(pMenu, pMe->m_MainSel);
@@ -1300,7 +1300,7 @@ static boolean Staticapp_ListAplikasiHandler(Staticapp *pMe, AEEEvent eCode, uin
                 IMENUCTL_SetItemText(pMenu, wID, NULL, NULL, pwsz);
             }
             
-            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
+            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_ACTIVE_NO_REDRAW);
             IMENUCTL_SetOemProperties( pMenu, OEMMP_USE_MENU_STYLE);
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
             IMENUCTL_SetSel(pMenu, pMe->m_MainSel);

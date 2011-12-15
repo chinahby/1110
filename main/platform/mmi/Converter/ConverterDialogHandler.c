@@ -418,7 +418,7 @@ static boolean  Converter_MainEvent(CConverter *pMe, AEEEvent eCode, uint16 wPar
             return TRUE;
        
         case EVT_DIALOG_START:
-            IMENUCTL_SetProperties(pMenu, MP_BIND_ITEM_TO_NUMBER_KEY |MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
+            IMENUCTL_SetProperties(pMenu, MP_BIND_ITEM_TO_NUMBER_KEY |MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_ACTIVE_NO_REDRAW);
             IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
             (void)ISHELL_PostEvent(pMe->m_pShell, 

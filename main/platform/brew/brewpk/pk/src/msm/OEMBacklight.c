@@ -18,6 +18,8 @@
 #include "OEMSVC.h"
 #include "AEE_OEMDispatch.h"
 #include "AEEIDisplay.h"
+#include "sleep.h"
+#include "clk.h"
 
 #ifdef FEATURE_AUTOEXIT_AFTER_BLDISABLE
 #define MSAFTER_DISABLEBACKLIGHT_TIMER    60000
@@ -321,6 +323,7 @@ static int AEEBacklight_Enable(IBacklight *pme)
 #ifdef FEATURE_AUTOEXIT_AFTER_BLDISABLE
    AEEBacklight_CancelNotifyTimer(pme);
 #endif
+
    if (AEEBacklight_IsEnabled(pme))
    {
       AEEBacklight_SetDisableTimer(pme);
@@ -359,7 +362,9 @@ static int AEEBacklight_Enable(IBacklight *pme)
 
       case AEECLSID_BACKLIGHT_DISPLAY1:
          disp_on();
-         
+		 #ifdef FEATURE_DISP_240X320
+         clk_busy_wait(150*1000);
+		 #endif
          // Update Screen
          AEEBacklight_FlushDisplay(pme, AEECLSID_DISPLAY1);
          
@@ -462,6 +467,8 @@ static int AEEBacklight_Enable(IBacklight *pme)
          nErr = EUNSUPPORTED;
          break;
    }
+
+   
 
    AEEBacklight_SetDisableTimer(pme);
    return nErr;

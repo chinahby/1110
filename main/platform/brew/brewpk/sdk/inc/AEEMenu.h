@@ -34,7 +34,7 @@ typedef struct _IMenuCtl      IMenuCtl;
 #define MP_BIND_ITEM_TO_NUMBER_KEY   0x00000100  // bind item to number key 0 - 9
 
 #define MP_TRANSPARENT_UNSEL 0x00001000
-
+#define MP_ACTIVE_NO_REDRAW  0x00002000    //add by yangdecai
 //draw icon align right but the text align left
 #define MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT    0x00000400
 #endif /*CUST_EDITION*/

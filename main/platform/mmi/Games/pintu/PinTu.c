@@ -230,7 +230,7 @@ static boolean PinTu_Init(IApplet* pi)
    char *filename = NULL;    //tcl wgs 050127 added
    AEEDeviceInfo pdi;
    char       catalogIdx[MAX_CATALOG_NUM][MAX_FILENAME_LEN] = {PINTU_RING_DIR,DOWNLOAD_IMAGE_DIR};
-
+   MSG_FATAL("PinTu_Init..........................",0,0,0);
    if(pMe == NULL)  return FALSE;
 
    //create common obj
@@ -887,7 +887,7 @@ static void PinTu_DisplayMainScreen(PinTu * pMe)
    (void)Brew_AddMenuItem(pMe->m_pMenuCtl,PINTU_RES_FILE_LANG,IDS_NEW_GAME,      NULL, IDB_START_GAME,IDS_NEW_GAME,     0);       //game new
    if(pMe->m_continueFlg && pMe->m_recordClock > 0)
       (void)Brew_AddMenuItem(pMe->m_pMenuCtl,PINTU_RES_FILE_LANG,IDS_GAME_CONTINUE, NULL, IDB_CONTINUE,IDS_GAME_CONTINUE,0);    //game continue
-   (void)Brew_AddMenuItem(pMe->m_pMenuCtl,PINTU_RES_FILE_LANG,IDS_SELECT_IMAGE,     NULL, IDB_SELECT_IAMGE,IDS_SELECT_IMAGE,0);    //select image to spelling
+   //(void)Brew_AddMenuItem(pMe->m_pMenuCtl,PINTU_RES_FILE_LANG,IDS_SELECT_IMAGE,     NULL, IDB_SELECT_IAMGE,IDS_SELECT_IMAGE,0);    //select image to spelling
    (void)Brew_AddMenuItem(pMe->m_pMenuCtl,PINTU_RES_FILE_LANG,IDS_SET_PARAM,        NULL, IDB_SETTING,IDS_SET_PARAM,   0);    //set paramter
    #if 0
    (void)Brew_AddMenuItem(pMe->m_pMenuCtl,PINTU_RES_FILE_LANG,IDS_SOUND_SET,        NULL, IDB_SOUND_SET,IDS_SOUND_SET,   0);    //set sound  added by tcl wgs 050120
@@ -1230,7 +1230,7 @@ static void DrawPicBroad(PinTu *pMe)
    //draw the exit button
    DrawExitButton(pMe);
    //draw the sound button tcl wgs 050119 added
-   DrawSoundButton(pMe);
+   //DrawSoundButton(pMe);
    //end tcl wgs 050119 added 
    tmpVal = pMe->m_paramAttr;
    if(tmpVal & LIMIT_THREE_MINTUES)
@@ -1453,7 +1453,7 @@ static boolean StartNewGame(PinTu *pMe)
 
    if(!pMe->m_continueFlg)  InitArray(pMe);
    DrawPicBroad(pMe);
-   DrawSoundButton(pMe);
+   //DrawSoundButton(pMe);
    IDISPLAY_Update(pMe->a.m_pIDisplay);
    (void)IDISPLAY_SetColor(pMe->a.m_pIDisplay, CLR_USER_BACKGROUND, oldTextColor);
 
@@ -2689,13 +2689,13 @@ static boolean GetPlaceByPenDown(PinTu *pMe,uint32 dwParam)
    {
        if(pMe->m_Soundflag)
        {
-           pMe->m_Soundflag = FALSE;
+           //pMe->m_Soundflag = FALSE;
        }
 	else
 	{
-	     pMe->m_Soundflag = TRUE;
+	     //pMe->m_Soundflag = TRUE;
 	}
-	DrawSoundButton( pMe);
+	//DrawSoundButton( pMe);
    	return TRUE;
    }
     //avaible area in the y direction for moving block

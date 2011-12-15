@@ -423,7 +423,7 @@ static boolean  SecurityMainDlgHandler(CSecurityMenu *pMe,
         case EVT_DIALOG_START:
             pMe->m_lock_sel = SEC_SEL_NONE;
             //设定标题格式
-            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
+            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY|MP_ACTIVE_NO_REDRAW);
             IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SECURITY_BACKGROUND);
@@ -610,7 +610,7 @@ static boolean  SecurityApplicationLockDlgHandler(CSecurityMenu *pMe,
 
         case EVT_DIALOG_START:
             //设定标题格式
-            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_MULTI_SEL);
+            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_MULTI_SEL|MP_ACTIVE_NO_REDRAW);
             IMENUCTL_SetOemProperties(pMenu, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY | OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SECURITY_BACKGROUND);
@@ -757,7 +757,7 @@ static boolean  SecurityPassWordDlgHandler(CSecurityMenu *pMe,
         {
             uint16 wItemID;
             uint16 string_id = IDS_PHONE_LOCK;//IDS_PHONE_PASSWORD_CHECK_TITLE;
-            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
+            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT|MP_ACTIVE_NO_REDRAW);
             IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SECURITY_BACKGROUND);
@@ -1018,7 +1018,7 @@ static boolean   SecurityKeyLockDlgHandler(CSecurityMenu *pMe,
                 SetMenuIcon(pMenu, ui16_return, TRUE);
                 IMENUCTL_SetSel(pMenu, ui16_return);
 
-                IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
+                IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT|MP_ACTIVE_NO_REDRAW);
                 IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
                 IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
 
@@ -1536,7 +1536,7 @@ static boolean  SecurityPinCheckDlgHandler(CSecurityMenu *pMe,
                     SetMenuIcon(pMenu, IDS_ON, TRUE);
                     SetMenuIcon(pMenu, IDS_OFF, FALSE);
                 }
-                IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
+                IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT|MP_ACTIVE_NO_REDRAW);
                 IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SECURITY_BACKGROUND);
@@ -5420,7 +5420,7 @@ static boolean  SecurityEmergencyCallHandler(CSecurityMenu *pMe,
                 int   i = 0;
                 ICONFIG_GetItem(pMe->m_pConfig, CFGI_EMERGENCYNUM_TABLE, (void*)&emerg_tab, sizeof(EmergencyNum_Table));
                 
-                IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
+                IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_ACTIVE_NO_REDRAW);
                 IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 				//add by yangdecai
 			{
@@ -5589,7 +5589,7 @@ static boolean  HandleRestoreDialogEvent(CSecurityMenu *pMe,
 
         case EVT_DIALOG_START:
             //设定标题格式
-            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
+            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_ACTIVE_NO_REDRAW);
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
             // 设定菜单控件的矩形位置及尺寸
 
@@ -5822,7 +5822,7 @@ static boolean  HandleChangeCodeDialogEvent(CSecurityMenu *pMe,
 
         case EVT_DIALOG_START:
 
-            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
+            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY|MP_ACTIVE_NO_REDRAW);
             IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SECURITY_BACKGROUND);

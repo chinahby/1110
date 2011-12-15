@@ -849,11 +849,14 @@ static boolean SecurityMenu_HandleEvent(ISecurityMenu  *pi,
 		case EVT_PEN_UP:
 		//case EVT_PEN_DOWN:
 			{
+				MSG_FATAL("EVT_PEN_UP......................",0,0,0);
 				return SecurityMenu_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 			}
+			break;
 
 		case EVT_USER:
 			{
+					MSG_FATAL("EVT_USER......................",0,0,0);
 				if((wParam == AVK_SELECT) || (wParam == AVK_INFO))
 				{
 					if(dwParam == DWPARMA_OTHER)
@@ -874,6 +877,7 @@ static boolean SecurityMenu_HandleEvent(ISecurityMenu  *pi,
 				}
 				else if(wParam == AVK_CLR)
 				{
+					MSG_FATAL("AVK_CLR......................",0,0,0);
 					eCode = EVT_KEY;
 				}
 				return SecurityMenu_RouteDialogEvent(pMe,eCode,wParam,dwParam);

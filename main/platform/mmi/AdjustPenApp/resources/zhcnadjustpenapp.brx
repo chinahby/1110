@@ -19,10 +19,10 @@
 </Strings>
 <Objects MimeType="image/png">
 	<Object Id="5001" Name="IDI_ADJUSTBIG">
-		<File>..\..\Appscommon\images\color\AdjustPenApp\big.png</File>
+		<File>..\..\Appscommon\images\240x320\common\AdjustPenApp\big.png</File>
 	</Object>
 	<Object Id="5002" Name="IDI_ADJUSTSMALL">
-		<File>..\..\Appscommon\images\color\AdjustPenApp\small.png</File>
+		<File>..\..\Appscommon\images\240x320\common\AdjustPenApp\small.png</File>
 	</Object>
 </Objects>
 </BREWRes>

@@ -992,7 +992,7 @@ static boolean IDD_MAIN_Handler(void        *pUser,
             MSG_FATAL("IDD_MAIN_Handler EVT_DIALOG_INIT 1",0,0,0);
             // 设置设置菜单控件矩形和属性
             //SetControlRect(pMe,pMenu);
-            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
+            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY|MP_ACTIVE_NO_REDRAW);
             MENU_SETBOTTOMBAR(pMenu, BTBAR_SELECT_BACK);
             IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
             MSG_FATAL("IDD_MAIN_Handler EVT_DIALOG_INIT 2",0,0,0);
@@ -2016,7 +2016,7 @@ static boolean IDD_MESSAGELIST_Handler(void        *pUser,
                 }
                 IMENUCTL_SetRect(pMenu, &pMe->m_rc);
                
-                dwMask = (dwMask & (~MP_WRAPSCROLL)) | MP_UNDERLINE_TITLE;
+                dwMask = (dwMask & (~MP_WRAPSCROLL)) | MP_UNDERLINE_TITLE|MP_ACTIVE_NO_REDRAW;
                 IMENUCTL_SetProperties(pMenu, dwMask);
                 IMENUCTL_SetOemProperties(pMenu, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY | OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
@@ -3091,7 +3091,7 @@ static boolean IDD_DELETEMSGS_Handler(void *pUser,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
-            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
+            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY|MP_ACTIVE_NO_REDRAW);
             IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MESSAGE_BACKGROUND);
@@ -3288,7 +3288,7 @@ static boolean IDD_SETTING_Handler(void   *pUser,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
-            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
+            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY|MP_ACTIVE_NO_REDRAW);
             IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MESSAGE_BACKGROUND);

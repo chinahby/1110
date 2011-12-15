@@ -1078,7 +1078,7 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
       }  	
       pm = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam,
                                            IDC_SYS_MENU);
-      IMENUCTL_SetProperties(pm, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
+      IMENUCTL_SetProperties(pm, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_ACTIVE_NO_REDRAW);
       IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_DEBUG_TITLE,  IDS_DEBUG_TITLE, NULL, 0);
 	  IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_NV_SETTING, IDS_NV_SETTING,NULL,0);
       IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_VERSION_TITLE,  IDS_VERSION_TITLE, NULL, 0);

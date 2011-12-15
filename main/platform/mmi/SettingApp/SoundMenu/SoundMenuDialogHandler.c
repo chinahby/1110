@@ -457,7 +457,7 @@ static boolean  HandleMainDialogEvent(CSoundMenu *pMe,
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
 #endif
-            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
+            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY|MP_ACTIVE_NO_REDRAW);
 
             IMENUCTL_SetSel(pMenu, pMe->m_currDlgId);
 
@@ -661,7 +661,7 @@ static boolean  HandleSceneModeSubDialogEvent(CSoundMenu *pMe,
         case EVT_DIALOG_START:
             //设定标题格式
             IMENUCTL_SetPopMenuRect(pMenu);
-            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
+            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY|MP_ACTIVE_NO_REDRAW);
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
 
             IMENUCTL_SetSel(pMenu, pMe->m_nSubDlgId);
@@ -931,7 +931,7 @@ static boolean  HandleSoundMenuProfilesDialogEvent(CSoundMenu *pMe,
             // 给菜单各菜单项加数字编号图标
             SoundMenu_SetItemNumIcon(pMenu);
 
-            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
+            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY|MP_ACTIVE_NO_REDRAW);
             IMENUCTL_SetOemProperties( pMenu , OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
@@ -1251,7 +1251,7 @@ static boolean  HandleHintDialogEvent(CSoundMenu *pMe,
                 InitMenuIcons(pMenu);
                 SetMenuIcon(pMenu, ui16_return, TRUE);
                 IMENUCTL_SetSel(pMenu, ui16_return);
-                IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
+                IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT|MP_ACTIVE_NO_REDRAW);
                 IMENUCTL_SetOemProperties( pMenu , OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
                 IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
@@ -1559,7 +1559,7 @@ static boolean  HandleRingerDialogEvent(CSoundMenu *pMe,
             }  
 #endif //#if defined FEATURE_SMSTONETYPE_MID		    
 #endif
-            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
+            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT|MP_ACTIVE_NO_REDRAW);
             IMENUCTL_SetOemProperties( pMenu , OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
@@ -2005,7 +2005,7 @@ static boolean  HandleSmsRingDialogEvent(CSoundMenu *pMe,
             SetMenuIcon(pMenu, pMe->m_lastSmsRingPlayed, TRUE);
             IMENUCTL_SetSel(pMenu, pMe->m_lastSmsRingPlayed);
 
-            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
+            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT|MP_ACTIVE_NO_REDRAW);
             IMENUCTL_SetOemProperties( pMenu , OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
@@ -2180,7 +2180,7 @@ static boolean  HandleVolumeDialogEvent(CSoundMenu *pMe,
             // 返回此菜单的选择项
             IMENUCTL_SetSel(pMenu, pMe->m_fSubDlgId);
 
-            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
+            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY|MP_ACTIVE_NO_REDRAW);
             IMENUCTL_SetOemProperties( pMenu , OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
@@ -2296,7 +2296,7 @@ static boolean  HandleFMModeDialogEvent(CSoundMenu *pMe,
                 InitMenuIcons(pMenu);
                 SetMenuIcon(pMenu, ui16_return, TRUE);
                 IMENUCTL_SetSel(pMenu, ui16_return);
-                IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
+                IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT|MP_ACTIVE_NO_REDRAW);
                 IMENUCTL_SetOemProperties( pMenu , OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
                 IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
@@ -2476,7 +2476,7 @@ static boolean  HandleOtherSelDialogEvent(CSoundMenu *pMe,
                 InitMenuIcons(pMenu);
                 SetMenuIcon(pMenu, ui16_return, TRUE);
                 IMENUCTL_SetSel(pMenu, ui16_return);
-                IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
+                IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT|MP_ACTIVE_NO_REDRAW);
                 IMENUCTL_SetOemProperties( pMenu , OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
                 IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
@@ -2698,7 +2698,7 @@ static boolean  HandleKeySndMenuDialogEvent(CSoundMenu *pMe,
                 InitMenuIcons(pMenu);
                 SetMenuIcon(pMenu, ui16_return, TRUE);
                 IMENUCTL_SetSel(pMenu, ui16_return);
-                IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
+                IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_ACTIVE_NO_REDRAW);
                 IMENUCTL_SetOemProperties( pMenu , OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
                 IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);

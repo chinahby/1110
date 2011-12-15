@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <BREWRes Name="adjustpenapp" VERSION="1">
-<Strings Encoding="Unicode">
+<Strings Encoding="ISOLATIN1">
 	<STRING Id="1001" Name="IDS_ADJUST_NONE">
-		<Text>你可以校准触屏使得触笔更加准确,请点击画面开始进行校准</Text>
+		<Text>You can calibrate the touch screen makes the stylus more accurate, please click on the screen to begin the calibration</Text>
 	</STRING>
 	<String Id="1002" Name="IDS_ADJUST_LEFTTOP">
-		<Text>请点击画面左上角的箭头中心</Text>
+		<Text>Please click on the arrow top left corner of the screen center</Text>
 	</String>
 	<String Id="1003" Name="IDS_ADJUST_CENTER">
-		<Text>请点击画面中央的箭头中心</Text>
+		<Text>Click center arrow to the center of the screen</Text>
 	</String>
 	<String Id="1004" Name="IDS_ADJUST_RIGHTBOM">
-		<Text>请点击画面右下角的箭头中心</Text>
+		<Text>Please click on the arrow bottom right corner of the screen center</Text>
 	</String>
 	<String Id="1005" Name="IDS_ADJUST_DONE">
-		<Text>触摸校准完毕</Text>
+		<Text>Touch calibration is complete</Text>
 	</String>
 </Strings>
 <Objects MimeType="image/png">
