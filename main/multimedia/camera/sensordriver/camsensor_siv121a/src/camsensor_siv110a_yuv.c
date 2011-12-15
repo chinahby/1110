@@ -14,9 +14,11 @@
 /*============================================================================
     TYPE DEFINITIONS 
 ============================================================================*/
-
+#ifdef FEATURE_VERSION_C180
+#define CAMSENSOR_SIC110A_RESET_PIN         GPIO_OUTPUT_62
+#else
 #define CAMSENSOR_SIC110A_RESET_PIN         GPIO_OUTPUT_10
-
+#endif
 // sensor's chip ID and version
 #define SIC110A_SENSOR_ID                   (0x0D)
 #define SIC110A_SENSOR_VERSION              (0x02)
