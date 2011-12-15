@@ -4779,11 +4779,14 @@ boolean camsensor_init (void)
 	}
 #else
 
-	if (camsensor_detect_table[current_camsensor_id])
+	if ( current_camsensor_id <  CAMSENSOR_ID_MAX )
 	{
-		camctrl_init_tbl();
-		camsensor_init_func_tbl();
-		camsensor_initialized = (*camsensor_detect_table[current_camsensor_id])(&camsensor_function_table, &camctrl_tbl);
+		if (camsensor_detect_table[current_camsensor_id])
+		{
+			camctrl_init_tbl();
+			camsensor_init_func_tbl();
+			camsensor_initialized = (*camsensor_detect_table[current_camsensor_id])(&camsensor_function_table, &camctrl_tbl);
+		}
 	}
 #endif /* nFEATURE_CAMERA_MULTI_SENSOR */
 #else
