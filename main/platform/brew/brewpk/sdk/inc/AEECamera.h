@@ -187,7 +187,7 @@ Qualcomm Confidential and Proprietary
 #define CAM_PARM_FLASH_CTL          (CAM_PARM_CTL_BASE + 128)// [Set/Get] Flash control
 #define CAM_PARM_AF_INFO            (CAM_PARM_CTL_BASE + 129) // [Set/Get] Set the auto focus info
 #define CAM_PARM_BESTSHOT           (CAM_PARM_CTL_BASE + 130)// [Set/Get] Best shot mode
-
+//#define CAM_PARM_FLASH              (CAM_PARM_CTL_BASE + 131) //
 #define CAM_PARM_CURRENT_SENSOR		(CAM_PARM_QCOM_RESERVED_BEGIN + 1)// [Set/Get] Current sensor
 /*
 ** 保持和camsensor_sensor_model_pair_type一致
@@ -636,6 +636,7 @@ AEEINTERFACE(ICamera)
 #define ICAMERA_GetFrame(p, ppf)                AEEGETPVTBL(p, ICamera)->GetFrame(p, ppf)
 #define ICAMERA_EncodeSnapshot(p)               AEEGETPVTBL(p, ICamera)->EncodeSnapshot(p)
 #define ICAMERA_DeferEncode(p, b)               ICAMERA_SetParm(p, CAM_PARM_DEFER_ENCODE, (int32)(b), 0)
+
 //
 // Commonly used APIs to set/get ICamera parm
 //
@@ -658,6 +659,7 @@ AEEINTERFACE(ICamera)
 #define ICAMERA_RotateEncode(p, v)              ICAMERA_SetParm(p, CAM_PARM_ROTATE_ENCODE,(int32)(v),       0)
 #define ICAMERA_AddOverlay(p, pb)               ICAMERA_SetParm(p, CAM_PARM_OVERLAY,      (int32)(pb),      0)
 #define ICAMERA_ClearOverlay(p)                 ICAMERA_SetParm(p, CAM_PARM_OVERLAY,      0,                0)
+#define ICAMERA_ControlFlash(p,b)               ICAMERA_SetParm(p, CAM_PARM_FLASH,        (int32)b,         0)
 
 
 // Camera display API:
