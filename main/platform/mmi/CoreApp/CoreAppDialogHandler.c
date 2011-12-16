@@ -5473,16 +5473,16 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 								IDLE_TIME_MIN_X+40,
 								IDLE_TIME_Y
 								);
-		if(jDate.wHour >= 12)
+		if((jDate.wHour >= 6)&&(jDate.wHour <= 18))
         {
-        	IIMAGE_Draw(pMe->m_pImageTimeIcon[12],
+        	IIMAGE_Draw(pMe->m_pImageTimeIcon[10],
 								95,
 								130
 								);
 		}
 		else
 		{
-			IIMAGE_Draw(pMe->m_pImageTimeIcon[10],
+			IIMAGE_Draw(pMe->m_pImageTimeIcon[12],
 								95,
 								130
 								);
