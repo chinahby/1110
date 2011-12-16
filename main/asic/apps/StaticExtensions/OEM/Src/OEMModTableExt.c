@@ -1072,7 +1072,7 @@ static const AEEStaticMod gOEMStaticModList[] =
 #if defined( FEATURE_GAME_BLACKJACK)
     {AEEFS_MIF_DIR"blackjack.mif", BlackJack_Load},
 //    {AEEFS_MIF_DIR"fiveball.mif", FiveBall_Load},
-defined(FEATURE_VERSION_X3)
+#if defined(FEATURE_VERSION_X3)
       {AEEFS_MIF_DIR"pintu.mif", PinTu_Load},
       {AEEFS_MIF_DIR"tetris.mif", TetrisMod_Load},
 #endif
