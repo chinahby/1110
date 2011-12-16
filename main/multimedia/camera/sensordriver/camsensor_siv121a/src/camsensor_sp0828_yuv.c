@@ -65,22 +65,7 @@ static boolean initialize_sp0828_registers(uint16 dx, uint16 dy);
 static uint16  camsensor_sp0828_get_snapshot_fps(uint16 fps);
 static boolean sp0828_i2c_write_byte(uint8 offset, uint8 data);
 static boolean sp0828_i2c_read_byte(uint8 offset, uint8* data);
-void SP0828_config_window(uint16 startx,uint16 starty,uint16 width, uint16 height);
 
-void SP0828_config_window(uint16 startx,uint16 starty,uint16 width, uint16 height)
-{
-	sp0828_i2c_write_byte(0xfd,0x00);//page 0
-	// Horizontal
-	sp0828_i2c_write_byte(0x4b,(startx&0x0300)>>8);	//2msb
-	sp0828_i2c_write_byte(0x4c,startx&0x00FF);			// 8lsb
-	sp0828_i2c_write_byte(0x4d,(width&0x0300)>>8);			//2msb
-	sp0828_i2c_write_byte(0x4e,width&0x00FF);			// 8lsb
-	// Vertical
-	sp0828_i2c_write_byte(0x47,(starty&0x0100)>>8);	//1msb
-	sp0828_i2c_write_byte(0x48,starty&0x00FF);   			// 8lsb
-	sp0828_i2c_write_byte(0x49,(height&0x0100)>>8);		   	// 1msb
-	sp0828_i2c_write_byte(0x4a,height&0x00FF);		   	// 8lsb
-}	/* config_SP0828_window */
 /*============================================================================
     Function Body
 ============================================================================*/
@@ -565,7 +550,6 @@ SIDE EFFECTS
 
 static boolean camsensor_sp0828_snapshot_config( camsensor_static_params_type  *camsensor_params)
 {
-	//SP0828_config_window(0,0,CAMSENSOR_SP0828_FULL_SIZE_WIDTH,CAMSENSOR_SP0828_FULL_SIZE_HEIGHT);
 	/* Sensor output data format */
 	camsensor_params->format = CAMIF_YCbCr_Cr_Y_Cb_Y;
 
@@ -628,7 +612,6 @@ SIDE EFFECTS
 ===========================================================================*/
 static boolean camsensor_sp0828_video_config(camsensor_static_params_type *camsensor_params)
 {
-	//SP0828_config_window(0,0,CAMSENSOR_SP0828_QTR_SIZE_WIDTH,CAMSENSOR_SP0828_QTR_SIZE_HEIGHT);
     /* Sensor output data format */
 	camsensor_params->discardFirstFrame = TRUE;
 	camsensor_params->format = CAMIF_YCbCr_Cr_Y_Cb_Y;
