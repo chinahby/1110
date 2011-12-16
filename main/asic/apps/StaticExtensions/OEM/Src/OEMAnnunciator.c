@@ -68,7 +68,7 @@
 //#error code not present
 //#endif
 
-#define ANN_TEXT_MAX_LEN    72
+#define ANN_TEXT_MAX_LEN    64
 
 typedef struct IANNUNCore
 {
@@ -2195,11 +2195,8 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
             	{
             	    //IIMAGE_Draw(pBackBmp,20, 0);
             	    AEERect bgRect;
-                    char str[128] = {0};
-                    int titleLen = IDISPLAY_MeasureText(pMe->m_coreObj->m_piDisplay,AEE_FONT_BOLD, (const AECHAR*)IAnnunCoreObj->m_Title);
-
-                    WSTRTOSTR((const AECHAR*)IAnnunCoreObj->m_Title, str, sizeof(str));
-                    MSG_FATAL("***pji***IAnnunciator_Redraw:titleLen=%d",titleLen,0,0);
+                    int titleLen = IDISPLAY_MeasureText(pMe->m_coreObj->m_piDisplay,AEE_FONT_NORMAL, (const AECHAR*)IAnnunCoreObj->m_Title);
+                    
                     bgRect.y = 0;
                     bgRect.dy = STATEBAR_HEIGHT;
 #if defined(FEATURE_DISP_128X128)
