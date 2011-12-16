@@ -94,8 +94,10 @@ endif
 ifeq ($(MMI_ADD_GAME),yes)
 include $(BRICKATTACK)/brickattack.min
 include $(BLACKJACK)/blackjack.min
+ifeq ($(USES_RESDIR),X3) 
 include $(PINTU)/Pintu.min
 include $(TETRIS)/Tetris.min
+endif
 endif
 
 #Apps
