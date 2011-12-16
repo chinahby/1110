@@ -1849,7 +1849,7 @@ static void DrawMatrixStr(MainMenu *pMe)
                                     wszBottomstr,
                                     sizeof(wszBottomstr));
 		rc.x  = pMe->m_Icondefault_Pt[i].x-15;
-		rc.y  = pMe->m_Icondefault_Pt[i].y+ICON_HEIGHT;
+		rc.y  = pMe->m_Icondefault_Pt[i].y+ICON_HEIGHT+3;
 		rc.dx = ICON_WIDTH+30;
 		rc.dy = 20;
 		DrawGreyBitTextWithProfile(pMe->m_pShell,

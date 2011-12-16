@@ -4,9 +4,15 @@
 	<STRING Id="1001" Name="IDS_ITEM_CAMERA">
 		<Text>照相机</Text>
 	</STRING>
+	<String Id="1002" Name="IDS_MULTI_PRE">
+		<Text>前摄像头</Text>
+	</String>
 	<STRING Id="1003" Name="IDS_ITEM_CAMERA_GALLERY">
 		<Text>我的相册</Text>
 	</STRING>
+	<String Id="1004" Name="IDS_MULTI_BACK">
+		<Text>后摄像头</Text>
+	</String>
 	<STRING Id="1005" Name="IDS_CFG_ENVIR">
 		<Text>环境模式</Text>
 	</STRING>
@@ -112,6 +118,15 @@
 	<STRING Id="1073" Name="IDS_MSG_CAPTURE_FAILED">
 		<Text>连拍失败</Text>
 	</STRING>
+	<String Id="1074" Name="IDS_CAMERA_PHOTO_MODE">
+		<Text>图片路径</Text>
+	</String>
+	<String Id="1075" Name="IDS_CAMERA_PHOTO_PHONE">
+		<Text>手机</Text>
+	</String>
+	<String Id="1076" Name="IDS_CAMERA_PHOTO_TFCARD">
+		<Text>内存卡</Text>
+	</String>
 	<String Id="1077" Name="IDS_CAMERA_RECORD_FAILED">
 		<Text>录像失败</Text>
 	</String>
@@ -140,6 +155,13 @@
 	<Dialog Id="6004" Name="IDD_CPIC" Focus="0">
 		<Controls/>
 		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<Dialog Id="6005" Name="IDD_CAMERA_PHOTO_MODE" Focus="7004">
+		<Controls>
+			<Menu Id="7004" Name="IDC_PHOTOMODE">
+				<Items/>
+			</Menu>
+		</Controls>
 	</Dialog>
 	<Dialog Id="6008" Name="IDD_CVIDEOCFG" Focus="7003">
 		<Controls>

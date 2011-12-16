@@ -111,7 +111,7 @@ extern const unsigned long prv_dataArray[];
 #define  PTRCK_HIT_TRIAN   (PTRCK_HIT_ABTRI | PTRCK_HIT_BLTRI)
 
 #ifdef FEATURE_T9_CHINESE
-#ifdef FEATURE_DISP_128X160
+#if defined(FEATURE_DISP_128X160)
 #define SELECTION_BUFFER_SIZE   (6)
 #define CAUDB_SIZE              (110)
 #define T9KEYTYPE_NORMAL        (0)
@@ -122,6 +122,19 @@ extern const unsigned long prv_dataArray[];
 #define T9_STROKE_FONT_WIDTH    (12) // (10) 
 #define T9_STROKE_LEFT_ARROW    (10) 
 #define MAX_STROKES             (9) // (10) // the max count which display in the screen
+
+#elif defined(FEATURE_DISP_240X320)
+#define SELECTION_BUFFER_SIZE   (8)
+#define CAUDB_SIZE              (200)
+#define T9KEYTYPE_NORMAL        (0)
+#define T9KEYTYPE_SELECT        (1)
+#define T9KEYTYPE_CONTROL       (2)
+#define T9KEYTYPE_UNKNOWN       (6)
+#define T9_FONT_WIDTH           (30)
+#define T9_STROKE_FONT_WIDTH    (12) // (10) 
+#define T9_STROKE_LEFT_ARROW    (10) 
+#define MAX_STROKES             (9) // (10) // the max count which display in the screen
+
 #else
 #define SELECTION_BUFFER_SIZE   (8)
 #define CAUDB_SIZE              (110)
@@ -137,14 +150,25 @@ extern const unsigned long prv_dataArray[];
 #endif
 
 #ifndef AEE_SIMULATOR
+#ifdef FEATURE_DISP_240X320
+#define SYLLABLEWIDTH  24
+#define SEPARATORWIDTH 16
+#define PSYLLABLEWIDTH  8   
+#define PSEPARATORWIDTH 3   // 4
+#define SPELLMAX  10
+#define SPACESIZE  5  //6
+#define CHINESE_FONT_HEIGHT 26
+#define CHINESE_FONT_WIDTH 26 
+#else
 #define SYLLABLEWIDTH  15
 #define SEPARATORWIDTH 6
 #define PSYLLABLEWIDTH  8   
 #define PSEPARATORWIDTH 3   // 4
 #define SPELLMAX  10
 #define SPACESIZE  5  //6
-#define CHINESE_FONT_HEIGHT 16
-#define CHINESE_FONT_WIDTH 14    
+#define CHINESE_FONT_HEIGHT 14
+#define CHINESE_FONT_WIDTH 14   
+#endif   
 #else 
 //add by ydc
 #define SYLLABLEWIDTH  15//9
@@ -970,6 +994,7 @@ OEMCONTEXT OEM_TextCreate(const IShell* pIShell,
    pNewContext->rectChineseInput.dx = 0;
    pNewContext->rectChineseInput.y = pNewContext->rectDisplay.y + pNewContext->rectDisplay.dy;
    pNewContext->rectChineseInput.dy = 0;
+   MSG_FATAL("rectChineseInput.x===%d,rectChineseInput.y===%d",pNewContext->rectChineseInput.x,pNewContext->rectChineseInput.y,0);
 #endif //#ifdef FEATURE_T9_CHINESE
 #ifdef FEATURE_MYANMAR_INPUT_MOD   //add by yangdecai 2010-1224
    pNewContext->rectMyanmarInput.x = pNewContext->rectDisplay.x;
@@ -992,8 +1017,8 @@ OEMCONTEXT OEM_TextCreate(const IShell* pIShell,
    TextCtl_TextChanged(pNewContext);
 
    // Restart the edit if editable
-   //MSG_FATAL("pNewContext->rectDisplay.X=%d,pNewContext->rectDisplay.y=%d",pNewContext->rectDisplay.x,pNewContext->rectDisplay.y,0);
-   //MSG_FATAL("pNewContext->rectDisplay.dX=%d,pNewContext->rectDisplay.dy=%d",pNewContext->rectDisplay.dx,pNewContext->rectDisplay.dy,0);
+   MSG_FATAL("pNewContext->rectDisplay.X=%d,pNewContext->rectDisplay.y=%d",pNewContext->rectDisplay.x,pNewContext->rectDisplay.y,0);
+   MSG_FATAL("pNewContext->rectDisplay.dX=%d,pNewContext->rectDisplay.dy=%d",pNewContext->rectDisplay.dx,pNewContext->rectDisplay.dy,0);
    MSG_FATAL("TextCtl_RestartEdit..........................",0,0,0);
    TextCtl_RestartEdit(pNewContext);
 
@@ -10143,14 +10168,15 @@ static void T9TextCtl_CJK_CHINESE_Restart(TextCtlContext *pContext)
     sT9Status = T9_CJK_CHINESE_Init ( pContext );
 
     // set rectChinese input Rect
+    MSG_FATAL("pContext->rectDisplay.dx=%d,pContext->nLineHeight=%d",pContext->rectDisplay.dx,pContext->nLineHeight,0);
     pContext->rectChineseSyllableInput.x = pContext->rectDisplay.x;
     pContext->rectChineseSyllableInput.dx = pContext->rectDisplay.dx;
-    pContext->rectChineseSyllableInput.dy = pContext->nLineHeight; 
+    pContext->rectChineseSyllableInput.dy = pContext->nLineHeight+5; 
     
     pContext->rectChineseSyllableInput.y = pContext->rectDisplay.y + pContext->rectDisplay.dy - pContext->rectChineseSyllableInput.dy*2;
     pContext->rectChineseTextInput.x = pContext->rectChineseSyllableInput.x;
     pContext->rectChineseTextInput.dx = pContext->rectChineseSyllableInput.dx;
-    pContext->rectChineseTextInput.dy = pContext->nLineHeight;    
+    pContext->rectChineseTextInput.dy = pContext->nLineHeight+5;    
     pContext->rectChineseTextInput.y = pContext->rectDisplay.y + pContext->rectDisplay.dy - pContext->rectChineseTextInput.dy;    
 
     pContext->rectChineseInput.x = pContext->rectChineseSyllableInput.x;
@@ -11163,6 +11189,7 @@ static void T9_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext )
     nWordCount = ( STRLEN(pbSpellBuffer) + 1 ) / ( nKeyBufLen + 1 );
     
     // number of spell words that can be displayed
+    MSG_FATAL("dx=====%d,dy======%d",pContext->rectChineseInput.dx,pContext->rectChineseInput.dy,0);
     if (pContext->sT9ccFieldInfo.G.nLdbNum == (T9PIDChinese | T9SIDChineseSimplified))
     {
         nWordCountDisp = ( pContext->rectChineseInput.dx - 2 ) / 

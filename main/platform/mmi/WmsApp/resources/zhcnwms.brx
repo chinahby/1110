@@ -644,7 +644,7 @@
 			<Text Id="7006" Name="IDC_WRITEMSG_TEXT">
 				<TitleID>IDS_BLANK</TitleID>
 				<Items/></Text>
-			<Menu Id="7042" Name="IDC_WRITEMSG_MENU">
+			<Menu Id="7045" Name="IDC_WRITEMSG_MENU">
 				<Items/>
 			</Menu>
 		</Controls>
@@ -932,18 +932,25 @@
 		<Controls/>
 		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</Dialog>
-	<Dialog Id="6047" Name="IDD_VIEWMSG_MMS" Focus="7039">
+	<Dialog Id="6047" Name="IDD_FLASHSMS" Focus="7039">
 		<Controls>
-			<Static Id="7039" Name="IDC_VIEWMSG_MMS_STATIC">
+			<Static Id="7039" Name="IDC_STATIC_FLASHSMS">
 				<Items/></Static>
-			<Menu Id="7045" Name="IDC_VIEWMSG_MMS_MENU">
+		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<Dialog Id="6048" Name="IDD_VIEWMSG_MMS" Focus="7040">
+		<Controls>
+			<Static Id="7040" Name="IDC_VIEWMSG_MMS_STATIC">
+				<Items/></Static>
+			<Menu Id="7046" Name="IDC_VIEWMSG_MMS_MENU">
 				<Items/>
 			</Menu>
 		</Controls>
 	</Dialog>
-	<DIALOG Id="6049" Name="IDD_MMSOPTION_YESNO" Focus="7040">
+	<DIALOG Id="6049" Name="IDD_MMSOPTION_YESNO" Focus="7041">
 		<Controls>
-			<Menu Id="7040" Name="IDC_MMSOPTION_YESNO">
+			<Menu Id="7041" Name="IDC_MMSOPTION_YESNO">
 				<Items/>
 			</Menu>
 		</Controls>
