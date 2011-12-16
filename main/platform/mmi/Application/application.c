@@ -1129,7 +1129,9 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
 #endif
 #endif
 #ifdef FEATURE_SUPPORT_WAP_APP
+#ifndef FEATURE_VERSION_W208S
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_BROWSER, IDS_APPLICATION_BROWSER, NULL, 0); 
+#endif
 #endif
 #ifdef	FEATURE_APP_BLUETOOTH  //add by yangdecai
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_BLUETOOTH, IDS_APPLICATION_BLUETOOTH, NULL, 0); 

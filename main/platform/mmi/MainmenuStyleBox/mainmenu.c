@@ -43,6 +43,114 @@
 #include "AEERUIM.h" 
 #include "OEMCFGI.h"
 #endif //#if !defined( AEE_SIMULATOR)
+enum {
+#if 1 /*APP_CONFIG_USE_EVENTLISTENER*/
+	APP_ORIGINATOR_ALLAPPSELECT = -1,
+#endif /*APP_CONFIG_USE_EVENTLISTENER*/
+	APP_ORIGINATOR_TASK = 0,
+	APP_ORIGINATOR_MANAGER,
+	APP_ORIGINATOR_LAUNCHER,
+	APP_ORIGINATOR_BROWSER,
+	APP_ORIGINATOR_MAILER,
+	APP_ORIGINATOR_DATAFOLDER,
+	APP_ORIGINATOR_ADDRESSBOOK,
+	APP_ORIGINATOR_MEDIAPLAYER,
+	APP_ORIGINATOR_IrDA,
+	APP_ORIGINATOR_BLUETOOTH,
+	APP_ORIGINATOR_MMS,
+	APP_ORIGINATOR_SISL,
+	APP_ORIGINATOR_SISLDAEMON,
+	APP_ORIGINATOR_NETMANAGER,
+	APP_ORIGINATOR_MIMEVIEWER,
+	APP_ORIGINATOR_CALENDAR,
+	APP_ORIGINATOR_MMSDAEMON,
+	APP_ORIGINATOR_WAPPUSHDAEMON,
+	APP_ORIGINATOR_DOWNLOAD,
+	APP_ORIGINATOR_JAVA,
+	APP_ORIGINATOR_EVENTLISTENER,
+	APP_ORIGINATOR_TELCALL,
+	APP_ORIGINATOR_JAMSTUB,
+	APP_ORIGINATOR_PDFVIEWER,
+	APP_ORIGINATOR_DOCVIEWER,
+#ifdef APP_CONFIG_USE_DOWNLOAD_DAEMON
+	APP_ORIGINATOR_DOWNLOADDAEMON,
+	APP_ORIGINATOR_DOWNLOADEXT,
+#endif
+	APP_ORIGINATORS
+};
+#define	APPLICATION_MSGBASE_SYSTEM			0x00000
+enum{
+	APP_BROWSER_START_MAINMENU = APPLICATION_MSGBASE_SYSTEM,
+	APP_BROWSER_START_HOME,		/* arg: not use */
+	APP_BROWSER_START_BY_MAINMENU, /* arg : slim_int IDM_BROWSER_XXX */
+	APP_BROWSER_START_URL,			/* arg: TString url */
+	APP_BROWSER_START_PAGESAVEINFO,	/* arg : TPageSaveInfo (slim_handle) */
+	APP_BROWSER_START_BY_PUSH,			/* arg: TString url */
+	APP_BROWSER_RESULT_SAVEFILE,	/* arg: TString file name */
+#ifdef WIRELESS_BROWSER_CONFIG_USE_FILEUPLOAD
+	APP_BROWSER_RESULT_FILESELECT,	/* arg: TString file name */
+#endif
+	APP_BROWSER_RESULT_ADDRESS_BOOK,	/* arg : TString add addressbook */
+#ifdef WIRELESS_BROWSER_CONFIG_USE_VBOOKMARK
+	APP_BROWSER_VBOOKMARK_IMPORT,				/* arg: TString file name */
+#endif
+	APP_BROWSER_REQUEST_BOOKMARKLIST_UPDATE,	/* arg: not use */
+#ifdef APP_CONFIG_USE_DRM
+	APP_BROWSER_START_RIGHTS,
+	APP_BROWSER_START_RIGHTS_ONMEMORY,
+#endif
+#ifdef APP_CONFIG_USE_CASTING
+	APP_BROWSER_START_URL_WITH_POST,
+#endif
+	APP_BROWSER_RES_INSTALL,
+	APP_BROWSER_STARTS
+};
+typedef struct {
+    char	*title;
+    char	*url;
+} StartupInfoURL;
+typedef struct {
+	char *fMailAddress;
+	char *fSubject;
+	char *fContent;
+	char *fFilePath;
+}StartupInfoEmailComposition;
+typedef struct{
+	char *fStr;
+}StartupInfoMMSComposition;
+typedef enum {
+	JAM_APP_TYPE_UNKOWN = -1,
+	JAM_APP_TYPE_CLDC = 0,
+	JAM_APP_TYPE_MIDP,
+	JAM_APP_TYPE_DOJA,
+	JAM_APP_TYPE_DIR,
+	JAM_APP_TYPES
+} TJamAppType_;
+typedef struct{
+	TJamAppType_ fType;
+	char *fAdfUrl;
+	int fAdfUrlLen;
+	byte *fAdfContent;
+	int fAdfContentSize;
+	char *fUserName;
+	int fUserNameLen;
+	char *fPassword;
+	int fPasswordLen;
+	byte *fSessionID;
+	int fSessionIDLen;
+}StartupInfoJava;
+typedef struct {
+	int appid_fx;
+	int subtype_keycode;
+	int par_keychar;
+	union {  
+		StartupInfoURL	url_info;
+		StartupInfoEmailComposition	emailcomposition_info;
+		StartupInfoMMSComposition	mmscomposition_info;
+		StartupInfoJava				java_info;
+    	} fInfo;
+} StartInfo;
+static StartInfo start_info;		
 #ifdef FEATURE_LCD_TOUCH_ENABLE
 #define PARAM_NOT_REF(x)
 /*==============================================================================
@@ -2794,6 +2902,19 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_IconTitle[9]     = IDS_MAIN_MENU_SETTINGS;
     pMe->m_IconTitle[10]    = IDS_MAIN_MENU_USERPROFILE;
     pMe->m_IconTitle[11]    = IDS_MAIN_MENU_GAMES;
+#elif defined(FEATURE_VERSION_W208S)
+    pMe->m_IconTitle[0]     = IDS_MAIN_MENU_CALL_LOGS;	//IDS_MAIN_MENU_MEDIAGALLERY;
+    pMe->m_IconTitle[1]     = IDS_MAIN_MENU_CONTACTS;
+    pMe->m_IconTitle[2]     = IDS_MAIN_MENU_MULTIMEDIA;		//IDS_MAIN_MENU_UTK;
+    pMe->m_IconTitle[3]     = IDS_MAIN_MENU_MAP;
+    pMe->m_IconTitle[4]     = IDS_MAIN_MENU_NEO_APP;
+    pMe->m_IconTitle[5]     = IDS_MAIN_MENU_NEO_NAV;
+    pMe->m_IconTitle[6]     = IDS_MAIN_MENU_MESSAGES;		//IDS_MAIN_MENU_MULTIMEDIA;
+    pMe->m_IconTitle[7]     = IDS_MAIN_MENU_CAMERA;			//IDS_MAIN_MENU_STATIC_APPLICATION;
+    pMe->m_IconTitle[8]     = IDS_MAIN_MENU_FMRADIO;		 //IDS_MAIN_MENU_SCHEDULER;
+    pMe->m_IconTitle[9]     = IDS_MAIN_MENU_SETTINGS;
+    pMe->m_IconTitle[10]    = IDS_MAIN_MENU_FILEMGR;		//IDS_MAIN_MENU_USERPROFILE;
+    pMe->m_IconTitle[11]    = IDS_MAIN_MENU_TOOLS;			//IDS_MAIN_MENU_GAMES;	
 #else
     pMe->m_IconTitle[0]     = IDS_MAIN_MENU_MEDIAGALLERY;
     pMe->m_IconTitle[1]     = IDS_MAIN_MENU_CONTACTS;
@@ -4100,7 +4221,56 @@ static int StartApplet(MainMenu *pMe, int i)
         IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
     }
 #endif
-    switch(i){
+    switch(i)
+	{
+#ifdef FEATURE_VERSION_W208S
+	case IDS_MAIN_MENU_CALL_LOGS:
+	{
+		Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_RECENTCALL);
+		break;
+	}
+	case IDS_MAIN_MENU_MAP:
+	{
+		break;
+	}
+	case IDS_MAIN_MENU_NEO_APP:
+	{
+		break;
+	}
+	case IDS_MAIN_MENU_NEO_NAV:
+	{
+		char	buf[12];
+		
+		OEM_SetBAM_ADSAccount();	//Add By zzg 2011_07_08
+		
+    	MSG_FATAL("AEECLSID_BRW_APP...........START",0,0,0);
+    	start_info.appid_fx = APP_ORIGINATOR_BROWSER;
+        start_info.subtype_keycode = APP_BROWSER_START_MAINMENU;
+        start_info.par_keychar = 0;
+        //start_info.fInfo.url_info.title = "163";
+        //start_info.fInfo.url_info.url = "http://www.163.com";
+        SPRINTF(buf, "%p", &start_info);
+		Result = ISHELL_StartAppletArgs(pMe->m_pShell,AEECLSID_NF3,buf);
+        //Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_BRW_APP);
+        MSG_FATAL("AEECLSID_BRW_APP...........Result=%d",Result,0,0);		
+		
+		break;
+	}
+	
+#ifdef FEATURE_BREW_CAMERA	
+	case IDS_MAIN_MENU_CAMERA:
+	{		
+		Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_CAMERA);
+		break;
+	}
+#endif
+	
+	case IDS_MAIN_MENU_FILEMGR:
+	{
+		Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MEDIAGALLERY);
+		break;
+	}
+#endif
     case IDS_MAIN_MENU_GALLERY:
     case IDS_MAIN_MENU_MEDIAGALLERY:
         Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MEDIAGALLERY);

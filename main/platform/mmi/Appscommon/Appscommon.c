@@ -377,13 +377,14 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
             nResID_L = IDS_BLUETOOTH_ACCEPT;
             nResID_R = IDS_REJECT;  
             break;
-
+		/*	
 		//Add By zzg 2011_12_12	
 		case BTBAR_LOCK_BACK:
 			nResID_L = IDS_LOCK;
 			nResID_R = IDS_BACK;	
 			break;
 		//Add End
+		*/
 		
          case BTBAR_ADD_BACK:
             nResID_L=IDS_ADD;
@@ -3110,12 +3111,14 @@ void DrawBottomBar_Ex(IShell    *m_pIShell, IDisplay  * pIDisplay, BottomBar_e_T
             nResID_R = IDS_SOS;
          	break;
 
+		/*
 		//Add By zzg 2011_12_12
 		case BTBAR_LOCK_BACK:
          	nResID_L = IDS_LOCK;
             nResID_R = IDS_BACK;
          	break;
 		//Add End
+		*/
          	
 		case BTBAR_MENU_FRENDUO:
 			nResID_L = IDS_MENU;

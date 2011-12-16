@@ -88,9 +88,24 @@
 	<String Id="1029" Name="IDS_MAIN_MENU_VIDEOPLAYER">
 		<Text>VideoPlayer</Text>
 	</String>
+	<String Id="1030" Name="IDS_MAIN_MENU_FILEMGR">
+		<Text>File Manager</Text>
+	</String>
+	<String Id="1031" Name="IDS_MAIN_MENU_MAP">
+		<Text>Map</Text>
+	</String>
+	<String Id="1032" Name="IDS_MAIN_MENU_NEO_APP">
+		<Text>Neo Application</Text>
+	</String>
+	<String Id="1033" Name="IDS_MAIN_MENU_NEO_NAV">
+		<Text>Neo Navigation</Text>
+	</String>
 	<STRING Id="1034" Name="IDS_MENU_LIST">
 		<Text>Menu</Text>
 	</STRING>
+	<String Id="1035" Name="IDS_MAIN_MENU_CALL_LOGS">
+		<Text>Call Logs</Text>
+	</String>
 	<STRING Id="1043" Name="IDS_MAIN_MENU_CALCULATOR">
 		<Text>Calculator</Text>
 	</STRING>

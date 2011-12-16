@@ -1672,6 +1672,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                     if(!pMe->m_bShowPopMenu)
                     {
 //Add By zzg 2011_12_12
+/*
 #ifdef FEATURE_VERSION_W208S
 						if (0 == WSTRCMP(pMe->m_DialString, L"*"))
 						{
@@ -1682,7 +1683,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 							if(!OEMKeyguard_IsEnabled())
 							{
 								(void) ICONFIG_GetItem(pMe->m_pConfig,
-														CFGI_KEY_LOCK_CHECK/*CFGI_PHONE_KEY_LOCK_CHECK*/,
+														CFGI_KEY_LOCK_CHECK,
 														&bData,
 														sizeof(bData));
 								if(bData)
@@ -1705,6 +1706,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                             return TRUE;
 						}
 #endif
+*/
 //Add End
 					
 #ifdef FEATURE_EDITABLE_NUMBER
@@ -10710,11 +10712,13 @@ static void CallApp_Draw_NumEdit_SoftKey(CCallApp *pMe)
 
 #ifdef FEATURE_VERSION_W208S
 
+			/*
 			if (0 == WSTRCMP(pMe->m_DialString, L"*"))
 			{
 				type = BTBAR_LOCK_BACK; 						
 			}
-			else						
+			else	
+			*/	
 			{
 				type = BTBAR_OPTION_SAVE_BACK;
 			}
