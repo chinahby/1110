@@ -3795,6 +3795,10 @@ static void CameraApp_RecordSnapShot(CCameraApp *pMe)
 		{
 			ICAMERA_RotateEncode(pMe->m_pCamera, 180);
 		}
+		else if(pMe->m_nCameraMulti == OEMNV_CAMERA_MULTI_ONE)
+		{
+			ICAMERA_RotateEncode(pMe->m_pCamera, 0);
+		}
 	}
 #endif
     
