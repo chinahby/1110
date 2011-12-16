@@ -628,6 +628,9 @@
 	<String Id="1031" Name="IDS_SAVE_CURRENT_ITEM">
 		<Text>Save the current item</Text>
 	</String>
+	<String Id="1032" Name="IDS_INSERT_NEW_PICTURE">
+		<Text>Insert new picture</Text>
+	</String>
 	<String Id="1033" Name="IDS_GETTINGFROM">
 		<Text>Receiving...</Text>
 	</String>

@@ -536,6 +536,10 @@ static int CameraApp_InitAppData(CCameraApp *pMe)
     pMe->m_pCamera = NULL;  
     pMe->m_pMedia = NULL;
     pMe->m_isFormQuicktest = FALSE;
+#ifdef FEATURE_USES_MMS  
+    pMe->m_isFormMMS = FALSE;
+#endif
+
 #ifdef CAMERA_RECORD_DEBUG
     pMe->m_isStartFromFacebook = TRUE;
     pMe->m_isRecordMode = TRUE;
@@ -754,6 +758,12 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
                 {
 					pMe->m_isRecordMode = TRUE;
                 }
+#ifdef FEATURE_USES_MMS                  
+                else if( STRCMP(as->pszArgs, "MMS") == 0 )
+                {
+					pMe->m_isFormMMS = TRUE;
+                }           
+#endif                
             }
             pMe->m_rc = as->rc;
             pMe->m_bSuspending = FALSE;

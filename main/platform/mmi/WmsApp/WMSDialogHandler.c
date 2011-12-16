@@ -2554,7 +2554,7 @@ static boolean IDD_VIEWMSG_Handler(void         *pUser,
 {
     IStatic * pStatic = NULL;
     WmsApp *pMe = (WmsApp *)pUser;
-    
+    MSG_FATAL("IDD_VIEWMSG_Handler eCode=0x%x, wParam=0x%x, dwParam=0x%x", eCode, wParam, dwParam);
     if (NULL == pMe)
     {
         return FALSE;
@@ -2609,7 +2609,7 @@ static boolean IDD_VIEWMSG_Handler(void         *pUser,
                 AECHAR wszTitle[32] = {0};
                 uint16 nTitleID=0;
                 TitleBar_Param_type     TBarParam = {0};                
-
+                MSG_FATAL("IDD_VIEWMSG_Handler EVT_USER_REDRAW m_currState=%d",pMe->m_currState,0,0);
              
                 switch (pMe->m_currState)
                 {
@@ -11062,6 +11062,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                         if((pMe->m_pMMSImage == NULL) && (pMe->m_pMMSSOUND == NULL) && (pMe->m_pMMSVIDEO == NULL))
                         {
                             MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_PICTURE);//add by xuhui 2011/08/01
+                            MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_NEW_PICTURE);
                             MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_VIDEO);//add by xuhui 2011/08/01
                             MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_SOUND);//add by xuhui 2011/08/01
                             MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_FILE);//add by xuhui 2011/08/01
@@ -11076,6 +11077,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                         else if(pMe->m_pMMSSOUND && (pMe->m_pMMSImage == NULL) && (pMe->m_pMMSVIDEO == NULL))
                         {
                             MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_PICTURE);//add by xuhui 2011/08/01
+                            MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_NEW_PICTURE);
                             MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_VIDEO);//add by xuhui 2011/08/01
                             MENU_ADDITEM(pMe->m_pMenu, IDS_REMOVE_SOUND);//add by xuhui 2011/08/01
                             MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_FILE);//add by xuhui 2011/08/01
@@ -11083,6 +11085,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                         else if(pMe->m_pMMSVIDEO && (pMe->m_pMMSImage == NULL) && (pMe->m_pMMSSOUND == NULL))
                         {
                             MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_PICTURE);//add by xuhui 2011/08/01
+                            MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_NEW_PICTURE);
                             MENU_ADDITEM(pMe->m_pMenu, IDS_REMOVE_VIDEO);//add by xuhui 2011/08/01
                             MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_SOUND);//add by xuhui 2011/08/01
                             MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_FILE);//add by xuhui 2011/08/01
@@ -11104,6 +11107,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                         else if(pMe->m_pMMSSOUND && pMe->m_pMMSVIDEO && (pMe->m_pMMSImage == NULL))
                         {
                             MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_PICTURE);//add by xuhui 2011/08/01
+                            MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_NEW_PICTURE);
                             MENU_ADDITEM(pMe->m_pMenu, IDS_REMOVE_VIDEO);//add by xuhui 2011/08/01
                             MENU_ADDITEM(pMe->m_pMenu, IDS_REMOVE_SOUND);//add by xuhui 2011/08/01
                             MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_FILE);//add by xuhui 2011/08/01
@@ -11253,7 +11257,15 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 #endif                    
                     return TRUE;
                 }
-                    //CLOSE_DIALOG(DLGRET_INSERTPICTURE)
+
+                case IDS_INSERT_NEW_PICTURE:
+                {
+                    char MMSName[MG_MAX_FILE_NAME]={'\0'};
+                    MSG_FATAL("IDS_INSERT_NEW_PICTURE",0,0,0);
+                    pMe->m_insertMMSType = 0;
+                    return ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_APP_CAMERA, "MMS");
+                }
+
                     
                 case IDS_INSERT_VIDEO:
                 {
@@ -15353,7 +15365,7 @@ static boolean IDD_VMNUM_Handler(void   *pUser,
 {
     ITextCtl *pTextCtl = NULL;
     WmsApp *pMe = (WmsApp *)pUser;
-
+    MSG_FATAL("IDD_VMNUM_Handler eCode=0x%x",eCode, 0, 0);
     if (NULL == pMe)
     {
         return FALSE;
@@ -15604,7 +15616,7 @@ static boolean IDD_LOADINGMSG_Handler(void   *pUser,
 )
 {
     WmsApp *pMe = (WmsApp *)pUser;
-
+    MSG_FATAL("IDD_LOADINGMSG_Handler eCode=0x%x, wParam=0x%x, dwParam=0x%x",eCode,wParam,dwParam);
     if (NULL == pMe)
     {
         return FALSE;
@@ -15630,9 +15642,12 @@ static boolean IDD_LOADINGMSG_Handler(void   *pUser,
             return TRUE;
             
         case EVT_USER_REDRAW:
+            MSG_FATAL("IDD_LOADINGMSG_Handler EVT_USER_REDRAW m_currState=%d",pMe->m_currState,0,0);
             if (WMSST_TEMPLATES == pMe->m_currState)
-            {// 读取模版
+            {
+                // 读取模版
                 wms_message_index_type index = pMe->m_wInsertTemplate-MSG_CMD_BASE;
+                MSG_FATAL("IDD_LOADINGMSG_Handler EVT_USER_REDRAW 1 index=%d",index,0,0);
                 
                 if (pMe->m_wInsertTemplate>=MSG_CMD_BASE)
                 {// 用户常用语
@@ -15666,7 +15681,7 @@ static boolean IDD_LOADINGMSG_Handler(void   *pUser,
                 wms_cache_info_node  *pnode = NULL;
                 int nRet,i,nCount=0;
                 boolean bUIMSMS = FALSE;
-                
+                MSG_FATAL("IDD_LOADINGMSG_Handler EVT_USER_REDRAW 2 wIndex=%d",pMe->m_wCurindex,0,0);
                 wIndex = pMe->m_wCurindex;
                 MSG_FATAL("EVT_USER_REDRAW,read......",0,0,0);
                 // 取消息 cache info 节点
@@ -15754,7 +15769,7 @@ static boolean IDD_LOADINGMSG_Handler(void   *pUser,
                                    (void *)pMe,
                                    pnode->mem_store,
                                    pnode->index);
-                MSG_FATAL("READ msg.........................",0,0,0);
+                MSG_FATAL("READ msg....... index=%d",pnode->index,0,0);
                                    
                 if (nRet != SUCCESS)
                 {

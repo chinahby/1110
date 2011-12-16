@@ -966,14 +966,21 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                 return FALSE;
 
             case AVK_CLR:
-                if(pMe->m_isFormQuicktest)
+                if((pMe->m_isFormQuicktest)       
+#ifdef FEATURE_USES_MMS                    
+                   || (pMe->m_isFormMMS) 
+#endif
+                    )
                 {
                     ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);
                     if(pMe->m_nCameraState == CAM_PREVIEW)
                     {
                         ICAMERA_Stop(pMe->m_pCamera);
                         pMe->m_nCameraState = CAM_STOP;
-                    }                        
+                    }                      
+#ifdef FEATURE_USES_MMS  
+                    pMe->m_isFormMMS = FALSE;
+#endif
                     pMe->m_isFormQuicktest = FALSE;
                     pMe->m_nLeftTime = 0;
                     ISHELL_CloseApplet(pMe->m_pShell, FALSE);
@@ -1520,6 +1527,25 @@ static boolean CameraApp_PicHandleEvent(CCameraApp *pMe, AEEEvent eCode, uint16 
                     
                 case AVK_SELECT:
                 case AVK_INFO:
+                    MSG_FATAL("CameraApp_PicHandleEvent AVK_INFO",0,0,0);
+#ifdef FEATURE_USES_MMS                    
+                    if(pMe->m_isFormMMS)
+                    {
+                       DBGPRINTF("CameraApp_PicHandleEvent CurrentFileName=%s",pMe->m_sCurrentFileName); 
+                       ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSIMAGE,
+                                       pMe->m_sCurrentFileName, sizeof(pMe->m_sCurrentFileName));   
+                        pMe->m_isFormMMS = FALSE;
+                        ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);
+                        if(pMe->m_nCameraState == CAM_PREVIEW)
+                        {
+                            ICAMERA_Stop(pMe->m_pCamera);
+                            pMe->m_nCameraState = CAM_STOP;
+                        }
+                        ISHELL_CloseApplet(pMe->m_pShell, FALSE);
+                        MSG_FATAL("CameraApp_PopMSGHandleEvent END",0,0,0); 
+                        return TRUE;
+                    }
+#endif                    
                     break;
                     
                 default:

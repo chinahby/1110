@@ -643,6 +643,9 @@
 	<String Id="1035" Name="IDS_SAVE_CURRENT_ITEM" Encoding="Unicode">
 		<Text>Save the current item</Text>
 	</String>
+	<String Id="1036" Name="IDS_INSERT_NEW_PICTURE" Encoding="Unicode">
+		<Text>Insert new picture</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN" Focus="7001">

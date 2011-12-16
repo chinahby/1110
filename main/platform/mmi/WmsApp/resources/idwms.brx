@@ -595,6 +595,9 @@
 	<String Id="1019" Name="IDS_SAVE_CURRENT_ITEM" Encoding="Unicode">
 		<Text>Save the current item</Text>
 	</String>
+	<String Id="1020" Name="IDS_INSERT_NEW_PICTURE" Encoding="Unicode">
+		<Text>Insert new picture</Text>
+	</String>
 	<String Id="1026" Name="IDS_MMSDELIVERYREPORT">
 		<Text>MMS Delivery Report</Text>
 	</String>

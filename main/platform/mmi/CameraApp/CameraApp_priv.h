@@ -631,6 +631,9 @@ typedef struct _CCameraApp
     boolean				 m_isStartFromFacebook;
     boolean 			 m_isRecordMode;
     int32                 m_sensor_model; //判断摄像头为多少像素的 add by xuhui
+#ifdef FEATURE_USES_MMS
+    boolean              m_isFormMMS;
+#endif
 } CCameraApp;
 
 /*==============================================================================                         

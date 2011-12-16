@@ -640,6 +640,9 @@
 	<String Id="1034" Name="IDS_SAVE_CURRENT_ITEM">
 		<Text>Save the current item</Text>
 	</String>
+	<String Id="1035" Name="IDS_INSERT_NEW_PICTURE">
+		<Text>Insert new picture</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN" Focus="7001">

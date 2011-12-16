@@ -562,6 +562,9 @@
 	<String Id="1017" Name="IDS_SAVE_CURRENT_ITEM">
 		<Text>保存当前项</Text>
 	</String>
+	<String Id="1018" Name="IDS_INSERT_NEW_PICTURE">
+		<Text>Insert new picture</Text>
+	</String>
 	<String Id="1026" Name="IDS_MMSDELIVERYREPORT">
 		<Text>使用彩信发送报告</Text>
 	</String>
