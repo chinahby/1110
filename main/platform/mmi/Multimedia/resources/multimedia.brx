@@ -7,6 +7,9 @@
 	<String Id="1002" Name="IDS_MULTIMEDIA_MEDIAGALLERY">
 		<Text>MediaGallery</Text>
 	</String>
+	<String Id="1003" Name="IDS_MULTIMEDIA_VIDEO_CAMERA">
+		<Text>Video Camera</Text>
+	</String>
 	<STRING Id="1011" Name="IDS_MULTIMEDIA_CAMERA">
 		<Text>Camera</Text>
 	</STRING>
