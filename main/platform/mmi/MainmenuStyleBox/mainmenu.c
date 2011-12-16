@@ -1451,6 +1451,7 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 					if(pMe->m_bReraw)
 					{
 						AutoMovePage(pMe);
+						pMe->m_bReraw = FALSE;
 					}
 				}
 				
@@ -1475,10 +1476,9 @@ static void AutoMovePage(MainMenu *pMe)
 			MSG_FATAL("pMe->m_PrsentPage=========%d",pMe->m_PrsentPage,0,0);
 			// 初始整个背景及全部初始图标	
     		DrawMatrix(pMe);
-			DrawMatrixStr(pMe);
     		// 绘制聚焦过程动画
     		MoveCursorTo(pMe, pMe->m_nRow, pMe->m_nColumn);
-			
+			DrawMatrixStr(pMe);
 			pMe->m_bmove = FALSE;
 		}
 		else
