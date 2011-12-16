@@ -733,6 +733,7 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
 			MSG_FATAL("EVT_PEN_MOVE..............................",0,0,0);
 			if((m_Move_Dx>MOVE_DY) &&(m_bstartInRect)&&(OEMKEYGUARD_PT_IN_RECT(wXPos,wYPos,rct_Move)))
 			{
+				AEERect rct_End = {171,270,69,50};
 				MSG_FATAL("EVT_PEN_MOVE..............................111",0,0,0);
 				m_Rct.x = m_Rct.x + m_Move_Dx;
 				rct.x = m_Rct.x;
@@ -741,6 +742,22 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
 				OEMPriv_DrawPenMoveBar(rct.x,rct.y);
 				m_privpinter_x = wXPos;
 				m_privpinter_y = wYPos;
+				if(OEMKEYGUARD_PT_IN_RECT(wXPos,wYPos,rct_End))
+				{
+					//½âËø
+					sUnlockState = UNLOCKSTATE_RESET;
+
+                    // Correct key, make a beep...
+                    if (spAlert)
+                    {
+                        IALERT_KeyBeep(spAlert, (AVKType) wParam, TRUE);
+                    }
+
+                    // Unlock the keyguard
+                    OEMKeyguard_SetState(FALSE);
+
+                    OEMPriv_ResumeBREW();
+				}
 				//drew »¬¶¯Í¼±ê
 			}
 			return TRUE;
@@ -748,7 +765,7 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
 		break;
 		case EVT_POINTER_UP:
 		{
-			AEERect rct_End = {171,270,42,44};
+			AEERect rct_End = {171,270,69,50};
 			uint16 wXPos = (int16)AEE_POINTER_GET_X((const char *)dwParam);
 			uint16 wYPos = (int16)AEE_POINTER_GET_Y((const char *)dwParam);
 			if(m_bstartInRect)
