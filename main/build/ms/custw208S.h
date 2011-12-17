@@ -266,10 +266,17 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 
 #include "custdisplay.h"
 
+#define FEATURE_MOVIE_RECORD_SUPPORT
+#define FEATURE_MM_REC
+
 #ifdef USES_CAMERA
+#ifdef FEATURE_MOVIE_RECORD_SUPPORT
+#include "custcamcorder.h"
+#endif
 #include "custcamera.h"
 #include "custjpeg.h"
 #endif
+
 
 #include "custuim.h"
 #include "custcmx.h"
