@@ -1094,7 +1094,11 @@ static register_address_value_pair SID130B_mode_full[] =
 
 //IDP
 	{0x00, 0x03},
-		
+
+	{0x90, 0x00},
+	{0x91, 0x00},
+	{0x92, 0x00},
+	{0x93, 0x00},
 	{0x94, 0x02}, //win size 1600x12600
 	{0x95, 0x58},
 	{0x96, 0x03},
@@ -1297,6 +1301,7 @@ boolean camsensor_SETi_SID130B_video_config
 
   	}
 
+	camsensor_current_resolution = camsensor_preview_resolution;
 	(void)camsensor_config_camclk_po(camsensor_camclk_po_hz);
 	return TRUE;
 } /* camsensor_mt9d112_mu2m0yu_video_config */

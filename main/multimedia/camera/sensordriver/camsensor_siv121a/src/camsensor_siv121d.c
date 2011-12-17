@@ -495,7 +495,7 @@ boolean camsensor_siv121d_0m3_start(camsensor_static_params_type *camsensor_para
 
 
 	/* Quarter size dimensions - The same size. */
-	camsensor_params->qtr_size_width  = 640;
+	camsensor_params->qtr_size_width  = 360;
 	camsensor_params->qtr_size_height = 480;
 
 	switch (camsensor_preview_resolution)
@@ -702,7 +702,7 @@ camsensor_static_params_type  *camsensor_params		 /* Camera sensor config params
 	} /* camsensor_preview_resolution */
 
 	/* CAMIF window */
-	camsensor_params->camif_window_width_config.firstPixel = 0;
+	camsensor_params->camif_window_width_config.firstPixel = 280;
 	camsensor_params->camif_window_width_config.lastPixel  = camsensor_params->camif_window_width_config.firstPixel + camsensor_params->camsensor_width*2 - 1;
 	camsensor_params->camif_window_height_config.firstLine = 0;
 	camsensor_params->camif_window_height_config.lastLine = camsensor_params->camif_window_height_config.firstLine + camsensor_params->camsensor_height - 1;
