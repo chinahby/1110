@@ -328,6 +328,50 @@ static const CCameraSize g_CameraSizeCFG_10[] =
     {0,0,NULL}
 };
 
+//Add By zzg 2011_12_17
+//10万像素的选项
+static const CCameraSize g_VideoSizeCFG_10[] = 
+{
+#if defined(FEATURE_DISP_160X128)
+	//{128,160,L"128*160"}, // FULL Screen
+    //{144,176,L"144*176"}, // QCIF
+    {160,128,L"160*128"}, // FULL Screen
+    {176,144,L"176*144"}, // QCIF
+#elif defined(FEATURE_DISP_220X176)
+	//{128,160,L"128*160"}, // FULL Screen
+    //{144,176,L"144*176"}, // QCIF
+    {160,128,L"160*128"}, // FULL Screen
+    {176,144,L"176*144"}, // QCIF
+#elif defined(FEATURE_DISP_128X160)
+	//{128,160,L"128*160"}, // FULL Screen
+    //{144,176,L"144*176"}, // QCIF
+    {128,160,L"128*160"}, // FULL Screen
+    {144,176,L"144*176"}, // QCIF
+#elif defined(FEATURE_DISP_176X220)
+	//{128,160,L"128*160"}, // FULL Screen
+    //{144,176,L"144*176"}, // QCIF
+    {128,160,L"128*160"}, // FULL Screen
+    {144,176,L"144*176"}, // QCIF
+#elif defined(FEATURE_DISP_240X320)
+	//{128,160,L"128*160"}, // FULL Screen
+    //{144,176,L"144*176"}, // QCIF
+    {128,160,L"128*160"}, // FULL Screen
+    {144,176,L"144*176"}, // QCIF
+#elif defined(FEATURE_DISP_320X240)
+	//{128,160,L"128*160"}, // FULL Screen
+    //{144,176,L"144*176"}, // QCIF
+    {160,128,L"160*128"}, // FULL Screen
+    {176,144,L"176*144"}, // QCIF
+#else
+	//{128,160,L"128*160"}, // FULL Screen
+    //{144,176,L"144*176"}, // QCIF
+    {160,128,L"160*128"}, // FULL Screen
+    {176,144,L"176*144"}, // QCIF
+#endif
+    {0,0,NULL}
+};
+//Add End
+
 /*==============================================================================
                                  函数定义
 ==============================================================================*/
@@ -2455,12 +2499,12 @@ static boolean CameraApp_InitpopMenu(CCameraApp *pMe, IMenuCtl *popMenu)
             	MSG_FATAL("CAMERACFGQUALITY",0,0,0);
                 CameraApp_PopMenu_QualityInit(pMe, popMenu);
                 break;
-            #ifndef FEATURE_VERSION_X3
+#ifndef FEATURE_VERSION_X3
             case CAMERACFGSIZE:
                 MSG_FATAL("CAMERACFGSIZE",0,0,0);
                 CameraApp_PopMenu_SizeInit(pMe, popMenu);
                 break;
-            #endif
+#endif
             case CAMERACFGTONE:
             	MSG_FATAL("CAMERACFGQUALITY",0,0,0);
                 CameraApp_PopMenu_ShutterToneInit(pMe, popMenu);
@@ -2797,32 +2841,109 @@ static void CameraApp_PopMenu_SizeInit(CCameraApp *pMe, IMenuCtl *popMenu)
             else if(pMe->m_sensor_model == 10)
             {
                  MSG_FATAL("add SizeItem",0,0,0);
-                if(g_CameraSizeCFG_10[i].dx == 0)
-                {
-                    break;
-                }
-                IMENUCTL_AddItem(popMenu, 
-                                 NULL, 
-                                 0,
-                                 i, 
-                                 g_CameraSizeCFG_10[i].pStr, 
-                                 NULL);
-                i++;            
+				 
+#ifdef FEATURE_MOVIE_RECORD_SUPPORT
+				 if ( pMe->m_isRecordMode )
+				 {
+					if (g_VideoSizeCFG_10[i].dx == 0)
+					{
+						break;
+					}
+					
+					IMENUCTL_AddItem(popMenu, 
+					     NULL, 
+					     0,
+					     i, 
+					     g_VideoSizeCFG_10[i].pStr, 
+					     NULL);
+					
+					i++;            
+					 
+				 }
+				 else
+				 {
+					if (g_CameraSizeCFG_10[i].dx == 0)
+					{
+						break;
+					}
+					IMENUCTL_AddItem(popMenu, 
+					             NULL, 
+					             0,
+					             i, 
+					             g_CameraSizeCFG_10[i].pStr, 
+					             NULL);
+					i++;   
+				 }
+#else
+				if (g_CameraSizeCFG_10[i].dx == 0)
+				{
+					break;
+				}
+				
+				IMENUCTL_AddItem(popMenu, 
+				             NULL, 
+				             0,
+				             i, 
+				             g_CameraSizeCFG_10[i].pStr, 
+				             NULL);
+				i++;   
+#endif		 
+                         
             }
             else
             {
                  MSG_FATAL("add SizeItem",0,0,0);
-            	if(g_CameraSizeCFG_10[i].dx == 0)
-                {
-                    break;
-                }
-                IMENUCTL_AddItem(popMenu, 
-                                 NULL, 
-                                 0,
-                                 i, 
-                                 g_CameraSizeCFG_10[i].pStr, 
-                                 NULL);
-                i++; 
+
+#ifdef FEATURE_MOVIE_RECORD_SUPPORT
+				 if ( pMe->m_isRecordMode )
+				 {
+					if (g_VideoSizeCFG_10[i].dx == 0)
+					{
+						break;
+					}
+					
+					IMENUCTL_AddItem(popMenu, 
+						 NULL, 
+						 0,
+						 i, 
+						 g_VideoSizeCFG_10[i].pStr, 
+						 NULL);
+					
+					i++;			
+					 
+				 }
+				 else
+				 {
+					if (g_CameraSizeCFG_10[i].dx == 0)
+					{
+						break;
+					}
+					IMENUCTL_AddItem(popMenu, 
+								 NULL, 
+								 0,
+								 i, 
+								 g_CameraSizeCFG_10[i].pStr, 
+								 NULL);
+					i++;   
+				 }
+#else
+				if (g_CameraSizeCFG_10[i].dx == 0)
+				{
+					break;
+				}
+				
+				IMENUCTL_AddItem(popMenu, 
+							 NULL, 
+							 0,
+							 i, 
+							 g_CameraSizeCFG_10[i].pStr, 
+							 NULL);
+				i++;   
+#endif
+
+
+				 
+            	
             }
         }
          MSG_FATAL("CameraApp_SetPopMenuRect",0,0,0);
@@ -2841,21 +2962,66 @@ static void CameraApp_PopMenu_SizeInit(CCameraApp *pMe, IMenuCtl *popMenu)
         }
         else if(pMe->m_sensor_model == 10)
         {
-            IMENUCTL_AddItem(popMenu, 
+#ifdef FEATURE_MOVIE_RECORD_SUPPORT
+			if (pMe->m_isRecordMode)
+			{
+				IMENUCTL_AddItem(popMenu, 
+                             NULL, 
+                             0,
+                             0, 
+                             g_VideoSizeCFG_10[OEMNV_CAMERA_SIZE_DEFAULT].pStr, 
+                             NULL);  
+			}
+			else
+			{
+				IMENUCTL_AddItem(popMenu, 
                              NULL, 
                              0,
                              0, 
                              g_CameraSizeCFG_10[OEMNV_CAMERA_SIZE_DEFAULT].pStr, 
-                             NULL);        
+                             NULL);  
+			}				
+			 	
+#else
+			IMENUCTL_AddItem(popMenu, 
+                             NULL, 
+                             0,
+                             0, 
+                             g_CameraSizeCFG_10[OEMNV_CAMERA_SIZE_DEFAULT].pStr, 
+                             NULL);      
+#endif
+              
         }
         else
         {
-        	IMENUCTL_AddItem(popMenu, 
+#ifdef FEATURE_MOVIE_RECORD_SUPPORT
+			if (pMe->m_isRecordMode)
+			{
+				IMENUCTL_AddItem(popMenu, 
+                             NULL, 
+                             0,
+                             0, 
+                             g_VideoSizeCFG_10[OEMNV_CAMERA_SIZE_DEFAULT].pStr, 
+                             NULL);  
+			}
+			else
+			{
+				IMENUCTL_AddItem(popMenu, 
                              NULL, 
                              0,
                              0, 
                              g_CameraSizeCFG_10[OEMNV_CAMERA_SIZE_DEFAULT].pStr, 
-                             NULL);
+                             NULL);  
+			}				
+			 	
+#else
+			IMENUCTL_AddItem(popMenu, 
+                             NULL, 
+                             0,
+                             0, 
+                             g_CameraSizeCFG_10[OEMNV_CAMERA_SIZE_DEFAULT].pStr, 
+                             NULL);      
+#endif
         }
         CameraApp_SetPopMenuRect(pMe, popMenu, 1);
     }
@@ -3265,7 +3431,8 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
 	        break;
 	}
 
-#ifndef FEATURE_VERSION_X3    
+#ifndef FEATURE_VERSION_X3   
+#ifndef FEATURE_VERSION_W208S
     // size cfgID
     (void)ICONFIG_GetItem(pMe->m_pConfig,
                           CFGI_CAMERA_SIZE,
@@ -3294,6 +3461,7 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
 	        nResID[CAMERACFGSIZE] = IDI_SIZE_160_128;
 	        break;
     }
+#endif	
 #endif
     // sound cfgID
     (void)ICONFIG_GetItem(pMe->m_pConfig,
@@ -3584,6 +3752,8 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
 	    displaySize.cy = 320;
 	}
 #else
+	MSG_FATAL("***zzg CPreviewStart ***", 0, 0, 0);
+
     if(pMe->m_sensor_model == 30)
     {
         captureSize.cx = g_CameraSizeCFG[pMe->m_nCameraSize].dx;
@@ -3595,13 +3765,39 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
     }
     else if(pMe->m_sensor_model == 10)
     {
-        captureSize.cx = g_CameraSizeCFG_10[pMe->m_nCameraSize].dx;
+#ifdef FEATURE_MOVIE_RECORD_SUPPORT
+		if ( pMe->m_isRecordMode )
+		{
+			captureSize.cx = g_VideoSizeCFG_10[pMe->m_nCameraSize].dx;
+	        captureSize.cy = g_VideoSizeCFG_10[pMe->m_nCameraSize].dy;
+#ifndef FEATURE_CAMERA_NOFULLSCREEN	        
+			displaySize.cx = SCREEN_WIDTH;
+	        displaySize.cy = SCREEN_HEIGHT;
+#endif	
+		}
+		else
+		{
+			captureSize.cx = g_CameraSizeCFG_10[pMe->m_nCameraSize].dx;
+	        captureSize.cy = g_CameraSizeCFG_10[pMe->m_nCameraSize].dy;
+#ifndef FEATURE_CAMERA_NOFULLSCREEN
+	        displaySize.cx = g_CameraSizeCFG_10[0].dx;
+	        displaySize.cy = g_CameraSizeCFG_10[0].dy;
+#endif
+		}
+#else
+		captureSize.cx = g_CameraSizeCFG_10[pMe->m_nCameraSize].dx;
         captureSize.cy = g_CameraSizeCFG_10[pMe->m_nCameraSize].dy;
 #ifndef FEATURE_CAMERA_NOFULLSCREEN
         displaySize.cx = g_CameraSizeCFG_10[0].dx;
         displaySize.cy = g_CameraSizeCFG_10[0].dy;
 #endif
+#endif
+        
     }
+
+	MSG_FATAL("***zzg CPreviewStart captureSize:%d,%d***", captureSize.cx, captureSize.cy, 0);
+	MSG_FATAL("***zzg CPreviewStart displaySize:%d,%d***", displaySize.cx, displaySize.cy , 0);
+	
 #endif
 #ifdef FEATURE_CAMERA_NOFULLSCREEN
 #if defined(FEATURE_DISP_160X128)
@@ -4161,7 +4357,43 @@ static void CameraApp_SetCameraCaptureSize(CCameraApp *pMe, uint16 wParam)
     }
     else if(pMe->m_sensor_model == 10)
     {
-        captureSize.cx = g_CameraSizeCFG_10[pMe->m_nCameraSize].dx;
+#ifdef FEATURE_MOVIE_RECORD_SUPPORT
+		if ( pMe->m_isRecordMode )
+		{
+			captureSize.cx = g_VideoSizeCFG_10[pMe->m_nCameraSize].dx;
+	        captureSize.cy = g_VideoSizeCFG_10[pMe->m_nCameraSize].dy;
+#ifdef T_QSC1110
+	        #if defined(FEATURE_DISP_128X160)
+	        displaySize.cx = g_VideoSizeCFG_10[1].dx;
+	        displaySize.cy = g_VideoSizeCFG_10[1].dy;
+	        #else
+	        displaySize.cx = SCREEN_WIDTH;
+	        displaySize.cy = SCREEN_HEIGHT;
+	        #endif
+#else
+	        displaySize.cx = g_VideoSizeCFG_10[0].dx;
+	        displaySize.cy = g_VideoSizeCFG_10[0].dy;
+#endif
+		}
+		else
+		{
+			captureSize.cx = g_CameraSizeCFG_10[pMe->m_nCameraSize].dx;
+	        captureSize.cy = g_CameraSizeCFG_10[pMe->m_nCameraSize].dy;
+#ifdef T_QSC1110
+	        #if defined(FEATURE_DISP_128X160)
+	        displaySize.cx = g_CameraSizeCFG_10[1].dx;
+	        displaySize.cy = g_CameraSizeCFG_10[1].dy;
+	        #else
+	        displaySize.cx = g_CameraSizeCFG_10[0].dx;
+	        displaySize.cy = g_CameraSizeCFG_10[0].dy;
+	        #endif
+#else
+	        displaySize.cx = g_CameraSizeCFG_10[0].dx;
+	        displaySize.cy = g_CameraSizeCFG_10[0].dy;
+#endif
+		}
+#else
+		captureSize.cx = g_CameraSizeCFG_10[pMe->m_nCameraSize].dx;
         captureSize.cy = g_CameraSizeCFG_10[pMe->m_nCameraSize].dy;
         #ifdef T_QSC1110
         #if defined(FEATURE_DISP_128X160)
@@ -4175,6 +4407,7 @@ static void CameraApp_SetCameraCaptureSize(CCameraApp *pMe, uint16 wParam)
         displaySize.cx = g_CameraSizeCFG_10[0].dx;
         displaySize.cy = g_CameraSizeCFG_10[0].dy;
         #endif
+#endif        
     }
 
     (void)ICONFIG_SetItem(pMe->m_pConfig,
