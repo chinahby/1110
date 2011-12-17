@@ -2112,14 +2112,17 @@ void Draw_Parser_Text(CVideoPlayer* pMe,const AECHAR* pText,uint16* height)
 	uint16 texth = 1;
 	uint16 lh = 1;
 	int    pos = 1,spacePos = 0;
-	const uint16 charw = 6,wcharw = (charw << 1) + 3,charh = 18;
+    AECHAR entext[2] = {'a','\0'};
+	uint16 charw = IDisplay_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL,entext);
+    uint16 wcharw = (charw<<1);
+    const uint16 charh = 18;
 	
 	AEERect rc = {0,0,SCR_W,SCR_H};
 	rc.x  = pMe->m_rc.x + 5;
 	rc.dx = pMe->m_rc.dx - 5;
     rc.y = VIDEOPLAYER_NAMEPART_H + 5;
     rc.dy = pMe->m_rc.dy - VIDEOPLAYER_NAMEPART_H -  GetBottomBarHeight(pMe->m_pDisplay) - 5;
-
+    MSG_FATAL("****pji****charw = %d; wcharw=%d",charw,wcharw,0);
 	if(pText == NULL) return ;
 
 	IDISPLAY_FillRect(pMe->m_pDisplay,&rc,0x0);
