@@ -111,6 +111,9 @@ extern const unsigned long prv_dataArray[];
 #define  PTRCK_HIT_TRIAN   (PTRCK_HIT_ABTRI | PTRCK_HIT_BLTRI)
 
 #ifdef FEATURE_T9_CHINESE
+static uint16 StrokeMap[]=
+{ 0x4E00/*ºá*/, 0x4E28/*Êú*/, 0x4E3F/*µã*/, 0x4E36/*Æ²*/,0x4E5B/*ÕÛ*/, 0x003F/*ÎÊ*/, 0x0000 };	
+
 #if defined(FEATURE_DISP_128X160)
 #define SELECTION_BUFFER_SIZE   (6)
 #define CAUDB_SIZE              (110)
@@ -131,7 +134,7 @@ extern const unsigned long prv_dataArray[];
 #define T9KEYTYPE_CONTROL       (2)
 #define T9KEYTYPE_UNKNOWN       (6)
 #define T9_FONT_WIDTH           (30)
-#define T9_STROKE_FONT_WIDTH    (12) // (10) 
+#define T9_STROKE_FONT_WIDTH    (16) // (10) 
 #define T9_STROKE_LEFT_ARROW    (10) 
 #define MAX_STROKES             (9) // (10) // the max count which display in the screen
 
@@ -11028,7 +11031,7 @@ static void T9_CJK_CHINESE_DrawStrokeString(TextCtlContext *pContext)
     T9UINT           nStrokeLen = 0;
     T9UINT           nStart = 0;
     T9UINT           nStrokeDisLen = 0;
-
+	
     AECHAR ch[2]={0,0}; 
     uint32 format;
     AEERect  pRect;
@@ -11060,9 +11063,10 @@ static void T9_CJK_CHINESE_DrawStrokeString(TextCtlContext *pContext)
 
     /* len of the stroke buffer, extra 1 for a component */
     nStrokeLen = pContext->sT9ccFieldInfo.nKeyBufLen;
-
+    MSG_FATAL("nStrokeLen==================%d",nStrokeLen,0,0);
     /*nStrokeDisLen is the length of the strokes and components in spell buffer */
     nStrokeDisLen = pContext->sT9ccFieldInfo.nKeyBufLen;
+	MSG_FATAL("nStrokeDisLen===============%d",nStrokeDisLen,0,0);
    
 #ifdef FEATURE_FUNCS_THEME                       
     IDISPLAY_DrawRect(pContext->pIDisplay,
@@ -11103,10 +11107,14 @@ static void T9_CJK_CHINESE_DrawStrokeString(TextCtlContext *pContext)
     pbBuffer = pContext->sT9ccFieldInfo.pbKeyBuf + bNumOfComp;
 
     /* Draw each stroke, starting fromt the nstart */
+	MSG_FATAL("bNumOfComp============%d",bNumOfComp,0,0);
     for (k = nStart; k < pContext->sT9ccFieldInfo.nKeyBufLen - bNumOfComp; k++) 
     {
+    	
         format = IDF_ALIGN_NONE;
-        ch[0] = *(pbBuffer+k) + 0x3129;
+        ch[0] = *(pbBuffer+k);   // + 0x3129;
+        ch[0] = StrokeMap[((int)ch[0])-1];
+		MSG_FATAL("draw........................ch==%x",ch[0],0,0);
         (void) IDISPLAY_DrawText((IDisplay *)pContext->pIDisplay,
                                AEE_FONT_NORMAL,
                                ch,

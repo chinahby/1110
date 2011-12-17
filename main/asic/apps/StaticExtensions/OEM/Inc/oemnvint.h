@@ -974,6 +974,10 @@ typedef PACKED struct _ringID
    OEMNV_CAMERA_MULTI_TWO	
    }OEMCAMERAMULTI;
 #endif
+typedef enum{
+   OEMNV_CAMERA_FLASH_ON,
+   OEMNV_CAMERA_FLASH_OFF
+}OEMCAMERFLASH;
 
 
 typedef enum {

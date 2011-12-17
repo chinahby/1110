@@ -31,6 +31,9 @@
 	<String Id="1010" Name="IDS_CFG_MULTI">
 		<Text>MULTICAMERA</Text>
 	</String>
+	<String Id="1011" Name="IDS_CFG_FLASH">
+		<Text>Flash</Text>
+	</String>
 	<String Id="1013" Name="IDS_CFG_QUALITY">
 		<Text>Quality</Text>
 	</String>

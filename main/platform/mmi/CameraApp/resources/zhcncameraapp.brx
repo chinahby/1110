@@ -28,6 +28,12 @@
 	<STRING Id="1009" Name="IDS_ENVIR_MODE_SUNNY">
 		<Text>晴天模式</Text>
 	</STRING>
+	<String Id="1010" Name="IDS_CFG_MULTI">
+		<Text>双摄像头选项</Text>
+	</String>
+	<String Id="1011" Name="IDS_CFG_FLASH">
+		<Text>闪光灯</Text>
+	</String>
 	<STRING Id="1013" Name="IDS_CFG_QUALITY">
 		<Text>图片质量</Text>
 	</STRING>

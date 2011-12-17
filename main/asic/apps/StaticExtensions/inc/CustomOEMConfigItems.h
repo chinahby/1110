@@ -409,6 +409,7 @@ enum{
     ////////////////////////////////////////////////////////////////
 #ifdef FEATURE_CAMERA_MULTI_SENSOR
    CFGI_CAMERA_MULTI,
+   CFGT_CAMERA_FLASH,
 #endif
     CFGI_CAMERA_ENVIROMENT,      //type = byte
     CFGI_CAMERA_QUALITY,         //type = byte

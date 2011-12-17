@@ -633,6 +633,7 @@ typedef struct
  #endif
 #ifdef FEATURE_CAMERA_MULTI_SENSOR
    byte camera_multi;       //CFGI_CAMERA_MULTI
+   byte camera_flash;       //CFGT_CAMERA_FLASH
 #endif
    byte camera_enviroment; /*CFGI_CAMERA_ENVIROMENT*/
    byte camera_quality;    /*CFGI_CAMERA_QUALITY*/
@@ -1456,6 +1457,8 @@ static int OEMPriv_SetItem_CFGI_MENU_STYLE(void *pBuff);
 #ifdef FEATURE_CAMERA_MULTI_SENSOR
 static int OEMPriv_GetItem_CFGI_CAMERA_MULTI(void *pBuff);
 static int OEMPriv_SetItem_CFGI_CAMERA_MULTI(void *pBuff);
+static int OEMPriv_GetItem_CFGT_CAMERA_FLASH(void *pBuff);
+static int OEMPriv_SetItem_CFGT_CAMERA_FLASH(void *pBuff);
 #endif
 
 static int OEMPriv_GetItem_CFGI_CAMERA_ENVIROMENT(void *pBuff);
@@ -1785,7 +1788,8 @@ static OEMConfigListType oemi_cache = {
    ,OEMNV_MENU_STYLE_ICON
    #endif
 #ifdef FEATURE_CAMERA_MULTI_SENSOR
-   ,OEMNV_CAMERA_MULTI_ONE       //CFGI_CAMER_MULTI
+   ,OEMNV_CAMERA_MULTI_TWO       //CFGI_CAMER_MULTI
+   ,OEMNV_CAMERA_FLASH_OFF
 #endif
    ,OEMNV_CAMERA_ENVIR_AUTO         /*CFGI_CAMERA_ENVIROMENT*/
    ,OEMNV_CAMERA_QUALITY_HIGH       /*CFGI_CAMERA_QUALITY*/
@@ -2339,6 +2343,7 @@ static ConfigItemTableEntry const customOEMItemTable[] =
 #endif
 #ifdef FEATURE_CAMERA_MULTI_SENSOR
    ,CFGTABLEITEM(CFGI_CAMERA_MULTI, sizeof(byte))
+   ,CFGTABLEITEM(CFGT_CAMERA_FLASH, sizeof(byte))
 #endif
    ,CFGTABLEITEM(CFGI_CAMERA_ENVIROMENT, sizeof(byte))
    ,CFGTABLEITEM(CFGI_CAMERA_QUALITY, sizeof(byte))
@@ -2911,7 +2916,8 @@ void OEM_RestoreFactorySetting( void )
    oemi_cache.menu_style= OEMNV_MENU_STYLE_ICON;
 #endif
 #ifdef FEATURE_CAMERA_MULTI_SENSOR
-   oemi_cache.camera_multi = OEMNV_CAMERA_MULTI_ONE;
+   oemi_cache.camera_multi = OEMNV_CAMERA_MULTI_TWO;
+   oemi_cache.camera_flash = OEMNV_CAMERA_FLASH_OFF;
 #endif
    oemi_cache.camera_enviroment = OEMNV_CAMERA_ENVIR_AUTO;
    oemi_cache.camera_quality = OEMNV_CAMERA_QUALITY_HIGH;
@@ -11015,6 +11021,20 @@ static int OEMPriv_SetItem_CFGI_CAMERA_MULTI(void *pBuff)
    }
    return SUCCESS;
 }
+static int OEMPriv_GetItem_CFGT_CAMERA_FLASH(void *pBuff)
+{
+	*(byte *) pBuff = oemi_cache.camera_flash;
+   return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGT_CAMERA_FLASH(void *pBuff)
+{
+	if (oemi_cache.camera_flash != *(byte *)pBuff) {
+      oemi_cache.camera_flash = *(byte *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+   return SUCCESS;
+}
+
 #endif
 
 static int OEMPriv_GetItem_CFGI_CAMERA_ENVIROMENT(void *pBuff)
