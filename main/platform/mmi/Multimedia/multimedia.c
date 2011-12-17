@@ -931,7 +931,7 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
             
             //IMENUCTL_SetTitle(pMenu, MULTIMEDIA_RES_FILE_LANG, IDS_MENU_LIST, NULL);      
 #ifdef FEATURE_VERSION_W208S
-			IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_VIDEO_CAMERA, IDS_VIDEO_CAMERA, NULL, 0);
+			IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_VIDEO_CAMERA, IDS_MULTIMEDIA_VIDEO_CAMERA, NULL, 0);
 			IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_MUSICPLAYER, IDS_MULTIMEDIA_MUSICPLAYER, NULL, 0);
 #endif
 
@@ -1100,8 +1100,8 @@ static int StartApplet(Multimed *pMe, int i)
     switch(i)
     {
 #ifdef FEATURE_VERSION_W208S
-		case IDS_VIDEO_CAMERA:
-			Result = ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_APP_FMRADIO, "record");
+		case IDS_MULTIMEDIA_VIDEO_CAMERA:
+			Result = ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_APP_CAMERA, "record");
             break;
 #endif
         case IDS_MULTIMEDIA_CAMERA:
