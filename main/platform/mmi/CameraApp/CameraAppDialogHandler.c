@@ -74,8 +74,8 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
 static boolean CameraApp_RoutePopMenuCommandEvent(CCameraApp *pMe, 
                                                   uint16 wParam);
 #ifdef FEATURE_CAMERA_MULTI_SENSOR  //add by adrew
-static boolean CameraApp_PopMenu_MultiCommandHandleEvent(CCameraApp *pMe, 
-                                                               uint16 wParam);
+static boolean CameraApp_PopMenu_MultiCommandHandleEvent(CCameraApp *pMe,  uint16 wParam);
+static boolean CameraApp_PopMenu_FlashCommandHandleEvent(CCameraApp *pMe,  uint16 wParam);                                                 
 #endif
 // PopMenu环境模式菜单处理函数                           
 static boolean CameraApp_PopMenu_EnvironmentCommandHandleEvent(CCameraApp *pMe, 
@@ -119,7 +119,8 @@ static void CameraApp_InitCFGData(CCameraApp * pMe);
 // 初始化拍照环境设置菜单
 static void CameraApp_PopMenu_MultiInit(CCameraApp *pMe, 
                                               IMenuCtl *popMenu);
-
+static void CameraApp_PopMenu_FlashInit(CCameraApp *pMe, 
+                                              IMenuCtl *popMenu);
 #endif
 // 初始化拍照环境设置菜单
 static void CameraApp_PopMenu_EnvironmentInit(CCameraApp *pMe, 
@@ -1055,7 +1056,10 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                 // 防止快速按键，导致hotkey Text存在于LCD上 
                 MSG_FATAL("AVK_INFO...................",0,0,0);
                 ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);
-				
+				(void)ICONFIG_GetItem(pMe->m_pConfig,
+                              CFGT_CAMERA_FLASH,
+                              &pMe->n_nCameraFlash,
+                              sizeof(pMe->n_nCameraFlash));
 				MSG_FATAL("AVK_INFO...................end",0,0,0);
                 if ( pMe->m_isRecordMode == FALSE)
                 {
@@ -1119,7 +1123,10 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                 		#ifdef FEATURE_LCD_TOUCH_ENABLE
                 		if(pMe->m_nCameraMulti == OEMNV_CAMERA_MULTI_TWO)
                 		{
+                			if(pMe->n_nCameraFlash == OEMNV_CAMERA_FLASH_ON)
+                			{
                 			ICAMERA_ControlFlash(pMe->m_pCamera,TRUE);
+                			}
                 		}
 						#endif
 	                    pMe->m_nCameraState = CAM_CAPTURE;
@@ -1955,6 +1962,9 @@ static boolean CameraApp_RoutePopMenuCommandEvent(CCameraApp *pMe, uint16 wParam
 			case CAMERACFGMULTI:
 				return CameraApp_PopMenu_MultiCommandHandleEvent(pMe, wParam);
                 break;
+			case CAMERACFGFLASH:
+				return CameraApp_PopMenu_FlashCommandHandleEvent(pMe, wParam);
+				break;
 		    #endif
             case CAMERACFGENVIRMENT:
                 return CameraApp_PopMenu_EnvironmentCommandHandleEvent(pMe, wParam);
@@ -2047,6 +2057,33 @@ static boolean CameraApp_PopMenu_MultiCommandHandleEvent(CCameraApp *pMe,
     
     return TRUE;
 }
+
+static boolean CameraApp_PopMenu_FlashCommandHandleEvent(CCameraApp *pMe,  uint16 wParam)
+{
+	 switch(wParam)
+            {
+                case IDS_TONE_ENABLE:
+					MSG_FATAL("CameraApp_PopMenu_MultiCommandHandleEvent OEMNV_CAMERA_FLASH_ON",0,0,0);
+                    pMe->n_nCameraFlash = OEMNV_CAMERA_FLASH_ON;
+                    //dwFPS = 0;
+                    break;
+
+                case IDS_TONE_DISABLE:
+					MSG_FATAL("CameraApp_PopMenu_MultiCommandHandleEvent OEMNV_CAMERA_FLASH_OFF",0,0,0);
+                    pMe->n_nCameraFlash = OEMNV_CAMERA_FLASH_OFF;
+                    //dwFPS = 3;	
+                    break;
+				default:
+					break;
+			 }
+	 (void)ICONFIG_SetItem(pMe->m_pConfig,
+                                  CFGT_CAMERA_FLASH,
+                                  &pMe->n_nCameraFlash,
+                                  sizeof(pMe->n_nCameraFlash));
+     CLOSE_DIALOG(DLGRET_CANCELED); 
+    return TRUE;
+}
+
 #endif
 
 /*==============================================================================
@@ -2489,6 +2526,9 @@ static boolean CameraApp_InitpopMenu(CCameraApp *pMe, IMenuCtl *popMenu)
 			case CAMERACFGMULTI:
  				CameraApp_PopMenu_MultiInit(pMe,popMenu);
 				break;
+			case CAMERACFGFLASH:
+				CameraApp_PopMenu_FlashInit(pMe,popMenu);
+				break;
 			#endif
             case CAMERACFGENVIRMENT:
                 MSG_FATAL("CAMERACFGQUALITY",0,0,0);
@@ -2551,7 +2591,8 @@ static void CameraApp_InitCFGData(CCameraApp * pMe)
     if(pMe->m_pActiveDlgID == IDD_CCAMERACFG)
     {
     	#ifdef FEATURE_CAMERA_MULTI_SENSOR  //add by andrew
-    	pMe->m_nCameraMulti = OEMNV_CAMERA_MULTI_ONE;
+    	pMe->m_nCameraMulti = OEMNV_CAMERA_MULTI_TWO;
+		pMe->n_nCameraFlash = OEMNV_CAMERA_FLASH_OFF;
 		#endif
         pMe->m_nCameraEnviroment = OEMNV_CAMERA_ENVIR_AUTO;
         pMe->m_nCameraQuality = OEMNV_CAMERA_QUALITY_HIGH;       
@@ -2591,6 +2632,10 @@ static void CameraApp_InitCFGData(CCameraApp * pMe)
                               CFGI_CAMERA_MULTI,
                               &pMe->m_nCameraMulti,
                               sizeof(pMe->m_nCameraMulti));
+		(void)ICONFIG_SetItem(pMe->m_pConfig,
+                              CFGT_CAMERA_FLASH,
+                              &pMe->n_nCameraFlash,
+                              sizeof(pMe->n_nCameraFlash));
 		#endif
         (void)ICONFIG_SetItem(pMe->m_pConfig,
                               CFGI_CAMERA_ENVIROMENT,
@@ -2656,6 +2701,43 @@ static void CameraApp_PopMenu_MultiInit(CCameraApp *pMe,
                 
         case OEMNV_CAMERA_MULTI_TWO:
             CameraApp_SetCFGMenuIcon(popMenu, IDS_MULTI_BACK, TRUE);
+            break;
+   
+        default:
+            break;  
+    }
+}
+static void CameraApp_PopMenu_FlashInit(CCameraApp *pMe, 
+                                              IMenuCtl *popMenu)
+{
+	IMENUCTL_DeleteAll(popMenu);
+    CameraApp_SetPopMenuRect(pMe, popMenu, 2);
+	IMENUCTL_AddItem(popMenu, 
+                     AEE_APPSCAMERAAPP_RES_FILE, 
+                     IDS_TONE_ENABLE, 
+                     IDS_TONE_ENABLE, 
+                     NULL, 
+                     0);
+    IMENUCTL_AddItem(popMenu, 
+                     AEE_APPSCAMERAAPP_RES_FILE,
+                     IDS_TONE_DISABLE, 
+                     IDS_TONE_DISABLE, 
+                     NULL,
+                     0);
+	InitMenuIcons(popMenu);
+	 (void)ICONFIG_GetItem(pMe->m_pConfig,
+                          CFGT_CAMERA_FLASH,
+                          &pMe->n_nCameraFlash,
+                          sizeof(pMe->n_nCameraFlash));
+                                           
+    switch(pMe->n_nCameraFlash)
+    {
+        case OEMNV_CAMERA_FLASH_ON:
+            CameraApp_SetCFGMenuIcon(popMenu, IDS_TONE_ENABLE, TRUE);
+            break;
+                
+        case OEMNV_CAMERA_FLASH_OFF:
+            CameraApp_SetCFGMenuIcon(popMenu, IDS_TONE_DISABLE, TRUE);
             break;
    
         default:
@@ -3374,6 +3456,21 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
 			default:
 				break;
 	   	}
+	(void)ICONFIG_GetItem(pMe->m_pConfig,
+                              CFGT_CAMERA_FLASH,
+                              &pMe->n_nCameraFlash,
+                              sizeof(pMe->n_nCameraFlash));
+	   switch(pMe->n_nCameraFlash)
+    	{
+    		case OEMNV_CAMERA_FLASH_ON:
+				nResID[CAMERACFGFLASH] = IDI_CAMER_FLASH;
+				break;
+			case OEMNV_CAMERA_FLASH_OFF:
+				nResID[CAMERACFGFLASH] = IDI_CAMER_FLASH;
+				break;
+			default:
+				break;
+	   	}
 	#endif
 #if defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_S1000T)
 #else
@@ -3634,6 +3731,9 @@ static void CameraApp_DrawCFGPromptText(CCameraApp *pMe)
 			case CAMERACFGMULTI:
 				nResID = IDS_CFG_MULTI;
                 break;
+			case CAMERACFGFLASH:
+				nResID = IDS_CFG_FLASH;
+				break;
 		    #endif
             case CAMERACFGENVIRMENT:
                 nResID = IDS_CFG_ENVIR;
@@ -4142,7 +4242,10 @@ static boolean CameraApp_SelfTimeRecordSnapShot(CCameraApp *pMe)
         	#ifdef FEATURE_LCD_TOUCH_ENABLE
 	   		if(pMe->m_nCameraMulti == OEMNV_CAMERA_MULTI_TWO)
 	   		{
-	   			ICAMERA_ControlFlash(pMe->m_pCamera,TRUE);
+	   			if(pMe->n_nCameraFlash == OEMNV_CAMERA_FLASH_ON)
+                {
+	   				ICAMERA_ControlFlash(pMe->m_pCamera,TRUE);
+	   			}
 	   		}
 	   		#endif
             pMe->m_nCameraState = CAM_CAPTURE;

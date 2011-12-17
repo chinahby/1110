@@ -420,6 +420,7 @@ typedef enum
 	#ifdef FEATURE_CAMERA_MULTI_SENSOR  //add by yangdecai
 	CAMERACFGMULTI,
 	CAMERACFGFIRST = CAMERACFGMULTI,
+	CAMERACFGFLASH,
 	#endif
     #if defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_S1000T)
     CAMERACFGENVIRMENT,
@@ -613,6 +614,7 @@ typedef struct _CCameraApp
     CAMERASTATE          m_nCameraState;         // camera的运行状态
 #ifdef FEATURE_CAMERA_MULTI_SENSOR
     OEMCAMERAMULTI       m_nCameraMulti;         // camera前后设置   add by andrew
+    OEMCAMERFLASH        n_nCameraFlash;
 #endif
     OEMCAMERAQUALITY     m_nCameraQuality;       // camera拍照质量
     OEMCAMERATONE        m_nCameraTone;          // camera快门声音
