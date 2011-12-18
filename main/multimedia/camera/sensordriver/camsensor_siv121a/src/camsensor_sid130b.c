@@ -131,8 +131,8 @@ static const char camsensor_SETi_SID130B_sensor_suffix[]= "SID130B_mu2myu";
 /***************************************************************
 * The following defines are used as UI parameters
 ***************************************************************/
-#define CAMSENSOR_SID130B_FULL_SIZE_WIDTH  600
-#define CAMSENSOR_SID130B_FULL_SIZE_HEIGHT 800
+#define CAMSENSOR_SID130B_FULL_SIZE_WIDTH  600//480//600
+#define CAMSENSOR_SID130B_FULL_SIZE_HEIGHT 800//640//800
 
 #define CAMSENSOR_SID130B_QTR_SIZE_WIDTH   240
 #define CAMSENSOR_SID130B_QTR_SIZE_HEIGHT  320
@@ -495,7 +495,11 @@ static register_address_value_pair camsensor_SETi_SID130B_reg_settings_array[]=
 	{0x83, 0x14},
 	{0x84, 0x0f},
 
-
+	{0x90, 0x01/*0x01*/},
+	{0x91, 0x55/*0x75*/},
+	{0x92, 0x00/*0x00*/},
+	{0x93, 0xa8/*0xc8*/},
+	
 	{0x94, 0x03}, //win size 800x600
 	{0x95, 0x20},
 	{0x96, 0x02},
@@ -1005,8 +1009,9 @@ boolean camsensor_SETi_SID130B_start(camsensor_static_params_type *camsensor_par
 
 			break;
     }
+	MSG_FATAL("camsensor_params->preview_dx_decimation=%d,y=%d",camsensor_params->preview_dx_decimation,camsensor_params->preview_dy_decimation,0);
 	/* Pixel Clock Should be inverted for this Sensor */
-	
+	MSG_FATAL("camsensor_params->camsensor_width=%d,heiht==%d",camsensor_params->camsensor_width,camsensor_params->camsensor_height,0);
 	/* ------------  Auto Exposure Control Config -------------- */
 	camsensor_params->aec_enable = FALSE;
 
@@ -1095,10 +1100,11 @@ static register_address_value_pair SID130B_mode_full[] =
 //IDP
 	{0x00, 0x03},
 
-	{0x90, 0x00},
-	{0x91, 0x00},
-	{0x92, 0x00},
-	{0x93, 0x00},
+	{0x90, 0x01/*0x01*/},
+	{0x91, 0x55/*0x75*/},
+	{0x92, 0x00/*0x00*/},
+	{0x93, 0xa8/*0xc8*/},
+	
 	{0x94, 0x02}, //win size 1600x12600
 	{0x95, 0x58},
 	{0x96, 0x03},

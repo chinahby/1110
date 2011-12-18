@@ -490,8 +490,8 @@ boolean camsensor_siv121d_0m3_start(camsensor_static_params_type *camsensor_para
 	/* VFE's perception of Sensor output capability */
 
 	/* Full size dimensions - 1600x1200 */
-	camsensor_params->full_size_width  = 640;
-	camsensor_params->full_size_height = 480; /* 2 Extra Lines for VFE padding */
+	camsensor_params->full_size_width  = 480;//480;//640;
+	camsensor_params->full_size_height = 640;//640;//480; /* 2 Extra Lines for VFE padding */
 
 
 	/* Quarter size dimensions - The same size. */

@@ -433,9 +433,9 @@ typedef enum
 	#endif
     CAMERACFGQUALITY,
     #endif
-    #ifndef FEATURE_VERSION_X3
+   // #ifndef FEATURE_VERSION_X3
     CAMERACFGSIZE,
-    #endif
+   // #endif
     CAMERACFGTONE,
     CAMERACFGSELFTIME,
     //CAMERACFGBANDING,
@@ -624,6 +624,7 @@ typedef struct _CCameraApp
     OEMCAMERASTORAGE     m_nCameraStorage;       // camera≈ƒ’’¥Ê¥¢Œª÷√
     
     ICamera              *m_pCamera;
+	
     IFileMgr             *m_pFM; 
     IConfig              *m_pConfig;              // IConfig interface
     IMedia               *m_pMedia;

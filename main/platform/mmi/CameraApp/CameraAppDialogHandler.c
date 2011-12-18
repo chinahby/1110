@@ -274,7 +274,6 @@ static const CCameraSize g_CameraSizeCFG[] =
 #elif defined(FEATURE_DISP_240X320)
     //{128,160,L"128*160"}, // FULL Screen
     //{176,220,L"176*220"}, // QCIF
-    {240,320,L"240*320"}, // QVGA
     {480,640,L"480*640"}, // VGA 
     {600,800,L"600*800"}, // VGA
 #elif defined(FEATURE_DISP_320X240)
@@ -315,7 +314,8 @@ static const CCameraSize g_CameraSizeCFG_10[] =
 #elif defined(FEATURE_DISP_240X320)
     //{128,160,L"128*160"}, // FULL Screen
     //{176,220,L"176*220"}, // QCIF
-    {240,320,L"240*320"}, // QVGA    
+    {480,640,L"480*640"}, // VGA 
+    {600,800,L"600*800"}, // VGA  
 #elif defined(FEATURE_DISP_320X240)
     //{128,160,L"128*160"}, // FULL Screen
     //{176,220,L"176*220"}, // QCIF
@@ -355,9 +355,9 @@ static const CCameraSize g_VideoSizeCFG_10[] =
     {144,176,L"144*176"}, // QCIF
 #elif defined(FEATURE_DISP_240X320)
 	//{128,160,L"128*160"}, // FULL Screen
-    //{144,176,L"144*176"}, // QCIF
-    {128,160,L"128*160"}, // FULL Screen
-    {144,176,L"144*176"}, // QCIF
+    //{176,220,L"176*220"}, // QCIF
+    {480,640,L"480*640"}, // VGA 
+    {600,800,L"600*800"}, // VGA
 #elif defined(FEATURE_DISP_320X240)
 	//{128,160,L"128*160"}, // FULL Screen
     //{144,176,L"144*176"}, // QCIF
@@ -1125,7 +1125,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                 		{
                 			if(pMe->n_nCameraFlash == OEMNV_CAMERA_FLASH_ON)
                 			{
-                			ICAMERA_ControlFlash(pMe->m_pCamera,TRUE);
+                				ICAMERA_ControlFlash(pMe->m_pCamera,TRUE);
                 			}
                 		}
 						#endif
@@ -1972,10 +1972,10 @@ static boolean CameraApp_RoutePopMenuCommandEvent(CCameraApp *pMe, uint16 wParam
             case CAMERACFGQUALITY:
                 return CameraApp_PopMenu_QualityCommandHandleEvent(pMe, wParam);
 
-            #ifndef FEATURE_VERSION_X3
+            //#ifndef FEATURE_VERSION_X3
             case CAMERACFGSIZE:
                 return CameraApp_PopMenu_SizeCommandHandleEvent(pMe, wParam);
-            #endif
+            //#endif
             
             case CAMERACFGTONE:
                 return CameraApp_PopMenu_ShutterToneCommandHandleEvent(pMe, wParam);
@@ -2539,12 +2539,12 @@ static boolean CameraApp_InitpopMenu(CCameraApp *pMe, IMenuCtl *popMenu)
             	MSG_FATAL("CAMERACFGQUALITY",0,0,0);
                 CameraApp_PopMenu_QualityInit(pMe, popMenu);
                 break;
-#ifndef FEATURE_VERSION_X3
+//#ifndef FEATURE_VERSION_X3
             case CAMERACFGSIZE:
                 MSG_FATAL("CAMERACFGSIZE",0,0,0);
                 CameraApp_PopMenu_SizeInit(pMe, popMenu);
                 break;
-#endif
+//#endif
             case CAMERACFGTONE:
             	MSG_FATAL("CAMERACFGQUALITY",0,0,0);
                 CameraApp_PopMenu_ShutterToneInit(pMe, popMenu);
@@ -3456,6 +3456,7 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
 			default:
 				break;
 	   	}
+	   
 	(void)ICONFIG_GetItem(pMe->m_pConfig,
                               CFGT_CAMERA_FLASH,
                               &pMe->n_nCameraFlash,
@@ -3528,7 +3529,7 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
 	        break;
 	}
 
-#ifndef FEATURE_VERSION_X3   
+//#ifndef FEATURE_VERSION_X3   
 #ifndef FEATURE_VERSION_W208S
     // size cfgID
     (void)ICONFIG_GetItem(pMe->m_pConfig,
@@ -3559,7 +3560,7 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
 	        break;
     }
 #endif	
-#endif
+//#endif
     // sound cfgID
     (void)ICONFIG_GetItem(pMe->m_pConfig,
                           CFGI_CAMERA_TONE,
@@ -3743,11 +3744,11 @@ static void CameraApp_DrawCFGPromptText(CCameraApp *pMe)
                 nResID = IDS_CFG_QUALITY;
                 break;
 
-            #ifndef FEATURE_VERSION_X3      
+            //#ifndef FEATURE_VERSION_X3      
             case CAMERACFGSIZE:
                 nResID = IDS_CFG_SIZE;
                 break;
-            #endif    
+            //#endif    
                 
             case CAMERACFGTONE:
                 nResID = IDS_CFG_TONE;
@@ -3831,15 +3832,15 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
 	{
 		if ( pMe->m_nCameraMulti == OEMNV_CAMERA_MULTI_ONE )
 		{
-			captureSize.cx = 480;
-		    captureSize.cy = 640;
+			captureSize.cx = g_CameraSizeCFG_10[pMe->m_nCameraSize].dx;//480;
+		    captureSize.cy = g_CameraSizeCFG_10[pMe->m_nCameraSize].dy;//640;
 		    displaySize.cx = 240;
 		    displaySize.cy = 320;
 		}
 		else if ( pMe->m_nCameraMulti == OEMNV_CAMERA_MULTI_TWO)
 		{
-			captureSize.cx = 600;
-		    captureSize.cy = 800;
+			captureSize.cx = g_CameraSizeCFG_10[pMe->m_nCameraSize].dx;//600;
+		    captureSize.cy = g_CameraSizeCFG_10[pMe->m_nCameraSize].dy;//800
 		    displaySize.cx = 240;
 		    displaySize.cy = 320;
 		}
@@ -4537,7 +4538,7 @@ static void CameraApp_HandleSnapshotPic(CCameraApp *pMe)
             AEEImageInfo myInfo;
             int x,y;
             IImage_GetInfo(pImage,&myInfo);
-            
+            MSG_FATAL("111myInfo.cx=====%d,myInfo.cy===%d",myInfo.cx,myInfo.cy,0);
 #ifdef FEATURE_BREW_SCALE
             if(myInfo.cy > 0 && pMe->m_rc.dy > 0)
             {
@@ -4560,8 +4561,24 @@ static void CameraApp_HandleSnapshotPic(CCameraApp *pMe)
 #endif
             x = (myInfo.cx-pMe->m_rc.dx)/2;
             y = (myInfo.cy-pMe->m_rc.dy)/2;
+			MSG_FATAL("myInfo.cx=====%d,myInfo.cy===%d",myInfo.cx,myInfo.cy,0);
+			MSG_FATAL("x=========%d,y=========%d",x,y,0);
+			#ifdef  FEATURE_CAMERA_MULTI_SENSOR
+			if(myInfo.cx>(SCREEN_WIDTH+5))
+			{
+				MSG_FATAL(",..........",0,0,0);
+				//x = (myInfo.cx-SCREEN_WIDTH)/2;
+				IImage_SetParm(pImage,
+                               IPARM_SCALE,
+                               285,
+                               320);
+			}
+			#endif
+			MSG_FATAL("x=========%d,y=========%d",x,y,0);
             IImage_SetOffset(pImage,x,y);
             IImage_Draw(pImage,0,0);
+           
+            //IDISPLAY_BitBlt(pMe->m_pDisplay, pMe->m_rc.x, pMe->m_rc.y, pMe->m_rc.dx, pMe->m_rc.dy, pMe->m_pIBitmap, 0, 0, AEE_RO_COPY);
             IImage_Release(pImage);
         }
     }
@@ -4643,6 +4660,7 @@ static void CameraApp_UpdateFrame(CCameraApp *pMe)
     return;
 #ifndef FEATURE_DSP
   (void)ICAMERA_GetFrame(pMe->m_pCamera, &pFrame);
+
 #endif
   if (!pFrame)
     return;
