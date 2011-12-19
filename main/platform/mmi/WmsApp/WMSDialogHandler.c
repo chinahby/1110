@@ -15460,7 +15460,7 @@ static boolean IDD_VMNUM_Handler(void   *pUser,
             }
             IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
             #ifdef FEATURE_LCD_TOUCH_ENABLE
-            TSIM_NumberKeypad(TRUE);
+            TSIM_NumberKeypad(FALSE);
             #endif
             (void)ITEXTCTL_Redraw(pTextCtl);
             
