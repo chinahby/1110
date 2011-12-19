@@ -1582,7 +1582,6 @@ static void AutoMovePage(MainMenu *pMe)
 		MSG_FATAL("AutoMovePage........................",0,0,0);
 		if(pMe->m_bDraOver)
 		{
-			ISHELL_CancelTimer(pMe->m_pShell,(PFNNOTIFY)AutoMovePage,pMe);
 			pMe->m_step = 0;
 			pMe->m_bDraOver = FALSE;
 			MSG_FATAL("pMe->m_PrsentPage=========%d",pMe->m_PrsentPage,0,0);
@@ -1592,6 +1591,7 @@ static void AutoMovePage(MainMenu *pMe)
     		MoveCursorTo(pMe, pMe->m_nRow, pMe->m_nColumn);
 			DrawMatrixStr(pMe);
 			pMe->m_bmove = FALSE;
+			ISHELL_CancelTimer(pMe->m_pShell,(PFNNOTIFY)AutoMovePage,pMe);
 		}
 		else
 		{
