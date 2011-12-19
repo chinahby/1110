@@ -1479,11 +1479,15 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
             int32 startdate, enddate;
 
             rc = pme->m_rc;
+			#ifdef FEATURE_VERSION_X3
+			rc.dy -= (HEIGHT_PROMPT_BAR);
+			#else
 #if FEATURE_DRAW_LUNAR_CALENDAR
             rc.dy -= (HEIGHT_PROMPT_BAR+14);
 #else
             rc.dy -= GetBottomBarHeight( pme->m_pDisplay);
 #endif
+			#endif
             IDATECTL_SetRect(pDatePick,&rc);
 
             if( IDATECTL_SetDate( pDatePick,1899,1,1))
@@ -1809,7 +1813,9 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
                 CScheduleApp_GetChineseLunar(&pme->m_calendar);
 
                 CScheduleApp_GetLunarStr(pme);
+				//#ifndef FEATURE_VERSION_X3
                 CScheduleApp_DrawLunarStr(pme);  //»­ÈÕÀú
+                //#endif
                 IDISPLAY_UpdateEx( pme->m_pDisplay, FALSE);
                 //repaint(pme, TRUE);
             }
@@ -3664,7 +3670,7 @@ static boolean  dialog_handler_of_state_event_edit( CScheduleApp* pme,
             
             if(pme->m_sports)
             {
-                titleBarParms.nTitleResID = IDS_SPORTS_TITLE;
+                titleBarParms.nTitleResID = IDS_APP;
             }
             else
             {
@@ -3674,7 +3680,7 @@ static boolean  dialog_handler_of_state_event_edit( CScheduleApp* pme,
 			#if 0
             DrawTitleBar( pme->m_pDisplay, &titleBarParms);
 			#else
-			IANNUNCIATOR_SetFieldText(pme->m_pIAnn,(uint16*)titleBarParms.strTitleResFile);
+			//IANNUNCIATOR_SetFieldText(pme->m_pIAnn,(uint16*)titleBarParms.strTitleResFile);
 			#endif
 
             if( currentItem == 2 && timeFormatType == OEMNV_TIMEFORM_AMPM)

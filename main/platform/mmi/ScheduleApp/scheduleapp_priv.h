@@ -58,11 +58,19 @@
 
 
 #define debug(...)
+#ifdef FEATURE_VERSION_X3
+#ifdef FEATURE_LANG_CHINESE
+#define     FEATURE_DRAW_LUNAR_CALENDAR     0
+#else 
+#define     FEATURE_DRAW_LUNAR_CALENDAR     1
+#endif
 
+#else
 #ifdef FEATURE_LANG_CHINESE
 #define     FEATURE_DRAW_LUNAR_CALENDAR     1
 #else 
 #define     FEATURE_DRAW_LUNAR_CALENDAR     0
+#endif
 #endif
 
 #define     FEATURE_ONE_DB                  0
@@ -70,7 +78,11 @@
 #define     HEIGHT_PROMPT_BAR   BOTTOMBAR_HEIGHT
 
 #ifdef FEATURE_DRAW_LUNAR_CALENDAR
+#ifdef FEATURE_VERSION_X3
+#define     LUNAR_RECT_HEIGHT              24
+#else
 #define     LUNAR_RECT_HEIGHT              14
+#endif
 #endif
 #if defined(FEATURE_DISP_128X160) || defined(FEATURE_DISP_128X128)
 #define     MAX_INPUT_SUBJECT               14
