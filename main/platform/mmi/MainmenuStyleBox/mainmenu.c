@@ -79,10 +79,14 @@ enum {
 	APP_ORIGINATORS
 };
 #define	APPLICATION_MSGBASE_SYSTEM			0x00000
+#define FIX_CRASH_WHEN_ADD_BKMARK_FROM_SMS
 enum{
 	APP_BROWSER_START_MAINMENU = APPLICATION_MSGBASE_SYSTEM,
 	APP_BROWSER_START_HOME,		/* arg: not use */
 	APP_BROWSER_START_BY_MAINMENU, /* arg : slim_int IDM_BROWSER_XXX */
+#ifdef FIX_CRASH_WHEN_ADD_BKMARK_FROM_SMS
+	APP_BROWSER_START_NORMAL,
+#endif		
 	APP_BROWSER_START_URL,			/* arg: TString url */
 	APP_BROWSER_START_PAGESAVEINFO,	/* arg : TPageSaveInfo (slim_handle) */
 	APP_BROWSER_START_BY_PUSH,			/* arg: TString url */
@@ -4231,6 +4235,28 @@ static int StartApplet(MainMenu *pMe, int i)
 	}
 	case IDS_MAIN_MENU_MAP:
 	{
+		char	buf[12];
+		
+		OEM_SetBAM_ADSAccount();	//Add By zzg 2011_07_08
+		
+    	MSG_FATAL("AEECLSID_BRW_APP...........START",0,0,0);
+    	start_info.appid_fx = APP_ORIGINATOR_BROWSER;
+        start_info.subtype_keycode = APP_BROWSER_START_URL;
+        start_info.par_keychar = 0;
+
+		start_info.fInfo.url_info.title = "map";
+		start_info.fInfo.url_info.url = "http://wap.movidamovil.com/venezuela/?debug=true";		
+		
+        //start_info.fInfo.url_info.title = "163";
+        //start_info.fInfo.url_info.url = "http://wap.163.com";
+
+		
+        SPRINTF(buf, "%p", &start_info);
+		Result = ISHELL_StartAppletArgs(pMe->m_pShell,AEECLSID_NF3,buf);
+        //Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_BRW_APP);
+        MSG_FATAL("AEECLSID_BRW_APP...........Result=%d",Result,0,0);		
+		
+		
 		break;
 	}
 	case IDS_MAIN_MENU_NEO_APP:
