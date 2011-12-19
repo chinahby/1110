@@ -4670,14 +4670,30 @@ static void CameraApp_HandleSnapshotPic(CCameraApp *pMe)
 			MSG_FATAL("myInfo.cx=====%d,myInfo.cy===%d",myInfo.cx,myInfo.cy,0);
 			MSG_FATAL("x=========%d,y=========%d",x,y,0);
 			#ifdef  FEATURE_CAMERA_MULTI_SENSOR
-			if(myInfo.cx>(SCREEN_WIDTH+5))
+			if(pMe->m_nCameraMulti == OEMNV_CAMERA_MULTI_ONE)
 			{
-				MSG_FATAL(",..........",0,0,0);
-				//x = (myInfo.cx-SCREEN_WIDTH)/2;
-				IImage_SetParm(pImage,
-                               IPARM_SCALE,
-                               285,
-                               320);
+				if(myInfo.cx>(SCREEN_WIDTH+5))
+				{
+					MSG_FATAL(",..........",0,0,0);
+					//x = (myInfo.cx-SCREEN_WIDTH)/2;
+					if(myInfo.cx>430)
+					{
+						IImage_SetParm(pImage,
+                        	       IPARM_SCALE,
+                            	   285,
+                               	   320);
+						MSG_FATAL(",.........1111.",0,0,0);
+					}
+					else
+					{
+						IImage_SetParm(pImage,
+                        	       IPARM_SCALE,
+                            	   240,
+                               	   320);
+						MSG_FATAL(",.........2222.",0,0,0);
+						x = 0;
+					}
+				}
 			}
 			#endif
 			MSG_FATAL("x=========%d,y=========%d",x,y,0);
