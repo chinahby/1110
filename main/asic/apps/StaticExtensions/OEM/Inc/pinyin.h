@@ -39,7 +39,7 @@ when       who     what, where, why
 
 #include "aee.h"
 
-#define FONT_WIDTH 16
+#define FONT_WIDTH 20
 #define LINE_GB 40
 #define SIZE_OF_COMBO 256
 #define SIZE_OF_PINYIN 398
