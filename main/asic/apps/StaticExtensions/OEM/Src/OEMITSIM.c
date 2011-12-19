@@ -2809,6 +2809,7 @@ static void TSIM_Draw(CTSIM * pme)
     boolean            bFrame = FALSE;
     int16              len, startx, starty;
     int                i;
+    AEERect            aRect;
     DBGPRINTF("TSIM_Draw    4"); 
 
     if (!pme)
@@ -2822,9 +2823,16 @@ static void TSIM_Draw(CTSIM * pme)
     
     //Clear the screen
     //IDISPLAY_FillRect(pme->m_pIDisplay, &pme->m_rectDisplay, CLR_SYS_WIN);
-
-    IDISPLAY_FillRect(pme->m_pIDisplay, &pme->m_rectDisplay, RGB_WINTE_BACKDROP);  //modi by ydc 090521
-	
+    if(pme->m_tsm_curr == TSIM_HANSTROKE)
+    {
+        aRect=pme->m_rectDisplay; 
+        aRect.dy=155;
+        IDISPLAY_FillRect(pme->m_pIDisplay, &aRect, RGB_WINTE_BACKDROP);    
+    }
+    else
+    {
+        IDISPLAY_FillRect(pme->m_pIDisplay, &pme->m_rectDisplay, RGB_WINTE_BACKDROP);  //modi by ydc 090521
+    }
     // ASSUME we don't have to re-cal text here and that font hasn't changed
     if (pme->m_dwProps & TP_FRAME)
     {
@@ -3397,6 +3405,7 @@ static void TSIM_TextChanged(CTSIM* pme)
         // Restrict to at most 1 line
         pme->nDisplayLines = 1;
     }
+    DBGPRINTF("TSIM_TextChanged-----pme->nDisplayLines=%d",pme->nDisplayLines);
 
     if (pme->nDisplayLines <= 0)
     {
@@ -3742,7 +3751,7 @@ static void TSIM_DrawScrollBar(CTSIM* pme)
 //    boolean     bpressed = FALSE; 
     if(pme->m_tsm_curr == TSIM_HANSTROKE)
     {
-      wScrollBarHeight = 100;
+      wScrollBarHeight = 135;
     }
     else
     {
