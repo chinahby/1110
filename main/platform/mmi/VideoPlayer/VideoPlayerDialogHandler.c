@@ -2120,7 +2120,7 @@ void Draw_Parser_Text(CVideoPlayer* pMe,const AECHAR* pText,uint16* height)
 	AEERect rc = {0,0,SCR_W,SCR_H};
 	rc.x  = pMe->m_rc.x + 5;
 	rc.dx = pMe->m_rc.dx - 5;
-    rc.y = VIDEOPLAYER_NAMEPART_H + 5;
+    rc.y = VIDEOPLAYER_NAMEPART_H;
     rc.dy = pMe->m_rc.dy - VIDEOPLAYER_NAMEPART_H -  GetBottomBarHeight(pMe->m_pDisplay) - 5;
     MSG_FATAL("****pji****charw = %d; wcharw=%d",charw,wcharw,0);
 	if(pText == NULL) return ;
