@@ -522,6 +522,10 @@ static boolean  IScheduleApp_HandleEvent( IScheduleApp   *pi,
     switch (eCode)
     {
         case EVT_APP_START:
+			if(OEM_IME_DIALOG == wParam)
+			{
+				return TRUE;
+			}
             pme->m_bAppIsReady = FALSE;
             as = (AEEAppStart*)dwParam;
             pme->m_rc = as->rc;
