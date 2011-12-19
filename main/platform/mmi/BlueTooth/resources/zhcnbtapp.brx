@@ -1,68 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="btapp" VERSION="1">
+<BREWRes Name="zhcnbtapp" VERSION="1">
 <Strings Encoding="Unicode">
 	<String Id="1" Name="IDS_BT_TITLE">
-		<Text>Bluetooth</Text>
+		<Text>蓝牙</Text>
 	</String>
 	<String Id="2" Name="IDS_AUDIO_GATEWAY">
-		<Text>Audio Gateway</Text>
+		<Text>音频网关</Text>
 	</String>
 	<String Id="3" Name="IDS_NETWORK_ACCESS">
-		<Text>Network Access</Text>
+		<Text>网络访问</Text>
 	</String>
 	<String Id="4" Name="IDS_DEVICES">
-		<Text>Devices</Text>
+		<Text>设备</Text>
 	</String>
 	<String Id="5" Name="IDS_TESTS">
-		<Text>Tests</Text>
+		<Text>测试</Text>
 	</String>
 	<String Id="6" Name="IDS_MY_INFO">
-		<Text>My Info</Text>
+		<Text>我的信息</Text>
 	</String>
 	<String Id="7" Name="IDS_SETTINGS">
-		<Text>Settings</Text>
+		<Text>设置</Text>
 	</String>
 	<String Id="8" Name="IDS_ENABLING">
-		<Text>Enabling</Text>
+		<Text>启用</Text>
 	</String>
 	<String Id="9" Name="IDS_BONDABLE">
-		<Text>Bondable</Text>
+		<Text>粘接</Text>
 	</String>
 	<String Id="10" Name="IDS_BT_ON">
-		<Text>Turn Bluetooth On</Text>
+		<Text>打开蓝牙</Text>
 	</String>
 	<String Id="11" Name="IDS_BT_OFF">
-		<Text>Turn Bluetooth Off</Text>
+		<Text>关闭蓝牙</Text>
 	</String>
 	<String Id="12" Name="IDS_ACTIVE">
-		<Text>Active</Text>
+		<Text>活动</Text>
 	</String>
 	<String Id="13" Name="IDS_PASSIVE">
-		<Text>Passive</Text>
+		<Text>无源</Text>
 	</String>
 	<STRING Id="14" Name="IDS_BT_OK">
-		<Text>OK</Text>
+		<Text>确定</Text>
 	</STRING>
 	<STRING Id="15" Name="IDS_BT_CANCEL">
-		<Text>Cancel</Text>
+		<Text>取消</Text>
 	</STRING>
 	<String Id="16" Name="IDS_ON">
-		<Text>On</Text>
+		<Text>开</Text>
 	</String>
 	<String Id="17" Name="IDS_ON_TIMED">
-		<Text>On (for 3 minutes)</Text>
+		<Text>开（3分钟）</Text>
 	</String>
 	<String Id="18" Name="IDS_OFF">
-		<Text>Off</Text>
+		<Text>关闭</Text>
 	</String>
 	<String Id="19" Name="IDS_TYPE">
-		<Text>Type</Text>
+		<Text>类型</Text>
 	</String>
 	<String Id="20" Name="IDS_MODE">
-		<Text>Mode</Text>
+		<Text>模式</Text>
 	</String>
 	<String Id="21" Name="IDS_TIME">
-		<Text>Time</Text>
+		<Text>时间</Text>
 	</String>
 	<String Id="22" Name="IDS_SPKR">
 		<Text>Spkr</Text>
@@ -71,274 +71,274 @@
 		<Text>Mic</Text>
 	</String>
 	<String Id="24" Name="IDS_CONN_MODE">
-		<Text>Connection Mode</Text>
+		<Text>连接模式</Text>
 	</String>
 	<String Id="25" Name="IDS_IDLE_TO">
-		<Text>Idle Timeout</Text>
+		<Text>空闲超时</Text>
 	</String>
 	<String Id="26" Name="IDS_SPKR_VOL">
-		<Text>Speaker Volume</Text>
+		<Text>扬声器音量</Text>
 	</String>
 	<String Id="27" Name="IDS_MIC_VOL">
-		<Text>Microphone Volume</Text>
+		<Text>麦克风音量</Text>
 	</String>
 	<String Id="28" Name="IDS_BD_ADDR">
-		<Text>BD Address</Text>
+		<Text>屋宇署地址</Text>
 	</String>
 	<String Id="29" Name="IDS_BT_NAME">
-		<Text>BT Name</Text>
+		<Text>蓝牙名字</Text>
 	</String>
 	<String Id="30" Name="IDS_SEARCHING">
-		<Text>Searching...</Text>
+		<Text>搜索...</Text>
 	</String>
 	<String Id="31" Name="IDS_NOT_AVAIL">
-		<Text>Not Available</Text>
+		<Text>不可用</Text>
 	</String>
 	<String Id="32" Name="IDS_DEVICE_SEARCH">
-		<Text>Device Search</Text>
+		<Text>设备搜索</Text>
 	</String>
 	<String Id="33" Name="IDS_DEVICE_ALL">
-		<Text>All Devices</Text>
+		<Text>所有设备</Text>
 	</String>
 	<String Id="34" Name="IDS_DEVICE_AUDIO">
-		<Text>Audio Devices</Text>
+		<Text>音频设备</Text>
 	</String>
 	<String Id="35" Name="IDS_DEVICE_NETWORK">
-		<Text>Network Devices</Text>
+		<Text>网络设备</Text>
 	</String>
 	<String Id="36" Name="IDS_BY_BD_ADDR">
-		<Text>By BD Address</Text>
+		<Text>屋宇署地址</Text>
 	</String>
 	<String Id="37" Name="IDS_ALL">
-		<Text>All</Text>
+		<Text>全部</Text>
 	</String>
 	<String Id="38" Name="IDS_BONDED">
-		<Text>Bonded</Text>
+		<Text>绑定</Text>
 	</String>
 	<String Id="39" Name="IDS_AUDIO">
-		<Text>Audio</Text>
+		<Text>音频</Text>
 	</String>
 	<String Id="40" Name="IDS_NETWORK">
-		<Text>Network</Text>
+		<Text>网络</Text>
 	</String>
 	<String Id="41" Name="IDS_REMOVE">
-		<Text>Remove</Text>
+		<Text>删除</Text>
 	</String>
 	<String Id="42" Name="IDS_BOND">
-		<Text>Bond</Text>
+		<Text>绑定</Text>
 	</String>
 	<String Id="43" Name="IDS_UNBOND">
-		<Text>Unbond</Text>
+		<Text>取消绑定</Text>
 	</String>
 	<String Id="44" Name="IDS_KEEP">
-		<Text>Keep</Text>
+		<Text>保持</Text>
 	</String>
 	<String Id="45" Name="IDS_DISCARD">
-		<Text>Discard</Text>
+		<Text>丢弃</Text>
 	</String>
 	<String Id="46" Name="IDS_LIST_ALL">
-		<Text>List All</Text>
+		<Text>全部列表</Text>
 	</String>
 	<String Id="47" Name="IDS_LIST_BONDED">
-		<Text>List Bonded Devices</Text>
+		<Text>绑定设备列表</Text>
 	</String>
 	<String Id="48" Name="IDS_REMOVE_ALL">
-		<Text>Remove All</Text>
+		<Text>删除全部</Text>
 	</String>
 	<String Id="49" Name="IDS_UNBOND_ALL">
-		<Text>Unbond All</Text>
+		<Text>取消所有绑定设备</Text>
 	</String>
 	<String Id="50" Name="IDS_EDIT_NAME">
-		<Text>Edit Name</Text>
+		<Text>编辑名称</Text>
 	</String>
 	<String Id="51" Name="IDS_PASS_KEY">
-		<Text>Pass Key for %s</Text>
+		<Text>通的关键 %s</Text>
 	</String>
 	<String Id="52" Name="IDS_DISCOVERED_DEVICES">
-		<Text>Discovered Devices</Text>
+		<Text>发现设备</Text>
 	</String>
 	<String Id="53" Name="IDS_BONDED_DEVICES">
-		<Text>Bonded Devices</Text>
+		<Text>绑定设备</Text>
 	</String>
 	<String Id="54" Name="IDS_KNOWN_DEVICES">
-		<Text>Known Devices</Text>
+		<Text>不知名设备</Text>
 	</String>
 	<String Id="55" Name="IDS_UNKNOWN">
-		<Text>Unknown</Text>
+		<Text>不知名</Text>
 	</String>
 	<String Id="56" Name="IDS_AUDIO_TRANSFER">
-		<Text>Audio Transfer</Text>
+		<Text>音频传输</Text>
 	</String>
 	<String Id="57" Name="IDS_DEVICE_TYPE">
-		<Text>Device Type</Text>
+		<Text>设备类型</Text>
 	</String>
 	<String Id="58" Name="IDS_AUTOMATIC">
-		<Text>Automatic</Text>
+		<Text>自动</Text>
 	</String>
 	<String Id="59" Name="IDS_HEADSET">
-		<Text>Headset</Text>
+		<Text>耳机</Text>
 	</String>
 	<String Id="60" Name="IDS_HANDSFREE">
-		<Text>Hands-Free</Text>
+		<Text>免提</Text>
 	</String>
 	<String Id="61" Name="IDS_SECURITY">
-		<Text>Security</Text>
+		<Text>安全</Text>
 	</String>
 	<String Id="62" Name="IDS_SECURITY_NONE">
-		<Text>No Security</Text>
+		<Text>无安全性</Text>
 	</String>
 	<String Id="63" Name="IDS_SECURITY_AUTH">
-		<Text>Authentication</Text>
+		<Text>验证</Text>
 	</String>
 	<String Id="64" Name="IDS_SECURITY_AUTH_ENC">
-		<Text>Authentication + Encryption</Text>
+		<Text>验证+加密</Text>
 	</String>
 	<STRING Id="65" Name="IDS_BT_YES_EX">
-		<Text>Yes</Text>
+		<Text>是</Text>
 	</STRING>
 	<STRING Id="66" Name="IDS_BT_NO_EX">
-		<Text>No</Text>
+		<Text>无</Text>
 	</STRING>
 	<String Id="67" Name="IDS_VR">
 		<Text>VR</Text>
 	</String>
 	<String Id="68" Name="IDS_VR_CAPABLE">
-		<Text>VR Capable</Text>
+		<Text>VR的能力</Text>
 	</String>
 	<String Id="69" Name="IDS_CONNECT">
-		<Text>Connect</Text>
+		<Text>连接</Text>
 	</String>
 	<String Id="70" Name="IDS_DISCONNECT">
-		<Text>Disconnect</Text>
+		<Text>断开</Text>
 	</String>
 	<STRING Id="71" Name="IDS_BT_CLOSE">
-		<Text>Close</Text>
+		<Text>关闭</Text>
 	</STRING>
 	<String Id="72" Name="IDS_LISTENING">
-		<Text>Listening</Text>
+		<Text>听力</Text>
 	</String>
 	<String Id="73" Name="IDS_CONNECTING">
-		<Text>Connecting</Text>
+		<Text>连接中</Text>
 	</String>
 	<String Id="74" Name="IDS_CONNECTED">
-		<Text>Connected</Text>
+		<Text>已经连接上</Text>
 	</String>
 	<String Id="75" Name="IDS_DISCONNECTED">
-		<Text>Disconnected</Text>
+		<Text>断开的</Text>
 	</String>
 	<String Id="76" Name="IDS_OPTIONS">
-		<Text>Options</Text>
+		<Text>选项</Text>
 	</String>
 	<String Id="77" Name="IDS_ACTIVE_ANY_DEVICE">
-		<Text>Active, Any Device</Text>
+		<Text>活动，任何设备</Text>
 	</String>
 	<String Id="78" Name="IDS_HCI_MODE">
-		<Text>Set HCI Mode</Text>
+		<Text>设置人机交互模式</Text>
 	</String>
 	<String Id="79" Name="IDS_USE">
-		<Text>Use</Text>
+		<Text>使用</Text>
 	</String>
 	<String Id="80" Name="IDS_APIT">
 		<Text>APIT</Text>
 	</String>
 	<String Id="81" Name="IDS_PUT">
-		<Text>Put</Text>
+		<Text>发送</Text>
 	</String>
 	<String Id="82" Name="IDS_GET">
-		<Text>Get</Text>
+		<Text>获取</Text>
 	</String>
 	<String Id="83" Name="IDS_DELETE">
-		<Text>Delete</Text>
+		<Text>删除</Text>
 	</String>
 	<String Id="84" Name="IDS_PUSH">
-		<Text>Push</Text>
+		<Text>推动</Text>
 	</String>
 	<String Id="85" Name="IDS_PULL">
-		<Text>Pull</Text>
+		<Text>拉</Text>
 	</String>
 	<String Id="86" Name="IDS_REGISTER">
-		<Text>Register</Text>
+		<Text>注册</Text>
 	</String>
 	<String Id="87" Name="IDS_DEREGISTER">
-		<Text>De-Register</Text>
+		<Text>取消注册</Text>
 	</String>
 	<String Id="88" Name="IDS_DISCOVERABLE">
-		<Text>Discoverable</Text>
+		<Text>发现的</Text>
 	</String>
 	<String Id="89" Name="IDS_FTM">
 		<Text>FTM</Text>
 	</String>
 	<String Id="90" Name="IDS_BUSINESS_CARD_EXCHANGE">
-		<Text>Business Card Exchange</Text>
+		<Text>名片交换</Text>
 	</String>
 	<String Id="91" Name="IDS_OBEX_SERVERS">
-		<Text>OBEX Servers</Text>
+		<Text>OBEX服务器</Text>
 	</String>
 	<String Id="92" Name="IDS_PUT_FOLDER">
-		<Text>Put Folder</Text>
+		<Text>放在文件夹</Text>
 	</String>
 	<String Id="93" Name="IDS_GET_FOLDER">
-		<Text>Get Folder</Text>
+		<Text>获取文件夹</Text>
 	</String>
 	<String Id="94" Name="IDS_PASSWORD">
-		<Text>Password</Text>
+		<Text>密码</Text>
 	</String>
 	<String Id="95" Name="IDS_AUTHENTICATE">
-		<Text>Authenticate</Text>
+		<Text>认证</Text>
 	</String>
 	<String Id="96" Name="IDS_SRCH_BD_ADDR">
-		<Text>Least significant digits of BD Address</Text>
+		<Text>BD的地址的最显著的数字</Text>
 	</String>
 	<String Id="97" Name="IDS_TEST_MODE">
-		<Text>Enter Test Mode</Text>
+		<Text>进入测试模式</Text>
 	</String>
 	<String Id="98" Name="IDS_ENABLE_SERVICE_SECURITY">
-		<Text>Enable Service Security</Text>
+		<Text>使服务安全</Text>
 	</String>
 	<String Id="99" Name="IDS_JOB_ID">
-		<Text>Job ID</Text>
+		<Text>作业ID</Text>
 	</String>
 	<String Id="100" Name="IDS_BROWSE_SVC">
-		<Text>Browse Service</Text>
+		<Text>浏览服务</Text>
 	</String>
 	<String Id="101" Name="IDS_SEARCH_SVC">
-		<Text>Search Service</Text>
+		<Text>搜索服务</Text>
 	</String>
 	<String Id="102" Name="IDS_REGISTER_SVC">
-		<Text>Register Service</Text>
+		<Text>注册服务</Text>
 	</String>
 	<String Id="103" Name="IDS_UNREGISTER_SVC">
-		<Text>Unregister Service</Text>
+		<Text>取消注册服务</Text>
 	</String>
 	<String Id="106" Name="IDS_OPP">
 		<Text>OPP</Text>
 	</String>
 	<String Id="107" Name="IDS_OPP_TESTS">
-		<Text>OPP Tests</Text>
+		<Text>OPP 测试</Text>
 	</String>
 	<String Id="108" Name="IDS_OPP_SERVER">
-		<Text>OPP Server</Text>
+		<Text>OPP 服务</Text>
 	</String>
 	<String Id="109" Name="IDS_OPP_CLIENT">
-		<Text>OPP Client</Text>
+		<Text>OPP 客户端</Text>
 	</String>
 	<String Id="110" Name="IDS_FTP">
 		<Text>FTP</Text>
 	</String>
 	<String Id="111" Name="IDS_FTP_TESTS">
-		<Text>FTP Tests</Text>
+		<Text>FTP 测试</Text>
 	</String>
 	<String Id="112" Name="IDS_FTP_SERVER">
-		<Text>FTP Server</Text>
+		<Text>FTP 服务</Text>
 	</String>
 	<String Id="113" Name="IDS_FTP_CLIENT">
-		<Text>FTP Client</Text>
+		<Text>FTP 客户端</Text>
 	</String>
 	<String Id="114" Name="IDS_BROWSE_SVC_RESULTS">
-		<Text>Cls/SCN/Service Name</Text>
+		<Text>Cls/SCN/服务 名称</Text>
 	</String>
 	<String Id="115" Name="IDS_SRCH_SVC_RESULTS">
-		<Text>Profile/Version</Text>
+		<Text>简介/版本</Text>
 	</String>
 	<String Id="116" Name="IDS_OBEX_TESTS">
 		<Text>OBEX</Text>
@@ -359,103 +359,103 @@
 		<Text>ICP</Text>
 	</String>
 	<String Id="122" Name="IDS_CTP_EST_CALL">
-		<Text>Establish Call</Text>
+		<Text>建立呼叫</Text>
 	</String>
 	<String Id="123" Name="IDS_ICP_EST_CALL">
-		<Text>Establish Call</Text>
+		<Text>建立呼叫</Text>
 	</String>
 	<String Id="124" Name="IDS_CTP_MSG_EST_CALL_FAILED">
-		<Text>Failed to establish CTP call!</Text>
+		<Text>CTP的呼叫建立失败！</Text>
 	</String>
 	<String Id="125" Name="IDS_ICP_MSG_EST_CALL_FAILED">
-		<Text>Failed to establish ICP call!</Text>
+		<Text>建立ICP备调用失败！</Text>
 	</String>
 	<String Id="126" Name="IDS_MSG_TCS_CLEAR_CALL_FAILED">
-		<Text>ClearCall Failed!</Text>
+		<Text>ClearCall 失败!</Text>
 	</String>
 	<String Id="127" Name="IDS_ICP_CLEAR_CALL">
-		<Text>Clear Call</Text>
+		<Text>清晰的通话</Text>
 	</String>
 	<String Id="128" Name="IDS_DEVICE_TELEPHONY">
-		<Text>Telephony Devices</Text>
+		<Text>电话设备</Text>
 	</String>
 	<String Id="129" Name="IDS_MSG_NO_TELEPHONY_DEV">
-		<Text>No Telephony device in database</Text>
+		<Text>在数据库中没有电话设备</Text>
 	</String>
 	<String Id="130" Name="IDS_MSG_TCS_CALL_SETUP_FAILED">
-		<Text>Call Setup Failed!</Text>
+		<Text>呼叫建立失败！</Text>
 	</String>
 	<String Id="131" Name="IDS_MSG_TCS_CALL_SETUP_SUCCESS">
-		<Text>Call Setup Successful!</Text>
+		<Text>呼叫建立成功！</Text>
 	</String>
 	<String Id="132" Name="IDS_FTP_CREATE_FOLDER">
-		<Text>Create Folder</Text>
+		<Text>创建文件夹</Text>
 	</String>
 	<String Id="133" Name="IDS_FTP_LIST_FOLDER">
-		<Text>Remote Browsing</Text>
+		<Text>远程浏览</Text>
 	</String>
 	<String Id="134" Name="IDS_FTP_MSG_FOLDER_CREATED">
-		<Text>Folder creation successful</Text>
+		<Text>文件夹创建</Text>
 	</String>
 	<String Id="135" Name="IDS_FTP_MSG_FOLDER_CREATION_FAILED">
-		<Text>Folder creation failed</Text>
+		<Text>创建文件夹失败</Text>
 	</String>
 	<String Id="136" Name="IDS_ENABLE">
-		<Text>Enable</Text>
+		<Text>启用</Text>
 	</String>
 	<String Id="137" Name="IDS_DISABLE">
-		<Text>Disable</Text>
+		<Text>禁用</Text>
 	</String>
 	<String Id="138" Name="IDS_RADIO_ON">
-		<Text>Turn Radio On</Text>
+		<Text>打开收音机</Text>
 	</String>
 	<String Id="139" Name="IDS_RADIO_OFF">
-		<Text>Turn Radio Off</Text>
+		<Text>关闭收音机</Text>
 	</String>
 	<String Id="140" Name="IDS_VISIBILITY_ON">
-		<Text>Turn Visibility On</Text>
+		<Text>打开的可视性</Text>
 	</String>
 	<String Id="141" Name="IDS_VISIBILITY_OFF">
-		<Text>Turn Visibility Off</Text>
+		<Text>关闭能见度</Text>
 	</String>
 	<String Id="142" Name="IDS_MASTER_CONTROL">
-		<Text>Master Control</Text>
+		<Text>主控</Text>
 	</String>
 	<String Id="143" Name="IDS_DFLT_DIAL_STR">
-		<Text>Default Dial String</Text>
+		<Text>默认拨号字符串</Text>
 	</String>
 	<String Id="144" Name="IDS_ALLOW_ROLE_SWITCH">
-		<Text>Allow Incoming Role Switch</Text>
+		<Text>允许传入的角色转换</Text>
 	</String>
 	<String Id="145" Name="IDS_DISALLOW_ROLE_SWITCH">
-		<Text>Disallow Incoming Role Switch</Text>
+		<Text>禁止传入的角色转换</Text>
 	</String>
 	<String Id="147" Name="IDS_FTP_SRV_ALLOW_BROWSE">
-		<Text>Allow Browse</Text>
+		<Text>允许浏览</Text>
 	</String>
 	<String Id="148" Name="IDS_FTP_SRV_READ_ONLY">
-		<Text>Read Only</Text>
+		<Text>只读</Text>
 	</String>
 	<STRING Id="149" Name="IDS_BT_SELECT">
-		<Text>Select</Text>
+		<Text>选择</Text>
 	</STRING>
 	<String Id="150" Name="IDS_FTP_MOVE_TO_FOLDER">
-		<Text>Move to Folder</Text>
+		<Text>移动到文件夹</Text>
 	</String>
 	<String Id="151" Name="IDS_FTP_MOVE_TO_ROOT">
-		<Text>Move to Root</Text>
+		<Text>移动到根</Text>
 	</String>
 	<String Id="152" Name="IDS_SPP_TESTS">
-		<Text>SPP Tests</Text>
+		<Text>SPP 测试</Text>
 	</String>
 	<String Id="153" Name="IDS_SPP_SERVER">
-		<Text>SPP Server</Text>
+		<Text>SPP 服务</Text>
 	</String>
 	<String Id="154" Name="IDS_SPP_CLIENT">
-		<Text>SPP Client</Text>
+		<Text>SPP 客户端</Text>
 	</String>
 	<String Id="155" Name="IDS_SPP_SETTINGS">
-		<Text>Bytes To Send</Text>
+		<Text>字节发送</Text>
 	</String>
 	<String Id="156" Name="IDS_SPP_DATA_SIZE_THOUSAND">
 		<Text>2K</Text>
@@ -467,31 +467,31 @@
 		<Text>2G</Text>
 	</String>
 	<String Id="159" Name="IDS_USERID">
-		<Text>User ID</Text>
+		<Text>用户 ID</Text>
 	</String>
 	<String Id="160" Name="IDS_AUTH_NONE">
-		<Text>No Authentication</Text>
+		<Text>无身份验证</Text>
 	</String>
 	<String Id="161" Name="IDS_AUTH_PWD">
-		<Text>PIN Authentication</Text>
+		<Text>PIN 身份验证</Text>
 	</String>
 	<String Id="162" Name="IDS_AUTH_USERID_PWD">
-		<Text>UserID and PIN Authentication</Text>
+		<Text>用户ID和PIN 身份验证</Text>
 	</String>
 	<String Id="163" Name="IDS_PASSIVE_ANY_DEVICE">
-		<Text>Passive, Any Device</Text>
+		<Text>无源，任何设备</Text>
 	</String>
 	<String Id="164" Name="IDS_LIST_CONNECTED">
-		<Text>List Connected Devices</Text>
+		<Text>列出连接的设备</Text>
 	</String>
 	<String Id="165" Name="IDS_CONNECTED_DEVICES">
-		<Text>Connected Devices</Text>
+		<Text>连接的设备</Text>
 	</String>
 	<String Id="166" Name="IDS_SET_BONDABLE">
-		<Text>Set Bondable</Text>
+		<Text>设置粘接</Text>
 	</String>
 	<String Id="167" Name="IDS_CLEAR_BONDABLE">
-		<Text>Clear Bondable</Text>
+		<Text>清楚粘接</Text>
 	</String>
 	<String Id="200" Name="IDS_SETTINGS_FTP">
 		<Text>FTP</Text>
@@ -500,64 +500,64 @@
 		<Text>BIP</Text>
 	</String>
 	<String Id="202" Name="IDS_ENABLE_OPP">
-		<Text>OPP Server</Text>
+		<Text>OPP 服务器</Text>
 	</String>
 	<String Id="203" Name="IDS_ENABLE_FTP">
-		<Text>FTP Server</Text>
+		<Text>FTP 服务器</Text>
 	</String>
 	<String Id="204" Name="IDS_ENABLE_BIP">
-		<Text>BIP Server</Text>
+		<Text>BIP 服务器</Text>
 	</String>
 	<String Id="205" Name="IDS_ENABLE_BPP">
-		<Text>BPP Server</Text>
+		<Text>BPP 服务器</Text>
 	</String>
 	<String Id="206" Name="IDS_HANDSFREE_PRIVATE">
-		<Text>Hands-Free-Private</Text>
+		<Text>免提，私人</Text>
 	</String>
 	<String Id="207" Name="IDS_ENABLE_VIDEO_CALL">
-		<Text>Enable Video Call</Text>
+		<Text>启用视频通话</Text>
 	</String>
 	<String Id="208" Name="IDS_DISABLE_VIDEO_CALL">
-		<Text>Disable Video Call</Text>
+		<Text>禁用视频呼叫</Text>
 	</String>
 	<String Id="209" Name="IDS_ENABLE_SAP">
-		<Text>SAP Server</Text>
+		<Text>SAP 服务器</Text>
 	</String>
 	<String Id="210" Name="IDS_ENABLE_A2DP">
-		<Text>Enable A2DP</Text>
+		<Text>启用支持A2DP</Text>
 	</String>
 	<String Id="211" Name="IDS_ENABLE_AVRCP">
-		<Text>Enable AVRCP</Text>
+		<Text>启用支持AVRCP</Text>
 	</String>
 	<String Id="212" Name="IDS_SWITCH_ROLE">
-		<Text>Do Role Switch</Text>
+		<Text>做好角色转换</Text>
 	</String>
 	<String Id="213" Name="IDS_MASTER">
-		<Text>Master</Text>
+		<Text>主</Text>
 	</String>
 	<String Id="214" Name="IDS_SLAVE">
-		<Text>Slave</Text>
+		<Text>从</Text>
 	</String>
 	<String Id="215" Name="IDS_MSG_SWITCH_ROLE_SUCCESS">
-		<Text>Role Switch Cmd Issued Successfully</Text>
+		<Text>角色切换Cmd的成功发行</Text>
 	</String>
 	<String Id="216" Name="IDS_MSG_SWITCH_ROLE_FAILED">
-		<Text>Role Switch Failed</Text>
+		<Text>角色转换失败</Text>
 	</String>
 	<String Id="217" Name="IDS_MSG_SWITCH_ROLE_NOT_ALLOWED">
-		<Text>Connected to more than one dev, Role Switch Not Allowed</Text>
+		<Text>连接一个以上的开发，角色转换不允许</Text>
 	</String>
 	<String Id="218" Name="IDS_MSG_NO_LINK_TO_SWITCH_ROLE">
-		<Text>No link to switch role</Text>
+		<Text>没有链接到开关的作用</Text>
 	</String>
 	<String Id="219" Name="IDS_LABEL_DEV_ROLE">
-		<Text>Local Dev Role: %s </Text>
+		<Text>本地开发的作用： %s </Text>
 	</String>
 	<String Id="220" Name="IDS_ENABLE_PBAP">
-		<Text>PBAP Server</Text>
+		<Text>PBAP 服务器</Text>
 	</String>
 	<String Id="221" Name="IDS_ENABLE_OBEX">
-		<Text>OBEX Server</Text>
+		<Text>OBEX 服务器</Text>
 	</String>
 	<String Id="230" Name="IDS_PBAP">
 		<Text>PBAP</Text>
@@ -566,208 +566,208 @@
 		<Text>PBAP</Text>
 	</String>
 	<String Id="232" Name="IDS_PBAP_SERVER">
-		<Text>PBAP Server</Text>
+		<Text>PBAP 服务器</Text>
 	</String>
 	<String Id="233" Name="IDS_PBAP_CLIENT">
-		<Text>PBAP Client</Text>
+		<Text>PBAP 客户端</Text>
 	</String>
 	<String Id="234" Name="IDS_PBAP_VCARD_FORMAT">
-		<Text>Format</Text>
+		<Text>格式</Text>
 	</String>
 	<String Id="235" Name="IDS_PBAP_FILTER">
-		<Text>Filter</Text>
+		<Text>过滤器</Text>
 	</String>
 	<String Id="236" Name="IDS_PBAP_MAX_LIST_COUNT">
-		<Text>List Count</Text>
+		<Text>列表计数</Text>
 	</String>
 	<String Id="237" Name="IDS_PBAP_LIST_START_OFFSET">
-		<Text>List Offset</Text>
+		<Text>名单偏移</Text>
 	</String>
 	<String Id="238" Name="IDS_PBAP_SORT_ORDER">
-		<Text>Sorting Order</Text>
+		<Text>排序</Text>
 	</String>
 	<String Id="239" Name="IDS_PBAP_SEARCH_ATTR">
-		<Text>Search Atribute</Text>
+		<Text>搜索属性</Text>
 	</String>
 	<String Id="240" Name="IDS_PBAP_SEARCH_VALUE">
-		<Text>Search Value</Text>
+		<Text>搜索值</Text>
 	</String>
 	<String Id="241" Name="IDS_PBAP_VCARD_2_1">
-		<Text>vCard 2.1</Text>
+		<Text>电子名片 2.1</Text>
 	</String>
 	<String Id="242" Name="IDS_PBAP_VCARD_3_0">
-		<Text>vCard 3.0</Text>
+		<Text>电子名片 3.0</Text>
 	</String>
 	<String Id="243" Name="IDS_PBAP_SORT_INDEX">
-		<Text>Indexed</Text>
+		<Text>收录</Text>
 	</String>
 	<String Id="244" Name="IDS_PBAP_SORT_ALPHA">
-		<Text>Alphabetical</Text>
+		<Text>按英文字母顺序</Text>
 	</String>
 	<String Id="245" Name="IDS_PBAP_SORT_SOUND">
-		<Text>Phonetically</Text>
+		<Text>发音</Text>
 	</String>
 	<String Id="246" Name="IDS_PBAP_SORTING">
-		<Text>Sorting Order</Text>
+		<Text>排序</Text>
 	</String>
 	<String Id="247" Name="IDS_PBAP_DOWNLOAD">
-		<Text>Download PB Object</Text>
+		<Text>下载PB对象</Text>
 	</String>
 	<String Id="248" Name="IDS_PBAP_BROWSE">
-		<Text>Browse PB</Text>
+		<Text>浏览PB</Text>
 	</String>
 	<String Id="249" Name="IDS_PBAP_SEARCH_ATTRIBUTE">
-		<Text>Search Attribute</Text>
+		<Text>搜索属性</Text>
 	</String>
 	<String Id="250" Name="IDS_EFS">
-		<Text>Use EFS</Text>
+		<Text>使用EFS</Text>
 	</String>
 	<String Id="251" Name="IDS_MEMORY_CARD">
-		<Text>Use SD Memory Card</Text>
+		<Text>使用SD记忆卡</Text>
 	</String>
 	<String Id="252" Name="IDS_PBAP_SEARCH_SOUND">
-		<Text>Sound</Text>
+		<Text>声音</Text>
 	</String>
 	<String Id="260" Name="IDS_PBAP_SEARCH_NAME">
-		<Text>Name</Text>
+		<Text>名称</Text>
 	</String>
 	<String Id="261" Name="IDS_PBAP_SEARCH_NUMBER">
-		<Text>Number</Text>
+		<Text>数</Text>
 	</String>
 	<String Id="263" Name="IDS_PBAP_SET_CONFIG_OPTIONS">
-		<Text>Set Config Options</Text>
+		<Text>Config中设置选项</Text>
 	</String>
 	<String Id="264" Name="IDS_PBAP_SET_CONFIG_VALUES">
-		<Text>Set Config Values</Text>
+		<Text>设置配置值</Text>
 	</String>
 	<String Id="265" Name="IDS_PBAP_DW_PB">
-		<Text>PhoneBook</Text>
+		<Text>电话簿</Text>
 	</String>
 	<String Id="266" Name="IDS_PBAP_DW_ICH">
-		<Text>Incoming Calls</Text>
+		<Text>来电</Text>
 	</String>
 	<String Id="267" Name="IDS_PBAP_DW_OCH">
-		<Text>Outgoing Calls</Text>
+		<Text>呼出</Text>
 	</String>
 	<String Id="268" Name="IDS_PBAP_DW_MCH">
-		<Text>Missed Calls</Text>
+		<Text>未接来电</Text>
 	</String>
 	<String Id="269" Name="IDS_PBAP_DW_CCH">
-		<Text>Combined Calls</Text>
+		<Text>联合呼叫</Text>
 	</String>
 	<String Id="270" Name="IDS_PBAP_PHONE">
-		<Text>Phone</Text>
+		<Text>电话</Text>
 	</String>
 	<String Id="271" Name="IDS_PBAP_SIM">
 		<Text>SIM</Text>
 	</String>
 	<String Id="272" Name="IDS_PBAP_SELECT_SOURCE">
-		<Text>Select PB Repository</Text>
+		<Text>选择PB信息库</Text>
 	</String>
 	<String Id="273" Name="IDS_PBAP_MSG_CLIENT_DOWNLOAD_FAILED">
-		<Text>Downloading PB Failed</Text>
+		<Text>下载PB失败</Text>
 	</String>
 	<String Id="274" Name="IDS_PBAP_MSG_PULL_PB_DONE">
-		<Text>Pull PB Success</Text>
+		<Text>拉PB成功</Text>
 	</String>
 	<String Id="275" Name="IDS_PBAP_MSG_SET_PB_FAILED">
-		<Text>Set PhoneBook Failed</Text>
+		<Text>设置电话簿失败</Text>
 	</String>
 	<String Id="276" Name="IDS_PBAP_MSG_PULL_VCARD_LIST_FAIL">
-		<Text>Pull vCard Listing Failed</Text>
+		<Text>拉电子名片上市失败</Text>
 	</String>
 	<String Id="277" Name="IDS_PBAP_MSG_PULL_VOBJ_FAILED">
-		<Text>Pull vCard Entry Failed</Text>
+		<Text>拉名片条目失败</Text>
 	</String>
 	<String Id="278" Name="IDS_PBAP_MSG_PULL_PB_FAILED">
-		<Text>Pull PB Object Failed</Text>
+		<Text>拉PB对象失败</Text>
 	</String>
 	<String Id="279" Name="IDS_PBAP_MSG_VOBJ_PULLED">
-		<Text>vCard Entry Pulled</Text>
+		<Text>名片条目拉</Text>
 	</String>
 	<String Id="280" Name="IDS_PBAP_MSG_NO_OF_PB_OBJS">
-		<Text>No of PB Objects=%s</Text>
+		<Text>没有PB的对象=%s</Text>
 	</String>
 	<String Id="281" Name="IDS_PBAP_DW_INVALID">
-		<Text>Invalid PhoneBook</Text>
+		<Text>无效的电话簿</Text>
 	</String>
 	<String Id="282" Name="IDS_PBAP_MSG_MAX_LIST_ZERO">
-		<Text>List empty as MaxListCount is 0. No. of items=%s</Text>
+		<Text>列表为空MaxListCount是0。项目号=%s</Text>
 	</String>
 	<String Id="283" Name="IDS_PBAP_MSG_ABORT_REQ_FAIL">
-		<Text>Abort Failed</Text>
+		<Text>中止失败</Text>
 	</String>
 	<String Id="284" Name="IDS_PBAP_MSG_PULL_VCARD_LIST_DONE">
-		<Text>Pull vCard Listing Success</Text>
+		<Text>拉电子名片的成功</Text>
 	</String>
 	<String Id="500" Name="IDS_HS_BUTTON">
-		<Text>HS Button</Text>
+		<Text>HS 按钮</Text>
 	</String>
 	<STRING Id="501" Name="IDS_BT_IGNORE">
-		<Text>Ignore</Text>
+		<Text>忽略</Text>
 	</STRING>
 	<String Id="502" Name="IDS_INFO_HS_BUTTON">
-		<Text>If a call is not present, should HS button press be ignored when received at connection time? If not, a call will be made using the Default Dial String.</Text>
+		<Text>如果呼叫是不存在的，应HS按下按钮时被忽略在连接时收到？如果没有，通话将使用默认的拨号字符串。</Text>
 	</String>
 	<String Id="503" Name="IDS_CONFIG_SCAN_PARAMS">
-		<Text>Config Scan Param</Text>
+		<Text>配置扫描PARAM</Text>
 	</String>
 	<String Id="504" Name="IDS_PAGE_SCAN">
-		<Text>Page Scan</Text>
+		<Text>页扫描</Text>
 	</String>
 	<String Id="505" Name="IDS_INQ_SCAN">
-		<Text>Inquiry Scan</Text>
+		<Text>查询扫描</Text>
 	</String>
 	<String Id="506" Name="IDS_SCAN_PARAM_DEFAULT">
-		<Text>Default</Text>
+		<Text>默认</Text>
 	</String>
 	<String Id="507" Name="IDS_SCAN_PARAM_INTERLACE_128">
-		<Text>Interlace, 1.28s</Text>
+		<Text>交错, 1.28s</Text>
 	</String>
 	<String Id="508" Name="IDS_SCAN_PARAM_INTERLACE_256">
-		<Text>Interlace, 2.56s</Text>
+		<Text>交错, 2.56s</Text>
 	</String>
 	<String Id="509" Name="IDS_SCAN_PARAM_STD_128">
 		<Text>Std, 1.28s</Text>
 	</String>
 	<String Id="510" Name="IDS_SCAN_PARAM_SMALLEST_CONN_TIME">
-		<Text>Smallest Connection Time</Text>
+		<Text>最小连接时间</Text>
 	</String>
 	<String Id="511" Name="IDS_SCAN_PARAM_LARGER_CONN_TIME">
-		<Text>Larger Connection Time</Text>
+		<Text>较大的连接时间</Text>
 	</String>
 	<String Id="512" Name="IDS_SCAN_PARAM_LARGEST_CONN_TIME">
-		<Text>Largest Connection Time</Text>
+		<Text>最大的连接时间</Text>
 	</String>
 	<String Id="513" Name="IDS_SET_CONN_ROLE">
-		<Text>Set Connection Role</Text>
+		<Text>设置方面的作用</Text>
 	</String>
 	<String Id="514" Name="IDS_ACCEPT_CONN_ROLE">
-		<Text>Preferred Accept Connection Role</Text>
+		<Text>宁愿接受方面的作用</Text>
 	</String>
 	<String Id="515" Name="IDS_STRING_SRV_PROFILE_SELECTION">
-		<Text>Profile selection</Text>
+		<Text>配置文件选择</Text>
 	</String>
 	<String Id="516" Name="IDS_STRING_SRV_SEC_LEVEL">
-		<Text>Security level</Text>
+		<Text>安全级别</Text>
 	</String>
 	<String Id="517" Name="IDS_AUDIO_GATEWAY_SEC_HIGH">
-		<Text>Audio Gateway: Cur Sec=&gt;High</Text>
+		<Text>音频网关是：cur秒=&gt;高</Text>
 	</String>
 	<String Id="518" Name="IDS_AUDIO_GATEWAY_SEC_MED">
-		<Text>Audio Gateway: Cur Sec=&gt;Med</Text>
+		<Text>音频网关是：cur秒=&gt; MED</Text>
 	</String>
 	<String Id="519" Name="IDS_AUDIO_GATEWAY_SEC_LOW">
-		<Text>Audio Gateway: Cur Sec=&gt;Low</Text>
+		<Text>音频网关是：cur秒=&gt;低</Text>
 	</String>
 	<String Id="520" Name="IDS_NETWORK_ACCESS_SEC_HIGH">
-		<Text>Network Access: Cur Sec=&gt;High</Text>
+		<Text>网络访问：姜黄素秒=&gt;高</Text>
 	</String>
 	<String Id="521" Name="IDS_NETWORK_ACCESS_SEC_MED">
-		<Text>Network Access: Cur Sec=&gt;Med</Text>
+		<Text>网络访问: Cur Sec=&gt;Med</Text>
 	</String>
 	<String Id="522" Name="IDS_NETWORK_ACCESS_SEC_LOW">
-		<Text>Network Access: Cur Sec=&gt;Low</Text>
+		<Text>网络访问: Cur Sec=&gt;Low</Text>
 	</String>
 	<String Id="523" Name="IDS_ENABLE_OPP_SEC_HIGH">
 		<Text>OPP: Cur Sec=&gt;High</Text>
@@ -869,10 +869,10 @@
 		<Text>HID: Cur Sec=&gt;Low</Text>
 	</String>
 	<String Id="556" Name="IDS_READ_OOB">
-		<Text>Read OOB</Text>
+		<Text>读 OOB</Text>
 	</String>
 	<String Id="557" Name="IDS_WRITE_OOB">
-		<Text>Create OOB</Text>
+		<Text>创建 OOB</Text>
 	</String>
 	<String Id="558" Name="IDS_ENABLE_SPP">
 		<Text>SPP</Text>
@@ -890,97 +890,97 @@
 		<Text>HID</Text>
 	</String>
 	<String Id="601" Name="IDS_HID_EVT_VIEW">
-		<Text>Event View</Text>
+		<Text>事件查看</Text>
 	</String>
 	<String Id="602" Name="IDS_HID_SET_REPORT">
-		<Text>Set Report</Text>
+		<Text>设置报告</Text>
 	</String>
 	<String Id="603" Name="IDS_HID_GET_REPORT">
-		<Text>Get Report</Text>
+		<Text>获取报告</Text>
 	</String>
 	<String Id="604" Name="IDS_HID_OPERATIONS">
-		<Text>HID Operations</Text>
+		<Text>HID 行动</Text>
 	</String>
 	<String Id="605" Name="IDS_HID_CERTIFICATION">
-		<Text>Certification</Text>
+		<Text>认证</Text>
 	</String>
 	<String Id="606" Name="IDS_HID_SET_IDLE">
-		<Text>Set Idle</Text>
+		<Text>设置空闲</Text>
 	</String>
 	<String Id="607" Name="IDS_HID_GET_IDLE">
-		<Text>Get Idle</Text>
+		<Text>获取空闲</Text>
 	</String>
 	<String Id="608" Name="IDS_HID_SET_PROTOCOL">
-		<Text>Set Protocol</Text>
+		<Text>设置协议</Text>
 	</String>
 	<String Id="609" Name="IDS_HID_GET_PROTOCOL">
-		<Text>Get Protocol</Text>
+		<Text>获取协议</Text>
 	</String>
 	<String Id="610" Name="IDS_HID_UNPLUG_VC">
-		<Text>Unplug Virtual Cable</Text>
+		<Text>拔掉虚拟电缆</Text>
 	</String>
 	<String Id="611" Name="IDS_HID_ENABLE_BOOT_MODE">
-		<Text>Enable Boot Mode</Text>
+		<Text>启用引导模式</Text>
 	</String>
 	<String Id="612" Name="IDS_HID_IDLE_RATE">
-		<Text>Idle Rate</Text>
+		<Text>闲置率</Text>
 	</String>
 	<String Id="613" Name="IDS_HID_DEVICES">
-		<Text>HID Devices</Text>
+		<Text>HID 设备</Text>
 	</String>
 	<String Id="1000" Name="IDS_BIP_TESTS">
-		<Text>BIP Tests</Text>
+		<Text>BIP 测试</Text>
 	</String>
 	<String Id="1001" Name="IDS_BIP">
 		<Text>BIP</Text>
 	</String>
 	<String Id="1002" Name="IDS_BIP_SERVER">
-		<Text>BIP Server</Text>
+		<Text>BIP 服务器</Text>
 	</String>
 	<String Id="1003" Name="IDS_BIP_CLIENT">
-		<Text>BIP Client</Text>
+		<Text>BIP 客户端</Text>
 	</String>
 	<String Id="1004" Name="IDS_BIP_CONNECT_IMAGE_PRINTING">
-		<Text>Advanced Image Printing</Text>
+		<Text>先进的图像打印</Text>
 	</String>
 	<String Id="1005" Name="IDS_BIP_CONNECT_IMAGE_PUSH">
-		<Text>Image Push Responder</Text>
+		<Text>图像推送响应</Text>
 	</String>
 	<String Id="1006" Name="IDS_BIP_CONNECT_IMAGE_PULL">
-		<Text>Image Pull Responder</Text>
+		<Text>图片获取响应</Text>
 	</String>
 	<String Id="1007" Name="IDS_BIP_CONNECT_REMOTE_CAMERA">
-		<Text>Remote Camera</Text>
+		<Text>远程摄像机</Text>
 	</String>
 	<String Id="1008" Name="IDS_BIP_CONNECT_AUTOMATIC_ARCHIVE">
-		<Text>Automatic Archive</Text>
+		<Text>自动存档</Text>
 	</String>
 	<String Id="1009" Name="IDS_BIP_CONNECT_REMOTE_DISPLAY">
-		<Text>Remote Display</Text>
+		<Text>远程显示</Text>
 	</String>
 	<String Id="1010" Name="IDS_BIP_GET_CAPABILITIES">
-		<Text>Get Capabilities</Text>
+		<Text>获取能力</Text>
 	</String>
 	<String Id="1011" Name="IDS_BIP_PUT_IMAGE">
-		<Text>Put Image</Text>
+		<Text>取得图片</Text>
 	</String>
 	<String Id="1012" Name="IDS_BIP_PUT_ATTACHMENT">
-		<Text>Put Linked Attachment</Text>
+		<Text>链接的附件</Text>
 	</String>
 	<String Id="1013" Name="IDS_BIP_PUT_THUMBNAIL">
-		<Text>Put Linked Thumbnail</Text>
+		<Text>链接的缩略图</Text>
 	</String>
 	<String Id="1014" Name="IDS_A2DP_CONTROL">
-		<Text>A2DP Control</Text>
+		<Text>A2DP控制</Text>
 	</String>
 	<String Id="1015" Name="IDS_A2DP_SUSPEND_ON_END">
-		<Text>Suspend On End</Text>
+		<Text>暂停关闭</Text>
 	</String>
 	<String Id="1016" Name="IDS_A2DP_CLOSE_ON_END">
-		<Text>Close On End</Text>
+		<Text>关闭</Text>
 	</String>
 	<String Id="1017" Name="IDS_A2DP_START_DELAY">
-		<Text>Start Delay</Text>
+		<Text>启动延时</Text>
 	</String>
 	<String Id="1018" Name="IDS_A2DP_HONOR_IN_USE">
 		<Text>Honor In Use</Text>
@@ -989,58 +989,58 @@
 		<Text>Ignore In Use</Text>
 	</String>
 	<String Id="1020" Name="IDS_BIP_GET_IMAGE_LIST">
-		<Text>Get Image List</Text>
+		<Text>获取图像列表</Text>
 	</String>
 	<String Id="1021" Name="IDS_BIP_GET_IMAGE_PROPERTIES">
-		<Text>Get Image Properties</Text>
+		<Text>获取图像属性</Text>
 	</String>
 	<String Id="1022" Name="IDS_BIP_GET_IMAGE">
-		<Text>Get Image</Text>
+		<Text>取得图片</Text>
 	</String>
 	<String Id="1023" Name="IDS_BIP_DELETE_IMAGE">
-		<Text>Delete Image</Text>
+		<Text>删除图片</Text>
 	</String>
 	<String Id="1024" Name="IDS_BIP_GET_ATTACHMENT">
-		<Text>Get Linked Attachment</Text>
+		<Text>获取链接的附件</Text>
 	</String>
 	<String Id="1025" Name="IDS_BIP_GET_THUMBNAIL">
-		<Text>Get Linked Thumbnail</Text>
+		<Text>获取链接的缩略图</Text>
 	</String>
 	<String Id="1026" Name="IDS_BIP_GET_PARTIAL_IMAGE">
-		<Text>Get Partial Image</Text>
+		<Text>获取部分图片</Text>
 	</String>
 	<String Id="1027" Name="IDS_BIP_GET_STATUS">
-		<Text>Get Status</Text>
+		<Text>获取状态</Text>
 	</String>
 	<String Id="1028" Name="IDS_A2DP_RECONFIG_BY_RECONFIG">
-		<Text>Reconfig by Reconfig</Text>
+		<Text>重新配置</Text>
 	</String>
 	<String Id="1029" Name="IDS_A2DP_RECONFIG_BY_CLOSE">
-		<Text>Reconfig by Close</Text>
+		<Text>关闭配置</Text>
 	</String>
 	<String Id="1030" Name="IDS_BIP_START_PRINT">
-		<Text>Start Print</Text>
+		<Text>开始打印</Text>
 	</String>
 	<String Id="1031" Name="IDS_BIP_START_ARCHIVE">
-		<Text>Start Archive</Text>
+		<Text>开启档案</Text>
 	</String>
 	<String Id="1032" Name="IDS_BIP_REMOTE_DISPLAY">
-		<Text>Remote Display Select</Text>
+		<Text>远程显示选择</Text>
 	</String>
 	<String Id="1033" Name="IDS_BIP_GET_MONITORING_IMAGE">
-		<Text>Get Monitoring Image</Text>
+		<Text>获取监控图像</Text>
 	</String>
 	<String Id="1034" Name="IDS_BIP_REMOTE_DISPLAY_CURRENT">
-		<Text>Remote Display Current</Text>
+		<Text>远程显示电流</Text>
 	</String>
 	<String Id="1035" Name="IDS_BIP_REMOTE_DISPLAY_PREV">
-		<Text>Remote Display Previous</Text>
+		<Text>远程显示上一页</Text>
 	</String>
 	<String Id="1036" Name="IDS_BIP_REMOTE_DISPLAY_NEXT">
-		<Text>Remote Display Next</Text>
+		<Text>远程显示下一页</Text>
 	</String>
 	<String Id="1037" Name="IDS_A2DP_RECONFIG_BY_REPAGE">
-		<Text>Reconfig by Repage</Text>
+		<Text>重新配置</Text>
 	</String>
 	<String Id="1038" Name="IDS_A2DP_INCREMENT_BITRATE">
 		<Text>Increment Bitrate</Text>
@@ -1055,19 +1055,19 @@
 		<Text>Auto Bitrate</Text>
 	</String>
 	<String Id="1042" Name="IDS_A2DP_MSG_CTRL_CMD_FAILED">
-		<Text>A2DP control command failed</Text>
+		<Text>A2DP控制命令失败</Text>
 	</String>
 	<String Id="1043" Name="IDS_A2DP_CONTROL_DATA">
-		<Text>Enter A2DP Control Data</Text>
+		<Text>输入A2DP的控制数据</Text>
 	</String>
 	<String Id="1044" Name="IDS_A2DP_MSG_CTRL_CMD_SUCCESS">
-		<Text>A2DP control command send successfully</Text>
+		<Text>A2DP控制命令发送成功</Text>
 	</String>
 	<String Id="1045" Name="IDS_SDP_QUERY">
-		<Text>Perform SDP Query</Text>
+		<Text>执行SDP查询</Text>
 	</String>
 	<String Id="1046" Name="IDS_SERVER_PSM">
-		<Text>Server PSM</Text>
+		<Text>服务器PSM</Text>
 	</String>
 	<String Id="1047" Name="IDS_L2">
 		<Text>L2 Experimental Tests</Text>
@@ -1079,37 +1079,37 @@
 		<Text>Test Printing</Text>
 	</String>
 	<String Id="1050" Name="IDS_BIP_MSG_PUSH_SUCCESS">
-		<Text>Successfully pushed %s </Text>
+		<Text>成功发送 %s </Text>
 	</String>
 	<String Id="1051" Name="IDS_BIP_MSG_PUSH_FAILED">
-		<Text>Failed to push %s</Text>
+		<Text>失败发送 %s</Text>
 	</String>
 	<String Id="1052" Name="IDS_BIP_MSG_PULL_SUCCESS">
-		<Text>Successfully pulled %s</Text>
+		<Text>成功取得 %s</Text>
 	</String>
 	<String Id="1053" Name="IDS_BIP_MSG_PULL_FAILED">
-		<Text>Failed to pull %s</Text>
+		<Text>失败取得 %s</Text>
 	</String>
 	<String Id="1054" Name="IDS_CLIENT_PSM">
-		<Text>Client PSM</Text>
+		<Text>客户端的PSM</Text>
 	</String>
 	<String Id="1055" Name="IDS_BIP_MSG_DELETE_SUCCESS">
-		<Text>Successfully deleted %s</Text>
+		<Text>已经成功删除 %s</Text>
 	</String>
 	<String Id="1056" Name="IDS_BIP_MSG_DELETE_FAILED">
-		<Text>Failed to delete %s</Text>
+		<Text>失败删除 %s</Text>
 	</String>
 	<String Id="1057" Name="IDS_BIP_MSG_REMOTE_DISPLAY_SUCCESS">
-		<Text>Remote display successful</Text>
+		<Text>远程显示成功</Text>
 	</String>
 	<String Id="1058" Name="IDS_BIP_MSG_REMOTE_DISPLAY_FAILED">
-		<Text>Remote display failed</Text>
+		<Text>远程显示失败</Text>
 	</String>
 	<String Id="1059" Name="IDS_BIP_MSG_START_ARCHIVE_SUCCESS">
-		<Text>Start archive successful</Text>
+		<Text>存档成功</Text>
 	</String>
 	<String Id="1060" Name="IDS_BIP_MSG_START_ARCHIVE_FAILED">
-		<Text>Start archive failed</Text>
+		<Text>存档失败</Text>
 	</String>
 	<String Id="1061" Name="IDS_BIP_MSG_START_PRINT_SUCCESS">
 		<Text>Start print successful</Text>
@@ -1118,46 +1118,46 @@
 		<Text>Start print failed</Text>
 	</String>
 	<String Id="1063" Name="IDS_BIP_MSG_GET_STATUS_SUCCESS">
-		<Text>Get status successful</Text>
+		<Text>取得状态成功</Text>
 	</String>
 	<String Id="1064" Name="IDS_BIP_MSG_GET_STATUS_FAILED">
-		<Text>Get status failed</Text>
+		<Text>取得状态失败</Text>
 	</String>
 	<String Id="1065" Name="IDS_LABEL_KBITS_PER_SEC">
 		<Text>kBits/Sec: %d</Text>
 	</String>
 	<String Id="1066" Name="IDS_ENABLE_SERVER">
-		<Text>Enable Server</Text>
+		<Text>启用服务器</Text>
 	</String>
 	<String Id="1067" Name="IDS_DISABLE_SERVER">
-		<Text>Disable Server</Text>
+		<Text>禁用服务器</Text>
 	</String>
 	<String Id="1068" Name="IDS_CONNECT_CLIENT">
-		<Text>Connect Client</Text>
+		<Text>连接客户端</Text>
 	</String>
 	<String Id="1069" Name="IDS_DISCONNECT_CLIENT">
-		<Text>Disconnect Client</Text>
+		<Text>断开客户端</Text>
 	</String>
 	<String Id="1070" Name="IDS_BIP_REGISTER_IMAGING_RESPONDER">
-		<Text>Imaging Responder</Text>
+		<Text>成像响应</Text>
 	</String>
 	<String Id="1071" Name="IDS_BIP_REGISTER_REFERENCED_OBJECTS_SERVER">
-		<Text>Referenced Object Server</Text>
+		<Text>引用服务器</Text>
 	</String>
 	<String Id="1072" Name="IDS_BIP_REGISTER_ARCHIVED_OBJECTS_SERVER">
 		<Text>Archived Object Server</Text>
 	</String>
 	<String Id="1073" Name="IDS_AG_CONNECTION_IN_PRGS">
-		<Text>AG Connection In Progress</Text>
+		<Text>连接正在进行</Text>
 	</String>
 	<String Id="1074" Name="IDS_BT_SHORT_NAME">
-		<Text>BT Short Name</Text>
+		<Text>蓝牙简短名</Text>
 	</String>
 	<String Id="1075" Name="IDS_IOC_YESNO">
-		<Text>IOC DisplayYes/No</Text>
+		<Text>IOC 显示 是/否</Text>
 	</String>
 	<String Id="1076" Name="IDS_IOC_DISPLAY_ONLY">
-		<Text>IOC DisplayOnly</Text>
+		<Text>仅显示IOC</Text>
 	</String>
 	<String Id="1077" Name="IDS_IOC_KEYBOARD_ONLY">
 		<Text>IOC KeyboardOnly</Text>
@@ -1166,7 +1166,7 @@
 		<Text>IOC NoIO</Text>
 	</String>
 	<String Id="1079" Name="IDS_SECURITY_LOW">
-		<Text>Low Security</Text>
+		<Text>低安全性</Text>
 	</String>
 	<String Id="1080" Name="IDS_BIP_CONNECT_REFERENCED_OBJECTS">
 		<Text>Referenced Objects Server</Text>
@@ -1175,10 +1175,10 @@
 		<Text>Archived Objects Server</Text>
 	</String>
 	<String Id="1082" Name="IDS_SECURITY_MED">
-		<Text>Medium Security</Text>
+		<Text>中等安全性</Text>
 	</String>
 	<String Id="1083" Name="IDS_SECURITY_HIGH">
-		<Text>High Security</Text>
+		<Text>高安全性</Text>
 	</String>
 	<String Id="1084" Name="IDS_MITM">
 		<Text>MITM</Text>
@@ -1187,52 +1187,52 @@
 		<Text>Debug Key</Text>
 	</String>
 	<String Id="1086" Name="IDS_BOND_OPTIONS">
-		<Text>Bond Options</Text>
+		<Text>绑定选项</Text>
 	</String>
 	<String Id="1087" Name="IDS_EDIT_SHORT_NAME">
-		<Text>Edit Short Name</Text>
+		<Text>编辑简短名字</Text>
 	</String>
 	<String Id="1088" Name="IDS_EDIT_MANU_DATA">
-		<Text>Edit Manu Data</Text>
+		<Text>编辑数据</Text>
 	</String>
 	<String Id="1089" Name="IDS_IOCAPABILITY">
-		<Text>IO Capability</Text>
+		<Text>IO 能力</Text>
 	</String>
 	<String Id="1090" Name="IDS_BIP_GET_IMAGE_TOTAL">
-		<Text>Get Image Total</Text>
+		<Text>取得图片总数</Text>
 	</String>
 	<String Id="1091" Name="IDS_BIP_GET_RECENT_IMAGE_LIST">
-		<Text>Get Recent Image List</Text>
+		<Text>获取最近的图像列表</Text>
 	</String>
 	<String Id="1092" Name="IDS_BIP_GET_MONITORING_IMAGE_SAVE">
-		<Text>Get Monitoring Image w Save</Text>
+		<Text>监控图像保存</Text>
 	</String>
 	<String Id="1093" Name="IDS_SERV_SECURITY">
-		<Text>Service Security</Text>
+		<Text>服务安全性</Text>
 	</String>
 	<String Id="1094" Name="IDS_PROMPT_REBOND">
-		<Text>Rebond with device %s?</Text>
+		<Text>重绑定设备 %s?</Text>
 	</String>
 	<String Id="1095" Name="IDS_PROMPT_PROCEED_BONDING">
 		<Text>Proceed bonding with device %s passkey %s?</Text>
 	</String>
 	<String Id="1096" Name="IDS_AUTO_GENERATED_PASSKEY">
-		<Text>AutoGenerated PassKey</Text>
+		<Text>自动生成的密钥</Text>
 	</String>
 	<String Id="1097" Name="IDS_LABEL_BT_SHORT_NAME">
-		<Text>BT Short Name: %s</Text>
+		<Text>蓝牙简短名字: %s</Text>
 	</String>
 	<String Id="1098" Name="IDS_LABEL_LINK_KEY">
 		<Text>BT LKStatus : %s</Text>
 	</String>
 	<String Id="1099" Name="IDS_LABEL_BT_MANU_DATA">
-		<Text>BT Manufacturer Data: %s</Text>
+		<Text>蓝牙制造商数据: %s</Text>
 	</String>
 	<String Id="1100" Name="IDS_BT_LABEL_UUID">
-		<Text>BT UUID: %s</Text>
+		<Text>蓝牙 UUID: %s</Text>
 	</String>
 	<String Id="1101" Name="IDS_MSG_USER_CFM_FAILED">
-		<Text>User Confirmation has Failed</Text>
+		<Text>用户确认已经“失败”</Text>
 	</String>
 	<String Id="1102" Name="IDS_BT_LABEL_UUID16">
 		<Text>UUID16: </Text>
@@ -1244,10 +1244,10 @@
 		<Text>UUID128: </Text>
 	</String>
 	<String Id="1105" Name="IDS_LABEL_LOCAL_PSSKEY">
-		<Text>Local PassKey: %s</Text>
+		<Text>本地密钥: %s</Text>
 	</String>
 	<String Id="1106" Name="IDS_LABEL_REMOTE_PSSKEY">
-		<Text>Remote PassKey: %s</Text>
+		<Text>远程密钥: %s</Text>
 	</String>
 	<String Id="1107" Name="IDS_MAX_INTERVAL">
 		<Text>Sniff Max Interval</Text>
@@ -1259,10 +1259,10 @@
 		<Text>Proceed bonding with device %s?</Text>
 	</String>
 	<String Id="1110" Name="IDS_DISPLAY_PSSKEY">
-		<Text>Pairing with device %s</Text>
+		<Text>与设备配对 %s</Text>
 	</String>
 	<String Id="1111" Name="IDS_BT_MANU_DATA">
-		<Text>BT Manufacturer Data</Text>
+		<Text>蓝牙制造商数据</Text>
 	</String>
 	<String Id="1112" Name="IDS_MAX_LATENCY">
 		<Text>Sniff Max Latency</Text>
@@ -1319,7 +1319,7 @@
 		<Text>Idle TO</Text>
 	</String>
 	<String Id="1130" Name="IDS_CHNG_MAX_LATENCY">
-		<Text>Latency</Text>
+		<Text>延迟</Text>
 	</String>
 	<String Id="1131" Name="IDS_CHNG_SNIF_PARAM_SETTINGS">
 		<Text>Sniff Param</Text>
@@ -1328,88 +1328,88 @@
 		<Text>Sniff Profiles Menu</Text>
 	</String>
 	<String Id="1133" Name="IDS_PROFILE1">
-		<Text>Profile-1</Text>
+		<Text>简介-1</Text>
 	</String>
 	<String Id="1134" Name="IDS_PROFILE2">
-		<Text>Profile-2</Text>
+		<Text>简介-2</Text>
 	</String>
 	<String Id="1135" Name="IDS_PROFILE3">
-		<Text>Profile-3</Text>
+		<Text>简介-3</Text>
 	</String>
 	<String Id="1136" Name="IDS_ENABLE_HID">
-		<Text>HID Host</Text>
+		<Text>HID主机</Text>
 	</String>
 	<String Id="1137" Name="IDS_AUTHORIZE">
-		<Text>Authorize</Text>
+		<Text>授权</Text>
 	</String>
 	<String Id="1138" Name="IDS_AUTHORIZE_FIRST">
 		<Text>AuthFirst</Text>
 	</String>
 	<String Id="1139" Name="IDS_ENABLE_ALL">
-		<Text>EnableAll</Text>
+		<Text>全部启用</Text>
 	</String>
 	<String Id="1140" Name="IDS_GO">
-		<Text>Go</Text>
+		<Text>转到</Text>
 	</String>
 	<String Id="1141" Name="IDS_CAN">
-		<Text>Cancel</Text>
+		<Text>取消</Text>
 	</String>
 	<String Id="1142" Name="IDS_HID_HOST_CAPS_LOCK">
 		<Text>CAPS LOCK</Text>
 	</String>
 	<String Id="1143" Name="IDS_HID_SET_LED_OFF">
-		<Text>Set LED OFF</Text>
+		<Text>设置关闭屏</Text>
 	</String>
 	<String Id="1144" Name="IDS_MSG_HID_SEND_REPORT_FAIL">
-		<Text>SEND_REPORT Failed</Text>
+		<Text>发送报告失败</Text>
 	</String>
 	<String Id="1145" Name="IDS_MSG_HID_SEND_REPORT_SUCCESS">
-		<Text>SEND_REPORT Successful</Text>
+		<Text>发送报告成功</Text>
 	</String>
 	<String Id="1146" Name="IDS_HID_HOST_NUM_LOCK">
 		<Text>NUM LOCK</Text>
 	</String>
 	<String Id="1147" Name="IDS_HID_SET_LED_ON">
-		<Text>Set LED ON</Text>
+		<Text>设置开启屏</Text>
 	</String>
 	<String Id="1148" Name="IDS_HID_SET_REPORT_INTERRUPT_SMALL">
-		<Text>Small (Interrupt)</Text>
+		<Text>小（中断）</Text>
 	</String>
 	<String Id="1149" Name="IDS_HID_HOST_SCROLL_LOCK">
 		<Text>SCROLL LOCK</Text>
 	</String>
 	<String Id="1150" Name="IDS_HID_SET_REPORT_INTERRUPT_LARGE">
-		<Text>Large (Interrupt)</Text>
+		<Text>大（中断）</Text>
 	</String>
 	<String Id="1151" Name="IDS_HID_CONTROL_SMALL">
-		<Text>Small (Control)</Text>
+		<Text>小（控制）</Text>
 	</String>
 	<String Id="1152" Name="IDS_HID_SET_REPORT_CONTROL_LARGE">
-		<Text>Large (Control)</Text>
+		<Text>大（控制）</Text>
 	</String>
 	<String Id="1153" Name="IDS_HID_SET_REPORT_CONTROL_SMALL">
 		<Text>Small (Control)</Text>
 	</String>
 	<String Id="1154" Name="IDS_HID_GET_REPORT_SMALL">
-		<Text>Small</Text>
+		<Text>小</Text>
 	</String>
 	<String Id="1155" Name="IDS_HID_GET_REPORT_LARGE">
-		<Text>Large</Text>
+		<Text>大</Text>
 	</String>
 	<String Id="1156" Name="IDS_MSG_HID_GET_REPORT_SUCCESS">
-		<Text>GET_REPORT Successful</Text>
+		<Text>取得报告成功</Text>
 	</String>
 	<String Id="1157" Name="IDS_MSG_HID_GET_REPORT_FAIL">
-		<Text>GET_REPORT Failed</Text>
+		<Text>取得报告失败</Text>
 	</String>
 	<String Id="1158" Name="IDS_SECURITY_SPECIAL">
 		<Text>Special (MITM_NO_BONDING)</Text>
 	</String>
 	<String Id="1159" Name="IDS_AUDIO_GATEWAY_SEC_SPECIAL">
-		<Text>Audio Gateway: Cur Sec=&gt;Special</Text>
+		<Text>音频网关: Cur Sec=&gt;Special</Text>
 	</String>
 	<String Id="1160" Name="IDS_NETWORK_ACCESS_SEC_SPECIAL">
-		<Text>Network Access: Cur Sec=&gt;Special</Text>
+		<Text>网络访问: Cur Sec=&gt;Special</Text>
 	</String>
 	<String Id="1161" Name="IDS_ENABLE_OPP_SEC_SPECIAL">
 		<Text>OPP: Cur Sec=&gt;Special</Text>
@@ -1445,40 +1445,40 @@
 		<Text>SPP: Cur Sec=&gt;Special</Text>
 	</String>
 	<String Id="1172" Name="IDS_REBOND_OPT_MITM">
-		<Text>Rebond Options: MITM</Text>
+		<Text>重绑定选项: MITM</Text>
 	</String>
 	<String Id="1173" Name="IDS_REBOND_OPT_BOND">
-		<Text>Rebond Options: BOND</Text>
+		<Text>重绑定选项: BOND</Text>
 	</String>
 	<String Id="1174" Name="IDS_BT_BLANK">
 		<Text> </Text>
 	</String>
 	<String Id="2001" Name="IDS_MSG_NO_CONNECTED_DEV">
-		<Text>No connected devices found in database.</Text>
+		<Text>在数据库中发现没有连接的设备.</Text>
 	</String>
 	<String Id="2003" Name="IDS_MSG_PIN_REPLY_FAILED">
-		<Text>Passkey was not accepted.</Text>
+		<Text>口令不被接受.</Text>
 	</String>
 	<String Id="2004" Name="IDS_MSG_BONDED">
-		<Text>Successfully bonded to %s.</Text>
+		<Text>成功绑定到 %s.</Text>
 	</String>
 	<String Id="2005" Name="IDS_MSG_BOND_FAILED">
-		<Text>Failed to bond with %s.</Text>
+		<Text>失败绑定 %s.</Text>
 	</String>
 	<String Id="2006" Name="IDS_MSG_BT_ENABLED">
-		<Text>BT is now enabled.</Text>
+		<Text>蓝牙现在可用.</Text>
 	</String>
 	<String Id="2007" Name="IDS_MSG_BT_DISABLED">
-		<Text>BT is now disabled.</Text>
+		<Text>蓝牙现在不可用.</Text>
 	</String>
 	<String Id="2008" Name="IDS_MSG_DEV_INFO_UNAVAIL">
-		<Text>Device information for %s is unavailable.</Text>
+		<Text>设备信息%s不可用.</Text>
 	</String>
 	<String Id="2009" Name="IDS_MSG_BONDABLE_NOT_SET">
-		<Text>Failed to set bondable.</Text>
+		<Text>无法绑定设备.</Text>
 	</String>
 	<String Id="2010" Name="IDS_MSG_BONDABLE_NOT_CLEARED">
-		<Text>Failed to clear bondable.</Text>
+		<Text>无法清楚绑定</Text>
 	</String>
 	<String Id="2011" Name="IDS_MSG_BONDABLE_SET">
 		<Text>Unit is now bondable.</Text>
@@ -1487,70 +1487,70 @@
 		<Text>Unit is no longer bondable.</Text>
 	</String>
 	<String Id="2013" Name="IDS_MSG_NO_DEV">
-		<Text>Device database is empty.</Text>
+		<Text>设备数据库是空的。</Text>
 	</String>
 	<String Id="2014" Name="IDS_MSG_NO_BONDED_DEV">
-		<Text>No bonded devices found in database.</Text>
+		<Text>在数据库中发现没有绑定设备.</Text>
 	</String>
 	<String Id="2015" Name="IDS_MSG_AG_CONN">
-		<Text>Connected to audio device "%s".</Text>
+		<Text>已经连接到音频设备"%s".</Text>
 	</String>
 	<String Id="2016" Name="IDS_MSG_AG_CONNF">
-		<Text>Failed to connect to audio device "%s".</Text>
+		<Text>连接到音频设备失败 "%s".</Text>
 	</String>
 	<String Id="2017" Name="IDS_MSG_AG_DISCONN">
-		<Text>Disconnected from audio device "%s".</Text>
+		<Text>断开音频设备"%s".</Text>
 	</String>
 	<String Id="2018" Name="IDS_MSG_NA_CONN">
-		<Text>Connected to network device "%s".</Text>
+		<Text>连接到网络设备"%s".</Text>
 	</String>
 	<String Id="2019" Name="IDS_MSG_NA_DISCONN">
-		<Text>Disconnected from network device "%s".</Text>
+		<Text>断开网络设备"%s".</Text>
 	</String>
 	<String Id="2020" Name="IDS_MSG_DEV_ADDED">
-		<Text>Device %s added to database.</Text>
+		<Text>设备%s加到数据库</Text>
 	</String>
 	<String Id="2021" Name="IDS_MSG_DEV_ADD_FAILED">
-		<Text>Failed to add %s to database.</Text>
+		<Text>加设备 %s 到数据库失败</Text>
 	</String>
 	<String Id="2022" Name="IDS_MSG_DEV_REM">
-		<Text>Device %s removed from database.</Text>
+		<Text>设备%s从数据库删除.</Text>
 	</String>
 	<String Id="2023" Name="IDS_MSG_DEV_REM_FAILED">
-		<Text>Failed to remove %s from database.</Text>
+		<Text>从数据库删除设备%s失败</Text>
 	</String>
 	<String Id="2024" Name="IDS_MSG_DEV_UNBONDED">
-		<Text>Device %s unbonded.</Text>
+		<Text>设备%s不能绑定.</Text>
 	</String>
 	<String Id="2025" Name="IDS_MSG_DEV_UNBOND_FAILED">
-		<Text>Failed to unbond %s.</Text>
+		<Text>取消设备绑定%s。</Text>
 	</String>
 	<String Id="2026" Name="IDS_MSG_SEARCHING">
-		<Text>Searching for Bluetooth devices...Press CLR key to quit.</Text>
+		<Text>搜索蓝牙设备...按CLR键退出。</Text>
 	</String>
 	<String Id="2027" Name="IDS_MSG_NO_DEV_DISC">
-		<Text>No Bluetooth devices discovered.</Text>
+		<Text>没有发现蓝牙设备.</Text>
 	</String>
 	<String Id="2028" Name="IDS_MSG_DEV_DISC_FAILED">
-		<Text>Device discovery failed.</Text>
+		<Text>设备发现失败。</Text>
 	</String>
 	<String Id="2029" Name="IDS_MSG_FEATURE_UNAVAIL">
-		<Text>Feature not available.</Text>
+		<Text>功能不可用。</Text>
 	</String>
 	<String Id="2030" Name="IDS_MSG_END_SPP_TEST">
-		<Text>Press CLR key to end SPP test.</Text>
+		<Text>按CLR键结束SPP测试。</Text>
 	</String>
 	<String Id="2031" Name="IDS_MSG_SPP_OPEN_FAILED">
-		<Text>Could not open SPP. Error: %d.</Text>
+		<Text>不能打开SPP. 错误: %d.</Text>
 	</String>
 	<String Id="2032" Name="IDS_MSG_DEV_SEC_FAILED">
-		<Text>Failed to change security for %s.</Text>
+		<Text>更改安全失败%s.</Text>
 	</String>
 	<String Id="2033" Name="IDS_MSG_SVC_BROWSE_FAILED">
-		<Text>Failed to browse services of %s.</Text>
+		<Text>浏览服务失败%s.</Text>
 	</String>
 	<String Id="2034" Name="IDS_MSG_SVC_SEARCH_FAILED">
-		<Text>Failed to search services of %s.</Text>
+		<Text>无法搜索服务%s.</Text>
 	</String>
 	<String Id="2035" Name="IDS_MSG_HCI_MODE">
 		<Text>HCI mode has been set to %s.</Text>
@@ -1562,25 +1562,25 @@
 		<Text>Must map BT HCI to a valid port first.</Text>
 	</String>
 	<String Id="2038" Name="IDS_MSG_SVR_REG_DONE">
-		<Text>Server registered.</Text>
+		<Text>服务器注册。</Text>
 	</String>
 	<String Id="2039" Name="IDS_MSG_SVR_REG_FAILED">
-		<Text>Failed to register server.</Text>
+		<Text>注册服务器失败。</Text>
 	</String>
 	<String Id="2040" Name="IDS_MSG_SVR_DEREG_DONE">
-		<Text>Server deregistered.</Text>
+		<Text>服务器注销。</Text>
 	</String>
 	<String Id="2041" Name="IDS_MSG_SVR_DEREG_FAILED">
-		<Text>Failed to deregister server.</Text>
+		<Text>无法注销服务器。</Text>
 	</String>
 	<String Id="2042" Name="IDS_MSG_CONN_FAILED">
-		<Text>Failed to connect to server.</Text>
+		<Text>无法连接到服务器。</Text>
 	</String>
 	<String Id="2043" Name="IDS_MSG_DISCONN_FAILED">
-		<Text>Failed to disconnect from server.</Text>
+		<Text>无法从服务器断开。</Text>
 	</String>
 	<String Id="2044" Name="IDS_MSG_OBJ_PUSHED">
-		<Text>%s pushed to server.</Text>
+		<Text>%s服务器。</Text>
 	</String>
 	<String Id="2045" Name="IDS_MSG_OBJ_PUSH_FAILED">
 		<Text>Failed to push %s to server.</Text>
@@ -1610,16 +1610,16 @@
 		<Text>Failed to get "%s" from server.</Text>
 	</String>
 	<String Id="2054" Name="IDS_MSG_FILE_DELETED">
-		<Text>Deleted "%s" from server.</Text>
+		<Text>删除"%s"从服务器。</Text>
 	</String>
 	<String Id="2055" Name="IDS_MSG_FILE_DELETE_FAILED">
-		<Text>Failed to delete "%s" from server.</Text>
+		<Text>删除失败"%s"从服务器.</Text>
 	</String>
 	<String Id="2056" Name="IDS_MSG_DISCOVERABLE_NOT_SET">
-		<Text>Failed to set discoverable.</Text>
+		<Text>无法设备发现。</Text>
 	</String>
 	<String Id="2057" Name="IDS_MSG_DISCOVERABLE_NOT_CLEARED">
-		<Text>Failed to clear discoverable.</Text>
+		<Text>无法明确发现。</Text>
 	</String>
 	<String Id="2058" Name="IDS_MSG_DISCOVERABLE_SET">
 		<Text>Unit is now discoverable.</Text>
@@ -1643,16 +1643,16 @@
 		<Text>%s unsuccessfully pushed by client.</Text>
 	</String>
 	<String Id="2065" Name="IDS_MSG_OBJ_NOT_FOUND">
-		<Text>%s not found.</Text>
+		<Text>%s 没被发现.</Text>
 	</String>
 	<String Id="2066" Name="IDS_MSG_FOLDER_BROWSING_DONE">
-		<Text>Successfully browsed folder on %s.</Text>
+		<Text>成功地浏览文件夹%s.</Text>
 	</String>
 	<String Id="2067" Name="IDS_MSG_FOLDER_BROWSING_FAILED">
-		<Text>Failed to browse "%s" folder.</Text>
+		<Text>无法浏览"%s"文件夹.</Text>
 	</String>
 	<String Id="2068" Name="IDS_MSG_NO_OBEX_SERVERS">
-		<Text>No OBEX Servers in DB.</Text>
+		<Text>没有数据库的OBEX服务器上，</Text>
 	</String>
 	<String Id="2069" Name="IDS_MSG_DEREG_SVR_FIRST">
 		<Text>Must de-register server first.</Text>
@@ -1700,25 +1700,25 @@
 		<Text>Failed to change Role Switch Control.</Text>
 	</String>
 	<String Id="2084" Name="IDS_MSG_ABORT_FAILED">
-		<Text>Failed to Abort.</Text>
+		<Text>无法中止。</Text>
 	</String>
 	<String Id="2085" Name="IDS_MSG_CLI_REG_DONE">
-		<Text>Client Registered</Text>
+		<Text>客户端注册</Text>
 	</String>
 	<String Id="2086" Name="IDS_MSG_CLI_REG_FAILED">
-		<Text>Client Failed to Register</Text>
+		<Text>客户端无法注册</Text>
 	</String>
 	<String Id="2087" Name="IDS_MSG_CLI_DEREG_DONE">
-		<Text>Client De-registered</Text>
+		<Text>客户端</Text>
 	</String>
 	<String Id="2088" Name="IDS_MSG_CLI_DEREG_FAILED">
 		<Text>Client Failed to De-register</Text>
 	</String>
 	<String Id="2089" Name="IDS_MSG_SET_CONN_ROLE_SUCCESS">
-		<Text>Connection Role has been set successfully.</Text>
+		<Text>已成功设置方面的作用。</Text>
 	</String>
 	<String Id="2090" Name="IDS_MSG_SET_CONN_ROLE_FAILED">
-		<Text>Connection Role has failed to set.</Text>
+		<Text>没有设置作用。</Text>
 	</String>
 	<String Id="2091" Name="IDS_MSG_SET_CONN_ROLE_NOT_ALLOWED">
 		<Text>Multiple connections exist.  Connection Role setting now allowed.</Text>
@@ -1730,13 +1730,13 @@
 		<Text>Browsing service records on %s ... Press CLR to quit.</Text>
 	</String>
 	<String Id="2094" Name="IDS_MSG_SECURITY_SAVED">
-		<Text>Security settings are saved</Text>
+		<Text>保存安全设置</Text>
 	</String>
 	<String Id="2095" Name="IDS_MSG_SECURITY_NOT_SAVED">
-		<Text>No security settings are saved</Text>
+		<Text>没有安全设置将被保存</Text>
 	</String>
 	<String Id="2096" Name="IDS_MSG_OOB_DATA_NOT_PRESENT">
-		<Text>OOB data not present</Text>
+		<Text>OOB数据不存在</Text>
 	</String>
 	<String Id="2097" Name="IDS_MSG_OOB_DATA_PRESENT">
 		<Text>OOB data present</Text>
@@ -1748,37 +1748,37 @@
 		<Text>BIP Operation in progress. Press CLR key to abort</Text>
 	</String>
 	<String Id="2100" Name="IDS_PROMPT_UNBOND_ALL">
-		<Text>Unbond all devices?</Text>
+		<Text>取消绑定所有设备？</Text>
 	</String>
 	<String Id="2101" Name="IDS_PROMPT_REMOVE_ALL">
-		<Text>Remove all devices from database?</Text>
+		<Text>从数据库中删除所有的设备？</Text>
 	</String>
 	<String Id="2102" Name="IDS_PROMPT_UNBOND_ONE">
-		<Text>Unbond %s?</Text>
+		<Text>取消绑定 %s?</Text>
 	</String>
 	<String Id="2103" Name="IDS_PROMPT_REMOVE_ONE">
-		<Text>Remove %s from database?</Text>
+		<Text>删除 %s从数据库?</Text>
 	</String>
 	<String Id="2104" Name="IDS_PROMPT_USE_AUDIO_DEV">
 		<Text>Use %s  as audio device?</Text>
 	</String>
 	<String Id="2105" Name="IDS_PROMPT_CONNECT">
-		<Text>Connect to %s?</Text>
+		<Text>连接到 %s?</Text>
 	</String>
 	<String Id="2106" Name="IDS_PROMPT_DISCONNECT">
-		<Text>Disconnect from %s?</Text>
+		<Text>从%s?断开连接</Text>
 	</String>
 	<String Id="2107" Name="IDS_PROMPT_ENTER_TEST_MODE">
 		<Text>Enter Test Mode?</Text>
 	</String>
 	<String Id="2108" Name="IDS_PROMPT_USE_SRVC_SECURITY">
-		<Text>Enable Service Security?</Text>
+		<Text>开启服务安全?</Text>
 	</String>
 	<String Id="2109" Name="IDS_PROMPT_AUTHORIZE">
 		<Text>Device %s requests connection to service 0x%x.  Authorize connection?</Text>
 	</String>
 	<String Id="2110" Name="IDS_PROMPT_ACCEPT_CONN_REQ">
-		<Text>Accept connection request from %s?</Text>
+		<Text>从%s接受连接请求?</Text>
 	</String>
 	<String Id="2111" Name="IDS_PROMPT_SET_CONN_ROLE_FUTURE">
 		<Text>Set local device to be %s in future connections?</Text>
@@ -1787,52 +1787,52 @@
 		<Text>Set local device to be %s in current connection with %s?</Text>
 	</String>
 	<String Id="2200" Name="IDS_LABEL_BT_NAME">
-		<Text>BT Name: %s</Text>
+		<Text>蓝牙名字: %s</Text>
 	</String>
 	<String Id="2201" Name="IDS_LABEL_BD_ADDR">
-		<Text>BD Address: %s</Text>
+		<Text>BD 地址: %s</Text>
 	</String>
 	<String Id="2202" Name="IDS_LABEL_SVC_CLS">
-		<Text>Service Class(es): %s</Text>
+		<Text>服务类(es): %s</Text>
 	</String>
 	<String Id="2203" Name="IDS_LABEL_LMP_FEAT">
-		<Text>LMP Features: %s</Text>
+		<Text>LMP 特点: %s</Text>
 	</String>
 	<String Id="2204" Name="IDS_LABEL_BONDABLE">
-		<Text>Bondable: %s</Text>
+		<Text>绑定: %s</Text>
 	</String>
 	<String Id="2205" Name="IDS_LABEL_DISCOVERABLE">
-		<Text>Discoverable: %s</Text>
+		<Text>发现的: %s</Text>
 	</String>
 	<String Id="2206" Name="IDS_LABEL_SECURITY">
-		<Text>Security: %s</Text>
+		<Text>安全: %s</Text>
 	</String>
 	<String Id="2207" Name="IDS_LABEL_OPTIONS">
-		<Text>Options for %s</Text>
+		<Text>选项 %s</Text>
 	</String>
 	<String Id="2209" Name="IDS_LABEL_PORT_STATUS">
-		<Text>Port status: %s</Text>
+		<Text>端口状态: %s</Text>
 	</String>
 	<String Id="2210" Name="IDS_LABEL_BYTES_SENT">
-		<Text>Bytes sent: %d</Text>
+		<Text>发送的字节数: %d</Text>
 	</String>
 	<String Id="2211" Name="IDS_LABEL_BYTES_RCVD">
-		<Text>Bytes received: %d</Text>
+		<Text>接收的字节数: %d</Text>
 	</String>
 	<String Id="2212" Name="IDS_LABEL_SSP_CAPABLE">
-		<Text>SSP Capable: %s</Text>
+		<Text>SSP 能力: %s</Text>
 	</String>
 	<String Id="3001" Name="IDS_BPP">
 		<Text>BPP</Text>
 	</String>
 	<String Id="3002" Name="IDS_BPP_TESTS">
-		<Text>BPP Sender</Text>
+		<Text>BPP 发送</Text>
 	</String>
 	<String Id="3010" Name="IDS_BPP_SEND_FILE">
-		<Text>Send File</Text>
+		<Text>发送文件</Text>
 	</String>
 	<String Id="3011" Name="IDS_BPP_SOAP_REQUEST">
-		<Text>Soap Request</Text>
+		<Text>Soap 请求</Text>
 	</String>
 	<String Id="3012" Name="IDS_BPP_TEST_PRINT">
 		<Text>Test Printing</Text>
@@ -1844,64 +1844,64 @@
 		<Text>Failed to print %s</Text>
 	</String>
 	<String Id="3022" Name="IDS_BPP_MSG_SOAP_REQ_SUCCESS">
-		<Text>Successfully sent SOAP request</Text>
+		<Text>成功发送的SOAP请求</Text>
 	</String>
 	<String Id="3023" Name="IDS_BPP_MSG_SOAP_REQ_FAILED">
-		<Text>SOAP request failed</Text>
+		<Text>SOAP请求失败</Text>
 	</String>
 	<String Id="3100" Name="IDS_A2DP">
 		<Text>A2DP</Text>
 	</String>
 	<String Id="3101" Name="IDS_A2DP_DISCONNECT_FAILED">
-		<Text>Disconnection Failed</Text>
+		<Text>断开失败</Text>
 	</String>
 	<String Id="3200" Name="IDS_AVRCP">
 		<Text>AVRCP</Text>
 	</String>
 	<String Id="3201" Name="IDS_AVRCP_OP_MENU">
-		<Text>AVRCP OP Menu</Text>
+		<Text>AVRCP OP 菜单</Text>
 	</String>
 	<String Id="3202" Name="IDS_AVRCP_SELECT">
-		<Text>Select</Text>
+		<Text>选择</Text>
 	</String>
 	<String Id="3203" Name="IDS_AVRCP_UP">
-		<Text>Up</Text>
+		<Text>上</Text>
 	</String>
 	<String Id="3204" Name="IDS_AVRCP_DOWN">
-		<Text>Down</Text>
+		<Text>下</Text>
 	</String>
 	<String Id="3205" Name="IDS_AVRCP_LEFT">
-		<Text>Left</Text>
+		<Text>左边</Text>
 	</String>
 	<String Id="3206" Name="IDS_AVRCP_RIGHT">
-		<Text>Right</Text>
+		<Text>右边</Text>
 	</String>
 	<String Id="3207" Name="IDS_AVRCP_RIGHT_UP">
-		<Text>Right Up</Text>
+		<Text>右上</Text>
 	</String>
 	<String Id="3208" Name="IDS_AVRCP_RIGHT_DOWN">
-		<Text>Right Down</Text>
+		<Text>右下</Text>
 	</String>
 	<String Id="3209" Name="IDS_AVRCP_LEFT_UP">
-		<Text>Left Up</Text>
+		<Text>左上</Text>
 	</String>
 	<String Id="3210" Name="IDS_AVRCP_LEFT_DOWN">
-		<Text>Left Down</Text>
+		<Text>左下</Text>
 	</String>
 	<String Id="3211" Name="IDS_AVRCP_ROOT_MENU">
-		<Text>Root Menu</Text>
+		<Text>根菜单</Text>
 	</String>
 	<String Id="3212" Name="IDS_AVRCP_SETUP_MENU">
-		<Text>Setup Menu</Text>
+		<Text>安装菜单</Text>
 	</String>
 	<String Id="3213" Name="IDS_AVRCP_CONTENTS_MENU">
-		<Text>Contents Menu</Text>
+		<Text>内容菜单</Text>
 	</String>
 	<String Id="3214" Name="IDS_AVRCP_FAVORITE_MENU">
-		<Text>Favorite Menu</Text>
+		<Text>收藏菜单</Text>
 	</String>
 	<String Id="3215" Name="IDS_AVRCP_EXIT">
-		<Text>Exit</Text>
+		<Text>结束</Text>
 	</String>
 	<String Id="3216" Name="IDS_AVRCP_0">
 		<Text>0</Text>
@@ -1934,70 +1934,70 @@
 		<Text>9</Text>
 	</String>
 	<String Id="3226" Name="IDS_AVRCP_DOT">
-		<Text>Dot</Text>
+		<Text>点</Text>
 	</String>
 	<String Id="3227" Name="IDS_AVRCP_ENTER">
-		<Text>Enter</Text>
+		<Text>输入</Text>
 	</String>
 	<String Id="3228" Name="IDS_AVRCP_CLEAR">
-		<Text>Clear</Text>
+		<Text>清除</Text>
 	</String>
 	<String Id="3229" Name="IDS_AVRCP_CHANNEL_UP">
-		<Text>Channel Up</Text>
+		<Text>增加频道</Text>
 	</String>
 	<String Id="3230" Name="IDS_AVRCP_CHANNEL_DOWN">
-		<Text>Channel Down</Text>
+		<Text>减少频道</Text>
 	</String>
 	<String Id="3231" Name="IDS_AVRCP_PREVIOUS_CHANNEL">
-		<Text>Previous Channel</Text>
+		<Text>上一个频道</Text>
 	</String>
 	<String Id="3232" Name="IDS_AVRCP_SOUND_SELECT">
-		<Text>Sound Select</Text>
+		<Text>声音选择</Text>
 	</String>
 	<String Id="3233" Name="IDS_AVRCP_INPUT_SELECT">
-		<Text>Input Select</Text>
+		<Text>输入选择</Text>
 	</String>
 	<String Id="3234" Name="IDS_AVRCP_DISPLAY_INFORMATION">
-		<Text>Display Information</Text>
+		<Text>显示信息</Text>
 	</String>
 	<String Id="3235" Name="IDS_AVRCP_HELP">
-		<Text>Help</Text>
+		<Text>帮助</Text>
 	</String>
 	<String Id="3236" Name="IDS_AVRCP_PAGE_UP">
-		<Text>Page Up</Text>
+		<Text>上一页</Text>
 	</String>
 	<String Id="3237" Name="IDS_AVRCP_PAGE_DOWN">
-		<Text>Page Down</Text>
+		<Text>下一页</Text>
 	</String>
 	<String Id="3238" Name="IDS_AVRCP_POWER">
-		<Text>Power</Text>
+		<Text>电源</Text>
 	</String>
 	<String Id="3239" Name="IDS_AVRCP_VOLUME_UP">
-		<Text>Volume Up</Text>
+		<Text>音量增加</Text>
 	</String>
 	<String Id="3240" Name="IDS_AVRCP_VOLUME_DOWN">
-		<Text>Volume Down</Text>
+		<Text>音量减小</Text>
 	</String>
 	<String Id="3241" Name="IDS_AVRCP_MUTE">
-		<Text>Mute</Text>
+		<Text>振动</Text>
 	</String>
 	<String Id="3242" Name="IDS_AVRCP_PLAY">
-		<Text>Play</Text>
+		<Text>播放</Text>
 	</String>
 	<String Id="3243" Name="IDS_AVRCP_STOP">
-		<Text>Stop</Text>
+		<Text>停止</Text>
 	</String>
 	<String Id="3244" Name="IDS_AVRCP_PAUSE">
-		<Text>Pause</Text>
+		<Text>暂停</Text>
 	</String>
 	<String Id="3245" Name="IDS_AVRCP_RECORD">
-		<Text>Record</Text>
+		<Text>记录</Text>
 	</String>
 	<String Id="3246" Name="IDS_AVRCP_REWIND">
-		<Text>Rewind</Text>
+		<Text>倒退</Text>
 	</String>
 	<String Id="3247" Name="IDS_AVRCP_FAST_FORWARD">
-		<Text>Fast Forward</Text>
+		<Text>快速前进</Text>
 	</String>
 	<String Id="3248" Name="IDS_AVRCP_EJECT">
 		<Text>Eject</Text>
@@ -2030,16 +2030,16 @@
 		<Text>F5</Text>
 	</String>
 	<String Id="3258" Name="IDS_AVRCP_GENERIC">
-		<Text>Generic</Text>
+		<Text>通用</Text>
 	</String>
 	<String Id="4000" Name="IDS_SAP_TESTS">
 		<Text>SAP</Text>
 	</String>
 	<String Id="4001" Name="IDS_SAP_SERVER">
-		<Text>SAP Server</Text>
+		<Text>SAP服务器</Text>
 	</String>
 	<String Id="4002" Name="IDS_SAP_CLIENT">
-		<Text>SAP Client</Text>
+		<Text>SAP客户端</Text>
 	</String>
 	<String Id="4003" Name="IDS_SAP_SIM_POWER_ON">
 		<Text>SIM Power On</Text>
@@ -2123,19 +2123,19 @@
 		<Text>OBEXAPP</Text>
 	</String>
 	<String Id="4041" Name="IDS_OBEX_SERVER">
-		<Text>OBEX Server</Text>
+		<Text>OBEX服务器</Text>
 	</String>
 	<String Id="4042" Name="IDS_OBEX_CLIENT">
-		<Text>OBEX Client</Text>
+		<Text>OBEX 客户端</Text>
 	</String>
 	<String Id="4043" Name="IDS_OBEX_FORCE_DISCONNECT">
-		<Text>Force Disconnect</Text>
+		<Text>强制断开</Text>
 	</String>
 	<String Id="4044" Name="IDS_OBEX_APP_TESTS">
-		<Text>OBEX Tests</Text>
+		<Text>OBEX 测试</Text>
 	</String>
 	<String Id="4045" Name="IDS_OBEX_SETPATH">
-		<Text>Set Path</Text>
+		<Text>设置路径</Text>
 	</String>
 	<String Id="4046" Name="IDS_OBEX_MSG_SERVICE_NOT_FOUND">
 		<Text>OBEX Service not found</Text>
@@ -2144,10 +2144,10 @@
 		<Text>Authenticate with UID</Text>
 	</String>
 	<String Id="4048" Name="IDS_OBEX_MSG_SETPATH_FAILED">
-		<Text>Setpath Failed</Text>
+		<Text>设置路径失败！</Text>
 	</String>
 	<String Id="4049" Name="IDS_OBEX_MSG_SETPATH_SUCCESS">
-		<Text>Setpath Success</Text>
+		<Text>设置路径成功</Text>
 	</String>
 	<String Id="4050" Name="IDS_MSG_HID_CONN_FAIL">
 		<Text>Connection to HID device failed</Text>
@@ -2183,22 +2183,22 @@
 		<Text>GET_PROTOCOL failed</Text>
 	</String>
 	<String Id="4061" Name="IDS_OPEN_BT">
-		<Text>The BlueTooth is closed. Open it now?</Text>
+		<Text>蓝牙是关闭，现在要打开吗？</Text>
 	</String>
 	<String Id="4062" Name="IDS_BT_CLOSED">
-		<Text>The BlueTooth is closed. Please Open it first</Text>
+		<Text>蓝牙是关闭，请打开蓝牙</Text>
 	</String>
 	<String Id="4063" Name="IDS_BT_YES">
-		<Text>Yes</Text>
+		<Text>确定</Text>
 	</String>
 	<String Id="4064" Name="IDS_BT_NO">
-		<Text>No</Text>
+		<Text>否</Text>
 	</String>
 	<String Id="4065" Name="IDS_BT_OPP_SETTING">
-		<Text>Opp Setting</Text>
+		<Text>Opp 设置</Text>
 	</String>
 	<String Id="4066" Name="IDS_INSERT_TCARD">
-		<Text>No Memory, Pls Insert the TCard!</Text>
+		<Text>没有内存卡，请插入T卡</Text>
 	</String>
 	<String Id="4067" Name="IDS_FILE_PROGRESS">
 		<Text>File Transmission Progress: </Text>
