@@ -5984,9 +5984,17 @@ static boolean TSIM_HanstrokePenUp(CTSIM *pme, uint32 dwparam)
 	int i;
      DBGPRINTF("TSIM_HanstrokePenUp-----");
 	IDISPLAY_SetColor(pme->m_pIDisplay,CLR_USER_TEXT,RGB_WHITE); 
-    if (pme->m_tsm_curr == TSIM_HANSTROKE)
+    for (i=(int)FUNCTITLE_ONE; i<(int)MAX_FN_TYPE; i++)
     {
-        IIMAGE_Draw(pme->m_phwimage,HAND_IMAGE_X,HAND_IMAGE_Y-63);
+       if (TSIM_IsInRange(dwparam, (&(pme->hs_funtitlerange[i]))))
+       {
+          IIMAGE_SetParm(pme->m_phwimage, IPARM_OFFSET,0,27); 
+          IIMAGE_SetParm(pme->m_phwimage, IPARM_SIZE, 240, 93);
+          IIMAGE_Draw(pme->m_phwimage,0,HAND_IMAGE_Y+TSIMLINEHEIGHT-60);
+       }
+    } 
+    if (pme->m_tsm_curr == TSIM_HANSTROKE)
+    {    
         if ((pme->selectchar_index >= 0) && (pme->selectchar_index <= 9)/*&&(pme->wSelStart<pme->m_nMaxChars)*/) //modi by ydc 090521
         {
             if(!TSIM_IsInRange(dwparam, (&(pme->candirange[pme->selectchar_index]))))
