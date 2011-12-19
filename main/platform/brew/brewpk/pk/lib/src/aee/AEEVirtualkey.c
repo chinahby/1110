@@ -190,6 +190,47 @@ static AEEVKeyItem_Own  VLCharKeyItem[MAX_PYKEYPAD_NUMBER] =
     {EVT_CHAR, 't', {'t'}},
     {EVT_CHAR, 'y', {'y'}},
     {EVT_CHAR, 'u', {'u'}},
+        
+    {EVT_CHAR, 'i', {'i'}},
+    {EVT_CHAR, 'o', {'o'}},
+    {EVT_CHAR, 'p', {'p'}},    
+    {EVT_CHAR, 'a', {'a'}},
+    {EVT_CHAR, 's', {'s'}},
+    {EVT_CHAR, 'd', {'d'}},
+    {EVT_CHAR, 'f', {'f'}},
+        
+    {EVT_CHAR, 'g', {'g'}},
+    {EVT_CHAR, 'h', {'h'}},
+    {EVT_CHAR, 'j', {'j'}},
+    {EVT_CHAR, 'k', {'k'}},
+    {EVT_CHAR, 'l', {'l'}},    
+    {EVT_CHAR, 'z', {'z'}},
+    {EVT_CHAR, 'x', {'x'}},
+        
+    {EVT_CHAR, 'c', {'c'}},
+    {EVT_CHAR, 'v', {'v'}},
+    {EVT_CHAR, 'b', {'b'}},
+    {EVT_CHAR, 'n', {'n'}},
+    {EVT_CHAR, 'm', {'m'}},    
+    {EVT_CHAR, ',', {','}},
+    {EVT_CHAR, 0x3002, {0x3002}},
+        
+    {EVT_CHAR, '?', {'?'}},
+    {EVT_CHAR, '!', {'!'}},
+    {EVT_CHAR, ' ', {' '}},
+    {EVT_CHAR, '\n', {'\n'}} 
+};
+
+/*
+static AEEVKeyItem_Own  VLCharKeyItem[MAX_PYKEYPAD_NUMBER] =
+{
+    {EVT_CHAR, 'q', {'q'}},
+    {EVT_CHAR, 'w', {'w'}},
+    {EVT_CHAR, 'e', {'e'}},
+    {EVT_CHAR, 'r', {'r'}},
+    {EVT_CHAR, 't', {'t'}},
+    {EVT_CHAR, 'y', {'y'}},
+    {EVT_CHAR, 'u', {'u'}},
     {EVT_CHAR, 'i', {'i'}},
     {EVT_CHAR, 'o', {'o'}},
     {EVT_CHAR, 'p', {'p'}},
@@ -218,8 +259,8 @@ static AEEVKeyItem_Own  VLCharKeyItem[MAX_PYKEYPAD_NUMBER] =
     {EVT_CHAR, ';', {';'}},
     {EVT_CHAR, '?', {'?'}},
     {EVT_CHAR, '!', {'!'}}
-};
-static AEEVKeyPad_Own VLCharKeyPad = {3,11};
+}; */
+static AEEVKeyPad_Own VLCharKeyPad = {5,7};
 
 //大写字母键盘
 
@@ -1342,6 +1383,7 @@ static void      IVkeyCtl_SetKeyPad(IVkeyCtl * po,AEERect * prc,uint32  m_dwProp
             VkeyCtl_SetBigCharPad(pme,prc);
             break;
         case AEE_VKEY_LITTLECHAR:
+            DBGPRINTF("AEE_VKEY_LITTLECHAR-----------1");
             VkeyCtl_SetLittleCharPad(pme,prc);
             break;
         case AEE_VKEY_SYMBOL:
@@ -1525,20 +1567,21 @@ Comments:
 static void      VkeyCtl_SetLittleCharPad(VkeyCtl * pme,AEERect * prc)
 {
     int   i, j, count = 0;
-    
+    DBGPRINTF("VkeyCtl_SetLittleCharPad------");
     if(pme == NULL)
     {
         return;
     }
-    
+    DBGPRINTF("VkeyCtl_SetLittleCharPad------2");
     /*=======================================================================
     检查最小空间
     =======================================================================*/
     pme->m_rc = *prc;
     
-    if ((pme->m_rc.dx < PY_KEYPAD_MINWIDTH)
-       || (pme->m_rc.dy < PY_KEYPAD_MINHEIGHT))
+    if ((pme->m_rc.dx < OTHER_KEYPAD_MINWIDTH)
+       || (pme->m_rc.dy < OTHER_KEYPAD_MINHEIGHT))
     {
+        DBGPRINTF("VkeyCtl_SetLittleCharPad------3");
         return ;  //没有达到最小空间的要求
     }
     
@@ -1550,27 +1593,44 @@ static void      VkeyCtl_SetLittleCharPad(VkeyCtl * pme,AEERect * prc)
     {
         (void)IIMAGE_Release(pme->m_KeyPadDown);
     }
-  //  pme->m_KeyPadNormal = ISHELL_LoadResImage(pme->m_pIShell,
-  //                                         AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_PINYINKEYPAD);
-  //  pme->m_KeyPadDown = ISHELL_LoadResImage(pme->m_pIShell,
-   //                                      AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_PINYINKEYPADDOWN);
-    
+    pme->m_KeyPadNormal = ISHELL_LoadResImage(pme->m_pIShell,
+                                           AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_PINYINUNPRESS);
+    pme->m_KeyPadDown = ISHELL_LoadResImage(pme->m_pIShell,
+                                         AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_PINYINPRESS);
+    DBGPRINTF("VkeyCtl_SetLittleCharPad------4");
 	if ((pme->m_KeyPadNormal == NULL)
        || (pme->m_KeyPadDown == NULL))
     {
         return;
     }
-    
+    DBGPRINTF("VkeyCtl_SetLittleCharPad------5");
     IIMAGE_Draw(pme->m_KeyPadNormal, pme->m_rc.x, pme->m_rc.y);
     
-    for(i = 0; i < VLCharKeyPad.row; i++)
+    for(i = 1; i <= VLCharKeyPad.row; i++)
     {
         for(j = 0; j < VLCharKeyPad.coloum; j++)
         {
-            pme->GridRect[count].x = (int16)(pme->m_rc.x + 6 + 22 * j);
-            pme->GridRect[count].y = (int16)(pme->m_rc.y + 1 + 28 * i);
-            pme->GridRect[count].dx = 22;
-            pme->GridRect[count].dy = 28;
+            if(count==31)
+            {
+            pme->GridRect[count].x = (int16)(pme->m_rc.x+ 5*(j+1)+ 29 * j-2)+10;
+            pme->GridRect[count].y = (int16)((i == 0)?(pme->m_rc.y + 1):(pme->m_rc.y +2+ 25 * i));
+            pme->GridRect[count].dx = 50;
+            pme->GridRect[count].dy = 25;
+            }
+            else if(count==30)
+            {
+            pme->GridRect[count].x = (int16)(pme->m_rc.x+ 5*(j+1)+ 29 * j-2);
+            pme->GridRect[count].y = (int16)((i == 0)?(pme->m_rc.y + 1):(pme->m_rc.y +2+ 25 * i));
+            pme->GridRect[count].dx = 50;
+            pme->GridRect[count].dy = 25;
+            }
+            else
+            {
+            pme->GridRect[count].x = (int16)(pme->m_rc.x+ 5*(j+1)+ 29 * j-2);
+            pme->GridRect[count].y = (int16)((i == 0)?(pme->m_rc.y + 1):(pme->m_rc.y +2+ 25 * i));
+            pme->GridRect[count].dx = 29;
+            pme->GridRect[count].dy = 25;
+            }
             count++;
             DBGPRINTF("VkeyCtl_SetLittleCharPad-----pme->GridRect[count].x=%d--pme->GridRect[count].y",pme->GridRect[count].x,pme->GridRect[count].y);
             DBGPRINTF("VkeyCtl_SetLittleCharPad-----pme->GridRect[count].dx=%d--pme->GridRect[count].dy",pme->GridRect[count].dx,pme->GridRect[count].dy);
@@ -2029,6 +2089,7 @@ static boolean VkeyCtl_MapParam(VkeyCtl * pme,int cx,int cy,AEEEvent *evt,uint16
            
         case AEE_VKEY_LITTLECHAR:
         {
+            DBGPRINTF("AEE_VKEY_LITTLECHAR-----------1");
             ret = VkeyCtl_MapLittleChar(pme,cx,cy,evt,wp);
             return ret;
         }
@@ -2221,10 +2282,9 @@ static boolean VkeyCtl_MapLittleChar(VkeyCtl * pme,int x,int y,AEEEvent *evt,uin
     int i,j,count;
     //boolean outloop = FALSE;      
     count = 0;
-    return FALSE;
     DBGPRINTF("VkeyCtl_MapLittleChar-----1");
     /* 3*10的键盘 */
-    for (i = 0; i < VLCharKeyPad.row; i++)
+    for (i = 1; i <= VLCharKeyPad.row; i++)
     {
         for (j = 0; j < VLCharKeyPad.coloum; j++,count++)
         {
@@ -2574,6 +2634,7 @@ static void      VkeyCtl_HitPad(VkeyCtl* pme, int x, int y,boolean sign)
             break;
         case AEE_VKEY_LITTLECHAR:
             //VkeyCtl_HitNumberPad(pme, x, y, sign);
+            DBGPRINTF("AEE_VKEY_LITTLECHAR-----------1");
             VkeyCtl_HitLittleCharPad(pme, x, y, sign);
             break;
         case AEE_VKEY_SYMBOL:
@@ -2828,11 +2889,14 @@ Return Value:
 ========================================================================*/
 static void      VkeyCtl_HitLittleCharPad(VkeyCtl* pme, int x, int y,boolean sign)
 {
+     DBGPRINTF("VkeyCtl_HitLittleCharPad-----------1");
     if (pme)
     {
         int   i;
-        for (i = 0; i < MAX_PYKEYPAD_NUMBER; i++)
+        for (i = 0; i < MAX_PYKEYPAD_NUMBER-2; i++)
         {
+            
+            DBGPRINTF("VkeyCtl_HitLittleCharPad-----------2");
             if (IsInRect(x, y, &pme->GridRect[i]))
             {
                 IImage *     pImage;
@@ -2850,15 +2914,22 @@ static void      VkeyCtl_HitLittleCharPad(VkeyCtl* pme, int x, int y,boolean sig
                 {
                     return;
                 }
-                
+                DBGPRINTF("VkeyCtl_HitLittleCharPad-----------3");
                 IIMAGE_SetParm(pImage,
                                IPARM_OFFSET,
                                pme->GridRect[i].x - pme->m_rc.x,
                                pme->GridRect[i].y - pme->m_rc.y);
                 IIMAGE_SetParm(pImage,
                                IPARM_SIZE,
-                               15,
-                               19);
+                               30,
+                               25);
+                if(i > 30)
+                {
+                 IIMAGE_SetParm(pImage,
+                               IPARM_SIZE,
+                               50,
+                               25);
+                }
                 IIMAGE_Draw(pImage,
                             pme->GridRect[i].x,
                             pme->GridRect[i].y);

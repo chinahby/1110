@@ -528,7 +528,30 @@
 	</Object>
 	<Object Id="7166" Name="IDB_MODE_IME_NOTHWRITEOKEN">
 		<File>..\images\240x320\common\ime\nothwriteokEN.bmp</File>
+	</Object> 
+	
+	<Object Id="7167" Name="IDB_MODE_IME_HANDWRITINGPRESS">
+		<File>..\images\240x320\common\ime\IMAGE_INPUT_EG_HANDWRITING_PRESS.bmp</File>
+	</Object>	
+	<Object Id="7168" Name="IDB_MODE_IME_HANDWRITINGUNPRESS">
+		<File>..\images\240x320\common\ime\IMAGE_INPUT_EG_HANDWRITING_UNPRESS.bmp</File>
 	</Object>
+	<Object Id="7169" Name="IDB_MODE_IME_PINYINPRESS">
+		<File>..\images\240x320\common\ime\IMAGE_INPUT_EG_PEN_PINYIN_PRESS.bmp</File>
+	</Object>
+	<Object Id="7170" Name="IDB_MODE_IME_PINYINUNPRESS">
+		<File>..\images\240x320\common\ime\IMAGE_INPUT_EG_PEN_PINYIN_UNPRESS.bmp</File>
+	</Object>
+	<Object Id="7171" Name="IDB_MODE_IME_KEYPADUNPRESS">
+		<File>..\images\240x320\common\ime\IMAGE_INPUT_KEYPAD_UNPRESS.bmp</File>
+	</Object>
+	<Object Id="7172" Name="IDB_MODE_IME_KEYPADPRESS">
+		<File>..\images\240x320\common\ime\IMAGE_INPUT_KEYPAD_PRESS.bmp</File>
+	</Object>
+	<Object Id="7173" Name="IDB_MODE_IME_PINYINUPPRESS">
+		<File>..\images\240x320\common\ime\IMAGE_INPUT_EG_PEN_PINYIN_UPPRESS.bmp</File>
+	</Object>
+	
 	<Object Id="7200" Name="IDB_CALCAPP_ADD_DOWN" MimeType="image/png">
 		<File>..\images\240x320\common\Calculator\IMAGE_CALC_ADD_DOWN.png</File>
 	</Object>

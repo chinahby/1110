@@ -91,12 +91,18 @@ typedef struct _OEMTSIMInputModeInfo
 //enum the function title types.
 typedef enum
 {
-    FUNCTITLE_BLANK = 0X00,
+    FUNCTITLE_ONE = 0X00,
+    FUNCTITLE_TWO,
+    FUNCTITLE_THREE,
+    FUNCTITLE_FOUR,
+    FUNCTITLE_FIVE,
+    FUNCTITLE_SIX,
+    FUNCTITLE_BLANK ,
     FUNCTITLE_DELETE,
     FUNCTITLE_BACKSPACE
 }Function_type;
 
-#define MAX_FN_TYPE   (3)
+#define MAX_FN_TYPE   (9)
 
 //enum the states of the pinyin inputmode.
 typedef enum
@@ -125,7 +131,7 @@ typedef struct
 // add by Decai.Yang start
 #define STROKE_END_X                    (-1)
 #define STROKE_END_Y                    (0)
-#define STROKE_WIDTH                    3       //笔划线宽,目前最大值为5
+//#define STROKE_WIDTH                    1       //笔划线宽,目前最大值为5
 //add end
 
 //add by Decai Yang
