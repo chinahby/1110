@@ -1056,10 +1056,13 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                 // 防止快速按键，导致hotkey Text存在于LCD上 
                 MSG_FATAL("AVK_INFO...................",0,0,0);
                 ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);
+#ifdef FEATURE_CAMERA_MULTI_SENSOR				
 				(void)ICONFIG_GetItem(pMe->m_pConfig,
                               CFGT_CAMERA_FLASH,
                               &pMe->n_nCameraFlash,
                               sizeof(pMe->n_nCameraFlash));
+#endif
+				
 				MSG_FATAL("AVK_INFO...................end",0,0,0);
                 if ( pMe->m_isRecordMode == FALSE)
                 {
@@ -1123,10 +1126,12 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                 		#ifdef FEATURE_LCD_TOUCH_ENABLE
                 		if(pMe->m_nCameraMulti == OEMNV_CAMERA_MULTI_TWO)
                 		{
+#ifdef FEATURE_CAMERA_MULTI_SENSOR                		
                 			if(pMe->n_nCameraFlash == OEMNV_CAMERA_FLASH_ON)
                 			{
                 				ICAMERA_ControlFlash(pMe->m_pCamera,TRUE);
                 			}
+#endif							
                 		}
 						#endif
 	                    pMe->m_nCameraState = CAM_CAPTURE;
@@ -2058,6 +2063,7 @@ static boolean CameraApp_PopMenu_MultiCommandHandleEvent(CCameraApp *pMe,
     return TRUE;
 }
 
+#ifdef FEATURE_CAMERA_MULTI_SENSOR
 static boolean CameraApp_PopMenu_FlashCommandHandleEvent(CCameraApp *pMe,  uint16 wParam)
 {
 	 switch(wParam)
@@ -2083,6 +2089,7 @@ static boolean CameraApp_PopMenu_FlashCommandHandleEvent(CCameraApp *pMe,  uint1
      CLOSE_DIALOG(DLGRET_CANCELED); 
     return TRUE;
 }
+#endif
 
 #endif
 
@@ -2707,6 +2714,8 @@ static void CameraApp_PopMenu_MultiInit(CCameraApp *pMe,
             break;  
     }
 }
+
+#ifdef FEATURE_CAMERA_MULTI_SENSOR
 static void CameraApp_PopMenu_FlashInit(CCameraApp *pMe, 
                                               IMenuCtl *popMenu)
 {
@@ -2744,6 +2753,7 @@ static void CameraApp_PopMenu_FlashInit(CCameraApp *pMe,
             break;  
     }
 }
+#endif
 
 #endif
 
@@ -4241,6 +4251,7 @@ static boolean CameraApp_SelfTimeRecordSnapShot(CCameraApp *pMe)
         if(pMe->m_pCamera)
         {
         	#ifdef FEATURE_LCD_TOUCH_ENABLE
+			#ifdef FEATURE_CAMERA_MULTI_SENSOR
 	   		if(pMe->m_nCameraMulti == OEMNV_CAMERA_MULTI_TWO)
 	   		{
 	   			if(pMe->n_nCameraFlash == OEMNV_CAMERA_FLASH_ON)
@@ -4248,6 +4259,7 @@ static boolean CameraApp_SelfTimeRecordSnapShot(CCameraApp *pMe)
 	   				ICAMERA_ControlFlash(pMe->m_pCamera,TRUE);
 	   			}
 	   		}
+			#endif
 	   		#endif
             pMe->m_nCameraState = CAM_CAPTURE;
             ICAMERA_Stop(pMe->m_pCamera);
