@@ -156,6 +156,7 @@ typedef enum
     
     WMS_MMS_PDU_WSPHTTPGETreq,
     WMS_MMS_PDU_WSPHTTPRESEND,
+    WMS_MMS_PDU_DRAFT,
 }WMS_MMS_PDU_MessageTypeValue;
 
 typedef enum _mms_core_ans_

@@ -847,15 +847,13 @@ typedef enum {
 
 #ifdef FEATURE_USES_MMS
 #define MAX_MMS_STORED 10//最多只能存10条彩
-#define MMS_MAX_FILE_NAME            128
-#define MAX_PH_NUMBER 36   
 
 typedef struct _MMSData
 { 
     // 接收消息方号码
    // char      phoneNumber[MAX_PH_NUMBER+1];
-    char      phoneNumber[13];
-    char      MMSDataFileName[MMS_MAX_FILE_NAME]; 
+    char      phoneNumber[32];
+    char      MMSDataFileName[AEE_MAX_FILE_NAME]; 
     int       MMSDatasize;
     boolean   MMSDataReaded;
 } MMSData;

@@ -1725,12 +1725,12 @@ boolean WMS_MMS_SaveMMS(char* phoneNumber,char *pBuffer,int DataLen,int nKind)
     int nMmsDataInfoType = 0;
     int nMmsCoutType = 0;
     char psz[5] = {0};
-    char mmsDataFileName[MMS_MAX_FILE_NAME];
+    char mmsDataFileName[AEE_MAX_FILE_NAME];
     MMSData	mmsDataInfoList[MAX_MMS_STORED];
     char sz[2] =   { '/', 0 };
     int nCharBegin = 'A';
     
-    MSG_FATAL("[WMS_MMS_SaveMMS] g_mmsDataInfoMax=%d",g_mmsDataInfoMax,0,0);
+    MSG_FATAL("[WMS_MMS_SaveMMS] g_mmsDataInfoMax=%d, nKind=%d",g_mmsDataInfoMax,nKind,0);
     
     switch(nKind)
     {
@@ -1742,7 +1742,6 @@ boolean WMS_MMS_SaveMMS(char* phoneNumber,char *pBuffer,int DataLen,int nKind)
         }
         break;
         
-        default:
         case MMS_INBOX:
         {
             nMmsDataInfoType = CFGI_MMSINDATA_INFO;
@@ -1750,6 +1749,17 @@ boolean WMS_MMS_SaveMMS(char* phoneNumber,char *pBuffer,int DataLen,int nKind)
             //nCharBegin = 'A';
         }
         break;
+
+        case MMS_DRAFTBOX:
+        {
+            nMmsDataInfoType = CFGI_MMSDRAFTDATA_INFO;
+            nMmsCoutType = CFGI_MMS_DRAFTCOUNT;
+            //nCharBegin = 'A';
+        }
+        break;   
+
+        default:
+            break;
     }
     if (result = ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_CONFIG,(void **)&pConfig) != SUCCESS)
     {
@@ -1760,21 +1770,22 @@ boolean WMS_MMS_SaveMMS(char* phoneNumber,char *pBuffer,int DataLen,int nKind)
         nMmsCoutType,
         &g_mmsDataInfoMax,
         sizeof(g_mmsDataInfoMax));  
-
-    if(g_mmsDataInfoMax >= MAX_MMS_STORED)
+    MSG_FATAL("[WMS_MMS_SaveMMS] 1 g_mmsDataInfoMax=%d",g_mmsDataInfoMax,0,0);
+    while(g_mmsDataInfoMax >= MAX_MMS_STORED)
     {
-        if(!WMS_MMS_DeleteMMS(0,nKind))
+       /* if(!WMS_MMS_DeleteMMS(0,nKind))
         {
             result = EFAILED;
             goto Exit;
-        }
+        }*/
+        WMS_MMS_DeleteMMS(0,nKind);
     }
 
     ICONFIG_GetItem(pConfig, 
         nMmsCoutType,
         &g_mmsDataInfoMax,
         sizeof(g_mmsDataInfoMax));  
-        
+    MSG_FATAL("[WMS_MMS_SaveMMS] 2 g_mmsDataInfoMax=%d",g_mmsDataInfoMax,0,0);    
     result = ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_FILEMGR,(void **)&pIFileMgr);
     if (SUCCESS != result)
     {
@@ -1788,7 +1799,7 @@ boolean WMS_MMS_SaveMMS(char* phoneNumber,char *pBuffer,int DataLen,int nKind)
                    sizeof(mmsDataInfoList));
 
 // Emulator filename and path
-    MEMSET((void*)mmsDataFileName, 0, MMS_MAX_FILE_NAME);
+    MEMSET((void*)mmsDataFileName, 0, AEE_MAX_FILE_NAME);
     psz[1] = g_mmsDataInfoMax+nCharBegin;
     if(nKind == MMS_OUTBOX)
     {
@@ -1798,6 +1809,10 @@ boolean WMS_MMS_SaveMMS(char* phoneNumber,char *pBuffer,int DataLen,int nKind)
     {
         psz[0]='I';
     }
+    else if(nKind == MMS_DRAFTBOX)
+    {
+        psz[0]='D';
+    }    
     STRCPY(mmsDataFileName, "fs:/hsmm/mmsDataFile");
 
     if(SUCCESS != IFILEMGR_Test(pIFileMgr, mmsDataFileName))
@@ -1845,7 +1860,7 @@ boolean WMS_MMS_SaveMMS(char* phoneNumber,char *pBuffer,int DataLen,int nKind)
         mmsDataInfoList[g_mmsDataInfoMax].MMSDataFileName);
 
     g_mmsDataInfoMax++;
-    MSG_FATAL("[WMS_MMS_SaveMMS] g_mmsDataInfoMax=%d",g_mmsDataInfoMax,0,0);
+    MSG_FATAL("[WMS_MMS_SaveMMS] 3 g_mmsDataInfoMax=%d",g_mmsDataInfoMax,0,0);
 	ICONFIG_SetItem(pConfig, nMmsDataInfoType, (void*)&mmsDataInfoList, sizeof(mmsDataInfoList));        
     ICONFIG_SetItem(pConfig, nMmsCoutType, &g_mmsDataInfoMax, sizeof(g_mmsDataInfoMax));  
 
@@ -1886,6 +1901,13 @@ boolean WMS_MMS_DeleteMMSALL(int nKind)
         {
             nMmsCoutType = CFGI_MMS_OUTCOUNT;
             nMmsDataInfoType = CFGI_MMSOUTDATA_INFO;
+        }
+        break;
+
+        case MMS_DRAFTBOX:
+        {
+            nMmsCoutType = CFGI_MMS_DRAFTCOUNT;
+            nMmsDataInfoType = CFGI_MMSDRAFTDATA_INFO;
         }
         break;
         
@@ -1964,6 +1986,13 @@ boolean WMS_MMS_DeleteMMS(uint32 index,int nKind)
             nMmsCoutType = CFGI_MMS_OUTCOUNT;
         }
         break;
+
+        case MMS_DRAFTBOX:
+        {
+            nMmsDataInfoType = CFGI_MMSDRAFTDATA_INFO;
+            nMmsCoutType = CFGI_MMS_DRAFTCOUNT;
+        }
+        break;
         
         default:
         case MMS_INBOX:
@@ -2003,7 +2032,7 @@ boolean WMS_MMS_DeleteMMS(uint32 index,int nKind)
         if(SUCCESS == IFILEMGR_Remove(pIFileMgr,
             pMmsDataInfoListCur->MMSDataFileName))
         {
-            isRemoveSuccess = TRUE;
+            //isRemoveSuccess = TRUE;
             MSG_FATAL("[WMS_MMS_DeleteMMS] find remove success", 0,0,0);
         }
         else
@@ -2020,45 +2049,45 @@ boolean WMS_MMS_DeleteMMS(uint32 index,int nKind)
         //goto Exit;
     }
     
-
-    for(i = index;
-        i < (g_mmsDataInfoMax - 1);
-        i++)
+    isRemoveSuccess = TRUE;//不管删除成功与否，都要把第index个文件从DataInfoList列表中给移除
+    for(i = index; (i < (g_mmsDataInfoMax - 1)) && (i < MAX_MMS_STORED-1); i++)
     {
         MSG_FATAL("[WMS_MMS_DeleteMMS] rename file index:%d", i,0,0);
         pMmsDataInfoListCur = &mmsDataInfoList[i];
         pMmsDataInfoListNext = &mmsDataInfoList[i + 1];
-        if(EFAILED == IFILEMGR_Test(pIFileMgr,pMmsDataInfoListCur->MMSDataFileName)
-            && SUCCESS == IFILEMGR_Test(pIFileMgr,pMmsDataInfoListNext->MMSDataFileName))
+        if((pMmsDataInfoListCur != NULL) && (pMmsDataInfoListNext != NULL))
         {
-            DBGPRINTF("Cur FileName=%s",pMmsDataInfoListCur->MMSDataFileName);
-            DBGPRINTF("Next FileName=%s",pMmsDataInfoListNext->MMSDataFileName);
-            if(SUCCESS == IFILEMGR_Rename(pIFileMgr,pMmsDataInfoListNext->MMSDataFileName,pMmsDataInfoListCur->MMSDataFileName))
+            if(EFAILED == IFILEMGR_Test(pIFileMgr,pMmsDataInfoListCur->MMSDataFileName)
+                && SUCCESS == IFILEMGR_Test(pIFileMgr,pMmsDataInfoListNext->MMSDataFileName))
             {
-                STRCPY(pMmsDataInfoListCur->phoneNumber,pMmsDataInfoListNext->phoneNumber);
-                pMmsDataInfoListCur->MMSDatasize = pMmsDataInfoListNext->MMSDatasize;
-                DBGPRINTF("[WMS_MMS_DeleteMMS] rename file phone number:%s", pMmsDataInfoListCur->phoneNumber);
-                MSG_FATAL("[WMS_MMS_DeleteMMS] rename file phone number len:%d", pMmsDataInfoListCur->MMSDatasize,0,0);
-                DBGPRINTF("[WMS_MMS_DeleteMMS] rename file phone name:%s", pMmsDataInfoListCur->MMSDataFileName);
+                DBGPRINTF("Cur FileName=%s",pMmsDataInfoListCur->MMSDataFileName);
+                DBGPRINTF("Next FileName=%s",pMmsDataInfoListNext->MMSDataFileName);
+                if(SUCCESS == IFILEMGR_Rename(pIFileMgr,pMmsDataInfoListNext->MMSDataFileName,pMmsDataInfoListCur->MMSDataFileName))
+                {
+                    STRCPY(pMmsDataInfoListCur->phoneNumber,pMmsDataInfoListNext->phoneNumber);
+                    pMmsDataInfoListCur->MMSDatasize = pMmsDataInfoListNext->MMSDatasize;
+                    DBGPRINTF("[WMS_MMS_DeleteMMS] rename file phone number:%s", pMmsDataInfoListCur->phoneNumber);
+                    MSG_FATAL("[WMS_MMS_DeleteMMS] rename file phone number len:%d", pMmsDataInfoListCur->MMSDatasize,0,0);
+                    DBGPRINTF("[WMS_MMS_DeleteMMS] rename file phone name:%s", pMmsDataInfoListCur->MMSDataFileName);
+                }
+                else
+                {
+                    result = IFILEMGR_GetLastError(pIFileMgr);
+                    MSG_FATAL("[WMS_MMS_DeleteMMS] rename file error:0x%x", result,0,0);
+                    //goto Exit;
+                    continue;
+                }
             }
             else
             {
                 result = IFILEMGR_GetLastError(pIFileMgr);
-                MSG_FATAL("[WMS_MMS_DeleteMMS] rename file error:0x%x", result,0,0);
+                MSG_FATAL("[WMS_MMS_DeleteMMS] rename file phone name:%s", pMmsDataInfoListCur->MMSDataFileName,0,0);
+                MSG_FATAL("[WMS_MMS_DeleteMMS] rename file phone name:%s", pMmsDataInfoListNext->MMSDataFileName,0,0);
+                MSG_FATAL("[WMS_MMS_DeleteMMS] Test file error:0x%x", result,0,0);
                 //goto Exit;
                 continue;
             }
         }
-        else
-        {
-            result = IFILEMGR_GetLastError(pIFileMgr);
-            MSG_FATAL("[WMS_MMS_DeleteMMS] rename file phone name:%s", pMmsDataInfoListCur->MMSDataFileName,0,0);
-            MSG_FATAL("[WMS_MMS_DeleteMMS] rename file phone name:%s", pMmsDataInfoListNext->MMSDataFileName,0,0);
-            MSG_FATAL("[WMS_MMS_DeleteMMS] Test file error:0x%x", result,0,0);
-            //goto Exit;
-            continue;
-        }
-        
     };
     if(pMmsDataInfoListNext != NULL)
     {
@@ -2066,7 +2095,7 @@ boolean WMS_MMS_DeleteMMS(uint32 index,int nKind)
     }
 
     if(isRemoveSuccess)
-        g_mmsDataInfoMax --;
+        g_mmsDataInfoMax--;
         
     ICONFIG_SetItem(pConfig, nMmsDataInfoType, (void*)mmsDataInfoList, sizeof(mmsDataInfoList));        
     ICONFIG_SetItem(pConfig, nMmsCoutType, &g_mmsDataInfoMax, sizeof(g_mmsDataInfoMax)); 
@@ -2117,6 +2146,13 @@ uint8* WMS_MMS_ReadMMS(uint32 index,int nKind,uint32* pLen)
         {
             nMmsDataInfoType = CFGI_MMSOUTDATA_INFO;
             nMmsCoutType = CFGI_MMS_OUTCOUNT;
+        }
+        break;
+
+        case MMS_DRAFTBOX:
+        {
+            nMmsDataInfoType = CFGI_MMSDRAFTDATA_INFO;
+            nMmsCoutType = CFGI_MMS_DRAFTCOUNT;
         }
         break;
         
@@ -2559,6 +2595,38 @@ int WMS_MMS_PDU_Encode(MMS_WSP_ENCODE_SEND* encdata, uint8* hPDU, uint8 ePDUType
             WMS_MMS_SaveMMS((char*)encdata->pMessage->hTo,(char*)WMS_MMS_BUFFERGet(),size,MMS_OUTBOX);
 	    }
 	    break;
+
+        case WMS_MMS_PDU_DRAFT:
+        {
+            if(encdata->pMessage == NULL)
+                return 0;
+            // 添加数据
+            WMS_MMS_DATA_Encode(&(encdata->pMessage->mms_data));
+            // Encode
+            head_len = MMS_Encode_header(pCurPos,WMS_MMS_PDU_MSendReq,encdata);
+            pCurPos += head_len;
+        
+            head_len = MMS_Encode_MsgBody(pCurPos,&encdata->pMessage->mms_data);
+            pCurPos += head_len;
+            MMS_DEBUG(("[MMS] MMS_Encode_MsgBody head_len1 = %d",head_len));    
+            
+        
+            size = (int)(pCurPos-WMS_MMS_BUFFERGet());
+        
+            MMS_DEBUG(("[MMS] MMS_SEND_TEST size = %d",size));
+            SNPRINTF((char*)hPDU,MSG_MAX_PACKET_SIZE,POST_TEST,size);
+        
+            MMS_DEBUG(("POST_TEST:%s",hPDU));
+            head_len = STRLEN((char*)hPDU);
+            MMS_DEBUG(("[MMS] POST_TEST head_len = %d",head_len));
+        
+            MEMCPY((void*)(hPDU+head_len),(void*)WMS_MMS_BUFFERGet(),size);//将来直接保存buf就行了,再解析时用WMS_MMS_WSP_DecodeMessage解析就可以了
+        
+            // SaveMMS
+            WMS_MMS_SaveMMS((char*)encdata->pMessage->hTo,(char*)WMS_MMS_BUFFERGet(),size,MMS_DRAFTBOX);
+        }
+        break;
+
 	    case WMS_MMS_PDU_MNotifyrespInd:
 	    {
 	        if(NULL == encdata->pNotifyresp)
@@ -4302,7 +4370,7 @@ boolean WMS_MMSState(int nState,int16 wParam,uint32 dwParam)
     MMSSocket *pMMSSocket = NULL;
     boolean isLocked = FALSE;
 
-    MMS_DEBUG(("[MSG][WMS_MMSState]: Enter!"));
+    MSG_FATAL("[MSG][WMS_MMSState]: Enter!",0,0, 0);
     if(!WMS_SOCKET_LOCK())
     {
         WMS_MMS_SOCKET_PARAM* pParam = NULL;
@@ -4349,9 +4417,9 @@ boolean WMS_MMSState(int nState,int16 wParam,uint32 dwParam)
 static void MMSSocketState(MMSSocket *ps)
 {
 
-    MMS_DEBUG(("[MSG][DeviceSocket]: MMSSocketState Enter!"));
+    MSG_FATAL("[MSG][DeviceSocket]: MMSSocketState Enter! bConnected=%d",ps->bConnected,0,0);
     
-    if(!ps->bConnected)
+    if((!ps->bConnected) && (ps->nState != WMS_MMS_PDU_DRAFT))
     {
 #ifdef FEATURE_USES_MMS_TEST        
         MMSSocketConnect(ps,"10.0.0.200",80);
@@ -4400,6 +4468,18 @@ static void MMSSocketState(MMSSocket *ps)
             FREEIF(pBuf);
         }
         break;
+
+        case WMS_MMS_PDU_DRAFT:
+        {
+            uint8* pBuf = NULL;
+            uint32 nBufLen = 0;
+            MSG_FATAL("MMSSocketState WMS_MMS_PDU_DRAFT",0,0,0);
+            pBuf = (uint8*)MALLOC(MSG_MAX_PACKET_SIZE);
+            nBufLen = WMS_MMS_PDU_Encode((MMS_WSP_ENCODE_SEND*)ps->dwParam,pBuf,WMS_MMS_PDU_DRAFT);
+            MMSSocketClose(&ps);
+            FREEIF(pBuf);
+            return;
+        }        
 
         case WMS_MMS_PDU_MReadRecInd:
         {

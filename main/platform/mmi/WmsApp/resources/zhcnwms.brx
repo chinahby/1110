@@ -589,6 +589,9 @@
 	<String Id="1017" Name="IDS_INSERT_NEW_PICTURE">
 		<Text>插入新图片</Text>
 	</String>
+	<String Id="1018" Name="IDS_DRAFT_MMS">
+		<Text>彩信草稿箱</Text>
+	</String>
 	<String Id="1026" Name="IDS_MMSDELIVERYREPORT">
 		<Text>使用彩信发送报告</Text>
 	</String>

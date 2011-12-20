@@ -2706,6 +2706,10 @@ void WmsApp_UpdateMenuList(WmsApp *pMe, IMenuCtl *pMenu)
             case WMS_MB_OUTBOX_MMS:
                 nTitleID = IDS_OUTBOX_MMS;
                 break;
+
+            case WMS_MB_DRAFTBOX_MMS:
+                nTitleID = IDS_DRAFT_MMS;
+                break;                
 #endif
             case WMS_MB_DRAFT:
                 nTitleID = IDS_DRAFT;
@@ -4636,6 +4640,7 @@ void WmsApp_CombinateMsg(WmsApp *pMe)
                 bFirst = FALSE;
                 MEMCPY(&pMe->m_msCur, pMe->m_CurMsgNodesMS[i], sizeof(WMSMessageStruct));
                 pMe->m_msCur.m_szMessage = pMsgText;
+                DBGPRINTF("pMe->m_msCur.m_szMessage=%S",pMe->m_msCur.m_szMessage);
             }
             if (NULL != (pMe->m_CurMsgNodesMS[i])->m_szMessage)
             {
@@ -5933,6 +5938,7 @@ uint16 WmsApp_GetmemAlertID(WmsApp * pMe, wms_box_e_type eBox)
 #ifdef FEATURE_USES_MMS
         case WMS_MB_INBOX_MMS:
         case WMS_MB_OUTBOX_MMS: 
+        case WMS_MB_DRAFTBOX_MMS:
             MSG_FATAL("WMS_MB_OUTBOX_MMS g_mmsDataInfoMax=%d",g_mmsDataInfoMax,0,0);
             if (g_mmsDataInfoMax == 0)
             {
@@ -7130,19 +7136,24 @@ void WmsApp_UpdateMenuList_MMS(WmsApp *pMe, IMenuCtl *pMenu)
     // 建立菜单项列表
     MEMSET(&mai, 0, sizeof(mai));
     mai.pszResImage = AEE_APPSCOMMONRES_IMAGESFILE;
-    mai.pszResText = NULL;
+    mai.pszResText = AEE_WMSAPPRES_LANGFILE;
     mai.pImage = NULL;
     mai.wFont = AEE_FONT_NORMAL;
     mai.dwData = 0;
     
     // 先清除旧有消息列表
     (void)IMENUCTL_DeleteAll(pMenu);
-#ifdef FEATURE_USES_MMS 
     switch(pMe->m_eMBoxType)
     {
         case WMS_MB_OUTBOX_MMS:
         {
             nboxType = CFGI_MMSOUTDATA_INFO;
+        }
+        break;
+
+        case WMS_MB_DRAFTBOX_MMS:
+        {
+            nboxType = CFGI_MMSDRAFTDATA_INFO;
         }
         break;
         
@@ -7163,7 +7174,6 @@ void WmsApp_UpdateMenuList_MMS(WmsApp *pMe, IMenuCtl *pMenu)
             DBGPRINTF("WmsApp_UpdateMenuList_MMS phoneNumber=%s, length=%d",mmsDataInfoList[g_mmsDataInfoMax-1].phoneNumber, STRLEN(mmsDataInfoList[g_mmsDataInfoMax-1].phoneNumber));
             DBGPRINTF("MMSDataFileName=%s",mmsDataInfoList[g_mmsDataInfoMax-1].MMSDataFileName);
         }
-#endif
     MSG_FATAL("WmsApp_UpdateMenuList_MMS nItems=%d", nItems, 0, 0);
     (void)STRTOWSTR("%s", wszFmt, sizeof(wszFmt));
     for (i=0; i<nItems; i++)
@@ -7187,18 +7197,20 @@ void WmsApp_UpdateMenuList_MMS(WmsApp *pMe, IMenuCtl *pMenu)
         }
         else
         {
-            if (NULL != mmsDataInfoList[i].phoneNumber)
+            if (STRLEN(mmsDataInfoList[i].phoneNumber)>0)
             {
                 WSPRINTF(wszTitle, sizeof(wszTitle), wszFmt, wstrNum);
             }
             else
             {
-                (void)STRTOWSTR("**********", wstrNum, sizeof(wstrNum));
-                WSPRINTF(wszTitle, sizeof(wszTitle), wszFmt, wstrNum);
+                mai.wText = IDS_CDG2_FAIL1;
+                MEMSET(wszTitle, 0, sizeof(wszTitle));
             }
         }
-
-        mai.pText = wszTitle;
+        if(WSTRLEN(wszTitle)>0)
+        {
+            mai.pText = wszTitle;
+        }
         mai.wItemID = i+1;
 
         mai.dwData = mai.wItemID;
@@ -7226,6 +7238,10 @@ void WmsApp_UpdateMenuList_MMS(WmsApp *pMe, IMenuCtl *pMenu)
         {
             nTitleID = IDS_INBOX_MMS;
         }
+        else if(pMe->m_eMBoxType == WMS_MB_DRAFTBOX_MMS)
+        {
+            nTitleID = IDS_DRAFT_MMS;
+        }      
         
         if (nTitleID != 0)
         {

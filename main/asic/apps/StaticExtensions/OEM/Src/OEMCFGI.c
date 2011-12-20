@@ -274,7 +274,7 @@ when       who     what, where, why
 // in OEMConfigListType.  It does not need to be incremented when a new
 // field is added to the end of OEMConfigListType.
 //
-#define OEMCONFIGLIST_VERSION ( (uint16) 0x000E )
+#define OEMCONFIGLIST_VERSION ( (uint16) 0x000A )
 
 ////
 // The EFS file that stores the OEM configuration.
@@ -687,6 +687,8 @@ typedef struct
    char  s_MMSImage[AEE_MAX_FILE_NAME];     
    char  s_MMSSOUND[AEE_MAX_FILE_NAME];   
    char  s_MMSVIDEO[AEE_MAX_FILE_NAME];
+   MMSData   MMSDraftDataInfo[MAX_MMS_STORED];   //CFGI_MMSDraftDATA_INFO
+   uint8 mmsDraftCount;   
    MMSData   MMSOutDataInfo[MAX_MMS_STORED];   //CFGI_MMSOUTDATA_INFO
    MMSData   MMSInDataInfo[MAX_MMS_STORED];   //CFGI_MMSINDATA_INFO
    uint8 mmsOutCount;//CFGI_MMS_OUTCOUNT
@@ -1534,6 +1536,11 @@ static int OEMPriv_SetItem_CFGI_WMS_REPORTALLOWED(void *pBuff);
 static int OEMPriv_GetItem_CFGI_WMS_SENDERVISIBILITY(void *pBuff);
 static int OEMPriv_SetItem_CFGI_WMS_SENDERVISIBILITY(void *pBuff);
 
+static int OEMPriv_GetItem_CFGI_MMSDRAFTDATA_INFO(void *pBuff);
+static int OEMPriv_SetItem_CFGI_MMSDRAFTDATA_INFO(void *pBuff);
+static int OEMPriv_GetItem_CFGI_MMS_DRAFTCOUNT(void *pBuff); 
+static int OEMPriv_SetItem_CFGI_MMS_DRAFTCOUNT(void *pBuff);
+
 #endif
 
 /*===========================================================================
@@ -1844,13 +1851,16 @@ static OEMConfigListType oemi_cache = {
    ,{OEMNV_MMSIMAGE}
    ,{OEMNV_MMSSOUND}
    ,{OEMNV_MMSVIDEO}
-   ,{{"0", "0", 0}, {"0", "0", 0}, {"0", "0", 0}, {"0", "0", 0}, {"0", "0", 0},
-     {"0", "0", 0}, {"0", "0", 0}, {"0", "0", 0}, {"0", "0", 0}, {"0", "0", 0}
+   ,{{"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE},
+     {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}
+    }    ,      
+    0   
+   ,{{"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE},
+     {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}
     }  //CFGI_MMSDATA_INFO
-    ,{{"0", "0", 0}, {"0", "0", 0}, {"0", "0", 0}, {"0", "0", 0}, {"0", "0", 0},
-     {"0", "0", 0}, {"0", "0", 0}, {"0", "0", 0}, {"0", "0", 0}, {"0", "0", 0}
-    }  //CFGI_MMSDATA_INFO
-    ,  
+   ,{{"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE},
+     {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}
+    },  //CFGI_MMSDATA_INFO
     0,//CFGI_MMS_COUNT 
     0,//CFGI_MMS_COUNT
     TRUE,
@@ -2401,6 +2411,8 @@ static ConfigItemTableEntry const customOEMItemTable[] =
    CFGTABLEITEM_EMPTY(CFGI_MMSIMAGE) ,
    CFGTABLEITEM_EMPTY(CFGI_MMSSOUND) ,
    CFGTABLEITEM_EMPTY(CFGI_MMSVIDEO) ,
+   CFGTABLEITEM(CFGI_MMSDRAFTDATA_INFO, sizeof(MMSData) * MAX_MMS_STORED),
+   CFGTABLEITEM(CFGI_MMS_DRAFTCOUNT, sizeof(uint8)),   
    CFGTABLEITEM(CFGI_MMSOUTDATA_INFO, sizeof(MMSData) * MAX_MMS_STORED),
    CFGTABLEITEM(CFGI_MMSINDATA_INFO, sizeof(MMSData) * MAX_MMS_STORED),
    CFGTABLEITEM(CFGI_MMS_OUTCOUNT, sizeof(uint8)),
@@ -2410,6 +2422,7 @@ static ConfigItemTableEntry const customOEMItemTable[] =
    CFGTABLEITEM(CFGI_WMS_READREPLY, sizeof(uint8)),
    CFGTABLEITEM(CFGI_WMS_REPORTALLOWED, sizeof(uint8)),
    CFGTABLEITEM(CFGI_WMS_SENDERVISIBILITY, sizeof(uint8)),
+   
 #endif   
 };
 #endif
@@ -2817,19 +2830,25 @@ void OEM_RestoreFactorySetting( void )
         uint8 index = 0; 
         for(; index < MAX_MMS_STORED; index++)
         {
-            MEMSET(oemi_cache.MMSInDataInfo[index].phoneNumber, 0, 13);
-            MEMSET(oemi_cache.MMSInDataInfo[index].MMSDataFileName, 0, MMS_MAX_FILE_NAME);
+            MEMSET(oemi_cache.MMSInDataInfo[index].phoneNumber, 0, 32);
+            MEMSET(oemi_cache.MMSInDataInfo[index].MMSDataFileName, 0, AEE_MAX_FILE_NAME);
             oemi_cache.MMSInDataInfo[index].MMSDatasize = 0;
-            oemi_cache.MMSInDataInfo[index].MMSDatasize = FALSE;
+            oemi_cache.MMSInDataInfo[index].MMSDataReaded = FALSE;
 
-            MEMSET(oemi_cache.MMSOutDataInfo[index].phoneNumber, 0, 13);
-            MEMSET(oemi_cache.MMSOutDataInfo[index].MMSDataFileName, 0, MMS_MAX_FILE_NAME);
+            MEMSET(oemi_cache.MMSOutDataInfo[index].phoneNumber, 0, 32);
+            MEMSET(oemi_cache.MMSOutDataInfo[index].MMSDataFileName, 0, AEE_MAX_FILE_NAME);
             oemi_cache.MMSOutDataInfo[index].MMSDatasize = 0;
-            oemi_cache.MMSOutDataInfo[index].MMSDatasize = FALSE;
+            oemi_cache.MMSOutDataInfo[index].MMSDataReaded = FALSE;
+
+            MEMSET(oemi_cache.MMSDraftDataInfo[index].phoneNumber, 0, 32);
+            MEMSET(oemi_cache.MMSDraftDataInfo[index].MMSDataFileName, 0, AEE_MAX_FILE_NAME);
+            oemi_cache.MMSDraftDataInfo[index].MMSDatasize = 0;
+            oemi_cache.MMSDraftDataInfo[index].MMSDataReaded = FALSE;            
         }
    }
    oemi_cache.mmsInCount = 0;
    oemi_cache.mmsOutCount = 0;
+   oemi_cache.mmsDraftCount = 0;
 #endif  
    //ÆÁ±£Ê±¼ä
    oemi_cache.p_screensaver_time=0; 
@@ -5731,7 +5750,7 @@ static void OEMPriv_WriteOEMConfigListCB(void *pUnused)
    char *pszBREWPath = OEMCONFIGLIST_FILE;  /* Path using BREW convention */
    char *pszFSPath = NULL;    /* Path with full EFS convention */
    int  fd = -1;
-
+   ERR("OEMPriv_WriteOEMConfigListCB Start", 0, 0, 0); 
 #if MIN_BREW_VERSION(4,0)
    nErr = OEMefs_GetNativePath(pszBREWPath, NULL, NULL, &nFileNameLen);
 #else
@@ -5778,6 +5797,7 @@ static void OEMPriv_WriteOEMConfigListCB(void *pUnused)
    (void) efs_write(fd, &version, sizeof(version));
    (void) efs_write(fd, (void *) &oemi_cache, sizeof(oemi_cache));
    (void) efs_close(fd);
+   ERR("OEMPriv_WriteOEMConfigListCB End", 0, 0, 0); 
 }
 
 /*=============================================================================
@@ -10703,6 +10723,42 @@ static int OEMPriv_SetItem_CFGI_MMS_INCOUNT(void *pBuff)
    MSG_FATAL("OEMPriv_SetItem_CFGI_MMS_INCOUNT Start mmsCount=%d", oemi_cache.mmsInCount,0,0); 
    return SUCCESS;
 }
+
+static int OEMPriv_GetItem_CFGI_MMSDRAFTDATA_INFO(void *pBuff) 
+{
+   MSG_FATAL("OEMPriv_GetItem_CFGI_MMSDRAFTDATA_INFO Start",0,0,0);
+   MEMCPY(pBuff, (void*)(oemi_cache.MMSDraftDataInfo), sizeof(MMSData) * MAX_MMS_STORED);
+   MSG_FATAL("OEMPriv_GetItem_CFGI_MMSDRAFTDATA_INFO ENd",0,0,0);
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_MMSDRAFTDATA_INFO(void *pBuff)
+{
+    MSG_FATAL("OEMPriv_SetItem_CFGI_MMSDRAFTDATA_INFO Start", 0,0,0);
+    MEMCPY((void*)(oemi_cache.MMSDraftDataInfo), pBuff, sizeof(MMSData) * MAX_MMS_STORED);
+    OEMPriv_WriteOEMConfigList(); 
+    MSG_FATAL("OEMPriv_SetItem_CFGI_MMSDRAFTDATA_INFO End", 0,0,0);
+    return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_MMS_DRAFTCOUNT(void *pBuff) 
+{
+    MSG_FATAL("OEMPriv_GetItem_CFGI_MMS_DraftCOUNT Start mmsCount=%d", oemi_cache.mmsDraftCount,0,0); 
+   *(uint8 *) pBuff = oemi_cache.mmsDraftCount;
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_MMS_DRAFTCOUNT(void *pBuff)
+{
+   MSG_FATAL("OEMPriv_SetItem_CFGI_MMS_DraftCOUNT Start *pBuff=%d", *(uint8*)pBuff,0,0); 
+   if (oemi_cache.mmsDraftCount != *(uint8 *)pBuff) {
+      oemi_cache.mmsDraftCount = *(uint8 *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+   MSG_FATAL("OEMPriv_SetItem_CFGI_MMS_DraftCOUNT Start mmsCount=%d", oemi_cache.mmsDraftCount,0,0); 
+   return SUCCESS;
+}
+
 static int OEMPriv_GetItem_CFGI_WMS_MMSNOTIFY(void *pBuff) 
 {
     MSG_FATAL("OEMPriv_GetItem_CFGI_MMS_INCOUNT Start mmsCount=%d", oemi_cache.mmsNotify,0,0); 

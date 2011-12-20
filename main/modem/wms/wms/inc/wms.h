@@ -357,6 +357,7 @@ typedef enum _wms_box_e_type
 #ifdef FEATURE_USES_MMS
     WMS_MB_OUTBOX_MMS,   // ²ÊÐÅ·¢¼þÏä
     WMS_MB_INBOX_MMS,
+    WMS_MB_DRAFTBOX_MMS,
 #endif
     WMS_MB_MAX
 } wms_box_e_type;
@@ -843,7 +844,7 @@ typedef enum
 {
     MMS_OUTBOX,
     MMS_INBOX,
-    MMS_DRAFT
+    MMS_DRAFTBOX
 }WMS_MMS_SAVETYPE;
 
 

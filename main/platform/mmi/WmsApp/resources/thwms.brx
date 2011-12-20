@@ -643,6 +643,9 @@
 	<String Id="1035" Name="IDS_INSERT_NEW_PICTURE">
 		<Text>Insert new picture</Text>
 	</String>
+	<String Id="1036" Name="IDS_DRAFT_MMS">
+		<Text>Draft mms</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN" Focus="7001">
