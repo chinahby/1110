@@ -3613,7 +3613,7 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
 	}
 
 //#ifndef FEATURE_VERSION_X3   
-#ifndef FEATURE_VERSION_W208S
+#ifdef FEATURE_VERSION_W208S
     // size cfgID
     (void)ICONFIG_GetItem(pMe->m_pConfig,
                           CFGI_CAMERA_SIZE,

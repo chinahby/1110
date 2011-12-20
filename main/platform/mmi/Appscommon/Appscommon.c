@@ -2715,6 +2715,11 @@ void DrawPromptMessage (IDisplay *pIDisplay,
         }  
     }
     DrawBottomBar(pIDisplay, &bottomParam);  
+
+#ifdef FEATURE_VERSION_W208S
+	strrect.x += 5;
+	strrect.dx -= 10;
+#endif	
      
     //Draw string  
     ISTATIC_SetRect(pStatic, &strrect);
