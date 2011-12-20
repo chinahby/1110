@@ -363,6 +363,7 @@ static void drawImage( void *pMe)
     		IDISPLAY_FillRect( pme->a.m_pIDisplay, &rc, RGB_WHITE);
        	 	IIMAGE_Draw( image, x, y);
         	IIMAGE_Release( image);
+			image = NULL;
     	}
 		ISHELL_SetTimer(pme->a.m_pIShell,CHANGETIME,drawImage,(void *)pMe);
 	}

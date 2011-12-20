@@ -1654,8 +1654,6 @@ static boolean CameraApp_PicHandleEvent(CCameraApp *pMe, AEEEvent eCode, uint16 
 
 				if(TOUCH_PT_IN_RECT(wXPos,wYPos,rc))
 				{
-                    IImage *pImage = NULL;
-                    AEEImageInfo myInfo;
                     MSG_FATAL("CameraApp_CameraCFGHandleEvent TOUCH_PT_IN_RECT",0, 0, 0);
 					if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//×ó
 					{
