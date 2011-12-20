@@ -504,6 +504,7 @@ static boolean PinTu_HandleEvent(IApplet * pi, AEEEvent eCode, uint16 wParam, ui
                 IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);				
 				MSG_FATAL("***zzg Application EVT_APP_START EnableAnnunciatorBar TRUE",0,0,0);				   
          }
+         #if 0
 		 {
                 AECHAR WTitle[20] = {0};
 
@@ -517,6 +518,12 @@ static boolean PinTu_HandleEvent(IApplet * pi, AEEEvent eCode, uint16 wParam, ui
     			    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
             	}
          }
+         #else
+          if(pMe->m_pIAnn != NULL)
+           {
+   		    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,NULL);
+       	   }
+         #endif
          PinTu_DisplaySplashScreen(pMe);
          return TRUE;
 
