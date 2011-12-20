@@ -946,7 +946,7 @@ static boolean CTSIM_HandleEvent(ITSIM * pITSIM, AEEEvent eCode, uint16 wParam, 
     int          i;
 	THWPoint point;
 	boolean m_bBack = FALSE;
-    DBGPRINTF("CTSIM_HandleEvent---------");
+    DBGPRINTF("CTSIM_HandleEvent---------wParam=%d---dwParam%d",wParam,dwParam);
 
     //ERR("eCode: 0x%x, wParam: 0x%x, dwParam: 0x%x", eCode, wParam, dwParam);
     switch(eCode)
@@ -1536,6 +1536,10 @@ static boolean CTSIM_HandleEvent(ITSIM * pITSIM, AEEEvent eCode, uint16 wParam, 
                     }
                     return FALSE;    
                 case AVK_CLR:
+                    if(dwParam != 0)
+                    {
+                      return FALSE;   
+                    }
                     if ((pme->m_tsm_curr == TSIM_PINYIN)
                     && (pme->py_state == PY_SELECT_MODE))
                     {
@@ -9700,7 +9704,7 @@ static boolean TSIM_LetSymPenDown(CTSIM *pme, uint32 dwparam)
     }      
            
     if (TSIM_IsInRange(dwparam, &pme->keypad))
-    {
+    { 
         (void)IVKEYCTL_HandleEvent(pme->m_pIVkeyCtl, EVT_PEN_DOWN, 0, dwparam);
         pme->bkpaddown = TRUE;
         return TRUE;
