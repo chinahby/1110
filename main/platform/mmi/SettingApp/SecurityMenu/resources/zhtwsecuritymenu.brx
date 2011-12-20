@@ -327,5 +327,8 @@
 			</Menu>
 		</Controls>
 	</Dialog>
+	<Dialog Id="6023" Name="IDD_TSIMINPUT_PASSWORD_DIALOG" Focus="0">
+		<Controls/>
+	</Dialog>	
 </Dialogs>
 </BREWRes>
