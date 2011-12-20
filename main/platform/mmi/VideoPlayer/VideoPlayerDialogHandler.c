@@ -2115,13 +2115,24 @@ void Draw_Parser_Text(CVideoPlayer* pMe,const AECHAR* pText,uint16* height)
     AECHAR entext[2] = {'a','\0'};
 	uint16 charw = IDisplay_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL,entext);
     uint16 wcharw = (charw<<1);
+	#ifdef FEATURE_VERSION_X3
+	const uint16 charh = 22;
+	#else
     const uint16 charh = 18;
-	
+	#endif
 	AEERect rc = {0,0,SCR_W,SCR_H};
+	#ifdef FEATURE_VERSION_X3
+	rc.x  = pMe->m_rc.x + 2;
+	rc.dx = pMe->m_rc.dx - 2;
+	#else
 	rc.x  = pMe->m_rc.x + 5;
 	rc.dx = pMe->m_rc.dx - 5;
+	#endif
     rc.y = VIDEOPLAYER_NAMEPART_H;
     rc.dy = pMe->m_rc.dy - VIDEOPLAYER_NAMEPART_H -  GetBottomBarHeight(pMe->m_pDisplay) - 5;
+	#ifdef FEATURE_VERSION_X3
+	wcharw = 25;
+	#endif
     MSG_FATAL("****pji****charw = %d; wcharw=%d",charw,wcharw,0);
 	if(pText == NULL) return ;
 
