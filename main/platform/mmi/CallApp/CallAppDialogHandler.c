@@ -2490,9 +2490,11 @@ static boolean  CallApp_Dialer_Calling_DlgHandler(CCallApp *pMe,
             }
 #endif
             //DRAW NAME
+            MSG_FATAL("CallApp_Dialer_Calling_DlgHandler....name==%d",name[0],0,0);
             if(pMe->m_CallsTable->in_phonebook && !b_cdg)
             {
                 /*预留出动画的宽度*/
+				MSG_FATAL("CallApp_Dialer_Calling_DlgHandler....ok",0,0,0);
                 SETAEERECT(&rect,
                                                         CALL_NAME_X,
                                                         CALL_SECOND_LINE_Y,
@@ -2508,6 +2510,7 @@ static boolean  CallApp_Dialer_Calling_DlgHandler(CCallApp *pMe,
             if(pMe->m_cdg_dsp_info.pi== AEET_PI_ALLOW)
 #endif
             {
+            	MSG_FATAL("draw number",0,0,0);
                 if(pMe->m_CallsTable->in_phonebook || b_cdg)
                 {
                     int16 dy = 0;
@@ -2551,6 +2554,7 @@ static boolean  CallApp_Dialer_Calling_DlgHandler(CCallApp *pMe,
                                 CALL_NAME_DX,
                                 dy);
                 }
+				MSG_FATAL("CallApp_DrawText_Ex.....number",0,0,0);
                 CallApp_DrawText_Ex(pMe, AEE_FONT_NORMAL,
                         pMe->m_CallsTable->call_number, &rect, IDF_ALIGN_LEFT |IDF_TEXT_TRANSPARENT);
             }
@@ -11446,18 +11450,20 @@ static boolean CallApp_DrawText_Ex(CCallApp *pMe, AEEFont fnt,
     len = WSTRLEN(wStr);
     WSTRLCPY(wBuf, wStr, 64);
 
-
+    MSG_FATAL("line======%d,hight=%d,rect->dy=%d",line,hight,rect->dy);
     while(line)
     {
         line--;
         len = WSTRLEN(wBuf);
         pixLen = IDISPLAY_MeasureTextEx(pMe->m_pDisplay, fnt,  wBuf,  -1, rect->dx, &fits);
+		MSG_FATAL("CallApp_DrawText_Ex....len==%d,pixLen=%d",len,pixLen,0);
         //CALL_ERR("%d %d %d len,pixLen,fits",len,pixLen,fits);
         if (0 == pixLen)
         {
             // IDISPLAY_MeasureTextEx failed, just return the entire string
             line = 0;
             //CALL_ERR("IDISPLAY_MeasureTextEx failed",0,0,0);
+            MSG_FATAL("IDISPLAY_DrawText........1111111",0,0,0);
             return IDISPLAY_DrawText(pMe->m_pDisplay,  fnt, wBuf,-1, rect->x, rect->y, rect, mask);
         }
 
@@ -11466,6 +11472,7 @@ static boolean CallApp_DrawText_Ex(CCallApp *pMe, AEEFont fnt,
             // Entire string fits on the line, all is good
             line = 0;
             //CALL_ERR("Entire string fits on the line, all is good",0,0,0);
+            MSG_FATAL("IDISPLAY_DrawText........222222",0,0,0);
             return IDISPLAY_DrawText(pMe->m_pDisplay,  fnt, wBuf,-1, rect->x, rect->y, rect, mask);
         }
 
@@ -11476,6 +11483,7 @@ static boolean CallApp_DrawText_Ex(CCallApp *pMe, AEEFont fnt,
                 wBuf[fits-3] = 0;
                 //CALL_ERR("the last line ,need add ...",0,0,0);
                 WSTRCAT(wBuf, (AECHAR*)".\0.\0.\0");
+				MSG_FATAL("IDISPLAY_DrawText........33333333",0,0,0);
                 IDISPLAY_DrawText(pMe->m_pDisplay,  fnt, wBuf,-1, rect->x, rect->y, rect, mask);
             }
             else
@@ -11484,6 +11492,7 @@ static boolean CallApp_DrawText_Ex(CCallApp *pMe, AEEFont fnt,
                 //CALL_ERR("draw %d line",line,0,0);
                 WSTRLCPY(temp, wBuf + fits , 64);
                 wBuf[fits] = 0;
+				MSG_FATAL("IDISPLAY_DrawText........44444444",0,0,0);
                 IDISPLAY_DrawText(pMe->m_pDisplay,  fnt, wBuf,-1, rect->x, rect->y, rect, mask);
                 WSTRLCPY(wBuf, temp,64);
                 rect->y = rect->y + hight/*CALL_LINE_HIGHT*/;/*y向下增加一行*/
@@ -12506,6 +12515,7 @@ static void callApp_draw_pendown(CCallApp* pMe,int16 x,int16 y)
 				MSG_FATAL("rc[i].x===%d,rc[i].y===%d,i===%d",rc[i].x,rc[i].y,i);
 				IIMAGE_Draw(image,rc[i].x,rc[i].y);
 				IIMAGE_Release( image);
+				image = NULL;
 			}
         	break;
     	}
@@ -12554,6 +12564,7 @@ static void callApp_draw_penmove(CCallApp* pMe,int16 x,int16 y)
 			{
 				IIMAGE_Draw(image,rc[pMe->m_i].x,rc[pMe->m_i].y);
 				IIMAGE_Release(image);
+				image = NULL;
 			}
 			switch(pMe->m_i)
 			{
@@ -12720,6 +12731,7 @@ static void callApp_draw_penup(CCallApp* pMe,int16 x,int16 y)
 			{
 				IIMAGE_Draw(image,rc[i].x,rc[i].y);
 				IIMAGE_Release(image);
+				image = NULL;
 			}
 			switch(i)
 			{

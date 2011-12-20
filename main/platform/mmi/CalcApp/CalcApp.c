@@ -1469,6 +1469,7 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
 					{
 						IIMAGE_Draw(image,rc[pme->m_i].x,rc[pme->m_i].y);
 						IIMAGE_Release(image);
+						image = NULL;
 					}
 					i = pme->m_i;
 					pme->m_bup = TRUE;
@@ -1611,6 +1612,7 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
 							MSG_FATAL("rc[i].x===%d,rc[i].y===%d,i===%d",rc[i].x,rc[i].y,i);
 							IIMAGE_Draw(image,rc[i].x,rc[i].y);
 							IIMAGE_Release( image);
+							image = NULL;
 						}
 	                	break;
                 	}
