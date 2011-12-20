@@ -3759,7 +3759,7 @@ static void TSIM_DrawScrollBar(CTSIM* pme)
     }
     else
     {
-      wScrollBarHeight = 60;//(uint16)(pme->m_rectDisplay.dy
+      wScrollBarHeight = 73;//(uint16)(pme->m_rectDisplay.dy
                                     //- 2 * pme->wScrollBarWidth);
     }
     // Draw the clear 1-pixel border to the left of the scroll bar
