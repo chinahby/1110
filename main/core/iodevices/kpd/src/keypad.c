@@ -236,7 +236,11 @@ static const hs_key_type keys[ KEYPAD_ROWS ][ KEYPAD_COLUMNS ] = {
 
    /* KEYSENSE_0 */
    /* 1,17          1,15        1,11        1,9          1,Memo*/
+   #ifndef FEATURE_VERSION_C180
    { HS_CAMERA_K,   HS_SEND_K,  HS_DOWN_K,  HS_MUSIC_K,  HS_NONE_K},
+    #else
+     { HS_NONE_K,   HS_SEND_K,  HS_DOWN_K,  HS_NONE_K,  HS_NONE_K},
+    #endif
    
    /* KEYSENSE_1 */
    /* 3,17          3,15        3,11        3,9          3,Memo*/

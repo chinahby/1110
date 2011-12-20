@@ -2,8 +2,13 @@
 # CAMERASERVICES
 #-------------------------------------------------------------------------------
 ifneq ($(USES_QSC1110),yes)
+ifneq ($(PROJECTNAME),c180)
 CAMERASERVICES_SOURCES=\
         camera_svcs_softdsp.c
+else
+CAMERASERVICES_SOURCES=\
+        camera_svcs.c
+endif
 else
 CAMERASERVICES_SOURCES=\
         camera_svcs.c
