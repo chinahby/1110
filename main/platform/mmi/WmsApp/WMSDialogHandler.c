@@ -11601,7 +11601,6 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 				{
 	                AECHAR *pwstrText = ITEXTCTL_GetTextPtr(pIText);
 	                int nLen = 0;
-                    DBGPRINTF("IDD_WRITEMSG_Handler IDS_SAVETODRAFT m_isMMS=%d", pMe->m_isMMS, 0, 0);
 #ifdef FEATURE_USES_MMS                     
                     if(pMe->m_isMMS)
                     {
