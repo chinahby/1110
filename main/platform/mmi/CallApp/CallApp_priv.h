@@ -188,8 +188,11 @@
 /*上下各空3个像素*/
 //#define CALL_LINE_HIGHT             ((int)((pMe->m_rc.dy - CALL_ANNU_HEIGHT - CALL_SOFT_KEY_HIGHT)/4))
 /*上下各空3个像素*/
+#ifdef FEATURE_VERSION_X3
+#define CALL_LINE_HIGHT                      (25) 
+#else
 #define CALL_LINE_HIGHT                      (20) //18为NORMAL字体高度，目前只需要这个高度就够了
-
+#endif
 #define CALL_FIRST_LINE_Y                   (CALL_ANNU_HEIGHT)
 #define CALL_SECOND_LINE_Y               (CALL_FIRST_LINE_Y +    CALL_LINE_HIGHT)
 #define CALL_THIRD_LINE_Y                  (CALL_FIRST_LINE_Y +2*CALL_LINE_HIGHT )
