@@ -462,10 +462,10 @@ static boolean dialog_handler_of_state_main( Recorder* pme, AEEEvent evt, uint16
 	static IMenuCtl* 	pMenu 		= 0;
 	static uint16		selected	= 0;
 	static boolean		reserve		= 0;
-
+    MSG_FATAL("dialog_handler_of_state_main---evt=%d,--wParam=%d----%d",evt,wParam,dwParam);
 	switch (evt)
 	{
-
+        
         case EVT_DIALOG_INIT:
         {
             pMenu       = (IMenuCtl*)IDIALOG_GetControl( pme->m_pActiveDialog, IDC_MAIN_MENU);
@@ -554,8 +554,9 @@ static boolean dialog_handler_of_state_main( Recorder* pme, AEEEvent evt, uint16
 
 		case EVT_COMMAND:
 		{
-           selected = wParam;
+            selected = wParam;
 			reserve = TRUE;
+            wParam = IMENUCTL_GetSel(pMenu);
 			switch( wParam)
 			{
 				case IDS_NEW_RECORD:
