@@ -9242,7 +9242,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                 {
                     AEERect rect;
                     int ry=0;
-                    if(i<2)
+                    if(i<4)
                     {
                         y=y+dy+ygap;
                         ry=y-dy-ygap;
