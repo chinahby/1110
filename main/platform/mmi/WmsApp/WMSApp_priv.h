@@ -967,9 +967,13 @@ typedef struct WmsApp
 // 一个菜单项在LCD上能同时显示的数字字符个数
 #define  MAXCHARS_ONEMENUITEMCANDISPLAY     (16)
 
+#ifdef FEATURE_VERSION_X3
+// 建立消息列表菜单时一页的最大项目数
+#define MAXITEMS_ONEPAGE                    (9)
+#else
 // 建立消息列表菜单时一页的最大项目数
 #define MAXITEMS_ONEPAGE                    (7)
-
+#endif
 // 限制群发时最多允许发往的地址数
 #define MAXNUM_MULTISEND                    (20)
 
