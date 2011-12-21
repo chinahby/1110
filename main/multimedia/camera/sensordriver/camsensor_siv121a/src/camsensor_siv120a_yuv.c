@@ -53,11 +53,13 @@ $Header: //depot/asic/msm6550/drivers/camsensor/camsensor_ SIV120A_ycbcr.c#3 $ $
 /* From the logic analyzer measurements */
 #define OV_SIV120A_YCBCR_FULL_SIZE_WIDTH           640//640
 #define OV_SIV120A_YCBCR_FULL_SIZE_HEIGHT          480
-
+#ifdef	FEATURE_VERSION_X3
 #define OV_SIV120A_YCBCR_QTR_SIZE_WIDTH   		240//640   
 #define OV_SIV120A_YCBCR_QTR_SIZE_HEIGHT  		320//240//   
-
-
+#else
+#define OV_SIV120A_YCBCR_QTR_SIZE_WIDTH   		640   
+#define OV_SIV120A_YCBCR_QTR_SIZE_HEIGHT  		480 //   
+#endif
 #define SIV120A_SENSOR_ID						(0x12)
 #define SIV120A_SENSOR_VERSION					(0x10)
 /*===========================================================================
@@ -526,7 +528,9 @@ boolean camsensor_SIV120A_ycbcr_snapshot_config
   camsensor_static_params_type *camsensor_params /* Other config params */
 ) 
 {
+	#ifdef	FEATURE_VERSION_X3
 	SIV120A_config_window(0,0,OV_SIV120A_YCBCR_FULL_SIZE_WIDTH,OV_SIV120A_YCBCR_FULL_SIZE_HEIGHT);
+	#endif
 	/* Discard the first frame.*/
 	camsensor_params->discardFirstFrame = FALSE;
 	/* Sensor output data format */
@@ -605,8 +609,9 @@ boolean camsensor_SIV120A_ycbcr_video_config
 )
 {
 	camsensor_SIV120A_sensor_init();
-
+#ifdef	FEATURE_VERSION_X3
 	SIV120A_config_window(0,0,OV_SIV120A_YCBCR_QTR_SIZE_WIDTH,OV_SIV120A_YCBCR_QTR_SIZE_HEIGHT);
+#endif
 	/* Sensor output data format */
 	camsensor_params->discardFirstFrame = TRUE;
 	camsensor_params->format = CAMIF_YCbCr_Cr_Y_Cb_Y;
