@@ -54,8 +54,9 @@ $Header: //depot/asic/msm6550/drivers/camsensor/camsensor_ SIV120A_ycbcr.c#3 $ $
 #define OV_SIV120A_YCBCR_FULL_SIZE_WIDTH           640//640
 #define OV_SIV120A_YCBCR_FULL_SIZE_HEIGHT          480
 
-#define OV_SIV120A_YCBCR_QTR_SIZE_WIDTH   		640//640   
-#define OV_SIV120A_YCBCR_QTR_SIZE_HEIGHT  		480//240//   
+#define OV_SIV120A_YCBCR_QTR_SIZE_WIDTH   		240//640   
+#define OV_SIV120A_YCBCR_QTR_SIZE_HEIGHT  		320//240//   
+
 
 #define SIV120A_SENSOR_ID						(0x12)
 #define SIV120A_SENSOR_VERSION					(0x10)
@@ -77,7 +78,19 @@ const char camsensor_SIV120A_ycbcr_sensor_name[]  = "SIV120A VGA";
 static boolean camsensor_SIV120A_ycbcr_i2c_write_byte(uint8 reg, uint8 data);
 static void camsensor_SIV120A_ycbcr_register(camsensor_function_table_type *camsensor_function_table_ptr);
 static boolean camsensor_SIV120A_ycbcr_i2c_read_byte(uint8 reg, uint8 *data); 
+static void SIV120A_config_window(uint16 startx,uint16 starty,uint16 width, uint16 height);
 
+
+static void SIV120A_config_window(uint16 startx,uint16 starty,uint16 width, uint16 height)
+{
+	camsensor_SIV120A_ycbcr_i2c_write_byte(0x00,0x03);
+
+	camsensor_SIV120A_ycbcr_i2c_write_byte(0xa0,(byte)((startx>>8)<<6)|((width>>8)<<4)|((starty>>8)<<3)|((height>>8)<<2));
+	camsensor_SIV120A_ycbcr_i2c_write_byte(0xa1,(byte)startx);
+	camsensor_SIV120A_ycbcr_i2c_write_byte(0xa2,(byte)width);
+	camsensor_SIV120A_ycbcr_i2c_write_byte(0xa3,(byte)starty);
+	camsensor_SIV120A_ycbcr_i2c_write_byte(0xa4,(byte)height);
+}
 /*============================================================================
                           EXTERNAL API DEFINITIONS
 ============================================================================*/
@@ -314,7 +327,7 @@ boolean camsensor_siv120a_init(camsensor_function_table_type *camsensor_function
     gpio_out(CAMSENSOR_SIV120A_RESET_PIN,1);
     clk_busy_wait(2*1000);
 
-	camsensor_preview_resolution  = CAMSENSOR_FULL_SIZE;
+	camsensor_preview_resolution  = CAMSENSOR_QTR_SIZE;
 	camsensor_snapshot_resolution = CAMSENSOR_FULL_SIZE;
 
 
@@ -329,10 +342,10 @@ boolean camsensor_siv120a_init(camsensor_function_table_type *camsensor_function
 	camsensor_SIV120A_ycbcr_i2c_write_byte(0x00, 0x00);
 	camsensor_SIV120A_ycbcr_i2c_read_byte(0x01, &product_id_msb);
 	clk_busy_wait(10);
-	MSG_FATAL ("camsensor_OV7690_ycbcr_init_product_id_msb=0x%x",product_id_msb,0,0);
+	MSG_FATAL ("camsensor_siv120a_ycbcr_init_product_id_msb=0x%x",product_id_msb,0,0);
 	camsensor_SIV120A_ycbcr_i2c_read_byte(0x02, &product_id_lsb);
 	clk_busy_wait(10);
-	MSG_FATAL ("camsensor_OV7690_ycbcr_init_product_id_msb=0x%x",product_id_lsb,0,0);
+	MSG_FATAL ("camsensor_siv120a_ycbcr_init_product_id_msb=0x%x",product_id_lsb,0,0);
 
 	if ( product_id_msb != SIV120A_SENSOR_ID || product_id_lsb != SIV120A_SENSOR_VERSION )
 	{
@@ -513,6 +526,7 @@ boolean camsensor_SIV120A_ycbcr_snapshot_config
   camsensor_static_params_type *camsensor_params /* Other config params */
 ) 
 {
+	SIV120A_config_window(0,0,OV_SIV120A_YCBCR_FULL_SIZE_WIDTH,OV_SIV120A_YCBCR_FULL_SIZE_HEIGHT);
 	/* Discard the first frame.*/
 	camsensor_params->discardFirstFrame = FALSE;
 	/* Sensor output data format */
@@ -530,7 +544,8 @@ boolean camsensor_SIV120A_ycbcr_snapshot_config
 	camsensor_params->camif_window_width_config.lastPixel  = camsensor_params->camsensor_width*2 - 1;
 	camsensor_params->camif_window_height_config.firstLine = 0;
 	camsensor_params->camif_window_height_config.lastLine = camsensor_params->camsensor_height - 1;
-	
+
+	clk_busy_wait(100*1000);
 	camsensor_current_resolution = camsensor_snapshot_resolution;
 	return TRUE;
 } /* camsensor_SIV120A_ycbcr_snapshot_config */
@@ -590,6 +605,8 @@ boolean camsensor_SIV120A_ycbcr_video_config
 )
 {
 	camsensor_SIV120A_sensor_init();
+
+	SIV120A_config_window(0,0,OV_SIV120A_YCBCR_QTR_SIZE_WIDTH,OV_SIV120A_YCBCR_QTR_SIZE_HEIGHT);
 	/* Sensor output data format */
 	camsensor_params->discardFirstFrame = TRUE;
 	camsensor_params->format = CAMIF_YCbCr_Cr_Y_Cb_Y;
