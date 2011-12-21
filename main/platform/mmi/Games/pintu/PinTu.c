@@ -356,7 +356,7 @@ static boolean PinTu_Init(IApplet* pi)
    {
         IIMAGE_SetParm(pMe->m_pNumberLableImage,IPARM_ROP, AEE_RO_TRANSPARENT, 0) ;
    }
-   pMe->m_Soundflag = TRUE;
+   pMe->m_Soundflag = FALSE;
   
    return TRUE;
 }//PinTu_Init()
@@ -644,12 +644,12 @@ static boolean PinTu_HandleEvent(IApplet * pi, AEEEvent eCode, uint16 wParam, ui
                return TRUE;
                
             case IDS_SOUND_ON:
-               pMe->m_Soundflag = TRUE;
+               //pMe->m_Soundflag = TRUE;
                PinTu_DisplayMainScreen(pMe);
                return TRUE;
                 
             case IDS_SOUND_OFF:
-               pMe->m_Soundflag = FALSE;
+               //pMe->m_Soundflag = FALSE;
                PinTu_DisplayMainScreen(pMe);
                return TRUE;
                 

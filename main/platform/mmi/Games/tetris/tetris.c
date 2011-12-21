@@ -907,7 +907,7 @@ static boolean Tetris_InitAppData(CTetrisApp * pMe)
     pMe->m_rTime  = INIT_TIME;
     pMe->m_pImage = NULL;
     pMe->m_rLevel = pMe->m_CfgData.m_nLevel;
-    pMe->m_bSound = pMe->m_CfgData.m_bSound;
+    pMe->m_bSound = FALSE;
     pMe->m_bGrid  = pMe->m_CfgData.m_bGrid;
                              
     pMe->m_rSelMenuItem = IDS_TETRIS_START; 
@@ -3755,7 +3755,7 @@ static void SaveSettingData(CTetrisApp * pMe)
 
     pMe->m_CfgData.m_nLevel = pMe->m_rLevel;
     pMe->m_CfgData.m_bGrid  = pMe->m_bGrid;
-    pMe->m_CfgData.m_bSound = pMe->m_bSound;
+    pMe->m_CfgData.m_bSound = FALSE;
 
     ISHELL_SetPrefs(pMe->a.m_pIShell, 
                     AEECLSID_TETRIS,
