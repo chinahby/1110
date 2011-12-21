@@ -11413,7 +11413,7 @@ static void T9_CJK_CHINESE_DisplaySelection(TextCtlContext *pContext)
               iWindX+2,
               iWindY, // at the bottom line
               iWindDx -6,     
-              iWindDy);   
+              iWindDy-1);   
 	SETAEERECT(&pAllRect,
               iWindX,
               pContext->rectChineseSyllableInput.y, // at the bottom line
