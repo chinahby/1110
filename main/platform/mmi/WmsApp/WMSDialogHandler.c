@@ -3000,7 +3000,7 @@ static boolean IDD_VIEWMSG_Handler(void         *pUser,
 					#endif
 					if (pMe->m_currState == WMSST_VIEWINBOXMSG)
                 	{                	
-#if defined(FEATURE_CARRIER_VENEZUELA_MOVILNET) || defined(FEATURE_CARRIER_THAILAND_HUTCH)
+#if 1//defined(FEATURE_CARRIER_VENEZUELA_MOVILNET) || defined(FEATURE_CARRIER_THAILAND_HUTCH)
 	                    // 该运营商要求 CBN 优先
 	                    if (WSTRLEN(pMe->m_msCur.m_szCallBkNum) > 0)
 	                    {
@@ -3027,7 +3027,7 @@ static boolean IDD_VIEWMSG_Handler(void         *pUser,
 					{
 						if (pMe->m_currState == WMSST_VIEWINBOXMSG)
 	                	{                	
-#if defined(FEATURE_CARRIER_VENEZUELA_MOVILNET) || defined(FEATURE_CARRIER_THAILAND_HUTCH)
+#if 1//defined(FEATURE_CARRIER_VENEZUELA_MOVILNET) || defined(FEATURE_CARRIER_THAILAND_HUTCH)
 		                    // 该运营商要求 CBN 优先
 		                    if (WSTRLEN(pMe->m_msCur.m_szCallBkNum) > 0)
 		                    {
@@ -3382,7 +3382,7 @@ static boolean IDD_SETTING_Handler(void   *pUser,
             MENU_ADDITEM(pMenu, IDS_SENDMODE);
 #ifdef FEATURE_RESERVEDMSG  
 #endif                   
-#ifdef FEATURE_CARRIER_TAIWAN_APBW        //add by yangdecai   2010-08-23 
+#if 1//def FEATURE_CARRIER_TAIWAN_APBW        //add by yangdecai   2010-08-23 
             MSG_FATAL("IDD_SETTING_Handler EVT_DIALOG_INIT IDS_CALLBACKNUM", 0, 0, 0);
             MENU_ADDITEM(pMenu, IDS_CALLBACKNUM);
 #endif 
@@ -3459,7 +3459,7 @@ static boolean IDD_SETTING_Handler(void   *pUser,
                     CLOSE_DIALOG(DLGRET_AUTOREPLACE)
                     return TRUE;
 #endif                    
-#ifdef FEATURE_CARRIER_TAIWAN_APBW        //add by yangdecai   2010-08-23 
+#if 1//def FEATURE_CARRIER_TAIWAN_APBW        //add by yangdecai   2010-08-23 
                 // 发出短信是否带回叫号码
                 MSG_FATAL("IDD_SETTING_Handler EVT_COMMAND IDS_CALLBACKNUM", 0, 0, 0);
                 case IDS_CALLBACKNUM:
@@ -6068,7 +6068,7 @@ static boolean IDD_CALLBACKNUM_Handler(void   *pUser,
 {
     ITextCtl *pTextCtl = NULL;
     WmsApp *pMe = (WmsApp *)pUser;
-
+    MSG_FATAL("IDD_CALLBACKNUM_Handler eCode=0x%x, wParam=0x%x",eCode,wParam,0);
     if (NULL == pMe)
     {
         return FALSE;
@@ -6099,6 +6099,7 @@ static boolean IDD_CALLBACKNUM_Handler(void   *pUser,
 
             if (WSTRLEN(pMe->m_msSend.m_szCallBkNum)>0)
             {// 这是从挂起状态恢复
+                DBGPRINTF("IDD_CALLBACKNUM_Handler m_szCallBkNum=%S", pMe->m_msSend.m_szCallBkNum);
                 (void) ITEXTCTL_SetText(pTextCtl, pMe->m_msSend.m_szCallBkNum, -1);
             }
             else         
@@ -6109,6 +6110,7 @@ static boolean IDD_CALLBACKNUM_Handler(void   *pUser,
                                        CFGI_CALLBACKNUM,
                                        wstrNum,
                                        sizeof(wstrNum));
+                DBGPRINTF("IDD_CALLBACKNUM_Handler wstrNum=%S",wstrNum);
                 if (WSTRLEN(wstrNum) == 0)
                 {// 取默认值: 转化后的 IMSI_S
 #ifdef FEATURE_CARRIER_VENEZUELA_MOVILNET
@@ -9086,7 +9088,6 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                     ISHELL_LoadResString(pMe->m_pShell, AEE_WMSAPPRES_LANGFILE, IDS_DELIVERYREPORTS, wstrText[nControls], sizeof(wstrText));
                     nControls++;
                 }
-#ifdef FEATURE_CARRIER_TAIWAN_APBW 
 
                 if (mask & 0x10)
                 {
@@ -9094,7 +9095,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                     ISHELL_LoadResString(pMe->m_pShell, AEE_WMSAPPRES_LANGFILE, IDS_CALLBACKNUM, wstrText[nControls], sizeof(wstrText));
                     nControls++;
                 }
-#endif                
+                
                 if (mask & 0x01)
                 {
                     wControls[nControls] = IDC_TEXT_CBNUM;
@@ -9441,7 +9442,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                                 IMENUCTL_SetSel((IMenuCtl *)pControl, nSelID);
                             }
                             break;
-#ifdef FEATURE_CARRIER_TAIWAN_APBW                             
+                            
                         case IDC_TEXT_CBNUM:
                             ITEXTCTL_SetProperties((ITextCtl *)pControl, TP_FIXSETRECT|TP_FIXOEM|TP_FOCUS_NOSEL);
                             ITEXTCTL_SetMaxSize((ITextCtl *)pControl, MAX_PH_DIGITS - 1);
@@ -9476,7 +9477,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                             }
                             ITEXTCTL_SetCursorPos((ITextCtl *)pControl, TC_CURSOREND);
                             break;
-#endif                            
+                            
                         default:
                             break;
                     }
@@ -9610,7 +9611,6 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
 
         case EVT_DIALOG_END:
             {
-#ifdef FEATURE_CARRIER_TAIWAN_APBW                 
                 ITextCtl *pIText = (ITextCtl*)IDIALOG_GetControl(pMe->m_pActiveIDlg, IDC_TEXT_CBNUM);
                 
                 if (NULL != pIText)
@@ -9620,7 +9620,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                     if (NULL != txtPtr)
                     {
                         AECHAR  wszText[MAX_PH_DIGITS] = {0};
-                        
+                        DBGPRINTF("IDD_SENDOPTS_Handler txtPtr=%s", txtPtr);
                         (void)ISHELL_LoadResString(pMe->m_pShell, 
                                     AEE_WMSAPPRES_LANGFILE,
                                     IDS_CALLBACKNUM,
@@ -9633,7 +9633,6 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                         }
                     }
                 }
-#endif                
             }
             return TRUE;
             
@@ -9852,7 +9851,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                     {
                         pMe->m_wPrevMenuSel = wNextFocus;
                     }
-#ifdef FEATURE_CARRIER_TAIWAN_APBW                    
+                    
                     switch (wControls[i])
                     {
                         case IDC_TEXT_CBNUM:
@@ -9875,7 +9874,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                         default:                            
                             break;
                     }
-#endif                   
+                    
                     ICONTROL_SetActive(pControl,FALSE);
                     IDIALOG_SetFocus(pMe->m_pActiveIDlg, pMe->m_wPrevMenuSel);
                             
@@ -12584,7 +12583,7 @@ static boolean IDD_MSGOPTS_Handler(void *pUser,
 
                 // 拨打号码
                 case IDS_CALL:
-#if defined(FEATURE_CARRIER_VENEZUELA_MOVILNET) || defined(FEATURE_CARRIER_THAILAND_HUTCH)
+#if 1//defined(FEATURE_CARRIER_VENEZUELA_MOVILNET) || defined(FEATURE_CARRIER_THAILAND_HUTCH)
                     // 该运营商要求 CBN 优先
                     if (WSTRLEN(pMe->m_msCur.m_szCallBkNum) > 0)
                     {
@@ -12603,7 +12602,7 @@ static boolean IDD_MSGOPTS_Handler(void *pUser,
 #ifdef FEATRUE_SET_IP_NUMBER
                 // 拨打IP号码
                 case IDS_IPCALL:
-#if defined(FEATURE_CARRIER_VENEZUELA_MOVILNET)
+#if 1//defined(FEATURE_CARRIER_VENEZUELA_MOVILNET)
                     // 该运营商要求 CBN 优先
                     if (WSTRLEN(pMe->m_msCur.m_szCallBkNum) > 0)
                     {

@@ -1255,7 +1255,7 @@ static NextFSMAction WMSST_INBOXMSGOPTS_Handler(WmsApp *pMe)
                 WmsApp_FreeMultiSendList(pMe->m_pSendList);
                 
                 // 拷贝回复地址 
-#if defined(FEATURE_CARRIER_VENEZUELA_MOVILNET)
+#if 1//defined(FEATURE_CARRIER_VENEZUELA_MOVILNET)
                 // 该运营商要求回复短信时 CBN 优先
                 if (WSTRLEN(pMe->m_msCur.m_szCallBkNum)>0)
                 {
@@ -3038,7 +3038,7 @@ static NextFSMAction WMSST_WRITEMSG_Handler(WmsApp *pMe)
                     (void)MEMSET(pMe->m_msSend.m_szCallBkNum, 0, sizeof(pMe->m_msSend.m_szCallBkNum));
                     if (WSTRLEN(wstrNum) == 0)
                     {// 取默认值: 转化后的 IMSI_S
-#ifdef FEATURE_CARRIER_VENEZUELA_MOVILNET
+#if 1//def FEATURE_CARRIER_VENEZUELA_MOVILNET
                         AECHAR  wstrPrefix1[]={(AECHAR)'1',(AECHAR)'5', (AECHAR)'8', 0};
                         AECHAR  wstrPrefix2[]={(AECHAR)'1',(AECHAR)'9', (AECHAR)'9', 0};
                         AECHAR  wstrPrefix3[5]={0};
@@ -7112,7 +7112,7 @@ static NextFSMAction WMSST_VIEWINBOXMSG_MMS_Handler(WmsApp *pMe)
                 WmsApp_FreeMultiSendList(pMe->m_pSendList);
                 
                 // 拷贝回复地址 
-#if defined(FEATURE_CARRIER_VENEZUELA_MOVILNET)
+#if 1//defined(FEATURE_CARRIER_VENEZUELA_MOVILNET)
                 // 该运营商要求回复短信时 CBN 优先
                 if (WSTRLEN(pMe->m_msCur.m_szCallBkNum)>0)
                 {
@@ -7492,7 +7492,7 @@ static NextFSMAction WMSST_VIEWDRAFTBOXMSG_MMS_Handler(WmsApp *pMe)
                 WmsApp_FreeMultiSendList(pMe->m_pSendList);
                 
                 // 拷贝回复地址 
-#if defined(FEATURE_CARRIER_VENEZUELA_MOVILNET)
+#if 1//defined(FEATURE_CARRIER_VENEZUELA_MOVILNET)
                 // 该运营商要求回复短信时 CBN 优先
                 if (WSTRLEN(pMe->m_msCur.m_szCallBkNum)>0)
                 {
