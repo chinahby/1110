@@ -122,7 +122,7 @@
 		<Text>请稍等</Text>
 	</STRING>
 	<STRING Id="1073" Name="IDS_MSG_CAPTURE_FAILED">
-		<Text>连拍失败</Text>
+		<Text>拍照失败</Text>
 	</STRING>
 	<String Id="1074" Name="IDS_CAMERA_PHOTO_MODE">
 		<Text>图片路径</Text>
