@@ -1602,10 +1602,11 @@ uint16 CContApp_GetCurrFldNum(CContApp *pMe, AEEAddrFieldID wFldID)
     ASSERT(pMe != NULL); 
     
     nFldsNum = IVector_Size(pMe->m_pFldIv);
-    
+      MSG_FATAL("CContApp_GetCurrFldNum---nFldsNum=%d",nFldsNum,0,0);
     if(nFldsNum == 0)
     {
         FARF(ADDR, ("No fields to count"));
+        MSG_FATAL("CContApp_GetCurrFldNum---%d",nCnt,0,0);
         return nCnt;
     }
     
@@ -1634,7 +1635,7 @@ uint16 CContApp_GetCurrFldNum(CContApp *pMe, AEEAddrFieldID wFldID)
     }
     
     FARF(ADDR, ("Get current %d field number %d", wFldID, nCnt));
-    
+      MSG_FATAL("CContApp_GetCurrFldNum---wFldID=%d---nCnt=%d",wFldID,nCnt,0);
     return nCnt;
 }// CContApp_GetCurrFldNum
 
@@ -2551,6 +2552,7 @@ static boolean CContApp_SmartMenuHandle( CContApp *pMe,
     
     if(pMenuCtl == NULL || pTextCtl == NULL)
     {
+        MSG_FATAL("CContApp_SmartMenuHandle-----FALSE",0,0,0);
         return FALSE;
     }
     if(ITEXTCTL_GetInputMode(pTextCtl,NULL) == AEE_TM_SYMBOLS)
@@ -2568,6 +2570,7 @@ static boolean CContApp_SmartMenuHandle( CContApp *pMe,
             {
                 IMENUCTL_SetActive(pMenuCtl, TRUE);
                 ITEXTCTL_SetActive(pTextCtl, TRUE);
+                 MSG_FATAL("CContApp_SmartMenuHandle-----FALSE",0,0,0);
                 return FALSE;
             }
             else
@@ -2722,7 +2725,6 @@ static boolean CContApp_SmartMenuHandle( CContApp *pMe,
                     return TRUE;
                 }          
 				//Add End
-
 				case AVK_INFO:	//Add By zzg 2010_09_16
                  //case AVK_RIGHT:
                  {    
@@ -2740,6 +2742,7 @@ static boolean CContApp_SmartMenuHandle( CContApp *pMe,
                              uint32    dwMask = IMENUCTL_GetProperties(pMenuCtl);
                              IMENUCTL_SetProperties(pMenuCtl, dwMask |MP_NO_REDRAW);
                          }
+                          MSG_FATAL("pMe->m_wSelectSmart==%d",pMe->m_wSelectSmart,0,0);
                          /*
                          if(pMe->m_nleftNum <= pMe->m_eTotalSelectNum)
                          {
@@ -3112,6 +3115,7 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                         else
                         {
                             IMENUCTL_Redraw(pMenuCtl);
+                             MSG_FATAL("CContApp_SmartMenuHandle-----FALSE",0,0,0);
                             return FALSE;
                         }
                     }
@@ -3344,6 +3348,8 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                         return TRUE;               
                     } */
                         //if(ITEXTCTL_IsActive(pTextCtl))
+                         MSG_FATAL("pMe->m_wMainListSel=%d----pMe->m_wMainListIdx=%d---",pMe->m_wMainListSel,pMe->m_wMainListIdx,0);
+                         MSG_FATAL("--pMe->m_nSmartStateType=%d",pMe->m_nSmartStateType,0,0);
                         if(SMART_STATE_IDD_LIST == pMe->m_nSmartStateType)
                         {
 
@@ -3414,6 +3420,7 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                         }
                         
                     curSelectFieldInfo.wIndex = pMe->m_wSelectSmart;
+                    MSG_FATAL("--pMe->m_wSelectSmart=%d",pMe->m_wSelectSmart,0,0);
 
                     if(SMART_STATE_IDD_COPY == pMe->m_nSmartStateType 
                         || SMART_STATE_IDD_DELETE == pMe->m_nSmartStateType
@@ -3441,13 +3448,14 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                         
                         //curSelectFieldInfo.wFieldMask = pMe->m_wFieldIndex;
                         if(CContApp_GetCurrFldNum(pMe, AEE_ADDRFIELD_PHONE_GENERIC) > 1)
-                        {                           
+                        {  
+                            MSG_FATAL("pMe->m_wMainListSel=%d----pMe->m_wMainListIdx=%d---",pMe->m_wMainListSel,pMe->m_wMainListIdx,0);
                             // store the menu select
                             PUSH_LISTMENU_SEL(pMe->m_wMainListSel);
                             
                             // store the menu index
                             PUSH_LISTMENU_IDX(pMe->m_wMainListIdx);
-
+                           
                             // insert  content into wms
                             if(pMe->m_eStartMethod == STARTMETHOD_SELECTFIELD && pMe->m_wSelFldType == MULTI_SELECT_CONTENT)
                             {
@@ -3461,6 +3469,7 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                         }
                         else
                         {
+                             MSG_FATAL("pMe->m_wMainListSel=%d----pMe->m_wMainListIdx=%d---",pMe->m_wMainListSel,pMe->m_wMainListIdx,0);
                             pMe->m_wFieldIndex = CContApp_GetOneNumberFld(pMe, IDX_NUM_RUIM_FLD);
                             curSelectFieldInfo.wFieldMask = pMe->m_wFieldIndex;
                             rtn = CContApp_FindSelectFieldListNode(pSelectFieldListRoot, &curSelectFieldInfo);
@@ -3782,6 +3791,7 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                 {
                     FREEIF(pMe->m_szAlpha);
                     ITEXTCTL_SetText(pTextCtl, pMe->m_szAlpha, -1);
+                     MSG_FATAL("CContApp_SmartMenuHandle-----FALSE",0,0,0);
                     return FALSE;
                 }
                 
@@ -3863,6 +3873,7 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
             // In smart find mode ?
             if(!pMe->m_bInSmartFind)
             {
+                 MSG_FATAL("CContApp_SmartMenuHandle-----FALSE",0,0,0);
                 return FALSE;
             }
             if(pMe->m_wSelectSmart != wParam)
@@ -3896,7 +3907,7 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
         default:
             break;
     }
-    
+     MSG_FATAL("CContApp_SmartMenuHandle-----FALSE",0,0,0);
     return FALSE;
 }// CContApp_SmartMenuHandle
 
@@ -8997,7 +9008,7 @@ static boolean  CContApp_HandleCopyDlgEvent( CContApp  *pMe,
             
             if(NULL == pMe->m_szAlpha)
             {
-                CONTAPP_DRAW_BOTTOMBAR(BTBAR_OPTION_OK_BACK);
+                CONTAPP_DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
             }
             CContApp_DrawScrollBar(pMe, pMenuCtl);
             IDISPLAY_Update(pMe->m_pDisplay);  
@@ -9076,6 +9087,23 @@ static boolean  CContApp_HandleCopyDlgEvent( CContApp  *pMe,
         case EVT_COMMAND:
             pMe->m_wSelectSmart = wParam;
             pMe->m_wSelectCont = wParam;
+            #ifdef FEATURE_VERSION_X3
+            if(SUCCESS != CContApp_LoadAddrFlds( pMe, pMe->m_wSelectSmart, SELECT_ALL))
+             {
+                 CLOSE_DIALOG(DLGRET_ERR);
+                 return TRUE;
+             }
+             curSelectFieldInfo.wIndex = pMe->m_wSelectSmart;
+             pMe->m_wFieldIndex = CContApp_GetOneNumberFld(pMe, IDX_NUM_RUIM_FLD);
+             curSelectFieldInfo.wFieldMask = pMe->m_wFieldIndex;
+             rtn = CContApp_FindSelectFieldListNode(pSelectFieldListRoot, &curSelectFieldInfo);
+            if (rtn == TYPE_NO_MATCH)
+            {
+                pMe->m_eTotalSelectNum++;
+                CContApp_AddSelectFieldListNode(pSelectFieldListRoot, &curSelectFieldInfo);
+            }
+            #endif
+            CLOSE_DIALOG(DLGRET_SELECT);
             return TRUE;
             
         case EVT_CTL_SEL_CHANGED:
@@ -9102,7 +9130,7 @@ static boolean  CContApp_HandleCopyDlgEvent( CContApp  *pMe,
 				{
 					if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//×ó
 					{
-						boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_CONTACT,EVT_USER,AVK_SELECT,EVT_KEY_PRESS);
+						boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_CONTACT,EVT_USER,AVK_SELECT,EVT_KEY_RELEASE);
 						return rt;
 					}
 					else if(wXPos >= rc.x + (rc.dx/3)   && wXPos < rc.x + (rc.dx/3)*2 )//×ó
@@ -12167,7 +12195,7 @@ static boolean  CContApp_HandleDeleteDlgEvent( CContApp  *pMe,
             
             if(NULL == pMe->m_szAlpha)
             {
-                CONTAPP_DRAW_BOTTOMBAR(BTBAR_OPTION_OK_BACK);
+                CONTAPP_DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
             }
             CContApp_DrawScrollBar(pMe, pMenuCtl);
             IDISPLAY_Update(pMe->m_pDisplay);  
@@ -12255,7 +12283,7 @@ static boolean  CContApp_HandleDeleteDlgEvent( CContApp  *pMe,
 				{
 					if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//×ó
 					{
-						boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_CONTACT,EVT_USER,AVK_SELECT,EVT_KEY_PRESS);
+						boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_CONTACT,EVT_USER,AVK_SELECT,EVT_KEY_RELEASE);
 						return rt;
 					}
 					else if(wXPos >= rc.x + (rc.dx/3)   && wXPos < rc.x + (rc.dx/3)*2 )//×ó
@@ -12276,6 +12304,23 @@ static boolean  CContApp_HandleDeleteDlgEvent( CContApp  *pMe,
         case EVT_COMMAND:
             pMe->m_wSelectSmart = wParam;
             pMe->m_wSelectCont = wParam;
+            #ifdef FEATURE_VERSION_X3
+            if(SUCCESS != CContApp_LoadAddrFlds( pMe, pMe->m_wSelectSmart, SELECT_ALL))
+             {
+                 CLOSE_DIALOG(DLGRET_ERR);
+                 return TRUE;
+             }
+             curSelectFieldInfo.wIndex = pMe->m_wSelectSmart;
+             pMe->m_wFieldIndex = CContApp_GetOneNumberFld(pMe, IDX_NUM_RUIM_FLD);
+             curSelectFieldInfo.wFieldMask = pMe->m_wFieldIndex;
+             rtn = CContApp_FindSelectFieldListNode(pSelectFieldListRoot, &curSelectFieldInfo);
+            if (rtn == TYPE_NO_MATCH)
+            {
+                pMe->m_eTotalSelectNum++;
+                CContApp_AddSelectFieldListNode(pSelectFieldListRoot, &curSelectFieldInfo);
+            }
+           #endif
+            CLOSE_DIALOG(DLGRET_SELECT);
             return TRUE;
             
         case EVT_CTL_SEL_CHANGED:
@@ -12427,7 +12472,7 @@ static boolean  CContApp_HandleSelectRecordDlgEvent( CContApp  *pMe,
             
             if(NULL == pMe->m_szAlpha)
             {
-                CONTAPP_DRAW_BOTTOMBAR(BTBAR_OPTION_OK_BACK);
+                CONTAPP_DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
             }
             CContApp_DrawScrollBar(pMe, pMenuCtl);
             IDISPLAY_Update(pMe->m_pDisplay);  
@@ -12586,7 +12631,7 @@ static boolean  CContApp_HandleSelectDlgEvent( CContApp  *pMe,
 #if defined(AEE_STATIC)
     ASSERT(pMe != NULL);
 #endif
-	 MSG_FATAL("CContApp_HandleSelectDlgEvent...........",0,0,0);
+	 MSG_FATAL("CContApp_HandleSelectDlgEvent...........eCode=%d--wParam=%d--dwParam=%d",eCode,wParam,dwParam);
     pMenuCtl = (IMenuCtl*)IDIALOG_GetControl( pMe->m_pActiveDlg, IDC_SELECT_MENU);
     pTextCtl = (ITextCtl*)IDIALOG_GetControl( pMe->m_pActiveDlg, IDC_SELECT_TEXT);   
 
@@ -12595,6 +12640,7 @@ static boolean  CContApp_HandleSelectDlgEvent( CContApp  *pMe,
 
     if(CContApp_SmartMenuHandle(pMe, pMenuCtl, pTextCtl, eCode,wParam))
     {
+        MSG_FATAL("CContApp_HandleSelectDlgEvent...........eCode=%d--wParam=%d--dwParam=%d",eCode,wParam,dwParam);
         return TRUE;
     }
     
@@ -12705,7 +12751,7 @@ static boolean  CContApp_HandleSelectDlgEvent( CContApp  *pMe,
                 }
                 else
                 {
-                    CONTAPP_DRAW_BOTTOMBAR(BTBAR_OPTION_OK_BACK);
+                    CONTAPP_DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
                 }
             }
             //(void)IMENUCTL_Redraw(pMenuCtl);
@@ -12826,21 +12872,18 @@ static boolean  CContApp_HandleSelectDlgEvent( CContApp  *pMe,
                 case AVK_UP:
                 case AVK_DOWN:
                     return TRUE;
-                break;
 
                 case AVK_SELECT:
-
-                    curSelectFieldInfo.wIndex = pMe->m_wSelectCont;
+                     curSelectFieldInfo.wIndex = pMe->m_wSelectCont;
                     curSelectFieldInfo.wFieldCount = pMe->m_wFieldCount;
                     curSelectFieldInfo.wFieldMask = pMe->m_wFieldIndex;
-
+                    
                     if(CContApp_GetCurrFldNum(pMe, AEE_ADDRFIELD_PHONE_GENERIC) > 1)
                     {
                         CLOSE_DIALOG(DLGRET_POPNUMFLD);
                     }
                     else
                     {
-
                         rtn = CContApp_FindSelectFieldListNode(pSelectFieldListRoot, &curSelectFieldInfo);
                         if (rtn == TYPE_NO_MATCH)
                         {
@@ -12861,7 +12904,7 @@ static boolean  CContApp_HandleSelectDlgEvent( CContApp  *pMe,
                         }
                         else if (rtn == TYPE_FIELD_MATCH)
                         {
-                            CContApp_UpdateSelectFieldListNode(pSelectFieldListRoot, &curSelectFieldInfo);
+                             CContApp_UpdateSelectFieldListNode(pSelectFieldListRoot, &curSelectFieldInfo);
                             if(pCurSelectFieldNode->SelectFieldInfo.wFieldMask == 1)
                             {
                                 CContApp_DeleteSelectFieldListNode(pSelectFieldListRoot, &curSelectFieldInfo);
@@ -12908,7 +12951,22 @@ static boolean  CContApp_HandleSelectDlgEvent( CContApp  *pMe,
         case EVT_COMMAND:
             pMe->m_wSelectCont = wParam;
             pMe->m_wSelectSmart = wParam;
-
+            #ifdef FEATURE_VERSION_X3
+            if(SUCCESS != CContApp_LoadAddrFlds( pMe, pMe->m_wSelectSmart, SELECT_ALL))
+             {
+                 CLOSE_DIALOG(DLGRET_ERR);
+                 return TRUE;
+             }
+             curSelectFieldInfo.wIndex = pMe->m_wSelectSmart;
+             pMe->m_wFieldIndex = CContApp_GetOneNumberFld(pMe, IDX_NUM_RUIM_FLD);
+             curSelectFieldInfo.wFieldMask = pMe->m_wFieldIndex;
+             rtn = CContApp_FindSelectFieldListNode(pSelectFieldListRoot, &curSelectFieldInfo);
+            if (rtn == TYPE_NO_MATCH)
+            {
+                pMe->m_eTotalSelectNum++;
+                CContApp_AddSelectFieldListNode(pSelectFieldListRoot, &curSelectFieldInfo);
+            }
+           #endif
             CLOSE_DIALOG(DLGRET_SELECT);
             return TRUE;
             
@@ -12936,7 +12994,7 @@ static boolean  CContApp_HandleSelectDlgEvent( CContApp  *pMe,
 				{
 					if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//×ó
 					{
-						boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_CONTACT,EVT_USER,AVK_SELECT,EVT_KEY_PRESS);
+						boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_CONTACT,EVT_USER,AVK_SELECT,EVT_KEY_RELEASE);
 						return rt;
 					}
 					else if(wXPos >= rc.x + (rc.dx/3)   && wXPos < rc.x + (rc.dx/3)*2 )//×ó
@@ -15394,7 +15452,7 @@ static boolean  CContApp_HandleSelectOptDlgEvent( CContApp  *pMe,
     
     pMenuCtl = (IMenuCtl*)IDIALOG_GetControl( pMe->m_pActiveDlg,
                                               IDC_SELECTOPT_MENU);
-                                              
+    MSG_FATAL("CContApp_HandleSelectOptDlgEvent-----eCode=%d-----wparam=%d----dwparam=%d",eCode,wParam,dwParam);                                          
     MENU_AUTO_SCROLL(pMenuCtl, eCode, wParam);
     switch (eCode)
     {

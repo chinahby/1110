@@ -972,7 +972,7 @@ static boolean  IContApp_HandleEvent( IContApp   *pi,
 					}
 					else if(dwParam == EVT_KEY_PRESS)
 					{
-						eCode = EVT_KEY_PRESS;
+                        eCode = EVT_KEY_PRESS;
 						dwParam = 0;
 					}
 					else if(dwParam == EVT_KEY_RELEASE)
