@@ -1552,9 +1552,15 @@ static void AStatic_RedrawText(AStatic * pme)
 				
 				IDISPLAY_BitBlt(pd, rc.x, rc.y, rc.dx, rc.dy, pFrame, 1, (bi.cy-rc.dy), AEE_RO_COPY);
 				IBITMAP_Release(pFrame);
+				pFrame = NULL;
 		 	}
 			else
 			{
+				if(pFrame!=NULL)
+				{
+					IBITMAP_Release(pFrame);
+					pFrame = NULL;
+				}
 				DBGPRINTF("***zzg AStatic_RedrawText pFrame != NULL***");
 			}
 
