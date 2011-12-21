@@ -557,7 +557,7 @@ extern bt_cmd_status_type bt_pf_goep_sd_register_custom_service(
 
 #define BT_PF_OPP_NO_CONN_ID     0xFFFF
 
-#define BT_PF_OPP_OBJSYS_OPS_TMO 1000 /* ms */
+#define BT_PF_OPP_OBJSYS_OPS_TMO 10000 
 
 #define BT_PF_OPP_SRV_OBJ_FORMAT_VCARD_2_1 0x01
 #define BT_PF_OPP_SRV_OBJ_FORMAT_VCARD_3_0 0x02
@@ -685,7 +685,7 @@ extern bt_cmd_status_type bt_cmd_pf_opp_srv_write_done(
 #include "oi_ftp_client.h"
 #include "oi_ftp_sys.h"
 
-#define BT_PF_FTP_FILESYS_OPS_TMO 1000 /* ms */
+#define BT_PF_FTP_FILESYS_OPS_TMO 10000 
 
 typedef enum
 {
@@ -885,7 +885,7 @@ extern bt_cmd_status_type bt_cmd_pf_ftp_srv_set_folder_done(
 #ifdef FEATURE_BT_TEST_API
 #error code not present
 #else
-#define BT_PF_BIP_OPS_TMO 1000 /* ms */
+#define BT_PF_BIP_OPS_TMO 10000	
 #endif
 
 #define BT_PF_BIP_NO_CONN_ID 0xFFFF
@@ -1198,7 +1198,7 @@ extern bt_cmd_status_type bt_cmd_pf_bip_srv_req_cfm(
 
 #define BT_PF_BPP_NO_CONN_ID 0xFFFF
 
-#define BT_PF_BPP_OPS_TMO 1000 /* ms */
+#define BT_PF_BPP_OPS_TMO 10000 
 
 typedef uint16 bt_pf_bpp_sndr_conn_id_type;
 
@@ -2643,7 +2643,7 @@ extern bt_cmd_status_type bt_cmd_pf_avdtp_security_control_rsp (
 
 #define BT_PF_PBAP_NO_CONN_ID     0xFFFF
 
-#define BT_PF_PBAP_OBJSYS_OPS_TMO 1000 /* ms */
+#define BT_PF_PBAP_OBJSYS_OPS_TMO 10000 
 
 #define BT_PF_PBAP_OBJ_FORMAT_VCARD_2_1 0x01
 #define BT_PF_PBAP_OBJ_FORMAT_VCARD_3_0 0x02

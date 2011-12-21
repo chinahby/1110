@@ -1791,7 +1791,7 @@ LOCAL void bt_rm_init_low_power_config
 #ifdef BT_SWDEV_2_1_SSR
   lpc_ptr->max_latency              = BT_RM_SSR_NOT_ALLOWED;
   lpc_ptr->stick_to_app_param       = FALSE;
-  lpc_ptr->sniff_initiator_oriented = FALSE;
+  lpc_ptr->sniff_initiator_oriented = TRUE;
 #endif /* BT_SWDEV_2_1_SSR */
 
 }
@@ -2864,7 +2864,7 @@ LOCAL void bt_rm_init_connection
   conn_ptr->max_latency                    = BT_RM_DEF_MAX_LATENCY;
   conn_ptr->cur_latency                    = 0;
   conn_ptr->stick_to_app_param             = FALSE;
-  conn_ptr->sniff_initiator_oriented       = FALSE;
+  conn_ptr->sniff_initiator_oriented       = TRUE;
   conn_ptr->sniff_param_changed            = FALSE;
   conn_ptr->sniff_retry_to_ms_left         = 0;
   conn_ptr->ssr_emulating                  = FALSE;
@@ -16099,6 +16099,7 @@ LOCAL void bt_rm_ev_hc_encryption_change
     if ( re_pair_started == FALSE )
     {
       conn_ptr->encrypt_enable = encrypt_enable;
+/*
       if( ( encrypt_enable == BT_ENCRYPT_ENABLE_OFF ) &&
           ( hc_status == BT_BE_SUCCESS ) )
       {
@@ -16107,15 +16108,15 @@ LOCAL void bt_rm_ev_hc_encryption_change
 #ifdef BT_SWDEV_2_1_SSP
             if (IS_SSP_DOABLE() == TRUE)
             {
-              /* Remote 2.1 device disabled encryption. This is
-                 against the spec. Disconnect from rogue device. */
+              // Remote 2.1 device disabled encryption. This is
+                // against the spec. Disconnect from rogue device. 
               BT_MSG_DEBUG("BT RM: SSP Remote 2.1 device turned off enc. Disconnecting.",
                            conn_ptr->enh_enc_state,0,0);
               bt_rm_disconnect_acl( conn_ptr, 
                                     ( bt_rm_disc_reason_type )BT_BE_CONN_REJECTED_SECURITY_FAILURE );
             }
             else
-#endif /* BT_SWDEV_2_1_SSP */
+#endif // BT_SWDEV_2_1_SSP
             {
               BT_MSG_DEBUG("BT RM: Starting enh enc timer enc_state = %x",
                            conn_ptr->enh_enc_state,0,0);
@@ -16131,13 +16132,13 @@ LOCAL void bt_rm_ev_hc_encryption_change
         }
         else if(conn_ptr->enh_enc_state == BT_RM_ENH_ENC_DISABLING)
         {
-            /* Trying to do re-pairing start authentication which will triger re-pairing */
+            // Trying to do re-pairing start authentication which will triger re-pairing 
             BT_MSG_DEBUG("BT RM: Starting re-pairing enh_enc_state %x",conn_ptr->enh_enc_state,0,0);
             conn_ptr->enh_enc_state = BT_RM_ENH_ENC_AUTHENTICATING;
             bt_cmd_hc_authentication_requested( conn_ptr->hc_handle_acl );
 #ifdef BT_SWDEV_2_1_SSP
             conn_ptr->pairing_initiated = TRUE;
-#endif /* BT_SWDEV_2_1_SSP */
+#endif // BT_SWDEV_2_1_SSP 
         }
         else
         {
@@ -16146,6 +16147,7 @@ LOCAL void bt_rm_ev_hc_encryption_change
         }
       }
       else
+*/	  	
       {
 #ifdef BT_SWDEV_2_1_SSP
         conn_ptr->authenticated = TRUE;
