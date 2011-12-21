@@ -536,7 +536,7 @@
 		<Text>发送并保存</Text>
 	</String>
 	<String Id="185" Name="IDS_ENABLEREPORT_SHORT">
-		<Text>Hdp</Text>
+		<Text>开</Text>
 	</String>
 	<String Id="1001" Name="IDS_INSERT_PICTURE">
 		<Text>插入图片</Text>
