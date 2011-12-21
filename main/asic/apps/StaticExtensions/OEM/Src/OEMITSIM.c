@@ -332,6 +332,7 @@ OBJECT(CTSIM)
    AEERect                    rc_blackscrbar;         // save the rect above  the scroll bar
    AEERect                    rc_keypad;              // the rectangle of the keypad
    int16                      downdelta_y;            // save the last y coordinate
+   int16                      cursRect_x;
    uint16                     TopWhitePixels;         // the pixels above the scroll bar
    uint16                     BottomWhitePixels;      // the pixels below the scroll bar
    uint16                     curbuffersize;          // current buffer size which save the pszContents.
@@ -4008,7 +4009,8 @@ static void TSIM_DrawTextPart(CTSIM *pme, boolean bScroll, boolean bFrame)
     rectClip.y  = pme->m_rectDisplay.y;
     rectClip.dx = pme->m_rectDisplay.dx;
     rectClip.dy = pme->m_rectDisplay.dy;
-   
+    
+     DBGPRINTF("TSIM_DrawTextPart-------rectClip.x=%d-rectClip.y=%d ----rectClip.dx=%d---rectClip.dy=%d",rectClip.x,rectClip.y,rectClip.dx,rectClip.dy);
     if (bFrame)
     {
         //if we have drawn a frame for the text part,
@@ -4045,6 +4047,7 @@ static void TSIM_DrawTextPart(CTSIM *pme, boolean bScroll, boolean bFrame)
    
     for (; cnt > 0; ++i, --cnt)
     {
+        DBGPRINTF("TSIM_DrawTextPart--------cat=%d ----i=%d---pme->wLines=%d",cnt,i,pme->wLines);
         if (pme->nFontLeading && cnt > 1)
         {
             // Draw the leading area first so it's ready to be inverted if
@@ -4055,6 +4058,7 @@ static void TSIM_DrawTextPart(CTSIM *pme, boolean bScroll, boolean bFrame)
         if (i < pme->wLines)
         {
             uint16 lineChars = pme->pwLineStarts[i+1] - pme->pwLineStarts[i];
+            DBGPRINTF("TSIM_DrawTextPart------lineChars=%d",lineChars);
 
             if (pme->m_pszContents[pme->pwLineStarts[i+1]-1] == TSIMLINEBREAK && lineChars)
             {
@@ -4120,12 +4124,14 @@ static void TSIM_DrawTextPart(CTSIM *pme, boolean bScroll, boolean bFrame)
        
             if (bCursor)
             {
+                DBGPRINTF("TSIM_DrawTextPart------wSelStartLine=%d------ i=%d",wSelStartLine ,i);
                 if (wSelStartLine == i)
                 {
                     /* Must draw a cursor now */
                     int16 cursX = rectText.x;
                     // Thai: No Modifications needed here
                     // Arrow key puts cursor in correct position
+                     
                     if (pme->wSelStart > pme->pwLineStarts[i])
                     {
                         if( pme->m_dwProps & TP_PASSWORD )
@@ -4178,6 +4184,7 @@ static void TSIM_DrawTextPart(CTSIM *pme, boolean bScroll, boolean bFrame)
             }
             else
             {
+                 DBGPRINTF("TSIM_DrawTextPart------wSelStartLine=%d------ i=%d----wSelEndLine=%d",wSelStartLine ,i,wSelEndLine);
                 if (wSelStartLine <= i && i <= wSelEndLine)
                 {
                     /* Must draw some kind of selection on this line */
@@ -4306,6 +4313,7 @@ static void TSIM_DrawTextPart(CTSIM *pme, boolean bScroll, boolean bFrame)
         }
         else
         {
+             DBGPRINTF("TSIM_DrawTextPart------wSelStartLine=%d------ i=%d----wSelEndLine=%d",wSelStartLine ,i,wSelEndLine);
             // Draw an empty box, there's no text
             //IDISPLAY_FillRect(pme->m_pIDisplay, &rectText, CLR_SYS_WIN);
 			IDISPLAY_FillRect(pme->m_pIDisplay, &rectText, RGB_WINTE_BACKDROP);   //modi by ydc 090521
@@ -4315,10 +4323,16 @@ static void TSIM_DrawTextPart(CTSIM *pme, boolean bScroll, boolean bFrame)
                 // Must draw a cursor.  We can only get here if the text
                 // is completely empty, so just use a nice cursor rectangle
                 // at where the start of the text would be
-                cursRect.x = rectText.x - 2 + 16*((courlen-1)%10);   //modi by ydc 20090527
-                cursRect.y = rectText.y - 23;
+                DBGPRINTF("TSIM_DrawTextPart-----rectText.x=%d---courlen=%d",rectText.x,courlen);
+                if(pme->cursRect_x==0)
+                {
+                  pme->cursRect_x = rectText.x +5 + 22*((courlen-1)%9);
+                }
+                cursRect.x = pme->cursRect_x;//rectText.x +5 + 22*((courlen-1)%9);//rectText.x - 2 + 16*((courlen-1)%10);   //modi by ydc 20090527
+                cursRect.y = rectText.y - 31;
                 cursRect.dx = 5;
                 cursRect.dy = pme->nFontAscent + pme->nFontDescent + 1;
+                DBGPRINTF("TSIM_DrawTextPart-----cursRect.x=%d---cursRect.y=%d--cursRect.dx=%d----cursRect.dy=%d",cursRect.x,cursRect.y,cursRect.dx,cursRect.dy);
                 bDrawCursor = TRUE;
             }
         }
@@ -4345,6 +4359,7 @@ static void TSIM_DrawTextPart(CTSIM *pme, boolean bScroll, boolean bFrame)
 
     if (bDrawCursor)
     { 
+        pme->cursRect_x=cursRect.x;
         TSIM_DrawCursor(pme, &cursRect, &rectClip);//lint !e645
     }
     return;
@@ -5477,6 +5492,7 @@ static void TSIM_DrawCursor(CTSIM *pme, const AEERect *cursRect,
 		*/
 		if (TSIM_IntersectRect(&draw, &scratch, clipRect))
 		{
+            DBGPRINTF("TSIM_DrawCursor draw.x=%d----draw.y=%d----draw.dx=%d-----draw.dy---%d",draw.x,draw.y,draw.dx,draw.dy);
 			IDISPLAY_FillRect(pme->m_pIDisplay, &draw, RGB_WHITE);    //modi by ydc   090521
 			m_draw1.x = draw.x;
 			m_draw1.y = draw.y;
@@ -5502,6 +5518,7 @@ static void TSIM_DrawCursor(CTSIM *pme, const AEERect *cursRect,
 		*/
 		if (TSIM_IntersectRect(&draw, &scratch, clipRect))
 		{
+            DBGPRINTF("TSIM_DrawCursor draw.x=%d----draw.y=%d----draw.dx=%d-----draw.dy---%d",draw.x,draw.y,draw.dx,draw.dy);
 			IDISPLAY_FillRect(pme->m_pIDisplay, &draw, RGB_WHITE);    //modi by ydc   090521
 			m_draw2.x = draw.x;
 			m_draw2.y = draw.y;
@@ -5528,6 +5545,7 @@ static void TSIM_DrawCursor(CTSIM *pme, const AEERect *cursRect,
 		*/
 		if (TSIM_IntersectRect(&draw, &scratch, clipRect))
 		{
+            DBGPRINTF("TSIM_DrawCursor draw.x=%d----draw.y=%d----draw.dx=%d-----draw.dy---%d",draw.x,draw.y,draw.dx,draw.dy);
 			IDISPLAY_FillRect(pme->m_pIDisplay, &draw, RGB_WHITE);    //modi by ydc   090521
 			m_draw3.x = draw.x;
 			m_draw3.y = draw.y;
@@ -6138,6 +6156,7 @@ SEE ALSO:
 =========================================================*/
 static boolean TSIM_HanstrokePenMove(CTSIM* pme, uint32 dwparam)
 {
+    int i;
     //if the coordinate is in the scroll bar area,then
     //drag the scroll bar
     if (pme->bselect_blackscrbar)
@@ -6145,6 +6164,15 @@ static boolean TSIM_HanstrokePenMove(CTSIM* pme, uint32 dwparam)
        // return(TSIM_DragBar(pme, dwparam));
     }
     IIMAGE_Draw(pme->m_pnothwimage,HAND_IMAGE_X,HAND_IMAGE_Y+55); 
+    for (i=(int)FUNCTITLE_ONE; i<(int)MAX_FN_TYPE; i++)
+    {
+       if (!TSIM_IsInRange(dwparam, (&(pme->hs_funtitlerange[i]))))
+       {
+          IIMAGE_SetParm(pme->m_phwimage, IPARM_OFFSET,0,27); 
+          IIMAGE_SetParm(pme->m_phwimage, IPARM_SIZE, 240, 93);
+          IIMAGE_Draw(pme->m_phwimage,0,HAND_IMAGE_Y+TSIMLINEHEIGHT-60);
+       }
+    } 
     //if the pen has moved in the text area, then
     //we fix the selection which will be copied to
     //other place.
@@ -7153,7 +7181,7 @@ static void TSIM_SelectCandiChar(CTSIM *pme, int  index, CoordiRange *prange)
 		}
 		if ((pme->py_state == PY_ASSOC_MODE)&&(pme->m_tsm_curr == TSIM_HANSTROKE)||(pme->m_tsm_curr == TSIM_HANSTROKE))   //modi ydc 090519
 		{
-			rc.y = (int16)(prange->ymin)+1;  //add ydc 090515
+			rc.y = (int16)(prange->ymin)+2;  //add ydc 090515
 		}
 		else
 		{
@@ -7168,7 +7196,7 @@ static void TSIM_SelectCandiChar(CTSIM *pme, int  index, CoordiRange *prange)
 			rc.dx = (int16)((prange->xmax - prange->xmin) -3);
 		}
 
-        rc.dy = (int16)((prange->ymax - prange->ymin) + 1);
+        rc.dy = (int16)(prange->ymax - prange->ymin);
         IDISPLAY_InvertRect(pme->m_pIDisplay, &rc);
         IDISPLAY_UpdateEx(pme->m_pIDisplay, FALSE);
         pme->selectchar_index = (int16)index;
@@ -8930,7 +8958,7 @@ static boolean  TSIM_PinyinEvtChar(CTSIM* pme, AEEEvent eCode, AECHAR receivecha
                 //if the state is PY_INPUT_MODE, then enter the PY_SELECT_MODE state
                 pme->py_state = PY_SELECT_MODE;
                 //Pinyin_DrawCandiRect(pme);
-                IIMAGE_Draw(pme->m_pleft,pme->m_rectDisplay.x,pme->m_rectDisplay.dy);
+                IIMAGE_Draw(pme->m_pleft,(int)pme->m_rectDisplay.x,(int)((int)pme->m_rectDisplay.dy+1));
                 //display the pinyin
                 Pinyin_DispPY(pme);
                 //set the first page
@@ -9240,7 +9268,7 @@ static void TSIM_DispPreviousPage(CTSIM *pme)
     if((pme->nPageIndex==0)&&(pme->py_state == PY_SELECT_MODE))
     {
         rc.x=60;
-        IIMAGE_Draw(pme->m_pleft,pme->m_rectDisplay.x,pme->m_rectDisplay.dy);        
+        IIMAGE_Draw(pme->m_pleft,(int)pme->m_rectDisplay.x,(int)((int)pme->m_rectDisplay.dy+1));       
         Pinyin_DispPY(pme);
         TSIM_DispChinese(pme, &pme->gb[pme->nPageStart], &rc, 6);
     }
