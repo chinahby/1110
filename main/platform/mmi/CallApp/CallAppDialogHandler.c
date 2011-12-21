@@ -1773,13 +1773,19 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 					}
                     szStr[1] = '\0';
                     STR_TO_WSTR(szStr, wStr, sizeof(wStr));
-				//	#ifndef FEATURE_LCD_TOUCH_ENABLE
+				#ifndef FEATURE_LCD_TOUCH_ENABLE
                     if((AVKType)wParam == AVK_POUND||(AVKType)wParam == AVK_STAR|| (AVKType)wParam == AVK_0)
                     {
                         CallApp_Process_Spec_Key_Event(pMe,wParam);
                     }
                     else
-				//	#endif
+				#else
+					if((AVKType)wParam == AVK_STAR)
+                    {
+                        CallApp_Process_Spec_Key_Event(pMe,wParam);
+                    }
+                    else
+				#endif
                     {
                         int    len;
                         //char   szStr[2];
