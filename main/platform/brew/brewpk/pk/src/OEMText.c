@@ -11406,7 +11406,8 @@ static void T9_CJK_CHINESE_DisplaySelection(TextCtlContext *pContext)
         return;
     }
     T9_CJK_CHINESE_AdjustInputInfoLocation(pContext, &iWindX, &iWindY, &iWindDx, &iWindDy);
-    
+    MSG_FATAL("iWindX===%d,,,,,,iWindY====%d",iWindX,iWindY,0);
+	MSG_FATAL("iWindDx===%d,,,,,,iWindDy====%d",iWindX,iWindY,0);
     // setup the text Rect
     SETAEERECT(&pRect,
               iWindX+2,
@@ -11418,6 +11419,11 @@ static void T9_CJK_CHINESE_DisplaySelection(TextCtlContext *pContext)
               pContext->rectChineseSyllableInput.y, // at the bottom line
               iWindDx+2,     
               (iWindDy)*2);  
+	MSG_FATAL("pRect.y===%d,,,,,,pRect.x====%d",pRect.y,pRect.x,0);
+	MSG_FATAL("pRect.dy===%d,,,,,,pRect.dx====%d",pRect.dy,pRect.dx,0);
+	
+	MSG_FATAL("pAllRect.y===%d,,,,,,pAllRect.x====%d",pAllRect.y,pAllRect.x,0);
+	MSG_FATAL("pAllRect.dy===%d,,,,,,pAllRect.dx====%d",pAllRect.dy,pAllRect.dx,0);
     IDISPLAY_EraseRect(pContext->pIDisplay, &pRect);
     // blank the selection when focus on TEXT
     if ( FOCUS_TEXT != pContext->sFocus )
@@ -11433,13 +11439,14 @@ static void T9_CJK_CHINESE_DisplaySelection(TextCtlContext *pContext)
                 &pRect,
                 RGB_BLACK,
                 RGB_WHITE,
-                IDF_RECT_FRAME);  
+                /*IDF_RECT_FRAME|*/IDF_RECT_FILL);  
 #endif //FEATURE_FUNCS_THEME 
     
         /* Point to the buffer to draw */
         psBuffer = pContext->sT9ccFieldInfo.pwSelectPage;
 
         /* Draw each character */
+
         for (k = 0; k < pContext->sT9ccFieldInfo.nSelectPageMax; k++) 
         {
             format = IDF_ALIGN_NONE;
@@ -11449,6 +11456,7 @@ static void T9_CJK_CHINESE_DisplaySelection(TextCtlContext *pContext)
 			cRect.y = pRect.y;
 			cRect.dx = CHINESE_FONT_WIDTH;
 			cRect.dy = CHINESE_FONT_HEIGHT-2;
+			
            (void) IDISPLAY_DrawText((IDisplay *)pContext->pIDisplay,
                                    AEE_FONT_NORMAL,
                                    ch,
@@ -11457,6 +11465,7 @@ static void T9_CJK_CHINESE_DisplaySelection(TextCtlContext *pContext)
                                    pRect.y,//SCREEN_HEIGHT - pContext->nLineHeight,
                                    &cRect,
                                    format); 
+		   
             /* If this character is a NULL terminator, then stop drawing */
             if (*(psBuffer + k ) == 0)  break;
         };
