@@ -2781,16 +2781,19 @@ static NextFSMAction WMSST_TONUMLIST_Handler(WmsApp *pMe)
 				}
             }
 #else
+
 //以下为原来sendopt的操作，全部移动到此处，由于sendopt放在了写短信的option菜单中 
 #if !defined(FEATURE_CARRIER_THAILAND_HUTCH) 
             if (IVector_Size(pMe->m_pSendList) > 0)
 #endif                
             {
                 MSG_FATAL("WMSST_TONUMLIST_Handler m_SendOPT=%d, m_eCreateWMSType=%d",pMe->m_SendOPT,pMe->m_eCreateWMSType,0);
-                // 打包消息
+				
+				// 打包消息
                 WmsApp_PrepareUserDataMOList(pMe);
                 pMe->m_idxUserdata = 0;
-                
+			
+				
                 if ((pMe->m_SendOPT != SENDOPT_SEND) &&
                     (pMe->m_eCreateWMSType != SEND_MSG_RESERVE) &&
                     (pMe->m_eCreateWMSType != SEND_MSG_EDITRESERVE))
@@ -2826,15 +2829,21 @@ static NextFSMAction WMSST_TONUMLIST_Handler(WmsApp *pMe)
                     wms_cacheinfolist_getcounts(WMS_MB_OUTBOX, NULL, &nOnUIMs, &nMsgs);
 #endif                   
                     
-                    nItems = IVector_Size(pMe->m_pUserDataMOList);
-                    
+                    nItems = IVector_Size(pMe->m_pUserDataMOList);					
+					
                     if ((nItems+nMsgs-nOnUIMs)>nMax)
                     {
-                        pMe->m_ePMsgType = MESSAGE_WARNNING;
-                        WmsApp_ShowMsgBox(pMe, IDS_STOREINSUFFICIENCY);
-                        return NFSMACTION_WAIT;
-                    }
+                    	MSG_FATAL("***zzg ToNumList nItems=%d, nMsgs=%d, nOnUIMs=%d***", nItems, nMsgs, nOnUIMs);
+
+						//Del by zzg 2011_12_22
+                        //pMe->m_ePMsgType = MESSAGE_WARNNING;
+                        //WmsApp_ShowMsgBox(pMe, IDS_STOREINSUFFICIENCY);
+                        //return NFSMACTION_WAIT;
+                        //Del End
+                    }				
+					
                 }
+		
                 
 #if defined(FEATURE_CARRIER_THAILAND_HUTCH) 
                 // 对于 Hutch 版本, 如发送选项非 "Save Only" 需在发送前一个状态进行
@@ -2868,11 +2877,14 @@ static NextFSMAction WMSST_TONUMLIST_Handler(WmsApp *pMe)
                         }
                     }
                 }
+
+				MSG_FATAL("WMSST_TONUMLIST_Handler m_SendOPT=%d, m_eCreateWMSType=%d",pMe->m_SendOPT,pMe->m_eCreateWMSType,0);
                 
                 if (pMe->m_SendOPT == SENDOPT_SAVE)
                 {// 这种状态不必经过 WMSST_SENDING 状态
                     wms_client_message_s_type *pClientMsg = NULL;
                     int nRet;
+					
 #if !defined(FEATURE_CARRIER_THAILAND_HUTCH) 
                     CMultiSendItemInfo *pItem = NULL;
                     
@@ -2898,8 +2910,8 @@ static NextFSMAction WMSST_TONUMLIST_Handler(WmsApp *pMe)
                         // HUTCH 要求用户选"仅保存"时，消息存入草稿箱
                         // Must modify message tag!
                         pClientMsg->msg_hdr.tag = WMS_TAG_MO_DRAFT;
-#endif
-                        do
+#endif						
+						do
                         {
                             nRet = IWMS_MsgWrite(pMe->m_pwms, 
                                                  pMe->m_clientId, 
@@ -2907,7 +2919,8 @@ static NextFSMAction WMSST_TONUMLIST_Handler(WmsApp *pMe)
                                                  (void*)pMe,
                                                  WMS_WRITE_MODE_INSERT,
                                                  pClientMsg);
-                        } while(nRet != SUCCESS);
+                        } while(nRet != SUCCESS);											
+                        
 #ifndef WIN32
                         // 休眠10毫秒以确保有时间执行保存消息的操作
                         MSLEEP(10);
@@ -2920,9 +2933,11 @@ static NextFSMAction WMSST_TONUMLIST_Handler(WmsApp *pMe)
                         pClientMsg = WmsApp_GetClientMsgMO(pMe, TRUE);
 #endif                        
                     }
+					
+					
                     pMe->m_ePMsgType = MESSAGE_INFORMATIVE;
                     WmsApp_ShowMsgBox(pMe, IDS_SAVED);
-                    return NFSMACTION_WAIT;
+                    return NFSMACTION_WAIT;                  
                 }
                 
                 if ((pMe->m_eCreateWMSType == SEND_MSG_RESERVE) ||
@@ -2935,6 +2950,7 @@ static NextFSMAction WMSST_TONUMLIST_Handler(WmsApp *pMe)
                     // 检查卡是否插入modi by yangdecai 2010-08-10
 				    if (IRUIM_IsCardConnected(pMe->m_pIRUIM)) 
 				    {
+				    	MSG_FATAL("***zzg WMS ToNumList WMSST_SENDING***", 0, 0, 0);
 		            	MOVE_TO_STATE(WMSST_SENDING)
 				    }
 					else
@@ -4673,7 +4689,7 @@ static NextFSMAction WMSST_RSVDMSGTIME_Handler(WmsApp *pMe)
                 // 获取消息数
                 wms_cacheinfolist_getcounts(WMS_MB_RESERVE, &nMsgs, NULL, NULL);
                 nItems = IVector_Size(pMe->m_pUserDataMOList);
-                if ((nItems+nMsgs)>nMax - MAX_RSVFAILD)
+                if ((nItems+nMsgs)>(nMax - MAX_RSVFAILD))
                 {
                     pMe->m_ePMsgType = MESSAGE_WARNNING;
                     WmsApp_ShowMsgBox(pMe, IDS_STOREINSUFFICIENCY);
