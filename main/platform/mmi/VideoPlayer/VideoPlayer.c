@@ -440,7 +440,6 @@ static void VideoPlayer_FreeAppData(CVideoPlayer *pMe)
     //»Ö¸´°´¼üÒô
     (void)ICONFIG_SetItem(pMe->m_pConfig,CFGI_BEEP_VOL,&pMe->m_CKSound,sizeof(byte));    
 
-    VidePlayer_SoundRestore();
     
     if (pMe->m_pConfig)
     {
@@ -465,6 +464,9 @@ static void VideoPlayer_FreeAppData(CVideoPlayer *pMe)
     }
     
     VideoPlayer_ReleaseVideo(pMe); 
+
+    
+    //VidePlayer_SoundRestore();
 }
 
 /*=================================================================================================================
