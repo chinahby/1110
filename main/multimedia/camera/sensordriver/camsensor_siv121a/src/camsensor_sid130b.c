@@ -131,11 +131,11 @@ static const char camsensor_SETi_SID130B_sensor_suffix[]= "SID130B_mu2myu";
 /***************************************************************
 * The following defines are used as UI parameters
 ***************************************************************/
-#define CAMSENSOR_SID130B_FULL_SIZE_WIDTH  600//480//600
-#define CAMSENSOR_SID130B_FULL_SIZE_HEIGHT 800//640//800
+#define CAMSENSOR_SID130B_FULL_SIZE_WIDTH  900//480//600
+#define CAMSENSOR_SID130B_FULL_SIZE_HEIGHT 1200//640//800
 
-#define CAMSENSOR_SID130B_QTR_SIZE_WIDTH   240
-#define CAMSENSOR_SID130B_QTR_SIZE_HEIGHT  320
+#define CAMSENSOR_SID130B_QTR_SIZE_WIDTH   600
+#define CAMSENSOR_SID130B_QTR_SIZE_HEIGHT  800
 
 #define CAMSENSOR_MIN_BRIGHTNESS 0
 
@@ -205,7 +205,7 @@ static register_address_value_pair camsensor_SETi_SID130B_reg_settings_array[]=
 	{0x00, 0x00},
 	{0x04, 0x00},
 	{0x05, 0x0f},
-	{0x06, 0x8e},
+	{0x06, 0x8f},
 	{0x07, 0x88},
 	{0x08, 0x22},
 	{0x09, 0x11},
@@ -240,8 +240,8 @@ static register_address_value_pair camsensor_SETi_SID130B_reg_settings_array[]=
 	{0x10, 0x00},
 	{0x11, 0x10},
 
-	{0x12, 0x85},
-	{0x13, 0x85},
+	{0x12, 0x8c},//0x85
+	{0x13, 0x8c},//0x85
 	{0x14, 0x85},
         {0x17, 0xC4},
         {0x1c, 0x0c},
@@ -250,44 +250,6 @@ static register_address_value_pair camsensor_SETi_SID130B_reg_settings_array[]=
 	{0x35, 0x3c},   //
 	{0x36, 0x26}, //0X35/0X34=X/64
 	{0x40, 0x40},
-
-       #if 0
-	{0x41, 0x20},
-	{0x42, 0x20},
-	{0x43, 0x00},
-	{0x44, 0x00},
-	{0x45, 0x01},
-	{0x46, 0x1C},
-	{0x47, 0x11},
-	{0x48, 0x15},
-	{0x49, 0x17},
-	{0x4A, 0x1A},
-	{0x4B, 0x1C},
-	{0x4C, 0x1E},
-	{0x4D, 0x1E},
-	{0x4E, 0x0F},
-	{0x4F, 0x09},
-	{0x50, 0x07},
-	{0x51, 0x05},
-	{0x52, 0x04},
-	{0x53, 0x03},
-	{0x54, 0x02},
-	{0x55, 0x01},
-       
-        {0x60, 0x3c},
-        {0x61, 0x3c},
-	{0x62, 0x7f},
-	{0x63, 0x7f},
-	{0x64, 0x3c},
-	{0x65, 0x3c},
-	{0x66, 0x10},
-	{0x67, 0x50},
-	{0x68, 0xe4},
-	{0x69, 0xe4},
-	{0x6A, 0x50},
-	{0x6B, 0x10},
-	{0x6C, 0x06},
-	 #endif
 
 	{0x70, 0xc4},
 	{0x73, 0x22},
@@ -340,7 +302,7 @@ static register_address_value_pair camsensor_SETi_SID130B_reg_settings_array[]=
 	{0x44, 0x13},
 	{0x45, 0x6b},
 	{0x46, 0x82},
-        {0x52, 0x88},
+    {0x52, 0x88},
 	{0x53, 0xa3},
 	{0x54, 0xb6},
 	{0x55, 0xa3},
@@ -428,11 +390,11 @@ static register_address_value_pair camsensor_SETi_SID130B_reg_settings_array[]=
 	{0x35, 0x00},
 	{0x36, 0x44},
 	{0x37, 0x66},
-	{0x38, 0x00},
-	{0x39, 0x40},
-	{0x3A, 0x60},
-	{0x3B, 0x80},
-	{0x3C, 0xa0},
+	{0x38, 0x00},//0x00
+	{0x39, 0x08},//0x40
+	{0x3A, 0x08},//0x60
+	{0x3B, 0x20},//0x80
+	{0x3C, 0x20},//0xa0
 	{0x3D, 0x00},
 	{0x3E, 0x40},
 	{0x3F, 0x60},
@@ -495,15 +457,15 @@ static register_address_value_pair camsensor_SETi_SID130B_reg_settings_array[]=
 	{0x83, 0x14},
 	{0x84, 0x0f},
 
-	{0x90, 0x01/*0x01*/},
-	{0x91, 0x55/*0x75*/},
-	{0x92, 0x00/*0x00*/},
-	{0x93, 0xa8/*0xc8*/},
+	{0x90, 0x01}, //win size 800x600
+	{0x91, 0xf4},
+	{0x92, 0x00},
+	{0x93, 0xc8},
 	
-	{0x94, 0x03}, //win size 800x600
-	{0x95, 0x20},
-	{0x96, 0x02},
-	{0x97, 0x58},
+	{0x94, 0x02}, //win size 800x600
+	{0x95, 0x58},
+	{0x96, 0x03},
+	{0x97, 0x20},
 
 	//Interpolation   
 	{0xA0, 0x3f},
@@ -648,11 +610,11 @@ static register_address_value_pair camsensor_SETi_SID130B_reg_settings_array[]=
 	{0x6F, 0x00},
 
 	{0x80, 0xa2},
-	{0x81, 0x10},
-	{0x82, 0x14},
-	{0x83, 0x08},
+	{0x81, 0x10},//0x10
+	{0x82, 0x18},//0x14
+	{0x83, 0x04},//0x08
 	{0x85, 0x08},
-	{0x87, 0x08},
+	{0x87, 0x04},//0x08
 	{0x89, 0x08},
 	{0x90, 0x16},
 	{0x91, 0x03},
@@ -1100,15 +1062,14 @@ static register_address_value_pair SID130B_mode_full[] =
 //IDP
 	{0x00, 0x03},
 
-	{0x90, 0x01/*0x01*/},
-	{0x91, 0x55/*0x75*/},
-	{0x92, 0x00/*0x00*/},
-	{0x93, 0xa8/*0xc8*/},
-	
-	{0x94, 0x02}, //win size 1600x12600
-	{0x95, 0x58},
-	{0x96, 0x03},
-	{0x97, 0x20},
+	{0x90, 0x00}, //win size 1600x12600
+    {0x91, 0x00},
+    {0x92, 0x00},
+    {0x93, 0x00},
+	{0x94, 0x06}, //win size 1600x12600
+    {0x95, 0x40},
+    {0x96, 0x04},
+    {0x97, 0xb0},
 };
 
 boolean camsensor_SETi_SID130B_snapshot_config
@@ -1133,13 +1094,11 @@ boolean camsensor_SETi_SID130B_snapshot_config
 			camsensor_params->full_size_height;
 
 	/* CAMIF window */
-	camsensor_params->camif_window_width_config.firstPixel = 0;
-	camsensor_params->camif_window_width_config.lastPixel  = \
-			(camsensor_params->full_size_width*2)-1;
+	camsensor_params->camif_window_width_config.firstPixel = 640;
+	camsensor_params->camif_window_width_config.lastPixel  = 640 + (camsensor_params->full_size_width*2)-1;
 
 	camsensor_params->camif_window_height_config.firstLine = 0;
-	camsensor_params->camif_window_height_config.lastLine  = \
-			camsensor_params->full_size_height-1;
+	camsensor_params->camif_window_height_config.lastLine  = 0 + camsensor_params->full_size_height-1;
 			
 	array_length = sizeof(SID130B_mode_full) / sizeof(SID130B_mode_full[0]);
 	/* Configure sensor for Preview mode  */
@@ -1231,13 +1190,8 @@ boolean camsensor_SETi_SID130B_video_config
 	    	return(FALSE);
 	 	}
 	}
-		
-	SETi_SID130B_i2c_write_byte(0x00, 0x03);
-	SETi_SID130B_i2c_write_byte(0x94, 0x00);
-	SETi_SID130B_i2c_write_byte(0x95, 0xF0);
-	SETi_SID130B_i2c_write_byte(0x96, 0x01);
-	SETi_SID130B_i2c_write_byte(0x97, 0x40);
-	camera_timed_wait(100); 
+
+	camera_timed_wait(10); 
       
 	camsensor_params->format 			= format_preview;
  	camsensor_params->discardFirstFrame =  TRUE;
@@ -1260,44 +1214,32 @@ boolean camsensor_SETi_SID130B_video_config
 			            camsensor_params->qtr_size_height;
 
 			/* CAMIF Window */
-			camsensor_params->camif_window_width_config.firstPixel = \
-			                 camsensor_info.preview_dummy_pixels*2;
+			camsensor_params->camif_window_width_config.firstPixel = 0;
 
-			camsensor_params->camif_window_width_config.lastPixel  = \
-			          (camsensor_info.preview_dummy_pixels) \
-			      +(camsensor_params->qtr_size_width*2)-1;
+			camsensor_params->camif_window_width_config.lastPixel  = 0 +(camsensor_params->qtr_size_width*2)-1;
 
 			camsensor_params->camif_window_height_config.firstLine = 0;
 
-			camsensor_params->camif_window_height_config.lastLine  = \
-			            camsensor_params->qtr_size_height-1;
+			camsensor_params->camif_window_height_config.lastLine  = 0 + camsensor_params->qtr_size_height-1;
       		break;
 
 
 		case CAMSENSOR_FULL_SIZE:
-			/* Set the current dimensions */
-			camsensor_params->camsensor_width  = \
-			            camsensor_params->full_size_width;
-			camsensor_params->camsensor_height = \
-			            camsensor_params->full_size_height;
+			camsensor_params->camsensor_width  = camsensor_params->full_size_width;
+			camsensor_params->camsensor_height = camsensor_params->full_size_height;
 
 			/* CAMIF frame */
 			camsensor_params->camif_frame_config.pixelsPerLine = \
-			            camsensor_params->full_size_width*2;
-
+					camsensor_params->full_size_width*2;
 			camsensor_params->camif_frame_config.linesPerFrame = \
-			            camsensor_params->full_size_height;
+					camsensor_params->full_size_height;
 
 			/* CAMIF window */
 			camsensor_params->camif_window_width_config.firstPixel = 0;
-
-			camsensor_params->camif_window_width_config.lastPixel  = \
-			           (camsensor_params->full_size_width*2)-1;
+			camsensor_params->camif_window_width_config.lastPixel  = 0 + (camsensor_params->full_size_width*2)-1;
 
 			camsensor_params->camif_window_height_config.firstLine = 0;
-
-			camsensor_params->camif_window_height_config.lastLine  = \
-			           camsensor_params->full_size_height-1;
+			camsensor_params->camif_window_height_config.lastLine  = 0 + camsensor_params->full_size_height-1;
 
 			break;
 
@@ -1624,33 +1566,33 @@ camera_ret_code_type camsensor_SETi_SID130B_set_ev_compensation(int32 compensati
 		        break;
 
 		    case 12:   // +0 EV
-		        SETi_SID130B_i2c_write_byte(0x12, 0x74);
-		        SETi_SID130B_i2c_write_byte(0x13, 0x74);
-		        SETi_SID130B_i2c_write_byte(0x14, 0x74);
+		        SETi_SID130B_i2c_write_byte(0x12, 0x8c);//0x74
+		        SETi_SID130B_i2c_write_byte(0x13, 0x8c);
+		        SETi_SID130B_i2c_write_byte(0x14, 0x8c);
 		        break;
 
 		    case 13:    // +1 EV
-		        SETi_SID130B_i2c_write_byte(0x12, 0x84);
-		        SETi_SID130B_i2c_write_byte(0x13, 0x84);
-		        SETi_SID130B_i2c_write_byte(0x14, 0x84);
+		        SETi_SID130B_i2c_write_byte(0x12, 0xa0);//0x84
+		        SETi_SID130B_i2c_write_byte(0x13, 0xa0);
+		        SETi_SID130B_i2c_write_byte(0x14, 0xa0);
 		        break;
 
 		    case 14:    // +2 EV
-		        SETi_SID130B_i2c_write_byte(0x12, 0x94);
-		        SETi_SID130B_i2c_write_byte(0x13, 0x94);
-		        SETi_SID130B_i2c_write_byte(0x14, 0x94);
+		        SETi_SID130B_i2c_write_byte(0x12, 0xb0);//0x94
+		        SETi_SID130B_i2c_write_byte(0x13, 0xb0);
+		        SETi_SID130B_i2c_write_byte(0x14, 0xb0);
 		        break;
 
 		    case 15:    // +3 EV
-		        SETi_SID130B_i2c_write_byte(0x12, 0xA4);
-		        SETi_SID130B_i2c_write_byte(0x13, 0xA4);
-		        SETi_SID130B_i2c_write_byte(0x14, 0xA4);
+		        SETi_SID130B_i2c_write_byte(0x12, 0xc0);//0xa4
+		        SETi_SID130B_i2c_write_byte(0x13, 0xc0);
+		        SETi_SID130B_i2c_write_byte(0x14, 0xc0);
 		        break;
 
 		    case 16:    // +4 EV
-		        SETi_SID130B_i2c_write_byte(0x12, 0xB4);
-		        SETi_SID130B_i2c_write_byte(0x13, 0xB4);
-		        SETi_SID130B_i2c_write_byte(0x14, 0xB4);
+		        SETi_SID130B_i2c_write_byte(0x12, 0xd0);//0xb4
+		        SETi_SID130B_i2c_write_byte(0x13, 0xd0);
+		        SETi_SID130B_i2c_write_byte(0x14, 0xd0);
 		        break;
 
 		    default:
