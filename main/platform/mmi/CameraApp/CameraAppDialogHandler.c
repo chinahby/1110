@@ -251,8 +251,8 @@ typedef struct
 #ifdef FEATURE_CAMERA_MULTI_SENSOR
 static const CCameraSize g_CameraFrontSizeCFG[] = 
 {
-	{320,240,L"320*240"}, // VGA 
-    {640,480,L"640*480"}, // VGA
+	{180,240,L"180*240"}, // VGA 
+    {360,480,L"360*480"}, // VGA
     {0,0,NULL}
 };
 
@@ -3610,7 +3610,38 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
 	        break;
 	}
 
-//#ifndef FEATURE_VERSION_X3   
+#ifdef FEATURE_VERSION_X3 
+	// size cfgID
+	(void)ICONFIG_GetItem(pMe->m_pConfig,
+                          CFGI_CAMERA_SIZE,
+                         &pMe->m_nCameraSize,
+                          sizeof(pMe->m_nCameraSize));
+
+    switch(pMe->m_nCameraSize)
+    {
+	    case OEMNV_CAMERA_SIZE_INDEX_0:
+	        nResID[CAMERACFGSIZE] = IDI_SIZE_160_128;
+	        break;
+
+	    case OEMNV_CAMERA_SIZE_INDEX_1:
+	        nResID[CAMERACFGSIZE] = IDI_SIZE_220_176;
+	        break;
+
+	    case OEMNV_CAMERA_SIZE_INDEX_2:
+	        nResID[CAMERACFGSIZE] = IDI_SIZE_320_240;
+	        break;
+
+	    case OEMNV_CAMERA_SIZE_INDEX_3:
+	        nResID[CAMERACFGSIZE] = IDI_SIZE_640_480;
+	        break;
+	        
+	    default:
+	        nResID[CAMERACFGSIZE] = IDI_SIZE_160_128;
+	        break;
+    }
+
+#endif
+
 #ifdef FEATURE_VERSION_W208S
     // size cfgID
     (void)ICONFIG_GetItem(pMe->m_pConfig,
