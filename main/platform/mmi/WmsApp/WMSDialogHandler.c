@@ -10773,6 +10773,9 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 #ifndef FEATURE_USES_MMS             
             IDISPLAY_Update(pMe->m_pDisplay);  
 #endif
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+            TSIM_NumberKeypad(FALSE);
+#endif
             return TRUE; 
             
         case EVT_KEY_RELEASE:
