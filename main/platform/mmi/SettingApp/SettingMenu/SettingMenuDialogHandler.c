@@ -56,6 +56,7 @@ boolean start_security_setting_by_user;
 #define FEATURE_SET_SCENEMODE
 #elif defined FEATURE_VERSION_M8P
 #define FEATURE_SET_SCENEMODE
+#elif defined FEATURE_VERSION_X3
 #else
 #define FEATURE_SET_SCENEMODE
 #endif
@@ -7809,6 +7810,16 @@ static boolean  Setting_Handle_Password(CSettingMenu *pMe,
                 strDisplay[nLen] = '|';
                 strDisplay[nLen + 1] = '\0';
                 (void) STRTOWSTR(strDisplay, wstrDisplay, sizeof(wstrDisplay));
+                #ifdef FEATURE_VERSION_X3
+                IDISPLAY_DrawText(pMe->m_pDisplay, 
+                                AEE_FONT_BOLD, 
+                                wstrDisplay,
+                                -1, 
+                                10, 
+                                (pMe->m_rc.dy)*2/11+MENUITEM_HEIGHT,
+                                NULL, 
+                                IDF_TEXT_TRANSPARENT);
+                #else
                 IDISPLAY_DrawText(pMe->m_pDisplay, 
                                 AEE_FONT_BOLD, 
                                 wstrDisplay,
@@ -7817,6 +7828,7 @@ static boolean  Setting_Handle_Password(CSettingMenu *pMe,
                                 TITLEBAR_HEIGHT + MENUITEM_HEIGHT*3/2,
                                 NULL, 
                                 IDF_TEXT_TRANSPARENT);
+                #endif
                 (void)IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, nOldFontColor);
         		#ifndef FEATURE_ALL_KEY_PAD    //add by yangdecai 
                 // 绘制底条提示
