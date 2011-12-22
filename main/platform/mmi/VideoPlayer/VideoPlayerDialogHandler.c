@@ -2502,7 +2502,7 @@ static void VideoPlayer_VideoNotify(void * pUser, AEEMediaCmdNotify * pCmdNotify
                 VideoPlayer_RefreshPlayerFileName(pMe);
                 VideoPlayer_RefreshScheduleBar(pMe);//刷新进度条
                 VideoPlayer_RefreshVolBar(pMe);// 刷新音量
-#ifdef FEATURE_DISP_240X320
+#if defined (FEATURE_DISP_240X320)||defined(FEATURE_DISP_220X176)
                 VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE, IDI_PLAY, VIDEOPLAYER_PLAY_X,VIDEOPLAYER_PLAY_Y); //"|>"
 #endif
 
