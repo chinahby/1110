@@ -425,7 +425,7 @@
 		<Text>提醒超时默认发送</Text>
 	</STRING>
 	<STRING Id="148" Name="IDS_DELETEALL">
-		<Text>全部刪除</Text>
+		<Text>全部删除</Text>
 	</STRING>
 	<STRING Id="149" Name="IDS_INPUTNULL">
 		<Text>短信内容不能为空</Text>
