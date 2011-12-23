@@ -1411,7 +1411,7 @@ static void VideoPlayer_UpdateFRButton(CVideoPlayer *pMe)
 /*=================================================================================================================
 ≥ı ºªØvideo
 =================================================================================================================*/
-void VidePlayer_SoundRestore()
+void VidePlayer_SoundRestore(void)
 {    
     IConfig             *pConfig;
     int nRet = EFAILED;
@@ -1421,6 +1421,7 @@ void VidePlayer_SoundRestore()
 	byte		set_ringer_level;
 	byte		set_beep_level;
 	byte        CallVolume;
+#if 0    
         // Create the IConfig Serivce object.
     nRet = ISHELL_CreateInstance(AEE_GetShell(),
                                  AEECLSID_CONFIG,
@@ -1429,6 +1430,7 @@ void VidePlayer_SoundRestore()
     {
         return ;
     }
+    
     
     ICONFIG_GetItem(pConfig, CFGI_PROFILE_CUR_NUMBER,&CurProfile, sizeof(byte));
     MSG_FATAL("VidePlayer_SoundRestore CurProfile=%d",CurProfile,0,0);
@@ -1447,28 +1449,16 @@ void VidePlayer_SoundRestore()
     MSG_FATAL("VidePlayer_SoundRestore CallVolume=%d",CallVolume,0,0);                                            
 	set_ringer_level            =   return_ringer_level[CurProfile];
 	set_beep_level              =   return_beep_level[CurProfile];
-    if (!HS_HEADSET_ON())
-   {    
-        snd_set_device(SND_DEVICE_HANDSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);
-    	snd_set_volume( SND_DEVICE_HANDSET, SND_METHOD_KEY_BEEP,set_beep_level, NULL, NULL );
-    	snd_set_volume( SND_DEVICE_HANDSET, SND_METHOD_VOICE,CallVolume, NULL, NULL );		
+           
+   (void)ICONFIG_SetItem(pConfig,CFGI_BEEP_VOL,set_beep_level,sizeof(byte));
+   (void)ICONFIG_SetItem(pConfig,CFGI_RINGER_VOL,set_ringer_level,sizeof(byte));
+   (void)ICONFIG_SetItem(pConfig,CFGI_EAR_VOL,CallVolume,sizeof(byte));
 
-    	snd_set_volume( SND_DEVICE_HANDSET, SND_METHOD_MESSAGE,set_ringer_level, NULL, NULL );	
-    	snd_set_volume( SND_DEVICE_HANDSET, SND_METHOD_RING,set_ringer_level, NULL, NULL );	
-    }
-    else
-    {        
-        snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);
-        snd_set_volume( SND_DEVICE_STEREO_HEADSET, SND_METHOD_KEY_BEEP,set_beep_level, NULL, NULL );
-        snd_set_volume( SND_DEVICE_STEREO_HEADSET, SND_METHOD_VOICE,CallVolume, NULL, NULL );		
-
-        snd_set_volume( SND_DEVICE_STEREO_HEADSET, SND_METHOD_MESSAGE,set_ringer_level, NULL, NULL );	
-        snd_set_volume( SND_DEVICE_STEREO_HEADSET, SND_METHOD_RING,set_ringer_level, NULL, NULL );	
-    }
     if (pConfig!=NULL)
-        ICONFIG_Release(pConfig);
-    
+        ICONFIG_Release(pConfig);   
+#endif    
 }
+
 void  VideoPlayer_InitVideo(CVideoPlayer  *pMe)                  
 {    
     //ÃÓ–¥m_md stucture

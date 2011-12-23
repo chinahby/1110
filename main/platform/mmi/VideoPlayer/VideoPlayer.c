@@ -466,7 +466,7 @@ static void VideoPlayer_FreeAppData(CVideoPlayer *pMe)
     VideoPlayer_ReleaseVideo(pMe); 
 
     
-    //VidePlayer_SoundRestore();
+   // VidePlayer_SoundRestore();
 }
 
 /*=================================================================================================================
@@ -891,7 +891,12 @@ static boolean VideoPlayer_HandleEvent(IVideoPlayer *pi, AEEEvent  eCode, uint16
 void VideoPlayer_ReleaseVideo(CVideoPlayer *pMe)
 {
     if(pMe->m_pMedia)
-    {
+    {//restore video music
+        (void)IMEDIA_SetAudioDevice((IMedia *)pMe->m_pMedia, HS_HEADSET_ON()?AEE_SOUND_DEVICE_STEREO_HEADSET:AEE_SOUND_DEVICE_HANDSET);        
+        MSLEEP(100);
+        //VidePlayer_SoundRestore();
+        IMEDIA_SetVolume((IMedia *)pMe->m_pMedia, 60);        
+        MSLEEP(100);
         (void)IMEDIA_RegisterNotify((IMedia*)pMe->m_pMedia, NULL, pMe);
         IMEDIA_Release((IMedia*)pMe->m_pMedia);
         pMe->m_pMedia = NULL;
