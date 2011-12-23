@@ -74,7 +74,7 @@ static boolean  HandleFmRadioMainDialogEvent(CFmRadio *pMe,
 #elif defined(FEATURE_DISP_176X220)
 #define FM_VOLUME_Y                         (SCREEN_HEIGHT - 100)
 #elif defined(FEATURE_DISP_240X320)
-#define FM_VOLUME_Y                         (SCREEN_HEIGHT - 130)
+#define FM_VOLUME_Y                         (SCREEN_HEIGHT - 140)
 #else
 #define FM_VOLUME_Y                         (SCREEN_HEIGHT - 68)
 #endif
@@ -361,6 +361,7 @@ static boolean  HandleFmRadioMainDialogEvent(CFmRadio *pMe,
 				int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
 				int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
 				AEERect bottomBarRect;
+                AEERect LbottomRect,RbottomRect,UbottomRect,DbottemRect,StopbottemRect;
 				//int ht;
 				int nBarH ;
                 AEERect rc;
@@ -370,6 +371,11 @@ static boolean  HandleFmRadioMainDialogEvent(CFmRadio *pMe,
 				MEMSET(&devinfo, 0, sizeof(devinfo));
 				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
 				SETAEERECT(&bottomBarRect, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+                SETAEERECT(&LbottomRect, 60, FM_VOLUME_Y, 45, 60);
+                SETAEERECT(&RbottomRect, 140, FM_VOLUME_Y, 45, 60);
+                SETAEERECT(&UbottomRect, 0, FM_VOLUME_Y-5, FM_VOLUME_X*4, FM_VOLUME_X*3);
+                SETAEERECT(&DbottemRect, 0, FM_VOLUME_Y+52, FM_VOLUME_X*4, FM_VOLUME_X*3);
+                SETAEERECT(&StopbottemRect, 105, FM_VOLUME_Y, 30, 60);
 				MSG_FATAL("wXPos=====%d,wYPos=========%d",wXPos,wYPos,0);
 				
 				if( TOUCH_PT_IN_RECT(wXPos, wYPos, bottomBarRect))
@@ -387,6 +393,31 @@ static boolean  HandleFmRadioMainDialogEvent(CFmRadio *pMe,
 						MSG_FATAL("AVK_SELECT",0,0,0);
 					}
 				}
+                else if( TOUCH_PT_IN_RECT(wXPos, wYPos, StopbottemRect))
+                {
+                    eCode = EVT_KEY;
+					wParam = AVK_INFO;
+                }
+                else if( TOUCH_PT_IN_RECT(wXPos, wYPos, LbottomRect))
+                {
+                    eCode = EVT_KEY;
+					wParam = AVK_LEFT;
+                }
+                else if( TOUCH_PT_IN_RECT(wXPos, wYPos, RbottomRect))
+                {
+                    eCode = EVT_KEY;
+					wParam = AVK_RIGHT;
+                }
+                else if( TOUCH_PT_IN_RECT(wXPos, wYPos, UbottomRect))
+                {
+                    eCode = EVT_KEY;
+					wParam = AVK_UP;
+                }
+                else if( TOUCH_PT_IN_RECT(wXPos, wYPos, DbottemRect))
+                {
+                    eCode = EVT_KEY;
+					wParam = AVK_DOWN;
+                }
                 else
                 {
                     if(ITEXTCTL_IsActive(pMe->pText))//pMe->m_pMenu
@@ -1648,12 +1679,17 @@ static void popOptionMenu( CFmRadio *pMe)
 	uint16  resId[] = { 
 	#if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
 						//IDS_FMRADIO_OPTION_MENU_QUIT,
+						#ifdef FEATURE_VERSION_X3
+                        IDS_FMRADIO_OPTION_MENU_LIST,
+                        IDS_FMRADIO_OPTION_MENU_GLOBAL_SEARCH,
+                        #else
                         #if defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_W515V3)
                         IDS_FMRADIO_OPTION_MENU_SEARCH,
                         #else
                         IDS_FMRADIO_OPTION_MENU_GLOBAL_SEARCH,
                         #endif						
 						IDS_FMRADIO_OPTION_MENU_LIST,
+                        #endif                        
 						IDS_SAVE,
                         IDS_FMRADIO_SPEAKER,
 	#endif
