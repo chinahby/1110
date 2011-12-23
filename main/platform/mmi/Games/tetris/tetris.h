@@ -41,7 +41,7 @@ AUTHOR: whewei
 #define MAX_LEVEL        3              // Max number of levels supported
 #define NEXT_MAX_YNUM    2              // Max number of blocks in vertical direction 
 #define NEXT_MAX_XNUM    4              // Max number of blocks in horizontal direction 
-#define NEXT_BLOCK_SIZE  8              // Size of the next block 
+#define NEXT_BLOCK_SIZE  11              // Size of the next block 
 #define MAX_REM_LINES    4              // Max number of lines deleted once
 #define MAX_FLASH_TIMES  3              // Max flash times when delete a full line
 #define MAX_BLOCK_KIND   7              // Max number of types supported
@@ -64,7 +64,7 @@ AUTHOR: whewei
 
 #define LARGE_POP_WIN_X    25
 #define LARGE_POP_WIN_Y    45
-#define LARGE_POP_WIN_DX   160
+#define LARGE_POP_WIN_DX   140
 #define LARGE_POP_WIN_DY   200
 
 #define SMALL_POP_WIN_X    35

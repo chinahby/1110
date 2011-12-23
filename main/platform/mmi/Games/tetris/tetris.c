@@ -2392,9 +2392,9 @@ static void DrawButtons(CTetrisApp * pMe, boolean bDrawTwo, boolean bPaused)
     rect.dx = pMe->m_rScreenWidth - rect.x;
     rect.dy = BUTTON_DY;
 
-    IDISPLAY_EraseRect(pMe->a.m_pIDisplay, &rect);
+    //IDISPLAY_EraseRect(pMe->a.m_pIDisplay, &rect);
     pMe->m_pImage = ISHELL_LoadResImage(pMe->a.m_pIShell, TETRIS_RES_FILE_LANG, IDB_RECTBG);
-    IIMAGE_Draw(pMe->m_pImage, rect.x, rect.y);
+    IIMAGE_Draw(pMe->m_pImage, rect.x, rect.y-2);
 
     if(bPaused == TRUE)
     {
@@ -2426,8 +2426,8 @@ static void DrawButtons(CTetrisApp * pMe, boolean bDrawTwo, boolean bPaused)
     }
 
     rect.y += rect.dy + 10;
-    IIMAGE_Draw(pMe->m_pImage, rect.x, rect.y);
-
+    IIMAGE_Draw(pMe->m_pImage, rect.x, rect.y-2);
+    
     MEMSET(Content, 0, sizeof(Content));
     (void)ISHELL_LoadResString(pMe->a.m_pIShell, 
                                TETRIS_RES_FILE_LANG,
