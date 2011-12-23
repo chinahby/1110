@@ -4,9 +4,9 @@
     <String Id="1001" Name= "IDS_TITLE_BRIGHTNESS">
         <Text>السطوع</Text>
     </String>
-	<String Id="1002" Name="IDS_TITLE_BRIGHTNESS">
-		<Text>Brightness</Text>
-
+ 	<STRING Id="1002" Name="IDS_TITLE_BRIGHTNESS">
+ 		<Text>السطوع</Text>
+ 	</STRING>
     <String Id="1003" Name= "IDS_TITLE_CONTRAST">
         <Text>التباين</Text>
     </String>
