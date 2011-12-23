@@ -39,6 +39,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_RUIM_PHONEBOOK
 #define FEATURE_ICARD_NO_UI_BASE
 #define FEATURE_LANG_ENGLISH
+#define FEATURE_LANG_SPANISH			//Add By zzg 2011_12_23
 //#define FEATURE_LANG_ARABIC
 //#define FEATURE_NUM_KEY_MID
 //#define FEATURE_INPUTMODE_INDONESIAN //Add By zzg 2010_09_06

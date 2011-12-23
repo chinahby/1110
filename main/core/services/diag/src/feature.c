@@ -257,7 +257,7 @@ byte diag_feature_mask[FEATURE_MASK_LENGTH] = {
 #error code not present
   #endif /* FEATURE_LANG_FRENCH */
   #ifdef FEATURE_LANG_SPANISH
-#error code not present
+//#error code not present
   #endif /* FEATURE_LANG_SPANISH */
   #ifdef FEATURE_LANG_PORTUGUESE
 #error code not present
