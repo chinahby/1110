@@ -43,6 +43,24 @@
 	<Object Id="5014" Name="IDB_PROMPT_MSG_STATIC_BG">
 		<File>..\images\220x176\common\Appscommon\MessageBox\background_static.bmp</File>
 	</Object>
+	<Object Id="5015" Name="IDB_MODE_T9_MT_SPANISH" MimeType="image/png">
+		<File>..\images\220x176\common\IME\T9sp.png</File>
+	</Object>
+	<Object Id="5016" Name="IDB_MODE_T9_RAPID_SPANISH" MimeType="image/png">
+		<File>..\images\220x176\common\IME\sp_1.png</File>
+	</Object>
+	<Object Id="5017" Name="IDB_MODE_T9_MT_SPANISH_LOW" MimeType="image/png">
+		<File>..\images\220x176\common\IME\sp_2.png</File>
+	</Object>
+	<Object Id="5018" Name="IDB_MODE_T9_MT_SPANISH_UP" MimeType="image/png">
+		<File>..\images\220x176\common\IME\sp_3.png</File>
+	</Object>
+	<Object Id="5019" Name="IDB_MODE_T9_RAPID_SPANISH_LOW" MimeType="image/png">
+		<File>..\images\220x176\common\IME\sp_4.png</File>
+	</Object>
+	<Object Id="5020" Name="IDB_MODE_T9_RAPID_SPANISH_UP" MimeType="image/png">
+		<File>..\images\220x176\common\IME\sp_5.png</File>
+	</Object>
 	<Object Id="5021" Name="IDB_CHECK_ON" MimeType="image/png">
 		<File>..\images\220x176\common\Appscommon\Icon\check_yes.png</File>
 	</Object>
@@ -423,13 +441,13 @@
 	</Object>
 	<Object Id="7045" Name="IDB_QQMSG">
 		<File>..\images\128x160\common\Annunciator\qqmsg.bmp</File>
-	</Object>	
+	</Object>
 	<Object Id="7046" Name="IDB_QQHIDING">
 		<File>..\images\128x160\common\Annunciator\qqhiding.bmp</File>
 	</Object>
 	<Object Id="7047" Name="IDB_QQLEAVE">
 		<File>..\images\128x160\common\Annunciator\qqleave.bmp</File>
-	</Object>			
+	</Object>
 	<Object Id="7101" Name="IDB_MMS_ENTER" MimeType="image/png">
 		<File>..\images\220x176\common\Appscommon\Icon\enter.png</File>
 	</Object>
