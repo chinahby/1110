@@ -134,13 +134,13 @@
 		<Text>中国电信</Text>
 	</STRING>
 	<STRING Id="1045" Name="IDS_HEADSET_ON">
-		<Text>Headset plug in</Text>
+		<Text>耳机插入</Text>
 	</STRING>
 	<STRING Id="1046" Name="IDS_HEADSET_OFF">
-		<Text>Headset plug out</Text>
+		<Text>耳机拔出</Text>
 	</STRING>
 	<STRING Id="1047" Name="IDS_WAITING">
-		<Text>Waiting</Text>
+		<Text>等待</Text>
 	</STRING>
 	<String Id="1048" Name="IDS_SUPER_SINGAL_ON">
 		<Text>开启超强信号！</Text>
@@ -152,7 +152,7 @@
 		<Text>Technical problem</Text>
 	</String>
 	<String Id="1051" Name="IDS_MSG_MEMISSUE">
-		<Text>Memory problem</Text>
+		<Text>内存问题</Text>
 	</String>
 	<String Id="1052" Name="IDS_MSG_SECISSUE">
 		<Text>Access security policy not fulfilled or secret code rejected</Text>
@@ -161,28 +161,28 @@
 		<Text>The new PIN is accepted</Text>
 	</String>
 	<String Id="1054" Name="IDS_NO_USIM_CARDONE">
-		<Text>No UIM card 1</Text>
+		<Text>请插入卡</Text>
 	</String>
 	<String Id="1055" Name="IDS_NO_USIM_CARDTWO">
-		<Text>No UIM card 2</Text>
+		<Text>请插入卡2</Text>
 	</String>
 	<String Id="1056" Name="IDS_STR_BLACKBERRY_ONE">
-		<Text>Messages</Text>
+		<Text>短消息</Text>
 	</String>
 	<String Id="1057" Name="IDS_STR_BLACKBERRY_TWO">
-		<Text>Contacts</Text>
+		<Text>电话本</Text>
 	</String>
 	<String Id="1058" Name="IDS_STR_BLACKBERRY_TRE">
-		<Text>Alarm</Text>
+		<Text>闹钟</Text>
 	</String>
 	<String Id="1059" Name="IDS_STR_BLACKBERRY_FUR">
-		<Text>Scheduler</Text>
+		<Text>日历</Text>
 	</String>
 	<String Id="1060" Name="IDS_STR_BLACKBERRY_FIV">
-		<Text>Musicplayer</Text>
+		<Text>MP3播放</Text>
 	</String>
 	<String Id="1061" Name="IDS_STR_BLACKBERRY_SIX">
-		<Text>FMRadio</Text>
+		<Text>收音机</Text>
 	</String>
 	<String Id="1062" Name="IDS_BATTERY_FULLY_CHARGE">
 		<Text>完成电池充电</Text>
