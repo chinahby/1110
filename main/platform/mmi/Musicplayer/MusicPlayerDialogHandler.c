@@ -1620,9 +1620,52 @@ static boolean MP3_Settings_HandleEvent(CMusicPlayer *pMe,
 			  AEERect rc;
 			  int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
 			  int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
+  		      int16       title_hight ;
+   		      int16       bottomheight ;
+   		      int16       itemheight ;
+   		      int16       lineSpace;
+  		    
+  		      if(!pMe)
+  		      {
+  		          return;
+  		      }
+  		      ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+  		      pMe->m_rc.dy = devinfo.cyScreen;
+  		      title_hight = 0;
+  		      bottomheight = GetBottomBarHeight(pMe->m_pDisplay);
+  		      itemheight = IDISPLAY_GetFontMetrics(pMe->m_pDisplay, AEE_FONT_NORMAL, NULL, NULL);	//AEE_FONT_BOLD
+  		      lineSpace = ( pMe->m_rc.dy - bottomheight - itemheight*3) / 4;	//4/5
+			  MSG_FATAL("wXPos=====%d,wYPos======%d",wXPos,wYPos,0);
+			  MSG_FATAL("lineSpace=====%d,itemheight======%d",lineSpace,itemheight,0);
+			  //菜单1
+			  SETAEERECT(&rc,CONTROL_RECT_START_X+20,lineSpace,pMe->m_rc.dx - CONTROL_RECT_START_X - 40, itemheight + 1);
+			  if(MUSICPLAYER_PT_IN_RECT(wXPos,wYPos,rc))
+			  {
+				  //return  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_INFO,0);
+				  pMe->m_nCtlID = 1;
+				  CMusicPlayer_Set_CTL(pMe);
+				   return TRUE;
+			  }
 
-			  //播放
-			  SETAEERECT(&rc,PLAY_X,PLAY_Y,PLAY_W, PLAY_H);
+			   //菜单2
+			  SETAEERECT(&rc,CONTROL_RECT_START_X+20,lineSpace*2+itemheight,pMe->m_rc.dx - CONTROL_RECT_START_X - 40, itemheight + 1);
+			  if(MUSICPLAYER_PT_IN_RECT(wXPos,wYPos,rc))
+			  {
+				  pMe->m_nCtlID = 2;
+				  CMusicPlayer_Set_CTL(pMe);
+				   return TRUE;
+			  }
+
+			   //菜单3
+			  SETAEERECT(&rc,CONTROL_RECT_START_X+20,lineSpace*3+itemheight*2,pMe->m_rc.dx - CONTROL_RECT_START_X - 40, itemheight + 1);
+			  if(MUSICPLAYER_PT_IN_RECT(wXPos,wYPos,rc))
+			  {
+				  pMe->m_nCtlID = 3;
+				  CMusicPlayer_Set_CTL(pMe);
+				   return TRUE;
+			  }
+			  
+			  #if 0
 			  if(MUSICPLAYER_PT_IN_RECT(wXPos,wYPos,rc))
 			  {
 				  return  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_INFO,0);
@@ -1651,6 +1694,7 @@ static boolean MP3_Settings_HandleEvent(CMusicPlayer *pMe,
 			  {
 				  return  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_INFO,0);
 			  }
+			  #endif
               
               //左右选择  
               if(MUSICPLAYER_PT_IN_RECT(wXPos,wYPos,pMe->LMode))
@@ -1680,8 +1724,6 @@ static boolean MP3_Settings_HandleEvent(CMusicPlayer *pMe,
               
 			  //底部操作栏
 			  nBarH = GetBottomBarHeight(pMe->m_pDisplay);
-			  MEMSET(&devinfo, 0, sizeof(devinfo));
-			  ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
 			  SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, devinfo.cyScreen);
 			  if ((wXPos>0)&&(wXPos<devinfo.cxScreen/3)&&(wYPos>rc.y)&&(wYPos<devinfo.cyScreen))
 			  {
