@@ -2826,7 +2826,7 @@ static boolean JudgeAction(CTetrisApp * pMe, uint32 dwParam)
     {
         int BTYPos;
         BTYPos = pMe->m_rNextStartY + NEXT_MAX_YNUM * NEXT_BLOCK_SIZE + 6 * pMe->m_rLineHeight;
-        if(YPos > BTYPos && YPos < BTYPos + BUTTON_DY)
+        if(YPos > BTYPos && YPos < BTYPos + BUTTON_DY+10)
         {
             if(pMe->m_AppState == APP_STATE_RUNNING)
             {
@@ -2845,7 +2845,7 @@ static boolean JudgeAction(CTetrisApp * pMe, uint32 dwParam)
             return TRUE;
         }
         else if(YPos > BTYPos + BUTTON_DY + pMe->m_rLineHeight && 
-                YPos < BTYPos + 2 * BUTTON_DY + pMe->m_rLineHeight)
+                YPos < BTYPos + 2 * BUTTON_DY + pMe->m_rLineHeight+10)
         {
             if(pMe->m_AppState == APP_STATE_RUNNING  ||
                pMe->m_AppState == APP_STATE_PAUSED   ||
