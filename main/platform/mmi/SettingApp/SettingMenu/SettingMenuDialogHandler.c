@@ -2520,9 +2520,17 @@ static boolean  HandleCallForwardInputDialogEvent(CSettingMenu *pMe,
                          return rt;
                     } 
                     else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//ср
-                    {                       
-                         boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_SETTINGMENU,EVT_USER,AVK_CLR,0);
-                         return rt;
+                    {     
+                        if ( WSTRLEN(ITEXTCTL_GetTextPtr(pTextCtl)) > 0 &&
+                             ITEXTCTL_GetCursorPos(pTextCtl) != TC_CURSORSTART )
+                        {
+                             return ITEXTCTL_HandleEvent(pTextCtl,EVT_KEY,AVK_CLR, 0);
+                        }
+                        else
+                        {
+                             boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_SETTINGMENU,EVT_USER,AVK_CLR,0);
+                             return rt;
+                        }
                     }
                 }  
             
