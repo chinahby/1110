@@ -430,6 +430,15 @@ static boolean  HandleFmRadioMainDialogEvent(CFmRadio *pMe,
        					}                        
                     }
 
+                    if(IMENUCTL_IsActive(pMe->m_pMenu))
+                    {
+                        IMENUCTL_GetRect(pMe->m_pMenu,&rc); 
+       					if(FMRADIOAPP_PT_IN_RECT(wXPos,wYPos,rc))
+       					{
+                            return IMENUCTL_HandleEvent(pMe->m_pMenu,EVT_PEN_UP,wParam, dwParam);
+       					}                        
+                    }
+
                 }
 			}
 #endif
