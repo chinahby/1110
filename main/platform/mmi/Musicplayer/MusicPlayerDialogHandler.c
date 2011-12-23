@@ -1621,8 +1621,6 @@ static boolean MP3_Settings_HandleEvent(CMusicPlayer *pMe,
 			  int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
 			  int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
 
-
-
 			  //²¥·Å
 			  SETAEERECT(&rc,PLAY_X,PLAY_Y,PLAY_W, PLAY_H);
 			  if(MUSICPLAYER_PT_IN_RECT(wXPos,wYPos,rc))
@@ -1653,6 +1651,33 @@ static boolean MP3_Settings_HandleEvent(CMusicPlayer *pMe,
 			  {
 				  return  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_INFO,0);
 			  }
+              
+              //×óÓÒÑ¡Ôñ  
+              if(MUSICPLAYER_PT_IN_RECT(wXPos,wYPos,pMe->LMode))
+			  {
+				  return  IMENUCTL_HandleEvent(pMe->m_pMode,EVT_KEY,AVK_LEFT, 0);
+			  }
+              if(MUSICPLAYER_PT_IN_RECT(wXPos,wYPos,pMe->LVolume))
+			  {
+				  return  IMENUCTL_HandleEvent(pMe->m_pVolume,EVT_KEY,AVK_LEFT, 0);
+			  }
+              if(MUSICPLAYER_PT_IN_RECT(wXPos,wYPos,pMe->LOrder))
+			  {
+				  return  IMENUCTL_HandleEvent(pMe->m_pSort,EVT_KEY,AVK_LEFT, 0);
+			  }
+              if(MUSICPLAYER_PT_IN_RECT(wXPos,wYPos,pMe->RMode))
+			  {
+				  return  IMENUCTL_HandleEvent(pMe->m_pMode,EVT_KEY,AVK_RIGHT, 0);
+			  }
+              if(MUSICPLAYER_PT_IN_RECT(wXPos,wYPos,pMe->RVolume))
+			  {
+				  return  IMENUCTL_HandleEvent(pMe->m_pVolume,EVT_KEY,AVK_RIGHT, 0);
+			  }
+              if(MUSICPLAYER_PT_IN_RECT(wXPos,wYPos,pMe->ROrder))
+			  {
+				  return  IMENUCTL_HandleEvent(pMe->m_pSort,EVT_KEY,AVK_RIGHT, 0);
+			  }
+              
 			  //µ×²¿²Ù×÷À¸
 			  nBarH = GetBottomBarHeight(pMe->m_pDisplay);
 			  MEMSET(&devinfo, 0, sizeof(devinfo));
@@ -3846,6 +3871,11 @@ static void CMusicPlayer_Draw_Arrow(CMusicPlayer *pMe,int title_hight, int lineS
         //IIMAGE_Draw( pR_ResImg, pMe->m_rc.dx - 9, title_hight + lineSpace * 2 + itemheight + 4);
         IIMAGE_Draw( pR_ResImg, pMe->m_rc.dx - 9, title_hight + lineSpace * 2 + itemheight + 1);	//4
         IIMAGE_Draw( pR_ResImg, pMe->m_rc.dx - 9, title_hight + lineSpace * 3 + itemheight * 2 + 1);
+#ifdef FEATURE_LCD_TOUCH_ENABLE        
+        SETAEERECT(&pMe->RMode,pMe->m_rc.dx - 15,title_hight + lineSpace + 4,16, 15);
+        SETAEERECT(&pMe->RVolume,pMe->m_rc.dx - 15,title_hight + lineSpace * 2 + itemheight + 1,16, 15);
+        SETAEERECT(&pMe->ROrder,pMe->m_rc.dx - 15,title_hight + lineSpace * 3 + itemheight * 2 + 1,16, 15);
+#endif
         IIMAGE_Release(pR_ResImg);
         pR_ResImg = NULL;
     }
@@ -3856,6 +3886,11 @@ static void CMusicPlayer_Draw_Arrow(CMusicPlayer *pMe,int title_hight, int lineS
         IIMAGE_Draw( pL_ResImg, CONTROL_RECT_START_X, title_hight + lineSpace + 4);
         IIMAGE_Draw( pL_ResImg, CONTROL_RECT_START_X, title_hight + lineSpace * 2 + itemheight + 1);
         IIMAGE_Draw( pL_ResImg, CONTROL_RECT_START_X, title_hight + lineSpace * 3 + itemheight * 2 + 1);
+#ifdef FEATURE_LCD_TOUCH_ENABLE        
+        SETAEERECT(&pMe->LMode,CONTROL_RECT_START_X-10,title_hight + lineSpace + 4,20, 15);
+        SETAEERECT(&pMe->LVolume,CONTROL_RECT_START_X-10,title_hight + lineSpace * 2 + itemheight + 1,20, 15);
+        SETAEERECT(&pMe->LOrder,CONTROL_RECT_START_X-10,title_hight + lineSpace * 3 + itemheight * 2 + 1,20, 15);
+#endif
        // IIMAGE_Draw( pL_ResImg, CONTROL_RECT_START_X, title_hight + lineSpace * 4 + itemheight * 3 + 4);
         IIMAGE_Release(pL_ResImg);
         pL_ResImg = NULL;

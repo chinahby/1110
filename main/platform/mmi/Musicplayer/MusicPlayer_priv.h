@@ -975,7 +975,15 @@ typedef struct _CMusicPlayer
     IShell         *m_pShell;
     IConfig        *m_pConfig;
 
-    AEERect       m_rc;
+    AEERect         m_rc;
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+    AEERect         LMode;
+    AEERect         LVolume;
+    AEERect         LOrder;
+    AEERect         RMode;
+    AEERect         RVolume;
+    AEERect         ROrder;
+#endif
 
     // 当前活动对话框IDialog接口指针
     IDialog             *m_pActiveDlg;
