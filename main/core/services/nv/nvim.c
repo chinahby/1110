@@ -3140,7 +3140,11 @@ LOCAL nv_stat_enum_type nv_auto_set_need_value(void)
     
     if(NV_DONE_S == local_cmd.status)
     {
-        if((AUTO_NV_ITME_VERSION+1) == auto_nv_item_version)
+#ifdef FEATURE_VERSION_W208S
+		if((AUTO_NV_ITME_VERSION+1) == auto_nv_item_version)
+#else
+        if(AUTO_NV_ITME_VERSION == auto_nv_item_version)
+#endif			
         {
             //OK, it not a fresh start phone and version is same as this bin file
             //skip the follow operations.
@@ -3156,7 +3160,11 @@ LOCAL nv_stat_enum_type nv_auto_set_need_value(void)
     bIsResetOemNv = TRUE;
     
     //OK, need to restore, make the version equal to BIN file's.
-    auto_nv_item_version = AUTO_NV_ITME_VERSION+1;
+#ifdef FEATURE_VERSION_W208S
+	auto_nv_item_version = AUTO_NV_ITME_VERSION+1;
+#else
+	auto_nv_item_version = AUTO_NV_ITME_VERSION;
+#endif    
     lcd_debug_message ("Initialize necessary nv, please waiting.");
     
     
