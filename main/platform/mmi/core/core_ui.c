@@ -1762,10 +1762,14 @@ boolean   IsRunAsFactoryTestMode(void)
 ==============================================================================*/
 boolean   IsRunAsUIMVersion(void)
 {
+#ifdef FEATURE_VERSION_W208S
+    return FALSE;
+#else
 #ifdef FEATURE_UIM
     return TRUE;
 #else
     return FALSE;
+#endif
 #endif
 }
 #endif
