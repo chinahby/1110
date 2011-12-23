@@ -1338,7 +1338,22 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
                             }
                             else
                             {
+                            	#ifdef FEATURE_VERSION_X3
+								if(pMe->m_PrsentPage>0)
+								{
+									pMe->m_PrsentPage--;
+									pMe->m_bRight = FALSE;
+									pMe->m_bReraw = TRUE;
+									AutoMovePage(pMe);
+									pMe->m_bReraw = FALSE;
+								}
+								else
+								{
+									nRow = MAX_MATRIX_ROWS-1;
+								}
+								#else
                                 nRow = MAX_MATRIX_ROWS-1;
+								#endif
                             }
                             nCol = MAX_MATRIX_COLS-1;
                         }
@@ -1363,7 +1378,22 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
                             }
                             else
                             {
+                            	#ifdef FEATURE_VERSION_X3
+								if(pMe->m_PrsentPage==0)
+								{
+									pMe->m_PrsentPage++;
+									pMe->m_bRight = TRUE;
+									pMe->m_bReraw = TRUE;
+									AutoMovePage(pMe);
+									pMe->m_bReraw = FALSE;
+								}
+								else
+								{
+									nRow = 0;
+								}
+								#else
                                 nRow = 0;
+								#endif
                             }
                             nCol = 0;
                         }
