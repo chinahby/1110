@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+ <BREWRes Name="mainmenu" VERSION="1">
+ <Strings Encoding="Unicode">
+ 	<STRING Id="1001" Name="IDS_MAIN_MENU_STATIC_APPLICATION" Encoding="Unicode">
+ 		<Text>Aplicación</Text>
+ 	</STRING>
+	<STRING Id="1002" Name="IDS_MAIN_MENU_FM">
+		<Text>Radio</Text>
+	</STRING>
+	<STRING Id="1003" Name="IDS_MAIN_MENU_BT">
+		<Text>BT</Text>
+	</STRING>
+	<STRING Id="1004" Name="IDS_MAIN_MENU_UNIT">
+		<Text>Unit</Text>
+	</STRING>
+	<STRING Id="1005" Name="IDS_MAIN_MENU_WORLDCLO">
+		<Text>WorldClo</Text>
+	</STRING>
+	<STRING Id="1006" Name="IDS_MAIN_MENU_PINTU">
+		<Text>Pintu</Text>
+	</STRING>
+	<STRING Id="1007" Name="IDS_MAIN_MENU_TETIRS">
+		<Text>Tetirs</Text>
+	</STRING>
+	<STRING Id="1008" Name="IDS_MAIN_MENU_BRICKATTACK">
+		<Text>Brickattack</Text>
+	</STRING>
+	<STRING Id="1009" Name="IDS_MAIN_MENU_BLACKJACK">
+		<Text>Blackjack</Text>
+	</STRING>
+	<STRING Id="1010" Name="IDS_MAIN_MENU_CALIBRA">
+		<Text>Calibra</Text>
+	</STRING>
+ 	<STRING Id="1011" Name="IDS_MAIN_MENU_MEDIAGALLERY">
+ 		<Text>Galería de Medios</Text>
+ 	</STRING>
+ 	<STRING Id="1012" Name="IDS_MAIN_MENU_CONTACTS">
+ 		<Text>Contactos</Text>
+ 	</STRING>
+ 	<STRING Id="1013" Name="IDS_MAIN_MENU_UTK">
+ 		<Text>UTK</Text>
+ 	</STRING>
+ 	<STRING Id="1014" Name="IDS_MAIN_MENU_TOOLS">
+ 		<Text>Herramientas</Text>
+ 	</STRING>
+ 	<STRING Id="1015" Name="IDS_MAIN_MENU_RECENTCALLS">
+ 		<Text>Llamadasrecientes</Text>
+ 	</STRING>
+ 	<STRING Id="1016" Name="IDS_MAIN_MENU_MESSAGES">
+ 		<Text>Mensajes</Text>
+ 	</STRING>
+ 	<STRING Id="1017" Name="IDS_MAIN_MENU_MULTIMEDIA">
+ 		<Text>Multimedios</Text>
+ 	</STRING>
+ 	<STRING Id="1018" Name="IDS_MAIN_MENU_APPLICATION">
+ 		<Text>Aplicación</Text>
+ 	</STRING>
+ 	<STRING Id="1019" Name="IDS_MAIN_MENU_SCHEDULER">
+ 		<Text>Programador</Text>
+ 	</STRING>
+ 	<STRING Id="1020" Name="IDS_MAIN_MENU_SETTINGS">
+ 		<Text>Configuración</Text>
+ 	</STRING>
+ 	<STRING Id="1021" Name="IDS_MAIN_MENU_USERPROFILE">
+ 		<Text>Perfil</Text>
+ 	</STRING>
+ 	<STRING Id="1022" Name="IDS_MAIN_MENU_CAMERA">
+ 		<Text>Cámara</Text>
+ 	</STRING>
+ 	<STRING Id="1023" Name="IDS_MAIN_MENU_RECORDER">
+ 		<Text>Grabadora</Text>
+ 	</STRING>
+ 	<STRING Id="1024" Name="IDS_MAIN_MENU_TIMER">
+ 		<Text>Temporizador</Text>
+ 	</STRING>
+ 	<STRING Id="1025" Name="IDS_MAIN_MENU_CONVERTER">
+ 		<Text>Conversión</Text>
+ 	</STRING>
+ 	<STRING Id="1026" Name="IDS_MAIN_MENU_STOPWATCH">
+ 		<Text>Cronómetro</Text>
+ 	</STRING>
+ 	<STRING Id="1027" Name="IDS_MAIN_MENU_WORLDTIME">
+ 		<Text>RelojMundial</Text>
+ 	</STRING>
+ 	<STRING Id="1028" Name="IDS_MAIN_MENU_ALARM">
+ 		<Text>Alarma</Text>
+ 	</STRING>
+ 	<STRING Id="1029" Name="IDS_MAIN_MENU_VIDEOPLAYER">
+ 		<Text>Reproductor de Video</Text>
+ 	</STRING>
+	<STRING Id="1030" Name="IDS_MAIN_MENU_FILEMGR">
+		<Text>File Manager</Text>
+	</STRING>
+	<STRING Id="1031" Name="IDS_MAIN_MENU_MAP">
+		<Text>mapa</Text>
+	</STRING>
+	<STRING Id="1032" Name="IDS_MAIN_MENU_NEO_APP">
+		<Text>Neo Application</Text>
+	</STRING>
+	<STRING Id="1033" Name="IDS_MAIN_MENU_NEO_NAV">
+		<Text>Neo Navigation</Text>
+	</STRING>
+ 	<STRING Id="1034" Name="IDS_MENU_LIST">
+ 		<Text>Menú</Text>
+ 	</STRING>
+	<STRING Id="1035" Name="IDS_MAIN_MENU_CALL_LOGS">
+		<Text>registros de llamadas</Text>
+	</STRING>
+ 	<STRING Id="1043" Name="IDS_MAIN_MENU_CALCULATOR">
+ 		<Text>Calculadora</Text>
+ 	</STRING>
+ 	<STRING Id="1046" Name="IDS_MAIN_MENU_FMRADIO">
+ 		<Text>Radio FM</Text>
+ 	</STRING>
+ 	<STRING Id="1051" Name="IDS_MAIN_MENU_MUSICPLAYER">
+ 		<Text>ReproductorDeMúsica</Text>
+ 	</STRING>
+ 	<STRING Id="1061" Name="IDS_MAIN_MENU_SMARTWORLD">
+ 		<Text>Mundo Inteligente (Smart World)</Text>
+ 	</STRING>
+ 	<STRING Id="1062" Name="IDS_MAIN_MENU_SMARTFRENACCESS">
+ 		<Text>Acceso a "SmartFren"</Text>
+ 	</STRING>
+ 	<STRING Id="1065" Name="IDS_MAIN_MENU_CALENDAR">
+ 		<Text>Calendario</Text>
+ 	</STRING>
+ 	<STRING Id="1066" Name="IDS_MAIN_MENU_CONTACT">
+ 		<Text>Contactos</Text>
+ 	</STRING>
+ 	<STRING Id="1067" Name="IDS_MAIN_MENU_SMS">
+ 		<Text>SMS</Text>
+ 	</STRING>
+ 	<STRING Id="1068" Name="IDS_MAIN_MENU_GAMES">
+ 		<Text>Juegos</Text>
+ 	</STRING>
+ 	<STRING Id="1070" Name="IDS_MAIN_MENU_GALLERY">
+ 		<Text>Galería</Text>
+ 	</STRING>
+ 	<STRING Id="1081" Name="IDS_MAIN_MENU_BLIVE">
+ 		<Text>"b-live"</Text>
+ 	</STRING>
+ 	<STRING Id="1085" Name="IDS_MAIN_MENU_FRENDUO">
+ 		<Text>"Frenduo"</Text>
+ 	</STRING>
+ 
+ </Strings>
+ <Dialogs>
+ 	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="0">
+ 		<Controls/>
+ 		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+ 	</DIALOG>
+ </Dialogs>
+ </BREWRes>

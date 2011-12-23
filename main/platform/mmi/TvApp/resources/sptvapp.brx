@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="utf-8"?>
+ <BREWRes Name="tvapp" VERSION="1">
+ <Strings Encoding="Unicode">
+ 	<STRING Id="1001" Name="IDS_ITEM_TV">
+ 		<Text>TV</Text>
+ 	</STRING>
+ 	<STRING Id="1002" Name="IDS_TITLE_BRIGHTNESS">
+ 		<Text>Brillo</Text>
+ 	</STRING>
+ 	<STRING Id="1003" Name="IDS_TITLE_CONTRAST">
+ 		<Text>Contraste</Text>
+ 	</STRING>
+ 	<STRING Id="1004" Name="IDS_TITLE_DEFINITION">
+ 		<Text>Definición</Text>
+ 	</STRING>
+ 	<STRING Id="1005" Name="IDS_TITLE_SATURATION">
+ 		<Text>Saturación</Text>
+ 	</STRING>
+ 	<STRING Id="1006" Name="IDS_TITLE_SOUND">
+ 		<Text>Sonido</Text>
+ 	</STRING>
+ 	<STRING Id="1070" Name="IDS_MSG_WAITING">
+ 		<Text>Esperando por imagen de TV</Text>
+ 	</STRING>
+ 	<STRING Id="1073" Name="IDS_MSG_CAPTURE_FAILED">
+ 		<Text>Falló en captar</Text>
+ 	</STRING>
+ 	<STRING Id="1101" Name="IDS_TV_FAVORITE">
+ 		<Text>Favoritos</Text>
+ 	</STRING>
+ 	<STRING Id="1102" Name="IDS_REGION">
+ 		<Text>Región</Text>
+ 	</STRING>
+ 	<STRING Id="1103" Name="IDS_AUTO_SCAN">
+ 		<Text>Escaneo automático</Text>
+ 	</STRING>
+ 	<STRING Id="1104" Name="IDS_LANDSCAPE">
+ 		<Text>Horizontal</Text>
+ 	</STRING>
+ 	<STRING Id="1105" Name="IDS_PORTRAIT">
+ 		<Text>Vertical</Text>
+ 	</STRING>
+ 	<STRING Id="1106" Name="IDS_ASIA">
+ 		<Text>Asia</Text>
+ 	</STRING>
+ 	<STRING Id="1107" Name="IDS_LATIN">
+ 		<Text>Latín</Text>
+ 	</STRING>
+ 	<STRING Id="1108" Name="IDS_EUROPE">
+ 		<Text>Europa</Text>
+ 	</STRING>
+ 	<STRING Id="1109" Name="IDS_AFRICA">
+ 		<Text>África</Text>
+ 	</STRING>
+ 	<STRING Id="1110" Name="IDS_OCEANIA">
+ 		<Text>Oceanía</Text>
+ 	</STRING>
+ 	<STRING Id="1111" Name="IDS_USA">
+ 		<Text>ESTADOS UNIDOS DE AMÉRICA</Text>
+ 	</STRING>
+ 	<STRING Id="1112" Name="IDS_CANADA">
+ 		<Text>CANADÁ</Text>
+ 	</STRING>
+ 	<STRING Id="1113" Name="IDS_KOREA">
+ 		<Text>COREA</Text>
+ 	</STRING>
+ 	<STRING Id="1114" Name="IDS_TAIWAN">
+ 		<Text>TAIWÁN</Text>
+ 	</STRING>
+ 	<STRING Id="1115" Name="IDS_MEXICO">
+ 		<Text>MÉXICO</Text>
+ 	</STRING>
+ 	<STRING Id="1116" Name="IDS_CHILE">
+ 		<Text>CHILE</Text>
+ 	</STRING>
+ 	<STRING Id="1117" Name="IDS_VENEZUELA">
+ 		<Text>VENEZUELA</Text>
+ 	</STRING>
+ 	<STRING Id="1118" Name="IDS_PHILIPPINES">
+ 		<Text>FILIPINAS</Text>
+ 	</STRING>
+ 	<STRING Id="1119" Name="IDS_JAMAICA">
+ 		<Text>JAMAICA</Text>
+ 	</STRING>
+ 	<STRING Id="1120" Name="IDS_CHINA">
+ 		<Text>CHINA</Text>
+ 	</STRING>
+ 	<STRING Id="1121" Name="IDS_SHENZHEN">
+ 		<Text>SHENZHÉN</Text>
+ 	</STRING>
+ 	<STRING Id="1122" Name="IDS_VIETNAM">
+ 		<Text>VIETNAM</Text>
+ 	</STRING>
+ 	<STRING Id="1123" Name="IDS_WESTERNEUROPE">
+ 		<Text>EUROPA OCCIDENTAL</Text>
+ 	</STRING>
+ 	<STRING Id="1124" Name="IDS_TURKEY">
+ 		<Text>TURQUÍA</Text>
+ 	</STRING>
+ 	<STRING Id="1125" Name="IDS_UAE">
+ 		<Text>EMIRATOS ÁRABES UNIDOS </Text>
+ 	</STRING>
+ 	<STRING Id="1126" Name="IDS_AFGHANISTAN">
+ 		<Text>AFGANISTÁN</Text>
+ 	</STRING>
+ 	<STRING Id="1127" Name="IDS_SINGAPORE">
+ 		<Text>SINGAPUR</Text>
+ 	</STRING>
+ 	<STRING Id="1128" Name="IDS_THAILAND">
+ 		<Text>TAILANDIA</Text>
+ 	</STRING>
+ 	<STRING Id="1129" Name="IDS_CAMBODIA">
+ 		<Text>CAMBOYA</Text>
+ 	</STRING>
+ 	<STRING Id="1130" Name="IDS_INDONESIA">
+ 		<Text>INDONESIA</Text>
+ 	</STRING>
+ 	<STRING Id="1131" Name="IDS_MALAYSIA">
+ 		<Text>MALASIA</Text>
+ 	</STRING>
+ 	<STRING Id="1132" Name="IDS_LAOS">
+ 		<Text>LAOS</Text>
+ 	</STRING>
+ 	<STRING Id="1133" Name="IDS_PORTUGAL">
+ 		<Text>PORTUGAL</Text>
+ 	</STRING>
+ 	<STRING Id="1134" Name="IDS_SWEDEN">
+ 		<Text>SUECIA</Text>
+ 	</STRING>
+ 	<STRING Id="1135" Name="IDS_PAKISTAN">
+ 		<Text>PAKISTÁN</Text>
+ 	</STRING>
+ 	<STRING Id="1136" Name="IDS_SPAIN">
+ 		<Text>ESPAÑA</Text>
+ 	</STRING>
+ 	<STRING Id="1137" Name="IDS_JAPAN">
+ 		<Text>JAPÓN</Text>
+ 	</STRING>
+ 	<STRING Id="1138" Name="IDS_UK">
+ 		<Text>REINO UNIDO</Text>
+ 	</STRING>
+ 	<STRING Id="1139" Name="IDS_HONGKONG">
+ 		<Text>HONG KONG</Text>
+ 	</STRING>
+ 	<STRING Id="1140" Name="IDS_SOUTHAFRICA">
+ 		<Text>SUDÁFRICA</Text>
+ 	</STRING>
+ 	<STRING Id="1141" Name="IDS_BRAZIL">
+ 		<Text>BRASIL</Text>
+ 	</STRING>
+ 	<STRING Id="1142" Name="IDS_ARGENTINA">
+ 		<Text>ARGENTINA</Text>
+ 	</STRING>
+ 	<STRING Id="1143" Name="IDS_INDIA">
+ 		<Text>INDIA</Text>
+ 	</STRING>
+ 	<STRING Id="1144" Name="IDS_BURMA">
+ 		<Text>MYANMAR (BIRMANIA)</Text>
+ 	</STRING>
+ 	<STRING Id="1145" Name="IDS_SUDAN">
+ 		<Text>SUDÁN</Text>
+ 	</STRING>
+ 	<STRING Id="1146" Name="IDS_YEMEN">
+ 		<Text>YEMEN</Text>
+ 	</STRING>
+ 	<STRING Id="1147" Name="IDS_PERU">
+ 		<Text>PERÚ</Text>
+ 	</STRING>
+ 	<STRING Id="1148" Name="IDS_BOLIVIA">
+ 		<Text>BOLIVIA</Text>
+ 	</STRING>
+ 	<STRING Id="1149" Name="IDS_ECUADOR">
+ 		<Text>ECUADOR</Text>
+ 	</STRING>
+ 	<STRING Id="1150" Name="IDS_SURINAME">
+ 		<Text>SURINAM</Text>
+ 	</STRING>
+ 	<STRING Id="1151" Name="IDS_AUSTRALIA">
+ 		<Text>AUSTRALIA</Text>
+ 	</STRING>
+ 	<STRING Id="1152" Name="NEWZEALAND">
+ 		<Text>NUEVA ZELANDIA</Text>
+ 	</STRING>
+ 	<STRING Id="1153" Name="IDS_NORTHKOREA">
+ 		<Text>COREA DEL NORTE</Text>
+ 	</STRING>
+ 	<STRING Id="1154" Name="IDS_MONGOLIA">
+ 		<Text>MONGOLIA</Text>
+ 	</STRING>
+ 	<STRING Id="1155" Name="IDS_AZERBAIJAN">
+ 		<Text>AZERBAIYÁN</Text>
+ 	</STRING>
+ 	<STRING Id="1156" Name="IDS_CZETH">
+ 		<Text>REPÚBLICA CHECA</Text>
+ 	</STRING>
+ 	<STRING Id="1157" Name="IDS_POLAND">
+ 		<Text>POLONIA</Text>
+ 	</STRING>
+ 	<STRING Id="1158" Name="IDS_RUSSION">
+ 		<Text>RUSIA</Text>
+ 	</STRING>
+ 	<STRING Id="1159" Name="IDS_UKRAINE">
+ 		<Text>UCRANIA</Text>
+ 	</STRING>
+ 	<STRING Id="1160" Name="IDS_TUNISIA">
+ 		<Text>TÚNEZ</Text>
+ 	</STRING>
+ 	<STRING Id="1161" Name="IDS_EGYPT">
+ 		<Text>EGIPTO</Text>
+ 	</STRING>
+ 	<STRING Id="1162" Name="IDS_MOROCCO">
+ 		<Text>MARRUECOS</Text>
+ 	</STRING>
+ 	<STRING Id="1163" Name="IDS_IRAQ">
+ 		<Text>IRAQ</Text>
+ 	</STRING>
+ 	<STRING Id="1164" Name="IDS_SAUDIARABIA">
+ 		<Text>ARABIA SAUDITA</Text>
+ 	</STRING>
+ 	<STRING Id="1165" Name="IDS_GREECE">
+ 		<Text>GRECIA</Text>
+ 	</STRING>
+ 	<STRING Id="1166" Name="IDS_OK1">
+ 		<Text>OK</Text>
+ 	</STRING>
+ 	<STRING Id="1167" Name="IDS_BACK1">
+ 		<Text>REGRESAR</Text>
+ 	</STRING>
+ </Strings>
+ <Dialogs>
+ 	<Dialog Id="6001" Name="IDD_CMAINMENU" Focus="7001">
+ 		<Controls>
+ 			<Menu Id="7001" Name="IDC_CAMERA_MAINMENU">
+ 				<Items/>
+ 			</Menu>
+ 		</Controls>
+ 	</Dialog>
+ 	<Dialog Id="6002" Name="IDD_CPREVIEW" Focus="0">
+ 		<Controls/>
+ 	</Dialog>
+ 	<Dialog Id="6003" Name="IDD_CCAMERACFG" Focus="7002">
+ 		<Controls>
+ 			<Menu Id="7002" Name="IDC_CAMERA_CFGMENU">
+ 				<Items/>
+ 			</Menu>
+ 		</Controls>
+ 	</Dialog>
+ 	<Dialog Id="6004" Name="IDD_CPIC" Focus="0">
+ 		<Controls/>
+ 		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+ 	</Dialog>
+ 	<Dialog Id="6005" Name="IDD_REGION" Focus="7005">
+ 		<Controls>
+ 			<Menu Id="7005" Name="IDC_REGION">
+ 				<Items/>
+ 			</Menu>
+ 		</Controls>
+ 	</Dialog>
+ 	<Dialog Id="6006" Name="IDD_REGIONASIA" Focus="7006">
+ 		<Controls>
+ 			<Menu Id="7006" Name="IDC_REGIONASIA">
+ 				<Items/>
+ 			</Menu>
+ 		</Controls>
+ 	</Dialog>
+ 	<Dialog Id="6007" Name="IDD_REGIONLATIN" Focus="7007">
+ 		<Controls>
+ 			<Menu Id="7007" Name="IDC_REGIONLATIN">
+ 				<Items/>
+ 			</Menu>
+ 		</Controls>
+ 	</Dialog>
+ 	<Dialog Id="6008" Name="IDD_CVIDEOCFG" Focus="7003">
+ 		<Controls>
+ 			<Menu Id="7003" Name="IDC_VIDEO_CFGMENU">
+ 				<Items/>
+ 			</Menu>
+ 		</Controls>
+ 	</Dialog>
+ 	<Dialog Id="6009" Name="IDD_POPMSG" Focus="7004">
+ 		<Controls>
+ 			<Menu Id="7004" Name="IDC_TV_POPMENU">
+ 				<Items/>
+ 			</Menu>
+ 		</Controls>
+ 		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+ 	</Dialog>
+ 	<Dialog Id="6010" Name="IDD_REGIONEUROPE" Focus="7008">
+ 		<Controls>
+ 			<Menu Id="7008" Name="IDC_REGIONEUROPE">
+ 				<Items/>
+ 			</Menu>
+ 		</Controls>
+ 	</Dialog>
+ 	<Dialog Id="6011" Name="IDD_REGIONAFRICA" Focus="7009">
+ 		<Controls>
+ 			<Menu Id="7009" Name="IDC_REGIONAFRICA">
+ 				<Items/>
+ 			</Menu>
+ 		</Controls>
+ 	</Dialog>
+ 	<Dialog Id="6012" Name="IDD_REGIONOCEANIA" Focus="7010">
+ 		<Controls>
+ 			<Menu Id="7010" Name="IDC_REGIONOCEANIA">
+ 				<Items/>
+ 			</Menu>
+ 		</Controls>
+ 	</Dialog>
+ 	<Dialog Id="6013" Name="IDD_DRAWTOPBAR" Focus="0">
+ 		<Controls/>
+ 	</Dialog>
+ 	<Dialog Id="6014" Name="IDD_AUTOSCAN" Focus="7019">
+ 		<Controls>
+ 			<Menu Id="7019" Name="IDC_AUTOSCAN">
+ 				<Items/>
+ 			</Menu>
+ 		</Controls>
+ 	</Dialog>
+ 	<Dialog Id="6015" Name="IDD_BOOKMARK" Focus="7020">
+ 		<Controls>
+ 			<Menu Id="7020" Name="IDC_BOOKMARK">
+ 				<Items/>
+ 			</Menu>
+ 		</Controls>
+ 	</Dialog>
+ 	<Dialog Id="6016" Name="IDD_TVWAITING" Focus="0">
+ 		<Controls/>
+ 	</Dialog>
+ </Dialogs>
+ </BREWRes>
