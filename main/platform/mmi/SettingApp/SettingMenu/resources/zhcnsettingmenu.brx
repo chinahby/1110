@@ -86,7 +86,7 @@
 		<Text>时间</Text>
 	</STRING>
 	<STRING Id="1029" Name="IDS_AUTO_POWER_STATE">
-		<Text>开／关</Text>
+		<Text>开/关</Text>
 	</STRING>
 	<STRING Id="1030" Name="IDS_IP_NUMBER_SET">
 		<Text>IP号码设置</Text>
