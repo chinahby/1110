@@ -616,7 +616,11 @@ static __inline void MediaGalleryApp_ShowProgressBox(CMediaGalleryApp *pMe,
     else if(nMsgBoxID == MG_MSGID_MOVE)
     {
       iTextID = IDS_MG_MOVEING;
-    }    
+    } 
+    else if(nMsgBoxID == MG_MSGID_RESORT)
+    {
+      iTextID = IDS_MG_EXECUTE;
+    } 
    	else
    	{
    	  iTextID = IDS_MG_PROGBARHINT;
