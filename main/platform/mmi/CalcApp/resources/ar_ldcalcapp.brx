@@ -34,7 +34,7 @@
 	<STRING Id="12" Name="IDS_NUMS">
 		<Text>123456789</Text>
 	</STRING>
-    <String Id="13" Name= "IDC_SIGN">
+    <STRING Id="13" Name= "IDC_SIGN">
         <Text>±</Text>
 	</STRING>
 	<STRING Id="14" Name="IDS_MEMIND">
