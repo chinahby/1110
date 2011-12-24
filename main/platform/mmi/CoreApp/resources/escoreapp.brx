@@ -1,59 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="escoreapp" VERSION="1">
-<Strings Encoding="Unicode">
+<BREWRes Name="coreapp" VERSION="1">
+<Strings Encoding="ISOLATIN1">
 	<STRING Id="1001" Name="IDS_CORE_TITLE">
-		<Text>Core Applet </Text>
+		<Text>Core Applet</Text>
 	</STRING>
 	<STRING Id="1002" Name="IDS_NORUIM">
-		<Text>NO UIM CARD!</Text>
+		<Text>No UIM card</Text>
 	</STRING>
 	<STRING Id="1003" Name="IDS_INVALID_PASSWORD">
-		<Text>¡Contraseña incorrecta!</Text>
+		<Text>Wrong password</Text>
 	</STRING>
 	<STRING Id="1004" Name="IDS_INVALIDPIN">
-		<Text>¡Código PIN incorrecto!</Text>
+		<Text>Wrong PIN code</Text>
 	</STRING>
 	<STRING Id="1005" Name="IDS_UIMBLOCKED">
-		<Text>¡UIM bloqueada!</Text>
+		<Text>UIM card blocked</Text>
 	</STRING>
 	<STRING Id="1006" Name="IDS_PINDIFFERENT">
-		<Text>¡Error de introducción!</Text>
+		<Text>Enter error</Text>
 	</STRING>
 	<STRING Id="1007" Name="IDS_INVALIDPUK">
-		<Text>PUK inválido, quedan %d si no destruirá la tarjeta!</Text>
+		<Text>Wrong PUK code</Text>
 	</STRING>
 	<STRING Id="1008" Name="IDS_UTKREFRESH">
-		<Text>Actualización UIM...</Text>
+		<Text>UIM card refresh...</Text>
 	</STRING>
 	<STRING Id="1009" Name="IDS_FULLY_CHARGED">
-		<Text>¡Completamente cargada!</Text>
+		<Text>Full charged</Text>
 	</STRING>
 	<STRING Id="1010" Name="IDS_OVERVOLTAGE">
-		<Text>¡Voltaje muy alto!</Text>
+		<Text>Voltage input too high</Text>
 	</STRING>
 	<STRING Id="1011" Name="IDS_ENTER_PIN">
-		<Text>Entre PIN:</Text>
+		<Text>Enter PIN</Text>
 	</STRING>
 	<STRING Id="1012" Name="IDS_NEWPIN">
-		<Text>Teclear nuevo PIN</Text>
+		<Text>Enter new PIN</Text>
 	</STRING>
 	<STRING Id="1013" Name="IDS_NEWPIN_AGAIN">
-		<Text>Volver a introducir PIN </Text>
+		<Text>Enter PIN again</Text>
 	</STRING>
 	<STRING Id="1014" Name="IDS_ENTER_PUK">
 		<Text>Enter PUK</Text>
 	</STRING>
 	<STRING Id="1015" Name="IDS_AVAILCNT">
-		<Text>Intentos disp.:%d</Text>
+		<Text>Available tries: %d</Text>
 	</STRING>
 	<STRING Id="1016" Name="IDS_LOCKEDRUIM">
-		<Text>¡UIM incorrecta!</Text>
+		<Text>Invalid UIM card</Text>
 	</STRING>
 	<STRING Id="1017" Name="IDS_FACTORYTESTMODE">
-		<Text>Prueba de fábrica </Text>
+		<Text>Factory test</Text>
 	</STRING>
 	<STRING Id="1018" Name="IDS_SEARCHING">
-		<Text>Buscando Red...</Text>
+		<Text>Searching...</Text>
 	</STRING>
 	<STRING Id="1019" Name="IDS_MONTH_DATE">
 		<Text>%04d/%02d/%02d</Text>
@@ -62,60 +62,60 @@
 		<Text>%02d:%02d</Text>
 	</STRING>
 	<STRING Id="1021" Name="IDS_SERVICEREQ">
-		<Text>¡Requiere programación del Servicio!</Text>
+		<Text>Need service programming</Text>
 	</STRING>
 	<STRING Id="1022" Name="IDS_LOADING">
-		<Text>Carga en curso...</Text>
+		<Text>Loading...</Text>
 	</STRING>
 	<STRING Id="1023" Name="IDS_ENTER_PHONELOCK">
-		<Text>Contraseña </Text>
+		<Text>Mobile password</Text>
 	</STRING>
 	<STRING Id="1024" Name="IDS_RESET_1">
-		<Text>Teléfono está </Text>
+		<Text>Phone is</Text>
 	</STRING>
 	<STRING Id="1025" Name="IDS_POWEROFF_1">
-		<Text>Apagando</Text>
+		<Text> battery low phone is shutting down</Text>
 	</STRING>
 	<STRING Id="1026" Name="IDS_RESET_2">
-		<Text>Reinicializando…</Text>
+		<Text>Resetting...</Text>
 	</STRING>
 	<STRING Id="1027" Name="IDS_LOWBATTMSG_TEXT">
-		<Text>¡Batería baja!</Text>
+		<Text>Battery low!</Text>
 	</STRING>
 	<STRING Id="1028" Name="IDS_RUIM_DOOR_REMOVED">
-		<Text>Tarjeta UIM desplazada </Text>
+		<Text>UIM card moved</Text>
 	</STRING>
 	<STRING Id="1029" Name="IDS_EXIT_EMERGENCY_MODE">
-		<Text>Advertencia: si se vuelve al servicio normal, los servicios de urgencia no le podrán contactar.</Text>
+		<Text>Warning: if you restore normal service, emergency operators may not reach you.</Text>
 	</STRING>
 	<STRING Id="1030" Name="IDS_EMERGENCY_MODE">
-		<Text>Modo de emergencia </Text>
+		<Text>Emergency mode</Text>
 	</STRING>
 	<STRING Id="1031" Name="IDS_POWERALARM">
-		<Text>Alarma</Text>
+		<Text>Alarm</Text>
 	</STRING>
 	<STRING Id="1032" Name="IDS_AUTO_POWER_OFF">
-		<Text>¿Apagado auto. del teléfono?</Text>
+		<Text>Could you want auto power off the phone</Text>
 	</STRING>
 	<STRING Id="1033" Name="IDS_VMAILTIPS_FMT">
-		<Text>Nuevos mensajes voz:%d</Text>
+		<Text>New voice mail:%d</Text>
 	</STRING>
 	<STRING Id="1034" Name="IDS_NEWWMSTIPS_FMT">
-		<Text>%d nuevo(s) mensaje(s) recibido(s)</Text>
+		<Text>Received %d new msg</Text>
 	</STRING>
 	<STRING Id="1035" Name="IDS_CHARGER_ON">
-		<Text>Inicio del cargador </Text>
+		<Text>Charger start</Text>
 	</STRING>
 	<STRING Id="1036" Name="IDS_CHARGER_OFF">
-		<Text>Paro del cargador </Text>
+		<Text>Charger stop</Text>
 	</STRING>
 	<STRING Id="1037" Name="IDS_EMERGENCY_NUMBER">
-		<Text>Número de emergencia </Text>
+		<Text>Emergency number</Text>
 	</STRING>
 	<STRING Id="1038" Name="IDS_MCC_LOCK">
-		<Text>Contraseña tarjeta</Text>
+		<Text>Card password</Text>
 	</STRING>
-	<STRING Id="1039" Name="IDS_ISRAEL_BANNER">
+	<STRING Id="1039" Name="IDS_ISRAEL_BANNER" Encoding="Unicode">
 		<Text>פלאפון</Text>
 	</STRING>
 	<STRING Id="1040" Name="IDS_PLANEMODE">
@@ -142,6 +142,9 @@
 	<STRING Id="1047" Name="IDS_WAITING">
 		<Text>Waiting</Text>
 	</STRING>
+	<String Id="1048" Name="IDS_SUPER_SINGAL_ON">
+		<Text>Super singal on!</Text>
+	</String>
 	<String Id="1049" Name="IDS_MSG_OK">
 		<Text>OK</Text>
 	</String>
@@ -182,13 +185,28 @@
 		<Text>FMRadio</Text>
 	</String>
 	<String Id="1062" Name="IDS_BATTERY_FULLY_CHARGE">
-		<Text>Completion of the battery</Text>
+		<Text>Charge Completed</Text>
 	</String>
 	<String Id="1063" Name="IDS_USERPROFILE_MODE">
 		<Text>vibrate mode activated</Text>
 	</String>
 	<String Id="1064" Name="IDS_USERPROFILE_NOMAL">
 		<Text>normal mode activated</Text>
+	</String>
+	<String Id="1065" Name="IDS_SUPER_SINGAL_OFF">
+		<Text>Super singal off!</Text>
+	</String>
+	<String Id="1070" Name="IDS_STR_TOUCH_ONE">
+		<Text>Dialer</Text>
+	</String>
+	<String Id="1071" Name="IDS_STR_TOUCH_TWO">
+		<Text>Main</Text>
+	</String>
+	<String Id="1072" Name="IDS_STR_TOUCH_TRE">
+		<Text>Messages</Text>
+	</String>
+	<String Id="1073" Name="IDS_STR_TOUCH_FUR">
+		<Text>Contacts</Text>
 	</String>
 </Strings>
 <Dialogs>
