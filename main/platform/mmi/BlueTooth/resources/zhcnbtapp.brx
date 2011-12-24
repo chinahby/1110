@@ -2201,7 +2201,7 @@
 		<Text>没有内存卡，请插入T卡</Text>
 	</String>
 	<String Id="4067" Name="IDS_FILE_PROGRESS">
-		<Text>File Transmission Progress: </Text>
+		<Text>文件传输进度: </Text>
 	</String>
 </Strings>
 <Objects MimeType="image/bmp">
