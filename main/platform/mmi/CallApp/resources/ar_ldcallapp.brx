@@ -177,7 +177,7 @@
  	</STRING>
  	<STRING Id="1114" Name="IDS_NUM_TOO_LONG">
  		<Text>الرقم طويل جدًا بحيث يتعذر حفظه</Text>
-	</String>
+	</STRING>
 	<STRING Id="1115" Name="IDS_NOOMH_CARD">
 		<Text>This is non-OMH Card, please upgrade to OMH R-UIM</Text>
  	</STRING>
