@@ -172,7 +172,7 @@ DESCRIPTION
 #define  NV_MRU_TABLE_SIZE                                      12
 
 /* Up to 10 SID/NIDs to lock out */
-#define  NV_MAX_SID_NID_LOCK                                    10
+#define  NV_MAX_SID_NID_LOCK                                    25
 
 /* Up to 20 home SID/NID pairs */
 #define  NV_MAX_HOME_SID_NID                                    20
