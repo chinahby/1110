@@ -140,7 +140,7 @@
 		<Text>删除</Text>
 	</STRING>
 	<STRING Id="1047" Name="IDS_MUSICLIST_DELALL">
-		<Text>全部刪除</Text>
+		<Text>全部删除</Text>
 	</STRING>
 	<STRING Id="1048" Name="IDS_YESNO_DEL">
 		<Text>是否删除</Text>
