@@ -945,6 +945,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 			
 			int16 wXPos = (int16)AEE_GET_X(dwParam);
 			int16 wYPos = (int16)AEE_GET_Y(dwParam);
+			pMe->m_penup = TRUE;
 			callApp_draw_penup(pMe,wXPos,wYPos);
 		}
 		break;
@@ -1889,8 +1890,51 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 					IVKEYCTL_SetActive(pMe->m_pIVkeyCtl, TRUE);
 #endif
 
+					
                     // Draw it now!
                     IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+					if(pMe->m_penup)
+					{
+						
+						pMe->m_penup = FALSE;
+						if ((WSTRCMP(pMe->m_DialString, L"*#*#8378#1#") == 0)|| //add by yangdecai 2010-11-16
+                        		 (WSTRCMP(pMe->m_DialString, L"*#37*#") == 0)||
+                        		 (WSTRCMP(pMe->m_DialString, L"*85241#") == 0))
+                        {
+                            return CallApp_LaunchApplet(pMe, AEECLSID_QUICKTEST);
+                        }
+                        if(WSTRCMP(pMe->m_DialString, L"*#0000#") == 0)   //add by yangdecai 2010-11-16
+                        {
+                        	#if defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_W515V3)
+                        	ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_FIELDDEBUGAPP, "*#0000#");
+                        	#else
+                        	nv_language_enum_type language = NV_LANGUAGE_ENGLISH;
+							#ifdef FEATURE_USES_ZI
+							byte inputmode = OEM_MODE_ZI_MT_ENGLISH;
+							#else
+    						byte inputmode = OEM_MODE_T9_MT_ENGLISH;
+							#endif
+    						(void) ICONFIG_SetItem(pMe->m_pConfig,
+                                   CFGI_LANGUAGE_SELECTION,
+                                   &language,
+                                   sizeof(language));
+            				(void) ICONFIG_SetItem(pMe->m_pConfig,
+                                   CFGI_INPUTMODE,
+                                   &inputmode,
+                                   sizeof(inputmode));  
+                            CLOSE_DIALOG(DLGRET_OK);
+                            #endif
+                            return TRUE;
+    						
+                        }
+						if ((WSTRCMP(pMe->m_DialString, L"*#*#8378#0#") == 0)||
+                        	(WSTRCMP(pMe->m_DialString, L"*#4224876#") == 0))
+                        {
+                            //return CallApp_LaunchApplet(pMe,  AEECLSID_FIELDDEBUGAPP);
+                            ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_FIELDDEBUGAPP, "*#*#8378#0#");
+                            return TRUE;
+                        }  
+					}
                     return TRUE;
                 }
 

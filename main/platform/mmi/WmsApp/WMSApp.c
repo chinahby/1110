@@ -2329,12 +2329,14 @@ Exit:
 				{
 					if(dwParam != 0)
 					{
+						MSG_FATAL("dwParam != 0",0,0,0);
 						eCode = EVT_COMMAND;
 						wParam = dwParam;
 						dwParam = 0;
 					}
 					else
 					{
+						MSG_FATAL("dwParam ===== 0",0,0,0);
 						eCode = EVT_KEY;
 					}
 				}
@@ -2349,6 +2351,11 @@ Exit:
 				else if (wParam == AVK_POUND)
 				{
 					eCode = EVT_KEY_PRESS;
+				}
+				else if (wParam == AVK_LEFT || wParam == AVK_RIGHT)
+				{
+					MSG_FATAL("wParam == AVK_LEFT",0,0,0);
+					eCode = EVT_KEY;
 				}
 				return WmsApp_RouteDialogEvt(pMe,eCode,wParam,dwParam);
 			}

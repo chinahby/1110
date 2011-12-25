@@ -922,6 +922,8 @@ typedef struct WmsApp
     boolean                        m_isForward;
     uint8                          m_insertMMSType;//播放MMS的类型，0：图片。 1：声音。 2：视频. 3:文件
 #endif    
+	AEERect                        m_rContrlRectImage[4];
+	AEERect                        m_lContrlRectImage[4];
 } WmsApp;
 
 /*==============================================================================

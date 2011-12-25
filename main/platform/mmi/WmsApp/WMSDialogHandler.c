@@ -6308,6 +6308,42 @@ static boolean IDD_CALLBACKNUM_Handler(void   *pUser,
                     break;
             }
             return TRUE;
+		#ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
+           case EVT_PEN_UP:
+            {
+                AEEDeviceInfo devinfo;
+                int nBarH ;
+                AEERect rc;
+                int16 wXPos = (int16)AEE_GET_X(dwParam);
+                int16 wYPos = (int16)AEE_GET_Y(dwParam);
+
+                nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+        
+                MEMSET(&devinfo, 0, sizeof(devinfo));
+                ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+                SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+
+                if(WMSAPP_PT_IN_RECT(wXPos,wYPos,rc))
+                {
+                    if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//左
+                    {
+                        boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_WMSAPP,EVT_USER,AVK_SELECT,0);
+                        return rt;
+                    }
+                    else if(wXPos >= rc.x + (rc.dx/3)   && wXPos < rc.x + (rc.dx/3)*2 )//左
+                    {
+                         boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_WMSAPP,EVT_USER,AVK_INFO,0);
+                         return rt;
+                    }
+                    else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//左
+                    {                       
+                         boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_WMSAPP,EVT_USER,AVK_CLR,0);
+                         return rt;
+                    }
+                }
+            }
+            break;
+#endif
   
         default:
             break;
@@ -9076,6 +9112,8 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
+			{
+
             MEMSET(wControls, 0, sizeof(wControls));
             nSelIdx = 0;
             nControls = 0;
@@ -9152,16 +9190,21 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                     (void)ITEXTCTL_SetInputMode(pIText, AEE_TM_NUMBERS);
                 }
             }
+        	}
             
             return TRUE;
 
         case EVT_DIALOG_START:
+			{
+			ITextCtl *pIText = (ITextCtl*)IDIALOG_GetControl(pMe->m_pActiveIDlg, IDC_TEXT_CBNUM);
+			(void)ITEXTCTL_SetText(pIText, pMe->m_msSend.m_szCallBkNum,MAX_PH_DIGITS);
             (void) ISHELL_PostEventEx(pMe->m_pShell, 
                                     EVTFLG_ASYNC,
                                     AEECLSID_WMSAPP,
                                     EVT_USER_REDRAW,
                                     0, 
                                     0);
+        	}
             return TRUE;
 
         case EVT_USER_REDRAW:
@@ -9322,6 +9365,10 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                         if (pLeftImg != NULL)
                         {
                             IIMAGE_GetInfo(pLeftImg, &imginfo);
+							pMe->m_lContrlRectImage[i].x = rc.x;
+							pMe->m_lContrlRectImage[i].y = y+(dy-imginfo.cy)/2;
+							pMe->m_lContrlRectImage[i].dx = imginfo.cx;
+							pMe->m_lContrlRectImage[i].dy = imginfo.cy;
                             IIMAGE_Draw(pLeftImg, rc.x, y+(dy-imginfo.cy)/2);
                             rc.x += imginfo.cx;
                             rc.dx -= imginfo.cx;
@@ -9330,6 +9377,10 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                         if (pRightImg != NULL)
                         {
                             IIMAGE_GetInfo(pLeftImg, &imginfo);
+							pMe->m_rContrlRectImage[i].x = rc.x+rc.dx-imginfo.cx;
+							pMe->m_rContrlRectImage[i].y = y+(dy-imginfo.cy)/2;
+							pMe->m_rContrlRectImage[i].dx = imginfo.cx;
+							pMe->m_rContrlRectImage[i].dy = imginfo.cy;
                             IIMAGE_Draw(pRightImg, rc.x+rc.dx-imginfo.cx, y+(dy-imginfo.cy)/2);
                             rc.dx -= imginfo.cx;
                         }
@@ -9348,6 +9399,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                     }
                     else if(wControls[i] == IDC_TEXT_CBNUM)
                     {
+                    	ITextCtl *pIText = (ITextCtl*)IDIALOG_GetControl(pMe->m_pActiveIDlg, IDC_TEXT_CBNUM);
                         rc.x  = 2;
                         rc.dx = pMe->m_rc.dx - rc.x - 2;
 #if defined(FEATURE_DISP_160X128)						
@@ -9364,6 +9416,29 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
 						rc.dy += 2;	//Add By zzg 2010_07_13								
 #endif
                         IDISPLAY_SetColor( pMe->m_pDisplay, CLR_USER_TEXT, RGB_BLACK);
+						MSG_FATAL("IDC_TEXT_CBNUM.........",0,0,0);
+						if (NULL != pIText)
+						{
+							AECHAR *txtPtr = ITEXTCTL_GetTextPtr(pIText);
+							
+							if (NULL != txtPtr)
+							{
+								AECHAR	wszText[MAX_PH_DIGITS] = {0};
+								DBGPRINTF("IDD_SENDOPTS_Handler txtPtr=%s", txtPtr);
+								(void)ISHELL_LoadResString(pMe->m_pShell, 
+											AEE_WMSAPPRES_LANGFILE,
+											IDS_CALLBACKNUM,
+											wszText, 
+											sizeof(wszText));
+								
+								if (WSTRCMP(pMe->m_msSend.m_szCallBkNum, txtPtr) != 0)
+								{// 用户输入有输入, 为确保获得最新输入,这里重新获取用户的输入。
+									MSG_FATAL("MAX_PH_DIGITS..........",0,0,0);
+									(void)ITEXTCTL_GetText(pIText, pMe->m_msSend.m_szCallBkNum, MAX_PH_DIGITS);
+								}
+							}
+						}
+
                     }
                     
                     switch(wControls[i])
@@ -9656,7 +9731,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                     if (NULL != txtPtr)
                     {
                         AECHAR  wszText[MAX_PH_DIGITS] = {0};
-                        DBGPRINTF("IDD_SENDOPTS_Handler txtPtr=%s", txtPtr);
+                        MSG_FATAL("IDD_SENDOPTS_Handler txtPtr=%s", txtPtr,0,0);
                         (void)ISHELL_LoadResString(pMe->m_pShell, 
                                     AEE_WMSAPPRES_LANGFILE,
                                     IDS_CALLBACKNUM,
@@ -9665,7 +9740,8 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                         
                         if (WSTRCMP(wszText, txtPtr) != 0)
                         {// 用户输入有输入, 为确保获得最新输入,这里重新获取用户的输入。
-                            (void)ITEXTCTL_GetText(pIText, pMe->m_msSend.m_szCallBkNum, MAX_PH_DIGITS);
+                        MSG_FATAL("MAX_PH_DIGITS..........",0,0,0);
+						(void)ITEXTCTL_GetText(pIText, pMe->m_msSend.m_szCallBkNum, MAX_PH_DIGITS);
                         }
                     }
                 }
@@ -9773,7 +9849,12 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                         }
                     }                 
                     break;	
-				
+				case AVK_LEFT:
+				case AVK_RIGHT:
+						{
+							IControl *pControl = NULL;
+							
+						}
                 default:
                     break;
             }
@@ -9978,7 +10059,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                 AEERect rc;
                 int16 wXPos = (int16)AEE_GET_X(dwParam);
                 int16 wYPos = (int16)AEE_GET_Y(dwParam);
-
+				int i = 0;
                 nBarH = GetBottomBarHeight(pMe->m_pDisplay);
         
                 MEMSET(&devinfo, 0, sizeof(devinfo));
@@ -10003,6 +10084,73 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                         return rt;
                     }
                 }
+				MSG_FATAL("wXPos===%d,wYPos====%d",wXPos,wYPos,0);
+				MSG_FATAL("wXPos===%d,wYPos====%d",pMe->m_lContrlRectImage[0].x,pMe->m_lContrlRectImage[0].y,0);
+				MSG_FATAL("wXPos===%d,wYPos====%d",pMe->m_lContrlRectImage[0].dx,pMe->m_lContrlRectImage[0].dy,0);
+				MSG_FATAL("wXPos===%d,wYPos====%d",pMe->m_lContrlRectImage[1].x,pMe->m_lContrlRectImage[1].y,0);
+				MSG_FATAL("wXPos===%d,wYPos====%d",pMe->m_lContrlRectImage[1].dx,pMe->m_lContrlRectImage[1].dy,0);
+				MSG_FATAL("wXPos===%d,wYPos====%d",pMe->m_lContrlRectImage[2].x,pMe->m_lContrlRectImage[2].y,0);
+				MSG_FATAL("wXPos===%d,wYPos====%d",pMe->m_lContrlRectImage[2].dx,pMe->m_lContrlRectImage[2].dy,0);
+				for(i=0;i<4;i++)
+				{
+					switch(i)
+					{
+						case 0:
+							if(WMSAPP_PT_IN_RECT(wXPos,wYPos,pMe->m_lContrlRectImage[0]))
+							{
+								boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_WMSAPP,EVT_USER,AVK_LEFT,0);
+								MSG_FATAL("00000000",0,0,0);
+                        		return rt;
+							}
+							else if(WMSAPP_PT_IN_RECT(wXPos,wYPos,pMe->m_rContrlRectImage[0]))
+							{
+								boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_WMSAPP,EVT_USER,AVK_RIGHT,0);
+                        		return rt;
+							}
+							break;
+						case 1:
+							if(WMSAPP_PT_IN_RECT(wXPos,wYPos,pMe->m_lContrlRectImage[1]))
+							{
+								boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_WMSAPP,EVT_USER,AVK_LEFT,0);
+                        		return rt;
+							}
+							else if(WMSAPP_PT_IN_RECT(wXPos,wYPos,pMe->m_rContrlRectImage[1]))
+							{
+								boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_WMSAPP,EVT_USER,AVK_RIGHT,0);
+                        		return rt;
+							}
+							break;
+							break;
+						case 2:
+							if(WMSAPP_PT_IN_RECT(wXPos,wYPos,pMe->m_lContrlRectImage[2]))
+							{
+								boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_WMSAPP,EVT_USER,AVK_LEFT,0);
+                        		return rt;
+							}
+							else if(WMSAPP_PT_IN_RECT(wXPos,wYPos,pMe->m_rContrlRectImage[2]))
+							{
+								boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_WMSAPP,EVT_USER,AVK_RIGHT,0);
+                        		return rt;
+							}
+							break;
+							break;
+						case 3:
+							if(WMSAPP_PT_IN_RECT(wXPos,wYPos,pMe->m_lContrlRectImage[3]))
+							{
+								boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_WMSAPP,EVT_USER,AVK_LEFT,0);
+                        		return rt;
+							}
+							else if(WMSAPP_PT_IN_RECT(wXPos,wYPos,pMe->m_rContrlRectImage[3]))
+							{
+								boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_WMSAPP,EVT_USER,AVK_RIGHT,0);
+                        		return rt;
+							}
+							break;
+							break;
+						default:
+							break;
+					}
+				}
 
             }
             break;

@@ -452,6 +452,7 @@ typedef struct _cdg_dsp_info
     AEETPI             pi;
     AECHAR              alpha[AEET_MAX_ALPHA_TAG_LENGTH];  
 #endif
+	
 }
 cdg_dsp_info;
 enum
@@ -720,6 +721,7 @@ typedef struct _CCallApp
 	boolean  m_bup;
 	int16   m_i;
 #endif
+	boolean            m_penup;
 } CCallApp;
 
 /*==============================================================================

@@ -820,7 +820,7 @@ static int CallApp_InitAppData(CCallApp *pMe)
     pMe->m_rc.y       = 0;
     pMe->m_rc.dx      = (int16) di.cxScreen;
     pMe->m_rc.dy      = (int16) di.cyScreen;
-
+	pMe->m_penup      = FALSE;
     pMe->m_ePreState = STATE_NULL;
     pMe->m_eCurState = STATE_INIT;
     pMe->m_pActiveDlg = NULL;
