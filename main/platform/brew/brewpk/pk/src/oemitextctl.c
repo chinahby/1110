@@ -585,6 +585,12 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
    //if( eCode >= EVT_PEN_UP  && eCode <= EVT_PEN_STALE_MOVE ){   modi by ydc  090520
 	if (eCode == EVT_PEN_UP){
       boolean bRet = FALSE;
+	  AEEDeviceInfo devinfo;
+	  int nBarH ;
+	  AEERect rc;
+	  int16   xpos, ypos;
+      xpos = AEE_GET_X(dwParam);
+      ypos = AEE_GET_Y(dwParam);
       // Stale move is not handled and likely the largest stream of events
       // For speed, abort quick.
       if( eCode == EVT_PEN_STALE_MOVE ){
@@ -605,9 +611,7 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
       && (!pme->m_pSoftKey)
       && (pme->m_pTitle))
       {
-          int16   xpos, ypos;
-          xpos = AEE_GET_X(dwParam);
-          ypos = AEE_GET_Y(dwParam);
+          
           MSG_FATAL("TSIM_DragBar-----xpos=%d--ypos=%d",xpos,ypos,0);
           if((eCode == EVT_PEN_UP )
           && (PT_IN_RECT(xpos,ypos,pme->m_tmrc)))
@@ -633,8 +637,29 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
           {
              IDISPLAY_Update(pme->m_pIDisplay);
           }
-      }
-      return bRet;
+      }	
+	  if(bRet)
+	  {
+	     return bRet;
+	  }
+		 
+		nBarH = GetBottomBarHeight(pme->m_pIDisplay);
+
+		MEMSET(&devinfo, 0, sizeof(devinfo));
+		ISHELL_GetDeviceInfo(pme->m_pIShell, &devinfo);
+		SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+		MSG_FATAL("devinfo.cyScreen-nBarH=%d----devinfo.cxScreen=%d----nBarH=%d",devinfo.cyScreen-nBarH,devinfo.cxScreen,nBarH);
+
+		if(PT_IN_RECT(xpos,ypos,rc))
+		{
+			if(xpos >= rc.x + (rc.dx/3)*2 && xpos < rc.x + (rc.dx/3)*3 )//×ó
+			{						
+				eCode = EVT_KEY;
+				wParam =AVK_CLR;
+			}
+		}
+						
+   
    }
 #endif  //end by ydc
     switch(eCode)
@@ -3637,8 +3662,8 @@ static void TextCtl_CalcRects(CTextCtl * pme)
       }
 
       //pme->m_pText = OEM_TextCreate(pme->m_pIShell, pme->m_pIDisplay, &rc);
-      //MSG_FATAL("rc.X=%d,rc.y=%d",rc.x,rc.y,0);
-      //MSG_FATAL("rc.dX=%d,rc.dy=%d",rc.dx,rc.dy,0);
+      MSG_FATAL("rc.X=%d,rc.y=%d",rc.x,rc.y,0);
+      MSG_FATAL("rc.dX=%d,rc.dy=%d",rc.dx,rc.dy,0);
       pme->m_pText = OEM_TextCreate(pme->m_pIShell, pme->m_pIDisplay, &rc, pme->m_clsMe);
 
       OEM_TextSetProperties(pme->m_pText, pme->m_dwProps);
