@@ -1387,6 +1387,21 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 #endif
         case EVT_USER:
 			MSG_FATAL("***zzg CoreApp EVT_USER wParam=%x, dwParam=%x***",wParam,dwParam,0);
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+			{				
+				if(wParam == AVK_SELECT)
+				{
+					eCode = EVT_COMMAND;
+					return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+				}
+				else if(wParam == AVK_CLR)
+				{
+					eCode = EVT_KEY;
+					return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+				}		
+			}
+#endif
+            
             switch(wParam) 
 			{
 

@@ -652,7 +652,7 @@ boolean CoreApp_RouteDialogEvent(CCoreApp *pMe,
         return FALSE;
     }
 
-	MSG_FATAL("***zzg CoreApp_RouteDialogEvent m_pDialogHandler***",0,0,0);
+	MSG_FATAL("***zzg CoreApp_RouteDialogEvent m_pDialogHandler***eCode=%d---wParam=%d---dwParam=%d",eCode,wParam,dwParam);
     
     return pMe->m_pDialogHandler((void *)pMe, eCode, wParam, dwParam);
 }
@@ -1518,12 +1518,13 @@ static boolean  IDD_EMERGENCYNUMLIST_Handler(void  *pUser,
     {
         return FALSE;
     }
+    MSG_FATAL("IDD_EMERGENCYNUMLIST_Handler--eCode=%d----wParam=%d---dwParam=%d",eCode,wParam,dwParam);
 
     pMenu = (IMenuCtl* )IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_EMERGENCYNUM);
     if (pMenu == NULL)
     {
         return FALSE;
-    }
+    } 
 
     switch (eCode)
     {
@@ -1613,8 +1614,10 @@ static boolean  IDD_EMERGENCYNUMLIST_Handler(void  *pUser,
                 case AVK_END:
                 case AVK_SOFT2:		//Add By zzg 2010_09_08 for smart and m8
                 case AVK_CLR:
+                     MSG_FATAL("IDD_EMERGENCYNUMLIST_Handler EVT_KEY...........eCode=%d",eCode,0,0);
                 	if(!pMe->m_IsSametime)
                 	{
+                         MSG_FATAL("IDD_EMERGENCYNUMLIST_Handler EVT_KEY...........eCode=%d",eCode,0,0);
                     	pMe->m_IsSametime = TRUE;
                     	CLOSE_DIALOG(DLGRET_CANCELED)
                     }
@@ -1677,6 +1680,7 @@ static boolean  IDD_EMERGENCYNUMLIST_Handler(void  *pUser,
         case EVT_COMMAND:
             {
                 CtlAddItem ai;
+                wParam =IMENUCTL_GetSel(pMenu);
                 if (IMENUCTL_GetItem(pMenu, wParam, &ai))
                 {
                      (void)MakeVoiceCall(pMe->a.m_pIShell, FALSE, (AECHAR *)ai.pText);
@@ -1724,6 +1728,7 @@ static boolean  IDD_PWDINPUT_Handler(void       *pUser,
     {
         return FALSE;
     }
+     MSG_FATAL("IDD_PWDINPUT_Handler--eCode=%d----wParam=%d---dwParam=%d",eCode,wParam,dwParam);
     //pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_PHONEPWD_MENU);
     //if (NULL == pMenu)
     //{
@@ -1972,7 +1977,38 @@ static boolean  IDD_PWDINPUT_Handler(void       *pUser,
                 }
             }
             return TRUE;
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+        case EVT_PEN_UP:
+            {
+                int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
+                int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
+                AEEDeviceInfo devinfo;
+                int nBarH ;
+                AEERect rc;
+                MSG_FATAL("Setting_HandleAuto_Power_DialogEvent wXPos=%d ,wYPos=%d",wXPos,wYPos,0);
+                 
+                nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+                MEMSET(&devinfo, 0, sizeof(devinfo));
+                ISHELL_GetDeviceInfo(pMe->a.m_pIShell, &devinfo);
+                SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);  
+                if(CORE_PT_IN_RECT(wXPos,wYPos,rc))
+                {
+                    if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//×ó
+                    {
+                         boolean rt =  ISHELL_PostEvent(pMe->a.m_pIShell,AEECLSID_CORE_APP,EVT_USER,AVK_SELECT,0);
+                         return rt;
+                    } 
+                    else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//ÓÒ
+                    { 
+                         boolean rt =  ISHELL_PostEvent(pMe->a.m_pIShell,AEECLSID_CORE_APP,EVT_USER,AVK_CLR,0);
+                         return rt;
+                    }
+                }  
             
+            }
+            break;
+                                    
+#endif            
         default:
             break;
     }
@@ -2012,7 +2048,7 @@ static boolean  IDD_UIMSECCODE_Handler(void       *pUser,
     static uint16 nResID = 0;
     //IMenuCtl *pMenu = NULL;
     CCoreApp *pMe = (CCoreApp *)pUser;
-    
+     MSG_FATAL("IDD_UIMSECCODE_Handler--eCode=%d----wParam=%d---dwParam=%d",eCode,wParam,dwParam);
     if (NULL == pMe)
     {
         return FALSE;
@@ -2022,7 +2058,43 @@ static boolean  IDD_UIMSECCODE_Handler(void       *pUser,
     //{
     //    return FALSE;
     //}
+
     
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+    if(eCode == EVT_PEN_UP)
+        {
+            int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
+            int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
+            AEEDeviceInfo devinfo;
+            int nBarH ;
+            AEERect rc;
+            MSG_FATAL("Setting_HandleAuto_Power_DialogEvent wXPos=%d ,wYPos=%d",wXPos,wYPos,0);
+             
+            nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+            MEMSET(&devinfo, 0, sizeof(devinfo));
+            ISHELL_GetDeviceInfo(pMe->a.m_pIShell, &devinfo);
+            SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);  
+            MSG_FATAL("Setting_HandleAuto_Power_DialogEvent wXPos=%d ,wYPos=%d---nBarH=%d",devinfo.cyScreen-nBarH,devinfo.cxScreen,nBarH);
+            if(CORE_PT_IN_RECT(wXPos,wYPos,rc))
+            {
+                 MSG_FATAL("Setting_HandleAuto_Power_DialogEvent wXPos=%d ,wYPos=%d---nBarH=%d",devinfo.cyScreen-nBarH,devinfo.cxScreen,nBarH);
+                if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//×ó
+                {
+                     MSG_FATAL("Setting_HandleAuto_Power_DialogEvent wXPos=%d ,wYPos=%d---nBarH=%d",devinfo.cyScreen-nBarH,devinfo.cxScreen,nBarH);
+                     eCode = EVT_KEY;
+				     wParam = AVK_SELECT;
+                } 
+                else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//ÓÒ
+                { 
+                     MSG_FATAL("Setting_HandleAuto_Power_DialogEvent wXPos=%d ,wYPos=%d---nBarH=%d",devinfo.cyScreen-nBarH,devinfo.cxScreen,nBarH);
+                     eCode = EVT_KEY;
+				     wParam = AVK_CLR;
+                }
+            }  
+        
+        }
+                                        
+#endif    
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
@@ -2362,8 +2434,7 @@ static boolean  IDD_UIMSECCODE_Handler(void       *pUser,
                                             NULL);
                 }
             }
-            return TRUE;
-            
+            return TRUE;            
         default:
             break;
     }
