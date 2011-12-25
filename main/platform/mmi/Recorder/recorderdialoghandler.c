@@ -1814,6 +1814,8 @@ __dialog_handler_of_state_record_pause_resume__:
 				int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
 				int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
 				AEERect bottomBarRect;
+				AEERect sondadd;
+				AEERect sonddel;
 				//int ht;
 				int nBarH ;
 				AEEDeviceInfo devinfo;
@@ -1841,7 +1843,22 @@ __dialog_handler_of_state_record_pause_resume__:
 						return rt;
 					}
 					
-				}	
+				}
+				MSG_FATAL("wXPos====%d,wXPos====%d",wXPos,wYPos,0);
+				
+					
+				SETAEERECT(&sonddel, 185, 245, 20, 20);
+				SETAEERECT(&sondadd, 224, 252, 20, 20);
+				if(TOUCH_PT_IN_RECT(wXPos, wYPos, sondadd))
+				{
+					recorder_set_media_volume( &pme->m_Media, pme->m_Media.m_nVolume + 20);
+					repaint( TRUE);
+				}
+				if(TOUCH_PT_IN_RECT(wXPos, wYPos, sonddel))
+				{
+					recorder_set_media_volume( &pme->m_Media, pme->m_Media.m_nVolume  -20);
+					repaint( TRUE);
+				}			
 			}
 		break;
 #endif
@@ -3356,7 +3373,7 @@ static boolean  dialog_handler_of_state_set_as( Recorder* pme, AEEEvent evt, uin
 				case AVK_SELECT:
 #endif
 				{
-
+					MSG_FATAL("subState======%d",subState,0,0);
 					if( subState != 0)
 					{
 						break;
@@ -3380,7 +3397,29 @@ static boolean  dialog_handler_of_state_set_as( Recorder* pme, AEEEvent evt, uin
 			}
 		}
 		return TRUE;
+		case EVT_COMMAND:
+			{
+					MSG_FATAL("subState======%d",subState,0,0);
+					if( subState != 0)
+					{
+						break;
+					}
 
+					subState = 1;
+					repaint( FALSE);
+#if defined( AEE_SIMULATOR)
+					subState = 0;
+					CLOSE_DIALOG(DLGRET_CANCELED);
+#else
+					{
+						MSG_FATAL("dialog_handler_of_state_set_as..........................",0,0,0);
+						CALLBACK_Init( &pme->m_cb, (PFNNOTIFY)recorder_set_as_cb, pme);
+						ISHELL_Resume( pme->m_pShell, &pme->m_cb);
+					}
+
+#endif
+				}
+				break;
 		case EVT_CTL_SEL_CHANGED:
 		{
 			if( subState == 0)
