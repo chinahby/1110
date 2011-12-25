@@ -59,7 +59,7 @@ when       who     what, where, why
 #include "blackjack.brh"
 #include "blackjack_image.brh"
 #include "AEEFile.h"
-
+#include "err.h"
 #include "appscommon.h"
 /*===========================================================================
 
@@ -799,6 +799,37 @@ static boolean BlackJack_HandleEvent(BlackJackApp *pMe,
                                      uint32        dwParam)
 {
    boolean bEventHandled = TRUE;
+   	#ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
+	if((eCode == EVT_PEN_UP)&&(pMe->m_playState ==state_choosingBetAmount))
+	{
+			AEEDeviceInfo devinfo;
+			int nBarH ;
+			AEERect rc;
+			int16 wXPos = (int16)AEE_GET_X(dwParam);
+			int16 wYPos = (int16)AEE_GET_Y(dwParam);
+
+			nBarH = GetBottomBarHeight(pMe->a.m_pIDisplay);
+    
+			MEMSET(&devinfo, 0, sizeof(devinfo));
+			ISHELL_GetDeviceInfo(pMe->a.m_pIShell, &devinfo);
+			SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+
+			if(TOUCH_PT_IN_RECT(wXPos,wYPos,rc))
+			{
+				if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//×ó
+				{
+					int16 id = IMENUCTL_GetSel(pMe->m_pCurrentMenu);
+					eCode = EVT_COMMAND;
+					wParam = id;
+				}
+				else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//×ó
+				{						
+					 eCode = EVT_KEY;
+					 wParam = AVK_CLR;
+				}
+			}
+	}
+#endif  
 
    switch (eCode) {
    case EVT_APP_SUSPEND:
@@ -831,6 +862,7 @@ static boolean BlackJack_HandleEvent(BlackJackApp *pMe,
 
 #ifdef FEATURE_LCD_TOUCH_ENABLE//andrew add for LCD touch
       case EVT_PEN_UP:
+	  	MSG_FATAL("EVT_PEN_UP...........pMe->m_playState=%d",pMe->m_playState,0,0);
         if ( (pMe->m_pIStatic != NULL) && ISTATIC_HandleEvent(pMe->m_pIStatic,
                                                               eCode,
                                                               wParam,
@@ -1291,7 +1323,7 @@ static boolean BlackJack_HandleKey(BlackJackApp *pMe,
       {
          // Go back to the "between hands info" IShell_Prompt without
          // changing the bet amount
-
+		 MSG_FATAL("state_choosingBetAmount  AVK_SOFT2",0,0,0);
          // We're done with the bet amount menu, free the memory
          if (pMe->m_pTempMenu) {
             IMENUCTL_Release(pMe->m_pTempMenu);

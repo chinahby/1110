@@ -400,8 +400,8 @@ static boolean InitWorldTime(CWorldTime *pme)
         IIMAGE_Draw( pme->m_leftArrow, SPACE_BETWEEN_MENU_AND_EDGE, yArrow);
 
         IIMAGE_Draw( pme->m_rightArrow, di.cxScreen - SPACE_BETWEEN_MENU_AND_EDGE - iInfo.cx, yArrow);
-		SETAEERECT(&pme->LeftrowRect, SPACE_BETWEEN_MENU_AND_EDGE, yArrow, iInfo.cx, iInfo.cy); 
-		SETAEERECT(&pme->RightrowRect, di.cxScreen - SPACE_BETWEEN_MENU_AND_EDGE - iInfo.cx, yArrow,  iInfo.cx, iInfo.cy); 
+		SETAEERECT(&pme->LeftrowRect, SPACE_BETWEEN_MENU_AND_EDGE, yArrow-5, iInfo.cx+10, iInfo.cy+10); 
+		SETAEERECT(&pme->RightrowRect, di.cxScreen - SPACE_BETWEEN_MENU_AND_EDGE - iInfo.cx, yArrow-5,  iInfo.cx+10, iInfo.cy+10); 
     }
 
 

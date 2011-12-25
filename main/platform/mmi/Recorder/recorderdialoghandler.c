@@ -1593,6 +1593,7 @@ __dialog_handler_of_state_record_stop__:
 #else
 				case AVK_SELECT:					
 #endif
+					MSG_FATAL("AVK_SELECT.................",0,0,0);
 					if( pme->m_Media.m_bRecorder && ( subState == 1 || subState == 3))
 					{
 						wParam = AVK_CLR;

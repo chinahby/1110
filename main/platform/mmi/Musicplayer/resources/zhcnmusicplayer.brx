@@ -146,7 +146,7 @@
 		<Text>是否删除</Text>
 	</STRING>
 	<STRING Id="1049" Name="IDS_YESNO_DELALL">
-		<Text>是否全部刪除</Text>
+		<Text>是否全部删除</Text>
 	</STRING>
 	<STRING Id="1050" Name="IDS_YESNO_RETRY">
 		<Text>是否重试</Text>

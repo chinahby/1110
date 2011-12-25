@@ -3478,18 +3478,18 @@ static void CClockApps_Draw_Arrow(CClockApps *pMe, AEERect* pRect,int i)
 	#ifdef FEATURE_LCD_TOUCH_ENABLE
 	if(i==0)
 	{
-		SETAEERECT(&pMe->pL_Rect1, pRect->x - imageInfo.cx, pRect->y + (pRect->dy - imageInfo.cy) / 2, imageInfo.cx, imageInfo.cy);
-		SETAEERECT(&pMe->pR_Rect1, pRect->x + pRect->dx, pRect->y + (pRect->dy - imageInfo.cy) / 2, imageInfo.cx, imageInfo.cy);
+		SETAEERECT(&pMe->pL_Rect1, pRect->x - imageInfo.cx-10, pRect->y + (pRect->dy - imageInfo.cy) / 2, imageInfo.cx+20, imageInfo.cy+10);
+		SETAEERECT(&pMe->pR_Rect1, pRect->x + pRect->dx-10, pRect->y + (pRect->dy - imageInfo.cy) / 2, imageInfo.cx+20, imageInfo.cy+10);
 	}
 	else if(i == 2)
 	{
-		SETAEERECT(&pMe->pL_Rect2, pRect->x - imageInfo.cx, pRect->y + (pRect->dy - imageInfo.cy) / 2, imageInfo.cx, imageInfo.cy);
-		SETAEERECT(&pMe->pR_Rect2, pRect->x + pRect->dx, pRect->y + (pRect->dy - imageInfo.cy) / 2, imageInfo.cx, imageInfo.cy);
+		SETAEERECT(&pMe->pL_Rect2, pRect->x - imageInfo.cx-10, pRect->y + (pRect->dy - imageInfo.cy) / 2, imageInfo.cx+20, imageInfo.cy+10);
+		SETAEERECT(&pMe->pR_Rect2, pRect->x + pRect->dx-10, pRect->y + (pRect->dy - imageInfo.cy) / 2, imageInfo.cx+20, imageInfo.cy+10);
 	}
 	else if(i == 3)
 	{
-		SETAEERECT(&pMe->pL_Rect3, pRect->x - imageInfo.cx, pRect->y + (pRect->dy - imageInfo.cy) / 2, imageInfo.cx, imageInfo.cy);
-		SETAEERECT(&pMe->pR_Rect3, pRect->x + pRect->dx, pRect->y + (pRect->dy - imageInfo.cy) / 2, imageInfo.cx, imageInfo.cy);
+		SETAEERECT(&pMe->pL_Rect3, pRect->x - imageInfo.cx-10, pRect->y + (pRect->dy - imageInfo.cy) / 2, imageInfo.cx+20, imageInfo.cy+10);
+		SETAEERECT(&pMe->pR_Rect3, pRect->x + pRect->dx-10, pRect->y + (pRect->dy - imageInfo.cy) / 2, imageInfo.cx+20, imageInfo.cy+10);
 	}
 	#endif
 

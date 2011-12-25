@@ -910,7 +910,7 @@ static void StopWatch_Redraw(CStopWatch *pme)
         IIMAGE_Draw(pImage,  + SPACE_BETWEEN_MENU, yArrow);
         IIMAGE_Release(pImage);
     }
-    SETAEERECT(&pme->LeftrowRect, SPACE_BETWEEN_MENU, yArrow, iInfo.cx, iInfo.cy); 
+    SETAEERECT(&pme->LeftrowRect, SPACE_BETWEEN_MENU, yArrow-10, iInfo.cx+10, iInfo.cy+10); 
     pImage = ISHELL_LoadResImage(pme->a.m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_RIGHTARROW);
     if(pImage)
     {
@@ -918,7 +918,7 @@ static void StopWatch_Redraw(CStopWatch *pme)
         IIMAGE_Release(pImage);
         pImage = NULL;
     }
-    SETAEERECT(&pme->RightrowRect, pme->m_rc.dx - SPACE_BETWEEN_MENU - ARROW_WIDTH, yArrow, iInfo.cx, iInfo.cy); 
+    SETAEERECT(&pme->RightrowRect, pme->m_rc.dx - SPACE_BETWEEN_MENU - ARROW_WIDTH, yArrow-15, iInfo.cx+10, iInfo.cy+20); 
     IMENUCTL_Redraw(pme->m_pStopWatch);
     ITIMECTL_Redraw(pme->m_pTime);
     IMENUCTL_Redraw(pme->m_pmenu);

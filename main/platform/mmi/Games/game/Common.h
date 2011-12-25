@@ -30,8 +30,11 @@
 #define AVK_F3							AVK_SOFT4
 #endif //AEE_STATIC
 
-
+#ifdef FEATURE_VERSION_X3
+#define PROMPT_INFO_HEIGHT       24  //prompt information height   
+#else
 #define PROMPT_INFO_HEIGHT       20  //prompt information height   
+#endif
 #define DISP_POPMENU_ITEM_NUM    4   //num of popmenu item
 #define MAX_CONTENT_SIZE         64 
 #define MAX_HELP_INFO_SIZE       1024  //the size of help information buffer
