@@ -1214,7 +1214,7 @@
 		<Text>重绑定设备 %s?</Text>
 	</String>
 	<String Id="1095" Name="IDS_PROMPT_PROCEED_BONDING">
-		<Text>使用密钥 %s和设备%s绑定?</Text>
+		<Text>使用密钥和设备绑定?</Text>
 	</String>
 	<String Id="1096" Name="IDS_AUTO_GENERATED_PASSKEY">
 		<Text>自动生成的密钥</Text>
