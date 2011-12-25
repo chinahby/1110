@@ -579,6 +579,7 @@ static boolean Tetris_HandleEvent(CTetrisApp * pMe, AEEEvent eCode, uint16 wPara
         }
 #endif
         case EVT_KEY:
+		
             if(IMENUCTL_UpAndDownScroll_HandleEvent(pMe->a.m_pIShell, 
                                                     pMe->m_pMainMenu, 
                                                     eCode, 
@@ -620,14 +621,16 @@ static boolean Tetris_HandleEvent(CTetrisApp * pMe, AEEEvent eCode, uint16 wPara
             return TRUE;
         }
     }
+	if(pMe->m_AppState == APP_STATE_HELP )
+	{
+		MSG_FATAL("ISTATIC_IsActive..................",0,0,0);
+    	if(ISTATIC_HandleEvent(pMe->m_pStatic, eCode, wParam, dwParam))
+    	{
+        	return TRUE;
+    	}
+	}
+
     
-    if(ISTATIC_IsActive(pMe->m_pStatic))
-    {
-        if(ISTATIC_HandleEvent(pMe->m_pStatic, eCode, wParam, dwParam))
-        {
-            return TRUE;
-        }
-    }
 
     return FALSE;
 }
@@ -1625,6 +1628,7 @@ static void DisplayHelpScreen(CTetrisApp * pMe)
                           AEE_FONT_BOLD | AEE_FONT_LARGE, 
                           AEE_FONT_NORMAL);
     ISTATIC_Redraw(pMe->m_pStatic);     // Display the help information.
+    MSG_FATAL("pMe->m_pStatic.....TRUE",0,0,0);
     ISTATIC_SetActive(pMe->m_pStatic, TRUE);
 
 #if defined AEE_STATIC
@@ -1859,6 +1863,7 @@ static void Reset(CTetrisApp * pMe, boolean bErase)
 
     if(ISTATIC_IsActive(pMe->m_pStatic))
     {
+    	MSG_FATAL("pMe->m_pStatic, FALSE",0,0,0);
         ISTATIC_SetActive(pMe->m_pStatic, FALSE);
         ISTATIC_Reset(pMe->m_pStatic);
     }
@@ -3933,6 +3938,7 @@ static void ReportScore(CTetrisApp * pMe, uint16 strID, uint32 Score, boolean Ne
                           AEE_FONT_NORMAL);     
 
     ISTATIC_SetActive(pMe->m_pStatic, TRUE);
+	MSG_FATAL("pMe->m_pStatic, TRUE",0,0,0);
     (void)ISTATIC_Redraw(pMe->m_pStatic);       
     IDISPLAY_Update(pMe->a.m_pIDisplay);        // Display the relevant information.       
 

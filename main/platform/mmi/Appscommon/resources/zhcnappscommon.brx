@@ -71,10 +71,10 @@
 		<Text>已删除</Text>
 	</STRING>
 	<STRING Id="24" Name="IDS_MSG_CONFIRM_DELETEALL">
-		<Text>是否全部刪除</Text>
+		<Text>是否全部删除</Text>
 	</STRING>
 	<STRING Id="25" Name="IDS_MSG_INFORMATIVE_DELETEALL">
-		<Text>全部刪除</Text>
+		<Text>全部删除</Text>
 	</STRING>
 	<STRING Id="26" Name="IDS_MSG_CONFIRM_COPY">
 		<Text>是否复制</Text>

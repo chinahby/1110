@@ -17,7 +17,7 @@
 		<Text>删除</Text>
 	</STRING>
 	<STRING Id="1006" Name="IDS_FMRADIO_DELETE_ALL">
-		<Text>全部刪除</Text>
+		<Text>全部删除</Text>
 	</STRING>
 	<STRING Id="1007" Name="IDS_FMRADIO_OPTION_MENU_QUIT">
 		<Text>退出</Text>
