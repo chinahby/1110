@@ -41,10 +41,10 @@
 		<Text>短信铃声</Text>
 	</STRING>
 	<STRING Id="1012" Name="IDS_RECORD_DELETE_CONFIRM">
-		<Text>是否刪除</Text>
+		<Text>是否删除</Text>
 	</STRING>
 	<STRING Id="1013" Name="IDS_RECORD_DELETE_ALL_CONFIRM">
-		<Text>是否刪除</Text>
+		<Text>是否删除</Text>
 	</STRING>
 	<STRING Id="1014" Name="IDS_RECORD_OPEN_FILE_ERROR_1">
 		<Text>文件已存在</Text>
