@@ -534,6 +534,7 @@ static boolean dialog_handler_of_state_main( Recorder* pme, AEEEvent evt, uint16
 
 		case EVT_USER_REDRAW:
 		{
+			MSG_FATAL("pme->m_prefs.storage===%d",pme->m_prefs.storage,0,0);
 			IMENUCTL_Redraw( pMenu);
 		}
 		return TRUE;
@@ -545,6 +546,7 @@ static boolean dialog_handler_of_state_main( Recorder* pme, AEEEvent evt, uint16
 				case AVK_SOFT2:
 				case AVK_CLR:
 				{
+					MSG_FATAL("AVK_CLR........",0,0,0);
 					CLOSE_DIALOG(DLGRET_CANCELED);
 				}
 				break;
@@ -2435,14 +2437,18 @@ static boolean  dialog_handler_of_state_record_list( Recorder* pme, AEEEvent evt
 			{
 				if(wXPos >= bottomBarRect.x + (bottomBarRect.dx/3)*2 && wXPos < bottomBarRect.x + (bottomBarRect.dx/3)*3 )//ÓÒ
 				{						
-					evt = EVT_KEY;
-					wParam = AVK_CLR;
+					//evt = EVT_KEY;
+					//wParam = AVK_CLR;
+					boolean rt = ISHELL_PostEvent(pme->m_pShell,AEECLSID_RECORDER,EVT_USER,AVK_CLR,0);
+						return rt;
 				}
 				else if((wXPos >= bottomBarRect.x) && (wXPos < bottomBarRect.x + (bottomBarRect.dx/3)))//×ó
 				{						
 					
-					evt = EVT_KEY;
-					wParam = AVK_SELECT;
+					//evt = EVT_KEY;
+					//wParam = AVK_SELECT;
+					boolean rt = ISHELL_PostEvent(pme->m_pShell,AEECLSID_RECORDER,EVT_USER,AVK_SELECT,0);
+						return rt;
 				}
 			}
 		}
@@ -2490,7 +2496,7 @@ static boolean  dialog_handler_of_state_record_list( Recorder* pme, AEEEvent evt
                 }
 		    }
 			#endif
-			IMENUCTL_SetOemProperties( pMenu, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY | OEMMP_USE_MENU_STYLE);
+			IMENUCTL_SetOemProperties( pMenu, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY | OEMMP_USE_MENU_STYLE|MP_ACTIVE_NO_REDRAW);
 			IMENUCTL_SetBottomBarType( pMenu, BTBAR_BACK);
             IMENUCTL_SetProperties( pOption, IMENUCTL_GetProperties( pMenu) | MP_BIND_ITEM_TO_NUMBER_KEY|MP_ACTIVE_NO_REDRAW);
 
@@ -3164,15 +3170,19 @@ static boolean  dialog_handler_of_state_set_as( Recorder* pme, AEEEvent evt, uin
 		if( TOUCH_PT_IN_RECT(wXPos, wYPos, bottomBarRect))
 		{
 			if(wXPos >= bottomBarRect.x + (bottomBarRect.dx/3)*2 && wXPos < bottomBarRect.x + (bottomBarRect.dx/3)*3 )//ÓÒ
-			{						
-				evt = EVT_KEY;
-				wParam = AVK_CLR;
+			{		
+				boolean rt = ISHELL_PostEvent(pme->m_pShell,AEECLSID_RECORDER,EVT_USER,AVK_CLR,0);
+						return rt;
+				//evt = EVT_KEY;
+				//wParam = AVK_CLR;
 			}
 			else if((wXPos >= bottomBarRect.x) && (wXPos < bottomBarRect.x + (bottomBarRect.dx/3)))//×ó
 			{						
-				
-				evt = EVT_KEY;
-				wParam = AVK_SELECT;
+
+				boolean rt = ISHELL_PostEvent(pme->m_pShell,AEECLSID_RECORDER,EVT_USER,AVK_SELECT,0);
+						return rt;
+				//evt = EVT_KEY;
+				//wParam = AVK_SELECT;
 				MSG_FATAL("AVK_SELECT",0,0,0);
 			}
 		}
@@ -3497,7 +3507,7 @@ static boolean dialog_handler_of_state_play_msg( Recorder* pme, AEEEvent evt, ui
 	int media_scheduler;
     MSG_FATAL("dialog_handler_of_state_play_msg evt=0x%x,wParam=0x%x,dwParam=0x%x",evt,wParam,dwParam);   
 #ifdef FEATURE_LCD_TOUCH_ENABLE    
-    if(evt == EVT_POINTER_DOWN)
+    if(evt == EVT_PEN_UP/*EVT_POINTER_DOWN*/)
 	{
 		AEERect bottomBarRect;
 		//int ht;
@@ -4420,15 +4430,18 @@ static boolean dialog_handler_of_state_storage_setup( Recorder* pme, AEEEvent ev
 			if( TOUCH_PT_IN_RECT(wXPos, wYPos, bottomBarRect))
 			{
 				if(wXPos >= bottomBarRect.x + (bottomBarRect.dx/3)*2 && wXPos < bottomBarRect.x + (bottomBarRect.dx/3)*3 )//ÓÒ
-				{						
-					evt = EVT_KEY;
-					wParam = AVK_CLR;
+				{	
+					boolean rt = ISHELL_PostEvent(pme->m_pShell,AEECLSID_RECORDER,EVT_USER,AVK_CLR,0);
+						return rt;
+					//evt = EVT_KEY;
+					//wParam = AVK_CLR;
 				}
 				else if((wXPos >= bottomBarRect.x) && (wXPos < bottomBarRect.x + (bottomBarRect.dx/3)))//×ó
 				{						
-					
-					evt = EVT_KEY;
-					wParam = AVK_SELECT;
+					boolean rt = ISHELL_PostEvent(pme->m_pShell,AEECLSID_RECORDER,EVT_USER,AVK_SELECT,0);
+						return rt;
+					//evt = EVT_KEY;
+					//wParam = AVK_SELECT;
 				}
 			}
 		}
