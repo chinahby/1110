@@ -9365,10 +9365,10 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                         if (pLeftImg != NULL)
                         {
                             IIMAGE_GetInfo(pLeftImg, &imginfo);
-							pMe->m_lContrlRectImage[i].x = rc.x;
-							pMe->m_lContrlRectImage[i].y = y+(dy-imginfo.cy)/2;
-							pMe->m_lContrlRectImage[i].dx = imginfo.cx;
-							pMe->m_lContrlRectImage[i].dy = imginfo.cy;
+							pMe->m_lContrlRectImage[i].x = 0;
+							pMe->m_lContrlRectImage[i].y = y+(dy-imginfo.cy)/2-5;
+							pMe->m_lContrlRectImage[i].dx = rc.x+imginfo.cx;
+							pMe->m_lContrlRectImage[i].dy = imginfo.cy+10;
                             IIMAGE_Draw(pLeftImg, rc.x, y+(dy-imginfo.cy)/2);
                             rc.x += imginfo.cx;
                             rc.dx -= imginfo.cx;
@@ -9377,10 +9377,10 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                         if (pRightImg != NULL)
                         {
                             IIMAGE_GetInfo(pLeftImg, &imginfo);
-							pMe->m_rContrlRectImage[i].x = rc.x+rc.dx-imginfo.cx;
-							pMe->m_rContrlRectImage[i].y = y+(dy-imginfo.cy)/2;
-							pMe->m_rContrlRectImage[i].dx = imginfo.cx;
-							pMe->m_rContrlRectImage[i].dy = imginfo.cy;
+							pMe->m_rContrlRectImage[i].x = rc.x+rc.dx-imginfo.cx-5;
+							pMe->m_rContrlRectImage[i].y = y+(dy-imginfo.cy)/2-5;
+							pMe->m_rContrlRectImage[i].dx = imginfo.cx+5;
+							pMe->m_rContrlRectImage[i].dy = imginfo.cy+10;
                             IIMAGE_Draw(pRightImg, rc.x+rc.dx-imginfo.cx, y+(dy-imginfo.cy)/2);
                             rc.dx -= imginfo.cx;
                         }
@@ -9592,7 +9592,6 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                         default:
                             break;
                     }
-                    
                     ICONTROL_SetRect(pControl, &rc);
                     ICONTROL_SetActive(pControl,TRUE);
                     if (wControls[i])
@@ -10049,7 +10048,9 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                 pMe->m_msSend.m_bDeliveryReport  = report;
                 pMe->m_CbVal  = cbval;                               
             }
+#ifndef FEATURE_LCD_TOUCH_ENABLE        
             CLOSE_DIALOG(DLGRET_OK)
+#endif           
             return TRUE;
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
         case EVT_PEN_UP:
@@ -10060,6 +10061,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                 int16 wXPos = (int16)AEE_GET_X(dwParam);
                 int16 wYPos = (int16)AEE_GET_Y(dwParam);
 				int i = 0;
+                IControl *pControl = NULL;
                 nBarH = GetBottomBarHeight(pMe->m_pDisplay);
         
                 MEMSET(&devinfo, 0, sizeof(devinfo));
@@ -10087,6 +10089,8 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
 				MSG_FATAL("wXPos===%d,wYPos====%d",wXPos,wYPos,0);
 				MSG_FATAL("wXPos===%d,wYPos====%d",pMe->m_lContrlRectImage[0].x,pMe->m_lContrlRectImage[0].y,0);
 				MSG_FATAL("wXPos===%d,wYPos====%d",pMe->m_lContrlRectImage[0].dx,pMe->m_lContrlRectImage[0].dy,0);
+                MSG_FATAL("wXPos===%d,wYPos====%d",pMe->m_rContrlRectImage[0].x,pMe->m_rContrlRectImage[0].y,0);
+				MSG_FATAL("wXPos===%d,wYPos====%d",pMe->m_rContrlRectImage[0].dx,pMe->m_rContrlRectImage[0].dy,0);
 				MSG_FATAL("wXPos===%d,wYPos====%d",pMe->m_lContrlRectImage[1].x,pMe->m_lContrlRectImage[1].y,0);
 				MSG_FATAL("wXPos===%d,wYPos====%d",pMe->m_lContrlRectImage[1].dx,pMe->m_lContrlRectImage[1].dy,0);
 				MSG_FATAL("wXPos===%d,wYPos====%d",pMe->m_lContrlRectImage[2].x,pMe->m_lContrlRectImage[2].y,0);
@@ -10098,54 +10102,58 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
 						case 0:
 							if(WMSAPP_PT_IN_RECT(wXPos,wYPos,pMe->m_lContrlRectImage[0]))
 							{
-								boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_WMSAPP,EVT_USER,AVK_LEFT,0);
-								MSG_FATAL("00000000",0,0,0);
-                        		return rt;
+                                pControl = IDIALOG_GetControl(pMe->m_pActiveIDlg, wControls[i]);
+                                IMENUCTL_HandleEvent((IMenuCtl *)pControl,EVT_KEY,AVK_LEFT,0);
+                                return TRUE;
 							}
 							else if(WMSAPP_PT_IN_RECT(wXPos,wYPos,pMe->m_rContrlRectImage[0]))
 							{
-								boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_WMSAPP,EVT_USER,AVK_RIGHT,0);
-                        		return rt;
+                                pControl = IDIALOG_GetControl(pMe->m_pActiveIDlg, wControls[i]);
+                                IMENUCTL_HandleEvent((IMenuCtl *)pControl,EVT_KEY,AVK_RIGHT,0);
+								return TRUE;
 							}
 							break;
 						case 1:
 							if(WMSAPP_PT_IN_RECT(wXPos,wYPos,pMe->m_lContrlRectImage[1]))
 							{
-								boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_WMSAPP,EVT_USER,AVK_LEFT,0);
-                        		return rt;
+                                pControl = IDIALOG_GetControl(pMe->m_pActiveIDlg, wControls[i]);
+                                IMENUCTL_HandleEvent((IMenuCtl *)pControl,EVT_KEY,AVK_LEFT,0);
+								return TRUE;
 							}
 							else if(WMSAPP_PT_IN_RECT(wXPos,wYPos,pMe->m_rContrlRectImage[1]))
 							{
-								boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_WMSAPP,EVT_USER,AVK_RIGHT,0);
-                        		return rt;
+                                pControl = IDIALOG_GetControl(pMe->m_pActiveIDlg, wControls[i]);
+                                IMENUCTL_HandleEvent((IMenuCtl *)pControl,EVT_KEY,AVK_RIGHT,0);
+								return TRUE;
 							}
-							break;
 							break;
 						case 2:
 							if(WMSAPP_PT_IN_RECT(wXPos,wYPos,pMe->m_lContrlRectImage[2]))
 							{
-								boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_WMSAPP,EVT_USER,AVK_LEFT,0);
-                        		return rt;
+								pControl = IDIALOG_GetControl(pMe->m_pActiveIDlg, wControls[i]);
+                                IMENUCTL_HandleEvent((IMenuCtl *)pControl,EVT_KEY,AVK_LEFT,0);
+								return TRUE;
 							}
 							else if(WMSAPP_PT_IN_RECT(wXPos,wYPos,pMe->m_rContrlRectImage[2]))
 							{
-								boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_WMSAPP,EVT_USER,AVK_RIGHT,0);
-                        		return rt;
+								pControl = IDIALOG_GetControl(pMe->m_pActiveIDlg, wControls[i]);
+                                IMENUCTL_HandleEvent((IMenuCtl *)pControl,EVT_KEY,AVK_RIGHT,0);
+								return TRUE;
 							}
-							break;
 							break;
 						case 3:
 							if(WMSAPP_PT_IN_RECT(wXPos,wYPos,pMe->m_lContrlRectImage[3]))
 							{
-								boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_WMSAPP,EVT_USER,AVK_LEFT,0);
-                        		return rt;
+								pControl = IDIALOG_GetControl(pMe->m_pActiveIDlg, wControls[i]);
+                                IMENUCTL_HandleEvent((IMenuCtl *)pControl,EVT_KEY,AVK_LEFT,0);
+								return TRUE;
 							}
 							else if(WMSAPP_PT_IN_RECT(wXPos,wYPos,pMe->m_rContrlRectImage[3]))
 							{
-								boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_WMSAPP,EVT_USER,AVK_RIGHT,0);
-                        		return rt;
+								pControl = IDIALOG_GetControl(pMe->m_pActiveIDlg, wControls[i]);
+                                IMENUCTL_HandleEvent((IMenuCtl *)pControl,EVT_KEY,AVK_RIGHT,0);
+								return TRUE;
 							}
-							break;
 							break;
 						default:
 							break;
