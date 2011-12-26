@@ -138,7 +138,7 @@ extern sSelectFieldListNode* pCurSelectFieldNode;
 #elif defined(FEATURE_DISP_220X176)
 #define MAX_NUM_MENUPOP                 (7) //(6)
 #elif defined(FEATURE_DISP_240X320)
-#define MAX_NUM_MENUPOP                 (7) //(6)
+#define MAX_NUM_MENUPOP                 (9) //(6)
 #elif defined(FEATURE_DISP_320X240)
 #define MAX_NUM_MENUPOP                 (7) //(6)
 #else
