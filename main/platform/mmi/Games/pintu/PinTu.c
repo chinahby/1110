@@ -625,6 +625,7 @@ static boolean PinTu_HandleEvent(IApplet * pi, AEEEvent eCode, uint16 wParam, ui
                return TRUE;
 
             case IDS_SET_PARAM: //set paramter of spelling
+            	MSG_FATAL("IDS_SET_PARAM........",0,0,0);
                pMe->m_eAppState = APP_STATE_SETTING;
                SetParamScreen(pMe);
                break;
@@ -1656,7 +1657,8 @@ static boolean ProcessKeyEvent(PinTu *pMe, uint16 wParam)
 
          return FALSE;
 
-      case AVK_F2://preview select picture for pintu
+      case AVK_INFO://preview select picture for pintu
+        MSG_FATAL("pMe->m_eAppState=====%d",pMe->m_eAppState,0,0);
          switch(pMe->m_eAppState)
          {
             case APP_STATE_IMAGE_SELECT:
@@ -2552,6 +2554,7 @@ static void SetMenuItemData(PinTu *pMe)
          break;
 
       case IDS_MODE_3:
+	  	 MSG_FATAL("IDS_MODE_3.....................",0,0,0);
          if(tmpVal & LIMIT_TRHEE_AND_THREE)
          {
             pMe->m_paramAttr ^= LIMIT_TRHEE_AND_THREE;
