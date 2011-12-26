@@ -936,7 +936,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                 {
                     IImage_SetDrawSize(pImage, 60, 60);
                     
-                    IImage_SetOffset(pImage, (pMe->m_nLeftTime)*60, 0);
+                    IImage_SetOffset(pImage, (pMe->m_nLeftTime-1)*60, 0);
 
                     IImage_Draw(pImage, (pMe->m_rc.dx-60)/2, (pMe->m_rc.dy-60)/2);
 
