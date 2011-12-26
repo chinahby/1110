@@ -7308,7 +7308,7 @@ static NextFSMAction WMSST_OUTMSGOPTS_MMS_Handler(WmsApp *pMe)
 		        
 		        pMe->m_isMMS = TRUE;
 		        ICONFIG_GetItem(pMe->m_pConfig,CFGI_MMSOUTDATA_INFO,&mmsDataInfoList,sizeof(mmsDataInfoList));
-		        STRTOWSTR(mmsDataInfoList[pMe->m_wSelItemxuhao - 1].MMSDataFileName,
+		        STRTOWSTR(mmsDataInfoList[pMe->m_wSelItemxuhao - 1].phoneNumber,
 		            pPhoneNumber->m_szName,
 		            sizeof(pPhoneNumber->m_szName));
 		        STRTOWSTR(STRTOPHONENUMBER(mmsDataInfoList[pMe->m_wSelItemxuhao - 1].phoneNumber,mmsDataInfoList[pMe->m_wSelItemxuhao - 1].phoneNumber),
@@ -7420,7 +7420,7 @@ static NextFSMAction WMSST_INMSGOPTS_MMS_Handler(WmsApp *pMe)
 		        
 		        pMe->m_isMMS = TRUE;
 		        ICONFIG_GetItem(pMe->m_pConfig,CFGI_MMSINDATA_INFO,&mmsDataInfoList,sizeof(mmsDataInfoList));
-		        STRTOWSTR(mmsDataInfoList[pMe->m_wSelItemxuhao - 1].MMSDataFileName,
+		        STRTOWSTR(mmsDataInfoList[pMe->m_wSelItemxuhao - 1].phoneNumber,
 		            pPhoneNumber->m_szName,
 		            sizeof(pPhoneNumber->m_szName));
 		        STRTOWSTR(STRTOPHONENUMBER(mmsDataInfoList[pMe->m_wSelItemxuhao - 1].phoneNumber,mmsDataInfoList[pMe->m_wSelItemxuhao - 1].phoneNumber),
@@ -7679,7 +7679,7 @@ static NextFSMAction WMSST_DRAFTMSGOPTS_MMS_Handler(WmsApp *pMe)
 		        
 		        pMe->m_isMMS = TRUE;
 		        ICONFIG_GetItem(pMe->m_pConfig,CFGI_MMSINDATA_INFO,&mmsDataInfoList,sizeof(mmsDataInfoList));
-		        STRTOWSTR(mmsDataInfoList[pMe->m_wSelItemxuhao - 1].MMSDataFileName,
+		        STRTOWSTR(mmsDataInfoList[pMe->m_wSelItemxuhao - 1].phoneNumber,
 		            pPhoneNumber->m_szName,
 		            sizeof(pPhoneNumber->m_szName));
 		        STRTOWSTR(STRTOPHONENUMBER(mmsDataInfoList[pMe->m_wSelItemxuhao - 1].phoneNumber,mmsDataInfoList[pMe->m_wSelItemxuhao - 1].phoneNumber),
