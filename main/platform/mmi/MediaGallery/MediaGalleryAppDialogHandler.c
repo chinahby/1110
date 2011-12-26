@@ -2825,6 +2825,32 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
    {
       return FALSE;
    }
+   if(eCode==EVT_PEN_UP)
+   {
+   		AEEDeviceInfo devinfo;
+		int nBarH ;
+		AEERect rcR;
+		AEERect rcL;
+		int16 wXPos = (int16)AEE_GET_X(dwParam);
+		int16 wYPos = (int16)AEE_GET_Y(dwParam);
+
+		nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+
+		MEMSET(&devinfo, 0, sizeof(devinfo));
+		ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+		SETAEERECT(&rcR, 0,0,50,30);
+		SETAEERECT(&rcL, 190,0,50,30);
+		if(TOUCH_PT_IN_RECT(wXPos,wYPos,rcR))
+		{
+			eCode = EVT_KEY;
+			wParam = AVK_RIGHT;
+		}
+		else if(TOUCH_PT_IN_RECT(wXPos,wYPos,rcL))
+		{
+			eCode = EVT_KEY;
+			wParam = AVK_LEFT;
+		}
+   }
     
    MGAppUtil_GetMediaDlgStat(pMe, &eDlgStat);
    MSG_FATAL("MGAppPopupMenu_OnImageViewer eCode=0x%x, wParam=0x%x, eDlgStat=%d",eCode,wParam,eDlgStat);
