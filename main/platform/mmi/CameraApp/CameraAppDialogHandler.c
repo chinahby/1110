@@ -2610,10 +2610,8 @@ static void CameraApp_InitCFGData(CCameraApp * pMe)
 {
     if(pMe->m_pActiveDlgID == IDD_CCAMERACFG)
     {
-    	#ifdef FEATURE_CAMERA_MULTI_SENSOR  //add by andrew
-    	pMe->m_nCameraMulti = OEMNV_CAMERA_MULTI_TWO;
-		pMe->n_nCameraFlash = OEMNV_CAMERA_FLASH_OFF;
-		#endif
+    	cam_sensor_model_pair_type sensor_type;
+    	
         pMe->m_nCameraEnviroment = OEMNV_CAMERA_ENVIR_AUTO;
         pMe->m_nCameraQuality = OEMNV_CAMERA_QUALITY_HIGH;       
 #ifdef FEATURE_CARRIER_CHINA_TELCOM
@@ -2686,6 +2684,26 @@ static void CameraApp_InitCFGData(CCameraApp * pMe)
                               CFGI_CAMERA_STORAGE,
                               &pMe->m_nCameraStorage,
                               sizeof(pMe->m_nCameraStorage)); 
+		#ifdef FEATURE_CAMERA_MULTI_SENSOR  //add by andrew
+		pMe->n_nCameraFlash = OEMNV_CAMERA_FLASH_OFF;
+		if(pMe->m_nCameraMulti == OEMNV_CAMERA_MULTI_ONE)
+		{
+		    	pMe->m_nCameraMulti = OEMNV_CAMERA_MULTI_TWO;
+				if(SUCCESS == ICAMERA_Stop(pMe->m_pCamera))
+		    	{
+			    	MSG_FATAL("CameraApp_PopMenu_MultiCommandHandleEvent.................11111",0,0,0);
+			        pMe->m_bIsPreview = FALSE;
+			        pMe->m_nCameraState = CAM_STOP;
+					if(pMe->m_pCamera != NULL)
+					{
+						ICAMERA_Release(pMe->m_pCamera);
+			            pMe->m_pCamera = NULL;
+					}
+					CameraApp_InitCameraCheck(pMe);
+			        CLOSE_DIALOG(DLGRET_CANCELED);
+		    	}
+		}
+		#endif
     }
 }
 #ifdef FEATURE_CAMERA_MULTI_SENSOR
