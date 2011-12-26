@@ -14,7 +14,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_VERSION_W208S
 #ifdef CUST_EDITION
 #define FEATURE_SUPPORT_WAP_APP
-
+#define FEATURE_MOVIE_RECORD_SUPPORT
 //#define FEATURE_SUPPORT_WAP_APP
 //#define FEATURE_BT_SEND_FILE_ONLY		//Add By zzg 2010_11_03
 
@@ -94,7 +94,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_DIAG_SMALL_BUFFER 
 #define FEATURE_IPC_SMALL_MEMORY_POOL 
 #define FEATURE_APP_DIALER 
-//#define FEATURE_MM_REC 
+#define FEATURE_MM_REC 
 //#define FEATURE_VOC_ADPCM 
 #define FEATURE_QVGANOTSUPPORTED 
 #define FEATURE_AUDFMT_AMR 
