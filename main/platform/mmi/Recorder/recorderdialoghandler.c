@@ -1603,6 +1603,7 @@ __dialog_handler_of_state_record_stop__:
 					}
 					else if( !pme->m_Media.m_bRecorder)
 					{
+						MSG_FATAL("AVK_SELECT...............RENAME",0,0,0);
 						goto __dialog_handler_of_state_record_pause_resume__;
 					}
 					else if( pme->m_Media.m_bMediaError)
@@ -2685,7 +2686,7 @@ static boolean  dialog_handler_of_state_record_list( Recorder* pme, AEEEvent evt
 #endif
 				{
 					int result = -1;
-
+					MSG_FATAL("AVK_SELECT...............",0,0,0);
 					if( ( subState >= 4 && subState <= 9) ||
 						subState == 11 ||
 						subState == 12 ||
@@ -2806,6 +2807,7 @@ __dialog_handler_of_state_record_list_rename_save__:
 
 				case AVK_INFO:
 				{
+					MSG_FATAL("AVK_INFO....................",0,0,0);
 					if( subState == 0 && IMENUCTL_GetItemCount( pMenu) > 0)
 					{
 						reserve = TRUE;
@@ -2857,7 +2859,7 @@ __dialog_handler_of_state_record_list_rename_save__:
 
 		case EVT_COMMAND:
 		{
-
+			MSG_FATAL("subState===%d",subState,0,0);
 			if( subState == 1)
 			{
 
@@ -2941,6 +2943,13 @@ __dialog_handler_of_state_record_list_rename_save__:
 				repaint( TRUE);
 #endif
 			}
+			#ifdef FEATURE_VERSION_X3
+			else if(subState == 10)
+			{
+				MSG_FATAL("command...............",0,0,0);
+				goto __dialog_handler_of_state_record_list_rename_save__;
+			}
+			#endif
 		}
 		return TRUE;
 
