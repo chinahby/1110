@@ -6890,8 +6890,21 @@ void CContApp_DrawScrollBar(CContApp * pMe, IMenuCtl   *pMenuCtl)
         rect.dx = SCROLLBAR_WIDTH;
         rect.y = 0;
         rect.dy = rect.dy - 2 * BOTTOMBAR_HEIGHT;	
-    
-        Appscommon_DrawScrollBar(pMe->m_pDisplay, currIdx, totalNum, MAX_NUM_MENUPOP, &rect);
+        pMe->m_ScrollBarrc=rect;
+        
+       if(pMe->m_wYPos > 0)
+       {
+         int pagenum = (pMe->m_wYPos-pMe->m_ScrollBarrc.y)/(pMe->m_ScrollBarrc.dy/(totalNum/MAX_NUM_MENUPOP +1));
+         pMe->m_wYPos=0;
+         currIdx=pagenum*MAX_NUM_MENUPOP+1;  
+         MSG_FATAL("CContApp_DrawScrollBar---pagenum=%d",pagenum,0,0);
+         MSG_FATAL("CContApp_DrawScrollBar---totalNum=%d----currIdx=%d---pMe->m_ScrollBarrc.dy=%d",totalNum,currIdx,pMe->m_ScrollBarrc.dy);
+         Appscommon_DrawScrollBar(pMe->m_pDisplay, currIdx, totalNum, MAX_NUM_MENUPOP, &pMe->m_ScrollBarrc);
+       }
+       else
+       {
+         Appscommon_DrawScrollBar(pMe->m_pDisplay, currIdx, totalNum, MAX_NUM_MENUPOP, &rect);
+       }
         //IDISPLAY_Update(pMe->m_pDisplay);  // 在这里update会和menu的redraw中的update不同步
     }
 

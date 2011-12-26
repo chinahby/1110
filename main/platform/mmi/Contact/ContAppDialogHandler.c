@@ -5002,6 +5002,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
     {
         case EVT_DIALOG_INIT:
             IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
+            pMe->m_wYPos=0;
             return TRUE;
             
         case EVT_DIALOG_START:
@@ -5064,7 +5065,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
         {
             //MP_NO_REDRAW
             uint32    dwMask = IMENUCTL_GetProperties(pMenuCtl);
-            IMENUCTL_SetProperties(pMenuCtl, dwMask & (~MP_NO_REDRAW));	
+            IMENUCTL_SetProperties(pMenuCtl, dwMask & (~MP_NO_REDRAW));
 
 			MSG_FATAL("***zzg contack list EVT_USER_REDRAW***", 0,0,0);
             
@@ -5551,7 +5552,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
 				int16 wYPos = (int16)AEE_GET_Y(dwParam);
 
 				nBarH = GetBottomBarHeight(pMe->m_pDisplay);
-        
+                pMe->m_wYPos=0;
 				MEMSET(&devinfo, 0, sizeof(devinfo));
 				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
 				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
@@ -5577,6 +5578,26 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
 						 return rt;
 					}
 				}
+                else if(CONTAPP_PT_IN_RECT(wXPos,wYPos,pMe->m_ScrollBarrc))
+                {
+                    int totalNum=IVector_Size(pMe->m_pAddList);
+                    int pagenum = (pMe->m_wYPos-pMe->m_ScrollBarrc.y)/(pMe->m_ScrollBarrc.dy/(totalNum/MAX_NUM_MENUPOP +1));
+                    IMENUCTL_SetSel(pMenuCtl,(uint16)(pagenum*MAX_NUM_MENUPOP+1));  
+                    pMe->m_wYPos=wYPos;
+                    (void)ISHELL_PostEvent( pMe->m_pShell,
+                                    AEECLSID_APP_CONTACT,
+                                    EVT_USER_REDRAW,
+                                    0,
+                                    0);
+                  /*int totalNum = IVector_Size(pMe->m_pAddList); 
+                  int pagenum = (wYPos-pMe->m_ScrollBarrc.y)/(pMe->m_ScrollBarrc.dy/(totalNum/MAX_NUM_MENUPOP +1));
+                  int currIdx=pagenum*MAX_NUM_MENUPOP+1;  
+                  //int currIdx= (pMe->m_ScrollBarrc.dy/(wYPos-pMe->m_ScrollBarrc.y))*MAX_NUM_MENUPOP +1;
+                  MSG_FATAL("CONTAPP_PT_IN_RECT---pagenum=%d",pagenum,0,0);
+                  MSG_FATAL("CONTAPP_PT_IN_RECT---totalNum=%d----currIdx=%d---pMe->m_ScrollBarrc.dy=%d",totalNum,currIdx,pMe->m_ScrollBarrc.dy);
+                  Appscommon_DrawScrollBar(pMe->m_pDisplay, currIdx, totalNum, MAX_NUM_MENUPOP, &pMe->m_ScrollBarrc);
+                  */
+                }
 
 			}
 			break;

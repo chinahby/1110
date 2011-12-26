@@ -840,7 +840,8 @@ typedef struct _CContApp
     boolean             m_bInsmartnofind;//mark it when don't find the records
     AECHAR              m_lastAlpha[MAX_INPUT_NAME_EN+1];//remember the last alpha when don't find the key
     AECHAR              *m_sSearchStr; // °´Ãû×ÖËÑË÷µÄ×Ö·û´®
-    
+    AEERect             m_ScrollBarrc;
+    int                 m_wYPos;
     // Field input type
     AEEAddrFieldID      m_nFldInputID;
     AECHAR             *m_pFldInputBuf;
