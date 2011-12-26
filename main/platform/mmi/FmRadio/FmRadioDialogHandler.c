@@ -2669,7 +2669,7 @@ static void paint( CFmRadio *pMe)
                 AEE_FONT_BOLD,
                 IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE
             );
-		#ifdef FEATURE_VERSION_X3
+		#ifndef FEATURE_VERSION_X3
         drawText( pMe,
                 FMRADIOLS_RES_FILE_LANG,
                 IDS_FMRADIO_OPTION_MENU_QUIT,
