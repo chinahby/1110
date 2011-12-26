@@ -49,6 +49,18 @@
 	<Object Id="5016" Name="IDB_PROMPT_MSG_STATIC_BG">
 		<File>..\images\240x320\common\Appscommon\MessageBox\background_static.bmp</File>
 	</Object>
+	<Object Id="5017" Name="IDB_MODE_T9_MT_SPANISH" MimeType="image/png">
+		<File>..\images\128x160\common\IME\T9sp.png</File>
+	</Object>
+	<Object Id="5018" Name="IDB_MODE_T9_RAPID_SPANISH" MimeType="image/png">
+		<File>..\images\128x160\common\IME\sp_1.png</File>
+	</Object>
+	<Object Id="5019" Name="IDB_MODE_T9_MT_SPANISH_LOW" MimeType="image/png">
+		<File>..\images\128x160\common\IME\sp_2.png</File>
+	</Object>
+	<Object Id="5020" Name="IDB_MODE_T9_MT_SPANISH_UP" MimeType="image/png">
+		<File>..\images\128x160\common\IME\sp_3.png</File>
+	</Object>
 	<Object Id="5021" Name="IDB_CHECK_ON" MimeType="image/png">
 		<File>..\images\128x160\common\Appscommon\Icon\check_yes.png</File>
 	</Object>
@@ -75,6 +87,12 @@
 	</Object>
 	<Object Id="5029" Name="IDB_RIGHTARROW" MimeType="image/png">
 		<File>..\images\128x160\common\Appscommon\Icon\RightArrow.png</File>
+	</Object>
+	<Object Id="5030" Name="IDB_MODE_T9_RAPID_SPANISH_LOW" MimeType="image/png">
+		<File>..\images\128x160\common\IME\sp_4.png</File>
+	</Object>
+	<Object Id="5031" Name="IDB_MODE_T9_RAPID_SPANISH_UP" MimeType="image/png">
+		<File>..\images\128x160\common\IME\sp_5.png</File>
 	</Object>
 	<Object Id="5041" Name="IDB_ERROR" MimeType="image/png">
 		<File>..\images\128x160\common\Appscommon\MessageBox\error.png</File>
