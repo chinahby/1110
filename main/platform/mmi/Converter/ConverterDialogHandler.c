@@ -891,10 +891,10 @@ static boolean  Converter_ConvertEvent(CConverter *pMe, AEEEvent eCode, uint16 w
 				IIMAGE_Release(Image);
             }
 #ifdef FEATURE_LCD_TOUCH_ENABLE
-				SETAEERECT(&pMe->pL_rect1, pMe->m_rc.x, pMe->m_rc.y + TITLEBAR_HEIGHT/2 + (pMe->dyMenu - ARROW_HEIGHT)/2 - 1*FRAME_SIZE, iInfo.cx, iInfo.cy); 
-				SETAEERECT(&pMe->pL_rect2, pMe->m_rc.x, pMe->m_rc.y + TITLEBAR_HEIGHT/2 + pMe->dyMenu*2 + (pMe->dyMenu - ARROW_HEIGHT)/2 + 5*FRAME_SIZE, iInfo.cx, iInfo.cy); 
-				SETAEERECT(&pMe->pR_rect1, pMe->m_rc.dx - ARROW_WIDTH, pMe->m_rc.y + TITLEBAR_HEIGHT/2 + (pMe->dyMenu - ARROW_HEIGHT)/2 - 1*FRAME_SIZE, iInfo.cx, iInfo.cy); 
-				SETAEERECT(&pMe->pR_rect2, pMe->m_rc.dx - ARROW_WIDTH, pMe->m_rc.y + TITLEBAR_HEIGHT/2 + pMe->dyMenu*2 + (pMe->dyMenu - ARROW_HEIGHT)/2 + 5*FRAME_SIZE, iInfo.cx, iInfo.cy); 
+				SETAEERECT(&pMe->pL_rect1, pMe->m_rc.x, pMe->m_rc.y + TITLEBAR_HEIGHT/2 + (pMe->dyMenu - ARROW_HEIGHT)/2 - 1*FRAME_SIZE, iInfo.cx+10, iInfo.cy); 
+				SETAEERECT(&pMe->pL_rect2, pMe->m_rc.x, pMe->m_rc.y + TITLEBAR_HEIGHT/2 + pMe->dyMenu*2 + (pMe->dyMenu - ARROW_HEIGHT)/2 + 5*FRAME_SIZE, iInfo.cx+10, iInfo.cy); 
+				SETAEERECT(&pMe->pR_rect1, pMe->m_rc.dx - ARROW_WIDTH-10, pMe->m_rc.y + TITLEBAR_HEIGHT/2 + (pMe->dyMenu - ARROW_HEIGHT)/2 - 1*FRAME_SIZE, iInfo.cx+10, iInfo.cy); 
+				SETAEERECT(&pMe->pR_rect2, pMe->m_rc.dx - ARROW_WIDTH-10, pMe->m_rc.y + TITLEBAR_HEIGHT/2 + pMe->dyMenu*2 + (pMe->dyMenu - ARROW_HEIGHT)/2 + 5*FRAME_SIZE, iInfo.cx+10, iInfo.cy); 
 #endif
 
             //»­µ×Ìõ
@@ -1800,7 +1800,7 @@ static boolean  Converter_ChangeCurrencyEvent(CConverter *pMe, AEEEvent eCode, u
                 IIMAGE_Release(Image);
                 Image = NULL;
             }
-			SETAEERECT(&pMe->pL_rect3, pMe->m_rc.x, pMe->m_rc.y + TITLEBAR_HEIGHT/2 + (pMe->dyMenu - ARROW_HEIGHT)/2, iInfo.cx, iInfo.cy); 
+			SETAEERECT(&pMe->pL_rect3, pMe->m_rc.x, pMe->m_rc.y + TITLEBAR_HEIGHT/2 + (pMe->dyMenu - ARROW_HEIGHT)/2, iInfo.cx+10, iInfo.cy); 
             
             Image = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_RIGHTARROW);
             MSG_FATAL("Image address=%x", Image,0,0);
@@ -1810,7 +1810,7 @@ static boolean  Converter_ChangeCurrencyEvent(CConverter *pMe, AEEEvent eCode, u
                 IIMAGE_Release(Image);
                 Image = NULL;
             }
-			SETAEERECT(&pMe->pR_rect3, pMe->m_rc.dx - ARROW_WIDTH, pMe->m_rc.y + TITLEBAR_HEIGHT/2 + (pMe->dyMenu - ARROW_HEIGHT)/2, iInfo.cx, iInfo.cy); 
+			SETAEERECT(&pMe->pR_rect3, pMe->m_rc.dx - ARROW_WIDTH-10, pMe->m_rc.y + TITLEBAR_HEIGHT/2 + (pMe->dyMenu - ARROW_HEIGHT)/2, iInfo.cx+10, iInfo.cy); 
             //»­µ×Ìõ
             nLen = STRLEN(m_inputNumber);
             if((pMe->m_nCtlID == basicCurrency) ||
