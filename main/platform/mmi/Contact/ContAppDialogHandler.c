@@ -5581,8 +5581,17 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
                 else if(CONTAPP_PT_IN_RECT(wXPos,wYPos,pMe->m_ScrollBarrc))
                 {
                     int totalNum=IVector_Size(pMe->m_pAddList);
-                    int pagenum = (pMe->m_wYPos-pMe->m_ScrollBarrc.y)/(pMe->m_ScrollBarrc.dy/(totalNum/MAX_NUM_MENUPOP +1));
-                    IMENUCTL_SetSel(pMenuCtl,(uint16)(pagenum*MAX_NUM_MENUPOP+1));  
+                    if((wYPos-(int)pMe->m_ScrollBarrc.y)> 0)
+                    {
+                     int pagenum = (wYPos-pMe->m_ScrollBarrc.y)/(pMe->m_ScrollBarrc.dy/(totalNum/MAX_NUM_MENUPOP +1));
+                     IMENUCTL_SetSel(pMenuCtl,(uint16)(pagenum*MAX_NUM_MENUPOP+1)); 
+                    }
+                    else
+                    {
+                     IMENUCTL_SetSel(pMenuCtl,0); 
+                    }
+                    
+                     
                     pMe->m_wYPos=wYPos;
                     (void)ISHELL_PostEvent( pMe->m_pShell,
                                     AEECLSID_APP_CONTACT,
