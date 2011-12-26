@@ -5594,7 +5594,39 @@ static boolean MediaGalleryApp_MusicAddDlg_HandleEvent(CMediaGalleryApp* pMe,
    {
       return FALSE;
    }
-
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+   if(eCode == EVT_PEN_UP)
+       {
+           int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
+           int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
+           AEEDeviceInfo devinfo;
+           int nBarH ;
+           AEERect rc;
+           MSG_FATAL("CContApp_HandleOneDialNumFldSelDlgEvent wXPos=%d ,wYPos=%d",wXPos,wYPos,0);
+            
+           nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+           MEMSET(&devinfo, 0, sizeof(devinfo));
+           ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+           SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);  
+           if(MEDIAGALLERYAPP_PT_IN_RECT(wXPos,wYPos,rc))
+           {
+               if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//×ó
+               {
+                    eCode = EVT_KEY;
+                    wParam = AVK_SELECT;
+               } 
+               else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//ÓÒ
+               { 
+                   eCode = EVT_KEY;
+                    wParam = AVK_CLR;
+               }
+           }
+           else if(pMenuCtl != NULL)
+           {
+            IMENUCTL_HandleEvent(pMenuCtl,eCode,wParam,dwParam);
+           }
+       }                               
+#endif  
    switch(eCode)
    {
       case EVT_DIALOG_INIT:
@@ -5697,8 +5729,34 @@ static boolean MediaGalleryApp_MusicAddDlg_HandleEvent(CMediaGalleryApp* pMe,
       }
 
       case EVT_COMMAND:
-         return TRUE;
-
+        //pMe->m_nCurPlaylistID = IMENUCTL_GetSel(pMenuCtl);
+         if(eDlgStat == MG_DLGSTAT_NORMAL)
+         {
+              if(MG_SELECT_MAX >= pMe->m_nSelNum)
+              {
+                 MGAppUtil_OnMediaMenuDefaultKeyEvt(pMe,
+                                                    pMenuCtl,
+                                                    eCode,
+                                                    wParam,
+                                                    dwParam);
+                 MGAppUtil_ExplorerGetSelectCount(pMe, pMenuCtl);
+                 MGAppUtil_UpdateMediaMenuSoftkey(pMe);
+              }
+              else
+              {
+                 IMENUCTL_SetActive(pMenuCtl, FALSE);
+                 MediaGalleryApp_ShowPromptMsgBox(pMe,
+                                                  IDS_MG_LISTFULL,
+                                                  MESSAGE_INFORMATION,
+                                                  BTBAR_BACK);
+              }
+              return TRUE;
+         }
+         else
+         {
+            MGAppUtil_OnMediaMenuDefaultKeyEvt(pMe, pMenuCtl,eCode,wParam, dwParam);
+         }
+           break;
       case EVT_CTL_SEL_CHANGED:
          MGAppUtil_OnMediaMenuSelChange(pMe, eDlgStat);
          return TRUE;
