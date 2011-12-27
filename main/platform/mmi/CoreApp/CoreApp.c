@@ -1391,7 +1391,14 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 			{				
 				if(wParam == AVK_SELECT)
 				{
-					eCode = EVT_COMMAND;
+					if(dwParam!=0)
+					{
+						eCode = EVT_COMMAND;
+					}
+					else
+					{
+						eCode = EVT_KEY;	
+					}
 					return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 				}
 				else if(wParam == AVK_CLR)
