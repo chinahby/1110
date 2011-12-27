@@ -16,7 +16,7 @@ GENERAL DESCRIPTION:  Provides support for IDialog interfaces in AEE.
 
 PUBLIC CLASSES AND STATIC FUNCTIONS: IDialog, IStatic
 
-Copyright © 1999-2007 QUALCOMM Incorporated.
+Copyright ?1999-2007 QUALCOMM Incorporated.
          All Rights Reserved.
        QUALCOMM Proprietary/GTDR
 
@@ -963,6 +963,12 @@ static void ADialog_Redraw(IDialog * po)
          ICONTROL_SetActive(pdc->pc, (boolean)(pdc == pme->m_pFocus));
          ICONTROL_Redraw(pdc->pc);
       }
+	  #ifdef FEATURE_VERSION_X3
+	  if(pme->m_pControls == NULL)
+   	  {
+		 return;
+      }
+	  #endif
       IDISPLAY_Update(pd);
    }
 }
