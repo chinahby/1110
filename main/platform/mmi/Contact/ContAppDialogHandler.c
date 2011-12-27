@@ -5598,8 +5598,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
                      {
                           pageitemp --;
                      }
-                     IMENUCTL_SetSel(pMenuCtl, IMENUCTL_GetItemID(pMenuCtl, pageitemp));
-                     //IMENUCTL_SetSel(pMenuCtl,(uint16)(pagenum*MAX_NUM_MENUPOP+1)+4003); 
+                     IMENUCTL_SetSel(pMenuCtl, IMENUCTL_GetItemID(pMenuCtl, pageitemp)); 
                      MSG_FATAL("0-----=%x---pMenuCtl=%x=====2==%x",IMENUCTL_GetItemID(pMenuCtl,15),IMENUCTL_GetItemID(pMenuCtl,1),IMENUCTL_GetItemID(pMenuCtl,2));
                      MSG_FATAL("0-----=%x---pMenuCtl=%x=====2==%x",IMENUCTL_GetItemID(pMenuCtl,7),IMENUCTL_GetItemID(pMenuCtl,8),IMENUCTL_GetItemID(pMenuCtl,16));
                     }
@@ -5607,22 +5606,12 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
                     {
                      IMENUCTL_SetSel(pMenuCtl,0); 
                     }
-                    
-                     
-                    pMe->m_wYPos=wYPos;
-                    (void)ISHELL_PostEvent( pMe->m_pShell,
+                     pMe->m_wYPos=wYPos;
+                     (void)ISHELL_PostEvent( pMe->m_pShell,
                                     AEECLSID_APP_CONTACT,
                                     EVT_USER_REDRAW,
                                     0,
                                     0);
-                  /*int totalNum = IVector_Size(pMe->m_pAddList); 
-                  int pagenum = (wYPos-pMe->m_ScrollBarrc.y)/(pMe->m_ScrollBarrc.dy/(totalNum/MAX_NUM_MENUPOP +1));
-                  int currIdx=pagenum*MAX_NUM_MENUPOP+1;  
-                  //int currIdx= (pMe->m_ScrollBarrc.dy/(wYPos-pMe->m_ScrollBarrc.y))*MAX_NUM_MENUPOP +1;
-                  MSG_FATAL("CONTAPP_PT_IN_RECT---pagenum=%d",pagenum,0,0);
-                  MSG_FATAL("CONTAPP_PT_IN_RECT---totalNum=%d----currIdx=%d---pMe->m_ScrollBarrc.dy=%d",totalNum,currIdx,pMe->m_ScrollBarrc.dy);
-                  Appscommon_DrawScrollBar(pMe->m_pDisplay, currIdx, totalNum, MAX_NUM_MENUPOP, &pMe->m_ScrollBarrc);
-                  */
                 }
 
 			}
