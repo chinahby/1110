@@ -2022,6 +2022,37 @@ static boolean MP3_PlaylistOpts_HandleEvent(CMusicPlayer *pMe,
     {
          return FALSE;
     }
+#ifdef FEATURE_LCD_TOUCH_ENABLE//andrew add for LCD touch
+     if(eCode ==EVT_PEN_UP)
+        {
+            AEEDeviceInfo devinfo;
+            int nBarH ;
+            AEERect rc;
+            int16 wXPos = (int16)AEE_GET_X(dwParam);
+            int16 wYPos = (int16)AEE_GET_Y(dwParam);
+
+            nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+    
+            MEMSET(&devinfo, 0, sizeof(devinfo));
+            ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+            SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+
+            if(TOUCH_PT_IN_RECT(wXPos,wYPos,rc))
+            {
+                if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//×ó
+                {
+                    eCode=EVT_KEY;
+                    wParam=AVK_SELECT;
+                }
+                else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//×ó
+                {
+                    eCode=EVT_KEY;
+                    wParam=AVK_CLR;
+                    
+                }
+            }
+        }
+#endif
 
     switch (eCode)
     {
@@ -2161,40 +2192,6 @@ static boolean MP3_PlaylistOpts_HandleEvent(CMusicPlayer *pMe,
 #endif//WIN32
             }
             return TRUE;
-#ifdef FEATURE_LCD_TOUCH_ENABLE//andrew add for LCD touch
-		case EVT_PEN_UP:
-			{
-				AEEDeviceInfo devinfo;
-				int nBarH ;
-				AEERect rc;
-				int16 wXPos = (int16)AEE_GET_X(dwParam);
-				int16 wYPos = (int16)AEE_GET_Y(dwParam);
-
-				nBarH = GetBottomBarHeight(pMe->m_pDisplay);
-        
-				MEMSET(&devinfo, 0, sizeof(devinfo));
-				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
-				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
-
-				if(TOUCH_PT_IN_RECT(wXPos,wYPos,rc))
-				{
-                    if ((wXPos>0)&&(wXPos<devinfo.cxScreen/2)&&(wYPos>rc.y)&&(wYPos<devinfo.cyScreen))
-                    {
-                        //boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_SELECT,0);
-                        IMENUCTL_HandleEvent(pMenuCtl,EVT_KEY,AVK_SELECT,0);
-                        return TRUE;
-                    }
-                    else if ((wXPos>devinfo.cxScreen/2)&&(wXPos<devinfo.cxScreen)&&(wYPos>rc.y)&&(wYPos<devinfo.cyScreen))
-                    {
-                        boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_CLR,0);
-                        return rt;
-                    }
-
-				}
-
-			}
-			break;
-#endif
         default:
             break;
             
