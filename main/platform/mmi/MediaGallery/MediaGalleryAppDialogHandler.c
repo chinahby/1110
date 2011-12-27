@@ -2825,6 +2825,7 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
    {
       return FALSE;
    }
+#ifdef FEATURE_LCD_TOUCH_ENABLE
    if(eCode==EVT_PEN_UP)
    {
    		AEEDeviceInfo devinfo;
@@ -2851,7 +2852,7 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
 			wParam = AVK_LEFT;
 		}
    }
-    
+#endif    
    MGAppUtil_GetMediaDlgStat(pMe, &eDlgStat);
    MSG_FATAL("MGAppPopupMenu_OnImageViewer eCode=0x%x, wParam=0x%x, eDlgStat=%d",eCode,wParam,eDlgStat);
    if(NULL == (pImageCtl = (IImageCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,
@@ -4235,7 +4236,7 @@ RENAMEDONEFREE:
 		   ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
 		   SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
 
-		   if(TOUCH_PT_IN_RECT(wXPos,wYPos,rc))
+		   if(MEDIAGALLERYAPP_PT_IN_RECT(wXPos,wYPos,rc))
 		   {
 			   if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//×ó
 			   {
