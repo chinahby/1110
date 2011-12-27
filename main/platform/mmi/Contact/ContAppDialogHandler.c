@@ -2881,11 +2881,12 @@ static boolean CContApp_SmartMenuHandle( CContApp *pMe,
                     wFirstItem = IMENUCTL_GetItemID(pMenuCtl, 0);
                     // Fix the bug that after delete a record
                     pMe->m_wSelectSmart = IMENUCTL_GetSel(pMenuCtl);
-                    
+                    MSG_FATAL("wFirstItem==%d,pMe->m_wSelectSmart==%d,m_pSmartBufLen=%d",wFirstItem,pMe->m_wSelectSmart,pMe->m_pSmartBufLen);
                     if(wFirstItem == pMe->m_wSelectSmart)//在最上面的一个选项上
                     {
                         if (pMe->m_pSmartBufLen <= smartmaxpop)
                         {
+                             
                             IMENUCTL_SetSel(pMenuCtl, 
                                                 IMENUCTL_GetItemID( pMenuCtl, pMe->m_pSmartBufLen -1));
                              MSG_FATAL("pMe->m_nCurrSmartIdx   = %d",pMe->m_nCurrSmartIdx,0,0);
@@ -5066,6 +5067,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
             //MP_NO_REDRAW
             uint32    dwMask = IMENUCTL_GetProperties(pMenuCtl);
             IMENUCTL_SetProperties(pMenuCtl, dwMask & (~MP_NO_REDRAW));
+            MSG_FATAL("--pMenuCtl=%x",IMENUCTL_GetSel(pMenuCtl),0,0);
 
 			MSG_FATAL("***zzg contack list EVT_USER_REDRAW***", 0,0,0);
             
@@ -5473,7 +5475,9 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
             }
             pMe->m_wSelectCont = wParam;
             pMe->m_wEditCont = wParam;
-
+            MSG_FATAL("pMe->m_wSelectCont======%d",pMe->m_wSelectCont,0,0);
+            MSG_FATAL("--pMenuCtl=%x ===%d",IMENUCTL_GetSel(pMenuCtl),IMENUCTL_GetItemID(pMenuCtl,pMe->m_wSelectCont),0);
+            
             if(IS_RUIM_REC(pMe->m_wSelectCont)
                 && STARTMETHOD_ADDFIELD == pMe->m_eStartMethod
 #ifndef WIN32
@@ -5528,12 +5532,13 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
             
             FARF(ADDR, ("pMe->m_wSelectCont = %d",wParam));
             pMe->m_wDelReturnSelId = CContApp_GetListReturnSel(pMe, pMenuCtl, &pMe->m_nCurrMenuIdx);
-            
+            MSG_FATAL("0pMe->m_wMainListSel===%d,pMe->m_wMainListIdx==%d",pMe->m_wMainListSel,pMe->m_wMainListIdx,0);
             // store the menu select
             PUSH_LISTMENU_SEL(pMe->m_wMainListSel);
             
             // store the menu index
             PUSH_LISTMENU_IDX(pMe->m_wMainListIdx);
+            MSG_FATAL("1pMe->m_wMainListSel===%d,pMe->m_wMainListIdx==%d",pMe->m_wMainListSel,pMe->m_wMainListIdx,0);
             
             CLOSE_DIALOG(DLGRET_OK);
             return TRUE;
@@ -5583,8 +5588,20 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
                     int totalNum=IVector_Size(pMe->m_pAddList);
                     if((wYPos-(int)pMe->m_ScrollBarrc.y)> 0)
                     {
-                     int pagenum = (wYPos-pMe->m_ScrollBarrc.y)/(pMe->m_ScrollBarrc.dy/(totalNum/MAX_NUM_MENUPOP +1));
-                     IMENUCTL_SetSel(pMenuCtl,(uint16)(pagenum*MAX_NUM_MENUPOP+1)); 
+                     int pagenum = (wYPos-pMe->m_ScrollBarrc.y)/(pMe->m_ScrollBarrc.dy/(totalNum/(MAX_NUM_MENUPOP-1) +1));
+                     int pageitemp = ((pagenum*(MAX_NUM_MENUPOP-1)));
+                     //pageitemp = pageitemp;
+                     MSG_FATAL("pagenum-----=%d---pageitemp=%d",pagenum,pageitemp,0);
+                     MSG_FATAL("---pMenuCtl=%d",IMENUCTL_GetItemID(pMenuCtl,pageitemp) ,0,0);
+                     //IMENUCTL_SetSel(pMenuCtl,10); 
+                     if(IMENUCTL_GetItemID(pMenuCtl, pageitemp) ==0)
+                     {
+                          pageitemp --;
+                     }
+                     IMENUCTL_SetSel(pMenuCtl, IMENUCTL_GetItemID(pMenuCtl, pageitemp));
+                     //IMENUCTL_SetSel(pMenuCtl,(uint16)(pagenum*MAX_NUM_MENUPOP+1)+4003); 
+                     MSG_FATAL("0-----=%x---pMenuCtl=%x=====2==%x",IMENUCTL_GetItemID(pMenuCtl,15),IMENUCTL_GetItemID(pMenuCtl,1),IMENUCTL_GetItemID(pMenuCtl,2));
+                     MSG_FATAL("0-----=%x---pMenuCtl=%x=====2==%x",IMENUCTL_GetItemID(pMenuCtl,7),IMENUCTL_GetItemID(pMenuCtl,8),IMENUCTL_GetItemID(pMenuCtl,16));
                     }
                     else
                     {
