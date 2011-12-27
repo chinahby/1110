@@ -835,7 +835,7 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
 #endif
              && (wParam == AVK_STAR 
              #ifdef FEATURE_VERSION_C01
-             || (wParam == AVK_1 && pme->m_nCurrInputMode == OEM_MODE_T9_MT_THAI)
+             || (wParam == AVK_1 && pme->m_nCurrInputMode == OEM_MODE_T9_MT_ARABIC)
              #endif
              ) 
              && (!(pme->m_dwProps & TP_NOSYMBOL))
@@ -1285,7 +1285,7 @@ if ((!pme->m_pSoftKey) &&
 	
 				if ((wParam == AVK_STAR 
 #ifdef FEATURE_VERSION_C01
-                || ((wParam == AVK_1) && (pme->m_nCurrInputMode == OEM_MODE_T9_MT_THAI) &&(!pme->m_bShowSyms))
+                || ((wParam == AVK_1) && (pme->m_nCurrInputMode == OEM_MODE_T9_MT_ARABIC) &&(!pme->m_bShowSyms))
 #endif
 				)
 #ifdef  FEATURE_MYANMAR_INPUT_MOD
