@@ -2379,7 +2379,7 @@ static boolean  HandleCallForwardInputDialogEvent(CSettingMenu *pMe,
             }
             ITEXTCTL_SetProperties( pTextCtl, TP_FRAME | TP_NOUPDATE|TP_FOCUS_NOSEL);
             //ITEXTCTL_SetProperties( pTextCtl, TP_FRAME | TP_FIXSETRECT |TP_EDITNUMBER_PTSTRING );
-            (void) ITEXTCTL_SetInputMode(pTextCtl, AEE_TM_NUMBERS);
+            (void) ITEXTCTL_SetInputMode(pTextCtl, AEE_TM_NUMBERS);            
             (void) ISHELL_PostEvent( pMe->m_pShell,AEECLSID_APP_SETTINGMENU,EVT_USER_REDRAW,0,0);
             return TRUE;
         }
@@ -2400,10 +2400,12 @@ static boolean  HandleCallForwardInputDialogEvent(CSettingMenu *pMe,
             {
                 //drawBottomBar(pMe->m_pDisplay, AEE_FONT_NORMAL,BTBAR_OK_BACK);
                 SETTING_MENU_DRAW_BOTTOMBAR(BTBAR_OK_BACK)
-            }
+            } 
             // 统一更新界面
             IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-
+            #ifdef FEATURE_LCD_TOUCH_ENABLE
+            TSIM_NumberKeypad(TRUE);
+            #endif 
             (void)ITEXTCTL_Redraw(pTextCtl);
 
             return TRUE;
@@ -2412,6 +2414,10 @@ static boolean  HandleCallForwardInputDialogEvent(CSettingMenu *pMe,
 #ifdef FEATRUE_SET_IP_NUMBER
             pMe->need_save_default = FALSE;
 #endif
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+            TSIM_NumberKeypad(FALSE);
+#endif
+
             return TRUE;
 
         case EVT_KEY:

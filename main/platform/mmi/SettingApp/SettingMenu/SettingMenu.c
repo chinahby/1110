@@ -777,7 +777,10 @@ static boolean SettingMenu_HandleEvent(ISettingMenu *pi,
 
         case EVT_DIALOG_INIT:
 			MSG_FATAL("***zzg SettingMenu_HandleEvent EVT_DIALOG_INIT***", 0, 0, 0);
-			
+			if(OEM_IME_DIALOG == wParam)
+			{
+				return TRUE;
+			}
             pMe->m_bAppIsReady = FALSE;
             pMe->m_pActiveDlg = (IDialog*)dwParam;
             pMe->m_pActiveDlgID = wParam;
@@ -785,6 +788,10 @@ static boolean SettingMenu_HandleEvent(ISettingMenu *pi,
             return SettingMenu_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_DIALOG_START:
+            if(OEM_IME_DIALOG == wParam)
+			{
+				return TRUE;
+			}
             return SettingMenu_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_USER_REDRAW:
@@ -814,6 +821,10 @@ static boolean SettingMenu_HandleEvent(ISettingMenu *pi,
             {
                 return TRUE;
             }
+            if(OEM_IME_DIALOG == wParam)
+			{
+				return ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_SETTINGMENU,EVT_USER_REDRAW,0,0);
+			}
             pMe->m_bAppIsReady = FALSE;
             (void) SettingMenu_RouteDialogEvent(pMe,eCode,wParam,dwParam);
             pMe->m_pActiveDlg = NULL;
