@@ -3516,7 +3516,7 @@ static boolean dialog_handler_of_state_play_msg( Recorder* pme, AEEEvent evt, ui
 	int media_scheduler;
     MSG_FATAL("dialog_handler_of_state_play_msg evt=0x%x,wParam=0x%x,dwParam=0x%x",evt,wParam,dwParam);   
 #ifdef FEATURE_LCD_TOUCH_ENABLE    
-    if(evt == EVT_PEN_UP/*EVT_POINTER_DOWN*/)
+    if(evt == EVT_POINTER_DOWN)
 	{
 		AEERect bottomBarRect;
 		//int ht;
