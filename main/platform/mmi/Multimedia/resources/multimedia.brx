@@ -5,7 +5,7 @@
 		<Text>Multimedia</Text>
 	</String>
 	<String Id="1002" Name="IDS_MULTIMEDIA_MEDIAGALLERY">
-		<Text>MediaGallery</Text>
+		<Text>File Management</Text>
 	</String>
 	<String Id="1003" Name="IDS_MULTIMEDIA_VIDEO_CAMERA">
 		<Text>Video Camera</Text>
