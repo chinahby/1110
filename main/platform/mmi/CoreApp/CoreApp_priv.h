@@ -755,6 +755,9 @@ typedef struct _CCoreApp
     
     // 用于保存用户输入的手机密码
     char                m_strPhonePWD[PHONEPASSWORDLENTH + 1];
+    #ifdef FEATURE_LCD_TOUCH_ENABLE
+    char                m_strPhonePWDtemp[PHONEPASSWORDLENTH + 1];
+    #endif
     char                m_strLockuimPWD[LOCKUIMPASSWORDLENTH + 1];
     uint16             m_strlockuimPWD;
     UIMERR_e_Type       m_eUIMErrCode;

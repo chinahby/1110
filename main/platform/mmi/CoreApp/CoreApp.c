@@ -565,6 +565,9 @@ boolean CoreApp_InitAppData(IApplet* po)
     pMe->m_b_needclose_core = FALSE;
 #endif
     MEMSET(pMe->m_strPhonePWD, 0, PINCODE_LENGTH + 1);
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+    MEMSET(pMe->m_strPhonePWDtemp, 0, PINCODE_LENGTH + 1);
+#endif
     MEMSET(pMe->m_strLockuimPWD, 0, sizeof(pMe->m_strLockuimPWD));
     MEMSET(pMe->m_strPIN1, 0, PINCODE_LENGTH + 1);
     MEMSET(pMe->m_strPIN2, 0, PINCODE_LENGTH + 1);
@@ -1405,7 +1408,18 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 				{
 					eCode = EVT_KEY;
 					return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
-				}		
+				}	
+                else if (wParam==100)
+                {     
+                      char * password=(char *)dwParam;
+                      (void) STRCPY( pMe->m_strPhonePWDtemp,password);
+                      MSG_FATAL("pMe->m_strPhonePWD--=%x---=%x----=%x",pMe->m_strPhonePWD[0],pMe->m_strPhonePWD[1],STRLEN(pMe->m_strPhonePWD));
+                      (void) ISHELL_PostEvent(pMe->a.m_pIShell,
+                                            AEECLSID_CORE_APP,
+                                            EVT_USER_REDRAW,
+                                            0,
+                                            0);                     
+                }
 			}
 #endif
             

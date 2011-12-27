@@ -333,6 +333,7 @@ static boolean bHideText = FALSE;
 static boolean bImageDecoded = FALSE;
 static boolean bsupersingal = FALSE;
 static StartInfo start_info;
+
 /*==============================================================================
 
                                  函数声明
@@ -1734,6 +1735,41 @@ static boolean  IDD_PWDINPUT_Handler(void       *pUser,
     //{
     //    return FALSE;
     //}
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+    if(eCode ==EVT_PEN_UP)
+        {
+            int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
+            int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
+            AEEDeviceInfo devinfo;
+            int nBarH ;
+            AEERect rc;
+            MSG_FATAL("Setting_HandleAuto_Power_DialogEvent wXPos=%d ,wYPos=%d",wXPos,wYPos,0);
+             
+            nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+            MEMSET(&devinfo, 0, sizeof(devinfo));
+            ISHELL_GetDeviceInfo(pMe->a.m_pIShell, &devinfo);
+            SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);  
+            if(CORE_PT_IN_RECT(wXPos,wYPos,rc))
+            {
+                if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//左
+                {
+                    eCode=EVT_KEY;
+                    wParam=AVK_SELECT;
+                } 
+                else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//右
+                { 
+                    eCode=EVT_KEY;
+                    wParam=AVK_CLR;
+                }
+            }
+            else
+            {
+                MEMSET(pMe->m_strPhonePWDtemp, 0, PINCODE_LENGTH + 1);
+                ISHELL_StartAppletArgs(pMe->a.m_pIShell, AEECLSID_APP_SECURITYMENU, "InputPW");
+            }  
+        }
+                                        
+#endif            
     
     switch (eCode)
     {
@@ -1763,7 +1799,7 @@ static boolean  IDD_PWDINPUT_Handler(void       *pUser,
                 AECHAR  text[32] = {0};
                 RGBVAL nOldFontColor;
                 TitleBar_Param_type  TitleBar_Param = {0};
-                
+                MSG_FATAL("IDD_PWDINPUT_Handler--eCode=%d----wParam=%d---dwParam=%d",eCode,wParam,dwParam);
                 // 先清屏
 #ifdef FEATURE_CARRIER_CHINA_VERTU
                 {
@@ -1804,7 +1840,12 @@ static boolean  IDD_PWDINPUT_Handler(void       *pUser,
                                     TITLEBAR_HEIGHT + MENUITEM_HEIGHT*1/2,
                                     NULL, 
                                     IDF_TEXT_TRANSPARENT);
-                
+#ifdef FEATURE_LCD_TOUCH_ENABLE                
+                if(STRLEN(pMe->m_strPhonePWDtemp)>0)
+                {
+                    (void) STRCPY( pMe->m_strPhonePWD,pMe->m_strPhonePWDtemp);
+                }
+#endif                
                 // 绘制输入
                 nLen = STRLEN(pMe->m_strPhonePWD);
                 MEMSET(strDisplay, '*', nLen);
@@ -1852,6 +1893,9 @@ static boolean  IDD_PWDINPUT_Handler(void       *pUser,
             return TRUE;
             
         case EVT_DIALOG_END:
+            #ifdef FEATURE_LCD_TOUCH_ENABLE
+            MEMSET(pMe->m_strPhonePWDtemp, 0, PINCODE_LENGTH + 1);
+            #endif
             return TRUE;
 
         case EVT_KEY:
@@ -1912,6 +1956,9 @@ static boolean  IDD_PWDINPUT_Handler(void       *pUser,
                     case AVK_SOFT2:		//Add By zzg 2010_09_08 for smart and m8    
                     case AVK_CLR:
                         chEnter = 0;
+                        #ifdef FEATURE_LCD_TOUCH_ENABLE
+                        MEMSET(pMe->m_strPhonePWDtemp, 0, PINCODE_LENGTH + 1);
+                        #endif
                         #ifndef FEATURE_ALL_KEY_PAD    //add by yangdecai 
                         if (STRLEN(pMe->m_strPhonePWD) == 0)
                         {
@@ -1977,38 +2024,6 @@ static boolean  IDD_PWDINPUT_Handler(void       *pUser,
                 }
             }
             return TRUE;
-#ifdef FEATURE_LCD_TOUCH_ENABLE
-        case EVT_PEN_UP:
-            {
-                int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
-                int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
-                AEEDeviceInfo devinfo;
-                int nBarH ;
-                AEERect rc;
-                MSG_FATAL("Setting_HandleAuto_Power_DialogEvent wXPos=%d ,wYPos=%d",wXPos,wYPos,0);
-                 
-                nBarH = GetBottomBarHeight(pMe->m_pDisplay);
-                MEMSET(&devinfo, 0, sizeof(devinfo));
-                ISHELL_GetDeviceInfo(pMe->a.m_pIShell, &devinfo);
-                SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);  
-                if(CORE_PT_IN_RECT(wXPos,wYPos,rc))
-                {
-                    if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//左
-                    {
-                         boolean rt =  ISHELL_PostEvent(pMe->a.m_pIShell,AEECLSID_CORE_APP,EVT_USER,AVK_SELECT,0);
-                         return rt;
-                    } 
-                    else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//右
-                    { 
-                         boolean rt =  ISHELL_PostEvent(pMe->a.m_pIShell,AEECLSID_CORE_APP,EVT_USER,AVK_CLR,0);
-                         return rt;
-                    }
-                }  
-            
-            }
-            break;
-                                    
-#endif            
         default:
             break;
     }
@@ -2068,29 +2083,28 @@ static boolean  IDD_UIMSECCODE_Handler(void       *pUser,
             AEEDeviceInfo devinfo;
             int nBarH ;
             AEERect rc;
-            MSG_FATAL("Setting_HandleAuto_Power_DialogEvent wXPos=%d ,wYPos=%d",wXPos,wYPos,0);
-             
             nBarH = GetBottomBarHeight(pMe->m_pDisplay);
             MEMSET(&devinfo, 0, sizeof(devinfo));
             ISHELL_GetDeviceInfo(pMe->a.m_pIShell, &devinfo);
             SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);  
-            MSG_FATAL("Setting_HandleAuto_Power_DialogEvent wXPos=%d ,wYPos=%d---nBarH=%d",devinfo.cyScreen-nBarH,devinfo.cxScreen,nBarH);
             if(CORE_PT_IN_RECT(wXPos,wYPos,rc))
             {
-                 MSG_FATAL("Setting_HandleAuto_Power_DialogEvent wXPos=%d ,wYPos=%d---nBarH=%d",devinfo.cyScreen-nBarH,devinfo.cxScreen,nBarH);
                 if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//左
                 {
-                     MSG_FATAL("Setting_HandleAuto_Power_DialogEvent wXPos=%d ,wYPos=%d---nBarH=%d",devinfo.cyScreen-nBarH,devinfo.cxScreen,nBarH);
                      eCode = EVT_KEY;
 				     wParam = AVK_SELECT;
                 } 
                 else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//右
                 { 
-                     MSG_FATAL("Setting_HandleAuto_Power_DialogEvent wXPos=%d ,wYPos=%d---nBarH=%d",devinfo.cyScreen-nBarH,devinfo.cxScreen,nBarH);
                      eCode = EVT_KEY;
 				     wParam = AVK_CLR;
                 }
-            }  
+            }
+            else
+            {
+                MEMSET(pMe->m_strPhonePWDtemp, 0, PINCODE_LENGTH + 1);
+                ISHELL_StartAppletArgs(pMe->a.m_pIShell, AEECLSID_APP_SECURITYMENU, "InputPW");
+            }
         
         }
                                         
@@ -2098,7 +2112,7 @@ static boolean  IDD_UIMSECCODE_Handler(void       *pUser,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
-            szCode = NULL;
+             szCode = NULL;
             nMaxLen = 0;
             return TRUE;
             
@@ -2155,7 +2169,6 @@ static boolean  IDD_UIMSECCODE_Handler(void       *pUser,
             {
                 return TRUE;
             }
-    
             // 绘制相关信息
             {
                 AECHAR  wstrDisplay[12] = {0};
@@ -2236,7 +2249,17 @@ static boolean  IDD_UIMSECCODE_Handler(void       *pUser,
                                                     TITLEBAR_HEIGHT + MENUITEM_HEIGHT*1/2, 
                                                     NULL, 
                                                     IDF_TEXT_TRANSPARENT);
-                
+#ifdef FEATURE_LCD_TOUCH_ENABLE                
+                MSG_FATAL("pMe->m_strPhonePWDtemp---%x---%x--%x",pMe->m_strPhonePWDtemp[0],pMe->m_strPhonePWDtemp[1],STRLEN(pMe->m_strPhonePWDtemp));
+                if(STRLEN(pMe->m_strPhonePWDtemp)>0)
+                {
+                    AECHAR  wszCodetemp[OEMNV_LOCKPIN_MAXLEN+1] = {0};
+                    (void) STRCPY(szCode,pMe->m_strPhonePWDtemp);
+                    (void) STRTOWSTR(pMe->m_strPhonePWDtemp,wszCodetemp,sizeof(wszCodetemp));
+                    (void) WSTRCPY(wszCode,wszCodetemp);                    
+                }
+                MSG_FATAL("szCode---%x---%x--%x",szCode[0],szCode[1],STRLEN(szCode));
+#endif
                 // 绘制输入
                 nLen = STRLEN(szCode);
                 MEMSET(strDisplay, '*', nLen);
@@ -2286,6 +2309,9 @@ static boolean  IDD_UIMSECCODE_Handler(void       *pUser,
             return TRUE;
             
         case EVT_DIALOG_END:
+            #ifdef FEATURE_LCD_TOUCH_ENABLE
+            MEMSET(pMe->m_strPhonePWDtemp, 0, PINCODE_LENGTH + 1);
+            #endif
             return TRUE;
 
         case EVT_KEY:
@@ -2346,6 +2372,9 @@ static boolean  IDD_UIMSECCODE_Handler(void       *pUser,
                     case AVK_SOFT2:		//Add By zzg 2010_09_08 for smart and m8    
                     case AVK_CLR:
                         chEnter = 0;
+                        #ifdef FEATURE_LCD_TOUCH_ENABLE
+                        MEMSET(pMe->m_strPhonePWDtemp, 0, PINCODE_LENGTH + 1);
+                        #endif
                         #ifndef FEATURE_ALL_KEY_PAD    //add by yangdecai 
                         if (szCode == NULL)
                         {
@@ -7762,7 +7791,6 @@ static const ServiceProviderList List_SP[] =
        
 };
 #endif
-
 static void CoreApp_GetSPN(CCoreApp *pMe)
 {
 

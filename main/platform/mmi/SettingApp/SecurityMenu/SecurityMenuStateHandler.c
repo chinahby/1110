@@ -860,8 +860,10 @@ static NextFSMAction Security_StateTsimPasswordInputHandler(CSecurityMenu *pMe)
             MOVE_TO_STATE(SECURITYMENU_ASKPIN)
             else if(pMe->m_pActiveTSIMInputID==IDD_PIN_CHANGE_DIALOG)
             MOVE_TO_STATE(SECURITYMENU_PINCHANGE)
-            else 
-            MOVE_TO_STATE(SECURITYMENU_ASKPASSWORD)     
+            else if(pMe->m_pActiveTSIMInputID==IDD_ASK_PASSWORD_DIALOG) 
+            MOVE_TO_STATE(SECURITYMENU_ASKPASSWORD) 
+            else
+            (void)ISHELL_CloseApplet(pMe->m_pShell, FALSE);   
             return NFSMACTION_CONTINUE;
 
          case DLGRET_CANCELED:
@@ -875,8 +877,10 @@ static NextFSMAction Security_StateTsimPasswordInputHandler(CSecurityMenu *pMe)
             MOVE_TO_STATE(SECURITYMENU_ASKPIN)
             else if(pMe->m_pActiveTSIMInputID==IDD_PIN_CHANGE_DIALOG)
             MOVE_TO_STATE(SECURITYMENU_PINCHANGE)
-            else 
-            MOVE_TO_STATE(SECURITYMENU_ASKPASSWORD)     
+            else if(pMe->m_pActiveTSIMInputID==IDD_ASK_PASSWORD_DIALOG) 
+            MOVE_TO_STATE(SECURITYMENU_ASKPASSWORD) 
+            else
+            (void)ISHELL_CloseApplet(pMe->m_pShell, FALSE);   
             return NFSMACTION_CONTINUE;
          // add end   
         default:

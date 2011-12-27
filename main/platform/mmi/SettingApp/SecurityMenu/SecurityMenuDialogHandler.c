@@ -2774,6 +2774,7 @@ static boolean  SecurityAskPasswordDlgHandler(CSecurityMenu *pMe,
 				}
                 else if(SECURITYMENU_PT_IN_RECT(wXPos,wYPos,pwtextrc))
                 {
+                    pMe->m_pActiveTSIMInputID=IDD_ASK_PASSWORD_DIALOG;
                     MSG_FATAL("DLGRET_TSIMPASSWORDINPUT-----------",0,0,0);
                     CLOSE_DIALOG(DLGRET_TSIMPASSWORDINPUT);
                 }
@@ -2934,7 +2935,17 @@ static boolean  SecurityTsimInputPasswordDlgHandler(CSecurityMenu *pMe,
                         break;
                     case AVK_SELECT: 
                         {
-                         CLOSE_DIALOG(DLGRET_OK)
+                         #ifdef FEATURE_LCD_TOUCH_ENABLE   
+                         if(pMe->m_pActiveTSIMInputID==0)
+                         {
+                           (void) ISHELL_PostEvent(pMe->m_pShell,AEECLSID_CORE_APP,EVT_USER,100,(uint32)pMe->m_strPhonePWD);
+                           CLOSE_DIALOG(DLGRET_OK)
+                         }
+                         else
+                         #endif   
+                         {
+                            CLOSE_DIALOG(DLGRET_OK)
+                         }
                         }
                         return TRUE;
                     case AVK_CLR:

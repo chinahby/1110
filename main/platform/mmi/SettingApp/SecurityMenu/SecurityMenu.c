@@ -714,9 +714,10 @@ static boolean SecurityMenu_HandleEvent(ISecurityMenu  *pi,
     AEEAppStart *as;
     extern boolean start_security_setting_by_user;
     //nv_item_type nvi;
-    //SEC_ERR("%x,%x,%x,SecurityMenu_HandleEvent",eCode,wParam,dwParam);
+    //SEC_ERR("%x,%x,%x,SecurityMenu_HandleEvent",eCode,wParam,dwParam);    
     AEEDeviceInfo di;
-    ISHELL_GetDeviceInfo(pMe->m_pShell,&di);      
+    MSG_FATAL("SecurityMenu_HandleEvent------eCode=%d----wParam=%d",eCode,wParam,0);
+    ISHELL_GetDeviceInfo(pMe->m_pShell,&di);
     switch (eCode)
     {
         case EVT_APP_START:
@@ -728,6 +729,16 @@ static boolean SecurityMenu_HandleEvent(ISecurityMenu  *pi,
                 (void) IDISPLAY_Release(pMe->m_pDisplay);
                 pMe->m_pDisplay = NULL;
             }
+#ifdef FEATURE_LCD_TOUCH_ENABLE            
+            if ((as != NULL) && (as->pszArgs != NULL))	
+			{
+                if (STRNCMP(as->pszArgs, "InputPW", 7) == 0)
+				{
+                    pMe->m_pActiveTSIMInputID=0;
+					MOVE_TO_STATE(SECURITYMENU_TSIMPASSWORDINPUT);				
+				}
+			}
+#endif            
             pMe->m_pDisplay = as->pDisplay;
             (void) IDISPLAY_AddRef(pMe->m_pDisplay);
             pMe->m_rc = as->rc;
