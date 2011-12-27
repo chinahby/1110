@@ -62,7 +62,7 @@
 		<Text>Move total steps: %d</Text>
 	</STRING>
 	<STRING Id="25" Name="IDS_HELP_CONTENT">
-		<Text>Game Description: \ 1, rules of the game: to put a picture in order to disrupt the original image location a success. \ 2, the game offers self-challenge methods, such as parameter settings, limit 3 minutes, up to 5 times the preview, choose whether to display the digital tips, 4 × 4 or 3 × 3 mode; \ 3, the operation mode: This game supports the key point pen and two modes, in point pen mode, the point will be to move the picture, the picture will move up the position of a space, in the key mode, the arrow keys to move through the grid to walk; in the jigsaw puzzle were marked by "e" icon for the button to preview the reference picture; \ 4, according to their preferences can be replaced with new pictures to the puzzle.</Text>
+		<Text>Game Description: \ 1, rules of the game: to put a picture in order to disrupt the original image location a success. \ 2, the game offers self-challenge methods, such as parameter settings, limit 3 minutes, up to 5 times the preview, choose whether to display the digital tips, 4 × 4 or 3 × 3 mode; \ 3, the operation mode: This game supports the key point pen and two modes, in point pen mode, the point will be to move the picture, the picture will move up the position of a space, in the key mode, the arrow keys to move through the grid to walk;</Text>
 	</STRING>
 	<STRING Id="26" Name="IDS_GAME_INFORMATION">
 		<Text>Company Name: \ Technology Co., Ltd. \ Customer Service Tel: *** \ website: \ http://www .*** \ Software Name: fun puzzles \ version: V1.0</Text>
