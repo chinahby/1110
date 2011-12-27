@@ -386,6 +386,7 @@ LOCAL void touchpad_pen_isr( void )
   	/* If a pen down is detected, start polling touchpad.
   	*/
 	touchpad_isr_close();
+	MSG_FATAL("[TP]: touchpad_enable_polling55555", 0, 0, 0);
   	touchpad_enable_polling();
 }
 
@@ -449,6 +450,7 @@ boolean touchpad_set_scan_mode( PEN_MODE_TYPE mode )
 	{
         touchpad_disable_polling();
         touchpad_scan_mode = mode;
+		MSG_FATAL("[TP]: touchpad_enable_polling444", 0, 0, 0);
 		touchpad_enable_polling();
 	}
     else
@@ -485,6 +487,7 @@ LOCAL void touchpad_enable_polling(void)
 	** If polling is not currently enabled, then uninstall the keypress
 	**  detection ISR, and reenabled the keypad polling timer
 	*/
+	MSG_FATAL("[TP]: touchpad_enable_polling2222", 0, 0, 0);
 	INTLOCK();
 	if ( !touchpad_polling_flag )
 	{
@@ -496,7 +499,7 @@ LOCAL void touchpad_enable_polling(void)
 		clk_reg( &touchpad_clk_cb, touchpad_start_next_cycle, TOUCHPAD_POLL_TIME, 0, FALSE );
 	}
 	INTFREE();
-
+	MSG_FATAL("[TP]: touchpad_enable_polling3333", 0, 0, 0);
 #endif /* T_SLEEP */
 } /* end of keypad_enable_polling */
 
@@ -959,14 +962,49 @@ boolean touchpad_adjust_cal(pen_cal_param_type* pen_param,byte param_num,pen_cal
 			k=0;			
 		}
 	}
-    
+	
+    if(pen_param[i].x_mv-pen_param[j].x_mv ==0)
+    {
+    	pen_param[i].x_mv++;
+    }
+	if(pen_param[i].y_mv-pen_param[j].y_mv ==0)
+	{
+		pen_param[i].y_mv++;	
+	}
 	kmvx = (int32)((pen_param[i].x_disp-pen_param[j].x_disp)<<TOUCHPAD_SHIFT)/(pen_param[i].x_mv-pen_param[j].x_mv);
 	kmvy = (int32)((pen_param[i].y_disp-pen_param[j].y_disp)<<TOUCHPAD_SHIFT)/(pen_param[i].y_mv-pen_param[j].y_mv);
+	
+	if(kmvx - pen_param[i].x_mv ==0)
+	{
+		kmvx ++;
+	}
+	if(kmvy - pen_param[i].y_mv ==0)
+	{
+		kmvy++;
+	}
+	if(kmvx - pen_param[j].x_mv ==0)
+	{
+		kmvx++;
+	}
+	if(kmvx - pen_param[j].y_mv ==0)
+	{
+		kmvy++;
+	}
+	if(kmvx == 0)
+	{
+		kmvx++;
+	}
+	if(kmvy == 0)
+	{
+		kmvy++;
+	}
+	
+	MSG_FATAL("kmvx===%d,,kmvx===%d",kmvx,kmvy,0);
     mvx0 = (((pen_param[i].x_disp<<TOUCHPAD_SHIFT)/kmvx - pen_param[i].x_mv)+((pen_param[j].x_disp<<TOUCHPAD_SHIFT)/kmvx - pen_param[j].x_mv))/2;
     mvy0 = (((pen_param[i].y_disp<<TOUCHPAD_SHIFT)/kmvy - pen_param[i].y_mv)+((pen_param[j].y_disp<<TOUCHPAD_SHIFT)/kmvy - pen_param[j].y_mv))/2;
 	MSG_FATAL("[TP]: touchpad_adjust_cal kmvx=%d kmvy=%d", kmvx, kmvy, 0);
     MSG_FATAL("[TP]: touchpad_adjust_cal mvx0=%d mvy0=%d", mvx0, mvy0, 0);
-    
+
 	if(param_num >=3)
 	{
 		x = (kmvx*(pen_param[k].x_mv+mvx0))>>TOUCHPAD_SHIFT;
