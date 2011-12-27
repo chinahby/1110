@@ -563,6 +563,7 @@ static void MediaGalleryApp_ShowPromptMsgBox(CMediaGalleryApp *pMe,
                               nTextResId,
                               eMsgBoxType,
                               eMsgBoxBottomBar);
+   IDISPLAY_Update(pMe->m_pDisplay);
 }//MediaGalleryApp_ShowPromptMsgBox
 
 static __inline void MediaGalleryApp_ShowDoneMsgBox(CMediaGalleryApp *pMe)
@@ -2930,6 +2931,7 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
          if(pMe->m_pImage != NULL)
          {
             IIMAGE_GetInfo(pMe->m_pImage, &pMe->m_ImgInfo);
+			MSG_FATAL("MGAppUtil_LoadImageNotify....start",0,0,0);
             IIMAGE_Notify(pMe->m_pImage,
                           MGAppUtil_LoadImageNotify,
                           pMe);
@@ -3481,7 +3483,17 @@ static boolean MGAppPopupMenu_OnSetWallpaper(CMediaGalleryApp *pMe,
       pMe->m_pImage = ISHELL_LoadImage(pMe->m_pShell, pSelData->szName);
       if(pMe->m_pImage)
       {
-          IIMAGE_GetInfo(pMe->m_pImage, &pMe->m_ImgInfo);		  
+          IIMAGE_GetInfo(pMe->m_pImage, &pMe->m_ImgInfo);		
+		  if(STRENDS(".gif", pSelData->szName))
+		  {
+		  	MSG_FATAL("pMe->m_ImgInfo.bAnimated...=%d",pMe->m_ImgInfo.bAnimated,0,0);
+		  	pMe->m_Gif = TRUE;
+			MSG_FATAL("pMe->m_Gif...=%d",pMe->m_Gif,0,0);
+		  }
+		  else
+		  {
+		  	pMe->m_Gif = FALSE;
+		  }
       }
    }
    else if(pMe->m_ImgViewOps == MG_OP_WALLPAPER)
@@ -3500,6 +3512,16 @@ static boolean MGAppPopupMenu_OnSetWallpaper(CMediaGalleryApp *pMe,
        * if call IIMAGE_Notify for png, bmp, it will be async, if for it
        * is sync. So we must set status before call IIMAGE_Notify */	  
       pMe->m_bImgLoadDone = FALSE;
+	  if(STRENDS(".gif", pSelData->szName))
+		  {
+		  	MSG_FATAL("pMe->m_ImgInfo.bAnimated...=%d",pMe->m_ImgInfo.bAnimated,0,0);
+		  	pMe->m_Gif = TRUE;
+			MSG_FATAL("pMe->m_Gif...=%d",pMe->m_Gif,0,0);
+		  }
+		  else
+		  {
+		  	pMe->m_Gif = FALSE;
+		  }
       IIMAGE_Notify(pMe->m_pImage, MGAppUtil_LoadImageNotify, pMe);
    }
    else
@@ -9466,9 +9488,11 @@ static boolean MGAppUtil_SetWallpaper(CMediaGalleryApp *pMe,
       return FALSE;
    }
 
-   //Add By zzg 2011_12_09   	
-   if (TRUE == pImgInfo->bAnimated)
+   //Add By zzg 2011_12_09 
+   MSG_FATAL("pImgInfo->bAnimated=====%dpMe->m_Gif=%d",pImgInfo->bAnimated,pMe->m_Gif,0);
+   if ((TRUE == pImgInfo->bAnimated) || (pMe->m_Gif ==TRUE))
    {
+   	  MSG_FATAL("MediaGalleryApp_ShowPromptMsgBox",0,0,0);
       MediaGalleryApp_ShowPromptMsgBox(pMe,
                                        IDS_MG_ANIMATE_CANNOTSET_WALLPAPER,
                                        MESSAGE_INFORMATION,
@@ -9982,6 +10006,7 @@ static void MGAppUtil_LoadImageNotify(void *pUser,
    else if (pMe->m_PopupOps == MG_OP_WALLPAPER ||
             pMe->m_ImgViewOps == MG_OP_WALLPAPER)
    {
+   	  MSG_FATAL("pMe->MGAppUtil_SetWallpaper//",0,0,0);
       MGAppUtil_SetWallpaper(pMe, pi);
    }
 }//MGAppUtil_LoadImageNotify
