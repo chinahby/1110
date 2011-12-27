@@ -545,7 +545,7 @@ static boolean CMediaGallery_HandleEvent(IMediaGallery* pi, AEEEvent eCode,
 #ifdef FEATURE_LCD_TOUCH_ENABLE//WLH ADD FOR LCD TOUCH
 
 			  case EVT_USER:
-			  
+			      MSG_FATAL("EVT_USER........wParam=%x",wParam,0,0);
 				  if(wParam == AVK_CLR)
 				  {
 					  eCode = EVT_KEY;
@@ -1417,7 +1417,7 @@ static int MediaGalleryApp_InitAppData(CMediaGalleryApp* pMe)
 
    pMe->m_nRingVolume = MG_MAX_UINT16;
    pMe->m_nKeyBeepVol = MG_MAX_BYTE;
-
+   pMe->m_Gif = FALSE;
    pMe->m_pImage = NULL;
 #ifdef FEATURE_ANICTL
    pMe->m_pAniCtl = NULL;
