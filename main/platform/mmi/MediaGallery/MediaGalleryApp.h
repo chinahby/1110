@@ -454,6 +454,7 @@ struct  _CMediaGalleryApp{
                                      then recover when approprite*/
    IImage            *m_pImage;
    AEEImageInfo      m_ImgInfo;
+   boolean           m_Gif;
    
 #ifdef FEATURE_ANICTL
    IAniCtl           *m_pAniCtl;
