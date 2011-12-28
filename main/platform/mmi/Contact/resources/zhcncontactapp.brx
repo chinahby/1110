@@ -461,7 +461,7 @@
 		<Text>紧急电话号码</Text>
 	</String>
 	<String Id="1089" Name="IDS_NUM_INVALID">
-		<Text>Invalid number</Text>
+		<Text>无效号码</Text>
 	</String>
 </Strings>
 <Dialogs>
