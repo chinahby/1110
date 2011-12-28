@@ -6734,7 +6734,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
             }
             
             #endif
-            #if defined(FEATURE_VERSION_VG68) || defined(FEATURE_T9_MT_THAI)            
+            #if defined(FEATURE_VERSION_VG68)&&defined(FEATURE_T9_MT_THAI)            
             MSG_FATAL("pContext->byMode=%d,t9Key=%d",pContext->byMode,t9Key,0);
             if(pContext->byMode == 5)
             {

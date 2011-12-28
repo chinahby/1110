@@ -111,7 +111,9 @@ CONSTFILE_FILES+=\
 	poweroffani.gif|fs:/image/pwronoffani/poweroffani.gif
 else ifeq ($(USES_RESDIR), N68TH)
 CONSTFILE_FILES+=\
-	poweronoffani.gif|fs:/image/pwronoffani/poweronoffani.gif	
+	poweronoffani.gif|fs:/image/pwronoffani/poweronoffani.gif\
+	poweroffani.png|fs:/image/pwronoffani/poweroffani.png\
+	poweronani.png|fs:/image/pwronoffani/poweronani.png
 else ifeq ($(USES_RESDIR), VG68)
 CONSTFILE_FILES+=\
 	poweronoffani.gif|fs:/image/pwronoffani/poweronoffani.gif	
