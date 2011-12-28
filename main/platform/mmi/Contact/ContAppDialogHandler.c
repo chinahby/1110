@@ -6050,14 +6050,14 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
     
     pTextCtl = (ITextCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_ADD_LOCAL_INPUT);
     pGroupList = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_ADD_GROUPLIST);
-    
+    MSG_FATAL("CContApp_HandleAddNewDlgEvent...000000",0,0,0);
     if(NULL == pMenuCtl || NULL == pTextCtl || NULL == pGroupList)
     {
         return TRUE;
     }
-    
-    MENU_AUTO_SCROLL(pMenuCtl, eCode, wParam);
-    
+    MSG_FATAL("CContApp_HandleAddNewDlgEvent...0000001",0,0,0);
+    //MENU_AUTO_SCROLL(pMenuCtl, eCode, wParam);
+    MSG_FATAL("CContApp_HandleAddNewDlgEvent...0000111",0,0,0);
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
@@ -6065,7 +6065,7 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
             dwMask |= DLG_NOT_SET_FOCUS_AUTO;
             IDIALOG_SetProperties(pMe->m_pActiveDlg, dwMask);
             pMe->m_nInputMode =  EDIT_MENU_MODE; 
-
+			MSG_FATAL("CContApp_HandleAddNewDlgEvent...EVT_DIALOG_INIT",0,0,0);
             return TRUE;
             
         case EVT_DIALOG_START:
@@ -6078,7 +6078,7 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
             rc = pMe->m_rc;
             rc.dy = devinfo.cyScreen;
             rc.dy -= GetBottomBarHeight(pMe->m_pDisplay);
-
+			MSG_FATAL("CContApp_HandleAddNewDlgEvent...EVT_DIALOG_START",0,0,0);
             IMENUCTL_SetRect(pMenuCtl, &rc);
 			#if 0
             (void)IMENUCTL_SetTitle( pMenuCtl,CONTAPP_RES_FILE_LANG,IDS_ONEDIAL_SET,NULL);
@@ -6299,7 +6299,7 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
         case EVT_DIALOG_END:
         {
              // Store the menu select if applet is suspended.
-			 
+			  MSG_FATAL("EVT_DIALOG_END............1........",0,0,0);
             if(pMe->m_bSuspending)
             {
                 // ÖÐ¶Ï´¦Àí
@@ -6319,9 +6319,11 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
                 pMe->m_wSelectStore = MENU_SELECT_NULL;
             }
             pMe->m_bInputNotComplete = FALSE;
+			 MSG_FATAL("EVT_DIALOG_END..........2..........",0,0,0);
 #ifdef FEATURE_LCD_TOUCH_ENABLE
             TSIM_NumberKeypad(FALSE);
 #endif
+			 MSG_FATAL("EVT_DIALOG_END..........3..........",0,0,0);
         }
         return TRUE;
         
