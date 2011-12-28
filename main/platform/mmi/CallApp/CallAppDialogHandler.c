@@ -931,6 +931,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 			int16 wXPos   = (int16)AEE_GET_X(dwParam);
 			int16 wYPos   = (int16)AEE_GET_Y(dwParam);
 			callApp_draw_pendown(pMe,wXPos,wYPos);
+			return TRUE;
 		}
 		break;
 		case EVT_PEN_MOVE:
@@ -938,6 +939,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 			int16 wXPos   = (int16)AEE_GET_X(dwParam);
 			int16 wYPos   = (int16)AEE_GET_Y(dwParam);
 			callApp_draw_penmove(pMe,wXPos,wYPos);
+			return TRUE;
 		}
 		break;
 		case EVT_PEN_UP:
@@ -947,6 +949,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 			int16 wYPos = (int16)AEE_GET_Y(dwParam);
 			pMe->m_penup = TRUE;
 			callApp_draw_penup(pMe,wXPos,wYPos);
+			return TRUE;
 		}
 		break;
 		case EVT_USER:
