@@ -482,21 +482,29 @@ int OEMBTExtOPP_Connect(
   bt_cmd_status_type  stat;
   OEMBTExtOPPobj_t    *pMe;
 
+  MSG_FATAL("***zzg OEMBTExtOPP_Connect Start***", 0, 0, 0);
+
   if( AEEHandle_From( &gOEMBTExtHandleList, pParent->m_hBT, 
                       (OEMINSTANCE*)&pMe ) != TRUE )
   {
+  	MSG_FATAL("***zzg OEMBTExtOPP_Connect return 1***", 0, 0, 0);
     return EFAILED;
   }
   if ( pBDAddr == NULL )
   {
+  	MSG_FATAL("***zzg OEMBTExtOPP_Connect return 2***", 0, 0, 0);
     return EBADPARM;
   }
   if ( pMe->state >= AEEBT_OPP_STATE_CONNECTED )
   {
+  	MSG_FATAL("***zzg OEMBTExtOPP_Connect return 3***", 0, 0, 0);
     return EBADSTATE;
   }
   stat = bt_cmd_pf_opp_cli_connect( pMe->appId, (bt_bd_addr_type*)pBDAddr,
                                     uChannelNumber );
+
+  MSG_FATAL("***zzg OEMBTExtOPP_Connect stat=%x***", stat, 0, 0);
+  
   return OEMBTExtOPP_CheckCmdStatus( stat );
 }
 
@@ -507,16 +515,23 @@ int OEMBTExtOPP_Abort( IBTExtOPP *pParent )
   bt_cmd_status_type stat;
   OEMBTExtOPPobj_t*  pMe;
 
+  MSG_FATAL("***zzg OEMBTExtOPP_Abort Start***", 0, 0, 0);
+
   if( AEEHandle_From( &gOEMBTExtHandleList, pParent->m_hBT, 
                       (OEMINSTANCE*)&pMe ) != TRUE )
   {
+  	MSG_FATAL("***zzg OEMBTExtOPP_Abort return 1***", 0, 0, 0);
     return EFAILED;
   }
   if ( pMe->state <= AEEBT_OPP_STATE_CONNECTED )
   {
+  	MSG_FATAL("***zzg OEMBTExtOPP_Abort return 2***", 0, 0, 0);
     return EBADSTATE;
   }
   stat = bt_cmd_pf_opp_cli_abort( pMe->appId, pMe->clientConnID );
+
+  MSG_FATAL("***zzg OEMBTExtOPP_Abort stat=%x***", stat, 0, 0);
+  
   return OEMBTExtOPP_CheckCmdStatus( stat );
 }
 
@@ -533,6 +548,13 @@ int OEMBTExtOPP_Push(
   char                szFileName[ AEEBT_MAX_FILE_NAME ];
   ACONTEXT*           pCurAC;
   AEEFileInfoEx       fileInfoEx;
+
+  char tempstr[100];
+
+  WSTRTOSTR(pwFileName, tempstr, sizeof(tempstr));
+
+  DBGPRINTF("***zzg OEMBTExtOPP_Push pszName=%s, WSTRlen=%d***", tempstr, WSTRLEN( pwFileName ));
+    
 
   fileInfoEx.nStructSize = sizeof( AEEFileInfoEx );
   fileInfoEx.pszFile = NULL;
@@ -551,6 +573,7 @@ int OEMBTExtOPP_Push(
 #ifndef CUST_EDITION
   if ( (pwFileName == NULL) && (pMe->bIsServer == FALSE) )
   {
+  	DBGPRINTF("***zzg OEMBTExtOPP_Push EBADPARM 111***");
     return EBADPARM;
   }
   switch ( objType )
@@ -580,6 +603,7 @@ int OEMBTExtOPP_Push(
 #else
   if ( ( pwFileName == NULL ) || ( WSTRLEN( pwFileName ) == 0 ) )
   {
+  		DBGPRINTF("***zzg OEMBTExtOPP_Push EBADPARM 111***");
     	return EBADPARM;
   }
 
@@ -636,18 +660,25 @@ int OEMBTExtOPP_Push(
 #endif /* CUST_EDITION */
 
     WSTRLCPY( pMe->wName, pwFileName, ARR_SIZE( pMe->wName ) );
-    AEEBT_FROM_WSTR( pwFileName, szFileName, sizeof(szFileName) );
+
+    //AEEBT_FROM_WSTR( pwFileName, szFileName, sizeof(szFileName) );
+    WSTRTOSTR(pwFileName, szFileName, sizeof(szFileName));	//Modify by zzg 2011_12_28
 
     pCurAC = ENTER_APP_CONTEXT( pMe->pac );
 
     IFILEMGR_GetInfoEx( pMe->pFileMgr, szFileName, &fileInfoEx );
     pMe->dwFileSize = fileInfoEx.dwSize;
 
+	DBGPRINTF("***zzg OEMBTExtOPP_Push dwSize=%d***", fileInfoEx.dwSize);
+	DBGPRINTF("***zzg OEMBTExtOPP_Push pszFile=%s***", fileInfoEx.pszFile);
+	DBGPRINTF("***zzg OEMBTExtOPP_Push szFileName=%s***", szFileName);
+
     pMe->pFile = IFILEMGR_OpenFile( pMe->pFileMgr, szFileName, _OFM_READ );
     (void) LEAVE_APP_CONTEXT( pCurAC );
 
     if ( pMe->pFile == NULL )
     {
+    	DBGPRINTF("***zzg OEMBTExtOPP_Push EBADPARM 333***");
       return EBADPARM;
     }
   }
@@ -786,13 +817,17 @@ int OEMBTExtOPP_Disconnect( IBTExtOPP* pParent )
   bt_cmd_status_type  stat;
   OEMBTExtOPPobj_t *pMe;
 
+  MSG_FATAL("***zzg OEMBTExtOPP_Disconnect start***", 0, 0, 0);
+
   if( AEEHandle_From( &gOEMBTExtHandleList, pParent->m_hBT, 
                       (OEMINSTANCE*)&pMe ) != TRUE )
   {
+  	MSG_FATAL("***zzg OEMBTExtOPP_Disconnect return 1***", 0, 0, 0);
     return EFAILED;
   }
   if ( pMe->state < AEEBT_OPP_STATE_CONNECTING )
   {
+  	MSG_FATAL("***zzg OEMBTExtOPP_Disconnect return 2***", 0, 0, 0);
     return EBADSTATE;
   }
   if ( pMe->bIsServer )
@@ -804,6 +839,9 @@ int OEMBTExtOPP_Disconnect( IBTExtOPP* pParent )
   {
     stat = bt_cmd_pf_opp_cli_disconnect( pMe->appId, pMe->clientConnID );
   }
+
+  MSG_FATAL("***zzg OEMBTExtOPP_Disconnect stat=%x***", stat, 0, 0);
+  
   return OEMBTExtOPP_CheckCmdStatus( stat );
 }
 
@@ -878,6 +916,8 @@ static boolean OEMBTExtOPP_HandleCmdDone(
   MSG_LOW( "OPP_HandleCmdDone - st=%x stat=%x cmd=%x", pMe->state,
            pCmdDn->cmd_status, pCmdDn->cmd_type );
 
+  MSG_FATAL("***zzg OEMBTExtOPP_HandleCmdDone cmd_type=%x***", pCmdDn->cmd_type, 0, 0);
+
   switch ( pCmdDn->cmd_type )
   {
     case BT_PF_CMD_OPP_SRV_REGISTER:
@@ -931,6 +971,7 @@ static boolean OEMBTExtOPP_HandleCmdDone(
     {
       if ( pCmdDn->cmd_status != BT_CS_GN_SUCCESS )
       {
+      	MSG_FATAL("***zzg AEEBT_OPP_EVT_CONN_FAILED 1 cmd_status=%x***", pCmdDn->cmd_status, 0, 0);
         pN->uID = AEEBT_OPP_EVT_CONN_FAILED;
         pN->data.uError = OEMBTExt_MapCmdStatus( pCmdDn->cmd_status );
       }
@@ -1385,6 +1426,8 @@ static void OEMBTExtOPP_DisconnectCb( OEMBTExtOPP_EvCb* pEvCb )
   OEMBTExtOPPobj_t* pMe = OEMBTExtOPP_FindMe( pEvCb->appId );
   AEEBTNotification* notif;
 
+  MSG_FATAL("***zzg OEMBTExtOPP_DisconnectCb pMe=%x, pEvCb->connId=%x***", pMe, pEvCb->connId, 0);
+
   if ( pMe == NULL )
   {
     TASKLOCK();
@@ -1393,6 +1436,9 @@ static void OEMBTExtOPP_DisconnectCb( OEMBTExtOPP_EvCb* pEvCb )
     // how did we get here?
     return;
   }
+
+  MSG_FATAL("***zzg OEMBTExtOPP_DisconnectCb bIsServer=%x, serverConnID=%x, clientConnID=%x***", 
+  				pMe->bIsServer, pMe->serverConnID, pMe->clientConnID);
 
   if ( (pMe->bIsServer != FALSE) && (pMe->serverConnID != pEvCb->connId) ||
        (pMe->bIsServer == FALSE) && (pMe->clientConnID != pEvCb->connId) )
@@ -1760,6 +1806,8 @@ static void OEMBTExtOPP_EventCallback( bt_ev_msg_type* ev_msg_ptr )
 
   pN->data.uError  = AEEBT_OPP_ERR_NONE;
 
+  MSG_FATAL("***zzg OEMBTExtOPP_EventCallback ev_type=%x***", ev_msg_ptr->ev_hdr.ev_type, 0, 0);
+
   switch ( ev_msg_ptr->ev_hdr.ev_type )
   {
     case BT_EV_GN_CMD_DONE:
@@ -1787,6 +1835,8 @@ static void OEMBTExtOPP_EventCallback( bt_ev_msg_type* ev_msg_ptr )
       {
         pMe->state = AEEBT_OPP_STATE_INIT;
         pN->uID = AEEBT_OPP_EVT_CONN_FAILED;
+
+		MSG_FATAL("***zzg AEEBT_OPP_EVT_CONN_FAILED 2 cmd_status=%x***", ev_msg_ptr->ev_msg.ev_opp_cli_con_cfm.status, 0, 0);
       }
       break;
     }
@@ -1804,6 +1854,8 @@ static void OEMBTExtOPP_EventCallback( bt_ev_msg_type* ev_msg_ptr )
       else
       {
         pN->uID = AEEBT_OPP_EVT_CONN_FAILED;
+
+		MSG_FATAL("***zzg AEEBT_OPP_EVT_CONN_FAILED 3 cmd_status=%x***", ev_msg_ptr->ev_msg.ev_opp_cli_con_prog_ind.status, 0, 0);
       }
       break;
     }
