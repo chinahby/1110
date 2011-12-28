@@ -965,10 +965,12 @@ boolean touchpad_adjust_cal(pen_cal_param_type* pen_param,byte param_num,pen_cal
 	
     if(pen_param[i].x_mv-pen_param[j].x_mv ==0)
     {
+    	return FALSE;
     	pen_param[i].x_mv++;
     }
 	if(pen_param[i].y_mv-pen_param[j].y_mv ==0)
 	{
+		return FALSE;
 		pen_param[i].y_mv++;	
 	}
 	kmvx = (int32)((pen_param[i].x_disp-pen_param[j].x_disp)<<TOUCHPAD_SHIFT)/(pen_param[i].x_mv-pen_param[j].x_mv);
@@ -976,26 +978,32 @@ boolean touchpad_adjust_cal(pen_cal_param_type* pen_param,byte param_num,pen_cal
 	
 	if(kmvx - pen_param[i].x_mv ==0)
 	{
+		return FALSE;
 		kmvx ++;
 	}
 	if(kmvy - pen_param[i].y_mv ==0)
 	{
+		return FALSE;
 		kmvy++;
 	}
 	if(kmvx - pen_param[j].x_mv ==0)
 	{
+		return FALSE;
 		kmvx++;
 	}
 	if(kmvx - pen_param[j].y_mv ==0)
 	{
+		return FALSE;
 		kmvy++;
 	}
 	if(kmvx == 0)
 	{
+		return FALSE;
 		kmvx++;
 	}
 	if(kmvy == 0)
 	{
+		return FALSE;
 		kmvy++;
 	}
 	
@@ -1018,6 +1026,7 @@ boolean touchpad_adjust_cal(pen_cal_param_type* pen_param,byte param_num,pen_cal
     MSG_FATAL("ret=======0000======%d",ret,0,0);
 	if(ret)
 	{
+		MSG_FATAL("ret=======0011======",0,0,0);
 		if(FALSE/*!touchpad_check_cal_data(mvx0,mvy0,kmvx,kmvy)*/)
 		{
 			ret =  FALSE;
