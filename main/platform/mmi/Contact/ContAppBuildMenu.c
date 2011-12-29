@@ -1247,7 +1247,7 @@ int CContApp_BuildEditMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl, boolean bAll)
                 {
                     AECHAR name[128]={0};
                     AECHAR *fileName=NULL;
-                    
+                    char nametemp[128] = {0};
                     fileName =  WSTRRCHR(pMe->m_nRingToneID, (AECHAR)'/');
                     if(NULL != fileName)
                     {
@@ -1259,8 +1259,13 @@ int CContApp_BuildEditMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl, boolean bAll)
                         WSTRCPY(name, pMe->m_nRingToneID);
                     }
 
-
-                    ai.wText       = IDS_RING;
+					WSTRTOSTR(name,nametemp,128);
+					DBGPRINTF("nametemp====%s",nametemp);
+					DBGPRINTF("name====%s",name);
+					MEMSET(name,0,128);
+					UTF8TOWSTR((byte *)nametemp,STRLEN(nametemp),name,128);
+					DBGPRINTF("name====%s",name);
+                ai.wText       = IDS_RING;
                     ai.wItemID   = IDI_EDIT_MENU_RINGTONE;
                     ai.wImage    = IDB_RING;
                    

@@ -6201,6 +6201,7 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
                     if (pMe->m_nRingToneID && pMe->m_nRingToneID[0] != (AECHAR)'\0')
                     {
                         AECHAR name[128]={0};
+						char nametemp[128] = {0};
                         AECHAR *fileName=NULL;
 
                         fileName = WSTRRCHR(pMe->m_nRingToneID, (AECHAR)'/');
@@ -6213,7 +6214,12 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
                         {
                             WSTRCPY(name, pMe->m_nRingToneID);
                         }
-						
+						WSTRTOSTR(name,nametemp,128);
+						DBGPRINTF("nametemp====%s",nametemp);
+						DBGPRINTF("name====%s",name);
+						MEMSET(name,0,128);
+						UTF8TOWSTR((byte *)nametemp,STRLEN(nametemp),name,128);
+						DBGPRINTF("name====%s",name);
                         IMENUCTL_SetItemText(pMenuCtl, IDI_ADDNEW_MENU_SELECTRINGTONE, NULL, 0, name);
                         
                     } 
@@ -10304,7 +10310,7 @@ static boolean  CContApp_HandleEditDlgEvent( CContApp  *pMe,
                     {
                         AECHAR name[128]={0};
                         AECHAR *fileName=NULL;
-                        
+                        char nametemp[128] = {0};
                         fileName = WSTRRCHR(pMe->m_nRingToneID, (AECHAR)'/');
                         if(NULL != fileName)
                         {
@@ -10315,7 +10321,10 @@ static boolean  CContApp_HandleEditDlgEvent( CContApp  *pMe,
                         {
                             WSTRCPY(name, pMe->m_nRingToneID);
                         }
-                        
+                        WSTRTOSTR(name,nametemp,128);
+						DBGPRINTF("nametemp====%s",nametemp);
+						MEMSET(name,0,128);
+						UTF8TOWSTR((byte *)nametemp,STRLEN(nametemp),name,128);
                         IMENUCTL_SetItemText(pMenuCtl, IDI_EDIT_MENU_RINGTONE, NULL, 0, name);
                     }
                     else
