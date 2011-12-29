@@ -1033,7 +1033,7 @@ __recorder_wstr_2_str_find_result__:
 		int 	cell		= 0;
 		int		subsets		= ARRAY_SIZE( gbk);
 
-		debug( ";try gbk");
+		DBGPRINTF( ";try gbk");
 		destLength --;
 		while( srcCounter < srcLength && pSrc[srcCounter] && destCounter < destLength)
 		{
@@ -1041,7 +1041,7 @@ __recorder_wstr_2_str_find_result__:
 			if( pSrc[srcCounter] < 0x80)
 			{
 				pDest[destCounter ++] = (char)pSrc[srcCounter];
-				debug( ";ascii, %c", (char)pSrc[srcCounter]);
+				DBGPRINTF( ";ascii, %c", (char)pSrc[srcCounter]);
 			}
 			else if( pSrc[srcCounter] == 0x80)
 			{
@@ -1049,12 +1049,12 @@ __recorder_wstr_2_str_find_result__:
 				{
 					pDest[destCounter ++] = 0x20;
 					pDest[destCounter ++] = 0xac;
-					debug( ";0x80, euro dollar");
+					DBGPRINTF( ";0x80, euro dollar");
 				}
 				else
 				{
 					pDest[destCounter ++] = '$';
-					debug( ";0x80, not enough buffer, $");
+					DBGPRINTF( ";0x80, not enough buffer, $");
 				}
 			}
 			else
@@ -1069,13 +1069,13 @@ __recorder_wstr_2_str_find_result__:
 							cell = byte2 - gbk_byte2_interval[subset][0];
 							if( pSrc[srcCounter] == gbk[subset][row][cell])
 							{
-								debug( ";0x%04x, gbk[%d][%d][%d] = 0x%02x%02x", pSrc[srcCounter], subset, row, cell, byte1, byte2);
+								DBGPRINTF( ";0x%04x, gbk[%d][%d][%d] = 0x%02x%02x", pSrc[srcCounter], subset, row, cell, byte1, byte2);
 								if( destCounter + 2 <= destLength)
 								{
 									found = TRUE;
 									pDest[destCounter ++] = byte1;
 									pDest[destCounter ++] = byte2;
-									debug( ";0x%04x found at gbk[%d][%d][%d] = 0x%02x%02x", pSrc[srcCounter], subset, row, cell, byte1, byte2);
+									DBGPRINTF( ";0x%04x found at gbk[%d][%d][%d] = 0x%02x%02x", pSrc[srcCounter], subset, row, cell, byte1, byte2);
 								}
 								break;
 							}
@@ -1085,7 +1085,7 @@ __recorder_wstr_2_str_find_result__:
 
 				if( !found)
 				{
-					debug( ";0x%04x not found, ->underline", pSrc[srcCounter]);
+					DBGPRINTF( ";0x%04x not found, ->underline", pSrc[srcCounter]);
 					pDest[destCounter ++] = '_';
 				}
 			}
@@ -2316,12 +2316,13 @@ static void recorder_list_rename_cb( Recorder* pme)
 	IMenuCtl*	pMenu		= (IMenuCtl*)pme->m_ptr[4];
 	int			result		= 0;
 
-	debug( ";---------------");
-	debug( ";recorder_list_rename_cb");
+	DBGPRINTF( ";---------------");
+	DBGPRINTF( ";recorder_list_rename_cb");
 
 	if( recorder_list_new_file_name_is_valid( pTextCtl))
 	{
 		char 	newFileName[256] 	= {0};
+		char    newFileNamegb[256]    = {0};
 		AECHAR* pText				= ITEXTCTL_GetTextPtr( pTextCtl);
 		int		offset				= 0;
 		int		len					= sizeof( newFileName);
@@ -2330,26 +2331,32 @@ static void recorder_list_rename_cb( Recorder* pme)
 
 		STRCPY( newFileName, pme->m_Media.m_pszSaveDir);
 		offset = STRLEN( newFileName);
-		recorder_wstr_2_str( pText, WSTRLEN( pText), newFileName + offset, len - offset);
+		//recorder_wstr_2_str((const AECHAR*)pText, WSTRLEN((AECHAR *)pText), newFileName + offset, len - offset);
+		WSTRTOUTF8(pText,sizeof(AECHAR) * (255 + 1),(byte *)newFileNamegb, 256);
+		STRCAT(newFileName,newFileNamegb);
+		
 		if( !STRENDS( pme->m_Media.m_pszFileExtension, newFileName))
 		{
 			STRCAT( newFileName, pme->m_Media.m_pszFileExtension);
 		}
-
-		debug( ";rename to %s", newFileName);
+		DBGPRINTF( ";rename to %s", newFileName);
+		result = IFILEMGR_Test(pme->m_pFileManager, newFileName);
+		DBGPRINTF( ";result to %s", result);
 		if( STRCMP( pme->m_FileName, newFileName) == 0)
 		{
 		}
+		
 		else if( IFILEMGR_Rename( pme->m_pFileManager, pme->m_FileName, newFileName) == SUCCESS)
 		{
+			DBGPRINTF("IFILEMGR_Rename sucessssssssssssssssss",0,0,0);
 			*selected = recorder_list_create_menu( pme, pMenu, newFileName);
 			result = 0;
 		}
 		else
 		{
 //			result = 1;
-			debug( ";rename file [%s] ", pme->m_FileName);
-			debug( ";to [%s] failed", newFileName);
+			DBGPRINTF( ";rename file [%s] ==%d ", pme->m_FileName,IFILEMGR_GetLastError(pme->m_pFileManager));
+			DBGPRINTF( ";to [%s] failed", newFileName);
 		}
 	}
 	else
