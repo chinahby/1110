@@ -725,6 +725,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
             return TRUE;
 
         case EVT_DIALOG_END:
+			MSG_FATAL("EVT_DIALOG_END.....123....",0,0,0);
             if(pMe->m_pIAnn != NULL)
             {
                 //退出拨号盘时，恢复titlebar
@@ -736,6 +737,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 #endif /* KEYSND_ZY */
 
             // 防止有来电时，POP menu还是active
+            MSG_FATAL("EVT_DIALOG_END.....222....",0,0,0);
             pMe->m_bShowPopMenu = FALSE;
             IMENUCTL_SetActive ( pMe->m_pMenu, FALSE );
             ISHELL_CancelTimer(pMe->m_pShell,
@@ -764,6 +766,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 #ifdef FEATURE_EDITABLE_RECORD
             pMe->m_bEditRecNumber = FALSE;
 #endif
+			MSG_FATAL("EVT_DIALOG_END......3333...",0,0,0);
             return TRUE;
 
         case EVT_COMMAND:
@@ -852,6 +855,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                         {
                             return CallApp_SaveNumber(pMe, ADD_FIELD);
                         }
+						CLOSE_DIALOG(DLGRET_OK)
                         return TRUE;
                         
                       case IDS_SEND_MESSAGE:
@@ -930,6 +934,10 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 			
 			int16 wXPos   = (int16)AEE_GET_X(dwParam);
 			int16 wYPos   = (int16)AEE_GET_Y(dwParam);
+			if(pMe->m_bShowPopMenu)
+			{
+				return TRUE;
+			}
 			callApp_draw_pendown(pMe,wXPos,wYPos);
 			return TRUE;
 		}
@@ -939,6 +947,10 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 			int16 wXPos   = (int16)AEE_GET_X(dwParam);
 			int16 wYPos   = (int16)AEE_GET_Y(dwParam);
 			callApp_draw_penmove(pMe,wXPos,wYPos);
+			if(pMe->m_bShowPopMenu)
+			{
+				return TRUE;
+			}
 			return TRUE;
 		}
 		break;
@@ -947,6 +959,10 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 			
 			int16 wXPos = (int16)AEE_GET_X(dwParam);
 			int16 wYPos = (int16)AEE_GET_Y(dwParam);
+			if(pMe->m_bShowPopMenu)
+			{
+				return TRUE;
+			}
 			pMe->m_penup = TRUE;
 			callApp_draw_penup(pMe,wXPos,wYPos);
 			return TRUE;
@@ -12512,7 +12528,7 @@ static void CallApp_Draw_BackGround(CCallApp* pMe, AEERect * rect)
 	//IImage_Draw(pImageBg, rect->x, rect->y);
     IDisplay_GetClipRect(pMe->m_pDisplay, &oldClip);
     IDisplay_SetClipRect(pMe->m_pDisplay, rect);
-    IImage_Draw(pImageBg, rect->x, rect->y);
+	IImage_Draw(pImageBg, rect->x, rect->y);
     IDisplay_SetClipRect(pMe->m_pDisplay, &oldClip);
 	if(pImageBg != NULL)
     {
