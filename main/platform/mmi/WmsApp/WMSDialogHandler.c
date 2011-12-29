@@ -10516,6 +10516,13 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 	            //IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
 	            ICONFIG_GetItem(pMe->m_pConfig,CFGI_WMSWRITD_END_STATUS,&Is_notend,sizeof(Is_notend));
                 MSG_FATAL("Is_notend=%d",Is_notend,0,0);
+				if(NULL != pMe->m_msSend.m_szMessage)
+					{
+						ITEXTCTL_SetMaxSize ( pIText, WMS_MSG_MAXCHARS);
+	                	(void)ITEXTCTL_SetText(pIText,pMe->m_msSend.m_szMessage,-1);
+					}
+				else
+					{
 	            if(!Is_notend)
 	            {
 	            	uint16 m_nCount = 0;
@@ -10547,6 +10554,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
     				if (NULL != pnode)
     				{
 	    				// 重置当前消息列表
+	    				MSG_FATAL("pnode is not null",0,0,0);
 	    				MEMSET(pMe->m_CurMsgNodes, 0, sizeof(pMe->m_CurMsgNodes));
 	    				WmsApp_FreeMsgNodeMs(pMe);
 	    
@@ -10584,6 +10592,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     }
                     else
                     {
+                    	MSG_FATAL("pnode is null",0,0,0);
                     	if (NULL != pMe->m_msSend.m_szMessage)
 	            		{
 	                		ITEXTCTL_SetMaxSize ( pIText, WMS_MSG_MAXCHARS);
@@ -10611,6 +10620,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                         DBGPRINTF("pMe->m_msSend.m_szMessage=%S", pMe->m_msSend.m_szMessage);
 	            	}
 	            }
+					}
 	            
 	            //bw:Maximum character SMS in create SMS 1024 wrong.<<20080801
 	            pMe->m_nMOmaxChars = WmsApp_SetMaxSize(pIText);
