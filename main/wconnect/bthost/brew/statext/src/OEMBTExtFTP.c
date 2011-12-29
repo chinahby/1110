@@ -663,6 +663,8 @@ int OEMBTExtFTP_ListFolder(
   OEMBTExtFTPobj_t*   pMe;
   char                szBuf[ AEEBT_MAX_FILE_NAME + 1 ];
 
+  MSG_FATAL("***zzg OEMBTExtFTP_ListFolder***", 0, 0, 0);
+
   if( AEEHandle_From( &gOEMBTExtHandleList, pParent->m_hBT, 
                       (OEMINSTANCE*)&pMe ) != TRUE )
   {
@@ -676,12 +678,19 @@ int OEMBTExtFTP_ListFolder(
   {
     return EBADPARM;
   }
-  AEEBT_FROM_WSTR( pwDirList, szBuf, sizeof(szBuf) );
+  
+  //AEEBT_FROM_WSTR( pwDirList, szBuf, sizeof(szBuf) );
+  WSTRTOSTR(pwDirList, szBuf, sizeof(szBuf));	//Modify by zzg 2011_12_28
+  
+  DBGPRINTF("***zzg OEMBTExtFTP_ListFolder pwDirList=%s***", pwDirList);
+  DBGPRINTF("***zzg OEMBTExtFTP_ListFolder szBuf=%s***", szBuf);
+  
   if ( ((pMe->pFile = IFILEMGR_OpenFile( pMe->pFileMgr, szBuf, 
                                          _OFM_READWRITE )) == NULL) && 
        ((pMe->pFile = IFILEMGR_OpenFile( pMe->pFileMgr, szBuf, 
                                          _OFM_CREATE )) == NULL))
   {
+  	DBGPRINTF("***zzg IFILEMGR_OpenFile EFILEOPEN***");
     return EFILEOPEN;
   }
  
@@ -691,6 +700,9 @@ int OEMBTExtFTP_ListFolder(
   pMe->bytesRcvd = 0;
   stat = bt_cmd_pf_ftp_cli_get_folder_listing( pMe->appId, pMe->clientConnID, 
                                                (AECHAR*)pwDirName );
+
+  DBGPRINTF("***zzg bt_cmd_pf_ftp_cli_get_folder_listing stat=%x***", stat);
+  
   return OEMBTExtFTP_CheckCmdStatus( stat );
 }
 

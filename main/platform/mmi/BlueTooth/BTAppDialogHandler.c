@@ -1558,6 +1558,7 @@ static boolean HandleDeviceInfoDialogEvent(CBTApp *pMe,
 			IBTEXTRM_DeviceRead(pMe->mRM.po, pDev);	
 
 			MSG_FATAL("***zzg DeviceInfo 1 WSTRLEN(pDev->wName)=%d***", WSTRLEN(pDev->wName), 0, 0);
+
 			
 			//Print the log Start
 			/*
@@ -1855,7 +1856,7 @@ static boolean HandleDeviceInfoOpitionDialogEvent(CBTApp *pMe,
 			
 			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);   
 
-			IBTEXTRM_DeviceRead(pMe->mRM.po, pDev);		//Add By zzg 2011_06_07 Update the DeviceInfo
+			IBTEXTRM_DeviceRead(pMe->mRM.po, pDev);		//Add By zzg 2011_06_07 Update the DeviceInfo		
 
 			IMENUCTL_DeleteAll(pMenu);
 			
@@ -1880,7 +1881,8 @@ static boolean HandleDeviceInfoOpitionDialogEvent(CBTApp *pMe,
 							bIsAudioDev = TRUE;
 						}
 						i++;
-					}
+					}					
+					
 				}
 
 				MSG_FATAL("***zzg A2DP bIsAudioDev=%x, bEnabled=%x, bConnected=%x***", 
@@ -4644,6 +4646,8 @@ static boolean  HandleFtpClientDialogEvent(CBTApp * pMe,
 					// Store 'ROOT' as interop device root folder name is not known
 					STRLCPY(szOperandex, ROOT_FOLDER_STR, sizeof(szOperandex));
 
+					MSG_FATAL("***zzg BTApp FTP IDS_FTP_LIST_FOLDER***", 0, 0, 0);
+
 					if (BTApp_FTPListFolder(pMe) != SUCCESS)
 					{
 #ifdef FEATURE_APP_TEST_AUTOMATION
@@ -5050,6 +5054,22 @@ static boolean HandleFtpBrowseDialogEvent(CBTApp *pMe,
 				if (pMe->mFTP.bRemoteBrowsing)
 				{
 					STRTOWSTR(pMe->mFTP.remoteObjects[pMe->mFTP.uNumOfObjInRemoteDev-uNoOfItems].szFolderFileName, wName, sizeof(wName));
+
+					DBGPRINTF("zzg FtpBrowse Remote szFolderFileName=%s", pMe->mFTP.remoteObjects[pMe->mFTP.uNumOfObjInRemoteDev-uNoOfItems].szFolderFileName);
+
+					DBGPRINTF("zzg FtpBrowse Remote wName=%s", wName);
+
+					//Add By zzg 2011_12_29	
+				   	{						
+						UTF8TOWSTR((byte*)pMe->mFTP.remoteObjects[pMe->mFTP.uNumOfObjInRemoteDev-uNoOfItems].szFolderFileName, 
+									AEEBT_MAX_FILE_NAME + 1, 
+									wName, 	
+									(AEEBT_MAX_FILE_NAME + 1)*sizeof(AECHAR));	
+
+						DBGPRINTF("***zzg IMenuCtl_AddItem wName=%s***", wName);	
+					}	
+					//Add End
+										
 					// Add the folder / file names as menu items
 					IMENUCTL_AddItem(pMenu, NULL, 0, pMe->mFTP.uNumOfObjInRemoteDev - uNoOfItems, wName, 0);					
 				}
@@ -5057,6 +5077,21 @@ static boolean HandleFtpBrowseDialogEvent(CBTApp *pMe,
 				{
 					STRTOWSTR(pMe->mFTP.localObjects[pMe->mFTP.uNumOfObjInLocalDev-uNoOfItems].szFolderFileName, wName, sizeof(wName));
 
+					DBGPRINTF("zzg FtpBrowse Local szFolderFileName=%s", pMe->mFTP.localObjects[pMe->mFTP.uNumOfObjInLocalDev-uNoOfItems].szFolderFileName);
+
+					DBGPRINTF("zzg FtpBrowse Local wName=%s", wName);
+
+					//Add By zzg 2011_12_29	
+				   	{						
+						UTF8TOWSTR((byte*)pMe->mFTP.localObjects[pMe->mFTP.uNumOfObjInLocalDev-uNoOfItems].szFolderFileName, 
+									AEEBT_MAX_FILE_NAME + 1, 
+									wName, 	
+									(AEEBT_MAX_FILE_NAME + 1)*sizeof(AECHAR));	
+						
+						DBGPRINTF("***zzg IMenuCtl_AddItem pText=%s***", wName);	
+					}	
+					//Add End
+					
 					// Add the folder / file names as menu items
 					IMENUCTL_AddItem(pMenu, NULL, 0, pMe->mFTP.uNumOfObjInLocalDev - uNoOfItems, wName, 0);
 				}
@@ -5996,15 +6031,38 @@ static boolean  HandleMsgBoxDialogEvent(CBTApp * pMe,
 			
 
 			if (pMe->m_bNeedStr)	//pMe->m_msg_id+pMe->wMsgBuf
-			{
-				ISTATIC_SetText(pStatic, NULL, pText, AEE_FONT_BOLD, AEE_FONT_NORMAL);
+			{	
+				//Add By zzg 2011_12_29	
+			   	{
+					char tempstr[256];
+
+					WSTRTOSTR(pText, tempstr, 256);		
+					
+					UTF8TOWSTR((byte*)tempstr, 256, pText, 	(256)*sizeof(AECHAR));	
+
+					DBGPRINTF("***zzg IMenuCtl_AddItem tempstr=%s***", tempstr);
+					DBGPRINTF("***zzg IMenuCtl_AddItem pText=%s***", pText);	
+				}	
+				//Add End
+				ISTATIC_SetText(pStatic, NULL, pText, AEE_FONT_BOLD, AEE_FONT_NORMAL);					
 			}
 			else
-			{
-				ISTATIC_SetText(pStatic, NULL, wstrText, AEE_FONT_BOLD, AEE_FONT_NORMAL);
-			}
+			{		
+				//Add By zzg 2011_12_29	
+			   	{
+					char tempstr[256];
 
-			MSG_FATAL("***zzg MsgBoxDialog EVT_USER_REDRAW ***", 0, 0, 0);
+					WSTRTOSTR(pText, tempstr, 256);		
+					
+					UTF8TOWSTR((byte*)tempstr, 256, wstrText, 	(256)*sizeof(AECHAR));	
+
+					DBGPRINTF("***zzg IMenuCtl_AddItem tempstr=%s***", tempstr);
+					DBGPRINTF("***zzg IMenuCtl_AddItem wstrText=%s***", wstrText);	
+				}	
+				//Add End
+				
+				ISTATIC_SetText(pStatic, NULL, wstrText, AEE_FONT_BOLD, AEE_FONT_NORMAL);				
+			}			
 						
 			ISTATIC_Redraw(pStatic);	
 			ISTATIC_SetActive(pStatic, TRUE);		
@@ -6162,11 +6220,37 @@ static boolean  HandleProMptDialogEvent(CBTApp *pMe,
 			}
 
 			if (pMe->m_bPromptNeedStr)	//pMe->m_prompt_id+pMe->wPromptBuf
-			{
+			{						
+				//Add By zzg 2011_12_29	
+			   	{
+					char tempstr[256];
+
+					WSTRTOSTR(pText, tempstr, 256);		
+					
+					UTF8TOWSTR((byte*)tempstr, 256, pText, 	(256)*sizeof(AECHAR));	
+
+					DBGPRINTF("***zzg IMenuCtl_AddItem tempstr=%s***", tempstr);
+					DBGPRINTF("***zzg IMenuCtl_AddItem pText=%s***", pText);	
+				}	
+				//Add End
+				
 				 m_PromptMsg.pwszMsg = pText;	
 			}
 			else
-			{
+			{		
+				//Add By zzg 2011_12_29	
+			   	{
+					char tempstr[256];
+
+					WSTRTOSTR(pText, tempstr, 256);		
+					
+					UTF8TOWSTR((byte*)tempstr, 256, wstrText, 	(256)*sizeof(AECHAR));	
+
+					DBGPRINTF("***zzg IMenuCtl_AddItem tempstr=%s***", tempstr);
+					DBGPRINTF("***zzg IMenuCtl_AddItem wstrText=%s***", wstrText);	
+				}	
+				//Add End
+				
 				 m_PromptMsg.pwszMsg = wstrText;	
 			}
 		
@@ -6549,7 +6633,21 @@ static boolean HandleBtTextEditDialogEvent(CBTApp *pMe,
 			ITEXTCTL_SetProperties(pIText, prop);
 			//ITEXTCTL_SetProperties(pIText, TP_FRAME | TP_MULTILINE | TP_NOUPDATE |TP_FOCUS_NOSEL); //TP_STARKEY_SWITCH
 
-			ITEXTCTL_SetMaxSize(pIText, maxLen);
+			ITEXTCTL_SetMaxSize(pIText, maxLen);	
+
+			//Add By zzg 2011_12_29	
+		   	{
+				char tempstr[256];
+
+				WSTRTOSTR(pText, tempstr, 256);		
+				
+				UTF8TOWSTR((byte*)tempstr, 256, pText, 	(256)*sizeof(AECHAR));	
+
+				DBGPRINTF("***zzg IMenuCtl_AddItem tempstr=%s***", tempstr);
+				DBGPRINTF("***zzg IMenuCtl_AddItem pText=%s***", pText);	
+			}	
+			//Add End
+				
 			ITEXTCTL_SetText(pIText, pText, WSTRLEN(pText));			
 			ITEXTCTL_SetInputMode(pIText, IM);			
 
@@ -7064,12 +7162,30 @@ static boolean HandleSendFileDialogEvent(CBTApp *pMe,
 				
 				case IDS_PUSH:
 				{
+					MSG_FATAL("***zzg SendFileDlg IDS_PUSH", 0, 0, 0);
 					BTApp_OPPPushEx(pMe, pMe->m_pfilepath, AEEBT_OPP_UNKNOWN_TYPE);	
                     return TRUE;
 				}
 				
 				case IDS_DISCONNECT:	
 				{
+					int temp=0;
+					temp = IBTEXTOPP_Disconnect(pMe->mOPP.po);
+
+					MSG_FATAL("***zzg SendFileDlg IDS_DISCONNECT result=%x", temp, 0, 0);
+
+					if (temp != SUCCESS)
+					{
+						BTApp_ShowMessage(pMe, IDS_MSG_DISCONN_FAILED, NULL, 3);
+					}
+					else
+					{
+						CLOSE_DIALOG(DLGRET_CANCELED)
+					}
+
+					/*
+					MSG_FATAL("***zzg SendFileDlg IDS_DISCONNECT", 0, 0, 0);
+					
 					if (IBTEXTOPP_Disconnect(pMe->mOPP.po) != SUCCESS)
 					{
 						BTApp_ShowMessage(pMe, IDS_MSG_DISCONN_FAILED, NULL, 3);
@@ -7078,6 +7194,7 @@ static boolean HandleSendFileDialogEvent(CBTApp *pMe,
 					{
 						CLOSE_DIALOG(DLGRET_CANCELED)
 					}
+					*/
                     return TRUE;						
 				}
 				

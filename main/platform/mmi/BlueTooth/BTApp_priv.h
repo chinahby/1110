@@ -288,7 +288,7 @@ typedef struct _CBTApp
   BTAppMenuType   menuStack[ MENU_STACK_DEPTH ];
   uint16          uMenuSel[ MENU_STACK_DEPTH ];
 
-  char			  m_pfilepath[AEEBT_MAX_FILE_NAME];
+  char			  m_pfilepath[256];	//AEEBT_MAX_FILE_NAME
   
   uint8           uTopMenu;
   BTApp_Enabling  mEnablingType;

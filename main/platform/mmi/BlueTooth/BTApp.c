@@ -2295,6 +2295,7 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 					&& (STRNCMP(args->pszArgs, "BtHeadSet", 9) != 0)					
 					&& (STRNCMP(args->pszArgs, "ResetBT", 7) != 0))
 				{
+					DBGPRINTF(("***zzg args->pszArgs=%s***", args->pszArgs));
 					pMe->bStartFromOtherApp	= TRUE;		
 					BTApp_SaveSendFilePath(pMe, args->pszArgs);				
 				}
@@ -18301,8 +18302,12 @@ static void BTApp_BuildDeviceList( CBTApp* pMe, BTAppMenuType menu )
 //Add By zzg 2010_11_10
 static void BTApp_SaveSendFilePath(CBTApp *pMe, const char* filepath)
 {	
-	MEMSET(pMe->m_pfilepath, 0, AEEBT_MAX_FILE_NAME*sizeof(char) );
-	MEMCPY(pMe->m_pfilepath, filepath, STRLEN(filepath));	
+	DBGPRINTF("***zzg BTApp_SaveSendFilePath filepath=%s***", filepath);
+		
+	MEMSET(pMe->m_pfilepath, 0, 256*sizeof(char) );		//AEEBT_MAX_FILE_NAME
+	MEMCPY(pMe->m_pfilepath, filepath, STRLEN(filepath));
+
+	DBGPRINTF("***zzg BTApp_SaveSendFilePath m_pfilepath=%s***", pMe->m_pfilepath);
 }
 //Add End
 
