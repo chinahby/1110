@@ -373,6 +373,9 @@
 	<STRING Id="130" Name="IDS_SENDDONE">
 		<Text>تم الانتهاء من إرسال الرسائل ! نجح إرسال %d رسالة وفشل إرسال %d رسالة</Text>
 	</STRING>
+	<STRING Id="131" Name="IDS_RESERVEDMSG">
+		<Text>Duly messages</Text>
+	</STRING>
 	<STRING Id="132" Name="IDS_RESERVEDMSGS">
 		<Text>الرسائل التي فشل إرسالها</Text>
 	</STRING>
@@ -565,76 +568,85 @@
 	<String Id="1010" Name="IDS_TEMPLATEHITZ9">
 		<Text>كيف حالك؟</Text>
 	</String>
-	<String Id="1011" Name="IDS_INSERT_PICTURE">
-		<Text>Insert picture</Text>
+	<String Id="1011" Name="IDS_MSGVALIDITY_IMMEDIATE">
+		<Text>Immediate</Text>
 	</String>
 	<String Id="1012" Name="IDS_STR_FLASHSMS">
 		<Text>Flash sms</Text>
 	</String>
-	<String Id="1013" Name="IDS_FROM_PICTURES">
+	<String Id="1013" Name="IDS_INSERT_PICTURE">
+		<Text>Insert picture</Text>
+	</String>
+	<String Id="1014" Name="IDS_FROM_PICTURES">
 		<Text>From pictures</Text>
 	</String>
-	<String Id="1014" Name="IDS_NEW_PHOTO">
+	<String Id="1015" Name="IDS_NEW_PHOTO">
 		<Text>New photo</Text>
 	</String>
-	<String Id="1015" Name="IDS_INSERT_VIDEO">
+	<String Id="1016" Name="IDS_INSERT_VIDEO">
 		<Text>Insert video</Text>
 	</String>
-	<String Id="1016" Name="IDS_FROM_MOVIES">
+	<String Id="1017" Name="IDS_FROM_MOVIES">
 		<Text>From movies</Text>
 	</String>
-	<String Id="1017" Name="IDS_NEW_VIDEO">
+	<String Id="1018" Name="IDS_NEW_VIDEO">
 		<Text>New video</Text>
 	</String>
-	<String Id="1018" Name="IDS_INSERT_SOUND">
+	<String Id="1019" Name="IDS_INSERT_SOUND">
 		<Text>Insert sound</Text>
 	</String>
-	<String Id="1019" Name="IDS_FROM_MUSIC">
+	<String Id="1020" Name="IDS_FROM_MUSIC">
 		<Text>From music</Text>
 	</String>
-	<String Id="1020" Name="IDS_NEW_SOUND">
+	<String Id="1021" Name="IDS_NEW_SOUND">
 		<Text>New sound</Text>
 	</String>
-	<String Id="1021" Name="IDS_OUTBOX_MMS">
-		<Text>Outbox  MMS</Text>
+	<String Id="1022" Name="IDS_INSERT_FILE">
+		<Text>Insert file</Text>
 	</String>
-	<String Id="1022" Name="IDS_REMOVE_PICTURE">
+	<String Id="1023" Name="IDS_REMOVE_PICTURE">
 		<Text>Remove picture</Text>
 	</String>
-	<String Id="1023" Name="IDS_REMOVE_VIDEO">
+	<String Id="1024" Name="IDS_REMOVE_VIDEO">
 		<Text>Remove video</Text>
 	</String>
-	<String Id="1024" Name="IDS_REMOVE_SOUND">
+	<String Id="1025" Name="IDS_REMOVE_SOUND">
 		<Text>Remove Sound</Text>
 	</String>
-	<STRING Id="1025" Name="IDS_MMSNOTIFY">
+	<String Id="1026" Name="IDS_OUTBOX_MMS">
+		<Text>Outbox  MMS</Text>
+	</String>
+	<String Id="1027" Name="IDS_INBOX_MMS">
+		<Text>Inbox  MMS</Text>
+	</String>
+	<STRING Id="1028" Name="IDS_MMSNOTIFY">
 		<Text>MMS Notify</Text>
 	</STRING>
-	<String Id="1026" Name="IDS_MMSDELIVERYREPORT">
-		<Text>MMS Delivery Report</Text>
-	</String>
-	<String Id="1027" Name="IDS_READREPLY">
-		<Text>MMS Read Reply</Text>
-	</String>
-	<String Id="1028" Name="IDS_REPORTALLOWED">
-		<Text>MMS Report Allowed</Text>
-	</String>
 	<String Id="1029" Name="IDS_SENDERVISIBILITY">
 		<Text>MMS Sender Visibility</Text>
 	</String>
-	<String Id="1030" Name="IDS_MMS_SIZE_TOO_BIG">
-		<Text>Size of MMS too large</Text>
+	<String Id="1030" Name="IDS_MMSDELIVERYREPORT">
+		<Text>MMS Delivery Report</Text>
 	</String>
-	<String Id="1031" Name="IDS_SAVE_CURRENT_ITEM">
-		<Text>Save the current item</Text>
+	<String Id="1031" Name="IDS_READREPLY">
+		<Text>MMS Read Reply</Text>
 	</String>
-	<String Id="1032" Name="IDS_INSERT_NEW_PICTURE">
-		<Text>Insert new picture</Text>
+	<String Id="1032" Name="IDS_REPORTALLOWED">
+		<Text>MMS Report Allowed</Text>
 	</String>
 	<String Id="1033" Name="IDS_GETTINGFROM">
 		<Text>Receiving...</Text>
 	</String>
-	<String Id="1034" Name="IDS_DRAFT_MMS">
+	<String Id="1034" Name="IDS_MMS_SIZE_TOO_BIG">
+		<Text>Size of MMS too large</Text>
+	</String>
+	<String Id="1035" Name="IDS_SAVE_CURRENT_ITEM">
+		<Text>Save the current item</Text>
+	</String>
+	<String Id="1036" Name="IDS_INSERT_NEW_PICTURE">
+		<Text>Insert new picture</Text>
+	</String>
+	<String Id="1037" Name="IDS_DRAFT_MMS">
 		<Text>Draft mms</Text>
 	</String>
 </Strings>
@@ -677,7 +689,7 @@
 			<Text Id="7006" Name="IDC_WRITEMSG_TEXT">
 				<TitleID>IDS_BLANK</TitleID>
 				<Items/></Text>
-			<Menu Id="7042" Name="IDC_WRITEMSG_MENU">
+			<Menu Id="7045" Name="IDC_WRITEMSG_MENU">
 				<Items/>
 			</Menu>
 		</Controls>
@@ -965,22 +977,25 @@
 		<Controls/>
 		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</Dialog>
-	<Dialog Id="6047" Name="IDD_FLASHSMS" Focus="0">
-		<Controls/>
+	<Dialog Id="6047" Name="IDD_FLASHSMS" Focus="7039">
+		<Controls>
+			<Static Id="7039" Name="IDC_STATIC_FLASHSMS">
+				<Items/></Static>
+		</Controls>
 		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</Dialog>
-	<Dialog Id="6048" Name="IDD_VIEWMSG_MMS" Focus="7039">
+	<Dialog Id="6048" Name="IDD_VIEWMSG_MMS" Focus="7040">
 		<Controls>
-			<Static Id="7039" Name="IDC_VIEWMSG_MMS_STATIC">
+			<Static Id="7040" Name="IDC_VIEWMSG_MMS_STATIC">
 				<Items/></Static>
-			<Menu Id="7045" Name="IDC_VIEWMSG_MMS_MENU">
+			<Menu Id="7046" Name="IDC_VIEWMSG_MMS_MENU">
 				<Items/>
 			</Menu>
 		</Controls>
 	</Dialog>
-	<DIALOG Id="6049" Name="IDD_MMSOPTION_YESNO" Focus="7040">
+	<DIALOG Id="6049" Name="IDD_MMSOPTION_YESNO" Focus="7041">
 		<Controls>
-			<Menu Id="7040" Name="IDC_MMSOPTION_YESNO">
+			<Menu Id="7041" Name="IDC_MMSOPTION_YESNO">
 				<Items/>
 			</Menu>
 		</Controls>
