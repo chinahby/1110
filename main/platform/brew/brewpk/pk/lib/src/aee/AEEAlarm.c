@@ -350,7 +350,7 @@ static int CAlarm_SetAlarm(IAlarm *p,
    CAlarm *pMe = (CAlarm*)p;
    uint32       idx;
    AlarmInfo   *pai;
-   
+   DBGPRINTF( "CAlarm_SetAlarm  cls=0x%x nUserCode = %d--nMins=%d",cls,nUserCode,nMins);
    if (FALSE == pMe->m_alarmsActive) {
       return EFAILED;
    }
@@ -795,7 +795,8 @@ static void CAlarm_ScheduleAlarms(CAlarm *pMe)
     while (i < IVector_Size(pMe->m_alarms)) 
     {
         AlarmInfo *pai = IVector_ElementAt(pMe->m_alarms, i);
-
+        DBGPRINTF( "pai->nExpireMin = %d nCurrMin = %d---pai->nUserCode=%d",pai->nExpireMin,nCurrMin,pai->nUserCode);
+        DBGPRINTF( "i = %d ---IVector_Size(pMe->m_alarms = %d",i,IVector_Size(pMe->m_alarms)); 
         if (pai->nExpireMin <= nCurrMin) 
         {
             pOldContext = AEE_EnterAppContext(NULL);

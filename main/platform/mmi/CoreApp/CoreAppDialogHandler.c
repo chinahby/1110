@@ -1138,6 +1138,7 @@ static boolean  IDD_ALARM_Handler(void       *pUser,
     static PowerDown_Alarm_Cfg time = {0};
 
     CCoreApp *pMe = (CCoreApp *)pUser;
+    MSG_FATAL("IDD_ALARM_Handler-----eCode=%d---wParam=%d",eCode,wParam,0);
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
@@ -1266,6 +1267,7 @@ static boolean  IDD_ALARM_Handler(void       *pUser,
             }
             else if( wParam == AVK_SELECT)
             {
+                MSG_FATAL("IDD_ALARM_Handler-----AVK_SELECT",0,0,0);
                 defaultProcessAlarm( pMe);
             }
             else if( (wParam == AVK_CLR) || (wParam == AVK_SOFT2))	//Add By zzg 2010_09_08 for smart/m8

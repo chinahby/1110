@@ -253,24 +253,31 @@ boolean ClockApps_RouteDialogEvent(CClockApps *pMe,
     switch (pMe->m_pActiveDlgID)
     {
         case IDD_ALARMCLOCK_DLG:
+            MSG_FATAL("IDD_ALARMTIME_REACH-----eCode=%d---wParam=%d",eCode,wParam,0);
             return HandleAlarmMainDialogEvent(pMe,eCode,wParam,dwParam);
 
         case IDD_ALARMCLOCK_OPTION:
+            MSG_FATAL("IDD_ALARMTIME_REACH-----eCode=%d---wParam=%d",eCode,wParam,0);
             return HandleAlarmOptionDialogEvent(pMe,eCode,wParam,dwParam);
 
         case IDD_ALARMCLOCK_SUB:
+            MSG_FATAL("IDD_ALARMTIME_REACH-----eCode=%d---wParam=%d",eCode,wParam,0);
             return HandleAlarmSubDialogEvent(pMe,eCode,wParam,dwParam);
 
         case IDD_ALARMCLOCK_MESSEGE:
+            MSG_FATAL("IDD_ALARMTIME_REACH-----eCode=%d---wParam=%d",eCode,wParam,0);
             return HandleAlarmTimeMessegeDialogEvent(pMe,eCode,wParam,dwParam);
 
         case IDD_ALARMTIME_REACH:
+            MSG_FATAL("IDD_ALARMTIME_REACH-----eCode=%d---wParam=%d",eCode,wParam,0);
             return HandleAlarmTimeReachDialogEvent(pMe,eCode,wParam,dwParam);
             
         case IDD_DELCONFIRM:
+            MSG_FATAL("IDD_ALARMTIME_REACH-----eCode=%d---wParam=%d",eCode,wParam,0);
             return HandleAlarmDelConfirmEvent(pMe, eCode, wParam, dwParam);
 
         case IDD_WARNING:
+            MSG_FATAL("IDD_ALARMTIME_REACH-----eCode=%d---wParam=%d",eCode,wParam,0);
             return HandleAlarmMsgBox(pMe, eCode, wParam, dwParam);
 
         default:
@@ -743,6 +750,7 @@ static boolean  HandleAlarmOptionDialogEvent(CClockApps *pMe,
                     {
                         allClosed = FALSE;
                     }
+                    MSG_FATAL("CClockApps_UpdateAlarmTimer----i=%d",i,0,0);
                     CClockApps_UpdateAlarmTimer(pMe, i);
                 }
 
@@ -1378,7 +1386,7 @@ static boolean  HandleAlarmSubDialogEvent(CClockApps *pMe,
                                    CLOCK_CFG_VERSION,
                                    &pMe->m_ClockCfg,
                                    sizeof(ClockAppCfg));
-
+            MSG_FATAL("CClockApps_UpdateAlarmTimer----pMe->m_eCurAlarmType=%d",pMe->m_eCurAlarmType,0,0);
             CClockApps_UpdateAlarmTimer(pMe, pMe->m_eCurAlarmType);
 #if defined( FEATURE_POWERDOWN_ALARM)
             registerPowerdownAlarmclock();
@@ -1675,6 +1683,7 @@ static boolean  HandleAlarmTimeMessegeDialogEvent(CClockApps *pMe,
 
                         //选择闹钟启动时,更新闹钟定时器的设置
                         //当取消选择启动时用来取消闹钟定时器,更新ICON图标
+                        MSG_FATAL("CClockApps_UpdateAlarmTimer----pMe->m_eCurAlarmType=%d",pMe->m_eCurAlarmType,0,0);
                         CClockApps_UpdateAlarmTimer(pMe, pMe->m_eCurAlarmType);
                         //画保存提示信息
                         CClockApps_DrawSaveAlert(pMe);
@@ -2075,6 +2084,7 @@ static boolean  HandleAlarmTimeReachDialogEvent(CClockApps *pMe,
                 default:
                 case AVK_SELECT:
                 {
+                    MSG_FATAL("CClockApps_Snooze-----AVK_SELECT",0,0,0);
                     CClockApps_Snooze(pMe);
                     return TRUE;
                 }
@@ -2323,6 +2333,7 @@ static boolean HandleAlarmMsgBox(CClockApps *pMe,
                     {
                         allClosed = FALSE;
                     }
+                    MSG_FATAL("CClockApps_UpdateAlarmTimer----i=%d",i,0,0);
                     CClockApps_UpdateAlarmTimer(pMe, i);
                 }
                 if((allClosed) && (pMe->m_pIAnn != NULL))
@@ -2650,7 +2661,8 @@ void CClockApps_Snooze(CClockApps *pMe)
                            AEECLSID_ALARMCLOCK,
                            CLOCK_CFG_VERSION,
                            &pMe->m_ClockCfg,
-                           sizeof(ClockAppCfg));    
+                           sizeof(ClockAppCfg));  
+    MSG_FATAL("pMe->m_ClockCfg-----dwWATime=%d----Snooze=%d",pMe->m_ClockCfg.dwWATime[pMe->m_eCurAlarmType],pMe->m_ClockCfg.Snooze[pMe->m_eCurAlarmType],0);
     ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)CClockApps_Snooze, pMe);
     if(!pMe->m_bSuspending)
     {
@@ -2664,7 +2676,7 @@ void CClockApps_Snooze(CClockApps *pMe)
             ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)CClockApps_DeActivate, pMe);
         }  
     }
-    
+    MSG_FATAL("CClockApps_Snooze-----AVK_SELECT",0,0,0);
 #ifdef FEATURE_UIALARM
     if (SUCCESS != ISHELL_CreateInstance(pMe->m_pShell, 
                                         AEECLSID_UIALARM,
@@ -2673,6 +2685,7 @@ void CClockApps_Snooze(CClockApps *pMe)
         return;
     }
 #endif
+
     dwnow = GETTIMESECONDS();
     
 //#if defined(FEATURE_PROJECT_M8) || defined(FEATURE_PROJECT_SMART)
@@ -2686,6 +2699,7 @@ void CClockApps_Snooze(CClockApps *pMe)
 #endif    
 
 #ifdef FEATURE_UIALARM
+    MSG_FATAL("CClockApps_Snooze-----AVK_SELECT",0,0,0);
     //设置闹钟时间及类型
     (void) IAlarm_SetAlarm(pAlarm,
                             AEECLSID_ALARMCLOCK,
@@ -2695,14 +2709,23 @@ void CClockApps_Snooze(CClockApps *pMe)
     IAlarm_Release(pAlarm);
     
 #else
+    MSG_FATAL("CClockApps_Snooze-----(uint16)pMe->m_eCurAlarmType=%d---snoozetime=%d",(uint16)pMe->m_eCurAlarmType,snoozetime,0);
     (void) ISHELL_SetAlarm(pMe->m_pShell,
                             AEECLSID_ALARMCLOCK,
                             (uint16)pMe->m_eCurAlarmType,
                             snoozetime);
 #endif
-
+    MSG_FATAL("CClockApps_Snooze-----(uint16)pMe->m_eCurAlarmType=%d---snoozetime=%d",(uint16)pMe->m_eCurAlarmType,snoozetime,0);
 
     ERR("YKMILAN COME HERE %d   cfg time %d",snoozetime,pMe->m_ClockCfg.dwWATime[pMe->m_eCurAlarmType],NULL);
+
+   (void) ISHELL_GetPrefs(pMe->m_pShell,
+                           AEECLSID_ALARMCLOCK,
+                           CLOCK_CFG_VERSION,
+                           &pMe->m_ClockCfg,
+                           sizeof(ClockAppCfg));  
+    MSG_FATAL("pMe->m_ClockCfg-----dwWATime=%d----Snooze=%d",pMe->m_ClockCfg.dwWATime[pMe->m_eCurAlarmType],pMe->m_ClockCfg.Snooze[pMe->m_eCurAlarmType],0);
+    
     CLOSE_DIALOG(DLGRET_CANCELED)
     
 }
