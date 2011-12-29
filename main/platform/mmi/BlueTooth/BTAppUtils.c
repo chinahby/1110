@@ -1579,6 +1579,13 @@ void BTApp_ShowMessage(
 	//Add End
 	*/
 
+	//Add By zzg 2011_12_28
+	if (ISHELL_ActiveApplet(pMe->m_pShell) != AEECLSID_BLUETOOTH_APP)
+	{		
+		return;			
+	}
+	//Add End	
+
 	IDISPLAY_Backlight( pMe->m_pIDisplay, TRUE );
 
 	MEMSET(pMe->wMsgBuf, 0, WSTRLEN(pMe->wMsgBuf)*sizeof(AECHAR));
@@ -1589,10 +1596,11 @@ void BTApp_ShowMessage(
 	}
 	else
 	{
-		WSTRCPY(pMe->wMsgBuf, wArg);		
+		WSTRCPY(pMe->wMsgBuf, wArg);			
 		needstr = TRUE;
 	}
 
+	DBGPRINTF("***zzg BTApp_ShowMessage wMsgBuf=%s***", pMe->wMsgBuf);
 
 	MSG_FATAL("***zzg BTApp_ShowMsg msgID=%d, WSTRLEN(wArg)=%d***", msgID, WSTRLEN(wArg), 0);
 	
