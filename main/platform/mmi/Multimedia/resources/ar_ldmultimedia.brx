@@ -3,6 +3,12 @@
 <Strings Encoding="Unicode">
  	<STRING Id="1001" Name="IDS_MULTIMEDIA_TITLE">
  		<Text>الوسائط المتعددة</Text>
+	</STRING>
+	<String Id="1002" Name="IDS_MULTIMEDIA_MEDIAGALLERY">
+		<Text>معرض الوسائط</Text>
+	</String>
+	<String Id="1003" Name="IDS_MULTIMEDIA_VIDEO_CAMERA">
+		<Text>Video Camera</Text>
  	</STRING>
  	<STRING Id="1011" Name="IDS_MULTIMEDIA_CAMERA">
  		<Text>الكاميرا</Text>
