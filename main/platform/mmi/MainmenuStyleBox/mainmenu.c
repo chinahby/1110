@@ -1275,7 +1275,7 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
                     {
                         int nRow = pMe->m_nRow;
                         int nCol = pMe->m_nColumn;
-                        
+                        MSG_FATAL("AVK_UPpMe->m_nRow==%d,pMe->m_nColumn==%d",pMe->m_nRow,pMe->m_nColumn,0);
                         if (nRow>0)
                         {
                             nRow--;
@@ -1300,7 +1300,7 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
                     {
                         int nRow = pMe->m_nRow;
                         int nCol = pMe->m_nColumn;
-                        
+                        MSG_FATAL("AVK_DOWNpMe->m_nRow==%d,pMe->m_nColumn==%d",pMe->m_nRow,pMe->m_nColumn,0);
                         if (nRow<MAX_MATRIX_ROWS-1)
                         {
                             nRow++;
@@ -1325,7 +1325,7 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
                     {
                         int nRow = pMe->m_nRow;
                         int nCol = pMe->m_nColumn;
-                        
+                        MSG_FATAL("AVK_leftpMe->m_nRow==%d,pMe->m_nColumn==%d",pMe->m_nRow,pMe->m_nColumn,0);
                         if (nCol>0)
                         {
                             nCol--;
@@ -1365,7 +1365,7 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
                     {
                         int nRow = pMe->m_nRow;
                         int nCol = pMe->m_nColumn;
-                        
+                        MSG_FATAL("AVK_RIGHTpMe->m_nRow==%d,pMe->m_nColumn==%d",pMe->m_nRow,pMe->m_nColumn,0);
                         if (nCol<MAX_MATRIX_COLS-1)
                         {
                             nCol++;
@@ -1594,6 +1594,7 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 					{
 						AutoMovePage(pMe);
 						pMe->m_bReraw = FALSE;
+						//MoveCursorTo(pMe, nRow, nCol);
 					}
 				}
 				
@@ -1619,9 +1620,11 @@ static void AutoMovePage(MainMenu *pMe)
     		DrawMatrix(pMe);
     		// 绘制聚焦过程动画
     		MoveCursorTo(pMe, pMe->m_nRow, pMe->m_nColumn);
+			MSG_FATAL("pMe->m_nRow===%d,pMe->m_nColumn=%d",pMe->m_nRow,pMe->m_nColumn,0);
 			DrawMatrixStr(pMe);
 			pMe->m_bmove = FALSE;
 			ISHELL_CancelTimer(pMe->m_pShell,(PFNNOTIFY)AutoMovePage,pMe);
+			ISHELL_PostEvent(pMe->m_pShell,AEECLSID_MAIN_MENU,EVT_USER_REDRAW,0,0);
 		}
 		else
 		{
@@ -2018,6 +2021,8 @@ static void DrawFocusIcon(MainMenu *pMe)
 	if((theFocus<0)||(theFocus>=MAX_MATRIX_ITEMS))
 	{
 		theFocus = 0;
+		pMe->m_nRow = 0;
+		pMe->m_nColumn = 0;
 	}
 	if( (pMe->m_pAnimate != NULL))
     {
