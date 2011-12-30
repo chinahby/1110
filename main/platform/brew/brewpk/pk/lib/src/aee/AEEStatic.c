@@ -1009,6 +1009,24 @@ static boolean AStatic_SetText
 
 	AStatic_SetFont(po, fntText, fntTitle);
 
+	DBGPRINTF("***zzg AStatic_SetText***");
+
+/*
+	//Add By zzg 2011_12_29	
+	{
+		char tempstr[256];
+				
+		WSTRTOSTR(pText, tempstr, 256);				
+		
+		UTF8TOWSTR((byte*)tempstr, 256, pText, (256)*sizeof(AECHAR));			
+			
+		DBGPRINTF("***zzg AStatic_SetText tempstr=%s***", tempstr);
+		DBGPRINTF("***zzg AStatic_SetText pText=%s***", pText);
+
+	}
+	//Add End
+	*/
+
 	if (pTitle)
 	{
 		pme->m_cyTitle = IDISPLAY_GetFontMetrics(pme->m_pDisplay, pme->m_fntTitle, NULL, NULL) + 2;
@@ -1022,6 +1040,8 @@ static boolean AStatic_SetText
 				pme->m_pTitle = WSTRDUP(pTitle);
 		}
 	}
+
+	
 
 	return (AStatic_SetTextEx(po, (byte*)pText, NULL, FALSE));
 }
@@ -1126,7 +1146,7 @@ static boolean AStatic_SetTextEx
 	boolean  bsb;
 
 	// If this is a complete replacement of the text then 
-	// free all existing text...	
+	// free all existing text...		
 
 	AStatic_SetPageLineCount(pme);
 
@@ -1531,7 +1551,7 @@ static void AStatic_RedrawText(AStatic * pme)
             {
                 IDISPLAY_EraseRect(pd,&rc);
             }
-    	}	
+    	}			 
 		 //Add By zzg 2011_12_08
 		 //Ë¢ÐÂSTATICµÄ±³¾°ÇøÓò (·ÀÖ¹Auto_scrollµÄË¢ÐÂ»ìÂÒ)
 		 else
@@ -1543,6 +1563,7 @@ static void AStatic_RedrawText(AStatic * pme)
 
 			pFrame = ISHELL_LoadResBitmap(pme->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_PROMPT_MSG_STATIC_BG);
 
+			/*
 			if ((pFrame != NULL) && (pme->m_bAutoScroll == TRUE))
 			{
 				IBITMAP_GetInfo(pFrame, &bi, sizeof(bi));
@@ -1563,10 +1584,28 @@ static void AStatic_RedrawText(AStatic * pme)
 				}
 				DBGPRINTF("***zzg AStatic_RedrawText pFrame != NULL***");
 			}
+			*/
+
+			if (pFrame != NULL) 
+			{
+				IBITMAP_GetInfo(pFrame, &bi, sizeof(bi));
+
+				DBGPRINTF("***zzg rc:%d,%d,%d,%d**", rc.x, rc.y, rc.dx, rc.dy);
+				DBGPRINTF("***zzg bi:%d,%d**", bi.cx, bi.cy);
+				
+				IDISPLAY_BitBlt(pd, rc.x, rc.y, rc.dx, rc.dy, pFrame, 1, (bi.cy-rc.dy), AEE_RO_COPY);
+				IBITMAP_Release(pFrame);
+				pFrame = NULL;
+		 	}
+			else
+			{				
+				DBGPRINTF("***zzg AStatic_RedrawText pFrame == NULL***");
+			}
 
 			IDISPLAY_Update(pd);
 		 }
 		 //Add End
+		 
     }
    // Now back... the ys are  already adjusted below
    rc.x--;
@@ -1653,7 +1692,7 @@ static void AStatic_RedrawText(AStatic * pme)
       AStatic_DrawScrollBar(pme,pme->m_nIdx);
    
    IDISPLAY_Update(pd);	
-	
+   	
    if(pme->m_bAutoScroll)
    {
       nMS = 0;
@@ -1669,7 +1708,8 @@ static void AStatic_RedrawText(AStatic * pme)
       //nMS *= pme->m_nPageLines;
 		
       ISHELL_SetTimer(pme->m_pShell, nMS, (PFNNOTIFY)(AStatic_ScrollTimerCB), pme);
-   }
+   }   
+   
 }
 /*===========================================================================
 

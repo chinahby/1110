@@ -2543,6 +2543,7 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
         }
         case EVT_APP_SUSPEND:
         {
+			/*
 			AEESuspendInfo* pi = (AEESuspendInfo*)dwParam;
 			MSG_HIGH( "HndlEv - APP_SUSPEND wP=0x%x dw=0x%x", wParam, dwParam, 0 );
 			
@@ -2550,6 +2551,7 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 			{
 				pi->bCloseDialogs = FALSE;
 			}
+			*/
 			
 			pMe->bSuspended = TRUE;			
 			pMe->m_bSuspending = TRUE;
