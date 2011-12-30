@@ -841,6 +841,10 @@ typedef struct _CContApp
     AECHAR              m_lastAlpha[MAX_INPUT_NAME_EN+1];//remember the last alpha when don't find the key
     AECHAR              *m_sSearchStr; // °´Ãû×ÖËÑË÷µÄ×Ö·û´®
     AEERect             m_ScrollBarrc;
+#ifdef FEATURE_LCD_TOUCH_ENABLE    
+    AEERect             M_RGroupRect;
+    AEERect             M_LGroupRect;
+#endif    
     int                 m_wYPos;
     // Field input type
     AEEAddrFieldID      m_nFldInputID;

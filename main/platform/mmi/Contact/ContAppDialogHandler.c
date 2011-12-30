@@ -6771,13 +6771,16 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
 							}
 							else
 							{
-							/*	if((!IMENUCTL_IsActive(pMenuCtl)))
-									IMENUCTL_SetActive(pMenuCtl, TRUE);
-                                //ITEXTCTL_HandleEvent(pTextCtl,EVT_KEY,AVK_UP,0);
-                                MSG_FATAL("pMenuCtleCode=%x---wParam%x---dwParam%x",eCode,wParam,dwParam);
-								IMENUCTL_HandleEvent(pMenuCtl,eCode,wParam,dwParam);
-							*/
-                                
+                                if(CONTAPP_PT_IN_RECT(wXPos,wYPos,pMe->M_RGroupRect))
+                                {
+                                    IMENUCTL_HandleEvent(pGroupList,EVT_KEY,AVK_RIGHT,0); 
+                                }
+                                else if(CONTAPP_PT_IN_RECT(wXPos,wYPos,pMe->M_LGroupRect))
+                                {
+                                    IMENUCTL_HandleEvent(pGroupList,EVT_KEY,AVK_LEFT,0); 
+                                }
+                                else
+                                {                                
                               #if 1
                                  if(EDIT_GROUP == pMe->m_nInputMode)
                                     {                    
@@ -6810,7 +6813,7 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
                                     }
                                     IMENUCTL_SetActive(pGroupList, FALSE);
                                #endif
-
+                                }
 							}
 
 					}
@@ -10884,13 +10887,16 @@ static boolean  CContApp_HandleEditDlgEvent( CContApp  *pMe,
 							}
 							else
 							{
-							/*	if((!IMENUCTL_IsActive(pMenuCtl)))
-									IMENUCTL_SetActive(pMenuCtl, TRUE);
-                                //ITEXTCTL_HandleEvent(pTextCtl,EVT_KEY,AVK_UP,0);
-                                MSG_FATAL("pMenuCtleCode=%x---wParam%x---dwParam%x",eCode,wParam,dwParam);
-								IMENUCTL_HandleEvent(pMenuCtl,eCode,wParam,dwParam);
-							*/
-                                
+                               if(CONTAPP_PT_IN_RECT(wXPos,wYPos,pMe->M_RGroupRect))
+                                {
+                                    IMENUCTL_HandleEvent(pGroupList,EVT_KEY,AVK_RIGHT,0); 
+                                }
+                                else if(CONTAPP_PT_IN_RECT(wXPos,wYPos,pMe->M_LGroupRect))
+                                {
+                                    IMENUCTL_HandleEvent(pGroupList,EVT_KEY,AVK_LEFT,0); 
+                                }
+                                else
+                                {
                               #if 1
                                  if(EDIT_GROUP == pMe->m_nInputMode)
                                     {                    
@@ -10923,7 +10929,7 @@ static boolean  CContApp_HandleEditDlgEvent( CContApp  *pMe,
                                     }
                                     IMENUCTL_SetActive(pGroupList, FALSE);
                                #endif
-
+                                }
 							}
 
 					}
@@ -15191,7 +15197,10 @@ static void CContApp_ShowGroupSelect(CContApp  *pMe, IMenuCtl  *pMenuCtl, IMenuC
 
     IIMAGE_Draw( left_arrow, rect.x - info.cx - 2, rect.y + 4);
     IIMAGE_Draw( right_arrow, rect.x + rect.dx + 2 , rect.y + 4);
-
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+    SETAEERECT(&pMe->M_LGroupRect, rect.x - info.cx - 7, rect.y, info.cx+10, info.cy+10); 
+    SETAEERECT(&pMe->M_RGroupRect, rect.x + rect.dx -7 , rect.y , info.cx+10, info.cy+10); 
+#endif
     color.wMask = MC_BACK | MC_SEL_BACK;
     color.cBack = RGB_WHITE;
     color.cSelBack = RGB_WHITE;
