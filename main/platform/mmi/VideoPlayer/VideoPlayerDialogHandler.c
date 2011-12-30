@@ -783,6 +783,11 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
             }
             else // 初始化成功
             {
+                if(pMe->bTotalTime == 0)
+                {
+                  CLOSE_DIALOG(DLGRET_MSGBOX);
+                  return FALSE;
+                }
                 if(!pMe->IsFullScreen)// 正常模式
                 {                   
                     if(!pMe->IsPlay) // 非播放状态
