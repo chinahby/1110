@@ -12881,7 +12881,6 @@ static void callApp_draw_penup(CCallApp* pMe,int16 x,int16 y)
 				case 12:
 				{
 					boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_USER,AVK_SELECT,0);
-					pMe->m_bShowPopMenu = TRUE;
 				 	return ;
 				}
 					break;
