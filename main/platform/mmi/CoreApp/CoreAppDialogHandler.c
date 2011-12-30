@@ -5271,9 +5271,9 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
     //AEEDeviceInfo di;
 #endif /*FEATURE_CARRIER_SUDAN_SUDATEL*/
     byte      bTFmt;
-#ifdef FEATURE_VERSION_VG68
+//#ifdef FEATURE_VERSION_VG68
     int nFont = 33;//VG68默认时间字体大小
-#endif
+//#endif
 
     MSG_FATAL("CoreApp_UpdateDateTime.......................",0,0,0);
     
