@@ -1619,13 +1619,16 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
             break;
 
         case EVT_KEY:
-            if ( pMe->m_bShowPopMenu && (AVK_LEFT != wParam)&& (AVK_RIGHT!= wParam))
+            
+            if ( pMe->m_bShowPopMenu &&(AVK_SELECT!= wParam)&& (AVK_CLR!= wParam)&&(AVK_INFO!= wParam))
+            
+            {
+                return TRUE;
+            }
+            else
             {
                 // cancel the pop menu...
                 pMe->m_bShowPopMenu = FALSE;
-                IMENUCTL_SetActive ( pMe->m_pMenu, FALSE );
-                (void)ISHELL_PostEvent( pMe->m_pShell, AEECLSID_DIALER, EVT_USER_REDRAW, 0, 0 );
-                return TRUE;
             }
 
             //if(CallApp_Process_HeldKey_Event(pMe,eCode,wParam,dwParam))
