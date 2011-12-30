@@ -132,7 +132,11 @@
 #if defined(FEATURE_LANG_DEFAULT_ENGLISH)
 #define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_ENGLISH         //NV_LANGUAGE_SELECTION_I
 #elif defined(FEATURE_LANG_CHINESE)
+#ifdef FEATURE_VERSION_X3
+#define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_ENGLISH         //简体中文
+#else
 #define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_CHINESE         //简体中文
+#endif
 #elif defined(FEATURE_LANG_TCHINESE)
 #define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_TCHINESE        //繁体中文
 #elif defined(FEATURE_LANG_ITALIAN)
