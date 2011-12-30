@@ -18,7 +18,7 @@
 #include "aeefile.h"
 #include "MediaGallery.h"
 
-#if defined(FEATURE_LANG_THAI)
+#if defined(FEATURE_LANG_THAI)||defined(FEATURE_LANG_CHINESE)
 #define RECORDER_FILE_NAME_LENGHT	12
 #else
 #define RECORDER_FILE_NAME_LENGHT	16
