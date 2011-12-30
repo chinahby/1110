@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="zhcnCallApp" VERSION="1">
+<BREWRes Name="zhcncallapp" VERSION="1">
 <Strings Encoding="Unicode">
 	<STRING Id="1001" Name="IDS_SK_MENU">
 		<Text>菜单</Text>
@@ -157,6 +157,18 @@
 	<STRING Id="1052" Name="IDS_INVALID_LINK_NUM">
 		<Text>无效链接号码</Text>
 	</STRING>
+	<STRING Id="1053" Name="IDS_MSG_CURPROFILE_MEETING">
+		<Text>震动模式</Text>
+	</STRING>
+	<STRING Id="1054" Name="IDS_MSG_CURPROFILE_NORMALMODE">
+		<Text>正常模式</Text>
+	</STRING>
+	<String Id="1055" Name="IDS_PWDERR">
+		<Text>无效密码</Text>
+	</String>
+	<String Id="1057" Name="IDS_PWDTIPS">
+		<Text>输入密码</Text>
+	</String>
 	<STRING Id="1100" Name="IDS_OPTION_RECORDER_ON">
 		<Text>录音</Text>
 	</STRING>
@@ -181,12 +193,9 @@
 	<STRING Id="1115" Name="IDS_NOOMH_CARD">
 		<Text>This is non-OMH Card, please upgrade to OMH R-UIM</Text>
 	</STRING>
-	<STRING Id="1116" Name="IDS_PWDTIPS">
-		<Text>Enter password</Text>
-	</STRING>
 	<STRING Id="1117" Name="IDS_INVALID">
-		<Text>Invalid password</Text>
-	</STRING>	
+		<Text>无效密码</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_NUMEDIT" Focus="0">
@@ -229,6 +238,9 @@
 		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</DIALOG>
 	<Dialog Id="6009" Name="IDD_IP_NUMBER" Focus="0">
+		<Controls/>
+	</Dialog>
+	<Dialog Id="6010" Name="IDD_PWD" Focus="0">
 		<Controls/>
 	</Dialog>
 </Dialogs>
