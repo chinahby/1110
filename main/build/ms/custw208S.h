@@ -14,7 +14,6 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_VERSION_W208S
 #ifdef CUST_EDITION
 #define FEATURE_SUPPORT_WAP_APP
-#define FEATURE_MOVIE_RECORD_SUPPORT
 //#define FEATURE_SUPPORT_WAP_APP
 //#define FEATURE_BT_SEND_FILE_ONLY		//Add By zzg 2010_11_03
 
@@ -28,8 +27,8 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //Add End
 //#define FEATURE_USES_BLACKBERRY                  //USE BLACKBERRY STYLE
 
-//wangliang add!   2011-07-30
 #define FEATURE_USES_MMS
+
 #define FEATURE_USES_MMS_TEST
 #define FEATURE_SMS_UDH
 //#define FEATURE_SUPPORT_ID
@@ -51,6 +50,8 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_CDSMS_CACHE_USELIST
 //#define FEATURE_SPN_FROM_BSMCCMNC
 //#define FEATURE_LONG_NETLOCK   //add by yangdecai
+
+#define FEATURE_MOVIE_RECORD_SUPPORT
 #endif
 
 #ifndef TARGSBW2_H
@@ -78,7 +79,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //#define FEATURE_AUDIO_SPECTRUM_ANALYZER 
 #define CLKRGM_INCLUDE_TD 
 #define FEATURE_MMODE_LOW_MEM_TARGET 
-#define FEATURE_LOWTIER_LOWMEM 
+//#define FEATURE_LOWTIER_LOWMEM 
 #define FEATURE_REX_IPC 
 #define FEATURE_ASYNC_DATA_NOOP 
 #define HS_USB_SCSI_BUFFER_SIZE (512 * 2)
@@ -267,8 +268,6 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 
 #include "custdisplay.h"
 
-#define FEATURE_MOVIE_RECORD_SUPPORT
-#define FEATURE_MM_REC
 
 #ifdef USES_CAMERA
 #ifdef FEATURE_MOVIE_RECORD_SUPPORT
