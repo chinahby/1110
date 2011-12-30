@@ -5053,11 +5053,7 @@ static boolean HandleFtpBrowseDialogEvent(CBTApp *pMe,
 			{				
 				if (pMe->mFTP.bRemoteBrowsing)
 				{
-					STRTOWSTR(pMe->mFTP.remoteObjects[pMe->mFTP.uNumOfObjInRemoteDev-uNoOfItems].szFolderFileName, wName, sizeof(wName));
-
-					DBGPRINTF("zzg FtpBrowse Remote szFolderFileName=%s", pMe->mFTP.remoteObjects[pMe->mFTP.uNumOfObjInRemoteDev-uNoOfItems].szFolderFileName);
-
-					DBGPRINTF("zzg FtpBrowse Remote wName=%s", wName);
+					//STRTOWSTR(pMe->mFTP.remoteObjects[pMe->mFTP.uNumOfObjInRemoteDev-uNoOfItems].szFolderFileName, wName, sizeof(wName));
 
 					//Add By zzg 2011_12_29	
 				   	{						
@@ -5075,12 +5071,8 @@ static boolean HandleFtpBrowseDialogEvent(CBTApp *pMe,
 				}
 				else
 				{
-					STRTOWSTR(pMe->mFTP.localObjects[pMe->mFTP.uNumOfObjInLocalDev-uNoOfItems].szFolderFileName, wName, sizeof(wName));
-
-					DBGPRINTF("zzg FtpBrowse Local szFolderFileName=%s", pMe->mFTP.localObjects[pMe->mFTP.uNumOfObjInLocalDev-uNoOfItems].szFolderFileName);
-
-					DBGPRINTF("zzg FtpBrowse Local wName=%s", wName);
-
+					//STRTOWSTR(pMe->mFTP.localObjects[pMe->mFTP.uNumOfObjInLocalDev-uNoOfItems].szFolderFileName, wName, sizeof(wName));
+			
 					//Add By zzg 2011_12_29	
 				   	{						
 						UTF8TOWSTR((byte*)pMe->mFTP.localObjects[pMe->mFTP.uNumOfObjInLocalDev-uNoOfItems].szFolderFileName, 
@@ -5200,9 +5192,16 @@ static boolean HandleFtpBrowseDialogEvent(CBTApp *pMe,
 							uIndex = IMENUCTL_GetSel(pMenu);
 																				
 							// Get the name of the menu item selected on the screen
-							STRTOWSTR(pMe->mFTP.remoteObjects[uIndex].szFolderFileName, wName, sizeof(wName)); 
+							//STRTOWSTR(pMe->mFTP.remoteObjects[uIndex].szFolderFileName, wName, sizeof(wName)); 
 
-							MSG_FATAL("***zzg FtpBrowseOpition uIndex=%x, szTypeOfObj=%x***", uIndex, pMe->mFTP.remoteObjects[uIndex].szTypeOfObj, 0);
+							//Add By zzg 2011_12_30
+							UTF8TOWSTR((byte*)pMe->mFTP.remoteObjects[uIndex].szFolderFileName, 
+										AEEBT_MAX_FILE_NAME + 1, 
+										wName, 	
+										(AEEBT_MAX_FILE_NAME + 1)*sizeof(AECHAR));	
+							//Add End
+							
+
 
 							// If folder,  browse the folder 
 							if (pMe->mFTP.remoteObjects[uIndex].szTypeOfObj == AEEBT_FTP_FOLDER)
@@ -5299,7 +5298,18 @@ static boolean HandleFtpBrowseDialogEvent(CBTApp *pMe,
 
 							DBGPRINTF("***zzg FtpBrowseDlgEvt szFolderFileName=%s***", pMe->mFTP.localObjects[uIndex].szFolderFileName);
 														
-							STRTOWSTR(pMe->mFTP.localObjects[uIndex].szFolderFileName, wName, sizeof(wName));
+							//STRTOWSTR(pMe->mFTP.localObjects[uIndex].szFolderFileName, wName, sizeof(wName));
+							
+							//Add By zzg 2011_12_29	
+						   	{						
+								UTF8TOWSTR((byte*)pMe->mFTP.localObjects[uIndex].szFolderFileName, 
+											AEEBT_MAX_FILE_NAME + 1, 
+											wName, 	
+											(AEEBT_MAX_FILE_NAME + 1)*sizeof(AECHAR));	
+
+								DBGPRINTF("***zzg IMenuCtl_AddItem wName=%s***", wName);	
+							}	
+							//Add End
 
 							if (pMe->mFTP.localObjects[uIndex].szTypeOfObj == AEEBT_FTP_FILE)
 							{
@@ -5317,7 +5327,20 @@ static boolean HandleFtpBrowseDialogEvent(CBTApp *pMe,
 								STRLCPY(szName, pMe->mFTP.szLocalBrowsePath, sizeof(szName));
 								STRLCAT(szName, DIRECTORY_STR, sizeof(szName));
 								STRLCAT(szName, pMe->mFTP.localObjects[uIndex].szFolderFileName, sizeof(szName));
-								STRTOWSTR(szName, wBuf, sizeof(wBuf));
+								
+								//STRTOWSTR(szName, wBuf, sizeof(wBuf));
+								
+								//Add By zzg 2011_12_29	
+							   	{						
+									UTF8TOWSTR((byte*)szName, 
+												AEEBT_MAX_FILE_NAME + 1, 
+												wBuf, 	
+												(AEEBT_MAX_FILE_NAME + 1)*sizeof(AECHAR));	
+
+									DBGPRINTF("***zzg IMenuCtl_AddItem wBuf=%s***", wBuf);	
+								}	
+								//Add End
+								
 								STRLCPY(szOperandex, pMe->mFTP.localObjects[uIndex].szFolderFileName, sizeof(szOperandex));
 
 								if ((result = IBTEXTFTP_Put(pMe->mFTP.po, pMe->mFTP.localObjects[uIndex].szTypeOfObj, wBuf, wName)) != SUCCESS)
@@ -5388,7 +5411,18 @@ static boolean HandleFtpBrowseDialogEvent(CBTApp *pMe,
 						{
 							uIndex = IMENUCTL_GetSel(pMenu);
 
-							STRTOWSTR(pMe->mFTP.localObjects[uIndex].szFolderFileName, wName, sizeof(wName));
+							//STRTOWSTR(pMe->mFTP.localObjects[uIndex].szFolderFileName, wName, sizeof(wName));
+
+							//Add By zzg 2011_12_29	
+						   	{						
+								UTF8TOWSTR((byte*)pMe->mFTP.localObjects[uIndex].szFolderFileName, 
+											AEEBT_MAX_FILE_NAME + 1, 
+											wName, 	
+											(AEEBT_MAX_FILE_NAME + 1)*sizeof(AECHAR));	
+
+								DBGPRINTF("***zzg IMenuCtl_AddItem wName=%s***", wName);	
+							}	
+							//Add End
 
 							if (STRLEN(pMe->mFTP.szLocalBrowsePath) + STRLEN(DIRECTORY_STR) + 
 								STRLEN(pMe->mFTP.localObjects[uIndex].szFolderFileName) > 
@@ -5407,7 +5441,19 @@ static boolean HandleFtpBrowseDialogEvent(CBTApp *pMe,
 							STRLCAT(szName, pMe->mFTP.localObjects[uIndex].szFolderFileName, sizeof(szName));
 							DBGPRINTF("PUT file/folder name is %s", szName);
 
-							STRTOWSTR(szName, wBuf, sizeof(wBuf));
+							//STRTOWSTR(szName, wBuf, sizeof(wBuf));
+
+							//Add By zzg 2011_12_29	
+						   	{						
+								UTF8TOWSTR((byte*)szName, 
+											AEEBT_MAX_FILE_NAME + 1, 
+											wBuf, 	
+											(AEEBT_MAX_FILE_NAME + 1)*sizeof(AECHAR));	
+
+								DBGPRINTF("***zzg IMenuCtl_AddItem wBuf=%s***", wBuf);	
+							}	
+							//Add End
+							
 							STRLCPY(szOperandex, pMe->mFTP.localObjects[uIndex].szFolderFileName, sizeof(szOperandex));
 
 							if ((result = IBTEXTFTP_Put(pMe->mFTP.po, pMe->mFTP.localObjects[uIndex].szTypeOfObj, wBuf, wName)) != SUCCESS)
@@ -5641,7 +5687,19 @@ static boolean HandleFtpBrowseOpitionDialogEvent(CBTApp * pMe,AEEEvent eCode,uin
 							uIndex = pMe->m_folder_index;
 							
 							// Get the name of the menu item selected on the screen
-							STRTOWSTR(pMe->mFTP.remoteObjects[uIndex].szFolderFileName, wName, sizeof(wName)); 
+							//STRTOWSTR(pMe->mFTP.remoteObjects[uIndex].szFolderFileName, wName, sizeof(wName)); 
+
+							//Add By zzg 2011_12_29	
+						   	{						
+								UTF8TOWSTR((byte*)pMe->mFTP.remoteObjects[uIndex].szFolderFileName, 
+											AEEBT_MAX_FILE_NAME + 1, 
+											wName, 	
+											(AEEBT_MAX_FILE_NAME + 1)*sizeof(AECHAR));	
+
+								DBGPRINTF("***zzg IMenuCtl_AddItem wName=%s***", wName);	
+							}	
+							//Add End
+							
 
 							MSG_FATAL("***zzg FtpBrowseOpition uIndex=%x, szTypeOfObj=%x***", 
 										uIndex, pMe->mFTP.remoteObjects[uIndex].szTypeOfObj, 0);
@@ -5678,7 +5736,18 @@ static boolean HandleFtpBrowseOpitionDialogEvent(CBTApp * pMe,AEEEvent eCode,uin
 									}
 								}
 
-								STRTOWSTR(szOperandex, wBuf, sizeof(wBuf));
+								//STRTOWSTR(szOperandex, wBuf, sizeof(wBuf));
+								
+								//Add By zzg 2011_12_29	
+							   	{						
+									UTF8TOWSTR((byte*)szOperandex, 
+												AEEBT_MAX_FILE_NAME + 1, 
+												wBuf, 	
+												(AEEBT_MAX_FILE_NAME + 1)*sizeof(AECHAR));	
+
+									DBGPRINTF("***zzg IMenuCtl_AddItem wBuf=%s***", wBuf);	
+								}	
+								//Add End
 
 								if (IBTEXTFTP_Get(pMe->mFTP.po, pMe->mFTP.remoteObjects[uIndex].szTypeOfObj, wBuf, wName) != SUCCESS)
 								{
@@ -5736,7 +5805,19 @@ static boolean HandleFtpBrowseOpitionDialogEvent(CBTApp * pMe,AEEEvent eCode,uin
 							//uIndex = IMENUCTL_GetSel(pMe->m_pIMenu);
 							
 							// Get the name of the menu item selected on the screen
-							STRTOWSTR(pMe->mFTP.remoteObjects[uIndex].szFolderFileName, wName, sizeof(wName));
+							//STRTOWSTR(pMe->mFTP.remoteObjects[uIndex].szFolderFileName, wName, sizeof(wName));
+
+							//Add By zzg 2011_12_29	
+						   	{						
+								UTF8TOWSTR((byte*)pMe->mFTP.remoteObjects[uIndex].szFolderFileName, 
+											AEEBT_MAX_FILE_NAME + 1, 
+											wName, 	
+											(AEEBT_MAX_FILE_NAME + 1)*sizeof(AECHAR));	
+
+								DBGPRINTF("***zzg IMenuCtl_AddItem wName=%s***", wName);	
+							}	
+							//Add End
+								
 
 							//if (pMe->mFTP.u8StorageDevice == STORAGE_DEV_MEM_CARD)
 							//Default device is STORAGE_DEV_MEM_CARD
@@ -5754,7 +5835,19 @@ static boolean HandleFtpBrowseOpitionDialogEvent(CBTApp * pMe,AEEEvent eCode,uin
 							}
 
 							STRLCAT(szOperandex, pMe->mFTP.remoteObjects[uIndex].szFolderFileName, sizeof(szOperandex));
-							STRTOWSTR(szOperandex, wBuf, sizeof(wBuf));
+							
+							//STRTOWSTR(szOperandex, wBuf, sizeof(wBuf));
+
+							//Add By zzg 2011_12_29	
+						   	{						
+								UTF8TOWSTR((byte*)szOperandex, 
+											AEEBT_MAX_FILE_NAME + 1, 
+											wBuf, 	
+											(AEEBT_MAX_FILE_NAME + 1)*sizeof(AECHAR));	
+
+								DBGPRINTF("***zzg IMenuCtl_AddItem wBuf=%s***", wBuf);	
+							}	
+							//Add End
 							
 							DBGPRINTF("***zzg GET file/folder name is %s***", szOperandex);
 							DBGPRINTF("***zzg GET szFolderFileName name is %s***", pMe->mFTP.remoteObjects[uIndex].szFolderFileName);						
@@ -5829,7 +5922,18 @@ static boolean HandleFtpBrowseOpitionDialogEvent(CBTApp * pMe,AEEEvent eCode,uin
 						//uIndex = IMENUCTL_GetSel(pMenu);
 						
 						// Get the name of the menu item selected on the screen
-						STRTOWSTR(pMe->mFTP.remoteObjects[uIndex].szFolderFileName, wName, sizeof(wName));
+						//STRTOWSTR(pMe->mFTP.remoteObjects[uIndex].szFolderFileName, wName, sizeof(wName));
+						
+						//Add By zzg 2011_12_29	
+					   	{						
+							UTF8TOWSTR((byte*)pMe->mFTP.remoteObjects[uIndex].szFolderFileName, 
+										AEEBT_MAX_FILE_NAME + 1, 
+										wName, 	
+										(AEEBT_MAX_FILE_NAME + 1)*sizeof(AECHAR));	
+
+							DBGPRINTF("***zzg IMenuCtl_AddItem wName=%s***", wName);	
+						}	
+						//Add End
 
 						// Just storing folder name to display it later 
 						STRLCPY(szOperandex, pMe->mFTP.remoteObjects[uIndex].szFolderFileName, sizeof(szOperandex));
@@ -6000,14 +6104,15 @@ static boolean  HandleMsgBoxDialogEvent(CBTApp * pMe,
 		
 		case EVT_USER_REDRAW:		
 		{	
-			AECHAR  wstrText[MSGBOX_MAXTEXTLEN];
-			AECHAR* pText = pMe->pText2;
-                        
+			AECHAR  wstrText[MSGBOX_MAXTEXTLEN];			
+			AECHAR* pText = pMe->pText2;			
+					
             (void) ISHELL_LoadResString(pMe->m_pShell,
 	                                    AEE_APPSBTAPP_RES_FILE,
 	                                    pMe->m_msg_id,
 	                                    wstrText,
 	                                    sizeof(wstrText));
+			
 
 			MSG_FATAL("***zzg MsgBoxDialog m_msg_id=%d, m_bNeedStr=%d, wMsgBuf_len=%d***", pMe->m_msg_id, pMe->m_bNeedStr, WSTRLEN(pMe->wMsgBuf));
 			
@@ -6015,6 +6120,7 @@ static boolean  HandleMsgBoxDialogEvent(CBTApp * pMe,
 			{
 				// use the wArg as msg
 				pText = pMe->wMsgBuf;
+				
 			}
 			else
 			{
@@ -6024,45 +6130,68 @@ static boolean  HandleMsgBoxDialogEvent(CBTApp * pMe,
 				if (pMe->wMsgBuf != NULL)
 				{
 					// build the message
-					WSPRINTF( pMe->pText1, LONG_TEXT_BUF_LEN*sizeof(AECHAR), pMe->pText2, pMe->wMsgBuf);
+					WSPRINTF( pMe->pText1, LONG_TEXT_BUF_LEN*sizeof(AECHAR), pMe->pText2, pMe->wMsgBuf);	
 					pText = pMe->pText1;
+					
+				}
+				else
+				{
+					//Add By zzg 2011_12_29	
+				   	{
+						char tempstr[256];
+
+						//WSTRTOSTR(pMe->pText2, tempstr, 256);		
+						WSTRTOUTF8(pMe->pText2, (256)*sizeof(AECHAR),(byte *)tempstr, 256);
+						
+						UTF8TOWSTR((byte*)tempstr, 256, pText, 	(256)*sizeof(AECHAR));	
+
+						DBGPRINTF("***zzg IMenuCtl_AddItem tempstr=%s***", tempstr);
+						DBGPRINTF("***zzg IMenuCtl_AddItem pText=%s***", pText);	
+					}	
+					//Add End
 				}
 			}
 			
 
 			if (pMe->m_bNeedStr)	//pMe->m_msg_id+pMe->wMsgBuf
-			{	
+			{			
+				
 				//Add By zzg 2011_12_29	
 			   	{
 					char tempstr[256];
 
-					WSTRTOSTR(pText, tempstr, 256);		
+					//WSTRTOSTR(pText, tempstr, 256);		
+					WSTRTOUTF8(pText, (256)*sizeof(AECHAR),(byte *)tempstr, 256);
 					
 					UTF8TOWSTR((byte*)tempstr, 256, pText, 	(256)*sizeof(AECHAR));	
 
 					DBGPRINTF("***zzg IMenuCtl_AddItem tempstr=%s***", tempstr);
 					DBGPRINTF("***zzg IMenuCtl_AddItem pText=%s***", pText);	
 				}	
-				//Add End
+				//Add End					
+				
 				ISTATIC_SetText(pStatic, NULL, pText, AEE_FONT_BOLD, AEE_FONT_NORMAL);					
 			}
 			else
 			{		
+				
 				//Add By zzg 2011_12_29	
 			   	{
 					char tempstr[256];
 
-					WSTRTOSTR(pText, tempstr, 256);		
+					//WSTRTOSTR(wstrText, tempstr, 256);		
+					WSTRTOUTF8(wstrText, (256)*sizeof(AECHAR),(byte *)tempstr, 256);
 					
 					UTF8TOWSTR((byte*)tempstr, 256, wstrText, 	(256)*sizeof(AECHAR));	
 
 					DBGPRINTF("***zzg IMenuCtl_AddItem tempstr=%s***", tempstr);
 					DBGPRINTF("***zzg IMenuCtl_AddItem wstrText=%s***", wstrText);	
 				}	
-				//Add End
+				//Add End					
 				
-				ISTATIC_SetText(pStatic, NULL, wstrText, AEE_FONT_BOLD, AEE_FONT_NORMAL);				
-			}			
+				ISTATIC_SetText(pStatic, NULL, wstrText, AEE_FONT_BOLD, AEE_FONT_NORMAL);		
+			}		
+			
 						
 			ISTATIC_Redraw(pStatic);	
 			ISTATIC_SetActive(pStatic, TRUE);		
@@ -6220,12 +6349,17 @@ static boolean  HandleProMptDialogEvent(CBTApp *pMe,
 			}
 
 			if (pMe->m_bPromptNeedStr)	//pMe->m_prompt_id+pMe->wPromptBuf
-			{						
+			{			
+				/*
 				//Add By zzg 2011_12_29	
 			   	{
 					char tempstr[256];
 
-					WSTRTOSTR(pText, tempstr, 256);		
+					//WSTRTOSTR(pText, tempstr, 256);	
+					WSTRTOUTF8(pText, 
+                               (256)*sizeof(AECHAR),
+                               (byte *)tempstr, 
+                               256);
 					
 					UTF8TOWSTR((byte*)tempstr, 256, pText, 	(256)*sizeof(AECHAR));	
 
@@ -6233,16 +6367,22 @@ static boolean  HandleProMptDialogEvent(CBTApp *pMe,
 					DBGPRINTF("***zzg IMenuCtl_AddItem pText=%s***", pText);	
 				}	
 				//Add End
+				*/
 				
 				 m_PromptMsg.pwszMsg = pText;	
 			}
 			else
 			{		
+				/*
 				//Add By zzg 2011_12_29	
 			   	{
 					char tempstr[256];
 
-					WSTRTOSTR(pText, tempstr, 256);		
+					//WSTRTOSTR(wstrText, tempstr, 256);		
+					WSTRTOUTF8(wstrText, 
+                               (256)*sizeof(AECHAR),
+                               (byte *)tempstr, 
+                               256);
 					
 					UTF8TOWSTR((byte*)tempstr, 256, wstrText, 	(256)*sizeof(AECHAR));	
 
@@ -6250,6 +6390,7 @@ static boolean  HandleProMptDialogEvent(CBTApp *pMe,
 					DBGPRINTF("***zzg IMenuCtl_AddItem wstrText=%s***", wstrText);	
 				}	
 				//Add End
+				*/
 				
 				 m_PromptMsg.pwszMsg = wstrText;	
 			}
@@ -6635,6 +6776,7 @@ static boolean HandleBtTextEditDialogEvent(CBTApp *pMe,
 
 			ITEXTCTL_SetMaxSize(pIText, maxLen);	
 
+			/*
 			//Add By zzg 2011_12_29	
 		   	{
 				char tempstr[256];
@@ -6646,7 +6788,8 @@ static boolean HandleBtTextEditDialogEvent(CBTApp *pMe,
 				DBGPRINTF("***zzg IMenuCtl_AddItem tempstr=%s***", tempstr);
 				DBGPRINTF("***zzg IMenuCtl_AddItem pText=%s***", pText);	
 			}	
-			//Add End
+			//Add End	
+			*/
 				
 			ITEXTCTL_SetText(pIText, pText, WSTRLEN(pText));			
 			ITEXTCTL_SetInputMode(pIText, IM);			
@@ -7537,10 +7680,36 @@ static boolean HandleFileProgressDialogEvent(CBTApp *pMe,
 
 		case EVT_DIALOG_END:
 		{
+			int     result = 0;
+			
 			pMe->m_fileprogInfo.numBytes	= 0;
 			pMe->m_fileprogInfo.objSize		= 0;	
 
-			IBTEXTOPP_Abort(pMe->mOPP.po);
+			if (NULL != pMe->mOPP.po)
+			{
+				IBTEXTOPP_Abort(pMe->mOPP.po);
+			}
+
+			//Add By zzg 2011_12_30
+			if (NULL != pMe->mFTP.po)
+			{				
+				if( pMe->mFTP.bObjectTransfer )
+				{
+					result = IBTEXTFTP_Abort(pMe->mFTP.po);
+					
+					if( result != SUCCESS )
+					{
+						MSG_MED( "Abort failed %d", result, 0, 0 );
+						//BTApp_ShowMessage( pMe, IDS_MSG_ABORT_FAILED, 0, 2 );
+					}
+					else
+					{
+						pMe->mFTP.bObjectTransfer = FALSE;
+						MSG_MED( "Aborted", 0, 0, 0 );
+					}
+				}					
+			}
+			//Add End
 
 			if ((pMe->mOPP.bConnected == TRUE) || ((pMe->mOPP.bConnecting == TRUE)))
 			{

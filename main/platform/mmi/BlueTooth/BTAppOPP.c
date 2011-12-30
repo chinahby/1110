@@ -1319,6 +1319,21 @@ void BTApp_OPPPush( CBTApp* pMe, AEEBTObjectType objType )
       else
       {
         MSG_ERROR( "OPP_Push() failed with %x", result, 0, 0 );
+		MSG_FATAL( "OPP_Push() failed with %x", result, 0, 0 );
+
+		//Add By zzg 2011_12_29	
+	   	{
+			char tempstr[256];
+
+			WSTRTOSTR(pwName, tempstr, 256);				
+			
+			UTF8TOWSTR((byte*)tempstr, 256, pwName, 	(256)*sizeof(AECHAR));	
+
+			DBGPRINTF("***zzg IMenuCtl_AddItem tempstr=%s***", tempstr);
+			DBGPRINTF("***zzg IMenuCtl_AddItem pwName=%s***", pwName);	
+		}	
+		//Add End	
+				
         BTApp_ShowMessage( pMe, IDS_MSG_OBJ_PUSH_FAILED, pwName, 4 );
       }
     }
@@ -1334,17 +1349,26 @@ void BTApp_OPPPushEx( CBTApp* pMe, char* filepath, AEEBTObjectType objType )
 {
   int result = SUCCESS;
   int i=0;
+
+  int tempresult = SUCCESS; 
   
   const char * pszName = filepath;
   
-  AECHAR* pwName = wDefaultObjectName;
+  AECHAR* pwName = wDefaultObjectName;  
 
+  //gb2312_to_ucs2((unsigned char *)pszName, STRLEN(pszName), wDefaultObjectName, sizeof(wDefaultObjectName));	//Add By zzg 2011_12_29
   STRTOWSTR(pszName, wDefaultObjectName, sizeof(wDefaultObjectName));
 
   MSG_FATAL("***zzg BTApp_OPPPushEx Start***", 0, 0, 0);
+  
+  DBGPRINTF("***zzg BTApp_OPPPushEx filepath=%s, pszName=%s***", filepath, pszName);
 
-  if ( IFILEMGR_Test( pMe->mOPP.pIFileMgr, pszName ) != SUCCESS )
-  {
+  tempresult = IFILEMGR_Test( pMe->mOPP.pIFileMgr, pszName );
+
+  MSG_FATAL("***zzg BTApp_OPPPushEx IFILEMGR_Test result=%d, bRegistered=%d***", tempresult, pMe->mOPP.bRegistered, 0);
+
+  if (tempresult != SUCCESS )
+  {	
     if ( pMe->mOPP.bRegistered != FALSE ) // server?
     {
       pwName = NULL;
@@ -1354,7 +1378,9 @@ void BTApp_OPPPushEx( CBTApp* pMe, char* filepath, AEEBTObjectType objType )
       BTApp_ShowMessage( pMe, IDS_MSG_OBJ_NOT_FOUND, wDefaultObjectName, 0 );
       result = EFAILED;
     }
-  }
+  }  
+  
+  MSG_FATAL("***zzg BTApp_OPPPushEx Start result=%x, bRegistered=%x***", result, pMe->mOPP.bRegistered, 0);
     
   if ( result == SUCCESS )
   {
@@ -1370,9 +1396,24 @@ void BTApp_OPPPushEx( CBTApp* pMe, char* filepath, AEEBTObjectType objType )
         //ShowBusyIcon( pMe->m_pShell, pMe->m_pIDisplay, &pMe->m_rect, FALSE );
       }
       else
-      {
+      {     		
         MSG_ERROR( "BTApp_OPPPExush() failed with %x", result, 0, 0 );
-        BTApp_ShowMessage( pMe, IDS_MSG_OBJ_PUSH_FAILED, pwName, 4 );
+		MSG_FATAL( "BTApp_OPPPExush() failed with %x", result, 0, 0 );
+
+		//Add By zzg 2011_12_29	
+	   	{
+			char tempstr[256];
+
+			WSTRTOSTR(pwName, tempstr, 256);				
+			
+			UTF8TOWSTR((byte*)tempstr, 256, pwName, 	(256)*sizeof(AECHAR));	
+
+			DBGPRINTF("***zzg IMenuCtl_AddItem tempstr=%s***", tempstr);
+			DBGPRINTF("***zzg IMenuCtl_AddItem pwName=%s***", pwName);	
+		}	
+		//Add End	
+		
+        BTApp_ShowMessage( pMe, IDS_MSG_OBJ_PUSH_FAILED, pwName, 4 );   
       }
     }
   } 
@@ -2382,7 +2423,21 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 #error code not present
 #endif 
 				{
-					pMe->bUpdateProgress	= FALSE;	//Add By zzg 2010_11_27					
+					pMe->bUpdateProgress	= FALSE;	//Add By zzg 2010_11_27	
+
+					//Add By zzg 2011_12_29	
+				   	{
+						char tempstr[256];
+
+						WSTRTOSTR(wDefaultObjectName, tempstr, 256);				
+						
+						UTF8TOWSTR((byte*)tempstr, 256, wDefaultObjectName, (256)*sizeof(AECHAR));	
+
+						DBGPRINTF("***zzg IMenuCtl_AddItem tempstr=%s***", tempstr);
+						DBGPRINTF("***zzg IMenuCtl_AddItem wDefaultObjectName=%s***", wDefaultObjectName);	
+					}	
+					//Add End
+					
 					BTApp_ShowMessage( pMe, msgID, wDefaultObjectName, 2 );		  
 				}
 			}
@@ -2423,7 +2478,21 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 			{
 				//if ( pMe->mOPP.bRegistered != TRUE  )
 				{
-					pMe->bUpdateProgress	= FALSE;	//Add By zzg 2010_11_27					
+					pMe->bUpdateProgress	= FALSE;	//Add By zzg 2010_11_27		
+
+					//Add By zzg 2011_12_29	
+				   	{
+						char tempstr[256];
+
+						WSTRTOSTR(wDefaultObjectName, tempstr, 256);				
+						
+						UTF8TOWSTR((byte*)tempstr, 256, wDefaultObjectName, (256)*sizeof(AECHAR));	
+
+						DBGPRINTF("***zzg IMenuCtl_AddItem tempstr=%s***", tempstr);
+						DBGPRINTF("***zzg IMenuCtl_AddItem wDefaultObjectName=%s***", wDefaultObjectName);	
+					}	
+					//Add End	
+		
 					BTApp_ShowMessage( pMe, msgID, wDefaultObjectName, 2 );
 				}
 			}
@@ -2509,6 +2578,27 @@ void BTApp_OPPConnect( CBTApp* pMe, AEEBTBDAddr* pBDAddr )
   BTApp_SetBondable( pMe );
   pMe->mOPP.remoteBDAddr = *pBDAddr;
   pMe->mOPP.bConnecting = FALSE;
+
+  MSG_FATAL("***zzg BTApp_OPPConnect***", 0, 0, 0);
+
+  	{
+		uint8 temp=0;
+		temp = IBTEXTOPP_Connect( pMe->mOPP.po, pBDAddr, 0 );
+
+		MSG_FATAL("***zzg BTApp_OPPConnect return=%x***", temp, 0, 0);
+
+		if ( temp != SUCCESS )
+		  {
+		    BTApp_ClearBondable( pMe ); // no need to be bondable anymore
+		    BTApp_ShowMessage( pMe, IDS_MSG_CONN_FAILED, NULL, 3 );
+		  }
+		  else
+		  {
+		    // BTApp_ShowBusyIcon( pMe ); // wait for connect confirm
+		  }
+	}
+
+  /*
   if ( IBTEXTOPP_Connect( pMe->mOPP.po, pBDAddr, 0 ) != SUCCESS )
   {
     BTApp_ClearBondable( pMe ); // no need to be bondable anymore
@@ -2518,6 +2608,7 @@ void BTApp_OPPConnect( CBTApp* pMe, AEEBTBDAddr* pBDAddr )
   {
     // BTApp_ShowBusyIcon( pMe ); // wait for connect confirm
   }
+  */
 }
 /* ==========================================================================
 FUNCTION BTApp_EnableOPP
