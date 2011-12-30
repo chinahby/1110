@@ -964,6 +964,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 				return TRUE;
 			}
 			pMe->m_penup = TRUE;
+			
 			callApp_draw_penup(pMe,wXPos,wYPos);
 			return TRUE;
 		}
@@ -1685,6 +1686,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 						}
 					}
 #endif
+					pMe->m_bShowPopMenu = TRUE;
                     return TRUE;
 
                 case AVK_SELECT:
@@ -12879,12 +12881,14 @@ static void callApp_draw_penup(CCallApp* pMe,int16 x,int16 y)
 				case 12:
 				{
 					boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_USER,AVK_SELECT,0);
+					pMe->m_bShowPopMenu = TRUE;
 				 	return ;
 				}
 					break;
 				case 13:
 				{
 						CallApp_Process_Send_Key_Release_Event(pMe);
+						pMe->m_bShowPopMenu = TRUE;
 				}
 					break;
 				case 14:
