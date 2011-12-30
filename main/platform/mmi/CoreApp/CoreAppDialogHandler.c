@@ -1139,6 +1139,35 @@ static boolean  IDD_ALARM_Handler(void       *pUser,
 
     CCoreApp *pMe = (CCoreApp *)pUser;
     MSG_FATAL("IDD_ALARM_Handler-----eCode=%d---wParam=%d",eCode,wParam,0);
+    
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+    if(eCode ==EVT_PEN_UP)
+        {
+            int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
+            int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
+            AEEDeviceInfo devinfo;
+            int nBarH ;
+            AEERect rc;
+             
+            nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+            MEMSET(&devinfo, 0, sizeof(devinfo));
+            ISHELL_GetDeviceInfo(pMe->a.m_pIShell, &devinfo);
+            SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);  
+            if(CORE_PT_IN_RECT(wXPos,wYPos,rc))
+            {
+                if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//×ó
+                {
+                    eCode=EVT_KEY;
+                    wParam=AVK_SELECT;
+                } 
+                else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//ÓÒ
+                { 
+                    eCode=EVT_KEY;
+                    wParam=AVK_CLR;
+                }
+            } 
+        }                             
+#endif            
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
