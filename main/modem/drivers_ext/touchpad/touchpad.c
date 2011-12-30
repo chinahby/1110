@@ -244,6 +244,7 @@ void touchpad_init( void )
 		touchpad_init_scanner();
 	    touchpad_dev_init = TRUE;
 	    touchpad_isr_open();
+        MSG_FATAL("touchpad_isr_open............00",0,0,0);
     }
 
     INTFREE();
@@ -286,6 +287,7 @@ boolean touchpad_register( touchpad_event_pfn cb)
 		if(!touchpad_polling_flag)
 		{
 			touchpad_isr_open();
+            MSG_FATAL("touchpad_isr_open............11",0,0,0);
 		}
 	}
 	else
@@ -337,7 +339,9 @@ boolean touchpad_isr_open()
 	
 	/* Let the sleep task know it is now ok to sleep*/
 	TOUCHPAD_SLEEP_ALLOW();
+    MSG_FATAL("[TP]: touchpad_isr_open000", 0, 0, 0);
 	return gpio_int_set_handler((gpio_int_type)TOUCHPAD_GPIO_INT, ACTIVE_HIGH, touchpad_pen_isr);
+    MSG_FATAL("[TP]: touchpad_isr_open111", 0, 0, 0);
 }
 
 boolean touchpad_isr_close()
@@ -547,7 +551,7 @@ boolean touchpad_check_pen_value(pen_event_type*pen_event,pen_value_type *pen_va
 
 	x = pen_value->pen_x_mv;
 	y = pen_value->pen_y_mv;
-
+    MSG_FATAL("x===%d,y=====%d",x,y,0);
 	if( touchpad_scan_mode == PEN_DISPTRACK_MODE)
 	{
 		delta_mv = (DELTA_MV2<<2); // *4  
@@ -556,7 +560,10 @@ boolean touchpad_check_pen_value(pen_event_type*pen_event,pen_value_type *pen_va
 	{
 		delta_mv = (DELTA_MV<<3); //*16   
 	}
-
+    MSG_FATAL("old_x[0]==%d,,,old_y[0]===%d",old_x[0],old_y[0],0);
+    MSG_FATAL("old_x[1]==%d,,,old_y[1]===%d",old_x[0],old_y[0],0);
+    MSG_FATAL("old_x[2]==%d,,,old_y[2]===%d",old_x[0],old_y[0],0);
+    MSG_FATAL("old_x[3]==%d,,,old_y[3]===%d",old_x[0],old_y[0],0);
 	if(pen_event->pen_state == PEN_DOWN ||pen_event->pen_state == PEN_STAY || pen_event->pen_state == PEN_MOVE)
 	{
 		if(trace_num >=1)
@@ -760,9 +767,13 @@ void touchpad_polling(int4 ms_interval)
     else
 	{
         touchpad_disable_polling();
-		cur_pen_event.pen_state = PEN_UP;
-        touchpad_write_array(&cur_pen_event);
-        cur_pen_event.pen_state = PEN_NONE;
+        MSG_FATAL("cur_pen_event.pen_state===%d",cur_pen_event.pen_state,0,0);
+		if(cur_pen_event.pen_state != PEN_NONE)
+		{
+			cur_pen_event.pen_state = PEN_UP;
+        	touchpad_write_array(&cur_pen_event);
+        	cur_pen_event.pen_state = PEN_NONE;
+		}
 		 /* Install an ISR to detect when  pen up*/
 		touchpad_isr_open();
 	}
@@ -863,6 +874,9 @@ boolean touchpad_read_value(pen_value_type *pen_value)
 	}
    
     MSG_FATAL("touchpad_read_value x = %d y = %d",pen_value->pen_x_mv,pen_value->pen_y_mv,0);
+    pen_value->pen_x_mv = touchpad_read_x();
+	pen_value->pen_y_mv = touchpad_read_y();
+    MSG_FATAL("0000touchpad_read_value x = %d y = %d",pen_value->pen_x_mv,pen_value->pen_y_mv,0);
     return TRUE;
 }
 
