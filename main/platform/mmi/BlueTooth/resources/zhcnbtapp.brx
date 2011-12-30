@@ -68,7 +68,7 @@
 		<Text>Spkr</Text>
 	</String>
 	<String Id="23" Name="IDS_MIC">
-		<Text>Mic</Text>
+		<Text>麦克</Text>
 	</String>
 	<String Id="24" Name="IDS_CONN_MODE">
 		<Text>连接模式</Text>
@@ -83,7 +83,7 @@
 		<Text>麦克风音量</Text>
 	</String>
 	<String Id="28" Name="IDS_BD_ADDR">
-		<Text>屋宇署地址</Text>
+		<Text>BD地址</Text>
 	</String>
 	<String Id="29" Name="IDS_BT_NAME">
 		<Text>蓝牙名字</Text>
@@ -107,7 +107,7 @@
 		<Text>网络设备</Text>
 	</String>
 	<String Id="36" Name="IDS_BY_BD_ADDR">
-		<Text>屋宇署地址</Text>
+		<Text>通过BD地址</Text>
 	</String>
 	<String Id="37" Name="IDS_ALL">
 		<Text>全部</Text>
@@ -152,7 +152,7 @@
 		<Text>编辑名称</Text>
 	</String>
 	<String Id="51" Name="IDS_PASS_KEY">
-		<Text>通的关键 %s</Text>
+		<Text>通的关键%s</Text>
 	</String>
 	<String Id="52" Name="IDS_DISCOVERED_DEVICES">
 		<Text>发现设备</Text>
@@ -251,10 +251,10 @@
 		<Text>删除</Text>
 	</String>
 	<String Id="84" Name="IDS_PUSH">
-		<Text>推动</Text>
+		<Text>发送</Text>
 	</String>
 	<String Id="85" Name="IDS_PULL">
-		<Text>拉</Text>
+		<Text>接收</Text>
 	</String>
 	<String Id="86" Name="IDS_REGISTER">
 		<Text>注册</Text>
@@ -275,7 +275,7 @@
 		<Text>OBEX服务器</Text>
 	</String>
 	<String Id="92" Name="IDS_PUT_FOLDER">
-		<Text>放在文件夹</Text>
+		<Text>放进文件夹</Text>
 	</String>
 	<String Id="93" Name="IDS_GET_FOLDER">
 		<Text>获取文件夹</Text>
@@ -287,7 +287,7 @@
 		<Text>认证</Text>
 	</String>
 	<String Id="96" Name="IDS_SRCH_BD_ADDR">
-		<Text>BD的地址的最显著的数字</Text>
+		<Text>BD的地址的显著的数字</Text>
 	</String>
 	<String Id="97" Name="IDS_TEST_MODE">
 		<Text>进入测试模式</Text>
@@ -371,7 +371,7 @@
 		<Text>建立ICP备调用失败！</Text>
 	</String>
 	<String Id="126" Name="IDS_MSG_TCS_CLEAR_CALL_FAILED">
-		<Text>ClearCall 失败!</Text>
+		<Text>清楚电话失败!</Text>
 	</String>
 	<String Id="127" Name="IDS_ICP_CLEAR_CALL">
 		<Text>清晰的通话</Text>
@@ -530,7 +530,7 @@
 		<Text>启用支持AVRCP</Text>
 	</String>
 	<String Id="212" Name="IDS_SWITCH_ROLE">
-		<Text>做好角色转换</Text>
+		<Text>角色转换</Text>
 	</String>
 	<String Id="213" Name="IDS_MASTER">
 		<Text>主</Text>
@@ -539,7 +539,7 @@
 		<Text>从</Text>
 	</String>
 	<String Id="215" Name="IDS_MSG_SWITCH_ROLE_SUCCESS">
-		<Text>角色切换Cmd的成功发行</Text>
+		<Text>角色切换Cmd的成功</Text>
 	</String>
 	<String Id="216" Name="IDS_MSG_SWITCH_ROLE_FAILED">
 		<Text>角色转换失败</Text>
@@ -692,7 +692,7 @@
 		<Text>无效的电话簿</Text>
 	</String>
 	<String Id="282" Name="IDS_PBAP_MSG_MAX_LIST_ZERO">
-		<Text>列表为空MaxListCount是0。项目号=%s</Text>
+		<Text>列表为空时最大列表计数是0。项目号=%s</Text>
 	</String>
 	<String Id="283" Name="IDS_PBAP_MSG_ABORT_REQ_FAIL">
 		<Text>中止失败</Text>
@@ -1211,7 +1211,7 @@
 		<Text>服务安全性</Text>
 	</String>
 	<String Id="1094" Name="IDS_PROMPT_REBOND">
-		<Text>重绑定设备 %s?</Text>
+		<Text>重绑定设备%s?</Text>
 	</String>
 	<String Id="1095" Name="IDS_PROMPT_PROCEED_BONDING">
 		<Text>使用密钥和设备绑定?</Text>
@@ -1652,7 +1652,7 @@
 		<Text>无法浏览"%s"文件夹.</Text>
 	</String>
 	<String Id="2068" Name="IDS_MSG_NO_OBEX_SERVERS">
-		<Text>没有数据库的OBEX服务器上，</Text>
+		<Text>没有数据库在OBEX服务器上，</Text>
 	</String>
 	<String Id="2069" Name="IDS_MSG_DEREG_SVR_FIRST">
 		<Text>Must de-register server first.</Text>
@@ -1754,19 +1754,19 @@
 		<Text>从数据库中删除所有的设备？</Text>
 	</String>
 	<String Id="2102" Name="IDS_PROMPT_UNBOND_ONE">
-		<Text>取消绑定 %s?</Text>
+		<Text>取消绑定%s?</Text>
 	</String>
 	<String Id="2103" Name="IDS_PROMPT_REMOVE_ONE">
-		<Text>删除 %s从数据库?</Text>
+		<Text>删除%s从数据库?</Text>
 	</String>
 	<String Id="2104" Name="IDS_PROMPT_USE_AUDIO_DEV">
 		<Text>Use %s  as audio device?</Text>
 	</String>
 	<String Id="2105" Name="IDS_PROMPT_CONNECT">
-		<Text>连接到 %s?</Text>
+		<Text>连接到%s?</Text>
 	</String>
 	<String Id="2106" Name="IDS_PROMPT_DISCONNECT">
-		<Text>从%s?断开连接</Text>
+		<Text>从%s断开连接</Text>
 	</String>
 	<String Id="2107" Name="IDS_PROMPT_ENTER_TEST_MODE">
 		<Text>Enter Test Mode?</Text>
