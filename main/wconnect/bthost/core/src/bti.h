@@ -1403,8 +1403,10 @@ typedef struct bt_event_q_info_struct
   #define DEFAULT_BT_NAME         CUST_MODEL_ID
 #else
 #ifdef CUST_EDITION
-#ifdef FEATURE_VERSION_S1000T
+#if defined (FEATURE_VERSION_S1000T)
   #define DEFAULT_BT_NAME         "V3 Dew"
+#elif defined(FEATURE_VERSION_W516)
+  #define DEFAULT_BT_NAME         "Q7"
 #else
   #define DEFAULT_BT_NAME         "Hitz 233C"
 #endif
