@@ -1178,6 +1178,20 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 
 
         case EVT_USER_REDRAW:
+				{
+					pMe->m_step = 0;
+					pMe->m_bDraOver = FALSE;
+					MSG_FATAL("pMe->m_PrsentPage=========%d",pMe->m_PrsentPage,0,0);
+					// 初始整个背景及全部初始图标	
+		    		DrawMatrix(pMe);
+		    		// 绘制聚焦过程动画
+		    		MoveCursorTo(pMe, pMe->m_nRow, pMe->m_nColumn);
+					MSG_FATAL("pMe->m_nRow===%d,pMe->m_nColumn=%d",pMe->m_nRow,pMe->m_nColumn,0);
+					DrawMatrixStr(pMe);
+					pMe->m_bmove = FALSE;
+					ISHELL_CancelTimer(pMe->m_pShell,(PFNNOTIFY)AutoMovePage,pMe);
+					IDISPLAY_UpdateEx(pMe->m_pDisplay, TRUE);
+				}
             return TRUE;
             
         case EVT_DIALOG_END:
@@ -1613,44 +1627,33 @@ static void AutoMovePage(MainMenu *pMe)
 		MSG_FATAL("AutoMovePage........................",0,0,0);
 		if(pMe->m_bDraOver)
 		{
-			pMe->m_step = 0;
-			pMe->m_bDraOver = FALSE;
-			MSG_FATAL("pMe->m_PrsentPage=========%d",pMe->m_PrsentPage,0,0);
-			// 初始整个背景及全部初始图标	
-    		DrawMatrix(pMe);
-    		// 绘制聚焦过程动画
-    		MoveCursorTo(pMe, pMe->m_nRow, pMe->m_nColumn);
-			MSG_FATAL("pMe->m_nRow===%d,pMe->m_nColumn=%d",pMe->m_nRow,pMe->m_nColumn,0);
-			DrawMatrixStr(pMe);
-			pMe->m_bmove = FALSE;
-			ISHELL_CancelTimer(pMe->m_pShell,(PFNNOTIFY)AutoMovePage,pMe);
 			ISHELL_PostEvent(pMe->m_pShell,AEECLSID_MAIN_MENU,EVT_USER_REDRAW,0,0);
 		}
 		else
 		{
-			if(pMe->m_step<7)
+			if(pMe->m_step<5)
 			{
 				pMe->m_step++;
 			}
 			else
 			{
-				pMe->m_step = 7;
+				pMe->m_step = 5;
 				pMe->m_bDraOver = TRUE;
 				
 			}
 			MSG_FATAL("ISHELL_SetTimer................",0,0,0);
 			(void)ISHELL_SetTimer(pMe->m_pShell,
-                                    100,
+                                    150,
                                     (PFNNOTIFY)AutoMovePage,
                                     pMe);
 			if(pMe->m_bRight)
 			{
 				
-				MovePen(pMe,(7-pMe->m_step)*27);
+				MovePen(pMe,(5-pMe->m_step)*35);
 			}
 			else
 			{
-				MovePen(pMe,-((7-pMe->m_step)*27));	
+				MovePen(pMe,-((5-pMe->m_step)*35));	
 			}
 			
 		}
