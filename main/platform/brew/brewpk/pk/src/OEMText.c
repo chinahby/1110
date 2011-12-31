@@ -1786,7 +1786,11 @@ boolean OEM_TextKeyPress(OEMCONTEXT hTextCtl,
     // Press and hold the number key to get the number
 	#ifndef FEATURE_ALL_KEY_PAD
 	#ifndef FEATURE_VERSION_W515V3
+	#ifdef FEATURE_VERSION_X3
+	if ((eCode != EVT_KEY) && !(eCode == EVT_KEY_HELD && dwKeyCode == AVK_STAR))
+	#else
     if ((eCode != EVT_KEY) && !(eCode == EVT_KEY_HELD && dwKeyCode == AVK_0))
+	#endif
     #else
     if ((eCode == EVT_KEY_RELEASE)||(eCode == EVT_KEY_PRESS))
     #endif
@@ -11658,7 +11662,7 @@ static boolean TextCtl_NumbersKey(TextCtlContext *pContext, AEEEvent eCode,AVKTy
 	    {   
 #if !defined (FEATURE_ALL_KEY_PAD)
 	        case AVK_STAR:
-#ifdef FEATURE_VERSION_W515V3
+#if defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_X3)
               if(eCode == EVT_KEY_HELD)
               {
                   if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
