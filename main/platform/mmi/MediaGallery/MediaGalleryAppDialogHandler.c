@@ -2512,9 +2512,9 @@ static boolean MediaGalleryApp_OnDefaultOperate(CMediaGalleryApp* pMe,
             {
                 ICONFIG_SetItem(pConfig, CFGI_MMSVIDEO, pCurNode->szName, sizeof(pCurNode->szName));   
                 MGAppPopupMenu_OperationDone(pMe, MG_FNSHOP_DONE);
+                RELEASEIF(pConfig);
                 return TRUE;                
             }
-            RELEASEIF(pConfig);
             return FALSE;
          }
 #endif           
@@ -2542,9 +2542,9 @@ static boolean MediaGalleryApp_OnDefaultOperate(CMediaGalleryApp* pMe,
             {
                 ICONFIG_SetItem(pConfig, CFGI_MMSVIDEO, pCurNode->szName, sizeof(pCurNode->szName));   
                 MGAppPopupMenu_OperationDone(pMe, MG_FNSHOP_DONE);
+                RELEASEIF(pConfig);
                 return TRUE;
             }
-            RELEASEIF(pConfig);
             return FALSE;
          }
 #endif         
@@ -10864,7 +10864,7 @@ static boolean MGAppPopupMenu_OnSetMMSImage(CMediaGalleryApp *pMe,
                                        IDS_MG_LARGEFILE,
                                        MESSAGE_ERR,
                                        BTBAR_BACK);
-
+      RELEASEIF(pConfig);
       return FALSE;
    }
 
@@ -10878,6 +10878,7 @@ static boolean MGAppPopupMenu_OnSetMMSImage(CMediaGalleryApp *pMe,
       if(!pSelData || !pSelData->szName)
       {
          MSG_FATAL("Data is invalidate",0,0,0);
+         RELEASEIF(pConfig);
          return FALSE;
       }
       
@@ -10892,6 +10893,7 @@ static boolean MGAppPopupMenu_OnSetMMSImage(CMediaGalleryApp *pMe,
    }
    else if(pMe->m_ImgViewOps != MG_OP_FORMMS_IMAGE)
    {
+      RELEASEIF(pConfig); 
       return FALSE;
    }
 
@@ -10918,8 +10920,10 @@ static boolean MGAppPopupMenu_OnSetMMSImage(CMediaGalleryApp *pMe,
                                        BTBAR_BACK);
 
       MSG_FATAL("IImage interface is 0x%x", pMe->m_pImage,0,0);
+      RELEASEIF(pConfig);
       return FALSE;
    }
+   RELEASEIF(pConfig);
    return TRUE;
 }//MGAppPopupMenu_OnSetWallpaper
 #endif
