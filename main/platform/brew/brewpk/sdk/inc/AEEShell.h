@@ -1026,6 +1026,7 @@ static __inline boolean ISHELL_SendURL( IShell *pShell, const char *pszURL )
 #define ST_TRANSPARENTBACK    0x40000000  // set static text background transparent, liubin 2008.10.23
 #define ST_TRANSPARENT        0x80000000  // Transparent Text
 #define ST_GRAPHIC_BG        0x00000010  // use graphic background
+#define ST_SPECIAL_BG        0x00000020  // use special background	Add By zzg 2011_12_31
 #endif /*CUST_EDITION*/
 QINTERFACE(IStatic)
 {

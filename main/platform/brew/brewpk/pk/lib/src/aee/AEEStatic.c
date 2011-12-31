@@ -1554,8 +1554,9 @@ static void AStatic_RedrawText(AStatic * pme)
     	}			 
 		 //Add By zzg 2011_12_08
 		 //Ë¢ÐÂSTATICµÄ±³¾°ÇøÓò (·ÀÖ¹Auto_scrollµÄË¢ÐÂ»ìÂÒ)
-		 else
+		 else  if(pme->m_dwProps & ST_SPECIAL_BG)
 		 {
+		 	
 			IBitmap *      pFrame;
 			AEEBitmapInfo  bi;
 
