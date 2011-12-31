@@ -6532,7 +6532,9 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
                     if( LOCAL_NUMBER_INPUT == pMe->m_nInputMode || OPT_TEXT_INPUT == pMe->m_nInputMode)
                     {
                     	//Add By zzg 2011_12_15
-                    	if (CContApp_CheckNumberIsInValid(pMe, pTextCtl))
+                    	if (CContApp_CheckNumberIsInValid(pMe, pTextCtl)&&((pMe->m_nFldInputID == AEE_ADDRFIELD_PHONE_GENERIC)
+							||(pMe->m_nFldInputID == AEE_ADDRFIELD_PHONE_HOME)||(pMe->m_nFldInputID == AEE_ADDRFIELD_PHONE_WORK)
+							||(pMe->m_nFldInputID == AEE_ADDRFIELD_PHONE_FAX)))
                     	{
                     		 pMe->m_bNumberInvalid = TRUE;		
                     		 CLOSE_DIALOG(DLGRET_NUM_UNAVAILD);
@@ -10650,7 +10652,9 @@ static boolean  CContApp_HandleEditDlgEvent( CContApp  *pMe,
                 case AVK_SELECT:
                 {
 					//Add By zzg 2011_12_15
-                	if (CContApp_CheckNumberIsInValid(pMe, pTextCtl))
+                	if (CContApp_CheckNumberIsInValid(pMe, pTextCtl)&&((pMe->m_nFldInputID == AEE_ADDRFIELD_PHONE_GENERIC)
+							||(pMe->m_nFldInputID == AEE_ADDRFIELD_PHONE_HOME)||(pMe->m_nFldInputID == AEE_ADDRFIELD_PHONE_WORK)
+							||(pMe->m_nFldInputID == AEE_ADDRFIELD_PHONE_FAX)))
                 	{
                 		 pMe->m_bNumberInvalid = TRUE;		
                 		 CLOSE_DIALOG(DLGRET_NUM_UNAVAILD);
@@ -14782,7 +14786,7 @@ static boolean  CContApp_HandlePopNumFldDlgEvent( CContApp  *pMe,
             // 做了勾选的处理，看起来菜单是被勾选了的，实际上因为没有EVT_KEY_PRESS:AVK_RIGHT，逻辑上菜单对应的号码
             // 还没有标记到newMask。
             
-            if(AVK_SELECT == wParam || AVK_INFO == wParam)
+           if(AVK_SELECT == wParam || AVK_INFO == wParam)
             {
                 //pMe->m_wSelectFldOpts = wParam;
                 curSelectFieldInfo.wIndex = pMe->m_wSelectCont;
@@ -14796,6 +14800,7 @@ static boolean  CContApp_HandlePopNumFldDlgEvent( CContApp  *pMe,
                 }
                 else
                 {
+
                     CContApp_SetSelectNodeFieldMark(pSelectFieldListRoot, &curSelectFieldInfo);
                     if(pCurSelectFieldNode->SelectFieldInfo.wFieldMask == 0)
                     {
@@ -14888,6 +14893,7 @@ static boolean  CContApp_HandlePopNumFldDlgEvent( CContApp  *pMe,
 			break;
 #endif 
         case EVT_CTL_SEL_CHANGED :
+			MSG_FATAL("EVT_CTL_SEL_CHANGED......",0,0,0);
             pMe->m_wSelectFldOpts = wParam;
             return TRUE;
             

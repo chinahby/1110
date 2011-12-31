@@ -4030,6 +4030,7 @@ static NextFSMAction Handler_STATE_SELECTPOS(CContApp *pMe)
                     pMe->m_nSaveType = CONTCFG_SAVETYPE_PHONE;
                     if(STARTMETHOD_ADDFIELD == pMe->m_eStartMethod)
                     {
+                    	MSG_FATAL("IDS_POSITION_PHONE.............",0,0,0);
                         pMe->m_eAddFldType = ADDFLDTOPHONE;
                     }
                     break;
@@ -4058,7 +4059,7 @@ static NextFSMAction Handler_STATE_SELECTPOS(CContApp *pMe)
                     }
                     return NFSMACTION_WAIT;
                 }
-                    
+                MSG_FATAL("IDS_POSITION_PHONE......0000",0,0,0);
                 MOVE_TO_STATE(STATE_MAINLIST);
                 break;
             }
@@ -4084,6 +4085,7 @@ static NextFSMAction Handler_STATE_SELECTPOS(CContApp *pMe)
             }
             else
             {
+            	MSG_FATAL("IDS_POSITION_PHONE......1111111",0,0,0);
                 pMe->m_wSelectEdit = IDI_ADDNEW_MENU_NAME;
                 MOVE_TO_STATE(STATE_ADDNEW);
             }
@@ -6789,7 +6791,11 @@ static NextFSMAction Handler_STATE_SELECT(CContApp *pMe)
         }
 
         case DLGRET_POPNUMFLD :
+			#ifdef FEATURE_VERSION_X3
+			MOVE_TO_STATE(STATE_DETAIL_MULTI);
+			#else
             MOVE_TO_STATE(STATE_POPNUMFLD);
+			#endif
             break;
 
         case DLGRET_ERR :
