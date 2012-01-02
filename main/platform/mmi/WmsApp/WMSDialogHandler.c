@@ -6245,6 +6245,9 @@ static boolean IDD_CALLBACKNUM_Handler(void   *pUser,
                     DRAW_BOTTOMBAR(BTBAR_BACK)
                 }
             }
+            #ifdef FEATURE_LCD_TOUCH_ENABLE
+            TSIM_NumberKeypad(TRUE);
+            #endif
             IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
             
             (void)ITEXTCTL_Redraw(pTextCtl);
@@ -6263,6 +6266,9 @@ static boolean IDD_CALLBACKNUM_Handler(void   *pUser,
             {
                 pMe->m_msSend.m_szCallBkNum[0] = 0;
             }
+            #ifdef FEATURE_LCD_TOUCH_ENABLE
+            TSIM_NumberKeypad(FALSE);
+            #endif
             return TRUE;
             
         case EVT_KEY:
