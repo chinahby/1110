@@ -681,7 +681,162 @@ uint8* MMS_WTP_Encode_String(uint8* buf,char* pszStr)
  
     return buf;
 }
+static void MMS_Encode_Address(uint8* pIn)
+{
+    uint8* pAddCur = pIn;
+    
+    boolean isNumber = TRUE;
+    boolean isMail = FALSE;
+    boolean isIpV4 = FALSE;
+    boolean isIpV6 = FALSE;
 
+    uint16 nCount = 0;
+    uint16 nIndex = 0;
+
+    if(pIn == NULL || STRLEN((char*)pIn) == 0)
+        return ;
+        
+    while(*pAddCur != '\0')
+    {
+        switch(*pAddCur)
+        {
+            case '.':
+            {
+                switch(nIndex)
+                {
+                    case 0:
+                    {
+                        if(nCount == 3)
+                        {
+                            isIpV4 = TRUE;
+                        }
+                        else
+                        {
+                            isIpV4 = FALSE;
+                        }
+                    }
+                    break;
+                    case 1:
+                    case 2:
+                    {
+                        if(isIpV4 && nCount == 3)
+                        {
+                            isIpV4 = TRUE;
+                           
+                        }
+                        else
+                        {
+                            isIpV4 = FALSE;
+                        }
+                    }
+                    break;
+                    default:
+                    {
+                       isIpV4 = FALSE;
+                    }
+                    break;
+                }
+                nIndex++;
+                nCount = 0;
+                pAddCur++;
+                continue;
+            }
+            break;
+            case ':':
+            {
+                switch(nIndex)
+                {
+                    case 0:
+                    {
+                        if(nCount == 4)
+                        {
+                            isIpV6 = TRUE;
+                        }
+                        else
+                        {
+                            isIpV6 = FALSE;
+                        }
+                    }
+                    break;
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 6:
+                    {
+                        if(isIpV6 && nCount == 4)
+                        {
+                            isIpV6 = TRUE; 
+                        }
+                        else
+                        {
+                            isIpV6 = FALSE;
+                        }
+                    }
+                    break;
+                    default:
+                    {
+                       isIpV6 = FALSE;
+                    }
+                    break;
+                }
+                nIndex++;
+                nCount = 0;
+                pAddCur++;
+                continue;
+            }
+            break;
+            case '@':
+            {
+                isMail = TRUE;
+            }
+            break;
+            case '/':
+            {
+                if((STRLEN((char*)pIn) > (pAddCur  - pIn + 4))
+                    && *(pAddCur + 1) == 'T'
+                    && *(pAddCur + 2) == 'Y'
+                    && *(pAddCur + 3) == 'P'
+                    && *(pAddCur + 4) == 'E')
+                {
+                    return ;
+                }
+            }
+            break;
+            default:
+            {                
+                isNumber = (isNumber && (*pAddCur >= '0' && *pAddCur <= '9'))? TRUE : FALSE;
+            }
+            break;
+        }
+        
+        nCount++;
+        pAddCur++;        
+    }
+
+    
+    if(isIpV6)
+    {
+        STRCAT((char*)pIn,"/TYPE=IPv6");
+    }
+    else if(isIpV4)
+    {
+        STRCAT((char*)pIn,"/TYPE=IPv4");
+    }
+    else if(isMail)
+    {
+        ;
+    }
+    if(isNumber)
+    {
+        STRCAT((char*)pIn,"/TYPE=PLMN");
+    }
+    else
+    {
+        ;
+    }
+}
 static int MMS_Encode_header(uint8* mms_context,int nType,MMS_WSP_ENCODE_SEND* pData)
 {
     uint8* pCurPos = (uint8*)mms_context;	
@@ -722,18 +877,11 @@ static int MMS_Encode_header(uint8* mms_context,int nType,MMS_WSP_ENCODE_SEND* p
             
             //  X-Mms-MMS-Version
             pData->pMessage->iMMSVersion = 10;
-        	
-            if(STRLEN((char*)pData->pMessage->hTo) && !STRSTR((char*)pData->pMessage->hTo,"/TYPE=PLMN"))
-                STRCAT((char*)pData->pMessage->hTo,"/TYPE=PLMN");
-                
-            if(STRLEN((char*)pData->pMessage->hCc)&&!STRSTR((char*)pData->pMessage->hCc,"/TYPE=PLMN"))
-                STRCAT((char*)pData->pMessage->hCc,"/TYPE=PLMN");
-                
-            if(STRLEN((char*)pData->pMessage->hBcc)&&!STRSTR((char*)pData->pMessage->hBcc,"/TYPE=PLMN"))
-                STRCAT((char*)pData->pMessage->hBcc,"/TYPE=PLMN");
 
-            if(STRLEN((char*)pData->pMessage->hFrom)&&!STRSTR((char*)pData->pMessage->hFrom,"/TYPE=PLMN"))
-                STRCAT((char*)pData->pMessage->hFrom,"/TYPE=PLMN");
+        	MMS_Encode_Address(pData->pMessage->hTo);
+        	MMS_Encode_Address(pData->pMessage->hCc);
+        	MMS_Encode_Address(pData->pMessage->hBcc);
+        	MMS_Encode_Address(pData->pMessage->hFrom);
 
 	        pCurPos = WMS_MMS_PDU_SendRequest(pCurPos,pData);
 	    }
@@ -769,9 +917,8 @@ static int MMS_Encode_header(uint8* mms_context,int nType,MMS_WSP_ENCODE_SEND* p
             pData->pReadReport->bReadStutas = TRUE;
 
             pData->pReadReport->iMessageClass = MMS_CLASS_AUTO;
-            
-            if(STRLEN((char*)pData->pReadReport->hTo)&&!STRSTR((char*)pData->pReadReport->hTo,"/TYPE=PLMN"))
-                STRCAT((char*)pData->pReadReport->hTo,"/TYPE=PLMN");
+
+            MMS_Encode_Address(pData->pReadReport->hTo);
             
 	        pCurPos = WMS_MMS_PDU_ReadRecInd(pCurPos,pData);
 	    }
@@ -1683,7 +1830,7 @@ uint8* WMS_MMS_PDUHeader_Encode(uint8* pBuf,int nKind,uint8* pValue,int32 nValue
 uint8* WMS_MMS_BUFFERGet()
 {
     if(pBuf == NULL)
-        pBuf = (uint8*)MALLOC(MSG_MAX_PACKET_SIZE);
+        pBuf = (uint8*)sys_malloc(MSG_MAX_PACKET_SIZE);
         
     return pBuf;
 }
@@ -1695,7 +1842,11 @@ void WMS_MMS_BUFFERReset()
 
 void WMS_MMS_BUFFERRelease()
 {
-    FREEIF(pBuf);
+    if(pBuf != NULL)
+    {
+        sys_free(pBuf);
+        pBuf = NULL;
+    }
 }
 
 void WMS_MMS_MmsWspDecDataRelease(MMS_WSP_DEC_DATA** ppdata,Mms_pdu_types nDataType)
@@ -3216,6 +3367,29 @@ static int MMS_WSP_DecodeContentTypeHeader(uint8* pData, int iDataLen, WSP_DEC_D
 
 	return consumed;/*contenttypevaluelen;*/
 }
+void WMS_MMS_PDU_Decode_BuffClean(MMS_WSP_DEC_DATA* decdata,Mms_pdu_types type)
+{
+    switch(type)
+    {
+        case MMS_PDU_SEND_CONF:
+        {
+            MMS_WSP_DEC_MESSAGE_RECEIVED *message = &decdata->message;
+            int i = 0;
+            while(i < message->mms_data.frag_num && i < WMSMMS_FRAGMENTCOUNT)
+            {
+                FREEIF(message->mms_data.fragment[i].pContent)
+                i++;
+            };
+            MEMSET(message,NULL,sizeof(MMS_WSP_DEC_MESSAGE_RECEIVED);
+        }
+        break;
+        default:
+        {
+        }
+        break;
+    }
+    
+}
 int WMS_MMS_PDU_Decode(MMS_WSP_DEC_DATA* decdata,uint8* ptr, int datalen,uint8 *ePDUType)
 {
 	int len,i=0,iDataOffset,j;
@@ -3301,6 +3475,10 @@ int WMS_MMS_PDU_Decode(MMS_WSP_DEC_DATA* decdata,uint8* ptr, int datalen,uint8 *
 	{
 	    MMS_DEBUG(("[WMS_MMS_PDU_Decode] *ePDUType == 0"));
 		return MMC_GENERIC;
+	}
+	else
+	{
+	    WMS_MMS_PDU_Decode_BuffClean(decdata,*ePDUType);
 	}
 
 	i = 2;
@@ -4358,6 +4536,7 @@ void WMS_MMSWaitStack(void *pShell)
         WMS_MMSState(pParam->nState,pParam->wParam,pParam->dwParam);
         MMS_DEBUG(("[MSG][WMS_MMSState]: pParam->nState:%d,wParam:%d,dwParam:%d!"));
         IVector_RemoveElementAt(pSocketParam,0);
+        FREEIF(pParam);
     }
     
     ISHELL_SetTimer(pShell,2000,&WMS_MMSWaitStack,pShell);
