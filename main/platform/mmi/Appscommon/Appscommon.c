@@ -2716,11 +2716,13 @@ void DrawPromptMessage (IDisplay *pIDisplay,
         }  
     }
     DrawBottomBar(pIDisplay, &bottomParam);  
-
+	
+/*
 #ifdef FEATURE_VERSION_W208S
 	strrect.x += 5;
 	strrect.dx -= 10;
-#endif	
+#endif
+*/
      
     //Draw string  
     ISTATIC_SetRect(pStatic, &strrect);
@@ -3080,10 +3082,13 @@ void DrawBottomBar_Ex(IShell    *m_pIShell, IDisplay  * pIDisplay, BottomBar_e_T
     AECHAR      wszBuf[16]= {(AECHAR)'\0'};
     int nBarH = 0;
     int nFontH = 0;
+	
     if ((NULL == m_pIShell) || (NULL == pIDisplay))
     {
         return;
     }
+
+	
 
     nBarH = GetBottomBarHeight(pIDisplay);
     nFontH = IDISPLAY_GetFontMetrics(pIDisplay, AEE_FONT_NORMAL, NULL, NULL);
@@ -3225,22 +3230,25 @@ void DrawBottomBar_Ex(IShell    *m_pIShell, IDisplay  * pIDisplay, BottomBar_e_T
 			nResID_R = IDS_FMENU;
 			break;	
     }
+	
     if(nResID_L)
     {
         ISHELL_LoadResString(m_pIShell,AEE_APPSCOMMONRES_LANGFILE,nResID_L,wszBuf, sizeof(wszBuf));
         DrawTextWithProfile(m_pIShell, pIDisplay,RGB_WHITE_NO_TRANS,AEE_FONT_NORMAL, wszBuf, -1,0, 0, &rc,  IDF_ALIGN_MIDDLE | IDF_ALIGN_LEFT  | IDF_TEXT_TRANSPARENT);
-    } 
+    } 	
+	
     if(nResID_R)
     {
         ISHELL_LoadResString(m_pIShell,AEE_APPSCOMMONRES_LANGFILE,nResID_R,wszBuf, sizeof(wszBuf));
         DrawTextWithProfile(m_pIShell, pIDisplay,RGB_WHITE_NO_TRANS,AEE_FONT_NORMAL, wszBuf, -1,0, 0, &rc,  IDF_ALIGN_MIDDLE | IDF_ALIGN_RIGHT  | IDF_TEXT_TRANSPARENT);
-    }
+    }	
+	
 	//add by yangdecai 2010-08-04
 	if(nResID_M)
 	{
 		ISHELL_LoadResString(m_pIShell,AEE_APPSCOMMONRES_LANGFILE,nResID_M,wszBuf, sizeof(wszBuf));
         DrawTextWithProfile(m_pIShell, pIDisplay,RGB_WHITE_NO_TRANS,AEE_FONT_NORMAL, wszBuf, -1,0, 0, &rc,  IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER | IDF_TEXT_TRANSPARENT);
-	}
+	}	
 }
 
 /*==============================================================================
