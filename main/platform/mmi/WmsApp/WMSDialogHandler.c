@@ -18197,7 +18197,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
     IImage* pIImage = NULL;
     IImage* pISound = NULL;
     IImage* pIVideo = NULL;    
-    static MMS_WSP_DEC_DATA *pDecdata = NULL;
+    MMS_WSP_DEC_DATA *pDecdata = NULL;
     MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] eCode:0x%x, wParam=0x%x",eCode,wParam,0);
     if (NULL == pMe)
     {
@@ -18695,22 +18695,31 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
 			return TRUE;
 
         case EVT_DIALOG_END:
-            MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] EVT_DIALOG_END",0 ,0 , 0);
-            if (NULL != pMe->m_pMenu)
             {
-                IMENUCTL_Release(pMe->m_pMenu);
-                pMe->m_pMenu = NULL;
-            }      
-            if(pMe->m_pMedia != NULL)
-            {
-                IMedia_Stop(pMe->m_pMedia);
+                uint8 i = 0;
+                MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] EVT_DIALOG_END",0 ,0 , 0);
+                if (NULL != pMe->m_pMenu)
+                {
+                    IMENUCTL_Release(pMe->m_pMenu);
+                    pMe->m_pMenu = NULL;
+                }      
+                if(pMe->m_pMedia != NULL)
+                {
+                    IMedia_Stop(pMe->m_pMedia);
+                }
+                RELEASEIF(pMe->m_pMedia);
+                pMe->m_CurrentState == PLAYER_IDLE;
+                MEMSET(&pMe->m_ResData,NULL,sizeof(WSP_MMS_RESOURCE));
+                FREEIF(pMe->m_DecData.message.hBody);
+                FREEIF(pMe->m_DecData.message.mms_data.head_info.pContent);
+                for(i = 0;i < pMe->m_DecData.message.mms_data.frag_num;i++)
+                {
+                    FREEIF(pMe->m_DecData.message.mms_data.fragment[i].pContent);
+                }            
+                RELEASEIF(pIImage);
+                RELEASEIF(pISound);
+                RELEASEIF(pIVideo);  
             }
-            RELEASEIF(pMe->m_pMedia);
-            pMe->m_CurrentState == PLAYER_IDLE;
-            MEMSET(&pMe->m_ResData,NULL,sizeof(WSP_MMS_RESOURCE));
-            RELEASEIF(pIImage);
-            RELEASEIF(pISound);
-            RELEASEIF(pIVideo);            
             return TRUE;
 
         case EVT_CTL_SEL_CHANGED:   

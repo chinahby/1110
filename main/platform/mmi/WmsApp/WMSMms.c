@@ -3377,10 +3377,10 @@ void WMS_MMS_PDU_Decode_BuffClean(MMS_WSP_DEC_DATA* decdata,Mms_pdu_types type)
             int i = 0;
             while(i < message->mms_data.frag_num && i < WMSMMS_FRAGMENTCOUNT)
             {
-                FREEIF(message->mms_data.fragment[i].pContent)
+                FREEIF(message->mms_data.fragment[i].pContent);
                 i++;
             };
-            MEMSET(message,NULL,sizeof(MMS_WSP_DEC_MESSAGE_RECEIVED);
+            MEMSET(message,NULL,sizeof(MMS_WSP_DEC_MESSAGE_RECEIVED));
         }
         break;
         default:
