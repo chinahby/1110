@@ -1046,7 +1046,7 @@ static void DispMoveStepInfo(PinTu *pMe)
    ISHELL_LoadResString(pMe->a.m_pIShell, PINTU_RES_FILE_LANG,IDS_MOVE_TOTAL_STEPS, szTemp, sizeof(szTemp));
 
    WSPRINTF(szBuf,16 *sizeof(AECHAR),szTemp,pMe->m_moveStep);
-   SETAEERECT(&tempRect,0,(pMe->m_cyScreen - PROMPT_INFO_HEIGHT),(pMe->m_cxScreen/3-2),PROMPT_INFO_HEIGHT);
+   SETAEERECT(&tempRect,0,(pMe->m_cyScreen - PROMPT_INFO_HEIGHT),(pMe->m_cxScreen/3+10),PROMPT_INFO_HEIGHT);
    IDISPLAY_FillRect(pMe->a.m_pIDisplay,&tempRect,BACK_GROUND_COLOR);
    (void)IDISPLAY_DrawText(pMe->a.m_pIDisplay,
                            AEE_FONT_NORMAL,szBuf, -1,0, 0,&tempRect,
@@ -2743,7 +2743,7 @@ static void DrawExitButton(PinTu *pMe)
 
         IIMAGE_SetParm(pExitButton,IPARM_ROP, AEE_RO_TRANSPARENT, 0);
         IIMAGE_GetInfo(pExitButton, &ImageInfo);
-        IIMAGE_Draw(pExitButton,(pMe->m_cxScreen/3 + ImageInfo.cx/2 + 5),(pMe->m_cyScreen - (ImageInfo.cy + PROMPT_INFO_HEIGHT)/2 - 2));
+        IIMAGE_Draw(pExitButton,(pMe->m_cxScreen/3 + ImageInfo.cx/2 + 15),(pMe->m_cyScreen - (ImageInfo.cy + PROMPT_INFO_HEIGHT)/2 - 2));
         IIMAGE_Release( pExitButton );
         pExitButton = NULL;
     }
