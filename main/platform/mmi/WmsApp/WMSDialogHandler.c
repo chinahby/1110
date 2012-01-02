@@ -11302,6 +11302,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
             switch (wParam)
             {
                 case AVK_CLR:
+                    MSG_FATAL("IDD_WRITEMSG_Handler AVK_CLR",0,0,0);
                     #ifdef FEATURE_ALL_KEY_PAD
                     if(dwParam == 1)
                     {
@@ -11319,13 +11320,30 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     }
                     else
                     {
+#ifdef FEATURE_USES_MMS
+                        if(pMe->m_isMMS)
+                        { 
+                            char pszPath[AEE_MAX_FILE_NAME]={'\0'};
+                            DBGPRINTF("MMSImageName=%s len=%d", pszPath, STRLEN(pszPath));
+                            ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSIMAGE,pszPath, sizeof(pszPath));      
+                            ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSSOUND,pszPath, sizeof(pszPath)); 
+                            ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSVIDEO,pszPath, sizeof(pszPath)); 
+                            FREEIF(pMe->m_EncData.pMessage);
+                            RELEASEIF(pMe->m_pMMSImage);
+                            RELEASEIF(pMe->m_pMMSSOUND);
+                            RELEASEIF(pMe->m_pMMSVIDEO);
+                            pMe->m_isMMS = FALSE;
+                        }
+#endif                         
                     	pMe->m_bwriteclr = TRUE;
                     	CLOSE_DIALOG(DLGRET_CANCELED)
                     }
                     #else
+                    MSG_FATAL("IDD_WRITEMSG_Handler AVK_CLR 1",0,0,0);
                     if (NULL == pMe->m_pMenu)
                     {
 #ifdef FEATURE_USES_MMS
+                `       MSG_FATAL("IDD_WRITEMSG_Handler AVK_CLR 2",0,0,0);
                         if(pMe->m_isMMS)
                         { 
                             char pszPath[AEE_MAX_FILE_NAME]={'\0'};
@@ -18176,6 +18194,9 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
     IStatic * pStatic = NULL;
     IMenuCtl* pMenuCtl = NULL;
     uint32 dwMask;
+    IImage* pIImage = NULL;
+    IImage* pISound = NULL;
+    IImage* pIVideo = NULL;    
     static MMS_WSP_DEC_DATA *pDecdata = NULL;
     MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] eCode:0x%x, wParam=0x%x",eCode,wParam,0);
     if (NULL == pMe)
@@ -18224,9 +18245,6 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                 CtlAddItem ai;
                 AEERect rc={0};
                 AEEDeviceInfo devinfo={0};
-                IImage* pIImage = NULL;
-                IImage* pISound = NULL;
-                IImage* pIVideo = NULL;
                 MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] EVT_DIALOG_INIT",0 ,0 , 0);
                 MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] g_mmsDataInfoMax=%d", g_mmsDataInfoMax,0,0);
                 pDecdata = &pMe->m_DecData;
@@ -18677,6 +18695,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
 			return TRUE;
 
         case EVT_DIALOG_END:
+            MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] EVT_DIALOG_END",0 ,0 , 0);
             if (NULL != pMe->m_pMenu)
             {
                 IMENUCTL_Release(pMe->m_pMenu);
@@ -18689,6 +18708,9 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
             RELEASEIF(pMe->m_pMedia);
             pMe->m_CurrentState == PLAYER_IDLE;
             MEMSET(&pMe->m_ResData,NULL,sizeof(WSP_MMS_RESOURCE));
+            RELEASEIF(pIImage);
+            RELEASEIF(pISound);
+            RELEASEIF(pIVideo);            
             return TRUE;
 
         case EVT_CTL_SEL_CHANGED:   
@@ -18749,6 +18771,10 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                                                 0);
                     }
 #endif      
+                    RELEASEIF(pIImage);
+                    RELEASEIF(pISound);
+                    RELEASEIF(pIVideo);  
+
                     return TRUE;
                        
                     case AVK_SELECT:

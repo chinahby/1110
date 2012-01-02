@@ -4127,9 +4127,12 @@ static void ConnectError(void* pDdata, int nError)
                                          EVT_MMS_MSG_SEND_FINSH,
                                          FALSE, 
                                          0);
+            pUser->bConnected = FALSE;
+            MMSSocketClose(&pUser);
 		}
 		break;
 
+        case AEE_NET_ERROR:
 		case AEE_NET_ECONNREFUSED:
 		{
 			MSG_FATAL("ConnectError AEE_NET_ECONNREFUSED",0,0,0);
@@ -4139,6 +4142,8 @@ static void ConnectError(void* pDdata, int nError)
                                          EVT_MMS_MSG_SEND_FINSH,
                                          FALSE, 
                                          0);
+            pUser->bConnected = FALSE;
+            MMSSocketClose(&pUser);
 		}
 		break; 
 			
@@ -4151,6 +4156,8 @@ static void ConnectError(void* pDdata, int nError)
                                          EVT_MMS_MSG_SEND_FINSH,
                                          FALSE, 
                                          0);
+            pUser->bConnected = FALSE;
+            MMSSocketClose(&pUser);
 		}
 		break; 
 	}

@@ -761,7 +761,7 @@ static void CWmsApp_FreeAppData(WmsApp *pMe)
         char MMSImageName[MG_MAX_FILE_NAME]={'/0'};
         MSG_FATAL("pMe->m_pMMSSOUND != NULL",0,0,0);
         ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSSOUND,MMSImageName, sizeof(MMSImageName));       
-        RELEASEIF(pMe->m_pMMSImage);
+        RELEASEIF(pMe->m_pMMSSOUND);
     }    
 
     if(pMe->m_pMMSVIDEO!= NULL)
