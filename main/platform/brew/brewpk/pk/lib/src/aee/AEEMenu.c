@@ -1484,6 +1484,22 @@ static boolean IMenuCtl_AddItem(IMenuCtl * po, const char * pszResFile, uint16 w
       else
          return FALSE;
    }
+
+	/*
+	//Add By zzg 2011_12_29	
+   	{
+		char tempstr[256];
+
+		WSTRTOSTR(pText, tempstr, 256);		
+		
+		UTF8TOWSTR((byte*)tempstr, 256, pText, 	(256)*sizeof(AECHAR));	
+
+		DBGPRINTF("***zzg IMenuCtl_AddItem tempstr=%s***", tempstr);
+		DBGPRINTF("***zzg IMenuCtl_AddItem pText=%s***", pText);	
+	}	
+	//Add End
+	*/
+   
    
    // Non owner drawn menu item
    MEMSET(&ai, 0, sizeof(CtlAddItem));
