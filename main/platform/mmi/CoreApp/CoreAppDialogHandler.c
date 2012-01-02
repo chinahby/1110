@@ -2955,7 +2955,11 @@ static boolean  IDD_LOADING_Handler(void       *pUser,
                                   pMe);
 #ifdef FEATURE_RUIM_PHONEBOOK
 #ifdef FEATURE_VERSION_W208S
+#ifdef FEATURE_UIM
 			if(TRUE)
+#else
+			if(FALSE)
+#endif				
 #else
 			if(IsRunAsUIMVersion())
 #endif            
@@ -7954,7 +7958,11 @@ static void CoreApp_GetSPN(CCoreApp *pMe)
 #endif
     {
 #ifdef FEATURE_VERSION_W208S
+#ifdef FEATURE_UIM
 		if (TRUE)
+#else
+		if (FALSE)
+#endif			
 #else
 		if(IsRunAsUIMVersion())
 #endif     
