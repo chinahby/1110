@@ -955,7 +955,13 @@ static boolean AppTimer_HandleEvent(CAppTimer *pme, AEEEvent eCode, uint16 wPara
                 IALERT_StopMp3Alert(pme->m_pAlert);
                 TimerNotifyMP3PlayerAlertEvent(pme, FALSE);
             }
-#endif
+#endif  
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+          if(wParam==AVK_SYMBOL)
+            {
+              return FALSE;
+            }
+#endif          
             switch(wParam)
             {
 
