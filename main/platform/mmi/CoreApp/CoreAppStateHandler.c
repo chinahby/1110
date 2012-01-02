@@ -623,7 +623,13 @@ static NextFSMAction COREST_VERIFYUIM_Handler(CCoreApp *pMe)
             /* generate subscription changed event */
             SendRTREConfig(pMe);
 #endif
-            if (!IsRunAsUIMVersion())
+
+#ifdef FEATURE_VERSION_W208S
+			if (FALSE)
+#else
+			if (!IsRunAsUIMVersion())
+#endif 
+            
             {
                 pMe->m_eUIMErrCode = UIMERR_NOUIM;
                 MOVE_TO_STATE(COREST_STARTUPANI);
@@ -1052,7 +1058,12 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
         case DLGRET_MSGOK:
 #endif
 #ifdef FEATURE_UTK2
-            if (IsRunAsUIMVersion() && (pMe->m_eUIMErrCode == UIMERR_NONE))
+
+#ifdef FEATURE_VERSION_W208S
+			if (pMe->m_eUIMErrCode == UIMERR_NONE)
+#else
+			if (IsRunAsUIMVersion() && (pMe->m_eUIMErrCode == UIMERR_NONE))
+#endif             
             { // 系统运行于有卡版本且卡正确无误
                 ui_enable_proactive(TRUE);
                 // UTK Profile download
@@ -1163,8 +1174,13 @@ static NextFSMAction COREST_STARTUPANI_Handler(CCoreApp *pMe)
                  pMe->m_eUIMErrCode = UIMERR_NONE;
             }
             
- #if defined( FEATURE_IDLE_LOCK_RUIM)&&defined(FEATURE_UIM)
-            if (!pMe->bunlockuim && IsRunAsUIMVersion() && IRUIM_IsCardConnected(pMe->m_pIRUIM))
+#if defined( FEATURE_IDLE_LOCK_RUIM)&&defined(FEATURE_UIM)
+
+#ifdef FEATURE_VERSION_W208S
+			if (!pMe->bunlockuim && IRUIM_IsCardConnected(pMe->m_pIRUIM))
+#else
+			if (!pMe->bunlockuim && IsRunAsUIMVersion() && IRUIM_IsCardConnected(pMe->m_pIRUIM))
+#endif            
             {
                 boolean lockFlg = TRUE;     //not find right MCC and MNC value lable should lock current RUIM 
                 isAllowIMSI(pMe,&lockFlg);
@@ -1334,7 +1350,12 @@ static NextFSMAction COREST_POWERONAPPSDATAINIT_Handler(CCoreApp *pMe)
                 MOVE_TO_STATE(COREST_POWERONSYSINIT)
             }
 #ifdef FEATURE_RUIM_PHONEBOOK
-            if(IsRunAsUIMVersion())
+
+#ifdef FEATURE_VERSION_W208S
+			 if (TRUE)
+#else
+			 if (IsRunAsUIMVersion())
+#endif            
             {
                 if(IRUIM_IsCardConnected(pMe->m_pIRUIM))
                 {

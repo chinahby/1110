@@ -2954,7 +2954,11 @@ static boolean  IDD_LOADING_Handler(void       *pUser,
                                   DialogTimeoutCallback, 
                                   pMe);
 #ifdef FEATURE_RUIM_PHONEBOOK
-            if(IsRunAsUIMVersion())
+#ifdef FEATURE_VERSION_W208S
+			if(TRUE)
+#else
+			if(IsRunAsUIMVersion())
+#endif            
             {
                 if(IRUIM_IsCardConnected(pMe->m_pIRUIM))
                 {
@@ -4855,13 +4859,11 @@ static void CoreApp_TimeKeyguard(void *pUser)
 {
     CCoreApp    *pMe = (CCoreApp *)pUser;
     pMe->m_b_set_lock = TRUE;
-
-	MSG_FATAL("***zzg CoreApp_TimeKeyguard***", 0, 0, 0);
 	
     if(pMe->m_b_set_lock)
-    {
-        OEMKeyguard_SetState(TRUE);
-        CoreApp_UpdateBottomBar(pMe);
+    {    	
+        OEMKeyguard_SetState(TRUE);		
+        CoreApp_UpdateBottomBar(pMe);		
         //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
         pMe->m_b_set_lock = FALSE;
     }
@@ -6261,9 +6263,8 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 // 绘制待机界面的 "Menu         Contacts"
 static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 {
-    BottomBar_e_Type    eBBarType = BTBAR_NONE;
-
-    
+    BottomBar_e_Type    eBBarType = BTBAR_NONE;    
+	
     if(pMe->m_bemergencymode)
     {
         eBBarType = BTBAR_BACK;
@@ -7952,7 +7953,12 @@ static void CoreApp_GetSPN(CCoreApp *pMe)
     if(pMe->svc_p_name[0] == 0)
 #endif
     {
-        if(IsRunAsUIMVersion())
+#ifdef FEATURE_VERSION_W208S
+		if (TRUE)
+#else
+		if(IsRunAsUIMVersion())
+#endif     
+        
         {
             static int SPNRetry = 5;
             if(EFAILED == IRUIM_Read_Svc_P_Name(pMe->m_pIRUIM,pMe->svc_p_name))

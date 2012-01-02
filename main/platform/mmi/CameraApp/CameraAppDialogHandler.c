@@ -64,6 +64,13 @@ static boolean CameraApp_PicHandleEvent(CCameraApp *pMe,
                                         uint16 wParam, 
                                         uint32 dwParam);
 
+// 对话框IDD_CVIDEO事件处理函数
+static boolean CameraApp_VideoHandleEvent(CCameraApp *pMe, 
+                                        AEEEvent eCode, 
+                                        uint16 wParam, 
+                                        uint32 dwParam);
+
+
 // 对话框IDD_POPMSG事件处理函数
 static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
                                             AEEEvent   eCode,
@@ -219,7 +226,6 @@ static void CameraApp_SetCameraCaptureSize(CCameraApp *pMe,
 
 // 拍照后，照片处理函数
 static void CameraApp_HandleSnapshotPic(CCameraApp *pMe);
-
 
 // 设置Camera Preview的参数
 static void CameraApp_SetParamAfterPreview(CCameraApp * pMe);
@@ -489,6 +495,9 @@ boolean CameraApp_RouteDialogEvent(CCameraApp *pMe, AEEEvent eCode, uint16 wPara
   
         case IDD_CPIC:
             return CameraApp_PicHandleEvent(pMe, eCode, wParam, dwParam);
+
+		case IDD_CVIDEO:
+            return CameraApp_VideoHandleEvent(pMe, eCode, wParam, dwParam);	
 
         case IDD_POPMSG:
             return CameraApp_PopMSGHandleEvent(pMe, eCode, wParam, dwParam);
@@ -1008,7 +1017,9 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
         case EVT_KEY_HELD:         
             return TRUE;
 
-        case EVT_KEY_PRESS:           
+        case EVT_KEY_PRESS:    
+			MSG_FATAL("***zzg CameraApp_PreviewHandleEvent EVT_KEY_PRESS wParam=%x, m_bCapturePic=%x", wParam,pMe->m_bCapturePic,0);
+			
             // 如果当前在拍照，不处理AVK_END按键以外的按键事件
             if((wParam != AVK_END) && (pMe->m_bCapturePic == TRUE))
             {
@@ -1190,10 +1201,21 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
 	                    return TRUE;
 	                }            
 
-	                ICAMERA_Stop(pMe->m_pCamera);
-	                
-	                pMe->m_nCameraState = CAM_STARTRECORD;					
-	                CameraApp_RecordVideo(pMe);
+	                ICAMERA_Stop(pMe->m_pCamera);   
+
+					//Add By zzg 2012_01_02
+					MSG_FATAL("***zzg Priview m_nCameraState=%x***", pMe->m_nCameraState, 0, 0);
+					
+					if (pMe->m_nCameraState == CAM_RECORDING)
+					{
+						CLOSE_DIALOG(DLGRET_VIDEOMENU);
+					}
+					else
+					//Add End	
+					{
+						pMe->m_nCameraState = CAM_STARTRECORD;	
+	                	CameraApp_RecordVideo(pMe);
+					}
                 }
                 break;
                     
@@ -1675,6 +1697,196 @@ static boolean CameraApp_PicHandleEvent(CCameraApp *pMe, AEEEvent eCode, uint16 
 
 /*==============================================================================
 函数：
+       CameraApp_VideoHandleEvent
+说明：
+       IDD_CPIC对话框事件处理函数
+       
+参数：
+       pMe [in]：指向CameraApp Applet对象结构的指针。该结构包含小程序的特定信息。
+       eCode [in]：事件代码。
+       wParam：事件相关数据。
+       dwParam：事件相关数据。
+       
+返回值：
+       TRUE：传入事件被处理。
+       FALSE：传入事件被忽略。
+       
+备注：
+       
+==============================================================================*/
+static boolean CameraApp_VideoHandleEvent(CCameraApp *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
+{  
+    MSG_FATAL("CameraApp_VideoHandleEvent eCode=0x%x, wParam=0x%x, dwParam=0x%x",eCode, wParam, dwParam);
+    switch(eCode)
+    {
+        case EVT_DIALOG_INIT:          
+            return TRUE;
+ 
+        case EVT_DIALOG_START:   
+        	//Add By zzg 2010_09_01  			
+#ifdef FEATURE_APP_MUSICPLAYER	
+			if (app_media_scheduler() == APP_MEDIA_IMPACT_BY_MP3)
+			{
+				ISHELL_SendEvent(pMe->m_pShell,
+				     AEECLSID_APP_MUSICPLAYER,
+				     EVT_ALARM,
+				     TRUE,
+				     TRUE);
+			}
+#endif         
+			//Add End
+			
+            ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_CAMERA, EVT_USER_REDRAW, NULL, NULL);
+            return TRUE;
+            
+        //Add By zzg 2010_09_01      
+        case EVT_DIALOG_END:
+        {        	
+#ifdef FEATURE_APP_MUSICPLAYER
+		    if (app_media_scheduler() == APP_MEDIA_IMPACT_BY_MP3)
+		    {
+		        ISHELL_SendEvent(pMe->m_pShell,
+		                         AEECLSID_APP_MUSICPLAYER,
+		                         EVT_ALARM,
+		                         FALSE,
+		                         TRUE);
+		    } 
+#endif 			
+ 			return TRUE;
+ 		}
+ 		//Add End    
+
+		
+        case EVT_USER_REDRAW:    	
+		{
+			AECHAR wfileName[MIN_PIC_WCHAR_NAME_LEN];			
+			AEERect bottom_rc;
+			
+			SETAEERECT(&bottom_rc, 0, pMe->m_rc.dy - BOTTOMBAR_HEIGHT, pMe->m_rc.dx, BOTTOMBAR_HEIGHT);
+			
+			IDISPLAY_EraseRect(pMe->m_pDisplay, &bottom_rc);
+    
+    		STRTOWSTR(pMe->m_sCaptureFileName, wfileName, MIN_PIC_WCHAR_NAME_LEN);	
+           
+			if (WSTRLEN(wfileName)>0)
+			{      
+			    DrawTextWithProfile(pMe->m_pShell, 
+			                        pMe->m_pDisplay, 
+			                        RGB_BLACK, 
+			                        AEE_FONT_NORMAL, 
+			                        wfileName, 
+			                        -1, 
+			                        0, 
+			                        0, 
+			                        &pMe->m_rc, 
+			                        IDF_ALIGN_TOP|IDF_ALIGN_RIGHT|IDF_TEXT_TRANSPARENT);
+			}
+
+            //CameraApp_DrawBottomBarText(pMe, BTBAR_SAVE_DELETE);
+            {
+				BottomBar_Param_type BarParam;					
+				MEMSET(&BarParam, 0, sizeof(BarParam)); 		
+				BarParam.eBBarType = BTBAR_SAVE_DELETE; 				
+				
+				DrawBottomBar(pMe->m_pDisplay, &BarParam);					
+			}            
+
+			IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+            return TRUE;
+        }
+            
+        case EVT_KEY:
+            switch(wParam)
+            {
+                case AVK_CLR:                                                       
+                    if(pMe->m_pFileMgr)
+                    {
+                        IFILEMGR_Remove(pMe->m_pFileMgr, pMe->m_sCurrentFileName);
+                    }
+                    break;
+                    
+                case AVK_SELECT:
+                case AVK_INFO:
+                    MSG_FATAL("CameraApp_VideoHandleEvent AVK_INFO",0,0,0);
+#ifdef FEATURE_USES_MMS                    
+                    if(pMe->m_isFormMMS)
+                    {
+                       DBGPRINTF("CameraApp_VideoHandleEvent CurrentFileName=%s",pMe->m_sCurrentFileName); 
+                       ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSIMAGE,
+                                       pMe->m_sCurrentFileName, sizeof(pMe->m_sCurrentFileName));   
+                        pMe->m_isFormMMS = FALSE;
+                        ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);
+                        if(pMe->m_nCameraState == CAM_PREVIEW)
+                        {
+                            ICAMERA_Stop(pMe->m_pCamera);
+                            pMe->m_nCameraState = CAM_STOP;
+                        }
+                        ISHELL_CloseApplet(pMe->m_pShell, FALSE);
+                        MSG_FATAL("CameraApp_PopMSGHandleEvent END",0,0,0); 
+                        return TRUE;
+                    }
+#endif                    
+                    break;
+                    
+                default:
+                    return TRUE;
+            } 
+            
+            pMe->m_wMsgID = IDS_DONE;
+            pMe->m_nMsgTimeout = TIMEOUT_MS_MSGDONE;
+            CLOSE_DIALOG(DLGRET_POPMSG);
+            return TRUE;
+ 
+        case EVT_KEY_PRESS:   
+            return TRUE;
+ 
+        case EVT_KEY_RELEASE:
+            return TRUE;
+ 
+        case EVT_KEY_HELD:
+            return TRUE;  
+
+#ifdef FEATURE_LCD_TOUCH_ENABLE//andrew add for LCD touch
+		case EVT_PEN_UP:
+			{
+				AEEDeviceInfo devinfo;
+				int nBarH ;
+				AEERect rc;
+				int16 wXPos = (int16)AEE_GET_X(dwParam);
+				int16 wYPos = (int16)AEE_GET_Y(dwParam);
+                MSG_FATAL("CameraApp_VideoHandleEvent EVT_PEN_UP, wXPos=%d, wYPos=%d",wXPos, wYPos, 0);
+				nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+        
+				MEMSET(&devinfo, 0, sizeof(devinfo));
+				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+
+				if(TOUCH_PT_IN_RECT(wXPos,wYPos,rc))
+				{
+                    MSG_FATAL("CameraApp_CameraCFGHandleEvent TOUCH_PT_IN_RECT",0, 0, 0);
+					if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//左
+					{
+						return CameraApp_PicHandleEvent(pMe, EVT_KEY, AVK_SELECT, 0);
+					}
+                    if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//右
+					{						
+						 return CameraApp_PicHandleEvent(pMe, EVT_KEY, AVK_CLR, 0);
+					}
+				}
+
+			}
+			break;
+#endif              
+    }
+    return FALSE;
+
+}
+
+
+
+
+/*==============================================================================
+函数：
        CameraApp_PopMSGHandleEvent
 说明：
        IDD_POPMSGC对话框事件处理函数
@@ -1748,7 +1960,8 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
             return TRUE;                                                                       
             
         case EVT_USER_REDRAW:
-            if(pMe->m_ePreState == STATE_CPIC)
+            //if(pMe->m_ePreState == STATE_CPIC)
+            if ((pMe->m_ePreState == STATE_CPIC) || (pMe->m_ePreState == STATE_CVIDEO)) 
             {
                 IDISPLAY_ClearScreen(pMe->m_pDisplay);
             }
@@ -4174,7 +4387,29 @@ static void CameraApp_RecordVideo(CCameraApp *pMe)
         STRCPY(pMe->m_sCaptureFileName, pMe->m_sCurrentFileName+STRLEN(MG_PHONEVIDEOS_PATH));
     }
 
-    
+	/*
+	if (HS_HEADSET_ON())
+	{
+		MSG_FATAL("***zzg HS_HEADSET_ON() TRUE", 0,0,0);
+		snd_set_device(SND_DEVICE_HANDSET, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	
+		snd_set_device(SND_DEVICE_HEADSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);	
+	}
+	else
+	{	
+		MSG_FATAL("***zzg HS_HEADSET_ON() FALSE", 0,0,0);
+		snd_set_device(SND_DEVICE_HEADSET, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	
+		snd_set_device(SND_DEVICE_HANDSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);	
+	}
+	*/
+	
+
+	//Add By zzg 2011_12_30		
+	//result = ICAMERA_SetAudioEncode(pMe->m_pCamera, AEECLSID_MEDIAAAC, 0);	
+	result = ICAMERA_SetAudioEncode(pMe->m_pCamera, AEECLSID_MEDIAQCP, 13);	//MM_QCP_FORMAT_FIXED_12_2_AMR
+	MSG_FATAL("***zzg ICAMERA_SetAudioEncode result=%d",result,0,0);
+	//Add End
+
+	    
     pMe->m_nCameraState = CAM_STARTINGRECORD;
 
     result = ICAMERA_SetVideoEncode(pMe->m_pCamera,AEECLSID_MEDIAMPEG4,0);
