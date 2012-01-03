@@ -364,8 +364,8 @@
 
 // pop timeout
 #define TIMEOUT_MS_MSGBOX     3000
-#define TIMEOUT_MS_MSGDONE    1000
-#define TIMEOUT_MS_QUICK      300
+#define TIMEOUT_MS_MSGDONE    2000	//1000
+#define TIMEOUT_MS_QUICK      1000	//300
 
 // file name lenth
 #define MIN_FILE_NAME_LEN      64

@@ -646,7 +646,7 @@ static boolean CameraApp_MainMenuHandleEvent(CCameraApp *pMe, AEEEvent eCode, ui
                     	pMe->m_nCameraStorage = OEMNV_CAMERA_STORAGE_MEMORY_CARD;
                     }
 #endif
-                    CLOSE_DIALOG(DLGRET_POPMSG);
+                    CLOSE_DIALOG(DLGRET_POPMSG);                    
                     break;
 
                 case IDS_ITEM_CAMERA_GALLERY:
@@ -1063,7 +1063,9 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
 					if(SUCCESS == ICAMERA_Stop(pMe->m_pCamera))
 	                {
 	                    pMe->m_bIsPreview = FALSE;
-	                    (void)ISHELL_SendEvent(pMe->m_pShell, AEECLSID_APP_CAMERA, EVT_USER_REDRAW, 0, 0);
+	                    //(void)ISHELL_SendEvent(pMe->m_pShell, AEECLSID_APP_CAMERA, EVT_USER_REDRAW, 0, 0);
+
+						CLOSE_DIALOG(DLGRET_VIDEOMENU);		//Add By zzg 2012_01_02	
 	                } 
                 }
                 else
@@ -1118,7 +1120,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
 	                    pMe->m_nMsgTimeout = TIMEOUT_MS_MSGBOX;
 	                    ICAMERA_Stop(pMe->m_pCamera);
 	                    pMe->m_bIsPreview = FALSE;
-	                    CLOSE_DIALOG(DLGRET_POPMSG);
+	                    CLOSE_DIALOG(DLGRET_POPMSG);	                   
 						
 	                    return TRUE;
 	                }
@@ -1197,7 +1199,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
 	                    pMe->m_nMsgTimeout = TIMEOUT_MS_MSGBOX;
 	                    ICAMERA_Stop(pMe->m_pCamera);
 	                    pMe->m_bIsPreview = FALSE;
-	                    CLOSE_DIALOG(DLGRET_POPMSG);
+	                    CLOSE_DIALOG(DLGRET_POPMSG);	                    
 	                    return TRUE;
 	                }            
 
@@ -1647,7 +1649,7 @@ static boolean CameraApp_PicHandleEvent(CCameraApp *pMe, AEEEvent eCode, uint16 
             
             pMe->m_wMsgID = IDS_DONE;
             pMe->m_nMsgTimeout = TIMEOUT_MS_MSGDONE;
-            CLOSE_DIALOG(DLGRET_POPMSG);
+            CLOSE_DIALOG(DLGRET_POPMSG);            
             return TRUE;
  
         case EVT_KEY_PRESS:   
@@ -1834,7 +1836,7 @@ static boolean CameraApp_VideoHandleEvent(CCameraApp *pMe, AEEEvent eCode, uint1
             
             pMe->m_wMsgID = IDS_DONE;
             pMe->m_nMsgTimeout = TIMEOUT_MS_MSGDONE;
-            CLOSE_DIALOG(DLGRET_POPMSG);
+            CLOSE_DIALOG(DLGRET_POPMSG);           
             return TRUE;
  
         case EVT_KEY_PRESS:   
@@ -1909,7 +1911,9 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
                                             uint16     wParam,
                                             uint32     dwParam)
 {
-    static IStatic *pStatic = NULL;       
+    static IStatic *pStatic = NULL;     
+
+	MSG_FATAL("***zzg CameraApp_PopMSGHandleEvent eCode=%x***", eCode, 0, 0);
     
     switch (eCode)
     {
@@ -1929,8 +1933,10 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
 			}
 #endif         
 			//Add End
-			
-            if((pMe->m_nMsgTimeout != 0) && (pMe->m_wMsgID != IDS_MSG_WAITING))
+
+			MSG_FATAL("***zzg CameraApp_PopMSGHandleEvent m_nMsgTimeout=%d, m_wMsgID=%d***", pMe->m_nMsgTimeout, pMe->m_wMsgID, 0);
+
+            if((pMe->m_nMsgTimeout != 0) && (pMe->m_wMsgID != IDS_MSG_WAITING))           
             {
                 (void)ISHELL_SetTimer(pMe->m_pShell,
                                       pMe->m_nMsgTimeout,
@@ -2078,24 +2084,32 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
                                      CameraApp_DialogTimeout,
                                      pMe);
             return TRUE;
-            
+
+		case EVT_KEY_PRESS:
         case EVT_KEY:
             // 进Preview的 时候限制按键
+            MSG_FATAL("***zzg POPMsg eCode=%x, wParam=%x, m_wMsgID=%d***", eCode, wParam, pMe->m_wMsgID);
+			
             if(pMe->m_wMsgID == IDS_MSG_WAITING)
             {
+            	MSG_FATAL("***zzg POPMsg return***", 0, 0, 0);
                 return TRUE;
             }
             
             switch (wParam)
             {
-                case AVK_INFO:
-                    return TRUE;
+                //case AVK_INFO:
+                    //return TRUE;
                     
-                case AVK_CLR:
-                     CLOSE_DIALOG(DLGRET_CANCELED);
-                     return TRUE;
-                     
+                //case AVK_CLR:
+                     //CLOSE_DIALOG(DLGRET_CANCELED);
+                     //return TRUE;
+
+				case AVK_INFO:
+				case AVK_CLR:	
                 case AVK_SELECT:
+					MSG_FATAL("***zzg CameraApp AVK_SELECT m_nMsgTimeout=%d***", pMe->m_nMsgTimeout, 0, 0);
+					
                     if(pMe->m_nMsgTimeout == 0)
                     {
                         int nMediaDevice;
@@ -4427,7 +4441,7 @@ static void CameraApp_RecordVideo(CCameraApp *pMe)
         ICAMERA_Stop(pMe->m_pCamera);
         pMe->m_nCameraState = CAM_STOP;
         pMe->m_bRePreview = TRUE;
-        CLOSE_DIALOG(DLGRET_POPMSG);
+        CLOSE_DIALOG(DLGRET_POPMSG);        
         return;
     }
 #else
@@ -4501,7 +4515,7 @@ static void CameraApp_RecordSnapShot(CCameraApp *pMe)
         ICAMERA_Stop(pMe->m_pCamera);
         pMe->m_nCameraState = CAM_STOP;
         pMe->m_bRePreview = TRUE;
-        CLOSE_DIALOG(DLGRET_POPMSG);
+        CLOSE_DIALOG(DLGRET_POPMSG);        
         return;
     }
 
@@ -5311,7 +5325,7 @@ void CameraApp_AppEventNotify(CCameraApp *pMe, int16 nCmd, int16 nStatus)
 	                pMe->m_bRePreview = TRUE;
 	                pMe->m_wMsgID = IDS_MSG_CAPTURE_FAILED;
 	                pMe->m_nMsgTimeout = TIMEOUT_MS_MSGDONE;
-	                CLOSE_DIALOG(DLGRET_POPMSG);
+	                CLOSE_DIALOG(DLGRET_POPMSG);	                
 	            }
 	        #ifdef FEATURE_MOVIE_RECORD_SUPPORT
 	            else if(pMe->m_nCameraState == CAM_STARTINGRECORD)
@@ -5319,7 +5333,7 @@ void CameraApp_AppEventNotify(CCameraApp *pMe, int16 nCmd, int16 nStatus)
 	                pMe->m_bRePreview = TRUE;
 	                pMe->m_wMsgID = IDS_CAMERA_RECORD_FAILED;
 	                pMe->m_nMsgTimeout = TIMEOUT_MS_MSGDONE;
-	                CLOSE_DIALOG(DLGRET_POPMSG);
+	                CLOSE_DIALOG(DLGRET_POPMSG);	                
 	            }
 	        #endif
 	            break;
@@ -5348,7 +5362,7 @@ void CameraApp_AppEventNotify(CCameraApp *pMe, int16 nCmd, int16 nStatus)
                 pMe->m_bRePreview = TRUE;
                 pMe->m_wMsgID = IDS_MSG_CAPTURE_FAILED;
                 pMe->m_nMsgTimeout = TIMEOUT_MS_MSGDONE;
-                CLOSE_DIALOG(DLGRET_POPMSG);
+                CLOSE_DIALOG(DLGRET_POPMSG);               
             }
             break;
             
