@@ -631,9 +631,6 @@
 	<String Id="1031" Name="IDS_MMS_SIZE_TOO_BIG">
 		<Text>Size of MMS too large</Text>
 	</String>
-	<String Id="1032" Name="IDS_STRING_1032">
-		<Text></Text>
-	</String>
 	<String Id="1033" Name="IDS_GETTINGFROM">
 		<Text>Receiving...</Text>
 	</String>
