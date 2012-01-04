@@ -1832,7 +1832,7 @@ __inline int MGExplorer_UpdateMediaMenuTitle(CMediaGalleryApp *pMe,
    int nItemCount;
    int nSelIdx;
    int nRet = SUCCESS;
-   const char *cpszCountFormat = " (%d/%d)";
+   const char *cpszCountFormat = "(%d/%d)";
    char *pszCount;
    uint16 nLen = STRLEN(cpszCountFormat) + 11;
    uint16 nTitleLen = MG_MAX_FILE_NAME + nLen;
