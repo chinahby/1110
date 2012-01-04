@@ -10433,6 +10433,8 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                                 MSG_FATAL("ImageIndex=%d", ImageIndex,0,0);
                                // IMENUCTL_SetItemText(pMenuCtl, ImageIndex++, NULL, 0, pMe->m_msSend.m_szMessage);
                                 IMENUCTL_SetItemText(pMenuCtl, ImageIndex++, NULL, 0, FileName);
+                                RELEASEIF(pMe->m_pMMSImage);
+                                pMe->m_hasImage = TRUE;
                                 pszBasename = NULL;
                                 MEMSET(FileName, 0, sizeof(FileName));
                                 AddMimeResIntoMms(pMe,MMSImagepszPath);
@@ -10458,6 +10460,8 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                             }                   
                             MSG_FATAL("SoundIndex=%d", SoundIndex,0,0);
                             IMENUCTL_SetItemText(pMenuCtl, SoundIndex++, NULL, 0, FileName);
+                            RELEASEIF(pMe->m_pMMSSOUND);
+                            pMe->m_hasSound = TRUE;
                             pszBasename = NULL;
                             MEMSET(FileName, 0, sizeof(FileName));
                             AddMimeResIntoMms(pMe,MMSSoundpszPath);
@@ -10478,6 +10482,8 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                                return EFAILED;
                             }            
                             IMENUCTL_SetItemText(pMenuCtl, VideoIndex++, NULL, 0, FileName);
+                            RELEASEIF(pMe->m_pMMSVIDEO);
+                            pMe->m_hasVideo = TRUE;
                             pszBasename = NULL;
                             MEMSET(FileName, 0, sizeof(FileName));
 
@@ -11292,9 +11298,9 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                         ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSSOUND,pszPath, sizeof(pszPath)); 
                         ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSVIDEO,pszPath, sizeof(pszPath)); 
                         FREEIF(pMe->m_EncData.pMessage);
-                        RELEASEIF(pMe->m_pMMSImage);
-                        RELEASEIF(pMe->m_pMMSSOUND);
-                        RELEASEIF(pMe->m_pMMSVIDEO);
+                        pMe->m_hasImage = FALSE;
+                        pMe->m_hasSound = FALSE;
+                        pMe->m_hasVideo = FALSE;
                         pMe->m_isMMS = FALSE;
                     }
                     return TRUE;
@@ -11308,8 +11314,8 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
             switch (wParam)
             {
                 case AVK_CLR:
-                    MSG_FATAL("IDD_WRITEMSG_Handler AVK_CLR",0,0,0);
-                    #ifdef FEATURE_ALL_KEY_PAD
+                    MSG_FATAL("IDD_WRITEMSG_Handler AVK_CLR m_isMMS=%d, dwParam=%d",pMe->m_isMMS,dwParam,0);
+#ifdef FEATURE_ALL_KEY_PAD
                     if(dwParam == 1)
                     {
                     	if (NULL != pMe->m_pMenu)
@@ -11335,16 +11341,16 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                             ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSSOUND,pszPath, sizeof(pszPath)); 
                             ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSVIDEO,pszPath, sizeof(pszPath)); 
                             FREEIF(pMe->m_EncData.pMessage);
-                            RELEASEIF(pMe->m_pMMSImage);
-                            RELEASEIF(pMe->m_pMMSSOUND);
-                            RELEASEIF(pMe->m_pMMSVIDEO);
+                            pMe->m_hasImage = FALSE;
+                            pMe->m_hasSound = FALSE;
+                            pMe->m_hasVideo = FALSE;
                             pMe->m_isMMS = FALSE;
                         }
 #endif                         
                     	pMe->m_bwriteclr = TRUE;
                     	CLOSE_DIALOG(DLGRET_CANCELED)
                     }
-                    #else
+#else
                     MSG_FATAL("IDD_WRITEMSG_Handler AVK_CLR 1",0,0,0);
                     if (NULL == pMe->m_pMenu)
                     {
@@ -11358,9 +11364,9 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                             ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSSOUND,pszPath, sizeof(pszPath)); 
                             ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSVIDEO,pszPath, sizeof(pszPath)); 
                             FREEIF(pMe->m_EncData.pMessage);
-                            RELEASEIF(pMe->m_pMMSImage);
-                            RELEASEIF(pMe->m_pMMSSOUND);
-                            RELEASEIF(pMe->m_pMMSVIDEO);
+                            pMe->m_hasImage = FALSE;
+                            pMe->m_hasSound = FALSE;
+                            pMe->m_hasVideo = FALSE;
                             pMe->m_isMMS = FALSE;
                         }
 #endif                           
@@ -11378,7 +11384,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                                                 0, 
                                                 0);
                     }
-                    #endif
+#endif
                     return TRUE;
    
                 case AVK_SELECT:
@@ -11407,7 +11413,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                         MENU_ADDITEM(pMe->m_pMenu, IDS_INSERTCONTACT);
 #ifdef FEATURE_USES_MMS       
                         IMENUCTL_SetActive(pMenuCtl, FALSE);
-                        if((pMe->m_pMMSImage == NULL) && (pMe->m_pMMSSOUND == NULL) && (pMe->m_pMMSVIDEO == NULL))
+                        if(!pMe->m_hasImage && !pMe->m_hasSound && !pMe->m_hasVideo)
                         {
                             MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_PICTURE);//add by xuhui 2011/08/01
                             MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_NEW_PICTURE);
@@ -11415,14 +11421,14 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                             MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_SOUND);//add by xuhui 2011/08/01
                             MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_FILE);//add by xuhui 2011/08/01
                         } 
-                        else if(pMe->m_pMMSImage && (pMe->m_pMMSSOUND == NULL) && (pMe->m_pMMSVIDEO == NULL))
+                        else if(pMe->m_hasImage && !pMe->m_hasSound && !pMe->m_hasVideo)
                         {
                             MENU_ADDITEM(pMe->m_pMenu, IDS_REMOVE_PICTURE);//add by xuhui 2011/08/01
                             MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_VIDEO);//add by xuhui 2011/08/01
                             MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_SOUND);//add by xuhui 2011/08/01
                             MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_FILE);//add by xuhui 2011/08/01
                         } 
-                        else if(pMe->m_pMMSSOUND && (pMe->m_pMMSImage == NULL) && (pMe->m_pMMSVIDEO == NULL))
+                        else if(pMe->m_hasSound && !pMe->m_hasImage && !pMe->m_hasVideo)
                         {
                             MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_PICTURE);//add by xuhui 2011/08/01
                             MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_NEW_PICTURE);
@@ -11430,7 +11436,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                             MENU_ADDITEM(pMe->m_pMenu, IDS_REMOVE_SOUND);//add by xuhui 2011/08/01
                             MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_FILE);//add by xuhui 2011/08/01
                         }   
-                        else if(pMe->m_pMMSVIDEO && (pMe->m_pMMSImage == NULL) && (pMe->m_pMMSSOUND == NULL))
+                        else if(pMe->m_hasVideo && !pMe->m_hasImage && !pMe->m_hasSound)
                         {
                             MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_PICTURE);//add by xuhui 2011/08/01
                             MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_NEW_PICTURE);
@@ -11438,21 +11444,21 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                             MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_SOUND);//add by xuhui 2011/08/01
                             MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_FILE);//add by xuhui 2011/08/01
                         }           
-                        else if(pMe->m_pMMSVIDEO && pMe->m_pMMSImage && (pMe->m_pMMSSOUND == NULL))
+                        else if(pMe->m_hasVideo && pMe->m_hasImage && !pMe->m_hasSound)
                         {
                             MENU_ADDITEM(pMe->m_pMenu, IDS_REMOVE_PICTURE);//add by xuhui 2011/08/01
                             MENU_ADDITEM(pMe->m_pMenu, IDS_REMOVE_VIDEO);//add by xuhui 2011/08/01
                             MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_SOUND);//add by xuhui 2011/08/01
                             MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_FILE);//add by xuhui 2011/08/01
                         }    
-                        else if(pMe->m_pMMSSOUND && pMe->m_pMMSImage && (pMe->m_pMMSVIDEO == NULL))
+                        else if(pMe->m_hasSound && pMe->m_hasImage && !pMe->m_hasVideo)
                         {
                             MENU_ADDITEM(pMe->m_pMenu, IDS_REMOVE_PICTURE);//add by xuhui 2011/08/01
                             MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_VIDEO);//add by xuhui 2011/08/01
                             MENU_ADDITEM(pMe->m_pMenu, IDS_REMOVE_SOUND);//add by xuhui 2011/08/01
                             MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_FILE);//add by xuhui 2011/08/01
                         }           
-                        else if(pMe->m_pMMSSOUND && pMe->m_pMMSVIDEO && (pMe->m_pMMSImage == NULL))
+                        else if(pMe->m_hasSound && pMe->m_hasVideo && !pMe->m_hasImage)
                         {
                             MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_PICTURE);//add by xuhui 2011/08/01
                             MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_NEW_PICTURE);
@@ -11460,7 +11466,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                             MENU_ADDITEM(pMe->m_pMenu, IDS_REMOVE_SOUND);//add by xuhui 2011/08/01
                             MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_FILE);//add by xuhui 2011/08/01
                         }    
-                        else if(pMe->m_pMMSSOUND && pMe->m_pMMSVIDEO && pMe->m_pMMSImage)
+                        else if(pMe->m_hasSound && pMe->m_hasVideo && pMe->m_hasImage)
                         {
                             MENU_ADDITEM(pMe->m_pMenu, IDS_REMOVE_PICTURE);//add by xuhui 2011/08/01
                             MENU_ADDITEM(pMe->m_pMenu, IDS_REMOVE_VIDEO);//add by xuhui 2011/08/01
@@ -11668,6 +11674,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     };
                     
                     RELEASEIF(pMe->m_pMMSImage);
+                    pMe->m_hasImage = FALSE;
                     for(; i < SOUND_MENU_INDEX; i++)
                     {
                         if ( IMENUCTL_GetItem( pMenuCtl, i,&ai ) )
@@ -11696,9 +11703,9 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                             ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSSOUND,pszPath, sizeof(pszPath)); 
                             ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSVIDEO,pszPath, sizeof(pszPath)); 
                             FREEIF(pMe->m_EncData.pMessage);
-                            RELEASEIF(pMe->m_pMMSImage);
-                            RELEASEIF(pMe->m_pMMSSOUND);
-                            RELEASEIF(pMe->m_pMMSVIDEO);
+                            pMe->m_hasImage = FALSE;
+                            pMe->m_hasSound = FALSE;
+                            pMe->m_hasVideo = FALSE;
                             pMe->m_isMMS = FALSE;
                         }
                     }
@@ -11738,6 +11745,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     };   
                     
                     RELEASEIF(pMe->m_pMMSSOUND);
+                    pMe->m_hasSound = FALSE;
                     MSG_FATAL("IMENUCTL_DeleteItem index=%d,frag_num=%d",IMENUCTL_GetSel(pMenuCtl),pMe->m_EncData.pMessage->mms_data.frag_num,0);
                     for(; i < VIDEO_MENU_INDEX; i++)
                     {
@@ -11761,9 +11769,9 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                             ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSSOUND,pszPath, sizeof(pszPath)); 
                             ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSVIDEO,pszPath, sizeof(pszPath)); 
                             FREEIF(pMe->m_EncData.pMessage);
-                            RELEASEIF(pMe->m_pMMSImage);
-                            RELEASEIF(pMe->m_pMMSSOUND);
-                            RELEASEIF(pMe->m_pMMSVIDEO);
+                            pMe->m_hasImage = FALSE;
+                            pMe->m_hasSound = FALSE;
+                            pMe->m_hasVideo = FALSE;
                             pMe->m_isMMS = FALSE;
                         }                        
                     }  
@@ -11801,6 +11809,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                         pMe->m_EncData.pMessage->mms_data.frag_num --;
                     };      
                     RELEASEIF(pMe->m_pMMSVIDEO);
+                    pMe->m_hasVideo = FALSE;
                     MSG_FATAL("IMENUCTL_DeleteItem index=%d",IMENUCTL_GetSel(pMenuCtl),0,0);
                     for(; i < OTHER_MENU_INDEX; i++)
                     {
@@ -11825,9 +11834,9 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                             ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSSOUND,pszPath, sizeof(pszPath)); 
                             ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSVIDEO,pszPath, sizeof(pszPath)); 
                             FREEIF(pMe->m_EncData.pMessage);
-                            RELEASEIF(pMe->m_pMMSImage);
-                            RELEASEIF(pMe->m_pMMSSOUND);
-                            RELEASEIF(pMe->m_pMMSVIDEO);
+                            pMe->m_hasImage = FALSE;
+                            pMe->m_hasSound = FALSE;
+                            pMe->m_hasVideo = FALSE;
                             pMe->m_isMMS = FALSE;
                         }                        
                     }  
@@ -11892,9 +11901,9 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                         ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSSOUND,pszPath, sizeof(pszPath)); 
                         ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSVIDEO,pszPath, sizeof(pszPath)); 
                         FREEIF(pMe->m_EncData.pMessage);
-                        RELEASEIF(pMe->m_pMMSImage);
-                        RELEASEIF(pMe->m_pMMSSOUND);
-                        RELEASEIF(pMe->m_pMMSVIDEO);
+                        pMe->m_hasImage = FALSE;
+                        pMe->m_hasSound = FALSE;
+                        pMe->m_hasVideo = FALSE;
                         pMe->m_isMMS = FALSE;                             
     					CLOSE_DIALOG(DLGRET_CANCELED)
     					return TRUE;                        
@@ -18468,6 +18477,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                                    return EFAILED;
                                 }   
                                 IMENUCTL_SetItemText(pMenuCtl, index, NULL, 0, menuItemName);
+                                RELEASEIF(pIImage);
                                 DBGPRINTF("Image menuItemName=%s, ItemCount=%d, wItemID=%d", menuItemName, IMENUCTL_GetItemCount(pMenuCtl), ai.wItemID);
                                 MSG_FATAL("IMENUCTL_GetItemCount1=%d", IMENUCTL_GetItemCount(pMenuCtl),0,0);
                             }
@@ -18501,6 +18511,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                                 pMe->m_ResData.soundData.data[pMe->m_ResData.soundData.nIndex].nResIndex,
                                 pMe->m_ResData.soundData.data[pMe->m_ResData.soundData.nIndex].type);
                             MSG_FATAL("IMENUCTL_GetItemCount2=%d", IMENUCTL_GetItemCount(pMenuCtl),0,0);
+                            RELEASEIF(pISound);
                         }
                         else if(STRISTR(pMimeType, VIDEO_MIME_BASE))
                         {
@@ -18512,19 +18523,20 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                             pMe->m_ResData.videoData.data[pMe->m_ResData.videoData.nCount].nResIndex = index;
                             pMe->m_ResData.videoData.data[pMe->m_ResData.videoData.nCount].type = pMimeType;
                             pMe->m_ResData.videoData.nCount ++;
-                            pISound = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_VIDEO);  
-                            IIMAGE_SetParm(pISound,IPARM_SCALE, 30, 30);                        
+                            pIVideo = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_VIDEO);  
+                            IIMAGE_SetParm(pIVideo,IPARM_SCALE, 30, 30);                        
                             MEMSET(&ai, 0, sizeof(ai));
                             MEMSET(&ai, 0, sizeof(ai));
                             ai.wItemID   = index;
-                            ai.pImage = pISound;
+                            ai.pImage = pIVideo;
                             if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
                             {
                                MSG_FATAL("Failed to Add Opts item %d", ai.wItemID,0,0);
                                return EFAILED;
                             }                   
                             MSG_FATAL("SoundIndex=%d", index,0,0);
-                            IMENUCTL_SetItemText(pMenuCtl, index, NULL, 0, menuItemName);                               
+                            IMENUCTL_SetItemText(pMenuCtl, index, NULL, 0, menuItemName);    
+                            RELEASEIF(pIVideo);
                         }
                         else
                         {/*
@@ -19347,7 +19359,12 @@ static IImage* WmsLoadImageFromData(WmsApp *pMe,int nFragIndex,char* pMimeType)
                 IImage_SetStream(pIImageCur,(IAStream*)pMemAStream);
             }
         }
-        RELEASEIF(pMemAStream);
+        if(pMemAStream != NULL)
+        {
+            IMEMASTREAM_Release(pMemAStream);
+            RELEASEIF(pMemAStream);
+        }
+        FREEIF(pData);
     }
     MSG_FATAL("[WmsLoadImageFromData] Exit", 0, 0, 0);
     return pIImageCur;

@@ -904,6 +904,9 @@ typedef struct WmsApp
     IImage                          *m_pMMSImage;
     IImage                          *m_pMMSSOUND;
     IImage                          *m_pMMSVIDEO;
+    boolean                         m_hasImage;
+    boolean                         m_hasSound;
+    boolean                         m_hasVideo;
     AECHAR                          *m_MMSData;
     boolean                         m_isMMS;
     IFileMgr                        *m_pIFileMgr;

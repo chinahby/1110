@@ -556,6 +556,9 @@ static int CWmsApp_InitAppData(WmsApp *pMe)
     pMe->m_CurrentState = PLAYER_IDLE;
     pMe->m_isForward = FALSE;
     pMe->m_insertMMSType = 0;
+    pMe->m_hasImage = FALSE;
+    pMe->m_hasSound = FALSE;
+    pMe->m_hasVideo = FALSE;    
 #endif
     // 初始化各成员变量
     pMe->m_prevState = WMSST_NONE;

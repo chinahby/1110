@@ -3395,7 +3395,7 @@ int WMS_MMS_PDU_Decode(MMS_WSP_DEC_DATA* decdata,uint8* ptr, int datalen,uint8 *
 	int len,i=0,iDataOffset,j;
 	uint8* pchar;
 	int ret = MMC_OK;
-
+    DBGPRINTF("WMS_MMS_PDU_Decode Start ePDUType=%d, datalen=%d",*ePDUType, datalen);
 	if ( decdata == NULL)
 	{
 		return MMC_GENERIC;
@@ -3405,12 +3405,12 @@ int WMS_MMS_PDU_Decode(MMS_WSP_DEC_DATA* decdata,uint8* ptr, int datalen,uint8 *
 
 	if (datalen <= 2)
 	{
-	    MMS_DEBUG(("[WMS_MMS_PDU_Decode] datalen <= 2 ptr[i]:0x%x",ptr[i]));
+	    DBGPRINTF("[WMS_MMS_PDU_Decode] datalen <= 2 ptr[i]:0x%x",ptr[i]);
 		return MMC_GENERIC;
     }
 	if (ptr[0] != 0x8c)
 	{
-	    MMS_DEBUG(("[WMS_MMS_PDU_Decode] ptr[0] != 0x8c ptr[i]:0x%x",ptr[0]));
+	    DBGPRINTF("[WMS_MMS_PDU_Decode] ptr[0] != 0x8c ptr[i]:0x%x",ptr[0]);
 		return MMC_GENERIC;
 	}
 	*ePDUType = 0;
@@ -3473,7 +3473,7 @@ int WMS_MMS_PDU_Decode(MMS_WSP_DEC_DATA* decdata,uint8* ptr, int datalen,uint8 *
 	
 	if (*ePDUType == 0)
 	{
-	    MMS_DEBUG(("[WMS_MMS_PDU_Decode] *ePDUType == 0"));
+	    DBGPRINTF("[WMS_MMS_PDU_Decode] *ePDUType == 0");
 		return MMC_GENERIC;
 	}
 	else
@@ -3484,7 +3484,7 @@ int WMS_MMS_PDU_Decode(MMS_WSP_DEC_DATA* decdata,uint8* ptr, int datalen,uint8 *
 	i = 2;
 	while( i < datalen)
 	{
-	    MMS_DEBUG(("ptr[i] = 0x%x",ptr[i]));
+	    DBGPRINTF("ptr[i] = 0x%x",ptr[i]);
 		switch(ptr[i])
 		{
 			case 0x83:/* content-location */
@@ -3503,13 +3503,13 @@ int WMS_MMS_PDU_Decode(MMS_WSP_DEC_DATA* decdata,uint8* ptr, int datalen,uint8 *
 				{
 					if (len > MMS_MAX_CONTENT_LOCATION)
 					{
-						MMS_DEBUG(("len > MMS_MAX_CONTENT_LOCATION"));
+						DBGPRINTF("len > MMS_MAX_CONTENT_LOCATION");
 						return MMC_GENERIC;
 					}
 					
 					STRNCPY((char*)decdata->notification.hContentLocation,(const char *)pchar,len);
 					decdata->notification.hContentLocation[len] = 0;
-					MMS_DEBUG(("MMS_PDU_Decode 0x83 content-location:%s",decdata->notification.hContentLocation));
+					DBGPRINTF("MMS_PDU_Decode 0x83 content-location:%s",decdata->notification.hContentLocation);
 				}
 				break;
 			}
@@ -3564,7 +3564,7 @@ int WMS_MMS_PDU_Decode(MMS_WSP_DEC_DATA* decdata,uint8* ptr, int datalen,uint8 *
 				len = MMS_WSP_GetValueLen(&ptr[i],datalen-i,&iDataOffset);
 				if (len == MMS_DECODER_ERROR_VALUE)
 				{
-					MMS_DEBUG(("len == MMS_DECODER_ERROR_VALUE"));
+					DBGPRINTF("len == MMS_DECODER_ERROR_VALUE");
 					return MMC_GENERIC;
 				}
 
@@ -3586,7 +3586,7 @@ int WMS_MMS_PDU_Decode(MMS_WSP_DEC_DATA* decdata,uint8* ptr, int datalen,uint8 *
 				len = MMS_WSP_GetValueLen(&ptr[i],datalen-i,&iDataOffset);
 				if (len == MMS_DECODER_ERROR_VALUE)
 				{
-					MMS_DEBUG(("len == MMS_DECODER_ERROR_VALUE"));
+					DBGPRINTF("len == MMS_DECODER_ERROR_VALUE");
 					return MMC_GENERIC;
 				}
 				i += iDataOffset;
@@ -3634,7 +3634,7 @@ int WMS_MMS_PDU_Decode(MMS_WSP_DEC_DATA* decdata,uint8* ptr, int datalen,uint8 *
 				{
 					if(MMS_MAX_MESSAGEID_CHARSIZE < len)
 					{
-						MMS_DEBUG(("MMS_MAX_MESSAGEID_CHARSIZE < len"));
+						DBGPRINTF("MMS_MAX_MESSAGEID_CHARSIZE < len");
 						return MMC_GENERIC;
 					}
 
@@ -3760,7 +3760,7 @@ int WMS_MMS_PDU_Decode(MMS_WSP_DEC_DATA* decdata,uint8* ptr, int datalen,uint8 *
 				len = MMS_WSP_GetValueLen(&ptr[i],datalen-i,&iDataOffset);
 				if (len == MMS_DECODER_ERROR_VALUE)
 				{
-					MMS_DEBUG(("len == MMS_DECODER_ERROR_VALUE"));
+					DBGPRINTF("len == MMS_DECODER_ERROR_VALUE");
 					return MMC_GENERIC;
 				}
 				i += iDataOffset;
@@ -3805,13 +3805,13 @@ int WMS_MMS_PDU_Decode(MMS_WSP_DEC_DATA* decdata,uint8* ptr, int datalen,uint8 *
 							len = MMS_PDU_DecodeEncodedString(&ptr[i],datalen-i,*ePDUType,(uint8*)&decdata->message.hSubject);
 							if (len == MMS_DECODER_ERROR_VALUE)
 							{
-								MMS_DEBUG(("len == MMS_DECODER_ERROR_VALUE"));
+								DBGPRINTF("len == MMS_DECODER_ERROR_VALUE");
 								return MMC_GENERIC;
 							}
 							i += len;
 							i--;
 
-							MMS_DEBUG(("MMS_PDU_Decode 0x96 subject:%s",decdata->notification.hSubject));
+							DBGPRINTF("MMS_PDU_Decode 0x96 subject:%s",decdata->notification.hSubject);
 							break;
 							
 						case MMS_PDU_NOTIFICATION_IND:
@@ -3819,13 +3819,13 @@ int WMS_MMS_PDU_Decode(MMS_WSP_DEC_DATA* decdata,uint8* ptr, int datalen,uint8 *
 							len = MMS_PDU_DecodeEncodedString(&ptr[i],datalen-i,*ePDUType,(uint8*)&decdata->notification.hSubject);
 							if (len == MMS_DECODER_ERROR_VALUE)
 							{
-								MMS_DEBUG(("len == MMS_DECODER_ERROR_VALUE"));
+								DBGPRINTF("len == MMS_DECODER_ERROR_VALUE");
 								return MMC_GENERIC;
 							}
 							i += len;
 							i--;
 
-							MMS_DEBUG(("MMS_PDU_Decode 0x96 subject:%s",decdata->notification.hSubject));
+							DBGPRINTF("MMS_PDU_Decode 0x96 subject:%s",decdata->notification.hSubject);
 							break;
 						default:
 							break;
@@ -3884,7 +3884,7 @@ int WMS_MMS_PDU_Decode(MMS_WSP_DEC_DATA* decdata,uint8* ptr, int datalen,uint8 *
 				len = MMS_WSP_GetValueLen(&ptr[i],datalen-i,&iDataOffset);
 				if (len == MMS_DECODER_ERROR_VALUE)
 				{
-					MMS_DEBUG(("len == MMS_DECODER_ERROR_VALUE!!"));
+					DBGPRINTF("len == MMS_DECODER_ERROR_VALUE!!");
 					return MMC_GENERIC;
 				}
 				i += (iDataOffset + len);
