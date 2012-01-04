@@ -14,7 +14,7 @@
 		<Text>Unit</Text>
 	</String>
 	<String Id="1005" Name="IDS_MAIN_MENU_WORLDCLO">
-		<Text>WorldClo</Text>
+		<Text>WorldTime</Text>
 	</String>
 	<String Id="1006" Name="IDS_MAIN_MENU_PINTU">
 		<Text>Pintu</Text>
