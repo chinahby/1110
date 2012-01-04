@@ -10232,12 +10232,15 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
     MSG_FATAL("IDD_WRITEMSG_Handler Start 1",0,0,0);
      
     pMenuCtl = (IMenuCtl*)IDIALOG_GetControl( pMe->m_pActiveIDlg, IDC_WRITEMSG_MENU);
-
+    
+#ifdef FEATURE_USES_MMS 
     if(NULL == pMenuCtl)
     {
         MSG_FATAL("IDD_WRITEMSG_Handler Start NULL == pMenuCtl",0,0,0);
         return FALSE;
     }
+#endif
+
 #ifndef FEATURE_USES_MMS
     {
         //如果不给这个菜单控件设置坐标，那么在触摸事件中，事件会乱传，有时会传到MENU菜单中去
@@ -10248,7 +10251,10 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
         rc.x = -1;
         rc.dx = 1;
         MSG_FATAL("IDD_WRITEMSG_Handler rc.x=%d, rc.y=%d,rc.dy=%d", rc.x, rc.y, rc.dy);
-        IMENUCTL_SetRect(pMenuCtl, &rc);
+        if(pMenuCtl != NULL)
+        {
+            IMENUCTL_SetRect(pMenuCtl, &rc);
+        }
     }
 #endif    
     MSG_FATAL("IDD_WRITEMSG_Handler Start 2",0,0,0);
