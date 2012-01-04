@@ -27,6 +27,10 @@ ifneq ($(EXTLANG1),NO)
 CONSTFILE_FILES+=\
     $(EXTLANG1)converter.bar|fs:/mod/converter/$(EXTLANG1)/converter.bar 
 endif
+ifneq ($(EXTLANG2),NO)
+CONSTFILE_FILES+=\
+    $(EXTLANG2)converter.bar|fs:/mod/converter/$(EXTLANG2)/converter.bar 
+endif
 
 INC  += $(CONVERTER_INC) $(CONVERTER_RES)
 #SRC  += $(CONVERTER_SOURCES)

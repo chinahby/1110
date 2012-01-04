@@ -5,10 +5,10 @@
 		<Text>เกมส์</Text>
 	</String>
 	<STRING Id="1011" Name="IDS_GAME_TITLE_1">
-		<Text>Blackjack</Text>
+		<Text>กระบอง</Text>
 	</STRING>
 	<STRING Id="1012" Name="IDS_GAME_TITLE_2">
-		<Text>Brickattack</Text>
+		<Text>อิฐโจมตี</Text>
 	</STRING>
 	<STRING Id="1013" Name="IDS_GAME_TITLE_3">
 		<Text>Tetris</Text>

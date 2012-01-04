@@ -119,7 +119,7 @@
 		<Text>รายชื่อสูงสุด</Text>
 	</STRING>
 	<STRING Id="1011" Name="IDS_EDIT_NUMBER">
-		<Text>Edit number</Text>
+		<Text>แก้ไขตัวเลข</Text>
 	</STRING>
 	<STRING Id="1012" Name="IDS_HOUR">
 		<Text>ชั่วโมง</Text>

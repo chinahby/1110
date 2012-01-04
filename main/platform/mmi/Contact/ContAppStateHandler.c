@@ -6791,7 +6791,7 @@ static NextFSMAction Handler_STATE_SELECT(CContApp *pMe)
         }
 
         case DLGRET_POPNUMFLD :
-			#ifdef FEATURE_VERSION_X3
+			#if defined (FEATURE_VERSION_X3)||defined(FEATURE_VERSION_VG68)
 			MOVE_TO_STATE(STATE_DETAIL_MULTI);
 			#else
             MOVE_TO_STATE(STATE_POPNUMFLD);

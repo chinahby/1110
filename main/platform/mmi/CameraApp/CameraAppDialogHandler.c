@@ -3917,6 +3917,28 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
 	        break;
     }
 #endif	
+#ifdef FEATURE_VERSION_VG68
+    // size cfgID
+    (void)ICONFIG_GetItem(pMe->m_pConfig,
+                          CFGI_CAMERA_SIZE,
+                         &pMe->m_nCameraSize,
+                          sizeof(pMe->m_nCameraSize));
+
+    switch(pMe->m_nCameraSize)
+    {
+	    case OEMNV_CAMERA_SIZE_INDEX_0:
+	        nResID[CAMERACFGSIZE] = IDI_SIZE_176_220;
+	        break;
+
+	    case OEMNV_CAMERA_SIZE_INDEX_1:
+	        nResID[CAMERACFGSIZE] = IDI_SIZE_320_240;
+	        break;
+	    default:
+	        nResID[CAMERACFGSIZE] = IDI_SIZE_176_220;
+	        break;
+    }
+#endif	
+
 //#endif
     // sound cfgID
     (void)ICONFIG_GetItem(pMe->m_pConfig,
