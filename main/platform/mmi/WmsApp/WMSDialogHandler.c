@@ -11314,7 +11314,6 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
             switch (wParam)
             {
                 case AVK_CLR:
-                    MSG_FATAL("IDD_WRITEMSG_Handler AVK_CLR m_isMMS=%d, dwParam=%d",pMe->m_isMMS,dwParam,0);
 #ifdef FEATURE_ALL_KEY_PAD
                     if(dwParam == 1)
                     {
@@ -11332,7 +11331,8 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     }
                     else
                     {
-#ifdef FEATURE_USES_MMS
+#ifdef FEATURE_USES_MMS                        
+                        MSG_FATAL("IDD_WRITEMSG_Handler AVK_CLR m_isMMS=%d, dwParam=%d",pMe->m_isMMS,dwParam,0);
                         if(pMe->m_isMMS)
                         { 
                             char pszPath[AEE_MAX_FILE_NAME]={'\0'};
