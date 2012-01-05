@@ -8167,9 +8167,9 @@ static boolean Setting_Handle_Msgbox(CSettingMenu *pMe,
                                 wstrText,
                                 sizeof(wstrText));
                                 
-                Msg_Param.ePMsgType = MESSAGE_INFORMATIVE;
+                Msg_Param.ePMsgType = MESSAGE_WARNNING;// MESSAGE_INFORMATIVE;
                 Msg_Param.pwszMsg = wstrText;
-                Msg_Param.eBBarType = BTBAR_RETRY_CANCEL;
+                Msg_Param.eBBarType = BTBAR_RETRY_CANCEL;//BTBAR_NONE
                 DrawPromptMessage(pMe->m_pDisplay, pStatic, &Msg_Param);
             }
             // 更新界面
