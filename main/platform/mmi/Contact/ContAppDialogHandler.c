@@ -6424,6 +6424,26 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
                 case AVK_DOWN:
                 {
                     MSG_FATAL("m_nInputMode=%d",pMe->m_nInputMode,0,0);
+
+					//Add By zzg 2011_12_15
+					if ((LOCAL_NUMBER_INPUT == pMe->m_nInputMode) 
+						|| (EDIT_MENU_MODE == pMe->m_nInputMode)
+						|| (EDIT_GROUP == pMe->m_nInputMode))
+					{
+	                	if (CContApp_CheckNumberIsInValid(pMe, pTextCtl))
+	                	{
+	                		 pMe->m_bNumberInvalid = TRUE;		
+	                		 CLOSE_DIALOG(DLGRET_NUM_UNAVAILD);
+							 return TRUE;
+						}
+						else
+						{
+							DBGPRINTF("***zzg CContApp_FixPlusNumber 2***");
+							CContApp_FixPlusNumber(pMe);	
+						}
+					}
+                	//Add End
+                	
                     if(EDIT_GROUP == pMe->m_nInputMode)
                     {                    
                         CContApp_SetEditGroup(pMe, pMenuCtl, FALSE, IMENUCTL_GetSel(pGroupList));
@@ -6529,23 +6549,29 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
                 case AVK_INFO:
                 case AVK_SELECT:
                 {
-                    if( LOCAL_NUMBER_INPUT == pMe->m_nInputMode || OPT_TEXT_INPUT == pMe->m_nInputMode)
-                    {
-                    	//Add By zzg 2011_12_15
-                    	if (CContApp_CheckNumberIsInValid(pMe, pTextCtl)&&((pMe->m_nFldInputID == AEE_ADDRFIELD_PHONE_GENERIC)
-							||(pMe->m_nFldInputID == AEE_ADDRFIELD_PHONE_HOME)||(pMe->m_nFldInputID == AEE_ADDRFIELD_PHONE_WORK)
-							||(pMe->m_nFldInputID == AEE_ADDRFIELD_PHONE_FAX)))
-                    	{
-                    		 pMe->m_bNumberInvalid = TRUE;		
-                    		 CLOSE_DIALOG(DLGRET_NUM_UNAVAILD);
+					MSG_FATAL("***zzg ContApp AddNewDlg m_nInputMode=%x***", pMe->m_nInputMode, 0, 0);
+
+					//Add By zzg 2011_12_15
+					if ((LOCAL_NUMBER_INPUT == pMe->m_nInputMode) 
+						|| (EDIT_MENU_MODE == pMe->m_nInputMode)
+						|| (EDIT_GROUP == pMe->m_nInputMode))
+					{
+	                	if (CContApp_CheckNumberIsInValid(pMe, pTextCtl))
+	                	{
+	                		 pMe->m_bNumberInvalid = TRUE;		
+	                		 CLOSE_DIALOG(DLGRET_NUM_UNAVAILD);
 							 return TRUE;
 						}
 						else
 						{
+							DBGPRINTF("***zzg CContApp_FixPlusNumber 3***");
 							CContApp_FixPlusNumber(pMe);	
 						}
-                    	//Add End
-                    	
+					}
+                	//Add End
+					
+                    if( LOCAL_NUMBER_INPUT == pMe->m_nInputMode || OPT_TEXT_INPUT == pMe->m_nInputMode)
+                    {                    	
                         if(TRUE != CContApp_SaveLocal_Input(pMe, pTextCtl))
                         {
                             return TRUE;
@@ -10538,6 +10564,26 @@ static boolean  CContApp_HandleEditDlgEvent( CContApp  *pMe,
                             IMENUCTL_SetActive(pGroupList, FALSE);
                             IMENUCTL_SetActive(pMenuCtl, TRUE);
                         }
+
+						//Add By zzg 2011_12_15
+						if ((LOCAL_NUMBER_INPUT == pMe->m_nInputMode) 
+							|| (EDIT_MENU_MODE == pMe->m_nInputMode)
+							|| (EDIT_GROUP == pMe->m_nInputMode))
+						{
+		                	if (CContApp_CheckNumberIsInValid(pMe, pTextCtl))
+		                	{
+		                		 pMe->m_bNumberInvalid = TRUE;		
+		                		 CLOSE_DIALOG(DLGRET_NUM_UNAVAILD);
+								 return TRUE;
+							}
+							else
+							{
+								DBGPRINTF("***zzg CContApp_FixPlusNumber 4***");
+								CContApp_FixPlusNumber(pMe);	
+							}
+						}
+	                	//Add End
+                	
                         if(OPT_TEXT_INPUT == pMe->m_nInputMode || LOCAL_NUMBER_INPUT == pMe->m_nInputMode)
                         {
                             if(TRUE == CContApp_SaveLocal_Input(pMe, pTextCtl))
@@ -10662,6 +10708,7 @@ static boolean  CContApp_HandleEditDlgEvent( CContApp  *pMe,
 					}
 					else
 					{
+						DBGPRINTF("***zzg CContApp_FixPlusNumber 5***");
 						CContApp_FixPlusNumber(pMe);	
 					}
                 	//Add End
@@ -12993,20 +13040,22 @@ static boolean  CContApp_HandleSelectDlgEvent( CContApp  *pMe,
                     return TRUE;
 
                 case AVK_SELECT:
-                     curSelectFieldInfo.wIndex = pMe->m_wSelectCont;
+                    curSelectFieldInfo.wIndex = pMe->m_wSelectCont;
                     curSelectFieldInfo.wFieldCount = pMe->m_wFieldCount;
                     curSelectFieldInfo.wFieldMask = pMe->m_wFieldIndex;
                     
                     if(CContApp_GetCurrFldNum(pMe, AEE_ADDRFIELD_PHONE_GENERIC) > 1)
-                    {
+                    {                    	
                         CLOSE_DIALOG(DLGRET_POPNUMFLD);
                     }
                     else
                     {
-                        rtn = CContApp_FindSelectFieldListNode(pSelectFieldListRoot, &curSelectFieldInfo);
+                        rtn = CContApp_FindSelectFieldListNode(pSelectFieldListRoot, &curSelectFieldInfo);						
+						
                         if (rtn == TYPE_NO_MATCH)
                         {
-                            CContApp_AddSelectFieldListNode(pSelectFieldListRoot, &curSelectFieldInfo);
+                            CContApp_AddSelectFieldListNode(pSelectFieldListRoot, &curSelectFieldInfo);							
+							
                             if (pMe->m_wSelFldType == SINGLE_SELECT_NUMBER)
                             {
                                 CLOSE_DIALOG(DLGRET_OK);
@@ -13036,7 +13085,7 @@ static boolean  CContApp_HandleSelectDlgEvent( CContApp  *pMe,
                     CLOSE_DIALOG(DLGRET_CANCELED);
                     return TRUE;
                     
-                case AVK_INFO:
+                case AVK_INFO:					
                     if (pMe->m_wSelFldType == SINGLE_SELECT_NUMBER)
                     {
                         curSelectFieldInfo.wIndex = pMe->m_wSelectCont;
@@ -14542,6 +14591,9 @@ static boolean  CContApp_HandlePopNumFldDlgEvent( CContApp  *pMe,
                                               IDC_POPNUMFLD_MENU);
                                               
     MENU_AUTO_SCROLL(pMenuCtl, eCode, wParam);
+
+	MSG_FATAL("***zzg ContApp PopNumFldGld eCode=%x***", eCode, 0, 0);
+	
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
@@ -14786,14 +14838,20 @@ static boolean  CContApp_HandlePopNumFldDlgEvent( CContApp  *pMe,
             // 做了勾选的处理，看起来菜单是被勾选了的，实际上因为没有EVT_KEY_PRESS:AVK_RIGHT，逻辑上菜单对应的号码
             // 还没有标记到newMask。
             
-           if(AVK_SELECT == wParam || AVK_INFO == wParam)
+           //if(AVK_SELECT == wParam || AVK_INFO == wParam)
+           if(AVK_SELECT == wParam )		//Add By zzg 2012_01_05
             {
+            	MSG_FATAL("***zzg HandlePopNumFldDlg EVT_KEY_RELEASE wParam=%x***", wParam, 0, 0);
+				
                 //pMe->m_wSelectFldOpts = wParam;
                 curSelectFieldInfo.wIndex = pMe->m_wSelectCont;
                 curSelectFieldInfo.wFieldMask = newMask;
                 pMe->m_wFieldIndex = newMask;
                                 
                 rtn = CContApp_FindSelectFieldListNode(pSelectFieldListRoot, &curSelectFieldInfo);
+
+				MSG_FATAL("***zzg CContApp_FindSelectFieldListNode rtn=%x***", rtn, 0, 0);
+				
                 if (rtn == TYPE_NO_MATCH && newMask != 0)
                 {
                     CContApp_AddSelectFieldListNode(pSelectFieldListRoot, &curSelectFieldInfo);
@@ -14815,9 +14873,12 @@ static boolean  CContApp_HandlePopNumFldDlgEvent( CContApp  *pMe,
                 return TRUE;
             }
 
-            if(AVK_RIGHT == wParam)
+            //if(AVK_RIGHT == wParam)
+            if(AVK_RIGHT == wParam || AVK_INFO == wParam)	//Add By zzg 2012_01_05
             {
                 dword oldMask = newMask;
+
+				boolean bsel = FALSE;	//Add By zzg 2012_01_05
                 
                 pFld = IVector_ElementAt( pMe->m_pFldIv, (uint32)pMe->m_wSelectFldOpts );
                 
@@ -14826,32 +14887,37 @@ static boolean  CContApp_HandlePopNumFldDlgEvent( CContApp  *pMe,
                     //phone number
                     case AEE_ADDRFIELD_PHONE_GENERIC :
                         newMask ^= MASK_ADDRFIELD_PHONE_GENERIC;
-                        //bsel = newMask & MASK_ADDRFIELD_PHONE_GENERIC;
+                        bsel = newMask & MASK_ADDRFIELD_PHONE_GENERIC;
                         break;
                         
                     //home number
                     case AEE_ADDRFIELD_PHONE_HOME :
                         newMask ^= MASK_ADDRFIELD_PHONE_HOME;
-                        //bsel = newMask & MASK_ADDRFIELD_PHONE_HOME;
+                        bsel = newMask & MASK_ADDRFIELD_PHONE_HOME;
                         break;
                 
                     //work number
                     case AEE_ADDRFIELD_PHONE_WORK :
                         newMask ^= MASK_ADDRFIELD_PHONE_WORK;
-                        //bsel = newMask & MASK_ADDRFIELD_PHONE_WORK;
+                        bsel = newMask & MASK_ADDRFIELD_PHONE_WORK;
                         break;
 
                     //fax number
                     case AEE_ADDRFIELD_PHONE_FAX :
                         newMask ^= MASK_ADDRFIELD_PHONE_FAX;
-                        //bsel = newMask & MASK_ADDRFIELD_PHONE_FAX;
+                        bsel = newMask & MASK_ADDRFIELD_PHONE_FAX;
                         break;
                         
                     default :
                         return TRUE;
                 }
                 pMe->m_eTotalSelectNum += (CContApp_GetSelNodeMarkNum(newMask) - CContApp_GetSelNodeMarkNum(oldMask));
-                
+
+				//Add By zzg 2012_01_05	
+				IMENUCTL_SetSelEx(pMenuCtl, (uint32)pMe->m_wSelectFldOpts, bsel);	
+				IMENUCTL_Redraw(pMenuCtl);
+				//Add By zzg 2012_01_05	
+				
             }
             break;
        #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
