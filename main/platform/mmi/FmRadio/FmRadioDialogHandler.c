@@ -2759,7 +2759,7 @@ static void paint( CFmRadio *pMe)
                         IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE
                     );	
 		#elif defined(FEATURE_DISP_240X320)
-            int         width       = 70;
+            int         width       = 115;
 		
             SETAEERECT( &rect, ( 240 - width) / 2, (( 320 - fontHeight) / 2) - fontHeight, width, fontHeight);
             drawText( pMe,
