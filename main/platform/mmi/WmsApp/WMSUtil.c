@@ -105,8 +105,10 @@ static uint32 OEMWMS_GetTimeFromWmsTimestamp(wms_timestamp_s_type *pTime)
     
     // If the year is above 95 it we assume it is in 20 th century(1900+ year
     // otherwise we assume it is in 21 century(2000+year)
-    jt.year = (tmp <= 95) ? (2000 + tmp) : (1900 + tmp);
-    
+    DBGPRINTF("OEMWMS_GetTimeFromWmsTimestamp tmp=%d", tmp);
+    //jt.year = (tmp <= 95) ? (2000 + tmp) : (1900 + tmp);
+    jt.year = (tmp < 80) ? (2000 + tmp) : (1900 + tmp);
+    DBGPRINTF("OEMWMS_GetTimeFromWmsTimestamp jt.year=%d", jt.year);
     jt.month = BCD2INT(pTime->month);
     jt.day = BCD2INT(pTime->day);
     jt.hour = BCD2INT(pTime->hour);
@@ -149,7 +151,7 @@ void WMSUtil_SecsToDateString(WmsApp* pMe,uint32 dwTime, AECHAR *pBuf, int nSize
 #ifdef FEATURE_TIME_DATA_SETTING
     byte            btDateFmt = 0;
 #endif /* FEATURE_TIME_DATA_SETTING */    
-    
+    DBGPRINTF("WMSUtil_SecsToDateString Start");
     if ((NULL == pMe) || (NULL == pBuf) || (0 == nSize))
     {
         return;
@@ -166,8 +168,9 @@ void WMSUtil_SecsToDateString(WmsApp* pMe,uint32 dwTime, AECHAR *pBuf, int nSize
                            CFGI_TIME_FORMAT,
                            &btTimeFmt,
                            sizeof(btTimeFmt));
-    
+    DBGPRINTF("WMSUtil_SecsToDateString btTimeFmt=%d",btTimeFmt);
     GETJULIANDATE(dwTime, &jt);
+    DBGPRINTF("WMSUtil_SecsToDateString jt.year=%d",jt.wYear);
     MEMSET(wstrFmt, 0, sizeof(wstrFmt));
     if (btTimeFmt == OEMNV_TIMEFORM_AMPM)
     {
@@ -1938,12 +1941,14 @@ void ConvertMStoMcTime(uint32 sec, wms_timestamp_s_type *pmc_time)
         return;
     }
     GETJULIANDATE(sec, &julian);
-    
+    DBGPRINTF("ConvertMStoMcTime julian.Year=%d", julian.wYear);
     if (julian.wYear <= 1999)
     {
-        if (julian.wYear <= 1996)
+        //if (julian.wYear <= 1996)
+        if (julian.wYear <= 1980)
         {
-            year = 96;
+            //year = 96;
+            year = 80;
         }
         else
         {
@@ -1961,7 +1966,7 @@ void ConvertMStoMcTime(uint32 sec, wms_timestamp_s_type *pmc_time)
             year = julian.wYear - 2000;
         }
     }
-
+    DBGPRINTF("ConvertMStoMcTime year=%d", year);
     pmc_time->year     = ConvertIntToBcd(year);
     pmc_time->month    = ConvertIntToBcd(julian.wMonth);
     pmc_time->day      = ConvertIntToBcd(julian.wDay);
@@ -1969,6 +1974,7 @@ void ConvertMStoMcTime(uint32 sec, wms_timestamp_s_type *pmc_time)
     pmc_time->minute   = ConvertIntToBcd(julian.wMinute);
     pmc_time->second   = ConvertIntToBcd(julian.wSecond);
     pmc_time->timezone = 0;
+    DBGPRINTF("ConvertMStoMcTime year=%d", year);
 }
 
 /*==============================================================================
