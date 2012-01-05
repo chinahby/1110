@@ -1109,6 +1109,7 @@ nvio_read (
 #error code not present
 #endif
 
+/*
 #ifdef FEATURE_VERSION_W208S
 	//Add By zzg 2011_12_19
 	 case NV_SID_NID_LOCK_I:
@@ -1122,6 +1123,7 @@ nvio_read (
 	 }
 #endif
 	//Add End
+*/	
 
       default:
 
@@ -2710,9 +2712,9 @@ nvio_write (
                                   (byte *)cmd_ptr->data_ptr, 
                                   nvim_op_get_size(cmd_ptr->item));
         break;
-		
+
+/*
 #ifdef FEATURE_VERSION_W208S		
-/*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 		//Add By zzg 2011_12_19
 		case NV_SID_NID_LOCK_I:
 		{	
@@ -2721,6 +2723,7 @@ nvio_write (
 		}
 		//Add End
 #endif
+*/
 
       default:
         /* All other items get generic treatment, if they have 
