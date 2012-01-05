@@ -151,7 +151,7 @@
 #define MG_WALLPAPER_PIXEL_MAX         640
 
 /*Ä¬ÈÏÈÕÆÚ */
-#define MG_DEFAULT_JYEAR               2009
+#define MG_DEFAULT_JYEAR               1980
 #define MG_DEFAULT_JMONTH              01
 #define MG_DEFAULT_JDAY                01
 
