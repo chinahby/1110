@@ -3899,7 +3899,7 @@ static boolean  HandleVolumeSubDialogEvent(CSoundMenu *pMe,
                 }
                 
                 IDISPLAY_Update(pMe->m_pDisplay);
-                if (pMe->m_VolType == SET_RINGER_VOL && byte_return != OEMSOUND_MUTE_VOL)
+                if (pMe->m_VolType == SET_RINGER_VOL /*&& byte_return != OEMSOUND_MUTE_VOL*/)
                 {
                     IALERT_StopRingerAlert(pMe->m_pAlert);
                     IALERT_StopMp3Alert(pMe->m_pAlert);
