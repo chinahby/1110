@@ -202,6 +202,10 @@ static boolean CameraApp_FindMemoryCardExist(CCameraApp *pMe);
 // Dialog的定时处理函数
 static void CameraApp_DialogTimeout(void *pme);
 
+// PICDialog的定时处理函数
+static void CameraApp_PicDialogTimeout(void *pme);
+
+
 // 存储空间的检测函数
 static boolean CameraApp_IsEnoughfMemorySpace(CCameraApp *pMe);
 
@@ -481,7 +485,6 @@ boolean CameraApp_RouteDialogEvent(CCameraApp *pMe, AEEEvent eCode, uint16 wPara
     {
         return FALSE;
     }
-    
     switch(pMe->m_pActiveDlgID)
     {
         case IDD_CMAINMENU:
@@ -825,6 +828,12 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
 {
     int   nCameraSelfTime = 0;
     MSG_FATAL("CameraApp_PreviewHandleEvent eCode=0x%x, wParam=0x%x",eCode, wParam, 0);
+    
+    if(pMe->m_isPicCamera)
+    {
+        if(eCode==EVT_KEY)
+          return TRUE;
+    }
     switch(eCode) 
     {
         case EVT_DIALOG_INIT:
@@ -1613,7 +1622,8 @@ static boolean CameraApp_PicHandleEvent(CCameraApp *pMe, AEEEvent eCode, uint16 
         case EVT_KEY:
             switch(wParam)
             {
-                case AVK_CLR:                                                       
+                case AVK_CLR:
+                    pMe->m_isPicCamera=TRUE;
                     if(pMe->m_pFileMgr)
                     {
                         IFILEMGR_Remove(pMe->m_pFileMgr, pMe->m_sCurrentFileName);
@@ -1622,6 +1632,7 @@ static boolean CameraApp_PicHandleEvent(CCameraApp *pMe, AEEEvent eCode, uint16 
                     
                 case AVK_SELECT:
                 case AVK_INFO:
+                    pMe->m_isPicCamera=TRUE;
                     MSG_FATAL("CameraApp_PicHandleEvent AVK_INFO",0,0,0);
 #ifdef FEATURE_USES_MMS                    
                     if(pMe->m_isFormMMS)
@@ -1649,7 +1660,11 @@ static boolean CameraApp_PicHandleEvent(CCameraApp *pMe, AEEEvent eCode, uint16 
             
             pMe->m_wMsgID = IDS_DONE;
             pMe->m_nMsgTimeout = TIMEOUT_MS_MSGDONE;
-            CLOSE_DIALOG(DLGRET_POPMSG);            
+           (void)ISHELL_SetTimer(pMe->m_pShell,
+                                 3000,
+                                 CameraApp_PicDialogTimeout,
+                                 pMe);
+            CLOSE_DIALOG(DLGRET_POPMSG);
             return TRUE;
  
         case EVT_KEY_PRESS:   
@@ -4542,6 +4557,18 @@ static void CameraApp_RecordSnapShot(CCameraApp *pMe)
     }
 
     pMe->m_bCapturePic = FALSE;
+}
+
+static void CameraApp_PicDialogTimeout(void *pme)
+{
+    CCameraApp *pMe = (CCameraApp *)pme;
+        
+    if(NULL == pMe)
+        return;
+    pMe->m_isPicCamera=FALSE;
+    (void)ISHELL_CancelTimer(pMe->m_pShell,
+                             CameraApp_PicDialogTimeout,
+                             pMe);
 }
 
 static void CameraApp_DialogTimeout(void *pme)

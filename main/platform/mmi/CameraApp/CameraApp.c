@@ -513,6 +513,7 @@ static int CameraApp_InitAppData(CCameraApp *pMe)
     pMe->m_eDlgRet = DLGRET_CREATE;
     pMe->m_bNotOverwriteDlgRet = FALSE;
     pMe->m_bIsPreview = FALSE;
+    pMe->m_isPicCamera = FALSE;
     
     pMe->m_bCapturePic = FALSE;
     pMe->m_ePreState = STATE_NULL;
