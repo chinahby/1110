@@ -5350,6 +5350,15 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
         jDate.wYear = (uint16)time.year&0xFFFF;
         jDate.wWeekDay = (uint16)time.day_of_week&0xFFFF;
 #else
+#ifdef FEATURE_VERSION_W208S
+		jDate.wYear = 2012;
+        jDate.wMonth = 1;
+        jDate.wDay =1;
+        jDate.wHour = 0;
+        jDate.wMinute =0;
+        jDate.wSecond = 0;
+        jDate.wWeekDay = 7;
+#else
         jDate.wYear = 1980;
         jDate.wMonth = 1;
         jDate.wDay =6;
@@ -5357,6 +5366,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
         jDate.wMinute =0;
         jDate.wSecond = 0;
         jDate.wWeekDay = 6;
+#endif		
 #endif
     }
 #ifndef FEATURE_CARRIER_SUDAN_SUDATEL
