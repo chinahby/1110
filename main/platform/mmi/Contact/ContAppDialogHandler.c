@@ -5660,7 +5660,7 @@ static boolean  CContApp_HandleInputFldDlgEvent( CContApp  *pMe,
 #if defined(AEE_STATIC)
     ASSERT(pMe != NULL);
 #endif
-
+    MSG_FATAL("CContApp_HandleInputFldDlgEvent eCode=0x%x, wParam=0x%x", eCode,wParam,0);
     pTextCtl = (ITextCtl*)IDIALOG_GetControl( pMe->m_pActiveDlg,
                                               IDC_INPUTFLD_TEXTCTL);
 
@@ -14141,7 +14141,7 @@ static boolean  CContApp_HandleGroupOptEditDlgEvent( CContApp  *pMe,
     ASSERT(pMe != NULL);
 #endif
 
-    MSG_FATAL("CContApp_HandleGroupOptEditDlgEvent Start",0,0,0);
+    MSG_FATAL("CContApp_HandleGroupOptEditDlgEvent Start eCode=0x%x",eCode,0,0);
     pTextCtl = (ITextCtl*)IDIALOG_GetControl( pMe->m_pActiveDlg,
                                               IDC_GROUPOPT_EDIT);
     
@@ -14178,9 +14178,15 @@ static boolean  CContApp_HandleGroupOptEditDlgEvent( CContApp  *pMe,
                 IDS_INPUT_GROUP,
                 WTitle,
                 sizeof(WTitle));
+
+                (void)ITEXTCTL_SetTitle( pTextCtl, NULL,0,WTitle);
+
+                
                 if(pMe->m_pIAnn != NULL)
                 {
-                    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+                    IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, FALSE);
+                    IANNUNCIATOR_Redraw(pMe->m_pIAnn);                    
+                  //  IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
                 }
             }                                     
             
@@ -14274,6 +14280,12 @@ static boolean  CContApp_HandleGroupOptEditDlgEvent( CContApp  *pMe,
                 IDISPLAY_Update(pMe->m_pDisplay);  
             }
             return TRUE;
+
+        case EVT_CTL_TEXT_MODECHANGED:  //ÇÐ»»ÊäÈë·¨
+            {
+                CContApp_SetFldMaxSize(pMe,pTextCtl,pMe->m_nFldInputID);             
+            }
+            return TRUE; 
             
         case EVT_DIALOG_END:
             return TRUE;
