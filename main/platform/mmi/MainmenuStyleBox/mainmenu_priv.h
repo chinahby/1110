@@ -151,7 +151,6 @@ typedef struct _MainMenu
     #ifdef FEATURE_LCD_TOUCH_ENABLE
 	IImage         *m_pImageBg[MAX_MATRIX_PAGE];
 	IImage         *m_pImageBgblack;
-	boolean         m_bDraOver;
 	int             m_step;
 	boolean         m_bRight;
 	boolean         m_bReraw;

@@ -1164,9 +1164,8 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 			if(pMe->m_pImageBgblack ==NULL)
 			{
 				pMe->m_pImageBgblack  = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);
-			}	                                  
-			AEE_CancelTimer(Main_keypadtimer,pMe);
-			AEE_SetTimer(5*1000,Main_keypadtimer,pMe);
+			}
+            
             // 初始整个背景及全部初始图标	
             MSG_FATAL("MainMenu_IconMenuHandler  EVT_USER_REDRAW STAR.......",0,0,0);
             DrawMatrix(pMe);
@@ -1174,24 +1173,6 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
             // 绘制聚焦过程动画
             MoveCursorTo(pMe, pMe->m_nRow, pMe->m_nColumn);
 			DrawMatrixStr(pMe);
-            return TRUE;
-
-
-        case EVT_USER_REDRAW:
-				{
-					pMe->m_step = 0;
-					pMe->m_bDraOver = FALSE;
-					MSG_FATAL("pMe->m_PrsentPage=========%d",pMe->m_PrsentPage,0,0);
-					// 初始整个背景及全部初始图标	
-		    		DrawMatrix(pMe);
-		    		// 绘制聚焦过程动画
-		    		MoveCursorTo(pMe, pMe->m_nRow, pMe->m_nColumn);
-					MSG_FATAL("pMe->m_nRow===%d,pMe->m_nColumn=%d",pMe->m_nRow,pMe->m_nColumn,0);
-					DrawMatrixStr(pMe);
-					pMe->m_bmove = FALSE;
-					ISHELL_CancelTimer(pMe->m_pShell,(PFNNOTIFY)AutoMovePage,pMe);
-					IDISPLAY_UpdateEx(pMe->m_pDisplay, TRUE);
-				}
             return TRUE;
             
         case EVT_DIALOG_END:
@@ -1624,40 +1605,44 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 }
 static void AutoMovePage(MainMenu *pMe)
 {
-		MSG_FATAL("AutoMovePage........................",0,0,0);
-		if(pMe->m_bDraOver)
-		{
-			ISHELL_PostEvent(pMe->m_pShell,AEECLSID_MAIN_MENU,EVT_USER_REDRAW,0,0);
-		}
-		else
-		{
-			if(pMe->m_step<5)
-			{
-				pMe->m_step++;
-			}
-			else
-			{
-				pMe->m_step = 5;
-				pMe->m_bDraOver = TRUE;
-				
-			}
-			MSG_FATAL("ISHELL_SetTimer................",0,0,0);
-			(void)ISHELL_SetTimer(pMe->m_pShell,
-                                    150,
-                                    (PFNNOTIFY)AutoMovePage,
-                                    pMe);
-			if(pMe->m_bRight)
-			{
-				
-				MovePen(pMe,(5-pMe->m_step)*35);
-			}
-			else
-			{
-				MovePen(pMe,-((5-pMe->m_step)*35));	
-			}
-			
-		}
-		IDISPLAY_UpdateEx(pMe->m_pDisplay, TRUE);
+	MSG_FATAL("AutoMovePage........................",0,0,0);
+	if(pMe->m_step<5)
+	{
+		pMe->m_step++;
+        MSG_FATAL("ISHELL_SetTimer................",0,0,0);
+		(void)ISHELL_SetTimer(pMe->m_pShell,
+                                150,
+                                (PFNNOTIFY)AutoMovePage,
+                                pMe);
+	}
+	else
+	{
+		pMe->m_step = 5;
+	}
+	
+	if(pMe->m_bRight)
+	{
+		
+		MovePen(pMe,(5-pMe->m_step)*35);
+	}
+	else
+	{
+		MovePen(pMe,-((5-pMe->m_step)*35));	
+	}
+    
+    if(pMe->m_step >= 5)
+    {
+        pMe->m_step = 0;
+		MSG_FATAL("pMe->m_PrsentPage=========%d",pMe->m_PrsentPage,0,0);
+		// 初始整个背景及全部初始图标	
+		DrawMatrix(pMe);
+		// 绘制聚焦过程动画
+		MoveCursorTo(pMe, pMe->m_nRow, pMe->m_nColumn);
+		MSG_FATAL("pMe->m_nRow===%d,pMe->m_nColumn=%d",pMe->m_nRow,pMe->m_nColumn,0);
+		DrawMatrixStr(pMe);
+		pMe->m_bmove = FALSE;
+    }
+    IDISPLAY_UpdateEx(pMe->m_pDisplay, TRUE);
 }
 
 static void Main_keypadtimer(void *pUser)
