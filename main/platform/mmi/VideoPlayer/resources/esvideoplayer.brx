@@ -5,22 +5,22 @@
 		<Text>Video Player</Text>
 	</String>
 	<STRING Id="1004" Name="IDS_DELETE">
-		<Text>Delete</Text>
+		<Text>Borrar</Text>
 	</STRING>
 	<STRING Id="1008" Name="IDS_PLAYFAILED">
-		<Text>Play Failed</Text>
+		<Text>No se pudo jugar</Text>
 	</STRING>
 	<String Id="1012" Name="IDS_HELPTITLE">
-		<Text>HELP</Text>
+		<Text>AYUDA</Text>
 	</String>
 	<String Id="1013" Name="IDS_HELP">
-		<Text>Key Up and Down: Adjust the volume.\nGallery: Search videos in dirctory.\nNote: In full screen mode,press any key to come back.</Text>
+		<Text>Clave arriba y abajo: Ajustar el volumen.\nGalería de fotos: Buscar videos en dirctory.\nNota: En el modo de pantalla completa, presione cualquier tecla para volver.</Text>
 	</String>
 	<String Id="1014" Name="IDS_FILENAMETOOLONG">
-		<Text>FileName too long</Text>
+		<Text>NombreArchivo demasiado tiempo</Text>
 	</String>	
 	<STRING Id="1015" Name="IDS_PLAYFORMATFAILD">
-		<Text>Play Format Failed</Text>
+		<Text>Formato de juego Error</Text>
 	</STRING>
 </Strings>
 <Dialogs>
