@@ -523,7 +523,7 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
 	pMe->m_PenPos      = -1;
 	pMe->m_bmove       = FALSE;
 	pMe->m_PrsentPage  = 0;
-    pMe->m_bDraOver    = FALSE;
+    //pMe->m_bDraOver    = FALSE;
 	pMe->m_step        = 0;
 	pMe->m_bRight      = FALSE;
 	pMe->m_bReraw      = FALSE;
@@ -1606,20 +1606,58 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 static void AutoMovePage(MainMenu *pMe)
 {
 	MSG_FATAL("AutoMovePage........................",0,0,0);
-	if(pMe->m_step<5)
-	{
-		pMe->m_step++;
-        MSG_FATAL("ISHELL_SetTimer................",0,0,0);
-		(void)ISHELL_SetTimer(pMe->m_pShell,
+
+		if(pMe->m_step<5)
+		{
+			MSG_FATAL("ISHELL_SetTimer................",0,0,0);
+		    (void)ISHELL_SetTimer(pMe->m_pShell,
                                 150,
                                 (PFNNOTIFY)AutoMovePage,
                                 pMe);
-	}
-	else
-	{
-		pMe->m_step = 5;
-	}
+			if(pMe->m_bRight)
+			{
+				
+				MovePen(pMe,(5-pMe->m_step)*35);
+			}
+			else
+			{
+				MovePen(pMe,-((5-pMe->m_step)*35));	
+			}
+            IDISPLAY_UpdateEx(pMe->m_pDisplay, TRUE);
+            pMe->m_step++;
+		}
+        else if(pMe->m_step == 5)
+        {
+            (void)ISHELL_SetTimer(pMe->m_pShell,
+                                150,
+                                (PFNNOTIFY)AutoMovePage,
+                                pMe);
+            // 初始整个背景及全部初始图标	
+    		DrawMatrix(pMe);
+            IDISPLAY_UpdateEx(pMe->m_pDisplay, TRUE);
+            pMe->m_step ++;
+        }
+		else
+		{
+			//pMe->m_step = 5;
+			//pMe->m_bDraOver = TRUE;
+			pMe->m_step = 0;
+    		MSG_FATAL("pMe->m_PrsentPage=========%d",pMe->m_PrsentPage,0,0);
+    		// 初始整个背景及全部初始图标	
+    		DrawMatrix(pMe);
+    		// 绘制聚焦过程动画
+    		MoveCursorTo(pMe, pMe->m_nRow, pMe->m_nColumn);
+    		MSG_FATAL("pMe->m_nRow===%d,pMe->m_nColumn=%d",pMe->m_nRow,pMe->m_nColumn,0);
+    		DrawMatrixStr(pMe);
+    		pMe->m_bmove = FALSE;
+            IDISPLAY_UpdateEx(pMe->m_pDisplay, TRUE);
+			
+		}
+
 	
+    /*
+	pMe->m_step++;
+    
 	if(pMe->m_bRight)
 	{
 		
@@ -1629,7 +1667,7 @@ static void AutoMovePage(MainMenu *pMe)
 	{
 		MovePen(pMe,-((5-pMe->m_step)*35));	
 	}
-    
+    IDISPLAY_UpdateEx(pMe->m_pDisplay, TRUE);
     if(pMe->m_step >= 5)
     {
         pMe->m_step = 0;
@@ -1641,8 +1679,18 @@ static void AutoMovePage(MainMenu *pMe)
 		MSG_FATAL("pMe->m_nRow===%d,pMe->m_nColumn=%d",pMe->m_nRow,pMe->m_nColumn,0);
 		DrawMatrixStr(pMe);
 		pMe->m_bmove = FALSE;
+        IDISPLAY_UpdateEx(pMe->m_pDisplay, TRUE);
     }
-    IDISPLAY_UpdateEx(pMe->m_pDisplay, TRUE);
+    else
+    {
+        MSG_FATAL("ISHELL_SetTimer................",0,0,0);
+		(void)ISHELL_SetTimer(pMe->m_pShell,
+                                150,
+                                (PFNNOTIFY)AutoMovePage,
+                                pMe);
+    }
+    */
+    
 }
 
 static void Main_keypadtimer(void *pUser)
