@@ -493,7 +493,7 @@ static hs_to_aee_key_type hs_to_aee_tbl[] =
 	{HS_F1_K,					    AVK_MESSAGE,				    AVK_METHED_HOLD, FALSE, 1},
 	{HS_F2_K,					    AVK_MUSIC,						AVK_METHED_HOLD, FALSE, 1},
 	#endif
-	{HS_F3_K,					    AVK_CLR,						AVK_METHED_HOLD, FALSE, 1},
+	{HS_F3_K,					    AVK_DEL,						AVK_METHED_HOLD, FALSE, 0},
 	{HS_F4_K,					    AVK_MUTE,						AVK_METHED_HOLD, FALSE, 1},
     {HS_F5_K,					    AVK_UP,						    AVK_METHED_HOLD, FALSE, 1},
 	{HS_MUSIC_K,					AVK_MUSIC,						AVK_METHED_HOLD, FALSE, 1},
@@ -1675,6 +1675,16 @@ void CoreTask_init( void )
 #endif /* T_WINNT */
 #endif
 
+#if !MIN_BREW_VERSIONEx(3,1,4)
+#if MIN_BREW_VERSION(3,1)
+ (void) bridle_Init(NULL);
+#else
+#if MIN_BREW_VERSION(3,0)
+   bridle_InitSWITable(NULL);
+#endif
+#endif
+#endif /* !MIN_BREW_VERSIONEx(3,1,4) */
+
      InitResources(); /* set up resource files */
 #if MIN_BREW_VERSION(4,0)
    (void) AEE_Init(gpiRexEnv, &piShell);
@@ -1690,8 +1700,9 @@ void CoreTask_init( void )
    k1ExHandler_SetExceptionHandlerOf(ui_tcb.thread_id);
 #else
    (void) AEE_Init(AEE_APP_SIG);
-#ifdef FEATURE_OEMOMH
-    OEMOMH_Init();
+#ifdef FEATURE_MSHOP_DOWNLOAD_CONFIG_FOR_CT_AND_OMH
+   MSG_ERROR("OMH: Calling OEMOMH_Init after AEE_Init()", 0, 0, 0);
+   OEMOMH_Init();
 #endif
 #endif
     CoreTask_CreateAEEInstance();
