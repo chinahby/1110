@@ -334,6 +334,11 @@ typedef struct _TextCtlContext {
    boolean              m_bDigital;
    uint32               m_curpos;
    uint32               m_curarri;
+#ifdef  FEATURE_T9_MT_ENGLISH   
+   boolean              is_bSelectchar; 
+   int                  m_oldkey;
+   int                  m_wp;
+#endif   
 #ifdef  FEATURE_MYANMAR_INPUT_MOD
    boolean              m_myaisnull;
    boolean              m_Selectcandidates;
@@ -499,6 +504,9 @@ static int       TextCtl_GetScrollBarRects(TextCtlContext * pme, AEERect * prcFr
 static void      TSIM_CreateDlg(TextCtlContext *pContext);
 static boolean   TSIM_DlgHandleEvent(void * pUser, AEEEvent evt, uint16 wparam, uint32 dwparam);
 static boolean   TextCtl_IsInRange(int16 xpos, int16 ypos, CoordiRange* range);
+#ifdef FEATURE_LANG_SPANISH
+static void TextCtl_SelectCharTimer(TextCtlContext *pContext);
+#endif
 #ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
 static void TextCtl_DrawCursorTimer(TextCtlContext *pContext);
 extern uint32 ParagraphAlignment(AECHAR *pszText, int nChars);                 
@@ -955,6 +963,10 @@ OEMCONTEXT OEM_TextCreate(const IShell* pIShell,
    pNewContext->nMultitapCaps = MULTITAP_FIRST_CAP;
    pNewContext->m_bCaplk = FALSE;
    pNewContext->m_islong = FALSE;
+   #ifdef  FEATURE_T9_MT_ENGLISH 
+   pNewContext->is_bSelectchar=FALSE;
+   pNewContext->m_wp=0;
+   #endif
    pNewContext->m_curpos = 0;  //add by yangdecai
    pNewContext->m_curarri = 0; //add by yangdecai
    pNewContext->nLineHeight =
@@ -3511,6 +3523,17 @@ static void TextCtl_DrawCursorTimer(TextCtlContext *pContext)
     }
 }
 #endif //FEATURE_ARPHIC_LAYOUT_ENGINE
+#ifdef FEATURE_LANG_SPANISH
+static void TextCtl_SelectCharTimer(TextCtlContext *pContext)
+{
+    if(NULL == pContext)//pContext
+        {
+            return ;
+        }
+     pContext->is_bSelectchar= FALSE;
+    ISHELL_CancelTimer((IShell *) pContext->pIShell,(PFNNOTIFY)TextCtl_SelectCharTimer, pContext);
+}
+#endif
 /*=============================================================================
 FUNCTION: TextCtl_DrawCursor
 
@@ -4894,6 +4917,52 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 
 								    }
 							#endif
+                            #ifdef FEATURE_T9_MT_SPANISH
+								case TEXT_MODE_T9_MT_SPANISH:
+									{
+										if (key == VLCharKeyItem[i].wParam)
+			            				{
+			            					TextCtl_NoSelection(pContext);
+                                            if(pContext->is_bSelectchar && pContext->m_oldkey==i)    
+                                            {
+                                               pContext->m_wp++;
+                                               if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
+                                                  {
+                                                       --pContext->wSelStart;
+                                                  }
+                                                  TextCtl_AddChar(pContext, 0);
+                                                  TextCtl_NoSelection(pContext);
+                                               //ISHELL_CancelTimer((IShell *) pContext->pIShell, (PFNNOTIFY)TextCtl_SelectCharTimer, pContext);
+                                            }
+                                            else
+                                            {
+                                                pContext->m_wp=0;
+                                            }
+			            					if(pContext->is_isShift)
+			                        		{ 
+                                                TextCtl_AddChar(pContext,(AECHAR)(VLCharSEKeyItem[i].wp[pContext->m_wp]));
+			                            		pContext->is_isShift = FALSE;
+			            					}
+                                            else if(pContext->is_bAlt)
+					                        {
+					                        	TextCtl_NoSelection(pContext);
+					                            TextCtl_AddChar(pContext,(AECHAR)(VLCharKeyItem[i].wp));
+					                            if(!pContext->m_islong)
+					                            {
+					                            	pContext->is_bAlt = FALSE;
+					                            }
+					                        }
+											else
+											{
+												TextCtl_AddChar(pContext,(AECHAR)(VLCharCapSEKeyItem[i].wp[pContext->m_wp]));
+											}
+                                            pContext->is_bSelectchar=TRUE;
+                                            pContext->m_oldkey=i;
+                                            (void) ISHELL_SetTimer((IShell *) (pContext->pIShell),TIMEOUT,(PFNNOTIFY)TextCtl_SelectCharTimer,pContext);
+										}
+										break;
+									}
+							#endif                            
 		    				#ifdef FEATURE_T9_RAPID_ARABIC
 		    					case TEXT_MODE_T9_RAPID_ARABIC:
 									{
@@ -6264,6 +6333,45 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
 											{
 												TextCtl_AddChar(pContext,(AECHAR)(VLCharThaiKeyItem[i].wp));
 											}
+										}
+										break;
+									}
+							#endif
+                            #ifdef FEATURE_T9_MT_SPANISH
+								case TEXT_MODE_T9_MT_SPANISH:
+									{
+										if (key == VLCharKeyItem[i].wParam)
+			            				{
+			            					TextCtl_NoSelection(pContext);
+                                            if(pContext->is_bSelectchar && pContext->m_oldkey==i)    
+                                            {
+                                               pContext->m_wp++;
+                                               // --pContext->wSelStart;
+                                               
+                                               if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
+                                                  {
+                                                       --pContext->wSelStart;
+                                                  }
+                                                  TextCtl_AddChar(pContext, 0);
+                                                  TextCtl_NoSelection(pContext);
+                                               //(void)ISHELL_CancelTimer((IShell *) (pContext->pIShell), (PFNNOTIFY)TextCtl_SelectCharTimer, pContext);
+                                            }
+                                            else
+                                            {
+                                                pContext->m_wp=0;
+                                            }
+			            					if(pContext->is_isShift)
+			                        		{ 
+                                                TextCtl_AddChar(pContext,(AECHAR)(VLCharCapSEKeyItem[i].wp[pContext->m_wp]));
+			                            		pContext->is_isShift = FALSE;
+			            					}
+											else
+											{
+												TextCtl_AddChar(pContext,(AECHAR)(VLCharSEKeyItem[i].wp[pContext->m_wp]));
+											}
+                                            pContext->is_bSelectchar=TRUE;
+                                            pContext->m_oldkey=i;
+                                            (void) ISHELL_SetTimer((IShell *) (pContext->pIShell),TIMEOUT,(PFNNOTIFY)TextCtl_SelectCharTimer,pContext);
 										}
 										break;
 									}

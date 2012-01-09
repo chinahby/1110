@@ -282,6 +282,8 @@ const Mya_character_type default_mynamar_multitap_strings[10] =
 typedef struct _SheftKeyItem_Own  SheftKeyItem_Own;
 //typedef struct _UI_character_type UI_character_type ;
 typedef struct _AR_character_type AR_character_type;
+typedef struct _SE_character_type SE_character_type;
+
 struct _SheftKeyItem_Own
 {
 	uint16          wParam;
@@ -293,6 +295,13 @@ struct _AR_character_type   //add by yangdecai
 	uint16                 wParam;
 	uint16                 wp[10];
 	uint16                 wsize;
+};
+
+struct _SE_character_type
+{
+	uint16          wParam;
+	uint16          wp[5];
+	AECHAR          name[1];
 };
 
 struct _UI_character_type
@@ -885,9 +894,88 @@ static SheftKeyItem_Own VLCharShiftThaiKeyItem[MAX_SHEFTKEYPAD_NUMBER] =
     
     {AVK_SPACE,' ',{' '}}  
 };
+#endif
+
+#ifdef FEATURE_LANG_SPANISH
+static SE_character_type VLCharCapSEKeyItem[MAX_SHEFTKEYPAD_NUMBER] = 
+{
+	{AVK_POUND, {'Q', '#'}, {'Q'}},
+        
+	{AVK_1, {'W','1'}, {'W'}},
+	{AVK_2, {'E','2', 0x00C9, 0x00C8}, {'E'}},
+	{AVK_3, {'R','3'}, {'R'}},
+	{AVK_T, {'T','('}, {'T'}},
+	{AVK_Y, {'Y',')'}, {'Y'}},
+	{AVK_U, {'U', '_', 0x00DA, 0x00DC}, {'U'}},
+
+	{AVK_I, {'I', '-', 0x00CD, 0x00CF}, {'I'}},
+	{AVK_O, {'O', '+', 0x00D3, 0x00D2}, {'O'}},
+	{AVK_P, {'P', '@'}, {'P'}},
+	{AVK_STAR, {'A', '*', 0x00C1, 0x00C0}, {'A'}},
+	{AVK_4, {'S', '4'}, {'S'}},
+	{AVK_5, {'D', '5'}, {'D'}},
+	{AVK_6, {'F', '6'}, {'F'}},
+
+	{AVK_G, {'G', '/'}, {'G'}},
+	{AVK_H, {'H', ':'}, {'H'}},
+	{AVK_J, {'J', ';'}, {'J'}},
+	{AVK_K, {'K', '\''}, {'K'}},
+	{AVK_L, {'L', '\"'}, {'L'}},
+	{AVK_7, {'Z', '7'}, {'Z'}},
+	
+	{AVK_8, {'X', '8'}, {'X'}},
+	{AVK_9, {'C', '9', 0x00C7}, {'C'}},
+    {AVK_V, {'V', '?'}, {'V'}},
+	{AVK_B, {'B', '!'}, {'B'}},
+	{AVK_N, {'N', ',', 0x00D1}, {'N'}},
+	{AVK_M, {'M', '.'}, {'M'}},
+	{AVK_RWD, {'$', '\0'}, {'$'}},
+    {AVK_ENTER,{0x000A},{0x000A}},
+    
+    {AVK_SPACE,{' '},{' '}}, 
+    {AVK_0,{'0'},{'0'}}
+};
 
 
+static SE_character_type VLCharSEKeyItem[MAX_SHEFTKEYPAD_NUMBER] = 
+{
+	{AVK_POUND, {'q', '#'}, {'q'}},
+        
+	{AVK_1, {'w','1'}, {'w'}},
+	{AVK_2, {'e','2', 0x00C9, 0x00C8}, {'e'}},
+	{AVK_3, {'r','3'}, {'r'}},
+	{AVK_T, {'t','('}, {'t'}},
+	{AVK_Y, {'y',')'}, {'y'}},
+	{AVK_U, {'u', '_', 0x00DA, 0x00DC}, {'u'}},
 
+	{AVK_I, {'i', '-', 0x00CD, 0x00CF}, {'i'}},
+	{AVK_O, {'o', '+', 0x00D3, 0x00D2}, {'o'}},
+	{AVK_P, {'p', '@'}, {'p'}},
+	{AVK_STAR, {'a', '*', 0x00C1, 0x00C0}, {'a'}},
+	{AVK_4, {'s', '4'}, {'s'}},
+	{AVK_5, {'d', '5'}, {'d'}},
+	{AVK_6, {'f', '6'}, {'f'}},
+
+	{AVK_G, {'g', '/'}, {'g'}},
+	{AVK_H, {'h', ':'}, {'h'}},
+	{AVK_J, {'j', ';'}, {'j'}},
+	{AVK_K, {'k', '\''}, {'k'}},
+	{AVK_L, {'l', '\"'}, {'l'}},
+	{AVK_7, {'z', '7'}, {'z'}},
+	
+	{AVK_8, {'x', '8'}, {'x'}},
+	{AVK_9, {'c', '9', 0x00C7}, {'c'}},
+    {AVK_V, {'v', '?'}, {'v'}},
+	{AVK_B, {'b', '!'}, {'b'}},
+	{AVK_N, {'n', ',', 0x00D1}, {'n'}},
+	{AVK_M, {'m', '.'}, {'m'}},
+	{AVK_RWD, {'$', '\0'}, {'$'}},
+    {AVK_ENTER,{0x000A},{0x000A}},
+    
+    {AVK_SPACE,{' '},{' '}},  
+    {AVK_0,{'0'},{'0'}}
+
+};
 #endif
 
 
