@@ -3746,8 +3746,9 @@ static void quicktest_fm_power_up( void* pme)
 	if (HS_HEADSET_ON())
 	{
 		WarT_Fm_Mute(FALSE);
+        WarT_Fm_Set_Volume(7);
 	}		    
-    WarT_Fm_Set_Volume(7);
+    
 #else
     if( !fm_radio_is_power_up())
     {
@@ -3755,9 +3756,10 @@ static void quicktest_fm_power_up( void* pme)
     }
 	if (HS_HEADSET_ON())
 	{
+        fm_set_volume( 7,FALSE);
 		fm_mute(FALSE,FALSE);
 	}		    
-    fm_set_volume(7,FALSE);
+ //   fm_set_volume(7,FALSE);
 #endif
 #endif
     quicktest_fm_set_channel_to( pMe, convertChannelValueFromText( defaultChannel));
