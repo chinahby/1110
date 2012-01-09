@@ -4332,6 +4332,7 @@ static int StartApplet(MainMenu *pMe, int i)
 	}
 	case IDS_MAIN_MENU_NEO_APP:
 	{
+        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPMANAGER);
 		break;
 	}
 	case IDS_MAIN_MENU_NEO_NAV:

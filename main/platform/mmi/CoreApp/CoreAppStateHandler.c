@@ -991,9 +991,10 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
                     char EFmodelBuf[127];
                     static const char mnBuf[] = "WaterWorld";
                     int len = 0;
+                    static const char modename[] = CUST_MODEL;
                     EFmodelBuf[0] = 0x01; //01
                     EFmodelBuf[1] = 0x00; //00   
-                    len = STRLEN(ver_modelname);
+                    len = STRLEN(modename);
                     DBGPRINTF("modelBuf len =%d", len);
                     DBGPRINTF("EFmodelBuf =%s", EFmodelBuf);
                     DBGPRINTF("EFmodelBuf len =%s", STRLEN(EFmodelBuf));
@@ -1002,7 +1003,7 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
                     {
                         if(i < len + 2)
                         {
-                            EFmodelBuf[i] = ver_modelname[j++];
+                            EFmodelBuf[i] = modename[j++];
                         }
                         else
                         {
