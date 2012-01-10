@@ -29,7 +29,7 @@ extern void OEMDisplayDev_AnnunBar1_Deactivate(void);
 #include "AEEAnnunciator.h"
 #include "AEEDisp.h"
 #endif
-#include "Msg.h"
+
 struct IAnnunciatorControl {
    const AEEVTBL(IAnnunciatorControl)  *pvt;
    uint32                               uRef;
@@ -69,18 +69,6 @@ static uint32 OEMAnnunciatorControl_Release(IAnnunciatorControl *pme)
    if (--pme->uRef) {
       return pme->uRef;
    }
-#if !defined(FEATURE_UIONE_HDK) && defined(FEATURE_ANNUNCIATOR)
-    {
-        /* Create in the system context */
-        PACONTEXT pac = AEE_EnterAppContext(NULL);
-        if(pme->pAnnun != NULL)
-        {
-            IANNUNCIATOR_Release(pme->pAnnun);
-            pme->pAnnun = NULL;
-        }
-        AEE_LeaveAppContext(pac);
-    }
-#endif
 
    FREEIF(pme);
 
@@ -250,64 +238,14 @@ void OEMAnnunciatorControl_Enable(IAnnunciatorControl *pme, boolean bEnable)
          break;
    }
 
-   if(0 != clsDisp) {   	
+   if(0 != clsDisp) {
       (void) IANNUNCIATOR_EnableAnnunciatorBar(pme->pAnnun,
                                                clsDisp,
-                                               bEnable);	  
-//      if(bEnable) {
-//         (void) IANNUNCIATOR_Redraw(pme->pAnnun);
-//      }
+                                               bEnable);
+      if(bEnable) {
+         //Gemsea Remove (void) IANNUNCIATOR_Redraw(pme->pAnnun);
+      }
    }
-#endif
-   return;
-}
-
-void OEMAnnunciatorControl_EnableEx(IAnnunciatorControl *pme, boolean bEnable, boolean bForceRearaw)
-{
-#ifdef FEATURE_UIONE_HDK
-    if (AEECLSID_AnnunciatorControl_Display1 == pme->uCls) 
-    {
-        if (bEnable) 
-        {
-            OEMDisplayDev_AnnunBar1_Activate();
-        }
-        else 
-        {
-            OEMDisplayDev_AnnunBar1_Deactivate();
-        }
-    }
-#else //if defined(FEATURE_ANNUNCIATOR)
-    AEECLSID clsDisp;
-    switch (pme->uCls)
-    {
-        case AEECLSID_AnnunciatorControl_Display1:
-            clsDisp = AEECLSID_DISPLAY1;
-            break;
-            
-        case AEECLSID_AnnunciatorControl_Display2:
-            clsDisp = AEECLSID_DISPLAY2;
-            break;
-            
-        case AEECLSID_AnnunciatorControl_Display3:
-            clsDisp = AEECLSID_DISPLAY3;
-            break;
-            
-        case AEECLSID_AnnunciatorControl_Display4:
-            clsDisp = AEECLSID_DISPLAY4;
-            break;
-            
-        default:
-            clsDisp = 0;
-            break;
-    }
-
-    if (0 != clsDisp) 
-    {
-        (void) IANNUNCIATOR_EnableAnnunciatorBarEx(pme->pAnnun,
-                                               clsDisp,
-                                               bEnable,
-                                               bForceRearaw);
-    }
 #endif
    return;
 }
@@ -317,8 +255,7 @@ static const IAnnunciatorControlVtbl gvtIAnnunciatorControl = {
    OEMAnnunciatorControl_Release,
    OEMAnnunciatorControl_QueryInterface,
    OEMAnnunciatorControl_GetRegion,
-   OEMAnnunciatorControl_Enable,
-   OEMAnnunciatorControl_EnableEx
+   OEMAnnunciatorControl_Enable
 };
 
 /*===========================================================================

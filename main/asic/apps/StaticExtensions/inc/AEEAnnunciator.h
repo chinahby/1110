@@ -292,7 +292,6 @@ AEEINTERFACE(IAnnunciator)
    int     (*Redraw) (IAnnunciator *pMe);
    int     (*EnableAnnunciatorBar)   (IAnnunciator * pMe, AEECLSID clsid, boolean bOn);
    int     (*GetAnnunciatorBarSize)  (IAnnunciator * pMe, AEECLSID clsid, AEERect *pRec);
-   int     (*EnableAnnunciatorBarEx) (IAnnunciator * pMe, AEECLSID clsid, boolean bOn, boolean bForceRearaw);
    int     (*SetUnblinkTimer) (IAnnunciator * pMe, uint32 nAnnunID, uint32 nState, uint32 nTimeMs);
    int     (*SetFieldIsActiveEx) (IAnnunciator * pMe,boolean bActive);   //add by yangdecai 2010-07-13
    int     (*SetFieldText)     (IAnnunciator * pMe,uint16 * cText);    //add by yangdecai 2010-07-13
@@ -312,7 +311,6 @@ AEEINTERFACE(IAnnunciator)
 #define IANNUNCIATOR_Redraw(p) AEEGETPVTBL((p), IAnnunciator)->Redraw((p))
 #define IANNUNCIATOR_EnableAnnunciatorBar(p,cls,b)   AEEGETPVTBL((p),IAnnunciator)->EnableAnnunciatorBar((p),(cls),(b))
 #define IANNUNCIATOR_GetAnnunciatorBarSize(p,cls,pr) AEEGETPVTBL((p),IAnnunciator)->GetAnnunciatorBarSize((p),(cls),(pr))
-#define IANNUNCIATOR_EnableAnnunciatorBarEx(p,cls,b,c)   AEEGETPVTBL((p),IAnnunciator)->EnableAnnunciatorBarEx((p),(cls),(b),(c))
 #define IANNUNCIATOR_SetUnblinkTimer(p,id,s,n)   AEEGETPVTBL((p),IAnnunciator)->SetUnblinkTimer((p),(id),(s),(n))
 #define IANNUNCIATOR_SetFieldIsActiveEx(p,b)       AEEGETPVTBL((p),IAnnunciator)->SetFieldIsActiveEx((p),(b))
 #define IANNUNCIATOR_SetFieldText(p,c)           AEEGETPVTBL((p),IAnnunciator)->SetFieldText((p),(c))

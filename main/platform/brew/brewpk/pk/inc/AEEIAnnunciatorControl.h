@@ -34,18 +34,12 @@ INITIALIAZTION AND SEQUENCEING REQUIREMENTS: Not Applicable
 // IAnnunciatorControl Interface
 //
 //******************************************************************************
-#ifdef CUST_EDITION	
-#define INHERIT_IAnnunciatorControl(iname) \
-   INHERIT_IQI(iname); \
-   int      (*GetRegion)            (iname *po, AEERect *pRegion); \
-   void     (*Enable)               (iname *po, boolean bEnable); \
-   void     (*EnableEx)             (iname *po, boolean bEnable, boolean bForceRearaw)
-#else
+
 #define INHERIT_IAnnunciatorControl(iname) \
    INHERIT_IQI(iname); \
    int      (*GetRegion)            (iname *po, AEERect *pRegion); \
    void     (*Enable)               (iname *po, boolean bEnable)
-#endif
+
 AEEINTERFACE_DEFINE(IAnnunciatorControl);
 
 static __inline uint32 IAnnunciatorControl_AddRef(IAnnunciatorControl *po)
@@ -72,13 +66,6 @@ static __inline void IAnnunciatorControl_Enable(IAnnunciatorControl *po, boolean
 {
    AEEGETPVTBL(po,IAnnunciatorControl)->Enable(po, bEnable);
 }
-
-#ifdef CUST_EDITION	
-static __inline void IAnnunciatorControl_EnableEx(IAnnunciatorControl *po, boolean bEnable, boolean bForceRearaw)
-{
-   AEEGETPVTBL(po,IAnnunciatorControl)->EnableEx(po, bEnable, bForceRearaw);
-}
-#endif /*CUST_EDITION*/
 
 /*==============================================================================
    INTERFACE DOCUMENTATION

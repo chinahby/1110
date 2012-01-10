@@ -777,6 +777,7 @@ See Also:
 ==================================================================*/
 static void OEMSound_Proceed_Vibrate(uint16 wDuration, void * pUser)
 {
+   DBGPRINTF("OEMSound_Proceed_Vibrate %d",wDuration);
    uisnd_vibrate(wDuration, NULL, pUser);
 }
 

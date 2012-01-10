@@ -103,9 +103,9 @@ struct IAnnunciator
    void *              m_pac;
    IANNUNCore         *m_coreObj;
    unsigned short      m_usRef;
-   uint32 nAnnunID;
-   uint32 nState;  
-   
+   uint32              nAnnunID;
+   uint32              nState;  
+   boolean             m_bLastState;
 };
 
 typedef struct AnnunTimerInfo
@@ -135,7 +135,6 @@ static uint32 GetAnnunStateRank(uint32 nState);
 static int ModifyAnnunStateSchedule(IAnnunciator * pMe, uint32 nAnnunID, uint32 *nState);
 
 static int SwitchAnnunState(IAnnunciator * pMe, uint32 nAnnunID, uint32 *nState);
-static int IAnnunciator_EnableAnnunciatorBarEx(IAnnunciator * pMe, AEECLSID clsid, boolean bOn, boolean bForceRearaw);
 static int IAnnunciator_SetUnblinkTimer(IAnnunciator * pMe, uint32 nAnnunID, uint32 nState, uint32 nTimeMs);
 //static int IAnnunciator_SetFieldIsActive(IAnnunciator * pMe , boolean bActive);
 static int IAnnunciator_SetFieldIsActiveEx(IAnnunciator *pMe, boolean bActive);
@@ -153,7 +152,6 @@ IAnnunciatorVtbl gvtIAnnunciator = {
    IAnnunciator_Redraw,
    IAnnunciator_EnableAnnunciatorBar,
    IAnnunciator_GetAnnunciatorBarSize
-   ,IAnnunciator_EnableAnnunciatorBarEx
    ,IAnnunciator_SetUnblinkTimer
    ,IAnnunciator_SetFieldIsActiveEx
    ,IAnnunciator_SetFieldText,
@@ -1631,35 +1629,51 @@ SIDE EFFECTS
 ===========================================================================*/
 int OEMAnnunciator_New(IShell *piShell, AEECLSID clsid, void **pp)
 {
-  IAnnunciator *pMe=NULL;
-  *pp = 0;
+   IAnnunciator *pMe=NULL;
+   *pp = 0;
 
-  if (AEECLSID_ANNUNCIATOR != clsid) {
-    return EUNSUPPORTED;
-  }
+   if (AEECLSID_ANNUNCIATOR != clsid)
+   {
+      return EUNSUPPORTED;
+   }
 
-  pMe = (IAnnunciator *) AEE_OEM_NEWCLASS((IBaseVtbl*)&gvtIAnnunciator, sizeof(IAnnunciator));
-  if (pMe == NULL) {
-     return ENOMEMORY;
-  }
+//lint -save -e826  Suppress "Suspicious ptr-to-ptr conversion; space too small"
+   pMe = (IAnnunciator *)AEE_NewClass((IBaseVtbl*)&gvtIAnnunciator,
+                                      sizeof(IAnnunciator));
+//lint -restore
+   if (pMe == NULL)
+   {
+      return ENOMEMORY;
+   }
 
-  pMe->m_piShell = piShell;
-  ISHELL_AddRef(piShell);
+   pMe->m_piShell = piShell;
+   (void)ISHELL_AddRef(piShell);
 
-  pMe->clsid = clsid;
-  pMe->m_coreObj = OEMAnnunCore_New(piShell);
+   pMe->clsid = clsid;
+   pMe->m_coreObj = OEMAnnunCore_New(piShell);
 
-  if(pMe->m_coreObj == NULL)
-  {
-    IAnnunciator_Delete(pMe);
-    return EFAILED;
-  }
-  pMe->m_pac = AEE_GetAppContext();
-  
-    CALLBACK_Init(&pMe->m_cbSysObj, OEM_FreeAnnunciator, pMe);
-    AEE_LinkSysObject(&pMe->m_cbSysObj);
-    *pp = pMe;
-  return SUCCESS;
+   if (pMe->m_coreObj == NULL)
+   {
+      IAnnunciator_Delete(pMe);
+      return EFAILED;
+   }
+   pMe->m_pac = AEE_GetAppContext();
+
+   /* Force the use of fonts that fit our field sizes. */
+   //OEMAnnunciator_SelectFonts(pMe->m_coreObj->m_piDisplay);
+
+   /* The following check is a workaround for a BREW bug.  If it's
+    * a BREW-internal thing creating the annunciator, as indicated 
+    * by the context class being the shell's class, then don't
+    * set up the callback.
+    */
+   if (AEE_GetAppContextCls(pMe->m_pac) != AEECLSID_SHELL)
+   {
+      CALLBACK_Init(&pMe->m_cbSysObj, OEM_FreeAnnunciator, pMe);
+      AEE_LinkSysObject(&pMe->m_cbSysObj);
+   }
+   *pp = pMe;
+   return SUCCESS;
 }
 /*===========================================================================
 
@@ -2407,9 +2421,8 @@ static int IAnnunciator_EnableAnnunciatorBar(IAnnunciator * pMe, AEECLSID clsid,
      default:
         return ECLASSNOTSUPPORT;
   }
-#ifndef FEATURE_OEMOMH
-  if(bOn != bLastState)
-#endif
+  
+  if(bOn != bLastState || bOn != pMe->m_bLastState)
   {
 #if 0//def FEATURE_MDP
 #error code not present
@@ -2419,56 +2432,12 @@ static int IAnnunciator_EnableAnnunciatorBar(IAnnunciator * pMe, AEECLSID clsid,
      {
         (void) IANNUNCIATOR_Redraw(pMe);
      }
+     pMe->m_bLastState = bOn;
   }
 
   return SUCCESS;
 }
 
-static int IAnnunciator_EnableAnnunciatorBarEx(IAnnunciator * pMe, AEECLSID clsid, boolean bOn, boolean bForceRearaw)
-{
-    boolean bLastState;
-#if 0//def FEATURE_MDP
-    #error code not present
-#endif /* FEATURE_MDP */
-
-    if (!pMe)
-    {
-        return EFAILED;
-    }
-
-    if(NULL == pMe->m_coreObj)
-    {
-        return EFAILED;
-    }
-
-    switch(clsid)
-    {
-        case AEECLSID_DISPLAY1:
-            bLastState = pMe->m_coreObj->m_bAnnunciatorOn;
-            pMe->m_coreObj->m_bAnnunciatorOn = bOn;
-#if 0//def FEATURE_MDP
-#error code not present
-#endif /* FEATURE_MDP */
-            break;
-
-        default:
-            return ECLASSNOTSUPPORT;
-    }
-
-    if ((bOn != bLastState) || bForceRearaw)
-    {
-#if 0//def FEATURE_MDP
-#error code not present
-#endif /* FEATURE_MDP */
-        
-        if (bOn)
-        {
-            (void) IANNUNCIATOR_Redraw(pMe);
-        }
-    }
-    
-    return SUCCESS;
-}
 /*=======================================================================
 
 IAnnunciator_GetAnnunciatorBarSize()
