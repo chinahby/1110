@@ -1327,7 +1327,7 @@ static int OEMNet_RegisterIfaceEventCallback(OEMNet* pNet, dss_iface_ioctl_event
                             &ev_cb,
                             &ndssErr);
 
-   DBGPRINTF("***zzg OEMNet_RegisterIfaceEventCallback event=%d, ret=%d***", event, ret);
+   DBGPRINTF("***zzg OEMNet_RegisterIfaceEventCallback event=%d, ret=%d, ndssErr=%x***", event, ret, ndssErr);
    
    if (DSS_SUCCESS != ret) 
    {

@@ -816,8 +816,9 @@ static boolean  HandleCallSettingDialogEvent(CSettingMenu *pMe,
 #ifdef FEATURE_CARRIER_THAILAND_HUTCH 
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_AUTOANSWER_TITLE, IDS_AUTOANSWER_TITLE, NULL, 0);
 #endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH
+
 #ifdef FEATURE_OEMOMH
-            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_KEYTONE_LENGTH, IDS_KEYTONE_LENGTH, NULL, 0);
+			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_KEYTONE_LENGTH, IDS_KEYTONE_LENGTH, NULL, 0);
 #endif
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_CALL_RESTRICT, IDS_CALL_RESTRICT, NULL, 0);            
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_VOICE_PRIVACY, IDS_VOICE_PRIVACY, NULL, 0);
@@ -1455,7 +1456,7 @@ static boolean  HandleCallSettingSelDialogEvent(CSettingMenu *pMe,
                             callset = AEECM_PRIVACY_PREF_STANDARD;
 #else
                             callset = AEET_PRIVACY_PREF_STANDARD;
-#endif
+#endif							
                             ICONFIG_SetItem(pMe->m_pConfig,CFGI_VOICEPRIVACY,&callset,sizeof(callset));
                             CLOSE_DIALOG(DLGRET_WARNING)
                             return TRUE;
@@ -1530,7 +1531,7 @@ static boolean  HandleCallSettingSelDialogEvent(CSettingMenu *pMe,
                             callset = AEECM_PRIVACY_PREF_ENHANCED;
 #else
                             callset = AEET_PRIVACY_PREF_ENHANCED;
-#endif
+#endif							
                             ICONFIG_SetItem(pMe->m_pConfig,CFGI_VOICEPRIVACY,&callset,sizeof(callset));
                             CLOSE_DIALOG(DLGRET_WARNING)
                             return TRUE;

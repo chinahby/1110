@@ -6581,6 +6581,8 @@ MAKE_CALL_VALUE CallApp_MakeCall(CCallApp *pMe)
 	AEETCalls po;
 #endif
 
+	MSG_FATAL("***zzg CallApp_MakeCall cls=%x***", cls, 0, 0);
+
     ISHELL_CancelTimer(pMe->m_pShell,(PFNNOTIFY)CallApp_MakeCall, pMe);
     if(cls == AEECLSID_DIALER ||cls == AEECLSID_CORE_APP)
     {
@@ -6588,6 +6590,9 @@ MAKE_CALL_VALUE CallApp_MakeCall(CCallApp *pMe)
     else
     {
         CALL_ERR("Active Clisid not allow make call",0,0,0);
+
+		MSG_FATAL("***zzg Active Clisid not allow make call***", 0, 0, 0);
+		
         pMe->m_b_auto_redial     = FALSE;
         pMe->m_auto_redial_count = 0;
         return CALL_FAIL_ANOTHER;
@@ -11988,12 +11993,62 @@ static void CallApp_Draw_Numer_Img(CCallApp   *pMe,  AECHAR const *dialStr)
 #endif //FEATURE_IMAGE_DIALING_DIGITS
 static void CallApp_Display_Number(CCallApp *pMe)
 {
-  #ifdef FEATURE_CARRIER_VENEZUELA_MOVILNET
+
+#ifdef FEATURE_VERSION_W208S
+	int len,i;
+	AECHAR t_DialString[MAX_SIZE_DIALER_TEXT];
+	AECHAR dt_String1[30];
+	AECHAR dt_String2[5];
+	AECHAR dt_String3[5];
+
+	MSG_FATAL("***zzg CallApp_Display_Number***", 0, 0, 0);
+
+	(void)MEMSET( t_DialString,(AECHAR) 0, sizeof(t_DialString));
+	(void)MEMSET( dt_String1,(AECHAR) 0, sizeof(dt_String1));
+	(void)MEMSET( dt_String2,(AECHAR) 0, sizeof(dt_String2));
+	(void)MEMSET( dt_String3,(AECHAR) 0, sizeof(dt_String3));
+	WSTRCPY(t_DialString,pMe->m_DialString);
+	len = WSTRLEN(pMe->m_DialString);
+
+
+	if ((3<len)&&(len<8))
+	{
+		for(i=0;i<3;i++) dt_String1[i]= t_DialString[len-3+i];
+		WSTRCPY(&t_DialString[len-3], L"-");
+		for(i=0;i<3;i++)  t_DialString[len-3+1+i]=dt_String1[i];
+	}
+	else if((7<len)&&((len<12)))
+	{
+		for(i=0;i<3;i++) dt_String1[i]= t_DialString[len-3+i];
+		for(i=0;i<4;i++) dt_String2[i]= t_DialString[len-4-3+i];
+		WSTRCPY(&t_DialString[len-4-3], L"-");
+		WSTRCPY(&t_DialString[len+1-3], L"-");
+		for(i=0;i<4;i++)  t_DialString[len-4-3+1+i]=dt_String2[i];
+		for(i=0;i<3;i++)  t_DialString[len-3+1+1+i]=dt_String1[i];
+	}		
+	else if (len > 11)
+	{		   
+		for(i=0;i<(len-8);i++) dt_String1[i]= t_DialString[8+i];
+		for(i=0;i<4;i++) dt_String2[i]= t_DialString[4+i];
+		for(i=0;i<4;i++) dt_String3[i]= t_DialString[i];
+		 
+		WSTRCPY(&t_DialString[4], L"-");
+		WSTRCPY(&t_DialString[4+4+1], L"-");		
+		for(i=0;i<4;i++)  t_DialString[i]=dt_String3[i];
+		for(i=0;i<4;i++)  t_DialString[i+4+1]=dt_String2[i];
+		for(i=0;i<(len-8);i++)  t_DialString[4+4+1+1+i]=dt_String1[i];
+		
+	}
+	//////////////////////////////////////////
+#endif //FEATURE_VERSION_W208S
+
+  #ifdef FEATURE_CARRIER_VENEZUELA_MOVILNET 
     int len,i;
     AECHAR t_DialString[MAX_SIZE_DIALER_TEXT];
     AECHAR dt_String1[30];
     AECHAR dt_String2[5];
     AECHAR dt_String3[5];
+	
    (void)MEMSET( t_DialString,(AECHAR) 0, sizeof(t_DialString));
    (void)MEMSET( dt_String1,(AECHAR) 0, sizeof(dt_String1));
    (void)MEMSET( dt_String2,(AECHAR) 0, sizeof(dt_String2));
@@ -12141,7 +12196,11 @@ static void CallApp_Display_Number(CCallApp *pMe)
         #endif //FEATURE_CARRIER_VENEZUELA_MOVILNET
     }
 #else
+#ifdef FEATURE_VERSION_W208S
+	CallApp_DrawDialerString(pMe, t_DialString);
+#else
     CallApp_DrawDialerString(pMe, pMe->m_DialString);
+#endif
 #endif //#ifdef FEATURE_IMAGE_DIALING_DIGITS
 }
 

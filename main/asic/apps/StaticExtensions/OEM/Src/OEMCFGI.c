@@ -2669,6 +2669,10 @@ void OEM_RestoreFactorySetting( void )
     nvi_cache.key_tone_length = OEMNV_KEYTONE_LONG;
     nvi.cont_key_dtmf = TRUE;
     (void) OEMNV_Put( NV_CONT_KEY_DTMF_I, &nvi);
+#elif defined (FEATURE_VERSION_W208S)
+	nvi_cache.key_tone_length = OEMNV_KEYTONE_LONG;
+    nvi.cont_key_dtmf = TRUE;
+    (void) OEMNV_Put( NV_CONT_KEY_DTMF_I, &nvi);
 #else //FEATURE_CARRIER_VENEZUELA_MOVILNET
     nvi_cache.key_tone_length = OEMNV_KEYTONE_NORMAL;
 #ifndef WIN32
@@ -3642,6 +3646,9 @@ void OEM_InitPreference(void)
    nvi_cache.lock = nvi.lock;
 
    //CFGI_KEYTONE_LENGTH
+#ifdef FEATURE_VERSION_W208S
+	nvi_cache.key_tone_length = OEMNV_KEYTONE_LONG;
+#else
    (void) OEMNV_Get( NV_CONT_KEY_DTMF_I, &nvi);
    if(nvi.cont_key_dtmf)
    {
@@ -3651,6 +3658,7 @@ void OEM_InitPreference(void)
    {
       nvi_cache.key_tone_length = OEMNV_KEYTONE_NORMAL;
    }
+#endif   
 #endif // CUST_EDITION
 #endif//#ifndef WIN32
 

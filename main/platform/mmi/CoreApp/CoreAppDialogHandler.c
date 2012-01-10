@@ -3701,7 +3701,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #elif defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_SCHEDULEAPP);
 #elif defined(FEATURE_VERSION_W208S)
-					//return CoreApp_LaunchApplet(pMe, AEECLSID_APPMANAGER);
+					return CoreApp_LaunchApplet(pMe, AEECLSID_APPMANAGER);
 					return TRUE;
 #else
 					
