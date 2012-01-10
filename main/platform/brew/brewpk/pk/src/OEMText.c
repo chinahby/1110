@@ -4917,8 +4917,8 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 
 								    }
 							#endif
-                            #ifdef FEATURE_T9_MT_SPANISH
-								case TEXT_MODE_T9_MT_SPANISH:
+                            #ifdef FEATURE_T9_RAPID_SPANISH
+								case TEXT_MODE_T9_RAPID_SPANISH:
 									{
 										if (key == VLCharKeyItem[i].wParam)
 			            				{
