@@ -4925,7 +4925,11 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 			            					TextCtl_NoSelection(pContext);
                                             if(pContext->is_bSelectchar && pContext->m_oldkey==i)    
                                             {
+                                               if(pContext->m_wp < VLCharCapSEKeyItem[i].wsize - 1)
                                                pContext->m_wp++;
+                                               else
+                                               pContext->m_wp=0;
+                                               
                                                if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
                                                   {
                                                        --pContext->wSelStart;
@@ -6345,7 +6349,11 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
 			            					TextCtl_NoSelection(pContext);
                                             if(pContext->is_bSelectchar && pContext->m_oldkey==i)    
                                             {
+                                               if(pContext->m_wp < VLCharCapSEKeyItem[i].wsize -1)
                                                pContext->m_wp++;
+                                               else
+                                               pContext->m_wp=0;
+                                               
                                                // --pContext->wSelStart;
                                                
                                                if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
