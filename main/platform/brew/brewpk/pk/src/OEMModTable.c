@@ -1027,7 +1027,9 @@ const AEEStaticClass ***OEMMod_GetStaticClassLists(void)
 #if defined(FEATURE_A1)
          {AEECLSID_A1MODENV, ASCF_PRIV|ASCF_UPGRADE, 0, NULL, A1ModEnv_CreateInstance},
 #endif // FEATURE_A1
+#ifndef CUST_EDITION//FEATURE_VERSION_W208S
          {AEECLSID_ALARMMGR, ASCF_UPGRADE, 0, NULL, AEEAlarmMgr_New},
+#endif
 #if (defined(FEATURE_IFLIP)|| (defined(AEE_SIMULATOR) && !defined(_AEEWIN)))
          {AEECLSID_FLIP,	ASCF_UPGRADE, 0, NULL, OEMFLIP_New}, 
 #endif

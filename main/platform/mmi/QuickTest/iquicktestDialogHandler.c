@@ -494,6 +494,12 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                0,
                pMe->m_rc.dx,
                pMe->m_rc.dy);
+    
+    if(wParam ==AVK_DEL)
+    {
+        wParam =AVK_CLR;
+        dwParam = 1;
+    }
 
     switch (eCode)
     {
