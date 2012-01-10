@@ -222,137 +222,22 @@ static const uint8 a6to8[] = {0x00, 0x04, 0x08, 0x0C, 0x10, 0x14, 0x18, 0x1C,
 // preformance for important cases.
 #ifndef BITMAP_DISABLE_OPT_STEP4
 
-#ifndef AEE_SIMULATOR
+#if 0
 #define FILLRECT_COPY FillRect_Copy
-extern void memset16(word *dest, dword pattern, int count);
+
 // Assume all parameters are valid and in bounds.
 static __inline void FillRect_Copy(OEMBitmap *pbmDst, int x, int y, int dx, int dy, NativeColor color)
 {
-    int32  pitch = pbmDst->m_dib.nPitch>>1;
-    uint16 *pw = (uint16*)(pbmDst->m_dib.pBmp + pbmDst->m_dib.nPitch * y + (x<<1));
-    
-    if (dx==1) 
-    {
-        word wColor = color & 0xFFFF;
-        while (dy--) 
-        {
- 	  	    *pw = wColor;
-            // goto next line
-            pw += pitch;
-        }
-    }
-    else
-    {
-        if(dx == pitch)
-        {
-            register uint32 dwclr = (color<<16) | color;
-            register uint32 *pdw;
-            int dymod;
-            
-            if((uint32)pw&0x3 == 2)
-            {
-                *pw++ = color;
-            }
-            
-            pdw = (uint32 *)pw;
-            dy = (dy*dx)>>1;
-            dymod = dy &0x0007;
-            dy = dy>>3;
-            while (dy--) 
-            {
-                *pdw++ = dwclr;
-                *pdw++ = dwclr;
-                *pdw++ = dwclr;
-                *pdw++ = dwclr;
-                *pdw++ = dwclr;
-                *pdw++ = dwclr;
-                *pdw++ = dwclr;
-                *pdw++ = dwclr;
-            }
-            while (dymod--) 
-            {
-                *pdw++ = dwclr;
-            }
-            
-            if(dx&1 == 1 && dy&1 == 1 && (uint32)pw&0x3 == 0)
-            {
-                *pw++ = color;
-            }
-        }
-        else
-        {
-            while (dy--) 
-            {
-         	    memset16(pw, color, dx);
-                // goto next line
-                pw += pitch;
-            }
-        }
-    }
 }
 #endif
 
 
-#if 1
+#if 0
 #define FILLRECT_XOR FillRect_XOR
 
 // Assume all parameters are valid and in bounds.
 static __inline void FillRect_XOR(OEMBitmap *pbmDst, int x, int y, int dx, int dy, NativeColor color)
 {
-    int32  pitch = pbmDst->m_dib.nPitch>>1;
-    uint16 *pw = (uint16*)(pbmDst->m_dib.pBmp + pbmDst->m_dib.nPitch * y + (x<<1));
-    uint16 *pwBase = pw;
-
-    uint16 wColor;
-    uint32 *pdw;
-
-    color &= 0xFFFF;
-    wColor = color;
-    color |= (color<<16);
-
-    while (dy--)
-    {
-        int cx = dx;
-
-	    if (x & 0x01)  // first 16 bits
-	    {
-	        *pw++ ^= wColor;
-	        cx --;
-	    }
-
-        pdw = (uint32 *)pw;
-
-	    if (cx > 1)  // porcess 32 bits portion
-	    {
-	        int cx2 = cx >> 1;
-            cx -= cx2 << 1;
-
-            while (cx2 >> 3)
-            {
-                *pdw++ ^= color;
-                *pdw++ ^= color;
-                *pdw++ ^= color;
-                *pdw++ ^= color;
-                *pdw++ ^= color;
-                *pdw++ ^= color;
-                *pdw++ ^= color;
-                *pdw++ ^= color;
-
-                cx2 -= 8;
-            }
-            
-            while (cx2--)
-                *pdw++ ^= color;
-	    }
-
-        if (cx != 0) // last 16 bits
-        {
-            pw = (uint16 *)pdw;
-            *pw ^= wColor;
-        }
-
-        pw = pwBase += pitch;
-    }
 }
 #endif
 

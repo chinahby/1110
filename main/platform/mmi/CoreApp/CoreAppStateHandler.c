@@ -736,11 +736,11 @@ static NextFSMAction COREST_VERIFYUIM_Handler(CCoreApp *pMe)
                 }
                 else
                 {
-                	#ifdef   FEATURE_VERSION_N021
-                	  MOVE_TO_STATE(COREST_STARTUPANI);
-                	#else 
+#if defined(FEATURE_VERSION_N021) || defined(FEATURE_VERSION_W208S)
+                	MOVE_TO_STATE(COREST_STARTUPANI);
+#else 
                     MOVE_TO_STATE(COREST_UIMERR)
-                  #endif
+#endif
                 }
             }
             CoreApp_ProcessSubscriptionStatus(pMe);
@@ -1366,12 +1366,12 @@ static NextFSMAction COREST_POWERONAPPSDATAINIT_Handler(CCoreApp *pMe)
 
 #ifdef FEATURE_VERSION_W208S
 #ifdef FEATURE_UIM
-			 if (TRUE)	
+			if (TRUE)
 #else
-			 if (FALSE)
+			if (FALSE)
 #endif			 	
 #else
-			 if (IsRunAsUIMVersion())
+			if (IsRunAsUIMVersion())
 #endif            
             {
                 if(IRUIM_IsCardConnected(pMe->m_pIRUIM))
