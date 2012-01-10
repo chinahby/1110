@@ -1092,14 +1092,14 @@ __handleKeyEvent_input_channel_done__:
         return TRUE;
 
 #if (defined( FEATURE_FMRADIO_NO_MODE_SELECT) || defined( FEATURE_FMRADIO_KEY_OK_TO_MUTE))
-		case AVK_STAR:
+	/*	case AVK_STAR:
 		case AVK_POUND:
 		{
 			if( pMe->opMode == FM_RADIO_OPMODE_PLAY)
 			{
 				changeVolume( pMe, key);
 			}
-		}
+		}*/
 		return TRUE;
         
 		case AVK_LEFT:
