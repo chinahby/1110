@@ -924,6 +924,7 @@ typedef struct WmsApp
 	MMSMediaPlayerState      	   m_CurrentState;                    /*播放状态*/
     boolean                        m_isForward;
     uint8                          m_insertMMSType;//播放MMS的类型，0：图片。 1：声音。 2：视频. 3:文件
+    boolean                         m_isSendToAlbumOrEmain;
 #endif    
 	AEERect                        m_rContrlRectImage[4];
 	AEERect                        m_lContrlRectImage[4];

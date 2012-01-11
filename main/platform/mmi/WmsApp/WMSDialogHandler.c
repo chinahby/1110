@@ -8407,7 +8407,16 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
 #ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
                 ITEXTCTL_SetProperties(pIText, TP_FIXSETRECT|TP_FOCUS_NOSEL);//show cursor
 #else
-                ITEXTCTL_SetProperties(pIText, TP_FIXSETRECT|TP_FIXOEM|TP_USELESS_UPDOWN|TP_FOCUS_NOSEL);
+#ifdef FEATURE_USES_MMS                         
+                if(pMe->m_isSendToAlbumOrEmain)
+                {
+                    ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_FIXSETRECT | TP_NOUPDATE|TP_FOCUS_NOSEL);
+                }
+                else
+#endif                    
+                {
+                    ITEXTCTL_SetProperties(pIText, TP_FIXSETRECT|TP_FIXOEM|TP_USELESS_UPDOWN|TP_FOCUS_NOSEL);
+                }
 #endif
                 ITEXTCTL_SetMaxSize(pIText, MAX_PH_DIGITS);
                 (void)ITEXTCTL_SetInputMode(pIText, AEE_TM_NUMBERS);
@@ -8453,12 +8462,32 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                 
                 IMENUCTL_SetSel(pMenu, nSelID);
                 pItem = WmsApp_GetAddItem(pMe->m_pSendList, (nSelID-MSG_CMD_BASE));
+                DBGPRINTF("nCount = %d, pwstrText=%S",nCount, ITEXTCTL_GetTextPtr(pIText));
+                DBGPRINTF("m_isSendToAlbumOrEmain=%d, m_szTo=%S", pMe->m_isSendToAlbumOrEmain,pItem->m_szTo);
                 if (nCount<=0)
                 { 
-                    #ifdef FEATURE_LCD_TOUCH_ENABLE
+                    #if 1//def FEATURE_LCD_TOUCH_ENABLE
                     {
-                    AECHAR *pwstrText = ITEXTCTL_GetTextPtr(pIText);
-                    ITEXTCTL_SetText(pIText, pwstrText, -1);     
+#ifdef FEATURE_USES_MMS                         
+                        if(pMe->m_isSendToAlbumOrEmain)
+                        {
+                            AECHAR *pwstrText = ITEXTCTL_GetTextPtr(pIText);
+                            if(pwstrText == NULL)
+                            {
+                                DBGPRINTF("IDD_TONUMLIST_Handler pwstrText==NULL");   
+                            }
+                            else
+                            {
+                                DBGPRINTF("IDD_TONUMLIST_Handler pwstrText=%S", pwstrText);   
+                            }
+                            ITEXTCTL_SetText(pIText, pwstrText, -1);   
+                        }
+                        else
+#endif                            
+                        {
+                            ITEXTCTL_SetText(pIText, wstrText, -1); 
+                        }
+                        
                     }
                     #else
                     ITEXTCTL_SetText(pIText, wstrText, -1); 
@@ -8470,8 +8499,31 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                 }
                 else
                 {
-                   (void)ITEXTCTL_SetText(pIText, pItem->m_szTo, -1);   
-                    
+#ifdef FEATURE_USES_MMS                         
+                    if(pMe->m_isSendToAlbumOrEmain)
+                    {
+                        AECHAR *pwstrText = ITEXTCTL_GetTextPtr(pIText);
+                        if(WSTRLEN(pwstrText) > 0)
+                        {
+                            ITEXTCTL_SetText(pIText, pwstrText, -1);   
+                        }
+                        else
+                        {
+                            if(WSTRCHR(pItem->m_szTo, L'@') == NULL)
+                            {
+                                (void)ITEXTCTL_SetText(pIText, WSTRCAT(pItem->m_szTo, L"@"), -1);  
+                            }
+                            else
+                            {
+                                (void)ITEXTCTL_SetText(pIText, pItem->m_szTo, -1);  
+                            }
+                        }
+                    }
+                    else
+#endif                        
+                    {
+                        (void)ITEXTCTL_SetText(pIText, pItem->m_szTo, -1);  
+                    }
                     // 绘制底条提示
                     
                     if ((pMe->m_eCreateWMSType == SEND_MSG_RESERVE) ||
@@ -8747,6 +8799,21 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                     break;
             }
             return TRUE;
+#ifdef FEATURE_USES_MMS
+        case EVT_CTL_TEXT_MODECHANGED:  //切换输入法    
+            {
+                if(pMe->m_isSendToAlbumOrEmain)
+                {
+                    AEETextInputMode nInputMode;
+                    nInputMode = ITEXTCTL_GetInputMode(pIText,NULL);
+                    if (nInputMode != AEE_TM_SYMBOLS && nInputMode != AEE_TM_FACE_SYMBOL)
+                    {
+                        IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    }
+                }
+            }
+            return TRUE;    
+#endif
    
         case EVT_CTL_SEL_CHANGED:
             pMe->m_CurAddID = wParam;
@@ -8802,6 +8869,12 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
         
         case EVT_CTL_TAB:
         	MSG_FATAL("EVT_CTL_TAB...............dwParam=%d",dwParam,0,0);
+#ifdef FEATURE_USES_MMS                  
+            if(pMe->m_isSendToAlbumOrEmain)
+            {
+                return TRUE;
+            }
+#endif               
             if (pMe->m_eMakeAddListMode == MAKEADDLIST_NONE)
             {// 非群发
                 return TRUE;
@@ -10292,7 +10365,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     AEERect rc={0};
                     AEEDeviceInfo devinfo={0};
                     MSG_FATAL("IDD_WRITEMSG_Handler EVT_DIALOG_INIT m_insertMMSType=%d",pMe->m_insertMMSType,0,0);
-                                 
+                    pMe->m_isSendToAlbumOrEmain = FALSE;             
                     pMe->m_pMMSMenuHasFocus = FALSE;
                     ICONFIG_GetItem(pMe->m_pConfig, CFGI_MMSIMAGE,MMSImagepszPath, sizeof(MMSImagepszPath));
                     ICONFIG_GetItem(pMe->m_pConfig, CFGI_MMSSOUND,MMSSoundpszPath, sizeof(MMSSoundpszPath));
@@ -11308,6 +11381,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                         pMe->m_hasSound = FALSE;
                         pMe->m_hasVideo = FALSE;
                         pMe->m_isMMS = FALSE;
+                        pMe->m_isSendToAlbumOrEmain = FALSE; 
                     }
                     return TRUE;
 #endif                 
@@ -11351,6 +11425,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                             pMe->m_hasSound = FALSE;
                             pMe->m_hasVideo = FALSE;
                             pMe->m_isMMS = FALSE;
+                            pMe->m_isSendToAlbumOrEmain = FALSE; 
                         }
 #endif                         
                     	pMe->m_bwriteclr = TRUE;
@@ -11374,6 +11449,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                             pMe->m_hasSound = FALSE;
                             pMe->m_hasVideo = FALSE;
                             pMe->m_isMMS = FALSE;
+                            pMe->m_isSendToAlbumOrEmain = FALSE; 
                         }
 #endif                           
                         CLOSE_DIALOG(DLGRET_CANCELED)
@@ -11478,7 +11554,8 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                             MENU_ADDITEM(pMe->m_pMenu, IDS_REMOVE_VIDEO);//add by xuhui 2011/08/01
                             MENU_ADDITEM(pMe->m_pMenu, IDS_REMOVE_SOUND);//add by xuhui 2011/08/01
                             MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_FILE);//add by xuhui 2011/08/01
-                        }                         
+                        }  
+                        MENU_ADDITEM(pMe->m_pMenu, IDS_SEND_TO_ALBUM_OR_EMAIL);
 #endif                       
                         MENU_ADDITEM(pMe->m_pMenu, IDS_INSERTTEMPLATES);
 						MENU_ADDITEM(pMe->m_pMenu, IDS_SAVETODRAFT);	//Add By zzg 2010_09_11						
@@ -11713,6 +11790,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                             pMe->m_hasSound = FALSE;
                             pMe->m_hasVideo = FALSE;
                             pMe->m_isMMS = FALSE;
+                            pMe->m_isSendToAlbumOrEmain = FALSE; 
                         }
                     }
                     else
@@ -11779,6 +11857,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                             pMe->m_hasSound = FALSE;
                             pMe->m_hasVideo = FALSE;
                             pMe->m_isMMS = FALSE;
+                            pMe->m_isSendToAlbumOrEmain = FALSE; 
                         }                        
                     }  
                     else
@@ -11844,6 +11923,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                             pMe->m_hasSound = FALSE;
                             pMe->m_hasVideo = FALSE;
                             pMe->m_isMMS = FALSE;
+                            pMe->m_isSendToAlbumOrEmain = FALSE; 
                         }                        
                     }  
                     else
@@ -11858,7 +11938,14 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                                         0, 
                                         0);
                     return TRUE;
-                }                   
+                }     
+
+                case IDS_SEND_TO_ALBUM_OR_EMAIL:
+                {
+                    pMe->m_isSendToAlbumOrEmain = TRUE; 
+                    CLOSE_DIALOG(DLGRET_SEND)
+                    return TRUE;
+                }                
 #endif
                     
                 // 插入表情符号: 
@@ -11910,7 +11997,8 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                         pMe->m_hasImage = FALSE;
                         pMe->m_hasSound = FALSE;
                         pMe->m_hasVideo = FALSE;
-                        pMe->m_isMMS = FALSE;                             
+                        pMe->m_isMMS = FALSE; 
+                        pMe->m_isSendToAlbumOrEmain = FALSE; 
     					CLOSE_DIALOG(DLGRET_CANCELED)
     					return TRUE;                        
                     }

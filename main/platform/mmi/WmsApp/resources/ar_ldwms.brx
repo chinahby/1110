@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="arwms" VERSION="1">
+<BREWRes Name="ar_ldwms" VERSION="1">
 <Strings Encoding="Unicode">
 	<String Id="1" Name="IDS_INBOX">
 		<Text>علبة الوارد</Text>
@@ -636,6 +636,9 @@
 	</String>
 	<String Id="1034" Name="IDS_DRAFT_MMS">
 		<Text>Draft mms</Text>
+	</String>
+	<String Id="1035" Name="IDS_SEND_TO_ALBUM_OR_EMAIL">
+		<Text>Send to album or email</Text>
 	</String>
 </Strings>
 <Dialogs>
