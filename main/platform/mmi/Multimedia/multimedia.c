@@ -931,9 +931,6 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
             
             //IMENUCTL_SetTitle(pMenu, MULTIMEDIA_RES_FILE_LANG, IDS_MENU_LIST, NULL);      
 #ifdef FEATURE_VERSION_W208S
-#if !defined(FEATURE_PEKTEST)
-			IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_VIDEO_CAMERA, IDS_MULTIMEDIA_VIDEO_CAMERA, NULL, 0);
-#endif
 			IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_MUSICPLAYER, IDS_MULTIMEDIA_MUSICPLAYER, NULL, 0);
 #endif
 
@@ -963,9 +960,10 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
             IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_MEDIAGALLERY,IDS_MULTIMEDIA_MEDIAGALLERY, NULL, 0);
 #endif
 #ifdef FEATURE_VERSION_W516
+#if !defined(FEATURE_PEKTEST)
             IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_VIDEO_CAMERA, IDS_MULTIMEDIA_VIDEO_CAMERA, NULL, 0);
 #endif
-
+#endif
             return TRUE;
             
         case EVT_DIALOG_START:
