@@ -32,7 +32,7 @@
 		<Text>Calibra</Text>
 	</String>
 	<STRING Id="1011" Name="IDS_MAIN_MENU_MEDIAGALLERY">
-		<Text>MediaGallery</Text>
+		<Text>File Management</Text>
 	</STRING>
 	<STRING Id="1012" Name="IDS_MAIN_MENU_CONTACTS">
 		<Text>Contacts</Text>

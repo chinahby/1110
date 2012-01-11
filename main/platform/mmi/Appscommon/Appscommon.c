@@ -2755,8 +2755,8 @@ void DrawPromptMessage (IDisplay *pIDisplay,
         if (TRUE== drawbgimage)
         {
         	DBGPRINTF("***zzg Appscommon DrawPromptMessage***");
-            //ISTATIC_SetProperties(pStatic, ST_CENTERTEXT|ST_MIDDLETEXT|ST_TRANSPARENTBACK);          
-            ISTATIC_SetProperties(pStatic, ST_CENTERTEXT|ST_MIDDLETEXT|ST_TRANSPARENTBACK|ST_SPECIAL_BG);   	//Modify by zzg 2011_12_31
+            ISTATIC_SetProperties(pStatic, ST_CENTERTEXT|ST_MIDDLETEXT|ST_TRANSPARENTBACK);          
+            //ISTATIC_SetProperties(pStatic, ST_CENTERTEXT|ST_MIDDLETEXT|ST_TRANSPARENTBACK|ST_SPECIAL_BG);   	//Modify by zzg 2011_12_31
         }
         else
         {

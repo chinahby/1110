@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="game" VERSION="1">
+<BREWRes Name="argame" VERSION="1">
 <Strings Encoding="Unicode">
 	<String Id="1001" Name="IDS_GAME_LIST">
-        <Text>اللعبة</Text>
-    </String>
-
+		<Text>اللعبة</Text>
+	</String>
 	<STRING Id="1011" Name="IDS_GAME_TITLE_1">
-        <Text>بلاك جاك</Text>
+		<Text>بلاك جاك</Text>
 	</STRING>
 	<STRING Id="1012" Name="IDS_GAME_TITLE_2">
-        <Text>Brickattack</Text>
+		<Text>هجوم قرميد</Text>
 	</STRING>
 	<STRING Id="1013" Name="IDS_GAME_TITLE_3">
-        <Text>تيتريس</Text>
+		<Text>تيتريس</Text>
 	</STRING>
 </Strings>
 <Dialogs>
