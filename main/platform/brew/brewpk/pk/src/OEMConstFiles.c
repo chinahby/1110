@@ -128,7 +128,7 @@ static const AEEConstFile *  gpOEMConstFiles[] = {
                                                             &gCODESIG_MIF,
                                                             &gCODESIG_MOD,
 #endif
-#ifndef CUST_EDITION
+#if !defined(CUST_EDITION) || defined(FEATURE_PEKTEST)
                                                             // Const MIF files for MCF
 #ifndef FEATURE_MANGO_BREW
 #ifndef FEATURE_USES_LOWMEM
