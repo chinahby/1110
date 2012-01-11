@@ -292,7 +292,7 @@ GENERAL DESCRIPTION:
 #if defined(FEATURE_BREW_MULTIMEDIA) || defined(FEATURE_GPSONE)
 #define OEMOBJECTMGR
 #endif // defined(FEATURE_BREW_MULTIMEDIA) || defined(FEATURE_GPSONE)
-
+#ifndef FEATURE_VERSION_W208S
 //Disable for QSC1110
 //#ifndef FEATURE_LOW_MEMORY_USAGE
 #ifdef FEATURE_USES_ADVANCEAPI
@@ -300,7 +300,7 @@ GENERAL DESCRIPTION:
 #define FEATURE_UNZIP
 #endif
 //#endif
-
+#endif
 
 #if (defined(FEATURE_PDAPI) || defined(FEATURE_GPSONE)) && defined(FEATURE_GPSAPP)
 #define FEATURE_POSITION_DETERMINATION
@@ -423,8 +423,10 @@ GENERAL DESCRIPTION:
 #define FEATURE_BREW_RESCTL
 
 // Disabled image scaling support for now
+#ifndef FEATURE_PEKTEST
 #ifndef FEATURE_USES_LOWMEM
 #define FEATURE_BREW_SCALE       // turn on image scaling in BREW viewers
+#endif
 #endif
 
 #define FEATURE_DEV_NOTIFIER
@@ -482,7 +484,7 @@ GENERAL DESCRIPTION:
 
 // Enable the following definition to support DebugApp
 #ifndef FEATURE_MANGO_BREW
-//#define FEATURE_AEE_DEBUGSET
+#define FEATURE_AEE_DEBUGSET
 #endif
 
 // Enable the following definition to forcibly close all TCP sockets
