@@ -4191,9 +4191,23 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
                                                         CALL_THIRD_LINE_Y,
                                                         CALL_NAME_DX,
                                                         CALL_LINE_HIGHT);
-                
                 IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, CALLAPP_TEXT_COLOR);
-                (void)IDISPLAY_DrawText(pMe->m_pDisplay,
+            #ifdef FEATURE_VERSION_C01
+             SETAEERECT(&rect,
+                                                        CALL_NAME_X-20,
+                                                        CALL_THIRD_LINE_Y+30,
+                                                        CALL_NAME_DX+20,
+                                                        CALL_LINE_HIGHT);
+             (void)IDISPLAY_DrawText(pMe->m_pDisplay,
+                                                        AEE_FONT_NORMAL,
+                                                        mui_call,
+                                                        -1,
+                                                        rect.x,
+                                                        rect.y,
+                                                        &rect,
+                                                        IDF_ALIGN_LEFT|IDF_TEXT_TRANSPARENT);
+            #else
+             (void)IDISPLAY_DrawText(pMe->m_pDisplay,
                                                         AEE_FONT_NORMAL,
                                                         mui_call,
                                                         -1,
@@ -4201,6 +4215,8 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
                                                         CALL_THIRD_LINE_Y,
                                                         &rect,
                                                         IDF_ALIGN_LEFT|IDF_TEXT_TRANSPARENT);
+            #endif
+            
                 IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, CALLAPP_TEXT_COLOR);
             }
             else
@@ -9264,6 +9280,22 @@ static void CallApp_Draw_Connect_Number_and_Name(CCallApp *pMe)
                                                 CALL_SECOND_LINE_Y,
                                                 CALL_NAME_DX,
                                                 CALL_LINE_HIGHT);
+                                                
+            #ifdef FEATURE_VERSION_C01
+            SETAEERECT(&rect,
+                                                CALL_NAME_X-20,
+                                                CALL_SECOND_LINE_Y+30,
+                                                CALL_NAME_DX+20,
+                                                CALL_LINE_HIGHT);
+            (void)IDISPLAY_DrawText(pMe->m_pDisplay,
+                                                AEE_FONT_NORMAL,
+                                                mui_call,
+                                                -1,
+                                                rect.x,
+                                                rect.y,
+                                                &rect,
+                                                IDF_TEXT_TRANSPARENT);
+            #else
             (void)IDISPLAY_DrawText(pMe->m_pDisplay,
                                                 AEE_FONT_NORMAL,
                                                 mui_call,
@@ -9272,6 +9304,7 @@ static void CallApp_Draw_Connect_Number_and_Name(CCallApp *pMe)
                                                 CALL_SECOND_LINE_Y,
                                                 &rect,
                                                 IDF_TEXT_TRANSPARENT);
+            #endif
         }
     }
     else//not 3Way

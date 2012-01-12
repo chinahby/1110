@@ -15969,6 +15969,7 @@ static boolean  CContApp_HandleSelectOptDlgEvent( CContApp  *pMe,
 
                 case IDS_UNMARKALL:
                     CContApp_FreeSelectFieldListNode();
+                    pMe->m_eTotalSelectNum = 0;
                     CLOSE_DIALOG(DLGRET_MARKCHG);
                     break;
                     

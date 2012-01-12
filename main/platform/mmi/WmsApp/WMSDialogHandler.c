@@ -9400,7 +9400,11 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                 {
                     AEERect rect;
                     int ry=0;
+                    #ifdef FEATURE_VERSION_C01
+                    if(i<4 && i != 2)
+                    #else
                     if(i<4)
+                    #endif    
                     {
                         y=y+dy+ygap;
                         ry=y-dy-ygap;
@@ -9432,7 +9436,11 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                     
                         if((language != NV_LANGUAGE_CHINESE) && (language != NV_LANGUAGE_TCHINESE))
                         {
+                            #ifdef FEATURE_VERSION_C01
+                            rect.dx = SENDOPT_TITLELONGER+40;
+                            #else
                             rect.dx = SENDOPT_TITLELONGER;
+                            #endif
                             rc.x    = SENDOPT_TITLELONGER + 2;
                             rc.dx   = pMe->m_rc.dx - SENDOPT_TITLELONGER - 4;
                             
