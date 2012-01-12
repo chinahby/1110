@@ -8611,6 +8611,7 @@ void Mpeg4Player::SetURN(const URL &fullURN, URNData &destURN)
   URNData urn;
   if (!urn.Init())
   {
+  	QTV_Free(strippedURN);
     return;
   }
   urn.bValid=false;
@@ -8670,6 +8671,7 @@ void Mpeg4Player::SetURN(const URL &fullURN, URNData &destURN)
     {
       /* The URN Length exceeds urlsize. Skipping further parsing;
       this should never happen*/
+      QTV_Free(strippedURN);
       return;
     }
 
@@ -8689,6 +8691,7 @@ void Mpeg4Player::SetURN(const URL &fullURN, URNData &destURN)
   urn.sURN->SetUrl(strippedURN);
   if (URL::URL_OK != urn.sURN->GetErrorCode())
   {
+  	QTV_Free(strippedURN);
     return;
   }
 

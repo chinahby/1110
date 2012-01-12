@@ -25,7 +25,7 @@
 
 #include "VideoPlayer_priv.h"      
 #include "AEE_OEMEvent.h"
-
+#include "AEEHeap.h"
 /*=================================================================================================================
               定义（宏定义及数据类型提前声明）和常数
 =================================================================================================================*/
@@ -283,6 +283,7 @@ static uint32  VideoPlayer_Release (IVideoPlayer *pi)
 {
     register CVideoPlayer *pMe = (CVideoPlayer*)pi;
 
+    MSG_FATAL("VideoPlayer_Release",0,0,0);
     ASSERT(pMe != NULL);
 
     if(pMe->m_nRefs == 0)
@@ -411,9 +412,11 @@ static int VideoPlayer_InitAppData(CVideoPlayer *pMe)
 备注:
 
 =================================================================================================================*/
+
+
 static void VideoPlayer_FreeAppData(CVideoPlayer *pMe)
 {
-   
+    MSG_FATAL("VideoPlayer_FreeAppData",0,0,0);
     if (NULL == pMe)
     {
         return ;
@@ -462,9 +465,7 @@ static void VideoPlayer_FreeAppData(CVideoPlayer *pMe)
         IIMAGE_Release(pMe->m_pImage);
         pMe->m_pImage = NULL;
     }
-    
-    VideoPlayer_ReleaseVideo(pMe); 
-
+    RELEASEIF(pMe->m_pFileDB);
     
    // VidePlayer_SoundRestore();
 }
@@ -548,13 +549,13 @@ static boolean VideoPlayer_HandleEvent(IVideoPlayer *pi, AEEEvent  eCode, uint16
 			//Rendering_UpdateEx();//wlh add for 3D test
             ASSERT(dwParam != 0);
             as = (AEEAppStart*)dwParam;
-            if (NULL != pMe->m_pDisplay)
-            {
-                (void) IDISPLAY_Release(pMe->m_pDisplay);
-                pMe->m_pDisplay = NULL;
-            }
+//            if (NULL != pMe->m_pDisplay)
+//            {
+//                (void) IDISPLAY_Release(pMe->m_pDisplay);
+//                pMe->m_pDisplay = NULL;
+//            }
             pMe->m_pDisplay = as->pDisplay;
-            (void) IDISPLAY_AddRef(pMe->m_pDisplay);       
+//            (void) IDISPLAY_AddRef(pMe->m_pDisplay);       
             pMe->m_rc = as->rc; 
             pMe->m_bSuspending = FALSE;
             pMe->m_bActive = TRUE; 
@@ -575,8 +576,9 @@ static boolean VideoPlayer_HandleEvent(IVideoPlayer *pi, AEEEvent  eCode, uint16
                         pMe->IsGallery=TRUE;
                         pMe->IsPlay  = TRUE;
                         videoplayer_play_flag = TRUE;
-#ifndef WIN32                        
-                        pMe->m_FileToPlay=(char *)MALLOC(MAX_STR_LEN*sizeof(char));
+#ifndef WIN32          
+                        FREEIF(pMe->m_FileToPlay);
+                        pMe->m_FileToPlay = (char *)MALLOC(MAX_STR_LEN*sizeof(char));
                         (void)STRCPY(pMe->m_FileToPlay,&as->pszArgs[1]); 
                         //初始化Media指针并注册回调
                         VideoPlayer_InitVideo(pMe); 
@@ -602,10 +604,13 @@ static boolean VideoPlayer_HandleEvent(IVideoPlayer *pi, AEEEvent  eCode, uint16
 
 
         case EVT_APP_STOP: 
+        {            
             if(pMe->m_pMedia)
 			{
 				IMEDIA_Stop((IMedia*)pMe->m_pMedia);
-			}	
+			}
+			
+            VideoPlayer_ReleaseVideo(pMe); 
             (void)ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);
             SetDeviceState(DEVICE_TYPE_MP4,DEVICE_MP4_STATE_OFF);
              //恢复按键音
@@ -613,11 +618,11 @@ static boolean VideoPlayer_HandleEvent(IVideoPlayer *pi, AEEEvent  eCode, uint16
             
             pMe->m_bAppIsReady  = FALSE;
              videoplayer_play_flag = FALSE;
-            if (pMe->m_pDisplay != NULL)
-            {
-                (void) IDISPLAY_Release(pMe->m_pDisplay);
-                pMe->m_pDisplay = NULL;
-            }
+            //if (pMe->m_pDisplay != NULL)
+            //{
+            //    (void) IDISPLAY_Release(pMe->m_pDisplay);
+            //    pMe->m_pDisplay = NULL;
+            //}
             pMe->m_bSuspending = TRUE; 
             {
                 dword shake;
@@ -629,28 +634,36 @@ static boolean VideoPlayer_HandleEvent(IVideoPlayer *pi, AEEEvent  eCode, uint16
 #endif
                 }
             }
-            return TRUE;
+        }
+        return TRUE;
 
         case EVT_APP_SUSPEND:  
-            SetDeviceState(DEVICE_TYPE_MP4,DEVICE_MP4_STATE_OFF);
-            (void)ICONFIG_SetItem(pMe->m_pConfig,CFGI_BEEP_VOL,&pMe->m_CKSound,sizeof(byte));
-            pMe->m_bSuspending = TRUE;                               
-            (void)ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);
-            
-            //中断相关操作(自动关机,低电量关机,来电)            
-            if(pMe->m_pMedia != NULL && !pMe->UserStop)
             {
-                if(pMe->IsFullScreen) // (来电时)全屏界面则回到正常模式
+                AEERect rc = {0,0,SCR_W,SCR_H};
+                SetDeviceState(DEVICE_TYPE_MP4,DEVICE_MP4_STATE_OFF);
+                (void)ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);
+                (void)ICONFIG_SetItem(pMe->m_pConfig,CFGI_BEEP_VOL,&pMe->m_CKSound,sizeof(byte));
+                pMe->m_bSuspending = TRUE;                               
+                
+                
+                //中断相关操作(自动关机,低电量关机,来电)            
+                if(pMe->m_pMedia != NULL)// && !pMe->UserStop)
                 {
-                    VideoPlayer_PlayMod(pMe, wParam);
+                    if(pMe->IsFullScreen) // (来电时)全屏界面则回到正常模式
+                    {
+                        VideoPlayer_PlayMod(pMe, wParam);
+                    }
+                    //if(pMe->IsPlay)
+                    //{
+                    //   IMEDIA_Pause((IMedia*)pMe->m_pMedia);
+                    //}
+                    IMedia_Stop((IMedia*)pMe->m_pMedia);
                 }
-                if(pMe->IsPlay)
-                {
-                    IMEDIA_Pause((IMedia*)pMe->m_pMedia);
-                }
-                IMedia_Stop((IMedia*)pMe->m_pMedia);
+                
+                IDisplay_EraseRect(pMe->m_pDisplay,&rc);
+                //RELEASEIF(pMe->m_pDisplay);
+                //中断相关操作(自动关机,低电量关机,来电)
             }
-            //中断相关操作(自动关机,低电量关机,来电)
             return TRUE;
 
         case EVT_APP_RESUME:  
@@ -659,13 +672,13 @@ static boolean VideoPlayer_HandleEvent(IVideoPlayer *pi, AEEEvent  eCode, uint16
             ASSERT(dwParam != 0);
             as = (AEEAppStart*)dwParam;
             pMe->m_bSuspending = FALSE;          
-            if (pMe->m_pDisplay != NULL)
-            {
-                (void) IDISPLAY_Release(pMe->m_pDisplay);
-                pMe->m_pDisplay = NULL;
-            }
+            //if (pMe->m_pDisplay != NULL)
+            //{
+            //    (void) IDISPLAY_Release(pMe->m_pDisplay);
+            //    pMe->m_pDisplay = NULL;
+            //}
             pMe->m_pDisplay = as->pDisplay;
-            (void) IDISPLAY_AddRef(pMe->m_pDisplay);
+            //(void) IDISPLAY_AddRef(pMe->m_pDisplay);
             pMe->m_rc = as->rc; 
  #if 0        
             if(pMe->m_eCurState != STATE_PLAYER)
@@ -688,6 +701,7 @@ static boolean VideoPlayer_HandleEvent(IVideoPlayer *pi, AEEEvent  eCode, uint16
                     pMe->IsGallery=TRUE;
                     pMe->IsPlay  = TRUE;
                     videoplayer_play_flag = TRUE;
+                    FREEIF(pMe->m_FileToPlay);
                     pMe->m_FileToPlay=(char *)MALLOC(MAX_STR_LEN*sizeof(char));
                     (void)STRCPY(pMe->m_FileToPlay,&as->pszArgs[1]); 
                     //初始化Media指针并注册回调

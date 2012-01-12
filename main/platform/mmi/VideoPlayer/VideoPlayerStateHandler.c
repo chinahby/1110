@@ -93,7 +93,7 @@ NextFSMAction VideoPlayer_ProcessState(CVideoPlayer *pMe)
     {
         return retVal;
     }
-
+    DBGPRINTF("[VideoPlayer]pMe->m_eCurState:%d,pMe->m_eDlgRet:%d",pMe->m_eCurState,pMe->m_eDlgRet);
     // 根据当前状态调用相应的状态处理函数
     switch (pMe->m_eCurState)
     {
