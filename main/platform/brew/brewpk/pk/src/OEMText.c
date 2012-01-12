@@ -6801,7 +6801,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
                    #endif
                 }                                        
             } 
-#if  defined(FEATURE_VERSION_W516) ||defined(FEATURE_VERSION_VG68) 
+#if  defined(FEATURE_VERSION_W516) ||defined(FEATURE_VERSION_VG68) ||defined(FEATURE_VERSION_C01)
 
             pContext->nMultitapCaps = MULTITAP_ALL_SMALL;
 #endif
@@ -12427,7 +12427,7 @@ boolean OEM_isFirstCap (OEMCONTEXT hTextField)
     boolean bRet = FALSE;
     int maxsymbolcount;
     int i,j;
-	#if  defined(FEATURE_VERSION_W516) ||defined(FEATURE_VERSION_VG68) 
+	#if  defined(FEATURE_VERSION_W516) ||defined(FEATURE_VERSION_VG68) || defined(FEATURE_VERSION_C01)
 	return FALSE;
 	#endif
     
