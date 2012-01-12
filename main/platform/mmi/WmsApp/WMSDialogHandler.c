@@ -18314,7 +18314,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
     IImage* pIImage = NULL;
     IImage* pISound = NULL;
     IImage* pIVideo = NULL;    
-    MMS_WSP_DEC_DATA *pDecdata = NULL;
+    static MMS_WSP_DEC_DATA *pDecdata = NULL;
     MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] eCode:0x%x, wParam=0x%x",eCode,wParam,0);
     if (NULL == pMe)
     {
@@ -18550,7 +18550,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                     else if(pMimeType = MMS_WSP_MineType2MormalMimeType((const char*)pDecdata->message.mms_data.fragment[index].hContentType))
                     {
                         pMe->m_isMMS = TRUE;
-                        MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] pMimeType:%d", pMimeType, 0, 0);
+                        DBGPRINTF("[IDD_VIEWMSG_MMS_Handler] pMimeType:%s", pMimeType);
                         if(STRISTR(pMimeType, IMAGE_MIME_BASE))
                         {   
                             AECHAR menuItemName[100] = {0};
@@ -18727,7 +18727,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                 ISTATIC_Redraw(pStatic);
                 IMENUCTL_SetActive(pMenuCtl, TRUE);
                 IMENUCTL_Redraw(pMenuCtl);                  
-                MSG_FATAL("pMe->m_CurrentState=%d, soundData.nCount=%d",pMe->m_CurrentState,pMe->m_ResData.soundData.nCount,0);
+                MSG_FATAL("m_CurrentState=%d, soundData.nCount=%d, m_eMBoxType=%d",pMe->m_CurrentState,pMe->m_ResData.soundData.nCount,pMe->m_eMBoxType);
                 
                 if(pDecdata != NULL)
                 {
