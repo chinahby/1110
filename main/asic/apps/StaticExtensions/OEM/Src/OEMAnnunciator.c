@@ -2210,7 +2210,9 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
             	    //IIMAGE_Draw(pBackBmp,20, 0);
             	    AEERect bgRect;
                     int titleLen = IDISPLAY_MeasureText(pMe->m_coreObj->m_piDisplay,AEE_FONT_NORMAL, (const AECHAR*)IAnnunCoreObj->m_Title);
-                    
+
+					MSG_FATAL("***zzg OEMAnnunciator titleLen=%d***", titleLen, 0, 0);
+					
                     bgRect.y = 0;
                     bgRect.dy = STATEBAR_HEIGHT;
 #if defined(FEATURE_DISP_128X128)
@@ -2241,7 +2243,8 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
                     }
 #elif defined(FEATURE_DISP_220X176)
 					bgRect.x = 28;
-                    if(titleLen > 180)
+                    //if(titleLen > 180)
+                    if(titleLen > 164)
                     {
                         bgRect.x = 0;
                         bgRect.dx = 220;
@@ -2310,6 +2313,9 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
                     bgRect.dx = 120;
                     IAnnunCoreObj->m_btoolen = FALSE;
 #endif
+
+
+					DBGPRINTF("***zzg bgRect:%d,%d,%d,%d***", bgRect.x, bgRect.y, bgRect.dx, bgRect.dy);
 					
                     IDISPLAY_DrawRect(pMe->m_coreObj->m_piDisplay,
                                       &bgRect,

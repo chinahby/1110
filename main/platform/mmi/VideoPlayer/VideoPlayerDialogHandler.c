@@ -1856,31 +1856,33 @@ static void VideoPlayer_RefreshPlayingTick(CVideoPlayer *pMe)
     {
         pMe->PauseLock = FALSE; 
     }      
+	
     if (pMe->TickUpdateImg[IDI_TIME_PART_PRELOAD]!=NULL)
     {
         //画时间显示区域
-        #if defined(FEATURE_DISP_128X160)
-    	#elif defined(FEATURE_DISP_220X176)
-        #elif defined(FEATURE_DISP_240X320)
-        #elif defined(FEATURE_DISP_176X220)
-        #else 
+#if defined(FEATURE_DISP_128X160)
+#elif defined(FEATURE_DISP_220X176)
+#elif defined(FEATURE_DISP_240X320)
+#elif defined(FEATURE_DISP_176X220)
+#else 
     	IIMAGE_Draw(pMe->TickUpdateImg[IDI_TIME_PART_PRELOAD], VIDEOPLAYER_TIME_X, VIDEOPLAYER_TIME_Y); 
     	IIMAGE_Draw(pMe->TickUpdateImg[IDI_TIME_PART_PRELOAD], VIDEOPLAYER_TIME_X+85, VIDEOPLAYER_TIME_Y); 
-        #endif
+ #endif
     }
+	
 	SETAEERECT(&rc_tick, VIDEOPLAYER_TIME_X, VIDEOPLAYER_TIME_Y, VIDEOPLAYER_TIME_W, VIDEOPLAYER_TIME_H);
     IDISPLAY_FillRect(pMe->m_pDisplay,&rc_tick,0x0);
     
     MEMSET(tick_time,0,MAX_STR_LEN);
+	
 #if defined (FEATURE_DISP_240X320)||defined (FEATURE_DISP_220X176)||defined(FEATURE_DISP_176X220)
-    SPRINTF(tick_time,"%02d:%02d/",
-        pMe->bCurrentTime/60,pMe->bCurrentTime%60);
+    SPRINTF(tick_time,"%02d:%02d/", pMe->bCurrentTime/60,pMe->bCurrentTime%60);
 #else
-    SPRINTF(tick_time,"%02d:%02d",
-		pMe->bCurrentTime/60,pMe->bCurrentTime%60);
+    SPRINTF(tick_time,"%02d:%02d", pMe->bCurrentTime/60,pMe->bCurrentTime%60);
 #endif
     STRTOWSTR(tick_time, Wtick_time, sizeof(Wtick_time));
-	#ifndef FEATURE_DISP_128X160
+
+#ifndef FEATURE_DISP_128X160
 #if defined (FEATURE_DISP_240X320)||defined (FEATURE_DISP_220X176)||defined(FEATURE_DISP_176X220)
 	DrawTextWithProfile(pMe->m_pShell, 
                     pMe->m_pDisplay, 
@@ -1904,28 +1906,30 @@ static void VideoPlayer_RefreshPlayingTick(CVideoPlayer *pMe)
                         &rc_tick, 
                         IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE|IDF_TEXT_TRANSPARENT);
 #endif
+#else
+#endif
 
-	#else
-	#endif
-	#if defined(FEATURE_DISP_128X160)
+#if defined(FEATURE_DISP_128X160)
 	SETAEERECT(&rc_tick, VIDEOPLAYER_TIME_X, VIDEOPLAYER_TIME_Y, VIDEOPLAYER_TIME_W, VIDEOPLAYER_TIME_H);
-	#elif defined(FEATURE_DISP_220X176)
+	IDISPLAY_FillRect(pMe->m_pDisplay,&rc_tick,0x0);
+#elif defined(FEATURE_DISP_220X176)
 	SETAEERECT(&rc_tick, SCR_W-VIDEOPLAYER_TIME_W, VIDEOPLAYER_TIME_Y, VIDEOPLAYER_TIME_W, VIDEOPLAYER_TIME_H);
-	#elif defined(FEATURE_DISP_176X220)
+	IDISPLAY_FillRect(pMe->m_pDisplay,&rc_tick,0x0);
+#elif defined(FEATURE_DISP_176X220)
 	SETAEERECT(&rc_tick, SCR_W-VIDEOPLAYER_TIME_W, VIDEOPLAYER_TIME_Y, VIDEOPLAYER_TIME_W, VIDEOPLAYER_TIME_H);
     IDISPLAY_FillRect(pMe->m_pDisplay,&rc_tick,0x0);
-	#elif defined(FEATURE_DISP_240X320)
+#elif defined(FEATURE_DISP_240X320)
 	SETAEERECT(&rc_tick, 120, VIDEOPLAYER_TIME_Y, VIDEOPLAYER_TIME_W, VIDEOPLAYER_TIME_H);
     IDISPLAY_FillRect(pMe->m_pDisplay,&rc_tick,0x0);
-	#else
+#else
 	SETAEERECT(&rc_tick, VIDEOPLAYER_TIME_X+85, VIDEOPLAYER_TIME_Y, VIDEOPLAYER_TIME_W, VIDEOPLAYER_TIME_H);
-    #endif
+#endif
 	MEMSET(tick_time, 0, MAX_STR_LEN);
 	MEMSET(Wtick_time, 0, sizeof(Wtick_time));
-	SPRINTF(tick_time, "%02d:%02d",
-		pMe->bTotalTime/60,pMe->bTotalTime%60);
+	SPRINTF(tick_time, "%02d:%02d", pMe->bTotalTime/60,pMe->bTotalTime%60);
 	STRTOWSTR(tick_time, Wtick_time, sizeof(Wtick_time));
-    #if defined (FEATURE_DISP_240X320)||defined (FEATURE_DISP_220X176)||defined(FEATURE_DISP_176X220)
+	
+#if defined (FEATURE_DISP_240X320)||defined (FEATURE_DISP_220X176)||defined(FEATURE_DISP_176X220)
 	DrawTextWithProfile(pMe->m_pShell, 
                     pMe->m_pDisplay, 
                     RGB_WHITE, 
@@ -1936,7 +1940,7 @@ static void VideoPlayer_RefreshPlayingTick(CVideoPlayer *pMe)
                     0, 
                     &rc_tick, 
                     IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE|IDF_TEXT_TRANSPARENT);
-    #else
+#else
 	DrawTextWithProfile(pMe->m_pShell, 
                         pMe->m_pDisplay, 
                         RGB_WHITE, 
@@ -1947,7 +1951,7 @@ static void VideoPlayer_RefreshPlayingTick(CVideoPlayer *pMe)
                         57, 
                         &rc_tick, 
                         IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE|IDF_TEXT_TRANSPARENT);
-    #endif
+#endif
 }    
 
 /*=================================================================================================================

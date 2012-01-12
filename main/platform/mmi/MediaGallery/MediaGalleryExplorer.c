@@ -1842,7 +1842,7 @@ __inline int MGExplorer_UpdateMediaMenuTitle(CMediaGalleryApp *pMe,
    uint8  nMedium;
    MGStartMode     eStartMode;
    MGMimeType     eMimeBase;
-   AECHAR m_Annstr[40] = {0};
+   AECHAR m_Annstr[40] = {0};	
 
    MSG_FATAL("MGExplorer_UpdateMediaMenuTitle Start",0,0,0);
    if(!pMe || !pMenuCtl){
@@ -1880,6 +1880,8 @@ __inline int MGExplorer_UpdateMediaMenuTitle(CMediaGalleryApp *pMe,
       }
       SNPRINTF(pszCount, sizeof(char) * nLen, cpszCountFormat,
                nSelIdx + 1, nItemCount);
+
+	  DBGPRINTF("***zzg MediaMenuTitle pszCount=%s***", pszCount);
    }
 
    pCurDir = MGExplorer_GetCurrentFolder(&pMe->m_Explorer);
@@ -1945,6 +1947,9 @@ __inline int MGExplorer_UpdateMediaMenuTitle(CMediaGalleryApp *pMe,
    else
    {
       AECHAR wszBuffer[MG_MAX_LINETEXTNUM];
+
+	  DBGPRINTF("***zzg MediaMenuTitle pszCount=%s, nLen=%d", pszCount, nLen); 
+	  
       UTF8TOWSTR((const byte *)pszCount,
                  sizeof(char) * nLen,
                  wszBuffer,
@@ -1952,7 +1957,7 @@ __inline int MGExplorer_UpdateMediaMenuTitle(CMediaGalleryApp *pMe,
       WSTRCAT(wpszTitle, wszBuffer);
 
    }
-   WSTRNCOPY(m_Annstr,20,wpszTitle);
+   WSTRNCOPY(m_Annstr,40,wpszTitle);	//20
    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,m_Annstr);
    //IMENUCTL_SetTitle(pMenuCtl, NULL, 0, wpszTitle);
 

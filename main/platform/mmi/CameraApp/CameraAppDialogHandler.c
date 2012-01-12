@@ -572,8 +572,16 @@ static boolean CameraApp_MainMenuHandleEvent(CCameraApp *pMe, AEEEvent eCode, ui
             IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
             
             // 初始化菜单项
-            IMENUCTL_AddItem(pMenu, AEE_APPSCAMERAAPP_RES_FILE, IDS_ITEM_CAMERA, IDS_ITEM_CAMERA, NULL, NULL);
-            IMENUCTL_AddItem(pMenu, AEE_APPSCAMERAAPP_RES_FILE, IDS_ITEM_CAMERA_GALLERY, IDS_ITEM_CAMERA_GALLERY, NULL, NULL);
+            if (pMe->m_isRecordMode == TRUE)
+            {
+				IMENUCTL_AddItem(pMenu, AEE_APPSCAMERAAPP_RES_FILE, IDS_VIDEO_CAMERA, IDS_VIDEO_CAMERA, NULL, NULL);
+            	//IMENUCTL_AddItem(pMenu, AEE_APPSCAMERAAPP_RES_FILE, IDS_ITEM_CAMERA_GALLERY, IDS_ITEM_CAMERA_GALLERY, NULL, NULL);
+			}
+			else
+			{
+				IMENUCTL_AddItem(pMenu, AEE_APPSCAMERAAPP_RES_FILE, IDS_ITEM_CAMERA, IDS_ITEM_CAMERA, NULL, NULL);
+            	IMENUCTL_AddItem(pMenu, AEE_APPSCAMERAAPP_RES_FILE, IDS_ITEM_CAMERA_GALLERY, IDS_ITEM_CAMERA_GALLERY, NULL, NULL);
+			}            
             #if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T)
             IMENUCTL_AddItem(pMenu, AEE_APPSCAMERAAPP_RES_FILE, IDS_CAMERA_PHOTO_MODE, IDS_CAMERA_PHOTO_MODE, NULL, NULL);
             #endif
@@ -602,6 +610,7 @@ static boolean CameraApp_MainMenuHandleEvent(CCameraApp *pMe, AEEEvent eCode, ui
         case EVT_COMMAND:          
             switch(wParam) 
             {
+            	case IDS_VIDEO_CAMERA:
                 case IDS_ITEM_CAMERA: 
 #if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T)
                     {
@@ -613,7 +622,7 @@ static boolean CameraApp_MainMenuHandleEvent(CCameraApp *pMe, AEEEvent eCode, ui
                     // set the annunciator disable
                     IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn,AEECLSID_DISPLAY1,FALSE);
                     
-                    pMe->m_nMainMenuItemSel = IDS_ITEM_CAMERA;
+                    pMe->m_nMainMenuItemSel = wParam;	//IDS_ITEM_CAMERA;
 
                     pMe->m_bMemoryCardExist = CameraApp_FindMemoryCardExist(pMe);
 #ifdef FEATURE_VERSION_FLEXI203P
