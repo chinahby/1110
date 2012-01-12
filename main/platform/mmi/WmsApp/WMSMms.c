@@ -378,6 +378,7 @@ typedef enum
     VIDEO_3G2,
     VIDEO_H263,
     VIDEO_MP4,
+    VIDEO_3GP,
 
     MIME_TYPE_COUT
 } WSP_MIME_TYPE;
@@ -422,6 +423,7 @@ const static char* sWspMimeType[MIME_TYPE_COUT] =
     "video/3gpp2",
     "video/h263",
     "video/mp4",   
+    "video/3gp",
 };
 
 uint32 cSlim_clib_ctype_table_mms[256] = {
@@ -695,7 +697,7 @@ static void MMS_Encode_Address(uint8* pIn)
 
     if(pIn == NULL || STRLEN((char*)pIn) == 0)
         return ;
-        
+    DBGPRINTF("pAddCur=%s",pAddCur);    
     while(*pAddCur != '\0')
     {
         switch(*pAddCur)
@@ -843,7 +845,7 @@ static int MMS_Encode_header(uint8* mms_context,int nType,MMS_WSP_ENCODE_SEND* p
 
     if(pData == NULL)
         return 0;
-
+    DBGPRINTF("MMS_Encode_header Start nType=%d",nType);
     switch(nType)
 	{
 	    case WMS_MMS_PDU_MSendReq:
@@ -877,7 +879,10 @@ static int MMS_Encode_header(uint8* mms_context,int nType,MMS_WSP_ENCODE_SEND* p
             
             //  X-Mms-MMS-Version
             pData->pMessage->iMMSVersion = 10;
-
+            DBGPRINTF("pData->pMessage->hTo=%s",pData->pMessage->hTo);
+            DBGPRINTF("pData->pMessage->hCc=%s",pData->pMessage->hCc);
+            DBGPRINTF("pData->pMessage->hBcc=%s",pData->pMessage->hBcc);
+            DBGPRINTF("pData->pMessage->hFrom=%s",pData->pMessage->hFrom);
         	MMS_Encode_Address(pData->pMessage->hTo);
         	MMS_Encode_Address(pData->pMessage->hCc);
         	MMS_Encode_Address(pData->pMessage->hBcc);
@@ -917,7 +922,7 @@ static int MMS_Encode_header(uint8* mms_context,int nType,MMS_WSP_ENCODE_SEND* p
             pData->pReadReport->bReadStutas = TRUE;
 
             pData->pReadReport->iMessageClass = MMS_CLASS_AUTO;
-
+            DBGPRINTF("pData->pReadReport->hTo%s",pData->pReadReport->hTo);
             MMS_Encode_Address(pData->pReadReport->hTo);
             
 	        pCurPos = WMS_MMS_PDU_ReadRecInd(pCurPos,pData);
@@ -2712,7 +2717,7 @@ int WMS_MMS_PDU_Encode(MMS_WSP_ENCODE_SEND* encdata, uint8* hPDU, uint8 ePDUType
 		return MMC_NOMEM;
 	}
     MEMSET((void*)WMS_MMS_BUFFERGet(), 0, MSG_MAX_PACKET_SIZE);	  
-
+    DBGPRINTF("WMS_MMS_PDU_Encode ePDUType=%d", ePDUType);
     // 只有收和发有body
 	switch(ePDUType)
 	{
@@ -2941,6 +2946,7 @@ static int MMS_WSP_Decode_MultipartData(uint8* pData, int iDataLen,int nParts, W
 		{
 			consumed += (contenttypelen + iHeadersDataOffset + iDataDataOffset + iDataOffset);
 			acc = MMS_WSP_Decode_UINTVAR(&pData[consumed], iDataLen - consumed, &iAccOffset);
+            DBGPRINTF("acc==0x%x", acc);
 			if (acc != MMS_DECODER_ERROR_VALUE)
 			{
 				dec = MMS_WSP_Decode_MultipartData(&pData[consumed+iAccOffset],iDataLen-consumed-iAccOffset, acc, &iMIMEParts[cur_part], inout_depth);
@@ -5157,7 +5163,9 @@ char* MMS_WSP_MineType2MormalMimeType(const char* pszSrc)
             if(STRSTR(pszSrc,sWspMimeType[VIDEO_MP4])
                 || STRSTR(pszSrc,sWspMimeType[VIDEO_H263])
                 || STRSTR(pszSrc,sWspMimeType[VIDEO_3GPP])
-                || STRSTR(pszSrc,sWspMimeType[VIDEO_3G2]))
+                || STRSTR(pszSrc,sWspMimeType[VIDEO_3G2])
+                || STRSTR(pszSrc,sWspMimeType[VIDEO_3GP])
+                )
             {
                 return MT_VIDEO_MPEG4;
             }
@@ -5302,7 +5310,10 @@ const char *MMS_GetMimeType(const char *pszSrc)
          } else if (MMS_STREQI(pext+1, "mp4")) {
             return "video/mp4";
             
-         }
+         } else if (MMS_STREQI(pext+1, "3gp")) {
+            return "video/3gp";
+            
+         } 
       }
    }
    return NULL;

@@ -18477,7 +18477,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                 RELEASEIF(pIFileMgr);
                
                 result = WMS_MMS_PDU_Decode(pDecdata,(uint8*)pBuffer,pMmsDataInfoCur->MMSDatasize, &ePDUType);
-
+                MSG_FATAL("IDD_VIEWMSG_MMS_Handler result=%d", result,0,0);
                 if(!pMmsDataInfoCur->MMSDataReaded && pDecdata->message.bReadRep)
                 {
                     if(NULL == pMe->m_EncData.pReadReport)
