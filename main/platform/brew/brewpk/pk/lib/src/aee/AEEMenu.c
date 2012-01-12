@@ -3850,6 +3850,7 @@ static void Menu_Recalc(CMenuCtl * pme)
 
          if(cx > cxMaxItem)
             cx = cxMaxItem;
+
       }
       else{
          // Item Width (Includes Text and Padding)
@@ -3900,6 +3901,7 @@ static void Menu_Recalc(CMenuCtl * pme)
     MENUITEM_HEIGHT宏数值与字体高度差值为奇数时坐标错*/
    cyMax = MAX(cyMax, MENUITEM_HEIGHT);
 #endif
+	
 
    pme->m_cxMaxItem = cxMax;  // Width of widest item
    pme->m_cyMaxItem = cyMax;  // Height of tallest item
@@ -7551,6 +7553,7 @@ static void Icon_CalcRows(CMenuCtl * pme)
 {
    uint16   cxMax,cyMax;
 
+
    // Single Frame has one one row/col
    if(SINGLE_FRAME(pme)){
       pme->m_nRows = pme->m_nCols = 1;
@@ -7573,6 +7576,7 @@ static void Icon_CalcRows(CMenuCtl * pme)
         pme->m_cyMaxItem = cyMax;
       if(cxMax < pme->m_cxMaxItem)
         pme->m_cxMaxItem = cxMax;
+
    }
 
    // Number of displayable icon rows
@@ -7600,6 +7604,7 @@ static void Icon_CalcRows(CMenuCtl * pme)
    // Calculate horizontal/vertical padding around icons
    pme->m_xImagePad = (cxMax - (pme->m_nCols * pme->m_cxMaxItem)) / (pme->m_nCols + 1);
    pme->m_yImagePad = (cyMax - (pme->m_nRows * pme->m_cyMaxItem)) / (pme->m_nRows + 1);
+
 }
 
 /*=====================================================================

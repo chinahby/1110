@@ -10471,14 +10471,27 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                         rc = pMe->m_rc;
                         pMe->m_isMMS = TRUE;
                         ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
-                        rc.y = 0; 
-                        rc.dy = devinfo.cyScreen;
-                        rc.dy -= GetBottomBarHeight(pMe->m_pDisplay);   
+						
+                        //rc.y = 0; 
+                        //rc.dy = devinfo.cyScreen;
+                        //rc.dy -= GetBottomBarHeight(pMe->m_pDisplay); 
+
+						//Modify by zzg 2012_01_12
+                        rc.y = GetBottomBarHeight(pMe->m_pDisplay)/2 - 2;	
+						rc.dy -= rc.y;
+						//Modify end
+                          
                         MSG_FATAL("IDD_WRITEMSG_Handler rc.x=%d, rc.y=%d,rc.dy=%d", rc.x, rc.y, rc.dy);
                         IMENUCTL_SetRect(pMenuCtl, &rc);
                         IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL| OEMMP_USE_MENU_INFO_SELECT);
                         IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY|OEMMP_USE_MENU_STYLE);
-                
+
+						//Add by zzg 2012_01_12
+						rc.y = 0; 			
+						rc.dy = devinfo.cyScreen;
+                        rc.dy -= GetBottomBarHeight(pMe->m_pDisplay); 
+                        //Add End
+                		
                         // Clear items
                         (void)IMENUCTL_DeleteAll(pMenuCtl);                
                         // Init items
@@ -10494,14 +10507,15 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                         {
                             MSG_FATAL("Failed to Add Opts item %d", ai.wItemID,0,0);
                             return EFAILED;
-                        }    
+                        }  
+						
                         IMENUCTL_SetItemText(pMenuCtl, pMe->m_wSelectStore, AEE_WMSAPPRES_LANGFILE, IDS_PHONE, NULL);
                         MSG_FATAL("pMe->m_wSelectStore=%d", pMe->m_wSelectStore,0,0);
                         //IMENUCTL_SetItemText(pMenuCtl, pMe->m_wSelectStore++, NULL, 0, L"homenum");
                           
                         if(STRLEN(MMSImagepszPath) != 0)
                         {
-                            pMe->m_pMMSImage = ISHELL_LoadImage(pMe->m_pShell,MMSImagepszPath);
+                            pMe->m_pMMSImage = ISHELL_LoadImage(pMe->m_pShell,MMSImagepszPath);                            
                             if(pMe->m_pMMSImage != NULL)
                             {
                                 pszBasename = BASENAME(MMSImagepszPath);
