@@ -4,6 +4,9 @@
 
 #include "disp_ic_generic.h"
 
+#define LCD_SET_REG(cmd,v)   LCD_WRITE_CMD(cmd); \
+									 LCD_WRITE_DATA(v);
+
 #ifdef FEATURE_MDP
 #include "mdp_drv.h"
 #include "mdp_hw.h"
@@ -25,8 +28,7 @@
 #define DISP_LCD_RAM_ADDR_SET_1_ADDR      0x20 // Start address - col
 #define DISP_LCD_RAM_ADDR_SET_2_ADDR      0x21 // Start address - row
 #define DISP_LCD_CMD_RAMWR                0x22 // RAM Data Write
-#define LCD_SET_REG(cmd,v)   LCD_WRITE_CMD(cmd); \
-									 LCD_WRITE_DATA(v);
+
 #ifdef __GNUC__
 static uint32 MDP_DISP_SCR_HX8340[MDP_LCD_SCR_SIZE][MDP_LCD_SCR_LEN]
 __attribute__ ((aligned (16))) =
