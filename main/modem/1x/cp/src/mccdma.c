@@ -2868,7 +2868,11 @@ boolean mcc_powerup_load
   cdma.mob_model = 0;
 
   #if defined(FEATURE_OTASP) && !defined(FEATURE_NSOTASP)
+#ifdef FEATURE_VERSION_W208S
+  cdma.spc_change_enabled = TRUE;
+#else
   cdma.spc_change_enabled = FALSE;
+#endif
   #endif /* (FEATURE_OTASP) && !(FEATURE_NSOTASP) */
 
   #ifdef FEATURE_PASSPORT_MODE
@@ -3524,17 +3528,22 @@ boolean mcc_powerup_load
 #if defined(FEATURE_OTASP) && !defined(FEATURE_NSOTASP)
   if (cdma.is_cdma_subs_avail) 
   {
+    MSG_FATAL("***zzg cdma.is_cdma_subs_avail***", 0, 0, 0);
     mcc_nv_buf.item = NV_SPC_CHANGE_ENABLED_I;
     status = mcc_nv_cmd( &mcc_nv_buf ) ;
     if ( status == NV_DONE_S)
     {
-      cdma.spc_change_enabled = mcc_nv_data.spc_change_enabled;
+      cdma.spc_change_enabled = mcc_nv_data.spc_change_enabled;            
     }
     else if (status == NV_NOTACTIVE_S)
     {
       /* default to deny SPC change from default value to a non-default value
       ** as specified in IS-683A */
+#ifdef FEATURE_VERSION_W208S
+	  cdma.spc_change_enabled = TRUE;
+#else
       cdma.spc_change_enabled = FALSE;
+#endif            
     }
     else
     {

@@ -25,7 +25,7 @@
 #elif defined(FEATURE_VERSION_M8021)
 #define AUTO_NV_MIN_VERSION                 0x17
 #else
-#define AUTO_NV_MIN_VERSION                 0x12
+#define AUTO_NV_MIN_VERSION                 0x14
 #endif
 
 #define AUTO_NV_ITME_VERSION                (AUTO_NV_MIN_VERSION + AUTO_NV_RF_VERSION)
@@ -35,6 +35,7 @@
 const nv_auto_set_type nv_auto_set_svc_list[] = 
 {
     {NV_SLOT_CYCLE_INDEX_I,             {0x02}},
+	{NV_SPC_CHANGE_ENABLED_I,           {0x01}},	
     {NV_PREF_MODE_I,                    {0x00, 0x04}},
     {NV_PCDMACH_I,                      {0x00, 0x1b, 0x01, 0x80, 0x01}},
     {NV_SCDMACH_I,                      {0x00, 0xb3, 0x02, 0x09, 0x03}},
@@ -54,8 +55,8 @@ const nv_auto_set_type nv_auto_set_svc_list[] =
     {NV_BANNER_I,                       {'N', 'o', ' ', 'C', 'a', 'r', 'd', 0x00}},   
     {NV_LOCK_CODE_I,                    {0x30, 0x30, 0x30, 0x30}}, 
     {NV_SEC_CODE_I,                     {0x30, 0x30, 0x30, 0x30, 0x30, 0x30}},
-    {NV_IMSI_MCC_I,                     {0x00, 0x67, 0x01}},
-    {NV_IMSI_11_12_I,                   {0x00, 0x5c}},
+	{NV_IMSI_MCC_I,                     {0x00, 0x67, 0x01}},
+    {NV_IMSI_11_12_I,                   {0x00, 0x5c}},   
     {NV_DIR_NUMBER_I,                   {0x00, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30}},
     {NV_PRL_ENABLED_I,                  {0x00, 0x01}},
 #if defined(FEATURE_VERSION_W208S)    

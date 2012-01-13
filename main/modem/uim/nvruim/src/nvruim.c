@@ -2631,14 +2631,19 @@ static nv_ruim_support_status nvruim_write_spc_enable(
     #endif /*FEATURE_OTASP_OTAPA*/
     
       case NV_SPC_CHANGE_ENABLED_I:
+	  	MSG_FATAL("***zzg write_spc_enable NV_SPC_CHANGE_ENABLED_I***", 0, 0, 0);	  	
+		
         /* Reset SPC_Change_Enable bit (bit 4) */
-        nvruim_otapa_spc_enable_cache_buf &= NVRUIM_SPC_ENABLE_MASK;
+        //nvruim_otapa_spc_enable_cache_buf &= NVRUIM_SPC_ENABLE_MASK;
+
+		nvruim_otapa_spc_enable_cache_buf &= NVRUIM_SPC_DISABLE;
+		nvruim_otapa_spc_enable_cache_buf |= NVRUIM_SPC_ENABLE_MASK;
     
         /* A value of 0 indicates that SPC is enabled and '1' indicates
         that SPC is disabled */
-        if(!nv_cmd_ptr->data_ptr->spc_change_enabled)
+        //if(!nv_cmd_ptr->data_ptr->spc_change_enabled)
         {
-          nvruim_otapa_spc_enable_cache_buf |= NVRUIM_SPC_DISABLE;
+          //nvruim_otapa_spc_enable_cache_buf |= NVRUIM_SPC_DISABLE;
         }
         break;
       default:
@@ -4081,6 +4086,7 @@ if (!nvruim_lock_cache())
     case NV_OTAPA_ENABLED_I:
 #endif /* FEATURE_OTASP_OTAPA */
     case NV_SPC_CHANGE_ENABLED_I:
+		MSG_FATAL("***zzg nvruim_write NV_SPC_CHANGE_ENABLED_I***", 0, 0, 0);
       nvruim_write_sprt_status = nvruim_write_spc_enable(nv_cmd_ptr, 
                                                          op_status);
       break;
@@ -6070,10 +6076,16 @@ static nv_ruim_support_status nvruim_read_spc_enabled(
   switch(nv_cmd_ptr->item)
   {
     case NV_SPC_CHANGE_ENABLED_I:
+		MSG_FATAL("***zzg nvruim_read_spc NV_SPC_CHANGE_ENABLED_I***", 0, 0, 0);
       if(NV_DONE_S == *op_status)
-      {
-        nv_cmd_ptr->data_ptr->spc_change_enabled =
-          ((nvruim_otapa_spc_enable_cache_buf & NVRUIM_SPC_DISABLE) == 0);
+      {      	
+        //nv_cmd_ptr->data_ptr->spc_change_enabled = 
+          //((nvruim_otapa_spc_enable_cache_buf & NVRUIM_SPC_DISABLE) == 0);
+
+		nv_cmd_ptr->data_ptr->spc_change_enabled = 
+          !((nvruim_otapa_spc_enable_cache_buf & NVRUIM_SPC_DISABLE) == 0);
+          
+		
       } /* end if - the read was successful. */
       break;
   
@@ -10042,6 +10054,7 @@ if (!nvruim_lock_cache())
     case NV_OTAPA_ENABLED_I:
 #endif
     case NV_SPC_CHANGE_ENABLED_I:
+		MSG_FATAL("***zzg nvruim_read_spc NV_SPC_CHANGE_ENABLED_I***", 0, 0, 0);
       nvruim_read_support_status = nvruim_read_spc_enabled(nv_cmd_ptr, 
                                                            op_status);
       break;
