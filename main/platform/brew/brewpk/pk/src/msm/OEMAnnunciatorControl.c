@@ -243,7 +243,7 @@ void OEMAnnunciatorControl_Enable(IAnnunciatorControl *pme, boolean bEnable)
                                                clsDisp,
                                                bEnable);
       if(bEnable) {
-         //Gemsea Remove (void) IANNUNCIATOR_Redraw(pme->pAnnun);
+         (void) IANNUNCIATOR_Redraw(pme->pAnnun);
       }
    }
 #endif

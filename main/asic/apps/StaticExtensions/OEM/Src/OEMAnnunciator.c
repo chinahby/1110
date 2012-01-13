@@ -105,7 +105,6 @@ struct IAnnunciator
    unsigned short      m_usRef;
    uint32              nAnnunID;
    uint32              nState;  
-   boolean             m_bLastState;
 };
 
 typedef struct AnnunTimerInfo
@@ -2428,7 +2427,7 @@ static int IAnnunciator_EnableAnnunciatorBar(IAnnunciator * pMe, AEECLSID clsid,
         return ECLASSNOTSUPPORT;
   }
   
-  if(bOn != bLastState || bOn != pMe->m_bLastState)
+  if(bOn != bLastState)
   {
 #if 0//def FEATURE_MDP
 #error code not present
@@ -2438,7 +2437,6 @@ static int IAnnunciator_EnableAnnunciatorBar(IAnnunciator * pMe, AEECLSID clsid,
      {
         (void) IANNUNCIATOR_Redraw(pMe);
      }
-     pMe->m_bLastState = bOn;
   }
 
   return SUCCESS;
