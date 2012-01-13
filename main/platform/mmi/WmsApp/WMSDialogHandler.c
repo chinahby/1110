@@ -8463,7 +8463,6 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                 IMENUCTL_SetSel(pMenu, nSelID);
                 pItem = WmsApp_GetAddItem(pMe->m_pSendList, (nSelID-MSG_CMD_BASE));
                 DBGPRINTF("nCount = %d, pwstrText=%S",nCount, ITEXTCTL_GetTextPtr(pIText));
-                DBGPRINTF("m_isSendToAlbumOrEmain=%d, m_szTo=%S", pMe->m_isSendToAlbumOrEmain,pItem->m_szTo);
                 if (nCount<=0)
                 { 
                     #if 1//def FEATURE_LCD_TOUCH_ENABLE
