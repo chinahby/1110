@@ -677,10 +677,6 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
             {
 #ifdef FEATURE_SET_SOUND_TITLE
                 case IDS_SOUND_TITLE:       //ÉùÒôÉèÖÃ
-#if defined(FEATURE_PEKTEST)
-                    (void) ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_APP_SOUNDMENU,"R");
-#else
-
                     if (AEE_SUCCESS == ISHELL_CreateInstance(pMe->m_pShell,
                                                              AEECLSID_APP_SOUNDMENU,
                                                              (void **)&pSoundList))
@@ -689,7 +685,6 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
                         ISoundMenu_Release(pSoundList);
                     }
                     return TRUE;
-#endif
 #endif
 
 #ifdef FEATURE_SET_SCENEMODE

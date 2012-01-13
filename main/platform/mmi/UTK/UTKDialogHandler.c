@@ -2282,10 +2282,24 @@ static void UTKApp_PlaytoneTimeout(void *pme)
             
         case IDS_RINGING_TONE_SEL_BY_USER_FOR_IC_V_CALL_STRING:
 		{
-			byte        ringid = OEMNV_DEFAULTRINGER;			
-			timeout = 12000;  
-			ICONFIG_GetItem(pMe->m_pConfig,CFGI_RINGER_TYPE,&ringid, sizeof(ringid));
-			IALERT_StartRingerAlert(pMe->m_pAlert,(uint32)ringid);
+			byte        midID = OEMNV_DEFAULTRINGER;
+            byte        profilenum = 0;
+            ringID      ringid[PROFILENUMBER];
+            
+            ICONFIG_GetItem(pMe->m_pConfig, CFGI_PROFILE_CUR_NUMBER, &profilenum, sizeof(profilenum));
+            ICONFIG_GetItem(pMe->m_pConfig, CFGI_PROFILE_CALL_RINGER, (void*)ringid, sizeof(ringid));
+            if(ringid[profilenum].ringType == OEMNV_MID_RINGER)
+            {
+                IALERT_StartRingerAlert(pMe->m_pAlert,(uint32)midID);
+            }
+            else if(ringid[profilenum].ringType == OEMNV_MP3_RINGER)
+            {
+                if ((IALERT_StartMp3Alert(pMe->m_pAlert, ringid[profilenum].szMusicname,ALERT_NORMAL_SND) != SUCCESS))
+                {
+                    IALERT_StartRingerAlert(pMe->m_pAlert, (uint32)midID);
+                }
+            }
+            timeout   = 12000;  
 		}
             break;
             

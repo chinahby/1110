@@ -1587,11 +1587,15 @@ static IFileMgr *RingerMgr_GetFileMgr(void)
 ===========================================================================*/
 static int OEM_SetActiveRinger(AEERingerCatID idCategory, AEERingerID idRinger, char * szFilename)
 {
-    byte data;
-    // 1st ringer has idRinger value 1 and menu item value should be 0 for this
-
-    data = (byte)idRinger;
-    return OEM_SetConfig(CFGI_RINGER_TYPE, &data, sizeof(byte));
+    byte        midID = OEMNV_DEFAULTRINGER;
+    byte        profilenum = 0;
+    ringID      ringid[PROFILENUMBER];
+    
+    OEM_GetConfig(CFGI_PROFILE_CUR_NUMBER, &profilenum, sizeof(profilenum));
+    OEM_GetConfig(CFGI_PROFILE_CALL_RINGER, (void*)ringid, sizeof(ringid));
+    ringid[profilenum].ringType =   OEMNV_MID_RINGER;
+	ringid[profilenum].midID    =   idRinger;
+	return OEM_SetConfig(CFGI_PROFILE_CALL_RINGER,(void*)ringid,sizeof(ringid));
 }
 
 /*===========================================================================
@@ -1600,16 +1604,16 @@ static int OEM_SetActiveRinger(AEERingerCatID idCategory, AEERingerID idRinger, 
 ===========================================================================*/
 static AEERingerID OEM_GetActiveRinger(AEERingerCatID idRingerCat, AECHAR * szwName)
 {
-    byte data;
-
-    if (OEM_GetConfig(CFGI_RINGER_TYPE, &data, sizeof(byte)) != SUCCESS)
+    byte        profilenum = 0;
+    ringID      ringid[PROFILENUMBER];
+    
+    OEM_GetConfig(CFGI_PROFILE_CUR_NUMBER, &profilenum, sizeof(profilenum));
+    OEM_GetConfig(CFGI_PROFILE_CALL_RINGER, (void*)ringid, sizeof(ringid));
+    if(ringid[profilenum].ringType == OEMNV_MID_RINGER)
     {
-        return 1;
+        return ringid[profilenum].midID;
     }
-    else
-    {
-        return data;
-    }
+	return 1;
 }
 #endif
 

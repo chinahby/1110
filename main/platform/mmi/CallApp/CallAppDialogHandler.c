@@ -11726,9 +11726,9 @@ static void CallApp_Play_Incoming_Tone(CCallApp *pMe)
     int ringerId = AEE_RINGER_ID_NONE;
     char        filename[MAX_FILE_NAME]={0};
     
-    MSG_FATAL("CallApp_Play_Incoming_Tone %d 0x%x",pMe->m_b_incall,pMe->m_CallsTable->ringer[0],0);
     if((AECHAR)'\0' != pMe->m_CallsTable->ringer[0])
     {
+        byte profilenum = 0;
         if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
                                             AEECLSID_RINGERMGR,
                                             (void **)&RingerMgr))
@@ -11740,6 +11740,16 @@ static void CallApp_Play_Incoming_Tone(CCallApp *pMe)
         // 为了支持PEK 测试，电话本的RINGTONE 字段只能保存字符串类型，这里根据路径名查找是否有MID存在
         ringerId = IRINGERMGR_GetRingerID(RingerMgr, filename);
         
+        if(AEE_RINGER_ID_NONE == ringerId)
+        {
+            ICONFIG_GetItem(pMe->m_pConfig, CFGI_PROFILE_CUR_NUMBER, &profilenum, sizeof(profilenum));
+            ICONFIG_GetItem(pMe->m_pConfig, CFGI_PROFILE_CALL_RINGER, (void*)ringid, sizeof(ringid));
+            if(ringid[profilenum].ringType == OEMNV_MID_RINGER)
+            {
+                ringerId = ringid[profilenum].midID;
+            }
+        }
+        
         if(AEE_RINGER_ID_NONE != ringerId)
         {
             // ringType is mid
@@ -11750,32 +11760,19 @@ static void CallApp_Play_Incoming_Tone(CCallApp *pMe)
             // ringType is mp3
             if ((IALERT_StartMp3Alert(pMe->m_pAlert, filename,ALERT_NORMAL_SND) != SUCCESS))
             {
-                // 如果失败就播放默认的MID
-                byte midID = 0;
-
-                ICONFIG_GetItem(pMe->m_pConfig,CFGI_RINGER_TYPE,&midID, sizeof(midID));
-                if(0 == midID)
-                {
-                    midID = OEMNV_DEFAULTRINGER;
-                }
-                
-                IALERT_StartRingerAlert(pMe->m_pAlert, midID);
+                IALERT_StartRingerAlert(pMe->m_pAlert, OEMNV_DEFAULTRINGER);
             }
         }
+        IRINGERMGR_Release(RingerMgr);
     }
     else
     {
-        byte midID = 0;
+        byte midID;
         byte profilenum = 0;
         
-        ICONFIG_GetItem(pMe->m_pConfig,CFGI_RINGER_TYPE,&midID, sizeof(midID));
-        if(midID == 0)
-        {
-            midID = OEMNV_DEFAULTRINGER;
-        }
-    
         ICONFIG_GetItem(pMe->m_pConfig, CFGI_PROFILE_CUR_NUMBER, &profilenum, sizeof(profilenum));
         ICONFIG_GetItem(pMe->m_pConfig, CFGI_PROFILE_CALL_RINGER, (void*)ringid, sizeof(ringid));
+        midID = ringid[profilenum].midID;
         if(ringid[profilenum].ringType == OEMNV_MID_RINGER)
         {
             IALERT_StartRingerAlert(pMe->m_pAlert,(uint32)midID);
@@ -11784,8 +11781,7 @@ static void CallApp_Play_Incoming_Tone(CCallApp *pMe)
         {
             if ((IALERT_StartMp3Alert(pMe->m_pAlert, ringid[profilenum].szMusicname,ALERT_NORMAL_SND) != SUCCESS))
             {
-                MSG_ERROR("play mp3 player faile, to play mid alert.......",0,0,0);
-                IALERT_StartRingerAlert(pMe->m_pAlert, (uint32)midID);
+                IALERT_StartRingerAlert(pMe->m_pAlert, OEMNV_DEFAULTRINGER);
             }
         } 
     }

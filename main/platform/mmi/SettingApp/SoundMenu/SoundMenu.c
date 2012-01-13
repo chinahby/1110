@@ -1536,30 +1536,29 @@ void SoundMenu_UpdateRingerListMenu(CSoundMenu *pMe, IMenuCtl *pMenu)
     mai.dwData = 0;
     for (dwIndex = wBeginPos; dwIndex <= wEndPos; dwIndex++)
     {
-        {
-            if ((dwIndex + 1) >= wItemCount)
-            {   // "下载铃声"菜单项
+        if ((dwIndex + 1) >= wItemCount)
+        {   // "下载铃声"菜单项
 
-                if (pListItem->id == pMe->m_RingID[pMe->m_CurProfile])
-                {
-                    //mai.wImage = IDB_SELECT_ICON;
-                    pMe->m_lastRingerPlayed = pListItem->id;
-                }
-                break;
-            }
-            else
+            if (pListItem->id == pMe->m_RingID[pMe->m_CurProfile])
             {
-                pListItem = (RingerMenuItemInfo *)IVector_ElementAt(pMe->m_pRingerList, dwIndex);
+                //mai.wImage = IDB_SELECT_ICON;
+                DBGPRINTF("pMe->m_lastRingerPlayed:%d",pListItem->id);
+                pMe->m_lastRingerPlayed = pListItem->id;
+            }
+            break;
+        }
+        else
+        {
+            pListItem = (RingerMenuItemInfo *)IVector_ElementAt(pMe->m_pRingerList, dwIndex);
 
-                if (NULL != pListItem)
-                {
-                      //mai.pText = pListItem->szName;
-                    mai.wItemID = pListItem->id;
-                    mai.pText = pListItem->szName;
-                    // 添加带图标菜单项到菜单
-                    (void)IMENUCTL_AddItemEx(pMenu, &mai);
-                    //ERR("dwIndex = %d",dwIndex , 0, 0);
-                }
+            if (NULL != pListItem)
+            {
+                  //mai.pText = pListItem->szName;
+                mai.wItemID = pListItem->id;
+                mai.pText = pListItem->szName;
+                // 添加带图标菜单项到菜单
+                (void)IMENUCTL_AddItemEx(pMenu, &mai);
+                //ERR("dwIndex = %d",dwIndex , 0, 0);
             }
         }
     }
@@ -1581,7 +1580,7 @@ void SoundMenu_UpdateRingerListMenu(CSoundMenu *pMe, IMenuCtl *pMenu)
         }
     }
     pMe->m_fSubDlgId = pMe->m_lastRingerPlayed;
-
+    DBGPRINTF("IMENUCTL_SetSel:%d",pMe->m_lastRingerPlayed);
     IMENUCTL_SetSel(pMenu, pMe->m_lastRingerPlayed);
     (void)IMENUCTL_Redraw(pMenu);
     SOUND_ERR("UpdateRingerListMenu end!",0,0,0);

@@ -1523,7 +1523,7 @@ static boolean  HandleRingerDialogEvent(CSoundMenu *pMe,
                         // mid
                         pMe->m_RingID[pMe->m_CurProfile] = ringerId;
                     }
-
+                    IRINGERMGR_Release(RingerMgr);
                 }
 
             }
@@ -1785,14 +1785,10 @@ static boolean  HandleRingerDialogEvent(CSoundMenu *pMe,
             {
                 if (nNewConfigRinger[pMe->m_CurProfile].midID <  NUM_OF_MAXRINGER)
                 {
-                    byte m_ringer_type = 0;
                     ICONFIG_GetItem(pMe->m_pConfig,CFGI_PROFILE_CALL_RINGER,(void*)nNewConfigRinger,sizeof(nNewConfigRinger));
                     nNewConfigRinger[pMe->m_CurProfile].midID = (uint16)(wParam);
                     nNewConfigRinger[pMe->m_CurProfile].ringType = OEMNV_MID_RINGER;
-                    m_ringer_type = (byte)nNewConfigRinger[pMe->m_CurProfile].midID;
                     ICONFIG_SetItem(pMe->m_pConfig,CFGI_PROFILE_CALL_RINGER,(void*)nNewConfigRinger,sizeof(nNewConfigRinger));
-                    //Set for ALERT
-                    //ICONFIG_SetItem(pMe->m_pConfig,CFGI_RINGER_TYPE,&m_ringer_type,sizeof(m_ringer_type));
                 }
             }
             else if(pMe->m_RingerType == SET_ALARMRING)       //闹钟铃声
@@ -1859,7 +1855,7 @@ static boolean  HandleRingerDialogEvent(CSoundMenu *pMe,
                     {
                         return FALSE;
                     }
-                                        
+                    
                     // 为了支持PEK 测试，电话本的RINGTONE 字段只能保存字符串类型，这里根据路径名查找是否有MID存在
                     if( SUCCESS == IRINGERMGR_GetRingerInfo(RingerMgr, wParam, &info))
                     {
@@ -1870,6 +1866,7 @@ static boolean  HandleRingerDialogEvent(CSoundMenu *pMe,
                     {
                         pMe->m_enter_address[0] = (AECHAR)'\0';
                     }
+                    IRINGERMGR_Release(RingerMgr);
                 }
                 SOUND_ERR("%x %x %d SoundMenu_Ringer_List2",pMe->m_enter_addr,&pMe->m_enter_addr,*pMe->m_enter_addr);
             }
@@ -3187,18 +3184,6 @@ static void SoundMenu_SceneModeActivate(CSoundMenu *pMe)
                               &set_bt_sms_ringer,
                               sizeof(set_bt_sms_ringer));
 #endif
-
-#if 0
-        (void)IRINGERMGR_SetRinger(pMe->m_pRingerMgr,
-                               AEE_RINGER_CATEGORY_ALL,
-                               (AEERingerID)set_call_ringer);
-#else
-        {
-            byte ring_id = 0;
-            ring_id = set_call_ringer.midID;
-            ICONFIG_SetItem(pMe->m_pConfig,CFGI_RINGER_TYPE,&ring_id,sizeof(byte));
-        }
-#endif
         {
             uint16 alarm_id = 0;
             alarm_id = set_alarm_ringer.midID;
@@ -3788,7 +3773,6 @@ static boolean  HandleVolumeSubDialogEvent(CSoundMenu *pMe,
                 //uint16    ui16_return = IDI_ICON_AUDIO_VOL1;
                 int imageIndex = 0;
                 IImage*   pRingLevel = NULL;
-                IImage*   pMenuBg = NULL;
                 AEERect   rect = {0};
                 AEEImageInfo ImageSize;
                 byte        byte_return;
@@ -3806,7 +3790,7 @@ static boolean  HandleVolumeSubDialogEvent(CSoundMenu *pMe,
                     default:
                         return FALSE;
                 }
-                        
+                
                 switch(byte_return)
                 {
                     case OEMSOUND_1ST_VOL:      //音量为“1级”

@@ -325,7 +325,7 @@ typedef struct _CSoundMenu
             pMe->m_eCurState = tpState;        \
         }
 #define  SOUND_MENU_SOFK_HIGHT 0
-#define  NUM_OF_MAXRINGER   40                  //最大铃声数
+#define  NUM_OF_MAXRINGER   256                 //最大铃声数
 #define  DEFAULT_MENU       NUM_OF_MAXRINGER+1  // 默认ID , for contact
 #define  DOWNLOAD_MENU      NUM_OF_MAXRINGER+2  //下载铃声ID
 #if defined(FEATURE_WMS_APP) && !defined(FEATURE_WMSAPP_ONLYSUPPORTVMAIL)

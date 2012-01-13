@@ -2310,7 +2310,10 @@ static void OEMALERT_StartRingerAlert(IALERT *pMe,uint32 id,ALERT_SND_TYPE type)
             //}
             if(pMe->m_ringCurVol != OEMSOUND_MUTE_VOL)
             {
-                (void) IRINGERMGR_Play(pMe->m_pRingerMgr, pMe->ring_id, 1);
+                if(SUCCESS != IRINGERMGR_Play(pMe->m_pRingerMgr, pMe->ring_id, 1))
+                {
+                    IRINGERMGR_Play(pMe->m_pRingerMgr, OEMNV_DEFAULTRINGER, 1);
+                }
                 gCurStatus.m_pCurRingerMgr = pMe->m_pRingerMgr;
                 gCurStatus.m_bplaying = TRUE;
             }
@@ -2338,7 +2341,10 @@ static void OEMALERT_StartRingerAlert(IALERT *pMe,uint32 id,ALERT_SND_TYPE type)
             OEMALERT_SetRingerVol(pMe, FALSE); 
             if(pMe->m_ringCurVol != OEMSOUND_MUTE_VOL)
             {
-                (void) IRINGERMGR_Play(pMe->m_pRingerMgr, pMe->ring_id, 1);
+                if(SUCCESS != IRINGERMGR_Play(pMe->m_pRingerMgr, pMe->ring_id, 1))
+                {
+                    IRINGERMGR_Play(pMe->m_pRingerMgr, OEMNV_DEFAULTRINGER, 1);
+                }
                 gCurStatus.m_pCurRingerMgr = pMe->m_pRingerMgr;
                 gCurStatus.m_bplaying = TRUE;
             }		

@@ -4072,12 +4072,6 @@ static void CoreApp_SceneMode(CCoreApp *pMe)
 	                  &set_bt_sms_ringer,
 	                  sizeof(set_bt_sms_ringer));
 #endif
-
-	{
-		byte ring_id = 0;
-		ring_id = set_call_ringer.midID;
-		ICONFIG_SetItem(pMe->m_pConfig,CFGI_RINGER_TYPE,&ring_id,sizeof(byte));
-	}
 	{
 		uint16 alarm_id = 0;
 		alarm_id = set_alarm_ringer.midID;
