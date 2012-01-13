@@ -13,7 +13,7 @@ PUBLIC CLASSES:  Not Applicable
 
 INITIALIZATION AND SEQUENCING REQUIREMENTS:  Not Applicable
 
-        Copyright ?1999-2005 QUALCOMM Incorporated.
+        Copyright © 1999-2005 QUALCOMM Incorporated.
                All Rights Reserved.
             QUALCOMM Proprietary/GTDR
 ===========================================================================*/
@@ -40,8 +40,6 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS:  Not Applicable
 #include "AEEStdLib.h"
 #include "AEECriticalSection.h"
 #include "AEEResourceCtl.h"
-
-#include "Hs_mb6550.h"			//Add By zzg 2010_07_27
 
 /*-------------------------------------------------------------------
             Type Declarations
@@ -236,7 +234,7 @@ int Sound_New( IShell * pShell,AEECLSID cls, void **ppif )
    AEESound *  pMe;
    int         nErr;
 
-   pMe = (AEESound *)AEE_OEM_NEWCLASS((IBaseVtbl *)&gsSoundMethods, sizeof(AEESound));
+   pMe = (AEESound *)AEE_NewClass((IBaseVtbl *)&gsSoundMethods, sizeof(AEESound));
    if (!pMe)
       return ENOMEMORY;
 
@@ -539,13 +537,6 @@ static void AEESound_PlayTone(ISound* po, AEESoundToneData toneData)
 {
    AEESound *  pMe = (AEESound *) po;
    
-   //if ( toneData.eTone <= AEE_TONE_FIRST || toneData.eTone >= AEE_TONE_LAST )
-   if ( toneData.eTone <= AEE_TONE_FIRST || toneData.eTone > AEE_TONE_FEEDBACK_STOP)
-   {
-      AEESound_StatusNotify(pMe, AEE_SOUND_FAILURE);
-      return;
-   }
-
    AEESOUND_CHECK_ACQUIRED(po);
    pMe->m_nPlaying++;
 
@@ -798,15 +789,15 @@ See Also:
 ==================================================================*/
 static void AEESound_SetVolume(ISound* po, uint16 wVolume)
 {
-    AEESound * pMe = (AEESound *) po;
+   AEESound * pMe = (AEESound *) po;
+   
+   AEESOUND_CHECK_ACQUIRED(po);
+   
+   // First get the max volume level. Then in the AEESound_LevelCB, set the volume
+   pMe->m_wVolume = wVolume;  // Save the volume
+   pMe->m_bGetVolume = FALSE;
 
-    AEESOUND_CHECK_ACQUIRED(po);
-      
-    // First get the max volume level. Then in the AEESound_LevelCB, set the volume
-    pMe->m_wVolume = wVolume;  // Save the volume
-    pMe->m_bGetVolume = FALSE;
-    
-    OEMSound_GetLevels(&pMe->m_SoundInfo, (void *)pMe->m_hObject);
+   OEMSound_GetLevels(&pMe->m_SoundInfo, (void *)pMe->m_hObject);
 }
 
 /*==================================================================
@@ -922,7 +913,7 @@ void AEESound_LevelCB( const void * pClientData, AEESoundStatus eStatus, uint16 
    if (!pMe) {
       goto CBExit;
    }
-   
+
    // Now, set the volume, the resulting status callback is queued in AEESound_StatusCB
    switch ( eStatus )
    {
@@ -934,7 +925,7 @@ void AEESound_LevelCB( const void * pClientData, AEESoundStatus eStatus, uint16 
             OEMSound_GetVolume(&pMe->m_SoundInfo, (void *)pMe->m_hObject);
 	       }
          else
-	       {	       	
+	       {
             OEMSound_SetVolume(&pMe->m_SoundInfo, wSetLevel, (void *)pMe->m_hObject);
 	       }   
          break;

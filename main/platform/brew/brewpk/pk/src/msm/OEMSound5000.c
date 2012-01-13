@@ -15,7 +15,7 @@ PUBLIC CLASSES AND STATIC FUNCTIONS:
 INITIALIZATION AND SEQUENCING REQUIREMENTS:
 No additional module-level initialization or sequencing requirements.
 
-        Copyright ?1999-2002 QUALCOMM Incorporated.
+        Copyright © 1999-2002 QUALCOMM Incorporated.
                All Rights Reserved.
             QUALCOMM Proprietary/GTDR
 =============================================================================*/
@@ -471,7 +471,7 @@ void OEMSound_SetVolume(AEESoundInfo * psi, uint16 wLevel, void * pUser)
    snd_packets_type * psp; // Pointer to sound packet
 
    gpUser = pUser;
-   
+
    // Get a sound packet, fill-in the command contents and pass it to sound task
    psp= snd_get_packet();
    if ( psp )

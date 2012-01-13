@@ -214,13 +214,8 @@ static int OEMWIFIOpts_QueryInterface( IWIFIOpts *pMe, AEECLSID id, void **ppo )
 static int OEMWIFIOpts_AddOpt( IWIFIOpts *pMe, WIFIOpt *pOpt );
 static int OEMWIFIOpts_RemoveOpt( IWIFIOpts *pMe, int32 nOptId );
 static int OEMWIFIOpts_GetOpt( IWIFIOpts *pMe, int32 nOptId, WIFIOpt *pOpt );
-#ifdef CUST_EDITION	  
-static void *OEMWIFI_Malloc( uint32 size, int line );
-static void OEMWIFI_Free( void *p );
-static boolean OEMWIFI_WriteFile( uint32 id );
-static int OEMWIFI_ReadFile( void );
-#endif /*CUST_EDITION*/
-/* The function supported by WIFI object. */
+
+/* The function supported by WIFI object */
 static const AEEVTBL(IWIFI) gOEMWIFIFuncs = 
 {
    OEMWIFI_AddRef,
@@ -415,7 +410,7 @@ int OEMWIFI_New( IShell *pIShell, AEECLSID cls, void **ppif )
    }
 
    // Allocate the object.
-   pNew = (IWIFI *)AEE_OEM_NEWCLASS( (IBaseVtbl*)&gOEMWIFIFuncs, sizeof( IWIFI )); 
+   pNew = (IWIFI *)AEE_NewClass( (IBaseVtbl*)&gOEMWIFIFuncs, sizeof( IWIFI )); 
    if ( pNew == NULL )
    {
       MSG_ERROR( "OEMWIFI_New: out of memory", 0, 0, 0 );
@@ -3502,7 +3497,7 @@ int OEMWIFIOpts_New ( IShell *pIShell, AEECLSID cls, void **ppif )
    }
 
    // Allocate the object.
-   pNew = (IWIFIOpts *) AEE_OEM_NEWCLASS( (IBaseVtbl*)&gOEMWIFIOptsFuncs, sizeof( IWIFIOpts )); 
+   pNew = (IWIFIOpts *) AEE_NewClass( (IBaseVtbl*)&gOEMWIFIOptsFuncs, sizeof( IWIFIOpts )); 
    if ( pNew == NULL )
    {
       MSG_ERROR( "OEMWIFIOpts_New: out of memory", 0, 0, 0 );

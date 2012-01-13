@@ -88,7 +88,7 @@ int OEMLoggerFile_New( IShell * pShell, AEECLSID cls, void **ppif ){
       return(EBADPARM);
    }
 
-   if((pMe = (IOEMLoggerFile *)AEE_OEM_NEWCLASS((IBaseVtbl *)&gsOEMLoggerFileFunc, sizeof(IOEMLoggerFile))) == NULL){
+   if((pMe = (IOEMLoggerFile *)AEE_NewClass((IBaseVtbl *)&gsOEMLoggerFileFunc, sizeof(IOEMLoggerFile))) == NULL){
       return(ENOMEMORY);
    }
 

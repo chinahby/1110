@@ -1229,6 +1229,7 @@ static void InitResources (void)
 #else
     "brew",
     "brew/sys",
+    "brew/sys/download",
     "brew/shared",
     "brew/mod",
     "brew/mif",

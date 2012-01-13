@@ -113,7 +113,7 @@ int OEMLoggerDMSS_New( IShell *pShell, AEECLSID cls, void **ppif ){
       return(EBADPARM);
    }
 
-   pMe = (IOEMLoggerDMSS*)(void*)AEE_OEM_NEWCLASS((IBaseVtbl *)(void*)&gsOEMLoggerDMSSFunc, sizeof(IOEMLoggerDMSS));
+   pMe = (IOEMLoggerDMSS*)(void*)AEE_NewClass((IBaseVtbl *)(void*)&gsOEMLoggerDMSSFunc, sizeof(IOEMLoggerDMSS));
 
    if(NULL == pMe){
       return(ENOMEMORY);

@@ -86,7 +86,7 @@ RingerFormat   gFormats[] =
 
 // {AEE_SOUNDPLAYER_FILE_ADPCM,     AEECLSID_MEDIAADPCM,    AEE_RINGER_DIR DIRECTORY_STR "*" DOT_SEPARATOR "wav"},
 // {AEE_SOUNDPLAYER_FILE_PCM,       AEECLSID_MEDIAPCM,      AEE_RINGER_DIR DIRECTORY_STR "*" DOT_SEPARATOR "wav"},
-#ifdef FEATURE_AAC
+#if defined(FEATURE_AAC) && !defined(FEATURE_PEKTEST)
    {AEE_SOUNDPLAYER_FILE_AAC,       AEECLSID_MEDIAAAC,      AEE_RINGER_DIR DIRECTORY_STR "*" DOT_SEPARATOR "aac"},
 #endif
 // {AEE_SOUNDPLAYER_FILE_AMR,       AEECLSID_MEDIAAMR,      AEE_RINGER_DIR DIRECTORY_STR "*" DOT_SEPARATOR "amr"},
@@ -250,6 +250,14 @@ static const VTBL(IRingerMgr) gCRingerMgrFuncs = {CRingerMgr_AddRef,
                                                    CRingerMgr_Play,
                                                    CRingerMgr_Stop};
 
+#ifdef CUST_EDITION
+#define CAT_MAX         (AEE_RINGER_CATEGORY_ALL)
+
+#define AEE_RINGER_CATEGORY_NONE ((AEERingerCatID)0xffffffff)
+
+static const char *     gpszCategories[] = {"All", NULL};
+
+#else
 #define CAT_PERSONAL    1
 #define CAT_BUSINESS    2
 #define CAT_MAX         (CAT_BUSINESS)
@@ -257,6 +265,7 @@ static const VTBL(IRingerMgr) gCRingerMgrFuncs = {CRingerMgr_AddRef,
 #define AEE_RINGER_CATEGORY_NONE ((AEERingerCatID)0xffffffff)
 
 static const char *     gpszCategories[] = {"All","Personal","Business",NULL};
+#endif
 #ifndef OEM_RINGER_SUPPORT
 static AEERingerID      gCategoryRings[] = {0,    0,         0};
 #endif
@@ -1143,9 +1152,7 @@ static int CRingerMgr_Play(IRingerMgr * po,AEERingerID id,const char * pszFile,I
 	        	pme->m_bQcp = FALSE;
 	        }
 #endif
-            } 
-            else 
-            {
+         } else {
             ISOUNDPLAYER_SetStream(pme->m_pPlayer, pStream);
          }
 
@@ -1197,7 +1204,11 @@ static int CRingerMgr_Stop(IRingerMgr * po)
 #endif
       pme->m_pPlayer = NULL;
       ISOUNDPLAYER_Release(psp);
-      CRingerMgr_Notify(pme, ARE_PLAY,0,(int)(pme->m_bPlaying ? EINCOMPLETEITEM : 0));
+      DBGPRINTF("CRingerMgr_Notify %d",(int)(pme->m_bPlaying ? EINCOMPLETEITEM : 0));
+      if(pme->m_bPlaying) // Gemsea modify for duplice ARE_PLAY send
+      {
+        CRingerMgr_Notify(pme, ARE_PLAY,0,(int)(pme->m_bPlaying ? EINCOMPLETEITEM : 0));
+      }
       return(0);
    }
    return(EFAILED);
@@ -1401,6 +1412,7 @@ static void CRingerMgr_SoundStatus(void * pUser, AEESoundPlayerCmd  eCBType,AEES
       if ((eSPStatus == AEE_SOUNDPLAYER_DONE) ||
           (eSPStatus == AEE_SOUNDPLAYER_ABORTED)) {
          pme->m_bPlaying = FALSE;
+         DBGPRINTF("AEE_SOUNDPLAYER_PLAY_CB %d %d",eSPStatus, pme->m_dwDelay);
          if(!CRingerMgr_Notify(pme, ARE_PLAY,0,0))
             return;
 

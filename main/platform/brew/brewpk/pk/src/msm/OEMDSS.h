@@ -185,11 +185,13 @@ extern sint15 dss_accept
   ===========================================================================
   ===========================================================================*/
 #if defined(CLOSE_PPP_ON_OUT_OF_NETWORK_COVERAGE) || (!defined(AEE_SIMULATOR) && !defined(T_MSM6100) && !defined(T_MSM6250))
+
    #define TRACK_TAPI_STATE_FOR_DATA_NETWORK_USE
 
    extern void OEMDSS_OnCallStatus(void);
    extern void OEMDSS_FreeTAPI(void *p);
    extern void OEMDSS_SetupTAPI(void);
+
 #endif // defined(CLOSE_PPP_ON_OUT_OF_NETWORK_COVERAGE) || ...
 
 /*===========================================================================

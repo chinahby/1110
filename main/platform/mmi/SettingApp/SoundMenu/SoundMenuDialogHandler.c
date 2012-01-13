@@ -1521,7 +1521,7 @@ static boolean  HandleRingerDialogEvent(CSoundMenu *pMe,
                     else
                     {
                         // mid
-                        pMe->m_RingID[pMe->m_CurProfile] = pMe->m_lastRingerPlayed;
+                        pMe->m_RingID[pMe->m_CurProfile] = ringerId;
                     }
 
                 }

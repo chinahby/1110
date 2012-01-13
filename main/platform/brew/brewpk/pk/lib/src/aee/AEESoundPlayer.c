@@ -18,7 +18,7 @@ GENERAL DESCRIPTION:  Provides support for ISoundPlayer interface in BREW. These
 
 PUBLIC CLASSES AND STATIC FUNCTIONS: ISoundPlayer
 
-Copyright ?1999-2005 QUALCOMM Incorporated.
+Copyright ? 1999-2005 QUALCOMM Incorporated.
          All Rights Reserved.
        QUALCOMM Proprietary/GTDR
 
@@ -234,7 +234,7 @@ int AEESoundPlayer_New(IShell * pShell, AEECLSID clsid, void **ppobj)
    
    if (SUCCESS == nErr) {
 
-      pme = (AEESoundPlayer *)AEE_OEM_NEWCLASS( (IBaseVtbl *)&gSoundPlayerFuncs, sizeof(AEESoundPlayer));
+      pme = (AEESoundPlayer *)AEE_NewClass( (IBaseVtbl *)&gSoundPlayerFuncs, sizeof(AEESoundPlayer));
       
       if ((AEESoundPlayer *)0 != pme) {
 

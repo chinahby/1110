@@ -42,7 +42,7 @@
 #  else
 #   include "dsi.h"
 #  endif
-#  define FAILOVER_3G_TO_2G
+
 #if ((defined DSS_VERSION) && (DSS_VERSION >= 900))
 #include "dsrlp.h"
 #endif

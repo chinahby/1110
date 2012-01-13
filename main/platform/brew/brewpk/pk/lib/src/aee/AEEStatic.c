@@ -1009,24 +1009,6 @@ static boolean AStatic_SetText
 
 	AStatic_SetFont(po, fntText, fntTitle);
 
-	DBGPRINTF("***zzg AStatic_SetText***");
-
-/*
-	//Add By zzg 2011_12_29	
-	{
-		char tempstr[256];
-				
-		WSTRTOSTR(pText, tempstr, 256);				
-		
-		UTF8TOWSTR((byte*)tempstr, 256, pText, (256)*sizeof(AECHAR));			
-			
-		DBGPRINTF("***zzg AStatic_SetText tempstr=%s***", tempstr);
-		DBGPRINTF("***zzg AStatic_SetText pText=%s***", pText);
-
-	}
-	//Add End
-	*/
-
 	if (pTitle)
 	{
 		pme->m_cyTitle = IDISPLAY_GetFontMetrics(pme->m_pDisplay, pme->m_fntTitle, NULL, NULL) + 2;
@@ -1416,8 +1398,6 @@ static boolean AStatic_Recalc(AStatic * pme)
 
    // Determine the starting point for text drawing...
 
-   DBGPRINTF("***zzg Aeestatic Recalc m_bAutoScroll=%x***", pme->m_bAutoScroll);
-
    pme->m_yText = pme->m_cyTitle + pme->m_rc.y + TEXT_BETWEEN_LINE_PIXEL;
    if(!pme->m_bAutoScroll && (pme->m_dwProps & ST_MIDDLETEXT)){
       cy = nLines * (pme->m_cyText + TEXT_BETWEEN_LINE_PIXEL);
@@ -1516,8 +1496,6 @@ static void AStatic_RedrawText(AStatic * pme)
   if (pme->m_nLines > pme->m_nPageLines)
      rc.dx -= pme->m_nSBWidth + 1;   // Now paired with Recalc
 
-  DBGPRINTF("***zzg AStatic_RedrawText***");
-  
    // Draw the next lines...
 
    nIdx = pme->m_nIdx;
@@ -1529,22 +1507,16 @@ static void AStatic_RedrawText(AStatic * pme)
    rc.y++;
    rc.dy -= 2;
 
-   DBGPRINTF("***zzg AStatic_RedrawText rt:%d,%d,%d,%d***", rc.x, rc.y, rc.dx, rc.dy);
-   
    if(pme->m_dwProps & ST_TRANSPARENT) 
     {
-    	DBGPRINTF("***zzg AStatic_RedrawText ST_TRANSPARENT***");
         AStatic_FillRect_Transparence(pme, rc);
     }   
     else
     {   
-    	DBGPRINTF("***zzg AStatic_RedrawText !!!!ST_TRANSPARENT***");
     	 if(!(pme->m_dwProps & ST_TRANSPARENTBACK))
     	 {
-    	 	DBGPRINTF("***zzg AStatic_RedrawText !!ST_TRANSPARENTBACK***");
             if(pme->m_dwProps & ST_GRAPHIC_BG)
             {
-            	DBGPRINTF("***zzg AStatic_RedrawText !!ST_GRAPHIC_BG***");
                 AStatic_DrawBackground(pme, &rc);
             }
             else
@@ -1560,53 +1532,18 @@ static void AStatic_RedrawText(AStatic * pme)
 			IBitmap *      pFrame;
 			AEEBitmapInfo  bi;
 
-			DBGPRINTF("***zzg AStatic_RedrawText ST_TRANSPARENTBACK***");
-
 			pFrame = ISHELL_LoadResBitmap(pme->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_PROMPT_MSG_STATIC_BG);
-
-			/*
-			if ((pFrame != NULL) && (pme->m_bAutoScroll == TRUE))
-			{
-				IBITMAP_GetInfo(pFrame, &bi, sizeof(bi));
-
-				DBGPRINTF("***zzg rc:%d,%d,%d,%d**", rc.x, rc.y, rc.dx, rc.dy);
-				DBGPRINTF("***zzg bi:%d,%d**", bi.cx, bi.cy);
-				
-				IDISPLAY_BitBlt(pd, rc.x, rc.y, rc.dx, rc.dy, pFrame, 1, (bi.cy-rc.dy), AEE_RO_COPY);
-				IBITMAP_Release(pFrame);
-				pFrame = NULL;
-		 	}
-			else
-			{
-				if(pFrame!=NULL)
-				{
-					IBITMAP_Release(pFrame);
-					pFrame = NULL;
-				}
-				DBGPRINTF("***zzg AStatic_RedrawText pFrame != NULL***");
-			}
-			*/
 
 			if (pFrame != NULL) 
 			{
 				IBITMAP_GetInfo(pFrame, &bi, sizeof(bi));
-
-				DBGPRINTF("***zzg rc:%d,%d,%d,%d**", rc.x, rc.y, rc.dx, rc.dy);
-				DBGPRINTF("***zzg bi:%d,%d**", bi.cx, bi.cy);
-				
 				IDISPLAY_BitBlt(pd, rc.x, rc.y, rc.dx, rc.dy, pFrame, 1, (bi.cy-rc.dy), AEE_RO_COPY);
 				IBITMAP_Release(pFrame);
 				pFrame = NULL;
 		 	}
-			else
-			{				
-				DBGPRINTF("***zzg AStatic_RedrawText pFrame == NULL***");
-			}
-
 			IDISPLAY_Update(pd);
 		 }
 		 //Add End
-		 
     }
    // Now back... the ys are  already adjusted below
    rc.x--;
@@ -1730,8 +1667,6 @@ Internal Method - Timer CB used to scroll text
 static void AStatic_ScrollTimerCB(AStatic * pme)
 {
    int   nIdx, nLastScroll;
-
-   DBGPRINTF("***zzg AStatic_ScrollTimerCB***");
 
    if(pme->m_bAutoScroll)
    {	   

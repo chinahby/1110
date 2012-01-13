@@ -11,7 +11,7 @@ GENERAL DESCRIPTION:
    available) on the device. Conceptually the secure clock is a single device 
    but the implementation utilizes the TOD and real-time clock (if available).
 
-        Copyright ?2006-2008 QUALCOMM Incorporated.
+        Copyright © 2006-2008 QUALCOMM Incorporated.
                All Rights Reserved.
             QUALCOMM Proprietary/GTDR
 =============================================================================*/

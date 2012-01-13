@@ -8,7 +8,7 @@ GENERAL DESCRIPTION:
    A sample implementation of the OEMSock functions declared in
    OEMSock.h that are used in the implementation of AEENet.
 
-        Copyright ?1999-2005 QUALCOMM Incorporated.
+        Copyright © 1999-2008 QUALCOMM Incorporated.
                All Rights Reserved.
         Qualcomm Confidential and Proprietary
 =============================================================================*/
@@ -16,9 +16,7 @@ GENERAL DESCRIPTION:
 
 /* necessary BREW includes */
 #include "OEMSock_QoSSpec.h" // must be included before "OEMSock_priv.h"
-#ifdef CUST_EDITION	  
-#include "OEMSVC.h"
-#endif /*CUST_EDITION*/
+
 #include "OEMSock.h"
 #include "OEMSock_priv.h"       // OEM_PROVIDES_*, etc.
 #include "OEMNotify.h"
@@ -1158,8 +1156,6 @@ static void OEMNet_IfaceEventCallback
 {
    OEMNet* pNet = OEMNet_FromAppID(app_id);
 
-   DBGPRINTF("***zzg OEMNet_IfaceEventCallback event=%d***", event);
-
    if ((OEMNet*)0 != pNet) {
    switch (event) {
 
@@ -1314,23 +1310,15 @@ static int OEMNet_RegisterIfaceEventCallback(OEMNet* pNet, dss_iface_ioctl_event
    ev_cb.app_id = pNet->sAppID;
 
    iface_id = OEMNet_GetIfaceId(pNet);
-   
-   if (DSS_IFACE_INVALID_ID == iface_id) 
-   {
+   if (DSS_IFACE_INVALID_ID == iface_id) {
       return AEE_NET_ENETNONET;
    }
 
-	DBGPRINTF("***zzg OEMNet_RegisterIfaceEventCallback iface_id=%d***", iface_id);
-	
    ret = oemdss_iface_ioctl(iface_id,
                             bRegister ? DSS_IFACE_IOCTL_REG_EVENT_CB : DSS_IFACE_IOCTL_DEREG_EVENT_CB,
                             &ev_cb,
                             &ndssErr);
-
-   DBGPRINTF("***zzg OEMNet_RegisterIfaceEventCallback event=%d, ret=%d, ndssErr=%x***", event, ret, ndssErr);
-   
-   if (DSS_SUCCESS != ret) 
-   {
+   if (DSS_SUCCESS != ret) {
       return DSSToAEE_Err(ndssErr);
    }
 
@@ -1375,9 +1363,6 @@ OEMCONTEXT OEMNet_Open
 {
    int16 ndssErr;
    OEMNet* pNet;
-
-   DBGPRINTF("***zzg OEMNet_Open Start***");
-   
 #if defined(FEATURE_DATA_UMTS) || defined(DSS_GET_IFACE_ID_BY_POLICY_VERS)
    boolean bSelectIface = TRUE;
 #endif
@@ -1451,18 +1436,13 @@ OEMCONTEXT OEMNet_Open
    pNet->bRegisteredToTAPI = FALSE;
 #endif // defined(CLOSE_PPP_ON_OUT_OF_NETWORK_COVERAGE)
 
-	DBGPRINTF("***zzg OEMNet_Open 1 pNet->sAppID=%d***", pNet->sAppID);
-
    // Does the network library need to be opened?
-   if (DSS_ERROR == pNet->sAppID) 
-   {
+   if (DSS_ERROR == pNet->sAppID) {
       int ret;
       dss_net_policy_info_type policy_info;
 
       // Initialize to defaults
       dss_init_net_policy_info(&policy_info);
-
-	  DBGPRINTF("***zzg OEMNet_Open nFamily=%d***", nFamily);
 
       switch (nFamily)
       {
@@ -1515,8 +1495,6 @@ OEMCONTEXT OEMNet_Open
          }
          case AEE_NETWORK_CDMA(0):
          {
-		 	DBGPRINTF("***zzg OEMNet_Open AEE_NETWORK_CDMA***");
-			
             policy_info.iface.kind = DSS_IFACE_NAME;
             policy_info.iface.info.name = DSS_IFACE_CDMA_SN;
 
@@ -1533,8 +1511,6 @@ OEMCONTEXT OEMNet_Open
          }
          case AEE_NETWORK_IWLAN_3GPP2(0):
          {
-		 	DBGPRINTF("***zzg OEMNet_Open AEE_NETWORK_IWLAN_3GPP2***");
-			
             policy_info.iface.info.name = (dss_iface_name_enum_type)DSS_IFACE_IWLAN_3GPP2;
             // Allow certain ops for only for CDMA Service Network
             OEMDSS_SetCDMAProfileId(nNetwork,&policy_info);
@@ -1543,8 +1519,6 @@ OEMCONTEXT OEMNet_Open
 
          case AEE_NETWORK_3GPP2_ANY(0):
          {
-		 	DBGPRINTF("***zzg OEMNet_Open AEE_NETWORK_3GPP2_ANY***");
-			
             policy_info.iface.info.name = (dss_iface_name_enum_type)DSS_IFACE_3GPP2_ANY;
             // Allow certain ops for only for CDMA Service Network
             OEMDSS_SetCDMAProfileId(nNetwork,&policy_info);
@@ -1596,11 +1570,7 @@ OEMCONTEXT OEMNet_Open
                                       NULL,
                                       &policy_info,
                                       &ndssErr);
-
-	  DBGPRINTF("***zzg OEMNet_Open 2 pNet->sAppID=%d***", pNet->sAppID);
-	  
-      if (DSS_ERROR == pNet->sAppID) 
-	  {
+      if (DSS_ERROR == pNet->sAppID) {
          OEMNet_Close(pNet);
          *err = DSSToAEE_Err(ndssErr);
          FARF(ALWAYS, ("OEMNet_Open: dss_open_netlib2 failed"));
@@ -1616,11 +1586,7 @@ OEMCONTEXT OEMNet_Open
          // later, all references to iface_id should use the stored value. this
          // guaranties that the same iface_id is used for this app.
          pNet->app_iface_id = oemdss_get_iface_id(pNet->sAppID);
-
-		 DBGPRINTF("***zzg OEMNet_Open 1 pNet->app_iface_id=%d***", pNet->app_iface_id);
-		 
-         if (DSS_IFACE_INVALID_ID == pNet->app_iface_id) 
-		 {
+         if (DSS_IFACE_INVALID_ID == pNet->app_iface_id) {
             OEMNet_Close(pNet);
             *err = AEE_NET_ENETNONET;
             FARF(ALWAYS, ("OEMNet_Open: oemdss_get_iface_id failed %d", pNet->sAppID));
@@ -1631,9 +1597,7 @@ OEMCONTEXT OEMNet_Open
          // called, the same iface_id will be chosen.
          policy_info.iface.kind = DSS_IFACE_ID;
          policy_info.iface.info.id = pNet->app_iface_id;
-		 
-         if (DSS_SUCCESS != dss_set_app_net_policy(pNet->sAppID, &policy_info, &ndssErr)) 
-		 {
+         if (DSS_SUCCESS != dss_set_app_net_policy(pNet->sAppID, &policy_info, &ndssErr)) {
             OEMNet_Close(pNet);
             *err = DSSToAEE_Err(ndssErr);
             FARF(ALWAYS, ("OEMNet_Open: dss_set_app_net_policy failed %d", pNet->sAppID));
@@ -1645,9 +1609,6 @@ OEMCONTEXT OEMNet_Open
 
       // fallback to the old way of finding the iface
       *err = OEMDSS_GetIfaceIdBeforePppopen(&pNet->app_iface_id);
-
-	    DBGPRINTF("***zzg OEMNet_Open 2 pNet->app_iface_id=%d***", pNet->app_iface_id);
-		
       if (DSS_IFACE_INVALID_ID == pNet->app_iface_id) {
          OEMNet_Close(pNet);
          FARF(ALWAYS, ("OEMNet_Open: failed to fetch iface id"));
@@ -1747,8 +1708,6 @@ int16 OEMNet_Close
 )
 {
    OEMNet* pNet = (OEMNet*)netd;
-
-   DBGPRINTF("***zzg OEMNet_Close pNet->sAppID=%d***", pNet->sAppID);
 
    if ((OEMNet*)0 != pNet) {
       int16 ndssErr;
@@ -2263,8 +2222,6 @@ static int16 OEMNet_PPPOpen2
       nRet = AEE_NET_SUCCESS;
    }
 
-   DBGPRINTF("***zzg OEMNet_PPPOpen2  nRet=%x***", nRet);
-
    if (AEE_NET_ENETCLOSEINPROGRESS == nRet) {
       // retry ppp open attempt a little later
       AEE_SetSysTimerCallback(200, &pNet->cbRetryPPPOpen);
@@ -2333,8 +2290,6 @@ int16 OEMNet_PPPOpen
 )
 {
    OEMNet* pNet = (OEMNet*)netd;
-
-   DBGPRINTF("***zzg OEMNet_PPPOpen  state=%x***", OEMNet_PPPState(pNet));
 
    // can't call dss_pppopen() while the network is still closing
    if (NET_PPP_CLOSING == OEMNet_PPPState(pNet)) {
@@ -2458,13 +2413,10 @@ int16 OEMNet_PPPClose
    pNet->PPPState.bTrying3G = FALSE;
 #endif /* #if defined(FAILOVER_3G_TO_2G) */
 
-	DBGPRINTF("***zzg OEMNet_PPPClose dss_netstatus=%x***", dss_netstatus(pNet->sAppID, &ndssErr));
-	
    if ((DSS_SUCCESS != dss_pppclose(pNet->sAppID, &ndssErr)) &&
        (DS_ENETNONET != ndssErr)) {
 
-      if (DS_EWOULDBLOCK == ndssErr) 
-	  {
+      if (DS_EWOULDBLOCK == ndssErr) {
          OEMNet_SetState(pNet, NET_PPP_CLOSING);
          AEE_SYS_RESUME_IF(pNet->pcbNetWaiter);
       }
@@ -8596,10 +8548,7 @@ void OEMNet_CloseAllNets(void)
 {
    OEMNet* pNet;
 
-   DBGPRINTF("***zzg OEMNet_CloseAllNets***");
-
-   for (pNet = gNetList.pNets; pNet; pNet = pNet->pNext) 
-   {
+   for (pNet = gNetList.pNets; pNet; pNet = pNet->pNext) {
       OEMNet_PPPClose((OEMCONTEXT)pNet);
    }
 }
@@ -8618,8 +8567,6 @@ void OEMNet_CloseSiblingNets(OEMCONTEXT netd)
 {
    OEMNet* pNet = (OEMNet*)netd;
    OEMNet* pCurNet;
-
-   DBGPRINTF("***zzg OEMNet_CloseSiblingNets***");
 
    for (pCurNet = gNetList.pNets; pCurNet; pCurNet = pCurNet->pNext) {
       if (pNet->app_iface_id == pCurNet->app_iface_id) {

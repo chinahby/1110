@@ -12,7 +12,7 @@ PUBLIC CLASSES:  Not Applicable
 
 INITIALIZATION AND SEQUENCING REQUIREMENTS:  Not Applicable
 
-        Copyright ?1999-2007 QUALCOMM Incorporated.
+        Copyright © 1999-2007 QUALCOMM Incorporated.
                All Rights Reserved.
             QUALCOMM Proprietary/GTDR
 ===========================================================================*/
@@ -155,7 +155,6 @@ int AEEMedia_New(IMedia * po, IShell * ps, AEECLSID cls)
    pme->m_clsSelf = cls;
 
    pme->m_pac = AEE_GetAppContext();
-   
    pme->m_nState = MM_STATE_IDLE;
 
    CALLBACK_Init(&pme->m_cbSysObj, AEEMedia_Delete, pme);
@@ -313,14 +312,10 @@ int AEEMedia_SetMediaParm(IMedia * po, int nParamID, int32 p1, int32 p2)
       switch (nParamID)
       {
          case MM_PARM_MEDIA_DATA:
-         {
-		 	nRet = AEEMedia_SetMediaData(pme, (AEEMediaDataEx *)p1, (boolean)(0 != p2));
+            nRet = AEEMedia_SetMediaData(pme, (AEEMediaDataEx *)p1, (boolean)(0 != p2));
             if (nRet == SUCCESS)
-            {
-				pme->m_nState = MM_STATE_READY;
-            }
+               pme->m_nState = MM_STATE_READY;
             break;
-         }
 
          default:
             break;
@@ -375,7 +370,7 @@ int AEEMedia_Play(IMedia * po)
 {
    AEEMedia *           pme = (AEEMedia *)po;
    int                  nRet = SUCCESS;
-   
+
    if (!AEEMedia_IsPlayOK(pme))
       return EBADSTATE;
 
@@ -495,11 +490,9 @@ int AEEMedia_Seek(IMedia * po, AEEMediaSeek eSeek, int32 lTimeMS)
 int AEEMedia_Pause(IMedia * po)
 {
    AEEMedia * pme = (AEEMedia *)po;
-	
+
    if (!AEEMedia_IsPauseOK(pme))
-   {   
-		return EBADSTATE;
-   }
+      return EBADSTATE;
 
    return SUCCESS;
 }
@@ -510,7 +503,7 @@ int AEEMedia_Pause(IMedia * po)
 int AEEMedia_Resume(IMedia * po)
 {
    AEEMedia * pme = (AEEMedia *)po;
-   
+
    if (!AEEMedia_IsResumeOK(pme))
       return EBADSTATE;
 
@@ -539,7 +532,7 @@ int AEEMedia_GetState(IMedia * po, boolean * pbStateChanging)
 
    if (pbStateChanging)
       *pbStateChanging = pme->m_bStateChanging;
-	
+
    return pme->m_nState;
 }
 
@@ -568,7 +561,7 @@ void AEEMedia_CallbackNotify(AEEMedia * pme, AEEMediaCallback * pmcb)
          AEEMedia_AppCallback(pme, pmcb);
       }
       else
-      {      	
+      {
          // Perform state change...
          switch (pme->m_nState)
          {
