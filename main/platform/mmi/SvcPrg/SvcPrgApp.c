@@ -2512,7 +2512,7 @@ static boolean CSvcPrg_BuildMenuList(CSvcPrgApp *pMe)
    
    // Server
    m[4].title            = IDS_BREW_SERVER;
-   m[4].itemType         = DT_TSTR;
+   m[4].itemType         = DT_WSTR; // GEMSE Modify
    m[4].cfgItem          = CFGI_BREW_SERVER;
    m[4].typeData.strLen  = DL_MAX_SERVER; 
    m[4].isEditable       = TRUE;
@@ -3214,7 +3214,6 @@ static void CSvcPrg_LoadTextCtlWithItemVal(CSvcPrgApp      *pMe,
    switch (item->itemType) {
    case DT_WSTR:
    case DT_WSTR_FIXED:
-   case DT_TSTR:
       {
          int maxLen;
 
@@ -3238,7 +3237,31 @@ static void CSvcPrg_LoadTextCtlWithItemVal(CSvcPrgApp      *pMe,
          break;
       }
       
+   case DT_TSTR: // GEMSE Modify
+      {
+         int maxLen;
 
+         if (sizeof(wBuf) < (item->typeData.strLen) ) {
+            ERR("wBuf is too small!", 0, 0, 0);
+            maxLen = sizeof(szBuf);
+         } else {
+            maxLen = item->typeData.strLen;
+         }
+
+         if (SUCCESS != ICONFIG_GetItem(pMe->m_pConfig, 
+                                        item->cfgItem,
+                                        (void *) szBuf,
+                                        maxLen)) {
+
+            ERR("Unable to retrieve config item: %d", 
+                (int) item->cfgItem, 0, 0);
+         }
+         
+         STR_TO_WSTR(szBuf, wBuf, sizeof(wBuf));
+         ITEXTCTL_SetMaxSize(pt, item->typeData.strLen-1);
+         break;
+      }
+   
    case DT_BYTE:
       {
          uint8 b;
@@ -3402,16 +3425,29 @@ static void CSvcPrg_SaveItemValue(CSvcPrgApp      *pMe,
    switch (item->itemType) {
    case DT_WSTR:
    case DT_WSTR_FIXED:
-   case DT_TSTR:
+   
       if (SUCCESS != ICONFIG_SetItem(pMe->m_pConfig, 
                                      item->cfgItem,
                                      wNewVal,
-                                     WSTRSIZE(wNewVal))) {
+                                     (item->typeData.strLen) * sizeof(AECHAR))) {
          ERR("Unable to save config item: %d", 
              (int) item->cfgItem, 0, 0);
       }
       break;
-
+      
+   case DT_TSTR: // GEMSE Modify
+   {
+      char  szBuf[64];
+      WSTR_TO_STR(wNewVal, szBuf, sizeof(szBuf));
+      if (SUCCESS != ICONFIG_SetItem(pMe->m_pConfig, 
+                                     item->cfgItem,
+                                     szBuf,
+                                     item->typeData.strLen)) {
+         ERR("Unable to save config item: %d", 
+             (int) item->cfgItem, 0, 0);
+      }
+      break;
+   }
    case DT_BYTE:
       {
          uint8 b;

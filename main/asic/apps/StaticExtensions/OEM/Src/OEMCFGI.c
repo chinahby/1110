@@ -274,7 +274,7 @@ when       who     what, where, why
 // in OEMConfigListType.  It does not need to be incremented when a new
 // field is added to the end of OEMConfigListType.
 //
-#define OEMCONFIGLIST_VERSION ( (uint16) 0x000A )
+#define OEMCONFIGLIST_VERSION ( (uint16) 0x000B )
 
 ////
 // The EFS file that stores the OEM configuration.
@@ -320,9 +320,6 @@ typedef struct
 } OEMConfigCugInfo;
 /* BREW Download Information */
 
-#define OEMCFG_DEFAULT_CID           (27)
-#define OEMCFG_DEFAULT_PLATFORM_ID   (600)
-#define OEMCFG_DEFAULT_DL_SERVER     "oemdemo.qualcomm.com"
 #define OEMCFG_DL_AKEY_SIZE           8
 #define OEMCFG_DL_BKEY_SIZE           16
 #define OEMCFG_DL_SERVER_LEN          64
@@ -1616,19 +1613,11 @@ static OEMConfigListType oemi_cache = {
    0,                                              // CFGI_DEVICE
    {0,},                                           // CFGI_CUG
    FALSE,                                          // CFGI_VR
-#ifdef CUST_EDITION
-   {DEFAULT_BREW_CARRIER_ID, OEMCFG_DEFAULT_PLATFORM_ID,   // Download Info
+   {DEFAULT_BREW_CARRIER_ID, DEFAULT_BREW_PLATFORM_ID,   // Download Info
     {0,}, {0,},
     DEFAULT_BREW_SERVER, DEFAULT_BREW_DOWNLOAD_FLG,
     DEFAULT_BREW_APOLICY, DEFAULT_BREW_PPOLICY
    },
-#else
-   {OEMCFG_DEFAULT_CID, DEFAULT_BREW_PLATFORM_ID,   // Download Info
-    {0,}, {0,},
-    OEMCFG_DEFAULT_DL_SERVER, DIF_TEST_ALLOWED | DIF_MIN_FOR_SID,
-    APOLICY_NONE, PPOLICY_BREW_OR_CARRIER
-   },
-#endif
    "0000000000000000000000000000000",              // CFGI_SUBSCRIBERID
    FALSE,                                          // CFGI_DISABLE_IN_CALL_DISP
    FALSE,                                          // CFGI_DISABLE_BG_IMAGE
@@ -1837,8 +1826,8 @@ static OEMConfigListType oemi_cache = {
    ,{-1,-1,-1,-1}
 #endif//FEATURE_TOUCHPAD
 #endif //CUST_EDITION
-   ,{0}  //CFGI_BREWSET_USENAME
-   ,{0}  //CFGI_BREWSET_PASSWORD
+   ,{DEFAULT_BREW_USERNAME}  //CFGI_BREWSET_USENAME
+   ,{DEFAULT_BREW_PASSWORD}  //CFGI_BREWSET_PASSWORD
    ,FALSE    //CFGI_LANGUAGE_MOD
 #ifdef FEATURE_ANALOG_TV
    ,0
@@ -2604,7 +2593,6 @@ void OEM_RestoreFactorySetting( void )
    oemi_cache.vr = 0;
 
    MEMSET((void *)&oemi_cache.download_info, 0, sizeof(OEMConfigDownloadInfo));
-#ifdef CUST_EDITION
    oemi_cache.download_info.dwCID  = DEFAULT_BREW_CARRIER_ID;
    oemi_cache.download_info.dwPID  = DEFAULT_BREW_PLATFORM_ID;
    oemi_cache.download_info.wFlags = DEFAULT_BREW_DOWNLOAD_FLG;
@@ -2613,20 +2601,11 @@ void OEM_RestoreFactorySetting( void )
    STRLCPY((char *)oemi_cache.download_info.szServer, 
            (const char *)DEFAULT_BREW_SERVER, 
            sizeof(oemi_cache.download_info.szServer));
-#else
-   oemi_cache.download_info.dwCID  = OEMCFG_DEFAULT_CID;
-   oemi_cache.download_info.dwPID  = OEMCFG_DEFAULT_PLATFORM_ID;
-   oemi_cache.download_info.wFlags = DIF_TEST_ALLOWED | DIF_MIN_FOR_SID;
-   oemi_cache.download_info.wAuth  = APOLICY_NONE;
-   oemi_cache.download_info.wPrivP = PPOLICY_BREW_OR_CARRIER;
-   STRLCPY((char *)oemi_cache.download_info.szServer, 
-           (const char *)OEMCFG_DEFAULT_DL_SERVER, 
-           sizeof(oemi_cache.download_info.szServer));
-#endif
    oemi_cache.disable_in_call_disp = FALSE;
    oemi_cache.disable_bg_image = FALSE;
    oemi_cache.manual_plmn_sel_allowed = TRUE;
-
+   STRCPY((char *)oemi_cache.brewsetings_usename,DEFAULT_BREW_USERNAME);
+   STRCPY((char *)oemi_cache.brewsetings_password,DEFAULT_BREW_PASSWORD);
 #ifdef CUST_EDITION
 #ifdef FEATURE_KEYGUARD	 
 
@@ -3705,7 +3684,7 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
    }
 
    if (pBuff == NULL) {
-      MSG_FATAL("OEM_GetCachedConfig(): invalid parm size", 0, 0, 0);
+      DBGPRINTF("OEM_GetCachedConfig(): invalid parm size");
       return EBADPARM;
    }
 
@@ -3725,14 +3704,14 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
          if (NULL == cfgTable[j].tbl[idx].get) {
             // Exit the for() loop immediately if we found the
             // entry and it had a NULL function.
-            
+            DBGPRINTF("GetConfig(): invalid parm size");
             break;
          }
 
          // Perform the size check here so the item functions can
          // assume the size is ok.
          if (nSize != cfgTable[j].tbl[idx].size) {
-            MSG_FATAL("GetConfig(): invalid parm size", 0, 0, 0);
+            DBGPRINTF("GetConfig(): %d %d %d = %d",j,idx,nSize,cfgTable[j].tbl[idx].size);
             return EBADPARM;
          }
       
@@ -4416,7 +4395,7 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
 
    case CFGI_BREW_AUTH:
       {
-         uint16 *val = (uint16 *)pBuff;
+         byte *val = (byte *)pBuff;
          if (nSize != (int) sizeof(*val)) {
             return EBADPARM;
          }
@@ -4426,7 +4405,7 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
 
    case CFGI_BREW_PRIVP:
       {
-         uint16 *val = (uint16 *)pBuff;
+         byte *val = (byte *)pBuff;
          if (nSize != (int) sizeof(*val)) {
             return EBADPARM;
          }
@@ -5242,10 +5221,10 @@ int OEM_SetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
          return(EBADPARM);
 
       MEMSET((void *)&oemi_cache.download_info, 0, sizeof(OEMConfigDownloadInfo));
-        oemi_cache.download_info.dwCID  = pdi->dwCarrierID;
-        oemi_cache.download_info.dwPID  = pdi->dwPlatformID;
+      oemi_cache.download_info.dwCID  = pdi->dwCarrierID;
+      oemi_cache.download_info.dwPID  = pdi->dwPlatformID;
       oemi_cache.download_info.wAuth  = pdi->nAuth;
-        oemi_cache.download_info.wFlags = pdi->wFlags;
+      oemi_cache.download_info.wFlags = pdi->wFlags;
       oemi_cache.download_info.wPrivP = pdi->nPolicy;
       STRLCPY((char *)oemi_cache.download_info.szServer, 
               (const char *)pdi->szServer, 
@@ -5999,7 +5978,6 @@ static void OEMPriv_ReadOEMConfigList(void)
    MEMSET((void *)&oemi_cache.cug, 0, sizeof(OEMConfigCugInfo));
    if (STRCMP((const char *)oemi_cache.download_info.szServer, "") == 0)
    {
-#ifdef CUST_EDITION
      oemi_cache.download_info.dwCID  = DEFAULT_BREW_CARRIER_ID;
      oemi_cache.download_info.dwPID  = DEFAULT_BREW_PLATFORM_ID;
      oemi_cache.download_info.wFlags = DEFAULT_BREW_DOWNLOAD_FLG;
@@ -6008,16 +5986,6 @@ static void OEMPriv_ReadOEMConfigList(void)
      STRLCPY((char *)oemi_cache.download_info.szServer, 
              (const char *)DEFAULT_BREW_SERVER, 
              sizeof(oemi_cache.download_info.szServer));
-#else
-     oemi_cache.download_info.dwCID  = OEMCFG_DEFAULT_CID;
-     oemi_cache.download_info.dwPID  = OEMCFG_DEFAULT_PLATFORM_ID;
-     oemi_cache.download_info.wFlags = DIF_TEST_ALLOWED | DIF_MIN_FOR_SID;
-     oemi_cache.download_info.wAuth  = APOLICY_NONE;
-     oemi_cache.download_info.wPrivP = PPOLICY_BREW_OR_CARRIER;
-     STRLCPY((char *)oemi_cache.download_info.szServer, 
-             (const char *)OEMCFG_DEFAULT_DL_SERVER, 
-             sizeof(oemi_cache.download_info.szServer));
-#endif
    }
 
    // Force the value on the following members
@@ -10924,12 +10892,14 @@ static int OEMPriv_SetItem_CFGI_FM_BACKGROUND(void *pBuff)
 static int OEMPriv_GetItem_CFGI_BREWSET_USENAME(void *pBuff)
 {
 	 MEMCPY(pBuff, (void*) &oemi_cache.brewsetings_usename, sizeof(byte) * MAS_BREWSETINT_STRING);
+     DBGPRINTF("CFGI_BREWSET_USENAME %s",oemi_cache.brewsetings_usename);
      return SUCCESS;
 }
 
 static int OEMPriv_SetItem_CFGI_BREWSET_USENAME(void *pBuff)
 {
 	MEMCPY((void*) &oemi_cache.brewsetings_usename, pBuff, sizeof(byte) * MAS_BREWSETINT_STRING);
+    DBGPRINTF("CFGI_BREWSET_USENAME %s",oemi_cache.brewsetings_usename);
     OEMPriv_WriteOEMConfigList(); 
     return SUCCESS;
 }
@@ -10937,12 +10907,14 @@ static int OEMPriv_SetItem_CFGI_BREWSET_USENAME(void *pBuff)
 static int OEMPriv_GetItem_CFGI_BREWSET_PASSWORD(void *pBuff)
 {
 	MEMCPY(pBuff, (void*) &oemi_cache.brewsetings_password, sizeof(byte) * MAS_BREWSETINT_STRING);
+    DBGPRINTF("CFGI_BREWSET_PASSWORD %s",oemi_cache.brewsetings_password);
     return SUCCESS;
 }
 
 static int OEMPriv_SetItem_CFGI_BREWSET_PASSWORD(void *pBuff)
 {
 	MEMCPY((void*) &oemi_cache.brewsetings_password, pBuff, sizeof(byte) * MAS_BREWSETINT_STRING);
+    DBGPRINTF("CFGI_BREWSET_PASSWORD %s",oemi_cache.brewsetings_password);
     OEMPriv_WriteOEMConfigList(); 
     return SUCCESS;
 }
@@ -11671,34 +11643,6 @@ void OEM_SetBAM_ADSAccount(STATIC_BREW_APP_e eApp)
     (void)OEMNV_Put(NV_PPP_PASSWORD_I, &nvi);
 #endif
 } /* OEM_SetBAM_ADSAccount */
-
-//Add By zzg 2011_07_08
-#elif defined(FEATURE_VERSION_W208) || defined(FEATURE_VERSION_W208S)
-void OEM_SetBAM_ADSAccount(void)
-{
-#ifndef WIN32
-    nv_item_type nvi;
-    char username[MAS_BREWSETINT_STRING] = {0};
-    char password[MAS_BREWSETINT_STRING] = {0};
-#ifdef FEATURE_USES_MMS_TEST    
-	MEMCPY(username,"ctwap@mycdma.cn",15);	
-	MEMCPY(password,"vnet.mobi",9);
-#endif    
-	//MEMCPY(username,"card",4);	
-	//MEMCPY(password,"card",4);
-	
-    // ’À∫≈
-    (void)STRCPY((char *)nvi.pap_user_id.user_id, (char *)username);
-    nvi.pap_user_id.user_id_len = STRLEN((char *)username);
-    (void)OEMNV_Put(NV_PPP_USER_ID_I, &nvi);
-
-    // ’À∫≈√‹¬Î
-    (void)STRCPY((char *)nvi.pap_password.password, (char *)password);
-    nvi.pap_password.password_len = STRLEN((char *)password);
-    (void)OEMNV_Put(NV_PPP_PASSWORD_I, &nvi);
-#endif
-} /* OEM_SetBAM_ADSAccount */
-//Add End
 #else 
 
 void OEM_SetBAM_ADSAccount(void)
@@ -11720,12 +11664,33 @@ void OEM_SetBAM_ADSAccount(void)
     (void)STRCPY((char *)nvi.pap_password.password, (char *)password);
     nvi.pap_password.password_len = STRLEN((char *)password);
     (void)OEMNV_Put(NV_PPP_PASSWORD_I, &nvi);
-
-	MSG_FATAL("username: %c%c",username[0],username[1],0);
-	MSG_FATAL("password: %c%c",password[0],password[1],0);
 #endif	
 } /* OEM_SetBAM_ADSAccount */
 
 #endif
+
+void OEM_SetBROWSER_ADSAccount(void)
+{
+#ifndef WIN32
+    nv_item_type nvi;
+    char username[MAS_BREWSETINT_STRING] = {0};
+    char password[MAS_BREWSETINT_STRING] = {0};
+
+    OEMPriv_GetItem_CFGI_BREWSET_USENAME((void*)username);
+    OEMPriv_GetItem_CFGI_BREWSET_PASSWORD((void*)password);
+
+    // ’À∫≈
+    (void)STRCPY((char *)nvi.pap_user_id.user_id, (char *)username);
+    nvi.pap_user_id.user_id_len = STRLEN((char *)username);
+    (void)OEMNV_Put(NV_PPP_USER_ID_I, &nvi);
+
+
+    // ’À∫≈√‹¬Î
+    (void)STRCPY((char *)nvi.pap_password.password, (char *)password);
+    nvi.pap_password.password_len = STRLEN((char *)password);
+    (void)OEMNV_Put(NV_PPP_PASSWORD_I, &nvi);
+#endif	
+} /* OEM_SetBROWSER_ADSAccount */
+
 #endif // CUST_EDITION
 

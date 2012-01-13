@@ -4308,7 +4308,7 @@ static int StartApplet(MainMenu *pMe, int i)
 	{
 		char	buf[12];
 		
-		OEM_SetBAM_ADSAccount();	//Add By zzg 2011_07_08
+		OEM_SetBROWSER_ADSAccount();	//Add By zzg 2011_07_08
 		
     	MSG_FATAL("AEECLSID_BRW_APP...........START",0,0,0);
     	start_info.appid_fx = APP_ORIGINATOR_BROWSER;
@@ -4339,7 +4339,7 @@ static int StartApplet(MainMenu *pMe, int i)
 	{
 		char	buf[12];
 		
-		OEM_SetBAM_ADSAccount();	//Add By zzg 2011_07_08
+		OEM_SetBROWSER_ADSAccount();	//Add By zzg 2011_07_08
 		
     	MSG_FATAL("AEECLSID_BRW_APP...........START",0,0,0);
     	start_info.appid_fx = APP_ORIGINATOR_BROWSER;

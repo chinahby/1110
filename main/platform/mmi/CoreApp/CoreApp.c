@@ -638,6 +638,7 @@ boolean CoreApp_InitAppData(IApplet* po)
 	 OEM_SetBAM_ADSAccount();
 }
 #endif
+    OEM_SetBROWSER_ADSAccount();
 	(void)ICONFIG_GetItem(pMe->m_pConfig, CFGI_PROFILE_CUR_NUMBER,&pMe->m_CurProfile, sizeof(pMe->m_CurProfile));//CFGI_ALERT_TYPE
 	(void)ICONFIG_GetItem(pMe->m_pConfig,CFGI_PROFILE_CUR_NUMBER,&pMe->m_active,sizeof(pMe->m_active));
     CoreAppReadNVKeyBeepValue(pMe);

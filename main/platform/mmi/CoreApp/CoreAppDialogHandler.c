@@ -3741,7 +3741,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 				    	{
                         	char	buf[12];
 		                    
-                    		OEM_SetBAM_ADSAccount();
+                    		OEM_SetBROWSER_ADSAccount();
                     		
                         	start_info.appid_fx = APP_ORIGINATOR_BROWSER;
                             start_info.subtype_keycode = APP_BROWSER_START_MAINMENU;
