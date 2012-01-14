@@ -855,9 +855,18 @@ nvim_build_sec(void)
    word               cnt;       /* Counter for attempts to write variable */
    
    /* Initialize the lock code to the default value (0000)   */
-   for( cnt=0; cnt<NV_LOCK_CODE_SIZE; cnt++)  {
+#ifdef  FEATURE_VERSION_W208S 
+   local_item.lock_code.digits[ 0] = '1';
+   local_item.lock_code.digits[ 1] = '5';
+   local_item.lock_code.digits[ 2] = '8';
+#else
+   for( cnt=0; cnt<NV_LOCK_CODE_SIZE; cnt++)  
+   {
      local_item.lock_code.digits[ cnt] = '0';
    }
+#endif
+
+   
    local_cmd.item       = NV_LOCK_CODE_I;
    local_cmd.tcb_ptr    = NULL;
    local_cmd.sigs       = 0;

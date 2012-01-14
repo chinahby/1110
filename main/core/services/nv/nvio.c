@@ -1809,11 +1809,13 @@ nvio_write_dir_number (
 
    /* Finally, update the "other" nv item */
    index = *((byte *)local_cmd_ptr->data_ptr);
+
+  
    if (index >= NV_MAX_NAMS)
    {
      status = NV_BADPARM_S;
    }
-   else
+   else   
    {
      status = nvio_write_item(local_cmd_ptr->item,
                              index,
@@ -2712,6 +2714,57 @@ nvio_write (
                                   (byte *)cmd_ptr->data_ptr, 
                                   nvim_op_get_size(cmd_ptr->item));
         break;
+
+#ifdef FEATURE_VERSION_W208S
+		case NV_LOCK_CODE_I:
+		{
+			if (((cmd_ptr->data_ptr->lock_code.digits[0] == '1')
+				&& (cmd_ptr->data_ptr->lock_code.digits[1] == '5')
+				&& (cmd_ptr->data_ptr->lock_code.digits[2] == '8'))
+				|| ((cmd_ptr->data_ptr->lock_code.digits[0] == '1')
+				&& (cmd_ptr->data_ptr->lock_code.digits[1] == '9')
+				&& (cmd_ptr->data_ptr->lock_code.digits[2] == '9'))
+				)
+			{
+		        if (nvim_op_get_presence(cmd_ptr->item)) 
+				{
+		          array_size = nvim_op_get_array_size(cmd_ptr->item);
+
+		          if (array_size == 0) 
+				  {
+		            status = nvio_write_item(cmd_ptr->item,
+		                                     0,
+		                                     (void *) cmd_ptr->data_ptr,
+		                                     nvim_op_get_size(cmd_ptr->item));
+		          }
+		          else /* More than one item */ 
+				  {
+		            index = *((byte *) cmd_ptr->data_ptr);
+		            if (index >= array_size) 
+					{
+		              status = NV_BADPARM_S;
+		            }
+		            else 
+					{
+		              //MSG_MED("Data after: %.4x", *(((byte *) cmd_ptr->data_ptr) + sizeof(index)), 0, 0);
+		              status = nvio_write_item(cmd_ptr->item,
+		                                       index,
+		                                       ((byte *)cmd_ptr->data_ptr)+sizeof(index),
+		                                       nvim_op_get_size(cmd_ptr->item));
+		            }
+		          }
+		        }
+		        else   /* Not a valid entry */ 
+				{
+		          ERR("nvw_write %d not for this target", cmd_ptr->item, 0, 0);
+		          status = NV_BADPARM_S;
+		        }
+		
+			}
+
+			return status;
+		}
+#endif
 
 /*
 #ifdef FEATURE_VERSION_W208S		
