@@ -8378,10 +8378,9 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MESSAGE_BACKGROUND);
 #endif
-			//add by yangdecai
-			{
-				AECHAR WTitle[40] = {0};
-				(void)ISHELL_LoadResString(pMe->m_pShell,
+            {
+                AECHAR WTitle[20] = {0};
+                (void)ISHELL_LoadResString(pMe->m_pShell,
                         AEE_WMSAPPRES_LANGFILE,                                
                         IDS_RECEIVER,
                         WTitle,
@@ -8410,7 +8409,15 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
 #ifdef FEATURE_USES_MMS                         
                 if(pMe->m_isSendToAlbumOrEmain)
                 {
-                    ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_FIXSETRECT | TP_NOUPDATE|TP_FOCUS_NOSEL);
+                    AECHAR WTitle[2] = {0};
+                    
+                    ITEXTCTL_SetProperties( pIText, (TP_FIXSETRECT |TP_EDITNUMBER_PTSTRING |TP_FIXOEM | TP_USELESS_UPDOWN | TP_GRAPHIC_BG | TP_FOCUS_NOSEL| TP_STARKEY_SWITCH));
+                    IMENUCTL_SetActive(pMenu, FALSE);
+                    ITEXTCTL_SetActive(pIText, TRUE);
+                    ITEXTCTL_SetCursorPos(pIText, TC_CURSOREND);
+                    (void)ITEXTCTL_SetTitle( pIText, NULL,0,WTitle);
+                    IDIALOG_SetFocus(pMe->m_pActiveIDlg, IDC_NUMTEXT);
+                    IDISPLAY_UpdateEx(pMe->m_pDisplay, TRUE);     
                 }
                 else
 #endif                    
@@ -8543,11 +8550,15 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                         #endif
                     }
                 }
-                pMe->m_CurAddID = nSelID;
-                
+                pMe->m_CurAddID = nSelID;             
                 (void)IMENUCTL_Redraw(pMenu);
-                
                 IMENUCTL_GetSelItemRect(pMenu, &rc);
+#ifdef FEATURE_USES_MMS                         
+                if(pMe->m_isSendToAlbumOrEmain)
+                {
+                    rc.x = 0;
+                }
+#endif                
                 ITEXTCTL_SetRect(pIText, &rc);
                 IMENUCTL_SetActive(pMenu, FALSE);
                 ITEXTCTL_SetActive(pIText, TRUE);
