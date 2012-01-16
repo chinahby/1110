@@ -3044,9 +3044,15 @@ boolean OEM_SVCSimpleBeep(BeepType nBeepType, boolean bLoud)
       return TRUE;
    case BEEP_VIBRATE_ALERT:
       // Use Alert Sound
+#ifndef WIN32
+      uisnd_vibrate(1000,NULL,NULL);
+#endif
       return TRUE;
    case BEEP_VIBRATE_REMIND:
       // Use Vibrate Reminder
+#ifndef WIN32
+      uisnd_vibrate(1000,NULL,NULL);
+#endif
       return TRUE;
    default:
       break;

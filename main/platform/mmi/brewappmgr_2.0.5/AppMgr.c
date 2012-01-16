@@ -493,6 +493,24 @@ static boolean AppMgr_HandleEvent(AppMgr * pme, AEEEvent eCode, uint16 wParam, u
                                  AppMgr_HandleLaunchError(pme, ps->cls, ps->nErr);
                            }
                         }
+#ifdef CUST_EDITION
+                        else if(ps->cls)
+                        {
+                            AEEAppInfo ai;
+
+                            // Don't act if notification is for hidden app or a screen saver
+                            ISHELL_QueryClass(pme->a.m_pIShell, ps->cls, &ai);
+                            
+                            if (ai.wFlags & AFLAG_STATIC)
+                            {
+                                return TRUE;
+                            }
+                            
+                            IANNUNCIATOR_SetFieldIsActiveEx(pme->m_pIAnn,FALSE);   
+                			IANNUNCIATOR_SetHasTitleText(pme->m_pIAnn,FALSE);
+                			IANNUNCIATOR_SetFieldText(pme->m_pIAnn,NULL);
+                        }
+#endif
                      }
                      return TRUE;
 #endif // NMASK_SHELL_START_STATUS
