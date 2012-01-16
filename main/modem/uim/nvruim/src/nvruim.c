@@ -2632,19 +2632,25 @@ static nv_ruim_support_status nvruim_write_spc_enable(
     
       case NV_SPC_CHANGE_ENABLED_I:
 	  	MSG_FATAL("***zzg write_spc_enable NV_SPC_CHANGE_ENABLED_I***", 0, 0, 0);	  	
-		
-        /* Reset SPC_Change_Enable bit (bit 4) */
-        //nvruim_otapa_spc_enable_cache_buf &= NVRUIM_SPC_ENABLE_MASK;
-
-		nvruim_otapa_spc_enable_cache_buf &= NVRUIM_SPC_DISABLE;
-		nvruim_otapa_spc_enable_cache_buf |= NVRUIM_SPC_ENABLE_MASK;
-    
-        /* A value of 0 indicates that SPC is enabled and '1' indicates
-        that SPC is disabled */
-        //if(!nv_cmd_ptr->data_ptr->spc_change_enabled)
+		        
+#ifdef FEATURE_VERSION_W208S
+		if(nv_cmd_ptr->data_ptr->spc_change_enabled)
         {
-          //nvruim_otapa_spc_enable_cache_buf |= NVRUIM_SPC_DISABLE;
+			nvruim_otapa_spc_enable_cache_buf &= NVRUIM_SPC_DISABLE;
+			nvruim_otapa_spc_enable_cache_buf |= NVRUIM_SPC_ENABLE_MASK;
+        }		
+#else
+		/* Reset SPC_Change_Enable bit (bit 4) */
+        nvruim_otapa_spc_enable_cache_buf &= NVRUIM_SPC_ENABLE_MASK;
+
+		/* A value of 0 indicates that SPC is enabled and '1' indicates
+        that SPC is disabled */
+        if(!nv_cmd_ptr->data_ptr->spc_change_enabled)
+        {
+          nvruim_otapa_spc_enable_cache_buf |= NVRUIM_SPC_DISABLE;
         }
+#endif    
+        
         break;
       default:
         return NV_RUIM_ITEM_NOT_SUPPORTED;
@@ -4085,8 +4091,7 @@ if (!nvruim_lock_cache())
 #ifdef FEATURE_OTASP_OTAPA
     case NV_OTAPA_ENABLED_I:
 #endif /* FEATURE_OTASP_OTAPA */
-    case NV_SPC_CHANGE_ENABLED_I:
-		MSG_FATAL("***zzg nvruim_write NV_SPC_CHANGE_ENABLED_I***", 0, 0, 0);
+    case NV_SPC_CHANGE_ENABLED_I:		
       nvruim_write_sprt_status = nvruim_write_spc_enable(nv_cmd_ptr, 
                                                          op_status);
       break;
@@ -5066,7 +5071,9 @@ static nv_ruim_support_status nvruim_read_msisdn(
       */
       /* Initialize the temp buffer to character '0' */
       for(i = 0; i < NV_DIR_NUMB_SIZ; i++)
-        temp_msisdn_buffer[i] = 0x30;
+      {
+      	temp_msisdn_buffer[i] = 0x30;
+      }
     
       /* this is the number of BCD digits in the MDN that are returned */
       num_bcd_digits = msisdn_buffer[ NVRUIM_MSISDN_ND_INDEX ] & 0x0F;
@@ -6075,17 +6082,17 @@ static nv_ruim_support_status nvruim_read_spc_enabled(
   
   switch(nv_cmd_ptr->item)
   {
-    case NV_SPC_CHANGE_ENABLED_I:
-		MSG_FATAL("***zzg nvruim_read_spc NV_SPC_CHANGE_ENABLED_I***", 0, 0, 0);
+    case NV_SPC_CHANGE_ENABLED_I:		
       if(NV_DONE_S == *op_status)
-      {      	
-        //nv_cmd_ptr->data_ptr->spc_change_enabled = 
-          //((nvruim_otapa_spc_enable_cache_buf & NVRUIM_SPC_DISABLE) == 0);
-
+      {    
+    
+#ifdef FEATURE_VERSION_W208S
 		nv_cmd_ptr->data_ptr->spc_change_enabled = 
           !((nvruim_otapa_spc_enable_cache_buf & NVRUIM_SPC_DISABLE) == 0);
-          
-		
+#else
+		nv_cmd_ptr->data_ptr->spc_change_enabled = 
+          ((nvruim_otapa_spc_enable_cache_buf & NVRUIM_SPC_DISABLE) == 0);
+#endif
       } /* end if - the read was successful. */
       break;
   
@@ -10053,8 +10060,7 @@ if (!nvruim_lock_cache())
 #ifdef FEATURE_OTASP_OTAPA
     case NV_OTAPA_ENABLED_I:
 #endif
-    case NV_SPC_CHANGE_ENABLED_I:
-		MSG_FATAL("***zzg nvruim_read_spc NV_SPC_CHANGE_ENABLED_I***", 0, 0, 0);
+    case NV_SPC_CHANGE_ENABLED_I:		
       nvruim_read_support_status = nvruim_read_spc_enabled(nv_cmd_ptr, 
                                                            op_status);
       break;

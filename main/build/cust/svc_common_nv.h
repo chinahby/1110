@@ -35,7 +35,6 @@
 const nv_auto_set_type nv_auto_set_svc_list[] = 
 {
     {NV_SLOT_CYCLE_INDEX_I,             {0x02}},
-	{NV_SPC_CHANGE_ENABLED_I,           {0x01}},	
     {NV_PREF_MODE_I,                    {0x00, 0x04}},
     {NV_PCDMACH_I,                      {0x00, 0x1b, 0x01, 0x80, 0x01}},
     {NV_SCDMACH_I,                      {0x00, 0xb3, 0x02, 0x09, 0x03}},
