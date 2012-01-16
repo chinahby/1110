@@ -1081,9 +1081,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
 					if(SUCCESS == ICAMERA_Stop(pMe->m_pCamera))
 	                {
 	                    pMe->m_bIsPreview = FALSE;
-	                    //(void)ISHELL_SendEvent(pMe->m_pShell, AEECLSID_APP_CAMERA, EVT_USER_REDRAW, 0, 0);
-
-						CLOSE_DIALOG(DLGRET_VIDEOMENU);		//Add By zzg 2012_01_02	
+	                    (void)ISHELL_SendEvent(pMe->m_pShell, AEECLSID_APP_CAMERA, EVT_USER_REDRAW, 0, 0);						
 	                } 
                 }
                 else
@@ -1936,8 +1934,6 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
                                             uint32     dwParam)
 {
     static IStatic *pStatic = NULL;     
-
-	MSG_FATAL("***zzg CameraApp_PopMSGHandleEvent eCode=%x***", eCode, 0, 0);
     
     switch (eCode)
     {
@@ -1956,9 +1952,7 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
 				     TRUE);
 			}
 #endif         
-			//Add End
-
-			MSG_FATAL("***zzg CameraApp_PopMSGHandleEvent m_nMsgTimeout=%d, m_wMsgID=%d***", pMe->m_nMsgTimeout, pMe->m_wMsgID, 0);
+			//Add End			
 
             if((pMe->m_nMsgTimeout != 0) && (pMe->m_wMsgID != IDS_MSG_WAITING))           
             {
@@ -2108,32 +2102,24 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
                                      CameraApp_DialogTimeout,
                                      pMe);
             return TRUE;
-
-		case EVT_KEY_PRESS:
+		
         case EVT_KEY:
-            // 进Preview的 时候限制按键
-            MSG_FATAL("***zzg POPMsg eCode=%x, wParam=%x, m_wMsgID=%d***", eCode, wParam, pMe->m_wMsgID);
-			
+            // 进Preview的 时候限制按键		
             if(pMe->m_wMsgID == IDS_MSG_WAITING)
-            {
-            	MSG_FATAL("***zzg POPMsg return***", 0, 0, 0);
+            {            	
                 return TRUE;
             }
             
             switch (wParam)
             {
-                //case AVK_INFO:
-                    //return TRUE;
+                case AVK_INFO:
+                    return TRUE;
                     
-                //case AVK_CLR:
-                     //CLOSE_DIALOG(DLGRET_CANCELED);
-                     //return TRUE;
-
-				case AVK_INFO:
-				case AVK_CLR:	
-                case AVK_SELECT:
-					MSG_FATAL("***zzg CameraApp AVK_SELECT m_nMsgTimeout=%d***", pMe->m_nMsgTimeout, 0, 0);
-					
+                case AVK_CLR:
+                     CLOSE_DIALOG(DLGRET_CANCELED);
+                     return TRUE;
+				
+                case AVK_SELECT:					
                     if(pMe->m_nMsgTimeout == 0)
                     {
                         int nMediaDevice;
