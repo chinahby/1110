@@ -310,6 +310,9 @@ static boolean AppMgr_Init(AppMgr * pme)
       // eInput and dwSize do not change. Set pData to the audio file name.
       pme->m_spInfo.eInput = SDT_FILE;
    }
+
+   pme->m_pIAnn = NULL;
+   ISHELL_CreateInstance(pme->a.m_pIShell, AEECLSID_ANNUNCIATOR, (void **)&pme->m_pIAnn);
    return TRUE;
 }
 
@@ -391,6 +394,11 @@ static void AppMgr_Free(AppMgr * pme)
 
    // Close Image Cache 
    FreeObj((void**)&pme->m_pImageCacheFile);
+   if(NULL != pme->m_pIAnn)
+   {
+       IANNUNCIATOR_Release(pme->m_pIAnn);
+       pme->m_pIAnn = NULL;
+   }
 }
 
 //===========================================================================
@@ -506,9 +514,12 @@ static boolean AppMgr_HandleEvent(AppMgr * pme, AEEEvent eCode, uint16 wParam, u
                                 return TRUE;
                             }
                             
-                            IANNUNCIATOR_SetFieldIsActiveEx(pme->m_pIAnn,FALSE);   
-                			IANNUNCIATOR_SetHasTitleText(pme->m_pIAnn,FALSE);
-                			IANNUNCIATOR_SetFieldText(pme->m_pIAnn,NULL);
+                            if(pme->m_pIAnn)
+                            {
+                                IANNUNCIATOR_SetFieldIsActiveEx(pme->m_pIAnn,FALSE);   
+                			    IANNUNCIATOR_SetHasTitleText(pme->m_pIAnn,FALSE);
+                			    IANNUNCIATOR_SetFieldText(pme->m_pIAnn,NULL);
+                            }
                         }
 #endif
                      }
@@ -580,12 +591,7 @@ static boolean AppMgr_HandleEvent(AppMgr * pme, AEEEvent eCode, uint16 wParam, u
       case EVT_APP_STOP:
          // Stop Sound & Animation
          AppMgr_StopSoundAnimation(pme);
-		IANNUNCIATOR_SetHasTitleText(pme->m_pIAnn,TRUE);
-		if(NULL != pme->m_pIAnn)
-		{
-			IANNUNCIATOR_Release(pme->m_pIAnn);
-    		pme->m_pIAnn = NULL;
-		}
+		 IANNUNCIATOR_SetHasTitleText(pme->m_pIAnn,TRUE);
          return TRUE;
 
       case EVT_APP_SUSPEND:
@@ -1730,12 +1736,6 @@ int AppMgr_Start(AppMgr* pme)
 
    if (AEE_SUCCESS != nErr) {
       return nErr;
-   }
-   if (AEE_SUCCESS != ISHELL_CreateInstance(pme->a.m_pIShell,
-                                            AEECLSID_ANNUNCIATOR,
-                                            (void **)&pme->m_pIAnn))
-   {
-        return EFAILED;
    }
    #endif // FEATURE_BREW_DOWNLOAD
    
