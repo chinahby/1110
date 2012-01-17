@@ -1553,7 +1553,7 @@ void uisnd_snd(
   snd_priority_type  priority;
 
   method = choose_method(type);
-
+  uisnd_set_volume(choose_device(type),method,100,NULL,NULL);
   if(!uisnd_is_to_be_silenced(method))
   {
     MSG_MED("Starting Sounds %d %d", type, snd, 0);
@@ -1857,6 +1857,7 @@ void uisnd_tone(
   MSG_MED("Starting a tone %d %d %d", type, tone, wtime);
   device  = choose_device( type );
   method  = choose_method( type );
+  uisnd_set_volume(device,method,100,NULL,NULL);
   if(!uisnd_is_to_be_silenced(method)) {
     MSG_MED("Starting Sounds %d %d", type, tone, 0);
     uisnd_play_tone_generic( device, method, tone, wtime,
