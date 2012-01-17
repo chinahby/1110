@@ -3027,19 +3027,19 @@ boolean OEM_SVCSimpleBeep(BeepType nBeepType, boolean bLoud)
    case BEEP_REMINDER:
       // Use Reminder Beep sound
 #ifndef WIN32
-      uisnd_tone(UI_MSG_SND, SND_WARN, 1000);
+      uisnd_tone(UI_MSG_SND, SND_WARN, 2000);
 #endif
       return TRUE;
    case BEEP_MSG:
       // Use New Message Beep Sound
 #ifndef WIN32
-      uisnd_tone(UI_MSG_SND, SND_MSG_WAITING, 1000);
+      uisnd_tone(UI_MSG_SND, SND_MSG_WAITING, 2000);
 #endif
 	  return TRUE;
    case BEEP_ERROR:
       // Use Errpor Beep sound
 #ifndef WIN32
-      uisnd_tone(UI_MSG_SND, SND_ERR, 1000);
+      uisnd_tone(UI_MSG_SND, SND_ERR, 2000);
 #endif
       return TRUE;
    case BEEP_VIBRATE_ALERT:

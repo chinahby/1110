@@ -1684,11 +1684,7 @@ static OEMConfigListType oemi_cache = {
 #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_C01)
    1,											//CFGI_KEY_LOCK_CHECK			
 #else
-#ifdef FEATURE_VERSION_W208S
-   4,                                           //CFGI_KEY_LOCK_CHECK
-#else
    0,
-#endif
 #endif   
 
    OEMNV_LOCK_RUIM,                                 // CFGI_LOCK_RUIM,   //type = boolean

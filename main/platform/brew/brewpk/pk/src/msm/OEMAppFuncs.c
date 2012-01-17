@@ -287,6 +287,9 @@ Exit and re-init BREW
 ==============================================================*/
 static void ResetBREW(void * pUnused)
 {
+#ifdef CUST_EDITION
+   WakeReset(pUnused);
+#else
    //Set this bool. Calling AEE_Exit() will result in NTF_IDLE. We do not want AutoStartApp to
    //be started there.
    gbInResetBREW = TRUE;
@@ -297,6 +300,7 @@ static void ResetBREW(void * pUnused)
 
    //AEE_Init will also take care of starting AutoStart App
    AEE_Init(0);
+#endif
 }
 
 /*==============================================================

@@ -331,11 +331,11 @@ void  OEM_GetDeviceInfo(AEEDeviceInfo * pi)
 #if defined(FEATURE_AUDIO_FORMAT)
       pi->bMIDI = TRUE;
 #endif
-
+#if !defined(FEATURE_PEKTEST)
 #if defined(FEATURE_CMX)
       pi->bCMX = TRUE;
 #endif
-
+#endif
 #if defined(FEATURE_GPSONE) || defined(FEATURE_PDAPI)
       pi->bPosLoc = TRUE;
 #endif
@@ -815,6 +815,10 @@ int   OEM_GetDeviceInfoEx(AEEDeviceItem nItem, void *pBuff, int *pnSize)
          if(pBuff && *pnSize) {
 #if defined T_MSM7500
             #define CHIP_ID "MSM7500"
+#elif defined T_QSC1110
+            #define CHIP_ID "QSC1110"
+#elif defined T_QSC1100
+            #define CHIP_ID "QSC1100"
 #elif defined T_MSM6280
             #define CHIP_ID "MSM6280"
 #elif defined T_MSM6250
@@ -1149,13 +1153,13 @@ int   OEM_GetDeviceInfoEx(AEEDeviceItem nItem, void *pBuff, int *pnSize)
       {
          return(EBADPARM);
       }
-      if (!pBuff || *pnSize< (STRLEN("ALCATEL")+1)*sizeof(AECHAR)) 
+      if (!pBuff || *pnSize< (STRLEN("WATERWORLD INC.")+1)*sizeof(AECHAR)) 
       {
-         *pnSize = (STRLEN("ALCATEL")+1)*sizeof(AECHAR);
+         *pnSize = (STRLEN("WATERWORLD INC.")+1)*sizeof(AECHAR);
          return(EBUFFERTOOSMALL);
       }
       
-      (void)STRTOWSTR("ALCATEL", (AECHAR *)pBuff, *pnSize);
+      (void)STRTOWSTR("WATERWORLD INC.", (AECHAR *)pBuff, *pnSize);
       return SUCCESS;
    
    case AEE_DEVICEITEM_MODEL_NAME:
@@ -1672,12 +1676,19 @@ int SetLngCode(uint32 dwLngCode)
 }
 
 #else
-
+static uint32 g_usLngCode = 0; // FOR PEK TEST ONLY
 uint32 GetLngCode(void)
 {
     nv_language_enum_type language=0;
     uint32 LngCode = LNG_ENGLISH;
- 
+
+    if(g_usLngCode != 0)
+    {
+        LngCode = g_usLngCode;
+        g_usLngCode = 0;
+        return LngCode;
+    }
+    
     OEM_SVCGetConfig(CFGI_LANGUAGE_SELECTION, &language, sizeof(language));
 
 #ifdef WIN32//wlh 临时修改为中文
@@ -1881,9 +1892,12 @@ int SetLngCode(uint32 dwLngCode)
 
 #ifdef FEATURE_LANG_ENGLISH          
         case LNG_ENGLISH:
+            language = NV_LANGUAGE_ENGLISH;
+            break;
 #endif //FEATURE_LANG_ENGLISH            
         default:
-            language = NV_LANGUAGE_ENGLISH;                
+            language = NV_LANGUAGE_ENGLISH;  
+            g_usLngCode = dwLngCode;
             break;
     }
 
