@@ -461,6 +461,9 @@ enum{
     CFGI_FM_PLAY_MODE,
     CFGI_IDLE_DATETIME_MODE,  //add yangdecai 2011-04-13
     CFGI_CAMERA_PHOTO_MODE,   //add pyuangui 20110516
+#ifdef FEATURE_VERSION_W208S
+	CFGI_OTKSL_TIMES,		  //Add By zzg 2012_01_18
+#endif
 	//Add End
 	
 #ifdef FEATURE_LONG_NETLOCK

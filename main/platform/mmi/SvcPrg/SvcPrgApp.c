@@ -854,7 +854,8 @@ static boolean CSvcPrg_OnCommand_SecCodeOK(CSvcPrgApp *pMe,
    int nReturnStatus;
 #endif
 
-   if (IDIALOG_GetID(pd) != IDD_SECCODE) {
+   if (IDIALOG_GetID(pd) != IDD_SECCODE) 
+   {
       return FALSE;
    }
 
@@ -863,7 +864,7 @@ static boolean CSvcPrg_OnCommand_SecCodeOK(CSvcPrgApp *pMe,
    if (!pt) {
       return FALSE;
    }
-
+ 
    if (CSvcPrg_CheckSecCode(pMe, ITEXTCTL_GetTextPtr(pt))) {
       MenuItemType  fakeItem;
 
@@ -2953,11 +2954,15 @@ static boolean CSvcPrg_DisplayItem(CSvcPrgApp      *pMe,
             m++;
          }
          
-         if (item->title == IDS_SERVICE_OPTIONS) {
+         if (item->title == IDS_SERVICE_OPTIONS) 
+		 {
+		   MSG_FATAL("***zzg CSvcPrg_DisplayItem IDS_SERVICE_OPTIONS m_accessByOTKSL=%x***", pMe->m_accessByOTKSL, 0, 0);
+		   
 #ifdef FEATURE_ENABLE_OTKSL
             // The service programming code may not be viewed/changed when access
             // to the applet was granted by using the OTKSL code.
-           if (TRUE == pMe->m_accessByOTKSL) {
+           if (TRUE == pMe->m_accessByOTKSL) 
+		   {
              IMENUCTL_DeleteItem (pm, IDS_SPCCODE);
            }
 #endif /* FEATURE_ENABLE_OTKSL */
@@ -3799,30 +3804,59 @@ static boolean CSvcPrg_CheckSecCode(CSvcPrgApp *pMe, AECHAR const *code)
 
    AECHAR wSPC[OEMNV_SECCODE_LENGTH];
 
+   uint8 otksl_times = 0;	//Add By zzg 2012_01_18
+
+   OEM_GetConfig(CFGI_OTKSL_TIMES, &otksl_times, sizeof(uint8)); 	//Add By zzg 2012_01_18
+
+   MSG_FATAL("***zzg CSvcPrg_CheckSecCode Start***", 0, 0, 0);
+
 #ifdef FEATURE_ENABLE_OTKSL
    pMe->m_accessByOTKSL = FALSE;
 
+   MSG_FATAL("***zzg ICONFIG_GetItem CFGI_OTKSLCODE***", 0, 0, 0);
+	
    if (SUCCESS == ICONFIG_GetItem(pMe->m_pConfig, 
                                  CFGI_OTKSLCODE,
                                  wSPC,
-                                 sizeof(wSPC))) {
+                                 sizeof(wSPC))) 
+   {
 
-      if (0 == WSTRCMP(code, wSPC)) {
+	  MSG_FATAL("***zzg ICONFIG_GetItem CFGI_OTKSLCODE SUCEESS***", 0, 0, 0);
+      if (0 == WSTRCMP(code, wSPC)) 
+	  {
+		 MSG_FATAL("***zzg CSvcPrg_CheckSecCode 0 == WSTRCMP(code, wSPC)***", 0, 0, 0);
+		 if(otksl_times > 10)
+	 	 {
+	         MEMSET(wSPC, 0xFF, sizeof(wSPC));
 
-         MEMSET(wSPC, 0xFF, sizeof(wSPC));
+	         // Invalidate the code as it can only be used one time.  This
+	         // is done by storing 0xFFs, which cannot be entered by the keypad 
+	         if (SUCCESS == ICONFIG_SetItem(pMe->m_pConfig,
+	                                        CFGI_OTKSLCODE,
+	                                        wSPC,
+	                                        sizeof(wSPC))) 
+	         { 
+	            pMe->m_accessByOTKSL = TRUE;
 
-         // Invalidate the code as it can only be used one time.  This
-         // is done by storing 0xFFs, which cannot be entered by the keypad 
-         if (SUCCESS == ICONFIG_SetItem(pMe->m_pConfig,
-                                        CFGI_OTKSLCODE,
-                                        wSPC,
-                                        sizeof(wSPC))) { 
-            pMe->m_accessByOTKSL = TRUE;
-            return TRUE;
-         } else {
-            ERR("Unable to invalidate OTKSL code", 0, 0, 0);
+				MSG_FATAL("***zzg ICONFIG_SetItem CFGI_OTKSLCODE Success m_accessByOTKSL=%x***", pMe->m_accessByOTKSL, 0, 0);
+				
+	            return TRUE;
+	         }
+		 }
+		 else 
+		 {
+		  	 otksl_times++;
+			 OEM_SetConfig(CFGI_OTKSL_TIMES, &otksl_times, sizeof(uint8)); 	//Add By zzg 2012_01_18
+
+			 MSG_FATAL("***zzg OEM_SetConfig CFGI_OTKSL_TIMES otksl_times=%d***", otksl_times, 0, 0);
+			 //pMe->m_accessByOTKSL = TRUE;
+			 return TRUE;
          }
       }
+   }
+   else
+   {
+		MSG_FATAL("***zzg ICONFIG_GetItem CFGI_OTKSLCODE Failed***", 0, 0, 0);
    }
 
 #endif /* FEATURE_ENABLE_OTKSL */
@@ -3830,11 +3864,15 @@ static boolean CSvcPrg_CheckSecCode(CSvcPrgApp *pMe, AECHAR const *code)
    if (SUCCESS != ICONFIG_GetItem(pMe->m_pConfig, 
                                  CFGI_SECCODE,
                                  wSPC,
-                                 sizeof(wSPC))) {
+                                 sizeof(wSPC))) 
+   {
 
+	  MSG_FATAL("***zzg ICONFIG_GetItem CFGI_SECCODE Failed***", 0, 0, 0);
       ERR("Unable to retrieve security code", 0, 0, 0);
       return FALSE;
    }
+
+   MSG_FATAL("***zzg CSvcPrg_CheckSecCode return***", 0, 0, 0);
 
    return 0 == WSTRCMP(code, wSPC);
 }

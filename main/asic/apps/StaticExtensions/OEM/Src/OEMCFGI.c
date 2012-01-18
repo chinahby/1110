@@ -686,6 +686,7 @@ typedef struct
    boolean FMPlayMode_status;
    byte    Idle_datetime_mode;   //add by yangceai 2011-04-13
    boolean    Camera_Photo_mode;   // add by pyuangui 20110516
+   uint8	otksl_times;	//Add By zzg 2012_01_18
    //Add End
    #ifdef FEATURE_LONG_NETLOCK
    boolean netlock_flg;
@@ -1067,6 +1068,11 @@ static int OEMPriv_SetItem_CFGI_IDLE_DATETIME_MODE(void *pBuff);
 static int OEMPriv_GetItem_CFGI_IDLE_DATETIME_MODE(void *pBuff);
 static int OEMPriv_SetItem_CFGI_CAMERA_PHOTO_MODE(void *pBuff);
 static int OEMPriv_GetItem_CFGI_CAMERA_PHOTO_MODE(void *pBuff);
+
+#ifdef FEATURE_VERSION_W208S
+static int OEMPriv_SetItem_CFGI_OTKSL_TIMES(void *pBuff);
+static int OEMPriv_GetItem_CFGI_OTKSL_TIMES(void *pBuff);
+#endif
 
 
 
@@ -1838,6 +1844,7 @@ static OEMConfigListType oemi_cache = {
    ,1
    ,1
    ,1
+   ,1
    //Add End
    #ifdef FEATURE_LONG_NETLOCK
    ,0
@@ -2399,6 +2406,9 @@ static ConfigItemTableEntry const customOEMItemTable[] =
    CFGTABLEITEM(CFGI_FM_PLAY_MODE,sizeof(boolean)),
    CFGTABLEITEM(CFGI_IDLE_DATETIME_MODE,sizeof(byte)),  //ADD BY YANGDECAI 2011-04-13
    CFGTABLEITEM(CFGI_CAMERA_PHOTO_MODE,sizeof(byte)),
+#ifdef FEATURE_VERSION_W208S
+   CFGTABLEITEM(CFGI_OTKSL_TIMES,sizeof(uint8)),	//Add By zzg 2012_01_18
+#endif
    #ifdef FEATURE_LONG_NETLOCK
    CFGTABLEITEM(CFGI_NET_LOCK_FLAGS,sizeof(boolean)),
    #endif
@@ -2955,6 +2965,7 @@ void OEM_RestoreFactorySetting( void )
    oemi_cache.FMPlayMode_status = 1;
    oemi_cache.Idle_datetime_mode = 1;
    oemi_cache.Camera_Photo_mode =1;
+   oemi_cache.otksl_times = 1;
    //Add End
 #ifdef FEATURE_PLANEMODE
    oemi_cache.planeMode = OEMNV_PLANEMODE_OFF;
@@ -10936,6 +10947,25 @@ static int OEMPriv_GetItem_CFGI_CAMERA_PHOTO_MODE(void *pBuff)
 	MEMCPY(pBuff, (void*) &oemi_cache.Camera_Photo_mode, sizeof(byte));
     return SUCCESS;
 }
+
+#ifdef FEATURE_VERSION_W208S
+static int OEMPriv_SetItem_CFGI_OTKSL_TIMES(void *pBuff)
+{
+	MSG_FATAL("OEMPriv_SetItem_CFGI_OTKSL_TIMES Start *otksl_times=%d", *(uint8*)pBuff,0,0); 
+	if (oemi_cache.otksl_times != *(uint8 *)pBuff)
+	{
+		oemi_cache.otksl_times = *(uint8 *)pBuff;
+		OEMPriv_WriteOEMConfigList();
+	}
+	MSG_FATAL("OEMPriv_SetItem_CFGI_OTKSL_TIMES Start otksl_times=%d", oemi_cache.mmsOutCount,0,0); 
+	return SUCCESS;
+}
+static int OEMPriv_GetItem_CFGI_OTKSL_TIMES(void *pBuff)
+{
+	*(uint8 *) pBuff = oemi_cache.otksl_times;
+	return SUCCESS;
+}
+#endif
 
 static int OEMPriv_SetItem_CFGI_LANGUAGE_MOD(void *pBuff)
 {

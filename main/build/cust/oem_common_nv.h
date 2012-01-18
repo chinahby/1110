@@ -126,6 +126,8 @@
 //Others
 #if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T)
 #define OEMNV_PHONE_PASSWORD                        11005                       //CFGI_PHONE_PASSWORD
+#elif defined (FEATURE_VERSION_W208S)
+#define OEMNV_PHONE_PASSWORD                        14321                    //10670    
 #else
 #define OEMNV_PHONE_PASSWORD                        10670                    //10670                       //CFGI_PHONE_PASSWORD
 #endif
