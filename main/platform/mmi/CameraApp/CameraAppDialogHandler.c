@@ -5228,12 +5228,12 @@ static int CameraApp_SavePhoto(CCameraApp *pMe)
 
 	//Start encoding processing
 	(void)ICAMERA_SetMediaData(pMe->m_pCamera, &md, 0);
-
+#ifndef FEATURE_VERSION_C01
 	ICAMERA_SetVideoEncode(pMe->m_pCamera, AEECLSID_JPEG, 0);
 
 		
 	ICAMERA_DeferEncode(pMe->m_pCamera, TRUE);
-			
+#endif			
   	return ICAMERA_EncodeSnapshot(pMe->m_pCamera);
 } /* END CameraApp_SavePhoto */
 
