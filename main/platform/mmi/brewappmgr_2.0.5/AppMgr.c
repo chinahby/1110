@@ -46,8 +46,8 @@ static int     AppMgr_CreateInstance(AEECLSID ClsId,IShell * pIShell,IModule * p
 #if !defined(AEE_FA_CONST)
 static int     AppManager_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 
-static const AEEAppInfo    gaiAppMgr[] = {{AEECLSID_APPMGR_BID,APPMGRLS_RES_FILE,IDS_APPLICATION_MANAGER,0,0,0,0,0},
-                                          {AEECLSID_MOBILESHOP_BID,APPMGRLS_RES_FILE,IDS_MOBILESHOP,0,0,0,0,AFLAG_HIDDEN|AFLAG_POPUP}};
+static const AEEAppInfo    gaiAppMgr[] = {{AEECLSID_APPMGR_BID,AEE_APPMGRLS_RES_FILE,IDS_APPLICATION_MANAGER,0,0,0,0,0},
+                                          {AEECLSID_MOBILESHOP_BID,AEE_APPMGRLS_RES_FILE,IDS_MOBILESHOP,0,0,0,0,AFLAG_HIDDEN|AFLAG_POPUP}};
 
 //===========================================================================
 //
@@ -1309,12 +1309,12 @@ static void AppMgr_Order(AppMgr* pme)
       pme->m_wLastState = ST_OPTIONS;
 
       // Set New Title
-      IMENUCTL_SetTitle(pme->m_pMenu, APPMGRLS_RES_FILE, IDS_SELECT_APP, NULL);
+      IMENUCTL_SetTitle(pme->m_pMenu, AEE_APPMGRLS_RES_FILE, IDS_SELECT_APP, NULL);
       IMENUCTL_Redraw(pme->m_pMenu);
    }
    else
    {
-      IMENUCTL_SetTitle(pme->m_pMenu, APPMGRLS_RES_FILE, IDS_REORDER_APP, NULL);
+      IMENUCTL_SetTitle(pme->m_pMenu, AEE_APPMGRLS_RES_FILE, IDS_REORDER_APP, NULL);
       IMENUCTL_Redraw(pme->m_pMenu);
       AppMgr_DrawVisualIndication(pme);
       pme->m_bConfigMenu = TRUE;
@@ -1842,7 +1842,7 @@ static boolean AppMgr_Launcher(AppMgr * pme)
    }
 
    // Set Menu Title
-   IMENUCTL_SetTitle(pme->m_pMainMenu, APPMGRLS_RES_FILE, (uint16)(IDC_BREW_APPS + nCatIndex), NULL);
+   IMENUCTL_SetTitle(pme->m_pMainMenu, AEE_APPMGRLS_RES_FILE, (uint16)(IDC_BREW_APPS + nCatIndex), NULL);
 
    // Draw Main Menu
    while (nCount)
@@ -1950,7 +1950,7 @@ static boolean AppMgr_MShop(AppMgr * pme)
    // Load MShop Logo first time
    if (pme->m_pMShopLogo == NULL)
    {
-      pme->m_pMShopLogo = ISHELL_LoadResImage(pme->a.m_pIShell, APPMGRLS_RES_FILE, IDB_MSHOP_LOGO);
+      pme->m_pMShopLogo = ISHELL_LoadResImage(pme->a.m_pIShell, AEE_APPMGRLS_RES_FILE, IDB_MSHOP_LOGO);
 
       if (pme->m_pMShopLogo)
       {
@@ -1974,11 +1974,11 @@ static boolean AppMgr_MShop(AppMgr * pme)
       IMENUCTL_SetRect(pme->m_pMenu, &rc);
    }
    else
-      IMENUCTL_SetTitle(pme->m_pMenu, APPMGRLS_RES_FILE, IDC_MSHOP, NULL);
+      IMENUCTL_SetTitle(pme->m_pMenu, AEE_APPMGRLS_RES_FILE, IDC_MSHOP, NULL);
 
    // Add Items
    MEMSET(&ai, 0, sizeof(ai));
-   ai.pszResText  = APPMGRLS_RES_FILE;
+   ai.pszResText  = AEE_APPMGRLS_RES_FILE;
    ai.pszResImage = APPMGRLN_RES_FILE;
 
    ai.wFont    = AEE_FONT_NORMAL;
@@ -2048,12 +2048,12 @@ static boolean AppMgr_Options(AppMgr * pme)
    nCount = nIdx = 0;
 
    // Set Menu Title
-   IMENUCTL_SetTitle(pme->m_pMenu, APPMGRLS_RES_FILE, IDC_OPTIONS, NULL);
+   IMENUCTL_SetTitle(pme->m_pMenu, AEE_APPMGRLS_RES_FILE, IDC_OPTIONS, NULL);
 
    // Add Menu Items
    MEMSET(&ai, 0, sizeof(ai));
    ai.pszResImage = APPMGRLN_RES_FILE;
-   ai.pszResText  = APPMGRLS_RES_FILE;
+   ai.pszResText  = AEE_APPMGRLS_RES_FILE;
    ai.wFont    = AEE_FONT_NORMAL;
 
    // Add order apps
@@ -2139,18 +2139,18 @@ static boolean AppMgr_Options(AppMgr * pme)
 static boolean AppMgr_Help(AppMgr * pme)
 {
    // Set Menu Title
-   IMENUCTL_SetTitle(pme->m_pMenu, APPMGRLS_RES_FILE, IDC_HELP, NULL);
+   IMENUCTL_SetTitle(pme->m_pMenu, AEE_APPMGRLS_RES_FILE, IDC_HELP, NULL);
 
    // add menu items
-   IMENUCTL_AddItem(pme->m_pMenu, APPMGRLS_RES_FILE, IDC_HELP_BUYING_NEW_APPS, IDC_HELP_BUYING_NEW_APPS, NULL, NULL);
-   IMENUCTL_AddItem(pme->m_pMenu, APPMGRLS_RES_FILE, IDC_HELP_WHAT_DO_I_PAY, IDC_HELP_WHAT_DO_I_PAY, NULL, NULL);
-   IMENUCTL_AddItem(pme->m_pMenu, APPMGRLS_RES_FILE, IDC_HELP_AIRTIME_CHARGES, IDC_HELP_AIRTIME_CHARGES, NULL, NULL);
-   IMENUCTL_AddItem(pme->m_pMenu, APPMGRLS_RES_FILE, IDC_HELP_CANCELING_SUBSCRIPTION, IDC_HELP_CANCELING_SUBSCRIPTION, NULL, NULL);
-   IMENUCTL_AddItem(pme->m_pMenu, APPMGRLS_RES_FILE, IDC_HELP_DEMO_APPS, IDC_HELP_DEMO_APPS, NULL, NULL);
-   IMENUCTL_AddItem(pme->m_pMenu, APPMGRLS_RES_FILE, IDC_HELP_REMOVING_APPS, IDC_HELP_REMOVING_APPS, NULL, NULL);
-   IMENUCTL_AddItem(pme->m_pMenu, APPMGRLS_RES_FILE, IDC_HELP_DISABLED_APPS, IDC_HELP_DISABLED_APPS, NULL, NULL);
-   IMENUCTL_AddItem(pme->m_pMenu, APPMGRLS_RES_FILE, IDC_HELP_RESTORING_APPS, IDC_HELP_RESTORING_APPS, NULL, NULL);
-   IMENUCTL_AddItem(pme->m_pMenu, APPMGRLS_RES_FILE, IDC_HELP_EXPIRED_APPS, IDC_HELP_EXPIRED_APPS, NULL, NULL);
+   IMENUCTL_AddItem(pme->m_pMenu, AEE_APPMGRLS_RES_FILE, IDC_HELP_BUYING_NEW_APPS, IDC_HELP_BUYING_NEW_APPS, NULL, NULL);
+   IMENUCTL_AddItem(pme->m_pMenu, AEE_APPMGRLS_RES_FILE, IDC_HELP_WHAT_DO_I_PAY, IDC_HELP_WHAT_DO_I_PAY, NULL, NULL);
+   IMENUCTL_AddItem(pme->m_pMenu, AEE_APPMGRLS_RES_FILE, IDC_HELP_AIRTIME_CHARGES, IDC_HELP_AIRTIME_CHARGES, NULL, NULL);
+   IMENUCTL_AddItem(pme->m_pMenu, AEE_APPMGRLS_RES_FILE, IDC_HELP_CANCELING_SUBSCRIPTION, IDC_HELP_CANCELING_SUBSCRIPTION, NULL, NULL);
+   IMENUCTL_AddItem(pme->m_pMenu, AEE_APPMGRLS_RES_FILE, IDC_HELP_DEMO_APPS, IDC_HELP_DEMO_APPS, NULL, NULL);
+   IMENUCTL_AddItem(pme->m_pMenu, AEE_APPMGRLS_RES_FILE, IDC_HELP_REMOVING_APPS, IDC_HELP_REMOVING_APPS, NULL, NULL);
+   IMENUCTL_AddItem(pme->m_pMenu, AEE_APPMGRLS_RES_FILE, IDC_HELP_DISABLED_APPS, IDC_HELP_DISABLED_APPS, NULL, NULL);
+   IMENUCTL_AddItem(pme->m_pMenu, AEE_APPMGRLS_RES_FILE, IDC_HELP_RESTORING_APPS, IDC_HELP_RESTORING_APPS, NULL, NULL);
+   IMENUCTL_AddItem(pme->m_pMenu, AEE_APPMGRLS_RES_FILE, IDC_HELP_EXPIRED_APPS, IDC_HELP_EXPIRED_APPS, NULL, NULL);
 
    if (pme->m_nIndex > 0)
       IMENUCTL_SetSel(pme->m_pMenu, pme->m_nMenuSel[pme->m_nIndex--]);
@@ -2194,12 +2194,12 @@ static boolean AppMgr_MainMenu(AppMgr * pme)
    }
    
    // Set Menu Title
-   IMENUCTL_SetTitle(pme->m_pMainMenu, APPMGRLS_RES_FILE, IDS_MAIN_MENU, NULL);
+   IMENUCTL_SetTitle(pme->m_pMainMenu, AEE_APPMGRLS_RES_FILE, IDS_MAIN_MENU, NULL);
 
    // Add the menu items.
    MEMSET(&ai, 0, sizeof(ai));
 
-   ai.pszResText  = APPMGRLS_RES_FILE;
+   ai.pszResText  = AEE_APPMGRLS_RES_FILE;
    ai.pszResImage = APPMGRLN_RES_FILE;
 
 #if defined(FEATURE_BREW_DOWNLOAD)
@@ -3339,7 +3339,7 @@ static void AppMgr_Prompt(AppMgr * pme, const AECHAR* szTitle, uint16 wIDTitle, 
    {
       while (*wButtons)
       {
-         IMENUCTL_AddItem(pme->m_pSK, APPMGRLS_RES_FILE, *wButtons, *wButtons, NULL, 0);
+         IMENUCTL_AddItem(pme->m_pSK, AEE_APPMGRLS_RES_FILE, *wButtons, *wButtons, NULL, 0);
          wButtons++;
       }
 
@@ -3374,10 +3374,10 @@ static void AppMgr_Prompt(AppMgr * pme, const AECHAR* szTitle, uint16 wIDTitle, 
 
    // Set Static Control title and text and display it
    if (!szTitle && wIDTitle)        
-      ISHELL_LoadResString(pme->a.m_pIShell, APPMGRLS_RES_FILE, wIDTitle, szTitleBuf, MAX_STR_SIZE);
+      ISHELL_LoadResString(pme->a.m_pIShell, AEE_APPMGRLS_RES_FILE, wIDTitle, szTitleBuf, MAX_STR_SIZE);
 
    if (!szText)
-      ISHELL_LoadResString(pme->a.m_pIShell, APPMGRLS_RES_FILE, wIDText, szTextBuf, MAX_STR_SIZE);
+      ISHELL_LoadResString(pme->a.m_pIShell, AEE_APPMGRLS_RES_FILE, wIDText, szTextBuf, MAX_STR_SIZE);
 
    if (wButtons)
    {
@@ -4058,13 +4058,13 @@ void AppMgr_MoreInfo(AppMgr* pme, AEERect* prc)
    // Display available RAM
    if (dwRAM)
    {
-      if (ISHELL_LoadResString(pme->a.m_pIShell, APPMGRLS_RES_FILE, IDS_SYSTEMINFO_RAM, szTemp, sizeof(szTemp)))
+      if (ISHELL_LoadResString(pme->a.m_pIShell, AEE_APPMGRLS_RES_FILE, IDS_SYSTEMINFO_RAM, szTemp, sizeof(szTemp)))
          pText = AppendWStr(pText, szTemp, '\n');
       FormatMem(dwRAM, szTemp, FALSE);
       pText = AppendWStr(pText, szTemp, ' ');
    }
 
-   if (ISHELL_LoadResString(pme->a.m_pIShell, APPMGRLS_RES_FILE, IDS_OPTIONS_BREW_INFO, szTemp, sizeof(szTemp)))
+   if (ISHELL_LoadResString(pme->a.m_pIShell, AEE_APPMGRLS_RES_FILE, IDS_OPTIONS_BREW_INFO, szTemp, sizeof(szTemp)))
       pText = AppendWStr(pText, szTemp, '\n');
 
    // Get AEE Version
@@ -4077,10 +4077,10 @@ void AppMgr_MoreInfo(AppMgr* pme, AEERect* prc)
    STRTOWSTR(szVersion, szTemp, sizeof(szTemp));
    pText = AppendWStr(pText, szTemp, ' ');
 
-   if (ISHELL_LoadResString(pme->a.m_pIShell, APPMGRLS_RES_FILE, IDS_APPLICATION_MANAGER, szTemp, sizeof(szTemp)))
+   if (ISHELL_LoadResString(pme->a.m_pIShell, AEE_APPMGRLS_RES_FILE, IDS_APPLICATION_MANAGER, szTemp, sizeof(szTemp)))
       pText = AppendWStr(pText, szTemp, '\n');
 
-   if (ISHELL_LoadResString(pme->a.m_pIShell, APPMGRLS_RES_FILE, IDS_APPMGR_VERSION, szTemp, sizeof(szTemp)))
+   if (ISHELL_LoadResString(pme->a.m_pIShell, AEE_APPMGRLS_RES_FILE, IDS_APPMGR_VERSION, szTemp, sizeof(szTemp)))
       pText = AppendWStr(pText, szTemp, ' ');
 
    // Display Prompt
@@ -4206,7 +4206,7 @@ static boolean AppMgr_MShopGuide(AppMgr * pme)
       IIMAGE_Release(pMShop);
 
       // Draw Title
-      ISHELL_LoadResString(pme->a.m_pIShell, APPMGRLS_RES_FILE, IDC_HELP, pTitle, sizeof(pTitle));
+      ISHELL_LoadResString(pme->a.m_pIShell, AEE_APPMGRLS_RES_FILE, IDC_HELP, pTitle, sizeof(pTitle));
 
       // If image height greater or equal to font height, align bottom of text with bottom of image
       if (ii.cy >= pme->m_cyFont) 
@@ -4244,15 +4244,15 @@ static boolean AppMgr_MShopGuide(AppMgr * pme)
    }
 
    // add menu items
-   IMENUCTL_AddItem(pme->m_pMenu, APPMGRLS_RES_FILE, IDC_MSHOPGUIDE_MSHOP, IDC_MSHOPGUIDE_MSHOP, NULL, NULL);
-   IMENUCTL_AddItem(pme->m_pMenu, APPMGRLS_RES_FILE, IDC_MSHOPGUIDE_CATALOG, IDC_MSHOPGUIDE_CATALOG, NULL, NULL);
-   IMENUCTL_AddItem(pme->m_pMenu, APPMGRLS_RES_FILE, IDC_MSHOPGUIDE_FIND, IDC_MSHOPGUIDE_FIND, NULL, NULL);
-   IMENUCTL_AddItem(pme->m_pMenu, APPMGRLS_RES_FILE, IDC_MSHOPGUIDE_PREVIEW, IDC_MSHOPGUIDE_PREVIEW, NULL, NULL);
-   IMENUCTL_AddItem(pme->m_pMenu, APPMGRLS_RES_FILE, IDC_MSHOPGUIDE_PURCHASE_OPTIONS, IDC_MSHOPGUIDE_PURCHASE_OPTIONS, NULL, NULL);
-   IMENUCTL_AddItem(pme->m_pMenu, APPMGRLS_RES_FILE, IDC_MSHOPGUIDE_PAYMENT, IDC_MSHOPGUIDE_PAYMENT, NULL, NULL);
-   IMENUCTL_AddItem(pme->m_pMenu, APPMGRLS_RES_FILE, IDC_MSHOPGUIDE_MEMORY_FULL, IDC_MSHOPGUIDE_MEMORY_FULL, NULL, NULL);
-   IMENUCTL_AddItem(pme->m_pMenu, APPMGRLS_RES_FILE, IDC_MSHOPGUIDE_RESTORING_APPS, IDC_MSHOPGUIDE_RESTORING_APPS, NULL, NULL);
-   IMENUCTL_AddItem(pme->m_pMenu, APPMGRLS_RES_FILE, IDC_MSHOPGUIDE_CAN_I_RETURN_APPS, IDC_MSHOPGUIDE_CAN_I_RETURN_APPS, NULL, NULL);
+   IMENUCTL_AddItem(pme->m_pMenu, AEE_APPMGRLS_RES_FILE, IDC_MSHOPGUIDE_MSHOP, IDC_MSHOPGUIDE_MSHOP, NULL, NULL);
+   IMENUCTL_AddItem(pme->m_pMenu, AEE_APPMGRLS_RES_FILE, IDC_MSHOPGUIDE_CATALOG, IDC_MSHOPGUIDE_CATALOG, NULL, NULL);
+   IMENUCTL_AddItem(pme->m_pMenu, AEE_APPMGRLS_RES_FILE, IDC_MSHOPGUIDE_FIND, IDC_MSHOPGUIDE_FIND, NULL, NULL);
+   IMENUCTL_AddItem(pme->m_pMenu, AEE_APPMGRLS_RES_FILE, IDC_MSHOPGUIDE_PREVIEW, IDC_MSHOPGUIDE_PREVIEW, NULL, NULL);
+   IMENUCTL_AddItem(pme->m_pMenu, AEE_APPMGRLS_RES_FILE, IDC_MSHOPGUIDE_PURCHASE_OPTIONS, IDC_MSHOPGUIDE_PURCHASE_OPTIONS, NULL, NULL);
+   IMENUCTL_AddItem(pme->m_pMenu, AEE_APPMGRLS_RES_FILE, IDC_MSHOPGUIDE_PAYMENT, IDC_MSHOPGUIDE_PAYMENT, NULL, NULL);
+   IMENUCTL_AddItem(pme->m_pMenu, AEE_APPMGRLS_RES_FILE, IDC_MSHOPGUIDE_MEMORY_FULL, IDC_MSHOPGUIDE_MEMORY_FULL, NULL, NULL);
+   IMENUCTL_AddItem(pme->m_pMenu, AEE_APPMGRLS_RES_FILE, IDC_MSHOPGUIDE_RESTORING_APPS, IDC_MSHOPGUIDE_RESTORING_APPS, NULL, NULL);
+   IMENUCTL_AddItem(pme->m_pMenu, AEE_APPMGRLS_RES_FILE, IDC_MSHOPGUIDE_CAN_I_RETURN_APPS, IDC_MSHOPGUIDE_CAN_I_RETURN_APPS, NULL, NULL);
 
    // Set menu selection
    if (pme->m_nIndex > 1)
@@ -4289,7 +4289,7 @@ static boolean AppMgr_Categories(AppMgr * pme)
 
    MEMSET(&ai, 0, sizeof(ai));
 
-   ai.pszResText  = APPMGRLS_RES_FILE;
+   ai.pszResText  = AEE_APPMGRLS_RES_FILE;
    ai.pszResImage = APPMGRLN_RES_FILE;
 
    // add title to the menu
@@ -4302,7 +4302,7 @@ static boolean AppMgr_Categories(AppMgr * pme)
          IDISPLAY_DrawText(pme->a.m_pIDisplay, AEE_FONT_BOLD, AppMgr_GetAppName(pme, pme->m_pCurrentApp), -1, 0, 0, NULL, 0);
 
          // Set Title
-         IMENUCTL_SetTitle(pme->m_pMenu, APPMGRLS_RES_FILE, (uint16)((pme->m_wState == ST_MOVE) ? IDS_MOVE : IDS_SET_CATEGORY), NULL);
+         IMENUCTL_SetTitle(pme->m_pMenu, AEE_APPMGRLS_RES_FILE, (uint16)((pme->m_wState == ST_MOVE) ? IDS_MOVE : IDS_SET_CATEGORY), NULL);
 
          // Menu Control Rect Size
          SETAEERECT(&rc, 0, pme->m_cyFont, pme->m_rc.dx, pme->m_rc.dy - pme->m_cyFont);
@@ -4314,7 +4314,7 @@ static boolean AppMgr_Categories(AppMgr * pme)
 
       default:
          // Set Title
-         IMENUCTL_SetTitle(pme->m_pMenu, APPMGRLS_RES_FILE, IDS_SELECT, NULL);
+         IMENUCTL_SetTitle(pme->m_pMenu, AEE_APPMGRLS_RES_FILE, IDS_SELECT, NULL);
 
          // Menu Control Rect Size
          SETAEERECT(&rc, 0, 0, pme->m_rc.dx, pme->m_rc.dy);
@@ -4418,22 +4418,22 @@ void AppMgr_DrawAppStatus(AppMgr* pme, const AppStatus status)
    {
       case DISABLED:
          pImage = ISHELL_LoadResImage(pme->a.m_pIShell, APPMGRLN_RES_FILE, IDB_DISABLED);
-         ISHELL_LoadResString(pme->a.m_pIShell, APPMGRLS_RES_FILE, IDS_LAUNCHER_DISABLED, szText, sizeof(szText));
+         ISHELL_LoadResString(pme->a.m_pIShell, AEE_APPMGRLS_RES_FILE, IDS_LAUNCHER_DISABLED, szText, sizeof(szText));
          break;
 
       case DEMO:
          pImage = ISHELL_LoadResImage(pme->a.m_pIShell, APPMGRLN_RES_FILE, IDB_DEMO);
-         ISHELL_LoadResString(pme->a.m_pIShell, APPMGRLS_RES_FILE, IDS_LAUNCHER_DEMO, szText, sizeof(szText));
+         ISHELL_LoadResString(pme->a.m_pIShell, AEE_APPMGRLS_RES_FILE, IDS_LAUNCHER_DEMO, szText, sizeof(szText));
          break;
 
       case EXPIRED:
          pImage = ISHELL_LoadResImage(pme->a.m_pIShell, APPMGRLN_RES_FILE, IDB_EXPIRED);
-         ISHELL_LoadResString(pme->a.m_pIShell, APPMGRLS_RES_FILE, IDS_LAUNCHER_EXPIRED, szText, sizeof(szText));
+         ISHELL_LoadResString(pme->a.m_pIShell, AEE_APPMGRLS_RES_FILE, IDS_LAUNCHER_EXPIRED, szText, sizeof(szText));
          break;
 
       case EXPIREDDEMO:
          pImage = ISHELL_LoadResImage(pme->a.m_pIShell, APPMGRLN_RES_FILE, IDB_EXPIREDDEMO);
-         ISHELL_LoadResString(pme->a.m_pIShell, APPMGRLS_RES_FILE, IDS_LAUNCHER_EXPIREDDEMO, szText, sizeof(szText));
+         ISHELL_LoadResString(pme->a.m_pIShell, AEE_APPMGRLS_RES_FILE, IDS_LAUNCHER_EXPIREDDEMO, szText, sizeof(szText));
          break;
    }
 
@@ -4465,11 +4465,11 @@ static boolean AppMgr_MainMenuView(AppMgr * pme)
 
    MEMSET(&ai, 0, sizeof(ai));
 
-   ai.pszResText  = APPMGRLS_RES_FILE;
+   ai.pszResText  = AEE_APPMGRLS_RES_FILE;
    ai.pszResImage = APPMGRLN_RES_FILE;
 
    // add title to the menu
-   IMENUCTL_SetTitle(pme->m_pMenu, APPMGRLS_RES_FILE, IDC_OPTIONS_MAINMENU_STYLE, NULL);
+   IMENUCTL_SetTitle(pme->m_pMenu, AEE_APPMGRLS_RES_FILE, IDC_OPTIONS_MAINMENU_STYLE, NULL);
 
    // add menu items
    ai.wFont    = AEE_FONT_NORMAL;
@@ -4530,12 +4530,12 @@ static boolean AppMgr_LockUnlock(AppMgr * pme)
    }
 
    // add title to the menu
-   IMENUCTL_SetTitle(pme->m_pMenu, APPMGRLS_RES_FILE, IDC_LOCK_APP, NULL);
+   IMENUCTL_SetTitle(pme->m_pMenu, AEE_APPMGRLS_RES_FILE, IDC_LOCK_APP, NULL);
 
    // add menu items
    MEMSET(&ai, 0, sizeof(ai));
 
-   ai.pszResText  = APPMGRLS_RES_FILE;
+   ai.pszResText  = AEE_APPMGRLS_RES_FILE;
    ai.pszResImage = APPMGRLN_RES_FILE;
 
    ai.wFont    = AEE_FONT_NORMAL;
@@ -4575,13 +4575,13 @@ static boolean AppMgr_AirtimeWarnings(AppMgr * pme)
    boolean bWarning;
    
    // add title to the menu
-   IMENUCTL_SetTitle(pme->m_pMenu, APPMGRLS_RES_FILE, IDC_AIRTIME_WARNINGS, NULL);
+   IMENUCTL_SetTitle(pme->m_pMenu, AEE_APPMGRLS_RES_FILE, IDC_AIRTIME_WARNINGS, NULL);
 
    // add menu items
 
    MEMSET(&ai, 0, sizeof(ai));
 
-   ai.pszResText  = APPMGRLS_RES_FILE;
+   ai.pszResText  = AEE_APPMGRLS_RES_FILE;
    ai.pszResImage = APPMGRLN_RES_FILE;
 
    ai.wFont    = AEE_FONT_NORMAL;
@@ -4724,7 +4724,7 @@ static boolean AppMgr_ScreenSavers(AppMgr * pme)
    AEECLSID currentScreenSaver = ISHELL_GetHandler(pme->a.m_pIShell, AEECLSID_SCREEN_SAVER, MT_SCREEN_SAVER);
 
    // add title to the menu
-   IMENUCTL_SetTitle(pme->m_pMenu, APPMGRLS_RES_FILE, IDS_SELECT, NULL);
+   IMENUCTL_SetTitle(pme->m_pMenu, AEE_APPMGRLS_RES_FILE, IDS_SELECT, NULL);
    
    // Add Menu Items
    MEMSET(&ai, 0, sizeof(ai));
@@ -4758,7 +4758,7 @@ static boolean AppMgr_ScreenSavers(AppMgr * pme)
    if (IMENUCTL_GetItemCount(pme->m_pMenu) > 0)
    {
       // Add no screen saver option
-      ai.pszResText = APPMGRLS_RES_FILE;
+      ai.pszResText = AEE_APPMGRLS_RES_FILE;
       ai.wText		= IDS_OPTIONS_NO_SCREEN_SAVER;
       ai.wItemID  = wItemID++;
       if (currentScreenSaver == 0)
@@ -4774,10 +4774,10 @@ static boolean AppMgr_ScreenSavers(AppMgr * pme)
       // Provide Set and Remove Softkey Options
 
       // Add Set
-      IMENUCTL_AddItem(pme->m_pSK, APPMGRLS_RES_FILE, IDC_SET_SS, IDC_SET_SS, NULL, 0);
+      IMENUCTL_AddItem(pme->m_pSK, AEE_APPMGRLS_RES_FILE, IDC_SET_SS, IDC_SET_SS, NULL, 0);
 
       // Add Remove
-      IMENUCTL_AddItem(pme->m_pSK, APPMGRLS_RES_FILE, IDC_REMOVE_SS, IDC_REMOVE_SS, NULL, 0);
+      IMENUCTL_AddItem(pme->m_pSK, AEE_APPMGRLS_RES_FILE, IDC_REMOVE_SS, IDC_REMOVE_SS, NULL, 0);
 
       // Get Softkey Menu Size
       IMENUCTL_GetRect(pme->m_pSK, &rcm);
@@ -4842,19 +4842,19 @@ boolean AppMgr_EditSoundImage(AppMgr * pme)
    // Provide Softkey Options
 
    // Add Done
-   IMENUCTL_AddItem(pme->m_pSK, APPMGRLS_RES_FILE, IDC_CONFIGURE_DONE, IDC_CONFIGURE_DONE, NULL, 0);
+   IMENUCTL_AddItem(pme->m_pSK, AEE_APPMGRLS_RES_FILE, IDC_CONFIGURE_DONE, IDC_CONFIGURE_DONE, NULL, 0);
 
    // Add Configure Image
    if (OEM_SET_IMAGE)
-      IMENUCTL_AddItem(pme->m_pSK, APPMGRLS_RES_FILE, IDC_CONFIGURE_IMAGE, IDC_CONFIGURE_IMAGE, NULL, 0);
+      IMENUCTL_AddItem(pme->m_pSK, AEE_APPMGRLS_RES_FILE, IDC_CONFIGURE_IMAGE, IDC_CONFIGURE_IMAGE, NULL, 0);
 
    //Do not give an option to choose sound files if ISoundPlayer cannot be
    //created on the handset
    if(pme->m_pISp) 
-      IMENUCTL_AddItem(pme->m_pSK, APPMGRLS_RES_FILE, IDC_CONFIGURE_SOUND, IDC_CONFIGURE_SOUND, NULL, 0);
+      IMENUCTL_AddItem(pme->m_pSK, AEE_APPMGRLS_RES_FILE, IDC_CONFIGURE_SOUND, IDC_CONFIGURE_SOUND, NULL, 0);
 
    // Add Reset
-   IMENUCTL_AddItem(pme->m_pSK, APPMGRLS_RES_FILE, IDC_CONFIGURE_RESET, IDC_CONFIGURE_RESET, NULL, 0);
+   IMENUCTL_AddItem(pme->m_pSK, AEE_APPMGRLS_RES_FILE, IDC_CONFIGURE_RESET, IDC_CONFIGURE_RESET, NULL, 0);
 
    // Get Softkey Menu Size
    IMENUCTL_GetRect(pme->m_pSK, &rcm);
@@ -4957,7 +4957,7 @@ static boolean AppMgr_Config(AppMgr * pme)
       if (IMENUCTL_GetItemCount(pme->m_pMenu))
       {
          // add title to the menu
-         IMENUCTL_SetTitle(pme->m_pMenu, APPMGRLS_RES_FILE, IDS_SELECT_APP, NULL);      
+         IMENUCTL_SetTitle(pme->m_pMenu, AEE_APPMGRLS_RES_FILE, IDS_SELECT_APP, NULL);      
          
          // Set Size
          IMENUCTL_SetRect(pme->m_pMenu, &pme->m_rc);
@@ -5045,12 +5045,12 @@ static void AppMgr_DisplayMemoryInfo(AppMgr * pme)
       FormatMem(dwTotal, szTotal, FALSE);
 
       // Display "%s available"
-      ISHELL_LoadResString(pme->a.m_pIShell, APPMGRLS_RES_FILE, IDS_MT_AVAILABLE, szFormat, sizeof(szFormat));
+      ISHELL_LoadResString(pme->a.m_pIShell, AEE_APPMGRLS_RES_FILE, IDS_MT_AVAILABLE, szFormat, sizeof(szFormat));
       WSPRINTF(szBuff, sizeof(szBuff), szFormat, szFree);
       IDISPLAY_DrawText(pme->a.m_pIDisplay, AEE_FONT_NORMAL, szBuff, -1, 2*MARGIN, y + MARGIN, NULL, 0);
 
       // Display "%s used (%s total)"
-      ISHELL_LoadResString(pme->a.m_pIShell, APPMGRLS_RES_FILE, IDS_MT_USED, szFormat, sizeof(szFormat));
+      ISHELL_LoadResString(pme->a.m_pIShell, AEE_APPMGRLS_RES_FILE, IDS_MT_USED, szFormat, sizeof(szFormat));
       WSPRINTF(szBuff, sizeof(szBuff), szFormat, szUsed, szTotal);
       IDISPLAY_DrawText(pme->a.m_pIDisplay, AEE_FONT_NORMAL, szBuff, -1, 2*MARGIN, y + pme->m_cyFont + MARGIN, NULL, 0);
    }
@@ -5079,7 +5079,7 @@ static void AppMgr_DisplayMemoryInfo(AppMgr * pme)
       // App size string
       FormatMem(pmi->dwSpaceTotal, szTotal, FALSE);
 
-      pText = FormatString(pme->a.m_pIShell, APPMGRLS_RES_FILE, IDS_MT_MEMORYUSE, szTotal); 
+      pText = FormatString(pme->a.m_pIShell, AEE_APPMGRLS_RES_FILE, IDS_MT_MEMORYUSE, szTotal); 
 
       if (pText)
       {
@@ -5089,7 +5089,7 @@ static void AppMgr_DisplayMemoryInfo(AppMgr * pme)
 
       // Expire String
       *szBuff = 0;
-      GetExpireString(pme->a.m_pIShell, APPMGRLS_RES_FILE, 0, pmi->li.lt, pmi->li.dwExpire, szBuff, sizeof(szBuff), TRUE,FALSE);
+      GetExpireString(pme->a.m_pIShell, AEE_APPMGRLS_RES_FILE, 0, pmi->li.lt, pmi->li.dwExpire, szBuff, sizeof(szBuff), TRUE,FALSE);
       IDISPLAY_DrawText(pme->a.m_pIDisplay, AEE_FONT_NORMAL, szBuff, -1, 2*MARGIN, y + pme->m_cyFont + MARGIN, NULL, 0);
    }
 }
@@ -5196,7 +5196,7 @@ static boolean AppMgr_ManageTool(AppMgr * pme)
    
    // Add "System Info." in options menu
    MEMSET(&ai,0,sizeof(ai));
-   ai.pszResText  = APPMGRLS_RES_FILE;
+   ai.pszResText  = AEE_APPMGRLS_RES_FILE;
    ai.pszResImage = APPMGRLN_RES_FILE;
 
    ai.wItemID     = IDC_OPT_INFO;
@@ -5305,7 +5305,7 @@ static boolean AppMgr_AppInfo(AppMgr * pme)
 
    MEMSET(&ai,0,sizeof(ai));
 
-   ai.pszResText  = APPMGRLS_RES_FILE;
+   ai.pszResText  = AEE_APPMGRLS_RES_FILE;
    ai.pszResImage = APPMGRLN_RES_FILE;
 
    // Check pme->m_pCurrentApp and pme->m_pCurrentApp->dwItemID as we may be
@@ -5534,32 +5534,32 @@ static boolean AppMgr_ViewProperties(AppMgr * pme)
    pText = NULL;
 
    // Total app size string
-   ISHELL_LoadResString(ps, APPMGRLS_RES_FILE, IDS_APP_TOTALSIZE, szFormat, sizeof(szFormat));
+   ISHELL_LoadResString(ps, AEE_APPMGRLS_RES_FILE, IDS_APP_TOTALSIZE, szFormat, sizeof(szFormat));
    FormatMem(pmi->dwSpaceTotal, szMem, FALSE);
    WSPRINTF(szBuff, sizeof(szBuff), szFormat, szMem);
    pText = AppendWStr(pText,szBuff,'\n');
 
    // App size string
-   ISHELL_LoadResString(ps, APPMGRLS_RES_FILE, IDS_APP_APPSIZE, szFormat, sizeof(szFormat));
+   ISHELL_LoadResString(ps, AEE_APPMGRLS_RES_FILE, IDS_APP_APPSIZE, szFormat, sizeof(szFormat));
    FormatMem(pmi->dwSpaceApp, szMem, FALSE);
    WSPRINTF(szBuff, sizeof(szBuff), szFormat, szMem);
    pText = AppendWStr(pText,szBuff,'\n');
 
    // App data size string
-   ISHELL_LoadResString(ps, APPMGRLS_RES_FILE, IDS_APP_APPDATASIZE, szFormat, sizeof(szFormat));
+   ISHELL_LoadResString(ps, AEE_APPMGRLS_RES_FILE, IDS_APP_APPDATASIZE, szFormat, sizeof(szFormat));
    FormatMem(pmi->dwSpaceTotal - pmi->dwSpaceApp, szMem, FALSE);
    WSPRINTF(szBuff, sizeof(szBuff), szFormat, szMem);
    pText = AppendWStr(pText,szBuff,'\n');
 
    // Expire String
    *szBuff = 0;
-   GetExpireString(pme->a.m_pIShell, APPMGRLS_RES_FILE, 0, pmi->li.lt, pmi->li.dwExpire, szBuff, sizeof(szBuff), TRUE,FALSE);
+   GetExpireString(pme->a.m_pIShell, AEE_APPMGRLS_RES_FILE, 0, pmi->li.lt, pmi->li.dwExpire, szBuff, sizeof(szBuff), TRUE,FALSE);
    if(*szBuff)
    {
       AECHAR szTemp[32];
 
       // App License String
-      ISHELL_LoadResString(ps, APPMGRLS_RES_FILE, IDS_APP_LICENSE, szFormat, sizeof(szFormat));
+      ISHELL_LoadResString(ps, AEE_APPMGRLS_RES_FILE, IDS_APP_LICENSE, szFormat, sizeof(szFormat));
       WSPRINTF(szTemp, sizeof(szTemp), szFormat, szBuff);
       pText = AppendWStr(pText,szTemp,'\n');
    }
@@ -5568,7 +5568,7 @@ static boolean AppMgr_ViewProperties(AppMgr * pme)
       AECHAR szTemp[32];
 
       // Last Used
-      ISHELL_LoadResString(ps, APPMGRLS_RES_FILE, IDS_APP_LASTUSED, szFormat, sizeof(szFormat));
+      ISHELL_LoadResString(ps, AEE_APPMGRLS_RES_FILE, IDS_APP_LASTUSED, szFormat, sizeof(szFormat));
       GetDateString(pme->a.m_pIShell, pmi->dwLastUsedTime, szBuff,sizeof(szBuff));
       WSPRINTF(szTemp, sizeof(szTemp), szFormat, szBuff);
       pText = AppendWStr(pText,szTemp,'\n');
@@ -5590,22 +5590,22 @@ static boolean AppMgr_ViewProperties(AppMgr * pme)
    switch (AppMgr_AppStatus(pme, AppMgr_GetItemID(pme, pme->m_pCurrentApp)))
    {
       case DISABLED:
-         if(ISHELL_LoadResString(ps, APPMGRLS_RES_FILE, IDS_LAUNCHER_DISABLED, szBuff, sizeof(szBuff)))
+         if(ISHELL_LoadResString(ps, AEE_APPMGRLS_RES_FILE, IDS_LAUNCHER_DISABLED, szBuff, sizeof(szBuff)))
             pText = AppendWStr(pText,szBuff,'\n');
          break;
 
       case DEMO:
-         if(ISHELL_LoadResString(ps, APPMGRLS_RES_FILE, IDS_LAUNCHER_DEMO, szBuff, sizeof(szBuff)))
+         if(ISHELL_LoadResString(ps, AEE_APPMGRLS_RES_FILE, IDS_LAUNCHER_DEMO, szBuff, sizeof(szBuff)))
             pText = AppendWStr(pText,szBuff,'\n');
          break;
 
       case EXPIRED:
-         if(ISHELL_LoadResString(ps, APPMGRLS_RES_FILE, IDS_LAUNCHER_EXPIRED, szBuff, sizeof(szBuff)))
+         if(ISHELL_LoadResString(ps, AEE_APPMGRLS_RES_FILE, IDS_LAUNCHER_EXPIRED, szBuff, sizeof(szBuff)))
             pText = AppendWStr(pText,szBuff,'\n');
          break;
 
       case EXPIREDDEMO:
-         if(ISHELL_LoadResString(ps, APPMGRLS_RES_FILE, IDS_LAUNCHER_EXPIREDDEMO, szBuff, sizeof(szBuff)))
+         if(ISHELL_LoadResString(ps, AEE_APPMGRLS_RES_FILE, IDS_LAUNCHER_EXPIREDDEMO, szBuff, sizeof(szBuff)))
             pText = AppendWStr(pText,szBuff,'\n');
          break;
    }
@@ -5728,7 +5728,7 @@ static boolean AppMgr_SystemInfo(AppMgr * pme)
    SETAEERECT(&rc, 0, 0, pme->m_rc.dx, pme->m_rc.dy);
 
    // Draw the title on first line in the center
-   ISHELL_LoadResString(pme->a.m_pIShell, APPMGRLS_RES_FILE, IDC_OPT_INFO, szBuff, sizeof(szBuff));
+   ISHELL_LoadResString(pme->a.m_pIShell, AEE_APPMGRLS_RES_FILE, IDC_OPT_INFO, szBuff, sizeof(szBuff));
    IDISPLAY_DrawText(pd,AEE_FONT_BOLD, szBuff, -1, 0, rc.y, &rc, IDF_ALIGN_CENTER);
 
    // Underline title
@@ -5758,7 +5758,7 @@ static boolean AppMgr_SystemInfo(AppMgr * pme)
       wPct = 100;
 
    // Display "Memory wPct% Full"
-   ISHELL_LoadResString(pme->a.m_pIShell, APPMGRLS_RES_FILE, IDS_MEM_FORMAT, szFormat, sizeof(szFormat));
+   ISHELL_LoadResString(pme->a.m_pIShell, AEE_APPMGRLS_RES_FILE, IDS_MEM_FORMAT, szFormat, sizeof(szFormat));
    WSPRINTF(szBuff, sizeof(szBuff), szFormat, wPct);
    IDISPLAY_DrawText(pd,AEE_FONT_BOLD, szBuff, -1, 0, rc.y, &rc, IDF_ALIGN_CENTER);
 
@@ -6019,7 +6019,7 @@ static void AppMgr_ShowFiles(AppMgr * pme, boolean bImage )
    if (IMENUCTL_GetItemCount(pme->m_pMenu))
    {
       // Set Title
-      IMENUCTL_SetTitle(pme->m_pMenu, APPMGRLS_RES_FILE, (uint16)(bImage ? IDC_CONFIGURE_IMAGE : IDC_CONFIGURE_SOUND), NULL);
+      IMENUCTL_SetTitle(pme->m_pMenu, AEE_APPMGRLS_RES_FILE, (uint16)(bImage ? IDC_CONFIGURE_IMAGE : IDC_CONFIGURE_SOUND), NULL);
 
       // Sort Menu
       IMENUCTL_Sort(pme->m_pMenu, MCS_NAME_ASCENDING);
@@ -6033,7 +6033,7 @@ static void AppMgr_ShowFiles(AppMgr * pme, boolean bImage )
    else
    {
       AECHAR szBuf[25];
-      if(ISHELL_LoadResString(pme->a.m_pIShell,APPMGRLS_RES_FILE,IDS_CONFIGURE_NO_FILES,szBuf,sizeof(szBuf)))
+      if(ISHELL_LoadResString(pme->a.m_pIShell,AEE_APPMGRLS_RES_FILE,IDS_CONFIGURE_NO_FILES,szBuf,sizeof(szBuf)))
          IDISPLAY_DrawText(pme->a.m_pIDisplay, AEE_FONT_NORMAL,szBuf, -1,0,0,0, IDF_ALIGN_CENTER);
    }
 

@@ -38,6 +38,11 @@ INITIALIZATION & SEQUENCING REQUIREMENTS:
 #include "appmgrln_res.h"
 #include "appmgrls_res.h"
 
+//Add By zzg 2012_02_01
+#define  AEE_APPMGRLS_RES_FILE (AEE_RES_LANGDIR APPMGRLS_RES_FILE)
+//Add End
+
+
 #define			CONFIG_FILE_VER_1          "ver:1"
 #define			CONFIG_FILE_VER_2          "ver:2"
 #define			CONFIG_FILE	               "config.txt"

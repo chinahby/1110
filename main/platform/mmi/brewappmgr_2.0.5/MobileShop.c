@@ -52,7 +52,7 @@ static void MShop_DisCheckDispInfo(MShop * pme)
    AECHAR	 promptText[256];
    AECHAR	 formatString[256];
    if( ISHELL_LoadResString( pme->a.m_pIShell, 
-				    APPMGRLS_RES_FILE,
+				    AEE_APPMGRLS_RES_FILE,
 				    IDS_FILE_MEMORY_FULL,
 				    formatString,
 				    sizeof(AECHAR) * 256 ) > 0 )
@@ -289,7 +289,7 @@ static boolean MShop_HandleEvent(MShop * pme, AEEEvent eCode, uint16 wParam, uin
    if((eCode == EVT_DIALOG_END) && (wParam == OEM_IME_DIALOG))
    {
        IDISPLAY_ClearScreen(pme->a.m_pIDisplay);
-       MShop_SetTitle(pme, APPMGRLS_RES_FILE,(uint16)(IDS_SEARCH_TITLE),NULL);
+       MShop_SetTitle(pme, AEE_APPMGRLS_RES_FILE,(uint16)(IDS_SEARCH_TITLE),NULL);
        IMENUCTL_Redraw(pme->m_pSK);
        ITEXTCTL_SetActive(pme->m_pText, TRUE);
        IDISPLAY_UpdateEx(pme->a.m_pIDisplay, FALSE);
@@ -313,7 +313,7 @@ static boolean MShop_HandleEvent(MShop * pme, AEEEvent eCode, uint16 wParam, uin
    {
       // This is when Text Control returns from its mode/symbol selection menus
       if (ITEXTCTL_IsActive(pme->m_pText) && pme->m_bRepaint) {
-         MShop_SetTitle(pme, APPMGRLS_RES_FILE, (uint16)((pme->m_wState == ST_SEARCH) ? IDS_SEARCH_TITLE : IDS_CREDITBACK_TITLE), NULL);
+         MShop_SetTitle(pme, AEE_APPMGRLS_RES_FILE, (uint16)((pme->m_wState == ST_SEARCH) ? IDS_SEARCH_TITLE : IDS_CREDITBACK_TITLE), NULL);
 
          // Reset repaint flag
          pme->m_bRepaint = FALSE;
@@ -323,19 +323,19 @@ static boolean MShop_HandleEvent(MShop * pme, AEEEvent eCode, uint16 wParam, uin
          // If Select key press made Text Control inactive and softkey active
          // Change Title as per first softkey item
          if ((wParam == AVK_SELECT) && IMENUCTL_IsActive(pme->m_pSK))
-            MShop_SetTitle(pme, APPMGRLS_RES_FILE, (uint16)((pme->m_wState == ST_SEARCH) ? IDC_SEARCH_ANY : IDC_MSHOP_CREDITBACK), NULL);
+            MShop_SetTitle(pme, AEE_APPMGRLS_RES_FILE, (uint16)((pme->m_wState == ST_SEARCH) ? IDC_SEARCH_ANY : IDC_MSHOP_CREDITBACK), NULL);
 
          // If Clear key press made Text Control inactive and softkey active
          // Redraw Title
          if ((wParam == AVK_CLR) && IMENUCTL_IsActive(pme->m_pSK))
-            MShop_SetTitle(pme, APPMGRLS_RES_FILE, IDC_INPUT_MODE, NULL);
+            MShop_SetTitle(pme, AEE_APPMGRLS_RES_FILE, IDC_INPUT_MODE, NULL);
 #ifdef CUST_EDITION
          if ((wParam == AVK_SOFT2) && IMENUCTL_IsActive(pme->m_pSK))
-            MShop_SetTitle(pme, APPMGRLS_RES_FILE, IDC_INPUT_MODE, NULL);
+            MShop_SetTitle(pme, AEE_APPMGRLS_RES_FILE, IDC_INPUT_MODE, NULL);
          // If up key press made Text Control active and softkey inactive
          
          if ((wParam == AVK_UP) && ITEXTCTL_IsActive(pme->m_pText))
-            MShop_SetTitle(pme, APPMGRLS_RES_FILE, (uint16)((pme->m_wState == ST_SEARCH) ? IDS_SEARCH_TITLE : IDS_CREDITBACK_TITLE), NULL);
+            MShop_SetTitle(pme, AEE_APPMGRLS_RES_FILE, (uint16)((pme->m_wState == ST_SEARCH) ? IDS_SEARCH_TITLE : IDS_CREDITBACK_TITLE), NULL);
 #endif
       }
       return(TRUE);
@@ -391,16 +391,16 @@ static boolean MShop_HandleEvent(MShop * pme, AEEEvent eCode, uint16 wParam, uin
             {
                // Search Menu
                case IDC_SEARCH_ANY:
-                  MShop_SetTitle(pme, APPMGRLS_RES_FILE, IDC_SEARCH_ANY, NULL);
+                  MShop_SetTitle(pme, AEE_APPMGRLS_RES_FILE, IDC_SEARCH_ANY, NULL);
                   break;
 
                // Credit Back Menu
                case IDC_MSHOP_CREDITBACK:
-                  MShop_SetTitle(pme, APPMGRLS_RES_FILE, IDC_MSHOP_CREDITBACK, NULL);
+                  MShop_SetTitle(pme, AEE_APPMGRLS_RES_FILE, IDC_MSHOP_CREDITBACK, NULL);
                   break;
 
                default:
-                  MShop_SetTitle(pme, APPMGRLS_RES_FILE, IDC_INPUT_MODE, NULL);
+                  MShop_SetTitle(pme, AEE_APPMGRLS_RES_FILE, IDC_INPUT_MODE, NULL);
                   break;
             }
             return TRUE;
@@ -779,7 +779,7 @@ static void MShop_Failed(MShop * pme, uint16 wIDDef, int nErr, const AECHAR * ps
 
             pszMsg = (const AECHAR *)MALLOC(MAX_STR_SIZE);
             if(pszMsg){
-               ISHELL_LoadResString(pme->a.m_pIShell, APPMGRLS_RES_FILE, wIDDef,(AECHAR *)pszMsg,MAX_STR_SIZE);
+               ISHELL_LoadResString(pme->a.m_pIShell, AEE_APPMGRLS_RES_FILE, wIDDef,(AECHAR *)pszMsg,MAX_STR_SIZE);
                if(WSTRSIZE(sz) + WSTRSIZE(pszMsg) < MAX_STR_SIZE)
                   WSTRCAT((AECHAR *)pszMsg,sz);
                dwProps |= ST_TEXTALLOC;
@@ -813,7 +813,7 @@ static void MShop_RecallMessage(MShop * pme, AECHAR * pszRecalled)
    // Display recall message in single button ("OK") prompt
    MEMSET(wButtons, 0, sizeof(wButtons));
 
-   pText = FormatString(pme->a.m_pIShell, APPMGRLS_RES_FILE, IDS_RECALLED, pszRecalled);
+   pText = FormatString(pme->a.m_pIShell, AEE_APPMGRLS_RES_FILE, IDS_RECALLED, pszRecalled);
    wButtons[0] = IDC_OK;
    MShop_Prompt(pme, NULL, IDC_MSHOP, pText, 0, wButtons, wButtons, IDC_OK, ST_TEXTALLOC|ST_NOSCROLL);
 
@@ -842,7 +842,7 @@ static void MShop_VerificationFailedMessage(MShop * pme, AECHAR * pszAppName)
    // Display verification failed in single button ("OK") prompt
    MEMSET(wButtons, 0, sizeof(wButtons));
 
-   pText = FormatString(pme->a.m_pIShell, APPMGRLS_RES_FILE, IDS_VERIFICATION_FAILED, pszAppName);
+   pText = FormatString(pme->a.m_pIShell, AEE_APPMGRLS_RES_FILE, IDS_VERIFICATION_FAILED, pszAppName);
    wButtons[0] = IDC_OK;
    MShop_Prompt(pme, NULL, IDC_MSHOP, pText, 0, wButtons, wButtons, IDC_OK, ST_TEXTALLOC|ST_NOSCROLL);
 
@@ -1155,7 +1155,7 @@ static void MShop_ShowItemInfo(MShop * pme, DLEnumItem * pi)
       FormatMem(is.dwFSInstall, szSize, FALSE);  // Get in 5K. 5MB, 5.4MB format
          
       // Get formatted string for free memory
-      psz = FormatString(pme->a.m_pIShell, APPMGRLS_RES_FILE, IDS_APP_SIZE_PREVIEW, szSize);
+      psz = FormatString(pme->a.m_pIShell, AEE_APPMGRLS_RES_FILE, IDS_APP_SIZE_PREVIEW, szSize);
          
       // Append psz
       if (psz)
@@ -1270,7 +1270,7 @@ static void MShop_EnumCB(void * pcxt, int nErr, DLEnumItem * pe)
    if (!pme->m_nCatItems)
    {
       if(pme->m_bSearch)
-         MShop_SetTitle(pme, APPMGRLS_RES_FILE, IDS_SEARCH_RESULTS, NULL);
+         MShop_SetTitle(pme, AEE_APPMGRLS_RES_FILE, IDS_SEARCH_RESULTS, NULL);
       else{
          AECHAR * psz;
 
@@ -1279,7 +1279,7 @@ static void MShop_EnumCB(void * pcxt, int nErr, DLEnumItem * pe)
          if(psz)
             MShop_SetTitle(pme, NULL, 0, psz);
          else
-            MShop_SetTitle(pme, APPMGRLS_RES_FILE, IDC_MSHOP_CATALOG, NULL);
+            MShop_SetTitle(pme, AEE_APPMGRLS_RES_FILE, IDC_MSHOP_CATALOG, NULL);
       }
    }
 
@@ -1377,7 +1377,7 @@ static boolean MShop_AppOptionsDialog(MShop * pme)
       // Initialize ai
       MEMSET(&ai, 0, sizeof(ai));
 
-      ai.pszResText  = APPMGRLS_RES_FILE;
+      ai.pszResText  = AEE_APPMGRLS_RES_FILE;
       ai.pszResImage = APPMGRLN_RES_FILE;
       ai.wFont = AEE_FONT_NORMAL;
       ai.wText = IDC_INFO;
@@ -1416,7 +1416,7 @@ static uint16 MShop_AddOptionMenuItem(MShop * pme, uint16 wItemID, DLItem * pIte
       return(wItemID);
 
    // This will file pszOption with "<price info> - "
-   psz = FillPrice(pme->a.m_pIShell, APPMGRLS_RES_FILE, p->pszPrice, pszOption, MAX_STR_SIZE);
+   psz = FillPrice(pme->a.m_pIShell, AEE_APPMGRLS_RES_FILE, p->pszPrice, pszOption, MAX_STR_SIZE);
 
    nLeft = MAX_STR_SIZE - WSTRSIZE(pszOption);
 
@@ -1430,7 +1430,7 @@ static uint16 MShop_AddOptionMenuItem(MShop * pme, uint16 wItemID, DLItem * pIte
 
    // Add "<price info> - < expiration string for non expired items> in menu and
    // increase item ID for next items.
-   if(GetExpireString(pme->a.m_pIShell, APPMGRLS_RES_FILE, dwNow, lt, p->dwValue, psz, nLeft, FALSE, TRUE))
+   if(GetExpireString(pme->a.m_pIShell, AEE_APPMGRLS_RES_FILE, dwNow, lt, p->dwValue, psz, nLeft, FALSE, TRUE))
    {
       CtlAddItem ai;
 
@@ -1469,11 +1469,11 @@ static uint16 MShop_AddSimpleOptionMenuItem(MShop * pme, uint16 wItemID, uint16 
    if(!pszOption)
       return(wItemID);
 
-   psz = FillPrice(pme->a.m_pIShell,APPMGRLS_RES_FILE, p->pszPrice, pszOption, MAX_STR_SIZE);
+   psz = FillPrice(pme->a.m_pIShell,AEE_APPMGRLS_RES_FILE, p->pszPrice, pszOption, MAX_STR_SIZE);
 
    nLeft = MAX_STR_SIZE - WSTRSIZE(pszOption);
 
-   ISHELL_LoadResString(pme->a.m_pIShell, APPMGRLS_RES_FILE, wTextID, psz, nLeft);
+   ISHELL_LoadResString(pme->a.m_pIShell, AEE_APPMGRLS_RES_FILE, wTextID, psz, nLeft);
 
    // Initialize ai
    MEMSET(&ai, 0, sizeof(ai));
@@ -1685,7 +1685,7 @@ static boolean MShop_ConfirmPurchaseDialog(MShop * pme)
    // Prepare a purchase confirmation prompt with "Next" and "Cancel" buttons. Make "Cancel"
    // default.
    MEMSET(wButtons, 0, sizeof(wButtons));
-   pText = FormatString(pme->a.m_pIShell,APPMGRLS_RES_FILE, wID, pme->m_pPrice->pszPrice);
+   pText = FormatString(pme->a.m_pIShell,AEE_APPMGRLS_RES_FILE, wID, pme->m_pPrice->pszPrice);
    if(pText){
       wButtons[0] = IDC_NEXT;
       wButtons[1] = IDC_CANCEL;
@@ -1942,7 +1942,7 @@ static void MShop_Prompt(MShop * pme, const AECHAR* szTitle, uint16 wIDTitle, co
    // Add items in soft key
    while (*wButtons && *wItemIDs)
    {
-      IMENUCTL_AddItem(pme->m_pSK, APPMGRLS_RES_FILE, *wButtons, *wItemIDs, NULL, 0);
+      IMENUCTL_AddItem(pme->m_pSK, AEE_APPMGRLS_RES_FILE, *wButtons, *wItemIDs, NULL, 0);
       wButtons++;
       wItemIDs++;
    }
@@ -1990,7 +1990,7 @@ static void MShop_Prompt(MShop * pme, const AECHAR* szTitle, uint16 wIDTitle, co
 
    // Set Static Control Text and display it
    if (!szText)
-      ISHELL_LoadResString(pme->a.m_pIShell, APPMGRLS_RES_FILE, wIDText, szTextBuf, MAX_STR_SIZE);
+      ISHELL_LoadResString(pme->a.m_pIShell, AEE_APPMGRLS_RES_FILE, wIDText, szTextBuf, MAX_STR_SIZE);
 
    ISTATIC_SetText(pme->m_pStatic, NULL, szTextBuf, 0, AEE_FONT_NORMAL);
    ISTATIC_SetActive(pme->m_pStatic, TRUE);
@@ -2001,7 +2001,7 @@ static void MShop_Prompt(MShop * pme, const AECHAR* szTitle, uint16 wIDTitle, co
    IMENUCTL_SetActive(pme->m_pSK, TRUE);
 
    if (szTitle || wIDTitle)
-      MShop_SetTitle(pme, APPMGRLS_RES_FILE, wIDTitle, szTitle);
+      MShop_SetTitle(pme, AEE_APPMGRLS_RES_FILE, wIDTitle, szTitle);
 
    if (!szText)
       FREE(szTextBuf);
@@ -2172,7 +2172,7 @@ static void MShop_InitStatus(MShop * pme)
    cyHist = pme->m_cyFont;
 
    // Measure "Downloading ..." to set status rectangle width
-   ISHELL_LoadResString(pme->a.m_pIShell, APPMGRLS_RES_FILE, IDS_DOWNLOADING, szBuff, sizeof(szBuff));
+   ISHELL_LoadResString(pme->a.m_pIShell, AEE_APPMGRLS_RES_FILE, IDS_DOWNLOADING, szBuff, sizeof(szBuff));
    cxStatus = IDISPLAY_MeasureText(pme->a.m_pIDisplay, AEE_FONT_NORMAL, szBuff);
 
    pme->m_rcStatus.dx = (cxStatus > ii.cxFrame ? cxStatus : ii.cxFrame) + ((AEE_3D_FRAME_SIZE + FRAME_SEP) * 2);
@@ -2208,7 +2208,7 @@ static void MShop_InitStatus(MShop * pme)
    IDISPLAY_DrawFrame(pme->a.m_pIDisplay, &rc, AEE_FT_RAISED, CLR_SYS_WIN);
 
    // Load "Connecting ..." and display that in histogram area.
-   ISHELL_LoadResString(pme->a.m_pIShell, APPMGRLS_RES_FILE, (uint16)(pme->m_bDownloading ? (pme->m_wLastState ? (pme->m_bVerify ? IDS_VERIFYING : IDS_DOWNLOADING ) : IDS_CANCELLING): IDS_CONNECTING), szBuff, sizeof(szBuff));
+   ISHELL_LoadResString(pme->a.m_pIShell, AEE_APPMGRLS_RES_FILE, (uint16)(pme->m_bDownloading ? (pme->m_wLastState ? (pme->m_bVerify ? IDS_VERIFYING : IDS_DOWNLOADING ) : IDS_CANCELLING): IDS_CONNECTING), szBuff, sizeof(szBuff));
    IDISPLAY_DrawText(pme->a.m_pIDisplay,AEE_FONT_NORMAL, szBuff, -1, 0, 0, &pme->m_rcHist, IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE);
 
    // Start image animation
@@ -2353,7 +2353,7 @@ static boolean MShop_Status(MShop * pme,DownloadStatus * ps)
                bUpdate = TRUE;           // Set display update required
 
                // Display "Reading..." in histogram area
-               ISHELL_LoadResString(pme->a.m_pIShell, APPMGRLS_RES_FILE, IDS_READING, szBuff, sizeof(szBuff));
+               ISHELL_LoadResString(pme->a.m_pIShell, AEE_APPMGRLS_RES_FILE, IDS_READING, szBuff, sizeof(szBuff));
                IDISPLAY_DrawText(pme->a.m_pIDisplay,AEE_FONT_NORMAL, szBuff, -1, 0, 0, &pme->m_rcHist, IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE|IDF_RECT_FILL);
             }
          }
@@ -2374,7 +2374,7 @@ static boolean MShop_LogDialog(MShop * pme)
    AEERect  rc, rcm;
 
    // Display OK prompt
-   IMENUCTL_AddItem(pme->m_pSK, APPMGRLS_RES_FILE, IDC_OK, IDC_OK, 0, 0);
+   IMENUCTL_AddItem(pme->m_pSK, AEE_APPMGRLS_RES_FILE, IDC_OK, IDC_OK, 0, 0);
    IMENUCTL_SetActive(pme->m_pSK, TRUE);
 
    // Get softkey height for setting main menu size
@@ -2503,7 +2503,7 @@ static void MShop_AddNextLogItem(MShop * pme)
    }
 
    // Load format string "%s: action (%s)"
-   ISHELL_LoadResString(pme->a.m_pIShell, APPMGRLS_RES_FILE, wID, szType, sizeof(szType));
+   ISHELL_LoadResString(pme->a.m_pIShell, AEE_APPMGRLS_RES_FILE, wID, szType, sizeof(szType));
    
    // Assign log buffer using format string with name & date strings
    WSPRINTF(pme->m_pLogBuff, MAX_STR_SIZE, szType, pName, szBuff);
@@ -2550,15 +2550,15 @@ static boolean MShop_DisplayTextInputForm(MShop * pme, boolean bSearch)
    pme->m_pText = pt;
 
    // Set TextControl buffer size and title
-   MShop_SetTitle(pme, APPMGRLS_RES_FILE,(uint16)(bSearch ? IDS_SEARCH_TITLE : IDS_CREDITBACK_TITLE),NULL);
+   MShop_SetTitle(pme, AEE_APPMGRLS_RES_FILE,(uint16)(bSearch ? IDS_SEARCH_TITLE : IDS_CREDITBACK_TITLE),NULL);
    ITEXTCTL_SetMaxSize(pt, MAX_STR_CHARS);
 
    if (bSearch)
       // Setup softkey menu for this text control with any/mode options
-      IMENUCTL_AddItem(pme->m_pSK, APPMGRLS_RES_FILE, IDS_ANY, IDC_SEARCH_ANY, NULL, NULL);
+      IMENUCTL_AddItem(pme->m_pSK, AEE_APPMGRLS_RES_FILE, IDS_ANY, IDC_SEARCH_ANY, NULL, NULL);
    else
       // Setup softkey menu for this text control with ok/mode options
-      IMENUCTL_AddItem(pme->m_pSK, APPMGRLS_RES_FILE, IDC_OK, IDC_MSHOP_CREDITBACK, NULL, NULL);
+      IMENUCTL_AddItem(pme->m_pSK, AEE_APPMGRLS_RES_FILE, IDC_OK, IDC_MSHOP_CREDITBACK, NULL, NULL);
 
    // Get softkey size
    IMENUCTL_GetRect(pme->m_pSK, &rcm);
@@ -2762,7 +2762,7 @@ static boolean MShop_CheckDownload(MShop * pme, DLITEMID iID, AECHAR * pszName)
                 FormatMem(dwFree,szFree,FALSE); // Get new string
             }
             // Get formatted string for free memory
-            psz = FormatStringEx(pme->a.m_pIShell,APPMGRLS_RES_FILE,IDS_APP_RAM_SIZE,szSize,szFree);
+            psz = FormatStringEx(pme->a.m_pIShell,AEE_APPMGRLS_RES_FILE,IDS_APP_RAM_SIZE,szSize,szFree);
          }
          break;
 
@@ -2784,7 +2784,7 @@ static boolean MShop_CheckDownload(MShop * pme, DLITEMID iID, AECHAR * pszName)
                    FormatMem(dwFree,szFree,FALSE); // Get new string
                }
                // Get formatted string for free memory
-               psz = FormatStringEx(pme->a.m_pIShell,APPMGRLS_RES_FILE,IDS_APP_EFS_SIZE,szSize,szFree);
+               psz = FormatStringEx(pme->a.m_pIShell,AEE_APPMGRLS_RES_FILE,IDS_APP_EFS_SIZE,szSize,szFree);
             }
             else
             {
@@ -2819,7 +2819,7 @@ static boolean MShop_CheckDownload(MShop * pme, DLITEMID iID, AECHAR * pszName)
                // Get formatted string for free memory
                if (pApps)
                {
-                  psz = FormatString(pme->a.m_pIShell,APPMGRLS_RES_FILE,IDS_FILE_MEMORY_FULL,pApps);
+                  psz = FormatString(pme->a.m_pIShell,AEE_APPMGRLS_RES_FILE,IDS_FILE_MEMORY_FULL,pApps);
                   FREE(pApps);
                }
             }
@@ -2835,7 +2835,7 @@ static boolean MShop_CheckDownload(MShop * pme, DLITEMID iID, AECHAR * pszName)
             WSPRINTF(szFree,sizeof(szFree),szFormat,dwFree);   // Get #count string
             WSPRINTF(szSize,sizeof(szSize),szFormat,dwSize);   // Get #count string
             // Get formatted string for free files
-            psz = FormatStringEx(pme->a.m_pIShell,APPMGRLS_RES_FILE,IDS_APP_FILES_NEEDED,szSize,szFree);
+            psz = FormatStringEx(pme->a.m_pIShell,AEE_APPMGRLS_RES_FILE,IDS_APP_FILES_NEEDED,szSize,szFree);
          }
          break;
 
@@ -2908,7 +2908,7 @@ static boolean MShop_SetServerDialog(MShop * pme)
    MShop_Reset(pme,FALSE);
 
    // Set Title
-   IMENUCTL_SetTitle(pme->m_pMenu, APPMGRLS_RES_FILE, IDS_SELECT, NULL);
+   IMENUCTL_SetTitle(pme->m_pMenu, AEE_APPMGRLS_RES_FILE, IDS_SELECT, NULL);
 
    // Initialize CtlAddItem
    MEMSET(&ai, 0, sizeof(ai));
