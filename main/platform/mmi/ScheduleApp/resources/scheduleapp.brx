@@ -40,6 +40,9 @@
 	<STRING Id="1013" Name="IDS_OPTION_SETUP">
 		<Text>Settings</Text>
 	</STRING>
+	<String Id="1014" Name="IDS_VALID_DATE">
+		<Text>The date has already passed</Text>
+	</String>
 	<STRING Id="1016" Name="IDS_OPTION_VIEWDAY_DELETE_CONFIRM">
 		<Text>Delete it</Text>
 	</STRING>
