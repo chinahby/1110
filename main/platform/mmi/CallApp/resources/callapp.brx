@@ -5,7 +5,7 @@
 		<Text>Menu</Text>
 	</STRING>
 	<STRING Id="1002" Name="IDS_PREPAGO">
-		<Text>Recarga Prepago</Text>
+		<Text>Prepaid recharge</Text>
 	</STRING>
 	<STRING Id="1003" Name="IDS_RELEASE">
 		<Text>Release</Text>
@@ -50,7 +50,7 @@
 		<Text>Reject</Text>
 	</STRING>
 	<STRING Id="1017" Name="IDS_SALDO">
-		<Text>Consulta de saldo</Text>
+		<Text>Balance Inquiry</Text>
 	</STRING>
 	<STRING Id="1018" Name="IDS_WAITING_CALL">
 		<Text>Waiting call</Text>
@@ -65,7 +65,7 @@
 		<Text>Unavailable</Text>
 	</STRING>
 	<STRING Id="1022" Name="IDS_CLIENTE">
-		<Text>Atencion al cliente</Text>
+		<Text>Customer</Text>
 	</STRING>
 	<STRING Id="1023" Name="IDS_NONHANDFREE">
 		<Text>Handfree off</Text>

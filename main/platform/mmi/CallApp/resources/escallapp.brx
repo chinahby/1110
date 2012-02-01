@@ -1,247 +1,247 @@
 <?xml version="1.0" encoding="utf-8"?>
- <BREWRes Name="callapp" VERSION="1">
- <Strings Encoding="Unicode">
- 	<STRING Id="1001" Name="IDS_SK_MENU">
- 		<Text>Menú</Text>
- 	</STRING>
- 	<STRING Id="1002" Name="IDS_PREPAGO">
- 		<Text>Recarga Prepago</Text>
- 	</STRING>
- 	<STRING Id="1003" Name="IDS_RELEASE">
- 		<Text>Soltar</Text>
- 	</STRING>
- 	<STRING Id="1004" Name="IDS_INVALID_IP_NUMBER">
- 		<Text>El número IP está en blanco</Text>
- 	</STRING>
- 	<STRING Id="1005" Name="IDS_CALLING_DIALOG_TEXT">
- 		<Text>Llamando</Text>
- 	</STRING>
- 	<STRING Id="1006" Name="IDS_ENDCALL_DIALOG_TEXT">
- 		<Text>Se finalizó la llamada</Text>
- 	</STRING>
- 	<STRING Id="1007" Name="IDS_SAVE_NEW">
- 		<Text>Guardar</Text>
- 	</STRING>
- 	<STRING Id="1008" Name="IDS_MSG_EXCEPTIONAL_CHAR">
- 		<Text>Número inválido, no se puede contestar</Text>
- 	</STRING>
- 	<STRING Id="1009" Name="IDS_TIME_TEXT">
- 		<Text>Hora:</Text>
- 	</STRING>
- 	<STRING Id="1010" Name="IDS_NO_NUMBER">
- 		<Text>Número desconocido</Text>
- 	</STRING>
- 	<STRING Id="1011" Name="IDS_NUMBER_RESTRICTED">
- 		<Text>Restringido</Text>
- 	</STRING>
- 	<STRING Id="1012" Name="IDS_IP_NUMBER_SELECT">
- 		<Text>Número IP</Text>
- 	</STRING>
- 	<STRING Id="1013" Name="IDS_EMGCALL">
- 		<Text>Llamada de Emergencia</Text>
- 	</STRING>
- 	<STRING Id="1014" Name="IDS_AUTO_REDIAL">
- 		<Text>Rediscado automático</Text>
- 	</STRING>
- 	<STRING Id="1015" Name="IDS_USE_BT_AG">
- 		<Text>Usar audífono Bluetooth</Text>
- 	</STRING>
- 	<STRING Id="1016" Name="IDS_REJECT">
- 		<Text>Rechazar</Text>
- 	</STRING>
- 	<STRING Id="1017" Name="IDS_SALDO">
- 		<Text>Consulta de saldo</Text>
- 	</STRING>
- 	<STRING Id="1018" Name="IDS_WAITING_CALL">
- 		<Text>Llamada en espera</Text>
- 	</STRING>
- 	<STRING Id="1019" Name="IDS_MUTI_CALL">
- 		<Text>Llamada de conferencia</Text>
- 	</STRING>
- 	<STRING Id="1020" Name="IDS_ANSWER">
- 		<Text>Contestar</Text>
- 	</STRING>
- 	<STRING Id="1021" Name="IDS_NUMBER_UNAVAILABLE">
- 		<Text>No está disponible</Text>
- 	</STRING>
- 	<STRING Id="1022" Name="IDS_CLIENTE">
- 		<Text>Atención al cliente</Text>
- 	</STRING>
- 	<STRING Id="1023" Name="IDS_NONHANDFREE">
- 		<Text>Manos libres apagado</Text>
- 	</STRING>
- 	<STRING Id="1024" Name="IDS_HANDFREE">
- 		<Text>Manos libres prendido</Text>
- 	</STRING>
- 	<STRING Id="1025" Name="IDS_VOICEMAIL_EMPTY">
- 		<Text>No hay correo electrónico</Text>
- 	</STRING>
- 	<STRING Id="1026" Name="IDS_MUTE">
- 		<Text>Eliminar Sonido</Text>
- 	</STRING>
- 	<STRING Id="1027" Name="IDS_UNMUTE">
- 		<Text>Restablecer Sonido</Text>
- 	</STRING>
- 	<STRING Id="1028" Name="IDS_FORWARD_TO_VOICEMAIL">
- 		<Text>Correo de voz</Text>
- 	</STRING>
- 	<STRING Id="1029" Name="IDS_RESTRICT_OUTGOING">
- 		<Text>Llamada restringida</Text>
- 	</STRING>
- 	<STRING Id="1030" Name="IDS_SPEED_DIAL_EMPTY">
- 		<Text>El discado rápido %s está en blanco</Text>
- 	</STRING>
- 	<STRING Id="1031" Name="IDS_RELEASEHOLD">
- 		<Text>Liberar modo de espera</Text>
- 	</STRING>
- 	<STRING Id="1032" Name="IDS_RESCUE_RUIM">
- 		<Text>Recuperar tarjeta UIM</Text>
- 	</STRING>
- 	<STRING Id="1033" Name="IDS_IGNORE">
- 		<Text>Ignorar</Text>
- 	</STRING>
- 	<STRING Id="1034" Name="IDS_INCOMINGCALL_TEXT">
- 		<Text>Recibiendo llamada.</Text>
- 	</STRING>
- 	<STRING Id="1035" Name="IDS_LINK">
- 		<Text>Enlace</Text>
- 	</STRING>
- 	<STRING Id="1036" Name="IDS_CALLAPP_TITLE">
- 		<Text>Organizador de llamadas</Text>
- 	</STRING>
- 	<STRING Id="1037" Name="IDS_CANCEL">
- 		<Text>Cancelar</Text>
- 	</STRING>
- 	<STRING Id="1038" Name="IDS_MISSED_1CALL">
- 		<Text>1 llamada perdida</Text>
- 	</STRING>
- 	<STRING Id="1039" Name="IDS_CALLLOST">
- 		<Text>Llamada perdida.</Text>
- 	</STRING>
- 	<STRING Id="1040" Name="IDS_CALLFAILED">
- 		<Text>Llamada fallida.</Text>
- 	</STRING>
- 	<STRING Id="1041" Name="IDS_SK_OK">
- 		<Text>OK</Text>
- 	</STRING>
- 	<STRING Id="1042" Name="IDS_INVALIDEMGNUM">
- 		<Text>Advertencia: si usted restablece el servicio normal, los operadores de emergencia no podrán localizarlo.</Text>
- 	</STRING>
- 	<STRING Id="1043" Name="IDS_MISSED_NCALLS">
- 		<Text>%d de llamadas perdidas</Text>
- 	</STRING>
- 	<STRING Id="1044" Name="IDS_SAVE_TO_CONT">
- 		<Text>Guardar en contactos</Text>
- 	</STRING>
- 	<STRING Id="1045" Name="IDS_SEND_MESSAGE">
- 		<Text>Enviar mensajes</Text>
- 	</STRING>
- 	<STRING Id="1046" Name="IDS_EMGNUMBER_CALL_ONLY">
- 		<Text>Sólo llamadas de emergencia</Text>
- 	</STRING>
- 	<STRING Id="1047" Name="IDS_CALL_CENTER_NUMBER">
- 		<Text>Número de Acceso Directo</Text>
- 	</STRING>
- 	<STRING Id="1048" Name="IDS_CALL">
- 		<Text>Llamar</Text>
- 	</STRING>
- 	<STRING Id="1049" Name="IDS_RECORD">
- 		<Text>Grabar</Text>
- 	</STRING>
- 	<STRING Id="1050" Name="IDS_REFUI_SEND">
- 		<Text>Enviando ahora</Text>
- 	</STRING>
- 	<STRING Id="1051" Name="IDS_USE_PHONE">
- 		<Text>Usar teléfono</Text>
- 	</STRING>
- 	<STRING Id="1052" Name="IDS_INVALID_LINK_NUM">
- 		<Text>Número de enlace inválido</Text>
- 	</STRING>
- 	<STRING Id="1053" Name="IDS_MSG_CURPROFILE_MEETING">
- 		<Text>Modo de vibración activado</Text>
- 	</STRING>
- 	<STRING Id="1054" Name="IDS_MSG_CURPROFILE_NORMALMODE">
- 		<Text>Modo normal activado</Text>
- 	</STRING>
- 	<STRING Id="1055" Name="IDS_PWDERR">
- 		<Text>Contraseña inválida</Text>
- 	</STRING>
- 	<STRING Id="1057" Name="IDS_PWDTIPS">
- 		<Text>Introducir contraseña</Text>
- 	</STRING>
- 	<STRING Id="1100" Name="IDS_OPTION_RECORDER_ON">
- 		<Text>Grabadora prendida</Text>
- 	</STRING>
- 	<STRING Id="1101" Name="IDS_OPTION_RECORDER_OFF">
- 		<Text>Grabadora apagada</Text>
- 	</STRING>
- 	<STRING Id="1110" Name="IDS_RECORD_THE_OTHER_SIZE">
- 		<Text>Tuyo</Text>
- 	</STRING>
- 	<STRING Id="1111" Name="IDS_RECORD_SELF">
- 		<Text>Mío</Text>
- 	</STRING>
- 	<STRING Id="1112" Name="IDS_CONTACT">
- 		<Text>Contactos</Text>
- 	</STRING>
- 	<STRING Id="1113" Name="IDS_SMS">
- 		<Text>Mensajes</Text>
- 	</STRING>
- 	<STRING Id="1114" Name="IDS_NUM_TOO_LONG">
- 		<Text>El número es demasiado largo para poder guardarlo</Text>
- 	</STRING>
- 	<STRING Id="1115" Name="IDS_NOOMH_CARD">
- 		<Text>Esta no es una tarjeta OMH, por favor mejore la versión de su tarjeta a una OMH R - UIM</Text>
- 	</STRING>
- 	<STRING Id="1117" Name="IDS_INVALID">
- 		<Text>Contraseña inválida</Text>
- 	</STRING>
- </Strings>
- <Dialogs>
- 	<DIALOG Id="6001" Name="IDD_NUMEDIT" Focus="0">
- 		<Controls/>
- 		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
- 	</DIALOG>
- 	<DIALOG Id="6002" Name="IDD_CALLING" Focus="0">
- 		<Controls/>
- 		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
- 	</DIALOG>
- 	<DIALOG Id="6003" Name="IDD_CONVERSATION" Focus="7004">
- 		<Controls>
- 			<SoftKey Id="7001" Name="IDDC_CONVERSATION_SK">
- 				<Items/>
- 			</SoftKey>
- 			<Stopwatch Id="7004" Name="IDDC_CONVERSATION_TIMER">
- 				<Items/></Stopwatch>
- 		</Controls>
- 	</DIALOG>
- 	<DIALOG Id="6004" Name="IDD_ENDCALL" Focus="7005">
- 		<Controls>
- 			<Countdown Id="7005" Name="IDDC_ENDCALL_TIMER">
- 				<Items/></Countdown>
- 		</Controls>
- 	</DIALOG>
- 	<DIALOG Id="6005" Name="IDD_INCOMINGCALL" Focus="0">
- 		<Controls/>
- 	</DIALOG>
- 	<DIALOG Id="6006" Name="IDD_MISSED" Focus="0">
- 		<Controls/>
- 	</DIALOG>
- 	<DIALOG Id="6007" Name="IDD_USERCONFIRM" Focus="7006">
- 		<Controls>
- 			<Static Id="7006" Name="IDC_USERCONFIRM_STATIC">
- 				<Items/></Static>
- 		</Controls>
- 	</DIALOG>
- 	<DIALOG Id="6008" Name="IDD_MSGBOX" Focus="0">
- 		<Controls/>
- 		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
- 	</DIALOG>
- 	<Dialog Id="6009" Name="IDD_IP_NUMBER" Focus="0">
- 		<Controls/>
- 	</Dialog>
- 	<Dialog Id="6010" Name="IDD_PWD" Focus="0">
- 		<Controls/>
- 	</Dialog>
- </Dialogs>
- </BREWRes>
+<BREWRes Name="escallapp" VERSION="1">
+<Strings Encoding="Unicode">
+	<STRING Id="1001" Name="IDS_SK_MENU">
+		<Text>Menú</Text>
+	</STRING>
+	<STRING Id="1002" Name="IDS_PREPAGO">
+		<Text>Recarga Prepago</Text>
+	</STRING>
+	<STRING Id="1003" Name="IDS_RELEASE">
+		<Text>Soltar</Text>
+	</STRING>
+	<STRING Id="1004" Name="IDS_INVALID_IP_NUMBER">
+		<Text>El número IP está en blanco</Text>
+	</STRING>
+	<STRING Id="1005" Name="IDS_CALLING_DIALOG_TEXT">
+		<Text>Llamando</Text>
+	</STRING>
+	<STRING Id="1006" Name="IDS_ENDCALL_DIALOG_TEXT">
+		<Text>Se finalizó la llamada</Text>
+	</STRING>
+	<STRING Id="1007" Name="IDS_SAVE_NEW">
+		<Text>Guardar</Text>
+	</STRING>
+	<STRING Id="1008" Name="IDS_MSG_EXCEPTIONAL_CHAR">
+		<Text>Número inválido, no se puede contestar</Text>
+	</STRING>
+	<STRING Id="1009" Name="IDS_TIME_TEXT">
+		<Text>Hora:</Text>
+	</STRING>
+	<STRING Id="1010" Name="IDS_NO_NUMBER">
+		<Text>Número desconocido</Text>
+	</STRING>
+	<STRING Id="1011" Name="IDS_NUMBER_RESTRICTED">
+		<Text>Restringido</Text>
+	</STRING>
+	<STRING Id="1012" Name="IDS_IP_NUMBER_SELECT">
+		<Text>Número IP</Text>
+	</STRING>
+	<STRING Id="1013" Name="IDS_EMGCALL">
+		<Text>Llamada de Emergencia</Text>
+	</STRING>
+	<STRING Id="1014" Name="IDS_AUTO_REDIAL">
+		<Text>Rediscado automático</Text>
+	</STRING>
+	<STRING Id="1015" Name="IDS_USE_BT_AG">
+		<Text>Usar audífono Bluetooth</Text>
+	</STRING>
+	<STRING Id="1016" Name="IDS_REJECT">
+		<Text>Rechazar</Text>
+	</STRING>
+	<STRING Id="1017" Name="IDS_SALDO">
+		<Text>Consulta de saldo</Text>
+	</STRING>
+	<STRING Id="1018" Name="IDS_WAITING_CALL">
+		<Text>Llamada en espera</Text>
+	</STRING>
+	<STRING Id="1019" Name="IDS_MUTI_CALL">
+		<Text>Llamada de conferencia</Text>
+	</STRING>
+	<STRING Id="1020" Name="IDS_ANSWER">
+		<Text>Contestar</Text>
+	</STRING>
+	<STRING Id="1021" Name="IDS_NUMBER_UNAVAILABLE">
+		<Text>No está disponible</Text>
+	</STRING>
+	<STRING Id="1022" Name="IDS_CLIENTE">
+		<Text>Atención al cliente</Text>
+	</STRING>
+	<STRING Id="1023" Name="IDS_NONHANDFREE">
+		<Text>Manos libres apagado</Text>
+	</STRING>
+	<STRING Id="1024" Name="IDS_HANDFREE">
+		<Text>Manos libres prendido</Text>
+	</STRING>
+	<STRING Id="1025" Name="IDS_VOICEMAIL_EMPTY">
+		<Text>No hay correo electrónico</Text>
+	</STRING>
+	<STRING Id="1026" Name="IDS_MUTE">
+		<Text>Eliminar Sonido</Text>
+	</STRING>
+	<STRING Id="1027" Name="IDS_UNMUTE">
+		<Text>Restablecer Sonido</Text>
+	</STRING>
+	<STRING Id="1028" Name="IDS_FORWARD_TO_VOICEMAIL">
+		<Text>Correo de voz</Text>
+	</STRING>
+	<STRING Id="1029" Name="IDS_RESTRICT_OUTGOING">
+		<Text>Llamada restringida</Text>
+	</STRING>
+	<STRING Id="1030" Name="IDS_SPEED_DIAL_EMPTY">
+		<Text>El discado rápido %s está en blanco</Text>
+	</STRING>
+	<STRING Id="1031" Name="IDS_RELEASEHOLD">
+		<Text>Liberar modo de espera</Text>
+	</STRING>
+	<STRING Id="1032" Name="IDS_RESCUE_RUIM">
+		<Text>Recuperar tarjeta UIM</Text>
+	</STRING>
+	<STRING Id="1033" Name="IDS_IGNORE">
+		<Text>Ignorar</Text>
+	</STRING>
+	<STRING Id="1034" Name="IDS_INCOMINGCALL_TEXT">
+		<Text>Recibiendo llamada.</Text>
+	</STRING>
+	<STRING Id="1035" Name="IDS_LINK">
+		<Text>Enlace</Text>
+	</STRING>
+	<STRING Id="1036" Name="IDS_CALLAPP_TITLE">
+		<Text>Organizador de llamadas</Text>
+	</STRING>
+	<STRING Id="1037" Name="IDS_CANCEL">
+		<Text>Cancelar</Text>
+	</STRING>
+	<STRING Id="1038" Name="IDS_MISSED_1CALL">
+		<Text>1 llamada perdida</Text>
+	</STRING>
+	<STRING Id="1039" Name="IDS_CALLLOST">
+		<Text>Llamada perdida.</Text>
+	</STRING>
+	<STRING Id="1040" Name="IDS_CALLFAILED">
+		<Text>Llamada fallida.</Text>
+	</STRING>
+	<STRING Id="1041" Name="IDS_SK_OK">
+		<Text>OK</Text>
+	</STRING>
+	<STRING Id="1042" Name="IDS_INVALIDEMGNUM">
+		<Text>Advertencia: si usted restablece el servicio normal, los operadores de emergencia no podrán localizarlo.</Text>
+	</STRING>
+	<STRING Id="1043" Name="IDS_MISSED_NCALLS">
+		<Text>%d de llamadas perdidas</Text>
+	</STRING>
+	<STRING Id="1044" Name="IDS_SAVE_TO_CONT">
+		<Text>Guardar en contactos</Text>
+	</STRING>
+	<STRING Id="1045" Name="IDS_SEND_MESSAGE">
+		<Text>Enviar mensajes</Text>
+	</STRING>
+	<STRING Id="1046" Name="IDS_EMGNUMBER_CALL_ONLY">
+		<Text>Sólo llamadas de emergencia</Text>
+	</STRING>
+	<STRING Id="1047" Name="IDS_CALL_CENTER_NUMBER">
+		<Text>Número de Acceso Directo</Text>
+	</STRING>
+	<STRING Id="1048" Name="IDS_CALL">
+		<Text>Llamar</Text>
+	</STRING>
+	<STRING Id="1049" Name="IDS_RECORD">
+		<Text>Grabar</Text>
+	</STRING>
+	<STRING Id="1050" Name="IDS_REFUI_SEND">
+		<Text>Enviando ahora</Text>
+	</STRING>
+	<STRING Id="1051" Name="IDS_USE_PHONE">
+		<Text>Usar teléfono</Text>
+	</STRING>
+	<STRING Id="1052" Name="IDS_INVALID_LINK_NUM">
+		<Text>Número de enlace inválido</Text>
+	</STRING>
+	<STRING Id="1053" Name="IDS_MSG_CURPROFILE_MEETING">
+		<Text>Modo de vibración activado</Text>
+	</STRING>
+	<STRING Id="1054" Name="IDS_MSG_CURPROFILE_NORMALMODE">
+		<Text>Modo normal activado</Text>
+	</STRING>
+	<STRING Id="1055" Name="IDS_PWDERR">
+		<Text>Contraseña inválida</Text>
+	</STRING>
+	<STRING Id="1057" Name="IDS_PWDTIPS">
+		<Text>Introducir contraseña</Text>
+	</STRING>
+	<STRING Id="1100" Name="IDS_OPTION_RECORDER_ON">
+		<Text>Grabadora prendida</Text>
+	</STRING>
+	<STRING Id="1101" Name="IDS_OPTION_RECORDER_OFF">
+		<Text>Grabadora apagada</Text>
+	</STRING>
+	<STRING Id="1110" Name="IDS_RECORD_THE_OTHER_SIZE">
+		<Text>Tuyo</Text>
+	</STRING>
+	<STRING Id="1111" Name="IDS_RECORD_SELF">
+		<Text>Mío</Text>
+	</STRING>
+	<STRING Id="1112" Name="IDS_CONTACT">
+		<Text>Contactos</Text>
+	</STRING>
+	<STRING Id="1113" Name="IDS_SMS">
+		<Text>Mensajes</Text>
+	</STRING>
+	<STRING Id="1114" Name="IDS_NUM_TOO_LONG">
+		<Text>El número es demasiado largo para poder guardarlo</Text>
+	</STRING>
+	<STRING Id="1115" Name="IDS_NOOMH_CARD">
+		<Text>Esta no es una tarjeta OMH, por favor mejore la versión de su tarjeta a una OMH R - UIM</Text>
+	</STRING>
+	<STRING Id="1117" Name="IDS_INVALID">
+		<Text>Contraseña inválida</Text>
+	</STRING>
+</Strings>
+<Dialogs>
+	<DIALOG Id="6001" Name="IDD_NUMEDIT" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</DIALOG>
+	<DIALOG Id="6002" Name="IDD_CALLING" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</DIALOG>
+	<DIALOG Id="6003" Name="IDD_CONVERSATION" Focus="7004">
+		<Controls>
+			<SoftKey Id="7001" Name="IDDC_CONVERSATION_SK">
+				<Items/>
+			</SoftKey>
+			<Stopwatch Id="7004" Name="IDDC_CONVERSATION_TIMER">
+				<Items/></Stopwatch>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6004" Name="IDD_ENDCALL" Focus="7005">
+		<Controls>
+			<Countdown Id="7005" Name="IDDC_ENDCALL_TIMER">
+				<Items/></Countdown>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6005" Name="IDD_INCOMINGCALL" Focus="0">
+		<Controls/>
+	</DIALOG>
+	<DIALOG Id="6006" Name="IDD_MISSED" Focus="0">
+		<Controls/>
+	</DIALOG>
+	<DIALOG Id="6007" Name="IDD_USERCONFIRM" Focus="7006">
+		<Controls>
+			<Static Id="7006" Name="IDC_USERCONFIRM_STATIC">
+				<Items/></Static>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6008" Name="IDD_MSGBOX" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</DIALOG>
+	<Dialog Id="6009" Name="IDD_IP_NUMBER" Focus="0">
+		<Controls/>
+	</Dialog>
+	<Dialog Id="6010" Name="IDD_PWD" Focus="0">
+		<Controls/>
+	</Dialog>
+</Dialogs>
+</BREWRes>
