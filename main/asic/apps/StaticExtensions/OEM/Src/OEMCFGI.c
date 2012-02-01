@@ -4316,6 +4316,8 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
          rc = (AEERect *) pBuff;
          rc->x = 0;
          rc->y = 10000;
+         rc->dx = 0;
+         rc->dy = 0;
 
          return SUCCESS;
       }
