@@ -50,7 +50,7 @@
 		<Text>Mensajes</Text>
 	</STRING>
 	<STRING Id="1017" Name="IDS_MAIN_MENU_MULTIMEDIA">
-		<Text>Multimedios</Text>
+		<Text>Multimedia</Text>
 	</STRING>
 	<STRING Id="1018" Name="IDS_MAIN_MENU_APPLICATION">
 		<Text>Aplicación</Text>
@@ -89,16 +89,16 @@
 		<Text>Reproductor de Video</Text>
 	</STRING>
 	<STRING Id="1030" Name="IDS_MAIN_MENU_FILEMGR">
-		<Text>File Manager</Text>
+		<Text>Explorador de Archivos</Text>
 	</STRING>
 	<STRING Id="1031" Name="IDS_MAIN_MENU_MAP">
 		<Text>En tus Manos</Text>
 	</STRING>
 	<STRING Id="1032" Name="IDS_MAIN_MENU_NEO_APP">
-		<Text>Neo Application</Text>
+		<Text>Neo Aplicaciones</Text>
 	</STRING>
 	<STRING Id="1033" Name="IDS_MAIN_MENU_NEO_NAV">
-		<Text>Neo Navigation</Text>
+		<Text>Neo Navegacion</Text>
 	</STRING>
 	<STRING Id="1034" Name="IDS_MENU_LIST">
 		<Text>Menú</Text>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="coreapp" VERSION="1">
+<BREWRes Name="escoreapp" VERSION="1">
 <Strings Encoding="ISOLATIN1">
 	<STRING Id="1001" Name="IDS_CORE_TITLE">
 		<Text>Core Applet</Text>
@@ -26,7 +26,7 @@
 		<Text>UIM card refresh...</Text>
 	</STRING>
 	<STRING Id="1009" Name="IDS_FULLY_CHARGED">
-		<Text>Full charged</Text>
+		<Text>Carga Completa</Text>
 	</STRING>
 	<STRING Id="1010" Name="IDS_OVERVOLTAGE">
 		<Text>Voltage input too high</Text>
@@ -104,10 +104,10 @@
 		<Text>Received %d new msg</Text>
 	</STRING>
 	<STRING Id="1035" Name="IDS_CHARGER_ON">
-		<Text>Charger start</Text>
+		<Text>Iniciar la carga de</Text>
 	</STRING>
 	<STRING Id="1036" Name="IDS_CHARGER_OFF">
-		<Text>Charger stop</Text>
+		<Text>Cargador desconectado</Text>
 	</STRING>
 	<STRING Id="1037" Name="IDS_EMERGENCY_NUMBER">
 		<Text>Emergency number</Text>
