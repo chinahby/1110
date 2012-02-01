@@ -2504,6 +2504,38 @@ static boolean  CallApp_Dialer_Calling_DlgHandler(CCallApp *pMe,
 #endif
                     }
                 }
+
+
+#ifdef FEATURE_VERSION_W208S
+				{
+					if (0 == WSTRCMP(pMe->m_CallsTable->call_number, L"*1")
+						|| 0 == WSTRCMP(pMe->m_CallsTable->call_number, L"911")
+						|| 0 == WSTRCMP(pMe->m_CallsTable->call_number, L"*171"))
+                    {
+                        msgid = IDS_EMGCALL;
+                    }
+                    else if (0 == WSTRCMP(pMe->m_CallsTable->call_number, L"*611"/*NumCliente*/))
+                    {
+                        msgid = IDS_CLIENTE;
+                    }
+                    else if (0 == WSTRCMP(pMe->m_CallsTable->call_number, L"*5"/*NumSaldo*/))
+                    {
+                        msgid = IDS_SALDO;
+                    }
+                    else if (0 == WSTRCMP(pMe->m_CallsTable->call_number, L"*21"/*NumPrepago*/))
+                    {
+                        msgid = IDS_PREPAGO;
+                    }
+                    else if (0 == WSTRCMP(pMe->m_CallsTable->call_number, L"*9"/*NumPrepago*/)) //zhuweisheng modify
+                    {
+                        msgid = IDS_FORWARD_TO_VOICEMAIL;
+                    }
+
+                }
+#endif
+
+
+				
 #ifdef FEATURE_CARRIER_VENEZUELA_MOVILNET
                 {
                     if (0 == WSTRCMP(pMe->m_CallsTable->call_number, L"*611"/*NumCliente*/))
