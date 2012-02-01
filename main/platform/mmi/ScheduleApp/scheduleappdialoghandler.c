@@ -4057,6 +4057,8 @@ _scheduleapp_event_edit_save_:
                     pme->m_CalMgr.m_nAlarmTime  = alarmTime[IMENUCTL_GetSel( pAlarm) - IDS_EVENT_EDIT_ALARM_OPTION_NO_ALARM];
                     pme->m_CalMgr.m_AlertState  = ringtone[IMENUCTL_GetSel( pRingtone) - IDS_EVENT_EDIT_RINGTONE_OPTION_ALARM_CLOCK];
 
+					MSG_FATAL("***zzg today=%d, m_lEventDay=%d, m_lStartTime=%d***", pme->m_CalMgr.m_lToday, pme->m_CalMgr.m_lEventDay, pme->m_CalMgr.m_lStartTime);
+
                     if(pme->m_sports)
                     {
                         pme->m_CalMgr.m_CurMode     = walkmode[IMENUCTL_GetSel(pMode) - IDS_SPORTS_RUN];
@@ -4070,6 +4072,14 @@ _scheduleapp_event_edit_save_:
                     {
                         updateEvent( &pme->m_CalMgr);
                     }
+
+					//Add By zzg 2012_02_01
+					if (pme->m_CalMgr.m_lEventDay < pme->m_CalMgr.m_lToday)
+					{
+						CLOSE_DIALOG(DLGRET_FAILD)
+						return TRUE;
+					}
+					//Add End
 
                     if(  pme->m_CalMgr.m_dbOperationResult == SUCCESS)
                     {
@@ -4703,7 +4713,7 @@ static boolean  dialog_handler_of_state_setup( CScheduleApp* pme,
                         repaint(pme, TRUE);
                     }
                     else
-                    {
+                    {                    	
                         pme->m_CalMgr.m_cfg.wDayStart    = ITIMECTL_GetTime( pStart) / 1000 / 60;
                         pme->m_CalMgr.m_cfg.nAutoDelete  = autoDeleteDay[IMENUCTL_GetSel( pAutoDelete) - IDS_SETUP_AUTO_DELETE_OPTION_30_DAY];
                         pme->m_CalMgr.m_cfg.nSnooze      = snooze[IMENUCTL_GetSel( pSnooze) - IDS_SETUP_SNOOZE_OPTION_OFF];

@@ -308,6 +308,17 @@ static NextFSMAction state_handler_of_state_event_edit(CScheduleApp *pme)
             MOVE_TO_STATE( STATE_INPUTTEXT)
             return NFSMACTION_CONTINUE;
 
+		//Add By zzg 2012_02_01
+		case DLGRET_FAILD:
+			pme->m_wMsgResID = IDS_VALID_DATE;
+            if(SUCCESS != CScheduleApp_ShowDialog(pme, IDD_MSGBOX))
+            {
+                MOVE_TO_STATE(STATE_EXIT);
+                return NFSMACTION_CONTINUE;
+            }
+            return NFSMACTION_WAIT;
+		//Add End
+
         case DLGRET_OK:
             pme->m_wMsgResID = IDS_DONE;
             if(SUCCESS != CScheduleApp_ShowDialog(pme, IDD_MSGBOX))
