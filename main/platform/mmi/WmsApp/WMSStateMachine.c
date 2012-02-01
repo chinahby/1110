@@ -2769,7 +2769,9 @@ static NextFSMAction WMSST_TONUMLIST_Handler(WmsApp *pMe)
                         }
                     }
                 }
-                
+#ifdef FEATURE_RTRE_DEFAULT_IS_NV
+                MOVE_TO_STATE(WMSST_SENDING)
+#else
                 // 检查卡是否插入modi by yangdecai 2010-08-10
 			    if (IRUIM_IsCardConnected(pMe->m_pIRUIM)) 
 			    {
@@ -2779,6 +2781,7 @@ static NextFSMAction WMSST_TONUMLIST_Handler(WmsApp *pMe)
 				{
 					MOVE_TO_STATE(WMSST_POPMSG)
 				}
+#endif                
             }
 #else
 
@@ -2947,6 +2950,9 @@ static NextFSMAction WMSST_TONUMLIST_Handler(WmsApp *pMe)
                 }
                 else
                 {
+#ifdef FEATURE_RTRE_DEFAULT_IS_NV
+                    MOVE_TO_STATE(WMSST_SENDING)
+#else                    
                     // 检查卡是否插入modi by yangdecai 2010-08-10
 				    if (IRUIM_IsCardConnected(pMe->m_pIRUIM)) 
 				    {
@@ -2957,6 +2963,7 @@ static NextFSMAction WMSST_TONUMLIST_Handler(WmsApp *pMe)
 					{
 						MOVE_TO_STATE(WMSST_POPMSG)
 					}
+#endif                    
                 }
             }
             else
@@ -3914,6 +3921,9 @@ static NextFSMAction WMSST_OUTMSGOPTS_Handler(WmsApp *pMe)
             }
             
             pMe->m_eCreateWMSType = SEND_MSG_RESEND;
+#ifdef FEATURE_RTRE_DEFAULT_IS_NV
+            MOVE_TO_STATE(WMSST_SENDING)
+#else            
             // 检查卡是否插入modi by yangdecai 2010-08-10
 		    if (IRUIM_IsCardConnected(pMe->m_pIRUIM)) 
 		    {
@@ -3923,6 +3933,7 @@ static NextFSMAction WMSST_OUTMSGOPTS_Handler(WmsApp *pMe)
 			{
 				MOVE_TO_STATE(WMSST_POPMSG)
 			}
+#endif            
             return NFSMACTION_CONTINUE;
 
             
@@ -5052,6 +5063,9 @@ static NextFSMAction WMSST_RESERVEDMSGOPT_Handler(WmsApp *pMe)
             }
             
             pMe->m_eCreateWMSType = SEND_MSG_RESERVE;
+#ifdef FEATURE_RTRE_DEFAULT_IS_NV
+            MOVE_TO_STATE(WMSST_SENDING)
+#else            
             // 检查卡是否插入modi by yangdecai 2010-08-10
 		    if (IRUIM_IsCardConnected(pMe->m_pIRUIM)) 
 		    {
@@ -5061,6 +5075,7 @@ static NextFSMAction WMSST_RESERVEDMSGOPT_Handler(WmsApp *pMe)
 			{
 				MOVE_TO_STATE(WMSST_POPMSG)
 			}
+#endif            
             return NFSMACTION_CONTINUE;  
             
         case DLGRET_DELETE:
@@ -5202,7 +5217,9 @@ static NextFSMAction WMSST_RESERVEDMSGALERT_Handler(WmsApp *pMe)
             }
             
             pMe->m_eCreateWMSType = SEND_MSG_RESERVE;
-            
+#ifdef FEATURE_RTRE_DEFAULT_IS_NV
+            MOVE_TO_STATE(WMSST_SENDING)
+#else            
             // 状态迁至发送界面
             // 检查卡是否插入modi by yangdecai 2010-08-10
 		    if (IRUIM_IsCardConnected(pMe->m_pIRUIM)) 
@@ -5213,6 +5230,7 @@ static NextFSMAction WMSST_RESERVEDMSGALERT_Handler(WmsApp *pMe)
 			{
 				MOVE_TO_STATE(WMSST_POPMSG)
 			}
+#endif            
             return NFSMACTION_CONTINUE;
             
         default:
@@ -6188,6 +6206,9 @@ static NextFSMAction WMSST_CONTINUESEND_QUERY_Handler(WmsApp *pMe)
 
         case DLGRET_OK:
             pMe->m_bNeedContinueSend = FALSE;
+#ifdef FEATURE_RTRE_DEFAULT_IS_NV
+            MOVE_TO_STATE(WMSST_SENDING)
+#else            
             // 检查卡是否插入modi by yangdecai 2010-08-10
 		    if (IRUIM_IsCardConnected(pMe->m_pIRUIM)) 
 		    {
@@ -6197,6 +6218,7 @@ static NextFSMAction WMSST_CONTINUESEND_QUERY_Handler(WmsApp *pMe)
 			{
 				MOVE_TO_STATE(WMSST_POPMSG)
 			}
+#endif            
             return NFSMACTION_CONTINUE;
             
         default:
@@ -6587,7 +6609,9 @@ static NextFSMAction WMSST_RESENDCONFIRM_Handler(WmsApp *pMe)
 			{
 				pMe->m_eCreateWMSType = SEND_MSG_RESEND;
 				pMe->m_eDlgReturn = DLGRET_CREATE;
-				
+#ifdef FEATURE_RTRE_DEFAULT_IS_NV
+                MOVE_TO_STATE(WMSST_SENDING)
+#else				
 				// 检查卡是否插入modi by yangdecai 2010-08-10
 			    if (IRUIM_IsCardConnected(pMe->m_pIRUIM)) 
 			    {
@@ -6597,6 +6621,7 @@ static NextFSMAction WMSST_RESENDCONFIRM_Handler(WmsApp *pMe)
 				{
 					MOVE_TO_STATE(WMSST_POPMSG)
 				}
+#endif                
 			}
 			else
 			{
@@ -7300,6 +7325,29 @@ static NextFSMAction WMSST_OUTMSGOPTS_MMS_Handler(WmsApp *pMe)
         case DLGRET_RESEND:
            
             pMe->m_eCreateWMSType = SEND_MSG_RESEND;
+#ifdef FEATURE_RTRE_DEFAULT_IS_NV
+		    {
+		        CMultiSendItemInfo *pPhoneNumber = (CMultiSendItemInfo*)MALLOC(sizeof(CMultiSendItemInfo));
+		        MMSData	mmsDataInfoList[MAX_MMS_STORED];
+		        
+		        pMe->m_isMMS = TRUE;
+		        ICONFIG_GetItem(pMe->m_pConfig,CFGI_MMSOUTDATA_INFO,&mmsDataInfoList,sizeof(mmsDataInfoList));
+		        STRTOWSTR(mmsDataInfoList[pMe->m_wSelItemxuhao - 1].phoneNumber,
+		            pPhoneNumber->m_szName,
+		            sizeof(pPhoneNumber->m_szName));
+		        STRTOWSTR(STRTOPHONENUMBER(mmsDataInfoList[pMe->m_wSelItemxuhao - 1].phoneNumber,mmsDataInfoList[pMe->m_wSelItemxuhao - 1].phoneNumber),
+		            pPhoneNumber->m_szTo,
+		            sizeof(pPhoneNumber->m_szTo));
+		        IVector_AddElement(pMe->m_pSendList,pPhoneNumber);
+		        if(!WMS_MMS_Resend(pMe->m_wSelItemxuhao - 1,MMS_OUTBOX))
+		        {
+		            pMe->m_SendStatus = HTTP_CODE_Bad_Request;
+		            ISHELL_SetTimer(pMe->m_pShell,1000,(PFNNOTIFY)&WmsApp_ProcessMMSStatus,pMe);
+		        }
+		        MOVE_TO_STATE(WMSST_SENDING)
+            	
+		    }
+#else            
             // 检查卡是否插入modi by yangdecai 2010-08-10
 		    if (IRUIM_IsCardConnected(pMe->m_pIRUIM)) 
 		    {
@@ -7327,6 +7375,7 @@ static NextFSMAction WMSST_OUTMSGOPTS_MMS_Handler(WmsApp *pMe)
 			{
 				MOVE_TO_STATE(WMSST_POPMSG)
 			}
+#endif            
             return NFSMACTION_CONTINUE;
             
         default:
@@ -7411,7 +7460,30 @@ static NextFSMAction WMSST_INMSGOPTS_MMS_Handler(WmsApp *pMe)
         case DLGRET_RESEND:
 
             pMe->m_eCreateWMSType = SEND_MSG_RESEND;
-            
+#ifdef FEATURE_RTRE_DEFAULT_IS_NV
+            // 检查卡是否插入modi by yangdecai 2010-08-10
+            {
+                CMultiSendItemInfo *pPhoneNumber = (CMultiSendItemInfo*)MALLOC(sizeof(CMultiSendItemInfo));
+                MMSData mmsDataInfoList[MAX_MMS_STORED];
+                
+                pMe->m_isMMS = TRUE;
+                ICONFIG_GetItem(pMe->m_pConfig,CFGI_MMSINDATA_INFO,&mmsDataInfoList,sizeof(mmsDataInfoList));
+                STRTOWSTR(mmsDataInfoList[pMe->m_wSelItemxuhao - 1].phoneNumber,
+                    pPhoneNumber->m_szName,
+                    sizeof(pPhoneNumber->m_szName));
+                STRTOWSTR(STRTOPHONENUMBER(mmsDataInfoList[pMe->m_wSelItemxuhao - 1].phoneNumber,mmsDataInfoList[pMe->m_wSelItemxuhao - 1].phoneNumber),
+                    pPhoneNumber->m_szTo,
+                    sizeof(pPhoneNumber->m_szTo));
+                IVector_AddElement(pMe->m_pSendList,pPhoneNumber);
+                if(!WMS_MMS_Resend(pMe->m_wSelItemxuhao - 1,MMS_INBOX))
+                {
+                    pMe->m_SendStatus = HTTP_CODE_Bad_Request;
+                    ISHELL_SetTimer(pMe->m_pShell,1000,(PFNNOTIFY)&WmsApp_ProcessMMSStatus,pMe);
+                }
+                MOVE_TO_STATE(WMSST_SENDING)
+                
+            }
+#else
             // 检查卡是否插入modi by yangdecai 2010-08-10
 		    if (IRUIM_IsCardConnected(pMe->m_pIRUIM)) 
 		    {
@@ -7439,6 +7511,7 @@ static NextFSMAction WMSST_INMSGOPTS_MMS_Handler(WmsApp *pMe)
 			{
 				MOVE_TO_STATE(WMSST_POPMSG)
 			}
+#endif            
             return NFSMACTION_CONTINUE;
             
         default:
@@ -7670,7 +7743,29 @@ static NextFSMAction WMSST_DRAFTMSGOPTS_MMS_Handler(WmsApp *pMe)
         case DLGRET_RESEND:
 
             pMe->m_eCreateWMSType = SEND_MSG_RESEND;
-            
+#ifdef FEATURE_RTRE_DEFAULT_IS_NV    
+            {
+                CMultiSendItemInfo *pPhoneNumber = (CMultiSendItemInfo*)MALLOC(sizeof(CMultiSendItemInfo));
+                MMSData mmsDataInfoList[MAX_MMS_STORED];
+                
+                pMe->m_isMMS = TRUE;
+                ICONFIG_GetItem(pMe->m_pConfig,CFGI_MMSINDATA_INFO,&mmsDataInfoList,sizeof(mmsDataInfoList));
+                STRTOWSTR(mmsDataInfoList[pMe->m_wSelItemxuhao - 1].phoneNumber,
+                    pPhoneNumber->m_szName,
+                    sizeof(pPhoneNumber->m_szName));
+                STRTOWSTR(STRTOPHONENUMBER(mmsDataInfoList[pMe->m_wSelItemxuhao - 1].phoneNumber,mmsDataInfoList[pMe->m_wSelItemxuhao - 1].phoneNumber),
+                    pPhoneNumber->m_szTo,
+                    sizeof(pPhoneNumber->m_szTo));
+                IVector_AddElement(pMe->m_pSendList,pPhoneNumber);
+                if(!WMS_MMS_Resend(pMe->m_wSelItemxuhao - 1,MMS_DRAFTBOX))
+                {
+                    pMe->m_SendStatus = HTTP_CODE_Bad_Request;
+                    ISHELL_SetTimer(pMe->m_pShell,1000,(PFNNOTIFY)&WmsApp_ProcessMMSStatus,pMe);
+                }
+                MOVE_TO_STATE(WMSST_SENDING)
+                
+            }
+#else
             // 检查卡是否插入modi by yangdecai 2010-08-10
 		    if (IRUIM_IsCardConnected(pMe->m_pIRUIM)) 
 		    {
@@ -7698,6 +7793,7 @@ static NextFSMAction WMSST_DRAFTMSGOPTS_MMS_Handler(WmsApp *pMe)
 			{
 				MOVE_TO_STATE(WMSST_POPMSG)
 			}
+#endif            
             return NFSMACTION_CONTINUE;
             
         default:
