@@ -121,7 +121,11 @@
 #define OEMNV_CALLFORWARD_WAIT_ENABLE               "*74"                       //CFGI_CALLFORWARD_WAIT_ENABLE
 #define OEMNV_CALLFORWARD_WAIT_DISABLE              "*740"                      //CFGI_CALLFORWARD_WAIT_DISABLE
 #define OEMNV_CALLFORWARD_VOICEMAIL_ENABLE          "0"                         //CFGI_CALLFORWARD_VOICEMAIL_ENABLE 
+#ifdef FEATURE_VERSION_W208S
+#define OEMNV_VOICEMAIL_NUMBER                      L"*9"                         //NV_SMS_VM_NUMBER_I  
+#else
 #define OEMNV_VOICEMAIL_NUMBER                      L"0"                         //NV_SMS_VM_NUMBER_I  
+#endif
 #endif
 //Others
 #if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T)
