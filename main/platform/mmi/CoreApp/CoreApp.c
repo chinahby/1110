@@ -1833,6 +1833,13 @@ static boolean CoreApp_HandleCMNotify(CCoreApp * pMe, AEENotify *pNotify)
                     return TRUE;
 
                 // NAM selection was changed
+#ifdef FEATURE_UIM_RUN_TIME_ENABLE
+#ifdef FEATURE_ICM
+                case AEECM_EVENT_PH_NVRUIM_CONFIG:
+#else
+                case AEET_EVENT_PH_NVRUIM_CONFIG:
+#endif
+#endif
 #ifdef FEATURE_ICM
                 case AEECM_EVENT_PH_NAM_SEL:
 #else
@@ -1847,19 +1854,101 @@ static boolean CoreApp_HandleCMNotify(CCoreApp * pMe, AEENotify *pNotify)
                     }
                     else
 #endif
+                    /* Inform BREW sub changed */
                     {
-                        int nErr;
-                        IDownload *pIDownload=NULL;
-                        AEEMobileInfo info;
+                        IDownload* pDownload = NULL;
+                        IConfig*   pConfig   = NULL;
                         
-                        ICONFIG_GetItem(pMe->m_pConfig, CFGI_MOBILEINFO, &info, sizeof(info));
-                         
-                        nErr = ISHELL_CreateInstance(pMe->a.m_pIShell, AEECLSID_DOWNLOAD, (void **) &pIDownload);
-                        if (nErr==SUCCESS && pIDownload)
+                        DBGPRINTF("CM EVENT %x", pEvtInfo->event);
+                        
+                        /* Create the objects which contain the information. */
+                        ISHELL_CreateInstance(pMe->a.m_pIShell, AEECLSID_DOWNLOAD,
+                                              (void**)&pDownload);
+                        ISHELL_CreateInstance(pMe->a.m_pIShell, AEECLSID_CONFIG,
+                                              (void**)&pConfig);
+
+                        if(pConfig && pDownload)
                         {
-                            IDOWNLOAD_SetSubscriberID(pIDownload, info.szMobileID, STRLEN(info.szMobileID));
-                            IDOWNLOAD_Release(pIDownload);
+                           int nSIDLen;
+                           char* pSID = NULL;
+                           char* pSIDToSet = NULL;
+                           int nResult = AEE_SUCCESS;
+                           AEEDownloadInfo DownloadInfo;
+
+                           nResult = ICONFIG_GetItem(pConfig, CFGI_DOWNLOAD,
+                                                     (void*)&DownloadInfo,
+                                                     sizeof(DownloadInfo));
+                           if(nResult == AEE_SUCCESS)
+                           {
+                              if(DownloadInfo.wFlags & DIF_MIN_FOR_SID)
+                              {
+                                 AEEMobileInfo MobileInfo;
+                                 nResult = ICONFIG_GetItem(pConfig, CFGI_MOBILEINFO,
+                                                           &MobileInfo, sizeof(MobileInfo));
+                                 if(nResult == AEE_SUCCESS)
+                                 {
+                                    pSIDToSet = STRDUP(MobileInfo.szMobileID);
+                                 }
+                                 else
+                                 {
+                                   DBGPRINTF("Could not get MOBILEINFO %d", nResult);
+                                 }
+                              }
+                              else
+                              {
+                                 nResult = ICONFIG_GetItem(pConfig, CFGI_SUBSCRIBERID_LEN,
+                                                           &nSIDLen, sizeof(nSIDLen));
+                                 if(nResult == AEE_SUCCESS)
+                                 {
+                                    pSID = (char*)MALLOC(nSIDLen);
+                                    if(pSID)
+                                    {
+                                      nResult = ICONFIG_GetItem(pConfig, CFGI_SUBSCRIBERID,
+                                                                pSID, nSIDLen);
+                                      if(nResult == AEE_SUCCESS)
+                                      {
+                                         pSIDToSet = STRDUP(pSID);
+                                      }
+                                      else
+                                      {
+                                        DBGPRINTF("Could not get SUBSCRIBER ID %d", nResult);
+                                      }
+                                    }
+                                    else
+                                    {
+                                      DBGPRINTF("Could not get memory for SID %d", nSIDLen);
+                                    }
+                                 }
+                                 else
+                                 {
+                                   DBGPRINTF("Could not get SUBSCRIBERID_LEN %d", nResult);
+                                 }
+                              }
+                           }
+                           else
+                           {
+                             DBGPRINTF("Could not get CFGI_DOWNLOAD");
+                           }
+
+                           if(pSIDToSet)
+                           {
+                             int i;
+                             nSIDLen = STRLEN(pSIDToSet);
+                             DBGPRINTF("Setting Subscriber ID len %d %s", nSIDLen,pSIDToSet);
+                             IDOWNLOAD_SetSubscriberID(pDownload, pSIDToSet, nSIDLen+1);
+                           }
+                           FREEIF(pSIDToSet);
+                           FREEIF(pSID);
                         }
+                        else
+                        {
+                          DBGPRINTF("Could not create interfaces %x %x", pDownload, pConfig);
+                        }
+
+                        if(pDownload)
+                           IDOWNLOAD_Release(pDownload);
+                        if(pConfig)
+                           ICONFIG_Release(pConfig);
                     }
                     return TRUE;
 

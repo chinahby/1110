@@ -1799,6 +1799,7 @@ uint32 GetLngCode(void)
 int SetLngCode(uint32 dwLngCode)
 {
     nv_language_enum_type language=NV_LANGUAGE_ENGLISH;
+    g_usLngCode = 0;
     switch (dwLngCode)
     {
 #ifdef FEATURE_LANG_SPANISH    
