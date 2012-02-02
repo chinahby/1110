@@ -38,7 +38,7 @@
 		<Text>Número IP</Text>
 	</STRING>
 	<STRING Id="1013" Name="IDS_EMGCALL">
-		<Text>Llamada de Emergencia</Text>
+		<Text>Emergencia</Text>
 	</STRING>
 	<STRING Id="1014" Name="IDS_AUTO_REDIAL">
 		<Text>Rediscado automático</Text>
