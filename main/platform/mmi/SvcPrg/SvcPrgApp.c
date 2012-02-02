@@ -135,6 +135,10 @@ when       who     what, where, why
 #define MAX_AKEY_DIGITS 26
 #endif
 
+//Add By zzg 2012_02_02
+#define  AEE_SVCPRGAPP_RES_FILE (AEE_RES_LANGDIR SVCPRG_RES_FILE)
+//Add End
+
 // DT_IP related values
 #define MAX_IP_INDEX                  4
 #define MAX_IP_LEN                    16
@@ -993,7 +997,7 @@ static boolean CSvcPrg_OnCommand_IP_Edit(IDialog      *pd,
    pItem->typeData.ipid.currIndex = 0;
 
    (void) ITEXTCTL_SetTitle(pt,
-                            SVCPRG_RES_FILE,
+                            AEE_SVCPRGAPP_RES_FILE,
                             IDS_EDIT_IP_BYTE0,
                             NULL);
    
@@ -1005,13 +1009,13 @@ static boolean CSvcPrg_OnCommand_IP_Edit(IDialog      *pd,
 
    (void) IMENUCTL_DeleteAll(pm);
    (void) IMENUCTL_AddItem(pm, 
-                           SVCPRG_RES_FILE,
+                           AEE_SVCPRGAPP_RES_FILE,
                            IDS_CMD_IP_CONTINUE,
                            IDS_CMD_IP_CONTINUE,
                            NULL,
                            (uint32) pItem);
    (void) IMENUCTL_AddItem(pm, 
-                           SVCPRG_RES_FILE,
+                           AEE_SVCPRGAPP_RES_FILE,
                            IDS_CMD_CANCEL,
                            IDS_CMD_CANCEL,
                            NULL,
@@ -1088,13 +1092,13 @@ static boolean CSvcPrg_Ask_Save_IP(IDialog      *pd,
 
    (void) IMENUCTL_DeleteAll(pm);
    (void) IMENUCTL_AddItem(pm,
-                           SVCPRG_RES_FILE,
+                           AEE_SVCPRGAPP_RES_FILE,
                            IDS_CMD_SAVE,
                            IDS_CMD_SAVE,
                            NULL,
                            (uint32) pItem);
    (void) IMENUCTL_AddItem(pm,
-                           SVCPRG_RES_FILE,
+                           AEE_SVCPRGAPP_RES_FILE,
                            IDS_CMD_CANCEL,
                            IDS_CMD_CANCEL,
                            NULL,
@@ -1102,13 +1106,13 @@ static boolean CSvcPrg_Ask_Save_IP(IDialog      *pd,
 
    if (pItem->cfgItem == CFGI_DNS_IP1) {
       (void) ITEXTCTL_SetTitle(pt,
-                               SVCPRG_RES_FILE,
+                               AEE_SVCPRGAPP_RES_FILE,
                                IDS_DNS1,
                                NULL);
    }
    else {
       (void) ITEXTCTL_SetTitle(pt,
-                               SVCPRG_RES_FILE,
+                               AEE_SVCPRGAPP_RES_FILE,
                                IDS_DNS2,
                                NULL);
    }
@@ -1226,7 +1230,7 @@ static boolean CSvcPrg_OnCommand_IP_Continue(CSvcPrgApp   *pMe,
    }
    
    (void) ITEXTCTL_SetTitle(pt,
-                            SVCPRG_RES_FILE,
+                            AEE_SVCPRGAPP_RES_FILE,
                             titleId,
                             NULL);
 
@@ -1296,13 +1300,13 @@ static boolean CSvcPrg_OnCommand_Edit(IDialog      *pd,
 
    (void) IMENUCTL_DeleteAll(pm);
    (void) IMENUCTL_AddItem(pm, 
-                           SVCPRG_RES_FILE,
+                           AEE_SVCPRGAPP_RES_FILE,
                            IDS_CMD_SAVE,
                            IDS_CMD_SAVE,
                            NULL,
                            (uint32) pItem);
    (void) IMENUCTL_AddItem(pm, 
-                           SVCPRG_RES_FILE,
+                           AEE_SVCPRGAPP_RES_FILE,
                            IDS_CMD_CANCEL,
                            IDS_CMD_CANCEL,
                            NULL,
@@ -1651,7 +1655,7 @@ static boolean CSvcPrg_OnCommand_SID_OK(CSvcPrgApp      *pMe,
    }
 
    (void) ITEXTCTL_SetTitle(pt,
-                            SVCPRG_RES_FILE,
+                            AEE_SVCPRGAPP_RES_FILE,
                             IDS_EDIT_NID,
                             NULL);
 
@@ -1660,14 +1664,14 @@ static boolean CSvcPrg_OnCommand_SID_OK(CSvcPrgApp      *pMe,
    (void) IMENUCTL_DeleteAll(pm);
 
    (void) IMENUCTL_AddItem(pm, 
-                           SVCPRG_RES_FILE,
+                           AEE_SVCPRGAPP_RES_FILE,
                            IDS_CMD_NID_OK,
                            IDS_CMD_NID_OK,
                            NULL,
                            (uint32) pItem);
 
    (void) IMENUCTL_AddItem(pm, 
-                           SVCPRG_RES_FILE,
+                           AEE_SVCPRGAPP_RES_FILE,
                            IDS_CMD_NID_CANCEL,
                            IDS_CMD_NID_CANCEL,
                            NULL,
@@ -1877,7 +1881,7 @@ static boolean CSvcPrg_OnSidNidItemSelect(CSvcPrgApp   *pMe,
    }
 
    (void) ITEXTCTL_SetTitle(pt,
-                            SVCPRG_RES_FILE,
+                            AEE_SVCPRGAPP_RES_FILE,
                             IDS_EDIT_SID,
                             NULL);
 
@@ -1886,14 +1890,14 @@ static boolean CSvcPrg_OnSidNidItemSelect(CSvcPrgApp   *pMe,
    (void) IMENUCTL_DeleteAll(pm);
 
    (void) IMENUCTL_AddItem(pm, 
-                           SVCPRG_RES_FILE,
+                           AEE_SVCPRGAPP_RES_FILE,
                            IDS_CMD_SID_OK,
                            IDS_CMD_SID_OK,
                            NULL,
                            (uint32) pItem);
 
    (void) IMENUCTL_AddItem(pm, 
-                           SVCPRG_RES_FILE,
+                           AEE_SVCPRGAPP_RES_FILE,
                            IDS_CMD_CANCEL,
                            IDS_CMD_CANCEL,
                            NULL,
@@ -2805,19 +2809,19 @@ static boolean CSvcPrg_DisplayItem(CSvcPrgApp      *pMe,
          return FALSE;
       }
       (void) ITEXTCTL_SetTitle(pt,
-                               SVCPRG_RES_FILE,
+                               AEE_SVCPRGAPP_RES_FILE,
                                item->title,
                                NULL);
       (void) ITEXTCTL_SetText(pt, NULL, -1);
       if (item->itemType == DT_AKEY) {
         (void) IMENUCTL_AddItem(pm, 
-                                SVCPRG_RES_FILE,
+                                AEE_SVCPRGAPP_RES_FILE,
                                 IDS_CMD_AKEY,
                                 IDS_CMD_AKEY,
                                 NULL,
                                 (uint32) item);
 		(void) IMENUCTL_AddItem(pm, 
-                                 SVCPRG_RES_FILE,
+                                 AEE_SVCPRGAPP_RES_FILE,
                                  IDS_CMD_CANCEL,
                                  IDS_CMD_CANCEL,
                                  NULL,
@@ -2829,13 +2833,13 @@ static boolean CSvcPrg_DisplayItem(CSvcPrgApp      *pMe,
 		
 	
         (void) IMENUCTL_AddItem(pm, 
-                                SVCPRG_RES_FILE,
+                                AEE_SVCPRGAPP_RES_FILE,
                                 IDS_CMD_OK,
                                 IDS_CMD_OK,
                                 NULL,
                                 (uint32) item);
 	    (void) IMENUCTL_AddItem(pm, 
-                                 SVCPRG_RES_FILE,
+                                 AEE_SVCPRGAPP_RES_FILE,
                                  IDS_CMD_NID_CANCEL,
                                  IDS_CMD_NID_CANCEL,
                                  NULL,
@@ -2846,14 +2850,14 @@ static boolean CSvcPrg_DisplayItem(CSvcPrgApp      *pMe,
       if ((item->itemType != DT_AKEY) && (item->isEditable)) {
          if (item->itemType == DT_IP) {
             (void) IMENUCTL_AddItem(pm, 
-                                    SVCPRG_RES_FILE,
+                                    AEE_SVCPRGAPP_RES_FILE,
                                     IDS_CMD_IP_EDIT,
                                     IDS_CMD_IP_EDIT,
                                     NULL,
                                     (uint32) item);
          } else {
             (void) IMENUCTL_AddItem(pm, 
-                                    SVCPRG_RES_FILE,
+                                    AEE_SVCPRGAPP_RES_FILE,
                                     IDS_CMD_EDIT,
                                     IDS_CMD_EDIT,
                                     NULL,
@@ -2919,14 +2923,14 @@ static boolean CSvcPrg_DisplayItem(CSvcPrgApp      *pMe,
          }
          #if 0
          (void) IMENUCTL_SetTitle(pm, 
-                                  SVCPRG_RES_FILE, 
+                                  AEE_SVCPRGAPP_RES_FILE, 
                                   item->title,
                                   NULL);
 		 #else
 		  {
 		  		AECHAR WTitle[40] = {0};
 				(void)ISHELL_LoadResString(pMe->a.m_pIShell,
-                        SVCPRG_RES_FILE,                                
+                        AEE_SVCPRGAPP_RES_FILE,                                
                         item->title,
                         WTitle,
                         sizeof(WTitle));
@@ -2943,7 +2947,7 @@ static boolean CSvcPrg_DisplayItem(CSvcPrgApp      *pMe,
          ASSERT(m != NULL);
          for (;;) {
             (void) IMENUCTL_AddItem(pm, 
-                                    SVCPRG_RES_FILE,
+                                    AEE_SVCPRGAPP_RES_FILE,
                                     m->title,
                                     m->title,
                                     NULL,
@@ -2987,14 +2991,14 @@ static boolean CSvcPrg_DisplayItem(CSvcPrgApp      *pMe,
          }
          #if 0
          (void) IMENUCTL_SetTitle(pm, 
-                                  SVCPRG_RES_FILE, 
+                                  AEE_SVCPRGAPP_RES_FILE, 
                                   item->title,
                                   NULL);
 		 #else
 		  {
 		  		AECHAR WTitle[40] = {0};
 				(void)ISHELL_LoadResString(pMe->a.m_pIShell,
-                        SVCPRG_RES_FILE,                                
+                        AEE_SVCPRGAPP_RES_FILE,                                
                         item->title,
                         WTitle,
                         sizeof(WTitle));
@@ -3009,14 +3013,14 @@ static boolean CSvcPrg_DisplayItem(CSvcPrgApp      *pMe,
          ASSERT(item->isEditable);  
 
          (void) IMENUCTL_AddItem(pm, 
-                                 SVCPRG_RES_FILE,
+                                 AEE_SVCPRGAPP_RES_FILE,
                                  IDS_CMD_YES,
                                  IDS_CMD_YES,
                                  NULL,
                                  (uint32) item);
 
          (void) IMENUCTL_AddItem(pm, 
-                                 SVCPRG_RES_FILE,
+                                 AEE_SVCPRGAPP_RES_FILE,
                                  IDS_CMD_NO,
                                  IDS_CMD_NO,
                                  NULL,
@@ -3049,14 +3053,14 @@ static boolean CSvcPrg_DisplayItem(CSvcPrgApp      *pMe,
          }
          #if 0
          (void) IMENUCTL_SetTitle(pm, 
-                                  SVCPRG_RES_FILE, 
+                                  AEE_SVCPRGAPP_RES_FILE, 
                                   item->title,
                                   NULL);
 		 #else
 		  {
 		  		AECHAR WTitle[40] = {0};
 				(void)ISHELL_LoadResString(pMe->a.m_pIShell,
-                        SVCPRG_RES_FILE,                                
+                        AEE_SVCPRGAPP_RES_FILE,                                
                         item->title,
                         WTitle,
                         sizeof(WTitle));
@@ -3080,7 +3084,7 @@ static boolean CSvcPrg_DisplayItem(CSvcPrgApp      *pMe,
               r->resId != 0 || r->value != 0; 
               r++) {
             (void) IMENUCTL_AddItem(pm, 
-                                    SVCPRG_RES_FILE,
+                                    AEE_SVCPRGAPP_RES_FILE,
                                     r->resId,
                                     RANGE_ITEMID_FLAG | r->value,
                                     NULL,
@@ -3128,14 +3132,14 @@ static boolean CSvcPrg_DisplayItem(CSvcPrgApp      *pMe,
          }
 		  #if 0
          (void) IMENUCTL_SetTitle(pm, 
-                                  SVCPRG_RES_FILE, 
+                                  AEE_SVCPRGAPP_RES_FILE, 
                                   item->title,
                                   NULL);
 		  #else
 		  {
 		  		AECHAR WTitle[40] = {0};
 				(void)ISHELL_LoadResString(pMe->a.m_pIShell,
-                        SVCPRG_RES_FILE,                                
+                        AEE_SVCPRGAPP_RES_FILE,                                
                         item->title,
                         WTitle,
                         sizeof(WTitle));
@@ -3544,7 +3548,7 @@ DESCRIPTION:  Creates a new dialog
 
 PARAMETERS:
    *pMe: CSvcPrgApp object pointer 
-   dlgId: dialog Id defined in the SVCPRG_RES_FILE resource file.
+   dlgId: dialog Id defined in the AEE_SVCPRGAPP_RES_FILE resource file.
 
 RETURN VALUE:
     IDialog *: IDialog interface to the newly created dialog
@@ -3576,7 +3580,7 @@ static IDialog *CSvcPrg_CreateDialog(CSvcPrgApp *pMe, uint16 dlgId)
 
 
    if (SUCCESS != ISHELL_CreateDialog(pMe->a.m_pIShell, 
-                                      SVCPRG_RES_FILE,
+                                      AEE_SVCPRGAPP_RES_FILE,
                                       dlgId,
                                       NULL) ) {
       return NULL;
@@ -3705,7 +3709,7 @@ static boolean CSvcPrg_DisplaySecCodeDialog(CSvcPrgApp *pMe)
    {
        AECHAR WTitle[40] = {0};
        (void)ISHELL_LoadResString(pMe->a.m_pIShell,
-               SVCPRG_RES_FILE,                                
+               AEE_SVCPRGAPP_RES_FILE,                                
                IDS_ENTER_SECCODE,
                WTitle,
                sizeof(WTitle));
@@ -3718,13 +3722,13 @@ static boolean CSvcPrg_DisplaySecCodeDialog(CSvcPrgApp *pMe)
    (void) IMENUCTL_DeleteAll(pm);
 
    (void) IMENUCTL_AddItem(pm,
-                           SVCPRG_RES_FILE,
+                           AEE_SVCPRGAPP_RES_FILE,
                            IDS_CMD_SECCODE_OK,
                            IDS_CMD_SECCODE_OK,
                            NULL,
                            0);
     (void) IMENUCTL_AddItem(pm,
-                           SVCPRG_RES_FILE,
+                           AEE_SVCPRGAPP_RES_FILE,
                            IDS_CMD_CANCEL,
                            IDS_CMD_CANCEL,
                            NULL,
@@ -3747,7 +3751,7 @@ DESCRIPTION:  Display a message to the user in a dialog
 
 PARAMETERS:
    *pMe: CSvcPrgApp object pointer 
-   msgId:  string resource from the SVCPRG_RES_FILE resource file
+   msgId:  string resource from the AEE_SVCPRGAPP_RES_FILE resource file
 
 RETURN VALUE:
    boolean:  TRUE if successful
@@ -3915,7 +3919,7 @@ DESCRIPTION:  Display a message to the user _without_ a dialog
 
 PARAMETERS:
    *pMe: CSvcPrgApp object pointer 
-   msgId:  string resource from the SVCPRG_RES_FILE resource file
+   msgId:  string resource from the AEE_SVCPRGAPP_RES_FILE resource file
 
 RETURN VALUE:
    None
@@ -3945,7 +3949,7 @@ static void CSvcPrg_DisplayTextMsg(CSvcPrgApp *pMe, uint16 resId)
 
    wText[0] = (AECHAR) 0;
    (void) ISHELL_LoadResString(pMe->a.m_pIShell,
-                               SVCPRG_RES_FILE,
+                               AEE_SVCPRGAPP_RES_FILE,
                                resId,
                                wText,
                                sizeof(wText));
