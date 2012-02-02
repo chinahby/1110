@@ -171,14 +171,7 @@ when       who     what, where, why
 /* Default PRL version number to be used for default PRL's. Note the a PRL
 ** that is read from NV might use this value as well.
 */
-
-#ifdef FEATURE_VERSION_W208S
-#define PRL_DEFAULT_VER 3002
-#else
 #define PRL_DEFAULT_VER 0
-#endif
-
-
 
 /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

@@ -7748,12 +7748,14 @@ static int OEMPriv_GetItem_CFGI_IMSI_S(void *pBuff)
    imsi_s[1] = '0' + (char) ( (min2 / 10) % 10);
    imsi_s[2] = '0' + (char) (min2 % 10);
 
+
    nvi.min1.nam = (byte) CM_NAM_1;
    if (NV_DONE_S != OEMNV_Get(NV_MIN1_I, &nvi)) {
       return EFAILED;
    }
 
    OEMPriv_MIN1_TO_STR(nvi.min1.min1[CDMAMIN], &imsi_s[3]);
+
 
    STR_TO_WSTR(imsi_s,
                (AECHAR *) pBuff,
@@ -7786,6 +7788,23 @@ static int OEMPriv_SetItem_CFGI_IMSI_S(void *pBuff)
       }
       imsi++;
    }
+
+//Add By zzg 2012_02_02
+#ifdef FEATURE_VERSION_W208S
+	{
+		AECHAR  wstrPrefix1[]={(AECHAR)'1',(AECHAR)'5', (AECHAR)'8', 0};
+		AECHAR  wstrPrefix2[]={(AECHAR)'1',(AECHAR)'9', (AECHAR)'9', 0};
+	
+		imsi = (AECHAR *) pBuff;
+
+		if ((WSTRNCMP(imsi, wstrPrefix1, 3) != 0)
+			&& (WSTRNCMP(imsi, wstrPrefix2, 3) != 0))
+	    {
+	        return EFAILED;
+	    }	    
+	}	
+#endif
+//Add End
 
    //
    // Encode the first three digits (IS-95A 6.3.1.1)

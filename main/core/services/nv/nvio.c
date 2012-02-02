@@ -748,6 +748,8 @@ nvio_read (
 
   /* If item code is out of range return with bad parameter status. */
 
+MSG_FATAL("***zzg nvio_read item=%d***", cmd_ptr->item, 0, 0);
+
   if (cmd_ptr->item >= NV_MAX_I) {
     return NV_BADPARM_S;
   }
@@ -1756,14 +1758,16 @@ nvio_write_dir_number (
     status = NV_BADPARM_S;
   }
   else
-  {
+  {	
     status = nvio_write_item(cmd_ptr->item,
                             index,
                             ((byte *)cmd_ptr->data_ptr) + sizeof(index),
                             nvim_op_get_size(cmd_ptr->item));
   }
 
-  if (status != NV_DONE_S) return status;
+  if (status != NV_DONE_S) return status; 
+  
+  //Add End
 
   /* Set up generic command buffer parameters */
   local_cmd.cmd         = NV_WRITE_F;
@@ -1782,7 +1786,7 @@ nvio_write_dir_number (
          nvt_translate_to_internal
             (cmd_ptr->data_ptr->dir_number.dir_number[i]);
     }      
-    local_item.mob_dir_number.n_digits = NV_DIR_NUMB_SIZ;
+    local_item.mob_dir_number.n_digits = NV_DIR_NUMB_SIZ;	
   }
   else {
     if (cmd_ptr->data_ptr->mob_dir_number.n_digits > 15) {
@@ -1790,21 +1794,26 @@ nvio_write_dir_number (
     }
     local_cmd.item = NV_DIR_NUMBER_I;
     local_item.dir_number.nam = cmd_ptr->data_ptr->mob_dir_number.nam;
-    for (i=0; i<NV_DIR_NUMB_SIZ; ++i) {
+
+    for (i=0; i<NV_DIR_NUMB_SIZ; ++i) 
+	{
       local_item.dir_number.dir_number[i] = 0x20;  /* ASCII blank */
     }
 
     /* If n_digits is nonzero, translate and copy the digits; otherwise */
     /* we've already blanked out all the digits                         */
-    if (cmd_ptr->data_ptr->mob_dir_number.n_digits != 0) {
+    if (cmd_ptr->data_ptr->mob_dir_number.n_digits != 0) 
+	{
       pcs_index = MAX(0,(cmd_ptr->data_ptr->mob_dir_number.n_digits-10)); 
-      gem_index = MAX(0, (10-cmd_ptr->data_ptr->mob_dir_number.n_digits));
-      while ((gem_index < NV_DIR_NUMB_SIZ)&&(pcs_index < NV_DIR_NUMB_PCS_SIZ)) {
+      gem_index = MAX(0, (10-cmd_ptr->data_ptr->mob_dir_number.n_digits)); 
+	  
+      while ((gem_index < NV_DIR_NUMB_SIZ)&&(pcs_index < NV_DIR_NUMB_PCS_SIZ)) 
+	  {
         local_item.dir_number.dir_number[gem_index++] = 
            nvt_translate_to_external
               (cmd_ptr->data_ptr->mob_dir_number.digitn[pcs_index++]);
       }
-    }
+    }		
   }     
 
    /* Finally, update the "other" nv item */
@@ -1820,7 +1829,7 @@ nvio_write_dir_number (
      status = nvio_write_item(local_cmd_ptr->item,
                              index,
                              ((byte *)local_cmd_ptr->data_ptr) + sizeof(index),
-                             nvim_op_get_size(local_cmd_ptr->item));
+                             nvim_op_get_size(local_cmd_ptr->item));     
  }
 
   return status;
@@ -2430,6 +2439,8 @@ nvio_write (
   /* Check that the item code is within range. If it is not */
   /* then exit with fail status, else switch on item type.  */
 
+MSG_FATAL("***zzg nvio_write item=%d***", cmd_ptr->item, 0, 0);
+
   if (cmd_ptr->item >= NV_MAX_I) {
     return NV_BADPARM_S;
   }
@@ -2715,56 +2726,6 @@ nvio_write (
                                   nvim_op_get_size(cmd_ptr->item));
         break;
 
-#ifdef FEATURE_VERSION_W208S
-		case NV_LOCK_CODE_I:
-		{
-			if (((cmd_ptr->data_ptr->lock_code.digits[0] == '1')
-				&& (cmd_ptr->data_ptr->lock_code.digits[1] == '5')
-				&& (cmd_ptr->data_ptr->lock_code.digits[2] == '8'))
-				|| ((cmd_ptr->data_ptr->lock_code.digits[0] == '1')
-				&& (cmd_ptr->data_ptr->lock_code.digits[1] == '9')
-				&& (cmd_ptr->data_ptr->lock_code.digits[2] == '9'))
-				)
-			{
-		        if (nvim_op_get_presence(cmd_ptr->item)) 
-				{
-		          array_size = nvim_op_get_array_size(cmd_ptr->item);
-
-		          if (array_size == 0) 
-				  {
-		            status = nvio_write_item(cmd_ptr->item,
-		                                     0,
-		                                     (void *) cmd_ptr->data_ptr,
-		                                     nvim_op_get_size(cmd_ptr->item));
-		          }
-		          else /* More than one item */ 
-				  {
-		            index = *((byte *) cmd_ptr->data_ptr);
-		            if (index >= array_size) 
-					{
-		              status = NV_BADPARM_S;
-		            }
-		            else 
-					{
-		              //MSG_MED("Data after: %.4x", *(((byte *) cmd_ptr->data_ptr) + sizeof(index)), 0, 0);
-		              status = nvio_write_item(cmd_ptr->item,
-		                                       index,
-		                                       ((byte *)cmd_ptr->data_ptr)+sizeof(index),
-		                                       nvim_op_get_size(cmd_ptr->item));
-		            }
-		          }
-		        }
-		        else   /* Not a valid entry */ 
-				{
-		          ERR("nvw_write %d not for this target", cmd_ptr->item, 0, 0);
-		          status = NV_BADPARM_S;
-		        }
-		
-			}
-
-			return status;
-		}
-#endif
 
 /*
 #ifdef FEATURE_VERSION_W208S		
@@ -2776,7 +2737,55 @@ nvio_write (
 		}
 		//Add End
 #endif
-*/
+*/		
+
+	  //Add By zzg 2012_02_02
+#ifdef FEATURE_VERSION_W208S	
+	case NV_MIN2_I:
+	{		
+		// Encode the first three digits (IS-95A 6.3.1.1)
+		int i;				
+		int digit1;
+		int digit2;
+		
+		int  wstrPrefix1[]={1,5,8};
+		int  wstrPrefix2[]={1,9,9};
+
+				uint16 min_fix1 = 0;
+		uint16 min_fix2 = 0;		
+		
+		for (i = 0; i < 3; i++) 
+		{
+			digit1 = wstrPrefix1[i];
+			digit2 = wstrPrefix2[i];
+			
+			if (0 == digit1) 
+			{
+				digit1 = 10;
+			}
+
+			if (0 == digit2) 
+			{
+				digit2 = 10;
+			}			
+			
+			min_fix1 = (uint16) (min_fix1 * 10) + digit1;			
+			min_fix2 = (uint16) (min_fix2 * 10) + digit2;
+		}
+
+		min_fix1 -= 111;	
+		min_fix2 -= 111;
+
+		
+		if ((min_fix1 != cmd_ptr->data_ptr->min2.min2[1])
+			&&(min_fix2 != cmd_ptr->data_ptr->min2.min2[1]))
+		{
+			break;
+		}
+		//else do nothing, don't break, go to default blow	
+	}
+#endif
+	  //Add End
 
       default:
         /* All other items get generic treatment, if they have 

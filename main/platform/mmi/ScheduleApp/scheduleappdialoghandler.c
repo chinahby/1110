@@ -4059,6 +4059,14 @@ _scheduleapp_event_edit_save_:
 
 					MSG_FATAL("***zzg today=%d, m_lEventDay=%d, m_lStartTime=%d***", pme->m_CalMgr.m_lToday, pme->m_CalMgr.m_lEventDay, pme->m_CalMgr.m_lStartTime);
 
+					//Add By zzg 2012_02_01
+					if (pme->m_CalMgr.m_lEventDay < pme->m_CalMgr.m_lToday)
+					{
+						CLOSE_DIALOG(DLGRET_FAILD)
+						return TRUE;
+					}
+					//Add End
+
                     if(pme->m_sports)
                     {
                         pme->m_CalMgr.m_CurMode     = walkmode[IMENUCTL_GetSel(pMode) - IDS_SPORTS_RUN];
@@ -4072,14 +4080,6 @@ _scheduleapp_event_edit_save_:
                     {
                         updateEvent( &pme->m_CalMgr);
                     }
-
-					//Add By zzg 2012_02_01
-					if (pme->m_CalMgr.m_lEventDay < pme->m_CalMgr.m_lToday)
-					{
-						CLOSE_DIALOG(DLGRET_FAILD)
-						return TRUE;
-					}
-					//Add End
 
                     if(  pme->m_CalMgr.m_dbOperationResult == SUCCESS)
                     {
