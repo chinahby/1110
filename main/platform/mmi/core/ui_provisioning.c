@@ -746,7 +746,7 @@ void ui_init_provisioning(cm_client_id_type cm_client_id)
             }
           }
           if (need_nv_save) {
-            (void) ui_put_nv( NV_SID_NID_LOCK_I, &nvi );
+            //(void) ui_put_nv( NV_SID_NID_LOCK_I, &nvi );
           }
 #endif /* TriMode */
       }
