@@ -1164,11 +1164,9 @@ typedef enum
 */
 typedef enum
 {
-#ifdef CUST_EDITION
-  AEET_PRIVACY_PREF_NONE = -1,
-#else
+
   AEET_PRIVACY_PREF_NONE = 0,
-#endif
+
   AEET_PRIVACY_PREF_STANDARD,
     /* Standard privacy */
 

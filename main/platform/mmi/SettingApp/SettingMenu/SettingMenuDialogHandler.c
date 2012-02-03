@@ -1334,18 +1334,18 @@ static boolean  HandleCallSettingSelDialogEvent(CSettingMenu *pMe,
                     else if(pMe->m_CallSettingSel == IDS_VOICE_PRIVACY)
                     {
 #ifdef FEATURE_ICM
-                        if(byte_return == AEECM_PRIVACY_PREF_ENHANCED)    //on
+                        if(byte_return == AEECM_PRIVACY_PREF_ENHANCED-1)    //on
 #else
-                        if(byte_return == AEET_PRIVACY_PREF_ENHANCED)    //on
+                        if(byte_return == AEET_PRIVACY_PREF_ENHANCED-1)    //on
 #endif
                         {
                             IMENUCTL_SetSel(pMenu, IDS_ENABLE);
                             SetMenuIcon(pMenu, IDS_ENABLE, TRUE);
                         }
 #ifdef FEATURE_ICM
-                        else if(byte_return == AEECM_PRIVACY_PREF_STANDARD || byte_return == AEECM_PRIVACY_PREF_NONE)                   //off
+                        else if(byte_return == (AEECM_PRIVACY_PREF_STANDARD-1) || byte_return == (AEECM_PRIVACY_PREF_NONE-1))                   //off
 #else
-                        else if(byte_return == AEET_PRIVACY_PREF_STANDARD || byte_return == AEET_PRIVACY_PREF_NONE)
+                        else if(byte_return == (AEET_PRIVACY_PREF_STANDARD-1) || byte_return == (AEET_PRIVACY_PREF_NONE-1))
 #endif
                         {
                             IMENUCTL_SetSel(pMenu, IDS_DISABLE);
@@ -1453,9 +1453,9 @@ static boolean  HandleCallSettingSelDialogEvent(CSettingMenu *pMe,
 
                        case IDS_VOICE_PRIVACY:     //voice privacy
 #ifdef FEATURE_ICM
-                            callset = AEECM_PRIVACY_PREF_STANDARD;
+                            callset = AEECM_PRIVACY_PREF_STANDARD-1;
 #else
-                            callset = AEET_PRIVACY_PREF_STANDARD;
+                            callset = AEET_PRIVACY_PREF_STANDARD-1;
 #endif							
                             ICONFIG_SetItem(pMe->m_pConfig,CFGI_VOICEPRIVACY,&callset,sizeof(callset));
                             CLOSE_DIALOG(DLGRET_WARNING)
@@ -1528,9 +1528,9 @@ static boolean  HandleCallSettingSelDialogEvent(CSettingMenu *pMe,
 
                         case IDS_VOICE_PRIVACY:     //voice privacy
 #ifdef FEATURE_ICM
-                            callset = AEECM_PRIVACY_PREF_ENHANCED;
+                            callset = AEECM_PRIVACY_PREF_ENHANCED-1;
 #else
-                            callset = AEET_PRIVACY_PREF_ENHANCED;
+                            callset = AEET_PRIVACY_PREF_ENHANCED-1;
 #endif							
                             ICONFIG_SetItem(pMe->m_pConfig,CFGI_VOICEPRIVACY,&callset,sizeof(callset));
                             CLOSE_DIALOG(DLGRET_WARNING)

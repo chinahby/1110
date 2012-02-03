@@ -490,11 +490,9 @@ typedef enum
 /* Note: Different from DMSS, require translation */
 typedef enum
 {
-#ifdef CUST_EDITION
-  AEECM_PRIVACY_PREF_NONE = -1,
-#else
+
   AEECM_PRIVACY_PREF_NONE = 0,
-#endif
+
   AEECM_PRIVACY_PREF_STANDARD,
     /* Standard privacy */
 

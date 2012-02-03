@@ -1054,9 +1054,11 @@ const AEEStaticClass ***OEMMod_GetStaticClassLists(void)
          {AEECLSID_FMRDS,0,0,NULL,OEMFMRDS_New},
 #endif
 #ifndef FEATURE_MANGO_BREW
-#if 0//ndef FEATURE_USES_LOWMEM
+#ifndef FEATURE_USES_LOWMEM
          {AEECLSID_ServingNetworks, (ASCF_UPGRADE), 0, NULL, CServingNetworks_New},
+#if 0
          {AEECLSID_GPSOneLock, ASCF_PRIV, 0, NULL, AEEGPSOneConfig_New},
+#endif
          {AEECLSID_MannerMode, ASCF_PRIV, 0, NULL, AEEMannerModeStore_New},
 #endif         
 #endif
