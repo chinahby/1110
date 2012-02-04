@@ -333,9 +333,18 @@ static const CCameraSize g_CameraSizeCFG_10[] =
     {176,220,L"176*220"}, // QCIF
     {240,320,L"240*320"}, // QVGA    
 #elif defined(FEATURE_DISP_176X220)
-    //{128,160,L"128*160"}, // FULL Screen
+//1110w516 siv121d
+#ifdef FEATURE_VERSION_W516
     {176,220,L"176*220"}, // QCIF
-    {320,240,L"320*240"}, // QVGA   
+    {320,240,L"320*240"}, // QVGA
+	{360,480,L"640*480"},
+#else
+    {176,220,L"176*220"}, // QCIF
+    {240,320,L"240*320"}, // QVGA
+#ifndef FEATURE_VERSION_VG68
+    {480,640,L"480*640"}, // VGA    
+#endif
+#endif     
 #elif defined(FEATURE_DISP_240X320)
     //{128,160,L"128*160"}, // FULL Screen
     //{176,220,L"176*220"}, // QCIF
@@ -378,6 +387,9 @@ static const CCameraSize g_VideoSizeCFG_10[] =
     //{144,176,L"144*176"}, // QCIF
     {128,160,L"128*160"}, // FULL Screen
     {144,176,L"144*176"}, // QCIF
+#ifdef FEATURE_VERSION_W516	
+    {320,240,L"320*240"}, // QCIF    
+#endif
 #elif defined(FEATURE_DISP_240X320)
 	//{128,160,L"128*160"}, // FULL Screen
     //{176,220,L"176*220"}, // QCIF
@@ -4283,6 +4295,8 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
 #ifdef FEATURE_MOVIE_RECORD_SUPPORT
 		if ( pMe->m_isRecordMode )
 		{
+			if(g_VideoSizeCFG_10[pMe->m_nCameraSize].dx==0)
+				pMe->m_nCameraSize=OEMNV_CAMERA_SIZE_INDEX_0;
 			captureSize.cx = g_VideoSizeCFG_10[pMe->m_nCameraSize].dx;
 	        captureSize.cy = g_VideoSizeCFG_10[pMe->m_nCameraSize].dy;
 #ifndef FEATURE_CAMERA_NOFULLSCREEN	        
