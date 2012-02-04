@@ -70,7 +70,7 @@ static int OEMFont_MeasureTextCursorPos(IFont *pMe, int x, const AECHAR *pcText,
 #elif defined(FEATURE_DISP_220X176) || defined(FEATURE_DISP_176X220)
 #define BIGNUMBER_FONT_SIZE 40 
 #define NORMAL_FONT_SIZE    20 
-#define LARGE_FONT_SIZE     24 
+#define LARGE_FONT_SIZE     28 
 #define SMALL_FONT_SIZE     4
 
 #else
@@ -220,7 +220,11 @@ static int OEMFont_QueryInterface(IFont *pMe, AEECLSID id, void **pvtbl)
     return (po != 0 ? SUCCESS : ECLASSNOTSUPPORT);
 }
 
+#define NEW_SIZE  17
+#define MATH_FACTOR_BIT         10
+#define SCALE_V_ONLY 
 
+//#include "err.h"
 static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, int nChars,
 	int x, int xMin, int xMax, int sy, int oy, int dy, NativeColor clrText, NativeColor clrBack,
 	boolean bTransparency, int *pOutWidth)
@@ -229,7 +233,7 @@ static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, i
     if(pMe->wSize != BIGNUMBER_FONT_SIZE)
     {
         AleFontMetrics fm;   //metics of the entrie string
-        int kmask, j, yend, sx, xend, i, xloop;
+        int kmask, j, yend, sx, xend, i, xloop,ii=0,jj=0;
         byte m,n;
         unsigned char *p;
         word *dp,*dbase;
@@ -238,9 +242,18 @@ static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, i
         word cText, cBack;
         uint32 bmp_offset = 0;
         AECHAR nCharsContent = 0;
-        AECHAR *pText = (AECHAR *)pcText;
+        AECHAR *pText = (AECHAR *)pcText,pTemp=NULL;
         int16 nRealSize = WSTRLEN(pcText);
-
+			   //第一步, 进行参数合法性检测
+		//宽度缩放比
+		uint32 fScalex =0;
+		uint32 fScaley =0;
+		//指向目标数据
+		uint16* pbyDst = NULL;
+		uint16* pbySrc = NULL;
+		uint32 xx=0,yy=0,xx_last=0;
+	//	uint16 Position[100] = {0};
+		
         if(nRealSize > nChars)
         {
             nCharsContent = *(pcText + nChars - 1 + 1);
@@ -256,9 +269,14 @@ static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, i
         getfont_info. FontBuffer = gFontDataBuffer;
         getfont_info. BufferRowByteTotal = SCREENBYTEWIDTH;
         getfont_info. BufferColumnByteTotal = SCREENHEIGHT;
-       
+        //getfont_info. CharPosition = Position;
+		
         //all the remain fields are unchanged
-        AleGetStringFont (&getfont_info, gAleWorkBuffer);
+        AleGetStringFont (&getfont_info, gAleWorkBuffer);		
+		
+		//MSG_FATAL("position %d %d %d",Position[0],Position[1],Position[2]);
+		//MSG_FATAL("position %d %d %d",Position[3],Position[4],Position[5]);
+		
         if(nRealSize > nChars)
         {
             pText[nChars] = nCharsContent;
@@ -277,6 +295,11 @@ static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, i
 #endif        
         pfont = gFontDataBuffer;
 
+		fScalex =(yend<<MATH_FACTOR_BIT) / NEW_SIZE;
+        fScaley =(yend<<MATH_FACTOR_BIT) / NEW_SIZE;
+#ifndef SCALE_V_ONLY			
+		xend = fScalex*NEW_SIZE/14;
+#endif
         if(x < xMin)
         {
             m = (xMin - x) / 8;
@@ -303,51 +326,80 @@ static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, i
             sx = x;
             xloop = xend;
         }
-
+		
         cText = (word)(clrText & 0xFFFF);
         cBack = (word)(clrBack & 0xFFFF);
         
         bmp_offset = sy*nPitch;
         dp = dbase = (word*)(pBmp + bmp_offset + (sx<<1));
-        
-        for ( j = 0; j < yend; j++ )
-        {
+		
+
+		//MSG_FATAL("xloop=%d bTransparency=%d EngCount=%d",xloop,bTransparency,EngCount);
+        for ( j = 0; j < NEW_SIZE; j++ )
+        {        	
+			yy = (j * fScaley)>>MATH_FACTOR_BIT;
+			
             if (bTransparency)
             {
-                for ( p = (unsigned char*) (pfont + m + oy*SCREENBYTEWIDTH + j*SCREENBYTEWIDTH), 
-                       dp = dbase + j*(nPitch>>1), kmask = (0x80>>n), i = 0;         i < xloop;         i++)
-                {
-                    if ( (*p) & kmask )
+                for ( xx=0,xx_last=0,p = (unsigned char*) (pfont + m + oy*SCREENBYTEWIDTH + yy*SCREENBYTEWIDTH), 
+                        dp = dbase + j*(nPitch>>1),kmask = (0x80>>n), i = 0;i < xloop;i++)
+                {    
+#ifdef SCALE_V_ONLY							
+					xx = i;
+#else						
+					xx = (i * fScalex)>>MATH_FACTOR_BIT;
+#endif
+					
+					if(xx_last!=xx)
+					{
+						xx_last=xx;
+	                    kmask >>= 1;
+					}
+					
+					if ( !(kmask) )
+                    {
+                        kmask = 0x80;
+                        p++;
+                    }
+					
+                    if ( (*p) & (kmask) )
                     {
                         *dp = cText;  //this pixel contains font
                     }
                     dp++;
-                    
-                    kmask >>= 1;
-                    if ( !kmask )
-                    {
-                        kmask = 0x80;
-                        p++;
-                    }
+
+
                 }
             }
             else
             {
-                for ( p = (unsigned char*) (pfont + m +  oy*SCREENBYTEWIDTH + j*SCREENBYTEWIDTH), 
-                         dp = dbase + j*(nPitch>>1), kmask = (0x80>>n), i = 0;        i < xloop;       i++)
+                for ( xx=0,xx_last=0,p = (unsigned char*) (pfont + m +  oy*SCREENBYTEWIDTH + yy*SCREENBYTEWIDTH), 
+					dp = dbase + j*(nPitch>>1),kmask = (0x80>>n), i = 0;i < xloop;i++)
                 {
-                    *dp++ = (*p & kmask)?(cText):(cBack);
-                    
-                    kmask >>= 1;
-                    if ( !kmask )
+                	
+#ifdef SCALE_V_ONLY							
+					xx = i;
+#else						
+					xx = (i * fScalex)>>MATH_FACTOR_BIT;
+#endif
+					if(xx_last!=xx)
+					{
+						xx_last=xx;
+	                    kmask >>= 1;
+					}
+					
+					if ( !(kmask) )
                     {
                         kmask = 0x80;
                         p++;
                     }
+					
+                    *dp++ = (*p & (kmask) )?(cText):(cBack);
+   
                 }
             }
         }
-
+		
         *pOutWidth = xloop;
         return;
     }
@@ -568,8 +620,8 @@ static int DrawTextEx(IFont *pMe, IBitmap *pDst, const AECHAR * pcText, int nCha
     boolean bTransparent, bUnderline;
     int sy, dy, oy;
     int dispWidth;
-    int result = SUCCESS;
-    
+    int result = SUCCESS;   
+	
     xMin = prcBackground->x;
     xMax = prcBackground->x + prcBackground->dx - 1;
     yMin = prcBackground->y;
@@ -640,6 +692,7 @@ static int DrawTextEx(IFont *pMe, IBitmap *pDst, const AECHAR * pcText, int nCha
          {
              return result;
          }
+		 
          DrawChar(pMe, pDIB->pBmp, pDIB->nPitch, pcText, nChars,
     	          x, xMin, xMax, sy, oy, dy, clrText, clrBack, bTransparent, &dispWidth);
          IDIB_Release(pDIB);
@@ -1239,7 +1292,11 @@ static void ArphicLineCursorMeasure (const AECHAR *pcText, int nChars,
       }
 
       //decide cursor's real position
-      *curx = xstart + cursorpos;
+#ifdef SCALE_V_ONLY      
+      *curx = (xstart + cursorpos);
+#else
+	  *curx = (xstart + cursorpos)*NEW_SIZE/14;
+#endif
       if ( *curx < 0 )
          *curx = 0;
       else if ( *curx >= xMax )
@@ -1283,8 +1340,11 @@ ArphicMeasureNChars(const AECHAR *pcText, int nChars)
 
     AleGetStringFont (&getfont_info, gAleWorkBuffer);
     pText[nChars] = nCharsContent;
-    
+#ifdef SCALE_V_ONLY    
     return ((fm.horiAdvance > 0)?(fm.horiAdvance):(0));
+#else
+	return ((fm.horiAdvance > 0)?(fm.horiAdvance*NEW_SIZE/14):(0));
+#endif
 }
 
 /*===========================================================================
