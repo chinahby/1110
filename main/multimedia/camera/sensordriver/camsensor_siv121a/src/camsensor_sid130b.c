@@ -1204,7 +1204,7 @@ boolean camsensor_SETi_SID130B_video_config
 	 	}
 	}
 
-	camera_timed_wait(1000); 
+	camera_timed_wait(10); 
       
 	camsensor_params->format 			= format_preview;
  	camsensor_params->discardFirstFrame =  TRUE;
