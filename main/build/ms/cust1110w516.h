@@ -20,6 +20,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_DRM_NO_BREW 
 //#define FEATURE_BT_SEND_FILE_ONLY		//Add By zzg 2010_11_03
 
+#define FEATURE_ENABLE_OTKSL
 #define BT_QSC1110//FEATURE_BT_QSC1100
 #define FEATURE_BT_QSOC_BTS4025_B2   //this is now we used  bluetooth  ÐÍºÅ
 //Add by zzg 2010_10_13

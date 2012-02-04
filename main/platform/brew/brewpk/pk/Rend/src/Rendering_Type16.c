@@ -1423,10 +1423,12 @@ static const PFNRENDDRAW g_PFNRendDraw[REND_MAX] =
     Fun_REND_MOVE_HORZ_IN,
     Fun_REND_MOVE_VERT_OUT,
     Fun_REND_MOVE_VERT_IN,
+    #ifndef FEATURE_VERSION_W516
     Fun_REND_FLY_HORZ_OUT,          //ª¨»Î
     Fun_REND_FLY_HORZ_IN,
     Fun_REND_FLY_VERT_OUT,
     Fun_REND_FLY_VERT_IN,
+    #endif
     Fun_REND_ROTAT_HORZ_OUT,        //–˝»Î
     Fun_REND_ROTAT_HORZ_IN,
     Fun_REND_ROTAT_VERT_OUT,

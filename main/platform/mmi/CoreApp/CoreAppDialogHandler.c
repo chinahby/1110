@@ -5682,6 +5682,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
         
     }
 #endif
+    MSG_FATAL("******pji*****rc.y=%d,rc.dy=%d",rc.y,rc.dy,0);
 	DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
 	                              pMe->m_pDisplay,
 	                              RGB_WHITE_NO_TRANS,

@@ -4561,8 +4561,10 @@ static boolean  HandleRENDMenuDialogEvent(CDisplayMenu *pMe,
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_EFFECT_SHOW_VERT, IDS_REND_EFFECT_SHOW_VERT, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_EFFECT_MOVE_HORZ, IDS_REND_EFFECT_MOVE_HORZ, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_EFFECT_MOVE_VERT, IDS_REND_EFFECT_MOVE_VERT, NULL, 0);
+            #ifndef FEATURE_VERSION_W516
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_EFFECT_FLY_HORZ, IDS_REND_EFFECT_FLY_HORZ, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_EFFECT_FLY_VERT, IDS_REND_EFFECT_FLY_VERT, NULL, 0);
+            #endif
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_EFFECT_ROTAT_HORZ, IDS_REND_EFFECT_ROTAT_HORZ, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_EFFECT_ROTAT_VERT, IDS_REND_EFFECT_ROTAT_VERT, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_EFFECT_BLINDS_VERT, IDS_REND_EFFECT_BLINDS_VERT, NULL, 0);
@@ -4588,12 +4590,14 @@ static boolean  HandleRENDMenuDialogEvent(CDisplayMenu *pMe,
             case DISPLAYREND_TYPE_MOVE_VERT:
                 SetMenuIcon(pMenu, IDS_REND_EFFECT_MOVE_VERT, TRUE);
                 break;
+            #ifndef FEATURE_VERSION_W516 
             case DISPLAYREND_TYPE_FLY_HORZ:
                 SetMenuIcon(pMenu, IDS_REND_EFFECT_FLY_HORZ, TRUE);
-                break;
+                break; 
             case DISPLAYREND_TYPE_FLY_VERT:
                 SetMenuIcon(pMenu, IDS_REND_EFFECT_FLY_VERT, TRUE);
                 break;
+            #endif    
             case DISPLAYREND_TYPE_ROTAT_HORZ:
                 SetMenuIcon(pMenu, IDS_REND_EFFECT_ROTAT_HORZ, TRUE);
                 break;
@@ -4670,12 +4674,14 @@ static boolean  HandleRENDMenuDialogEvent(CDisplayMenu *pMe,
             case IDS_REND_EFFECT_MOVE_VERT:
                 nOldRendState = DISPLAYREND_TYPE_MOVE_VERT;
                 break;
+            #ifndef FEATURE_VERSION_W516
             case IDS_REND_EFFECT_FLY_HORZ:
                 nOldRendState = DISPLAYREND_TYPE_FLY_HORZ;
                 break;
             case IDS_REND_EFFECT_FLY_VERT:
                 nOldRendState = DISPLAYREND_TYPE_FLY_VERT;
                 break;
+            #endif    
             case IDS_REND_EFFECT_ROTAT_HORZ:
                 nOldRendState = DISPLAYREND_TYPE_ROTAT_HORZ;
                 break;

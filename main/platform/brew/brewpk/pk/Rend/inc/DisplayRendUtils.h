@@ -7,8 +7,10 @@ typedef enum
     DISPLAYREND_TYPE_SHOW_VERT,     // 垂直显示
     DISPLAYREND_TYPE_MOVE_HORZ,     // 水平移动
     DISPLAYREND_TYPE_MOVE_VERT,     // 垂直移动
+    #ifndef FEATURE_VERSION_W516
     DISPLAYREND_TYPE_FLY_HORZ,      // 水平飞行
     DISPLAYREND_TYPE_FLY_VERT,      // 垂直飞行
+    #endif
     DISPLAYREND_TYPE_ROTAT_HORZ,    // 水平旋转
     DISPLAYREND_TYPE_ROTAT_VERT,    // 垂直旋转
     DISPLAYREND_TYPE_BLINDS_VERT,   // 垂直百叶窗
