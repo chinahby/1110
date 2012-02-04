@@ -185,6 +185,11 @@ static NextFSMAction WMSST_MSGCOPY_Handler(WmsApp *pMe);
 // WMSST_MSGVALIDITY  状态处理函数
 static NextFSMAction WMSST_MSGVALIDITY_Handler(WmsApp *pMe);
 
+//Add by zzg 2012_02_04 
+// WMSST_TIME_STAMP 状态处理函数
+static NextFSMAction WMSST_TIME_STAMP_Handler(WmsApp *pMe);
+
+
 // WMSST_AUTODELETE  状态处理函数
 static NextFSMAction WMSST_AUTODELETE_Handler(WmsApp *pMe);
 
@@ -452,6 +457,11 @@ NextFSMAction WmsApp_ProcessState(WmsApp *pMe)
 
         case WMSST_MSGVALIDITY:
             return WMSST_MSGVALIDITY_Handler(pMe);
+
+		//Add By zzg 2012_02_04
+		case WMSST_TIME_STAMP:
+            return WMSST_TIME_STAMP_Handler(pMe);
+		//Add End
             
         case WMSST_AUTODELETE:
             return WMSST_AUTODELETE_Handler(pMe);
@@ -3590,8 +3600,25 @@ static NextFSMAction WMSST_SENDING_Handler(WmsApp *pMe)
             {
                 uint32  dwSecs;
                 wms_cache_info_node  *pnode = NULL;
+				
+				byte	btTimeStamp = 0;
+			    
+				(void) ICONFIG_GetItem(pMe->m_pConfig,
+			                           CFGI_SMS_TIMESTAMP,
+			                           &btTimeStamp,
+			                           sizeof(btTimeStamp));
+
+				if (btTimeStamp == OEMNV_SMS_TIMESTAMP_ADJUST)
+				{
+					dwSecs = GETUTCSECONDS();
+					MSG_FATAL("***zzg GETUTCSECONDS 9 dwSecs=%d***", dwSecs, 0, 0);
+				}
+				else
+				{
+					dwSecs = GETTIMESECONDS();
+					MSG_FATAL("***zzg GETTIMESECONDS 9 dwSecs=%d***", dwSecs, 0, 0);
+				}   	                
                 
-                dwSecs = GETTIMESECONDS();
                 wms_cacheinfolist_enumbegin(WMS_MB_RESERVE);
                 pnode = wms_cacheinfolist_enumnext(WMS_MB_RESERVE);
                 if (NULL != pnode)
@@ -4522,6 +4549,12 @@ static NextFSMAction WMSST_MSGSETTING_Handler(WmsApp *pMe)
         case DLGRET_MSGVALIDITY:
             MOVE_TO_STATE(WMSST_MSGVALIDITY)
             return NFSMACTION_CONTINUE;
+
+		//Add By zzg 2012_02_04
+		case DLGRET_TIME_STAMP:
+            MOVE_TO_STATE(WMSST_TIME_STAMP)
+            return NFSMACTION_CONTINUE;
+		//Add End
             
         case DLGRET_AUTODELETE:
             MOVE_TO_STATE(WMSST_AUTODELETE)
@@ -5036,8 +5069,25 @@ static NextFSMAction WMSST_RESERVEDMSGOPT_Handler(WmsApp *pMe)
                 if(pMe->m_eDlgReturn == DLGRET_SEND)
                 {
                     uint32 dwTime;
+					
+					byte	btTimeStamp = 0;
+				    
+					(void) ICONFIG_GetItem(pMe->m_pConfig,
+				                           CFGI_SMS_TIMESTAMP,
+				                           &btTimeStamp,
+				                           sizeof(btTimeStamp));
 
-                    dwTime = GETTIMESECONDS();
+					if (btTimeStamp == OEMNV_SMS_TIMESTAMP_ADJUST)
+					{
+						dwTime = GETUTCSECONDS();
+						MSG_FATAL("***zzg GETUTCSECONDS 10 dwSecs=%d***", dwTime, 0, 0);
+					}
+					else
+					{
+						dwTime = GETTIMESECONDS();
+						MSG_FATAL("***zzg GETTIMESECONDS 10 dwSecs=%d***", dwTime, 0, 0);
+					}  
+					
                     pMe->m_msCur.m_dwTime = dwTime;
                 }
                 
@@ -5815,6 +5865,55 @@ static NextFSMAction WMSST_MSGVALIDITY_Handler(WmsApp *pMe)
             return NFSMACTION_CONTINUE;
     }
 } // WMSST_MSGVALIDITY_Handler
+
+//Add By zzg 2012_02_04
+/*==============================================================================
+函数:
+    WMSST_TIME_STAMP_Handler
+
+说明:
+    WMSST_TIME_STAMP 状态处理函数。
+    
+参数:
+    pMe [in]: 指向WMS Applet对象结构的指针。该结构包含小程序的特定信息。
+
+返回值:
+    NFSMACTION_CONTINUE: 指示不停状态机。
+    NFSMACTION_WAIT: 指示停止状态机。
+
+备注:
+
+==============================================================================*/
+static NextFSMAction WMSST_TIME_STAMP_Handler(WmsApp *pMe)
+{
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+
+    switch (pMe->m_eDlgReturn)
+    {
+        case DLGRET_CREATE:
+            WmsApp_ShowDialog(pMe, IDD_TIME_STAMP);
+            return NFSMACTION_WAIT;
+
+        case DLGRET_CANCELED:
+        case DLGRET_MSGBOX_OK:
+            MOVE_TO_STATE(WMSST_MSGSETTING)
+            return NFSMACTION_CONTINUE;
+            
+        case DLGRET_OK:
+            pMe->m_ePMsgType = MESSAGE_INFORMATIVE;
+            WmsApp_ShowMsgBox(pMe, IDS_SAVED);
+            return NFSMACTION_WAIT;
+            
+        default:
+            // 用退出程序代替宏断言
+            MOVE_TO_STATE(WMSST_EXIT)
+            return NFSMACTION_CONTINUE;
+    }
+} 
+//Add End
 
 /*==============================================================================
 函数:

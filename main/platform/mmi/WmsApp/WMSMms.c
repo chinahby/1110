@@ -865,7 +865,40 @@ static int MMS_Encode_header(uint8* mms_context,int nType,MMS_WSP_ENCODE_SEND* p
                 return 0;
 
 	        //X-Mms-Transaction-ID
-        	GetJulianDate(GETTIMESECONDS(), &juDateTime);
+	        {
+				IConfig *pConfig = NULL;				
+				uint32  dwSecs;   
+				byte	btTimeStamp = 0;
+			    
+				if (ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_CONFIG,(void **)&pConfig) != SUCCESS)
+			    {
+			    	MSG_FATAL("***zzg MMS_Encode_header Create AEECLSID_CONFIG faidled***", 0, 0, 0);
+			        RELEASEIF(pConfig);
+			        return 0;
+			    }
+
+				(void) ICONFIG_GetItem(pConfig,
+			                           CFGI_SMS_TIMESTAMP,
+			                           &btTimeStamp,
+			                           sizeof(btTimeStamp));
+
+				if (btTimeStamp == OEMNV_SMS_TIMESTAMP_ADJUST)
+				{
+					dwSecs = GETUTCSECONDS();
+					MSG_FATAL("***zzg GETUTCSECONDS 9 dwSecs=%d***", dwSecs, 0, 0);
+				}
+				else
+				{
+					dwSecs = GETTIMESECONDS();
+					MSG_FATAL("***zzg GETTIMESECONDS 9 dwSecs=%d***", dwSecs, 0, 0);
+				}   	            
+
+				RELEASEIF(pConfig);
+
+				//GetJulianDate(GETTIMESECONDS(), &juDateTime);		
+				GetJulianDate(dwSecs, &juDateTime);	
+			}        	
+			
         	SNPRINTF(szDataTime,
         	    sizeof(szDataTime) - 1,
         	    "%2.2d:%2.2d %2.2d/%2.2d/%4.4d",

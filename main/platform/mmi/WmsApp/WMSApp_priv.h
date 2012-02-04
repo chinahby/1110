@@ -522,6 +522,11 @@ typedef enum WMSAPPState
     
     // 消息有效期设置
     WMSST_MSGVALIDITY, 
+
+	//Add By zzg 2012_02_04
+	//时间戳
+	WMSST_TIME_STAMP,
+	//Add End
     
     // 消息优先级设置
     WMSST_PRIORITY,
@@ -637,6 +642,7 @@ typedef enum DLGRetValue
    DLGRET_SENDMODE,
    DLGRET_STORAGE,
    DLGRET_MSGVALIDITY,
+   DLGRET_TIME_STAMP,	//Add By zzg 2012_02_04
    DLGRET_EDITCALLREJECTSMS,
    DLGRET_AUTODELETE,
    DLGRET_RESERVEDMSGALERTTIMEOUT,

@@ -5281,13 +5281,35 @@ wms_client_message_s_type *WmsApp_GetClientMsgMO(WmsApp *pMe, boolean bSend)
     
     // 时间戳
     {
-        uint32 sec = GETTIMESECONDS();
+    	uint32	sec = 0;
+    	byte	btTimeStamp = 0;
+		
+    	(void) ICONFIG_GetItem(pMe->m_pConfig,
+	                           CFGI_SMS_TIMESTAMP,
+	                           &btTimeStamp,
+	                           sizeof(btTimeStamp));
+
+		if (btTimeStamp == OEMNV_SMS_TIMESTAMP_ADJUST)
+		{
+			sec = GETUTCSECONDS();
+			MSG_FATAL("***zzg GETUTCSECONDS 1 sec=%d***", sec, 0, 0);
+		}
+		else
+		{
+			sec = GETTIMESECONDS();
+			MSG_FATAL("***zzg GETTIMESECONDS 1 sec=%d***", sec, 0, 0);
+		}				
+
+		MSG_FATAL("***zzg GETUTCSECONDS 1 m_eCreateWMSType=%d, dwSecs=%d***", pMe->m_eCreateWMSType, pMe->m_rsvDateTime.dwSecs, 0);
         
         if ((pMe->m_eCreateWMSType == SEND_MSG_RESERVE) ||
             (pMe->m_eCreateWMSType == SEND_MSG_EDITRESERVE))
         {
             sec = pMe->m_rsvDateTime.dwSecs;
         }
+
+		MSG_FATAL("***zzg GETUTCSECONDS 1 final_sec=%d***", sec, 0, 0);
+		
         ConvertMStoMcTime(sec, &pCltTsData->u.cdma.mc_time);
     }
     pCltTsData->u.cdma.mask |= WMS_MASK_BD_MC_TIME;
@@ -6545,8 +6567,24 @@ static void WmsApp_ReservedMsgStatusUpdate(WmsApp * pMe)
 #endif    
     uint32  dwSecs;
     wms_cache_info_node  *pnode = NULL;
-    
-    dwSecs = GETTIMESECONDS();
+	
+	byte	btTimeStamp = 0;
+	
+	(void) ICONFIG_GetItem(pMe->m_pConfig,
+                           CFGI_SMS_TIMESTAMP,
+                           &btTimeStamp,
+                           sizeof(btTimeStamp));
+
+	if (btTimeStamp == OEMNV_SMS_TIMESTAMP_ADJUST)
+	{
+		dwSecs = GETUTCSECONDS();
+		MSG_FATAL("***zzg GETUTCSECONDS 2 dwSecs=%d***", dwSecs, 0, 0);
+	}
+	else
+	{
+		dwSecs = GETTIMESECONDS();
+		MSG_FATAL("***zzg GETTIMESECONDS 2 dwSecs=%d***", dwSecs, 0, 0);
+	}    
     
     wms_cacheinfolist_enumbegin(WMS_MB_RESERVE);
     pnode = wms_cacheinfolist_enumnext(WMS_MB_RESERVE);
@@ -6678,10 +6716,26 @@ static void WmsApp_ReservedMsgTimer(void * pUser)
 void WmsApp_ReservedMsgSetTimer(WmsApp * pMe)
 {
     uint32  dwSecs;
+	byte	btTimeStamp = 0;
     wms_cache_info_node  *pnode = NULL;
     
     AEE_CancelTimer(WmsApp_ReservedMsgTimer, pMe);
-    dwSecs = GETTIMESECONDS();
+	
+	(void) ICONFIG_GetItem(pMe->m_pConfig,
+                           CFGI_SMS_TIMESTAMP,
+                           &btTimeStamp,
+                           sizeof(btTimeStamp));
+
+	if (btTimeStamp == OEMNV_SMS_TIMESTAMP_ADJUST)
+	{
+		dwSecs = GETUTCSECONDS();
+		MSG_FATAL("***zzg GETUTCSECONDS 3 dwSecs=%d***", dwSecs, 0, 0);
+	}
+	else
+	{
+		dwSecs = GETTIMESECONDS();
+		MSG_FATAL("***zzg GETTIMESECONDS 3 dwSecs=%d***", dwSecs, 0, 0);
+	}    
     
     // 检查预约短信列表, 对于过期的短信需修改其标记
     WmsApp_ReservedMsgStatusUpdate(pMe);

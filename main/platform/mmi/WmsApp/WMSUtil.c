@@ -152,6 +152,8 @@ void WMSUtil_SecsToDateString(WmsApp* pMe,uint32 dwTime, AECHAR *pBuf, int nSize
     byte            btDateFmt = 0;
 #endif /* FEATURE_TIME_DATA_SETTING */    
     DBGPRINTF("WMSUtil_SecsToDateString Start");
+	DBGPRINTF("***zzg WMSUtil_SecsToDateString Start dwTime=%d", dwTime);
+	
     if ((NULL == pMe) || (NULL == pBuf) || (0 == nSize))
     {
         return;
@@ -2088,7 +2090,24 @@ wms_client_message_s_type *WmsApp_PackPhrase(WmsApp *pMe,
         
         // Ê±¼ä´Á
         {
-            uint32 sec = GETTIMESECONDS();
+        	uint32	sec = 0;					
+			byte	btTimeStamp = 0;
+		    
+			(void) ICONFIG_GetItem(pMe->m_pConfig,
+		                           CFGI_SMS_TIMESTAMP,
+		                           &btTimeStamp,
+		                           sizeof(btTimeStamp));
+
+			if (btTimeStamp == OEMNV_SMS_TIMESTAMP_ADJUST)
+			{
+				sec = GETUTCSECONDS();
+				MSG_FATAL("***zzg GETUTCSECONDS 11 dwSecs=%d***", sec, 0, 0);
+			}
+			else
+			{
+				sec = GETTIMESECONDS();
+				MSG_FATAL("***zzg GETTIMESECONDS 11 dwSecs=%d***", sec, 0, 0);
+			}  
             
             ConvertMStoMcTime(sec, &pCltTsData->u.cdma.mc_time);
         }

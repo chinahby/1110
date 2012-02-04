@@ -574,49 +574,49 @@
 	<String Id="1012" Name="IDS_STR_FLASHSMS">
 		<Text>Flash sms</Text>
 	</String>
-	<String Id="1013" Name="IDS_INSERT_PICTURE" Encoding="Unicode">
+	<String Id="1013" Name="IDS_INSERT_PICTURE">
 		<Text>Insert picture</Text>
 	</String>
-	<String Id="1014" Name="IDS_FROM_PICTURES" Encoding="Unicode">
+	<String Id="1014" Name="IDS_FROM_PICTURES">
 		<Text>From pictures</Text>
 	</String>
-	<String Id="1015" Name="IDS_NEW_PHOTO" Encoding="Unicode">
+	<String Id="1015" Name="IDS_NEW_PHOTO">
 		<Text>New photo</Text>
 	</String>
-	<String Id="1016" Name="IDS_INSERT_VIDEO" Encoding="Unicode">
+	<String Id="1016" Name="IDS_INSERT_VIDEO">
 		<Text>Insert video</Text>
 	</String>
-	<String Id="1017" Name="IDS_FROM_MOVIES" Encoding="Unicode">
+	<String Id="1017" Name="IDS_FROM_MOVIES">
 		<Text>From movies</Text>
 	</String>
-	<String Id="1018" Name="IDS_NEW_VIDEO" Encoding="Unicode">
+	<String Id="1018" Name="IDS_NEW_VIDEO">
 		<Text>New video</Text>
 	</String>
-	<String Id="1019" Name="IDS_INSERT_SOUND" Encoding="Unicode">
+	<String Id="1019" Name="IDS_INSERT_SOUND">
 		<Text>Insert sound</Text>
 	</String>
-	<String Id="1020" Name="IDS_FROM_MUSIC" Encoding="Unicode">
+	<String Id="1020" Name="IDS_FROM_MUSIC">
 		<Text>From music</Text>
 	</String>
-	<String Id="1021" Name="IDS_NEW_SOUND" Encoding="Unicode">
+	<String Id="1021" Name="IDS_NEW_SOUND">
 		<Text>New sound</Text>
 	</String>
-	<String Id="1022" Name="IDS_INSERT_FILE" Encoding="Unicode">
+	<String Id="1022" Name="IDS_INSERT_FILE">
 		<Text>Insert file</Text>
 	</String>
-	<String Id="1023" Name="IDS_REMOVE_PICTURE" Encoding="Unicode">
+	<String Id="1023" Name="IDS_REMOVE_PICTURE">
 		<Text>Remove picture</Text>
 	</String>
-	<String Id="1024" Name="IDS_REMOVE_VIDEO" Encoding="Unicode">
+	<String Id="1024" Name="IDS_REMOVE_VIDEO">
 		<Text>Remove video</Text>
 	</String>
-	<String Id="1025" Name="IDS_REMOVE_SOUND" Encoding="Unicode">
+	<String Id="1025" Name="IDS_REMOVE_SOUND">
 		<Text>Remove Sound</Text>
 	</String>
-	<String Id="1026" Name="IDS_OUTBOX_MMS" Encoding="Unicode">
+	<String Id="1026" Name="IDS_OUTBOX_MMS">
 		<Text>Outbox  MMS</Text>
 	</String>
-	<String Id="1027" Name="IDS_INBOX_MMS" Encoding="Unicode">
+	<String Id="1027" Name="IDS_INBOX_MMS">
 		<Text>Inbox  MMS</Text>
 	</String>
 	<STRING Id="1028" Name="IDS_MMSNOTIFY">
@@ -634,23 +634,32 @@
 	<String Id="1032" Name="IDS_REPORTALLOWED">
 		<Text>MMS Report Allowed</Text>
 	</String>
-	<String Id="1033" Name="IDS_GETTINGFROM" Encoding="Unicode">
+	<String Id="1033" Name="IDS_GETTINGFROM">
 		<Text>Receiving...</Text>
 	</String>
-	<String Id="1034" Name="IDS_MMS_SIZE_TOO_BIG" Encoding="Unicode">
+	<String Id="1034" Name="IDS_MMS_SIZE_TOO_BIG">
 		<Text>Size of MMS too large</Text>
 	</String>
-	<String Id="1035" Name="IDS_SAVE_CURRENT_ITEM" Encoding="Unicode">
+	<String Id="1035" Name="IDS_SAVE_CURRENT_ITEM">
 		<Text>Save the current item</Text>
 	</String>
-	<String Id="1036" Name="IDS_INSERT_NEW_PICTURE" Encoding="Unicode">
+	<String Id="1036" Name="IDS_INSERT_NEW_PICTURE">
 		<Text>Insert new picture</Text>
 	</String>
-	<String Id="1037" Name="IDS_DRAFT_MMS" Encoding="Unicode">
+	<String Id="1037" Name="IDS_DRAFT_MMS">
 		<Text>Draft mms</Text>
 	</String>
-	<String Id="1038" Name="IDS_SEND_TO_ALBUM_OR_EMAIL" Encoding="Unicode">
+	<String Id="1038" Name="IDS_SEND_TO_ALBUM_OR_EMAIL">
 		<Text>Send to album or email</Text>
+	</String>
+	<String Id="1039" Name="IDS_TIME_STAMP">
+		<Text>Time Stamp</Text>
+	</String>
+	<String Id="1040" Name="IDS_TIME_STAMP_ADJUST">
+		<Text>Adjust Time</Text>
+	</String>
+	<String Id="1041" Name="IDS_TIME_STAMP_ASRECEIVED">
+		<Text>As Received</Text>
 	</String>
 </Strings>
 <Dialogs>
@@ -1005,6 +1014,13 @@
 	</DIALOG>
 	<Dialog Id="6050" Name="IDD_GETTING" Focus="0">
 		<Controls/>
+	</Dialog>
+	<Dialog Id="6051" Name="IDD_TIME_STAMP" Focus="0">
+		<Controls>
+			<Menu Id="7042" Name="IDC_TIME_STAMP_MENU">
+				<Items/>
+			</Menu>
+		</Controls>
 	</Dialog>
 </Dialogs>
 </BREWRes>

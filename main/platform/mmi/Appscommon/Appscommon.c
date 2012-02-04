@@ -1316,9 +1316,7 @@ void DrawBottomBg(IDisplay  * pIDisplay)
 
 	AEEDeviceInfo devinfo;
     int nBarH = GetBottomBarHeight(pIDisplay);    
-
-	MSG_FATAL("***zzg DrawBottomBg***",0,0,0);
-	    
+	
     if ((NULL == pShell) || (NULL == pIDisplay))
     {
         return;
@@ -1394,11 +1392,7 @@ void DrawBottomText(IDisplay  * pIDisplay,	char* pText, int type)
 
 	AEEDeviceInfo devinfo;
     int nBarH = GetBottomBarHeight(pIDisplay);
-    
-
-	MSG_FATAL("***zzg DrawBottomText***",0,0,0);
-
-	    
+    	    
     if ((NULL == pShell) || (NULL == pIDisplay))
     {
         return;

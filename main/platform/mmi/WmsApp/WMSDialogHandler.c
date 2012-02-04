@@ -301,6 +301,14 @@ static boolean IDD_MESSAGEVALIDITY_Handler(void   *pUser,
     uint32 dwParam
 );
 
+//Add By zzg 2012_02_04
+static boolean IDD_TIME_STAMP_Handler(void   *pUser,
+    AEEEvent eCode,
+    uint16 wParam, 
+    uint32 dwParam
+);
+//Add End
+
 static boolean IDD_SENDING_Handler(void *pUser,
     AEEEvent eCode,
     uint16 wParam, 
@@ -740,6 +748,12 @@ void WmsApp_SetDialogHandler(WmsApp *pMe)
         case IDD_MESSAGEVALIDITY:
             pMe->m_pDialogHandler = IDD_MESSAGEVALIDITY_Handler;
             break;
+
+		//Add By zzg 2012_02_04
+		case IDD_TIME_STAMP:
+            pMe->m_pDialogHandler = IDD_TIME_STAMP_Handler;
+            break;
+		//Add End
             
         case IDD_SENDING:
             pMe->m_pDialogHandler = IDD_SENDING_Handler;
@@ -3409,6 +3423,7 @@ static boolean IDD_SETTING_Handler(void   *pUser,
 
             // 菜单项初始化
             MENU_ADDITEM(pMenu, IDS_MSGVALIDITY);
+			MENU_ADDITEM(pMenu, IDS_TIME_STAMP);	//Add By zzg 2012_02_04
 #if (!defined FEATURE_CARRIER_TAIWAN_APBW) && (!defined FEATURE_CARRIER_THAILAND_HUTCH)
             MENU_ADDITEM(pMenu, IDS_REPORTTITLE); //IDS_DELIVERYREPORTS);
 #endif            
@@ -3531,6 +3546,12 @@ static boolean IDD_SETTING_Handler(void   *pUser,
                 case IDS_MSGVALIDITY:
                     CLOSE_DIALOG(DLGRET_MSGVALIDITY)
                     return TRUE;
+
+				//Add By zzg 2012_02_04
+				case IDS_TIME_STAMP:
+                    CLOSE_DIALOG(DLGRET_TIME_STAMP)
+                    return TRUE;
+				//Add End
                     
                 // 收到短信时，若设定空间满是否自动删除已读消息腾出空间
                 case IDS_AUTODELETE:
@@ -3840,7 +3861,27 @@ static boolean IDD_GETDT_Handler(void   *pUser,
             // 获取日期间
             if (pMe->m_rsvDateTime.dwSecs == 0)
             {
-                pMe->m_rsvDateTime.dwSecs = GETTIMESECONDS();
+            	uint32  dwSecs;
+				byte	btTimeStamp = 0;
+			    
+				(void) ICONFIG_GetItem(pMe->m_pConfig,
+			                           CFGI_SMS_TIMESTAMP,
+			                           &btTimeStamp,
+			                           sizeof(btTimeStamp));
+
+				if (btTimeStamp == OEMNV_SMS_TIMESTAMP_ADJUST)
+				{
+					dwSecs = GETUTCSECONDS();
+					MSG_FATAL("***zzg GETUTCSECONDS 4 dwSecs=%d***", dwSecs, 0, 0);
+				}
+				else
+				{
+					dwSecs = GETTIMESECONDS();
+					MSG_FATAL("***zzg GETTIMESECONDS 4 dwSecs=%d***", dwSecs, 0, 0);
+				}   
+	
+                pMe->m_rsvDateTime.dwSecs = dwSecs;	
+				
             }
             {
                 JulianType jtdate;
@@ -3945,8 +3986,29 @@ static boolean IDD_GETDT_Handler(void   *pUser,
                     JulianType  jtdate;
                     uint32      nRet = 0;
                     char        strTep[5] = {0};
+
+
+					uint32  dwSecs;
+					byte	btTimeStamp = 0;
+				    
+					(void) ICONFIG_GetItem(pMe->m_pConfig,
+				                           CFGI_SMS_TIMESTAMP,
+				                           &btTimeStamp,
+				                           sizeof(btTimeStamp));
+
+					if (btTimeStamp == OEMNV_SMS_TIMESTAMP_ADJUST)
+					{
+						dwSecs = GETUTCSECONDS();
+						MSG_FATAL("***zzg GETUTCSECONDS 5 dwSecs=%d***", dwSecs, 0, 0);
+					}
+					else
+					{
+						dwSecs = GETTIMESECONDS();
+						MSG_FATAL("***zzg GETTIMESECONDS 5 dwSecs=%d***", dwSecs, 0, 0);
+					}   
                     
-                    GETJULIANDATE(GETTIMESECONDS(), &jtdate);
+                    //GETJULIANDATE(GETTIMESECONDS(), &jtdate);
+                    GETJULIANDATE(dwSecs, &jtdate);
                     
                     (void)WSTRTOSTR(pMe->m_rsvDateTime.wstrYear, strTep, sizeof(strTep));
                     nRet = STRTOUL(strTep, NULL, 10);
@@ -4235,14 +4297,38 @@ static boolean IDD_GETDT_Handler(void   *pUser,
                         jtdate.wMinute = STRTOUL(strTep, NULL, 10);
                         
                         pMe->m_rsvDateTime.dwSecs = JULIANTOSECONDS(&jtdate);
-                        if (pMe->m_rsvDateTime.dwSecs < GETTIMESECONDS() + 5)
-                        {
-                            CLOSE_DIALOG(DLGRET_DATEERR)
-                        }
-                        else
-                        {
-                            CLOSE_DIALOG(DLGRET_OK)
-                        }
+
+						{
+							uint32  dwSecs;
+							byte	btTimeStamp = 0;
+						    
+							(void) ICONFIG_GetItem(pMe->m_pConfig,
+						                           CFGI_SMS_TIMESTAMP,
+						                           &btTimeStamp,
+						                           sizeof(btTimeStamp));
+
+							if (btTimeStamp == OEMNV_SMS_TIMESTAMP_ADJUST)
+							{
+								dwSecs = GETUTCSECONDS();
+								MSG_FATAL("***zzg GETUTCSECONDS 6 dwSecs=%d***", dwSecs, 0, 0);
+							}
+							else
+							{
+								dwSecs = GETTIMESECONDS();
+								MSG_FATAL("***zzg GETTIMESECONDS 6 dwSecs=%d***", dwSecs, 0, 0);
+							}   
+						
+						
+	                        //if (pMe->m_rsvDateTime.dwSecs < GETTIMESECONDS() + 5)
+	                        if (pMe->m_rsvDateTime.dwSecs < dwSecs + 5)
+	                        {
+	                            CLOSE_DIALOG(DLGRET_DATEERR)
+	                        }
+	                        else
+	                        {
+	                            CLOSE_DIALOG(DLGRET_OK)
+	                        }
+						}
                     }
                     return TRUE;
   
@@ -7018,6 +7104,176 @@ static boolean IDD_MESSAGEVALIDITY_Handler(void   *pUser,
 
     return FALSE;
 } // IDD_MESSAGEVALIDITY_Handler
+
+
+//Add By zzg 2012_02_04
+/*==============================================================================
+函数:
+    IDD_TIME_STAMP_Handler
+
+说明:
+    WMS Applet对话框 IDD_TIME_STAMP 事件处理函数。
+    
+参数:
+    pUser [in]: 指向WMS Applet对象结构的指针。该结构包含小程序的特定信息。
+    eCode [in]: 事件代码。
+    wParam[in]: 事件参数
+    dwParam [in]: 与事件关联的数据。
+
+返回值:
+    TRUE:  传入事件得到处理。
+    FALSE: 传入事件没被处理。
+
+备注:
+
+==============================================================================*/
+static boolean IDD_TIME_STAMP_Handler(void   *pUser,
+    AEEEvent eCode,
+    uint16   wParam,
+    uint32   dwParam
+)
+{
+    IMenuCtl *pMenu = NULL;
+    WmsApp *pMe = (WmsApp *)pUser;
+
+    if (NULL == pMe)
+    {
+        return FALSE;
+    }
+
+    pMenu = (IMenuCtl* )IDIALOG_GetControl(pMe->m_pActiveIDlg, IDC_TIME_STAMP_MENU);
+    if (pMenu == NULL)
+    {
+        return FALSE;
+    }
+
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT:
+            //SetControlRect(pMe,pMenu);
+            //add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_WMSAPPRES_LANGFILE,                                
+                        IDS_TIME_STAMP,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
+            MENU_SETBOTTOMBAR(pMenu, BTBAR_SELECT_BACK);
+            
+            // 菜单项初始化
+            MENU_ADDITEM(pMenu, IDS_TIME_STAMP_ADJUST);
+            MENU_ADDITEM(pMenu, IDS_TIME_STAMP_ASRECEIVED);
+
+            return TRUE;
+
+        case EVT_DIALOG_START:
+            (void) ISHELL_PostEventEx(pMe->m_pShell, 
+                                    EVTFLG_ASYNC,
+                                    AEECLSID_WMSAPP,
+                                    EVT_USER_REDRAW,
+                                    0, 
+                                    0);
+                                    
+            InitMenuIcons(pMenu);
+            {// 需根据具体配置选择相应菜单项
+                uint16 nSelID = IDS_TIME_STAMP_ASRECEIVED;
+                byte   btTimeStamp = OEMNV_SMS_TIMESTAMP_ASRECEIVED;
+                
+                (void) ICONFIG_GetItem(pMe->m_pConfig,
+                                       CFGI_SMS_TIMESTAMP,
+                                       &btTimeStamp,
+                                       sizeof(btTimeStamp));
+                
+                switch (btTimeStamp)
+                {
+                    case OEMNV_SMS_TIMESTAMP_ADJUST:
+                        nSelID = IDS_TIME_STAMP_ADJUST;
+                        break;
+                        
+                    case OEMNV_SMS_TIMESTAMP_ASRECEIVED:
+                        nSelID = IDS_TIME_STAMP_ASRECEIVED;
+                        break;                       
+                    
+                    default:
+                        nSelID = IDS_TIME_STAMP_ASRECEIVED;
+                        break;
+                }
+                IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
+                IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
+#ifdef FEATURE_CARRIER_CHINA_VERTU
+                IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MESSAGE_BACKGROUND);
+#endif
+                InitMenuIcons(pMenu);
+                SetMenuIcon(pMenu, nSelID, TRUE);
+                IMENUCTL_SetSel(pMenu, nSelID);
+            }
+            return TRUE;
+
+        case EVT_USER_REDRAW:
+            // 绘制底条提示
+            // Select       Back
+            //DRAW_BOTTOMBAR(BTBAR_SELECT_BACK)
+            
+            // 更新界面
+            //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+            //(void)IMENUCTL_Redraw(pMenu);    //dele by yangdecai
+            return TRUE;
+
+        case EVT_DIALOG_END:
+            return TRUE;
+
+        case EVT_KEY:
+            switch (wParam)
+            {
+                case AVK_CLR:
+                    CLOSE_DIALOG(DLGRET_CANCELED)
+                    return TRUE;
+  
+                default:
+                    break;
+            }
+            return TRUE;
+
+        case EVT_COMMAND:
+            {
+                byte   btTimeStamp = OEMNV_SMS_TIMESTAMP_ASRECEIVED;
+                
+                switch (wParam)
+                {
+                    case IDS_TIME_STAMP_ADJUST:
+                        btTimeStamp = OEMNV_SMS_TIMESTAMP_ADJUST;
+                        break;
+                        
+                    case IDS_TIME_STAMP_ASRECEIVED:
+                        btTimeStamp = OEMNV_SMS_TIMESTAMP_ASRECEIVED;
+                        break;
+                                            
+                    default:
+                        return TRUE;
+                }
+                InitMenuIcons(pMenu);
+                SetMenuIcon(pMenu, wParam, TRUE);
+                (void) ICONFIG_SetItem(pMe->m_pConfig,
+                                       CFGI_SMS_TIMESTAMP,
+                                       &btTimeStamp,
+                                       sizeof(btTimeStamp));
+            }
+            
+            CLOSE_DIALOG(DLGRET_OK)
+            return TRUE;
+
+        default:
+            break;
+    }
+
+    return FALSE;
+} 
+//Add End
+
+
 #ifdef FEATURE_USES_MMS
     /*==============================================================================
     函数:
@@ -14309,9 +14565,30 @@ static boolean IDD_MSGBOX_Handler(void *pUser,
                                             pMe->m_wMsgResID,
                                             wstrTep,
                                             sizeof(wstrTep));
-                                            
-                            GETJULIANDATE(GETTIMESECONDS(), &jtdate);
-                            WSPRINTF(wstrText, sizeof(wstrText), wstrTep, jtdate.wYear);
+                            {
+								int32  dwSecs;
+								byte	btTimeStamp = 0;
+							    
+								(void) ICONFIG_GetItem(pMe->m_pConfig,
+							                           CFGI_SMS_TIMESTAMP,
+							                           &btTimeStamp,
+							                           sizeof(btTimeStamp));
+
+								if (btTimeStamp == OEMNV_SMS_TIMESTAMP_ADJUST)
+								{
+									dwSecs = GETUTCSECONDS();
+									MSG_FATAL("***zzg GETUTCSECONDS 7 dwSecs=%d***", dwSecs, 0, 0);
+								}
+								else
+								{
+									dwSecs = GETTIMESECONDS();
+									MSG_FATAL("***zzg GETTIMESECONDS 7 dwSecs=%d***", dwSecs, 0, 0);
+								}   							               
+							
+	                            //GETJULIANDATE(GETTIMESECONDS(), &jtdate);
+	                            GETJULIANDATE(dwSecs, &jtdate);
+	                            WSPRINTF(wstrText, sizeof(wstrText), wstrTep, jtdate.wYear);
+							}
                         }
                         break;
 
