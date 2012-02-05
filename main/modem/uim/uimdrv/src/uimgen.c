@@ -2308,7 +2308,7 @@ boolean uim_process_generic_command
 
     case UIM_INTERNAL_POLL_F:           /* Internal command to Poll */
       {
-        MSG_FATAL( "Received internal Poll command ", 0, 0, 0 );
+        MSG_MED( "Received internal Poll command ", 0, 0, 0 );
         /* Build the Internal Poll list of states. */
         uim_generic_states[0] = UIM_STATUS_ST;
         uim_generic_states[1] = UIM_DONE_ST;
@@ -3062,7 +3062,7 @@ boolean uim_process_generic_command
 
     case UIM_ENVELOPE_F:                /* Send an envelope command */
       {
-        MSG_FATAL( "Received Envelope command ", 0, 0, 0 );
+        MSG_MED( "Received Envelope command ", 0, 0, 0 );
 
         /* Build the Envelope list of states. */
         uim_generic_states[0] = UIM_ENVELOPE_ST;
@@ -3074,7 +3074,7 @@ boolean uim_process_generic_command
 
     case UIM_INTERNAL_FETCH_F:          /* Fetch a proactive command */
       {
-        MSG_FATAL( "Received Internal Fetch command ", 0, 0, 0 );
+        MSG_MED( "Received Internal Fetch command ", 0, 0, 0 );
 
         /* Build the Fetch list of states. */
         uim_generic_states[0] = UIM_FETCH_ST;
@@ -4628,7 +4628,7 @@ void uim_process_generic_response
 
           /* Report to requesting task */
           (*(cmd_ptr->hdr.rpt_function))( &uim_rpt_buf );
-          MSG_FATAL( "Reporting result for Envelope", 0, 0, 0 );
+          MSG_MED( "Reporting result for Envelope", 0, 0, 0 );
         } /* end if - is the report function defined. */
       } /* end case - UIM_ENVELOPE_F */
       break;
@@ -5839,7 +5839,7 @@ void uim_generic_command
         uim_req_buf_ptr->rsp_ptr = uim_rsp_buf_ptr;
 
         uim_req_buf_ptr->rpt_function = uim_command_response_callback;
-        MSG_FATAL( "UIM_STATUS_ST", 0, 0, 0);
+
         uim_send_command(uim_req_buf_ptr );
 
       }
@@ -7590,7 +7590,7 @@ void uim_generic_command
 
   } /* end of main switch */
 
-  MSG_FATAL("UIM state in uim_command %ld",*uim_generic_state_ptr, 0,0);
+  MSG_LOW("UIM state in uim_command %ld",*uim_generic_state_ptr, 0,0);
 
 } /* uim_generic_command */
 
@@ -7715,9 +7715,9 @@ uim_cmd_status_type uim_generic_command_response
     ERR_FATAL("uim_generic_command_response cmd is NULL",0,0,0);
   }
 
-  MSG_FATAL("SW1 0x%x,SW2 0x%x, status %d",
+  MSG_HIGH("SW1 0x%x,SW2 0x%x, status %d",
            rsp_ptr->sw1, rsp_ptr->sw2, rsp_ptr->cmd_status);
-  MSG_FATAL("generic_state %d, uim_reselect_mf %d",
+  MSG_HIGH("generic_state %d, uim_reselect_mf %d",
            *(uim_generic_state_ptr), uim_reselect_mf,0);
 
   if ((*uim_generic_state_ptr != UIM_POWER_UP_ST) &&
@@ -7806,7 +7806,6 @@ uim_cmd_status_type uim_generic_command_response
   }
 
 #ifdef FEATURE_UIM_TOOLKIT
-  MSG_FATAL("FEATURE_UIM_TOOLKIT %d",uim_mode,0,0);
   /* Change fetch responses to normal end responses only if we are not in
    * passive mode.  In passive mode, it is the client's responsibility
    * to do a fetch based on the status words reported
@@ -7832,7 +7831,6 @@ uim_cmd_status_type uim_generic_command_response
     /* If the command is completed, indicate there is a proactive command
        pending. */
     completed_status = UIM_CMD_FETCH;
-    MSG_FATAL("UIM_CMD_FETCH 0x%X",uim_rpt_buf.sw2,0,0);
 
     /* Set the protocol for the Internal FETCH command based on the last
        successful command */
@@ -9745,7 +9743,7 @@ uim_cmd_status_type uim_generic_command_response
               return(UIM_POLL_ERROR);
             }
 #else
-            MSG_FATAL("Polling failed while uim_mode is %d, ignoring",
+            MSG_ERROR("Polling failed while uim_mode is %d, ignoring",
                       uim_mode,0,0);
             /* Internal poll command failed for some odd reason
              * let us continue instead of comparing data with the

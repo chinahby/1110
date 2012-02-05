@@ -4597,7 +4597,7 @@ void uim_send_command
 #error code not present
 #endif /* FEATURE_UIM_USB_UICC */
 
-  MSG_FATAL( "uim_send_command %d", uim_current_protocol, 0, 0 );
+  MSG_LOW( "uim_send_command", 0, 0, 0 );
 
   /* Reset the error counts */
   uim_parity_error_count = 0;
