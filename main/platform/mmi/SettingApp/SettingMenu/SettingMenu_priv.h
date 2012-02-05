@@ -143,6 +143,12 @@ typedef enum DLGRetValue
     ,DLGRET_SEARCHMODE
     ,DLGRET_TIMEFONTMODE
     #endif
+#ifdef FEATURE_VERSION_W208S
+    ,DLGRET_SMSRESTRICT
+    ,DLGRET_SMSRESTRICT_SEND
+    ,DLGRET_SMSRESTRICT_RECEIVE
+    ,DLGRET_SMSRESTRICT_RECEIVE_ADD
+#endif
 
 } DLGRet_Value_e_Type;
 
@@ -201,6 +207,12 @@ typedef enum _SettingMenuState
 #ifdef FEATURE_VERSION_MYANMAR
    ,SEARCHMENUST_MODE
    ,TIMEFONTMENUST_MODE
+#endif
+#ifdef FEATURE_VERSION_W208S
+   ,SETTINGMENUST_SMSRESTRICT
+   ,SETTINGMENUST_SMSRESTRICT_SEND
+   ,SETTINGMENUST_SMSRESTRICT_RECEIVE
+   ,SETTINGMENUST_SMSRESTRICT_RECEIVE_ADD
 #endif
 } SettingMenuState;
 
@@ -328,6 +340,10 @@ typedef struct _CSettingMenu
 	AEERect pR_Rect1;
 	AEERect pR_Rect2;
 	#endif
+#ifdef FEATURE_VERSION_W208S    
+    sms_restrict_recive_info		sms_restrict_reciveList[MAX_SMS_RESTRICT];
+    IMenuCtl                        *m_pMenu;
+#endif
 } CSettingMenu;
 
 /*==============================================================================

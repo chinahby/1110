@@ -280,6 +280,21 @@
 	<STRING Id="1093" Name="IDS_AUTOPOWER_WARNING">
 		<Text>เปิด/ปิด อัตโนมัติ เวลาเดียวกัน!</Text>
 	</STRING>
+	<String Id="1094" Name="IDS_SMS_RESTRICT">
+		<Text>SMS restrict</Text>
+	</String>
+	<String Id="1095" Name="IDS_SMS_RESTRICT_SEND">
+		<Text>Restrict send</Text>
+	</String>
+	<String Id="1096" Name="IDS_SMS_RESTRICT_RECEIVE">
+		<Text>Restrict receive</Text>
+	</String>
+	<String Id="1097" Name="IDS_ADD">
+		<Text>Add</Text>
+	</String>
+	<String Id="1098" Name="IDS_DELETE">
+		<Text>Delete</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="7001">
@@ -431,5 +446,25 @@
 			</Menu>
 		</Controls>
 	</DIALOG>
+	<Dialog Id="6022" Name="IDD_SMS_RESTRICT" Focus="7016">
+		<Controls>
+			<Menu Id="7016" Name="IDC_SMS_RESTRICT">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6023" Name="IDD_SMS_RESTRICT_RECEIVE" Focus="7017">
+		<Controls>
+			<Menu Id="7017" Name="IDC_SMS_RESTRICT_RECEIVE">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6024" Name="IDD_SMS_RESTRICT_RECEIVE_ADD" Focus="0">
+		<Controls>
+			<Text Id="7021" Name="IDC_TEXT_SMS_RESTRICT_RECEIVE">
+				<Items/></Text>
+		</Controls>
+	</Dialog>
 </Dialogs>
 </BREWRes>

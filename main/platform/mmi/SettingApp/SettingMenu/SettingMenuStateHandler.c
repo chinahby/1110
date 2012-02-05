@@ -131,6 +131,13 @@ static NextFSMAction Sound_StateAutoAnswerSubHandler(CSettingMenu *pMe);
 static NextFSMAction SettingMenu_StatePlaneModeHandler(CSettingMenu *pMe);
 #endif
 
+#ifdef FEATURE_VERSION_W208S
+// 状态 SMSRestrictHandler 处理函数
+static NextFSMAction SettingMenu_StateSMSRestrictHandler(CSettingMenu *pMe);
+static NextFSMAction SettingMenu_StateSMSRestrictReceiveHandler(CSettingMenu *pMe);
+static NextFSMAction SettingMenu_StateSMSRestrictReceiveADDHandler(CSettingMenu *pMe);
+#endif
+
 /*==============================================================================
                                  全局数据
 ==============================================================================*/
@@ -320,7 +327,20 @@ NextFSMAction SettingMenu_ProcessState(CSettingMenu *pMe)
          case SETTINGMENUST_FMMODE:
         	retVal = SettingMenuMenu_StateFMmodeHandler(pMe);
         	break;
-            
+
+#ifdef FEATURE_VERSION_W208S
+        case SETTINGMENUST_SMSRESTRICT:
+            retVal = SettingMenu_StateSMSRestrictHandler(pMe);
+            break;
+
+        case SETTINGMENUST_SMSRESTRICT_RECEIVE:
+            retVal = SettingMenu_StateSMSRestrictReceiveHandler(pMe);
+            break;       
+
+        case SETTINGMENUST_SMSRESTRICT_RECEIVE_ADD:
+            retVal = SettingMenu_StateSMSRestrictReceiveADDHandler(pMe);
+            break;             
+#endif            
         default:
             ASSERT_NOT_REACHABLE;
     }
@@ -424,6 +444,12 @@ static NextFSMAction SettingMenu_StateMainHandler(CSettingMenu *pMe)
         case DLGRET_CALLSETTING:
             MOVE_TO_STATE(SETTINGMENUST_CALLSETTING)
             return NFSMACTION_CONTINUE;
+
+#ifdef FEATURE_VERSION_W208S
+      case DLGRET_SMSRESTRICT:
+          MOVE_TO_STATE(SETTINGMENUST_SMSRESTRICT)
+          return NFSMACTION_CONTINUE;
+#endif
 
 #ifdef FEATURE_PERU_VERSION
         case DLGRET_PHONE_NUMBER:
@@ -2019,3 +2045,151 @@ static NextFSMAction SettingMenu_StatePlaneModeHandler(CSettingMenu *pMe)
 } // SettingMenu_StatePlaneModeHandler
 #endif 
 
+#ifdef FEATURE_VERSION_W208S
+/*==============================================================================
+函数：
+       SettingMenu_StateSMSRestrictHandler
+说明：
+       SMSRestrict状态处理函数
+
+参数：
+       pMe [in]：指向SettingMenu Applet对象结构的指针。该结构包含小程序的特定信息。
+
+返回值：
+       NFSMACTION_CONTINUE：指示后有子状态，状态机不能停止。
+       NFSMACTION_WAIT：指示因要显示对话框界面给用户，应挂起状态机。
+
+备注：
+
+==============================================================================*/ 
+static NextFSMAction SettingMenu_StateSMSRestrictHandler(CSettingMenu *pMe)
+{
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+    switch(pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            SettingMenu_ShowDialog(pMe, IDD_SMS_RESTRICT);
+            return NFSMACTION_WAIT;
+
+        case DLGRET_SMSRESTRICT_SEND:
+            MOVE_TO_STATE(SETTINGMENUST_SMSRESTRICT_SEND)
+            return NFSMACTION_CONTINUE;
+
+        case DLGRET_SMSRESTRICT_RECEIVE:
+            MOVE_TO_STATE(SETTINGMENUST_SMSRESTRICT_RECEIVE)
+            return NFSMACTION_CONTINUE;
+
+        case DLGRET_CANCELED:
+            MOVE_TO_STATE(SETTINGMENUST_MAIN)
+            return NFSMACTION_CONTINUE;
+
+        default:
+            ASSERT_NOT_REACHABLE;
+    }
+
+    return NFSMACTION_WAIT;
+} // StateRestrictHandler
+
+/*==============================================================================
+函数：
+       SettingMenu_StateSMSRestrictReceiveHandler
+说明：
+       SMSRestrictReceive状态处理函数
+
+参数：
+       pMe [in]：指向SettingMenu Applet对象结构的指针。该结构包含小程序的特定信息。
+
+返回值：
+       NFSMACTION_CONTINUE：指示后有子状态，状态机不能停止。
+       NFSMACTION_WAIT：指示因要显示对话框界面给用户，应挂起状态机。
+
+备注：
+
+==============================================================================*/
+static NextFSMAction SettingMenu_StateSMSRestrictReceiveHandler(CSettingMenu *pMe)
+{
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+    switch(pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            SettingMenu_ShowDialog(pMe, IDD_SMS_RESTRICT_RECEIVE);
+            return NFSMACTION_WAIT;
+
+        case DLGRET_CANCELED:
+        case DLGRET_MSGBOX_OK:            
+            MOVE_TO_STATE(SETTINGMENUST_SMSRESTRICT)
+            return NFSMACTION_CONTINUE;
+
+        case DLGRET_SMSRESTRICT_RECEIVE_ADD:
+            MOVE_TO_STATE(SETTINGMENUST_SMSRESTRICT_RECEIVE_ADD)
+            return NFSMACTION_CONTINUE;
+
+        case DLGRET_WARNING:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            pMe->m_msg_id = IDS_DONE;
+            SettingMenu_ShowDialog(pMe, IDD_WARNING_MESSEGE);
+            return NFSMACTION_WAIT;
+
+        default:
+            ASSERT_NOT_REACHABLE;
+    }
+
+    return NFSMACTION_WAIT;
+}
+
+/*==============================================================================
+函数：
+       SettingMenu_StateSMSRestrictReceiveADDHandler
+说明：
+       SMSRestrictReceive状态处理函数
+
+参数：
+       pMe [in]：指向SettingMenu Applet对象结构的指针。该结构包含小程序的特定信息。
+
+返回值：
+       NFSMACTION_CONTINUE：指示后有子状态，状态机不能停止。
+       NFSMACTION_WAIT：指示因要显示对话框界面给用户，应挂起状态机。
+
+备注：
+
+==============================================================================*/
+static NextFSMAction SettingMenu_StateSMSRestrictReceiveADDHandler(CSettingMenu *pMe)
+{
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+    switch(pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            SettingMenu_ShowDialog(pMe, IDD_SMS_RESTRICT_RECEIVE_ADD);
+            return NFSMACTION_WAIT;
+
+        case DLGRET_CANCELED:
+        case DLGRET_MSGBOX_OK:            
+            MOVE_TO_STATE(SETTINGMENUST_SMSRESTRICT_RECEIVE)
+            return NFSMACTION_CONTINUE;
+
+        case DLGRET_WARNING:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            pMe->m_msg_id = IDS_DONE;
+            SettingMenu_ShowDialog(pMe, IDD_WARNING_MESSEGE);
+            return NFSMACTION_WAIT;
+
+        default:
+            ASSERT_NOT_REACHABLE;
+    }
+
+    return NFSMACTION_WAIT;
+}
+
+#endif

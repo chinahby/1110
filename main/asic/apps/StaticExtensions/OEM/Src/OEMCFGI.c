@@ -274,7 +274,7 @@ when       who     what, where, why
 // in OEMConfigListType.  It does not need to be incremented when a new
 // field is added to the end of OEMConfigListType.
 //
-#define OEMCONFIGLIST_VERSION ( (uint16) 0x000B )
+#define OEMCONFIGLIST_VERSION ( (uint16) 0x000D )
 
 ////
 // The EFS file that stores the OEM configuration.
@@ -706,6 +706,10 @@ typedef struct
    int8 mmsReadReply;
    int8 mmsReportAllowed;
    int8 mmsSenderVisibility;
+#endif
+#ifdef FEATURE_VERSION_W208S
+   uint8        sms_restrict_receive_total;  
+   sms_restrict_recive_info   sms_restrict_recive[MAX_SMS_RESTRICT];
 #endif
 } OEMConfigListType;
 
@@ -1556,6 +1560,12 @@ static int OEMPriv_SetItem_CFGI_MMS_DRAFTCOUNT(void *pBuff);
 
 #endif
 
+#ifdef FEATURE_VERSION_W208S
+static int OEMPriv_GetItem_CFGI_SMS_RESTRICT_RECEIVE_INFO(void *pBuff);
+static int OEMPriv_SetItem_CFGI_SMS_RESTRICT_RECEIVE_INFO(void *pBuff);
+static int OEMPriv_GetItem_CFGI_SMS_RESTRICT_RECEIVE_TOTAL(void *pBuff);
+static int OEMPriv_SetItem_CFGI_SMS_RESTRICT_RECEIVE_TOTAL(void *pBuff);
+#endif
 /*===========================================================================
 
                      STATIC/LOCAL DATA
@@ -1871,6 +1881,10 @@ static OEMConfigListType oemi_cache = {
     -1,
     -1,
 #endif   
+#ifdef FEATURE_VERSION_W208S
+     0                                              //CFGI_SMS_RESTRICT_TOTAL
+    ,{0}                                              //CFGI_SMS_RESTRICT_RECEIVE_INFO
+#endif    
 };
 
 ////
@@ -2423,12 +2437,15 @@ static ConfigItemTableEntry const customOEMItemTable[] =
    CFGTABLEITEM(CFGI_MMS_OUTCOUNT, sizeof(uint8)),
    CFGTABLEITEM(CFGI_MMS_INCOUNT, sizeof(uint8)),
    CFGTABLEITEM(CFGI_WMS_MMSNOTIFY, sizeof(boolean)),
-   CFGTABLEITEM(CFGI_WMS_MMSDELIVERYREPORT, sizeof(uint8)),
-   CFGTABLEITEM(CFGI_WMS_READREPLY, sizeof(uint8)),
-   CFGTABLEITEM(CFGI_WMS_REPORTALLOWED, sizeof(uint8)),
-   CFGTABLEITEM(CFGI_WMS_SENDERVISIBILITY, sizeof(uint8)),
-   
+   CFGTABLEITEM(CFGI_WMS_MMSDELIVERYREPORT, sizeof(int8)),
+   CFGTABLEITEM(CFGI_WMS_READREPLY, sizeof(int8)),
+   CFGTABLEITEM(CFGI_WMS_REPORTALLOWED, sizeof(int8)),
+   CFGTABLEITEM(CFGI_WMS_SENDERVISIBILITY, sizeof(int8)),   
 #endif   
+#ifdef FEATURE_VERSION_W208S
+   CFGTABLEITEM(CFGI_SMS_RESTRICT_RECEIVE_TOTAL, sizeof(uint8)),
+   CFGTABLEITEM(CFGI_SMS_RESTRICT_RECEIVE_INFO, sizeof(sms_restrict_recive_info) * MAX_SMS_RESTRICT),
+#endif    
 };
 #endif
 
@@ -2843,11 +2860,24 @@ void OEM_RestoreFactorySetting( void )
             MEMSET(oemi_cache.MMSDraftDataInfo[index].MMSDataFileName, 0, AEE_MAX_FILE_NAME);
             oemi_cache.MMSDraftDataInfo[index].MMSDatasize = 0;
             oemi_cache.MMSDraftDataInfo[index].MMSDataReaded = FALSE;            
-        }
+        }   
+        oemi_cache.mmsNotify = TRUE;
+        oemi_cache.mmsDeliverReport = -1;
+        oemi_cache.mmsReadReply = -1;
+        oemi_cache.mmsReportAllowed = -1;
+        oemi_cache.mmsSenderVisibility = -1;
    }
    oemi_cache.mmsInCount = 0;
    oemi_cache.mmsOutCount = 0;
    oemi_cache.mmsDraftCount = 0;
+   {
+        uint8 index = 0;
+        for(; index < MAX_SMS_RESTRICT; ++index)
+        {
+            MEMSET(oemi_cache.sms_restrict_recive[index].szName, 0, 32+1);
+        }
+        oemi_cache.sms_restrict_receive_total = 0;
+   }
 #endif  
    //ÆÁ±£Ê±¼ä
    oemi_cache.p_screensaver_time=0; 
@@ -10558,6 +10588,47 @@ static int OEMPriv_SetItem_CFGI_FMRADIO_CHAN_INFO(void *pBuff)
     OEMPriv_WriteOEMConfigList(); 
     return SUCCESS;
 }
+
+#ifdef FEATURE_VERSION_W208S
+static int OEMPriv_GetItem_CFGI_SMS_RESTRICT_RECEIVE_INFO(void *pBuff)
+{
+   DBGPRINTF("OEMPriv_GetItem_CFGI_SMS_RESTRICT_RECEIVE_INFO Start");
+   if(pBuff == NULL)
+   {
+        DBGPRINTF("pBuff == NULL"); 
+   }
+   MEMCPY(pBuff, oemi_cache.sms_restrict_recive, sizeof(sms_restrict_recive_info) * MAX_SMS_RESTRICT);
+   DBGPRINTF("OEMPriv_GetItem_CFGI_SMS_RESTRICT_RECEIVE_INFO End");
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_SMS_RESTRICT_RECEIVE_INFO(void *pBuff)
+{
+    MEMCPY(oemi_cache.sms_restrict_recive, pBuff, sizeof(sms_restrict_recive_info) * MAX_SMS_RESTRICT);
+    OEMPriv_WriteOEMConfigList(); 
+    return SUCCESS;
+} 
+
+static int OEMPriv_GetItem_CFGI_SMS_RESTRICT_RECEIVE_TOTAL(void *pBuff) 
+{
+   DBGPRINTF("CFGI_SMS_RESTRICT_RECEIVE_TOTAL = %d", oemi_cache.sms_restrict_receive_total); 
+   *(uint8 *) pBuff = oemi_cache.sms_restrict_receive_total;
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_SMS_RESTRICT_RECEIVE_TOTAL(void *pBuff)
+{
+   DBGPRINTF("SetItem_CFGI_SMS_RESTRICT_RECEIVE_TOTAL = %d", *(uint8 *)pBuff);  
+   if (oemi_cache.sms_restrict_receive_total != *(uint8 *)pBuff) {
+      oemi_cache.sms_restrict_receive_total = *(uint8 *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+   DBGPRINTF("oemi_cache.sms_restrict_receive_total = %d", oemi_cache.sms_restrict_receive_total);  
+   return SUCCESS;
+}
+
+#endif
+
 
 #ifdef FEATURE_ANALOG_TV
 static int OEMPriv_SetItem_CFGI_TV_OR_CAMERA(void *pBuff)

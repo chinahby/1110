@@ -64,6 +64,10 @@ boolean start_security_setting_by_user;
 /*==============================================================================
                                  宏定义和常数
 ==============================================================================*/
+
+#define MENU_ADDITEM(pMenu,ID)                                                \
+    (void)IMENUCTL_AddItem((pMenu), AEE_APPSSETTINGMENU_RES_FILE, (ID), (ID), 0, 0) 
+
 // 关闭对话框宏
 #define CLOSE_DIALOG(DlgRet)  {    \
                                      pMe->m_eDlgRet = DlgRet; \
@@ -335,7 +339,26 @@ static boolean  HandleAutoAnswerSubDialogEvent(CSettingMenu *pMe,
     uint32 dwParam
 );
 
+#ifdef FEATURE_VERSION_W208S
+static boolean Setting_Handle_SMSRestrict(CSettingMenu *pMe,
+	AEEEvent eCode,
+	uint16 wParam,
+	uint32 dwParam
+);
 
+static boolean Setting_Handle_SMSRestrict_RECEIVE(CSettingMenu *pMe,
+	AEEEvent eCode,
+	uint16 wParam,
+	uint32 dwParam
+);
+
+static boolean Setting_Handle_SMSRestrict_RECEIVE_ADD(CSettingMenu *pMe,
+	AEEEvent eCode,
+	uint16 wParam,
+	uint32 dwParam
+);
+
+#endif
 /*==============================================================================
                                  全局数据
 ==============================================================================*/
@@ -540,6 +563,17 @@ boolean SettingMenu_RouteDialogEvent(CSettingMenu *pMe,
 		case IDD_TIME_FONTMODE:
 			return HandleTimeFontModeDialogEvent(pMe,eCode,wParam,dwParam);
 #endif
+
+#ifdef FEATURE_VERSION_W208S
+        case IDD_SMS_RESTRICT:
+            return Setting_Handle_SMSRestrict(pMe,eCode,wParam,dwParam);
+
+        case IDD_SMS_RESTRICT_RECEIVE:
+            return Setting_Handle_SMSRestrict_RECEIVE(pMe,eCode,wParam,dwParam);         
+
+        case IDD_SMS_RESTRICT_RECEIVE_ADD:
+            return Setting_Handle_SMSRestrict_RECEIVE_ADD(pMe,eCode,wParam,dwParam);               
+#endif
         default:
             return FALSE;
     }
@@ -601,6 +635,10 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
             }
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_DISPLAY_TITLE, IDS_DISPLAY_TITLE, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_CALLSETTING_TITLE, IDS_CALLSETTING_TITLE, NULL, 0);
+#ifdef FEATURE_VERSION_W208S
+            //添加短信黑名单
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SMS_RESTRICT, IDS_SMS_RESTRICT, NULL, 0);
+#endif
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_PHONESETTING_TITLE, IDS_PHONESETTING_TITLE, NULL, 0);
 #ifdef FEATRUE_AUTO_POWER
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_AUTO_POWER_TITLE, IDS_AUTO_POWER_TITLE, NULL, 0);
@@ -717,6 +755,12 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
                 case IDS_CALLSETTING_TITLE:   //通话设置
                     CLOSE_DIALOG(DLGRET_CALLSETTING)
                     break;
+
+#ifdef FEATURE_VERSION_W208S
+                case IDS_SMS_RESTRICT:   //短信黑名单
+                    CLOSE_DIALOG(DLGRET_SMSRESTRICT)
+                    break;
+#endif
 
 #ifdef FEATRUE_AUTO_POWER
                 case IDS_AUTO_POWER_TITLE:/*自动开关机设置*/
@@ -8396,3 +8440,493 @@ static boolean  HandlePlaneModeDialogEvent(CSettingMenu *pMe,
 } // HandlePlaneModeDialogEvent
 #endif
 
+#ifdef FEATURE_VERSION_W208S
+/*==============================================================================
+函数：
+       Setting_Handle_SMSRestrict
+说明：
+       IDC_SMS_RESTRICT
+
+参数：
+       pMe [in]：指向ClockApps Applet对象结构的指针。该结构包含小程序的特定信息。
+       eCode [in]：事件代码。
+       wParam：事件相关数据。
+       dwParam：事件相关数据。
+
+返回值：
+       TRUE：传入事件被处理。
+       FALSE：传入事件被忽略。
+
+备注：
+
+==============================================================================*/
+
+static boolean  Setting_Handle_SMSRestrict(CSettingMenu *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam)
+{
+    PARAM_NOT_REF(dwParam)
+    IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,
+                                                         IDC_SMS_RESTRICT);
+    if (pMenu == NULL)
+    {
+        return FALSE;
+    }
+
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT:
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_APPSSETTINGMENU_RES_FILE,                                
+                        IDC_SMS_RESTRICT,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pAnn,WTitle);
+            }
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SMS_RESTRICT_SEND, IDS_SMS_RESTRICT_SEND, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SMS_RESTRICT_RECEIVE, IDS_SMS_RESTRICT_RECEIVE, NULL, 0);
+            return TRUE;
+
+        case EVT_DIALOG_START:
+            //设定标题格式
+            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE | MP_WRAPSCROLL | MP_BIND_ITEM_TO_NUMBER_KEY|MP_ACTIVE_NO_REDRAW);
+            IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
+#ifdef FEATURE_CARRIER_CHINA_VERTU
+            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
+#endif
+            IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
+
+            IMENUCTL_SetSel(pMenu, pMe->m_sSubDlgId);
+
+            (void) ISHELL_PostEvent(pMe->m_pShell,
+                                   AEECLSID_APP_SETTINGMENU,
+                                   EVT_USER_REDRAW,
+                                   0,
+                                   0);
+            return TRUE;
+
+        case EVT_USER_REDRAW:
+            //(void)IMENUCTL_Redraw(pMenu);  //dele by yangdecai
+
+            return TRUE;
+
+        case EVT_DIALOG_END:
+            return TRUE;
+
+        case EVT_KEY:
+            switch(wParam)
+            {
+                case AVK_CLR:
+                   CLOSE_DIALOG(DLGRET_CANCELED)
+                   return TRUE;
+
+                default:
+                   break;
+            }
+            return TRUE;
+
+        case EVT_COMMAND:
+            //pMe->m_sSubDlgId = IMENUCTL_GetSel(pMenu);
+            pMe->m_sSubDlgId = wParam;
+            switch(wParam)
+            {
+                case IDS_SMS_RESTRICT_SEND:   //发送限制
+                    CLOSE_DIALOG(DLGRET_SMSRESTRICT_SEND)
+                    break;
+
+                case IDS_SMS_RESTRICT_RECEIVE:   //接收限制
+                    CLOSE_DIALOG(DLGRET_SMSRESTRICT_RECEIVE)
+                    break;
+
+                default:
+                    ASSERT_NOT_REACHABLE;
+            }
+            return TRUE;
+
+        default:
+             break;
+    }
+    return FALSE;
+} // HandleRestrictDialogEvent
+
+/*==============================================================================
+函数：
+       Setting_Handle_SMSRestrict_RECEIVE
+说明：
+       IDC_SMS_RESTRICT
+
+参数：
+       pMe [in]：指向ClockApps Applet对象结构的指针。该结构包含小程序的特定信息。
+       eCode [in]：事件代码。
+       wParam：事件相关数据。
+       dwParam：事件相关数据。
+
+返回值：
+       TRUE：传入事件被处理。
+       FALSE：传入事件被忽略。
+
+备注：
+
+==============================================================================*/
+
+static boolean  Setting_Handle_SMSRestrict_RECEIVE(CSettingMenu *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam)
+{
+    PARAM_NOT_REF(dwParam)
+    IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,
+                                                         IDC_SMS_RESTRICT_RECEIVE);
+    MSG_FATAL("Setting_Handle_SMSRestrict_RECEIVE Start eCode=0x%x wParam=0x%x",eCode,wParam,0);
+    if (pMenu == NULL)
+    {
+        return FALSE;
+    }
+    MSG_FATAL("Setting_Handle_SMSRestrict_RECEIVE 1",0,0,0);
+    if (pMe->m_pMenu != NULL)
+    {
+        MSG_FATAL("Setting_Handle_SMSRestrict_RECEIVE 2",0,0,0);
+        if (IMENUCTL_HandleEvent(pMe->m_pMenu, eCode, wParam, dwParam))
+        {
+            MSG_FATAL("Setting_Handle_SMSRestrict_RECEIVE 3",0,0,0);
+            return TRUE;
+        }
+    }   
+    MSG_FATAL("Setting_Handle_SMSRestrict_RECEIVE 4",0,0,0);
+    //用同一个dialog处理不好事件时，就用另一个Dialog处理输入事件好了
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT:
+			{
+                uint32 dwMask;
+                uint8 byMax = 0;
+                uint8 i = 0;
+				AECHAR WTitle[40] = {0};
+                MSG_FATAL("Setting_Handle_SMSRestrict_RECEIVE EVT_DIALOG_INIT 2",0,0,0);
+                IMENUCTL_SetOemProperties(pMenu, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY | OEMMP_USE_MENU_STYLE);
+                IMENUCTL_SetBottomBarType(pMenu,BTBAR_OPTION_BACK);
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_APPSSETTINGMENU_RES_FILE,                                
+                        IDS_SMS_RESTRICT_RECEIVE,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pAnn,WTitle);
+                MSG_FATAL("Setting_Handle_SMSRestrict_RECEIVE EVT_DIALOG_INIT 3",0,0,0);
+            	//初始拒收黑名单的总数
+            	(void) ICONFIG_GetItem(pMe->m_pConfig,
+            						   CFGI_SMS_RESTRICT_RECEIVE_TOTAL,
+            						   &byMax,
+            						   sizeof(uint8));  
+                MSG_FATAL("Setting_Handle_SMSRestrict_RECEIVE EVT_DIALOG_INIT 4 byMax=%d",byMax,0,0);
+            	//初始化拒收短信黑名单的信息
+            	(void) ICONFIG_GetItem(pMe->m_pConfig,
+            						   CFGI_SMS_RESTRICT_RECEIVE_INFO,
+            						   (void*)pMe->sms_restrict_reciveList,
+            						   sizeof(pMe->sms_restrict_reciveList));
+
+                MSG_FATAL("Setting_Handle_SMSRestrict_RECEIVE EVT_DIALOG_INIT 3 byMax=%d",byMax,0,0);
+                if(byMax > 0)
+                {
+                    for(; i < byMax; ++i)
+                    {
+                        DBGPRINTF("szName=%S", pMe->sms_restrict_reciveList[i].szName);
+                        IMENUCTL_AddItem(pMenu, 0,0,i, pMe->sms_restrict_reciveList[i].szName, 0);
+                    }
+                    IMENUCTL_SetSel(pMenu, 0);
+                }    
+            }
+
+        case EVT_DIALOG_START:
+            (void) ISHELL_PostEvent(pMe->m_pShell,
+                                   AEECLSID_APP_SETTINGMENU,
+                                   EVT_USER_REDRAW,
+                                   0,
+                                   0);
+            return TRUE;
+
+        case EVT_USER_REDRAW:    
+            MSG_FATAL("Setting_Handle_SMSRestrict_RECEIVE EVT_USER_REDRAW 0",0,0,0);
+            IMENUCTL_Redraw(pMenu);
+            IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+            return TRUE;
+
+        case EVT_DIALOG_END:
+            if (NULL != pMe->m_pMenu)
+            {
+                IMENUCTL_Release(pMe->m_pMenu);
+                pMe->m_pMenu = NULL;
+            }           
+            return TRUE;
+
+        case EVT_KEY:
+            switch(wParam)
+            {
+                case AVK_CLR:
+                   if (pMe->m_pMenu == NULL)
+                   {
+                       CLOSE_DIALOG(DLGRET_CANCELED)
+                   }
+                   else
+                   {
+                       IMENUCTL_Release(pMe->m_pMenu);
+                       pMe->m_pMenu = NULL;   
+                       IMENUCTL_SetActive(pMenu, TRUE);	
+                    	(void) ISHELL_PostEvent(pMe->m_pShell, 
+                                            AEECLSID_APP_SETTINGMENU,
+                                            EVT_USER_REDRAW,
+                                            0, 
+                                            0);                       
+                   }
+                   return TRUE;
+                    
+                default:
+                   break;
+            }
+            return TRUE;
+
+        case EVT_COMMAND:
+            MSG_FATAL("Setting_Handle_SMSRestrict_RECEIVE EVT_COMMAND",0,0,0);
+            if (pMe->m_pMenu == NULL)
+            {
+                MSG_FATAL("Setting_Handle_SMSRestrict_RECEIVE EVT_COMMAND 0",0,0,0);
+                if (pMe->m_pMenu != NULL)
+                {
+                    return TRUE;
+                }
+                // 显示弹出菜单
+                if (ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_MENUCTL, 
+                        (void **) &pMe->m_pMenu) == SUCCESS)
+                {
+                
+                    AEERect rc={0};
+                    AEERect Temprc={0};
+                    // 将文本控件置于非激活状态
+                    IMENUCTL_SetActive(pMenu, FALSE);
+                    // 动态添加菜单项
+                    MENU_ADDITEM(pMe->m_pMenu, IDS_ADD);
+                    MENU_ADDITEM(pMe->m_pMenu, IDS_DELETE);
+                    IMENUCTL_SetPopMenuRect(pMe->m_pMenu);
+
+                    IMENUCTL_SetProperties(pMe->m_pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
+					IMENUCTL_SetOemProperties(pMe->m_pMenu, OEMMP_USE_MENU_STYLE);
+					
+                    IMENUCTL_SetBottomBarType(pMe->m_pMenu,BTBAR_SELECT_BACK);
+                    
+                    IMENUCTL_SetActive(pMe->m_pMenu, TRUE);						
+					(void)IMENUCTL_Redraw(pMe->m_pMenu);     						
+                    
+                    IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+
+                }                
+            }
+            else
+            {
+                if (NULL != pMe->m_pMenu)
+                {
+                    IMENUCTL_Release(pMe->m_pMenu);
+                    pMe->m_pMenu = NULL;
+                }
+                pMe->m_sSubDlgId = wParam;
+                MSG_FATAL("Setting_Handle_SMSRestrict_RECEIVE wParam=d",wParam,0,0);
+                switch(wParam)
+                {
+                    case IDS_ADD:   //添加接收黑名单
+                        CLOSE_DIALOG(DLGRET_SMSRESTRICT_RECEIVE_ADD)
+                        break;
+
+                    case IDS_DELETE:   //删除接收黑名单
+                        {
+                            uint8 index = 0, i=0;
+                            uint8 MenuSelectdId = IMENUCTL_GetSel(pMenu);
+                            uint8 byMax = 0;
+                            sms_restrict_recive_info		temp[MAX_SMS_RESTRICT]={0};
+                            MSG_FATAL("Setting_Handle_SMSRestrict_RECEIVE IDS_DELETE MenuSelectdId=%d",MenuSelectdId,0,0);
+                            if(MenuSelectdId > 0)
+                            {
+                            	(void) ICONFIG_GetItem(pMe->m_pConfig,
+                            						   CFGI_SMS_RESTRICT_RECEIVE_TOTAL,
+                            						   &byMax,
+                            						   sizeof(uint8));     
+                                for(; index <byMax; ++index)
+                                {
+                                    if(index != MenuSelectdId)
+                                    {
+                                        MEMCPY(temp[i++].szName, pMe->sms_restrict_reciveList[index].szName, sizeof(pMe->sms_restrict_reciveList[index].szName));
+                                    }
+                                }
+                                --byMax;
+                                (void)IMENUCTL_DeleteAll(pMenu);  
+                                MSG_FATAL("sizeof(pMe->sms_restrict_reciveList)=%d", sizeof(pMe->sms_restrict_reciveList),0,0);
+                                MEMSET(pMe->sms_restrict_reciveList, 0, sizeof(pMe->sms_restrict_reciveList));
+                                if(byMax > 0)
+                                {
+                                    for(i = 0; i < byMax; ++i)
+                                    {
+                                        DBGPRINTF("szName=%S", temp[i].szName);
+                                        IMENUCTL_AddItem(pMenu, 0,0,i, temp[i].szName, 0);
+                                    }
+                                    IMENUCTL_SetSel(pMenu, 0);
+                                }        
+                              	(void) ICONFIG_SetItem(pMe->m_pConfig,
+                             						   CFGI_SMS_RESTRICT_RECEIVE_TOTAL,
+                             						   &byMax,
+                             						   sizeof(uint8));
+                             	(void) ICONFIG_SetItem(pMe->m_pConfig,
+                             						   CFGI_SMS_RESTRICT_RECEIVE_INFO,
+                             						   (void*) temp,
+                             						   sizeof(temp));          
+                            	(void) ISHELL_PostEvent(pMe->m_pShell, 
+                                                    AEECLSID_APP_SETTINGMENU,
+                                                    EVT_USER_REDRAW,
+                                                    0, 
+                                                    0);
+                            }
+                        }
+
+                        break;
+                }
+            }
+            return TRUE;
+
+        default:
+             break;
+    }
+    return FALSE;
+} // HandleRestrictDialogEvent
+
+/*==============================================================================
+函数：
+       Setting_Handle_SMSRestrict_RECEIVE_ADD
+说明：
+       IDC_SMS_RESTRICT
+
+参数：
+       pMe [in]：指向ClockApps Applet对象结构的指针。该结构包含小程序的特定信息。
+       eCode [in]：事件代码。
+       wParam：事件相关数据。
+       dwParam：事件相关数据。
+
+返回值：
+       TRUE：传入事件被处理。
+       FALSE：传入事件被忽略。
+
+备注：
+
+==============================================================================*/
+
+static boolean  Setting_Handle_SMSRestrict_RECEIVE_ADD(CSettingMenu *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam)
+{
+    PARAM_NOT_REF(dwParam)
+    ITextCtl *pIText = (ITextCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_TEXT_SMS_RESTRICT_RECEIVE);
+    MSG_FATAL("Setting_Handle_SMSRestrict_RECEIVE_ADD Start eCode=0x%x wParam=0x%x",eCode,wParam,0);
+    if (pIText == NULL)
+    {
+        return FALSE;
+    }
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT:
+			{
+                uint32 dwMask;
+                byte byMax = 0;
+                uint8 i = 0;
+				AECHAR WTitle[40] = {0};
+                AEERect rc={0};
+                AEEDeviceInfo devinfo={0};
+                MSG_FATAL("Setting_Handle_SMSRestrict_RECEIVE_ADD EVT_DIALOG_INIT 1",0,0,0);
+                ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);                
+                ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
+                rc.x = 0;
+                rc.y = 0;
+                rc.dy = GetBottomBarHeight(pMe->m_pDisplay);
+                rc.dx = devinfo.cxScreen;
+                ITEXTCTL_SetRect( pIText, &rc);
+                ITEXTCTL_SetMaxSize ( pIText, 32);
+                (void)ITEXTCTL_SetText(pIText,L"",-1);
+                (void) ITEXTCTL_SetInputMode(pIText, AEE_TM_NUMBERS); 
+                            
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_APPSSETTINGMENU_RES_FILE,                                
+                        IDS_ADD,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pAnn,WTitle);
+                ITEXTCTL_SetActive(pIText, TRUE);
+                ITEXTCTL_SetCursorPos(pIText, TC_CURSOREND);                
+            }
+
+        case EVT_DIALOG_START:
+            //设定标题格式
+            (void) ISHELL_PostEvent(pMe->m_pShell,
+                                   AEECLSID_APP_SETTINGMENU,
+                                   EVT_USER_REDRAW,
+                                   0,
+                                   0);
+            return TRUE;
+
+        case EVT_USER_REDRAW:    
+            MSG_FATAL("Setting_Handle_SMSRestrict_RECEIVE_ADD EVT_USER_REDRAW 0",0,0,0);
+            ITEXTCTL_SetCursorPos(pIText, TC_CURSOREND);
+            ITEXTCTL_SetActive(pIText, TRUE);  
+            ITEXTCTL_Redraw(pIText);                  
+            SETTING_MENU_DRAW_BOTTOMBAR(BTBAR_SAVE_BACK);
+            IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+            return TRUE;
+
+        case EVT_DIALOG_END:
+            return TRUE;
+
+        case EVT_KEY:
+            switch(wParam)
+            {
+                case AVK_CLR:
+                   CLOSE_DIALOG(DLGRET_CANCELED)
+                   return TRUE;
+
+                case AVK_SELECT:
+                {
+                     uint8 byMax = 0;
+                     AECHAR *pwstrText = ITEXTCTL_GetTextPtr(pIText);
+                     MSG_FATAL("Setting_Handle_SMSRestrict_RECEIVE_ADD AVK_SELECT 0",0,0,0);
+                     DBGPRINTF("pwstrText=%S",pwstrText);
+                     if(WSTRLEN(pwstrText) != 0)
+                     {
+                         sms_restrict_recive_info info = {0};
+                         (void) ICONFIG_GetItem(pMe->m_pConfig,
+                         CFGI_SMS_RESTRICT_RECEIVE_TOTAL,
+                         &byMax,
+                         sizeof(byte));   
+                         MEMCPY(pMe->sms_restrict_reciveList[byMax].szName, pwstrText, sizeof(pMe->sms_restrict_reciveList[byMax].szName));
+                         byMax++;
+                         DBGPRINTF("szName=%S, byMax=%d",pwstrText, byMax);
+                      	(void) ICONFIG_SetItem(pMe->m_pConfig,
+                     						   CFGI_SMS_RESTRICT_RECEIVE_TOTAL,
+                     						   &byMax,
+                     						   sizeof(uint8));
+                     	(void) ICONFIG_SetItem(pMe->m_pConfig,
+                     						   CFGI_SMS_RESTRICT_RECEIVE_INFO,
+                     						   (void*) pMe->sms_restrict_reciveList,
+                     						   sizeof(pMe->sms_restrict_reciveList));                           
+                     }
+                     CLOSE_DIALOG(DLGRET_MSGBOX_OK)                
+                }
+                return TRUE;
+                    
+                default:
+                   break;
+            }
+            return TRUE;
+
+        default:
+             break;
+    }
+    return FALSE;
+} // Setting_Handle_SMSRestrict_RECEIVE_ADD
+
+#endif

@@ -864,6 +864,15 @@ typedef struct _sChanInfo
     AECHAR          szName[MAX_FMRADIO_NAME_CHAR + 1];              //广播台名
     uint16          wChannel;                                       //信道号
 } sChanInfo;
+
+#ifdef FEATURE_VERSION_W208S
+#define MAX_SMS_RESTRICT 40//最多只能设40个黑名单
+typedef struct _SMS_RESTRICT_RECEIVE_Info
+{
+    AECHAR          szName[32 + 1];              //phoneNumber
+} sms_restrict_recive_info;
+#endif
+
 typedef enum {
     OEMNV_RING_FIRST,
     OEMNV_MP3_RINGER,

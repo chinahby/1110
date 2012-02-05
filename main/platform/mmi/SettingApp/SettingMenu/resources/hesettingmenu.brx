@@ -1,435 +1,470 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="settingmenu" VERSION="1">
-	<Strings Encoding="Unicode">
-		<STRING Id="1001" Name="IDS_APP_TITLE">
-			<Text>הגדרות</Text>
-		</STRING>
-		<STRING Id="1002" Name="IDS_CALLFORWARD_START">
-			<Text>הפעל</Text>
-		</STRING>
-		<STRING Id="1003" Name="IDS_AUTOKEYGUARD_TITLE">
-			<Text>נעילת מקשים אוטומטית</Text>
-		</STRING>
-		<STRING Id="1004" Name="IDS_SCENEMODE_TITLE">
-			<Text>פרופילים</Text>
-		</STRING>
-		<STRING Id="1005" Name="IDS_PHONE_NUMBER">
-			<Text>מספר טלפון</Text>
-		</STRING>
-		<STRING Id="1006" Name="IDS_NET_SEL">
-			<Text>רשת</Text>
-		</STRING>
-		<STRING Id="1007" Name="IDS_OFF">
-			<Text>כבוי</Text>
-		</STRING>
-		<STRING Id="1008" Name="IDS_AKG_30SEC">
-			<Text>30 שניות</Text>
-		</STRING>
-		<STRING Id="1009" Name="IDS_AKG_2MIN">
-			<Text>2 דקות</Text>
-		</STRING>
-		<STRING Id="1010" Name="IDS_AKG_5MIN">
-			<Text>5 דקות</Text>
-		</STRING>
-		<STRING Id="1011" Name="IDS_NET_A">
-			<Text>A בלבד</Text>
-		</STRING>
-		<STRING Id="1012" Name="IDS_NET_B">
-			<Text>B בלבד</Text>
-		</STRING>
-		<STRING Id="1013" Name="IDS_NET_HOME">
-			<Text>בית בלבד</Text>
-		</STRING>
-		<STRING Id="1014" Name="IDS_NET_STANDARD">
-			<Text>בית עדיף</Text>
-		</STRING>
-		<STRING Id="1015" Name="IDS_DATESETTING">
-			<Text>תבנית תאריך</Text>
-		</STRING>
-		<STRING Id="1016" Name="IDS_SOUND_TITLE">
-			<Text>קול</Text>
-		</STRING>
-		<STRING Id="1017" Name="IDS_DISPLAY_TITLE">
-			<Text>תצוגה</Text>
-		</STRING>
-		<STRING Id="1018" Name="IDS_YMD">
-			<Text>יום/חודש/שנה</Text>
-		</STRING>
-		<STRING Id="1019" Name="IDS_SECURITY_TITLE">
-			<Text>אבטחה</Text>
-		</STRING>
-		<STRING Id="1020" Name="IDS_DMY">
-			<Text>שנה/חודש/יום</Text>
-		</STRING>
-		<STRING Id="1021" Name="IDS_MDY">
-			<Text>שנה/יום/חודש</Text>
-		</STRING>
-		<STRING Id="1022" Name="IDS_TIMESETTING">
-			<Text>תבנית שעה</Text>
-		</STRING>
-		<STRING Id="1023" Name="IDS_AMPM">
-			<Text>12 שעות</Text>
-		</STRING>
-		<STRING Id="1024" Name="IDS_DAY">
-			<Text>24 שעות</Text>
-		</STRING>
-		<STRING Id="1025" Name="IDS_VOICE_PRIVACY">
-			<Text>פרטיות קול</Text>
-		</STRING>
-		<STRING Id="1026" Name="IDS_AUTO_POWER_ON_TIME">
-			<Text>הפעלה אוטומטית</Text>
-		</STRING>
-		<STRING Id="1027" Name="IDS_AUTO_POWER_OFF_TIME">
-			<Text>כיבוי אוטומטי</Text>
-		</STRING>
-		<STRING Id="1028" Name="IDS_AUTO_POWER_TIME">
-			<Text>שעה:</Text>
-		</STRING>
-		<STRING Id="1029" Name="IDS_AUTO_POWER_STATE">
-			<Text>מצב</Text>
-		</STRING>
-		<STRING Id="1030" Name="IDS_IP_NUMBER_SET">
-			<Text>הגדרת מספר IP</Text>
-		</STRING>
-		<STRING Id="1031" Name="IDS_ENABLE">
-			<Text>הפעל</Text>
-		</STRING>
-		<STRING Id="1032" Name="IDS_DISABLE">
-			<Text>בטל</Text>
-		</STRING>
-		<STRING Id="1033" Name="IDS_ANSWER_MODE">
-			<Text>מצב מענה</Text>
-		</STRING>
-		<STRING Id="1034" Name="IDS_SHORT_AKG_TITLE">
-			<Text>נעי' מק'</Text>
-		</STRING>
-		<STRING Id="1035" Name="IDS_COVER_ANSWER">
-			<Text>פת'</Text>
-		</STRING>
-		<STRING Id="1036" Name="IDS_SEND_ANSWER">
-			<Text>מ Send</Text>
-		</STRING>
-		<STRING Id="1037" Name="IDS_HEADSET_ANSWER">
-			<Text>אוזנייה</Text>
-		</STRING>
-		<STRING Id="1038" Name="IDS_MINUTE_ALERT">
-			<Text>התראת 50 שניות</Text>
-		</STRING>
-		<STRING Id="1039" Name="IDS_AUTOANSWER_TITLE">
-			<Text>אוזנייה אוטומטית</Text>
-		</STRING>
-		<STRING Id="1040" Name="IDS_ANYKEY_ANSWER_TITLE">
-			<Text>כל מקש</Text>
-		</STRING>
-		<STRING Id="1041" Name="IDS_CALLFORWARD_BUSY">
-			<Text>תפוס</Text>
-		</STRING>
-		<STRING Id="1042" Name="IDS_CALLFORWARD_ANYWAY">
-			<Text>כל השיחות</Text>
-		</STRING>
-		<STRING Id="1043" Name="IDS_CALLFORWARD_NOANSWER">
-			<Text>אין תשובה</Text>
-		</STRING>
-		<STRING Id="1044" Name="IDS_CALLFORWARD_NOCONNECT">
-			<Text>ללא תנאים</Text>
-		</STRING>
-		<STRING Id="1045" Name="IDS_CALLFORWARD_CANCELALL">
-			<Text>בטל הכול</Text>
-		</STRING>
-		<STRING Id="1046" Name="IDS_LANGUAGE">
-			<Text>שפה</Text>
-		</STRING>
-		<STRING Id="1047" Name="IDS_CHINESE" Encoding="Unicode">
-			<Text>סינית</Text>
-		</STRING>
-		<STRING Id="1048" Name="IDS_ENGLISH">
-			<Text>אנגלית</Text>
-		</STRING>
-		<STRING Id="1049" Name="IDS_AUTO_REDIAL">
-			<Text>חיוג חוזר אוטומטי</Text>
-		</STRING>
-		<STRING Id="1050" Name="IDS_CALLFORWARD_INPUT">
-			<Text>הזנת מספרים</Text>
-		</STRING>
-		<STRING Id="1051" Name="IDS_CALLFORWARD_CANCEL">
-			<Text>ביטול</Text>
-		</STRING>
-		<STRING Id="1052" Name="IDS_CALLFORWARD_WAIT">
-			<Text>שיחה ממתינה</Text>
-		</STRING>
-		<STRING Id="1053" Name="IDS_CALLSETTING_TITLE">
-			<Text>חייג</Text>
-		</STRING>
-		<STRING Id="1054" Name="IDS_PHONESETTING_TITLE">
-			<Text>טלפון</Text>
-		</STRING>
-		<STRING Id="1055" Name="IDS_NETWORKSETTING_TITLE">
-			<Text>ספק שירותים</Text>
-		</STRING>
-		<STRING Id="1056" Name="IDS_CALLFORWARD_DIVERT">
-			<Text>הפניית שיחה</Text>
-		</STRING>
-		<STRING Id="1057" Name="IDS_WARNING_MESSEGE">
-			<Text>אין מספיק מילים!</Text>
-		</STRING>
-		<STRING Id="1058" Name="IDS_VOL_WARNING">
-			<Text>קול כבוי!</Text>
-		</STRING>
-		<STRING Id="1059" Name="IDS_ITALIAN">
-			<Text>איטלקית</Text>
-		</STRING>
-		<STRING Id="1060" Name="IDS_SPANISH" Encoding="Unicode">
-			<Text>ספרדית</Text>
-		</STRING>
-		<STRING Id="1061" Name="IDS_PORTUGUESE" Encoding="Unicode">
-			<Text>פורטוגזית</Text>
-		</STRING>
-		<STRING Id="1062" Name="IDS_STATUS">
-			<Text>מצב</Text>
-		</STRING>
-		<STRING Id="1063" Name="IDS_BANNER_TITLE">
-			<Text>כרזה</Text>
-		</STRING>
-		<STRING Id="1064" Name="IDS_INDONESIAN">
-			<Text>אינדונזית</Text>
-		</STRING>
-		<STRING Id="1065" Name="IDS_HINDI">
-			<Text>הינדי</Text>
-		</STRING>
-		<STRING Id="1066" Name="IDS_VIETNAMESE" Encoding="Unicode">
-			<Text>ויאטנמית</Text>
-		</STRING>
-		<STRING Id="1067" Name="IDS_ARABIC" Encoding="Unicode">
-			<Text>ערבית</Text>
-		</STRING>
-		<STRING Id="1068" Name="IDS_HEBREW">
-			<Text>עברית</Text>
-		</STRING>
-		<STRING Id="1069" Name="IDS_THAI" Encoding="Unicode">
-			<Text>ภาษาไทย</Text>
-		</STRING>
-		<STRING Id="1070" Name="IDS_TCHINESE" Encoding="Unicode">
-			<Text>סינית מסורתית</Text>
-		</STRING>
-		<STRING Id="1071" Name="IDS_RUSSIAN">
-			<Text>רוסית</Text>
-		</STRING>
-		<STRING Id="1072" Name="IDS_ADD_NEW_ITEM">
-			<Text>הוספה</Text>
-		</STRING>
-		<STRING Id="1073" Name="IDS_SET_DELETE">
-			<Text>מחיקה</Text>
-		</STRING>
-		<STRING Id="1074" Name="IDS_SET_EDIT">
-			<Text>עריכה</Text>
-		</STRING>
-		<STRING Id="1075" Name="IDS_SET_IP_CALL_OPTION">
-			<Text>אפשרויות חיוג IP</Text>
-		</STRING>
-		<STRING Id="1076" Name="IDS_AM_PM_SET">
-			<Text>הגדרת שעה</Text>
-		</STRING>
-		<STRING Id="1077" Name="IDS_SETMENU_AM">
-			<Text>AM</Text>
-		</STRING>
-		<STRING Id="1078" Name="IDS_SETMENU_PM">
-			<Text>PM</Text>
-		</STRING>
-		<STRING Id="1079" Name="IDS_NOT_GET_FEATURE_CODE">
-			<Text>לא אופיין קוד!</Text>
-		</STRING>
-		<STRING Id="1080" Name="IDS_KEYTONE_LENGTH">
-			<Text>הגדרות צליל DTMF</Text>
-		</STRING>
-		<STRING Id="1081" Name="IDS_KEYTONE_LONG">
-			<Text>ארוך</Text>
-		</STRING>
-		<STRING Id="1082" Name="IDS_KEYTONE_NORMAL">
-			<Text>רגיל</Text>
-		</STRING>
-		<STRING Id="1083" Name="IDS_AUTOANSWER_5SEC">
-			<Text>5 שניות</Text>
-		</STRING>
-		<STRING Id="1084" Name="IDS_AUTOANSWER_10SEC">
-			<Text>10 שניות</Text>
-		</STRING>
-		<STRING Id="1085" Name="IDS_LOCALNET">
-			<Text>רשת מקומית</Text>
-		</STRING>
-		<STRING Id="1086" Name="IDS_AUTONET">
-			<Text>רשת אוטומטית</Text>
-		</STRING>
-		<STRING Id="1087" Name="IDS_OPEN_ROAM">
-			<Text>פתח נדידה</Text>
-		</STRING>
-		<STRING Id="1088" Name="IDS_CLOSE_ROAM">
-			<Text>סגור נדידה</Text>
-		</STRING>
-		<STRING Id="1089" Name="IDS_SET_SUCESS">
-			<Text>בוצע!</Text>
-		</STRING>
-		<STRING Id="1090" Name="IDS_RESET_PHONE">
-			<Text>אתחל טלפון</Text>
-		</STRING>
-		<STRING Id="1091" Name="IDS_SET_POUND">
-			<Text>הגדר #</Text>
-		</STRING>
-		<STRING Id="1092" Name="IDS_SET_DEFAULT">
-			<Text>קבע כברירת מחדל</Text>
-		</STRING>
-		<STRING Id="1093" Name="IDS_AUTOPOWER_WARNING">
-			<Text>חפיפה בזמני הפעלה/כיבוי אוטו'! </Text>
-		</STRING>
-	</Strings>
-	<Dialogs>
-		<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="7001">
-			<Controls>
-				<Menu Id="7001" Name="IDC_MAIN">
-					<TitleID>IDS_APP_TITLE</TitleID>
-					<Items/>
-				</Menu>
-			</Controls>
-		</DIALOG>
-		<DIALOG Id="6002" Name="IDD_LANGUAGE_MENU" Focus="7002">
-			<Controls>
-				<Menu Id="7002" Name="IDC_LANGUAGE">
-					<TitleID>IDS_LANGUAGE</TitleID>
-					<Items/>
-				</Menu>
-			</Controls>
-		</DIALOG>
-		<DIALOG Id="6003" Name="IDD_CALLSETTINGSEL" Focus="7003">
-			<Controls>
-				<Menu Id="7003" Name="IDC_CALLSETTINGSEL">
-					<Items/>
-				</Menu>
-			</Controls>
-		</DIALOG>
-		<DIALOG Id="6004" Name="IDD_DIVERT_MENU" Focus="7004">
-			<Controls>
-				<Menu Id="7004" Name="IDC_DIVERT">
-					<TitleID>IDS_CALLFORWARD_DIVERT</TitleID>
-					<Items/>
-				</Menu>
-			</Controls>
-		</DIALOG>
-		<DIALOG Id="6005" Name="IDD_PHONE_NUMBER" Focus="0">
-			<Controls/>
-		</DIALOG>
-		<DIALOG Id="6006" Name="IDD_CALLFORWARD_SEL" Focus="7005">
-			<Controls>
-				<Menu Id="7005" Name="IDC_CALLFORWARD_SEL">
-					<Items/>
-				</Menu>
-			</Controls>
-		</DIALOG>
-		<DIALOG Id="6007" Name="IDD_CALLFORWARD_INPUT" Focus="7006">
-			<Controls>
-				<Text Id="7006" Name="IDC_CALLFORWARD_INPUT">
-					<TitleID>IDS_CALLFORWARD_INPUT</TitleID>
-					<Items/></Text>
-			</Controls>
-		</DIALOG>
-		<DIALOG Id="6008" Name="IDD_NET_SELECT" Focus="7008">
-			<Controls>
-				<Menu Id="7008" Name="IDC_NET_SELECT">
-					<TitleID>IDS_NET_SEL</TitleID>
-					<Items/>
-				</Menu>
-			</Controls>
-		</DIALOG>
-		<DIALOG Id="6009" Name="IDD_TIMESETTING" Focus="7007">
-			<Controls>
-				<Menu Id="7007" Name="IDC_TIMESET">
-					<TitleID>IDS_TIMESETTING</TitleID>
-					<Items/>
-				</Menu>
-			</Controls>
-		</DIALOG>
-		<DIALOG Id="6010" Name="IDD_PHONESETTING_MENU" Focus="7010">
-			<Controls>
-				<Menu Id="7010" Name="IDC_PHONESETTING">
-					<TitleID>IDS_PHONESETTING_TITLE</TitleID>
-					<Items/>
-				</Menu>
-			</Controls>
-		</DIALOG>
-		<DIALOG Id="6011" Name="IDD_CALLSETTING_MENU" Focus="7011">
-			<Controls>
-				<Menu Id="7011" Name="IDC_CALLSETTING">
-					<TitleID>IDS_CALLSETTING_TITLE</TitleID>
-					<Items/>
-				</Menu>
-			</Controls>
-		</DIALOG>
-		<DIALOG Id="6012" Name="IDD_NETWORKSETTING_MENU" Focus="7012">
-			<Controls>
-				<Menu Id="7012" Name="IDC_NETWORKSETTING">
-					<TitleID>IDS_NETWORKSETTING_TITLE</TitleID>
-					<Items/>
-				</Menu>
-			</Controls>
-		</DIALOG>
-		<DIALOG Id="6013" Name="IDD_AKG_MENU" Focus="7013">
-			<Controls>
-				<Menu Id="7013" Name="IDC_AKG">
-					<TitleID>IDS_AUTOKEYGUARD_TITLE</TitleID>
-					<Items/>
-				</Menu>
-			</Controls>
-		</DIALOG>
-		<DIALOG Id="6014" Name="IDD_BANNER_TXT" Focus="7014">
-			<Controls>
-				<Text Id="7014" Name="IDC_BANNER">
-					<TitleID>IDS_BANNER_TITLE</TitleID>
-					<Items/></Text>
-			</Controls>
-		</DIALOG>
-		<Dialog Id="6015" Name="IDD_KEYTONE_LENGTH" Focus="7020">
-			<Controls>
-				<Menu Id="7020" Name="IDC_KEYTONE_LENGTH">
-					<TitleID>IDS_KEYTONE_LENGTH</TitleID>
-					<Items/>
-				</Menu>
-			</Controls>
-		</Dialog>
-		<DIALOG Id="6016" Name="IDD_DATESETTING" Focus="7009">
-			<Controls>
-				<Menu Id="7009" Name="IDC_DATESET">
-					<TitleID>IDS_DATESETTING</TitleID>
-					<Items/>
-				</Menu>
-			</Controls>
-		</DIALOG>
-		<DIALOG Id="6017" Name="IDD_AUTO_POWER" Focus="0">
-			<Controls/>
-		</DIALOG>
-		<Dialog Id="6018" Name="IDD_IP_NUMBER_SET" Focus="7018">
-			<Controls>
-				<Menu Id="7018" Name="IDC_IP_NUMBER_SET">
-					<Items/>
-				</Menu>
-			</Controls>
-		</Dialog>
-		<DIALOG Id="6019" Name="IDD_WARNING_MESSEGE" Focus="0">
-			<Controls/>
-			<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
-		</DIALOG>
-		<DIALOG Id="6020" Name="IDD_ANSWER_MODE" Focus="7019">
-			<Controls>
-				<Menu Id="7019" Name="IDC_ANSWER_MODE">
-					<TitleID>IDS_ANSWER_MODE</TitleID>
-					<Items/>
-				</Menu>
-			</Controls>
-		</DIALOG>
-		<Dialog Id="6021" Name="IDD_AUTOANSWER_SUB" Focus="0">
-			<Controls>
-				<Menu Id="7015" Name="IDC_AUTOANSWER_SUB">
-					<TitleID>IDS_AUTOANSWER_TITLE</TitleID>
-					<Items/>
-				</Menu>
-			</Controls>
-		</Dialog>
-	</Dialogs>
+<BREWRes Name="hesettingmenu" VERSION="1">
+<Strings Encoding="Unicode">
+	<STRING Id="1001" Name="IDS_APP_TITLE">
+		<Text>הגדרות</Text>
+	</STRING>
+	<STRING Id="1002" Name="IDS_CALLFORWARD_START">
+		<Text>הפעל</Text>
+	</STRING>
+	<STRING Id="1003" Name="IDS_AUTOKEYGUARD_TITLE">
+		<Text>נעילת מקשים אוטומטית</Text>
+	</STRING>
+	<STRING Id="1004" Name="IDS_SCENEMODE_TITLE">
+		<Text>פרופילים</Text>
+	</STRING>
+	<STRING Id="1005" Name="IDS_PHONE_NUMBER">
+		<Text>מספר טלפון</Text>
+	</STRING>
+	<STRING Id="1006" Name="IDS_NET_SEL">
+		<Text>רשת</Text>
+	</STRING>
+	<STRING Id="1007" Name="IDS_OFF">
+		<Text>כבוי</Text>
+	</STRING>
+	<STRING Id="1008" Name="IDS_AKG_30SEC">
+		<Text>30 שניות</Text>
+	</STRING>
+	<STRING Id="1009" Name="IDS_AKG_2MIN">
+		<Text>2 דקות</Text>
+	</STRING>
+	<STRING Id="1010" Name="IDS_AKG_5MIN">
+		<Text>5 דקות</Text>
+	</STRING>
+	<STRING Id="1011" Name="IDS_NET_A">
+		<Text>A בלבד</Text>
+	</STRING>
+	<STRING Id="1012" Name="IDS_NET_B">
+		<Text>B בלבד</Text>
+	</STRING>
+	<STRING Id="1013" Name="IDS_NET_HOME">
+		<Text>בית בלבד</Text>
+	</STRING>
+	<STRING Id="1014" Name="IDS_NET_STANDARD">
+		<Text>בית עדיף</Text>
+	</STRING>
+	<STRING Id="1015" Name="IDS_DATESETTING">
+		<Text>תבנית תאריך</Text>
+	</STRING>
+	<STRING Id="1016" Name="IDS_SOUND_TITLE">
+		<Text>קול</Text>
+	</STRING>
+	<STRING Id="1017" Name="IDS_DISPLAY_TITLE">
+		<Text>תצוגה</Text>
+	</STRING>
+	<STRING Id="1018" Name="IDS_YMD">
+		<Text>יום/חודש/שנה</Text>
+	</STRING>
+	<STRING Id="1019" Name="IDS_SECURITY_TITLE">
+		<Text>אבטחה</Text>
+	</STRING>
+	<STRING Id="1020" Name="IDS_DMY">
+		<Text>שנה/חודש/יום</Text>
+	</STRING>
+	<STRING Id="1021" Name="IDS_MDY">
+		<Text>שנה/יום/חודש</Text>
+	</STRING>
+	<STRING Id="1022" Name="IDS_TIMESETTING">
+		<Text>תבנית שעה</Text>
+	</STRING>
+	<STRING Id="1023" Name="IDS_AMPM">
+		<Text>12 שעות</Text>
+	</STRING>
+	<STRING Id="1024" Name="IDS_DAY">
+		<Text>24 שעות</Text>
+	</STRING>
+	<STRING Id="1025" Name="IDS_VOICE_PRIVACY">
+		<Text>פרטיות קול</Text>
+	</STRING>
+	<STRING Id="1026" Name="IDS_AUTO_POWER_ON_TIME">
+		<Text>הפעלה אוטומטית</Text>
+	</STRING>
+	<STRING Id="1027" Name="IDS_AUTO_POWER_OFF_TIME">
+		<Text>כיבוי אוטומטי</Text>
+	</STRING>
+	<STRING Id="1028" Name="IDS_AUTO_POWER_TIME">
+		<Text>שעה:</Text>
+	</STRING>
+	<STRING Id="1029" Name="IDS_AUTO_POWER_STATE">
+		<Text>מצב</Text>
+	</STRING>
+	<STRING Id="1030" Name="IDS_IP_NUMBER_SET">
+		<Text>הגדרת מספר IP</Text>
+	</STRING>
+	<STRING Id="1031" Name="IDS_ENABLE">
+		<Text>הפעל</Text>
+	</STRING>
+	<STRING Id="1032" Name="IDS_DISABLE">
+		<Text>בטל</Text>
+	</STRING>
+	<STRING Id="1033" Name="IDS_ANSWER_MODE">
+		<Text>מצב מענה</Text>
+	</STRING>
+	<STRING Id="1034" Name="IDS_SHORT_AKG_TITLE">
+		<Text>נעי' מק'</Text>
+	</STRING>
+	<STRING Id="1035" Name="IDS_COVER_ANSWER">
+		<Text>פת'</Text>
+	</STRING>
+	<STRING Id="1036" Name="IDS_SEND_ANSWER">
+		<Text>מ Send</Text>
+	</STRING>
+	<STRING Id="1037" Name="IDS_HEADSET_ANSWER">
+		<Text>אוזנייה</Text>
+	</STRING>
+	<STRING Id="1038" Name="IDS_MINUTE_ALERT">
+		<Text>התראת 50 שניות</Text>
+	</STRING>
+	<STRING Id="1039" Name="IDS_AUTOANSWER_TITLE">
+		<Text>אוזנייה אוטומטית</Text>
+	</STRING>
+	<STRING Id="1040" Name="IDS_ANYKEY_ANSWER_TITLE">
+		<Text>כל מקש</Text>
+	</STRING>
+	<STRING Id="1041" Name="IDS_CALLFORWARD_BUSY">
+		<Text>תפוס</Text>
+	</STRING>
+	<STRING Id="1042" Name="IDS_CALLFORWARD_ANYWAY">
+		<Text>כל השיחות</Text>
+	</STRING>
+	<STRING Id="1043" Name="IDS_CALLFORWARD_NOANSWER">
+		<Text>אין תשובה</Text>
+	</STRING>
+	<STRING Id="1044" Name="IDS_CALLFORWARD_NOCONNECT">
+		<Text>ללא תנאים</Text>
+	</STRING>
+	<STRING Id="1045" Name="IDS_CALLFORWARD_CANCELALL">
+		<Text>בטל הכול</Text>
+	</STRING>
+	<STRING Id="1046" Name="IDS_LANGUAGE">
+		<Text>שפה</Text>
+	</STRING>
+	<STRING Id="1047" Name="IDS_CHINESE">
+		<Text>סינית</Text>
+	</STRING>
+	<STRING Id="1048" Name="IDS_ENGLISH">
+		<Text>אנגלית</Text>
+	</STRING>
+	<STRING Id="1049" Name="IDS_AUTO_REDIAL">
+		<Text>חיוג חוזר אוטומטי</Text>
+	</STRING>
+	<STRING Id="1050" Name="IDS_CALLFORWARD_INPUT">
+		<Text>הזנת מספרים</Text>
+	</STRING>
+	<STRING Id="1051" Name="IDS_CALLFORWARD_CANCEL">
+		<Text>ביטול</Text>
+	</STRING>
+	<STRING Id="1052" Name="IDS_CALLFORWARD_WAIT">
+		<Text>שיחה ממתינה</Text>
+	</STRING>
+	<STRING Id="1053" Name="IDS_CALLSETTING_TITLE">
+		<Text>חייג</Text>
+	</STRING>
+	<STRING Id="1054" Name="IDS_PHONESETTING_TITLE">
+		<Text>טלפון</Text>
+	</STRING>
+	<STRING Id="1055" Name="IDS_NETWORKSETTING_TITLE">
+		<Text>ספק שירותים</Text>
+	</STRING>
+	<STRING Id="1056" Name="IDS_CALLFORWARD_DIVERT">
+		<Text>הפניית שיחה</Text>
+	</STRING>
+	<STRING Id="1057" Name="IDS_WARNING_MESSEGE">
+		<Text>אין מספיק מילים!</Text>
+	</STRING>
+	<STRING Id="1058" Name="IDS_VOL_WARNING">
+		<Text>קול כבוי!</Text>
+	</STRING>
+	<STRING Id="1059" Name="IDS_ITALIAN">
+		<Text>איטלקית</Text>
+	</STRING>
+	<STRING Id="1060" Name="IDS_SPANISH">
+		<Text>ספרדית</Text>
+	</STRING>
+	<STRING Id="1061" Name="IDS_PORTUGUESE">
+		<Text>פורטוגזית</Text>
+	</STRING>
+	<STRING Id="1062" Name="IDS_STATUS">
+		<Text>מצב</Text>
+	</STRING>
+	<STRING Id="1063" Name="IDS_BANNER_TITLE">
+		<Text>כרזה</Text>
+	</STRING>
+	<STRING Id="1064" Name="IDS_INDONESIAN">
+		<Text>אינדונזית</Text>
+	</STRING>
+	<STRING Id="1065" Name="IDS_HINDI">
+		<Text>הינדי</Text>
+	</STRING>
+	<STRING Id="1066" Name="IDS_VIETNAMESE">
+		<Text>ויאטנמית</Text>
+	</STRING>
+	<STRING Id="1067" Name="IDS_ARABIC">
+		<Text>ערבית</Text>
+	</STRING>
+	<STRING Id="1068" Name="IDS_HEBREW">
+		<Text>עברית</Text>
+	</STRING>
+	<STRING Id="1069" Name="IDS_THAI">
+		<Text>ภาษาไทย</Text>
+	</STRING>
+	<STRING Id="1070" Name="IDS_TCHINESE">
+		<Text>סינית מסורתית</Text>
+	</STRING>
+	<STRING Id="1071" Name="IDS_RUSSIAN">
+		<Text>רוסית</Text>
+	</STRING>
+	<STRING Id="1072" Name="IDS_ADD_NEW_ITEM">
+		<Text>הוספה</Text>
+	</STRING>
+	<STRING Id="1073" Name="IDS_SET_DELETE">
+		<Text>מחיקה</Text>
+	</STRING>
+	<STRING Id="1074" Name="IDS_SET_EDIT">
+		<Text>עריכה</Text>
+	</STRING>
+	<STRING Id="1075" Name="IDS_SET_IP_CALL_OPTION">
+		<Text>אפשרויות חיוג IP</Text>
+	</STRING>
+	<STRING Id="1076" Name="IDS_AM_PM_SET">
+		<Text>הגדרת שעה</Text>
+	</STRING>
+	<STRING Id="1077" Name="IDS_SETMENU_AM">
+		<Text>AM</Text>
+	</STRING>
+	<STRING Id="1078" Name="IDS_SETMENU_PM">
+		<Text>PM</Text>
+	</STRING>
+	<STRING Id="1079" Name="IDS_NOT_GET_FEATURE_CODE">
+		<Text>לא אופיין קוד!</Text>
+	</STRING>
+	<STRING Id="1080" Name="IDS_KEYTONE_LENGTH">
+		<Text>הגדרות צליל DTMF</Text>
+	</STRING>
+	<STRING Id="1081" Name="IDS_KEYTONE_LONG">
+		<Text>ארוך</Text>
+	</STRING>
+	<STRING Id="1082" Name="IDS_KEYTONE_NORMAL">
+		<Text>רגיל</Text>
+	</STRING>
+	<STRING Id="1083" Name="IDS_AUTOANSWER_5SEC">
+		<Text>5 שניות</Text>
+	</STRING>
+	<STRING Id="1084" Name="IDS_AUTOANSWER_10SEC">
+		<Text>10 שניות</Text>
+	</STRING>
+	<STRING Id="1085" Name="IDS_LOCALNET">
+		<Text>רשת מקומית</Text>
+	</STRING>
+	<STRING Id="1086" Name="IDS_AUTONET">
+		<Text>רשת אוטומטית</Text>
+	</STRING>
+	<STRING Id="1087" Name="IDS_OPEN_ROAM">
+		<Text>פתח נדידה</Text>
+	</STRING>
+	<STRING Id="1088" Name="IDS_CLOSE_ROAM">
+		<Text>סגור נדידה</Text>
+	</STRING>
+	<STRING Id="1089" Name="IDS_SET_SUCESS">
+		<Text>בוצע!</Text>
+	</STRING>
+	<STRING Id="1090" Name="IDS_RESET_PHONE">
+		<Text>אתחל טלפון</Text>
+	</STRING>
+	<STRING Id="1091" Name="IDS_SET_POUND">
+		<Text>הגדר #</Text>
+	</STRING>
+	<STRING Id="1092" Name="IDS_SET_DEFAULT">
+		<Text>קבע כברירת מחדל</Text>
+	</STRING>
+	<STRING Id="1093" Name="IDS_AUTOPOWER_WARNING">
+		<Text>חפיפה בזמני הפעלה/כיבוי אוטו'! </Text>
+	</STRING>
+	<String Id="1094" Name="IDS_SMS_RESTRICT">
+		<Text>SMS restrict</Text>
+	</String>
+	<String Id="1095" Name="IDS_SMS_RESTRICT_SEND">
+		<Text>Restrict send</Text>
+	</String>
+	<String Id="1096" Name="IDS_SMS_RESTRICT_RECEIVE">
+		<Text>Restrict receive</Text>
+	</String>
+	<String Id="1097" Name="IDS_ADD">
+		<Text>Add</Text>
+	</String>
+	<String Id="1098" Name="IDS_DELETE">
+		<Text>Delete</Text>
+	</String>
+</Strings>
+<Dialogs>
+	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="7001">
+		<Controls>
+			<Menu Id="7001" Name="IDC_MAIN">
+				<TitleID>IDS_APP_TITLE</TitleID>
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6002" Name="IDD_LANGUAGE_MENU" Focus="7002">
+		<Controls>
+			<Menu Id="7002" Name="IDC_LANGUAGE">
+				<TitleID>IDS_LANGUAGE</TitleID>
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6003" Name="IDD_CALLSETTINGSEL" Focus="7003">
+		<Controls>
+			<Menu Id="7003" Name="IDC_CALLSETTINGSEL">
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6004" Name="IDD_DIVERT_MENU" Focus="7004">
+		<Controls>
+			<Menu Id="7004" Name="IDC_DIVERT">
+				<TitleID>IDS_CALLFORWARD_DIVERT</TitleID>
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6005" Name="IDD_PHONE_NUMBER" Focus="0">
+		<Controls/>
+	</DIALOG>
+	<DIALOG Id="6006" Name="IDD_CALLFORWARD_SEL" Focus="7005">
+		<Controls>
+			<Menu Id="7005" Name="IDC_CALLFORWARD_SEL">
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6007" Name="IDD_CALLFORWARD_INPUT" Focus="7006">
+		<Controls>
+			<Text Id="7006" Name="IDC_CALLFORWARD_INPUT">
+				<TitleID>IDS_CALLFORWARD_INPUT</TitleID>
+				<Items/></Text>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6008" Name="IDD_NET_SELECT" Focus="7008">
+		<Controls>
+			<Menu Id="7008" Name="IDC_NET_SELECT">
+				<TitleID>IDS_NET_SEL</TitleID>
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6009" Name="IDD_TIMESETTING" Focus="7007">
+		<Controls>
+			<Menu Id="7007" Name="IDC_TIMESET">
+				<TitleID>IDS_TIMESETTING</TitleID>
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6010" Name="IDD_PHONESETTING_MENU" Focus="7010">
+		<Controls>
+			<Menu Id="7010" Name="IDC_PHONESETTING">
+				<TitleID>IDS_PHONESETTING_TITLE</TitleID>
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6011" Name="IDD_CALLSETTING_MENU" Focus="7011">
+		<Controls>
+			<Menu Id="7011" Name="IDC_CALLSETTING">
+				<TitleID>IDS_CALLSETTING_TITLE</TitleID>
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6012" Name="IDD_NETWORKSETTING_MENU" Focus="7012">
+		<Controls>
+			<Menu Id="7012" Name="IDC_NETWORKSETTING">
+				<TitleID>IDS_NETWORKSETTING_TITLE</TitleID>
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6013" Name="IDD_AKG_MENU" Focus="7013">
+		<Controls>
+			<Menu Id="7013" Name="IDC_AKG">
+				<TitleID>IDS_AUTOKEYGUARD_TITLE</TitleID>
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6014" Name="IDD_BANNER_TXT" Focus="7014">
+		<Controls>
+			<Text Id="7014" Name="IDC_BANNER">
+				<TitleID>IDS_BANNER_TITLE</TitleID>
+				<Items/></Text>
+		</Controls>
+	</DIALOG>
+	<Dialog Id="6015" Name="IDD_KEYTONE_LENGTH" Focus="7020">
+		<Controls>
+			<Menu Id="7020" Name="IDC_KEYTONE_LENGTH">
+				<TitleID>IDS_KEYTONE_LENGTH</TitleID>
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<DIALOG Id="6016" Name="IDD_DATESETTING" Focus="7009">
+		<Controls>
+			<Menu Id="7009" Name="IDC_DATESET">
+				<TitleID>IDS_DATESETTING</TitleID>
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6017" Name="IDD_AUTO_POWER" Focus="0">
+		<Controls/>
+	</DIALOG>
+	<Dialog Id="6018" Name="IDD_IP_NUMBER_SET" Focus="7018">
+		<Controls>
+			<Menu Id="7018" Name="IDC_IP_NUMBER_SET">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<DIALOG Id="6019" Name="IDD_WARNING_MESSEGE" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</DIALOG>
+	<DIALOG Id="6020" Name="IDD_ANSWER_MODE" Focus="7019">
+		<Controls>
+			<Menu Id="7019" Name="IDC_ANSWER_MODE">
+				<TitleID>IDS_ANSWER_MODE</TitleID>
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<Dialog Id="6021" Name="IDD_AUTOANSWER_SUB" Focus="0">
+		<Controls>
+			<Menu Id="7015" Name="IDC_AUTOANSWER_SUB">
+				<TitleID>IDS_AUTOANSWER_TITLE</TitleID>
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6022" Name="IDD_SMS_RESTRICT" Focus="7016">
+		<Controls>
+			<Menu Id="7016" Name="IDC_SMS_RESTRICT">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6023" Name="IDD_SMS_RESTRICT_RECEIVE" Focus="7017">
+		<Controls>
+			<Menu Id="7017" Name="IDC_SMS_RESTRICT_RECEIVE">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6024" Name="IDD_SMS_RESTRICT_RECEIVE_ADD" Focus="0">
+		<Controls>
+			<Text Id="7021" Name="IDC_TEXT_SMS_RESTRICT_RECEIVE">
+				<Items/></Text>
+		</Controls>
+	</Dialog>
+</Dialogs>
 </BREWRes>

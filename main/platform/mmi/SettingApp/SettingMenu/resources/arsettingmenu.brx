@@ -388,6 +388,21 @@
 	<String Id="1129" Name="IDS_MYANMAR">
 		<Text>myanmar</Text>
 	</String>
+	<String Id="1130" Name="IDS_SMS_RESTRICT">
+		<Text>SMS restrict</Text>
+	</String>
+	<String Id="1131" Name="IDS_SMS_RESTRICT_SEND">
+		<Text>Restrict send</Text>
+	</String>
+	<String Id="1132" Name="IDS_SMS_RESTRICT_RECEIVE">
+		<Text>Restrict receive</Text>
+	</String>
+	<String Id="1133" Name="IDS_ADD">
+		<Text>Add</Text>
+	</String>
+	<String Id="1134" Name="IDS_DELETE">
+		<Text>Delete</Text>
+	</String>
 	<STRING Id="1136" Name="IDS_FMRADIO_OPTION_MENU_PLAY_MODLE">
 		<Text>وضع نغمات</Text>
 	</STRING>
@@ -634,6 +649,26 @@
 			<Menu Id="7030" Name="IDC_MENU_TIMEFONTMODE">
 				<Items/>
 			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6036" Name="IDD_SMS_RESTRICT" Focus="7031">
+		<Controls>
+			<Menu Id="7031" Name="IDC_SMS_RESTRICT">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6037" Name="IDD_SMS_RESTRICT_RECEIVE" Focus="7032">
+		<Controls>
+			<Menu Id="7032" Name="IDC_SMS_RESTRICT_RECEIVE">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6038" Name="IDD_SMS_RESTRICT_RECEIVE_ADD" Focus="0">
+		<Controls>
+			<Text Id="7033" Name="IDC_TEXT_SMS_RESTRICT_RECEIVE">
+				<Items/></Text>
 		</Controls>
 	</Dialog>
 </Dialogs>

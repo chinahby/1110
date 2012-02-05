@@ -1647,7 +1647,172 @@ Exit:
 #ifdef FEATURE_ICM
 				uint16 num = 0;
 #endif
+#ifdef FEATURE_VERSION_W208S 
 
+                {
+                    //在这里，把黑名单里发来的短信给删掉，并且不显示通知给用户看
+                    char szFrom[32+1];
+                    AECHAR          szRestricName[32 + 1]={0}; 
+                    byte * pDst;
+                    int nOffset = 0;
+                    uint8 i;
+                    uint8 byMax = 0;
+                    wms_address_s_type           address;
+                    sms_restrict_recive_info        sms_restrict_reciveList[MAX_SMS_RESTRICT];   
+                    MSG_FATAL("EVT_WMS_MSG_STATUS_REPORT 1",0,0,0);
+                    address = info->mt_message_info.message.u.cdma_message.address;
+                    
+                    pDst = (byte*)szFrom;
+
+                    if (address.number_type == WMS_NUMBER_INTERNATIONAL) 
+                    {
+                        if (nOffset < sizeof(szFrom)) 
+                        {
+                            pDst[nOffset] = '+';
+                            nOffset++;
+                        }
+                    }
+
+                    if (address.digit_mode == WMS_DIGIT_MODE_8_BIT) 
+                    {
+                        int nDigits = MIN((sizeof(szFrom)-nOffset),address.number_of_digits);
+                        memcpy(pDst + nOffset, address.digits, nDigits);
+                        nOffset += nDigits;
+                    }   
+                    else if (address.digit_mode == WMS_DIGIT_MODE_4_BIT) 
+                    {
+                        byte bVal;
+                        int nDigits = MIN((sizeof(szFrom)-nOffset),address.number_of_digits);
+
+                        for (i = 0; i < nDigits; i++) 
+                        {
+                            bVal = (byte)address.digits[i] & 0x0f;
+                            pDst[nOffset] = GetDigit(bVal) ;
+                            nOffset++;
+                        }
+                    }
+                    pDst[nOffset] = '\0';
+                    DBGPRINTF("szFrom=%s", szFrom);
+   
+                    //初始拒收黑名单的总数
+                    (void) ICONFIG_GetItem(pMe->m_pConfig,
+                                           CFGI_SMS_RESTRICT_RECEIVE_TOTAL,
+                                           &byMax,
+                                           sizeof(uint8));  
+                    MSG_FATAL("EVT_WMS_MSG_STATUS_REPORT byMax=%d",byMax,0,0);
+                    //初始化拒收短信黑名单的信息
+                    (void) ICONFIG_GetItem(pMe->m_pConfig,
+                                           CFGI_SMS_RESTRICT_RECEIVE_INFO,
+                                           (void*)sms_restrict_reciveList,
+                                           sizeof(sms_restrict_reciveList));
+                    STRTOWSTR(szFrom, szRestricName, sizeof(szRestricName));                         
+                    if(byMax > 0)
+                    {
+                        for(i=0; i < byMax; ++i)
+                        {
+                            //处理短信黑名单时，可以按下面类似的来处理。当是黑名单中的号码时，直接返回WMS_OK_S
+                            DBGPRINTF("EVT_WMS_MSG_STATUS_REPORT i=%d szName=%S", i,sms_restrict_reciveList[i].szName);
+                            if(WSTRCMP(szRestricName, sms_restrict_reciveList[i].szName)== 0)
+                            {
+                                uint16 wIndex=0;
+                                wms_cache_info_node  *pnode = NULL;
+                                int i;
+                                wms_cache_info_node  *pnode2 = NULL;   
+                                wms_cache_info_node             *TempCurMsgNodes[LONGSMS_MAX_PACKAGES];
+                                int nRet,nCount=0;
+                                wms_cache_info_list   *pList = NULL;
+                                boolean bUIMSMS = FALSE;
+                                MSG_FATAL("szRestricName == szName",wIndex,0,0);
+                                pList = wms_get_cacheinfolist(WMS_MB_INBOX);
+                                if (NULL != pList)
+                                {
+                                    wIndex = pList->nBranches+1;
+                                }         
+                                else
+                                {
+                                    wIndex = 0;
+                                }
+                                
+                                // 取消息 cache info 节点
+                                if (wIndex>=RUIM_MSGINDEX_BASE)
+                                {
+                                    wIndex = wIndex - RUIM_MSGINDEX_BASE;
+                                    pnode = wms_cacheinfolist_getnode(WMS_MB_INBOX, WMS_MEMORY_STORE_RUIM, wIndex);
+                                }
+                                else
+                                {
+                                    pnode = wms_cacheinfolist_getnode(WMS_MB_INBOX, WMS_MEMORY_STORE_NV_CDMA, wIndex);
+                                }
+                                
+                                if (pnode != NULL)
+                                {
+                                    MEMSET(TempCurMsgNodes, 0, sizeof(TempCurMsgNodes));
+                                    MEMCPY(TempCurMsgNodes, pMe->m_CurMsgNodes, sizeof(TempCurMsgNodes));
+                                    // 重置当前消息列表
+                                    MEMSET(pMe->m_CurMsgNodes, 0, sizeof(pMe->m_CurMsgNodes));
+                                    WmsApp_FreeMsgNodeMs(pMe);
+                                    
+                                    pMe->m_idxCur = 0;
+#ifdef FEATURE_SMS_UDH
+                                    if (pnode->pItems != NULL)
+                                    {
+                                        MEMCPY(pMe->m_CurMsgNodes, pnode->pItems, sizeof(pMe->m_CurMsgNodes));
+                                        
+                                        for (; pMe->m_idxCur<LONGSMS_MAX_PACKAGES; pMe->m_idxCur++)
+                                        {
+                                            if (pMe->m_CurMsgNodes[pMe->m_idxCur] != NULL)
+                                            {
+                                                pnode = pMe->m_CurMsgNodes[pMe->m_idxCur];
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    else
+#endif
+                                    {
+                                        pMe->m_CurMsgNodes[0] = pnode;
+                                    }
+        
+                                    for (i=0; i<LONGSMS_MAX_PACKAGES; i++)
+                                    {
+                                        if (pMe->m_CurMsgNodes[i] != NULL)
+                                        {
+                                            pnode2 = pMe->m_CurMsgNodes[i];
+                                            
+                                            // 发布删除消息命令
+                                            nRet = ENOMEMORY;
+                                            do
+                                            {
+                                                nRet = IWMS_MsgDelete(pMe->m_pwms,
+                                                                   pMe->m_clientId,
+                                                                   &pMe->m_callback,
+                                                                   (void *)pMe,
+                                                                   pnode2->mem_store,
+                                                                   pnode2->index);
+                                            } while(nRet != SUCCESS);
+                                            pMe->m_CurMsgNodes[i] = NULL;
+                                        }
+                                    }
+                                    MEMSET(pMe->m_CurMsgNodes, 0, sizeof(pMe->m_CurMsgNodes));
+                                    WmsApp_FreeMsgNodeMs(pMe);
+                                    MEMCPY(pMe->m_CurMsgNodes, TempCurMsgNodes, sizeof(pMe->m_CurMsgNodes));
+        
+                                    for (i=0; i<LONGSMS_MAX_PACKAGES; i++)
+                                    {
+                                        if (TempCurMsgNodes[i] != NULL)
+                                        {
+                                            FREE(TempCurMsgNodes[i]);
+                                            TempCurMsgNodes[i] = NULL;
+                                        }
+                                    }      
+                                    MSG_FATAL("EVT_WMS_MSG_STATUS_REPORT end m_wCurindex=%d",pMe->m_wCurindex,0,0);
+                                    return TRUE;
+                                }
+                            }
+                        }
+                    }       
+                }
+#endif
 #ifdef FEATURE_POWERUP_REGISTER_CHINAUNICOM                
                 if (info->mt_message_info.message.u.cdma_message.teleservice == 
                     WMS_TELESERVICE_CHINAUNICOMREG)

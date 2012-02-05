@@ -364,6 +364,21 @@
 	<STRING Id="1121" Name="IDS_MASS_STORAGE">
 		<Text>Off</Text>
 	</STRING>
+	<String Id="1122" Name="IDS_SMS_RESTRICT" Encoding="Unicode">
+		<Text>SMS restrict</Text>
+	</String>
+	<String Id="1123" Name="IDS_SMS_RESTRICT_SEND" Encoding="Unicode">
+		<Text>Restrict send</Text>
+	</String>
+	<String Id="1124" Name="IDS_SMS_RESTRICT_RECEIVE" Encoding="Unicode">
+		<Text>Restrict receive</Text>
+	</String>
+	<String Id="1125" Name="IDS_ADD" Encoding="Unicode">
+		<Text>Add</Text>
+	</String>
+	<String Id="1126" Name="IDS_DELETE" Encoding="Unicode">
+		<Text>Delete</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="7001">
@@ -575,6 +590,26 @@
 				<TitleID>IDS_USB_FUNCTION</TitleID>
 				<Items/>
 			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6031" Name="IDD_SMS_RESTRICT" Focus="7026">
+		<Controls>
+			<Menu Id="7026" Name="IDC_SMS_RESTRICT">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6032" Name="IDD_SMS_RESTRICT_RECEIVE" Focus="7027">
+		<Controls>
+			<Menu Id="7027" Name="IDC_SMS_RESTRICT_RECEIVE">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6033" Name="IDD_SMS_RESTRICT_RECEIVE_ADD" Focus="0">
+		<Controls>
+			<Text Id="7028" Name="IDC_TEXT_SMS_RESTRICT_RECEIVE">
+				<Items/></Text>
 		</Controls>
 	</Dialog>
 </Dialogs>
