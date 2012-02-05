@@ -661,6 +661,9 @@
 	<String Id="1041" Name="IDS_TIME_STAMP_ASRECEIVED">
 		<Text>As Received</Text>
 	</String>
+	<String Id="1042" Name="IDS_ADD_TO_RESTRICT_LIST" Encoding="Unicode">
+		<Text>Add to restrict list</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN" Focus="7001">

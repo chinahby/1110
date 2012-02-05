@@ -2057,7 +2057,7 @@ static boolean IDD_MESSAGELIST_Handler(void        *pUser,
 {
     IMenuCtl *pMenu = NULL;
     WmsApp *pMe = (WmsApp *)pUser;
-    MSG_FATAL("IDD_MESSAGELIST_Handler Start eCode=0x%x",eCode,0,0);
+    MSG_FATAL("IDD_MESSAGELIST_Handler Start eCode=0x%x, wParam=0x%x",eCode,wParam,0);
     if (NULL == pMe)
     {
         return FALSE;
@@ -2478,7 +2478,7 @@ static boolean IDD_MESSAGELIST_Handler(void        *pUser,
                         
                     case AVK_INFO:
                         pMe->m_wPrevMenuSel = IMENUCTL_GetSel(pMenu);
-                       
+                        MSG_FATAL("IDD_MESSAGELIST_Handler Start AVK_INFO pMe->m_wPrevMenuSel=%d",pMe->m_wPrevMenuSel,0,0);
 #ifdef FEATURE_USES_MMS
                         if((pMe->m_eMBoxType == WMS_MB_OUTBOX_MMS)
                             || (pMe->m_eMBoxType == WMS_MB_INBOX_MMS)
@@ -2614,7 +2614,7 @@ static boolean IDD_MESSAGELIST_Handler(void        *pUser,
         case EVT_COMMAND:
             pMe->m_wPrevMenuSel = wParam;
             pMe->m_wCurindex = pMe->m_wPrevMenuSel - MSG_CMD_BASE;
-            ERR("pMe->m_wCurindex---%d", pMe->m_wCurindex, 0, 0);
+            MSG_FATAL("pMe->m_wCurindex---%d", pMe->m_wCurindex, 0, 0);
             
             CLOSE_DIALOG(DLGRET_OPT)
             return TRUE;
@@ -13081,6 +13081,7 @@ static boolean IDD_MSGOPTS_Handler(void *pUser,
                         MENU_ADDITEM(pMenu, IDS_CALL);
                         MENU_ADDITEM(pMenu, IDS_DELETE);
                         MENU_ADDITEM(pMenu, IDS_DELETEALL);
+                        MENU_ADDITEM(pMenu, IDS_ADD_TO_RESTRICT_LIST);
                         if (pMe->m_eOptType != OPT_VIA_LISTMSG)
                         {
 #ifdef FEATURE_CONTACT_APP
@@ -13120,6 +13121,7 @@ static boolean IDD_MSGOPTS_Handler(void *pUser,
                         MENU_ADDITEM(pMenu, IDS_FORWARD);
                         MENU_ADDITEM(pMenu, IDS_DELETE);
                         MENU_ADDITEM(pMenu, IDS_DELETEALL);
+                        MENU_ADDITEM(pMenu, IDS_ADD_TO_RESTRICT_LIST);
                         break;
                         
                     case WMS_MB_DRAFT:
@@ -13131,6 +13133,7 @@ static boolean IDD_MSGOPTS_Handler(void *pUser,
                         MENU_ADDITEM(pMenu, IDS_DELETE);
                         MENU_ADDITEM(pMenu, IDS_DELETEALL);
                         //MENU_ADDITEM(pMenu, IDS_FORWARD);
+                        MENU_ADDITEM(pMenu, IDS_ADD_TO_RESTRICT_LIST);
                         break;
                 
                     case WMS_MB_VOICEMAIL:
@@ -13284,6 +13287,46 @@ static boolean IDD_MSGOPTS_Handler(void *pUser,
                 case IDS_DELETEALL:
                     CLOSE_DIALOG(DLGRET_CLEARALL)
                     return TRUE;
+
+                // 添加到黑名单
+                case IDS_ADD_TO_RESTRICT_LIST:
+                    {
+                        uint8 byMax = 0;
+                        sms_restrict_recive_info		sms_restrict_reciveList[MAX_SMS_RESTRICT];
+                        MSG_FATAL("IDS_ADD_TO_RESTRICT_LIST",0,0,0);
+                        DBGPRINTF("pMe->m_msCur.m_szNum=%S",pMe->m_msCur.m_szNum);
+                        if (WSTRLEN(pMe->m_msCur.m_szNum) > 0)
+                        {
+                            sms_restrict_recive_info info = {0};
+                            
+                            (void) ICONFIG_GetItem(pMe->m_pConfig,
+                            CFGI_SMS_RESTRICT_RECEIVE_TOTAL,
+                            &byMax,
+                            sizeof(byte));  
+                            
+                        	//初始化拒收短信黑名单的信息
+                        	(void) ICONFIG_GetItem(pMe->m_pConfig,
+                        						   CFGI_SMS_RESTRICT_RECEIVE_INFO,
+                        						   (void*)sms_restrict_reciveList,
+                        						   sizeof(sms_restrict_reciveList));           
+                            
+                            MEMCPY(sms_restrict_reciveList[byMax].szName, pMe->m_msCur.m_szNum, sizeof(sms_restrict_reciveList[byMax].szName));
+                            byMax++;
+                            DBGPRINTF("szName=%S, byMax=%d",pMe->m_msCur.m_szNum, byMax);
+                           (void) ICONFIG_SetItem(pMe->m_pConfig,
+                                                  CFGI_SMS_RESTRICT_RECEIVE_TOTAL,
+                                                  &byMax,
+                                                  sizeof(uint8));
+                           
+                           (void) ICONFIG_SetItem(pMe->m_pConfig,
+                                                  CFGI_SMS_RESTRICT_RECEIVE_INFO,
+                                                  (void*) sms_restrict_reciveList,
+                                                  sizeof(sms_restrict_reciveList));                           
+                        }
+
+                    }
+                    CLOSE_DIALOG(DLGRET_CANCELED)
+                    return TRUE;                    
                     
 #ifdef FEATURE_CDSMS_RUIM
                 // 复制到 UIM
@@ -14221,7 +14264,7 @@ static boolean IDD_DELETING_Handler(void        *pUser,
                         {
                             int i;
                             wms_cache_info_node  *pnode = NULL;
-                            
+                            MSG_FATAL("IDD_DELETING_Handler pMe->m_wCurindex=%d", pMe->m_wCurindex,0,0);
                             for (i=0; i<LONGSMS_MAX_PACKAGES; i++)
                             {
                                 if (pMe->m_CurMsgNodes[i] != NULL)
@@ -19227,6 +19270,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                                 MENU_ADDITEM(pMe->m_pMenu, IDS_CALL);
                                 MENU_ADDITEM(pMe->m_pMenu, IDS_SAVE_CURRENT_ITEM);    //Add By zzg 2010_09_11                     
                                 MENU_ADDITEM(pMe->m_pMenu, IDS_DELETE);
+                                MENU_ADDITEM(pMe->m_pMenu, IDS_ADD_TO_RESTRICT_LIST);
                                 // 设置菜单属性
                                 IMENUCTL_SetPopMenuRect(pMe->m_pMenu);
 

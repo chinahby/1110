@@ -574,6 +574,9 @@
 	<String Id="1021" Name="IDS_SEND_TO_ALBUM_OR_EMAIL">
 		<Text>发送到相册或邮箱</Text>
 	</String>
+	<String Id="1022" Name="IDS_ADD_TO_RESTRICT_LIST">
+		<Text>添加到黑名单</Text>
+	</String>
 	<String Id="1026" Name="IDS_MMSDELIVERYREPORT">
 		<Text>使用彩信发送报告</Text>
 	</String>

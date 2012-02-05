@@ -640,6 +640,9 @@
 	<String Id="1035" Name="IDS_SEND_TO_ALBUM_OR_EMAIL">
 		<Text>Send to album or email</Text>
 	</String>
+	<String Id="1036" Name="IDS_ADD_TO_RESTRICT_LIST">
+		<Text>Add to restrict list</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN" Focus="7001">

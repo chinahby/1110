@@ -646,6 +646,9 @@
 	<String Id="1036" Name="IDS_DRAFT_MMS">
 		<Text>Draft mms</Text>
 	</String>
+	<String Id="1037" Name="IDS_ADD_TO_RESTRICT_LIST">
+		<Text>Add to restrict list</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN" Focus="7001">

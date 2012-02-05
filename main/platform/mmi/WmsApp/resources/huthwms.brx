@@ -571,6 +571,9 @@
 	<String Id="1020" Name="IDS_SEND_TO_ALBUM_OR_EMAIL">
 		<Text>Send to album or email</Text>
 	</String>
+	<String Id="1021" Name="IDS_ADD_TO_RESTRICT_LIST">
+		<Text>Add to restrict list</Text>
+	</String>
 	<String Id="1026" Name="IDS_MMSDELIVERYREPORT">
 		<Text>MMS Delivery Report</Text>
 	</String>
