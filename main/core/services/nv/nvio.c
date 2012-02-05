@@ -748,8 +748,6 @@ nvio_read (
 
   /* If item code is out of range return with bad parameter status. */
 
-//MSG_FATAL("***zzg nvio_read item=%d***", cmd_ptr->item, 0, 0);
-
   if (cmd_ptr->item >= NV_MAX_I) {
     return NV_BADPARM_S;
   }
