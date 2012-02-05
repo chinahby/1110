@@ -8486,7 +8486,7 @@ static boolean  Setting_Handle_SMSRestrict(CSettingMenu *pMe,
                         sizeof(WTitle));
 				IANNUNCIATOR_SetFieldText(pMe->m_pAnn,WTitle);
             }
-            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SMS_RESTRICT_SEND, IDS_SMS_RESTRICT_SEND, NULL, 0);
+            //IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SMS_RESTRICT_SEND, IDS_SMS_RESTRICT_SEND, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SMS_RESTRICT_RECEIVE, IDS_SMS_RESTRICT_RECEIVE, NULL, 0);
             return TRUE;
 
@@ -8533,9 +8533,9 @@ static boolean  Setting_Handle_SMSRestrict(CSettingMenu *pMe,
             pMe->m_sSubDlgId = wParam;
             switch(wParam)
             {
-                case IDS_SMS_RESTRICT_SEND:   //发送限制
-                    CLOSE_DIALOG(DLGRET_SMSRESTRICT_SEND)
-                    break;
+      //          case IDS_SMS_RESTRICT_SEND:   //发送限制
+      //              CLOSE_DIALOG(DLGRET_SMSRESTRICT_SEND)
+      //              break;
 
                 case IDS_SMS_RESTRICT_RECEIVE:   //接收限制
                     CLOSE_DIALOG(DLGRET_SMSRESTRICT_RECEIVE)

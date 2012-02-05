@@ -2075,9 +2075,9 @@ static NextFSMAction SettingMenu_StateSMSRestrictHandler(CSettingMenu *pMe)
             SettingMenu_ShowDialog(pMe, IDD_SMS_RESTRICT);
             return NFSMACTION_WAIT;
 
-        case DLGRET_SMSRESTRICT_SEND:
-            MOVE_TO_STATE(SETTINGMENUST_SMSRESTRICT_SEND)
-            return NFSMACTION_CONTINUE;
+//        case DLGRET_SMSRESTRICT_SEND:
+//            MOVE_TO_STATE(SETTINGMENUST_SMSRESTRICT_SEND)
+//            return NFSMACTION_CONTINUE;
 
         case DLGRET_SMSRESTRICT_RECEIVE:
             MOVE_TO_STATE(SETTINGMENUST_SMSRESTRICT_RECEIVE)
