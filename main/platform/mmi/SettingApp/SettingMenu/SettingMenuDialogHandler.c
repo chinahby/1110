@@ -8730,7 +8730,7 @@ static boolean  Setting_Handle_SMSRestrict_RECEIVE(CSettingMenu *pMe,
                     pMe->m_pMenu = NULL;
                 }
                 pMe->m_sSubDlgId = wParam;
-                MSG_FATAL("Setting_Handle_SMSRestrict_RECEIVE wParam=d",wParam,0,0);
+                MSG_FATAL("Setting_Handle_SMSRestrict_RECEIVE wParam=0x%x",wParam,0,0);
                 switch(wParam)
                 {
                     case IDS_ADD:   //添加接收黑名单
@@ -8744,7 +8744,7 @@ static boolean  Setting_Handle_SMSRestrict_RECEIVE(CSettingMenu *pMe,
                             uint8 byMax = 0;
                             sms_restrict_recive_info		temp[MAX_SMS_RESTRICT]={0};
                             MSG_FATAL("Setting_Handle_SMSRestrict_RECEIVE IDS_DELETE MenuSelectdId=%d",MenuSelectdId,0,0);
-                            if(MenuSelectdId > 0)
+                            if(MenuSelectdId >= 0)
                             {
                             	(void) ICONFIG_GetItem(pMe->m_pConfig,
                             						   CFGI_SMS_RESTRICT_RECEIVE_TOTAL,
@@ -8769,6 +8769,7 @@ static boolean  Setting_Handle_SMSRestrict_RECEIVE(CSettingMenu *pMe,
                                         IMENUCTL_AddItem(pMenu, 0,0,i, temp[i].szName, 0);
                                     }
                                     IMENUCTL_SetSel(pMenu, 0);
+                                    IMENUCTL_SetActive(pMenu, TRUE);
                                 }        
                               	(void) ICONFIG_SetItem(pMe->m_pConfig,
                              						   CFGI_SMS_RESTRICT_RECEIVE_TOTAL,
