@@ -1224,6 +1224,7 @@ static boolean IDD_MAIN_Handler(void        *pUser,
             return TRUE;
             
         case EVT_DIALOG_END:
+            IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,NULL);
             return TRUE;
 
         case EVT_KEY:
@@ -13287,7 +13288,7 @@ static boolean IDD_MSGOPTS_Handler(void *pUser,
                 case IDS_DELETEALL:
                     CLOSE_DIALOG(DLGRET_CLEARALL)
                     return TRUE;
-
+#ifdef FEATURE_VERSION_W208S
                 // 添加到黑名单
                 case IDS_ADD_TO_RESTRICT_LIST:
                     {
@@ -13327,7 +13328,7 @@ static boolean IDD_MSGOPTS_Handler(void *pUser,
                     }
                     CLOSE_DIALOG(DLGRET_CANCELED)
                     return TRUE;                    
-                    
+#endif                    
 #ifdef FEATURE_CDSMS_RUIM
                 // 复制到 UIM
                 case IDS_COPYTORUIM:
@@ -18503,8 +18504,7 @@ static boolean IDD_POPMSG_Handler(void *pUser,AEEEvent eCode,uint16 wParam,uint3
             
         case EVT_DIALOG_END:
              ISTATIC_Release(pStatic); 
-             pStatic = NULL;                 
-            
+             pStatic = NULL;   
             return TRUE;
             
         case EVT_KEY:
