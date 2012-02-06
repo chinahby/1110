@@ -1452,7 +1452,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
 	                             &info->mt_message_info.message.u.cdma_message.raw_ts, 
 	                             &pMe->m_CltTsdata);
 
-	            #ifdef FEATURE_USES_MMS
+#ifdef FEATURE_USES_MMS
                      pMe->m_pMsgEvent = ((wms_msg_event_info_s_type*)dwParam);
 	            	 nRet = IWMS_MMsDecodeNotifyBody(pMe->m_pwms,&pMe->m_CltTsdata,notify_buf);
 	            
@@ -1710,7 +1710,7 @@ Exit:
                     {
                         for(i=0; i < byMax; ++i)
                         {
-                            //处理短信黑名单时，可以按下面类似的来处理。当是黑名单中的号码时，直接返回WMS_OK_S
+                            //处理短信黑名单时，先删除保存的短信，再直接返回TRUESW
                             DBGPRINTF("EVT_WMS_MSG_STATUS_REPORT i=%d szName=%S", i,sms_restrict_reciveList[i].szName);
                             if(WSTRCMP(szRestricName, sms_restrict_reciveList[i].szName)== 0)
                             {
@@ -1722,7 +1722,6 @@ Exit:
                                 int nRet,nCount=0;
                                 wms_cache_info_list   *pList = NULL;
                                 boolean bUIMSMS = FALSE;
-                                MSG_FATAL("szRestricName == szName",wIndex,0,0);
                                 pList = wms_get_cacheinfolist(WMS_MB_INBOX);
                                 if (NULL != pList)
                                 {
@@ -1732,7 +1731,7 @@ Exit:
                                 {
                                     wIndex = 0;
                                 }
-                                
+                                MSG_FATAL("szRestricName == szName",wIndex,0,0);
                                 // 取消息 cache info 节点
                                 if (wIndex>=RUIM_MSGINDEX_BASE)
                                 {
@@ -2062,6 +2061,45 @@ Exit:
                     {
                         char* pStr = STRSTR((const char *)&pDecData->notification.hContentLocation,"http://");
                         MSG_FATAL("decData.notification.hContentLocation = %s",pStr,0,0);
+#ifdef FEATURE_VERSION_W208S 
+                        {
+                            uint8 i;
+                            uint8 byMax = 0;
+                            wms_address_s_type           address;
+                            sms_restrict_recive_info        sms_restrict_reciveList[MAX_SMS_RESTRICT];  
+                            AECHAR          szRestricName[32 + 1]={0};
+                            
+                            DBGPRINTF("MMS_PDU_NOTIFICATION_IND notification.hFrom=%s",pDecData->notification.hFrom);
+                            //初始拒收黑名单的总数
+                            (void) ICONFIG_GetItem(pMe->m_pConfig,
+                                                   CFGI_SMS_RESTRICT_RECEIVE_TOTAL,
+                                                   &byMax,
+                                                   sizeof(uint8));  
+                            MSG_FATAL("MMS_PDU_NOTIFICATION_IND byMax=%d",byMax,0,0);
+                            //初始化拒收短信黑名单的信息
+                            (void) ICONFIG_GetItem(pMe->m_pConfig,
+                                                   CFGI_SMS_RESTRICT_RECEIVE_INFO,
+                                                   (void*)sms_restrict_reciveList,
+                                                   sizeof(sms_restrict_reciveList));
+                            STRTOWSTR((char*)(pDecData->notification.hFrom), szRestricName, sizeof(szRestricName));                         
+                            if(byMax > 0)
+                            {
+                                for(i=0; i < byMax; ++i)
+                                {
+                                    //处理短信黑名单时，直接返回TRUE,，不做写卡操作
+                                    DBGPRINTF("EVT_WMS_MSG_STATUS_REPORT i=%d szName=%S", i,sms_restrict_reciveList[i].szName);
+                                    if(WSTRCMP(szRestricName, sms_restrict_reciveList[i].szName)== 0)
+                                    {
+                                        //这里可能直接返回，因为彩信通知还没有写到卡上来                                        
+                                        return TRUE;
+                                    }
+                                }
+                            }     
+                        }
+#endif
+
+
+                        
                         if(pMe->m_isCheckMMSNotify)
                         {
                             wms_memory_store_e_type   mem_store = WMS_MEMORY_STORE_RUIM;

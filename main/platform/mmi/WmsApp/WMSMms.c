@@ -3631,6 +3631,9 @@ int WMS_MMS_PDU_Decode(MMS_WSP_DEC_DATA* decdata,uint8* ptr, int datalen,uint8 *
 				i += iDataOffset;
                 if (*ePDUType == MMS_PDU_RETRIEVE_CONF)
 				    STRNCPY((char*)decdata->message.hFrom,(char*)&ptr[i + 1],len - 1);//Address-present-token | Insert-address-token
+
+                if (*ePDUType == MMS_PDU_NOTIFICATION_IND)//彩信通知短信里带的发件人的电话号码
+				    STRNCPY((char*)decdata->notification.hFrom,(char*)&ptr[i + 1],len - 1);//Address-present-token | Insert-address-token
 				    
 				j = i;
 				i += len;
