@@ -650,7 +650,7 @@
 		<Text>Proyecto de mms</Text>
 	</STRING>
 	<String Id="1038" Name="IDS_SEND_TO_ALBUM_OR_EMAIL">
-		<Text>Send to album or email</Text>
+		<Text>Enviar a Album o Email</Text>
 	</String>
 	<String Id="1039" Name="IDS_TIME_STAMP">
 		<Text>Time Stamp</Text>
