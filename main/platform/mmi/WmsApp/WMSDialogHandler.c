@@ -8772,13 +8772,14 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                         }
                         else
                         {
-                            if(WSTRCHR(pItem->m_szTo, L'@') == NULL)
+                            DBGPRINTF("IDD_TONUMLIST_Handler pItem->m_szEmail=%d",pItem->m_szEmail);
+                            if(WSTRCHR(pItem->m_szEmail, L'@') == NULL)
                             {
-                                (void)ITEXTCTL_SetText(pIText, WSTRCAT(pItem->m_szTo, L"@"), -1);  
+                                (void)ITEXTCTL_SetText(pIText, WSTRCAT(pItem->m_szEmail, L"@"), -1);  
                             }
                             else
                             {
-                                (void)ITEXTCTL_SetText(pIText, pItem->m_szTo, -1);  
+                                (void)ITEXTCTL_SetText(pIText, pItem->m_szEmail, -1);  
                             }
                         }
                     }

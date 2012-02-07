@@ -114,6 +114,8 @@ typedef struct _CMultiSendItemInfo
     
     // 接收消息方号码在电话本中对应的姓名
     AECHAR      m_szName[MAX_TITLE_LEN+1]; 
+    //接收消息方邮件
+    AECHAR      m_szEmail[MAX_EMAILADD_LEN+1];
 } CMultiSendItemInfo;
 
 // 短消息消息数据结构---供 WMS Applet 内部使用

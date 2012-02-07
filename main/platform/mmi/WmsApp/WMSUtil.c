@@ -1430,6 +1430,12 @@ static boolean GetNumCallback(sSelectFieldListNode* pNode)
                 goto GetNumCallback_Exit;
             }
             (void)WSTRCPY(pItem->m_szTo, (AECHAR *)(pTepNode->SelectFieldInfo.m_pAddNewMobile));
+            if((NULL != pTepNode->SelectFieldInfo.m_pAddNewMobile) &&
+                (WSTRLEN((AECHAR *)(pTepNode->SelectFieldInfo.m_pAddNewMobile))>0))
+            {
+                (void)WSTRCPY(pItem->m_szEmail, (AECHAR *)(pTepNode->SelectFieldInfo.m_pAddNewEMAIL));
+                DBGPRINTF("m_pAddNewEMAIL=%S",pItem->m_szEmail);
+            }
             if (NULL != wstrName)
             {
                 (void)WSTRCPY(pItem->m_szName, wstrName);
