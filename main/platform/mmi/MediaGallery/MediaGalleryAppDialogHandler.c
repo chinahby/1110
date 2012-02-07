@@ -243,6 +243,7 @@ static boolean MGAppPopupMenu_OnSetAs(CMediaGalleryApp* pMe,
                                       AEEEvent eCode,
                                       uint16 wParam,
                                       uint32 dwParam);
+
 static boolean MGAppPopupMenu_OnSavetoplaylist(CMediaGalleryApp* pMe,
                                       			AEEEvent eCode,
                                       			uint16 wParam,
@@ -3764,9 +3765,11 @@ static boolean MGAppPopupMenu_OnSetAs(CMediaGalleryApp *pMe,
                }
 
                RELEASEIF(pConfig);
-
                if(bSel == TRUE)
+               {
+                  IMENUCTL_SetActive(pMenuCtl, FALSE);
                   MGAppPopupMenu_OperationDone(pMe, MG_FNSHOP_DONE);
+               }
                else
                {
                   IMENUCTL_SetActive(pMenuCtl, FALSE);
@@ -10572,6 +10575,7 @@ static void MGAppUtil_StartUDisk(void *po)
    MSG_FATAL("MGAppUtil_StartUDisk---------bRet =%d",bRet ,0,0);
 
 }//MGAppUtil_StartUDisk
+
 static int MGAppUtil_BuildPlaylist(CMediaGalleryApp *pMe,IMenuCtl *pMenuCtl)
 {
 	AEEFileInfoEx  fi;
