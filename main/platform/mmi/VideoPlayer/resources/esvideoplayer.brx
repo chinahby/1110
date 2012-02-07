@@ -2,7 +2,7 @@
 <BREWRes Name="videoplayer" VERSION="1">
 <Strings Encoding="ISOLATIN1">
 	<String Id="1001" Name="IDS_TITLE">
-		<Text>Video Player</Text>
+		<Text>Reproductor de Video</Text>
 	</String>
 	<STRING Id="1004" Name="IDS_DELETE">
 		<Text>Borrar</Text>
