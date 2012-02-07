@@ -104,7 +104,7 @@
 		<Text>Menú</Text>
 	</STRING>
 	<STRING Id="1035" Name="IDS_MAIN_MENU_CALL_LOGS">
-		<Text>registros de llamadas</Text>
+		<Text>Registros de llamadas</Text>
 	</STRING>
 	<STRING Id="1043" Name="IDS_MAIN_MENU_CALCULATOR">
 		<Text>Calculadora</Text>
