@@ -112,7 +112,7 @@ Qualcomm Confidential and Proprietary
 #ifdef CUST_EDITION	
 // define max number of items
 // Max number of digits in a call history entry 
-#define AEECALLHISTORY_MAXDIGITS             (33+2)  //two bytes for number count
+#define AEECALLHISTORY_MAXDIGITS             (83+2)//(33+2)  //two bytes for number count  //modify by pyuangui
 // Max number of letters of an call history entry 
 // (including the NULL byte)
 #define AEECALLHISTORY_MAXLETTERS           (33)

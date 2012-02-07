@@ -2652,7 +2652,7 @@ void DrawPromptMessage (IDisplay *pIDisplay,
             titlerect.dx = TitleBgImgInfo.cx;
             titlerect.x = totalrect.x - TitleBgImgInfo.cx/2;
             titlerect.y = totalrect.y  - StringBgImgInfo.cy/2 + TitleBgImgInfo.cy/2;
-            #ifdef FEATURE_VERSION_W515V3
+            #if  defined(FEATURE_VERSION_W515V3) ||defined(FEATURE_VERSION_W516)
             strrect.dy = StringBgImgInfo.cy/2 + 20;
             strrect.dx = StringBgImgInfo.cx;
             strrect.x = totalrect.x - StringBgImgInfo.cx/2;

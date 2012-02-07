@@ -3772,9 +3772,17 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
    memset(&cursRect, 0, sizeof(cursRect));
 
    rectClip.x  = pContext->rectDisplay.x;
+   #ifdef FEATURE_VERSION_W516
+   rectClip.y  = pContext->rectDisplay.y+5;
+   #else
    rectClip.y  = pContext->rectDisplay.y;
+   #endif
    rectClip.dx = pContext->rectDisplay.dx;
-   rectClip.dy = pContext->rectDisplay.dy;
+   #ifdef FEATURE_VERSION_W516
+   rectClip.dy = pContext->rectDisplay.dy-5;
+   #else
+   rectClip.dy = pContext->rectDisplay.dy; 
+   #endif
    //MSG_FATAL("pContext->rectDisplay=%d,rectClip.y=%d",pContext->rectDisplay.x,pContext->rectDisplay.y,0);
    //MSG_FATAL("pContext->rectDisplay=%d,rectClip.dy=%d",pContext->rectDisplay.dx,pContext->rectDisplay.dy,0);
    if (bFrame) {
@@ -4095,6 +4103,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
                                         // is embedded in our fonts too
                cursRect.dx = 1;
                cursRect.dy = pContext->nFontAscent + pContext->nFontDescent;
+              
                bDrawCursor = TRUE;  // Draw the cursor at the end
             }
          }
