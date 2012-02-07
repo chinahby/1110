@@ -134,10 +134,10 @@
 		<Text>China Telecom</Text>
 	</STRING>
 	<STRING Id="1045" Name="IDS_HEADSET_ON">
-		<Text>Headset plug in</Text>
+		<Text>Auricular Conectado</Text>
 	</STRING>
 	<STRING Id="1046" Name="IDS_HEADSET_OFF">
-		<Text>Headset plug out</Text>
+		<Text>Auricular Desconectado</Text>
 	</STRING>
 	<STRING Id="1047" Name="IDS_WAITING">
 		<Text>Waiting</Text>
