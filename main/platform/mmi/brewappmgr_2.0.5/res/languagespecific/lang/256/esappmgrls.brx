@@ -618,7 +618,7 @@
 		<Text>Si compra un programa, no puede devolverlo. Sin embargo, la mayoría son muy económicos u ofrecen opciones de demostración para que los pruebe.</Text>
 	</STRING>
 	<STRING Id="4000" Name="IDS_MOBILESHOP">
-		<Text>MobileShop</Text>
+		<Text>Tienda Movil</Text>
 	</STRING>
 	<STRING Id="5000" Name="IDS_APPLICATION_MANAGER">
 		<Text>App Manager</Text>
