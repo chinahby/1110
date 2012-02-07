@@ -29,7 +29,7 @@
  		<Text>Conversión</Text>
  	</STRING>
  	<STRING Id="1016" Name="IDS_APPLICATION_WORLDTIME">
- 		<Text>HoraMundial</Text>
+ 		<Text>Hora Mundial</Text>
  	</STRING>
  	<STRING Id="1017" Name="IDS_APPLICATION_RECORDER">
  		<Text>Grabadora</Text>
