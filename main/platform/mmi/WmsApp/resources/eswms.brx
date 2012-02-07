@@ -647,7 +647,7 @@
 		<Text>Insertar imagen nueva</Text>
 	</STRING>
 	<STRING Id="1037" Name="IDS_DRAFT_MMS">
-		<Text>proyecto de mms</Text>
+		<Text>Proyecto de mms</Text>
 	</STRING>
 	<String Id="1038" Name="IDS_SEND_TO_ALBUM_OR_EMAIL">
 		<Text>Send to album or email</Text>
