@@ -2,7 +2,7 @@
  <BREWRes Name="mediagallery" VERSION="1">
  <Strings Encoding="Unicode">
  	<STRING Id="1000" Name="IDS_MG_MEDIAGALLERY">
- 		<Text>GaleríaDeMedios</Text>
+ 		<Text>Explorador de Archivos</Text>
  	</STRING>
  	<STRING Id="1001" Name="IDS_MG_PHONEMEMORY">
  		<Text>Teléfono</Text>

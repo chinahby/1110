@@ -7180,8 +7180,8 @@ static boolean IDD_TIME_STAMP_Handler(void   *pUser,
                                     
             InitMenuIcons(pMenu);
             {// 需根据具体配置选择相应菜单项
-                uint16 nSelID = IDS_TIME_STAMP_ASRECEIVED;
-                byte   btTimeStamp = OEMNV_SMS_TIMESTAMP_ASRECEIVED;
+                uint16 nSelID = IDS_TIME_STAMP_ADJUST;
+                byte   btTimeStamp = OEMNV_SMS_TIMESTAMP_ADJUST;
                 
                 (void) ICONFIG_GetItem(pMe->m_pConfig,
                                        CFGI_SMS_TIMESTAMP,
@@ -7199,7 +7199,6 @@ static boolean IDD_TIME_STAMP_Handler(void   *pUser,
                         break;                       
                     
                     default:
-                        nSelID = IDS_TIME_STAMP_ASRECEIVED;
                         break;
                 }
                 IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
