@@ -119,7 +119,7 @@
 		<Text>Diversión</Text>
 	</STRING>
 	<STRING Id="205" Name="IDC_MSHOP">
-		<Text>MobileShop</Text>
+		<Text>Tienda Movil</Text>
 	</STRING>
 	<STRING Id="206" Name="IDC_OPTIONS">
 		<Text>Configuración</Text>

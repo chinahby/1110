@@ -2202,13 +2202,16 @@ static boolean AppMgr_MainMenu(AppMgr * pme)
    ai.pszResText  = AEE_APPMGRLS_RES_FILE;
    ai.pszResImage = APPMGRLN_RES_FILE;
 
+
 #if defined(FEATURE_BREW_DOWNLOAD)
-   if (OEM_LOCK_MOBILESHOP_LOCATION)
+   //if (OEM_LOCK_MOBILESHOP_LOCATION)	//Del by zzg 2012_02_08
    {
       ai.wText       = IDC_MSHOP;
       ai.wImage      = ((nType == THUMB) ? IDB_MSHOP_THUMB : ((nType == ICON) ? IDB_MSHOP_ICON : IDB_MSHOP_LARGE));
-      ai.wItemID     = IDC_MSHOP;
+	  ai.wItemID     = IDC_MSHOP;
+	  
       IMENUCTL_AddItemEx(pme->m_pMainMenu, &ai);
+
 
       if (pme->m_pMainMenuSK)
       {
@@ -2216,11 +2219,15 @@ static boolean AppMgr_MainMenu(AppMgr * pme)
          ai.wImage      = IDB_MSHOP_THUMB;
          ai.wItemID     = pme->m_nItem[0] + IDC_MSHOP;
          IMENUCTL_AddItemEx(pme->m_pMainMenuSK, &ai);
+
+		 
       }
-      nDraw--;
+      //nDraw--;	//Del by zzg 2012_02_08
    }
 #endif // FEATURE_BREW_DOWNLOAD
 
+//Del by zzg 2012_02_08
+/*		
    // Show root level apps in
    if (pme->m_nItem[0])
    {
@@ -2231,17 +2238,24 @@ static boolean AppMgr_MainMenu(AppMgr * pme)
       
       while (nCount)
       {
-         uint16 nItemID = (!OEM_LOCK_MOBILESHOP_LOCATION && pi->cls == AEECLSID_MOBILESHOP_BID) ? IDC_MSHOP : itemID;
+         //uint16 nItemID = (!OEM_LOCK_MOBILESHOP_LOCATION && pi->cls == AEECLSID_MOBILESHOP_BID) ? IDC_MSHOP : itemID;
+		 uint16 nItemID = IDC_WORK;
 
+		 MSG_FATAL("***zzg AppMgr_MainMenu 3 nItemID=%d, nCount=%d***", nItemID, nCount, 0);
+		 
          AppMgr_AddMenuItem(pme, pme->m_pMainMenu, pi, nItemID,  nType, FALSE);
 
          if (pme->m_pMainMenuSK)
-            AppMgr_AddMenuItem(pme, pme->m_pMainMenuSK, pi, nCount,  THUMB, TRUE);
+         {
+         	AppMgr_AddMenuItem(pme, pme->m_pMainMenuSK, pi, nCount,  THUMB, TRUE);
+			MSG_FATAL("***zzg AppMgr_MainMenu 4 nCount=%d***", nCount, 0, 0);
+         }
 
          pi = pi->pNext;
          itemID++;
          nCount--;
-
+*/
+//Del End
          if (nDraw != 0xffffffff)
          {
             if (!nDraw)
@@ -2279,8 +2293,8 @@ static boolean AppMgr_MainMenu(AppMgr * pme)
             else
                nDraw--;
          }
-      }
-   }
+      //}	//Del by zzg 2012_02_08
+   //}    	//Del by zzg 2012_02_08
 
    // Add Categories. Categories are added in following order
    // Favorites, Work, Fun, General
