@@ -2125,7 +2125,12 @@ static boolean CTextCtl_Redraw(ITextCtl * pITextCtl)
             MSG_FATAL("pme->m_isshift............................",0,0,0);
             if(pme->m_isshift)
             {
-            	AECHAR Shiftbuf[8] = {L"Shift"};
+            	AECHAR Shiftbuf[20];
+                ISHELL_LoadResString(pme->m_pIShell,
+                                        AEE_APPSCOMMONRES_LANGFILE,
+                                        IDS_SHIFT,
+                                        Shiftbuf,
+                                        sizeof(Shiftbuf));                
             	MSG_FATAL("qrc.x===%d,qrc.y====%d",qrc.x,qrc.y,0);
             	IDISPLAY_SetColor(pme->m_pIDisplay, CLR_USER_TEXT, RGB_WHITE);//临时改变文本颜色
             	IDISPLAY_DrawText(pme->m_pIDisplay,
@@ -2146,7 +2151,12 @@ static boolean CTextCtl_Redraw(ITextCtl * pITextCtl)
             }
             else if(pme->m_isAlt )
             {
-            	AECHAR Altbuf[8] = {L"Alt"};
+            	AECHAR Altbuf[20];
+                ISHELL_LoadResString(pme->m_pIShell,
+                                        AEE_APPSCOMMONRES_LANGFILE,
+                                        IDS_ALT,
+                                        Altbuf,
+                                        sizeof(Altbuf));                 
             	MSG_FATAL("qrc.x===%d,qrc.y====%d",qrc.x,qrc.y,0);
             	IDISPLAY_SetColor(pme->m_pIDisplay, CLR_USER_TEXT, RGB_WHITE);//临时改变文本颜色
             	IDISPLAY_DrawText(pme->m_pIDisplay,
@@ -2167,7 +2177,12 @@ static boolean CTextCtl_Redraw(ITextCtl * pITextCtl)
             }
             else if(pme->m_isCap)
             {
-            	AECHAR Altbuf[8] = {L"Cap"};
+            	AECHAR Altbuf[20];
+                ISHELL_LoadResString(pme->m_pIShell,
+                                        AEE_APPSCOMMONRES_LANGFILE,
+                                        IDS_CAP,
+                                        Altbuf,
+                                        sizeof(Altbuf));                  
             	MSG_FATAL("qrc.x===%d,qrc.y====%d",qrc.x,qrc.y,0);
             	IDISPLAY_SetColor(pme->m_pIDisplay, CLR_USER_TEXT, RGB_WHITE);//临时改变文本颜色
             	IDISPLAY_DrawText(pme->m_pIDisplay,
