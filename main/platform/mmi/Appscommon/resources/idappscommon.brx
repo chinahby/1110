@@ -244,6 +244,15 @@
 	<String Id="1032" Name="IDS_MSG_KEYGUARD_SPACE">
 		<Text>Long Press Space Key to Unlock The Keyguard</Text>
 	</String>
+	<String Id="1033" Name="IDS_SHIFT" Encoding="Unicode">
+		<Text>Shift</Text>
+	</String>
+	<String Id="1034" Name="IDS_ALT" Encoding="Unicode">
+		<Text>Alt</Text>
+	</String>
+	<String Id="1035" Name="IDS_CAP" Encoding="Unicode">
+		<Text>Cap</Text>
+	</String>
 	<STRING Id="2001" Name="IDS_SNOOZE">
 		<Text>Tahan</Text>
 	</STRING>

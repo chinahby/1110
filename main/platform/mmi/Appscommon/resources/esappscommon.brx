@@ -1,278 +1,287 @@
 <?xml version="1.0" encoding="utf-8"?>
- <BREWRes Name="appscommon" VERSION="1">
- <Strings Encoding="Unicode">
- 	<STRING Id="1" Name="IDS_SELECT">
- 		<Text>Seleccionar</Text>
- 	</STRING>
- 	<STRING Id="2" Name="IDS_DEL">
- 		<Text>Borrar</Text>
- 	</STRING>
- 	<STRING Id="3" Name="IDS_CANCEL">
- 		<Text>Regresar </Text>
- 	</STRING>
- 	<STRING Id="4" Name="IDS_SEND">
- 		<Text>Enviar/Marcar</Text>
- 	</STRING>
- 	<STRING Id="5" Name="IDS_CONTINU">
- 		<Text>Cont.</Text>
- 	</STRING>
- 	<STRING Id="6" Name="IDS_BACK">
- 		<Text>Regresar </Text>
- 	</STRING>
- 	<STRING Id="7" Name="IDS_FIND">
- 		<Text>Búsqueda</Text>
- 	</STRING>
- 	<STRING Id="8" Name="IDS_OK">
- 		<Text>OK</Text>
- 	</STRING>
- 	<STRING Id="9" Name="IDS_EDIT">
- 		<Text>Editar</Text>
- 	</STRING>
- 	<STRING Id="10" Name="IDS_SAVE">
- 		<Text>Guardar</Text>
- 	</STRING>
- 	<STRING Id="11" Name="IDS_MENU">
- 		<Text>Menú</Text>
- 	</STRING>
- 	<STRING Id="12" Name="IDS_NEXT">
- 		<Text>Próxima</Text>
- 	</STRING>
- 	<STRING Id="13" Name="IDS_READ">
- 		<Text>Leer</Text>
- 	</STRING>
- 	<STRING Id="14" Name="IDS_OPTION">
- 		<Text>Opción</Text>
- 	</STRING>
- 	<STRING Id="15" Name="IDS_SOS">
- 		<Text>SOS</Text>
- 	</STRING>
- 	<STRING Id="16" Name="IDS_CLOSE">
- 		<Text>Cerrar</Text>
- 	</STRING>
- 	<STRING Id="17" Name="IDS_RESET">
- 		<Text>Reconfigurar</Text>
- 	</STRING>
- 	<STRING Id="18" Name="IDS_END">
- 		<Text>Finalizar</Text>
- 	</STRING>
- 	<STRING Id="19" Name="IDS_STRING_CONTACTS">
- 		<Text>Contactos</Text>
- 	</STRING>
- 	<STRING Id="20" Name="IDS_STRING_END_CALL">
- 		<Text>Finalizar llamada</Text>
- 	</STRING>
- 	<STRING Id="21" Name="IDS_STRING_CANCEL">
- 		<Text>Cancelar</Text>
- 	</STRING>
- 	<STRING Id="22" Name="IDS_MSG_CONFIRM_DELETE">
- 		<Text>Borrar</Text>
- 	</STRING>
- 	<STRING Id="23" Name="IDS_MSG_INFORMATIVE_DELETE">
- 		<Text>Borrado</Text>
- 	</STRING>
- 	<STRING Id="24" Name="IDS_MSG_CONFIRM_DELETEALL">
- 		<Text>Borrar todo</Text>
- 	</STRING>
- 	<STRING Id="25" Name="IDS_MSG_INFORMATIVE_DELETEALL">
- 		<Text>Todo borrado</Text>
- 	</STRING>
- 	<STRING Id="26" Name="IDS_MSG_CONFIRM_COPY">
- 		<Text>Copiar</Text>
- 	</STRING>
- 	<STRING Id="27" Name="IDS_MSG_INFORMATIVE_COPYED">
- 		<Text>Se realizó satisfactoriamente</Text>
- 	</STRING>
- 	<STRING Id="28" Name="IDS_SETTING">
- 		<Text>Configurar</Text>
- 	</STRING>
- 	<STRING Id="29" Name="IDS_TOTODAY">
- 		<Text>Hoy</Text>
- 	</STRING>
- 	<STRING Id="30" Name="IDS_STRING_IP">
- 		<Text>IP</Text>
- 	</STRING>
- 	<STRING Id="31" Name="IDS_INPUT_NORMAL">
- 		<Text>Normal</Text>
- 	</STRING>
- 	<STRING Id="32" Name="IDS_INPUT_STROKE">
- 		<Text>Trazo</Text>
- 	</STRING>
- 	<STRING Id="33" Name="IDS_INPUT_ZHUYIN">
- 		<Text>Zhuyin</Text>
- 	</STRING>
- 	<STRING Id="34" Name="IDS_INPUT_RAPIDEN">
- 		<Text>INGRápido</Text>
- 	</STRING>
- 	<STRING Id="35" Name="IDS_INPUT_NUMBERS">
- 		<Text>Números</Text>
- 	</STRING>
- 	<STRING Id="36" Name="IDS_MSG_KEYGUARD">
- 		<Text>Oprima "Desbloquear" y luego *</Text>
- 	</STRING>
- 	<STRING Id="37" Name="IDS_INPUT_RAPIDTH">
- 		<Text>THRápido</Text>
- 	</STRING>
- 	<STRING Id="38" Name="IDS_INPUT_MULTITH">
- 		<Text>MultiTH</Text>
- 	</STRING>
- 	<STRING Id="39" Name="IDS_INPUT_MAJUSCULE">
- 		<Text>ABC</Text>
- 	</STRING>
- 	<STRING Id="40" Name="IDS_INPUT_SMALL_LETTER">
- 		<Text>abc</Text>
- 	</STRING>
- 	<STRING Id="41" Name="IDS_ANSWER">
- 		<Text>Contestar</Text>
- 	</STRING>
- 	<STRING Id="42" Name="IDS_IGNORE">
- 		<Text>Ignorar</Text>
- 	</STRING>
- 	<STRING Id="43" Name="IDS_REJECT">
- 		<Text>Rechazar</Text>
- 	</STRING>
- 	<STRING Id="44" Name="IDS_MUTE">
- 		<Text>Eliminar sonido</Text>
- 	</STRING>
- 	<STRING Id="45" Name="IDS_UNMUTE">
- 		<Text>Restablecer sonido</Text>
- 	</STRING>
- 	<STRING Id="46" Name="IDS_STRING_UNLOCK">
- 		<Text>Desbloquear</Text>
- 	</STRING>
- 	<STRING Id="47" Name="IDS_START">
- 		<Text>Iniciar</Text>
- 	</STRING>
- 	<STRING Id="48" Name="IDS_CALL">
- 		<Text>Llamar </Text>
- 	</STRING>
- 	<STRING Id="114" Name="IDS_OPTION_FM">
- 		<Text>Opción</Text>
- 	</STRING>
- 	<STRING Id="1001" Name="IDS_RECORD">
- 		<Text>Grabar</Text>
- 	</STRING>
- 	<STRING Id="1002" Name="IDS_STOP">
- 		<Text>Parar</Text>
- 	</STRING>
- 	<STRING Id="1003" Name="IDS_APPSCOMMON_AM">
- 		<Text>AM</Text>
- 	</STRING>
- 	<STRING Id="1004" Name="IDS_APPSCOMMON_PM">
- 		<Text>PM</Text>
- 	</STRING>
- 	<STRING Id="1005" Name="IDS_RESUME">
- 		<Text>Resumir</Text>
- 	</STRING>
- 	<STRING Id="1006" Name="IDS_RETRY">
- 		<Text>Reintentar</Text>
- 	</STRING>
- 	<STRING Id="1007" Name="IDS_CREATE">
- 		<Text>Crear</Text>
- 	</STRING>
- 	<STRING Id="1008" Name="IDS_ADD">
- 		<Text>Agregar</Text>
- 	</STRING>
- 	<STRING Id="1009" Name="IDS_PAUSE">
- 		<Text>Pausar</Text>
- 	</STRING>
- 	<STRING Id="1010" Name="IDS_PLAY">
- 		<Text>Reproducir</Text>
- 	</STRING>
- 	<STRING Id="1011" Name="IDS_POP_DONE">
- 		<Text>Finalizado</Text>
- 	</STRING>
- 	<STRING Id="1012" Name="IDS_EXCHANGE">
- 		<Text>Intercambiar</Text>
- 	</STRING>
- 	<STRING Id="1013" Name="IDS_JEWISH">
- 		<Text>Mostrar</Text>
- 	</STRING>
- 	<STRING Id="1014" Name="IDS_HANDSFREE_ON">
- 		<Text>Manos Libres</Text>
- 	</STRING>
- 	<STRING Id="1015" Name="IDS_BLUETOOTH_ACCEPT">
- 		<Text>Aceptar</Text>
- 	</STRING>
- 	<STRING Id="1016" Name="IDS_HANDSFREE_OFF">
- 		<Text>Normal</Text>
- 	</STRING>
- 	<STRING Id="1017" Name="IDS_REPLAY">
- 		<Text>Reproducir nuevamente</Text>
- 	</STRING>
- 	<STRING Id="1018" Name="IDS_UP">
- 		<Text>Regresar</Text>
- 	</STRING>
- 	<STRING Id="1019" Name="IDS_SPORT">
- 		<Text>Deportes</Text>
- 	</STRING>
- 	<STRING Id="1020" Name="IDS_CONFIRM_OFF_FM">
- 		<Text>Apagar FM</Text>
- 	</STRING>
- 	<STRING Id="1021" Name="IDS_CONFIRM_OFF_MP">
- 		<Text>Apagar reproductor de música</Text>
- 	</STRING>
- 	<STRING Id="1022" Name="IDS_FULLSCREEN">
- 		<Text>Completa</Text>
- 	</STRING>
- 	<STRING Id="1023" Name="IDS_GALLERY">
- 		<Text>Galería</Text>
- 	</STRING>
- 	<STRING Id="1024" Name="IDS_YES">
- 		<Text>Sí</Text>
- 	</STRING>
- 	<STRING Id="1025" Name="IDS_NO">
- 		<Text>No</Text>
+<BREWRes Name="esappscommon" VERSION="1">
+<Strings Encoding="Unicode">
+	<STRING Id="1" Name="IDS_SELECT">
+		<Text>Seleccionar</Text>
+	</STRING>
+	<STRING Id="2" Name="IDS_DEL">
+		<Text>Borrar</Text>
+	</STRING>
+	<STRING Id="3" Name="IDS_CANCEL">
+		<Text>Regresar </Text>
+	</STRING>
+	<STRING Id="4" Name="IDS_SEND">
+		<Text>Enviar/Marcar</Text>
+	</STRING>
+	<STRING Id="5" Name="IDS_CONTINU">
+		<Text>Cont.</Text>
+	</STRING>
+	<STRING Id="6" Name="IDS_BACK">
+		<Text>Regresar </Text>
+	</STRING>
+	<STRING Id="7" Name="IDS_FIND">
+		<Text>Búsqueda</Text>
+	</STRING>
+	<STRING Id="8" Name="IDS_OK">
+		<Text>OK</Text>
+	</STRING>
+	<STRING Id="9" Name="IDS_EDIT">
+		<Text>Editar</Text>
+	</STRING>
+	<STRING Id="10" Name="IDS_SAVE">
+		<Text>Guardar</Text>
+	</STRING>
+	<STRING Id="11" Name="IDS_MENU">
+		<Text>Menú</Text>
+	</STRING>
+	<STRING Id="12" Name="IDS_NEXT">
+		<Text>Próxima</Text>
+	</STRING>
+	<STRING Id="13" Name="IDS_READ">
+		<Text>Leer</Text>
+	</STRING>
+	<STRING Id="14" Name="IDS_OPTION">
+		<Text>Opción</Text>
+	</STRING>
+	<STRING Id="15" Name="IDS_SOS">
+		<Text>SOS</Text>
+	</STRING>
+	<STRING Id="16" Name="IDS_CLOSE">
+		<Text>Cerrar</Text>
+	</STRING>
+	<STRING Id="17" Name="IDS_RESET">
+		<Text>Reconfigurar</Text>
+	</STRING>
+	<STRING Id="18" Name="IDS_END">
+		<Text>Finalizar</Text>
+	</STRING>
+	<STRING Id="19" Name="IDS_STRING_CONTACTS">
+		<Text>Contactos</Text>
+	</STRING>
+	<STRING Id="20" Name="IDS_STRING_END_CALL">
+		<Text>Finalizar llamada</Text>
+	</STRING>
+	<STRING Id="21" Name="IDS_STRING_CANCEL">
+		<Text>Cancelar</Text>
+	</STRING>
+	<STRING Id="22" Name="IDS_MSG_CONFIRM_DELETE">
+		<Text>Borrar</Text>
+	</STRING>
+	<STRING Id="23" Name="IDS_MSG_INFORMATIVE_DELETE">
+		<Text>Borrado</Text>
+	</STRING>
+	<STRING Id="24" Name="IDS_MSG_CONFIRM_DELETEALL">
+		<Text>Borrar todo</Text>
+	</STRING>
+	<STRING Id="25" Name="IDS_MSG_INFORMATIVE_DELETEALL">
+		<Text>Todo borrado</Text>
+	</STRING>
+	<STRING Id="26" Name="IDS_MSG_CONFIRM_COPY">
+		<Text>Copiar</Text>
+	</STRING>
+	<STRING Id="27" Name="IDS_MSG_INFORMATIVE_COPYED">
+		<Text>Se realizó satisfactoriamente</Text>
+	</STRING>
+	<STRING Id="28" Name="IDS_SETTING">
+		<Text>Configurar</Text>
+	</STRING>
+	<STRING Id="29" Name="IDS_TOTODAY">
+		<Text>Hoy</Text>
+	</STRING>
+	<STRING Id="30" Name="IDS_STRING_IP">
+		<Text>IP</Text>
+	</STRING>
+	<STRING Id="31" Name="IDS_INPUT_NORMAL">
+		<Text>Normal</Text>
+	</STRING>
+	<STRING Id="32" Name="IDS_INPUT_STROKE">
+		<Text>Trazo</Text>
+	</STRING>
+	<STRING Id="33" Name="IDS_INPUT_ZHUYIN">
+		<Text>Zhuyin</Text>
+	</STRING>
+	<STRING Id="34" Name="IDS_INPUT_RAPIDEN">
+		<Text>INGRápido</Text>
+	</STRING>
+	<STRING Id="35" Name="IDS_INPUT_NUMBERS">
+		<Text>Números</Text>
+	</STRING>
+	<STRING Id="36" Name="IDS_MSG_KEYGUARD">
+		<Text>Oprima "Desbloquear" y luego *</Text>
+	</STRING>
+	<STRING Id="37" Name="IDS_INPUT_RAPIDTH">
+		<Text>THRápido</Text>
+	</STRING>
+	<STRING Id="38" Name="IDS_INPUT_MULTITH">
+		<Text>MultiTH</Text>
+	</STRING>
+	<STRING Id="39" Name="IDS_INPUT_MAJUSCULE">
+		<Text>ABC</Text>
+	</STRING>
+	<STRING Id="40" Name="IDS_INPUT_SMALL_LETTER">
+		<Text>abc</Text>
+	</STRING>
+	<STRING Id="41" Name="IDS_ANSWER">
+		<Text>Contestar</Text>
+	</STRING>
+	<STRING Id="42" Name="IDS_IGNORE">
+		<Text>Ignorar</Text>
+	</STRING>
+	<STRING Id="43" Name="IDS_REJECT">
+		<Text>Rechazar</Text>
+	</STRING>
+	<STRING Id="44" Name="IDS_MUTE">
+		<Text>Eliminar sonido</Text>
+	</STRING>
+	<STRING Id="45" Name="IDS_UNMUTE">
+		<Text>Restablecer sonido</Text>
+	</STRING>
+	<STRING Id="46" Name="IDS_STRING_UNLOCK">
+		<Text>Desbloquear</Text>
+	</STRING>
+	<STRING Id="47" Name="IDS_START">
+		<Text>Iniciar</Text>
+	</STRING>
+	<STRING Id="48" Name="IDS_CALL">
+		<Text>Llamar </Text>
+	</STRING>
+	<STRING Id="114" Name="IDS_OPTION_FM">
+		<Text>Opción</Text>
+	</STRING>
+	<STRING Id="1001" Name="IDS_RECORD">
+		<Text>Grabar</Text>
+	</STRING>
+	<STRING Id="1002" Name="IDS_STOP">
+		<Text>Parar</Text>
+	</STRING>
+	<STRING Id="1003" Name="IDS_APPSCOMMON_AM">
+		<Text>AM</Text>
+	</STRING>
+	<STRING Id="1004" Name="IDS_APPSCOMMON_PM">
+		<Text>PM</Text>
+	</STRING>
+	<STRING Id="1005" Name="IDS_RESUME">
+		<Text>Resumir</Text>
+	</STRING>
+	<STRING Id="1006" Name="IDS_RETRY">
+		<Text>Reintentar</Text>
+	</STRING>
+	<STRING Id="1007" Name="IDS_CREATE">
+		<Text>Crear</Text>
+	</STRING>
+	<STRING Id="1008" Name="IDS_ADD">
+		<Text>Agregar</Text>
+	</STRING>
+	<STRING Id="1009" Name="IDS_PAUSE">
+		<Text>Pausar</Text>
+	</STRING>
+	<STRING Id="1010" Name="IDS_PLAY">
+		<Text>Reproducir</Text>
+	</STRING>
+	<STRING Id="1011" Name="IDS_POP_DONE">
+		<Text>Finalizado</Text>
+	</STRING>
+	<STRING Id="1012" Name="IDS_EXCHANGE">
+		<Text>Intercambiar</Text>
+	</STRING>
+	<STRING Id="1013" Name="IDS_JEWISH">
+		<Text>Mostrar</Text>
+	</STRING>
+	<STRING Id="1014" Name="IDS_HANDSFREE_ON">
+		<Text>Manos Libres</Text>
+	</STRING>
+	<STRING Id="1015" Name="IDS_BLUETOOTH_ACCEPT">
+		<Text>Aceptar</Text>
+	</STRING>
+	<STRING Id="1016" Name="IDS_HANDSFREE_OFF">
+		<Text>Normal</Text>
+	</STRING>
+	<STRING Id="1017" Name="IDS_REPLAY">
+		<Text>Reproducir nuevamente</Text>
+	</STRING>
+	<STRING Id="1018" Name="IDS_UP">
+		<Text>Regresar</Text>
+	</STRING>
+	<STRING Id="1019" Name="IDS_SPORT">
+		<Text>Deportes</Text>
+	</STRING>
+	<STRING Id="1020" Name="IDS_CONFIRM_OFF_FM">
+		<Text>Apagar FM</Text>
+	</STRING>
+	<STRING Id="1021" Name="IDS_CONFIRM_OFF_MP">
+		<Text>Apagar reproductor de música</Text>
+	</STRING>
+	<STRING Id="1022" Name="IDS_FULLSCREEN">
+		<Text>Completa</Text>
+	</STRING>
+	<STRING Id="1023" Name="IDS_GALLERY">
+		<Text>Galería</Text>
+	</STRING>
+	<STRING Id="1024" Name="IDS_YES">
+		<Text>Sí</Text>
+	</STRING>
+	<STRING Id="1025" Name="IDS_NO">
+		<Text>No</Text>
 	</STRING>
 	<STRING Id="1026" Name="IDS_LOCK">
 		<Text>El bloqueo del teclado</Text>
- 	</STRING>
- 	<STRING Id="1027" Name="IDS_FACEBOOK">
- 		<Text>Facebook</Text>
- 	</STRING>
- 	<STRING Id="1028" Name="IDS_FRENDUO_LIST">
- 		<Text>Frenduo</Text>
- 	</STRING>
- 	<STRING Id="1029" Name="IDS_CHAT">
- 		<Text>Charla</Text>
- 	</STRING>
- 	<STRING Id="1030" Name="IDS_MORE">
- 		<Text>Más</Text>
- 	</STRING>
- 	<STRING Id="1031" Name="IDS_MESSAGES">
- 		<Text>Mensajes</Text>
- 	</STRING>
- 	<STRING Id="1032" Name="IDS_MSG_KEYGUARD_SPACE">
- 		<Text>Presione la Tecla de Espacio por algunos segundos para Desbloquear el Teclado</Text>
- 	</STRING>
- 	<STRING Id="2001" Name="IDS_SNOOZE">
- 		<Text>Alarma de Repetición </Text>
- 	</STRING>
- 	<STRING Id="2002" Name="IDS_FM_BACK">
- 		<Text>Volver/regresar/atrás</Text>
- 	</STRING>
- 	<STRING Id="2003" Name="IDS_MSG_KEYGUARD_UNLOCKKEY">
- 		<Text>Presione * para desbloquear el teclado</Text>
- 	</STRING>
- 	<STRING Id="2004" Name="IDS_MODIFY">
- 		<Text>Modificar</Text>
- 	</STRING>
- 	<STRING Id="2005" Name="IDS_VIEW">
- 		<Text>Visualizar</Text>
- 	</STRING>
- 	<STRING Id="2006" Name="IDS_FMUSLIM">
- 		<Text>FMusulmán</Text>
- 	</STRING>
- 	<STRING Id="2007" Name="IDS_FNASRANI">
- 		<Text>FCristiano</Text>
- 	</STRING>
- 	<STRING Id="2008" Name="IDS_FPORTAL">
- 		<Text>FPortal</Text>
- 	</STRING>
- 	<STRING Id="2009" Name="IDS_FGURU">
- 		<Text>FGurú</Text>
- 	</STRING>
- 	<STRING Id="2010" Name="IDS_FMENU">
- 		<Text>MiFlexi</Text>
- 	</STRING>
- </Strings>
- </BREWRes>
+	</STRING>
+	<STRING Id="1027" Name="IDS_FACEBOOK">
+		<Text>Facebook</Text>
+	</STRING>
+	<STRING Id="1028" Name="IDS_FRENDUO_LIST">
+		<Text>Frenduo</Text>
+	</STRING>
+	<STRING Id="1029" Name="IDS_CHAT">
+		<Text>Charla</Text>
+	</STRING>
+	<STRING Id="1030" Name="IDS_MORE">
+		<Text>Más</Text>
+	</STRING>
+	<STRING Id="1031" Name="IDS_MESSAGES">
+		<Text>Mensajes</Text>
+	</STRING>
+	<STRING Id="1032" Name="IDS_MSG_KEYGUARD_SPACE">
+		<Text>Presione la Tecla de Espacio por algunos segundos para Desbloquear el Teclado</Text>
+	</STRING>
+	<String Id="1033" Name="IDS_SHIFT">
+		<Text>cam</Text>
+	</String>
+	<String Id="1034" Name="IDS_ALT">
+		<Text>Alt</Text>
+	</String>
+	<String Id="1035" Name="IDS_CAP">
+		<Text>May</Text>
+	</String>
+	<STRING Id="2001" Name="IDS_SNOOZE">
+		<Text>Alarma de Repetición </Text>
+	</STRING>
+	<STRING Id="2002" Name="IDS_FM_BACK">
+		<Text>Volver/regresar/atrás</Text>
+	</STRING>
+	<STRING Id="2003" Name="IDS_MSG_KEYGUARD_UNLOCKKEY">
+		<Text>Presione * para desbloquear el teclado</Text>
+	</STRING>
+	<STRING Id="2004" Name="IDS_MODIFY">
+		<Text>Modificar</Text>
+	</STRING>
+	<STRING Id="2005" Name="IDS_VIEW">
+		<Text>Visualizar</Text>
+	</STRING>
+	<STRING Id="2006" Name="IDS_FMUSLIM">
+		<Text>FMusulmán</Text>
+	</STRING>
+	<STRING Id="2007" Name="IDS_FNASRANI">
+		<Text>FCristiano</Text>
+	</STRING>
+	<STRING Id="2008" Name="IDS_FPORTAL">
+		<Text>FPortal</Text>
+	</STRING>
+	<STRING Id="2009" Name="IDS_FGURU">
+		<Text>FGurú</Text>
+	</STRING>
+	<STRING Id="2010" Name="IDS_FMENU">
+		<Text>MiFlexi</Text>
+	</STRING>
+</Strings>
+</BREWRes>

@@ -244,6 +244,15 @@
 	<String Id="1032" Name="IDS_MSG_KEYGUARD_SPACE">
 		<Text>กดปุ่มสเปซค้างไว้เพื่อปลดล็อคปุ่มกด</Text>
 	</String>
+	<String Id="1033" Name="IDS_SHIFT">
+		<Text>Shift</Text>
+	</String>
+	<String Id="1034" Name="IDS_ALT">
+		<Text>Alt</Text>
+	</String>
+	<String Id="1035" Name="IDS_CAP">
+		<Text>Cap</Text>
+	</String>
 	<STRING Id="2001" Name="IDS_SNOOZE">
 		<Text>เลื่อนไป</Text>
 	</STRING>
