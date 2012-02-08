@@ -10,7 +10,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #endif
 
 //#define FEATURE_VERSION_S106
-//#define FEATURE_VERSION_W516
+#define FEATURE_VERSION_W516
 #define FEATURE_VERSION_1110W516
 #ifdef CUST_EDITION
 #define FEATURE_APP_BLUETOOTH
