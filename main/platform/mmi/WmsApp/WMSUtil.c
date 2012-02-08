@@ -1400,6 +1400,7 @@ static boolean GetNumCallback(sSelectFieldListNode* pNode)
     }
     
     pTepNode = pNode;
+    MSG_FATAL("GetNumCallback nMaxItems=%d", nMaxItems,0,0);
     for (i=0; ((i<nMaxItems) && (NULL != pTepNode)); )
     {
         if (pTepNode->SelectFieldInfo.wFieldMask & MASK_ADDRFIELD_NAME)
@@ -1411,6 +1412,7 @@ static boolean GetNumCallback(sSelectFieldListNode* pNode)
             (NULL != pTepNode->SelectFieldInfo.m_pAddNewMobile) &&
             (WSTRLEN((AECHAR *)(pTepNode->SelectFieldInfo.m_pAddNewMobile))>0))
         {
+            MSG_FATAL("MASK_ADDRFIELD_PHONE_GENERIC i=%d", i,0,0);
             if (gpWMSApp->m_currState == WMSST_SENDOPTS)
             {// Callback Number Enter:
                 (void)WSTRCPY(gpWMSApp->m_msSend.m_szCallBkNum, (AECHAR *)(pTepNode->SelectFieldInfo.m_pAddNewMobile));
@@ -1430,12 +1432,14 @@ static boolean GetNumCallback(sSelectFieldListNode* pNode)
                 goto GetNumCallback_Exit;
             }
             (void)WSTRCPY(pItem->m_szTo, (AECHAR *)(pTepNode->SelectFieldInfo.m_pAddNewMobile));
-            if((NULL != pTepNode->SelectFieldInfo.m_pAddNewMobile) &&
-                (WSTRLEN((AECHAR *)(pTepNode->SelectFieldInfo.m_pAddNewMobile))>0))
+            MSG_FATAL("MASK_ADDRFIELD_PHONE_GENERIC1 i=%d", i,0,0);
+            if((NULL != pTepNode->SelectFieldInfo.m_pAddNewEMAIL) &&
+                (WSTRLEN((AECHAR *)(pTepNode->SelectFieldInfo.m_pAddNewEMAIL))>0))
             {
                 (void)WSTRCPY(pItem->m_szEmail, (AECHAR *)(pTepNode->SelectFieldInfo.m_pAddNewEMAIL));
                 DBGPRINTF("m_pAddNewEMAIL=%S",pItem->m_szEmail);
             }
+            MSG_FATAL("MASK_ADDRFIELD_PHONE_GENERIC2 i=%d", i,0,0);
             if (NULL != wstrName)
             {
                 (void)WSTRCPY(pItem->m_szName, wstrName);
@@ -1554,6 +1558,10 @@ static boolean GetNumCallback(sSelectFieldListNode* pNode)
         }
         
         pTepNode = pTepNode->pNextNode;
+        if (wstrName != NULL)
+        {
+            SYS_FREEIF(wstrName);
+        }        
     }
     
 GetNumCallback_Exit:
