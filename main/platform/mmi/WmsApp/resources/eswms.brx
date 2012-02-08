@@ -323,7 +323,7 @@
 		<Text>No hay ningún número de buzón de correo de voz, ¿desea agregarlo ahora?</Text>
 	</STRING>
 	<STRING Id="114" Name="IDS_RESEND">
-		<Text>Reenviar</Text>
+		<Text>Vuelva a enviar</Text>
 	</STRING>
 	<STRING Id="115" Name="IDS_INSUFFICIENCY">
 		<Text>El lugar de almacenamiento que escogió no tiene suficiente espacio</Text>
