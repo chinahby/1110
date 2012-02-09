@@ -1270,7 +1270,7 @@ static boolean RecentCalls_ListRecordEvent(CRecentCalls *pMe,
                     }
                     break;
                 case AVK_CAMERA:
-                	#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)
+                	#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_W516)
                     {
 						nv_item_type	SimChoice;
 						OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
@@ -2004,7 +2004,7 @@ static boolean RecentCalls_DetailEvent(CRecentCalls *pMe,
                 CLOSE_DIALOG(DLGRET_CANCELED)
                 break;
             case AVK_CAMERA:
-            	#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)
+            	#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_W516)
                 {
 					nv_item_type	SimChoice;
 					OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
