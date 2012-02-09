@@ -1111,7 +1111,7 @@ static boolean IDD_MAIN_Handler(void        *pUser,
                         wstrFmt, g_mmsDataInfoMax); 
                 }
                 IMENUCTL_SetItemText(pMenu, IDS_INBOX_MMS, NULL, NULL, pwsz);
-
+				
                 STRTOWSTR("(%d)",wstrFmt,sizeof(wstrFmt));
                 ISHELL_LoadResString(pMe->m_pShell, AEE_WMSAPPRES_LANGFILE,
                             IDS_OUTBOX_MMS,
@@ -1124,7 +1124,7 @@ static boolean IDD_MAIN_Handler(void        *pUser,
                     WSPRINTF(&pwsz[nLen], (64-nLen)*sizeof(AECHAR), 
                         wstrFmt, g_mmsDataInfoMax); 
                 }
-                IMENUCTL_SetItemText(pMenu, IDS_OUTBOX_MMS, NULL, NULL, pwsz);
+                IMENUCTL_SetItemText(pMenu, IDS_OUTBOX_MMS, NULL, NULL, pwsz);				
 #endif
                 // 格式化收件箱菜单项文本
                 (void)STRTOWSTR("(%d/%d)",wstrFmt,sizeof(wstrFmt));
@@ -9441,7 +9441,8 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
 )
 {
     static uint16 wControls[5]={0}; // 用到的控件列表
-    static AECHAR wstrText[4][20] = {0};
+    //static AECHAR wstrText[4][20] = {0};
+    static AECHAR wstrText[4][80] = {0};
     static int    nSelIdx = 0;      // 当前聚焦的控件在 wControls 的索引
     static int    nControls = 0;    // 用到的控件数
     static Send_OPT_e_Type      sendmode;
@@ -9467,7 +9468,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
             priority = pMe->m_msSend.m_epriority;
             report   = pMe->m_msSend.m_bDeliveryReport;
             cbval    = pMe->m_CbVal;
-            
+			            
             // 初始化用到的控件列表
             {
                 // 掩码 00001111 这里需要5个控件，所以掩码 改为 1111 1111
@@ -9521,7 +9522,8 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                     wControls[nControls] = IDC_TEXT_CBNUM;
                     nControls++;
                 }
-            }
+            }			
+				
             // 解决闪屏问题，从start移动到此处 
             {
                 uint32 dwMask = IDIALOG_GetProperties(pMe->m_pActiveIDlg);
