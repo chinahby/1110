@@ -87,6 +87,7 @@ struct _CWorldTime {
 	boolean     m_ismyatime;
 	boolean     m_isMya;
     boolean     m_isIndia;
+	boolean		m_isVenezuela;
 	AEERect LeftrowRect;
 	AEERect RightrowRect;
 };
@@ -267,6 +268,15 @@ static void getCursorPosX( CWorldTime* pme,boolean left)
                     pme->m_xBar =(int)( (pme->m_widthBg / 24.0 * timeZone ) + 0.5)+3;
                 }
             }
+			else if(pme->m_isVenezuela)
+			{
+				if( timeZone < 0)
+	            {
+	                timeZone += 25;
+	            }
+				timeZone ++;
+				pme->m_xBar =(int)( (pme->m_widthBg / 24.0 * timeZone ) + 0.5)-3;
+			}
 			else
 			{
 	            if( timeZone < 0)
@@ -360,6 +370,8 @@ static boolean InitWorldTime(CWorldTime *pme)
     AEEImageInfo   iInfo = {0};
     int                  i = 0;
     int                  yArrow = 0;
+
+	MSG_FATAL("***zzg InitWorldTime***", 0, 0, 0);
 
     ISHELL_GetDeviceInfo( pme->a.m_pIShell, &di);
     SETAEERECT( &pme->m_rectScreen, 0, 0, di.cxScreen, di.cyScreen);
@@ -455,14 +467,18 @@ static boolean InitWorldTime(CWorldTime *pme)
 	pme->m_ismyatime = FALSE;
 	pme->m_isMya = FALSE;
     pme->m_isIndia = FALSE;
+	pme->m_isVenezuela = FALSE;
     pme->m_timeZone = get_timezone();
+
+	MSG_FATAL("***zzg InitWorldTime m_timeZone=%d***", pme->m_timeZone, 0, 0);
+	
 	if(pme->m_timeZone == 26)
 	{
 		//pme->m_ismyatime = TRUE;
 		pme->m_isMya = TRUE;
 		pme->m_timeZone = pme->m_timeZone-20;
 		MSG_FATAL("pme->m_timeZone===000==%d",pme->m_timeZone,0,0);
-	}
+	}	
     if(pme->m_timeZone == 25)
 	{
 		//pme->m_ismyatime = TRUE;
@@ -470,6 +486,14 @@ static boolean InitWorldTime(CWorldTime *pme)
 		pme->m_timeZone = pme->m_timeZone-20;
 		MSG_FATAL("pme->m_timeZone===000==%d",pme->m_timeZone,0,0);
 	}
+	
+	//Add By zzg 2012_02_09
+	if ((pme->m_timeZone == -4) || (pme->m_timeZone == 21))
+	{
+        pme->m_isVenezuela = TRUE;		
+		MSG_FATAL("pme->m_timeZone===000==%d",pme->m_timeZone,0,0);
+	}
+	//Add End
     getCursorPosX( pme,FALSE);
 
     return TRUE;
@@ -919,7 +943,14 @@ static void CWorldTime_DrawCityTime(CWorldTime *pme,boolean left)
 		{
 			sec = GETUTCSECONDS()+(local==pme->m_timeZone?LOCALTIMEOFFSET( 0):pme->m_timeZone*3600+1800);
 		}
-	}    
+	}  
+	else if(pme->m_isVenezuela)
+	{	   
+		IMENUCTL_SetSel(pme->m_pMenuCity,IDS_CITY_21);		
+		sec = GETUTCSECONDS()+(local==pme->m_timeZone?LOCALTIMEOFFSET( 0):pme->m_timeZone*3600-1800);		
+
+		MSG_FATAL("***zzg DrawCityTime local=%d, timeZone=%d, sec=%d***", local, pme->m_timeZone, sec);
+	} 
 	else
 	{
     	IMENUCTL_SetSel(pme->m_pMenuCity,timeZone + IDS_CITY_0);
@@ -974,6 +1005,9 @@ static void Draw_TimeZone(CWorldTime *pme)
             text,
             sizeof(text));
 	WSTRCAT(text,L"  ");
+
+	MSG_FATAL("***zzg Draw_TimeZone m_isVenezuela=%d***", pme->m_isVenezuela, 0, 0);
+	
 	if(pme->m_ismyatime || pme->m_isMya)
 	{
 	#ifdef FEATURE_VERSION_MYANMAR
@@ -989,6 +1023,10 @@ static void Draw_TimeZone(CWorldTime *pme)
         WSTRCPY(Temp,L"5.5");
     }
     #endif
+	else if (pme->m_isVenezuela)
+	{
+		WSTRCPY(Temp,L"-4.5");
+	}
 	else
 	{
 		WSPRINTF(Temp, sizeof(Temp), wFormat, timeZone);
@@ -1075,92 +1113,139 @@ static void Draw_WorldTimeContent(CWorldTime *pme)
 
 static void WorldTime_DrawNextCity(CWorldTime * pme, boolean left)
 {
-
     if( pme->m_pImageBg && pme->m_pImageBar)
     {
         AEERect         rect = {0};
         AEEImageInfo    ii   = {0};
-		#ifdef FEATURE_VERSION_MYANMAR
+#ifdef FEATURE_VERSION_MYANMAR
 		if((pme->m_isMya) && (pme->m_timeZone == 6))
 		{
 			pme->m_timeZone = 5;
 		}
-		#endif
+#endif
+		MSG_FATAL("***zzg WorldTime_DrawNextCity m_isVenezuela=%d, m_timeZone=%d, left=%d***", pme->m_isVenezuela, pme->m_timeZone, left);
+
         IIMAGE_GetInfo( pme->m_pImageBar, &ii);
         SETAEERECT( &rect, pme->m_xBar, 0, ii.cx, ii.cy);
         MSG_FATAL("ii.cy:::::%d",pme->m_yBg,0,0);
         drawImageWithOffset( pme, pme->m_pImageBg, pme->m_xBg + pme->m_xBar, pme->m_yBg, &rect);
+
+		
         if((pme->m_isMya) && (((pme->m_timeZone == 7)&&(left))))
         {
         	MSG_FATAL("7pme->m_timeZone:::::::%d",pme->m_timeZone,0,0);
-        	#ifdef FEATURE_VERSION_MYANMAR
+#ifdef FEATURE_VERSION_MYANMAR
         	pme->m_timeZone = pme->m_timeZone -2 ;
-        	#else
+#else
         	pme->m_timeZone = pme->m_timeZone -1 ;
-        	#endif
+#endif
         	pme->m_isMya = FALSE;
         }
-        #if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T)
+
+		//Add By zzg 2012_02_09
+		else if((pme->m_isVenezuela) && (((pme->m_timeZone == -4)&&(left))))
+        {        	
+        	pme->m_timeZone = pme->m_timeZone -1;
+        	pme->m_isVenezuela = FALSE;
+        }
+		//Add End
+		
+#if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T)
         else if((pme->m_isIndia) && ((pme->m_timeZone == 6)&& (left)))
         {
             pme->m_timeZone = pme->m_timeZone -1 ;
             pme->m_isIndia = FALSE;
         }
-        #endif
-        #ifdef FEATURE_VERSION_MYANMAR
+#endif
+
+#ifdef FEATURE_VERSION_MYANMAR
         else if((pme->m_isMya) && ((pme->m_timeZone == 5)&& !(left)))
-        #else
+#else
         else if((pme->m_isMya) && ((pme->m_timeZone == 6)&& !(left)))
-        #endif
+#endif
         {
         	MSG_FATAL("6pme->m_timeZone:::::::%d",pme->m_timeZone,0,0);
-        	#ifdef FEATURE_VERSION_MYANMAR
+#ifdef FEATURE_VERSION_MYANMAR
         	pme->m_timeZone = pme->m_timeZone +2;
-        	#else
+#else
         	pme->m_timeZone = pme->m_timeZone +1;
-        	#endif
+#endif
         	pme->m_isMya = FALSE;
         }
-        #if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T)
+
+		//Add By zzg 2012_02_09
+		else if((pme->m_isVenezuela) && ((pme->m_timeZone == -4)&& !(left)))
+        {
+        	MSG_FATAL("6pme->m_timeZone:::::::%d",pme->m_timeZone,0,0);
+        	pme->m_timeZone = pme->m_timeZone +1;
+        	pme->m_isVenezuela = FALSE;
+        }
+		//Add End
+
+#if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T)
         else if((pme->m_isIndia) && ((pme->m_timeZone == 5)&& !(left)))
         {
             pme->m_timeZone = pme->m_timeZone +1 ;
             pme->m_isIndia = FALSE;
         }
-        #endif        
-        #ifdef FEATURE_VERSION_MYANMAR
+#endif        
+
+#ifdef FEATURE_VERSION_MYANMAR
         else if((pme->m_isMya) && (((pme->m_timeZone == 5)&&(left))||(((pme->m_timeZone == 7)&& !(left)))))
-        #else
+#else
         else if((pme->m_isMya) && (((pme->m_timeZone == 6)&&(left))||(((pme->m_timeZone == 7)&& !(left)))))
-        #endif
+#endif
         {
         	MSG_FATAL("ii.cy:::::%d",pme->m_yBg,0,0);
         	pme->m_isMya = FALSE;
         }
-        #if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T)
+
+		/*
+		//Add By zzg 2012_02_09
+		else if((pme->m_isVenezuela) && (((pme->m_timeZone == -4)&&(left))||(((pme->m_timeZone == -4)&& !(left)))))		
+        {
+        	MSG_FATAL("ii.cy:::::%d",pme->m_yBg,0,0);
+        	pme->m_isVenezuela = FALSE;
+        }
+		//Add End
+		*/
+
+#if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T)
         else if((pme->m_isIndia) && (((pme->m_timeZone == 5)&&(left))||(((pme->m_timeZone == 6)&& !(left)))))
        
         {
         	MSG_FATAL("ii.cy:::::%d",pme->m_yBg,0,0);
-        	pme->m_isIndia = FALSE;
+        	pme->m_isVenezuela = FALSE;
         }
-        #endif
-        #ifdef FEATURE_VERSION_MYANMAR
+#endif
+
+#ifdef FEATURE_VERSION_MYANMAR
         else if(!(pme->m_isMya)&&(((pme->m_timeZone == 7)&&(left)))||((pme->m_timeZone == 5)&& !(left)))
-        #else
+#else
         else if(!(pme->m_isMya)&&(((pme->m_timeZone == 7)&&(left)))||((pme->m_timeZone == 6)&& !(left)))
-        #endif
+#endif
         {
         	MSG_FATAL("ii.cy:::::%d",pme->m_yBg,0,0);
         	pme->m_isMya = TRUE;
         }
-        #if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T)
+
+		//Add By zzg 2012_02_09
+		else if(!(pme->m_isVenezuela)&&(((pme->m_timeZone == -3)&&(left)))||((pme->m_timeZone == -5)&& !(left)))
+        {
+        	MSG_FATAL("ii.cy:::::%d",pme->m_yBg,0,0);
+        	pme->m_isVenezuela = TRUE;
+			
+			pme->m_timeZone += left ? -1 : 1;
+        }
+		//Add End
+
+#if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T)
         else if(!(pme->m_isIndia)&&(((pme->m_timeZone == 6)&&(left)))||((pme->m_timeZone == 5)&& !(left)))
         {
         	MSG_FATAL("ii.cy:::::%d",pme->m_yBg,0,0);
         	pme->m_isIndia = TRUE;
         }
-        #endif
+#endif
         else
         {
         	MSG_FATAL("ii.cy:::::%d",pme->m_yBg,0,0);
