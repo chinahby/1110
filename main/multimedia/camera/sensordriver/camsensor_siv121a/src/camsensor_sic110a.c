@@ -18,7 +18,7 @@
 #define T_QSC1110
 #endif
 
-#if defined(FEATURE_VERSION_W516)
+#if defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W208S)
 #ifdef T_QSC1110
 #define CAMSENSOR_SIC110A_RESET_PIN         GPIO_OUTPUT_10
 #else

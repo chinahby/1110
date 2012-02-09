@@ -9,8 +9,6 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define CUST_EDITION
 #endif
 
-#define FEATURE_VERSION_S106
-#define FEATURE_VERSION_W516
 #define FEATURE_VERSION_W208S
 #ifdef CUST_EDITION
 //#define FEATURE_OEMOMH						//Add By zzg 2012_01_06

@@ -334,7 +334,7 @@ static const CCameraSize g_CameraSizeCFG_10[] =
     {240,320,L"240*320"}, // QVGA    
 #elif defined(FEATURE_DISP_176X220)
 //1110w516 siv121d
-#ifdef FEATURE_VERSION_W516
+#if defined(FEATURE_VERSION_W516)||defined(FEATURE_VERSION_W208S)
     {176,220,L"176*220"}, // QCIF
     {320,240,L"320*240"}, // QVGA
 	{360,480,L"640*480"},
@@ -387,7 +387,7 @@ static const CCameraSize g_VideoSizeCFG_10[] =
     //{144,176,L"144*176"}, // QCIF
     {128,160,L"128*160"}, // FULL Screen
     {144,176,L"144*176"}, // QCIF
-#ifdef FEATURE_VERSION_W516	
+#if defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W208S)	
     {320,240,L"320*240"}, // QCIF    
 #endif
 #elif defined(FEATURE_DISP_240X320)

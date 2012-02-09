@@ -3772,13 +3772,13 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
    memset(&cursRect, 0, sizeof(cursRect));
 
    rectClip.x  = pContext->rectDisplay.x;
-   #ifdef FEATURE_VERSION_W516
+   #if defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W208S)
    rectClip.y  = pContext->rectDisplay.y+5;
    #else
    rectClip.y  = pContext->rectDisplay.y;
    #endif
    rectClip.dx = pContext->rectDisplay.dx;
-   #ifdef FEATURE_VERSION_W516
+   #if defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W208S)
    rectClip.dy = pContext->rectDisplay.dy-5;
    #else
    rectClip.dy = pContext->rectDisplay.dy; 
@@ -6810,8 +6810,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
                    #endif
                 }                                        
             } 
-#if  defined(FEATURE_VERSION_W516) ||defined(FEATURE_VERSION_VG68) ||defined(FEATURE_VERSION_C01)
-
+#if  defined(FEATURE_VERSION_W516) ||defined(FEATURE_VERSION_VG68) ||defined(FEATURE_VERSION_C01) || defined(FEATURE_VERSION_W208S)
             pContext->nMultitapCaps = MULTITAP_ALL_SMALL;
 #endif
             MSG_FATAL("pContext->nMultitapCaps=========%d",pContext->nMultitapCaps,0,0);
@@ -12436,7 +12435,7 @@ boolean OEM_isFirstCap (OEMCONTEXT hTextField)
     boolean bRet = FALSE;
     int maxsymbolcount;
     int i,j;
-	#if  defined(FEATURE_VERSION_W516) ||defined(FEATURE_VERSION_VG68) || defined(FEATURE_VERSION_C01)
+	#if  defined(FEATURE_VERSION_W516) ||defined(FEATURE_VERSION_VG68) || defined(FEATURE_VERSION_C01) || defined(FEATURE_VERSION_W208S)
 	return FALSE;
 	#endif
     

@@ -117,7 +117,7 @@
 #define    CHARGE_FULL_STATE                (4)
 #if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)
 #define AVK_SEND_TWO     2
-#elif defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021) || defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_W516)
+#elif defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021) || defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_W516)||defined(FEATURE_VERSION_W208S)
 #define AVK_SEND_TWO     2
 #else
 #define AVK_SEND_TWO     1
@@ -315,8 +315,14 @@
 #define    PWROFF_ANI_FILE                       PWRON_ANI_FILE
 #define    PWROFF_ANI_FRAME_COUNT                PWRON_ANI_FRAME_COUNT
 #define    PWROFF_ANI_RATE                       PWRON_ANI_RATE
-
 #elif defined FEATURE_VERSION_S1000
+#define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweron.gif"
+#define    PWRON_ANI_FRAME_COUNT                 (1)
+#define    PWRON_ANI_RATE                        (4000)
+#define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweroff.gif"
+#define    PWROFF_ANI_FRAME_COUNT                PWRON_ANI_FRAME_COUNT
+#define    PWROFF_ANI_RATE                       PWRON_ANI_RATE
+#elif defined FEATURE_VERSION_W208S
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweron.gif"
 #define    PWRON_ANI_FRAME_COUNT                 (1)
 #define    PWRON_ANI_RATE                        (4000)

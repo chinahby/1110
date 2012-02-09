@@ -610,7 +610,7 @@ int fm_tune_channel(word wChannel)
 	OperationRDAFM_2w(FM_I2C_WRITE, &(RDA5802_channel_start_tune[0]), 4);
 	clk_busy_wait(30*1000); //at least delay 20ms
 	OperationRDAFM_2w(FM_I2C_READ, &(RDA5802_reg_data[0]), 4);
-    #ifdef FEATURE_VERSION_W516
+    #if defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W208S)
     clk_busy_wait(100*1000);
     #else
 	clk_busy_wait(50*1000); //at least delay 20ms

@@ -5206,7 +5206,7 @@ static void OEM_SetInputMode(CTextCtl * pme)
 			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
 	        #else
 			wMode = AEE_TM_CAPLOWER;//大小写字母输入模?
-			#if  defined(FEATURE_VERSION_W516) ||defined(FEATURE_VERSION_VG68) || defined(FEATURE_VERSION_C01)
+			#if  defined(FEATURE_VERSION_W516) ||defined(FEATURE_VERSION_VG68) || defined(FEATURE_VERSION_C01) || defined(FEATURE_VERSION_W208S)
 			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
 			#else
 			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
@@ -5587,7 +5587,7 @@ static void OEM_SetInputMode(CTextCtl * pme)
             MSG_FATAL("IDB_MODE_T9_MT_ENGLISH_UP",0,0,0);
 	        #else
 			wMode = AEE_TM_CAPLOWER;//大小写字母输入模?
-			#if  defined(FEATURE_VERSION_W516)
+			#if  defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W208S)
 			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
 			#else
 			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
