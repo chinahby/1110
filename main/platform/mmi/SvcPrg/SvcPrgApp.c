@@ -1291,7 +1291,7 @@ static boolean CSvcPrg_OnCommand_Edit(IDialog      *pd,
    // Add the association between the softkey and the text control
    // _before_ deleting all the menu items so the 'Multitap' item
    // is removed too
-   if (pItem->itemType != DT_TSTR) {
+   if (pItem->itemType != DT_TSTR && pItem->itemType != DT_WSTR && pItem->itemType != DT_WSTR_FIXED) {
       ITEXTCTL_SetSoftKeyMenu(pt, pm);
       (void) ITEXTCTL_SetInputMode(pt, AEE_TM_NUMBERS);
    } else {
@@ -1313,10 +1313,10 @@ static boolean CSvcPrg_OnCommand_Edit(IDialog      *pd,
                            (uint32) pItem);
 
    // add "Multitap" back in for txt string
-   if (pItem->itemType == DT_TSTR) {
+   if (pItem->itemType == DT_TSTR || pItem->itemType == DT_WSTR || pItem->itemType == DT_WSTR_FIXED) {
       ITEXTCTL_SetSoftKeyMenu(pt, pm);
    }
-      
+   
    // Set the focus to the text control object
    (void) IDIALOG_SetFocus(pd,
                            IDC_GENERICTEXTSK_TEXT);

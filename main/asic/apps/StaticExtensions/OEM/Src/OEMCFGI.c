@@ -4233,6 +4233,11 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
    ////////////////////////////////////////////////////////////////
 
    case CFGI_BUILD_VERSION:
+#ifdef FEATURE_PEKTEST
+      STR_TO_WSTR((char *)mob_sw_rev,
+                  (AECHAR *) pBuff,
+                  nSize);
+#else
 #ifdef CUST_EDITION
 #ifndef WIN32
       STR_TO_WSTR((char *)ver_modelversion,
@@ -4244,6 +4249,7 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
                   (AECHAR *) pBuff,
                   nSize);
 #endif // CUST_EDITION
+#endif // FEATURE_PEKTEST
       return SUCCESS;
    case CFGI_BUILD_TIME:
    	  {
