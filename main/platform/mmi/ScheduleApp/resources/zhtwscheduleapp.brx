@@ -23,7 +23,7 @@
 		<Text>年 : 月 : 日</Text>
 	</STRING>
 	<STRING Id="1008" Name="IDS_INVALID_YEAR">
-		<Text>請輸入從1900至2099間的任一年份</Text>
+		<Text>請輸入從1980至2050間的任一年份</Text>
 	</STRING>
 	<STRING Id="1009" Name="IDS_DONE">
 		<Text>完成</Text>

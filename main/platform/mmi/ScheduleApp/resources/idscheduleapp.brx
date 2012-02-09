@@ -23,7 +23,7 @@
 		<Text>TTTT : BB : HH</Text>
 	</STRING>
 	<STRING Id="1008" Name="IDS_INVALID_YEAR">
-		<Text>Masukkan tahun dari 1900 hingga 2051</Text>
+		<Text>Masukkan tahun dari 1980 hingga 2050</Text>
 	</STRING>
 	<STRING Id="1009" Name="IDS_DONE">
 		<Text>Selesai</Text>

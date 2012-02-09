@@ -23,7 +23,7 @@
 		<Text> :  :  </Text>
 	</STRING>
 	<STRING Id="1008" Name="IDS_INVALID_YEAR">
-		<Text>1900 2051 </Text>
+		<Text>1980 2050 </Text>
 	</STRING>
 	<STRING Id="1009" Name="IDS_DONE">
 		<Text></Text>
