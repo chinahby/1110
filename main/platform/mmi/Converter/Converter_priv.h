@@ -170,7 +170,7 @@ typedef struct _CConverter
     IMenuCtl           *currency;
     ITextCtl            *coeff1;
     ITextCtl            *coeff2;
-    #if defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)
+    #if defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_W516)
     #else
     ITextCtl            *coeff3;
     #endif
@@ -185,12 +185,14 @@ typedef struct _CConverter
     boolean            PENUPbRedraw;
     boolean            PENUPbCalc;
     IAnnunciator *m_pIAnn;
+    #ifdef FEATURE_LCD_TOUCH_ENABLE
 	AEERect      pL_rect1;
 	AEERect      pL_rect2;
     AEERect      pR_rect1;
 	AEERect      pR_rect2;
 	AEERect      pL_rect3;
 	AEERect      pR_rect3;
+    #endif
 } CConverter;
 
 /*==============================================================================
