@@ -1000,5 +1000,11 @@
 	<Dialog Id="6050" Name="IDD_GETTING" Focus="0">
 		<Controls/>
 	</Dialog>
+	<Dialog Id="6051" Name="IDD_ALBUMOREMAIN" Focus="0">
+		<Controls>
+			<Text Id="7041" Name="IDC_EDIT_ALBUMOREMAIN">
+				<Items/></Text>
+		</Controls>
+	</Dialog>
 </Dialogs>
 </BREWRes>

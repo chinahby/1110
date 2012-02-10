@@ -938,6 +938,12 @@
 			</Menu>
 		</Controls>
 	</Dialog>
+	<Dialog Id="6045" Name="IDD_ALBUMOREMAIN" Focus="7041">
+		<Controls>
+			<Text Id="7041" Name="IDC_EDIT_ALBUMOREMAIN">
+				<Items/></Text>
+		</Controls>
+	</Dialog>
 	<DIALOG Id="6049" Name="IDD_MMSOPTION_YESNO" Focus="7040">
 		<Controls>
 			<Menu Id="7040" Name="IDC_MMSOPTION_YESNO">

@@ -1025,5 +1025,11 @@
 			</Menu>
 		</Controls>
 	</Dialog>
+	<Dialog Id="6052" Name="IDD_ALBUMOREMAIN" Focus="7043">
+		<Controls>
+			<Text Id="7043" Name="IDC_EDIT_ALBUMOREMAIN">
+				<Items/></Text>
+		</Controls>
+	</Dialog>
 </Dialogs>
 </BREWRes>
