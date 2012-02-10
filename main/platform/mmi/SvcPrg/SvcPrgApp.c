@@ -3809,9 +3809,9 @@ static boolean CSvcPrg_CheckSecCode(CSvcPrgApp *pMe, AECHAR const *code)
    AECHAR wSPC[OEMNV_SECCODE_LENGTH];
 
    uint8 otksl_times = 0;	//Add By zzg 2012_01_18
-
+   #ifdef FEATURE_VERSION_W208S 
    OEM_GetConfig(CFGI_OTKSL_TIMES, &otksl_times, sizeof(uint8)); 	//Add By zzg 2012_01_18
-
+   #endif
    MSG_FATAL("***zzg CSvcPrg_CheckSecCode Start***", 0, 0, 0);
 
 #ifdef FEATURE_ENABLE_OTKSL
