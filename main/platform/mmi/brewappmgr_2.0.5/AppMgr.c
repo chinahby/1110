@@ -2204,7 +2204,7 @@ static boolean AppMgr_MainMenu(AppMgr * pme)
 
 
 #if defined(FEATURE_BREW_DOWNLOAD)
-   //if (OEM_LOCK_MOBILESHOP_LOCATION)	//Del by zzg 2012_02_08
+   if (OEM_LOCK_MOBILESHOP_LOCATION)
    {
       ai.wText       = IDC_MSHOP;
       ai.wImage      = ((nType == THUMB) ? IDB_MSHOP_THUMB : ((nType == ICON) ? IDB_MSHOP_ICON : IDB_MSHOP_LARGE));
@@ -2222,12 +2222,10 @@ static boolean AppMgr_MainMenu(AppMgr * pme)
 
 		 
       }
-      //nDraw--;	//Del by zzg 2012_02_08
+      nDraw--;	//Del by zzg 2012_02_08
    }
 #endif // FEATURE_BREW_DOWNLOAD
-
-//Del by zzg 2012_02_08
-/*		
+		
    // Show root level apps in
    if (pme->m_nItem[0])
    {
@@ -2254,8 +2252,7 @@ static boolean AppMgr_MainMenu(AppMgr * pme)
          pi = pi->pNext;
          itemID++;
          nCount--;
-*/
-//Del End
+
          if (nDraw != 0xffffffff)
          {
             if (!nDraw)
@@ -2293,9 +2290,9 @@ static boolean AppMgr_MainMenu(AppMgr * pme)
             else
                nDraw--;
          }
-      //}	//Del by zzg 2012_02_08
-   //}    	//Del by zzg 2012_02_08
-
+      }	
+   }    	
+   
    // Add Categories. Categories are added in following order
    // Favorites, Work, Fun, General
 
