@@ -259,6 +259,7 @@ do
     nv_pr_list.prl_version = mcsys_get_prl_version();
 #endif
 
+
 #ifdef FEATURE_IS683A_PRL
     item_id = NV_ROAMING_LIST_683_I;
 #else

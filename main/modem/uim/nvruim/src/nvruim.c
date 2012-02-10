@@ -6002,7 +6002,7 @@ static nv_ruim_support_status nvruim_read_prl(
       nv_cmd_ptr->data_ptr->roaming_list.size *= 8;
   
       /* Fill up list id */
-      nv_cmd_ptr->data_ptr->roaming_list.prl_version  = *prl_ptr++ << 8;
+      nv_cmd_ptr->data_ptr->roaming_list.prl_version  = *prl_ptr++ << 8;  
       nv_cmd_ptr->data_ptr->roaming_list.prl_version |= *prl_ptr++;
   
     }

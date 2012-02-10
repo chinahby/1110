@@ -424,11 +424,7 @@ DESCRIPTION
 #define  NV_MAX_PAGE_CHARS                                      20
 
 /* 4 digit lock code */
-#ifdef FEATURE_VERSION_W208S
-#define  NV_LOCK_CODE_SIZE                                       3
-#else
 #define  NV_LOCK_CODE_SIZE                                       4
-#endif
 
 /* Bytes in passwd */
 #define  NV_ISD_STD_PASSWD_SIZ                                   4
@@ -8205,7 +8201,6 @@ typedef PACKED struct {
 typedef PACKED struct { 
   /* NAM id 0-N */
   byte                                             nam;
-  
   word                                             prl_version;
   
   dword                                            size;

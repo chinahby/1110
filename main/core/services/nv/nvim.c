@@ -1078,6 +1078,8 @@ nvim_init_prl_data (void)
                                 NV_ROAMING_LIST_HEADER_SIZE);/* data count */
     /* Set state data items -- note that the item's active flag */
     /* occupies the "nam" field in the external type.           */
+
+	
     if ((status == NV_DONE_S) && ((boolean)prl_header.nam == TRUE)) {
       nv_prl_version_data[nam] = prl_header.prl_version;
       nv_prl_valid_data[nam] = prl_header.valid;
@@ -1086,6 +1088,8 @@ nvim_init_prl_data (void)
       nv_prl_version_data[nam] = NV_PRL_VERSION_INVALID;
       nv_prl_valid_data[nam] = FALSE;
     }
+
+
   }
   return;
 }
@@ -2178,7 +2182,6 @@ SIDE EFFECTS
   None.
 
 ===========================================================================*/
-
 word  nv_prl_version
 (
   byte   nam          /* Which NAM the request is for */
@@ -2189,6 +2192,8 @@ word  nv_prl_version
 
   /* Note that prl_version field is set to NV_PRL_VERSION_INVALID if   */
   /* the roaming list is NOT_ACTIVE                                    */
+
+	
   return nv_prl_version_data[nam];
 }
 
@@ -3008,6 +3013,7 @@ LOCAL nv_stat_enum_type nv_auto_set_prl()
 #endif
 
     dwPrlSize = sizeof(pr_list_data)/sizeof(byte);
+
     local_cmd.tcb_ptr    = NULL;
     local_cmd.sigs       = 0;
     local_cmd.done_q_ptr = NULL;
@@ -3072,6 +3078,7 @@ LOCAL nv_stat_enum_type nv_auto_set_prl()
       nv_pr_list.valid = TRUE;
     }
 #endif
+
 
     /* Set the PRL version */
 #ifdef FEATURE_SD20
@@ -3142,11 +3149,7 @@ LOCAL nv_stat_enum_type nv_auto_set_need_value(void)
     
     if(NV_DONE_S == local_cmd.status)
     {
-#ifdef FEATURE_VERSION_W208S
-		if((AUTO_NV_ITME_VERSION+1) == auto_nv_item_version)
-#else
-        if(AUTO_NV_ITME_VERSION == auto_nv_item_version)
-#endif			
+        if(AUTO_NV_ITME_VERSION == auto_nv_item_version)	
         {
             //OK, it not a fresh start phone and version is same as this bin file
             //skip the follow operations.
@@ -3162,11 +3165,7 @@ LOCAL nv_stat_enum_type nv_auto_set_need_value(void)
     bIsResetOemNv = TRUE;
     
     //OK, need to restore, make the version equal to BIN file's.
-#ifdef FEATURE_VERSION_W208S
-	auto_nv_item_version = AUTO_NV_ITME_VERSION+1;
-#else
-	auto_nv_item_version = AUTO_NV_ITME_VERSION;
-#endif    
+	auto_nv_item_version = AUTO_NV_ITME_VERSION;   
     lcd_debug_message ("Initialize necessary nv, please waiting.");
     
     

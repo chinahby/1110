@@ -1455,11 +1455,11 @@ SIDE EFFECTS
 
 ===========================================================================*/
 
-
 word  
 nv_prl_version (
   byte  nam
 );
+
 
 #ifdef FEATURE_NV_HTORPC_METACOMMENTS
 /*~ FUNCTION nv_prl_version */

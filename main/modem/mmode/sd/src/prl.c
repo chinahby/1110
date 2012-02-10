@@ -479,6 +479,8 @@ SIDE EFFECTS
 ===========================================================================*/
 nv_ram_roaming_list_type   *prl_get_ptr( void )
 {
+  
+  
   return &prl;
 }
 
@@ -2586,10 +2588,14 @@ MMEXTN  void                      prl_hdr_extract(
 
   /* Extract the PRL ID.
   */
+
+  
   prl_hdr_ptr->pr_list_id = SD_B_UNPACKW(buf_ptr,
                                       offset,
                                       PR_LIST_ID_LENGTH);
   offset += PR_LIST_ID_LENGTH;
+  
+  
   SD_MSG_LOW( "PRL ID=%d", prl_hdr_ptr->pr_list_id, 0, 0 );
 
   /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -2717,13 +2723,17 @@ static  boolean                   prl_read(
   /* Read into RAM the PRL that is associated with the specified NAM. If read
   ** operation fails, return FALSE.
   */
+
+  
   prl_ptr->nam = (byte) nam;
   if( ! sdnv_read(NV_ROAMING_LIST_683_I, (nv_item_type*) prl_ptr) )
   {
+  	
     SD_MSG_MED( "PRL read failed!, NAM=%d",nam,0,0 );
 
     return FALSE;
   }
+
 
   /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -2842,6 +2852,7 @@ static  boolean                   prl_create_dflt(
 
   /* Create special PRLs
   */
+
 
 
   #ifdef FEATURE_HYBR_GW_UTF
@@ -3467,7 +3478,6 @@ static   prl_validation_enum_type    prl_validate_proc(
         byte                        *prl_ptr,
             /* Pointer to the PRL to validate.
             */
-
         word                        *prl_ver_ptr,
             /* Pointer where to save the PRL version.
             */
@@ -3546,6 +3556,7 @@ static   prl_validation_enum_type    prl_validate_proc(
 
   /* Extract the PRL header information.
   */
+  
   prl_hdr_extract( prl_hdr_ptr, prl_ptr, sspr_p_rev );
 
   /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -4845,7 +4856,6 @@ static  prl_validation_enum_type  prl_validate_base(
 
         byte                      *prl_ptr,
         /* Pointer to the PRL to validate */
-
         word                      *prl_ver_ptr,
             /* Pointer where to save the PRL version.
             */
@@ -4997,6 +5007,8 @@ MMEXTN  prl_validation_enum_type  prl_validate(
         boolean                   is_full_validation
 )
 {
+
+  
   return prl_validate_base( prl_ptr,
                             prl_ver_ptr,
                             sspr_p_rev_ptr,
@@ -5038,7 +5050,6 @@ MMEXTN  prl_commit_status_e_type prl_commit2 (
 
         sd_nam_e_type               curr_nam,
            /* The current NAM to write for */
-
         word                        *prl_ver_ptr,
             /* Where to save the PRL version.*/
 
@@ -5094,6 +5105,7 @@ MMEXTN  prl_commit_status_e_type prl_commit2 (
   prl.prl_version = *prl_ver_ptr;
   prl.valid = TRUE;
   memcpy( (byte*)prl.roaming_list, prl_to_validate, size );
+
 
   /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -5190,6 +5202,8 @@ MMEXTN  unsigned int              prl_get_total_size(
 
   /* Try validating a 2nd PRL that may be stored at the end of the 1st PRL.
   */
+
+  
   prl_validation = prl_validate_base( (byte*) (prl_ptr + prl1_size),
                                       NULL,
                                       &sspr_p_rev,
@@ -5299,6 +5313,7 @@ MMEXTN  boolean                   prl_init(
   prl_sspr_p_rev_e_type     sspr_p_rev;
 
 
+
   /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   SD_ASSERT_ENUM_IS_INRANGE( (sd_nam_e_type) nam, SD_NAM_MAX );
@@ -5341,6 +5356,7 @@ MMEXTN  boolean                   prl_init(
 
     /* Try validating a 2nd PRL that may be stored at the end of the 1st PRL.
     */
+  
     prl_validation = prl_validate_base(
                                 (byte*) (prl_ptr->roaming_list + prl_offset),
                                 NULL,
@@ -5365,6 +5381,8 @@ MMEXTN  boolean                   prl_init(
       SD_MSG_HIGH( "=== Working of 1st PRL ===", 0, 0, 0 );
 
       prl_offset = 0;
+
+	
       prl_validation = prl_validate_base( (byte*) prl_ptr->roaming_list,
                                           NULL,
                                           &sspr_p_rev,
@@ -5375,6 +5393,7 @@ MMEXTN  boolean                   prl_init(
 
     if( prl_validation == PRL_VALID )
     {
+  
       prl_hdr_extract( prl_hdr_ptr,
                        (byte*) (prl_ptr->roaming_list + prl_offset),
                        sspr_p_rev );
@@ -5432,6 +5451,7 @@ MMEXTN  boolean                   prl_init(
       prl_ptr->valid            = FALSE;
       prl_ptr->prl_version      = PRL_DEFAULT_VER;
 
+
       return FALSE;
     }
     else
@@ -5457,6 +5477,7 @@ MMEXTN  boolean                   prl_init(
   /* If we got here, we have a loaded PRL (from NV or a default) - extract
   ** the header of the loaded a PRL and mark the PRL as valid.
   */
+	  
   prl_hdr_extract( prl_hdr_ptr,
                    (byte*) (prl_ptr->roaming_list + prl_offset),
                    sspr_p_rev );

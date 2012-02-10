@@ -1237,7 +1237,6 @@ typedef struct {
   /* PR_LIST_ID field - set to PRL_DEFAULT_VER if PRL is not loaded.
   */
   word          pr_list_id;
-
   /* SSPR_P_REV field.
   */
   prl_sspr_p_rev_e_type     sspr_p_rev;
@@ -1700,7 +1699,6 @@ extern  prl_commit_status_e_type    prl_commit2(
 
         sd_nam_e_type               curr_nam,
            /* The current NAM to write for */
-
         word                        *prl_ver_ptr,
             /* Where to save the PRL version.*/
 

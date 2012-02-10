@@ -25,10 +25,10 @@
 #elif defined(FEATURE_VERSION_M8021)
 #define AUTO_NV_MIN_VERSION                 0x17
 #else
-#define AUTO_NV_MIN_VERSION                 0x18
+#define AUTO_NV_MIN_VERSION                 0x24
 #endif
 
-#define AUTO_NV_ITME_VERSION                (AUTO_NV_MIN_VERSION + AUTO_NV_RF_VERSION)
+#define AUTO_NV_ITME_VERSION                (AUTO_NV_MIN_VERSION + AUTO_NV_RF_VERSION + 2)
 
 //NOTICE: we only auto set NAM-0's value 
 //you can change those nv value for different operator.
@@ -53,7 +53,7 @@ const nv_auto_set_type nv_auto_set_svc_list[] =
     //change for certain opeartor                     
     {NV_BANNER_I,                       {'N', 'o', ' ', 'C', 'a', 'r', 'd', 0x00}},   
     {NV_LOCK_CODE_I,                    {0x30, 0x30, 0x30, 0x30}}, 
-    {NV_SEC_CODE_I,                     {0x30, 0x30, 0x30, 0x30, 0x30, 0x30}},
+    {NV_SEC_CODE_I,                     {0x30, 0x30, 0x30, 0x30, 0x30, 0x30}},  
     {NV_OTKSL_I,                        {0x30, 0x30, 0x30, 0x30, 0x30, 0x30}},
 	{NV_IMSI_MCC_I,                     {0x00, 0x67, 0x01}},
     {NV_IMSI_11_12_I,                   {0x00, 0x5c}},   

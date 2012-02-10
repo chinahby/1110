@@ -522,6 +522,7 @@ nvio_read_prl_item (
 
   snprintf(f_name,sizeof(f_name),"/nvm/prl_%d",num);
 
+
     /* Check if the file is present or not. */
   if(efs_stat(f_name,&temp_buf) == -1) {
     return NV_NOTACTIVE_S;
@@ -661,6 +662,7 @@ nvio_read_roaming_list (
   MSG_MED("size: %d", item_size, 0, 0);
  
   snprintf(f_name,sizeof(f_name),"/nvm/prl_%d",cmd_ptr->data_ptr->roaming_list.nam);
+
   
     /* Check if the file is present or not. */
   if(efs_stat(f_name,&temp_buf) == -1) {
@@ -743,6 +745,8 @@ nvio_read (
   byte  local_imei[NV_UE_IMEI_SIZE];
   int i;
 #endif
+
+  //MSG_FATAL("***zzg nvio_read item=%d***", cmd_ptr->item, 0, 0);
  
 /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -1446,6 +1450,7 @@ nvio_write_roaming_list (
 
   snprintf(f_name,sizeof(f_name),"/nvm/prl_%d",cmd_ptr->data_ptr->roaming_list.nam);
 
+
   fd = efs_open(f_name, O_RDWR | O_CREAT , 0777 );
 
   nbytes = item_size;
@@ -1480,6 +1485,7 @@ nvio_write_roaming_list (
   }
   else
     status = NV_DONE_S;
+
 
   nv_prl_version_data[cmd_ptr->data_ptr->roaming_list.nam] = 
           cmd_ptr->data_ptr->roaming_list.prl_version;
@@ -1967,6 +1973,7 @@ nvio_write_prl_item (
 
   snprintf(f_name,sizeof(f_name),"/nvm/prl_%d",num);
 
+  
   fd = efs_open(f_name, O_RDWR | O_CREAT, 0777 );
 
   nbytes = item_size;
