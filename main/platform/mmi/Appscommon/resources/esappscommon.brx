@@ -245,7 +245,7 @@
 		<Text>Presione la Tecla de Espacio por algunos segundos para Desbloquear el Teclado</Text>
 	</STRING>
 	<String Id="1033" Name="IDS_SHIFT">
-		<Text>cam</Text>
+		<Text>Cam</Text>
 	</String>
 	<String Id="1034" Name="IDS_ALT">
 		<Text>Alt</Text>
