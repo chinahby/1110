@@ -3113,7 +3113,11 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_IconTitle[8]     = IDS_MAIN_MENU_SCHEDULER;
     pMe->m_IconTitle[9]     = IDS_MAIN_MENU_SETTINGS;
     pMe->m_IconTitle[10]    = IDS_MAIN_MENU_GAMES;
-    pMe->m_IconTitle[11]    = IDS_MAIN_MENU_CALCULATOR;
+	#ifndef FEATURE_VERSION_1110W516
+	pMe->m_IconTitle[11]    = IDS_MAIN_MENU_CALCULATOR;
+	#else
+    pMe->m_IconTitle[11]    = IDS_MAIN_MENU_CAMERA;
+	#endif
 #endif
 #elif defined (FEATURE_DISP_240X320)
     pMe->m_IconTitle[0]     = IDS_MAIN_MENU_MEDIAGALLERY;
@@ -4478,7 +4482,13 @@ static int StartApplet(MainMenu *pMe, int i)
     case IDS_MAIN_MENU_TIMER:
         Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPTIMER);
         break;
-        
+    #ifdef FEATURE_VERSION_1110W516
+    	case IDS_MAIN_MENU_CAMERA:
+	{		
+		Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_CAMERA);
+		break;
+	}   
+    #endif    
     default:
         break;
 

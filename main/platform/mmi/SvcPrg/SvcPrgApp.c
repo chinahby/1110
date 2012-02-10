@@ -3850,8 +3850,9 @@ static boolean CSvcPrg_CheckSecCode(CSvcPrgApp *pMe, AECHAR const *code)
 		 else 
 		 {
 		  	 otksl_times++;
+             #ifdef FEATURE_VERSION_W208S 
 			 OEM_SetConfig(CFGI_OTKSL_TIMES, &otksl_times, sizeof(uint8)); 	//Add By zzg 2012_01_18
-
+             #endif
 			 MSG_FATAL("***zzg OEM_SetConfig CFGI_OTKSL_TIMES otksl_times=%d***", otksl_times, 0, 0);
 			 //pMe->m_accessByOTKSL = TRUE;
 			 return TRUE;

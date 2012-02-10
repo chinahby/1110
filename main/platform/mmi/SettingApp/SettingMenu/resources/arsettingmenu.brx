@@ -140,10 +140,10 @@
 		<Text>اللغة</Text>
 	</STRING>
 	<STRING Id="1047" Name="IDS_CHINESE">
-		<Text>الصينية</Text>
+		<Text>中文</Text>
 	</STRING>
 	<STRING Id="1048" Name="IDS_ENGLISH">
-		<Text>الإنجليزية</Text>
+		<Text>English</Text>
 	</STRING>
 	<STRING Id="1049" Name="IDS_AUTO_REDIAL">
 		<Text>إعادة المحاولة تلقائيًا</Text>

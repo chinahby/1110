@@ -514,7 +514,7 @@ boolean camsensor_siv121d_0m3_start(camsensor_static_params_type *camsensor_para
 	/* VFE's perception of Sensor output capability */
 
 	/* Full size dimensions - 1600x1200 */
-	camsensor_params->full_size_width  = 640;//480;//640;
+	camsensor_params->full_size_width  = 360;//480;//640;
 	camsensor_params->full_size_height = 480;//640;//480; /* 2 Extra Lines for VFE padding */
 
 
@@ -622,16 +622,16 @@ camsensor_static_params_type *camsensor_params
 	camsensor_params->camsensor_width = camsensor_params->full_size_width;
 	camsensor_params->camsensor_height = camsensor_params->full_size_height;
 	/* CAMIF frame */
-	camsensor_params->camif_frame_config.pixelsPerLine = 640*2;
-	camsensor_params->camif_frame_config.linesPerFrame = 480;
+	camsensor_params->camif_frame_config.pixelsPerLine = camsensor_params->full_size_width*2;
+	camsensor_params->camif_frame_config.linesPerFrame = camsensor_params->full_size_height;
 	
 	/* CAMIF window */
 	camsensor_params->camif_window_width_config.firstPixel = 0;
 	camsensor_params->camif_window_width_config.lastPixel  = camsensor_params->camsensor_width*2 - 1;
 	camsensor_params->camif_window_height_config.firstLine = 0;
 	camsensor_params->camif_window_height_config.lastLine = camsensor_params->camsensor_height - 1;
-	SIV121D_config_window(0,0,camsensor_params->camsensor_width,camsensor_params->camsensor_height);
-	rex_sleep(5);
+	//SIV121D_config_window(0,0,camsensor_params->camsensor_width,camsensor_params->camsensor_height);
+	//rex_sleep(5);
 	camsensor_current_resolution = camsensor_snapshot_resolution;
 	return TRUE;
 } /* camsensor_siv121d_0m3_snapshot_config */

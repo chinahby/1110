@@ -3561,7 +3561,11 @@ static void TextCtl_DrawCursor(TextCtlContext *pContext,
 #ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
     AEERect draw, scratch  = *cursRect;
     scratch.dx = 1;
-    scratch.dy = 14; 
+	#ifndef FEATURE_VERSION_1110W516
+	scratch.dy = 14; 
+	#else
+    scratch.dy = 17; 
+	#endif
     //MSG_FATAL("scratch.x=%d,scratch.y=%d",scratch.x,scratch.y,0);
 	//MSG_FATAL("scratch.dx=%d,scratch.dy=%d",scratch.dx,scratch.dy,0);
 	//MSG_FATAL("clipRect.x=%d,clipRect.y=%d",clipRect->x,clipRect->y,0);
