@@ -22,6 +22,9 @@
     <String Id="1009" Name= "IDS_ENVIR_MODE_SUNNY">
  		<Text>مشمس النمط</Text>
     </String>
+	<String Id="1012" Name="IDS_VIDEO_CAMERA">
+		<Text>كاميرا فيديو</Text>
+	</String>
     <String Id="1013" Name= "IDS_CFG_QUALITY">
  		<Text>الجودة</Text>
     </String>
