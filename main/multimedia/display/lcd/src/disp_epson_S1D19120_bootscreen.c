@@ -10918,7 +10918,7 @@ uint8 phone_charging_data[] =
   ,230,186,230,186,230,186,230,186,230,186,230,186,230,186,230,186,230,186,230,186,230,186,230,186,230,186,230,186,230,186,230,186,230,186,230,186,230,186,230,186
   ,230,186,230,186,230,186,230,186,230,186,230,186,230,186,230,186,230,186,230,186,230,186,230,186,230,186,222,218,230,0,0
 };
-#elif defined(FEATURE_VERSION_W516)
+#elif defined(FEATURE_VERSION_1110W516)
 uint8 phone_charging_data[] = 
 {
    255,255,255,255,255,255,255,255,255,255,255
@@ -15358,7 +15358,7 @@ void disp_epson_S1D19120_boot_chg_splash_screen (void)
 	disp_update(phone_charging_data, 220, 0, 0, 176, 220, 0, 0);
 #endif
 #elif defined(FEATURE_DISP_176X220)
-#if defined(FEATURE_VERSION_VG68) || defined(FEATURE_VERSION_W516)
+#if defined(FEATURE_VERSION_VG68) || defined(FEATURE_VERSION_1110W516)
 disp_update(phone_charging_data, 176, 0, 0, 220, 176, 0, 0);
 #else
 disp_update(phone_charging_data, 80, 0, 0, 80, 80, 70, 48);
