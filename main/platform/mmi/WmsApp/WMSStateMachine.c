@@ -2910,6 +2910,13 @@ static NextFSMAction WMSST_TONUMLIST_Handler(WmsApp *pMe)
                     {
                         // ¿½±´µ±Ç°ºÅÂë
                         pMe->m_msSend.m_szNum[0] = 0;
+#ifdef FEATURE_USES_MMS                  
+                        if(pMe->m_isSendToAlbumOrEmain && (WSTRLEN(pItem->m_szEmail) > 0) && pMe->m_isMMS)  
+                        {
+                            (void)WSTRCPY(pMe->m_msSend.m_szNum, pItem->m_szEmail);
+                        }
+                        else
+#endif                        
                         (void)WSTRCPY(pMe->m_msSend.m_szNum, pItem->m_szTo);
                     }
 

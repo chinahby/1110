@@ -8739,14 +8739,6 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                         if(pMe->m_isSendToAlbumOrEmain)
                         {
                             AECHAR *pwstrText = ITEXTCTL_GetTextPtr(pIText);
-                            if(pwstrText == NULL)
-                            {
-                                DBGPRINTF("IDD_TONUMLIST_Handler pwstrText==NULL");   
-                            }
-                            else
-                            {
-                                DBGPRINTF("IDD_TONUMLIST_Handler pwstrText=%S", pwstrText);   
-                            }
                             ITEXTCTL_SetText(pIText, pwstrText, -1);   
                         }
                         else
@@ -8985,7 +8977,7 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                             }
                             else
 #endif                
-                            (void)ITEXTCTL_GetText(pIText, pItem->m_szTo, MAX_PH_DIGITS + 1);
+                            (void)ITEXTCTL_GetText(pIText, pItem->m_szTo, MAX_EMAILADD_LEN + 1);
                             
                             // 调用电话本接口获取人名
                             WMSUtil_GetContactName(pMe, pItem->m_szTo, pItem->m_szName, MAX_TITLE_LEN);
@@ -8999,7 +8991,13 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                                     MEMSET(pMe->m_EncData.pMessage,NULL,sizeof(MMS_WSP_MESSAGE_SEND));
                                 }
                                 
-                                //MEMCPY((char*)pMe->m_EncData.pMessage->hTo,pItem->m_szTo,STRLEN((char*)pItem->m_szTo));
+#ifdef FEATURE_USES_MMS                  
+                                if(pMe->m_isSendToAlbumOrEmain)
+                                {
+                                    WSTRTOSTR(pItem->m_szEmail,(char*)pMe->m_EncData.pMessage->hTo,MMS_MAX_SINGLE_ADDRESS_SIZE);
+                                }
+                                else
+#endif                                
                                 WSTRTOSTR(pItem->m_szTo,(char*)pMe->m_EncData.pMessage->hTo,MMS_MAX_SINGLE_ADDRESS_SIZE);
 
                                 MSG_FATAL("IDD_SENDING_Handler to:%s",pMe->m_EncData.pMessage->hTo,0,0);
@@ -11899,7 +11897,12 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                             MENU_ADDITEM(pMe->m_pMenu, IDS_REMOVE_SOUND);//add by xuhui 2011/08/01
                             MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_FILE);//add by xuhui 2011/08/01
                         }  
-                        MENU_ADDITEM(pMe->m_pMenu, IDS_SEND_TO_ALBUM_OR_EMAIL);
+#ifdef FEATURE_USES_MMS 
+                        if(pMe->m_isMMS)
+                        {
+                            MENU_ADDITEM(pMe->m_pMenu, IDS_SEND_TO_ALBUM_OR_EMAIL);
+                        }
+#endif                        
 #endif                       
                         MENU_ADDITEM(pMe->m_pMenu, IDS_INSERTTEMPLATES);
 						MENU_ADDITEM(pMe->m_pMenu, IDS_SAVETODRAFT);	//Add By zzg 2010_09_11						

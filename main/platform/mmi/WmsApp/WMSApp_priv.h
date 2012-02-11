@@ -122,7 +122,7 @@ typedef struct _CMultiSendItemInfo
 typedef struct 
 {
     AECHAR                      m_szCallBkNum[MAX_PH_DIGITS+1];     // Call Back Number
-    AECHAR                      m_szNum[MAX_PH_DIGITS+1];           // 发送/接收消息方号码
+    AECHAR                      m_szNum[MAX_EMAILADD_LEN+1];           // 发送/接收消息方号码
     AECHAR                      *m_szMessage;       // 消息体
     uint32                      m_dwTime;           // 消息时间戳
     wms_priority_e_type         m_epriority;        // 消息优先级
