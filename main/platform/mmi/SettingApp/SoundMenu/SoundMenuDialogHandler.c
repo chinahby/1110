@@ -1613,6 +1613,7 @@ static boolean  HandleRingerDialogEvent(CSoundMenu *pMe,
 
         case EVT_UPDATAMENU:
             IALERT_StopRingerAlert(pMe->m_pAlert);
+            MSG_FATAL("%x,%x,%x,HandleRingerDialogEvent",eCode,wParam,dwParam);
 
             // 更新菜单列表
             SoundMenu_UpdateRingerListMenu(pMe, pMenu);
@@ -1621,7 +1622,7 @@ static boolean  HandleRingerDialogEvent(CSoundMenu *pMe,
                 (void)IMENUCTL_Redraw(pMenu);
             }
             //InitMenuIcons(pMenu);
-            if(pMe->m_fSubDlgId != DOWNLOAD_MENU &&pMe->m_RingCurVol[pMe->m_CurProfile] != OEMSOUND_MUTE_VOL)
+            if(pMe->m_fSubDlgId != DOWNLOAD_MENU &&pMe->m_RingCurVol[pMe->m_CurProfile] != OEMSOUND_MUTE_VOL && wParam != 0)
             {
                 //预听铃声
                 MSG_FATAL("RingerPreviewEVT_UPDATAMENU....................................................",0,0,0);
@@ -1694,8 +1695,6 @@ static boolean  HandleRingerDialogEvent(CSoundMenu *pMe,
                         // 菜单到底，需列举下一页菜单
                         pMe->m_eMakeListMode = MAKELIST_NEXTPAGE;
 
-                        //IALERT_StopRinger(pMe->m_pAlert);
-
                         // 发送更新菜单列表事件
                         ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_SOUNDMENU, EVT_UPDATAMENU,0,0);
                     }
@@ -1706,8 +1705,6 @@ static boolean  HandleRingerDialogEvent(CSoundMenu *pMe,
                     {
                         // 菜单到顶，需列举上一页菜单
                         pMe->m_eMakeListMode = MAKELIST_PREPAGE;
-
-                        //IALERT_StopRinger(pMe->m_pAlert);
 
                         // 发送更新菜单列表事件
                         ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_SOUNDMENU,EVT_UPDATAMENU,0, 0);
