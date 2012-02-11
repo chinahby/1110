@@ -128,6 +128,11 @@ CONSTFILE_FILES+=\
     wallpaper6.png|fs:/image/wallpaper/wallpaper6.png \
     wallpaper7.png|fs:/image/wallpaper/wallpaper7.png \
     wallpaper8.png|fs:/image/wallpaper/wallpaper8.png
+else ifeq ($(USES_RESDIR), C11)
+CONSTFILE_FILES+=\
+    wallpaper1.png|fs:/image/wallpaper/wallpaper1.png \
+    wallpaper2.png|fs:/image/wallpaper/wallpaper2.png \
+    wallpaper3.png|fs:/image/wallpaper/wallpaper3.png 
 else ifeq ($(USES_RESDIR), C306)
 CONSTFILE_FILES+=\
     wallpaper1.png|fs:/image/wallpaper/wallpaper1.png \

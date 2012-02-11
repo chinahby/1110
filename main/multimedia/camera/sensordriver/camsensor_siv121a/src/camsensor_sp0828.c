@@ -14,7 +14,7 @@
 /*============================================================================
     TYPE DEFINITIONS 
 ============================================================================*/
-#ifdef FEATURE_VERSION_C180
+#if defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_C11)
 #define T_QSC1110
 #endif
 

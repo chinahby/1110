@@ -14,7 +14,7 @@
 /*============================================================================
     TYPE DEFINITIONS 
 ============================================================================*/
-#ifdef FEATURE_VERSION_C180
+#if defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_C11)
 #define CAMSENSOR_SIC110A_RESET_PIN         GPIO_OUTPUT_62
 #else
 #define CAMSENSOR_SIC110A_RESET_PIN         GPIO_OUTPUT_10

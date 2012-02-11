@@ -5432,7 +5432,7 @@ void          (*task_wait_handler)( rex_sigs_type )
   (void) rex_clr_sigs( task_ptr, task_wait_sig );
 
   /* Check NV read status */
-#if defined(FEATURE_VERSION_M8021) || defined(FEATURE_VERSION_MYA450) || defined(FEATURE_VERSION_N68)
+#if defined(FEATURE_VERSION_M8021) || defined(FEATURE_VERSION_MYA450) || defined(FEATURE_VERSION_N68) || defined(FEATURE_VERSION_C11)
 	gpio_out(SIM_SEL,(GPIO_ValueType)GPIO_HIGH_VALUE);
 #else
 #if defined(FEATURE_VERSION_C306)

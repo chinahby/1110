@@ -348,6 +348,20 @@ else
             techno_meto.mid|fs:/ringers/techno_meto.mid \
             feeling_on.mid|fs:/ringers/feeling_on.mid \
             on_off.mp3|fs:/ringers/on_off.mp3
+     else ifeq ($(USES_RESDIR), C11)
+        CONSTFILE_FILES+=\
+            blue_load.mid|fs:/ringers/blue_load.mid \
+            blues.mid|fs:/ringers/blues.mid \
+            clock.mid|fs:/ringers/clock.mid \
+            dance_craze.mid|fs:/ringers/dance_craze.mid \
+            green_line.mid|fs:/ringers/green_line.mid \
+            jumping.mid|fs:/ringers/jumping.mid \
+            lucky.mid|fs:/ringers/lucky.mid \
+            call3.mid|fs:/ringers/call3.mid \
+            call4.mid|fs:/ringers/call4.mid \
+            feeling_on.mid|fs:/ringers/feeling_on.mid \
+            callsound.mp3|fs:/ringers/callsound.mp3 \
+            poweronoff.mp3|fs:/ringers/poweronoff.mp3  
     else ifeq ($(USES_RESDIR), W515V3)
         CONSTFILE_FILES+=\
             blues.mid|fs:/ringers/blues.mid \

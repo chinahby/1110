@@ -578,7 +578,7 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
 
 //Add By zzg 2010_11_23
 #ifndef FEATURE_UNLOCK_KEY_SPACE	
-#ifdef FEATURE_VERSION_W515V3
+#if  defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_C11)
                 case AVK_SELECT:
 #else
                 case AVK_CLR:
@@ -1056,7 +1056,7 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
         //    db_put(DB_BACKLIGHT_LEVEL, &db_value);
         //}
 		
-#ifdef FEATURE_VERSION_W515V3
+#if  defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_C11)
         if(wParam == AVK_CLR)
 #else
         if(wParam == AVK_SELECT)
@@ -1074,7 +1074,7 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
                 return FALSE;            
             }            
         }
-#ifdef FEATURE_VERSION_W515V3
+#if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_C11) 
         if(wParam== AVK_CLR||wParam == AVK_END || wParam == AVK_POWER || wParam == AVK_HEADSET_CONNECT || wParam == AVK_HEADSET_DISCONNECT)
 #else
         if(wParam== AVK_SELECT||wParam == AVK_END || wParam == AVK_POWER || wParam == AVK_HEADSET_CONNECT || wParam == AVK_HEADSET_DISCONNECT)
