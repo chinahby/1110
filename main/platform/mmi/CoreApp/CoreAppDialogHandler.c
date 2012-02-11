@@ -3523,7 +3523,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 						//AEE_CancelTimer(CoreApp_keypadtimer,pMe);
 						//ISHELL_CancelTimer(pMe->a.m_pIShell,CoreApp_keypadtimer,pMe);
 					}
-#if defined(FEAUTRE_VERSION_N450)||defined(FEATURE_VERSION_W0216A)  //add by pyuangui
+#if defined(FEAUTRE_VERSION_N450)||defined(FEATURE_VERSION_W0216A)||defined(FEATURE_VERSION_1110W516)  //add by pyuangui
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);   
 #else
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
