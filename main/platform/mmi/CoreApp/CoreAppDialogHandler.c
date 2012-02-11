@@ -3774,7 +3774,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                         #if defined( FEATURE_VERSION_W515V3) 
                            Mainmenu_KeypadLock(TRUE);
                         #endif
-                        #if defined(FEATURE_VERSION_MYANMAR)
+                        #if defined(FEATURE_VERSION_MYANMAR) || defined( FEATURE_VERSION_C11) || defined(FEATURE_VERSION_1110W516)
                            WMSDialog_KeypadLock(TRUE);
                         #endif
     				    #ifdef FEATURE_USES_BLACKBERRY
@@ -4139,7 +4139,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             	case AVK_SOFT2:		//Add By zzg 2010_09_08 for smart and m8
                 case AVK_CLR:
 
-#ifdef FEATURE_VERSION_W515V3
+#if  defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_1110W516)
                 if(pMe->m_IsSametime)
                    {
                        return TRUE;
@@ -4239,7 +4239,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 				case AVK_O:
                     {
                         ICallApp         *pCallApp = NULL;
-                        #if defined( FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)|| defined(FEATURE_VERSION_MYANMAR) || defined( FEATURE_VERSION_C01) || defined( FEATURE_VERSION_W515V3)
+                        #if defined( FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)|| defined(FEATURE_VERSION_MYANMAR) || defined( FEATURE_VERSION_C01) || defined( FEATURE_VERSION_C11) || defined( FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_1110W516)
                         if(pMe->m_iskeypadtime)
                         {
                         	if(wParam==AVK_STAR)
@@ -4254,7 +4254,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 				                                &bData,
 				                                sizeof(bData));
 				                    pMe->m_iskeypadtime = FALSE;
-                                    #if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_MYANMAR)
+                                    #if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_MYANMAR) || defined( FEATURE_VERSION_C11) || defined(FEATURE_VERSION_1110W516)
                                         CoreApp_TimeKeyguard(pMe);
                                     #else
 				        			if(bData)
@@ -6294,7 +6294,7 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 		#else
     		#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_S1000T)
     			eBBarType = BTBAR_UNLOCK_SOS;
-        	#elif defined(FEATURE_VERSION_W515V3)
+        	#elif defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_1110W516)
         		eBBarType = BTBAR_LUNLOCK;
         	#elif defined(FEATURE_VERSION_VERYKOOL)
         		eBBarType = BTBAR_UNLOCK_SOS;
