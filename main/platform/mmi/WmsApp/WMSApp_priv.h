@@ -110,7 +110,7 @@ typedef struct
 typedef struct _CMultiSendItemInfo
 { 
     // 接收消息方号码
-    AECHAR      m_szTo[MAX_PH_DIGITS+1];
+    AECHAR      m_szTo[MAX_EMAILADD_LEN+1];//发送邮件时，邮件地址也是放在这个里面发的，所以大小要和邮件的一致
     
     // 接收消息方号码在电话本中对应的姓名
     AECHAR      m_szName[MAX_TITLE_LEN+1]; 
