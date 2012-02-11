@@ -542,6 +542,7 @@ int MimeResCheckFileExist(WmsApp *pMe,char* pPath);
 int WMSMMS_GetResByExplorer(void* pv, FileNamesBuf pBuf, uint32 nBufSize);
 
 static void WMSMMS_MediaNotify(void * pUser, AEEMediaCmdNotify *pCmdNotify);
+static boolean IDD_EDIT_ALBUMOREMAIN_Handler(void *pUser, AEEEvent eCode,uint16 wParam, uint32 dwParam);
 
 #endif
 /*==============================================================================
@@ -886,6 +887,10 @@ void WmsApp_SetDialogHandler(WmsApp *pMe)
 #ifdef FEATURE_USES_MMS
         case IDD_VIEWMSG_MMS:
             pMe->m_pDialogHandler = IDD_VIEWMSG_MMS_Handler;
+            break;
+
+        case IDD_ALBUMOREMAIN:
+            pMe->m_pDialogHandler = IDD_EDIT_ALBUMOREMAIN_Handler;
             break;
 #endif            
         default:
@@ -8559,6 +8564,12 @@ static uint16 WmsApp_UpdateAddListMenu(WmsApp *pMe, IMenuCtl *pMenu)
             {
                 mai.pText = pItem->m_szName;
             }
+#ifdef FEATURE_USES_MMS                  
+            else if(pMe->m_isSendToAlbumOrEmain && (WSTRLEN(pItem->m_szEmail) > 0))
+            {
+                mai.pText = pItem->m_szEmail;
+            }
+#endif               
             else
             {
                 mai.pText = pItem->m_szTo;
@@ -8665,23 +8676,17 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
 #ifdef FEATURE_USES_MMS                         
                 if(pMe->m_isSendToAlbumOrEmain)
                 {
-                    AECHAR WTitle[2] = {0};
-                    
-                    ITEXTCTL_SetProperties( pIText, (TP_FIXSETRECT |TP_EDITNUMBER_PTSTRING |TP_FIXOEM | TP_USELESS_UPDOWN | TP_GRAPHIC_BG | TP_FOCUS_NOSEL| TP_STARKEY_SWITCH));
-                    IMENUCTL_SetActive(pMenu, FALSE);
-                    ITEXTCTL_SetActive(pIText, TRUE);
-                    ITEXTCTL_SetCursorPos(pIText, TC_CURSOREND);
-                    (void)ITEXTCTL_SetTitle( pIText, NULL,0,WTitle);
-                    IDIALOG_SetFocus(pMe->m_pActiveIDlg, IDC_NUMTEXT);
-                    IDISPLAY_UpdateEx(pMe->m_pDisplay, TRUE);     
+                    ITEXTCTL_SetProperties( pIText, (TP_FIXSETRECT |TP_EDITNUMBER_PTSTRING |TP_FIXOEM | TP_USELESS_UPDOWN | TP_FOCUS_NOSEL| TP_STARKEY_SWITCH));
+                    ITEXTCTL_SetMaxSize(pIText, MAX_EMAILADD_LEN);    
                 }
                 else
 #endif                    
                 {
                     ITEXTCTL_SetProperties(pIText, TP_FIXSETRECT|TP_FIXOEM|TP_USELESS_UPDOWN|TP_FOCUS_NOSEL);
+                    ITEXTCTL_SetMaxSize(pIText, MAX_PH_DIGITS);
                 }
 #endif
-                ITEXTCTL_SetMaxSize(pIText, MAX_PH_DIGITS);
+                
                 (void)ITEXTCTL_SetInputMode(pIText, AEE_TM_NUMBERS);
                 ITEXTCTL_SetActive(pIText, FALSE);
             }
@@ -8761,25 +8766,16 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                 }
                 else
                 {
-#ifdef FEATURE_USES_MMS                         
+#ifdef FEATURE_USES_MMS    
                     if(pMe->m_isSendToAlbumOrEmain)
                     {
-                        AECHAR *pwstrText = ITEXTCTL_GetTextPtr(pIText);
-                        if(WSTRLEN(pwstrText) > 0)
+                        if(pItem != NULL)
                         {
-                            ITEXTCTL_SetText(pIText, pwstrText, -1);   
+                            (void)ITEXTCTL_SetText(pIText, pItem->m_szEmail, -1);  
                         }
                         else
                         {
-                            DBGPRINTF("IDD_TONUMLIST_Handler pItem->m_szEmail=%d",pItem->m_szEmail);
-                            if(WSTRCHR(pItem->m_szEmail, L'@') == NULL)
-                            {
-                                (void)ITEXTCTL_SetText(pIText, WSTRCAT(pItem->m_szEmail, L"@"), -1);  
-                            }
-                            else
-                            {
-                                (void)ITEXTCTL_SetText(pIText, pItem->m_szEmail, -1);  
-                            }
+                            (void)ITEXTCTL_SetText(pIText, L"", -1);  
                         }
                     }
                     else
@@ -8810,12 +8806,6 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                 pMe->m_CurAddID = nSelID;             
                 (void)IMENUCTL_Redraw(pMenu);
                 IMENUCTL_GetSelItemRect(pMenu, &rc);
-#ifdef FEATURE_USES_MMS                         
-                if(pMe->m_isSendToAlbumOrEmain)
-                {
-                    rc.x = 0;
-                }
-#endif                
                 ITEXTCTL_SetRect(pIText, &rc);
                 IMENUCTL_SetActive(pMenu, FALSE);
                 ITEXTCTL_SetActive(pIText, TRUE);
@@ -8828,6 +8818,7 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                 ITEXTCTL_SetCursorPos(pIText, TC_CURSOREND);
                 (void)ITEXTCTL_Redraw(pIText);
             }
+            IDISPLAY_Update(pMe->m_pDisplay);
             IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
             return TRUE;
             
@@ -8874,6 +8865,13 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                     {
                         MEMSET(pItem->m_szName, 0, sizeof(pItem->m_szName));
                     }
+#ifdef FEATURE_USES_MMS                  
+                    if(pMe->m_isSendToAlbumOrEmain)
+                    {
+                        (void)ITEXTCTL_GetText(pIText, pItem->m_szEmail, MAX_EMAILADD_LEN + 1);
+                    }
+                    else
+#endif                          
                     (void)ITEXTCTL_GetText(pIText, pItem->m_szTo, MAX_PH_DIGITS);
                     
                     // 调用电话本接口获取人名
@@ -8883,6 +8881,66 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
             }
             return TRUE;
 
+        case EVT_KEY_PRESS:
+            switch (wParam)
+            {
+                case AVK_0:
+                case AVK_1:
+                case AVK_2:
+                case AVK_3:
+                case AVK_4:  
+                case AVK_5:
+                case AVK_6:
+                case AVK_7:
+                case AVK_8:
+                case AVK_9: 
+                case AVK_Q:
+                case AVK_W:
+                case AVK_E:
+                case AVK_R:
+                case AVK_A:
+                case AVK_S:
+                case AVK_D:
+                case AVK_F:
+                case AVK_Z:
+                case AVK_X:
+                case AVK_C:
+                case AVK_T:
+                case AVK_Y:
+                case AVK_U:
+                case AVK_I:
+                case AVK_O:
+                case AVK_P:
+                case AVK_G:
+                case AVK_H:
+                case AVK_J:
+                case AVK_K:
+                case AVK_L:
+                case AVK_V:
+                case AVK_B:
+                case AVK_N:
+                case AVK_M:
+                case AVK_SPACE:
+                case AVK_RWD:                    
+                case AVK_POUND:
+                case AVK_STAR:
+                case AVK_INFO:    
+                    {
+#ifdef FEATURE_USES_MMS             
+                        DBGPRINTF("IDD_TONUMLIST_Handler EVT_KEY_PRESS");
+                        if(pMe->m_isSendToAlbumOrEmain)
+                        {
+                            AECHAR *pwsText = ITEXTCTL_GetTextPtr(pIText);
+                            DBGPRINTF("IDD_TONUMLIST_Handler AVK_INFO,pwsText=%S", pwsText);
+                            MEMSET(pMe->m_szEmail,0,sizeof(pMe->m_szEmail));
+                            MEMCPY(pMe->m_szEmail, pwsText, sizeof(pMe->m_szEmail));
+                            CLOSE_DIALOG(DLGRET_EDIT_ALBUMOREMAIN);
+                        }
+#endif                            
+                    }
+                    return TRUE;                    
+            }
+        
         case EVT_KEY:
             switch (wParam)
             {
@@ -8920,6 +8978,13 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                             {
                                 MEMSET(pItem->m_szName, 0, sizeof(pItem->m_szName));
                             }
+#ifdef FEATURE_USES_MMS                  
+                            if(pMe->m_isSendToAlbumOrEmain)
+                            {
+                                (void)ITEXTCTL_GetText(pIText, pItem->m_szEmail, MAX_EMAILADD_LEN + 1);
+                            }
+                            else
+#endif                
                             (void)ITEXTCTL_GetText(pIText, pItem->m_szTo, MAX_PH_DIGITS + 1);
                             
                             // 调用电话本接口获取人名
@@ -8927,45 +8992,6 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
 #ifdef FEATURE_USES_MMS
                             if(pMe->m_isMMS)
                             {
-                          /*      IFile  *pFile;
-                                FileInfo fileInfo;
-                                int size = 0;
-                                char MMSpszPath[MG_MAX_FILE_NAME]={'\0'};
-                                char *fileBuffer = NULL;
-                                char filenamePath[MG_MAX_FILE_NAME] = {'\0'};
-                                char filename[2];
-                                filename[0] = 'a'+g_mmsDataInfoMax;
-                                filename[1] = '\0';
-                                ICONFIG_GetItem(pMe->m_pConfig, CFGI_MMSIMAGE,MMSpszPath, sizeof(MMSpszPath));
-                                if(STRLEN(MMSpszPath) != 0)
-                                {
-                                    pFile = IFILEMGR_OpenFile(pMe->m_pIFileMgr, MMSpszPath, _OFM_READ);
-                                    if(pFile != NULL)
-                                    {
-                                        IFILE_GetInfo(pFile, &fileInfo);
-                                        fileBuffer = MALLOC(fileInfo.dwSize);
-                                        if(fileBuffer != NULL)
-                                        {
-                                            (void)STRCPY(filenamePath,MMSFILE_DIR);
-                                            (void)STRCAT(filenamePath,"/");
-                                            (void)STRCAT(filenamePath,filename);
-                                            (void)STRCAT(filenamePath,"扩展名");
-                                            IFILE_Release( pFile);
-                                            pFile = IFILEMGR_OpenFile(pMe->m_pIFileMgr, MMSFILE_DIR, _OFM_READWRITE);
-                                            size = IFILE_Read(pFile ,fileBuffer,(uint32)size);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        IFILE_Release( pFile);
-                                        pFile = NULL;
-                                    }
-                                }
-                                ICONFIG_GetItem(pMe->m_pConfig, CFGI_MMSSOUND,MMSpszPath, sizeof(MMSpszPath));
-                                ICONFIG_GetItem(pMe->m_pConfig, CFGI_MMSVIDEO,MMSpszPath, sizeof(MMSpszPath));    */
-                                
-                                //MMS_SocketTest(pItem->m_szTo);
-								
                                 uint8 len = 0;
                                 if(NULL == pMe->m_EncData.pMessage)
                                 {
@@ -9139,7 +9165,7 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
 #ifdef FEATURE_USES_MMS                  
             if(pMe->m_isSendToAlbumOrEmain)
             {
-                return TRUE;
+               // return TRUE;
             }
 #endif               
             if (pMe->m_eMakeAddListMode == MAKEADDLIST_NONE)
@@ -9208,6 +9234,14 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                             }
                             else
                             {
+                                MSG_FATAL("IDD_TONUMLIST_Handler IVector_AddElement SUCCESS",0,0,0);
+#ifdef FEATURE_USES_MMS                  
+                                if(pMe->m_isSendToAlbumOrEmain)
+                                {
+                                    (void)ITEXTCTL_GetText(pIText, pItem->m_szEmail, MAX_EMAILADD_LEN + 1);
+                                }
+                                else
+#endif                                      
                                 (void)ITEXTCTL_GetText(pIText, pItem->m_szTo, MAX_PH_DIGITS);
                             
                                 // 调用电话本接口重新获取人名
@@ -9310,17 +9344,36 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                         {
                             return TRUE;
                         }
-                        
-                        // 检查内容是否有变更，若有则更新记录
-                        if (WSTRCMP(pItem->m_szTo, pwsText) != 0)
+                        DBGPRINTF("m_szEmail=%S, pwsText=%S,m_isSendToAlbumOrEmain=%d",pItem->m_szEmail, pwsText, pMe->m_isSendToAlbumOrEmain);
+#ifdef FEATURE_USES_MMS                  
+                        if(pMe->m_isSendToAlbumOrEmain)       
                         {
-                            (void)ITEXTCTL_GetText(pIText, pItem->m_szTo, MAX_PH_DIGITS);
-                        
-                            // 清除以前可能存在的数据
-                            MEMSET(pItem->m_szName, 0, sizeof(pItem->m_szName));
-                            
-                            // 调用电话本接口重新获取人名
-                            WMSUtil_GetContactName(pMe, pItem->m_szTo, pItem->m_szName, MAX_TITLE_LEN);
+                            // 检查内容是否有变更，若有则更新记录
+                            if (WSTRCMP(pItem->m_szEmail, pwsText) != 0)
+                            {
+                                //这里更新的记录，应该保存到m_szTo里去，因为发送时都是从m_szTo取地址的
+                                (void)ITEXTCTL_GetText(pIText, pItem->m_szEmail, MAX_PH_DIGITS);
+                                DBGPRINTF("pItem->m_szEmail=%S",pItem->m_szEmail);
+                                // 清除以前可能存在的数据
+                                MEMSET(pItem->m_szEmail, 0, sizeof(pItem->m_szEmail));                               
+                                // 调用电话本接口重新获取人名
+                                WMSUtil_GetContactName(pMe, pItem->m_szTo, pItem->m_szName, MAX_TITLE_LEN);
+                            }                            
+                        }
+                        else
+#endif                      
+                        {
+                            // 检查内容是否有变更，若有则更新记录
+                            if (WSTRCMP(pItem->m_szTo, pwsText) != 0)
+                            {
+                                (void)ITEXTCTL_GetText(pIText, pItem->m_szTo, MAX_PH_DIGITS);
+                                DBGPRINTF("pItem->m_szTo=%S",pItem->m_szTo);
+                                // 清除以前可能存在的数据
+                                MEMSET(pItem->m_szName, 0, sizeof(pItem->m_szName));
+                                
+                                // 调用电话本接口重新获取人名
+                                WMSUtil_GetContactName(pMe, pItem->m_szTo, pItem->m_szName, MAX_TITLE_LEN);
+                            }
                         }
                         
                         // 移动光标
@@ -12233,6 +12286,17 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 
                 case IDS_SEND_TO_ALBUM_OR_EMAIL:
                 {
+                    if ((SEND_MSG_REPLY != pMe->m_eCreateWMSType) &&
+                        (SEND_MSG_RESEND != pMe->m_eCreateWMSType) &&
+                        (SEND_MSG_EDITRESERVE != pMe->m_eCreateWMSType) &&
+                        (SEND_MSG_RESERVE != pMe->m_eCreateWMSType))
+                    {
+                        pMe->m_eMakeAddListMode = MAKEADDLIST_INIT;
+                    }
+                    else
+                    {
+                        pMe->m_eMakeAddListMode = MAKEADDLIST_NONE;
+                    }                    
                     pMe->m_isSendToAlbumOrEmain = TRUE; 
                     CLOSE_DIALOG(DLGRET_SEND)
                     return TRUE;
@@ -20167,5 +20231,228 @@ static void WMSMMS_MediaNotify(void * pUser, AEEMediaCmdNotify *pCmdNotify)
         }
 	}
 }
+
+
+
+
+/*==============================================================================
+函数:
+    IDD_EDIT_ALBUMOREMAIN_Handler
+
+说明:
+    WMS Applet对话框 IDD_ALBUMOREMAIN 事件处理函数。用于短消息文本输处理。
+
+参数:
+    pUser [in]: 指向WMS Applet对象结构的指针。该结构包含小程序的特定信息。
+    eCode [in]: 事件代码。
+    wParam[in]: 事件参数
+    dwParam [in]: 与事件关联的数据。
+
+返回值:
+    TRUE:  传入事件得到处理。
+    FALSE: 传入事件没被处理。
+
+备注:
+
+==============================================================================*/
+
+static boolean IDD_EDIT_ALBUMOREMAIN_Handler(void *pUser, 
+    AEEEvent eCode,
+    uint16 wParam, 
+    uint32 dwParam
+)
+{
+    ITextCtl *pIText = NULL;   
+    AEETextInputMode nInputMode;
+    static AEETextInputMode nMode;
+	AECHAR Annstr[20] = {0};
+    WmsApp *pMe = (WmsApp *)pUser;
+    MSG_FATAL("IDD_EDIT_ALBUMOREMAIN_Handler Start eCode=0x%x, wParam=0x%x",eCode,wParam,0);
+    if (NULL == pMe)
+    {
+        return FALSE;
+    }
+    pIText = (ITextCtl*)IDIALOG_GetControl(pMe->m_pActiveIDlg, IDC_EDIT_ALBUMOREMAIN);
+
+    if (NULL == pIText)
+    {
+        return FALSE;
+    }
+    MSG_FATAL("IDD_EDIT_ALBUMOREMAIN_Handler Start 1",0,0,0);
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT:
+        	{
+                AECHAR WTitle[2] = {0};
+                MSG_FATAL("IDD_EDIT_ALBUMOREMAIN_Handler EVT_DIALOG_INIT",0,0,0);
+                IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
+                SetControlRect(pMe, pIText);       
+                ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
+                (void)ITEXTCTL_SetTitle( pIText, NULL,0,WTitle);
+                ITEXTCTL_SetMaxSize(pIText, MAX_EMAILADD_LEN);              
+				if(NULL != pMe->m_szEmail)
+				{
+                    DBGPRINTF("pMe->m_szEmail=%S", pMe->m_szEmail);
+					ITEXTCTL_SetMaxSize ( pIText, MAX_EMAILADD_LEN+1);
+                	(void)ITEXTCTL_SetText(pIText,pMe->m_szEmail,-1);
+				}
+	            return TRUE;
+            }
+        
+        case EVT_DIALOG_START:         
+            (void) ISHELL_PostEventEx(pMe->m_pShell, 
+                                    EVTFLG_ASYNC,
+                                    AEECLSID_WMSAPP,
+                                    EVT_USER_REDRAW,
+                                    0, 
+                                    0);
+            return TRUE;
+
+        case EVT_USER_REDRAW:  
+            {
+                int32 InsertPos = 0;
+    			(void)ISHELL_LoadResString(pMe->m_pShell,
+                            AEE_WMSAPPRES_LANGFILE,                                
+                            IDS_EDIT,
+                            Annstr,
+                            sizeof(Annstr));
+                
+    			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,Annstr);
+                InsertPos = ITEXTCTL_GetCursorPos(pIText);
+                DBGPRINTF("EVT_USER_REDRAW InsertPos=%d",InsertPos);
+                if (InsertPos == 0)
+                {
+                    ITEXTCTL_SetCursorPos(pIText, TC_CURSOREND);
+                }
+                else
+                {
+                    ITEXTCTL_SetCursorPos(pIText, InsertPos);
+                }
+                ITEXTCTL_SetActive(pIText, TRUE);  
+                ITEXTCTL_Redraw(pIText);
+                // 绘制底部操作提示条
+                DRAW_BOTTOMBAR(BTBAR_OK_BACK)
+                IDISPLAY_Update(pMe->m_pDisplay);  
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+                TSIM_NumberKeypad(FALSE);
+#endif
+            }
+            return TRUE; 
+
+        case EVT_CTL_TEXT_MODECHANGED:  //切换输入法    这里增加画底条，否则从符号输入界面返回时无底条
+            // 绘制底部操作提示条
+            {
+                nInputMode = ITEXTCTL_GetInputMode(pIText,NULL);
+                if (nInputMode != AEE_TM_SYMBOLS && nInputMode != AEE_TM_FACE_SYMBOL)
+                {
+                    DRAW_BOTTOMBAR(BTBAR_OK_BACK)
+                    IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                }
+            }
+            return TRUE; 
+            
+
+        case EVT_DIALOG_END:
+            {
+                AECHAR *pwsText = ITEXTCTL_GetTextPtr(pIText);
+                CMultiSendItemInfo *pItem = NULL;
+                MSG_FATAL("IDD_EDIT_ALBUMOREMAIN_Handler EVT_DIALOG_END m_CurAddID=%d",pMe->m_CurAddID,0,0);  
+                
+                pItem = WmsApp_GetAddItem(pMe->m_pSendList, (pMe->m_CurAddID-MSG_CMD_BASE));
+                if(pItem == NULL)
+                {
+                    pItem = (CMultiSendItemInfo *)sys_malloc(sizeof(CMultiSendItemInfo));
+                    if (NULL != pItem)
+                    {// 缓冲区分配成功
+                        MSG_FATAL("IDD_EDIT_ALBUMOREMAIN_Handler IVector_AddElement",0,0,0);
+                        if (SUCCESS != IVector_AddElement(pMe->m_pSendList, pItem))
+                        {
+                            sys_free(pItem);
+                            return TRUE;
+                        }
+                        else
+                        {
+                            MSG_FATAL("IDD_EDIT_ALBUMOREMAIN_Handler IVector_AddElement SUCCESS",0,0,0);
+                            (void)ITEXTCTL_GetText(pIText, pItem->m_szEmail, MAX_EMAILADD_LEN + 1);
+                            (void)ITEXTCTL_GetText(pIText, pItem->m_szTo, MAX_EMAILADD_LEN + 1);
+                        }
+                    }
+                }
+                else
+                {
+                    MSG_FATAL("IDD_EDIT_ALBUMOREMAIN_Handler pItem != NULL",0,0,0);
+                    (void)ITEXTCTL_GetText(pIText, pItem->m_szEmail, MAX_EMAILADD_LEN + 1);
+                    (void)ITEXTCTL_GetText(pIText, pItem->m_szTo, MAX_EMAILADD_LEN + 1);                    
+                }
+            }			
+			
+            return TRUE;
+
+        case EVT_KEY:
+            MSG_FATAL("IDD_EDIT_ALBUMOREMAIN_Handler EVT_KEY",0,0,0);
+            switch (wParam)
+            {
+                case AVK_CLR:
+                    MSG_FATAL("IDD_EDIT_ALBUMOREMAIN_Handler AVK_CLR 1",0,0,0);
+                    CLOSE_DIALOG(DLGRET_CANCELED)
+                    return TRUE;
+
+                case AVK_INFO:
+                case AVK_SELECT:
+                    MSG_FATAL("AVK_SELECT ",0,0,0);
+                    CLOSE_DIALOG(DLGRET_MSGBOX_OK)
+                    return TRUE;
+                      
+                default:
+                    break;
+            }
+            return TRUE;
+
+#ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
+
+			case EVT_PEN_UP:
+				{
+					AEEDeviceInfo devinfo;
+					int nBarH ;
+					AEERect rc;
+					int16 wXPos = (int16)AEE_GET_X(dwParam);
+					int16 wYPos = (int16)AEE_GET_Y(dwParam);
+	                MSG_FATAL("IDD_EDIT_ALBUMOREMAIN_Handler EVT_PEN_UP wXPos=%d, wYPos=%d",wXPos,wYPos,0);
+					nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+			
+					MEMSET(&devinfo, 0, sizeof(devinfo));
+					ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+					SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+	
+					if(WMSAPP_PT_IN_RECT(wXPos,wYPos,rc))
+					{
+                        MSG_FATAL("IDD_WRITEMSG_Handler EVT_PEN_UP WMSAPP_PT_IN_RECT",0,0,0);
+						if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//左
+						{
+                            MSG_FATAL("IDD_WRITEMSG_Handler EVT_PEN_UP left",0,0,0);
+							return IDD_EDIT_ALBUMOREMAIN_Handler((void *)pMe,EVT_KEY,AVK_SELECT,0);
+						}
+						else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//左
+						{					
+							boolean rt;
+							int len = WSTRLEN(ITEXTCTL_GetTextPtr(pIText));
+	                        MSG_FATAL("IDD_WRITEMSG_Handler EVT_PEN_UP left len=%d",len,0,0);
+							if((ITEXTCTL_IsActive(pIText)) && (len > 0))
+								return ITEXTCTL_HandleEvent(pIText,EVT_KEY,AVK_CLR,0);
+							else
+                                return IDD_EDIT_ALBUMOREMAIN_Handler((void *)pMe, EVT_KEY, AVK_CLR, 0);
+						}
+					}
+	
+				}
+				return TRUE;
+#endif 
+
+        default:
+            break;            
+    }
+
+    return FALSE;
+} // IDD_WRITEMSG_Handler
 
 #endif

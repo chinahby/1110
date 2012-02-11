@@ -570,7 +570,7 @@ typedef enum WMSAPPState
     WMSST_VIEWDRAFTBOXMSG_MMS,
     WMSST_DRAFTMSGMMSOPTS,
 	WMSST_GETTING,
-	
+	WMSST_EDIT_ALBUMOREMAIN,	
 #endif
 
     // 退出短信应用
@@ -720,6 +720,7 @@ typedef enum DLGRetValue
    ,DLGRET_DRAFTBOX_MMS
    ,DLGRET_DRAFT_MMS
    ,DLGRET_CLEARDRAFT_MMS
+   ,DLGRET_EDIT_ALBUMOREMAIN
 #endif
 /*   
    ,DLGRET_INSERTPICTURE //add by xuhui 2011/08/01
@@ -933,6 +934,7 @@ typedef struct WmsApp
     boolean                        m_isForward;
     uint8                          m_insertMMSType;//播放MMS的类型，0：图片。 1：声音。 2：视频. 3:文件
     boolean                         m_isSendToAlbumOrEmain;
+    AECHAR                         m_szEmail[MAX_EMAILADD_LEN+1];
 #endif    
 	AEERect                        m_rContrlRectImage[4];
 	AEERect                        m_lContrlRectImage[4];

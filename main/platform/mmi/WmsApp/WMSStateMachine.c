@@ -244,7 +244,7 @@ static NextFSMAction WMSST_INMSGOPTS_MMS_Handler(WmsApp *pMe);
 static NextFSMAction WMSST_DRAFTBOX_MMS_Handler(WmsApp *pMe);
 static NextFSMAction WMSST_VIEWDRAFTBOXMSG_MMS_Handler(WmsApp *pMe);
 static NextFSMAction WMSST_DRAFTMSGOPTS_MMS_Handler(WmsApp *pMe);
-
+static NextFSMAction WMSST_EDIT_ALBUMOREMAIN_Handler(WmsApp *pMe);
 #endif
 
 /*==============================================================================
@@ -536,7 +536,10 @@ NextFSMAction WmsApp_ProcessState(WmsApp *pMe)
             return WMSST_VIEWDRAFTBOXMSG_MMS_Handler(pMe);    
 
         case WMSST_DRAFTMSGMMSOPTS:
-            return WMSST_DRAFTMSGOPTS_MMS_Handler(pMe);            
+            return WMSST_DRAFTMSGOPTS_MMS_Handler(pMe);     
+
+        case WMSST_EDIT_ALBUMOREMAIN:
+            return WMSST_EDIT_ALBUMOREMAIN_Handler(pMe);            
 #endif
 
 
@@ -3001,6 +3004,13 @@ static NextFSMAction WMSST_TONUMLIST_Handler(WmsApp *pMe)
             MSG_FATAL("WMSST_TONUMLIST_Handler DLGRET_SELECTFROMOPT",0,0,0);
             MOVE_TO_STATE(WMSST_SELECTFROM);
             return NFSMACTION_CONTINUE;
+
+#ifdef FEATURE_USES_MMS  
+        case DLGRET_EDIT_ALBUMOREMAIN:
+            MSG_FATAL("WMSST_TONUMLIST_Handler case DLGRET_EDIT_ALBUMOREMAIN",0,0,0);
+            MOVE_TO_STATE(WMSST_EDIT_ALBUMOREMAIN) 
+            return NFSMACTION_CONTINUE;
+#endif            
         
         default:
             // 用退出程序代替宏断言
@@ -7901,5 +7911,53 @@ static NextFSMAction WMSST_DRAFTMSGOPTS_MMS_Handler(WmsApp *pMe)
             return NFSMACTION_CONTINUE;
     }
 }
+
+/*==============================================================================
+函数:
+    WMSST_EDIT_ALBUMOREMAIN_Handler
+
+说明:
+    WMSST_WRITEMSG 状态处理函数。
+
+参数:
+    pMe [in]: 指向WMS Applet对象结构的指针。该结构包含小程序的特定信息。
+
+返回值:
+    NFSMACTION_CONTINUE: 指示不停状态机。
+    NFSMACTION_WAIT: 指示停止状态机。
+
+备注:
+
+==============================================================================*/
+static NextFSMAction WMSST_EDIT_ALBUMOREMAIN_Handler(WmsApp *pMe)
+{
+    MSG_FATAL("WMSST_EDIT_ALBUMOREMAIN_Handler Start",0,0,0);
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+    switch (pMe->m_eDlgReturn)
+    {
+        // 创建编辑消息对话框界面
+        case DLGRET_CREATE:
+            WmsApp_ShowDialog(pMe, IDD_ALBUMOREMAIN);
+            return NFSMACTION_WAIT;
+            
+        case DLGRET_MSGBOX_OK:
+            MOVE_TO_STATE(WMSST_TONUMLIST)
+            return TRUE;
+            
+        case DLGRET_CANCELED:
+            MOVE_TO_STATE(WMSST_TONUMLIST)
+            return NFSMACTION_CONTINUE;
+            
+        default:
+            // 用退出程序代替宏断言
+            MOVE_TO_STATE(WMSST_TONUMLIST)
+            break;
+    }
+    
+    return NFSMACTION_CONTINUE;
+} // WMSST_EDIT_ALBUMOREMAIN_Handler
 
 #endif
