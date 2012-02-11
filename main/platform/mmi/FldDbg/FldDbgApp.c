@@ -4578,7 +4578,7 @@ static boolean CFieldDebug_HandleEvent(CFieldDebug  *pme,
                if(STRNCMP(args->pszArgs,"*#*#8378#0#",11) == 0)
                {
                   pme->m_dlgID = IDD_TOP_DIALOG;
-               }
+               }			   
        }
             
        if (ISHELL_CreateDialog(ps,

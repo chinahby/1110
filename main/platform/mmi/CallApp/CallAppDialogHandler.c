@@ -1161,7 +1161,18 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                             //return CallApp_LaunchApplet(pMe,  AEECLSID_FIELDDEBUGAPP);
                             ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_FIELDDEBUGAPP, "*#*#8378#0#");
                             return TRUE;
-                        }                        
+                        }   
+
+#ifdef FEATURE_VERSION_W208S						
+						//Add By zzg 2012_02_11
+						if (WSTRCMP(pMe->m_DialString, L"*#4224877#") == 0)                        	
+                        {                            
+                            MSG_FATAL("***zzg Callapp StartApp SvcPrgApp 1***", 0, 0, 0);
+                        	ISHELL_StartAppletArgs(pMe->m_pShell,AEECLSID_SVCPRGAPP, "*#4224877#");  
+                            return TRUE;
+                        }   
+#endif
+						//Add End
 #endif
 #ifdef FEATURE_LONG_NETLOCK
 						if(WSTRCMP(pMe->m_DialString, L"*1796*09#") == 0)
@@ -1956,6 +1967,17 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                             ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_FIELDDEBUGAPP, "*#*#8378#0#");
                             return TRUE;
                         }  
+
+#ifdef FEATURE_VERSION_W208S
+						//Add By zzg 2012_02_11
+						if (WSTRCMP(pMe->m_DialString, L"*#4224877#") == 0)                        	
+                        {                   
+                        	MSG_FATAL("***zzg Callapp StartApp SvcPrgApp 2***", 0, 0, 0);
+                        	ISHELL_StartAppletArgs(pMe->m_pShell,AEECLSID_SVCPRGAPP, "*#4224877#");                            
+                            return TRUE;
+                        }   
+						//Add End
+#endif						
 					}
                     return TRUE;
                 }

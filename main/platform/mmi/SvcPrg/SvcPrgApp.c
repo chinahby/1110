@@ -254,6 +254,7 @@ typedef struct _CSvcPrgApp {
 
    boolean       m_resetOnExit;
    MenuItemType *m_mainMenu;
+   boolean       m_bMinLock;	//Add By zzg 2012_02_11 for *#4224877#
    
    IAnnunciator *m_pIAnn;
 
@@ -637,6 +638,21 @@ static boolean CSvcPrg_OnAppStart(CSvcPrgApp  *pMe,
         return EFAILED;
     }
     IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE); 
+
+	MSG_FATAL("***zzg CSvcPrg_OnAppStart***", 0, 0, 0);
+
+	//Add By zzg 2012_02_11
+	pMe->m_bMinLock = FALSE;
+	
+	if ((a != NULL) || (a->pszArgs != NULL))
+	{
+		if (STRNCMP(a->pszArgs,"*#4224877#",10) == 0)
+		{
+			pMe->m_bMinLock = TRUE;
+		}
+	}
+	
+	//Add End
    return CSvcPrg_DisplaySecCodeDialog(pMe);
 }
 
@@ -2092,177 +2108,251 @@ static boolean CSvcPrg_BuildMenuList(CSvcPrgApp *pMe)
   numItems++;
 #endif
 
-   m = CSvcPrg_CreateMenuList(numItems);
+  //m = CSvcPrg_CreateMenuList(numItems);
+  
+//Add By zzg 2012_02_11
+  if (pMe->m_bMinLock == TRUE)
+  {
+  	m = CSvcPrg_CreateMenuList(1);
+  }
+  else
+  {
+	m = CSvcPrg_CreateMenuList(numItems);
+  }
+//Add End  
 
-   if (NULL == m) {
+   if (NULL == m) 
+   {
       return FALSE;
    }
 
-   m[0].title              = IDS_ESN;
-   m[0].itemType           = DT_ESN;
-   m[0].cfgItem            = CFGI_ESN; 
+   MSG_FATAL("***zzg CSvcPrg_BuildMenuList m_bMinLock=%d***", pMe->m_bMinLock, 0, 0);
 
-   m[1].title              = IDS_NETWORK_OPTIONS;
-   m[1].itemType           = DT_SUBMENU;
-   m[1].typeData.subMenu   = NULL;
-   
-   m[2].title              = IDS_SMS_OPTIONS;
-   m[2].itemType           = DT_SUBMENU;
-   m[2].typeData.subMenu   = NULL;
+//Add By zzg 2012_02_11
+   if (pMe->m_bMinLock == TRUE)
+   {	   
+	   m[0].title              = IDS_NETWORK_OPTIONS;
+	   m[0].itemType           = DT_SUBMENU;
+	   m[0].typeData.subMenu   = NULL;
+	   	   
+	   indexBREWMenu           = 1;	   
+	   // Store the Main menu pointer
+	   pMe->m_mainMenu = m;  
+   }
+   else
+   {
+//Add End
+	   m[0].title              = IDS_ESN;
+	   m[0].itemType           = DT_ESN;
+	   m[0].cfgItem            = CFGI_ESN; 
 
-   m[3].title              = IDS_DATA_OPTIONS;
-   m[3].itemType           = DT_SUBMENU;
-   m[3].typeData.subMenu   = NULL;
-   
-   m[4].title              = IDS_SLOTCYCLEINDEX;
-   m[4].itemType           = DT_BYTE;
-   m[4].cfgItem            = CFGI_SLOTINDEX; 
-   m[4].isEditable         = TRUE;
+	   m[1].title              = IDS_NETWORK_OPTIONS;
+	   m[1].itemType           = DT_SUBMENU;
+	   m[1].typeData.subMenu   = NULL;
+	   
+	   m[2].title              = IDS_SMS_OPTIONS;
+	   m[2].itemType           = DT_SUBMENU;
+	   m[2].typeData.subMenu   = NULL;
 
-   m[5].title              = IDS_SPCCODE;
-   m[5].itemType           = DT_WSTR_FIXED;
-   m[5].cfgItem            = CFGI_SECCODE; 
-   m[5].typeData.strLen    = OEMNV_SECCODE_LENGTH;
-   m[5].isEditable         = TRUE;
+	   m[3].title              = IDS_DATA_OPTIONS;
+	   m[3].itemType           = DT_SUBMENU;
+	   m[3].typeData.subMenu   = NULL;
+	   
+	   m[4].title              = IDS_SLOTCYCLEINDEX;
+	   m[4].itemType           = DT_BYTE;
+	   m[4].cfgItem            = CFGI_SLOTINDEX; 
+	   m[4].isEditable         = TRUE;
 
-   m[6].title             = IDS_AKEY;
-   m[6].itemType          = DT_AKEY;
-   m[6].typeData.strLen   = MAX_AKEY_DIGITS+1; /* add 1 to fix textctl */
+	   m[5].title              = IDS_SPCCODE;
+	   m[5].itemType           = DT_WSTR_FIXED;
+	   m[5].cfgItem            = CFGI_SECCODE; 
+	   m[5].typeData.strLen    = OEMNV_SECCODE_LENGTH;
+	   m[5].isEditable         = TRUE;
 
-   numItems = 7;
+	   m[6].title             = IDS_AKEY;
+	   m[6].itemType          = DT_AKEY;
+	   m[6].typeData.strLen   = MAX_AKEY_DIGITS+1; /* add 1 to fix textctl */
+
+	   numItems = 7;
 
 #ifdef FEATURE_CDMA_RX_DIVERSITY
-   m[numItems].title              = IDS_CDMA_RX_DIVERSITY_ENABLED;
-   m[numItems].itemType           = DT_BOOLEAN;
-   m[numItems].cfgItem            = CFGI_CDMA_RX_DIVERSITY_CTL;
-   m[numItems].isEditable         = TRUE;
-   numItems++;
+	   m[numItems].title              = IDS_CDMA_RX_DIVERSITY_ENABLED;
+	   m[numItems].itemType           = DT_BOOLEAN;
+	   m[numItems].cfgItem            = CFGI_CDMA_RX_DIVERSITY_CTL;
+	   m[numItems].isEditable         = TRUE;
+	   numItems++;
 #endif
 
 #ifdef FEATURE_HDR
-   m[numItems].title              = IDS_HDR_RX_DIVERSITY_ENABLED;
-   m[numItems].itemType           = DT_BOOLEAN;
-   m[numItems].cfgItem            = CFGI_HDR_RX_DIVERSITY_CTL;
-   m[numItems].isEditable         = TRUE;
-   numItems++;
+	   m[numItems].title              = IDS_HDR_RX_DIVERSITY_ENABLED;
+	   m[numItems].itemType           = DT_BOOLEAN;
+	   m[numItems].cfgItem            = CFGI_HDR_RX_DIVERSITY_CTL;
+	   m[numItems].isEditable         = TRUE;
+	   numItems++;
 #endif
 
-   // Add BREW MSHOP item
-   m[numItems].title              = IDS_BREW_OPTIONS;
-   m[numItems].itemType           = DT_SUBMENU;
-   m[numItems].typeData.subMenu   = NULL;
-   indexBREWMenu                  = numItems++;
-   
-   // Store the Main menu pointer
-   pMe->m_mainMenu = m;  
+	   // Add BREW MSHOP item
+	   m[numItems].title              = IDS_BREW_OPTIONS;
+	   m[numItems].itemType           = DT_SUBMENU;
+	   m[numItems].typeData.subMenu   = NULL;
+	   indexBREWMenu                  = numItems++;
+	   
+	   // Store the Main menu pointer
+	   pMe->m_mainMenu = m;     
+   }//Add by zzg 2012_02_11
+ 
 
 
    //
    // Build the Network menu
    //
+   
+//Add By zzg 2012_02_11
+	if (pMe->m_bMinLock == TRUE)
+	{
+		m = CSvcPrg_CreateMenuList(2);
+	}
+	else
+	{ 
+//Add End
+
 #ifdef FEATURE_ACP
-   m = CSvcPrg_CreateMenuList(15); // 15 elements in the Network menu
+	   m = CSvcPrg_CreateMenuList(15); // 15 elements in the Network menu
 #else  
-   m = CSvcPrg_CreateMenuList(13); // 13 elements in the Network menu
+	   m = CSvcPrg_CreateMenuList(13); // 13 elements in the Network menu
 #endif 
-   if (NULL == m) {
+
+	}
+
+
+   if (NULL == m) 
+   {
       return FALSE;
    }
 
-   m[0].title              = IDS_PHONE_NUMBER;
-   m[0].itemType           = DT_WSTR;
-   m[0].cfgItem            = CFGI_PHONE_NUMBER; 
-   m[0].typeData.strLen    = OEMNV_PHONENUMBER_MAXLEN;
-   m[0].isEditable         = TRUE;
 
-   m[1].title              = IDS_HOME_SIDNID;
-   m[1].itemType           = DT_SIDNIDLIST;
-   m[1].cfgItem            = CFGI_HOME_SIDNID_LIST; 
-   m[1].typeData.sidnid.count = OEMNV_HOME_SIDNID_ARRSIZE;
-   m[1].isEditable         = TRUE;
+//Add By zzg 2012_02_11	
+	if (pMe->m_bMinLock == TRUE)
+	{
+	   m[0].title              = IDS_PHONE_NUMBER;
+	   m[0].itemType           = DT_WSTR;
+	   m[0].cfgItem            = CFGI_PHONE_NUMBER; 
+	   m[0].typeData.strLen    = OEMNV_PHONENUMBER_MAXLEN;
+	   m[0].isEditable         = TRUE;
 
-   m[2].title              = IDS_LOCK_SIDNID;
-   m[2].itemType           = DT_SIDNIDLIST;
-   m[2].cfgItem            = CFGI_LOCK_SIDNID_LIST; 
-   m[2].typeData.sidnid.count = OEMNV_LOCK_SIDNID_ARRSIZE;
-   m[2].isEditable         = TRUE;
+	   m[1].title              = IDS_IMSI_S;
+	   m[1].itemType           = DT_WSTR_FIXED;
+	   m[1].cfgItem            = CFGI_IMSI_S;
+	   m[1].typeData.strLen    = OEMNV_IMSI_S_LENGTH;
+	   m[1].isEditable         = TRUE;	   
+	   
+	   // Store the Network menu in the Main menu
+	   ASSERT(IDS_NETWORK_OPTIONS == pMe->m_mainMenu[0].title);
+	   ASSERT(DT_SUBMENU == pMe->m_mainMenu[0].itemType);
+	   pMe->m_mainMenu[0].typeData.subMenu = m;
 
-   m[3].title              = IDS_COUNTRY_CODE;
-   m[3].itemType           = DT_WORD;
-   m[3].cfgItem            = CFGI_IMSI_MCC;
-   m[3].isEditable         = TRUE;
+	   return TRUE; 
+	}
+	else
+	{
+//Add End   
+	   m[0].title              = IDS_PHONE_NUMBER;
+	   m[0].itemType           = DT_WSTR;
+	   m[0].cfgItem            = CFGI_PHONE_NUMBER; 
+	   m[0].typeData.strLen    = OEMNV_PHONENUMBER_MAXLEN;
+	   m[0].isEditable         = TRUE;
 
-   m[4].title              = IDS_NETWORK_CODE;
-   m[4].itemType           = DT_WORD;
-   m[4].cfgItem            = CFGI_IMSI_11_12;
-   m[4].isEditable         = TRUE;
+	   m[1].title              = IDS_HOME_SIDNID;
+	   m[1].itemType           = DT_SIDNIDLIST;
+	   m[1].cfgItem            = CFGI_HOME_SIDNID_LIST; 
+	   m[1].typeData.sidnid.count = OEMNV_HOME_SIDNID_ARRSIZE;
+	   m[1].isEditable         = TRUE;
 
-   m[5].title              = IDS_IMSI_S;
-   m[5].itemType           = DT_WSTR_FIXED;
-   m[5].cfgItem            = CFGI_IMSI_S;
-   m[5].typeData.strLen    = OEMNV_IMSI_S_LENGTH;
-   m[5].isEditable         = TRUE;
+	   m[2].title              = IDS_LOCK_SIDNID;
+	   m[2].itemType           = DT_SIDNIDLIST;
+	   m[2].cfgItem            = CFGI_LOCK_SIDNID_LIST; 
+	   m[2].typeData.sidnid.count = OEMNV_LOCK_SIDNID_ARRSIZE;
+	   m[2].isEditable         = TRUE;
 
-   m[6].title              = IDS_PRL_ENABLED;
-   m[6].itemType           = DT_BOOLEAN;
-   m[6].cfgItem            = CFGI_PRL_ENABLED;
-   m[6].isEditable         = TRUE;
+	   m[3].title              = IDS_COUNTRY_CODE;
+	   m[3].itemType           = DT_WORD;
+	   m[3].cfgItem            = CFGI_IMSI_MCC;
+	   m[3].isEditable         = TRUE;
 
-   m[7].title              = IDS_PRI_CH_A;
-   m[7].itemType           = DT_WORD;
-   m[7].cfgItem            = CFGI_PRI_CH_A;
-   m[7].isEditable         = TRUE;
+	   m[4].title              = IDS_NETWORK_CODE;
+	   m[4].itemType           = DT_WORD;
+	   m[4].cfgItem            = CFGI_IMSI_11_12;
+	   m[4].isEditable         = TRUE;
 
-   m[8].title              = IDS_PRI_CH_B;
-   m[8].itemType           = DT_WORD;
-   m[8].cfgItem            = CFGI_PRI_CH_B;
-   m[8].isEditable         = TRUE;
+	   m[5].title              = IDS_IMSI_S;
+	   m[5].itemType           = DT_WSTR_FIXED;
+	   m[5].cfgItem            = CFGI_IMSI_S;
+	   m[5].typeData.strLen    = OEMNV_IMSI_S_LENGTH;
+	   m[5].isEditable         = TRUE;
 
-   m[9].title              = IDS_SEC_CH_A;
-   m[9].itemType           = DT_WORD;
-   m[9].cfgItem            = CFGI_SEC_CH_A;
-   m[9].isEditable         = TRUE;
+	   m[6].title              = IDS_PRL_ENABLED;
+	   m[6].itemType           = DT_BOOLEAN;
+	   m[6].cfgItem            = CFGI_PRL_ENABLED;
+	   m[6].isEditable         = TRUE;
 
-   m[10].title             = IDS_SEC_CH_B;
-   m[10].itemType          = DT_WORD;
-   m[10].cfgItem           = CFGI_SEC_CH_B;
-   m[10].isEditable        = TRUE;
+	   m[7].title              = IDS_PRI_CH_A;
+	   m[7].itemType           = DT_WORD;
+	   m[7].cfgItem            = CFGI_PRI_CH_A;
+	   m[7].isEditable         = TRUE;
 
-   m[11].title             = IDS_REGISTRATION;
-   m[11].itemType          = DT_SUBMENU;
-   m[11].typeData.subMenu  = NULL;
+	   m[8].title              = IDS_PRI_CH_B;
+	   m[8].itemType           = DT_WORD;
+	   m[8].cfgItem            = CFGI_PRI_CH_B;
+	   m[8].isEditable         = TRUE;
 
-   m[12].title             = IDS_AOC;
-   m[12].itemType          = DT_BYTE;
-   m[12].cfgItem           = CFGI_AOC;
-   m[12].isEditable         = TRUE;
+	   m[9].title              = IDS_SEC_CH_A;
+	   m[9].itemType           = DT_WORD;
+	   m[9].cfgItem            = CFGI_SEC_CH_A;
+	   m[9].isEditable         = TRUE;
+
+	   m[10].title             = IDS_SEC_CH_B;
+	   m[10].itemType          = DT_WORD;
+	   m[10].cfgItem           = CFGI_SEC_CH_B;
+	   m[10].isEditable        = TRUE;
+
+	   m[11].title             = IDS_REGISTRATION;
+	   m[11].itemType          = DT_SUBMENU;
+	   m[11].typeData.subMenu  = NULL;
+
+	   m[12].title             = IDS_AOC;
+	   m[12].itemType          = DT_BYTE;
+	   m[12].cfgItem           = CFGI_AOC;
+	   m[12].isEditable         = TRUE;
 
 #ifdef FEATURE_ACP
-   m[13].title              = IDS_MODE_PREF;
-   m[13].itemType           = DT_RANGE;
-   m[13].cfgItem            = CFGI_MODE_PREF;
-   m[13].isEditable         = TRUE;
-   m[13].typeData.rangeData = CSvcPrg_CreateRange(3);
-   if (NULL == m[13].typeData.rangeData) {
-      return FALSE;
-   }
-   m[13].typeData.rangeData[0].resId = IDS_MODE_AUTOMATIC;
-   m[13].typeData.rangeData[0].value = OEMNV_MODE_AUTOMATIC;
-   m[13].typeData.rangeData[1].resId = IDS_MODE_DIGITAL_ONLY;
-   m[13].typeData.rangeData[1].value = OEMNV_MODE_DIGITAL_ONLY;
-   m[13].typeData.rangeData[2].resId = IDS_MODE_ANALOG_ONLY;
-   m[13].typeData.rangeData[2].value = OEMNV_MODE_ANALOG_ONLY;
+	   m[13].title              = IDS_MODE_PREF;
+	   m[13].itemType           = DT_RANGE;
+	   m[13].cfgItem            = CFGI_MODE_PREF;
+	   m[13].isEditable         = TRUE;
+	   m[13].typeData.rangeData = CSvcPrg_CreateRange(3);
+	   if (NULL == m[13].typeData.rangeData) {
+	      return FALSE;
+	   }
+	   m[13].typeData.rangeData[0].resId = IDS_MODE_AUTOMATIC;
+	   m[13].typeData.rangeData[0].value = OEMNV_MODE_AUTOMATIC;
+	   m[13].typeData.rangeData[1].resId = IDS_MODE_DIGITAL_ONLY;
+	   m[13].typeData.rangeData[1].value = OEMNV_MODE_DIGITAL_ONLY;
+	   m[13].typeData.rangeData[2].resId = IDS_MODE_ANALOG_ONLY;
+	   m[13].typeData.rangeData[2].value = OEMNV_MODE_ANALOG_ONLY;
 
-   m[14].title              = IDS_ANALOG_OPTIONS;
-   m[14].itemType           = DT_SUBMENU;
-   m[14].typeData.subMenu   = NULL;
+	   m[14].title              = IDS_ANALOG_OPTIONS;
+	   m[14].itemType           = DT_SUBMENU;
+	   m[14].typeData.subMenu   = NULL;
 
 #endif /* FEATURE_ACP */
-   
-   // Store the Network menu in the Main menu
-   ASSERT(IDS_NETWORK_OPTIONS == pMe->m_mainMenu[1].title);
-   ASSERT(DT_SUBMENU == pMe->m_mainMenu[1].itemType);
-   pMe->m_mainMenu[1].typeData.subMenu = m;
+	   
+	   // Store the Network menu in the Main menu
+	   ASSERT(IDS_NETWORK_OPTIONS == pMe->m_mainMenu[1].title);
+	   ASSERT(DT_SUBMENU == pMe->m_mainMenu[1].itemType);
+	   pMe->m_mainMenu[1].typeData.subMenu = m;
+#ifdef FEATURE_VERSION_W208S	   
+	}//Add By zzg 2012_02_11
+#endif	
 
 
    //
