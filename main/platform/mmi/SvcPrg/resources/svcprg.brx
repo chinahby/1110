@@ -65,7 +65,7 @@
 		<Text>No</Text>
 	</STRING>
 	<STRING Id="26" Name="IDS_PHONE_NUMBER">
-		<Text>Phone Number</Text>
+		<Text>MDN</Text>
 	</STRING>
 	<STRING Id="27" Name="IDS_HOME_SIDNID">
 		<Text>Home SID/NID</Text>
@@ -164,7 +164,7 @@
 		<Text>MNC</Text>
 	</STRING>
 	<STRING Id="59" Name="IDS_IMSI_S">
-		<Text>IMSI_S</Text>
+		<Text>MIN</Text>
 	</STRING>
 	<STRING Id="60" Name="IDS_MODE_PREF">
 		<Text>Mode Preference</Text>
