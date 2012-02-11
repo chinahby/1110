@@ -158,10 +158,10 @@
  		<Text>ربط عدد غير صالحة</Text>
  	</STRING>
 	<STRING Id="1053" Name="IDS_MSG_CURPROFILE_MEETING">
-		<Text>vibrate mode activated</Text>
+		<Text>يهتز الوضع تنشيط</Text>
 	</STRING>
 	<STRING Id="1054" Name="IDS_MSG_CURPROFILE_NORMALMODE">
-		<Text>normal mode activated</Text>
+		<Text>الوضع العادي تفعيلها</Text>
 	</STRING>
 	<String Id="1055" Name="IDS_PWDERR">
 		<Text>Invalid password</Text>
