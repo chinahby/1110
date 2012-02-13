@@ -9341,9 +9341,10 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                         if ((nCount == 0) && (wParam<1))
                         {
                             return TRUE;
-                        }
-                       //DBGPRINTF("m_szEmail=%S, pwsText=%S,m_isSendToAlbumOrEmain=%d",pItem->m_szEmail, pwsText, pMe->m_isSendToAlbumOrEmain);
-#ifdef FEATURE_USES_MMS                  
+                        }                       
+#ifdef FEATURE_USES_MMS    
+						DBGPRINTF("m_szEmail=%S, pwsText=%S,m_isSendToAlbumOrEmain=%d",pItem->m_szEmail, pwsText, pMe->m_isSendToAlbumOrEmain);
+
                         if(pMe->m_isSendToAlbumOrEmain)       
                         {
                             // 检查内容是否有变更，若有则更新记录

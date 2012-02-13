@@ -3045,12 +3045,13 @@ static boolean CSvcPrg_DisplayItem(CSvcPrgApp      *pMe,
          }
          
          if (item->title == IDS_SERVICE_OPTIONS) 
-		 {
-		   MSG_FATAL("***zzg CSvcPrg_DisplayItem IDS_SERVICE_OPTIONS m_accessByOTKSL=%x***", pMe->m_accessByOTKSL, 0, 0);
-		   
+		 {		   
 #ifdef FEATURE_ENABLE_OTKSL
             // The service programming code may not be viewed/changed when access
             // to the applet was granted by using the OTKSL code.
+
+		   MSG_FATAL("***zzg CSvcPrg_DisplayItem IDS_SERVICE_OPTIONS m_accessByOTKSL=%x***", pMe->m_accessByOTKSL, 0, 0);
+
            if (TRUE == pMe->m_accessByOTKSL) 
 		   {
              IMENUCTL_DeleteItem (pm, IDS_SPCCODE);
