@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="OEMMsgs" VERSION="1">
+<Strings DefFormat="Unicode">
+	<String Id="1" Name="OEM_IDC_YES">
+		<Value>是</Value>
+	</String>
+	<String Id="2" Name="OEM_IDC_NO">
+		<Value>否</Value>
+	</String>
+	<String Id="3" Name="OEM_IDS_POS_REQUEST">
+		<Value>是否允许此网络应用程序请求您的定位？</Value>
+	</String>
+	<String Id="4" Name="OEM_IDS_DIAL_VOICE">
+		<Value>是否允许此应用程序拨打电话？</Value>
+	</String>
+	<String Id="5" Name="OEM_IDS_PRIVACY">
+		<Value>隐私警告</Value>
+	</String>
+	<String Id="6" Name="OEM_IDS_APP_SUSPENDED">
+		<Value>呼叫进行中...应用程序已中止。</Value>
+	</String>
+	<String Id="7" Name="OEM_IDS_RECEIVE_VOICE">
+		<Value>接收此呼叫？</Value>
+	</String>
+</Strings>
+<Images DefFormat="">
+</Images>
+<Dialogs>
+</Dialogs>
+</BREWRes>

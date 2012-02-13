@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="OEMMsgs" VERSION="1">
+<Strings DefFormat="ISOLATIN1">
+	<String Id="1" Name="OEM_IDC_YES">
+		<Value>Sim</Value>
+	</String>
+	<String Id="2" Name="OEM_IDC_NO">
+		<Value>Não</Value>
+	</String>
+	<String Id="3" Name="OEM_IDS_POS_REQUEST">
+		<Value>Permitir que este aplicativo de rede solicite sua localização de posição?</Value>
+	</String>
+	<String Id="4" Name="OEM_IDS_DIAL_VOICE">
+		<Value>Permitir que este aplicativo faça uma chamada telefônica?</Value>
+	</String>
+	<String Id="5" Name="OEM_IDS_PRIVACY">
+		<Value>Alerta de privacidade</Value>
+	</String>
+	<String Id="6" Name="OEM_IDS_APP_SUSPENDED">
+		<Value>Chamada em andamento... aplicativo suspenso.</Value>
+	</String>
+	<String Id="7" Name="OEM_IDS_RECEIVE_VOICE">
+		<Value>Receber a chamada?</Value>
+	</String>
+</Strings>
+<Images DefFormat="">
+</Images>
+<Dialogs>
+</Dialogs>
+</BREWRes>

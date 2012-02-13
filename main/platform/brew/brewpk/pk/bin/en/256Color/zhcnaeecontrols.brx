@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="aeecontrols" VERSION="1">
+<Strings Encoding="Unicode">
+	<String Id="1" Name="AEE_IDS_JANUARY">
+		<Text>一月</Text>
+	</String>
+	<String Id="2" Name="AEE_IDS_FEBRUARY">
+		<Text>二月</Text>
+	</String>
+	<String Id="3" Name="AEE_IDS_MARCH">
+		<Text>三月</Text>
+	</String>
+	<String Id="4" Name="AEE_IDS_APRIL">
+		<Text>四月</Text>
+	</String>
+	<String Id="5" Name="AEE_IDS_MAY">
+		<Text>五月</Text>
+	</String>
+	<String Id="6" Name="AEE_IDS_JUNE">
+		<Text>六月</Text>
+	</String>
+	<String Id="7" Name="AEE_IDS_JULY">
+		<Text>七月</Text>
+	</String>
+	<String Id="8" Name="AEE_IDS_AUGUST">
+		<Text>八月</Text>
+	</String>
+	<String Id="9" Name="AEE_IDS_SEPTEMBER">
+		<Text>九月</Text>
+	</String>
+	<String Id="10" Name="AEE_IDS_OCTOBER">
+		<Text>十月</Text>
+	</String>
+	<String Id="11" Name="AEE_IDS_NOVEMBER">
+		<Text>十一月</Text>
+	</String>
+	<String Id="12" Name="AEE_IDS_DECEMBER">
+		<Text>十二月</Text>
+	</String>
+	<String Id="13" Name="AEE_IDS_SUNDAY">
+		<Text>星期日</Text>
+	</String>
+	<String Id="14" Name="AEE_IDS_MONDAY">
+		<Text>星期一</Text>
+	</String>
+	<String Id="15" Name="AEE_IDS_TUESDAY">
+		<Text>星期二</Text>
+	</String>
+	<String Id="16" Name="AEE_IDS_WEDNESDAY">
+		<Text>星期三</Text>
+	</String>
+	<String Id="17" Name="AEE_IDS_THURSDAY">
+		<Text>星期四</Text>
+	</String>
+	<String Id="18" Name="AEE_IDS_FRIDAY">
+		<Text>星期五</Text>
+	</String>
+	<String Id="19" Name="AEE_IDS_SATURDAY">
+		<Text>星期六</Text>
+	</String>
+	<String Id="20" Name="AEE_IDS_AM">
+		<Text>AM</Text>
+	</String>
+	<String Id="21" Name="AEE_IDS_PM">
+		<Text>PM</Text>
+	</String>
+	<String Id="22" Name="AEE_IDS_NO_FLOAT">
+		<Text>- 无浮点值 -</Text>
+	</String>
+	<String Id="23" Name="AEE_IDS_STDM_DIG_REQ">
+		<Text>使用该功能需要数字服务。</Text>
+	</String>
+	<String Id="24" Name="AEE_IDS_STDM_CANNOT_START">
+		<Text>软件无法启动。</Text>
+	</String>
+	<String Id="25" Name="AEE_IDS_STDM_UNKNOWN">
+		<Text>未知错误 (%d)</Text>
+	</String>
+	<String Id="26" Name="AEE_IDS_STDM_NOT_FOUND">
+		<Text>为节约内存，已卸载该软件。  必须下载新的版本。</Text>
+	</String>
+	<String Id="27" Name="AEE_IDS_STDM_EXPIRED">
+		<Text>该软件已经过期。</Text>
+	</String>
+	<String Id="28" Name="AEE_IDS_STDM_MEM">
+		<Text>内存错误, 请关机并重新启动手机来运行该软件。</Text>
+	</String>
+	<String Id="29" Name="AEE_IDS_MODE_TITLE">
+		<Text> 文本模式</Text>
+	</String>
+	<String Id="30" Name="AEE_IDS_MODE_ALPHA">
+		<Text> 正常 Alpha</Text>
+	</String>
+	<String Id="31" Name="AEE_IDS_MODE_T9">
+		<Text> 快速输入</Text>
+	</String>
+	<String Id="32" Name="AEE_IDS_MODE_NUMBERS">
+		<Text> 数字</Text>
+	</String>
+	<String Id="33" Name="AEE_IDS_MODE_SYMBOLS">
+		<Text> 符号</Text>
+	</String>
+	<String Id="34" Name="AEE_IDS_SYMS">
+		<Text>-.&amp;&apos;()_!?*#%&quot;:+&lt;&gt;=¿¡»«/\@,~{}$[]^;</Text>
+	</String>
+	<String Id="35" Name="AEE_IDS_STDM_RES_NOT_FOUND">
+		<Text>找不到软件资源。</Text>
+	</String>
+	<String Id="36" Name="AEE_IDS_UNKNOWN">
+		<Text>软件</Text>
+	</String>
+	<String Id="37" Name="AEE_IDS_STDM_ALLOCATED">
+		<Text>模块未能释放所有内存。</Text>
+	</String>
+	<String Id="38" Name="AEE_IDS_PRIV_ERROR">
+		<Text>软件优先级冲突。</Text>
+	</String>
+	<String Id="39" Name="AEE_IDS_SECURITY_ERROR">
+		<Text>软件数字签名失败。  (%d)</Text>
+	</String>
+	<String Id="40" Name="AEE_IDS_CAPP_RECALLED">
+		<Text>%s 已被撤消并从您的电话中删除。</Text>
+	</String>
+	<String Id="41" Name="AEE_IDS_CAPP_RECALL_TITLE">
+		<Text>撤消警告</Text>
+	</String>
+	<String Id="42" Name="AEE_IDS_CAPP_CHECK_PRELOAD">
+		<Text>准备| 软件</Text>
+	</String>
+	<String Id="43" Name="AEE_IDC_CAPP_OK">
+		<Text>确定</Text>
+	</String>
+	<String Id="44" Name="AEE_IDS_RESET">
+		<Text>重置</Text>
+	</String>
+	<String Id="45" Name="AEE_IDS_SUBMIT">
+		<Text>提交</Text>
+	</String>
+	<String Id="46" Name="AEE_IDS_HV_DONE">
+		<Text>完成</Text>
+	</String>
+	<String Id="47" Name="AEE_IDS_CAPP_CHECK_RECALLS">
+		<Text>检查|撤消</Text>
+	</String>
+	<String Id="48" Name="AEE_IDS_CAPP_AI_TITLE">
+		<Text>自动安装</Text>
+	</String>
+	<String Id="49" Name="AEE_IDS_CAPP_CHECK_ACKS">
+		<Text>注册|软件</Text>
+	</String>
+	<String Id="50" Name="AEE_IDS_CAPP_CHECK_AI">
+		<Text>升级软件</Text>
+	</String>
+	<String Id="51" Name="AEE_IDS_BREW_SUSPENDED">
+		<Text>BREW暂停</Text>
+	</String>
+</Strings>
+<Objects MimeType="image/bmp">
+	<Object Id="1" Name="AEE_IDB_SMALLFONTS">
+		<File>..\..\..\Bitmaps\SmallNums.bmp</File>
+	</Object>
+	<Object Id="2" Name="AEE_IDI_BREW">
+		<File>..\..\..\Bitmaps\DefaultApp\256\BREWIcon.bmp</File>
+	</Object>
+	<Object Id="3" Name="AEE_IDB_BUSY">
+		<File>..\..\..\Bitmaps\busy-8.bmp</File>
+	</Object>
+	<Object Id="4" Name="AEE_IDB_BREW">
+		<File>..\..\..\Bitmaps\DefaultApp\256\BREWImage.bmp</File>
+	</Object>
+	<Object Id="5" Name="AEE_IDB_BREW_THUMB">
+		<File>..\..\..\Bitmaps\DefaultApp\256\BREW16x16.bmp</File>
+	</Object>
+	<Object Id="6" Name="AEE_IDB_GAME_THUMB">
+		<File>..\..\..\Bitmaps\Games16x16-8.bmp</File>
+	</Object>
+	<Object Id="7" Name="AEE_IDB_TOOL_THUMB">
+		<File>..\..\..\Bitmaps\Tools16x16-8.bmp</File>
+	</Object>
+	<Object Id="8" Name="AEE_IDB_POINT_THUMB">
+		<File>..\..\..\Bitmaps\Settings16x16-8.bmp</File>
+	</Object>
+	<Object Id="9" Name="AEE_IDB_PIMS_THUMB">
+		<File>..\..\..\Bitmaps\PIMS16x16-8.bmp</File>
+	</Object>
+	<Object Id="10" Name="AEE_IDB_RADIO">
+		<File>..\..\..\Bitmaps\RadioButtons-8.bmp</File>
+	</Object>
+	<Object Id="11" Name="AEE_IDB_CHECKBOX">
+		<File>..\..\..\Bitmaps\Checkbox-8.bmp</File>
+	</Object>
+	<Object Id="12" Name="AEE_IDB_DNARROW">
+		<File>..\..\..\Bitmaps\DOWNArrow-8.bmp</File>
+	</Object>
+	<Object Id="13" Name="AEE_IDB_UPARROW">
+		<File>..\..\..\Bitmaps\UPArrow-8.bmp</File>
+	</Object>
+	<Object Id="14" Name="AEE_IDB_IMAGE">
+		<File>..\..\..\Bitmaps\image-8.bmp</File>
+	</Object>
+	<Object Id="15" Name="AEE_IDB_BRKIMAGE">
+		<File>..\..\..\Bitmaps\brokenimage-8.bmp</File>
+	</Object>
+	<Object Id="16" Name="AEE_IDB_ENTER">
+		<File>..\..\..\Bitmaps\Enter.bmp</File>
+	</Object>
+</Objects>
+<Dialogs>
+</Dialogs>
+</BREWRes>
