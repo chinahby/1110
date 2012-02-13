@@ -2350,11 +2350,7 @@ static boolean CSvcPrg_BuildMenuList(CSvcPrgApp *pMe)
 	   ASSERT(IDS_NETWORK_OPTIONS == pMe->m_mainMenu[1].title);
 	   ASSERT(DT_SUBMENU == pMe->m_mainMenu[1].itemType);
 	   pMe->m_mainMenu[1].typeData.subMenu = m;
-#ifdef FEATURE_VERSION_W208S	   
-	}//Add By zzg 2012_02_11
-#endif	
-
-
+	}
    //
    // Build the Registration submenu
    //
