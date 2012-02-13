@@ -2212,17 +2212,14 @@ static boolean AppMgr_MainMenu(AppMgr * pme)
 	  
       IMENUCTL_AddItemEx(pme->m_pMainMenu, &ai);
 
-
       if (pme->m_pMainMenuSK)
       {
          ai.wText       = NULL;
          ai.wImage      = IDB_MSHOP_THUMB;
          ai.wItemID     = pme->m_nItem[0] + IDC_MSHOP;
-         IMENUCTL_AddItemEx(pme->m_pMainMenuSK, &ai);
-
-		 
+         IMENUCTL_AddItemEx(pme->m_pMainMenuSK, &ai);		 
       }
-      nDraw--;	//Del by zzg 2012_02_08
+      nDraw--;	
    }
 #endif // FEATURE_BREW_DOWNLOAD
 		
@@ -2237,11 +2234,37 @@ static boolean AppMgr_MainMenu(AppMgr * pme)
       while (nCount)
       {
          uint16 nItemID = (!OEM_LOCK_MOBILESHOP_LOCATION && pi->cls == AEECLSID_MOBILESHOP_BID) ? IDC_MSHOP : itemID;
+		 
 
-         AppMgr_AddMenuItem(pme, pme->m_pMainMenu, pi, nItemID,  nType, FALSE);
+		 //Add By zzg 2012_02_13
+		if (nItemID == IDC_MSHOP)
+		{
+			ai.wText       = IDC_MSHOP;
+			ai.wImage      = ((nType == THUMB) ? IDB_MSHOP_THUMB : ((nType == ICON) ? IDB_MSHOP_ICON : IDB_MSHOP_LARGE));
+			ai.wItemID     = IDC_MSHOP;
 
-         if (pme->m_pMainMenuSK)
-            AppMgr_AddMenuItem(pme, pme->m_pMainMenuSK, pi, nCount,  THUMB, TRUE);
+			IMENUCTL_AddItemEx(pme->m_pMainMenu, &ai);
+
+			if (pme->m_pMainMenuSK)
+			{
+				ai.wText       = NULL;
+				ai.wImage      = IDB_MSHOP_THUMB;
+				ai.wItemID     = pme->m_nItem[0] + IDC_MSHOP;
+				IMENUCTL_AddItemEx(pme->m_pMainMenuSK, &ai);		 
+			}
+			nDraw--;	
+		}   
+		else
+		{
+			
+			AppMgr_AddMenuItem(pme, pme->m_pMainMenu, pi, nItemID,  nType, FALSE);
+
+			if (pme->m_pMainMenuSK)
+			{
+				AppMgr_AddMenuItem(pme, pme->m_pMainMenuSK, pi, nCount,  THUMB, TRUE);
+			}
+		}
+		//Add End            
 
          pi = pi->pNext;
          itemID++;
@@ -4637,6 +4660,8 @@ static void AppMgr_AddMenuItem(AppMgr * pme, IMenuCtl * pMenu, AppMgrItem* pi, u
    int height = 0;
    IImage* pImage = NULL;
 
+   MSG_FATAL("***zzg AppMgr_AddMenuItem itemID=%d***", itemID, 0, 0);
+
    if (nType == THUMB)
    {
       width = APP_THUMB_X_THRESHOLD;
@@ -4674,9 +4699,10 @@ static void AppMgr_AddMenuItem(AppMgr * pme, IMenuCtl * pMenu, AppMgrItem* pi, u
    }
 
    MEMSET(&mai, 0, sizeof(mai));
+
    mai.pText = (bSK ? NULL : AppMgr_GetAppName(pme, pi));
    mai.wItemID = itemID; 
-   mai.dwData = (uint32)pi;
+   mai.dwData = (uint32)pi;   
 
    //To menu, add image corresponding to the app's soft key image.
    if (pImage && ImageFits(pImage, NULL, NULL, 0, width, height))
