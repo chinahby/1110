@@ -60,7 +60,7 @@ INITIALIZATION & SEQUENCING REQUIREMENTS:
   OEM customization flag to lock MobileShop location
   
 ===========================================================================*/
-#define  OEM_LOCK_MOBILESHOP_LOCATION     TRUE		//FALSE        // Lock MobileShop location
+#define  OEM_LOCK_MOBILESHOP_LOCATION     FALSE        // Lock MobileShop location
 
 /*===========================================================================
 
