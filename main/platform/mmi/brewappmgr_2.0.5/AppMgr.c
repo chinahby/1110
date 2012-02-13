@@ -2236,18 +2236,12 @@ static boolean AppMgr_MainMenu(AppMgr * pme)
       
       while (nCount)
       {
-         //uint16 nItemID = (!OEM_LOCK_MOBILESHOP_LOCATION && pi->cls == AEECLSID_MOBILESHOP_BID) ? IDC_MSHOP : itemID;
-		 uint16 nItemID = IDC_WORK;
+         uint16 nItemID = (!OEM_LOCK_MOBILESHOP_LOCATION && pi->cls == AEECLSID_MOBILESHOP_BID) ? IDC_MSHOP : itemID;
 
-		 MSG_FATAL("***zzg AppMgr_MainMenu 3 nItemID=%d, nCount=%d***", nItemID, nCount, 0);
-		 
          AppMgr_AddMenuItem(pme, pme->m_pMainMenu, pi, nItemID,  nType, FALSE);
 
          if (pme->m_pMainMenuSK)
-         {
-         	AppMgr_AddMenuItem(pme, pme->m_pMainMenuSK, pi, nCount,  THUMB, TRUE);
-			MSG_FATAL("***zzg AppMgr_MainMenu 4 nCount=%d***", nCount, 0, 0);
-         }
+            AppMgr_AddMenuItem(pme, pme->m_pMainMenuSK, pi, nCount,  THUMB, TRUE);
 
          pi = pi->pNext;
          itemID++;
