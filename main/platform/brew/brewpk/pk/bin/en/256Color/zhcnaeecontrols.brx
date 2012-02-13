@@ -101,7 +101,7 @@
 		<Text> 符号</Text>
 	</String>
 	<String Id="34" Name="AEE_IDS_SYMS">
-		<Text>-.&amp;&apos;()_!?*#%&quot;:+&lt;&gt;=¿¡»«/\@,~{}$[]^;</Text>
+		<Text>-.&amp;'()_!?*#%":+&lt;&gt;=¿¡»«/\@,~{}$[]^;</Text>
 	</String>
 	<String Id="35" Name="AEE_IDS_STDM_RES_NOT_FOUND">
 		<Text>找不到软件资源。</Text>

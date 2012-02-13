@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <BREWRes Name="OEMMsgs" VERSION="1">
-<Strings DefFormat="ISOLATIN1">
+<Strings Encoding="ISOLATIN1">
 	<String Id="1" Name="OEM_IDC_YES">
-		<Value>Sí</Value>
+		<Text>Sí</Text>
 	</String>
 	<String Id="2" Name="OEM_IDC_NO">
-		<Value>No</Value>
+		<Text>No</Text>
 	</String>
 	<String Id="3" Name="OEM_IDS_POS_REQUEST">
-		<Value>¿Permitir que este programa de red solicite su ubicación?</Value>
+		<Text>¿Permitir que este programa de red solicite su ubicación?</Text>
 	</String>
 	<String Id="4" Name="OEM_IDS_DIAL_VOICE">
-		<Value>¿Permitir que este programa haga una llamada?</Value>
+		<Text>¿Permitir que este programa haga una llamada?</Text>
 	</String>
 	<String Id="5" Name="OEM_IDS_PRIVACY">
-		<Value>Aviso sobre confidencialidad</Value>
+		<Text>Aviso sobre confidencialidad</Text>
 	</String>
 	<String Id="6" Name="OEM_IDS_APP_SUSPENDED">
-		<Value>Llamada en curso. Programa suspendido.</Value>
+		<Text>Llamada en curso. Programa suspendido.</Text>
 	</String>
 	<String Id="7" Name="OEM_IDS_RECEIVE_VOICE">
-		<Value>¿Recibir la llamada?</Value>
+		<Text>¿Recibir la llamada?</Text>
 	</String>
 </Strings>
 <Images DefFormat="">

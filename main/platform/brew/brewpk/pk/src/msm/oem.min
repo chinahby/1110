@@ -348,19 +348,19 @@ endif
 
 CONSTFILE_FILES+=\
         oemmsgs.bar|fs:/sys/oemmsgs.bar \
-        OEMAEEControls.bar|fs:/sys/en/OEMAEEControls.bar \
-		 aeecontrols.bar|fs:/sys/aeecontrols.bar
+		aeecontrols.bar|fs:/sys/aeecontrols.bar
 
 # 加入另外一种语言资源文件
 ifneq ($(EXTLANG1),NO)
 CONSTFILE_FILES+=\
-        $(EXTLANG1)OEMAEEControls.bar|fs:/sys/$(EXTLANG1)/OEMAEEControls.bar
+        $(EXTLANG1)aeecontrols.bar|fs:/sys/$(EXTLANG1)/aeecontrols.bar \
+        $(EXTLANG1)oemmsgs.bar|fs:/sys/$(EXTLANG1)/oemmsgs.bar
 endif
 ifneq ($(EXTLANG2),NO)
 CONSTFILE_FILES+=\
-        $(EXTLANG2)OEMAEEControls.bar|fs:/sys/$(EXTLANG2)/OEMAEEControls.bar
+        $(EXTLANG2)aeecontrols.bar|fs:/sys/$(EXTLANG2)/aeecontrols.bar \
+        $(EXTLANG2)oemmsgs.bar|fs:/sys/$(EXTLANG2)/oemmsgs.bar
 endif
-
 
 vpath %.s $(BREW_OEM_SRC) $(BREW_OEM_MSM_SRC)
 vpath %.c $(BREW_OEM_SRC) $(BREW_OEM_MSM_SRC)

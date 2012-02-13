@@ -33,9 +33,9 @@ INCLUDE FILES FOR MODULE
 #include "AEEStdLib.h"
 #ifndef CUST_EDITION
 #include "AEEDate_priv.h"
+#endif
 #include "AEEControls_res.h"
-#else
-#include "AEEControls.brh"
+#ifdef CUST_EDITION
 #include "Appscommon.h"
 #include "appscommonimages.brh"
 #include "AEEDate.h"
@@ -1268,7 +1268,7 @@ by AEECONTROLS_RES_FILE.
 static boolean DateCtl_GetMonthString(DateCtl * pme, int nMonth, AECHAR * pBuff, int nSize)
 {  
    if(pBuff && nMonth >= 1 && nMonth <= 12)
-      return(ISHELL_LoadResString(pme->m_pIShell, OEMAEECONTROLS_LNGRES_FILE, gMonthIDs[nMonth-1], pBuff, nSize) != 0);
+      return(ISHELL_LoadResString(pme->m_pIShell, AEECONTROLS_RES_FILE, gMonthIDs[nMonth-1], pBuff, nSize) != 0);
 
    return(FALSE);
 }
@@ -1283,7 +1283,7 @@ file specified by AEECONTROLS_RES_FILE.
 static boolean DateCtl_GetDayString(DateCtl * pme, int nDay, AECHAR * pBuff, int nSize)
 {
    if(nDay >= 0 && nDay <= 6) 
-      return(ISHELL_LoadResString(pme->m_pIShell, OEMAEECONTROLS_LNGRES_FILE, gDayIDs[nDay], pBuff, nSize) != 0);
+      return(ISHELL_LoadResString(pme->m_pIShell, AEECONTROLS_RES_FILE, gDayIDs[nDay], pBuff, nSize) != 0);
 
    return(FALSE);
 }

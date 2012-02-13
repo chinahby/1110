@@ -26,6 +26,7 @@ GENERAL DESCRIPTION:
 #endif
 #include "BREWVersion.h"
 #include "mmidispsize.h"
+#define FEATURE_PEKTEST
 #define FEATURE_GREYBIT
 #define FEATURE_BREW_3_0
 

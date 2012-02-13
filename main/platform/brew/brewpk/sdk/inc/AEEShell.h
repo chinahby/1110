@@ -20,13 +20,7 @@ Qualcomm Confidential and Proprietary
 #include "AEESoundPlayer.h"
 #include "AEEControls_res.h"
 #include "AEELngCode.h"
-#ifdef CUST_EDITION	
-#include "OEMAEEControls.brh"
-#endif /*CUST_EDITION*/
 #include "../../inc/AEEDeviceItems.h"
-#ifdef CUST_EDITION	
-#define OEMAEECONTROLS_LNGRES_FILE ("fs:/sys/" AEE_RES_LANGDIR OEMAEECONTROLS_RES_FILE)
-#endif /*CUST_EDITION*/
 
 typedef struct _IDialog    IDialog;
 typedef struct _IStatic    IStatic;

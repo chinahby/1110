@@ -42,7 +42,6 @@ when       who     what, where, why
 #endif
 #include "AEEStdLib.h"
 #include "AEEClassIDs.h"
-#include "AEEControls.brh"
 #include "AEEPen.h"
 #include "AEE_OEM.h"
 #ifndef AEE_SIMULATOR
@@ -3820,7 +3819,7 @@ static void TextCtl_ShowSymbolPage(CTextCtl * pme, int nDir)
     szBuff[1] = (AECHAR)'\0';
 
     ISHELL_LoadResString(pme->m_pIShell,
-                                OEMAEECONTROLS_LNGRES_FILE,
+                                AEECONTROLS_RES_FILE,
                                 AEE_IDS_MODE_SYMBOLS,
                                 szText,
                                 sizeof(szText));
@@ -4008,7 +4007,7 @@ static void TextCtl_ShowFaceSymbolPage(CTextCtl * pme, int nDir)
     szBuff[1] = (AECHAR)'\0';
 
     ISHELL_LoadResString(pme->m_pIShell,
-                                OEMAEECONTROLS_LNGRES_FILE,
+                                AEECONTROLS_RES_FILE,
                                 AEE_IDS_MODE_SYMBOLS,
                                 szTitle,
                                 sizeof(szTitle));
@@ -4198,19 +4197,11 @@ static void TextCtl_ShowNetSymbolPage(CTextCtl * pme, int nDir)
    szBuff[0] = (AECHAR)0x2195; 
    szBuff[1] = (AECHAR)'\0';
 
-#ifdef FEATURE_CARRIER_THAILAND_HUTCH   
    ISHELL_LoadResString(pme->m_pIShell,
-                                OEMAEECONTROLS_LNGRES_FILE,
-                                AEE_IDS_MODE_NETSYMBOL,
-                                szText,
-                                sizeof(szText));
-#else
-   ISHELL_LoadResString(pme->m_pIShell,
-                                OEMAEECONTROLS_LNGRES_FILE,
+                                AEECONTROLS_RES_FILE,
                                 AEE_IDS_MODE_SYMBOLS,
                                 szText,
                                 sizeof(szText));
-#endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH  
   ISHELL_LoadResString(pme->m_pIShell,
                             AEE_APPSCOMMONRES_LANGFILE,
                             IDS_BACK,
@@ -4789,7 +4780,7 @@ static void TextCtl_ShowModeMenu(CTextCtl * pme)
       pme->m_pModeMenu = pm;
 
       //Set the title of the menu to "Text Mode".
-      IMENUCTL_SetTitle(pm, OEMAEECONTROLS_LNGRES_FILE, AEE_IDS_MODE_TITLE, NULL);
+      IMENUCTL_SetTitle(pm, AEECONTROLS_RES_FILE, AEE_IDS_MODE_TITLE, NULL);
 
       //Now, build the list using modes supported by OEM & Us.
       CTextCtl_EnumModeInit((ITextCtl *)pme);

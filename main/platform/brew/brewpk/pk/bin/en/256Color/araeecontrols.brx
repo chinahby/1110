@@ -154,7 +154,7 @@
 		<STRING Id="51" Name="AEE_IDS_BREW_SUSPENDED">
 			<Text>BREW Suspended</Text>
 		</STRING>
-	</Strings>
+</Strings>
 <Objects MimeType="image/bmp">
 	<Object Id="1" Name="AEE_IDB_SMALLFONTS">
 		<File>..\..\..\Bitmaps\SmallNums.bmp</File>
