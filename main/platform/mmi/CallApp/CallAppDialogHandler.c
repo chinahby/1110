@@ -7466,10 +7466,11 @@ static void CallApp_DrawDialerString(CCallApp   *pMe,  AECHAR const *dialStr)
         y -= pMe->m_nCurrNumHeight;
         srcStr -= pMe->m_nCurrLineFits[i];
         #ifdef FEATURE_VERSION_1110W516
-        y = y-10;
-        #endif
+        IFONT_DrawText(pMe->m_pCurrNumFont, pBmp, 0, y-10, srcStr, pMe->m_nCurrLineFits[i], clrFG, 0, &dialerRect, IDF_TEXT_TRANSPARENT|IDF_ALIGN_RIGHT);
+        #else
         IFONT_DrawText(pMe->m_pCurrNumFont, pBmp, 0, y, srcStr, pMe->m_nCurrLineFits[i], clrFG, 0, &dialerRect, IDF_TEXT_TRANSPARENT|IDF_ALIGN_RIGHT);
-		#ifndef FEATURE_LCD_TOUCH_ENABLE
+        #endif
+        #ifndef FEATURE_LCD_TOUCH_ENABLE
         y -= pMe->m_nCurrLineSpace;
 		#endif
     }
