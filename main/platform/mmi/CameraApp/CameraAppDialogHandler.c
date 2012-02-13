@@ -334,10 +334,13 @@ static const CCameraSize g_CameraSizeCFG_10[] =
     {240,320,L"240*320"}, // QVGA    
 #elif defined(FEATURE_DISP_176X220)
 //1110w516 siv121d
-#if defined(FEATURE_VERSION_W516)||defined(FEATURE_VERSION_W208S)
+#if defined(FEATURE_VERSION_W208S)
     {176,220,L"176*220"}, // QCIF
     {320,240,L"320*240"}, // QVGA
 	{360,480,L"640*480"},
+#elif defined(FEATURE_VERSION_W516)
+    {180,240,L"180*240"}, // VGA 
+    {360,480,L"640*480"},
 #else
     {176,220,L"176*220"}, // QCIF
     {240,320,L"240*320"}, // QVGA
@@ -387,7 +390,7 @@ static const CCameraSize g_VideoSizeCFG_10[] =
     //{144,176,L"144*176"}, // QCIF
     {128,160,L"128*160"}, // FULL Screen
     {144,176,L"144*176"}, // QCIF
-#if defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W208S)	
+#if defined(FEATURE_VERSION_W208S)	
     {320,240,L"320*240"}, // QCIF    
 #endif
 #elif defined(FEATURE_DISP_240X320)
@@ -1453,6 +1456,13 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
                     {
                         pMe->m_nCameraCFG--;
                     }
+                    if(pMe->m_nCameraCFG == CAMERACFGSELFTIME )
+                    {
+                        if(pMe->m_isRecordMode == TRUE)
+                        {
+                            pMe->m_nCameraCFG--;
+                        }
+                    }
                     break;
    
                 case AVK_RIGHT:
@@ -1464,6 +1474,13 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
                     else
                     {
                         pMe->m_nCameraCFG++;
+                    }
+                    if(pMe->m_nCameraCFG == CAMERACFGSELFTIME )
+                    {
+                        if(pMe->m_isRecordMode == TRUE)
+                        {
+                            pMe->m_nCameraCFG++;
+                        }
                     }
                     MSG_FATAL("CameraApp_CameraCFGHandleEvent RIGHT END:%d",pMe->m_nCameraCFG,0,0);
                     break;
@@ -3938,7 +3955,48 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
 	        nResID[CAMERACFGSIZE] = IDI_SIZE_160_128;
 	        break;
     }
+#endif
+#ifdef FEATURE_VERSION_1110W516
+    // size cfgID
+    (void)ICONFIG_GetItem(pMe->m_pConfig,
+                          CFGI_CAMERA_SIZE,
+                         &pMe->m_nCameraSize,
+                          sizeof(pMe->m_nCameraSize));
+
+        MSG_FATAL("pMe->m_isRecordMode=%d",pMe->m_isRecordMode,0,0);
+        if(pMe->m_isRecordMode == FALSE)
+        {
+            switch(pMe->m_nCameraSize)
+            {
+    	    case OEMNV_CAMERA_SIZE_INDEX_0:
+    	        nResID[CAMERACFGSIZE] = IDI_SIZE_320_240;
+    	        break;
+    	    case OEMNV_CAMERA_SIZE_INDEX_1:
+    	        nResID[CAMERACFGSIZE] = IDI_SIZE_640_480;
+    	        break;	        
+    	    default:
+    	        nResID[CAMERACFGSIZE] = IDI_SIZE_320_240;
+    	        break;
+            }
+        }
+        else
+        {
+            switch(pMe->m_nCameraSize)
+            {
+                
+    	    case OEMNV_CAMERA_SIZE_INDEX_0:
+    	        nResID[CAMERACFGSIZE] = IDI_SIZE_128_160;
+    	        break;
+    	    case OEMNV_CAMERA_SIZE_INDEX_1:
+    	        nResID[CAMERACFGSIZE] = IDI_SIZE_320_240;
+    	        break;	        
+    	    default:
+    	        nResID[CAMERACFGSIZE] = IDI_SIZE_128_160;
+    	        break;
+            }
+        }
 #endif	
+
 #ifdef FEATURE_VERSION_VG68
     // size cfgID
     (void)ICONFIG_GetItem(pMe->m_pConfig,
@@ -4070,6 +4128,14 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
     #else
     for(i = 0; i < CAMERACFGMAX; i++)
     {
+        if(i == CAMERACFGSELFTIME)
+        {
+            if(pMe->m_isRecordMode == TRUE)
+            { 
+                continue;
+            }
+        }
+        
         pTopBarImage = ISHELL_LoadResImage(pMe->m_pShell, 
                                            CAMERAAPP_IMAGE_RES_FILE, 
                                            nResID[i]);

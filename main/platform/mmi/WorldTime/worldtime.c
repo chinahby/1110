@@ -1412,9 +1412,6 @@ static int get_timezone(void)
     	{
         	timezone --;
    		}
-        #ifdef FEATURE_VERSION_1110W516
-        timezone = timezone - 5;
-        #endif
         
                     
 	}

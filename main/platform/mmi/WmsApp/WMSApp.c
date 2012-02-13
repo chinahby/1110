@@ -6239,29 +6239,37 @@ void WmsApp_PlaySMSAlert(WmsApp * pMe, boolean bsmsin)
     
     if (btActiveProfile<PROFILENUMBER)
     {
-    	
-         IALERT_StopMp3Alert(pMe->m_pAlert);
-        if(SmsRingerID[btActiveProfile].ringType == OEMNV_MP3_RINGER)
+    	extern boolean MediaGallery_CheckUdiskStat(void);
+        // IALERT_StopMp3Alert(pMe->m_pAlert);
+        if(MediaGallery_CheckUdiskStat())
         {
-
-            // 注册按键notify事件，当有按键时关闭MP3短信提示音
-            MSG_FATAL("IALERT_StartSMSAlert::::::::::::::::::::111111111111111111111111111",0,0,0);
-            (void)ISHELL_RegisterNotify(pMe->m_pShell, 
-                                        AEECLSID_WMSAPP,
-                                        AEECLSID_SHELL,
-                                        ( ( (uint32)(NOTIFIER_VAL_ANY) ) << 16 ) | NMASK_SHELL_KEY);
-                
-            if ((IALERT_StartMp3Alert(pMe->m_pAlert, SmsRingerID[btActiveProfile].szMusicname,ALERT_SMS_SND) != SUCCESS))
-            {
-            	
-                (void) IALERT_StartSMSAlert(pMe->m_pAlert, SmsRingerID[btActiveProfile].midID);
-            }            
+            (void) IALERT_StartSMSAlert(pMe->m_pAlert, SmsRingerID[btActiveProfile].midID);
         }
         else
         {
-        	MSG_FATAL("IALERT_StartSMSAlert::::::::::::::::::::2222222222222222222",0,0,0);
-            (void) IALERT_StartSMSAlert(pMe->m_pAlert, SmsRingerID[btActiveProfile].midID);
+            if(SmsRingerID[btActiveProfile].ringType == OEMNV_MP3_RINGER)
+            {
+
+                // 注册按键notify事件，当有按键时关闭MP3短信提示音
+                MSG_FATAL("IALERT_StartSMSAlert::::::::::::::::::::111111111111111111111111111",0,0,0);
+                (void)ISHELL_RegisterNotify(pMe->m_pShell, 
+                                            AEECLSID_WMSAPP,
+                                            AEECLSID_SHELL,
+                                            ( ( (uint32)(NOTIFIER_VAL_ANY) ) << 16 ) | NMASK_SHELL_KEY);
+                    
+                if ((IALERT_StartMp3Alert(pMe->m_pAlert, SmsRingerID[btActiveProfile].szMusicname,ALERT_SMS_SND) != SUCCESS))
+                {
+                	MSG_FATAL("IALERT_StartSMSAlert::::::::::::::::::::111111111",0,0,0);
+                    (void) IALERT_StartSMSAlert(pMe->m_pAlert, SmsRingerID[btActiveProfile].midID);
+                }            
+            }
+            else
+            {
+            	MSG_FATAL("IALERT_StartSMSAlert::::::::::::::::::::2222222222222222222",0,0,0);
+                (void) IALERT_StartSMSAlert(pMe->m_pAlert, SmsRingerID[btActiveProfile].midID);
+            }
         }
+
     }    
 }
 

@@ -1250,7 +1250,11 @@ void DrawBottomBar(IDisplay  * pIDisplay, BottomBar_Param_type *BParam)
         // 绘制底部提示条的上下箭头
         if (NULL != pBarImg)
         {
+            #ifdef FEATURE_DISP_176X220
+            IIMAGE_Draw(pBarImg, 85, 182);
+            #else
             IIMAGE_Draw(pBarImg, 61, 117);
+            #endif
             IIMAGE_Release(pBarImg);
             pBarImg = NULL;
         }
