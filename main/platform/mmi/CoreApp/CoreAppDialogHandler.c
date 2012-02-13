@@ -6154,7 +6154,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
     wFormat[0] = 0;
     
     (void) ISHELL_LoadResString(pMe->a.m_pIShell,
-                                OEMAEECONTROLS_LNGRES_FILE,
+                                AEECONTROLS_RES_FILE,
                                 nWeekResID,
                                 wszDate,
                                 sizeof(wszDate));

@@ -2995,7 +2995,7 @@ void Appscommon_Draw_Keyguard_Time(IDisplay *pIDisplay)
             nWeekResID = AEE_IDS_SUNDAY;
             break;
     }
-    (void) ISHELL_LoadResString(pShell, OEMAEECONTROLS_LNGRES_FILE, nWeekResID, wstrWeekDay, sizeof(wstrWeekDay));
+    (void) ISHELL_LoadResString(pShell, AEECONTROLS_RES_FILE, nWeekResID, wstrWeekDay, sizeof(wstrWeekDay));
     
     wstrWeekDay[3] = L'\0';
     nTextLen = WSTRLEN(wstrDisp);

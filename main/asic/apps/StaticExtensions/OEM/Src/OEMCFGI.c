@@ -274,7 +274,11 @@ when       who     what, where, why
 // in OEMConfigListType.  It does not need to be incremented when a new
 // field is added to the end of OEMConfigListType.
 //
+#ifdef FEATURE_PEKTEST
+#define OEMCONFIGLIST_VERSION ( (uint16) 0x000E )
+#else
 #define OEMCONFIGLIST_VERSION ( (uint16) 0x000D )
+#endif
 
 ////
 // The EFS file that stores the OEM configuration.
@@ -2632,7 +2636,9 @@ void OEM_RestoreFactorySetting( void )
 #ifdef CUST_EDITION
 #ifdef FEATURE_KEYGUARD	 
 
-#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM) ||defined(FEATURE_VERSION_C01)
+#ifdef FEATURE_PEKTEST
+    oemi_cache.b_key_lock       =  0;
+#elif defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM) ||defined(FEATURE_VERSION_C01)
 	oemi_cache.b_key_lock       =  1; 
 #elif defined(FEATURE_VERSION_W208S)
     oemi_cache.b_key_lock       =  4; 
@@ -3057,7 +3063,11 @@ void OEM_RestoreFactorySetting( void )
    (void) OEMNV_Put( NV_MENU_FORMAT_I, &nvi );
    nvi_cache.menu_format = (byte) OEMNV_MENUFORM_LARGE;
 
-#if defined(FEATURE_CARRIER_THAILAND_CAT)
+#ifdef FEATURE_PEKTEST
+   nvi.back_light = OEMNV_BL_30S;
+   (void) OEMNV_Put( NV_BACK_LIGHT_I, &nvi );
+   nvi_cache.backlight = OEMNV_BL_30S;
+#elif defined(FEATURE_CARRIER_THAILAND_CAT)
    nvi.back_light = OEMNV_BL_30S;
    (void) OEMNV_Put( NV_BACK_LIGHT_I, &nvi );
    nvi_cache.backlight = OEMNV_BL_30S;

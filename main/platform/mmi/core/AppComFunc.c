@@ -78,7 +78,6 @@ when         who     what, where, why
 #include "AEEText.h"
 #include "AEEModTable.h"
 #include "AEEStdLib.h"
-#include "AEEControls.brh"
 #include "AEEModGen.h"
 #include "AEEAppGen.h"
 #include "AppComFunc.h"

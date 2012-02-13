@@ -82,7 +82,6 @@
 
 #include "AEEAnnunciator.h"
 
-#include "AEEControls.brh"
 #include "AEERUIM.h"
 #ifdef FEATURE_OEMOMH
 #include "AEEConfig.h"
