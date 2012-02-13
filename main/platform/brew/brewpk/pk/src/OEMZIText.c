@@ -4618,7 +4618,7 @@ static boolean TextCtl_NumbersKey(TextCtlContext *pContext, AEEEvent eCode,AVKTy
 	                }
 	            }
 	            return TRUE;
-	            break;
+	            
 	        case AVK_SHIFT:
 	              {
 	                 if(pContext->is_isShift)
@@ -4630,7 +4630,7 @@ static boolean TextCtl_NumbersKey(TextCtlContext *pContext, AEEEvent eCode,AVKTy
 	                    pContext->is_isShift = TRUE;
 	                 }
 	              }
-	              break;
+	              return TRUE;
 		  
 	        case AVK_0:
 	            if(pContext->dwProperties & TP_EDITNUMBER_PTSTRING)     
@@ -5928,13 +5928,13 @@ static boolean ZITextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
 	                 }
 	                 #endif
 	              }
-	              break;
+	              return TRUE;
 	        case AVK_CAPLK:
 	             {
 					 pContext->m_bCaplk = !pContext->m_bCaplk;
 	             }
 	             return TRUE;
-	             break;
+	             
 	        case AVK_LEFT:
 	            {
 	            if(FOCUS_SELECTION == pContext->sFocus)
@@ -6769,13 +6769,13 @@ static boolean ZITextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	                 }
 	                 #endif
 	              }
-	              break;
+	              return TRUE;
 	        case AVK_CAPLK:
 	             {
 					 pContext->m_bCaplk = !pContext->m_bCaplk;
 	             }
 	             return TRUE;
-	             break;
+	             
 	        case AVK_LEFT:
 	            {
 	            if(FOCUS_SELECTION == pContext->sFocus)
@@ -7197,13 +7197,13 @@ static boolean ZITextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	                 }
 	                 #endif
 	              }
-	              break;
+	              return TRUE;
 	        case AVK_CAPLK:
 	             {
 					 pContext->m_bCaplk = !pContext->m_bCaplk;
 	             }
 	             return TRUE;
-	             break;
+	             
 	        case AVK_LEFT:
 	            {
 	            if(FOCUS_SELECTION == pContext->sFocus)

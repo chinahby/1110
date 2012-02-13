@@ -773,18 +773,7 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
             if ( OEM_TextKeyPress(pme->m_pText,eCode,wParam,dwParam) != FALSE)
             {
             		CTextCtl_Redraw((ITextCtl *)pme);
-                    if (!(pme->m_dwProps & TP_NODRAW))
-                    {
-                        OEM_TextUpdate(pme->m_pText);
-                    }
-                    
                     TextCtl_CheckEntryMode(pme);
-                    
-                    if (!(pme->m_dwProps & TP_NODRAW))
-                    {
-                        IDISPLAY_Update(pme->m_pIDisplay);
-                    }
-                    
                     return(TRUE);
             }
             if (!pme->m_bActive ||
@@ -2413,10 +2402,15 @@ static void CTextCtl_SetProperties(ITextCtl * pITextCtl, uint32 nProperties)
     //      pme->m_dwProps = nProperties;
     //      return;
     //   }
-
-	//Add By zzg 2010_09_02
-	nProperties |= TP_FOCUS_NOSEL;
-	//Add End
+    AEEAppInfo ai;
+    ISHELL_QueryClass(pme->m_pIShell, ISHELL_ActiveApplet(pme->m_pIShell), &ai);
+    MSG_FATAL("ISHELL_QueryClass %d %d",ai.wFlags & AFLAG_HIDDEN,ai.wFlags & AFLAG_STATIC,0);
+    if ((ai.wFlags & AFLAG_HIDDEN) || (ai.wFlags & AFLAG_STATIC))
+    {
+	    //Add By zzg 2010_09_02
+	    nProperties |= TP_FOCUS_NOSEL;
+	    //Add End
+    }
 	
     pme->m_dwProps = nProperties;
     if (nProperties & TP_LARGE_FONT) 
@@ -4509,9 +4503,20 @@ See Also: none
 static void TextCtl_CloseSymbolDialog(CTextCtl * pme, AECHAR ch)
 {
 	AEECLSID  pCLSID;
+    boolean  bDoItDoIt   = FALSE;
 
 	TextCtl_ClearScreen(pme); 
-	CTextCtl_SetActive((ITextCtl *)pme, TRUE);
+   if( !(pme->m_dwProps & TP_FOCUS_NOSEL) ){
+      // Backwards compatibility, didn't want to move the SetActive block in case
+      // of other side effects, so add the property that could cause the unwanted effect
+      // and remove it later when appropriate!
+      bDoItDoIt = TRUE;
+      pme->m_dwProps |= TP_FOCUS_NOSEL; 
+   }
+   CTextCtl_SetActive((ITextCtl *)pme, TRUE);
+   if( bDoItDoIt ){
+      pme->m_dwProps &= ~TP_FOCUS_NOSEL; 
+   }
 	SetArrowFlagonIM(FALSE);     
 	pme->m_bShowSyms = FALSE;
 	if(ch)
@@ -5931,9 +5936,6 @@ static void OEM_SetInputMode(CTextCtl * pme)
 	MSG_FATAL("2pme->m_wResID=%d,wMode=%d",pme->m_wResID,wMode,0);
     //设置输入法
     (void)CTextCtl_SetInputMode((ITextCtl *)pme, wMode);
-    
-    // 刷新控件
-    (void)CTextCtl_Redraw((ITextCtl *)pme);
 }
 
 /*=================================================================

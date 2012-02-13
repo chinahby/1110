@@ -68,6 +68,10 @@ when       who     what, where, why
 #include "OEMITSIM.h"
 #include "AEE_OEM.h"
 
+#define IS_THAI_MODIFIER(c)      ( (c) == 0x0E31 || ( (c) >= 0x0E33 && (c) <= 0x0E3A )\
+                                  || ( (c) >= 0x0E47 && (c) <= 0xE4E ) )
+
+#define IS_DIACRITIC_MOD(c)      ( (boolean)((c) >= 0x0300 && (c) <= 0x036F) )
 #ifdef AEE_DEBUG
 #include "msg.h"
 #endif
@@ -926,11 +930,7 @@ OEMCONTEXT OEM_TextCreate(const IShell* pIShell,
    pNewContext->pIShell = (IShell *) pIShell;
    pNewContext->pIDisplay = (IDisplay *) pIDisplay;
    pNewContext->rectDisplay = *pRect;
-#ifdef FEATURE_SCROLLBAR_USE_STYLE
-   pNewContext->wScrollBarWidth = SCROLLBAR_WIDTH;
-#else
    pNewContext->wScrollBarWidth = devInfo.cxScrollBar + 1;  // Add border pixel
-#endif
 
    pNewContext->bEditable = 1;
    pNewContext->dwProperties = TP_FRAME | TP_MULTILINE;
@@ -1778,7 +1778,6 @@ boolean OEM_TextKeyPress(OEMCONTEXT hTextCtl,
 		T9_AW_Destroy ( pContext );
     	(void) ISHELL_CancelTimer((IShell *) pContext->pIShell,
                             TextCtl_MultitapTimer, pContext);    
-    	TextCtl_NoSelection(pContext);
 		pContext->m_bCaplk = FALSE;
 		//T9_AW_Init ( pContext );
 		MEMSET((void *)pContext->pszContents,0,WSTRLEN((void *)pContext->pszContents));
@@ -2153,14 +2152,13 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
     {
         return;
     }
-    MSG_FATAL("OEM_TextDraw----------",0,0,0);
+    
     if (pContext->bValid)
     {
         if (pContext->dwProperties & TP_FRAME) 
         {
             AEERect rect = pContext->rectDisplay;
-			//MSG_FATAL("rect.X=%d,rect.y=%d",rect.x,rect.y,0);
-			//MSG_FATAL("rect.dX=%d,rect.dy=%d",rect.dx,rect.dy,0);
+			            
             // See side effects above!
             if (pContext->dwProperties & TP_DISPLAY_COUNT) 
             {
@@ -2303,6 +2301,15 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
 #endif
 #endif //FEATURE_FUNCS_THEME
 
+            }
+            else
+            {
+			    IDISPLAY_DrawRect((IDisplay *)pContext->pIDisplay, &rect,pContext->bEditable?RGB_BLACK:RGB_WHITE,RGB_NONE, IDF_RECT_FRAME);
+                rect.x += 1;
+                rect.y += 1;
+                rect.dx -= 2;
+                rect.dy -= 2;
+                IDISPLAY_DrawRect((IDisplay *)pContext->pIDisplay, &rect,RGB_WHITE, RGB_NONE, IDF_RECT_FRAME);
             }
             bFrame = TRUE;
         }
@@ -3064,40 +3071,72 @@ SIDE EFFECTS:
 SEE ALSO:
 
 =============================================================================*/
-static boolean TextCtl_SetSel(TextCtlContext *pContext,
-                              int             selStart,
-                              int             selEnd)
+boolean TextCtl_SetSel(TextCtlContext *pContext, int selStart, int selEnd)
 {
    boolean bChanged = FALSE;
+   MSG_FATAL("TextCtl_SetSel 1 %d %d",selStart,selEnd,0);
    if (pContext) {
-      int selSwap;
+      int            selSwap;
+      AEEDeviceInfo  di;
 
-      if (selStart < 0)
+      OEM_GetDeviceInfo(&di);
+
+      if (selStart < 0){
          selStart = (int) pContext->wContentsChars + 1 + selStart;
-
-      if (selEnd < 0)
+         if (selStart < 0)
+            selStart = 0;
+      }else{
+         if (selStart > pContext->wContentsChars)
+            selStart = pContext->wContentsChars;
+      }
+      if (selEnd < 0){
          selEnd = (int) pContext->wContentsChars + 1 + selEnd;
+         if (selEnd < 0)
+            selEnd = 0;
+      }else{
+         if (selEnd > pContext->wContentsChars)
+            selEnd = pContext->wContentsChars;
+      }
+      if( di.wEncoding == AEE_ENC_UNICODE || di.wEncoding == AEE_ENC_UNICODE2 ){
+         // THAI: Check if the Sel start or Sel end is in between a grapheme
+         // And adjust to next valid split
 
-      if (selStart < 0)
-         selStart = 0;
-
-      if (selEnd < 0)
-         selEnd = 0;
-
-      if (selStart > pContext->wContentsChars)
-         selStart = pContext->wContentsChars;
-
-      if (selEnd > pContext->wContentsChars)
-         selEnd = pContext->wContentsChars;
+         // First the starting selection
+         if( pContext->pszContents ){
+            // The next character
+            AECHAR wSplit = pContext->pszContents[selStart];
+            if( IS_THAI_MODIFIER(wSplit) ){
+               // Is thai modifier, so advance and inspect the next
+               wSplit = pContext->pszContents[++selStart];
+               if( IS_THAI_MODIFIER(wSplit) ){
+                  ++selStart;
+               }
+            }else if( IS_DIACRITIC_MOD(wSplit) ){
+               ++selStart;
+            }
+         }
+         // Now the ending selection
+         if( pContext->pszContents ){
+            // The next character
+            AECHAR wSplit = pContext->pszContents[selEnd];
+            if( IS_THAI_MODIFIER(wSplit) ){
+               // Is thai modifier, so advance and inspect the next
+               wSplit = pContext->pszContents[++selEnd];
+               if( IS_THAI_MODIFIER(wSplit) ){
+                  ++selEnd;
+               }
+            }else if( IS_DIACRITIC_MOD(wSplit) ){
+               ++selEnd;
+            }
+         }
+      }
 
       if (selStart > selEnd) {
          selSwap = selStart;
          selStart = selEnd;
          selEnd = selSwap;
          pContext->bSwap = TRUE;
-      }
-      else
-      {
+      }else{
          pContext->bSwap = FALSE;
       }
       if ((uint16) selStart != pContext->wSelStart) {
@@ -3108,11 +3147,12 @@ static boolean TextCtl_SetSel(TextCtlContext *pContext,
          pContext->wSelEnd = (uint16) selEnd;
          bChanged = TRUE;
       }
-      if (bChanged) {
+      if (bChanged) 
          pContext->bNeedsDraw = TRUE;
-      }
+
+      MSG_FATAL("TextCtl_SetSel 2 %d %d %d",pContext->wSelStart,pContext->wSelEnd,bChanged);
    }
-   return bChanged;
+   return(bChanged);
 }
 
 /*=============================================================================
@@ -3230,114 +3270,94 @@ static boolean TextCtl_AutoScroll(TextCtlContext *pContext)
    return bChanged;
 }
 
-/*=============================================================================
-FUNCTION: TextCtl_DrawScrollBar
-
-DESCRIPTION:
-
-PARAMETERS:
-   *pContext:
-
-RETURN VALUE:
-   None
-
-COMMENTS:
-
-SIDE EFFECTS:
-
-SEE ALSO:
-
-=============================================================================*/
-static void TextCtl_DrawScrollBar(TextCtlContext *pContext)
+//-----------------------------------------------------------------------------
+//
+//  
+//-----------------------------------------------------------------------------
+void TextCtl_DrawScrollBar(TextCtlContext *pTextCtl)
 {
    // Assume this is only called internally when bValid is true and
    // scroll bars need to be draw.  This function will ALWAYS draw
    // a scroll bar if called.
-
-   AEERect aRect,
-           scratchRect;
-   AEERect scrollRect;
-   int32   wBlackPixels;
-   int32   wTopWhitePixels;
-   int32   wBottomWhitePixels;
-   int16   wScrollBarHeight = pContext->rectDisplay.dy - 2;
+   AEERect scratchRect, rctFrame, rctThumb;
 
    // Draw the clear 1-pixel border to the left of the scroll bar
-   aRect.x = pContext->rectDisplay.x +
-                 (int16)(pContext->rectDisplay.dx - pContext->wScrollBarWidth);
-   aRect.y = pContext->rectDisplay.y;
-#ifdef FEATURE_SCROLLBAR_USE_STYLE
-   aRect.dx = pContext->wScrollBarWidth - 1;
-#else
-   aRect.dx = 1;
-#endif
-   aRect.dy = pContext->rectDisplay.dy;
-   scratchRect = aRect;
-   if (pContext->dwProperties & TP_FRAME) {
+   scratchRect.x = pTextCtl->rectDisplay.x + pTextCtl->rectDisplay.dx - pTextCtl->wScrollBarWidth;
+   scratchRect.y = pTextCtl->rectDisplay.y;
+   scratchRect.dx = 1;
+   scratchRect.dy = pTextCtl->rectDisplay.dy;
+   if (pTextCtl->dwProperties & TP_FRAME) {
       /* Don't erase part of the frame! */
-#ifdef FEATURE_SCROLLBAR_USE_STYLE
-      scratchRect.x -= 2;
-      scratchRect.y += 2;
-      scratchRect.dy -= 4;
-      wScrollBarHeight -= 2;
-      aRect = scratchRect;
-#else
       scratchRect.y += 1;
       scratchRect.dy -= 2;
+   }
+   (void) IDISPLAY_FillRect((IDisplay *)pTextCtl->pIDisplay, &scratchRect, RGB_WHITE);
+   if( !TextCtl_GetScrollBarRects(pTextCtl, &rctFrame, &rctThumb) ){
+#ifdef FEATURE_SCROLLBAR_USE_STYLE
+      IDISPLAY_DrawFrame((IDisplay *)pTextCtl->pIDisplay, &rctFrame, AEE_FT_BOX, MAKE_RGB(0xDE, 0xDE, 0xDE));
+      IDISPLAY_FillRect((IDisplay *)pTextCtl->pIDisplay, &rctThumb, MAKE_RGB(0xFF, 0x70, 0x00));
+#else
+      IDISPLAY_DrawFrame((IDisplay *)pTextCtl->pIDisplay, &rctFrame, AEE_FT_BOX, CLR_SYS_SCROLLBAR);
+      IDISPLAY_FillRect((IDisplay *)pTextCtl->pIDisplay, &rctThumb, CLR_SYS_SCROLLBAR_FILL);
 #endif
    }
-   if(pContext->dwProperties & TP_GRAPHIC_BG)
-   {
-      TextCtl_DrawBackGround(pContext, &scratchRect);
-   }
-   else
-   {
-      IDISPLAY_FillRect(pContext->pIDisplay, &scratchRect, RGB_WHITE);
-   }
+}
+
+//-----------------------------------------------------------------------------
+//
+//  
+//-----------------------------------------------------------------------------
+static int TextCtl_GetScrollBarRects(TextCtlContext * pme, AEERect * prcFrame, AEERect * prcThumb)
+{
+   AEERect aRect;
+   uint16 wBlackPixels;
+   uint16 wTopWhitePixels;
+   uint16 wBottomWhitePixels;
+   uint16 wScrollBarHeight = pme->rectDisplay.dy - 2;
+
+   // Skip the clear 1-pixel border to the left of the scroll bar
+   aRect.x = pme->rectDisplay.x + pme->rectDisplay.dx - pme->wScrollBarWidth;
+   aRect.y = pme->rectDisplay.y;
+   aRect.dx = 1;
+   aRect.dy = pme->rectDisplay.dy;
 
    // Now calculate the length of the black portion of the scroll bar
-   if (pContext->wLines >= pContext->nDisplayLines) {
-      int32 wWhitePixels;
-      int16 wLinesOffScreen;
-
-      wBlackPixels = (pContext->nDisplayLines *
-                      wScrollBarHeight /
-                      pContext->wLines);
-
-      if (wBlackPixels < 3) {
-         wBlackPixels = 3; // Minimum size of black part
-      }
-
-      if (wBlackPixels > wScrollBarHeight) {
-         wBlackPixels = wScrollBarHeight;
-      }
-
-      wLinesOffScreen = (int16)(pContext->wLines - pContext->nDisplayLines);
+   if (pme->wLines > pme->nDisplayLines) {
+      uint16 wWhitePixels;
+      uint16 wLinesOffScreen;
+      wBlackPixels = (uint16) ((uint32) pme->nDisplayLines *
+                                       (uint32) wScrollBarHeight
+                                       / (uint32) pme->wLines);
+      if (wBlackPixels < 3) wBlackPixels = 3; // Minimum size of black part
+      if (wBlackPixels > wScrollBarHeight) wBlackPixels = wScrollBarHeight;
+      wLinesOffScreen = (uint16) pme->wLines
+                        - (uint16) pme->nDisplayLines;
       wWhitePixels = wScrollBarHeight - wBlackPixels;
-      wTopWhitePixels = (wWhitePixels *
-                         pContext->wDisplayStartLine /
-                         wLinesOffScreen);
-
-      if (wWhitePixels && !wTopWhitePixels && pContext->wDisplayStartLine) {
+      wTopWhitePixels = (uint16) ((uint32) wWhitePixels
+                                          * (uint32) pme->wDisplayStartLine
+                                          / (uint32) wLinesOffScreen);
+      if (wWhitePixels && !wTopWhitePixels && pme->wDisplayStartLine) {
          // Be sure to show at least 1 pixel of white on the top if we're not
          // really scrolled all the way to the top
          wTopWhitePixels = 1;
       }
       wBottomWhitePixels = wWhitePixels - wTopWhitePixels;
-      if (!wBottomWhitePixels && wWhitePixels && pContext->wDisplayStartLine <
+      if (!wBottomWhitePixels && wWhitePixels && pme->wDisplayStartLine <
           wLinesOffScreen) {
          // Really we should show at least 1 pixel of white on the bottom
          if (wTopWhitePixels >= 2) {
             // Get it from the top white area
             --wTopWhitePixels;
             ++wBottomWhitePixels;
-         } else if (wBlackPixels > 3) {
+         }
+         else if (wBlackPixels > 3) {
             // Squeeze it out of the black area
             --wBlackPixels;
             ++wBottomWhitePixels;
          }
       }
-   } else {
+   }
+   else {
       wBlackPixels = wScrollBarHeight;
       wTopWhitePixels = 0;
       wBottomWhitePixels = 0;
@@ -3345,65 +3365,26 @@ static void TextCtl_DrawScrollBar(TextCtlContext *pContext)
 
    // Re-adjust aRect for scroll bar area itself
    ++aRect.x;
-   aRect.dx = (int16)pContext->wScrollBarWidth - 1;
+   aRect.dx = pme->wScrollBarWidth - 1;
 
-   // Frame the outer area of the scroll bar
-   IDISPLAY_FrameRect((IDisplay *)pContext->pIDisplay, &aRect);
-   scrollRect = aRect;
-   scrollRect.y = scrollRect.y -2;
-   scrollRect.dx = scrollRect.dx+4;
-   scrollRect.dy = scrollRect.dy +2;
-   IDISPLAY_FillRect(pContext->pIDisplay, &scrollRect, MAKE_RGB(0,0,0));
+   // Frame Position the outer area of the scroll bar
+   *prcFrame = aRect;
+
    // Now adjust aRect for just the inside of the scroll bar
    ++aRect.x;
-#ifdef FEATURE_SCROLLBAR_USE_STYLE
-   --aRect.dx;
-#else
    aRect.dx -= 2;
-#endif
    ++aRect.y;
    aRect.dy -= 2;
 
-   // Draw the top white pixels
+   // Skip the top white pixels
    if (wTopWhitePixels) {
-      aRect.dy = (int16) wTopWhitePixels;
-#ifdef FEATURE_SCROLLBAR_USE_STYLE
-      IDISPLAY_FillRect(pContext->pIDisplay,
-                        &aRect,
-                        MAKE_RGB(0xDE, 0xDE, 0xDE));
-#else
-      IDISPLAY_FillRect(pContext->pIDisplay,
-                        &aRect,
-                        RGB_WHITE);
-#endif
-
-      aRect.y += (int16) wTopWhitePixels;
+      aRect.y += wTopWhitePixels;
    }
-   // Draw the black pixels (we always have some of these)
-   aRect.dy = (int16) wBlackPixels;
-   if (aRect.dy + aRect.y > pContext->rectDisplay.y + wScrollBarHeight/*pContext->rectDisplay.dy*/)
-     aRect.dy = pContext->rectDisplay.y + wScrollBarHeight/*pContext->rectDisplay.dy*/ - aRect.y;
-#ifdef FEATURE_SCROLLBAR_USE_STYLE
-   IDISPLAY_FillRect(pContext->pIDisplay, &aRect, MAKE_RGB(0xFF, 0x70, 0x00));
-#else
-   IDISPLAY_FillRect(pContext->pIDisplay, &aRect, CLR_SYS_SCROLLBAR_FILL);//IDISPLAY_FillRect(pContext->pIDisplay, &aRect, RGB_BLACK);
-#endif
+   // Skip the black pixels (we always have some of these)
+   aRect.dy = wBlackPixels;
+   *prcThumb = aRect;
 
-   // Draw the bottom white pixels
-   if (wBottomWhitePixels) {
-      aRect.y += (int16) wBlackPixels;
-      aRect.dy = (int16) wBottomWhitePixels;
-      
-#ifdef FEATURE_SCROLLBAR_USE_STYLE
-      IDISPLAY_FillRect(pContext->pIDisplay, &aRect, MAKE_RGB(0xDE, 0xDE, 0xDE));
-      scrollRect = aRect;
-      scrollRect.y = aRect.dy+aRect.y-3;
-      scrollRect.dy = 3;
-      IDISPLAY_FillRect(pContext->pIDisplay, &scrollRect, MAKE_RGB(0, 0, 0));
-#else
-      IDISPLAY_FillRect(pContext->pIDisplay, &aRect, RGB_WHITE);
-#endif
-   }
+   return AEE_SUCCESS;
 }
 
 /*=============================================================================
@@ -3566,10 +3547,7 @@ static void TextCtl_DrawCursor(TextCtlContext *pContext,
 	#else
     scratch.dy = 17; 
 	#endif
-    //MSG_FATAL("scratch.x=%d,scratch.y=%d",scratch.x,scratch.y,0);
-	//MSG_FATAL("scratch.dx=%d,scratch.dy=%d",scratch.dx,scratch.dy,0);
-	//MSG_FATAL("clipRect.x=%d,clipRect.y=%d",clipRect->x,clipRect->y,0);
-	//MSG_FATAL("clipRect.dx=%d,clipRect.dy=%d",clipRect->dx,clipRect->dy,0);
+    
     if (IntersectRect(&draw, &scratch, clipRect))
     {
     	#if defined(FEATURE_LANG_ARABIC)
@@ -3776,19 +3754,10 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
    memset(&cursRect, 0, sizeof(cursRect));
 
    rectClip.x  = pContext->rectDisplay.x;
-   #if defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W208S)
-   rectClip.y  = pContext->rectDisplay.y+5;
-   #else
    rectClip.y  = pContext->rectDisplay.y;
-   #endif
    rectClip.dx = pContext->rectDisplay.dx;
-   #if defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W208S)
-   rectClip.dy = pContext->rectDisplay.dy-5;
-   #else
    rectClip.dy = pContext->rectDisplay.dy; 
-   #endif
-   //MSG_FATAL("pContext->rectDisplay=%d,rectClip.y=%d",pContext->rectDisplay.x,pContext->rectDisplay.y,0);
-   //MSG_FATAL("pContext->rectDisplay=%d,rectClip.dy=%d",pContext->rectDisplay.dx,pContext->rectDisplay.dy,0);
+
    if (bFrame) {
       rectClip.x  += 1;
       rectClip.y  += 1;
@@ -3806,10 +3775,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
       }
    }
    rectText = rectClip;
-   //MSG_FATAL("rectClipx=%d,rectClip.y=%d",rectClip.x,rectClip.y,0);
-   //MSG_FATAL("rectClipdx=%d,rectClip.dy=%d",rectClip.dx,rectClip.dy,0);
-   rectText.dy = pContext->nFontAscent + pContext->nFontDescent;
-
+   rectText.dy = MIN(rectClip.dy,(pContext->nFontAscent + pContext->nFontDescent));
    rectLeading = rectText;
    rectLeading.y += rectText.dy;
    rectLeading.dy = pContext->nFontLeading;
@@ -4491,7 +4457,7 @@ static void TextCtl_RestartEdit(TextCtlContext *pContext)
     {
         (*sTextModes[pContext->byMode].pfn_exit)(pContext); 
     }
-      if (sTextModes[pContext->byMode].pfn_restart)
+    if (sTextModes[pContext->byMode].pfn_restart)
     {
         (*sTextModes[pContext->byMode].pfn_restart)(pContext);
     }
@@ -4760,7 +4726,6 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
                 }
                 break;  
 			case AVK_SHIFT:
-				
 			    if(!pContext->is_isShift)
 			    {
 					pContext->is_isShift = FALSE;
@@ -4772,7 +4737,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 					pContext->m_islong = TRUE;
 				}
 				return TRUE;
-				break;
+				
 			case AVK_LCTRL:
 				if(!pContext->is_bAlt)
 				{
@@ -4785,7 +4750,6 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 					pContext->m_islong = TRUE;
 				}
 				return TRUE;
-				break;
 				
 			default:
 			    break;
@@ -5065,7 +5029,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 		                 }
 		                 pContext->m_islong = FALSE;
 		              }
-		              break;
+		              return TRUE;
 		        #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
 		        case AVK_LCTRL:
 		        	{
@@ -5083,13 +5047,13 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 		                 }
 		                 pContext->m_islong = FALSE;
 		        	}
-		        	break;
+		        	return TRUE;
 		        #endif
 				case AVK_CAPLK:
 					{
 						 pContext->m_bCaplk = !pContext->m_bCaplk;
 					}
-					break;
+					return TRUE;
 		        case AVK_LEFT:
 		            {
 		            if(FOCUS_SELECTION == pContext->sFocus)
@@ -5485,7 +5449,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 								  }
 							}
 							return TRUE;
-							break;
+							
 						 case AVK_SHIFT:
 							  {
 							  	 #ifndef FEATURE_VERSION_S1000T
@@ -5497,14 +5461,15 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 								 {
 									pContext->is_isShift = TRUE;
 								 }
+                                 MSG_FATAL("AVK_SHIFT %d",pContext->is_isShift,0,0);
 								 #endif
 							  }
-							  break;
+							  return TRUE;
 						case AVK_CAPLK:
 							{
 								 pContext->m_bCaplk = !pContext->m_bCaplk;
 							}
-							break;
+							return TRUE;
 						case AVK_LEFT:
 							{
 							if(FOCUS_SELECTION == pContext->sFocus)
@@ -6433,7 +6398,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
 	                  }
 	            }
 	            return TRUE;
-	            break;
+	            
 	         case AVK_SHIFT:
 	              {
 	              	 #if 1//ndef FEATURE_VERSION_S1000T
@@ -6447,13 +6412,13 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
 	                 }
 	                 #endif
 	              }
-	              break;
+	              return TRUE;
 	        case AVK_CAPLK:
 	             {
 					 pContext->m_bCaplk = !pContext->m_bCaplk;
 	             }
 	             return TRUE;
-	             break;
+	             
 	        case AVK_LEFT:
 	            {
 	            if(FOCUS_SELECTION == pContext->sFocus)
@@ -6713,6 +6678,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
                     return FALSE;
                 }
             }
+            MSG_FATAL("Call TextCtl_NoSelection",0,0,0);
             TextCtl_NoSelection(pContext);
             TextCtl_AddChar(pContext,ch);
             //bRet = T9_AW_DisplayText ( pContext, key);  
@@ -7474,7 +7440,7 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	                  }
 	            }
 	            return TRUE;
-	            break;
+	            
 	         case AVK_SHIFT:
 	              {
 	              	 #if  1//ndef FEATURE_VERSION_S1000T
@@ -7488,13 +7454,13 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	                 }
 	                 #endif
 	              }
-	              break;
+	              return TRUE;
 	        case AVK_CAPLK:
 	             {
 					 pContext->m_bCaplk = !pContext->m_bCaplk;
 	             }
 	             return TRUE;
-	             break;
+	             
 	        case AVK_LEFT:
 	            {
 	            if(FOCUS_SELECTION == pContext->sFocus)
@@ -7903,10 +7869,10 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	                  }
 	            }
 	            return TRUE;
-	            break;
+	            
 	         case AVK_SHIFT:
 	              {
-	              	  #ifndef FEATURE_VERSION_S1000T
+	              	 #ifndef FEATURE_VERSION_S1000T
 	                 if(pContext->is_isShift)
 	                 {
 	                    pContext->is_isShift = FALSE;
@@ -7917,13 +7883,13 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	                 }
 	                 #endif
 	              }
-	              break;
+	              return TRUE;
 	        case AVK_CAPLK:
 	             {
 					 pContext->m_bCaplk = !pContext->m_bCaplk;
 	             }
 	             return TRUE;
-	             break;
+	             
 	        case AVK_LEFT:
 	            {
 	            if(FOCUS_SELECTION == pContext->sFocus)
@@ -8328,7 +8294,7 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	                  }
 	            }
 	            return TRUE;
-	            break;
+	            
 	         case AVK_SHIFT:
 	              {
 	              	 #ifndef FEATURE_VERSION_S1000T
@@ -8342,13 +8308,13 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	                 }
 	                 #endif
 	              }
-	              break;
+	              return TRUE;
 	        case AVK_CAPLK:
 	             {
 					 pContext->m_bCaplk = !pContext->m_bCaplk;
 	             }
 	             return TRUE;
-	             break;
+	             
 	        case AVK_LEFT:
 	            {
 	            if(FOCUS_SELECTION == pContext->sFocus)
@@ -9549,8 +9515,6 @@ static void T9TextCtl_CJK_MYANMAR_Restart(TextCtlContext *pContext)
     pContext->rectMyanmarInput.dy = pContext->rectMyanmarSyllableInput.dy + pContext->rectMyanmarTextInput.dy;    
     pContext->rectMyanmarInput.y = pContext->rectDisplay.y + pContext->rectDisplay.dy - pContext->rectMyanmarInput.dy;            
     
-  
-        
     TextCtl_NoSelection(pContext);
     TextCtl_TextChanged(pContext);
     pContext->nMSelectionSelectd = 0;       // no default selected word   
@@ -11994,7 +11958,7 @@ static boolean TextCtl_NumbersKey(TextCtlContext *pContext, AEEEvent eCode,AVKTy
 	                }
 	            }
 	            return TRUE;
-	            break;
+	            
 	        case AVK_SHIFT:
 	              {
 	                 if(pContext->is_isShift)
@@ -12006,7 +11970,7 @@ static boolean TextCtl_NumbersKey(TextCtlContext *pContext, AEEEvent eCode,AVKTy
 	                    pContext->is_isShift = TRUE;
 	                 }
 	              }
-	              break;
+	              return TRUE;
 		  
 	        case AVK_0:
 	            if(pContext->dwProperties & TP_EDITNUMBER_PTSTRING)     
@@ -13133,97 +13097,6 @@ static uint8 TextCtl_PenHitToTrack(TextCtlContext * pme, int16 wXPos, int16 wYPo
 	}
 	*pwData = 0;
 	return 0;
-}
-
-
-static int TextCtl_GetScrollBarRects(TextCtlContext * pme, AEERect * prcFrame, AEERect * prcThumb)
-{
-	AEERect aRect;
-	uint16 wBlackPixels;
-	uint16 wTopWhitePixels;
-	uint16 wBottomWhitePixels;
-	uint16 wScrollBarHeight, triheight;
-
-	if(pme->rectDisplay.dy > 2 * pme->wScrollBarWidth)
-	{
-		wScrollBarHeight = (uint16)(pme->rectDisplay.dy
-			- 2 * pme->wScrollBarWidth);
-		triheight = pme->wScrollBarWidth;
-	}
-	else
-	{
-		wScrollBarHeight = ((pme->rectDisplay.dy%2==0)?2:1);
-		triheight = (pme->rectDisplay.dy - wScrollBarHeight)/2;
-	}
-
-	// Skip the clear 1-pixel border to the left of the scroll bar
-	aRect.x = pme->rectDisplay.x + pme->rectDisplay.dx - pme->wScrollBarWidth;
-	aRect.y = pme->rectDisplay.y;
-	aRect.dx = pme->wScrollBarWidth;
-	aRect.dy = pme->rectDisplay.dy;
-
-	// Now calculate the length of the black portion of the scroll bar
-	if (pme->wLines > pme->nDisplayLines) {
-		uint16 wWhitePixels;
-		uint16 wLinesOffScreen;
-		wBlackPixels = (uint16) ( (uint16)pme->nDisplayLines *
-			wScrollBarHeight
-			/  pme->wLines);
-		if (wBlackPixels < 3) wBlackPixels = 3; // Minimum size of black part
-		if (wBlackPixels > wScrollBarHeight) wBlackPixels = wScrollBarHeight;
-		wLinesOffScreen = (uint16) pme->wLines
-			- (uint16) pme->nDisplayLines;
-		wWhitePixels = wScrollBarHeight - wBlackPixels;
-		wTopWhitePixels = (uint16) ((uint32) wWhitePixels
-			* (uint32) pme->wDisplayStartLine
-			/ (uint32) wLinesOffScreen);
-		if (wWhitePixels && !wTopWhitePixels && pme->wDisplayStartLine) {
-			// Be sure to show at least 1 pixel of white on the top if we're not
-			// really scrolled all the way to the top
-			wTopWhitePixels = 1;
-		}
-		wBottomWhitePixels = wWhitePixels - wTopWhitePixels;
-		if (!wBottomWhitePixels && wWhitePixels && pme->wDisplayStartLine <
-			wLinesOffScreen) {
-				// Really we should show at least 1 pixel of white on the bottom
-				if (wTopWhitePixels >= 2) {
-					// Get it from the top white area
-					--wTopWhitePixels;
-					++wBottomWhitePixels;
-				}
-				else if (wBlackPixels > 3) {
-					// Squeeze it out of the black area
-					--wBlackPixels;
-					++wBottomWhitePixels;
-				}
-		}
-	}
-	else {
-		wBlackPixels = wScrollBarHeight;
-		wTopWhitePixels = 0;
-		wBottomWhitePixels = 0;
-	}
-
-	// Re-adjust aRect for scroll bar area itself
-	//   ++aRect.x;
-	//   aRect.dx = pme->wScrollBarWidth - 1;
-
-	// Frame Position the outer area of the scroll bar
-	*prcFrame = aRect;
-
-	// Now adjust aRect for just the inside of the scroll bar
-	//   ++aRect.x;
-	//   aRect.dx -= 2;
-	//   ++aRect.y;
-	//   aRect.dy -= 2;
-
-	// Skip the top white pixels
-	aRect.y += wTopWhitePixels + triheight;
-	// Skip the black pixels (we always have some of these)
-	aRect.dy = (int16)wBlackPixels;
-	*prcThumb = aRect;
-
-	return AEE_SUCCESS;
 }
 
 /*=============================================================================
