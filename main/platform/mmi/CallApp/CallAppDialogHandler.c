@@ -7297,6 +7297,7 @@ static void CallApp_DrawDialerString(CCallApp   *pMe,  AECHAR const *dialStr)
     AECHAR        *dstStr;
     int            len;
     int            y;
+    int            tempy;
     int            fits;
     AEERect        dialerRect;
     int            nLineMax;
@@ -7465,11 +7466,16 @@ static void CallApp_DrawDialerString(CCallApp   *pMe,  AECHAR const *dialStr)
     {
         y -= pMe->m_nCurrNumHeight;
         srcStr -= pMe->m_nCurrLineFits[i];
+        MSG_FATAL("pMe->m_nCurrNumHeight=%d---pMe->m_large_Num_Height=%d",pMe->m_nCurrNumHeight,pMe->m_large_Num_Height,0);
         #ifdef FEATURE_VERSION_1110W516
-        IFONT_DrawText(pMe->m_pCurrNumFont, pBmp, 0, y-10, srcStr, pMe->m_nCurrLineFits[i], clrFG, 0, &dialerRect, IDF_TEXT_TRANSPARENT|IDF_ALIGN_RIGHT);
+        if((int)pMe->m_nCurrNumHeight == 30 ||(int)pMe->m_nCurrNumHeight == pMe->m_large_Num_Height)
+          tempy = y-10;
+        else
+          tempy = y;  
         #else
-        IFONT_DrawText(pMe->m_pCurrNumFont, pBmp, 0, y, srcStr, pMe->m_nCurrLineFits[i], clrFG, 0, &dialerRect, IDF_TEXT_TRANSPARENT|IDF_ALIGN_RIGHT);
+          tempy = y;
         #endif
+        IFONT_DrawText(pMe->m_pCurrNumFont, pBmp, 0, tempy, srcStr, pMe->m_nCurrLineFits[i], clrFG, 0, &dialerRect, IDF_TEXT_TRANSPARENT|IDF_ALIGN_RIGHT);
         #ifndef FEATURE_LCD_TOUCH_ENABLE
         y -= pMe->m_nCurrLineSpace;
 		#endif
