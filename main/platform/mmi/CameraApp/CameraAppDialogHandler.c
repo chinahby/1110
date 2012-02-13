@@ -4556,7 +4556,7 @@ static void CameraApp_RecordVideo(CCameraApp *pMe)
 
 	//Add By zzg 2011_12_30		
 	//result = ICAMERA_SetAudioEncode(pMe->m_pCamera, AEECLSID_MEDIAAAC, 0);	
-	result = ICAMERA_SetAudioEncode(pMe->m_pCamera, AEECLSID_MEDIAQCP, 13);	//MM_QCP_FORMAT_FIXED_12_2_AMR
+	result = ICAMERA_SetAudioEncode(pMe->m_pCamera, AEECLSID_MEDIAQCP, 0);	//MM_QCP_FORMAT_FIXED_12_2_AMR
 	MSG_FATAL("***zzg ICAMERA_SetAudioEncode result=%d",result,0,0);
 	//Add End
 
