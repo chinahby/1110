@@ -9342,7 +9342,7 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                         {
                             return TRUE;
                         }
-                        DBGPRINTF("m_szEmail=%S, pwsText=%S,m_isSendToAlbumOrEmain=%d",pItem->m_szEmail, pwsText, pMe->m_isSendToAlbumOrEmain);
+                       //DBGPRINTF("m_szEmail=%S, pwsText=%S,m_isSendToAlbumOrEmain=%d",pItem->m_szEmail, pwsText, pMe->m_isSendToAlbumOrEmain);
 #ifdef FEATURE_USES_MMS                  
                         if(pMe->m_isSendToAlbumOrEmain)       
                         {
