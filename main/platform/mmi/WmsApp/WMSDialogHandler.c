@@ -8968,6 +8968,13 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                             }
                             else
                             {
+#ifdef FEATURE_USES_MMS                  
+                                if(pMe->m_isSendToAlbumOrEmain)
+                                {
+                                    MEMSET(pItem->m_szEmail, 0, sizeof(pItem->m_szEmail));
+                                }
+                                else
+#endif                                 
                                 MEMSET(pItem->m_szName, 0, sizeof(pItem->m_szName));
                             }
 #ifdef FEATURE_USES_MMS                  
@@ -8977,7 +8984,7 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                             }
                             else
 #endif                
-                            (void)ITEXTCTL_GetText(pIText, pItem->m_szTo, MAX_EMAILADD_LEN + 1);
+                            (void)ITEXTCTL_GetText(pIText, pItem->m_szTo, MAX_PH_DIGITS + 1);
                             
                             // 调用电话本接口获取人名
                             WMSUtil_GetContactName(pMe, pItem->m_szTo, pItem->m_szName, MAX_TITLE_LEN);
@@ -8985,22 +8992,39 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                             if(pMe->m_isMMS)
                             {
                                 uint8 len = 0;
+                                uint8 count = IVector_Size(pMe->m_pSendList);
+                                MSG_FATAL("IDD_TONUMLIST_Handler count=%d", count, 0, 0);
                                 if(NULL == pMe->m_EncData.pMessage)
                                 {
                                     pMe->m_EncData.pMessage = MALLOC(sizeof(MMS_WSP_MESSAGE_SEND));
                                     MEMSET(pMe->m_EncData.pMessage,NULL,sizeof(MMS_WSP_MESSAGE_SEND));
                                 }
-                                
-#ifdef FEATURE_USES_MMS                  
-                                if(pMe->m_isSendToAlbumOrEmain)
+                                if (count > 0)
                                 {
-                                    WSTRTOSTR(pItem->m_szEmail,(char*)pMe->m_EncData.pMessage->hTo,MMS_MAX_SINGLE_ADDRESS_SIZE);
+                                    int index = 0;
+                                    char TempTo[MAX_EMAILADD_LEN];
+                                    for(; index < count; ++index)
+                                    {
+                                        pItem = (CMultiSendItemInfo *)IVector_ElementAt(pMe->m_pSendList, index);
+                                        if (NULL != pItem)
+                                        {
+                                            if(pMe->m_isSendToAlbumOrEmain)
+                                            {
+                                                DBGPRINTF("pItem->m_szEmail=%S", pItem->m_szEmail);
+                                                WSTRTOSTR(pItem->m_szEmail,(char*)TempTo,sizeof(TempTo));
+                                            }
+                                            else
+                                            {
+                                                DBGPRINTF("pItem->m_szTo=%S", pItem->m_szTo);
+                                                WSTRTOSTR(pItem->m_szTo,(char*)TempTo,sizeof(TempTo));
+                                            } 
+                                            STRCAT((char*)pMe->m_EncData.pMessage->hTo,TempTo);
+                                            STRCAT((char*)pMe->m_EncData.pMessage->hTo, ",");
+                                            MEMSET(TempTo, 0, sizeof(TempTo));
+                                        }                                        
+                                    }
                                 }
-                                else
-#endif                                
-                                WSTRTOSTR(pItem->m_szTo,(char*)pMe->m_EncData.pMessage->hTo,MMS_MAX_SINGLE_ADDRESS_SIZE);
-
-                                MSG_FATAL("IDD_SENDING_Handler to:%s",pMe->m_EncData.pMessage->hTo,0,0);
+                                DBGPRINTF("pMessage->hTo:%s",pMe->m_EncData.pMessage->hTo,0,0);
                                 pMe->m_EncData.pMessage->iRetrieveStatus = MMS_VALUE_USELESSNESS;
                                 pMe->m_EncData.pMessage->iDate = MMS_VALUE_USELESSNESS;
                                 pMe->m_EncData.pMessage->iPriority = MMS_VALUE_USELESSNESS;
@@ -9160,12 +9184,6 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
         
         case EVT_CTL_TAB:
         	MSG_FATAL("EVT_CTL_TAB...............dwParam=%d",dwParam,0,0);
-#ifdef FEATURE_USES_MMS                  
-            if(pMe->m_isSendToAlbumOrEmain)
-            {
-               // return TRUE;
-            }
-#endif               
             if (pMe->m_eMakeAddListMode == MAKEADDLIST_NONE)
             {// 非群发
                 return TRUE;
@@ -9351,7 +9369,7 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                             if (WSTRCMP(pItem->m_szEmail, pwsText) != 0)
                             {
                                 //这里更新的记录，应该保存到m_szTo里去，因为发送时都是从m_szTo取地址的
-                                (void)ITEXTCTL_GetText(pIText, pItem->m_szEmail, MAX_PH_DIGITS);
+                                (void)ITEXTCTL_GetText(pIText, pItem->m_szEmail, MAX_EMAILADD_LEN);
                                 DBGPRINTF("pItem->m_szEmail=%S",pItem->m_szEmail);
                                 // 清除以前可能存在的数据
                                 MEMSET(pItem->m_szEmail, 0, sizeof(pItem->m_szEmail));                               

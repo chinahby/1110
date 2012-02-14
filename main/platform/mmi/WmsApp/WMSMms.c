@@ -916,6 +916,8 @@ static int MMS_Encode_header(uint8* mms_context,int nType,MMS_WSP_ENCODE_SEND* p
             DBGPRINTF("pData->pMessage->hCc=%s",pData->pMessage->hCc);
             DBGPRINTF("pData->pMessage->hBcc=%s",pData->pMessage->hBcc);
             DBGPRINTF("pData->pMessage->hFrom=%s",pData->pMessage->hFrom);
+            //如果是群发到手机时，需要在每一个hTo后面加"/TYPE=PLMN",邮箱则不用。再在WMS_MMS_PDU_SendRequest里循环调用
+            //pCurPos = WMS_MMS_PDUHeader_Encode(pCurPos,WMS_MMS_PDU_To,pData->pMessage->hTo,0);则可实现邮件群发
         	MMS_Encode_Address(pData->pMessage->hTo);
         	MMS_Encode_Address(pData->pMessage->hCc);
         	MMS_Encode_Address(pData->pMessage->hBcc);
@@ -1532,7 +1534,7 @@ int WMS_MMS_SEND_PDU(WMS_MMS_PDU_MessageTypeValue type,uint8* hPDU,MMS_WSP_ENCOD
 uint8* WMS_MMS_PDU_SendRequest(uint8* pBuff,MMS_WSP_ENCODE_SEND *pData)
 {
     uint8* pCurPos = pBuff;
-    
+    MSG_FATAL("WMS_MMS_PDU_SendRequest Start",0,0,0);
     //X-Mms-Message-Type
     pCurPos = WMS_MMS_PDUHeader_Encode(pCurPos,WMS_MMS_PDU_MessageType,NULL,WMS_MMS_PDU_MSendReq);
 
@@ -1547,10 +1549,29 @@ uint8* WMS_MMS_PDU_SendRequest(uint8* pBuff,MMS_WSP_ENCODE_SEND *pData)
     
     // From 
     pCurPos = WMS_MMS_PDUHeader_Encode(pCurPos,WMS_MMS_PDU_FLAGS_EN(WMS_MMS_PDU_From,INSERT_ADDRESS),pData->pMessage->hFrom,0);
-    
-    // To 
-    pCurPos = WMS_MMS_PDUHeader_Encode(pCurPos,WMS_MMS_PDU_To,pData->pMessage->hTo,0);
-
+    {
+        uint8 TempTo[MAX_EMAILADD_LEN+1];
+        int len = STRLEN((char*)pData->pMessage->hTo);
+        uint8 *to = pData->pMessage->hTo;
+        int i, j;
+        for(i=0, j=0; i < len; ++i)
+        {
+            if(*to == ',')
+            {
+                DBGPRINTF("len=%d, i=%d, j=%d, TempTo=%s",len, i, j, TempTo);
+                TempTo[j] = '\0';
+                pCurPos = WMS_MMS_PDUHeader_Encode(pCurPos,WMS_MMS_PDU_To,TempTo,0);
+                DBGPRINTF("WMS_MMS_PDU_SendRequest TempTo=%s", TempTo);
+                MEMSET(TempTo, '\0', sizeof(TempTo));
+                j = 0;
+                to++;
+                continue;
+            }
+            TempTo[j++] = *to++;
+            // To 
+           // pCurPos = WMS_MMS_PDUHeader_Encode(pCurPos,WMS_MMS_PDU_To,pData->pMessage->hTo,0);
+        }
+    }
     // Cc  
     pCurPos = WMS_MMS_PDUHeader_Encode(pCurPos,WMS_MMS_PDU_Cc,pData->pMessage->hCc,0);
 

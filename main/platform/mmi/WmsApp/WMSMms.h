@@ -33,7 +33,7 @@
 #define MMS_TEST
 #endif
 /////////////////////////////////////////////////////////////
-
+#define MAX_EMAILADD_LEN               64 
 #define MMS_DELREP_STATUS_FLAG_NOREQ 0x0000
 #define MMS_DELREP_STATUS_FLAG_NORCV 0x0001
 #define MMS_DELREP_STATUS_FLAG_OK 0x0002
@@ -51,7 +51,7 @@
 #define MMS_MAX_MESSAGE_ID_SIZE 40
 #define MMS_MAX_ADDRESS_SIZE	2700
 #define	MMS_MAX_ADDRESS_COUNT	70
-#define MMS_MAX_SINGLE_ADDRESS_SIZE 90
+#define MMS_MAX_SINGLE_ADDRESS_SIZE MAX_EMAILADD_LEN*20//最多同时群发20个联系人
 #define MMS_MAX_CONTENT_LOCATION	100
 #define MMS_MAX_CONTENT_ID	100
 #define MMS_MAX_CONTENT_TYPE	100
@@ -431,7 +431,7 @@ typedef struct _wsp_decoder_data_delrep_received
 typedef struct _wsp_encoder_data_message_send
 {
 	uint8 hFrom[MMS_MAX_SINGLE_ADDRESS_SIZE];
-	uint8 hTo[MMS_MAX_SINGLE_ADDRESS_SIZE];
+	uint8 hTo[MMS_MAX_SINGLE_ADDRESS_SIZE];//这里的大小应该变成MAX_EMAILADD_LEN*最大允许群发的个数
 	uint8 hCc[MMS_MAX_SINGLE_ADDRESS_SIZE];
 	uint8 hBcc[MMS_MAX_SINGLE_ADDRESS_SIZE];
 	uint8 hSubject[MMS_MAX_SUBJECT_SIZE];
