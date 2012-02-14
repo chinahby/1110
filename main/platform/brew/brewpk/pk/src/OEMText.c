@@ -3754,9 +3754,17 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
    memset(&cursRect, 0, sizeof(cursRect));
 
    rectClip.x  = pContext->rectDisplay.x;
+   #ifdef FEATURE_VERSION_1110W516
+   rectClip.y  = pContext->rectDisplay.y+5;
+   #else
    rectClip.y  = pContext->rectDisplay.y;
+   #endif
    rectClip.dx = pContext->rectDisplay.dx;
+   #ifdef FEATURE_VERSION_1110W516
+   rectClip.dy = pContext->rectDisplay.dy-5;
+   #else
    rectClip.dy = pContext->rectDisplay.dy; 
+   #endif 
 
    if (bFrame) {
       rectClip.x  += 1;
