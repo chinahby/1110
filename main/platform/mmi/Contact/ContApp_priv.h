@@ -167,7 +167,7 @@ extern sSelectFieldListNode* pCurSelectFieldNode;
 
 #define MAX_INPUT_NAME_TH               (32)
 #define MAX_INPUT_NUM_CARD              (20)
-#define MAX_INPUT_NUM                   (16)
+#define MAX_INPUT_NUM                   (32)
 #define MAX_INPUT_EMAIL                 (64)
 #define MAX_INPUT_URL                   (128)
 #define MAX_INPUT_NOTES                 (128)
