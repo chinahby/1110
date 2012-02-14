@@ -419,6 +419,9 @@ typedef PACKED struct _Key_pad_Cfg
 #elif defined(FEATURE_VERSION_VG68)
 #define   OEMNV_STARTUP_MUSIC 9
 #define   OEMNV_SHUTDOWN_MUSIC 10
+#elif defined(FEATURE_VERSION_1110W516)
+#define   OEMNV_STARTUP_MUSIC 11
+#define   OEMNV_SHUTDOWN_MUSIC 11
 #else
 #ifdef FEATURE_USES_LOWMEM
 #define   OEMNV_STARTUP_MUSIC 4
