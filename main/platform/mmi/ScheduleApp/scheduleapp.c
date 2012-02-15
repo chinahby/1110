@@ -429,12 +429,6 @@ static void CScheduleApp_FreeAppData(CScheduleApp *pme)
         (void) ISOUND_Release(pme->m_pSound);
         pme->m_pSound = NULL;
     }
-
-    if(pme->m_pActiveDlg != NULL)
-    {
-        (void) IDIALOG_Release(pme->m_pActiveDlg);
-        pme->m_pActiveDlg = NULL;
-    }
 	if(pme->m_pIAnn)
     {
         IANNUNCIATOR_Release(pme->m_pIAnn);
