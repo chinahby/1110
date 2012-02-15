@@ -8999,6 +8999,10 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                                     pMe->m_EncData.pMessage = MALLOC(sizeof(MMS_WSP_MESSAGE_SEND));
                                     MEMSET(pMe->m_EncData.pMessage,NULL,sizeof(MMS_WSP_MESSAGE_SEND));
                                 }
+                                if(!pMe->m_isSendToAlbumOrEmain)
+                                {
+                                    STRCAT((char*)pMe->m_EncData.pMessage->hTo, "PLMN");
+                                }
                                 if (count > 0)
                                 {
                                     int index = 0;
