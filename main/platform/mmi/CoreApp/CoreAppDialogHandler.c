@@ -2577,7 +2577,15 @@ static boolean  IDD_UIMERR_Handler(void       *pUser,
             {
                 uint16    nResID = 0;
                 AECHAR    *wTipsMsg = NULL;
-                
+
+#ifdef FEATURE_VERSION_W208S                     	
+                // 设置静态控件文本                
+                (void)ISTATIC_SetText(pStatic,
+				                        NULL,
+				                        NULL,
+				                        AEE_FONT_NORMAL,
+				                        AEE_FONT_NORMAL);   				
+#else
                 switch (pMe->m_eUIMErrCode)
                 {
                     // 没插入卡
@@ -2626,6 +2634,7 @@ static boolean  IDD_UIMERR_Handler(void       *pUser,
                         wTipsMsg = NULL;
                     }
                 }
+#endif				
                 
                 ISTATIC_SetActive(pStatic, TRUE);
                 (void) ISTATIC_Redraw(pStatic);
@@ -5036,11 +5045,15 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
             }
             else
             {
+#ifdef FEATURE_VERSION_W208S                     	
+                //Do nothing  				
+#else            
         		(void) ISHELL_LoadResString(pMe->a.m_pIShell,
                                             AEE_COREAPPRES_LANGFILE,
                                             IDS_NORUIM,
                                             wszBuf,
                                             nSize);
+#endif
             }
     }
     else

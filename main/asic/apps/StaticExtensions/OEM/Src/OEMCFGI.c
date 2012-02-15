@@ -3497,6 +3497,10 @@ void OEM_InitPreference(void)
 #endif
 
   (void) OEMNV_Get( NV_BANNER_I, &nvi );
+
+#ifdef FEATURE_VERSION_W208S
+  memset(nvi_cache.banner, 0, sizeof(nvi_cache.banner));
+#else
   {
      /* Convert the nv banner data from UTF-8 to Unicode */
      int bannerLen=0;
@@ -3511,6 +3515,9 @@ void OEM_InitPreference(void)
                        nvi_cache.banner,
                        sizeof(nvi_cache.banner) - sizeof(AECHAR));
   }
+#endif
+
+  
 
   (void) OEMNV_Get( NV_MENU_FORMAT_I, &nvi );
   nvi_cache.menu_format = (byte)nvi.menu_format;
@@ -4988,6 +4995,9 @@ int OEM_SetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
    case CFGI_BANNER:
       if(!pBuff) return EFAILED;
 #ifndef WIN32
+#ifdef FEATURE_VERSION_W208S
+	  memset((void *)nvi.banner.letters, 0, sizeof(nvi.banner.letters));
+#else
       WSTRNCOPYN(nvi_cache.banner,
                  sizeof(nvi_cache.banner)/sizeof(AECHAR),
                  (AECHAR*) pBuff,
@@ -4999,6 +5009,7 @@ int OEM_SetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
                         WSTRLEN((AECHAR*) pBuff),
                         (byte *)nvi.banner.letters,
                         sizeof(nvi.banner.letters));
+#endif	  
 
 
       (void) OEMNV_Put( NV_BANNER_I, &nvi );
