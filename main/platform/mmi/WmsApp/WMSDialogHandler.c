@@ -13206,7 +13206,9 @@ static boolean IDD_MSGOPTS_Handler(void *pUser,
                         {
                             MENU_ADDITEM(pMenu, IDS_VIEW);
                         }
+						#ifndef FEATURE_VERSION_W208S						
                         MENU_ADDITEM(pMenu, IDS_RESEND);
+						#endif
                         MENU_ADDITEM(pMenu, IDS_FORWARD);
                         MENU_ADDITEM(pMenu, IDS_DELETE);
                         MENU_ADDITEM(pMenu, IDS_DELETEALL);
