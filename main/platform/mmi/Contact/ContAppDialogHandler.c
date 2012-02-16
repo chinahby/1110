@@ -10399,7 +10399,7 @@ static boolean  CContApp_HandleEditDlgEvent( CContApp  *pMe,
                 // Set menu select
                 IMENUCTL_SetSel(pMenuCtl, pMe->m_wSelectEdit);
             }
-            
+            (void)IMENUCTL_Redraw(pMenuCtl);
             // Draw prompt bar here
             if( IDI_EDIT_MENU_RINGTONE == IMENUCTL_GetSel(pMenuCtl))
             {
