@@ -6263,7 +6263,7 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
                 // Set menu select
                 IMENUCTL_SetSel(pMenuCtl, pMe->m_wSelectEdit);
             }
-            
+            (void)IMENUCTL_Redraw(pMenuCtl);
             // Draw prompt bar here
             if( IDI_ADDNEW_MENU_SELECTRINGTONE == IMENUCTL_GetSel(pMenuCtl))
             {
