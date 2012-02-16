@@ -217,7 +217,11 @@ when        who    what, where, why
 ---------------------------------------------------------------------------*/
 #define DSS_MAX_SYS_APPS     1 /* max no of sys apps, 1 for lingering sock */
 #ifdef FEATURE_LOW_MEMORY_USAGE
+#ifdef FEATURE_SUPPORT_WAP_APP
+  #define DSS_MAX_APPS         (25 + DSS_MAX_SYS_APPS)      /* max no of apps */
+#else
   #define DSS_MAX_APPS         ( 3 + DSS_MAX_SYS_APPS)      /* max no of apps */
+#endif
 #else
   #define DSS_MAX_APPS         (25 + DSS_MAX_SYS_APPS)      /* max no of apps */
 #endif
