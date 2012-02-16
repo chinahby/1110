@@ -120,7 +120,7 @@ static void disp_ic_init(void)
     LCD_WRITE_DATA(0x0A);   //0x0E
     
     LCD_WRITE_CMD(0x36); //MX, MY, RGB mode
-    LCD_WRITE_DATA(0xC8);
+    LCD_WRITE_DATA(0xC0);//0xc8
     //------------------------------------ST7735R Gamma Sequence-----------------------------------------//
     LCD_WRITE_CMD(0xe0);
     LCD_WRITE_DATA(0x02);
