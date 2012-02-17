@@ -1990,6 +1990,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                     //	MEMSET(pMe->m_DialString,0,MAX_SIZE_DIALER_TEXT);
                     //}
                     len = WSTRLEN(pMe->m_DialString);
+                    MSG_FATAL("pMe->m_DialString len=%d",len,0,0);
 #ifdef FEATURE_EDITABLE_RECORD
                    if(pMe->m_bEditRecNumber)
                    {
@@ -2034,9 +2035,14 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
               		   CallApp_Display_Number(pMe);
               		   // Draw it now!
               		   IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                       if(pMe->m_msg_text_id == IDS_NUM_TOO_LONG)
+                       {
+                          pMe->m_msg_text_id=0;
+                       }
                        CLOSE_DIALOG(DLGRET_OK)
                        return TRUE;
                     }
+
 #ifdef FEATURE_EDITABLE_NUMBER
                     if(pMe->m_nCursorPos == 0)
                     {
