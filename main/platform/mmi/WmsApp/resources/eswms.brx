@@ -662,7 +662,7 @@
 		<Text>Como Recibida</Text>
 	</String>
 	<String Id="1042" Name="IDS_ADD_TO_RESTRICT_LIST">
-		<Text>Add to restrict list</Text>
+		<Text>A?adir a lista restringida</Text>
 	</String>
 </Strings>
 <Dialogs>
