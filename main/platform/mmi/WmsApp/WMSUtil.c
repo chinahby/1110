@@ -2104,7 +2104,9 @@ wms_client_message_s_type *WmsApp_PackPhrase(WmsApp *pMe,
         
         // Ê±¼ä´Á
         {
-        	uint32	sec = 0;					
+        	uint32	sec = 0;	
+
+			/*
 			byte	btTimeStamp = 0;
 		    
 			(void) ICONFIG_GetItem(pMe->m_pConfig,
@@ -2122,6 +2124,9 @@ wms_client_message_s_type *WmsApp_PackPhrase(WmsApp *pMe,
 				sec = GETTIMESECONDS();
 				MSG_FATAL("***zzg GETTIMESECONDS 11 dwSecs=%d***", sec, 0, 0);
 			}  
+			*/
+
+			sec = GETTIMESECONDS();
             
             ConvertMStoMcTime(sec, &pCltTsData->u.cdma.mc_time);
         }
@@ -3563,6 +3568,8 @@ int GetSeamlessSMSInfo(char *szInfoEx, int nSize)
  		MSG_FATAL("Get NV_MIN1_I : 0x%x",nvi.min1.min1[1],0,0);
  		value = nvi.min1.min1[1];
     }
+
+	MSG_FATAL("***zzg GetSeamlessSMSInfo  value=%d***", value, 0, 0);
 
     temp = (word) (value>>14 );
     *txt++ = mintable[ (temp/100) %10];

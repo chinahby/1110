@@ -3429,7 +3429,7 @@ static boolean IDD_SETTING_Handler(void   *pUser,
 
             // 菜单项初始化
             MENU_ADDITEM(pMenu, IDS_MSGVALIDITY);
-			MENU_ADDITEM(pMenu, IDS_TIME_STAMP);	//Add By zzg 2012_02_04
+			//MENU_ADDITEM(pMenu, IDS_TIME_STAMP);	//Add By zzg 2012_02_04
 #if (!defined FEATURE_CARRIER_TAIWAN_APBW) && (!defined FEATURE_CARRIER_THAILAND_HUTCH)
             MENU_ADDITEM(pMenu, IDS_REPORTTITLE); //IDS_DELIVERYREPORTS);
 #endif            
@@ -3868,6 +3868,8 @@ static boolean IDD_GETDT_Handler(void   *pUser,
             if (pMe->m_rsvDateTime.dwSecs == 0)
             {
             	uint32  dwSecs;
+
+				/*
 				byte	btTimeStamp = 0;
 			    
 				(void) ICONFIG_GetItem(pMe->m_pConfig,
@@ -3885,7 +3887,10 @@ static boolean IDD_GETDT_Handler(void   *pUser,
 					dwSecs = GETTIMESECONDS();
 					MSG_FATAL("***zzg GETTIMESECONDS 4 dwSecs=%d***", dwSecs, 0, 0);
 				}   
-	
+				*/
+
+				dwSecs = GETTIMESECONDS();
+				
                 pMe->m_rsvDateTime.dwSecs = dwSecs;	
 				
             }
@@ -3993,8 +3998,9 @@ static boolean IDD_GETDT_Handler(void   *pUser,
                     uint32      nRet = 0;
                     char        strTep[5] = {0};
 
-
 					uint32  dwSecs;
+					
+					/*
 					byte	btTimeStamp = 0;
 				    
 					(void) ICONFIG_GetItem(pMe->m_pConfig,
@@ -4012,9 +4018,10 @@ static boolean IDD_GETDT_Handler(void   *pUser,
 						dwSecs = GETTIMESECONDS();
 						MSG_FATAL("***zzg GETTIMESECONDS 5 dwSecs=%d***", dwSecs, 0, 0);
 					}   
+					*/
                     
-                    //GETJULIANDATE(GETTIMESECONDS(), &jtdate);
-                    GETJULIANDATE(dwSecs, &jtdate);
+                    GETJULIANDATE(GETTIMESECONDS(), &jtdate);
+                    //GETJULIANDATE(dwSecs, &jtdate);
                     
                     (void)WSTRTOSTR(pMe->m_rsvDateTime.wstrYear, strTep, sizeof(strTep));
                     nRet = STRTOUL(strTep, NULL, 10);
@@ -4306,6 +4313,8 @@ static boolean IDD_GETDT_Handler(void   *pUser,
 
 						{
 							uint32  dwSecs;
+							
+							/*
 							byte	btTimeStamp = 0;
 						    
 							(void) ICONFIG_GetItem(pMe->m_pConfig,
@@ -4323,10 +4332,11 @@ static boolean IDD_GETDT_Handler(void   *pUser,
 								dwSecs = GETTIMESECONDS();
 								MSG_FATAL("***zzg GETTIMESECONDS 6 dwSecs=%d***", dwSecs, 0, 0);
 							}   
+							*/
 						
 						
-	                        //if (pMe->m_rsvDateTime.dwSecs < GETTIMESECONDS() + 5)
-	                        if (pMe->m_rsvDateTime.dwSecs < dwSecs + 5)
+	                        if (pMe->m_rsvDateTime.dwSecs < GETTIMESECONDS() + 5)
+	                        //if (pMe->m_rsvDateTime.dwSecs < dwSecs + 5)
 	                        {
 	                            CLOSE_DIALOG(DLGRET_DATEERR)
 	                        }
@@ -14705,6 +14715,8 @@ static boolean IDD_MSGBOX_Handler(void *pUser,
                                             sizeof(wstrTep));
                             {
 								int32  dwSecs;
+
+								/*
 								byte	btTimeStamp = 0;
 							    
 								(void) ICONFIG_GetItem(pMe->m_pConfig,
@@ -14721,10 +14733,11 @@ static boolean IDD_MSGBOX_Handler(void *pUser,
 								{
 									dwSecs = GETTIMESECONDS();
 									MSG_FATAL("***zzg GETTIMESECONDS 7 dwSecs=%d***", dwSecs, 0, 0);
-								}   							               
+								}   	
+								*/
 							
-	                            //GETJULIANDATE(GETTIMESECONDS(), &jtdate);
-	                            GETJULIANDATE(dwSecs, &jtdate);
+	                            GETJULIANDATE(GETTIMESECONDS(), &jtdate);
+	                            //GETJULIANDATE(dwSecs, &jtdate);
 	                            WSPRINTF(wstrText, sizeof(wstrText), wstrTep, jtdate.wYear);
 							}
                         }

@@ -2113,7 +2113,7 @@ static boolean CSvcPrg_BuildMenuList(CSvcPrgApp *pMe)
 //Add By zzg 2012_02_11
   if (pMe->m_bMinLock == TRUE)
   {
-  	m = CSvcPrg_CreateMenuList(1);
+  	m = CSvcPrg_CreateMenuList(2);
   }
   else
   {
@@ -2131,6 +2131,7 @@ static boolean CSvcPrg_BuildMenuList(CSvcPrgApp *pMe)
 //Add By zzg 2012_02_11
    if (pMe->m_bMinLock == TRUE)
    {	   
+   	   /*
 	   m[0].title              = IDS_NETWORK_OPTIONS;
 	   m[0].itemType           = DT_SUBMENU;
 	   m[0].typeData.subMenu   = NULL;
@@ -2138,6 +2139,26 @@ static boolean CSvcPrg_BuildMenuList(CSvcPrgApp *pMe)
 	   indexBREWMenu           = 1;	   
 	   // Store the Main menu pointer
 	   pMe->m_mainMenu = m;  
+	   */
+
+	   m[0].title              = IDS_PHONE_NUMBER;
+	   m[0].itemType           = DT_WSTR;
+	   m[0].cfgItem            = CFGI_PHONE_NUMBER; 
+	   m[0].typeData.strLen    = OEMNV_PHONENUMBER_MAXLEN;
+	   m[0].isEditable         = TRUE;
+
+	   m[1].title              = IDS_IMSI_S;
+	   m[1].itemType           = DT_WSTR_FIXED;
+	   m[1].cfgItem            = CFGI_IMSI_S;
+	   m[1].typeData.strLen    = OEMNV_IMSI_S_LENGTH;
+	   m[1].isEditable         = TRUE;	   
+	   
+	   // Store the Network menu in the Main menu	   
+	   indexBREWMenu           = 2;	   
+	   // Store the Main menu pointer
+	   pMe->m_mainMenu = m;  
+
+	   return TRUE; 
    }
    else
    {
@@ -2210,7 +2231,7 @@ static boolean CSvcPrg_BuildMenuList(CSvcPrgApp *pMe)
 //Add By zzg 2012_02_11
 	if (pMe->m_bMinLock == TRUE)
 	{
-		m = CSvcPrg_CreateMenuList(2);
+		//m = CSvcPrg_CreateMenuList(2);
 	}
 	else
 	{ 
@@ -2234,6 +2255,7 @@ static boolean CSvcPrg_BuildMenuList(CSvcPrgApp *pMe)
 //Add By zzg 2012_02_11	
 	if (pMe->m_bMinLock == TRUE)
 	{
+		/*
 	   m[0].title              = IDS_PHONE_NUMBER;
 	   m[0].itemType           = DT_WSTR;
 	   m[0].cfgItem            = CFGI_PHONE_NUMBER; 
@@ -2252,6 +2274,7 @@ static boolean CSvcPrg_BuildMenuList(CSvcPrgApp *pMe)
 	   pMe->m_mainMenu[0].typeData.subMenu = m;
 
 	   return TRUE; 
+	   */
 	}
 	else
 	{

@@ -3617,7 +3617,8 @@ static NextFSMAction WMSST_SENDING_Handler(WmsApp *pMe)
             {
                 uint32  dwSecs;
                 wms_cache_info_node  *pnode = NULL;
-				
+
+				/*
 				byte	btTimeStamp = 0;
 			    
 				(void) ICONFIG_GetItem(pMe->m_pConfig,
@@ -3634,7 +3635,10 @@ static NextFSMAction WMSST_SENDING_Handler(WmsApp *pMe)
 				{
 					dwSecs = GETTIMESECONDS();
 					MSG_FATAL("***zzg GETTIMESECONDS 9 dwSecs=%d***", dwSecs, 0, 0);
-				}   	                
+				}   	
+				*/
+
+				dwSecs = GETTIMESECONDS();
                 
                 wms_cacheinfolist_enumbegin(WMS_MB_RESERVE);
                 pnode = wms_cacheinfolist_enumnext(WMS_MB_RESERVE);
@@ -5086,7 +5090,8 @@ static NextFSMAction WMSST_RESERVEDMSGOPT_Handler(WmsApp *pMe)
                 if(pMe->m_eDlgReturn == DLGRET_SEND)
                 {
                     uint32 dwTime;
-					
+
+					/*
 					byte	btTimeStamp = 0;
 				    
 					(void) ICONFIG_GetItem(pMe->m_pConfig,
@@ -5104,6 +5109,9 @@ static NextFSMAction WMSST_RESERVEDMSGOPT_Handler(WmsApp *pMe)
 						dwTime = GETTIMESECONDS();
 						MSG_FATAL("***zzg GETTIMESECONDS 10 dwSecs=%d***", dwTime, 0, 0);
 					}  
+					*/
+
+					dwTime = GETTIMESECONDS();
 					
                     pMe->m_msCur.m_dwTime = dwTime;
                 }

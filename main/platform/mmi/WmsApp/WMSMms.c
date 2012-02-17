@@ -865,9 +865,10 @@ static int MMS_Encode_header(uint8* mms_context,int nType,MMS_WSP_ENCODE_SEND* p
                 return 0;
 
 	        //X-Mms-Transaction-ID
-	        {
-				IConfig *pConfig = NULL;				
-				uint32  dwSecs;   
+	        {	
+	        	/*					
+				uint32  dwSecs; 				
+				IConfig *pConfig = NULL;	
 				byte	btTimeStamp = 0;
 			    
 				if (ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_CONFIG,(void **)&pConfig) != SUCCESS)
@@ -894,9 +895,10 @@ static int MMS_Encode_header(uint8* mms_context,int nType,MMS_WSP_ENCODE_SEND* p
 				}   	            
 
 				RELEASEIF(pConfig);
+				*/
 
-				//GetJulianDate(GETTIMESECONDS(), &juDateTime);		
-				GetJulianDate(dwSecs, &juDateTime);	
+				GetJulianDate(GETTIMESECONDS(), &juDateTime);		
+				//GetJulianDate(dwSecs, &juDateTime);	
 			}        	
 			
         	SNPRINTF(szDataTime,

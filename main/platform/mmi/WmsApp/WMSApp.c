@@ -5485,13 +5485,15 @@ wms_client_message_s_type *WmsApp_GetClientMsgMO(WmsApp *pMe, boolean bSend)
     // 时间戳
     {
     	uint32	sec = 0;
+		
+		/*
     	byte	btTimeStamp = 0;
 		
     	(void) ICONFIG_GetItem(pMe->m_pConfig,
 	                           CFGI_SMS_TIMESTAMP,
 	                           &btTimeStamp,
 	                           sizeof(btTimeStamp));
-
+		
 		if (btTimeStamp == OEMNV_SMS_TIMESTAMP_ADJUST)
 		{
 			sec = GETUTCSECONDS();
@@ -5501,7 +5503,11 @@ wms_client_message_s_type *WmsApp_GetClientMsgMO(WmsApp *pMe, boolean bSend)
 		{
 			sec = GETTIMESECONDS();
 			MSG_FATAL("***zzg GETTIMESECONDS 1 sec=%d***", sec, 0, 0);
-		}				
+		}
+		*/
+
+		
+		sec = GETTIMESECONDS();	
 
 		MSG_FATAL("***zzg GETUTCSECONDS 1 m_eCreateWMSType=%d, dwSecs=%d***", pMe->m_eCreateWMSType, pMe->m_rsvDateTime.dwSecs, 0);
         
@@ -6778,7 +6784,8 @@ static void WmsApp_ReservedMsgStatusUpdate(WmsApp * pMe)
 #endif    
     uint32  dwSecs;
     wms_cache_info_node  *pnode = NULL;
-	
+
+	/*
 	byte	btTimeStamp = 0;
 	
 	(void) ICONFIG_GetItem(pMe->m_pConfig,
@@ -6796,6 +6803,9 @@ static void WmsApp_ReservedMsgStatusUpdate(WmsApp * pMe)
 		dwSecs = GETTIMESECONDS();
 		MSG_FATAL("***zzg GETTIMESECONDS 2 dwSecs=%d***", dwSecs, 0, 0);
 	}    
+	*/
+
+	dwSecs = GETTIMESECONDS();
     
     wms_cacheinfolist_enumbegin(WMS_MB_RESERVE);
     pnode = wms_cacheinfolist_enumnext(WMS_MB_RESERVE);
@@ -6932,6 +6942,7 @@ void WmsApp_ReservedMsgSetTimer(WmsApp * pMe)
     
     AEE_CancelTimer(WmsApp_ReservedMsgTimer, pMe);
 	
+	/*
 	(void) ICONFIG_GetItem(pMe->m_pConfig,
                            CFGI_SMS_TIMESTAMP,
                            &btTimeStamp,
@@ -6947,6 +6958,9 @@ void WmsApp_ReservedMsgSetTimer(WmsApp * pMe)
 		dwSecs = GETTIMESECONDS();
 		MSG_FATAL("***zzg GETTIMESECONDS 3 dwSecs=%d***", dwSecs, 0, 0);
 	}    
+	*/
+
+	dwSecs = GETTIMESECONDS();
     
     // 检查预约短信列表, 对于过期的短信需修改其标记
     WmsApp_ReservedMsgStatusUpdate(pMe);
