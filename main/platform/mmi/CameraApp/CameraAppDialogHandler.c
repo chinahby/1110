@@ -4019,7 +4019,7 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
     }
 #endif	
 
-#ifdef FEATURE_VERSION_C01
+#if  defined(FEATURE_VERSION_C01) ||defined(FEATURE_VERSION_C11)
     // size cfgID
     (void)ICONFIG_GetItem(pMe->m_pConfig,
                           CFGI_CAMERA_SIZE,
