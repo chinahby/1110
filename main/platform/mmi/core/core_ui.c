@@ -2048,7 +2048,6 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
 			}
 		//Add End
 		*/
-		
         if (cls == AEECLSID_DIALER) 
 		{
             // AVK_END 会关掉全部程序，回到待机界面，这里做转换，避免此问题
@@ -2267,6 +2266,16 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
     if(bHandle == TRUE)
     {
         AEE_Event(evt, wParam, 0);
+        if(wParam == AVK_ENDCALL)
+        {
+            // 在CallApp为顶层应用的情况下，需要通知后台应用AVK_END事件
+            static NotifyKeyEvent g_KeyEvent;
+            g_KeyEvent.eCode        = evt;
+            g_KeyEvent.wParam       = AVK_END;
+            g_KeyEvent.dwParam      = 0;
+            g_KeyEvent.clsHandled   = AEECLSID_SHELL;
+            AEE_Notify(AEECLSID_SHELL, (AVK_END << 16) | NMASK_SHELL_KEY, &g_KeyEvent);
+        }
     }
     return bHandle;
 }
