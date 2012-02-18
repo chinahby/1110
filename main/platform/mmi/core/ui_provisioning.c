@@ -212,7 +212,7 @@ static dword ui_default_imsi_s1 ( void )
   **       in hex = 3e7  a  18b
   **    in binary = 1111100111 1010 0110001011
   */
-  return (((dword) zero << 14) | (fourth << 10) | last3);
+  return (((dword) zero << 14) | (fourth << 10) | last3);  
 #endif
 
 } /* ui_default_imsi_s1() */
@@ -261,12 +261,19 @@ void ui_initialize_imsi_components ( byte nam )
   nvi.min2.min2[CDMAMIN] = IMSI_S2_0 ;
   (void) ui_put_nv( NV_MIN2_I, &nvi ) ;
 
+  MSG_FATAL("***zzg ui_initialize_imsi_components  min2=%d***", nvi.min2.min2[1], 0, 0);
+
   nvi.min1.min1[CDMAMIN] =  ui_default_imsi_s1() ;
+  
   /* The following assignment must not be done, before the function above */
   /* because that function will read ESN which will corrupt the min1.nam. */
+
+  (void) ui_get_nv( NV_MIN1_I, &nvi ) ;
   nvi.min1.nam = nam;
   nvi.min1.min1[FMMIN] = IMSI_S1_0 ;
-  (void) ui_put_nv( NV_MIN1_I, &nvi ) ;
+  (void) ui_put_nv( NV_MIN1_I, &nvi ) ;  
+
+  MSG_FATAL("***zzg ui_initialize_imsi_components  min1=%d***", nvi.min1.min1[1], 0, 0);
 
 
   (void) ui_get_nv( NV_ESN_I, &nvi ) ;
@@ -540,6 +547,8 @@ void ui_init_provisioning(cm_client_id_type cm_client_id)
   boolean initialize_imsi_t[NV_MAX_NAMS];
   boolean imsi_t_all_zeros[NV_MAX_NAMS];
   #endif
+
+  MSG_FATAL("***zzg ui_init_provisioning start***", 0, 0, 0);
   
   for (i=0; i<NV_MAX_NAMS; i++)
   {
@@ -949,6 +958,9 @@ void ui_init_provisioning(cm_client_id_type cm_client_id)
           /**********************************************/
           /* Make sure MCC and IMSI_11_12 are set       */
           /**********************************************/
+
+		MSG_FATAL("***zzg ui_init_provisioning 1 i=%d, initialize_imsi=%d, imsi_all_zeros=%d***", i, initialize_imsi[i], imsi_all_zeros[i]);
+
         nvi.imsi_mcc.nam = i;
         if ( NV_NOTACTIVE_S == ui_get_nv( NV_IMSI_MCC_I, &nvi ) )
         {
@@ -966,6 +978,8 @@ void ui_init_provisioning(cm_client_id_type cm_client_id)
           }
         }
 
+		MSG_FATAL("***zzg ui_init_provisioning 2 i=%d, initialize_imsi=%d, imsi_all_zeros=%d***", i, initialize_imsi[i], imsi_all_zeros[i]);
+
         nvi.imsi_11_12.nam = i;
         if ( NV_NOTACTIVE_S == ui_get_nv( NV_IMSI_11_12_I, &nvi ) )
         {
@@ -982,6 +996,8 @@ void ui_init_provisioning(cm_client_id_type cm_client_id)
               imsi_all_zeros[i] = FALSE ;
             }
         }
+
+		MSG_FATAL("***zzg ui_init_provisioning 3 i=%d, initialize_imsi=%d, imsi_all_zeros=%d***", i, initialize_imsi[i], imsi_all_zeros[i]);
 
         nvi.imsi_addr_num.nam = i;
         if ( NV_NOTACTIVE_S == ui_get_nv( NV_IMSI_ADDR_NUM_I, &nvi ) )
@@ -1014,6 +1030,8 @@ void ui_init_provisioning(cm_client_id_type cm_client_id)
 
         /* Get and validate NV_IMSI_T_S1_I code goes here */
 
+		MSG_FATAL("***zzg ui_init_provisioning 4 i=%d, initialize_imsi=%d, imsi_all_zeros=%d***", i, initialize_imsi[i], imsi_all_zeros[i]);
+
 
         nvi.imsi_t_s1.nam = (byte) i;     /* get the MINs for the NAM */
         if ( NV_NOTACTIVE_S == ui_get_nv( NV_IMSI_T_S1_I, &nvi ) )
@@ -1038,6 +1056,8 @@ void ui_init_provisioning(cm_client_id_type cm_client_id)
               }
         }
 
+		MSG_FATAL("***zzg ui_init_provisioning 5 i=%d, initialize_imsi=%d, imsi_all_zeros=%d***", i, initialize_imsi[i], imsi_all_zeros[i]);
+
 
         nvi.imsi_t_s2.nam = (byte) i;     /* get the MINs for the NAM */
         if ( NV_NOTACTIVE_S == ui_get_nv( NV_IMSI_T_S2_I, &nvi ) )
@@ -1058,6 +1078,7 @@ void ui_init_provisioning(cm_client_id_type cm_client_id)
               }
         }
 
+        MSG_FATAL("***zzg ui_init_provisioning 6 i=%d, initialize_imsi=%d, imsi_all_zeros=%d***", i, initialize_imsi[i], imsi_all_zeros[i]);
 
 
         nvi.imsi_t_11_12.nam = (byte) i;     /* get the MINs for the NAM */
@@ -1077,6 +1098,8 @@ void ui_init_provisioning(cm_client_id_type cm_client_id)
             }
         }
 
+		MSG_FATAL("***zzg ui_init_provisioning 7 i=%d, initialize_imsi=%d, imsi_all_zeros=%d***", i, initialize_imsi[i], imsi_all_zeros[i]);
+
 
         nvi.imsi_t_mcc.nam = (byte) i;     /* get the MINs for the NAM */
         if ( NV_NOTACTIVE_S == ui_get_nv( NV_IMSI_T_MCC_I, &nvi ) )
@@ -1095,6 +1118,7 @@ void ui_init_provisioning(cm_client_id_type cm_client_id)
             }
         }
 
+		MSG_FATAL("***zzg ui_init_provisioning 8 i=%d, initialize_imsi=%d, imsi_all_zeros=%d***", i, initialize_imsi[i], imsi_all_zeros[i]);
 
         nvi.imsi_t_addr_num.nam = (byte) i;     /* get the MINs for the NAM */
         if ( NV_NOTACTIVE_S == ui_get_nv( NV_IMSI_T_ADDR_NUM_I, &nvi ) )
@@ -1117,6 +1141,8 @@ void ui_init_provisioning(cm_client_id_type cm_client_id)
 
 #endif /*** End of FEATURE_IS95B_TRUE_IMSI ***/
 
+		MSG_FATAL("***zzg ui_init_provisioning 9 i=%d, initialize_imsi=%d, imsi_all_zeros=%d***", i, initialize_imsi[i], imsi_all_zeros[i]);
+
 
         /**********************************/
         /* Read out the MINs for each NAM */
@@ -1124,6 +1150,7 @@ void ui_init_provisioning(cm_client_id_type cm_client_id)
         nvi.min1.nam = (byte) i;     /* get the MINs for the NAM */
         if ( NV_NOTACTIVE_S == ui_get_nv( NV_MIN1_I, &nvi ) )
         {
+        	MSG_FATAL("***zzg ui_init_provisioning 10 i=%d, initialize_imsi=%d, imsi_all_zeros=%d***", i, initialize_imsi[i], imsi_all_zeros[i]);
             initialize_imsi[i] = TRUE ;
         }
         else
@@ -1138,6 +1165,7 @@ void ui_init_provisioning(cm_client_id_type cm_client_id)
                    ( ( ( nvi.min1.min1[j] & 0x000003FF ) > 999 ) ) )
               {
                 /* Invalid Range See IS-95A section 6.3.1 */
+				MSG_FATAL("***zzg ui_init_provisioning 11 i=%d, initialize_imsi=%d, imsi_all_zeros=%d***", i, initialize_imsi[i], imsi_all_zeros[i]);
                 initialize_imsi[i] = TRUE ;
               }
               if ( nvi.min1.min1[j] != IMSI_S1_0 )
@@ -1147,6 +1175,10 @@ void ui_init_provisioning(cm_client_id_type cm_client_id)
             } /* end for (j = 0; j < NV_MAX_MINS; j++) */
         }
 
+		MSG_FATAL("***zzg ui_init_provisioning 12 i=%d, initialize_imsi=%d, imsi_all_zeros=%d***", i, initialize_imsi[i], imsi_all_zeros[i]);
+
+		MSG_FATAL("***zzg ui_init min1[0]=%d, min1[1]=%d***", nvi.min1.min1[0], nvi.min1.min1[1], 0);
+
         //for( j=0; j<NV_MAX_MINS; j++ ) {
         //    ui.min1[i][j] = nvi.min1.min1[j];
         //}
@@ -1154,6 +1186,7 @@ void ui_init_provisioning(cm_client_id_type cm_client_id)
         nvi.min2.nam = (byte) i;
         if ( NV_NOTACTIVE_S == ui_get_nv( NV_MIN2_I, &nvi ) )
         {
+        	MSG_FATAL("***zzg ui_init_provisioning 13 i=%d, initialize_imsi=%d, imsi_all_zeros=%d***", i, initialize_imsi[i], imsi_all_zeros[i]);
             initialize_imsi[i] = TRUE ;
         }
         else
@@ -1164,6 +1197,7 @@ void ui_init_provisioning(cm_client_id_type cm_client_id)
               if ( nvi.min2.min2[j] > IMSI_S2_0 )
               {
                 /* invalid range */
+				MSG_FATAL("***zzg ui_init_provisioning 14 i=%d, initialize_imsi=%d, imsi_all_zeros=%d***", i, initialize_imsi[i], imsi_all_zeros[i]);
                 initialize_imsi[i] = TRUE ;
               }
               if ( nvi.min2.min2[j] != IMSI_S2_0 )
@@ -1172,6 +1206,8 @@ void ui_init_provisioning(cm_client_id_type cm_client_id)
               }
             } /* end for (j = 0; j < NV_MAX_MINS; j++) */
         }
+
+		MSG_FATAL("***zzg ui_init_provisioning 15 i=%d, initialize_imsi=%d, imsi_all_zeros=%d***", i, initialize_imsi[i], imsi_all_zeros[i]);
 
         //for( j=0; j<NV_MAX_MINS; j++ ) {
         //    ui.min2[i][j] = nvi.min2.min2[j];
@@ -1186,6 +1222,9 @@ void ui_init_provisioning(cm_client_id_type cm_client_id)
     /* initialize all components of IMSI to zero, except the last    */
     /* four digits of MIN1 will be taken from the ESN                */
     /*****************************************************************/
+
+	MSG_FATAL("***zzg ui_init_provisioning 16 i=%d, initialize_imsi=%d, imsi_all_zeros=%d***", i, initialize_imsi[i], imsi_all_zeros[i]);
+	
     for ( i=0; i<NV_MAX_NAMS; i++ )
     {
           if ( initialize_imsi[i] == TRUE || imsi_all_zeros[i] == TRUE )
