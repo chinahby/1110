@@ -260,20 +260,15 @@ void ui_initialize_imsi_components ( byte nam )
   nvi.min2.min2[FMMIN] = IMSI_S2_0 ;
   nvi.min2.min2[CDMAMIN] = IMSI_S2_0 ;
   (void) ui_put_nv( NV_MIN2_I, &nvi ) ;
-
-  MSG_FATAL("***zzg ui_initialize_imsi_components  min2=%d***", nvi.min2.min2[1], 0, 0);
-
+ 
   nvi.min1.min1[CDMAMIN] =  ui_default_imsi_s1() ;
   
   /* The following assignment must not be done, before the function above */
   /* because that function will read ESN which will corrupt the min1.nam. */
-
-  (void) ui_get_nv( NV_MIN1_I, &nvi ) ;
+  
   nvi.min1.nam = nam;
   nvi.min1.min1[FMMIN] = IMSI_S1_0 ;
-  (void) ui_put_nv( NV_MIN1_I, &nvi ) ;  
-
-  MSG_FATAL("***zzg ui_initialize_imsi_components  min1=%d***", nvi.min1.min1[1], 0, 0);
+  (void) ui_put_nv( NV_MIN1_I, &nvi ) ;   
 
 
   (void) ui_get_nv( NV_ESN_I, &nvi ) ;

@@ -288,7 +288,7 @@ when       who     what, where, why
 #define OEMCONFIGLIST_FILE ("brew/oemconfig.dat")
 #endif
 
-
+#define FMMIN 0		//Add By zzg 2012_02_18
 #define CDMAMIN 1
 
 ////
@@ -349,6 +349,9 @@ typedef struct {
 #endif
 #endif
 #define   IP_STRING   "0.0.0.0"
+
+#define IMSI_MIN1_S1_ZERO 0xF9EBE7L	//Add By zzg 2012_02_18
+
 
 #if defined(FEATURE_PEKTEST)
 // 为方便 PEK 测试，PEK 测试配置放在最前面
@@ -7795,11 +7798,14 @@ static int OEMPriv_GetItem_CFGI_IMSI_S(void *pBuff)
    uint16       min2;
 
    nvi.min2.nam = (byte) CM_NAM_1;
-   if (NV_DONE_S != OEMNV_Get(NV_MIN2_I, &nvi)) {
+   if (NV_DONE_S != OEMNV_Get(NV_MIN2_I, &nvi)) 
+   {
       return EFAILED;
    }
 
+
    min2 = OEMPriv_MIN2_TO_DEC(nvi.min2.min2[CDMAMIN]);
+
 
    imsi_s[0] = '0' + (char) (min2 / 100);
    imsi_s[1] = '0' + (char) ( (min2 / 10) % 10);
@@ -7807,10 +7813,12 @@ static int OEMPriv_GetItem_CFGI_IMSI_S(void *pBuff)
 
 
    nvi.min1.nam = (byte) CM_NAM_1;
-   if (NV_DONE_S != OEMNV_Get(NV_MIN1_I, &nvi)) {
+   if (NV_DONE_S != OEMNV_Get(NV_MIN1_I, &nvi)) 
+   {
       return EFAILED;
    }
 
+   
    OEMPriv_MIN1_TO_STR(nvi.min1.min1[CDMAMIN], &imsi_s[3]);
 
 
@@ -7851,8 +7859,11 @@ static int OEMPriv_SetItem_CFGI_IMSI_S(void *pBuff)
 	{
 		AECHAR  wstrPrefix1[]={(AECHAR)'1',(AECHAR)'5', (AECHAR)'8', 0};
 		AECHAR  wstrPrefix2[]={(AECHAR)'1',(AECHAR)'9', (AECHAR)'9', 0};
+
 	
 		imsi = (AECHAR *) pBuff;
+
+
 
 		if ((WSTRNCMP(imsi, wstrPrefix1, 3) != 0)
 			&& (WSTRNCMP(imsi, wstrPrefix2, 3) != 0))
@@ -7937,12 +7948,16 @@ static int OEMPriv_SetItem_CFGI_IMSI_S(void *pBuff)
 
    nvi.min2.nam = (byte) CM_NAM_1;
    nvi.min2.min2[CDMAMIN] = min2;
+
+   
    if (NV_DONE_S != OEMNV_Put(NV_MIN2_I, &nvi)) {
       return EFAILED;
    }
 
    nvi.min1.nam = (byte) CM_NAM_1;
+   nvi.min1.min1[FMMIN] = IMSI_MIN1_S1_ZERO;	//Add By zzg 2012_02_18
    nvi.min1.min1[CDMAMIN] = min1;
+
 
    if (NV_DONE_S != OEMNV_Put(NV_MIN1_I, &nvi)) {
       return EFAILED;
