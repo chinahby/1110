@@ -1573,6 +1573,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
 						}
 					}
                     MSG_FATAL("IWMS_MMsDecodeNotifyBody=%d", nRet, 0, 0);
+                    WMSAPPU_SYSFREE(dwParam);
                     return TRUE;
 #endif
 
@@ -1805,6 +1806,7 @@ Exit:
                                         }
                                     }      
                                     MSG_FATAL("EVT_WMS_MSG_STATUS_REPORT end m_wCurindex=%d",pMe->m_wCurindex,0,0);
+                                    WMSAPPU_SYSFREE(dwParam);
                                     return TRUE;
                                 }
                             }
@@ -1885,6 +1887,7 @@ Exit:
 	                                           &po, 
 	                                           sizeof(AEETCalls)))
 					{
+                        WMSAPPU_SYSFREE(dwParam);
 						return FALSE;
 					}
 					MSG_FATAL("EVT_WMS_MSG_STATUS_REPORT po.dwCount:%d",po.dwCount,0,0);
@@ -1970,7 +1973,6 @@ Exit:
                 }
                 WMSAPPU_SYSFREE(info);
             }
-            
             // ¸üÐÂÍ¼±ê
             WmsApp_UpdateAnnunciators(pMe);
             return TRUE;
@@ -4008,6 +4010,10 @@ void WmsApp_CfgCb(wms_cfg_event_e_type event, wms_cfg_event_info_s_type *pInfo)
                                    evt,
                                    0, 
                                    (uint32) pInfobuf);
+        if (btRet == FALSE)
+        {
+            WMSAPPU_SYSFREE(pInfobuf)
+        }
     }
 } // WmsApp_CfgCb
 
@@ -4159,6 +4165,7 @@ void WmsApp_MsgCb(wms_msg_event_e_type       event,
 //            break;
             
         default:
+            WMSAPPU_SYSFREE(pInfobuf)
             break;
     } // switch
     
@@ -4175,10 +4182,6 @@ void WmsApp_MsgCb(wms_msg_event_e_type       event,
         {
             WMSAPPU_SYSFREE(pInfobuf)
         }
-    }
-    else
-    {
-        WMSAPPU_SYSFREE(pInfobuf)
     }
 } // WmsApp_MsgCb() 
 
