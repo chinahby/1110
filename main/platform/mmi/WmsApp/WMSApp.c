@@ -1935,6 +1935,13 @@ Exit:
 	        					if(ISHELL_ActiveApplet(pMe->m_pShell) == AEECLSID_CORE_APP)
 	        					#endif
 	        					{
+	        						#ifdef FEATURE_VERSION_W208S
+									if(ISHELL_ActiveApplet(pMe->m_pShell) == AEECLSID_NF3)
+									{
+										MSG_FATAL("***zzg WMSApp get NewSms 1 ActiveApplet== AEECLSID_NF3***", 0, 0, 0);
+									}
+									else
+									#endif
 	            					(void) ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_WMSAPP, "NEWSMS");
 	            				}
 	        				}
@@ -2156,6 +2163,13 @@ Exit:
     	        					if(ISHELL_ActiveApplet(pMe->m_pShell) == AEECLSID_CORE_APP)
     	        					#endif
     	        					{
+    	        						#ifdef FEATURE_VERSION_W208S
+										if(ISHELL_ActiveApplet(pMe->m_pShell) == AEECLSID_NF3)
+										{
+											MSG_FATAL("***zzg WMSApp get NewSms 2 ActiveApplet== AEECLSID_NF3***", 0, 0, 0);
+										}
+										else
+										#endif
     	            					(void) ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_WMSAPP, "NEWSMS");
     	            				}
     	        				}
