@@ -24,6 +24,8 @@
 #define AUTO_NV_MIN_VERSION                 0x15
 #elif defined(FEATURE_VERSION_M8021)
 #define AUTO_NV_MIN_VERSION                 0x17
+#elif defined(FEATURE_IS683A_450M_SUPPORT) && defined(FEATURE_DISABLE_UIMPRL)
+#define AUTO_NV_MIN_VERSION                 0x25
 #else
 #define AUTO_NV_MIN_VERSION                 0x24
 #endif
@@ -170,6 +172,13 @@ const byte pr_list_data[] =
   ,17,124,0,48,96,24,17,92,0,48,96,24,17,88,0,48,96,24,17,90,0,48,96,24,17,100,0,48,96,24,17,102,0,48,64,32,83,34,0,48\
   ,96,34,0,26,0,48,64,40,65,0,0,40,32,32,60,242,48,64,32,67,14,0,48,64,40,128,72,0,48,64,0,114,126,0,48,64,56,128,88,0\
   ,64,64,73,119,252,0,4,0,64,96,73,24,84,0,18,0,42,102
+};
+#elif defined(FEATURE_IS683A_450M_SUPPORT) && defined(FEATURE_DISABLE_UIMPRL)
+const byte pr_list_data[] =
+{
+   0\
+  ,66,3,234,3,128,128,128,0,2,0,3,9,48,157,24,227,196,36,129,242,138,10,8,41,4,40,210,40,160,40,110,64,64,0,24,84,3,0,0,64\
+  ,96,0,119,252,3,0,0,64,96,8,24,84,3,0,0,64,96,8,119,252,3,0,0,191,216
 };
 #else
 const byte pr_list_data[] =
