@@ -13184,7 +13184,9 @@ static boolean IDD_MSGOPTS_Handler(void *pUser,
                         MENU_ADDITEM(pMenu, IDS_CALL);
                         MENU_ADDITEM(pMenu, IDS_DELETE);
                         MENU_ADDITEM(pMenu, IDS_DELETEALL);
+#ifdef FEATURE_VERSION_W208S                        
                         MENU_ADDITEM(pMenu, IDS_ADD_TO_RESTRICT_LIST);
+#endif
                         if (pMe->m_eOptType != OPT_VIA_LISTMSG)
                         {
 #ifdef FEATURE_CONTACT_APP
@@ -13226,7 +13228,9 @@ static boolean IDD_MSGOPTS_Handler(void *pUser,
                         MENU_ADDITEM(pMenu, IDS_FORWARD);
                         MENU_ADDITEM(pMenu, IDS_DELETE);
                         MENU_ADDITEM(pMenu, IDS_DELETEALL);
+#ifdef FEATURE_VERSION_W208S                        
                         MENU_ADDITEM(pMenu, IDS_ADD_TO_RESTRICT_LIST);
+#endif
                         break;
                         
                     case WMS_MB_DRAFT:
@@ -13238,7 +13242,9 @@ static boolean IDD_MSGOPTS_Handler(void *pUser,
                         MENU_ADDITEM(pMenu, IDS_DELETE);
                         MENU_ADDITEM(pMenu, IDS_DELETEALL);
                         //MENU_ADDITEM(pMenu, IDS_FORWARD);
+#ifdef FEATURE_VERSION_W208S                        
                         MENU_ADDITEM(pMenu, IDS_ADD_TO_RESTRICT_LIST);
+#endif
                         break;
                 
                     case WMS_MB_VOICEMAIL:
@@ -19377,7 +19383,9 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                                 MENU_ADDITEM(pMe->m_pMenu, IDS_CALL);
                                 MENU_ADDITEM(pMe->m_pMenu, IDS_SAVE_CURRENT_ITEM);    //Add By zzg 2010_09_11                     
                                 MENU_ADDITEM(pMe->m_pMenu, IDS_DELETE);
+#ifdef FEATURE_VERSION_W208S                                
                                 MENU_ADDITEM(pMe->m_pMenu, IDS_ADD_TO_RESTRICT_LIST);
+#endif
                                 // ÉèÖÃ²Ëµ¥ÊôĞÔ
                                 IMENUCTL_SetPopMenuRect(pMe->m_pMenu);
 
