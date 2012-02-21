@@ -1,82 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="utk" VERSION="1">
+<BREWRes Name="arutk" VERSION="1">
 <Strings Encoding="Unicode">
-    <String Id="1" Name= "IDS_TITLE">
-        <Text>UTK</Text>
-    </String>
-
-    <String Id="2" Name= "IDS_SENDING">
-        <Text>جاري إرسال الرسائل...</Text>
-    </String>
-
-    <String Id="3" Name= "IDS_GETINPUT_WRONG_LEN">
-        <Text>"خطأ، يرجى إعادة الإدخال!"</Text>
-    </String>
-
-    <String Id="4" Name= "IDS_DIAL_TONE_STRING">
-        <Text>نغمة الاتصال</Text>
-    </String>
-
-    <String Id="5" Name= "IDS_CALLED_SUBSCRIBER_BUSY_STRING">
-        <Text>سلسلة مشغولة للمشترك المطلوب</Text>
-    </String>
-
-    <String Id="6" Name= "IDS_CONGESTION_STRING">
-        <Text>ازدحام</Text>
-    </String>
-
-    <String Id="7" Name= "IDS_RADIO_PATH_ACKNOWLEDGE_STRING">
-        <Text>تأكيد مسار الراديو</Text>
-    </String>
-
-    <String Id="8" Name= "IDS_RADIO_PATH_NOT_AVAILABLE_OR_CALL_DROPPED_STRING">
-        <Text>مسار الراديو غير متوفر أو فشلت المكالمة</Text>
-    </String>
-
-    <String Id="9" Name= "IDS_ERROR_OR_SPECIAL_INFORMATION_STRING">
-        <Text>خطأ أو معلومات خاصة</Text>
-    </String>
-
-    <String Id="10" Name= "IDS_CALL_WAITING_STRING">
-        <Text>انتظار المكالمات</Text>
-    </String>
-
-    <String Id="11" Name= "IDS_RINGING_STRING">
-        <Text>نغمة الرنين</Text>
-    </String>
-
-    <String Id="12" Name= "IDS_GENERAL_BEEP_STRING">
-        <Text>صوت تنبيه عام</Text>
-    </String>
-
-    <String Id="13" Name= "IDS_POSITIVE_ACKNOWLEDGEMENT_STRING">
-        <Text>تأكيد إيجابي</Text>
-    </String>
-
-    <String Id="14" Name= "IDS_NEGATIVE_ACKNOWLEDGEMENT_OR_ERROR_STRING">
-        <Text>تأكيد سلبي أو خطأ</Text>
-    </String>
-
-    <String Id="15" Name= "IDS_RINGING_TONE_SEL_BY_USER_FOR_IC_V_CALL_STRING">
-        <Text>نغمة رنين المكالمات الواردة</Text>
-    </String>
-
-    <String Id="16" Name= "IDS_ALERT_TONE_SEL_BY_USER_FOR_IC_SMS_STRING">
-        <Text>تنبيه الرسائل النصية</Text>
-    </String>
-
-    <String Id="17" Name= "IDS_CALLINFO">
-        <Text>"هاتفك قيد المحادثة، لذا يتعذر إجراء مكالمة الآن."</Text>
-    </String>
-
-    <String Id="18" Name= "IDS_NONEUTK">
-        <Text>بلا UTK!</Text>
-    </String>
-
-    <String Id="100" Name= "IDM_OK">
-        <Text>تم</Text>
-    </String>
-
+	<String Id="1" Name="IDS_TITLE">
+		<Text>UIM الأدوات</Text>
+	</String>
+	<String Id="2" Name="IDS_SENDING">
+		<Text>جاري إرسال الرسائل...</Text>
+	</String>
+	<String Id="3" Name="IDS_GETINPUT_WRONG_LEN">
+		<Text>"خطأ، يرجى إعادة الإدخال!"</Text>
+	</String>
+	<String Id="4" Name="IDS_DIAL_TONE_STRING">
+		<Text>نغمة الاتصال</Text>
+	</String>
+	<String Id="5" Name="IDS_CALLED_SUBSCRIBER_BUSY_STRING">
+		<Text>سلسلة مشغولة للمشترك المطلوب</Text>
+	</String>
+	<String Id="6" Name="IDS_CONGESTION_STRING">
+		<Text>ازدحام</Text>
+	</String>
+	<String Id="7" Name="IDS_RADIO_PATH_ACKNOWLEDGE_STRING">
+		<Text>تأكيد مسار الراديو</Text>
+	</String>
+	<String Id="8" Name="IDS_RADIO_PATH_NOT_AVAILABLE_OR_CALL_DROPPED_STRING">
+		<Text>مسار الراديو غير متوفر أو فشلت المكالمة</Text>
+	</String>
+	<String Id="9" Name="IDS_ERROR_OR_SPECIAL_INFORMATION_STRING">
+		<Text>خطأ أو معلومات خاصة</Text>
+	</String>
+	<String Id="10" Name="IDS_CALL_WAITING_STRING">
+		<Text>انتظار المكالمات</Text>
+	</String>
+	<String Id="11" Name="IDS_RINGING_STRING">
+		<Text>نغمة الرنين</Text>
+	</String>
+	<String Id="12" Name="IDS_GENERAL_BEEP_STRING">
+		<Text>صوت تنبيه عام</Text>
+	</String>
+	<String Id="13" Name="IDS_POSITIVE_ACKNOWLEDGEMENT_STRING">
+		<Text>تأكيد إيجابي</Text>
+	</String>
+	<String Id="14" Name="IDS_NEGATIVE_ACKNOWLEDGEMENT_OR_ERROR_STRING">
+		<Text>تأكيد سلبي أو خطأ</Text>
+	</String>
+	<String Id="15" Name="IDS_RINGING_TONE_SEL_BY_USER_FOR_IC_V_CALL_STRING">
+		<Text>نغمة رنين المكالمات الواردة</Text>
+	</String>
+	<String Id="16" Name="IDS_ALERT_TONE_SEL_BY_USER_FOR_IC_SMS_STRING">
+		<Text>تنبيه الرسائل النصية</Text>
+	</String>
+	<String Id="17" Name="IDS_CALLINFO">
+		<Text>"هاتفك قيد المحادثة، لذا يتعذر إجراء مكالمة الآن."</Text>
+	</String>
+	<String Id="18" Name="IDS_NONEUTK">
+		<Text>بلا UTK!</Text>
+	</String>
+	<String Id="100" Name="IDM_OK">
+		<Text>تم</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="1" Name="IDD_SPLASH_DIALOG" Focus="0">

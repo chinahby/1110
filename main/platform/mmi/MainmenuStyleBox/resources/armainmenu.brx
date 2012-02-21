@@ -11,7 +11,7 @@
 		<Text>جهات الاتصال</Text>
 	</String>
 	<String Id="1013" Name="IDS_MAIN_MENU_UTK">
-		<Text>UTK</Text>
+		<Text>UIM الأدوات</Text>
 	</String>
 	<String Id="1014" Name="IDS_MAIN_MENU_TOOLS">
 		<Text>أدوات</Text>

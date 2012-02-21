@@ -652,7 +652,16 @@
 	<String Id="1038" Name="IDS_SEND_TO_ALBUM_OR_EMAIL">
 		<Text>Send to album or email</Text>
 	</String>
-	<String Id="1039" Name="IDS_ADD_TO_RESTRICT_LIST">
+	<String Id="1039" Name="IDS_TIME_STAMP">
+		<Text>Time Stamp</Text>
+	</String>
+	<String Id="1040" Name="IDS_TIME_STAMP_ADJUST">
+		<Text>Adjust Time</Text>
+	</String>
+	<String Id="1041" Name="IDS_TIME_STAMP_ASRECEIVED">
+		<Text>As Received</Text>
+	</String>
+	<String Id="1042" Name="IDS_ADD_TO_RESTRICT_LIST">
 		<Text>Add to restrict list</Text>
 	</String>
 </Strings>
@@ -1009,9 +1018,16 @@
 	<Dialog Id="6050" Name="IDD_GETTING" Focus="0">
 		<Controls/>
 	</Dialog>
-	<Dialog Id="6051" Name="IDD_ALBUMOREMAIN" Focus="7042">
+	<Dialog Id="6051" Name="IDD_TIME_STAMP" Focus="0">
 		<Controls>
-			<Text Id="7042" Name="IDC_EDIT_ALBUMOREMAIN">
+			<Menu Id="7042" Name="IDC_TIME_STAMP_MENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6052" Name="IDD_ALBUMOREMAIN" Focus="7043">
+		<Controls>
+			<Text Id="7043" Name="IDC_EDIT_ALBUMOREMAIN">
 				<Items/></Text>
 		</Controls>
 	</Dialog>

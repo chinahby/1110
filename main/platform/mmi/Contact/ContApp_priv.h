@@ -172,8 +172,11 @@ extern sSelectFieldListNode* pCurSelectFieldNode;
 #define MAX_INPUT_URL                   (128)
 #define MAX_INPUT_NOTES                 (128)
 #define MAX_INPUT_ADDRESS               (128)
-
+#ifdef FEATURE_VERSION_1110W516
+#define MAX_PHONEBOOK_CAPACITY          (1000)
+#else
 #define MAX_PHONEBOOK_CAPACITY          (500)
+#endif
 #define MAX_RUIMBOOK_CAPACITY           (250)
 
 #define MAX_PHONE_FIELD    (0x0B)

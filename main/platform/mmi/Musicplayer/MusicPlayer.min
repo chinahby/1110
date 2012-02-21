@@ -43,6 +43,7 @@ endif
 endif
 ifeq ($(RESOURCEDIR),W516)
     CONSTFILE_FILES+=\
+    music1.mp3|fs:/hsmm/music/music1.mp3\
     1.mp3|fs:/hsmm/music/1.mp3\
     2.mp3|fs:/hsmm/music/2.mp3\
     3.mp3|fs:/hsmm/music/3.mp3\
