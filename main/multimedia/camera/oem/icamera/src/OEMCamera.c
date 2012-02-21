@@ -3056,7 +3056,7 @@ int OEMCamera_EncodeSnapshot(OEMINSTANCE hInstance)
 #if defined(FEATURE_CAMERA_BURST_MODE) || defined (FEATURE_CAMERA_MULTISHOT_SINGLE_ENCODE)
 #error code not present
 #endif //FEATURE_CAMERA_BURST_MODE || FEATURE_CAMERA_MULTISHOT_SINGLE_ENCODE
-
+   MSG_FATAL("camera_encode_picture",0,0,0);
 #ifdef FEATURE_CAMERA_ENCODE_PROPERTIES
    nRet = camera_encode_picture(&pme->m_rawFrame, &h, OEMCamera_CameraLayerCB, (void *)pRsp->hObject);
 #else /* FEATURE_CAMERA_ENCODE_PROPERTIES */
@@ -3568,7 +3568,7 @@ static int OEMCamera_RecordSnapshot(OEMCamera * pme, CameraRsp * pRsp)
 #ifdef FEATURE_CAMERA_ENCODE_PROPERTIES
    camera_encode_properties_type   p;
 #endif // FEATURE_CAMERA_ENCODE_PROPERTIES
-
+   MSG_FATAL("OEMCamera_RecordSnapshot",0,0,0);
 #ifdef FEATURE_CAMERA_ENCODE_PROPERTIES
    ICamera_SetSnapshotProperties(pme, &p);
    camera_set_encode_properties(&p);
@@ -4386,7 +4386,10 @@ void OEMCamera_CameraLayerCB(camera_cb_type cb, const void *client_data, camera_
 
          if ((pRsp->camNotify.nCmd == CAM_CMD_START) ||
              (pRsp->camNotify.nCmd == CAM_CMD_ENCODESNAPSHOT))
+         {
+            MSG_FATAL("OEMCamera_SetReadyMode",0,0,0);
             OEMCamera_SetReadyMode(pme);
+         }
          goto Resume;
 
       case CAMERA_EVT_CB_FRAME:
@@ -4433,6 +4436,7 @@ void OEMCamera_CameraLayerCB(camera_cb_type cb, const void *client_data, camera_
          switch (cb)
          {
             case CAMERA_RSP_CB_SUCCESS:
+               MSG_FATAL("CAM_MODE_PREVIEW",0,0,0);
                pme->m_nMode = CAM_MODE_PREVIEW;
                pme->m_nNextMode = CAM_MODE_READY;
                nStatus = CAM_STATUS_START;
@@ -4442,11 +4446,13 @@ void OEMCamera_CameraLayerCB(camera_cb_type cb, const void *client_data, camera_
             case CAMERA_EXIT_CB_FAILED:
                nStatus = CAM_STATUS_FAIL;
                dwData = CAM_EPREVIEWFAIL;
+               MSG_FATAL("OEMCamera_SetReadyMode",0,0,0);
                OEMCamera_SetReadyMode(pme);
                break;
 
             case CAMERA_EXIT_CB_DONE:
                nStatus = CAM_STATUS_DONE;
+               MSG_FATAL("OEMCamera_SetReadyMode",0,0,0);
                OEMCamera_SetReadyMode(pme);
                break;
          }
@@ -4477,6 +4483,7 @@ void OEMCamera_CameraLayerCB(camera_cb_type cb, const void *client_data, camera_
          switch (cb)
          {
             case CAMERA_RSP_CB_SUCCESS:
+               MSG_FATAL("CAM_MODE_SNAPSHOT",0,0,0);
                pme->m_nMode = CAM_MODE_SNAPSHOT;
                nStatus = CAM_STATUS_START;
                pme->m_bStateChanging = FALSE;
@@ -4496,6 +4503,7 @@ void OEMCamera_CameraLayerCB(camera_cb_type cb, const void *client_data, camera_
                   if (SUCCESS != OEMCamera_EncodeSnapshot(pme))
                      bEncodeFailed = TRUE;
                }
+               MSG_FATAL("OEMCamera_SetReadyMode",0,0,0);
                OEMCamera_SetReadyMode(pme);
                break;
 
@@ -4508,7 +4516,7 @@ void OEMCamera_CameraLayerCB(camera_cb_type cb, const void *client_data, camera_
                   pme->m_boCameraStoppedDueToACMRelease = FALSE;
                }
 #endif // FEATURE_ACM || FEATURE_BMP_ACM
-
+               MSG_FATAL("OEMCamera_SetReadyMode",0,0,0);
                OEMCamera_SetReadyMode(pme);
                break;
          }
@@ -4524,12 +4532,14 @@ void OEMCamera_CameraLayerCB(camera_cb_type cb, const void *client_data, camera_
          switch (cb)
          {
             case CAMERA_RSP_CB_SUCCESS:
+               MSG_FATAL("CAM_MODE_SNAPSHOT",0,0,0);
                pme->m_nMode = CAM_MODE_SNAPSHOT;
                pme->m_bStateChanging = FALSE;
                pme->m_nNextMode = CAM_MODE_READY;
                break;
 
             case CAMERA_EXIT_CB_DONE:
+               MSG_FATAL("OEMCamera_SetReadyMode",0,0,0);
                OEMCamera_SetReadyMode(pme);
                nStatus = CAM_STATUS_DONE;
                dwData = parm4;
@@ -4540,6 +4550,7 @@ void OEMCamera_CameraLayerCB(camera_cb_type cb, const void *client_data, camera_
 
             case CAMERA_EXIT_CB_FILE_SIZE_EXCEEDED:
                nStatus = CAM_STATUS_FILE_SIZE_EXCEEDED;
+               MSG_FATAL("OEMCamera_SetReadyMode",0,0,0);
                OEMCamera_SetReadyMode(pme);
                break;
 
@@ -4547,6 +4558,7 @@ void OEMCamera_CameraLayerCB(camera_cb_type cb, const void *client_data, camera_
             default:
                nStatus = CAM_STATUS_FAIL;
                dwData = CAM_ESNAPSHOTFAIL;
+               MSG_FATAL("OEMCamera_SetReadyMode",0,0,0);
                OEMCamera_SetReadyMode(pme);
                break;
 
@@ -4560,6 +4572,7 @@ void OEMCamera_CameraLayerCB(camera_cb_type cb, const void *client_data, camera_
          switch (cb)
          {
             case CAMERA_RSP_CB_SUCCESS:
+               MSG_FATAL("CAM_MODE_MOVIE",0,0,0);
                pme->m_nMode = CAM_MODE_MOVIE;
                nStatus = CAM_STATUS_START;
                pme->m_bStateChanging = FALSE;
@@ -4569,11 +4582,13 @@ void OEMCamera_CameraLayerCB(camera_cb_type cb, const void *client_data, camera_
             case CAMERA_EXIT_CB_FAILED:
                nStatus = CAM_STATUS_FAIL;
                dwData = CAM_EMOVIEFAIL;
+               MSG_FATAL("OEMCamera_SetReadyMode",0,0,0);
                OEMCamera_SetReadyMode(pme);
                break;
 
             case CAMERA_EXIT_CB_DONE:
                nStatus = CAM_STATUS_DONE;
+               MSG_FATAL("OEMCamera_SetReadyMode",0,0,0);
                OEMCamera_SetReadyMode(pme);
                break;
 
@@ -4882,6 +4897,7 @@ static int OEMCamera_AddOverlay(OEMCamera * pme, IDIB * pDIB)
 ==================================================================*/
 static void OEMCamera_SetReadyMode(OEMCamera * pme)
 {
+   MSG_FATAL("CAM_MODE_READY",0,0,0);
    pme->m_nMode = CAM_MODE_READY;
    pme->m_nNextMode = CAM_MODE_READY;
    pme->m_bPaused = FALSE;

@@ -8290,7 +8290,7 @@ static void camera_jpeg_encode_callback(JPEGENC_CBrtnType  *clientData )
   uint32         jpeg_encoded_data_size = 0;
 
 
-  MSG_HIGH ("camera_jpeg_encode_callback", 0, 0, 0);
+  MSG_FATAL ("camera_jpeg_encode_callback", 0, 0, 0);
 
 #ifdef CAMERA_TIMETEST
 #error code not present
@@ -8316,24 +8316,24 @@ static void camera_jpeg_encode_callback(JPEGENC_CBrtnType  *clientData )
         }
 
         /* Set the camera_state to ready */
-        MSG_HIGH("Encoding done. State transition to ready", 0, 0, 0);
+        MSG_FATAL("Encoding done. State transition to ready", 0, 0, 0);
         break;
 
       case JPEGENC_FILE_SIZE_FAIL:
-        MSG_ERROR("JPEG encoder aborted due to file size error.", 0, 0, 0);
+        MSG_FATAL("JPEG encoder aborted due to file size error.", 0, 0, 0);
         jpeg_callback_status = CAMERA_EXIT_CB_FILE_SIZE_EXCEEDED;
         break;
 
       case JPEGENC_IMG_ABORT:
       default:
-        MSG_HIGH("Encoding Aborted. State transition to ready", 0, 0, 0);
+        MSG_FATAL("Encoding Aborted. State transition to ready", 0, 0, 0);
         jpeg_callback_status = CAMERA_EXIT_CB_FAILED;
         break;
      }
   }
   else
   {
-    MSG_HIGH("No data from Encoder. State transition to ready", 0, 0, 0);
+    MSG_FATAL("No data from Encoder. State transition to ready", 0, 0, 0);
     jpeg_callback_status = CAMERA_EXIT_CB_FAILED;
   }
 
@@ -11928,7 +11928,7 @@ static void camera_process_encode_picture_standalone
   camera_state = CAMERA_STATE_ENCODE_PICTURE;
   camera_svcs_optimize_resources();
 
-  MSG_HIGH("camera_process_encode_picture", 0, 0, 0);
+  MSG_CAMERADEBUG("camera_process_encode_picture_standalone", 0, 0, 0);
   event_report(EVENT_CAMERA_SAVE_PICTURE);
 
 
@@ -19495,7 +19495,7 @@ static void camera_process_terminate(void)
 
     camera_log(LOG_INFO, (uint32)camera_func, 0, (uint32)TERM_END, __LINE__);
     event_report(EVENT_CAMERA_EXIT);
-    MSG_HIGH("CAMERA_SVCS: Termination complete", 0, 0, 0);
+    MSG_FATAL("CAMERA_SVCS: Termination complete", 0, 0, 0);
 
     if (camera_app_cb)
     {
