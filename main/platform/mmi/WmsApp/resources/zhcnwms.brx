@@ -601,6 +601,12 @@
 	<String Id="1021" Name="IDS_MMS_SERVER_ADDRESS">
 		<Text>服务器地址</Text>
 	</String>
+	<String Id="1022" Name="IDD_MMS_PORT">
+		<Text>代理网关</Text>
+	</String>
+	<String Id="1023" Name="IDS_MMS_PORT">
+		<Text>端口</Text>
+	</String>
 	<String Id="1026" Name="IDS_MMSDELIVERYREPORT">
 		<Text>使用彩信发送报告</Text>
 	</String>
@@ -979,6 +985,18 @@
 	<Dialog Id="6052" Name="IDD_MMS_SERVER_ADDRESS" Focus="0">
 		<Controls>
 			<Text Id="7043" Name="IDC_MMS_SERVER_ADDRESS">
+				<Items/></Text>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6053" Name="IDD_MMS_PROXY" Focus="0">
+		<Controls>
+			<Text Id="7044" Name="IDC_MMS_PROXY">
+				<Items/></Text>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6054" Name="IDD_MMS_PORT" Focus="0">
+		<Controls>
+			<Text Id="7047" Name="IDC_MMS_PORT">
 				<Items/></Text>
 		</Controls>
 	</Dialog>

@@ -246,6 +246,8 @@ static NextFSMAction WMSST_VIEWDRAFTBOXMSG_MMS_Handler(WmsApp *pMe);
 static NextFSMAction WMSST_DRAFTMSGOPTS_MMS_Handler(WmsApp *pMe);
 static NextFSMAction WMSST_EDIT_ALBUMOREMAIN_Handler(WmsApp *pMe);
 static NextFSMAction WMSST_MMS_SERVER_ADDRESS_Handler(WmsApp *pMe);
+static NextFSMAction WMSST_MMS_PROXY_Handler(WmsApp *pMe);
+static NextFSMAction WMSST_MMS_PORT_Handler(WmsApp *pMe);
 #endif
 
 /*==============================================================================
@@ -544,6 +546,12 @@ NextFSMAction WmsApp_ProcessState(WmsApp *pMe)
 
         case WMSST_MMS_SERVER_ADDRESS:
             return WMSST_MMS_SERVER_ADDRESS_Handler(pMe);   
+
+        case WMSST_MMS_PROXY:
+            return WMSST_MMS_PROXY_Handler(pMe); 
+
+        case WMSST_MMS_PORT:
+            return WMSST_MMS_PORT_Handler(pMe);             
 #endif
 
 
@@ -4568,7 +4576,15 @@ static NextFSMAction WMSST_MSGSETTING_Handler(WmsApp *pMe)
 
         case DLGRET_MMS_SERVER_ADDRESS:
             MOVE_TO_STATE(WMSST_MMS_SERVER_ADDRESS)
-            return NFSMACTION_CONTINUE;            
+            return NFSMACTION_CONTINUE;     
+
+        case DLGRET_MMS_PROXY:
+            MOVE_TO_STATE(WMSST_MMS_PROXY)
+            return NFSMACTION_CONTINUE;    
+
+        case DLGRET_MMS_PORT :
+            MOVE_TO_STATE(WMSST_MMS_PORT)
+            return NFSMACTION_CONTINUE;                
 #endif
         case DLGRET_CALLBACKNUM:
             MOVE_TO_STATE(WMSST_CALLBACKNUMSWITCH)
@@ -8031,4 +8047,99 @@ static NextFSMAction WMSST_MMS_SERVER_ADDRESS_Handler(WmsApp *pMe)
     return NFSMACTION_CONTINUE;
 } // WMSST_MMS_SERVER_ADDRESS_Handler
 
+/*==============================================================================
+函数:
+    WMSST_MMS_PROXY_Handler
+
+说明:
+    WMSST_MMS_PROXY 状态处理函数。
+
+参数:
+    pMe [in]: 指向WMS Applet对象结构的指针。该结构包含小程序的特定信息。
+
+返回值:
+    NFSMACTION_CONTINUE: 指示不停状态机。
+    NFSMACTION_WAIT: 指示停止状态机。
+
+备注:
+
+==============================================================================*/
+static NextFSMAction WMSST_MMS_PROXY_Handler(WmsApp *pMe)
+{
+    MSG_FATAL("WMSST_MMS_PROXY_Handler Start",0,0,0);
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+    switch (pMe->m_eDlgReturn)
+    {
+        // 创建编辑消息对话框界面
+        case DLGRET_CREATE:
+            WmsApp_ShowDialog(pMe, IDD_MMS_PROXY);
+            return NFSMACTION_WAIT;
+            
+        case DLGRET_MSGBOX_OK:
+            MOVE_TO_STATE(WMSST_MSGSETTING)
+            return TRUE;
+            
+        case DLGRET_CANCELED:
+            MOVE_TO_STATE(WMSST_MSGSETTING)
+            return NFSMACTION_CONTINUE;
+            
+        default:
+            // 用退出程序代替宏断言
+            MOVE_TO_STATE(WMSST_MSGSETTING)
+            break;
+    }
+    
+    return NFSMACTION_CONTINUE;
+} // WMSST_MMS_PROXY_Handler
+
+/*==============================================================================
+函数:
+    WMSST_MMS_PORT_Handler
+
+说明:
+    WMSST_MMS_PORT 状态处理函数。
+
+参数:
+    pMe [in]: 指向WMS Applet对象结构的指针。该结构包含小程序的特定信息。
+
+返回值:
+    NFSMACTION_CONTINUE: 指示不停状态机。
+    NFSMACTION_WAIT: 指示停止状态机。
+
+备注:
+
+==============================================================================*/
+static NextFSMAction WMSST_MMS_PORT_Handler(WmsApp *pMe)
+{
+    MSG_FATAL("WMSST_MMS_PORT_Handler Start",0,0,0);
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+    switch (pMe->m_eDlgReturn)
+    {
+        // 创建编辑消息对话框界面
+        case DLGRET_CREATE:
+            WmsApp_ShowDialog(pMe, IDD_MMS_PORT);
+            return NFSMACTION_WAIT;
+            
+        case DLGRET_MSGBOX_OK:
+            MOVE_TO_STATE(WMSST_MSGSETTING)
+            return TRUE;
+            
+        case DLGRET_CANCELED:
+            MOVE_TO_STATE(WMSST_MSGSETTING)
+            return NFSMACTION_CONTINUE;
+            
+        default:
+            // 用退出程序代替宏断言
+            MOVE_TO_STATE(WMSST_MSGSETTING)
+            break;
+    }
+    
+    return NFSMACTION_CONTINUE;
+} // WMSST_MMS_PORT_Handler
 #endif

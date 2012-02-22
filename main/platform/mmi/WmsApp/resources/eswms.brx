@@ -667,6 +667,12 @@
 	<String Id="1043" Name="IDS_MMS_SERVER_ADDRESS">
 		<Text>Dirección del servidor MMS</Text>
 	</String>
+	<String Id="1044" Name="IDS_MMS_PROXY">
+		<Text>Proxy Address</Text>
+	</String>
+	<String Id="1045" Name="IDS_MMS_PORT">
+		<Text>port</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN" Focus="7001">
@@ -1037,6 +1043,18 @@
 	<Dialog Id="6053" Name="IDD_MMS_SERVER_ADDRESS" Focus="0">
 		<Controls>
 			<Text Id="7044" Name="IDC_MMS_SERVER_ADDRESS">
+				<Items/></Text>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6054" Name="IDD_MMS_PROXY" Focus="0">
+		<Controls>
+			<Text Id="7047" Name="IDC_MMS_PROXY">
+				<Items/></Text>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6055" Name="IDD_MMS_PORT" Focus="0">
+		<Controls>
+			<Text Id="7048" Name="IDC_MMS_PORT">
 				<Items/></Text>
 		</Controls>
 	</Dialog>

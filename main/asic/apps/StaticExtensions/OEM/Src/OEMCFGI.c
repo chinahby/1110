@@ -717,6 +717,8 @@ typedef struct
    char  s_MMSServerAddress[MAX_URL_LEN];     
    char  s_MMSUserName[MAS_BREWSETINT_STRING];   
    char  s_MMSPassword[MAS_BREWSETINT_STRING];   
+   char  s_MMSProxy[MAS_BREWSETINT_STRING];  //CFGI_MMS_PROXY 
+   char  s_MMSPort[MAS_BREWSETINT_STRING];   //CFGI_MMS_PORT  
 #endif
 #ifdef FEATURE_VERSION_W208S
    uint8        sms_restrict_receive_total;  
@@ -1461,6 +1463,12 @@ static int OEMPriv_SetItem_CFGI_MMS_USER_NAME(void* pBuff);
 static int OEMPriv_GetItem_CFGI_MMS_PASSWORD(void* pBuff);
 static int OEMPriv_SetItem_CFGI_MMS_PASSWORD(void* pBuff);
 
+static int OEMPriv_GetItem_CFGI_MMS_PROXY(void* pBuff);
+static int OEMPriv_SetItem_CFGI_MMS_PROXY(void* pBuff);
+
+static int OEMPriv_GetItem_CFGI_MMS_PORT(void* pBuff);
+static int OEMPriv_SetItem_CFGI_MMS_PORT(void* pBuff);
+
 #endif
 
 //Add By zzg 2010_11_22
@@ -1901,6 +1909,8 @@ static OEMConfigListType oemi_cache = {
     {"http://mms.movilnet.com.ve"}
    ,{""}
    ,{""}    
+   ,{OEMNV_MMSPROXY}
+   ,{OEMNV_MMSPORT}     
 #endif   
 #ifdef FEATURE_VERSION_W208S
      ,0                                              //CFGI_SMS_RESTRICT_TOTAL
@@ -2465,6 +2475,8 @@ static ConfigItemTableEntry const customOEMItemTable[] =
    CFGTABLEITEM_EMPTY(CFGI_MMS_SERVER_ADDRESS) ,
    CFGTABLEITEM(CFGI_MMS_USER_NAME,sizeof(char)*MAS_BREWSETINT_STRING),
    CFGTABLEITEM(CFGI_MMS_PASSWORD,sizeof(char)*MAS_BREWSETINT_STRING),   
+   CFGTABLEITEM(CFGI_MMS_PROXY,sizeof(char)*MAX_MMS_PROXY),
+   CFGTABLEITEM(CFGI_MMS_PORT,sizeof(char)*MAX_MMS_PORT),     
 #endif   
 #ifdef FEATURE_VERSION_W208S
    CFGTABLEITEM(CFGI_SMS_RESTRICT_RECEIVE_TOTAL, sizeof(uint8)),
@@ -2896,6 +2908,8 @@ void OEM_RestoreFactorySetting( void )
    MEMCPY(oemi_cache.s_MMSServerAddress,"http://mms.movilnet.com.ve", MAX_URL_LEN/*FILESPECLEN*/); 
    MEMCPY(oemi_cache.s_MMSUserName,"", MAS_BREWSETINT_STRING/*FILESPECLEN*/); 
    MEMCPY(oemi_cache.s_MMSPassword,"", MAS_BREWSETINT_STRING/*FILESPECLEN*/);    
+   MEMCPY(oemi_cache.s_MMSProxy,OEMNV_MMSPROXY, MAX_MMS_PROXY/*FILESPECLEN*/); 
+   MEMCPY(oemi_cache.s_MMSPort,OEMNV_MMSPORT, MAX_MMS_PORT/*FILESPECLEN*/);    
    oemi_cache.mmsInCount = 0;
    oemi_cache.mmsOutCount = 0;
    oemi_cache.mmsDraftCount = 0;
@@ -11022,6 +11036,36 @@ static int OEMPriv_SetItem_CFGI_MMS_PASSWORD(void *pBuff)
 {
 	MEMCPY((void*) &oemi_cache.s_MMSPassword, pBuff, sizeof(char) * MAS_BREWSETINT_STRING);
     DBGPRINTF("CFGI_MMS_PASSWORD %s",oemi_cache.s_MMSPassword);
+    OEMPriv_WriteOEMConfigList(); 
+    return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_MMS_PROXY(void *pBuff)
+{
+	 MEMCPY(pBuff, (void*) &oemi_cache.s_MMSProxy, sizeof(char) * MAX_MMS_PROXY);
+     DBGPRINTF("CFGI_MMS_PROXY %s",oemi_cache.s_MMSProxy);
+     return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_MMS_PROXY(void *pBuff)
+{
+	MEMCPY((void*) &oemi_cache.s_MMSProxy, pBuff, sizeof(char) * MAX_MMS_PROXY);
+    DBGPRINTF("CFGI_MMS_PROXY %s",oemi_cache.s_MMSProxy);
+    OEMPriv_WriteOEMConfigList(); 
+    return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_MMS_PORT(void *pBuff)
+{
+	 MEMCPY(pBuff, (void*) &oemi_cache.s_MMSPort, sizeof(char) * MAX_MMS_PORT);
+     DBGPRINTF("CFGI_MMS_PORT %s",oemi_cache.s_MMSPort);
+     return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_MMS_PORT(void *pBuff)
+{
+	MEMCPY((void*) &oemi_cache.s_MMSPort, pBuff, sizeof(char) * MAX_MMS_PORT);
+    DBGPRINTF("CFGI_MMS_PORT %s",oemi_cache.s_MMSPort);
     OEMPriv_WriteOEMConfigList(); 
     return SUCCESS;
 }

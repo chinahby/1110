@@ -577,6 +577,12 @@
 	<String Id="1022" Name="IDS_MMS_SERVER_ADDRESS" Encoding="Unicode">
 		<Text>MMS server address</Text>
 	</String>
+	<String Id="1023" Name="IDS_MMS_PROXY" Encoding="Unicode">
+		<Text>Proxy Address</Text>
+	</String>
+	<String Id="1024" Name="IDS_MMS_PORT" Encoding="Unicode">
+		<Text>port</Text>
+	</String>
 	<String Id="1026" Name="IDS_MMSDELIVERYREPORT">
 		<Text>MMS Delivery Report</Text>
 	</String>
@@ -950,6 +956,18 @@
 	<Dialog Id="6046" Name="IDD_MMS_SERVER_ADDRESS" Focus="0">
 		<Controls>
 			<Text Id="7043" Name="IDC_MMS_SERVER_ADDRESS">
+				<Items/></Text>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6047" Name="IDD_MMS_PROXY" Focus="0">
+		<Controls>
+			<Text Id="7044" Name="IDC_MMS_PROXY">
+				<Items/></Text>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6048" Name="IDD_MMS_PORT" Focus="0">
+		<Controls>
+			<Text Id="7046" Name="IDC_MMS_PORT">
 				<Items/></Text>
 		</Controls>
 	</Dialog>

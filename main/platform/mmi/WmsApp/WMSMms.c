@@ -179,13 +179,17 @@ boolean WMS_MMS_Resend(int nIndex,int nKind);
 #define SLIM_SS_DEC(s,len)			((s)--,(len)++)
 #define slim_tolower(c) ((int)cSlim_clib_tolower_table_mms[(c)])
 #define slim_toupper(c) ((int)cSlim_clib_toupper_table_mms[(c)])
-
+#if 0
 #ifndef FEATURE_USES_MMS_TEST
 //这是南美的短信中心http://mms.movilnet.com.ve
 #define POST_TEST ("POST %s HTTP/1.1\r\nHost:http://mms.movilnet.com.ve\r\nAccept-Charset:utf-8\r\nContent-Length:%d\r\nAccept:*/*,application/vnd.wap.mms-message\r\nAccept-Language:en\r\nAccept-Encoding:gzip,deflate\r\nContent-Type:application/vnd.wap.mms-message\r\nUser-Agent: http://mms.movilnet.com.ve/phonemodel.xml\r\nx-wap-profile: \"http://mms.movilnet.com.ve/phonemodel.xml\"\r\nKeep-Alive:300\r\nConnection:Keep-Alive\r\n\r\n")
 #else//这是中国电信的短信中心http://mmsc.vnet.mobi
 #define POST_TEST ("POST %s HTTP/1.1\r\nHost:10.0.0.200:80\r\nAccept-Charset:utf-8\r\nContent-Length:%d\r\nAccept:*/*,application/vnd.wap.mms-message\r\nAccept-Language:en\r\nAccept-Encoding:gzip,deflate\r\nContent-Type:application/vnd.wap.mms-message\r\nUser-Agent: Nokia6235/1.0 (S190V0200.nep) UP.Browser/6.2.3.2 MMP/2.0\r\nx-wap-profile: \"http://nds1.nds.nokia.com/uaprof/N6235r200.xml\"\r\nKeep-Alive:300\r\nConnection:Keep-Alive\r\n\r\n")
 #endif
+#endif
+
+#define POST_TEST ("POST %s HTTP/1.1\r\nHost:%s\r\nAccept-Charset:utf-8\r\nContent-Length:%d\r\nAccept:*/*,application/vnd.wap.mms-message\r\nAccept-Language:en\r\nAccept-Encoding:gzip,deflate\r\nContent-Type:application/vnd.wap.mms-message\r\nUser-Agent: http://mms.movilnet.com.ve/phonemodel.xml\r\nx-wap-profile: \"http://mms.movilnet.com.ve/phonemodel.xml\"\r\nKeep-Alive:300\r\nConnection:Keep-Alive\r\n\r\n")
+
 boolean bSocketLock = FALSE;
 IVector* pSocketParam= NULL;
 
@@ -2837,7 +2841,7 @@ int WMS_MMS_PDU_Encode(MMS_WSP_ENCODE_SEND* encdata, uint8* hPDU, uint8 ePDUType
             size = (int)(pCurPos-WMS_MMS_BUFFERGet());
 
             MMS_DEBUG(("[MMS] MMS_SEND_TEST size = %d",size));
-            SNPRINTF((char*)hPDU,MSG_MAX_PACKET_SIZE,POST_TEST, serverAddress, size);
+            SNPRINTF((char*)hPDU,MSG_MAX_PACKET_SIZE,POST_TEST, serverAddress, serverAddress, size);
 
             DBGPRINTF(("POST_TEST:%s",(char*)hPDU));
             head_len = STRLEN((char*)hPDU);
@@ -2868,7 +2872,7 @@ int WMS_MMS_PDU_Encode(MMS_WSP_ENCODE_SEND* encdata, uint8* hPDU, uint8 ePDUType
             size = (int)(pCurPos-WMS_MMS_BUFFERGet());
         
             MMS_DEBUG(("[MMS] MMS_SEND_TEST size = %d",size));
-            SNPRINTF((char*)hPDU,MSG_MAX_PACKET_SIZE,POST_TEST, serverAddress, serverAddress);
+            SNPRINTF((char*)hPDU,MSG_MAX_PACKET_SIZE,POST_TEST, serverAddress, serverAddress, size);
         
             DBGPRINTF(("POST_TEST:%s",(char*)hPDU));
             head_len = STRLEN((char*)hPDU);
@@ -2890,7 +2894,7 @@ int WMS_MMS_PDU_Encode(MMS_WSP_ENCODE_SEND* encdata, uint8* hPDU, uint8 ePDUType
 	        size = head_len;
 
             MMS_DEBUG(("[MMS] MMS_SEND_TEST size = %d",size));
-            SNPRINTF((char*)hPDU,MSG_MAX_PACKET_SIZE,POST_TEST, serverAddress, size);
+            SNPRINTF((char*)hPDU,MSG_MAX_PACKET_SIZE,POST_TEST, serverAddress, serverAddress, size);
 
             DBGPRINTF(("POST_TEST:%s",(char*)hPDU));
             head_len = STRLEN((char*)hPDU);
@@ -2908,7 +2912,7 @@ int WMS_MMS_PDU_Encode(MMS_WSP_ENCODE_SEND* encdata, uint8* hPDU, uint8 ePDUType
 	        size = head_len;
 
             MMS_DEBUG(("[MMS] MMS_SEND_TEST size = %d",size));
-            SNPRINTF((char*)hPDU,MSG_MAX_PACKET_SIZE,POST_TEST, serverAddress, size);
+            SNPRINTF((char*)hPDU,MSG_MAX_PACKET_SIZE,POST_TEST, serverAddress, serverAddress, size);
 
             DBGPRINTF(("POST_TEST:%s",(char*)hPDU));
             head_len = STRLEN((char*)hPDU);
@@ -2926,7 +2930,7 @@ int WMS_MMS_PDU_Encode(MMS_WSP_ENCODE_SEND* encdata, uint8* hPDU, uint8 ePDUType
 	        size = head_len;
 
             MMS_DEBUG(("[MMS] MMS_SEND_TEST size = %d",size));
-            SNPRINTF((char*)hPDU,MSG_MAX_PACKET_SIZE,POST_TEST, serverAddress, size);
+            SNPRINTF((char*)hPDU,MSG_MAX_PACKET_SIZE,POST_TEST, serverAddress, serverAddress, size);
 
             DBGPRINTF(("POST_TEST:%s",(char*)hPDU));
             head_len = STRLEN((char*)hPDU);
@@ -4622,7 +4626,7 @@ static uint32 WMS_MMS_EncodePostHead(uint8* pBuf,uint8* pContentBuf,uint32 nCont
         (void)ICONFIG_Release(pConfig);
         pConfig = NULL;      
         
-        nHeaderLen = SPRINTF((char*)pBuf,POST_TEST, serverAddress, nContentLen);
+        nHeaderLen = SPRINTF((char*)pBuf,POST_TEST, serverAddress, serverAddress, nContentLen);
         DBGPRINTF(("POST_TEST:%s",(char*)pBuf));
         MEMCPY(pBuf + nHeaderLen,pContentBuf,nContentLen);
     }
@@ -4726,11 +4730,41 @@ static void MMSSocketState(MMSSocket *ps)
     
     if((!ps->bConnected) && (ps->nState != WMS_MMS_PDU_DRAFT))
     {
+        IConfig             *pConfig;
+        char Proxy[MAX_MMS_PROXY] = {0};
+        char port[MAX_MMS_PORT] = {0};
+        uint16 portID = 0;
+        IShell  *pShell = AEE_GetShell();
+        if (ISHELL_CreateInstance(pShell, AEECLSID_CONFIG,(void **)&pConfig) == SUCCESS)
+        {
+            ICONFIG_GetItem(pConfig, CFGI_MMS_PROXY, Proxy, sizeof(Proxy));
+            ICONFIG_GetItem(pConfig, CFGI_MMS_PORT,  port,  sizeof(port));
+            (void)ICONFIG_Release(pConfig);
+            pConfig = NULL; 
+
+            if((STRLEN(Proxy) != 0) && (STRLEN(port) != 0))
+            {
+                portID = (uint16)ATOI(port);
+                DBGPRINTF("Proxy=%s, portID=%d",Proxy, portID);            
+                MMSSocketConnect(ps,Proxy,portID);
+            }
+            else
+            {
+                //默认为南美的网关和端口号
+                MMSSocketConnect(ps,"10.0.0.0",80);
+            }
+        }
+        else
+        {
+                //默认为南美的网关和端口号
+                MMSSocketConnect(ps,"10.0.0.0",80);            
+        }
+/*        
 #ifdef FEATURE_USES_MMS_TEST        
         MMSSocketConnect(ps,"10.0.0.200",80);
 #else
         MMSSocketConnect(ps,"10.0.0.0",80);
-#endif
+#endif*/
         return;
     }
 

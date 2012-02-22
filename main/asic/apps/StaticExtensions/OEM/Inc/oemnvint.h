@@ -316,6 +316,8 @@ typedef PACKED struct _Key_pad_Cfg
 #define  OEMNV_MMSIMAGE    ""
 #define  OEMNV_MMSSOUND    ""
 #define  OEMNV_MMSVIDEO    ""
+#define  OEMNV_MMSPROXY    "10.0.0.0"
+#define  OEMNV_MMSPORT     "80"
 #endif
 /*
 
@@ -855,6 +857,8 @@ typedef enum {
 
 #ifdef FEATURE_USES_MMS
 #define MAX_MMS_STORED 10//最多只能存10条彩
+#define MAX_MMS_PROXY    20
+#define MAX_MMS_PORT    6
 
 typedef struct _MMSData
 { 

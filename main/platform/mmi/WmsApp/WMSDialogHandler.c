@@ -57,6 +57,9 @@ extern uint8  g_mmsDataInfoMax;
                                  宏定义和常数
                                  
 ==============================================================================*/
+#define MAX_MMS_PROXY    20
+#define MAX_MMS_PORT    6
+
 #define CONTACTAPP_RES_FILE "contactapp.bar"
 #define CONTAPP_RES_FILE_LANG  AEE_RES_LANGDIR CONTACTAPP_RES_FILE
 
@@ -545,7 +548,8 @@ int WMSMMS_GetResByExplorer(void* pv, FileNamesBuf pBuf, uint32 nBufSize);
 static void WMSMMS_MediaNotify(void * pUser, AEEMediaCmdNotify *pCmdNotify);
 static boolean IDD_EDIT_ALBUMOREMAIN_Handler(void *pUser, AEEEvent eCode,uint16 wParam, uint32 dwParam);
 static boolean IDD_MMS_SERVER_ADDRESS_Handler(void *pUser, AEEEvent eCode,uint16 wParam, uint32 dwParam);
-
+static boolean IDD_MMS_PROXY_Handler(void *pUser, AEEEvent eCode,uint16 wParam, uint32 dwParam);
+static boolean IDD_MMS_PORT_Handler(void *pUser, AEEEvent eCode,uint16 wParam, uint32 dwParam);
 #endif
 /*==============================================================================
 
@@ -898,6 +902,14 @@ void WmsApp_SetDialogHandler(WmsApp *pMe)
         case IDD_MMS_SERVER_ADDRESS:
             pMe->m_pDialogHandler = IDD_MMS_SERVER_ADDRESS_Handler;
             break;
+
+        case IDD_MMS_PROXY:
+            pMe->m_pDialogHandler = IDD_MMS_PROXY_Handler;
+            break;
+
+        case IDD_MMS_PORT:
+            pMe->m_pDialogHandler = IDD_MMS_PORT_Handler;
+            break;            
 #endif            
         default:
             pMe->m_pDialogHandler = NULL;
@@ -3456,6 +3468,8 @@ static boolean IDD_SETTING_Handler(void   *pUser,
             MENU_ADDITEM(pMenu,IDS_REPORTALLOWED);
             MENU_ADDITEM(pMenu,IDS_SENDERVISIBILITY);
             MENU_ADDITEM(pMenu,IDS_MMS_SERVER_ADDRESS);
+            MENU_ADDITEM(pMenu,IDS_MMS_PROXY);
+            MENU_ADDITEM(pMenu,IDS_MMS_PORT);
 #endif
             IMENUCTL_SetSel(pMenu, pMe->m_wPrevMenuSel);
             return TRUE;
@@ -3554,6 +3568,18 @@ static boolean IDD_SETTING_Handler(void   *pUser,
                 case IDS_SENDERVISIBILITY:
                     CLOSE_DIALOG(DLGRET_SENDERVISIBILITY)
                      return TRUE;
+
+                case IDS_MMS_SERVER_ADDRESS:
+                    CLOSE_DIALOG(DLGRET_MMS_SERVER_ADDRESS)
+                    return TRUE;         
+
+                case IDS_MMS_PROXY:
+                    CLOSE_DIALOG(DLGRET_MMS_PROXY)
+                    return TRUE;    
+
+                case IDS_MMS_PORT:
+                    CLOSE_DIALOG(DLGRET_MMS_PORT)
+                    return TRUE;                        
 #endif                     
                 // 发出短信相对有效期设置
                 case IDS_MSGVALIDITY:
@@ -3575,11 +3601,7 @@ static boolean IDD_SETTING_Handler(void   *pUser,
                 case IDS_RESERVEDMSG:
                     CLOSE_DIALOG(DLGRET_RESERVEDMSGALERTTIMEOUT)
                     return TRUE;
-                    
-                case IDS_MMS_SERVER_ADDRESS:
-                    CLOSE_DIALOG(DLGRET_MMS_SERVER_ADDRESS)
-                    return TRUE;        
-                    
+                                           
                 default:
                     break;
             }
@@ -20564,14 +20586,14 @@ static boolean IDD_MMS_SERVER_ADDRESS_Handler(void *pUser,
         case EVT_DIALOG_INIT:
         	{
                 AECHAR WTitle[2] = {0};
-                AECHAR MMSServerAddress[MAX_URL_LEN+1] = {0};
-                char temp[MAX_URL_LEN+1] = {0};
+                AECHAR MMSServerAddress[MAX_URL_LEN] = {0};
+                char temp[MAX_URL_LEN] = {0};
                 MSG_FATAL("IDD_MMS_SERVER_ADDRESS_Handler EVT_DIALOG_INIT",0,0,0);
                 IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
                 SetControlRect(pMe, pIText);       
                 ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
                 (void)ITEXTCTL_SetTitle( pIText, NULL,0,WTitle);
-                ITEXTCTL_SetMaxSize(pIText, MAX_EMAILADD_LEN+1);   
+                ITEXTCTL_SetMaxSize(pIText, MAX_URL_LEN);   
                 ICONFIG_GetItem(pMe->m_pConfig, CFGI_MMS_SERVER_ADDRESS, temp, sizeof(temp));
 				if(STRLEN(temp) != 0)
 				{
@@ -20637,7 +20659,7 @@ static boolean IDD_MMS_SERVER_ADDRESS_Handler(void *pUser,
 
         case EVT_DIALOG_END:
             {
-                char MMSServerAddress[MAX_URL_LEN+1] = {0};
+                char MMSServerAddress[MAX_URL_LEN] = {0};
                 AECHAR *pwsText = ITEXTCTL_GetTextPtr(pIText);
                 WSTRTOSTR(pwsText, MMSServerAddress, MAX_URL_LEN);
                 ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMS_SERVER_ADDRESS,MMSServerAddress, sizeof(MMSServerAddress)); 
@@ -20711,5 +20733,399 @@ static boolean IDD_MMS_SERVER_ADDRESS_Handler(void *pUser,
 
     return FALSE;
 } // IDD_MMS_SERVER_ADDRESS_Handler
+
+/*==============================================================================
+函数:
+    IDD_MMS_PROXY_Handler
+
+说明:
+    WMS Applet对话框 IDD_MMS_PROXY_Handler 事件处理函数。用于短消息文本输处理。
+
+参数:
+    pUser [in]: 指向WMS Applet对象结构的指针。该结构包含小程序的特定信息。
+    eCode [in]: 事件代码。
+    wParam[in]: 事件参数
+    dwParam [in]: 与事件关联的数据。
+
+返回值:
+    TRUE:  传入事件得到处理。
+    FALSE: 传入事件没被处理。
+
+备注:
+
+==============================================================================*/
+
+static boolean IDD_MMS_PROXY_Handler(void *pUser, 
+    AEEEvent eCode,
+    uint16 wParam, 
+    uint32 dwParam
+)
+{
+    ITextCtl *pIText = NULL;   
+    AEETextInputMode nInputMode;
+    static AEETextInputMode nMode;
+	AECHAR Annstr[20] = {0};
+    WmsApp *pMe = (WmsApp *)pUser;
+    MSG_FATAL("IDD_MMS_PROXY_Handler Start eCode=0x%x, wParam=0x%x",eCode,wParam,0);
+    if (NULL == pMe)
+    {
+        return FALSE;
+    }
+    pIText = (ITextCtl*)IDIALOG_GetControl(pMe->m_pActiveIDlg, IDC_MMS_PROXY);
+
+    if (NULL == pIText)
+    {
+        return FALSE;
+    }
+    MSG_FATAL("IDD_MMS_PROXY_Handler Start 1",0,0,0);
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT:
+        	{
+                AECHAR WTitle[2] = {0};
+                AECHAR MMSProxy[MAX_MMS_PROXY] = {0};
+                char temp[MAX_MMS_PROXY] = {0};
+                MSG_FATAL("IDD_MMS_PROXY_Handler EVT_DIALOG_INIT",0,0,0);
+                IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
+                SetControlRect(pMe, pIText);       
+                ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
+                (void)ITEXTCTL_SetTitle( pIText, NULL,0,WTitle);
+                ITEXTCTL_SetMaxSize(pIText, MAX_MMS_PROXY);   
+                ICONFIG_GetItem(pMe->m_pConfig, CFGI_MMS_PROXY, temp, sizeof(temp));
+				if(STRLEN(temp) != 0)
+				{
+                    DBGPRINTF("temp=%s", temp);
+                    STRTOWSTR(temp, MMSProxy, sizeof(MMSProxy));
+                	(void)ITEXTCTL_SetText(pIText,MMSProxy,-1);
+				}
+	            return TRUE;
+            }
+        
+        case EVT_DIALOG_START:         
+            (void) ISHELL_PostEventEx(pMe->m_pShell, 
+                                    EVTFLG_ASYNC,
+                                    AEECLSID_WMSAPP,
+                                    EVT_USER_REDRAW,
+                                    0, 
+                                    0);
+            return TRUE;
+
+        case EVT_USER_REDRAW:  
+            {
+                int32 InsertPos = 0;
+    			(void)ISHELL_LoadResString(pMe->m_pShell,
+                            AEE_WMSAPPRES_LANGFILE,                                
+                            IDS_EDIT,
+                            Annstr,
+                            sizeof(Annstr));
+                
+    			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,Annstr);
+                InsertPos = ITEXTCTL_GetCursorPos(pIText);
+                DBGPRINTF("EVT_USER_REDRAW InsertPos=%d",InsertPos);
+                if (InsertPos == 0)
+                {
+                    ITEXTCTL_SetCursorPos(pIText, TC_CURSOREND);
+                }
+                else
+                {
+                    ITEXTCTL_SetCursorPos(pIText, InsertPos);
+                }
+                ITEXTCTL_SetActive(pIText, TRUE);  
+                ITEXTCTL_Redraw(pIText);
+                // 绘制底部操作提示条
+                DRAW_BOTTOMBAR(BTBAR_OK_BACK)
+                IDISPLAY_Update(pMe->m_pDisplay);  
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+                TSIM_NumberKeypad(FALSE);
+#endif
+            }
+            return TRUE; 
+
+        case EVT_CTL_TEXT_MODECHANGED:  //切换输入法    这里增加画底条，否则从符号输入界面返回时无底条
+            // 绘制底部操作提示条
+            {
+                nInputMode = ITEXTCTL_GetInputMode(pIText,NULL);
+                if (nInputMode != AEE_TM_SYMBOLS && nInputMode != AEE_TM_FACE_SYMBOL)
+                {
+                    DRAW_BOTTOMBAR(BTBAR_OK_BACK)
+                    IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                }
+            }
+            return TRUE; 
+            
+
+        case EVT_DIALOG_END:
+            {
+                char MMSProxy[MAX_MMS_PROXY] = {0};
+                AECHAR *pwsText = ITEXTCTL_GetTextPtr(pIText);
+                WSTRTOSTR(pwsText, MMSProxy, MAX_MMS_PROXY);
+                ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMS_PROXY,MMSProxy, sizeof(MMSProxy)); 
+                MSG_FATAL("IDD_MMS_PROXY_Handler EVT_DIALOG_END 0",0,0,0);  
+            }
+            return TRUE;
+
+        case EVT_KEY:
+            MSG_FATAL("IDD_MMS_PROXY_Handler EVT_KEY",0,0,0);
+            switch (wParam)
+            {
+                case AVK_CLR:
+                    MSG_FATAL("IDD_MMS_PROXY_Handler AVK_CLR 1",0,0,0);
+                    CLOSE_DIALOG(DLGRET_CANCELED)
+                    return TRUE;
+
+                case AVK_INFO:
+                case AVK_SELECT:
+                    MSG_FATAL("AVK_SELECT ",0,0,0);
+                    CLOSE_DIALOG(DLGRET_MSGBOX_OK)
+                    return TRUE;
+                      
+                default:
+                    break;
+            }
+            return TRUE;
+
+#ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
+
+			case EVT_PEN_UP:
+				{
+					AEEDeviceInfo devinfo;
+					int nBarH ;
+					AEERect rc;
+					int16 wXPos = (int16)AEE_GET_X(dwParam);
+					int16 wYPos = (int16)AEE_GET_Y(dwParam);
+	                MSG_FATAL("IDD_MMS_PROXY_Handler EVT_PEN_UP wXPos=%d, wYPos=%d",wXPos,wYPos,0);
+					nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+			
+					MEMSET(&devinfo, 0, sizeof(devinfo));
+					ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+					SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+	
+					if(WMSAPP_PT_IN_RECT(wXPos,wYPos,rc))
+					{
+                        MSG_FATAL("IDD_MMS_PROXY_Handler EVT_PEN_UP WMSAPP_PT_IN_RECT",0,0,0);
+						if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//左
+						{
+                            MSG_FATAL("IDD_MMS_PROXY_Handler EVT_PEN_UP left",0,0,0);
+							return IDD_MMS_PROXY_Handler((void *)pMe,EVT_KEY,AVK_SELECT,0);
+						}
+						else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//左
+						{					
+							boolean rt;
+							int len = WSTRLEN(ITEXTCTL_GetTextPtr(pIText));
+	                        MSG_FATAL("IDD_MMS_PROXY_Handler EVT_PEN_UP left len=%d",len,0,0);
+							if((ITEXTCTL_IsActive(pIText)) && (len > 0))
+								return ITEXTCTL_HandleEvent(pIText,EVT_KEY,AVK_CLR,0);
+							else
+                                return IDD_MMS_PROXY_Handler((void *)pMe, EVT_KEY, AVK_CLR, 0);
+						}
+					}
+	
+				}
+				return TRUE;
+#endif 
+
+        default:
+            break;            
+    }
+
+    return FALSE;
+} // IDD_MMS_PROXY_Handler
+
+/*==============================================================================
+函数:
+    IDD_MMS_PORT_Handler
+
+说明:
+    WMS Applet对话框 IDD_MMS_PORT_Handler 事件处理函数。用于短消息文本输处理。
+
+参数:
+    pUser [in]: 指向WMS Applet对象结构的指针。该结构包含小程序的特定信息。
+    eCode [in]: 事件代码。
+    wParam[in]: 事件参数
+    dwParam [in]: 与事件关联的数据。
+
+返回值:
+    TRUE:  传入事件得到处理。
+    FALSE: 传入事件没被处理。
+
+备注:
+
+==============================================================================*/
+
+static boolean IDD_MMS_PORT_Handler(void *pUser, 
+    AEEEvent eCode,
+    uint16 wParam, 
+    uint32 dwParam
+)
+{
+    ITextCtl *pIText = NULL;   
+    AEETextInputMode nInputMode;
+    static AEETextInputMode nMode;
+	AECHAR Annstr[20] = {0};
+    WmsApp *pMe = (WmsApp *)pUser;
+    MSG_FATAL("IDD_MMS_PORT_Handler Start eCode=0x%x, wParam=0x%x",eCode,wParam,0);
+    if (NULL == pMe)
+    {
+        return FALSE;
+    }
+    pIText = (ITextCtl*)IDIALOG_GetControl(pMe->m_pActiveIDlg, IDC_MMS_PORT);
+
+    if (NULL == pIText)
+    {
+        return FALSE;
+    }
+    MSG_FATAL("IDD_MMS_PORT_Handler Start 1",0,0,0);
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT:
+        	{
+                AECHAR WTitle[2] = {0};
+                AECHAR MMSPort[MAX_MMS_PORT] = {0};
+                char temp[MAX_MMS_PORT] = {0};
+                MSG_FATAL("IDD_MMS_PORT_Handler EVT_DIALOG_INIT",0,0,0);
+                IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
+                SetControlRect(pMe, pIText);       
+                ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
+                (void)ITEXTCTL_SetTitle( pIText, NULL,0,WTitle);
+                ITEXTCTL_SetMaxSize(pIText, MAX_MMS_PORT);   
+                ICONFIG_GetItem(pMe->m_pConfig, CFGI_MMS_PORT, temp, sizeof(temp));
+				if(STRLEN(temp) != 0)
+				{
+                    DBGPRINTF("temp=%s", temp);
+                    STRTOWSTR(temp, MMSPort, sizeof(MMSPort));
+                	(void)ITEXTCTL_SetText(pIText,MMSPort,-1);
+				}
+	            return TRUE;
+            }
+        
+        case EVT_DIALOG_START:         
+            (void) ISHELL_PostEventEx(pMe->m_pShell, 
+                                    EVTFLG_ASYNC,
+                                    AEECLSID_WMSAPP,
+                                    EVT_USER_REDRAW,
+                                    0, 
+                                    0);
+            return TRUE;
+
+        case EVT_USER_REDRAW:  
+            {
+                int32 InsertPos = 0;
+    			(void)ISHELL_LoadResString(pMe->m_pShell,
+                            AEE_WMSAPPRES_LANGFILE,                                
+                            IDS_EDIT,
+                            Annstr,
+                            sizeof(Annstr));
+                
+    			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,Annstr);
+                InsertPos = ITEXTCTL_GetCursorPos(pIText);
+                DBGPRINTF("EVT_USER_REDRAW InsertPos=%d",InsertPos);
+                if (InsertPos == 0)
+                {
+                    ITEXTCTL_SetCursorPos(pIText, TC_CURSOREND);
+                }
+                else
+                {
+                    ITEXTCTL_SetCursorPos(pIText, InsertPos);
+                }
+                ITEXTCTL_SetActive(pIText, TRUE);  
+                ITEXTCTL_Redraw(pIText);
+                // 绘制底部操作提示条
+                DRAW_BOTTOMBAR(BTBAR_OK_BACK)
+                IDISPLAY_Update(pMe->m_pDisplay);  
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+                TSIM_NumberKeypad(FALSE);
+#endif
+            }
+            return TRUE; 
+
+        case EVT_CTL_TEXT_MODECHANGED:  //切换输入法    这里增加画底条，否则从符号输入界面返回时无底条
+            // 绘制底部操作提示条
+            {
+                nInputMode = ITEXTCTL_GetInputMode(pIText,NULL);
+                if (nInputMode != AEE_TM_SYMBOLS && nInputMode != AEE_TM_FACE_SYMBOL)
+                {
+                    DRAW_BOTTOMBAR(BTBAR_OK_BACK)
+                    IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                }
+            }
+            return TRUE; 
+            
+
+        case EVT_DIALOG_END:
+            {
+                char MMSPort[MAX_MMS_PORT] = {0};
+                AECHAR *pwsText = ITEXTCTL_GetTextPtr(pIText);
+                WSTRTOSTR(pwsText, MMSPort, MAX_MMS_PORT);
+                ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMS_PORT,MMSPort, sizeof(MMSPort)); 
+                MSG_FATAL("IDD_MMS_PORT_Handler EVT_DIALOG_END 0",0,0,0);  
+            }
+            return TRUE;
+
+        case EVT_KEY:
+            MSG_FATAL("IDD_MMS_PORT_Handler EVT_KEY",0,0,0);
+            switch (wParam)
+            {
+                case AVK_CLR:
+                    MSG_FATAL("IDD_MMS_PORT_Handler AVK_CLR 1",0,0,0);
+                    CLOSE_DIALOG(DLGRET_CANCELED)
+                    return TRUE;
+
+                case AVK_INFO:
+                case AVK_SELECT:
+                    MSG_FATAL("AVK_SELECT ",0,0,0);
+                    CLOSE_DIALOG(DLGRET_MSGBOX_OK)
+                    return TRUE;
+                      
+                default:
+                    break;
+            }
+            return TRUE;
+
+#ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
+
+			case EVT_PEN_UP:
+				{
+					AEEDeviceInfo devinfo;
+					int nBarH ;
+					AEERect rc;
+					int16 wXPos = (int16)AEE_GET_X(dwParam);
+					int16 wYPos = (int16)AEE_GET_Y(dwParam);
+	                MSG_FATAL("IDD_MMS_PORT_Handler EVT_PEN_UP wXPos=%d, wYPos=%d",wXPos,wYPos,0);
+					nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+			
+					MEMSET(&devinfo, 0, sizeof(devinfo));
+					ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+					SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+	
+					if(WMSAPP_PT_IN_RECT(wXPos,wYPos,rc))
+					{
+                        MSG_FATAL("IDD_MMS_PORT_Handler EVT_PEN_UP WMSAPP_PT_IN_RECT",0,0,0);
+						if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//左
+						{
+                            MSG_FATAL("IDD_MMS_PORT_Handler EVT_PEN_UP left",0,0,0);
+							return IDD_MMS_PORT_Handler((void *)pMe,EVT_KEY,AVK_SELECT,0);
+						}
+						else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//左
+						{					
+							boolean rt;
+							int len = WSTRLEN(ITEXTCTL_GetTextPtr(pIText));
+	                        MSG_FATAL("IDD_MMS_PORT_Handler EVT_PEN_UP left len=%d",len,0,0);
+							if((ITEXTCTL_IsActive(pIText)) && (len > 0))
+								return ITEXTCTL_HandleEvent(pIText,EVT_KEY,AVK_CLR,0);
+							else
+                                return IDD_MMS_PORT_Handler((void *)pMe, EVT_KEY, AVK_CLR, 0);
+						}
+					}
+	
+				}
+				return TRUE;
+#endif 
+
+        default:
+            break;            
+    }
+
+    return FALSE;
+} // IDD_MMS_PORT_Handler
 
 #endif
