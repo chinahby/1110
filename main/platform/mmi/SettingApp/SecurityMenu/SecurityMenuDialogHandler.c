@@ -1340,7 +1340,18 @@ static boolean  SecurityCallPassWordInputDlgHandler(CSecurityMenu *pMe,
                         }
                         #endif
                         break;
-                        
+
+                    case AVK_DEL:    
+                        chEnter = 0;
+#ifdef FEATURE_ALL_KEY_PAD 
+                        if (pMe->m_strPhonePWD == NULL || STRLEN(pMe->m_strPhonePWD) == 0)
+                        {
+                            CLOSE_DIALOG(DLGRET_CANCELED)
+                            return TRUE;
+                        }
+#endif
+                    break;
+
                     case AVK_DOWN:
                     //case AVK_SELECT:
                     //case AVK_INFO:
@@ -2173,7 +2184,18 @@ static boolean  SecurityPinChangeDlgHandler(CSecurityMenu *pMe,
                         }
                         #endif
                         break;
-                        
+
+                    case AVK_DEL:    
+                        chEnter = 0;
+#ifdef FEATURE_ALL_KEY_PAD 
+                        if (pMe->m_strPhonePWD == NULL || STRLEN(pMe->m_strPhonePWD) == 0)
+                        {
+                            CLOSE_DIALOG(DLGRET_CANCELED)
+                            return TRUE;
+                        }
+#endif
+                    break;
+
                     case AVK_DOWN:
                         {
                             nLen = (pMe->m_strPhonePWD == NULL)?(0):(STRLEN(pMe->m_strPhonePWD));
@@ -2665,7 +2687,18 @@ static boolean  SecurityAskPasswordDlgHandler(CSecurityMenu *pMe,
                         }
                         #endif
                         break;
-                        
+
+                    case AVK_DEL:    
+                        chEnter = 0;
+#ifdef FEATURE_ALL_KEY_PAD 
+                        if (pMe->m_strPhonePWD == NULL || STRLEN(pMe->m_strPhonePWD) == 0)
+                        {
+                            CLOSE_DIALOG(DLGRET_CANCELED)
+                            return TRUE;
+                        }
+#endif
+                    break;
+
                     case AVK_SELECT:
                     case AVK_INFO:
                         
@@ -2971,7 +3004,18 @@ static boolean  SecurityTsimInputPasswordDlgHandler(CSecurityMenu *pMe,
                         	}
                         }
                         #endif
-                        break;      
+                        break;  
+
+                case AVK_DEL:    
+                    chEnter = 0;
+#ifdef FEATURE_ALL_KEY_PAD 
+                    if (pMe->m_strPhonePWD == NULL || STRLEN(pMe->m_strPhonePWD) == 0)
+                    {
+                        CLOSE_DIALOG(DLGRET_CANCELED)
+                        return TRUE;
+                    }
+#endif
+                break;                        
                         
                 default:
                     return TRUE;
@@ -3495,6 +3539,17 @@ static boolean  SecurityAskPinDlgHandler(CSecurityMenu *pMe,
                         #endif
                         break;
                         
+                    case AVK_DEL:    
+                        chEnter = 0;
+#ifdef FEATURE_ALL_KEY_PAD 
+                        if (pMe->m_strPhonePWD == NULL || STRLEN(pMe->m_strPhonePWD) == 0)
+                        {
+                            CLOSE_DIALOG(DLGRET_CANCELED)
+                            return TRUE;
+                        }
+#endif
+                    break;
+                        
                     case AVK_DOWN:
                         if(pMe->m_bIsConfirmPassword)
                         {
@@ -3933,7 +3988,18 @@ static boolean  SecurityAskCallPasswordDlgHandler(CSecurityMenu *pMe,
                         }
                         #endif
                         break;
-                        
+
+                   case AVK_DEL:    
+                       chEnter = 0;
+#ifdef FEATURE_ALL_KEY_PAD 
+                       if (pMe->m_strPhonePWD == NULL || STRLEN(pMe->m_strPhonePWD) == 0)
+                       {
+                           CLOSE_DIALOG(DLGRET_CANCELED)
+                           return TRUE;
+                       }
+#endif
+                   break;
+
                    case AVK_DOWN:
                          {
                             uint16 wPWD=0;
@@ -4623,6 +4689,18 @@ static boolean  SecurityAffirmPassWordHandler(CSecurityMenu *pMe,
                         #endif
                         break;
                         
+                    case AVK_DEL:    
+                        chEnter = 0;
+#ifdef FEATURE_ALL_KEY_PAD 
+                        if (pMe->m_strPhonePWD == NULL || STRLEN(pMe->m_strPhonePWD) == 0)
+                        {
+                            CLOSE_DIALOG(DLGRET_CANCELED)
+                            return TRUE;
+                        }
+#endif
+                    break;
+
+                        
                     case AVK_SELECT:
                     case AVK_INFO:            
                     {
@@ -5073,6 +5151,18 @@ static boolean  SecurityAskPUKPassWordHandler(CSecurityMenu *pMe,
                         }
                         #endif
                         break;
+                        
+                    case AVK_DEL:    
+                        chEnter = 0;
+#ifdef FEATURE_ALL_KEY_PAD 
+                        if (pMe->m_strPhonePWD == NULL || STRLEN(pMe->m_strPhonePWD) == 0)
+                        {
+                            CLOSE_DIALOG(DLGRET_CANCELED)
+                            return TRUE;
+                        }
+#endif
+                    break;
+                        
                    case AVK_UP:
                          {
                             if(pMe->m_eRUIMSCode == ENTERPUK_STEP0)

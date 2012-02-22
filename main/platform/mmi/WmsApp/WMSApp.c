@@ -6240,6 +6240,14 @@ void WmsApp_PlaySMSAlert(WmsApp * pMe, boolean bsmsin)
 
 #ifdef FEATURE_VIDEOPLAYER
 #ifndef WIN32
+#ifdef FEATURE_VERSION_W208S              
+     if(ISHELL_ActiveApplet(pMe->m_pShell) == AEECLSID_DIALER)
+     {
+        MSG_FATAL("WmsApp_PlaySMSAlert AEECLSID_DIALER",0,0,0);
+        ISOUND_Vibrate(pMe->m_pSound,TIME_MS_SMSVIBRATE);
+        return;
+     }
+#endif     
      if(GetDeviceState(DEVICE_TYPE_MP4) == DEVICE_MP4_STATE_ON)
      {
          ISOUND_Vibrate(pMe->m_pSound,TIME_MS_SMSVIBRATE);

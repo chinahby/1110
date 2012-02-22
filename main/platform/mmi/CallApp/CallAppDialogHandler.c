@@ -3507,10 +3507,16 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
             {
                 case AVK_UP:
                 case AVK_VOLUME_UP:
+#ifdef FEATURE_ALL_KEY_PAD                     
+                case AVK_O:
+#endif                    
                     vol_add = TRUE;
 
                 case AVK_DOWN:
                 case AVK_VOLUME_DOWN:
+#ifdef FEATURE_ALL_KEY_PAD                     
+                case AVK_I:
+#endif                         
                     CallApp_ChangeCallVolume(pMe, vol_add);
 
 #if !defined( FEATURE_CALL_RECORDER)

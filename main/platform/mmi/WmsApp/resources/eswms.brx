@@ -668,10 +668,10 @@
 		<Text>Dirección del servidor MMS</Text>
 	</String>
 	<String Id="1044" Name="IDS_MMS_PROXY">
-		<Text>Proxy Address</Text>
+		<Text>Dirección de proxy</Text>
 	</String>
 	<String Id="1045" Name="IDS_MMS_PORT">
-		<Text>port</Text>
+		<Text>puerto</Text>
 	</String>
 </Strings>
 <Dialogs>

@@ -1128,6 +1128,9 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
           
         //增大音量   
         case AVK_UP: 
+#ifdef FEATURE_ALL_KEY_PAD                     
+        case AVK_O:
+#endif                
             if(pMe->m_bVolumeLevel < VOLUME_FIVE)
             {
                 pMe->m_bVolumeLevel++;
@@ -1159,6 +1162,9 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
           
         //减小音量  
         case AVK_DOWN: 
+#ifdef FEATURE_ALL_KEY_PAD                     
+        case AVK_I:
+#endif                
             if(pMe->m_bVolumeLevel > VOLUME_OFF)
             {
                 pMe->m_bVolumeLevel--;

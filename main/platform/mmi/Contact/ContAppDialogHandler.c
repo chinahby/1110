@@ -11451,6 +11451,17 @@ static boolean  CContApp_HandleInputDlgEvent( CContApp  *pMe,
                         }
                         #endif
                         break;
+
+                    case AVK_DEL:    
+                        chEnter = 0;
+#ifdef FEATURE_ALL_KEY_PAD 
+                        if (pMe->m_strPhonePWD == NULL || STRLEN(pMe->m_strPhonePWD) == 0)
+                        {
+                            CLOSE_DIALOG(DLGRET_CANCELED)
+                            return TRUE;
+                        }
+#endif
+                    break;
                         
                     case AVK_SELECT:
                     case AVK_INFO:
