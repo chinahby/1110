@@ -287,6 +287,7 @@ when       who     what, where, why
 #else
 #define OEMCONFIGLIST_FILE ("brew/oemconfig.dat")
 #endif
+#define MAX_URL_LEN                    256      // URL◊Ó¥Û‘ –Ì≥§∂»
 
 #define FMMIN 0		//Add By zzg 2012_02_18
 #define CDMAMIN 1
@@ -713,6 +714,9 @@ typedef struct
    int8 mmsReadReply;
    int8 mmsReportAllowed;
    int8 mmsSenderVisibility;
+   char  s_MMSServerAddress[MAX_URL_LEN];     
+   char  s_MMSUserName[MAS_BREWSETINT_STRING];   
+   char  s_MMSPassword[MAS_BREWSETINT_STRING];   
 #endif
 #ifdef FEATURE_VERSION_W208S
    uint8        sms_restrict_receive_total;  
@@ -1450,6 +1454,13 @@ static int OEMPriv_SetItem_CFGI_NET_LOCK_FLAGS(void *pBuff);
 #ifdef FEATURE_USES_MMS
 static int OEMPriv_GetItem_CFGI_MMS_SETTING(void *pBuff);
 static int OEMPriv_SetItem_CFGI_MMS_SETTING(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_MMS_USER_NAME(void* pBuff);
+static int OEMPriv_SetItem_CFGI_MMS_USER_NAME(void* pBuff);
+
+static int OEMPriv_GetItem_CFGI_MMS_PASSWORD(void* pBuff);
+static int OEMPriv_SetItem_CFGI_MMS_PASSWORD(void* pBuff);
+
 #endif
 
 //Add By zzg 2010_11_22
@@ -1887,9 +1898,12 @@ static OEMConfigListType oemi_cache = {
     -1,
     -1,
     -1,
+    {"http://mms.movilnet.com.ve"}
+   ,{""}
+   ,{""}    
 #endif   
 #ifdef FEATURE_VERSION_W208S
-     0                                              //CFGI_SMS_RESTRICT_TOTAL
+     ,0                                              //CFGI_SMS_RESTRICT_TOTAL
     ,{0}                                              //CFGI_SMS_RESTRICT_RECEIVE_INFO
 #endif    
 };
@@ -2448,6 +2462,9 @@ static ConfigItemTableEntry const customOEMItemTable[] =
    CFGTABLEITEM(CFGI_WMS_READREPLY, sizeof(int8)),
    CFGTABLEITEM(CFGI_WMS_REPORTALLOWED, sizeof(int8)),
    CFGTABLEITEM(CFGI_WMS_SENDERVISIBILITY, sizeof(int8)),   
+   CFGTABLEITEM_EMPTY(CFGI_MMS_SERVER_ADDRESS) ,
+   CFGTABLEITEM(CFGI_MMS_USER_NAME,sizeof(char)*MAS_BREWSETINT_STRING),
+   CFGTABLEITEM(CFGI_MMS_PASSWORD,sizeof(char)*MAS_BREWSETINT_STRING),   
 #endif   
 #ifdef FEATURE_VERSION_W208S
    CFGTABLEITEM(CFGI_SMS_RESTRICT_RECEIVE_TOTAL, sizeof(uint8)),
@@ -2876,6 +2893,9 @@ void OEM_RestoreFactorySetting( void )
         oemi_cache.mmsReportAllowed = -1;
         oemi_cache.mmsSenderVisibility = -1;
    }
+   MEMCPY(oemi_cache.s_MMSServerAddress,"http://mms.movilnet.com.ve", MAX_URL_LEN/*FILESPECLEN*/); 
+   MEMCPY(oemi_cache.s_MMSUserName,"", MAS_BREWSETINT_STRING/*FILESPECLEN*/); 
+   MEMCPY(oemi_cache.s_MMSPassword,"", MAS_BREWSETINT_STRING/*FILESPECLEN*/);    
    oemi_cache.mmsInCount = 0;
    oemi_cache.mmsOutCount = 0;
    oemi_cache.mmsDraftCount = 0;
@@ -4768,6 +4788,10 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
     case CFGI_MMSVIDEO:
       MEMCPY((void *)pBuff, (void *)oemi_cache.s_MMSVIDEO, AEE_MAX_FILE_NAME);
       return AEE_SUCCESS;        
+
+    case CFGI_MMS_SERVER_ADDRESS:
+      MEMCPY((void *)pBuff, (void *)oemi_cache.s_MMSServerAddress, AEE_MAX_FILE_NAME);
+      return AEE_SUCCESS;
 #endif      
    default:
       return(EUNSUPPORTED);
@@ -5757,6 +5781,14 @@ int OEM_SetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
       MEMCPY((void *)oemi_cache.s_MMSVIDEO, (void *)pBuff, AEE_MAX_FILE_NAME/*FILESPECLEN*/);
       OEMPriv_WriteOEMConfigList();
       return AEE_SUCCESS;             
+
+   case CFGI_MMS_SERVER_ADDRESS:
+      if(!pBuff) return EFAILED;
+      DBGPRINTF("pBuff=%s", (char*)pBuff);
+      MEMSET((void *)oemi_cache.s_MMSServerAddress,'\0', MAX_URL_LEN/*FILESPECLEN*/);
+      MEMCPY((void *)oemi_cache.s_MMSServerAddress, (void *)pBuff, MAX_URL_LEN/*FILESPECLEN*/);
+      OEMPriv_WriteOEMConfigList();
+      return AEE_SUCCESS;
 #endif
 
    default:
@@ -10963,6 +10995,37 @@ static int OEMPriv_SetItem_CFGI_WMS_SENDERVISIBILITY(void *pBuff)
     MSG_FATAL("OEMPriv_SetItem_CFGI_MMS_INCOUNT Start mmsNotify=%d", oemi_cache.mmsSenderVisibility,0,0); 
     return SUCCESS;
 }
+
+static int OEMPriv_GetItem_CFGI_MMS_USER_NAME(void *pBuff)
+{
+	 MEMCPY(pBuff, (void*) &oemi_cache.s_MMSUserName, sizeof(char) * MAS_BREWSETINT_STRING);
+     DBGPRINTF("CFGI_MMS_USER_NAME %s",oemi_cache.s_MMSUserName);
+     return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_MMS_USER_NAME(void *pBuff)
+{
+	MEMCPY((void*) &oemi_cache.s_MMSUserName, pBuff, sizeof(char) * MAS_BREWSETINT_STRING);
+    DBGPRINTF("CFGI_MMS_USER_NAME %s",oemi_cache.s_MMSUserName);
+    OEMPriv_WriteOEMConfigList(); 
+    return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_MMS_PASSWORD(void *pBuff)
+{
+	 MEMCPY(pBuff, (void*) &oemi_cache.s_MMSPassword, sizeof(char) * MAS_BREWSETINT_STRING);
+     DBGPRINTF("CFGI_MMS_PASSWORD %s",oemi_cache.s_MMSPassword);
+     return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_MMS_PASSWORD(void *pBuff)
+{
+	MEMCPY((void*) &oemi_cache.s_MMSPassword, pBuff, sizeof(char) * MAS_BREWSETINT_STRING);
+    DBGPRINTF("CFGI_MMS_PASSWORD %s",oemi_cache.s_MMSPassword);
+    OEMPriv_WriteOEMConfigList(); 
+    return SUCCESS;
+}
+
 #endif
 /*==============================================================================
 ∫Ø ˝£∫
@@ -11814,6 +11877,9 @@ void OEM_SetBAM_ADSAccount(void)
 
     OEMPriv_GetItem_CFGI_BREWSET_USENAME((void*)username);
     OEMPriv_GetItem_CFGI_BREWSET_PASSWORD((void*)password);
+
+    DBGPRINTF("OEM_SetBAM_ADSAccount username=%s ",username);
+    DBGPRINTF("OEM_SetBAM_ADSAccount passwordt=%s",password);    
     // ’À∫≈
     (void)STRCPY((char *)nvi.pap_user_id.user_id, (char *)username);
     nvi.pap_user_id.user_id_len = STRLEN((char *)username);
@@ -11838,6 +11904,8 @@ void OEM_SetBROWSER_ADSAccount(void)
 
     OEMPriv_GetItem_CFGI_BREWSET_USENAME((void*)username);
     OEMPriv_GetItem_CFGI_BREWSET_PASSWORD((void*)password);
+    DBGPRINTF("OEM_SetBROWSER_ADSAccount username=%s ",username);
+    DBGPRINTF("OEM_SetBROWSER_ADSAccoun passwordt=%s",password);
 
     // ’À∫≈
     (void)STRCPY((char *)nvi.pap_user_id.user_id, (char *)username);
@@ -11852,5 +11920,32 @@ void OEM_SetBROWSER_ADSAccount(void)
 #endif	
 } /* OEM_SetBROWSER_ADSAccount */
 
+#ifdef FEATURE_USES_MMS
+void OEM_SetMMS_ADSAccount(void)
+{
+#ifndef WIN32
+    nv_item_type nvi;
+    char username[MAS_BREWSETINT_STRING] = {0};
+    char password[MAS_BREWSETINT_STRING] = {0};
+
+    OEMPriv_GetItem_CFGI_MMS_USER_NAME((void*)username);
+    OEMPriv_GetItem_CFGI_MMS_PASSWORD((void*)password);
+    DBGPRINTF("OEM_SetMMS_ADSAccount username=%s ",username);
+    DBGPRINTF("OEM_SetMMS_ADSAccount passwordt=%s",password);
+
+    // ’À∫≈
+    (void)STRCPY((char *)nvi.pap_user_id.user_id, (char *)username);
+    nvi.pap_user_id.user_id_len = STRLEN((char *)username);
+    (void)OEMNV_Put(NV_PPP_USER_ID_I, &nvi);
+
+
+    // ’À∫≈√‹¬Î
+    (void)STRCPY((char *)nvi.pap_password.password, (char *)password);
+    nvi.pap_password.password_len = STRLEN((char *)password);
+    (void)OEMNV_Put(NV_PPP_PASSWORD_I, &nvi);
+#endif	
+
+} /* OEM_SetMMS_ADSAccount */
+#endif
 #endif // CUST_EDITION
 

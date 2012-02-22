@@ -1046,10 +1046,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
             }
             MSG_FATAL("EVT_APP_START %d",pMe->m_currState,0,0);
             // ¿ªÊ¼ÅÜWMS×´Ì¬»ú
-            CWmsApp_RunFSM(pMe);
-#ifdef MMS_TEST            
-           // WmsApp_debug_CheckChariFromRawDaTa(pMe);
-#endif            
+            CWmsApp_RunFSM(pMe);          
             return TRUE;
 
         case EVT_APP_STOP: 

@@ -598,6 +598,9 @@
 	<String Id="1020" Name="IDS_ADD_TO_RESTRICT_LIST">
 		<Text>添加到黑名单</Text>
 	</String>
+	<String Id="1021" Name="IDS_MMS_SERVER_ADDRESS">
+		<Text>服务器地址</Text>
+	</String>
 	<String Id="1026" Name="IDS_MMSDELIVERYREPORT">
 		<Text>使用彩信发送报告</Text>
 	</String>
@@ -970,6 +973,12 @@
 	<Dialog Id="6051" Name="IDD_ALBUMOREMAIN" Focus="7042">
 		<Controls>
 			<Text Id="7042" Name="IDC_EDIT_ALBUMOREMAIN">
+				<Items/></Text>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6052" Name="IDD_MMS_SERVER_ADDRESS" Focus="0">
+		<Controls>
+			<Text Id="7043" Name="IDC_MMS_SERVER_ADDRESS">
 				<Items/></Text>
 		</Controls>
 	</Dialog>

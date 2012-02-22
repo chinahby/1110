@@ -8695,11 +8695,25 @@ static boolean  Setting_Handle_SMSRestrict_RECEIVE(CSettingMenu *pMe,
                     
                         AEERect rc={0};
                         AEERect Temprc={0};
+                        uint8 byMax = 0;
+                    	//初始拒收黑名单的总数
+                    	(void) ICONFIG_GetItem(pMe->m_pConfig,
+                    						   CFGI_SMS_RESTRICT_RECEIVE_TOTAL,
+                    						   &byMax,
+                    						   sizeof(uint8));                          
                         // 将文本控件置于非激活状态
                         IMENUCTL_SetActive(pMenu, FALSE);
-                        // 动态添加菜单项
-                        MENU_ADDITEM(pMe->m_pMenu, IDS_ADD);
-                        MENU_ADDITEM(pMe->m_pMenu, IDS_DELETE);
+                        if(byMax > 0)
+                        {
+                            // 动态添加菜单项
+                            MENU_ADDITEM(pMe->m_pMenu, IDS_ADD);
+                            MENU_ADDITEM(pMe->m_pMenu, IDS_DELETE);
+                        }
+                        else
+                        {
+                            // 动态添加菜单项
+                            MENU_ADDITEM(pMe->m_pMenu, IDS_ADD);                            
+                        }
                         IMENUCTL_SetPopMenuRect(pMe->m_pMenu);
                     
                         IMENUCTL_SetProperties(pMe->m_pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
@@ -8731,11 +8745,24 @@ static boolean  Setting_Handle_SMSRestrict_RECEIVE(CSettingMenu *pMe,
                 
                     AEERect rc={0};
                     AEERect Temprc={0};
+                    uint8 byMax = 0;
+                	//初始拒收黑名单的总数
+                	(void) ICONFIG_GetItem(pMe->m_pConfig,
+                						   CFGI_SMS_RESTRICT_RECEIVE_TOTAL,
+                						   &byMax,
+                						   sizeof(uint8));                     
                     // 将文本控件置于非激活状态
                     IMENUCTL_SetActive(pMenu, FALSE);
                     // 动态添加菜单项
-                    MENU_ADDITEM(pMe->m_pMenu, IDS_ADD);
-                    MENU_ADDITEM(pMe->m_pMenu, IDS_DELETE);
+                    if(byMax > 0)
+                    {
+                        MENU_ADDITEM(pMe->m_pMenu, IDS_ADD);
+                        MENU_ADDITEM(pMe->m_pMenu, IDS_DELETE);
+                    }
+                    else
+                    {
+                        MENU_ADDITEM(pMe->m_pMenu, IDS_ADD);
+                    }
                     IMENUCTL_SetPopMenuRect(pMe->m_pMenu);
 
                     IMENUCTL_SetProperties(pMe->m_pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
@@ -8771,13 +8798,14 @@ static boolean  Setting_Handle_SMSRestrict_RECEIVE(CSettingMenu *pMe,
                             uint8 MenuSelectdId = IMENUCTL_GetSel(pMenu);
                             uint8 byMax = 0;
                             sms_restrict_recive_info		temp[MAX_SMS_RESTRICT]={0};
+                        	(void) ICONFIG_GetItem(pMe->m_pConfig,
+                        						   CFGI_SMS_RESTRICT_RECEIVE_TOTAL,
+                        						   &byMax,
+                        						   sizeof(uint8));                              
                             MSG_FATAL("Setting_Handle_SMSRestrict_RECEIVE IDS_DELETE MenuSelectdId=%d",MenuSelectdId,0,0);
-                            if(MenuSelectdId >= 0)
+                            if((MenuSelectdId >= 0) && (byMax > 0))
                             {
-                            	(void) ICONFIG_GetItem(pMe->m_pConfig,
-                            						   CFGI_SMS_RESTRICT_RECEIVE_TOTAL,
-                            						   &byMax,
-                            						   sizeof(uint8));     
+   
                                 for(; index <byMax; ++index)
                                 {
                                     if(index != MenuSelectdId)

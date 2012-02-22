@@ -181,9 +181,10 @@ boolean WMS_MMS_Resend(int nIndex,int nKind);
 #define slim_toupper(c) ((int)cSlim_clib_toupper_table_mms[(c)])
 
 #ifndef FEATURE_USES_MMS_TEST
-#define POST_TEST ("POST http://mms.movilnet.com.ve HTTP/1.1\r\nHost:http://mms.movilnet.com.ve\r\nAccept-Charset:utf-8\r\nContent-Length:%d\r\nAccept:*/*,application/vnd.wap.mms-message\r\nAccept-Language:en\r\nAccept-Encoding:gzip,deflate\r\nContent-Type:application/vnd.wap.mms-message\r\nUser-Agent: http://mms.movilnet.com.ve/phonemodel.xml\r\nx-wap-profile: \"http://mms.movilnet.com.ve/phonemodel.xml\"\r\nKeep-Alive:300\r\nConnection:Keep-Alive\r\n\r\n")
-#else
-#define POST_TEST ("POST http://mmsc.vnet.mobi HTTP/1.1\r\nHost:10.0.0.200:80\r\nAccept-Charset:utf-8\r\nContent-Length:%d\r\nAccept:*/*,application/vnd.wap.mms-message\r\nAccept-Language:en\r\nAccept-Encoding:gzip,deflate\r\nContent-Type:application/vnd.wap.mms-message\r\nUser-Agent: Nokia6235/1.0 (S190V0200.nep) UP.Browser/6.2.3.2 MMP/2.0\r\nx-wap-profile: \"http://nds1.nds.nokia.com/uaprof/N6235r200.xml\"\r\nKeep-Alive:300\r\nConnection:Keep-Alive\r\n\r\n")
+//这是南美的短信中心http://mms.movilnet.com.ve
+#define POST_TEST ("POST %s HTTP/1.1\r\nHost:http://mms.movilnet.com.ve\r\nAccept-Charset:utf-8\r\nContent-Length:%d\r\nAccept:*/*,application/vnd.wap.mms-message\r\nAccept-Language:en\r\nAccept-Encoding:gzip,deflate\r\nContent-Type:application/vnd.wap.mms-message\r\nUser-Agent: http://mms.movilnet.com.ve/phonemodel.xml\r\nx-wap-profile: \"http://mms.movilnet.com.ve/phonemodel.xml\"\r\nKeep-Alive:300\r\nConnection:Keep-Alive\r\n\r\n")
+#else//这是中国电信的短信中心http://mmsc.vnet.mobi
+#define POST_TEST ("POST %s HTTP/1.1\r\nHost:10.0.0.200:80\r\nAccept-Charset:utf-8\r\nContent-Length:%d\r\nAccept:*/*,application/vnd.wap.mms-message\r\nAccept-Language:en\r\nAccept-Encoding:gzip,deflate\r\nContent-Type:application/vnd.wap.mms-message\r\nUser-Agent: Nokia6235/1.0 (S190V0200.nep) UP.Browser/6.2.3.2 MMP/2.0\r\nx-wap-profile: \"http://nds1.nds.nokia.com/uaprof/N6235r200.xml\"\r\nKeep-Alive:300\r\nConnection:Keep-Alive\r\n\r\n")
 #endif
 boolean bSocketLock = FALSE;
 IVector* pSocketParam= NULL;
@@ -1568,6 +1569,7 @@ uint8* WMS_MMS_PDU_SendRequest(uint8* pBuff,MMS_WSP_ENCODE_SEND *pData)
                 DBGPRINTF("to=%s",to);
                 if(*to == ',')
                 {
+                    TempTo[j] = '\0';
                     DBGPRINTF("len=%d, i=%d, j=%d, TempTo=%s",len, i, j, TempTo);
                     STRCAT((char*)TempTo,"/TYPE=PLMN");
                     //TempTo[j] = '\0';
@@ -2796,7 +2798,17 @@ int WMS_MMS_PDU_Encode(MMS_WSP_ENCODE_SEND* encdata, uint8* hPDU, uint8 ePDUType
 	int len;
 	int i;
 	uint32 size = 0;
-
+    IConfig             *pConfig;
+    char serverAddress[MAX_URL_LEN+1] = {0};
+    IShell  *pShell = AEE_GetShell();
+    if (ISHELL_CreateInstance(pShell, AEECLSID_CONFIG,(void **)&pConfig) != SUCCESS)
+    {
+        return ;
+    }
+    ICONFIG_GetItem(pConfig, CFGI_MMS_SERVER_ADDRESS, serverAddress, sizeof(serverAddress));
+    (void)ICONFIG_Release(pConfig);
+    pConfig = NULL;
+    DBGPRINTF("serverAddress=%s", serverAddress);
 	MMS_DEBUG(("[WMS_MMS_PDU_Encode] ENTER"));
 	if ( hPDU == NULL || encdata == NULL )
 	{
@@ -2825,9 +2837,9 @@ int WMS_MMS_PDU_Encode(MMS_WSP_ENCODE_SEND* encdata, uint8* hPDU, uint8 ePDUType
             size = (int)(pCurPos-WMS_MMS_BUFFERGet());
 
             MMS_DEBUG(("[MMS] MMS_SEND_TEST size = %d",size));
-            SNPRINTF((char*)hPDU,MSG_MAX_PACKET_SIZE,POST_TEST,size);
+            SNPRINTF((char*)hPDU,MSG_MAX_PACKET_SIZE,POST_TEST, serverAddress, size);
 
-            MMS_DEBUG(("POST_TEST:%s",hPDU));
+            DBGPRINTF(("POST_TEST:%s",(char*)hPDU));
             head_len = STRLEN((char*)hPDU);
             MMS_DEBUG(("[MMS] POST_TEST head_len = %d",head_len));
 
@@ -2856,9 +2868,9 @@ int WMS_MMS_PDU_Encode(MMS_WSP_ENCODE_SEND* encdata, uint8* hPDU, uint8 ePDUType
             size = (int)(pCurPos-WMS_MMS_BUFFERGet());
         
             MMS_DEBUG(("[MMS] MMS_SEND_TEST size = %d",size));
-            SNPRINTF((char*)hPDU,MSG_MAX_PACKET_SIZE,POST_TEST,size);
+            SNPRINTF((char*)hPDU,MSG_MAX_PACKET_SIZE,POST_TEST, serverAddress, serverAddress);
         
-            MMS_DEBUG(("POST_TEST:%s",hPDU));
+            DBGPRINTF(("POST_TEST:%s",(char*)hPDU));
             head_len = STRLEN((char*)hPDU);
             MMS_DEBUG(("[MMS] POST_TEST head_len = %d",head_len));
         
@@ -2878,9 +2890,9 @@ int WMS_MMS_PDU_Encode(MMS_WSP_ENCODE_SEND* encdata, uint8* hPDU, uint8 ePDUType
 	        size = head_len;
 
             MMS_DEBUG(("[MMS] MMS_SEND_TEST size = %d",size));
-            SNPRINTF((char*)hPDU,MSG_MAX_PACKET_SIZE,POST_TEST,size);
+            SNPRINTF((char*)hPDU,MSG_MAX_PACKET_SIZE,POST_TEST, serverAddress, size);
 
-            MMS_DEBUG(("POST_TEST:%s",hPDU));
+            DBGPRINTF(("POST_TEST:%s",(char*)hPDU));
             head_len = STRLEN((char*)hPDU);
             MMS_DEBUG(("[MMS] POST_TEST head_len = %d",head_len));
 
@@ -2896,9 +2908,9 @@ int WMS_MMS_PDU_Encode(MMS_WSP_ENCODE_SEND* encdata, uint8* hPDU, uint8 ePDUType
 	        size = head_len;
 
             MMS_DEBUG(("[MMS] MMS_SEND_TEST size = %d",size));
-            SNPRINTF((char*)hPDU,MSG_MAX_PACKET_SIZE,POST_TEST,size);
+            SNPRINTF((char*)hPDU,MSG_MAX_PACKET_SIZE,POST_TEST, serverAddress, size);
 
-            MMS_DEBUG(("POST_TEST:%s",hPDU));
+            DBGPRINTF(("POST_TEST:%s",(char*)hPDU));
             head_len = STRLEN((char*)hPDU);
             MMS_DEBUG(("[MMS] POST_TEST head_len = %d",head_len));
 
@@ -2914,9 +2926,9 @@ int WMS_MMS_PDU_Encode(MMS_WSP_ENCODE_SEND* encdata, uint8* hPDU, uint8 ePDUType
 	        size = head_len;
 
             MMS_DEBUG(("[MMS] MMS_SEND_TEST size = %d",size));
-            SNPRINTF((char*)hPDU,MSG_MAX_PACKET_SIZE,POST_TEST,size);
+            SNPRINTF((char*)hPDU,MSG_MAX_PACKET_SIZE,POST_TEST, serverAddress, size);
 
-            MMS_DEBUG(("POST_TEST:%s",hPDU));
+            DBGPRINTF(("POST_TEST:%s",(char*)hPDU));
             head_len = STRLEN((char*)hPDU);
             MMS_DEBUG(("[MMS] POST_TEST head_len = %d",head_len));
 
@@ -4314,7 +4326,7 @@ boolean  MMSSocketNew (MMSSocket **pps, uint16 nType)
 	INetMgr *pINetMgr = NULL;
 	MMS_DEBUG(("[MSG][DeviceSocket]: DeviceSocketNew Enter!"));
         
-    OEM_SetBAM_ADSAccount();
+    OEM_SetMMS_ADSAccount();
     
 	if(pINetMgr == NULL)
 	{
@@ -4599,7 +4611,19 @@ static uint32 WMS_MMS_EncodePostHead(uint8* pBuf,uint8* pContentBuf,uint32 nCont
     int nHeaderLen = 0;
     if(pBuf && pContentBuf && nContentLen != 0)
     {
-        nHeaderLen = SPRINTF((char*)pBuf,POST_TEST,nContentLen);
+        IConfig             *pConfig;
+        char serverAddress[MAX_URL_LEN+1] = {0};
+        IShell  *pShell = AEE_GetShell();
+        if (ISHELL_CreateInstance(pShell, AEECLSID_CONFIG,(void **)&pConfig) != SUCCESS)
+        {
+            return ;
+        }
+        ICONFIG_GetItem(pConfig, CFGI_MMS_SERVER_ADDRESS, serverAddress, sizeof(serverAddress));
+        (void)ICONFIG_Release(pConfig);
+        pConfig = NULL;      
+        
+        nHeaderLen = SPRINTF((char*)pBuf,POST_TEST, serverAddress, nContentLen);
+        DBGPRINTF(("POST_TEST:%s",(char*)pBuf));
         MEMCPY(pBuf + nHeaderLen,pContentBuf,nContentLen);
     }
 

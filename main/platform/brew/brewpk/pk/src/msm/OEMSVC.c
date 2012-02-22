@@ -3292,7 +3292,7 @@ static void SetImsiFromSim (
 #endif
   ui_get_nv(NV_MIN1_I, &nvi);
   value = nvi.min1.min1[1];
-  temp = (word) (value>>14 );
+  DBGPRINTF("******NV_MIN1_I=%d******", nvi.min1.min1[1]);   temp = (word) (value>>14 );
   *txt++ = mintable[ (temp/100) %10];
   temp %= 100;
   *txt++ = mintable[ temp/10 ];
@@ -3483,7 +3483,7 @@ void OEM_GetGSM1xIdentityParams
   /* CDMA IMSI */
   nv_buf.min1.nam = pParams->nam;
   (void) GSM1X_NV_READ_FUNC( NV_MIN1_I, &nv_buf );
-  pParams->imsi_s1[0] = nv_buf.min1.min1[0];
+  DBGPRINTF("******NV_MIN1_I=%d******", nv_buf.min1.min1[1]);   pParams->imsi_s1[0] = nv_buf.min1.min1[0];
   pParams->imsi_s1[1] = nv_buf.min1.min1[1];
 
   nv_buf.min2.nam = pParams->nam;
@@ -3578,7 +3578,7 @@ void OEM_SetGSM1xIdentityParams
   nv_buf.min1.min1[0] = pParams->imsi_s1[0];
   nv_buf.min1.min1[1] = pParams->imsi_s1[1];
   (void) GSM1X_NV_WRITE_FUNC( NV_MIN1_I, &nv_buf );
-
+  DBGPRINTF("******NV_MIN1_I=%d******", pParams->imsi_s1[1]); 
   nv_buf.min2.nam = pParams->nam;
   nv_buf.min2.min2[0] = pParams->imsi_s2[0];
   nv_buf.min2.min2[1] = pParams->imsi_s2[1];

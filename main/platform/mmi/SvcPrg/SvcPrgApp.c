@@ -2093,7 +2093,7 @@ SEE ALSO:
 static boolean CSvcPrg_BuildMenuList(CSvcPrgApp *pMe)
 {
    MenuItemType *m;
-   int numItems = 8; // Number of items in the main menu.
+   int numItems = 9; // Number of items in the main menu.
    int indexBREWMenu;
 
    pMe->m_mainMenu = NULL;
@@ -2218,6 +2218,12 @@ static boolean CSvcPrg_BuildMenuList(CSvcPrgApp *pMe)
 	   m[numItems].typeData.subMenu   = NULL;
 	   indexBREWMenu                  = numItems++;
 	   
+#ifdef FEATURE_USES_MMS
+      m[numItems].title              = IDS_MMS_OPTIONS;
+      m[numItems].itemType           = DT_SUBMENU;
+      m[numItems].typeData.subMenu   = NULL;
+      indexBREWMenu                  = numItems++;
+#endif       
 	   // Store the Main menu pointer
 	   pMe->m_mainMenu = m;     
    }//Add by zzg 2012_02_11
@@ -2705,10 +2711,41 @@ static boolean CSvcPrg_BuildMenuList(CSvcPrgApp *pMe)
    m[11].typeData.strLen  = DL_MAX_SERVER; 
    m[11].isEditable       = TRUE;
    
+#ifdef FEATURE_USES_MMS 
    // Store the BREW menu in the Main menu
-   ASSERT(IDS_BREW_OPTIONS == pMe->m_mainMenu[indexBREWMenu].title);
-   ASSERT(DT_SUBMENU == pMe->m_mainMenu[indexBREWMenu].itemType);
-   pMe->m_mainMenu[indexBREWMenu].typeData.subMenu = m;
+   ASSERT(IDS_BREW_OPTIONS == pMe->m_mainMenu[indexBREWMenu-1].title);
+   ASSERT(DT_SUBMENU == pMe->m_mainMenu[indexBREWMenu-1].itemType);
+   pMe->m_mainMenu[indexBREWMenu-1].typeData.subMenu = m;
+#else
+    // Store the BREW menu in the Main menu
+    ASSERT(IDS_BREW_OPTIONS == pMe->m_mainMenu[indexBREWMenu].title);
+    ASSERT(DT_SUBMENU == pMe->m_mainMenu[indexBREWMenu].itemType);
+    pMe->m_mainMenu[indexBREWMenu].typeData.subMenu = m;
+#endif
+#ifdef FEATURE_USES_MMS 
+     m = CSvcPrg_CreateMenuList(2); // elements in the MMS menu
+     if (NULL == m) {
+        return FALSE;
+     }  
+      // USERNAME
+      m[0].title            = IDS_BREW_USERNAME;
+      m[0].itemType         = DT_TSTR;
+      m[0].cfgItem          = CFGI_MMS_USER_NAME;
+      m[0].typeData.strLen  = DL_MAX_SERVER; 
+      m[0].isEditable       = TRUE;
+   
+      // PASSWORD
+      m[1].title            = IDS_BREW_PASSWORD;
+      m[1].itemType         = DT_TSTR;
+      m[1].cfgItem          = CFGI_MMS_PASSWORD;
+      m[1].typeData.strLen  = DL_MAX_SERVER; 
+      m[1].isEditable       = TRUE;
+         
+      // Store the SMS Options menu in the Main menu
+      ASSERT(IDS_MMS_OPTIONS == pMe->m_mainMenu[indexBREWMenu].title);
+      ASSERT(DT_SUBMENU == pMe->m_mainMenu[indexBREWMenu].itemType);
+      pMe->m_mainMenu[indexBREWMenu].typeData.subMenu = m;
+#endif
 
    return TRUE;    // Phew!  I'm sure glad that pain is over with.
 }

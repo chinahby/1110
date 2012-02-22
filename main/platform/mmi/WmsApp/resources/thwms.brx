@@ -649,6 +649,9 @@
 	<String Id="1037" Name="IDS_ADD_TO_RESTRICT_LIST">
 		<Text>Add to restrict list</Text>
 	</String>
+	<String Id="1038" Name="IDS_MMS_SERVER_ADDRESS">
+		<Text>MMS server address</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN" Focus="7001">
@@ -1003,6 +1006,12 @@
 	<Dialog Id="6051" Name="IDD_ALBUMOREMAIN" Focus="0">
 		<Controls>
 			<Text Id="7041" Name="IDC_EDIT_ALBUMOREMAIN">
+				<Items/></Text>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6052" Name="IDD_MMS_SERVER_ADDRESS" Focus="0">
+		<Controls>
+			<Text Id="7043" Name="IDC_MMS_SERVER_ADDRESS">
 				<Items/></Text>
 		</Controls>
 	</Dialog>

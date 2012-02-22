@@ -322,6 +322,9 @@
 	<String Id="112" Name="IDS_MO_ONLY_TRAFFIC">
 		<Text>Use Only Traffic</Text>
 	</String>
+	<String Id="1001" Name="IDS_MMS_OPTIONS" Encoding="Unicode">
+		<Text>MMS Settings</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="1" Name="IDD_GENERICMENU" Focus="1" Flags="00000000">
