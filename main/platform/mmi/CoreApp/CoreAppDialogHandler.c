@@ -3607,6 +3607,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             	    return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
 #elif defined (FEATURE_VERSION_W208S)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
+#elif defined(FEATURE_VERSION_C11)
+                    return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CAMERA);
 #else
                 	return CoreApp_LaunchApplet(pMe, AEECLSID_MEDIAGALLERY);
 #endif
@@ -3648,6 +3650,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO); 
 	#elif defined(FEATURE_VERSION_W208S)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
+    #elif defined (FEATURE_VERSION_C11)
+					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
     #elif defined(FEATURE_VERSION_VG68)
                     return CoreApp_LaunchApplet(pMe, AEECLSID_WORLDTIME);
 	#else
@@ -3708,7 +3712,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #elif defined (FEATURE_VERSION_M8P)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
 #elif defined (FEATURE_VERSION_C11)
-					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
+					return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #elif defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_SCHEDULEAPP);
 #elif defined(FEATURE_VERSION_W208S)
@@ -3771,6 +3775,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 				    	}
                         #elif defined(FEATURE_VERSION_VG68)
                             return CoreApp_LaunchApplet(pMe, AEECLSID_ALARMCLOCK);
+                        #elif defined(FEATURE_VERSION_C11)
+                            return CoreApp_LaunchApplet(pMe, AEECLSID_APP_SETTINGMENU);
 						#else
 							return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);//
 							#endif
