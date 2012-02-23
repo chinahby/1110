@@ -80,7 +80,19 @@
 		<Text>اللغة</Text>
 	</STRING>
 	<STRING Id="1027" Name="IDS_FMRADIO_HEADSET">
-		<Text>سماعة الرأس</Text>
+		<Text>سماعة</Text>
 	</STRING>
+	<STRING Id="1028" Name="IDS_FMRADIO_OPTION_MENU_SEARCH">
+		<Text>البحث</Text>
+	</STRING>	
+	<STRING Id="1029" Name="IDS_FMRADIO_CHANNEL_EDIT_TURE">
+		<Text>موافق</Text>
+	</STRING>	
+	<STRING Id="1030" Name="IDS_FMRADIO_CHANNEL_EDIT_ERROR">
+		<Text>غير موافق</Text>
+	</STRING>	
+	<STRING Id="1031" Name="IDS_FMRADIO_CHANNEL_EDIT_SUCCESS">
+		<Text>إضافة النجاح</Text>
+	</STRING>		
 </Strings>
 </BREWRes>

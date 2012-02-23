@@ -1369,13 +1369,13 @@ static void StopWatch_ResetRecordFull(CStopWatch *pme)
 
     {
         PromptMsg_Param_type    parm;
-        AECHAR                  text[32];
+        AECHAR                  text[64];
 
         MEMSET( &parm, 0, sizeof( parm));
         parm.ePMsgType  = MESSAGE_CONFIRM;
         parm.eBBarType  = BTBAR_OK_CANCEL;
 
-        ISHELL_LoadResString( pme->a.m_pIShell, AEE_STOPWATCH_RES_FILE, IDS_RESET_RECORDFULL, text, 52);
+        ISHELL_LoadResString( pme->a.m_pIShell, AEE_STOPWATCH_RES_FILE, IDS_RESET_RECORDFULL, text, 64);
         parm.pwszMsg = text;
         DrawPromptMessage( pme->a.m_pIDisplay, pme->pStatic, &parm);
         pme->watch_state = W_RESET_CONFIRM;

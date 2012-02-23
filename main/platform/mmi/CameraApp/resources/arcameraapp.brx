@@ -4,9 +4,15 @@
 	<String Id="1001" Name="IDS_ITEM_CAMERA">
  		<Text>الكاميرا</Text>
 	</String>
+	<String Id="1002" Name="IDS_MULTI_PRE">
+		<Text>Camera One</Text>
+	</String>
     <String Id="1003" Name= "IDS_ITEM_CAMERA_GALLERY">
  		<Text>معرض صور</Text>
     </String>
+	<String Id="1004" Name="IDS_MULTI_BACK">
+		<Text>Camera Two</Text>
+	</String>
     <String Id="1005" Name= "IDS_CFG_ENVIR">
  		<Text>البيئة</Text>
     </String>
@@ -22,6 +28,12 @@
     <String Id="1009" Name= "IDS_ENVIR_MODE_SUNNY">
  		<Text>مشمس النمط</Text>
     </String>
+	<String Id="1010" Name="IDS_CFG_MULTI">
+		<Text>MULTICAMERA</Text>
+	</String>
+	<String Id="1011" Name="IDS_CFG_FLASH">
+		<Text>Flash</Text>
+	</String>
 	<String Id="1012" Name="IDS_VIDEO_CAMERA">
 		<Text>كاميرا فيديو</Text>
 	</String>
@@ -142,6 +154,15 @@
 
     <String Id="1073" Name= "IDS_MSG_CAPTURE_FAILED">
         <Text>فشل الالتقاط</Text>
+	</String>
+	<String Id="1074" Name="IDS_CAMERA_PHOTO_MODE">
+		<Text>Photo Path</Text>
+	</String>
+	<String Id="1075" Name="IDS_CAMERA_PHOTO_PHONE">
+		<Text>Phone</Text>
+	</String>
+	<String Id="1076" Name="IDS_CAMERA_PHOTO_TFCARD">
+		<Text>memory card</Text>
     </String>
 	  <String Id="1077" Name="IDS_CAMERA_RECORD_FAILED">
 			  <Text>Record failed</Text>
@@ -169,6 +190,17 @@
 		</Controls>
 	</Dialog>
 	<Dialog Id="6004" Name="IDD_CPIC" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<Dialog Id="6005" Name="IDD_CAMERA_PHOTO_MODE" Focus="7004">
+		<Controls>
+			<Menu Id="7004" Name="IDC_PHOTOMODE">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6006" Name="IDD_CVIDEO" Focus="0">
 		<Controls/>
 		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</Dialog>
