@@ -275,9 +275,9 @@ when       who     what, where, why
 // field is added to the end of OEMConfigListType.
 //
 #ifdef FEATURE_PEKTEST
-#define OEMCONFIGLIST_VERSION ( (uint16) 0x000E )
+#define OEMCONFIGLIST_VERSION ( (uint16) 0x000F )
 #else
-#define OEMCONFIGLIST_VERSION ( (uint16) 0x000D )
+#define OEMCONFIGLIST_VERSION ( (uint16) 0x000E )
 #endif
 
 ////
@@ -332,8 +332,8 @@ typedef struct
 typedef struct {
    uint32   dwCID;         // Carrier ID
    uint32   dwPID;         // Platform ID
-   uint8    bBKey[OEMCFG_DL_BKEY_SIZE];     // BKey
-   uint8    bAKey[OEMCFG_DL_AKEY_SIZE];      // AKey
+   uint8    bBKey[OEMCFG_DL_BKEY_SIZE+1];    // BKey
+   uint8    bAKey[OEMCFG_DL_AKEY_SIZE+1];      // AKey
    char     szServer[OEMCFG_DL_SERVER_LEN];  // DL Server
    uint16   wFlags;        // DL Flags
    uint16   wAuth;         // Auth policy
@@ -1656,7 +1656,7 @@ static OEMConfigListType oemi_cache = {
    {0,},                                           // CFGI_CUG
    FALSE,                                          // CFGI_VR
    {DEFAULT_BREW_CARRIER_ID, DEFAULT_BREW_PLATFORM_ID,   // Download Info
-    {0,}, {0,},
+    {"0000000000000000"}, {"00000000"},
     DEFAULT_BREW_SERVER, DEFAULT_BREW_DOWNLOAD_FLG,
     DEFAULT_BREW_APOLICY, DEFAULT_BREW_PPOLICY
    },
@@ -2657,6 +2657,8 @@ void OEM_RestoreFactorySetting( void )
    oemi_cache.download_info.wFlags = DEFAULT_BREW_DOWNLOAD_FLG;
    oemi_cache.download_info.wAuth  = DEFAULT_BREW_APOLICY;
    oemi_cache.download_info.wPrivP = DEFAULT_BREW_PPOLICY;
+   STRCPY((char *)oemi_cache.download_info.bBKey,"0000000000000000");
+   STRCPY((char *)oemi_cache.download_info.bAKey,"00000000");
    STRLCPY((char *)oemi_cache.download_info.szServer, 
            (const char *)DEFAULT_BREW_SERVER, 
            sizeof(oemi_cache.download_info.szServer));
@@ -4457,19 +4459,19 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
 
    case CFGI_BREW_BKEY:
       {
-         if (nSize > (int) DL_BKEY_SIZE * sizeof(AECHAR)) {
-            return EBADPARM;
-         }
-         STRTOWSTR((char *)oemi_cache.download_info.bBKey, pBuff, DL_BKEY_SIZE * sizeof(AECHAR));
+         //Gemsea DELETE if (nSize > (int) DL_BKEY_SIZE * sizeof(AECHAR)) {
+         //Gemsea DELETE    return EBADPARM;
+         //Gemsea DELETE }
+         STRTOWSTR((char *)oemi_cache.download_info.bBKey, pBuff, (DL_BKEY_SIZE+1) * sizeof(AECHAR));
          return(SUCCESS);
       }
 
    case CFGI_BREW_AKEY:
       {
-         if (nSize > (int) DL_AKEY_SIZE * sizeof(AECHAR)) {
-            return EBADPARM;
-         }
-         STRTOWSTR((char *)oemi_cache.download_info.bAKey, pBuff, DL_AKEY_SIZE * sizeof(AECHAR));
+         //Gemsea DELETE if (nSize > (int) DL_AKEY_SIZE * sizeof(AECHAR)) {
+         //Gemsea DELETE    return EBADPARM;
+         //Gemsea DELETE }
+         STRTOWSTR((char *)oemi_cache.download_info.bAKey, pBuff, (DL_AKEY_SIZE+1) * sizeof(AECHAR));
          return(SUCCESS);
       }
 
@@ -5365,22 +5367,22 @@ int OEM_SetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
 
    case CFGI_BREW_BKEY:
       {
-         if (!pBuff || nSize > (int) DL_BKEY_SIZE * sizeof(AECHAR)) {
+         if (!pBuff || nSize > (int) (DL_BKEY_SIZE+1) * sizeof(AECHAR)) {
             return EBADPARM;
          }
          MEMSET((void*)oemi_cache.download_info.bBKey, 0, sizeof(oemi_cache.download_info.bBKey));
-         WSTRTOSTR(pBuff, (char *)oemi_cache.download_info.bBKey, DL_BKEY_SIZE);
+         WSTRTOSTR(pBuff, (char *)oemi_cache.download_info.bBKey, DL_BKEY_SIZE+1);
          OEMPriv_WriteOEMConfigList();
          return SUCCESS;
       }
 
    case CFGI_BREW_AKEY:
       {
-         if (!pBuff || nSize > (int) DL_AKEY_SIZE * sizeof(AECHAR)) {
+         if (!pBuff || nSize > (int) (DL_AKEY_SIZE+1) * sizeof(AECHAR)) {
             return EBADPARM;
          }
          MEMSET((void*)oemi_cache.download_info.bAKey, 0, sizeof(oemi_cache.download_info.bAKey));
-         WSTRTOSTR(pBuff, (char *)oemi_cache.download_info.bAKey, DL_AKEY_SIZE);
+         WSTRTOSTR(pBuff, (char *)oemi_cache.download_info.bAKey, DL_AKEY_SIZE+1);
          OEMPriv_WriteOEMConfigList();
          return SUCCESS;
       }
@@ -6098,6 +6100,8 @@ static void OEMPriv_ReadOEMConfigList(void)
      oemi_cache.download_info.wFlags = DEFAULT_BREW_DOWNLOAD_FLG;
      oemi_cache.download_info.wAuth  = DEFAULT_BREW_APOLICY;
      oemi_cache.download_info.wPrivP = DEFAULT_BREW_PPOLICY;
+     STRCPY((char *)oemi_cache.download_info.bBKey,"0000000000000000");
+     STRCPY((char *)oemi_cache.download_info.bAKey,"00000000");
      STRLCPY((char *)oemi_cache.download_info.szServer, 
              (const char *)DEFAULT_BREW_SERVER, 
              sizeof(oemi_cache.download_info.szServer));

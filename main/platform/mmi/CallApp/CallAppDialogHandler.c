@@ -1982,7 +1982,22 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                     return TRUE;
                 }
 
-                case AVK_CLR:
+				//case AVK_CLR:
+
+				//Add By zzg 2012_02_22
+				case AVK_CLR:
+				{
+					pMe->m_DialString[0] = 0;
+			        CallApp_Draw_NumEdit_SoftKey(pMe);
+					CallApp_Display_Number(pMe);
+					// Draw it now!
+					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+			        CLOSE_DIALOG(DLGRET_OK)
+			        return TRUE;					
+				}
+                
+                case AVK_DEL:
+				//Add End	
                 {
                     int len;
                     //if(dwParam == 1)
@@ -7391,6 +7406,9 @@ static void CallApp_DrawDialerString(CCallApp   *pMe,  AECHAR const *dialStr)
         pMe->m_nCurrLineSpace = (dialerRect.dy - pMe->m_nCurrNumHeight*nLineMax)/(nLineMax-1);
 		#endif
         nLine = 0;
+
+		MSG_FATAL("***zzg CallApp_DrawDialerString dialerRect.dy=%d, nLineMax=%d", dialerRect.dy,nLineMax,0);
+		
         while(1)
         {
             if ('\0' == *dstStr)
@@ -11074,7 +11092,10 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
     //    return FALSE;
     //}
 
-    if ((AVKType)wParam == AVK_CLR)
+	MSG_FATAL("***zzg CallApp_Process_HeldKey_Event wParam=%x***", wParam,0,0);
+
+    //if ((AVKType)wParam == AVK_CLR)
+	if ((AVKType)wParam == AVK_DEL)   	//Modify by zzg 2012_02_22
     {
         // Clearing the last digit exits the dialog
         pMe->m_DialString[0] = 0;
@@ -12378,10 +12399,180 @@ static void CallApp_Calc_Cursor_Rect(CCallApp* pMe, AEERect *pRect)
         }
     }
 	SETAEERECT(pRect, xPos, yPos, 4, NUM_IMAGE_HIGHT);
+#else    
+
+#ifdef FEATURE_VERSION_W208S
+{
+	int x = 0, y = 0;	
+	int length=0;
+	int index1=0;
+	int index2=0;	
+	
+	int tmplen=0;
+	int tmplenex=0;
+
+	int strlen1 = 0;
+	int strlen2 = 0;
+
+	int strexlen1 = 0;
+	int strexlen2 = 0;
+	
+    int nLen; 
+	
+	int len,i;
+	AECHAR t_DialString[MAX_SIZE_DIALER_TEXT];
+	AECHAR dt_String1[30];
+	AECHAR dt_String2[5];
+	AECHAR dt_String3[5];		
+
+	(void)MEMSET( t_DialString,(AECHAR) 0, sizeof(t_DialString));
+	(void)MEMSET( dt_String1,(AECHAR) 0, sizeof(dt_String1));
+	(void)MEMSET( dt_String2,(AECHAR) 0, sizeof(dt_String2));
+	(void)MEMSET( dt_String3,(AECHAR) 0, sizeof(dt_String3));
+	WSTRCPY(t_DialString,pMe->m_DialString);
+	len = WSTRLEN(pMe->m_DialString);
+
+	if ((3<len)&&(len<8))
+	{
+		for(i=0;i<3;i++) dt_String1[i]= t_DialString[len-3+i];
+		WSTRCPY(&t_DialString[len-3], L"-");
+		for(i=0;i<3;i++)  t_DialString[len-3+1+i]=dt_String1[i];
+	}
+	else if((7<len)&&((len<12)))
+	{
+		for(i=0;i<3;i++) dt_String1[i]= t_DialString[len-3+i];
+		for(i=0;i<4;i++) dt_String2[i]= t_DialString[len-4-3+i];
+		WSTRCPY(&t_DialString[len-4-3], L"-");
+		WSTRCPY(&t_DialString[len+1-3], L"-");
+		for(i=0;i<4;i++)  t_DialString[len-4-3+1+i]=dt_String2[i];
+		for(i=0;i<3;i++)  t_DialString[len-3+1+1+i]=dt_String1[i];
+	}		
+	else if (len > 11)
+	{		   
+		for(i=0;i<(len-8);i++) dt_String1[i]= t_DialString[8+i];
+		for(i=0;i<4;i++) dt_String2[i]= t_DialString[4+i];
+		for(i=0;i<4;i++) dt_String3[i]= t_DialString[i];
+		 
+		WSTRCPY(&t_DialString[4], L"-");
+		WSTRCPY(&t_DialString[4+4+1], L"-");		
+		for(i=0;i<4;i++)  t_DialString[i]=dt_String3[i];
+		for(i=0;i<4;i++)  t_DialString[i+4+1]=dt_String2[i];
+		for(i=0;i<(len-8);i++)  t_DialString[4+4+1+1+i]=dt_String1[i];
+		
+	}		
+
+	nLen = WSTRLEN(pMe->m_DialString);
+	length = WSTRLEN(t_DialString);
+
+	for (i=0; i<length; i++)
+	{
+		if (t_DialString[i] == L'-')
+		{
+			if (index1 == 0)
+			{
+				index1 = i;
+			}				
+			else if (index2 == 0)
+			{
+				index2 = i;
+			}
+		}
+	}
+
+	MSG_FATAL("***zzg CallApp_Calc_Cursor_Rect index1=%d, index2=%d***", index1, index2, 0);
+
+	MSG_FATAL("***zzg CallApp_Calc_Cursor_Rect nLen=%d, length=%d***", nLen, length, 0);
+
+	IFONT_MeasureText(pMe->m_pCurrNumFont, L"-", 1, pMe->m_rc.dx, NULL, &tmplen);	
+
+    if(length > 0)
+    {
+        AECHAR *pSrcStr = t_DialString + length;
+        int nCurrLineMaxPos = length;
+        int nCurrLineMinPos = length;
+		
+		int nCurrPos    	= nLen-pMe->m_nCursorPos;;	
+   		
+		MSG_FATAL("***zzg CallApp_Calc_Cursor_Rect pMe->m_nCursorPos=%d, nCurrPos=%d***", pMe->m_nCursorPos, nCurrPos, 0);		
+		
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+		y = pMe->m_rc.dy-BOTTOMBAR_HEIGHT - 220;
 #else
-    int x = 0, y = 0;
+        y = pMe->m_rc.dy-BOTTOMBAR_HEIGHT;
+#endif
+
+		if ((index1 != 0) && (index2 != 0))
+		{
+			if ((nCurrPos > index1) && (nCurrPos < index2))
+			{
+				nCurrPos++;	
+			}
+			else if ((nCurrPos+1) >= index2)
+			{
+				nCurrPos+=2;
+			}
+		}
+		else if ((index1 != 0) && (index2 == 0))
+		{
+			if (nCurrPos > index1) 
+			{
+				nCurrPos++;	
+			}
+		}		
+
+		MSG_FATAL("***zzg CallApp_Calc_Cursor_Rect nCurrPos=%d***", nCurrPos, 0, 0);
+        
+        for(i=0; i<pMe->m_nCurrLine; i++)
+        {
+            y -= pMe->m_nCurrNumHeight;
+			
+            pSrcStr -= pMe->m_nCurrLineFits[i];
+            nCurrLineMinPos = nCurrLineMaxPos-pMe->m_nCurrLineFits[i];	
+            
+			MSG_FATAL("***zzg CallApp_Calc_Cursor_Rect nCurrPos =%d, nCurrLineMinPos=%d, nCurrLineMaxPos=%d***", nCurrPos, nCurrLineMinPos, nCurrLineMaxPos);
+			
+            // 在此行
+            if(nCurrPos > nCurrLineMinPos && nCurrPos < nCurrLineMaxPos)
+            {
+                IFONT_MeasureText(pMe->m_pCurrNumFont, pSrcStr+(nCurrPos-nCurrLineMinPos), nCurrLineMaxPos-nCurrPos, pMe->m_rc.dx, NULL, &x);
+                x = pMe->m_rc.dx - x;					
+				
+                break;
+            }
+            else if(nCurrPos == 0 && nCurrLineMinPos == nCurrPos)
+            {
+                IFONT_MeasureText(pMe->m_pCurrNumFont, pSrcStr, nCurrLineMaxPos, pMe->m_rc.dx, NULL, &x);
+                x = pMe->m_rc.dx - x;					
+				
+                break;
+            }
+            else if(nCurrPos == nCurrLineMaxPos)
+            {
+                x = pMe->m_rc.dx - 1;
+                break;
+            }
+            
+            nCurrLineMaxPos -= pMe->m_nCurrLineFits[i];
+			#ifndef FEATURE_LCD_TOUCH_ENABLE
+            y -= pMe->m_nCurrLineSpace;
+			#endif
+        }
+    }
+	#ifdef FEATURE_LCD_TOUCH_ENABLE
+	else
+	{
+		x = pMe->m_rc.dx-2;
+	}
+	#endif
+    SETAEERECT(pRect, x, y, 1, pMe->m_nCurrNumHeight);
+}
+
+#else
+	int x = 0, y = 0;
     int i;
     int nLen = WSTRLEN(pMe->m_DialString);
+
+	MSG_FATAL("***zzg CallApp_Calc_Cursor_Rect nLen=%d***", nLen, 0, 0);
 
     if(nLen > 0)
     {
@@ -12399,8 +12590,10 @@ static void CallApp_Calc_Cursor_Rect(CCallApp* pMe, AEERect *pRect)
         {
             y -= pMe->m_nCurrNumHeight;
             pSrcStr -= pMe->m_nCurrLineFits[i];
-            nCurrLineMinPos = nCurrLineMaxPos-pMe->m_nCurrLineFits[i];
+            nCurrLineMinPos = nCurrLineMaxPos-pMe->m_nCurrLineFits[i];	
             
+			MSG_FATAL("***zzg CallApp_Calc_Cursor_Rect nCurrLineMinPos=%d, nCurrLineMaxPos=%d***", nCurrLineMinPos, nCurrLineMaxPos, 0);
+			
             // 在此行
             if(nCurrPos > nCurrLineMinPos && nCurrPos < nCurrLineMaxPos)
             {
@@ -12433,6 +12626,9 @@ static void CallApp_Calc_Cursor_Rect(CCallApp* pMe, AEERect *pRect)
 	}
 	#endif
     SETAEERECT(pRect, x, y, 1, pMe->m_nCurrNumHeight);
+#endif //FEATURE_VERSION_W208S
+
+	
 #endif
 }
 
@@ -12477,7 +12673,11 @@ static void CallApp_Set_Cursor_Blink(void* pUser)
     AEERect rect = {0};
     ISHELL_CancelTimer(pMe->m_pShell, CallApp_Set_Cursor_Blink, pMe);
 
+	MSG_FATAL("***zzg CallApp_Set_Cursor_Blink***", 0, 0, 0);
+
     CallApp_Calc_Cursor_Rect(pMe, &rect);
+
+	DBGPRINTF("***zzg CallApp_Set_Cursor_Blink rect:%d,%d,%d,%d***", rect.x, rect.y, rect.dx, rect.dy);
 
     if(bDrawCursor)
     {

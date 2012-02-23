@@ -1186,6 +1186,7 @@ static boolean  IDD_ALARM_Handler(void       *pUser,
             ISHELL_PostEvent(pMe->a.m_pIShell,AEECLSID_CORE_APP,EVT_USER_REDRAW,0,0);
             ICONFIG_GetItem( pMe->m_pConfig, CFGI_BEEP_VOL, &keyBeepVolumeSetting, sizeof(byte));
             ICONFIG_SetItem( pMe->m_pConfig, CFGI_BEEP_VOL, &mute, sizeof(byte));
+			
             return TRUE;
         }
 
@@ -2779,7 +2780,13 @@ static boolean  IDD_STARTUPANI_Handler(void       *pUser,
             IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
             return TRUE;
 
-        case EVT_DIALOG_START: 			
+        case EVT_DIALOG_START: 		
+			//Add By zzg 2012_02_17
+
+
+
+			//Add End
+			
             if(pMe->m_wStartupAniTime == 0)
             {
 #ifndef FEATURE_USES_LOWMEM
@@ -6301,8 +6308,11 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 // 绘制待机界面的 "Menu         Contacts"
 static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 {
-    BottomBar_e_Type    eBBarType = BTBAR_NONE;    
-	
+    BottomBar_e_Type    eBBarType = BTBAR_NONE;  
+
+	MSG_FATAL("***zzg CoreApp_UpdateBottomBar m_bemergencymode=%d, OEMKeyguard_IsEnabled=%d***", pMe->m_bemergencymode, OEMKeyguard_IsEnabled(), 0);
+
+/*	
     if(pMe->m_bemergencymode)
     {
         eBBarType = BTBAR_BACK;
@@ -6325,6 +6335,32 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 		#endif
     }
 #endif
+*/
+
+	
+#ifdef FEATURE_KEYGUARD
+    if(OEMKeyguard_IsEnabled())
+    {
+    	#ifdef FEATURE_LCD_TOUCH_ENABLE
+		
+		#else
+    		#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_S1000T)
+    			eBBarType = BTBAR_UNLOCK_SOS;
+        	#elif defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_1110W516)
+        		eBBarType = BTBAR_LUNLOCK;
+        	#elif defined(FEATURE_VERSION_VERYKOOL)
+        		eBBarType = BTBAR_UNLOCK_SOS;
+    		#else
+        		eBBarType = BTBAR_UNLOCK;
+        	#endif
+		#endif
+    }
+	else
+#endif
+	if(pMe->m_bemergencymode)
+    {
+        eBBarType = BTBAR_BACK;
+    }
     else
     {
 #ifdef FEATURE_VERSION_SMART					//Add By zzg 2010_07_20
@@ -6367,6 +6403,9 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 #endif
 	
     }
+
+	MSG_FATAL("***zzg CoreApp_UpdateBottomBar eBBarType=%x***", eBBarType, 0, 0);
+	
 	#ifdef FEATURE_LCD_TOUCH_ENABLE
 	
 	#else

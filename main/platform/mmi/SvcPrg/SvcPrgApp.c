@@ -2620,14 +2620,14 @@ static boolean CSvcPrg_BuildMenuList(CSvcPrgApp *pMe)
    m[2].title            = IDS_BREW_BKEY;
    m[2].itemType         = DT_WSTR;
    m[2].cfgItem          = CFGI_BREW_BKEY;
-   m[2].typeData.strLen  = DL_BKEY_SIZE; 
+   m[2].typeData.strLen  = DL_BKEY_SIZE+1; 
    m[2].isEditable       = TRUE;
    
    // Akey
    m[3].title            = IDS_BREW_AKEY;
    m[3].itemType         = DT_WSTR;
    m[3].cfgItem          = CFGI_BREW_AKEY;
-   m[3].typeData.strLen  = DL_AKEY_SIZE; 
+   m[3].typeData.strLen  = DL_AKEY_SIZE+1; 
    m[3].isEditable       = TRUE;
    
    // Server
