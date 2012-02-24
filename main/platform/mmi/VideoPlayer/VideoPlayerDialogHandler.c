@@ -709,7 +709,7 @@ static boolean  VPDMSGBOX_HandleEvent(CVideoPlayer *pMe,AEEEvent eCode,uint16 wP
             ISHELL_CancelTimer(pMe->m_pShell, DialogTimeoutCallback,pMe);
             ISTATIC_Release(pStatic);
             pStatic = NULL;
-            FREE(wstrText);
+            //FREE(wstrText);
             return TRUE;
         
         case EVT_KEY:           
