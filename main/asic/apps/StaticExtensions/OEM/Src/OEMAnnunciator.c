@@ -1890,7 +1890,7 @@ static int IAnnunciator_SetField(IAnnunciator * pMe, uint32 nAnnunID,
 {
   PACONTEXT pac;
   uint32 nStateRank = GetAnnunStateRank(nState);
-  MSG_FATAL("IAnnunciator_SetField %d 0x%x",nAnnunID,nState,0);
+  //MSG_FATAL("IAnnunciator_SetField %d 0x%x",nAnnunID,nState,0);
   
   
   if (nAnnunID >= ARR_SIZE(Annunciators))
@@ -2214,7 +2214,7 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
             	    AEERect bgRect;
                     int titleLen = IDISPLAY_MeasureText(pMe->m_coreObj->m_piDisplay,AEE_FONT_NORMAL, (const AECHAR*)IAnnunCoreObj->m_Title);
 
-					MSG_FATAL("***zzg OEMAnnunciator titleLen=%d***", titleLen, 0, 0);
+					//MSG_FATAL("***zzg OEMAnnunciator titleLen=%d***", titleLen, 0, 0);
 					
                     bgRect.y = 0;
                     bgRect.dy = STATEBAR_HEIGHT;

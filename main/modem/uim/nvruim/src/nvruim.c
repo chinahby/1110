@@ -1365,16 +1365,16 @@ static nv_ruim_support_status nvruim_check_uim_status_and_nam(
 #endif /* FEATURE_UIM_RUIM_W_GSM_ACCESS && !FEATURE_UIM_RUN_TIME_ENABLE */
     {
       /* Only process the NAM parameters for the RUIM
-      This check assumes the first byte of the data contains the NAM */
+      This check assumes the first byte of the data contains the NAM */ 
       if(NV_RUIM_NAM != nv_cmd_ptr->data_ptr->min1.nam)
       {
-        /* Go to NV for this item */
+        /* Go to NV for this item */		
         return NV_RUIM_ITEM_NOT_SUPPORTED;
       }
 
       *op_status = NV_READONLY_S; /* Error, read-only   */
 
-      nv_cmd_ptr->status = *op_status;
+      nv_cmd_ptr->status = *op_status;	  
 
       return NV_RUIM_SUPPORTS_ITEM;
     }
@@ -1532,7 +1532,8 @@ static nv_ruim_support_status nvruim_write_imsi_m(
                         sizeof (nvruim_imsi_m_cache_buf.imsi_s1),
                         3,
                         UIM_CDMA_IMSI_M,
-                        RUIM_IMSI_M_CACHE_BIT);
+                        RUIM_IMSI_M_CACHE_BIT);	  
+	  
       break;
 
     case NV_MIN2_I:
@@ -2630,9 +2631,7 @@ static nv_ruim_support_status nvruim_write_spc_enable(
         break;
     #endif /*FEATURE_OTASP_OTAPA*/
     
-      case NV_SPC_CHANGE_ENABLED_I:
-	  	MSG_FATAL("***zzg write_spc_enable NV_SPC_CHANGE_ENABLED_I***", 0, 0, 0);	  	
-		        
+      case NV_SPC_CHANGE_ENABLED_I: 
 #ifdef FEATURE_VERSION_W208S
 		if(nv_cmd_ptr->data_ptr->spc_change_enabled)
         {
@@ -3824,7 +3823,7 @@ if (!nvruim_lock_cache())
   /* If it is an R-UIM item:  */
   /*     Initialize the buffer with item pointer & size */
   /*     Reformat the data for R-UIM (reverse bytes & set flags)*/
-  /*     Select the offset into the EF  */
+  /*     Select the offset into the EF  */ 
 
   switch(nv_cmd_ptr->item)
   {
@@ -4006,7 +4005,7 @@ if (!nvruim_lock_cache())
     case NV_IMSI_MCC_I:
     case NV_IMSI_T_MCC_I:
     case NV_ACCOLC_I:
-#endif /* !FEATURE_NVRUIM_ADM_ACCESS */
+#endif /* !FEATURE_NVRUIM_ADM_ACCESS */	  
       nvruim_write_sprt_status = nvruim_check_uim_status_and_nam(nv_cmd_ptr, op_status);
       break;
 /************************END READ ONLY ITEMS***************************/
@@ -4631,7 +4630,7 @@ static nv_ruim_support_status nvruim_read_imsi_m(
 )
 {
   boolean dummy;
-  nv_ruim_support_status support_status = NV_RUIM_SUPPORTS_ITEM;
+  nv_ruim_support_status support_status = NV_RUIM_SUPPORTS_ITEM;  
 
   /* Only process the NAM parameters for the RUIM
      This check assumes the first byte of the data contains the NAM */
@@ -4691,7 +4690,7 @@ static nv_ruim_support_status nvruim_read_imsi_m(
         nvruim_imsi_m_cache_buf.imsi_11_12;
     } /* end if - the read was successful. */
   }
-  else if(nv_cmd_ptr->item == NV_MIN1_I){
+  else if(nv_cmd_ptr->item == NV_MIN1_I){  	
   #ifdef FEATURE_NVRUIM_DEBUG_FORCE_MIN1
     /* Debug code to override the MIN1 */
     nv_cmd_ptr->data_ptr-> min1.min1[NV_CDMA_MIN_INDEX] = 0x00792971;
@@ -4708,10 +4707,10 @@ static nv_ruim_support_status nvruim_read_imsi_m(
 #endif
     /* Copy the contents of CDMA MIN1 to Amps MIN1 */
     nv_cmd_ptr->data_ptr->min1.min1[0] =
-    nv_cmd_ptr->data_ptr-> min1.min1[NV_CDMA_MIN_INDEX] ;
+    nv_cmd_ptr->data_ptr-> min1.min1[NV_CDMA_MIN_INDEX];	 
   }
   else if(nv_cmd_ptr->item == NV_MIN2_I)
-  {
+  {  	
   #ifdef FEATURE_NVRUIM_DEBUG_FORCE_MIN2
      /* Debug code to override the MIN2 */
      nv_cmd_ptr->data_ptr->min2.min2[NV_CDMA_MIN_INDEX] = 0x02EB;
@@ -4727,7 +4726,7 @@ static nv_ruim_support_status nvruim_read_imsi_m(
   #endif
   /* Copy the contents of CDMA MIN2 to Amps MIN2 */
     nv_cmd_ptr->data_ptr->min2.min2[0] =
-    nv_cmd_ptr->data_ptr-> min2.min2[NV_CDMA_MIN_INDEX] ;
+    nv_cmd_ptr->data_ptr-> min2.min2[NV_CDMA_MIN_INDEX];  
   }
   else if(nv_cmd_ptr->item == NV_IMSI_MCC_I)
   {
@@ -9943,7 +9942,7 @@ if (!nvruim_lock_cache())
     case NV_MIN2_I:
     case NV_IMSI_11_12_I:
     case NV_IMSI_MCC_I:
-    case NV_IMSI_ADDR_NUM_I:
+    case NV_IMSI_ADDR_NUM_I:		
       nvruim_read_support_status =  nvruim_read_imsi_m(nv_cmd_ptr, op_status);
       break;                       
 
