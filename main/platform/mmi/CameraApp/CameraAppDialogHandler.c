@@ -288,7 +288,7 @@ static const CCameraSize g_CameraSizeCFG[] =
 #elif defined(FEATURE_DISP_128X160)
     {128,160,L"128*160"}, // FULL Screen
     {176,220,L"176*220"}, // QCIF
-    {240,320,L"240*320"}, // QVGA
+    {240,320,L"240*320"}, // QVGA   
     //{480,640,L"480*640"}, // VGA    
 #elif defined(FEATURE_DISP_176X220)
     {176,220,L"176*220"}, // QCIF
@@ -331,7 +331,9 @@ static const CCameraSize g_CameraSizeCFG_10[] =
 #elif defined(FEATURE_DISP_128X160)
     {128,160,L"128*160"}, // FULL Screen
     {176,220,L"176*220"}, // QCIF
-    {240,320,L"240*320"}, // QVGA    
+#ifndef FEATURE_VERSION_C11
+    {240,320,L"240*320"}, // QVGA
+#endif    
 #elif defined(FEATURE_DISP_176X220)
 //1110w516 siv121d
 #if defined(FEATURE_VERSION_W208S)
@@ -4035,9 +4037,11 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
         case OEMNV_CAMERA_SIZE_INDEX_1:
             nResID[CAMERACFGSIZE] = IDI_SIZE_176_220;
             break;
+        #ifndef  FEATURE_VERSION_C11
         case OEMNV_CAMERA_SIZE_INDEX_2:
             nResID[CAMERACFGSIZE] = IDI_SIZE_240_320;
-            break;    
+            break;   
+        #endif
         default:
             nResID[CAMERACFGSIZE] = IDI_SIZE_128_160;
             break;
