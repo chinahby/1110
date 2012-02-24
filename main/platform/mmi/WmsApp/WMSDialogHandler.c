@@ -11844,7 +11844,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     if (NULL == pMe->m_pMenu)
                     {
 #ifdef FEATURE_USES_MMS
-                `       MSG_FATAL("IDD_WRITEMSG_Handler AVK_CLR 2",0,0,0);
+                        MSG_FATAL("IDD_WRITEMSG_Handler AVK_CLR 2",0,0,0);
                         if(pMe->m_isMMS)
                         { 
                             char pszPath[AEE_MAX_FILE_NAME]={'\0'};
