@@ -3191,6 +3191,24 @@ static void RecentCalls_RecordDetail(CRecentCalls   *pMe)
                   IDF_TEXT_TRANSPARENT);
 
 #else
+#ifdef FEATURE_VERSION_W208S
+	(void)IDISPLAY_DrawText(pMe->m_pDisplay,
+                     AEE_FONT_BOLD,
+                     wszText, 
+                     -1, 
+                     PIXELS_TO_EDGE,
+                     PIXELS_TO_EDGE  + ((4 + nSinkingLines)*nLineHeight),	//+ TITLEBAR_HEIGHT	 	5
+                     NULL,
+                     IDF_TEXT_TRANSPARENT);
+   (void)IDISPLAY_DrawText(pMe->m_pDisplay,
+                     AEE_FONT_BOLD,
+                     wszCount, 
+                     -1, 
+                     nTextWidth + 3 * nNumberWidth,
+                     PIXELS_TO_EDGE  + ((4 + nSinkingLines)*nLineHeight),	//+ TITLEBAR_HEIGHT	 	5
+                     NULL,
+                     IDF_TEXT_TRANSPARENT);
+#else
    (void)IDISPLAY_DrawText(pMe->m_pDisplay,
                      AEE_FONT_BOLD,
                      wszText, 
@@ -3207,6 +3225,7 @@ static void RecentCalls_RecordDetail(CRecentCalls   *pMe)
                      PIXELS_TO_EDGE  + ((5 + nSinkingLines)*nLineHeight),	//+ TITLEBAR_HEIGHT	 	5
                      NULL,
                      IDF_TEXT_TRANSPARENT);
+#endif   
 #endif   
    IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_BLACK);
    RecentCalls_TimeRecord(pMe, nSinkingLines); //画通话时间
@@ -3238,6 +3257,7 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines)
 #endif /*FEATURE_APP_WORLDTIME*/
 
     int                 nTextWidth = 0;
+	int					nCallTimeWidth = 0;	//Add By zzg 2012_02_24
     int					nCallTimeTextWidth = 0;
     int                 nLineHeight = BETWEEN_LINE_PIXELS + IDISPLAY_GetFontMetrics(pMe->m_pDisplay, AEE_FONT_BOLD, NULL, NULL);
     int                 nNumberWidth  = GetSingleNumberWidth(pMe->m_pDisplay, AEE_FONT_BOLD);
@@ -3262,6 +3282,7 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines)
   //画出"日期/时间"字符串
 
 	nCallTimeTextWidth = IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL, buffer);
+    nCallTimeWidth = IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL, szbuf);	//Add By zzg 2012_02_24
     (void) ISHELL_LoadResString(pMe->m_pShell,
                     AEE_RECENTCALLSRES_LANGFILE,
                     IDS_DURATION,
@@ -3280,6 +3301,17 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines)
                     IDF_TEXT_TRANSPARENT
                 );  //画出"通话时间"字符串
 #else
+#ifdef FEATURE_VERSION_W208S
+	(void)IDISPLAY_DrawText(pMe->m_pDisplay,
+                    AEE_FONT_NORMAL,
+                    buffer,
+                    -1,
+                    PIXELS_TO_EDGE,
+                    PIXELS_TO_EDGE  + ((3 + nSinkingLines)*nLineHeight),	//+ TITLEBAR_HEIGHT	 
+                    NULL,
+                    IDF_TEXT_TRANSPARENT
+                );  //画出"通话时间"字符串
+#else
     (void)IDISPLAY_DrawText(pMe->m_pDisplay,
                     AEE_FONT_NORMAL,
                     buffer,
@@ -3289,6 +3321,7 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines)
                     NULL,
                     IDF_TEXT_TRANSPARENT
                 );  //画出"通话时间"字符串
+#endif                
 #endif
     //如果读出的时间是0值的话(换卡情况)，那么不再画时间
     if(pMe->list_record[pMe->record_selected].time_stamp == 0)
@@ -3310,6 +3343,17 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines)
                       IDF_TEXT_TRANSPARENT
                   );
 #else
+#ifdef FEATURE_VERSION_W208S
+		(void)IDISPLAY_DrawText( pMe->m_pDisplay,
+                      AEE_FONT_BOLD,
+                      buffer,
+                      -1,
+                      nCallTimeWidth + nNumberWidth, //ELS_TO_EDGE,
+                      PIXELS_TO_EDGE  + ((2 + nSinkingLines)*nLineHeight),	//+ TITLEBAR_HEIGHT	 	3
+                      NULL,
+                      IDF_TEXT_TRANSPARENT
+                  );
+#else
         (void)IDISPLAY_DrawText( pMe->m_pDisplay,
                       AEE_FONT_BOLD,
                       buffer,
@@ -3319,6 +3363,7 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines)
                       NULL,
                       IDF_TEXT_TRANSPARENT
                   );
+#endif
 #endif
     }
 #endif /*FEATURE_APP_WORLDTIME*/
@@ -3521,6 +3566,18 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines)
                   IDF_TEXT_TRANSPARENT
               );
 #else
+#ifdef FEATURE_VERSION_W208S
+		//画出具体的通话时间
+        (void)IDISPLAY_DrawText( pMe->m_pDisplay,
+                  AEE_FONT_BOLD,
+                  buffer,
+                  -1,
+                  nTextWidth + nNumberWidth,
+                  PIXELS_TO_EDGE  + ((3+ nSinkingLines)*nLineHeight),	//+ TITLEBAR_HEIGHT	 	 
+                  NULL,
+                  IDF_TEXT_TRANSPARENT
+              );
+#else
         //画出具体的通话时间
         (void)IDISPLAY_DrawText( pMe->m_pDisplay,
                   AEE_FONT_BOLD,
@@ -3531,6 +3588,7 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines)
                   NULL,
                   IDF_TEXT_TRANSPARENT
               );
+#endif
 #endif
      }
     }
