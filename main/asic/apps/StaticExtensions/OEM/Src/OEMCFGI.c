@@ -2916,12 +2916,14 @@ void OEM_RestoreFactorySetting( void )
    oemi_cache.mmsOutCount = 0;
    oemi_cache.mmsDraftCount = 0;
    {
+#ifdef FEATURE_VERSION_W208S
         uint8 index = 0;
         for(; index < MAX_SMS_RESTRICT; ++index)
         {
             MEMSET(oemi_cache.sms_restrict_recive[index].szName, 0, 32+1);
         }
         oemi_cache.sms_restrict_receive_total = 0;
+#endif        
    }
 #endif  
    //ÆÁ±£Ê±¼ä
