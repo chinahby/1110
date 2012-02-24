@@ -1619,7 +1619,8 @@ void video_fmt_mp4r_process (void *server_data)
                         = video_fmt_mp4r_find_access_point;
 
                     context->cb_info.info.server_data = context;
-
+                    MSG_ERROR("**************** VIDEO_FMT_DATA_INCOMPLETE ************************", 0, 0, 0);
+                    MSG_FATAL("**************** VIDEO_FMT_DATA_INCOMPLETE ************************", 0, 0, 0);
                     context->callback_ptr (VIDEO_FMT_DATA_INCOMPLETE,
                                                context->client_data,
                                                &context->cb_info,
@@ -1627,7 +1628,7 @@ void video_fmt_mp4r_process (void *server_data)
                     /* Put state machine in the state where stream reads are
                     ** now allowed.
                     */
-                    context->state = VIDEO_FMT_MP4R_STATE_READY;
+                    context->state = VIDEO_FMT_MP4R_STATE_INVALID;//VIDEO_FMT_MP4R_STATE_READY;
                     for (i = 0; i < context->num_streams; ++i)
                     {
                         context->stream_state [i].state
@@ -2669,7 +2670,8 @@ void video_fmt_mp4r_data_incomplete (video_fmt_mp4r_context_type  *context)
          = video_fmt_mp4r_find_access_point;
 
     context->cb_info.info.server_data = context;
-
+    MSG_ERROR("**************** VIDEO_FMT_DATA_INCOMPLETE ************************", 0, 0, 0);
+    MSG_FATAL("**************** VIDEO_FMT_DATA_INCOMPLETE ************************", 0, 0, 0);
     context->callback_ptr (VIDEO_FMT_DATA_INCOMPLETE,
                            context->client_data,
                            &context->cb_info,
@@ -5637,6 +5639,8 @@ boolean video_fmt_mp4r_process_atom_stbl
                 context->state = VIDEO_FMT_MP4R_STATE_DECODE_ATOM_HEADER;
 
                 /* Stop further parsing by indicating failure code to client. */
+                MSG_ERROR("**************** VIDEO_FMT_DATA_INCOMPLETE ************************", 0, 0, 0);
+                MSG_FATAL("**************** VIDEO_FMT_DATA_INCOMPLETE ************************", 0, 0, 0);
                 context->callback_ptr(VIDEO_FMT_DATA_INCOMPLETE, context->client_data, NULL, NULL);
                 return TRUE;
             }
