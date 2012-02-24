@@ -172,6 +172,10 @@
 			</Menu>
 		</Controls>
 	</Dialog>
+	<Dialog Id="6006" Name="IDD_CVIDEO" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
 	<Dialog Id="6008" Name="IDD_CVIDEOCFG" Focus="7003">
 		<Controls>
 			<Menu Id="7003" Name="IDC_VIDEO_CFGMENU">
