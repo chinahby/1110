@@ -112,6 +112,20 @@ extern boolean   IsRunAsFactoryTestMode(void);
 #define WEEK_Y              52
 #elif defined(FEATURE_DISP_220X176)
 
+
+#ifdef FEATURE_VERSION_W208S
+#define IDLE_D_CLOCK_X 		5
+#define IDLE_D_CLOCK_Y 		22
+
+#define RPLMN_X				IDLE_D_CLOCK_X
+#define RPLMN_Y				IDLE_D_CLOCK_Y
+
+#define DATA_X				IDLE_D_CLOCK_X
+#define DATA_Y				(IDLE_D_CLOCK_Y+25)
+
+#define WEEK_X              DATA_X
+#define WEEK_Y              DATA_Y
+#else
 #define IDLE_D_CLOCK_X 		5
 #define IDLE_D_CLOCK_Y 		25
 
@@ -123,6 +137,7 @@ extern boolean   IsRunAsFactoryTestMode(void);
 
 #define WEEK_X              IDLE_D_CLOCK_X
 #define WEEK_Y              (DATA_Y + 25)
+#endif
 
 #elif defined(FEATURE_DISP_128X160)
 
@@ -6087,7 +6102,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                                   &wszDate[0], -1,
                                   0, 0, &rc_date, 
                                   IDF_ALIGN_MIDDLE
-                                  | IDF_ALIGN_RIGHT
+                                  | IDF_ALIGN_RIGHT          
                                   | IDF_TEXT_TRANSPARENT); 
 #elif defined(FEATURE_DISP_128X160)
 #ifdef FEATURE_VERSION_MYANMAR
@@ -6367,7 +6382,11 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 #elif defined(FEATURE_DISP_160X128)
 							  | IDF_ALIGN_RIGHT
 #elif defined(FEATURE_DISP_220X176)
-							  | IDF_ALIGN_RIGHT							  
+#ifdef FEATURE_VERSION_W208S
+							  | IDF_ALIGN_LEFT
+#else
+							  | IDF_ALIGN_RIGHT		
+#endif							  
 #elif defined(FEATURE_DISP_128X160)
 #ifdef FEATURE_VERSION_MYANMAR
 							  | IDF_ALIGN_CENTER

@@ -662,7 +662,7 @@
 		<Text>Como Recibida</Text>
 	</String>
 	<String Id="1042" Name="IDS_ADD_TO_RESTRICT_LIST">
-		<Text>A?adir a lista restringida</Text>
+		<Text>Añadir a la lista restringida</Text>
 	</String>
 	<String Id="1043" Name="IDS_MMS_SERVER_ADDRESS">
 		<Text>Dirección del servidor MMS</Text>

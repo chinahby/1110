@@ -104,7 +104,7 @@
 		<Text>Received %d new msg</Text>
 	</STRING>
 	<STRING Id="1035" Name="IDS_CHARGER_ON">
-		<Text>Iniciar la carga de</Text>
+		<Text>Cargador Conectado</Text>
 	</STRING>
 	<STRING Id="1036" Name="IDS_CHARGER_OFF">
 		<Text>Cargador desconectado</Text>

@@ -4842,11 +4842,15 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
               //  {
               //      headsetPresent = FALSE;
               //  }
+              
+                /*
                 OEM_GetConfig(CFGI_FM_PLAY_MODE,&RingtonesPlaymode, sizeof(RingtonesPlaymode));
+			    
                 if(RingtonesPlaymode ) //&& HS_HEADSET_ON()
                 {
                   snd_set_device(SND_DEVICE_HANDSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);
                 }
+				*/
 
 	            CallApp_IncomingCall_Dlg_Init(pMe);
 				IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
@@ -6376,6 +6380,9 @@ void CallApp_SetupCallAudio(CCallApp *pMe)
     {
         headsetPresent = FALSE;
     }
+
+	MSG_FATAL("***zzg CallApp_SetupCallAudio headsetPresent=%x, m_bHandFree=%x***", headsetPresent, pMe->m_bHandFree, 0);	
+	
 #ifdef FEATURE_SUPPORT_BT_AUDIO
 	MSG_FATAL("***zzg CallApp_SetupCallAudio headsetPresent=%x, m_bHandFree=%x, m_bBtAvailable=%x***", 
 				headsetPresent, pMe->m_bHandFree, pMe->m_bBtAvailable);	
@@ -6455,6 +6462,7 @@ void CallApp_SetupCallAudio(CCallApp *pMe)
 #else
 	if(SUCCESS != ITELEPHONE_GetCalls(pMe->m_pITelephone, &po,sizeof(AEETCalls)))
 	{
+	`	MSG_FATAL("***zzg CallApp_SetupCallAudio SUCCESS != ITELEPHONE_GetCalls***", 0, 0, 0);
 		return ;
 	}
 
@@ -6478,6 +6486,8 @@ void CallApp_SetupCallAudio(CCallApp *pMe)
         soundStuff.eEarMuteCtl = AEE_SOUND_MUTECTL_MUTED;
         soundStuff.eMicMuteCtl = AEE_SOUND_MUTECTL_MUTED;
     }
+
+	MSG_FATAL("***zzg CallApp_SetupCallAudio 2 eDevice=%d***", soundStuff.eDevice, 0, 0);
 
     (void) ISOUND_Set(pMe->m_pSound,  &soundStuff);
 

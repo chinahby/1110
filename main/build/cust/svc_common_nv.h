@@ -27,7 +27,7 @@
 #elif defined(FEATURE_IS683A_450M_SUPPORT) && defined(FEATURE_DISABLE_UIMPRL)
 #define AUTO_NV_MIN_VERSION                 0x25
 #else
-#define AUTO_NV_MIN_VERSION                 0x24
+#define AUTO_NV_MIN_VERSION                 0x26
 #endif
 
 #define AUTO_NV_ITME_VERSION                (AUTO_NV_MIN_VERSION + AUTO_NV_RF_VERSION + 2)
@@ -51,9 +51,16 @@ const nv_auto_set_type nv_auto_set_svc_list[] =
     {NV_CURR_NAM_I,                     {0x00}},
     {NV_AUTO_NAM_I,                     {0x00}},            
     //change for certain opeartor
+#ifdef FEATURE_VERSION_W208S
+	{NV_NAME_NAM_I,                     {0x00, ' ', 0x00}},     
+    //change for certain opeartor                     
+    {NV_BANNER_I,                       {' ', 0x00}}, 
+#else
     {NV_NAME_NAM_I,                     {0x00, 'N', 'o', ' ', 'C', 'a', 'r', 'd', 0x00}},     
     //change for certain opeartor                     
-    {NV_BANNER_I,                       {'N', 'o', ' ', 'C', 'a', 'r', 'd', 0x00}},   
+    {NV_BANNER_I,                       {'N', 'o', ' ', 'C', 'a', 'r', 'd', 0x00}}, 
+#endif
+    
     {NV_LOCK_CODE_I,                    {0x30, 0x30, 0x30, 0x30}}, 
     {NV_SEC_CODE_I,                     {0x30, 0x30, 0x30, 0x30, 0x30, 0x30}},  
     {NV_OTKSL_I,                        {0x30, 0x30, 0x30, 0x30, 0x30, 0x30}},
