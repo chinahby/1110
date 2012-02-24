@@ -2677,7 +2677,7 @@ void video_fmt_mp4r_data_incomplete (video_fmt_mp4r_context_type  *context)
                            &context->cb_info,
                            video_fmt_mp4r_end);
 
-   context->state = VIDEO_FMT_MP4R_STATE_READY;
+   context->state = VIDEO_FMT_MP4R_STATE_INVALID;//VIDEO_FMT_MP4R_STATE_READY;
     for (i = 0; i < context->num_streams; ++i)
     {
         context->stream_state [i].state  = VIDEO_FMT_MP4R_STREAM_STATE_READY;
@@ -5636,7 +5636,7 @@ boolean video_fmt_mp4r_process_atom_stbl
                 context->cb_info.info.num_streams = 0;
                 context->cb_info.info.abs_file_offset = 0;
                 context->cb_info.info.server_data = context;
-                context->state = VIDEO_FMT_MP4R_STATE_DECODE_ATOM_HEADER;
+                context->state = VIDEO_FMT_MP4R_STATE_INVALID;//VIDEO_FMT_MP4R_STATE_DECODE_ATOM_HEADER;
 
                 /* Stop further parsing by indicating failure code to client. */
                 MSG_ERROR("**************** VIDEO_FMT_DATA_INCOMPLETE ************************", 0, 0, 0);
