@@ -465,6 +465,10 @@ static void CoreApp_Issametimer(void *pUser);
 
 static void CoreApp_UpdateBottomBar(CCoreApp    *pMe); 
 
+#ifdef FEATURE_VERSION_C11
+static void CCoreApp_TorchTipTimeOut(CCoreApp *pMe);
+#endif
+
 //static void CoreApp_GetRecordCount(CCoreApp *pMe);
 
 //static boolean CoreApp_PowerAlarm_Event(CCoreApp *pMe);
@@ -3174,6 +3178,10 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #ifdef FEATURE_KEYGUARD	 
     byte  bData;
 #endif
+#ifdef FEATURE_VERSION_C11    
+    static IStatic * pStatic = NULL;
+#endif
+
     if (NULL == pMe)
     {
         return FALSE;
@@ -3191,7 +3199,19 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             {
                 IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);//返回待机界面时，要把显示titlebar标志还原成TRUE
 			}
-			
+
+          #ifdef FEATURE_VERSION_C11
+           if (NULL == pStatic)
+            {
+                AEERect rect = {0};
+                if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->a.m_pIShell,AEECLSID_STATIC,(void **)&pStatic))
+                {
+                    return FALSE;
+                }
+                ISTATIC_SetRect(pStatic, &rect);
+            }
+           #endif
+           
             MEMSET(pMe->m_wstrEnterNum, 0, sizeof(pMe->m_wstrEnterNum));
 			MSG_FATAL("***zzg CoreApp EVT_DIALOG_INIT bFirstStart=%x***", bFirstStart, 0, 0);
 			
@@ -3322,7 +3342,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             }
             return TRUE;            
         }
-#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM) ||defined(FEATURE_VERSION_S1000T)||defined(FEATURE_LCD_TOUCH_ENABLE)
+#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM) ||defined(FEATURE_VERSION_S1000T)||defined(FEATURE_LCD_TOUCH_ENABLE)||defined(FEATURE_VERSION_C11)
 		case EVT_KEY_HELD:
 			 MSG_FATAL("***zzg EVT_KEY_HELD wParam=%x, dwParam=%x", wParam, dwParam, 0);
 			
@@ -3346,6 +3366,47 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 				}
 			}
 #else
+#ifdef FEATURE_VERSION_C11
+            if(wParam == AVK_INFO)
+            {
+                boolean TorchOn = FALSE;
+                pMe->m_keyinfoheld=TRUE;
+                OEM_GetConfig(CFGI_FLSHLITHG_STATUS,&TorchOn, sizeof(TorchOn));
+                if (TorchOn == FALSE )
+                {
+                    TorchOn = TRUE;
+                    if (pMe->m_pBacklight)
+                    {
+                        IBACKLIGHT_TurnOnTorch(pMe->m_pBacklight);
+                    }
+                }
+                else
+                {
+                    TorchOn = FALSE;
+                    if (pMe->m_pBacklight)
+                    {                           
+                        IBACKLIGHT_TurnOffTorch(pMe->m_pBacklight);
+                    }
+                }
+                OEM_SetConfig(CFGI_FLSHLITHG_STATUS,&TorchOn, sizeof(TorchOn));
+               {
+                 PromptMsg_Param_type m_PromptMsg;
+                 MEMSET(&m_PromptMsg,0,sizeof(PromptMsg_Param_type));
+                 if(TorchOn)
+                 m_PromptMsg.nMsgResID= IDS_MAIN_MENU_TORCHON;
+                 else
+                 m_PromptMsg.nMsgResID= IDS_MAIN_MENU_TORCHOFF;   
+                 m_PromptMsg.ePMsgType = MESSAGE_WARNNING;
+                 STRLCPY(m_PromptMsg.strMsgResFile, AEE_COREAPPRES_LANGFILE,MAX_FILE_NAME);
+                 m_PromptMsg.eBBarType = BTBAR_NONE;
+                 DrawPromptMessage(pMe->m_pDisplay,pStatic,&m_PromptMsg);
+                 IDISPLAY_UpdateEx(pMe->m_pDisplay,TRUE);
+                 (void)ISHELL_SetTimer(pMe->a.m_pIShell,1000, (PFNNOTIFY)CCoreApp_TorchTipTimeOut,pMe);
+                }
+                
+                return TRUE;
+            }
+#endif            
     		if(wParam == AVK_SPACE)
             {
             	boolean bData;
@@ -3476,6 +3537,11 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             (void) ISHELL_CancelTimer(pMe->a.m_pIShell,
                                       CoreApp_SearchingTimer,
                                       pMe);
+#ifdef FEATURE_VERSION_C11
+                ISTATIC_Release(pStatic);
+                pStatic = NULL;
+                pMe->m_keyinfoheld=FALSE;
+#endif
 #ifdef FEATURE_KEYGUARD	    
 	     (void)ISHELL_CancelTimer(pMe->a.m_pIShell, 
                                     CoreApp_TimeKeyguard,
@@ -3510,7 +3576,21 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 		}
 #endif		
 		//Add End
-		
+#ifdef FEATURE_VERSION_C11		
+		case EVT_KEY_RELEASE:
+        if((AVKType)wParam == AVK_INFO)
+        {
+            if(pMe->m_keyinfoheld)
+            {
+               return TRUE;
+            }
+            else
+            {
+               return CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
+            }
+        }
+            return TRUE;
+ #endif
         case EVT_KEY_PRESS: 
             if(pMe->m_bemergencymode)
             {
@@ -3919,7 +3999,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 						}
 						
 #else
-#ifdef FEATURE_VERSION_C01	
+#if defined(FEATURE_VERSION_C01)	
                      if(!pMe->m_iskeypadtime)
         			   {
     					   AEE_CancelTimer(CoreApp_keypadtimer,pMe);
@@ -3927,7 +4007,10 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
     					   pMe->m_iskeypadtime = TRUE;
         			   }
                     
-						return TRUE;                    
+						return TRUE;
+#elif defined (FEATURE_VERSION_C11) 
+                        pMe->m_keyinfoheld=FALSE;
+                        return TRUE;
 #else
                        if(pMe->m_iskeypadtime)
 						{
@@ -7900,6 +7983,23 @@ static const ServiceProviderList List_SP[] =
        
 };
 #endif
+
+#ifdef FEATURE_VERSION_C11
+static void CCoreApp_TorchTipTimeOut(CCoreApp *pMe)
+{
+    if (NULL == pMe)
+    {
+        return;
+    }
+
+    (void) ISHELL_PostEvent(pMe->a.m_pIShell,
+                            AEECLSID_CORE_APP,
+                            EVT_USER_REDRAW,
+                            0,
+                            0);
+}
+#endif
+
 static void CoreApp_GetSPN(CCoreApp *pMe)
 {
 

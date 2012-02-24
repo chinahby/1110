@@ -915,6 +915,9 @@ typedef struct _CCoreApp
 	#ifdef FEATURE_KEYGUARD
 	boolean             m_iskeypadtime;
 	#endif
+    #ifdef FEATURE_VERSION_C11
+	boolean             m_keyinfoheld;
+	#endif
 	boolean             m_IsSametime;
     #ifdef FEATURE_QQ_APP 
     QQ_STATE            m_qqstate;

@@ -492,7 +492,9 @@ boolean CoreApp_InitAppData(IApplet* po)
     pMe->m_bSuspended = FALSE;
     pMe->m_bChargFull = FALSE;
     pMe->m_bBatteryActive=FALSE;
-    
+#ifdef FEATURE_VERSION_C11    
+    pMe->m_keyinfoheld=FALSE;
+#endif    
     if (SUCCESS != ISHELL_CreateInstance(pMe->a.m_pIShell,
                                          AEECLSID_CARD,
                                          (void **) &pMe->m_pICard))
@@ -1148,7 +1150,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             default:
                 break;
             }
-            #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)||defined(FEATURE_LCD_TOUCH_ENABLE)
+            #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)||defined(FEATURE_LCD_TOUCH_ENABLE)||defined(FEATURE_VERSION_C11)
 			
 			return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
             #endif

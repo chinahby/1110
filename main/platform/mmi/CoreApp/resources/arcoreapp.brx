@@ -196,6 +196,12 @@
 	<String Id="1065" Name="IDS_SUPER_SINGAL_OFF">
 		<Text>Super singal off!</Text>
 	</String>
+	<String Id="1080" Name="IDS_MAIN_MENU_TORCHON">
+		<Text>الشعلة</Text>
+	</String>
+	<String Id="1081" Name="IDS_MAIN_MENU_TORCHOFF">
+		<Text>شعلة معطلة</Text>
+	</String>
  </Strings>
  <Dialogs>
  	<DIALOG Id="6001" Name="IDD_UIMERR" Focus="7001">

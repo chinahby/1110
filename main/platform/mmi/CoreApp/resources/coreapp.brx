@@ -208,6 +208,12 @@
 	<String Id="1073" Name="IDS_STR_TOUCH_FUR">
 		<Text>Contacts</Text>
 	</String>
+	<String Id="1080" Name="IDS_MAIN_MENU_TORCHON">
+		<Text>Torch On</Text>
+	</String>
+	<String Id="1081" Name="IDS_MAIN_MENU_TORCHOFF">
+		<Text>Torch Off</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_UIMERR" Focus="7001">
