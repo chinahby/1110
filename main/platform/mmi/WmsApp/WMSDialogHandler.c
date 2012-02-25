@@ -18876,9 +18876,6 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
     IStatic * pStatic = NULL;
     IMenuCtl* pMenuCtl = NULL;
     uint32 dwMask;
-    IImage* pIImage = NULL;
-    IImage* pISound = NULL;
-    IImage* pIVideo = NULL;    
     static MMS_WSP_DEC_DATA *pDecdata = NULL;
     MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] eCode:0x%x, wParam=0x%x",eCode,wParam,0);
     if (NULL == pMe)
@@ -18906,6 +18903,9 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
     {
         case EVT_DIALOG_INIT:
             {
+                IImage* pIImage = NULL;
+                IImage* pISound = NULL;
+                IImage* pIVideo = NULL;                    
                 AECHAR *pFormatedText = NULL;
                 AECHAR wszTitle[32] = {0};
                 MMSData mmsDataInfoList[MAX_MMS_STORED];
@@ -19130,6 +19130,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                             pIImage = WmsLoadImageFromData(pMe,
                                         pMe->m_ResData.imageData.data[pMe->m_ResData.imageData.nIndex].nResIndex,
                                         pMe->m_ResData.imageData.data[pMe->m_ResData.imageData.nIndex].type);
+                            DBGPRINTF("pIImage ADDRESS=0x%X", pIImage);
                             MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] Image 2", 0, 0, 0);
                             if(pIImage != NULL)
                             {
@@ -19144,10 +19145,10 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                                    return EFAILED;
                                 }   
                                 IMENUCTL_SetItemText(pMenuCtl, index, NULL, 0, menuItemName);
-                                RELEASEIF(pIImage);
                                 DBGPRINTF("Image menuItemName=%s, ItemCount=%d, wItemID=%d", menuItemName, IMENUCTL_GetItemCount(pMenuCtl), ai.wItemID);
                                 MSG_FATAL("IMENUCTL_GetItemCount1=%d", IMENUCTL_GetItemCount(pMenuCtl),0,0);
                             }
+                            RELEASEIF(pIImage);
                         }
                         else if(STRISTR(pMimeType, SOUND_MIME_BASE))
                         {
@@ -19161,6 +19162,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                             pMe->m_ResData.soundData.data[pMe->m_ResData.soundData.nCount].type = pMimeType;
                             pMe->m_ResData.soundData.nCount++;
                             pISound = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MUSIC);  
+                            DBGPRINTF("pISound ADDRESS=0x%X", pISound);
                             IIMAGE_SetParm(pISound,IPARM_SCALE, 30, 30);                        
                             MEMSET(&ai, 0, sizeof(ai));
                             MEMSET(&ai, 0, sizeof(ai));
@@ -19382,7 +19384,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
         case EVT_DIALOG_END:
             {
                 uint8 i = 0;
-                MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] EVT_DIALOG_END",0 ,0 , 0);
+                MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] EVT_DIALOG_END 1",0 ,0 , 0);
                 if (NULL != pMe->m_pMenu)
                 {
                     IMENUCTL_Release(pMe->m_pMenu);
@@ -19400,10 +19402,8 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                 for(i = 0;i < pMe->m_DecData.message.mms_data.frag_num;i++)
                 {
                     FREEIF(pMe->m_DecData.message.mms_data.fragment[i].pContent);
-                }            
-                RELEASEIF(pIImage);
-                RELEASEIF(pISound);
-                RELEASEIF(pIVideo);  
+                }       
+                MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] EVT_DIALOG_END 2",0 ,0 , 0);
             }
             return TRUE;
 
@@ -19465,9 +19465,6 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                                                 0);
                     }
 #endif      
-                    RELEASEIF(pIImage);
-                    RELEASEIF(pISound);
-                    RELEASEIF(pIVideo);  
 
                     return TRUE;
                        
@@ -20031,10 +20028,14 @@ static IImage* WmsLoadImageFromData(WmsApp *pMe,int nFragIndex,char* pMimeType)
         }
         if(pMemAStream != NULL)
         {
+            DBGPRINTF("pMemAStream ADDRESS=0x%X", pMemAStream);
             IMEMASTREAM_Release(pMemAStream);
-            RELEASEIF(pMemAStream);
         }
-        FREEIF(pData);
+        else
+        {
+            DBGPRINTF("pData ADDRESS=0x%X", pData);
+            FREEIF(pData);
+        }
     }
     MSG_FATAL("[WmsLoadImageFromData] Exit", 0, 0, 0);
     return pIImageCur;
@@ -20065,10 +20066,13 @@ static void WmsLoadSoundFromData(WmsApp *pMe,int nFragIndex,char* pMimeType)
 
     mediaData.clsData = MMD_BUFFER;
     mediaData.pData = pMmsData->fragment[nFragIndex].pContent;
+    DBGPRINTF("mediaData.pData ADDRESS=0x%X",mediaData.pData);
     mediaData.dwSize = rSize;
+    DBGPRINTF("pMe->m_pMedia ADDRESS=0x%X",pMe->m_pMedia);
     RELEASEIF(pMe->m_pMedia);
 
     nResult = AEEMediaUtil_CreateMedia(pMe->m_pShell,&mediaData,&pMe->m_pMedia);
+    DBGPRINTF("pMe->m_pMedia ADDRESS=0x%X",pMe->m_pMedia);
     if(nResult != SUCCESS)
     {
         MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] CreateMedia Error:%s", nResult, 0, 0);
