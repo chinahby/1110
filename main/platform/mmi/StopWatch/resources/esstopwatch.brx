@@ -8,7 +8,7 @@
  		<Text>Reconfigurar</Text>
  	</STRING>
  	<STRING Id="3" Name="IDS_RESET_RECORDFULL">
- 		<Text>El registro está lleno, reconfigurar</Text>
+ 		<Text>Era ya lleno，Establece</Text>
  	</STRING>
  	<STRING Id="4" Name="IDS_STOPWATCH1">
  		<Text>Cronómetro 1</Text>

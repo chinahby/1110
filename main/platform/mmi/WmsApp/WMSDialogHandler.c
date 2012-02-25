@@ -2116,7 +2116,7 @@ static boolean IDD_MESSAGELIST_Handler(void        *pUser,
                 }
                 IMENUCTL_SetRect(pMenu, &pMe->m_rc);
                
-                dwMask = (dwMask & (~MP_WRAPSCROLL)) | MP_UNDERLINE_TITLE|MP_ACTIVE_NO_REDRAW;
+                dwMask = (dwMask & (~MP_WRAPSCROLL)) | MP_UNDERLINE_TITLE|MP_ACTIVE_NO_REDRAW;                
                 IMENUCTL_SetProperties(pMenu, dwMask);
                 IMENUCTL_SetOemProperties(pMenu, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY | OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
@@ -2222,14 +2222,17 @@ static boolean IDD_MESSAGELIST_Handler(void        *pUser,
                 if(pMe->m_eMBoxType == WMS_MB_OUTBOX_MMS)
                 {
                     ICONFIG_GetItem(pMe->m_pConfig,CFGI_MMS_OUTCOUNT,&g_mmsDataInfoMax,sizeof(g_mmsDataInfoMax));
+					nCount = g_mmsDataInfoMax;	//Add By zzg 2012_02_25
                 }
                 else if(pMe->m_eMBoxType == WMS_MB_INBOX_MMS)
                 {
                     ICONFIG_GetItem(pMe->m_pConfig,CFGI_MMS_INCOUNT,&g_mmsDataInfoMax,sizeof(g_mmsDataInfoMax));
+					nCount = g_mmsDataInfoMax;	//Add By zzg 2012_02_25
                 }
                 else if(pMe->m_eMBoxType == WMS_MB_DRAFTBOX_MMS)
                 {
                     ICONFIG_GetItem(pMe->m_pConfig,CFGI_MMS_DRAFTCOUNT,&g_mmsDataInfoMax,sizeof(g_mmsDataInfoMax));
+					nCount = g_mmsDataInfoMax;	//Add By zzg 2012_02_25
                 }                
                 else
 #endif 
@@ -2313,6 +2316,9 @@ static boolean IDD_MESSAGELIST_Handler(void        *pUser,
                 int         nCount = 0;
                 
                 (void)IMENUCTL_GetItemData(pMenu, wParam, &dwcurxuhao);
+
+				MSG_FATAL("***zzg IDD_MESSAGELIST dwcurxuhao=%d***", dwcurxuhao, 0, 0);
+				
                 pMe->m_wSelItemxuhao = dwcurxuhao;
                 pList = wms_get_cacheinfolist(pMe->m_eMBoxType);
 #ifdef FEATURE_USES_MMS
@@ -2320,16 +2326,24 @@ static boolean IDD_MESSAGELIST_Handler(void        *pUser,
                 {
                     ICONFIG_GetItem(pMe->m_pConfig,CFGI_MMS_OUTCOUNT,&g_mmsDataInfoMax,sizeof(g_mmsDataInfoMax));
                     pMe->m_wSelItemxuhao = IMENUCTL_GetSel(pMenu);
+
+					nCount = g_mmsDataInfoMax;	//Add By zzg 2012_02_25
                 }
                 else if(pMe->m_eMBoxType == WMS_MB_INBOX_MMS)
                 {
                     ICONFIG_GetItem(pMe->m_pConfig,CFGI_MMS_INCOUNT,&g_mmsDataInfoMax,sizeof(g_mmsDataInfoMax));
                     pMe->m_wSelItemxuhao = IMENUCTL_GetSel(pMenu);
+
+					MSG_FATAL("***zzg IDD_MESSAGELIST g_mmsDataInfoMax=%d, m_wSelItemxuhao=%d***", g_mmsDataInfoMax, pMe->m_wSelItemxuhao, 0);
+
+					nCount = g_mmsDataInfoMax;	//Add By zzg 2012_02_25
                 }
                 else if(pMe->m_eMBoxType == WMS_MB_DRAFTBOX_MMS)
                 {
                     ICONFIG_GetItem(pMe->m_pConfig,CFGI_MMS_DRAFTCOUNT,&g_mmsDataInfoMax,sizeof(g_mmsDataInfoMax));
                     pMe->m_wSelItemxuhao = IMENUCTL_GetSel(pMenu);
+
+					nCount = g_mmsDataInfoMax;	//Add By zzg 2012_02_25
                 }                
                 else
 #endif
@@ -2400,10 +2414,12 @@ static boolean IDD_MESSAGELIST_Handler(void        *pUser,
                        )
                     {
                         dwcurxuhao = IMENUCTL_GetSel(pMenu);
+						
+						MSG_FATAL("***zzg IMENUCTL_GetSel dwcurxuhao=%d***", dwcurxuhao, 0, 0);
                     }
 #endif
                     WSPRINTF(&wszTitle[nLen], (32-nLen)*sizeof(AECHAR), wszFmt, dwcurxuhao, nCount);
-                    DBGPRINTF("EVT_CTL_SEL_CHANGED wszTitle=%S, dwcurxuhao=%d, wParam=%d",wszTitle, dwcurxuhao, wParam);
+                    DBGPRINTF("EVT_CTL_SEL_CHANGED wszTitle=%S, dwcurxuhao=%d, nCount=%d",wszTitle, dwcurxuhao, nCount);
 					#if 0
                     (void)IMENUCTL_SetTitle(pMenu, NULL, 0, wszTitle);
 					#else
@@ -15430,19 +15446,24 @@ static boolean IDD_EXTARCTEDITEM_OPT_Handler(void *pUser,
 #if defined(FEATURE_SUPPORT_WAP_APP)
                 case IDS_BROWSE:
                     {
+						/*
                         AECHAR    *pItem = NULL;
                         char      *pBuf = NULL;
                         int32     nLen, nSize;
+
+						MSG_FATAL("***zzg WMSDialogHandler IDS_BROWSE***", 0, 0, 0);
                         
                         pItem = (AECHAR *)IVector_ElementAt(pMe->m_pSaveNumList, pMe->m_CurExtractItem);
                         if (NULL == pItem)
                         {
+                        	MSG_FATAL("***zzg WMSDialogHandler NULL == pItem return***", 0, 0, 0);
                             return TRUE;
                         }
                         nSize = 256*sizeof(char);
                         pBuf = (char *)MALLOC(nSize);
                         if (NULL == pBuf)
                         {
+                        	MSG_FATAL("***zzg WMSDialogHandler NULL == pBuf***", 0, 0, 0);
                             return TRUE;
                         }
                         pBuf[0]=0;
@@ -15450,9 +15471,63 @@ static boolean IDD_EXTARCTEDITEM_OPT_Handler(void *pUser,
                         nLen = STRLEN(pBuf);
                         nSize -= nLen*sizeof(char);
                         WSTRTOSTR(pItem, &pBuf[nLen], nSize);
+
+						MSG_FATAL("***zzg WMSDialogHandler pBuf=%s***", pBuf, 0, 0);
                         
                         ISHELL_PostURL(pMe->m_pShell, pBuf);
-                        FREEIF(pBuf);                     
+                        FREEIF(pBuf);    
+						*/
+
+						char	buf[12];
+						int		Result;
+						AECHAR    *pItem = NULL;
+                        char      *pBuf = NULL;
+                        int32     nLen, nSize;
+
+						MSG_FATAL("***zzg WMSDialogHandler IDS_BROWSE Start***", 0, 0, 0);
+		
+						OEM_SetBROWSER_ADSAccount();	//Add By zzg 2011_07_08
+						
+						pItem = (AECHAR *)IVector_ElementAt(pMe->m_pSaveNumList, pMe->m_CurExtractItem);
+						
+						if (NULL == pItem)
+						{							
+							return TRUE;
+						}						
+						
+						nSize = 256*sizeof(char);
+						pBuf = (char *)MALLOC(nSize);
+						
+						if (NULL == pBuf)
+						{							
+							return TRUE;
+						}
+
+						MSG_FATAL("***zzg WMSDialogHandler pItem=%x, pBuf = %x***", pItem, pBuf, 0);
+						
+						pBuf[0]=0;								
+						WSTRTOSTR(pItem, pBuf, nSize);
+
+						DBGPRINTF("***zzg IDS_BROWSE pBuf=%s***", pBuf, 0, 0);
+										    	
+				    	start_info.appid_fx = APP_ORIGINATOR_BROWSER;
+				        start_info.subtype_keycode = APP_BROWSER_START_URL;
+				        start_info.par_keychar = 0;
+						
+				        //start_info.fInfo.url_info.title = "163";				        
+				        start_info.fInfo.url_info.url = pBuf;	//"http://www.163.com";
+						
+						//STRCPY(start_info.fInfo.url_info.url, pBuf);
+
+						DBGPRINTF("***zzg IDS_BROWSE url=%s***", start_info.fInfo.url_info.url);						
+						
+				        SPRINTF(buf, "%p", &start_info);
+						Result = ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_NF3, buf);
+
+						MSG_FATAL("***zzg IDS_BROWSE End***", 0, 0, 0);
+
+						FREEIF(pBuf); 
+						
                     }
                     return TRUE;
 #endif               
