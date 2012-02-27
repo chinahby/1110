@@ -89,7 +89,7 @@
 #else
 #define     MAX_INPUT_SUBJECT               20
 #endif
-#define     MAX_INPUT_LOCATION              128
+#define     MAX_INPUT_LOCATION              64
 #define     MAX_SPORTS_DISTANCE             5
 #define     MAX_SPORTS_TIME                 3
 
@@ -154,7 +154,10 @@
 #define TIME_ONE_SEC                (1000)
 #define TIMEOUT_MS_MSGBOX           (2*TIME_ONE_SEC) //提示信息的显示的时间
 #define MAXHISTORY                  20          //最大的记录数
-#define MAXTEXT                     64          //每个记录的最大容量
+
+//#define MAXTEXT                     64          //每个记录的最大容量
+#define MAXTEXT						(MAX_INPUT_LOCATION+1)
+
 #define TIMEOUT_MS_QUICK            100         //允许连续快速按键的时间间隔
 
 #define CAL_DATABASE_PATH           "fs:/mod/scheduleapp"     //数据库的路径名

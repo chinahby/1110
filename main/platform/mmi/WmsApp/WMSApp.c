@@ -2820,6 +2820,9 @@ void WmsApp_UpdateMenuList(WmsApp *pMe, IMenuCtl *pMenu)
     (void)IMENUCTL_DeleteAll(pMenu);
 
     (void)STRTOWSTR("%s", wszFmt, sizeof(wszFmt));
+
+	MSG_FATAL("WmsApp_UpdateMenuList_WMS nItems=%d", nItems, 0, 0);
+	
     for (i=0; i<nItems; i++)
     {
         wszTitle[0] = 0;
@@ -2905,6 +2908,8 @@ void WmsApp_UpdateMenuList(WmsApp *pMe, IMenuCtl *pMenu)
         wSelectItemID = mai.wItemID;
         pMe->m_wSelItemxuhao = mai.dwData;
     }
+
+	MSG_FATAL("WmsApp_UpdateMenuList_WMS wSelectItemID=%d", wSelectItemID, 0, 0);
     
     if (wSelectItemID != 0)
     {
@@ -2968,6 +2973,9 @@ void WmsApp_UpdateMenuList(WmsApp *pMe, IMenuCtl *pMenu)
 			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wszTitle);
 			#endif
         }
+
+		MSG_FATAL("WmsApp_UpdateMenuList_WMS wItemCount=%d", wItemCount, 0, 0);
+		
         if(wItemCount > MAXITEMS_ONEPAGE)
         {
             AEERect rc;
@@ -7372,7 +7380,7 @@ Exit:
 }
 void WmsApp_UpdateMenuList_MMS(WmsApp *pMe, IMenuCtl *pMenu)
 {
-    int i, nItems;
+    int i, j, nItems;
     uint16  wItemCount;
     uint16  wTotalPages;
     AECHAR  wszFmt[10]={0};
@@ -7382,7 +7390,7 @@ void WmsApp_UpdateMenuList_MMS(WmsApp *pMe, IMenuCtl *pMenu)
     CtlAddItem  mai;
     uint16      wSelectItemID=0;
     boolean     bFindCurxuhao = FALSE;
-    MMSData		                   mmsDataInfoList[MAX_MMS_STORED];
+    MMSData		mmsDataInfoList[MAX_MMS_STORED];
     int nboxType = 0;
     MSG_FATAL("WmsApp_UpdateMenuList_MMS Start",0,0,0);
     if ((NULL == pMe) || (NULL == pMenu))
@@ -7399,7 +7407,7 @@ void WmsApp_UpdateMenuList_MMS(WmsApp *pMe, IMenuCtl *pMenu)
     }
     
     // 计算需要的总页数
-    wTotalPages = wItemCount / (MAXITEMS_ONEPAGE);
+    wTotalPages = (wItemCount / (MAXITEMS_ONEPAGE));
     if ((wItemCount % MAXITEMS_ONEPAGE) != 0)
     {
         wTotalPages++;
@@ -7442,6 +7450,100 @@ void WmsApp_UpdateMenuList_MMS(WmsApp *pMe, IMenuCtl *pMenu)
             (void)IMENUCTL_Redraw(pMenu);
         }
         return;
+    }
+
+	// 确定建立菜单列表时，对应消息列表的起点位置
+    switch (pMe->m_eMakeListMode)
+    {
+        case MAKEMSGLIST_INIT:
+            pMe->m_wCurPageStarxuhao = 1;
+            pMe->m_wSelItemxuhao = 1;
+            break;
+            
+        case MAKEMSGLIST_NEXTONE:
+            if (pMe->m_wCurPageStarxuhao+MAXITEMS_ONEPAGE>wItemCount)
+            {
+                pMe->m_wCurPageStarxuhao = 1;
+                pMe->m_wSelItemxuhao = 1;
+            }
+            else
+            {
+                pMe->m_wSelItemxuhao = pMe->m_wCurPageStarxuhao+MAXITEMS_ONEPAGE;
+                pMe->m_wCurPageStarxuhao++;
+            }
+            
+            break;
+            
+        case MAKEMSGLIST_BACKONE:
+            if (pMe->m_wCurPageStarxuhao>1)
+            {
+                pMe->m_wCurPageStarxuhao--;
+                pMe->m_wSelItemxuhao = pMe->m_wCurPageStarxuhao;
+            }
+            else
+            {// 移至最后一页，选中最后一项
+                pMe->m_wCurPageStarxuhao = wItemCount+1-MAXITEMS_ONEPAGE;
+                pMe->m_wSelItemxuhao = wItemCount;
+            }
+            
+            break;
+            
+        case MAKEMSGLIST_PREPAGE:
+            if (pMe->m_wCurPageStarxuhao==1)
+            {// 移至最后一页，选中最后一项
+                pMe->m_wCurPageStarxuhao = wItemCount+1-MAXITEMS_ONEPAGE;
+                pMe->m_wSelItemxuhao = wItemCount;
+            }
+            else if (pMe->m_wCurPageStarxuhao<=MAXITEMS_ONEPAGE)
+            {// 移至首页，选中第一项
+                pMe->m_wCurPageStarxuhao = 1;
+                pMe->m_wSelItemxuhao = 1;
+            }
+            else
+            {
+                pMe->m_wCurPageStarxuhao = pMe->m_wCurPageStarxuhao-MAXITEMS_ONEPAGE;
+                pMe->m_wSelItemxuhao = pMe->m_wCurPageStarxuhao;
+            }
+            break;
+            
+        case MAKEMSGLIST_NEXTPAGE:
+            if ((pMe->m_wCurPageStarxuhao+2*MAXITEMS_ONEPAGE-1)<=wItemCount)
+            {// 移至首页，选中第一项
+                pMe->m_wCurPageStarxuhao += MAXITEMS_ONEPAGE;
+            }
+            else if (pMe->m_wCurPageStarxuhao<=(wItemCount-MAXITEMS_ONEPAGE))
+            {// 移至末页，选中第一项
+                pMe->m_wCurPageStarxuhao = wItemCount-MAXITEMS_ONEPAGE+1;
+            }
+            else
+            {// 移至首页，选中第一项
+                pMe->m_wCurPageStarxuhao = 1;
+            }
+            
+            pMe->m_wSelItemxuhao = pMe->m_wCurPageStarxuhao;
+            
+            break;
+            
+        case MAKEMSGLIST_RESUMECURPAGE:
+            if (wTotalPages<2)
+            {
+                pMe->m_wCurPageStarxuhao = 1;
+            }
+            else
+            {
+                if (pMe->m_wCurPageStarxuhao>wItemCount)
+                {
+                    pMe->m_wCurPageStarxuhao = 1;
+                }
+                else if ((pMe->m_wCurPageStarxuhao+MAXITEMS_ONEPAGE)>wItemCount)
+                {
+                    pMe->m_wCurPageStarxuhao = wItemCount-MAXITEMS_ONEPAGE+1;
+                }
+            }
+            break;
+            
+        default:
+            return;
     }
         
     // 建立菜单项列表
@@ -7486,8 +7588,21 @@ void WmsApp_UpdateMenuList_MMS(WmsApp *pMe, IMenuCtl *pMenu)
             DBGPRINTF("MMSDataFileName=%s",mmsDataInfoList[g_mmsDataInfoMax-1].MMSDataFileName);
         }
     MSG_FATAL("WmsApp_UpdateMenuList_MMS nItems=%d", nItems, 0, 0);
-    (void)STRTOWSTR("%s", wszFmt, sizeof(wszFmt));
-    for (i=0; i<nItems; i++)
+    (void)STRTOWSTR("%s", wszFmt, sizeof(wszFmt));	
+
+	if (pMe->m_wSelItemxuhao > MAXITEMS_ONEPAGE)
+	{
+		j = pMe->m_wSelItemxuhao - MAXITEMS_ONEPAGE;
+	}	
+	else
+	{
+		j = 0;
+	}
+
+	MSG_FATAL("***zzg UpdateMenuList_MMS pMe->m_wSelItemxuhao=%d, wItemCount=%d, j=%d***", pMe->m_wSelItemxuhao, wItemCount, j);
+	
+    //for (i=0; i<nItems; i++)
+    for (i=j; i<(j+nItems); i++)    //Add By zzg 2012_02_27
     {
         wszTitle[0] = 0;
         MEMSET(wszName, 0, sizeof(wszName));
@@ -7522,16 +7637,23 @@ void WmsApp_UpdateMenuList_MMS(WmsApp *pMe, IMenuCtl *pMenu)
         {
             mai.pText = wszTitle;
         }
+		
         mai.wItemID = i+1;
 
         mai.dwData = mai.wItemID;
+
+		MSG_FATAL("***zzg UpdateMenuList_MMS wItemID=%d***", mai.wItemID, 0, 0);
         
         mai.wImage = IDB_READ_PH_EMERGENCY;//WmsApp_GetMsgICONID(pnode);
             
         // 添加带图标菜单项到菜单
-        (void)IMENUCTL_AddItemEx(pMenu, &mai);
+        (void)IMENUCTL_AddItemEx(pMenu, &mai);		
     }
-    wSelectItemID = mai.wItemID;
+
+	//wSelectItemID =  mai.wItemID;
+	wSelectItemID = pMe->m_wSelItemxuhao;	//Add By zzg 2012_02_27
+
+	MSG_FATAL("***zzg UpdateMenuList_MMS wSelectItemID=%d***", wSelectItemID, 0, 0);	
     
     if (wSelectItemID != 0)
     {

@@ -1787,9 +1787,18 @@ static boolean  IDD_PWD_Handler(void       *pUser,
                     case AVK_POUND:
                         chEnter = '#';
                         break;
+
+					//Add By zzg 2012_02_27					
+					case AVK_DEL:	 
+					{
+						chEnter = 0;
+						break;
+					}
+					//Add End
                         
                     case AVK_CLR:
-                        chEnter = 0;      
+                        chEnter = 0;    
+						MSG_FATAL("***zzg WMSDialog IDD_PWD_Handler dwParam=%x, m_strPhonePWD=%x, STRLEN(pMe->m_strPhonePWD)=%d***", dwParam, pMe->m_strPhonePWD, STRLEN(pMe->m_strPhonePWD));
                         #ifndef FEATURE_ALL_KEY_PAD    //add by yangdecai 
                         if (pMe->m_strPhonePWD == NULL || STRLEN(pMe->m_strPhonePWD) == 0)
                         {

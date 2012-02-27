@@ -686,7 +686,14 @@ static boolean  RecentCalls_VerifyPasswordEvent(CRecentCalls *pMe,
                     case AVK_POUND:
                         chEnter = '#';
                         break;
-                        
+						
+                    //Add By zzg 2012_02_27					
+					case AVK_DEL:	 
+					{
+						chEnter = 0;			
+						break;
+					}
+					//Add End    
                     case AVK_CLR:
                         chEnter = 0;
                         #ifndef FEATURE_ALL_KEY_PAD    //add by yangdecai 
@@ -4702,6 +4709,14 @@ static boolean	Recentcalls_AskpasswordEvent(CRecentCalls *pMe,
                     case AVK_POUND:
                         chEnter = '#';
                         break;
+						
+					//Add By zzg 2012_02_27					
+					case AVK_DEL:	 
+					{
+						chEnter = 0;
+						break;
+					}
+					//Add End	
                         
                     case AVK_CLR:
                         chEnter = 0;

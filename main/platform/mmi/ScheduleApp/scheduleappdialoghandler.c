@@ -1285,7 +1285,13 @@ static boolean dialog_handler_of_state_pwd(CScheduleApp* pme,
                     case AVK_POUND:
                         chEnter = '#';
                         break;
-                        
+                    //Add By zzg 2012_02_27					
+					case AVK_DEL:	 
+					{
+						chEnter = 0;
+						break;
+					}
+					//Add End	
                     case AVK_CLR:
                         chEnter = 0;       
                         #ifndef FEATURE_ALL_KEY_PAD
@@ -6075,20 +6081,14 @@ static boolean  dialog_handler_of_state_showalert( CScheduleApp* pme,
                                                             rc.x, rc.y, &rc,
                                                             IDF_TEXT_TRANSPARENT | IDF_ALIGN_LEFT | IDF_ALIGN_MIDDLE);
 					   rc.y = rc.y + TITLEBAR_HEIGHT;
-                       #ifdef FEATURE_VERSION_C11
+                       
                        IDISPLAY_DrawText(pme->m_pDisplay, AEE_FONT_NORMAL,
-                                                            theLast->location,
-                                                            -1,
-                                                            rc.x, rc.y, &rc,
-                                                            IDF_TEXT_TRANSPARENT | IDF_ALIGN_LEFT | IDF_ALIGN_MIDDLE);
-                       #else
-                       IDISPLAY_DrawText(pme->m_pDisplay, AEE_FONT_NORMAL,
-                                                           theLast->subject,
+                                                           theLast->location,
                                                            -1,
                                                            rc.x, rc.y, &rc,
                                                            IDF_TEXT_TRANSPARENT | IDF_ALIGN_LEFT | IDF_ALIGN_MIDDLE);
 
-                       #endif
+                       
                     }
                 }
 
