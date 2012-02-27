@@ -15489,8 +15489,8 @@ static boolean IDD_EXTARCTEDITEM_OPT_Handler(void *pUser,
 
 						char	buf[12];
 						int		Result;
-						AECHAR    *pItem = NULL;
-                        char      *pBuf = NULL;
+						AECHAR    *pItem = NULL;                        
+						char	  pbuf[256];
                         int32     nLen, nSize;
 
 						MSG_FATAL("***zzg WMSDialogHandler IDS_BROWSE Start***", 0, 0, 0);
@@ -15504,30 +15504,19 @@ static boolean IDD_EXTARCTEDITEM_OPT_Handler(void *pUser,
 							return TRUE;
 						}						
 						
-						nSize = 256*sizeof(char);
-						pBuf = (char *)MALLOC(nSize);
-						
-						if (NULL == pBuf)
-						{							
-							return TRUE;
-						}
+						DBGPRINTF("***zzg WMSDialogHandler pItem=%x***", pItem);
+																		
+						WSTRTOSTR(pItem, pbuf, sizeof(pbuf));
 
-						MSG_FATAL("***zzg WMSDialogHandler pItem=%x, pBuf = %x***", pItem, pBuf, 0);
-						
-						pBuf[0]=0;								
-						WSTRTOSTR(pItem, pBuf, nSize);
-
-						DBGPRINTF("***zzg IDS_BROWSE pBuf=%s***", pBuf, 0, 0);
+						DBGPRINTF("***zzg IDS_BROWSE pbuf=%s***", pbuf, 0, 0);
 										    	
 				    	start_info.appid_fx = APP_ORIGINATOR_BROWSER;
 				        start_info.subtype_keycode = APP_BROWSER_START_URL;
-				        start_info.par_keychar = 0;
+				        start_info.par_keychar = 0;						
 						
-				        //start_info.fInfo.url_info.title = "163";				        
-				        start_info.fInfo.url_info.url = pBuf;	//"http://www.163.com";
-						
-						//STRCPY(start_info.fInfo.url_info.url, pBuf);
-
+				        start_info.fInfo.url_info.title = "Browser";				        
+				        start_info.fInfo.url_info.url = pbuf;	//"http://www.163.com";			        
+																		
 						DBGPRINTF("***zzg IDS_BROWSE url=%s***", start_info.fInfo.url_info.url);						
 						
 				        SPRINTF(buf, "%p", &start_info);
@@ -15535,7 +15524,7 @@ static boolean IDD_EXTARCTEDITEM_OPT_Handler(void *pUser,
 
 						MSG_FATAL("***zzg IDS_BROWSE End***", 0, 0, 0);
 
-						FREEIF(pBuf); 
+						//FREEIF(pBuf); 
 						
                     }
                     return TRUE;

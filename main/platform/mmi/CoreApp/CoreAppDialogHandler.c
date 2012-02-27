@@ -5189,7 +5189,11 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
 #ifdef WIN32
             STRTOWSTR("WIN32BUILD", wszBuf, nSize);
 #else
+#ifdef FEATURE_VERSION_W208S
+			//Do Nothing
+#else
             STRTOWSTR(ver_modelname, wszBuf, nSize);
+#endif
 #endif
         }
     }
