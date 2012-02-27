@@ -3061,8 +3061,8 @@ static boolean  dialog_handler_of_state_event_edit( CScheduleApp* pme,
     // 2 - db error
     static byte subState = 0;
 
-    static AECHAR   subjectValue[MAXTEXT]     = {0};
-    static AECHAR   locationValue[MAXTEXT]    = {0};
+    static AECHAR   subjectValue[MAXTEXT+1]     = {0};
+    static AECHAR   locationValue[MAXTEXT+1]    = {0};
     static uint32   startTimeValue            = 0;
     static uint32   durationValue             = 0;
     static uint16   sportsmodeValue           = 0;
@@ -3320,8 +3320,8 @@ static boolean  dialog_handler_of_state_event_edit( CScheduleApp* pme,
             ringtoneValue       = 0;
             if( !pme->m_closeByPowerKey && !exitByUser)
             {
-                ITEXTCTL_GetText( pSubject, subjectValue, MAXTEXT - 1);
-                ITEXTCTL_GetText( pNote, locationValue, MAXTEXT - 1);
+                ITEXTCTL_GetText( pSubject, subjectValue, MAXTEXT - 1+2);
+                ITEXTCTL_GetText( pNote, locationValue, MAXTEXT - 1+2);
 
                 startTimeValue  = ITIMECTL_GetTime( pStart);
                 if(pme->m_sports)
@@ -4205,7 +4205,7 @@ static boolean  dialog_handler_of_state_inputtext( CScheduleApp* pme,
     static ITextCtl*        pTextControl  = 0;
     static BottomBar_e_Type bottomBarType = 0;
 
-    static AECHAR   theText[MAXTEXT]    = {0};
+    static AECHAR   theText[MAXTEXT+1]    = {0};
     static boolean  exitByUser          = 0;
 
     switch (eCode)
@@ -4315,7 +4315,7 @@ static boolean  dialog_handler_of_state_inputtext( CScheduleApp* pme,
                     else if( pTextControl && bottomBarType != BTBAR_BACK_DELETE)
                     {
                     	MSG_FATAL("bottomBarType != BTBAR_BACK_DELETE....................",0,0,0);
-                        ITEXTCTL_GetText( pTextControl, pme->m_pszEventEditText, MAXTEXT/*WSTRLEN(pme->m_pszEventEditText)*sizeof(AECHAR)*/);
+                        ITEXTCTL_GetText( pTextControl, pme->m_pszEventEditText, MAXTEXT+1/*WSTRLEN(pme->m_pszEventEditText)*sizeof(AECHAR)*/);
                     }
                     exitByUser = 1;
                     CLOSE_DIALOG(DLGRET_OK)
@@ -4853,8 +4853,8 @@ static void initMenuItemWhenViewDay( CCalApp* pme, IMenuCtl* pMenu, int type)
     int             setupHour   = GET_HOUR( pme->m_cfg.wDayStart);
     int             setupMinute = GET_MINUTE( pme->m_cfg.wDayStart);
 
-    AECHAR          subject[MAXTEXT]    = {0};
-    AECHAR          location[MAXTEXT]   = {0};
+    AECHAR          subject[MAXTEXT+1]    = {0};
+    AECHAR          location[MAXTEXT+1]   = {0};
     AECHAR          text[160]           = {0};
 #if FEATURE_ONE_DB
     if( !openDatabaseIf( pme))
@@ -6045,11 +6045,13 @@ static boolean  dialog_handler_of_state_showalert( CScheduleApp* pme,
                     IIMAGE_Release(AlertImage);
                     AlertImage = NULL;
                 }
-
+				
+				
                 // draw alert text    // if(theLast->baseFields.m_CurEvtType == 2)
                 {
                     AECHAR AlertText[64] = {0};
-                    AECHAR text[32] = {0};
+                    AECHAR text[32] = {0};					
+					
                     AEERect rc;
                     int length;
                     
@@ -6075,22 +6077,22 @@ static boolean  dialog_handler_of_state_showalert( CScheduleApp* pme,
                         //AlertText[length++] = '\n';
                         //WSTRNCOPY(d,dlen,s)
                         WSTRCPY(AlertText + length, theLast->subject);
+																							
                         IDISPLAY_DrawText(pme->m_pDisplay, AEE_FONT_NORMAL,
                                                             AlertText,
                                                             -1,
                                                             rc.x, rc.y, &rc,
                                                             IDF_TEXT_TRANSPARENT | IDF_ALIGN_LEFT | IDF_ALIGN_MIDDLE);
-					   rc.y = rc.y + TITLEBAR_HEIGHT;
-                       
-                       IDISPLAY_DrawText(pme->m_pDisplay, AEE_FONT_NORMAL,
-                                                           theLast->location,
-                                                           -1,
-                                                           rc.x, rc.y, &rc,
-                                                           IDF_TEXT_TRANSPARENT | IDF_ALIGN_LEFT | IDF_ALIGN_MIDDLE);
-
+					
+						rc.y = rc.y + TITLEBAR_HEIGHT;												                       
+						IDISPLAY_DrawText(pme->m_pDisplay, AEE_FONT_NORMAL,
+						                                   theLast->location,
+						                                   -1,
+						                                   rc.x, rc.y, &rc,
+						                                   IDF_TEXT_TRANSPARENT | IDF_ALIGN_LEFT | IDF_ALIGN_MIDDLE);			
                        
                     }
-                }
+                }				
 
                 //draw titlebar
                 {
@@ -6585,7 +6587,7 @@ static boolean  dialog_handler_of_state_viewevent( CScheduleApp* pme,
         case EVT_USER_REDRAW:
         {
             TitleBar_Param_type TitleBar = {0};
-            AECHAR                 wstrTitle[MAX_INPUT_SUBJECT] = {0};
+            AECHAR                 wstrTitle[MAX_INPUT_SUBJECT+1] = {0};
 #ifdef FEATURE_FUNCS_THEME
             Theme_Param_type    themeParms          = {0};
             RGBVAL              scrollbarFillColor  = 0;

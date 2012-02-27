@@ -156,7 +156,7 @@
 #define MAXHISTORY                  20          //最大的记录数
 
 //#define MAXTEXT                     64          //每个记录的最大容量
-#define MAXTEXT						(MAX_INPUT_LOCATION+1)
+#define MAXTEXT						MAX_INPUT_LOCATION
 
 #define TIMEOUT_MS_QUICK            100         //允许连续快速按键的时间间隔
 
@@ -431,8 +431,8 @@ typedef struct
    uint16               permId;
    uint16               CurEveType;
    CalBaseFields        baseFields;
-   AECHAR               subject[MAX_INPUT_SUBJECT];//distance
-   AECHAR               location[MAX_INPUT_LOCATION];//time
+   AECHAR               subject[MAX_INPUT_SUBJECT+1];//distance
+   AECHAR               location[MAX_INPUT_LOCATION+1];//time
    AppointmentStatus    status;
    JulianType           julian;
 } Appointment;
@@ -461,8 +461,8 @@ struct _CCalApp
    uint32            m_lCurrentDay;         //当前的日期
    uint32            m_lToday;
 
-   AECHAR            m_szEventDes[MAX_INPUT_SUBJECT]; //约会的标题
-   AECHAR            m_szNote[MAX_INPUT_LOCATION];     //约会的内容
+   AECHAR            m_szEventDes[MAX_INPUT_SUBJECT+1]; //约会的标题
+   AECHAR            m_szNote[MAX_INPUT_LOCATION+1];     //约会的内容
    uint32            m_lEventDay;           //当前日期
    int32             m_lStartTime;          //约会开始时间
    int32             m_lDuration;           //约会的时长
