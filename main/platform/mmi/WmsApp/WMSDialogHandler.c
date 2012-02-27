@@ -19385,17 +19385,19 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
             {
                 uint8 i = 0;
                 MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] EVT_DIALOG_END 1",0 ,0 , 0);
-                if (NULL != pMe->m_pMenu)
-                {
-                    IMENUCTL_Release(pMe->m_pMenu);
-                    pMe->m_pMenu = NULL;
-                }      
+              /*   
                 if(pMe->m_pMedia != NULL)
                 {
                     IMedia_Stop(pMe->m_pMedia);
                 }
-                RELEASEIF(pMe->m_pMedia);
+                */
                 pMe->m_CurrentState == PLAYER_IDLE;
+                RELEASEIF(pMe->m_pMedia);
+                 if (NULL != pMe->m_pMenu)
+                {
+                    IMENUCTL_Release(pMe->m_pMenu);
+                    pMe->m_pMenu = NULL;
+                }    
                 MEMSET(&pMe->m_ResData,NULL,sizeof(WSP_MMS_RESOURCE));
                 FREEIF(pMe->m_DecData.message.hBody);
                 FREEIF(pMe->m_DecData.message.mms_data.head_info.pContent);
@@ -20043,6 +20045,7 @@ static IImage* WmsLoadImageFromData(WmsApp *pMe,int nFragIndex,char* pMimeType)
 
 static void WmsLoadSoundFromData(WmsApp *pMe,int nFragIndex,char* pMimeType)
 {
+    
     uint32 rSize = 0;
     WSP_MMS_DATA* pMmsData = &pMe->m_DecData.message.mms_data;
     AEECLSID cls = 0;
