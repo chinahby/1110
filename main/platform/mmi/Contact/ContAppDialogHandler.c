@@ -14175,7 +14175,7 @@ static boolean  CContApp_HandleGroupOptEditDlgEvent( CContApp  *pMe,
             ITEXTCTL_SetProperties( pTextCtl, TP_MULTILINE | TP_FRAME | TP_FIXSETRECT | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT|TP_FOCUS_NOSEL | TP_GRAPHIC_BG);
                      
             (void)ITEXTCTL_SetInputMode(pTextCtl,
-                     CContApp_GetFldInputMode(AEE_ADDRFIELD_NAME));
+            CContApp_GetFldInputMode(AEE_ADDRFIELD_NAME));
             /*
             (void)ITEXTCTL_SetTitle( pTextCtl,
                                      CONTAPP_RES_FILE_LANG,
@@ -14294,7 +14294,7 @@ static boolean  CContApp_HandleGroupOptEditDlgEvent( CContApp  *pMe,
 
         case EVT_CTL_TEXT_MODECHANGED:  //ÇÐ»»ÊäÈë·¨
             {
-                CContApp_SetFldMaxSize(pMe,pTextCtl,pMe->m_nFldInputID);             
+                //CContApp_SetFldMaxSize(pMe,pTextCtl,pMe->m_nFldInputID);  //Del by zzg 2012_02_29
             }
             return TRUE; 
             
