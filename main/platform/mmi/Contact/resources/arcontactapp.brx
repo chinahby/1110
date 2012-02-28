@@ -8,7 +8,7 @@
  		<Text>الاسم</Text>
  	</STRING>
  	<STRING Id="3" Name="IDS_MOBILE">
- 		<Text>الهاتف المتحرك</Text>
+ 		<Text>الجوال</Text>
  	</STRING>
  	<STRING Id="4" Name="IDS_HOME">
  		<Text>المنزل</Text>
@@ -20,7 +20,7 @@
  		<Text>البريد الإلكتروني</Text>
  	</STRING>
  	<STRING Id="7" Name="IDS_URL">
- 		<Text>URL</Text>
+ 		<Text>الموقع الالكتروني</Text>
  	</STRING>
  	<STRING Id="8" Name="IDS_NOTES">
  		<Text>مذكرة</Text>
@@ -56,7 +56,7 @@
  		<Text>الفاكس</Text>
  	</STRING>
  	<STRING Id="35" Name="IDS_MSG_FINDNULL">
- 		<Text>لا مباريات</Text>
+ 		<Text>لايوجد مماثل</Text>
  	</STRING>
  	<STRING Id="37" Name="IDS_GROUP_PERSONAL">
  		<Text>المدرسة</Text>
@@ -71,43 +71,43 @@
  		<Text>الزميل</Text>
  	</STRING>
  	<STRING Id="41" Name="IDS_GROUP_VIP">
- 		<Text>VIP</Text>
+ 		<Text>خاص</Text>
  	</STRING>
  	<STRING Id="42" Name="IDS_GROUP_FRIEND">
  		<Text>الأصدقاء</Text>
  	</STRING>
  	<STRING Id="43" Name="IDS_GROUP_NONE">
- 		<Text>UIM بطاقة</Text>
+ 		<Text>البطاقة</Text>
  	</STRING>
  	<STRING Id="47" Name="IDS_POSITION_ALL">
- 		<Text>الهاتف وبطاقة UIM</Text>
+ 		<Text>الهاتف والبطاقة</Text>
  	</STRING>
  	<STRING Id="48" Name="IDS_COPYTORUIM">
- 		<Text>نسخة عن بطاقة لUIM</Text>
+ 		<Text>نسخ الى البطاقة</Text>
  	</STRING>
  	<STRING Id="49" Name="IDS_COPYTOPHONE">
- 		<Text>جميع نسخ إلى الهاتف</Text>
+ 		<Text>نسخ الى الهاتف</Text>
  	</STRING>
  	<STRING Id="50" Name="IDS_MOVETORUIM">
- 		<Text>نقل كافة إلى بطاقة UIM</Text>
+ 		<Text>نقل الى البطاقة</Text>
  	</STRING>
  	<STRING Id="51" Name="IDS_MOVETOPHONE">
- 		<Text>نقل كافة إلى الهاتف</Text>
+ 		<Text>نقل الى الهاتف</Text>
  	</STRING>
  	<STRING Id="54" Name="IDS_COPYING_COMPLETE">
- 		<Text>أكمل نسخة</Text>
+ 		<Text>اكتمل النسخ</Text>
  	</STRING>
  	<STRING Id="56" Name="IDS_RING">
- 		<Text>الرنة</Text>
+ 		<Text>نغمة الرنين</Text>
  	</STRING>
  	<STRING Id="60" Name="IDS_SPEEDDIAL">
- 		<Text>سرعة الاتصال</Text>
+ 		<Text>الاتصال السريع</Text>
  	</STRING>
  	<STRING Id="63" Name="IDS_ONEDIAL_NULL">
  		<Text>لا شيء</Text>
  	</STRING>
  	<STRING Id="64" Name="IDS_POSITION_SELECT">
- 		<Text>عندما حدد حفظ</Text>
+ 		<Text>تحديد مكان الحفظ</Text>
  	</STRING>
  	<STRING Id="66" Name="IDS_CAPACITY">
  		<Text>حالة الذاكرة</Text>
@@ -122,7 +122,7 @@
  		<Text>تهيئة. يرجى الانتظار...</Text>
  	</STRING>
  	<STRING Id="70" Name="IDS_ERR_UNKNOWN">
- 		<Text>مجهولة خطأ ، الثابتة والمتنقلة المحاولة مرة أخرى بعد خروج</Text>
+ 		<Text>خطأ غير معروف، حاول مرة أخرى بعد الخروج</Text>
  	</STRING>
  	<STRING Id="71" Name="IDS_ERR_LOADFIELDS">
  		<Text>فشلت التهيئة ، الرجاء المحاولة مرة أخرى</Text>
@@ -140,43 +140,43 @@
  		<Text>فشل حذف</Text>
  	</STRING>
  	<STRING Id="78" Name="IDS_MSG_MAX_RUIM">
- 		<Text>UIM الذاكرة ممتلئة</Text>
+ 		<Text>ذاكرة البطاقة ممتلئة</Text>
  	</STRING>
  	<STRING Id="79" Name="IDS_MSG_MAX_PHONE">
  		<Text>ذاكرة الهاتف ممتلئة</Text>
  	</STRING>
  	<STRING Id="80" Name="IDS_ERR_CREATEREC">
- 		<Text>مجهولة الخطأ ، الرجاء المحاولة مرة أخرى بعد خروج</Text>
+ 		<Text>خطأ غير معروف، الرجاء المحاولة مرة أخرى بعد الخروج</Text>
  	</STRING>
  	<STRING Id="91" Name="IDS_SUCCESS">
- 		<Text>فعل</Text>
+ 		<Text>تم</Text>
  	</STRING>
  	<STRING Id="92" Name="IDS_ERR_ADDFIELD">
- 		<Text>مجهولة الخطأ ، الرجاء المحاولة مرة أخرى بعد خروج</Text>
+ 		<Text>خطأ غير معروف، الرجاء المحاولة مرة أخرى بعد الخروج</Text>
  	</STRING>
  	<STRING Id="93" Name="IDS_MSG_MAXFIELDS">
- 		<Text>غير المكتملة ، يتجاوز الحد الأقصى</Text>
+ 		<Text>غير مكتمل تجاوز الحد الأقصى</Text>
  	</STRING>
  	<STRING Id="94" Name="IDS_MSG_COPYFAILED">
- 		<Text>فشل لنسخ ، الثابتة والمتنقلة التحقق من الذاكرة</Text>
+ 		<Text>فشل النسخ ، الرجاء فحص الذاكرة</Text>
  	</STRING>
  	<STRING Id="95" Name="IDS_YESNO_COPYREC">
- 		<Text>نسخة</Text>
+ 		<Text>نسخ</Text>
  	</STRING>
  	<STRING Id="96" Name="IDS_YESNO_MOVEREC">
- 		<Text>تحرك</Text>
+ 		<Text>نقل</Text>
  	</STRING>
  	<STRING Id="97" Name="IDS_MSG_MOVEFAILED">
  		<Text>الخطأ ، الرجاء التحقق من الذاكرة</Text>
  	</STRING>
  	<STRING Id="99" Name="IDS_ERR_COPY">
- 		<Text>فشل نسخة</Text>
+ 		<Text>فشل النسخ</Text>
  	</STRING>
  	<STRING Id="100" Name="IDS_SAVETO">
- 		<Text>إنقاذ الموقف</Text>
+ 		<Text>حفظ</Text>
  	</STRING>
  	<STRING Id="101" Name="IDS_VIEWTYPE">
- 		<Text>عرض الوضع</Text>
+ 		<Text>طريقة العرض</Text>
  	</STRING>
  	<STRING Id="113" Name="IDS_MSG_NORECORD">
  		<Text>لا يوجد سجل للاستخدام</Text>
@@ -248,13 +248,13 @@
  		<Text>تنفيذ</Text>
  	</STRING>
  	<STRING Id="1018" Name="IDS_MARK">
- 		<Text>علامة</Text>
+ 		<Text>تحديد</Text>
  	</STRING>
  	<STRING Id="1019" Name="IDS_UNMARK">
- 		<Text>إلغاء تحديد</Text>
+ 		<Text>إلغاء التحديد</Text>
  	</STRING>
  	<STRING Id="1020" Name="IDS_MARKALL">
- 		<Text>كل علامة</Text>
+ 		<Text>تحديد الكل</Text>
  	</STRING>
  	<STRING Id="1021" Name="IDS_SAVE_EMAIL">
  		<Text>فقد البريد الإلكتروني</Text>
@@ -293,7 +293,7 @@
  		<Text>نقل</Text>
  	</STRING>
  	<STRING Id="1033" Name="IDS_COPYONETORUIM">
- 		<Text>نسخة لبطاقة UIM</Text>
+ 		<Text>نسخ الى البطاقة</Text>
  	</STRING>
  	<STRING Id="1034" Name="IDS_COPYONETOPNONE">
  		<Text>نسخ إلى الهاتف</Text>
@@ -317,19 +317,19 @@
  		<Text>نسخ الأسماء</Text>
  	</STRING>
  	<STRING Id="1041" Name="IDS_DELETE_CONTACTS">
- 		<Text>حذف اتصالات</Text>
+ 		<Text>حذف الأسماء</Text>
  	</STRING>
  	<STRING Id="1042" Name="IDS_CONTACTS_MEMORY_STUTAS">
  		<Text>حالة الذاكرة</Text>
  	</STRING>
  	<STRING Id="1043" Name="IDS_PHONE_TO_UIM">
- 		<Text>الهاتف إلى بطاقة UIM</Text>
+ 		<Text>الهاتف إلى البطاقة</Text>
  	</STRING>
  	<STRING Id="1044" Name="IDS_UIM_TO_PHONE">
- 		<Text>UIM بطاقة الهاتف</Text>
+ 		<Text>من البطاقة الى الهاتف</Text>
  	</STRING>
  	<STRING Id="1045" Name="IDS_UIM_CARD">
- 		<Text>UIM بطاقة</Text>
+ 		<Text>البطاقة</Text>
  	</STRING>
  	<STRING Id="1046" Name="IDS_DELETE_ALL">
  		<Text>حذف الكل</Text>
@@ -356,76 +356,76 @@
  		<Text>تم</Text>
  	</STRING>
  	<STRING Id="1054" Name="IDS_ERR_GETCONFIG">
- 		<Text>فشل جلب التكوين</Text>
+ 		<Text>فشل الاعدادات</Text>
  	</STRING>
  	<STRING Id="1055" Name="IDS_UIMCARD">
- 		<Text>UIM بطاقة</Text>
+ 		<Text>البطاقة</Text>
  	</STRING>
  	<STRING Id="1056" Name="IDS_PHONE_THEN_UIM">
- 		<Text>بطاقة الهاتف ثم UIM</Text>
+ 		<Text>الهاتف ثم البطاقة</Text>
  	</STRING>
  	<STRING Id="1057" Name="IDS_UIM_THEN_PHONE">
- 		<Text>ثم UIM بطاقة الهاتف</Text>
+ 		<Text>البطاقة ثم الهاتف</Text>
  	</STRING>
  	<STRING Id="1058" Name="IDS_COPY_TOUIMCARD">
- 		<Text>نسخة لبطاقة UIM</Text>
+ 		<Text>نسخ للبطاقة</Text>
  	</STRING>
  	<STRING Id="1059" Name="IDS_MOVE_TOUIMCARD">
- 		<Text>الانتقال إلى بطاقة UIM</Text>
+ 		<Text>نقل إلى البطاقة</Text>
  	</STRING>
  	<STRING Id="1060" Name="IDS_COPY_TOPHONE">
  		<Text>نسخ إلى الهاتف</Text>
  	</STRING>
  	<STRING Id="1061" Name="IDS_MOVE_TOPHONE">
- 		<Text>الانتقال إلى الهاتف</Text>
+ 		<Text>نقل إلى الهاتف</Text>
  	</STRING>
  	<STRING Id="1062" Name="IDS_MSG_DELETEFAILED">
- 		<Text>فشل لحذف ، الثابتة والمتنقلة التحقق من الذاكرة</Text>
+ 		<Text>فشل الحذف ، الرجاء التحقق من الذاكرة</Text>
  	</STRING>
  	<STRING Id="1063" Name="IDS_DELETING">
  		<Text>حذف...</Text>
  	</STRING>
  	<STRING Id="1064" Name="IDS_MARK_ERR">
- 		<Text>علامة خطأ</Text>
+ 		<Text>تحديد خاطئ</Text>
  	</STRING>
  	<STRING Id="1065" Name="IDS_FULL_UIM">
- 		<Text>UIM بطاقة كاملة</Text>
+ 		<Text>البطاقة ممتلئة</Text>
  	</STRING>
  	<STRING Id="1066" Name="IDS_FULL_PHONE">
- 		<Text>كامل الهاتف</Text>
+ 		<Text>ذاكرة الهاتف ممتلئة</Text>
  	</STRING>
  	<STRING Id="1067" Name="IDS_BUILD_VCARD_FAIL">
  		<Text>فشلت في بناء هيئة VCard</Text>
  	</STRING>
  	<STRING Id="1068" Name="IDS_UIMFULL_SAVETOPHONE">
- 		<Text>UIM بطاقة كاملة ، إلا أن الهاتف</Text>
+ 		<Text>البطاقة ممتلئة احفظ الى الهاتف</Text>
  	</STRING>
  	<STRING Id="1069" Name="IDS_PHONEFULL_SAVETOCARD">
- 		<Text>الهاتف كاملة ، لحفظ بطاقة UIM</Text>
+ 		<Text>الهاتف ممتلئ احفظ الى البطاقة</Text>
  	</STRING>
  	<STRING Id="1070" Name="IDS_MEMORYFULL">
- 		<Text>الذاكرة الكامل ، يرجى حذف</Text>
+ 		<Text>الذاكرة ممتلئة ، يرجى الحذف</Text>
  	</STRING>
  	<STRING Id="1071" Name="IDS_RETURN_ERR">
  		<Text>عودة خطأ</Text>
  	</STRING>
  	<STRING Id="1072" Name="IDS_ERR_MOVE">
- 		<Text>فشل التحرك</Text>
+ 		<Text>فشل النقل</Text>
  	</STRING>
  	<STRING Id="1073" Name="IDS_NUMBER_TOOLONG">
  		<Text>عدد طويل جدا</Text>
  	</STRING>
  	<STRING Id="1074" Name="IDS_FULL_UIM_DONE">
- 		<Text>UIM بطاقة كاملة ، د فعلت ٪</Text>
+ 		<Text>البطاقة ممتلئة ، د تم ٪</Text>
  	</STRING>
  	<STRING Id="1075" Name="IDS_FULL_PHONE_DONE">
- 		<Text>الهاتف الكامل ، د فعلت ٪</Text>
+ 		<Text>الهاتف ممتلئ ، د تم ٪</Text>
  	</STRING>
  	<STRING Id="1076" Name="IDS_RECORDS_DONE">
- 		<Text>د القيام سجلات ٪</Text>
+ 		<Text>د  السجلات جاهزة ٪</Text>
  	</STRING>
  	<STRING Id="1077" Name="IDS_SENTLIST_FULL">
- 		<Text>يصل الحد الأقصى الاتصالات</Text>
+ 		<Text>وصل الحد الأقصى للسجلات</Text>
  	</STRING>
  	<STRING Id="1078" Name="IDS_COPY_EXPECT">
  		<Text>د ٪ السجلات القيام به ، والمحاضر د تفشل ٪</Text>
@@ -434,10 +434,10 @@
  		<Text>إعادة التسمية</Text>
  	</STRING>
  	<STRING Id="1080" Name="IDS_SAVE_EDIT">
- 		<Text>حفظ تحرير</Text>
+ 		<Text>حفظ التعديل</Text>
  	</STRING>
  	<STRING Id="1081" Name="IDS_GROUP_UIM">
- 		<Text>UIM بطاقة</Text>
+ 		<Text>البطاقة</Text>
  	</STRING>
  	<STRING Id="1082" Name="IDS_SAME_NAME">
  		<Text>نفس الاسم ، وإعادة تسمية</Text>
@@ -452,16 +452,16 @@
  		<Text>عدم التحديد</Text>
  	</STRING>
  	<STRING Id="1086" Name="IDS_NO_UIM_CARD">
- 		<Text>أي بطاقة UIM ، بحفظها على الهاتف</Text>
+ 		<Text>لاتوجد بطاقة ، احفظ على الهاتف</Text>
  	</STRING>
  	<STRING Id="1087" Name="IDS_NO_CARD">
- 		<Text>لا UIM بطاقة</Text>
+ 		<Text>لاتوجد بطاقة</Text>
  	</STRING>
  	<STRING Id="1088" Name="IDS_EMERGENCY_CALL" Encoding="Unicode">
  		<Text>رقم الطوارئ</Text>
 	</STRING>
 	<STRING Id="1089" Name="IDS_NUM_INVALID">
-		<Text>Invalid number</Text>
+		<Text>رقم خطأ</Text>
  	</STRING>
  </Strings>
  <Dialogs>

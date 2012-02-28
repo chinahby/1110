@@ -5,13 +5,13 @@
  		<Text>تطبيق</Text>
  	</STRING>
  	<STRING Id="1002" Name="IDS_DIAG_AND_DATA">
- 		<Text>في</Text>
+ 		<Text>تشغيل</Text>
  	</STRING>
  	<STRING Id="1003" Name="IDS_MASS_STORAGE">
  		<Text>إيقاف</Text>
  	</STRING>
 	<String Id="1004" Name="IDS_APPLICATION_WAPBROWSER">
-		<Text>Browser</Text>
+		<Text>المتصفح</Text>
 	</String>
  	<STRING Id="1011" Name="IDS_APPLICATION_BAM">
  		<Text>BAM</Text>
@@ -23,10 +23,10 @@
  		<Text>الموقت</Text>
  	</STRING>
  	<STRING Id="1014" Name="IDS_APPLICATION_ALARM">
- 		<Text>ساعة التوقيت</Text>
+ 		<Text>المنبة</Text>
  	</STRING>
  	<STRING Id="1015" Name="IDS_APPLICATION_CONVERTER">
- 		<Text>التنبيه</Text>
+ 		<Text>محول الوحدات</Text>
  	</STRING>
  	<STRING Id="1016" Name="IDS_APPLICATION_WORLDTIME">
  		<Text>التوقيت العالمي</Text>

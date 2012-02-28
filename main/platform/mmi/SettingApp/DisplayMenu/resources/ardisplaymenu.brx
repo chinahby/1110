@@ -53,7 +53,7 @@
         <Text>من</Text>
 	</STRING>
 	<STRING Id="1019" Name="IDS_STRING_OFF">
-        <Text>إيقاف التشغيل</Text>
+        <Text>إيقاف</Text>
 	</STRING>
 	<STRING Id="1020" Name="IDS_STRING_ON">
         <Text>تشغيل</Text>
@@ -95,7 +95,7 @@
         <Text>ساطع</Text>
 	</STRING>
 	<STRING Id="1036" Name="IDS_DEL_ITEM_YESNO">
-        <Text>حذفه</Text>
+        <Text>احذف</Text>
 	</STRING>
 	<STRING Id="1037" Name="IDS_50S">
         <Text>50 ثانية</Text>
@@ -113,10 +113,10 @@
         <Text>وقت إضاءة لوحة المفاتيح</Text>
 	</STRING>
 	<STRING Id="1042" Name="IDS_STARTUP_ANIMATION">
-        <Text>الرسم المتحرك الخاص ببدء التشغيل</Text>
+        <Text>حركة بدء التشغيل</Text>
 	</STRING>
 	<STRING Id="1043" Name="IDS_POWEROFF_ANIMATION">
-        <Text>الرسم المتحرك الخاص بإيقاف التشغيل</Text>
+        <Text>حركة إيقاف التشغيل</Text>
 	</STRING>
 	<STRING Id="1044" Name="IDS_STRING_BLUE">
         <Text>أزرق</Text>

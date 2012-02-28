@@ -368,13 +368,13 @@
 		<Text>معايرة الشاشة</Text>
 	</String>
 	<String Id="1123" Name="IDS_SIM_SET">
-		<Text>إعدادات UIM</Text>
+		<Text>إعدادات البطاقة</Text>
 	</String>
 	<String Id="1124" Name="IDS_SIM_ONE">
-		<Text>UIM1</Text>
+		<Text>البطاقة1</Text>
 	</String>
 	<String Id="1125" Name="IDS_SIM_TWO">
-		<Text>UIM2</Text>
+		<Text>البطاقة2</Text>
 	</String>
 	<String Id="1126" Name="IDS_SIMSETTING_CHOICE_STRING">
 		<Text>هل أنت متأكد؟</Text>
@@ -389,19 +389,19 @@
 		<Text>myanmar</Text>
 	</String>
 	<String Id="1130" Name="IDS_SMS_RESTRICT">
-		<Text>SMS restrict</Text>
+		<Text>حظر الرسائل</Text>
 	</String>
 	<String Id="1131" Name="IDS_SMS_RESTRICT_SEND">
-		<Text>Restrict send</Text>
+		<Text>حظر الارسال</Text>
 	</String>
 	<String Id="1132" Name="IDS_SMS_RESTRICT_RECEIVE">
-		<Text>Restrict receive</Text>
+		<Text>حظر الاستقبال</Text>
 	</String>
 	<String Id="1133" Name="IDS_ADD">
-		<Text>Add</Text>
+		<Text>اضافة</Text>
 	</String>
 	<String Id="1134" Name="IDS_DELETE">
-		<Text>Delete</Text>
+		<Text>حذف</Text>
 	</String>
 	<STRING Id="1136" Name="IDS_FMRADIO_OPTION_MENU_PLAY_MODLE">
 		<Text>وضع نغمات</Text>

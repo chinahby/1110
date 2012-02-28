@@ -44,7 +44,7 @@
 		<Text>تفاصيل</Text>
 	</STRING>
 	<STRING Id="1014" Name="IDS_MG_BLUETOOTH">
-		<Text>إرسال عن طريق البلوتوث</Text>
+		<Text>إرسال بالبلوتوث</Text>
 	</STRING>
 	<STRING Id="1015" Name="IDS_MG_COPY">
 		<Text>نسخ</Text>
@@ -185,7 +185,7 @@
 		<Text>اسم متكرر</Text>
 	</STRING>
 	<STRING Id="1061" Name="IDS_MG_NULLNAME">
-		<Text>اسم خالي</Text>
+		<Text>بدون اسم</Text>
 	</STRING>
 	<STRING Id="1062" Name="IDS_MG_PROTECT">
 		<Text>تمت حماية الملف</Text>
@@ -227,7 +227,7 @@
 		<Text>الاتصال بالكمبيوتر الشخصي باستخدام كبل USB</Text>
 	</STRING>
 	<STRING Id="1075" Name="IDS_MG_SORT">
-		<Text>فرز</Text>
+		<Text>ترتيب</Text>
 	</STRING>
 	<STRING Id="1076" Name="IDS_MG_BYNAME">
 		<Text>فرز حسب الاسم</Text>
@@ -248,7 +248,7 @@
 		<Text>فرز حسب النوع</Text>
 	</STRING>
 	<STRING Id="1082" Name="IDS_MG_BYNULL">
-		<Text>بدون فرز</Text>
+		<Text>بدون ترتيب</Text>
 	</STRING>
 	<STRING Id="1083" Name="IDS_MG_OPEN">
 		<Text>فتح</Text>
@@ -323,16 +323,16 @@
 		<Text>جاري التحميل...</Text>
 	</STRING>
 	<String Id="1107" Name="IDS_MSG_SAVEPLAYLIST">
-		<Text>Add to playlist</Text>
+		<Text>اضافة الى قائمة التشغيل</Text>
 	</String>
 	<String Id="1108" Name="IDS_DEFAULTPLAYLISTNAME">
-		<Text>Default playlist</Text>
+		<Text>قائمة التشغيل الافتراضية</Text>
 	</String>
 	<String Id="1109" Name="IDS_PLAYLIST_FULL">
-		<Text>Playlist full!</Text>
+		<Text>قائمة التشغيل ممتلئة</Text>
 	</String>
 	<String Id="1110" Name="IDS_ADD_SUCCESS">
-		<Text>Add music success</Text>
+		<Text>تم اضافة الموسيقى</Text>
 	</String>
 </Strings>
 <Dialogs>

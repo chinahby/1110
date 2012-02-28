@@ -2,22 +2,22 @@
 <BREWRes Name="arwms" VERSION="1">
 <Strings Encoding="Unicode">
 	<String Id="1" Name="IDS_INBOX">
-		<Text>علبة الوارد</Text>
+		<Text>صندوق الوارد</Text>
 	</String>
 	<String Id="2" Name="IDS_WRITEMESSAGE">
-		<Text>إنشاء</Text>
+		<Text>رسالة جديدة</Text>
 	</String>
 	<String Id="3" Name="IDS_OUTBOX">
-		<Text>علبة الصادر</Text>
+		<Text>صندوق الصادر</Text>
 	</String>
 	<String Id="4" Name="IDS_VOICEMAIL">
 		<Text>البريد الصوتي</Text>
 	</String>
 	<String Id="5" Name="IDS_DRAFT">
-		<Text>مسودة</Text>
+		<Text>المسودات</Text>
 	</String>
 	<String Id="6" Name="IDS_TEMPLATES">
-		<Text>القوالب</Text>
+		<Text>النماذج</Text>
 	</String>
 	<String Id="7" Name="IDS_MENSTATUS">
 		<Text>حالة الذاكرة</Text>
@@ -32,7 +32,7 @@
 		<Text>الهاتف</Text>
 	</String>
 	<String Id="11" Name="IDS_RUIM">
-		<Text>بطاقة UIM</Text>
+		<Text>البطاقة</Text>
 	</String>
 	<String Id="12" Name="IDS_EMPTY">
 		<Text>لا يوجد سجل</Text>
@@ -65,7 +65,7 @@
 		<Text>استخراج الرقم</Text>
 	</String>
 	<String Id="22" Name="IDS_COPYTORUIM">
-		<Text>نسخ إلى بطاقة UIM</Text>
+		<Text>نسخ إلى البطاقة</Text>
 	</String>
 	<String Id="23" Name="IDS_COPYTOPNONE">
 		<Text>نسخ إلى الهاتف</Text>
@@ -80,7 +80,7 @@
 		<Text>تم نسخ %d</Text>
 	</String>
 	<String Id="27" Name="IDS_RUIMFULL">
-		<Text>رسائل UIM ممتلئة</Text>
+		<Text>ذاكرة البطاقة ممتلئة</Text>
 	</String>
 	<String Id="28" Name="IDS_VOICEMAIL_FMT">
 		<Text>عدد الرسائل الصوتية:%d</Text>
@@ -152,7 +152,7 @@
 		<Text>إيقاف التشغيل</Text>
 	</String>
 	<String Id="51" Name="IDS_RUIMANDPHONE">
-		<Text>بطاقة UIM والهاتف</Text>
+		<Text>البطاقة والهاتف</Text>
 	</String>
 	<String Id="52" Name="IDS_ADDNEW">
 		<Text>إضافة</Text>
@@ -170,7 +170,7 @@
 		<Text>إرسال إلى</Text>
 	</String>
 	<String Id="57" Name="IDS_MSGSENT">
-		<Text>تم إرسال الرسائل</Text>
+		<Text>تم الارسال</Text>
 	</String>
 	<String Id="58" Name="IDS_FAILED">
 		<Text>فشلت العملية</Text>
@@ -191,10 +191,10 @@
 		<Text>تم رفض الإنشاء</Text>
 	</STRING>
 	<STRING Id="64" Name="IDS_CDG2_FAIL100">
-		<Text>SMS not supported</Text>
+		<Text>الرسائل غير مدعومة</Text>
 	</STRING>
 	<STRING Id="65" Name="IDS_DRAFTFULL">
-		<Text>Draft is full</Text>
+		<Text>المسودات  ممتلئة</Text>
 	</STRING>
 	<STRING Id="66" Name="IDS_APP_WMS">
 		<Text>الرسائل</Text>
@@ -203,7 +203,7 @@
 		<Text>الطوارئ</Text>
 	</STRING>
 	<STRING Id="68" Name="IDS_EMERGENCY">
-		<Text>Emergency</Text>
+		<Text>الطوارئ</Text>
 	</STRING>
 	<STRING Id="69" Name="IDS_NOVALIDNUM">
 		<Text>لا يوجد رقم صالح</Text>
@@ -248,7 +248,7 @@
 		<Text>الرسائل النصية ممتلئة</Text>
 	</STRING>
 	<STRING Id="88" Name="IDS_RUIMALMOSTFULL">
-		<Text>رسائل UIM ممتلئة تقريبًا</Text>
+		<Text>رسائل البطاقة ممتلئة تقريبًا</Text>
 	</STRING>
 	<STRING Id="89" Name="IDS_PHONEALMOSTFULL">
 		<Text>رسائل الهاتف ممتلئة تقريبًا</Text>
@@ -380,7 +380,7 @@
 		<Text>الرسائل التي فشل إرسالها</Text>
 	</STRING>
 	<STRING Id="133" Name="IDS_FAILEDRSVDMSGS">
-		<Text>Failed messages</Text>
+		<Text>الرسائل التي فشل إرسالها</Text>
 	</STRING>
 	<STRING Id="134" Name="IDS_NEWRESERVEDMSG">
 		<Text>إنشاء</Text>
@@ -536,7 +536,7 @@
 		<Text>إرسال وحفظ</Text>
 	</String>
 	<String Id="185" Name="IDS_ENABLEREPORT_SHORT">
-		<Text>Hdp</Text>
+		<Text>تشغيل</Text>
 	</String>
 	<String Id="1001" Name="IDS_TEMPLATEHITZ0">
 		<Text>"معذرة، سأتصل بك لاحقًا"</Text>
@@ -661,11 +661,17 @@
 	<String Id="1041" Name="IDS_TIME_STAMP_ASRECEIVED">
 		<Text>As Received</Text>
 	</String>
-	<String Id="1042" Name="IDS_ADD_TO_RESTRICT_LIST">
+	<String Id="1042" Name="IDS_ADD_TO_RESTRICT_LIST" Encoding="Unicode">
 		<Text>Add to restrict list</Text>
 	</String>
-	<String Id="1040" Name="IDS_MMS_SERVER_ADDRESS">
+	<String Id="1043" Name="IDS_MMS_SERVER_ADDRESS" Encoding="Unicode">
 		<Text>MMS server address</Text>
+	</String>
+	<String Id="1044" Name="IDS_MMS_PROXY" Encoding="Unicode">
+		<Text>Proxy Address</Text>
+	</String>
+	<String Id="1045" Name="IDS_MMS_PORT" Encoding="Unicode">
+		<Text>Port</Text>
 	</String>
 </Strings>
 <Dialogs>
@@ -1034,9 +1040,9 @@
 				<Items/></Text>
 		</Controls>
 	</Dialog>
-	<Dialog Id="6052" Name="IDD_MMS_SERVER_ADDRESS" Focus="0">
+	<Dialog Id="6053" Name="IDD_MMS_SERVER_ADDRESS" Focus="0">
 		<Controls>
-			<Text Id="7043" Name="IDC_MMS_SERVER_ADDRESS">
+			<Text Id="7044" Name="IDC_MMS_SERVER_ADDRESS">
 				<Items/></Text>
 		</Controls>
 	</Dialog>

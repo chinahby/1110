@@ -38,7 +38,7 @@
         <Text>تقييد المكالمات المستلمة</Text>
 	</STRING>
 	<String Id="1013" Name="IDS_AKG_2MIN">
-		<Text>2 Min</Text>
+		<Text>2 دقيقة</Text>
 	</String>
 	<STRING Id="1014" Name="IDS_OFF">
         <Text>إيقاف التشغيل</Text>
@@ -47,10 +47,10 @@
         <Text>خارج نطاق جهات الاتصال</Text>
 	</STRING>
 	<String Id="1016" Name="IDS_AKG_5MIN">
-		<Text>5 Min</Text>
+		<Text>5 دقيقة</Text>
 	</String>
 	<String Id="1017" Name="IDS_NOTALLOW">
-		<Text>Not Allowed!</Text>
+		<Text>غير مسموح</Text>
 	</String>
 	<STRING Id="1018" Name="IDS_NEWPIN">
         <Text>أدخل رمز PIN جديد:</Text>
@@ -86,7 +86,7 @@
         <Text>قفل الهاتف</Text>
 	</STRING>
 	<STRING Id="1034" Name="IDS_PIN_SET">
-        <Text>إعدادات PIN</Text>
+        <Text>إعدادات الرمز الشخصي</Text>
 	</STRING>
 	<STRING Id="1036" Name="IDS_PHONE_PASSWORD_CHANGE">
         <Text>تغيير كلمة المرور</Text>
@@ -95,7 +95,7 @@
         <Text>تشغيل</Text>
 	</STRING>
 	<STRING Id="1039" Name="IDS_PIN_CHECK">
-        <Text>تمكين PIN</Text>
+        <Text>تمكين لرمز الشخصي</Text>
 	</STRING>
 	<STRING Id="1041" Name="IDS_RESTORE_OK">
         <Text>موافق</Text>
@@ -125,7 +125,7 @@
         <Text>الرسائل</Text>
 	</STRING>
 	<STRING Id="1051" Name="IDS_RESET_DONE">
-        <Text>تمت إعادة التعيين</Text>
+        <Text>تمت إعادة الضبط</Text>
 	</STRING>
 	<STRING Id="1052" Name="IDS_MSG_INPUTINVALID">
         <Text>كلمة المرور غير صالحة</Text>

@@ -26,7 +26,7 @@
  		<Text>إيقاف</Text>
  	</STRING>
  	<STRING Id="1009" Name="IDS_STATE_ON">
- 		<Text>في</Text>
+ 		<Text>تشغيل</Text>
  	</STRING>
  	<STRING Id="1010" Name="IDS_REP_MODE_0">
  		<Text>كل يوم</Text>
@@ -38,7 +38,7 @@
  		<Text>الاثنين - السبت</Text>
  	</STRING>
  	<STRING Id="1013" Name="IDS_REP_MODE_3">
- 		<Text>يوم الاثنين</Text>
+ 		<Text>الاثنين</Text>
  	</STRING>
  	<STRING Id="1014" Name="IDS_REP_MODE_4">
  		<Text>الثلاثاء</Text>
@@ -62,10 +62,10 @@
  		<Text>دولة</Text>
  	</STRING>
  	<STRING Id="1021" Name="IDS_CLOCK_TIME">
- 		<Text>مرة</Text>
+ 		<Text>الوقت</Text>
  	</STRING>
  	<STRING Id="1022" Name="IDS_REPEAT_MODE">
- 		<Text>طريقة</Text>
+ 		<Text>الوضع</Text>
  	</STRING>
  	<STRING Id="1023" Name="IDS_CLOCK_SAVE_ALERT">
  		<Text>حفظ التنبيه</Text>
@@ -74,7 +74,7 @@
  		<Text>أي مفتاح لإغلاق.</Text>
  	</STRING>
  	<STRING Id="1025" Name="IDS_CLOCK_SNOOZE">
- 		<Text>قيلولة بعد الظهر</Text>
+ 		<Text>غفوة</Text>
  	</STRING>
  	<STRING Id="1026" Name="IDS_CLEAR">
  		<Text>حذف</Text>
@@ -83,7 +83,7 @@
  		<Text>حذف جميع</Text>
  	</STRING>
  	<STRING Id="1028" Name="IDS_ALARM_ON">
- 		<Text>في</Text>
+ 		<Text>تشغيل</Text>
  	</STRING>
  	<STRING Id="1029" Name="IDS_ALARM_OFF">
  		<Text>إيقاف</Text>

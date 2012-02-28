@@ -23,7 +23,7 @@
 		<Text>إنهاء</Text>
 	</STRING>
 	<STRING Id="1008" Name="IDS_FMRADIO_OPTION_MENU_PLAY_ON_BACKGROUND">
-		<Text>تصغير</Text>
+		<Text>تشغيل في الخلفية</Text>
 	</STRING>
 	<STRING Id="1009" Name="IDS_FMRADIO_OPTION_MENU_GLOBAL_SEARCH">
 		<Text>بحث عام</Text>
@@ -77,7 +77,7 @@
 		<Text>87.5-108 ميجاهرتز</Text>
 	</STRING>
 	<STRING Id="1026" Name="IDS_FMRADIO_SPEAKER">
-		<Text>اللغة</Text>
+		<Text>مكبر الصوت</Text>
 	</STRING>
 	<STRING Id="1027" Name="IDS_FMRADIO_HEADSET">
 		<Text>سماعة</Text>

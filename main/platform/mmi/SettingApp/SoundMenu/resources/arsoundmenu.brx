@@ -104,13 +104,13 @@
         <Text>عادي</Text>
 	</STRING>
 	<STRING Id="1038" Name="IDS_QUIETMODE">
-        <Text>الوضع الصامت</Text>
+        <Text>صامت</Text>
 	</STRING>
 	<STRING Id="1039" Name="IDS_MEETING">
         <Text>اجتماع</Text>
 	</STRING>
 	<STRING Id="1040" Name="IDS_NOISEMODE">
-        <Text>بالخارج</Text>
+        <Text>في الخارج</Text>
 	</STRING>
 	<STRING Id="1041" Name="IDS_CARMODE">
         <Text>في السيارة</Text>
@@ -128,7 +128,7 @@
         <Text>جاري الاستعادة...</Text>
 	</STRING>
 	<STRING Id="1046" Name="IDS_KEYSND_SILENT">
-        <Text>الوضع الصامت</Text>
+        <Text>صامت</Text>
 	</STRING>
 	<STRING Id="1047" Name="IDS_POWERONOFF_ALERT">
         <Text>تنبيه التشغيل/إيقاف التشغيل</Text>

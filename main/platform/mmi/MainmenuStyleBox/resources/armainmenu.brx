@@ -2,22 +2,22 @@
 <BREWRes Name="armainmenu" VERSION="1">
 <Strings Encoding="Unicode">
 	<String Id="1001" Name="IDS_MAIN_MENU_STATIC_APPLICATION">
-		<Text>تطبيق</Text>
+		<Text>التطبيقات</Text>
 	</String>
 	<String Id="1011" Name="IDS_MAIN_MENU_MEDIAGALLERY">
-		<Text>معرض الوسائط</Text>
+		<Text>مدير الملفات</Text>
 	</String>
 	<String Id="1012" Name="IDS_MAIN_MENU_CONTACTS">
 		<Text>جهات الاتصال</Text>
 	</String>
 	<String Id="1013" Name="IDS_MAIN_MENU_UTK">
-		<Text>UIM الأدوات</Text>
+		<Text>خدمات البطاقة</Text>
 	</String>
 	<String Id="1014" Name="IDS_MAIN_MENU_TOOLS">
-		<Text>أدوات</Text>
+		<Text>الادوات</Text>
 	</String>
 	<String Id="1015" Name="IDS_MAIN_MENU_RECENTCALLS">
-		<Text>المكالمات الأخيرة</Text>
+		<Text>سجل المكالمات</Text>
 	</String>
 	<String Id="1016" Name="IDS_MAIN_MENU_MESSAGES">
 		<Text>الرسائل</Text>
@@ -26,16 +26,16 @@
 		<Text>الوسائط المتعددة</Text>
 	</String>
 	<String Id="1018" Name="IDS_MAIN_MENU_APPLICATION">
-		<Text>تطبيق</Text>
+		<Text>التطبيقات</Text>
 	</String>
 	<String Id="1019" Name="IDS_MAIN_MENU_SCHEDULER">
-		<Text>المجدول</Text>
+		<Text>المهام</Text>
 	</String>
 	<STRING Id="1020" Name="IDS_MAIN_MENU_SETTINGS">
-		<Text>إعدادات</Text>
+		<Text>الاعدادات</Text>
 	</STRING>
 	<String Id="1021" Name="IDS_MAIN_MENU_USERPROFILE">
-		<Text>ملف تعريف المستخدم</Text>
+		<Text>الاوضاع</Text>
 	</String>
 	<String Id="1034" Name="IDS_MENU_LIST">
 		<Text>القائمة</Text>
@@ -59,7 +59,7 @@
 		<Text>التقويم</Text>
 	</String>
 	<String Id="1066" Name="IDS_MAIN_MENU_CONTACT">
-		<Text>جهة الاتصال</Text>
+		<Text>دليل الهاتف</Text>
 	</String>
 	<String Id="1067" Name="IDS_MAIN_MENU_SMS">
 		<Text>الرسائل النصية</Text>
@@ -68,7 +68,7 @@
 		<Text>الألعاب</Text>
 	</String>
 	<String Id="1070" Name="IDS_MAIN_MENU_GALLERY">
-		<Text>معرض</Text>
+		<Text>الاستوديو</Text>
 	</String>
 	<String Id="1081" Name="IDS_MAIN_MENU_BLIVE">
 		<Text>b-live</Text>

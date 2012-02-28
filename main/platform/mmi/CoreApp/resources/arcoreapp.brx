@@ -23,10 +23,10 @@
  		<Text>رمز PUK خاطئ</Text>
  	</STRING>
  	<STRING Id="1008" Name="IDS_UTKREFRESH">
- 		<Text>تحديث بطاقة UIM...</Text>
+ 		<Text>تحديث البطاقة...</Text>
  	</STRING>
  	<STRING Id="1009" Name="IDS_FULLY_CHARGED">
- 		<Text>تم الشحن بشكل كامل</Text>
+ 		<Text>تم الشحن</Text>
  	</STRING>
  	<STRING Id="1010" Name="IDS_OVERVOLTAGE">
  		<Text>إدخال الفولتية عالي جدًا</Text>
@@ -74,10 +74,10 @@
  		<Text>الهاتف هو</Text>
  	</STRING>
  	<STRING Id="1025" Name="IDS_POWEROFF_1">
- 		<Text>إيقاف التشغيل</Text>
+ 		<Text>البطارية منخفضة ..إيقاف التشغيل</Text>
  	</STRING>
  	<STRING Id="1026" Name="IDS_RESET_2">
- 		<Text>جاري إعادة التعيين...</Text>
+ 		<Text>جاري إعادة الضبط...</Text>
  	</STRING>
  	<STRING Id="1027" Name="IDS_LOWBATTMSG_TEXT">
  		<Text>البطارية منخفضة</Text>
@@ -152,55 +152,55 @@
  		<Text>المشكلة التقنية</Text>
  	</STRING>
  	<STRING Id="1051" Name="IDS_MSG_MEMISSUE">
- 		<Text>مشكلة الذاكرة</Text>
+ 		<Text>مشكلة في الذاكرة</Text>
  	</STRING>
  	<STRING Id="1052" Name="IDS_MSG_SECISSUE">
  		<Text>وصول السياسة الأمنية لم تف أو رفض شفرة سرية</Text>
  	</STRING>
 	<String Id="1053" Name="IDS_MSG_ACCEPTED">
- 		<Text>قبول PIN جديد</Text>
+ 		<Text>تم حفظ الرمز الشخصي</Text>
 	</String>
 	<String Id="1054" Name="IDS_NO_USIM_CARDONE">
-		<Text>No UIM card 1</Text>
+		<Text>بطاقة 1 غير متوفرة</Text>
 	</String>
 	<String Id="1055" Name="IDS_NO_USIM_CARDTWO">
-		<Text>No UIM card 2</Text>
+		<Text>بطاقة 2 غير متوفرة</Text>
 	</String>
 	<String Id="1056" Name="IDS_STR_BLACKBERRY_ONE">
-		<Text>Messages</Text>
+		<Text>الرسائل</Text>
 	</String>
 	<String Id="1057" Name="IDS_STR_BLACKBERRY_TWO">
-		<Text>Contacts</Text>
+		<Text>دليل الهاتف</Text>
 	</String>
 	<String Id="1058" Name="IDS_STR_BLACKBERRY_TRE">
-		<Text>Alarm</Text>
+		<Text>المنبة</Text>
 	</String>
 	<String Id="1059" Name="IDS_STR_BLACKBERRY_FUR">
-		<Text>Scheduler</Text>
+		<Text>المهام</Text>
 	</String>
 	<String Id="1060" Name="IDS_STR_BLACKBERRY_FIV">
-		<Text>Musicplayer</Text>
+		<Text>مشغل الموسيقى</Text>
 	</String>
 	<String Id="1061" Name="IDS_STR_BLACKBERRY_SIX">
-		<Text>FMRadio</Text>
+		<Text>راديو FM</Text>
 	</String>
 	<String Id="1062" Name="IDS_BATTERY_FULLY_CHARGE">
-		<Text>Completion of the battery</Text>
+		<Text>اكتمل الشحن</Text>
 	</String>
 	<String Id="1063" Name="IDS_USERPROFILE_MODE">
-		<Text>vibrate mode activated</Text>
+		<Text>وضع الاهتزاز يعمل</Text>
 	</String>
 	<String Id="1064" Name="IDS_USERPROFILE_NOMAL">
-		<Text>normal mode activated</Text>
+		<Text>الوضع العام فعال</Text>
 	</String>
 	<String Id="1065" Name="IDS_SUPER_SINGAL_OFF">
 		<Text>Super singal off!</Text>
 	</String>
 	<String Id="1080" Name="IDS_MAIN_MENU_TORCHON">
-		<Text>الشعلة</Text>
+		<Text>تشغيل مصباح</Text>
 	</String>
 	<String Id="1081" Name="IDS_MAIN_MENU_TORCHOFF">
-		<Text>شعلة معطلة</Text>
+		<Text>ايقاف المصباح</Text>
 	</String>
  </Strings>
  <Dialogs>

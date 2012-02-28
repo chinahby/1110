@@ -5,7 +5,7 @@
  		<Text>القائمة</Text>
  	</STRING>
  	<STRING Id="1002" Name="IDS_PREPAGO">
- 		<Text>Recarga Prepago</Text>
+ 		<Text>شحن الرصيد</Text>
  	</STRING>
  	<STRING Id="1003" Name="IDS_RELEASE">
  		<Text>تحرير</Text>
@@ -14,34 +14,34 @@
  		<Text>رقم IP فارغ</Text>
  	</STRING>
  	<STRING Id="1005" Name="IDS_CALLING_DIALOG_TEXT">
- 		<Text>استدعاء</Text>
+ 		<Text>يتصل بك</Text>
  	</STRING>
  	<STRING Id="1006" Name="IDS_ENDCALL_DIALOG_TEXT">
- 		<Text>دعوة العضوية.</Text>
+ 		<Text>المكالمة انتهت</Text>
  	</STRING>
  	<STRING Id="1007" Name="IDS_SAVE_NEW">
  		<Text>حفظ</Text>
  	</STRING>
  	<STRING Id="1008" Name="IDS_MSG_EXCEPTIONAL_CHAR">
- 		<Text>عدد غير صالح، لا يمكن الرد</Text>
+ 		<Text>رقم خاطئ، لا يمكن الرد</Text>
  	</STRING>
  	<STRING Id="1009" Name="IDS_TIME_TEXT">
  		<Text>الوقت :</Text>
  	</STRING>
  	<STRING Id="1010" Name="IDS_NO_NUMBER">
- 		<Text>عدد غير معروف</Text>
+ 		<Text>رقم غير معروف</Text>
  	</STRING>
  	<STRING Id="1011" Name="IDS_NUMBER_RESTRICTED">
  		<Text>مقيد</Text>
  	</STRING>
  	<STRING Id="1012" Name="IDS_IP_NUMBER_SELECT">
- 		<Text>عدد IP</Text>
+ 		<Text>رقم IP</Text>
  	</STRING>
  	<STRING Id="1013" Name="IDS_EMGCALL">
  		<Text>مكالمة الطوارئ</Text>
  	</STRING>
  	<STRING Id="1014" Name="IDS_AUTO_REDIAL">
- 		<Text>السيارات معاودة الاتصال</Text>
+ 		<Text>معاودة الاتصال تلقائيا</Text>
  	</STRING>
  	<STRING Id="1015" Name="IDS_USE_BT_AG">
  		<Text>استخدام سماعة بلوتوث</Text>
@@ -50,34 +50,34 @@
  		<Text>رفض</Text>
  	</STRING>
  	<STRING Id="1017" Name="IDS_SALDO">
- 		<Text>Consulta de saldo</Text>
+ 		<Text>ستعلام الرصيد</Text>
  	</STRING>
  	<STRING Id="1018" Name="IDS_WAITING_CALL">
  		<Text>انتظار مكالمة</Text>
  	</STRING>
  	<STRING Id="1019" Name="IDS_MUTI_CALL">
- 		<Text>ثلاثة حزب الدعوة</Text>
+ 		<Text>المؤتمر الثلاثي</Text>
  	</STRING>
  	<STRING Id="1020" Name="IDS_ANSWER">
- 		<Text>رد</Text>
+ 		<Text>اجابة</Text>
  	</STRING>
  	<STRING Id="1021" Name="IDS_NUMBER_UNAVAILABLE">
  		<Text>غير متوفر</Text>
  	</STRING>
  	<STRING Id="1022" Name="IDS_CLIENTE">
- 		<Text>Atencion al cliente</Text>
+ 		<Text>عميل</Text>
  	</STRING>
  	<STRING Id="1023" Name="IDS_NONHANDFREE">
- 		<Text>إيقاف تشغيل وضع التحدث دون استخدام الأيدي</Text>
+ 		<Text>مكبر الصوت</Text>
  	</STRING>
  	<STRING Id="1024" Name="IDS_HANDFREE">
- 		<Text>تشغيل وضع التحدث دون استخدام الأيدي</Text>
+ 		<Text>إيقاف المكبر</Text>
  	</STRING>
  	<STRING Id="1025" Name="IDS_VOICEMAIL_EMPTY">
- 		<Text>لا البريد الصوتي</Text>
+ 		<Text>البريد الصوتي غير متوفر</Text>
  	</STRING>
  	<STRING Id="1026" Name="IDS_MUTE">
- 		<Text>أخرس</Text>
+ 		<Text>كتم</Text>
  	</STRING>
  	<STRING Id="1027" Name="IDS_UNMUTE">
  		<Text>إلغاء كتمه</Text>
@@ -86,13 +86,13 @@
  		<Text>البريد الصوتي</Text>
  	</STRING>
  	<STRING Id="1029" Name="IDS_RESTRICT_OUTGOING">
- 		<Text>دعوة مقيدة</Text>
+ 		<Text>اتصال محجوب</Text>
  	</STRING>
  	<STRING Id="1030" Name="IDS_SPEED_DIAL_EMPTY">
- 		<Text>ق سرعة الاتصال الهاتفي ٪ فارغ</Text>
+ 		<Text>رقم الاتصال السريع ٪ فارغ</Text>
  	</STRING>
  	<STRING Id="1031" Name="IDS_RELEASEHOLD">
- 		<Text>الافراج عن عقد</Text>
+ 		<Text>انهاء التعليق</Text>
  	</STRING>
  	<STRING Id="1032" Name="IDS_RESCUE_RUIM">
  		<Text>انقاذ UIM بطاقة</Text>
@@ -107,7 +107,7 @@
  		<Text>ربط</Text>
  	</STRING>
  	<STRING Id="1036" Name="IDS_CALLAPP_TITLE">
- 		<Text>استدعاء مدير</Text>
+ 		<Text>سجل المكالمات</Text>
  	</STRING>
  	<STRING Id="1037" Name="IDS_CANCEL">
  		<Text>إلغاء</Text>
@@ -116,10 +116,10 @@
  		<Text>1 مكالمة لم يرد عليها</Text>
  	</STRING>
  	<STRING Id="1039" Name="IDS_CALLLOST">
- 		<Text>دعوة المفقودة.</Text>
+ 		<Text>مكالمة المفقودة.</Text>
  	</STRING>
  	<STRING Id="1040" Name="IDS_CALLFAILED">
- 		<Text>فشل استدعاء.</Text>
+ 		<Text>فشل الاتصال.</Text>
  	</STRING>
  	<STRING Id="1041" Name="IDS_SK_OK">
  		<Text>موافق</Text>
@@ -143,7 +143,7 @@
  		<Text>الخط الساخن رقم</Text>
  	</STRING>
  	<STRING Id="1048" Name="IDS_CALL">
- 		<Text>دعوة</Text>
+ 		<Text>اتصال</Text>
  	</STRING>
  	<STRING Id="1049" Name="IDS_RECORD">
  		<Text>سجل</Text>
@@ -155,25 +155,25 @@
  		<Text>استخدام الهاتف</Text>
  	</STRING>
  	<STRING Id="1052" Name="IDS_INVALID_LINK_NUM">
- 		<Text>ربط عدد غير صالحة</Text>
+ 		<Text>عنوان غير صحيح</Text>
  	</STRING>
 	<STRING Id="1053" Name="IDS_MSG_CURPROFILE_MEETING">
-		<Text>يهتز الوضع تنشيط</Text>
+		<Text>وضع الاهتزاز</Text>
 	</STRING>
 	<STRING Id="1054" Name="IDS_MSG_CURPROFILE_NORMALMODE">
-		<Text>الوضع العادي تفعيلها</Text>
+		<Text>لوضع العادي</Text>
 	</STRING>
 	<String Id="1055" Name="IDS_PWDERR">
-		<Text>Invalid password</Text>
+		<Text>كلمة سر خطأ</Text>
 	</String>
 	<String Id="1057" Name="IDS_PWDTIPS">
-		<Text>Enter password</Text>
+		<Text>ادخل كلمة السر</Text>
 	</String>
  	<STRING Id="1100" Name="IDS_OPTION_RECORDER_ON">
- 		<Text>المسجل على</Text>
+ 		<Text>تسغيل</Text>
  	</STRING>
  	<STRING Id="1101" Name="IDS_OPTION_RECORDER_OFF">
- 		<Text>تسجيل الخروج</Text>
+ 		<Text>ايقاف</Text>
  	</STRING>
  	<STRING Id="1110" Name="IDS_RECORD_THE_OTHER_SIZE">
  		<Text>خاص بك</Text>
@@ -194,7 +194,7 @@
 		<Text>This is non-OMH Card, please upgrade to OMH R-UIM</Text>
  	</STRING>
 	<STRING Id="1117" Name="IDS_INVALID">
-		<Text>Invalid password</Text>
+		<Text>كلمة سر خطأ</Text>
 	</STRING>
  </Strings>
  <Dialogs>

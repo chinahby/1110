@@ -5,7 +5,7 @@
 		<Text>الوسائط المتعددة</Text>
 	</String>
 	<String Id="1002" Name="IDS_MULTIMEDIA_MEDIAGALLERY">
-		<Text>معرض الوسائط</Text>
+		<Text>مدير الملفات</Text>
 	</String>
 	<String Id="1003" Name="IDS_MULTIMEDIA_VIDEO_CAMERA">
 		<Text>كاميرا فيديو</Text>

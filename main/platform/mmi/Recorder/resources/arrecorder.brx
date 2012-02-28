@@ -2,10 +2,10 @@
 <BREWRes Name="recorder" VERSION="1">
 <Strings Encoding="Unicode">
 	<STRING Id="1" Name="IDS_TITLE">
-        <Text>ذاكرة الفيديو</Text>
+        <Text>مسجل الصوت</Text>
 	</STRING>
 	<STRING Id="2" Name="IDS_RECORDER_MEMO_RINGER_NAME">
-        <Text>ذاكرة الفيديو</Text>
+        <Text>مسجل الصوت</Text>
 	</STRING>
 	<STRING Id="1001" Name="IDS_NEW_RECORD">
         <Text>مسجل جديد</Text>
@@ -203,10 +203,10 @@
         <Text>تكرار</Text>
 	</STRING>
 	<STRING Id="1211" Name="IDS_MM_STATUS_SPACE_WARNING">
-        <Text>كامل</Text>
+        <Text>ممتلئ</Text>
 	</STRING>
 	<STRING Id="1212" Name="IDS_MM_STATUS_SPACE_ERROR">
-        <Text>كامل</Text>
+        <Text>ممتلئ</Text>
 	</STRING>
 	<STRING Id="1213" Name="IDS_MM_STATUS_UNKNOWN">
         <Text>خطأ غير معروف</Text>

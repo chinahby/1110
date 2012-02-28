@@ -47,7 +47,7 @@
 		<Text>فاتورة بمبلغ</Text>
 	</STRING>
 	<STRING Id="17" Name="IDS_TIP">
-		<Text>غيض المبلغ</Text>
+		<Text>المبلغ</Text>
 	</STRING>
 	<STRING Id="18" Name="IDS_PERCENT">
 		<Text>%</Text>
@@ -104,7 +104,7 @@
 		<Text>الضيوف :</Text>
 	</STRING>
 	<STRING Id="37" Name="IDS_SPLITBILL">
-		<Text>لك الأجر :</Text>
+		<Text>المدفوع :</Text>
 	</STRING>
 	<STRING Id="38" Name="IDS_DIV_0">
 		<Text>القسمة 0</Text>

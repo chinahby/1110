@@ -5,22 +5,22 @@
  		<Text>الكاميرا</Text>
 	</String>
 	<String Id="1002" Name="IDS_MULTI_PRE">
-		<Text>Camera One</Text>
+		<Text>الكاميرا الامامية</Text>
 	</String>
     <String Id="1003" Name= "IDS_ITEM_CAMERA_GALLERY">
  		<Text>معرض صور</Text>
     </String>
 	<String Id="1004" Name="IDS_MULTI_BACK">
-		<Text>Camera Two</Text>
+		<Text>الكاميرا الاساسية</Text>
 	</String>
     <String Id="1005" Name= "IDS_CFG_ENVIR">
  		<Text>البيئة</Text>
     </String>
     <String Id="1006" Name= "IDS_ENVIR_MODE_AUTO">
- 		<Text>السيارات</Text>
+ 		<Text>تلقائي</Text>
     </String>
     <String Id="1007" Name= "IDS_ENVIR_MODE_NIGHT">
- 		<Text>ليلة النمط</Text>
+ 		<Text>الوضع الليلي</Text>
     </String>
     <String Id="1008" Name= "IDS_ENVIR_MODE_CLOUDY">
  		<Text>وضع غائم</Text>
@@ -29,10 +29,10 @@
  		<Text>مشمس النمط</Text>
     </String>
 	<String Id="1010" Name="IDS_CFG_MULTI">
-		<Text>MULTICAMERA</Text>
+		<Text>ثنائي الكاميرا</Text>
 	</String>
 	<String Id="1011" Name="IDS_CFG_FLASH">
-		<Text>Flash</Text>
+		<Text>فلاش</Text>
 	</String>
 	<String Id="1012" Name="IDS_VIDEO_CAMERA">
 		<Text>كاميرا فيديو</Text>
@@ -61,11 +61,11 @@
     </String>
 
     <String Id="1019" Name= "IDS_TONE_DISABLE">
-        <Text>إيقاف التشغيل</Text>
+        <Text>إيقاف</Text>
     </String>
 
     <String Id="1020" Name= "IDS_TONE_ENABLE">
- 		<Text>في</Text>
+ 		<Text>تشغيل</Text>
     </String>
 
     <String Id="1021" Name= "IDS_CFG_SELFTIMER">
@@ -93,7 +93,7 @@
     </String>
 
     <String Id="1027" Name= "IDS_CAPTURE_OFF">
-        <Text>إيقاف التشغيل</Text>
+        <Text>إيقاف</Text>
     </String>
 
     <String Id="1028" Name= "IDS_CAPTURE_MODE1">
@@ -156,19 +156,19 @@
         <Text>فشل الالتقاط</Text>
 	</String>
 	<String Id="1074" Name="IDS_CAMERA_PHOTO_MODE">
-		<Text>Photo Path</Text>
+		<Text>مسار الصورة</Text>
 	</String>
 	<String Id="1075" Name="IDS_CAMERA_PHOTO_PHONE">
-		<Text>Phone</Text>
+		<Text>الهاتف</Text>
 	</String>
 	<String Id="1076" Name="IDS_CAMERA_PHOTO_TFCARD">
-		<Text>memory card</Text>
+		<Text>بطاقة الذاكرة</Text>
     </String>
 	  <String Id="1077" Name="IDS_CAMERA_RECORD_FAILED">
-			  <Text>Record failed</Text>
+			  <Text>فشل التسجيل</Text>
 	  </String>
 	  <String Id="1078" Name="IDS_CAMERA_RECORD_STOP">
-				<Text>Stop</Text>
+				<Text>توقف</Text>
 		</String>
 </Strings>
 <Dialogs>

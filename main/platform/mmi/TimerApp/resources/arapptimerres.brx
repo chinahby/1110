@@ -5,7 +5,7 @@
         <Text>الموقت</Text>
 	</STRING>
 	<STRING Id="2002" Name="IDS_APPTIMER_PROMPT">
-		 <Text>انتهاء صلاحية الموقت</Text>
+		 <Text>انتهاء المؤقت</Text>
 	</STRING>
 	<STRING Id="2003" Name="IDS_APPTIMER_INFO">
         <Text>س س:د د:ث ث</Text>
