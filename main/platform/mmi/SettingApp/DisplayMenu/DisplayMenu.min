@@ -207,6 +207,14 @@ CONSTFILE_FILES+=\
     wallpaper4.png|fs:/image/wallpaper/wallpaper4.png \
     wallpaper5.png|fs:/image/wallpaper/wallpaper5.png \
     wallpaper6.png|fs:/image/wallpaper/wallpaper6.png 
+else ifeq ($(USES_RESDIR),C180)
+CONSTFILE_FILES+=\
+    wallpaper1.png|fs:/image/wallpaper/wallpaper1.png \
+    wallpaper2.png|fs:/image/wallpaper/wallpaper2.png \
+    wallpaper3.png|fs:/image/wallpaper/wallpaper3.png \
+    wallpaper4.png|fs:/image/wallpaper/wallpaper4.png \
+    wallpaper5.png|fs:/image/wallpaper/wallpaper5.png \
+    wallpaper6.png|fs:/image/wallpaper/wallpaper6.png     
 else
 CONSTFILE_FILES+=\
     wallpaper1.png|fs:/image/wallpaper/wallpaper1.png \

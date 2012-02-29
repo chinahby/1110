@@ -31,9 +31,11 @@ ifneq ($(RESOURCEDIR),W515V3)
 ifneq ($(RESOURCEDIR),S106)
 ifneq ($(RESOURCEDIR),X3)
 ifneq ($(RESOURCEDIR),C11)
+ifneq ($(RESOURCEDIR),C180)
 ifneq ($(RESOURCEDIR),common)
 	CONSTFILE_FILES+=\
 		Away.mp3|fs:/hsmm/music/Away.mp3
+endif
 endif
 endif
 endif

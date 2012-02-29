@@ -6777,13 +6777,13 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
                      && MULTITAP_FIRST_CAP == pContext->nMultitapCaps
                      && !OEM_isFirstCap(pContext))
                 {
-                   #if defined(FEATURE_VERSION_C306)||defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_C11)
+                   #if defined(FEATURE_VERSION_C306)||defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)
                    #else
                    pContext->nMultitapCaps = MULTITAP_ALL_SMALL;
                    #endif
                 }                                        
             } 
-#if  defined(FEATURE_VERSION_W516) ||defined(FEATURE_VERSION_VG68) ||defined(FEATURE_VERSION_C01) || defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_C11)
+#if  defined(FEATURE_VERSION_W516) ||defined(FEATURE_VERSION_VG68) ||defined(FEATURE_VERSION_C01) || defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)
 
             pContext->nMultitapCaps = MULTITAP_ALL_SMALL;
 #endif
@@ -12407,7 +12407,7 @@ boolean OEM_isFirstCap (OEMCONTEXT hTextField)
     boolean bRet = FALSE;
     int maxsymbolcount;
     int i,j;
-	#if  defined(FEATURE_VERSION_W516) ||defined(FEATURE_VERSION_VG68) || defined(FEATURE_VERSION_C01) || defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_C11)
+	#if  defined(FEATURE_VERSION_W516) ||defined(FEATURE_VERSION_VG68) || defined(FEATURE_VERSION_C01) || defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)
 
 	return FALSE;
 	#endif
