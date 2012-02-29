@@ -785,7 +785,7 @@ static void CWmsApp_FreeAppData(WmsApp *pMe)
     {
         FREEIF(pMe->m_DecData.message.mms_data.fragment[i].pContent);
     }
-    FREEIF(pMe->m_pMsgEvent);
+    WMSAPPU_SYSFREE(pMe->m_pMsgEvent);
     FREEIF(pMe->m_EncData.pReadReport);
     FREEIF(pMe->m_EncData.pDeliveryacknowledgement);
     FREEIF(pMe->m_EncData.pNotifyresp);
@@ -1390,7 +1390,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
                 
                 MSG_FATAL("WMSApp received new message teleservice=%d",info->mt_message_info.message.u.cdma_message.teleservice,0,0);
 
-#ifdef MMS_TEST
+#if 0//def MMS_TEST
                 {
                     IFile* pIFile = NULL;
         		    IFileMgr *pIFileMgr = NULL;
@@ -1562,6 +1562,8 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
 							    EVT_MMS_PDUDECODE,
 							    body_len,
 							    (int32)body);
+                            DBGPRINTF("body_len=%d", body_len);
+                            DBGPRINTF("body=%s", (char*)body);
 							    
 						}
 						else
@@ -1798,7 +1800,7 @@ Exit:
                                     {
                                         if (TempCurMsgNodes[i] != NULL)
                                         {
-                                            FREE(TempCurMsgNodes[i]);
+                                            FREE(TempCurMsgNodes[i]);//有可能有重复删除
                                             TempCurMsgNodes[i] = NULL;
                                         }
                                     }      
@@ -2002,7 +2004,7 @@ Exit:
                 pBody += 4;
             }
             MSG_FATAL("EVT_MMS_PDUDECODE body_len:%d",body_len,0,0);
-
+            DBGPRINTF("pBody=%s", (char*)pBody);
             if(pDecData != NULL)
                 MEMSET(pDecData,NULL,sizeof(sizeof(MMS_WSP_DEC_DATA)));
             if(body_len != 0)
@@ -2037,7 +2039,7 @@ Exit:
                             CLOSE_DIALOG(DLGRET_INBOX_MMS);
                         }
                     }
-                    FREEIF(pBody);
+                    sys_free(pBody);
                     break;
                     case MMS_PDU_SEND_CONF:
                     {
@@ -2066,7 +2068,7 @@ Exit:
                     case MMS_PDU_NOTIFICATION_IND:
                     {
                         char* pStr = STRSTR((const char *)&pDecData->notification.hContentLocation,"http://");
-                        MSG_FATAL("decData.notification.hContentLocation = %s",pStr,0,0);
+                        DBGPRINTF("decData.notification.hContentLocation = %s",pStr);
 #ifdef FEATURE_VERSION_W208S 
                         {
                             uint8 i;
@@ -2103,12 +2105,15 @@ Exit:
                             }     
                         }
 #endif
-
-
+                        DBGPRINTF("pMe->m_isCheckMMSNotify=%d", pMe->m_isCheckMMSNotify);
                         
                         if(pMe->m_isCheckMMSNotify)
                         {
                             wms_memory_store_e_type   mem_store = WMS_MEMORY_STORE_RUIM;
+                            if(pMe->m_pMsgEvent == NULL)
+                            {
+                                return FALSE;
+                            }
                             if(sendData->pNotifyresp == NULL)
                                 sendData->pNotifyresp = (MMS_WSP_ENC_NOTIFY_RESP*)MALLOC(sizeof(MMS_WSP_ENC_NOTIFY_RESP));
                                 
@@ -2227,7 +2232,7 @@ Exit:
                                 WMS_MMSState(WMS_MMS_PDU_WSPHTTPGETreq,0,(uint32)strAddr);
                             }
                         }
-                        FREEIF(pBody); // YY: add
+                        sys_free(pBody); // YY: add
                     }
                     break;
                     case MMS_PDU_DELIVERY_IND:
@@ -2253,7 +2258,7 @@ Exit:
                             gbWmsMMSNtf = FALSE;
                             CLOSE_DIALOG(DLGRET_INBOX_MMS);
                         }
-                        FREEIF(pBody); // YY: add
+                        sys_free(pBody); // YY: add
                     }
                     break;
                     case MMS_PDU_RETRIEVE_CONF:
@@ -2275,7 +2280,10 @@ Exit:
                         }
                         else
                         {
-                            sendData->pNotifyresp = (MMS_WSP_ENC_NOTIFY_RESP*)MALLOC(sizeof(MMS_WSP_ENC_NOTIFY_RESP));
+                            if(sendData->pNotifyresp == NULL)
+                            {
+                                sendData->pNotifyresp = (MMS_WSP_ENC_NOTIFY_RESP*)MALLOC(sizeof(MMS_WSP_ENC_NOTIFY_RESP));
+                            }
                         }    
                         
                         WMS_MMS_SaveMMS(pDecData->message.hFrom,pBody,body_len,MMS_INBOX);
