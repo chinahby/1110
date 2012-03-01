@@ -12068,6 +12068,47 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     return TRUE;
                 
                 case AVK_INFO:
+#ifdef FEATURE_USES_MMS 
+                        if(pMe->m_isMMS)
+                        {
+                            AECHAR *pwstrText = ITEXTCTL_GetTextPtr(pIText);
+                            uint8 len = 0;
+                            if (NULL != pwstrText)
+                            {
+                                len = WSTRLEN(pwstrText);
+                            }
+                            MSG_FATAL("IDD_WRITEMSG_Handler len=%d",len,0,0);
+                            if (len>0)
+                            {
+                                WSP_MMS_ENCODE_DATA *mms_data = NULL;
+                                char mmsTextData[MMS_MAX_TEXT_SIZE+1] = {0};
+                                if(NULL == pMe->m_EncData.pMessage)
+                                {
+                                    MSG_FATAL("IDD_WRITEMSG_Handler pMe->m_EncData.pMessage MALLOC",0,0,0);
+                                    pMe->m_EncData.pMessage = MALLOC(sizeof(MMS_WSP_MESSAGE_SEND));
+                                    MEMSET(pMe->m_EncData.pMessage,NULL,sizeof(MMS_WSP_MESSAGE_SEND));
+                                }
+                                    
+                            	mms_data = &pMe->m_EncData.pMessage->mms_data;
+                                
+                                MSG_FATAL("mms_data->frag_num=%d",mms_data->frag_num,0,0);
+                                MSG_FATAL("mms_data->frag_num=%d",mms_data->frag_num,0,0);
+                                WSTRTOSTR(pwstrText, mmsTextData, MMS_MAX_TEXT_SIZE+1);                        
+                                len = STRLEN(mmsTextData);
+                                STRNCPY((char*)mms_data->fragment[0].hContentText,mmsTextData,len);
+                                len = STRLEN("text/plain");
+                                STRNCPY((char*)mms_data->fragment[0].hContentType,"text/plain",len);
+                                len = STRLEN("1.txt");
+                                STRNCPY((char*)mms_data->fragment[0].hContentLocation,"1.txt",len);
+                                len = STRLEN("1.txt");
+                                STRNCPY((char*)mms_data->fragment[0].hContentID,"1.txt",len);
+                                len = STRLEN("1.txt");
+                                STRNCPY((char*)mms_data->fragment[0].hContentName,"1.txt",len);
+                                mms_data->frag_num++;
+                                DBGPRINTF("mmsTextData=%s len=%d", mmsTextData, STRLEN(mmsTextData));  
+                            }
+                        }     
+#endif                       
                     return IDD_WRITEMSG_Handler((void *)pMe, EVT_COMMAND, IDS_SEND, 0);
                       
                 default:
