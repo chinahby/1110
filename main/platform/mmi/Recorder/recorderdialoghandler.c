@@ -1298,9 +1298,9 @@ static void recorder_scroll_title( Recorder* pme)
 
 uint16 recorder_get_res_id_from_error_code( Media* pme)
 {
-
 	uint16 	resId   = 0;
 	int		error	= pme->m_nLastOperationError;
+
 
 	if( error >= FILE_ERROR && error <= ENOMEDIA)
 	{
@@ -1394,11 +1394,13 @@ static boolean  dialog_handler_of_state_record( Recorder* pme, AEEEvent evt, uin
 
 	static IStatic* pStatic		= 0;
 
+
 	switch (evt)
 	{
 		case EVT_DIALOG_INIT:
 		{    
 			pStatic = (IStatic*)IDIALOG_GetControl( pme->m_pActiveDialog, IDC_RECORDER_RECORD_STATIC);
+
 
 			if( !pme->m_bSuspended)
 			{
@@ -1468,6 +1470,8 @@ static boolean  dialog_handler_of_state_record( Recorder* pme, AEEEvent evt, uin
 		case EVT_DIALOG_END:
 		{		
 			ISHELL_CancelTimer( pme->m_pShell, 0, pme);
+
+			
 #if !defined( AEE_SIMULATOR)
 			if (pme->m_bSuspended)
 			{
@@ -1480,6 +1484,8 @@ static boolean  dialog_handler_of_state_record( Recorder* pme, AEEEvent evt, uin
 				{
 					db_items_value_type dbItemValue      = {0};
 					db_get( DB_IN_USE, &dbItemValue);
+
+					recorder_stop_if( &pme->m_Media);		//Add By zzg 2012_03_01
 					if( dbItemValue.in_use)
 					{
 						MOVE_TO_STATE( STATE_RECORD_LIST);
@@ -1535,6 +1541,7 @@ __dialog_handler_of_state_record_stop__:
 			IDISPLAY_SetColor( pme->m_pDisplay, CLR_USER_TEXT, pme->m_ThemeTextColor);
 			IDISPLAY_DrawText( pme->m_pDisplay, AEE_FONT_NORMAL, pme->m_Title, -1, pme->m_nTitleX, 0, 0, IDF_TEXT_TRANSPARENT);
 
+			
 			if( pme->m_Media.m_bMediaError)
 			{
 				uint16 	resId   = recorder_get_res_id_from_error_code( &pme->m_Media);
@@ -3970,6 +3977,7 @@ static void recorder_play( Media* pme)
 	{
 		result = EUNSUPPORTED;
 	}
+
 	recorder_process_media_operation_result( pme, result, MEDIA_STATE_READY);
 }
 
@@ -4013,6 +4021,8 @@ static void recorder_record2( Media* pme)
 	recorder_release_media_if( pme);
 	recorder_create_media_if( pme);
 	recorder_set_media_volume( pme, AEE_MAX_VOLUME);
+
+	
 	recorder_process_media_operation_result( pme, recorder_record( pme), MEDIA_STATE_READY);
 }
 
@@ -4188,6 +4198,7 @@ void recorder_stop_if( Media* pme)
 
 		if( ( result = IMEDIA_Stop( pme->m_pMedia)) != SUCCESS)
 		{		
+			
 			debug( ";stop failed, 0x%x", result);
 		}
 		OEMOS_Sleep( 200);		
@@ -4219,6 +4230,7 @@ static void recorder_replay( Media* pme)
 	{
 		debug( ";replay failed, 0x%x", result);
 	}
+
 
 	recorder_process_media_operation_result( pme, result, MEDIA_STATE_PLAYING);
 }
