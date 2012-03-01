@@ -785,7 +785,6 @@ static void CWmsApp_FreeAppData(WmsApp *pMe)
     {
         FREEIF(pMe->m_DecData.message.mms_data.fragment[i].pContent);
     }
-    WMSAPPU_SYSFREE(pMe->m_pMsgEvent);
     FREEIF(pMe->m_EncData.pReadReport);
     FREEIF(pMe->m_EncData.pDeliveryacknowledgement);
     FREEIF(pMe->m_EncData.pNotifyresp);
@@ -1444,13 +1443,13 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
 				if (bRet == TRUE)
                 {
 					(void)MEMSET(&pMe->m_CltTsdata, 0 , sizeof(pMe->m_CltTsdata));
+					MEMCPY(&pMe->m_message,&info->mt_message_info.message,sizeof(wms_client_message_s_type));
                      
 	                 nRet = IWMS_TsDecode(pMe->m_pwms, 
 	                             &info->mt_message_info.message.u.cdma_message.raw_ts, 
 	                             &pMe->m_CltTsdata);
 
 #ifdef FEATURE_USES_MMS
-                     pMe->m_pMsgEvent = ((wms_msg_event_info_s_type*)dwParam);
 	            	 nRet = IWMS_MMsDecodeNotifyBody(pMe->m_pwms,&pMe->m_CltTsdata,notify_buf);
 	            
 
@@ -2110,10 +2109,7 @@ Exit:
                         if(pMe->m_isCheckMMSNotify)
                         {
                             wms_memory_store_e_type   mem_store = WMS_MEMORY_STORE_RUIM;
-                            if(pMe->m_pMsgEvent == NULL)
-                            {
-                                return FALSE;
-                            }
+                            
                             if(sendData->pNotifyresp == NULL)
                                 sendData->pNotifyresp = (MMS_WSP_ENC_NOTIFY_RESP*)MALLOC(sizeof(MMS_WSP_ENC_NOTIFY_RESP));
                                 
@@ -2140,22 +2136,22 @@ Exit:
                             pMe->m_CltTsdata.u.cdma.user_data.data_len = STRLEN((char*)pMe->m_CltTsdata.u.cdma.user_data.data);
                             IWMS_TsEncode(pMe->m_pwms,
                                 &pMe->m_CltTsdata,
-                                &pMe->m_pMsgEvent->mt_message_info.message.u.cdma_message.raw_ts);  
+                                &pMe->m_message.u.cdma_message.raw_ts);  
                                 
                                 WmsApp_PlaySMSAlert(pMe, TRUE);
 
                                 MSG_FATAL("EVT_MMS_PDUDECODE = %d,%d",
-                                    pMe->m_pMsgEvent->mt_message_info.message.msg_hdr.mem_store,
-                                    pMe->m_pMsgEvent->mt_message_info.message.msg_hdr.tag,
+                                    pMe->m_message.msg_hdr.mem_store,
+                                    pMe->m_message.msg_hdr.tag,
                                     0);
                                     
-                                pMe->m_pMsgEvent->mt_message_info.message.msg_hdr.mem_store = mem_store;
+                                pMe->m_message.msg_hdr.mem_store = mem_store;
                             if(IWMS_MsgWrite( pMe->m_pwms,
                                     pMe->m_clientId,
                                     &pMe->m_callback,
                                     (void*)pMe,
                                     WMS_WRITE_MODE_INSERT,
-                                    &pMe->m_pMsgEvent->mt_message_info.message) == SUCCESS)
+                                    &pMe->m_message) == SUCCESS)
                             {
                                 gbWmsSMSNtf = TRUE;
                                 gbWmsLastNtfIsSMS = TRUE;
@@ -2217,7 +2213,6 @@ Exit:
                                 WMS_MMSState(WMS_MMS_PDU_MNotifyrespInd,0,(uint32)sendData);
                                
                             }                     
-                             WMSAPPU_SYSFREE(pMe->m_pMsgEvent);
                              // ¸üÐÂÍ¼±ê
                              WmsApp_UpdateAnnunciators(pMe);
                              break;
@@ -2395,7 +2390,7 @@ Exit:
             {
                 MSG_FATAL("WMS_MMS_PDU_Decode nResult = %d",nResult,0,0);
             }
-            WMSAPPU_SYSFREE(pMe->m_pMsgEvent);
+            
             MSG_FATAL("WMS_MMS_PDU_Decode WMSAPPU_SYSFREE(pMe->m_pMsgEvent);",0,0,0);
             return TRUE;
         }

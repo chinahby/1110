@@ -802,6 +802,7 @@ typedef struct WmsApp
     int                             m_idxCur;           // 操作 m_CurMsgNodes 的当前索引号
     wms_client_message_s_type       *m_pCurCltPhrase;   // 用于常用语
     wms_client_message_s_type       **m_pCurSendCltMsg; // 用于发送给特定号码的消息列表
+    wms_client_message_s_type       m_message;
     int                             m_idxCurSend;       // 当前发送的消息在 m_pCurSendCltMsg 中的索引
     int                             m_nSendItems;       // m_pCurSendCltMsg 包含的总项数
     IVector                         *m_pSendList;
@@ -915,7 +916,7 @@ typedef struct WmsApp
 #ifdef FEATURE_USES_MMS      
     MMS_WSP_DEC_DATA                m_DecData;
     MMS_WSP_ENCODE_SEND             m_EncData;
-    wms_msg_event_info_s_type       *m_pMsgEvent;
+    
     IImage                          *m_pMMSImage;
     IImage                          *m_pMMSSOUND;
     IImage                          *m_pMMSVIDEO;
