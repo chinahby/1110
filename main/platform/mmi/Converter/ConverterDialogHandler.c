@@ -1001,14 +1001,37 @@ static boolean  Converter_ConvertEvent(CConverter *pMe, AEEEvent eCode, uint16 w
             FREEIF(m_inputNumber);
             return TRUE;
         }
+		
+		//Add By zzg 2012_03_01
+		case EVT_KEY_HELD:
+		{
+			if (AVK_DEL == wParam)
+			{
+				if(pMe->m_nCtlID == IDC_NUMBER1 ||pMe->m_nCtlID == IDC_NUMBER2)
+				{
+					ITEXTCTL_Reset(pMe->pNumber1);
+					ITEXTCTL_Reset(pMe->pNumber2);	
 
+					(void) ISHELL_PostEvent(pMe->m_pShell,
+                                            AEECLSID_CONVERTER,
+                                            EVT_USER_REDRAW,
+                                            0,
+                                            0);
+				}
+			}
+			return TRUE;
+		}
+		//Add End
+		
         case EVT_KEY:
         {
             char     chEnter  = 0;
             boolean bRedraw = FALSE;
             boolean bCalc = FALSE;
             uint16   ctlID = 0;
-                
+
+			MSG_FATAL("***zzg EVT_KEY wParam=%x***", wParam,0,0);
+			
             switch (wParam)
             {
                 case AVK_0:
@@ -1033,7 +1056,37 @@ static boolean  Converter_ConvertEvent(CConverter *pMe, AEEEvent eCode, uint16 w
                     }
                 }
                     break;
-                    
+
+				//Add By zzg 2012_03_02
+				case AVK_DEL:
+				{
+					if(pMe->m_nCtlID == IDC_NUMBER1 ||pMe->m_nCtlID == IDC_NUMBER2)
+					{
+						Converter_GetTextToInputNum(pMe, wstrDisplay, m_inputNumber);
+					}					
+
+					nLen = STRLEN(m_inputNumber);
+					
+					if (nLen != 0)					
+					{
+						bRedraw = TRUE;
+						bCalc = TRUE;
+						chEnter = 0;
+						if(IS_NOT_NUMBER(m_inputNumber[0]))
+						{
+						    MEMSET(m_inputNumber, 0, (MAX_INPUT_NUMBER + 3)*sizeof(char));
+						}
+						else
+						{
+						    m_inputNumber[nLen - 1] = chEnter;
+						}
+					}
+                                      
+					break;
+				}
+				//Add End	
+
+				case AVK_M:			//Add By zzg 2012_03_01
                 case AVK_STAR:
                 {
                     if(pMe->m_nCtlID == IDC_NUMBER1 ||pMe->m_nCtlID == IDC_NUMBER2)
@@ -1928,12 +1981,38 @@ static boolean  Converter_ChangeCurrencyEvent(CConverter *pMe, AEEEvent eCode, u
             }
             return TRUE;
         }
+
+		//Add By zzg 2012_03_01
+		case EVT_KEY_HELD:
+		{
+			if (AVK_DEL == wParam)
+			{
+				if(pMe->m_nCtlID == coeffNum1)
+                {
+                    ITEXTCTL_Reset(pMe->coeff1);
+                }
+                if(pMe->m_nCtlID == coeffNum2)
+                {
+                    ITEXTCTL_Reset(pMe->coeff2);
+                }		
+
+				(void) ISHELL_PostEvent(pMe->m_pShell,
+                                            AEECLSID_CONVERTER,
+                                            EVT_USER_REDRAW,
+                                            0,
+                                            0);
+			}
+			return TRUE;
+		}
+		//Add End
         
         case EVT_KEY:
         {
             char     chEnter  = 0;
             boolean bRedraw = FALSE;
             uint16   ctlID = 0;
+
+			MSG_FATAL("***zzg EVT_KEY wParam=%x***", wParam,0,0);
                 
             switch (wParam)
             {
@@ -1974,7 +2053,45 @@ static boolean  Converter_ChangeCurrencyEvent(CConverter *pMe, AEEEvent eCode, u
                     }
                 }
                     break;
+
+				//Add By zzg 2012_03_02
+				case AVK_DEL:
+				{
+					chEnter = 0;
+                    nLen = STRLEN(m_inputNumber);
                     
+                    if (nLen == 0 ||pMe->m_nCtlID == basicCurrency ||bChangable == FALSE)
+                    {
+                        CLOSE_DIALOG(DLGRET_CANCELED)
+                        return TRUE;
+                    }
+                    else
+                    {
+                        bRedraw = TRUE;
+                        m_inputNumber[nLen -1] = chEnter;
+                        (void) STRTOWSTR(m_inputNumber, wstrDisplay, sizeof(wstrDisplay));
+                        if(pMe->m_nCtlID == coeffNum1)
+                        {
+                            ITEXTCTL_SetText(pMe->coeff1, wstrDisplay, -1);
+                        }
+                        if(pMe->m_nCtlID == coeffNum2)
+                        {
+                            ITEXTCTL_SetText(pMe->coeff2, wstrDisplay, -1);
+                        }
+                        #if defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_W516)
+						#else
+                        if(pMe->m_nCtlID == coeffNum3)
+                        {
+                            ITEXTCTL_SetText(pMe->coeff3, wstrDisplay, -1);
+                        }
+                        #endif
+                    }
+                                      
+					break;
+				}
+				//Add End
+
+				case AVK_M:			//Add By zzg 2012_03_01
                 case AVK_STAR:
                 {
                     if((pMe->m_nCtlID != basicCurrency) && (bChangable == TRUE))

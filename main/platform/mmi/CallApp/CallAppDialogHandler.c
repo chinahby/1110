@@ -2006,6 +2006,9 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                     //}
                     len = WSTRLEN(pMe->m_DialString);
                     MSG_FATAL("pMe->m_DialString len=%d",len,0,0);
+					
+					MSG_FATAL("***zzg m_bEditRecNumber=%d, dwParam=%x***", pMe->m_bEditRecNumber,dwParam,0);
+					
 #ifdef FEATURE_EDITABLE_RECORD
                    if(pMe->m_bEditRecNumber)
                    {
@@ -2020,12 +2023,16 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                            return TRUE;
                        }
 #else
+						//Del by zzg 2012_03_01
+						/*
                        if(dwParam == 0)
                        {
                        		CLOSE_DIALOG(DLGRET_OK)
                             return TRUE;
                        }
                        else
+					   	*/
+					   	//Del End
                        {
                        	  if(len == 0)
                        	  {
