@@ -6356,7 +6356,15 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
 			            					}
 											else
 											{
-												TextCtl_AddChar(pContext,(AECHAR)(VLCharSEKeyItem[i].wp[pContext->m_wp]));
+												if(pContext->m_bCaplk)
+												{
+													TextCtl_AddChar(pContext,(AECHAR)(VLCharCapSEKeyItem[i].wp[pContext->m_wp]));
+													pContext->m_bCaplk = FALSE;
+												}
+												else
+												{
+					                            	TextCtl_AddChar(pContext,(AECHAR)(VLCharSEKeyItem[i].wp[pContext->m_wp]));
+												}												
 											}
                                             pContext->is_bSelectchar=TRUE;
                                             pContext->m_oldkey=i;
