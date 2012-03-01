@@ -598,7 +598,10 @@ static boolean CameraApp_MainMenuHandleEvent(CCameraApp *pMe, AEEEvent eCode, ui
 			else
 			{
 				IMENUCTL_AddItem(pMenu, AEE_APPSCAMERAAPP_RES_FILE, IDS_ITEM_CAMERA, IDS_ITEM_CAMERA, NULL, NULL);
-            	IMENUCTL_AddItem(pMenu, AEE_APPSCAMERAAPP_RES_FILE, IDS_ITEM_CAMERA_GALLERY, IDS_ITEM_CAMERA_GALLERY, NULL, NULL);
+                if(!pMe->m_isFormMMS)
+                {
+            	    IMENUCTL_AddItem(pMenu, AEE_APPSCAMERAAPP_RES_FILE, IDS_ITEM_CAMERA_GALLERY, IDS_ITEM_CAMERA_GALLERY, NULL, NULL);
+                }
 			}            
             #if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T)
             IMENUCTL_AddItem(pMenu, AEE_APPSCAMERAAPP_RES_FILE, IDS_CAMERA_PHOTO_MODE, IDS_CAMERA_PHOTO_MODE, NULL, NULL);
