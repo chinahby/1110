@@ -780,7 +780,11 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
                 switch(nDevice)
                 {
                     case APP_MEDIA_ALLOW:
-						if (pMe->m_isRecordMode == TRUE)
+						if ((pMe->m_isRecordMode == TRUE)
+#ifdef FEATURE_USES_MMS  
+                            || (pMe->m_isFormMMS)
+#endif                            
+                            )
 						{
 							pMe->m_eCurState = STATE_CPOPMSG;
 						}
@@ -803,7 +807,11 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
                         //Add By zzg 2010_09_01
                         //pMe->m_eCurState = STATE_CMAINMENU;   
                         
-						if (pMe->m_isRecordMode == TRUE)
+						if ((pMe->m_isRecordMode == TRUE)
+#ifdef FEATURE_USES_MMS  
+                            || (pMe->m_isFormMMS)
+#endif                            
+                            )
 						{
 							pMe->m_eCurState = STATE_CPOPMSG;
 						}
@@ -825,7 +833,7 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
                     default:
                         break;                   
                 }
-            }
+            }                 
 
             SetDeviceState(DEVICE_TYPE_CAMERA, DEVICE_CAMERA_STATE_ON);
       

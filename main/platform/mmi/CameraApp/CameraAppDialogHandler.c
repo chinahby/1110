@@ -1976,7 +1976,11 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
     switch (eCode)
     {
         case EVT_DIALOG_INIT: 
-			if (pMe->m_isRecordMode == TRUE)
+			if ((pMe->m_isRecordMode == TRUE)
+#ifdef FEATURE_USES_MMS  
+                || (pMe->m_isFormMMS)
+#endif                
+                )
 			{
 				pMe->m_bIsPreview = FALSE;
 	            pMe->m_nCameraState = CAM_START;
@@ -2014,7 +2018,11 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
 			}
 #endif         
 			//Add End	
-			if (pMe->m_isRecordMode == TRUE)
+			if ((pMe->m_isRecordMode == TRUE)
+#ifdef FEATURE_USES_MMS  
+                || (pMe->m_isFormMMS)
+#endif
+                )
 			{
 				if(pMe->m_pCamera)
 	            {
