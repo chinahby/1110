@@ -19261,6 +19261,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                 IDIALOG_SetFocus(pMe->m_pActiveIDlg, IDC_VIEWMSG_MMS_MENU);
                 IMENUCTL_Redraw(pMenuCtl);
                 IMENUCTL_SetActive(pMenuCtl, TRUE);
+                ISTATIC_SetActive(pStatic, FALSE);
                 pMe->m_ResData.nIndex = IDC_VIEWMSG_MMS_STATIC;
                 if(pBuffer != NULL)
                 {
@@ -19301,6 +19302,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                 char* pMimeType = NULL;
                 uint8 MenuSelectdId = IMENUCTL_GetSel(pMenuCtl);  
                 ISTATIC_Redraw(pStatic);
+                ISTATIC_SetActive(pStatic, FALSE);
                 IMENUCTL_SetActive(pMenuCtl, TRUE);
                 IMENUCTL_Redraw(pMenuCtl);                  
                 MSG_FATAL("m_CurrentState=%d, soundData.nCount=%d, m_eMBoxType=%d",pMe->m_CurrentState,pMe->m_ResData.soundData.nCount,pMe->m_eMBoxType);
@@ -19440,19 +19442,17 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
             {
                 case AVK_CLR:
 #ifdef FEATURE_ALL_KEY_PAD
-                    if(dwParam == 1)
+                    if (NULL != pMe->m_pMenu)
                     {
-                        if (NULL != pMe->m_pMenu)
-                        {
-                            IMENUCTL_Release(pMe->m_pMenu);
-                            pMe->m_pMenu = NULL;
-                            (void) ISHELL_PostEventEx(pMe->m_pShell, 
-                                                EVTFLG_ASYNC,
-                                                AEECLSID_WMSAPP,
-                                                EVT_USER_REDRAW,
-                                                0, 
-                                                0);
-                        }
+                        ISTATIC_SetProperties(pStatic, ST_GRAPHIC_BG);  
+                        IMENUCTL_Release(pMe->m_pMenu);
+                        pMe->m_pMenu = NULL;
+                        (void) ISHELL_PostEventEx(pMe->m_pShell, 
+                                            EVTFLG_ASYNC,
+                                            AEECLSID_WMSAPP,
+                                            EVT_USER_REDRAW,
+                                            0, 
+                                            0);
                     }
                     else
                     {
@@ -19466,6 +19466,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                     else
                     {
                         MSG_FATAL("pMe->m_pMenu != NULL",0,0,0);
+                        ISTATIC_SetProperties(pStatic, ST_GRAPHIC_BG);  
                         IMENUCTL_Release(pMe->m_pMenu);
                         pMe->m_pMenu = NULL;
                         (void) ISHELL_PostEventEx(pMe->m_pShell, 
@@ -19484,6 +19485,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                         {
                             return TRUE;
                         }
+                        ISTATIC_SetProperties(pStatic, ST_GRAPHIC_BG|ST_NOSCROLL);  
                         if(pMe->m_eMBoxType == WMS_MB_INBOX_MMS)
                         {
                             // ÏÔÊ¾µ¯³ö²Ëµ¥
