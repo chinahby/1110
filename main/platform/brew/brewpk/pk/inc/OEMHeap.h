@@ -53,7 +53,7 @@ extern int OEM_GetHeapInitBytes(void **ppHeapBytes, uint32 *puHeapBytesLen);
 #define sys_realloc(p, n)      OEMOS_DbgReallocMark(AEEHeap_Realloc(p,n),p,__FILE__,__LINE__)
 #define sys_strdup(p)          (char *)OEMOS_DbgMark(AEEHeap_StrDup(p),__FILE__,__LINE__)
 #define sys_malloc(n)          OEMOS_DbgMark(AEEHeap_Malloc(n),__FILE__,__LINE__)
-#define sys_free(p)            OEMOS_DbgUnMark(AEEHeap_Free,p,__FILE__,__LINE__)
+#define sys_free(p)            if(p != NULL){OEMOS_DbgUnMark(AEEHeap_Free,p,__FILE__,__LINE__); p = NULL;}
 #endif
 #define sys_lockmem            AEEHeap_Lock
 #define sys_unlockmem          AEEHeap_Unlock
