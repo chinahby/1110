@@ -8009,6 +8009,7 @@ static boolean IDD_SENDING_Handler(void *pUser,
 #ifdef FEATURE_USES_MMS
                 if(pMe->m_isMMS)    
                 {
+                    char pszPath[AEE_MAX_FILE_NAME]={'\0'};
                     if(pMe->m_isForward)//如果是转发进来的，必须把转发的临时文件给删掉
                     {
                         IFile* pIFile = NULL;
@@ -8041,6 +8042,16 @@ static boolean IDD_SENDING_Handler(void *pUser,
                     {
                         nResID = IDS_FAILED;
                     }
+                    DBGPRINTF("MMSImageName=%s len=%d", pszPath, STRLEN(pszPath));
+                    ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSIMAGE,pszPath, sizeof(pszPath));      
+                    ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSSOUND,pszPath, sizeof(pszPath)); 
+                    ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSVIDEO,pszPath, sizeof(pszPath)); 
+                    FREEIF(pMe->m_EncData.pMessage);
+                    pMe->m_hasImage = FALSE;
+                    pMe->m_hasSound = FALSE;
+                    pMe->m_hasVideo = FALSE;
+                    pMe->m_isMMS = FALSE;
+                    pMe->m_isSendToAlbumOrEmain = FALSE; 
                 }
                 else
 #endif            
