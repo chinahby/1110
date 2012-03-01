@@ -2093,8 +2093,16 @@ boolean WMS_MMS_SaveMMS(char* phoneNumber,char *pBuffer,int DataLen,int nKind)
     }   
 
 //  Save mms info
-    DBGPRINTF("[WMS_MMS_SaveMMS] PhoneNumber:0x%x:0x%x:0x%x",phoneNumber[0],phoneNumber[1],phoneNumber[2]);  
+    DBGPRINTF("[WMS_MMS_SaveMMS] PhoneNumber:%s",phoneNumber);  
+    if(STRISTR(phoneNumber, "PLMN") != NULL)
+    {
+        char temp[32];
+        STRCPY(temp, phoneNumber+4);
+        DBGPRINTF("temp=%s", temp);
+        STRCPY(phoneNumber, temp);
+    }
     STRTOPHONENUMBER(mmsDataInfoList[g_mmsDataInfoMax].phoneNumber,phoneNumber);
+    DBGPRINTF("[WMS_MMS_SaveMMS] PhoneNumber:%s",phoneNumber);  
 	//STRCPY(mmsDataInfoList[g_mmsDataInfoMax].phoneNumber, phoneNumber);
     DBGPRINTF("[WMS_MMS_SaveMMS] PhoneNumber:0x%x:0x%x:0x%x",mmsDataFileName[0],mmsDataFileName[1],mmsDataFileName[2]);  
     STRCPY(mmsDataInfoList[g_mmsDataInfoMax].MMSDataFileName, mmsDataFileName);
