@@ -1126,8 +1126,15 @@ static void recorder_compose_title( Recorder* pme)
 	}
 
 	MEMSET( pme->m_Title, 0, sizeof( pme->m_Title));
+
+	DBGPRINTF("***zzg recorder_compose_title m_FileName=%s***", pme->m_Media.m_FileName);
+	DBGPRINTF("***zzg recorder_compose_title m_pszSaveDir=%s, length=%d***", pme->m_Media.m_pszSaveDir, STRLEN( pme->m_Media.m_pszSaveDir));
+	
 	recorder_str_2_wstr( pme->m_Media.m_FileName + STRLEN( pme->m_Media.m_pszSaveDir), length, pme->m_Title, sizeof( pme->m_Title));
 	length = WSTRLEN( pme->m_Title);
+
+	DBGPRINTF("***zzg recorder_compose_title total=%d, length=%d***", total, length);
+	
 	if( total == 0)
 	{
 		pme->m_Title[length] = 0;
@@ -2181,7 +2188,8 @@ static int recorder_list_create_menu( Recorder* pme, IMenuCtl* pMenu, char* toSe
 		    	sizeof( RecorderPreference)
 		    );
 
-		if( prefs.storage == 0 && recorder_is_tf_card_exist())
+		//if( prefs.storage == 0 && recorder_is_tf_card_exist())
+		if( prefs.storage == 1 && recorder_is_tf_card_exist())	//Modify by zzg 2012_03_01
 		{
 			pme->m_Media.m_pszSaveDir = RECORDER_MEMO_SAVE_DIR_CARD0;
 		}
@@ -4073,7 +4081,8 @@ int recorder_recordEx( Media* pme, PFNMEDIANOTIFY pfnNotify)
 		    	sizeof( RecorderPreference)
 		    );
 
-		if( prefs.storage == 0 && recorder_is_tf_card_exist())
+		//if( prefs.storage == 0 && recorder_is_tf_card_exist())
+		if( prefs.storage == 1 && recorder_is_tf_card_exist())	//Modify by zzg 2012_03_01
 		{
 			pme->m_pszSaveDir = RECORDER_MEMO_SAVE_DIR_CARD0;
 		}
