@@ -592,7 +592,7 @@ static boolean CameraApp_MainMenuHandleEvent(CCameraApp *pMe, AEEEvent eCode, ui
             // 初始化菜单项
             if (pMe->m_isRecordMode == TRUE)
             {
-				IMENUCTL_AddItem(pMenu, AEE_APPSCAMERAAPP_RES_FILE, IDS_VIDEO_CAMERA, IDS_VIDEO_CAMERA, NULL, NULL);
+				//IMENUCTL_AddItem(pMenu, AEE_APPSCAMERAAPP_RES_FILE, IDS_VIDEO_CAMERA, IDS_VIDEO_CAMERA, NULL, NULL);
             	//IMENUCTL_AddItem(pMenu, AEE_APPSCAMERAAPP_RES_FILE, IDS_ITEM_CAMERA_GALLERY, IDS_ITEM_CAMERA_GALLERY, NULL, NULL);
 			}
 			else
@@ -1969,10 +1969,34 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
                                             uint32     dwParam)
 {
     static IStatic *pStatic = NULL;     
+	AECHAR WTitle[40] = {0};
     
     switch (eCode)
     {
         case EVT_DIALOG_INIT: 
+			if (pMe->m_isRecordMode == TRUE)
+			{
+				pMe->m_bIsPreview = FALSE;
+	            pMe->m_nCameraState = CAM_START;
+	            
+	            pMe->m_wMsgID = IDS_MSG_WAITING;
+	            pMe->m_nMsgTimeout = TIMEOUT_MS_MSGBOX;
+	            
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+	                                AEE_APPSCAMERAAPP_RES_FILE,                                
+	                                IDS_ITEM_CAMERA,
+	                                WTitle,
+	                                sizeof(WTitle));
+				if(pMe->m_pIAnn != NULL)
+	        	{
+			    	IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				}
+	                
+	            IDISPLAY_SetClipRect(pMe->m_pDisplay, NULL); 
+
+	            IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn,AEECLSID_DISPLAY1,TRUE);            
+			
+			}
             return TRUE;
         
         case EVT_DIALOG_START:
@@ -1987,8 +2011,54 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
 				     TRUE);
 			}
 #endif         
-			//Add End			
+			//Add End	
+			if (pMe->m_isRecordMode == TRUE)
+			{
+				if(pMe->m_pCamera)
+	            {
+	                ICAMERA_Release(pMe->m_pCamera);
+	                pMe->m_pCamera = NULL;
+	            }   
 
+				// set the annunciator disable
+				IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn,AEECLSID_DISPLAY1,FALSE);
+
+				pMe->m_bMemoryCardExist = CameraApp_FindMemoryCardExist(pMe);
+#ifdef FEATURE_VERSION_FLEXI203P
+
+				// 如果T卡不存在，defualt保存在手机里
+				if(!pMe->m_bMemoryCardExist)
+				{
+				    pMe->m_nCameraStorage = OEMNV_CAMERA_STORAGE_PHONE;
+				    
+				    pMe->m_nCameraSize = OEMNV_CAMERA_SIZE_DEFAULT;
+
+				    (void)ICONFIG_SetItem(pMe->m_pConfig,
+				                          CFGI_CAMERA_STORAGE,
+				                          &pMe->m_nCameraStorage,
+				                          sizeof(pMe->m_nCameraStorage));  
+
+				    (void)ICONFIG_SetItem(pMe->m_pConfig,
+				                          CFGI_CAMERA_SIZE,
+				                          &pMe->m_nCameraSize,
+				                          sizeof(pMe->m_nCameraSize)); 
+				}
+				else
+				{
+				    pMe->m_nCameraStorage = OEMNV_CAMERA_STORAGE_MEMORY_CARD;
+				}
+#else
+				if ( pMe->m_isStartFromFacebook == TRUE )
+				{
+					pMe->m_nCameraStorage = OEMNV_CAMERA_STORAGE_PHONE;
+				}
+				else
+				{
+					pMe->m_nCameraStorage = OEMNV_CAMERA_STORAGE_MEMORY_CARD;
+				}
+#endif
+			}
+			
             if((pMe->m_nMsgTimeout != 0) && (pMe->m_wMsgID != IDS_MSG_WAITING))           
             {
                 (void)ISHELL_SetTimer(pMe->m_pShell,

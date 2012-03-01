@@ -780,7 +780,14 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
                 switch(nDevice)
                 {
                     case APP_MEDIA_ALLOW:
-                        pMe->m_eCurState = STATE_CMAINMENU;                               
+						if (pMe->m_isRecordMode == TRUE)
+						{
+							pMe->m_eCurState = STATE_CPOPMSG;
+						}
+						else
+						{
+                        	pMe->m_eCurState = STATE_CMAINMENU;                               
+						}
                         break;
 
                     case APP_MEDIA_IMPACT_BY_MP3:                    
@@ -794,7 +801,16 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
                         //Del End
                         
                         //Add By zzg 2010_09_01
-                        pMe->m_eCurState = STATE_CMAINMENU;    
+                        //pMe->m_eCurState = STATE_CMAINMENU;   
+                        
+						if (pMe->m_isRecordMode == TRUE)
+						{
+							pMe->m_eCurState = STATE_CPOPMSG;
+						}
+						else
+						{
+                        	pMe->m_eCurState = STATE_CMAINMENU;                               
+						}
                         break;
                         //Add End                        
                         

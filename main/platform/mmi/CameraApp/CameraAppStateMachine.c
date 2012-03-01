@@ -278,7 +278,15 @@ static NextFSMAction CameraApp_StatePreviewHandle(CCameraApp *pMe)
             return NFSMACTION_CONTINUE;
     
         case DLGRET_CANCELED:
-            MOVE_TO_STATE(STATE_CMAINMENU)
+			//MOVE_TO_STATE(STATE_CMAINMENU)
+			if (pMe->m_isRecordMode == TRUE)
+			{
+				MOVE_TO_STATE(STATE_EXIT)  
+			}
+			else
+			{
+            	MOVE_TO_STATE(STATE_CMAINMENU)                              
+			}            
             return NFSMACTION_CONTINUE;
 
         case DLGRET_POPMSG:
@@ -398,7 +406,15 @@ static NextFSMAction CameraApp_StatePicHandle(CCameraApp *pMe)
             return NFSMACTION_CONTINUE;
 
         case DLGRET_CANCELED:
-            MOVE_TO_STATE(STATE_CMAINMENU)
+            //MOVE_TO_STATE(STATE_CMAINMENU)
+            if (pMe->m_isRecordMode == TRUE)
+			{
+				MOVE_TO_STATE(STATE_EXIT)  
+			}
+			else
+			{
+            	MOVE_TO_STATE(STATE_CMAINMENU)                              
+			}   
             return NFSMACTION_CONTINUE;
         
         case DLGRET_EXIT:
@@ -454,7 +470,15 @@ static NextFSMAction CameraApp_StateVideoHandle(CCameraApp *pMe)
             return NFSMACTION_CONTINUE;
 
         case DLGRET_CANCELED:
-            MOVE_TO_STATE(STATE_CMAINMENU)
+			if (pMe->m_isRecordMode == TRUE)
+			{
+				MOVE_TO_STATE(STATE_EXIT)  
+			}
+			else
+			{
+            	MOVE_TO_STATE(STATE_CMAINMENU)                              
+			}   
+            //MOVE_TO_STATE(STATE_CMAINMENU)
             return NFSMACTION_CONTINUE;
         
         case DLGRET_EXIT:
@@ -500,20 +524,28 @@ static NextFSMAction CameraApp_StatePopMSGHandle(CCameraApp *pMe)
             return NFSMACTION_CONTINUE;
 
         case DLGRET_CANCELED:
-            if(pMe->m_ePreState == STATE_CPIC)
-            {
-                pMe->m_bRePreview =  TRUE;
+			if (pMe->m_isRecordMode == TRUE)
+			{
+				pMe->m_bRePreview =  TRUE;
                 MOVE_TO_STATE(STATE_CPREVIEW);
-            }
-			else if (pMe->m_ePreState == STATE_CVIDEO)
-            {
-                pMe->m_bRePreview =  TRUE;
-                MOVE_TO_STATE(STATE_CPREVIEW);
-            }
-            else
-            {
-                MOVE_TO_STATE(pMe->m_ePreState);
-            }
+			}
+			else
+			{
+	            if(pMe->m_ePreState == STATE_CPIC)
+	            {
+	                pMe->m_bRePreview =  TRUE;
+	                MOVE_TO_STATE(STATE_CPREVIEW);
+	            }
+				else if (pMe->m_ePreState == STATE_CVIDEO)
+	            {
+	                pMe->m_bRePreview =  TRUE;
+	                MOVE_TO_STATE(STATE_CPREVIEW);
+	            }
+	            else
+	            {
+	                MOVE_TO_STATE(pMe->m_ePreState);
+	            }
+    		}
             return NFSMACTION_CONTINUE;
             
         default:
