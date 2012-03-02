@@ -349,6 +349,7 @@ static boolean bImageDecoded = FALSE;
 static boolean bsupersingal = FALSE;
 static StartInfo start_info;
 
+
 /*==============================================================================
 
                                  º¯ÊýÉùÃ÷
@@ -3196,7 +3197,6 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #ifdef FEATURE_VERSION_C11    
     static IStatic * pStatic = NULL;
 #endif
-
     if (NULL == pMe)
     {
         return FALSE;
@@ -3441,7 +3441,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #endif	
 				return TRUE;
             }
-            
+#ifndef FEATURE_VERSION_C11
 #if defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_HITZ181)
 	     if(wParam == AVK_SHIFT)
 #elif defined(FEATURE_VERSION_S1000T) 
@@ -3542,6 +3542,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
       			CLOSE_DIALOG(DLGRET_BATT_INFO)
             	return TRUE;
             }
+#endif
 		#endif
         #endif    
         case EVT_DIALOG_END:

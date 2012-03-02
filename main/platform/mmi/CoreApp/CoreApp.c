@@ -1150,7 +1150,13 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             default:
                 break;
             }
-            #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)||defined(FEATURE_LCD_TOUCH_ENABLE)||defined(FEATURE_VERSION_C11)
+            #if defined(FEATURE_VERSION_C11)
+             if(wParam == AVK_INFO)
+             {
+               return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+             }
+            #endif
+            #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)||defined(FEATURE_LCD_TOUCH_ENABLE)
 			
 			return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
             #endif
