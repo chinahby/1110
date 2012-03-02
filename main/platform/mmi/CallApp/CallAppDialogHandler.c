@@ -2030,9 +2030,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                        		CLOSE_DIALOG(DLGRET_OK)
                             return TRUE;
                        }
-                       else
-					   	*/
-					   	//Del End
+                       else					   	
                        {
                        	  if(len == 0)
                        	  {
@@ -2044,6 +2042,29 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                               return TRUE;
                           }
                        }
+                       */
+					   	//Del End
+
+						//Add By zzg 2012_03_02
+						if (len <= 1)
+						{
+							// Clearing the last digit exits the dialog
+							pMe->m_DialString[0] = 0;
+							CallApp_Draw_NumEdit_SoftKey(pMe);
+							CallApp_Display_Number(pMe);
+							
+							// Draw it now!
+							IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+							
+							if(pMe->m_msg_text_id == IDS_NUM_TOO_LONG)
+							{
+								pMe->m_msg_text_id=0;
+							}
+							
+							CLOSE_DIALOG(DLGRET_OK)
+							return TRUE;
+						}
+						//Add End						
 #endif
                    }
                    else if (len <= 1)
