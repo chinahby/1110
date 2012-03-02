@@ -275,9 +275,9 @@ when       who     what, where, why
 // field is added to the end of OEMConfigListType.
 //
 #ifdef FEATURE_PEKTEST
-#define OEMCONFIGLIST_VERSION ( (uint16) 0x000F )
+#define OEMCONFIGLIST_VERSION ( (uint16) 0x0010 )
 #else
-#define OEMCONFIGLIST_VERSION ( (uint16) 0x000E )
+#define OEMCONFIGLIST_VERSION ( (uint16) 0x000F )
 #endif
 
 ////
@@ -418,7 +418,7 @@ typedef struct {
 #define DEFAULT_BREW_USERNAME       ""
 #define DEFAULT_BREW_PASSWORD       ""
 #define DEFAULT_BREW_SERVER         "brewpostpago.movilnet.com.ve"
-#define DEFAULT_BREW_DOWNLOAD_FLG   (DIF_TEST_ALLOWED | DIF_SID_VALIDATE_ALL | DIF_RUIM_DEL_OVERRIDE | DIF_MIN_FOR_SID)
+#define DEFAULT_BREW_DOWNLOAD_FLG   (DIF_TEST_ALLOWED | DIF_SID_VALIDATE_ALL | DIF_MIN_FOR_SID)
 #define DEFAULT_BREW_APOLICY        APOLICY_SID
 #define DEFAULT_BREW_PPOLICY        PPOLICY_BREW_OR_CARRIER
 
@@ -1656,7 +1656,7 @@ static OEMConfigListType oemi_cache = {
    {0,},                                           // CFGI_CUG
    FALSE,                                          // CFGI_VR
    {DEFAULT_BREW_CARRIER_ID, DEFAULT_BREW_PLATFORM_ID,   // Download Info
-    {"0000000000000000"}, {"00000000"},
+    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0},
     DEFAULT_BREW_SERVER, DEFAULT_BREW_DOWNLOAD_FLG,
     DEFAULT_BREW_APOLICY, DEFAULT_BREW_PPOLICY
    },
@@ -2657,8 +2657,9 @@ void OEM_RestoreFactorySetting( void )
    oemi_cache.download_info.wFlags = DEFAULT_BREW_DOWNLOAD_FLG;
    oemi_cache.download_info.wAuth  = DEFAULT_BREW_APOLICY;
    oemi_cache.download_info.wPrivP = DEFAULT_BREW_PPOLICY;
-   STRCPY((char *)oemi_cache.download_info.bBKey,"0000000000000000");
-   STRCPY((char *)oemi_cache.download_info.bAKey,"00000000");
+   MEMSET(oemi_cache.download_info.bBKey,0,OEMCFG_DL_BKEY_SIZE);
+   MEMSET(oemi_cache.download_info.bAKey,0,OEMCFG_DL_AKEY_SIZE);
+
    STRLCPY((char *)oemi_cache.download_info.szServer, 
            (const char *)DEFAULT_BREW_SERVER, 
            sizeof(oemi_cache.download_info.szServer));
@@ -4461,19 +4462,22 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
 
    case CFGI_BREW_BKEY:
       {
-         //Gemsea DELETE if (nSize > (int) DL_BKEY_SIZE * sizeof(AECHAR)) {
-         //Gemsea DELETE    return EBADPARM;
-         //Gemsea DELETE }
-         STRTOWSTR((char *)oemi_cache.download_info.bBKey, pBuff, (DL_BKEY_SIZE+1) * sizeof(AECHAR));
+
+         if (nSize < (int) DL_BKEY_SIZE * sizeof(AECHAR)) {
+            return EBADPARM;
+         }
+         STRTOWSTR((char *)oemi_cache.download_info.bBKey, pBuff, nSize);
+
          return(SUCCESS);
       }
 
    case CFGI_BREW_AKEY:
       {
-         //Gemsea DELETE if (nSize > (int) DL_AKEY_SIZE * sizeof(AECHAR)) {
-         //Gemsea DELETE    return EBADPARM;
-         //Gemsea DELETE }
-         STRTOWSTR((char *)oemi_cache.download_info.bAKey, pBuff, (DL_AKEY_SIZE+1) * sizeof(AECHAR));
+         if (nSize < (int) DL_AKEY_SIZE * sizeof(AECHAR)) {
+            return EBADPARM;
+         }
+         STRTOWSTR((char *)oemi_cache.download_info.bAKey, pBuff, nSize);
+
          return(SUCCESS);
       }
 
@@ -6102,8 +6106,9 @@ static void OEMPriv_ReadOEMConfigList(void)
      oemi_cache.download_info.wFlags = DEFAULT_BREW_DOWNLOAD_FLG;
      oemi_cache.download_info.wAuth  = DEFAULT_BREW_APOLICY;
      oemi_cache.download_info.wPrivP = DEFAULT_BREW_PPOLICY;
-     STRCPY((char *)oemi_cache.download_info.bBKey,"0000000000000000");
-     STRCPY((char *)oemi_cache.download_info.bAKey,"00000000");
+     MEMSET(oemi_cache.download_info.bBKey,0,OEMCFG_DL_BKEY_SIZE);
+     MEMSET(oemi_cache.download_info.bAKey,0,OEMCFG_DL_AKEY_SIZE);
+
      STRLCPY((char *)oemi_cache.download_info.szServer, 
              (const char *)DEFAULT_BREW_SERVER, 
              sizeof(oemi_cache.download_info.szServer));
