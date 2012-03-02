@@ -59,7 +59,7 @@
  		<Text>No se encontró ninguno que coincida</Text>
  	</STRING>
  	<STRING Id="37" Name="IDS_GROUP_PERSONAL">
- 		<Text>Compañeros de colegio</Text>
+ 		<Text>Antiguo alumno</Text>
  	</STRING>
  	<STRING Id="38" Name="IDS_GROUP_BUSINESS">
  		<Text>Negocios</Text>
