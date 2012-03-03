@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="svcprg" VERSION="1">
+<Strings Encoding="ISOLATIN1">
+	<STRING Id="1" Name="IDS_SERVICE_OPTIONS">
+		<Text>Service Options:</Text>
+	</STRING>
+	<STRING Id="2" Name="IDS_ESN">
+		<Text>ESN</Text>
+	</STRING>
+	<STRING Id="3" Name="IDS_MODEL_ID">
+		<Text>Phone Model</Text>
+	</STRING>
+	<STRING Id="4" Name="IDS_NETWORK_OPTIONS">
+		<Text>Network Settings</Text>
+	</STRING>
+	<STRING Id="5" Name="IDS_SMS_OPTIONS">
+		<Text>SMS Settings</Text>
+	</STRING>
+	<STRING Id="6" Name="IDS_SLOTCYCLEINDEX">
+		<Text>Slot Cycle Index</Text>
+	</STRING>
+	<STRING Id="7" Name="IDS_SPCCODE">
+		<Text>Security Code</Text>
+	</STRING>
+	<STRING Id="8" Name="IDS_SMS_TIMESTAMP">
+		<Text>Time Stamp</Text>
+	</STRING>
+	<STRING Id="9" Name="IDS_MAX_MSG_PAYLOAD">
+		<Text>Max Msg Size</Text>
+	</STRING>
+	<STRING Id="10" Name="IDS_SMS_MO_ENCODING">
+		<Text>MO Encoding</Text>
+	</STRING>
+	<STRING Id="11" Name="IDS_SMS_MO_CHANNEL_SELECTION">
+		<Text>Allow Transport</Text>
+	</STRING>
+	<STRING Id="12" Name="IDS_SMS_TIMESTAMP_ADJUST">
+		<Text>Adjust Time</Text>
+	</STRING>
+	<STRING Id="13" Name="IDS_SMS_TIMESTAMP_ASRECEIVED">
+		<Text>As Received</Text>
+	</STRING>
+	<STRING Id="14" Name="IDS_SMS_MO_ENCODING_7BIT">
+		<Text>7-bit ASCII</Text>
+	</STRING>
+	<STRING Id="15" Name="IDS_SMS_MO_ENCODING_UNICODE">
+		<Text>Unicode</Text>
+	</STRING>
+	<STRING Id="20" Name="IDS_CMD_OK">
+		<Text>OK</Text>
+	</STRING>
+	<STRING Id="21" Name="IDS_CMD_EDIT">
+		<Text>Edit</Text>
+	</STRING>
+	<STRING Id="22" Name="IDS_CMD_SAVE">
+		<Text>Save</Text>
+	</STRING>
+	<STRING Id="23" Name="IDS_CMD_CANCEL">
+		<Text>Cancel</Text>
+	</STRING>
+	<STRING Id="24" Name="IDS_CMD_YES">
+		<Text>Yes</Text>
+	</STRING>
+	<STRING Id="25" Name="IDS_CMD_NO">
+		<Text>No</Text>
+	</STRING>
+	<STRING Id="26" Name="IDS_PHONE_NUMBER">
+		<Text>MDN</Text>
+	</STRING>
+	<STRING Id="27" Name="IDS_HOME_SIDNID">
+		<Text>Home SID/NID</Text>
+	</STRING>
+	<STRING Id="28" Name="IDS_LOCK_SIDNID">
+		<Text>Lock SID/NID</Text>
+	</STRING>
+	<STRING Id="29" Name="IDS_COUNTRY_CODE">
+		<Text>MCC</Text>
+	</STRING>
+	<STRING Id="30" Name="IDS_NOTHING_ENTERED">
+		<Text>Please enter a value.</Text>
+	</STRING>
+	<STRING Id="31" Name="IDS_PRL_ENABLED">
+		<Text>PRL Enabled</Text>
+	</STRING>
+	<STRING Id="32" Name="IDS_PRI_CH_A">
+		<Text>Pri Ch A</Text>
+	</STRING>
+	<STRING Id="33" Name="IDS_PRI_CH_B">
+		<Text>Pri Ch B</Text>
+	</STRING>
+	<STRING Id="34" Name="IDS_SEC_CH_A">
+		<Text>Sec Ch A</Text>
+	</STRING>
+	<STRING Id="35" Name="IDS_SEC_CH_B">
+		<Text>Sec Ch B</Text>
+	</STRING>
+	<STRING Id="36" Name="IDS_REGISTRATION">
+		<Text>Registration</Text>
+	</STRING>
+	<STRING Id="37" Name="IDS_AOC">
+		<Text>Overload Class</Text>
+	</STRING>
+	<STRING Id="38" Name="IDS_HOME_SID_REG">
+		<Text>Home SID Reg</Text>
+	</STRING>
+	<STRING Id="39" Name="IDS_FORN_SID_REG">
+		<Text>Foreign SID Reg</Text>
+	</STRING>
+	<STRING Id="40" Name="IDS_FORN_NID_REG">
+		<Text>Foreign NID Reg</Text>
+	</STRING>
+	<STRING Id="41" Name="IDS_EDIT_SID">
+		<Text>Enter SID</Text>
+	</STRING>
+	<STRING Id="42" Name="IDS_EDIT_NID">
+		<Text>Enter NID</Text>
+	</STRING>
+	<STRING Id="43" Name="IDS_CMD_SID_OK">
+		<Text>Continue</Text>
+	</STRING>
+	<STRING Id="44" Name="IDS_CMD_NID_OK">
+		<Text>Save</Text>
+	</STRING>
+	<STRING Id="45" Name="IDS_CMD_NID_CANCEL">
+		<Text>Cancel</Text>
+	</STRING>
+	<STRING Id="46" Name="IDS_ENTER_SECCODE">
+		<Text>Enter Sec. Code</Text>
+	</STRING>
+	<STRING Id="47" Name="IDS_CMD_SECCODE_OK">
+		<Text>OK</Text>
+	</STRING>
+	<STRING Id="48" Name="IDS_INVALID_SECCODE">
+		<Text>Invalid Security Code</Text>
+	</STRING>
+	<STRING Id="49" Name="IDS_PHONE_RESETTING">
+		<Text>Exiting Service Programming.  Phone will be reset...</Text>
+	</STRING>
+	<STRING Id="50" Name="IDS_TOO_SHORT">
+		<Text>The new value is not long enough.</Text>
+	</STRING>
+	<STRING Id="51" Name="IDS_SAVING">
+		<Text>Saving...</Text>
+	</STRING>
+	<STRING Id="52" Name="IDS_DATA_OPTIONS">
+		<Text>Data Settings</Text>
+	</STRING>
+	<STRING Id="53" Name="IDS_QNC_ENABLED">
+		<Text>QNC Enabled</Text>
+	</STRING>
+	<STRING Id="54" Name="IDS_DATA_DIALSTRING">
+		<Text>Pkt Dial String</Text>
+	</STRING>
+	<STRING Id="55" Name="IDS_SMS_IS41_WORKAROUND">
+		<Text>IS-41 Workaround</Text>
+	</STRING>
+	<STRING Id="56" Name="IDS_SMS_IS41_WORKAROUND_ON">
+		<Text>Enabled</Text>
+	</STRING>
+	<STRING Id="57" Name="IDS_SMS_IS41_WORKAROUND_OFF">
+		<Text>Disabled</Text>
+	</STRING>
+	<STRING Id="58" Name="IDS_NETWORK_CODE">
+		<Text>MNC</Text>
+	</STRING>
+	<STRING Id="59" Name="IDS_IMSI_S">
+		<Text>MIN</Text>
+	</STRING>
+	<STRING Id="60" Name="IDS_MODE_PREF">
+		<Text>Mode Preference</Text>
+	</STRING>
+	<STRING Id="62" Name="IDS_MODE_DIGITAL_ONLY">
+		<Text>Digital Only</Text>
+	</STRING>
+	<STRING Id="63" Name="IDS_CDMA_RX_DIVERSITY_ENABLED">
+		<Text>CDMA Rx Diversity Enabled?</Text>
+	</STRING>
+	<STRING Id="64" Name="IDS_MODE_ANALOG_ONLY">
+		<Text>Analog Only</Text>
+	</STRING>
+	<STRING Id="65" Name="IDS_MODE_AUTOMATIC">
+		<Text>Automatic</Text>
+	</STRING>
+	<STRING Id="66" Name="IDS_ANALOG_OPTIONS">
+		<Text>Analog Settings</Text>
+	</STRING>
+	<STRING Id="67" Name="IDS_AMPS_HOME_SID">
+		<Text>Home SID</Text>
+	</STRING>
+	<STRING Id="68" Name="IDS_AMPS_FIRSTCHP">
+		<Text>1st Paging Channel</Text>
+	</STRING>
+	<STRING Id="69" Name="IDS_AMPS_REG_TYPE">
+		<Text>Registration</Text>
+	</STRING>
+	<STRING Id="70" Name="IDS_AMPSREG_WHEREABOUTS_UNKNOWN">
+		<Text>Hide</Text>
+	</STRING>
+	<STRING Id="71" Name="IDS_AMPSREG_WHEREABOUTS_KNOWN">
+		<Text>Yes</Text>
+	</STRING>
+	<STRING Id="72" Name="IDS_AMPSREG_DISABLED">
+		<Text>Disabled</Text>
+	</STRING>
+	<STRING Id="73" Name="IDS_CMD_AKEY">
+		<Text>AKEY Entry</Text>
+	</STRING>
+	<STRING Id="74" Name="IDS_AKEY">
+		<Text>AKEY</Text>
+	</STRING>
+	<STRING Id="75" Name="IDS_AKEY_FAILED">
+		<Text>AKEY Entry failed</Text>
+	</STRING>
+	<STRING Id="76" Name="IDS_AKEY_SUCCESS">
+		<Text>AKEY entry success</Text>
+	</STRING>
+	<STRING Id="77" Name="IDS_HDR_RX_DIVERSITY_ENABLED">
+		<Text>HDR Rx Diversity Enabled?</Text>
+	</STRING>
+	<String Id="78" Name="IDS_SMS_MO_ACCESS_ON">
+		<Text>Use Access Channel</Text>
+	</String>
+	<String Id="79" Name="IDS_SMS_MO_ACCESS_OFF">
+		<Text>Do not use Access Channel</Text>
+	</String>
+	<String Id="80" Name="IDS_SMS_MO_TRAFFIC_ON">
+		<Text>Use Traffic Channel</Text>
+	</String>
+	<String Id="81" Name="IDS_SMS_MO_TRAFFIC_OFF">
+		<Text>Do not use Traffic Channel</Text>
+	</String>
+	<String Id="82" Name="IDS_SMS_MO_ACCESS">
+		<Text>Use Access Channel</Text>
+	</String>
+	<String Id="83" Name="IDS_SMS_MO_TRAFFIC">
+		<Text>Use Traffic Channel</Text>
+	</String>
+	<STRING Id="84" Name="IDS_AUTOSAVE_CLASS1_TO_SIM">
+		<Text>Save Class1 message in SIM?</Text>
+	</STRING>
+	<STRING Id="85" Name="IDS_BREW_OPTIONS">
+		<Text>BREW Settings</Text>
+	</STRING>
+	<STRING Id="86" Name="IDS_BREW_CID">
+		<Text>Carrier ID</Text>
+	</STRING>
+	<STRING Id="87" Name="IDS_BREW_PID">
+		<Text>Platform ID</Text>
+	</STRING>
+	<STRING Id="88" Name="IDS_BREW_BKEY">
+		<Text>Bkey</Text>
+	</STRING>
+	<STRING Id="89" Name="IDS_BREW_AKEY">
+		<Text>Akey</Text>
+	</STRING>
+	<STRING Id="90" Name="IDS_BREW_SERVER">
+		<Text>DL Server</Text>
+	</STRING>
+	<STRING Id="91" Name="IDS_BREW_FLAGS">
+		<Text>DL Flags</Text>
+	</STRING>
+	<STRING Id="92" Name="IDS_BREW_AUTH">
+		<Text>Auth Policy</Text>
+	</STRING>
+	<STRING Id="93" Name="IDS_BREW_PRIVP">
+		<Text>Privacy Policy</Text>
+	</STRING>
+	<STRING Id="94" Name="IDS_DNS1">
+		<Text>Primary DNS</Text>
+	</STRING>
+	<STRING Id="95" Name="IDS_DNS2">
+		<Text>Secondary DNS</Text>
+	</STRING>
+	<STRING Id="96" Name="IDS_APOLICY_NONE">
+		<Text>None</Text>
+	</STRING>
+	<STRING Id="97" Name="IDS_APOLICY_SID">
+		<Text>SID</Text>
+	</STRING>
+	<STRING Id="98" Name="IDS_APOLICY_TEXT">
+		<Text>Text</Text>
+	</STRING>
+	<STRING Id="99" Name="IDS_APOLICY_NUM">
+		<Text>Num</Text>
+	</STRING>
+	<STRING Id="100" Name="IDS_PPOLICY_BREW">
+		<Text>BREW</Text>
+	</STRING>
+	<STRING Id="101" Name="IDS_PPOLICY_CARRIER">
+		<Text>Carrier</Text>
+	</STRING>
+	<STRING Id="102" Name="IDS_PPOLICY_BREW_AND_CARRIER">
+		<Text>BREW and Carrier</Text>
+	</STRING>
+	<STRING Id="103" Name="IDS_PPOLICY_BREW_OR_CARRIER">
+		<Text>BREW or Carrier</Text>
+	</STRING>
+	<STRING Id="104" Name="IDS_CMD_IP_EDIT">
+		<Text>Edit</Text>
+	</STRING>
+	<STRING Id="105" Name="IDS_CMD_IP_CONTINUE">
+		<Text>Continue</Text>
+	</STRING>
+	<STRING Id="106" Name="IDS_EDIT_IP_BYTE0">
+		<Text>IP Byte 1</Text>
+	</STRING>
+	<STRING Id="107" Name="IDS_EDIT_IP_BYTE1">
+		<Text>IP Byte 2</Text>
+	</STRING>
+	<STRING Id="108" Name="IDS_EDIT_IP_BYTE2">
+		<Text>IP Byte 3</Text>
+	</STRING>
+	<STRING Id="109" Name="IDS_EDIT_IP_BYTE3">
+		<Text>IP Byte 4</Text>
+	</STRING>
+	<String Id="110" Name="IDS_BREW_USERNAME">
+		<Text>Username</Text>
+	</String>
+	<String Id="111" Name="IDS_BREW_PASSWORD">
+		<Text>Password</Text>
+	</String>
+	<String Id="112" Name="IDS_MO_ONLY_TRAFFIC">
+		<Text>Use Only Traffic</Text>
+	</String>
+	<String Id="1001" Name="IDS_MMS_OPTIONS" Encoding="Unicode">
+		<Text>MMS Settings</Text>
+	</String>
+</Strings>
+<Dialogs>
+	<DIALOG Id="1" Name="IDD_GENERICMENU" Focus="1" Flags="00000000">
+		<Controls>
+			<Menu Id="1" Name="IDC_GENERICMENU_MENU" Flags="00000000">
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="2" Name="IDD_GENERICTEXTSK" Focus="2" Flags="00000000">
+		<Controls>
+			<SoftKey Id="2" Name="IDC_GENERICTEXTSK_SK" Flags="00000000">
+				<Items/>
+			</SoftKey>
+			<Text Id="3" Name="IDC_GENERICTEXTSK_TEXT" Flags="00010000">
+				<Items/></Text>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="3" Name="IDD_SECCODE" Focus="4" Flags="00000000">
+		<Controls>
+			<Text Id="4" Name="IDC_SECCODE_TEXT" Flags="00410000">
+				<Items/></Text>
+			<SoftKey Id="6" Name="IDC_SECCODE_SK" Flags="00000000">
+				<Items/>
+			</SoftKey>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="4" Name="IDD_MESSAGE" Focus="0" Flags="00000000">
+		<Controls/>
+	</DIALOG>
+</Dialogs>
+</BREWRes>
