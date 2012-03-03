@@ -607,6 +607,9 @@
 	<String Id="1023" Name="IDS_MMS_PORT">
 		<Text>端口</Text>
 	</String>
+	<String Id="1024" Name="IDS_DELIVERY">
+		<Text>信息已发送到</Text>
+	</String>
 	<String Id="1026" Name="IDS_MMSDELIVERYREPORT">
 		<Text>使用彩信发送报告</Text>
 	</String>

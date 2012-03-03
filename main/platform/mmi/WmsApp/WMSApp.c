@@ -979,6 +979,10 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
             {
                 pMe->m_currState = WMSST_WMSNEW;
             }
+            else if(as && STRCMP(as->pszArgs,"NEWMMS") == 0)
+            {
+                pMe->m_currState = WMSST_INBOX_MMS;
+            }
             else
             {
                 pMe->m_currState = WMSST_MAIN;
@@ -2232,14 +2236,75 @@ Exit:
                     break;
                     case MMS_PDU_DELIVERY_IND:
                     {
-                        WMS_MMS_SaveMMS(pDecData->delrep.hTo,pBody,body_len,MMS_INBOX);
+                         AECHAR DeliveryNumber[MAX_PH_DIGITS]={0};
+                         AECHAR  wstrText[64]={0};
+                         char date[30];
+                         uint32 len = 0;
+                         JulianType current_time;
+                         char mmsTextData[MMS_MAX_TEXT_SIZE+1] = {0};
+                         WSP_MMS_ENCODE_DATA *mms_data = NULL;
+                         MSG_FATAL("MMS_PDU_DELIVERY_IND",0,0,0);
+                         (void)ISHELL_LoadResString(pMe->m_pShell,
+                                         AEE_WMSAPPRES_LANGFILE,                                
+                                         IDS_DELIVERY,
+                                         wstrText,
+                                         sizeof(wstrText));                    
+                         GETJULIANDATE(pDecData->delrep.iDate, &current_time);
+                         //GETJULIANDATE取得的时间是从1980/1/6开始的秒数，pDecData->delrep.iDate里保存的是从1970/1/1开始的时间
+                         //所以下面取得的时间也要对应的减去相差的时间
+                         SPRINTF(date,",%02d/%02d/%02d;%02d:%02d:%02d",current_time.wYear-10, current_time.wMonth, 
+                                 current_time.wDay-5, current_time.wHour+8, current_time.wMinute, current_time.wSecond);
+                         DBGPRINTF("minute=%d, second=%d", current_time.wMinute, current_time.wSecond);
+                         STRTOWSTR((char*)(pDecData->delrep.hTo), DeliveryNumber, sizeof(DeliveryNumber));
+                         WSTRCAT(wstrText,DeliveryNumber);
+                         DBGPRINTF("wstrText=%S",wstrText);
+                         DBGPRINTF("DeliveryNumber=%s",DeliveryNumber);
+                         
+                         if(NULL == pMe->m_EncData.pMessage)
+                         {
+                             MSG_FATAL("IDD_WRITEMSG_Handler pMe->m_EncData.pMessage MALLOC",0,0,0);
+                             pMe->m_EncData.pMessage = MALLOC(sizeof(MMS_WSP_MESSAGE_SEND));
+                             MEMSET(pMe->m_EncData.pMessage,NULL,sizeof(MMS_WSP_MESSAGE_SEND));
+                         }
+                             
+                         mms_data = &pMe->m_EncData.pMessage->mms_data;
+                         
+                         MSG_FATAL("mms_data->frag_num=%d",mms_data->frag_num,0,0);
+                         WSTRTOSTR(wstrText, mmsTextData, MMS_MAX_TEXT_SIZE+1);  
+                         STRCAT(mmsTextData, date);
+                         DBGPRINTF("mmsTextData=%s",mmsTextData);
+                         len = STRLEN(mmsTextData);
+                         STRNCPY((char*)mms_data->fragment[0].hContentText,mmsTextData,len);
+                         len = STRLEN("text/plain");
+                         STRNCPY((char*)mms_data->fragment[0].hContentType,"text/plain",len);
+                         len = STRLEN("1.txt");
+                         STRNCPY((char*)mms_data->fragment[0].hContentLocation,"1.txt",len);
+                         len = STRLEN("1.txt");
+                         STRNCPY((char*)mms_data->fragment[0].hContentID,"1.txt",len);
+                         len = STRLEN("1.txt");
+                         STRNCPY((char*)mms_data->fragment[0].hContentName,"1.txt",len);
+                         mms_data->frag_num++;
+                         DBGPRINTF("mmsTextData=%s len=%d", mmsTextData, STRLEN(mmsTextData));  
+                         STRCPY((char*)pMe->m_EncData.pMessage->hTo,"Delivery");
+                         pMe->m_EncData.pMessage->iRetrieveStatus = MMS_VALUE_USELESSNESS;
+                         pMe->m_EncData.pMessage->iDate = MMS_VALUE_USELESSNESS;
+                         pMe->m_EncData.pMessage->iPriority = MMS_VALUE_USELESSNESS;
+                         pMe->m_EncData.pMessage->bSenderVisibility = pMe->m_isMMSSenderVisibility;
+                         pMe->m_EncData.pMessage->iRetrieveStatus = MMS_VALUE_USELESSNESS;
+                         pMe->m_EncData.pMessage->iExpiry = MMS_VALUE_USELESSNESS;
+                         pMe->m_EncData.pMessage->iDeliveryTime = MMS_VALUE_USELESSNESS;
+                         pMe->m_EncData.pMessage->bReadRep = pMe->m_isMMSReadReply;
+                         pMe->m_EncData.pMessage->bDelRep = pMe->m_isMMSDeliveryReport;                                                
+                         WMS_MMSState(WMS_MMS_PDU_MDeliveryInd,0,(uint32)&pMe->m_EncData);
+                        
+                         
                         gbWmsMMSNtf = TRUE;
                         WmsApp_PlaySMSAlert(pMe, TRUE);
                         if (ISHELL_ActiveApplet(pMe->m_pShell) != AEECLSID_WMSAPP)
         				{
-        					#if defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_W515V3)
+#if defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_W515V3)
         					if(ISHELL_ActiveApplet(pMe->m_pShell) == AEECLSID_CORE_APP)
-        					#endif
+#endif
         					{
             					(void) ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_WMSAPP, "NEWMMS");
             				}
@@ -2253,6 +2318,7 @@ Exit:
                             gbWmsMMSNtf = FALSE;
                             CLOSE_DIALOG(DLGRET_INBOX_MMS);
                         }
+
                         sys_free(pBody); // YY: add
                     }
                     break;
@@ -2846,6 +2912,7 @@ void WmsApp_UpdateMenuList(WmsApp *pMe, IMenuCtl *pMenu)
         {
             wms_cacheinfolist_enumbegin(pMe->m_eMBoxType);
         }
+        DBGPRINTF("pnode->msg_type=%d",pnode->msg_type);
         if (pnode->msg_type == WMS_BD_TYPE_DELIVERY_ACK)
         {
             (void)ISHELL_LoadResString(pMe->m_pShell, AEE_WMSAPPRES_LANGFILE,
@@ -2854,7 +2921,7 @@ void WmsApp_UpdateMenuList(WmsApp *pMe, IMenuCtl *pMenu)
         else
         {
             wstrNum[0] = 0;
-            
+            DBGPRINTF("pnode->pszNum=%s",pnode->pszNum);
             // 从电话本中取人名
             if (NULL != pnode->pszNum)
             {
@@ -7395,12 +7462,37 @@ void WmsApp_UpdateMenuList_MMS(WmsApp *pMe, IMenuCtl *pMenu)
     boolean     bFindCurxuhao = FALSE;
     MMSData		mmsDataInfoList[MAX_MMS_STORED];
     int nboxType = 0;
+    int nCountType = 0;
     MSG_FATAL("WmsApp_UpdateMenuList_MMS Start",0,0,0);
     if ((NULL == pMe) || (NULL == pMenu))
     {
         return;
     }
-    
+    switch(pMe->m_eMBoxType)
+    {
+        case WMS_MB_OUTBOX_MMS:
+        {
+            nCountType = CFGI_MMS_OUTCOUNT;
+            nboxType = CFGI_MMSOUTDATA_INFO;
+        }
+        break;
+
+        case WMS_MB_DRAFTBOX_MMS:
+        {
+            nCountType = CFGI_MMS_DRAFTCOUNT;
+            nboxType = CFGI_MMSDRAFTDATA_INFO;
+        }
+        break;
+        
+        default:
+        case WMS_MB_INBOX_MMS:
+        {
+            nCountType = CFGI_MMS_INCOUNT;
+            nboxType = CFGI_MMSINDATA_INFO;
+        }
+        break;
+    }    
+    (void) ICONFIG_GetItem(pMe->m_pConfig,nCountType,&g_mmsDataInfoMax,sizeof(g_mmsDataInfoMax));
     // 取链表项数
     wItemCount = g_mmsDataInfoMax;
     MSG_FATAL("WmsApp_UpdateMenuList_MMS wItemCount=%d",wItemCount,0,0);
@@ -7559,37 +7651,16 @@ void WmsApp_UpdateMenuList_MMS(WmsApp *pMe, IMenuCtl *pMenu)
     
     // 先清除旧有消息列表
     (void)IMENUCTL_DeleteAll(pMenu);
-    switch(pMe->m_eMBoxType)
+    (void) ICONFIG_GetItem(pMe->m_pConfig,
+                       nboxType,
+                       (void*)mmsDataInfoList,
+                       sizeof(mmsDataInfoList));
     {
-        case WMS_MB_OUTBOX_MMS:
-        {
-            nboxType = CFGI_MMSOUTDATA_INFO;
-        }
-        break;
-
-        case WMS_MB_DRAFTBOX_MMS:
-        {
-            nboxType = CFGI_MMSDRAFTDATA_INFO;
-        }
-        break;
-        
-        default:
-        case WMS_MB_INBOX_MMS:
-        {
-            nboxType = CFGI_MMSINDATA_INFO;
-        }
-        break;
+        //only for test
+        MSG_FATAL("WmsApp_UpdateMenuList_MMS g_mmsDataInfoMax=%d", g_mmsDataInfoMax, 0, 0);
+        DBGPRINTF("WmsApp_UpdateMenuList_MMS phoneNumber=%s, length=%d",mmsDataInfoList[g_mmsDataInfoMax-1].phoneNumber, STRLEN(mmsDataInfoList[g_mmsDataInfoMax-1].phoneNumber));
+        DBGPRINTF("MMSDataFileName=%s",mmsDataInfoList[g_mmsDataInfoMax-1].MMSDataFileName);
     }
-        (void) ICONFIG_GetItem(pMe->m_pConfig,
-                           nboxType,
-                           (void*)mmsDataInfoList,
-                           sizeof(mmsDataInfoList));
-        {
-            //only for test
-            MSG_FATAL("WmsApp_UpdateMenuList_MMS g_mmsDataInfoMax=%d", g_mmsDataInfoMax, 0, 0);
-            DBGPRINTF("WmsApp_UpdateMenuList_MMS phoneNumber=%s, length=%d",mmsDataInfoList[g_mmsDataInfoMax-1].phoneNumber, STRLEN(mmsDataInfoList[g_mmsDataInfoMax-1].phoneNumber));
-            DBGPRINTF("MMSDataFileName=%s",mmsDataInfoList[g_mmsDataInfoMax-1].MMSDataFileName);
-        }
     MSG_FATAL("WmsApp_UpdateMenuList_MMS nItems=%d", nItems, 0, 0);
     (void)STRTOWSTR("%s", wszFmt, sizeof(wszFmt));	
 
@@ -7611,7 +7682,7 @@ void WmsApp_UpdateMenuList_MMS(WmsApp *pMe, IMenuCtl *pMenu)
         MEMSET(wszName, 0, sizeof(wszName));
         wstrNum[0] = 0;
         DBGPRINTF("mmsDataInfoList[i].phoneNumber=%s, length=%d",mmsDataInfoList[i].phoneNumber, STRLEN(mmsDataInfoList[i].phoneNumber));
-        // 从电话本中取人名
+       // 从电话本中取人名
         if (0 != STRLEN(mmsDataInfoList[i].phoneNumber))
         {
             (void)STRTOWSTR(mmsDataInfoList[i].phoneNumber, wstrNum, sizeof(wstrNum));
@@ -7636,6 +7707,11 @@ void WmsApp_UpdateMenuList_MMS(WmsApp *pMe, IMenuCtl *pMenu)
                 MEMSET(wszTitle, 0, sizeof(wszTitle));
             }
         }
+        if(STRCMP(mmsDataInfoList[i].phoneNumber, "Delivery")== 0)
+        {
+            (void)ISHELL_LoadResString(pMe->m_pShell, AEE_WMSAPPRES_LANGFILE,
+                        IDS_MMSDELIVERYREPORT, wszTitle,sizeof(wszTitle));          
+        }        
         if(WSTRLEN(wszTitle)>0)
         {
             mai.pText = wszTitle;

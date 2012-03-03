@@ -661,17 +661,20 @@
 	<String Id="1041" Name="IDS_TIME_STAMP_ASRECEIVED">
 		<Text>As Received</Text>
 	</String>
-	<String Id="1042" Name="IDS_ADD_TO_RESTRICT_LIST" Encoding="Unicode">
+	<String Id="1042" Name="IDS_ADD_TO_RESTRICT_LIST">
 		<Text>Add to restrict list</Text>
 	</String>
-	<String Id="1043" Name="IDS_MMS_SERVER_ADDRESS" Encoding="Unicode">
+	<String Id="1043" Name="IDS_MMS_SERVER_ADDRESS">
 		<Text>MMS server address</Text>
 	</String>
-	<String Id="1044" Name="IDS_MMS_PROXY" Encoding="Unicode">
+	<String Id="1044" Name="IDS_MMS_PROXY">
 		<Text>Proxy Address</Text>
 	</String>
-	<String Id="1045" Name="IDS_MMS_PORT" Encoding="Unicode">
+	<String Id="1045" Name="IDS_MMS_PORT">
 		<Text>Port</Text>
+	</String>
+	<String Id="1046" Name="IDS_DELIVERY">
+		<Text>message has been delivered to</Text>
 	</String>
 </Strings>
 <Dialogs>

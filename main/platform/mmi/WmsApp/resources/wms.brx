@@ -673,6 +673,9 @@
 	<String Id="1045" Name="IDS_MMS_PORT" Encoding="Unicode">
 		<Text>Port</Text>
 	</String>
+	<String Id="1046" Name="IDS_DELIVERY" Encoding="Unicode">
+		<Text>message has been delivered to </Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN" Focus="7001">

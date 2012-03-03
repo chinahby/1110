@@ -652,6 +652,9 @@
 	<String Id="1039" Name="IDS_MMS_PORT">
 		<Text>port</Text>
 	</String>
+	<String Id="1040" Name="IDS_DELIVERY">
+		<Text>message has been delivered to</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN" Focus="7001">

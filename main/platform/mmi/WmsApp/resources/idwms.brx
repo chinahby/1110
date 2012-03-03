@@ -628,6 +628,9 @@
 	<String Id="1030" Name="IDS_MMS_PORT" Encoding="Unicode">
 		<Text>port</Text>
 	</String>
+	<String Id="1031" Name="IDS_DELIVERY" Encoding="Unicode">
+		<Text>message has been delivered to</Text>
+	</String>
 	<String Id="1033" Name="IDS_GETTINGFROM" Encoding="Unicode">
 		<Text>Receiving...</Text>
 	</String>

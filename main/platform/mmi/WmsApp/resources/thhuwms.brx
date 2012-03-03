@@ -583,6 +583,9 @@
 	<String Id="1024" Name="IDS_MMS_PORT">
 		<Text>port</Text>
 	</String>
+	<String Id="1025" Name="IDS_DELIVERY">
+		<Text>message has been delivered to</Text>
+	</String>
 	<String Id="1026" Name="IDS_MMSDELIVERYREPORT">
 		<Text>MMS Delivery Report</Text>
 	</String>

@@ -598,6 +598,9 @@
 	<String Id="1029" Name="IDS_SENDERVISIBILITY">
 		<Text>显示彩信发送方号码</Text>
 	</String>
+	<String Id="1030" Name="IDS_DELIVERY">
+		<Text>信息已发送到</Text>
+	</String>
 	<String Id="1033" Name="IDS_GETTINGFROM">
 		<Text>接受中...</Text>
 	</String>

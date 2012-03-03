@@ -2101,7 +2101,14 @@ boolean WMS_MMS_SaveMMS(char* phoneNumber,char *pBuffer,int DataLen,int nKind)
         DBGPRINTF("temp=%s", temp);
         STRCPY(phoneNumber, temp);
     }
-    STRTOPHONENUMBER(mmsDataInfoList[g_mmsDataInfoMax].phoneNumber,phoneNumber);
+    if(STRCMP(phoneNumber,"Delivery") != 0)
+    {
+        STRTOPHONENUMBER(mmsDataInfoList[g_mmsDataInfoMax].phoneNumber,phoneNumber);
+    }
+    else
+    {
+        STRCPY(mmsDataInfoList[g_mmsDataInfoMax].phoneNumber, phoneNumber);
+    }
     DBGPRINTF("[WMS_MMS_SaveMMS] PhoneNumber:%s",phoneNumber);  
 	//STRCPY(mmsDataInfoList[g_mmsDataInfoMax].phoneNumber, phoneNumber);
     DBGPRINTF("[WMS_MMS_SaveMMS] PhoneNumber:0x%x:0x%x:0x%x",mmsDataFileName[0],mmsDataFileName[1],mmsDataFileName[2]);  
@@ -2889,7 +2896,39 @@ int WMS_MMS_PDU_Encode(MMS_WSP_ENCODE_SEND* encdata, uint8* hPDU, uint8 ePDUType
             MEMCPY((void*)(hPDU+head_len),(void*)WMS_MMS_BUFFERGet(),size);//将来直接保存buf就行了,再解析时用WMS_MMS_WSP_DecodeMessage解析就可以了
         
             // SaveMMS
-            WMS_MMS_SaveMMS((char*)encdata->pMessage->hTo,(char*)WMS_MMS_BUFFERGet(),size,MMS_DRAFTBOX);
+            WMS_MMS_SaveMMS((char*)encdata->pMessage->hTo,(char*)WMS_MMS_BUFFERGet(),size,MMS_INBOX);
+        }
+        break;
+
+        case WMS_MMS_PDU_MDeliveryInd:
+        {
+            MMS_DEBUG(("[WMS_MMS_PDU_MDeliveryInd] "));
+            if(encdata->pMessage == NULL)
+                return 0;
+            // 添加数据
+            WMS_MMS_DATA_Encode(&(encdata->pMessage->mms_data));
+            // Encode
+            head_len = MMS_Encode_header(pCurPos,WMS_MMS_PDU_MSendReq,encdata);
+            pCurPos += head_len;
+        
+            head_len = MMS_Encode_MsgBody(pCurPos,&encdata->pMessage->mms_data);
+            pCurPos += head_len;
+            MMS_DEBUG(("[MMS] MMS_Encode_MsgBody head_len1 = %d",head_len));    
+            
+        
+            size = (int)(pCurPos-WMS_MMS_BUFFERGet());
+        
+            MMS_DEBUG(("[MMS] MMS_SEND_TEST size = %d",size));
+            SNPRINTF((char*)hPDU,MSG_MAX_PACKET_SIZE,POST_TEST, serverAddress, serverAddress, size);
+        
+            DBGPRINTF(("POST_TEST:%s",(char*)hPDU));
+            head_len = STRLEN((char*)hPDU);
+            MMS_DEBUG(("[MMS] POST_TEST head_len = %d",head_len));
+        
+            MEMCPY((void*)(hPDU+head_len),(void*)WMS_MMS_BUFFERGet(),size);//将来直接保存buf就行了,再解析时用WMS_MMS_WSP_DecodeMessage解析就可以了
+        
+            // SaveMMS
+            WMS_MMS_SaveMMS((char*)encdata->pMessage->hTo,(char*)WMS_MMS_BUFFERGet(),size,MMS_INBOX);
         }
         break;
 
@@ -4736,7 +4775,7 @@ static void MMSSocketState(MMSSocket *ps)
 
     MSG_FATAL("[MSG][DeviceSocket]: MMSSocketState Enter! bConnected=%d",ps->bConnected,0,0);
     
-    if((!ps->bConnected) && (ps->nState != WMS_MMS_PDU_DRAFT))
+    if((!ps->bConnected) && (ps->nState != WMS_MMS_PDU_DRAFT) && (ps->nState != WMS_MMS_PDU_MDeliveryInd) )
     {
         IConfig             *pConfig;
         char Proxy[MAX_MMS_PROXY] = {0};
@@ -4827,6 +4866,18 @@ static void MMSSocketState(MMSSocket *ps)
             FREEIF(pBuf);
             return;
         }        
+
+        case WMS_MMS_PDU_MDeliveryInd:
+        {
+            uint8* pBuf = NULL;
+            uint32 nBufLen = 0;
+            MSG_FATAL("MMSSocketState WMS_MMS_PDU_MDeliveryInd",0,0,0);
+            pBuf = (uint8*)MALLOC(MSG_MAX_PACKET_SIZE);
+            nBufLen = WMS_MMS_PDU_Encode((MMS_WSP_ENCODE_SEND*)ps->dwParam,pBuf,WMS_MMS_PDU_MDeliveryInd);
+            MMSSocketClose(&ps);
+            FREEIF(pBuf);
+            return;
+        }   
 
         case WMS_MMS_PDU_MReadRecInd:
         {
