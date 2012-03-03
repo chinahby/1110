@@ -59,7 +59,7 @@
 		<Text>Contactos</Text>
 	</STRING>
 	<STRING Id="20" Name="IDS_STRING_END_CALL">
-		<Text>Finalizar llamada</Text>
+		<Text>Finalizar</Text>
 	</STRING>
 	<STRING Id="21" Name="IDS_STRING_CANCEL">
 		<Text>Cancelar</Text>
