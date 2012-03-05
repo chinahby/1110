@@ -156,7 +156,7 @@ and other items needed by this module.
  */
 
 /* TBP : Port this value */
-#define CLKRGM_TCXO_WARMUP_AND_SWITCH_OVERHEAD_MS  ( 15 )
+#define CLKRGM_TCXO_WARMUP_AND_SWITCH_OVERHEAD_MS  ( 10 )
 #define CLKRGM_TCXO_WARMUP_AND_SWITCH_OVERHEAD_US  (CLKRGM_TCXO_WARMUP_AND_SWITCH_OVERHEAD_MS * 1000)
 
 /* --------------------------------------------------------------------------

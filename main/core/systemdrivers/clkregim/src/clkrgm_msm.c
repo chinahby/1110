@@ -2432,17 +2432,11 @@ static void clk_regime_config_pm_for_tcxo_shutdown(pm_vreg_mask_type* pm_vreg_ma
    {
      pm_lp_mode_control( PM_ON_CMD, PM_VREG_LP_MSMC_ID );
    }
-   
-   if(PM_ERR_FLAG__SUCCESS != pm_config_buck_min_p_on_time(BUCK_SMPS_S2, PM_MIN_P_ON_TIME_307))
-   {
-     MSG_ERROR("Fail to set Min P_ON Time, TCXO Entry",0,0,0);
-   }
-
    pm_lp_mode_control( PM_ON_CMD, PM_VREG_LP_MSME1_ID );
    pm_lp_mode_control( PM_ON_CMD, PM_VREG_LP_MSME2_ID );
 
 
-   pm_config_tcxo_ctrl(PM_POLARITY_ACTIVE_HIGH, 164);
+   pm_config_tcxo_ctrl(PM_POLARITY_ACTIVE_HIGH, 0);
    pm_xo_sel_alt_sleep_clk_src(PM_XO_19_2MHZ_XTAL_OSC);
 
    // KIP A0 has overshoot problem when switch from PWM to PFM mode. 
@@ -2568,11 +2562,6 @@ static void clk_regime_config_pm_for_tcxo_wakeup(pm_vreg_mask_type vreg_mask,
   pm_vreg_smps_individual_clock_enable(PM_VREG_SMPS_RF_ID, TRUE);
 
 //  HWIO_OUT(RXA2D_EN, 0x3f);   // Should remove it, rf driver handles it
-  
-  if(PM_ERR_FLAG__SUCCESS != pm_config_buck_min_p_on_time(BUCK_SMPS_S2, PM_MIN_P_ON_TIME_68))
-   {
-     MSG_ERROR("Fail to set Min P_ON Time, TCXO Exit",0,0,0);
-   }
 
 } /* clk_regime_config_pm_for_tcxo_wakeup */
 
