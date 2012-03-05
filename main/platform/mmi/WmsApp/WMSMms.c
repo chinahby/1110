@@ -2896,7 +2896,7 @@ int WMS_MMS_PDU_Encode(MMS_WSP_ENCODE_SEND* encdata, uint8* hPDU, uint8 ePDUType
             MEMCPY((void*)(hPDU+head_len),(void*)WMS_MMS_BUFFERGet(),size);//将来直接保存buf就行了,再解析时用WMS_MMS_WSP_DecodeMessage解析就可以了
         
             // SaveMMS
-            WMS_MMS_SaveMMS((char*)encdata->pMessage->hTo,(char*)WMS_MMS_BUFFERGet(),size,MMS_INBOX);
+            WMS_MMS_SaveMMS((char*)encdata->pMessage->hTo,(char*)WMS_MMS_BUFFERGet(),size,MMS_DRAFTBOX);
         }
         break;
 

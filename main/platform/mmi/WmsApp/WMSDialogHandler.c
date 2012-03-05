@@ -19932,6 +19932,48 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                         return TRUE;
                     }
 
+                // 添加到黑名单
+                case IDS_ADD_TO_RESTRICT_LIST:
+                    {
+                        uint8 byMax = 0;
+                        AECHAR          phoneNumber[32 + 1];  
+                        sms_restrict_recive_info		sms_restrict_reciveList[MAX_SMS_RESTRICT];
+                        MSG_FATAL("IDD_VIEWMSG_MMS_Handler",0,0,0);
+                        DBGPRINTF("pDecdata->message.hFrom=%s", (char*)(pDecdata->message.hFrom));
+                        STRTOWSTR((char*)(pDecdata->message.hFrom), phoneNumber, sizeof(phoneNumber));
+                        DBGPRINTF("phoneNumber=%S", phoneNumber);
+                        if (WSTRLEN(phoneNumber) > 0)
+                        {
+                            sms_restrict_recive_info info = {0};
+                            
+                            (void) ICONFIG_GetItem(pMe->m_pConfig,
+                            CFGI_SMS_RESTRICT_RECEIVE_TOTAL,
+                            &byMax,
+                            sizeof(byte));  
+                            
+                        	//初始化拒收短信黑名单的信息
+                        	(void) ICONFIG_GetItem(pMe->m_pConfig,
+                        						   CFGI_SMS_RESTRICT_RECEIVE_INFO,
+                        						   (void*)sms_restrict_reciveList,
+                        						   sizeof(sms_restrict_reciveList));           
+                            
+                            MEMCPY(sms_restrict_reciveList[byMax].szName, phoneNumber, sizeof(sms_restrict_reciveList[byMax].szName));
+                            byMax++;
+                           (void) ICONFIG_SetItem(pMe->m_pConfig,
+                                                  CFGI_SMS_RESTRICT_RECEIVE_TOTAL,
+                                                  &byMax,
+                                                  sizeof(uint8));
+                           
+                           (void) ICONFIG_SetItem(pMe->m_pConfig,
+                                                  CFGI_SMS_RESTRICT_RECEIVE_INFO,
+                                                  (void*) sms_restrict_reciveList,
+                                                  sizeof(sms_restrict_reciveList));                           
+                        }
+
+                    }
+                    CLOSE_DIALOG(DLGRET_CANCELED)
+                    return TRUE;  
+
                 //保存
                 case IDS_SAVE_CURRENT_ITEM:  
                     {
