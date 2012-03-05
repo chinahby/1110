@@ -2506,7 +2506,7 @@ void mccccim_process_cc_msg( mccccim_event_type * event_ptr )
 
       /* Now get the cc_index for this con_ref */
       cc_index = mccccim_get_cc_index_from_con_ref(con_ref);
-      MSG_FATAL("CAI_ALERT_MSG %d %d",cc_index,MCCCCIM_NUM_MAX_CCS,0);
+
 	  /* check the cc_index valid range value to fix the Klocwork error */
       if ((cc_index == MCCCCIM_CON_REF_NOT_FOUND) || (cc_index >= MCCCCIM_NUM_MAX_CCS))
       {
@@ -2520,7 +2520,6 @@ void mccccim_process_cc_msg( mccccim_event_type * event_ptr )
         event_ptr->gen.status = 
            mccccim_process_alert_msg( &mccccim_cc_info[cc_index], msg_ptr);
         event_ptr->cc_msg.con_ref = con_ref;
-        MSG_FATAL("CAI_ALERT_MSG call_id %d %d",mccccim_cc_info[cc_index].call_id,mccccim_cc_info[cc_index].substate,0);
       }
 
       break;

@@ -4529,7 +4529,7 @@ static void cmcall_load_orig_plan(
 #error code not present
     #endif /* FEATURE_OTASP_2 */
 
-#ifndef CUST_EDITION
+
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
     /* Force to collocated HDR call origination plan
@@ -4551,7 +4551,7 @@ static void cmcall_load_orig_plan(
       CMCALL_SR_MAX_DIALS,           /* max numbers of dial attempts */
       CMCALL_PS_DATA_SR_MAX_TIME,    /* max time for silent redial sequence*/
       (cmcall_orig_plan_action_table_s_type*) &trimode_no_amps_action_table },
-#endif
+
 
     /* Force to collocated HDR call origination plan
     **
