@@ -1528,7 +1528,10 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                         }
                         else
                         {
+                            #if defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_C11)
+                            #else
                             CallApp_ProcessUIMMMIStr(pMe, pMe->m_DialString);
+                            #endif
                         }
                         break;
 

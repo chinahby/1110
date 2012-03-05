@@ -831,7 +831,7 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
                 ISTATIC_Redraw(pStatic);
                 FREEIF(pMe->m_pADNName);
                 FREEIF(pMe->m_pADNNumber);
-                COREAPP_DRAW_BOTTOMBAR(BTBAR_OK_BACK)
+                COREAPP_DRAW_BOTTOMBAR(BTBAR_OK_BACK) 
             }
             else if(pMe->m_nMsgID !=IDS_EXIT_EMERGENCY_MODE)
             {
@@ -863,7 +863,7 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
                     }
                     else
                     {
-                        m_PromptMsg.eBBarType = BTBAR_OK_BACK;
+                       m_PromptMsg.eBBarType = BTBAR_OK_BACK;
                     }
                 }
                 DrawPromptMessage(pMe->m_pDisplay,pStatic,&m_PromptMsg);
@@ -2343,7 +2343,7 @@ static boolean  IDD_UIMSECCODE_Handler(void       *pUser,
                 // 绘制底条提示
                 if (nLen > 3)
                 {// 确定-----删除
-                    CoreDrawBottomBar(BTBAR_OK_BACK)
+                   CoreDrawBottomBar(BTBAR_OK_BACK)
                 }
                 else if(nLen > 0)
                 {// 删除
@@ -3212,7 +3212,11 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 			
             if(pMe->m_pIAnn != NULL)
             {
+                #if defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_C11)
+                IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, FALSE);
+                #else
                 IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);//返回待机界面时，要把显示titlebar标志还原成TRUE
+                #endif
 			}
 
           #ifdef FEATURE_VERSION_C11
@@ -3553,10 +3557,14 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             (void) ISHELL_CancelTimer(pMe->a.m_pIShell,
                                       CoreApp_SearchingTimer,
                                       pMe);
+             #ifdef FEATURE_VERSION_C180
+             IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
+             #endif
 #ifdef FEATURE_VERSION_C11
-                ISTATIC_Release(pStatic);
-                pStatic = NULL;
-                pMe->m_keyinfoheld=FALSE;
+             ISTATIC_Release(pStatic);
+             pStatic = NULL;
+             pMe->m_keyinfoheld=FALSE;
+             IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
 #endif
 #ifdef FEATURE_KEYGUARD	    
 	     (void)ISHELL_CancelTimer(pMe->a.m_pIShell, 
@@ -3852,7 +3860,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 						}
 						#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
 							return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);//
-					    #elif defined(FEATURE_VERSION_W0216A)
+					    #elif defined(FEATURE_VERSION_W0216A)||defined(FEATURE_VERSION_C180)
 					    	return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);//
 					    
 				    	#elif defined(FEATURE_VERSION_W208S)
