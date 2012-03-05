@@ -979,10 +979,12 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
             {
                 pMe->m_currState = WMSST_WMSNEW;
             }
+            #ifdef FEATURE_USES_MMS
             else if(as && STRCMP(as->pszArgs,"NEWMMS") == 0)
             {
                 pMe->m_currState = WMSST_INBOX_MMS;
             }
+            #endif
             else
             {
                 pMe->m_currState = WMSST_MAIN;
