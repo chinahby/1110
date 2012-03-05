@@ -1050,6 +1050,7 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
         AEECLSID cls = AEE_Active(); 
         MSG_FATAL("OEMKeyguard_HandleEvent %d %x %x",sbMessageActive,evt,wParam);
 
+
         //{
         //    db_items_value_type  db_value;
         //    db_value.db_backlight_level = TRUE;
@@ -1059,28 +1060,49 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
 #if  defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_1110W516)
         if(wParam == AVK_CLR)
 #else
-        if(wParam == AVK_SELECT)
+        if(wParam == AVK_SELECT)		
 #endif            
         {
-            OEMPriv_ResumeBREW();
-            return FALSE;            
+#ifndef FEATURE_VERSION_W208S        
+        	OEMPriv_ResumeBREW();
+            return FALSE; 
+#endif			
         }       
-		
+
+#ifdef FEATURE_VERSION_W208S
+		if(cls == AEECLSID_ALARMCLOCK || cls == AEECLSID_SCHEDULEAPP || cls == AEECLSID_DIALER || cls == AEECLSID_WMSAPP)
+        {
+            if(wParam == AVK_CLR )
+            {
+            	OEMPriv_ResumeBREW();
+                return FALSE;            
+            }            
+        }
+#else
         if(cls == AEECLSID_ALARMCLOCK || cls == AEECLSID_SCHEDULEAPP)
         {
             if(wParam == AVK_CLR || wParam == AVK_SELECT)
             {
-                OEMPriv_ResumeBREW();
+            	OEMPriv_ResumeBREW();
                 return FALSE;            
             }            
         }
+#endif
+
 #if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_1110W516)
         if(wParam== AVK_CLR||wParam == AVK_END || wParam == AVK_POWER || wParam == AVK_HEADSET_CONNECT || wParam == AVK_HEADSET_DISCONNECT)
 #else
-        if(wParam== AVK_SELECT||wParam == AVK_END || wParam == AVK_POWER || wParam == AVK_HEADSET_CONNECT || wParam == AVK_HEADSET_DISCONNECT)
+        if(wParam== AVK_SELECT||wParam == AVK_END || wParam == AVK_POWER || wParam == AVK_HEADSET_CONNECT || wParam == AVK_HEADSET_DISCONNECT)			
 #endif
         {        
-            return FALSE;
+#ifndef FEATURE_VERSION_W208S          
+        	return FALSE;
+#else
+			if(wParam == AVK_END || wParam == AVK_POWER || wParam == AVK_HEADSET_CONNECT || wParam == AVK_HEADSET_DISCONNECT)
+			{
+				return FALSE;
+			}
+#endif
         }
        
 //Add By zzg 2010_11_23
