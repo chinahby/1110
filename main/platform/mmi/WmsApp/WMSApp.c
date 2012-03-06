@@ -7732,7 +7732,7 @@ void WmsApp_UpdateMenuList_MMS(WmsApp *pMe, IMenuCtl *pMenu)
         {
             mai.wImage = IDB_SENT_NORMAL;
         }
-        else if(pMe->m_eBoxType == WMS_MB_DRAFTBOX_MMS)
+        else if(pMe->m_eMBoxType == WMS_MB_DRAFTBOX_MMS)
         {
             mai.wImage = IDB_DRAFT;
         }
