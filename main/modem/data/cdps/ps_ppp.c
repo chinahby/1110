@@ -830,9 +830,13 @@ int ppp_set_auth_server_opts
   config_ptr->lcp_info.want_vals[FSM_LOCAL].authentication =
     PPP_CHAP_PROTOCOL;
   config_ptr->lcp_info.want_vals[FSM_LOCAL].chap_digest = PPP_CHAP_MD5;
+#ifdef FEATURE_NO_PPP_AUTH //Gemsea Add for Disable PPP Auth
+  config_ptr->lcp_info.want_mask[FSM_LOCAL] &= ~LCP_N_AP;
+  config_ptr->lcp_info.will_mask[FSM_LOCAL] &= ~LCP_N_AP;
+#else
   config_ptr->lcp_info.want_mask[FSM_LOCAL] |= LCP_N_AP;
   config_ptr->lcp_info.will_mask[FSM_LOCAL] |= LCP_N_AP;
-
+#endif
   /*-------------------------------------------------------------------------
     If the challenge name is non-NULL and the length is non-zero copy the
     challenge name.  Otherwise, set the challenge name length to 0.
