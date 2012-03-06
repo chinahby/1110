@@ -19938,7 +19938,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                         }
                         return TRUE;
                     }
-
+                #ifdef FEATURE_VERSION_W208S
                 // 添加到黑名单
                 case IDS_ADD_TO_RESTRICT_LIST:
                     {
@@ -19980,7 +19980,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                     }
                     CLOSE_DIALOG(DLGRET_CANCELED)
                     return TRUE;  
-
+                #endif
                 //保存
                 case IDS_SAVE_CURRENT_ITEM:  
                     {
