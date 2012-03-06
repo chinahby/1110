@@ -283,6 +283,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #include "custqbt.h"
 #include "custbt.h"
 #endif
+#include "custsec.h"
 #include "custcdma2000.h"
 #include "custdebug.h"
 #include "custdmss.h"

@@ -264,6 +264,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #include "custmmode.h"
 #include "custcdma.h"
 #include "custrf.h"
+#include "custsec.h"
 #include "custcdma2000.h"
 #include "custdebug.h"
 #include "custdmss.h"
