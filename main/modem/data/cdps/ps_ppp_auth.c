@@ -185,6 +185,7 @@ void ppp_auth_start
   -------------------------------------------------------------------------*/
   switch(ppp_cb_ptr->auth.mode)
   {
+#ifndef FEATURE_NO_PPP_AUTH //Gemsea Add for Disable PPP Auth
   case PPP_DO_CHAP:
   {
     ppp_event_payload.ppp_event_protocol = PPP_EV_CHAP;
@@ -224,7 +225,7 @@ void ppp_auth_start
     }
   }
   break;
-
+#endif
   default:
     /*-----------------------------------------------------------------------
       NOTE: this is intentionally not last as we want to start IPCP when
@@ -232,7 +233,10 @@ void ppp_auth_start
     -----------------------------------------------------------------------*/
     ASSERT(0);
     /* fall through */
-
+#ifndef FEATURE_NO_PPP_AUTH //Gemsea Add for Disable PPP Auth
+  case PPP_DO_CHAP:
+  case PPP_DO_PAP:
+#endif
   case PPP_NO_AUTH:
   {
     ppp_event_payload.ppp_event_protocol = PPP_EV_INVALID_PROTO;
