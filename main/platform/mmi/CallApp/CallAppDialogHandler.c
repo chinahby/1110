@@ -507,6 +507,7 @@ boolean CallApp_RouteDialogEvent(CCallApp *pMe,
         return FALSE;
     }
 
+
     //CALL_ERR("The active dialog is  %d dialog",pMe->m_pActiveDlgID,0,0);
     switch (pMe->m_pActiveDlgID)
     {
@@ -8794,11 +8795,13 @@ static void CallApp_Build_NumEdit_Option_Menu(CCallApp *pMe,IMenuCtl   *pMenuCtl
             else
 #endif //FEATURE_APP_PAUSE_TIMER
             {
+#ifndef FEATURE_VERSION_W208S            
                 if(!pMe->m_call_info.b_emerg)
                 {
                    (void) IMENUCTL_AddItem(pMenuCtl,AEE_APPSCALLAPP_RES_FILE,IDS_SK_MENU,IDS_SK_MENU,
                                                        (AECHAR*)NULL,(uint32)NULL);
                 }
+#endif				
             }
         }
 
