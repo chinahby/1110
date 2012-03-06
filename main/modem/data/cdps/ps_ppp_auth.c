@@ -233,7 +233,7 @@ void ppp_auth_start
     -----------------------------------------------------------------------*/
     ASSERT(0);
     /* fall through */
-#ifndef FEATURE_NO_PPP_AUTH //Gemsea Add for Disable PPP Auth
+#ifdef FEATURE_NO_PPP_AUTH //Gemsea Add for Disable PPP Auth
   case PPP_DO_CHAP:
   case PPP_DO_PAP:
 #endif
