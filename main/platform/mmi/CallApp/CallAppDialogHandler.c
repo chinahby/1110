@@ -1988,17 +1988,21 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 				//case AVK_CLR:
 
 				//Add By zzg 2012_02_22
+			 #ifdef FEATURE_ALL_KEY_PAD	
 				case AVK_CLR:
-				{
-					pMe->m_DialString[0] = 0;
-			        CallApp_Draw_NumEdit_SoftKey(pMe);
-					CallApp_Display_Number(pMe);
-					// Draw it now!
-					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-			        CLOSE_DIALOG(DLGRET_OK)
-			        return TRUE;					
-				}
-                
+				{ 
+                    pMe->m_DialString[0] = 0;
+ 			        CallApp_Draw_NumEdit_SoftKey(pMe);
+ 					CallApp_Display_Number(pMe);
+ 					// Draw it now!
+ 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+ 			        CLOSE_DIALOG(DLGRET_OK)
+ 			        return TRUE;
+                }
+             #endif    
+             #ifndef FEATURE_ALL_KEY_PAD
+                case AVK_CLR:
+             #endif
                 case AVK_DEL:
 				//Add End	
                 {
@@ -4304,7 +4308,7 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
                                                         CALL_NAME_DX,
                                                         CALL_LINE_HIGHT);
                 IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, CALLAPP_TEXT_COLOR);
-            #if defined(FEATURE_VERSION_C01) ||defined(FEATURE_VERSION_C11)
+            #if defined(FEATURE_VERSION_C01) ||defined(FEATURE_VERSION_C11) ||defined(FEATURE_VERSION_C180)
              SETAEERECT(&rect,
                                                         CALL_NAME_X-20,
                                                         CALL_THIRD_LINE_Y+30,
@@ -9420,7 +9424,7 @@ static void CallApp_Draw_Connect_Number_and_Name(CCallApp *pMe)
                                                 CALL_NAME_DX,
                                                 CALL_LINE_HIGHT);
                                                 
-            #if defined(FEATURE_VERSION_C01) ||defined(FEATURE_VERSION_C11)
+            #if defined(FEATURE_VERSION_C01) ||defined(FEATURE_VERSION_C11)||defined(FEATURE_VERSION_C180)
             SETAEERECT(&rect,
                                                 CALL_NAME_X-20,
                                                 CALL_SECOND_LINE_Y+30,
