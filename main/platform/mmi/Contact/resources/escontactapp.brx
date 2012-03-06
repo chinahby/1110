@@ -56,7 +56,7 @@
  		<Text>Fax</Text>
  	</STRING>
  	<STRING Id="35" Name="IDS_MSG_FINDNULL">
- 		<Text>No se encontró ninguno que coincida</Text>
+ 		<Text>No hay resultados</Text>
  	</STRING>
  	<STRING Id="37" Name="IDS_GROUP_PERSONAL">
  		<Text>Antiguo alumno</Text>
