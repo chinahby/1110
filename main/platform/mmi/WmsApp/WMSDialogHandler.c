@@ -19104,14 +19104,18 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                     STRCPY((char*)pMe->m_EncData.pReadReport->hTo,(char*)pDecdata->message.hFrom);
                     STRCPY((char*)pMe->m_EncData.pReadReport->hMessageID,(char*)pDecdata->message.hMessageID);
 
-                    pMmsDataInfoCur->MMSDataReaded = TRUE;
                     WMS_MMSState(WMS_MMS_PDU_MReadRecInd,NULL,(uint32)&pMe->m_EncData);
                     
-                    (void) ICONFIG_SetItem(pMe->m_pConfig,
-                                   nMmsDataInfo,
-                                   (void*)mmsDataInfoList,
-                                   sizeof(mmsDataInfoList));  
                 }
+                if(!pMmsDataInfoCur->MMSDataReaded)
+                {
+                    MSG_FATAL("IDD_VIEWMSG_MMS_Handler MMSDataReaded", 0,0,0);
+                    mmsDataInfoList[nInfoIndex].MMSDataReaded = TRUE;
+                }
+                (void) ICONFIG_SetItem(pMe->m_pConfig,
+                               nMmsDataInfo,
+                               (void*)mmsDataInfoList,
+                               sizeof(mmsDataInfoList));                  
                 MSG_FATAL("IDD_VIEWMSG_MMS_Handler result=%d, frag_num=%d, pMe->m_wCurindex=%d", result, pDecdata->message.mms_data.frag_num, pMe->m_wCurindex);
                 for(; index < pDecdata->message.mms_data.frag_num; index++)
                 {

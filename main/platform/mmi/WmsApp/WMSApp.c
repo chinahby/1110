@@ -2361,7 +2361,7 @@ Exit:
             					(void) ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_WMSAPP, "NEWMMS");
             				}
         				}
-        				/*
+        				
                         else if(pMe->m_currState == WMSST_WMSNEW)
                         {
                             CLOSE_DIALOG(DLGRET_CREATE)
@@ -2371,10 +2371,10 @@ Exit:
                             gbWmsMMSNtf = FALSE;
                             CLOSE_DIALOG(DLGRET_INBOX_MMS);
                         }
-                        */
-                        MSG_FATAL("pDecData->message.hFrom=%s",(char*)&pDecData->message.hFrom,0,0);
-                        MSG_FATAL("pDecData->message.hFrom=%s",pDecData->message.hTo,0,0);
-                        MSG_FATAL("pDecData->message.hFrom=%s,",pDecData->message.hCc,0,0);
+                        
+                        DBGPRINTF("pDecData->message.hFrom=%s",(char*)&pDecData->message.hFrom);
+                        DBGPRINTF("pDecData->message.hFrom=%s",pDecData->message.hTo);
+                        DBGPRINTF("pDecData->message.hFrom=%s,",pDecData->message.hCc);
 #if 0//def MMS_TEST
                         MSG_FATAL("IFILEMGR_OpenFile pDecData->message.mms_data.frag_num=%d",pDecData->message.mms_data.frag_num,0,0);
                         for(;i < pDecData->message.mms_data.frag_num; i ++)
@@ -7723,9 +7723,23 @@ void WmsApp_UpdateMenuList_MMS(WmsApp *pMe, IMenuCtl *pMenu)
 
         mai.dwData = mai.wItemID;
 
-		MSG_FATAL("***zzg UpdateMenuList_MMS wItemID=%d***", mai.wItemID, 0, 0);
-        
-        mai.wImage = IDB_READ_PH_EMERGENCY;//WmsApp_GetMsgICONID(pnode);
+		MSG_FATAL("***zzg UpdateMenuList_MMS wItemID=%d, %d MMSDataReaded=%d", mai.wItemID, i, mmsDataInfoList[i].MMSDataReaded);
+        if((!mmsDataInfoList[i].MMSDataReaded) && (pMe->m_eMBoxType == WMS_MB_INBOX_MMS))
+        {
+            mai.wImage = IDB_UREAD_PH_NORMAL;
+        }
+        else if(pMe->m_eMBoxType == WMS_MB_OUTBOX_MMS)
+        {
+            mai.wImage = IDB_SENT_NORMAL;
+        }
+        else if(pMe->m_eBoxType == WMS_MB_DRAFTBOX_MMS)
+        {
+            mai.wImage = IDB_DRAFT;
+        }
+        else
+        {
+            mai.wImage = IDB_READ_PH_NORMAL;
+        }
             
         // 添加带图标菜单项到菜单
         (void)IMENUCTL_AddItemEx(pMenu, &mai);		
