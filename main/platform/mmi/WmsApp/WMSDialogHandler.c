@@ -19293,22 +19293,20 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                 if((IMENUCTL_GetItemCount(pMenuCtl) == 0) && hasIStatic)
                 {
                     AEERect StaticRect={0};
+                    AEERect MenuRect={0};
                     MSG_FATAL("IMENUCTL_GetItemCount 4", 0,0,0);
                     SETAEERECT(&StaticRect,  0, 0, pMe->m_rc.dx, pMe->m_rc.dy - BOTTOMBAR_HEIGHT);
-                    
                     ISTATIC_SetRect (pStatic, &StaticRect);
                     ISTATIC_SetActive(pStatic, TRUE);
-                    IMENUCTL_SetActive(pMenuCtl, FALSE);
                     ISTATIC_Redraw(pStatic);
+                    IMENUCTL_SetActive(pMenuCtl, FALSE);
                     IDIALOG_SetFocus(pMe->m_pActiveIDlg, IDC_VIEWMSG_MMS_STATIC);
                 }
                 else if((IMENUCTL_GetItemCount(pMenuCtl) > 0) && !hasIStatic)
                 {
                     AEERect Rect={0};
-                    AEEDeviceInfo devinfo={0};
                     MSG_FATAL("IMENUCTL_GetItemCount 5", 0,0,0);
                     Rect = pMe->m_rc;
-                    ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
                     Rect.y = 0; 
                     Rect.dy = devinfo.cyScreen - GetBottomBarHeight(pMe->m_pDisplay);                  
                     IMENUCTL_SetRect(pMenuCtl, &Rect); 
@@ -19319,7 +19317,6 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                 }
                 else
                 {
-                    AEEDeviceInfo devinfo={0};
                     AEERect StaticRect={0};
                     AEERect Rect={0};
                     MSG_FATAL("IMENUCTL_GetItemCount 6", 0,0,0);
@@ -19330,7 +19327,6 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                     IMENUCTL_SetActive(pMenuCtl, TRUE);
                     
                     Rect = pMe->m_rc;
-                    ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
                     Rect.y = GetBottomBarHeight(pMe->m_pDisplay)*2; 
                     Rect.dy = devinfo.cyScreen;
                     Rect.dy -= (GetBottomBarHeight(pMe->m_pDisplay)*3); 
@@ -19340,19 +19336,13 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                 }                
                 pMe->m_CurrentState == PLAYER_IDLE;
                 MSG_FATAL("IDD_VIEWMSG_MMS_Handler init m_CurrentState=%d", pMe->m_CurrentState,0,0);
-                //IDIALOG_SetFocus(pMe->m_pActiveIDlg, IDC_VIEWMSG_MMS_MENU);
                 
                 pMe->m_ResData.nIndex = IDC_VIEWMSG_MMS_STATIC;
                 if(pBuffer != NULL)
                 {
                     FREE(pBuffer);
                 }
-                IDISPLAY_UpdateEx(pMe->m_pDisplay, TRUE);  
-                (void)ISHELL_PostEvent( pMe->m_pShell,
-                                    AEECLSID_WMSAPP,
-                                    EVT_USER_REDRAW,
-                                    0,
-                                    0);	                
+                IDISPLAY_UpdateEx(pMe->m_pDisplay, TRUE);            
             }
             return TRUE;
 
@@ -19384,7 +19374,10 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                 DBGPRINTF("EVT_USER_REDRAW pViewText=%S", pViewText);
                 ISTATIC_SetText(pStatic, NULL, pViewText,AEE_FONT_BOLD, AEE_FONT_BOLD);
                 ISTATIC_Redraw(pStatic);
-                IMENUCTL_Redraw(pMenuCtl);                
+                if(IMENUCTL_GetItemCount(pMenuCtl) > 0)
+                {
+                    IMENUCTL_Redraw(pMenuCtl);             
+                }
                 MSG_FATAL("m_CurrentState=%d, soundData.nCount=%d, m_eMBoxType=%d",pMe->m_CurrentState,pMe->m_ResData.soundData.nCount,pMe->m_eMBoxType);
                 
                 if(pDecdata != NULL)
