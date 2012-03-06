@@ -376,7 +376,7 @@ typedef enum WMSAPPState
     WMSST_VIEWINBOXMSG,  
     
     // 查看收件箱消息后对该消息的处理选项
-    WMSST_INBOXMSGOPTS,
+    WMSST_INBOXMSGOPTS,                                   //6
     
 #ifdef FEATURE_CDSMS_RUIM
     // 用于机卡间消息复制、移动前用户确认
@@ -390,7 +390,7 @@ typedef enum WMSAPPState
     WMSST_TONUMLIST,
     
     // 用于用户发送消息时编辑消息文本的状态
-    WMSST_WRITEMSG,
+    WMSST_WRITEMSG,                                   //10
     
     // 消息发送选项
     WMSST_SENDOPTS,
@@ -414,7 +414,7 @@ typedef enum WMSAPPState
     WMSST_VIEWDRAFTMSG, 
     
     // 查看草稿箱内消息后对该消息的处理选项
-    WMSST_DRAFTMSGOPTS, 
+    WMSST_DRAFTMSGOPTS,                                    //18
 
 #ifdef FEATURE_CONTACT_APP
     // 提取详情
@@ -428,7 +428,7 @@ typedef enum WMSAPPState
 #endif
     
     // 用于删除多条消息
-    WMSST_DELETEMSGS, 
+    WMSST_DELETEMSGS,                                    //22
     
 #if defined(FEATURE_CDSMS_RUIM)
     // 消息在机卡间互拷
@@ -454,7 +454,7 @@ typedef enum WMSAPPState
     WMSST_VIEWRESERVEDMSG,
 
     // 某条预约信息的相关操作选项
-    WMSST_RESERVEDMSGOPT,
+    WMSST_RESERVEDMSGOPT,                                    //30
     
     // 预约短信时间到提示
     WMSST_RESERVEDMSGALERT,
@@ -484,7 +484,7 @@ typedef enum WMSAPPState
     WMSST_VIEWTEMPLATE,
     
     // 消息模板编辑
-    WMSST_EDITTEMPLATE,
+    WMSST_EDITTEMPLATE,                                   //40
     
     WMSST_AUTOSAVE,
     
@@ -517,7 +517,7 @@ typedef enum WMSAPPState
     WMSST_MANAGEMENT,
     
     //拷贝消息状态
-    WMSST_COPYINBOX,
+    WMSST_COPYINBOX,                                   //50
     
     //移动消息状态
     WMSST_MOVEINBOX,
@@ -546,7 +546,7 @@ typedef enum WMSAPPState
     //用于发送失败是否重发  add by yangdecai
     WMSST_RESENDCONFIRM,
 	//用于新短息提示消息框add by yangdecai
-	WMSST_WMSNEW,
+	WMSST_WMSNEW,                                   //60
 	//用于弹出消息add by yangdecai
 	WMSST_POPMSG,
 
@@ -555,29 +555,29 @@ typedef enum WMSAPPState
 
 #ifdef FEATURE_USES_MMS
     // 显示彩信发件箱列表的状态
-    WMSST_MMSNOTIFY,
+    WMSST_MMSNOTIFY,                                   //63
     WMSST_MMSDELIVERYREPORT,
     WMSST_READREPLY,
     WMSST_REPORTALLOWED,
     WMSST_SENDERVISIBILITY,
     WMSST_INBOX_MMS,
     WMSST_OUTBOX_MMS,
-    WMSST_VIEWINBOXMSG_MMS,
+    WMSST_VIEWINBOXMSG_MMS,                                   //70
     WMSST_VIEWOUTBOXMSG_MMS,
     WMSST_OUTMSGMMSOPTS,
     WMSST_INMSGMMSOPTS,
     WMSST_DRAFTBOX_MMS,
-    WMSST_VIEWDRAFTBOXMSG_MMS,
+    WMSST_VIEWDRAFTBOXMSG_MMS,                                   //75
     WMSST_DRAFTMSGMMSOPTS,
 	WMSST_GETTING,
 	WMSST_EDIT_ALBUMOREMAIN,	
 	WMSST_MMS_SERVER_ADDRESS,	
-	WMSST_MMS_PROXY,
-	WMSST_MMS_PORT,	
+	WMSST_MMS_PROXY,                                   //80
+	WMSST_MMS_PORT,	                                   //81
 #endif
 
     // 退出短信应用
-    WMSST_EXIT
+    WMSST_EXIT                                      //82
 } WMSAPPState;
 
 // 状态处理函数返回给主状态处理函数的值

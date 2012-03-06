@@ -2015,7 +2015,7 @@ Exit:
             if(body_len != 0)
                 nResult = WMS_MMS_PDU_Decode(pDecData,pBody,body_len,&ePDUType); 
                 
-            MSG_FATAL("EVT_MMS_PDUDECODE nResult:%d ePDUType:%d",nResult,ePDUType,0);
+            MSG_FATAL("EVT_MMS_PDUDECODE nResult:%d ePDUType:%d,m_currState=%d",nResult,ePDUType,pMe->m_currState);
             if(!nResult)
             {
                 switch(ePDUType)
@@ -2317,8 +2317,14 @@ Exit:
                         }
                         else
                         {
-                            gbWmsMMSNtf = FALSE;
-                            CLOSE_DIALOG(DLGRET_INBOX_MMS);
+                            if(pMe->m_currState != WMSST_INBOX_MMS && pMe->m_currState != WMSST_VIEWINBOXMSG_MMS
+                                && pMe->m_currState !=	WMSST_INMSGMMSOPTS && pMe->m_currState !=	WMSST_WRITEMSG
+                                && pMe->m_currState != WMSST_SENDING && pMe->m_currState != WMSST_GETTING 
+                                && pMe->m_currState != WMSST_MMSNOTIFY )
+                            {
+                                gbWmsMMSNtf = FALSE;
+                                CLOSE_DIALOG(DLGRET_INBOX_MMS);
+                            }
                         }
 
                         sys_free(pBody); // YY: add
@@ -2328,7 +2334,7 @@ Exit:
                     {
                         int i = 0;
                         char dataPath[100];
-
+                        MSG_FATAL("MMS_PDU_RETRIEVE_CONF",0,0,0);
                         ISHELL_PostEventEx(
                             AEE_GetShell(),
                             EVTFLG_ASYNC,
@@ -2352,6 +2358,30 @@ Exit:
                         WMS_MMS_SaveMMS(pDecData->message.hFrom,pBody,body_len,MMS_INBOX);
                         gbWmsMMSNtf = TRUE;
                         WmsApp_PlaySMSAlert(pMe, TRUE);
+                        MSG_FATAL("[MMS_PDU_NOTIFICATION_IND] m_isMMSNotify:%d",pMe->m_isMMSNotify,0,0);
+                        if(pMe->m_isMMSNotify)
+                        {
+                            STRNCPY((char*)sendData->pDeliveryacknowledgement->hTransactionID,
+                                        (char*)pDecData->message.hTransactionID,
+                                        STRLEN((char*)pDecData->message.hTransactionID) + 1);
+                            MSG_FATAL("[MMS_PDU_NOTIFICATION_IND] hTransactionID:%s",sendData->pDeliveryacknowledgement->hTransactionID,0,0);            
+                            sendData->pDeliveryacknowledgement->bReportAllowed = pMe->m_isMMSReporyAllowed;            
+                            WMS_MMSState(WMS_MMS_PDU_MAcknowledgeInd,0,(uint32)sendData);
+                        }
+                        else
+                        {
+                            sendData->pNotifyresp->bReportAllowed = pMe->m_isMMSReporyAllowed;
+                            STRNCPY((char*)sendData->pNotifyresp->hTransactionID,
+                                (char*)pDecData->message.hTransactionID,
+                                STRLEN((char*)pDecData->message.hTransactionID) + 1);
+                            sendData->pNotifyresp->iStatus = WMS_PDU_STATUS_Retrieved;
+                            WMS_MMSState(WMS_MMS_PDU_MNotifyrespInd,0,(uint32)sendData);
+                        }
+                        pMe->m_isMMSNotify = FALSE;
+                        MSG_FATAL("WMS_MMS_PDU_Decode pMe->m_isMMSNotify = FALSE;",0,0,0);
+                        WMS_MMS_MmsWspDecDataRelease(&pDecData,ePDUType);
+                        MSG_FATAL("WMS_MMS_PDU_Decode WMS_MMS_MmsWspDecDataRelease",0,0,0);
+                        
                         if (ISHELL_ActiveApplet(pMe->m_pShell) != AEECLSID_WMSAPP)
         				{
         					#if defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_W515V3)
@@ -2364,12 +2394,19 @@ Exit:
         				
                         else if(pMe->m_currState == WMSST_WMSNEW)
                         {
+                             MSG_FATAL("MMS_PDU_RETRIEVE_CONF 1",0,0,0);
                             CLOSE_DIALOG(DLGRET_CREATE)
                         }
                         else
                         {
-                            gbWmsMMSNtf = FALSE;
-                            CLOSE_DIALOG(DLGRET_INBOX_MMS);
+                             MSG_FATAL("MMS_PDU_RETRIEVE_CONF 2",0,0,0);
+                            if(pMe->m_currState != WMSST_INBOX_MMS && pMe->m_currState != WMSST_VIEWINBOXMSG_MMS
+                                && pMe->m_currState !=	WMSST_INMSGMMSOPTS && pMe->m_currState !=	WMSST_WRITEMSG
+                                && pMe->m_currState != WMSST_SENDING && pMe->m_currState != WMSST_MMSNOTIFY )
+                            {
+                                gbWmsMMSNtf = FALSE;
+                                CLOSE_DIALOG(DLGRET_INBOX_MMS);
+                            } 
                         }
                         
                         DBGPRINTF("pDecData->message.hFrom=%s",(char*)&pDecData->message.hFrom);
@@ -2422,29 +2459,6 @@ Exit:
                 	        }
             	        }
 #endif            	        
-                        MSG_FATAL("[MMS_PDU_NOTIFICATION_IND] m_isMMSNotify:%d",pMe->m_isMMSNotify,0,0);
-                        if(pMe->m_isMMSNotify)
-                        {
-                            STRNCPY((char*)sendData->pDeliveryacknowledgement->hTransactionID,
-                                        (char*)pDecData->message.hTransactionID,
-                                        STRLEN((char*)pDecData->message.hTransactionID) + 1);
-                            MSG_FATAL("[MMS_PDU_NOTIFICATION_IND] hTransactionID:%s",sendData->pDeliveryacknowledgement->hTransactionID,0,0);            
-                            sendData->pDeliveryacknowledgement->bReportAllowed = pMe->m_isMMSReporyAllowed;            
-                            WMS_MMSState(WMS_MMS_PDU_MAcknowledgeInd,0,(uint32)sendData);
-                        }
-                        else
-                        {
-                            sendData->pNotifyresp->bReportAllowed = pMe->m_isMMSReporyAllowed;
-                            STRNCPY((char*)sendData->pNotifyresp->hTransactionID,
-                                (char*)pDecData->message.hTransactionID,
-                                STRLEN((char*)pDecData->message.hTransactionID) + 1);
-                            sendData->pNotifyresp->iStatus = WMS_PDU_STATUS_Retrieved;
-                            WMS_MMSState(WMS_MMS_PDU_MNotifyrespInd,0,(uint32)sendData);
-                        }
-                        pMe->m_isMMSNotify = FALSE;
-                        MSG_FATAL("WMS_MMS_PDU_Decode pMe->m_isMMSNotify = FALSE;",0,0,0);
-                        WMS_MMS_MmsWspDecDataRelease(&pDecData,ePDUType);
-                        MSG_FATAL("WMS_MMS_PDU_Decode WMS_MMS_MmsWspDecDataRelease",0,0,0);
                     }
                     break;
                     default:

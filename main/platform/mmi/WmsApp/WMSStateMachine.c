@@ -652,6 +652,7 @@ static NextFSMAction WMSST_INIT_Handler(WmsApp *pMe)
 static NextFSMAction WMSST_MAIN_Handler(WmsApp *pMe)
 {
     boolean  bsmslock = FALSE;
+    MSG_FATAL("WMSST_MAIN_Handler Start",0,0,0);
     if (NULL == pMe)
     {
         return NFSMACTION_WAIT;
@@ -744,8 +745,7 @@ static NextFSMAction WMSST_MAIN_Handler(WmsApp *pMe)
                 pMe->m_stchkpwdbk = pMe->m_currState;
                 pMe->m_currState = WMSST_CHKPWD;
             }
-            return NFSMACTION_CONTINUE;
-        
+            return NFSMACTION_CONTINUE;         
         
         // 用户在主界面选择-- 新建短消息
         case DLGRET_WRITEMSG:
@@ -3570,6 +3570,22 @@ static NextFSMAction WMSST_GETTING_Handler(WmsApp *pMe)
             pMe->m_eDlgReturn = DLGRET_INBOX_MMS;
 
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOX_MMS:
+            MSG_FATAL("WMSST_GETTING_Handler DLGRET_INBOX_MMS",0,0,0);
+            pMe->m_eMBoxType = WMS_MB_INBOX_MMS;
+            {
+                uint16  nMsgID=0;    
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX_MMS);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOX_MMS)
+            return NFSMACTION_CONTINUE;              
 
         default:
             MSG_FATAL("WMSST_GETTING_Handler default",0,0,0);
