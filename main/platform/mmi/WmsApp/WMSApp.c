@@ -2474,9 +2474,10 @@ Exit:
             }
             
             MSG_FATAL("WMS_MMS_PDU_Decode WMSAPPU_SYSFREE(pMe->m_pMsgEvent);",0,0,0);
+            FREEIF(strAddr)
             return TRUE;
         }
-
+        
         break;
 #endif        
         // É¾³ıÏûÏ¢
