@@ -2105,6 +2105,7 @@ static boolean IDD_MESSAGELIST_Handler(void        *pUser,
     switch(eCode)
     {
         case EVT_DIALOG_INIT:
+            MSG_FATAL("IDD_MESSAGELIST_Handler pMe->m_currState=%d", pMe->m_currState, 0, 0);
             //设置控件区域
             //SetControlRect(pMe,pMenu);
             
@@ -2118,7 +2119,7 @@ static boolean IDD_MESSAGELIST_Handler(void        *pUser,
                 uint16 nCount = 0;
                 int nLen = 0;
                 uint32 dwMask = IMENUCTL_GetProperties(pMenu);
-            
+                MSG_FATAL("IDD_MESSAGELIST_Handler pMe->m_currState=%d", pMe->m_currState, 0, 0);
                 if (pMe == NULL)
                 {
                     return TRUE;
@@ -2216,6 +2217,7 @@ static boolean IDD_MESSAGELIST_Handler(void        *pUser,
                                     EVT_USER_REDRAW,
                                     0, 
                                     0);
+            MSG_FATAL("IDD_MESSAGELIST_Handler pMe->m_currState=%d", pMe->m_currState, 0, 0);
             return TRUE;
           
         case EVT_USER_REDRAW:
@@ -2534,8 +2536,58 @@ static boolean IDD_MESSAGELIST_Handler(void        *pUser,
                             || (pMe->m_eMBoxType == WMS_MB_DRAFTBOX_MMS)
                            )
                         {
+                            MMSData mmsDataInfoList[MAX_MMS_STORED];
+                            MMSData* pMmsDataInfoCur = NULL;
+                            int nMmsDataInfo = 0;
+                            IFile* pIFile = NULL;
+                            IFileMgr *pIFileMgr = NULL;           
+                            int result = 0;
                             pMe->m_wCurindex = pMe->m_wPrevMenuSel;
-                            CLOSE_DIALOG(DLGRET_LOADOK);
+                            switch(pMe->m_eMBoxType)
+                            {
+                                case WMS_MB_OUTBOX_MMS:
+                                {
+                                    nMmsDataInfo = CFGI_MMSOUTDATA_INFO;
+                                }
+                                break;
+                                case WMS_MB_INBOX_MMS:
+                                {
+                                    nMmsDataInfo = CFGI_MMSINDATA_INFO;
+                                }
+                                break;
+                                case WMS_MB_DRAFTBOX_MMS:
+                                {
+                                    nMmsDataInfo = CFGI_MMSDRAFTDATA_INFO;
+                                }
+                                break;                    
+                            }; 
+                            (void) ICONFIG_GetItem(pMe->m_pConfig,
+                                               nMmsDataInfo,
+                                               (void*)mmsDataInfoList,
+                                               sizeof(mmsDataInfoList));   
+                            pMmsDataInfoCur  = &mmsDataInfoList[pMe->m_wCurindex-1]; 
+                            DBGPRINTF("nInfoIndex=%d,MMSDataFileName=%s",pMe->m_wCurindex-1,pMmsDataInfoCur->MMSDataFileName);
+                            result = ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_FILEMGR,(void **)&pIFileMgr);
+                            if(SUCCESS == result)
+                            {
+                                pIFile = IFILEMGR_OpenFile( pIFileMgr, pMmsDataInfoCur->MMSDataFileName, _OFM_READ);     
+                                if((pMmsDataInfoCur != NULL) && (pIFile != NULL))
+                                {
+                                    MSG_FATAL("IDD_MESSAGELIST_Handler AVK_INFO 1", 0,0,0);
+                                    MSG_FATAL("IDD_MESSAGELIST_Handler pMe->m_currState=%d", pMe->m_currState, 0, 0);
+                                    CLOSE_DIALOG(DLGRET_LOADOK)
+                                }
+                                else
+                                {
+                                    MSG_FATAL("IDD_MESSAGELIST_Handler AVK_INFO 2", 0,0,0);
+                                    CLOSE_DIALOG(DLGRET_CANCELED)
+                                }
+                            }
+                            else
+                            {
+                                MSG_FATAL("IDD_MESSAGELIST_Handler AVK_INFO 3", 0,0,0);
+                                CLOSE_DIALOG(DLGRET_CANCELED)
+                            }                            
                         }
                         else
 #endif
@@ -19067,8 +19119,8 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                
 
                 pMmsDataInfoCur  = &mmsDataInfoList[nInfoIndex];   
-                
-                DBGPRINTF("[IDD_VIEWMSG_MMS_Handler] FileName:%s",pMmsDataInfoCur->MMSDataFileName);
+                DBGPRINTF("FileName Strlen=%d", STRLEN(pMmsDataInfoCur->MMSDataFileName));
+                DBGPRINTF("[IDD_VIEWMSG_MMS_Handler] nInfoIndex=%d,FileName:%s",nInfoIndex,pMmsDataInfoCur->MMSDataFileName);
                 pIFile = IFILEMGR_OpenFile( pIFileMgr, pMmsDataInfoCur->MMSDataFileName, _OFM_READ);
                 if(pIFile != NULL)
                 {
@@ -19086,7 +19138,9 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                 else
                 {
                     MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] File Open Failed Error:0x%x", IFILEMGR_GetLastError(pIFileMgr),0,0);
-                    return FALSE;
+                    RELEASEIF(pIFile);
+                    RELEASEIF(pIFileMgr);
+                    break;
                 }
                 RELEASEIF(pIFile);
                 RELEASEIF(pIFileMgr);
@@ -19560,6 +19614,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                         {
                             return TRUE;
                         }
+                        MSG_FATAL("IDD_VIEWMSG_MMS_Handler AVK_SELECT m_eMBoxType=%d",pMe->m_eMBoxType,0,0);
                         //ISTATIC_SetProperties(pStatic, ST_GRAPHIC_BG|ST_NOSCROLL);  
                         ISTATIC_SetText(pStatic, NULL, L" ",AEE_FONT_BOLD, AEE_FONT_BOLD);
                         if(pMe->m_eMBoxType == WMS_MB_INBOX_MMS)
@@ -19568,6 +19623,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                             if (ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_MENUCTL, 
                                     (void **) &pMe->m_pMenu) == SUCCESS)
                             {
+                                MSG_FATAL("IDD_VIEWMSG_MMS_Handler AVK_SELECT 1",0,0,0);
                                 // 动态添加菜单项
                                 MENU_ADDITEM(pMe->m_pMenu, IDS_REPLY);
                                 MENU_ADDITEM(pMe->m_pMenu, IDS_FORWARD);
@@ -19586,6 +19642,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                                 IMENUCTL_SetActive(pMe->m_pMenu, TRUE);
                                 
                                 IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                                MSG_FATAL("IDD_VIEWMSG_MMS_Handler AVK_SELECT 2",0,0,0);
                             }
                         }
                         else if(pMe->m_eMBoxType == WMS_MB_DRAFTBOX_MMS)

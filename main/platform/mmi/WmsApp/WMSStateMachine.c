@@ -275,6 +275,7 @@ static NextFSMAction WMSST_MMS_PORT_Handler(WmsApp *pMe);
 NextFSMAction WmsApp_ProcessState(WmsApp *pMe)
 {
     NextFSMAction retVal = NFSMACTION_WAIT;
+    MSG_FATAL("WmsApp_ProcessState Start pMe->m_currState=%d", pMe->m_currState, 0, 0);
     if (NULL == pMe)
     {
         return retVal;
@@ -298,7 +299,7 @@ NextFSMAction WmsApp_ProcessState(WmsApp *pMe)
     {
         pMe->m_isPopMenu = FALSE;
     }
-    MSG_FATAL("WmsApp_ProcessState pMe->m_currState=%d", pMe->m_currState, 0, 0);
+    MSG_FATAL("WmsApp_ProcessState 1", 0, 0, 0);
     // 根据WMS applet状态，调用相应的状态处理函数
     switch (pMe->m_currState)
     {
@@ -7258,7 +7259,7 @@ static NextFSMAction WMSST_DRAFTBOX_MMS_Handler(WmsApp *pMe)
 ==============================================================================*/
 static NextFSMAction WMSST_VIEWINBOXMSG_MMS_Handler(WmsApp *pMe)
 {
-    MSG_FATAL("WMSST_VIEWOUTBOXMSG_MMS_Handler Start",0,0,0);
+    MSG_FATAL("WMSST_VIEWINBOXMSG_MMS_Handler Start",0,0,0);
     if (NULL == pMe)
     {
         return NFSMACTION_WAIT;
@@ -7267,24 +7268,24 @@ static NextFSMAction WMSST_VIEWINBOXMSG_MMS_Handler(WmsApp *pMe)
     switch (pMe->m_eDlgReturn)
     {
         case DLGRET_CREATE:
-            MSG_FATAL("WMSST_VIEWOUTBOXMSG_MMS_Handler DLGRET_CREATE",0,0,0);
+            MSG_FATAL("WMSST_VIEWINBOXMSG_MMS_Handler DLGRET_CREATE",0,0,0);
             WmsApp_ShowDialog(pMe, IDD_VIEWMSG_MMS);
            
             return NFSMACTION_WAIT;
 
         case DLGRET_CANCELED:
-            MSG_FATAL("WMSST_VIEWOUTBOXMSG_MMS_Handler DLGRET_CANCELED",0,0,0);
+            MSG_FATAL("WMSST_VIEWINBOXMSG_MMS_Handler DLGRET_CANCELED",0,0,0);
             MOVE_TO_STATE(WMSST_INBOX_MMS)
             return NFSMACTION_CONTINUE;
 
         case DLGRET_OK:
-            MSG_FATAL("WMSST_VIEWOUTBOXMSG_MMS_Handler DLGRET_OK",0,0,0);
+            MSG_FATAL("WMSST_VIEWINBOXMSG_MMS_Handler DLGRET_OK",0,0,0);
             pMe->m_eOptType = OPT_VIA_VIEWMSG;
             MOVE_TO_STATE(WMSST_INMSGMMSOPTS)
             return NFSMACTION_CONTINUE;
 
         case DLGRET_INFO:
-            MSG_FATAL("WMSST_VIEWOUTBOXMSG_MMS_Handler DLGRET_INFO",0,0,0);
+            MSG_FATAL("WMSST_VIEWINBOXMSG_MMS_Handler DLGRET_INFO",0,0,0);
             pMe->m_eOptType = OPT_VIA_VIEWMSG;
             MOVE_TO_STATE(WMSST_INMSGMMSOPTS)
             return NFSMACTION_CONTINUE;

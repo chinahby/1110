@@ -7312,7 +7312,7 @@ void WmsApp_ProcessMMSStatus(WmsApp *pMe)
         }
         else
         {
-            MOVE_TO_STATE(WMSST_MAIN)
+            MOVE_TO_STATE(pMe->m_currState)
         }
     }
     MSG_FATAL("WmsApp_ProcessMMSStatus End",0,0,0);
@@ -7466,7 +7466,7 @@ Exit:
 }
 void WmsApp_UpdateMenuList_MMS(WmsApp *pMe, IMenuCtl *pMenu)
 {
-    int i, j, nItems;
+    int i, j, nItems, index;
     uint16  wItemCount;
     uint16  wTotalPages;
     AECHAR  wszFmt[10]={0};
@@ -7477,6 +7477,7 @@ void WmsApp_UpdateMenuList_MMS(WmsApp *pMe, IMenuCtl *pMenu)
     uint16      wSelectItemID=0;
     boolean     bFindCurxuhao = FALSE;
     MMSData		mmsDataInfoList[MAX_MMS_STORED];
+    MMSData		mmsDataInfoListTemp[MAX_MMS_STORED];
     int nboxType = 0;
     int nCountType = 0;
     MSG_FATAL("WmsApp_UpdateMenuList_MMS Start",0,0,0);
@@ -7564,6 +7565,8 @@ void WmsApp_UpdateMenuList_MMS(WmsApp *pMe, IMenuCtl *pMenu)
     }
 
 	// 确定建立菜单列表时，对应消息列表的起点位置
+	MSG_FATAL("m_eMakeListMode=%d, m_wCurPageStarxuhao=%d,m_wSelItemxuhao=%d",
+	           pMe->m_eMakeListMode,pMe->m_wCurPageStarxuhao,pMe->m_wSelItemxuhao);
     switch (pMe->m_eMakeListMode)
     {
         case MAKEMSGLIST_INIT:
@@ -7586,7 +7589,7 @@ void WmsApp_UpdateMenuList_MMS(WmsApp *pMe, IMenuCtl *pMenu)
             break;
             
         case MAKEMSGLIST_BACKONE:
-            if (pMe->m_wCurPageStarxuhao>1)
+            if ((pMe->m_wCurPageStarxuhao>1) && (pMe->m_wSelItemxuhao > 1))
             {
                 pMe->m_wCurPageStarxuhao--;
                 pMe->m_wSelItemxuhao = pMe->m_wCurPageStarxuhao;
@@ -7690,7 +7693,39 @@ void WmsApp_UpdateMenuList_MMS(WmsApp *pMe, IMenuCtl *pMenu)
 	}
 
 	MSG_FATAL("***zzg UpdateMenuList_MMS pMe->m_wSelItemxuhao=%d, wItemCount=%d, j=%d***", pMe->m_wSelItemxuhao, wItemCount, j);
-	
+    if(pMe->m_eMBoxType == WMS_MB_INBOX_MMS)
+    {
+        for(i=0, index=0; i < wItemCount; ++i)
+        {
+            //把所有未读彩信都排在队列最前面
+            if(!mmsDataInfoList[i].MMSDataReaded)
+            {
+                MEMCPY(&(mmsDataInfoListTemp[index++]), &(mmsDataInfoList[i]), sizeof(mmsDataInfoList[i]));
+            }
+        }
+        //有未读彩信时，才会进下面这个FOR循环，否则不用进
+        if(index > 0)
+        {
+            for(i=0; i < wItemCount; ++i)
+            {
+                //把所有已读彩信都排在队列最后面
+                if(mmsDataInfoList[i].MMSDataReaded)
+                {
+                    MEMCPY(&(mmsDataInfoListTemp[index++]), &(mmsDataInfoList[i]), sizeof(mmsDataInfoList[i]));
+                }
+            }   
+            ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSINDATA_INFO, (void*)&mmsDataInfoListTemp, sizeof(mmsDataInfoListTemp));    
+        }
+    }
+    if(index > 0)
+    {
+        for(i=0; i < wItemCount; ++i)
+        {
+            MEMCPY(&(mmsDataInfoList[i]), &(mmsDataInfoListTemp[i]), sizeof(mmsDataInfoListTemp[i]));
+            DBGPRINTF("mmsDataInfoListTemp[%d].MMSDataFileName=%s", i, mmsDataInfoListTemp[i].MMSDataFileName);
+        }
+    }
+    
     //for (i=0; i<nItems; i++)
     for (i=j; i<(j+nItems); i++)    //Add By zzg 2012_02_27
     {
