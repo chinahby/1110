@@ -2598,7 +2598,7 @@ static boolean CSvcPrg_BuildMenuList(CSvcPrgApp *pMe)
    //
 
    // Add BREW MSHOP items
-   m = CSvcPrg_CreateMenuList(12);
+   m = CSvcPrg_CreateMenuList(13);
    
    if (NULL == m) {
       return FALSE;
@@ -2710,6 +2710,23 @@ static boolean CSvcPrg_BuildMenuList(CSvcPrgApp *pMe)
    m[11].cfgItem          = CFGI_BREWSET_PASSWORD;
    m[11].typeData.strLen  = DL_MAX_SERVER; 
    m[11].isEditable       = TRUE;
+
+   //Add By zzg 2012_03_07 
+   m[12].title              = IDS_PPP_AUTH;
+   m[12].itemType           = DT_RANGE;
+   m[12].cfgItem            = CFGI_PPP_AUTH; 
+   m[12].isEditable         = TRUE;
+   m[12].typeData.rangeData = CSvcPrg_CreateRange(2);
+   
+   if (NULL == m[12].typeData.rangeData) 
+   {
+      return FALSE;
+   }
+   m[12].typeData.rangeData[0].resId = IDS_PPP_AUTH_DISABLED;
+   m[12].typeData.rangeData[0].value = OEMNV_PPP_AUTH_DISABLED;
+   m[12].typeData.rangeData[1].resId = IDS_PPP_AUTH_ENABLED;
+   m[12].typeData.rangeData[1].value = OEMNV_PPP_AUTH_ENABLED;
+   //Add End
    
 #ifdef FEATURE_USES_MMS 
    // Store the BREW menu in the Main menu

@@ -325,6 +325,15 @@
 	<String Id="1001" Name="IDS_MMS_OPTIONS" Encoding="Unicode">
 		<Text>MMS Settings</Text>
 	</String>
+	<String Id="1002" Name="IDS_PPP_AUTH">
+		<Text>PPP Auth</Text>
+	</String>
+	<String Id="1003" Name="IDS_PPP_AUTH_ENABLED">
+		<Text>Enabled</Text>
+	</String>
+	<String Id="1004" Name="IDS_PPP_AUTH_DISABLED">
+		<Text>Disabled</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="1" Name="IDD_GENERICMENU" Focus="1" Flags="00000000">

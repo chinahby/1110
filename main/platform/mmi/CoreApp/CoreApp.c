@@ -70,6 +70,9 @@
 CCoreApp *g_pCoreApp = NULL; 
 
 #endif
+
+
+boolean	bIsPPPAuthEnabled = FALSE;	//Add By zzg 2012_03_07
 /*==============================================================================
 
                                  函数声明
@@ -726,6 +729,24 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             {
                 IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,TRUE);
             }
+
+            //Add By zzg 2012_03_07
+            {
+            	byte bEnabled=OEMNV_PPP_AUTH_DISABLED;
+	            ICONFIG_GetItem(pMe->m_pConfig, CFGI_PPP_AUTH, &bEnabled, sizeof(byte));
+
+	            DBGPRINTF("***zzg CoreApp CFGI_PPP_AUTH bEnabled=%x***", bEnabled);
+	            
+	            if (bEnabled == OEMNV_PPP_AUTH_ENABLED)
+	            {
+	                bIsPPPAuthEnabled = TRUE;
+	            }
+	            else
+	            {
+	                bIsPPPAuthEnabled = FALSE;
+	            }
+			}
+            //Add End
             
             // 开始 Core Applet 状态机, 当前状态已初始为 COREST_INIT
             CoreApp_RunFSM(pMe);

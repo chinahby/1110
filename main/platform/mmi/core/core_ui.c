@@ -354,8 +354,6 @@ static ITelephone          *g_pITelephone = NULL;
 #endif
 static boolean      m_isBacklight = FALSE;
 //Add End
-
-
 /* <EJECT> */
 /*===========================================================================
 

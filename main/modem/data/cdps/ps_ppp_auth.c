@@ -83,6 +83,7 @@ when        who    what, where, why
 #include "bit.h"
 #endif /* FEATURE_UIM_SUPPORT_3GPD */
 
+extern boolean	bIsPPPAuthEnabled; //Add By zzg 2012_03_07
 /*===========================================================================
 
                 LOCAL DEFINITIONS AND DECLARATIONS FOR MODULE
@@ -180,20 +181,116 @@ void ppp_auth_start
   ppp_cb_ptr->auth.retry_counter = PPP_AUTH_RETRY_COUNTER_VAL;
   ppp_cb_ptr->auth.active_id = 0;
 
+
   /*-------------------------------------------------------------------------
     Are we supposed to authenticate?
   -------------------------------------------------------------------------*/
+if (bIsPPPAuthEnabled == TRUE)	//Add By zzg 2012_03_07
+{
+	switch(ppp_cb_ptr->auth.mode)	
+	{	
+		case PPP_DO_CHAP:
+		{
+			ppp_event_payload.ppp_event_protocol = PPP_EV_CHAP;
+
+			/*-----------------------------------------------------------------------
+			Are we the authenticatee or the authenticator?  If we are the
+			authenticator send the challenge - otherwise wait for it.
+			-----------------------------------------------------------------------*/
+			if(ppp_cb_ptr->auth.flags & PPP_AP_REMOTE)
+			{
+				ppp_cb_ptr->auth.retry_proc = chapi_send_challenge;
+				chapi_send_challenge(ppp_cb_ptr);
+			}
+			else
+			{
+				ppp_cb_ptr->auth.retry_proc = chapi_send_resp;
+			}
+		}
+		break;  
+
+		case PPP_DO_PAP:
+		{
+			ppp_event_payload.ppp_event_protocol = PPP_EV_PAP;
+
+			/*-----------------------------------------------------------------------
+			Are we the authenticatee or the authenticator?  If we are the
+			authenticator we don't send anything, but wait for a pkt from our peer.
+			-----------------------------------------------------------------------*/
+			if(ppp_cb_ptr->auth.flags & PPP_AP_LOCAL)
+			{
+			ppp_cb_ptr->auth.retry_proc = papi_send_auth_req;
+			papi_send_auth_req(ppp_cb_ptr);
+			}
+			else
+			{
+			ppp_cb_ptr->auth.retry_proc = NULL;
+			}
+		}
+		break;
+
+		default:
+			/*-----------------------------------------------------------------------
+			NOTE: this is intentionally not last as we want to start IPCP when
+			assert()s are disabled.
+			-----------------------------------------------------------------------*/
+			ASSERT(0);
+		/* fall through */
+		case PPP_NO_AUTH:
+		{
+			ppp_event_payload.ppp_event_protocol = PPP_EV_INVALID_PROTO;
+			/*-----------------------------------------------------------------------
+			there was no authentication required and so is complete - clear flags
+			so it doesn't look like it failed.
+			-----------------------------------------------------------------------*/
+			ppp_cb_ptr->auth.flags = 0;
+			ppp_auth_complete(ppp_cb_ptr, PPP_NO_PROTOCOL);
+		}
+		break;
+	}
+}
+else
+{
+	switch(ppp_cb_ptr->auth.mode)
+	{
+		default:
+			/*-----------------------------------------------------------------------
+			NOTE: this is intentionally not last as we want to start IPCP when
+			assert()s are disabled.
+			-----------------------------------------------------------------------*/
+			ASSERT(0);
+			/* fall through */
+
+		case PPP_DO_CHAP:
+		case PPP_DO_PAP:
+
+		case PPP_NO_AUTH:
+		{
+			ppp_event_payload.ppp_event_protocol = PPP_EV_INVALID_PROTO;
+			/*-----------------------------------------------------------------------
+			there was no authentication required and so is complete - clear flags
+			so it doesn't look like it failed.
+			-----------------------------------------------------------------------*/
+			ppp_cb_ptr->auth.flags = 0;
+			ppp_auth_complete(ppp_cb_ptr, PPP_NO_PROTOCOL);
+		}
+		break;
+	} /* switch(auth mode) */
+}
+
+  /*
   switch(ppp_cb_ptr->auth.mode)
   {
 #ifndef FEATURE_NO_PPP_AUTH //Gemsea Add for Disable PPP Auth
+{	
   case PPP_DO_CHAP:
   {
     ppp_event_payload.ppp_event_protocol = PPP_EV_CHAP;
 
-    /*-----------------------------------------------------------------------
-      Are we the authenticatee or the authenticator?  If we are the
-      authenticator send the challenge - otherwise wait for it.
-    -----------------------------------------------------------------------*/
+    //-----------------------------------------------------------------------
+    //  Are we the authenticatee or the authenticator?  If we are the
+    //  authenticator send the challenge - otherwise wait for it.
+    //-----------------------------------------------------------------------
     if(ppp_cb_ptr->auth.flags & PPP_AP_REMOTE)
     {
       ppp_cb_ptr->auth.retry_proc = chapi_send_challenge;
@@ -210,10 +307,10 @@ void ppp_auth_start
   {
     ppp_event_payload.ppp_event_protocol = PPP_EV_PAP;
 
-    /*-----------------------------------------------------------------------
-      Are we the authenticatee or the authenticator?  If we are the
-      authenticator we don't send anything, but wait for a pkt from our peer.
-    -----------------------------------------------------------------------*/
+    //-----------------------------------------------------------------------
+    //  Are we the authenticatee or the authenticator?  If we are the
+    //  authenticator we don't send anything, but wait for a pkt from our peer.
+    //-----------------------------------------------------------------------
     if(ppp_cb_ptr->auth.flags & PPP_AP_LOCAL)
     {
       ppp_cb_ptr->auth.retry_proc = papi_send_auth_req;
@@ -227,29 +324,30 @@ void ppp_auth_start
   break;
 #endif
   default:
-    /*-----------------------------------------------------------------------
-      NOTE: this is intentionally not last as we want to start IPCP when
-      assert()s are disabled.
-    -----------------------------------------------------------------------*/
+    //-----------------------------------------------------------------------
+    //  NOTE: this is intentionally not last as we want to start IPCP when
+    //  assert()s are disabled.
+    //-----------------------------------------------------------------------
     ASSERT(0);
-    /* fall through */
+    //* fall through 
 #ifdef FEATURE_NO_PPP_AUTH //Gemsea Add for Disable PPP Auth
-  case PPP_DO_CHAP:
-  case PPP_DO_PAP:
+	case PPP_DO_CHAP:
+	case PPP_DO_PAP:
 #endif
   case PPP_NO_AUTH:
   {
     ppp_event_payload.ppp_event_protocol = PPP_EV_INVALID_PROTO;
-    /*-----------------------------------------------------------------------
-      there was no authentication required and so is complete - clear flags
-      so it doesn't look like it failed.
-    -----------------------------------------------------------------------*/
+    //-----------------------------------------------------------------------
+    //  there was no authentication required and so is complete - clear flags
+    //  so it doesn't look like it failed.
+    //-----------------------------------------------------------------------
     ppp_cb_ptr->auth.flags = 0;
     ppp_auth_complete(ppp_cb_ptr, PPP_NO_PROTOCOL);
   }
   break;
 
-  } /* switch(auth mode) */
+  } // switch(auth mode) 
+  */
 
   if(ppp_event_payload.ppp_event_protocol != PPP_EV_INVALID_PROTO)
   {

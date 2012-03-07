@@ -249,8 +249,9 @@ enum /* OEM AEEConfigItem Values */
    ////////////////////////////////////////////////////////////////
 
    CFGI_SMS_SERVICE_OPTION,          // type=byte
-   CFGI_SMS_TIMESTAMP,               // type=byte
+   CFGI_SMS_TIMESTAMP,               // type=byte   
    CFGI_SMS_IS41_WORKAROUND,         // type=byte
+   CFGI_PPP_AUTH,					 // type=byte
    CFGI_SMS_MO_ENCODING,             // type=byte
    CFGI_SMS_MODE,                    // type=byte
    CFGI_SMS_APP,                     // type=byte

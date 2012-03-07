@@ -543,6 +543,11 @@ typedef PACKED struct _Key_pad_Cfg
 #define OEMNV_SMS_TIMESTAMP_ADJUST        0
 #define OEMNV_SMS_TIMESTAMP_ASRECEIVED    1
 
+//Add By zzg 2012_03_07
+#define OEMNV_PPP_AUTH_DISABLED        0
+#define OEMNV_PPP_AUTH_ENABLED    	   1
+//Add End
+
 /////////////////////////////////////////////////////////////////////////
 // SMS IS-41 Workaround -- CFGI_SMS_IS41_WORKAROUND
 /////////////////////////////////////////////////////////////////////////

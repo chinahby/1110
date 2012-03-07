@@ -455,6 +455,7 @@ typedef struct
    dword         internet_call_time;           // CFGI_BROWSER_CALL_TIMER
    byte          sms_service_option;           // CFGI_SMS_SERVICE_OPTION
    byte          sms_is41_workaround;          // CFGI_SMS_IS41_WORKAROUND
+   byte		 	 ppp_auth_enabled;			   // CFGI_PPP_AUTH
    byte          sms_mo_encoding;              // CFGI_SMS_MO_ENCODING
    byte          sms_mode;                     // CFGI_SMS_MODE
    byte          sms_app;                      // CFGI_SMS_APP
@@ -980,6 +981,8 @@ static int OEMPriv_GetItem_CFGI_SMS_TIMESTAMP(void *pBuff);
 static int OEMPriv_SetItem_CFGI_SMS_TIMESTAMP(void *pBuff);
 static int OEMPriv_GetItem_CFGI_SMS_IS41_WORKAROUND(void *pBuff);
 static int OEMPriv_SetItem_CFGI_SMS_IS41_WORKAROUND(void *pBuff);
+static int OEMPriv_GetItem_CFGI_PPP_AUTH(void *pBuff);
+static int OEMPriv_SetItem_CFGI_PPP_AUTH(void *pBuff);
 static int OEMPriv_GetItem_CFGI_SMS_MO_ENCODING(void *pBuff);
 static int OEMPriv_SetItem_CFGI_SMS_MO_ENCODING(void *pBuff);
 static int OEMPriv_GetItem_CFGI_SMS_MODE(void *pBuff);
@@ -1619,6 +1622,7 @@ static OEMConfigListType oemi_cache = {
    0,                                               // CFGI_BROWSER_CALL_TIMER
    OEMNV_SMS_SO_SO6,
    OEMNV_SMS_EMAIL_ADDRESSING_IS41,
+   OEMNV_PPP_AUTH_DISABLED,							// CFGI_PPP_AUTH
 #if defined(FEATURE_CARRIER_ANGOLA_MOVICEL) || defined(FEATURE_CARRIER_MAROC_WANA) || defined (FEATURE_CARRIER_ISRAEL_PELEPHONE)
    OEMNV_SMS_MO_ENCODING_OCTET,
 #else   
@@ -2040,8 +2044,9 @@ static ConfigItemTableEntry const customItemTable[] =
    ////////////////////////////////////////////////////////////////
 
    CFGTABLEITEM(CFGI_SMS_SERVICE_OPTION, sizeof(byte)),
-   CFGTABLEITEM(CFGI_SMS_TIMESTAMP, sizeof(byte)),
+   CFGTABLEITEM(CFGI_SMS_TIMESTAMP, sizeof(byte)),   
    CFGTABLEITEM(CFGI_SMS_IS41_WORKAROUND, sizeof(byte)),
+   CFGTABLEITEM(CFGI_PPP_AUTH, sizeof(byte)),
    CFGTABLEITEM(CFGI_SMS_MO_ENCODING, sizeof(byte)),
    CFGTABLEITEM(CFGI_SMS_MODE, sizeof(byte)),
    CFGTABLEITEM(CFGI_SMS_APP, sizeof(byte)),
@@ -2608,6 +2613,7 @@ void OEM_RestoreFactorySetting( void )
 
    oemi_cache.sms_service_option  = OEMNV_SMS_SO_SO6;
    oemi_cache.sms_is41_workaround = OEMNV_SMS_EMAIL_ADDRESSING_IS41;
+   oemi_cache.ppp_auth_enabled	  = OEMNV_PPP_AUTH_DISABLED;
 #if defined(FEATURE_CARRIER_ANGOLA_MOVICEL) || defined(FEATURE_CARRIER_MAROC_WANA) || defined (FEATURE_CARRIER_ISRAEL_PELEPHONE)
    oemi_cache.sms_mo_encoding     = OEMNV_SMS_MO_ENCODING_OCTET;
 #else
@@ -6056,6 +6062,10 @@ static void OEMPriv_ReadOEMConfigList(void)
       oemi_cache.sms_is41_workaround = OEMNV_SMS_EMAIL_ADDRESSING_IS41;
    }
 
+   if (oemi_cache.ppp_auth_enabled> OEMNV_PPP_AUTH_ENABLED) {
+      oemi_cache.ppp_auth_enabled = OEMNV_PPP_AUTH_DISABLED;
+   }
+
    if (oemi_cache.sms_mo_encoding > OEMNV_SMS_MO_ENCODING_UNICODE) {
       oemi_cache.sms_mo_encoding = OEMNV_SMS_MO_ENCODING_7BIT;
    }
@@ -7227,10 +7237,26 @@ static int OEMPriv_GetItem_CFGI_SMS_IS41_WORKAROUND(void *pBuff)
    return SUCCESS;
 }
 
+static int OEMPriv_GetItem_CFGI_PPP_AUTH(void *pBuff)
+{
+   *(byte *)pBuff = oemi_cache.ppp_auth_enabled;
+   return SUCCESS;
+}
+
 static int OEMPriv_SetItem_CFGI_SMS_IS41_WORKAROUND(void *pBuff)
 {
    if (oemi_cache.sms_is41_workaround != *(byte *)pBuff) {
       oemi_cache.sms_is41_workaround = *(byte *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_PPP_AUTH(void *pBuff)
+{
+   if (oemi_cache.ppp_auth_enabled != *(byte *)pBuff) {
+      oemi_cache.ppp_auth_enabled = *(byte *)pBuff;
       OEMPriv_WriteOEMConfigList();
    }
 
