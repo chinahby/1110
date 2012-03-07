@@ -130,25 +130,17 @@ Qualcomm Confidential and Proprietary
 #define DEVICE_UNKNOWN  0xFF
 
 /* Maximum data length. */
-/* Currently QPST tool supports a maximum packet length of 4096. This 
- * value can be tuned to use bigger packet sizes for better performance 
- * if the QPST tool supports bigger size packets */
-#define UNFRAMED_MAX_DATA_LENGTH 4096
-
-/* Maximum data length. */
 #define MAX_DATA_LENGTH 1024
 
-/* Maximum packet size.  1 for packet type.  4 for length.  2 for CRC. 
- * 9 for any other overhead */
-#define MAX_PACKET_SIZE (UNFRAMED_MAX_DATA_LENGTH + 1 + 4 + 2 + 9)
+/* Maximum packet size.  1 for packet type.  4 for length.  2 for CRC. */
+#define MAX_PACKET_SIZE (MAX_DATA_LENGTH + 1 + 4 + 2)
 
 /* Number of packets.  NUMBER_OF_PACKETS * MAX_DATA_LENGTH will be our
    maximum window size. */
 #define NUMBER_OF_PACKETS 100
-#define STREAM_DLOAD_MAX_VER         0x04
-#define STREAM_DLOAD_MIN_VER         0x02
 
-#define UNFRAMED_DLOAD_MIN_VER       0x04
+#define STREAM_DLOAD_MAX_VER         0x03
+#define STREAM_DLOAD_MIN_VER         0x02
 
 #define FEATURE_UNCOMPRESSED_DLOAD   0x00000001
 
@@ -187,14 +179,11 @@ Qualcomm Confidential and Proprietary
 #define SECURITY_MODE_RSP            0x18
 #define PARTITION_TABLE_RSP          0x1A
 #define OPEN_MULTI_IMAGE_RSP         0x1C
-/* Gap here for commands implemented in QPST but not phone side */
-#define UNFRAMED_STREAM_WRITE_CMD    0x30 /* Needed for command parsing */
-#define UNFRAMED_STREAM_WRITE_RSP    0x31
-#define DUMMY_RSP                    0x32
+
 
 /* Only dispatch commands if they fall in the valid command range. */
 #define FIRST_COMMAND 0x01
-#define LAST_COMMAND  0x31
+#define LAST_COMMAND  0x1C
 
 
 /* Used by debug only code that simulates dropped ACKS */
@@ -231,7 +220,7 @@ typedef struct incoming_data *incoming_t;
 struct incoming_data packet_data[NUMBER_OF_PACKETS];
 
 /* We need 4 bytes extra for adjustment purposes. */
-ALIGN(4) byte aligned_buffer[UNFRAMED_MAX_DATA_LENGTH + 4];
+__align(4) byte aligned_buffer[MAX_DATA_LENGTH + 4];
 
 /* Lists. */
 incoming_t free_list;           /* Unused buffers. */
@@ -470,13 +459,6 @@ packet_handle_incoming_buf (byte* buf, int len)
 
     current->length = 0;
     current->next = NULL;       /* Pull it off of the list. */
-  }
-  if (buf[0] == UNFRAMED_STREAM_WRITE_CMD)
-  {
-    current->length = len;
-    memcpy(current->buffer, buf, len);
-    process_current_packet ();
-    return;
   }
   for (i=0; i < len; i++) {
      byte ch = *buf++;
@@ -1071,10 +1053,7 @@ handle_simple_read (incoming_t buffer)
   addr = (data[1] | (data[2] << 8) | (data[3] << 16) | (data[4] << 24));
   length = (data[5] | (data[6] << 8));
 
-  /* length of the read reply packet(read data length + 5(1 byte for command +
-   * 4 byte for address) should not exceed the reply buffer size.
-   */
-  if ((length + 5) > REPLY_BUFFER_SIZE)
+  if (length > MAX_DATA_LENGTH)
   {
     transmit_error (NAK_INVALID_LEN, "Packet too large");
     return 0;
@@ -1860,59 +1839,6 @@ handle_open_multi (incoming_t buffer)
 
 /*===========================================================================
 
-  This function is used to handle flashing with packets that are not following
-  HDLC encoding.
-
-===========================================================================*/
-int handle_unframed_stream_write(incoming_t buffer)
-{
-  dword unframed_length;
-  byte *unframed_data;
-  dword addr;
-  response_code_type retVal;
-  byte* buf;
-  TPRINTF(4,("handle_unframed_stream_write: enter\n"));
-
-  /* In unframed packet, byte 0 is command, bytes 1-3 are padding bits for
-   * alignment, bytes 4-7 are the address, bytes 8-11 are the length.
-   */
-
-  buf = buffer->buffer;
-
-  addr = (dword) (buf[4] | (buf[5] << 8) | (buf[6] << 16) | (buf[7] << 24));
-
-  unframed_length = (dword) (buf[8] | (buf[9] << 8) |
-        (buf[10] << 16) | (buf[11] << 24));
-
-  unframed_data = &(buffer->buffer[12]);
-
-  TPRINTF(4,("handle_unframed_stream_write: addr 0x%x  len 0x%x\n",
-     addr, unframed_length));
-
-  retVal = do_stream_write(unframed_data, addr,unframed_length);
-
-  if (retVal != ACK)
-  {
-    transmit_error ((dword) retVal, "Unframed stream write unsuccessful");
-    return 0;
-  }
-
-  reply_buffer[0] = UNFRAMED_STREAM_WRITE_RSP;
-  reply_buffer[1] = addr & 0xFF;
-  reply_buffer[2] = (addr >> 8) & 0xFF;
-  reply_buffer[3] = (addr >> 16) & 0xFF;
-  reply_buffer[4] = (addr >> 24) & 0xFF;
-  reply_length = 5;
-
-  compute_reply_crc ();
-  force_xmit_reply();
-
-  TPRINTF(4,("handle_unframed_stream_write: exit\n"));
-
-  return 0;
-}
-/*===========================================================================
-
 FUNCTION packet_process
 
 DESCRIPTION
@@ -1960,27 +1886,6 @@ int (*packet_handler[]) (incoming_t) =
   handle_invalid,             /*  0x1A -    partition table reply.  */
   handle_open_multi,          /*  0x1B -  open multi-image.         */
   handle_invalid,             /*  0x1C -    open multi-image reply. */
-  handle_invalid,             /*  0x1D -  Unimplemented command     */
-  handle_invalid,             /*  0x1E -  Unimplemented command     */
-  handle_invalid,             /*  0x1F -  Unimplemented command     */
-  handle_invalid,             /*  0x20 -  Unimplemented command     */
-  handle_invalid,             /*  0x21 -  Unimplemented command     */
-  handle_invalid,             /*  0x22 -  Unimplemented command     */
-  handle_invalid,             /*  0x23 -  Unimplemented command     */
-  handle_invalid,             /*  0x24 -  Unimplemented command     */
-  handle_invalid,             /*  0x25 -  Unimplemented command     */
-  handle_invalid,             /*  0x26 -  Unimplemented command     */
-  handle_invalid,             /*  0x27 -  Unimplemented command     */
-  handle_invalid,             /*  0x28 -  Unimplemented command     */
-  handle_invalid,             /*  0x29 -  Unimplemented command     */
-  handle_invalid,             /*  0x2A -  Unimplemented command     */
-  handle_invalid,             /*  0x2B -  Unimplemented command     */
-  handle_invalid,             /*  0x2C -  Unimplemented command     */
-  handle_invalid,             /*  0x2D -  Unimplemented command     */
-  handle_invalid,             /*  0x2E -  Unimplemented command     */
-  handle_invalid,             /*  0x2F -  Unimplemented command     */
-  handle_unframed_stream_write, /*0x30 -  unframed stream write     */
-  handle_invalid,             /*  0x31 -    stream written          */
 };
 
 
