@@ -5927,6 +5927,8 @@ static boolean  dialog_handler_of_state_showalert( CScheduleApp* pme,
     static byte      keyBeepVolumeSetting = 0;
     static uint16    theSel               = 0;
 
+	MSG_FATAL("***zzg dialog_handler_of_state_showalert eCode=%x, wParam=%x, dwParam=%x***", eCode, wParam, dwParam);
+
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
@@ -5955,6 +5957,8 @@ static boolean  dialog_handler_of_state_showalert( CScheduleApp* pme,
 
         case EVT_DIALOG_END:
         {
+            MSG_FATAL("***zzg scheduleapp EVT_DIALOG_END***", 0, 0, 0);
+            
             pme->m_CalMgr.m_wPendingAlarmPermID = EMPTY_ALARM_ID;  
             if( !pme->m_bshowEventDetail && !pme->m_bSuspended)
             {
@@ -6065,7 +6069,8 @@ static boolean  dialog_handler_of_state_showalert( CScheduleApp* pme,
                                                 wstrTitle, 
                                                 sizeof(wstrTitle));
                                                 
-                        SETAEERECT(&rc, 0, TITLEBAR_HEIGHT , pme->m_rc.dx, TITLEBAR_HEIGHT);
+                        //SETAEERECT(&rc, 0, TITLEBAR_HEIGHT , pme->m_rc.dx, TITLEBAR_HEIGHT);
+                        SETAEERECT(&rc, 0, 0 , pme->m_rc.dx, MENUITEM_HEIGHT);  //Add By zzg 2012_03_08
                         ISHELL_LoadResString(pme->m_pShell,
                                                 AEE_SCHEDULEAPP_RES_FILE,
                                                 IDS_EVENT_EDIT_TITLE_SUBJECT,
@@ -6084,7 +6089,8 @@ static boolean  dialog_handler_of_state_showalert( CScheduleApp* pme,
                                                             rc.x, rc.y, &rc,
                                                             IDF_TEXT_TRANSPARENT | IDF_ALIGN_LEFT | IDF_ALIGN_MIDDLE);
 					
-						rc.y = rc.y + TITLEBAR_HEIGHT;												                       
+						//rc.y = rc.y + TITLEBAR_HEIGHT;	
+						rc.y = rc.y + MENUITEM_HEIGHT;  //Add By zzg 2012_03_08;	
 						IDISPLAY_DrawText(pme->m_pDisplay, AEE_FONT_NORMAL,
 						                                   theLast->location,
 						                                   -1,
@@ -6163,14 +6169,11 @@ static boolean  dialog_handler_of_state_showalert( CScheduleApp* pme,
 
         case EVT_KEY_PRESS:
         {
-
+            MSG_FATAL("***zzg scheduleapp showalert EVT_KEY_PRESS wParam=%x, g_nCurEvtStyle=%x***", wParam, g_nCurEvtStyle, 0);
             if( wParam == AVK_SELECT || wParam == AVK_CLR)
-            {
-            
+            {            
                 if(g_nCurEvtStyle == 0)
                 {
-                
-				
                     if(wParam == AVK_SELECT)
                     {
                     
@@ -6208,8 +6211,6 @@ static boolean  dialog_handler_of_state_showalert( CScheduleApp* pme,
 
                     if( wParam == AVK_CLR)
                     {
-                    
-
                         Appointment* pAppointment = 0;
                  
                         //int          i            = 0;
@@ -6286,7 +6287,7 @@ static boolean  dialog_handler_of_state_showalert( CScheduleApp* pme,
 					        }
 
 					    }
-						DBGPRINTF("----------------------->ok2"); 
+						MSG_FATAL("----------------------->ok2", 0, 0, 0); 
 						ISHELL_CancelTimer( pme->m_pShell, 0, &(pme->m_CalMgr));
                         stopRingerAlert( &pme->m_CalMgr);
                         //MSG_FATAL("end       =============%d",end,0,0);

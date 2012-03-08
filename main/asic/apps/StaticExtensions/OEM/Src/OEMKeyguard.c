@@ -489,7 +489,7 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
 {
     // The keyguard message better be on the screen!
     ASSERT(sbMessageActive);
-    MSG_FATAL("OEMPriv_KeyguardEventHandler......................",0,0,0);
+    MSG_FATAL("OEMPriv_KeyguardEventHandler evt=%x, wParam=%x", evt,wParam,0);
     switch (evt)
     {
     	//Add By zzg 2010_11_23		
@@ -513,7 +513,7 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
 			}
 		}
 #endif	
-		//Add End
+		//Add End	
         case EVT_KEY:			
             switch ((AVKType)wParam)
             {           
@@ -584,7 +584,7 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
                 case AVK_CLR:
 #endif
                     
-                    
+                    MSG_FATAL("***zzg KeyguardEvtHandler wParam=%x, sUnlockState=%x***", wParam, sUnlockState, 0);
                     bDrawMessage = TRUE;
                     if (UNLOCKSTATE_RESET == sUnlockState)
                     {
@@ -1056,6 +1056,7 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
         //    db_value.db_backlight_level = TRUE;
         //    db_put(DB_BACKLIGHT_LEVEL, &db_value);
         //}
+        
 		
 #if  defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_1110W516)
         if(wParam == AVK_CLR)
@@ -1064,13 +1065,20 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
 #endif            
         {
 #ifndef FEATURE_VERSION_W208S        
-        	OEMPriv_ResumeBREW();
-            return FALSE; 
-#endif			
-        }       
+				OEMPriv_ResumeBREW();
+				return FALSE; 
+#else				
+				if (cls == AEECLSID_CORE_APP)
+				{
+					OEMPriv_ResumeBREW();
+					return FALSE; 
+				}
+#endif		
+        }  
 
 #ifdef FEATURE_VERSION_W208S
-        if (cls == AEECLSID_DIALER || cls == AEECLSID_WMSAPP)
+        MSG_FATAL("***zzg OEMKeyguard_HandleEvent 2 wParam=%x, cls=%x***", wParam, cls, 0);
+        if ((cls == AEECLSID_DIALER) || (cls == AEECLSID_WMSAPP))
         {
             if(wParam == AVK_CLR )
             {
@@ -1078,8 +1086,9 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
                 return FALSE;            
             } 
         }
-#else
-        if(cls == AEECLSID_ALARMCLOCK || cls == AEECLSID_SCHEDULEAPP)
+#endif
+        MSG_FATAL("***zzg OEMKeyguard_HandleEvent 3 wParam=%x, cls=%x***", wParam, cls, 0);
+        if((cls == AEECLSID_ALARMCLOCK) || (cls == AEECLSID_SCHEDULEAPP))
         {
             if(wParam == AVK_CLR || wParam == AVK_SELECT)
             {
@@ -1087,7 +1096,6 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
                 return FALSE;            
             }            
         }
-#endif
 
 #if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_1110W516)
         if(wParam== AVK_CLR||wParam == AVK_END || wParam == AVK_POWER || wParam == AVK_HEADSET_CONNECT || wParam == AVK_HEADSET_DISCONNECT)
@@ -1097,11 +1105,12 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
         {        
 #ifndef FEATURE_VERSION_W208S          
         	return FALSE;
-#else
-			if(wParam == AVK_END || wParam == AVK_POWER || wParam == AVK_HEADSET_CONNECT || wParam == AVK_HEADSET_DISCONNECT)
+#else            
+			if(wParam != AVK_SELECT)
 			{
 				return FALSE;
 			}
+			
 #endif
         }
        
@@ -1144,6 +1153,8 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
             }
         }
 		
+		MSG_FATAL("sbMessageActive 1===========%d",sbMessageActive,0,0);	
+		
         if (!sbMessageActive)
         {
             //
@@ -1166,7 +1177,7 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
                 AEE_Suspend();
             }
         }
-        MSG_FATAL("sbMessageActive===========%d",sbMessageActive,0,0);
+        MSG_FATAL("sbMessageActive 2===========%d",sbMessageActive,0,0);
         if (sbMessageActive)
         {
             OEMPriv_ResetMessageTimer();
