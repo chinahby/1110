@@ -1928,7 +1928,8 @@ static boolean  IDD_PWDINPUT_Handler(void       *pUser,
                 // 绘制底条提示
                 if (nLen > 3)
                 {// 确定-----删除
-                    CoreDrawBottomBar(BTBAR_OK_BACK)
+                    //CoreDrawBottomBar(BTBAR_OK_BACK)
+                    CoreDrawBottomBar(BTBAR_OK_SOS)
                 }
                 else if(nLen > 0)
                 {// 删除
@@ -2004,6 +2005,14 @@ static boolean  IDD_PWDINPUT_Handler(void       *pUser,
 						#endif
                         CLOSE_DIALOG(DLGRET_EMGCALL)
                         return TRUE;
+
+                    #ifdef FEATURE_ALL_KEY_PAD
+                    case AVK_DEL:
+                    {
+                        chEnter = 0;                        
+                        break;
+                    }
+                    #endif
 
                     case AVK_SOFT2:		//Add By zzg 2010_09_08 for smart and m8    
                     case AVK_CLR:

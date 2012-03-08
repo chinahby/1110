@@ -267,6 +267,7 @@ typedef enum BottomBar_e_Type
    //Add End
    //BTBAR_LOCK_BACK,			//锁键盘-返回
    BTBAR_OK_BACK,         // 确定-----返回
+   BTBAR_OK_SOS,          // 确定-----SOS
    BTBAR_OK_CANCEL,       // 确定-----取消
    BTBAR_OK_DEL,
    BTBAR_OK_DELETE,       // 确定-----删除

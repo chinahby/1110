@@ -798,6 +798,14 @@ typedef struct _OEMErrLogType {
 #define OEMNV_EMERG_NUM_TWO                    "112"
 #define OEMNV_EMERG_NUM_TRE                    "911"
 #define OEMNV_EMERG_NUM_FOR                    "123"
+#elif defined(FEATURE_VERSION_W208S)
+#define OEMNV_EMERT_SEZE                       3
+#define OEMNV_EMERG_NUM_LEN_ONE                2
+#define OEMNV_EMERG_NUM_LEN_TWO                3
+#define OEMNV_EMERG_NUM_LEN_TRE                4
+#define OEMNV_EMERG_NUM_ONE                    "*1"
+#define OEMNV_EMERG_NUM_TWO                    "911"
+#define OEMNV_EMERG_NUM_TRE                    "*171"
 #else
 #define OEMNV_EMERT_SEZE                       4
 #define OEMNV_EMERG_NUM_LEN                    3

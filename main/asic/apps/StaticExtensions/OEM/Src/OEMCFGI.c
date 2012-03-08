@@ -2987,20 +2987,37 @@ void OEM_RestoreFactorySetting( void )
    MEMSET((void *)&oemi_cache.fmRadio_chan_info, 0, sizeof(sChanInfo) * MAX_FMRADIO_STORED_CHANNEL);
    oemi_cache.fmRadio_chan_total = 0;
 #endif   
-   oemi_cache.emerg_table.emert_size = OEMNV_EMERT_SEZE;
-   oemi_cache.emerg_table.emerg_num[0].num_len = OEMNV_EMERG_NUM_LEN;
-   STRCPY(oemi_cache.emerg_table.emerg_num[0].num_buf,OEMNV_EMERG_NUM_ONE);
+
+#ifdef FEATURE_VERSION_W208S
+    oemi_cache.emerg_table.emert_size = OEMNV_EMERT_SEZE;
+    
+    oemi_cache.emerg_table.emerg_num[0].num_len = OEMNV_EMERG_NUM_LEN_ONE;
+    STRCPY(oemi_cache.emerg_table.emerg_num[0].num_buf,OEMNV_EMERG_NUM_ONE);
+
+    oemi_cache.emerg_table.emerg_num[1].num_len = OEMNV_EMERG_NUM_LEN_TWO;
+    STRCPY(oemi_cache.emerg_table.emerg_num[1].num_buf,OEMNV_EMERG_NUM_TWO);
+    
+    oemi_cache.emerg_table.emerg_num[2].num_len = OEMNV_EMERG_NUM_LEN_TRE;
+    STRCPY(oemi_cache.emerg_table.emerg_num[2].num_buf,OEMNV_EMERG_NUM_TRE); 
+#else
+    oemi_cache.emerg_table.emert_size = OEMNV_EMERT_SEZE;
+    oemi_cache.emerg_table.emerg_num[0].num_len = OEMNV_EMERG_NUM_LEN;
+    STRCPY(oemi_cache.emerg_table.emerg_num[0].num_buf,OEMNV_EMERG_NUM_ONE);
 #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
 #else
-   oemi_cache.emerg_table.emerg_num[1].num_len = OEMNV_EMERG_NUM_LEN;
-   STRCPY(oemi_cache.emerg_table.emerg_num[1].num_buf,OEMNV_EMERG_NUM_TWO);
-   oemi_cache.emerg_table.emerg_num[2].num_len = OEMNV_EMERG_NUM_LEN;
-   STRCPY(oemi_cache.emerg_table.emerg_num[2].num_buf,OEMNV_EMERG_NUM_TRE);
+    oemi_cache.emerg_table.emerg_num[1].num_len = OEMNV_EMERG_NUM_LEN;
+    STRCPY(oemi_cache.emerg_table.emerg_num[1].num_buf,OEMNV_EMERG_NUM_TWO);
+    oemi_cache.emerg_table.emerg_num[2].num_len = OEMNV_EMERG_NUM_LEN;
+    STRCPY(oemi_cache.emerg_table.emerg_num[2].num_buf,OEMNV_EMERG_NUM_TRE);
 #if !(defined(FEATURE_VERSION_CITYCELL) || defined(FEATURE_VERSION_M8P))
-   oemi_cache.emerg_table.emerg_num[3].num_len = OEMNV_EMERG_NUM_LEN;
-   STRCPY(oemi_cache.emerg_table.emerg_num[3].num_buf,OEMNV_EMERG_NUM_FOR);
+    oemi_cache.emerg_table.emerg_num[3].num_len = OEMNV_EMERG_NUM_LEN;
+    STRCPY(oemi_cache.emerg_table.emerg_num[3].num_buf,OEMNV_EMERG_NUM_FOR);
 #endif
-#endif                                  
+#endif  
+
+#endif
+
+                                   
    STRCPY(oemi_cache.BUSY_ENABLE,OEMNV_CALLFORWARD_BUSY_ENABLE);   //CFGI_CALLFORWARD_BUSY_ENABLE
    STRCPY(oemi_cache.BUSY_DISABLE,OEMNV_CALLFORWARD_BUSY_DISABLE);  //CFGI_CALLFORWARD_BUSY_DISABLE
    STRCPY(oemi_cache.NOANSWER_ENABLE,OEMNV_CALLFORWARD_NOANSWER_ENABLE);  //CFGI_CALLFORWARD_NOANSWER_ENABLE
