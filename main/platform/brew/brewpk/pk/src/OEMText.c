@@ -1796,14 +1796,14 @@ boolean OEM_TextKeyPress(OEMCONTEXT hTextCtl,
 	}
     // Press and hold the number key to get the number
 	#ifndef FEATURE_ALL_KEY_PAD
-	#ifndef FEATURE_VERSION_W515V3
-	#ifdef FEATURE_VERSION_X3
-	if ((eCode != EVT_KEY) && !(eCode == EVT_KEY_HELD && dwKeyCode == AVK_STAR))
-	#else
-    if ((eCode != EVT_KEY) && !(eCode == EVT_KEY_HELD && dwKeyCode == AVK_0))
-	#endif
-    #else
+	#if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_1110W516)
     if ((eCode == EVT_KEY_RELEASE)||(eCode == EVT_KEY_PRESS))
+    #else
+    #ifdef FEATURE_VERSION_X3
+    if ((eCode != EVT_KEY) && !(eCode == EVT_KEY_HELD && dwKeyCode == AVK_STAR))
+    #else
+    if ((eCode != EVT_KEY) && !(eCode == EVT_KEY_HELD && dwKeyCode == AVK_0))
+    #endif             
     #endif
        /* &&(!(key == AVK_STAR) && (eCode == EVT_KEY_RELEASE))
         &&(!(key == AVK_POUND) && (eCode == EVT_KEY_RELEASE)) //modi by yangdecai 2010-08-07
@@ -2910,7 +2910,7 @@ static void TextCtl_AddChar(TextCtlContext *pContext, AECHAR ch)
 
             // Write in the new character
             pContext->pszContents[pContext->wSelStart] = ch;
-            #ifdef FEATURE_VERSION_W515V3 //ndef FEATURE_ALL_KEY_PAD
+            #if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_1110W516)//ndef FEATURE_ALL_KEY_PAD
             if(!pContext->m_bDigital)
             {
 				pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart] = ch;
@@ -11729,6 +11729,7 @@ static boolean TextCtl_NumbersKey(TextCtlContext *pContext, AEEEvent eCode,AVKTy
    boolean  bRet       = FALSE;
    T9STATUS sT9Status = T9STATERROR;  
    pContext->m_bDigital = TRUE;
+   
    if (key >= AVK_1 && key <= AVK_9) 
    {
       TextCtl_NoSelection(pContext);
@@ -11766,7 +11767,7 @@ static boolean TextCtl_NumbersKey(TextCtlContext *pContext, AEEEvent eCode,AVKTy
 	    {   
 #if !defined (FEATURE_ALL_KEY_PAD)
 	        case AVK_STAR:
-#if defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_X3)
+#if defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_X3)||defined(FEATURE_VERSION_1110W516) 
               if(eCode == EVT_KEY_HELD)
               {
                   if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
@@ -11782,7 +11783,7 @@ static boolean TextCtl_NumbersKey(TextCtlContext *pContext, AEEEvent eCode,AVKTy
               else
 #endif
               {
-                #ifdef FEATURE_VERSION_W515V3
+                #if defined(FEATURE_VERSION_W515V3) ||defined(FEATURE_VERSION_1110W516) 
                 	AEE_CancelTimer(TextCtl_keypadtimer,pContext);
                 	{    
             			if(pContext->m_curpros == 0)
