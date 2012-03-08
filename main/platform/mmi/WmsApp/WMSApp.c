@@ -719,6 +719,7 @@ static int CWmsApp_InitAppData(WmsApp *pMe)
         CFGI_WMS_SENDERVISIBILITY,
         &pMe->m_isMMSSenderVisibility,
         sizeof(pMe->m_isMMSSenderVisibility));
+        pMe->m_Animate = NULL;
 #endif
 
     (void)IWMS_Activate(pMe->m_pwms,pMe->m_clientId);
@@ -795,6 +796,14 @@ static void CWmsApp_FreeAppData(WmsApp *pMe)
     pMe->m_wSelectStore = 1;
     pMe->m_pMMSMenuHasFocus = FALSE;
     WMS_MMS_RELEASE();
+    if(pMe->m_Animate != NULL)
+    {
+        DBGPRINTF("CWmsApp_FreeAppData pMe->m_Animate=0x%x", pMe->m_Animate);
+        IIMAGE_Stop(pMe->m_Animate);
+        IIMAGE_Release(pMe->m_Animate);
+        pMe->m_Animate = NULL;
+    }
+    
 #endif    
 
     pMe->m_eAppStatus = WMSAPP_STOP;

@@ -18982,6 +18982,11 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
     uint32 dwMask;
     static MMS_WSP_DEC_DATA *pDecdata = NULL;
     static AECHAR *pViewText = NULL;
+    static boolean hasAnimate = FALSE;
+    //AnimateState == 0:当前没有对动画操作
+    //AnimateState == 1:当前光标停留在动画上
+    //AnimateState == 2:当前光标停留在动画上，并按下了INFO键，开始显示动画
+    static uint8 AnimateState = 0;
     MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] eCode:0x%x, wParam=0x%x",eCode,wParam,0);
     if (NULL == pMe)
     {
@@ -19020,7 +19025,9 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                 uint8 ePDUType;
                 uint8 result = 0;
                 uint8 index = 0;
+                uint8 i = 0;
                 uint8 nImageIndex = 0;
+                uint8 AnimateStep = 0;
                 IFile* pIFile = NULL;
                 IFileMgr *pIFileMgr = NULL;
                 int rSize = 0;
@@ -19072,7 +19079,12 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                         IFILEMGR_RmDir(pIFileMgr, "fs:/hsmm/MMSVideoTemp");
                     }
                 }
-
+                if(pMe->m_Animate != NULL)
+                {
+                    IIMAGE_Stop(pMe->m_Animate);
+                    IIMAGE_Release(pMe->m_Animate);
+                    pMe->m_Animate = NULL;
+                }
                 
                 // Init 
                 MEMSET((void*)&pDecdata->message,NULL,sizeof(MMS_WSP_DEC_MESSAGE_RECEIVED));
@@ -19217,6 +19229,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                         if(STRISTR(pMimeType, IMAGE_MIME_BASE))
                         {   
                             AECHAR menuItemName[100] = {0};
+                            AEEImageInfo info;
                             STRTOWSTR((char*)pDecdata->message.mms_data.fragment[index].hContentName,
                                 menuItemName,
                                 100 * sizeof(AECHAR));
@@ -19233,20 +19246,54 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                             if(pIImage != NULL)
                             {
                                 MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] pIImage != NULL", 0, 0, 0);
-                                IIMAGE_SetParm(pIImage,IPARM_SCALE, 30, 30);
-                                MEMSET(&ai, 0, sizeof(ai));
-                                ai.wItemID   = index;
-                                ai.pImage = pIImage;
-                                if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
+                                IIMAGE_GetInfo(pIImage, &info);
+                                if(!info.bAnimated)
                                 {
-                                   MSG_FATAL("Failed to Add Opts item %d", ai.wItemID,0,0);
-                                   return EFAILED;
-                                }   
-                                IMENUCTL_SetItemText(pMenuCtl, index, NULL, 0, menuItemName);
-                                DBGPRINTF("Image menuItemName=%S, ItemCount=%d, wItemID=%d", menuItemName, IMENUCTL_GetItemCount(pMenuCtl), ai.wItemID);
-                                MSG_FATAL("IMENUCTL_GetItemCount1=%d", IMENUCTL_GetItemCount(pMenuCtl),0,0);
+                                    IIMAGE_SetParm(pIImage,IPARM_SCALE, 30, 30);
+                                    MEMSET(&ai, 0, sizeof(ai));
+                                    ai.wItemID   = index;
+                                    ai.pImage = pIImage;
+                                    if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
+                                    {
+                                       MSG_FATAL("Failed to Add Opts item %d", ai.wItemID,0,0);
+                                       return EFAILED;
+                                    }   
+                                    IMENUCTL_SetItemText(pMenuCtl, index, NULL, 0, menuItemName);
+                                    DBGPRINTF("Image menuItemName=%S, ItemCount=%d, wItemID=%d", menuItemName, IMENUCTL_GetItemCount(pMenuCtl), ai.wItemID);
+                                    MSG_FATAL("IMENUCTL_GetItemCount1=%d", IMENUCTL_GetItemCount(pMenuCtl),0,0);
+                                    RELEASEIF(pIImage);
+                                }
+                                else
+                                {
+                                    IImage* pIImageTemp = NULL;
+                                    pIImageTemp = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_MMS_SPACE);  
+                                    IIMAGE_SetParm(pIImageTemp,IPARM_SCALE, 30, 30);
+                                    MEMSET(&ai, 0, sizeof(ai));
+                                    ai.wItemID   = index;
+                                    ai.pImage = pIImageTemp;
+                                    if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
+                                    {
+                                       MSG_FATAL("Failed to Add Opts item %d", ai.wItemID,0,0);
+                                       return EFAILED;
+                                    }   
+                                    IMENUCTL_SetItemText(pMenuCtl, index, NULL, 0, menuItemName);
+                                    DBGPRINTF("Image menuItemName=%S, ItemCount=%d, wItemID=%d", menuItemName, IMENUCTL_GetItemCount(pMenuCtl), ai.wItemID);
+                                    MSG_FATAL("IMENUCTL_GetItemCount1=%d", IMENUCTL_GetItemCount(pMenuCtl),0,0);
+                                    RELEASEIF(pIImage);
+                                    RELEASEIF(pIImageTemp);
+                                    if(pMe->m_Animate != NULL)
+                                    {
+                                        IIMAGE_Stop(pMe->m_Animate);
+                                        IIMAGE_Release(pMe->m_Animate);
+                                        pMe->m_Animate = NULL;
+                                    }
+                                    pMe->m_Animate = WmsLoadImageFromData(pMe,
+                                        pMe->m_ResData.imageData.data[pMe->m_ResData.imageData.nIndex].nResIndex,
+                                        pMe->m_ResData.imageData.data[pMe->m_ResData.imageData.nIndex].type);;
+                                    DBGPRINTF("pMe->m_Animate=0x%x", pMe->m_Animate);
+                                    hasAnimate = TRUE;
+                                }
                             }
-                            RELEASEIF(pIImage);
                         }
                         else if(STRISTR(pMimeType, SOUND_MIME_BASE))
                         {
@@ -19356,7 +19403,6 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                 else if((IMENUCTL_GetItemCount(pMenuCtl) > 0) && !hasIStatic)
                 {
                     AEERect Rect={0};
-                    MSG_FATAL("IMENUCTL_GetItemCount 5", 0,0,0);
                     Rect = pMe->m_rc;
                     Rect.y = 0; 
                     Rect.dy = devinfo.cyScreen - GetBottomBarHeight(pMe->m_pDisplay);                  
@@ -19421,13 +19467,77 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
         case EVT_USER_REDRAW:
             {
                 char* pMimeType = NULL;
+                AEERect rc;
                 uint8 MenuSelectdId = IMENUCTL_GetSel(pMenuCtl); 
-                DBGPRINTF("EVT_USER_REDRAW pViewText=%S", pViewText);
-                ISTATIC_SetText(pStatic, NULL, pViewText,AEE_FONT_BOLD, AEE_FONT_BOLD);
-                ISTATIC_Redraw(pStatic);
-                if(IMENUCTL_GetItemCount(pMenuCtl) > 0)
+                CtlAddItem ai;
+                char menuItemName[100] = {0};
+                if(AnimateState == 2)
                 {
-                    IMENUCTL_Redraw(pMenuCtl);             
+                    IDISPLAY_ClearScreen(pMe->m_pDisplay);
+                    SETAEERECT(&rc, 0, 0, pMe->m_rc.dx, pMe->m_rc.dy);
+                    IDISPLAY_FillRect(pMe->m_pDisplay, &rc, MAKE_RGB(0, 0, 0));    
+                    if(hasAnimate)
+                    {
+                        AEEImageInfo info;
+                        uint8 x = 0;
+                        uint8 y = 0;
+                        if(pMe->m_Animate != NULL)
+                        {
+                            IIMAGE_GetInfo(pMe->m_Animate, &info);
+                            if(info.cx < pMe->m_rc.dx)
+                            {
+                                x = (pMe->m_rc.dx- info.cx)/2;
+                            }
+                            if(info.cy < pMe->m_rc.dy)
+                            {
+                                y = (pMe->m_rc.dy- info.cy)/2;
+                                if(y + info.cy > pMe->m_rc.dy - BOTTOMBAR_HEIGHT)
+                                {
+                                    y = 0;
+                                }
+                            }
+                            ISTATIC_SetText(pStatic, NULL, L" ",AEE_FONT_BOLD, AEE_FONT_BOLD);
+                            IIMAGE_Start(pMe->m_Animate, x, y);
+                        }
+                    }                    
+                }
+                else if(IMENUCTL_GetItem(pMenuCtl, MenuSelectdId, &ai))
+                {
+                    char *pext = NULL;
+                    WSTRTOSTR(ai.pText, menuItemName, sizeof(menuItemName));
+                    DBGPRINTF("gif name=%s", menuItemName);
+                    pext = STRRCHR(menuItemName, '.');
+                    if((pext != NULL) && (pext+1 != NULL))
+                    {
+                        if(STRICMP(pext+1, "gif") == 0)
+                        {
+                            DBGPRINTF("drawAnimate = TRUE");
+                            AnimateState = 1;   //当前光标停留在动画上                                               
+                        }
+                        else
+                        {
+                            AnimateState = 0;   //当前动画无操作
+                        }
+                    }
+                    else
+                    {
+                        AnimateState = 0;   //当前动画无操作
+                    }
+                }   
+                MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] AnimateState=%d",AnimateState ,0 , 0);
+                if(AnimateState != 2)
+                {
+                    //只有当不是在动画播放界面时，才画其他的元素
+                    DBGPRINTF("EVT_USER_REDRAW pViewText=%S", pViewText);     
+                    IDISPLAY_ClearScreen(pMe->m_pDisplay);
+                    SETAEERECT(&rc, 0, 0, pMe->m_rc.dx, pMe->m_rc.dy);
+                    IDISPLAY_FillRect(pMe->m_pDisplay, &rc, MAKE_RGB(0, 0, 0));                        
+                    ISTATIC_SetText(pStatic, NULL, pViewText,AEE_FONT_BOLD, AEE_FONT_BOLD);
+                    ISTATIC_Redraw(pStatic);
+                    if(IMENUCTL_GetItemCount(pMenuCtl) > 0)
+                    {
+                        IMENUCTL_Redraw(pMenuCtl);             
+                    }
                 }
                 MSG_FATAL("m_CurrentState=%d, soundData.nCount=%d, m_eMBoxType=%d",pMe->m_CurrentState,pMe->m_ResData.soundData.nCount,pMe->m_eMBoxType);
                 
@@ -19453,7 +19563,22 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                         }
                     }
                 }
-                if(pMe->m_eMBoxType == WMS_MB_OUTBOX_MMS)
+                if(AnimateState == 1)
+                {
+                    if(pMe->m_eMBoxType == WMS_MB_OUTBOX_MMS)
+                    {
+                        DRAW_BOTTOMBAR(BTBAR_PLAY_BACK);
+                    }
+                    else
+                    {
+                        DRAW_BOTTOMBAR(BTBAR_OPTION_PLAY_BACK);
+                    }
+                }
+                else if(AnimateState == 2)
+                {
+                    DRAW_BOTTOMBAR(BTBAR_BACK);
+                }
+                else if(pMe->m_eMBoxType == WMS_MB_OUTBOX_MMS)
                 {
                     if(pMe->m_ResData.soundData.nCount < 1)
                     {
@@ -19541,8 +19666,16 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                 for(i = 0;i < pMe->m_DecData.message.mms_data.frag_num;i++)
                 {
                     FREEIF(pMe->m_DecData.message.mms_data.fragment[i].pContent);
-                }       
+                }  
                 MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] EVT_DIALOG_END 2",0 ,0 , 0);
+                if(pMe->m_Animate != NULL)
+                {
+                    IIMAGE_Stop(pMe->m_Animate);
+                    IIMAGE_Release(pMe->m_Animate);
+                    pMe->m_Animate = NULL;
+                }
+                AnimateState = 0;
+                MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] EVT_DIALOG_END 3",0 ,0 , 0);
             }
             return TRUE;
 
@@ -19567,6 +19700,21 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
             switch (wParam)
             {
                 case AVK_CLR:
+                    if(AnimateState == 2)
+                    {
+                        if(pMe->m_Animate != NULL)
+                        {
+                            IIMAGE_Stop(pMe->m_Animate);
+                        }                        
+                        AnimateState = 1;
+                        (void) ISHELL_PostEventEx(pMe->m_pShell, 
+                                            EVTFLG_ASYNC,
+                                            AEECLSID_WMSAPP,
+                                            EVT_USER_REDRAW,
+                                            0, 
+                                            0);                        
+                        return TRUE;
+                    }
 #ifdef FEATURE_ALL_KEY_PAD
                     if (NULL != pMe->m_pMenu)
                     {
@@ -19607,13 +19755,20 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                     return TRUE;
                        
                     case AVK_SELECT:
-                        if (pMe->m_pMenu != NULL)
+                        if ((pMe->m_pMenu != NULL) || (AnimateState == 2))
                         {
                             return TRUE;
                         }
                         MSG_FATAL("IDD_VIEWMSG_MMS_Handler AVK_SELECT m_eMBoxType=%d",pMe->m_eMBoxType,0,0);
                         //ISTATIC_SetProperties(pStatic, ST_GRAPHIC_BG|ST_NOSCROLL);  
                         ISTATIC_SetText(pStatic, NULL, L" ",AEE_FONT_BOLD, AEE_FONT_BOLD);
+                        if(hasAnimate)
+                        {
+                            if(pMe->m_Animate != NULL)
+                            {
+                                IIMAGE_Stop(pMe->m_Animate);
+                            }
+                        }                        
                         if(pMe->m_eMBoxType == WMS_MB_INBOX_MMS)
                         {
                             // 显示弹出菜单
@@ -19666,7 +19821,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                         return TRUE;
                     
                     case AVK_INFO:
-                        if(pMe->m_pMenu == NULL)
+                        if((pMe->m_pMenu == NULL) && (AnimateState != 2))
                         {
                             char* pMimeType = NULL;
                             uint8 MenuSelectdId = IMENUCTL_GetSel(pMenuCtl);  
@@ -19751,7 +19906,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                                        }
                                        return TRUE;        
                                     }
-                                   // else if(STRISTR(pMimeType, SOUND_MIME_BASE))
+                                    else if(STRISTR(pMimeType, SOUND_MIME_BASE))
                                     {
                                         if(pMe->m_pMedia != NULL)
                                         {
@@ -19791,6 +19946,31 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                                             MSG_FATAL("IDD_VIEWMSG_MMS_Handler] State=%d, result=%d", pMe->m_CurrentState, result, 0);
                                             return TRUE;
                                         }                                              
+                                    }
+                                    else if(STRISTR(pMimeType, IMAGE_MIME_BASE))
+                                    {
+                                        MSG_FATAL("IDD_VIEWMSG_MMS_Handler IMAGE_MIME_BASE 4",0,0,0);
+                                        if(AnimateState != 2)
+                                        {
+                                            char *pext = NULL;
+                                            DBGPRINTF("AVK_INFO gif name=%s", pMimeType);
+                                            pext = STRRCHR(pMimeType, '/');
+                                            if((pext != NULL) && (pext+1 != NULL))
+                                            {
+                                                if(STRICMP(pext+1, "gif") == 0)
+                                                {
+                                                    //当前光标停留在动画上，并按下INFO键，这时动画状态变为播放状态2
+                                                    AnimateState = 2;                                                    
+                                                }
+                                            }                                            
+                                            (void)ISHELL_PostEventEx(pMe->m_pShell, 
+                                                                    EVTFLG_ASYNC,
+                                                                    AEECLSID_WMSAPP,
+                                                                    EVT_USER_REDRAW,
+                                                                    0, 
+                                                                    0);                                            
+                                        }
+                                        return TRUE;
                                     }
                                 }
                             }
