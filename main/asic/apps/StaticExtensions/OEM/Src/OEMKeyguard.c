@@ -1070,13 +1070,13 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
         }       
 
 #ifdef FEATURE_VERSION_W208S
-		if(cls == AEECLSID_ALARMCLOCK || cls == AEECLSID_SCHEDULEAPP || cls == AEECLSID_DIALER || cls == AEECLSID_WMSAPP)
+        if (cls == AEECLSID_DIALER || cls == AEECLSID_WMSAPP)
         {
             if(wParam == AVK_CLR )
             {
             	OEMPriv_ResumeBREW();
                 return FALSE;            
-            }            
+            } 
         }
 #else
         if(cls == AEECLSID_ALARMCLOCK || cls == AEECLSID_SCHEDULEAPP)
