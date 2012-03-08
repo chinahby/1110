@@ -2587,7 +2587,9 @@ static boolean IDD_MESSAGELIST_Handler(void        *pUser,
                             {
                                 MSG_FATAL("IDD_MESSAGELIST_Handler AVK_INFO 3", 0,0,0);
                                 CLOSE_DIALOG(DLGRET_CANCELED)
-                            }                            
+                            }    
+                            RELEASEIF(pIFile);
+                            RELEASEIF(pIFileMgr);                            
                         }
                         else
 #endif
@@ -8064,7 +8066,6 @@ static boolean IDD_SENDING_Handler(void *pUser,
                     char pszPath[AEE_MAX_FILE_NAME]={'\0'};
                     if(pMe->m_isForward)//如果是转发进来的，必须把转发的临时文件给删掉
                     {
-                        IFile* pIFile = NULL;
             		    IFileMgr *pIFileMgr = NULL;                             
                         AEEFileInfo myInfo;
                         int result = 0;
@@ -8083,6 +8084,7 @@ static boolean IDD_SENDING_Handler(void *pUser,
                             IFILEMGR_RmDir(pIFileMgr, "fs:/hsmm/MMSTemp");
                         }
                         pMe->m_isForward = FALSE;
+                        RELEASEIF(pIFileMgr);                        
                     }                    
                     //MSG_FATAL("MMS_GetSocketReadStatus()=%d",MMS_GetSocketReadStatus(),0,0);
                     //if(MMS_GetSocketReadStatus() == HTTP_CODE_OK)
@@ -19069,11 +19071,6 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                         }
                         IFILEMGR_RmDir(pIFileMgr, "fs:/hsmm/MMSVideoTemp");
                     }
-                    if ( pIFile != NULL )
-                    {
-                        IFILE_Release( pIFile);
-                        pIFile = NULL;
-                    }
                 }
 
                 
@@ -19246,7 +19243,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                                    return EFAILED;
                                 }   
                                 IMENUCTL_SetItemText(pMenuCtl, index, NULL, 0, menuItemName);
-                                DBGPRINTF("Image menuItemName=%s, ItemCount=%d, wItemID=%d", menuItemName, IMENUCTL_GetItemCount(pMenuCtl), ai.wItemID);
+                                DBGPRINTF("Image menuItemName=%S, ItemCount=%d, wItemID=%d", menuItemName, IMENUCTL_GetItemCount(pMenuCtl), ai.wItemID);
                                 MSG_FATAL("IMENUCTL_GetItemCount1=%d", IMENUCTL_GetItemCount(pMenuCtl),0,0);
                             }
                             RELEASEIF(pIImage);

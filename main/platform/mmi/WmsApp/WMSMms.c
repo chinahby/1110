@@ -2649,13 +2649,12 @@ int WMS_MMS_Decode_TEST(char *file)
 	        data_size = IFILE_Read(pIFile,WMS_MMS_BUFFERGet(), pInfo.dwSize);
 
 	        MSG_FATAL("[MMS]: pInfo.dwSize=%d,data_size=%d",pInfo.dwSize,data_size,0);
-	        IFILE_Release( pIFile);
-	        pIFile = NULL;
-	        IFILEMGR_Release(pIFileMgr);
-	        pIFileMgr = NULL;
 	    }    
     }
-
+    IFILE_Release( pIFile);
+    pIFile = NULL;
+    IFILEMGR_Release(pIFileMgr);
+    pIFileMgr = NULL;
 
     MMS_DEBUG(("Decode testing start!"));
     MSG_FATAL("[MMS]: 0x%x 0x%x 0x%x",WMS_MMS_BUFFERGet()[0],WMS_MMS_BUFFERGet()[1],WMS_MMS_BUFFERGet()[2]);
@@ -2698,12 +2697,12 @@ int WMS_MMS_PDU_Decode_Test(char *file)
 	        data_size = IFILE_Read(pIFile,WMS_MMS_BUFFERGet(), pInfo.dwSize);
 
 	        MSG_FATAL("[MMS]: pInfo.dwSize=%d,data_size=%d",pInfo.dwSize,data_size,0);
-	        IFILE_Release( pIFile);
-	        pIFile = NULL;
-	        IFILEMGR_Release(pIFileMgr);
-	        pIFileMgr = NULL;
 	    }    
     }
+    IFILE_Release( pIFile);
+    pIFile = NULL;
+    IFILEMGR_Release(pIFileMgr);
+    pIFileMgr = NULL;
 
 
     MMS_DEBUG(("Decode testing start! "));

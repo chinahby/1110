@@ -7694,6 +7694,7 @@ void WmsApp_UpdateMenuList_MMS(WmsApp *pMe, IMenuCtl *pMenu)
 	}
 
 	MSG_FATAL("***zzg UpdateMenuList_MMS pMe->m_wSelItemxuhao=%d, wItemCount=%d, j=%d***", pMe->m_wSelItemxuhao, wItemCount, j);
+    index = 0;
     if(pMe->m_eMBoxType == WMS_MB_INBOX_MMS)
     {
         for(i=0, index=0; i < wItemCount; ++i)
@@ -7716,14 +7717,11 @@ void WmsApp_UpdateMenuList_MMS(WmsApp *pMe, IMenuCtl *pMenu)
                 }
             }   
             ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSINDATA_INFO, (void*)&mmsDataInfoListTemp, sizeof(mmsDataInfoListTemp));    
-        }
-    }
-    if(index > 0)
-    {
-        for(i=0; i < wItemCount; ++i)
-        {
-            MEMCPY(&(mmsDataInfoList[i]), &(mmsDataInfoListTemp[i]), sizeof(mmsDataInfoListTemp[i]));
-            DBGPRINTF("mmsDataInfoListTemp[%d].MMSDataFileName=%s", i, mmsDataInfoListTemp[i].MMSDataFileName);
+            for(i=0; i < wItemCount; ++i)
+            {
+                MEMCPY(&(mmsDataInfoList[i]), &(mmsDataInfoListTemp[i]), sizeof(mmsDataInfoListTemp[i]));
+                DBGPRINTF("mmsDataInfoListTemp[%d].MMSDataFileName=%s", i, mmsDataInfoListTemp[i].MMSDataFileName);
+            }
         }
     }
     
