@@ -1068,7 +1068,7 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
 				OEMPriv_ResumeBREW();
 				return FALSE; 
 #else				
-				if (cls == AEECLSID_CORE_APP)
+				if (cls == AEECLSID_CORE_APP)		//For Emergency Call
 				{
 					OEMPriv_ResumeBREW();
 					return FALSE; 
@@ -1113,6 +1113,20 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
 			
 #endif
         }
+
+//Add By zzg 2012_03_09
+#ifdef FEATURE_VERSION_W208S
+		if((cls == AEECLSID_ALARMCLOCK) || (cls == AEECLSID_SCHEDULEAPP))
+        {
+            if ((wParam != AVK_CLR) && (wParam != AVK_SELECT))
+            {
+            	//OEMPriv_ResumeBREW();
+                return FALSE;            
+            }            
+        }
+#endif
+//Add End
+
        
 //Add By zzg 2010_11_23
 #ifdef FEATURE_UNLOCK_KEY_SPACE	        
