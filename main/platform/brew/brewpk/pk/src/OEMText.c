@@ -4903,28 +4903,37 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 										if (key == VLCharKeyItem[i].wParam)
 			            				{
 			            					TextCtl_NoSelection(pContext);
-                                            if(pContext->is_bSelectchar && pContext->m_oldkey==i)    
+
+
+											if ((pContext->is_isShift != TRUE) && (pContext->is_bAlt != TRUE) && (pContext->m_bCaplk != TRUE))
                                             {
-                                               if(pContext->m_wp < VLCharCapSEKeyItem[i].wsize - 1)
-                                               pContext->m_wp++;
-                                               else
-                                               pContext->m_wp=0;
-                                               
-                                               if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
-                                                  {
-                                                       --pContext->wSelStart;
-                                                  }
-                                                  TextCtl_AddChar(pContext, 0);
-                                                  TextCtl_NoSelection(pContext);
-                                               //ISHELL_CancelTimer((IShell *) pContext->pIShell, (PFNNOTIFY)TextCtl_SelectCharTimer, pContext);
-                                            }
-                                            else
-                                            {
-                                                pContext->m_wp=0;
-                                            }
+	                                            if(pContext->is_bSelectchar && pContext->m_oldkey==i)    
+	                                            {
+													
+	                                               if(pContext->m_wp < VLCharCapSEKeyItem[i].wsize - 1)
+	                                               pContext->m_wp++;
+	                                               else
+	                                               pContext->m_wp=0;
+
+	                                               
+	                                               if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
+	                                                  {
+	                                                       --pContext->wSelStart;
+	                                                  }
+	                                                  TextCtl_AddChar(pContext, 0);
+	                                                  TextCtl_NoSelection(pContext);
+	                                               //ISHELL_CancelTimer((IShell *) pContext->pIShell, (PFNNOTIFY)TextCtl_SelectCharTimer, pContext);
+	                                            }
+	                                            else
+	                                            {
+	                                                pContext->m_wp=0;
+	                                            }
+											}
+
+											
 			            					if(pContext->is_isShift)
 			                        		{ 
-                                                TextCtl_AddChar(pContext,(AECHAR)(VLCharSEKeyItem[i].wp[pContext->m_wp]));
+                                                TextCtl_AddChar(pContext,(AECHAR)(VLCharSEKeyItem[i].wp[1]));
 			                            		pContext->is_isShift = FALSE;
 			            					}
                                             else if(pContext->is_bAlt)
@@ -4936,13 +4945,33 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 					                            	pContext->is_bAlt = FALSE;
 					                            }
 					                        }
+											/*
 											else
 											{
 												TextCtl_AddChar(pContext,(AECHAR)(VLCharCapSEKeyItem[i].wp[pContext->m_wp]));
 											}
-                                            pContext->is_bSelectchar=TRUE;
-                                            pContext->m_oldkey=i;
-                                            (void) ISHELL_SetTimer((IShell *) (pContext->pIShell),TIMEOUT,(PFNNOTIFY)TextCtl_SelectCharTimer,pContext);
+											*/											
+											else
+											{
+												if(pContext->m_bCaplk)
+												{
+													TextCtl_AddChar(pContext,(AECHAR)(VLCharSEKeyItem[i].wp[0]));
+													#ifndef FEATURE_VERSION_W208S
+													pContext->m_bCaplk = FALSE;
+													#endif
+												}
+												else
+												{
+					                            	TextCtl_AddChar(pContext,(AECHAR)(VLCharCapSEKeyItem[i].wp[pContext->m_wp]));
+												}												
+											}
+
+											if ((pContext->is_isShift != TRUE) && (pContext->is_bAlt != TRUE) && (pContext->m_bCaplk != TRUE))
+											{												
+	                                            pContext->is_bSelectchar=TRUE;
+	                                            pContext->m_oldkey=i;
+	                                            (void) ISHELL_SetTimer((IShell *) (pContext->pIShell),TIMEOUT,(PFNNOTIFY)TextCtl_SelectCharTimer,pContext);
+											}
 										}
 										break;
 									}
@@ -6328,50 +6357,64 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
 										if (key == VLCharKeyItem[i].wParam)
 			            				{
 			            					TextCtl_NoSelection(pContext);
-                                            if(pContext->is_bSelectchar && pContext->m_oldkey==i)    
+
+
+											if ((pContext->is_isShift != TRUE) && (pContext->is_bAlt != TRUE) && (pContext->m_bCaplk != TRUE))
                                             {
-                                               if(pContext->m_wp < VLCharCapSEKeyItem[i].wsize -1)
-                                               pContext->m_wp++;
-                                               else
-                                               pContext->m_wp=0;
-                                               
-                                               // --pContext->wSelStart;
-                                               
-                                               if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
-                                                  {
-                                                       --pContext->wSelStart;
-                                                  }
-                                                  TextCtl_AddChar(pContext, 0);
-                                                  TextCtl_NoSelection(pContext);
-                                               //(void)ISHELL_CancelTimer((IShell *) (pContext->pIShell), (PFNNOTIFY)TextCtl_SelectCharTimer, pContext);
-                                            }
-                                            else
-                                            {
-                                                pContext->m_wp=0;
-                                            }
+	                                            if(pContext->is_bSelectchar && pContext->m_oldkey==i)    
+	                                            {
+	                                               if(pContext->m_wp < VLCharCapSEKeyItem[i].wsize -1)
+	                                               pContext->m_wp++;
+	                                               else
+	                                               pContext->m_wp=0;
+	                                               
+	                                               // --pContext->wSelStart;
+
+	                                               
+	                                               if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
+	                                                  {
+	                                                       --pContext->wSelStart;
+	                                                  }
+	                                                  TextCtl_AddChar(pContext, 0);
+	                                                  TextCtl_NoSelection(pContext);
+	                                               //(void)ISHELL_CancelTimer((IShell *) (pContext->pIShell), (PFNNOTIFY)TextCtl_SelectCharTimer, pContext);
+	                                            }
+	                                            else
+	                                            {
+	                                                pContext->m_wp=0;
+	                                            }
+											}
+
+											
 			            					if(pContext->is_isShift)
 			                        		{ 
-                                                TextCtl_AddChar(pContext,(AECHAR)(VLCharCapSEKeyItem[i].wp[pContext->m_wp]));
+                                                TextCtl_AddChar(pContext,(AECHAR)(VLCharCapSEKeyItem[i].wp[1]));
 			                            		pContext->is_isShift = FALSE;
 			            					}
 											else
 											{
 												if(pContext->m_bCaplk)
 												{
-													TextCtl_AddChar(pContext,(AECHAR)(VLCharCapSEKeyItem[i].wp[pContext->m_wp]));
+													TextCtl_AddChar(pContext,(AECHAR)(VLCharCapSEKeyItem[i].wp[0]));
+													#ifndef FEATURE_VERSION_W208S
 													pContext->m_bCaplk = FALSE;
+													#endif
 												}
 												else
 												{
 					                            	TextCtl_AddChar(pContext,(AECHAR)(VLCharSEKeyItem[i].wp[pContext->m_wp]));
 												}												
 											}
-                                            pContext->is_bSelectchar=TRUE;
-                                            pContext->m_oldkey=i;
-                                            (void) ISHELL_SetTimer((IShell *) (pContext->pIShell),TIMEOUT,(PFNNOTIFY)TextCtl_SelectCharTimer,pContext);
+
+											if ((pContext->is_isShift != TRUE) && (pContext->is_bAlt != TRUE) && (pContext->m_bCaplk != TRUE))
+											{
+	                                            pContext->is_bSelectchar=TRUE;
+	                                            pContext->m_oldkey=i;
+	                                            (void) ISHELL_SetTimer((IShell *) (pContext->pIShell),TIMEOUT,(PFNNOTIFY)TextCtl_SelectCharTimer,pContext);
+											}
 										}
 										break;
-									}
+									}								
 							#endif
 							default:
 							{
