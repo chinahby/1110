@@ -8795,7 +8795,8 @@ static void CallApp_Build_NumEdit_Option_Menu(CCallApp *pMe,IMenuCtl   *pMenuCtl
             else
 #endif //FEATURE_APP_PAUSE_TIMER
             {
-#ifndef FEATURE_VERSION_W208S            
+#if defined(FEATURE_VERSION_W208S)||defined(FEATURE_VERSION_1110W516) 
+#else
                 if(!pMe->m_call_info.b_emerg)
                 {
                    (void) IMENUCTL_AddItem(pMenuCtl,AEE_APPSCALLAPP_RES_FILE,IDS_SK_MENU,IDS_SK_MENU,
