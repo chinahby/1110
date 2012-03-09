@@ -27,7 +27,7 @@
 #elif defined(FEATURE_IS683A_450M_SUPPORT) && defined(FEATURE_DISABLE_UIMPRL)
 #define AUTO_NV_MIN_VERSION                 0x25
 #else
-#define AUTO_NV_MIN_VERSION                 0x26
+#define AUTO_NV_MIN_VERSION                 0x32
 #endif
 
 #define AUTO_NV_ITME_VERSION                (AUTO_NV_MIN_VERSION + AUTO_NV_RF_VERSION + 2)
