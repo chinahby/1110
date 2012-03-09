@@ -19261,7 +19261,6 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                                     IMENUCTL_SetItemText(pMenuCtl, index, NULL, 0, menuItemName);
                                     DBGPRINTF("Image menuItemName=%S, ItemCount=%d, wItemID=%d", menuItemName, IMENUCTL_GetItemCount(pMenuCtl), ai.wItemID);
                                     MSG_FATAL("IMENUCTL_GetItemCount1=%d", IMENUCTL_GetItemCount(pMenuCtl),0,0);
-                                    RELEASEIF(pIImage);
                                 }
                                 else
                                 {
@@ -19279,7 +19278,6 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                                     IMENUCTL_SetItemText(pMenuCtl, index, NULL, 0, menuItemName);
                                     DBGPRINTF("Image menuItemName=%S, ItemCount=%d, wItemID=%d", menuItemName, IMENUCTL_GetItemCount(pMenuCtl), ai.wItemID);
                                     MSG_FATAL("IMENUCTL_GetItemCount1=%d", IMENUCTL_GetItemCount(pMenuCtl),0,0);
-                                    RELEASEIF(pIImage);
                                     RELEASEIF(pIImageTemp);
                                     if(pMe->m_Animate != NULL)
                                     {
@@ -19293,6 +19291,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                                     DBGPRINTF("pMe->m_Animate=0x%x", pMe->m_Animate);
                                     hasAnimate = TRUE;
                                 }
+                                RELEASEIF(pIImage);
                             }
                         }
                         else if(STRISTR(pMimeType, SOUND_MIME_BASE))
@@ -19471,33 +19470,39 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                 uint8 MenuSelectdId = IMENUCTL_GetSel(pMenuCtl); 
                 CtlAddItem ai;
                 char menuItemName[100] = {0};
+                MSG_FATAL("[IDD_VIEWMSG_MMS_Handler 1] AnimateState=%d",AnimateState ,0 , 0);
                 if(AnimateState == 2)
                 {
-                    IDISPLAY_ClearScreen(pMe->m_pDisplay);
-                    SETAEERECT(&rc, 0, 0, pMe->m_rc.dx, pMe->m_rc.dy);
-                    IDISPLAY_FillRect(pMe->m_pDisplay, &rc, MAKE_RGB(0, 0, 0));    
                     if(hasAnimate)
                     {
                         AEEImageInfo info;
                         uint8 x = 0;
                         uint8 y = 0;
+                        AEEDeviceInfo devinfo={0};
+                        ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
                         if(pMe->m_Animate != NULL)
                         {
+                            MSG_FATAL("[IDD_VIEWMSG_MMS_Handler 2] pMe->m_Animate != NULL",0 ,0 , 0);
+                            ISTATIC_SetActive(pStatic, FALSE);
+                            IMENUCTL_SetActive(pMenuCtl, FALSE);                               
+                            IDISPLAY_ClearScreen(pMe->m_pDisplay);
+                            SETAEERECT(&rc, 0, 0, devinfo.cxScreen, devinfo.cyScreen);
+                            IDISPLAY_FillRect(pMe->m_pDisplay, &rc, MAKE_RGB(0, 0, 0));                                
                             IIMAGE_GetInfo(pMe->m_Animate, &info);
-                            if(info.cx < pMe->m_rc.dx)
+                            if(info.cx < devinfo.cxScreen)
                             {
-                                x = (pMe->m_rc.dx- info.cx)/2;
+                                x = (devinfo.cxScreen- info.cx)/2;
                             }
-                            if(info.cy < pMe->m_rc.dy)
+                            if(info.cy < devinfo.cyScreen)
                             {
-                                y = (pMe->m_rc.dy- info.cy)/2;
-                                if(y + info.cy > pMe->m_rc.dy - BOTTOMBAR_HEIGHT)
+                                y = (devinfo.cyScreen- info.cy)/2;
+                                if(y + info.cy > devinfo.cyScreen - BOTTOMBAR_HEIGHT)
                                 {
                                     y = 0;
                                 }
                             }
                             ISTATIC_SetText(pStatic, NULL, L" ",AEE_FONT_BOLD, AEE_FONT_BOLD);
-                            IIMAGE_Start(pMe->m_Animate, x, y);
+                            IIMAGE_Start(pMe->m_Animate, x, y);                         
                         }
                     }                    
                 }
@@ -19531,7 +19536,9 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                     DBGPRINTF("EVT_USER_REDRAW pViewText=%S", pViewText);     
                     IDISPLAY_ClearScreen(pMe->m_pDisplay);
                     SETAEERECT(&rc, 0, 0, pMe->m_rc.dx, pMe->m_rc.dy);
-                    IDISPLAY_FillRect(pMe->m_pDisplay, &rc, MAKE_RGB(0, 0, 0));                        
+                    IDISPLAY_FillRect(pMe->m_pDisplay, &rc, MAKE_RGB(0, 0, 0));  
+                    ISTATIC_SetActive(pStatic, FALSE);
+                    IMENUCTL_SetActive(pMenuCtl, TRUE);                        
                     ISTATIC_SetText(pStatic, NULL, pViewText,AEE_FONT_BOLD, AEE_FONT_BOLD);
                     ISTATIC_Redraw(pStatic);
                     if(IMENUCTL_GetItemCount(pMenuCtl) > 0)
