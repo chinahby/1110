@@ -21236,6 +21236,7 @@ static boolean IDD_MMS_PROXY_Handler(void *pUser,
                 ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
                 (void)ITEXTCTL_SetTitle( pIText, NULL,0,WTitle);
                 ITEXTCTL_SetMaxSize(pIText, MAX_MMS_PROXY);   
+                ITEXTCTL_SetInputMode(pIText, AEE_TM_NUMBERS);  
                 ICONFIG_GetItem(pMe->m_pConfig, CFGI_MMS_PROXY, temp, sizeof(temp));
 				if(STRLEN(temp) != 0)
 				{
