@@ -2082,9 +2082,9 @@ LOCAL void ds707_rmsmi_transition_state
 /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 #ifdef T_ARM
-  MSG_MED( "RMSM state goes %d to %d", ds707_rmsmi_info.state, new_state, 0 );
+  MSG_FATAL( "RMSM state goes %d to %d", ds707_rmsmi_info.state, new_state, 0 );
 #else
-  MSG_MED( "RMSM state goes '%s' to '%s'\n",
+  MSG_FATAL( "RMSM state goes '%s' to '%s'\n",
            ds707_rmsmi_state_names[ds707_rmsmi_info.state],
            ds707_rmsmi_state_names[new_state],
            0

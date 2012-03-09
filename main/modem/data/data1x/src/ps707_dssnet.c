@@ -673,7 +673,7 @@ LOCAL void dssneti_set_netstate
     This function should always execute in the PS task context, so dont need
     INTLOCKS 
   -------------------------------------------------------------------------*/
-  MSG_MED("Transition net state %d to %d", 
+  MSG_FATAL("Transition net state %d to %d", 
            dssneti_sm_cb.netstate, 
            new_netstate,
            0);  
@@ -706,7 +706,7 @@ LOCAL void dssneti_set_netstate
             ps_timer_cancel((uint8) dssneti_sm_cb.phy_iface_timer);
       ASSERT(timer_result != PS_TIMER_FAILURE);
 
-      MSG_MED("PPP is down",0,0,0);
+      MSG_FATAL("PPP is down",0,0,0);
 
       /*---------------------------------------------------------------------
         Set lcp_auth_disabled to FALSE.
@@ -795,7 +795,7 @@ LOCAL void dssneti_set_netstate
       /*---------------------------------------------------------------------
         Set the abort function cback in 707 Packet Manager.
       ---------------------------------------------------------------------*/
-      MSG_MED("dssnet setting abort_cback",0,0,0);
+      MSG_FATAL("dssnet setting abort_cback",0,0,0);
       ds707_pkt_set_abort_f_ptr(DS707_DEF_PKT_INSTANCE,
                                 dssneti_ppp_abort_cback);
 
@@ -931,6 +931,7 @@ LOCAL void dssneti_set_netstate
       /*---------------------------------------------------------------------
         Configure the PPP auth info for Um and start ppp on the device
       ---------------------------------------------------------------------*/
+      MSG_FATAL("dssneti_set_netstate %x",ppp_config.lcp_info.want_mask[0],0,0);
       is707_get_ppp_auth_info_from_nv( &ppp_config, ps_get_nv_item );
       if(ppp_start(PPP_UM_SN_DEV, &ppp_config) < 0)
       {
@@ -974,7 +975,7 @@ LOCAL void dssneti_set_netstate
       /*---------------------------------------------------------------------
         Notify MIP meta_sm that iface is up with MIP 
       ---------------------------------------------------------------------*/
-      MSG_MED("Iface up, Waiting on MIP registration",0,0,0); 
+      MSG_FATAL("Iface up, Waiting on MIP registration",0,0,0); 
       mip_meta_sm_post_event(MSM_IFACE_UP_W_MIP_EV);
       break;
 
@@ -1007,12 +1008,12 @@ LOCAL void dssneti_set_netstate
         /*-------------------------------------------------------------------
           Notify MIP meta_sm that iface is up with SIP 
         -------------------------------------------------------------------*/  
-        MSG_MED("Iface up with SimpleIP ",0,0,0); 
+        MSG_FATAL("Iface up with SimpleIP ",0,0,0); 
         mip_meta_sm_post_event(MSM_IFACE_UP_WO_MIP_EV);
       }
       else
       {
-        MSG_MED("Iface up with MIP",0,0,0); 
+        MSG_FATAL("Iface up with MIP",0,0,0); 
       }
 #endif /* FEATURE_DS_MOBILE_IP */
       break;
@@ -1021,7 +1022,7 @@ LOCAL void dssneti_set_netstate
       /*---------------------------------------------------------------------
         Close PPP.
       ---------------------------------------------------------------------*/
-      MSG_MED("Closing PPP on Iface" ,0,0,0);
+      MSG_FATAL("Closing PPP on Iface" ,0,0,0);
       ppp_stop(PPP_UM_SN_DEV);
 
       /*---------------------------------------------------------------------
@@ -1032,7 +1033,7 @@ LOCAL void dssneti_set_netstate
       break;
 
     case DSSNETI_WAITING_FOR_PHY_IFACE_DOWN_STATE:
-      MSG_HIGH("Bring down phy iface" ,0 ,0, 0);
+      MSG_FATAL("Bring down phy iface" ,0 ,0, 0);
       /*---------------------------------------------------------------------
         Send command to bring down the traffic channel.
       ---------------------------------------------------------------------*/
@@ -1887,7 +1888,7 @@ LOCAL void dssnet_process_mip_failure_ev
 #endif /* FEATURE_DS_MOBILE_IP */
 /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  MSG_MED("MIP_FAILURE_EV recd in %d state", 
+  MSG_FATAL("MIP_FAILURE_EV recd in %d state", 
            dssneti_sm_cb.netstate,0,0);
 
   switch(dssneti_sm_cb.netstate)
@@ -1953,6 +1954,7 @@ LOCAL void dssnet_process_mip_failure_ev
         /*-------------------------------------------------------------------
           Configure the PPP auth info for Um and start ppp on the device
         -------------------------------------------------------------------*/
+        MSG_FATAL("dssnet_process_mip_failure_ev",0,0,0);
         is707_get_ppp_auth_info_from_nv( &ppp_config, ps_get_nv_item );
 
         /*-------------------------------------------------------------------
@@ -2900,12 +2902,12 @@ void is707_get_ppp_auth_info_from_nv
     nv_status = nv_get(NV_DS_SIP_ACTIVE_PROFILE_INDEX_I, &nv_item );
     if( nv_status == NV_DONE_S )
     {
-      MSG_MED( "NV read success, active profile index is %d", 
+      MSG_FATAL( "NV read success, active profile index is %d", 
                nv_item.ds_sip_active_profile_index, 0, 0 );
     }
     else
     {
-      MSG_MED( "NV read failed for active profile index", 0, 0, 0 );
+      MSG_FATAL( "NV read failed for active profile index", 0, 0, 0 );
       ppp_config->auth_info.user_id_len = 0;
       ppp_config->auth_info.passwd_len = 0;
       return;
@@ -2935,7 +2937,7 @@ void is707_get_ppp_auth_info_from_nv
       memcpy( ppp_config->auth_info.user_id_info,
               (char *)nv_item.ds_sip_nai_info.nai,
               ppp_config->auth_info.user_id_len );
-      MSG_MED( "User id succesfully read",0 , 0, 0 );
+      MSG_FATAL( "User id succesfully read",0 , 0, 0 );
     }
     /*-------------------------------------------------------------------------
       If NV was never written then the length of the User_id is set to 0.
@@ -2947,7 +2949,7 @@ void is707_get_ppp_auth_info_from_nv
         Set the user_id length to 0.
       -----------------------------------------------------------------------*/
       ppp_config->auth_info.user_id_len = 0;
-      MSG_ERROR( "PPP user ID never written", 0, 0, 0 );
+      MSG_FATAL( "PPP user ID never written", 0, 0, 0 );
     }
 
     /*-------------------------------------------------------------------------
@@ -2965,7 +2967,7 @@ void is707_get_ppp_auth_info_from_nv
       memcpy( ppp_config->auth_info.passwd_info,
               (char *)nv_item.ds_sip_ppp_ss_info.ss,
               ppp_config->auth_info.passwd_len );
-      MSG_MED( " password  succesfully read",0 , 0, 0 );
+      MSG_FATAL( " password  succesfully read",0 , 0, 0 );
     }
     else
     {
@@ -2999,7 +3001,7 @@ void is707_get_ppp_auth_info_from_nv
          Set the user_id length to 0.
       -----------------------------------------------------------------------*/
       ppp_config->auth_info.user_id_len = 0;
-      MSG_ERROR( "PPP user ID never written", 0, 0, 0 );
+      MSG_FATAL( "PPP user ID never written", 0, 0, 0 );
     }
 
     /*-------------------------------------------------------------------------
@@ -3031,7 +3033,7 @@ void is707_get_ppp_auth_info_from_nv
   {
 #ifdef FEATURE_DATA_PPP_DEFAULT_PASSWD
     
-    MSG_MED( "SN PPP Password not provisioned, using default", 0, 0, 0 );
+    MSG_FATAL( "SN PPP Password not provisioned, using default", 0, 0, 0 );
     /*-----------------------------------------------------------------------
       Write the default password to NV
     -----------------------------------------------------------------------*/
@@ -3054,12 +3056,12 @@ void is707_get_ppp_auth_info_from_nv
 
       if( nv_status != NV_DONE_S )
       {
-        MSG_ERROR( "Failed to write default SN PPP password to NV", 0, 0, 0);
+        MSG_FATAL( "Failed to write default SN PPP password to NV", 0, 0, 0);
       }
     }
     else
     {    
-      MSG_ERROR( "Default PPP pwd too long to fit in NV. Skipping NV Write", 
+      MSG_FATAL( "Default PPP pwd too long to fit in NV. Skipping NV Write", 
                  0, 0, 0 );
     }
 
@@ -3076,7 +3078,7 @@ void is707_get_ppp_auth_info_from_nv
     else
     {
       ppp_config->auth_info.passwd_len = 0;
-      MSG_ERROR( "Default PPP password too long to fit in PPP config. "
+      MSG_FATAL( "Default PPP password too long to fit in PPP config. "
                  "SN PPP password not configured", 0, 0, 0);
     }
 #else
@@ -3084,7 +3086,7 @@ void is707_get_ppp_auth_info_from_nv
       Set the user_id length as 0.
     -----------------------------------------------------------------------*/
     ppp_config->auth_info.passwd_len = 0;
-    MSG_ERROR( "PPP password never written", 0, 0, 0 );
+    MSG_FATAL( "PPP password never written", 0, 0, 0 );
 #endif /* FEATURE_DATA_PPP_DEFAULT_PASSWD */
   }
 } /* is707_get_ppp_auth_info_from_nv() */
@@ -3115,6 +3117,7 @@ void dssnet_set_in_qnc_call
 )
 {
 /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+  MSG_FATAL( "dssnet_set_in_qnc_call %d", in_qnc_call, 0, 0 );
   dssneti_sm_cb.disable_lcp_auth = in_qnc_call;
 } /* dssnet_set_in_qnc_call() */
 

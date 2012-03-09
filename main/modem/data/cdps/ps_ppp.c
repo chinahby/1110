@@ -114,7 +114,6 @@ when        who    what, where, why
 #include "ps_ppp_ipcp.h"
 #include "ps_utils.h"
 
-extern boolean	bIsPPPAuthEnabled; //Add By zzg 2012_03_07
 /*=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
                             FORWARD DECLARATIONS
@@ -831,28 +830,8 @@ int ppp_set_auth_server_opts
   config_ptr->lcp_info.want_vals[FSM_LOCAL].authentication =
     PPP_CHAP_PROTOCOL;
   config_ptr->lcp_info.want_vals[FSM_LOCAL].chap_digest = PPP_CHAP_MD5;
-
-	//Add By zzg 2012_03_07	
-	if (bIsPPPAuthEnabled == FALSE)
-	{
-		config_ptr->lcp_info.want_mask[FSM_LOCAL] &= ~LCP_N_AP;
-		config_ptr->lcp_info.will_mask[FSM_LOCAL] &= ~LCP_N_AP;
-	}
-	else
-	{  
-		config_ptr->lcp_info.want_mask[FSM_LOCAL] |= LCP_N_AP;
-		config_ptr->lcp_info.will_mask[FSM_LOCAL] |= LCP_N_AP;			                   
-	}	
-	//Add End
-/*  
-#ifdef FEATURE_NO_PPP_AUTH //Gemsea Add for Disable PPP Auth
-  config_ptr->lcp_info.want_mask[FSM_LOCAL] &= ~LCP_N_AP;
-  config_ptr->lcp_info.will_mask[FSM_LOCAL] &= ~LCP_N_AP;
-#else
   config_ptr->lcp_info.want_mask[FSM_LOCAL] |= LCP_N_AP;
   config_ptr->lcp_info.will_mask[FSM_LOCAL] |= LCP_N_AP;
-#endif
-*/
 
   /*-------------------------------------------------------------------------
     If the challenge name is non-NULL and the length is non-zero copy the
@@ -992,7 +971,7 @@ int ppp_start
              config_ptr->rx_iface_ptr);
     return -1;
   }
-
+  MSG_FATAL("ppp_start %x %d",config_ptr->lcp_info.want_mask[0],device,0);
   /*-------------------------------------------------------------------------
     Configure PPP device
   -------------------------------------------------------------------------*/
@@ -1099,6 +1078,7 @@ int ppp_resync
       return -1;
     }
 
+    MSG_FATAL("ppp_resync %x %d",config_ptr->lcp_info.want_mask[0],device,0);
     config_ptr->rx_signal = ppp_cb_ptr->rx_signal;
     if(ppp_i_config(device, config_ptr) < 0)
     {

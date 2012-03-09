@@ -380,6 +380,7 @@ when        who    what, where, why
 #include "dstaski.h"
 #endif
 
+extern boolean	bIsPPPAuthEnabled; //Add By zzg 2012_03_07
 
 /*===========================================================================
                            FORWARD DECLARATIONS
@@ -1885,12 +1886,17 @@ LOCAL boolean ds707_pkti_call_conn_hdlr
 #endif /* FEATURE_DS_PZID_HYSTERESIS  */
 
     ds707_cta_reset_timer(DS707_CTA_START_TIMER, tc_state_ptr->so);
-
+    
     #ifndef FEATURE_ASYNC_DATA_NOOP
     dssnet_set_in_qnc_call(ds707_so_async_so_is_async(tc_state_ptr->so));
     #else
     /* As QNC is not supported seeting the value to FALSE */
+#ifdef CUST_EDITION
+    MSG_FATAL("ds707_so_async_so_is_async %d %d",tc_state_ptr->so,bIsPPPAuthEnabled,0);
+    dssnet_set_in_qnc_call(!bIsPPPAuthEnabled);
+#else
     dssnet_set_in_qnc_call(FALSE);
+#endif
     #endif
 
 #ifdef FEATURE_IS2000_REL_A
@@ -4883,6 +4889,7 @@ int ds707_pkt_setup_SN_ppp
 /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
   ppp_get_default_opts( &ppp_config_info );
 
+  MSG_FATAL("ds707_pkt_setup_SN_ppp",0,0,0);
   is707_get_ppp_auth_info_from_nv( &ppp_config_info, dsi_get_nv_item );
 
   ppp_config_info.rx_f_ptr       = ds707_pkt_rx_um_SN_data;
