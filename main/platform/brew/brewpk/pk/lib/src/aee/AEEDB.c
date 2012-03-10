@@ -369,7 +369,7 @@ static IDatabase *  AEEDatabase_New(AEEDBMgr * pMgr, OEMCONTEXT hdb)
 {
    AEEDatabase   * pme;
    
-   if((pme = (AEEDatabase *)AEE_OEM_NEWCLASS((IBaseVtbl *)&gAEEDatabaseFuncs, sizeof(AEEDatabase))) != NULL){
+   if((pme = (AEEDatabase *)AEE_NewClass((IBaseVtbl *)&gAEEDatabaseFuncs, sizeof(AEEDatabase))) != NULL){
       pme->m_hdb = hdb;
       pme->m_wCurrentRecIdx = AEE_DB_RECID_NULL;
       pme->m_pMgr = pMgr;
@@ -560,7 +560,7 @@ static IDBRecord *  AEEDBRecord_New(AEEDatabase * pDB, uint16 wID, byte * pRec)
 {
    AEEDBRecord   * pme;
   
-   if((pme = (AEEDBRecord *)AEE_OEM_NEWCLASS((IBaseVtbl *)&gAEEDBRecordFuncs, sizeof(AEEDBRecord))) != NULL){
+   if((pme = (AEEDBRecord *)AEE_NewClass((IBaseVtbl *)&gAEEDBRecordFuncs, sizeof(AEEDBRecord))) != NULL){
 
       if(pRec)
          pme->m_bOEMFree = TRUE;

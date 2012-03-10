@@ -118,7 +118,7 @@ int AniCtl_New(IShell * pIShell, AEECLSID cls, void ** ppobj)
 
    *ppobj = NULL;
 
-   pme = (CAniCtl *)AEE_OEM_NEWCLASS((AEEVTBL(IBase) *)&gCAniCtlFuncs,
+   pme = (CAniCtl *)AEE_NewClass((AEEVTBL(IBase) *)&gCAniCtlFuncs,
                                  sizeof(CAniCtl));
 
    if (pme == NULL)

@@ -202,7 +202,7 @@ int TimeCtl_New(IShell * ps,AEECLSID cls, void ** ppobj)
 
   // allocate memory for object
 
-   if((pme = (TimeCtl *)AEE_OEM_NEWCLASS((IBaseVtbl *)&gTimeFuncs, sizeof(TimeCtl))) == NULL)
+   if((pme = (TimeCtl *)AEE_NewClass((IBaseVtbl *)&gTimeFuncs, sizeof(TimeCtl))) == NULL)
       return(ENOMEMORY);
 
    // Increment the reference count on the shell...

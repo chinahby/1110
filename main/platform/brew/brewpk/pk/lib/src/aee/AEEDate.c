@@ -292,7 +292,7 @@ int DateCtl_New(IShell * pIShell, AEECLSID cls, void ** ppobj)
 
   // allocate memory for object
 
-   if((pme = (DateCtl *)AEE_OEM_NEWCLASS((IBaseVtbl *)&gQDateCtlFuncs, sizeof(DateCtl))) == NULL)
+   if((pme = (DateCtl *)AEE_NewClass((IBaseVtbl *)&gQDateCtlFuncs, sizeof(DateCtl))) == NULL)
       return(ENOMEMORY);
 
    // Increment the reference count on the shell...

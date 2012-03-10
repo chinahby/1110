@@ -925,7 +925,7 @@ static IAddrRec *  AEEAddrRec_New(AEEAddrBook * pAddrBook)
 {
    AEEAddrRec   * pme;
   
-   if((pme = (AEEAddrRec *)AEE_OEM_NEWCLASS((IBaseVtbl *)&gAEEAddrRecFuncs, sizeof(AEEAddrRec))) != NULL)
+   if((pme = (AEEAddrRec *)AEE_NewClass((IBaseVtbl *)&gAEEAddrRecFuncs, sizeof(AEEAddrRec))) != NULL)
    {
 
       

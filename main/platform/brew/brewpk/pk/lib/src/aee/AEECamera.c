@@ -132,7 +132,7 @@ int AEECamera_New(IShell * ps, AEECLSID cls, void **ppif)
     int         nRet = SUCCESS;
 
     // Alloc memory for the object
-    pme = (ICamera *)AEE_OEM_NEWCLASS((IBaseVtbl *)&gvtICamera, sizeof(ICamera));
+    pme = (ICamera *)AEE_NewClass((IBaseVtbl *)&gvtICamera, sizeof(ICamera));
     if (!pme)
     {
         nRet = ENOMEMORY;

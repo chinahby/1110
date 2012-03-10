@@ -831,7 +831,7 @@ int VkeyCtl_New(IShell * pIShell, AEECLSID cls, void ** ppobj)
     *ppobj = NULL;
         
     /*lint -e740 -e806 -e826*/
-    if ((pme = (VkeyCtl *)AEE_OEM_NEWCLASS( (IBaseVtbl *)&gQVkeyCtlFuncs, sizeof(VkeyCtl) )) == NULL)
+    if ((pme = (VkeyCtl *)AEE_NewClass( (IBaseVtbl *)&gQVkeyCtlFuncs, sizeof(VkeyCtl) )) == NULL)
     {
         return(ENOMEMORY);  
     }

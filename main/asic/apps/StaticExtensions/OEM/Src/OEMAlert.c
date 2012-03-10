@@ -746,7 +746,7 @@ int OEMALERT_New(IShell *pIShell, AEECLSID cls, void **ppif)
 
   // Allocate the object.
 //lint -save -e826  Suppress "suspicious ptr-to-ptr conversion (area too small)"
-  pNew = (IALERT *) AEE_OEM_NEWCLASS((IBaseVtbl*)&gOEMALERTFuncs, sizeof(IALERT));
+  pNew = (IALERT *) AEE_NewClass((IBaseVtbl*)&gOEMALERTFuncs, sizeof(IALERT));
 //lint -restore
   if (pNew == NULL)
        return ENOMEMORY;

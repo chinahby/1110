@@ -147,7 +147,7 @@ int ADialog_New(IShell * ps,AEECLSID cls, void **ppif)
    if(!pae)
       pae = AEE_GetStackedAppContext();
 
-   pme = (ADialog *)AEE_OEM_NEWCLASS((IBaseVtbl *)&gDialogMethods, sizeof(ADialog));
+   pme = (ADialog *)AEE_NewClass((IBaseVtbl *)&gDialogMethods, sizeof(ADialog));
    
    *ppif = pme;
 

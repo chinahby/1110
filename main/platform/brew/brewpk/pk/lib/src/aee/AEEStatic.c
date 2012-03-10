@@ -202,7 +202,7 @@ int Static_New(IShell * pShell,AEECLSID cls, void **ppif)
    AEEBitmapInfo  bi;
    int            nErr, nSize;
 
-   pme = (AStatic *)AEE_OEM_NEWCLASS((IBaseVtbl *)&gStaticMethods, sizeof(AStatic));
+   pme = (AStatic *)AEE_NewClass((IBaseVtbl *)&gStaticMethods, sizeof(AStatic));
 
    *ppif = pme;
 

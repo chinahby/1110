@@ -839,7 +839,7 @@ int AEEGraphics_New(IShell *pIShell, AEECLSID clsid, void **ppobj)
    int       nErr;
 
    /* mallocs, inits the vtable, addrefs me */
-   pMe = (QGraphics *)AEE_OEM_NEWCLASS((IBaseVtbl *)&gGraphicsFuncs, 
+   pMe = (QGraphics *)AEE_NewClass((IBaseVtbl *)&gGraphicsFuncs, 
                                    sizeof(QGraphics));
    
    if ((QGraphics *)0 != pMe) {

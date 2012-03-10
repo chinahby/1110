@@ -160,7 +160,7 @@ int ImageCtl_New(IShell * ps, AEECLSID cls, void ** ppObj)
 
   // allocate memory for object
 
-   if((pme = (ImageCtl *)AEE_OEM_NEWCLASS((IBaseVtbl *)&gViewerFuncs, sizeof(ImageCtl))) == NULL)
+   if((pme = (ImageCtl *)AEE_NewClass((IBaseVtbl *)&gViewerFuncs, sizeof(ImageCtl))) == NULL)
       return(ENOMEMORY);
 
    *ppObj = pme;

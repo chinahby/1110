@@ -612,7 +612,7 @@ static int Menu_New(IShell * pIShell, AEECLSID cls, void ** ppobj)
 
    *ppobj = NULL;
 
-   if((pme = (CMenuCtl *)AEE_OEM_NEWCLASS((IBaseVtbl *)&gCMenuCtlFuncs, sizeof(CMenuCtl))) == NULL)
+   if((pme = (CMenuCtl *)AEE_NewClass((IBaseVtbl *)&gCMenuCtlFuncs, sizeof(CMenuCtl))) == NULL)
       return(ENOMEMORY);
 
   // create IDisplay interface

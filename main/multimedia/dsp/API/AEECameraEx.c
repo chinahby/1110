@@ -90,7 +90,7 @@ int AEECameraEx_New(IShell* ps, AEECLSID cls, void **ppif)
     DBGPRINTF("aaaaaaaaaaaaaaaaaaa-----AEECameraEx_New");
 
     // Alloc memory for the object
-    pme = (ICameraEx *)AEE_OEM_NEWCLASS((IBaseVtbl *)&gvtICameraEx, sizeof(ICameraEx));
+    pme = (ICameraEx *)AEE_NewClass((IBaseVtbl *)&gvtICameraEx, sizeof(ICameraEx));
     if (!pme)
     {
         nRet = ENOMEMORY;
