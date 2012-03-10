@@ -1893,7 +1893,11 @@ LOCAL boolean ds707_pkti_call_conn_hdlr
     /* As QNC is not supported seeting the value to FALSE */
 #ifdef CUST_EDITION
     MSG_FATAL("ds707_so_async_so_is_async %d %d",tc_state_ptr->so,bIsPPPAuthEnabled,0);
+#ifdef FEATURE_VERSION_W208S
     dssnet_set_in_qnc_call(!bIsPPPAuthEnabled);
+#else
+	dssnet_set_in_qnc_call(FALSE);
+#endif
 #else
     dssnet_set_in_qnc_call(FALSE);
 #endif

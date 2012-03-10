@@ -1997,6 +1997,12 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
  					CallApp_Display_Number(pMe);
  					// Draw it now!
  					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+
+					if (pMe->m_msg_text_id == IDS_NUM_TOO_LONG)
+					{
+						pMe->m_msg_text_id=0;
+					}
+					
  			        CLOSE_DIALOG(DLGRET_OK)
  			        return TRUE;
                 }

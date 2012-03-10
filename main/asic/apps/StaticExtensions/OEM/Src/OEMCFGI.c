@@ -1622,7 +1622,11 @@ static OEMConfigListType oemi_cache = {
    0,                                               // CFGI_BROWSER_CALL_TIMER
    OEMNV_SMS_SO_SO6,
    OEMNV_SMS_EMAIL_ADDRESSING_IS41,
+#ifdef FEATURE_VERSION_W208S   
    OEMNV_PPP_AUTH_DISABLED,							// CFGI_PPP_AUTH
+#else
+	OEMNV_PPP_AUTH_ENABLED,							// CFGI_PPP_AUTH
+#endif   
 #if defined(FEATURE_CARRIER_ANGOLA_MOVICEL) || defined(FEATURE_CARRIER_MAROC_WANA) || defined (FEATURE_CARRIER_ISRAEL_PELEPHONE)
    OEMNV_SMS_MO_ENCODING_OCTET,
 #else   
