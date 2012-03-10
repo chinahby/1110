@@ -1138,7 +1138,7 @@ int IMovieFile_New(IShell * ps, AEECLSID cls, void **ppif)
    {
       // Allocate memory for MovieFile object.
       IMovieFile *po;
-      // = (IMovieFile *)AEE_OEM_NEWCLASS
+      // = (IMovieFile *)AEE_NewClass
        //   ((AEEVTBL(IBase) *)&gvtIMovieFile, sizeof(IMovieFile));
       //if (NULL == po)
      /// {

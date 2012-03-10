@@ -30,12 +30,6 @@ Qualcomm Confidential and Proprietary
 # endif /* if defined(AEE_SIMULATOR) */
 #endif /* if !defined(AEE_DBG_HEAP) */
 
-#ifndef USES_RELEASE_VERSION
-extern void *OEMOS_DbgMark(void *ptr,const char *cpszFile, int nLine);
-extern void *OEMOS_DbgReallocMark(void *ptr, void *oldptr, const char *cpszFile, int nLine);
-extern void OEMOS_DbgUnMark(PFNNOTIFY pfn,void *ptr,const char *cpszFile, int nLine);
-extern void OEMOS_DbgDump(void);
-#endif
 // Flags for GETAEEVERSION
 
 #define GAV_LATIN1   0x0001      // Single byte string

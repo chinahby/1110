@@ -68,13 +68,6 @@ extern AEE_EXPORTS void                AEE_InitAlarms(void * pUnused);
 extern AEE_EXPORTS byte               *AEE_GetDecodedTextString( byte * pText, uint32 nText, int se, int * ae, uint32 * pnBytes);
 extern AEE_EXPORTS boolean             AEE_IsDebugBREWSMS(void);
 
-#ifdef USES_RELEASE_VERSION
-#define AEE_OEM_NEWCLASS               AEE_NewClass
-#define AEE_OEM_NEWCLASSEX             AEE_NewClassEx
-#else
-#define AEE_OEM_NEWCLASS(p,n)          OEMOS_DbgMark((void *)AEE_NewClass(p,n),__FILE__,__LINE__)
-#define AEE_OEM_NEWCLASSEX(p,n,b)      OEMOS_DbgMark((void *)AEE_NewClassEx(p,n,b),__FILE__,__LINE__)
-#endif
 #if defined(__cplusplus)
 }
 #endif

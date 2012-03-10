@@ -172,7 +172,7 @@ int AClockCtl_New(IShell * ps, AEECLSID cls, void ** ppObj)
 
   // allocate memory for object
 
-   if((pme = (AClock *)AEE_OEM_NEWCLASS((IBaseVtbl *)&gAClockFuncs, sizeof(AClock))) == NULL)
+   if((pme = (AClock *)AEE_NewClass((IBaseVtbl *)&gAClockFuncs, sizeof(AClock))) == NULL)
       return(ENOMEMORY);
 
    *ppObj = pme;

@@ -127,7 +127,7 @@ int OEMIMUI_New(IShell * pIShell, AEECLSID clsID, void ** ppobj)
       return EUNSUPPORTED;
    }
 
-   if( (pme = (CIMUI *)AEE_OEM_NEWCLASSEX((IBaseVtbl*)&gpvtIIMUI, sizeof(CIMUI), FALSE)) == NULL ){
+   if( (pme = (CIMUI *)AEE_NewClassEx((IBaseVtbl*)&gpvtIIMUI, sizeof(CIMUI), FALSE)) == NULL ){
       return ENOMEMORY;
    }
    if( (nErr = ISHELL_CreateInstance(pIShell, AEECLSID_SOFTKEYCTL, (void **)&pme->pSKCharacterList)) != AEE_SUCCESS ){

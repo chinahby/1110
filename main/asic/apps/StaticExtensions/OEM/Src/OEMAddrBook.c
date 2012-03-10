@@ -283,11 +283,14 @@ int OEMAddrBook_New(IShell * pIShell,AEECLSID ClsId,void ** ppObj)
 
    *ppObj = NULL;
 
+   /* Make sure the object is know. */
    if (ClsId == AEECLSID_OEMADDRBOOK)
    {
       // Allocate 
-      pNew = (COEMAddrBook*)AEE_OEM_NEWCLASSEX((IBaseVtbl*)&gsOEMAddrBookFuncs,
-                                          sizeof(COEMAddrBook), TRUE);
+      //lint -save -e740 -e826 unusual ptr ops
+      pNew = (COEMAddrBook*)AEE_NewClassEx((IBaseVtbl*)&gsOEMAddrBookFuncs,
+                                            sizeof(COEMAddrBook), TRUE);
+      //lint -restore
       if (!pNew)
       {
          Err = ENOMEMORY;

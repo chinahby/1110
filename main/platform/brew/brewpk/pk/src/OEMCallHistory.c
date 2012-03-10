@@ -429,7 +429,7 @@ int OEMCallHistory_New(IShell *pIShell, AEECLSID ClsId, void **ppObj)
 
       // Make room
       /*lint -e740 */
-      pNew = (OEMCallHistory*)AEE_OEM_NEWCLASS((IBaseVtbl*)&gOEMCallHistoryFuncs,
+      pNew = (OEMCallHistory*)AEE_NewClass((IBaseVtbl*)&gOEMCallHistoryFuncs,
                                            sizeof(OEMCallHistory));
       /*lint +e740 */
       if (!pNew)

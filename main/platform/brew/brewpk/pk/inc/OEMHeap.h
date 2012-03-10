@@ -28,16 +28,13 @@ None.
 #if defined(__cplusplus)
 extern "C" {
 #endif
-#ifdef CUST_EDITION	
-#include "AEE_OEMHeap.h"
-#endif /*CUST_EDITION*/
+
 extern int OEM_GetHeapInitBytes(void **ppHeapBytes, uint32 *puHeapBytesLen);
 
 #if defined(__cplusplus)
 }
 #endif
 
-#ifdef USES_RELEASE_VERSION
 #if (AEE_DBG_HEAP == 1)
 #define sys_realloc(p, n)      AEEHeap_DbgMark(AEEHeap_Realloc(p,n),__FILE__,__LINE__)
 #define sys_strdup(p)          (char *)AEEHeap_DbgMark(AEEHeap_StrDup(p),__FILE__,__LINE__)
@@ -49,12 +46,6 @@ extern int OEM_GetHeapInitBytes(void **ppHeapBytes, uint32 *puHeapBytesLen);
 #endif
 
 #define sys_free               AEEHeap_Free
-#else
-#define sys_realloc(p, n)      OEMOS_DbgReallocMark(AEEHeap_Realloc(p,n),p,__FILE__,__LINE__)
-#define sys_strdup(p)          (char *)OEMOS_DbgMark(AEEHeap_StrDup(p),__FILE__,__LINE__)
-#define sys_malloc(n)          OEMOS_DbgMark(AEEHeap_Malloc(n),__FILE__,__LINE__)
-#define sys_free(p)            if(p != NULL){OEMOS_DbgUnMark(AEEHeap_Free,p,__FILE__,__LINE__); p = NULL;}
-#endif
 #define sys_lockmem            AEEHeap_Lock
 #define sys_unlockmem          AEEHeap_Unlock
 

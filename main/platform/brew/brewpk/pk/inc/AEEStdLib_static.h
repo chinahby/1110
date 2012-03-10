@@ -233,7 +233,6 @@ extern AEE_EXPORTS TChType       OEM_GetCHType(AECHAR ch);
 #define WSTRNCMP                  aee_wstrncmp
 #define WSTRNICMP                 aee_wstrnicmp
 
-#ifdef USES_RELEASE_VERSION
 #if (AEE_DBG_HEAP == 1)
 #define WSTRDUP(szIn)             (AECHAR*)(AEEHeap_DbgMark(aee_wstrdup((szIn)),__FILE__,__LINE__))
 #define MALLOC(dw)                AEEHeap_DbgMark(aee_realloc(0,(dw)),__FILE__,__LINE__)
@@ -246,12 +245,7 @@ extern AEE_EXPORTS TChType       OEM_GetCHType(AECHAR ch);
 #define STRDUP                    aee_strdup
 #endif
 /* #if (AEE_DBG_HEAP == 1) */ 
-#else
-#define WSTRDUP(szIn)             (AECHAR*)(OEMOS_DbgMark(aee_wstrdup((szIn)),__FILE__,__LINE__))
-#define MALLOC(dw)                OEMOS_DbgMark(aee_realloc(0,(dw)),__FILE__,__LINE__)
-#define REALLOC(p,dw)             OEMOS_DbgReallocMark(aee_realloc((p),(dw)),p,__FILE__,__LINE__)
-#define STRDUP(p)                 (char*)(OEMOS_DbgMark(aee_strdup(p),__FILE__,__LINE__))
-#endif
+
 #define DBGHEAPMARKEX             AEEHeap_DbgMark
 
 #define DUMPHEAP                  aee_dumpheap
@@ -298,11 +292,7 @@ extern AEE_EXPORTS TChType       OEM_GetCHType(AECHAR ch);
 #define STRLCPY                   aee_strlcpy
 #define STRLCAT                   aee_strlcat
 #define CONVERTBMP(src,pi,pb)     AEE_SetupNativeImage(AEECLSID_WINBMP,(src),(pi),(pb))
-#ifdef USES_RELEASE_VERSION
 #define FREE                      aee_free
-#else
-#define FREE(p)                   OEMOS_DbgUnMark(aee_free,p,__FILE__,__LINE__)
-#endif
 #define LOCKMEM                   AEEHeap_Lock
 #define UNLOCKMEM                 AEEHeap_Unlock
 #define SYSFREE                   AEE_FreeNativeImage

@@ -163,7 +163,7 @@ int OEMIMMgr_New(IShell * pIShell, AEECLSID clsID, void ** ppobj)
    }
 
    
-   if( (pme = (CIMMgr *)AEE_OEM_NEWCLASSEX((IBaseVtbl*)&gpvtIIMMgr, sizeof(CIMMgr), FALSE)) == NULL ){
+   if( (pme = (CIMMgr *)AEE_NewClassEx((IBaseVtbl*)&gpvtIIMMgr, sizeof(CIMMgr), FALSE)) == NULL ){
       return ENOMEMORY;
    }
 

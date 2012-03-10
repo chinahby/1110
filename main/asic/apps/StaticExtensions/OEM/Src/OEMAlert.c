@@ -508,7 +508,7 @@ int OEMALERT_NOTIFIER_New(IShell *pIShell, AEECLSID cls, void **ppif)
    {
      // Allocate the object.
 //lint -save -e826 Suppress "Suspicious ptr-to-ptr conversion (area too small)
-     IALERT_NOTIFIERobj = (IALERT_NOTIFIER*)AEE_OEM_NEWCLASSEX((IBaseVtbl*)&
+     IALERT_NOTIFIERobj = (IALERT_NOTIFIER*)AEE_NewClassEx((IBaseVtbl*)&
 							   gOEMALERT_NOTIFIERFuncs,
 							   sizeof(IALERT_NOTIFIER),
 							   TRUE);
