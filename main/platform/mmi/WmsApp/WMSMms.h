@@ -30,7 +30,7 @@
 #include "AEENet.h"
 #include "AEECallback.h"
 #ifndef USES_RELEASE_VERSION
-#define MMS_TEST
+//#define MMS_TEST
 #endif
 /////////////////////////////////////////////////////////////
 #define MAX_EMAILADD_LEN               64 
