@@ -1049,5 +1049,17 @@
 				<Items/></Text>
 		</Controls>
 	</Dialog>
+	<Dialog Id="6054" Name="IDD_MMS_PROXY" Focus="0">
+		<Controls>
+			<Text Id="7047" Name="IDC_MMS_PROXY">
+				<Items/></Text>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6055" Name="IDD_MMS_PORT" Focus="0">
+		<Controls>
+			<Text Id="7048" Name="IDC_MMS_PORT">
+				<Items/></Text>
+		</Controls>
+	</Dialog>
 </Dialogs>
 </BREWRes>
