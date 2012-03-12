@@ -1244,7 +1244,15 @@ static int MMS_GetFileContent(uint8* encbuf,WSP_ENCODE_DATA_FRAGMENT frag)
 	//text/plain
 	if ( onebyte == 0x83)
 	{
-		content_size = STRLEN((char*)frag.hContentText);
+	    if(STRNCMP(frag.pType,MMSUNICODE,sizeof(MMSUNICODE));
+	    {
+	        content_size = STRLEN((char*)frag.hContentText);
+	    }
+	    else
+	    {
+	        content_size = WSTRLEN((AECHAR*)frag.hContentText) << 1;
+	        content_size += 2;
+	    }
 	}
 	//content size
 	uintvar_len = MMS_WSP_Encode_UINTVAR(uintvar,content_size);
@@ -1262,8 +1270,13 @@ static int MMS_GetFileContent(uint8* encbuf,WSP_ENCODE_DATA_FRAGMENT frag)
 	//text/plain
 	if ( onebyte == 0x83)
 	{
-		content_size = STRLEN((char*)frag.hContentText);
-		STRNCPY((char*)pCurPos,(char*)frag.hContentText,content_size);
+		//content_size = STRLEN((char*)frag.hContentText);
+		if(!STRNCMP(frag.pType,MMSUNICODE,sizeof(MMSUNICODE));
+		{
+		    *pCurPos = 0xFE;pCurPos++;
+		    *pCurPos = 0xFF;pCurPos++;
+		}
+		MEMCPY((char*)pCurPos,(char*)frag.hContentText,content_size);
 		MSG_FATAL("[MMS_GetFileContent] Get Text Content:%d",content_size,0,0);
 	}
 	else
@@ -2746,7 +2759,7 @@ void WMS_MMS_DATA_Encode(WSP_MMS_ENCODE_DATA* pData)
     pData->frag_num = 0;
     while(index < WMSMMS_FRAGMENTCOUNT)
     {
-        if(index == 0 && STRLEN((char*)pData->fragment[index].hContentText) != 0)
+        if(index == 0)
         {
             MSG_FATAL("STRLEN((char*)pData->fragment[index].hContentText) != 0",0,0,0);
             len = STRLEN("text/plain");
