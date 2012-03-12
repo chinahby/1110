@@ -2617,7 +2617,11 @@ void OEM_RestoreFactorySetting( void )
 
    oemi_cache.sms_service_option  = OEMNV_SMS_SO_SO6;
    oemi_cache.sms_is41_workaround = OEMNV_SMS_EMAIL_ADDRESSING_IS41;
-   oemi_cache.ppp_auth_enabled	  = OEMNV_PPP_AUTH_DISABLED;
+#ifdef FEATURE_VERSION_W208S
+	oemi_cache.ppp_auth_enabled	  = OEMNV_PPP_AUTH_DISABLED;
+#else
+   oemi_cache.ppp_auth_enabled	  = OEMNV_PPP_AUTH_ENABLED;
+#endif
 #if defined(FEATURE_CARRIER_ANGOLA_MOVICEL) || defined(FEATURE_CARRIER_MAROC_WANA) || defined (FEATURE_CARRIER_ISRAEL_PELEPHONE)
    oemi_cache.sms_mo_encoding     = OEMNV_SMS_MO_ENCODING_OCTET;
 #else
@@ -6083,9 +6087,15 @@ static void OEMPriv_ReadOEMConfigList(void)
       oemi_cache.sms_is41_workaround = OEMNV_SMS_EMAIL_ADDRESSING_IS41;
    }
 
-   if (oemi_cache.ppp_auth_enabled> OEMNV_PPP_AUTH_ENABLED) {
+#ifdef FEATURE_VERSION_W208S
+	if (oemi_cache.ppp_auth_enabled> OEMNV_PPP_AUTH_ENABLED) {
       oemi_cache.ppp_auth_enabled = OEMNV_PPP_AUTH_DISABLED;
    }
+#else
+   if (oemi_cache.ppp_auth_enabled> OEMNV_PPP_AUTH_ENABLED) {
+      oemi_cache.ppp_auth_enabled = OEMNV_PPP_AUTH_ENABLED;
+   }
+#endif   
 
    if (oemi_cache.sms_mo_encoding > OEMNV_SMS_MO_ENCODING_UNICODE) {
       oemi_cache.sms_mo_encoding = OEMNV_SMS_MO_ENCODING_7BIT;
