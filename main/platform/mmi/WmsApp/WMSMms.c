@@ -1182,7 +1182,15 @@ static int MMS_GetFileContent(uint8* encbuf,WSP_ENCODE_DATA_FRAGMENT frag)
 				*temp_pos = 0x81; temp_pos++;
 
 				//0x83 us-ascii   0xea utf-8
-				*temp_pos = 0xea; temp_pos++;  //utf-8
+				if(STRNCMP(frag.pType,MMSUNICODE,sizeof(MMSUNICODE)))
+				{
+				    *temp_pos = 0xea; temp_pos++;  //utf-8
+				}
+				else
+				{
+				     *temp_pos = 0x03; temp_pos++;  
+				     *temp_pos = 0xe8; temp_pos++;  //UCS-2
+				}    
 			}
 			
 			param_len = STRLEN((char*)frag.hContentName);
