@@ -86,6 +86,8 @@
 #include "WmsMms.h"
 #include "AEEMedia.h"
 #define MMSFILE_DIR      "fs:/user/mms"
+#define MMSUNICODE  "UNICODE"
+#define MMSNOUNICODE  "NOUNICODE"
 #endif
 
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch

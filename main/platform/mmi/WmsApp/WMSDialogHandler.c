@@ -12093,9 +12093,17 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                                     MSG_FATAL("pwstrText is UNICODE",0,0,0);
                                     mms_data->fragment[0].pType = (char*)MALLOC(sizeof(char)*10);
                                     MEMSET(mms_data->fragment[0].pType, 0, sizeof(char)*10);
-                                    MEMCPY(mms_data->fragment[0].pType, "UNICODE", sizeof(char)*10);
+                                    MEMCPY(mms_data->fragment[0].pType, MMSUNICODE, sizeof(char)*10);
                                     DBGPRINTF("mms_data->fragment[0].pType=%s", mms_data->fragment[0].pType);
                                     //这里把当前彩信文本项的标志设为UNICODE
+                                }
+                                else
+                                {
+                                    MSG_FATAL("pwstrText is UNICODE",0,0,0);
+                                    mms_data->fragment[0].pType = (char*)MALLOC(sizeof(char)*10);
+                                    MEMSET(mms_data->fragment[0].pType, 0, sizeof(char)*10);
+                                    MEMCPY(mms_data->fragment[0].pType, NOUNICODE, sizeof(char)*10);
+                                    DBGPRINTF("mms_data->fragment[0].pType=%s", mms_data->fragment[0].pType);                                    
                                 }
                                 MSG_FATAL("mms_data->frag_num=%d",mms_data->frag_num,0,0);
                                 MSG_FATAL("mms_data->frag_num=%d",mms_data->frag_num,0,0);
