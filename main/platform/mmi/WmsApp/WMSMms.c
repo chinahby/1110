@@ -46,7 +46,7 @@
 #include "AEEVector.h"
 #include "AEEAnnunciator.h"
 #include "AEEBacklight.h"
-
+#include "WMSApp_priv.h"
 #include "AEEConfig.h"
 #include "wms.h"
 #include "AEEWMS.h"
@@ -74,8 +74,10 @@
 #ifdef FEATURE_USES_MMS
 #define MG_MAX_FILE_NAME            128
 
+/*
 #define RELEASEIF(p) \
    if (p != NULL) { IBASE_Release((IBase*)(p)); (p) = NULL; }
+*/   
 
 #define DBGPRINTF_EX_FORMAT    "*dbgprintf-%d* %s:%d"
 #define MMS_DEBUG(arg) __DBGPRINTF(DBGPRINTF_EX_FORMAT,5,__FILE__,__LINE__),__DBGPRINTF arg
@@ -1244,7 +1246,7 @@ static int MMS_GetFileContent(uint8* encbuf,WSP_ENCODE_DATA_FRAGMENT frag)
 	//text/plain
 	if ( onebyte == 0x83)
 	{
-	    if(STRNCMP(frag.pType,MMSUNICODE,sizeof(MMSUNICODE));
+	    if(STRNCMP(frag.pType,MMSUNICODE,sizeof(MMSUNICODE)))
 	    {
 	        content_size = STRLEN((char*)frag.hContentText);
 	    }
@@ -1271,7 +1273,7 @@ static int MMS_GetFileContent(uint8* encbuf,WSP_ENCODE_DATA_FRAGMENT frag)
 	if ( onebyte == 0x83)
 	{
 		//content_size = STRLEN((char*)frag.hContentText);
-		if(!STRNCMP(frag.pType,MMSUNICODE,sizeof(MMSUNICODE));
+		if(!STRNCMP(frag.pType,MMSUNICODE,sizeof(MMSUNICODE)))
 		{
 		    *pCurPos = 0xFE;pCurPos++;
 		    *pCurPos = 0xFF;pCurPos++;
@@ -2475,7 +2477,7 @@ uint8* WMS_MMS_ReadMMS(uint32 index,int nKind,uint32* pLen)
             }
             *pLen = nBitCount;
         }
-        RELEASEIF(pFile)
+        RELEASEIF(pFile);
     }
     else
     {
@@ -2819,7 +2821,7 @@ void WMS_MMS_DATA_Encode(WSP_MMS_ENCODE_DATA* pData)
 	STRNCPY((char*)pData->fragment[1].hContentName,"1.txt",len);
 #endif
     MMS_DEBUG(("[WMS_MMS_DATA_Encode] EXIT"));
-    RELEASEIF(pConfig)
+    RELEASEIF(pConfig);
 }
 
 int WMS_MMS_PDU_Encode(MMS_WSP_ENCODE_SEND* encdata, uint8* hPDU, uint8 ePDUType)
