@@ -1480,6 +1480,7 @@ static boolean  dialog_handler_of_state_record( Recorder* pme, AEEEvent evt, uin
 
 			
 #if !defined( AEE_SIMULATOR)
+
 			if (pme->m_bSuspended)
 			{
                 if (pme->m_Media.m_eState == MEDIA_STATE_RECORDING)
@@ -1492,7 +1493,7 @@ static boolean  dialog_handler_of_state_record( Recorder* pme, AEEEvent evt, uin
 					db_items_value_type dbItemValue      = {0};
 					db_get( DB_IN_USE, &dbItemValue);
 
-					recorder_stop_if( &pme->m_Media);		//Add By zzg 2012_03_01
+					//recorder_stop_if( &pme->m_Media);		//Add By zzg 2012_03_01
 					if( dbItemValue.in_use)
 					{
 						MOVE_TO_STATE( STATE_RECORD_LIST);

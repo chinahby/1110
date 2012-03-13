@@ -5994,7 +5994,15 @@ static boolean  dialog_handler_of_state_showalert( CScheduleApp* pme,
                 g_sport_snooze_back_flag = FALSE;
                 g_otherappflag = FALSE;
                 #endif
-                pme->m_eDlgRet = DLGRET_OK;// 闹钟提示完成后关闭对话框
+				
+                //pme->m_eDlgRet = DLGRET_OK;// 闹钟提示完成后关闭对话框	//Del by zzg 2012_03_13
+
+				//Add By zzg 2012_03_13
+				if (pme->m_CalMgr.m_bCloseFromTimer == TRUE)
+				{
+					pme->m_eDlgRet = DLGRET_OK;// 闹钟提示完成后关闭对话框
+				}	
+				//Add End
             }
 
 #if !defined( AEE_SIMULATOR)
@@ -6155,7 +6163,8 @@ static boolean  dialog_handler_of_state_showalert( CScheduleApp* pme,
 
                     if( theLast->status == EXPIRED && theLast->baseFields.alertst == ALERTSET)
                     {
-                        playRingerAlert( &pme->m_CalMgr);
+                        playRingerAlert( &pme->m_CalMgr);		
+						pme->m_CalMgr.m_bCloseFromTimer = FALSE; //Add By zzg 2012_03_13
                         ISHELL_SetTimer( pme->m_pShell, 30000, (PFNNOTIFY)stopRingerAlert, &pme->m_CalMgr);
                     }
 
@@ -6353,6 +6362,7 @@ static void stopRingerAlert(CCalApp *pme)
     {
         return;
     }
+	pme->m_bCloseFromTimer = TRUE;		//Add By zzg 2012_03_13
     (void) ISHELL_EndDialog(pme->m_pIShell);
 #endif
 }

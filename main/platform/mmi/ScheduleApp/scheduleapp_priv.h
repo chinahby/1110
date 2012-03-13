@@ -484,6 +484,7 @@ struct _CCalApp
    Appointment**        m_expiredAppointment;
    Appointment*         m_appointmentToView;
    WalkMode             m_CurMode;
+   boolean				m_bCloseFromTimer;		//Add By zzg 2012_03_13
 };
 
 // ScheduleApp Applet对象结构体：
