@@ -4740,7 +4740,7 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
         
 #ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
         if(bTitleRightAligned){
-            SETAEERECT( &rect, prc->x+prc->dx-pme->m_cyFont,prc->y + ps->yOffset, pme->m_cyFont-2, prc->dy);
+            SETAEERECT( &rect, prc->x+prc->dx-pme->m_cyFont,prc->y + ps->yOffset, pme->m_cyFont+1, prc->dy);
 			
 			STRTOWSTR(".%d", wszFmt, sizeof(wszFmt));
             
@@ -4761,7 +4761,7 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
             prc->dx -= rect.dx;
         }
         else{
-            SETAEERECT( &rect, ps->xOffset/*prc->x*/,prc->y + ps->yOffset, pme->m_cyFont, prc->dy);
+            SETAEERECT( &rect, ps->xOffset/*prc->x*/,prc->y + ps->yOffset, pme->m_cyFont+1, prc->dy);
 			
             STRTOWSTR("%d.", wszFmt, sizeof(wszFmt));	
 			            
