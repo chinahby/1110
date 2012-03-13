@@ -1260,7 +1260,7 @@ static int MMS_GetFileContent(uint8* encbuf,WSP_ENCODE_DATA_FRAGMENT frag)
 	    }
 	    else
 	    {
-	        content_size = WSTRLEN((AECHAR*)frag.hContentText) << 1;
+	        content_size = (WSTRLEN((AECHAR*)frag.hContentText) << 1);
 	        content_size += 2;
 	    }
 	}
@@ -1281,11 +1281,13 @@ static int MMS_GetFileContent(uint8* encbuf,WSP_ENCODE_DATA_FRAGMENT frag)
 	if ( onebyte == 0x83)
 	{
 		//content_size = STRLEN((char*)frag.hContentText);
+/*		
 		if(!STRNCMP(frag.pType,MMSUNICODE,sizeof(MMSUNICODE)))
 		{
 		    *pCurPos = 0xFE;pCurPos++;
 		    *pCurPos = 0xFF;pCurPos++;
 		}
+*/		
 		MEMCPY((char*)pCurPos,(char*)frag.hContentText,content_size);
 		MSG_FATAL("[MMS_GetFileContent] Get Text Content:%d",content_size,0,0);
 	}
