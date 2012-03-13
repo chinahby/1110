@@ -50,6 +50,8 @@ Qualcomm Confidential and Proprietary
 #define EVT_KEY_RELEASE          0x102 // App keyRelease - wParam = KEYCODE, dwParam = Bitflags for modifier keys
 #ifdef CUST_EDITION	
 #define EVT_KEY_HELD             0x103 // App keyHeld - wParam = KEYCODE, dwParam = 0
+#define EVT_KEY_KEYREPEAT        0X106  //KEY REPEAT
+
 #endif /*CUST_EDITION*/
 #define EVT_CHAR                 0x104 // Character Event wParam = AECHAR, dwParam = Bitflags for modifier keys
 #define EVT_UPDATECHAR           0x105 // Char update Event wParam = AECHAR, dwParam = Bitflags for modifier keys
