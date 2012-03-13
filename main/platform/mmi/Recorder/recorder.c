@@ -173,6 +173,9 @@ static boolean Recorder_HandleEvent( Recorder* pme, AEEEvent evt, uint16 wParam,
 	static byte alertTypeCall			= 0;
 	static byte alertTypeSms			= 0;
 	static byte alertTypeVibrate		= OEMNV_SMS_VIBONLY;
+
+	MSG_FATAL("***zzg Recorder_HandleEvent evt=%x, wParam=%x, dwParam=%x***", evt, wParam, dwParam);
+	
 	switch( evt)
 	{
 		case EVT_APP_START:
@@ -183,6 +186,8 @@ static boolean Recorder_HandleEvent( Recorder* pme, AEEEvent evt, uint16 wParam,
 			OEM_GetConfig( CFGI_BEEP_VOL, &keyBeepVolumeSetting, sizeof(byte));			
 			OEM_GetConfig( CFGI_ALERT_TYPE, &alertTypeCall, sizeof( alertTypeCall));
 			OEM_GetConfig( CFGI_SMS_RINGER, &alertTypeSms, sizeof( alertTypeSms));
+
+			MSG_FATAL("***zzg Recorder_HandleEvent EVT_APP_START alertTypeCall=%x***", alertTypeCall, 0, 0);
 			
 			OEM_SetConfig( CFGI_BEEP_VOL, &mute, sizeof(byte));
             OEM_SetConfig( CFGI_ALERT_TYPE, &alertTypeVibrate, sizeof( alertTypeVibrate));
@@ -212,6 +217,8 @@ static boolean Recorder_HandleEvent( Recorder* pme, AEEEvent evt, uint16 wParam,
 			pme->m_bInactive = TRUE;
 			ISHELL_CancelTimer( pme->m_pShell, 0, pme);	
 
+			MSG_FATAL("***zzg Recorder_HandleEvent EVT_APP_STOP alertTypeCall=%x***", alertTypeCall, 0, 0);
+
 			OEM_SetConfig( CFGI_BEEP_VOL, &keyBeepVolumeSetting, sizeof(byte));
             OEM_SetConfig( CFGI_ALERT_TYPE, &alertTypeCall, sizeof( alertTypeCall));
             OEM_SetConfig( CFGI_SMS_RINGER, &alertTypeSms, sizeof( alertTypeSms));
@@ -222,12 +229,29 @@ static boolean Recorder_HandleEvent( Recorder* pme, AEEEvent evt, uint16 wParam,
 		{
 			pme->m_bInactive 	= TRUE;
 			pme->m_bSuspended	= TRUE;
+
+			/*
+			//Add By zzg 2012_03_13
+			OEM_SetConfig( CFGI_BEEP_VOL, &keyBeepVolumeSetting, sizeof(byte));
+            OEM_SetConfig( CFGI_ALERT_TYPE, &alertTypeCall, sizeof( alertTypeCall));
+            OEM_SetConfig( CFGI_SMS_RINGER, &alertTypeSms, sizeof( alertTypeSms));
+			//Add End
+			*/
+			
 			ISHELL_CancelTimer( pme->m_pShell, 0, pme);
 		}
 		return TRUE;
 
 		case EVT_APP_RESUME:
 		{
+			//Add By zzg 2012_03_13
+			byte mute = OEMSOUND_MUTE_VOL;
+			
+			OEM_SetConfig( CFGI_BEEP_VOL, &mute, sizeof(byte));
+            OEM_SetConfig( CFGI_ALERT_TYPE, &alertTypeVibrate, sizeof( alertTypeVibrate));
+            OEM_SetConfig( CFGI_SMS_RINGER, &alertTypeVibrate, sizeof( alertTypeVibrate));
+			//Add End
+			
 			Recorder_RunFSM( pme);
 		}
 		return TRUE;
