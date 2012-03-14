@@ -248,6 +248,7 @@ static NextFSMAction WMSST_EDIT_ALBUMOREMAIN_Handler(WmsApp *pMe);
 static NextFSMAction WMSST_MMS_SERVER_ADDRESS_Handler(WmsApp *pMe);
 static NextFSMAction WMSST_MMS_PROXY_Handler(WmsApp *pMe);
 static NextFSMAction WMSST_MMS_PORT_Handler(WmsApp *pMe);
+static NextFSMAction WMSST_MMS_MEMSTATUS_Handler(WmsApp *pMe);
 #endif
 
 /*==============================================================================
@@ -552,7 +553,10 @@ NextFSMAction WmsApp_ProcessState(WmsApp *pMe)
             return WMSST_MMS_PROXY_Handler(pMe); 
 
         case WMSST_MMS_PORT:
-            return WMSST_MMS_PORT_Handler(pMe);             
+            return WMSST_MMS_PORT_Handler(pMe);    
+
+        case WMSST_MMS_MEMSTATUS:
+            return WMSST_MMS_MEMSTATUS_Handler(pMe);            
 #endif
 
 
@@ -837,7 +841,12 @@ static NextFSMAction WMSST_MAIN_Handler(WmsApp *pMe)
                 }
             }
             MOVE_TO_STATE(WMSST_DRAFTBOX_MMS)
-            return NFSMACTION_CONTINUE;               
+            return NFSMACTION_CONTINUE;         
+
+        // 用户在主界面选择-- 存储器状态
+        case DLGRET_MMS_MEMSTATUS:
+            MOVE_TO_STATE(WMSST_MMS_MEMSTATUS)
+            return NFSMACTION_CONTINUE;            
 #endif
         // 用户在主界面选择-- 语音信箱
         case DLGRET_VIEWVOICEMSG:
@@ -6479,6 +6488,11 @@ static NextFSMAction WMSST_MANAGEMENT_Handler(WmsApp *pMe)
             return NFSMACTION_CONTINUE;
 #endif             
 
+#ifdef FEATURE_USES_MMS
+        case DLGRET_MMS_MEMSTATUS:
+            MOVE_TO_STATE(WMSST_MMS_MEMSTATUS)
+            return NFSMACTION_CONTINUE;
+#endif
         case DLGRET_MEMSTATUS:
             MOVE_TO_STATE(WMSST_MEMSTATUS)
             return NFSMACTION_CONTINUE;
@@ -8159,4 +8173,29 @@ static NextFSMAction WMSST_MMS_PORT_Handler(WmsApp *pMe)
     
     return NFSMACTION_CONTINUE;
 } // WMSST_MMS_PORT_Handler
+
+static NextFSMAction WMSST_MMS_MEMSTATUS_Handler(WmsApp * pMe)
+{
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+
+    switch (pMe->m_eDlgReturn)
+    {
+        case DLGRET_CREATE:
+            WmsApp_ShowDialog(pMe, IDD_MMS_MEMSTATUS);
+            return NFSMACTION_WAIT;
+
+        case DLGRET_CANCELED:              
+            MOVE_TO_STATE(WMSST_MANAGEMENT)   
+            return NFSMACTION_CONTINUE;
+
+        default:
+            // 用退出程序代替宏断言
+            MOVE_TO_STATE(WMSST_EXIT)
+            return NFSMACTION_CONTINUE;
+    }
+} // WMSST_MMS_MEMSTATUS_Handler
+
 #endif

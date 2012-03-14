@@ -628,6 +628,9 @@
 	<String Id="1030" Name="IDS_DELIVERY">
 		<Text>message has been delivered to </Text>
 	</String>
+	<String Id="1031" Name="IDS_MMS_MENSTATUS">
+		<Text>MMS Memory status</Text>
+	</String>
 	<String Id="1033" Name="IDS_GETTINGFROM">
 		<Text>Receiving...</Text>
 	</String>
@@ -1005,6 +1008,9 @@
 			<Text Id="7046" Name="IDC_MMS_PORT">
 				<Items/></Text>
 		</Controls>
+	</Dialog>
+	<Dialog Id="6055" Name="IDD_MMS_MEMSTATUS" Focus="0">
+		<Controls/>
 	</Dialog>
 </Dialogs>
 </BREWRes>

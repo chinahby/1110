@@ -86,8 +86,6 @@
 #include "WmsMms.h"
 #include "AEEMedia.h"
 #define MMSFILE_DIR      "fs:/user/mms"
-#define MMSUNICODE  "UNICODE"
-#define MMSNOUNICODE  "NOUNICODE"
 #endif
 
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
@@ -576,10 +574,11 @@ typedef enum WMSAPPState
 	WMSST_MMS_SERVER_ADDRESS,	
 	WMSST_MMS_PROXY,                                   //80
 	WMSST_MMS_PORT,	                                   //81
+	WMSST_MMS_MEMSTATUS,
 #endif
 
     // 退出短信应用
-    WMSST_EXIT                                      //82
+    WMSST_EXIT                                      //83
 } WMSAPPState;
 
 // 状态处理函数返回给主状态处理函数的值
@@ -729,6 +728,7 @@ typedef enum DLGRetValue
    ,DLGRET_MMS_SERVER_ADDRESS
    ,DLGRET_MMS_PROXY
    ,DLGRET_MMS_PORT  
+   ,DLGRET_MMS_MEMSTATUS
 #endif
 /*   
    ,DLGRET_INSERTPICTURE //add by xuhui 2011/08/01

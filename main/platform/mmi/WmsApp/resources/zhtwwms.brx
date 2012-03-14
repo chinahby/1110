@@ -601,6 +601,9 @@
 	<String Id="1030" Name="IDS_DELIVERY">
 		<Text>信息已发送到</Text>
 	</String>
+	<String Id="1031" Name="IDS_MMS_MENSTATUS">
+		<Text>彩信存储状态</Text>
+	</String>
 	<String Id="1033" Name="IDS_GETTINGFROM">
 		<Text>接受中...</Text>
 	</String>
@@ -985,6 +988,9 @@
 		</Controls>
 	</DIALOG>
 	<Dialog Id="6050" Name="IDD_GETTING" Focus="0">
+		<Controls/>
+	</Dialog>
+	<Dialog Id="6051" Name="IDD_MMS_MEMSTATUS" Focus="0">
 		<Controls/>
 	</Dialog>
 </Dialogs>

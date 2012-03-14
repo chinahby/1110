@@ -278,13 +278,14 @@ boolean WMSUtil_HaveNoneASCIIChar ( AECHAR * pWstr, int * pPostion)
 #else
     int i ,len;
     AECHAR *pWstrTep = pWstr;
-
+    MSG_FATAL("WMSUtil_HaveNoneASCIIChar Start",0,0,0);
     if (NULL == pWstrTep)
     {
         return FALSE;
     }
     
     len = WSTRLEN(pWstrTep);
+    MSG_FATAL("WMSUtil_HaveNoneASCIIChar 1 len=%d",len,0,0);
     if (len <= 0)
     {
         return FALSE;
@@ -298,17 +299,19 @@ boolean WMSUtil_HaveNoneASCIIChar ( AECHAR * pWstr, int * pPostion)
         //ERR("i='%c',=%d",*pWstr,*pWstr,0);//Azlun
         ;
     }
-    
+    MSG_FATAL("WMSUtil_HaveNoneASCIIChar i=%d",i,0,0);
     if (i < len)
     {
         if (NULL != pPostion)
         {
             *pPostion = i;
         }
+        MSG_FATAL("WMSUtil_HaveNoneASCIIChar has NoneASCIIChar",0,0,0);
         return TRUE;
     }
     else
     {
+        MSG_FATAL("WMSUtil_HaveNoneASCIIChar has't NoneASCIIChar",0,0,0);
         return FALSE;
     }
 #endif /* FEATURE_CARRIER_ISRAEL_PELEPHONE */

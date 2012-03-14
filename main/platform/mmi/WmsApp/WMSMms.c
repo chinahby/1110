@@ -1180,17 +1180,7 @@ static int MMS_GetFileContent(uint8* encbuf,WSP_ENCODE_DATA_FRAGMENT frag)
 			if ( onebyte == 0x83)
 			{
 				*temp_pos = 0x81; temp_pos++;
-
-				//0x83 us-ascii   0xea utf-8
-				if(STRNCMP(frag.pType,MMSUNICODE,sizeof(MMSUNICODE)))
-				{
-				    *temp_pos = 0xea; temp_pos++;  //utf-8
-				}
-				else
-				{
-				     *temp_pos = 0x03; temp_pos++;  
-				     *temp_pos = 0xe8; temp_pos++;  //UCS-2
-				}    
+				*temp_pos = 0xea; temp_pos++;  //utf-8
 			}
 			
 			param_len = STRLEN((char*)frag.hContentName);
@@ -1254,15 +1244,7 @@ static int MMS_GetFileContent(uint8* encbuf,WSP_ENCODE_DATA_FRAGMENT frag)
 	//text/plain
 	if ( onebyte == 0x83)
 	{
-	    if(STRNCMP(frag.pType,MMSUNICODE,sizeof(MMSUNICODE)))
-	    {
-	        content_size = STRLEN((char*)frag.hContentText);
-	    }
-	    else
-	    {
-	        content_size = (WSTRLEN((AECHAR*)frag.hContentText) << 1);
-	        content_size += 2;
-	    }
+	    content_size = STRLEN((char*)frag.hContentText);
 	}
 	//content size
 	uintvar_len = MMS_WSP_Encode_UINTVAR(uintvar,content_size);
@@ -1280,14 +1262,6 @@ static int MMS_GetFileContent(uint8* encbuf,WSP_ENCODE_DATA_FRAGMENT frag)
 	//text/plain
 	if ( onebyte == 0x83)
 	{
-		//content_size = STRLEN((char*)frag.hContentText);
-/*		
-		if(!STRNCMP(frag.pType,MMSUNICODE,sizeof(MMSUNICODE)))
-		{
-		    *pCurPos = 0xFE;pCurPos++;
-		    *pCurPos = 0xFF;pCurPos++;
-		}
-*/		
 		MEMCPY((char*)pCurPos,(char*)frag.hContentText,content_size);
 		MSG_FATAL("[MMS_GetFileContent] Get Text Content:%d",content_size,0,0);
 	}
@@ -3195,7 +3169,7 @@ static int MMS_WSP_DecodeContentTypeParams(uint8* pData, int iDataLen, WSP_DEC_D
 	int paramnamelen,paramvaluelen,iDataOffsetname, iDataOffsetvalue,consumed=0;
 	boolean ok;
 	int charset_type;
-
+    DBGPRINTF("MMS_WSP_DecodeContentTypeParams Start");
 	while (consumed < iDataLen)
 	{
 		paramnamelen = MMS_WSP_GetValueLen(&pData[consumed],iDataLen,&iDataOffsetname);
@@ -3203,7 +3177,7 @@ static int MMS_WSP_DecodeContentTypeParams(uint8* pData, int iDataLen, WSP_DEC_D
 			return MMS_DECODER_ERROR_VALUE;
 		paramname = (char*)&pData[consumed+iDataOffsetname];
 		consumed += paramnamelen+iDataOffsetname;
-
+        DBGPRINTF("MMS_WSP_DecodeContentTypeParams paramnamelen=%d", paramnamelen);
 		ok = TRUE;
 		if (paramnamelen == 1)/* case of Short-interger */
 		{
@@ -3222,6 +3196,7 @@ static int MMS_WSP_DecodeContentTypeParams(uint8* pData, int iDataLen, WSP_DEC_D
     		consumed += paramvaluelen+iDataOffsetvalue;
 		
 			short_integer = paramname[0] & 0x7F;
+            DBGPRINTF("MMS_WSP_DecodeContentTypeParams short_integer=0x%x", short_integer);
 			switch(short_integer)
 			{
 				/* WAP-230-WSP-20010705-a, Approved Version 5 July 2001 
@@ -3282,18 +3257,20 @@ static int MMS_WSP_DecodeContentTypeParams(uint8* pData, int iDataLen, WSP_DEC_D
 							}
 							break;
 						case 0x6a:
+                            DBGPRINTF("MMS_WSP_DecodeContentTypeParams 0x6a");
 							paramvalue = "utf-8";
-							paramvaluelen = STRLEN(paramvalue);
+                            paramvaluelen = STRLEN(paramvalue);
+                            DBGPRINTF("paramvaluelen=%d",paramvaluelen);
 							*charset = 0x6a;
 							if (paramvaluelen > 0)
 							{
 								if (paramvalue[0] == '"')/* ?? Quoted? */
 								{
-									STRNCPY((char*)iMIMEParams->hContentEnCode,(char*)&paramvalue[1],paramvaluelen-1);
+									MEMCPY((char*)iMIMEParams->hContentEnCode,(char*)&paramvalue[1],paramvaluelen-1);
 								}
 								else
 								{
-									STRNCPY((char*)iMIMEParams->hContentEnCode,(char*)paramvalue,paramvaluelen);
+									MEMCPY((char*)iMIMEParams->hContentEnCode,(char*)paramvalue,paramvaluelen);
 								}
 							}
 							break;

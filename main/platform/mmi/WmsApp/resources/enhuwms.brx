@@ -598,6 +598,9 @@
 	<String Id="1029" Name="IDS_SENDERVISIBILITY">
 		<Text>MMS Sender Visibility</Text>
 	</String>
+	<String Id="1030" Name="IDS_MMS_MENSTATUS" Encoding="Unicode">
+		<Text>MMS Memory status</Text>
+	</String>
 	<String Id="1033" Name="IDS_GETTINGFROM" Encoding="Unicode">
 		<Text>Receiving...</Text>
 	</String>
@@ -982,6 +985,9 @@
 		</Controls>
 	</DIALOG>
 	<Dialog Id="6050" Name="IDD_GETTING" Focus="0">
+		<Controls/>
+	</Dialog>
+	<Dialog Id="6051" Name="IDD_MMS_MEMSTATUS" Focus="0">
 		<Controls/>
 	</Dialog>
 </Dialogs>
