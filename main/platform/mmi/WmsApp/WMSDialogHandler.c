@@ -10798,7 +10798,6 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
             return TRUE;
         }
     }
-    MSG_FATAL("IDD_WRITEMSG_Handler Start 1 pMe->m_isMMS=%d",pMe->m_isMMS,0,0);
      
     pMenuCtl = (IMenuCtl*)IDIALOG_GetControl( pMe->m_pActiveIDlg, IDC_WRITEMSG_MENU);
     
