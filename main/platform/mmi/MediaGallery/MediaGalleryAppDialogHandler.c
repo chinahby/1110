@@ -1931,7 +1931,7 @@ static boolean MediaGalleryApp_UDiskDlg_HandleEvent(CMediaGalleryApp* pMe,
 
       case EVT_DIALOG_START:
       {
-         AECHAR szBuffer[MG_MAX_LINETEXTNUM];
+         AECHAR szBuffer[50];
 
          ISHELL_LoadResString(pMe->m_pShell, MGRES_LANGFILE,
                IDS_MG_RUNUDISK, szBuffer, sizeof(szBuffer));
