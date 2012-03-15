@@ -400,7 +400,10 @@ boolean recorder_init_media( Media* pme)
 	pme->m_nTimeLimit			= RECORDER_TIME_LIMIT_NO_LIMIT;
 	pme->m_nVolume				= AEE_MAX_VOLUME / 2;
 	pme->m_bMediaError			= FALSE;
-	pme->m_pszSaveDir			= RECORDER_MEMO_SAVE_DIR_INTERNAL;
+	
+	//pme->m_pszSaveDir			= RECORDER_MEMO_SAVE_DIR_INTERNAL;
+	pme->m_pszSaveDir			= RECORDER_MEMO_SAVE_DIR_CARD0;		//Add By zzg 2012_03_15
+	
 	pme->m_pszFileExtension		= RECORDER_MEMO_FILE_EXTENSION_QCP;
 	pme->m_boardingAppletClsId  = ISHELL_ActiveApplet( AEE_GetShell());
 

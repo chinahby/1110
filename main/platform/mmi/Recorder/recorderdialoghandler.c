@@ -1611,6 +1611,8 @@ __dialog_handler_of_state_record_stop__:
 				case AVK_SELECT:					
 #endif
 					MSG_FATAL("AVK_SELECT.................",0,0,0);
+					MSG_FATAL("***zzg AVK_SELECT m_bRecorder=%x, subState=%x***", pme->m_Media.m_bRecorder, subState, 0);
+					
 					if( pme->m_Media.m_bRecorder && ( subState == 1 || subState == 3))
 					{
 						wParam = AVK_CLR;
@@ -1680,7 +1682,8 @@ __dialog_handler_of_state_record_discard_back__:
 							break;
 						}
 __dialog_handler_of_state_record_discard__:
-#if !defined( AEE_SIMULATOR)						
+#if !defined( AEE_SIMULATOR)	
+						MSG_FATAL("***zzg __dialog_handler_of_state_record_discard__***", 0, 0, 0);
 						recorder_stop_if( &pme->m_Media);
 						if( wParam == AVK_CLR && pme->m_Media.m_bRecorder)
 						{							
@@ -2190,7 +2193,8 @@ static int recorder_list_create_menu( Recorder* pme, IMenuCtl* pMenu, char* toSe
 		    );
 
 		//if( prefs.storage == 0 && recorder_is_tf_card_exist())
-		if( prefs.storage == 1 && recorder_is_tf_card_exist())	//Modify by zzg 2012_03_01
+		//if( prefs.storage == 1 && recorder_is_tf_card_exist())	//Modify by zzg 2012_03_01
+		if(recorder_is_tf_card_exist())	//Modify by zzg 2012_03_01
 		{
 			pme->m_Media.m_pszSaveDir = RECORDER_MEMO_SAVE_DIR_CARD0;
 		}
@@ -4083,7 +4087,8 @@ int recorder_recordEx( Media* pme, PFNMEDIANOTIFY pfnNotify)
 		    );
 
 		//if( prefs.storage == 0 && recorder_is_tf_card_exist())
-		if( prefs.storage == 1 && recorder_is_tf_card_exist())	//Modify by zzg 2012_03_01
+		//if( prefs.storage == 1 && recorder_is_tf_card_exist())	//Modify by zzg 2012_03_01
+		if(recorder_is_tf_card_exist())	//Modify by zzg 2012_03_01
 		{
 			pme->m_pszSaveDir = RECORDER_MEMO_SAVE_DIR_CARD0;
 		}
