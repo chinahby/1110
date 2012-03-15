@@ -3187,6 +3187,7 @@ static boolean  dialog_handler_of_state_set_as( Recorder* pme, AEEEvent evt, uin
 	// 16 set as sms ringtone faile
 	static int			subState = 0;
 	static uint16    	selected = 0;
+	
 #ifdef FEATURE_LCD_TOUCH_ENABLE
 	if(evt == EVT_PEN_UP)
 	{
@@ -3271,7 +3272,8 @@ static boolean  dialog_handler_of_state_set_as( Recorder* pme, AEEEvent evt, uin
 				    IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
                 }
 		    }
-			#endif
+			#endif			
+			
 			IMENUCTL_SetBottomBarType( pMenu, BTBAR_SAVE_BACK);
 			pme->m_ptr[0] = (int)pMenu;
 			pme->m_ptr[1] = (int)&subState;
@@ -3311,30 +3313,33 @@ static boolean  dialog_handler_of_state_set_as( Recorder* pme, AEEEvent evt, uin
                             &CurProfileNum,
                             sizeof(CurProfileNum));
             // 检查是否为来电铃声
-            OEM_GetConfig(
-                                CFGI_PROFILE_CALL_RINGER,
-                                (void*)ConfigRinger,
-                                sizeof(ConfigRinger));
-            
+            OEM_GetConfig(CFGI_PROFILE_CALL_RINGER,
+                          (void*)ConfigRinger,
+                          sizeof(ConfigRinger));			
+			
+			DBGPRINTF("***zzg m_FileName=%s, szMusicname=%s, ringType=%x***", pme->m_FileName,ConfigRinger[CurProfileNum].szMusicname, ConfigRinger[CurProfileNum].ringType);
+
+			
             if(((STRCMP(pme->m_FileName,ConfigRinger[CurProfileNum].szMusicname) == 0) && 
                     (ConfigRinger[CurProfileNum].ringType == OEMNV_MP3_RINGER)))
             {
-                SetCheckBoxItem(pMenu, IDS_SET_AS_RINGER, TRUE);
-    
+            	SetCheckBoxItem(pMenu, IDS_SET_AS_RINGER, TRUE);
             }
+						
+			
             // 检查是否为来闹钟铃声
-            OEM_GetConfig(
-                                CFGI_PROFILE_ALARM_RINGER,
-                                (void*)ConfigArmRinger,
-                                sizeof(ConfigArmRinger));
-            
+            OEM_GetConfig(CFGI_PROFILE_ALARM_RINGER,
+                          (void*)ConfigArmRinger,
+                          sizeof(ConfigArmRinger));
+
+			DBGPRINTF("***zzg m_FileName=%s, szMusicname=%s, ringType=%x***", pme->m_FileName,ConfigArmRinger[CurProfileNum].szMusicname, ConfigArmRinger[CurProfileNum].ringType);
+			
             if(((STRCMP(pme->m_FileName,ConfigArmRinger[CurProfileNum].szMusicname) == 0) && 
                     (ConfigArmRinger[CurProfileNum].ringType == OEMNV_MP3_RINGER)))
             {
-                SetCheckBoxItem(pMenu, IDS_SET_AS_ALARM_ALERT, TRUE);
-    
+            	SetCheckBoxItem(pMenu, IDS_SET_AS_ALARM_ALERT, TRUE);       	     
             }
-            
+			
 			IMENUCTL_SetSel( pMenu, selected);
 			IMENUCTL_SetActive( pMenu, subState == 0);
 			IMENUCTL_Redraw( pMenu);
@@ -3418,12 +3423,66 @@ static boolean  dialog_handler_of_state_set_as( Recorder* pme, AEEEvent evt, uin
 				//case AVK_INFO:
 				case AVK_SELECT:
 #endif
-				{
+				{			
 					MSG_FATAL("subState======%d",subState,0,0);
 					if( subState != 0)
 					{
 						break;
 					}
+
+					//Add By zzg 2012_03_15
+					if(!GetCheckBoxVal(pMenu, IDS_SET_AS_RINGER)/*id == IDS_SET_AS_RINGER*/)
+					{							
+						ringID config[PROFILENUMBER] 	= { 0};
+					    byte profile					= 0;
+						
+					    if( OEM_GetConfig( CFGI_PROFILE_CUR_NUMBER, &profile, sizeof( byte)) != SUCCESS)
+					    {
+					        MSG_FATAL( ";get profile setting failed",0,0,0);					        
+					    }
+
+					    if( OEM_GetConfig( CFGI_PROFILE_CALL_RINGER, (void*)config,sizeof( config)) != SUCCESS)
+					    {
+					        MSG_FATAL( ";get config failed",0,0,0);					        
+					    }
+						
+					    //STRCPY(config[profile].szMusicname,pme->m_FileName);
+					    config[profile].ringType = OEMNV_MID_RINGER;
+
+					    //config[profile].midID = id;
+
+					    if( OEM_SetConfig( CFGI_PROFILE_CALL_RINGER, (void*)config,sizeof( config)) != SUCCESS)
+					    {
+					        MSG_FATAL( ";set config failed",0,0,0);					        
+					    }
+																
+					}
+					
+					if(!GetCheckBoxVal(pMenu, IDS_SET_AS_ALARM_ALERT)/*id == IDS_SET_AS_ALARM_ALERT*/)
+					{
+						ringID config[PROFILENUMBER] 	= { 0};
+					    byte profile					= 0;
+					    
+					    if( OEM_GetConfig( CFGI_PROFILE_CUR_NUMBER, &profile, sizeof( byte)) != SUCCESS)
+					    {
+					        MSG_FATAL( ";get profile setting failed",0,0,0);					        
+					    }
+
+					    if( OEM_GetConfig( CFGI_PROFILE_ALARM_RINGER, (void*)config,sizeof( config)) != SUCCESS)
+					    {
+					        MSG_FATAL( ";get config failed",0,0,0);					        
+					    }
+					    //STRCPY(config[profile].szMusicname,pme->m_FileName);
+					    config[profile].ringType = OEMNV_MID_RINGER;
+
+					    //config[profile].midID = id;
+
+					    if( OEM_SetConfig( CFGI_PROFILE_ALARM_RINGER, (void*)config,sizeof( config)) != SUCCESS)
+					    {
+					        MSG_FATAL( ";set config failed",0,0,0);					        
+					    }													
+					}					
+					//Add End
 
 					subState = 1;
 					repaint( FALSE);
