@@ -866,7 +866,9 @@ static boolean  HandleCallSettingDialogEvent(CSettingMenu *pMe,
 #endif
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_CALL_RESTRICT, IDS_CALL_RESTRICT, NULL, 0);            
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_VOICE_PRIVACY, IDS_VOICE_PRIVACY, NULL, 0);
+#ifndef FEATURE_VERSION_W208S            
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_FMRADIO_OPTION_MENU_PLAY_MODLE, IDS_FMRADIO_OPTION_MENU_PLAY_MODLE, NULL, 0);
+#endif
             return TRUE;
 
         case EVT_DIALOG_START:
@@ -972,10 +974,11 @@ static boolean  HandleCallSettingDialogEvent(CSettingMenu *pMe,
                 case IDS_CALL_RESTRICT:
                     CLOSE_DIALOG(DLGRET_PASSWORD)
                     break;
+#ifndef FEATURE_VERSION_W208S                     
                 case IDS_FMRADIO_OPTION_MENU_PLAY_MODLE: //FM²¥·ÅÄ£Ê½
                 	CLOSE_DIALOG(DLGRET_FMMODE)
                 	break;
-
+#endif
                 default:
                     ASSERT_NOT_REACHABLE;
             }
