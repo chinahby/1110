@@ -143,7 +143,7 @@
  		<Text>chino</Text>
  	</STRING>
  	<STRING Id="1048" Name="IDS_ENGLISH">
- 		<Text>Inglés</Text>
+ 		<Text>English</Text>
  	</STRING>
  	<STRING Id="1049" Name="IDS_AUTO_REDIAL">
  		<Text>Intentar nuevamente de manera automática</Text>
