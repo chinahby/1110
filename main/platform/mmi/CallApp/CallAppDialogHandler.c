@@ -1845,6 +1845,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                         //if (pMe->m_lastCallState == AEECM_CALL_STATE_IDLE)
                         if(pMe->m_b_incall == FALSE)
                         {
+                        	MSG_FATAL("***zzg CallApp_Dialer_NumEdit len=%d***", len, 0, 0);
 #ifdef FEATURE_EDITABLE_NUMBER
                             if (len < MAX_SIZE_DIAL_STR- 1)
                             {
@@ -1870,8 +1871,13 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                         }
                         else
                         {
+                        	MSG_FATAL("***zzg CallApp_Dialer_NumEdit Incall len=%d, Arraysize=%d***", len, (int)( ARRAY_SIZE(pMe->m_DialString) - 1), 0);
 #ifdef FEATURE_EDITABLE_NUMBER
-                            if (len < (int)( ARRAY_SIZE(pMe->m_DialString) - 1))
+#ifdef FEATURE_VERSION_W208S
+							if (len < (int)( ARRAY_SIZE(pMe->m_DialString) - 3))	//Add By zzg 2012_03_16: W208S多了2个-分隔符
+#else
+							if (len < (int)( ARRAY_SIZE(pMe->m_DialString) - 1))
+#endif                            
                             {
                                 if (pMe->m_nCursorPos == 0)
                                 {
@@ -12194,7 +12200,8 @@ static void CallApp_Display_Number(CCallApp *pMe)
 	(void)MEMSET( dt_String3,(AECHAR) 0, sizeof(dt_String3));
 	WSTRCPY(t_DialString,pMe->m_DialString);
 	len = WSTRLEN(pMe->m_DialString);
-
+	
+	MSG_FATAL("***zzg CallApp_Display_Number len=%d***", len, 0, 0);
 
 	if ((3<len)&&(len<8))
 	{
