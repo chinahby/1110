@@ -2287,6 +2287,9 @@ static void OEMALERT_StartRingerAlert(IALERT *pMe,uint32 id,ALERT_SND_TYPE type)
         // Get ringer type
         (void) ICONFIG_GetItem(pMe->m_pConfig,CFGI_ALERT_TYPE,  &alerttype,sizeof(alerttype)); 
     }
+
+	MSG_FATAL("***zzg OEMALERT_StartRingAlert alerttype=%x***", alerttype, 0, 0);
+	
      switch (alerttype) 
      {    
         default:
@@ -2440,6 +2443,9 @@ static int OEMALERT_StartMp3Alert(IALERT * pMe, char *id, ALERT_SND_TYPE type)
     {
         (void) ICONFIG_GetItem(pMe->m_pConfig, CFGI_ALERT_TYPE,  &alertType, sizeof(alertType)); 
     }
+	
+	MSG_FATAL("***zzg OEMALERT_StartMp3Alert alertType=%x***", alertType, 0, 0);
+	
     OEMALERT_GetRingerVol(pMe);
     if(nRet == SUCCESS)         
     {
@@ -2718,6 +2724,9 @@ static void OEMALERT_HandleRingerAlertTimer(void *pUser)
     {
         (void) ICONFIG_GetItem(pMe->m_pConfig,CFGI_ALERT_TYPE,&alerttype,sizeof(alerttype));
     }
+
+	MSG_FATAL("***zzg OEMALERT_HandleRingerAlertTimer alerttype=%x***", alerttype, 0, 0);
+	
     switch (alerttype) 
     {
         case OEMNV_ALERTTYPE_OFF:
@@ -2777,7 +2786,7 @@ static void OEMALERT_HandleRingerAlertTimer(void *pUser)
 			    ISOUND_SetVolume(pMe->m_pSound,
 			                    GET_ISOUND_VOL_LEVEL((uint8) vol));  
                 #endif
-                #if defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_W515V3)
+                #if defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_W208S)
                 ISOUND_Vibrate(pMe->m_pSound,TIME_MS_RINGERVIBRATE_DURATION/2);
                 #else
                 ISOUND_Vibrate(pMe->m_pSound,TIME_MS_RINGERVIBRATE_DURATION);
