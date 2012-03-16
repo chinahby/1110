@@ -6468,7 +6468,7 @@ static boolean IDD_CALLBACKNUM_Handler(void   *pUser,
                 #endif
                 {
                     //            Back
-                    DRAW_BOTTOMBAR(BTBAR_BACK)
+                    DRAW_BOTTOMBAR(BTBAR_SAVE_BACK)
                 }
             }
             #ifdef FEATURE_LCD_TOUCH_ENABLE
