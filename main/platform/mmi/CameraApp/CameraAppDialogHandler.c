@@ -1464,11 +1464,21 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
                     {
                         pMe->m_nCameraCFG--;
                     }
+					
                     if(pMe->m_nCameraCFG == CAMERACFGSELFTIME )
                     {
                         if(pMe->m_isRecordMode == TRUE)
                         {
-                            pMe->m_nCameraCFG--;
+                            //pMe->m_nCameraCFG--;
+                            pMe->m_nCameraCFG -= 2;
+                        }
+                    }
+					
+					if(pMe->m_nCameraCFG == CAMERACFGTONE )
+                    {
+                        if(pMe->m_isRecordMode == TRUE)
+                        {
+                            pMe->m_nCameraCFG--;                            
                         }
                     }
                     break;
@@ -1490,6 +1500,15 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
                             pMe->m_nCameraCFG++;
                         }
                     }
+					
+					if(pMe->m_nCameraCFG == CAMERACFGTONE )
+                    {
+                        if(pMe->m_isRecordMode == TRUE)
+                        {
+                            pMe->m_nCameraCFG+=2;
+                        }
+                    }
+					
                     MSG_FATAL("CameraApp_CameraCFGHandleEvent RIGHT END:%d",pMe->m_nCameraCFG,0,0);
                     break;
 
@@ -4217,7 +4236,7 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
     #else
     for(i = 0; i < CAMERACFGMAX; i++)
     {
-        if(i == CAMERACFGSELFTIME)
+        if((i == CAMERACFGSELFTIME) || (i == CAMERACFGTONE))
         {
             if(pMe->m_isRecordMode == TRUE)
             { 
@@ -4230,7 +4249,17 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
                                            nResID[i]);
         if(pTopBarImage)
         {
-            IIMAGE_Draw(pTopBarImage, i*(TOPBAR_ICON_WIDTH+TOPBAR_ICON_SPACE), TOPBAR_ICON_Y);	// + 5
+        	//IIMAGE_Draw(pTopBarImage, i*(TOPBAR_ICON_WIDTH+TOPBAR_ICON_SPACE), TOPBAR_ICON_Y);	// + 5
+        	
+        	if ((pMe->m_isRecordMode == TRUE) && (i == CAMERACFGRESET))
+        	{
+				IIMAGE_Draw(pTopBarImage, (i-2)*(TOPBAR_ICON_WIDTH+TOPBAR_ICON_SPACE), TOPBAR_ICON_Y);	// + 5				
+			}
+			else
+			{
+				IIMAGE_Draw(pTopBarImage, i*(TOPBAR_ICON_WIDTH+TOPBAR_ICON_SPACE), TOPBAR_ICON_Y);	// + 5
+			}
+            
             IIMAGE_Release(pTopBarImage);
             pTopBarImage = NULL;
         }
@@ -4247,7 +4276,14 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
 			#if defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_S1000T)
 			IIMAGE_Draw(pCameraCFGChooseIcon, (TOPBAR_ICON_SPACE+TOPBAR_ICON_WIDTH)*(pMe->m_nCameraCFG-1), TOPBAR_ICON_Y);	//Add By zzg 2010_07_25
 			#else
-            IIMAGE_Draw(pCameraCFGChooseIcon, (TOPBAR_ICON_SPACE+TOPBAR_ICON_WIDTH)*(pMe->m_nCameraCFG), TOPBAR_ICON_Y);
+			if ((pMe->m_isRecordMode == TRUE) && (pMe->m_nCameraCFG == CAMERACFGRESET))
+        	{
+				IIMAGE_Draw(pCameraCFGChooseIcon, (pMe->m_nCameraCFG-2)*(TOPBAR_ICON_WIDTH+TOPBAR_ICON_SPACE), TOPBAR_ICON_Y);	// + 5				
+			}
+			else
+            {
+            	IIMAGE_Draw(pCameraCFGChooseIcon, (TOPBAR_ICON_SPACE+TOPBAR_ICON_WIDTH)*(pMe->m_nCameraCFG), TOPBAR_ICON_Y);
+			}
             #endif
 	        IIMAGE_Release(pCameraCFGChooseIcon);
 	        pCameraCFGChooseIcon = NULL;
