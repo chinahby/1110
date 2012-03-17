@@ -2192,10 +2192,18 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                 case AVK_UP:   //add by pyg
                     {
                      //for(i=0;i<pMe->m_nCurrLine;i++)
-                     if((WSTRLEN(pMe->m_DialString)-pMe->m_nCursorPos) > pMe->m_nCurrLineFits[0])
+                     MSG_FATAL("***zzg NumEdit AVK_UP strlen(Dialstr)=%d, CursorPos=%d, CurrLineFits=%d***", WSTRLEN(pMe->m_DialString), pMe->m_nCursorPos, pMe->m_nCurrLineFits[0]);
+#ifdef FEATURE_VERSION_W208S
+					 if((WSTRLEN(pMe->m_DialString)-pMe->m_nCursorPos) > (pMe->m_nCurrLineFits[0]-2))
+					 {
+						pMe->m_nCursorPos += (pMe->m_nCurrLineFits[0]-2);
+					 }
+#else
+					if((WSTRLEN(pMe->m_DialString)-pMe->m_nCursorPos) > pMe->m_nCurrLineFits[0])
                      {
                        pMe->m_nCursorPos += pMe->m_nCurrLineFits[0];
                      }
+#endif                     
                      else
                      {
                          pMe->m_nCursorPos = pMe->m_nCursorPos%pMe->m_nCurrLineFits[0];
@@ -2204,7 +2212,25 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                     }
                     return TRUE;
                 case AVK_DOWN:   //add by pyg
-                     if(pMe->m_nCursorPos < pMe->m_nCurrLineFits[0])
+                	MSG_FATAL("***zzg NumEdit AVK_DOWN CursorPos=%d, CurrLineFits=%d***", pMe->m_nCursorPos, pMe->m_nCurrLineFits[0], 0);
+#ifdef FEATURE_VERSION_W208S
+					if(pMe->m_nCursorPos < (pMe->m_nCurrLineFits[0]-2))
+                     {
+                       if((WSTRLEN(pMe->m_DialString)%pMe->m_nCurrLineFits[0]) > pMe->m_nCursorPos)
+                       {
+                          pMe->m_nCursorPos=((WSTRLEN(pMe->m_DialString)/pMe->m_nCurrLineFits[0]) * pMe->m_nCurrLineFits[0])+pMe->m_nCursorPos;
+                       }
+                       else
+                       {
+                          pMe->m_nCursorPos=WSTRLEN(pMe->m_DialString)-(WSTRLEN(pMe->m_DialString)%pMe->m_nCurrLineFits[0])-pMe->m_nCurrLineFits[0] + pMe->m_nCursorPos;
+                       }
+                     }
+                     else
+                     {
+                         pMe->m_nCursorPos -= (pMe->m_nCurrLineFits[0]-2);
+                     }     
+#else
+					 if(pMe->m_nCursorPos < pMe->m_nCurrLineFits[0])
                      {
                        if((WSTRLEN(pMe->m_DialString)%pMe->m_nCurrLineFits[0]) > pMe->m_nCursorPos)
                        {
@@ -2218,7 +2244,8 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                      else
                      {
                          pMe->m_nCursorPos -= pMe->m_nCurrLineFits[0];
-                     }      
+                     }    
+#endif					 
                      (void) ISHELL_PostEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_USER_REDRAW,0,0);
                     return TRUE;
 #endif
