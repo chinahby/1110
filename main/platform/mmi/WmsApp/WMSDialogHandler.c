@@ -20255,57 +20255,57 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                             if(STRISTR(pMimeType, IMAGE_MIME_BASE))
                             {
                                 MSG_FATAL("IDS_SAVE IMAGE_MIME_BASE", 0,0,0);
-                                if (SUCCESS != IFILEMGR_Test(pIFileMgr, "fs:/hsmm/pictures"))
+                                if (SUCCESS != IFILEMGR_Test(pIFileMgr, MG_MASSCARDPICTURE_PATH))
                             	{
-                            	    (void)IFILEMGR_MkDir(pIFileMgr, "fs:/hsmm/pictures");
+                            	    (void)IFILEMGR_MkDir(pIFileMgr, MG_MASSCARDPICTURE_PATH);
                             	}  
-                                SPRINTF(FilePath,"fs:/hsmm/pictures/%s",(char*)(pDecdata->message.mms_data.fragment[MenuSelectdId].hContentName));
+                                SPRINTF(FilePath,"%s%s",MG_MASSCARDPICTURE_PATH,(char*)(pDecdata->message.mms_data.fragment[MenuSelectdId].hContentName));
                                 while(SUCCESS == IFILEMGR_Test(pIFileMgr, FilePath))
                                 {
                                     MEMSET(FilePath, 0, sizeof(FilePath));
-                                    SPRINTF(FilePath,"fs:/hsmm/pictures/(%d)%s", step++,(char*)(pDecdata->message.mms_data.fragment[MenuSelectdId].hContentName));                                
+                                    SPRINTF(FilePath,"%s(%d)%s", MG_MASSCARDPICTURE_PATH, step++,(char*)(pDecdata->message.mms_data.fragment[MenuSelectdId].hContentName));                                
                                 }  
                             }
                             else if(STRISTR(pMimeType, SOUND_MIME_BASE))
                             {
                                 MSG_FATAL("IDS_SAVE SOUND_MIME_BASE", 0,0,0);
-                                if (SUCCESS != IFILEMGR_Test(pIFileMgr, "fs:/hsmm/music"))
+                                if (SUCCESS != IFILEMGR_Test(pIFileMgr, MG_MASSCARDMUSIC_PATH))
                             	{
-                            	    (void)IFILEMGR_MkDir(pIFileMgr, "fs:/hsmm/music");
+                            	    (void)IFILEMGR_MkDir(pIFileMgr, MG_MASSCARDMUSIC_PATH);
                             	}                              
-                                SPRINTF(FilePath,"fs:/hsmm/music/%s",(char*)(pDecdata->message.mms_data.fragment[MenuSelectdId].hContentName));
+                                SPRINTF(FilePath,"%s%s",MG_MASSCARDMUSIC_PATH,(char*)(pDecdata->message.mms_data.fragment[MenuSelectdId].hContentName));
                                 while(SUCCESS == IFILEMGR_Test(pIFileMgr, FilePath))
                                 {
                                     MEMSET(FilePath, 0, sizeof(FilePath));
-                                    SPRINTF(FilePath,"fs:/hsmm/music/(%d)%s", step++,(char*)(pDecdata->message.mms_data.fragment[MenuSelectdId].hContentName));                                
+                                    SPRINTF(FilePath,"%s(%d)%s", MG_MASSCARDMUSIC_PATH,step++,(char*)(pDecdata->message.mms_data.fragment[MenuSelectdId].hContentName));                                
                                 }  
                             }   
                             else if(STRISTR(pMimeType, VIDEO_MIME_BASE))
                             {
                                 MSG_FATAL("IDS_SAVE VIDEO_MIME_BASE", 0,0,0);
-                                if (SUCCESS != IFILEMGR_Test(pIFileMgr, "fs:/hsmm/video"))
+                                if (SUCCESS != IFILEMGR_Test(pIFileMgr, MG_MASSCARDVIDEO_PATH))
                             	{
-                            	    (void)IFILEMGR_MkDir(pIFileMgr, "fs:/hsmm/video");
+                            	    (void)IFILEMGR_MkDir(pIFileMgr, MG_MASSCARDVIDEO_PATH);
                             	}                              
-                                SPRINTF(FilePath,"fs:/hsmm/video/%s",(char*)(pDecdata->message.mms_data.fragment[MenuSelectdId].hContentName));
+                                SPRINTF(FilePath,"%s/%s",MG_MASSCARDVIDEO_PATH,(char*)(pDecdata->message.mms_data.fragment[MenuSelectdId].hContentName));
                                 while(SUCCESS == IFILEMGR_Test(pIFileMgr, FilePath))
                                 {
                                     MEMSET(FilePath, 0, sizeof(FilePath));
-                                    SPRINTF(FilePath,"fs:/hsmm/video/(%d)%s", step++,(char*)(pDecdata->message.mms_data.fragment[MenuSelectdId].hContentName));                                
+                                    SPRINTF(FilePath,"%s(%d)%s", MG_MASSCARDVIDEO_PATH,step++,(char*)(pDecdata->message.mms_data.fragment[MenuSelectdId].hContentName));                                
                                 }  
                             }                              
                             else
                             {
                                 MSG_FATAL("IDS_SAVE SOUND_MIME_BASE", 0,0,0);
-                                if (SUCCESS != IFILEMGR_Test(pIFileMgr, "fs:/hsmm/other"))
+                                if (SUCCESS != IFILEMGR_Test(pIFileMgr, MG_MASSCARDDOWNLOAD_PATH))
                             	{
-                            	    (void)IFILEMGR_MkDir(pIFileMgr, "fs:/hsmm/other");
+                            	    (void)IFILEMGR_MkDir(pIFileMgr, MG_MASSCARDDOWNLOAD_PATH);
                             	}                              
-                                SPRINTF(FilePath,"fs:/hsmm/other/%s",(char*)(pDecdata->message.mms_data.fragment[MenuSelectdId].hContentName));
+                                SPRINTF(FilePath,"%s%s",MG_MASSCARDDOWNLOAD_PATH,(char*)(pDecdata->message.mms_data.fragment[MenuSelectdId].hContentName));
                                 while(SUCCESS == IFILEMGR_Test(pIFileMgr, FilePath))
                                 {
                                     MEMSET(FilePath, 0, sizeof(FilePath));
-                                    SPRINTF(FilePath,"fs:/hsmm/other/(%d)%s", step++,(char*)(pDecdata->message.mms_data.fragment[MenuSelectdId].hContentName));                                
+                                    SPRINTF(FilePath,"%s(%d)%s", MG_MASSCARDDOWNLOAD_PATH, step++,(char*)(pDecdata->message.mms_data.fragment[MenuSelectdId].hContentName));                                
                                 }                                  
                             }
                             DBGPRINTF("FilePath=%s",FilePath);
