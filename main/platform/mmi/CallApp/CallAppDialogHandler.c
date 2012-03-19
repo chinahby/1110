@@ -1814,7 +1814,23 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 				#ifndef FEATURE_LCD_TOUCH_ENABLE
                     if((AVKType)wParam == AVK_POUND||(AVKType)wParam == AVK_STAR|| (AVKType)wParam == AVK_0)
                     {
-                        CallApp_Process_Spec_Key_Event(pMe,wParam);
+                        //CallApp_Process_Spec_Key_Event(pMe,wParam);
+                        
+                        //Add By zzg 2012_03_19
+                        #ifdef FEATURE_VERSION_W208S
+                        {
+							int len;
+							len = WSTRLEN(pMe->m_DialString);
+
+							if ((pMe->m_b_incall != TRUE) || (len < (int)(ARRAY_SIZE(pMe->m_DialString) - 3)))
+							{
+								CallApp_Process_Spec_Key_Event(pMe,wParam);
+							}														
+						}
+						#else
+						CallApp_Process_Spec_Key_Event(pMe,wParam);
+						#endif
+                    	//Add End
                     }
                     else
 				#else
