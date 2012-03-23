@@ -2910,7 +2910,7 @@ static void TextCtl_AddChar(TextCtlContext *pContext, AECHAR ch)
 
             // Write in the new character
             pContext->pszContents[pContext->wSelStart] = ch;
-            #if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_1110W516)//ndef FEATURE_ALL_KEY_PAD
+            #if defined(FEATURE_VERSION_W515V3) //|| defined(FEATURE_VERSION_1110W516)//ndef FEATURE_ALL_KEY_PAD
             if(!pContext->m_bDigital)
             {
 				pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart] = ch;
