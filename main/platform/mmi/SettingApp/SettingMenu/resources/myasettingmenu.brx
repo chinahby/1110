@@ -427,19 +427,19 @@
 	<String Id="1142" Name="IDS_FONT_SMALL">
 		<Text></Text>
 	</String>
-	<String Id="1143" Name="IDS_SMS_RESTRICT">
+	<String Id="1144" Name="IDS_SMS_RESTRICT">
 		<Text>SMS restrict</Text>
 	</String>
-	<String Id="1144" Name="IDS_SMS_RESTRICT_SEND">
+	<String Id="1145" Name="IDS_SMS_RESTRICT_SEND">
 		<Text>Restrict send</Text>
 	</String>
-	<String Id="1145" Name="IDS_SMS_RESTRICT_RECEIVE">
+	<String Id="1146" Name="IDS_SMS_RESTRICT_RECEIVE">
 		<Text>Restrict receive</Text>
 	</String>
-	<String Id="1146" Name="IDS_ADD">
+	<String Id="1147" Name="IDS_ADD">
 		<Text>Add</Text>
 	</String>
-	<String Id="1147" Name="IDS_DELETE">
+	<String Id="1148" Name="IDS_DELETE">
 		<Text>Delete</Text>
 	</String>
 </Strings>

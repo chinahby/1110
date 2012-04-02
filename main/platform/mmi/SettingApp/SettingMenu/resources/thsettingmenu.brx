@@ -388,19 +388,58 @@
 	<String Id="1129" Name="IDS_MYANMAR">
 		<Text></Text>
 	</String>
-	<String Id="1130" Name="IDS_SMS_RESTRICT">
+	<String Id="1130" Name="IDS_SEARCHNET_MODE">
+		<Text>Search mode</Text>
+	</String>
+	<String Id="1131" Name="IDS_AUTO_SEARCH">
+		<Text>Auto Search</Text>
+	</String>
+	<String Id="1132" Name="IDS_SEARCH_FIVEMINTU">
+		<Text>5 mintues</Text>
+	</String>
+	<String Id="1133" Name="IDS_SEARCH_TENMIINUTES">
+		<Text>10 minutes</Text>
+	</String>
+	<String Id="1134" Name="IDS_SEARCH_TENTY">
+		<Text>15 minutes</Text>
+	</String>
+	<String Id="1135" Name="IDS_SEARCH_THIRTYMINUTE">
+		<Text>30 minutes</Text>
+	</String>
+	<STRING Id="1136" Name="IDS_FMRADIO_OPTION_MENU_PLAY_MODLE">
+		<Text>Ringtones mode</Text>
+	</STRING>
+	<STRING Id="1137" Name="IDS_FMRADIO_PLAY_HANDSET">
+		<Text>Headset</Text>
+	</STRING>
+	<STRING Id="1138" Name="IDS_RADIO_PLAY_SPEAKER">
+		<Text>Handset</Text>
+	</STRING>
+	<String Id="1139" Name="IDS_IDLE_DATETIME_MOCD">
+		<Text>Timefont format</Text>
+	</String>
+	<String Id="1140" Name="IDS_FONT_BIG">
+		<Text>Big</Text>
+	</String>
+	<String Id="1141" Name="IDS_FONT_MIEDIUM">
+		<Text>Medium</Text>
+	</String>
+	<String Id="1142" Name="IDS_FONT_SMALL">
+		<Text>Small</Text>
+	</String>
+	<String Id="1144" Name="IDS_SMS_RESTRICT">
 		<Text>SMS restrict</Text>
 	</String>
-	<String Id="1131" Name="IDS_SMS_RESTRICT_SEND">
+	<String Id="1145" Name="IDS_SMS_RESTRICT_SEND">
 		<Text>Restrict send</Text>
 	</String>
-	<String Id="1132" Name="IDS_SMS_RESTRICT_RECEIVE">
+	<String Id="1146" Name="IDS_SMS_RESTRICT_RECEIVE">
 		<Text>Restrict receive</Text>
 	</String>
-	<String Id="1133" Name="IDS_ADD">
+	<String Id="1147" Name="IDS_ADD">
 		<Text>Add</Text>
 	</String>
-	<String Id="1134" Name="IDS_DELETE">
+	<String Id="1148" Name="IDS_DELETE">
 		<Text>Delete</Text>
 	</String>
 	<STRING Id="1136" Name="IDS_FMRADIO_OPTION_MENU_PLAY_MODLE">
