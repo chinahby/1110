@@ -1028,6 +1028,8 @@ static boolean UTK_HandleEvent(IUTK *pi,
                         }
                     }
                     else
+#else
+                    if (ISHELL_ActiveApplet(pMe->m_pShell) == AEECLSID_APP_UTK)
 #endif
                     eTempState = UTKST_SENDMSG;
                     break;
