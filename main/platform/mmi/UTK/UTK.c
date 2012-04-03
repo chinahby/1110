@@ -1029,7 +1029,12 @@ static boolean UTK_HandleEvent(IUTK *pi,
                     }
                     else
 #else
-                    if (ISHELL_ActiveApplet(pMe->m_pShell) == AEECLSID_APP_UTK)
+                    if (ISHELL_ActiveApplet(pMe->m_pShell) != AEECLSID_APP_UTK)
+                    {
+                        UTK_GiveResponse(pMe, pMe->cmd_type, FALSE, UIM_TK_NETWORK_CURRENTLY_UNABLE_TO_PROCESS_COMMAND);
+                        return TRUE;
+                    }
+                    else
 #endif
                     eTempState = UTKST_SENDMSG;
                     break;
