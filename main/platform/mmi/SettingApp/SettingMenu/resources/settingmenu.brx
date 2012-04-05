@@ -395,7 +395,7 @@
 		<Text>Auto Search</Text>
 	</String>
 	<String Id="1132" Name="IDS_SEARCH_FIVEMINTU">
-		<Text>5 mintues</Text>
+		<Text>5 minutes</Text>
 	</String>
 	<String Id="1133" Name="IDS_SEARCH_TENMIINUTES">
 		<Text>10 minutes</Text>

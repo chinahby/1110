@@ -389,43 +389,46 @@
 		<Text></Text>
 	</String>
 	<String Id="1130" Name="IDS_SEARCHNET_MODE">
-		<Text>Search mode</Text>
+		<Text>โหมดการค้นหา</Text>
 	</String>
 	<String Id="1131" Name="IDS_AUTO_SEARCH">
-		<Text>Auto Search</Text>
+		<Text>ค้นหาอัตโนมัติ</Text>
 	</String>
 	<String Id="1132" Name="IDS_SEARCH_FIVEMINTU">
-		<Text>5 mintues</Text>
+		<Text>5 นาท</Text>
 	</String>
 	<String Id="1133" Name="IDS_SEARCH_TENMIINUTES">
-		<Text>10 minutes</Text>
+		<Text>10 นาท</Text>
 	</String>
 	<String Id="1134" Name="IDS_SEARCH_TENTY">
-		<Text>15 minutes</Text>
+		<Text>15 นาท</Text>
 	</String>
 	<String Id="1135" Name="IDS_SEARCH_THIRTYMINUTE">
-		<Text>30 minutes</Text>
+		<Text>30 นาท</Text>
 	</String>
 	<STRING Id="1136" Name="IDS_FMRADIO_OPTION_MENU_PLAY_MODLE">
-		<Text>Ringtones mode</Text>
+		<Text>โหมดเสียงเรียกเข้า</Text>
 	</STRING>
 	<STRING Id="1137" Name="IDS_FMRADIO_PLAY_HANDSET">
-		<Text>Headset</Text>
+		<Text>ชุดหูฟัง</Text>
 	</STRING>
 	<STRING Id="1138" Name="IDS_RADIO_PLAY_SPEAKER">
-		<Text>Handset</Text>
+		<Text>เครื่องโทรศัพท์</Text>
 	</STRING>
 	<String Id="1139" Name="IDS_IDLE_DATETIME_MOCD">
-		<Text>Timefont format</Text>
+		<Text>รูปแบบตัวอักษรเวลา</Text>
 	</String>
 	<String Id="1140" Name="IDS_FONT_BIG">
-		<Text>Big</Text>
+		<Text>ใหญ่</Text>
 	</String>
 	<String Id="1141" Name="IDS_FONT_MIEDIUM">
-		<Text>Medium</Text>
+		<Text>กลาง</Text>
 	</String>
 	<String Id="1142" Name="IDS_FONT_SMALL">
-		<Text>Small</Text>
+		<Text>เล็ก</Text>
+	</String>
+	<String Id="1143" Name="IDS_AKG_1MIN">
+		<Text>1 Min</Text>
 	</String>
 	<String Id="1144" Name="IDS_SMS_RESTRICT">
 		<Text>SMS restrict</Text>
@@ -442,15 +445,6 @@
 	<String Id="1148" Name="IDS_DELETE">
 		<Text>Delete</Text>
 	</String>
-	<STRING Id="1136" Name="IDS_FMRADIO_OPTION_MENU_PLAY_MODLE">
-		<Text>โหมดเสียงเรียกเข้า</Text>
-	</STRING>
-	<STRING Id="1137" Name="IDS_FMRADIO_PLAY_HANDSET">
-		<Text>ชุดหูฟัง</Text>
-	</STRING>
-	<STRING Id="1138" Name="IDS_RADIO_PLAY_SPEAKER">
-		<Text>เครื่องโทรศัพท์</Text>
-	</STRING>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="7001">
