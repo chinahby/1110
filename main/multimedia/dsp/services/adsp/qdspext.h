@@ -1426,6 +1426,7 @@ typedef enum
   QDSP_IMAGE_CAM_AUDIO_CONC,
   QDSP_IMAGE_QCAMCORDER_COMBO,
   QDSP_IMAGE_I2SSBC,
+  QDSP_IMAGE_AMR, //Gemsea Add
   QDSP_IMAGE_MAX,
 
   /* DO NOT USE: Force this enum to be a 32bit type to improve speed */

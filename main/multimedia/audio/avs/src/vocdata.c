@@ -2080,6 +2080,9 @@ boolean voc_data_image_supports_bt_ag
 #ifdef QDSP_IMAGE_VOC_COMBO_DEFINED
     case QDSP_IMAGE_VOC_COMBO:
 #endif
+#ifdef FEATURE_AMR_FIXED
+    case QDSP_IMAGE_AMR:
+#endif
 #ifdef QDSP_IMAGE_VOC_COMBO_VOIP_DEFINED
     case QDSP_IMAGE_VOC_COMBO_VOIP:
 #endif

@@ -7360,6 +7360,9 @@ voc_state_return_type voc_state_idle (void)
 #ifdef QDSP_IMAGE_VOC_COMBO_DEFINED
           case QDSP_IMAGE_VOC_COMBO:
 #endif /* QDSP_IMAGE_VOC_COMBO_DEFINED */
+#ifdef FEATURE_AMR_FIXED
+          case QDSP_IMAGE_AMR:
+#endif
 #ifdef QDSP_IMAGE_VOC_COMBO_VOIP_DEFINED
           case QDSP_IMAGE_VOC_COMBO_VOIP:
 #endif /* QDSP_IMAGE_VOC_COMBO_VOIP_DEFINED */

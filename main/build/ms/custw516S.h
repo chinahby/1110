@@ -56,6 +56,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_MOVIE_RECORD_SUPPORT
 #define FEATURE_ARPHIC_LAYOUT_ENGINE
 #define FEATURE_CAMERA_MULTI_NEW_AUTO_DETECT
+#define FEATURE_AMR_FIXED
 #endif
 
 #ifndef TARGSBW2_H
@@ -67,7 +68,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_STD_MIDI 
 //#define FEATURE_GSTK 
 #define FEATURE_DIAG_LOWMEM 
-//#define FEATURE_AMR_VOCODER
+#define FEATURE_AMR_VOCODER
 #define T_QSC1110
 #define CUST_MOB_MODEL 25
 #define FEATURE_PLL_192 

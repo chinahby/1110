@@ -7168,6 +7168,9 @@ boolean voc_sample_rate ( voc_sample_rate_type rate )
 #ifdef QDSP_IMAGE_VOC_COMBO_DEFINED
         && (state->current_image != QDSP_IMAGE_VOC_COMBO)
 #endif /* QDSP_IMAGE_VOC_COMBO_DEFINED */
+#ifdef FEATURE_AMR_FIXED
+        && (state->current_image != QDSP_IMAGE_AMR)
+#endif
 #ifdef QDSP_IMAGE_VOC_COMBO_VOIP_DEFINED
         && (state->current_image != QDSP_IMAGE_VOC_COMBO_VOIP)
 #endif /* QDSP_IMAGE_VOC_COMBO_VOIP_DEFINED */
@@ -7246,6 +7249,9 @@ boolean voc_sample_rate ( voc_sample_rate_type rate )
 #ifdef QDSP_IMAGE_VOC_COMBO_DEFINED
         case QDSP_IMAGE_VOC_COMBO:
 #endif /* QDSP_IMAGE_VOC_COMBO_DEFINED */
+#ifdef FEATURE_AMR_FIXED
+        case QDSP_IMAGE_AMR:
+#endif
 #ifdef QDSP_IMAGE_VOC_COMBO_VOIP_DEFINED
         case QDSP_IMAGE_VOC_COMBO_VOIP:
 #endif /* QDSP_IMAGE_VOC_COMBO_VOIP_DEFINED */
@@ -8992,6 +8998,9 @@ void voc_codec_select ( voc_codec_type codec )
 #ifdef QDSP_IMAGE_VOC_COMBO_DEFINED
           && (state->current_image != QDSP_IMAGE_VOC_COMBO)
 #endif /* QDSP_IMAGE_VOC_COMBO_DEFINED */
+#ifdef FEATURE_AMR_FIXED
+          && (state->current_image != QDSP_IMAGE_AMR)
+#endif
 #ifdef QDSP_IMAGE_VOC_COMBO_VOIP_DEFINED
           && (state->current_image != QDSP_IMAGE_VOC_COMBO_VOIP)
 #endif /* QDSP_IMAGE_VOC_COMBO_VOIP_DEFINED */

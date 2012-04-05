@@ -3496,6 +3496,9 @@ void qdsp_cmd_av_sync_flush (void)
 #ifdef QDSP_IMAGE_VOC_COMBO_DEFINED
     case QDSP_IMAGE_VOC_COMBO:
 #endif
+#ifdef FEATURE_AMR_FIXED
+    case QDSP_IMAGE_AMR:
+#endif
 #ifdef QDSP_IMAGE_VOC_COMBO_VOIP_DEFINED
     case QDSP_IMAGE_VOC_COMBO_VOIP:
 #endif
@@ -3969,6 +3972,9 @@ void qdsp_cmd_do_av_sync( void )
 #endif
 #ifdef QDSP_IMAGE_VOC_COMBO_DEFINED
     case QDSP_IMAGE_VOC_COMBO:
+#endif
+#ifdef FEATURE_AMR_FIXED
+    case QDSP_IMAGE_AMR:
 #endif
 #ifdef QDSP_IMAGE_VOC_COMBO_VOIP_DEFINED
     case QDSP_IMAGE_VOC_COMBO_VOIP:
@@ -6719,6 +6725,9 @@ void qdsp_cmd_timewarp()
 #if defined(QDSP_IMAGE_VOC_COMBO_DEFINED)
     case QDSP_IMAGE_VOC_COMBO:
 #endif /* defined(QDSP_IMAGE_VOC_COMBO_DEFINED) */
+#ifdef FEATURE_AMR_FIXED
+    case QDSP_IMAGE_AMR:
+#endif
 #if defined(QDSP_IMAGE_VOC_COMBO_VOIP_DEFINED)
     case QDSP_IMAGE_VOC_COMBO_VOIP:
 #endif /* defined(QDSP_IMAGE_VOC_COMBO_VOIP_DEFINED) */
@@ -8370,6 +8379,9 @@ boolean qdsp_cmd_voc_adpcm_is_supported (void)
 #ifdef QDSP_IMAGE_VOC_COMBO_DEFINED
     case QDSP_IMAGE_VOC_COMBO:
 #endif /* QDSP_IMAGE_VOC_COMBO_DEFINED */
+#ifdef FEATURE_AMR_FIXED
+    case QDSP_IMAGE_AMR:
+#endif
 #ifdef QDSP_IMAGE_VOC_COMBO_VOIP_DEFINED
     case QDSP_IMAGE_VOC_COMBO_VOIP:
 #endif /* QDSP_IMAGE_VOC_COMBO_VOIP_DEFINED */
@@ -8472,6 +8484,9 @@ boolean qdsp_cmd_voc_adpcm_send_frame (void)
 #ifdef QDSP_IMAGE_VOC_COMBO_DEFINED
     case QDSP_IMAGE_VOC_COMBO:
 #endif /* QDSP_IMAGE_VOC_COMBO_DEFINED */
+#ifdef FEATURE_AMR_FIXED
+    case QDSP_IMAGE_AMR:
+#endif
 #ifdef QDSP_IMAGE_VOC_COMBO_VOIP_DEFINED
     case QDSP_IMAGE_VOC_COMBO_VOIP:
 #endif /* QDSP_IMAGE_VOC_COMBO_VOIP_DEFINED */
@@ -13707,6 +13722,9 @@ qdsp_cmd_status_type qdsp_cmd_dtmf (
 #ifdef QDSP_IMAGE_VOC_COMBO_DEFINED
     case QDSP_IMAGE_VOC_COMBO:
 #endif
+#ifdef FEATURE_AMR_FIXED
+    case QDSP_IMAGE_AMR:
+#endif
 #ifdef QDSP_IMAGE_VOC_COMBO_VOIP_DEFINED
     case QDSP_IMAGE_VOC_COMBO_VOIP:
 #endif
@@ -16982,6 +17000,9 @@ qdsp_cmd_status_type qdsp_cmd_adec_config (
 #ifdef QDSP_IMAGE_VOC_COMBO_DEFINED
       case QDSP_IMAGE_VOC_COMBO:
 #endif /* QDSP_IMAGE_VOC_COMBO_DEFINED */
+#ifdef FEATURE_AMR_FIXED
+    case QDSP_IMAGE_AMR:
+#endif
 #ifdef QDSP_IMAGE_VOC_COMBO_VOIP_DEFINED
       case QDSP_IMAGE_VOC_COMBO_VOIP:
 #endif /* QDSP_IMAGE_VOC_COMBO_VOIP_DEFINED */
@@ -18829,6 +18850,9 @@ qdsp_cmd_status_type qdsp_cmd_adec (
 #ifdef QDSP_IMAGE_VOC_COMBO_DEFINED
     case QDSP_IMAGE_VOC_COMBO:
 #endif /* QDSP_IMAGE_VOC_COMBO_DEFINED */
+#ifdef FEATURE_AMR_FIXED
+    case QDSP_IMAGE_AMR:
+#endif
 #ifdef QDSP_IMAGE_VOC_COMBO_VOIP_DEFINED
     case QDSP_IMAGE_VOC_COMBO_VOIP:
 #endif /* QDSP_IMAGE_VOC_COMBO_VOIP_DEFINED */
@@ -19218,6 +19242,9 @@ boolean qdsp_cmd_adec_int_pending()
 #ifdef QDSP_IMAGE_VOC_COMBO_DEFINED
     case QDSP_IMAGE_VOC_COMBO:
 #endif /* QDSP_IMAGE_VOC_COMBO_DEFINED */
+#ifdef FEATURE_AMR_FIXED
+    case QDSP_IMAGE_AMR:
+#endif
 #ifdef QDSP_IMAGE_VOC_COMBO_VOIP_DEFINED
     case QDSP_IMAGE_VOC_COMBO_VOIP:
 #endif /* QDSP_IMAGE_VOC_COMBO_VOIP_DEFINED */
@@ -19475,6 +19502,9 @@ qdsp_cmd_status_type qdsp_cmd_adec_pause (
 #ifdef QDSP_IMAGE_VOC_COMBO_DEFINED
     case QDSP_IMAGE_VOC_COMBO:
 #endif /* QDSP_IMAGE_VOC_COMBO_DEFINED */
+#ifdef FEATURE_AMR_FIXED
+    case QDSP_IMAGE_AMR:
+#endif
 #ifdef QDSP_IMAGE_VOC_COMBO_VOIP_DEFINED
     case QDSP_IMAGE_VOC_COMBO_VOIP:
 #endif /* QDSP_IMAGE_VOC_COMBO_VOIP_DEFINED */
@@ -20122,6 +20152,9 @@ qdsp_cmd_status_type qdsp_cmd_adec_flush ( uint16 flush_mask )
 #ifdef QDSP_IMAGE_VOC_COMBO_DEFINED
     case QDSP_IMAGE_VOC_COMBO:
 #endif /* QDSP_IMAGE_VOC_COMBO_DEFINED */
+#ifdef FEATURE_AMR_FIXED
+    case QDSP_IMAGE_AMR:
+#endif
 #ifdef QDSP_IMAGE_VOC_EVRC_DEFINED
     case QDSP_IMAGE_VOC_EVRC:
 #endif /* QDSP_IMAGE_VOC_EVRC_DEFINED */
@@ -25400,6 +25433,9 @@ qdsp_cmd_status_type qdsp_cmd_vol_ctrl (
 #ifdef QDSP_IMAGE_VOC_COMBO_DEFINED
     case QDSP_IMAGE_VOC_COMBO:
 #endif
+#ifdef FEATURE_AMR_FIXED
+    case QDSP_IMAGE_AMR:
+#endif
 #ifdef QDSP_IMAGE_VOC_COMBO_VOIP_DEFINED
     case QDSP_IMAGE_VOC_COMBO_VOIP:
 #endif
@@ -27379,6 +27415,9 @@ void qdsp_cmd_tx_comfort_noise_ctrl ( uint16 comfort_noise_mode )
 #ifdef QDSP_IMAGE_VOC_COMBO_DEFINED
     case QDSP_IMAGE_VOC_COMBO:
 #endif /* QDSP_IMAGE_VOC_COMBO_DEFINED */
+#ifdef FEATURE_AMR_FIXED
+    case QDSP_IMAGE_AMR:
+#endif
 #ifdef QDSP_IMAGE_VOC_COMBO_VOIP_DEFINED
     case QDSP_IMAGE_VOC_COMBO_VOIP:
 #endif /* QDSP_IMAGE_VOC_COMBO_VOIP_DEFINED */
@@ -28587,6 +28626,10 @@ void qdsp_cmd_register (
   qdsp_cmd_image_isr_table[QDSP_IMAGE_VOC_COMBO]    =
                                                 qdsp_cmd_voc_combo_image_isr;
 
+#ifdef FEATURE_AMR_FIXED
+  qdsp_cmd_image_isr_table[QDSP_IMAGE_AMR]    =
+                                                qdsp_cmd_voc_combo_image_isr;
+#endif
 #ifdef QDSP_IMAGE_VOC_COMBO_VOIP_DEFINED
   qdsp_cmd_image_isr_table[QDSP_IMAGE_VOC_COMBO_VOIP]    =
                                                 qdsp_cmd_voc_combo_image_isr;
@@ -31000,6 +31043,9 @@ qdsp_cmd_status_type qdsp_cmd_send_voc_adpcm_data(
 #ifdef QDSP_IMAGE_VOC_COMBO_DEFINED
     case QDSP_IMAGE_VOC_COMBO:
 #endif /* QDSP_IMAGE_VOC_COMBO_DEFINED */
+#ifdef FEATURE_AMR_FIXED
+    case QDSP_IMAGE_AMR:
+#endif
 #ifdef QDSP_IMAGE_VOC_COMBO_VOIP_DEFINED
     case QDSP_IMAGE_VOC_COMBO_VOIP:
 #endif /* QDSP_IMAGE_VOC_COMBO_VOIP_DEFINED */
