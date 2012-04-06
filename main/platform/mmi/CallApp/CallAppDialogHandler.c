@@ -8850,7 +8850,7 @@ static void CallApp_Build_NumEdit_Option_Menu(CCallApp *pMe,IMenuCtl   *pMenuCtl
             else
 #endif //FEATURE_APP_PAUSE_TIMER
             {
-#if defined(FEATURE_VERSION_W208S)||defined(FEATURE_VERSION_1110W516) 
+#if defined(FEATURE_VERSION_W208S)||defined(FEATURE_VERSION_1110W516) ||defined(FEATURE_VERSION_C180) 
 #else
                 if(!pMe->m_call_info.b_emerg)
                 {
@@ -11945,6 +11945,7 @@ static void CallApp_Play_Incoming_Tone(CCallApp *pMe)
         // 为了支持PEK 测试，电话本的RINGTONE 字段只能保存字符串类型，这里根据路径名查找是否有MID存在
         ringerId = IRINGERMGR_GetRingerID(RingerMgr, filename);
         
+        #ifdef FEATURE_PEKTEST
         if(AEE_RINGER_ID_NONE == ringerId)
         {
             ICONFIG_GetItem(pMe->m_pConfig, CFGI_PROFILE_CUR_NUMBER, &profilenum, sizeof(profilenum));
@@ -11954,7 +11955,7 @@ static void CallApp_Play_Incoming_Tone(CCallApp *pMe)
                 ringerId = ringid[profilenum].midID;
             }
         }
-        
+        #endif
         if(AEE_RINGER_ID_NONE != ringerId)
         {
             // ringType is mid
