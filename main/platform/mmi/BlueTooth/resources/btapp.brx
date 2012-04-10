@@ -1526,7 +1526,7 @@
 		<Text>Failed to unbond %s.</Text>
 	</String>
 	<String Id="2026" Name="IDS_MSG_SEARCHING">
-		<Text>Searching for Bluetooth devices...Press CLR key to quit.</Text>
+		<Text>Searching for Bluetooth devices...Press Back key to quit.</Text>
 	</String>
 	<String Id="2027" Name="IDS_MSG_NO_DEV_DISC">
 		<Text>No Bluetooth devices discovered.</Text>

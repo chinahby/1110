@@ -1526,7 +1526,7 @@
 		<Text>فشل إلغاء ربط %s.</Text>
 	</String>
 	<String Id="2026" Name="IDS_MSG_SEARCHING">
-		<Text>جاري البحث عن أجهزة بلوتوث...اضغط على مفتاح CLR للإنهاء.</Text>
+		<Text>جاري البحث عن أجهزة بلوتوث...اضغط على مفتاح ظهر للإنهاء.</Text>
 	</String>
 	<String Id="2027" Name="IDS_MSG_NO_DEV_DISC">
 		<Text>لم يتم اكتشاف أجهزة بلوتوث.</Text>
