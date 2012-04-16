@@ -950,6 +950,11 @@ static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier)
         {
             if( pMe->opMode == FM_RADIO_OPMODE_PLAY)
             {
+                #if defined( FEATURE_VERSION_1110W516)
+                 tuneVolumeStop(pMe);
+                 repaint( pMe, TRUE);
+                 return TRUE;
+                #endif
 #if defined( FEATURE_FMRADIO_NO_MODE_SELECT)
 				pMe->tuneVolumeByLeftRightArrowKey = TRUE;
 				ISHELL_SetTimer( pMe->m_pShell, 3000, (PFNNOTIFY)tuneVolumeByLeftRightArrowKeyCloseCb, pMe);
