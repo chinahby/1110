@@ -1971,11 +1971,12 @@ boolean WMS_MMS_SaveMMS(char* phoneNumber,char *pBuffer,int DataLen,int nKind)
     int result = 0;
     int nMmsDataInfoType = 0;
     int nMmsCoutType = 0;
-    char psz[5] = {0};
+    char psz[15] = {0};
     char mmsDataFileName[AEE_MAX_FILE_NAME];
     MMSData	mmsDataInfoList[MAX_MMS_STORED];
     char sz[2] =   { '/', 0 };
     int nCharBegin = 'A';
+    JulianType julian;
     
     MSG_FATAL("[WMS_MMS_SaveMMS] g_mmsDataInfoMax=%d, nKind=%d",g_mmsDataInfoMax,nKind,0);
     
@@ -2018,14 +2019,36 @@ boolean WMS_MMS_SaveMMS(char* phoneNumber,char *pBuffer,int DataLen,int nKind)
         &g_mmsDataInfoMax,
         sizeof(g_mmsDataInfoMax));  
     MSG_FATAL("[WMS_MMS_SaveMMS] 1 g_mmsDataInfoMax=%d",g_mmsDataInfoMax,0,0);
-    while(g_mmsDataInfoMax >= MAX_MMS_STORED)
+    ICONFIG_GetItem(pConfig,
+                   nMmsDataInfoType,
+                   (void*)mmsDataInfoList,
+                   sizeof(mmsDataInfoList));    
+    if(g_mmsDataInfoMax >= MAX_MMS_STORED)
     {
-       /* if(!WMS_MMS_DeleteMMS(0,nKind))
+        if(nKind == MMS_INBOX)
         {
-            result = EFAILED;
-            goto Exit;
-        }*/
-        WMS_MMS_DeleteMMS(0,nKind);
+            int index = g_mmsDataInfoMax-1;
+            MMSData	*pMmsDataInfoListTemp = NULL;
+            for(; index >= 0; --index)
+            {
+                 pMmsDataInfoListTemp = &mmsDataInfoList[index];
+                 if(pMmsDataInfoListTemp->MMSDataReaded)
+                 {
+                    //当有未读短信和已读短信时，要先删除已读短信
+                     WMS_MMS_DeleteMMS(index,nKind);
+                     break;
+                 }
+            }
+            if(index < 0)//全部为未读短信
+            {
+                WMS_MMS_DeleteMMS(0,nKind);
+            }
+            MSG_FATAL("[WMS_MMS_SaveMMS] 33333333 index=%d",index,0,0);
+        }
+        else
+        {
+            WMS_MMS_DeleteMMS(0,nKind);
+        }
     }
 
     ICONFIG_GetItem(pConfig, 
@@ -2047,7 +2070,7 @@ boolean WMS_MMS_SaveMMS(char* phoneNumber,char *pBuffer,int DataLen,int nKind)
 
 // Emulator filename and path
     MEMSET((void*)mmsDataFileName, 0, AEE_MAX_FILE_NAME);
-    psz[1] = g_mmsDataInfoMax+nCharBegin;
+    //psz[1] = g_mmsDataInfoMax+nCharBegin;
     if(nKind == MMS_OUTBOX)
     {
         psz[0]='O';
@@ -2060,6 +2083,10 @@ boolean WMS_MMS_SaveMMS(char* phoneNumber,char *pBuffer,int DataLen,int nKind)
     {
         psz[0]='D';
     }    
+        
+    GETJULIANDATE(GETTIMESECONDS(), &julian);
+    
+    SPRINTF(psz+STRLEN(psz), "%02d%02d%02d%02d", julian.wDay, julian.wHour, julian.wMinute, julian.wSecond);
     STRCPY(mmsDataFileName, "fs:/hsmm/mmsDataFile");
 
     if(SUCCESS != IFILEMGR_Test(pIFileMgr, mmsDataFileName))
@@ -2071,7 +2098,7 @@ boolean WMS_MMS_SaveMMS(char* phoneNumber,char *pBuffer,int DataLen,int nKind)
 // Load file name and remove exist file
     STRCAT(mmsDataFileName,sz);  
     STRCAT(mmsDataFileName, psz);
-
+    DBGPRINTF("[WMS_MMS_SaveMMS] mmsDataFileName:%s",mmsDataFileName);  
     if(SUCCESS == IFILEMGR_Test(pIFileMgr, mmsDataFileName))
     {
         result = IFILEMGR_Remove(pIFileMgr, mmsDataFileName);
@@ -2328,6 +2355,7 @@ boolean WMS_MMS_DeleteMMS(uint32 index,int nKind)
                 {
                     STRCPY(pMmsDataInfoListCur->phoneNumber,pMmsDataInfoListNext->phoneNumber);
                     pMmsDataInfoListCur->MMSDatasize = pMmsDataInfoListNext->MMSDatasize;
+                    pMmsDataInfoListCur->MMSDataReaded = pMmsDataInfoListNext->MMSDataReaded;
                     DBGPRINTF("[WMS_MMS_DeleteMMS] rename file phone number:%s", pMmsDataInfoListCur->phoneNumber);
                     MSG_FATAL("[WMS_MMS_DeleteMMS] rename file phone number len:%d", pMmsDataInfoListCur->MMSDatasize,0,0);
                     DBGPRINTF("[WMS_MMS_DeleteMMS] rename file phone name:%s", pMmsDataInfoListCur->MMSDataFileName);
