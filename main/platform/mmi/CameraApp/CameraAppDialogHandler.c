@@ -2534,6 +2534,7 @@ static boolean CameraApp_PopMenu_EnvironmentCommandHandleEvent(CCameraApp *pMe, 
                                   sizeof(pMe->m_nCameraEnviroment));
             
             ICAMERA_SetWb(pMe->m_pCamera, dwFPS);
+        
             break;
 
         case IDD_CVIDEOCFG:
@@ -5304,19 +5305,19 @@ static void CameraApp_SetParamAfterPreview(CCameraApp *pMe)
     switch(pMe->m_nCameraEnviroment)
     {
         case OEMNV_CAMERA_ENVIR_AUTO:
-            dwFPS = 0;
+            dwFPS =CAM_WB_AUTO;// 0;
             break;
 
         case OEMNV_CAMERA_ENVIR_NIGHT:
-            dwFPS = 3;
+            dwFPS =CAM_WB_FLUORESCENT;// 3;
             break;
 
         case OEMNV_CAMERA_ENVIR_SUNNY:
-            dwFPS = 1;
+            dwFPS =CAM_WB_DAYLIGHT;// 1;
             break;
         
         case OEMNV_CAMERA_ENVIR_CLOUDY:
-            dwFPS = 2;
+            dwFPS =CAM_WB_CLOUDY_DAYLIGHT;//  2;
             break;
 
         default:
@@ -5328,7 +5329,9 @@ static void CameraApp_SetParamAfterPreview(CCameraApp *pMe)
     {
     	ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_ROTATE_PREVIEW, 90, 0);
     }
-    ICAMERA_SetFramesPerSecond(pMe->m_pCamera, dwFPS);
+    //ICAMERA_SetFramesPerSecond(pMe->m_pCamera, dwFPS);
+    ICAMERA_SetWb(pMe->m_pCamera, dwFPS);
+    
     ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_BANDING, pMe->m_nCameraBanding, 0);
 }
 
