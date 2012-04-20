@@ -81,8 +81,8 @@ static void disp_ic_init(void)
 	LCD_DELAY(120); 	            // Must Delay At Least 100 ms
 	
 	LCD_WRITE_CMD(0xC0);       // Power Control 1
-	LCD_WRITE_DATA(0xF0);      // GVDD Setting//0xF1//调节亮度，值越大越亮，颜色就越淡，
-	LCD_WRITE_DATA(0x10);      // GVCL Setting//0x11//以上面同步
+	LCD_WRITE_DATA(0xEE);      // GVDD Setting//0xF1//调节亮度，值越大越亮，颜色就越淡，
+	LCD_WRITE_DATA(0x0E);      // GVCL Setting//0x11//以上面同步
 	
 	LCD_WRITE_CMD(0xC1);	  //set VGH&VGL driver voltage
 	LCD_WRITE_DATA(0x09);//ff
@@ -91,7 +91,7 @@ static void disp_ic_init(void)
 	LCD_WRITE_DATA(0x05);
 
 	LCD_WRITE_CMD(0xB4);
-	LCD_WRITE_DATA(0x02);
+	LCD_WRITE_DATA(0x03);
 	
 	LCD_WRITE_CMD(0xC5); //Set VMH[6:0] & VML[6:0] for VOMH & VCOML
 	LCD_WRITE_DATA(0x0B); //31
@@ -241,12 +241,12 @@ boolean disp_rm68110_tft177(disp_drv_ic_type *pdispic)
     //extern uint8 ID1,ID2,ID3;
     
     // Read ID
-    LCD_WRITE_CMD(0xDA);
-    id1 = LCD_READ_DATA();
-    id1 = LCD_READ_DATA();
-    LCD_WRITE_CMD(0xDB);
-    id2 = LCD_READ_DATA();
-    id2 = LCD_READ_DATA();
+    //LCD_WRITE_CMD(0xDA);
+    //id1 = LCD_READ_DATA();
+    //id1 = LCD_READ_DATA();
+    //LCD_WRITE_CMD(0xDB);
+    //id2 = LCD_READ_DATA();
+    //id2 = LCD_READ_DATA();
     LCD_WRITE_CMD(0xD3);
     id3 = LCD_READ_DATA();
     id3 = LCD_READ_DATA();
