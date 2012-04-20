@@ -4075,13 +4075,13 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
             switch(pMe->m_nCameraSize)
             {
     	    case OEMNV_CAMERA_SIZE_INDEX_0:
-    	        nResID[CAMERACFGSIZE] = IDI_SIZE_320_240;
+    	        nResID[CAMERACFGSIZE] = IDI_SIZE_180_240;
     	        break;
     	    case OEMNV_CAMERA_SIZE_INDEX_1:
     	        nResID[CAMERACFGSIZE] = IDI_SIZE_640_480;
     	        break;	        
     	    default:
-    	        nResID[CAMERACFGSIZE] = IDI_SIZE_320_240;
+    	        nResID[CAMERACFGSIZE] = IDI_SIZE_180_240;
     	        break;
             }
         }
@@ -4094,7 +4094,7 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
     	        nResID[CAMERACFGSIZE] = IDI_SIZE_128_160;
     	        break;
     	    case OEMNV_CAMERA_SIZE_INDEX_1:
-    	        nResID[CAMERACFGSIZE] = IDI_SIZE_320_240;
+    	        nResID[CAMERACFGSIZE] = IDI_SIZE_144_176;
     	        break;	        
     	    default:
     	        nResID[CAMERACFGSIZE] = IDI_SIZE_128_160;
