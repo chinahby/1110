@@ -1096,7 +1096,7 @@ static uint32 OEMCM_Release(ICM *pMe)
    }
 
    // Ref count is zero.  Release memory
-   FREE(pMe);
+   FREEIF(pMe);
    return (0);
 }
 

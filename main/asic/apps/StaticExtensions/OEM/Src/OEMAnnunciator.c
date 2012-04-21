@@ -1705,7 +1705,7 @@ static void IAnnunciator_Delete(IAnnunciator *pMe)
     }
     CALLBACK_Cancel(&pMe->m_cbSysObj);
     ISHELL_Release(pMe->m_piShell);
-    FREE(pMe);
+    FREEIF(pMe);
   }
 }
 /*===========================================================================
