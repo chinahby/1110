@@ -1104,7 +1104,7 @@ static boolean IDD_MAIN_Handler(void        *pUser,
                   (void)STRTOWSTR("No enough space,please free some space", szBufText,
                             sizeof(szBufText));
                   MSG_FATAL("IDD_MAIN_Handler dddddddddddddd",0, 0, 0);
-                  (void)ISHELL_MessageBoxText(pMe->m_pShell, L"[ERROR]", L"No enough space,please free some space");                    
+                  //(void)ISHELL_MessageBoxText(pMe->m_pShell, L"[ERROR]", L"No enough space,please free some space");                    
                 }
                 IFILEMGR_Release(pIFileMgr);  
             }
