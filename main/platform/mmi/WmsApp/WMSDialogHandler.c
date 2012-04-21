@@ -1082,32 +1082,6 @@ static boolean IDD_MAIN_Handler(void        *pUser,
             AEE_CancelTimer(WMSDialog_keypadtimer,pMe);
 			AEE_SetTimer(5*1000,WMSDialog_keypadtimer,pMe);            
             MSG_FATAL("IDD_MAIN_Handler EVT_DIALOG_INIT 6",0,0,0);
-            {
-        	    IFileMgr *pIFileMgr = NULL;
-        	    int result = 0;
-                uint32 pdwTotal = 0;
-                uint32 pdwFree = 0;
-        		result = ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_FILEMGR,(void **)&pIFileMgr);
-        		if (SUCCESS != result)
-        	    {
-        			MSG_FATAL("IDD_MAIN_Handler: Open file error %x", result,0,0);
-        			return FALSE;
-        	    }            
-        		pdwFree = IFILEMGR_GetFreeSpace(pIFileMgr, &pdwTotal); 
-                MSG_FATAL("IDD_MAIN_Handler pdwFree=%d, pdwTotal=%d",pdwFree, pdwTotal, 0);
-                if((pdwFree < MSG_MAX_PACKET_SIZE))
-                {
-                  AECHAR    szBufTitle[100];
-                  AECHAR    szBufText[100];
-
-                  (void)STRTOWSTR("[ERROR]", szBufTitle, sizeof(szBufTitle));
-                  (void)STRTOWSTR("No enough space,please free some space", szBufText,
-                            sizeof(szBufText));
-                  MSG_FATAL("IDD_MAIN_Handler dddddddddddddd",0, 0, 0);
-                  //(void)ISHELL_MessageBoxText(pMe->m_pShell, L"[ERROR]", L"No enough space,please free some space");                    
-                }
-                IFILEMGR_Release(pIFileMgr);  
-            }
             return TRUE;
 
         case EVT_DIALOG_START:
@@ -9164,57 +9138,73 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                             {
                                 uint8 len = 0;
                                 uint8 count = IVector_Size(pMe->m_pSendList);
-                                MSG_FATAL("IDD_TONUMLIST_Handler count=%d", count, 0, 0);
-                                if(NULL == pMe->m_EncData.pMessage)
+                                IFileMgr *pIFileMgr = NULL;
+                                int result = 0;
+                                uint32 pdwTotal = 0;
+                                uint32 pdwFree = 0;
+                                MSG_FATAL("IDD_WRITEMSG_Handler count=%d", count, 0, 0);
+                                result = ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_FILEMGR,(void **)&pIFileMgr);
+                                if (SUCCESS != result)
                                 {
-                                    pMe->m_EncData.pMessage = MALLOC(sizeof(MMS_WSP_MESSAGE_SEND));
-                                    MEMSET(pMe->m_EncData.pMessage,NULL,sizeof(MMS_WSP_MESSAGE_SEND));
-                                }
-                                if(!pMe->m_isSendToAlbumOrEmain)
+                                    MSG_FATAL("IDD_WRITEMSG_Handler: Open file error %x", result,0,0);
+                                    return FALSE;
+                                }            
+                                pdwFree = IFILEMGR_GetFreeSpace(pIFileMgr, &pdwTotal); 
+                                IFILEMGR_Release(pIFileMgr);    
+                                MSG_FATAL("IDD_WRITEMSG_Handler pdwFree=%d, pdwTotal=%d",pdwFree, pdwTotal, 0);
+                                if((pdwFree > MSG_MAX_PACKET_SIZE+50))
                                 {
-                                    STRCAT((char*)pMe->m_EncData.pMessage->hTo, "PLMN");
-                                }
-                                if (count > 0)
-                                {
-                                    int index = 0;
-                                    char TempTo[MAX_EMAILADD_LEN];
-                                    for(; index < count; ++index)
+                                    if(NULL == pMe->m_EncData.pMessage)
                                     {
-                                        pItem = (CMultiSendItemInfo *)IVector_ElementAt(pMe->m_pSendList, index);
-                                        if (NULL != pItem)
-                                        {
-                                            if(pMe->m_isSendToAlbumOrEmain)
-                                            {
-                                                DBGPRINTF("pItem->m_szEmail=%S", pItem->m_szEmail);
-                                                WSTRTOSTR(pItem->m_szEmail,(char*)TempTo,sizeof(TempTo));
-                                            }
-                                            else
-                                            {
-                                                DBGPRINTF("pItem->m_szTo=%S", pItem->m_szTo);
-                                                WSTRTOSTR(pItem->m_szTo,(char*)TempTo,sizeof(TempTo));
-                                            } 
-                                            STRCAT((char*)pMe->m_EncData.pMessage->hTo,TempTo);
-                                            STRCAT((char*)pMe->m_EncData.pMessage->hTo, ",");
-                                            MEMSET(TempTo, 0, sizeof(TempTo));
-                                        }                                        
+                                        pMe->m_EncData.pMessage = MALLOC(sizeof(MMS_WSP_MESSAGE_SEND));
+                                        MEMSET(pMe->m_EncData.pMessage,NULL,sizeof(MMS_WSP_MESSAGE_SEND));
                                     }
-                                }
-                                DBGPRINTF("pMessage->hTo:%s",pMe->m_EncData.pMessage->hTo,0,0);
-                                pMe->m_EncData.pMessage->iRetrieveStatus = MMS_VALUE_USELESSNESS;
-                                pMe->m_EncData.pMessage->iDate = MMS_VALUE_USELESSNESS;
-                                pMe->m_EncData.pMessage->iPriority = MMS_VALUE_USELESSNESS;
-                                pMe->m_EncData.pMessage->bSenderVisibility = pMe->m_isMMSSenderVisibility;
-                                pMe->m_EncData.pMessage->iRetrieveStatus = MMS_VALUE_USELESSNESS;
-                                pMe->m_EncData.pMessage->iExpiry = MMS_VALUE_USELESSNESS;
-                                pMe->m_EncData.pMessage->iDeliveryTime = MMS_VALUE_USELESSNESS;
-                                pMe->m_EncData.pMessage->bReadRep = pMe->m_isMMSReadReply;
-                                pMe->m_EncData.pMessage->bDelRep = pMe->m_isMMSDeliveryReport;
+                                    if(!pMe->m_isSendToAlbumOrEmain)
+                                    {
+                                        STRCAT((char*)pMe->m_EncData.pMessage->hTo, "PLMN");
+                                    }
+                                    if (count > 0)
+                                    {
+                                        int index = 0;
+                                        char TempTo[MAX_EMAILADD_LEN];
+                                        for(; index < count; ++index)
+                                        {
+                                            pItem = (CMultiSendItemInfo *)IVector_ElementAt(pMe->m_pSendList, index);
+                                            if (NULL != pItem)
+                                            {
+                                                if(pMe->m_isSendToAlbumOrEmain)
+                                                {
+                                                    DBGPRINTF("pItem->m_szEmail=%S", pItem->m_szEmail);
+                                                    WSTRTOSTR(pItem->m_szEmail,(char*)TempTo,sizeof(TempTo));
+                                                }
+                                                else
+                                                {
+                                                    DBGPRINTF("pItem->m_szTo=%S", pItem->m_szTo);
+                                                    WSTRTOSTR(pItem->m_szTo,(char*)TempTo,sizeof(TempTo));
+                                                } 
+                                                STRCAT((char*)pMe->m_EncData.pMessage->hTo,TempTo);
+                                                STRCAT((char*)pMe->m_EncData.pMessage->hTo, ",");
+                                                MEMSET(TempTo, 0, sizeof(TempTo));
+                                            }                                        
+                                        }
+                                    }
+                                    DBGPRINTF("pMessage->hTo:%s",pMe->m_EncData.pMessage->hTo,0,0);
+                                    pMe->m_EncData.pMessage->iRetrieveStatus = MMS_VALUE_USELESSNESS;
+                                    pMe->m_EncData.pMessage->iDate = MMS_VALUE_USELESSNESS;
+                                    pMe->m_EncData.pMessage->iPriority = MMS_VALUE_USELESSNESS;
+                                    pMe->m_EncData.pMessage->bSenderVisibility = pMe->m_isMMSSenderVisibility;
+                                    pMe->m_EncData.pMessage->iRetrieveStatus = MMS_VALUE_USELESSNESS;
+                                    pMe->m_EncData.pMessage->iExpiry = MMS_VALUE_USELESSNESS;
+                                    pMe->m_EncData.pMessage->iDeliveryTime = MMS_VALUE_USELESSNESS;
+                                    pMe->m_EncData.pMessage->bReadRep = pMe->m_isMMSReadReply;
+                                    pMe->m_EncData.pMessage->bDelRep = pMe->m_isMMSDeliveryReport;
 
-                                
-                                if(!WMS_MMSState(WMS_MMS_PDU_MSendReq,0,(uint32)&pMe->m_EncData))
-                                {
-                                    pMe->m_SendStatus = HTTP_CODE_Bad_Request;
-		                            ISHELL_SetTimer(pMe->m_pShell,1000,(PFNNOTIFY)&WmsApp_ProcessMMSStatus,pMe);
+                                    
+                                    if(!WMS_MMSState(WMS_MMS_PDU_MSendReq,0,(uint32)&pMe->m_EncData))
+                                    {
+                                        pMe->m_SendStatus = HTTP_CODE_Bad_Request;
+    		                            ISHELL_SetTimer(pMe->m_pShell,1000,(PFNNOTIFY)&WmsApp_ProcessMMSStatus,pMe);
+                                    }
                                 }
                             }
                             //return TRUE;
@@ -12568,33 +12558,49 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     if(pMe->m_isMMS)
                     {
                         uint8 len = 0;
-                        char pszPath[AEE_MAX_FILE_NAME]={'\0'};          
-                        if(NULL == pMe->m_EncData.pMessage)
+                        char pszPath[AEE_MAX_FILE_NAME]={'\0'};    
+                        IFileMgr *pIFileMgr = NULL;
+                        int result = 0;
+                        uint32 pdwTotal = 0;
+                        uint32 pdwFree = 0;
+                        result = ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_FILEMGR,(void **)&pIFileMgr);
+                        if (SUCCESS != result)
                         {
-                            pMe->m_EncData.pMessage = MALLOC(sizeof(MMS_WSP_MESSAGE_SEND));
-                            MEMSET(pMe->m_EncData.pMessage,NULL,sizeof(MMS_WSP_MESSAGE_SEND));
-                        }
-                        DBGPRINTF("IDD_SENDING_Handler to:%s",pMe->m_EncData.pMessage->hTo);
-                        pMe->m_EncData.pMessage->iRetrieveStatus = MMS_VALUE_USELESSNESS;
-                        pMe->m_EncData.pMessage->iDate = MMS_VALUE_USELESSNESS;
-                        pMe->m_EncData.pMessage->iPriority = MMS_VALUE_USELESSNESS;
-                        pMe->m_EncData.pMessage->bSenderVisibility = pMe->m_isMMSSenderVisibility;
-                        pMe->m_EncData.pMessage->iRetrieveStatus = MMS_VALUE_USELESSNESS;
-                        pMe->m_EncData.pMessage->iExpiry = MMS_VALUE_USELESSNESS;
-                        pMe->m_EncData.pMessage->iDeliveryTime = MMS_VALUE_USELESSNESS;
-                        pMe->m_EncData.pMessage->bReadRep = pMe->m_isMMSReadReply;
-                        pMe->m_EncData.pMessage->bDelRep = pMe->m_isMMSDeliveryReport;                                                
-	                    WMS_MMSState(WMS_MMS_PDU_DRAFT,0,(uint32)&pMe->m_EncData);
+                            MSG_FATAL("IDD_WRITEMSG_Handler: Open file error %x", result,0,0);
+                            return FALSE;
+                        }            
+                        pdwFree = IFILEMGR_GetFreeSpace(pIFileMgr, &pdwTotal); 
+                        IFILEMGR_Release(pIFileMgr);    
+                        MSG_FATAL("IDD_WRITEMSG_Handler pdwFree=%d, pdwTotal=%d",pdwFree, pdwTotal, 0);
+                        if((pdwFree > MSG_MAX_PACKET_SIZE+50))   
+                        {
+                            if(NULL == pMe->m_EncData.pMessage)
+                            {
+                                pMe->m_EncData.pMessage = MALLOC(sizeof(MMS_WSP_MESSAGE_SEND));
+                                MEMSET(pMe->m_EncData.pMessage,NULL,sizeof(MMS_WSP_MESSAGE_SEND));
+                            }
+                            DBGPRINTF("IDD_SENDING_Handler to:%s",pMe->m_EncData.pMessage->hTo);
+                            pMe->m_EncData.pMessage->iRetrieveStatus = MMS_VALUE_USELESSNESS;
+                            pMe->m_EncData.pMessage->iDate = MMS_VALUE_USELESSNESS;
+                            pMe->m_EncData.pMessage->iPriority = MMS_VALUE_USELESSNESS;
+                            pMe->m_EncData.pMessage->bSenderVisibility = pMe->m_isMMSSenderVisibility;
+                            pMe->m_EncData.pMessage->iRetrieveStatus = MMS_VALUE_USELESSNESS;
+                            pMe->m_EncData.pMessage->iExpiry = MMS_VALUE_USELESSNESS;
+                            pMe->m_EncData.pMessage->iDeliveryTime = MMS_VALUE_USELESSNESS;
+                            pMe->m_EncData.pMessage->bReadRep = pMe->m_isMMSReadReply;
+                            pMe->m_EncData.pMessage->bDelRep = pMe->m_isMMSDeliveryReport;                                                
+    	                    WMS_MMSState(WMS_MMS_PDU_DRAFT,0,(uint32)&pMe->m_EncData);
 
-                        ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSIMAGE,pszPath, sizeof(pszPath));      
-                        ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSSOUND,pszPath, sizeof(pszPath)); 
-                        ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSVIDEO,pszPath, sizeof(pszPath)); 
-                        FREEIF(pMe->m_EncData.pMessage);
-                        pMe->m_hasImage = FALSE;
-                        pMe->m_hasSound = FALSE;
-                        pMe->m_hasVideo = FALSE;
-                        pMe->m_isMMS = FALSE; 
-                        pMe->m_isSendToAlbumOrEmain = FALSE; 
+                            ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSIMAGE,pszPath, sizeof(pszPath));      
+                            ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSSOUND,pszPath, sizeof(pszPath)); 
+                            ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSVIDEO,pszPath, sizeof(pszPath)); 
+                            FREEIF(pMe->m_EncData.pMessage);
+                            pMe->m_hasImage = FALSE;
+                            pMe->m_hasSound = FALSE;
+                            pMe->m_hasVideo = FALSE;
+                            pMe->m_isMMS = FALSE; 
+                            pMe->m_isSendToAlbumOrEmain = FALSE; 
+                        }
     					CLOSE_DIALOG(DLGRET_CANCELED)
     					return TRUE;                        
                     }

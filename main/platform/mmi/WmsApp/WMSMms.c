@@ -30,8 +30,8 @@
 #else
 #include "BREWSimFeatures.h"  // Simulator Feature Definitions
 #endif
-#include "AEEEvent.h"
-#include "OEMClassIDs.h"      // Applet Ids
+
+#include "OEMClassIds.h"      // Applet Ids
 
 #include "WMSApp.h"
 #include "AEEHeap.h"          // AEE Memory Allocation Services
@@ -191,7 +191,6 @@ void WMS_MMS_SetSocketState(boolean state);
 #define POST_TEST ("POST %s HTTP/1.1\r\nHost:%s\r\nAccept-Charset:utf-8\r\nContent-Length:%d\r\nAccept:*/*,application/vnd.wap.mms-message\r\nAccept-Language:en\r\nAccept-Encoding:gzip,deflate\r\nContent-Type:application/vnd.wap.mms-message\r\nUser-Agent: http://mms.movilnet.com.ve/phonemodel.xml\r\nx-wap-profile: \"http://mms.movilnet.com.ve/phonemodel.xml\"\r\nKeep-Alive:300\r\nConnection:Keep-Alive\r\n\r\n")
 
 boolean bSocketLock = FALSE;
-boolean mms_space_enough = TRUE;
 boolean bCloseSocket = FALSE;
 IVector* pSocketParam= NULL;
 
@@ -4589,20 +4588,7 @@ static void ConnectError(void* pDdata, int nError)
 			
 		default:
 		{
-		    IFileMgr *pIFileMgr = NULL;
-		    int result = 0;
-            uint32 pdwTotal = 0;
-            uint32 pdwFree = 0;
-			result = ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_FILEMGR,(void **)&pIFileMgr);
-			if (SUCCESS != result)
-		    {
-				MSG_FATAL("MRS: Open file error %x", result,0,0);
-				return;
-		    }            
 		    MSG_FATAL("ConnectError error: 0x%x",nError,0,0);
-    		pdwFree = IFILEMGR_GetFreeSpace(pIFileMgr, &pdwTotal);    
-            MSG_FATAL("IFILEMGR_GetFreeSpace pdwFree=%d, pdwTotal=%d",pdwFree, pdwTotal, 0);
-            IFILEMGR_Release(pIFileMgr);
 		    ISHELL_PostEventEx(AEE_GetShell(),
                                          EVTFLG_ASYNC, 
                                          AEECLSID_WMSAPP, 

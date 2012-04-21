@@ -754,30 +754,7 @@ static NextFSMAction WMSST_MAIN_Handler(WmsApp *pMe)
         
         // 用户在主界面选择-- 新建短消息
         case DLGRET_WRITEMSG:
-            pMe->m_bTextFullAlert = FALSE;
-            {
-                uint16  nMsgID = 0;
-                IFileMgr *pIFileMgr = NULL;
-                int result = 0;
-                uint32 pdwTotal = 0;
-                uint32 pdwFree = 0;
-                result = ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_FILEMGR,(void **)&pIFileMgr);
-                if (SUCCESS != result)
-                {
-                    MSG_FATAL("WMSST_MAIN_Handler: Open file error %x", result,0,0);
-                    return FALSE;
-                }            
-                pdwFree = IFILEMGR_GetFreeSpace(pIFileMgr, &pdwTotal); 
-                IFILEMGR_Release(pIFileMgr);    
-                MSG_FATAL("WMSST_MAIN_Handler pdwFree=%d, pdwTotal=%d",pdwFree, pdwTotal, 0);
-                if((pdwFree < MSG_MAX_PACKET_SIZE+50))
-                {
-                    nMsgID = IDS_PHONEFULL;
-                    pMe->m_ePMsgType = MESSAGE_WARNNING;
-                    WmsApp_ShowMsgBox(pMe, nMsgID);
-                    return NFSMACTION_WAIT;
-                }
-            }            
+            pMe->m_bTextFullAlert = FALSE;         
             // 清空群发地址链表
             WmsApp_FreeMultiSendList(pMe->m_pSendList);
             pMe->m_eCreateWMSType = SEND_MSG_NEW;
@@ -1469,7 +1446,30 @@ static NextFSMAction WMSST_INBOXMSGOPTS_Handler(WmsApp *pMe)
                 WSTRTOSTR((AECHAR*)IVector_ElementAt(pMe->m_pSaveNumList,0),
                     str,
                     100);
-                MSG_FATAL("WMSST_TONUMLIST_Handler DLGRET_GETMMS=%s",str,0,0);
+                MSG_FATAL("WMSST_INBOXMSGOPTS_Handler DLGRET_GETMMS=%s",str,0,0);
+                {
+                    uint16  nMsgID = 0;
+                    IFileMgr *pIFileMgr = NULL;
+                    int result = 0;
+                    uint32 pdwTotal = 0;
+                    uint32 pdwFree = 0;
+                    result = ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_FILEMGR,(void **)&pIFileMgr);
+                    if (SUCCESS != result)
+                    {
+                        MSG_FATAL("WMSST_INBOXMSGOPTS_Handler: Open file error %x", result,0,0);
+                        return FALSE;
+                    }            
+                    pdwFree = IFILEMGR_GetFreeSpace(pIFileMgr, &pdwTotal); 
+                    IFILEMGR_Release(pIFileMgr);    
+                    MSG_FATAL("WMSST_INBOXMSGOPTS_Handler pdwFree=%d, pdwTotal=%d",pdwFree, pdwTotal, 0);
+                    if((pdwFree < MSG_MAX_PACKET_SIZE+50))
+                    {
+                        nMsgID = IDS_PHONEFULL;
+                        pMe->m_ePMsgType = MESSAGE_WARNNING;
+                        WmsApp_ShowMsgBox(pMe, nMsgID);
+                        return NFSMACTION_WAIT;
+                    }
+                }                      
                 if(!WMS_MMSState(WMS_MMS_PDU_WSPHTTPGETreq,0,(uint32)str))
                 {
                     pMe->m_GetStatus = HTTP_CODE_Bad_Request;
@@ -2792,6 +2792,29 @@ static NextFSMAction WMSST_TONUMLIST_Handler(WmsApp *pMe)
 
         case DLGRET_SENDOPT:
             MSG_FATAL("WMSST_TONUMLIST_Handler DLGRET_SENDOPT",0,0,0);
+            {
+                uint16  nMsgID = 0;
+                IFileMgr *pIFileMgr = NULL;
+                int result = 0;
+                uint32 pdwTotal = 0;
+                uint32 pdwFree = 0;
+                result = ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_FILEMGR,(void **)&pIFileMgr);
+                if (SUCCESS != result)
+                {
+                    MSG_FATAL("WMSST_TONUMLIST_Handler: Open file error %x", result,0,0);
+                    return FALSE;
+                }            
+                pdwFree = IFILEMGR_GetFreeSpace(pIFileMgr, &pdwTotal); 
+                IFILEMGR_Release(pIFileMgr);    
+                MSG_FATAL("WMSST_TONUMLIST_Handler pdwFree=%d, pdwTotal=%d",pdwFree, pdwTotal, 0);
+                if((pdwFree < MSG_MAX_PACKET_SIZE+50))
+                {
+                    nMsgID = IDS_PHONEFULL;
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }                
 #if defined(FEATURE_CARRIER_THAILAND_HUTCH) 
             if ((pMe->m_eCreateWMSType == SEND_MSG_RESERVE) ||
                 (pMe->m_eCreateWMSType == SEND_MSG_EDITRESERVE))
@@ -6147,11 +6170,34 @@ static NextFSMAction WMSST_EXTARCTDETAILS_Handler(WmsApp *pMe)
             {
                 char str[100] = {0};
                 MSG_FATAL("WMSST_INBOXMSGOPTS_Handler",0,0,0);
-                MSG_FATAL("WMSST_TONUMLIST_Handler DLGRET_GETMMS=%S",(AECHAR*)IVector_ElementAt(pMe->m_pSaveNumList,0),0,0);
+                MSG_FATAL("WMSST_EXTARCTDETAILS_Handler DLGRET_GETMMS=%S",(AECHAR*)IVector_ElementAt(pMe->m_pSaveNumList,0),0,0);
                 WSTRTOSTR((AECHAR*)IVector_ElementAt(pMe->m_pSaveNumList,0),
                     (char*)&str,
                     sizeof(str));
-                MSG_FATAL("WMSST_TONUMLIST_Handler DLGRET_GETMMS=%s",&str,0,0);
+                MSG_FATAL("WMSST_EXTARCTDETAILS_Handler DLGRET_GETMMS=%s",&str,0,0);
+                {
+                    uint16  nMsgID = 0;
+                    IFileMgr *pIFileMgr = NULL;
+                    int result = 0;
+                    uint32 pdwTotal = 0;
+                    uint32 pdwFree = 0;
+                    result = ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_FILEMGR,(void **)&pIFileMgr);
+                    if (SUCCESS != result)
+                    {
+                        MSG_FATAL("WMSST_EXTARCTDETAILS_Handler: Open file error %x", result,0,0);
+                        return FALSE;
+                    }            
+                    pdwFree = IFILEMGR_GetFreeSpace(pIFileMgr, &pdwTotal); 
+                    IFILEMGR_Release(pIFileMgr);    
+                    MSG_FATAL("WMSST_EXTARCTDETAILS_Handler pdwFree=%d, pdwTotal=%d",pdwFree, pdwTotal, 0);
+                    if((pdwFree < MSG_MAX_PACKET_SIZE+50))
+                    {
+                        nMsgID = IDS_PHONEFULL;
+                        pMe->m_ePMsgType = MESSAGE_WARNNING;
+                        WmsApp_ShowMsgBox(pMe, nMsgID);
+                        return NFSMACTION_WAIT;
+                    }
+                }                  
                 if(!WMS_MMSState(WMS_MMS_PDU_WSPHTTPGETreq,0,(uint32)str))
                 {
                     pMe->m_GetStatus = HTTP_CODE_Bad_Request;
