@@ -869,7 +869,7 @@ typedef enum {
 #define MAS_BREWSETINT_STRING    64
 
 #ifdef FEATURE_USES_MMS
-#define MAX_MMS_STORED 10//最多只能存10条彩
+#define MAX_MMS_STORED 5//最多只能存10条彩
 #define MAX_MMS_PROXY    20
 #define MAX_MMS_PORT    6
 
