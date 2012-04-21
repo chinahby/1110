@@ -50,7 +50,7 @@
         <Text>لا يوجد سجل</Text>
 	</STRING>
 	<STRING Id="1017" Name="IDS_VOLUME">
-        <Text>مستوى الصوت</Text>
+        <Text>حجم</Text>
 	</STRING>
 	<STRING Id="1018" Name="IDS_MUSICSORT">
         <Text>فرز حسب</Text>
