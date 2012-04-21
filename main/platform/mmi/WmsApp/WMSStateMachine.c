@@ -755,7 +755,29 @@ static NextFSMAction WMSST_MAIN_Handler(WmsApp *pMe)
         // 用户在主界面选择-- 新建短消息
         case DLGRET_WRITEMSG:
             pMe->m_bTextFullAlert = FALSE;
-            
+            {
+                uint16  nMsgID = 0;
+                IFileMgr *pIFileMgr = NULL;
+                int result = 0;
+                uint32 pdwTotal = 0;
+                uint32 pdwFree = 0;
+                result = ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_FILEMGR,(void **)&pIFileMgr);
+                if (SUCCESS != result)
+                {
+                    MSG_FATAL("WMSST_MAIN_Handler: Open file error %x", result,0,0);
+                    return FALSE;
+                }            
+                pdwFree = IFILEMGR_GetFreeSpace(pIFileMgr, &pdwTotal); 
+                IFILEMGR_Release(pIFileMgr);    
+                MSG_FATAL("WMSST_MAIN_Handler pdwFree=%d, pdwTotal=%d",pdwFree, pdwTotal, 0);
+                if((pdwFree < MSG_MAX_PACKET_SIZE+100))
+                {
+                    nMsgID = IDS_PHONEFULL;
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }            
             // 清空群发地址链表
             WmsApp_FreeMultiSendList(pMe->m_pSendList);
             pMe->m_eCreateWMSType = SEND_MSG_NEW;

@@ -4770,6 +4770,10 @@ boolean MMSSocket_FINISH_GETMSG(MMSSocket *ps)
             
             return TRUE;
         }
+        else
+        {
+            return FALSE;
+        }
     }
     if((ps->RecCount > 3) && (STRLEN((char*)ps->RecBuffer) == 0))
     {
