@@ -770,7 +770,7 @@ static NextFSMAction WMSST_MAIN_Handler(WmsApp *pMe)
                 pdwFree = IFILEMGR_GetFreeSpace(pIFileMgr, &pdwTotal); 
                 IFILEMGR_Release(pIFileMgr);    
                 MSG_FATAL("WMSST_MAIN_Handler pdwFree=%d, pdwTotal=%d",pdwFree, pdwTotal, 0);
-                if((pdwFree < MSG_MAX_PACKET_SIZE+100))
+                if((pdwFree < MSG_MAX_PACKET_SIZE+50))
                 {
                     nMsgID = IDS_PHONEFULL;
                     pMe->m_ePMsgType = MESSAGE_WARNNING;
