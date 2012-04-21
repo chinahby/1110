@@ -2176,7 +2176,7 @@ boolean WMS_MMS_SaveMMS(char* phoneNumber,char *pBuffer,int DataLen,int nKind)
 // Write buffer into file
     pIFile = IFILEMGR_OpenFile(pIFileMgr, mmsDataFileName, _OFM_CREATE);
 
-    if(NULL != pIFile)
+    if((NULL != pIFile) && (STRLEN(phoneNumber) > 0))
     {
         uint8 nbit =  pBuffer[1];
         pBuffer[1] = 0x84;//为了将来进“已发送彩信箱”里时方便调用WMS_MMS_PDU_Decode来解码
@@ -2188,44 +2188,44 @@ boolean WMS_MMS_SaveMMS(char* phoneNumber,char *pBuffer,int DataLen,int nKind)
         {
             MSG_FATAL("[WMS_MMS_SaveMMS] IFILE_Write pBuffer == NULL",0,0,0);            
         }
-        MSG_FATAL("[WMS_MMS_SaveMMS] IFILE_Write result=%d, DataLen=%d",result,DataLen,0);
-    }   
+        MSG_FATAL("[WMS_MMS_SaveMMS] IFILE_Write result=%d, DataLen=%d",result,DataLen,0); 
 
-//  Save mms info
-    DBGPRINTF("[WMS_MMS_SaveMMS] PhoneNumber:%s",phoneNumber);  
-    if(STRISTR(phoneNumber, "PLMN") != NULL)
-    {
-        char temp[32];
-        STRCPY(temp, phoneNumber+4);
-        DBGPRINTF("temp=%s", temp);
-        STRCPY(phoneNumber, temp);
-    }
-    if(STRCMP(phoneNumber,"Delivery") != 0)
-    {
-        STRTOPHONENUMBER(mmsDataInfoList[g_mmsDataInfoMax].phoneNumber,phoneNumber);
-    }
-    else
-    {
-        STRCPY(mmsDataInfoList[g_mmsDataInfoMax].phoneNumber, phoneNumber);
-    }
-    DBGPRINTF("[WMS_MMS_SaveMMS] PhoneNumber:%s",phoneNumber);  
-	//STRCPY(mmsDataInfoList[g_mmsDataInfoMax].phoneNumber, phoneNumber);
-    DBGPRINTF("[WMS_MMS_SaveMMS] PhoneNumber:0x%x:0x%x:0x%x",mmsDataFileName[0],mmsDataFileName[1],mmsDataFileName[2]);  
-    STRCPY(mmsDataInfoList[g_mmsDataInfoMax].MMSDataFileName, mmsDataFileName);
-    mmsDataInfoList[g_mmsDataInfoMax].MMSDatasize = DataLen;
-    mmsDataInfoList[g_mmsDataInfoMax].MMSDataReaded = FALSE;
-    
-    DBGPRINTF("[WMS_MMS_SaveMMS] PhoneNumber=%s, length=%d",
-        mmsDataInfoList[g_mmsDataInfoMax].phoneNumber,
-        STRLEN(mmsDataInfoList[g_mmsDataInfoMax].phoneNumber));      
-    DBGPRINTF("[WMS_MMS_SaveMMS] MMSDataFileName=%s",
-        mmsDataInfoList[g_mmsDataInfoMax].MMSDataFileName);
+    //  Save mms info
+        DBGPRINTF("[WMS_MMS_SaveMMS] PhoneNumber:%s",phoneNumber);  
+        if(STRISTR(phoneNumber, "PLMN") != NULL)
+        {
+            char temp[32];
+            STRCPY(temp, phoneNumber+4);
+            DBGPRINTF("temp=%s", temp);
+            STRCPY(phoneNumber, temp);
+        }
+        if(STRCMP(phoneNumber,"Delivery") != 0)
+        {
+            STRTOPHONENUMBER(mmsDataInfoList[g_mmsDataInfoMax].phoneNumber,phoneNumber);
+        }
+        else
+        {
+            STRCPY(mmsDataInfoList[g_mmsDataInfoMax].phoneNumber, phoneNumber);
+        }
+        g_mmsDataInfoMax++;
 
-    g_mmsDataInfoMax++;
-    MSG_FATAL("[WMS_MMS_SaveMMS] 3 g_mmsDataInfoMax=%d",g_mmsDataInfoMax,0,0);
-	ICONFIG_SetItem(pConfig, nMmsDataInfoType, (void*)&mmsDataInfoList, sizeof(mmsDataInfoList));        
-    ICONFIG_SetItem(pConfig, nMmsCoutType, &g_mmsDataInfoMax, sizeof(g_mmsDataInfoMax));  
+        DBGPRINTF("[WMS_MMS_SaveMMS] PhoneNumber:%s",phoneNumber);  
+    	//STRCPY(mmsDataInfoList[g_mmsDataInfoMax].phoneNumber, phoneNumber);
+        DBGPRINTF("[WMS_MMS_SaveMMS] PhoneNumber:0x%x:0x%x:0x%x",mmsDataFileName[0],mmsDataFileName[1],mmsDataFileName[2]);  
+        STRCPY(mmsDataInfoList[g_mmsDataInfoMax].MMSDataFileName, mmsDataFileName);
+        mmsDataInfoList[g_mmsDataInfoMax].MMSDatasize = DataLen;
+        mmsDataInfoList[g_mmsDataInfoMax].MMSDataReaded = FALSE;
+        
+        DBGPRINTF("[WMS_MMS_SaveMMS] PhoneNumber=%s, length=%d",
+            mmsDataInfoList[g_mmsDataInfoMax].phoneNumber,
+            STRLEN(mmsDataInfoList[g_mmsDataInfoMax].phoneNumber));      
+        DBGPRINTF("[WMS_MMS_SaveMMS] MMSDataFileName=%s",
+            mmsDataInfoList[g_mmsDataInfoMax].MMSDataFileName);
 
+        MSG_FATAL("[WMS_MMS_SaveMMS] 3 g_mmsDataInfoMax=%d",g_mmsDataInfoMax,0,0);
+    	ICONFIG_SetItem(pConfig, nMmsDataInfoType, (void*)&mmsDataInfoList, sizeof(mmsDataInfoList));        
+        ICONFIG_SetItem(pConfig, nMmsCoutType, &g_mmsDataInfoMax, sizeof(g_mmsDataInfoMax));  
+    }
 Exit:
     RELEASEIF(pIFile);
     RELEASEIF(pIFileMgr);
@@ -2307,7 +2307,7 @@ boolean WMS_MMS_DeleteMMSALL(int nKind)
         }
     }
     mmsCount = 0;
-    MEMSET((void*)mmsDataInfoList,NULL,sizeof(MMSData));
+    MEMSET((void*)mmsDataInfoList,NULL,sizeof(MMSData)*MAX_MMS_STORED);
     ICONFIG_SetItem(pConfig, nMmsDataInfoType, (void*)mmsDataInfoList, sizeof(mmsDataInfoList));        
     ICONFIG_SetItem(pConfig, nMmsCoutType, &mmsCount, sizeof(mmsCount));     
     RELEASEIF(pConfig);
