@@ -1897,15 +1897,12 @@ static OEMConfigListType oemi_cache = {
    ,{OEMNV_MMSIMAGE}
    ,{OEMNV_MMSSOUND}
    ,{OEMNV_MMSVIDEO}
-   ,{{"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE},
-     {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}
+   ,{{"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}
     }    ,      
     0   
-   ,{{"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE},
-     {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}
+   ,{{"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}
     }  //CFGI_MMSDATA_INFO
-   ,{{"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE},
-     {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}
+   ,{{"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}, {"0", "0", 0, FALSE}
     },  //CFGI_MMSDATA_INFO
     0,//CFGI_MMS_COUNT 
     0,//CFGI_MMS_COUNT
