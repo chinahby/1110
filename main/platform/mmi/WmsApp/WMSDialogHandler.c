@@ -1082,6 +1082,32 @@ static boolean IDD_MAIN_Handler(void        *pUser,
             AEE_CancelTimer(WMSDialog_keypadtimer,pMe);
 			AEE_SetTimer(5*1000,WMSDialog_keypadtimer,pMe);            
             MSG_FATAL("IDD_MAIN_Handler EVT_DIALOG_INIT 6",0,0,0);
+            {
+        	    IFileMgr *pIFileMgr = NULL;
+        	    int result = 0;
+                uint32 pdwTotal = 0;
+                uint32 pdwFree = 0;
+        		result = ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_FILEMGR,(void **)&pIFileMgr);
+        		if (SUCCESS != result)
+        	    {
+        			MSG_FATAL("IDD_MAIN_Handler: Open file error %x", result,0,0);
+        			return FALSE;
+        	    }            
+        		pdwFree = IFILEMGR_GetFreeSpace(pIFileMgr, &pdwTotal); 
+                MSG_FATAL("IDD_MAIN_Handler pdwFree=%d, pdwTotal=%d",pdwFree, pdwTotal, 0);
+                if((pdwFree < MSG_MAX_PACKET_SIZE))
+                {
+                  AECHAR    szBufTitle[100];
+                  AECHAR    szBufText[100];
+
+                  (void)STRTOWSTR("[ERROR]", szBufTitle, sizeof(szBufTitle));
+                  (void)STRTOWSTR("No enough space,please free some space", szBufText,
+                            sizeof(szBufText));
+                  MSG_FATAL("IDD_MAIN_Handler dddddddddddddd",0, 0, 0);
+                  (void)ISHELL_MessageBoxText(pMe->m_pShell, L"[ERROR]", L"No enough space,please free some space");                    
+                }
+                IFILEMGR_Release(pIFileMgr);  
+            }
             return TRUE;
 
         case EVT_DIALOG_START:

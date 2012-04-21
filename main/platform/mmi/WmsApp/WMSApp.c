@@ -1301,6 +1301,12 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
         case EVT_COMMAND:        	
         case EVT_KEY_PRESS:
         case EVT_KEY_RELEASE:
+#ifdef FEATURE_USES_MMS            
+            if(wParam == AVK_END)
+            {
+                WMS_MMS_SetSocketState(TRUE);
+            }
+#endif            
             return WmsApp_RouteDialogEvt(pMe,eCode,wParam,dwParam);
 
         case EVT_BUSY:
@@ -2948,6 +2954,7 @@ void WmsApp_UpdateMenuList(WmsApp *pMe, IMenuCtl *pMenu)
         {
             wstrNum[0] = 0;
             DBGPRINTF("pnode->pszNum=%s",pnode->pszNum);
+            DBGPRINTF("wszName=%s",wszName);
             // 从电话本中取人名
             if (NULL != pnode->pszNum)
             {
@@ -5194,6 +5201,7 @@ void WmsApp_PrepareUserDataMOList(WmsApp *pMe)
     // 确定消息编码方式及需划分的条数
     if (WMSUtil_HaveNoneASCIIChar(pMe->m_msSend.m_szMessage, NULL))
     {
+        DBGPRINTF("DRAFT encoding = WMS_ENCODING_UNICODE");
         encoding = WMS_ENCODING_UNICODE;
     }
     else
@@ -5232,12 +5240,14 @@ void WmsApp_PrepareUserDataMOList(WmsApp *pMe)
         {
             encoding = WMS_ENCODING_ASCII;
         }
+        DBGPRINTF("DRAFT encoding = WMS_ENCODING_ASCII");
 #endif //FEATURE_CARRIER_ANGOLA_MOVICEL
     }
 
     // 确定消息编码方式及需划分的条数
     if (WMS_ENCODING_UNICODE == encoding)
     {        
+        DBGPRINTF("WMS_ENCODING_UNICODE == encoding");
         if (nLen<=nMaxChars_UNICODE)
         {
             nMaxItemChars = nMaxChars_UNICODE;
@@ -5259,7 +5269,8 @@ void WmsApp_PrepareUserDataMOList(WmsApp *pMe)
         }
     }
     else if (WMS_ENCODING_ASCII == encoding)
-    {        
+    {      
+        DBGPRINTF("WMS_ENCODING_ASCII == encoding");
         if (nLen<=nMaxChars_ASCII)
         {
             nMaxItemChars = nMaxChars_ASCII;
@@ -5282,6 +5293,7 @@ void WmsApp_PrepareUserDataMOList(WmsApp *pMe)
     }
     else
     {        
+        DBGPRINTF("XXXXXXXXXXXXXXXX == encoding");
         if (nLen <= MAX_OCTETMSG_PAYLOAD)
         {
             nMaxItemChars = MAX_OCTETMSG_PAYLOAD;
@@ -5310,7 +5322,7 @@ void WmsApp_PrepareUserDataMOList(WmsApp *pMe)
     }
     
     (void) IVector_EnsureCapacity(pMe->m_pUserDataMOList, nItems);
-    
+    DBGPRINTF("nItems=%d",nItems);
     // 开始创建消息用户数据列表
     for (i=0; i<nItems; i++)
     {
@@ -5391,6 +5403,7 @@ void WmsApp_PrepareUserDataMOList(WmsApp *pMe)
             pMe->m_msSend.m_szMessage[nEnd] = 0;
             (void)WSTRTOSTR(&pMe->m_msSend.m_szMessage[i*nMaxItemChars], szText, nSize);
             pMe->m_msSend.m_szMessage[nEnd] = wChar;
+            DBGPRINTF("DRAFT szText1=%s", szText);
 #endif
             
             pUserdata->data_len = nChars;
@@ -5398,6 +5411,7 @@ void WmsApp_PrepareUserDataMOList(WmsApp *pMe)
                                                         pUserdata->data,
                                                         &pUserdata->data_len,
                                                         &pUserdata->padding_bits);
+            DBGPRINTF("DRAFT szText2=%s", szText);
             FREE(szText);
             if (SUCCESS != IVector_AddElement(pMe->m_pUserDataMOList, pUserdata))
             {

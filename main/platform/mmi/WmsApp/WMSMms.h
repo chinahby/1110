@@ -570,6 +570,7 @@ int MMS_PDU_PutPriority(int in_priority, int* out_priority);
 int MMS_PDU_PutDeliveryReportStatus(int in_Status, int* out_Status);
 int WMS_MMS_SEND_TEST(uint8 *buffer, char* sendNumber);
 int WMS_MMS_Decode_TEST(char *file);
+boolean WMS_MMS_DeleteMMSALL(int nKind);
 int WMS_MMS_SEND_PDU(WMS_MMS_PDU_MessageTypeValue type,uint8* hPDU,MMS_WSP_ENCODE_SEND* pData);
 int WMS_MMS_PDU_Encode(MMS_WSP_ENCODE_SEND* encdata, uint8* hPDU, uint8 ePDUType);
 int WMS_MMS_PDU_Decode(MMS_WSP_DEC_DATA* decdata,uint8* ptr, int datalen,uint8* ePDUType);

@@ -125,6 +125,7 @@ QINTERFACE(IWmsApp)
 extern boolean gbWmsVMailNtf;
 extern boolean gbWmsSMSNtf;
 extern boolean gbWmsLastNtfIsSMS;
+
 /*==============================================================================
 
                                  º¯ÊýÉùÃ÷
