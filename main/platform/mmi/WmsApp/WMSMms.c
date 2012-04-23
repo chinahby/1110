@@ -4779,7 +4779,7 @@ boolean WMS_MMSState(int nState,int16 wParam,uint32 dwParam)
     MMSSocket *pMMSSocket = NULL;
     boolean isLocked = FALSE;
 
-    MSG_FATAL("[MSG][WMS_MMSState]: Enter!",0,0, 0);       
+    MSG_FATAL("[MSG][WMS_MMSState]: Enter!",0,0, 0);      
     if(!WMS_SOCKET_LOCK())
     {
         WMS_MMS_SOCKET_PARAM* pParam = NULL;
@@ -5028,6 +5028,10 @@ static void MMSSocketState(MMSSocket *ps)
             }
             pBuf = (uint8*)MALLOC(MSG_MAX_PACKET_SIZE);
             nBufLen = WMS_MMS_PDU_Encode((MMS_WSP_ENCODE_SEND*)ps->dwParam,pBuf,ps->nState);
+            if(nBufLen == 0)
+            {
+                return;
+            }
             MMSSocketSend(ps,pBuf,nBufLen);
             FREEIF(((MMS_WSP_ENCODE_SEND*)ps->dwParam)->pMessage);
             FREEIF(pBuf);
