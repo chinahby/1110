@@ -73,6 +73,7 @@
 
 #ifdef FEATURE_USES_MMS
 #define MG_MAX_FILE_NAME            128
+
 /*
 #define RELEASEIF(p) \
    if (p != NULL) { IBASE_Release((IBase*)(p)); (p) = NULL; }
@@ -132,7 +133,8 @@ char* STRTOPHONENUMBER(char* pDesStr,char* pScrStr);
 uint8* WMS_MMS_ReadMMS(uint32 index,int nKind,uint32* pLen);
 boolean WMS_MMS_Resend(int nIndex,int nKind);
 
-void WMS_MMS_SetSocketState(boolean state);
+
+
 
 
 #define SLIM_WSP_WELL_KNWON_VALULES_MIME_TEXT_PLAIN 0x03
@@ -191,13 +193,7 @@ void WMS_MMS_SetSocketState(boolean state);
 #define POST_TEST ("POST %s HTTP/1.1\r\nHost:%s\r\nAccept-Charset:utf-8\r\nContent-Length:%d\r\nAccept:*/*,application/vnd.wap.mms-message\r\nAccept-Language:en\r\nAccept-Encoding:gzip,deflate\r\nContent-Type:application/vnd.wap.mms-message\r\nUser-Agent: http://mms.movilnet.com.ve/phonemodel.xml\r\nx-wap-profile: \"http://mms.movilnet.com.ve/phonemodel.xml\"\r\nKeep-Alive:300\r\nConnection:Keep-Alive\r\n\r\n")
 
 boolean bSocketLock = FALSE;
-boolean bCloseSocket = FALSE;
 IVector* pSocketParam= NULL;
-
-void WMS_MMS_SetSocketState(boolean state)
-{
-    bCloseSocket = state;
-}
 
 boolean WMS_SOCKET_LOCK()
 {
@@ -2026,71 +2022,7 @@ boolean WMS_MMS_SaveMMS(char* phoneNumber,char *pBuffer,int DataLen,int nKind)
     ICONFIG_GetItem(pConfig,
                    nMmsDataInfoType,
                    (void*)mmsDataInfoList,
-                   sizeof(mmsDataInfoList));  
-    {//要把这个移到一进入到短信的地方就提示。
-	    IFileMgr *pIFileMgr = NULL;
-	    int result = 0;
-        uint32 pdwTotal = 0;
-        uint32 pdwFree = 0;
-		result = ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_FILEMGR,(void **)&pIFileMgr);
-		if (SUCCESS != result)
-	    {
-			MSG_FATAL("WMS_MMS_SaveMMS: Open file error %x", result,0,0);
-			return FALSE;
-	    }            
-		pdwFree = IFILEMGR_GetFreeSpace(pIFileMgr, &pdwTotal); 
-        MSG_FATAL("WMS_MMS_SaveMMS pdwFree=%d, pdwTotal=%d",pdwFree, pdwTotal, 0);
-        if((pdwFree < MSG_MAX_PACKET_SIZE))
-        {
-            WMS_MMS_DeleteMMSALL(MMS_DRAFTBOX);
-        }
-        pdwFree = IFILEMGR_GetFreeSpace(pIFileMgr, &pdwTotal); 
-        if((pdwFree < MSG_MAX_PACKET_SIZE))
-        {
-            uint8 Max = 0;
-            uint8 index = 0;
-            ICONFIG_GetItem(pConfig, 
-                MMS_OUTBOX,
-                &Max,
-                sizeof(Max)); 
-            while((pdwFree < MSG_MAX_PACKET_SIZE) && (index++ < Max))
-            {
-                WMS_MMS_DeleteMMS(0,MMS_OUTBOX);
-                pdwFree = IFILEMGR_GetFreeSpace(pIFileMgr, &pdwTotal); 
-            }
-            Max = 0; 
-            index = 0;
-            if((pdwFree < MSG_MAX_PACKET_SIZE))
-            {
-                ICONFIG_GetItem(pConfig, 
-                    MMS_INBOX,
-                    &Max,
-                    sizeof(Max)); 
-                while((pdwFree < MSG_MAX_PACKET_SIZE) && (index++ < Max))
-                {
-                    uint8 m = Max-1;
-                    MMSData *pMmsDataInfoListTemp = NULL;
-                    for(; m >= 0; --m)
-                    {
-                         pMmsDataInfoListTemp = &mmsDataInfoList[index];
-                         if(pMmsDataInfoListTemp->MMSDataReaded)
-                         {
-                            //当有未读短信和已读短信时，要先删除已读短信
-                             WMS_MMS_DeleteMMS(m,MMS_INBOX);
-                             break;
-                         }
-                    }
-                    if(m < 0)//全部为未读短信
-                    {
-                        WMS_MMS_DeleteMMS(0,MMS_INBOX);
-                    }
-                    pdwFree = IFILEMGR_GetFreeSpace(pIFileMgr, &pdwTotal); 
-                }          
-            }
-        }
-        MSG_FATAL("WMS_MMS_SaveMMS pdwFree=%d, pdwTotal=%d",pdwFree, pdwTotal, 0);
-        IFILEMGR_Release(pIFileMgr);    
-    }    
+                   sizeof(mmsDataInfoList));    
     if(g_mmsDataInfoMax >= MAX_MMS_STORED)
     {
         if(nKind == MMS_INBOX)
@@ -2175,8 +2107,7 @@ boolean WMS_MMS_SaveMMS(char* phoneNumber,char *pBuffer,int DataLen,int nKind)
 
 // Write buffer into file
     pIFile = IFILEMGR_OpenFile(pIFileMgr, mmsDataFileName, _OFM_CREATE);
-
-    if((NULL != pIFile) && (STRLEN(phoneNumber) > 0))
+    if(NULL != pIFile)
     {
         uint8 nbit =  pBuffer[1];
         pBuffer[1] = 0x84;//为了将来进“已发送彩信箱”里时方便调用WMS_MMS_PDU_Decode来解码
@@ -2184,48 +2115,51 @@ boolean WMS_MMS_SaveMMS(char* phoneNumber,char *pBuffer,int DataLen,int nKind)
         RELEASEIF(pIFile);
         RELEASEIF(pIFileMgr);
         pBuffer[1] = nbit;
-        if(pBuffer == NULL)
-        {
-            MSG_FATAL("[WMS_MMS_SaveMMS] IFILE_Write pBuffer == NULL",0,0,0);            
-        }
-        MSG_FATAL("[WMS_MMS_SaveMMS] IFILE_Write result=%d, DataLen=%d",result,DataLen,0); 
+        MSG_FATAL("[WMS_MMS_SaveMMS] IFILE_Write result=%d",result,0,0);
+    }   
 
-    //  Save mms info
-        DBGPRINTF("[WMS_MMS_SaveMMS] PhoneNumber:%s",phoneNumber);  
-        if(STRISTR(phoneNumber, "PLMN") != NULL)
-        {
-            char temp[32];
-            STRCPY(temp, phoneNumber+4);
-            DBGPRINTF("temp=%s", temp);
-            STRCPY(phoneNumber, temp);
-        }
-        if(STRCMP(phoneNumber,"Delivery") != 0)
-        {
-            STRTOPHONENUMBER(mmsDataInfoList[g_mmsDataInfoMax].phoneNumber,phoneNumber);
-        }
-        else
-        {
-            STRCPY(mmsDataInfoList[g_mmsDataInfoMax].phoneNumber, phoneNumber);
-        }
-        g_mmsDataInfoMax++;
-
-        DBGPRINTF("[WMS_MMS_SaveMMS] PhoneNumber:%s",phoneNumber);  
-    	//STRCPY(mmsDataInfoList[g_mmsDataInfoMax].phoneNumber, phoneNumber);
-        DBGPRINTF("[WMS_MMS_SaveMMS] PhoneNumber:0x%x:0x%x:0x%x",mmsDataFileName[0],mmsDataFileName[1],mmsDataFileName[2]);  
-        STRCPY(mmsDataInfoList[g_mmsDataInfoMax].MMSDataFileName, mmsDataFileName);
-        mmsDataInfoList[g_mmsDataInfoMax].MMSDatasize = DataLen;
-        mmsDataInfoList[g_mmsDataInfoMax].MMSDataReaded = FALSE;
-        
-        DBGPRINTF("[WMS_MMS_SaveMMS] PhoneNumber=%s, length=%d",
-            mmsDataInfoList[g_mmsDataInfoMax].phoneNumber,
-            STRLEN(mmsDataInfoList[g_mmsDataInfoMax].phoneNumber));      
-        DBGPRINTF("[WMS_MMS_SaveMMS] MMSDataFileName=%s",
-            mmsDataInfoList[g_mmsDataInfoMax].MMSDataFileName);
-
-        MSG_FATAL("[WMS_MMS_SaveMMS] 3 g_mmsDataInfoMax=%d",g_mmsDataInfoMax,0,0);
-    	ICONFIG_SetItem(pConfig, nMmsDataInfoType, (void*)&mmsDataInfoList, sizeof(mmsDataInfoList));        
-        ICONFIG_SetItem(pConfig, nMmsCoutType, &g_mmsDataInfoMax, sizeof(g_mmsDataInfoMax));  
+//  Save mms info
+    DBGPRINTF("[WMS_MMS_SaveMMS] PhoneNumber:%s",phoneNumber);  
+    if((STRISTR(phoneNumber, "PLMN") != NULL) && (STRISTR(phoneNumber, "Delivery") != NULL))
+    {
+        char temp[32];
+        STRCPY(temp, phoneNumber+12);
+        DBGPRINTF("temp=%s", temp);
+        STRCPY(phoneNumber, temp);
     }
+    else if(STRISTR(phoneNumber, "PLMN") != NULL)
+    {
+        char temp[32];
+        STRCPY(temp, phoneNumber+4);
+        DBGPRINTF("temp=%s", temp);
+        STRCPY(phoneNumber, temp);
+    }
+    if(STRCMP(phoneNumber,"Delivery") != 0)
+    {
+        STRTOPHONENUMBER(mmsDataInfoList[g_mmsDataInfoMax].phoneNumber,phoneNumber);
+    }
+    else
+    {
+        STRCPY(mmsDataInfoList[g_mmsDataInfoMax].phoneNumber, phoneNumber);
+    }
+    DBGPRINTF("[WMS_MMS_SaveMMS] PhoneNumber:%s",phoneNumber);  
+	//STRCPY(mmsDataInfoList[g_mmsDataInfoMax].phoneNumber, phoneNumber);
+    DBGPRINTF("[WMS_MMS_SaveMMS] PhoneNumber:0x%x:0x%x:0x%x",mmsDataFileName[0],mmsDataFileName[1],mmsDataFileName[2]);  
+    STRCPY(mmsDataInfoList[g_mmsDataInfoMax].MMSDataFileName, mmsDataFileName);
+    mmsDataInfoList[g_mmsDataInfoMax].MMSDatasize = DataLen;
+    mmsDataInfoList[g_mmsDataInfoMax].MMSDataReaded = FALSE;
+    
+    DBGPRINTF("[WMS_MMS_SaveMMS] PhoneNumber=%s, length=%d",
+        mmsDataInfoList[g_mmsDataInfoMax].phoneNumber,
+        STRLEN(mmsDataInfoList[g_mmsDataInfoMax].phoneNumber));      
+    DBGPRINTF("[WMS_MMS_SaveMMS] MMSDataFileName=%s",
+        mmsDataInfoList[g_mmsDataInfoMax].MMSDataFileName);
+
+    g_mmsDataInfoMax++;
+    MSG_FATAL("[WMS_MMS_SaveMMS] 3 g_mmsDataInfoMax=%d",g_mmsDataInfoMax,0,0);
+	ICONFIG_SetItem(pConfig, nMmsDataInfoType, (void*)&mmsDataInfoList, sizeof(mmsDataInfoList));        
+    ICONFIG_SetItem(pConfig, nMmsCoutType, &g_mmsDataInfoMax, sizeof(g_mmsDataInfoMax));  
+
 Exit:
     RELEASEIF(pIFile);
     RELEASEIF(pIFileMgr);
@@ -2234,7 +2168,6 @@ Exit:
     return (result == SUCCESS);
     
 }
-
 boolean WMS_MMS_DeleteMMSALL(int nKind)
 {
     int i = 0;
@@ -4735,7 +4668,6 @@ boolean MMSSocket_FINISH_GETMSG(MMSSocket *ps)
     }
 
     MMS_DEBUG(("[MSG][DeviceSocket]: MMSSocket_FINISH_GETMSG ps->pOData=%s",ps->pOData));
-    MSG_FATAL("[MSG][DeviceSocket]: MMSSocket_FINISH_GETMSG RecBuffer len=%d", STRLEN((char*)ps->RecBuffer),0,0);
     if(ps->RecCount!= 0 
         && STRLEN((char*)ps->RecBuffer))
     {
@@ -4847,12 +4779,12 @@ boolean WMS_MMSState(int nState,int16 wParam,uint32 dwParam)
     MMSSocket *pMMSSocket = NULL;
     boolean isLocked = FALSE;
 
-    MSG_FATAL("[MSG][WMS_MMSState]: Enter!",0,0, 0);
+    MSG_FATAL("[MSG][WMS_MMSState]: Enter!",0,0, 0);       
     if(!WMS_SOCKET_LOCK())
     {
         WMS_MMS_SOCKET_PARAM* pParam = NULL;
         int i = 0;
-        MMS_DEBUG(("[MSG][WMS_MMSState]: LOCK!"));
+        MMS_DEBUG(("[MSG][WMS_MMSState]: LOCK!"));     
         if(pSocketParam == NULL)
         {
             ISHELL_CreateInstance(AEE_GetShell(),AEECLSID_VECTOR,(void**)&pSocketParam);
@@ -4874,7 +4806,7 @@ boolean WMS_MMSState(int nState,int16 wParam,uint32 dwParam)
         pParam->dwParam = dwParam;
         pParam->nState = nState;
         pParam->wParam = wParam;
-        bCloseSocket = FALSE; 
+        
         IVector_AddElement(pSocketParam,pParam);
         ISHELL_SetTimer(AEE_GetShell(),2000,&WMS_MMSWaitStack,AEE_GetShell());
         return TRUE;
@@ -4882,11 +4814,11 @@ boolean WMS_MMSState(int nState,int16 wParam,uint32 dwParam)
     MMSSocketNew(&pMMSSocket,AEE_SOCK_STREAM);
     if(pMMSSocket == NULL)
         return FALSE;
-       
+
     pMMSSocket->nState = nState;
     pMMSSocket->wParam = wParam;
     pMMSSocket->dwParam = dwParam;
-    bCloseSocket = FALSE;     
+        
     MMSSocketState(pMMSSocket);
     return TRUE;
 }
@@ -4943,12 +4875,7 @@ static void MMSSocketState(MMSSocket *ps)
         MMSSocketClose(&ps);
         return ;
     }
-    if(bCloseSocket)
-    {
-        MMS_DEBUG(("[MSG][DeviceSocket]:bCloseSocket = %d",bCloseSocket));
-        MMSSocketClose(&ps);
-        return ;
-    }
+
     MMS_DEBUG(("[MSG][DeviceSocket]: ps->nState = %d",ps->nState));
     switch(ps->nState)
     {
@@ -5139,7 +5066,7 @@ static void MMSSocketState(MMSSocket *ps)
             {
                 uint8* pData = (uint8*)STRSTR((const char*)ps->pOData,"\r\n\r\n") + 4;
                 uint32 nDataLen = (ps->nODataLen - ((uint32)pData - (uint32)(ps->pOData)));
-                MSG_FATAL("[MSG][DeviceSocket]: MMSSocketState nDataLen=%d",nDataLen, 0, 0);
+
                 MMS_DEBUG(("[MSG][DeviceSocket]: MMSSocketState Enter! pData:%d,ps->pData:%d",pData,ps->pOData));
                 if(pData != NULL && nDataLen > 0)
                 {
@@ -5415,21 +5342,17 @@ static void SocketReadableCB(void *pSocketData)
 
 		//when the RecCount equal to zero three times continiously,
 		//to ensure the connection is closed
+		MSG_FATAL("[MSG][DeviceSocket]: pData->NoDataCount > 3",0,0,0);
 		if(pData->NoDataCount > 3)
 		{
 		    MSG_FATAL("[MSG][DeviceSocket]: pData->NoDataCount > 3",0,0,0);
 		    if(pData->DNSCallback.pfnNotify)
     	    {
-                MSG_FATAL("[MSG][DeviceSocket]: pfnNotify != NULL",0,0,0);
     	        pData->DNSCallback.pfnNotify(pData->DNSCallback.pNotifyData);
     	        
     	        pData->DNSCallback.pNotifyData = NULL;
     	        pData->DNSCallback.pfnNotify = NULL;
     	    }
-            else
-            {
-                MSG_FATAL("[MSG][DeviceSocket]: pfnNotify == NULL",0,0,0);
-            }
 			return;
 		}
 	}

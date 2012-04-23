@@ -549,6 +549,7 @@ static int CWmsApp_InitAppData(WmsApp *pMe)
     pMe->m_MMSData = NULL;
     MEMSET(&pMe->m_EncData,NULL,sizeof(MMS_WSP_ENCODE_SEND));
     MEMSET(&pMe->m_ResData,NULL,sizeof(WSP_MMS_RESOURCE));
+    MEMSET(&pMe->m_DeliveryEncData,NULL,sizeof(MMS_WSP_ENCODE_SEND));
     pMe->m_pMedia = NULL;
     pMe->m_GetStatus = HTTP_CODE_OK;
     pMe->m_wSelectStore = 1;
@@ -790,6 +791,10 @@ static void CWmsApp_FreeAppData(WmsApp *pMe)
     FREEIF(pMe->m_EncData.pDeliveryacknowledgement);
     FREEIF(pMe->m_EncData.pNotifyresp);
     FREEIF(pMe->m_EncData.pMessage);
+    FREEIF(pMe->m_DeliveryEncData.pReadReport);
+    FREEIF(pMe->m_DeliveryEncData.pDeliveryacknowledgement);
+    FREEIF(pMe->m_DeliveryEncData.pNotifyresp);
+    FREEIF(pMe->m_DeliveryEncData.pMessage);    
     FREEIF(pMe->m_MMSData);
     pMe->m_isMMS = FALSE;
     pMe->m_isForward = FALSE;
@@ -1301,12 +1306,6 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
         case EVT_COMMAND:        	
         case EVT_KEY_PRESS:
         case EVT_KEY_RELEASE:
-#ifdef FEATURE_USES_MMS            
-            if(wParam == AVK_END)
-            {
-                WMS_MMS_SetSocketState(TRUE);
-            }
-#endif            
             return WmsApp_RouteDialogEvt(pMe,eCode,wParam,dwParam);
 
         case EVT_BUSY:
@@ -2276,15 +2275,19 @@ Exit:
                          WSTRCAT(wstrText,DeliveryNumber);
                          DBGPRINTF("wstrText=%S",wstrText);
                          DBGPRINTF("DeliveryNumber=%s",DeliveryNumber);
-                         
-                         if(NULL == pMe->m_EncData.pMessage)
+                         FREEIF(pMe->m_DeliveryEncData.pReadReport);
+                         FREEIF(pMe->m_DeliveryEncData.pDeliveryacknowledgement);
+                         FREEIF(pMe->m_DeliveryEncData.pNotifyresp);
+                         FREEIF(pMe->m_DeliveryEncData.pMessage);  
+                         MEMSET(&pMe->m_DeliveryEncData,NULL,sizeof(MMS_WSP_ENCODE_SEND));
+                         if(NULL == pMe->m_DeliveryEncData.pMessage)
                          {
-                             MSG_FATAL("IDD_WRITEMSG_Handler pMe->m_EncData.pMessage MALLOC",0,0,0);
-                             pMe->m_EncData.pMessage = MALLOC(sizeof(MMS_WSP_MESSAGE_SEND));
-                             MEMSET(pMe->m_EncData.pMessage,NULL,sizeof(MMS_WSP_MESSAGE_SEND));
+                             MSG_FATAL("IDD_WRITEMSG_Handler pMe->m_DeliveryEncData.pMessage MALLOC",0,0,0);
+                             pMe->m_DeliveryEncData.pMessage = MALLOC(sizeof(MMS_WSP_MESSAGE_SEND));
+                             MEMSET(pMe->m_DeliveryEncData.pMessage,NULL,sizeof(MMS_WSP_MESSAGE_SEND));
                          }
                              
-                         mms_data = &pMe->m_EncData.pMessage->mms_data;
+                         mms_data = &pMe->m_DeliveryEncData.pMessage->mms_data;
                          
                          MSG_FATAL("mms_data->frag_num=%d",mms_data->frag_num,0,0);
                          WSTRTOSTR(wstrText, mmsTextData, MMS_MAX_TEXT_SIZE+1);  
@@ -2302,17 +2305,17 @@ Exit:
                          STRNCPY((char*)mms_data->fragment[0].hContentName,"1.txt",len);
                          mms_data->frag_num++;
                          DBGPRINTF("mmsTextData=%s len=%d", mmsTextData, STRLEN(mmsTextData));  
-                         STRCPY((char*)pMe->m_EncData.pMessage->hTo,"Delivery");
-                         pMe->m_EncData.pMessage->iRetrieveStatus = MMS_VALUE_USELESSNESS;
-                         pMe->m_EncData.pMessage->iDate = MMS_VALUE_USELESSNESS;
-                         pMe->m_EncData.pMessage->iPriority = MMS_VALUE_USELESSNESS;
-                         pMe->m_EncData.pMessage->bSenderVisibility = pMe->m_isMMSSenderVisibility;
-                         pMe->m_EncData.pMessage->iRetrieveStatus = MMS_VALUE_USELESSNESS;
-                         pMe->m_EncData.pMessage->iExpiry = MMS_VALUE_USELESSNESS;
-                         pMe->m_EncData.pMessage->iDeliveryTime = MMS_VALUE_USELESSNESS;
-                         pMe->m_EncData.pMessage->bReadRep = pMe->m_isMMSReadReply;
-                         pMe->m_EncData.pMessage->bDelRep = pMe->m_isMMSDeliveryReport;                                                
-                         WMS_MMSState(WMS_MMS_PDU_MDeliveryInd,0,(uint32)&pMe->m_EncData);
+                         STRCPY((char*)pMe->m_DeliveryEncData.pMessage->hTo,"Delivery");
+                         pMe->m_DeliveryEncData.pMessage->iRetrieveStatus = MMS_VALUE_USELESSNESS;
+                         pMe->m_DeliveryEncData.pMessage->iDate = MMS_VALUE_USELESSNESS;
+                         pMe->m_DeliveryEncData.pMessage->iPriority = MMS_VALUE_USELESSNESS;
+                         pMe->m_DeliveryEncData.pMessage->bSenderVisibility = pMe->m_isMMSSenderVisibility;
+                         pMe->m_DeliveryEncData.pMessage->iRetrieveStatus = MMS_VALUE_USELESSNESS;
+                         pMe->m_DeliveryEncData.pMessage->iExpiry = MMS_VALUE_USELESSNESS;
+                         pMe->m_DeliveryEncData.pMessage->iDeliveryTime = MMS_VALUE_USELESSNESS;
+                         pMe->m_DeliveryEncData.pMessage->bReadRep = pMe->m_isMMSReadReply;
+                         pMe->m_DeliveryEncData.pMessage->bDelRep = pMe->m_isMMSDeliveryReport;   
+                         WMS_MMSState(WMS_MMS_PDU_MDeliveryInd,0,(uint32)&pMe->m_DeliveryEncData);
                         
                          
                         gbWmsMMSNtf = TRUE;

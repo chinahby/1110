@@ -2540,7 +2540,7 @@ static boolean IDD_MESSAGELIST_Handler(void        *pUser,
                         
                     case AVK_INFO:
                         pMe->m_wPrevMenuSel = IMENUCTL_GetSel(pMenu);
-                        MSG_FATAL("IDD_MESSAGELIST_Handler Start AVK_INFO pMe->m_wPrevMenuSel=%d",pMe->m_wPrevMenuSel,0,0);
+                        MSG_FATAL("IDD_MESSAGELIST_Handler Start  pMe->m_wPrevMenuSel=%d, pMe->m_eMBoxType=%d",pMe->m_wPrevMenuSel,pMe->m_eMBoxType,0);
 #ifdef FEATURE_USES_MMS
                         if((pMe->m_eMBoxType == WMS_MB_OUTBOX_MMS)
                             || (pMe->m_eMBoxType == WMS_MB_INBOX_MMS)
