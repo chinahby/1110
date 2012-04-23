@@ -5030,6 +5030,8 @@ static void MMSSocketState(MMSSocket *ps)
             nBufLen = WMS_MMS_PDU_Encode((MMS_WSP_ENCODE_SEND*)ps->dwParam,pBuf,ps->nState);
             if(nBufLen == 0)
             {
+                FREEIF(((MMS_WSP_ENCODE_SEND*)ps->dwParam)->pMessage);
+                FREEIF(pBuf);                
                 return;
             }
             MMSSocketSend(ps,pBuf,nBufLen);
