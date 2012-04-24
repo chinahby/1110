@@ -2011,7 +2011,7 @@ Exit:
             char *strAddr = (char*)MALLOC(100);
             uint8 ePDUType;
             MMS_WSP_ENCODE_SEND* sendData = &pMe->m_EncData;
-
+            DBGPRINTF("WMS Address = 0x%x", strAddr);  
             if(pBody == NULL)
             {
                 break;
@@ -2132,7 +2132,7 @@ Exit:
                             
                             if(sendData->pNotifyresp == NULL)
                                 sendData->pNotifyresp = (MMS_WSP_ENC_NOTIFY_RESP*)MALLOC(sizeof(MMS_WSP_ENC_NOTIFY_RESP));
-                                
+                            DBGPRINTF("WMS Address = 0x%x", sendData->pNotifyresp);      
                             if (IsRunAsUIMVersion())
                             { 
                                 ICONFIG_GetItem(pMe->m_pConfig,
@@ -2284,6 +2284,7 @@ Exit:
                          {
                              MSG_FATAL("IDD_WRITEMSG_Handler pMe->m_DeliveryEncData.pMessage MALLOC",0,0,0);
                              pMe->m_DeliveryEncData.pMessage = MALLOC(sizeof(MMS_WSP_MESSAGE_SEND));
+                             DBGPRINTF("WMS Address = 0x%x", pMe->m_DeliveryEncData.pMessage); 
                              MEMSET(pMe->m_DeliveryEncData.pMessage,NULL,sizeof(MMS_WSP_MESSAGE_SEND));
                          }
                              
@@ -2364,12 +2365,14 @@ Exit:
                         if(pMe->m_isMMSNotify)
                         {
                             sendData->pDeliveryacknowledgement = (MMS_WSP_ENC_DELIVERY_ACKNOWLEDGEMENT*)MALLOC(sizeof(MMS_WSP_ENC_DELIVERY_ACKNOWLEDGEMENT));
+                            DBGPRINTF("WMS Address = 0x%x", sendData->pDeliveryacknowledgement); 
                         }
                         else
                         {
                             if(sendData->pNotifyresp == NULL)
                             {
                                 sendData->pNotifyresp = (MMS_WSP_ENC_NOTIFY_RESP*)MALLOC(sizeof(MMS_WSP_ENC_NOTIFY_RESP));
+                                DBGPRINTF("WMS Address = 0x%x", sendData->pNotifyresp); 
                             }
                         }    
                         

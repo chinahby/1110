@@ -1099,7 +1099,7 @@ static boolean IDD_MAIN_Handler(void        *pUser,
                 
                 dwSize = 64 * sizeof(AECHAR);
                 pwsz = (AECHAR *)MALLOC(dwSize);
-                
+                DBGPRINTF("WMS Address = 0x%x", pwsz);
                 (void) ISHELL_PostEventEx(pMe->m_pShell, 
                                         EVTFLG_ASYNC,
                                         AEECLSID_WMSAPP,
@@ -8349,8 +8349,9 @@ static boolean IDD_SENDING_Handler(void *pUser,
                 {
                     WmsApp_FreeSendClentMsgList(pMe);
                     pClientMsg = (wms_client_message_s_type *)MALLOC(sizeof(wms_client_message_s_type));
+                    DBGPRINTF("WMS Address = 0x%x", pClientMsg);
                     pMe->m_pCurSendCltMsg = (wms_client_message_s_type **)MALLOC(sizeof(wms_client_message_s_type *));
-                    
+                    DBGPRINTF("WMS Address = 0x%x", pMe->m_pCurSendCltMsg);
                     if ((NULL == pnode) || 
                         (pMe->m_pCurSendCltMsg == NULL) ||
                         (NULL == pClientMsg))
@@ -8986,7 +8987,7 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                     if (NULL == pItem)
                     {// 保存当前地址的缓冲区尚未分配
                         pItem = (CMultiSendItemInfo *)sys_malloc(sizeof(CMultiSendItemInfo));
-                        
+                        DBGPRINTF("WMS Address = 0x%x", pItem);
                         if (NULL == pItem)
                         {// 缓冲区分配不成功
                             return TRUE;
@@ -9099,7 +9100,7 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                             if (NULL == pItem)
                             {// 保存当前地址的缓冲区尚未分配
                                 pItem = (CMultiSendItemInfo *)sys_malloc(sizeof(CMultiSendItemInfo));
-                                
+                                DBGPRINTF("WMS Address = 0x%x", pItem);
                                 if (NULL == pItem)
                                 {// 缓冲区分配不成功
                                     return TRUE;
@@ -9157,6 +9158,7 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                                     if(NULL == pMe->m_EncData.pMessage)
                                     {
                                         pMe->m_EncData.pMessage = MALLOC(sizeof(MMS_WSP_MESSAGE_SEND));
+                                        DBGPRINTF("WMS Address = 0x%x", pMe->m_EncData.pMessage);
                                         MEMSET(pMe->m_EncData.pMessage,NULL,sizeof(MMS_WSP_MESSAGE_SEND));
                                     }
                                     if(!pMe->m_isSendToAlbumOrEmain)
@@ -9406,6 +9408,7 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                         
                         // 添加当前输入
                         pItem = (CMultiSendItemInfo *)sys_malloc(sizeof(CMultiSendItemInfo));
+                        DBGPRINTF("WMS Address = 0x%x", pItem);
                         if (NULL != pItem)
                         {// 缓冲区分配成功
                             if (SUCCESS != IVector_AddElement(pMe->m_pSendList, pItem))
@@ -11339,7 +11342,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                 if ((mem_store == pnode->mem_store) && (pnode->index == wIdx))
                 {
                     WMSMessageStruct *pTms = (WMSMessageStruct *)MALLOC(sizeof(WMSMessageStruct));
-                    
+                    DBGPRINTF("WMS Address = 0x%x", pTms);
                     // 保存读取的数据
                     if (NULL != pTms)
                     {
@@ -12111,6 +12114,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                                 {
                                     MSG_FATAL("IDD_WRITEMSG_Handler pMe->m_EncData.pMessage MALLOC",0,0,0);
                                     pMe->m_EncData.pMessage = MALLOC(sizeof(MMS_WSP_MESSAGE_SEND));
+                                    DBGPRINTF("WMS Address = 0x%x", pMe->m_EncData.pMessage);
                                     MEMSET(pMe->m_EncData.pMessage,NULL,sizeof(MMS_WSP_MESSAGE_SEND));
                                 }
                                     
@@ -12169,6 +12173,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                                 {
                                     MSG_FATAL("IDD_WRITEMSG_Handler pMe->m_EncData.pMessage MALLOC",0,0,0);
                                     pMe->m_EncData.pMessage = MALLOC(sizeof(MMS_WSP_MESSAGE_SEND));
+                                    DBGPRINTF("WMS Address = 0x%x", pMe->m_EncData.pMessage);
                                     MEMSET(pMe->m_EncData.pMessage,NULL,sizeof(MMS_WSP_MESSAGE_SEND));
                                 }
                                     
@@ -12577,9 +12582,12 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                             if(NULL == pMe->m_EncData.pMessage)
                             {
                                 pMe->m_EncData.pMessage = MALLOC(sizeof(MMS_WSP_MESSAGE_SEND));
+                                DBGPRINTF("WMS Address = 0x%x", pMe->m_EncData.pMessage);
                                 MEMSET(pMe->m_EncData.pMessage,NULL,sizeof(MMS_WSP_MESSAGE_SEND));
+                                DBGPRINTF("WMS Address = 0x%x", pMe->m_EncData.pMessage);
                             }
                             DBGPRINTF("IDD_SENDING_Handler to:%s",pMe->m_EncData.pMessage->hTo);
+                            DBGPRINTF("WMS Address = 0x%x", pMe->m_EncData.pMessage);
                             pMe->m_EncData.pMessage->iRetrieveStatus = MMS_VALUE_USELESSNESS;
                             pMe->m_EncData.pMessage->iDate = MMS_VALUE_USELESSNESS;
                             pMe->m_EncData.pMessage->iPriority = MMS_VALUE_USELESSNESS;
@@ -13815,7 +13823,7 @@ static boolean IDD_MSGCOPY_Handler(void *pUser,
                     
                     nSize = 64 * sizeof(AECHAR);
                     wstrTips = (AECHAR *)MALLOC(nSize);
-                    
+                    DBGPRINTF("WMS Address = 0x%x", wstrTips);
                     if (NULL == wstrTips)
                     {
                         CLOSE_DIALOG(DLGRET_OK)
@@ -13976,7 +13984,7 @@ static boolean IDD_MSGCOPY_HandlerExt(void *pUser,
                 
                 nSize = 64 * sizeof(AECHAR);
                 wstrTips = (AECHAR *)MALLOC(nSize);
-                
+                DBGPRINTF("WMS Address = 0x%x", wstrTips);
                 if (NULL == wstrTips)
                 {
                     CLOSE_DIALOG(DLGRET_OK)
@@ -15829,6 +15837,7 @@ static AECHAR  * FormatMessageForDisplay(WmsApp *pMe, WMSMessageStruct *pMessage
             dwSize = (WSTRLEN(wstrFmt) + nName + WSTRLEN(wszTitle) + nLenNum + 1) * sizeof(AECHAR);
             
             wstrAddFld = (AECHAR *)MALLOC(dwSize);
+            DBGPRINTF("WMS Address = 0x%x", wstrAddFld);
             if (NULL == wstrAddFld)
             {
                 ERR("MALLOC Failed!",0,0,0);
@@ -15946,7 +15955,7 @@ static AECHAR  * FormatMessageForDisplay(WmsApp *pMe, WMSMessageStruct *pMessage
                     wstrMsg, sizeof(wstrMsg));
         dwSize = (WSTRLEN(wstrMsg) + WSTRLEN(wstrFmt) + 1) * sizeof(AECHAR);
         wstrOptCall = (AECHAR *)MALLOC(dwSize);
-        
+        DBGPRINTF("WMS Address = 0x%x", wstrOptCall);
         if (NULL == wstrOptCall)
         {
             ERR("MALLOC Failed!",0,0,0);
@@ -15965,7 +15974,7 @@ static AECHAR  * FormatMessageForDisplay(WmsApp *pMe, WMSMessageStruct *pMessage
                     wstrMsg, sizeof(wstrMsg));
         dwSize = (WSTRLEN(wstrMsg) + WSTRLEN(wstrFmt) + 1) * sizeof(AECHAR);
         wstrOptDel = (AECHAR *)MALLOC(dwSize);
-        
+        DBGPRINTF("WMS Address = 0x%x", wstrOptDel);
         if (NULL == wstrOptDel)
         {
             ERR("MALLOC Failed!",0,0,0);
@@ -15994,6 +16003,7 @@ static AECHAR  * FormatMessageForDisplay(WmsApp *pMe, WMSMessageStruct *pMessage
     dwSize = dwTotalLen * sizeof(AECHAR);
 
     wstrRet = (AECHAR *)MALLOC(dwSize);
+    DBGPRINTF("WMS Address = 0x%x", wstrRet);
     if (NULL == wstrRet)
     {
         ERR("MALLOC Failed!",0,0,0);
@@ -16146,6 +16156,7 @@ static AECHAR  * FormatFlashSMSForDisplay(WmsApp *pMe, WMSMessageStruct *pMessag
             dwSize = (WSTRLEN(wstrFmt) + nName + WSTRLEN(wszTitle) + nLenNum + 1) * sizeof(AECHAR);
             
             wstrAddFld = (AECHAR *)MALLOC(dwSize);
+            DBGPRINTF("WMS Address = 0x%x", wstrAddFld);
             if (NULL == wstrAddFld)
             {
                 ERR("MALLOC Failed!",0,0,0);
@@ -16252,6 +16263,7 @@ static AECHAR  * FormatFlashSMSForDisplay(WmsApp *pMe, WMSMessageStruct *pMessag
     dwSize = dwTotalLen * sizeof(AECHAR);
 
     wstrRet = (AECHAR *)MALLOC(dwSize);
+    DBGPRINTF("WMS Address = 0x%x", wstrRet);
     if (NULL == wstrRet)
     {
         ERR("MALLOC Failed!",0,0,0);
@@ -16423,7 +16435,7 @@ static boolean IDD_VOICEMAIL_Handler(void   *pUser,
                 
                 dwSize = 64 * sizeof(AECHAR);
                 pwsz = (AECHAR *)MALLOC(dwSize);
-                
+                DBGPRINTF("WMS Address = 0x%x", pwsz);
                 if (NULL == pwsz)
                 {
                     return FALSE;
@@ -17073,6 +17085,7 @@ static boolean IDD_LOADINGMSG_Handler(void   *pUser,
                 
                 dwSize = (MAX_TEMPLATECHARS + 1) * sizeof(AECHAR);
                 wstrTemplate = (AECHAR*)MALLOC(dwSize);
+                DBGPRINTF("WMS Address = 0x%x", wstrTemplate);
                 if (NULL == wstrTemplate)
                 {
                     CLOSE_DIALOG(DLGRET_LOADCANCELED)
@@ -17082,7 +17095,7 @@ static boolean IDD_LOADINGMSG_Handler(void   *pUser,
                 {// 用户常用语--通过读命令返回
                     wms_msg_event_info_s_type *Info = (wms_msg_event_info_s_type*)dwParam;
                     WMSMessageStruct  *pMsg = (WMSMessageStruct  *)MALLOC(sizeof(WMSMessageStruct));
-                        
+                    DBGPRINTF("WMS Address = 0x%x", pMsg);    
                     if (pMsg == NULL)
                     {
                         FREE(wstrTemplate);
@@ -17247,7 +17260,7 @@ static boolean IDD_LOADINGMSG_Handler(void   *pUser,
                     
                     nSize = (nLen + nCanInsert + 1) * sizeof(AECHAR);
                     wszTep = (AECHAR *)MALLOC(nSize);
-                    
+                    DBGPRINTF("WMS Address = 0x%x", wszTep);    
                     if (wszTep != NULL)
                     {
                         MEMSET(wszTep, 0, nSize);
@@ -17294,7 +17307,7 @@ static boolean IDD_LOADINGMSG_Handler(void   *pUser,
                 if ((mem_store == pnode->mem_store) && (pnode->index == wIdx))
                 {
                     WMSMessageStruct *pTms = (WMSMessageStruct *)MALLOC(sizeof(WMSMessageStruct));
-                    
+                    DBGPRINTF("WMS Address = 0x%x", pTms);   
                     // 保存读取的数据
                     if (NULL != pTms)
                     {
@@ -18496,7 +18509,7 @@ static boolean IDD_FLASHSMS_Handler(void *pUser,
             if ((mem_store == pnode->mem_store) && (pnode->index == wIdx))
             {
                 WMSMessageStruct *pTms = (WMSMessageStruct *)MALLOC(sizeof(WMSMessageStruct));
-                
+                DBGPRINTF("WMS Address = 0x%x", pTms);   
                 // 保存读取的数据
                 if (NULL != pTms)
                 {
@@ -19191,6 +19204,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                 {
                     MSG_FATAL("IDD_VIEWMSG_MMS_Handler 3", 0,0,0);
                     pBuffer = MALLOC(pMmsDataInfoCur->MMSDatasize*sizeof(uint8));
+                    DBGPRINTF("WMS Address = 0x%x", pBuffer);   
                     if(pBuffer == NULL)
                     {
                         MSG_FATAL("pBuffer MALLOC FAILED", 0,0,0);
@@ -19218,7 +19232,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                     {
                         pMe->m_EncData.pReadReport = (MMS_WSP_ENC_READ_REPORT*)MALLOC(sizeof(MMS_WSP_ENC_READ_REPORT));
                     }
-
+                    DBGPRINTF("WMS Address = 0x%x", pMe->m_EncData.pReadReport);  
                     STRCPY((char*)pMe->m_EncData.pReadReport->hTransactionID,(char*)pDecdata->message.hTransactionID);
                     STRCPY((char*)pMe->m_EncData.pReadReport->hTo,(char*)pDecdata->message.hFrom);
                     STRCPY((char*)pMe->m_EncData.pReadReport->hMessageID,(char*)pDecdata->message.hMessageID);
@@ -19243,6 +19257,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                     {
                         FREEIF(pViewText);
                         pViewText = (AECHAR*)MALLOC((rSize+1)*sizeof(AECHAR));
+                        DBGPRINTF("WMS Address = 0x%x", pViewText);  
                         rSize = pDecdata->message.mms_data.fragment[index].size;
                         MSG_FATAL("IDD_VIEWMSG_MMS_Handler 4 size=%d", rSize,0,0);
                         UTF8TOWSTR((byte*)(pDecdata->message.mms_data.fragment[index].pContent),rSize, pViewText, (rSize+1)*sizeof(AECHAR));
@@ -20066,6 +20081,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                                 pContentText[0] = 0xef;
                                 pContentText[1] = 0xbb;
                                 pContentText[2] = 0xbf;
+                                DBGPRINTF("WMS Address = 0x%x", pContentText); 
                                 MEMCPY((void*)&pContentText[3],(void*)pDecdata->message.mms_data.fragment[index].pContent,rSize);
                                 rSize += 3;
                             }
@@ -20074,6 +20090,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                                 MEMCPY((void*)pContentText,(void*)pDecdata->message.mms_data.fragment[index].pContent,rSize);
                             }
                             pFormatedText = (AECHAR *)MALLOC((rSize*sizeof(AECHAR)));
+                            DBGPRINTF("WMS Address = 0x%x", pFormatedText); 
                             MEMSET((void*)pFormatedText, 0, rSize*sizeof(AECHAR));
                             MSG_FATAL("size=%d", rSize,0,0);
                             DBGPRINTF("IDD_VIEWMSG_MMS_Handler pContent=%s", pDecdata->message.mms_data.fragment[index].pContent);
@@ -20405,6 +20422,7 @@ static IImage* WmsLoadImageFromData(WmsApp *pMe,int nFragIndex,char* pMimeType)
     MSG_FATAL("[WmsLoadImageFromData] Enter", 0, 0, 0);
     rSize = pMmsData->fragment[nFragIndex].size;
     pData = (uint8 *)MALLOC((rSize*sizeof(uint8)));
+    DBGPRINTF("WMS Address = 0x%x", pData); 
     MEMSET((void*)pData, NULL, rSize*sizeof(uint8));
     MEMCPY(pData,(void*)pMmsData->fragment[nFragIndex].pContent , rSize);
     
@@ -20545,6 +20563,7 @@ int AddMimeResIntoMms(WmsApp *pMe,char* pPath)
     if(NULL == pMe->m_EncData.pMessage)
     {
         pMe->m_EncData.pMessage = (MMS_WSP_MESSAGE_SEND*)MALLOC(sizeof(MMS_WSP_MESSAGE_SEND));
+        DBGPRINTF("WMS Address = 0x%x", pMe->m_EncData.pMessage); 
         MSG_FATAL("[AddMimeResIntoMms] NEW MMS MSG",0,0,0);
     }
 
@@ -20732,6 +20751,7 @@ int WMSMMS_GetResByExplorer(void* pv, FileNamesBuf pBuf, uint32 nBufSize)
     if(NULL == pMe->m_EncData.pMessage)
     {
         pMe->m_EncData.pMessage = (MMS_WSP_MESSAGE_SEND*)MALLOC(sizeof(MMS_WSP_MESSAGE_SEND));
+        DBGPRINTF("WMS Address = 0x%x", pMe->m_EncData.pMessage); 
     }
 
     if(NULL == pMe->m_EncData.pMessage)
@@ -20930,6 +20950,7 @@ static boolean IDD_EDIT_ALBUMOREMAIN_Handler(void *pUser,
                 if(pItem == NULL)
                 {
                     pItem = (CMultiSendItemInfo *)sys_malloc(sizeof(CMultiSendItemInfo));
+                    DBGPRINTF("WMS Address = 0x%x", pItem); 
                     if (NULL != pItem)
                     {// 缓冲区分配成功
                         MSG_FATAL("IDD_EDIT_ALBUMOREMAIN_Handler IVector_AddElement",0,0,0);

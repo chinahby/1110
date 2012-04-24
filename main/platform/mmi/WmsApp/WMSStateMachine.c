@@ -1314,6 +1314,7 @@ static NextFSMAction WMSST_INBOXMSGOPTS_Handler(WmsApp *pMe)
                 if (NULL != pwstrNum)
                 { 
                     pItem = (CMultiSendItemInfo *)sys_malloc(sizeof(CMultiSendItemInfo));
+                    DBGPRINTF("WMS Address = 0x%x", pItem); 
                 }
                     
                 // 将回复号码保存入链表
@@ -1441,6 +1442,7 @@ static NextFSMAction WMSST_INBOXMSGOPTS_Handler(WmsApp *pMe)
 
             {
                 char* str = (char*)MALLOC(100);
+                DBGPRINTF("WMS Address = 0x%x", str); 
                 MSG_FATAL("WMSST_INBOXMSGOPTS_Handler",0,0,0);
                 MSG_FATAL("WMSST_TONUMLIST_Handler DLGRET_GETMMS=%S",(AECHAR*)IVector_ElementAt(pMe->m_pSaveNumList,0),0,0);
                 WSTRTOSTR((AECHAR*)IVector_ElementAt(pMe->m_pSaveNumList,0),
@@ -4031,7 +4033,7 @@ static NextFSMAction WMSST_OUTMSGOPTS_Handler(WmsApp *pMe)
                 }
                 
                 pItem = (CMultiSendItemInfo *)sys_malloc(sizeof(CMultiSendItemInfo));
-                    
+                DBGPRINTF("WMS Address = 0x%x", pItem);     
                 // 将回复号码保存入链表
                 if ((pItem == NULL) || 
                     (SUCCESS != IVector_AddElement(pMe->m_pSendList, pItem)))
@@ -5130,7 +5132,7 @@ static NextFSMAction WMSST_RESERVEDMSGOPT_Handler(WmsApp *pMe)
                 if (WSTRLEN(pMe->m_msCur.m_szNum)>0)
                 {
                     pItem = (CMultiSendItemInfo *)sys_malloc(sizeof(CMultiSendItemInfo));
-                    
+                    DBGPRINTF("WMS Address = 0x%x", pItem);  
                     if ((NULL != pItem) &&
                         (SUCCESS != IVector_AddElement(pMe->m_pSendList, pItem)))
                     {
@@ -5211,7 +5213,7 @@ static NextFSMAction WMSST_RESERVEDMSGOPT_Handler(WmsApp *pMe)
                 }
                 
                 pItem = (CMultiSendItemInfo *)sys_malloc(sizeof(CMultiSendItemInfo));
-                    
+                DBGPRINTF("WMS Address = 0x%x", pItem);      
                 // 将回复号码保存入链表
                 if ((pItem == NULL) || 
                     (SUCCESS != IVector_AddElement(pMe->m_pSendList, pItem)))
@@ -5353,7 +5355,7 @@ static NextFSMAction WMSST_RESERVEDMSGALERT_Handler(WmsApp *pMe)
                 if ((NULL != pnode->pszNum) && (STRLEN(pnode->pszNum)>0))
                 {
                     pItem = (CMultiSendItemInfo *)sys_malloc(sizeof(CMultiSendItemInfo));
-                    
+                    DBGPRINTF("WMS Address = 0x%x", pItem);  
                     // 将回复号码保存入链表
                     if ((pItem == NULL) || 
                         (SUCCESS != IVector_AddElement(pMe->m_pSendList, pItem)))
@@ -6326,6 +6328,7 @@ static NextFSMAction WMSST_EXTARCTEDITEMOPT_Handler(WmsApp *pMe)
                 
                 // 将接收方号码保存入链表
                 pItem = (CMultiSendItemInfo *)sys_malloc(sizeof(CMultiSendItemInfo));
+                DBGPRINTF("WMS Address = 0x%x", pItem);  
                 if (pItem == NULL)
                 {
                     MOVE_TO_STATE(WMSST_VIEWINBOXMSG)
@@ -7424,6 +7427,7 @@ static NextFSMAction WMSST_VIEWINBOXMSG_MMS_Handler(WmsApp *pMe)
                 if (NULL != pwstrNum)
                 { 
                     pItem = (CMultiSendItemInfo *)sys_malloc(sizeof(CMultiSendItemInfo));
+                    DBGPRINTF("WMS Address = 0x%x", pItem);  
                 }
                     
                 // 将回复号码保存入链表
@@ -7444,6 +7448,7 @@ static NextFSMAction WMSST_VIEWINBOXMSG_MMS_Handler(WmsApp *pMe)
                     if (NULL == pItem)
                     { 
                         pItem = (CMultiSendItemInfo *)sys_malloc(sizeof(CMultiSendItemInfo));
+                        DBGPRINTF("WMS Address = 0x%x", pItem);  
                     }
                     if(SUCCESS != IVector_AddElement(pMe->m_pSendList, pItem))
                     {
@@ -7575,7 +7580,7 @@ static NextFSMAction WMSST_OUTMSGOPTS_MMS_Handler(WmsApp *pMe)
 		    {
 		        CMultiSendItemInfo *pPhoneNumber = (CMultiSendItemInfo*)MALLOC(sizeof(CMultiSendItemInfo));
 		        MMSData	mmsDataInfoList[MAX_MMS_STORED];
-		        
+		        DBGPRINTF("WMS Address = 0x%x", pPhoneNumber);  
 		        pMe->m_isMMS = TRUE;
 		        ICONFIG_GetItem(pMe->m_pConfig,CFGI_MMSOUTDATA_INFO,&mmsDataInfoList,sizeof(mmsDataInfoList));
 		        STRTOWSTR(mmsDataInfoList[pMe->m_wSelItemxuhao - 1].phoneNumber,
@@ -7599,7 +7604,7 @@ static NextFSMAction WMSST_OUTMSGOPTS_MMS_Handler(WmsApp *pMe)
 		    {
 		        CMultiSendItemInfo *pPhoneNumber = (CMultiSendItemInfo*)MALLOC(sizeof(CMultiSendItemInfo));
 		        MMSData	mmsDataInfoList[MAX_MMS_STORED];
-		        
+		        DBGPRINTF("WMS Address = 0x%x", pPhoneNumber);  
 		        pMe->m_isMMS = TRUE;
 		        ICONFIG_GetItem(pMe->m_pConfig,CFGI_MMSOUTDATA_INFO,&mmsDataInfoList,sizeof(mmsDataInfoList));
 		        STRTOWSTR(mmsDataInfoList[pMe->m_wSelItemxuhao - 1].phoneNumber,
@@ -7711,7 +7716,7 @@ static NextFSMAction WMSST_INMSGOPTS_MMS_Handler(WmsApp *pMe)
             {
                 CMultiSendItemInfo *pPhoneNumber = (CMultiSendItemInfo*)MALLOC(sizeof(CMultiSendItemInfo));
                 MMSData mmsDataInfoList[MAX_MMS_STORED];
-                
+                DBGPRINTF("WMS Address = 0x%x", pPhoneNumber);  
                 pMe->m_isMMS = TRUE;
                 ICONFIG_GetItem(pMe->m_pConfig,CFGI_MMSINDATA_INFO,&mmsDataInfoList,sizeof(mmsDataInfoList));
                 STRTOWSTR(mmsDataInfoList[pMe->m_wSelItemxuhao - 1].phoneNumber,
@@ -7735,7 +7740,7 @@ static NextFSMAction WMSST_INMSGOPTS_MMS_Handler(WmsApp *pMe)
 		    {
 		        CMultiSendItemInfo *pPhoneNumber = (CMultiSendItemInfo*)MALLOC(sizeof(CMultiSendItemInfo));
 		        MMSData	mmsDataInfoList[MAX_MMS_STORED];
-		        
+		        DBGPRINTF("WMS Address = 0x%x", pPhoneNumber);  
 		        pMe->m_isMMS = TRUE;
 		        ICONFIG_GetItem(pMe->m_pConfig,CFGI_MMSINDATA_INFO,&mmsDataInfoList,sizeof(mmsDataInfoList));
 		        STRTOWSTR(mmsDataInfoList[pMe->m_wSelItemxuhao - 1].phoneNumber,
@@ -7852,6 +7857,7 @@ static NextFSMAction WMSST_VIEWDRAFTBOXMSG_MMS_Handler(WmsApp *pMe)
                 if (NULL != pwstrNum)
                 { 
                     pItem = (CMultiSendItemInfo *)sys_malloc(sizeof(CMultiSendItemInfo));
+                    DBGPRINTF("WMS Address = 0x%x", pItem);  
                 }
                     
                 // 将回复号码保存入链表
@@ -7872,6 +7878,7 @@ static NextFSMAction WMSST_VIEWDRAFTBOXMSG_MMS_Handler(WmsApp *pMe)
                     if (NULL == pItem)
                     { 
                         pItem = (CMultiSendItemInfo *)sys_malloc(sizeof(CMultiSendItemInfo));
+                        DBGPRINTF("WMS Address = 0x%x", pItem);  
                     }
                     if(SUCCESS != IVector_AddElement(pMe->m_pSendList, pItem))
                     {
@@ -7993,7 +8000,7 @@ static NextFSMAction WMSST_DRAFTMSGOPTS_MMS_Handler(WmsApp *pMe)
             {
                 CMultiSendItemInfo *pPhoneNumber = (CMultiSendItemInfo*)MALLOC(sizeof(CMultiSendItemInfo));
                 MMSData mmsDataInfoList[MAX_MMS_STORED];
-                
+                DBGPRINTF("WMS Address = 0x%x", pPhoneNumber);  
                 pMe->m_isMMS = TRUE;
                 ICONFIG_GetItem(pMe->m_pConfig,CFGI_MMSINDATA_INFO,&mmsDataInfoList,sizeof(mmsDataInfoList));
                 STRTOWSTR(mmsDataInfoList[pMe->m_wSelItemxuhao - 1].phoneNumber,
@@ -8017,7 +8024,7 @@ static NextFSMAction WMSST_DRAFTMSGOPTS_MMS_Handler(WmsApp *pMe)
 		    {
 		        CMultiSendItemInfo *pPhoneNumber = (CMultiSendItemInfo*)MALLOC(sizeof(CMultiSendItemInfo));
 		        MMSData	mmsDataInfoList[MAX_MMS_STORED];
-		        
+		        DBGPRINTF("WMS Address = 0x%x", pPhoneNumber);  
 		        pMe->m_isMMS = TRUE;
 		        ICONFIG_GetItem(pMe->m_pConfig,CFGI_MMSINDATA_INFO,&mmsDataInfoList,sizeof(mmsDataInfoList));
 		        STRTOWSTR(mmsDataInfoList[pMe->m_wSelItemxuhao - 1].phoneNumber,

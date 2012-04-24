@@ -1927,7 +1927,7 @@ uint8* WMS_MMS_BUFFERGet()
 {
     if(pBuf == NULL)
         pBuf = (uint8*)sys_malloc(MSG_MAX_PACKET_SIZE);
-        
+        DBGPRINTF("WMS Address = 0x%x", pBuf);
     return pBuf;
 }
 
@@ -2112,11 +2112,11 @@ boolean WMS_MMS_SaveMMS(char* phoneNumber,char *pBuffer,int DataLen,int nKind)
         uint8 nbit =  pBuffer[1];
         pBuffer[1] = 0x84;//为了将来进“已发送彩信箱”里时方便调用WMS_MMS_PDU_Decode来解码
         result = IFILE_Write(pIFile, (void*)pBuffer, DataLen);
-        RELEASEIF(pIFile);
-        RELEASEIF(pIFileMgr);
         pBuffer[1] = nbit;
         MSG_FATAL("[WMS_MMS_SaveMMS] IFILE_Write result=%d",result,0,0);
     }   
+    RELEASEIF(pIFile);
+    RELEASEIF(pIFileMgr);
 
 //  Save mms info
     DBGPRINTF("[WMS_MMS_SaveMMS] PhoneNumber:%s",phoneNumber);  
@@ -3162,6 +3162,7 @@ static int MMS_WSP_Decode_MultipartData(uint8* pData, int iDataLen,int nParts, W
 					//bodycreated = TMIMEParts_NewBodySS(iMIMEParts,iPart,pbyte,iInsDataLen,SLIM_MIMECODEC_BINARY,TRUE);
 					iMIMEParts[cur_part].size = iPartDataLen;
 					iMIMEParts[cur_part].pContent = MALLOC(iPartDataLen+1);
+                    DBGPRINTF("WMS Address = 0x%x", iMIMEParts[cur_part].pContent);
                     iMIMEParts[cur_part].pContent[iPartDataLen] = '\0';
 					MEMCPY(iMIMEParts[cur_part].pContent,pbyte,iPartDataLen);
 				}
@@ -4434,6 +4435,7 @@ boolean  MMSSocketNew (MMSSocket **pps, uint16 nType)
 		{
 			return FALSE;
 		}
+        DBGPRINTF("WMS Address = 0x%x", pps);
         MEMSET(*pps,NULL,sizeof(MMSSocket));
 		(*pps)->pISocket = pISocket;
         (*pps)->bConnected = FALSE;
@@ -4803,6 +4805,7 @@ boolean WMS_MMSState(int nState,int16 wParam,uint32 dwParam)
         }
         
         pParam = (WMS_MMS_SOCKET_PARAM*)MALLOC(sizeof(WMS_MMS_SOCKET_PARAM));
+        DBGPRINTF("WMS Address = 0x%x", pParam);
         pParam->dwParam = dwParam;
         pParam->nState = nState;
         pParam->wParam = wParam;
@@ -4814,7 +4817,7 @@ boolean WMS_MMSState(int nState,int16 wParam,uint32 dwParam)
     MMSSocketNew(&pMMSSocket,AEE_SOCK_STREAM);
     if(pMMSSocket == NULL)
         return FALSE;
-
+    DBGPRINTF("WMS Address = 0x%x", pMMSSocket);
     pMMSSocket->nState = nState;
     pMMSSocket->wParam = wParam;
     pMMSSocket->dwParam = dwParam;
@@ -4899,6 +4902,7 @@ static void MMSSocketState(MMSSocket *ps)
                 break;
             }
             pBuf = (uint8*)MALLOC(SOCKET_BUFFER_SIZE);
+            DBGPRINTF("WMS Address = 0x%x", pBuf);
             MMS_DEBUG(("[MSG][DeviceSocket]: pBuf:%d",pBuf));
             nBufLen = WMS_MMS_PDU_Encode((MMS_WSP_ENCODE_SEND*)ps->dwParam,pBuf,ps->nState);
             MMS_DEBUG(("[MSG][DeviceSocket]: nBufLen:%d",nBufLen));
@@ -4914,6 +4918,7 @@ static void MMSSocketState(MMSSocket *ps)
             uint32 nBufLen = 0;
             MSG_FATAL("MMSSocketState WMS_MMS_PDU_DRAFT",0,0,0);
             pBuf = (uint8*)MALLOC(MSG_MAX_PACKET_SIZE);
+            DBGPRINTF("WMS Address = 0x%x", pBuf);
             nBufLen = WMS_MMS_PDU_Encode((MMS_WSP_ENCODE_SEND*)ps->dwParam,pBuf,WMS_MMS_PDU_DRAFT);
             MMSSocketClose(&ps);
             FREEIF(pBuf);
@@ -4926,6 +4931,7 @@ static void MMSSocketState(MMSSocket *ps)
             uint32 nBufLen = 0;
             MSG_FATAL("MMSSocketState WMS_MMS_PDU_MDeliveryInd",0,0,0);
             pBuf = (uint8*)MALLOC(MSG_MAX_PACKET_SIZE);
+            DBGPRINTF("WMS Address = 0x%x", pBuf);
             nBufLen = WMS_MMS_PDU_Encode((MMS_WSP_ENCODE_SEND*)ps->dwParam,pBuf,WMS_MMS_PDU_MDeliveryInd);
             MMSSocketClose(&ps);
             FREEIF(pBuf);
@@ -4949,7 +4955,14 @@ static void MMSSocketState(MMSSocket *ps)
                 break;
             }
             pBuf = (uint8*)MALLOC(SOCKET_BUFFER_SIZE);
+            DBGPRINTF("WMS Address = 0x%x", pBuf);
             nBufLen = WMS_MMS_PDU_Encode((MMS_WSP_ENCODE_SEND*)ps->dwParam,pBuf,ps->nState);
+            if(nBufLen < 0)
+            {
+                FREEIF(((MMS_WSP_ENCODE_SEND*)ps->dwParam)->pReadReport);
+                FREEIF(pBuf);                
+                return;
+            }
             MMSSocketSend(ps,pBuf,nBufLen);
             FREEIF(((MMS_WSP_ENCODE_SEND*)ps->dwParam)->pReadReport);
             FREEIF(pBuf);
@@ -4972,6 +4985,7 @@ static void MMSSocketState(MMSSocket *ps)
                 break;
             }
             pBuf = (uint8*)MALLOC(SOCKET_BUFFER_SIZE);
+            DBGPRINTF("WMS Address = 0x%x", pBuf);
             nBufLen = WMS_MMS_PDU_Encode((MMS_WSP_ENCODE_SEND*)ps->dwParam,pBuf,ps->nState);
             MMSSocketSend(ps,pBuf,nBufLen);
             FREEIF(((MMS_WSP_ENCODE_SEND*)ps->dwParam)->pDeliveryacknowledgement);
@@ -5027,13 +5041,8 @@ static void MMSSocketState(MMSSocket *ps)
                 break;
             }
             pBuf = (uint8*)MALLOC(MSG_MAX_PACKET_SIZE);
+            DBGPRINTF("WMS Address = 0x%x", pBuf);
             nBufLen = WMS_MMS_PDU_Encode((MMS_WSP_ENCODE_SEND*)ps->dwParam,pBuf,ps->nState);
-            if(nBufLen == 0)
-            {
-                FREEIF(((MMS_WSP_ENCODE_SEND*)ps->dwParam)->pMessage);
-                FREEIF(pBuf);                
-                return;
-            }
             MMSSocketSend(ps,pBuf,nBufLen);
             FREEIF(((MMS_WSP_ENCODE_SEND*)ps->dwParam)->pMessage);
             FREEIF(pBuf);
@@ -5058,6 +5067,7 @@ static void MMSSocketState(MMSSocket *ps)
                 break;
             }
             pBuf = (uint8*)MALLOC(MSG_MAX_PACKET_SIZE);
+            DBGPRINTF("WMS Address = 0x%x", pBuf);
             pContentBuf = WMS_MMS_ReadMMS(ps->dwParam,ps->wParam,&nContentLen);
             pContentBuf[1] = 0x80;
             nBufLen =  WMS_MMS_EncodePostHead(pBuf,pContentBuf,nContentLen);
@@ -5165,6 +5175,7 @@ boolean  MMSSocketSend (MMSSocket *ps, const uint8 *pBuf, uint32 nLen)
     ps->nDataLen = nLen;
     FREEIF(ps->pSendData);
 	ps->pSendData = (uint8*)MALLOC(nLen);
+    DBGPRINTF("WMS Address = 0x%x", ps->pSendData);
 	if ( ps->pSendData == NULL )
 	{
 		return ENOMEMORY;
