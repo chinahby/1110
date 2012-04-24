@@ -6495,6 +6495,7 @@ static boolean MediaGalleryApp_SoundSettingDlg_HandleEvent(CMediaGalleryApp *pMe
                                   CFGI_BEEP_VOL,
                                   &pMe->m_nKeyBeepVol,
                                   sizeof(byte));
+                  RELEASEIF(pConfig);
                }
                else
                {
