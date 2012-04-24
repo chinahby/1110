@@ -21748,7 +21748,7 @@ static boolean IDD_MMS_MEMSTATUS_Handler(void *pUser,
                 // 获取消息数
                 (void) ICONFIG_GetItem(pMe->m_pConfig,CFGI_MMS_INCOUNT,&nOnUIMs,sizeof(nOnUIMs));
                 MSG_FATAL("IDD_MMS_MEMSTATUS_Handler INBOX nOnUIMs=%d", nOnUIMs, 0, 0);
-                (void)SPRINTF(strVal, "%d/%d", nOnUIMs, 10); 
+                (void)SPRINTF(strVal, "%d/%d", nOnUIMs, MAX_MMS_STORED); 
                 (void)STRTOWSTR(strVal, wstrVal, sizeof(wstrVal));
                 (void)ISHELL_LoadResString(pMe->m_pShell, AEE_WMSAPPRES_LANGFILE,
                             IDS_INBOX_MMS, wstrDevice,sizeof(wstrDevice));
@@ -21766,7 +21766,7 @@ static boolean IDD_MMS_MEMSTATUS_Handler(void *pUser,
                 (void) ICONFIG_GetItem(pMe->m_pConfig,CFGI_MMS_OUTCOUNT,&nOnUIMs,sizeof(nOnUIMs));
                 MSG_FATAL("IDD_MMS_MEMSTATUS_Handler OUTBOX nOnUIMs=%d", nOnUIMs, 0, 0);
                 y += nLineHeight + 1;
-                (void)SPRINTF(strVal, "%d/%d", nOnUIMs, 10); 
+                (void)SPRINTF(strVal, "%d/%d", nOnUIMs, MAX_MMS_STORED); 
                 (void)STRTOWSTR(strVal, wstrVal, sizeof(wstrVal));
                 (void)ISHELL_LoadResString(pMe->m_pShell, AEE_WMSAPPRES_LANGFILE,
                             IDS_OUTBOX_MMS, wstrDevice,sizeof(wstrDevice));
@@ -21784,7 +21784,7 @@ static boolean IDD_MMS_MEMSTATUS_Handler(void *pUser,
                 (void) ICONFIG_GetItem(pMe->m_pConfig,CFGI_MMS_DRAFTCOUNT,&nOnUIMs,sizeof(nOnUIMs));
                 MSG_FATAL("IDD_MMS_MEMSTATUS_Handler DRAFT nOnUIMs=%d", nOnUIMs, 0, 0);
                 y += nLineHeight + 1;
-                (void)SPRINTF(strVal, "%d/%d", nOnUIMs, 10); 
+                (void)SPRINTF(strVal, "%d/%d", nOnUIMs, MAX_MMS_STORED); 
                 (void)STRTOWSTR(strVal, wstrVal, sizeof(wstrVal));
                 (void)ISHELL_LoadResString(pMe->m_pShell, AEE_WMSAPPRES_LANGFILE,
                             IDS_DRAFT_MMS, wstrDevice,sizeof(wstrDevice));
