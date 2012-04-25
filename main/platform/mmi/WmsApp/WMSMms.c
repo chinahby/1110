@@ -5195,6 +5195,8 @@ static void MMI_SocketSend(void *pData)
 	uint32 nLen = pUserData->nDataLen - pUserData->nBytesSent;
 	
 	MSG_FATAL("[MSG][DeviceSocket]: MMI_SocketSend Enter nLen = %d,pSocketInfo->nBytesSent=%d",nLen,pUserData->nBytesSent,0);
+
+	ISOCKET_Cancel(pUserData->pISocket,MMI_SocketSend,pUserData);
 	
 	if(nLen > 0)
 	{

@@ -1526,7 +1526,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
 								uint8 *header = NULL;
 								uint8 *ptrCur = NULL;
 								header = (uint8 *)MALLOC(header_len+1);
-                                
+                                MSG_FATAL("WMS address=0x%x", header, 0, 0);
                                 
 								if( NULL == header)
 								{
@@ -1564,6 +1564,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
 							}
 
 							body = (uint8*)sys_malloc(body_len);
+                            MSG_FATAL("WMS address=0x%x", body, 0, 0);
 							if( NULL == body )
 							{
 								MSG_FATAL("SMSPUSH_ALLOC_ERROR2",0,0,0);
