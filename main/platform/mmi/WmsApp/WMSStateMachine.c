@@ -2794,6 +2794,7 @@ static NextFSMAction WMSST_TONUMLIST_Handler(WmsApp *pMe)
 
         case DLGRET_SENDOPT:
             MSG_FATAL("WMSST_TONUMLIST_Handler DLGRET_SENDOPT",0,0,0);
+            #ifdef FEATURE_USES_MMS
             {
                 uint16  nMsgID = 0;
                 IFileMgr *pIFileMgr = NULL;
@@ -2816,7 +2817,8 @@ static NextFSMAction WMSST_TONUMLIST_Handler(WmsApp *pMe)
                     WmsApp_ShowMsgBox(pMe, nMsgID);
                     return NFSMACTION_WAIT;
                 }
-            }                
+            }
+            #endif
 #if defined(FEATURE_CARRIER_THAILAND_HUTCH) 
             if ((pMe->m_eCreateWMSType == SEND_MSG_RESERVE) ||
                 (pMe->m_eCreateWMSType == SEND_MSG_EDITRESERVE))
