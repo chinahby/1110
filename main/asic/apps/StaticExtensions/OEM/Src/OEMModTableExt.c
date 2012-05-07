@@ -973,6 +973,10 @@ extern int AppTimerMod_Load(IShell *ps, void *pHelpers, IModule **pMod);
 extern int CNetFront3_Load(IShell *ps, void *pHelpers, IModule **pMod);
 #endif
 
+#if defined(FEATURE_NEMOBREW)
+extern int nemobrew_Load(IShell *ps, void *pHelpers, IModule **pMod);
+#endif
+
 #if defined(FEATURE_CONVERTER)
 extern int  ConverterMod_Load(IShell* ps, void* pHelpers, IModule** ppMod);
 #endif
@@ -1336,6 +1340,11 @@ static const AEEStaticMod gOEMStaticModList[] =
 #if defined(FEATURE_VIDEOPLAYER)
     {AEEFS_MIF_DIR"videoplayer.mif", VideoPlayerMod_Load},
 #endif
+
+#ifdef FEATURE_NEMOBREW
+    {AEEFS_MIF_DIR"nemobrew.mif", nemobrew_Load},
+#endif
+
 #if defined(FEATURE_SUPPORT_WAP_APP)
     {AEEFS_MIF_DIR"netfront3.mif", CNetFront3_Load},
 #endif
