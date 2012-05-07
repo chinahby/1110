@@ -856,7 +856,9 @@ NUMBERMANAGER =         $(MMIDIR)/NumberManager
 ADJUSTPENAPP =          $(MMIDIR)/AdjustPenApp
 APPLICATION   =         $(MMIDIR)/Application
 GAME     =              $(MMIDIR)/Games/game
+NEMOMBREW_PATH  =       $(MMIDIR)/nemobrew
 TVAPP = 		$(MMIDIR)/TvApp
+
 ifeq ($(USES_FRENDUO),yes)
 FRENDUO  =         		$(MMIDIR)/FrenDuo
 endif
