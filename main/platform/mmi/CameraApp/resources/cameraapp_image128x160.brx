@@ -55,6 +55,18 @@
 	<Object Id="5018" Name="IDI_SELFTIME_15">
 		<File>..\..\Appscommon\images\128x160\common\CameraApp\Sec_15.PNG</File>
 	</Object>
+	<Object Id="5019" Name="IDI_SIZE_176_220">
+		<File>..\..\Appscommon\images\128x160\common\CameraApp\176_220.PNG</File>
+	</Object>
+	<Object Id="5020" Name="IDI_SIZE_240_320">
+		<File>..\..\Appscommon\images\128x160\common\CameraApp\320_240.PNG</File>
+	</Object>
+	<Object Id="5021" Name="IDI_SIZE_480_640">
+		<File>..\..\Appscommon\images\128x160\common\CameraApp\640_480.PNG</File>
+	</Object>
+	<Object Id="5022" Name="IDI_SIZE_128_160">
+		<File>..\..\Appscommon\images\128x160\common\CameraApp\128_160.PNG</File>
+	</Object>
 	<Object Id="5023" Name="IDI_BANDING_50">
 		<File>..\..\Appscommon\images\128x160\common\CameraApp\50_Hz.PNG</File>
 	</Object>
