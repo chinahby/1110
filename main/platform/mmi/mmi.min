@@ -161,6 +161,9 @@ endif
 ifeq ($(USES_WAPBROWSER),yes)
 include $(WAPBROWSER)/WapBrowser.min
 endif
+#ifneq ($(FEATURE_NEMOBREW),yes)
+include $(NEMOMBREW_PATH)/nemobrew.min
+#endif
 
 ifeq ($(USES_ATV),yes)
 include $(TVAPP)/TVApp.min
