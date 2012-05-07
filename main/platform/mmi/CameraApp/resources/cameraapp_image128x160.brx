@@ -88,14 +88,11 @@
 	<Object Id="5057" Name="IDI_COUNT_DOWN">
 		<File>..\..\Appscommon\images\128x160\common\CameraApp\countdown.png</File>
 	</Object>
-	<Object Id="5070" Name="IDI_SIZE_128_160">
-		<File>..\..\Appscommon\images\128x160\common\CameraApp\128_160.PNG</File>
+	<Object Id="5060" Name="IDI_SIZE_180_240">
+		<File>..\..\Appscommon\images\128x160\common\CameraApp\180_240.png</File>
 	</Object>
-	<Object Id="5071" Name="IDI_SIZE_176_220">
-		<File>..\..\Appscommon\images\128x160\common\CameraApp\176_220.PNG</File>
-	</Object>
-	<Object Id="5072" Name="IDI_SIZE_240_320">
-		<File>..\..\Appscommon\images\128x160\common\CameraApp\240_320.PNG</File>
+	<Object Id="5061" Name="IDI_SIZE_144_176">
+		<File>..\..\Appscommon\images\128x160\common\CameraApp\144_176.PNG</File>
 	</Object>
 </Objects>
 </BREWRes>
