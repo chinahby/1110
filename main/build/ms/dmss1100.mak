@@ -728,6 +728,9 @@ ifeq ($(USES_SPI), yes)
   OBJECTS += $(SPI_OBJS)
 endif
 
+ifeq ($(USES_BREW_BUIW), yes)
+  OBJECTS += $(BUIW_OBJS)
+endif
 #-------------------------------------------------------------------------------
 # Add PBL_OBJS and CFG_DATA_OBJS to the object list if its a NOR boot.
 #-------------------------------------------------------------------------------

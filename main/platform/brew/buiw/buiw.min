@@ -28,6 +28,7 @@ WIDGET_SOURCES1=\
 		FontMapModel.c \
 		GridContainer.c \
 		HFontOutline.c \
+		ImageBase.c \
 		ImageStaticWidget.c \
 		ImageWidget.c \
 		TextLayout.c \
