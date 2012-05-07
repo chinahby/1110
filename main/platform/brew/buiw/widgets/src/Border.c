@@ -777,6 +777,7 @@ boolean Border_HandleEvent(Border *me, AEEEvent evt, uint16 wParam, uint32 dwPar
       boolean bOldActive = me->bActive;
       me->bActive = (wParam != 0);
 
+//      DBGPRINTF("me=%ld, me->bActive=%d", (unsigned long)me, (int)me->bActive);
 
       if (bOldActive != me->bActive && 
           (me->nWidth[0] != me->nWidth[1]

@@ -51,7 +51,7 @@ GENERAL DESCRIPTION:
 
 
 #ifndef FARF
-#define FARF(x, p)
+#define FARF(x, p)  if (0 != FARF_##x) DBGPRINTF p 
 #endif
 
 

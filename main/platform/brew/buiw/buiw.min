@@ -6,6 +6,7 @@
 # Widgets source files
 WIDGET_SOURCES1=\
 		AEEBase.c \
+		Bitmap32.c \
 		BitmapWidget.c	\
 		BlendWidget.c \
 		Border.c \
@@ -24,11 +25,12 @@ WIDGET_SOURCES1=\
 		DrawDecoratorWidget.c \
 		FileSource.c \
 		FontBidiUtil.c \
+		FontMapModel.c \
 		GridContainer.c \
 		HFontOutline.c \
 		ImageStaticWidget.c \
 		ImageWidget.c \
-		LayoutText.c \
+		TextLayout.c \
 		LineTable.c \
 		ListWidget.c \
 		MenuModel.c \
@@ -43,6 +45,7 @@ WIDGET_SOURCES2=\
 		ResFile.c \
 		ResObj.c \
 		RootContainer.c \
+		ResDecoderCache.c \
 		ScrollWidget.c \
 		SliderWidget.c \
 		SoftkeyWidget.c \
@@ -59,6 +62,7 @@ WIDGET_SOURCES2=\
 		ViewportWidget.c \
 		widget_mod.c \
 		WidgetBase.c \
+		WidgetContBase.c \
 		wutil.c \
 		XYContainer.c
 		

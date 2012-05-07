@@ -88,6 +88,7 @@ static void Dictionary_Dump(Dictionary *me, Assoc *pAssoc, char *pBuffer, char *
       int nNameLen = (int)STRLEN(pszName);
 
       STRLCPY(pAppend, pszName, (unsigned)cbRem);
+      DBGPRINTF("%s type=%d, id=%d", pBuffer, (int)pAssoc->type, (int)pAssoc->id);
 
       // if node has children...descend using recursion
       if (pAssoc->type == RESTYPE_DICT && pAssoc->id < me->nrAssocs) {
@@ -391,6 +392,7 @@ int Dictionary_New(Dictionary **ppo, ResObj *pResObj)
 
 #ifdef DEBUG_DICTIONARY
    if (!nErr) {
+      DBGPRINTF("===== Dumping dictionary =====");
       Dictionary_DebugDump(me);
    }
 #endif
