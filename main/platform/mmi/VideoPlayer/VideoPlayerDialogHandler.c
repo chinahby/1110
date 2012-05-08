@@ -2167,15 +2167,21 @@ void Draw_Parser_Text(CVideoPlayer* pMe,const AECHAR* pText,uint16* height)
     const uint16 charh = 18;
 	#endif
 	AEERect rc = {0,0,SCR_W,SCR_H};
-	#ifdef FEATURE_VERSION_X3
+	#if defined(FEATURE_VERSION_X3) 
 	rc.x  = pMe->m_rc.x + 2;
 	rc.dx = pMe->m_rc.dx - 2;
+    #elif defined(FEATURE_VERSION_1110W516)
+    rc.x  = pMe->m_rc.x;
+	rc.dx = pMe->m_rc.dx;
 	#else
 	rc.x  = pMe->m_rc.x + 5;
 	rc.dx = pMe->m_rc.dx - 5;
 	#endif
     rc.y = VIDEOPLAYER_NAMEPART_H;
     rc.dy = pMe->m_rc.dy - VIDEOPLAYER_NAMEPART_H -  GetBottomBarHeight(pMe->m_pDisplay) - 5;
+    #if defined(FEATURE_VERSION_1110W516)
+    rc.dy = pMe->m_rc.dy - VIDEOPLAYER_NAMEPART_H -  GetBottomBarHeight(pMe->m_pDisplay);
+    #endif
 	#ifdef FEATURE_VERSION_X3
 	wcharw = 25;
 	#endif
@@ -2727,8 +2733,17 @@ boolean VideoPlayer_ChangeScrState(CVideoPlayer* pMe,boolean isLockScr)
 
             if(rc.dx < rc.dy)
             {
-                result = IMEDIA_SetMediaParm((IMedia*)pMe->m_pMedia, MM_MP4_PARM_ROTATION, MM_MPEG4_90_CW_ROTATION, 0);
-				result += IMEDIA_SetMediaParm((IMedia*)pMe->m_pMedia, MM_MP4_PARM_ASCALING, rc.dx, rc.dy);
+                 AEEMediaMPEG4Spec *pMP4Spec = NULL;
+                 int32 nSpecSize = 0;
+
+                 IMedia_GetMediaParm((IMedia*)pMe->m_pMedia,MM_MP4_PARM_MEDIA_SPEC,(int32 *)&pMP4Spec,(int32 *)&nSpecSize);
+                 MSG_FATAL("VideoPlayer_ChangeScrState-1--dx=%d---dy=%d",pMP4Spec->dwWidth,pMP4Spec->dwHeight,0);
+                 if(pMP4Spec->dwWidth > pMP4Spec->dwHeight)
+                 {
+                    result = IMEDIA_SetMediaParm((IMedia*)pMe->m_pMedia, MM_MP4_PARM_ROTATION, MM_MPEG4_90_CW_ROTATION, 0);
+				 }
+                result += IMEDIA_SetMediaParm((IMedia*)pMe->m_pMedia, MM_MP4_PARM_ASCALING, rc.dx, rc.dy);
+
             }
             else
             {
