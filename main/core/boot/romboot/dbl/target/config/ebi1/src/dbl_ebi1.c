@@ -104,7 +104,7 @@ dbl_nor_device Intel_256M18_ADMux =
 {
   "INTEL 256 M18 ADMux",
   2,                             /* # of codes to match */    
-  { 0x89, 8904 },              /* Manufacture codes. */
+  { 0x89, 0x8904 },              /* Manufacture codes. */
 };
 
 dbl_nor_device Intel_512M18_ADMux =
