@@ -170,6 +170,9 @@
 	  <String Id="1078" Name="IDS_CAMERA_RECORD_STOP">
 				<Text>توقف</Text>
 		</String>
+		<String Id="1079" Name="IDS_CAMERA_SAVE_VIDEO">
+		   <Text>حفظ فيديو</Text>
+	  </String>
 </Strings>
 <Dialogs>
 	<Dialog Id="6001" Name="IDD_CMAINMENU" Focus="7001">
