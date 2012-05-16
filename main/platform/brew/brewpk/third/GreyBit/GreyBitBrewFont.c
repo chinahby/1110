@@ -1318,6 +1318,7 @@ ArphicMeasureNChars(const AECHAR *pcText, int nChars)
 {
     AECHAR nCharsContent = 0;
     AECHAR *pText = (AECHAR *)pcText;
+    int16 nRealSize = WSTRLEN(pcText);
     AleFontMetrics fm;   //metics of the entrie string
     AleGetStringFontInfo getfont_info;  //structure for retrieve font
 
@@ -1331,10 +1332,13 @@ ArphicMeasureNChars(const AECHAR *pcText, int nChars)
     {
         return 0;
     }
-    
-    nCharsContent = *(pcText + nChars);
-    pText[nChars] = 0;
-    
+
+    if(nRealSize > nChars)
+    {
+        nCharsContent = *(pcText + nChars);
+        pText[nChars] = 0;
+    }
+        
     /*when outside call,need to Init Arphic Layout Engine*/
     memset (&getfont_info, 0, sizeof (getfont_info));
     getfont_info. CodeType = 1;  /* use Unicode */
@@ -1343,7 +1347,10 @@ ArphicMeasureNChars(const AECHAR *pcText, int nChars)
     getfont_info. FontMetrics = &fm;
 
     AleGetStringFont (&getfont_info, gAleWorkBuffer);
-    pText[nChars] = nCharsContent;
+    if(nRealSize > nChars)
+    {
+        pText[nChars] = nCharsContent;
+    }
 #ifdef SCALE_V_ONLY    
     return ((fm.horiAdvance > 0)?(fm.horiAdvance):(0));
 #else
