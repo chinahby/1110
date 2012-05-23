@@ -57,7 +57,12 @@ when         who     what, where, why
 /* GLOBAL FOR AMSS & TOOLS */
  /* List only Spansion parts tested by this target */
 const flashi_nor_device *(spansion_parts[]) = {
+  &S29WS256N0SB,
   &S29WS512P,
+  &S29VS128R_TOP,
+  &S29VS128R_BOT,
+  &S29VS256R_TOP,
+  &S29VS256R_BOT,
   NULL
 };
 

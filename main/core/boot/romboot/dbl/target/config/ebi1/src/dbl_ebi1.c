@@ -93,6 +93,34 @@ dbl_nor_device S29WS512P =
   {1,  0x227e, 0x223D, 0x2200 },                  /* Manufacture codes. */
 };
 
+dbl_nor_device S29VS128R_TOP =
+{
+  "SPANSION S29VS128R_TOP",
+  4,                                              /* # of codes to match */
+  {1,  0x007e, 0x0063, 0x0001 },                  /* Manufacture codes. */
+};
+
+dbl_nor_device S29VS128R_BOT =
+{
+  "SPANSION S29VS128R_BOT",
+  4,                                              /* # of codes to match */
+  {1,  0x007e, 0x0065, 0x0001 },                  /* Manufacture codes. */
+};
+
+dbl_nor_device S29VS256R_TOP =
+{
+  "SPANSION S29VS256R_TOP",
+  4,                                              /* # of codes to match */
+  {1,  0x007e, 0x0064, 0x0001 },                  /* Manufacture codes. */
+};
+
+dbl_nor_device S29VS256R_BOT =
+{
+  "SPANSION S29VS256R_BOT",
+  4,                                              /* # of codes to match */
+  {1,  0x007e, 0x0066, 0x0001 },                  /* Manufacture codes. */
+};
+
 dbl_nor_device Intel_128M18_ADMux =
 {
   "INTEL 128 M18 ADMux",
@@ -201,6 +229,10 @@ dbl_nor_device K5N2833ABB =
 const dbl_nor_device *(spansion_parts[]) = {
   &S29WS256N0SB,
   &S29WS512P,
+  &S29VS128R_TOP,
+  &S29VS128R_BOT,
+  &S29VS256R_TOP,
+  &S29VS256R_BOT,
   NULL
 };
 
@@ -464,6 +496,63 @@ const static dbl_parser_cfg_data_item_type ebi1_cfg_data_S29WSP_96MHZ[] =
   {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000000),  0x4ECB  },
 
   {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000002),  0xFFEF  },
+  
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, FLASH_ON_CS),  0x24400              },
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, FLASH_ON_CS),  0x00010034           },
+  {HWIO_OPERATION,   HWIO_ADDR(EBI1_BUFC_CFG),                EBI1_BUFC_CFG_VALUE  },
+  /*-----------------------------------------------------------------------
+                            End of Configuration
+  -----------------------------------------------------------------------*/   
+  {END_OF_CFG_DATA,  0x00000000,                    0x00000000            }
+};
+
+const static dbl_parser_cfg_data_item_type ebi1_cfg_data_S29VSR_48MHZ[] =
+{
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000000),  0xF0    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000AAA),  0xD0    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000AAA),  0x25    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000554),  0x00    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000000),  0x224B  },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000AAA),  0x29    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000000),  0xF0    },
+  
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, FLASH_ON_CS),  0x002300             },
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, FLASH_ON_CS),  0x00000034           },
+  {HWIO_OPERATION,   HWIO_ADDR(EBI1_BUFC_CFG),                EBI1_BUFC_CFG_VALUE  },
+  /*-----------------------------------------------------------------------
+                            End of Configuration
+  -----------------------------------------------------------------------*/   
+  {END_OF_CFG_DATA,  0x00000000,                    0x00000000  }
+};
+
+const static dbl_parser_cfg_data_item_type ebi1_cfg_data_S29VSR_64MHZ[] =
+{
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000000),  0xF0    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000AAA),  0xD0    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000AAA),  0x25    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000554),  0x00    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000000),  0x224B  },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000AAA),  0x29    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000000),  0xF0    },
+  
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, FLASH_ON_CS),  0x013400             },
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, FLASH_ON_CS),  0x00010034           },
+  {HWIO_OPERATION,   HWIO_ADDR(EBI1_BUFC_CFG),                EBI1_BUFC_CFG_VALUE  },
+  /*-----------------------------------------------------------------------
+                            End of Configuration
+  -----------------------------------------------------------------------*/   
+  {END_OF_CFG_DATA,  0x00000000,                    0x00000000  }
+};
+
+const static dbl_parser_cfg_data_item_type ebi1_cfg_data_S29VSR_96MHZ[] =
+{
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000000),  0xF0    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000AAA),  0xD0    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000AAA),  0x25    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000554),  0x00    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000000),  0x0ACB  },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000AAA),  0x29    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000000),  0xF0    },
   
   {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, FLASH_ON_CS),  0x24400              },
   {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, FLASH_ON_CS),  0x00010034           },
@@ -1546,6 +1635,25 @@ void dbl_ebi1_nor_configure
     else if( configured_clk_speed->ebi1 == 96 )
     {
       dbl_parse_cfg_data(ebi1_cfg_data_S29WSP_96MHZ);
+    }
+    else
+    {
+      DBL_ERR_FATAL(DBL_ERR_EBI1_CFG_FAILED);
+    }
+  }
+  else if ((dev == &S29VS128R_TOP) || (dev == &S29VS128R_BOT) || (dev == &S29VS256R_TOP) || (dev == &S29VS256R_BOT))
+  {
+    if( configured_clk_speed->ebi1 == 48 )
+    {
+      dbl_parse_cfg_data(ebi1_cfg_data_S29VSR_48MHZ);
+    }
+    else if( configured_clk_speed->ebi1 == 64 )
+    {
+      dbl_parse_cfg_data(ebi1_cfg_data_S29VSR_64MHZ);
+    }
+    else if( configured_clk_speed->ebi1 == 96 )
+    {
+      dbl_parse_cfg_data(ebi1_cfg_data_S29VSR_96MHZ);
     }
     else
     {

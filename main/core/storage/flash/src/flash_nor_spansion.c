@@ -261,6 +261,170 @@ flashi_nor_device S71PL032J80_srw =
   &flash_spansion_pl_op_functions
 };
 
+flash_geometry_info S29VS256R_TOP_geometry =
+{
+  FLASH_SPANSION_FAMILY,
+  FLASH_SIZE_32MB,
+  FLASH_XIFACE_16,
+  FLASH_WBUF_64,
+  2,
+  {
+    {255, 131072},
+    {4, 32768},
+    {0, 0},
+  },  /*lint !e785*/
+  259,
+  8,
+  {
+    { 0,    32,  31,  0},
+    { 32,   32,  63,  0},
+    { 64,   32,  95,  0},
+    { 96,   32,  127,  0},
+    { 128,  32,  159,  0},
+    { 160,  32,  191,  0},
+    { 192,  32,  223,  0},
+    { 224,  35,  258,  0},
+  }
+};  /*lint !e785*/
+
+flash_geometry_info S29VS256R_BOT_geometry =
+{
+  FLASH_SPANSION_FAMILY,
+  FLASH_SIZE_32MB,
+  FLASH_XIFACE_16,
+  FLASH_WBUF_64,
+  2,
+  {
+    {4, 32768},
+    {255, 131072},
+    {0, 0},
+  },  /*lint !e785*/
+  259,
+  8,
+  {
+    { 0,    35,  34,  0},
+    { 35,   32,  66,  0},
+    { 67,   32,  98,  0},
+    { 99,   32,  130,  0},
+    { 131,  32,  162,  0},
+    { 163,  32,  194,  0},
+    { 195,  32,  226,  0},
+    { 227,  32,  258,  0},
+  }
+};  /*lint !e785*/
+
+
+flash_geometry_info S29VS128R_TOP_geometry =
+{
+  FLASH_SPANSION_FAMILY,
+  FLASH_SIZE_32MB,
+  FLASH_XIFACE_16,
+  FLASH_WBUF_64,
+  2,
+  {
+    {127, 131072},
+    {4, 32768},
+    {0, 0},
+  },  /*lint !e785*/
+  131,
+  8,
+  {
+    { 0,    16,  15,  0},
+    { 16,   16,  31,  0},
+    { 32,   16,  47,  0},
+    { 48,   16,  63,  0},
+    { 64,   16,  79,  0},
+    { 80,   16,  95,  0},
+    { 96,   16,  111,  0},
+    { 112,  19,  130,  0},
+  }
+};  /*lint !e785*/
+
+flash_geometry_info S29VS128R_BOT_geometry =
+{
+  FLASH_SPANSION_FAMILY,
+  FLASH_SIZE_32MB,
+  FLASH_XIFACE_16,
+  FLASH_WBUF_64,
+  2,
+  {
+    {4, 32768},
+    {127, 131072},
+    {0, 0},
+  },  /*lint !e785*/
+  131,
+  8,
+  {
+    { 0,    19,  18,  0},
+    { 19,   16,  34,  0},
+    { 35,   16,  50,  0},
+    { 51,   16,  66,  0},
+    { 67,   16,  82,  0},
+    { 83,   16,  98,  0},
+    { 99,   16,  114,  0},
+    { 115,  16,  130,  0},
+  }
+};  /*lint !e785*/
+
+flashi_nor_device S29VS128R_TOP =
+{
+  "SPANSION S29VS128R_TOP",
+  4,                                              /* # of codes to match */
+  {1,  0x007e, 0x0063, 0x0001 },                  /* Manufacture codes. */
+  0,
+  FS_DEVICE_WRITES_SIMPLE,
+  0x0,                                            /* Device base address */
+  0,                                              /* Page Size */
+  /* Use CFI to initialize flash geometry */
+  INIT_USING_CFI_AT_RUNTIME,
+  &S29VS128R_TOP_geometry,
+  &flash_spansion_op_functions
+};
+
+flashi_nor_device S29VS128R_BOT =
+{
+  "SPANSION S29VS128R_BOT",
+  4,                                              /* # of codes to match */
+  {1,  0x007e, 0x0065, 0x0001 },                  /* Manufacture codes. */
+  0,
+  FS_DEVICE_WRITES_SIMPLE,
+  0x0,                                            /* Device base address */
+  0,                                              /* Page Size */
+  /* Use CFI to initialize flash geometry */
+  INIT_USING_CFI_AT_RUNTIME,
+  &S29VS128R_BOT_geometry,
+  &flash_spansion_op_functions
+};
+
+flashi_nor_device S29VS256R_TOP =
+{
+  "SPANSION S29VS256R_TOP",
+  4,                                              /* # of codes to match */
+  {1,  0x007e, 0x0064, 0x0001 },                  /* Manufacture codes. */
+  0,
+  FS_DEVICE_WRITES_SIMPLE,
+  0x0,                                            /* Device base address */
+  0,                                              /* Page Size */
+  /* Use CFI to initialize flash geometry */
+  INIT_USING_CFI_AT_RUNTIME,
+  &S29VS256R_TOP_geometry,
+  &flash_spansion_op_functions
+};
+
+flashi_nor_device S29VS256R_BOT =
+{
+  "SPANSION S29VS256R_BOT",
+  4,                                              /* # of codes to match */
+  {1,  0x007e, 0x0066, 0x0001 },                  /* Manufacture codes. */
+  0,
+  FS_DEVICE_WRITES_SIMPLE,
+  0x0,                                            /* Device base address */
+  0,                                              /* Page Size */
+  /* Use CFI to initialize flash geometry */
+  INIT_USING_CFI_AT_RUNTIME,
+  &S29VS256R_BOT_geometry,
+  &flash_spansion_op_functions
+};
 
 /*===========================================================================
 
