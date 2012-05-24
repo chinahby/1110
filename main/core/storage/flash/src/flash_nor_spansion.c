@@ -69,6 +69,16 @@ when         who     what, where, why
 #define FS_AMD_DQ3      0x08
 #define FS_AMD_DQ2      0x04
 
+/* Low level status bits for SPANSION. */
+#define FS_SPANSION_DQ7      0x80
+#define FS_SPANSION_DQ6      0x40
+#define FS_SPANSION_DQ5      0x20
+#define FS_SPANSION_DQ4      0x10
+#define FS_SPANSION_DQ3      0x08
+#define FS_SPANSION_DQ2      0x04
+#define FS_SPANSION_DQ1      0x02
+#define FS_SPANSION_DQ0      0x01
+
 /* This function is located in flash_ram.c. */
 extern void flash_spansion_get_id_codes(volatile word *baseaddr, word *dest);
 extern void flash_peek_twice(volatile word *wptr, word *prior, word *current);
@@ -95,6 +105,19 @@ LOCAL flash_status fsi_spansion_buffer_write (byte *buffer,
                                               flash_ptr_type baseaddr,
                                               dword offset, dword count);
 
+LOCAL flash_status fsi_spansion_erase_start_vs (flash_ptr_type baseaddr,
+                                             dword offset);
+LOCAL flash_status fsi_spansion_erase_status_vs (flashi_nor_device *nor_device,
+                                              flash_ptr_type eraseaddr);
+LOCAL flash_status fsi_spansion_suspend_vs (flash_ptr_type wptr);
+LOCAL flash_status fsi_spansion_resume_vs (flash_ptr_type eraseaddr);
+LOCAL flash_status fsi_spansion_write_vs (byte *buffer,
+                                                 flash_ptr_type baseaddr,
+                                                 dword offset, dword count);
+LOCAL flash_status fsi_spansion_buffer_write_vs (byte *buffer,
+                                              flash_ptr_type baseaddr,
+                                              dword offset, dword count);
+
 struct flashi_nor_dev_ops flash_spansion_op_functions =
 {
   fsi_spansion_configure,                         /* Config of hardware */
@@ -115,6 +138,17 @@ struct flashi_nor_dev_ops flash_spansion_pl_op_functions =
   fsi_spansion_erase_status,                      /* Status for Spansion. */
   fsi_spansion_suspend,
   fsi_spansion_resume,
+};
+
+struct flashi_nor_dev_ops flash_spansion_vs_op_functions =
+{
+  fsi_spansion_configure,                         /* Config of hardware */
+  fsi_nor_device_worded_read,                     /* Read operation. */
+  fsi_spansion_write_vs,                          /* Write for Spansion */
+  fsi_spansion_erase_start_vs,                    /* Erase for Spansion. */
+  fsi_spansion_erase_status_vs,                   /* Status for Spansion. */
+  fsi_spansion_suspend_vs,
+  fsi_spansion_resume_vs,
 };
 
  /* The fsi_nor_device structure will have minimal configuration information 
@@ -263,7 +297,7 @@ flashi_nor_device S71PL032J80_srw =
 
 flash_geometry_info S29VS256R_TOP_geometry =
 {
-  FLASH_SPANSION_FAMILY,
+  FLASH_SPANSION_2_FAMILY,
   FLASH_SIZE_32MB,
   FLASH_XIFACE_16,
   FLASH_WBUF_64,
@@ -289,7 +323,7 @@ flash_geometry_info S29VS256R_TOP_geometry =
 
 flash_geometry_info S29VS256R_BOT_geometry =
 {
-  FLASH_SPANSION_FAMILY,
+  FLASH_SPANSION_2_FAMILY,
   FLASH_SIZE_32MB,
   FLASH_XIFACE_16,
   FLASH_WBUF_64,
@@ -316,7 +350,7 @@ flash_geometry_info S29VS256R_BOT_geometry =
 
 flash_geometry_info S29VS128R_TOP_geometry =
 {
-  FLASH_SPANSION_FAMILY,
+  FLASH_SPANSION_2_FAMILY,
   FLASH_SIZE_32MB,
   FLASH_XIFACE_16,
   FLASH_WBUF_64,
@@ -342,7 +376,7 @@ flash_geometry_info S29VS128R_TOP_geometry =
 
 flash_geometry_info S29VS128R_BOT_geometry =
 {
-  FLASH_SPANSION_FAMILY,
+  FLASH_SPANSION_2_FAMILY,
   FLASH_SIZE_32MB,
   FLASH_XIFACE_16,
   FLASH_WBUF_64,
@@ -370,7 +404,7 @@ flashi_nor_device S29VS128R_TOP =
 {
   "SPANSION S29VS128R_TOP",
   4,                                              /* # of codes to match */
-  {1,  0x007e, 0x0063, 0x0001 },                  /* Manufacture codes. */
+  {1,  0x007E, 0x0063, 0x0001 },                  /* Manufacture codes. */
   0,
   FS_DEVICE_WRITES_SIMPLE,
   0x0,                                            /* Device base address */
@@ -378,14 +412,14 @@ flashi_nor_device S29VS128R_TOP =
   /* Use CFI to initialize flash geometry */
   INIT_USING_CFI_AT_RUNTIME,
   &S29VS128R_TOP_geometry,
-  &flash_spansion_op_functions
+  &flash_spansion_vs_op_functions
 };
 
 flashi_nor_device S29VS128R_BOT =
 {
   "SPANSION S29VS128R_BOT",
   4,                                              /* # of codes to match */
-  {1,  0x007e, 0x0065, 0x0001 },                  /* Manufacture codes. */
+  {1,  0x007E, 0x0065, 0x0001 },                  /* Manufacture codes. */
   0,
   FS_DEVICE_WRITES_SIMPLE,
   0x0,                                            /* Device base address */
@@ -393,14 +427,14 @@ flashi_nor_device S29VS128R_BOT =
   /* Use CFI to initialize flash geometry */
   INIT_USING_CFI_AT_RUNTIME,
   &S29VS128R_BOT_geometry,
-  &flash_spansion_op_functions
+  &flash_spansion_vs_op_functions
 };
 
 flashi_nor_device S29VS256R_TOP =
 {
   "SPANSION S29VS256R_TOP",
   4,                                              /* # of codes to match */
-  {1,  0x007e, 0x0064, 0x0001 },                  /* Manufacture codes. */
+  {1,  0x007E, 0x0064, 0x0001 },                  /* Manufacture codes. */
   0,
   FS_DEVICE_WRITES_SIMPLE,
   0x0,                                            /* Device base address */
@@ -408,14 +442,14 @@ flashi_nor_device S29VS256R_TOP =
   /* Use CFI to initialize flash geometry */
   INIT_USING_CFI_AT_RUNTIME,
   &S29VS256R_TOP_geometry,
-  &flash_spansion_op_functions
+  &flash_spansion_vs_op_functions
 };
 
 flashi_nor_device S29VS256R_BOT =
 {
   "SPANSION S29VS256R_BOT",
   4,                                              /* # of codes to match */
-  {1,  0x007e, 0x0066, 0x0001 },                  /* Manufacture codes. */
+  {1,  0x007E, 0x0066, 0x0001 },                  /* Manufacture codes. */
   0,
   FS_DEVICE_WRITES_SIMPLE,
   0x0,                                            /* Device base address */
@@ -423,7 +457,7 @@ flashi_nor_device S29VS256R_BOT =
   /* Use CFI to initialize flash geometry */
   INIT_USING_CFI_AT_RUNTIME,
   &S29VS256R_BOT_geometry,
-  &flash_spansion_op_functions
+  &flash_spansion_vs_op_functions
 };
 
 /*===========================================================================
@@ -1667,3 +1701,462 @@ fsi_spansion_fast_byte_write (byte *buffer,
   return status;
 
 }
+
+/*===========================================================================
+FUNCTION FSI_SPANSION_SUSPEND
+
+DESCRIPTION
+  Suspend an erase operation on SPANSION.  Correctly handles the
+  race condition of the suspend finishing near the time of this call.
+
+DEPENDENCIES
+  The device be in erasing state and the fsi_erase_location has been set
+  properly.
+
+RETURN VALUE
+  FLASH_SUCCESS             - The erase has completed.
+  FLASH_OP_NOT_COMPLETE     - The erase was suspended, reads may be done.
+
+SIDE EFFECTS
+  None
+===========================================================================*/
+LOCAL flash_status
+fsi_spansion_suspend_vs (flash_ptr_type eraseaddr)
+{
+  flash_status result = FLASH_SUCCESS;
+  word tmp, tmp2;
+  int done = 0;
+
+  retry_count = 0;
+
+  /* Issue the suspend erase command. */
+  *eraseaddr = 0xB0;
+
+  /* Wait 20 micro sec for status to be valid. This is erase_suspend_latency
+   * which is minimum time needed for suspend to take effect. If an active
+   * erase operation was in progress, status information is not available
+   * during the trasition from sector erase operation to erase suspend state.
+   */
+  clk_busy_wait(wait_amd_count);
+
+  /* Read the status register. */
+  (void)amd_peek_code[0];
+
+  /* Now look checking for status indicating that the suspend either
+     happened, or that the part was already done erasing. */
+  while (!done)
+  {
+    eraseaddr[0x555] = 0x70;
+    tmp = FSI_AMD_PEEK (eraseaddr);
+
+    if((tmp & FS_SPANSION_DQ7) && (tmp & FS_SPANSION_DQ6 == 1))
+    {
+        /* The suspend was successful. */
+      result = FLASH_OP_NOT_COMPLETE;
+      done = 1;
+    }
+    else if((tmp & FS_SPANSION_DQ7) && (tmp & FS_SPANSION_DQ6 == 0))
+    {
+      result = FLASH_SUCCESS;
+      done = 1;
+    }
+  }
+
+  return result;
+}
+
+/*===========================================================================
+FUNCTION FSI_SPANSION_RESUME
+
+DESCRIPTION
+  Resume a suspended erase.
+
+DEPENDENCIES
+  The fsi_spansion_suspend must have sucessfully suspended the device.
+
+RETURN VALUE
+  FLASH_SUCCESS             - The erase has been resumed.
+
+SIDE EFFECTS
+  None
+===========================================================================*/
+LOCAL flash_status
+fsi_spansion_resume_vs (flash_ptr_type eraseaddr)
+{
+  /* Issue the resume command. */
+  *eraseaddr = 0x30;
+  return FLASH_SUCCESS;
+
+}/* fsi_and_resume */
+
+/*===========================================================================
+
+FUNCTION FSI_SPANSION_ERASE
+
+DESCRIPTION
+  Initiate erase operation for an SPANSION part.
+
+DEPENDENCIES
+  
+
+RETURN VALUE
+  FLASH_SUCCESS            -  If erase operation was successfully initiated
+
+SIDE EFFECTS
+  None
+
+===========================================================================*/
+LOCAL flash_status
+fsi_spansion_erase_start_vs (flash_ptr_type baseaddr,
+         dword offset)
+{
+  volatile word *wptr;
+
+  wptr = baseaddr + BYTE_TO_WORD_OFFSET(offset);
+
+  wptr[0x555] = 0x80;
+  wptr[0x2AA] = 0x30;
+  return FLASH_SUCCESS;
+}
+
+
+/*===========================================================================
+
+FUNCTION FSI_SPANSION_ERASE_STATUS
+
+DESCRIPTION
+  Erase status for SPANSION components.
+
+DEPENDENCIES
+  The device must be in the erasing state.
+
+RETURN VALUE
+  FLASH_SUCCESS               - The erase is finished, component is not in
+                                read state
+  FLASH_OP_NOT_COMPLETE       - The erase is still happening.
+  FLASH_ERR_FATAL             - Something went wrong with the erase.
+
+SIDE EFFECTS
+  None
+
+===========================================================================*/
+LOCAL flash_status
+fsi_spansion_erase_status_vs (flashi_nor_device *nor_device, 
+                           flash_ptr_type eraseaddr )
+{
+  word status, current;
+  // Check Status
+  eraseaddr[0x555] = 0x70;
+  (void)amd_poke_code[0];
+  status = FSI_AMD_PEEK (eraseaddr);
+
+  if(status & FS_SPANSION_DQ7 == 0)
+  {
+    if(status & FS_SPANSION_DQ0 == 0)
+    {
+        return FLASH_OP_NOT_COMPLETE;
+    }
+  }
+  else
+  {
+    /*
+     * Here the DQ6 bit isn't toggling any more, indicating that Erase is
+     * complete. (p49)
+     *
+     * There have been problems with the SPANSION part accidentally
+     * indicating Erase Complete when it was not, in fact, complete.
+     *
+     * Rather than let the erase finish and corrupt the subsequent write
+     * operation in chaotic ways, we trap any such failures here by
+     * confirming that the block is readable and not still erasing.
+     */
+    current = *eraseaddr;           /* Read from erased block */
+    if (current != 0xFFFF) {
+       FLASH_ERR_FATAL ("SPANSION Erase completed prematurely! %x",
+                         current, 0, 0);
+    }
+
+  #ifdef FLASH_CHECK  
+    {
+      dword i;
+    #if defined(BUILD_JFLASH) || defined(BUILD_ARMPRG)
+      extern dword curr_erase_sector_bsize;
+      dword size= curr_erase_sector_bsize >> 1;
+    #else
+      dword size = flash_nor_find_size_for_block_addr (nor_device,  
+                                                       (dword)eraseaddr);       
+      size >>= 1;
+    #endif
+
+      for (i = 0; i < size; i++)
+      {
+        if(eraseaddr[i] != 0xFFFF)
+        {
+          FLASH_ERR_FATAL("Erase verify failed",0,0,0);
+        }
+        if ((i % 16) == 0)
+        {
+          KICK_DOG_AND_CHECK_DATA();
+        }
+      }
+    }
+  #endif
+
+    return FLASH_SUCCESS;
+  }
+}
+
+/*===========================================================================
+
+FUNCTION FSI_SPANSION_WRITE
+
+DESCRIPTION
+  Write a block of byte to Spansion flash part.
+
+DEPENDENCIES
+  The device must not be in  erasing state.
+
+RETURN VALUE
+  FLASH_SUCCESS      -  If write completed normally
+  FLASH_FAILURE      -  If write operation failed
+  FLASH_TIMEOUT      -  If write operation timed out
+  
+SIDE EFFECTS
+  None
+
+===========================================================================*/
+LOCAL flash_status
+fsi_spansion_write_vs (byte *buffer,
+               flash_ptr_type baseaddr,
+               dword offset,
+               dword count)
+
+{
+  flash_status status = FLASH_SUCCESS;
+  dword write_offset = offset;
+  dword write_stride;
+  dword num_to_write = count;
+  byte *data_ptr = buffer;
+  dword max_write_stride;
+#ifdef FLASH_CHECK
+  dword size = count;
+  byte *source = buffer;
+#endif
+
+  /*----------------------------------------------------------------*/
+
+  KICK_DOG_AND_CHECK_DATA();
+
+  /* Since we are only using buffer write, we cannot handle non-word aligned
+   * offsets and odd write lengths. Make sure that we are alright.
+   */
+  if ((offset & 0x1) || (count & 0x1))
+  {
+    /* Not word aligned or/and not even number of bytes */
+    /* Assuming count != 0 */
+    FLASH_ERR_FATAL("Not word aligned or/and odd number of bytes", 0, 0, 0);
+  }
+
+  /* Algorithm to split an arbitrary length of word-aligned non-write_buffer     
+   * aligned data into buffer writetable chunks.
+   *
+   * In its most general for any given length of data can be divided into three
+   * zones namely ZONE-1, ZONE-2 and ZONE-3 in that order, based on alignment of
+   * their start and end addresses with the write buffer.
+   *
+   *
+   *   ----------------------------------------------------------------------
+   *       ZONE-1    |                ZONE-2                 |     ZONE-3
+   *   ----------------------------------------------------------------------
+   *
+   *
+   *       ZONE        Start Addr.         End Addr.              Length
+   *      ------      -------------       -----------         ---------------
+   *        1          Un-aligned      Aligned/Un-aligned      < WR_BUF_SIZE
+   *        2           Aligned             Aligned          n * WR_BUF_SIZE
+   *        3           Aligned            Un-aligned          < WR_BUF_SIZE
+   * 
+   *      where n is an integer which can take a values statring from 0.
+   * 
+   * All the ZONEs may not be present in a given length of data buffer. Note     
+   * that ZONEs 1 and 3 are always less than size of write buffer. Zone 2 is     
+   * an integral multiple of write buffer size.
+   */
+
+  while (num_to_write)
+  {
+    if ( write_offset & (SPANSION_BUFFER_WRITE_SIZE - 1) )
+    {
+      /* ZONE-1: The data is not aligned to the beginning of write buffer. */
+
+      /* Note that this code segment will only get executed once. Possible 
+       * subsequent writes, if any, will be write buffer aligned. Code could
+       * further be optimized by moving this case out of the while loop.
+       */
+
+      /* Find the biggest length that can be written without crossing buffer 
+       * boundary.
+       */
+      max_write_stride = ( (write_offset & ~(SPANSION_BUFFER_WRITE_SIZE - 1)) + 
+                            SPANSION_BUFFER_WRITE_SIZE ) - write_offset;
+
+      write_stride = MIN (num_to_write, max_write_stride);
+
+    }
+    else if (num_to_write >= SPANSION_BUFFER_WRITE_SIZE)
+    {
+      /* ZONE-2: The data is aligned to the beginning of write buffer. A full 
+       *         length of buffer can be written.
+       */
+      write_stride = SPANSION_BUFFER_WRITE_SIZE;
+      
+    }
+    else
+    {
+      /* ZONE-3: The data is aligned to the beginning of write buffer. Data 
+       *         available to be written is less than full length of the write   
+       *         buffer.
+       */
+      write_stride = num_to_write;
+      
+    }
+
+    /* If further optimization is needed, a switch statement can be used here
+     * to selectively use byte or buffer write for different lenghts that
+     * need to be written.
+     */
+    status = fsi_spansion_buffer_write_vs(data_ptr, baseaddr, write_offset,
+                                       write_stride);
+
+    if (status != FLASH_SUCCESS)
+    {
+      return status;
+    }
+    
+    //KICK_DOG_AND_CHECK_DATA();
+    data_ptr += write_stride;
+    write_offset += write_stride;
+    num_to_write -= write_stride;
+
+  }
+
+#ifdef FLASH_CHECK
+  {
+    dword i;
+    volatile byte *part_base = ((volatile byte *) baseaddr + offset);
+
+    for (i = 0; i < size; i++)
+    {
+      if(part_base[i] != source[i])
+      {
+        FLASH_ERR_FATAL("Write verify failed",0,0,0);
+      }
+
+      if ((i % 16)==0)
+      {
+        KICK_DOG_AND_CHECK_DATA();
+      }
+    }
+  }
+#endif
+
+  return status;
+}/* fsi_spansion_write */
+
+/*===========================================================================
+
+FUNCTION FSI_SPANSION_BUFFER_WRITE
+
+DESCRIPTION
+  Write a block of bytes to a SPANSION part.
+
+DEPENDENCIES
+  The fs_dev_init must have been called.  The device must not be in
+  erasing state.
+
+RETURN VALUE
+  FLASH_SUCCESS      -  If write completed normally
+  FLASH_TIMEOUT      -  If write operation timed out
+
+SIDE EFFECTS
+  None
+
+===========================================================================*/
+LOCAL flash_status
+fsi_spansion_buffer_write_vs (byte *buffer,
+               flash_ptr_type baseaddr,
+               dword offset,
+               dword count)
+{
+  flash_status status = FLASH_SUCCESS;
+  word *word_buf_ptr = (word *)buffer;
+  dword word_offset, word_count;
+  dword status_word, i;
+  volatile word *wptr;
+
+  /*----------------------------------------------------------------*/
+  KICK_DOG_AND_CHECK_DATA();
+
+  /* To do word operations convert byte offset to word offset */
+  word_offset = offset>>1;
+  wptr = (baseaddr + word_offset);
+
+  /*========================================================
+   *
+   * Write buffer programming command sequences
+   *
+   * 1. Write Buffer Load Command Sector Address + 555h 0025h
+   *
+   * 2. Write Word Count Sector Address + 2AA Word Count (N¨C1)h
+   *
+   * 3. Load Buffer Word N Program Address, Word N Word N
+   *
+   * 4. Last Write Buffer to Flash Sector Address + 555h 0029h
+   *
+   *==================================================================*/
+
+  /* Command to do the buffer write */
+  *(baseaddr + 0x0555L) = 0x0025;
+
+  /* Load the len of the buffer to the starting address */
+  word_count = count>>1;
+  *(baseaddr + 0x02AAL) = (word_count - 1);
+
+  /* Prime the variable so that we can do increment the pointer inside the
+   * loop. This way we do not need to keep track of the last location we
+   * wrote to, to poll the status. Variable 'wptr' will always point to the
+   * last location when for loop is exited
+   */
+  wptr--;
+
+  /* Write to the buffer */
+  for (i = 0; i < word_count; i++)
+  {
+    /* Put together the next word to write to Flash. */
+    wptr++;
+    *wptr = word_buf_ptr[i];     //lint !e734 will never exceed 2 bytes
+  }
+
+  /* Write buffer program confirm */
+  *(baseaddr + 0x0555L) = 0x29;
+  
+  clk_busy_wait(4);
+
+  /* Wait for the write. */
+  while (1)    //lint !e716 while(1) has break and return..
+  {
+    *(baseaddr + 0x0555L) = 0x70;
+    status_word = *baseaddr;   //lint !e794 current_wptr will have ptr assigned
+    
+    /* Exit when finished. */
+    if ((status_word & FS_SPANSION_DQ7) == 1 && (status_word & FS_SPANSION_DQ0) == 0)
+    {
+        break;
+    }
+  }/* while */
+
+  KICK_DOG_AND_CHECK_DATA();
+
+  return status;
+}
+

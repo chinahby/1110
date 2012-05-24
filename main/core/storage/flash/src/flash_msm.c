@@ -335,6 +335,10 @@ flash_nor_geometry_init (flashi_nor_device *nor_device, flash_ptr_type baseaddr)
     {
       case 0x0001:
         flash_geometry_data.family_type = FLASH_SPANSION_FAMILY;
+        if(nor_device->codes[1] == 0x7E)
+        {
+            flash_geometry_data.family_type = FLASH_SPANSION_2_FAMILY;
+        }
         break;
       case 0x0020:
       case 0x0089:
@@ -367,7 +371,7 @@ flash_nor_geometry_init (flashi_nor_device *nor_device, flash_ptr_type baseaddr)
     flash_geometry_data.write_buf_size =
       (flash_wbuf_size_type) inpw(cfi_data +EXT_CFI_DEVICE_WBUF_SIZE_OFFSET);
 
-    if (flash_geometry_data.family_type == FLASH_SPANSION_FAMILY)
+    if (flash_geometry_data.family_type == FLASH_SPANSION_FAMILY || flash_geometry_data.family_type == FLASH_SPANSION_2_FAMILY)
     {
       /* Spansion devices encode the Top/Bottom/Dual boot information
        * in the primary vendor specific region of the CFI */
@@ -468,7 +472,7 @@ flash_nor_geometry_init (flashi_nor_device *nor_device, flash_ptr_type baseaddr)
 
     flash_geometry_data.num_total_blocks = total_block_count;
 
-    if (flash_geometry_data.family_type == FLASH_SPANSION_FAMILY)
+    if (flash_geometry_data.family_type == FLASH_SPANSION_FAMILY || flash_geometry_data.family_type == FLASH_SPANSION_2_FAMILY)
     {
       flash_geometry_data.x_iface = 
       	(flash_xiface_type) inpw(cfi_data +EXT_CFI_DEVICE_X_IFACE_OFFSET);

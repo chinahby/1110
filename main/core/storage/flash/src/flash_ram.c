@@ -56,6 +56,7 @@ when         who     what, where, why
  * Forward function declarations
  ***************************************************************/
 void flash_spansion_copy_cfi_data(volatile word *baseaddr, word *dest, word count);
+void flash_spansion_2_copy_cfi_data(volatile word *baseaddr, word *dest, word count);
 void flash_samsung_copy_cfi_data(volatile word *baseaddr, word *dest, word count);
 void flash_intel_copy_cfi_data(volatile word *baseaddr, word *dest, word count);
 void flash_peek_twice (volatile word *wptr, word *prior, word *current);
@@ -88,6 +89,7 @@ LOCAL flash_copy_cfi_data_func cfi_copy_functions[FLASH_MAX_FAMILIES] =
       flash_spansion_copy_cfi_data,    /* FLASH_SPANSION_FAMILY */
       flash_intel_copy_cfi_data,       /* FLASH_INTEL_FAMILY */
       flash_samsung_copy_cfi_data,     /* FLASH_SAMSUNG_FAMILY */
+      flash_spansion_2_copy_cfi_data,    /* FLASH_SPANSION_2_FAMILY */
     };
 
 /****************************************************************
@@ -277,6 +279,29 @@ flash_spansion_copy_cfi_data(volatile word *baseaddr, word *dest, word count)
   /* Set the Read CFI Query command */
   *(baseaddr+0x0555L) = 0x98;        // datasheet says 0x55 but doesn't work!
 
+  for (tmp = 0; tmp < count; tmp ++)
+    *(dest++) = *(baseaddr+tmp);
+
+  /* Set the Flash back to Read mode */
+  *(baseaddr + 0x0) = 0x00F0;
+}
+
+/***********************************************************************
+FUNCTION      FLASH_SPANSION_2_COPY_CFI_DATA
+
+DESCRIPTION   This function puts the AMD flash into CFI read mode and
+              copies count bytes from the CFI data into the dest
+
+RETURN VALUE   NONE
+**********************************************************************/
+void
+flash_spansion_2_copy_cfi_data(volatile word *baseaddr, word *dest, word count)
+{
+  word tmp = 0;
+  
+  /* Entry CFI Query command */
+  *(baseaddr+0x055L) = 0x98;
+  
   for (tmp = 0; tmp < count; tmp ++)
     *(dest++) = *(baseaddr+tmp);
 
