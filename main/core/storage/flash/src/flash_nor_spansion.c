@@ -70,14 +70,15 @@ when         who     what, where, why
 #define FS_AMD_DQ2      0x04
 
 /* Low level status bits for SPANSION. */
-#define FS_SPANSION_DQ7      0x80
-#define FS_SPANSION_DQ6      0x40
-#define FS_SPANSION_DQ5      0x20
-#define FS_SPANSION_DQ4      0x10
-#define FS_SPANSION_DQ3      0x08
-#define FS_SPANSION_DQ2      0x04
-#define FS_SPANSION_DQ1      0x02
-#define FS_SPANSION_DQ0      0x01
+#define DEV_RDY_MASK			(0x80)	/* Device Ready Bit */
+#define DEV_ERASE_SUSP_MASK		(0x40)	/* Erase Suspend Bit */
+#define DEV_ERASE_MASK			(0x20)	/* Erase Status Bit */
+#define DEV_PROGRAM_MASK		(0x10)	/* Program Status Bit */
+#define DEV_RFU_MASK			(0x08)	/* Reserved */
+#define DEV_PROGRAM_SUSP_MASK	(0x04)	/* Program Suspend Bit */
+#define DEV_SEC_LOCK_MASK		(0x02)	/* Sector lock Bit */
+#define DEV_BANK_MASK			(0x01)	/* Operation in current bank */
+
 
 /* This function is located in flash_ram.c. */
 extern void flash_spansion_get_id_codes(volatile word *baseaddr, word *dest);
@@ -1702,6 +1703,104 @@ fsi_spansion_fast_byte_write (byte *buffer,
 
 }
 
+#define SA_OFFSET_MASK	0xFFFFF000	 /* mask off the offset */
+/* LLD Command Definition */
+#define NOR_CFI_QUERY_CMD                ((0x98)*LLD_DEV_MULTIPLIER)
+#define NOR_CHIP_ERASE_CMD               ((0x10)*LLD_DEV_MULTIPLIER)
+#define NOR_ERASE_SETUP_CMD              ((0x80)*LLD_DEV_MULTIPLIER)
+#define NOR_RESET_CMD                    ((0xF0)*LLD_DEV_MULTIPLIER)
+#define NOR_SECSI_SECTOR_ENTRY_CMD       ((0x88)*LLD_DEV_MULTIPLIER)
+#define NOR_SECTOR_ERASE_CMD             ((0x30)*LLD_DEV_MULTIPLIER)
+#define NOR_WRITE_BUFFER_LOAD_CMD        ((0x25)*LLD_DEV_MULTIPLIER)
+#define NOR_WRITE_BUFFER_PGM_CONFIRM_CMD ((0x29)*LLD_DEV_MULTIPLIER) 
+#define NOR_SET_CONFIG_CMD			     ((0xD0)*LLD_DEV_MULTIPLIER)
+#define NOR_BIT_FIELD_CMD				 ((0xBF)*LLD_DEV_MULTIPLIER)
+
+#define NOR_ERASE_SUSPEND_CMD			 ((0xB0)*LLD_DEV_MULTIPLIER)
+#define NOR_ERASE_RESUME_CMD			 ((0x30)*LLD_DEV_MULTIPLIER)
+#define NOR_PROGRAM_SUSPEND_CMD			 ((0x51)*LLD_DEV_MULTIPLIER)
+#define NOR_PROGRAM_RESUME_CMD			 ((0x50)*LLD_DEV_MULTIPLIER)
+#define NOR_STATUS_REG_READ_CMD			 ((0x70)*LLD_DEV_MULTIPLIER)
+#define NOR_STATUS_REG_CLEAR_CMD		 ((0x71)*LLD_DEV_MULTIPLIER)
+#define NOR_BLANK_CHECK_CMD				 ((0x33)*LLD_DEV_MULTIPLIER)
+
+#define LLD_DEV_MULTIPLIER 0x00000001
+#define LLD_DB_READ_MASK   0x0000FFFF
+#define LLD_DEV_READ_MASK  0x0000FFFF
+#define LLD_UNLOCK_ADDR1   0x00000555
+#define LLD_UNLOCK_ADDR2   0x000002AA
+#define LLD_BYTES_PER_OP   0x00000002
+#define LLD_CFI_UNLOCK_ADDR1 0x00000555
+
+#define FLASH_OFFSET(b,o)       (*(( (flash_ptr_type)(b) ) + (o)))
+#define FLASH_WR(b,o,d) FLASH_OFFSET((b),(o)) = (d)
+#define FLASH_RD(b,o)   FLASH_OFFSET((b),(o))
+
+void lld_StatusRegReadCmd(flash_ptr_type base_addr, dword offset)
+{         
+  FLASH_WR(base_addr, (offset & SA_OFFSET_MASK) + LLD_UNLOCK_ADDR1, NOR_STATUS_REG_READ_CMD); 
+}
+
+void lld_ProgramSuspendCmd(flash_ptr_type base_addr)
+{         
+  /* Write Suspend Command */
+  FLASH_WR(base_addr, 0, NOR_PROGRAM_SUSPEND_CMD);
+}
+
+void lld_EraseSuspendCmd(flash_ptr_type base_addr)
+{       
+  /* Write Suspend Command */
+  FLASH_WR(base_addr, 0, NOR_ERASE_SUSPEND_CMD);
+}
+
+void lld_EraseResumeCmd(flash_ptr_type base_addr)
+{       
+  /* Write Resume Command */
+  FLASH_WR(base_addr, 0, NOR_ERASE_RESUME_CMD);
+}
+
+void lld_ProgramResumeCmd(flash_ptr_type base_addr)
+{       
+  /* Write Resume Command */
+  FLASH_WR(base_addr, 0, NOR_PROGRAM_RESUME_CMD);
+}
+
+void lld_SectorEraseCmd(flash_ptr_type base_addr, dword offset)
+{
+  /* Issue Sector Erase Command Sequence */
+  FLASH_WR(base_addr, (offset & SA_OFFSET_MASK) + LLD_UNLOCK_ADDR1, NOR_ERASE_SETUP_CMD);
+  FLASH_WR(base_addr, (offset & SA_OFFSET_MASK) + LLD_UNLOCK_ADDR2, NOR_SECTOR_ERASE_CMD);
+}
+
+void lld_WriteToBufferCmd(flash_ptr_type base_addr, dword offset)
+{  
+  FLASH_WR(base_addr, (offset & SA_OFFSET_MASK) + LLD_UNLOCK_ADDR1, NOR_WRITE_BUFFER_LOAD_CMD);
+}
+ 
+void lld_ProgramBufferToFlashCmd(flash_ptr_type base_addr, dword offset)
+{
+  /* Transfer Buffer to Flash Command */
+  FLASH_WR(base_addr, (offset & SA_OFFSET_MASK) + LLD_UNLOCK_ADDR1, NOR_WRITE_BUFFER_PGM_CONFIRM_CMD); 
+}
+
+LOCAL word lld_Poll(flash_ptr_type base_addr, dword offset)
+{       
+  unsigned long polling_counter = 0xFFFFFFFF;
+  volatile word status_reg;
+
+  do
+  {
+    polling_counter--;
+	lld_StatusRegReadCmd( base_addr, offset );		/* Issue status register read command */
+	status_reg = FLASH_RD(base_addr, offset);       /* read the status register */
+	if( (status_reg & DEV_RDY_MASK) == DEV_RDY_MASK  )  /* Are all devices done bit 7 is 1 */
+		break;
+
+  }while(polling_counter);
+  
+  return( status_reg );          /* retrun the status reg. */
+}
+
 /*===========================================================================
 FUNCTION FSI_SPANSION_SUSPEND
 
@@ -1723,46 +1822,16 @@ SIDE EFFECTS
 LOCAL flash_status
 fsi_spansion_suspend_vs (flash_ptr_type eraseaddr)
 {
-  flash_status result = FLASH_SUCCESS;
-  word tmp, tmp2;
-  int done = 0;
-
-  retry_count = 0;
+  word status_reg;
 
   /* Issue the suspend erase command. */
-  *eraseaddr = 0xB0;
+  lld_EraseSuspendCmd( eraseaddr );		/* issue erase suspend command */  
 
-  /* Wait 20 micro sec for status to be valid. This is erase_suspend_latency
-   * which is minimum time needed for suspend to take effect. If an active
-   * erase operation was in progress, status information is not available
-   * during the trasition from sector erase operation to erase suspend state.
-   */
-  clk_busy_wait(wait_amd_count);
+  status_reg = lld_Poll(eraseaddr, 0);        /* wait for device done */
 
-  /* Read the status register. */
-  (void)amd_peek_code[0];
-
-  /* Now look checking for status indicating that the suspend either
-     happened, or that the part was already done erasing. */
-  while (!done)
-  {
-    eraseaddr[0x555] = 0x70;
-    tmp = FSI_AMD_PEEK (eraseaddr);
-
-    if((tmp & FS_SPANSION_DQ7) && (tmp & FS_SPANSION_DQ6 == 1))
-    {
-        /* The suspend was successful. */
-      result = FLASH_OP_NOT_COMPLETE;
-      done = 1;
-    }
-    else if((tmp & FS_SPANSION_DQ7) && (tmp & FS_SPANSION_DQ6 == 0))
-    {
-      result = FLASH_SUCCESS;
-      done = 1;
-    }
-  }
-
-  return result;
+  if( (status_reg & DEV_ERASE_SUSP_MASK) == DEV_ERASE_SUSP_MASK )
+        return( FLASH_SUCCESS  );        /* Erase suspend  */
+  return( FLASH_FAILURE );       /* Erase suspend error */
 }
 
 /*===========================================================================
@@ -1780,13 +1849,11 @@ RETURN VALUE
 SIDE EFFECTS
   None
 ===========================================================================*/
-LOCAL flash_status
-fsi_spansion_resume_vs (flash_ptr_type eraseaddr)
+LOCAL flash_status fsi_spansion_resume_vs (flash_ptr_type eraseaddr)
 {
   /* Issue the resume command. */
-  *eraseaddr = 0x30;
+  lld_EraseResumeCmd(eraseaddr);
   return FLASH_SUCCESS;
-
 }/* fsi_and_resume */
 
 /*===========================================================================
@@ -1806,19 +1873,11 @@ SIDE EFFECTS
   None
 
 ===========================================================================*/
-LOCAL flash_status
-fsi_spansion_erase_start_vs (flash_ptr_type baseaddr,
-         dword offset)
+LOCAL flash_status fsi_spansion_erase_start_vs (flash_ptr_type baseaddr, dword offset)
 {
-  volatile word *wptr;
-
-  wptr = baseaddr + BYTE_TO_WORD_OFFSET(offset);
-
-  wptr[0x555] = 0x80;
-  wptr[0x2AA] = 0x30;
+  lld_SectorEraseCmd(baseaddr,BYTE_TO_WORD_OFFSET(offset));
   return FLASH_SUCCESS;
 }
-
 
 /*===========================================================================
 
@@ -1840,70 +1899,23 @@ SIDE EFFECTS
   None
 
 ===========================================================================*/
-LOCAL flash_status
-fsi_spansion_erase_status_vs (flashi_nor_device *nor_device, 
-                           flash_ptr_type eraseaddr )
+LOCAL flash_status fsi_spansion_erase_status_vs (flashi_nor_device *nor_device, flash_ptr_type eraseaddr )
 {
-  word status, current;
-  // Check Status
-  eraseaddr[0x555] = 0x70;
-  (void)amd_poke_code[0];
-  status = FSI_AMD_PEEK (eraseaddr);
-
-  if(status & FS_SPANSION_DQ7 == 0)
+  word status_reg;
+  
+  lld_StatusRegReadCmd( eraseaddr, 0 );		/* Issue status register read command */
+  status_reg = FLASH_RD(eraseaddr, 0);       /* read the status register */
+  if( (status_reg & DEV_RDY_MASK) == DEV_RDY_MASK  )  /* Are all devices done bit 7 is 1 */
   {
-    if(status & FS_SPANSION_DQ0 == 0)
-    {
-        return FLASH_OP_NOT_COMPLETE;
-    }
+    if( status_reg & DEV_SEC_LOCK_MASK )
+	  return( FLASH_FAILURE );		/* sector locked */
+
+    if( (status_reg & DEV_ERASE_MASK) == DEV_ERASE_MASK )
+	  return( FLASH_FAILURE);		/* erase error */
+    
+	return FLASH_SUCCESS;
   }
-  else
-  {
-    /*
-     * Here the DQ6 bit isn't toggling any more, indicating that Erase is
-     * complete. (p49)
-     *
-     * There have been problems with the SPANSION part accidentally
-     * indicating Erase Complete when it was not, in fact, complete.
-     *
-     * Rather than let the erase finish and corrupt the subsequent write
-     * operation in chaotic ways, we trap any such failures here by
-     * confirming that the block is readable and not still erasing.
-     */
-    current = *eraseaddr;           /* Read from erased block */
-    if (current != 0xFFFF) {
-       FLASH_ERR_FATAL ("SPANSION Erase completed prematurely! %x",
-                         current, 0, 0);
-    }
-
-  #ifdef FLASH_CHECK  
-    {
-      dword i;
-    #if defined(BUILD_JFLASH) || defined(BUILD_ARMPRG)
-      extern dword curr_erase_sector_bsize;
-      dword size= curr_erase_sector_bsize >> 1;
-    #else
-      dword size = flash_nor_find_size_for_block_addr (nor_device,  
-                                                       (dword)eraseaddr);       
-      size >>= 1;
-    #endif
-
-      for (i = 0; i < size; i++)
-      {
-        if(eraseaddr[i] != 0xFFFF)
-        {
-          FLASH_ERR_FATAL("Erase verify failed",0,0,0);
-        }
-        if ((i % 16) == 0)
-        {
-          KICK_DOG_AND_CHECK_DATA();
-        }
-      }
-    }
-  #endif
-
-    return FLASH_SUCCESS;
-  }
+  return FLASH_OP_NOT_COMPLETE;
 }
 
 /*===========================================================================
@@ -2091,16 +2103,15 @@ fsi_spansion_buffer_write_vs (byte *buffer,
   flash_status status = FLASH_SUCCESS;
   word *word_buf_ptr = (word *)buffer;
   dword word_offset, word_count;
-  dword status_word, i;
+  dword status_reg, i;
   volatile word *wptr;
 
   /*----------------------------------------------------------------*/
   KICK_DOG_AND_CHECK_DATA();
 
   /* To do word operations convert byte offset to word offset */
-  word_offset = offset>>1;
+  word_offset = BYTE_TO_WORD_OFFSET(offset);
   wptr = (baseaddr + word_offset);
-
   /*========================================================
    *
    * Write buffer programming command sequences
@@ -2115,45 +2126,43 @@ fsi_spansion_buffer_write_vs (byte *buffer,
    *
    *==================================================================*/
 
-  /* Command to do the buffer write */
-  *(baseaddr + 0x0555L) = 0x0025;
+  /* Issue Load Write Buffer Command Sequence */
+  lld_WriteToBufferCmd(baseaddr, word_offset);
 
-  /* Load the len of the buffer to the starting address */
+  /* Write # of locations to program */
   word_count = count>>1;
-  *(baseaddr + 0x02AAL) = (word_count - 1);
-
-  /* Prime the variable so that we can do increment the pointer inside the
-   * loop. This way we do not need to keep track of the last location we
-   * wrote to, to poll the status. Variable 'wptr' will always point to the
-   * last location when for loop is exited
-   */
-  wptr--;
-
+  word_count = (word)word_count - 1;
+  word_count *= LLD_DEV_MULTIPLIER;			/* For interleaving devices */
+  
+  /* In the datasheets of some latest Spansion devices, such as GLP, GLS, etc, the 
+  command sequence of "write to buffer" command states the address of word count is 
+  "Sector Address". Notice that to make LLD backward compatibility, the actual word 
+  count address implemented is "Sector Address + LLD_UNLOCK_ADDR2", since the lower 
+  address bits (a0-a15) are "don't care" bits and will be ignored anyway.
+  */
+  FLASH_WR(baseaddr, (word_offset & SA_OFFSET_MASK) + LLD_UNLOCK_ADDR2 , word_count);
+  
   /* Write to the buffer */
-  for (i = 0; i < word_count; i++)
+  for (i = 0; i <= word_count; i++)
   {
     /* Put together the next word to write to Flash. */
-    wptr++;
-    *wptr = word_buf_ptr[i];     //lint !e734 will never exceed 2 bytes
+    *wptr++ = word_buf_ptr[i];     //lint !e734 will never exceed 2 bytes
   }
 
-  /* Write buffer program confirm */
-  *(baseaddr + 0x0555L) = 0x29;
-  
-  clk_busy_wait(4);
+  /* Issue Program Buffer to Flash command */
+  lld_ProgramBufferToFlashCmd(baseaddr, word_offset);
 
-  /* Wait for the write. */
-  while (1)    //lint !e716 while(1) has break and return..
+  status_reg = lld_Poll(baseaddr, word_offset+word_count);
+
+  if( status_reg & DEV_SEC_LOCK_MASK )
   {
-    *(baseaddr + 0x0555L) = 0x70;
-    status_word = *baseaddr;   //lint !e794 current_wptr will have ptr assigned
-    
-    /* Exit when finished. */
-    if ((status_word & FS_SPANSION_DQ7) == 1 && (status_word & FS_SPANSION_DQ0) == 0)
-    {
-        break;
-    }
-  }/* while */
+	  status = FLASH_FAILURE;
+  }
+
+  if( (status_reg & DEV_PROGRAM_MASK) == DEV_PROGRAM_MASK )
+  {
+	  status = FLASH_FAILURE;		/* program error */
+  }
 
   KICK_DOG_AND_CHECK_DATA();
 
