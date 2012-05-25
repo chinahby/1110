@@ -1913,6 +1913,32 @@ LOCAL flash_status fsi_spansion_erase_status_vs (flashi_nor_device *nor_device, 
     if( (status_reg & DEV_ERASE_MASK) == DEV_ERASE_MASK )
 	  return( FLASH_FAILURE);		/* erase error */
     
+#ifdef FLASH_CHECK  
+      {
+        dword i;
+  #if defined(BUILD_JFLASH) || defined(BUILD_ARMPRG)
+        extern dword curr_erase_sector_bsize;
+        dword size= curr_erase_sector_bsize >> 1;
+  #else
+        dword size = flash_nor_find_size_for_block_addr (nor_device,  
+                                                         (dword)eraseaddr);       
+        size >>= 1;
+  #endif
+    
+        for (i = 0; i < size; i++)
+        {
+          if(eraseaddr[i] != 0xFFFF)
+          {
+            FLASH_ERR_FATAL("Erase verify failed",0,0,0);
+          }
+          if ((i % 16) == 0)
+          {
+            KICK_DOG_AND_CHECK_DATA();
+          }
+        }
+      }
+#endif
+
 	return FLASH_SUCCESS;
   }
   return FLASH_OP_NOT_COMPLETE;

@@ -371,7 +371,7 @@ flash_nor_geometry_init (flashi_nor_device *nor_device, flash_ptr_type baseaddr)
     flash_geometry_data.write_buf_size =
       (flash_wbuf_size_type) inpw(cfi_data +EXT_CFI_DEVICE_WBUF_SIZE_OFFSET);
 
-    if (flash_geometry_data.family_type == FLASH_SPANSION_FAMILY || flash_geometry_data.family_type == FLASH_SPANSION_2_FAMILY)
+    if (flash_geometry_data.family_type == FLASH_SPANSION_FAMILY)
     {
       /* Spansion devices encode the Top/Bottom/Dual boot information
        * in the primary vendor specific region of the CFI */
