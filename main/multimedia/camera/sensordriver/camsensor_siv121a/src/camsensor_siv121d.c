@@ -100,6 +100,97 @@ static CAMIF_InputFormatType 	format_preview,format_snapshot;
 
 static boolean camsensor_SIV121D_ycbcr_i2c_write_byte(uint8 reg, uint8 data);
 static boolean camsensor_SIV121D_ycbcr_i2c_read_byte(uint8 reg, uint8 *data);
+
+/*===========================================================================
+
+FUNCTION      camsensor_SIV121A_ycbcr_i2c_read_byte
+
+DESCRIPTION
+              8-bit I2C read.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  TRUE - I2C read successful
+  FALSE - I2C read failed
+
+
+SIDE EFFECTS
+  None
+
+===========================================================================*/
+static boolean camsensor_SIV121D_ycbcr_i2c_read_byte(uint8 reg, uint8 *data) 
+{
+    static uint8 readbyte; 
+	uint8  i;
+
+	if (data == NULL)
+	{
+		return FALSE;
+	}
+
+	camsensor_i2c_command.addr.reg = reg;
+	camsensor_i2c_command.buf_ptr  = (byte *)(&readbyte);
+	camsensor_i2c_command.len      = 1;
+
+	for (i =0; i < 3; ++i)
+	{
+		if (i2c_read(&camsensor_i2c_command) == I2C_SUCCESS)
+		{
+			*data  = readbyte;
+			//ERR("camsensor_SIV121A_ycbcr_i2c_read_byte: OK %x",reg,0,0);
+			return TRUE;
+		}
+	}
+
+	MSG_FATAL("camsensor_SIV121D_ycbcr_i2c_read_byte: false %x",reg,0,0);
+	return FALSE;
+}
+
+/*===========================================================================
+
+FUNCTION      camsensor_SIV121A_ycbcr_i2c_write_byte
+
+DESCRIPTION
+              8-bit I2C write.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  TRUE  - I2C write successful
+  FALSE - I2C write failed
+
+
+SIDE EFFECTS
+  None
+
+===========================================================================*/
+static boolean camsensor_SIV121D_ycbcr_i2c_write_byte(uint8 reg, uint8 data) 
+{
+    static uint8 writebyte;
+	uint8 i;
+
+	writebyte  = data;
+
+	camsensor_i2c_command.addr.reg = reg;
+	camsensor_i2c_command.buf_ptr  = (byte *)(&writebyte);
+	camsensor_i2c_command.len      = 1;
+
+	for (i = 0; i < 3; ++i)
+	{
+		if (i2c_write(&camsensor_i2c_command) == I2C_SUCCESS)
+		{
+			MSG_FATAL("camsensor_SIV121D_ycbcr_i2c_write_byte: OK %x,%x",reg,data,0);
+			return TRUE;
+		}
+	}
+	MSG_FATAL("camsensor_SIV121D_ycbcr_i2c_write_byte: false %x,%x",reg,data,0);
+	return FALSE;
+} /* camsensor_SIV121A_ycbcr_i2c_write_byte */
+
+
 #if 1
 static void SIV121D_config_window(uint16 startx,uint16 starty,uint16 width, uint16 height)
 {
@@ -116,7 +207,7 @@ static register_address_value_pair siv121d_reg_settings_array[] =
 {
 	//Sensor On  
 	//PMU
-
+	{0x00, 0x00},
 	{0x00, 0x01},
 	{0x03, 0x0a},
 
@@ -362,10 +453,8 @@ boolean camsensor_siv121d_0m3_init(camsensor_function_table_type *camsensor_func
    // clk_busy_wait(100*1000);
    // gpio_out(CAMSENSOR_SIV121D_RESET_PIN,1);
 
-	camsensor_SIV121D_ycbcr_i2c_write_byte(0x00,0x01);
-	camsensor_SIV121D_ycbcr_i2c_write_byte(0x03,0x0a);
-    clk_busy_wait(2*1000);
-
+	
+    clk_busy_wait(10*1000);
 	/* Configure I2C parameters */
 	camsensor_i2c_command.bus_id     = I2C_BUS_HW_CTRL;//I2C_BUS_HW_CTRLtao.bu20110414CHANGE
 	camsensor_i2c_command.slave_addr = SIV121D_0M3_I2C_SLAVE_ID;
@@ -377,6 +466,13 @@ boolean camsensor_siv121d_0m3_init(camsensor_function_table_type *camsensor_func
 	camsensor_preview_resolution  = CAMSENSOR_QTR_SIZE;
 	camsensor_snapshot_resolution = CAMSENSOR_FULL_SIZE;
 
+    camsensor_SIV121D_ycbcr_i2c_write_byte(0x00,0x01);
+	camsensor_SIV121D_ycbcr_i2c_write_byte(0x03,0x0a);
+    clk_busy_wait(500*1000);
+
+    //camsensor_SIV121D_ycbcr_i2c_write_byte(0x00,0x01);
+	//camsensor_SIV121D_ycbcr_i2c_write_byte(0x03,0x0a);
+    //clk_busy_wait(500*1000);
 	
 	/* The Sensor is indeed Micron MT9D112 */
 	/* Initialize Sensor registers */
@@ -1380,95 +1476,6 @@ camera_ret_code_type camsensor_siv121d_0m3_set_wb(int8 wb)
 
 /*===========================================================================
 
-FUNCTION      camsensor_SIV121A_ycbcr_i2c_read_byte
-
-DESCRIPTION
-              8-bit I2C read.
-
-DEPENDENCIES
-  None
-
-RETURN VALUE
-  TRUE - I2C read successful
-  FALSE - I2C read failed
-
-
-SIDE EFFECTS
-  None
-
-===========================================================================*/
-static boolean camsensor_SIV121D_ycbcr_i2c_read_byte(uint8 reg, uint8 *data) 
-{
-    static uint8 readbyte; 
-	uint8  i;
-
-	if (data == NULL)
-	{
-		return FALSE;
-	}
-
-	camsensor_i2c_command.addr.reg = reg;
-	camsensor_i2c_command.buf_ptr  = (byte *)(&readbyte);
-	camsensor_i2c_command.len      = 1;
-
-	for (i =0; i < 3; ++i)
-	{
-		if (i2c_read(&camsensor_i2c_command) == I2C_SUCCESS)
-		{
-			*data  = readbyte;
-			//ERR("camsensor_SIV121A_ycbcr_i2c_read_byte: OK %x",reg,0,0);
-			return TRUE;
-		}
-	}
-
-	MSG_FATAL("camsensor_SIV121D_ycbcr_i2c_read_byte: false %x",reg,0,0);
-	return FALSE;
-}
-
-/*===========================================================================
-
-FUNCTION      camsensor_SIV121A_ycbcr_i2c_write_byte
-
-DESCRIPTION
-              8-bit I2C write.
-
-DEPENDENCIES
-  None
-
-RETURN VALUE
-  TRUE  - I2C write successful
-  FALSE - I2C write failed
-
-
-SIDE EFFECTS
-  None
-
-===========================================================================*/
-static boolean camsensor_SIV121D_ycbcr_i2c_write_byte(uint8 reg, uint8 data) 
-{
-    static uint8 writebyte;
-	uint8 i;
-
-	writebyte  = data;
-
-	camsensor_i2c_command.addr.reg = reg;
-	camsensor_i2c_command.buf_ptr  = (byte *)(&writebyte);
-	camsensor_i2c_command.len      = 1;
-
-	for (i = 0; i < 3; ++i)
-	{
-		if (i2c_write(&camsensor_i2c_command) == I2C_SUCCESS)
-		{
-			MSG_FATAL("camsensor_SIV121D_ycbcr_i2c_write_byte: OK %x,%x",reg,data,0);
-			return TRUE;
-		}
-	}
-	MSG_FATAL("camsensor_SIV121D_ycbcr_i2c_write_byte: false %x,%x",reg,data,0);
-	return FALSE;
-} /* camsensor_SIV121A_ycbcr_i2c_write_byte */
-
-/*===========================================================================
-
 FUNCTION      INITIALIZE_mt9d113_mu2m0_REGISTERS
 
 DESCRIPTION
@@ -1511,6 +1518,7 @@ static boolean initialize_siv121d_0m3_registers(void)
 
 	return TRUE;
 } /* end of initialize_siv121d_0m3_registers. */
+
 
 /*===========================================================================
 
