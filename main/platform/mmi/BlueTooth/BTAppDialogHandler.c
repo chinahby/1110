@@ -6204,6 +6204,7 @@ static boolean  HandleMsgBoxDialogEvent(CBTApp * pMe,
 
 		case EVT_DIALOG_END:
 		{
+            ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)BTApp_CancelMsgBox, pMe);
 			return TRUE;
 		}
 
@@ -6215,7 +6216,7 @@ static boolean  HandleMsgBoxDialogEvent(CBTApp * pMe,
 				case AVK_SELECT:				
 				case AVK_CLR:	
 				{
-					ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)BTApp_CancelMsgBox, pMe);					
+					ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)BTApp_CancelMsgBox, pMe);
 					CLOSE_DIALOG(DLGRET_MSGBOX_CANCELED)	
 					return TRUE;
 				}
@@ -6417,7 +6418,8 @@ static boolean  HandleProMptDialogEvent(CBTApp *pMe,
 	  
         case EVT_DIALOG_END:
         {
-			MSG_FATAL("***zzg BTAppDlg DrawPromptMessage EVT_DIALOG_END***", 0, 0, 0);			
+			MSG_FATAL("***zzg BTAppDlg DrawPromptMessage EVT_DIALOG_END***", 0, 0, 0);
+            ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)BTApp_CancelProMptBox, pMe);
 			//CancelReDrawPromptMessage(pMe->m_pShell);	//取消Prompt和AEE_STATIC的Auto_scroll的同步
 			return TRUE;
         }
