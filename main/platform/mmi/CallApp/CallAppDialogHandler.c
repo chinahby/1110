@@ -4364,7 +4364,7 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
                                                         CALL_NAME_DX,
                                                         CALL_LINE_HIGHT);
                 IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, CALLAPP_TEXT_COLOR);
-            #if defined(FEATURE_VERSION_C01) ||defined(FEATURE_VERSION_C11) ||defined(FEATURE_VERSION_C180)
+            #if defined(FEATURE_VERSION_C01) ||defined(FEATURE_VERSION_C11) ||defined(FEATURE_VERSION_C180)||defined(FEATURE_VERSION_W027V3)
              SETAEERECT(&rect,
                                                         CALL_NAME_X-20,
                                                         CALL_THIRD_LINE_Y+30,
@@ -8850,7 +8850,7 @@ static void CallApp_Build_NumEdit_Option_Menu(CCallApp *pMe,IMenuCtl   *pMenuCtl
             else
 #endif //FEATURE_APP_PAUSE_TIMER
             {
-#if defined(FEATURE_VERSION_W208S)||defined(FEATURE_VERSION_1110W516) ||defined(FEATURE_VERSION_C180) 
+#if defined(FEATURE_VERSION_W208S)||defined(FEATURE_VERSION_1110W516) ||defined(FEATURE_VERSION_C180) ||defined(FEATURE_VERSION_W027V3)
 #else
                 if(!pMe->m_call_info.b_emerg)
                 {
@@ -9483,7 +9483,7 @@ static void CallApp_Draw_Connect_Number_and_Name(CCallApp *pMe)
                                                 CALL_NAME_DX,
                                                 CALL_LINE_HIGHT);
                                                 
-            #if defined(FEATURE_VERSION_C01) ||defined(FEATURE_VERSION_C11)||defined(FEATURE_VERSION_C180)
+            #if defined(FEATURE_VERSION_C01) ||defined(FEATURE_VERSION_C11)||defined(FEATURE_VERSION_C180)||defined(FEATURE_VERSION_W027V3)
             SETAEERECT(&rect,
                                                 CALL_NAME_X-20,
                                                 CALL_SECOND_LINE_Y+30,
@@ -11297,6 +11297,7 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
             }
             else
             {
+                ISOUND_Vibrate(pMe->m_pSound, 5000);
                 pMe->m_msg_text_id = IDS_MSG_CURPROFILE_MEETING;
             }
             CLOSE_DIALOG(DLGRET_MSGBOX);
