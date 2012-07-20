@@ -793,7 +793,7 @@ static void SoundMenu_FreeAppData(CSoundMenu *pMe)
 
     if (pMe->m_pIAnn)
     {
-        IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,TRUE);//»Ö¸´ÐÅºÅÀ¸Ô­Ê¼×´Ì¬
+        //IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,TRUE);//»Ö¸´ÐÅºÅÀ¸Ô­Ê¼×´Ì¬
         IANNUNCIATOR_Release(pMe->m_pIAnn);
         pMe->m_pIAnn= NULL;
     }
