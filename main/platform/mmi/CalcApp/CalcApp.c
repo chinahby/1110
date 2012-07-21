@@ -1197,8 +1197,17 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
 			#endif
             Calc_Startup(pme, (AEEAppStart *) dwParam);
 			IANNUNCIATOR_SetFieldIsActiveEx(pme->m_pIAnn,FALSE);   
-			IANNUNCIATOR_SetHasTitleText(pme->m_pIAnn,FALSE);
-			IANNUNCIATOR_SetFieldText(pme->m_pIAnn,NULL);
+			//IANNUNCIATOR_SetHasTitleText(pme->m_pIAnn,FALSE);
+			//IANNUNCIATOR_SetFieldText(pme->m_pIAnn,NULL);
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pme->a.m_pIShell,
+                        AEE_CALCAPP_RES_FILE,                                
+                        IDS_CALCTITLE,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
+            }
 			MEMSET(&BarParam, 0, sizeof(BarParam));//wlh 20090417 add 
 			BarParam.eBBarType = BTBAR_BACK;      //wlh 20090417 add
 			DrawBottomBar(pme->a.m_pIDisplay,&BarParam);    //wlh 20090417 add
