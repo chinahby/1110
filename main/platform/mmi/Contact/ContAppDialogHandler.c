@@ -2549,12 +2549,13 @@ static boolean CContApp_SmartMenuHandle( CContApp *pMe,
     // Check parameter
     ASSERT(pMe != NULL);
     (void) ISHELL_CancelTimer( pMe->m_pShell, CContApp_SmartMenuSetFocus, (void *)pMe);                           
-    
+  
     if(pMenuCtl == NULL || pTextCtl == NULL)
     {
         MSG_FATAL("CContApp_SmartMenuHandle-----FALSE",0,0,0);
         return FALSE;
     }
+    MSG_FATAL("ITEXTCTL_GetInputMode(pTextCtl,NULL)=%d",ITEXTCTL_GetInputMode(pTextCtl,NULL),0,0);
     if(ITEXTCTL_GetInputMode(pTextCtl,NULL) == AEE_TM_SYMBOLS)
     {
         return ITEXTCTL_HandleEvent( pTextCtl, eCode, wParam, 0);;
@@ -2685,7 +2686,7 @@ static boolean CContApp_SmartMenuHandle( CContApp *pMe,
                 {
                     return TRUE;
                 }
-                if(!ITEXTCTL_IsActive(pTextCtl))
+               // if(!ITEXTCTL_IsActive(pTextCtl))
                 {
                     ITEXTCTL_SetActive(pTextCtl, TRUE);
                     IMENUCTL_SetActive(pMenuCtl, FALSE);
@@ -3037,6 +3038,7 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                     boolean isSearchTextChg = FALSE;
                     // save this alpha,and all param
                     //pMe->m_szAlpha = ITEXTCTL_GetTextPtr(pTextCtl);
+                    
                     if(WSTRCMP(pMe->m_szAlpha, ITEXTCTL_GetTextPtr(pTextCtl)) != 0)
                     {
                         isSearchTextChg = TRUE; 
@@ -4981,7 +4983,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
     MSG_FATAL("CContApp_HandleListDlgEvent...........",0,0,0);
     pMenuCtl = (IMenuCtl*)IDIALOG_GetControl( pMe->m_pActiveDlg, IDC_LIST_MENU);
     pTextCtl = (ITextCtl*)IDIALOG_GetControl( pMe->m_pActiveDlg, IDC_LIST_TEXT);  
-
+   
 	MSG_FATAL("CContApp_HandleListDlgEvent ITEXTCTL_GetInputMode=%x",ITEXTCTL_GetInputMode(pTextCtl,NULL),0,0);
 
     if(ITEXTCTL_GetInputMode(pTextCtl,NULL) == AEE_TM_SYMBOLS)
@@ -5105,6 +5107,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
             }
             else
             {
+                 
                 // Restore the menu select from suspend
                 if(pMe->m_wSelectStore != MENU_SELECT_NULL)
                 {
@@ -5146,8 +5149,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
 	            isSearchTextChg = TRUE; 
 	            FREEIF(pMe->m_szAlpha);
 	            pMe->m_szAlpha = WSTRDUP(ITEXTCTL_GetTextPtr(pTextCtl));
-	            
-	                    
+	                 
 	            if(NULL != pMe->m_szAlpha && WSTRLEN(pMe->m_szAlpha) > 0)
 	            {
 	                n_KeywordsLen = WSTRLEN(pMe->m_szAlpha);	                
@@ -5156,7 +5158,10 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
 	            {
 	                FREEIF(pMe->m_szAlpha);
 	            }  
-	                                            
+	            if(b_TextctlActive)  
+	            {
+                  IMENUCTL_SetActive(pMenuCtl, FALSE);
+                }
 	            // research the record
 	            if(n_KeywordsLen > 0 && isSearchTextChg == TRUE)
 	            {
@@ -5276,7 +5281,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
                     return TRUE;
                 case AVK_CAMERA:
                 {
-                	 #if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)|| defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_1110W516)
+                	 #if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)|| defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W027)
                 	 {
 						nv_item_type	SimChoice;
 						OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
@@ -12095,7 +12100,7 @@ static boolean  CContApp_HandleSearchNameDlgEvent( CContApp  *pMe,
                     nLen = WSTRLEN(pwstrText);
                 }
                 
-                if (nLen >= 0)
+                if (nLen > 0)
                 {
                 	#ifndef FEATURE_ALL_KEY_PAD
                     // Send       Earse
