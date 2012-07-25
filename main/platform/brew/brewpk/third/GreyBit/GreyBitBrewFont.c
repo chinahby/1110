@@ -224,6 +224,29 @@ static int OEMFont_QueryInterface(IFont *pMe, AEECLSID id, void **pvtbl)
     return (po != 0 ? SUCCESS : ECLASSNOTSUPPORT);
 }
 
+static boolean GetCombineOffSet(IFont *pMe, uint16 ch1, uint16 ch2, int *pOff)
+{
+    boolean bRet = FALSE;
+    
+    // Hindi
+    switch(ch2){
+    case 0x093F:
+    case 0x094E:
+        if(pOff)
+        {
+            bRet = TRUE;
+            *pOff = -(GreyBitType_Layout_GetWidth(pMe->pLayout, ch2)*3)/5;
+        }
+        break;
+    default:
+        break;
+    }
+
+    // Hebrew
+    //switch()
+    return bRet;
+}
+
 #define NEW_SIZE  17
 #define MATH_FACTOR_BIT         10
 #define SCALE_V_ONLY 
@@ -417,10 +440,11 @@ FONT_NO_EXIST:
     int bytes_per_row, dispWidth = 0;
     word *dp, *dpBase, cText, cBack;
     unsigned int y1;
-    AECHAR ch;
+    AECHAR ch,ch1;
     int bmp_offset;
     GB_Bitmap charBmp;
     int16 foreR, foreG, foreB, backR, backG, backB, diffR, diffG, diffB;
+    int xCombOff = 0;
     
     bmp_offset = sy * nPitch;
     
@@ -443,12 +467,33 @@ FONT_NO_EXIST:
     {
 	    ch = pcText[i];
 		if(ch < ' ') continue;
-		
-		if(0 != GreyBitType_Layout_LoadChar(pMe->pLayout, ch, &charBmp))
-	    {
-	        continue;
-	    }
-	    
+        
+        if(xCombOff == 0)
+        {
+            ch1 = (i+1)<nChars?pcText[i+1]:0;
+            if(GetCombineOffSet(pMe, ch, ch1, &xCombOff))
+            {
+                ch  = ch1;
+                ch1 = pcText[i];
+            }
+            
+            if(0 != GreyBitType_Layout_LoadChar(pMe->pLayout, ch, &charBmp))
+    	    {
+    	        continue;
+    	    }
+        }
+        else
+        {
+    		if(0 != GreyBitType_Layout_LoadChar(pMe->pLayout, ch1, &charBmp))
+    	    {
+                xCombOff = 0;
+    	        continue;
+    	    }
+            
+            charBmp->horioff += xCombOff;
+            xCombOff = 0;
+        }
+        
         xWidth = (byte)charBmp->width;
         bytes_per_row = charBmp->pitch;
         
@@ -978,7 +1023,8 @@ static int OEMFont_MeasureText(IFont *pMe, const AECHAR *pcText, int nChars, int
 #endif
     int nRet = SUCCESS;
     int nRealStrLen, nFits, nTotalWidth = 0;
-    AECHAR ch;
+    AECHAR ch,ch1;
+    int xCombOff = 0;
     
     if(pMe->pLayout == NULL){
         return EFAILED;
@@ -1007,8 +1053,25 @@ static int OEMFont_MeasureText(IFont *pMe, const AECHAR *pcText, int nChars, int
         if(ch < ' ') {
             continue;
         }
+
+        if(xCombOff == 0)
+        {
+            ch1 = (nFits+1)<nChars?(*(pcText+1)):0;
+            if(GetCombineOffSet(pMe, ch, ch1, &xCombOff))
+            {
+                ch  = ch1;
+                ch1 = *pcText;
+            }
+            
+            nTotalWidth += GreyBitType_Layout_GetWidth(pMe->pLayout, ch) + xCombOff;
+        }
+        else
+        {
+    		nTotalWidth += GreyBitType_Layout_GetWidth(pMe->pLayout, ch1);
+            xCombOff = 0;
+        }
         
-	    nTotalWidth += GreyBitType_Layout_GetWidth(pMe->pLayout, ch);
+	    //nTotalWidth += GreyBitType_Layout_GetWidth(pMe->pLayout, ch);
         if (nTotalWidth >= nMaxWidth)
         {
             nTotalWidth = nMaxWidth;
