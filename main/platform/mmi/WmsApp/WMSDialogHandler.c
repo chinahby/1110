@@ -9907,7 +9907,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                 {
                     AEERect rect;
                     int ry=0;
-                    #if defined(FEATURE_VERSION_C01) || defined(FEATURE_VERSION_1110W516) ||defined(FEATURE_VERSION_C11)
+                    #if defined(FEATURE_VERSION_C01) || defined(FEATURE_VERSION_1110W516) ||defined(FEATURE_VERSION_C11)||defined(FEATURE_VERSION_C180)||defined(FEATURE_VERSION_C100)
                     if(i<4 && i != 2)
                     #else
                     if(i<4)
