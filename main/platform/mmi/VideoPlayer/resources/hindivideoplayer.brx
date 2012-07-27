@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="videoplayer" VERSION="1">
+<Strings Encoding="Unicode">
+	<String Id="1001" Name="IDS_TITLE">
+		<Text>विडियो प्लेयर</Text>
+	</String>
+	<STRING Id="1004" Name="IDS_DELETE">
+		<Text>मिटाना</Text>
+	</STRING>
+	<STRING Id="1008" Name="IDS_PLAYFAILED">
+		<Text>चलाने मे विफल रहा</Text>
+	</STRING>
+	<String Id="1012" Name="IDS_HELPTITLE">
+		<Text>मदद</Text>
+	</String>
+	<String Id="1013" Name="IDS_HELP">
+		<Text>कुंजी ऊपर और नीचे: मात्र समायोजित करें \n गलेरी : निर्देशिका में विडियो खोजें। नोट : फुल्ल स्क्रीन मोड़े में, पीछे आने के लिए किसी कुंजी को दबाएँ।.</Text>
+	</String>
+	<String Id="1014" Name="IDS_FILENAMETOOLONG">
+		<Text>FileName too long</Text>
+	</String>	
+	<STRING Id="1015" Name="IDS_PLAYFORMATFAILD">
+		<Text>Play Format Failed</Text>
+	</STRING>
+</Strings>
+<Dialogs>
+	<Dialog Id="6001" Name="IDD_OPTION" Focus="7001">
+		<Controls>
+			<Menu Id="7001" Name="IDC_OPTION_MENU">
+				<Items/>
+			</Menu>
+		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<Dialog Id="6003" Name="IDD_VIDEOPLAYER" Focus="0">
+		<Controls/>
+	</Dialog>
+	<Dialog Id="6004" Name="IDD_MSGBOX" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+</Dialogs>
+</BREWRes>

@@ -1,0 +1,2501 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="btapp" VERSION="1">
+<Strings Encoding="Unicode">
+	<String Id="1" Name="IDS_BT_TITLE">
+		<Text>ब्लूटूथ</Text>
+	</String>
+	<String Id="2" Name="IDS_AUDIO_GATEWAY">
+		<Text>औडियो गाइटवे</Text>
+	</String>
+	<String Id="3" Name="IDS_NETWORK_ACCESS">
+		<Text>नेटवर्क एक्सैस</Text>
+	</String>
+	<String Id="4" Name="IDS_DEVICES">
+		<Text>उपकरण</Text>
+	</String>
+	<String Id="5" Name="IDS_TESTS">
+		<Text>परीक्षण</Text>
+	</String>
+	<String Id="6" Name="IDS_MY_INFO">
+		<Text>मेरी सूचनाएँ</Text>
+	</String>
+	<String Id="7" Name="IDS_SETTINGS">
+		<Text>सेटिंगें</Text>
+	</String>
+	<String Id="8" Name="IDS_ENABLING">
+		<Text>समर्थ करना</Text>
+	</String>
+	<String Id="9" Name="IDS_BONDABLE">
+		<Text>बंधन योग्य</Text>
+	</String>
+	<String Id="10" Name="IDS_BT_ON">
+		<Text>बी टी को चालू करें</Text>
+	</String>
+	<String Id="11" Name="IDS_BT_OFF">
+		<Text>बी टी को बंद करें</Text>
+	</String>
+	<String Id="12" Name="IDS_ACTIVE">
+		<Text>सक्रिय</Text>
+	</String>
+	<String Id="13" Name="IDS_PASSIVE">
+		<Text>निष्क्रिय </Text>
+	</String>
+	<STRING Id="14" Name="IDS_BT_OK">
+		<Text>ठीक है</Text>
+	</STRING>
+	<STRING Id="15" Name="IDS_BT_CANCEL">
+		<Text>रद्द करें</Text>
+	</STRING>
+	<String Id="16" Name="IDS_ON">
+		<Text>चालू</Text>
+	</String>
+	<String Id="17" Name="IDS_ON_TIMED">
+		<Text>चालू (3 मिनट के लिए)</Text>
+	</String>
+	<String Id="18" Name="IDS_OFF">
+		<Text>बंद</Text>
+	</String>
+	<String Id="19" Name="IDS_TYPE">
+		<Text>प्रकार</Text>
+	</String>
+	<String Id="20" Name="IDS_MODE">
+		<Text>स्वरूप</Text>
+	</String>
+	<String Id="21" Name="IDS_TIME">
+		<Text>समय</Text>
+	</String>
+	<String Id="22" Name="IDS_SPKR">
+		<Text>स्पीकर</Text>
+	</String>
+	<String Id="23" Name="IDS_MIC">
+		<Text>माइक </Text>
+	</String>
+	<String Id="24" Name="IDS_CONN_MODE">
+		<Text>कनैक्शन मोड़</Text>
+	</String>
+	<String Id="25" Name="IDS_IDLE_TO">
+		<Text>निष्क्रिय समयबाह्य</Text>
+	</String>
+	<String Id="26" Name="IDS_SPKR_VOL">
+		<Text>स्पीकर मात्र</Text>
+	</String>
+	<String Id="27" Name="IDS_MIC_VOL">
+		<Text>माइक्रोफोन मात्र</Text>
+	</String>
+	<String Id="28" Name="IDS_BD_ADDR">
+		<Text>बी डी एड्रैस</Text>
+	</String>
+	<String Id="29" Name="IDS_BT_NAME">
+		<Text>बी टी नाम</Text>
+	</String>
+	<String Id="30" Name="IDS_SEARCHING">
+		<Text>खोज रहा...</Text>
+	</String>
+	<String Id="31" Name="IDS_NOT_AVAIL">
+		<Text>उपलब्द नहीं है</Text>
+	</String>
+	<String Id="32" Name="IDS_DEVICE_SEARCH">
+		<Text>उपकरण खोज</Text>
+	</String>
+	<String Id="33" Name="IDS_DEVICE_ALL">
+		<Text>सभी उपकरने</Text>
+	</String>
+	<String Id="34" Name="IDS_DEVICE_AUDIO">
+		<Text>औड़ियों उपकरणे</Text>
+	</String>
+	<String Id="35" Name="IDS_DEVICE_NETWORK">
+		<Text>नेटवर्क उपकरणे</Text>
+	</String>
+	<String Id="36" Name="IDS_BY_BD_ADDR">
+		<Text>बी डी द्वारा</Text>
+	</String>
+	<String Id="37" Name="IDS_ALL">
+		<Text>सब</Text>
+	</String>
+	<String Id="38" Name="IDS_BONDED">
+		<Text>बंदन किया गया</Text>
+	</String>
+	<String Id="39" Name="IDS_AUDIO">
+		<Text>आडियो</Text>
+	</String>
+	<String Id="40" Name="IDS_NETWORK">
+		<Text>नेटवर्क</Text>
+	</String>
+	<String Id="41" Name="IDS_REMOVE">
+		<Text>हटाएँ</Text>
+	</String>
+	<String Id="42" Name="IDS_BOND">
+		<Text>अनुबंद करना</Text>
+	</String>
+	<String Id="43" Name="IDS_UNBOND">
+		<Text>अबाधि</Text>
+	</String>
+	<String Id="44" Name="IDS_KEEP">
+		<Text>रखें</Text>
+	</String>
+	<String Id="45" Name="IDS_DISCARD">
+		<Text>डिस्कार्ड</Text>
+	</String>
+	<String Id="46" Name="IDS_LIST_ALL">
+		<Text>लिस्ट करें</Text>
+	</String>
+	<String Id="47" Name="IDS_LIST_BONDED">
+		<Text>बंदन किए हुए उपकरणों को लिस्ट करें</Text>
+	</String>
+	<String Id="48" Name="IDS_REMOVE_ALL">
+		<Text>सब को हटाएँ</Text>
+	</String>
+	<String Id="49" Name="IDS_UNBOND_ALL">
+		<Text>सब को आबाद करें</Text>
+	</String>
+	<String Id="50" Name="IDS_EDIT_NAME">
+		<Text>नाम संपादित करें</Text>
+	</String>
+	<String Id="51" Name="IDS_PASS_KEY">
+		<Text>%s के लिए कुंजी गुजारें</Text>
+	</String>
+	<String Id="52" Name="IDS_DISCOVERED_DEVICES">
+		<Text>खोज किए गए उपकरण</Text>
+	</String>
+	<String Id="53" Name="IDS_BONDED_DEVICES">
+		<Text>बंदित उपकरणें</Text>
+	</String>
+	<String Id="54" Name="IDS_KNOWN_DEVICES">
+		<Text>ज्ञात उपकरणें</Text>
+	</String>
+	<String Id="55" Name="IDS_UNKNOWN">
+		<Text>अज्ञात</Text>
+	</String>
+	<String Id="56" Name="IDS_AUDIO_TRANSFER">
+		<Text>आडियो स्थानांतरण</Text>
+	</String>
+	<String Id="57" Name="IDS_DEVICE_TYPE">
+		<Text>उपकरण प्रकार</Text>
+	</String>
+	<String Id="58" Name="IDS_AUTOMATIC">
+		<Text>स्वचालित</Text>
+	</String>
+	<String Id="59" Name="IDS_HEADSET">
+		<Text>हैंडसैट</Text>
+	</String>
+	<String Id="60" Name="IDS_HANDSFREE">
+		<Text>हस्त-मुक्त</Text>
+	</String>
+	<String Id="61" Name="IDS_SECURITY">
+		<Text>सुरक्षा</Text>
+	</String>
+	<String Id="62" Name="IDS_SECURITY_NONE">
+		<Text>सुरक्षा नहीं है</Text>
+	</String>
+	<String Id="63" Name="IDS_SECURITY_AUTH">
+		<Text>प्रमाणिकरण</Text>
+	</String>
+	<String Id="64" Name="IDS_SECURITY_AUTH_ENC">
+		<Text>प्रमाणीकरण +एंक्रिप्शन </Text>
+	</String>
+	<STRING Id="65" Name="IDS_BT_YES_EX">
+		<Text>हां</Text>
+	</STRING>
+	<STRING Id="66" Name="IDS_BT_NO_EX">
+		<Text>नहीं</Text>
+	</STRING>
+	<String Id="67" Name="IDS_VR">
+		<Text>VR</Text>
+	</String>
+	<String Id="68" Name="IDS_VR_CAPABLE">
+		<Text>VR सक्षम</Text>
+	</String>
+	<String Id="69" Name="IDS_CONNECT">
+		<Text>कनेक्ट</Text>
+	</String>
+	<String Id="70" Name="IDS_DISCONNECT">
+		<Text>असंबद्ध</Text>
+	</String>
+	<STRING Id="71" Name="IDS_BT_CLOSE">
+		<Text>बंद करें</Text>
+	</STRING>
+	<String Id="72" Name="IDS_LISTENING">
+		<Text>ध्यान देते </Text>
+	</String>
+	<String Id="73" Name="IDS_CONNECTING">
+		<Text>कनेक्टिंग</Text>
+	</String>
+	<String Id="74" Name="IDS_CONNECTED">
+		<Text>जुड़ा हुआ है</Text>
+	</String>
+	<String Id="75" Name="IDS_DISCONNECTED">
+		<Text>डिस्कनेक्ट कर दिया गया</Text>
+	</String>
+	<String Id="76" Name="IDS_OPTIONS">
+		<Text>विकल्प</Text>
+	</String>
+	<String Id="77" Name="IDS_ACTIVE_ANY_DEVICE">
+		<Text>सक्रिया, कोई उपरकण</Text>
+	</String>
+	<String Id="78" Name="IDS_HCI_MODE">
+		<Text>हेचसीआईए मोड सेट करें</Text>
+	</String>
+	<String Id="79" Name="IDS_USE">
+		<Text>उपयोग करें</Text>
+	</String>
+	<String Id="80" Name="IDS_APIT">
+		<Text>एपीआईटी</Text>
+	</String>
+	<String Id="81" Name="IDS_PUT">
+		<Text>रखना</Text>
+	</String>
+	<String Id="82" Name="IDS_GET">
+		<Text>लेना</Text>
+	</String>
+	<String Id="83" Name="IDS_DELETE">
+		<Text>मिटाएं</Text>
+	</String>
+	<String Id="84" Name="IDS_PUSH">
+		<Text>धक्का देना</Text>
+	</String>
+	<String Id="85" Name="IDS_PULL">
+		<Text>खींचना</Text>
+	</String>
+	<String Id="86" Name="IDS_REGISTER">
+		<Text>दर्ज करें</Text>
+	</String>
+	<String Id="87" Name="IDS_DEREGISTER">
+		<Text>डीरजिस्टर</Text>
+	</String>
+	<String Id="88" Name="IDS_DISCOVERABLE">
+		<Text>खोज योग्य</Text>
+	</String>
+	<String Id="89" Name="IDS_FTM">
+		<Text>एफटीएम</Text>
+	</String>
+	<String Id="90" Name="IDS_BUSINESS_CARD_EXCHANGE">
+		<Text>बिज़नस कार्ड विनियम</Text>
+	</String>
+	<String Id="91" Name="IDS_OBEX_SERVERS">
+		<Text>ओबीईएक्स सर्वर</Text>
+	</String>
+	<String Id="92" Name="IDS_PUT_FOLDER">
+		<Text>फोंल्डर डालें</Text>
+	</String>
+	<String Id="93" Name="IDS_GET_FOLDER">
+		<Text>फोंल्डर लें</Text>
+	</String>
+	<String Id="94" Name="IDS_PASSWORD">
+		<Text>पासवर्ड</Text>
+	</String>
+	<String Id="95" Name="IDS_AUTHENTICATE">
+		<Text>प्रामाणित करें</Text>
+	</String>
+	<String Id="96" Name="IDS_SRCH_BD_ADDR">
+		<Text>बी डी एड्रैस के कम महत्वपूर्ण अंक</Text>
+	</String>
+	<String Id="97" Name="IDS_TEST_MODE">
+		<Text>परीक्षणा मोड मे प्रवेश करें</Text>
+	</String>
+	<String Id="98" Name="IDS_ENABLE_SERVICE_SECURITY">
+		<Text>सेवा सुरक्षा को सक्रिय करें</Text>
+	</String>
+	<String Id="99" Name="IDS_JOB_ID">
+		<Text>नौकरी आईडी</Text>
+	</String>
+	<String Id="100" Name="IDS_BROWSE_SVC">
+		<Text>सेवा ब्रावुस करें</Text>
+	</String>
+	<String Id="101" Name="IDS_SEARCH_SVC">
+		<Text>सेवा खोजें</Text>
+	</String>
+	<String Id="102" Name="IDS_REGISTER_SVC">
+		<Text>सेवा को रजिस्टर करें</Text>
+	</String>
+	<String Id="103" Name="IDS_UNREGISTER_SVC">
+		<Text>सेवा को अंरेगीस्टर करें</Text>
+	</String>
+	<String Id="106" Name="IDS_OPP">
+		<Text>आप</Text>
+	</String>
+	<String Id="107" Name="IDS_OPP_TESTS">
+		<Text>आप परीक्षण</Text>
+	</String>
+	<String Id="108" Name="IDS_OPP_SERVER">
+		<Text>आप सर्वर </Text>
+	</String>
+	<String Id="109" Name="IDS_OPP_CLIENT">
+		<Text>आप क्लाईंट </Text>
+	</String>
+	<String Id="110" Name="IDS_FTP">
+		<Text>एफ़टीपी</Text>
+	</String>
+	<String Id="111" Name="IDS_FTP_TESTS">
+		<Text>एफ़टीपी क्लिएंट्स</Text>
+	</String>
+	<String Id="112" Name="IDS_FTP_SERVER">
+		<Text>एफ़टीपी सर्वर</Text>
+	</String>
+	<String Id="113" Name="IDS_FTP_CLIENT">
+		<Text>एफ़टीपी क्लाईंट</Text>
+	</String>
+	<String Id="114" Name="IDS_BROWSE_SVC_RESULTS">
+		<Text>सीएलएस/एससीएन/सेवा नाम</Text>
+	</String>
+	<String Id="115" Name="IDS_SRCH_SVC_RESULTS">
+		<Text>रूपरेखा / संस्करन</Text>
+	</String>
+	<String Id="116" Name="IDS_OBEX_TESTS">
+		<Text>ओबीईएक्स</Text>
+	</String>
+	<String Id="117" Name="IDS_TCS_TESTS">
+		<Text>टीसीएस - बीआईएन </Text>
+	</String>
+	<String Id="118" Name="IDS_CTP">
+		<Text>सीटीपी</Text>
+	</String>
+	<String Id="119" Name="IDS_ICP">
+		<Text>आईसीपी</Text>
+	</String>
+	<String Id="120" Name="IDS_CTP_TESTS">
+		<Text>सीटीपी</Text>
+	</String>
+	<String Id="121" Name="IDS_ICP_TESTS">
+		<Text>आईसीपी</Text>
+	</String>
+	<String Id="122" Name="IDS_CTP_EST_CALL">
+		<Text>काल को स्थापना करें</Text>
+	</String>
+	<String Id="123" Name="IDS_ICP_EST_CALL">
+		<Text>काल को स्थापना करें</Text>
+	</String>
+	<String Id="124" Name="IDS_CTP_MSG_EST_CALL_FAILED">
+		<Text>सीटीपी काल को साथपित करने मे विफल!</Text>
+	</String>
+	<String Id="125" Name="IDS_ICP_MSG_EST_CALL_FAILED">
+		<Text>आईसीपी काल को स्थापित करने मे विफल!</Text>
+	</String>
+	<String Id="126" Name="IDS_MSG_TCS_CLEAR_CALL_FAILED">
+		<Text>क्लियरकाल में विफल!</Text>
+	</String>
+	<String Id="127" Name="IDS_ICP_CLEAR_CALL">
+		<Text>क्लियर काल</Text>
+	</String>
+	<String Id="128" Name="IDS_DEVICE_TELEPHONY">
+		<Text>टेलिफोंनी उपकरणें</Text>
+	</String>
+	<String Id="129" Name="IDS_MSG_NO_TELEPHONY_DEV">
+		<Text>डेटाबेस में कोई टेलेफोनी उपकरण नहीं है</Text>
+	</String>
+	<String Id="130" Name="IDS_MSG_TCS_CALL_SETUP_FAILED">
+		<Text>काल सेट करना विफल!</Text>
+	</String>
+	<String Id="131" Name="IDS_MSG_TCS_CALL_SETUP_SUCCESS">
+		<Text>काल सेट करना सफल!</Text>
+	</String>
+	<String Id="132" Name="IDS_FTP_CREATE_FOLDER">
+		<Text>फोंल्डर बनाएँ</Text>
+	</String>
+	<String Id="133" Name="IDS_FTP_LIST_FOLDER">
+		<Text>दूरस्थ ब्राउज़िंग</Text>
+	</String>
+	<String Id="134" Name="IDS_FTP_MSG_FOLDER_CREATED">
+		<Text>फोंल्डर बनाना सफल</Text>
+	</String>
+	<String Id="135" Name="IDS_FTP_MSG_FOLDER_CREATION_FAILED">
+		<Text>फोंल्डर बनाना विफल</Text>
+	</String>
+	<String Id="136" Name="IDS_ENABLE">
+		<Text>सक्षम</Text>
+	</String>
+	<String Id="137" Name="IDS_DISABLE">
+		<Text>अक्षम</Text>
+	</String>
+	<String Id="138" Name="IDS_RADIO_ON">
+		<Text>रेडियो को चालू करें</Text>
+	</String>
+	<String Id="139" Name="IDS_RADIO_OFF">
+		<Text>रेडियो को बंद करें</Text>
+	</String>
+	<String Id="140" Name="IDS_VISIBILITY_ON">
+		<Text>दिखावा को चालू करें</Text>
+	</String>
+	<String Id="141" Name="IDS_VISIBILITY_OFF">
+		<Text>दिखावा को बांध करें</Text>
+	</String>
+	<String Id="142" Name="IDS_MASTER_CONTROL">
+		<Text>मास्टर कंट्रोल</Text>
+	</String>
+	<String Id="143" Name="IDS_DFLT_DIAL_STR">
+		<Text>दिफ़ौल्ट डायल स्ट्रिंग</Text>
+	</String>
+	<String Id="144" Name="IDS_ALLOW_ROLE_SWITCH">
+		<Text>आनेवाली भूमिका स्व्तिच को अनुमति दें।</Text>
+	</String>
+	<String Id="145" Name="IDS_DISALLOW_ROLE_SWITCH">
+		<Text>आनेवाली भूमिका स्व्तिच को अनुमति न दें।</Text>
+	</String>
+	<String Id="147" Name="IDS_FTP_SRV_ALLOW_BROWSE">
+		<Text>ब्रोवसे करने अनुमति दें।</Text>
+	</String>
+	<String Id="148" Name="IDS_FTP_SRV_READ_ONLY">
+		<Text>केवल पठनीय</Text>
+	</String>
+	<STRING Id="149" Name="IDS_BT_SELECT">
+		<Text>चुनें</Text>
+	</STRING>
+	<String Id="150" Name="IDS_FTP_MOVE_TO_FOLDER">
+		<Text>फोंल्डर में ले जाएँ</Text>
+	</String>
+	<String Id="151" Name="IDS_FTP_MOVE_TO_ROOT">
+		<Text>रूट में ले जाएँ</Text>
+	</String>
+	<String Id="152" Name="IDS_SPP_TESTS">
+		<Text>एसपीपी परीक्षण</Text>
+	</String>
+	<String Id="153" Name="IDS_SPP_SERVER">
+		<Text>एसपीपी सर्वर</Text>
+	</String>
+	<String Id="154" Name="IDS_SPP_CLIENT">
+		<Text>एसपीपी क्लाईंट</Text>
+	</String>
+	<String Id="155" Name="IDS_SPP_SETTINGS">
+		<Text>भेजने के बाइट्स</Text>
+	</String>
+	<String Id="156" Name="IDS_SPP_DATA_SIZE_THOUSAND">
+		<Text>2के</Text>
+	</String>
+	<String Id="157" Name="IDS_SPP_DATA_SIZE_MILLION">
+		<Text>2मे</Text>
+	</String>
+	<String Id="158" Name="IDS_SPP_DATA_SIZE_BILLION">
+		<Text>2जी</Text>
+	</String>
+	<String Id="159" Name="IDS_USERID">
+		<Text>प्रयोक्ता आईडी</Text>
+	</String>
+	<String Id="160" Name="IDS_AUTH_NONE">
+		<Text>प्रमाणीकरण नहीं है</Text>
+	</String>
+	<String Id="161" Name="IDS_AUTH_PWD">
+		<Text>पीआईएन प्रमाणीकरण</Text>
+	</String>
+	<String Id="162" Name="IDS_AUTH_USERID_PWD">
+		<Text>प्रयोक्ता और पीआईएन प्रमाणीकरण</Text>
+	</String>
+	<String Id="163" Name="IDS_PASSIVE_ANY_DEVICE">
+		<Text>निष्क्रिय, कोई उपकरण</Text>
+	</String>
+	<String Id="164" Name="IDS_LIST_CONNECTED">
+		<Text>जुड़ा हुआ उपकरणों को सूची करें</Text>
+	</String>
+	<String Id="165" Name="IDS_CONNECTED_DEVICES">
+		<Text>जुड़ा हुआ उपकारणे</Text>
+	</String>
+	<String Id="166" Name="IDS_SET_BONDABLE">
+		<Text>बाणडबल को सेट करें</Text>
+	</String>
+	<String Id="167" Name="IDS_CLEAR_BONDABLE">
+		<Text>क्लियर बाणडबल</Text>
+	</String>
+	<String Id="200" Name="IDS_SETTINGS_FTP">
+		<Text>एफ़टीपी</Text>
+	</String>
+	<String Id="201" Name="IDS_SETTINGS_BIP">
+		<Text>बीआईपी</Text>
+	</String>
+	<String Id="202" Name="IDS_ENABLE_OPP">
+		<Text>ओपीपी सर्वर</Text>
+	</String>
+	<String Id="203" Name="IDS_ENABLE_FTP">
+		<Text>एफ़टीपी सर्वर</Text>
+	</String>
+	<String Id="204" Name="IDS_ENABLE_BIP">
+		<Text>बीआईपी सर्वर</Text>
+	</String>
+	<String Id="205" Name="IDS_ENABLE_BPP">
+		<Text>बीपीपी सर्वर</Text>
+	</String>
+	<String Id="206" Name="IDS_HANDSFREE_PRIVATE">
+		<Text>हैंड्स-फ्री-प्राइवेट</Text>
+	</String>
+	<String Id="207" Name="IDS_ENABLE_VIDEO_CALL">
+		<Text>विडोए कॉल को एनेबल करें</Text>
+	</String>
+	<String Id="208" Name="IDS_DISABLE_VIDEO_CALL">
+		<Text>विडियो कॉल को डिसेबल करें</Text>
+	</String>
+	<String Id="209" Name="IDS_ENABLE_SAP">
+		<Text>एसएपी सर्वर</Text>
+	</String>
+	<String Id="210" Name="IDS_ENABLE_A2DP">
+		<Text>ए2डीपी को एनेबल करें</Text>
+	</String>
+	<String Id="211" Name="IDS_ENABLE_AVRCP">
+		<Text>एवीआरसीपी को एनेबल करें</Text>
+	</String>
+	<String Id="212" Name="IDS_SWITCH_ROLE">
+		<Text>रोल स्विच करें</Text>
+	</String>
+	<String Id="213" Name="IDS_MASTER">
+		<Text>मास्टर</Text>
+	</String>
+	<String Id="214" Name="IDS_SLAVE">
+		<Text>स्लेव</Text>
+	</String>
+	<String Id="215" Name="IDS_MSG_SWITCH_ROLE_SUCCESS">
+		<Text>रोल स्व्तिच कमांड सफलतापूर्वक से जारी किया गया</Text>
+	</String>
+	<String Id="216" Name="IDS_MSG_SWITCH_ROLE_FAILED">
+		<Text>रोल स्विच विफल हुआ</Text>
+	</String>
+	<String Id="217" Name="IDS_MSG_SWITCH_ROLE_NOT_ALLOWED">
+		<Text>एक से अधिक उपकरण के साथ जुड़ा हुआ है</Text>
+	</String>
+	<String Id="218" Name="IDS_MSG_NO_LINK_TO_SWITCH_ROLE">
+		<Text>स्विच रोल को लिंक नहीं है</Text>
+	</String>
+	<String Id="219" Name="IDS_LABEL_DEV_ROLE">
+		<Text>स्थानीय उपकरण रोल: %s </Text>
+	</String>
+	<String Id="220" Name="IDS_ENABLE_PBAP">
+		<Text>पीबीएपी सर्वर</Text>
+	</String>
+	<String Id="221" Name="IDS_ENABLE_OBEX">
+		<Text>ओबीईएक्स सर्वर</Text>
+	</String>
+	<String Id="230" Name="IDS_PBAP">
+		<Text>पीबीएपी</Text>
+	</String>
+	<String Id="231" Name="IDS_PBAP_TESTS">
+		<Text>पीबीएपी</Text>
+	</String>
+	<String Id="232" Name="IDS_PBAP_SERVER">
+		<Text>पीबीएपी सर्वर</Text>
+	</String>
+	<String Id="233" Name="IDS_PBAP_CLIENT">
+		<Text>पीबीएपी क्लाईंट</Text>
+	</String>
+	<String Id="234" Name="IDS_PBAP_VCARD_FORMAT">
+		<Text>प्रारूप</Text>
+	</String>
+	<String Id="235" Name="IDS_PBAP_FILTER">
+		<Text>फ़िल्टर</Text>
+	</String>
+	<String Id="236" Name="IDS_PBAP_MAX_LIST_COUNT">
+		<Text>सूची गिनती</Text>
+	</String>
+	<String Id="237" Name="IDS_PBAP_LIST_START_OFFSET">
+		<Text>सूची ऑफसेट</Text>
+	</String>
+	<String Id="238" Name="IDS_PBAP_SORT_ORDER">
+		<Text>छँटाई क्रम</Text>
+	</String>
+	<String Id="239" Name="IDS_PBAP_SEARCH_ATTR">
+		<Text>खोज विसेशता</Text>
+	</String>
+	<String Id="240" Name="IDS_PBAP_SEARCH_VALUE">
+		<Text>खोज मूल्य </Text>
+	</String>
+	<String Id="241" Name="IDS_PBAP_VCARD_2_1">
+		<Text>वीकार्ड 2.1</Text>
+	</String>
+	<String Id="242" Name="IDS_PBAP_VCARD_3_0">
+		<Text>वीकर्ड 3,0</Text>
+	</String>
+	<String Id="243" Name="IDS_PBAP_SORT_INDEX">
+		<Text>अनुक्रमित</Text>
+	</String>
+	<String Id="244" Name="IDS_PBAP_SORT_ALPHA">
+		<Text>वर्णक्रमानुसारी</Text>
+	</String>
+	<String Id="245" Name="IDS_PBAP_SORT_SOUND">
+		<Text>ध्वन्यात्मकतापूर्वक</Text>
+	</String>
+	<String Id="246" Name="IDS_PBAP_SORTING">
+		<Text>छँटाई क्रम</Text>
+	</String>
+	<String Id="247" Name="IDS_PBAP_DOWNLOAD">
+		<Text>पीबी ऑब्जेक्ट को डौन्लोड करें</Text>
+	</String>
+	<String Id="248" Name="IDS_PBAP_BROWSE">
+		<Text>पीबी को ब्रौस करें</Text>
+	</String>
+	<String Id="249" Name="IDS_PBAP_SEARCH_ATTRIBUTE">
+		<Text>खोज विसेशता</Text>
+	</String>
+	<String Id="250" Name="IDS_EFS">
+		<Text>ईएफ़एस के उपयोग करें</Text>
+	</String>
+	<String Id="251" Name="IDS_MEMORY_CARD">
+		<Text>एसडी मेमोरी कार्ड को उपयोग करें</Text>
+	</String>
+	<String Id="252" Name="IDS_PBAP_SEARCH_SOUND">
+		<Text>शब्द</Text>
+	</String>
+	<String Id="260" Name="IDS_PBAP_SEARCH_NAME">
+		<Text>नाम</Text>
+	</String>
+	<String Id="261" Name="IDS_PBAP_SEARCH_NUMBER">
+		<Text>नंबर</Text>
+	</String>
+	<String Id="263" Name="IDS_PBAP_SET_CONFIG_OPTIONS">
+		<Text>संरचना विकल्पों को सेट करें</Text>
+	</String>
+	<String Id="264" Name="IDS_PBAP_SET_CONFIG_VALUES">
+		<Text>संरचना मूल्यों को सेट करें</Text>
+	</String>
+	<String Id="265" Name="IDS_PBAP_DW_PB">
+		<Text>फोनबुक</Text>
+	</String>
+	<String Id="266" Name="IDS_PBAP_DW_ICH">
+		<Text>आनेवाली काल</Text>
+	</String>
+	<String Id="267" Name="IDS_PBAP_DW_OCH">
+		<Text>बाहर जानेवाली कालें</Text>
+	</String>
+	<String Id="268" Name="IDS_PBAP_DW_MCH">
+		<Text>छूटी काल</Text>
+	</String>
+	<String Id="269" Name="IDS_PBAP_DW_CCH">
+		<Text>संयुक्त काल</Text>
+	</String>
+	<String Id="270" Name="IDS_PBAP_PHONE">
+		<Text>फोन</Text>
+	</String>
+	<String Id="271" Name="IDS_PBAP_SIM">
+		<Text>सिम</Text>
+	</String>
+	<String Id="272" Name="IDS_PBAP_SELECT_SOURCE">
+		<Text>बी रेपोसीटोरी को चुनें</Text>
+	</String>
+	<String Id="273" Name="IDS_PBAP_MSG_CLIENT_DOWNLOAD_FAILED">
+		<Text>पीबी को डौन्लोड करना विफल हुआ</Text>
+	</String>
+	<String Id="274" Name="IDS_PBAP_MSG_PULL_PB_DONE">
+		<Text>पीबी को खींचना सफल हुआ</Text>
+	</String>
+	<String Id="275" Name="IDS_PBAP_MSG_SET_PB_FAILED">
+		<Text>सेट फोनेबूक विफल हुआ</Text>
+	</String>
+	<String Id="276" Name="IDS_PBAP_MSG_PULL_VCARD_LIST_FAIL">
+		<Text>वीकर्ड लिस्टिंग खींचना विफल हुआ</Text>
+	</String>
+	<String Id="277" Name="IDS_PBAP_MSG_PULL_VOBJ_FAILED">
+		<Text>ईकर्ड एंट्री खींचना विफल हुआ</Text>
+	</String>
+	<String Id="278" Name="IDS_PBAP_MSG_PULL_PB_FAILED">
+		<Text>पीबी ऑब्जेक्ट खींचना विफल हुआ</Text>
+	</String>
+	<String Id="279" Name="IDS_PBAP_MSG_VOBJ_PULLED">
+		<Text>वीकर्ड एंट्री खींचा गया है</Text>
+	</String>
+	<String Id="280" Name="IDS_PBAP_MSG_NO_OF_PB_OBJS">
+		<Text>पीबी ओब्जेक्टों की संख्या=%s</Text>
+	</String>
+	<String Id="281" Name="IDS_PBAP_DW_INVALID">
+		<Text>अवैध फोनेबूक</Text>
+	</String>
+	<String Id="282" Name="IDS_PBAP_MSG_MAX_LIST_ZERO">
+		<Text>खाली को MaxListCount सूची करना 0 है। माधोन की संख्या=%s</Text>
+	</String>
+	<String Id="283" Name="IDS_PBAP_MSG_ABORT_REQ_FAIL">
+		<Text>अबोर्ट विफल रहा है।</Text>
+	</String>
+	<String Id="284" Name="IDS_PBAP_MSG_PULL_VCARD_LIST_DONE">
+		<Text>वीकर्ड खींचना सफल रहा है।</Text>
+	</String>
+	<String Id="500" Name="IDS_HS_BUTTON">
+		<Text>एचएस बटन</Text>
+	</String>
+	<STRING Id="501" Name="IDS_BT_IGNORE">
+		<Text>उपेखसा करना</Text>
+	</STRING>
+	<String Id="502" Name="IDS_INFO_HS_BUTTON">
+		<Text>अगर एक काल उपसतिथ नहीं है,तो कनैक्शन के समय पर प्राप्त किया गया ठो एचएस बटन को उपेक्षा करना है? नहीं तो, डिफ़ाल्ट डाइलिंग स्ट्रिंग को उपयोग करके एक काल किया जाएगा।.</Text>
+	</String>
+	<String Id="503" Name="IDS_CONFIG_SCAN_PARAMS">
+		<Text>कोन्फ़िगुरतिओन स्कैन पैरामीटर</Text>
+	</String>
+	<String Id="504" Name="IDS_PAGE_SCAN">
+		<Text>पृष्ठ स्कैन</Text>
+	</String>
+	<String Id="505" Name="IDS_INQ_SCAN">
+		<Text>जांच स्कैन</Text>
+	</String>
+	<String Id="506" Name="IDS_SCAN_PARAM_DEFAULT">
+		<Text>डीफाल्ट</Text>
+	</String>
+	<String Id="507" Name="IDS_SCAN_PARAM_INTERLACE_128">
+		<Text>इंटरलेस, 1.28s</Text>
+	</String>
+	<String Id="508" Name="IDS_SCAN_PARAM_INTERLACE_256">
+		<Text>इंटरलेस, 25.6s</Text>
+	</String>
+	<String Id="509" Name="IDS_SCAN_PARAM_STD_128">
+		<Text>स्टैंडर्ड, 1.28s</Text>
+	</String>
+	<String Id="510" Name="IDS_SCAN_PARAM_SMALLEST_CONN_TIME">
+		<Text>चोटी कनैक्शन टाइम</Text>
+	</String>
+	<String Id="511" Name="IDS_SCAN_PARAM_LARGER_CONN_TIME">
+		<Text>बड़ा कनैक्शन टाइम</Text>
+	</String>
+	<String Id="512" Name="IDS_SCAN_PARAM_LARGEST_CONN_TIME">
+		<Text>सबसे बड़ा कनैक्शन टाइम</Text>
+	</String>
+	<String Id="513" Name="IDS_SET_CONN_ROLE">
+		<Text>कोननेकतीं रोल को सेट करें</Text>
+	</String>
+	<String Id="514" Name="IDS_ACCEPT_CONN_ROLE">
+		<Text>प्राथमिकता दी गयी स्वीकार कनैक्शन रोल</Text>
+	</String>
+	<String Id="515" Name="IDS_STRING_SRV_PROFILE_SELECTION">
+		<Text>प्रोफ़ाइल चयन</Text>
+	</String>
+	<String Id="516" Name="IDS_STRING_SRV_SEC_LEVEL">
+		<Text>सुरक्षा स्तर</Text>
+	</String>
+	<String Id="517" Name="IDS_AUDIO_GATEWAY_SEC_HIGH">
+		<Text>आडियो गेटवे: कर सेक=&gt;उच्च</Text>
+	</String>
+	<String Id="518" Name="IDS_AUDIO_GATEWAY_SEC_MED">
+		<Text>आडियो गेटवे: कर सेक=&gt;मध्य</Text>
+	</String>
+	<String Id="519" Name="IDS_AUDIO_GATEWAY_SEC_LOW">
+		<Text>आडियो गेटवे: कर सेक=&gt;कम</Text>
+	</String>
+	<String Id="520" Name="IDS_NETWORK_ACCESS_SEC_HIGH">
+		<Text>नेटवर्क एक्सैस: कर सेक=&gt;उच्च</Text>
+	</String>
+	<String Id="521" Name="IDS_NETWORK_ACCESS_SEC_MED">
+		<Text>नेटवर्क एक्सैस: कर सेक=&gt;मध्य</Text>
+	</String>
+	<String Id="522" Name="IDS_NETWORK_ACCESS_SEC_LOW">
+		<Text>नेटवर्क एक्सैस: कर सेक=&gt;कम</Text>
+	</String>
+	<String Id="523" Name="IDS_ENABLE_OPP_SEC_HIGH">
+		<Text>ओपीपी: कर सेक=&gt;उच्चा</Text>
+	</String>
+	<String Id="524" Name="IDS_ENABLE_OPP_SEC_MED">
+		<Text>ओपीपी: कर सेक=&gt;मध्य</Text>
+	</String>
+	<String Id="525" Name="IDS_ENABLE_OPP_SEC_LOW">
+		<Text>ओपीपी: कर सेक=&gt;कम</Text>
+	</String>
+	<String Id="526" Name="IDS_ENABLE_FTP_SEC_HIGH">
+		<Text>एफ़टीपी: कर सेक=&gt;उच्च</Text>
+	</String>
+	<String Id="527" Name="IDS_ENABLE_FTP_SEC_MED">
+		<Text>एफ़टीपी: कर सेक=&gt;मध्य</Text>
+	</String>
+	<String Id="528" Name="IDS_ENABLE_FTP_SEC_LOW">
+		<Text>एफ़टीपी: कर सेक=&gt;कम</Text>
+	</String>
+	<String Id="529" Name="IDS_ENABLE_BIP_SEC_HIGH">
+		<Text>बीआईपी: कर सेक=&gt;उच्च</Text>
+	</String>
+	<String Id="530" Name="IDS_ENABLE_BIP_SEC_MED">
+		<Text>बीआईपी: कर सेक=&gt;Med</Text>
+	</String>
+	<String Id="531" Name="IDS_ENABLE_BIP_SEC_LOW">
+		<Text>बीआईपी: कर सेक=&gt;Low</Text>
+	</String>
+	<String Id="532" Name="IDS_ENABLE_BPP_SEC_HIGH">
+		<Text>बीपीपी: कर सेक=&gt;उच्च</Text>
+	</String>
+	<String Id="533" Name="IDS_ENABLE_BPP_SEC_MED">
+		<Text>बीपीपी: कर सेक=&gt;Med</Text>
+	</String>
+	<String Id="534" Name="IDS_ENABLE_BPP_SEC_LOW">
+		<Text>बीपीपी: कर सेक=&gt;Low</Text>
+	</String>
+	<String Id="535" Name="IDS_ENABLE_PBAP_SEC_HIGH">
+		<Text>पीबीएपी: कर सेक=&gt;उच्च</Text>
+	</String>
+	<String Id="536" Name="IDS_ENABLE_PBAP_SEC_MED">
+		<Text>पीबीएपी: कर सेक=&gt;Med</Text>
+	</String>
+	<String Id="537" Name="IDS_ENABLE_PBAP_SEC_LOW">
+		<Text>पीबीएपी: कर सेक=&gt;Low</Text>
+	</String>
+	<String Id="538" Name="IDS_ENABLE_OBEX_SEC_HIGH">
+		<Text>ओबीईएक्स: कर सेक=&gt;उच्च</Text>
+	</String>
+	<String Id="539" Name="IDS_ENABLE_OBEX_SEC_MED">
+		<Text>ओबीईएक्स: कर सेक=&gt;Med</Text>
+	</String>
+	<String Id="540" Name="IDS_ENABLE_OBEX_SEC_LOW">
+		<Text>ओबीईएक्स: कर सेक=&gt;Low</Text>
+	</String>
+	<String Id="541" Name="IDS_ENABLE_SAP_SEC_HIGH">
+		<Text>एसएपी: कर सेक=&gt;उच्च</Text>
+	</String>
+	<String Id="542" Name="IDS_ENABLE_SAP_SEC_MED">
+		<Text>एसएपी: कर सेक=&gt;Med</Text>
+	</String>
+	<String Id="543" Name="IDS_ENABLE_SAP_SEC_LOW">
+		<Text>एसएपी: कर सेक=&gt;Low</Text>
+	</String>
+	<String Id="544" Name="IDS_ENABLE_A2DP_SEC_HIGH">
+		<Text>ए2डीपी: कर सेक=&gt;उच्च</Text>
+	</String>
+	<String Id="545" Name="IDS_ENABLE_A2DP_SEC_MED">
+		<Text>ए2डीपी: कर सेक=&gt;Med</Text>
+	</String>
+	<String Id="546" Name="IDS_ENABLE_A2DP_SEC_LOW">
+		<Text>ए2डीपी: कर सेक=&gt;Low</Text>
+	</String>
+	<String Id="547" Name="IDS_ENABLE_AVRCP_SEC_HIGH">
+		<Text>एवीआरसीपी: कर सेक=&gt;उच्च</Text>
+	</String>
+	<String Id="548" Name="IDS_ENABLE_AVRCP_SEC_MED">
+		<Text>एवीआरसीपी: कर सेक=&gt;Med</Text>
+	</String>
+	<String Id="549" Name="IDS_ENABLE_AVRCP_SEC_LOW">
+		<Text>एवीआरसीपी: कर सेक=&gt;Low</Text>
+	</String>
+	<String Id="550" Name="IDS_ENABLE_L2_SEC_HIGH">
+		<Text>एल2: कर सेक=&gt;उच्च</Text>
+	</String>
+	<String Id="551" Name="IDS_ENABLE_L2_SEC_MED">
+		<Text>एल2: कर सेक=&gt;Med</Text>
+	</String>
+	<String Id="552" Name="IDS_ENABLE_L2_SEC_LOW">
+		<Text>एल2: कर सेक=&gt;Low</Text>
+	</String>
+	<String Id="553" Name="IDS_ENABLE_HID_SEC_HIGH">
+		<Text>एचआईडी: कर सेक=&gt;उच्च</Text>
+	</String>
+	<String Id="554" Name="IDS_ENABLE_HID_SEC_MED">
+		<Text>एचआईडी: कर सेक=&gt;Med</Text>
+	</String>
+	<String Id="555" Name="IDS_ENABLE_HID_SEC_LOW">
+		<Text>एचआईडी: कर सेक=&gt;Low</Text>
+	</String>
+	<String Id="556" Name="IDS_READ_OOB">
+		<Text>ओओबी को पढ़ें</Text>
+	</String>
+	<String Id="557" Name="IDS_WRITE_OOB">
+		<Text>ओओबी को बनाइये</Text>
+	</String>
+	<String Id="558" Name="IDS_ENABLE_SPP">
+		<Text>एसपीपी</Text>
+	</String>
+	<String Id="559" Name="IDS_ENABLE_SPP_SEC_HIGH">
+		<Text>एसपीपी: कर सेक=&gt;उच्च</Text>
+	</String>
+	<String Id="560" Name="IDS_ENABLE_SPP_SEC_MED">
+		<Text>एसपीपी: कर सेक=&gt;मध्य</Text>
+	</String>
+	<String Id="561" Name="IDS_ENABLE_SPP_SEC_LOW">
+		<Text>एसपीपी: कर सेक=&gt;कम</Text>
+	</String>
+	<String Id="600" Name="IDS_HID">
+		<Text>एचआईडी</Text>
+	</String>
+	<String Id="601" Name="IDS_HID_EVT_VIEW">
+		<Text>घटना दृश्य</Text>
+	</String>
+	<String Id="602" Name="IDS_HID_SET_REPORT">
+		<Text>रिपोर्ट सेट करें</Text>
+	</String>
+	<String Id="603" Name="IDS_HID_GET_REPORT">
+		<Text>रिपोर्ट प्राप्त करें</Text>
+	</String>
+	<String Id="604" Name="IDS_HID_OPERATIONS">
+		<Text>एचआईडी संचालन</Text>
+	</String>
+	<String Id="605" Name="IDS_HID_CERTIFICATION">
+		<Text>प्रमाणीकरण</Text>
+	</String>
+	<String Id="606" Name="IDS_HID_SET_IDLE">
+		<Text>इडले को सेट करें</Text>
+	</String>
+	<String Id="607" Name="IDS_HID_GET_IDLE">
+		<Text>आइडल को प्राप्त करें</Text>
+	</String>
+	<String Id="608" Name="IDS_HID_SET_PROTOCOL">
+		<Text>प्रोटोकॉल को सेट करें</Text>
+	</String>
+	<String Id="609" Name="IDS_HID_GET_PROTOCOL">
+		<Text>प्रोटोकॉल को प्राप्त करें</Text>
+	</String>
+	<String Id="610" Name="IDS_HID_UNPLUG_VC">
+		<Text>वर्चुवल केबल को अनप्लग करें</Text>
+	</String>
+	<String Id="611" Name="IDS_HID_ENABLE_BOOT_MODE">
+		<Text>बूट मोड़ को सक्षम करें</Text>
+	</String>
+	<String Id="612" Name="IDS_HID_IDLE_RATE">
+		<Text>निष्क्रिय दर</Text>
+	</String>
+	<String Id="613" Name="IDS_HID_DEVICES">
+		<Text>एचआईडी उपकरणें</Text>
+	</String>
+	<String Id="1000" Name="IDS_BIP_TESTS">
+		<Text>बीआईपी परिक्षणें</Text>
+	</String>
+	<String Id="1001" Name="IDS_BIP">
+		<Text>बीआईपी</Text>
+	</String>
+	<String Id="1002" Name="IDS_BIP_SERVER">
+		<Text>बीआईपी सर्वर</Text>
+	</String>
+	<String Id="1003" Name="IDS_BIP_CLIENT">
+		<Text>बीआईपी क्लाईंट</Text>
+	</String>
+	<String Id="1004" Name="IDS_BIP_CONNECT_IMAGE_PRINTING">
+		<Text>उन्नत छवि मुद्रण</Text>
+	</String>
+	<String Id="1005" Name="IDS_BIP_CONNECT_IMAGE_PUSH">
+		<Text>ईमेज पुष रेस्पोंदर</Text>
+	</String>
+	<String Id="1006" Name="IDS_BIP_CONNECT_IMAGE_PULL">
+		<Text>इमेज फुल्ल रेस्पोंदर</Text>
+	</String>
+	<String Id="1007" Name="IDS_BIP_CONNECT_REMOTE_CAMERA">
+		<Text>रिमोट कैमेरा</Text>
+	</String>
+	<String Id="1008" Name="IDS_BIP_CONNECT_AUTOMATIC_ARCHIVE">
+		<Text>ऑटोमैटिक अर्चिव</Text>
+	</String>
+	<String Id="1009" Name="IDS_BIP_CONNECT_REMOTE_DISPLAY">
+		<Text>रिमोट डिस्प्ले</Text>
+	</String>
+	<String Id="1010" Name="IDS_BIP_GET_CAPABILITIES">
+		<Text>क्षमताएं प्राप्त करें</Text>
+	</String>
+	<String Id="1011" Name="IDS_BIP_PUT_IMAGE">
+		<Text>इमेज लगाएँ</Text>
+	</String>
+	<String Id="1012" Name="IDS_BIP_PUT_ATTACHMENT">
+		<Text>जुड़ा हुआ लगाव लगाएँ</Text>
+	</String>
+	<String Id="1013" Name="IDS_BIP_PUT_THUMBNAIL">
+		<Text>जुड़ा हुआ तंबनेल लगाएँ</Text>
+	</String>
+	<String Id="1014" Name="IDS_A2DP_CONTROL">
+		<Text>ए2डीपी कंट्रोल</Text>
+	</String>
+	<String Id="1015" Name="IDS_A2DP_SUSPEND_ON_END">
+		<Text>अंत पर निलंबित करें</Text>
+	</String>
+	<String Id="1016" Name="IDS_A2DP_CLOSE_ON_END">
+		<Text>अंत पर बंद करें</Text>
+	</String>
+	<String Id="1017" Name="IDS_A2DP_START_DELAY">
+		<Text>देरी से शुरू करें</Text>
+	</String>
+	<String Id="1018" Name="IDS_A2DP_HONOR_IN_USE">
+		<Text>उपयोग में सम्मान करें</Text>
+	</String>
+	<String Id="1019" Name="IDS_A2DP_IGNORE_IN_USE">
+		<Text>उपयोग में उपेक्षा करें</Text>
+	</String>
+	<String Id="1020" Name="IDS_BIP_GET_IMAGE_LIST">
+		<Text>छवि सूची प्राप्त करें</Text>
+	</String>
+	<String Id="1021" Name="IDS_BIP_GET_IMAGE_PROPERTIES">
+		<Text>छवि गुणों को प्राप्त करें</Text>
+	</String>
+	<String Id="1022" Name="IDS_BIP_GET_IMAGE">
+		<Text>छवि प्राप्त करें</Text>
+	</String>
+	<String Id="1023" Name="IDS_BIP_DELETE_IMAGE">
+		<Text>छवि को हटाएँ</Text>
+	</String>
+	<String Id="1024" Name="IDS_BIP_GET_ATTACHMENT">
+		<Text>जुड़ा हुआ लगाव को प्राप्त करें</Text>
+	</String>
+	<String Id="1025" Name="IDS_BIP_GET_THUMBNAIL">
+		<Text>जुड़ा हुआ तंबनेल प्राप्त करें</Text>
+	</String>
+	<String Id="1026" Name="IDS_BIP_GET_PARTIAL_IMAGE">
+		<Text>आंशिक छवि को प्राप्त करें</Text>
+	</String>
+	<String Id="1027" Name="IDS_BIP_GET_STATUS">
+		<Text>स्थिति प्राप्त करें</Text>
+	</String>
+	<String Id="1028" Name="IDS_A2DP_RECONFIG_BY_RECONFIG">
+		<Text>रीकोंफिग से रीकोंफिग करें</Text>
+	</String>
+	<String Id="1029" Name="IDS_A2DP_RECONFIG_BY_CLOSE">
+		<Text>करीब से रीकोंफिग करें</Text>
+	</String>
+	<String Id="1030" Name="IDS_BIP_START_PRINT">
+		<Text>मुद्रित प्रारंब करें</Text>
+	</String>
+	<String Id="1031" Name="IDS_BIP_START_ARCHIVE">
+		<Text>आरचिव प्रारंब करें</Text>
+	</String>
+	<String Id="1032" Name="IDS_BIP_REMOTE_DISPLAY">
+		<Text>रिमोट प्रदर्शन चयन</Text>
+	</String>
+	<String Id="1033" Name="IDS_BIP_GET_MONITORING_IMAGE">
+		<Text>रिमोट प्रदर्शन छवि</Text>
+	</String>
+	<String Id="1034" Name="IDS_BIP_REMOTE_DISPLAY_CURRENT">
+		<Text>रिमोट प्रदर्शन वर्तमान</Text>
+	</String>
+	<String Id="1035" Name="IDS_BIP_REMOTE_DISPLAY_PREV">
+		<Text>रिमोट प्रदर्शन पिछला</Text>
+	</String>
+	<String Id="1036" Name="IDS_BIP_REMOTE_DISPLAY_NEXT">
+		<Text>रिमोट प्रदर्शन अगला</Text>
+	</String>
+	<String Id="1037" Name="IDS_A2DP_RECONFIG_BY_REPAGE">
+		<Text>रीपेज से रीकोंफिग करें</Text>
+	</String>
+	<String Id="1038" Name="IDS_A2DP_INCREMENT_BITRATE">
+		<Text>वृद्धि बिटरेट</Text>
+	</String>
+	<String Id="1039" Name="IDS_A2DP_DECREMENT_BITRATE">
+		<Text>घटती बिटरेट</Text>
+	</String>
+	<String Id="1040" Name="IDS_A2DP_SET_BITRATE">
+		<Text>बिटरेट सेट करें</Text>
+	</String>
+	<String Id="1041" Name="IDS_A2DP_AUTO_BITRATE">
+		<Text>आटो बिटरेट</Text>
+	</String>
+	<String Id="1042" Name="IDS_A2DP_MSG_CTRL_CMD_FAILED">
+		<Text>ए2डीपी कंट्रोल कमांड विफल हुआ</Text>
+	</String>
+	<String Id="1043" Name="IDS_A2DP_CONTROL_DATA">
+		<Text>ए2डीपी कंट्रोल डेटा को दर्ज करें</Text>
+	</String>
+	<String Id="1044" Name="IDS_A2DP_MSG_CTRL_CMD_SUCCESS">
+		<Text>ए2डीपी कंट्रोल कमांड सफलतापूर्वक से भेजा गया</Text>
+	</String>
+	<String Id="1045" Name="IDS_SDP_QUERY">
+		<Text>एसडीपी प्रश्न प्रदर्शन करें</Text>
+	</String>
+	<String Id="1046" Name="IDS_SERVER_PSM">
+		<Text>सर्वर पीएसएम</Text>
+	</String>
+	<String Id="1047" Name="IDS_L2">
+		<Text>एल2 प्रयोगिक परीक्षण</Text>
+	</String>
+	<String Id="1048" Name="IDS_ENABLE_L2">
+		<Text>एल2 परीक्षण सर्वर को एनेबल करें</Text>
+	</String>
+	<String Id="1049" Name="IDS_BIP_TEST_PRINT">
+		<Text>परीक्षण मूधरन</Text>
+	</String>
+	<String Id="1050" Name="IDS_BIP_MSG_PUSH_SUCCESS">
+		<Text>सफलतापूर्वक से पुष किया गया %s </Text>
+	</String>
+	<String Id="1051" Name="IDS_BIP_MSG_PUSH_FAILED">
+		<Text>को पुष करने मे विफल रहे %s</Text>
+	</String>
+	<String Id="1052" Name="IDS_BIP_MSG_PULL_SUCCESS">
+		<Text>सफलतापूर्वक से खींचा गया %s</Text>
+	</String>
+	<String Id="1053" Name="IDS_BIP_MSG_PULL_FAILED">
+		<Text>सफलतापूर्वक से खींचा गया %s</Text>
+	</String>
+	<String Id="1054" Name="IDS_CLIENT_PSM">
+		<Text>क्लाईंट पीएसएम</Text>
+	</String>
+	<String Id="1055" Name="IDS_BIP_MSG_DELETE_SUCCESS">
+		<Text>सफलतापूर्वक से हटाया गया %s</Text>
+	</String>
+	<String Id="1056" Name="IDS_BIP_MSG_DELETE_FAILED">
+		<Text>हटाने में विफल रहा %s</Text>
+	</String>
+	<String Id="1057" Name="IDS_BIP_MSG_REMOTE_DISPLAY_SUCCESS">
+		<Text>रिमोट प्रदर्शन सफल</Text>
+	</String>
+	<String Id="1058" Name="IDS_BIP_MSG_REMOTE_DISPLAY_FAILED">
+		<Text>रिमोट प्रदर्शन विफल</Text>
+	</String>
+	<String Id="1059" Name="IDS_BIP_MSG_START_ARCHIVE_SUCCESS">
+		<Text>स्टार्ट अर्चिव सफल</Text>
+	</String>
+	<String Id="1060" Name="IDS_BIP_MSG_START_ARCHIVE_FAILED">
+		<Text>स्टार्ट अर्चिव विफल</Text>
+	</String>
+	<String Id="1061" Name="IDS_BIP_MSG_START_PRINT_SUCCESS">
+		<Text>स्टार्ट प्रिंटिंग सफल</Text>
+	</String>
+	<String Id="1062" Name="IDS_BIP_MSG_START_PRINT_FAILED">
+		<Text>स्टार्ट प्रिंटिंग विफल</Text>
+	</String>
+	<String Id="1063" Name="IDS_BIP_MSG_GET_STATUS_SUCCESS">
+		<Text>गेट स्टेटस सफल</Text>
+	</String>
+	<String Id="1064" Name="IDS_BIP_MSG_GET_STATUS_FAILED">
+		<Text>गेट स्टेटस विफल</Text>
+	</String>
+	<String Id="1065" Name="IDS_LABEL_KBITS_PER_SEC">
+		<Text>किबिट्स/सेक: %d</Text>
+	</String>
+	<String Id="1066" Name="IDS_ENABLE_SERVER">
+		<Text>एनेबल सरवर</Text>
+	</String>
+	<String Id="1067" Name="IDS_DISABLE_SERVER">
+		<Text>डिसेबल सरवर</Text>
+	</String>
+	<String Id="1068" Name="IDS_CONNECT_CLIENT">
+		<Text>क्लाईंट कनैक्ट</Text>
+	</String>
+	<String Id="1069" Name="IDS_DISCONNECT_CLIENT">
+		<Text>क्लाईंट डिस्कोन्नेक्त</Text>
+	</String>
+	<String Id="1070" Name="IDS_BIP_REGISTER_IMAGING_RESPONDER">
+		<Text>इमेजिंग रेस्पोंदर</Text>
+	</String>
+	<String Id="1071" Name="IDS_BIP_REGISTER_REFERENCED_OBJECTS_SERVER">
+		<Text>रेफेरेंकेड आबजेक्ट सर्वर</Text>
+	</String>
+	<String Id="1072" Name="IDS_BIP_REGISTER_ARCHIVED_OBJECTS_SERVER">
+		<Text>अर्चिवेद आबजेक्ट सर्वर</Text>
+	</String>
+	<String Id="1073" Name="IDS_AG_CONNECTION_IN_PRGS">
+		<Text>एजी कनैक्शन प्रगति पर</Text>
+	</String>
+	<String Id="1074" Name="IDS_BT_SHORT_NAME">
+		<Text>बीटी कम नाम</Text>
+	</String>
+	<String Id="1075" Name="IDS_IOC_YESNO">
+		<Text>आईओसी प्रदर्शन हा/नहीं</Text>
+	</String>
+	<String Id="1076" Name="IDS_IOC_DISPLAY_ONLY">
+		<Text>आईओसी प्रदर्शन मात्र</Text>
+	</String>
+	<String Id="1077" Name="IDS_IOC_KEYBOARD_ONLY">
+		<Text>आईओसी की बोर्ड मात्र</Text>
+	</String>
+	<String Id="1078" Name="IDS_IOC_NO">
+		<Text>आईओसी आईओ नहीं</Text>
+	</String>
+	<String Id="1079" Name="IDS_SECURITY_LOW">
+		<Text>कम सेक्युर्टी</Text>
+	</String>
+	<String Id="1080" Name="IDS_BIP_CONNECT_REFERENCED_OBJECTS">
+		<Text>रेफेरेंकेड आबजेक्ट सर्वर</Text>
+	</String>
+	<String Id="1081" Name="IDS_BIP_CONNECT_ARCHIVED_OBJECTS">
+		<Text>अर्चिव किया गया आबजेक्ट सर्वर</Text>
+	</String>
+	<String Id="1082" Name="IDS_SECURITY_MED">
+		<Text>मीडियम सेक्युर्टी</Text>
+	</String>
+	<String Id="1083" Name="IDS_SECURITY_HIGH">
+		<Text>उच्च सेक्युर्टी</Text>
+	</String>
+	<String Id="1084" Name="IDS_MITM">
+		<Text>एमआईटीएम</Text>
+	</String>
+	<String Id="1085" Name="IDS_DBG_KEY">
+		<Text>देबूग की</Text>
+	</String>
+	<String Id="1086" Name="IDS_BOND_OPTIONS">
+		<Text>बाण्ड ऑप्शन</Text>
+	</String>
+	<String Id="1087" Name="IDS_EDIT_SHORT_NAME">
+		<Text>कम नाम संपादित करें</Text>
+	</String>
+	<String Id="1088" Name="IDS_EDIT_MANU_DATA">
+		<Text>मेनू डाटा संपादित करें</Text>
+	</String>
+	<String Id="1089" Name="IDS_IOCAPABILITY">
+		<Text>आईओ क्षमता</Text>
+	</String>
+	<String Id="1090" Name="IDS_BIP_GET_IMAGE_TOTAL">
+		<Text>गेट इमेज टोटल</Text>
+	</String>
+	<String Id="1091" Name="IDS_BIP_GET_RECENT_IMAGE_LIST">
+		<Text>गेट रिसेंट इमेज लिस्ट</Text>
+	</String>
+	<String Id="1092" Name="IDS_BIP_GET_MONITORING_IMAGE_SAVE">
+		<Text>गेट मोनिट्रिंग इमेज w सेव</Text>
+	</String>
+	<String Id="1093" Name="IDS_SERV_SECURITY">
+		<Text>सेवा सुरक्षा</Text>
+	</String>
+	<String Id="1094" Name="IDS_PROMPT_REBOND">
+		<Text>से रीबांड करो उपकरण %s?</Text>
+	</String>
+	<String Id="1095" Name="IDS_PROMPT_PROCEED_BONDING">
+		<Text>उपकरण %s पासकी %s से बांडिंग आगे बढ़ो?</Text>
+	</String>
+	<String Id="1096" Name="IDS_AUTO_GENERATED_PASSKEY">
+		<Text>औटोजेनेरटेड पासकी</Text>
+	</String>
+	<String Id="1097" Name="IDS_LABEL_BT_SHORT_NAME">
+		<Text>बीटी कम नाम: %s</Text>
+	</String>
+	<String Id="1098" Name="IDS_LABEL_LINK_KEY">
+		<Text>बीटी एलके स्थ्तिती: %s</Text>
+	</String>
+	<String Id="1099" Name="IDS_LABEL_BT_MANU_DATA">
+		<Text>बीटी ऊटपादक डेटा: %s</Text>
+	</String>
+	<String Id="1100" Name="IDS_BT_LABEL_UUID">
+		<Text>बीटी यूयूआईडी: %s</Text>
+	</String>
+	<String Id="1101" Name="IDS_MSG_USER_CFM_FAILED">
+		<Text>उपयोगकर्ता जानकारी विफल</Text>
+	</String>
+	<String Id="1102" Name="IDS_BT_LABEL_UUID16">
+		<Text>यूयूआईडी16: </Text>
+	</String>
+	<String Id="1103" Name="IDS_BT_LABEL_UUID32">
+		<Text>यूआईडी32: </Text>
+	</String>
+	<String Id="1104" Name="IDS_BT_LABEL_UUID128">
+		<Text>यूआईडी128: </Text>
+	</String>
+	<String Id="1105" Name="IDS_LABEL_LOCAL_PSSKEY">
+		<Text>लोकल पासकी: %s</Text>
+	</String>
+	<String Id="1106" Name="IDS_LABEL_REMOTE_PSSKEY">
+		<Text>रिमोट पास की: %s</Text>
+	</String>
+	<String Id="1107" Name="IDS_MAX_INTERVAL">
+		<Text>स्निफ़्फ़ मैक्स इंटरवल</Text>
+	</String>
+	<String Id="1108" Name="IDS_IDLE_TIMEOUT">
+		<Text>स्निफ़्फ़ आइडल टाइमौट</Text>
+	</String>
+	<String Id="1109" Name="IDS_NO_PASSKEY_PROCEED_BONDING">
+		<Text>उपकरण %s के साथ संबंधों मे आगे बढ़ें</Text>
+	</String>
+	<String Id="1110" Name="IDS_DISPLAY_PSSKEY">
+		<Text>उपकरण %s से पाइरिंग</Text>
+	</String>
+	<String Id="1111" Name="IDS_BT_MANU_DATA">
+		<Text>बीटी उतपदक डेटा</Text>
+	</String>
+	<String Id="1112" Name="IDS_MAX_LATENCY">
+		<Text>स्निफ़्फ़ मैक्स लेटनसी</Text>
+	</String>
+	<String Id="1113" Name="IDS_LPM_ACTIVE">
+		<Text>स्निफ़्फ़ लो पावर मोड़ एक्टिव</Text>
+	</String>
+	<String Id="1114" Name="IDS_LMP_SNIFF">
+		<Text>स्न्फ़िफ़्फ़ लो पावर मोड़ स्निफ़्फ़</Text>
+	</String>
+	<String Id="1115" Name="IDS_LPM_SNIFF_LCK">
+		<Text>स्निफ़्फ़ लो पावर मोड लाक</Text>
+	</String>
+	<String Id="1116" Name="IDS_STK_APP_PARAM">
+		<Text>स्निफ़्फ़ सटीक आप परम</Text>
+	</String>
+	<String Id="1117" Name="IDS_SNIF_INIT_ORIENTED">
+		<Text>स्निफ़्फ़ इनीशियेटर ओरियंटेड</Text>
+	</String>
+	<String Id="1118" Name="IDS_LOW_PWR_MODE">
+		<Text>स्निफ़्फ़ लो पावर मोड</Text>
+	</String>
+	<String Id="1119" Name="IDS_CONFIG_SNIF_PARAMS">
+		<Text>कॉन्फ़िगर स्निफ़्फ़ परम</Text>
+	</String>
+	<String Id="1120" Name="IDS_SNIF_PARAM_SETTINGS">
+		<Text>स्निफ़्फ़ परम सेटिंग्स</Text>
+	</String>
+	<String Id="1121" Name="IDS_LABEL_LOW_POWER_MODE">
+		<Text>स्निफ़्फ़ लो पावर मोड: %s</Text>
+	</String>
+	<String Id="1122" Name="IDS_LABEL_MAX_INTERVAL">
+		<Text>स्निफ़्फ़ मैक्स इनटर्वल :%s</Text>
+	</String>
+	<String Id="1123" Name="IDS_LABEL_IDLE_TIMEOUT">
+		<Text>स्निफ़्फ़ आइडल टाइमआउट: %s</Text>
+	</String>
+	<String Id="1124" Name="IDS_LABEL_MAX_LATENCY">
+		<Text>निफ़्फ़ मैक्स लाटेनसी : %s</Text>
+	</String>
+	<String Id="1125" Name="IDS_LABEL_STICK_TO_APP">
+		<Text>निफ़्फ़ सटीक तो आप परम: %s</Text>
+	</String>
+	<String Id="1126" Name="IDS_LABEL_SNIFF_INIT_ORIENTED">
+		<Text>स्निफ़्फ़ इनिशिएटर ओरिएंतेड़:  %s</Text>
+	</String>
+	<String Id="1127" Name="IDS_CHNG_LOW_PWR_MODE">
+		<Text>लो पावर</Text>
+	</String>
+	<String Id="1128" Name="IDS_CHNG_MAX_INTERVAL">
+		<Text>मैक्स इनटर्वल</Text>
+	</String>
+	<String Id="1129" Name="IDS_CHNG_IDLE_TIMEOUT">
+		<Text>आइडल टीओ</Text>
+	</String>
+	<String Id="1130" Name="IDS_CHNG_MAX_LATENCY">
+		<Text>लातनसी</Text>
+	</String>
+	<String Id="1131" Name="IDS_CHNG_SNIF_PARAM_SETTINGS">
+		<Text>स्निफ़्फ़ परम</Text>
+	</String>
+	<String Id="1132" Name="IDS_CONFIG_SNIFF_PROFILES">
+		<Text>स्निफ़्फ़ प्रोफिलेस मेनू</Text>
+	</String>
+	<String Id="1133" Name="IDS_PROFILE1">
+		<Text>प्रोफ़ाइल-1</Text>
+	</String>
+	<String Id="1134" Name="IDS_PROFILE2">
+		<Text>प्रोफ़ाइल-2</Text>
+	</String>
+	<String Id="1135" Name="IDS_PROFILE3">
+		<Text>प्रोफ़ाइल-3</Text>
+	</String>
+	<String Id="1136" Name="IDS_ENABLE_HID">
+		<Text>एचआईडी होस्ट</Text>
+	</String>
+	<String Id="1137" Name="IDS_AUTHORIZE">
+		<Text>अधिकृत</Text>
+	</String>
+	<String Id="1138" Name="IDS_AUTHORIZE_FIRST">
+		<Text>आतफ़र्स्ट</Text>
+	</String>
+	<String Id="1139" Name="IDS_ENABLE_ALL">
+		<Text>एनेबल आल</Text>
+	</String>
+	<String Id="1140" Name="IDS_GO">
+		<Text>गो</Text>
+	</String>
+	<String Id="1141" Name="IDS_CAN">
+		<Text>रद्द करें</Text>
+	</String>
+	<String Id="1142" Name="IDS_HID_HOST_CAPS_LOCK">
+		<Text>कप्स लाक</Text>
+	</String>
+	<String Id="1143" Name="IDS_HID_SET_LED_OFF">
+		<Text>सेट एलईडी आफ</Text>
+	</String>
+	<String Id="1144" Name="IDS_MSG_HID_SEND_REPORT_FAIL">
+		<Text>सेण्ड_रिपोर्ट विफल</Text>
+	</String>
+	<String Id="1145" Name="IDS_MSG_HID_SEND_REPORT_SUCCESS">
+		<Text>सेण्ड_रिपोर्ट सफल</Text>
+	</String>
+	<String Id="1146" Name="IDS_HID_HOST_NUM_LOCK">
+		<Text>नाम_लाक</Text>
+	</String>
+	<String Id="1147" Name="IDS_HID_SET_LED_ON">
+		<Text>एलईडी आन सेट करें</Text>
+	</String>
+	<String Id="1148" Name="IDS_HID_SET_REPORT_INTERRUPT_SMALL">
+		<Text>छोटा (बाधा डालना)</Text>
+	</String>
+	<String Id="1149" Name="IDS_HID_HOST_SCROLL_LOCK">
+		<Text>स्क्रोल लाक/Text>
+	</String>
+	<String Id="1150" Name="IDS_HID_SET_REPORT_INTERRUPT_LARGE">
+		<Text>बड़ा (बाधा डालना)</Text>
+	</String>
+	<String Id="1151" Name="IDS_HID_CONTROL_SMALL">
+		<Text>छोटा (कंट्रोल)</Text>
+	</String>
+	<String Id="1152" Name="IDS_HID_SET_REPORT_CONTROL_LARGE">
+		<Text>बड़ा (कंट्रोल)</Text>
+	</String>
+	<String Id="1153" Name="IDS_HID_SET_REPORT_CONTROL_SMALL">
+		<Text>छोटा (कंट्रोल)</Text>
+	</String>
+	<String Id="1154" Name="IDS_HID_GET_REPORT_SMALL">
+		<Text>छोटा</Text>
+	</String>
+	<String Id="1155" Name="IDS_HID_GET_REPORT_LARGE">
+		<Text>बड़ा</Text>
+	</String>
+	<String Id="1156" Name="IDS_MSG_HID_GET_REPORT_SUCCESS">
+		<Text>गेट_रिपोर्ट सफल</Text>
+	</String>
+	<String Id="1157" Name="IDS_MSG_HID_GET_REPORT_FAIL">
+		<Text>गेट_रिपोर्ट विफल</Text>
+	</String>
+	<String Id="1158" Name="IDS_SECURITY_SPECIAL">
+		<Text>महत्वपूर्ण (एमआईटीएम_एनओ_बांडिंग)</Text>
+	</String>
+	<String Id="1159" Name="IDS_AUDIO_GATEWAY_SEC_SPECIAL">
+		<Text>ऑडियो गेटवे: Cur Sec=&gt;स्पेशल</Text>
+	</String>
+	<String Id="1160" Name="IDS_NETWORK_ACCESS_SEC_SPECIAL">
+		<Text>नेटवर्क एक्सेस: Cur Sec=&gt;स्पेशल</Text>
+	</String>
+	<String Id="1161" Name="IDS_ENABLE_OPP_SEC_SPECIAL">
+		<Text>OPP: Cur Sec=&gt;स्पेशल</Text>
+	</String>
+	<String Id="1162" Name="IDS_ENABLE_FTP_SEC_SPECIAL">
+		<Text>FTP: Cur Sec=&gt;स्पेशल</Text>
+	</String>
+	<String Id="1163" Name="IDS_ENABLE_BIP_SEC_SPECIAL">
+		<Text>BIP: Cur Sec=&gt;स्पेशल</Text>
+	</String>
+	<String Id="1164" Name="IDS_ENABLE_BPP_SEC_SPECIAL">
+		<Text>BPP: Cur Sec=&gt;स्पेशल</Text>
+	</String>
+	<String Id="1165" Name="IDS_ENABLE_PBAP_SEC_SPECIAL">
+		<Text>PBAP: Cur Sec=&gt;स्पेशल</Text>
+	</String>
+	<String Id="1166" Name="IDS_ENABLE_HID_SEC_SPECIAL">
+		<Text>HID: Cur Sec=&gt;स्पेशल</Text>
+	</String>
+	<String Id="1167" Name="IDS_ENABLE_SAP_SEC_SPECIAL">
+		<Text>SAP: Cur Sec=&gt;स्पेशल</Text>
+	</String>
+	<String Id="1168" Name="IDS_ENABLE_A2DP_SEC_SPECIAL">
+		<Text>A2DP: Cur Sec=&gt;स्पेशल</Text>
+	</String>
+	<String Id="1169" Name="IDS_ENABLE_AVRCP_SEC_SPECIAL">
+		<Text>AVRCP: Cur Sec=&gt;स्पेशल</Text>
+	</String>
+	<String Id="1170" Name="IDS_ENABLE_L2_SEC_SPECIAL">
+		<Text>L2: Cur Sec=&gt;स्पेशल</Text>
+	</String>
+	<String Id="1171" Name="IDS_ENABLE_SPP_SEC_SPECIAL">
+		<Text>SPP: Cur Sec=&gt;स्पेशल</Text>
+	</String>
+	<String Id="1172" Name="IDS_REBOND_OPT_MITM">
+		<Text>रिबाउंड विकल्प: MITM</Text>
+	</String>
+	<String Id="1173" Name="IDS_REBOND_OPT_BOND">
+		<Text>रिबाउंड विकल्प: BOND</Text>
+	</String>
+	<String Id="1174" Name="IDS_BT_BLANK">
+		<Text> </Text>
+	</String>
+	<String Id="2001" Name="IDS_MSG_NO_CONNECTED_DEV">
+		<Text>डेटाबेस में कोई कनेक्टेड डिवाइस नहीं पाया गया।.</Text>
+	</String>
+	<String Id="2003" Name="IDS_MSG_PIN_REPLY_FAILED">
+		<Text>पासकी स्वीकार नहीं किया गया। .</Text>
+	</String>
+	<String Id="2004" Name="IDS_MSG_BONDED">
+		<Text>%s से सफलतापूर्वक जुड़ा हुआ। .</Text>
+	</String>
+	<String Id="2005" Name="IDS_MSG_BOND_FAILED">
+		<Text>%s से जुड़ने में असफल।.</Text>
+	</String>
+	<String Id="2006" Name="IDS_MSG_BT_ENABLED">
+		<Text>BT सक्रिय नहीं है।.</Text>
+	</String>
+	<String Id="2007" Name="IDS_MSG_BT_DISABLED">
+		<Text>BT अब निष्क्रिय है।.</Text>
+	</String>
+	<String Id="2008" Name="IDS_MSG_DEV_INFO_UNAVAIL">
+		<Text>%s के लिए डिवाइस सूचना अनुपलब्ध है। .</Text>
+	</String>
+	<String Id="2009" Name="IDS_MSG_BONDABLE_NOT_SET">
+		<Text>बॉन्डेबल को सेट करने में असफल।.</Text>
+	</String>
+	<String Id="2010" Name="IDS_MSG_BONDABLE_NOT_CLEARED">
+		<Text>बॉन्डेबल को क्लियर करने में असफल।.</Text>
+	</String>
+	<String Id="2011" Name="IDS_MSG_BONDABLE_SET">
+		<Text>यूनिट अब बॉन्डेबल है।</Text>
+	</String>
+	<String Id="2012" Name="IDS_MSG_BONDABLE_CLEARED">
+		<Text>यूनिट अब बॉन्डेबल नहीं है।</Text>
+	</String>
+	<String Id="2013" Name="IDS_MSG_NO_DEV">
+		<Text>डिवाइस डेटाबेस खाली है।</Text>
+	</String>
+	<String Id="2014" Name="IDS_MSG_NO_BONDED_DEV">
+		<Text>डेटाबेस में कोई बॉन्डेड डिवाइस नहीं पाया गया।.</Text>
+	</String>
+	<String Id="2015" Name="IDS_MSG_AG_CONN">
+		<Text>ऑडियो डिवाइस "%s" से कनेक्ट हुआ।</Text>
+	</String>
+	<String Id="2016" Name="IDS_MSG_AG_CONNF">
+		<Text>ऑडियो डिवाइस "%s" से जुड़ने में असफल।.</Text>
+	</String>
+	<String Id="2017" Name="IDS_MSG_AG_DISCONN">
+		<Text>ऑडियो डिवाइस "%s" से डिसकनेक्ट हुआ।.</Text>
+	</String>
+	<String Id="2018" Name="IDS_MSG_NA_CONN">
+		<Text>नेटवर्क डिवाइस "%s" से कनेक्ट हुआ।</Text>
+	</String>
+	<String Id="2019" Name="IDS_MSG_NA_DISCONN">
+		<Text>नेटवर्क डिवाइस "%s" से डिसकनेक्ट हुआ।</Text>
+	</String>
+	<String Id="2020" Name="IDS_MSG_DEV_ADDED">
+		<Text>डिवाइस %s को डेटाबेस में शामिल किया गया।</Text>
+	</String>
+	<String Id="2021" Name="IDS_MSG_DEV_ADD_FAILED">
+		<Text>%s को डेटाबेस में शामिल नहीं किया जा सका।</Text>
+	</String>
+	<String Id="2022" Name="IDS_MSG_DEV_REM">
+		<Text>डिवाइस %s को डेटाबेस से हटाया गया। </Text>
+	</String>
+	<String Id="2023" Name="IDS_MSG_DEV_REM_FAILED">
+		<Text>%s को डेटाबेस से हटाने में असफल।</Text>
+	</String>
+	<String Id="2024" Name="IDS_MSG_DEV_UNBONDED">
+		<Text>डिवाइस %s अनबाउन्डेड ।</Text>
+	</String>
+	<String Id="2025" Name="IDS_MSG_DEV_UNBOND_FAILED">
+		<Text>%s को अनबाउंड करने में असफल।</Text>
+	</String>
+	<String Id="2026" Name="IDS_MSG_SEARCHING">
+		<Text>ब्ल्कूटूथ डिवाइस की तलाश जारी है...बाहर निकलने के लिए कृपया CLR की दबाएं।</Text>
+	</String>
+	<String Id="2027" Name="IDS_MSG_NO_DEV_DISC">
+		<Text>कोई ब्लूटूथ डिवाइस नहीं मिला।</Text>
+	</String>
+	<String Id="2028" Name="IDS_MSG_DEV_DISC_FAILED">
+		<Text>डिवाइस की तलाश असफल हुई।</Text>
+	</String>
+	<String Id="2029" Name="IDS_MSG_FEATURE_UNAVAIL">
+		<Text>फीचर उपलब्ध नहीं हैं।</Text>
+	</String>
+	<String Id="2030" Name="IDS_MSG_END_SPP_TEST">
+		<Text>SPP टेस्ट के समापन के लिए CLR की दबाएं।</Text>
+	</String>
+	<String Id="2031" Name="IDS_MSG_SPP_OPEN_FAILED">
+		<Text>SPP को खोल नहीं सका। त्रुटि: %d.</Text>
+	</String>
+	<String Id="2032" Name="IDS_MSG_DEV_SEC_FAILED">
+		<Text>%s के लिए सिक्योरिटी बदलने में असफल। </Text>
+	</String>
+	<String Id="2033" Name="IDS_MSG_SVC_BROWSE_FAILED">
+		<Text> %s की सेवाओं को ब्राउज कर पाने में असफल।</Text>
+	</String>
+	<String Id="2034" Name="IDS_MSG_SVC_SEARCH_FAILED">
+		<Text>%s की सेवाओं की तलाश कर पाने में असफल।</Text>
+	</String>
+	<String Id="2035" Name="IDS_MSG_HCI_MODE">
+		<Text>HCI मोड को %s पर सेट किया गया।</Text>
+	</String>
+	<String Id="2036" Name="IDS_MSG_HCI_MODE_FAILED">
+		<Text>HCI मोड को %s पर सेट करने में असफल।</Text>
+	</String>
+	<String Id="2037" Name="IDS_MSG_MAP_HCI_PORT_FIRST">
+		<Text>सबसे पहले किसी वैलिड पोर्ट से BT HCI को मैप करें।</Text>
+	</String>
+	<String Id="2038" Name="IDS_MSG_SVR_REG_DONE">
+		<Text>सर्वर रजिस्टर हुआ।</Text>
+	</String>
+	<String Id="2039" Name="IDS_MSG_SVR_REG_FAILED">
+		<Text>सर्वर रजिस्टर नहीं हुआ।</Text>
+	</String>
+	<String Id="2040" Name="IDS_MSG_SVR_DEREG_DONE">
+		<Text>सर्वर डीरजिस्टर हुआ।</Text>
+	</String>
+	<String Id="2041" Name="IDS_MSG_SVR_DEREG_FAILED">
+		<Text>सर्वर डीरजिस्टर नहीं हुआ।</Text>
+	</String>
+	<String Id="2042" Name="IDS_MSG_CONN_FAILED">
+		<Text>सर्वर से जुड़ने में असफल।</Text>
+	</String>
+	<String Id="2043" Name="IDS_MSG_DISCONN_FAILED">
+		<Text>सर्वर से डिसकनेक्ट होने में असफल।</Text>
+	</String>
+	<String Id="2044" Name="IDS_MSG_OBJ_PUSHED">
+		<Text>%s सर्वर की ओर पुश किया गया।</Text>
+	</String>
+	<String Id="2045" Name="IDS_MSG_OBJ_PUSH_FAILED">
+		<Text>%s सर्वर की ओर पुश करने में असफल।</Text>
+	</String>
+	<String Id="2046" Name="IDS_MSG_OBJ_SENT">
+		<Text>क्लाइंट द्वारा %s दबाया गया।</Text>
+	</String>
+	<String Id="2047" Name="IDS_MSG_OBJ_PULLED">
+		<Text>सर्वर से %s दबाया गया।</Text>
+	</String>
+	<String Id="2048" Name="IDS_MSG_OBJ_PULL_FAILED">
+		<Text>सर्वर से %s दबाने में असफल।</Text>
+	</String>
+	<String Id="2049" Name="IDS_MSG_OBJ_RCVD">
+		<Text>क्लाइंट द्वारा %s दबाया गया।</Text>
+	</String>
+	<String Id="2050" Name="IDS_MSG_FILE_PUT">
+		<Text>"%s" को सर्वर पर डालें।</Text>
+	</String>
+	<String Id="2051" Name="IDS_MSG_FILE_PUT_FAILED">
+		<Text>"%s" को सर्वर पर डालने में असफल।</Text>
+	</String>
+	<String Id="2052" Name="IDS_MSG_FILE_GOT">
+		<Text>सर्वर से "%s" प्राप्त हुआ।</Text>
+	</String>
+	<String Id="2053" Name="IDS_MSG_FILE_GET_FAILED">
+		<Text>सर्वर से "%s" प्राप्त करने में असफल।</Text>
+	</String>
+	<String Id="2054" Name="IDS_MSG_FILE_DELETED">
+		<Text>सर्वर से "%s" डिलीट किया गया।</Text>
+	</String>
+	<String Id="2055" Name="IDS_MSG_FILE_DELETE_FAILED">
+		<Text>सर्वर से "%s" डिलीट करने में असफल।</Text>
+	</String>
+	<String Id="2056" Name="IDS_MSG_DISCOVERABLE_NOT_SET">
+		<Text>डिस्कवरयोग्य को सेट करने में असफल।</Text>
+	</String>
+	<String Id="2057" Name="IDS_MSG_DISCOVERABLE_NOT_CLEARED">
+		<Text>डिस्कवरयोग्य को क्लियर करने में असफल।</Text>
+	</String>
+	<String Id="2058" Name="IDS_MSG_DISCOVERABLE_SET">
+		<Text>यूनिट अब डिस्कवरयोग्य है।</Text>
+	</String>
+	<String Id="2059" Name="IDS_MSG_DISCOVERABLE_CLEARED">
+		<Text>यूनिट अब डिस्कवरयोग्य नहीं है।</Text>
+	</String>
+	<String Id="2060" Name="IDS_MSG_UNMAP_HCI_PORT_FIRST">
+		<Text>BT HCI को NULL पर मैप करें।.</Text>
+	</String>
+	<String Id="2061" Name="IDS_MSG_NA_ENABLE_FAILED">
+		<Text>BT NA को सक्रिय करने में असफल।</Text>
+	</String>
+	<String Id="2062" Name="IDS_MSG_MAP_DATA_SVC_FIRST">
+		<Text>डेटा सर्विस को पहले BT_NA पोर्ट पर मैप करें। </Text>
+	</String>
+	<String Id="2063" Name="IDS_MSG_OBJ_NOT_SENT">
+		<Text>क्लाइंट द्वारा %s असफलतापूर्वक खींचा गया।</Text>
+	</String>
+	<String Id="2064" Name="IDS_MSG_OBJ_NOT_RCVD">
+		<Text>क्लाइंट द्वारा %s असफलतापूर्वक पुश गया।</Text>
+	</String>
+	<String Id="2065" Name="IDS_MSG_OBJ_NOT_FOUND">
+		<Text>%s नहीं मिला।</Text>
+	</String>
+	<String Id="2066" Name="IDS_MSG_FOLDER_BROWSING_DONE">
+		<Text>%s पर फोल्डर को सफलतापूर्वक ब्राउज करें।</Text>
+	</String>
+	<String Id="2067" Name="IDS_MSG_FOLDER_BROWSING_FAILED">
+		<Text>"%s" फोल्डर को ब्राउज करने में असफल।</Text>
+	</String>
+	<String Id="2068" Name="IDS_MSG_NO_OBEX_SERVERS">
+		<Text>DB में कोई OBEX सर्वर नहीं है।</Text>
+	</String>
+	<String Id="2069" Name="IDS_MSG_DEREG_SVR_FIRST">
+		<Text>सबसे पहले सर्वर डी-रजिस्टर करें।</Text>
+	</String>
+	<String Id="2070" Name="IDS_MSG_HCI_ON_WARNING">
+		<Text>चेतावनी: HCI मोड ऑन है!</Text>
+	</String>
+	<String Id="2071" Name="IDS_MSG_HCI_MODE_OFF_FIRST">
+		<Text>पहले HCI मोड को ऑफ करें।</Text>
+	</String>
+	<String Id="2072" Name="IDS_MSG_BT_ACTIVE">
+		<Text>ब्लू टूथ सक्रिय है। परिचालन की अनुमति नहीं है।</Text>
+	</String>
+	<String Id="2073" Name="IDS_MSG_TEST_MODE">
+		<Text>ब्लू टूथ टेस्ट मोड सक्रिय है। टेस्ट मोड से निकलने के लिए CLR की दबाएं।</Text>
+	</String>
+	<String Id="2074" Name="IDS_MSG_TEST_MODE_NOT_ENTERED">
+		<Text>टेस्ट मोड  एंटर करने में असफल।  त्रुटि  = %d</Text>
+	</String>
+	<String Id="2075" Name="IDS_MSG_TEST_MODE_NOT_EXITED">
+		<Text>टेस्ट मोड एग्जिट करने में असफल।  त्रुटि = %d</Text>
+	</String>
+	<String Id="2076" Name="IDS_MSG_MUST_SET_BONDABLE">
+		<Text>रिमोट डिवाइस से कनेक्शन एक्सेप्ट करते समय बॉन्डेबल ऑन करें।</Text>
+	</String>
+	<String Id="2077" Name="IDS_MSG_MUST_REENABLE_AG">
+		<Text>ऑडियो डिवाइस के रूप में %s का इस्तेमाल करने केलिए AG को निष्क्रिय करें, फिर दुबारा सक्रिय करें।</Text>
+	</String>
+	<String Id="2078" Name="IDS_MSG_RADIO_CTRL_SUCCESS">
+		<Text>BT रेडियो अब %s है।</Text>
+	</String>
+	<String Id="2079" Name="IDS_MSG_RADIO_CTRL_FAILED">
+		<Text>%s BT रेडियो चालू नहीं किया जा सका।</Text>
+	</String>
+	<String Id="2080" Name="IDS_MSG_VISIBILITY_CTRL_SUCCESS">
+		<Text>BT विजिबिलिटी अब %s है।</Text>
+	</String>
+	<String Id="2081" Name="IDS_MSG_VISIBILITY_CTRL_FAILED">
+		<Text>%s BT विजिबिलिटी को टर्न करने में असफल।</Text>
+	</String>
+	<String Id="2082" Name="IDS_MSG_ROLE_SW_CTRL_SUCCESS">
+		<Text>रोल स्विच कंट्रोल सफलतापूर्वक बदला गया।</Text>
+	</String>
+	<String Id="2083" Name="IDS_MSG_ROLE_SW_CTRL_FAILED">
+		<Text>रोल स्विच कंट्रोल नहीं बदला जा सका।</Text>
+	</String>
+	<String Id="2084" Name="IDS_MSG_ABORT_FAILED">
+		<Text>अबोर्ट करने में असफल।</Text>
+	</String>
+	<String Id="2085" Name="IDS_MSG_CLI_REG_DONE">
+		<Text>क्लाइंट रजिस्टर्ड हुआ। </Text>
+	</String>
+	<String Id="2086" Name="IDS_MSG_CLI_REG_FAILED">
+		<Text>क्लाइंट रजिस्टर्ड नहीं हो सका।</Text>
+	</String>
+	<String Id="2087" Name="IDS_MSG_CLI_DEREG_DONE">
+		<Text>क्लाइंट दुबारा रजिस्टर्ड हुआ।</Text>
+	</String>
+	<String Id="2088" Name="IDS_MSG_CLI_DEREG_FAILED">
+		<Text>क्लाइंट दुबारा डी-रजिस्टर्ड नहीं हो सका।</Text>
+	</String>
+	<String Id="2089" Name="IDS_MSG_SET_CONN_ROLE_SUCCESS">
+		<Text>कनेक्शन रोल को सफलतापूर्वक सेट किया गया।</Text>
+	</String>
+	<String Id="2090" Name="IDS_MSG_SET_CONN_ROLE_FAILED">
+		<Text>कनेक्शन रोल को सेट नहीं किया जा सका।</Text>
+	</String>
+	<String Id="2091" Name="IDS_MSG_SET_CONN_ROLE_NOT_ALLOWED">
+		<Text>अनेक कनेक्शन उपलब्ध हैं। कनेक्शन रोल सेटिंग की अब अनुमति है।</Text>
+	</String>
+	<String Id="2092" Name="IDS_MSG_GET_CONN_ROLE_FAILED">
+		<Text>मौजूदा कनेक्शन रोल सेटिंग को रिट्रीव करने में असफल।</Text>
+	</String>
+	<String Id="2093" Name="IDS_MSG_BROWSING">
+		<Text>ब्राउजिंग सर्विस %s पर रिकॉर्ड होता है ... निकलने के लिए CLR दबाएं।</Text>
+	</String>
+	<String Id="2094" Name="IDS_MSG_SECURITY_SAVED">
+		<Text>सिक्योरिटी सेटिंग सेव किए जा चुके हैं।</Text>
+	</String>
+	<String Id="2095" Name="IDS_MSG_SECURITY_NOT_SAVED">
+		<Text>कोई सिक्योरिटी सेटिंग सेव नहीं किया गया।</Text>
+	</String>
+	<String Id="2096" Name="IDS_MSG_OOB_DATA_NOT_PRESENT">
+		<Text>OOB डेटा उपलब्ध नहीं।</Text>
+	</String>
+	<String Id="2097" Name="IDS_MSG_OOB_DATA_PRESENT">
+		<Text>OOB उपलब्ध है।</Text>
+	</String>
+	<String Id="2098" Name="IDS_MSG_OOB_DATA_CREATED">
+		<Text>लोकल OOB डेटा EFS में निर्मित है।</Text>
+	</String>
+	<String Id="2099" Name="IDS_MSG_BIP_OP_PROGRESS">
+		<Text>BIP परिचालन जारी है। इसे विफल करने के लिए  CLR की दबाएं।</Text>
+	</String>
+	<String Id="2100" Name="IDS_PROMPT_UNBOND_ALL">
+		<Text>सारे डिवाइस अनबॉन्ड किया जाए?</Text>
+	</String>
+	<String Id="2101" Name="IDS_PROMPT_REMOVE_ALL">
+		<Text>डेटाबेस में से सारे डिवाइस हटा दिए जाएं?</Text>
+	</String>
+	<String Id="2102" Name="IDS_PROMPT_UNBOND_ONE">
+		<Text>%s को अनबॉन्ड किया जाए?</Text>
+	</String>
+	<String Id="2103" Name="IDS_PROMPT_REMOVE_ONE">
+		<Text>डेटाबेस में से %s हटा दिया जाए?</Text>
+	</String>
+	<String Id="2104" Name="IDS_PROMPT_USE_AUDIO_DEV">
+		<Text>%s  का इस्तेमाल ऑडियो डिवाइस के रूप में करें?</Text>
+	</String>
+	<String Id="2105" Name="IDS_PROMPT_CONNECT">
+		<Text>%s से कनेक्ट करें?</Text>
+	</String>
+	<String Id="2106" Name="IDS_PROMPT_DISCONNECT">
+		<Text>%s से डिसकनेक्ट करें?</Text>
+	</String>
+	<String Id="2107" Name="IDS_PROMPT_ENTER_TEST_MODE">
+		<Text>टेस्ट मोड एंटर करें?</Text>
+	</String>
+	<String Id="2108" Name="IDS_PROMPT_USE_SRVC_SECURITY">
+		<Text>सर्विस सिक्योरिटी सक्रिय करें?</Text>
+	</String>
+	<String Id="2109" Name="IDS_PROMPT_AUTHORIZE">
+		<Text>डिवाइस %s सर्विस 0x%x  के साथ कनेक्शन का अनुरोध करता है। कनेक्शन ऑथराइज करें?</Text>
+	</String>
+	<String Id="2110" Name="IDS_PROMPT_ACCEPT_CONN_REQ">
+		<Text>%s से कनेक्शन अनुरोध स्वीकार करें?</Text>
+	</String>
+	<String Id="2111" Name="IDS_PROMPT_SET_CONN_ROLE_FUTURE">
+		<Text>भविष्य के कनेक्शन में लोकल डिवाइस को %s के लिए सेट करें?</Text>
+	</String>
+	<String Id="2112" Name="IDS_PROMPT_SET_CONN_ROLE_CURRENT">
+		<Text>%s के साथ मौजूदा कनेक्शन में लोकल डिवाइस को %s के लिए सेट करें?</Text>
+	</String>
+	<String Id="2200" Name="IDS_LABEL_BT_NAME">
+		<Text>BT का नाम: %s</Text>
+	</String>
+	<String Id="2201" Name="IDS_LABEL_BD_ADDR">
+		<Text>BD का पता: %s</Text>
+	</String>
+	<String Id="2202" Name="IDS_LABEL_SVC_CLS">
+		<Text>सर्विस क्लास(क्लासेज): %s</Text>
+	</String>
+	<String Id="2203" Name="IDS_LABEL_LMP_FEAT">
+		<Text>LMP फीचर: %s</Text>
+	</String>
+	<String Id="2204" Name="IDS_LABEL_BONDABLE">
+		<Text>बॉन्डेबल: %s</Text>
+	</String>
+	<String Id="2205" Name="IDS_LABEL_DISCOVERABLE">
+		<Text>डिसकवरयोग्य: %s</Text>
+	</String>
+	<String Id="2206" Name="IDS_LABEL_SECURITY">
+		<Text>सिक्योरिटी: %s</Text>
+	</String>
+	<String Id="2207" Name="IDS_LABEL_OPTIONS">
+		<Text>के लिए विकल्प: %s</Text>
+	</String>
+	<String Id="2209" Name="IDS_LABEL_PORT_STATUS">
+		<Text>पोर्ट स्टेटस: %s</Text>
+	</String>
+	<String Id="2210" Name="IDS_LABEL_BYTES_SENT">
+		<Text>भेजे गए बाइट्स: %d</Text>
+	</String>
+	<String Id="2211" Name="IDS_LABEL_BYTES_RCVD">
+		<Text>प्राप्त बाइट्स: %d</Text>
+	</String>
+	<String Id="2212" Name="IDS_LABEL_SSP_CAPABLE">
+		<Text>SSP सक्षम: %s</Text>
+	</String>
+	<String Id="3001" Name="IDS_BPP">
+		<Text>BPP</Text>
+	</String>
+	<String Id="3002" Name="IDS_BPP_TESTS">
+		<Text>BPP सेंडर</Text>
+	</String>
+	<String Id="3010" Name="IDS_BPP_SEND_FILE">
+		<Text>फाइल भेजें</Text>
+	</String>
+	<String Id="3011" Name="IDS_BPP_SOAP_REQUEST">
+		<Text>सोप रिक्वेस्ट</Text>
+	</String>
+	<String Id="3012" Name="IDS_BPP_TEST_PRINT">
+		<Text>टेस्ट प्रिंटिंग</Text>
+	</String>
+	<String Id="3020" Name="IDS_BPP_MSG_SEND_FILE_SUCCESS">
+		<Text>सफलतापूर्वक प्रिंट किया हुआ %s</Text>
+	</String>
+	<String Id="3021" Name="IDS_BPP_MSG_SEND_FILE_FAILED">
+		<Text>प्रिंट करने में असफल %s</Text>
+	</String>
+	<String Id="3022" Name="IDS_BPP_MSG_SOAP_REQ_SUCCESS">
+		<Text>SOAP रिक्वेस्ट सफलतापूर्वक भेजा गया</Text>
+	</String>
+	<String Id="3023" Name="IDS_BPP_MSG_SOAP_REQ_FAILED">
+		<Text>SOAP रिक्वेस्ट असफल हुआ</Text>
+	</String>
+	<String Id="3100" Name="IDS_A2DP">
+		<Text>A2DP</Text>
+	</String>
+	<String Id="3101" Name="IDS_A2DP_DISCONNECT_FAILED">
+		<Text>डिसकनेक्शन असफल हुआ।</Text>
+	</String>
+	<String Id="3200" Name="IDS_AVRCP">
+		<Text>AVRCP</Text>
+	</String>
+	<String Id="3201" Name="IDS_AVRCP_OP_MENU">
+		<Text>AVRCP OP मेनू</Text>
+	</String>
+	<String Id="3202" Name="IDS_AVRCP_SELECT">
+		<Text>सेलेक्ट</Text>
+	</String>
+	<String Id="3203" Name="IDS_AVRCP_UP">
+		<Text>अप</Text>
+	</String>
+	<String Id="3204" Name="IDS_AVRCP_DOWN">
+		<Text>आउन</Text>
+	</String>
+	<String Id="3205" Name="IDS_AVRCP_LEFT">
+		<Text>बायां</Text>
+	</String>
+	<String Id="3206" Name="IDS_AVRCP_RIGHT">
+		<Text>दायां</Text>
+	</String>
+	<String Id="3207" Name="IDS_AVRCP_RIGHT_UP">
+		<Text>दायां ऊपर</Text>
+	</String>
+	<String Id="3208" Name="IDS_AVRCP_RIGHT_DOWN">
+		<Text>दायां नीचे</Text>
+	</String>
+	<String Id="3209" Name="IDS_AVRCP_LEFT_UP">
+		<Text>बायां ऊपर</Text>
+	</String>
+	<String Id="3210" Name="IDS_AVRCP_LEFT_DOWN">
+		<Text>बायां नीचे</Text>
+	</String>
+	<String Id="3211" Name="IDS_AVRCP_ROOT_MENU">
+		<Text>रूट मेनू</Text>
+	</String>
+	<String Id="3212" Name="IDS_AVRCP_SETUP_MENU">
+		<Text>सेटअप मेनू</Text>
+	</String>
+	<String Id="3213" Name="IDS_AVRCP_CONTENTS_MENU">
+		<Text>कंटेंट्स मेनू</Text>
+	</String>
+	<String Id="3214" Name="IDS_AVRCP_FAVORITE_MENU">
+		<Text>फेवरिट मेनू</Text>
+	</String>
+	<String Id="3215" Name="IDS_AVRCP_EXIT">
+		<Text>बाहर</Text>
+	</String>
+	<String Id="3216" Name="IDS_AVRCP_0">
+		<Text>0</Text>
+	</String>
+	<String Id="3217" Name="IDS_AVRCP_1">
+		<Text>1</Text>
+	</String>
+	<String Id="3218" Name="IDS_AVRCP_2">
+		<Text>2</Text>
+	</String>
+	<String Id="3219" Name="IDS_AVRCP_3">
+		<Text>3</Text>
+	</String>
+	<String Id="3220" Name="IDS_AVRCP_4">
+		<Text>4</Text>
+	</String>
+	<String Id="3221" Name="IDS_AVRCP_5">
+		<Text>5</Text>
+	</String>
+	<String Id="3222" Name="IDS_AVRCP_6">
+		<Text>6</Text>
+	</String>
+	<String Id="3223" Name="IDS_AVRCP_7">
+		<Text>7</Text>
+	</String>
+	<String Id="3224" Name="IDS_AVRCP_8">
+		<Text>8</Text>
+	</String>
+	<String Id="3225" Name="IDS_AVRCP_9">
+		<Text>9</Text>
+	</String>
+	<String Id="3226" Name="IDS_AVRCP_DOT">
+		<Text>डॉट</Text>
+	</String>
+	<String Id="3227" Name="IDS_AVRCP_ENTER">
+		<Text>एंटर</Text>
+	</String>
+	<String Id="3228" Name="IDS_AVRCP_CLEAR">
+		<Text>साफ</Text>
+	</String>
+	<String Id="3229" Name="IDS_AVRCP_CHANNEL_UP">
+		<Text>छानल अप</Text>
+	</String>
+	<String Id="3230" Name="IDS_AVRCP_CHANNEL_DOWN">
+		<Text>छानल डवून</Text>
+	</String>
+	<String Id="3231" Name="IDS_AVRCP_PREVIOUS_CHANNEL">
+		<Text>पिछला छानल</Text>
+	</String>
+	<String Id="3232" Name="IDS_AVRCP_SOUND_SELECT">
+		<Text>शब्द चयन</Text>
+	</String>
+	<String Id="3233" Name="IDS_AVRCP_INPUT_SELECT">
+		<Text>इनपुट चयन</Text>
+	</String>
+	<String Id="3234" Name="IDS_AVRCP_DISPLAY_INFORMATION">
+		<Text>प्रदर्शन सूचना</Text>
+	</String>
+	<String Id="3235" Name="IDS_AVRCP_HELP">
+		<Text>मदद</Text>
+	</String>
+	<String Id="3236" Name="IDS_AVRCP_PAGE_UP">
+		<Text>पाज अप</Text>
+	</String>
+	<String Id="3237" Name="IDS_AVRCP_PAGE_DOWN">
+		<Text>पाज डवून</Text>
+	</String>
+	<String Id="3238" Name="IDS_AVRCP_POWER">
+		<Text>पॉवर</Text>
+	</String>
+	<String Id="3239" Name="IDS_AVRCP_VOLUME_UP">
+		<Text>वाल्यूम डवून</Text>
+	</String>
+	<String Id="3240" Name="IDS_AVRCP_VOLUME_DOWN">
+		<Text>वाल्यूम अप</Text>
+	</String>
+	<String Id="3241" Name="IDS_AVRCP_MUTE">
+		<Text>मौन</Text>
+	</String>
+	<String Id="3242" Name="IDS_AVRCP_PLAY">
+		<Text>खेलें</Text>
+	</String>
+	<String Id="3243" Name="IDS_AVRCP_STOP">
+		<Text>रूकें</Text>
+	</String>
+	<String Id="3244" Name="IDS_AVRCP_PAUSE">
+		<Text>विराम</Text>
+	</String>
+	<String Id="3245" Name="IDS_AVRCP_RECORD">
+		<Text>रिकॉर्ड</Text>
+	</String>
+	<String Id="3246" Name="IDS_AVRCP_REWIND">
+		<Text>रिवाइन्द</Text>
+	</String>
+	<String Id="3247" Name="IDS_AVRCP_FAST_FORWARD">
+		<Text>फास्ट फारवर्ड</Text>
+	</String>
+	<String Id="3248" Name="IDS_AVRCP_EJECT">
+		<Text>एजेक्ट</Text>
+	</String>
+	<String Id="3249" Name="IDS_AVRCP_FORWARD">
+		<Text>फॉरवर्ड</Text>
+	</String>
+	<String Id="3250" Name="IDS_AVRCP_BACKWARD">
+		<Text>बैक्वार्ड</Text>
+	</String>
+	<String Id="3251" Name="IDS_AVRCP_ANGLE">
+		<Text>आंगल</Text>
+	</String>
+	<String Id="3252" Name="IDS_AVRCP_SUBPICTURE">
+		<Text>सब पिक्चर</Text>
+	</String>
+	<String Id="3253" Name="IDS_AVRCP_F1">
+		<Text>F1</Text>
+	</String>
+	<String Id="3254" Name="IDS_AVRCP_F2">
+		<Text>F2</Text>
+	</String>
+	<String Id="3255" Name="IDS_AVRCP_F3">
+		<Text>F3</Text>
+	</String>
+	<String Id="3256" Name="IDS_AVRCP_F4">
+		<Text>F4</Text>
+	</String>
+	<String Id="3257" Name="IDS_AVRCP_F5">
+		<Text>F5</Text>
+	</String>
+	<String Id="3258" Name="IDS_AVRCP_GENERIC">
+		<Text>जेनेरिक</Text>
+	</String>
+	<String Id="4000" Name="IDS_SAP_TESTS">
+		<Text>एसएपी</Text>
+	</String>
+	<String Id="4001" Name="IDS_SAP_SERVER">
+		<Text>एसएपी server</Text>
+	</String>
+	<String Id="4002" Name="IDS_SAP_CLIENT">
+		<Text>एसएपी क्लाईंट</Text>
+	</String>
+	<String Id="4003" Name="IDS_SAP_SIM_POWER_ON">
+		<Text>सिम पावर आन</Text>
+	</String>
+	<String Id="4004" Name="IDS_SAP_SIM_POWER_OFF">
+		<Text>इम पावर ऑफ</Text>
+	</String>
+	<String Id="4005" Name="IDS_SAP_SIM_RESET">
+		<Text>सिम रेसेट</Text>
+	</String>
+	<String Id="4006" Name="IDS_SAP_TRANSFER_ATR">
+		<Text>एटीआर ट्रान्सफर</Text>
+	</String>
+	<String Id="4007" Name="IDS_SAP_TRANSFER_APDU">
+		<Text>एपीडीयू ट्रान्सफर</Text>
+	</String>
+	<String Id="4008" Name="IDS_SAP_GET_CARD_READER_STATUS">
+		<Text>गेट कार्ड रीडर स्टेटस</Text>
+	</String>
+	<String Id="4009" Name="IDS_SAP_SRV_DISC_IMMD">
+		<Text>एसएपी सर्वर तुरंत डिस्कोन्नेक्त करता</Text>
+	</String>
+	<String Id="4010" Name="IDS_SAP_MSG_TRANSMIT_REQ_FAILED">
+		<Text>आईएम क्लाईंट मांग के प्रसारण मे विफल है</Text>
+	</String>
+	<String Id="4011" Name="IDS_SAP_MSG_SRV_DISC_REQ">
+		<Text>एसएपी सर्वर एक सुंदर डिस्कोन्नेक्टिओन को मांगा है</Text>
+	</String>
+	<String Id="4012" Name="IDS_SAP_MSG_SRV_DISC_IMMD">
+		<Text>तुरंत एसएपी क्लाईंट डिस्कोन्नेक्त किया गया है</Text>
+	</String>
+	<String Id="4013" Name="IDS_SAP_MSG_ATR_RECV">
+		<Text>सर्वर से एटीआर प्राप्त</Text>
+	</String>
+	<String Id="4014" Name="IDS_SAP_MSG_ATR_REQ_FAILED">
+		<Text>त्रुटि के साथ एटीआर रेस्पान्स प्राप्त</Text>
+	</String>
+	<String Id="4015" Name="IDS_SAP_MSG_CARD_READER_STATUS_RECV">
+		<Text>कार्ड रीडर स्टेटस सफल</Text>
+	</String>
+	<String Id="4016" Name="IDS_SAP_MSG_CARD_READER_STATUS_FAILED">
+		<Text>त्रुटि के साथ कार्ड रीडर स्टेटस प्राप्त</Text>
+	</String>
+	<String Id="4017" Name="IDS_SAP_MSG_SIM_POWER_ON_SUCCESS">
+		<Text>सिम पावर आन सफलतापूर्वक</Text>
+	</String>
+	<String Id="4018" Name="IDS_SAP_MSG_SIM_POWER_ON_FAILED">
+		<Text>सिम पावर आन विफल</Text>
+	</String>
+	<String Id="4019" Name="IDS_SAP_MSG_SIM_POWER_OFF_SUCCESS">
+		<Text>सिम पवार आफ सफलतापूर्वक</Text>
+	</String>
+	<String Id="4020" Name="IDS_SAP_MSG_SIM_POWER_OFF_FAILED">
+		<Text>सिम पावर आफ विफल</Text>
+	</String>
+	<String Id="4021" Name="IDS_SAP_MSG_SIM_RESET_SUCCESS">
+		<Text>इम रीसेट सफलतापूर्वक</Text>
+	</String>
+	<String Id="4022" Name="IDS_SAP_MSG_SIM_RESET_FAILED">
+		<Text>सिम रीसेट विफल</Text>
+	</String>
+	<String Id="4023" Name="IDS_SAP_APDU_CMD_DATA">
+		<Text>एसएपी एपीडीयू कमांड डेटा</Text>
+	</String>
+	<String Id="4024" Name="IDS_SAP_MSG_TX_APDU_SUCCESS">
+		<Text>टीएक्स और आरएक्स एपीडीयू सफल</Text>
+	</String>
+	<String Id="4025" Name="IDS_SAP_MSG_TX_APDU_FAILED">
+		<Text>एपीडीयू प्रसारण विफल</Text>
+	</String>
+	<String Id="4026" Name="IDS_SAP_MSG_SIM_STATUS_CHANGED">
+		<Text>सर्वर रिपोर्ट करता है की सिम स्थिति मे बदलाव</Text>
+	</String>
+	<String Id="4027" Name="IDS_SAP_MIN_PACKET_SIZE">
+		<Text>न्यूनतम एसएपी आकार सेट करें</Text>
+	</String>
+	<String Id="4028" Name="IDS_SAP_MAX_PACKET_SIZE">
+		<Text>अधिकतम एसएपी आकार सेट करें</Text>
+	</String>
+	<String Id="4040" Name="IDS_OBEX">
+		<Text>ओबीईएक्स आप</Text>
+	</String>
+	<String Id="4041" Name="IDS_OBEX_SERVER">
+		<Text>ओबीईएक्स सर्वर</Text>
+	</String>
+	<String Id="4042" Name="IDS_OBEX_CLIENT">
+		<Text>ओबीईएक्स क्लाईंट</Text>
+	</String>
+	<String Id="4043" Name="IDS_OBEX_FORCE_DISCONNECT">
+		<Text>डिस्कोन्नेक्त मजबूर करना</Text>
+	</String>
+	<String Id="4044" Name="IDS_OBEX_APP_TESTS">
+		<Text>ओबीईएक्स परीक्षण</Text>
+	</String>
+	<String Id="4045" Name="IDS_OBEX_SETPATH">
+		<Text>सेट पात</Text>
+	</String>
+	<String Id="4046" Name="IDS_OBEX_MSG_SERVICE_NOT_FOUND">
+		<Text>ओबीईएक्स सेवा पाता नहीं चला</Text>
+	</String>
+	<String Id="4047" Name="IDS_OBEX_AUTHENTICATE_WITH_USERID">
+		<Text>यूआईडी से प्रमाणित करें</Text>
+	</String>
+	<String Id="4048" Name="IDS_OBEX_MSG_SETPATH_FAILED">
+		<Text>सेटपथ विफल</Text>
+	</String>
+	<String Id="4049" Name="IDS_OBEX_MSG_SETPATH_SUCCESS">
+		<Text>सेटपाथ सफल</Text>
+	</String>
+	<String Id="4050" Name="IDS_MSG_HID_CONN_FAIL">
+		<Text>एचआईडी उपकरणों से कनैक्शन विफल</Text>
+	</String>
+	<String Id="4051" Name="IDS_MSG_HID_DCN_FAIL">
+		<Text>एचआईडी उपकरण से डिस्कोन्नेक्टिओन विफल</Text>
+	</String>
+	<String Id="4052" Name="IDS_MSG_NO_HID_DEVICES">
+		<Text>कोई एचआईडी उपकरण नहीं पाया नहीं</Text>
+	</String>
+	<String Id="4053" Name="IDS_MSG_HID_SET_IDLE_SUCCESS">
+		<Text>सेट_इडल सफल</Text>
+	</String>
+	<String Id="4054" Name="IDS_MSG_HID_SET_IDLE_FAIL">
+		<Text>सेट_इडल विफल</Text>
+	</String>
+	<String Id="4055" Name="IDS_MSG_HID_GET_IDLE_SUCCESS">
+		<Text>सेट_इडल सफल %s</Text>
+	</String>
+	<String Id="4056" Name="IDS_MSG_HID_GET_IDLE_FAIL">
+		<Text>गेट_इडले विफल</Text>
+	</String>
+	<String Id="4057" Name="IDS_MSG_HID_SET_PROTOCOL_SUCCESS">
+		<Text>सेट_प्रोटोकॉल सफल</Text>
+	</String>
+	<String Id="4058" Name="IDS_MSG_HID_SET_PROTOCOL_FAIL">
+		<Text>सेट_प्रोटोकॉल विफल</Text>
+	</String>
+	<String Id="4059" Name="IDS_MSG_HID_GET_PROTOCOL_SUCCESS">
+		<Text>गेट_प्रोटोकॉल सफल %s</Text>
+	</String>
+	<String Id="4060" Name="IDS_MSG_HID_GET_PROTOCOL_FAIL">
+		<Text>गेट_प्रोटोकॉल विफल</Text>
+	</String>
+	<String Id="4061" Name="IDS_OPEN_BT">
+		<Text>ब्लुटूथ बांध है। अब खोल्न है?</Text>
+	</String>
+	<String Id="4062" Name="IDS_BT_CLOSED">
+		<Text>ब्लूटूट बांध है। कृपया खोलिए!</Text>
+	</String>
+	<String Id="4063" Name="IDS_BT_YES">
+		<Text>हां</Text>
+	</String>
+	<String Id="4064" Name="IDS_BT_NO">
+		<Text>नहीं</Text>
+	</String>
+	<String Id="4065" Name="IDS_BT_OPP_SETTING">
+		<Text>ओपीपी सेटिंग</Text>
+	</String>
+	<String Id="4066" Name="IDS_INSERT_TCARD">
+		<Text>मेमोरी नहीं है, कृपाया टी कार्ड डालें</Text>
+	</String>
+	<String Id="4067" Name="IDS_FILE_PROGRESS">
+		<Text>फ़ाइल प्रसारण प्रगति:</Text>
+	</String>
+</Strings>
+<Objects MimeType="image/bmp">
+	<Object Id="5001" Name="IDB_BT_CHECK_ON">
+		<Hex>424D060500000000000036040000280000000D0000000D0000000100080000000000D0000000C40E0000C40E0000000000000000000000000000000080000080000000808000800000008000800080800000C0C0C000C0DCC000F0CAA6000020400000206000002080000020A0000020C0000020E00000400000004020000040400000406000004080000040A0000040C0000040E00000600000006020000060400000606000006080000060A0000060C0000060E00000800000008020000080400000806000008080000080A0000080C0000080E00000A0000000A0200000A0400000A0600000A0800000A0A00000A0C00000A0E00000C0000000C0200000C0400000C0600000C0800000C0A00000C0C00000C0E00000E0000000E0200000E0400000E0600000E0800000E0A00000E0C00000E0E00040000000400020004000400040006000400080004000A0004000C0004000E00040200000402020004020400040206000402080004020A0004020C0004020E00040400000404020004040400040406000404080004040A0004040C0004040E00040600000406020004060400040606000406080004060A0004060C0004060E00040800000408020004080400040806000408080004080A0004080C0004080E00040A0000040A0200040A0400040A0600040A0800040A0A00040A0C00040A0E00040C0000040C0200040C0400040C0600040C0800040C0A00040C0C00040C0E00040E0000040E0200040E0400040E0600040E0800040E0A00040E0C00040E0E00080000000800020008000400080006000800080008000A0008000C0008000E00080200000802020008020400080206000802080008020A0008020C0008020E00080400000804020008040400080406000804080008040A0008040C0008040E00080600000806020008060400080606000806080008060A0008060C0008060E00080800000808020008080400080806000808080008080A0008080C0008080E00080A0000080A0200080A0400080A0600080A0800080A0A00080A0C00080A0E00080C0000080C0200080C0400080C0600080C0800080C0A00080C0C00080C0E00080E0000080E0200080E0400080E0600080E0800080E0A00080E0C00080E0E000C0000000C0002000C0004000C0006000C0008000C000A000C000C000C000E000C0200000C0202000C0204000C0206000C0208000C020A000C020C000C020E000C0400000C0402000C0404000C0406000C0408000C040A000C040C000C040E000C0600000C0602000C0604000C0606000C0608000C060A000C060C000C060E000C0800000C0802000C0804000C0806000C0808000C080A000C080C000C080E000C0A00000C0A02000C0A04000C0A06000C0A08000C0A0A000C0A0C000C0A0E000C0C00000C0C02000C0C04000C0C06000C0C08000C0C0A000F0FBFF00A4A0A000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00FDFDFDFDFDFDFDFDFDFDFDFDFD000000FDA4A4A4A4A4A4A4A4A4A4A4FD000000FDA4FFFFFFFFFFFFFFFFFFA4FD000000FDA4FFFFFF00FFFFFFFFFFA4FD000000FDA4FFFF000000FFFFFFFFA4FD000000FDA4FF0000000000FFFFFFA4FD000000FDA4FF0000FF000000FFFFA4FD000000FDA4FF00FFFFFF000000FFA4FD000000FDA4FFFFFFFFFFFF0000FFA4FD000000FDA4FFFFFFFFFFFFFF00FFA4FD000000FDA4FFFFFFFFFFFFFFFFFFA4FD000000FDA4A4A4A4A4A4A4A4A4A4A4FD000000FDFDFDFDFDFDFDFDFDFDFDFDFD000000</Hex>
+	</Object>
+	<Object Id="5002" Name="IDB_BT_CHECK_OFF">
+		<Hex>424D060500000000000036040000280000000D0000000D0000000100080000000000D0000000C40E0000C40E0000000000000000000000000000000080000080000000808000800000008000800080800000C0C0C000C0DCC000F0CAA6000020400000206000002080000020A0000020C0000020E00000400000004020000040400000406000004080000040A0000040C0000040E00000600000006020000060400000606000006080000060A0000060C0000060E00000800000008020000080400000806000008080000080A0000080C0000080E00000A0000000A0200000A0400000A0600000A0800000A0A00000A0C00000A0E00000C0000000C0200000C0400000C0600000C0800000C0A00000C0C00000C0E00000E0000000E0200000E0400000E0600000E0800000E0A00000E0C00000E0E00040000000400020004000400040006000400080004000A0004000C0004000E00040200000402020004020400040206000402080004020A0004020C0004020E00040400000404020004040400040406000404080004040A0004040C0004040E00040600000406020004060400040606000406080004060A0004060C0004060E00040800000408020004080400040806000408080004080A0004080C0004080E00040A0000040A0200040A0400040A0600040A0800040A0A00040A0C00040A0E00040C0000040C0200040C0400040C0600040C0800040C0A00040C0C00040C0E00040E0000040E0200040E0400040E0600040E0800040E0A00040E0C00040E0E00080000000800020008000400080006000800080008000A0008000C0008000E00080200000802020008020400080206000802080008020A0008020C0008020E00080400000804020008040400080406000804080008040A0008040C0008040E00080600000806020008060400080606000806080008060A0008060C0008060E00080800000808020008080400080806000808080008080A0008080C0008080E00080A0000080A0200080A0400080A0600080A0800080A0A00080A0C00080A0E00080C0000080C0200080C0400080C0600080C0800080C0A00080C0C00080C0E00080E0000080E0200080E0400080E0600080E0800080E0A00080E0C00080E0E000C0000000C0002000C0004000C0006000C0008000C000A000C000C000C000E000C0200000C0202000C0204000C0206000C0208000C020A000C020C000C020E000C0400000C0402000C0404000C0406000C0408000C040A000C040C000C040E000C0600000C0602000C0604000C0606000C0608000C060A000C060C000C060E000C0800000C0802000C0804000C0806000C0808000C080A000C080C000C080E000C0A00000C0A02000C0A04000C0A06000C0A08000C0A0A000C0A0C000C0A0E000C0C00000C0C02000C0C04000C0C06000C0C08000C0C0A000F0FBFF00A4A0A000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00FDFDFDFDFDFDFDFDFDFDFDFDFD000000FDA4A4A4A4A4A4A4A4A4A4A4FD000000FDA4FFFFFFFFFFFFFFFFFFA4FD000000FDA4FFFFFFFFFFFFFFFFFFA4FD000000FDA4FFFFFFFFFFFFFFFFFFA4FD000000FDA4FFFFFFFFFFFFFFFFFFA4FD000000FDA4FFFFFFFFFFFFFFFFFFA4FD000000FDA4FFFFFFFFFFFFFFFFFFA4FD000000FDA4FFFFFFFFFFFFFFFFFFA4FD000000FDA4FFFFFFFFFFFFFFFFFFA4FD000000FDA4FFFFFFFFFFFFFFFFFFA4FD000000FDA4A4A4A4A4A4A4A4A4A4A4FD000000FDFDFDFDFDFDFDFDFDFDFDFDFD000000</Hex>
+	</Object>
+	<Object Id="5003" Name="IDB_BT_RADIO_FILLED">
+		<Hex>424D380100000000000056000000280000000E0000000E000000010008000000000000000000120B0000120B0000080000000800000000000000FFFFFF00FF00FF0099999900666666005C5C5C0033333300FFFFFF000202020205050505050505020202726902020203030303030303050502026E6502020303010101010103030505026F6E0203030101010101010103030505000003030101010000000001010303051200030501010406060600000101030500010305010104060606060001010305657303050101040606060600010103056C6F03050101040406060606010103056C6F03050501010404040401010103056C6F03030505010101010101010303026C6F020303050501010101010303020252630202030305050505050303020202647302020203030303030303020202026E750000</Hex>
+	</Object>
+	<Object Id="5004" Name="IDB_BT_RADIO_UNFILLED">
+		<Hex>424D30010000000000004E000000280000000E0000000E000000010008000000000000000000120B0000120B0000060000000600000000000000FFFFFF00FF00FF00999999005C5C5C00FFFFFF000202020204040404040404020202726902020203030303030303040402026E6502020303010101010103030404026F6E0203030101010101010103030404000003030101010101010101010303041200030401010101010101010101030400010304010101010101010101010304657303040101010101010101010103046C6F03040101010101010101010103046C6F03040401010101010101010103046C6F03030404010101010101010303026C6F020303040401010101010303020252630202030304040404040303020202647302020203030303030303020202026E750000</Hex>
+	</Object>
+	<Object Id="5005" Name="IDB_UP_DOWN">
+		<Hex>424dc60400000000000036040000280000000c0000000c000000010008000000000090000000c40e0000c40e0000000000000000000000000000000080000080000000808000800000008000800080800000c0c0c000c0dcc000f0caa6000020400000206000002080000020a0000020c0000020e00000400000004020000040400000406000004080000040a0000040c0000040e00000600000006020000060400000606000006080000060a0000060c0000060e00000800000008020000080400000806000008080000080a0000080c0000080e00000a0000000a0200000a0400000a0600000a0800000a0a00000a0c00000a0e00000c0000000c0200000c0400000c0600000c0800000c0a00000c0c00000c0e00000e0000000e0200000e0400000e0600000e0800000e0a00000e0c00000e0e00040000000400020004000400040006000400080004000a0004000c0004000e00040200000402020004020400040206000402080004020a0004020c0004020e00040400000404020004040400040406000404080004040a0004040c0004040e00040600000406020004060400040606000406080004060a0004060c0004060e00040800000408020004080400040806000408080004080a0004080c0004080e00040a0000040a0200040a0400040a0600040a0800040a0a00040a0c00040a0e00040c0000040c0200040c0400040c0600040c0800040c0a00040c0c00040c0e00040e0000040e0200040e0400040e0600040e0800040e0a00040e0c00040e0e00080000000800020008000400080006000800080008000a0008000c0008000e00080200000802020008020400080206000802080008020a0008020c0008020e00080400000804020008040400080406000804080008040a0008040c0008040e00080600000806020008060400080606000806080008060a0008060c0008060e00080800000808020008080400080806000808080008080a0008080c0008080e00080a0000080a0200080a0400080a0600080a0800080a0a00080a0c00080a0e00080c0000080c0200080c0400080c0600080c0800080c0a00080c0c00080c0e00080e0000080e0200080e0400080e0600080e0800080e0a00080e0c00080e0e000c0000000c0002000c0004000c0006000c0008000c000a000c000c000c000e000c0200000c0202000c0204000c0206000c0208000c020a000c020c000c020e000c0400000c0402000c0404000c0406000c0408000c040a000c040c000c040e000c0600000c0602000c0604000c0606000c0608000c060a000c060c000c060e000c0800000c0802000c0804000c0806000c0808000c080a000c080c000c080e000c0a00000c0a02000c0a04000c0a06000c0a08000c0a0a000c0a0c000c0a0e000c0c00000c0c02000c0c04000c0c06000c0c08000c0c0a000f0fbff00a4a0a000808080000000ff0000ff000000ffff00ff000000ff00ff00ffff0000ffffff00ff07a4a4ffffffffffa4ffffff0700a4ffffffffa400a4ffff0700a4ffffffa4000000a4ff0700a4ffff07000700a400ff0700a4ffffff070700a407ff0700a4ffffffff0700a4ffff0700a4ffffffff0700a4ffa40700a4a4ffffff0700a4ff00a400a400a4ffff0700a4ff07000000a4ffffff0700a4ffff0700a4ffffffff0700a4ffffff07ffffffffff0707a4ff</Hex>
+	</Object>
+	<Object Id="5006" Name="IDB_A">
+		<Hex>424d060500000000000036040000280000000d0000000d0000000100080000000000d0000000c40e0000c40e0000000000000000000000000000000080000080000000808000800000008000800080800000c0c0c000c0dcc000f0caa6000020400000206000002080000020a0000020c0000020e00000400000004020000040400000406000004080000040a0000040c0000040e00000600000006020000060400000606000006080000060a0000060c0000060e00000800000008020000080400000806000008080000080a0000080c0000080e00000a0000000a0200000a0400000a0600000a0800000a0a00000a0c00000a0e00000c0000000c0200000c0400000c0600000c0800000c0a00000c0c00000c0e00000e0000000e0200000e0400000e0600000e0800000e0a00000e0c00000e0e00040000000400020004000400040006000400080004000a0004000c0004000e00040200000402020004020400040206000402080004020a0004020c0004020e00040400000404020004040400040406000404080004040a0004040c0004040e00040600000406020004060400040606000406080004060a0004060c0004060e00040800000408020004080400040806000408080004080a0004080c0004080e00040a0000040a0200040a0400040a0600040a0800040a0a00040a0c00040a0e00040c0000040c0200040c0400040c0600040c0800040c0a00040c0c00040c0e00040e0000040e0200040e0400040e0600040e0800040e0a00040e0c00040e0e00080000000800020008000400080006000800080008000a0008000c0008000e00080200000802020008020400080206000802080008020a0008020c0008020e00080400000804020008040400080406000804080008040a0008040c0008040e00080600000806020008060400080606000806080008060a0008060c0008060e00080800000808020008080400080806000808080008080a0008080c0008080e00080a0000080a0200080a0400080a0600080a0800080a0a00080a0c00080a0e00080c0000080c0200080c0400080c0600080c0800080c0a00080c0c00080c0e00080e0000080e0200080e0400080e0600080e0800080e0a00080e0c00080e0e000c0000000c0002000c0004000c0006000c0008000c000a000c000c000c000e000c0200000c0202000c0204000c0206000c0208000c020a000c020c000c020e000c0400000c0402000c0404000c0406000c0408000c040a000c040c000c040e000c0600000c0602000c0604000c0606000c0608000c060a000c060c000c060e000c0800000c0802000c0804000c0806000c0808000c080a000c080c000c080e000c0a00000c0a02000c0a04000c0a06000c0a08000c0a0a000c0a0c000c0a0e000c0c00000c0c02000c0c04000c0c06000c0c08000c0c0a000f0fbff00a4a0a000808080000000ff0000ff000000ffff00ff000000ff00ff00ffff0000ffffff00fdfdfdfdfdfdfdfdfdfdfdfdfd000000fd0707070707070707070707fd000000fd0700000707070707000007fd000000fd0700000707070707000007fd000000fd0700000000000000000007fd000000fd0707000000000000000707fd000000fd0707000007070700000707fd000000fd0707070000070000070707fd000000fd0707070000070000070707fd000000fd0707070700000007070707fd000000fd0707070700000007070707fd000000fd0707070707070707070707fd000000fdfdfdfdfdfdfdfdfdfdfdfdfd000000</Hex>
+	</Object>
+	<Object Id="5007" Name="IDB_A_SEL">
+		<Hex>424d060500000000000036040000280000000d0000000d0000000100080000000000d0000000c40e0000c40e0000000000000000000000000000000080000080000000808000800000008000800080800000c0c0c000c0dcc000f0caa6000020400000206000002080000020a0000020c0000020e00000400000004020000040400000406000004080000040a0000040c0000040e00000600000006020000060400000606000006080000060a0000060c0000060e00000800000008020000080400000806000008080000080a0000080c0000080e00000a0000000a0200000a0400000a0600000a0800000a0a00000a0c00000a0e00000c0000000c0200000c0400000c0600000c0800000c0a00000c0c00000c0e00000e0000000e0200000e0400000e0600000e0800000e0a00000e0c00000e0e00040000000400020004000400040006000400080004000a0004000c0004000e00040200000402020004020400040206000402080004020a0004020c0004020e00040400000404020004040400040406000404080004040a0004040c0004040e00040600000406020004060400040606000406080004060a0004060c0004060e00040800000408020004080400040806000408080004080a0004080c0004080e00040a0000040a0200040a0400040a0600040a0800040a0a00040a0c00040a0e00040c0000040c0200040c0400040c0600040c0800040c0a00040c0c00040c0e00040e0000040e0200040e0400040e0600040e0800040e0a00040e0c00040e0e00080000000800020008000400080006000800080008000a0008000c0008000e00080200000802020008020400080206000802080008020a0008020c0008020e00080400000804020008040400080406000804080008040a0008040c0008040e00080600000806020008060400080606000806080008060a0008060c0008060e00080800000808020008080400080806000808080008080a0008080c0008080e00080a0000080a0200080a0400080a0600080a0800080a0a00080a0c00080a0e00080c0000080c0200080c0400080c0600080c0800080c0a00080c0c00080c0e00080e0000080e0200080e0400080e0600080e0800080e0a00080e0c00080e0e000c0000000c0002000c0004000c0006000c0008000c000a000c000c000c000e000c0200000c0202000c0204000c0206000c0208000c020a000c020c000c020e000c0400000c0402000c0404000c0406000c0408000c040a000c040c000c040e000c0600000c0602000c0604000c0606000c0608000c060a000c060c000c060e000c0800000c0802000c0804000c0806000c0808000c080a000c080c000c080e000c0a00000c0a02000c0a04000c0a06000c0a08000c0a0a000c0a0c000c0a0e000c0c00000c0c02000c0c04000c0c06000c0c08000c0c0a000f0fbff00a4a0a000808080000000ff0000ff000000ffff00ff000000ff00ff00ffff0000ffffff00fdfdfdfdfdfdfdfdfdfdfdfdfd000000fd0707070707070707070707fd000000fd07fcfc0707070707fcfc07fd000000fd07fcfc0707070707fcfc07fd000000fd07fcfcfcfcfcfcfcfcfc07fd000000fd0707fcfcfcfcfcfcfc0707fd000000fd0707fcfc070707fcfc0707fd000000fd070707fcfc07fcfc070707fd000000fd070707fcfc07fcfc070707fd000000fd07070707fcfcfc07070707fd000000fd07070707fcfcfc07070707fd000000fd0707070707070707070707fd000000fdfdfdfdfdfdfdfdfdfdfdfdfd000000</Hex>
+	</Object>
+	<Object Id="5008" Name="IDB_A_CONN">
+		<Hex>424d060500000000000036040000280000000d0000000d0000000100080000000000d0000000c40e0000c40e0000000000000000000000000000000080000080000000808000800000008000800080800000c0c0c000c0dcc000f0caa6000020400000206000002080000020a0000020c0000020e00000400000004020000040400000406000004080000040a0000040c0000040e00000600000006020000060400000606000006080000060a0000060c0000060e00000800000008020000080400000806000008080000080a0000080c0000080e00000a0000000a0200000a0400000a0600000a0800000a0a00000a0c00000a0e00000c0000000c0200000c0400000c0600000c0800000c0a00000c0c00000c0e00000e0000000e0200000e0400000e0600000e0800000e0a00000e0c00000e0e00040000000400020004000400040006000400080004000a0004000c0004000e00040200000402020004020400040206000402080004020a0004020c0004020e00040400000404020004040400040406000404080004040a0004040c0004040e00040600000406020004060400040606000406080004060a0004060c0004060e00040800000408020004080400040806000408080004080a0004080c0004080e00040a0000040a0200040a0400040a0600040a0800040a0a00040a0c00040a0e00040c0000040c0200040c0400040c0600040c0800040c0a00040c0c00040c0e00040e0000040e0200040e0400040e0600040e0800040e0a00040e0c00040e0e00080000000800020008000400080006000800080008000a0008000c0008000e00080200000802020008020400080206000802080008020a0008020c0008020e00080400000804020008040400080406000804080008040a0008040c0008040e00080600000806020008060400080606000806080008060a0008060c0008060e00080800000808020008080400080806000808080008080a0008080c0008080e00080a0000080a0200080a0400080a0600080a0800080a0a00080a0c00080a0e00080c0000080c0200080c0400080c0600080c0800080c0a00080c0c00080c0e00080e0000080e0200080e0400080e0600080e0800080e0a00080e0c00080e0e000c0000000c0002000c0004000c0006000c0008000c000a000c000c000c000e000c0200000c0202000c0204000c0206000c0208000c020a000c020c000c020e000c0400000c0402000c0404000c0406000c0408000c040a000c040c000c040e000c0600000c0602000c0604000c0606000c0608000c060a000c060c000c060e000c0800000c0802000c0804000c0806000c0808000c080a000c080c000c080e000c0a00000c0a02000c0a04000c0a06000c0a08000c0a0a000c0a0c000c0a0e000c0c00000c0c02000c0c04000c0c06000c0c08000c0c0a000f0fbff00a4a0a000808080000000ff0000ff000000ffff00ff000000ff00ff00ffff0000ffffff00fdfdfdfdfdfdfdfdfdfdfdfdfd000000fd0707070707070707070707fd000000fd07f9f90707070707f9f907fd000000fd07f9f90707070707f9f907fd000000fd07f9f9f9f9f9f9f9f9f907fd000000fd0707f9f9f9f9f9f9f90707fd000000fd0707f9f9070707f9f90707fd000000fd070707f9f907f9f9070707fd000000fd070707f9f907f9f9070707fd000000fd07070707f9f9f907070707fd000000fd07070707f9f9f907070707fd000000fd0707070707070707070707fd000000fdfdfdfdfdfdfdfdfdfdfdfdfd000000</Hex>
+	</Object>
+	<Object Id="5009" Name="IDB_N">
+		<Hex>424d060500000000000036040000280000000d0000000d0000000100080000000000d0000000c40e0000c40e0000000000000000000000000000000080000080000000808000800000008000800080800000c0c0c000c0dcc000f0caa6000020400000206000002080000020a0000020c0000020e00000400000004020000040400000406000004080000040a0000040c0000040e00000600000006020000060400000606000006080000060a0000060c0000060e00000800000008020000080400000806000008080000080a0000080c0000080e00000a0000000a0200000a0400000a0600000a0800000a0a00000a0c00000a0e00000c0000000c0200000c0400000c0600000c0800000c0a00000c0c00000c0e00000e0000000e0200000e0400000e0600000e0800000e0a00000e0c00000e0e00040000000400020004000400040006000400080004000a0004000c0004000e00040200000402020004020400040206000402080004020a0004020c0004020e00040400000404020004040400040406000404080004040a0004040c0004040e00040600000406020004060400040606000406080004060a0004060c0004060e00040800000408020004080400040806000408080004080a0004080c0004080e00040a0000040a0200040a0400040a0600040a0800040a0a00040a0c00040a0e00040c0000040c0200040c0400040c0600040c0800040c0a00040c0c00040c0e00040e0000040e0200040e0400040e0600040e0800040e0a00040e0c00040e0e00080000000800020008000400080006000800080008000a0008000c0008000e00080200000802020008020400080206000802080008020a0008020c0008020e00080400000804020008040400080406000804080008040a0008040c0008040e00080600000806020008060400080606000806080008060a0008060c0008060e00080800000808020008080400080806000808080008080a0008080c0008080e00080a0000080a0200080a0400080a0600080a0800080a0a00080a0c00080a0e00080c0000080c0200080c0400080c0600080c0800080c0a00080c0c00080c0e00080e0000080e0200080e0400080e0600080e0800080e0a00080e0c00080e0e000c0000000c0002000c0004000c0006000c0008000c000a000c000c000c000e000c0200000c0202000c0204000c0206000c0208000c020a000c020c000c020e000c0400000c0402000c0404000c0406000c0408000c040a000c040c000c040e000c0600000c0602000c0604000c0606000c0608000c060a000c060c000c060e000c0800000c0802000c0804000c0806000c0808000c080a000c080c000c080e000c0a00000c0a02000c0a04000c0a06000c0a08000c0a0a000c0a0c000c0a0e000c0c00000c0c02000c0c04000c0c06000c0c08000c0c0a000f0fbff00a4a0a000808080000000ff0000ff000000ffff00ff000000ff00ff00ffff0000ffffff00fdfdfdfdfdfdfdfdfdfdfdfdfd000000fd0707070707070707070707fd000000fd0700000707070707000007fd000000fd0700000707070700000007fd000000fd0700000707070000000007fd000000fd0700000707000000000007fd000000fd0700000700000007000007fd000000fd0700000000000707000007fd000000fd0700000000070707000007fd000000fd0700000007070707000007fd000000fd0700000707070707000007fd000000fd0707070707070707070707fd000000fdfdfdfdfdfdfdfdfdfdfdfdfd000000</Hex>
+	</Object>
+	<Object Id="5010" Name="IDB_N_CONN">
+		<Hex>424d060500000000000036040000280000000d0000000d0000000100080000000000d0000000c40e0000c40e0000000000000000000000000000000080000080000000808000800000008000800080800000c0c0c000c0dcc000f0caa6000020400000206000002080000020a0000020c0000020e00000400000004020000040400000406000004080000040a0000040c0000040e00000600000006020000060400000606000006080000060a0000060c0000060e00000800000008020000080400000806000008080000080a0000080c0000080e00000a0000000a0200000a0400000a0600000a0800000a0a00000a0c00000a0e00000c0000000c0200000c0400000c0600000c0800000c0a00000c0c00000c0e00000e0000000e0200000e0400000e0600000e0800000e0a00000e0c00000e0e00040000000400020004000400040006000400080004000a0004000c0004000e00040200000402020004020400040206000402080004020a0004020c0004020e00040400000404020004040400040406000404080004040a0004040c0004040e00040600000406020004060400040606000406080004060a0004060c0004060e00040800000408020004080400040806000408080004080a0004080c0004080e00040a0000040a0200040a0400040a0600040a0800040a0a00040a0c00040a0e00040c0000040c0200040c0400040c0600040c0800040c0a00040c0c00040c0e00040e0000040e0200040e0400040e0600040e0800040e0a00040e0c00040e0e00080000000800020008000400080006000800080008000a0008000c0008000e00080200000802020008020400080206000802080008020a0008020c0008020e00080400000804020008040400080406000804080008040a0008040c0008040e00080600000806020008060400080606000806080008060a0008060c0008060e00080800000808020008080400080806000808080008080a0008080c0008080e00080a0000080a0200080a0400080a0600080a0800080a0a00080a0c00080a0e00080c0000080c0200080c0400080c0600080c0800080c0a00080c0c00080c0e00080e0000080e0200080e0400080e0600080e0800080e0a00080e0c00080e0e000c0000000c0002000c0004000c0006000c0008000c000a000c000c000c000e000c0200000c0202000c0204000c0206000c0208000c020a000c020c000c020e000c0400000c0402000c0404000c0406000c0408000c040a000c040c000c040e000c0600000c0602000c0604000c0606000c0608000c060a000c060c000c060e000c0800000c0802000c0804000c0806000c0808000c080a000c080c000c080e000c0a00000c0a02000c0a04000c0a06000c0a08000c0a0a000c0a0c000c0a0e000c0c00000c0c02000c0c04000c0c06000c0c08000c0c0a000f0fbff00a4a0a000808080000000ff0000ff000000ffff00ff000000ff00ff00ffff0000ffffff00fdfdfdfdfdfdfdfdfdfdfdfdfd000000fd0707070707070707070707fd000000fd07f9f90707070707f9f907fd000000fd07f9f907070707f9f9f907fd000000fd07f9f9070707f9f9f9f907fd000000fd07f9f90707f9f9f9f9f907fd000000fd07f9f907f9f9f907f9f907fd000000fd07f9f9f9f9f90707f9f907fd000000fd07f9f9f9f9070707f9f907fd000000fd07f9f9f907070707f9f907fd000000fd07f9f90707070707f9f907fd000000fd0707070707070707070707fd000000fdfdfdfdfdfdfdfdfdfdfdfdfd000000</Hex>
+	</Object>
+	<Object Id="5011" Name="IDB_U">
+		<Hex>424d060500000000000036040000280000000d0000000d0000000100080000000000d0000000c40e0000c40e0000000000000000000000000000000080000080000000808000800000008000800080800000c0c0c000c0dcc000f0caa6000020400000206000002080000020a0000020c0000020e00000400000004020000040400000406000004080000040a0000040c0000040e00000600000006020000060400000606000006080000060a0000060c0000060e00000800000008020000080400000806000008080000080a0000080c0000080e00000a0000000a0200000a0400000a0600000a0800000a0a00000a0c00000a0e00000c0000000c0200000c0400000c0600000c0800000c0a00000c0c00000c0e00000e0000000e0200000e0400000e0600000e0800000e0a00000e0c00000e0e00040000000400020004000400040006000400080004000a0004000c0004000e00040200000402020004020400040206000402080004020a0004020c0004020e00040400000404020004040400040406000404080004040a0004040c0004040e00040600000406020004060400040606000406080004060a0004060c0004060e00040800000408020004080400040806000408080004080a0004080c0004080e00040a0000040a0200040a0400040a0600040a0800040a0a00040a0c00040a0e00040c0000040c0200040c0400040c0600040c0800040c0a00040c0c00040c0e00040e0000040e0200040e0400040e0600040e0800040e0a00040e0c00040e0e00080000000800020008000400080006000800080008000a0008000c0008000e00080200000802020008020400080206000802080008020a0008020c0008020e00080400000804020008040400080406000804080008040a0008040c0008040e00080600000806020008060400080606000806080008060a0008060c0008060e00080800000808020008080400080806000808080008080a0008080c0008080e00080a0000080a0200080a0400080a0600080a0800080a0a00080a0c00080a0e00080c0000080c0200080c0400080c0600080c0800080c0a00080c0c00080c0e00080e0000080e0200080e0400080e0600080e0800080e0a00080e0c00080e0e000c0000000c0002000c0004000c0006000c0008000c000a000c000c000c000e000c0200000c0202000c0204000c0206000c0208000c020a000c020c000c020e000c0400000c0402000c0404000c0406000c0408000c040a000c040c000c040e000c0600000c0602000c0604000c0606000c0608000c060a000c060c000c060e000c0800000c0802000c0804000c0806000c0808000c080a000c080c000c080e000c0a00000c0a02000c0a04000c0a06000c0a08000c0a0a000c0a0c000c0a0e000c0c00000c0c02000c0c04000c0c06000c0c08000c0c0a000f0fbff00a4a0a000808080000000ff0000ff000000ffff00ff000000ff00ff00ffff0000ffffff00fdfdfdfdfdfdfdfdfdfdfdfdfd000000fd0707070707070707070707fd000000fd0707070000000000070707fd000000fd0707000000000000000707fd000000fd0707000007070700000707fd000000fd0707000007070700000707fd000000fd0707000007070700000707fd000000fd0707000007070700000707fd000000fd0707000007070700000707fd000000fd0707000007070700000707fd000000fd0707000007070700000707fd000000fd0707070707070707070707fd000000fdfdfdfdfdfdfdfdfdfdfdfdfd000000</Hex>
+	</Object>
+	<Object Id="5012" Name="IDB_C">
+		<Hex>424d060500000000000036040000280000000d0000000d0000000100080000000000d0000000c40e0000c40e0000000000000000000000000000000080000080000000808000800000008000800080800000c0c0c000c0dcc000f0caa6000020400000206000002080000020a0000020c0000020e00000400000004020000040400000406000004080000040a0000040c0000040e00000600000006020000060400000606000006080000060a0000060c0000060e00000800000008020000080400000806000008080000080a0000080c0000080e00000a0000000a0200000a0400000a0600000a0800000a0a00000a0c00000a0e00000c0000000c0200000c0400000c0600000c0800000c0a00000c0c00000c0e00000e0000000e0200000e0400000e0600000e0800000e0a00000e0c00000e0e00040000000400020004000400040006000400080004000a0004000c0004000e00040200000402020004020400040206000402080004020a0004020c0004020e00040400000404020004040400040406000404080004040a0004040c0004040e00040600000406020004060400040606000406080004060a0004060c0004060e00040800000408020004080400040806000408080004080a0004080c0004080e00040a0000040a0200040a0400040a0600040a0800040a0a00040a0c00040a0e00040c0000040c0200040c0400040c0600040c0800040c0a00040c0c00040c0e00040e0000040e0200040e0400040e0600040e0800040e0a00040e0c00040e0e00080000000800020008000400080006000800080008000a0008000c0008000e00080200000802020008020400080206000802080008020a0008020c0008020e00080400000804020008040400080406000804080008040a0008040c0008040e00080600000806020008060400080606000806080008060a0008060c0008060e00080800000808020008080400080806000808080008080a0008080c0008080e00080a0000080a0200080a0400080a0600080a0800080a0a00080a0c00080a0e00080c0000080c0200080c0400080c0600080c0800080c0a00080c0c00080c0e00080e0000080e0200080e0400080e0600080e0800080e0a00080e0c00080e0e000c0000000c0002000c0004000c0006000c0008000c000a000c000c000c000e000c0200000c0202000c0204000c0206000c0208000c020a000c020c000c020e000c0400000c0402000c0404000c0406000c0408000c040a000c040c000c040e000c0600000c0602000c0604000c0606000c0608000c060a000c060c000c060e000c0800000c0802000c0804000c0806000c0808000c080a000c080c000c080e000c0a00000c0a02000c0a04000c0a06000c0a08000c0a0a000c0a0c000c0a0e000c0c00000c0c02000c0c04000c0c06000c0c08000c0c0a000f0fbff00a4a0a000808080000000ff0000ff000000ffff00ff000000ff00ff00ffff0000ffffff00fdfdfdfdfdfdfdfdfdfdfdfdfd000000fd0707070707070707070707fd000000fd0707070000000000070707fd000000fd0707000000000000000707fd000000fd0707000007070700000707fd000000fd0707000007070707070707fd000000fd0707000007070707070707fd000000fd0707000007070707070707fd000000fd0707000007070700000707fd000000fd0707000000000000000707fd000000fd0707070000000000070707fd000000fd0707070707070707070707fd000000fdfdfdfdfdfdfdfdfdfdfdfdfd000000</Hex>
+	</Object>
+	<Object Id="5013" Name="IDB_I">
+		<Hex>424d060500000000000036040000280000000d0000000d0000000100080000000000d0000000c40e0000c40e0000000000000000000000000000000080000080000000808000800000008000800080800000c0c0c000c0dcc000f0caa6000020400000206000002080000020a0000020c0000020e00000400000004020000040400000406000004080000040a0000040c0000040e00000600000006020000060400000606000006080000060a0000060c0000060e00000800000008020000080400000806000008080000080a0000080c0000080e00000a0000000a0200000a0400000a0600000a0800000a0a00000a0c00000a0e00000c0000000c0200000c0400000c0600000c0800000c0a00000c0c00000c0e00000e0000000e0200000e0400000e0600000e0800000e0a00000e0c00000e0e00040000000400020004000400040006000400080004000a0004000c0004000e00040200000402020004020400040206000402080004020a0004020c0004020e00040400000404020004040400040406000404080004040a0004040c0004040e00040600000406020004060400040606000406080004060a0004060c0004060e00040800000408020004080400040806000408080004080a0004080c0004080e00040a0000040a0200040a0400040a0600040a0800040a0a00040a0c00040a0e00040c0000040c0200040c0400040c0600040c0800040c0a00040c0c00040c0e00040e0000040e0200040e0400040e0600040e0800040e0a00040e0c00040e0e00080000000800020008000400080006000800080008000a0008000c0008000e00080200000802020008020400080206000802080008020a0008020c0008020e00080400000804020008040400080406000804080008040a0008040c0008040e00080600000806020008060400080606000806080008060a0008060c0008060e00080800000808020008080400080806000808080008080a0008080c0008080e00080a0000080a0200080a0400080a0600080a0800080a0a00080a0c00080a0e00080c0000080c0200080c0400080c0600080c0800080c0a00080c0c00080c0e00080e0000080e0200080e0400080e0600080e0800080e0a00080e0c00080e0e000c0000000c0002000c0004000c0006000c0008000c000a000c000c000c000e000c0200000c0202000c0204000c0206000c0208000c020a000c020c000c020e000c0400000c0402000c0404000c0406000c0408000c040a000c040c000c040e000c0600000c0602000c0604000c0606000c0608000c060a000c060c000c060e000c0800000c0802000c0804000c0806000c0808000c080a000c080c000c080e000c0a00000c0a02000c0a04000c0a06000c0a08000c0a0a000c0a0c000c0a0e000c0c00000c0c02000c0c04000c0c06000c0c08000c0c0a000f0fbff00a4a0a000808080000000ff0000ff000000ffff00ff000000ff00ff00ffff0000ffffff00fdfdfdfdfdfdfdfdfdfdfdfdfd000000fd0707070707070707070707fd000000fd0707070000000000070707fd000000fd0707070700000007070707fd000000fd0707070700000007070707fd000000fd0707070700000007070707fd000000fd0707070700000007070707fd000000fd0707070700000007070707fd000000fd0707070700000007070707fd000000fd0707070700000007070707fd000000fd0707070000000000070707fd000000fd0707070707070707070707fd000000fdfdfdfdfdfdfdfdfdfdfdfdfd000000</Hex>
+	</Object>
+	<Object Id="5014" Name="IDB_L">
+		<Hex>424d060500000000000036040000280000000d0000000d0000000100080000000000d0000000c40e0000c40e0000000000000000000000000000000080000080000000808000800000008000800080800000c0c0c000c0dcc000f0caa6000020400000206000002080000020a0000020c0000020e00000400000004020000040400000406000004080000040a0000040c0000040e00000600000006020000060400000606000006080000060a0000060c0000060e00000800000008020000080400000806000008080000080a0000080c0000080e00000a0000000a0200000a0400000a0600000a0800000a0a00000a0c00000a0e00000c0000000c0200000c0400000c0600000c0800000c0a00000c0c00000c0e00000e0000000e0200000e0400000e0600000e0800000e0a00000e0c00000e0e00040000000400020004000400040006000400080004000a0004000c0004000e00040200000402020004020400040206000402080004020a0004020c0004020e00040400000404020004040400040406000404080004040a0004040c0004040e00040600000406020004060400040606000406080004060a0004060c0004060e00040800000408020004080400040806000408080004080a0004080c0004080e00040a0000040a0200040a0400040a0600040a0800040a0a00040a0c00040a0e00040c0000040c0200040c0400040c0600040c0800040c0a00040c0c00040c0e00040e0000040e0200040e0400040e0600040e0800040e0a00040e0c00040e0e00080000000800020008000400080006000800080008000a0008000c0008000e00080200000802020008020400080206000802080008020a0008020c0008020e00080400000804020008040400080406000804080008040a0008040c0008040e00080600000806020008060400080606000806080008060a0008060c0008060e00080800000808020008080400080806000808080008080a0008080c0008080e00080a0000080a0200080a0400080a0600080a0800080a0a00080a0c00080a0e00080c0000080c0200080c0400080c0600080c0800080c0a00080c0c00080c0e00080e0000080e0200080e0400080e0600080e0800080e0a00080e0c00080e0e000c0000000c0002000c0004000c0006000c0008000c000a000c000c000c000e000c0200000c0202000c0204000c0206000c0208000c020a000c020c000c020e000c0400000c0402000c0404000c0406000c0408000c040a000c040c000c040e000c0600000c0602000c0604000c0606000c0608000c060a000c060c000c060e000c0800000c0802000c0804000c0806000c0808000c080a000c080c000c080e000c0a00000c0a02000c0a04000c0a06000c0a08000c0a0a000c0a0c000c0a0e000c0c00000c0c02000c0c04000c0c06000c0c08000c0c0a000f0fbff00a4a0a000808080000000ff0000ff000000ffff00ff000000ff00ff00ffff0000ffffff00fdfdfdfdfdfdfdfdfdfdfdfdfd000000fd0707070707070707070707fd000000fd0707070000000000000707fd000000fd0707070000000000000707fd000000fd0707070000070707070707fd000000fd0707070000070707070707fd000000fd0707070000070707070707fd000000fd0707070000070707070707fd000000fd0707070000070707070707fd000000fd0707070000070707070707fd000000fd0707070000070707070707fd000000fd0707070707070707070707fd000000fdfdfdfdfdfdfdfdfdfdfdfdfd000000</Hex>
+	</Object>
+	<Object Id="5015" Name="IDB_M">
+		<Hex>424d060500000000000036040000280000000d0000000d0000000100080000000000d0000000c40e0000c40e0000000000000000000000000000000080000080000000808000800000008000800080800000c0c0c000c0dcc000f0caa6000020400000206000002080000020a0000020c0000020e00000400000004020000040400000406000004080000040a0000040c0000040e00000600000006020000060400000606000006080000060a0000060c0000060e00000800000008020000080400000806000008080000080a0000080c0000080e00000a0000000a0200000a0400000a0600000a0800000a0a00000a0c00000a0e00000c0000000c0200000c0400000c0600000c0800000c0a00000c0c00000c0e00000e0000000e0200000e0400000e0600000e0800000e0a00000e0c00000e0e00040000000400020004000400040006000400080004000a0004000c0004000e00040200000402020004020400040206000402080004020a0004020c0004020e00040400000404020004040400040406000404080004040a0004040c0004040e00040600000406020004060400040606000406080004060a0004060c0004060e00040800000408020004080400040806000408080004080a0004080c0004080e00040a0000040a0200040a0400040a0600040a0800040a0a00040a0c00040a0e00040c0000040c0200040c0400040c0600040c0800040c0a00040c0c00040c0e00040e0000040e0200040e0400040e0600040e0800040e0a00040e0c00040e0e00080000000800020008000400080006000800080008000a0008000c0008000e00080200000802020008020400080206000802080008020a0008020c0008020e00080400000804020008040400080406000804080008040a0008040c0008040e00080600000806020008060400080606000806080008060a0008060c0008060e00080800000808020008080400080806000808080008080a0008080c0008080e00080a0000080a0200080a0400080a0600080a0800080a0a00080a0c00080a0e00080c0000080c0200080c0400080c0600080c0800080c0a00080c0c00080c0e00080e0000080e0200080e0400080e0600080e0800080e0a00080e0c00080e0e000c0000000c0002000c0004000c0006000c0008000c000a000c000c000c000e000c0200000c0202000c0204000c0206000c0208000c020a000c020c000c020e000c0400000c0402000c0404000c0406000c0408000c040a000c040c000c040e000c0600000c0602000c0604000c0606000c0608000c060a000c060c000c060e000c0800000c0802000c0804000c0806000c0808000c080a000c080c000c080e000c0a00000c0a02000c0a04000c0a06000c0a08000c0a0a000c0a0c000c0a0e000c0c00000c0c02000c0c04000c0c06000c0c08000c0c0a000f0fbff00a4a0a000808080000000ff0000ff000000ffff00ff000000ff00ff00ffff0000ffffff00fdfdfdfdfdfdfdfdfdfdfdfdfd000000fd0707070707070707070707fd000000fd0700000707070707000007fd000000fd0700000707070707000007fd000000fd0700000707070707000007fd000000fd0700000707000707000007fd000000fd0700000700000007000007fd000000fd0700000000000000000007fd000000fd0700000000070000000007fd000000fd0700000007070700000007fd000000fd0700000707070707000007fd000000fd0707070707070707070707fd000000fdfdfdfdfdfdfdfdfdfdfdfdfd000000</Hex>
+	</Object>
+	<Object Id="5016" Name="IDB_O">
+		<Hex>424d060500000000000036040000280000000d0000000d0000000100080000000000d0000000c40e0000c40e0000000000000000000000000000000080000080000000808000800000008000800080800000c0c0c000c0dcc000f0caa6000020400000206000002080000020a0000020c0000020e00000400000004020000040400000406000004080000040a0000040c0000040e00000600000006020000060400000606000006080000060a0000060c0000060e00000800000008020000080400000806000008080000080a0000080c0000080e00000a0000000a0200000a0400000a0600000a0800000a0a00000a0c00000a0e00000c0000000c0200000c0400000c0600000c0800000c0a00000c0c00000c0e00000e0000000e0200000e0400000e0600000e0800000e0a00000e0c00000e0e00040000000400020004000400040006000400080004000a0004000c0004000e00040200000402020004020400040206000402080004020a0004020c0004020e00040400000404020004040400040406000404080004040a0004040c0004040e00040600000406020004060400040606000406080004060a0004060c0004060e00040800000408020004080400040806000408080004080a0004080c0004080e00040a0000040a0200040a0400040a0600040a0800040a0a00040a0c00040a0e00040c0000040c0200040c0400040c0600040c0800040c0a00040c0c00040c0e00040e0000040e0200040e0400040e0600040e0800040e0a00040e0c00040e0e00080000000800020008000400080006000800080008000a0008000c0008000e00080200000802020008020400080206000802080008020a0008020c0008020e00080400000804020008040400080406000804080008040a0008040c0008040e00080600000806020008060400080606000806080008060a0008060c0008060e00080800000808020008080400080806000808080008080a0008080c0008080e00080a0000080a0200080a0400080a0600080a0800080a0a00080a0c00080a0e00080c0000080c0200080c0400080c0600080c0800080c0a00080c0c00080c0e00080e0000080e0200080e0400080e0600080e0800080e0a00080e0c00080e0e000c0000000c0002000c0004000c0006000c0008000c000a000c000c000c000e000c0200000c0202000c0204000c0206000c0208000c020a000c020c000c020e000c0400000c0402000c0404000c0406000c0408000c040a000c040c000c040e000c0600000c0602000c0604000c0606000c0608000c060a000c060c000c060e000c0800000c0802000c0804000c0806000c0808000c080a000c080c000c080e000c0a00000c0a02000c0a04000c0a06000c0a08000c0a0a000c0a0c000c0a0e000c0c00000c0c02000c0c04000c0c06000c0c08000c0c0a000f0fbff00a4a0a000808080000000ff0000ff000000ffff00ff000000ff00ff00ffff0000ffffff00fdfdfdfdfdfdfdfdfdfdfdfdfd000000fd0707070707070707070707fd000000fd0707070000000000070707fd000000fd0707000000000000000707fd000000fd0707000007070700000707fd000000fd0707000007070700000707fd000000fd0707000007070700000707fd000000fd0707000007070700000707fd000000fd0707000007070700000707fd000000fd0707000000000000000707fd000000fd0707070000000000070707fd000000fd0707070707070707070707fd000000fdfdfdfdfdfdfdfdfdfdfdfdfd000000</Hex>
+	</Object>
+	<Object Id="5017" Name="IDB_P">
+		<Hex>424d060500000000000036040000280000000d0000000d0000000100080000000000d0000000c40e0000c40e0000000000000000000000000000000080000080000000808000800000008000800080800000c0c0c000c0dcc000f0caa6000020400000206000002080000020a0000020c0000020e00000400000004020000040400000406000004080000040a0000040c0000040e00000600000006020000060400000606000006080000060a0000060c0000060e00000800000008020000080400000806000008080000080a0000080c0000080e00000a0000000a0200000a0400000a0600000a0800000a0a00000a0c00000a0e00000c0000000c0200000c0400000c0600000c0800000c0a00000c0c00000c0e00000e0000000e0200000e0400000e0600000e0800000e0a00000e0c00000e0e00040000000400020004000400040006000400080004000a0004000c0004000e00040200000402020004020400040206000402080004020a0004020c0004020e00040400000404020004040400040406000404080004040a0004040c0004040e00040600000406020004060400040606000406080004060a0004060c0004060e00040800000408020004080400040806000408080004080a0004080c0004080e00040a0000040a0200040a0400040a0600040a0800040a0a00040a0c00040a0e00040c0000040c0200040c0400040c0600040c0800040c0a00040c0c00040c0e00040e0000040e0200040e0400040e0600040e0800040e0a00040e0c00040e0e00080000000800020008000400080006000800080008000a0008000c0008000e00080200000802020008020400080206000802080008020a0008020c0008020e00080400000804020008040400080406000804080008040a0008040c0008040e00080600000806020008060400080606000806080008060a0008060c0008060e00080800000808020008080400080806000808080008080a0008080c0008080e00080a0000080a0200080a0400080a0600080a0800080a0a00080a0c00080a0e00080c0000080c0200080c0400080c0600080c0800080c0a00080c0c00080c0e00080e0000080e0200080e0400080e0600080e0800080e0a00080e0c00080e0e000c0000000c0002000c0004000c0006000c0008000c000a000c000c000c000e000c0200000c0202000c0204000c0206000c0208000c020a000c020c000c020e000c0400000c0402000c0404000c0406000c0408000c040a000c040c000c040e000c0600000c0602000c0604000c0606000c0608000c060a000c060c000c060e000c0800000c0802000c0804000c0806000c0808000c080a000c080c000c080e000c0a00000c0a02000c0a04000c0a06000c0a08000c0a0a000c0a0c000c0a0e000c0c00000c0c02000c0c04000c0c06000c0c08000c0c0a000f0fbff00a4a0a000808080000000ff0000ff000000ffff00ff000000ff00ff00ffff0000ffffff00fdfdfdfdfdfdfdfdfdfdfdfdfd000000fd0707070707070707070707fd000000fd0707000007070707070707fd000000fd0707000007070707070707fd000000fd0707000007070707070707fd000000fd0707000000000000070707fd000000fd0707000000000000000707fd000000fd0707000007070700000707fd000000fd0707000007070700000707fd000000fd0707000000000000000707fd000000fd0707000000000000070707fd000000fd0707070707070707070707fd000000fdfdfdfdfdfdfdfdfdfdfdfdfd000000</Hex>
+	</Object>
+	<Object Id="5018" Name="IDB_R">
+		<Hex>424d060500000000000036040000280000000d0000000d0000000100080000000000d0000000c40e0000c40e0000000000000000000000000000000080000080000000808000800000008000800080800000c0c0c000c0dcc000f0caa6000020400000206000002080000020a0000020c0000020e00000400000004020000040400000406000004080000040a0000040c0000040e00000600000006020000060400000606000006080000060a0000060c0000060e00000800000008020000080400000806000008080000080a0000080c0000080e00000a0000000a0200000a0400000a0600000a0800000a0a00000a0c00000a0e00000c0000000c0200000c0400000c0600000c0800000c0a00000c0c00000c0e00000e0000000e0200000e0400000e0600000e0800000e0a00000e0c00000e0e00040000000400020004000400040006000400080004000a0004000c0004000e00040200000402020004020400040206000402080004020a0004020c0004020e00040400000404020004040400040406000404080004040a0004040c0004040e00040600000406020004060400040606000406080004060a0004060c0004060e00040800000408020004080400040806000408080004080a0004080c0004080e00040a0000040a0200040a0400040a0600040a0800040a0a00040a0c00040a0e00040c0000040c0200040c0400040c0600040c0800040c0a00040c0c00040c0e00040e0000040e0200040e0400040e0600040e0800040e0a00040e0c00040e0e00080000000800020008000400080006000800080008000a0008000c0008000e00080200000802020008020400080206000802080008020a0008020c0008020e00080400000804020008040400080406000804080008040a0008040c0008040e00080600000806020008060400080606000806080008060a0008060c0008060e00080800000808020008080400080806000808080008080a0008080c0008080e00080a0000080a0200080a0400080a0600080a0800080a0a00080a0c00080a0e00080c0000080c0200080c0400080c0600080c0800080c0a00080c0c00080c0e00080e0000080e0200080e0400080e0600080e0800080e0a00080e0c00080e0e000c0000000c0002000c0004000c0006000c0008000c000a000c000c000c000e000c0200000c0202000c0204000c0206000c0208000c020a000c020c000c020e000c0400000c0402000c0404000c0406000c0408000c040a000c040c000c040e000c0600000c0602000c0604000c0606000c0608000c060a000c060c000c060e000c0800000c0802000c0804000c0806000c0808000c080a000c080c000c080e000c0a00000c0a02000c0a04000c0a06000c0a08000c0a0a000c0a0c000c0a0e000c0c00000c0c02000c0c04000c0c06000c0c08000c0c0a000f0fbff00a4a0a000808080000000ff0000ff000000ffff00ff000000ff00ff00ffff0000ffffff00fdfdfdfdfdfdfdfdfdfdfdfdfd000000fd0707070707070707070707fd000000fd0700000707070000000707fd000000fd0700000707000000070707fd000000fd0700000700000007070707fd000000fd0700000000000707070707fd000000fd0700000000000007070707fd000000fd0700000707000000070707fd000000fd0700000707070000070707fd000000fd0700000000000000070707fd000000fd0700000000000007070707fd000000fd0707070707070707070707fd000000fdfdfdfdfdfdfdfdfdfdfdfdfd000000</Hex>
+	</Object>
+	<Object Id="5019" Name="IDB_T">
+		<Hex>424d060500000000000036040000280000000d0000000d0000000100080000000000d0000000c40e0000c40e0000000000000000000000000000000080000080000000808000800000008000800080800000c0c0c000c0dcc000f0caa6000020400000206000002080000020a0000020c0000020e00000400000004020000040400000406000004080000040a0000040c0000040e00000600000006020000060400000606000006080000060a0000060c0000060e00000800000008020000080400000806000008080000080a0000080c0000080e00000a0000000a0200000a0400000a0600000a0800000a0a00000a0c00000a0e00000c0000000c0200000c0400000c0600000c0800000c0a00000c0c00000c0e00000e0000000e0200000e0400000e0600000e0800000e0a00000e0c00000e0e00040000000400020004000400040006000400080004000a0004000c0004000e00040200000402020004020400040206000402080004020a0004020c0004020e00040400000404020004040400040406000404080004040a0004040c0004040e00040600000406020004060400040606000406080004060a0004060c0004060e00040800000408020004080400040806000408080004080a0004080c0004080e00040a0000040a0200040a0400040a0600040a0800040a0a00040a0c00040a0e00040c0000040c0200040c0400040c0600040c0800040c0a00040c0c00040c0e00040e0000040e0200040e0400040e0600040e0800040e0a00040e0c00040e0e00080000000800020008000400080006000800080008000a0008000c0008000e00080200000802020008020400080206000802080008020a0008020c0008020e00080400000804020008040400080406000804080008040a0008040c0008040e00080600000806020008060400080606000806080008060a0008060c0008060e00080800000808020008080400080806000808080008080a0008080c0008080e00080a0000080a0200080a0400080a0600080a0800080a0a00080a0c00080a0e00080c0000080c0200080c0400080c0600080c0800080c0a00080c0c00080c0e00080e0000080e0200080e0400080e0600080e0800080e0a00080e0c00080e0e000c0000000c0002000c0004000c0006000c0008000c000a000c000c000c000e000c0200000c0202000c0204000c0206000c0208000c020a000c020c000c020e000c0400000c0402000c0404000c0406000c0408000c040a000c040c000c040e000c0600000c0602000c0604000c0606000c0608000c060a000c060c000c060e000c0800000c0802000c0804000c0806000c0808000c080a000c080c000c080e000c0a00000c0a02000c0a04000c0a06000c0a08000c0a0a000c0a0c000c0a0e000c0c00000c0c02000c0c04000c0c06000c0c08000c0c0a000f0fbff00a4a0a000808080000000ff0000ff000000ffff00ff000000ff00ff00ffff0000ffffff00fdfdfdfdfdfdfdfdfdfdfdfdfd000000fd0707070707070707070707fd000000fd0707070700000007070707fd000000fd0707070700000007070707fd000000fd0707070700000007070707fd000000fd0707070700000007070707fd000000fd0707070700000007070707fd000000fd0707070700000007070707fd000000fd0700000000000000000007fd000000fd0700000000000000000007fd000000fd0700000000000000000007fd000000fd0707070707070707070707fd000000fdfdfdfdfdfdfdfdfdfdfdfdfd000000</Hex>
+	</Object>
+	<Object Id="5020" Name="IDB_M_SEL">
+		<Hex>424d060500000000000036040000280000000d0000000d0000000100080000000000d0000000c40e0000c40e0000000000000000000000000000000080000080000000808000800000008000800080800000c0c0c000c0dcc000f0caa6000020400000206000002080000020a0000020c0000020e00000400000004020000040400000406000004080000040a0000040c0000040e00000600000006020000060400000606000006080000060a0000060c0000060e00000800000008020000080400000806000008080000080a0000080c0000080e00000a0000000a0200000a0400000a0600000a0800000a0a00000a0c00000a0e00000c0000000c0200000c0400000c0600000c0800000c0a00000c0c00000c0e00000e0000000e0200000e0400000e0600000e0800000e0a00000e0c00000e0e00040000000400020004000400040006000400080004000a0004000c0004000e00040200000402020004020400040206000402080004020a0004020c0004020e00040400000404020004040400040406000404080004040a0004040c0004040e00040600000406020004060400040606000406080004060a0004060c0004060e00040800000408020004080400040806000408080004080a0004080c0004080e00040a0000040a0200040a0400040a0600040a0800040a0a00040a0c00040a0e00040c0000040c0200040c0400040c0600040c0800040c0a00040c0c00040c0e00040e0000040e0200040e0400040e0600040e0800040e0a00040e0c00040e0e00080000000800020008000400080006000800080008000a0008000c0008000e00080200000802020008020400080206000802080008020a0008020c0008020e00080400000804020008040400080406000804080008040a0008040c0008040e00080600000806020008060400080606000806080008060a0008060c0008060e00080800000808020008080400080806000808080008080a0008080c0008080e00080a0000080a0200080a0400080a0600080a0800080a0a00080a0c00080a0e00080c0000080c0200080c0400080c0600080c0800080c0a00080c0c00080c0e00080e0000080e0200080e0400080e0600080e0800080e0a00080e0c00080e0e000c0000000c0002000c0004000c0006000c0008000c000a000c000c000c000e000c0200000c0202000c0204000c0206000c0208000c020a000c020c000c020e000c0400000c0402000c0404000c0406000c0408000c040a000c040c000c040e000c0600000c0602000c0604000c0606000c0608000c060a000c060c000c060e000c0800000c0802000c0804000c0806000c0808000c080a000c080c000c080e000c0a00000c0a02000c0a04000c0a06000c0a08000c0a0a000c0a0c000c0a0e000c0c00000c0c02000c0c04000c0c06000c0c08000c0c0a000f0fbff00a4a0a000808080000000ff0000ff000000ffff00ff000000ff00ff00ffff0000ffffff00fdfdfdfdfdfdfdfdfdfdfdfdfd000000fd0707070707070707070707fd000000fd07fcfc0707070707fcfc07fd000000fd07fcfc0707070707fcfc07fd000000fd07fcfc0707070707fcfc07fd000000fd07fcfc0707fc0707fcfc07fd000000fd07fcfc07fcfcfc07fcfc07fd000000fd07fcfcfcfcfcfcfcfcfc07fd000000fd07fcfcfcfc07fcfcfcfc07fd000000fd07fcfcfc070707fcfcfc07fd000000fd07fcfc0707070707fcfc07fd000000fd0707070707070707070707fd000000fdfdfdfdfdfdfdfdfdfdfdfdfd000000</Hex>
+	</Object>
+	<Object Id="5021" Name="IDB_M_CONN">
+		<Hex>424d060500000000000036040000280000000d0000000d0000000100080000000000d0000000c40e0000c40e0000000000000000000000000000000080000080000000808000800000008000800080800000c0c0c000c0dcc000f0caa6000020400000206000002080000020a0000020c0000020e00000400000004020000040400000406000004080000040a0000040c0000040e00000600000006020000060400000606000006080000060a0000060c0000060e00000800000008020000080400000806000008080000080a0000080c0000080e00000a0000000a0200000a0400000a0600000a0800000a0a00000a0c00000a0e00000c0000000c0200000c0400000c0600000c0800000c0a00000c0c00000c0e00000e0000000e0200000e0400000e0600000e0800000e0a00000e0c00000e0e00040000000400020004000400040006000400080004000a0004000c0004000e00040200000402020004020400040206000402080004020a0004020c0004020e00040400000404020004040400040406000404080004040a0004040c0004040e00040600000406020004060400040606000406080004060a0004060c0004060e00040800000408020004080400040806000408080004080a0004080c0004080e00040a0000040a0200040a0400040a0600040a0800040a0a00040a0c00040a0e00040c0000040c0200040c0400040c0600040c0800040c0a00040c0c00040c0e00040e0000040e0200040e0400040e0600040e0800040e0a00040e0c00040e0e00080000000800020008000400080006000800080008000a0008000c0008000e00080200000802020008020400080206000802080008020a0008020c0008020e00080400000804020008040400080406000804080008040a0008040c0008040e00080600000806020008060400080606000806080008060a0008060c0008060e00080800000808020008080400080806000808080008080a0008080c0008080e00080a0000080a0200080a0400080a0600080a0800080a0a00080a0c00080a0e00080c0000080c0200080c0400080c0600080c0800080c0a00080c0c00080c0e00080e0000080e0200080e0400080e0600080e0800080e0a00080e0c00080e0e000c0000000c0002000c0004000c0006000c0008000c000a000c000c000c000e000c0200000c0202000c0204000c0206000c0208000c020a000c020c000c020e000c0400000c0402000c0404000c0406000c0408000c040a000c040c000c040e000c0600000c0602000c0604000c0606000c0608000c060a000c060c000c060e000c0800000c0802000c0804000c0806000c0808000c080a000c080c000c080e000c0a00000c0a02000c0a04000c0a06000c0a08000c0a0a000c0a0c000c0a0e000c0c00000c0c02000c0c04000c0c06000c0c08000c0c0a000f0fbff00a4a0a000808080000000ff0000ff000000ffff00ff000000ff00ff00ffff0000ffffff00fdfdfdfdfdfdfdfdfdfdfdfdfd000000fd0707070707070707070707fd000000fd07f9f90707070707f9f907fd000000fd07f9f90707070707f9f907fd000000fd07f9f90707070707f9f907fd000000fd07f9f90707f90707f9f907fd000000fd07f9f907f9f9f907f9f907fd000000fd07f9f9f9f9f9f9f9f9f907fd000000fd07f9f9f9f907f9f9f9f907fd000000fd07f9f9f9070707f9f9f907fd000000fd07f9f90707070707f9f907fd000000fd0707070707070707070707fd000000fdfdfdfdfdfdfdfdfdfdfdfdfd000000</Hex>
+	</Object>
+</Objects>
+<Dialogs>
+	<Dialog Id="6001" Name="IDD_BT_TEXT_EDIT" Focus="7003">
+		<Controls>
+			<Text Id="7001" Name="IDC_TEXT_VALUE">
+				<Items/></Text>
+			<SoftKey Id="7002" Name="IDC_SK_MENU">
+				<Items>
+					<Item Id="8001" Name="IDC_CONTROL_ITEM_8001">
+						<TextID>IDS_AUDIO_TRANSFER</TextID>
+					</Item>
+					<Item Id="8002" Name="IDC_CONTROL_ITEM_8002">
+						<TextID>IDS_UNKNOWN</TextID>
+					</Item>
+				</Items>
+			</SoftKey>
+			<Menu Id="7003" Name="IDC_BT_TEXT_EDIT">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6002" Name="IDD_BT_MAINMENU" Focus="7004">
+		<Controls>
+			<Menu Id="7004" Name="IDC_BT_MAINMENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6003" Name="IDD_DEVICE_SEARCH" Focus="7022">
+		<Controls>
+			<Static Id="7022" Name="IDC_DEVICE_SEARCH">
+				<Items/></Static>
+			<Menu Id="7030" Name="IDC_MENU_BT_DEVICE_SEARCH">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6004" Name="IDD_SEARCH_RESULT" Focus="7006">
+		<Controls>
+			<Menu Id="7006" Name="IDC_SEARCH_RESULT">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6005" Name="IDD_DEVICE_LIST" Focus="7007">
+		<Controls>
+			<Menu Id="7007" Name="IDC_DEVICE_LIST">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6008" Name="IDD_MYINFO" Focus="7012">
+		<Controls>
+			<Menu Id="7010" Name="IDC_MYINFO">
+				<Items/>
+			</Menu>
+			<Static Id="7012" Name="IDC_MYINFO_STATIC">
+				<Items/></Static>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6009" Name="IDD_DEVICE" Focus="7011">
+		<Controls>
+			<Menu Id="7011" Name="IDC_DEVICE">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6010" Name="IDD_MYINFO_OPITION" Focus="7013">
+		<Controls>
+			<Menu Id="7013" Name="IDC_MYINFO_OPITION">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6014" Name="IDD_BT_SECURITY" Focus="7018">
+		<Controls>
+			<Menu Id="7018" Name="IDC_BT_SECURITY">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6015" Name="IDD_BT_DISCOVERABLE" Focus="7019">
+		<Controls>
+			<Menu Id="7019" Name="IDC_BT_DISCOVERABLE">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6016" Name="IDD_BT_IO_CAPABILITY" Focus="7020">
+		<Controls>
+			<Menu Id="7020" Name="IDC_IO_CAPABILITY">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6017" Name="IDD_BT_DEBUG_KEY" Focus="7021">
+		<Controls>
+			<Menu Id="7021" Name="IDC_BT_DEBUG_KEY">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6018" Name="IDD_BT_MSGBOX" Focus="7015">
+		<Controls>
+			<Static Id="7015" Name="IDC_BT_MSGBOX">
+				<Items/></Static>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6019" Name="IDD_BT_DEVICE_INFO" Focus="7023">
+		<Controls>
+			<Menu Id="7005" Name="IDC_BT_DEVICE_INFO">
+				<Items/>
+			</Menu>
+			<Static Id="7023" Name="IDC_STATIC_BT_DEVICE_INFO">
+				<Items/></Static>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6020" Name="IDD_BT_DEVICE_INFO_OPITION" Focus="7024">
+		<Controls>
+			<Menu Id="7024" Name="IDC_BT_DEVICE_INFO_OPITION">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6021" Name="IDD_BT_PROMPT" Focus="7027">
+		<Controls>
+			<Menu Id="7026" Name="IDC_BT_PROMPT">
+				<Items/>
+			</Menu>
+			<Static Id="7027" Name="IDC_BT_PROMPT_STATIC">
+				<Items/></Static>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6022" Name="IDD_BT_EDIT" Focus="7028">
+		<Controls>
+			<Text Id="7028" Name="IDC_BT_EDIT">
+				<Items/></Text>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6023" Name="IDD_BT_BOND_OPITION" Focus="7025">
+		<Controls>
+			<Menu Id="7025" Name="IDC_BT_BOND_OPITION">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6024" Name="IDD_BT_OPITION" Focus="7029">
+		<Controls>
+			<Menu Id="7029" Name="IDC_BT_OPITION">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6025" Name="IDD_BT_SEND_FILE" Focus="7031">
+		<Controls>
+			<Menu Id="7031" Name="IDC_BT_SEND_FILE">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6026" Name="IDD_BT_OBEX_LIST_SERVERS" Focus="7032">
+		<Controls>
+			<Menu Id="7032" Name="IDC_BT_OBEX_LIST_SERVERS">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6027" Name="IDD_BT_FILE_PROGRESS" Focus="7033">
+		<Controls>
+			<Static Id="7033" Name="IDC_BT_FILE_PROGRESS">
+				<Items/></Static>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6028" Name="IDD_BT_FTP" Focus="7034">
+		<Controls>
+			<Menu Id="7034" Name="IDC_BT_FTP">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6029" Name="IDD_BT_FTP_SERVER" Focus="7035">
+		<Controls>
+			<Menu Id="7035" Name="IDC_BT_FTP_SERVER">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6030" Name="IDD_BT_FTP_CLIENT" Focus="7036">
+		<Controls>
+			<Menu Id="7036" Name="IDC_BT_FTP_CLIENT">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6031" Name="IDD_BT_FTP_SETTINGS" Focus="7037">
+		<Controls>
+			<Menu Id="7037" Name="IDC_BT_FTP_SETTINGS">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6032" Name="IDD_BT_FTP_SERVER_REGISTER" Focus="7038">
+		<Controls>
+			<Menu Id="7038" Name="IDC_BT_FTP_SERVER_REGISTER">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6033" Name="IDD_BT_FTP_BROWSE" Focus="7039">
+		<Controls>
+			<Menu Id="7039" Name="IDC_BT_FTP_BROWSE">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6034" Name="IDD_BT_FTP_BROWSE_OPITION" Focus="7040">
+		<Controls>
+			<Menu Id="7040" Name="IDC_BT_FTP_BROWSE_OPITION">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6035" Name="IDD_MYINFO_EDIT" Focus="7041">
+		<Controls>
+			<Text Id="7041" Name="IDC_MYINFO_EDIT">
+				<TitleID>IDS_BT_BLANK</TitleID>
+				<Items/></Text>
+		</Controls>
+	</Dialog>
+</Dialogs>
+</BREWRes>

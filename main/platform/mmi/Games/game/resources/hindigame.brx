@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="game" VERSION="1">
+<Strings Encoding="ISOLATIN1">
+	<String Id="1001" Name="IDS_GAME_LIST">
+		<Text>गेम</Text>
+	</String>
+	<STRING Id="1011" Name="IDS_GAME_TITLE_BLACKJACK">
+		<Text>ब्लाच्क्जैक</Text>
+	</STRING>
+	<STRING Id="1012" Name="IDS_GAME_TITLE_BRICK">
+		<Text>ब्रिच्कत्तैक</Text>
+	</STRING>
+	<STRING Id="1013" Name="IDS_GAME_TITLE_FIVEBALL">
+		<Text>FiveBall</Text>
+	</STRING>
+	<STRING Id="1014" Name="IDS_GAME_TITLE_GMFIVE">
+		<Text>GMFive</Text>
+	</STRING>
+	<String Id="1015" Name="IDS_GAME_TITLE_PINTU">
+		<Text>PinTu</Text>
+	</String>
+	<String Id="1016" Name="IDS_GAME_TITLE_TETRIS">
+		<Text>टेटरिस</Text>
+	</String>
+	<STRING Id="1017" Name="IDS_GAME_TITLE_MAGICSUSHI">
+		<Text>Sang Petualang</Text>
+	</STRING>
+	<STRING Id="1018" Name="IDS_GAME_TITLE_BOMB">
+		<Text>Buah Pintar</Text>
+	</STRING>
+</Strings>
+<Dialogs>
+	<Dialog Id="6003" Name="IDD_LIST_GAME" Focus="7001">
+		<Controls>
+			<Menu Id="7001" Name="IDC_GAME_LIST">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+</Dialogs>
+</BREWRes>

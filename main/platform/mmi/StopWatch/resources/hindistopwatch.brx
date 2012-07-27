@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="stopwatch" VERSION="1">
+<Strings Encoding="Unicode">
+	<STRING Id="1" Name="IDS_STOPWATCH_TITLE">
+		<Text>स्टॉमवाच</Text>
+	</STRING>
+	<STRING Id="2" Name="IDS_RESET_CONFIRM">
+		<Text>रीसेट</Text>
+	</STRING>
+	<STRING Id="3" Name="IDS_RESET_RECORDFULL">
+		<Text>रिकॉर्ड रीसेट पूर्ण है</Text>
+	</STRING>
+	<STRING Id="4" Name="IDS_STOPWATCH1">
+		<Text>स्टॉपवॉच 1</Text>
+	</STRING>
+	<STRING Id="5" Name="IDS_STOPWATCH2">
+		<Text>स्टॉपवॉच 2</Text>
+	</STRING>
+	<STRING Id="6" Name="IDS_CHANGE_CONFIRM">
+		<Text>एक और स्टॉपवॉच के लिए बदलें</Text>
+	</STRING>
+</Strings>
+</BREWRes>

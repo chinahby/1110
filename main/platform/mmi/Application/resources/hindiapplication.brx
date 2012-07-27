@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="application" VERSION="1">
+<Strings Encoding="Unicode">
+	<String Id="1001" Name="IDS_APPLICATION_LIST">
+		<Text>अप्लिकेशन</Text>
+	</String>
+	<String Id="1002" Name="IDS_DIAG_AND_DATA">
+		<Text>चालू</Text>
+	</String>
+	<String Id="1003" Name="IDS_MASS_STORAGE">
+		<Text>बंद</Text>
+	</String>
+	<String Id="1004" Name="IDS_APPLICATION_WAPBROWSER">
+		<Text>ब्राउजर</Text>
+	</String>
+	<STRING Id="1011" Name="IDS_APPLICATION_BAM">
+		<Text>बी ए एम</Text>
+	</STRING>
+	<STRING Id="1012" Name="IDS_APPLICATION_TIMER">
+		<Text>घड़ी</Text>
+	</STRING>
+	<STRING Id="1013" Name="IDS_APPLICATION_STOPWATCH">
+		<Text>स्टॉमवाच</Text>
+	</STRING>
+	<STRING Id="1014" Name="IDS_APPLICATION_ALARM">
+		<Text>अलार्म</Text>
+	</STRING>
+	<String Id="1015" Name="IDS_APPLICATION_CONVERTER">
+		<Text>रूपांतरक</Text>
+	</String>
+	<String Id="1016" Name="IDS_APPLICATION_WORLDTIME">
+		<Text>दुनिया का समय</Text>
+	</String>
+	<String Id="1017" Name="IDS_APPLICATION_RECORDER">
+		<Text>रिकार्डर</Text>
+	</String>
+	<String Id="1018" Name="IDS_APPLICATION_SCHEDULER">
+		<Text>कैलेंडर</Text>
+	</String>
+	<String Id="1019" Name="IDS_APPLICATION_GAME">
+		<Text>खेल</Text>
+	</String>
+	<String Id="1020" Name="IDS_APPLICATION_CALCULATOR">
+		<Text>कैलकुलेटर</Text>
+	</String>
+	<String Id="1021" Name="IDS_APPLICATION_CAMERA">
+		<Text>कैमरा</Text>
+	</String>
+	<String Id="1022" Name="IDS_APPLICATION_FMRADIO">
+		<Text>एफएम रेडियो</Text>
+	</String>
+	<String Id="1024" Name="IDS_APPLICATION_BROWSER">
+		<Text>ब्राउजर</Text>
+	</String>
+	<String Id="1025" Name="IDS_APPLICATION_BLUETOOTH">
+		<Text>ब्लूटूथ</Text>
+	</String>
+	<String Id="1026" Name="IDS_APPLICATION_FLASHLIGHT">
+		<Text>फ्लाशलईत</Text>
+	</String>
+	<String Id="1027" Name="IDS_APPLICATION_MMS">
+		<Text>Mms</Text>
+	</String>
+	<String Id="1031" Name="IDS_TOOLS_LIST">
+		<Text>औजार</Text>
+	</String>
+	<String Id="1032" Name="IDS_STR_TRUNONTORCH">
+		<Text>TurnOn Torch</Text>
+	</String>
+	<String Id="1033" Name="IDS_STR_TRUNOFFFTORCH">
+		<Text>TurnOff Torch</Text>
+	</String>
+</Strings>
+<Dialogs>
+	<Dialog Id="6001" Name="IDD_FLASHLIGHT_SETTING" Focus="7002">
+		<Controls>
+			<Menu Id="7002" Name="IDC_FLASHLIGHT_SET">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6002" Name="IDD_MSGBOX" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<Dialog Id="6003" Name="IDD_LIST_APPLICATION" Focus="7001">
+		<Controls>
+			<Menu Id="7001" Name="IDC_APPLICATION_LIST">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+</Dialogs>
+</BREWRes>

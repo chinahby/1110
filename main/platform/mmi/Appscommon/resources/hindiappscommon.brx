@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="appscommon" VERSION="1">
+<Strings Encoding="ISOLATIN1">
+	<STRING Id="1" Name="IDS_SELECT">
+		<Text>चुनें</Text>
+	</STRING>
+	<STRING Id="2" Name="IDS_DEL">
+		<Text>मिटाएं</Text>
+	</STRING>
+	<STRING Id="3" Name="IDS_CANCEL">
+		<Text>पीछे</Text>
+	</STRING>
+	<STRING Id="4" Name="IDS_SEND">
+		<Text>भेजें</Text>
+	</STRING>
+	<STRING Id="5" Name="IDS_CONTINU">
+		<Text>अगला</Text>
+	</STRING>
+	<STRING Id="6" Name="IDS_BACK">
+		<Text>पीछे</Text>
+	</STRING>
+	<STRING Id="7" Name="IDS_FIND">
+		<Text>सर्च</Text>
+	</STRING>
+	<STRING Id="8" Name="IDS_OK">
+		<Text>ठीक है</Text>
+	</STRING>
+	<STRING Id="9" Name="IDS_EDIT">
+		<Text>संपादित करें</Text>
+	</STRING>
+	<STRING Id="10" Name="IDS_SAVE">
+		<Text>रक्षित करें</Text>
+	</STRING>
+	<STRING Id="11" Name="IDS_MENU">
+		<Text>मीनू</Text>
+	</STRING>
+	<STRING Id="12" Name="IDS_NEXT">
+		<Text>अगला</Text>
+	</STRING>
+	<STRING Id="13" Name="IDS_READ">
+		<Text>पढें</Text>
+	</STRING>
+	<STRING Id="14" Name="IDS_OPTION">
+		<Text>विकल्प</Text>
+	</STRING>
+	<STRING Id="15" Name="IDS_SOS">
+		<Text>एस ओ एस</Text>
+	</STRING>
+	<STRING Id="16" Name="IDS_CLOSE">
+		<Text>बांध करें</Text>
+	</STRING>
+	<STRING Id="17" Name="IDS_RESET">
+		<Text>रीसेट</Text>
+	</STRING>
+	<STRING Id="18" Name="IDS_END">
+		<Text>समाप्त</Text>
+	</STRING>
+	<STRING Id="19" Name="IDS_STRING_CONTACTS">
+		<Text>संपर्क</Text>
+	</STRING>
+	<STRING Id="20" Name="IDS_STRING_END_CALL">
+		<Text>काल समाप्त</Text>
+	</STRING>
+	<STRING Id="21" Name="IDS_STRING_CANCEL">
+		<Text>रद्द करें</Text>
+	</STRING>
+	<STRING Id="22" Name="IDS_MSG_CONFIRM_DELETE">
+		<Text>मिटाएं</Text>
+	</STRING>
+	<STRING Id="23" Name="IDS_MSG_INFORMATIVE_DELETE">
+		<Text>मिटाया गया</Text>
+	</STRING>
+	<STRING Id="24" Name="IDS_MSG_CONFIRM_DELETEALL">
+		<Text>सबको मिटाएं</Text>
+	</STRING>
+	<STRING Id="25" Name="IDS_MSG_INFORMATIVE_DELETEALL">
+		<Text>सबको मिटाएं</Text>
+	</STRING>
+	<STRING Id="26" Name="IDS_MSG_CONFIRM_COPY">
+		<Text>कॉपी</Text>
+	</STRING>
+	<STRING Id="27" Name="IDS_MSG_INFORMATIVE_COPYED">
+		<Text>सफल</Text>
+	</STRING>
+	<STRING Id="28" Name="IDS_SETTING">
+		<Text>लगाना</Text>
+	</STRING>
+	<STRING Id="29" Name="IDS_TOTODAY">
+		<Text>आज</Text>
+	</STRING>
+	<STRING Id="30" Name="IDS_STRING_IP">
+		<Text>आईपी</Text>
+	</STRING>
+	<STRING Id="31" Name="IDS_INPUT_NORMAL">
+		<Text>सामान्य</Text>
+	</STRING>
+	<STRING Id="32" Name="IDS_INPUT_STROKE">
+		<Text>स्ट्रोक</Text>
+	</STRING>
+	<STRING Id="33" Name="IDS_INPUT_ZHUYIN">
+		<Text>जुयीन</Text>
+	</STRING>
+	<STRING Id="34" Name="IDS_INPUT_RAPIDEN">
+		<Text>रेपिडयेन</Text>
+	</STRING>
+	<STRING Id="35" Name="IDS_INPUT_NUMBERS">
+		<Text>नंबर</Text>
+	</STRING>
+	<STRING Id="36" Name="IDS_MSG_KEYGUARD">
+		<Text>"अनलाक" दबाएँ बाढ़ में * </Text>
+	</STRING>
+	<STRING Id="37" Name="IDS_INPUT_RAPIDTH">
+		<Text>रेपिडटीएच</Text>
+	</STRING>
+	<STRING Id="38" Name="IDS_INPUT_MULTITH">
+		<Text>मल्टीटीएच</Text>
+	</STRING>
+	<STRING Id="39" Name="IDS_INPUT_MAJUSCULE">
+		<Text>एबीसी</Text>
+	</STRING>
+	<STRING Id="40" Name="IDS_INPUT_SMALL_LETTER">
+		<Text>एबीसी</Text>
+	</STRING>
+	<STRING Id="41" Name="IDS_ANSWER">
+		<Text>उत्तर दें</Text>
+	</STRING>
+	<STRING Id="42" Name="IDS_IGNORE">
+		<Text>उपेक्षा करना</Text>
+	</STRING>
+	<STRING Id="43" Name="IDS_REJECT">
+		<Text>रद्द</Text>
+	</STRING>
+	<STRING Id="44" Name="IDS_MUTE">
+		<Text>मौन</Text>
+	</STRING>
+	<STRING Id="45" Name="IDS_UNMUTE">
+		<Text>म्यूट नहीं</Text>
+	</STRING>
+	<STRING Id="46" Name="IDS_STRING_UNLOCK">
+		<Text>अनलॉक</Text>
+	</STRING>
+	<STRING Id="47" Name="IDS_START">
+		<Text>आरंभ करें</Text>
+	</STRING>
+	<STRING Id="48" Name="IDS_CALL">
+		<Text>कॉल करें</Text>
+	</STRING>
+	<STRING Id="114" Name="IDS_OPTION_FM">
+		<Text>विकल्प</Text>
+	</STRING>
+	<STRING Id="1001" Name="IDS_RECORD">
+		<Text>रिकॉर्ड</Text>
+	</STRING>
+	<STRING Id="1002" Name="IDS_STOP">
+		<Text>रूकें</Text>
+	</STRING>
+	<STRING Id="1003" Name="IDS_APPSCOMMON_AM">
+		<Text>अपराहन</Text>
+	</STRING>
+	<STRING Id="1004" Name="IDS_APPSCOMMON_PM">
+		<Text>पूर्वाहन</Text>
+	</STRING>
+	<STRING Id="1005" Name="IDS_RESUME">
+		<Text>पुनः जारी रखें</Text>
+	</STRING>
+	<STRING Id="1006" Name="IDS_RETRY">
+		<Text>पुन: प्रयास करें</Text>
+	</STRING>
+	<STRING Id="1007" Name="IDS_CREATE">
+		<Text>सृजित करें</Text>
+	</STRING>
+	<STRING Id="1008" Name="IDS_ADD">
+		<Text>जोड़ें</Text>
+	</STRING>
+	<STRING Id="1009" Name="IDS_PAUSE">
+		<Text>विराम</Text>
+	</STRING>
+	<STRING Id="1010" Name="IDS_PLAY">
+		<Text>खेलें</Text>
+	</STRING>
+	<STRING Id="1011" Name="IDS_POP_DONE">
+		<Text>किया</Text>
+	</STRING>
+	<STRING Id="1012" Name="IDS_EXCHANGE">
+		<Text>विनिमय</Text>
+	</STRING>
+	<STRING Id="1013" Name="IDS_JEWISH">
+		<Text>डिस्प्ले</Text>
+	</STRING>
+	<STRING Id="1014" Name="IDS_HANDSFREE_ON">
+		<Text>हेंड्सफ्री</Text>
+	</STRING>
+	<STRING Id="1015" Name="IDS_BLUETOOTH_ACCEPT">
+		<Text>स्वीकृत</Text>
+	</STRING>
+	<STRING Id="1016" Name="IDS_HANDSFREE_OFF">
+		<Text>सामान्य</Text>
+	</STRING>
+	<STRING Id="1017" Name="IDS_REPLAY">
+		<Text>फिर से खेलना</Text>
+	</STRING>
+	<STRING Id="1018" Name="IDS_UP">
+		<Text>पीछे</Text>
+	</STRING>
+	<STRING Id="1019" Name="IDS_SPORT">
+		<Text>खेल</Text>
+	</STRING>
+	<STRING Id="1020" Name="IDS_CONFIRM_OFF_FM">
+		<Text>FM बांध करें</Text>
+	</STRING>
+	<STRING Id="1021" Name="IDS_CONFIRM_OFF_MP">
+		<Text>मियूजिक प्लेयर को बांध करें</Text>
+	</STRING>
+	<STRING Id="1022" Name="IDS_FULLSCREEN">
+		<Text>स्क्रीन</Text>
+	</STRING>
+	<STRING Id="1023" Name="IDS_GALLERY">
+		<Text>गैलरी</Text>
+	</STRING>
+	<STRING Id="1024" Name="IDS_YES">
+		<Text>हां</Text>
+	</STRING>
+	<STRING Id="1025" Name="IDS_NO">
+		<Text>नहीं</Text>
+	</STRING>
+	<String Id="1026" Name="IDS_LOCK">
+		<Text>Lock Keypad</Text>
+	</String>
+	<String Id="1027" Name="IDS_FACEBOOK">
+		<Text>फकेबुक</Text>
+	</String>
+	<String Id="1028" Name="IDS_FRENDUO_LIST">
+		<Text>फ्रेन्दुवों</Text>
+	</String>
+	<String Id="1029" Name="IDS_CHAT">
+		<Text>चैट</Text>
+	</String>
+	<String Id="1030" Name="IDS_MORE">
+		<Text>और</Text>
+	</String>
+	<String Id="1031" Name="IDS_MESSAGES">
+		<Text>संदेश</Text>
+	</String>
+	<String Id="1032" Name="IDS_MSG_KEYGUARD_SPACE">
+		<Text>की गार्ड को अनलाक करने के लिए स्पैस की को देर तक दबाएँ</Text>
+	</String>
+	<String Id="1033" Name="IDS_SHIFT" Encoding="Unicode">
+		<Text>Shift</Text>
+	</String>
+	<String Id="1034" Name="IDS_ALT" Encoding="Unicode">
+		<Text>Alt</Text>
+	</String>
+	<String Id="1035" Name="IDS_CAP" Encoding="Unicode">
+		<Text>Cap</Text>
+	</String>
+	<STRING Id="2001" Name="IDS_SNOOZE">
+		<Text>स्नूज</Text>
+	</STRING>
+	<STRING Id="2002" Name="IDS_FM_BACK">
+		<Text>पीछे</Text>
+	</STRING>
+	<STRING Id="2003" Name="IDS_MSG_KEYGUARD_UNLOCKKEY">
+		<Text>की गार्ड को अनलाक करने के लिए * को दबाएँ</Text>
+	</STRING>
+	<STRING Id="2004" Name="IDS_MODIFY">
+		<Text>रूप बदलना</Text>
+	</STRING>
+	<String Id="2005" Name="IDS_VIEW">
+		<Text>देखें</Text>
+	</String>
+	<String Id="2006" Name="IDS_FMUSLIM">
+		<Text>एफ़ मुसलमान</Text>
+	</String>
+	<String Id="2007" Name="IDS_FNASRANI">
+		<Text>एफ क्रिसतियानी</Text>
+	</String>
+	<String Id="2008" Name="IDS_FPORTAL">
+		<Text>एफ पोर्टल</Text>
+	</String>
+	<String Id="2009" Name="IDS_FGURU">
+		<Text>एफ गुरु</Text>
+	</String>
+	<String Id="2010" Name="IDS_FMENU">
+		<Text>मै फ्लेकसी</Text>
+	</String>
+</Strings>
+</BREWRes>

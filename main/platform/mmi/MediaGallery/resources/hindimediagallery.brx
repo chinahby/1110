@@ -1,0 +1,476 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="mediagallery" VERSION="1">
+<Strings Encoding="ISOLATIN1">
+	<STRING Id="1000" Name="IDS_MG_MEDIAGALLERY">
+		<Text>मीडिया गैलरी</Text>
+	</STRING>
+	<STRING Id="1001" Name="IDS_MG_PHONEMEMORY">
+		<Text>फोन</Text>
+	</STRING>
+	<STRING Id="1002" Name="IDS_MG_CARDMEMORY">
+		<Text>स्मृति कार्ड</Text>
+	</STRING>
+	<STRING Id="1003" Name="IDS_MG_MEMORYSTATUS">
+		<Text>स्मृति स्थिति</Text>
+	</STRING>
+	<STRING Id="1004" Name="IDS_MG_PICTURES">
+		<Text>तस्वीरें</Text>
+	</STRING>
+	<STRING Id="1005" Name="IDS_MG_MUSIC">
+		<Text>संगीत</Text>
+	</STRING>
+	<STRING Id="1006" Name="IDS_MG_VIDEOS">
+		<Text>वीडियो</Text>
+	</STRING>
+	<STRING Id="1007" Name="IDS_MG_VOICEMEMO">
+		<Text>आवाज ज्ञापन</Text>
+	</STRING>
+	<STRING Id="1008" Name="IDS_MG_PLAY">
+		<Text>खेलें</Text>
+	</STRING>
+	<STRING Id="1009" Name="IDS_MG_SETAS">
+		<Text>ऐसा सेट करें</Text>
+	</STRING>
+	<STRING Id="1010" Name="IDS_MG_RENAME">
+		<Text>नाम पुनः लिखें</Text>
+	</STRING>
+	<STRING Id="1011" Name="IDS_MG_DELETE">
+		<Text>मिटाएं</Text>
+	</STRING>
+	<STRING Id="1012" Name="IDS_MG_DELALL">
+		<Text>सबको मिटाएं</Text>
+	</STRING>
+	<STRING Id="1013" Name="IDS_MG_DETAIL">
+		<Text>विवरण</Text>
+	</STRING>
+	<STRING Id="1014" Name="IDS_MG_BLUETOOTH">
+		<Text>ब्लूटूथ के माध्यम से भेजें</Text>
+	</STRING>
+	<STRING Id="1015" Name="IDS_MG_COPY">
+		<Text>कॉपी</Text>
+	</STRING>
+	<STRING Id="1016" Name="IDS_MG_MOVE">
+		<Text>चाल</Text>
+	</STRING>
+	<STRING Id="1017" Name="IDS_MG_SETWALLPAPER">
+		<Text>वॉलपेपर के रूप में सेट करें</Text>
+	</STRING>
+	<STRING Id="1018" Name="IDS_MG_VIEW">
+		<Text>देखें</Text>
+	</STRING>
+	<STRING Id="1019" Name="IDS_MG_MYREC">
+		<Text>मेरा रिकॉर्डर</Text>
+	</STRING>
+	<STRING Id="1020" Name="IDS_MG_CALLREC">
+		<Text>काल रिकार्डर</Text>
+	</STRING>
+	<STRING Id="1021" Name="IDS_MG_PHONEMEMSTAT">
+		<Text>फोन मेमोरी की स्थिति</Text>
+	</STRING>
+	<STRING Id="1022" Name="IDS_MG_CARDMEMSTAT">
+		<Text>कार्ड मेमोरी की स्थिति</Text>
+	</STRING>
+	<STRING Id="1023" Name="IDS_MG_TOTALMEMSTAT">
+		<Text>स्मृति की कुल स्थिति</Text>
+	</STRING>
+	<STRING Id="1024" Name="IDS_MG_SPACEUSED">
+		<Text>प्रयुक्त:</Text>
+	</STRING>
+	<STRING Id="1025" Name="IDS_MG_SPACEFREE">
+		<Text>निशुल्क:</Text>
+	</STRING>
+	<STRING Id="1026" Name="IDS_MG_SPACETOTAL">
+		<Text>कुल:</Text>
+	</STRING>
+	<STRING Id="1027" Name="IDS_MG_NOEXTCARD">
+		<Text>मेमोरी कार्ड डालें</Text>
+	</STRING>
+	<STRING Id="1028" Name="IDS_MG_BUILDPL">
+		<Text>प्लेलिस्ट बनाएँ</Text>
+	</STRING>
+	<STRING Id="1029" Name="IDS_MG_CALLRINGTONE">
+		<Text>घंटी-ध्वनि</Text>
+	</STRING>
+	<STRING Id="1030" Name="IDS_MG_SMSRINGTONE">
+		<Text>SMS के टोन</Text>
+	</STRING>
+	<STRING Id="1031" Name="IDS_MG_ALARMRINGTONE">
+		<Text>चेतावनी की घंटी</Text>
+	</STRING>
+	<STRING Id="1032" Name="IDS_MG_ADDMUSIC">
+		<Text>संगीत जोड़ें</Text>
+	</STRING>
+	<STRING Id="1033" Name="IDS_MG_BYTE">
+		<Text>बाइट</Text>
+	</STRING>
+	<STRING Id="1034" Name="IDS_MG_KILOBYTE">
+		<Text>KB</Text>
+	</STRING>
+	<STRING Id="1035" Name="IDS_MG_MEGABYTE">
+		<Text>MB</Text>
+	</STRING>
+	<STRING Id="1036" Name="IDS_MG_GIGABYTE">
+		<Text>GB</Text>
+	</STRING>
+	<STRING Id="1037" Name="IDS_MG_ARTIST">
+		<Text>कलाकार:</Text>
+	</STRING>
+	<STRING Id="1038" Name="IDS_MG_TITLE">
+		<Text>शीर्षक:</Text>
+	</STRING>
+	<STRING Id="1039" Name="IDS_MG_ALBUM">
+		<Text>एल्बम:</Text>
+	</STRING>
+	<STRING Id="1040" Name="IDS_MG_YEAR">
+		<Text>वर्ष:</Text>
+	</STRING>
+	<STRING Id="1041" Name="IDS_MG_GENRE">
+		<Text>शैली:</Text>
+	</STRING>
+	<STRING Id="1042" Name="IDS_MG_TOTALTIME">
+		<Text>कुल समय</Text>
+	</STRING>
+	<STRING Id="1043" Name="IDS_MG_BITRATE">
+		<Text>बिट दर</Text>
+	</STRING>
+	<STRING Id="1044" Name="IDS_MG_SAMPLERATE">
+		<Text>नमूना दर</Text>
+	</STRING>
+	<STRING Id="1045" Name="IDS_MG_CHANNEL">
+		<Text>चैनल</Text>
+	</STRING>
+	<STRING Id="1046" Name="IDS_MG_SIZE">
+		<Text>आकार:</Text>
+	</STRING>
+	<STRING Id="1047" Name="IDS_MG_CREATIONDATE">
+		<Text>निर्माण तिथि: %4u.%2d.%2d</Text>
+	</STRING>
+	<STRING Id="1048" Name="IDS_MG_ATTRIB">
+		<Text>विशेषता:</Text>
+	</STRING>
+	<STRING Id="1049" Name="IDS_MG_ADDVIDEO">
+		<Text>वीडियो को जोड़ें</Text>
+	</STRING>
+	<STRING Id="1050" Name="IDS_MG_UDISK">
+		<Text>USB कनेक्शन मोड</Text>
+	</STRING>
+	<STRING Id="1051" Name="IDS_MG_STARTUDISK">
+		<Text>Udisk प्रारंभ करें</Text>
+	</STRING>
+	<STRING Id="1052" Name="IDS_MG_FORMAT">
+		<Text>प्रारूप</Text>
+	</STRING>
+	<STRING Id="1053" Name="IDS_MG_READONLY">
+		<Text>केवल-पठन</Text>
+	</STRING>
+	<STRING Id="1054" Name="IDS_MG_ARCHIVE">
+		<Text>संग्रह</Text>
+	</STRING>
+	<STRING Id="1055" Name="IDS_MG_HIDDEN">
+		<Text>छिपा हुआ</Text>
+	</STRING>
+	<STRING Id="1056" Name="IDS_MG_INVALIDNAME">
+		<Text>अमान्य नाम</Text>
+	</STRING>
+	<STRING Id="1057" Name="IDS_MG_EMPTY">
+		<Text>कोई रिकॉर्ड नहीं है</Text>
+	</STRING>
+	<STRING Id="1058" Name="IDS_MG_FILEOPENED">
+		<Text>फ़ाइल खोला गया</Text>
+	</STRING>
+	<STRING Id="1059" Name="IDS_MG_LISTFULL">
+		<Text>सूची पूरी हो गयी</Text>
+	</STRING>
+	<STRING Id="1060" Name="IDS_MG_REPETITION">
+		<Text>पुनरावृत्ति नाम</Text>
+	</STRING>
+	<STRING Id="1061" Name="IDS_MG_NULLNAME">
+		<Text>शून्य नाम</Text>
+	</STRING>
+	<STRING Id="1062" Name="IDS_MG_PROTECT">
+		<Text>संरक्षित फ़ाइल</Text>
+	</STRING>
+	<STRING Id="1063" Name="IDS_MG_FOLDERNOTEMPTY">
+		<Text>खाली फ़ोल्डर नहीं</Text>
+	</STRING>
+	<STRING Id="1064" Name="IDS_MG_FILENOEXISTS">
+		<Text>फ़ाइल मौजूद नहीं है</Text>
+	</STRING>
+	<STRING Id="1065" Name="IDS_MG_DIRNOEXISTS">
+		<Text>फ़ोल्डर मौजूद नहीं है</Text>
+	</STRING>
+	<STRING Id="1066" Name="IDS_MG_CALLMEMO">
+		<Text>ज्ञापन कॉल</Text>
+	</STRING>
+	<STRING Id="1067" Name="IDS_MG_INSUFFICIENT">
+		<Text>भंडारण अपर्याप्त स्थान</Text>
+	</STRING>
+	<STRING Id="1068" Name="IDS_MG_PROGBARHINT">
+		<Text>हटा रहा है...</Text>
+	</STRING>
+	<STRING Id="1069" Name="IDS_MG_FILEOPERR">
+		<Text>त्रुटि</Text>
+	</STRING>
+	<STRING Id="1070" Name="IDS_MG_OVERWRITE">
+		<Text>मौजूदा रिकार्ड कवर करें</Text>
+	</STRING>
+	<STRING Id="1071" Name="IDS_MG_RUNUDISK">
+		<Text>यू डिस्क चल रहा है </Text>
+	</STRING>
+	<STRING Id="1072" Name="IDS_MG_STOPUDISK">
+		<Text>यू - डिस्क बंद कर दिया गया</Text>
+	</STRING>
+	<STRING Id="1073" Name="IDS_MG_UNKNOWN">
+		<Text>अज्ञात</Text>
+	</STRING>
+	<STRING Id="1074" Name="IDS_MG_NOUSBCABLE">
+		<Text>PC को USB केबल से कनेक्ट करें</Text>
+	</STRING>
+	<STRING Id="1075" Name="IDS_MG_SORT">
+		<Text>छांटें</Text>
+	</STRING>
+	<STRING Id="1076" Name="IDS_MG_BYNAME">
+		<Text>नाम के अनुसार छाँटें</Text>
+	</STRING>
+	<STRING Id="1077" Name="IDS_MG_BYDATE">
+		<Text>तिथि के अनुसार छाँटें</Text>
+	</STRING>
+	<STRING Id="1078" Name="IDS_MG_BYSIZE">
+		<Text>आकार के अनुसार छाँटें</Text>
+	</STRING>
+	<STRING Id="1079" Name="IDS_MG_ZOOM">
+		<Text>ज़ूम</Text>
+	</STRING>
+	<STRING Id="1080" Name="IDS_MG_SLIDE">
+		<Text>स्लाइड</Text>
+	</STRING>
+	<STRING Id="1081" Name="IDS_MG_BYTYPE">
+		<Text>प्रकार के आधार पर छाँटें</Text>
+	</STRING>
+	<STRING Id="1082" Name="IDS_MG_BYNULL">
+		<Text>छाँटना नहीं</Text>
+	</STRING>
+	<STRING Id="1083" Name="IDS_MG_OPEN">
+		<Text>खोलें</Text>
+	</STRING>
+	<STRING Id="1084" Name="IDS_MG_WALLPAPERNOSET">
+		<Text>छवि का आकार बहुत बड़ा है!</Text>
+	</STRING>
+	<STRING Id="1085" Name="IDS_MG_SELECTNONE">
+		<Text>कोई  चयन नहीं  किया गया </Text>
+	</STRING>
+	<STRING Id="1086" Name="IDS_MG_MANYFILES">
+		<Text>बहुत सारी  फाइलें, कुछ सूची में  नहीं</Text>
+	</STRING>
+	<STRING Id="1087" Name="IDS_MG_DEEPPATH">
+		<Text>बहुत गहरी फ़ोल्डर</Text>
+	</STRING>
+	<STRING Id="1088" Name="IDS_MG_FOLDERS">
+		<Text>फ़ोल्डर</Text>
+	</STRING>
+	<STRING Id="1089" Name="IDS_MG_FILES">
+		<Text>फ़ाइलें</Text>
+	</STRING>
+	<STRING Id="1090" Name="IDS_MG_LOCATION">
+		<Text>जगह</Text>
+	</STRING>
+	<STRING Id="1091" Name="IDS_MG_CONST">
+		<Text>निश्चित</Text>
+	</STRING>
+	<STRING Id="1092" Name="IDS_MG_SYSTEM">
+		<Text>प्रणाली</Text>
+	</STRING>
+	<STRING Id="1093" Name="IDS_MG_SELECT">
+		<Text>चुनें</Text>
+	</STRING>
+	<STRING Id="1094" Name="IDS_MG_DOWNLOAD">
+		<Text>डाउनलोड करें</Text>
+	</STRING>
+	<STRING Id="1095" Name="IDS_MG_SELECTPATH">
+		<Text>पथ का चयन करें</Text>
+	</STRING>
+	<STRING Id="1096" Name="IDS_MG_LARGEFILE">
+		<Text>बहुत बड़ा फ़ाइल</Text>
+	</STRING>
+	<STRING Id="1097" Name="IDS_MG_PHOTOGALLERY">
+		<Text>फोटो गैलरी</Text>
+	</STRING>
+	<STRING Id="1098" Name="IDS_MG_VIDEOGALLERY">
+		<Text>वीडियो गैलरी</Text>
+	</STRING>
+	<STRING Id="1099" Name="IDS_MG_FILENOTDEL">
+		<Text>कुछ फ़ाइल को नष्ट नहीं कर सकते हैं</Text>
+	</STRING>
+	<STRING Id="1100" Name="IDS_MG_MARKALL">
+		<Text>सभी मार्क करे</Text>
+	</STRING>
+	<STRING Id="1101" Name="IDS_MG_UNMARKALL">
+		<Text>सभी अचिह्नित करे</Text>
+	</STRING>
+	<STRING Id="1102" Name="IDS_MG_MARK">
+		<Text>मार्क करे</Text>
+	</STRING>
+	<STRING Id="1103" Name="IDS_MG_UNMARK">
+		<Text>अचिह्नित करे</Text>
+	</STRING>
+	<STRING Id="1104" Name="IDS_MG_EXECUTE">
+		<Text>चलाएँ</Text>
+	</STRING>
+	<STRING Id="1105" Name="IDS_MG_LOADFAILED">
+		<Text>छवि लोड विफल  हो गया</Text>
+	</STRING>
+	<String Id="1106" Name="IDS_MG_LOADING">
+		<Text>लोड हो रहा है...</Text>
+	</String>
+	<String Id="1107" Name="IDS_MSG_SAVEPLAYLIST">
+		<Text>Add to playlist</Text>
+	</String>
+	<String Id="1108" Name="IDS_DEFAULTPLAYLISTNAME">
+		<Text>Default playlist</Text>
+	</String>
+	<String Id="1109" Name="IDS_PLAYLIST_FULL">
+		<Text>Playlist full!</Text>
+	</String>
+	<String Id="1110" Name="IDS_ADD_SUCCESS">
+		<Text>Add music success</Text>
+	</String>
+	<String Id="1111" Name="IDS_USB_CONNECTED">
+		<Text>v3 data card connected</Text>
+	</String>
+	<String Id="1112" Name="IDS_USB_NOT_CONNECTED">
+		<Text>v3 data card not connected</Text>
+	</String>
+	<STRING Id="1113" Name="IDS_MG_STOPV3DATACARD">
+		<Text>v3 data card stopped</Text>
+	</STRING>
+	<STRING Id="1114" Name="IDS_MG_COPYING">
+		<Text>Copying</Text>
+	</STRING>
+	<STRING Id="1115" Name="IDS_MG_MOVEING">
+		<Text>Moveing</Text>
+	</STRING>
+	<String Id="1116" Name="IDS_MG_ANIMATE_CANNOTSET_WALLPAPER">
+		<Text>Animation can not set as wallpaper</Text>
+	</String>
+</Strings>
+<Dialogs>
+	<Dialog Id="6001" Name="IDD_MG_MAINMENU" Focus="7001">
+		<Controls>
+			<Menu Id="7001" Name="IDC_MG_MAINMENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6002" Name="IDD_MG_PHONEMEM" Focus="7002">
+		<Controls>
+			<Menu Id="7002" Name="IDC_MG_PHONEMEM">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6003" Name="IDD_MG_CARDMEM" Focus="7003">
+		<Controls>
+			<Menu Id="7003" Name="IDC_MG_CARDMEM">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6004" Name="IDD_MG_MEMSTAT" Focus="7004">
+		<Controls>
+			<Static Id="7004" Name="IDC_MG_MEMSTAT">
+				<Items/></Static>
+			<Menu Id="7011" Name="IDC_MG_MEMSTATTITLE">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6005" Name="IDD_MG_MEDIAMENU" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<Dialog Id="6006" Name="IDD_MG_SELECTPATH" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<Dialog Id="6007" Name="IDD_MG_SAVETOPLAYLIST" Focus="7005">
+		<Controls>
+			<Menu Id="7005" Name="IDC_MENU_PLAYLIST">
+				<Items/>
+			</Menu>
+		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<Dialog Id="6010" Name="IDD_MG_MSGBOX" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<Dialog Id="6011" Name="IDD_MG_IMAGEVIEWER" Focus="7012">
+		<Controls>
+			<Image Id="7012" Name="IDC_MG_IMAGEVIEWER">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+				<Items/></Image>
+		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<Dialog Id="6012" Name="IDD_MG_RENAME" Focus="7013">
+		<Controls>
+			<Text Id="7013" Name="IDC_MG_EDITNAME">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+				<Items/></Text>
+		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<Dialog Id="6013" Name="IDD_MG_SETAS" Focus="7014">
+		<Controls>
+			<Menu Id="7014" Name="IDC_MG_SETAS">
+				<Items/>
+			</Menu>
+		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<Dialog Id="6014" Name="IDD_MG_DETAIL" Focus="7018">
+		<Controls>
+			<Menu Id="7016" Name="IDC_MG_DETAIL">
+				<Items/>
+			</Menu>
+			<Static Id="7018" Name="IDC_MG_DETAILTEXT">
+				<Items/></Static>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6015" Name="IDD_MG_MOVE" Focus="0">
+		<Controls/>
+	</Dialog>
+	<Dialog Id="6018" Name="IDD_MG_MUSICADD" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<Dialog Id="6019" Name="IDD_MG_VIDEOADD" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<Dialog Id="6021" Name="IDD_MG_IMAGESETTING" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<Dialog Id="6022" Name="IDD_MG_MUSICETTING" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<Dialog Id="6023" Name="IDD_MG_UDISK" Focus="7020">
+		<Controls>
+			<Menu Id="7019" Name="IDC_MG_UDISK">
+				<Items/>
+			</Menu>
+			<Static Id="7020" Name="IDC_MG_UDISKRUN">
+				<Items/></Static>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6024" Name="IDD_MG_SORT" Focus="0">
+		<Controls>
+			<Menu Id="7021" Name="IDC_MG_SORTMENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+</Dialogs>
+</BREWRes>

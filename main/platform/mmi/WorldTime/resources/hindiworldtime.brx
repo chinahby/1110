@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="worldtime" VERSION="1">
+<Strings Encoding="Unicode">
+	<STRING Id="1" Name="IDS_TITLE">
+		<Text>लोक समय</Text>
+	</STRING>
+	<STRING Id="2" Name="IDS_CITY_0">
+		<Text>कसबलंका,लंदन</Text>
+	</STRING>
+	<STRING Id="3" Name="IDS_CITY_1">
+		<Text>कसबलंका,लंदन</Text>
+	</STRING>
+	<STRING Id="4" Name="IDS_CITY_2">
+		<Text>एथेंस,हेलसिंकी</Text>
+	</STRING>
+	<STRING Id="5" Name="IDS_CITY_3">
+		<Text>बगदाद,मॉस्को</Text>
+	</STRING>
+	<STRING Id="6" Name="IDS_CITY_4">
+		<Text>अबुदबी</Text>
+	</STRING>
+	<STRING Id="7" Name="IDS_CITY_5">
+		<Text>इस्लामाबाद,तशकेंट</Text>
+	</STRING>
+	<STRING Id="8" Name="IDS_CITY_6">
+		<Text>डाका</Text>
+	</STRING>
+	<STRING Id="9" Name="IDS_CITY_7">
+		<Text>बैंकॉक,जकार्ता</Text>
+	</STRING>
+	<STRING Id="10" Name="IDS_CITY_8">
+		<Text>ताइपेई,बीजिंग, हाँग काँग</Text>
+	</STRING>
+	<STRING Id="11" Name="IDS_CITY_9">
+		<Text>सियोल,टोक्यो</Text>
+	</STRING>
+	<STRING Id="12" Name="IDS_CITY_10">
+		<Text>मेलबोर्न,सिडनी</Text>
+	</STRING>
+	<STRING Id="13" Name="IDS_CITY_11">
+		<Text>व्लादिवोस्टोक</Text>
+	</STRING>
+	<STRING Id="14" Name="IDS_CITY_12">
+		<Text>वेलिंगटन</Text>
+	</STRING>
+	<STRING Id="15" Name="IDS_CITY_13">
+		<Text>एनिवेटोक</Text>
+	</STRING>
+	<STRING Id="16" Name="IDS_CITY_14">
+		<Text>मिडवाय</Text>
+	</STRING>
+	<STRING Id="17" Name="IDS_CITY_15">
+		<Text>होनालूलू, हवाई</Text>
+	</STRING>
+	<STRING Id="18" Name="IDS_CITY_16">
+		<Text>आंकरेज</Text>
+	</STRING>
+	<STRING Id="19" Name="IDS_CITY_17">
+		<Text>लॉस एंजिल्स,सान फ्रांसिकों</Text>
+	</STRING>
+	<STRING Id="20" Name="IDS_CITY_18">
+		<Text>डेनवर,फीनिक्स</Text>
+	</STRING>
+	<STRING Id="21" Name="IDS_CITY_19">
+		<Text>शिकागो,डेल्लास</Text>
+	</STRING>
+	<STRING Id="22" Name="IDS_CITY_20">
+		<Text>न्यू यॉर्क,मियामी</Text>
+	</STRING>
+	<STRING Id="23" Name="IDS_CITY_21">
+		<Text>काराकस,ल पाज</Text>
+	</STRING>
+	<STRING Id="24" Name="IDS_CITY_22">
+		<Text>ब्यूनोस आयर्स</Text>
+	</STRING>
+	<STRING Id="25" Name="IDS_CITY_23">
+		<Text>सेंट्रल अटलांटिका</Text>
+	</STRING>
+	<STRING Id="26" Name="IDS_CITY_24">
+		<Text>अजोरेस</Text>
+	</STRING>
+	<STRING Id="27" Name="IDS_DATE_FORMAT">
+		<Text>%02d/%02d %02d:%02d</Text>
+	</STRING>
+	<STRING Id="28" Name="IDS_CITY_25">
+		<Text>Yangon</Text>
+	</STRING>
+	<String Id="29" Name="IDS_CITY_26">
+		<Text>NEW DELHI</Text>
+	</String>
+	<String Id="1001" Name="IDS_TIME_ZONE">
+		<Text>समय क्षेत्र:</Text>
+	</String>
+</Strings>
+</BREWRes>

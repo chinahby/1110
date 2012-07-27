@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="recorder" VERSION="1">
+<Strings Encoding="ISOLATIN1">
+	<STRING Id="1" Name="IDS_TITLE">
+		<Text>आवाज ज्ञापन</Text>
+	</STRING>
+	<STRING Id="2" Name="IDS_RECORDER_MEMO_RINGER_NAME">
+		<Text>आवाज ज्ञापन</Text>
+	</STRING>
+	<STRING Id="1001" Name="IDS_NEW_RECORD">
+		<Text>नई रिकॉर्डर</Text>
+	</STRING>
+	<STRING Id="1002" Name="IDS_RECORD_LIST">
+		<Text>रिकॉर्ड की सूची</Text>
+	</STRING>
+	<STRING Id="1003" Name="IDS_RECORD_LIST_TITLE">
+		<Text>रिकॉर्ड की सूची</Text>
+	</STRING>
+	<STRING Id="1004" Name="IDS_RECORD_LIST_OPTION_PLAY">
+		<Text>खेलें</Text>
+	</STRING>
+	<STRING Id="1005" Name="IDS_RECORD_LIST_OPTION_SET_AS">
+		<Text>ऐसा सेट करें</Text>
+	</STRING>
+	<STRING Id="1006" Name="IDS_RECORD_LIST_OPTION_DELETE">
+		<Text>मिटाएं</Text>
+	</STRING>
+	<STRING Id="1007" Name="IDS_RECORD_LIST_OPTION_DELETE_ALL">
+		<Text>सबको मिटाएं</Text>
+	</STRING>
+	<STRING Id="1008" Name="IDS_RECORD_PAUSE">
+		<Text>विराम</Text>
+	</STRING>
+	<STRING Id="1009" Name="IDS_SET_AS_RINGER">
+		<Text>घंटी-ध्वनि</Text>
+	</STRING>
+	<STRING Id="1010" Name="IDS_SET_AS_ALARM_ALERT">
+		<Text>चेतावनी स्वर</Text>
+	</STRING>
+	<STRING Id="1011" Name="IDS_SET_AS_SMS_ALERT">
+		<Text>SMS के स्वर</Text>
+	</STRING>
+	<STRING Id="1012" Name="IDS_RECORD_DELETE_CONFIRM">
+		<Text>मिटाएं</Text>
+	</STRING>
+	<STRING Id="1013" Name="IDS_RECORD_DELETE_ALL_CONFIRM">
+		<Text>मिटाएं</Text>
+	</STRING>
+	<STRING Id="1014" Name="IDS_RECORD_OPEN_FILE_ERROR_1">
+		<Text>फ़ाइल मौजूद है</Text>
+	</STRING>
+	<STRING Id="1015" Name="IDS_RECORD_OPEN_FILE_ERROR_2">
+		<Text>चलाने  में असफल</Text>
+	</STRING>
+	<STRING Id="1016" Name="IDS_RECORD_OPEN_FILE_ERROR_3">
+		<Text>डायरेक्टरी खाली नहीं</Text>
+	</STRING>
+	<STRING Id="1017" Name="IDS_RECORD_OPEN_FILE_ERROR_4">
+		<Text>अमान्य नाम</Text>
+	</STRING>
+	<STRING Id="1018" Name="IDS_RECORD_OPEN_FILE_ERROR_5">
+		<Text>अमान्य स्थिति</Text>
+	</STRING>
+	<STRING Id="1019" Name="IDS_RECORD_OPEN_FILE_ERROR_6">
+		<Text>त्रुटि</Text>
+	</STRING>
+	<STRING Id="1020" Name="IDS_RECORD_OPEN_FILE_ERROR_7">
+		<Text>पूर्ण</Text>
+	</STRING>
+	<STRING Id="1021" Name="IDS_RECORD_OPEN_FILE_ERROR_8">
+		<Text>त्रुटि</Text>
+	</STRING>
+	<STRING Id="1022" Name="IDS_RECORD_OPEN_FILE_ERROR_9">
+		<Text>पूर्ण</Text>
+	</STRING>
+	<STRING Id="1023" Name="IDS_RECORD_OPEN_FILE_ERROR_10">
+		<Text>निर्देशिका विद्यमान नहीं है</Text>
+	</STRING>
+	<STRING Id="1024" Name="IDS_RECORD_OPEN_FILE_ERROR_11">
+		<Text>अवैध ऑपरेशन</Text>
+	</STRING>
+	<STRING Id="1025" Name="IDS_RECORD_OPEN_FILE_ERROR_12">
+		<Text>मेमोरी कार्ड डालें</Text>
+	</STRING>
+	<STRING Id="1026" Name="IDS_RECORD_OPEN_FILE_ERROR_13">
+		<Text>विफल</Text>
+	</STRING>
+	<STRING Id="1027" Name="IDS_RECORD_DELETING">
+		<Text>हटा रहा है...</Text>
+	</STRING>
+	<STRING Id="1028" Name="IDS_RECORD_RESUME">
+		<Text>पुनः जारी रखें</Text>
+	</STRING>
+	<STRING Id="1029" Name="IDS_RECORD_REPLAY">
+		<Text>पुनरावृत्ति</Text>
+	</STRING>
+	<STRING Id="1030" Name="IDS_NEW_FM_RECORD">
+		<Text>FM रिकॉर्ड</Text>
+	</STRING>
+	<STRING Id="1031" Name="IDS_CALL_RECORD">
+		<Text>रिकॉर्ड कॉल करें/Text>
+	</STRING>
+	<STRING Id="1032" Name="IDS_FORWARD_RECORD">
+		<Text>रिकॉर्ड अग्रेषित करें</Text>
+	</STRING>
+	<STRING Id="1033" Name="IDS_RECORD_LIST_OPTION_SET_AS_RINGTONE">
+		<Text>रिंगटोन के रूप में सेट करें</Text>
+	</STRING>
+	<STRING Id="1034" Name="IDS_RECORD_SET_AS_RINGER_ING">
+		<Text>सेटिंग करें...</Text>
+	</STRING>
+	<STRING Id="1035" Name="IDS_RECORD_SET_AS_RINGTONE_FAILED">
+		<Text>विफल</Text>
+	</STRING>
+	<STRING Id="1036" Name="IDS_RECORD_SET_AS_ALARM_FAILED">
+		<Text>विफल</Text>
+	</STRING>
+	<STRING Id="1037" Name="IDS_RECORD_SET_AS_RINGER_FAILED">
+		<Text>विफल:</Text>
+	</STRING>
+	<STRING Id="1038" Name="IDS_RECORDER_DONE">
+		<Text>किया गया</Text>
+	</STRING>
+	<STRING Id="1039" Name="IDS_RECORD_LIST_OPTION_RENAME">
+		<Text>नाम पुनः लिखें</Text>
+	</STRING>
+	<STRING Id="1040" Name="IDS_RECORD_LIST_RENAME_INVALID_FILE_NAME">
+		<Text>अवैध अक्षर: /\:*?"&lt;&gt;|</Text>
+	</STRING>
+	<STRING Id="1041" Name="IDS_RECORD_CANCEL_CONFIRM">
+		<Text>वास्तव में ज्ञापन त्यागें</Text>
+	</STRING>
+	<String Id="1042" Name="IDS_STORAGE_SETUP">
+		<Text>संग्रह</Text>
+	</String>
+	<String Id="1043" Name="IDS_STORAGE_SETUP_PHONE">
+		<Text>फोन</Text>
+	</String>
+	<String Id="1044" Name="IDS_STORAGE_SETUP_CARD0" Encoding="Unicode">
+		<Text>स्मृति कार्ड</Text>
+	</String>
+	<STRING Id="1100" Name="IDS_RECORD_MEDIA_ERROR">
+		<Text>त्रुटि</Text>
+	</STRING>
+	<STRING Id="1101" Name="IDS_RECORD_MEDIA_ERROR_EBADPARM">
+		<Text>त्रुटि</Text>
+	</STRING>
+	<STRING Id="1102" Name="IDS_RECORD_MEDIA_ERROR_EBADSTATE">
+		<Text>त्रुटि</Text>
+	</STRING>
+	<STRING Id="1103" Name="IDS_RECORD_MEDIA_ERROR_EUNSUPPORTED">
+		<Text>त्रुटि</Text>
+	</STRING>
+	<STRING Id="1104" Name="IDS_RECORD_MEDIA_ERROR_EITEMBUSY">
+		<Text>सिस्टम वर्तमान में व्यस्त है, कुछ समय के बाद प्रयास करें</Text>
+	</STRING>
+	<STRING Id="1105" Name="IDS_RECORD_MEDIA_ERROR_MM_EBADMEDIADATA">
+		<Text>खेलने में असफल</Text>
+	</STRING>
+	<STRING Id="1106" Name="IDS_RECORD_REACH_TIME_LIMIT">
+		<Text>समय सीमा समाप्त, बचाया</Text>
+	</STRING>
+	<STRING Id="1107" Name="IDS_RECORD_REACH_FILE_NUMBER_LIMIT">
+		<Text>%d ज्ञापन फाइलों को  अनुमति दी गयी</Text>
+	</STRING>
+	<STRING Id="1199" Name="IDS_MM_STATUS_INIT">
+		<Text>इनिश...</Text>
+	</STRING>
+	<STRING Id="1200" Name="IDS_MM_STATUS_READY">
+		<Text>तैयार</Text>
+	</STRING>
+	<STRING Id="1201" Name="IDS_MM_STATUS_START">
+		<Text>शुरू कर दिया</Text>
+	</STRING>
+	<STRING Id="1202" Name="IDS_MM_STATUS_DONE">
+		<Text>ठीक है</Text>
+	</STRING>
+	<STRING Id="1203" Name="IDS_MM_STATUS_ABORT">
+		<Text>छोड़ा गया</Text>
+	</STRING>
+	<STRING Id="1204" Name="IDS_MM_STATUS_DATA_IO_DELAY">
+		<Text>बफ़र कर रहा है...</Text>
+	</STRING>
+	<STRING Id="1205" Name="IDS_MM_STATUS_SEEK_FAIL">
+		<Text>विफल लगता है </Text>
+	</STRING>
+	<STRING Id="1206" Name="IDS_MM_STATUS_PAUSE">
+		<Text>रोका गया</Text>
+	</STRING>
+	<STRING Id="1207" Name="IDS_MM_STATUS_PAUSE_FAIL">
+		<Text>रोकें विफल रहा है</Text>
+	</STRING>
+	<STRING Id="1208" Name="IDS_MM_STATUS_RESUME">
+		<Text>फिर से शुरू कर दिया गया </Text>
+	</STRING>
+	<STRING Id="1209" Name="IDS_MM_STATUS_RESUME_FAIL">
+		<Text>फिर से शुरू में विफल रहा/Text>
+	</STRING>
+	<STRING Id="1210" Name="IDS_MM_STATUS_REPEAT">
+		<Text>पुनरावृत्ति</Text>
+	</STRING>
+	<STRING Id="1211" Name="IDS_MM_STATUS_SPACE_WARNING">
+		<Text>पूर्ण</Text>
+	</STRING>
+	<STRING Id="1212" Name="IDS_MM_STATUS_SPACE_ERROR">
+		<Text>पूर्ण</Text>
+	</STRING>
+	<STRING Id="1213" Name="IDS_MM_STATUS_UNKNOWN">
+		<Text>अज्ञात त्रुटि</Text>
+	</STRING>
+	<STRING Id="1214" Name="IDS_MM_STATUS_PLAYING">
+		<Text>चलाया जा रहा है...</Text>
+	</STRING>
+	<STRING Id="1215" Name="IDS_MM_STATUS_RECORDING">
+		<Text>रिकॉर्डिंग हो रहा है...</Text>
+	</STRING>
+</Strings>
+</BREWRes>
