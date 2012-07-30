@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="utk" VERSION="1">
+<Strings Encoding="ISOLATIN1">
+	<STRING Id="1" Name="IDS_TITLE">
+		<Text>UTK</Text>
+	</STRING>
+	<STRING Id="2" Name="IDS_SENDING">
+		<Text>संदेश भेज दिये जा रहे हैं...</Text>
+	</STRING>
+	<STRING Id="3" Name="IDS_GETINPUT_WRONG_LEN">
+		<Text>गलत, कृपया फिर से इनपुट करें!</Text>
+	</STRING>
+	<STRING Id="4" Name="IDS_DIAL_TONE_STRING">
+		<Text>टोन डायल</Text>
+	</STRING>
+	<STRING Id="5" Name="IDS_CALLED_SUBSCRIBER_BUSY_STRING">
+		<Text>ग्राहक व्यस्त स्ट्रिंग कहा जाता है</Text>
+	</STRING>
+	<STRING Id="6" Name="IDS_CONGESTION_STRING">
+		<Text>जमाव</Text>
+	</STRING>
+	<STRING Id="7" Name="IDS_RADIO_PATH_ACKNOWLEDGE_STRING">
+		<Text>रेडियो पथ स्वीकार करते हैं</Text>
+	</STRING>
+	<STRING Id="8" Name="IDS_RADIO_PATH_NOT_AVAILABLE_OR_CALL_DROPPED_STRING">
+		<Text>रेडियो पथ उपलब्ध नहीं या कॉल गिरा दिया गया</Text>
+	</STRING>
+	<STRING Id="9" Name="IDS_ERROR_OR_SPECIAL_INFORMATION_STRING">
+		<Text>त्रुटि या विशेष जानकारी</Text>
+	</STRING>
+	<STRING Id="10" Name="IDS_CALL_WAITING_STRING">
+		<Text>कॉल वेटिंग</Text>
+	</STRING>
+	<STRING Id="11" Name="IDS_RINGING_STRING">
+		<Text>घंटी-ध्वनि</Text>
+	</STRING>
+	<STRING Id="12" Name="IDS_GENERAL_BEEP_STRING">
+		<Text>जनरल बीप</Text>
+	</STRING>
+	<STRING Id="13" Name="IDS_POSITIVE_ACKNOWLEDGEMENT_STRING">
+		<Text>सकारात्मक रसीद</Text>
+	</STRING>
+	<STRING Id="14" Name="IDS_NEGATIVE_ACKNOWLEDGEMENT_OR_ERROR_STRING">
+		<Text>नकारात्मक पावती या त्रुटि</Text>
+	</STRING>
+	<STRING Id="15" Name="IDS_RINGING_TONE_SEL_BY_USER_FOR_IC_V_CALL_STRING">
+		<Text>इनकमिंग कॉल रिंगटोन</Text>
+	</STRING>
+	<STRING Id="16" Name="IDS_ALERT_TONE_SEL_BY_USER_FOR_IC_SMS_STRING">
+		<Text>एसएमएस एलर्ट</Text>
+	</STRING>
+	<STRING Id="17" Name="IDS_CALLINFO">
+		<Text>आपके फोन पर बातचीत में है, अब फोन नहीं कर सकते हैं.</Text>
+	</STRING>
+	<STRING Id="18" Name="IDS_NONEUTK">
+		<Text>UTK नहीं!</Text>
+	</STRING>
+	<STRING Id="100" Name="IDM_OK">
+		<Text>ठीक है</Text>
+	</STRING>
+</Strings>
+<Dialogs>
+	<DIALOG Id="1" Name="IDD_SPLASH_DIALOG" Focus="0">
+		<Controls/>
+	</DIALOG>
+	<DIALOG Id="2" Name="IDD_MAIN_DIALOG" Focus="7001">
+		<Controls>
+			<Menu Id="7001" Name="IDC_MAIN_MENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="3" Name="IDD_LIST_DIALOG" Focus="7002">
+		<Controls>
+			<Menu Id="7002" Name="IDC_LIST_MENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="4" Name="IDD_INPUT_DIALOG" Focus="7003">
+		<Controls>
+			<Text Id="7003" Name="IDC_INPUT_TEXT">
+				<Position PosX="0" PosW="128" PosY="0" PosH="110"/>
+				<Items/></Text>
+		</Controls>
+		<Position PosX="0" PosW="128" PosY="20" PosH="110"/>
+	</DIALOG>
+	<DIALOG Id="5" Name="IDD_DISPLAY_DIALOG" Focus="7004">
+		<Controls>
+			<Static Id="7004" Name="IDC_DISPLAY_STATIC">
+				<Items/></Static>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6" Name="IDD_SENDMSG_DIALOG" Focus="0">
+		<Controls/>
+	</DIALOG>
+	<DIALOG Id="7" Name="IDD_MSGBOX" Focus="7005">
+		<Controls>
+			<Static Id="7005" Name="IDC_MSGBOX_STATIC">
+				<Items/></Static>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="8" Name="IDD_PLAYTONE_DIALOG" Focus="7006">
+		<Controls>
+			<Static Id="7006" Name="IDC_PLAYTONE_STATIC">
+				<Items/></Static>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="9" Name="IDD_SETUPCALL_USERCONFIRM" Focus="7007">
+		<Controls>
+			<Static Id="7007" Name="IDC_SETUPCALL_USERCONFIRM">
+				<Items/></Static>
+		</Controls>
+	</DIALOG>
+	<Dialog Id="10" Name="IDD_POPMSG" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+</Dialogs>
+</BREWRes>
