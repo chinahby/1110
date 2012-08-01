@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <BREWRes Name="mediagallery" VERSION="1">
-<Strings Encoding="ISOLATIN1">
+<Strings Encoding="Unicode">
 	<STRING Id="1000" Name="IDS_MG_MEDIAGALLERY">
 		<Text>मीडिया गैलरी</Text>
 	</STRING>
