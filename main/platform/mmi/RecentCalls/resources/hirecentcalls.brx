@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <BREWRes Name="recentcalls" VERSION="1">
-<Strings Encoding="ISOLATIN1">
+<Strings Encoding="Unicode">
 	<STRING Id="1" Name="IDS_SAVE">
 		<Text>रक्षित करें</Text>
 	</STRING>
