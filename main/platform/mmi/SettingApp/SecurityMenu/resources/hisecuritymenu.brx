@@ -89,7 +89,7 @@
 		<Text>PIN सेटिंग्स</Text>
 	</STRING>
 	<STRING Id="1036" Name="IDS_PHONE_PASSWORD_CHANGE">
-		<Textपासवर्ड बदलें</Text>
+		<Text>पासवर्ड बदलें</Text>
 	</STRING>
 	<STRING Id="1037" Name="IDS_ON">
 		<Text>चालू</Text>
