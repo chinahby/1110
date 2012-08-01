@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <BREWRes Name="clockapps" VERSION="1">
-<Strings Encoding="ISOLATIN1">
+<Strings Encoding="Unicode">
 	<STRING Id="1001" Name="IDS_ALARMCLOCK_TITLE">
 		<Text>अलार्म</Text>
 	</STRING>
