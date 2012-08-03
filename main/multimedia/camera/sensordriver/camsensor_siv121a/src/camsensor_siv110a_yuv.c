@@ -120,7 +120,7 @@ boolean camsensor_sic110a_init(camsensor_function_table_type *camsensor_function
     gpio_out(CAMSENSOR_SIC110A_RESET_PIN,1);
     
     // Reset Sensor
-    camera_timed_wait(10);  //ovt
+    camera_timed_wait(20);  //ovt
     if( !sic110a_i2c_write_byte(0x00,0x00))
     {
         MSG_FATAL("Block Select error!",0,0,0);
@@ -163,10 +163,11 @@ static boolean initialize_sic110a_registers(void)
 {
     //Sensor Block Setting 	###Don't Change###
 	sic110a_i2c_write_byte(0x00, 0x00); 
+    sic110a_i2c_write_byte(0x03, 0x55);
 	sic110a_i2c_write_byte(0x04, 0x00); 
 	sic110a_i2c_write_byte(0x10, 0x00); 
 	sic110a_i2c_write_byte(0x11, 0x01); 
-	sic110a_i2c_write_byte(0x12, 0x13); 
+	sic110a_i2c_write_byte(0x12, 0x11); 
 
 	sic110a_i2c_write_byte(0x40, 0x80); 
 	sic110a_i2c_write_byte(0x41, 0x96); 
@@ -253,11 +254,11 @@ static boolean initialize_sic110a_registers(void)
 	sic110a_i2c_write_byte(0x12, 0x9D);  // YCbCr 
 
 	//Shading
-	sic110a_i2c_write_byte(0x27, 0x11); 
-	sic110a_i2c_write_byte(0x28, 0x11); 
-	sic110a_i2c_write_byte(0x29, 0x55); 
-	sic110a_i2c_write_byte(0x2A, 0x43); 
-	sic110a_i2c_write_byte(0x2B, 0x21); 
+	sic110a_i2c_write_byte(0x27, 0xDD); //11
+	sic110a_i2c_write_byte(0x28, 0xDD); //11
+	sic110a_i2c_write_byte(0x29, 0xDD); //55
+	sic110a_i2c_write_byte(0x2A, 0x44); //43
+	sic110a_i2c_write_byte(0x2B, 0x11); //21
 	sic110a_i2c_write_byte(0x2C, 0x00); //R left # right
 	sic110a_i2c_write_byte(0x2D, 0x00); //R top # bottom 
 	sic110a_i2c_write_byte(0x2E, 0x00); //G left # right 
@@ -364,7 +365,7 @@ static boolean initialize_sic110a_registers(void)
 	sic110a_i2c_write_byte(0x85, 0x10); 
 	sic110a_i2c_write_byte(0x86, 0x12); 
 	sic110a_i2c_write_byte(0x87, 0x12); 
-	sic110a_i2c_write_byte(0x88, 0x00); 
+	sic110a_i2c_write_byte(0x88, 0x08); //0X00
 
 	sic110a_i2c_write_byte(0x8C, 0xFF); 
 	sic110a_i2c_write_byte(0x8D, 0x00); 
@@ -587,7 +588,8 @@ SIDE EFFECTS
 
 static boolean camsensor_sic110a_snapshot_config( camsensor_static_params_type  *camsensor_params)
 {
-	uint8 iTemp;
+	uint16  exposure_time;
+    uint8  reg_val, iTemp;
     /* Sensor output data format */
 	camsensor_params->format = CAMIF_YCbCr_Cr_Y_Cb_Y;
 
@@ -604,16 +606,32 @@ static boolean camsensor_sic110a_snapshot_config( camsensor_static_params_type  
 	camsensor_params->camif_window_height_config.firstLine = 0;
 	camsensor_params->camif_window_height_config.lastLine = camsensor_params->camsensor_height - 1;
 
-	sic110a_i2c_write_byte(0x00, 0x01); // bank 1
-	sic110a_i2c_read_byte(0x34,&iTemp);
-	sic110a_i2c_write_byte(0x35, iTemp/2); // 1/2 divide
-	sic110a_i2c_write_byte(0x36, 0x20); 		// 1/2 = x/64, x=32
+    sic110a_i2c_write_byte(0x00, 0x01);
+    sic110a_i2c_write_byte(0x10, 0x00);
 
+	sic110a_i2c_write_byte(0x00, 0x01); // bank 1
+    sic110a_i2c_read_byte(0x31, &reg_val);
+    exposure_time = reg_val & 0x00ff;
+    sic110a_i2c_read_byte(0x30, &reg_val);
+    exposure_time= (exposure_time | ((reg_val & 0x00ff) << 8));
+
+    exposure_time = exposure_time >> 1;
+
+    if(exposure_time <1)
+    {
+     exposure_time=1;
+    }
+
+    reg_val = exposure_time & 0x00ff;
+    sic110a_i2c_write_byte(0x31, reg_val);
+    reg_val = ((exposure_time & 0xff00) >> 8);
+    sic110a_i2c_write_byte(0x30, reg_val);
+    
 	sic110a_i2c_write_byte(0x00, 0x00); // bank 0
-	sic110a_i2c_read_byte(0x34,&iTemp);
+	sic110a_i2c_read_byte(0x04,&iTemp);
 	iTemp = iTemp & 0xE3;
 	sic110a_i2c_write_byte(0x04, iTemp | 0x14);  // set CLK divider = 1/2 & Still mode change
-			
+	
 	camsensor_current_resolution = camsensor_snapshot_resolution;
 	return TRUE;
 }
@@ -731,6 +749,9 @@ None
 ===========================================================================*/
 static void camsensor_sic110a_power_down(void)
 {
+    CAMERA_CONFIG_GPIO(CAMSENSOR_SIC110A_RESET_PIN);
+    camera_timed_wait(50);
+    gpio_out(CAMSENSOR_SIC110A_RESET_PIN,0);
     sic110a_i2c_write_byte(0x00, 0x00);
     sic110a_i2c_write_byte(0x03, 0x02); //sensor sleep mode
     MSG_FATAL("camsensor_sic110a_power_down!",0,0,0);
