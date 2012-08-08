@@ -742,21 +742,27 @@ static void BlackJack_FreeAppData(BlackJackApp *pMe)
       IIMAGE_Release(pMe->m_pCardImages);
       pMe->m_pCardImages = NULL;
    }
-
-   if (pMe->m_pDuringHandMenu) {
-      IMENUCTL_Release(pMe->m_pDuringHandMenu);
+   
+   if(pMe->m_pCurrentMenu == pMe->m_pDuringHandMenu) {
+      RELEASEIF(pMe->m_pCurrentMenu);
       pMe->m_pDuringHandMenu = NULL;
    }
-
-   if (pMe->m_pTempMenu) {
-      IMENUCTL_Release(pMe->m_pTempMenu);
+   
+   if (pMe->m_pCurrentMenu == pMe->m_pTempMenu) {
+      RELEASEIF(pMe->m_pCurrentMenu);
       pMe->m_pTempMenu = NULL;
    }
+   
    if (pMe->m_pCurrentMenu) {
       IMENUCTL_Release(pMe->m_pCurrentMenu);
       pMe->m_pCurrentMenu = NULL;
    }
-
+   
+   if (pMe->m_pDuringHandMenu) {
+      IMENUCTL_Release(pMe->m_pDuringHandMenu);
+      pMe->m_pDuringHandMenu = NULL;
+   }
+   
    if (pMe->m_pIStatic) {
       ISTATIC_Release(pMe->m_pIStatic);
       pMe->m_pIStatic = NULL;
