@@ -71,7 +71,9 @@ when       who     what, where, why
                             
 /* 5100 has turbo coding */
 #ifdef T_QSC1110
+#ifdef FEATURE_CLKREGIM_2X_MODE
 #define MSMHW_TURBO_CODING
+#endif
 #endif
 /* QDSP2 needs the interrupt cleared before the ISR is invoked */
 #define MSMHW_ADSP_NEEDS_INT_CLEARED_B4_ISR
