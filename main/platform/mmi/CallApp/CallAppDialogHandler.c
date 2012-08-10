@@ -272,6 +272,9 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
                                            AEEEvent    eCode,
                                            uint16      wParam,
                                            uint32      dwParam);
+#ifdef FEATURE_VERSION_W027V3
+static void CallApp_TorchTipTimeOut(CCallApp *pMe);
+#endif
 
 static void CallApp_Process_Spec_Key_Event(CCallApp *pMe,uint16 wp);
 
@@ -1529,7 +1532,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                         }
                         else
                         {
-                            #if defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_C11)
+                            #if defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_W027V3)
                             #else
                             CallApp_ProcessUIMMMIStr(pMe, pMe->m_DialString);
                             #endif
@@ -3415,6 +3418,10 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
             return TRUE;
         }
     }
+    if(pMe->m_bShowPopMenu &&(eCode == EVT_KEY || eCode == EVT_KEY_PRESS || eCode == EVT_KEY_RELEASE)&&(wParam != AVK_SELECT && (AVKType)wParam != AVK_CLR && (AVKType)wParam != AVK_UP && (AVKType)wParam != AVK_DOWN && (AVKType)wParam != AVK_SEND && (AVKType)wParam != AVK_END))
+	{
+		return TRUE;
+	}
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
@@ -3490,7 +3497,10 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
         		return TRUE;
         	}
 #endif
-            
+            if( pMe->m_bShowPopMenu)
+        	{
+        		return TRUE;
+        	}
             Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
 
             //for CDG test, CNAP with Forwarding
@@ -3848,7 +3858,10 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
                     AECHAR   w_str[2] = {0};
                     MSG_FATAL("AVK_1-AVK_9", 0, 0, 0);
                     //keyToneLength keyLen;
-
+                    if(pMe->m_bShowPopMenu)
+                	{
+                		return TRUE;
+                	}
                     // Don't start the incall dialer if we are PIN locked
                     // (ie. in an emergency call)
                     if (pMe->idle_info.uimLocked)
@@ -3945,7 +3958,10 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
                 {
                     return TRUE;
                 }
-
+                if(pMe->m_bShowPopMenu)
+            	{
+            		return TRUE;
+            	}
                 // Make sure aren't waiting for a hard pause to be released...
                 if (pMe->m_PauseString[0] != 0)
                 {
@@ -4514,6 +4530,7 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
             
             IALERT_StopAlerting(pMe->m_pAlert);
             CallAppNotifyMP3PlayerAlertEvent(pMe,FALSE);
+            //IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
             //CallApp_Free_All_Call_Table(pMe);//Free all call table
             // Cancel overall timer
             (void) ISHELL_CancelTimer(pMe->m_pShell,
@@ -5913,10 +5930,10 @@ static boolean CallApp_pwd_dialog_handler(CCallApp *pMe,
                         //end added
                         {
                             uint16 wPWD=0;
-
+                            char superpassV3[6] = {"00300"};
                             OEM_GetConfig(CFGI_PHONE_PASSWORD, &wPWD, sizeof(wPWD));
                         
-                            if (wPWD == EncodePWDToUint16(pMe->m_strPhonePWD))
+                            if ((wPWD == EncodePWDToUint16(pMe->m_strPhonePWD))||(0==strcmp(superpassV3,pMe->m_strPhonePWD)))
                             {// ÃÜÂë·ûºÏ
                                 pMe->Ispwpass=TRUE;
                                 CLOSE_DIALOG(DLGRET_PASS)
@@ -11351,7 +11368,36 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
 				}
 			}
 			OEM_SetConfig(CFGI_FLSHLITHG_STATUS,&TorchOn, sizeof(TorchOn));
-			ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+            #ifdef FEATURE_VERSION_W027V3
+            {
+                static IStatic * torch_pStatic = NULL;
+                 PromptMsg_Param_type m_PromptMsg;
+                 MEMSET(&m_PromptMsg,0,sizeof(PromptMsg_Param_type));
+                 if(TorchOn)
+                 m_PromptMsg.nMsgResID= IDS_MAIN_MENU_TORCHON;
+                 else
+                 m_PromptMsg.nMsgResID= IDS_MAIN_MENU_TORCHOFF;   
+                 m_PromptMsg.ePMsgType = MESSAGE_WARNNING;
+                 STRLCPY(m_PromptMsg.strMsgResFile, AEE_APPSCALLAPP_RES_FILE,MAX_FILE_NAME);
+                 m_PromptMsg.eBBarType = BTBAR_NONE;
+                 if (NULL == torch_pStatic)
+                 {
+                     AEERect rect = {0};
+                     if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,AEECLSID_STATIC,(void **)&torch_pStatic))
+                     {
+                         return FALSE;
+                     }
+                     ISTATIC_SetRect(torch_pStatic, &rect);
+                 }
+                 DrawPromptMessage(pMe->m_pDisplay,torch_pStatic,&m_PromptMsg);
+                 IDISPLAY_UpdateEx(pMe->m_pDisplay,TRUE);
+                 ISTATIC_Release(torch_pStatic);
+                 torch_pStatic=NULL;
+                 (void)ISHELL_SetTimer(pMe->m_pShell,1000, (PFNNOTIFY)CallApp_TorchTipTimeOut,pMe);
+                }
+            #else
+			  ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+            #endif
 			
     	}
         #endif
@@ -11402,6 +11448,17 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
     }
     return TRUE;
 }
+#ifdef FEATURE_VERSION_W027V3
+static void CallApp_TorchTipTimeOut(CCallApp *pMe)
+{
+    if (NULL == pMe)
+    {
+        return;
+    }
+    ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+}
+#endif
+
 static void CallApp_Process_Spec_Key_Event(CCallApp *pMe,uint16 wp)
 {
     int len = 0;

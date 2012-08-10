@@ -196,6 +196,12 @@
 	<STRING Id="1117" Name="IDS_INVALID">
 		<Text>كلمة سر خطأ</Text>
 	</STRING>
+	<String Id="1120" Name="IDS_MAIN_MENU_TORCHON">
+		<Text>Torch On</Text>
+	</String>
+	<String Id="1121" Name="IDS_MAIN_MENU_TORCHOFF">
+		<Text>Torch Off</Text>
+	</String>
  </Strings>
  <Dialogs>
  	<DIALOG Id="6001" Name="IDD_NUMEDIT" Focus="0">

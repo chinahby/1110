@@ -2788,7 +2788,7 @@ static void CallApp_ProcessCallStateDATA(CCallApp                 *pMe,
                     }
                 }
                 break;
-#if 0//def FEATURE_OEMOMH
+#ifdef FEATURE_OEMOMH
 #ifdef FEATURE_ICM
            case AEECM_EVENT_CALL_ORIG:
 #else
@@ -4032,6 +4032,7 @@ static void CallApp_ProcessCallStateVoice(CCallApp *pMe,
         case AEECM_EVENT_CALL_LINE_CTRL: /* Originated was accepted */
             CALL_ERR("%d AEECM_EVENT_CALL_LINE_CTRL=+=",call_table->number.pi,0,0);
             CallApp_ProcessCallStateVoiceAccept(pMe, call_table, newState);
+      
             break;
 #endif
 #ifdef FEATURE_ICM
