@@ -59,7 +59,7 @@
 		<File>..\..\Appscommon\images\128x160\common\CameraApp\176_220.PNG</File>
 	</Object>
 	<Object Id="5020" Name="IDI_SIZE_240_320">
-		<File>..\..\Appscommon\images\128x160\common\CameraApp\320_240.PNG</File>
+		<File>..\..\Appscommon\images\128x160\common\CameraApp\240_320.PNG</File>
 	</Object>
 	<Object Id="5021" Name="IDI_SIZE_480_640">
 		<File>..\..\Appscommon\images\128x160\common\CameraApp\640_480.PNG</File>
