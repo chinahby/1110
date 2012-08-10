@@ -119,272 +119,293 @@ LOCAL boolean camsensor_sp0a18_sensor_init(void)
 {
 	MSG_FATAL("-----camsensor_SP0A18_sensor_init-----enter",0,0,0);
 
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);  
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x1C , 0x00);  
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x32 , 0x00); 
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x01);  
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x28 , 0xac);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x29 , 0x94);  
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00); 
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xe7 , 0x03); 
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xe7 , 0x00); 
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x0f , 0x3f);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x10 , 0x3a);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x13 , 0x3f);  //5f                                    
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x15 , 0x30); // 4f                                    
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x44 , 0x0e);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x22 , 0x10);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x26 , 0x02);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x27 , 0x68); //e8                                    
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x28 , 0x12); //b                                    
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x30 , 0x00);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x31 , 0x30);                                      
-	                                  
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x34 , 0x00);         
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);  
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x1C , 0x00);  
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x1B , 0x2f); 
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x32 , 0x00); 
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x01);  
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x28 , 0xc4);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x29 , 0x9e);  
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00); 
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xe7 , 0x03); 
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xe7 , 0x00); 
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x0f , 0x3f);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x10 , 0x0f);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x13 , 0x3f);  //5f                                    
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x15 , 0x0a); // 4f 
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x16 , 0x00); 
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x1a , 0x09);                                   
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x44 , 0x0f);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x22 , 0x13);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x26 , 0x02);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x27 , 0x68); //e8                                    
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x28 , 0x12); //b                                    
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x30 , 0x00);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x31 , 0x10);                                                            
+                                  
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x34 , 0x00);         
 
-	//special
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x01);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x00 , 0x01);  
+        //special
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x01);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x00 , 0x01);  
 
-	//pregain
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x01);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xc6 , 0x06);  
-	                                                
-	//Del sunspot                                       
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xcd , 0x24);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xd1 , 0x03);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xd5 , 0xff);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfc , 0x03);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfb , 0x0f); //27                                     
-	                                                   
-	//Blacklevel                                        
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x65 , 0x00);//blue_suboffset                       
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x66 , 0x00);//red_suboffset                        
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x67 , 0x00);//gr_suboffset                         
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x68 , 0x00);//gb_suboffset                         
-	                                                   
-	//AWB                                               
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x01);                                                                          
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x03 , 0x7d);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x04 , 0x88);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x05 , 0x07);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x11 , 0x11);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x12 , 0x11); 
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x17 , 0x27);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x18 , 0x45);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x1a , 0x9e);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x1b , 0x9e);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x2a , 0xE0);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x2b , 0x10);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x2c , 0x9f);//90                                   
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x6f , 0x05);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x8b , 0x2f);                                      
-	                                                   
-	//smooth                                            
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x4f , 0x54);//raw_gf_fac_outdoor raw_gf_fac_nr 55  
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x50 , 0x22);//draw_gf_fac_dummy raw_gf_fac_low     
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x57 , 0x06);//raw_dif_thr_outdoor                  
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x58 , 0x0f);//raw_dif_thr_normal                   
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x56 , 0x10);//dummy                                
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x59 , 0x10);//low                                  
-	                                                   
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x5a , 0x70);//raw_rb_fac_outdoor,raw_rb_fac_nr     
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x5b , 0x00);//raw_rb_fac_dummy,raw_rb_fac_low      
-	                                                   
-	//sharpen                                           
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x01); 
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xe5 , 0x20);              
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xe6 , 0x10);              
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xe7 , 0x20);
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xe8 , 0x60);//sharp_fac_pos_outdoor                
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xec , 0x60);//sharp_fac_neg_outdoor                
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xe9 , 0x40);//sharp_fac_pos_nr                     
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xed , 0x40);//sharp_fac_neg_nr                     
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xea , 0x40);//sharp_fac_pos_dummy                  
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xef , 0x40);//sharp_fac_neg_dummy                  
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xeb , 0x40);//sharp_fac_pos_low                    
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xf0 , 0x40);//sharp_fac_neg_low                    
-	                                                   
-	//rpc                                               
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);                 
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xe0 , 0x32);//rpc_1base_max  
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xe1 , 0x26);//rpc_2base_max  
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xe2 , 0x22);//rpc_3base_max  
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xe3 , 0x1e);//rpc_4base_max  
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xe4 , 0x1e);//rpc_5base_max  
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xe5 , 0x1d);//rpc_6base_max  
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xe6 , 0x1d);//rpc_7base_max  
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xe8 , 0x1b);//rpc_8base_max  
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xe9 , 0x1b);//rpc_9base_max  
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xea , 0x1b);//rpc_10base_max 
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xeb , 0x1a);//rpc_11base_max 
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xf5 , 0x1a);//rpc_12base_max 
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xf6 , 0x1a);//rpc_13base_max                      
-	                                                   
-	//ae min gain                                       
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x01);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x94 , 0x70);//rpc_max_indr                         
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x95 , 0x1a);//rpc_min_indr                         
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x9c , 0x70);//rpc_max_outdr                        
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x9d , 0x1a);//rpc_min_outdr                        
-	                                                   
-	//ae setting                                        
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x05 , 0x00);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x06 , 0x00);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x07 , 0x00);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x08 , 0x00);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x09 , 0x01);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x0A , 0x76);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xf0 , 0x62);//ABF_exp_base_8lsb                    
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xf1 , 0x00);//exp_min_base_msb                     
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x01);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x90 , 0x98);//exp_max_indr[7:0]                    
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x91 , 0x04);//exp_max_indr[12:8]                   
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x92 , 0x62);//exp_min_indr[7:0]                    
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x93 , 0x00);//exp_min_indr[12:8]                   
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x98 , 0x62);//exp_max_outdr[7:0]                   
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x99 , 0x00);//exp_max_outdr[12:8]                  
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x9a , 0x01);//exp_min_outdr[7:0]                   
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x9b , 0x00);//exp_min_outdr[12:8]                  
-	                                                   
-	//Status                                            
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x01);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xc4 , 0x70);//mean_nr_dummy                        
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xc5 , 0x74);//mean_dummy_nr                        
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xca , 0x30);//mean_heq_low                         
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xcb , 0x45);//mean_heq_dummy                       
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xcc , 0x70);//rpc_heq_low                          
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xcd , 0x70);//rpc_heq_dummy                        
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xce , 0x98);//exp_heq_dummy_8lsm                   
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xcf , 0x04);//exp_heq_dummy_5hsm                   
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xd0 , 0x98);//exp_heq_low_8lsm                     
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xd1 , 0x04);//exp_heq_low_5hsm                     
-	                                                   
-	//ae target                                         
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xed , 0x80);//90                                   
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xf7 , 0x7c);//8c                                   
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xf8 , 0x70);//84                                   
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xec , 0x6c);//80                                   
-	                                                   
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xef , 0x74);//99                                   
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xf9 , 0x70);//90                                   
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfa , 0x68);//80                                   
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xee , 0x64);//78                                   
-	                                                   
-	//gamma                                             
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x8b , 0x0 );
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x8c , 0x9 );
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x8d , 0x11);
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x8e , 0x20);
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x8f , 0x40);
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x90 , 0x59);
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x91 , 0x72);
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x92 , 0x85);
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x93 , 0x98);
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x94 , 0xa9);
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x95 , 0xba);
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x96 , 0xc8);
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x97 , 0xd5);
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x98 , 0xe1);
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x99 , 0xec);
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x9a , 0xf4);
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x9b , 0xfa);
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x01);
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x8d , 0xfe);
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x8e , 0xff);
-	                                                                                     
-	//Lens shading                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xa0 , 0x10);//lsc_gr_gain                          
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xa1 , 0x10);//lsc_gb_gain                          
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xa2 , 0x14);//lsc_r_gain                           
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xa3 , 0x10);//lsc_b_gain                           
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xa4 , 0x14);//lsc_gain_max                         
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xa5 , 0x80);//col_center                           
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xa6 , 0x80);//row_center                           
-	                                                   
-	//uv en                                             
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xb0 , 0x00);//uv_dif_gain_outdoor,uv_dif_gain_nr   
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xb1 , 0x33);//uv_dif_gain_dummy,uv_dif_gain_low    
-	                                                   
-	//lowlight lum                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xb2 , 0x20);//lum_limit                            
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xb3 , 0x1f);//lum_set                              
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xb4 , 0x20);//black_vt                             
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xb5 , 0x45);//white_vt                             
-	                                                   
-	//auto sat                                          
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xbf , 0x01);//autosa_en                            
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xc0 , 0xff);//y_p_th                               
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xc1 , 0xff);//y_mean_th                            
-	                                                   
-	//saturation                                        
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xd8 , 0x80);//sat_uv_s1                            
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xd9 , 0x80);//sat_uv_s2                            
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xda , 0x80);//sat_uv_s3                            
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xdb , 0x80);//sat_uv_s4                            
-	                                                   
-	//heq                                               
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xdc , 0x10);//heq_offset                           
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xdd , 0x80);//ku                                   
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xde , 0x90);//kl                                   
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xdf , 0x70);//heq_mean                             
-	                                                   
-	//CCM                                               
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x01);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xa0 , 0x80);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xa1 , 0x0 );                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xa2 , 0x0 );                                     
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xa3 , 0xf3);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xa4 , 0x8e);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xa5 , 0x0 );                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xa6 , 0x0 );                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xa7 , 0xe6);//55                                   
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xa8 , 0x9a);//                                  
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xa9 , 0x0 );                                     
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xaa , 0x3 );                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xab , 0xc );//f                                   
-	                                                   
-	//LSC                                               
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x33 , 0xcf);                                      
-	                                                   
-	//skin                                              
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x01);                                      
-	                                                   
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x8b , 0x2f);//bit7,0 en                            
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x01 , 0xf0);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x02 , 0x04);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x03 , 0x7e);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x04 , 0x88);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x05 , 0x07);                                      
-	                                                   
-	//resize_en                                         
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x01);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x0e , 0x00);                                      
-	                                                   
-	                                                   
-	//outformat                                         
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x35 , 0x00);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x5f , 0x01);                                      
-	                                                   
-	//En AE                                             
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x32 , 0x0d);                                      
-	camsensor_SP0A18_ycbcr_i2c_write_byte(0x34 , 0x06);                                      
-          
+        //pregain
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x01);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xc6 , 0x18);//a~f  
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xc7 , 0x12);//a~f   
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xc8 , 0x12);//a~f   
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xc9 , 0x12);//a~f                                            
+        //Del sunspot                                       
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xcd , 0x24);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xd1 , 0x03);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xd5 , 0xff);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xfc , 0x03);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xfb , 0x0f); //27                                     
+                                                   
+        //Blacklevel                                        
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x65 , 0x00);//blue_suboffset                       
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x66 , 0x00);//red_suboffset                        
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x67 , 0x00);//gr_suboffset                         
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x68 , 0x00);//gb_suboffset                         
+                                                   
+        //AWB                                               
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x01);                                                                          
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x10 , 0x0d);                                                                                                            
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x11 , 0x0d);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x12 , 0x0d);  
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x17 , 0x27);                                    
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x18 , 0x45);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x1a , 0xac);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x1b , 0x9e);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x2a , 0xE0);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x2b , 0x10);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x2c , 0x9f);//90    
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x2d , 0x99);
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x2e , 0x99);
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x6f , 0x05);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x8b , 0x2f); 
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x20 , 0xd0); 
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x21 , 0x78); 
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x22 , 0xe0); 
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x23 , 0x80); 
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x16 , 0x0d);
+        //smooth   
+#if 0//预览轮廓清晰
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x4f , 0x54);//raw_gf_fac_outdoor raw_gf_fac_nr 55  
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x50 , 0x22);//draw_gf_fac_dummy raw_gf_fac_low     
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x57 , 0x06);//raw_dif_thr_outdoor                  
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x58 , 0x0f);//raw_dif_thr_normal                   
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x56 , 0x10);//dummy                                
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x59 , 0x10);//low                                  
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x5a , 0x70);//raw_rb_fac_outdoor,raw_rb_fac_nr     
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x5b , 0x00);//raw_rb_fac_dummy,raw_rb_fac_low  
+#else//预览噪点相对较少
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x4f , 0x54);//raw_gf_fac_outdoor raw_gf_fac_nr 55  
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x50 , 0x11);//draw_gf_fac_dummy raw_gf_fac_low     
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x57 , 0x06);//raw_dif_thr_outdoor                  
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x58 , 0x16);//raw_dif_thr_normal                   
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x56 , 0x18);//dummy                                
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x59 , 0x18);//low                                                                                    
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x5a , 0x70);//raw_rb_fac_outdoor,raw_rb_fac_nr     
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x5b , 0x00);//raw_rb_fac_dummy,raw_rb_fac_low      
+#endif
+        //sharpen                                           
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x01); 
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xe5 , 0x20);              
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xe6 , 0x10);              
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xe7 , 0x20);
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xe8 , 0x38);//sharp_fac_pos_outdoor                
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xec , 0x38);//sharp_fac_neg_outdoor                
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xe9 , 0x30);//sharp_fac_pos_nr                     
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xed , 0x30);//sharp_fac_neg_nr                     
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xea , 0x30);//sharp_fac_pos_dummy                  
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xef , 0x08);//sharp_fac_neg_dummy  30                
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xeb , 0x10);//sharp_fac_pos_low                    
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xf0 , 0x20);//sharp_fac_neg_low                                                                  
+                                                   
+        //rpc                                               
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);                 
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xe0 , 0x32);//rpc_1base_max  
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xe1 , 0x26);//rpc_2base_max  
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xe2 , 0x22);//rpc_3base_max  
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xe3 , 0x1e);//rpc_4base_max  
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xe4 , 0x1e);//rpc_5base_max  
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xe5 , 0x1d);//rpc_6base_max  
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xe6 , 0x1d);//rpc_7base_max  
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xe8 , 0x1b);//rpc_8base_max  
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xe9 , 0x1b);//rpc_9base_max  
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xea , 0x1b);//rpc_10base_max 
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xeb , 0x1a);//rpc_11base_max 
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xf5 , 0x1a);//rpc_12base_max 
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xf6 , 0x1a);//rpc_13base_max                      
+                                                   
+        //ae min gain                                       
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x01);                                                        
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x95 , 0x1a);//rpc_min_indr                                        
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x9d , 0x1a);//rpc_min_outdr   
+        //ae setting       
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x01);       
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x9c , 0x70);//rpc_max_outdr    
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x94 , 0x70);//rpc_max_indr   
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x05 , 0x00);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x06 , 0x00);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x07 , 0x00);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x08 , 0x00);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x09 , 0x01);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x0A , 0x76);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xf0 , 0x62);//ABF_exp_base_8lsb                    
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xf1 , 0x00);//exp_min_base_msb                     
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x01);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x90 , 0x98);//exp_max_indr[7:0]                    
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x91 , 0x04);//exp_max_indr[12:8]                   
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x92 , 0x62);//exp_min_indr[7:0]                    
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x93 , 0x00);//exp_min_indr[12:8]                   
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x98 , 0x62);//exp_max_outdr[7:0]                   
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x99 , 0x00);//exp_max_outdr[12:8]                  
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x9a , 0x01);//exp_min_outdr[7:0]                   
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x9b , 0x00);//exp_min_outdr[12:8]                  
+                                                   
+        //Status                                            
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x01);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xc4 , 0x70);//mean_nr_dummy                        
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xc5 , 0x74);//mean_dummy_nr                        
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xca , 0x30);//mean_heq_low                         
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xcb , 0x45);//mean_heq_dummy                       
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xcc , 0x70);//rpc_heq_low                          
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xcd , 0x70);//rpc_heq_dummy                        
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xce , 0x98);//exp_heq_dummy_8lsm                   
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xcf , 0x04);//exp_heq_dummy_5hsm                   
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xd0 , 0x98);//exp_heq_low_8lsm                     
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xd1 , 0x04);//exp_heq_low_5hsm                     
+                                                   
+        //ae target                                         
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xed , 0x74);//80);//90                                   
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xf7 , 0x70);//7c);//8c                                   
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xf8 , 0x68);//70);//84                                   
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xec , 0x64);//6c);//80                                                                                    
+                                                   
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xef , 0x64);//99                                   
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xf9 , 0x60);//90                                   
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xfa , 0x58);//80                                   
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xee , 0x54);//78                                   
+                                                   
+        //gamma                                             
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x8b , 0x0 );
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x8c , 0xC );  
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x8d , 0x19);  
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x8e , 0x2C);  
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x8f , 0x49);  
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x90 , 0x61);  
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x91 , 0x77);  
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x92 , 0x8A);  
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x93 , 0x9B);  
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x94 , 0xA9);  
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x95 , 0xB5);  
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x96 , 0xC0);  
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x97 , 0xCA);  
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x98 , 0xD4);  
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x99 , 0xDD);  
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x9a , 0xE6);  
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x9b , 0xEF);  
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x01);  
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x8d , 0xF7);  
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x8e , 0xFF);  
+                                                                                     
+        //Lens shading                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xa0 , 0x10);//lsc_gr_gain                          
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xa1 , 0x10);//lsc_gb_gain                          
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xa2 , 0x14);//lsc_r_gain                           
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xa3 , 0x10);//lsc_b_gain                           
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xa4 , 0x14);//lsc_gain_max                         
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xa5 , 0x80);//col_center                           
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xa6 , 0x80);//row_center                           
+                                                   
+        //uv en                                             
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xb0 , 0x00);//uv_dif_gain_outdoor,uv_dif_gain_nr   
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xb1 , 0x33);//uv_dif_gain_dummy,uv_dif_gain_low    
+        //neg
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x01);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xd2 , 0x00);                                                   
+        //lowlight lum                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xb2 , 0x08);//lum_limit                            
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xb3 , 0x1f);//lum_set                              
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xb4 , 0x20);//black_vt                             
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xb5 , 0x45);//white_vt                             
+                                                   
+        //auto sat                                          
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xbf , 0x01);//autosa_en                            
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xc0 , 0xff);//y_p_th                               
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xc1 , 0xff);//y_mean_th                            
+                                                   
+        //saturation                                        
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xd8 , 0x74);//sat_uv_s1                            
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xd9 , 0x74);//sat_uv_s2                            
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xda , 0x74);//sat_uv_s3                            
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xdb , 0x74);//sat_uv_s4                            
+                                                   
+        //heq                                               
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xdc , 0x00);//heq_offset                           
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xdd , 0x70);//ku                                   
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xde , 0xa8);//90 //kl                                 
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xdf , 0x70);//heq_mean                             
+                                                   
+        //CCM                                               
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x01);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xa0 , 0x80);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xa1 , 0x0 );                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xa2 , 0x0 );                                     
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xa3 , 0xf3);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xa4 , 0x8e);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xa5 , 0x0 );                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xa6 , 0x0 );                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xa7 , 0xe6);//55                                   
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xa8 , 0x9a);//                                  
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xa9 , 0x0 );                                     
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xaa , 0x3 );                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xab , 0xc );//f                                   
+                                                   
+        //LSC                                               
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x33 , 0xcf);                                      
+                                                   
+        //skin                                              
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x01);                                      
+                                                   
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x8b , 0x2f);//bit7,0 en                            
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x01 , 0xf0);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x02 , 0x04);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x03 , 0x70);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x04 , 0x99);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x05 , 0x24);                                                                                        
+                                                   
+        //resize_en                                         
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x01);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x0e , 0x00);                                      
+                                                   
+                                                   
+        //outformat                                         
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x35 , 0x00);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x5f , 0x01);                                      
+                                                   
+        //En AE                                             
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x32 , 0x0d);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0x34 , 0x06);                                      
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xf4 , 0x09);        
 	return  TRUE;
 } /* camsensor_ov7690_write_sensor */
 
@@ -1005,8 +1026,8 @@ camera_ret_code_type camsensor_sp0a18_set_wb(int8 wb)
   	{
 		case  CAMERA_WB_AUTO://自动
 			camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd,0x01);
-			camsensor_SP0A18_ycbcr_i2c_write_byte(0x28,0xac);
-			camsensor_SP0A18_ycbcr_i2c_write_byte(0x29,0x94);
+			camsensor_SP0A18_ycbcr_i2c_write_byte(0x28,0xc4);
+			camsensor_SP0A18_ycbcr_i2c_write_byte(0x29,0x9e);
 			camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd,0x00);  // AUTO 3000K~7000K   	  			
 			camsensor_SP0A18_ycbcr_i2c_write_byte(0x32,0x0d); 
 	  		break;
