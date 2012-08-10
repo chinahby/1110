@@ -587,7 +587,9 @@ static uint8 fine_cal_cnt = 0;
 
 ===========================================================================*/
 #if !defined T_QSC1100
+#ifdef FEATURE_CLKREGIM_2X_MODE
 extern void srch4_hw_init(byte,sample_server_rx_chain_type);
+#endif
 #endif
 
 #ifdef FTM_HAS_CGPS
@@ -1046,7 +1048,7 @@ LOCAL void ftm_set_rf_mode(rfcom_device_enum_type device, ftm_mode_id_type mode)
 
   case FTM_PHONE_MODE_CDMA_1800:
     ftm_set_cdma_band( device, RF_BC4_BAND );
-    #if defined(T_MSM7800) || defined(T_QSC1100)
+    #if defined(T_MSM7800) || defined(T_QSC1100) 
       sample_server_set_chain_mode((sample_server_rx_chain_type)rfcom_to_path[device],
                                    SAMPLE_SERVER_CARRIER_0, RTC_1X, CONTINUOUS_SAMPLE_MODE);
     #else 
@@ -2938,7 +2940,7 @@ void ftm_set_secondary_chain
 )
 {
 #if !defined T_QSC1100
-
+#ifdef FEATURE_CLKREGIM_2X_MODE
   #ifdef FTM_HAS_CGPS
 #error code not present
   #endif
@@ -2998,6 +3000,7 @@ void ftm_set_secondary_chain
     }
     break;
   }
+#endif
 #endif /* !defined T_QSC1100 */
 } /* End ftm_set_secondary_chain() */
 
