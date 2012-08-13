@@ -3251,6 +3251,12 @@ static AEETextInputMode CTextCtl_SetInputMode(ITextCtl * po, AEETextInputMode m)
 				pme->m_wResID = IDB_MODE_T9_RAPID_ARABIC;
 				break;
 #endif //FEATURE_T9_RAPID_ARABIC
+#ifdef FEATURE_T9_MT_HINDI
+			case TEXT_MODE_T9_MT_HINDI:	
+				pme->m_wResID = IDB_MODE_T9_MT_HINDI;
+				break;
+#endif //FEATURE_T9_MT_ARABIC
+
 #endif
 #ifdef FEATURE_MYANMAR_INPUT_MOD
 			case TEXT_MODE_MYANMAR:
@@ -5363,14 +5369,14 @@ static void OEM_SetInputMode(CTextCtl * pme)
 #ifdef FEATURE_ZI_MT_HINDI
         case OEM_MODE_ZI_MT_HINDI:
             wMode = TEXT_MODE_ZI_MT_HINDI;
-            pme->m_wResID = IDB_MODE_T9_MT_HINDI;
+            pme->m_wResID = IDB_MODE_ZI_MT_HINDI;
             break;
 #endif //FEATURE_ZI_MT_HINDI
 
 #ifdef FEATURE_ZI_RAPID_HINDI
         case OEM_MODE_ZI_RAPID_HINDI:
             wMode = TEXT_MODE_ZI_RAPID_HINDI;
-            pme->m_wResID = IDB_MODE_T9_RAPID_HINDI;
+            pme->m_wResID = IDB_MODE_ZI_RAPID_HINDI;
             break;
 #endif //FEATURE_ZI_RAPID_HINDI
 

@@ -55,6 +55,7 @@ when       who     what, where, why
 
 #define MAX_SHEFTKEYPAD_NUMBER 40
 #define MAX_ARKEYPAD_NUMBER    8
+#define MAX_HIKEYPAD_NUMBER    10
 #define MAX_MULTITAPS          10
 typedef struct _Mya_character_type Mya_character_type;
 
@@ -282,6 +283,7 @@ const Mya_character_type default_mynamar_multitap_strings[10] =
 typedef struct _SheftKeyItem_Own  SheftKeyItem_Own;
 //typedef struct _UI_character_type UI_character_type ;
 typedef struct _AR_character_type AR_character_type;
+typedef struct _HI_character_type HI_character_type;
 typedef struct _SE_character_type SE_character_type;
 
 struct _SheftKeyItem_Own
@@ -294,6 +296,12 @@ struct _AR_character_type   //add by yangdecai
 {
 	uint16                 wParam;
 	uint16                 wp[10];
+	uint16                 wsize;
+};
+struct _HI_character_type   
+{
+	uint16                 wParam;
+	uint16                 wp[15];
 	uint16                 wsize;
 };
 
@@ -361,6 +369,21 @@ static AR_character_type  VLARCharKeyItem[MAX_ARKEYPAD_NUMBER] =
 	#endif
 };
 
+#endif
+#if defined(FEATURE_LANG_HINDI)
+static HI_character_type VLHICharKeyItem[MAX_HIKEYPAD_NUMBER] = 
+{
+    {AVK_1,  {0x0901, 0x0902, 0x0903, 0x094d, '1'}, 5}, /* key 1 */
+    {AVK_2,  {0x093e, 0x093f, 0x0940, 0x0941, 0x0942, 0x0943, 0x0905, 0x0906, 0x0907, 0x0908, 0x0909, 0x090a, 0x090b, '2'}, 14},      /* key 2 */
+    {AVK_3,  {0x0947, 0x0948, 0x0945, 0x094b, 0x094c, 0x0949, 0x0947, 0x0910, 0x090d, 0x0913, 0x0914, 0x0911, '3'}, 13},     /* key 3 */
+    {AVK_4,  {0x0915, 0x0916, 0x0917, 0x0918, 0x0919, 0x0958, 0x0959, 0x095a, '4'}, 9},      /* key 4 */
+    {AVK_5,  {0x091a, 0x091b, 0x091c, 0x091d, 0x091e, 0x095b, '5'}, 7},  /* key 5 */
+    {AVK_6,  {0x091f, 0x0920, 0x0921, 0x0922, 0x0923, 0x095c, 0x095d, '6'}, 8},       /* key 6 */
+    {AVK_7,  {0x0924, 0x0925, 0x0926, 0x0927, 0x0928, 0x0929, '7'}, 7},    /* key 7 */
+    {AVK_8,  {0x092a, 0x092b, 0x092c, 0x092d, 0x092e, 0x095e, '8'}, 7},     /* key 8 */
+    {AVK_9,  {0x092f, 0x0930, 0x0932, 0x0935, 0x0936, 0x0937, 0x0938, 0x0939, 0x0933, 0x0931, 0x0934, 0x095f, '9'}, 13},        /* key 9 */
+    {AVK_0,  {' ', '0'}, 2}   /* key 0 */    
+};
 #endif
 
 #if defined (FEATURE_VERSION_VG68)&&defined(FEATURE_LANG_THAI)

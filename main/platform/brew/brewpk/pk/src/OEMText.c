@@ -601,7 +601,20 @@ T9KeyMap ThaiArabic2T9Map[] =
 };
 
 #endif
-    
+
+#ifdef FEATURE_LANG_HINDI
+T9KeyMap Hindi2T9Map[] = 
+{
+    {T9KEYAMBIG1,    AVK_1}, {T9KEYAMBIG2,    AVK_2}, {T9KEYAMBIG3,    AVK_3},
+    {T9KEYAMBIG4,    AVK_4}, {T9KEYAMBIG5,    AVK_5}, {T9KEYAMBIG6,    AVK_6}, 
+    {T9KEYAMBIG7,    AVK_7}, {T9KEYAMBIG8,    AVK_8}, {T9KEYAMBIG9,    AVK_9}, 
+    {T9KEYAMBIGA,    AVK_0}, {T9KEYAMBIGB,  AVK_STAR},{T9KEYAMBIGC, AVK_POUND},
+    {T9KEYNONE, AVK_SELECT}, {T9KEYCLEAR,   AVK_CLR}, {T9KEYNEXT,   AVK_DOWN}, 
+    {T9KEYPREV,     AVK_UP}, {T9KEYLEFT,   AVK_LEFT}, {T9KEYRIGHT, AVK_RIGHT},  
+    {T9KEYNONE,   AVK_SEND}, {T9KEYNONE,    AVK_END}, {0,0}
+};
+
+#endif    
 #ifdef FEATURE_T9_CHINESE
 /* Translates Zhuyin keys to T9 key codes */
 T9KeyMap Pinyin2T9Map[] = 
@@ -6056,13 +6069,13 @@ static void T9TextCtl_MultitapRestart(TextCtlContext *pContext)
                         break;    
 #endif //FEATURE_T9_MT_HEBREW
 
-#ifdef FEATURE_T9_MT_HINDI
+/* #ifdef FEATURE_T9_MT_HINDI
                      case TEXT_MODE_T9_MT_HINDI:
                         sT9Status = T9AWSetLanguage ( &pContext->sT9awFieldInfo, 
                                                       T9PIDHindi, 0, 0 );   
                         break;        
 #endif //FEATURE_T9_MT_HINDI
-
+*/
 #ifdef FEATURE_T9_MT_THAI
                      case TEXT_MODE_T9_MT_THAI:
                         sT9Status = T9AWSetLanguage ( &pContext->sT9awFieldInfo, 
@@ -6841,8 +6854,8 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
             MSG_FATAL("pContext->nMultitapCaps=========%d",pContext->nMultitapCaps,0,0);
             sT9Status = T9HandleKey ( &pContext->sT9awFieldInfo.G, t9Key ); 
             MSG_FATAL("pContext->sT9awFieldInfo.G.psTxtBuf=%0x,=%d.....",pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart],pContext->wSelStart,0);
+             MSG_FATAL("pContext->byMode=%d,t9Key=%d",pContext->byMode,t9Key,0);
             #ifdef FEATURE_T9_MT_ARABIC
-            MSG_FATAL("pContext->byMode=%d,t9Key=%d",pContext->byMode,t9Key,0);
             if(pContext->byMode == 4)
             {
             
@@ -6919,8 +6932,50 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
 	            	}
 	            }
             }
-			#ifdef FEATURE_MT_MYANMRA
-			else if(pContext->byMode == 4)
+            #elif defined(FEATURE_LANG_HINDI)
+            //#ifdef FEATURE_LANG_HINDI
+            if(pContext->byMode == 4)
+            {
+                MSG_FATAL("FEATURE_LANG_HINDI----1",0,0,0);
+            	pContext->uModeInfo.mtap.kLast = key; 
+	            if(pContext->uModeInfo.mtap.kLast != AVK_UNDEFINED)
+	            {
+	            	uint32 i,j;
+	            	uint32 AVK_Size = 0;
+                    MSG_FATAL("FEATURE_LANG_HINDI----2",0,0,0);
+	            	for(i = 0;i<MAX_HIKEYPAD_NUMBER;i++)
+	            	{
+                        MSG_FATAL("FEATURE_LANG_HINDI----3",0,0,0);
+	            		if (key == VLHICharKeyItem[i].wParam)
+            			{
+            				AVK_Size = VLHICharKeyItem[i].wsize;
+                            if(pContext->m_curarri !=i)
+                   			{
+                   				pContext->m_curpos = 0;
+                   			}
+                   			pContext->m_curarri = i;
+                            MSG_FATAL("AVK_Size---%d----pContext->m_curpos=%d",AVK_Size,pContext->m_curpos,0);
+            				if(pContext->m_curpos<AVK_Size)
+	            			{
+	            				pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart] = VLHICharKeyItem[i].wp[pContext->m_curpos];
+	            			}
+	            			if(pContext->m_curpos<(AVK_Size-1))
+	            			{
+	            				pContext->m_curpos = pContext->m_curpos+1;
+	            				
+	            			}
+	            			else
+	            			{
+	            				pContext->m_curpos = 0;
+	            			}
+	            			MSG_FATAL("pContext->m_curpos==========%d--pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart]=%0x",pContext->m_curpos,pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart],0);
+            		}
+	            	}
+	            }
+            }
+            //#endif
+			#elif defined(FEATURE_MT_MYANMRA)
+			if(pContext->byMode == 4)
 			{
 				pContext->uModeInfo.mtap.kLast = key; 
 	            if(pContext->uModeInfo.mtap.kLast != AVK_UNDEFINED)
@@ -6950,7 +7005,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
 	            	}
 	            }
 			}
-			#endif 
+			//#endif 
             #endif
             //MSG_FATAL("pContext->sT9awFieldInfo.G.nCursor=%d",pContext->sT9awFieldInfo.G.nCursor,0,0);
             //MSG_FATAL("pContext->sT9awFieldInfo.G.nWordLen=%d",pContext->sT9awFieldInfo.G.nWordLen,0,0);
@@ -7185,9 +7240,9 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
            
             break;  
     }   
-   // MSG_FATAL("T9TextCtl_MultitapKey::12",0,0,0);
+    MSG_FATAL("T9TextCtl_MultitapKey::12",0,0,0);
     pContext->uModeInfo.mtap.kLast = key;   
-
+    MSG_FATAL("T9TextCtl_MultitapKey::sT9Status=%d",sT9Status,0,0);
     //display strings
     if ( T9STATNONE == sT9Status )
     {     
@@ -9132,7 +9187,7 @@ static boolean T9_AW_DisplayText(TextCtlContext *pContext, AVKType key)
            return FALSE;
         }
         pContext->pszContents = pNewContents;
-       // MSG_FATAL("T9_AW_DisplayText........11122key==%d",key,0,0);
+        MSG_FATAL("T9_AW_DisplayText........11122key==%d",key,0,0);
         if((TEXT_MODE_MULTITAP == OEM_TextGetCurrentMode((OEMCONTEXT)pContext) 
 #ifdef FEATURE_T9_CAP_LOWER_ENGLISH
         ||TEXT_MODE_T9_CAP_LOWER_ENGLISH == OEM_TextGetCurrentMode((OEMCONTEXT)pContext)
@@ -9433,11 +9488,12 @@ static boolean T9_AW_DisplayText(TextCtlContext *pContext, AVKType key)
         
         bModified = TRUE;
     }
-      
+    
+   MSG_FATAL("bModified=========1==%d----pContext->pszContents=%0x",bModified,pContext->pszContents,0);  
     if ( bModified ) 
     {         
         // Now re-calc and re-draw
-//        MSG_FATAL("bModified===========%d",bModified,0,0);
+        MSG_FATAL("bModified========2===%d",bModified,0,0);
         TextCtl_TextChanged(pContext);
     }
     return bModified;
@@ -9497,6 +9553,7 @@ static T9KEY T9_BrewKeyToT9AlphabeticKey(TextCtlContext *pContext,AEEEvent eCode
             break;
 		}
 #endif
+
 #ifdef FEATURE_T9_MT_ARABIC
 		case TEXT_MODE_T9_MT_ARABIC:
 		{
@@ -9506,6 +9563,19 @@ static T9KEY T9_BrewKeyToT9AlphabeticKey(TextCtlContext *pContext,AEEEvent eCode
                 if (ThaiArabic2T9Map[i].cKey == cKey)
                 {
                     return ThaiArabic2T9Map[i].mKey;
+                }
+            }            
+            break;
+		}
+#endif
+#ifdef FEATURE_T9_MT_HINDI
+		case TEXT_MODE_T9_MT_HINDI:
+		{
+			for (i = 0; Hindi2T9Map[i].cKey != 0; i++) 
+            {
+                if (Hindi2T9Map[i].cKey == cKey)
+                {
+                    return Hindi2T9Map[i].mKey;
                 }
             }            
             break;
