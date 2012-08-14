@@ -652,6 +652,7 @@ static boolean  HandleMainDialogEvent(CBTApp *pMe,
 				case IDS_BT_ON:
 				{
 					MSG_FATAL("***zzg BTAppDialogHandle EVT_COMMAND IDS_BT_ON***", 0, 0, 0);
+                    pMe->mEnablingType = BTAPP_ENABLING_AG;
 					BTApp_EnableBT(pMe);
 
 					BTApp_BuildPrompt(pMe, BT_APP_MENU_ON);		
@@ -684,6 +685,7 @@ static boolean  HandleMainDialogEvent(CBTApp *pMe,
 					
 					if (bt_status == FALSE)					  
 					{
+                        pMe->mEnablingType = BTAPP_ENABLING_AG;
 						BTApp_EnableBT(pMe);		
 					}
 					CLOSE_DIALOG(DLGRET_DEVICESRH)
@@ -709,6 +711,7 @@ static boolean  HandleMainDialogEvent(CBTApp *pMe,
 
 					if (bt_status == FALSE)					  
 					{
+                        pMe->mEnablingType = BTAPP_ENABLING_AG;
 						BTApp_EnableBT(pMe);
 					}					
 					CLOSE_DIALOG(DLGRET_DEVICE)
@@ -734,6 +737,7 @@ static boolean  HandleMainDialogEvent(CBTApp *pMe,
 
 					if (bt_status == FALSE)					  
 					{
+                        pMe->mEnablingType = BTAPP_ENABLING_AG;
 						BTApp_EnableBT(pMe);
 					}					
 					CLOSE_DIALOG(DLGRET_MYINFO)
@@ -762,6 +766,7 @@ static boolean  HandleMainDialogEvent(CBTApp *pMe,
 
 					if (bt_status == FALSE)					  
 					{
+                        pMe->mEnablingType = BTAPP_ENABLING_AG;
 						BTApp_EnableBT(pMe);
 					}		
 					

@@ -51,16 +51,16 @@ when        who     what, where, why
   /* Bluetooth Value-Added Profiles */
   #define FEATURE_BT_EXTPF
   #define FEATURE_BT_EXTPF_GOEP
-  #define FEATURE_BT_EXTPF_BIP
-  #define FEATURE_BT_EXTPF_BPP
+  //Gemsea Remove #define FEATURE_BT_EXTPF_BIP
+  //Gemsea Remove #define FEATURE_BT_EXTPF_BPP
   #define FEATURE_BT_EXTPF_FTP
   #define FEATURE_BT_EXTPF_OPP
-  #define FEATURE_BT_EXTPF_SML
-  #define FEATURE_BT_EXTPF_CTP
-  #define FEATURE_BT_EXTPF_PBAP
+  //Gemsea Remove #define FEATURE_BT_EXTPF_SML
+  //Gemsea Remove #define FEATURE_BT_EXTPF_CTP
+  //Gemsea Remove #define FEATURE_BT_EXTPF_PBAP
   #define FEATURE_BT_EXTPF_AV
-  #define FEATURE_BT_EXTPF_SAP
-  #define FEATURE_BT_EXTPF_HID_HOST
+  //Gemsea Remove #define FEATURE_BT_EXTPF_SAP
+  //Gemsea Remove #define FEATURE_BT_EXTPF_HID_HOST
  
 
   #ifdef FEATURE_BT_EXTPF_GOEP

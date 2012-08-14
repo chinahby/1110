@@ -284,7 +284,7 @@ static void BTApp_OBEXGetModelEventHandlerCb( CBTApp* pMe, ModelEvent *pEvent )
             }
             if ( bLenHdrPresent == FALSE )
             {
-              MSG_ERROR( "OBEX GET EVT CB - Length Hdr not recieved", 
+              MSG_FATAL( "OBEX GET EVT CB - Length Hdr not recieved", 
                          0, 0, 0 );
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
@@ -296,7 +296,7 @@ static void BTApp_OBEXGetModelEventHandlerCb( CBTApp* pMe, ModelEvent *pEvent )
                                        _OFM_CREATE );
             if ( pFile == NULL )
             {
-              MSG_ERROR( "OBEX GET EVT CB - File Creation Failed", 0, 0, 0 );
+              MSG_FATAL( "OBEX GET EVT CB - File Creation Failed", 0, 0, 0 );
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
 #endif
@@ -346,7 +346,7 @@ static void BTApp_OBEXGetModelEventHandlerCb( CBTApp* pMe, ModelEvent *pEvent )
                   else
                   {
                     pMe->mOBEX.bGetInProgress = FALSE;
-                    MSG_ERROR( "Recieved Data is more than the file size - %x",
+                    MSG_FATAL( "Recieved Data is more than the file size - %x",
                                pMe->mOBEX.bytesRcvd, 0, 0 );
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
@@ -376,7 +376,7 @@ static void BTApp_OBEXGetModelEventHandlerCb( CBTApp* pMe, ModelEvent *pEvent )
                   }
                   else
                   {
-                    MSG_ERROR( "Recieved Data is more than the file size - %x",
+                    MSG_FATAL( "Recieved Data is more than the file size - %x",
                                pMe->mOBEX.bytesRcvd, 0, 0 );
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
@@ -390,7 +390,7 @@ static void BTApp_OBEXGetModelEventHandlerCb( CBTApp* pMe, ModelEvent *pEvent )
             }
             else
             {
-              MSG_ERROR( "OBEX GET EVT CB Could not Seek the Specified File",
+              MSG_FATAL( "OBEX GET EVT CB Could not Seek the Specified File",
                          0, 0, 0 );
               IFILE_Release( pFile );
 #ifdef FEATURE_APP_TEST_AUTOMATION
@@ -401,7 +401,7 @@ static void BTApp_OBEXGetModelEventHandlerCb( CBTApp* pMe, ModelEvent *pEvent )
           }
           else
           {
-            MSG_ERROR( "OBEX GET EVT CB - File Open Error", 0, 0, 0 );
+            MSG_FATAL( "OBEX GET EVT CB - File Open Error", 0, 0, 0 );
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
 #endif
@@ -414,7 +414,7 @@ static void BTApp_OBEXGetModelEventHandlerCb( CBTApp* pMe, ModelEvent *pEvent )
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
 #endif
-          MSG_ERROR( "OBEX GET EVT CB - Get Pkt from Server Failed", 0, 0, 0 );
+          MSG_FATAL( "OBEX GET EVT CB - Get Pkt from Server Failed", 0, 0, 0 );
           BTApp_ShowMessage( pMe, IDS_MSG_FILE_GET_FAILED, wObjName, 3 );
         }
         break;
@@ -564,7 +564,7 @@ static void BTApp_OBEXSvrModelEventHandlerCb( CBTApp* pMe, ModelEvent *pEvent )
       }
       else
       {
-        MSG_ERROR( "OBEX SRV EVT CB - Connection Failed", 0, 0, 0 );
+        MSG_FATAL( "OBEX SRV EVT CB - Connection Failed", 0, 0, 0 );
       }
       BTApp_BuildTopMenu( pMe );
       break;
@@ -576,7 +576,7 @@ static void BTApp_OBEXSvrModelEventHandlerCb( CBTApp* pMe, ModelEvent *pEvent )
 
       if ( nResult != SUCCESS )
       {
-        MSG_ERROR( "OBEX SRV EVT CB - Disconnect response Failed - %x", 
+        MSG_FATAL( "OBEX SRV EVT CB - Disconnect response Failed - %x", 
                                                         nResult, 0, 0 );
       }
 
@@ -627,7 +627,7 @@ static void BTApp_OBEXSvrModelEventHandlerCb( CBTApp* pMe, ModelEvent *pEvent )
                                                AEE_OBEX_STAT_NOT_FOUND );
             if ( nResult != SUCCESS )
             {
-              MSG_ERROR( "OBEX SRV EVT CB - Get response Failed - %x", 
+              MSG_FATAL( "OBEX SRV EVT CB - Get response Failed - %x", 
                          nResult, 0, 0 );
             }
             return;
@@ -642,7 +642,7 @@ static void BTApp_OBEXSvrModelEventHandlerCb( CBTApp* pMe, ModelEvent *pEvent )
                                              AEE_OBEX_STAT_NAME_REQUIRED );
           if ( nResult != SUCCESS )
           {
-            MSG_ERROR( "OBEX SRV EVT CB - Get rsp Failed:%x", nResult, 0, 0 );
+            MSG_FATAL( "OBEX SRV EVT CB - Get rsp Failed:%x", nResult, 0, 0 );
           }
           return;
         }
@@ -651,26 +651,26 @@ static void BTApp_OBEXSvrModelEventHandlerCb( CBTApp* pMe, ModelEvent *pEvent )
                                   &fileInfo );
       if ( nResult != SUCCESS )
       {
-        MSG_ERROR( "OBEX SRV EVT CB - File Get info Failed Returning - %x",
+        MSG_FATAL( "OBEX SRV EVT CB - File Get info Failed Returning - %x",
                    nResult, 0, 0 );
         nResult = IOBEXServer_GetResponse( pMe->mOBEX.poServer, &emptyHeader,
                                            u8HdrCount,
                                            AEE_OBEX_STAT_GET_RESPONSE_ERROR );
         if ( nResult != SUCCESS )
         {
-          MSG_ERROR( "OBEX SRV EVT CB - Get rsp Failed - %x", nResult, 0, 0 );
+          MSG_FATAL( "OBEX SRV EVT CB - Get rsp Failed - %x", nResult, 0, 0 );
         }
         return;
       }
       if ( fileInfo.attrib == _FA_DIR )
       {
-        MSG_ERROR( "OBEX SRV EVT CB - Object is not a File", 0, 0, 0 );
+        MSG_FATAL( "OBEX SRV EVT CB - Object is not a File", 0, 0, 0 );
         nResult = IOBEXServer_GetResponse( pMe->mOBEX.poServer, &emptyHeader,
                                            u8HdrCount,
                                            AEE_OBEX_STAT_GET_RESPONSE_ERROR );
         if ( nResult != SUCCESS )
         {
-          MSG_ERROR( "OBEX SRV EVT CB - File Get info Failed res=%x", nResult,
+          MSG_FATAL( "OBEX SRV EVT CB - File Get info Failed res=%x", nResult,
                      0, 0 );
         }
         return;
@@ -719,7 +719,7 @@ static void BTApp_OBEXSvrModelEventHandlerCb( CBTApp* pMe, ModelEvent *pEvent )
                                              u8HdrCount, cmdStatus );
           if ( nResult != SUCCESS )
           {
-            MSG_ERROR( "OBEX SRV EVT CB - Get Response Failed Returning - %x", 
+            MSG_FATAL( "OBEX SRV EVT CB - Get Response Failed Returning - %x", 
                        nResult, 0, 0 );
           }
           else
@@ -739,14 +739,14 @@ static void BTApp_OBEXSvrModelEventHandlerCb( CBTApp* pMe, ModelEvent *pEvent )
       {
         // Passing an empty header in get response, as the API 
         // cannnot take NULL
-        MSG_ERROR( "OBEX SRV EVT CB - file access error", 0, 0, 0 );
+        MSG_FATAL( "OBEX SRV EVT CB - file access error", 0, 0, 0 );
         pMe->mOBEX.bGetInProgress = FALSE;
         nResult = IOBEXServer_GetResponse( pMe->mOBEX.poServer, 
                                            &emptyHeader, u8HdrCount,
                                            AEE_OBEX_STAT_GET_RESPONSE_ERROR );
         if ( nResult != SUCCESS )
         {
-          MSG_ERROR( "OBEX SRV EVT CB - Get Resp Failed Returning - %x", 
+          MSG_FATAL( "OBEX SRV EVT CB - Get Resp Failed Returning - %x", 
                      nResult, 0, 0 );
         }
       }
@@ -801,13 +801,13 @@ static void BTApp_OBEXSvrModelEventHandlerCb( CBTApp* pMe, ModelEvent *pEvent )
                                           pMe->mOBEX.szName, &fileInfo );
               if ( nResult != SUCCESS )
               {
-                MSG_ERROR( "OBEX SRV EVT CB - File Get info Failed", 0, 0, 0 );
+                MSG_FATAL( "OBEX SRV EVT CB - File Get info Failed", 0, 0, 0 );
                 nResult = IOBEXServer_PutResponse( pMe->mOBEX.poServer, 
                             pHeaders, u8HdrCount, 
                             AEE_OBEX_STAT_PUT_RESPONSE_ERROR );
                 if ( nResult != SUCCESS )
                 {
-                  MSG_ERROR( "OBEX SRV EVT CB - Put Resp failed. %x", 
+                  MSG_FATAL( "OBEX SRV EVT CB - Put Resp failed. %x", 
                              nResult, 0, 0 );
                 }
                 return;
@@ -816,7 +816,7 @@ static void BTApp_OBEXSvrModelEventHandlerCb( CBTApp* pMe, ModelEvent *pEvent )
               {
                 if ( fileInfo.attrib == _FA_DIR )
                 {
-                  MSG_ERROR( "OBEX SRV EVT CB - Object Could not be removed", 
+                  MSG_FATAL( "OBEX SRV EVT CB - Object Could not be removed", 
                              nResult, 0, 0 );
                 }
                 else
@@ -826,13 +826,13 @@ static void BTApp_OBEXSvrModelEventHandlerCb( CBTApp* pMe, ModelEvent *pEvent )
                 }
                 if ( nResult != SUCCESS )
                 {
-                  MSG_ERROR( "OBEX SRV EVT CB - File not removed", 0, 0, 0 );
+                  MSG_FATAL( "OBEX SRV EVT CB - File not removed", 0, 0, 0 );
                   nResult = IOBEXServer_PutResponse( pMe->mOBEX.poServer, 
                               pHeaders, u8HdrCount, 
                               AEE_OBEX_STAT_PUT_RESPONSE_ERROR );
                   if ( nResult != SUCCESS )
                   {
-                    MSG_ERROR( "OBEX SRV EVT CB - Put Resp failed. %x", 
+                    MSG_FATAL( "OBEX SRV EVT CB - Put Resp failed. %x", 
                                 nResult, 0, 0 );
                   }
                   return;
@@ -846,7 +846,7 @@ static void BTApp_OBEXSvrModelEventHandlerCb( CBTApp* pMe, ModelEvent *pEvent )
                               AEE_OBEX_STAT_SUCCESS );
                   if ( nResult != SUCCESS )
                   {
-                    MSG_ERROR( "OBEX SRV EVT CB - Put Resp failed. %x", 
+                    MSG_FATAL( "OBEX SRV EVT CB - Put Resp failed. %x", 
                                nResult, 0, 0 );
                   }
                   return;
@@ -861,7 +861,7 @@ static void BTApp_OBEXSvrModelEventHandlerCb( CBTApp* pMe, ModelEvent *pEvent )
                           AEE_OBEX_STAT_PUT_RESPONSE_ERROR );
               if ( nResult != SUCCESS )
               {
-                MSG_ERROR( "OBEX SRV EVT CB - Put Resp failed. %x", 
+                MSG_FATAL( "OBEX SRV EVT CB - Put Resp failed. %x", 
                            nResult, 0, 0 );
               }
               return;
@@ -869,13 +869,13 @@ static void BTApp_OBEXSvrModelEventHandlerCb( CBTApp* pMe, ModelEvent *pEvent )
           }
           else if ( bLenHdrPresent != TRUE )
           {
-            MSG_ERROR( "OBEX SRV EVT CB - Length Hdr not present", 0, 0, 0 );
+            MSG_FATAL( "OBEX SRV EVT CB - Length Hdr not present", 0, 0, 0 );
             nResult = IOBEXServer_PutResponse( pMe->mOBEX.poServer, 
                         pHeaders, u8HdrCount,
                         AEE_OBEX_STAT_LENGTH_REQUIRED );
             if ( nResult != SUCCESS )
             {
-              MSG_ERROR( "OBEX SRV EVT CB - Put Resp failed. Returning %x", 
+              MSG_FATAL( "OBEX SRV EVT CB - Put Resp failed. Returning %x", 
                          nResult, 0, 0 );
             }
             return;
@@ -887,13 +887,13 @@ static void BTApp_OBEXSvrModelEventHandlerCb( CBTApp* pMe, ModelEvent *pEvent )
                                        pMe->mOBEX.szName );
             if ( nResult != SUCCESS )
             {
-              MSG_ERROR( "OBEX SRV EVT CB - Error in File Remove", 0, 0, 0 );
+              MSG_FATAL( "OBEX SRV EVT CB - Error in File Remove", 0, 0, 0 );
               nResult = IOBEXServer_PutResponse( pMe->mOBEX.poServer, 
                           pHeaders, u8HdrCount,
                           AEE_OBEX_STAT_PUT_RESPONSE_ERROR );
               if ( nResult != SUCCESS )
               {
-                MSG_ERROR( "OBEX SRV EVT CB - Put Resp failed. Returning %x", 
+                MSG_FATAL( "OBEX SRV EVT CB - Put Resp failed. Returning %x", 
                            nResult, 0, 0 );
               }
               return;
@@ -908,13 +908,13 @@ static void BTApp_OBEXSvrModelEventHandlerCb( CBTApp* pMe, ModelEvent *pEvent )
           }
           else
           {
-            MSG_ERROR( "OBEX SRV EVT CB - Error in File creation", 0, 0, 0 );
+            MSG_FATAL( "OBEX SRV EVT CB - Error in File creation", 0, 0, 0 );
             nResult = IOBEXServer_PutResponse( pMe->mOBEX.poServer, 
                         pHeaders, u8HdrCount,
                         AEE_OBEX_STAT_PUT_RESPONSE_ERROR );
             if ( nResult != SUCCESS )
             {
-              MSG_ERROR( "OBEX SRV EVT CB - Put Resp failed. Returning %x", 
+              MSG_FATAL( "OBEX SRV EVT CB - Put Resp failed. Returning %x", 
                          nResult, 0, 0 );
             }
             return;
@@ -922,13 +922,13 @@ static void BTApp_OBEXSvrModelEventHandlerCb( CBTApp* pMe, ModelEvent *pEvent )
         }
         else
         {
-          MSG_ERROR( "OBEX SRV EVT CB - Name hdr not present", 0, 0, 0 );
+          MSG_FATAL( "OBEX SRV EVT CB - Name hdr not present", 0, 0, 0 );
           nResult = IOBEXServer_PutResponse( pMe->mOBEX.poServer, 
                       pHeaders, u8HdrCount,
                       AEE_OBEX_STAT_NAME_REQUIRED );
           if ( nResult != SUCCESS )
           {
-            MSG_ERROR( "OBEX SRV EVT CB - Put Resp failed %x", nResult, 0, 0 );
+            MSG_FATAL( "OBEX SRV EVT CB - Put Resp failed %x", nResult, 0, 0 );
           }
           return;
         }
@@ -955,7 +955,7 @@ static void BTApp_OBEXSvrModelEventHandlerCb( CBTApp* pMe, ModelEvent *pEvent )
                                                  AEE_OBEX_STAT_CONTINUE );
               if ( nResult != SUCCESS )
               {
-                 MSG_ERROR( "OBEX SRV EVT CB - Put Rsp failed. Returning %x",
+                 MSG_FATAL( "OBEX SRV EVT CB - Put Rsp failed. Returning %x",
                             nResult, 0, 0 );
               }
               else
@@ -973,7 +973,7 @@ static void BTApp_OBEXSvrModelEventHandlerCb( CBTApp* pMe, ModelEvent *pEvent )
                                                  AEE_OBEX_STAT_ERROR );
               if ( nResult != SUCCESS )
               {
-                MSG_ERROR( "OBEX SRV EVT CB - Put Rsp failed. %x", 
+                MSG_FATAL( "OBEX SRV EVT CB - Put Rsp failed. %x", 
                            nResult, 0, 0 );
               }
               else
@@ -998,7 +998,7 @@ static void BTApp_OBEXSvrModelEventHandlerCb( CBTApp* pMe, ModelEvent *pEvent )
                                                  AEE_OBEX_STAT_SUCCESS );
               if ( nResult != SUCCESS )
               {
-                MSG_ERROR( "OBEX SRV EVT CB - Put Resp failed. %x", 
+                MSG_FATAL( "OBEX SRV EVT CB - Put Resp failed. %x", 
                            nResult, 0, 0 );
               }
               else
@@ -1015,7 +1015,7 @@ static void BTApp_OBEXSvrModelEventHandlerCb( CBTApp* pMe, ModelEvent *pEvent )
                                                  AEE_OBEX_STAT_ERROR );
               if ( nResult != SUCCESS )
               {
-                MSG_ERROR( "OBEX SRV EVT CB -Put Rsp fail=%x", nResult, 0, 0 );
+                MSG_FATAL( "OBEX SRV EVT CB -Put Rsp fail=%x", nResult, 0, 0 );
               }
               else
               {
@@ -1031,12 +1031,12 @@ static void BTApp_OBEXSvrModelEventHandlerCb( CBTApp* pMe, ModelEvent *pEvent )
       }
       else
       {
-        MSG_ERROR( "OBEX SRV EVT CB - Could not Open File", 0, 0, 0 );
+        MSG_FATAL( "OBEX SRV EVT CB - Could not Open File", 0, 0, 0 );
         nResult = IOBEXServer_PutResponse( pMe->mOBEX.poServer, pHeaders,
                     u8HdrCount, AEE_OBEX_STAT_PUT_RESPONSE_ERROR );
         if ( nResult != SUCCESS )
         {
-          MSG_ERROR( "OBEX SRV EVT CB - Put Resp failed %x", nResult, 0, 0 );
+          MSG_FATAL( "OBEX SRV EVT CB - Put Resp failed %x", nResult, 0, 0 );
         }
       }
       break;
@@ -1056,14 +1056,14 @@ static void BTApp_OBEXSvrModelEventHandlerCb( CBTApp* pMe, ModelEvent *pEvent )
 		  
           if (  STRCMP( szObjectName, BTAPP_ROOT_DIR ) < 0 )
           {
-            MSG_ERROR( "OBXSRVEVTCB - Path cannot be set above the ROOT fldr",
+            MSG_FATAL( "OBXSRVEVTCB - Path cannot be set above the ROOT fldr",
                        0, 0, 0 );
             nResult = IOBEXServer_ConfirmSetPath( pMe->mOBEX.poServer,
                                                   pHeaders, u8HdrCount,
                                                   AEE_OBEX_ERR_FAILED );
             if ( nResult != SUCCESS )
             {
-              MSG_ERROR( "OBEX SRV EVT CB - Cnf Setpath failed. Returning %x",
+              MSG_FATAL( "OBEX SRV EVT CB - Cnf Setpath failed. Returning %x",
                          nResult, 0, 0 );
             }
             return;
@@ -1075,14 +1075,14 @@ static void BTApp_OBEXSvrModelEventHandlerCb( CBTApp* pMe, ModelEvent *pEvent )
         if ( WSTRLEN( setPathReq.folderName ) + STRLEN( DIRECTORY_STR ) + 
              STRLEN( szObjectName ) > AEEBT_MAX_FILE_NAME )
         {
-          MSG_ERROR( "OBEX SRV EVT CB - Objt name size exceeds MAX characters",
+          MSG_FATAL( "OBEX SRV EVT CB - Objt name size exceeds MAX characters",
                      0, 0, 0 );
           nResult = IOBEXServer_ConfirmSetPath( pMe->mOBEX.poServer, pHeaders, 
                                                 u8HdrCount, 
                                                 AEE_OBEX_ERR_FAILED );
           if ( nResult != SUCCESS )
           {
-            MSG_ERROR( "OBEX SRV EVT CB - Cnf Setpath failed. Returning %x", 
+            MSG_FATAL( "OBEX SRV EVT CB - Cnf Setpath failed. Returning %x", 
                        nResult, 0, 0 );
           }
           return;
@@ -1108,13 +1108,13 @@ static void BTApp_OBEXSvrModelEventHandlerCb( CBTApp* pMe, ModelEvent *pEvent )
           nResult = IFILEMGR_MkDir( pMe->mOBEX.pIFileMgr, szObjectName );
           if ( nResult != SUCCESS)
           {
-            MSG_ERROR( "OBEX SRV EVT CB - Folder Creation Failed", 0, 0, 0 );
+            MSG_FATAL( "OBEX SRV EVT CB - Folder Creation Failed", 0, 0, 0 );
             nResult = IOBEXServer_ConfirmSetPath( pMe->mOBEX.poServer,
                                                   pHeaders, u8HdrCount, 
                                                   AEE_OBEX_ERR_FAILED );
             if ( nResult != SUCCESS )
             {
-              MSG_ERROR( "OBEX SRV EVT CB - Cnf Setpath failed. Returning %x",
+              MSG_FATAL( "OBEX SRV EVT CB - Cnf Setpath failed. Returning %x",
                          nResult, 0, 0 );
             }
             return;
@@ -1122,13 +1122,13 @@ static void BTApp_OBEXSvrModelEventHandlerCb( CBTApp* pMe, ModelEvent *pEvent )
         }
         else
         {
-          MSG_ERROR( "OBEX SRV EVT CB - Directory not Found", 0, 0, 0 );
+          MSG_FATAL( "OBEX SRV EVT CB - Directory not Found", 0, 0, 0 );
           nResult = IOBEXServer_ConfirmSetPath( pMe->mOBEX.poServer, pHeaders, 
                                                 u8HdrCount, 
                                                 AEE_OBEX_NO_SUCH_FOLDER );
           if ( nResult != SUCCESS )
           {
-            MSG_ERROR( "Cnf Setpath failed. Returning %x", nResult, 0, 0 );
+            MSG_FATAL( "Cnf Setpath failed. Returning %x", nResult, 0, 0 );
           }
           return;
         }
@@ -1140,7 +1140,7 @@ static void BTApp_OBEXSvrModelEventHandlerCb( CBTApp* pMe, ModelEvent *pEvent )
                                             AEE_OBEX_STAT_SUCCESS );
       if ( nResult != SUCCESS )
       {
-        MSG_ERROR( "Cnf Setpath failed %x", nResult, 0, 0 );
+        MSG_FATAL( "Cnf Setpath failed %x", nResult, 0, 0 );
       }
       break;
     }
@@ -1187,13 +1187,13 @@ boolean BTApp_ProcessOBEXNotifications(
         MSG_LOW( "OBEXNotifications - SVR CON REQ Recieved", 0, 0, 0 );
         if ( pMe->mOBEX.poServer == NULL )
         {
-          MSG_ERROR( "OBEXNotifications - Server Obj is NULL", 0, 0, 0 );
+          MSG_FATAL( "OBEXNotifications - Server Obj is NULL", 0, 0, 0 );
           return bStatus;
         }
         if ( IOBEXServer_Initialize( pMe->mOBEX.poServer, 
                                      pObexData->obexHandle ) != SUCCESS )
         {
-          MSG_ERROR( "OBEXNotifications -OBEX initialize Failed", 0, 0, 0 );
+          MSG_FATAL( "OBEXNotifications -OBEX initialize Failed", 0, 0, 0 );
           IOBEXServer_AcceptConnection( pMe->mOBEX.poServer, FALSE, 
                                         NULL, u8HdrCount, 
                                         AEE_OBEX_STAT_ERROR );
@@ -1205,7 +1205,7 @@ boolean BTApp_ProcessOBEXNotifications(
         if ( IMODEL_AddListener( pMe->mOBEX.poServer->m_pIModel, 
                                  &pMe->mOBEX.sModelListener ) != SUCCESS )
         {
-          MSG_ERROR( "OBEXNotifications -Add Listener Failed", 0, 0, 0 );
+          MSG_FATAL( "OBEXNotifications -Add Listener Failed", 0, 0, 0 );
           IOBEXServer_AcceptConnection( pMe->mOBEX.poServer, FALSE, 
                                         NULL, u8HdrCount, 
                                         AEE_OBEX_STAT_ERROR );
@@ -1243,7 +1243,7 @@ boolean BTApp_ProcessOBEXNotifications(
                                                       AEE_OBEX_STAT_SUCCESS );
               if( nResult != SUCCESS )
               {
-                MSG_ERROR( "OBEXNotifications - Accept Conn Failed", 0, 0, 0 );
+                MSG_FATAL( "OBEXNotifications - Accept Conn Failed", 0, 0, 0 );
               }
               else
               {
@@ -1265,7 +1265,7 @@ boolean BTApp_ProcessOBEXNotifications(
                                                   pMe->mOBEX.bFullAccess );
               if( nResult != SUCCESS )
               {
-                MSG_ERROR( "OBEXNotifications - SVR Auth failed. Returning %x",
+                MSG_FATAL( "OBEXNotifications - SVR Auth failed. Returning %x",
                            nResult, 0, 0 );
               }
               else
@@ -1284,7 +1284,7 @@ boolean BTApp_ProcessOBEXNotifications(
                                                     AEE_OBEX_STAT_SUCCESS );
             if( nResult != SUCCESS )
             {
-              MSG_ERROR( "OBEXNotifications - Accept Conn Failed", 0, 0, 0 );
+              MSG_FATAL( "OBEXNotifications - Accept Conn Failed", 0, 0, 0 );
             }
             else
             {
@@ -1300,7 +1300,7 @@ boolean BTApp_ProcessOBEXNotifications(
         MSG_LOW( "OBEXNotifications - SVR AUTH REQ Recieved", 0, 0, 0 );
         if ( pMe->mOBEX.poServer == NULL )
         {
-          MSG_ERROR( "OBEXNotifications - Server Obj is NULL", 0, 0, 0 );
+          MSG_FATAL( "OBEXNotifications - Server Obj is NULL", 0, 0, 0 );
           return bStatus;
         }
         if( ( pMe->mOBEX.bDoAuthenticate == TRUE ) ||
@@ -1318,7 +1318,7 @@ boolean BTApp_ProcessOBEXNotifications(
                                               pMe->mOBEX.bFullAccess );
           if( nResult != SUCCESS )
           {
-            MSG_ERROR( "OBEXNotifications - Server Authenticate failed - %x",
+            MSG_FATAL( "OBEXNotifications - Server Authenticate failed - %x",
                        nResult, 0, 0 );
           }
           else
@@ -1379,7 +1379,7 @@ static void BTApp_OBEXPutPacketCb( CBTApp* pMe )
                                 &pMe->mOBEX.sModelListener );
   if ( nResult != SUCCESS )
   {
-    MSG_ERROR( "OBXPutPktCb - Error in AddListener", 0, 0, 0 );
+    MSG_FATAL( "OBXPutPktCb - Error in AddListener", 0, 0, 0 );
     BTApp_ShowMessage( pMe, IDS_MSG_FILE_PUT_FAILED, wObjName, 3 );
     return;
   }
@@ -1387,7 +1387,7 @@ static void BTApp_OBEXPutPacketCb( CBTApp* pMe )
                               &fileInfo );
   if ( nResult!= SUCCESS )
   {
-    MSG_ERROR( "OBXPutPktCb - File Get Info Failed", 0, 0, 0 );
+    MSG_FATAL( "OBXPutPktCb - File Get Info Failed", 0, 0, 0 );
     BTApp_ShowMessage( pMe, IDS_MSG_FILE_PUT_FAILED, wObjName, 3 );
     return;
   }
@@ -1436,7 +1436,7 @@ static void BTApp_OBEXPutPacketCb( CBTApp* pMe )
         IFILE_Release(pFile);
         if ( nResult != SUCCESS )
         {
-          MSG_ERROR( "OBXPutPktCb - PUT API Failed; Returning %x",
+          MSG_FATAL( "OBXPutPktCb - PUT API Failed; Returning %x",
                      nResult, 0, 0 );
           BTApp_ShowMessage( pMe, IDS_MSG_FILE_PUT_FAILED, wObjName, 3 );
         }
@@ -1447,19 +1447,19 @@ static void BTApp_OBEXPutPacketCb( CBTApp* pMe )
       }
       else
       {
-        MSG_ERROR( "OBXPutPktCb - Error in File seek", 0, 0, 0 );
+        MSG_FATAL( "OBXPutPktCb - Error in File seek", 0, 0, 0 );
         BTApp_ShowMessage( pMe, IDS_MSG_FILE_PUT_FAILED, wObjName, 3 );
       }
     }
     else
     {
-      MSG_ERROR( "OBXPutPktCb - File Open Failed", 0, 0, 0 );
+      MSG_FATAL( "OBXPutPktCb - File Open Failed", 0, 0, 0 );
       BTApp_ShowMessage( pMe, IDS_MSG_FILE_PUT_FAILED, wObjName, 3 );
     }
   }
   else
   {
-    MSG_ERROR( "OBXPutPktCb - Memory Allcoation Failed", 0, 0, 0 );
+    MSG_FATAL( "OBXPutPktCb - Memory Allcoation Failed", 0, 0, 0 );
     BTApp_ShowMessage( pMe, IDS_MSG_FILE_PUT_FAILED, wObjName, 3 );
   }
   FREEIF( pHeaders );
@@ -1503,7 +1503,7 @@ void BTApp_OBEXPut( CBTApp* pMe )
     }
     else
     {
-      MSG_LOW( "OBXPut - MSG_Error in File Get info", 0, 0, 0 );
+      MSG_LOW( "OBXPut - MSG_FATAL in File Get info", 0, 0, 0 );
     }
   }
   else
@@ -1627,7 +1627,7 @@ static int BTApp_ConnectObexServer( CBTApp* pMe )
                                         pMe->mOBEX.bFullAccess );
     if ( nResult != SUCCESS )
     {
-      MSG_ERROR( "Client Authenticate failed - %x", nResult, 0, 0 );
+      MSG_FATAL( "Client Authenticate failed - %x", nResult, 0, 0 );
       return nResult;
     }
   }
@@ -1635,7 +1635,7 @@ static int BTApp_ConnectObexServer( CBTApp* pMe )
                                  pHeaders, u8HeaderCount );
   if ( nResult != SUCCESS )
   {
-    MSG_ERROR( "Connection Request Failed - %x", nResult, 0, 0 );
+    MSG_FATAL( "Connection Request Failed - %x", nResult, 0, 0 );
   }
   return( nResult );
 }
@@ -1954,7 +1954,7 @@ boolean BTApp_OBEXBuildMenu( CBTApp* pMe, BTAppMenuType menu )
       }
       else
       {
-        MSG_ERROR( "OBEXBuildMenu - failed to create Obex objs", 0, 0, 0 );
+        MSG_FATAL( "OBEXBuildMenu - failed to create Obex objs", 0, 0, 0 );
         BTApp_OBEXCleanup( pMe );
         built = FALSE;
       }
@@ -1988,7 +1988,7 @@ void BTApp_OBEXDoServerDeregister( CBTApp* pMe )
   nResult = IOBEXServer_Deregister( pMe->mOBEX.poServer );
   if ( nResult != SUCCESS )
   {
-    MSG_ERROR( "Deregister Failed returning - %x", nResult, 0, 0 );
+    MSG_FATAL( "Deregister Failed returning - %x", nResult, 0, 0 );
     BTApp_ShowMessage( pMe, IDS_MSG_SVR_DEREG_FAILED, NULL, 3 );
   }
   else
@@ -2072,7 +2072,7 @@ static boolean BTApp_OBEXHandleSelection( CBTApp* pMe, uint16 sel )
                                          (void**)&pMe->mOBEX.poServer );
         if ( nResult != SUCCESS )
         {
-          MSG_ERROR( "OBEXHandleSelection - Cannot create Server obj",
+          MSG_FATAL( "OBEXHandleSelection - Cannot create Server obj",
                      0, 0, 0 );
           BTApp_ShowMessage( pMe, IDS_MSG_SVR_REG_FAILED, NULL, 3 );
           break;
@@ -2080,7 +2080,7 @@ static boolean BTApp_OBEXHandleSelection( CBTApp* pMe, uint16 sel )
       }
       else
       {
-        MSG_ERROR( "OBEXHandleSelection - Server Object already created",
+        MSG_FATAL( "OBEXHandleSelection - Server Object already created",
                     0, 0, 0 );
       }
       BTApp_SetBondable( pMe );
@@ -2318,14 +2318,14 @@ static boolean BTApp_HandleOBEXClientMenu( CBTApp* pMe, uint16 key )
       }
       case AVK_CLR:
       {
-        MSG_ERROR( "HndlOBEXClient - CLR Key hnldr invoked", 0, 0, 0 );
+        MSG_FATAL( "HndlOBEXClient - CLR Key hnldr invoked", 0, 0, 0 );
         if( ( pMe->mOBEX.bPutInProgress == TRUE ) || 
             ( pMe->mOBEX.bGetInProgress == TRUE ) )
         {
            nResult = IOBEXClient_AbortOperation( pMe->mOBEX.poClient );
            if( nResult != SUCCESS )
            {
-             MSG_ERROR( "HndlOBEXClient - Abort Failed", 0, 0, 0 );
+             MSG_FATAL( "HndlOBEXClient - Abort Failed", 0, 0, 0 );
            }
         }
         else if ( pMe->mOBEX.bEndingTest == FALSE)
@@ -2396,7 +2396,7 @@ boolean BTApp_OBEXHandleMenus( CBTApp *pMe, uint16 key, BTAppMenuType menu )
       handled = BTApp_HandleOBEXSettingsMenu( pMe, key );
       break;
     default:
-      MSG_ERROR("OBXHndlMenus - unexpected menu type %x", menu, 0, 0 );
+      MSG_FATAL("OBXHndlMenus - unexpected menu type %x", menu, 0, 0 );
       handled = FALSE;
       break;
   }
@@ -2443,14 +2443,14 @@ void BTApp_OBEXHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 
           if ( nResult != SUCCESS )
           {
-            MSG_ERROR( "OBEXHandleUserEvents - Cannot create Client obj",
+            MSG_FATAL( "OBEXHandleUserEvents - Cannot create Client obj",
                        0, 0, 0 );
             return;
           }
         }
         else
         {
-          MSG_ERROR( "OBEXHandleUserEvents - Client Object already created",
+          MSG_FATAL( "OBEXHandleUserEvents - Client Object already created",
                       0, 0, 0 );
         }
         if ( BTApp_ConnectObexServer( pMe ) != SUCCESS )
@@ -2520,7 +2520,7 @@ void BTApp_OBEXHandleUserEvents( CBTApp* pMe, uint32 dwParam )
       }
       if ( nResult != SUCCESS )
       {
-        MSG_ERROR( "OBEXHandleUserEvents - OBEX_Authenticate Resp failed", 
+        MSG_FATAL( "OBEXHandleUserEvents - OBEX_Authenticate Resp failed", 
                    0, 0, 0 );
       }
       else
@@ -2565,7 +2565,7 @@ void BTApp_EnableOBEX(
   {
     if ( BTApp_OBEXInit( pMe ) == FALSE )
     {
-      MSG_ERROR( "EnableOBEX - failed to create OBEX object", 0, 0, 0 );
+      MSG_FATAL( "EnableOBEX - failed to create OBEX object", 0, 0, 0 );
       BTApp_OBEXCleanup( pMe );
       return;
     }
@@ -2574,7 +2574,7 @@ void BTApp_EnableOBEX(
       if ( ISHELL_CreateInstance( pMe->a.m_pIShell, AEECLSID_OBEXSERVER,
                                        (void**)&pMe->mOBEX.poServer ) != SUCCESS )
       {
-        MSG_ERROR( "EnableOBEX - Cannot create OBEX Server obj",
+        MSG_FATAL( "EnableOBEX - Cannot create OBEX Server obj",
                    0, 0, 0 );
       }
       else
@@ -2588,7 +2588,7 @@ void BTApp_EnableOBEX(
         if ( BTApp_OBEXRegister( pMe ) != SUCCESS )
         {
           BTApp_ClearBondable( pMe );
-          MSG_ERROR( "EnableOBEX - Enabling OBEX failed", 0, 0, 0 );
+          MSG_FATAL( "EnableOBEX - Enabling OBEX failed", 0, 0, 0 );
         }
         else
         {
@@ -2603,7 +2603,7 @@ void BTApp_EnableOBEX(
     }
     else
     {
-      MSG_ERROR( "Enable OBEX - Server Obj already created",
+      MSG_FATAL( "Enable OBEX - Server Obj already created",
                  0, 0, 0 );
     }
   }

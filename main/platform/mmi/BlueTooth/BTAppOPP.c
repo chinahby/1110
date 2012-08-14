@@ -301,7 +301,7 @@ void BTApp_ProcessOPPNotifications(
 		}
 		else
 		{
-			MSG_ERROR("BTAppOPP: GetProgInfo failed!", 0, 0, 0);
+			MSG_FATAL("BTAppOPP: GetProgInfo failed!", 0, 0, 0);
 		}
 	  
       BTAPP_POST_USER_EVENT( OPP, EVT_OPP_PROG_INFO );
@@ -384,7 +384,8 @@ void BTApp_ProcessOPPNotifications(
       break;
     }
     default:
-      MSG_ERROR( "SPP - unexpected ev=%d", evt, 0, 0 );
+      MSG_FATAL( "OPP - unexpected ev=%d", evt, 0, 0 );
+      break;
   }
 }
 
@@ -1052,7 +1053,7 @@ static void BTApp_OPPCreateVCard( CBTApp* pMe )
 
     if ( pIFile == NULL )
     {
-      MSG_ERROR( "CreateVCard - failed to create file", 0, 0, 0 );
+      MSG_FATAL( "CreateVCard - failed to create file", 0, 0, 0 );
     }
     else
     {
@@ -1205,7 +1206,7 @@ void BTApp_OPPPull( CBTApp* pMe )
 	
     if ((STRLEN(szVCardName) + STRLEN(szName)) > AEEBT_MAX_FILE_NAME*2)
     {
-      MSG_ERROR( "File / Folder name exceeds max length", 0, 0, 0 );
+      MSG_FATAL( "File / Folder name exceeds max length", 0, 0, 0 );
       BTApp_ShowMessage( pMe, IDS_MSG_OBJ_PULL_FAILED, pMe->mOPP.wName, 3 );
       return;
     }
@@ -1226,7 +1227,7 @@ void BTApp_OPPPull( CBTApp* pMe )
        ((result = IFILEMGR_Remove( pMe->mOPP.pIFileMgr, 
                                    szVCardName )) != SUCCESS) )
   {
-    MSG_ERROR( "OPP_Pull() failed to remove file r=%x", result, 0, 0 );
+    MSG_FATAL( "OPP_Pull() failed to remove file r=%x", result, 0, 0 );
   }
 
   // convert string to wname
@@ -1234,7 +1235,7 @@ void BTApp_OPPPull( CBTApp* pMe )
 
   if ( (result = IBTEXTOPP_Pull( pMe->mOPP.po, wRemoteVCardName )) != SUCCESS )
   {
-    MSG_ERROR( "OPP_Pull() failed r=%x", result, 0, 0 );
+    MSG_FATAL( "OPP_Pull() failed r=%x", result, 0, 0 );
     BTApp_ShowMessage( pMe, IDS_MSG_OBJ_PULL_FAILED, wRemoteVCardName, 3 );
   }
   else
@@ -1318,7 +1319,7 @@ void BTApp_OPPPush( CBTApp* pMe, AEEBTObjectType objType )
       }
       else
       {
-        MSG_ERROR( "OPP_Push() failed with %x", result, 0, 0 );
+        MSG_FATAL( "OPP_Push() failed with %x", result, 0, 0 );
 		MSG_FATAL( "OPP_Push() failed with %x", result, 0, 0 );
 
 		//Add By zzg 2011_12_29	
@@ -1397,7 +1398,7 @@ void BTApp_OPPPushEx( CBTApp* pMe, char* filepath, AEEBTObjectType objType )
       }
       else
       {     		
-        MSG_ERROR( "BTApp_OPPPExush() failed with %x", result, 0, 0 );
+        MSG_FATAL( "BTApp_OPPPExush() failed with %x", result, 0, 0 );
 		MSG_FATAL( "BTApp_OPPPExush() failed with %x", result, 0, 0 );
 
 		//Add By zzg 2011_12_29	
@@ -1473,7 +1474,7 @@ boolean BTApp_OPPBuildMenu( CBTApp* pMe, BTAppMenuType menu )
 		}
 		else
 		{
-			MSG_ERROR( "OPPBuildMenu - failed to create OPP object", 0, 0, 0 );
+			MSG_FATAL( "OPPBuildMenu - failed to create OPP object", 0, 0, 0 );
 			BTApp_OPPCleanup( pMe );
 			built = FALSE;
 		}
@@ -1496,7 +1497,7 @@ boolean BTApp_OPPBuildMenu( CBTApp* pMe, BTAppMenuType menu )
 			}
 			else
 			{
-				MSG_ERROR("OPPBuildMenu - failed to create OPP object", 0, 0, 0);
+				MSG_FATAL("OPPBuildMenu - failed to create OPP object", 0, 0, 0);
 				BTApp_OPPCleanup(pMe);
 				built = FALSE;
 			}	
@@ -1513,7 +1514,7 @@ boolean BTApp_OPPBuildMenu( CBTApp* pMe, BTAppMenuType menu )
       }
       else
       {
-        MSG_ERROR( "OPPBuildMenu - failed to create OPP object", 0, 0, 0 );
+        MSG_FATAL( "OPPBuildMenu - failed to create OPP object", 0, 0, 0 );
         BTApp_OPPCleanup( pMe );
         built = FALSE;
       }
@@ -1564,7 +1565,7 @@ boolean BTApp_OPPHandleSelection( CBTApp* pMe, uint16 sel )
                                          AEEBT_OPP_FORMAT_ALL, 
                                          szServerNameOPP )) != SUCCESS )
       {
-        MSG_ERROR( "OPP_Register() failed with %x", result, 0, 0 );
+        MSG_FATAL( "OPP_Register() failed with %x", result, 0, 0 );
         BTApp_ClearBondable( pMe ); // no need to be bondable anymore
         BTApp_ShowMessage( pMe, IDS_MSG_SVR_REG_FAILED, NULL, 3 );
       }
@@ -1582,7 +1583,7 @@ boolean BTApp_OPPHandleSelection( CBTApp* pMe, uint16 sel )
     {
       if ( (result = IBTEXTOPP_Deregister( pMe->mOPP.po )) != SUCCESS )
       {
-        MSG_ERROR( "OPP_Deregister() failed with %x", result, 0, 0 );
+        MSG_FATAL( "OPP_Deregister() failed with %x", result, 0, 0 );
         BTApp_ShowMessage( pMe, IDS_MSG_SVR_DEREG_FAILED, NULL, 3 );
       }
       else
@@ -1674,7 +1675,7 @@ boolean BTApp_OPPHandleSendFileSelection( CBTApp* pMe, uint16 sel )
                                          AEEBT_OPP_FORMAT_ALL, 
                                          szServerNameOPP )) != SUCCESS )
       {
-        MSG_ERROR( "OPP_Register() failed with %x", result, 0, 0 );
+        MSG_FATAL( "OPP_Register() failed with %x", result, 0, 0 );
         BTApp_ClearBondable( pMe ); // no need to be bondable anymore
         BTApp_ShowMessage( pMe, IDS_MSG_SVR_REG_FAILED, NULL, 3 );
       }
@@ -1692,7 +1693,7 @@ boolean BTApp_OPPHandleSendFileSelection( CBTApp* pMe, uint16 sel )
     {
       if ( (result = IBTEXTOPP_Deregister( pMe->mOPP.po )) != SUCCESS )
       {
-        MSG_ERROR( "OPP_Deregister() failed with %x", result, 0, 0 );
+        MSG_FATAL( "OPP_Deregister() failed with %x", result, 0, 0 );
         BTApp_ShowMessage( pMe, IDS_MSG_SVR_DEREG_FAILED, NULL, 3 );
       }
       else
@@ -1793,7 +1794,7 @@ boolean BTApp_OPPHandleSettingSelection( CBTApp* pMe, uint16 sel )
                                          szServerNameOPP )) != SUCCESS )
       {
       
-        MSG_ERROR( "OPP_Register() failed with %x", result, 0, 0 );
+        MSG_FATAL( "OPP_Register() failed with %x", result, 0, 0 );
         BTApp_ClearBondable( pMe ); // no need to be bondable anymore
         BTApp_ShowMessage( pMe, IDS_MSG_SVR_REG_FAILED, NULL, 3 );
       }
@@ -1811,7 +1812,7 @@ boolean BTApp_OPPHandleSettingSelection( CBTApp* pMe, uint16 sel )
     {
       if ( (result = IBTEXTOPP_Deregister( pMe->mOPP.po )) != SUCCESS )
       {
-        MSG_ERROR( "OPP_Deregister() failed with %x", result, 0, 0 );
+        MSG_FATAL( "OPP_Deregister() failed with %x", result, 0, 0 );
         BTApp_ShowMessage( pMe, IDS_MSG_SVR_DEREG_FAILED, NULL, 3 );
       }
       else
@@ -2174,7 +2175,7 @@ boolean BTApp_OPPHandleMenus( CBTApp* pMe, uint16 key, BTAppMenuType menu )
       handled = BTApp_HandleOPPFileTypesMenu( pMe, key );
       break;
     default:
-      MSG_ERROR(" OPP: unexpected menu type %x", menu, 0, 0 );
+      MSG_FATAL(" OPP: unexpected menu type %x", menu, 0, 0 );
       handled = FALSE;
       break;
   }
@@ -2226,7 +2227,7 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 			}
 			else
 			{
-				MSG_ERROR("BTAppOPP: GetProgInfo failed!", 0, 0, 0);
+				MSG_FATAL("BTAppOPP: GetProgInfo failed!", 0, 0, 0);
 			}			
 			break;
 		}
@@ -2563,7 +2564,7 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 		}
 		default:
 		{
-			MSG_ERROR(" OPP: unexpected user event %x", dwParam, 0, 0 );
+			MSG_FATAL(" OPP: unexpected user event %x", dwParam, 0, 0 );
 		  	break;
 		}
 	}
@@ -2622,7 +2623,7 @@ boolean BTApp_EnableOPP(
   boolean bOPPEnabled = FALSE;
   int result;
 
-  MSG_FATAL("***zzg BTApp_EnableOPP***", 0, 0, 0);
+  MSG_FATAL("***zzg BTApp_EnableOPP %d***", pMe->mOPP.bRegistered, 0, 0);
 
   //if ( pMe->mOPP.bServerEnable == TRUE )		//Del By zzg 2010_11_25
   {
@@ -2640,7 +2641,7 @@ boolean BTApp_EnableOPP(
 
     if ( BTApp_OPPInit( pMe ) == FALSE )
     {
-      MSG_ERROR( "EnableOPP - failed to create OPP object"
+      MSG_FATAL( "EnableOPP - failed to create OPP object"
                   , 0, 0, 0 );
       BTApp_OPPCleanup( pMe );
     }
@@ -2651,11 +2652,11 @@ boolean BTApp_EnableOPP(
         BTApp_SetBondable( pMe );
         *pbSettingBondable = TRUE;
       }
-      MSG_LOW( "EnableOPP - enabling OPP", 0, 0, 0 );
+      MSG_FATAL( "EnableOPP - enabling OPP", 0, 0, 0 );
       if ( (result = IBTEXTOPP_Register( pMe->mOPP.po, AEEBT_OPP_FORMAT_ALL, 
                                          szServerNameOPP )) != SUCCESS )
       {		
-        MSG_ERROR( "OPP_Register() failed with %x", result, 0, 0 );
+        MSG_FATAL( "OPP_Register() failed with %x", result, 0, 0 );
         BTApp_ClearBondable( pMe ); // no need to be bondable anymore
       }
       else
@@ -2668,6 +2669,10 @@ boolean BTApp_EnableOPP(
         BTApp_ShowBusyIcon( pMe ); // wait for command done
         bOPPEnabled = TRUE;
       }
+    }
+    else
+    {
+        MSG_FATAL( "EnableOPP - pMe->mOPP.bRegistered == TRUE", 0, 0, 0 );
     }
   }  
 

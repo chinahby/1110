@@ -995,12 +995,12 @@ fs_pm_nor_powerup_init (fs_pm_flash_t  gc)
       break;
     }
   } /* While we are still searching for the erase pages */
-
+#if 0
   if (erased_page_count == 0) {
     FS_ERR_FATAL ("GC did not find any erased pages on restart",
         0,0,0);
   }
-
+#endif
   /* Now allocator points to where we really want to allocate new pages.
    * Go through from where our old allocator was after replaying the logs,
    * and mark any pages in between as garbage. */

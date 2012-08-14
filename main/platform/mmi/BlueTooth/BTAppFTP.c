@@ -3593,7 +3593,7 @@ boolean BTApp_EnableFTP(
   boolean bFTPEnabled = FALSE;
   int result;
 
-  if ( pMe->mFTP.bServerEnable == TRUE )
+//  if ( pMe->mFTP.bServerEnable == TRUE )
   {
 #ifdef FEATURE_BT_2_1
     if ( pMe->mFTP.bSecSelected !=FALSE ) 
@@ -3648,30 +3648,6 @@ boolean BTApp_EnableFTP(
         BTApp_ShowBusyIcon( pMe ); // wait for command done
         bFTPEnabled = TRUE;
       }
-    }
-  }
-  else
-  {
-    MSG_LOW("FTP_Register() CLIENT pMe->mFTP.bServerEnable = %d,"
-            "pMe->mFTP.bDoAuthenticate = %d",
-              pMe->mFTP.bServerEnable,
-              pMe->mFTP.bDoAuthenticate,
-              0);
-    if ( pMe->mFTP.bDoAuthenticate == FALSE )
-    {
-        MSG_LOW("FTP_Register() bDoAuthenticate == FALSE",
-              0,
-              0,
-              0);
-        pMe->mFTP.reg.auth = AEEBT_FTP_AUTH_NONE;
-    }
-    else
-    {
-        MSG_LOW("FTP_Register() bDoAuthenticate != FALSE",
-              0,
-              0,
-              0);
-        pMe->mFTP.reg.auth = AEEBT_FTP_AUTH_PASSWORD;
     }
   }
   return bFTPEnabled;

@@ -104,7 +104,7 @@ when        who   what, where, why
 #define CLEAR_SCREEN() (IDISPLAY_ClearScreen( pMe->m_pIDisplay ))
 
 #define BTAPP_POST_USER_EVENT( profile, ev ) \
-  MSG_MED( "ISHELL_PostEventEx profile=%d, ev=%d", EVT_##profile, ev, 0 ); \
+  MSG_FATAL( "ISHELL_PostEventEx profile=%d, ev=%d", EVT_##profile, ev, 0 ); \
   ISHELL_PostEventEx( pMe->m_pShell, EVTFLG_ASYNC, \
                       AEECLSID_BLUETOOTH_APP,         \
                       EVT_USER, EVT_##profile, ev )

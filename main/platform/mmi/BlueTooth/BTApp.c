@@ -1484,6 +1484,7 @@ static void BTApp_RunFSM(CBTApp *pMe)
 /*************************************************************************************/
 static void BTApp_OnAppStop( CBTApp* pMe )
 {
+  MSG_FATAL("***zzg BTApp_OnAppStop TOP_MENU=%d***", TOP_MENU, 0, 0);
   switch ( TOP_MENU )
   {
     case BT_APP_MENU_SEARCH:
@@ -2126,7 +2127,7 @@ static void BTApp_HandleNotify(CBTApp* pMe, AEEEvent evt, NotificationData* pDat
 
 				case AEEBT_A2DP_EVT_SUSPEND:
 				{
-					MSG_LOW( "AG: audioConnecting=%d callState=%d", pMe->mAG.bAudioConnecting, pMe->mAG.callState, 0);
+					MSG_FATAL( "AG: audioConnecting=%d callState=%d", pMe->mAG.bAudioConnecting, pMe->mAG.callState, 0);
 
 					// did we suspend A2DP so we can bring up SCO? 
 					if ( pMe->mAG.bAudioConnecting == TRUE )
@@ -2249,7 +2250,7 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 
     ISHELL_GetDeviceInfo(pMe->m_pShell, &di);  
 
-	MSG_FATAL("***zzg BTApp_HandleEvent eCode=%x***", eCode, 0, 0);
+	MSG_FATAL("***zzg BTApp_HandleEvent eCode=%x %d***", eCode, pMe->mEnablingType, 0);
     
     switch (eCode)
     {	     	
@@ -2338,6 +2339,7 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 					{		
 						if (BTApp_HCIModeOn(pMe) == FALSE)
 						{
+                            pMe->mEnablingType = BTAPP_ENABLING_AG;
 							BTApp_EnableBT(pMe);	
 						}							
 					}
@@ -2353,7 +2355,7 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 						}
 						else
 						{
-							MSG_ERROR( "OPPBuildMenu - failed to create OPP object", 0, 0, 0 );
+							MSG_FATAL( "OPPBuildMenu - failed to create OPP object", 0, 0, 0 );
 							BTApp_OPPCleanup( pMe );								
 						}	
 					}					
@@ -2374,7 +2376,7 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 						}
 						else
 						{
-							MSG_ERROR( "OPPBuildMenu - failed to create OPP object", 0, 0, 0 );
+							MSG_FATAL( "OPPBuildMenu - failed to create OPP object", 0, 0, 0 );
 							BTApp_OPPCleanup(pMe);								
 						}		
 					}
@@ -2405,6 +2407,7 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 					{		
 						if (BTApp_HCIModeOn(pMe) == FALSE)
 						{
+                            pMe->mEnablingType = BTAPP_ENABLING_AG;
 							BTApp_EnableBT(pMe);	
 						}							
 					}
@@ -2431,7 +2434,7 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 						}
 						else
 						{
-							MSG_ERROR( "OPPBuildMenu - failed to create OPP object", 0, 0, 0 );
+							MSG_FATAL( "OPPBuildMenu - failed to create OPP object", 0, 0, 0 );
 							BTApp_OPPCleanup( pMe );								
 						}	
 					}					
@@ -2513,9 +2516,7 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
         {
 			boolean* pb = (boolean*)dwParam;
 
-			MSG_HIGH( "HndlEv - APP_STOP dw=0x%x", dwParam, 0, 0);
-
-			MSG_FATAL("***zzg BTApp_HandleEvt EVT_APP_STOP***", 0, 0, 0);
+			MSG_FATAL("***zzg BTApp_HandleEvt EVT_APP_STOP dw=0x%x***", dwParam, 0, 0);
 			
 			if (pb)
 			{
@@ -2640,7 +2641,7 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
                 return TRUE;
             }
 
-			MSG_MED( "HndlEv - EVT_KEY wP=0x%x dw=0x%x", wParam, dwParam, 0 );
+			MSG_FATAL( "HndlEv - EVT_KEY wP=0x%x dw=0x%x", wParam, dwParam, 0 );
 			
 			return BTApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
         }
@@ -2684,40 +2685,17 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 			AEENotify* pN = (AEENotify*) dwParam;
 			AEEEvent  evt = GET_NOTIFIER_VAL(pN->dwMask);
 			
-			MSG_FATAL("***zzg BTApp_HandleEvent EVT_NOTIFY cls=%x, NOTIFIER_MASK=%x***", pN->cls, GET_NOTIFIER_MASK(pN->dwMask), 0);	
-
-			//Add By zzg 2011_06_27
-			//NotifyData = *(NotificationData *)(pN->pData);	
-			MEMSET(&NotifyData, 0, sizeof(NotificationData));
+			MSG_FATAL("***zzg BTApp_HandleEvent EVT_NOTIFY cls=%x, NOTIFIER_MASK=%x %d***", pN->cls, GET_NOTIFIER_MASK(pN->dwMask), evt);	
+            
 			MEMCPY(&NotifyData, pN->pData, sizeof(NotificationData));	
-
-			if (evt == AEEBT_RM_EVT_CONN)
-			{
-				AEEBTDeviceInfo dev;
-				DBGPRINTF("***zzg EVT_NOTIFY RM pN->pData: %04x%04x%04x", 
-				        ((uint16)(((NotificationData*)(pN->pData))->bdAddr.uAddr[5] << 8) | ((NotificationData*)(pN->pData))->bdAddr.uAddr[4]), 
-				        ((uint16)(((NotificationData*)(pN->pData))->bdAddr.uAddr[3] << 8) | ((NotificationData*)(pN->pData))->bdAddr.uAddr[2]), 
-				        ((uint16)(((NotificationData*)(pN->pData))->bdAddr.uAddr[1] << 8) | ((NotificationData*)(pN->pData))->bdAddr.uAddr[0]));
-				DBGPRINTF("***zzg EVT_NOTIFY RM NotifyData: %04x%04x%04x", 
-				        ((uint16)(NotifyData.bdAddr.uAddr[5] << 8) | NotifyData.bdAddr.uAddr[4]), 
-				        ((uint16)(NotifyData.bdAddr.uAddr[3] << 8) | NotifyData.bdAddr.uAddr[2]), 
-				        ((uint16)(NotifyData.bdAddr.uAddr[1] << 8) | NotifyData.bdAddr.uAddr[0]));
-			}
-			
-			//Add End
 		
 			if (pN->cls == AEECLSID_BLUETOOTH_NOTIFIER)
 			{
 				NotifyType = GET_NOTIFIER_MASK(pN->dwMask);
-
-				//Add By zzg 2011_06_23
-				MSG_FATAL("***zzg ActiveApplet=%x***", ISHELL_ActiveApplet(pMe->m_pShell), 0, 0);
-
+                
 				if (TRUE == BTApp_CheckNotify(pMe, evt, pN->pData, NotifyType))
-				{				
-					MSG_FATAL("***zzg BTApp_CheckNotify TRUE***", 0, 0, 0);					
-
-					MSG_FATAL("***zzg BTApp_CheckNotify bDevPickedUp=%x***", pMe->mAG.bDevPickedUp, 0, 0);
+				{
+					MSG_FATAL("***zzg BTApp_CheckNotify bDevPickedUp=%x %d***", pMe->mAG.bDevPickedUp, evt, 0);
 					
 					//if (ISHELL_ActiveApplet(pMe->m_pShell) != AEECLSID_BLUETOOTH_APP)
 					if ((ISHELL_ActiveApplet(pMe->m_pShell) != AEECLSID_BLUETOOTH_APP)
@@ -2727,11 +2705,8 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 						pMe->m_user_wParam = evt;	
 
 						ISHELL_StartApplet(pMe->m_pShell, AEECLSID_BLUETOOTH_APP);
-
-						DBGPRINTF("***zzg evt=%d, m_user_wParam = %d***", evt, pMe->m_user_wParam);
-
 						break;
-					}		
+					}
 				}
 				
 				//Add End
@@ -2865,7 +2840,7 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 
 						case AEEBT_A2DP_EVT_SUSPEND:
 						{
-							MSG_LOW( "AG: audioConnecting=%d callState=%d", pMe->mAG.bAudioConnecting, pMe->mAG.callState, 0);
+							MSG_FATAL( "AG: audioConnecting=%d callState=%d", pMe->mAG.bAudioConnecting, pMe->mAG.callState, 0);
 
 							MSG_FATAL("***zzg BTApp_Handle AEEBT_A2DP_EVT_SUSPEND***", 0, 0, 0);
 
@@ -2977,7 +2952,7 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 
 	case EVT_USER:
 	{		
-		MSG_MED( "HndlEv - EVT_USER wP=%d tm=%d", wParam, TOP_MENU, 0 );
+		MSG_FATAL( "HndlEv - EVT_USER wP=%d tm=%d", wParam, TOP_MENU, 0 );
 
 		MSG_FATAL("***zzg BTApp_HandleEvent EVT_USER wParam=%d, dwparam=%d***", wParam, dwParam, 0);
 
@@ -3404,7 +3379,7 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 #ifdef FEATURE_BT_EXTPF_BIP
 				if (!BDADDR_VALID(&pMe->mBIP.printerBDAddr))
 				{
-					MSG_LOW( "BIP Printing - No address selected for print", 0, 0, 0 );
+					MSG_FATAL( "BIP Printing - No address selected for print", 0, 0, 0 );
 					BTApp_ShowMessage( pMe, IDS_BIP_MSG_PUSH_FAILED, NULL, 3 );
 					return FALSE;
 				}
@@ -3415,12 +3390,12 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 				}
 				else
 				{
-					MSG_ERROR("BIP Printing - failed to create BIP object", 0, 0, 0);
+					MSG_FATAL("BIP Printing - failed to create BIP object", 0, 0, 0);
 					BTApp_BIPCleanup(pMe);
 					return FALSE;
 				}
 #else
-				MSG_LOW( "HandleEvent: No support of BIP for printing", 0, 0, 0 );
+				MSG_FATAL( "HandleEvent: No support of BIP for printing", 0, 0, 0 );
 				return FALSE;
 #endif //FEATURE_BT_EXTPF_BIP
 			}
@@ -3429,7 +3404,7 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 #ifdef FEATURE_BT_EXTPF_BPP
 				if (!BDADDR_VALID(&pMe->mBPP.printerBDAddr))
 				{
-					MSG_LOW("BPP Printing - No address selected for print", 0, 0, 0);
+					MSG_FATAL("BPP Printing - No address selected for print", 0, 0, 0);
 					BTApp_ShowMessage(pMe, IDS_BPP_MSG_SEND_FILE_FAILED, NULL, 3);
 					return FALSE;
 				}
@@ -3440,12 +3415,12 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 				}
 				else
 				{
-					MSG_ERROR("BPP Printing - failed to create BPP object", 0, 0, 0);
+					MSG_FATAL("BPP Printing - failed to create BPP object", 0, 0, 0);
 					BTApp_BPPCleanup(pMe);
 					return FALSE;
 				}
 #else
-				MSG_LOW( "HandleEvent: No support of BPP for printing", 0, 0, 0 );
+				MSG_FATAL( "HandleEvent: No support of BPP for printing", 0, 0, 0 );
 				return FALSE;
 #endif //FEATURE_BT_EXTPF_BPP
 			}
@@ -3964,7 +3939,7 @@ boolean BTApp_WriteConfigFile( CBTApp* pMe )
     else
     {
     	 MSG_FATAL("***zzg BTApp_WriteConfigFile Failed!***", 0, 0, 0);
-      MSG_ERROR( "WriteConfigFile - write failed", 0, 0, 0 );
+      MSG_FATAL( "WriteConfigFile - write failed", 0, 0, 0 );
     }
 
     if ( pIFile != NULL )
@@ -4010,7 +3985,7 @@ static boolean BTApp_ReadConfigFile( CBTApp* pMe )
       if ( !BTAPP_READ_VALUE( version ) )
       {
       	MSG_FATAL("***zzg BTApp_ReadConfigFile 4***", 0, 0, 0);
-        MSG_ERROR( "Can't read version from DB", 0, 0, 0);
+        MSG_FATAL( "Can't read version from DB", 0, 0, 0);
         version = 0;
       }
 
@@ -4264,7 +4239,7 @@ static boolean BTApp_ReadConfigFile( CBTApp* pMe )
 
   if ( success == FALSE )
   {
-    MSG_ERROR( "ReadConfigFile - read failed", 0, 0, 0 );
+    MSG_FATAL( "ReadConfigFile - read failed", 0, 0, 0 );
 
 	MSG_FATAL("***zzg BTApp_ReadConfigFile FALSE***", 0, 0, 0);
 	
@@ -4443,7 +4418,7 @@ static void BTApp_EnableServiceSecurity( CBTApp* pMe )
                                         TRUE );  // authorize first
   if ( result != SUCCESS )
   {
-    MSG_ERROR( "HndlSlction - SetServiceSecurity failed r=%x ss=%x", 
+    MSG_FATAL( "HndlSlction - SetServiceSecurity failed r=%x ss=%x", 
                result, pMe->mNA.bEnableSvcSec, 0 );
   }
   else
@@ -5035,7 +5010,7 @@ DESCRIPTION
   if ( pMe->mRM.uGetNameDevIdx != MAX_DEVICES )
   {
     AEEBTBDAddr *pBdAddr = &pMe->mRM.device[ pMe->mRM.uGetNameDevIdx ].bdAddr;
-    MSG_MED( "BTApp_OnAppStop Cancel device name req", 0, 0, 0 );
+    MSG_FATAL( "BTApp_OnAppStop Cancel device name req", 0, 0, 0 );
     IBTEXTSD_GetDeviceNameCancel( pMe->mSD.po,pBdAddr );
   }
    return;
@@ -5286,7 +5261,7 @@ static boolean BTApp_HandleEvent
     }
     case EVT_DIALOG_END:
     {
-		MSG_MED( "HndlEv - DIALOG_END wP=0x%x dw=0x%x", wParam, dwParam, 0 );
+		MSG_FATAL( "HndlEv - DIALOG_END wP=0x%x dw=0x%x", wParam, dwParam, 0 );
 		BTApp_HandleClearKey( pMe );
 		break;
     }
@@ -5302,7 +5277,7 @@ static boolean BTApp_HandleEvent
 #error code not present
 #endif //FEATURE_APP_TEST_AUTOMATION
     {
-      MSG_MED( "HndlEv - EVT_KEY wP=0x%x dw=0x%x", wParam, dwParam, 0 );
+      MSG_FATAL( "HndlEv - EVT_KEY wP=0x%x dw=0x%x", wParam, dwParam, 0 );
 
 	  //Add  By zzg 2010_11_27
 	  if (TRUE == pMe->bUpdateProgress)
@@ -5398,7 +5373,7 @@ static boolean BTApp_HandleEvent
     }
     case EVT_COMMAND: //0x200
     {
-      MSG_MED( "HndlEv - EVT_COMMAND wP=0x%x dw=0x%x", wParam, dwParam, 0 );
+      MSG_FATAL( "HndlEv - EVT_COMMAND wP=0x%x dw=0x%x", wParam, dwParam, 0 );
       break;
     }
     case EVT_NOTIFY:
@@ -5406,7 +5381,7 @@ static boolean BTApp_HandleEvent
       AEENotify* pN = (AEENotify*) dwParam;
       AEEEvent  evt = GET_NOTIFIER_VAL(pN->dwMask);
 	  
-      //MSG_MED( "HndlEv - NOTIFY cls=%x m=%x ev=%d", 
+      //MSG_FATAL( "HndlEv - NOTIFY cls=%x m=%x ev=%d", 
       //          pN->cls, GET_NOTIFIER_MASK(pN->dwMask), evt );
       if ( pN->cls == AEECLSID_BLUETOOTH_NOTIFIER )
       {
@@ -5489,7 +5464,7 @@ static boolean BTApp_HandleEvent
                  //  a call is present and call audio must be left alone 
                 break;
               case AEEBT_A2DP_EVT_SUSPEND:
-                MSG_LOW( "AG: audioConnecting=%d callState=%d", 
+                MSG_FATAL( "AG: audioConnecting=%d callState=%d", 
                          pMe->mAG.bAudioConnecting, pMe->mAG.callState, 0);
                 // did we suspend A2DP so we can bring up SCO? 
                 if ( pMe->mAG.bAudioConnecting == TRUE )
@@ -5618,7 +5593,7 @@ static boolean BTApp_HandleEvent
 					}
 					else
 					{
-						MSG_ERROR( "OPPBuildMenu - failed to create OPP object", 0, 0, 0 );
+						MSG_FATAL( "OPPBuildMenu - failed to create OPP object", 0, 0, 0 );
 						BTApp_OPPCleanup( pMe );				
 					}
 				}
@@ -5650,7 +5625,7 @@ static boolean BTApp_HandleEvent
 
     case EVT_USER:
     {
-      MSG_MED( "HndlEv - EVT_USER wP=%d tm=%d", wParam, TOP_MENU, 0 );
+      MSG_FATAL( "HndlEv - EVT_USER wP=%d tm=%d", wParam, TOP_MENU, 0 );
 	  MSG_FATAL("***zzg BTApp_HandleEvent EVT_USER wParam=%d, dwparam=%d***", wParam, dwParam, 0);
 	  
       switch ( wParam )
@@ -5859,7 +5834,7 @@ static boolean BTApp_HandleEvent
 #ifdef FEATURE_BT_EXTPF_BIP
           if ( !BDADDR_VALID( &pMe->mBIP.printerBDAddr ) )
           {
-            MSG_LOW( "BIP Printing - No address selected for print", 0, 0, 0 );
+            MSG_FATAL( "BIP Printing - No address selected for print", 0, 0, 0 );
             BTApp_ShowMessage( pMe, IDS_BIP_MSG_PUSH_FAILED, NULL, 3 );
             return FALSE;
           }
@@ -5870,12 +5845,12 @@ static boolean BTApp_HandleEvent
           }
           else
           {
-            MSG_ERROR( "BIP Printing - failed to create BIP object", 0, 0, 0 );
+            MSG_FATAL( "BIP Printing - failed to create BIP object", 0, 0, 0 );
             BTApp_BIPCleanup( pMe );
             return FALSE;
           }
 #else
-          MSG_LOW( "HandleEvent: No support of BIP for printing", 0, 0, 0 );
+          MSG_FATAL( "HandleEvent: No support of BIP for printing", 0, 0, 0 );
           return FALSE;
 #endif //FEATURE_BT_EXTPF_BIP
         }
@@ -5886,7 +5861,7 @@ static boolean BTApp_HandleEvent
           if ( !BDADDR_VALID( &pMe->mBPP.printerBDAddr ) )
           {
 			
-            MSG_LOW( "BPP Printing - No address selected for print", 0, 0, 0 );
+            MSG_FATAL( "BPP Printing - No address selected for print", 0, 0, 0 );
             BTApp_ShowMessage( pMe, IDS_BPP_MSG_SEND_FILE_FAILED, NULL, 3 );
             return FALSE;
           }
@@ -5898,12 +5873,12 @@ static boolean BTApp_HandleEvent
           else
           {
 			
-            MSG_ERROR( "BPP Printing - failed to create BPP object", 0, 0, 0 );
+            MSG_FATAL( "BPP Printing - failed to create BPP object", 0, 0, 0 );
             BTApp_BPPCleanup( pMe );
             return FALSE;
           }
 #else
-          MSG_LOW( "HandleEvent: No support of BPP for printing", 0, 0, 0 );
+          MSG_FATAL( "HandleEvent: No support of BPP for printing", 0, 0, 0 );
           return FALSE;
 #endif //FEATURE_BT_EXTPF_BPP
         }
@@ -5959,7 +5934,7 @@ static boolean BTApp_HandleEvent
 #endif //FEATURE_APP_TEST_AUTOMATION
     default:
     {
-      //MSG_MED( "HndlEv - ev=0x%x wP=0x%x dw=0x%x", eCode, wParam, dwParam );
+      //MSG_FATAL( "HndlEv - ev=0x%x wP=0x%x dw=0x%x", eCode, wParam, dwParam );
       event_processed = FALSE;
       break;
     }
@@ -5981,7 +5956,7 @@ static boolean BTApp_AutoAnswer( CBTApp* pMe )
 
   MSG_FATAL("***zzg BTApp_AutoAnswer callPresent=%x, callConn=%x***", callPresent, callConn, 0);
 
-  MSG_LOW( "AutoAnswer timer expired, cp=%x cc=%x", callPresent, callConn, 0 );
+  MSG_FATAL( "AutoAnswer timer expired, cp=%x cc=%x", callPresent, callConn, 0 );
 
   if ( callConn != BT_APP_CALL_NONE )
   {
@@ -6058,7 +6033,7 @@ DESCRIPTION
 ============================================================================= */
 static void BTApp_EndCall( CBTApp* pMe, BTAppCallType callType )
 {
-  MSG_LOW( "EndCall - c=%d ac=%d", callType, pMe->mAG.bAudioConnected, 0 );
+  MSG_FATAL( "EndCall - c=%d ac=%d", callType, pMe->mAG.bAudioConnected, 0 );
 #ifdef FEATURE_AVS_BT_SCO_REWORK
   if ( BTAPP_AG_ISBITSET( BTAPP_AG_FLAG_SCO_4_VOICE_WANTED_B ) )
   {
@@ -6098,7 +6073,7 @@ static void BTApp_EndCall( CBTApp* pMe, BTAppCallType callType )
 
     if ( pCallsDesc == NULL )
     {
-      MSG_ERROR( "EndCall - Memory allocation failed", 0, 0, 0 );
+      MSG_FATAL( "EndCall - Memory allocation failed", 0, 0, 0 );
       return;
     }
 
@@ -6123,13 +6098,13 @@ static void BTApp_EndCall( CBTApp* pMe, BTAppCallType callType )
         }
         else
         {
-          MSG_ERROR( "EndCall - failed to get call info", 0, 0, 0 );
+          MSG_FATAL( "EndCall - failed to get call info", 0, 0, 0 );
         }
       }
     }
     else
     {
-      MSG_ERROR( "EndCall - failed to get calls", 0, 0, 0 );
+      MSG_FATAL( "EndCall - failed to get calls", 0, 0, 0 );
     }
     
     FREEIF( pCallsDesc );
@@ -6139,13 +6114,13 @@ static void BTApp_EndCall( CBTApp* pMe, BTAppCallType callType )
   {
     if ( CVideoPhone_EndVideoCall( pMe->m_pShell ) == FALSE )
     {
-      MSG_ERROR( "EndCall - failed to end video call", 0, 0, 0 );
+      MSG_FATAL( "EndCall - failed to end video call", 0, 0, 0 );
     }
   }
 #endif //FEATURE_BT_VT
   else
   {
-    MSG_ERROR( "EndCall - unexpected call type", 0, 0, 0 );
+    MSG_FATAL( "EndCall - unexpected call type", 0, 0, 0 );
   }
 }
 
@@ -6173,7 +6148,7 @@ static boolean BTApp_Originate( CBTApp* pMe, char* szDialString )
   }
   else
   {
-    MSG_LOW("BTAPP Originate: URL failed, originating via ICALLMGR", 0,0,0);
+    MSG_FATAL("BTAPP Originate: URL failed, originating via ICALLMGR", 0,0,0);
     result = (ICALLMGR_Originate( pMe->mAG.pICallMgr, AEET_CALL_TYPE_VOICE, 
                                   szDialString, NULL, &pMe->mAG.pOutgoingCall,
                                   NULL )
@@ -6190,17 +6165,17 @@ static void BTApp_Dial( CBTApp* pMe )
 {
   char szString[ AEEBT_MAX_PHONE_NUM_DIGITS + 1 ] = "1234";
   
-  MSG_LOW( "Dial - ad=%d as=%d", 
+  MSG_FATAL( "Dial - ad=%d as=%d", 
            pMe->mAG.bAudioConnected, pMe->mAG.bAudioSelected, 0 );
 
   if ( WSTRLEN( pMe->mAG.wDialString ) == 0 )
   {
-    MSG_LOW( "Dial - using 1234", 0, 0, 0 );
+    MSG_FATAL( "Dial - using 1234", 0, 0, 0 );
   }
   else
   {
     WSTRTOSTR( pMe->mAG.wDialString, szString, sizeof( szString ) );
-    MSG_LOW( "Dial - using number stored in phone", 0, 0, 0 );
+    MSG_FATAL( "Dial - using number stored in phone", 0, 0, 0 );
   }
 
 #ifdef FEATURE_BT_VT
@@ -6228,7 +6203,7 @@ static void BTApp_Dial( CBTApp* pMe )
   }
   else
   {
-    MSG_ERROR( "Dial - failed to originate voice call", 0, 0, 0 );
+    MSG_FATAL( "Dial - failed to originate voice call", 0, 0, 0 );
   }
 }
 
@@ -6241,7 +6216,7 @@ static void BTApp_AnswerCall( CBTApp* pMe, BTAppCallType callIncoming )
   boolean bAnswered = FALSE;
   static const char szAnswer[] = "tel:AnswerCall";
 
-  MSG_LOW( "AnswerCall - dev=%d c=%d st=%d", 
+  MSG_FATAL( "AnswerCall - dev=%d c=%d st=%d", 
            pMe->mAG.devType, callIncoming, pMe->mAG.callState );
 
   MSG_FATAL("***zzg BTApp_AnswerCall***", 0, 0, 0);
@@ -6251,7 +6226,7 @@ static void BTApp_AnswerCall( CBTApp* pMe, BTAppCallType callIncoming )
 
   if ( callIncoming == BT_APP_CALL_NONE )
   {
-    MSG_ERROR( "AnswerCall - no incoming call", 0, 0, 0 );
+    MSG_FATAL( "AnswerCall - no incoming call", 0, 0, 0 );
   }
   else if ( BTApp_ConnectAudio( pMe, TRUE ) != FALSE )
   {
@@ -6266,7 +6241,7 @@ static void BTApp_AnswerCall( CBTApp* pMe, BTAppCallType callIncoming )
         }
         else if ( ICALL_Answer( pMe->mAG.pIncomingCall ) == SUCCESS )
         {
-          MSG_LOW("BTApp: URL answer failed. Used ICALL_Answer",0,0,0);
+          MSG_FATAL("BTApp: URL answer failed. Used ICALL_Answer",0,0,0);
           bAnswered = TRUE;
         }
         pMe->mAG.pIncomingCall = NULL;
@@ -6284,7 +6259,7 @@ static void BTApp_AnswerCall( CBTApp* pMe, BTAppCallType callIncoming )
 #endif //FEATURE_BT_VT
     if ( bAnswered == FALSE )
     {
-      MSG_ERROR( "AnswerCall - failed", 0, 0, 0 );
+      MSG_FATAL( "AnswerCall - failed", 0, 0, 0 );
     }
   }
 }
@@ -6306,13 +6281,13 @@ static boolean BTApp_PickAudioLink( CBTApp* pMe )
     // call is up, then HS initiates audio transfer from AG
 
 #if defined( FEATURE_UIONE_HDK )
-    MSG_LOW( "PickAudioLink - on UIOne MP is in background", 0, 0, 0 );
+    MSG_FATAL( "PickAudioLink - on UIOne MP is in background", 0, 0, 0 );
     bAGWins = TRUE; // allow SCO
 #elif !defined( FEATURE_APP_DIALER )
-    MSG_ERROR( "PickAudioLink - can't suspend MP ", 0, 0, 0 );
+    MSG_FATAL( "PickAudioLink - can't suspend MP ", 0, 0, 0 );
 #else
     // must suspend MediaPlayer so AVS would switch to play voice audio
-    MSG_LOW( "PickAudioLink - launching DialerApp", 0, 0, 0 );
+    MSG_FATAL( "PickAudioLink - launching DialerApp", 0, 0, 0 );
     bAGWins = TRUE; // allow SCO
 #endif //FEATURE_APP_DIALER
   }
@@ -6340,7 +6315,7 @@ static void BTApp_HandleEventButtonPressed( CBTApp* pMe )
 
   if ( pMe->mAG.bIgnoreButton != FALSE )
   {
-    MSG_LOW( "ButtonPressed - ignored", 0, 0, 0 );
+    MSG_FATAL( "ButtonPressed - ignored", 0, 0, 0 );
     return; // ignore this button pressed event
   }
 
@@ -6348,13 +6323,13 @@ static void BTApp_HandleEventButtonPressed( CBTApp* pMe )
   {
     if ( pMe->mAG.bAudioConnected )
     {
-      MSG_LOW( "ButtonPressed - HS hanging up call", 0, 0, 0 );
+      MSG_FATAL( "ButtonPressed - HS hanging up call", 0, 0, 0 );
       BTApp_EndCall( pMe, callPresent );
     }
     else // remote device initiates voice transfer
     {
       boolean bUseAG = TRUE;
-      MSG_LOW( "ButtonPressed - HS transfers audio to HS", 0, 0, 0 );
+      MSG_FATAL( "ButtonPressed - HS transfers audio to HS", 0, 0, 0 );
 #ifdef FEATURE_BT_EXTPF_AV
       if ( pMe->mA2DP.bStreaming != FALSE )
       {
@@ -6373,7 +6348,7 @@ static void BTApp_HandleEventButtonPressed( CBTApp* pMe )
   }
   else if ( callPresent != BT_APP_CALL_NONE )
   {
-    MSG_LOW( "ButtonPressed - HS cancelling MO call", 0, 0, 0 );
+    MSG_FATAL( "ButtonPressed - HS cancelling MO call", 0, 0, 0 );
     BTApp_EndCall( pMe, callPresent );
   }
 #if defined( FEATURE_PHONE_VR )
@@ -6408,7 +6383,7 @@ static void BTApp_HandleEventDevPickUp( CBTApp* pMe )
 
   if ( callPresent == BT_APP_CALL_NONE )
   {
-    MSG_ERROR( "AG - DevPickup, no call present", 0, 0, 0 );
+    MSG_FATAL( "AG - DevPickup, no call present", 0, 0, 0 );
   }
   else if ( callIncoming != BT_APP_CALL_NONE )
   {
@@ -6428,7 +6403,7 @@ static void BTApp_HandleEventDevHangUp( CBTApp* pMe )
 
   if ( callPresent == BT_APP_CALL_NONE )
   {
-    MSG_ERROR( "AG - DevHangup, no call present", 0, 0, 0 );
+    MSG_FATAL( "AG - DevHangup, no call present", 0, 0, 0 );
   }
   else // a call is present
   {
@@ -6447,19 +6422,19 @@ static void BTApp_HandleEventDevDial( CBTApp* pMe )
   AECHAR wString[ AEEBT_MAX_PHONE_NUM_DIGITS + 1 ];
   uint8  numChars = AEEBT_MAX_PHONE_NUM_DIGITS + 1;
 
-  MSG_MED( "DevDial - ac=%d as=%d", 
+  MSG_FATAL( "DevDial - ac=%d as=%d", 
            pMe->mAG.bAudioConnected, pMe->mAG.bAudioSelected, 0 );
 
   if ( IBTEXTAG_GetDialedString( pMe->mAG.po, wString, &numChars, 
                                  FALSE ) == SUCCESS )
   {
-    MSG_LOW( "DevDial - %d digits", numChars, 0, 0 );
+    MSG_FATAL( "DevDial - %d digits", numChars, 0, 0 );
     WSTRTOSTR( wString, szString, sizeof( szString ) );
 
     pMe->mAG.bDevDialed = BTApp_Originate( pMe, szString );
     if ( pMe->mAG.bDevDialed == FALSE )
     {
-      MSG_ERROR( "DevDial - failed to originate voice call", 
+      MSG_FATAL( "DevDial - failed to originate voice call", 
                  0, 0, 0 );
     }
     else
@@ -6469,7 +6444,7 @@ static void BTApp_HandleEventDevDial( CBTApp* pMe )
   }
   else
   {
-    MSG_ERROR( "DevDial - no dial string", 0, 0, 0 );
+    MSG_FATAL( "DevDial - no dial string", 0, 0, 0 );
   }
 }
 
@@ -6483,7 +6458,7 @@ static void BTApp_HandleEventDevMemDial( CBTApp* pMe )
   char   szString[ AEEBT_MAX_PHONE_NUM_DIGITS + 1 ];
   AECHAR wString2[ AEEBT_MAX_PHONE_NUM_DIGITS + 1 ] = {L""};
 
-  MSG_MED( "DevMemDial - ac=%d as=%d digits=%d",
+  MSG_FATAL( "DevMemDial - ac=%d as=%d digits=%d",
            pMe->mAG.bAudioConnected,
            pMe->mAG.bAudioSelected,
            AEEBT_MAX_MEM_DIAL_DIGITS + 1 );
@@ -6505,7 +6480,7 @@ static void BTApp_HandleEventDevMemDial( CBTApp* pMe )
 
     if ( WSTRLEN( wString2 ) == 0 )
     {
-      MSG_ERROR( "DevMemDial - no such entry in phone book", 0, 0, 0 );
+      MSG_FATAL( "DevMemDial - no such entry in phone book", 0, 0, 0 );
     }
     else
     {
@@ -6513,7 +6488,7 @@ static void BTApp_HandleEventDevMemDial( CBTApp* pMe )
       pMe->mAG.bDevDialed = BTApp_Originate( pMe, szString );
       if ( pMe->mAG.bDevDialed == FALSE )
       {
-        MSG_ERROR( "DevMemDial - failed to originate voice call", 
+        MSG_FATAL( "DevMemDial - failed to originate voice call", 
                    0, 0, 0 );
       }
       else
@@ -6525,7 +6500,7 @@ static void BTApp_HandleEventDevMemDial( CBTApp* pMe )
 #ifndef FEATURE_BT_HFP_1_5
   else
   {
-    MSG_ERROR( "DevMemDial - no dial string", 0, 0, 0 );
+    MSG_FATAL( "DevMemDial - no dial string", 0, 0, 0 );
   }
 #endif
 }
@@ -6545,7 +6520,7 @@ static void BTApp_HandleEventDevRedial( CBTApp* pMe )
   int         i = 0;
   boolean     bFound = FALSE;
 
-  MSG_MED( "DevRedial - ac=%d as=%d", 
+  MSG_FATAL( "DevRedial - ac=%d as=%d", 
            pMe->mAG.bAudioConnected, pMe->mAG.bAudioSelected, 0 );
 
 #ifdef FEATURE_BT_HFP_1_5
@@ -6554,12 +6529,12 @@ static void BTApp_HandleEventDevRedial( CBTApp* pMe )
   if(ISHELL_CreateInstance( pMe->m_pShell, AEECLSID_CALLHISTORY,
                                  (void**)&pCallHist ) != AEE_SUCCESS)
   {
-     MSG_ERROR( "DevRedial - Call history instance failed", 0, 0, 0 );
+     MSG_FATAL( "DevRedial - Call history instance failed", 0, 0, 0 );
   }
   else if(ICALLHISTORY_EnumInitByCallType(pCallHist,
                                  AEECALLHISTORY_CALL_TYPE_TO ) != AEE_SUCCESS)
   {
-     MSG_ERROR( "DevRedial - EnumInitByCallType failed, "
+     MSG_FATAL( "DevRedial - EnumInitByCallType failed, "
                 "no entry in dialed list", 0, 0, 0 );
   }
   else
@@ -6585,7 +6560,7 @@ static void BTApp_HandleEventDevRedial( CBTApp* pMe )
         pMe->mAG.bDevDialed = BTApp_Originate( pMe, szString );
         if ( pMe->mAG.bDevDialed == FALSE )
         {
-          MSG_ERROR( "DevRedial - failed to originate voice call r=%d", 
+          MSG_FATAL( "DevRedial - failed to originate voice call r=%d", 
                      Status, 0, 0 );
         }
       }
@@ -6624,7 +6599,7 @@ static boolean BTApp_InitTextDlg( CBTApp* pMe, IDialog* pDlg )
 
   if ( (pICurrentMenu == NULL) || (pTextCtl == NULL) )
   {
-    MSG_ERROR( "InitTextDlg - NULL pointers", 0, 0, 0 );
+    MSG_FATAL( "InitTextDlg - NULL pointers", 0, 0, 0 );
     return FALSE;
   }
 
@@ -6874,7 +6849,7 @@ static boolean BTApp_InitTextDlg( CBTApp* pMe, IDialog* pDlg )
 #error code not present
 #endif
     default:
-      MSG_ERROR( "InitTextDlg - unexp menu %x", TOP_MENU, 0, 0 );
+      MSG_FATAL( "InitTextDlg - unexp menu %x", TOP_MENU, 0, 0 );
       return FALSE;
   }
 
@@ -7022,7 +6997,7 @@ static boolean BTApp_TextEditSave( CBTApp* pMe )
                   ARR_SIZE(pMe->mRM.myInfo.wName) );
         if ( IBTEXTRM_SetName( pMe->mRM.po, pMe->mRM.myInfo.wName ) != SUCCESS )
         {
-          MSG_ERROR( "TextEditSave - SetName failed", 0, 0, 0 );
+          MSG_FATAL( "TextEditSave - SetName failed", 0, 0, 0 );
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
 #endif //FEATURE_APP_TEST_AUTOMATION
@@ -7046,7 +7021,7 @@ static boolean BTApp_TextEditSave( CBTApp* pMe )
              IBTEXTRM_SetNickName( pMe->mRM.po, NULL, 
                                    pMe->mRM.myInfo.wShortName ) != SUCCESS )
         {
-          MSG_ERROR( "TextEditSave - SetShortName failed", 0, 0, 0 );
+          MSG_FATAL( "TextEditSave - SetShortName failed", 0, 0, 0 );
         }
         else
         {
@@ -7066,7 +7041,7 @@ static boolean BTApp_TextEditSave( CBTApp* pMe )
         if ( ( IBTEXTRM_SetEIRManufData( pMe->mRM.po,(uint8*)szText, 
                                          STRLEN( szText ) ) != SUCCESS ) )
         {
-          MSG_ERROR( "TextEditSave- SetManuData failed", 0, 0, 0 );
+          MSG_FATAL( "TextEditSave- SetManuData failed", 0, 0, 0 );
         }
         else
         {
@@ -7086,9 +7061,9 @@ static boolean BTApp_TextEditSave( CBTApp* pMe )
 #ifdef FEATURE_BT_2_1
       DBGPRINTF_FATAL ( "TextEditHndlSave-BT_APP_MENU_PASSKEY with "
                         "pMe->pText2=%s ",pMe->pText2 ); 
-      MSG_MED( "TextEditHndlSave, pMe->mRM.bBonding=%d ", 
+      MSG_FATAL( "TextEditHndlSave, pMe->mRM.bBonding=%d ", 
                pMe->mRM.bBonding,0,0); 
-      MSG_MED( "TextEditHndlSave, pMe->mRM.ioCaptype=%d ", 
+      MSG_FATAL( "TextEditHndlSave, pMe->mRM.ioCaptype=%d ", 
                pMe->mRM.ioCaptype,0,0); 
 #endif /* FEATURE_BT_2_1 */
       if ( pMe->mRM.bBonding )
@@ -7127,7 +7102,7 @@ static boolean BTApp_TextEditSave( CBTApp* pMe )
           if ( IBTEXTRM_Bond( pMe->mRM.po, &pDev->bdAddr, 
                               pMe->mRM.wPassKey ) != SUCCESS )
           {
-            MSG_ERROR( "TextEditSave - Bond failed", 0, 0, 0 );
+            MSG_FATAL( "TextEditSave - Bond failed", 0, 0, 0 );
           }
           else
           {
@@ -7154,7 +7129,7 @@ static boolean BTApp_TextEditSave( CBTApp* pMe )
                       sizeof(char)*AEEBT_SSP_PASSKEY_LEN );
           DBGPRINTF_FATAL ( "Sending IBTEXTRM_PasskeyReply with "
                             "Passkey=%s ", passKey ); //was DBGPRINTF
-          MSG_LOW ( "BTApp_TextEditSave IBTEXTRM_PasskeyReply with BDAddr "
+          MSG_FATAL ( "BTApp_TextEditSave IBTEXTRM_PasskeyReply with BDAddr "
                     "- %2x%2x%2x", pDev->bdAddr.uAddr[0], pDev->bdAddr.uAddr[1], 
                     pDev->bdAddr.uAddr[2] );
 
@@ -7177,7 +7152,7 @@ static boolean BTApp_TextEditSave( CBTApp* pMe )
           if ( IBTEXTRM_PinReply( pMe->mRM.po, &pDev->bdAddr, 
                                   pMe->mRM.wPassKey ) != SUCCESS )
           {
-            MSG_ERROR( "TextEditSave - PinReply failed", 0, 0, 0 );
+            MSG_FATAL( "TextEditSave - PinReply failed", 0, 0, 0 );
           }
           else if ( WSTRLEN( pMe->mRM.wPassKey ) > 0 )
           {
@@ -7192,7 +7167,7 @@ static boolean BTApp_TextEditSave( CBTApp* pMe )
     {
       if ( WSTRCMP( pMe->mAG.wDialString, pMe->pText2 ) != 0 )
       {
-        MSG_LOW( "TextEditSave - dial string len=%d",
+        MSG_FATAL( "TextEditSave - dial string len=%d",
                  WSTRLEN( pMe->pText2 ), 0, 0 );
         WSTRLCPY( pMe->mAG.wDialString, pMe->pText2, 
                   ARR_SIZE( pMe->mAG.wDialString ) );
@@ -7208,7 +7183,7 @@ static boolean BTApp_TextEditSave( CBTApp* pMe )
       if ( IBTEXTFTP_Authenticate( pMe->mFTP.po, &pMe->mFTP.remoteBDAddr,
                                    NULL, pMe->mFTP.wPassWord ) != SUCCESS )
       {
-        MSG_ERROR( "TextEditSave - FTP_Authenticate failed", 0, 0, 0 );
+        MSG_FATAL( "TextEditSave - FTP_Authenticate failed", 0, 0, 0 );
       }
       else
       {
@@ -7227,7 +7202,7 @@ static boolean BTApp_TextEditSave( CBTApp* pMe )
 #error code not present
 #endif /* FEATURE_APP_TEST_AUTOMATION */
 
-        MSG_ERROR( "FTP Create Folder failed", 0, 0, 0 );
+        MSG_FATAL( "FTP Create Folder failed", 0, 0, 0 );
         BTApp_ShowMessage( pMe, IDS_FTP_MSG_FOLDER_CREATION_FAILED, 
                            pMe->mFTP.wFolderName, 3 );
       }
@@ -7247,7 +7222,7 @@ static boolean BTApp_TextEditSave( CBTApp* pMe )
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
 #endif /* FEATURE_APP_TEST_AUTOMATION */
-        MSG_ERROR( "Set Path to folder failed", 0, 0, 0 );
+        MSG_FATAL( "Set Path to folder failed", 0, 0, 0 );
         BTApp_ShowMessage( pMe, IDS_MSG_FOLDER_BROWSING_FAILED, 
                            pMe->mFTP.wFolderName, 3 );
       }
@@ -7264,7 +7239,7 @@ static boolean BTApp_TextEditSave( CBTApp* pMe )
       WSTRLCPY( pMe->mBIP.wPIN, pMe->pText2, ARR_SIZE(pMe->mBIP.wPIN) );
       if ( IBTEXTBIP_Authenticate( pMe->mBIP.po, pMe->mBIP.wPIN ) != SUCCESS )
       {
-        MSG_ERROR( "TextEditSave - BIP_Authenticate failed", 0, 0, 0 );
+        MSG_FATAL( "TextEditSave - BIP_Authenticate failed", 0, 0, 0 );
       }
       else
       {
@@ -7292,7 +7267,7 @@ static boolean BTApp_TextEditSave( CBTApp* pMe )
       }
       if ( result != SUCCESS )
       {
-        MSG_ERROR( "TextEditSave - BPP_Authenticate failed", 0, 0, 0 );
+        MSG_FATAL( "TextEditSave - BPP_Authenticate failed", 0, 0, 0 );
       }
       else
       {
@@ -7361,7 +7336,7 @@ static boolean BTApp_TextEditSave( CBTApp* pMe )
       }
       if ( result != SUCCESS )
       {
-        MSG_ERROR( "TextEditSave - PBAP_Authenticate failed", 0, 0, 0 );
+        MSG_FATAL( "TextEditSave - PBAP_Authenticate failed", 0, 0, 0 );
       }
       else
       {
@@ -7434,7 +7409,7 @@ static boolean BTApp_TextEditSave( CBTApp* pMe )
       }
       else
       {
-        MSG_ERROR( "TextEditSave - Invalid A2DP control event", 0, 0, 0 );
+        MSG_FATAL( "TextEditSave - Invalid A2DP control event", 0, 0, 0 );
       }
       break;
     }
@@ -7459,14 +7434,14 @@ static boolean BTApp_TextEditSave( CBTApp* pMe )
 #endif 
     default:
     {
-      MSG_ERROR( "TextEditSave - aM=%d", TOP_MENU, 0, 0 );
+      MSG_FATAL( "TextEditSave - aM=%d", TOP_MENU, 0, 0 );
       return FALSE;
     }
   }
 
   if ( ISHELL_EndDialog( pMe->m_pShell ) == EFAILED )
   {
-    MSG_ERROR( "TextEditSave - ISHELL_EndDialog() failed", 0, 0, 0 );
+    MSG_FATAL( "TextEditSave - ISHELL_EndDialog() failed", 0, 0, 0 );
   }
 
   return TRUE;
@@ -7490,16 +7465,16 @@ static boolean BTApp_TextEditHandleEvent(
   AEEBTDeviceInfo* pDev = &pMe->mRM.device[ pMe->mRM.uCurDevIdx ];
   AEEBTKeypressType keyPressType;
 
-  MSG_LOW( "TextEditHndlEv - pMe->mRM.ioCaptype = %d", pMe->mRM.ioCaptype, 0, 0 );
+  MSG_FATAL( "TextEditHndlEv - pMe->mRM.ioCaptype = %d", pMe->mRM.ioCaptype, 0, 0 );
 #endif /* FEATURE_BT_2_1 */
 
-  MSG_LOW( "TextEditHndlEv - evt=%x wP=%x dw=%x", evt, wParam, dw );
+  MSG_FATAL( "TextEditHndlEv - evt=%x wP=%x dw=%x", evt, wParam, dw );
 
   if ( (pCurrentDialog = ISHELL_GetActiveDialog( pMe->m_pShell )) == NULL )
   {
     if ( evt == EVT_DIALOG_END )
     {
-      MSG_LOW( "TextEditHndlEv - dialog end tm=%d", TOP_MENU, 0, 0 );
+      MSG_FATAL( "TextEditHndlEv - dialog end tm=%d", TOP_MENU, 0, 0 );
       if ( pMe->bBusyIconUp == FALSE )
       {
         BTApp_HandleClearKey( pMe );
@@ -7523,7 +7498,7 @@ static boolean BTApp_TextEditHandleEvent(
   {
     case EVT_DIALOG_START:
     {
-      MSG_LOW( "TextEditHndlEv - dialog start", 0, 0, 0 );
+      MSG_FATAL( "TextEditHndlEv - dialog start", 0, 0, 0 );
       return BTApp_InitTextDlg( pMe, pCurrentDialog );
     }
     case EVT_KEY:
@@ -7531,7 +7506,7 @@ static boolean BTApp_TextEditHandleEvent(
 #error code not present
 #endif //FEATURE_APP_TEST_AUTOMATION
     {
-      MSG_LOW( "TextEditHndlEv - EVT_KEY %x", wParam, 0, 0 );
+      MSG_FATAL( "TextEditHndlEv - EVT_KEY %x", wParam, 0, 0 );
       if ( wParam == AVK_CLR )
       {
         if ( (TOP_MENU == BT_APP_MENU_PASSKEY) && (pMe->mRM.bBonding == FALSE) )
@@ -7541,10 +7516,10 @@ static boolean BTApp_TextEditHandleEvent(
           if (( pMe->mRM.ioCaptype == AEEBT_RM_IOC_KEYBOARD_ONLY ) && 
                 ( pMe->mRM.bPassKey == TRUE ))
           {
-            MSG_MED( "TextEditHandleEvent - User has cleared all the digit, "
+            MSG_FATAL( "TextEditHandleEvent - User has cleared all the digit, "
                      "cancelling the Bonding operation with NULL passkey", 
                       0,0,0 );
-            MSG_MED( "TextEditHandleEvent - RemoteDev BDa=%2x%2x%2x", 
+            MSG_FATAL( "TextEditHandleEvent - RemoteDev BDa=%2x%2x%2x", 
                       pDev->bdAddr.uAddr[0], pDev->bdAddr.uAddr[1], 
                       pDev->bdAddr.uAddr[2] );
             pMe->mRM.bPassKey = FALSE ;
@@ -7561,7 +7536,7 @@ static boolean BTApp_TextEditHandleEvent(
         pMe->mRM.bBonding = FALSE;
         if ( ISHELL_EndDialog( pMe->m_pShell ) == EFAILED )
         {
-          MSG_ERROR( "TextEditHndlEv - ISHELL_EndDialog() failed", 0, 0, 0 );
+          MSG_FATAL( "TextEditHndlEv - ISHELL_EndDialog() failed", 0, 0, 0 );
         }
         return TRUE;
       }
@@ -7574,7 +7549,7 @@ static boolean BTApp_TextEditHandleEvent(
     }
     case EVT_COMMAND:
     {
-      MSG_LOW( "TextEditHndlEv - COMMAND wP=%x", wParam, 0, 0 );
+      MSG_FATAL( "TextEditHndlEv - COMMAND wP=%x", wParam, 0, 0 );
       if ( (wParam == IDS_OK) || (wParam == AVK_SELECT) || (wParam == AVK_INFO))//Modify by zzg  2010_11_03
       {
         return BTApp_TextEditSave( pMe );
@@ -7584,7 +7559,7 @@ static boolean BTApp_TextEditHandleEvent(
 #ifdef FEATURE_BT_2_1
     case EVT_KEY_PRESS:
     {
-      MSG_MED( "TextEditHndlEv-EVT_KEY_PRESS, pMe->mRM.ioCaptype = %d ", 
+      MSG_FATAL( "TextEditHndlEv-EVT_KEY_PRESS, pMe->mRM.ioCaptype = %d ", 
                pMe->mRM.ioCaptype, 0, 0 );
       if ( (pMe->mRM.ioCaptype == AEEBT_RM_IOC_KEYBOARD_ONLY) && 
            (pMe->mRM.bPassKey == TRUE) )
@@ -7599,12 +7574,12 @@ static boolean BTApp_TextEditHandleEvent(
         }
         else
         {
-          MSG_MED( "TextEditHndlEv-EVT_KEY_PRESS, Neither Digit Entered or "
+          MSG_FATAL( "TextEditHndlEv-EVT_KEY_PRESS, Neither Digit Entered or "
                    "Erased, returning FALSE ", 0, 0, 0 ); 
 		 
           return FALSE;
         }
-        MSG_MED( "Before IBTEXTRM_KeypressNotification, keyPressType=%d ", 
+        MSG_FATAL( "Before IBTEXTRM_KeypressNotification, keyPressType=%d ", 
                  keyPressType, 0, 0 );
         if ( IBTEXTRM_KeypressNotification( pMe->mRM.po, &pDev->bdAddr, 
                                             keyPressType ) !=SUCCESS )
@@ -7684,7 +7659,7 @@ static void BTApp_UpdateAGSettings( CBTApp* pMe, int newVal )
       }
       break;
     default:
-      MSG_ERROR( "UpdateAGSettings - m=%d", TOP_MENU, 0, 0 );
+      MSG_FATAL( "UpdateAGSettings - m=%d", TOP_MENU, 0, 0 );
   }
 }
 
@@ -7700,7 +7675,7 @@ static boolean BTApp_HandleVRCapableMenu( CBTApp* pMe, uint16 key )
   uint16  sel = IDS_BT_YES;
   boolean vr_enabled;
 
-  MSG_MED( "HndlVRCapable - k=0x%x", key, 0, 0 );
+  MSG_FATAL( "HndlVRCapable - k=0x%x", key, 0, 0 );
 
   switch ( key )
   {
@@ -7750,7 +7725,7 @@ static boolean BTApp_HandleVRCapableMenu( CBTApp* pMe, uint16 key )
           vr_enabled = FALSE;
           break;
         default:
-          MSG_ERROR( "HndlVRCapable - sel=%d", selection, 0, 0 );
+          MSG_FATAL( "HndlVRCapable - sel=%d", selection, 0, 0 );
           vr_enabled = TRUE;
           break;
       }
@@ -7787,7 +7762,7 @@ static boolean BTApp_HandleDevTypeMenu( CBTApp* pMe, uint16 key )
   AEEBTAudioDevice devType = pMe->mAG.devType;
   boolean bPrivateMode = pMe->mAG.bPrivateMode;
 
-  MSG_MED( "HndlDevType - k=0x%x", key, 0, 0 );
+  MSG_FATAL( "HndlDevType - k=0x%x", key, 0, 0 );
 
   switch ( key )
   {
@@ -7850,7 +7825,7 @@ static boolean BTApp_HandleDevTypeMenu( CBTApp* pMe, uint16 key )
           bPrivateMode = TRUE;
           break;          
         default:
-          MSG_ERROR( "HndlDevType - sel=%d", selection, 0, 0 );
+          MSG_FATAL( "HndlDevType - sel=%d", selection, 0, 0 );
           devType = pMe->mAG.devType;
           break;
       }
@@ -7881,7 +7856,7 @@ static boolean BTApp_HandleIOCMenu( CBTApp* pMe, uint16 key )
   uint16  sel = IDS_IOC_YESNO;
   AEEBTIOCapType ioCapType = pMe->mRM.ioCaptype; 
 
-  MSG_MED( " BTApp_HandleIOCMenu - k=0x%x", key, 0, 0 );
+  MSG_FATAL( " BTApp_HandleIOCMenu - k=0x%x", key, 0, 0 );
   selection = IMENUCTL_GetSel( pMe->m_pIMenu );
 
   switch ( key )
@@ -7914,7 +7889,7 @@ static boolean BTApp_HandleIOCMenu( CBTApp* pMe, uint16 key )
           ioCapType = AEEBT_RM_IOC_NO_IO;
           break;   
         default:
-          MSG_ERROR( "HandleIOCMenu - sel=%d", selection, 0, 0 );
+          MSG_FATAL( "HandleIOCMenu - sel=%d", selection, 0, 0 );
           ioCapType = pMe->mRM.ioCaptype;
           break;
       }
@@ -7922,11 +7897,11 @@ static boolean BTApp_HandleIOCMenu( CBTApp* pMe, uint16 key )
       {
         pMe->mRM.ioCaptype = ioCapType;
         pMe->bConfigChanged = TRUE;
-        MSG_MED( "HandleIOCMenu - Setting IO Cap: %d", pMe->mRM.ioCaptype, 
+        MSG_FATAL( "HandleIOCMenu - Setting IO Cap: %d", pMe->mRM.ioCaptype, 
                   0, 0 );
         if ( IBTEXTRM_SetIOCap( pMe->mRM.po, ioCapType ) != SUCCESS )
         {
-          MSG_ERROR( "IBTEXTRM_SetIOCap - setting of ioCap", 0, 0, 0 );
+          MSG_FATAL( "IBTEXTRM_SetIOCap - setting of ioCap", 0, 0, 0 );
           ev_processed = FALSE;
         }
       }
@@ -7976,7 +7951,7 @@ static boolean BTApp_HandleServiceSecurityOptionsMenu( CBTApp* pMe, uint16 key )
   uint16  sel = IDS_SECURITY_LOW;
   AEEBTSvcSecLevel srvSecType = pMe->mRM.srvSecType; 
 
-  MSG_MED( "HandleServiceSecurityOptionsMenu - k=0x%x", key, 0, 0 );
+  MSG_FATAL( "HandleServiceSecurityOptionsMenu - k=0x%x", key, 0, 0 );
 
   if ( (selection = BTApp_NumKey2Selection( pMe->m_pIMenu, key)) == 0 )
   {
@@ -8069,7 +8044,7 @@ static boolean BTApp_HandleServiceSecurityOptionsMenu( CBTApp* pMe, uint16 key )
           srvSecType = AEEBT_RM_SVC_SEC_NONE;
         break;   
           default:
-            MSG_ERROR( "HandleSvcSecurityMenu - sel=%d", selection, 0, 0 );
+            MSG_FATAL( "HandleSvcSecurityMenu - sel=%d", selection, 0, 0 );
             srvSecType = pMe->mRM.srvSecType; 
             break;
         }
@@ -8169,7 +8144,7 @@ static boolean BTApp_HandleServiceSecurityOptionsMenu( CBTApp* pMe, uint16 key )
         {
           case IDS_AUTHORIZE:
           {
-            MSG_LOW( "HndlSlction - IDS_AUTHORIZE m=%d", TOP_MENU, 0, 0 );
+            MSG_FATAL( "HndlSlction - IDS_AUTHORIZE m=%d", TOP_MENU, 0, 0 );
             pMe->bConfigChanged = TRUE;
             pMe->mRM.bAuthorize = pMe->mRM.bAuthorize ? FALSE : TRUE;
           BTApp_UpdateMenuItemImage( pMe->m_pIDisplay, 
@@ -8180,7 +8155,7 @@ static boolean BTApp_HandleServiceSecurityOptionsMenu( CBTApp* pMe, uint16 key )
         }
           case IDS_AUTHORIZE_FIRST:
           {
-            MSG_LOW( "HndlSlction - IDS_AUTHORIZE_FIRST m=%d", TOP_MENU, 0, 0 );
+            MSG_FATAL( "HndlSlction - IDS_AUTHORIZE_FIRST m=%d", TOP_MENU, 0, 0 );
             pMe->bConfigChanged = TRUE;
             pMe->mRM.bAuthorizeFirst = pMe->mRM.bAuthorizeFirst ? FALSE : TRUE;
             BTApp_UpdateMenuItemImage( pMe->m_pIDisplay, 
@@ -8206,7 +8181,7 @@ boolean BTApp_UpdateSecurityOptions( CBTApp* pMe , BTApp_ProfileEnabled profile 
 {
   boolean  bSecApplied = FALSE; 
 
-  MSG_MED( "UpdateSecurityOptions, pMe->mRM.srvSecType = %d, "
+  MSG_FATAL( "UpdateSecurityOptions, pMe->mRM.srvSecType = %d, "
            "pMe->mRM.bAuthorize =%d, pMe->mRM.bAuthorizeFirst=%d,is", 
             pMe->mRM.srvSecType, pMe->mRM.bAuthorize, pMe->mRM.bAuthorizeFirst);
 
@@ -8490,7 +8465,7 @@ static boolean BTApp_HandleSvrSec( CBTApp* pMe, uint16 key )
     selection = IMENUCTL_GetSel( pMe->m_pIMenu );
   }
 
-  MSG_MED( "BTApp_HandleSvrSec - k=0x%x sel=%x", key, selection, 0 );
+  MSG_FATAL( "BTApp_HandleSvrSec - k=0x%x sel=%x", key, selection, 0 );
   MENU_SET_SEL( selection );
   
   switch ( key )
@@ -8514,7 +8489,7 @@ static boolean BTApp_HandleSvrSec( CBTApp* pMe, uint16 key )
         {
           case IDS_ENABLE_ALL:
           {
-            MSG_LOW( "HndlSlction - Enable all m=%d", TOP_MENU, 0, 0 );
+            MSG_FATAL( "HndlSlction - Enable all m=%d", TOP_MENU, 0, 0 );
             pMe->bConfigChanged = TRUE;
             bEnableAll = TRUE;
             pMe->mAG.bSecSelectedAll = pMe->mAG.bSecSelectedAll ? FALSE : TRUE;
@@ -8526,7 +8501,7 @@ static boolean BTApp_HandleSvrSec( CBTApp* pMe, uint16 key )
           }
           case IDS_AUDIO_GATEWAY:
           {
-            MSG_LOW( "HndlSlction - AUDIO_GATEWAY_SECURITY m=%d", TOP_MENU, 0, 0 );
+            MSG_FATAL( "HndlSlction - AUDIO_GATEWAY_SECURITY m=%d", TOP_MENU, 0, 0 );
             pMe->bConfigChanged = TRUE;
             if ( bEnableAll == TRUE )
             {
@@ -8554,7 +8529,7 @@ static boolean BTApp_HandleSvrSec( CBTApp* pMe, uint16 key )
           }
           case IDS_ENABLE_L2:
           {
-            MSG_LOW( "HndlSlction - L2 m=%d", TOP_MENU, 0, 0 );
+            MSG_FATAL( "HndlSlction - L2 m=%d", TOP_MENU, 0, 0 );
             pMe->bConfigChanged = TRUE;
             if ( bEnableAll == TRUE )
             {
@@ -8582,7 +8557,7 @@ static boolean BTApp_HandleSvrSec( CBTApp* pMe, uint16 key )
           }
           case IDS_ENABLE_SPP:
           {
-            MSG_LOW( "HndlSlction - SPP m=%d", TOP_MENU, 0, 0 );
+            MSG_FATAL( "HndlSlction - SPP m=%d", TOP_MENU, 0, 0 );
             pMe->bConfigChanged = TRUE;
             if ( bEnableAll == TRUE )
             {
@@ -8610,7 +8585,7 @@ static boolean BTApp_HandleSvrSec( CBTApp* pMe, uint16 key )
           }
           case IDS_NETWORK_ACCESS:
           {
-            MSG_LOW( "HndlSlction - NETWORK_ACCESS_SECURITY m=%d", TOP_MENU, 0, 0 );
+            MSG_FATAL( "HndlSlction - NETWORK_ACCESS_SECURITY m=%d", TOP_MENU, 0, 0 );
             pMe->bConfigChanged = TRUE;
             if ( bEnableAll == TRUE )
             {
@@ -8660,7 +8635,7 @@ static boolean BTApp_HandleSvrSec( CBTApp* pMe, uint16 key )
 #ifdef FEATURE_BT_EXTPF_OPP
           case IDS_ENABLE_OPP:
           {
-            MSG_LOW( "HndlSlction - OPP m=%d", TOP_MENU, 0, 0 );
+            MSG_FATAL( "HndlSlction - OPP m=%d", TOP_MENU, 0, 0 );
             pMe->bConfigChanged = TRUE;
             if ( bEnableAll == TRUE )
             {
@@ -8708,7 +8683,7 @@ static boolean BTApp_HandleSvrSec( CBTApp* pMe, uint16 key )
 #ifdef FEATURE_BT_EXTPF_FTP
           case IDS_ENABLE_FTP:
           {
-            MSG_LOW( "HndlSlction - FTP m=%d", TOP_MENU, 0, 0 );
+            MSG_FATAL( "HndlSlction - FTP m=%d", TOP_MENU, 0, 0 );
             pMe->bConfigChanged = TRUE;
             if ( bEnableAll == TRUE )
             {
@@ -8755,7 +8730,7 @@ static boolean BTApp_HandleSvrSec( CBTApp* pMe, uint16 key )
 #ifdef FEATURE_BT_EXTPF_BIP
           case IDS_ENABLE_BIP:
           {
-            MSG_LOW( "HndlSlction - BIP m=%d", TOP_MENU, 0, 0 );
+            MSG_FATAL( "HndlSlction - BIP m=%d", TOP_MENU, 0, 0 );
             pMe->bConfigChanged = TRUE;
             if ( bEnableAll == TRUE )
             {
@@ -9006,7 +8981,7 @@ static boolean BTApp_HandleBondOptionsMenu( CBTApp* pMe, uint16 key )
     selection = IMENUCTL_GetSel( pMe->m_pIMenu );
   }
 
-  MSG_MED( "HandleBondOptions - k=0x%x sel=%x", key, selection, 0 );
+  MSG_FATAL( "HandleBondOptions - k=0x%x sel=%x", key, selection, 0 );
   MENU_SET_SEL( selection );
   
   switch ( key )
@@ -9028,7 +9003,7 @@ static boolean BTApp_HandleBondOptionsMenu( CBTApp* pMe, uint16 key )
       {
         case IDS_MITM:
         {
-          MSG_LOW( "HndlSlction - MITM settings m=%d, MITM=%d", 
+          MSG_FATAL( "HndlSlction - MITM settings m=%d, MITM=%d", 
                    TOP_MENU, pMe->mRM.bMITMEnabled, 0 );
           pMe->bConfigChanged = TRUE;
           pMe->mRM.bMITMEnabled =  pMe->mRM.bMITMEnabled ? FALSE : TRUE;
@@ -9040,7 +9015,7 @@ static boolean BTApp_HandleBondOptionsMenu( CBTApp* pMe, uint16 key )
         }
         case IDS_REBOND_OPT_MITM:
         {
-          MSG_LOW( "HndlSlction - Rebond options MITM settings m=%d, MITM=%d", 
+          MSG_FATAL( "HndlSlction - Rebond options MITM settings m=%d, MITM=%d", 
                    TOP_MENU, pMe->mRM.bRebondOptMITMEnabled, 0 );
           pMe->bConfigChanged = TRUE;
           pMe->mRM.bRebondOptMITMEnabled = pMe->mRM.bRebondOptMITMEnabled ?
@@ -9053,7 +9028,7 @@ static boolean BTApp_HandleBondOptionsMenu( CBTApp* pMe, uint16 key )
         }
         case IDS_REBOND_OPT_BOND:
         {
-          MSG_LOW( "HndlSlction - Rebond options BOND settings m=%d, BOND=%d", 
+          MSG_FATAL( "HndlSlction - Rebond options BOND settings m=%d, BOND=%d", 
                    TOP_MENU, pMe->mRM.bRebondOptBONDEnabled, 0 );
           pMe->bConfigChanged = TRUE;
           pMe->mRM.bRebondOptBONDEnabled = pMe->mRM.bRebondOptBONDEnabled ?
@@ -9091,14 +9066,14 @@ DESCRIPTION
 #if 1
 	if (pMe->mRM.bBonding && pDev->bSSPCapable && !(pMe->mRM.bpassKeyRqst))
 	{
-		MSG_LOW("BuildBondMenu - MITM Enabled : %d", pMe->mRM.bMITMEnabled, 0, 0);
+		MSG_FATAL("BuildBondMenu - MITM Enabled : %d", pMe->mRM.bMITMEnabled, 0, 0);
 
 		MSG_FATAL("***zzg BuildBondMenu - MITM Enabled : %d***", pMe->mRM.bMITMEnabled, 0, 0);
 
 		if (IBTEXTRM_SSPBond( pMe->mRM.po, &pDev->bdAddr, pMe->mRM.bMITMEnabled ) != SUCCESS)
 		{
 			MSG_FATAL("***zzg BTApp_BuildBondMenu IBTEXTRM_SSPBond Failed!***", 0, 0, 0);
-			MSG_ERROR("TextEditSave - Bond failed", 0, 0, 0);
+			MSG_FATAL("TextEditSave - Bond failed", 0, 0, 0);
 		}
 		else
 		{
@@ -9161,7 +9136,7 @@ static void BTApp_BuildDisplayPasskeyMenu( CBTApp* pMe )
   wText = MALLOC( sizeof(AECHAR) * SHORT_TEXT_BUF_LEN );
   if( wText == NULL )
   {
-    MSG_LOW( "BTApp_BuildDisplayPasskeyMenu - Failure memory allocation", 
+    MSG_FATAL( "BTApp_BuildDisplayPasskeyMenu - Failure memory allocation", 
              0, 0, 0 );
     return;
   }
@@ -9286,7 +9261,7 @@ static boolean BTApp_HandleConnModeMenu( CBTApp* pMe, uint16 key )
   AEEBTIdleMode newMode;
   CtlAddItem    ai;
 
-  MSG_MED( "HndlConnMode - k=0x%x", key, 0, 0 );
+  MSG_FATAL( "HndlConnMode - k=0x%x", key, 0, 0 );
   switch ( key )
   {
     case AVK_LEFT:
@@ -9396,7 +9371,7 @@ static boolean BTApp_HandleHSButtonHndlrMenu( CBTApp* pMe, uint16 key )
   IMENUCTL_GetItem( pMe->m_pIMenu, selection, &ai );
   bIgnore = (ai.wImage == IDB_CHECK_ON) ? TRUE : FALSE;
 
-  MSG_MED( "HndlHSButton - k=0x%x bIgnore=%d f=0x%x", 
+  MSG_FATAL( "HndlHSButton - k=0x%x bIgnore=%d f=0x%x", 
            key, bIgnore, pMe->mAG.uFlags );
 
   switch ( key )
@@ -9457,7 +9432,7 @@ static boolean BTApp_HandleListMenu( CBTApp* pMe, uint16 key )
   AECHAR  wBuf[ 5 ];
   boolean ev_processed = FALSE;
 
-  MSG_MED( "HndlList - m=%d k=0x%x", TOP_MENU, key, 0 );
+  MSG_FATAL( "HndlList - m=%d k=0x%x", TOP_MENU, key, 0 );
 
   switch ( TOP_MENU )
   {
@@ -9803,7 +9778,7 @@ int BTApp_RemoteOOBWrite( CBTApp* pMe, AEEBTDeviceInfo *pDev )
   uint8             result = EFAILED; 
   AECHAR            wBuf1[18]; 
   char              szBDAddr [18];
-  MSG_MED( "OOB Remote Data Write", 0, 0, 0 );
+  MSG_FATAL( "OOB Remote Data Write", 0, 0, 0 );
 
 
   if ( ISHELL_CreateInstance( pMe->m_pShell, AEECLSID_FILEMGR, 
@@ -9833,7 +9808,7 @@ int BTApp_RemoteOOBWrite( CBTApp* pMe, AEEBTDeviceInfo *pDev )
       }
       else
       {
-        MSG_ERROR( "OOB Remote read failed", 0, 0, 0 );
+        MSG_FATAL( "OOB Remote read failed", 0, 0, 0 );
       }
       
       if ( pIFile != NULL )
@@ -9844,7 +9819,7 @@ int BTApp_RemoteOOBWrite( CBTApp* pMe, AEEBTDeviceInfo *pDev )
     }
     else
     {
-      MSG_MED( "OOB Remote does not exist", 0, 0, 0 );
+      MSG_FATAL( "OOB Remote does not exist", 0, 0, 0 );
     }
     IFILEMGR_Release( pIFileMgr );
   }
@@ -9939,7 +9914,7 @@ static boolean BTApp_HandleSecurityMenu( CBTApp* pMe, uint16 key )
   AEEBTSecurity*    pCurrentSecurity;
   AEEBTDeviceInfo*  pDev = &pMe->mRM.device[ pMe->mRM.uCurDevIdx ];
 
-  MSG_MED( "HndlSec - k=0x%x m=%d", key, TOP_MENU, 0 );
+  MSG_FATAL( "HndlSec - k=0x%x m=%d", key, TOP_MENU, 0 );
 
   selection = IMENUCTL_GetSel( pMe->m_pIMenu );
   switch ( key )
@@ -9970,7 +9945,7 @@ static boolean BTApp_HandleSecurityMenu( CBTApp* pMe, uint16 key )
           selectedSecurity = AEEBT_SEC_AUTHENTICATE_AND_ENCRYPT;
           break;
         default:
-          MSG_ERROR( "HndlDevSec - selection=%d", selection, 0, 0 );
+          MSG_FATAL( "HndlDevSec - selection=%d", selection, 0, 0 );
           selectedSecurity = *pCurrentSecurity;
       }
 
@@ -9989,7 +9964,7 @@ static boolean BTApp_HandleSecurityMenu( CBTApp* pMe, uint16 key )
         }
         if ( result != SUCCESS )
         {
-          MSG_ERROR( "HndlSec - failed to set security", 0, 0, 0 );
+          MSG_FATAL( "HndlSec - failed to set security", 0, 0, 0 );
         }
       }
       ev_processed = BTApp_HandleClearKey( pMe );
@@ -10035,7 +10010,7 @@ static boolean BTApp_HandleDiscoverableMenu( CBTApp* pMe, uint16 key )
   uint16  sel = IDS_ON_TIMED;
   int     result;
 
-  MSG_MED( "HndlDiscoverable - k=0x%x", key, 0, 0 );
+  MSG_FATAL( "HndlDiscoverable - k=0x%x", key, 0, 0 );
 
   selection = IMENUCTL_GetSel( pMe->m_pIMenu );
 
@@ -10060,7 +10035,7 @@ static boolean BTApp_HandleDiscoverableMenu( CBTApp* pMe, uint16 key )
           discoverable = FALSE;
           break;
         default:
-          MSG_ERROR( "HndlDiscoverable - selection=%d", selection, 0, 0 );
+          MSG_FATAL( "HndlDiscoverable - selection=%d", selection, 0, 0 );
           discoverable = pMe->mSD.bDiscoverable;
           
       }
@@ -10071,7 +10046,7 @@ static boolean BTApp_HandleDiscoverableMenu( CBTApp* pMe, uint16 key )
           if ( (result = IBTEXTSD_SetDiscoverable( pMe->mSD.po, 
                                                    TRUE )) != SUCCESS )
           {
-            MSG_ERROR( "HndlDiscoverable - SetDisc failed r=%d", result, 0, 0 );
+            MSG_FATAL( "HndlDiscoverable - SetDisc failed r=%d", result, 0, 0 );
             BTApp_ShowMessage( pMe, IDS_MSG_DISCOVERABLE_NOT_SET, NULL, 2 );
           }
           else
@@ -10125,7 +10100,7 @@ static boolean BTApp_HandleSppTestMenu( CBTApp* pMe, uint16 key )
 {
   boolean ev_processed = TRUE;
 
-  MSG_MED( "HndlSppTest - k=0x%x", key, 0, 0 );
+  MSG_FATAL( "HndlSppTest - k=0x%x", key, 0, 0 );
 
   switch ( key )
   {
@@ -10157,7 +10132,7 @@ static boolean BTApp_HandleSppSettingsMenu( CBTApp* pMe, uint16 key )
   uint16  sel          = IDS_SPP_DATA_SIZE_THOUSAND;
   uint32  uNumBufs     = pMe->mSPP.uNumDataBufs;
 
-  MSG_MED( "HndlSPPSettings - k=0x%x", key, 0, 0 );
+  MSG_FATAL( "HndlSPPSettings - k=0x%x", key, 0, 0 );
 
   switch ( key )
   {
@@ -10205,7 +10180,7 @@ static boolean BTApp_HandleSppSettingsMenu( CBTApp* pMe, uint16 key )
           uNumBufs = 1000*1000;
           break;
         default:
-          MSG_ERROR( "HndlSPPSettings - sel=%d", selection, 0, 0 );
+          MSG_FATAL( "HndlSPPSettings - sel=%d", selection, 0, 0 );
           uNumBufs = 1000; // default is 2M
           break;
       }
@@ -10230,7 +10205,7 @@ static boolean BTApp_HandleSvcRspMenu( CBTApp* pMe, uint16 key )
 {
   boolean ev_processed = FALSE;
 
-  MSG_MED( "HndlSvcRsp - k=0x%x", key, 0, 0 );
+  MSG_FATAL( "HndlSvcRsp - k=0x%x", key, 0, 0 );
 
   switch ( key )
   {
@@ -10270,7 +10245,7 @@ static boolean BTApp_HandleSettingsMenu( CBTApp* pMe, uint16 key )
     selection = IMENUCTL_GetSel( pMe->m_pIMenu );
   }
 
-  MSG_MED( "HndlSettingsEnabling - k=0x%x sel=%x", key, selection, 0 );
+  MSG_FATAL( "HndlSettingsEnabling - k=0x%x sel=%x", key, selection, 0 );
   MENU_SET_SEL( selection );
   
   switch ( key )
@@ -10292,7 +10267,7 @@ static boolean BTApp_HandleSettingsMenu( CBTApp* pMe, uint16 key )
       {
         case IDS_AUDIO_GATEWAY:
         {
-          MSG_LOW( "HndlSlction - AUDIO_GATEWAY m=%d", TOP_MENU, 0, 0 );
+          MSG_FATAL( "HndlSlction - AUDIO_GATEWAY m=%d", TOP_MENU, 0, 0 );
           switch ( TOP_MENU )
           {
             case BT_APP_MENU_SETTINGS:
@@ -10317,7 +10292,7 @@ static boolean BTApp_HandleSettingsMenu( CBTApp* pMe, uint16 key )
         }
         case IDS_NETWORK_ACCESS:
         {
-          MSG_LOW( "HndlSlction - NETWORK_ACCESS m=%d", TOP_MENU, 0, 0 );
+          MSG_FATAL( "HndlSlction - NETWORK_ACCESS m=%d", TOP_MENU, 0, 0 );
           switch ( TOP_MENU )
           {
             case BT_APP_MENU_SETTINGS:
@@ -10350,7 +10325,7 @@ static boolean BTApp_HandleSettingsMenu( CBTApp* pMe, uint16 key )
 #ifdef FEATURE_BT_EXTPF_FTP
         case IDS_SETTINGS_FTP:
         {
-          MSG_LOW( "HndlSlction - SETTINGS_FTP m=%d", TOP_MENU, 0, 0 );
+          MSG_FATAL( "HndlSlction - SETTINGS_FTP m=%d", TOP_MENU, 0, 0 );
           BTApp_BuildMenu( pMe, BT_APP_MENU_FTP_ENABLING );
           break;
         }
@@ -10386,7 +10361,7 @@ static boolean BTApp_HandleSettingsMenu( CBTApp* pMe, uint16 key )
 #ifdef FEATURE_BT_EXTPF_BIP
         case IDS_SETTINGS_BIP:
         {
-          MSG_LOW( "HndlSlction - SETTINGS_BIP m=%d", TOP_MENU, 0, 0 );
+          MSG_FATAL( "HndlSlction - SETTINGS_BIP m=%d", TOP_MENU, 0, 0 );
           BTApp_BuildMenu( pMe, BT_APP_MENU_BIP_ENABLING );
           break;
         }
@@ -10441,7 +10416,7 @@ static boolean BTApp_HandleSettingsMenu( CBTApp* pMe, uint16 key )
               break;
             }
             default:
-              MSG_ERROR( "HndlDevType - sel=%d", selection, 0, 0 );
+              MSG_FATAL( "HndlDevType - sel=%d", selection, 0, 0 );
               break;
           }
           break;
@@ -10583,11 +10558,11 @@ static boolean BTApp_HandleScanParamsMenu(
   uint16  sel = IDS_SCAN_PARAM_DEFAULT;
   AEEBTActVsPwr scanParam;
 
-  MSG_MED( "HndlScanParams - m=%d k=0x%x", menu, key, 0 );
+  MSG_FATAL( "HndlScanParams - m=%d k=0x%x", menu, key, 0 );
 
   if ( (menu != BT_APP_MENU_PAGE_SCAN) && (menu != BT_APP_MENU_INQ_SCAN) )
   {
-    MSG_ERROR( "HndlScanParams - unexpected menu", 0, 0, 0 );
+    MSG_FATAL( "HndlScanParams - unexpected menu", 0, 0, 0 );
     return FALSE;
   }
 
@@ -10654,7 +10629,7 @@ static boolean BTApp_HandleScanParamsMenu(
           scanParam = AEEBT_RM_AVP_LARGEST_ACT_LEAST_POWER;
           break;
         default:
-          MSG_ERROR( "HndlScanParams - sel=%d", selection, 0, 0 );
+          MSG_FATAL( "HndlScanParams - sel=%d", selection, 0, 0 );
           scanParam = AEEBT_RM_AVP_AUTOMATIC;
           break;
       }
@@ -10697,7 +10672,7 @@ boolean BTApp_BuildMenu( CBTApp* pMe, BTAppMenuType menu )
 
   IDISPLAY_Backlight( pMe->m_pIDisplay, TRUE );
 
-  MSG_LOW( "BuildMenu - m=%d tm=%d", menu, TOP_MENU, 0 );
+  MSG_FATAL( "BuildMenu - m=%d tm=%d", menu, TOP_MENU, 0 );
   MSG_FATAL("BuildMenu - m=%d tm=%d", menu, TOP_MENU, 0);
   ISHELL_CancelTimer( pMe->m_pShell, (PFNNOTIFY) BTApp_MessageTimerExpired, 
                       pMe );
@@ -10884,11 +10859,11 @@ boolean BTApp_BuildMenu( CBTApp* pMe, BTAppMenuType menu )
       if ( IBTEXTRM_GetLocalInfo( pMe->mRM.po,&pMe->mRM.myInfo ) != SUCCESS )
       {
       	MSG_FATAL("***zzg IBTEXTRM_GetLocalInfo Failed!***", 0, 0, 0);
-        MSG_ERROR( "Get Local Device Information failed!!! ", 0, 0, 0 );
+        MSG_FATAL( "Get Local Device Information failed!!! ", 0, 0, 0 );
       }
       else
       {
-        MSG_LOW("Local HC LMPVersion = %d",pMe->mRM.myInfo.uLMPVersion, 0, 0 );
+        MSG_FATAL("Local HC LMPVersion = %d",pMe->mRM.myInfo.uLMPVersion, 0, 0 );
 
 		MSG_FATAL("***zzg Local HC LMPVersion = %d***", pMe->mRM.myInfo.uLMPVersion, 0, 0);
 		
@@ -11184,7 +11159,7 @@ boolean BTApp_HandleClearKey( CBTApp* pMe )
 
   
 
-  MSG_LOW( "HndlClearKey - m=%d msgId=%d", TOP_MENU, pMe->uCurrMsgId, 0 );
+  MSG_FATAL( "HndlClearKey - m=%d msgId=%d", TOP_MENU, pMe->uCurrMsgId, 0 );
 
   pMe->bBusyIconUp = FALSE;
   ISHELL_CancelTimer( pMe->m_pShell, (PFNNOTIFY) BTApp_MessageTimerExpired, 
@@ -11278,7 +11253,7 @@ boolean BTApp_HandleClearKey( CBTApp* pMe )
       int result;
       if ( pMe->bConfigChanged )
       {
-        MSG_LOW( "Configuring app with pS=%d iS=%d", 
+        MSG_FATAL( "Configuring app with pS=%d iS=%d", 
                  pMe->mRM.pageScanParam, pMe->mRM.inquiryScanParam, 0 );
          result = IBTEXTRM_ConfigApplication( pMe->mRM.po, FALSE,
                                               pMe->mRM.pageScanParam,
@@ -11286,7 +11261,7 @@ boolean BTApp_HandleClearKey( CBTApp* pMe )
                                               FALSE );
         if ( result != SUCCESS )
         {
-          MSG_ERROR( "Failed to configure application r=%d", result, 0, 0 );
+          MSG_FATAL( "Failed to configure application r=%d", result, 0, 0 );
         }
         pMe->bConfigChanged = FALSE;
         BTApp_WriteConfigFile( pMe );
@@ -11750,7 +11725,7 @@ boolean BTApp_HandleClearKey( CBTApp* pMe )
           }
           else
           {
-            MSG_ERROR( "BrowseServiceCancel failed - r=%d", result, 0, 0 );
+            MSG_FATAL( "BrowseServiceCancel failed - r=%d", result, 0, 0 );
           }
           break;
         }
@@ -11822,7 +11797,7 @@ static boolean BTApp_MenuHandleEvent
 
   boolean   bInStatic = FALSE;	//Add By zzg 2010_11_03
   
-  MSG_LOW( "MenuHndlEv - wP=0x%x dw=0x%x m=%d", wParam, dw, TOP_MENU );
+  MSG_FATAL( "MenuHndlEv - wP=0x%x dw=0x%x m=%d", wParam, dw, TOP_MENU );
 
 
   if ( (wParam != AVK_CLR) && (pMe->uCurrMsgId != 0) )
@@ -12184,7 +12159,7 @@ static boolean BTApp_KeysDisabled( CBTApp* pMe, uint16 key )
 #endif /* FEATURE_BT_EXTPF_PBAP */
   if ( pMe->bBusyIconUp != FALSE )
   {
-    MSG_MED( "KeysDisabled - Busy Icon up, keys disabled", 0, 0, 0 );
+    MSG_FATAL( "KeysDisabled - Busy Icon up, keys disabled", 0, 0, 0 );
     bKeyDisabled = TRUE;
   }
   else if ( (pMe->uCurrMsgId == IDS_MSG_SEARCHING) ||
@@ -12260,7 +12235,7 @@ boolean BTApp_RegisterAGNotif( CBTApp* pMe )
                                         umask );
     if ( result != SUCCESS )
     {
-      MSG_ERROR( "RegisterAGNotif - Failed r=%d", 0, 0, 0 );
+      MSG_FATAL( "RegisterAGNotif - Failed r=%d", 0, 0, 0 );
     }
     else
     {
@@ -12286,14 +12261,14 @@ void BTApp_DeregisterAGNotif( CBTApp* pMe )
                            AEECLSID_BLUETOOTH_NOTIFIER, 0 );
     if (result != SUCCESS)
     {
-      MSG_ERROR( "DeregisterAGNotif - m=0 failed r=%d", result, 0, 0 );
+      MSG_FATAL( "DeregisterAGNotif - m=0 failed r=%d", result, 0, 0 );
     }
     uBTApp_NMask &= ~NMASK_BT_AG;
     result = ISHELL_RegisterNotify( pMe->m_pShell, AEECLSID_BLUETOOTH_APP,
                            AEECLSID_BLUETOOTH_NOTIFIER, uBTApp_NMask );
     if (result != SUCCESS)
     {
-      MSG_ERROR( "DeregisterAGNotif - m=0x%x failed r=%d", 
+      MSG_FATAL( "DeregisterAGNotif - m=0x%x failed r=%d", 
                  uBTApp_NMask, result, 0 );
     }
   }
@@ -12329,7 +12304,7 @@ boolean BTApp_AGInit( CBTApp *pMe )
     if (ISHELL_CreateInstance( pMe->m_pShell, AEECLSID_CALLMGR,
                                (void**)&pMe->mAG.pICallMgr ) != SUCCESS )
     {
-      MSG_ERROR( "BTApp_AGInit - ICallMgr create instance failed", 0, 0, 0 );
+      MSG_FATAL( "BTApp_AGInit - ICallMgr create instance failed", 0, 0, 0 );
 	  MSG_FATAL("***zzg BTApp_AGInit - ICallMgr create instance failed***", 0, 0, 0);
       pMe->mAG.pICallMgr = NULL;
     }
@@ -12378,7 +12353,7 @@ boolean BTApp_AGInit( CBTApp *pMe )
     if ( IBTEXTAG_EnableExternalIO( pMe->mAG.po, &pMe->mAG.externalIOCb ) !=
          SUCCESS )
     {
-      MSG_ERROR( "BTApp_AGInit - failed enabling AG external I/O", 0, 0, 0 );
+      MSG_FATAL( "BTApp_AGInit - failed enabling AG external I/O", 0, 0, 0 );
 	  MSG_FATAL("***zzg BTApp_AGInit - failed enabling AG external I/O***", 0, 0, 0);
     }
 #endif /* FEATURE_BT_HFP_1_5 */
@@ -12386,7 +12361,7 @@ boolean BTApp_AGInit( CBTApp *pMe )
     if (ISHELL_CreateInstance( pMe->m_pShell, AEECLSID_TELEPHONE,
                                (void**)&pMe->pIPhone ) != SUCCESS )
     {
-      MSG_ERROR( "BTApp_AGInit - ITelephone create instance failed", 0, 0, 0 );
+      MSG_FATAL( "BTApp_AGInit - ITelephone create instance failed", 0, 0, 0 );
 	  MSG_FATAL("***zzg BTApp_AGInit - ITelephone create instance failed***", 0, 0, 0);
       pMe->pIPhone = NULL;
     }
@@ -12408,7 +12383,7 @@ boolean BTApp_AGInit( CBTApp *pMe )
   }
   else
   {
-    MSG_ERROR( "BTAppAG_Init - Failed to create AG instance", 0, 0, 0 );
+    MSG_FATAL( "BTAppAG_Init - Failed to create AG instance", 0, 0, 0 );
 	MSG_FATAL("***zzg BTAppAG_Init - Failed to create AG instance***", 0, 0, 0);
     /*  De-register the events for AG if A2DP is not enabled */
 #ifdef FEATURE_BT_EXTPF_AV
@@ -12554,7 +12529,7 @@ boolean BTApp_RegisterNANotif( CBTApp* pMe )
                                         umask );
     if ( result != SUCCESS )
     {
-      MSG_ERROR( "RegisterNANotif - Failed r=%d", 0, 0, 0 );
+      MSG_FATAL( "RegisterNANotif - Failed r=%d", 0, 0, 0 );
     }
     else
     {
@@ -12579,14 +12554,14 @@ void BTApp_DeregisterNANotif( CBTApp* pMe )
                            AEECLSID_BLUETOOTH_NOTIFIER, 0 );
     if (result != SUCCESS)
     {
-      MSG_ERROR( "DeregisterNANotif - m=0 failed r=%d", result, 0, 0 );
+      MSG_FATAL( "DeregisterNANotif - m=0 failed r=%d", result, 0, 0 );
     }
     uBTApp_NMask &= ~NMASK_BT_NA;
     result = ISHELL_RegisterNotify( pMe->m_pShell, AEECLSID_BLUETOOTH_APP,
                            AEECLSID_BLUETOOTH_NOTIFIER, uBTApp_NMask );
     if (result != SUCCESS)
     {
-      MSG_ERROR( "DeregisterNANotif - m=0x%x failed r=%d", 
+      MSG_FATAL( "DeregisterNANotif - m=0x%x failed r=%d", 
                  uBTApp_NMask, result, 0 );
     }
   }
@@ -12610,14 +12585,14 @@ static boolean BTApp_NAInit( CBTApp *pMe )
     // Now register for NA Notifications
     if ( BTApp_RegisterNANotif( pMe ) == FALSE )
     {
-      MSG_ERROR( "BTApp_NAInit - Failed to Register NA events", 0, 0, 0 );
+      MSG_FATAL( "BTApp_NAInit - Failed to Register NA events", 0, 0, 0 );
       BTApp_NADeInit( (IApplet*) pMe );
       return FALSE;
     } 
   }
   else
   {
-    MSG_ERROR( "BTApp_NAInit - Failed to create NA instance", 0, 0, 0 );
+    MSG_FATAL( "BTApp_NAInit - Failed to create NA instance", 0, 0, 0 );
     BTApp_NADeInit( (IApplet*) pMe );
     return FALSE;
   }
@@ -12686,7 +12661,7 @@ static boolean BTApp_EnableAG( CBTApp* pMe, boolean* pbSettingBondable)
 
     if ( BTApp_AGInit( pMe ) == FALSE )
     {
-      MSG_ERROR("BTApp_EnableBT - Failed to register for AG events", 0, 0, 0);
+      MSG_FATAL("BTApp_EnableBT - Failed to register for AG events", 0, 0, 0);
 	  MSG_FATAL("***zzg BTApp_EnableBT - Failed to register for AG events***", 0, 0, 0);
     }
     else
@@ -12696,7 +12671,7 @@ static boolean BTApp_EnableAG( CBTApp* pMe, boolean* pbSettingBondable)
       {
         if ( idleMode == AEEBT_AG_IDLEMODE_ACTIVE )
         {
-          MSG_MED( "EnableAG - forcing Passive mode", 0, 0, 0 );
+          MSG_FATAL( "EnableAG - forcing Passive mode", 0, 0, 0 );
 		  MSG_FATAL("***zzg EnableAG - forcing Passive mode***", 0, 0, 0);
           idleMode    = AEEBT_AG_IDLEMODE_PASSIVE;
           idleTimeout = 0;
@@ -12718,11 +12693,11 @@ static boolean BTApp_EnableAG( CBTApp* pMe, boolean* pbSettingBondable)
                (AEEBTBatteryChargeLevel)uLevel)) != SUCCESS )
         {
         	MSG_FATAL("***zzg EnableAG- Invalid no of Batt Scale***", 0, 0, 0);
-          MSG_ERROR( "EnableAG- Invalid no of Batt Scale ", 0, 0, 0 );
+          MSG_FATAL( "EnableAG- Invalid no of Batt Scale ", 0, 0, 0 );
         }
       }
 #endif /* FEATURE_BT_HFP_1_5*/
-     MSG_MED( "EnableAG - AG BDa=%2x%2x%2x", pMe->mAG.bdAddr.uAddr[5],
+     MSG_FATAL( "EnableAG - AG BDa=%2x%2x%2x", pMe->mAG.bdAddr.uAddr[5],
                pMe->mAG.bdAddr.uAddr[4], pMe->mAG.bdAddr.uAddr[3] );
  
       if ( BDADDR_VALID( &pMe->mAG.bdAddr ) )
@@ -12745,7 +12720,7 @@ static boolean BTApp_EnableAG( CBTApp* pMe, boolean* pbSettingBondable)
 	  
       if ( IBTEXTAG_Enable( pMe->mAG.po, pBDAddr, pMe->mAG.devType ) != SUCCESS )
       {
-        MSG_ERROR( "EnableAG - failed to enable AG", 0, 0, 0 );
+        MSG_FATAL( "EnableAG - failed to enable AG", 0, 0, 0 );
 		MSG_FATAL("***zzg EnableAG - failed to enable AG***", 0, 0, 0);
         BTApp_ClearBondable( pMe ); // no need to be bondable anymore
         /*  De-register the events for AG if A2DP is not enabled */
@@ -12806,7 +12781,7 @@ static boolean BTApp_EnableNA( CBTApp* pMe, boolean* pbSettingBondable)
     }
     if ( BTApp_NAInit( pMe ) == FALSE )
     {
-      MSG_ERROR( "BTApp_EnableBT - Failed to register for NA events", 0, 0, 0 );
+      MSG_FATAL( "BTApp_EnableBT - Failed to register for NA events", 0, 0, 0 );
     }
     else
     {
@@ -12816,12 +12791,12 @@ static boolean BTApp_EnableNA( CBTApp* pMe, boolean* pbSettingBondable)
         *pbSettingBondable = TRUE;
       }
   
-      MSG_LOW( "EnableNA - enabling NA", 0, 0, 0 );
+      MSG_FATAL( "EnableNA - enabling NA", 0, 0, 0 );
   
       result = IBTEXTNA_Enable( pMe->mNA.po );
       if ( result != SUCCESS )
       {
-        MSG_ERROR( "EnableNA - failed to enable NA r=%x", result, 0, 0 );
+        MSG_FATAL( "EnableNA - failed to enable NA r=%x", result, 0, 0 );
       }
       else
       {
@@ -12847,8 +12822,11 @@ void BTApp_EnableBT(CBTApp* pMe)
 	boolean      bSettingDiscoverable = FALSE;
 #endif
 
-	MSG_FATAL("***zzg  BTApp_EnableBT mEnablingType=%x***", pMe->mEnablingType, 0, 0);
-
+    if(bIsBTOn)
+    {
+        return;
+    }
+    
 	if (pMe->mEnablingType == BTAPP_ENABLING_NONE)
 	{
 		pMe->mEnablingType = BTAPP_ENABLING_AG;
@@ -12856,7 +12834,7 @@ void BTApp_EnableBT(CBTApp* pMe)
 	
 	if (BTApp_HCIModeOn(pMe) == TRUE)
 	{
-		MSG_ERROR("BTApp_HCIModeOn(pMe) == TRUE!", 0, 0, 0);
+		MSG_FATAL("BTApp_HCIModeOn(pMe) == TRUE!", 0, 0, 0);
 		return;
 	}
 	
@@ -12878,19 +12856,21 @@ void BTApp_EnableBT(CBTApp* pMe)
 				break;
 			}
 
-			MSG_FATAL("***zzg BTApp Enable AG FALSE***", 0, 0, 0);			
+			MSG_FATAL("***zzg BTApp Enable AG FALSE***", 0, 0, 0);	
+            pMe->mEnablingType++;
 		}
 		
 		case BTAPP_ENABLING_NA:
 		{
+#if 0
 			if (BTApp_EnableNA(pMe, &bSettingBondable) == TRUE)
 			{
 				MSG_FATAL("***zzg BTApp Enable NA TRUE***", 0, 0, 0);
 				break;
 			}
-			
+#endif
 			MSG_FATAL("***zzg BTApp Enable NA FALSE***", 0, 0, 0);
-			
+			pMe->mEnablingType++;
 		}
 		
 #ifdef FEATURE_BT_EXTPF_OPP  
@@ -12903,6 +12883,7 @@ void BTApp_EnableBT(CBTApp* pMe)
 			}
 
 			MSG_FATAL("***zzg BTApp Enable OPP FALSE***",0,0,0);
+            pMe->mEnablingType++;
 		}
 #endif //FEATURE_BT_EXTPF_OPP
 
@@ -12910,6 +12891,7 @@ void BTApp_EnableBT(CBTApp* pMe)
 		case BTAPP_ENABLING_OBEX:
 		{
 			BTApp_EnableOBEX(pMe, &bSettingBondable, &bSettingDiscoverable);
+            pMe->mEnablingType++;
 		}
 #endif //FEATURE_IOBEX
 
@@ -12923,7 +12905,7 @@ void BTApp_EnableBT(CBTApp* pMe)
 			}
 			
 			MSG_FATAL("***zzg BTApp Enable FTP FALSE***", 0, 0, 0);
-			
+			pMe->mEnablingType++;
 		}
 #endif /* FEATURE_BT_EXTPF_FTP */
 
@@ -12937,6 +12919,7 @@ void BTApp_EnableBT(CBTApp* pMe)
 			}
 
 			MSG_FATAL("***zzg BTApp Enable BIP FALSE***", 0, 0, 0);
+            pMe->mEnablingType++;
 		}
 #endif //FEATURE_BT_EXTPF_BIP
 
@@ -12950,6 +12933,7 @@ void BTApp_EnableBT(CBTApp* pMe)
 			}
 
 			MSG_FATAL("***zzg BTApp Enable BPP FALSE***", 0, 0, 0);
+            pMe->mEnablingType++;
 		}
 #endif //FEATURE_BT_EXTPF_BPP
 
@@ -12963,6 +12947,7 @@ void BTApp_EnableBT(CBTApp* pMe)
 			}
 
 			MSG_FATAL("***zzg BTApp Enable PBAP FALSE***", 0, 0, 0);
+            pMe->mEnablingType++;
 		}
 #endif /*FEATURE_BT_EXTPF_PBAP*/
 
@@ -12976,6 +12961,7 @@ void BTApp_EnableBT(CBTApp* pMe)
 			MSG_FATAL("***zzg BTApp_EnableBT BTAPP_ENABLING_AV***", 0, 0, 0);
 			BTApp_EnableA2DP(pMe, &bSettingBondable);
 			BTApp_EnableAVRCP(pMe, &bSettingBondable);
+            pMe->mEnablingType++;
 		}
 #endif //FEATURE_BT_EXTPF_AV
 
@@ -12988,24 +12974,23 @@ void BTApp_EnableBT(CBTApp* pMe)
 			BTApp_EnableL2(pMe);
 			pMe->mEnablingType = BTAPP_ENABLING_AG;
 			BTApp_BuildTopMenu(pMe);
+            
+            //Add By zzg 2010_11_16
+        	bIsBTOn = TRUE;
+
+        	if (pMe->m_pIAnn)
+        	{
+        		IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_BLUETOOTH, ANNUN_STATE_BT_ON);		
+        	}
+
+        	if (pMe->m_pConfig)
+        	{
+        		(void) ICONFIG_SetItem(pMe->m_pConfig,CFGI_BT_STATUS,&bIsBTOn,sizeof(bIsBTOn));   
+        	}		  
+        	//Add End
 			break;
 		}
 	}
-
-	//Add By zzg 2010_11_16
-	bIsBTOn = TRUE;
-
-	if (pMe->m_pIAnn)
-	{
-		IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_BLUETOOTH, ANNUN_STATE_BT_ON);		
-	}
-
-	if (pMe->m_pConfig)
-	{
-		(void) ICONFIG_SetItem(pMe->m_pConfig,CFGI_BT_STATUS,&bIsBTOn,sizeof(bIsBTOn));   
-	}		  
-	//Add End
-  
 }
 /* ==========================================================================
 FUNCTION BTApp_DisableBT
@@ -13024,7 +13009,11 @@ void BTApp_DisableBT( CBTApp* pMe )
 #endif
 
 	MSG_FATAL("***zzg BTApp_DisableBT***", 0, 0, 0);
-
+    if(!bIsBTOn)
+    {
+        return;
+    }
+    
 	if (pMe->bEnableAtStart != FALSE)
 	{
 		pMe->bEnableAtStart = FALSE;
@@ -13033,10 +13022,10 @@ void BTApp_DisableBT( CBTApp* pMe )
 
 	if (pMe->mAG.bEnabled)
 	{
-		MSG_LOW( "DisableBT - disabling AG", 0, 0, 0 );
+		MSG_FATAL( "DisableBT - disabling AG", 0, 0, 0 );
 		if ((result = IBTEXTAG_Disable(pMe->mAG.po)) != SUCCESS)
 		{
-			MSG_ERROR("DisableBT - failed to disable AG, r=%d", result, 0, 0);
+			MSG_FATAL("DisableBT - failed to disable AG, r=%d", result, 0, 0);
 		}
 		else
 		{
@@ -13046,10 +13035,10 @@ void BTApp_DisableBT( CBTApp* pMe )
 	
 	if (pMe->mNA.bEnabled)
 	{
-		MSG_LOW( "DisableBT - disabling NA", 0, 0, 0 );
+		MSG_FATAL( "DisableBT - disabling NA", 0, 0, 0 );
 		if ((result = IBTEXTNA_Disable(pMe->mNA.po)) != SUCCESS)
 		{
-			MSG_ERROR("DisableBT - failed to disable NA, r=%d", result, 0, 0);
+			MSG_FATAL("DisableBT - failed to disable NA, r=%d", result, 0, 0);
 		}
 		else
 		{
@@ -13063,7 +13052,7 @@ void BTApp_DisableBT( CBTApp* pMe )
 	{
 		if ((result = IBTEXTOPP_Deregister(pMe->mOPP.po)) != SUCCESS)
 		{
-			MSG_ERROR("OPP_Deregister() failed with %x", result, 0, 0);
+			MSG_FATAL("OPP_Deregister() failed with %x", result, 0, 0);
 			BTApp_ShowMessage(pMe, IDS_MSG_SVR_DEREG_FAILED, NULL, 3);
 		}
 		else
@@ -13085,7 +13074,7 @@ void BTApp_DisableBT( CBTApp* pMe )
 	{
 		if ((result = IBTEXTFTP_Deregister(pMe->mFTP.po)) != SUCCESS)
 		{
-			MSG_ERROR("FTP_Deregister() failed with %x", result, 0, 0);
+			MSG_FATAL("FTP_Deregister() failed with %x", result, 0, 0);
 			BTApp_ShowMessage(pMe, IDS_MSG_SVR_DEREG_FAILED, NULL, 3);
 		}
 		else
@@ -13163,7 +13152,7 @@ void BTApp_DisableBT( CBTApp* pMe )
 		result = IOBEXServer_Deregister(pMe->mOBEX.poServer);
 		if (result != SUCCESS)
 		{
-			MSG_ERROR("DisableBT - OBEX Deregister Failed with %x", result, 0, 0);
+			MSG_FATAL("DisableBT - OBEX Deregister Failed with %x", result, 0, 0);
 			BTApp_ShowMessage(pMe, IDS_MSG_SVR_DEREG_FAILED, NULL, 3);
 		}
 		else
@@ -13215,7 +13204,7 @@ void BTApp_DisableBT( CBTApp* pMe )
 	{
 		BTApp_ShowBusyIcon(pMe);
 	}
-
+    
 	//Add By zzg 2010_11_16
 	bIsBTOn = FALSE;	
 
@@ -13250,7 +13239,7 @@ static boolean BTApp_ATResponseCIMI( CBTApp* pMe )
 #if defined (FEATURE_WCDMA) || defined (FEATURE_GSM)
 #error code not present
 #else
-  MSG_LOW( "ATResponseCIMI - Not supported for CDMA", 0, 0, 0 );
+  MSG_FATAL( "ATResponseCIMI - Not supported for CDMA", 0, 0, 0 );
   return FALSE;
 #endif
 }
@@ -13271,7 +13260,7 @@ static void BTApp_ATResponseCBC( CBTApp* pMe )
   
   if ( pMe->mAG.pIBattery == NULL )
   {
-    MSG_LOW( "ATResponseCBC - No Battery I/F available", 0, 0, 0 );
+    MSG_FATAL( "ATResponseCBC - No Battery I/F available", 0, 0, 0 );
     BTApp_ATResponseErr( pMe, BTAPP_CME_AG_FAILURE );
     return;
   }
@@ -13279,7 +13268,7 @@ static void BTApp_ATResponseCBC( CBTApp* pMe )
   if ( IBATTERY_GetBatteryStatus( pMe->mAG.pIBattery, 
                                   &BattStatus ) != SUCCESS )
   {
-    MSG_ERROR( "ATResponseCBC - cannot obtain battery status", 0, 0, 0 );
+    MSG_FATAL( "ATResponseCBC - cannot obtain battery status", 0, 0, 0 );
     BTApp_ATResponseErr( pMe, BTAPP_CME_AG_FAILURE );
     return;
   }
@@ -13310,7 +13299,7 @@ static void BTApp_ATResponseCBC( CBTApp* pMe )
   if ( IBATTERY_GetBatteryLevel( pMe->mAG.pIBattery, 
                                  &BattLevel ) != SUCCESS )
   {
-    MSG_ERROR( "ATResponseCBC - cannot obtain battery level", 0, 0, 0 );
+    MSG_FATAL( "ATResponseCBC - cannot obtain battery level", 0, 0, 0 );
     BTApp_ATResponseErr( pMe, BTAPP_CME_AG_FAILURE );
     return;
   }
@@ -13318,13 +13307,13 @@ static void BTApp_ATResponseCBC( CBTApp* pMe )
   uBattScale = GETBATTERYSCALE(BattLevel);
   if ( uBattScale == 0 )
   {
-    MSG_LOW( "ATResponseCBC - Invalid no of Batt Scale ", 0, 0, 0 );
+    MSG_FATAL( "ATResponseCBC - Invalid no of Batt Scale ", 0, 0, 0 );
     BTApp_ATResponseErr( pMe, BTAPP_CME_AG_FAILURE );
     return;
   }
 
   ATBattLevel = (uBattLevel * 100) / uBattScale;
-  MSG_LOW( "ATResponseCBC - BattLevel: %d, BattScale: %d", uBattLevel,uBattScale,0 );
+  MSG_FATAL( "ATResponseCBC - BattLevel: %d, BattScale: %d", uBattLevel,uBattScale,0 );
   /* format the response message */
   SNPRINTF( (char*)rspBuf, sizeof(rspBuf), "\r\n+CBC: %d,%d\r\n", ATBattStatus, ATBattLevel );
   STRLCAT( (char*)rspBuf, (char*)okResp, sizeof(rspBuf) ); // append OK
@@ -13332,7 +13321,7 @@ static void BTApp_ATResponseCBC( CBTApp* pMe )
   /* send response */
   if ( SEND_RESP( rspBuf ) != SUCCESS )
   {
-    MSG_ERROR( "ATResponseCBC - Failure in sending response", 0, 0, 0 );
+    MSG_FATAL( "ATResponseCBC - Failure in sending response", 0, 0, 0 );
   }  
 }
 
@@ -13362,7 +13351,7 @@ static uint8 BTApp_ATConvertRSSI( uint16 rssi, uint8 scale )
   }
   else
   {
-    MSG_MED( "ATConvertRSSI: RSSI outside signal range: %d", rssi, 0, 0 );
+    MSG_FATAL( "ATConvertRSSI: RSSI outside signal range: %d", rssi, 0, 0 );
     siglvl = BTAPP_CSQ_RSSI_UNKNOWN_CODE;
   }
   return siglvl;
@@ -13388,7 +13377,7 @@ static void BTApp_ATResponseCSQ( CBTApp* pMe )
   }
   else
   {
-    MSG_LOW( "ATResponseCSQ - No RSSI Value available:%d", 
+    MSG_FATAL( "ATResponseCSQ - No RSSI Value available:%d", 
              pMe->mAG.pSSInfo->srv_status, 0, 0 );
     BTApp_ATResponseErr( pMe, BTAPP_CME_NO_NETWORK_SERVICE );
     return;
@@ -13404,7 +13393,7 @@ static void BTApp_ATResponseCSQ( CBTApp* pMe )
   /* send response */
   if ( SEND_RESP( rspBuf ) != SUCCESS )
   {
-    MSG_ERROR( "ATResponseCSQ - Failure in sending response", 0, 0, 0 );
+    MSG_FATAL( "ATResponseCSQ - Failure in sending response", 0, 0, 0 );
   }
 }
 
@@ -13420,7 +13409,7 @@ static void BTApp_ATResponseQueryCSCS( CBTApp* pMe )
 
   if ( ARR_SIZE(BTApp_ATCSCSTable) == 0 )
   {
-    MSG_ERROR( "ATResponseQueryCSCS - No character set supported", 0, 0, 0 );
+    MSG_FATAL( "ATResponseQueryCSCS - No character set supported", 0, 0, 0 );
   }
 
   /* format response packet */
@@ -13440,7 +13429,7 @@ static void BTApp_ATResponseQueryCSCS( CBTApp* pMe )
   /* send response */
   if ( SEND_RESP( rspBuf ) != SUCCESS )
   {
-    MSG_ERROR( "ATResponseQueryCSCS - Failure in sending response", 0, 0, 0 );
+    MSG_FATAL( "ATResponseQueryCSCS - Failure in sending response", 0, 0, 0 );
   }
 }
 
@@ -13459,7 +13448,7 @@ static void BTApp_ATResponseReadCSCS( CBTApp* pMe )
   /* send response */
   if ( SEND_RESP( rspBuf ) != SUCCESS )
   {
-    MSG_ERROR( "ATResponseReadCSCS - Failure in sending response", 0, 0, 0 );
+    MSG_FATAL( "ATResponseReadCSCS - Failure in sending response", 0, 0, 0 );
   }
 }
 
@@ -13516,7 +13505,7 @@ static void BTApp_ATResponseErr(
              (BTApp_CmeTable[index].cmeText != NULL) );
     if ( cmdString == NULL )
     {
-      MSG_ERROR( "ATResponseErr - Invalid Error Code", 0, 0, 0 );
+      MSG_FATAL( "ATResponseErr - Invalid Error Code", 0, 0, 0 );
       return;
     }
     SNPRINTF( (char*)rspBuf, sizeof(rspBuf), "\r\n+CME ERROR: %s", cmdString );    
@@ -13536,7 +13525,7 @@ static void BTApp_ATResponseErr(
   /* send error response */
   if ( SEND_RESP( rspBuf ) != SUCCESS )
   {
-    MSG_ERROR( "ATResponseErr - Failure in sending response", 0, 0, 0 );
+    MSG_FATAL( "ATResponseErr - Failure in sending response", 0, 0, 0 );
   }
 }
 
@@ -13556,7 +13545,7 @@ static void BTApp_ATResponseCNUM( CBTApp* pMe )
 
   if ( pMe->mAG.bValidSSData == FALSE )
   {
-    MSG_ERROR( "ATResponseCNUM - SS Info not avaiable to process", 0, 0, 0 );
+    MSG_FATAL( "ATResponseCNUM - SS Info not avaiable to process", 0, 0, 0 );
     SEND_RESP( okResp );
     return;
   }
@@ -13567,8 +13556,8 @@ static void BTApp_ATResponseCNUM( CBTApp* pMe )
     if ( ISHELL_GetDeviceInfoEx( pMe->m_pShell, AEE_DEVICEITEM_MDN, 
                                  (void*)numBuff, &numBuffSize) != SUCCESS )
     {
-      MSG_ERROR( "ATResponseCNUM - cannot obtain MSISDN", 0, 0, 0 );
-      MSG_LOW( "ATResponseCNUM - sending empty MSISDN", 0, 0, 0 );
+      MSG_FATAL( "ATResponseCNUM - cannot obtain MSISDN", 0, 0, 0 );
+      MSG_FATAL( "ATResponseCNUM - sending empty MSISDN", 0, 0, 0 );
       SEND_RESP( okResp );
       return;
     }
@@ -13591,14 +13580,14 @@ static void BTApp_ATResponseCNUM( CBTApp* pMe )
       int  test;
       for ( test = 0; test < STRLEN((const char*)pRspBuff); test++ )
       {
-        MSG_LOW( "ATResponseCNUM - pRspBuff : %c", pRspBuff[test], 0, 0 );
+        MSG_FATAL( "ATResponseCNUM - pRspBuff : %c", pRspBuff[test], 0, 0 );
       }
     }
     /* send the response */
     result = SEND_RESP( (uint8*) pRspBuff );
     if ( result != SUCCESS )
     {
-      MSG_LOW( "ATResponseCNUM - Failure in sending response", 0, 0, 0 );
+      MSG_FATAL( "ATResponseCNUM - Failure in sending response", 0, 0, 0 );
       return;
     }
   }
@@ -13637,7 +13626,7 @@ static void BTApp_ATResponseCLCC( CBTApp* pMe )
   pCallsDesc = (AEETCalls*)MALLOC( uSizeOfCallsDesc );
   if ( pCallsDesc == NULL )
   {
-    MSG_ERROR( "ATResponseCLCC - Memory allocation failed", 0, 0, 0 );
+    MSG_FATAL( "ATResponseCLCC - Memory allocation failed", 0, 0, 0 );
     SEND_RESP( okResp );
     return;  
   }
@@ -13645,13 +13634,13 @@ static void BTApp_ATResponseCLCC( CBTApp* pMe )
   if ( ITELEPHONE_GetCalls( pMe->pIPhone, pCallsDesc, 
                             uSizeOfCallsDesc ) != SUCCESS )
   {
-    MSG_ERROR( "ATResponseCLCC - ITELEPHONE_GetCalls failed", 0, 0, 0 );
+    MSG_FATAL( "ATResponseCLCC - ITELEPHONE_GetCalls failed", 0, 0, 0 );
     SEND_RESP( okResp );
     FREEIF( pCallsDesc );
     return;
   }
   
-  MSG_LOW( "ATResponseCLCC - active calls=%d", pCallsDesc->dwCount, 0, 0 );
+  MSG_FATAL( "ATResponseCLCC - active calls=%d", pCallsDesc->dwCount, 0, 0 );
   if ( pCallsDesc->dwCount > 0 )
   {
     /* process information for each call */
@@ -13662,11 +13651,11 @@ static void BTApp_ATResponseCLCC( CBTApp* pMe )
                                 &callInfo, sizeof(callInfo) );
       if ( result != SUCCESS )
       {
-        MSG_ERROR( "ATResponseCLCC - Cannot obtain call info for callID %d",
+        MSG_FATAL( "ATResponseCLCC - Cannot obtain call info for callID %d",
                    pCallsDesc->calls[index], 0, 0 );
         continue; // skip this call
       }
-      MSG_LOW( "ATResponseCLCC - id=%d dir|m=0x%04x st|prg=0x%04x", 
+      MSG_FATAL( "ATResponseCLCC - id=%d dir|m=0x%04x st|prg=0x%04x", 
                pCallsDesc->calls[index], 
                ((uint16)(callInfo.direction << 8) | callInfo.call_type), 
                ((uint16)(callInfo.call_state << 8) | callInfo.call_progress)  );
@@ -13683,7 +13672,7 @@ static void BTApp_ATResponseCLCC( CBTApp* pMe )
       }
       else
       {
-        MSG_ERROR( "ATResponseCLCC - invalid dir %d",
+        MSG_FATAL( "ATResponseCLCC - invalid dir %d",
                    callInfo.direction , 0, 0 );
         continue; // skip this call
       }
@@ -13718,7 +13707,7 @@ static void BTApp_ATResponseCLCC( CBTApp* pMe )
       }
       else
       {
-        MSG_ERROR( "ATResponseCLCC - invalid call state %d",
+        MSG_FATAL( "ATResponseCLCC - invalid call state %d",
                    callInfo.call_state, 0, 0 );
         continue; // skip this call
       }
@@ -13737,7 +13726,7 @@ static void BTApp_ATResponseCLCC( CBTApp* pMe )
       }
       else
       {
-        MSG_ERROR( "ATResponseCLCC - invalid call mode %d", 
+        MSG_FATAL( "ATResponseCLCC - invalid call mode %d", 
                    callInfo.call_type, 0, 0 );
         continue; // skip this call
       }
@@ -13768,7 +13757,7 @@ static void BTApp_ATResponseCLCC( CBTApp* pMe )
       result = SEND_RESP( rspBuf );
       if ( result != SUCCESS )
       {
-        MSG_ERROR( "ATResponseCLCC - Failure in sending response", 0, 0, 0 );
+        MSG_FATAL( "ATResponseCLCC - Failure in sending response", 0, 0, 0 );
       }
     }
   }
@@ -13811,7 +13800,7 @@ static void BTApp_ATResponseCOPS( CBTApp* pMe )
         mode = BTAPP_COPS_MODE_MANUAL;
         break;
       default:
-        MSG_LOW( "ATResponseCOPS - Mode:%d not supported", 
+        MSG_FATAL( "ATResponseCOPS - Mode:%d not supported", 
                  m_phInfo.network_sel_mode_pref, 0, 0 );
         BTApp_ATResponseErr( pMe, BTAPP_CME_OP_NOT_ALLOWED );
         return;
@@ -13820,7 +13809,7 @@ static void BTApp_ATResponseCOPS( CBTApp* pMe )
     if ( ITELEPHONE_GetServingSystemInfo( pMe->pIPhone, pMe->mAG.pSSInfo, 
                                           sizeof(AEETSSInfo)) != SUCCESS )
     {
-      MSG_LOW( "ATResponseCOPS - SS Info not available", 0, 0, 0 );
+      MSG_FATAL( "ATResponseCOPS - SS Info not available", 0, 0, 0 );
       BTApp_ATResponseErr( pMe, BTAPP_CME_AG_FAILURE );
       return;
     }
@@ -13832,7 +13821,7 @@ static void BTApp_ATResponseCOPS( CBTApp* pMe )
               pMMInfo->full_name.name,
               length );
       bNameAvailable = TRUE;
-      MSG_LOW( "ATResponseCOPS - name from ITELEPHONE, len:%d", length, 0, 0 );
+      MSG_FATAL( "ATResponseCOPS - name from ITELEPHONE, len:%d", length, 0, 0 );
     }
 #ifdef FEATURE_UI_CORE
 #if defined (FEATURE_WCDMA) || defined (FEATURE_GSM)
@@ -13848,7 +13837,7 @@ static void BTApp_ATResponseCOPS( CBTApp* pMe )
     else
     {
       /* name not available send mode field only */
-      MSG_LOW( "ATResponseCOPS - n/w Optr Name not available", 0, 0, 0 );     
+      MSG_FATAL( "ATResponseCOPS - n/w Optr Name not available", 0, 0, 0 );     
       SNPRINTF( (char*)rspBuf, sizeof(rspBuf), "\r\n+COPS: %d\r\n", mode );      
     }
     STRLCAT( (char*)rspBuf, (char*)okResp, sizeof(rspBuf ) );
@@ -13856,7 +13845,7 @@ static void BTApp_ATResponseCOPS( CBTApp* pMe )
   }
   if ( result != SUCCESS )
   {
-    MSG_LOW( "ATResponseCOPS - Failure in sending response", 0, 0, 0 );
+    MSG_FATAL( "ATResponseCOPS - Failure in sending response", 0, 0, 0 );
     BTApp_ATResponseErr( pMe, BTAPP_CME_AG_FAILURE );
   }
 }
@@ -13876,7 +13865,7 @@ static void BTApp_ProcessATCommands( CBTApp* pMe )
       uint8  mode;
       int    format;
 
-      MSG_LOW( "ProcessATCommands - AT+COPS=", 0, 0, 0 );
+      MSG_FATAL( "ProcessATCommands - AT+COPS=", 0, 0, 0 );
       if ( (pMe->mAG.parseData.rx_params[0] != NULL) &&
            (pMe->mAG.parseData.rx_params[1] != NULL) )
       {
@@ -13886,7 +13875,7 @@ static void BTApp_ProcessATCommands( CBTApp* pMe )
         if ( (mode == BTAPP_COPS_MODE_SETFMT) && 
              (format == BTAPP_COPS_FORMAT_LONG) )
         {
-          MSG_LOW( "ProcessATCommands - Send OK Response", 0, 0, 0 );
+          MSG_FATAL( "ProcessATCommands - Send OK Response", 0, 0, 0 );
           result = SEND_RESP( okResp );
         }
         else
@@ -13902,7 +13891,7 @@ static void BTApp_ProcessATCommands( CBTApp* pMe )
     }
     case BTAPP_AT_CMD_READ_COPS:
     {
-      MSG_LOW( "ProcessATCommands - AT+COPS?", 0, 0, 0 );
+      MSG_FATAL( "ProcessATCommands - AT+COPS?", 0, 0, 0 );
 #ifdef FEATURE_ICM
       BTApp_ATResponseCOPS( pMe );
 #else
@@ -13912,7 +13901,7 @@ static void BTApp_ProcessATCommands( CBTApp* pMe )
     }
     case BTAPP_AT_CMD_CLCC:
     {
-      MSG_LOW( "ProcessATCommands - AT+CLCC", 0, 0, 0 );
+      MSG_FATAL( "ProcessATCommands - AT+CLCC", 0, 0, 0 );
 #ifdef FEATURE_ICM
       BTApp_ATResponseCLCC( pMe );
 #endif
@@ -13920,7 +13909,7 @@ static void BTApp_ProcessATCommands( CBTApp* pMe )
     }
     case BTAPP_AT_CMD_CNUM:
     {
-      MSG_LOW( "ProcessATCommands - AT+CNUM", 0, 0, 0 );
+      MSG_FATAL( "ProcessATCommands - AT+CNUM", 0, 0, 0 );
 #ifdef FEATURE_ICM
       BTApp_ATResponseCNUM( pMe );
 #else
@@ -13932,7 +13921,7 @@ static void BTApp_ProcessATCommands( CBTApp* pMe )
     {
       BTApp_ATCMEEErrMode errMode;
 
-      MSG_LOW( "ProcessATCommands - AT+CMEE=", 0, 0, 0 );
+      MSG_FATAL( "ProcessATCommands - AT+CMEE=", 0, 0, 0 );
       if ( pMe->mAG.parseData.rx_params[0] != NULL )
       {
         errMode = (BTApp_ATCMEEErrMode)ATOI( (const char*)pMe->mAG.parseData.
@@ -13943,7 +13932,7 @@ static void BTApp_ProcessATCommands( CBTApp* pMe )
              (errMode == BTAPP_CMEE_ERR_ENABLE_VERBOSE) )
         {
           pMe->mAG.errATMode = errMode;
-          MSG_LOW( "AT+CMEE : Sending OK Resp", 0, 0, 0 );
+          MSG_FATAL( "AT+CMEE : Sending OK Resp", 0, 0, 0 );
           result = SEND_RESP( okResp );
         }
         else
@@ -13959,19 +13948,19 @@ static void BTApp_ProcessATCommands( CBTApp* pMe )
     }
     case BTAPP_AT_CMD_READ_CSCS:
     {
-      MSG_LOW( "ProcessATCommands - AT+CSCS?", 0, 0, 0 );
+      MSG_FATAL( "ProcessATCommands - AT+CSCS?", 0, 0, 0 );
       BTApp_ATResponseReadCSCS( pMe );
       break;
     }
     case BTAPP_AT_CMD_QUERY_CSCS:
     {
-      MSG_LOW( "ProcessATCommands - AT+CSCS=?", 0, 0, 0 );
+      MSG_FATAL( "ProcessATCommands - AT+CSCS=?", 0, 0, 0 );
       BTApp_ATResponseQueryCSCS( pMe );
       break;
     }
     case BTAPP_AT_CMD_SET_CSCS:
     {
-      MSG_LOW( "ProcessATCommands - AT+CSCS=", 0, 0, 0 );
+      MSG_FATAL( "ProcessATCommands - AT+CSCS=", 0, 0, 0 );
       if ( pMe->mAG.parseData.rx_params[0] != NULL )
       {
         uint8  i = 0;
@@ -13997,32 +13986,32 @@ static void BTApp_ProcessATCommands( CBTApp* pMe )
         }
         if ( i == ARR_SIZE(BTApp_ATCSCSTable) )
         {
-          MSG_ERROR( "ProcessATCommands - AT+CSCS, invalid char set", 0, 0, 0 );
+          MSG_FATAL( "ProcessATCommands - AT+CSCS, invalid char set", 0, 0, 0 );
           SEND_RESP( errorResp );
         }
       }
       else
       {
-        MSG_ERROR( "ProcessATCommands - AT+CSCS, expected parms", 0, 0, 0 );
+        MSG_FATAL( "ProcessATCommands - AT+CSCS, expected parms", 0, 0, 0 );
         SEND_RESP( errorResp );
       }      
       break;
     }
     case BTAPP_AT_CMD_CSQ:
     {
-      MSG_LOW( "ProcessATCommands - AT+CSQ", 0, 0, 0 );
+      MSG_FATAL( "ProcessATCommands - AT+CSQ", 0, 0, 0 );
       BTApp_ATResponseCSQ( pMe );
       break;
     }
     case BTAPP_AT_CMD_CBC:
     {
-      MSG_LOW( "ProcessATCommands - AT+CBC", 0, 0, 0 );
+      MSG_FATAL( "ProcessATCommands - AT+CBC", 0, 0, 0 );
       BTApp_ATResponseCBC( pMe );
       break;
     }
     case BTAPP_AT_CMD_CIMI:
     {
-      MSG_LOW( "ProcessATCommands - AT+CIMI", 0, 0, 0 );
+      MSG_FATAL( "ProcessATCommands - AT+CIMI", 0, 0, 0 );
       if ( BTApp_ATResponseCIMI( pMe ) == FALSE )
       {
         BTApp_ATResponseErr( pMe, BTAPP_CME_SIM_FAILURE );
@@ -14031,19 +14020,19 @@ static void BTApp_ProcessATCommands( CBTApp* pMe )
     }
     case BTAPP_AT_CMD_BLDN:
     {
-      MSG_LOW( "ProcessATCommands - AT+BLDN", 0, 0, 0 );
+      MSG_FATAL( "ProcessATCommands - AT+BLDN", 0, 0, 0 );
       BTApp_HandleEventDevRedial( pMe );
       break;
     }
     case BTAPP_AT_CMD_BTRH:
     {
-      MSG_LOW( "ProcessATCommands - AT+BTRH?", 0, 0, 0 );
+      MSG_FATAL( "ProcessATCommands - AT+BTRH?", 0, 0, 0 );
       SEND_RESP( okResp );
       break;
     }
     case BTAPP_AT_CMD_MEM_DIAL:
     {
-      MSG_LOW( "ProcessATCommands - ATD>", 0, 0, 0 );
+      MSG_FATAL( "ProcessATCommands - ATD>", 0, 0, 0 );
       if ( pMe->mAG.parseData.rx_params[0] != NULL )
       {
         BTApp_HandleEventDevMemDial( pMe );
@@ -14052,7 +14041,7 @@ static void BTApp_ProcessATCommands( CBTApp* pMe )
       break;
     }
     default:
-      MSG_LOW( "ProcessATCommands - Unknown command", 0, 0, 0 );
+      MSG_FATAL( "ProcessATCommands - Unknown command", 0, 0, 0 );
       SEND_RESP( errorResp );
       break;
   }
@@ -14069,7 +14058,7 @@ static void BTApp_ProcessATCommands( CBTApp* pMe )
 
   if ( result != SUCCESS )
   {
-    MSG_ERROR( "ProcessATCommand - failed to send response r=%d", result, 0, 0 );
+    MSG_FATAL( "ProcessATCommand - failed to send response r=%d", result, 0, 0 );
   }
 }
 
@@ -14089,7 +14078,7 @@ static boolean BTApp_ExtractATParams(
   boolean     result = TRUE;
   int         i;
 
-  MSG_LOW( "ExtractATParams - parm cnt=%d", 
+  MSG_FATAL( "ExtractATParams - parm cnt=%d", 
            pMe->mAG.parseData.rx_params_count, 0, 0 );
   pStartOfParam = (const char*)pParamsBuff;
   rx_param_count = pMe->mAG.parseData.rx_params_count;
@@ -14103,7 +14092,7 @@ static boolean BTApp_ExtractATParams(
   {
     if ( rx_param_count >= BTAPP_CMD_PARAMS_MAX )
     {
-      MSG_ERROR( "ExtractATParams - More AT Params then allowed", 0, 0, 0 );
+      MSG_FATAL( "ExtractATParams - More AT Params then allowed", 0, 0, 0 );
       result = FALSE;
       break;
     }
@@ -14115,7 +14104,7 @@ static boolean BTApp_ExtractATParams(
     pParam = (uint8*)MALLOC(LenOfParam + 1);
     if ( pParam == NULL )
     {
-      MSG_ERROR( "ExtractATParams - Memory allocation failure", 0, 0, 0 );
+      MSG_FATAL( "ExtractATParams - Memory allocation failure", 0, 0, 0 );
       result = FALSE;
       break;
     }
@@ -14190,7 +14179,7 @@ static void BTApp_RetrieveATCmd( CBTApp* pMe )
                                        &bytesRcvd );
     if ( result != SUCCESS )
     {
-      MSG_ERROR( "RetrieveATCmd - failed retrieving AT cmd r=%d", 
+      MSG_FATAL( "RetrieveATCmd - failed retrieving AT cmd r=%d", 
                  result, 0, 0 );
       break;
     }
@@ -14208,7 +14197,7 @@ static void BTApp_RetrieveATCmd( CBTApp* pMe )
     {
       if ( pMe->mAG.externalIOBuffer[ bytesRcvd - 1] != BTAPP_CMD_TERM_CHAR )
       {
-        MSG_ERROR( "AT command not terminated with term character", 0, 0, 0);
+        MSG_FATAL( "AT command not terminated with term character", 0, 0, 0);
         return;
       }
       else
@@ -14270,7 +14259,7 @@ static void BTApp_RetrieveATCmd( CBTApp* pMe )
                        STRLEN( BTApp_ATCmdTable[cmdType].cmd_text )) == 0 )
           {
             pMe->mAG.parseData.cmdType = cmdType;
-            MSG_LOW( "RetrieveATCmd - CmdType=%d", cmdType, 0, 0 );
+            MSG_FATAL( "RetrieveATCmd - CmdType=%d", cmdType, 0, 0 );
             pParamsBuff = pMe->mAG.externalIOBuffer + bufIdx +
                             STRLEN( BTApp_ATCmdTable[cmdType].cmd_text );
             /* extract parameters */
@@ -14284,12 +14273,12 @@ static void BTApp_RetrieveATCmd( CBTApp* pMe )
 
         if ( cmdType == BTAPP_AT_CMD_MAX )
         {
-          MSG_LOW( "RetrieveATCmd - Sending ERROR response", 0, 0, 0 );
+          MSG_FATAL( "RetrieveATCmd - Sending ERROR response", 0, 0, 0 );
 
           result = SEND_RESP( errorResp );
           if ( result != SUCCESS )
           {
-            MSG_ERROR( "RetrieveATCmd - failed to send response r=%d", result, 0, 0 );
+            MSG_FATAL( "RetrieveATCmd - failed to send response r=%d", result, 0, 0 );
           }
           break;
         }
@@ -14308,7 +14297,7 @@ static void BTApp_RetrieveATCmd( CBTApp* pMe )
         result = SEND_RESP( errorResp );
         if ( result != SUCCESS )
         {
-          MSG_ERROR( "RetrieveATCmd - failed to send response r=%d", result, 0, 0 );
+          MSG_FATAL( "RetrieveATCmd - failed to send response r=%d", result, 0, 0 );
         }
       }
       else if ( pMe->mAG.parseData.bParamComplete != FALSE )
@@ -14403,7 +14392,7 @@ DESCRIPTION
   }
   else
   {
-    MSG_ERROR( "DoUnbondAll - DeviceEnumInit failed", 0, 0, 0 );
+    MSG_FATAL( "DoUnbondAll - DeviceEnumInit failed", 0, 0, 0 );
     success = FALSE;
   }
 
@@ -14415,7 +14404,7 @@ DESCRIPTION
   }
   else
   {
-    MSG_LOW( "DoUnbondAll - #devs=%d", i, 0, 0 );
+    MSG_FATAL( "DoUnbondAll - #devs=%d", i, 0, 0 );
     BTApp_ShowBusyIcon( pMe );
   }
   return success;
@@ -14444,7 +14433,7 @@ DESCRIPTION
   }
   else
   {
-    MSG_ERROR( "DoRemoveAll - DeviceEnumInit failed", 0, 0, 0 );
+    MSG_FATAL( "DoRemoveAll - DeviceEnumInit failed", 0, 0, 0 );
     success = FALSE;
   }
 
@@ -14456,7 +14445,7 @@ DESCRIPTION
   }
   else
   {
-    MSG_LOW( "DoRemoveAll - #devs=%d", i, 0, 0 );
+    MSG_FATAL( "DoRemoveAll - #devs=%d", i, 0, 0 );
     BTApp_ShowBusyIcon( pMe );
   }
   return success;
@@ -14501,7 +14490,7 @@ DESCRIPTION
   if ( IBTEXTRM_AuthorizeRebond( pMe->mRM.po, &(pMe->mRM.BondBDAddr), 
                                  bAuthorized, rebondSec ) != SUCCESS )
   {
-    MSG_ERROR( "DoRebond - Rebond failed", 0, 0, 0 );
+    MSG_FATAL( "DoRebond - Rebond failed", 0, 0, 0 );
     success = FALSE;
   }
   else
@@ -14521,7 +14510,7 @@ DESCRIPTION
 {
   AEEBTDeviceInfo* pDev = &pMe->mRM.device[ pMe->mRM.uCurDevIdx ];
 
-  MSG_LOW( "DoUnbondOne - %2x%2x%2x", pDev->bdAddr.uAddr[0], 
+  MSG_FATAL( "DoUnbondOne - %2x%2x%2x", pDev->bdAddr.uAddr[0], 
            pDev->bdAddr.uAddr[1], pDev->bdAddr.uAddr[2] );
 
   (void) POP_MENU();
@@ -14543,7 +14532,7 @@ DESCRIPTION
 {
   AEEBTDeviceInfo* pDev = &pMe->mRM.device[ pMe->mRM.uCurDevIdx ];
 
-  MSG_LOW( "DoRemoveOne - %2x%2x%2x", pDev->bdAddr.uAddr[0], 
+  MSG_FATAL( "DoRemoveOne - %2x%2x%2x", pDev->bdAddr.uAddr[0], 
            pDev->bdAddr.uAddr[1], pDev->bdAddr.uAddr[2] );
 
   if ( IBTEXTRM_DeviceRemove( pMe->mRM.po, &pDev->bdAddr ) != SUCCESS )
@@ -14566,12 +14555,12 @@ static void BTApp_DoBrowseService( CBTApp* pMe, AEEBTDeviceInfo* pDev )
                                 pMe->mSD.browseRec, 
                                 AEEBT_MAX_NUM_OF_SRV_REC )) == SUCCESS )
   {
-    MSG_MED( "DoBrowseService - Started...", 0, 0, 0 );
+    MSG_FATAL( "DoBrowseService - Started...", 0, 0, 0 );
     BTApp_ShowDevMsg( pMe, IDS_MSG_BROWSING, &pDev->bdAddr, 0 );
   }
   else
   {
-    MSG_ERROR( "DoBrowseService failed", 0, 0, 0 );
+    MSG_FATAL( "DoBrowseService failed", 0, 0, 0 );
   }
 }
 
@@ -14598,7 +14587,7 @@ static void BTApp_DoSearchService( CBTApp* pMe, AEEBTDeviceInfo* pDev )
   }
   else
   {
-    MSG_ERROR( "DoSearchService failed", 0, 0, 0 );
+    MSG_FATAL( "DoSearchService failed", 0, 0, 0 );
   }
 }
 
@@ -14624,7 +14613,7 @@ static void BTApp_DoSPP( CBTApp* pMe, boolean bClient )
 
   if ( pMe->mSPP.status.state != AEEBT_SPP_ST_CLOSED )
   {
-    MSG_MED( "DoSPP - ending previously started SPP test.", 0, 0, 0 );
+    MSG_FATAL( "DoSPP - ending previously started SPP test.", 0, 0, 0 );
     BTApp_EndSPPTest( pMe );
   }
 
@@ -14646,7 +14635,7 @@ static void BTApp_DoSPP( CBTApp* pMe, boolean bClient )
 
   if ( result != SUCCESS )
   {
-    MSG_ERROR( "DoSPP - failed setting discoverable", 0, 0, 0 );
+    MSG_FATAL( "DoSPP - failed setting discoverable", 0, 0, 0 );
     return;
   }
 
@@ -14655,7 +14644,7 @@ static void BTApp_DoSPP( CBTApp* pMe, boolean bClient )
   if ( (result = IBTEXTSPP_Open( pMe->mSPP.po, &openCfg )) != SUCCESS )
   {
     AECHAR wBuf[ 32 ];
-    MSG_ERROR( "DoSPP - failed to open SPP - client=%d r=%d", 
+    MSG_FATAL( "DoSPP - failed to open SPP - client=%d r=%d", 
                bClient, result, 0 );
     BTApp_ClearBondable( pMe ); // no need to be bondable anymore
     ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, 
@@ -14678,7 +14667,7 @@ static void BTApp_EndSPPTest( CBTApp* pMe )
 {
   int result;
 
-  MSG_MED( "EndSPPTest - st=%d isCli=%d", 
+  MSG_FATAL( "EndSPPTest - st=%d isCli=%d", 
            pMe->mSPP.status.state, pMe->mSPP.bClient, 0 );
 
   //clearing any unread data from the mSPP buffer
@@ -14697,7 +14686,7 @@ static void BTApp_EndSPPTest( CBTApp* pMe )
   {
     if ( (result = IBTEXTSPP_Close( pMe->mSPP.po )) != SUCCESS )
     {
-      MSG_ERROR( "EndSPPTest - failed to close SPP r=%d", result, 0, 0 );
+      MSG_FATAL( "EndSPPTest - failed to close SPP r=%d", result, 0, 0 );
     }
   }
 }
@@ -14754,7 +14743,7 @@ static void BTApp_SetHCIMode( CBTApp* pMe, uint16 msgID )
       break;
 #endif
     default:
-      MSG_ERROR( "SetHCIMode - unexpect msgID %x", msgID, 0, 0 );
+      MSG_FATAL( "SetHCIMode - unexpect msgID %x", msgID, 0, 0 );
       HCIMode = AEEBT_HCIM_OFF;
       break;
   }
@@ -14801,7 +14790,7 @@ DESCRIPTION
 
   pMe->bBusyIconUp = FALSE; 
 
-  MSG_MED( "OOB Local Data size 0x%x", pMe->mRM.OOBDataSize, 0, 0 );
+  MSG_FATAL( "OOB Local Data size 0x%x", pMe->mRM.OOBDataSize, 0, 0 );
 
   if ( IBTEXTRM_ReadOOBData( pMe->mRM.po, &pMe->mRM.OOBDataSize,
                              uOOBDataBuffer ) == SUCCESS )
@@ -14832,7 +14821,7 @@ DESCRIPTION
       }
       else
       {
-        MSG_ERROR( "OOB Local Write failed", 0, 0, 0 );
+        MSG_FATAL( "OOB Local Write failed", 0, 0, 0 );
       }
       
       if ( pIFile != NULL )
@@ -14845,7 +14834,7 @@ DESCRIPTION
   }   
   else
   {
-    MSG_MED( "OOB Data Read Error", 0, 0, 0 );
+    MSG_FATAL( "OOB Data Read Error", 0, 0, 0 );
   }
   // Show the status message
   BTApp_ShowMessage (pMe,IDS_MSG_OOB_DATA_CREATED, NULL, 2);
@@ -14934,7 +14923,7 @@ static void BTApp_RadioActivityChanged( CBTApp* pMe )
   boolean bDiscoverable = 
     (pMe->mRM.radioActivity & AEEBT_RA_INQ_SCANNING) ? TRUE : FALSE;
 
-  MSG_MED( "Current radio activity 0x%x", pMe->mRM.radioActivity, 0, 0 );
+  MSG_FATAL( "Current radio activity 0x%x", pMe->mRM.radioActivity, 0, 0 );
 
   if ( pMe->mSD.bDiscoverable != bDiscoverable )
   {
@@ -14961,17 +14950,18 @@ static boolean BTApp_HandleSelection( CBTApp* pMe, uint16 selection )
   AECHAR           wShortText[ 10 ];
   AEEBTDeviceInfo* pDev = &pMe->mRM.device[ pMe->mRM.uCurDevIdx ];
 
-  MSG_MED( "HndlSlction - sel=%d m=%d", selection, TOP_MENU, 0 );
+  MSG_FATAL( "HndlSlction - sel=%d m=%d", selection, TOP_MENU, 0 );
   MENU_SET_SEL( selection );
   MSG_FATAL("BTApp_HandleSelection:::::::=%d",selection,0,0);
   switch ( selection )
   {
     case IDS_BT_ON:
     {
-      MSG_LOW( "HndlSlction - ON m=%d", TOP_MENU, 0, 0 );
+      MSG_FATAL( "HndlSlction - ON m=%d", TOP_MENU, 0, 0 );
       if ( TOP_MENU == BT_APP_MENU_MAIN )
       {
         MSG_FATAL("***zzg BTApp_HandleSelection BTApp_EnableBT***",0,0,0);
+        pMe->mEnablingType = BTAPP_ENABLING_AG;
         BTApp_EnableBT( pMe );
 		IDISPLAY_UpdateEx( pMe->m_pIDisplay, TRUE );	//Add By zzg 2010_12_24
       }
@@ -14979,7 +14969,7 @@ static boolean BTApp_HandleSelection( CBTApp* pMe, uint16 selection )
     }
     case IDS_BT_OFF:
     {
-      MSG_LOW( "HndlSlction - OFF m=%d", TOP_MENU, 0, 0 );
+      MSG_FATAL( "HndlSlction - OFF m=%d", TOP_MENU, 0, 0 );
       if ( TOP_MENU == BT_APP_MENU_MAIN )
       {
         BTApp_DisableBT( pMe );		
@@ -14989,7 +14979,7 @@ static boolean BTApp_HandleSelection( CBTApp* pMe, uint16 selection )
     }
     case IDS_BT_YES:
     {
-      MSG_LOW( "HndlSlction - YES m=%d", TOP_MENU, 0, 0 );
+      MSG_FATAL( "HndlSlction - YES m=%d", TOP_MENU, 0, 0 );
 	  
       switch ( TOP_MENU )
       {
@@ -15009,7 +14999,7 @@ static boolean BTApp_HandleSelection( CBTApp* pMe, uint16 selection )
           if ( IBTEXTRM_SSPBond( pMe->mRM.po, &pDev->bdAddr, 
                               pMe->mRM.bMITMEnabled ) != SUCCESS )
           {
-            MSG_ERROR( "HandleSelection YES -SSP Bond Failed", 0, 0, 0 );
+            MSG_FATAL( "HandleSelection YES -SSP Bond Failed", 0, 0, 0 );
             return FALSE;
           }
           */
@@ -15022,6 +15012,7 @@ static boolean BTApp_HandleSelection( CBTApp* pMe, uint16 selection )
 		{
 			if ( BTApp_HCIModeOn( pMe ) == FALSE )
 			{
+                pMe->mEnablingType = BTAPP_ENABLING_AG;
 				BTApp_EnableBT(pMe);
 				
 				BTApp_BuildMenu( pMe, BT_APP_MENU_OPP_SENDFILE);
@@ -15059,11 +15050,11 @@ static boolean BTApp_HandleSelection( CBTApp* pMe, uint16 selection )
           {
             if ( pMe->mAG.devType == AEEBT_AG_AUDIO_DEVICE_HEADSET )
             {
-              MSG_MED( "HndlSlction - connecting to HS", 0, 0, 0 );
+              MSG_FATAL( "HndlSlction - connecting to HS", 0, 0, 0 );
             }
             else
             {
-              MSG_MED( "HndlSlction - connecting to HF", 0, 0, 0 );
+              MSG_FATAL( "HndlSlction - connecting to HF", 0, 0, 0 );
             }
             if ( BTApp_CallConnected( pMe ) != BT_APP_CALL_NONE )
             {
@@ -15090,7 +15081,7 @@ static boolean BTApp_HandleSelection( CBTApp* pMe, uint16 selection )
         {
           if ( (result = IBTEXTRM_EnterTestMode( pMe->mRM.po )) != SUCCESS )
           {
-            MSG_ERROR( "HndlSlction - failed to enter Test Mode r=%x", 
+            MSG_FATAL( "HndlSlction - failed to enter Test Mode r=%x", 
                        result, 0, 0 );
             ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, 
                                   IDS_MSG_TEST_MODE_NOT_ENTERED, 
@@ -15113,7 +15104,7 @@ static boolean BTApp_HandleSelection( CBTApp* pMe, uint16 selection )
                                                   &pDev->bdAddr,
                                                   TRUE )) != SUCCESS )
           {
-            MSG_ERROR( "HndlSlction - AuthorizeReply failed r=%x", 
+            MSG_FATAL( "HndlSlction - AuthorizeReply failed r=%x", 
                        result, 0, 0 );
           }
           else
@@ -15133,7 +15124,7 @@ static boolean BTApp_HandleSelection( CBTApp* pMe, uint16 selection )
                            pMe->mRM.po, pBDAddr,
                            !(pMe->mRM.linkStatus->bMaster) )) != SUCCESS )
           {
-            MSG_ERROR( "HndlSlction - SetConnectionRole failed r=%x", 
+            MSG_FATAL( "HndlSlction - SetConnectionRole failed r=%x", 
                        result, 0, 0 );
             BTApp_ShowMessage( pMe, IDS_MSG_SET_CONN_ROLE_FAILED, NULL, 0 );
           }
@@ -15144,14 +15135,14 @@ static boolean BTApp_HandleSelection( CBTApp* pMe, uint16 selection )
           break;
         }
         default:
-          MSG_LOW( "HndlSlction - OK m=%d", TOP_MENU, 0, 0 );
+          MSG_FATAL( "HndlSlction - OK m=%d", TOP_MENU, 0, 0 );
           BTApp_HandleClearKey( pMe );
       }
       break;
     }
     case IDS_BT_NO:
     {
-      MSG_LOW( "HndlSlction - NO m=%d", TOP_MENU, 0, 0 );
+      MSG_FATAL( "HndlSlction - NO m=%d", TOP_MENU, 0, 0 );
       if ( TOP_MENU == BT_APP_MENU_AUTHORIZE_CONN )
       {
         if ( (result = IBTEXTRM_AuthorizeReply( pMe->mRM.po, 
@@ -15159,7 +15150,7 @@ static boolean BTApp_HandleSelection( CBTApp* pMe, uint16 selection )
                                                 &pDev->bdAddr,
                                                 FALSE )) != SUCCESS )
         {
-          MSG_ERROR( "HndlSlction - AuthorizeReply failed r=%x", result, 0, 0 );
+          MSG_FATAL( "HndlSlction - AuthorizeReply failed r=%x", result, 0, 0 );
         }
         else
         {
@@ -15276,7 +15267,7 @@ static boolean BTApp_HandleSelection( CBTApp* pMe, uint16 selection )
     case IDS_AUDIO_TRANSFER:
     {
       BTAppCallType callPresent = BTApp_CallPresent( pMe );
-      MSG_LOW( "HndlSlction - Audio Xfer c=%x", callPresent, 0, 0 );
+      MSG_FATAL( "HndlSlction - Audio Xfer c=%x", callPresent, 0, 0 );
       if ( pMe->mAG.bAudioConnected == FALSE )
       {
         BTApp_ConnectAudio( pMe, TRUE );
@@ -15425,7 +15416,7 @@ static boolean BTApp_HandleSelection( CBTApp* pMe, uint16 selection )
       }
       else
       {
-        MSG_ERROR( "HndlSlction - AllowRoleSwitch() failed %x", result, 0, 0 );
+        MSG_FATAL( "HndlSlction - AllowRoleSwitch() failed %x", result, 0, 0 );
         BTApp_ShowMessage( pMe, IDS_MSG_ROLE_SW_CTRL_FAILED, NULL, 3 );
       }
       break;
@@ -15531,7 +15522,7 @@ static boolean BTApp_HandleSelection( CBTApp* pMe, uint16 selection )
     if ( IBTEXTRM_CreateOOBData( pMe->mRM.po, &pMe->mRM.OOBDataSize, 
                                &pMe->mRM.OOBCreateCb ) != SUCCESS )
     {
-      MSG_ERROR( "BTApp - Failed to create OOB data", 
+      MSG_FATAL( "BTApp - Failed to create OOB data", 
                0, 0, 0 );
     }
     break;
@@ -15783,7 +15774,7 @@ void BTApp_InitA2DPVolumes( CBTApp* pMe )
   {
     return;
   }
-  MSG_LOW("InitA2DPVolumes - Initializing the volume setting for A2DP device", 0, 0, 0 );
+  MSG_FATAL("InitA2DPVolumes - Initializing the volume setting for A2DP device", 0, 0, 0 );
   
   // beep volume
   result = OEMNV_Get( NV_BEEP_LVL_SHADOW_I, &nvi );
@@ -15966,38 +15957,38 @@ static boolean BTApp_Init( CBTApp* pMe )
 			pMe->mRM.linkStatus = NULL;
 		}
 		
-		MSG_ERROR("BTApp_Init - failed allocating Memory", 0, 0, 0 );   
+		MSG_FATAL("BTApp_Init - failed allocating Memory", 0, 0, 0 );   
 		
       	return FALSE;
     }
     
     if ((IBTEXTRM_AutoServiceSearchDisable(pMe->mRM.po)) != SUCCESS)
     {
-		MSG_ERROR("BTApp_Init - failed disabling auto service search", 0, 0, 0);		
+		MSG_FATAL("BTApp_Init - failed disabling auto service search", 0, 0, 0);		
     }
 
     if (IBTEXTRM_RegisterConnStatus(pMe->mRM.po) != SUCCESS)
     {
-		MSG_ERROR("BTApp_Init - failed registering for connection status", 0, 0, 0);		
+		MSG_FATAL("BTApp_Init - failed registering for connection status", 0, 0, 0);		
     }
 
     CALLBACK_Init(&pMe->mRM.radioActivityCb, BTApp_RadioActivityChanged, pMe);
 	
     if (IBTEXTRM_RegisterRadioActivity(pMe->mRM.po, &pMe->mRM.radioActivity, &pMe->mRM.radioActivityCb) != SUCCESS)
     {
-		MSG_ERROR("BTApp_Init - failed registering for radio activity change", 0, 0, 0);		
+		MSG_FATAL("BTApp_Init - failed registering for radio activity change", 0, 0, 0);		
     }
 
     if (IBTEXTRM_ConfigApplication(pMe->mRM.po, FALSE, pMe->mRM.pageScanParam, pMe->mRM.inquiryScanParam, FALSE) != SUCCESS)
     {
-		MSG_ERROR("BTApp_Init - Failed to configure application", 0, 0, 0);		
+		MSG_FATAL("BTApp_Init - Failed to configure application", 0, 0, 0);		
     }
 	
     bInitDone = TRUE;
   }
   else
   {
-	MSG_ERROR("BTApp_Init - Failed to create ... some'n", 0, 0, 0);
+	MSG_FATAL("BTApp_Init - Failed to create ... some'n", 0, 0, 0);
 	
 	//BTApp_FreeAppData( (IApplet*) pMe );
 	BTApp_FreeAppData(pMe);
@@ -16021,6 +16012,7 @@ static boolean BTApp_StartBT( CBTApp* pMe)
 
 		if (pMe->bEnableAtStart != FALSE)
 		{
+            pMe->mEnablingType = BTAPP_ENABLING_AG;
 			BTApp_EnableBT(pMe);
 		}
 		
@@ -16509,7 +16501,7 @@ static void BTApp_BuildMyInfoMenu( CBTApp* pMe)
                                      &maxManuDataLen, 
                                      pManuData ) != SUCCESS )
     {
-      MSG_ERROR( "MY Info - Manufacturer Data failed failed to read from EFS", 
+      MSG_FATAL( "MY Info - Manufacturer Data failed failed to read from EFS", 
                  0, 0, 0 );
     } 
     else
@@ -16571,7 +16563,7 @@ static void BTApp_BuildMyInfoMenu( CBTApp* pMe)
   if ( IBTEXTRM_CreateOOBData( pMe->mRM.po, &pMe->mRM.OOBDataSize, 
                                &pMe->mRM.OOBCreateCb ) != SUCCESS )
   {
-    MSG_ERROR( "BTApp - Failed to create OOB data", 
+    MSG_FATAL( "BTApp - Failed to create OOB data", 
                0, 0, 0 );
   }
   */
@@ -16813,7 +16805,7 @@ static void BTApp_DoScanParamsMenu( CBTApp* pMe, int item )
   {
     index = 0;
   }
-  MSG_MED( "DoScanParams - item=%d curSel=%d", item, selection, 0 );
+  MSG_FATAL( "DoScanParams - item=%d curSel=%d", item, selection, 0 );
 
   selection = IMENUCTL_GetItemID( pMe->m_pISoftMenu, index );
   
@@ -16847,7 +16839,7 @@ static void BTApp_BuildScanParamsSubmenu( CBTApp* pMe, BTAppMenuType menu )
   uint16      titleID;
   AEEBTActVsPwr* pScanParam;
 
-  MSG_LOW( "BuildScanParams - menu=%d pS=%d iS=%d", 
+  MSG_FATAL( "BuildScanParams - menu=%d pS=%d iS=%d", 
            menu, pMe->mRM.pageScanParam, pMe->mRM.inquiryScanParam );
 
   if ( menu == BT_APP_MENU_PAGE_SCAN )
@@ -17015,7 +17007,7 @@ static void BTApp_BuildMasterControlMenu( CBTApp* pMe )
   if ( IBTEXTRM_GetRoleSwitchPolicy( pMe->mRM.po, NULL, 
                                      &pMe->mRM.bRoleSwitchAllowed ) != SUCCESS )
   {
-    MSG_ERROR( "BuildMasterCtl - Get Role Switch Policy failed", 0, 0, 0 );
+    MSG_FATAL( "BuildMasterCtl - Get Role Switch Policy failed", 0, 0, 0 );
   }
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, 
                      pMe->mRM.bRoleSwitchAllowed ? 
@@ -17273,7 +17265,7 @@ static void BTApp_BuildDevTypeMenu( CBTApp* pMe )
   CtlAddItem  ai;
   uint16      sel = 0;
 
-  MSG_LOW( "BuildDevType - type=%d", pMe->mAG.devType, 0, 0 );
+  MSG_FATAL( "BuildDevType - type=%d", pMe->mAG.devType, 0, 0 );
 
   IMENUCTL_Reset( pMe->m_pIMenu );
   //SETAEERECT (&rc, 0, 0, pMe->m_rect.dx, pMe->m_rect.dy-20);
@@ -17354,7 +17346,7 @@ static void BTApp_BuildConnModeMenu( CBTApp* pMe )
   uint16      sel = 0;
   boolean     bNoBDAddr = !BDADDR_VALID( &pMe->mAG.bdAddr );
 
-  MSG_LOW( "BuildConnMode - idleMode=%d", pMe->mAG.idleMode, 0, 0 );
+  MSG_FATAL( "BuildConnMode - idleMode=%d", pMe->mAG.idleMode, 0, 0 );
 
   IMENUCTL_Reset( pMe->m_pIMenu );
   
@@ -17434,7 +17426,7 @@ static void BTApp_BuildHSButtonHndlrMenu( CBTApp* pMe )
   boolean     bIgnore = 
     BTAPP_AG_ISBITSET( BTAPP_AG_FLAG_IGNORE_BUTTON_AT_ACL_B );
 
-  MSG_LOW( "BuildHSButtonHndlr - ignore=%d", bIgnore, 0, 0 );
+  MSG_FATAL( "BuildHSButtonHndlr - ignore=%d", bIgnore, 0, 0 );
 
   IMENUCTL_Reset( pMe->m_pIMenu );
   
@@ -17508,7 +17500,7 @@ static void BTApp_BuildListMenu( CBTApp* pMe, BTAppMenuType menu )
   uint16 uTitleID = 0;
   long val;
 
-  MSG_LOW( "BuildListMenu - m=%d", menu, 0, 0 );
+  MSG_FATAL( "BuildListMenu - m=%d", menu, 0, 0 );
 
   switch ( menu )
   {
@@ -17604,7 +17596,7 @@ static void BTApp_DoAGSettingsMenu( CBTApp* pMe, int item )
   {
     index = 0;
   }
-  MSG_MED( "DoAGSettings - item=%d curSel=%d", item, selection, 0 );
+  MSG_FATAL( "DoAGSettings - item=%d curSel=%d", item, selection, 0 );
   
   selection = IMENUCTL_GetItemID( pMe->m_pISoftMenu, index );
   
@@ -18096,7 +18088,7 @@ DESCRIPTION
 #endif
 		default:
 		{
-			MSG_ERROR( "BTApp_BldPrompt - unexp menu %d", menu, 0, 0 );
+			MSG_FATAL( "BTApp_BldPrompt - unexp menu %d", menu, 0, 0 );
 		  	return;
 		}
 	}
@@ -18138,7 +18130,7 @@ static void BTApp_BuildDeviceList( CBTApp* pMe, BTAppMenuType menu )
 #endif /* FEATURE_BT_2_1 */
 
 
-  MSG_LOW( "BuildDeviceList - m=%d", menu, 0, 0 );
+  MSG_FATAL( "BuildDeviceList - m=%d", menu, 0, 0 );
 
   IMENUCTL_Reset( pMe->m_pIMenu );
   IMENUCTL_SetRect( pMe->m_pIMenu, &pMe->m_rect );  
@@ -18292,7 +18284,7 @@ static void BTApp_BuildDeviceList( CBTApp* pMe, BTAppMenuType menu )
       break;
     }
     default:
-      MSG_ERROR( "BuildDeviceList - unexpected m=%d", menu, 0, 0 );
+      MSG_FATAL( "BuildDeviceList - unexpected m=%d", menu, 0, 0 );
       break;
   }
 
@@ -18376,10 +18368,10 @@ static void BTApp_BuildDevRespMenu( CBTApp* pMe )
     MENU_SET_SEL( IMENUCTL_GetSel( pMe->m_pIMenu ) );
     numItems = IMENUCTL_GetItemCount( pMe->m_pIMenu );
   }
-  MSG_MED( "BldDevRespMenu - curSel=%d items=%d tm=%d", 
+  MSG_FATAL( "BldDevRespMenu - curSel=%d items=%d tm=%d", 
            MENU_SEL, numItems, TOP_MENU );
 
-  MSG_MED( "BldDevRespMenu - numItems = %d uGetNameDevIdx = %d", numItems, pMe->mRM.uGetNameDevIdx, 0);
+  MSG_FATAL( "BldDevRespMenu - numItems = %d uGetNameDevIdx = %d", numItems, pMe->mRM.uGetNameDevIdx, 0);
 
 #ifdef FEATURE_BT_2_1    
   for ( i=numItems; i<pMe->mSD.uNumRecs; i++ )
@@ -18390,19 +18382,19 @@ static void BTApp_BuildDevRespMenu( CBTApp* pMe )
     result = EFAILED;
     len    = 0;
 
-    MSG_MED( "BldDevRespMenu - pDev->uValue1 = %d", pDev->uValue1, 0, 0);
+    MSG_FATAL( "BldDevRespMenu - pDev->uValue1 = %d", pDev->uValue1, 0, 0);
     tempuValue1 = 0;
     if( (pMe->mSD.bDiscovering == FALSE) && (pDev->uValue1 != 0) )
     {
       // save the value of get name status
       tempuValue1 = pDev->uValue1;
-      MSG_MED( "BldDevRespMenu - tempuValue1 = %d", tempuValue1, 0, 0);
+      MSG_FATAL( "BldDevRespMenu - tempuValue1 = %d", tempuValue1, 0, 0);
     }
 
     result = IBTEXTRM_DeviceRead( pMe->mRM.po, pDev );
     if ( result != SUCCESS )
     {
-      MSG_ERROR( "BldDevRespMenu - DeviceRead() failed for index=%d", 
+      MSG_FATAL( "BldDevRespMenu - DeviceRead() failed for index=%d", 
                  i, 0, 0 );
     }
 
@@ -18411,7 +18403,7 @@ static void BTApp_BuildDevRespMenu( CBTApp* pMe )
     {
       // restore the value of get name status      
       pDev->uValue1 = tempuValue1;
-      MSG_MED( "BldDevRespMenu - restored pDev->uValue1 = %d", pDev->uValue1, 0, 0);
+      MSG_FATAL( "BldDevRespMenu - restored pDev->uValue1 = %d", pDev->uValue1, 0, 0);
     }
 
     len = WSTRLEN( pDev->wName );
@@ -18423,8 +18415,8 @@ static void BTApp_BuildDevRespMenu( CBTApp* pMe )
       bEIRReqName = FALSE;
     }
 
-    MSG_MED( "BldDevRespMenu - uFlags = 0x%x", pDev->EIRData.uFlags, 0, 0);
-    MSG_MED( "BldDevRespMenu - nameLen=%d, uValue1=%d, bEIRReqName=%d", len, pDev->uValue1, bEIRReqName );
+    MSG_FATAL( "BldDevRespMenu - uFlags = 0x%x", pDev->EIRData.uFlags, 0, 0);
+    MSG_FATAL( "BldDevRespMenu - nameLen=%d, uValue1=%d, bEIRReqName=%d", len, pDev->uValue1, bEIRReqName );
     if ( (pDev->uValue1 == 0) && // GetName not done?
          (bEIRReqName) )
     {
@@ -18432,7 +18424,7 @@ static void BTApp_BuildDevRespMenu( CBTApp* pMe )
            (pMe->mRM.uGetNameDevIdx == MAX_DEVICES) )
       {
         nameReqIssued = TRUE;
-        MSG_MED( "BldDevRespMenu - requesting name for index=%d", i, 0, 0 );
+        MSG_FATAL( "BldDevRespMenu - requesting name for index=%d", i, 0, 0 );
         if ( IBTEXTSD_GetDeviceName( pMe->mSD.po, &pDev->bdAddr,
                                      pDev->wName,
                                      ARR_SIZE( pDev->wName ) ) == SUCCESS )
@@ -18473,7 +18465,7 @@ static void BTApp_BuildDevRespMenu( CBTApp* pMe )
         break;
       }
     }
-    MSG_MED( "BldDevRespMenu - mapIndex=%d devRank=%d DevIndex=%d", 
+    MSG_FATAL( "BldDevRespMenu - mapIndex=%d devRank=%d DevIndex=%d", 
              MapIndex, pDev->EIRData.deviceRanking, 
              pMe->mRM.uDevToDspIdxMap[MapIndex] );
   }
@@ -18511,7 +18503,7 @@ static void BTApp_BuildDevRespMenu( CBTApp* pMe )
       if ( (pMapDev->EIRData.uFlags & AEEBT_EIR_DATA_RCVD_B) && 
            (!(pMapDev->EIRData.uFlags & AEEBT_EIR_NAME_CMPLT_B)) )
       {
-        MSG_MED( "BldDevRespMenu - short name for DevIndex=%d", 
+        MSG_FATAL( "BldDevRespMenu - short name for DevIndex=%d", 
                  pMe->mRM.uDevToDspIdxMap[MapIndex], 0, 0 );
         WSTRLCAT( pwName, wBuf, AEEBT_MAX_DEVICENAME_LEN );
       }
@@ -18520,7 +18512,7 @@ static void BTApp_BuildDevRespMenu( CBTApp* pMe )
     if ( IMENUCTL_AddItem( pMe->m_pIMenu, NULL, 0, MapIndex, 
                            pwName, 0 ) == FALSE )
     {
-      MSG_ERROR( "BldDevRespMenu - failed adding item %d to menu", MapIndex, 0, 0 );
+      MSG_FATAL( "BldDevRespMenu - failed adding item %d to menu", MapIndex, 0, 0 );
     }
     else
     {
@@ -18529,11 +18521,11 @@ static void BTApp_BuildDevRespMenu( CBTApp* pMe )
                     pMe->mSD.devRec[(pMe->mRM.uDevToDspIdxMap[MapIndex])].serviceClass,
                     &pMe->mSD.devRec[(pMe->mRM.uDevToDspIdxMap[MapIndex])].bdAddr );
       IMENUCTL_SetItem( pMe->m_pIMenu, MapIndex, MSIF_IMAGE, &ai );
-      MSG_MED( "BldDevRespMenu - addr=%04x %04x %04x", 
+      MSG_FATAL( "BldDevRespMenu - addr=%04x %04x %04x", 
                ((uint16)(pMapDev->bdAddr.uAddr[ 5 ] << 8) | pMapDev->bdAddr.uAddr[ 4 ]),
                ((uint16)(pMapDev->bdAddr.uAddr[ 3 ] << 8) | pMapDev->bdAddr.uAddr[ 2 ]),
                ((uint16)(pMapDev->bdAddr.uAddr[ 1 ] << 8) | pMapDev->bdAddr.uAddr[ 0 ]) );
-      MSG_MED( "BldDevRespMenu - rank=%d", pMapDev->EIRData.deviceRanking, 
+      MSG_FATAL( "BldDevRespMenu - rank=%d", pMapDev->EIRData.deviceRanking, 
                0, 0 ); 
     }
   }
@@ -18575,7 +18567,7 @@ static void BTApp_BuildDevRespMenu( CBTApp* pMe )
     if ( IMENUCTL_AddItem( pMe->m_pIMenu, NULL, 0, i, 
                            pwName, 0 ) == FALSE )
     {
-      MSG_ERROR( "BldDevRespMenu - failed adding item %d to menu", i, 0, 0 );
+      MSG_FATAL( "BldDevRespMenu - failed adding item %d to menu", i, 0, 0 );
     }
     else
     {
@@ -18584,7 +18576,7 @@ static void BTApp_BuildDevRespMenu( CBTApp* pMe )
                                            pMe->mSD.devRec[ i ].serviceClass,
                                            &pMe->mSD.devRec[ i ].bdAddr );
       IMENUCTL_SetItem( pMe->m_pIMenu, i, MSIF_IMAGE, &ai );
-      MSG_MED( "BldDevRespMenu - addr=%04x %04x %04x", 
+      MSG_FATAL( "BldDevRespMenu - addr=%04x %04x %04x", 
                ((uint16)(pA->uAddr[ 5 ] << 8) | pA->uAddr[ 4 ]),
                ((uint16)(pA->uAddr[ 3 ] << 8) | pA->uAddr[ 2 ]),
                ((uint16)(pA->uAddr[ 1 ] << 8) | pA->uAddr[ 0 ]) );
@@ -18668,7 +18660,7 @@ static void BTApp_BuildDevInfo( CBTApp* pMe )
 
   // save the value of get name status
   tempuValue1 = pDev->uValue1;
-  MSG_MED( "BTApp_BuildDevInfo - tempuValue1 = %d", tempuValue1, 0, 0);
+  MSG_FATAL( "BTApp_BuildDevInfo - tempuValue1 = %d", tempuValue1, 0, 0);
 
   if ( TOP_MENU != BT_APP_MENU_DEV_RESP )
   {
@@ -18712,7 +18704,7 @@ static void BTApp_BuildDevInfo( CBTApp* pMe )
                                      &maxManuDataLen, 
                                      pManuData ) != SUCCESS ) )  
     {
-      MSG_ERROR( "DevInfo - Manufacturer Data failed", 0, 0, 0 );
+      MSG_FATAL( "DevInfo - Manufacturer Data failed", 0, 0, 0 );
     } 
     else
     {
@@ -18949,7 +18941,7 @@ static void BTApp_BuildDevOptions( CBTApp* pMe )
     if ( IBTEXTRM_GetRoleSwitchPolicy( pMe->mRM.po, &pDev->bdAddr, 
                                        &bSwitchAllowed ) != SUCCESS )
     {
-      MSG_ERROR( "BuildDevOptions - Get Role Switch Policy failed; "
+      MSG_FATAL( "BuildDevOptions - Get Role Switch Policy failed; "
                  "assumed not allowed", 0, 0, 0 );
     }
     strID = bSwitchAllowed ? IDS_DISALLOW_ROLE_SWITCH : IDS_ALLOW_ROLE_SWITCH;
@@ -18977,7 +18969,7 @@ static void BTApp_BuildSecurityMenu(
   CtlAddItem  ai;
   uint16      sel = 0;
 
-  MSG_LOW( "BuildSec - sec=0x%x", security, 0, 0 );
+  MSG_FATAL( "BuildSec - sec=0x%x", security, 0, 0 );
 
   CLEAR_SCREEN();
 
@@ -19105,7 +19097,7 @@ DESCRIPTION
 
 	if (IBTEXTRM_UserConfirmationReply(pMe->mRM.po, &pMe->mRM.BondBDAddr, bConfirmed ) != SUCCESS )
 	{
-		MSG_ERROR( "UserConfirm - DeviceEnumInit failed", 0, 0, 0 );
+		MSG_FATAL( "UserConfirm - DeviceEnumInit failed", 0, 0, 0 );
 		success = FALSE;
 	}
 	return success;
@@ -19119,7 +19111,7 @@ static boolean BTApp_HandleDbgKey( CBTApp* pMe, uint16 key )
   boolean ev_processed = FALSE;
   uint16  selection;
  
-  MSG_MED( "BTApp_HandleDbgKey - k=0x%x", key, 0, 0 );
+  MSG_FATAL( "BTApp_HandleDbgKey - k=0x%x", key, 0, 0 );
 
   switch ( key )
   {
@@ -19138,7 +19130,7 @@ static boolean BTApp_HandleDbgKey( CBTApp* pMe, uint16 key )
       {
         case IDS_DBG_KEY:
         {
-          MSG_LOW( "HndlSlction - IDS_DBG_KEY m=%d", TOP_MENU, 0, 0 );
+          MSG_FATAL( "HndlSlction - IDS_DBG_KEY m=%d", TOP_MENU, 0, 0 );
           pMe->bConfigChanged = TRUE;
           pMe->mRM.bDBGEnabled = pMe->mRM.bDBGEnabled ? FALSE : TRUE;
           BTApp_UpdateMenuItemImage( pMe->m_pIDisplay, pMe->m_pIMenu,selection,
@@ -19150,7 +19142,7 @@ static boolean BTApp_HandleDbgKey( CBTApp* pMe, uint16 key )
         }
         
         default:
-          MSG_ERROR( "BTApp_HandleDbgKey - sel=%d", selection, 0, 0 );
+          MSG_FATAL( "BTApp_HandleDbgKey - sel=%d", selection, 0, 0 );
           break;
       }
       ev_processed = TRUE;
@@ -19574,7 +19566,7 @@ static void BTApp_BuildIOCapabilityMenu( CBTApp* pMe )
   CtlAddItem  ai;
   uint16      sel = 0;
 
-  MSG_LOW( "BTApp_BuildIOCapabilityMenu - type=%d", pMe->mRM.ioCaptype, 0, 0 ); 
+  MSG_FATAL( "BTApp_BuildIOCapabilityMenu - type=%d", pMe->mRM.ioCaptype, 0, 0 ); 
 
   IMENUCTL_Reset( pMe->m_pIMenu );
   
@@ -20034,7 +20026,7 @@ static boolean BTApp_BuildSecurityOptionsMenu(   CBTApp* pMe   )
   CtlAddItem  ai;
   uint16      sel = 0;
 
-  MSG_LOW( "BuildSecurityOptionsMenu - ", 0, 0, 0 );
+  MSG_FATAL( "BuildSecurityOptionsMenu - ", 0, 0, 0 );
 
   CLEAR_SCREEN();
   IMENUCTL_Reset( pMe->m_pIMenu );
@@ -20208,7 +20200,7 @@ static void BTApp_BuildDBGKeyHndlrMenu( CBTApp* pMe )
 {
   AEERect     rc;
   CtlAddItem  ai;
-  MSG_LOW( "BuildDBGKeyHndlrMenu ",0, 0, 0 );
+  MSG_FATAL( "BuildDBGKeyHndlrMenu ",0, 0, 0 );
 
   IMENUCTL_Reset( pMe->m_pIMenu );
   
@@ -20278,7 +20270,7 @@ static boolean BTApp_VerifyRcvdData(
     i = ((uBytesRcvd - 1) % NUM_SRC_BYTES);
     if ( pMe->mSPP.buf[(pMe->mSPP.buf_start + j) % SPP_BUF_SZ] != (uint8)i )
     {
-      MSG_ERROR( "VerifyRcvdData - i=%x ith=%x data=%x", 
+      MSG_FATAL( "VerifyRcvdData - i=%x ith=%x data=%x", 
                  (uint8)i, uBytesRcvd-1,
                  pMe->mSPP.buf[(pMe->mSPP.buf_start + j) % SPP_BUF_SZ] );
       good = FALSE;
@@ -20311,7 +20303,7 @@ static void BTApp_SendSPPData( CBTApp* pMe )
 
   if ( pMe->pMem == NULL )
   {
-    MSG_ERROR( "SendSPPData - MALLOC failed", 0, 0, 0 );
+    MSG_FATAL( "SendSPPData - MALLOC failed", 0, 0, 0 );
   }
   else
   {
@@ -20393,7 +20385,7 @@ static void BTApp_SendBackSPPData( CBTApp* pMe )
     }
     else
     {
-      MSG_ERROR( "SendBackSPPData - SPP_Write failed %d", bytesSent, 0, 0);
+      MSG_FATAL( "SendBackSPPData - SPP_Write failed %d", bytesSent, 0, 0);
     }
   }
   
@@ -20459,18 +20451,18 @@ DESCRIPTION
 ============================================================================= */
 static void BTApp_StartVR( CBTApp* pMe )
 {
-  MSG_LOW( "StartVR - as=%d ac=%d", pMe->mAG.bAudioSelected, 
+  MSG_FATAL( "StartVR - as=%d ac=%d", pMe->mAG.bAudioSelected, 
            pMe->mAG.bAudioConnected, 0 );
 
 #ifdef FEATURE_APP_PUREVOICE
   pMe->mAG.callState = BTAPP_AG_CALL_STARTVR;
   if ( BTApp_ConnectAudio( pMe, TRUE ) != FALSE )
   {
-    MSG_MED( "StartVR - launching Purevoice", 0, 0, 0 );
+    MSG_FATAL( "StartVR - launching Purevoice", 0, 0, 0 );
     if ( ISHELL_StartApplet( pMe->m_pShell, 
                              AEECLSID_PUREVOICE ) != SUCCESS )
     {
-      MSG_ERROR( "StartVR - failed to launch PureVoice", 0, 0, 0 );
+      MSG_FATAL( "StartVR - failed to launch PureVoice", 0, 0, 0 );
       pMe->mAG.bStartedVr = FALSE;
       IBTEXTAG_UpdateVRState( pMe->mAG.po, FALSE );
     }
@@ -20481,7 +20473,7 @@ static void BTApp_StartVR( CBTApp* pMe )
     }
   }
 #else
-  MSG_ERROR( "StartVR - PureVoice app not present", 0, 0, 0 );
+  MSG_FATAL( "StartVR - PureVoice app not present", 0, 0, 0 );
 #endif /* FEATURE_APP_PUREVOICE */
 }
 
@@ -20491,18 +20483,18 @@ DESCRIPTION
 ============================================================================= */
 static void BTApp_EndVR( CBTApp* pMe )
 {
-  MSG_LOW( "EndVR - as=%d ac=%d", pMe->mAG.bAudioSelected, 
+  MSG_FATAL( "EndVR - as=%d ac=%d", pMe->mAG.bAudioSelected, 
            pMe->mAG.bAudioConnected, 0 );
 #ifdef FEATURE_APP_PUREVOICE
   if ( ISHELL_ActiveApplet( pMe->m_pShell ) == AEECLSID_PUREVOICE )
   {
     boolean bProcessed = FALSE;
-    MSG_LOW( "EndVR - closing PureVoice", 0, 0, 0 );
+    MSG_FATAL( "EndVR - closing PureVoice", 0, 0, 0 );
     bProcessed = ISHELL_SendEvent( pMe->m_pShell, AEECLSID_PUREVOICE, 
                                    EVT_USER, 0x88, 0 ); // 0x88 is signal for PureVoice to exit
     if ( bProcessed == FALSE )
     {
-      MSG_ERROR( "EndVR - evt sent to PureVoice not processed", 0, 0, 0 );
+      MSG_FATAL( "EndVR - evt sent to PureVoice not processed", 0, 0, 0 );
     }
     pMe->mAG.bStartedVr = FALSE;
     IBTEXTAG_UpdateVRState( pMe->mAG.po, FALSE );
@@ -20545,7 +20537,7 @@ DESCRIPTION
 static void BTApp_AcceptButtonPress( CBTApp* pMe )
 {
   pMe->mAG.bIgnoreButton = FALSE;
-  MSG_LOW( "AcceptButtonPress - stop ignoring button press", 0, 0, 0 );
+  MSG_FATAL( "AcceptButtonPress - stop ignoring button press", 0, 0, 0 );
 }
 
 /* ==========================================================================
@@ -20563,11 +20555,11 @@ static boolean BTApp_SuspendA2DP( CBTApp* pMe )
   if ( pMe->mA2DP.bStreaming != FALSE )
   {
     bProceed = FALSE;
-    MSG_LOW("AG - wait for A2DP to suspend...", 0, 0, 0 );      
+    MSG_FATAL("AG - wait for A2DP to suspend...", 0, 0, 0 );      
   }
   if ( pMe->mA2DP.bAudioSelected != FALSE )
   {
-    MSG_MED( "AG - Releasing A2DP A2conn=%d", pMe->mA2DP.bConnected, 0, 0 );
+    MSG_FATAL( "AG - Releasing A2DP A2conn=%d", pMe->mA2DP.bConnected, 0, 0 );
     BTApp_ReleaseA2DPDevice( pMe ); // suspending won't do
   }
 #endif
@@ -20666,7 +20658,7 @@ static boolean BTApp_DisconnectAudio( CBTApp* pMe, boolean bForceUnmute )
 	
   if ( pMe->mAG.bAudioConnected != FALSE )
   {
-    MSG_LOW( "AG - Disc Audio, Disconnecting=%d",
+    MSG_FATAL( "AG - Disc Audio, Disconnecting=%d",
              pMe->mAG.bAudioDisconnecting, 0, 0 );
 
     /* Deregister Device Change Callback */
@@ -20690,7 +20682,7 @@ static boolean BTApp_DisconnectAudio( CBTApp* pMe, boolean bForceUnmute )
   }
   else if ( pMe->mAG.bAudioConnecting != FALSE )
   {
-    MSG_LOW( "AG - waiting to Disc Audio, fum=%d", bForceUnmute, 0, 0 );
+    MSG_FATAL( "AG - waiting to Disc Audio, fum=%d", bForceUnmute, 0, 0 );
     pMe->mAG.bAudioDisconnecting = TRUE; //let the connection be established first
   }
   else // already disconnected
@@ -20725,7 +20717,7 @@ static void BTApp_SetInBandRing( CBTApp* pMe, boolean bInBandRing )
     pMe->mAG.bInbandRing = bInBandRing;
     IBTEXTAG_SetInbandRingCapable( pMe->mAG.po, bInBandRing );
   }
-  MSG_LOW( "SetInBandRing - supported=%d", bInBandRing, 0, 0 );
+  MSG_FATAL( "SetInBandRing - supported=%d", bInBandRing, 0, 0 );
 }
 
 /* ==========================================================================
@@ -20977,7 +20969,7 @@ static void BTApp_HandleAudioSetup( CBTApp* pMe, BTAppCallType callPresent )
         break;
       }
       default:
-        MSG_LOW( "HdleAudioSetup: snd type 0x%02x ignored", 
+        MSG_FATAL( "HdleAudioSetup: snd type 0x%02x ignored", 
                  pMe->mAG.uSoundType, 0, 0 );
         break;
     }
@@ -20993,7 +20985,7 @@ DESCRIPTION
 ============================================================================= */
 static void BTApp_HandleMTCall( CBTApp* pMe )
 {
-  MSG_MED( "AG - HndlMTCall cSt=%d snd=0x%x", 
+  MSG_FATAL( "AG - HndlMTCall cSt=%d snd=0x%x", 
            pMe->mAG.callState, pMe->mAG.uSoundType, 0 );
 
   MSG_FATAL("***zzg BTApp_HandleMTCall uSoundType=%x, callState=%x***", pMe->mAG.uSoundType, pMe->mAG.callState, 0);
@@ -21075,7 +21067,7 @@ static void BTApp_HandleMTCall( CBTApp* pMe )
       break;
     }
     default:
-      MSG_LOW( "HandleMTCall - snd type 0x%02x ignored", 
+      MSG_FATAL( "HandleMTCall - snd type 0x%02x ignored", 
                pMe->mAG.uSoundType, 0, 0 );
       return;
   }
@@ -21119,7 +21111,7 @@ static boolean BTApp_DisconnectAudio( CBTApp* pMe, boolean bForceUnmute )
 
   if ( pMe->mAG.bAudioConnecting != FALSE )
   {
-    MSG_LOW( "AG - waiting to Disc Audio, fum=%d", bForceUnmute, 0, 0 );
+    MSG_FATAL( "AG - waiting to Disc Audio, fum=%d", bForceUnmute, 0, 0 );
     pMe->mAG.bForceUnmute        = bForceUnmute;
     pMe->mAG.bAudioDisconnecting = TRUE; //let the connection be established first
   }
@@ -21163,7 +21155,7 @@ static boolean BTApp_CheckInBandRing( CBTApp* pMe )
     pMe->mAG.bInbandRing = bInBandRing;
     IBTEXTAG_SetInbandRingCapable( pMe->mAG.po, bInBandRing );
   }
-  MSG_LOW( "CheckInBandRing - supported=%d", bInBandRing, 0, 0 );
+  MSG_FATAL( "CheckInBandRing - supported=%d", bInBandRing, 0, 0 );
   return bInBandRing;
 }
 
@@ -21178,7 +21170,7 @@ static void BTApp_HandleMTCall( CBTApp* pMe )
 
   MSG_FATAL("***zzg BTApp_HandleMTCall bDoInband=%x***", bDoInband, 0, 0);
   
-  MSG_MED( "AG - HndlMTCall callSt=%d AGconn=%d AGas=%d", 
+  MSG_FATAL( "AG - HndlMTCall callSt=%d AGconn=%d AGas=%d", 
            pMe->mAG.callState, pMe->mAG.bConnected, pMe->mAG.bAudioConnected );
   pMe->mAG.bDevPickedUp = FALSE;
   pMe->mAG.callState = (bDoInband != FALSE) ? BTAPP_AG_CALL_INCOMING_INBAND :
@@ -21303,7 +21295,7 @@ static void BTApp_HandleCallAndMOSSetup( CBTApp* pMe )
          ((callPresent != BT_APP_CALL_NONE) ||
           BTAPP_AG_ISBITSET( BTAPP_AG_FLAG_IGNORE_BUTTON_AT_ACL_B )) )
     {
-      MSG_LOW( "HndlCall&MOSSetup - start ignoring button press", 0, 0, 0 );
+      MSG_FATAL( "HndlCall&MOSSetup - start ignoring button press", 0, 0, 0 );
       pMe->mAG.bIgnoreButton = TRUE;
       ISHELL_SetTimer( pMe->m_pShell, ONE_SECOND * 2, 
                        (PFNNOTIFY) BTApp_AcceptButtonPress, pMe );
@@ -21385,7 +21377,7 @@ static void BTApp_HandleAudioConnEv( CBTApp *pMe )
         if ( pMe->mA2DP.bStreaming != FALSE )
         {
           // how is this possible? locally initiated SCO while A2DP is streaming?
-          MSG_ERROR( "AudioConnEv - SCO + A2DP streaming ", 0, 0, 0 );
+          MSG_FATAL( "AudioConnEv - SCO + A2DP streaming ", 0, 0, 0 );
 
           // gotta bring down one
           BTApp_PickAudioLink( pMe );
@@ -21484,7 +21476,7 @@ static void BTApp_ProcessAGNotifications(
     case AEEBT_AG_EVT_CONFIGURED:          // response to Config()
       if ( pData->uError != AEEBT_AG_ERR_NONE )
       {
-        MSG_ERROR( "AG - Configure failed err=%d", pData->uError, 0, 0 );
+        MSG_FATAL( "AG - Configure failed err=%d", pData->uError, 0, 0 );
       }
       break;
     case AEEBT_AG_EVT_ENABLED:             // response to Enable()
@@ -21512,7 +21504,7 @@ static void BTApp_ProcessAGNotifications(
         pMe->mAG.pSSInfo = (AEETSSInfo*)MALLOC( sizeof(AEETSSInfo) );
         if ( pMe->mAG.pSSInfo == NULL )
         {
-          MSG_ERROR( "ProcessAGNotifications - Mem alloc failed", 0, 0, 0 );
+          MSG_FATAL( "ProcessAGNotifications - Mem alloc failed", 0, 0, 0 );
           return;
         }        
 #endif
@@ -21580,7 +21572,7 @@ static void BTApp_ProcessAGNotifications(
     }
     case AEEBT_AG_EVT_CONNECT_FAILED:
     {
-      MSG_MED( "AG - Connect failed BDA=%04x %04x %04x", 
+      MSG_FATAL( "AG - Connect failed BDA=%04x %04x %04x", 
                ((uint16)(pData->bdAddr.uAddr[5] << 8) | pData->bdAddr.uAddr[4]), 
                ((uint16)(pData->bdAddr.uAddr[3] << 8) | pData->bdAddr.uAddr[2]), 
                ((uint16)(pData->bdAddr.uAddr[1] << 8) | pData->bdAddr.uAddr[0]) );
@@ -21650,7 +21642,7 @@ static void BTApp_ProcessAGNotifications(
     case AEEBT_AG_EVT_RUNG:                // response to Ring()
       MSG_FATAL("***zzg BTApp_ProcessAGNotify AEEBT_AG_EVT_RUNG uError=%x***", pData->uError, 0, 0);
 	  
-      MSG_MED( "AG - RUNG err=%d", pData->uError, 0, 0 );
+      MSG_FATAL( "AG - RUNG err=%d", pData->uError, 0, 0 );
       if ( pData->uError == AEEBT_AG_ERR_RING_FAILED )
       {
         BTApp_DisconnectAudio( pMe, TRUE );
@@ -21659,7 +21651,7 @@ static void BTApp_ProcessAGNotifications(
     case AEEBT_AG_EVT_VR_CAPABLE_SET:      // response to SetVRCapable()
     case AEEBT_AG_EVT_SPKR_GAIN_SET:       // response to SetSpkrGain()
     case AEEBT_AG_EVT_MIC_GAIN_SET:        // response to SetMicGain()
-      MSG_LOW( "AG Notif - evt=%d", evt, 0, 0 );
+      MSG_FATAL( "AG Notif - evt=%d", evt, 0, 0 );
       break;
     case AEEBT_AG_EVT_AUDIO_CONNECTED:     // may be due to ConnectAudio()     
       MSG_FATAL("***zzg AGNotify AEEBT_AG_EVT_AUDIO_CONNECTED***", 0, 0, 0);
@@ -21667,7 +21659,7 @@ static void BTApp_ProcessAGNotifications(
       break;
     case AEEBT_AG_EVT_AUDIO_CONNECT_FAILED:
     {
-      MSG_MED( "AG - AudioConnFailed err=%d", pData->uError, 0, 0 );
+      MSG_FATAL( "AG - AudioConnFailed err=%d", pData->uError, 0, 0 );
 #ifdef FEATURE_AVS_BT_SCO_REWORK
       ISHELL_CancelTimer( pMe->m_pShell,
                           (PFNNOTIFY) BTApp_ReleaseBTDeviceDelayed, pMe );
@@ -21815,7 +21807,7 @@ static void BTApp_ProcessAGNotifications(
       BTApp_HandleEventButtonPressed( pMe );
       break;
     case AEEBT_AG_EVT_SPKR_GAIN_REPORT:    // audio device's spkr gain report
-      MSG_MED( "AG - SpkrGainReport gain=%d", pData->uVolumeGain, 0, 0 );
+      MSG_FATAL( "AG - SpkrGainReport gain=%d", pData->uVolumeGain, 0, 0 );
       if ( pMe->mAG.spkrGain != pData->uVolumeGain )
       {
         pMe->mAG.spkrGain = pData->uVolumeGain;
@@ -21829,7 +21821,7 @@ static void BTApp_ProcessAGNotifications(
       }
       break;
     case AEEBT_AG_EVT_MIC_GAIN_REPORT:     // audio device's mic gain report
-      MSG_MED( "AG - MicGainReport gain=%d", pData->uVolumeGain, 0, 0 );
+      MSG_FATAL( "AG - MicGainReport gain=%d", pData->uVolumeGain, 0, 0 );
       if ( pMe->mAG.micGain != pData->uVolumeGain )
       {
         pMe->mAG.micGain = pData->uVolumeGain;
@@ -21864,7 +21856,7 @@ static void BTApp_ProcessAGNotifications(
         if ( ITELEPHONE_GetServingSystemInfo( pMe->pIPhone, pMe->mAG.pSSInfo, 
                                               sizeof(AEETSSInfo)) != SUCCESS )
         {
-          MSG_MED( "AG EXT IO - SS Info cannot be initialized", 0, 0, 0 );
+          MSG_FATAL( "AG EXT IO - SS Info cannot be initialized", 0, 0, 0 );
           pMe->mAG.bValidSSData = FALSE;
         }
         else
@@ -21901,7 +21893,7 @@ static void BTApp_ProcessAGNotifications(
       break;
 #ifdef FEATURE_PHONE_VR
     case AEEBT_AG_EVT_VR_ON:               // HF turned VR on
-      MSG_MED( "AG - VR On", 0, 0, 0 );
+      MSG_FATAL( "AG - VR On", 0, 0, 0 );
       if ( pMe->mAG.bVREnabled == FALSE )
       {
         pMe->mAG.bUpdateVrState = TRUE;
@@ -21913,7 +21905,7 @@ static void BTApp_ProcessAGNotifications(
       }
       break;
     case AEEBT_AG_EVT_VR_OFF:              // HF turned VR off
-      MSG_MED( "AG - VR Off", 0, 0, 0 );
+      MSG_FATAL( "AG - VR Off", 0, 0, 0 );
       if ( pMe->mAG.bVREnabled == FALSE )
       {
         if ( pMe->mAG.bStartedVr != FALSE )
@@ -21946,27 +21938,27 @@ static void BTApp_ProcessAGNotifications(
     }
 #endif
     case AEEBT_AG_EVT_DEV_SEND_DTMF:       // HF sent DTMF tone
-      MSG_MED( "AG - DevSendDTMF ch=%d", pData->uDTMFChar, 0, 0 );
+      MSG_FATAL( "AG - DevSendDTMF ch=%d", pData->uDTMFChar, 0, 0 );
       break;
     case AEEBT_AG_EVT_VR_STATE_UPDATED:
-      MSG_MED( "AG - VR state updated", 0, 0, 0 );
+      MSG_FATAL( "AG - VR state updated", 0, 0, 0 );
       break;
 #ifdef FEATURE_BT_HFP_1_5
     case AEEBT_AG_EVT_EXTERNAL_IO_ENABLED:
-      MSG_MED( "AG - External I/O enabled", 0, 0, 0 );
+      MSG_FATAL( "AG - External I/O enabled", 0, 0, 0 );
       break;
     case AEEBT_AG_EVT_EXTERNAL_IO_DISABLED:
-      MSG_MED( "AG - External I/O disabled", 0, 0, 0 );
+      MSG_FATAL( "AG - External I/O disabled", 0, 0, 0 );
       break;
     case AEEBT_AG_EVT_RSSI_SET:
-      MSG_MED( "AG - RSSI value set", 0, 0, 0 );
+      MSG_FATAL( "AG - RSSI value set", 0, 0, 0 );
       break;
     case AEEBT_AG_EVT_BATTERY_CHARGE_IND_SET:
-      MSG_MED( "AG - Battery charge level set", 0, 0, 0 );
+      MSG_FATAL( "AG - Battery charge level set", 0, 0, 0 );
       break;
 #endif
     case AEEBT_AG_EVT_INBAND_RING_CAPABLE_SET:
-      MSG_MED( "AG - Inband Ring Capable Set", 0, 0, 0 );
+      MSG_FATAL( "AG - Inband Ring Capable Set", 0, 0, 0 );
       break;
 #ifdef FEATURE_AVS_BT_SCO_REWORK
     case AEEBT_AG_EVT_SOUND_CHANGING:
@@ -21981,7 +21973,7 @@ static void BTApp_ProcessAGNotifications(
       if ( (pData->sSoundType != AEEBT_SND_DTMF_START) &&
            (pData->sSoundType != AEEBT_SND_DTMF_STOP))
       {
-        MSG_MED( "AG - Snd Chg Evt=0x%x as|a2s=0x%04x cp|ci=0x%04x", 
+        MSG_FATAL( "AG - Snd Chg Evt=0x%x as|a2s=0x%04x cp|ci=0x%04x", 
                  pData->sSoundType, 
                  ((uint16)(pMe->mAG.bAudioSelected << 8) | a2s),
                  ((uint16)(callPresent << 8) | callIncoming) );
@@ -22017,7 +22009,7 @@ static void BTApp_ProcessAGNotifications(
     }
 #endif /* FEATURE_AVS_BT_SCO_REWORK */
     default:
-      MSG_ERROR( "AG - unexpected ev=%d", evt, 0, 0 );
+      MSG_FATAL( "AG - unexpected ev=%d", evt, 0, 0 );
   }
 }
 
@@ -22055,7 +22047,7 @@ static void BTApp_ProcessNANotifications(
   NotificationData* pData
 )
 {
-  MSG_LOW( "NA Notif - evt=%d", evt, 0, 0 );
+  MSG_FATAL( "NA Notif - evt=%d", evt, 0, 0 );
   switch ( evt )
   {
     case AEEBT_NA_EVT_ENABLED:
@@ -22126,7 +22118,7 @@ static void BTApp_ProcessSDNotifications(
   NotificationData* pData
 )
 {
-  MSG_LOW( "SD Notif - evt=%d", evt, 0, 0 );
+  MSG_FATAL( "SD Notif - evt=%d", evt, 0, 0 );
 
   MSG_FATAL("***zzg BTApp_ProcessSDNotifications evt=%d***", evt, 0, 0 );
 
@@ -22134,7 +22126,7 @@ static void BTApp_ProcessSDNotifications(
   {
     case AEEBT_SD_EVT_DEVICE_DISCOVERY_RESP:
     {
-		MSG_MED( "SD - DiscResp nD=%d", pData->uNumDevicesDiscovered, 0, 0 );
+		MSG_FATAL( "SD - DiscResp nD=%d", pData->uNumDevicesDiscovered, 0, 0 );
 
 		MSG_FATAL("***zzg AEEBT_SD_EVT_DEVICE_DISCOVERY_RESP uNumRecs=%d***", pData->uNumDevicesDiscovered, 0, 0 );
 
@@ -22171,7 +22163,7 @@ static void BTApp_ProcessSDNotifications(
     }
     case AEEBT_SD_EVT_DEVICE_DISCOVERY_STARTED:
     {
-      MSG_MED( "SD - DiscStarted err=%d", pData->uError, 0, 0 );
+      MSG_FATAL( "SD - DiscStarted err=%d", pData->uError, 0, 0 );
       if ( pData->uError == AEEBT_SD_ERR_NONE )
       {
 #ifdef FEATURE_BT_2_1
@@ -22204,7 +22196,7 @@ static void BTApp_ProcessSDNotifications(
           pDev->uValue1 = 0;
         }
       }
-      MSG_MED( "SD - DiscComp n=%d err=%d", 
+      MSG_FATAL( "SD - DiscComp n=%d err=%d", 
                pData->sDevDiscComplete.uNumDevicesDiscovered,
                pData->sDevDiscComplete.uError, 0 );
 
@@ -22247,7 +22239,7 @@ static void BTApp_ProcessSDNotifications(
     }
     case AEEBT_SD_EVT_DEVICE_DISCOVERY_STOPPED:
     {
-      MSG_MED( "SD - DiscStopped err=%d", pData->uError, 0, 0 );
+      MSG_FATAL( "SD - DiscStopped err=%d", pData->uError, 0, 0 );
       pMe->mSD.bDiscovering = FALSE;
       ISHELL_CancelTimer( pMe->m_pShell, 
                           (PFNNOTIFY) BTApp_StopDeviceDiscovery, pMe );
@@ -22255,7 +22247,7 @@ static void BTApp_ProcessSDNotifications(
     }
     case AEEBT_SD_EVT_DISCOVERABLE_MODE_SET:
     {
-      MSG_MED( "SD - SetDisc err=%d", pData->uError, 0, 0 );
+      MSG_FATAL( "SD - SetDisc err=%d", pData->uError, 0, 0 );
       ISHELL_PostEventEx( pMe->m_pShell, EVTFLG_ASYNC, 
                           AEECLSID_BLUETOOTH_APP,
                           EVT_USER, EVT_SD_DISC_SET, pData->uError );
@@ -22263,7 +22255,7 @@ static void BTApp_ProcessSDNotifications(
     }
     case AEEBT_SD_EVT_DISCOVERABLE_MODE_RESP:
     {
-      MSG_MED( "SD - GetDisc m=%d", pData->sDiscoverableModeResp.mode, 0, 0 );
+      MSG_FATAL( "SD - GetDisc m=%d", pData->sDiscoverableModeResp.mode, 0, 0 );
       ISHELL_PostEventEx( pMe->m_pShell, EVTFLG_ASYNC, 
                           AEECLSID_BLUETOOTH_APP,
                           EVT_USER, EVT_SD_DISC_RSP, 
@@ -22272,7 +22264,7 @@ static void BTApp_ProcessSDNotifications(
     }
     case AEEBT_SD_EVT_BROWSE_RESP:
     {
-      MSG_MED( "SD - BrowseResp nR=%d", pData->uNumSvcRecsFound, 0, 0 );
+      MSG_FATAL( "SD - BrowseResp nR=%d", pData->uNumSvcRecsFound, 0, 0 );
       pMe->mSD.uNumBrowseRecs = pData->uNumSvcRecsFound;
       ISHELL_PostEventEx( pMe->m_pShell, EVTFLG_ASYNC, 
                           AEECLSID_BLUETOOTH_APP,
@@ -22281,20 +22273,20 @@ static void BTApp_ProcessSDNotifications(
     }
     case AEEBT_SD_EVT_BROWSE_FAILED:
     {
-      MSG_ERROR( "SD - BrowseFailed err=%d", pData->uError, 0, 0 );
+      MSG_FATAL( "SD - BrowseFailed err=%d", pData->uError, 0, 0 );
       BTApp_ShowDevMsg( pMe, IDS_MSG_SVC_BROWSE_FAILED, 
                         &pMe->mRM.device[ pMe->mRM.uCurDevIdx ].bdAddr, 2 );
       break;
     }
     case AEEBT_SD_EVT_BROWSE_SERVICE_CANCELED:
     {
-      MSG_MED( "SD - BrowseService cancelled", 0, 0, 0 );
+      MSG_FATAL( "SD - BrowseService cancelled", 0, 0, 0 );
       BTApp_BuildTopMenu( pMe );
       break;
     }
     case AEEBT_SD_EVT_SEARCH_RESP:
     {
-      MSG_MED( "SD - SrchResp nR=%d", pData->uNumSvcRecsFound, 0, 0 );
+      MSG_FATAL( "SD - SrchResp nR=%d", pData->uNumSvcRecsFound, 0, 0 );
       pMe->mSD.uNumSvcRecs = pData->uNumSvcRecsFound;
       ISHELL_PostEventEx( pMe->m_pShell, EVTFLG_ASYNC, 
                           AEECLSID_BLUETOOTH_APP,
@@ -22303,7 +22295,7 @@ static void BTApp_ProcessSDNotifications(
     }
     case AEEBT_SD_EVT_SEARCH_FAILED:
     {
-      MSG_ERROR( "SD - SearchFailed err=%d", pData->uError, 0, 0 );
+      MSG_FATAL( "SD - SearchFailed err=%d", pData->uError, 0, 0 );
       BTApp_ShowDevMsg( pMe, IDS_MSG_SVC_SEARCH_FAILED, 
                         &pMe->mRM.device[ pMe->mRM.uCurDevIdx ].bdAddr, 2 );
       break;
@@ -22313,12 +22305,12 @@ static void BTApp_ProcessSDNotifications(
       AEEBTDeviceInfo* pDev = NULL;
       if ( pMe->mRM.uGetNameDevIdx == MAX_DEVICES )
       {
-        MSG_ERROR( "SD - Unexpected NameResp", 0, 0, 0 );
+        MSG_FATAL( "SD - Unexpected NameResp", 0, 0, 0 );
       }
       else
       {
         pDev = &pMe->mRM.device[ pMe->mRM.uGetNameDevIdx ];
-        MSG_MED( "SD - NameResp idx=%d name=%c%c", pMe->mRM.uGetNameDevIdx,
+        MSG_FATAL( "SD - NameResp idx=%d name=%c%c", pMe->mRM.uGetNameDevIdx,
                  pDev->wName[0], pDev->wName[1] );
         pMe->mRM.uGetNameDevIdx = MAX_DEVICES;
         pDev->uValue1 = UD1_GET_NAME_SUCCESS;
@@ -22352,12 +22344,12 @@ static void BTApp_ProcessSDNotifications(
       AEEBTDeviceInfo* pDev = NULL;
       if ( pMe->mRM.uGetNameDevIdx >= MAX_DEVICES )
       {
-        MSG_ERROR( "SD - Unexpected GetNameFailed", 0, 0, 0 );
+        MSG_FATAL( "SD - Unexpected GetNameFailed", 0, 0, 0 );
       }
       else
       {
         pDev = &pMe->mRM.device[ pMe->mRM.uGetNameDevIdx ];
-        MSG_ERROR( "SD - GetNameFailed", 0, 0, 0 );
+        MSG_FATAL( "SD - GetNameFailed", 0, 0, 0 );
         pMe->mRM.uGetNameDevIdx = MAX_DEVICES;
         pDev->uValue1 = UD1_GET_NAME_FAILED;
 
@@ -22394,7 +22386,7 @@ static void BTApp_ProcessSDNotifications(
     }
     default:
     {
-      MSG_ERROR( "SD - unexpected ev=%d", evt, 0, 0 );
+      MSG_FATAL( "SD - unexpected ev=%d", evt, 0, 0 );
       break;
     }
   }
@@ -22419,7 +22411,6 @@ static void BTApp_ProcessRMNotifications(
 	STRTOWSTR ("*", wBuf , sizeof(wBuf));
 #endif /* FEATURE_BT_2_1 */     
 
-	MSG_LOW( "RM Notif - evt=%d", evt, 0, 0);
 	MSG_FATAL("***zzg BTApp_ProcessRMNotifications evt=%d***", evt, 0, 0);
 
 	switch (evt)
@@ -22448,8 +22439,6 @@ static void BTApp_ProcessRMNotifications(
 		
 		case AEEBT_RM_EVT_KEYPRESS_NOTIFICATION:
 		{
-			MSG_LOW( "AEEBT_RM_EVT_KEYPRESS_NOTIFICATION - keypressType=%d", pData->keypress, 0, 0 );
-
 			MSG_FATAL("***zzg AEEBT_RM_EVT_KEYPRESS_NOTIFICATION keypressType=%d", pData->keypress, 0, 0 );
 
 			switch (pData->keypress)
@@ -22600,12 +22589,12 @@ static void BTApp_ProcessRMNotifications(
 		{
 #ifndef FEATURE_BT_2_1
 			AEEBTDeviceInfo* pDev = &pMe->mRM.device[pMe->mRM.uCurDevIdx];
-			MSG_MED("RM - Bonded err=%d", pData->pDevUpdateStatus->error, 0, 0);
+			MSG_FATAL("RM - Bonded err=%d", pData->pDevUpdateStatus->error, 0, 0);
 
 			if (AEEBT_BD_ADDRS_EQUAL(&pDev->bdAddr,
 			                         &pData->pDevUpdateStatus->bdAddr) == FALSE)
 			{
-				MSG_ERROR("RM - Bonded addr != curRMDev(%d)", pMe->mRM.uCurDevIdx, 0, 0);
+				MSG_FATAL("RM - Bonded addr != curRMDev(%d)", pMe->mRM.uCurDevIdx, 0, 0);
 				pDev->bdAddr = pData->pDevUpdateStatus->bdAddr;
 				IBTEXTRM_DeviceRead(pMe->mRM.po, pDev);
 			}
@@ -22637,7 +22626,7 @@ static void BTApp_ProcessRMNotifications(
 
 			if (ISHELL_GetActiveDialog( pMe->m_pShell ) != NULL)
 			{
-			MSG_MED("AEEBT_RM_EVT_BONDED received when there isalready an active dialog.exiting", 0, 0,0);
+			MSG_FATAL("AEEBT_RM_EVT_BONDED received when there isalready an active dialog.exiting", 0, 0,0);
 			break;
 			}
 			*/
@@ -22645,7 +22634,7 @@ static void BTApp_ProcessRMNotifications(
 			if ((pMe->mRM.bUserCfm != FALSE) 
 				 && (AEEBT_BD_ADDRS_EQUAL(&pMe->mRM.BondBDAddr,&pData->sBonded.bdAddr)) == FALSE)
 			{
-				MSG_ERROR("RM -  SSP Bonded addr != one requested .. exiting", 0, 0, 0);
+				MSG_FATAL("RM -  SSP Bonded addr != one requested .. exiting", 0, 0, 0);
 				break;
 			}
 
@@ -22723,7 +22712,7 @@ static void BTApp_ProcessRMNotifications(
 		
 	    case AEEBT_RM_EVT_PASSKEY_NOTIFICATION:
 	    {
-			MSG_MED(" RM - received Passkey Notification ", 0, 0, 0);
+			MSG_FATAL(" RM - received Passkey Notification ", 0, 0, 0);
 			pMe->mRM.device[pMe->mRM.uCurDevIdx].bdAddr = pData->sPasskey.bdAddr;
 			IBTEXTRM_DeviceRead(pMe->mRM.po, &pMe->mRM.device[pMe->mRM.uCurDevIdx]);
 
@@ -22761,7 +22750,7 @@ static void BTApp_ProcessRMNotifications(
 
 		case AEEBT_RM_EVT_UNBONDED:        // response to Unbond()
 		{		
-			MSG_MED( "RM - Unbonded err=%d", pData->pDevUpdateStatus->error, 0, 0);
+			MSG_FATAL( "RM - Unbonded err=%d", pData->pDevUpdateStatus->error, 0, 0);
 			if (pData->pDevUpdateStatus->error == AEEBT_RM_ERR_NONE)
 			{
 				msgID = IDS_MSG_DEV_UNBONDED;
@@ -22805,7 +22794,7 @@ static void BTApp_ProcessRMNotifications(
 
 		case AEEBT_RM_EVT_BONDABLE_MODE:   // response to SetBondable()
 		{
-			MSG_MED("RM - SetBondable err=%d", pData->uError, 0, 0);
+			MSG_FATAL("RM - SetBondable err=%d", pData->uError, 0, 0);
 			
 			if (pData->uError == AEEBT_RM_ERR_NONE)
 			{
@@ -22854,7 +22843,7 @@ static void BTApp_ProcessRMNotifications(
 		}
 	  
 		case AEEBT_RM_EVT_DEVICE_ADDED:    // response to DeviceAdd()
-			MSG_MED( "RM - DevAdded err=%d m=%d bonding=%d", pData->pDevUpdateStatus->error, TOP_MENU, pMe->mRM.bBonding );
+			MSG_FATAL( "RM - DevAdded err=%d m=%d bonding=%d", pData->pDevUpdateStatus->error, TOP_MENU, pMe->mRM.bBonding );
 
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
@@ -22933,12 +22922,12 @@ static void BTApp_ProcessRMNotifications(
 	  
 		case AEEBT_RM_EVT_DEVICE_UPDATED:  // response to DeviceUpdate()
 		{
-			MSG_MED("RM - DevUpdated err=%d bm=0x%x", pData->pDevUpdateStatus->error,pData->pDevUpdateStatus->updateBitmap, 0);
+			MSG_FATAL("RM - DevUpdated err=%d bm=0x%x", pData->pDevUpdateStatus->error,pData->pDevUpdateStatus->updateBitmap, 0);
 			break;
 		}
 		
     case AEEBT_RM_EVT_DEVICE_REMOVED:  // response to DeviceRemove()
-      MSG_MED( "RM - DevRem err=%d", pData->pDevUpdateStatus->error, 0, 0 );
+      MSG_FATAL( "RM - DevRem err=%d", pData->pDevUpdateStatus->error, 0, 0 );
 
 	  /*
 	  if ((TOP_MENU == BT_APP_MENU_REMOVE_ONE) 
@@ -23051,7 +23040,7 @@ static void BTApp_ProcessRMNotifications(
 			
 			if (dev.uValue2 != pData->pLinkStatus->linkMode)
 			{
-				MSG_MED("RM - Link mode change for %04x%04x lm=%d",
+				MSG_FATAL("RM - Link mode change for %04x%04x lm=%d",
 				         ((uint16)(pData->pLinkStatus->bdAddr.uAddr[3] << 8) | 
 				          pData->pLinkStatus->bdAddr.uAddr[2]), 
 				         ((uint16)(pData->pLinkStatus->bdAddr.uAddr[1] << 8) | 
@@ -23061,7 +23050,7 @@ static void BTApp_ProcessRMNotifications(
 			
 			if (pMe->mRM.linkStatus->bMaster != pData->pLinkStatus->bMaster)
 			{
-				MSG_MED("RM - dev role chgd=%d", pData->pLinkStatus->bMaster, 0, 0);
+				MSG_FATAL("RM - dev role chgd=%d", pData->pLinkStatus->bMaster, 0, 0);
 			}
 			
 			MEMCPY(pMe->mRM.linkStatus, pData->pLinkStatus, sizeof(AEEBTLinkStatus));
@@ -23070,7 +23059,7 @@ static void BTApp_ProcessRMNotifications(
 		
 		case AEEBT_RM_EVT_DEVICE_SECURITY_SET:
 		{
-			MSG_MED( "RM - DevSecSet err=%d", pData->pDevUpdateStatus->error, 0, 0);
+			MSG_FATAL( "RM - DevSecSet err=%d", pData->pDevUpdateStatus->error, 0, 0);
 			
 			if (pData->pDevUpdateStatus->error == AEEBT_RM_ERR_NONE)
 			{
@@ -23093,7 +23082,7 @@ static void BTApp_ProcessRMNotifications(
 			//uint16 selection;
 			boolean SecEnabled;
 
-			MSG_MED( "RM - SvcSecSet err=%d", pData->uError, 0, 0 );
+			MSG_FATAL( "RM - SvcSecSet err=%d", pData->uError, 0, 0 );
 
 #ifdef FEATURE_BT_2_1
 			//if (TOP_MENU != BT_APP_MENU_SECURITY_OPTIONS )
@@ -23125,7 +23114,7 @@ static void BTApp_ProcessRMNotifications(
 		
 		case AEEBT_RM_EVT_AUTHORIZE_REQUEST:
 		{
-			MSG_MED("RM - AuthReq sim=%d", pData->pAuthorizeReq->serviceId.serviceIdMethod, 0, 0);
+			MSG_FATAL("RM - AuthReq sim=%d", pData->pAuthorizeReq->serviceId.serviceIdMethod, 0, 0);
 			
 			if ((pData->pAuthorizeReq->serviceId.serviceIdMethod == pMe->mRM.svcId.serviceIdMethod) &&
 			    (pData->pAuthorizeReq->serviceId.id.uPSM == pMe->mRM.svcId.id.uPSM))
@@ -23179,21 +23168,21 @@ static void BTApp_ProcessRMNotifications(
 
 		case AEEBT_RM_EVT_TEST_MODE_ENTERED:
 		{
-			MSG_MED( "RM - DUTEntered err=%d", pData->uError, 0, 0 );
+			MSG_FATAL( "RM - DUTEntered err=%d", pData->uError, 0, 0 );
 			BTApp_ShowMessage( pMe, IDS_MSG_TEST_MODE, NULL, 0 );
 			break;
 		}
 		
 		case AEEBT_RM_EVT_TEST_MODE_EXITED:
 		{
-			MSG_MED( "RM - DUTExited err=%d", pData->uError, 0, 0 );
+			MSG_FATAL( "RM - DUTExited err=%d", pData->uError, 0, 0 );
 			BTApp_HandleClearKey( pMe );
 			break;
 		}
 		
 		case AEEBT_RM_EVT_AUTO_SERVICE_SEARCH_DISABLED:
 		{
-			MSG_MED( "RM - Auto Svc Srch Disabled err=%d", pData->uError, 0, 0 );
+			MSG_FATAL( "RM - Auto Svc Srch Disabled err=%d", pData->uError, 0, 0 );
 			break;
 		}
 		
@@ -23215,7 +23204,7 @@ static void BTApp_ProcessRMNotifications(
 #endif //FEATURE_APP_TEST_AUTOMATION
 			}
 			
-			MSG_LOW("RoleSwEvt : RoleSwAlw=%d", pMe->mRM.bRoleSwitchAllowed, 0, 0);
+			MSG_FATAL("RoleSwEvt : RoleSwAlw=%d", pMe->mRM.bRoleSwitchAllowed, 0, 0);
 			BTApp_ShowMessage(pMe, msgID, NULL, 3);
 			break;
 		}
@@ -23224,7 +23213,7 @@ static void BTApp_ProcessRMNotifications(
 		{
 			AECHAR wShortText[5];
 			STRTOWSTR(pMe->mRM.bRadioOn ? "OFF" : "ON", wShortText, sizeof(wShortText));
-			MSG_MED("RM - Radio Status stat=%d", pData->uStatus, 0, 0);
+			MSG_FATAL("RM - Radio Status stat=%d", pData->uStatus, 0, 0);
 			
 			if (pMe->mRM.bRadioOn != pData->uStatus)
 			{
@@ -23248,7 +23237,7 @@ static void BTApp_ProcessRMNotifications(
 		{
 			AECHAR wShortText[5];
 			STRTOWSTR(pMe->mRM.bVisibilityOn ? "OFF" : "ON", wShortText, sizeof(wShortText));
-			MSG_MED("RM - Radio Status stat=%d", pData->uStatus, 0, 0);
+			MSG_FATAL("RM - Radio Status stat=%d", pData->uStatus, 0, 0);
 			
 			if (pMe->mRM.bVisibilityOn != pData->uStatus)
 			{
@@ -23291,7 +23280,7 @@ static void BTApp_ProcessRMNotifications(
 			}
 			else
 			{
-				MSG_ERROR("RM - DB entry missing!", 0, 0, 0);
+				MSG_FATAL("RM - DB entry missing!", 0, 0, 0);
 			}	  	
 
 			break;
@@ -23310,7 +23299,7 @@ static void BTApp_ProcessRMNotifications(
 		
 		case AEEBT_RM_EVT_CONN_ROLE_SET:
 		{
-			MSG_MED("RM - Conn Role Set err=%d", pData->uError, 0, 0);
+			MSG_FATAL("RM - Conn Role Set err=%d", pData->uError, 0, 0);
 			
 			if (pData->uError != AEEBT_RM_ERR_NONE)
 			{
@@ -23325,24 +23314,24 @@ static void BTApp_ProcessRMNotifications(
 		
 		case AEEBT_RM_EVT_APPLICATION_CONFIGURED:
 		{
-			MSG_MED("RM - App Config done, err=%d", pData->uError, 0, 0);
+			MSG_FATAL("RM - App Config done, err=%d", pData->uError, 0, 0);
 			break;
 		}
 #ifdef FEATURE_BT_2_1
 		case AEEBT_RM_EVT_KEYPRESS_NOTIFICATION_REPLIED:
 		{
-			MSG_MED("RM - KPNotif Sent, err=%d", pData->uError, 0, 0);
+			MSG_FATAL("RM - KPNotif Sent, err=%d", pData->uError, 0, 0);
 			break;
 		}
 		case AEEBT_RM_EVT_LPM_CONFIGURED:
 		{
-			MSG_MED("RM - Low Pwr Mode Configured, err=%d", pData->uError, 0, 0);
+			MSG_FATAL("RM - Low Pwr Mode Configured, err=%d", pData->uError, 0, 0);
 			break;
 		}
 #endif /* FEATURE_BT_2_1 */
 
 		default:
-		MSG_ERROR("RM - unexpected ev=%d", evt, 0, 0);
+		MSG_FATAL("RM - unexpected ev=%d", evt, 0, 0);
   }
 }
 
@@ -23362,7 +23351,7 @@ static void BTApp_ProcessSPPNotifications(
   switch ( evt )
   {
     case AEEBT_SPP_EVT_OPENED:
-      MSG_MED( "SPP - Opened err=%d", pData->pSppStatus->uReason, 0, 0 );
+      MSG_FATAL( "SPP - Opened err=%d", pData->pSppStatus->uReason, 0, 0 );
       pMe->mSPP.status = *pData->pSppStatus;
       if ( pData->pSppStatus->uReason == AEEBT_SPP_ERR_NONE )
       {
@@ -23377,7 +23366,7 @@ static void BTApp_ProcessSPPNotifications(
                           EVT_USER, userEvent, 0L);
       break;
     case AEEBT_SPP_EVT_CLOSED:
-      MSG_MED( "SPP - Closed", 0, 0, 0 );
+      MSG_FATAL( "SPP - Closed", 0, 0, 0 );
       pMe->mSPP.status = *pData->pSppStatus;
       ISHELL_PostEventEx( pMe->m_pShell, EVTFLG_ASYNC, 
                           AEECLSID_BLUETOOTH_APP,
@@ -23417,7 +23406,7 @@ static void BTApp_ProcessSPPNotifications(
     case AEEBT_SPP_EVT_TX_FLUSHED:
       break;
     default:
-      MSG_ERROR( "SPP - unexpected ev=%d", evt, 0, 0 );
+      MSG_FATAL( "SPP - unexpected ev=%d", evt, 0, 0 );
   }
 }
 
@@ -23440,7 +23429,7 @@ static boolean BTApp_ProcessBattEvents( CBTApp* pMe, uint16  wParam,
   {
     return FALSE;
   }
-  MSG_LOW( "Received battery event=%d", pNotifyInfo->dwMask, 0, 0 ); 
+  MSG_FATAL( "Received battery event=%d", pNotifyInfo->dwMask, 0, 0 ); 
   switch ( pNotifyInfo->dwMask )
   {
     case NMASK_BATTERY_LEVEL_CHANGE:
@@ -23507,13 +23496,13 @@ static void BTApp_ReportRSSIChange( CBTApp* pMe )
   }
   else
   {
-    MSG_LOW( "ReportRSSIChange - sys=%d srv=%d", 
+    MSG_FATAL( "ReportRSSIChange - sys=%d srv=%d", 
              pMe->mAG.pSSInfo->sys_mode, pMe->mAG.pSSInfo->srv_status, 0 );
     return;
   }
   if ( IBTEXTAG_SetRSSI( pMe->mAG.po, rssiValue ) != SUCCESS )
   {
-    MSG_LOW( "ReportRSSIChange - error in setting RSSI", 0, 0, 0 );
+    MSG_FATAL( "ReportRSSIChange - error in setting RSSI", 0, 0, 0 );
   }
   return;
 }
@@ -23533,7 +23522,7 @@ static boolean BTApp_ProcessTPSSEvents( CBTApp* pMe, uint16  wParam,
   {
     return FALSE;
   }
-  MSG_LOW( "AG - TP received SS event=%d", pEv->event, 0, 0 ); 
+  MSG_FATAL( "AG - TP received SS event=%d", pEv->event, 0, 0 ); 
   /* copy the SS info to pMe structure */
   if ( (&pEv->event_data.ss != NULL) && (pMe->mAG.pSSInfo != NULL) )
   {
@@ -23543,14 +23532,14 @@ static boolean BTApp_ProcessTPSSEvents( CBTApp* pMe, uint16  wParam,
   }
   else
   {
-    MSG_ERROR( "ProcessTPSSEvents - Invalid SS data in NotifyInfo", 0, 0, 0 );
+    MSG_FATAL( "ProcessTPSSEvents - Invalid SS data in NotifyInfo", 0, 0, 0 );
     return FALSE;
   }
   switch ( pEv->event )
   {
     case AEET_EVENT_SS_SRV_CHANGED: /* Serving system information changed */
     {
-      MSG_LOW( "Service Status = %d", pMe->mAG.pSSInfo->srv_status, 0, 0 );
+      MSG_FATAL( "Service Status = %d", pMe->mAG.pSSInfo->srv_status, 0, 0 );
       /* check for status chnages */
       switch ( pMe->mAG.pSSInfo->srv_status )
       {
@@ -23566,7 +23555,7 @@ static boolean BTApp_ProcessTPSSEvents( CBTApp* pMe, uint16  wParam,
     }
     case AEET_EVENT_SS_RSSI: /* RSSI changed */
     {
-      MSG_LOW( "Received RSSI change event", 0, 0, 0 );
+      MSG_FATAL( "Received RSSI change event", 0, 0, 0 );
       BTApp_ReportRSSIChange( pMe );
       break;
     }
@@ -23731,7 +23720,7 @@ static void BTApp_HandleCallIncom( CBTApp* pMe )
   }
   else
   {
-    MSG_LOW( "HandleCallIncom - AG inactive state", 0, 0, 0 );
+    MSG_FATAL( "HandleCallIncom - AG inactive state", 0, 0, 0 );
   }
   pMe->mAG.uNumCalls++;
 }
@@ -23865,14 +23854,14 @@ static boolean BTApp_ProcessTPCallEvents( CBTApp* pMe, uint16  wParam,
   {
     case AEET_EVENT_CALL_ORIG:
     {
-      MSG_MED( "AG - TP ev CALL_ORIG calls=%d devD=%d", 
+      MSG_FATAL( "AG - TP ev CALL_ORIG calls=%d devD=%d", 
                pMe->mAG.uNumCalls, pMe->mAG.bDevDialed, 0 );
       BTApp_HandleCallOrig( pMe );
       break;
     }
     case AEET_EVENT_CALL_INCOM:
     {
-      MSG_MED( "AG - TP ev CALL_INCOM calls=%d", pMe->mAG.uNumCalls, 0, 0 );
+      MSG_FATAL( "AG - TP ev CALL_INCOM calls=%d", pMe->mAG.uNumCalls, 0, 0 );
       ICALLMGR_GetCall( pMe->mAG.pICallMgr, pEv->event_data.call.cd, 
                         &pMe->mAG.pIncomingCall );
       BTApp_HandleCallIncom( pMe );
@@ -23880,19 +23869,19 @@ static boolean BTApp_ProcessTPCallEvents( CBTApp* pMe, uint16  wParam,
     }
     case AEET_EVENT_CALL_ANSWER:
     {
-      MSG_MED( "AG - TP ev CALL_ANSWER dpu=%d", pMe->mAG.bDevPickedUp, 0, 0 );
+      MSG_FATAL( "AG - TP ev CALL_ANSWER dpu=%d", pMe->mAG.bDevPickedUp, 0, 0 );
       BTApp_HandleCallAnswer( pMe );
       return TRUE;
     }
     case AEET_EVENT_CALL_END:
     {
-      MSG_MED( "AG - TP ev CALL_END calls=%d", pMe->mAG.uNumCalls, 0, 0 );
+      MSG_FATAL( "AG - TP ev CALL_END calls=%d", pMe->mAG.uNumCalls, 0, 0 );
       BTApp_HandleCallEnd( pMe );
       break;
     }
     case AEET_EVENT_CALL_CONNECT:
     {
-      MSG_LOW( "AG - TP ev CONNECT", 0, 0, 0 );
+      MSG_FATAL( "AG - TP ev CONNECT", 0, 0, 0 );
       if ( pMe->mAG.bEnabled != FALSE )
       {
         pMe->mAG.callState = BTAPP_AG_CALL_CONNECTED;
@@ -23901,29 +23890,29 @@ static boolean BTApp_ProcessTPCallEvents( CBTApp* pMe, uint16  wParam,
     }
     case AEET_EVENT_CALL_OPS:
     {
-      MSG_LOW( "AG - TP ev FLASHED", 0, 0, 0 );
+      MSG_FATAL( "AG - TP ev FLASHED", 0, 0, 0 );
       break;
     }
     case AEET_EVENT_CALL_SIGNAL:
     {
-      MSG_LOW( "AG - TP ev SIGNAL", 0, 0, 0 );
+      MSG_FATAL( "AG - TP ev SIGNAL", 0, 0, 0 );
       break;
     }
     case AEET_EVENT_CALL_PROGRESS_INFO_IND:
     {
-      MSG_LOW( "AG - TP ev REMOTE_PARTY_REACHED", 0, 0, 0 );
+      MSG_FATAL( "AG - TP ev REMOTE_PARTY_REACHED", 0, 0, 0 );
       break;
     }
     /* case AEECM_EVENT_CALL_ALL_CALLS_ENDED:
     {
-      MSG_LOW( "AG - CM ev ALL_CALLS_ENDED calls=%d", 
+      MSG_FATAL( "AG - CM ev ALL_CALLS_ENDED calls=%d", 
                pMe->mAG.uNumCalls, 0, 0 );
       pMe->mAG.uNumCalls = 0;
       break;
     }*/
     default:
     {
-      MSG_LOW( "AG - TP event %x", pEv->event, 0, 0 );
+      MSG_FATAL( "AG - TP event %x", pEv->event, 0, 0 );
     }
   }
 
@@ -23988,13 +23977,13 @@ static boolean BTApp_ProcessVTEvents(
   {
     case AEEVP_EVENT_VIDEO_CALL_INCOM:
     {
-      MSG_MED( "AG - VT ev CALL_INCOM", 0, 0, 0 );
+      MSG_FATAL( "AG - VT ev CALL_INCOM", 0, 0, 0 );
       BTApp_HandleCallIncom( pMe );
       return TRUE;
     }
     case AEEVP_EVENT_VIDEO_CALL_CONNECT:
     {
-      MSG_MED( "AG - VT ev CALL_CONNECT", 0, 0, 0 );
+      MSG_FATAL( "AG - VT ev CALL_CONNECT", 0, 0, 0 );
       if ( pMe->mAG.callState != BTAPP_AG_CALL_ORGINATED )
       {
         BTApp_HandleCallAnswer( pMe );
@@ -24007,27 +23996,27 @@ static boolean BTApp_ProcessVTEvents(
     {
       // the case in which there is an Incoming Video Call and the UE
       // answers it. Headset needs to stop ringing.
-      MSG_MED( "AG - VT ev CALL_SETUP", 0, 0, 0 );
+      MSG_FATAL( "AG - VT ev CALL_SETUP", 0, 0, 0 );
       BTApp_StopRing( pMe );
       return TRUE;
     }
     case AEEVP_EVENT_VIDEO_CALL_END:
     {
       // the case in which Video call setup fails, HS needs to stop rining.
-      MSG_MED( "AG - VT ev CALL_END calls=%d", pMe->mAG.uNumCalls, 0, 0 );
+      MSG_FATAL( "AG - VT ev CALL_END calls=%d", pMe->mAG.uNumCalls, 0, 0 );
       BTApp_HandleCallEnd( pMe );
       return TRUE;
     }
     case AEEVP_EVENT_VIDEO_CALL_ORIG:
     {
-      MSG_MED( "AG - VT ev CALL_ORIG calls=%d devD=%d", 
+      MSG_FATAL( "AG - VT ev CALL_ORIG calls=%d devD=%d", 
                pMe->mAG.uNumCalls, pMe->mAG.bDevDialed, 0 );
       BTApp_HandleCallOrig( pMe );
       break;
     }
     default:
     {
-      MSG_MED( "AG - VT event %x ignored", pNotify->event, 0, 0 );
+      MSG_FATAL( "AG - VT event %x ignored", pNotify->event, 0, 0 );
       break;
     }
   }

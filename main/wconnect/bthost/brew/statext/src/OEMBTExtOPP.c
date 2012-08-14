@@ -913,7 +913,7 @@ static boolean OEMBTExtOPP_HandleCmdDone(
 {
   boolean doSendNotif = TRUE;
 
-  MSG_LOW( "OPP_HandleCmdDone - st=%x stat=%x cmd=%x", pMe->state,
+  MSG_FATAL( "OPP_HandleCmdDone - st=%x stat=%x cmd=%x", pMe->state,
            pCmdDn->cmd_status, pCmdDn->cmd_type );
 
   MSG_FATAL("***zzg OEMBTExtOPP_HandleCmdDone cmd_type=%x***", pCmdDn->cmd_type, 0, 0);
@@ -1009,7 +1009,7 @@ static void OEMBTExtOPP_NotifyProgress(OEMBTExtOPPobj_t* pMe)
   pN = IBTEXTNOTIFIER_GetFreeNotification( pMe->pNotifier );
   if( pN == NULL )
   {
-    MSG_ERROR( "OPP Notify progress - Can't get free not.",
+    MSG_FATAL( "OPP Notify progress - Can't get free not.",
                0, 0, 0 );
   }
   else
@@ -1042,24 +1042,24 @@ static void OEMBTExtOPP_ReadCb( OEMBTExtOPP_EvCb* pEvCb )
     TASKLOCK();
     pEvCb->bInUse = FALSE;
     TASKFREE();
-    MSG_ERROR( "ReadCb: appID not found, aID=%x", pEvCb->appId, 0, 0 );
+    MSG_FATAL( "ReadCb: appID not found, aID=%x", pEvCb->appId, 0, 0 );
     return;
   }
 
   if ( ((pMe->bIsServer != FALSE) && (pMe->serverConnID != pEvCb->connId)) || 
        ((pMe->bIsServer == FALSE) && (pMe->clientConnID != pEvCb->connId)) )
   {
-    MSG_ERROR( "ReadCb: wrong conn id=%x", pEvCb->connId, 0, 0 );
+    MSG_FATAL( "ReadCb: wrong conn id=%x", pEvCb->connId, 0, 0 );
     status = BT_CS_PF_OBEX_CONNECTION_NOT_FOUND;
   }
   else if ( (void*)pMe->pFile != (void*)pEvCb->handle )
   {
-    MSG_ERROR( "ReadCb: wrong handle=%x", pEvCb->handle, 0, 0 );
+    MSG_FATAL( "ReadCb: wrong handle=%x", pEvCb->handle, 0, 0 );
     status = BT_CS_PF_INVALID_HANDLE;
   }
   else if ( pMe->bytesSent >= pMe->dwFileSize )
   {
-    MSG_LOW( "ReadCb: all %d bytes read", pMe->dwFileSize, 0, 0 );
+    MSG_FATAL( "ReadCb: all %d bytes read", pMe->dwFileSize, 0, 0 );
     status = BT_CS_PF_END_OF_FILE;
   }
   else // everything checks out
@@ -1068,7 +1068,7 @@ static void OEMBTExtOPP_ReadCb( OEMBTExtOPP_EvCb* pEvCb )
     {
       if ( IFILE_Seek( pMe->pFile, _SEEK_START, 0 ) != SUCCESS )
       {
-        MSG_ERROR( "ReadCb: seek failed", 0, 0, 0 );
+        MSG_FATAL( "ReadCb: seek failed", 0, 0, 0 );
       }
     }
     bytesRead = pEvCb->maxBytes;
@@ -1080,7 +1080,7 @@ static void OEMBTExtOPP_ReadCb( OEMBTExtOPP_EvCb* pEvCb )
     pMe->bytesSent += bytesRead;
     if ( bytesRead == 0 )
     {
-      MSG_ERROR( "ReadCb: failed to read from obj", 0, 0, 0 );
+      MSG_FATAL( "ReadCb: failed to read from obj", 0, 0, 0 );
       status = BT_CS_PF_READ_ERROR;
     }
     // notify the app about progress
@@ -1128,12 +1128,12 @@ static void OEMBTExtOPP_WriteCb( OEMBTExtOPP_EvCb* pEvCb )
   if ( ((pMe->bIsServer != FALSE) && (pMe->serverConnID != pEvCb->connId)) || 
        ((pMe->bIsServer == FALSE) && (pMe->clientConnID != pEvCb->connId)) )
   {
-    MSG_ERROR( "WriteCb: wrong conn id=%x", pEvCb->connId, 0, 0 );
+    MSG_FATAL( "WriteCb: wrong conn id=%x", pEvCb->connId, 0, 0 );
     status = BT_CS_PF_OBEX_CONNECTION_NOT_FOUND;
   }
   else if ( (void*)pMe->pFile != (void*)pEvCb->handle )
   {
-    MSG_ERROR( "WriteCb: wrong handle=%x", pEvCb->handle, 0, 0 );
+    MSG_FATAL( "WriteCb: wrong handle=%x", pEvCb->handle, 0, 0 );
     status = BT_CS_PF_INVALID_HANDLE;
   }
 #ifdef FEATURE_BT_OBEX_DBL_BUF_WRITE
@@ -1142,16 +1142,16 @@ static void OEMBTExtOPP_WriteCb( OEMBTExtOPP_EvCb* pEvCb )
     /* Error on previous write operation, don't do this write, return status. */
     status = pMe->prevWriteStatus;
 
-    MSG_ERROR( "WriteCb: Previous Write Error! Status = 0x%X", pMe->prevWriteStatus,0,0 );
+    MSG_FATAL( "WriteCb: Previous Write Error! Status = 0x%X", pMe->prevWriteStatus,0,0 );
   }
 #endif /* FEATURE_BT_OBEX_DBL_BUF_WRITE */
   else if ( pEvCb->maxBytes == 0 )
   {
-    MSG_LOW( "WriteCb: nothing to write", 0, 0, 0 );
+    MSG_FATAL( "WriteCb: nothing to write", 0, 0, 0 );
   }
   else if ( IFILEMGR_GetFreeSpace( pMe->pFileMgr, NULL ) < pEvCb->maxBytes )
   {
-    MSG_ERROR( "WriteCb: EFS full, failed to write to obj", 0, 0, 0 );
+    MSG_FATAL( "WriteCb: EFS full, failed to write to obj", 0, 0, 0 );
     status = BT_CS_PF_OBEX_DATABASE_FULL;
   }
 #ifdef FEATURE_BT_OBEX_DBL_BUF_WRITE
@@ -1159,7 +1159,7 @@ static void OEMBTExtOPP_WriteCb( OEMBTExtOPP_EvCb* pEvCb )
   else if (pMe->pBuffer == NULL || pEvCb->maxBytes > OPP_BUFFER_SIZE) 
   {
     /* Error, can't copy to save buffer, shouldn't happen. */
-    MSG_ERROR( "WriteCb: Save Buffer Error, pBuffer:0x%X, maxBytes:%d", 
+    MSG_FATAL( "WriteCb: Save Buffer Error, pBuffer:0x%X, maxBytes:%d", 
                pMe->pBuffer, pEvCb->maxBytes, 0 );
     
     status = BT_CS_PF_WRITE_ERROR;
@@ -1167,10 +1167,10 @@ static void OEMBTExtOPP_WriteCb( OEMBTExtOPP_EvCb* pEvCb )
   else
   {
     /* Copy data to saved buffer. */
-    MSG_LOW("OEMBTExtOPP_WriteCb: Copy to saved buffer",0, 0, 0 );
+    MSG_FATAL("OEMBTExtOPP_WriteCb: Copy to saved buffer",0, 0, 0 );
     MEMCPY( (void*)pMe->pBuffer, (void*)pEvCb->pSrc, pEvCb->maxBytes);
 
-    MSG_LOW("OEMBTExtOPP_WriteCb: Sending Write Done Notify",0, 0, 0 );
+    MSG_FATAL("OEMBTExtOPP_WriteCb: Sending Write Done Notify",0, 0, 0 );
     if ( pMe->bIsServer)
     {
       bt_cmd_pf_opp_srv_write_done( pMe->appId, pMe->serverConnID,
@@ -1185,17 +1185,17 @@ static void OEMBTExtOPP_WriteCb( OEMBTExtOPP_EvCb* pEvCb )
     /* Write Done notification is done so not needed to be done after File write. */
     notifyWriteDoneNeeded = FALSE;
 
-    MSG_LOW("OEMBTExtOPP_WriteCb: Call IFILE_Write",0, 0, 0 );
+    MSG_FATAL("OEMBTExtOPP_WriteCb: Call IFILE_Write",0, 0, 0 );
     if ( (bytesWritten = IFILE_Write( (IFile*)pEvCb->handle, pMe->pBuffer, 
                                        pEvCb->maxBytes )) == 0 )
     {
-      MSG_ERROR( "WriteCb: failed to write to obj", 0, 0, 0 );
+      MSG_FATAL( "WriteCb: failed to write to obj", 0, 0, 0 );
       status = BT_CS_PF_WRITE_ERROR;
 
     }
     else
     {
-      MSG_LOW("WriteCb: FILE Write Done: maxBytes-0x%X bytesWritten-0x%X",pEvCb->maxBytes, bytesWritten,0 );
+      MSG_FATAL("WriteCb: FILE Write Done: maxBytes-0x%X bytesWritten-0x%X",pEvCb->maxBytes, bytesWritten,0 );
 
       pMe->bytesRcvd += bytesWritten;
       status = BT_CS_GN_SUCCESS;
@@ -1211,7 +1211,7 @@ static void OEMBTExtOPP_WriteCb( OEMBTExtOPP_EvCb* pEvCb )
   /* Write Done notification is done so not needed to be done after File write. */
   if (notifyWriteDoneNeeded == TRUE)
   {
-    MSG_LOW("OEMBTExtOPP_WriteCb: Sending Write Done Notify",0, 0, 0 );
+    MSG_FATAL("OEMBTExtOPP_WriteCb: Sending Write Done Notify",0, 0, 0 );
     if ( pMe->bIsServer)
     {
       bt_cmd_pf_opp_srv_write_done( pMe->appId, pMe->serverConnID,
@@ -1226,13 +1226,13 @@ static void OEMBTExtOPP_WriteCb( OEMBTExtOPP_EvCb* pEvCb )
 
   /* Save current status as previous for next call. */
   pMe->prevWriteStatus = status;
-  MSG_LOW("OEMBTExtOPP_WriteCb: Saved Write Status: 0x%X",pMe->prevWriteStatus, 0, 0 );
+  MSG_FATAL("OEMBTExtOPP_WriteCb: Saved Write Status: 0x%X",pMe->prevWriteStatus, 0, 0 );
 
 #else
   else if ( (bytesWritten = IFILE_Write( pMe->pFile, pEvCb->pSrc, 
                                          pEvCb->maxBytes )) == 0 )
   {
-    MSG_ERROR( "WriteCb: failed to write to obj", 0, 0, 0 );
+    MSG_FATAL( "WriteCb: failed to write to obj", 0, 0, 0 );
     status = BT_CS_PF_WRITE_ERROR;
   }
   else
@@ -1279,15 +1279,15 @@ static void OEMBTExtOPP_CloseCb( OEMBTExtOPP_EvCb* pEvCb )
   if ( ((pMe->bIsServer != FALSE) && (pMe->serverConnID != pEvCb->connId)) || 
        ((pMe->bIsServer == FALSE) && (pMe->clientConnID != pEvCb->connId)) )
   {
-    MSG_ERROR( "CloseCb: wrong conn id=%x", pEvCb->connId, 0, 0 );
+    MSG_FATAL( "CloseCb: wrong conn id=%x", pEvCb->connId, 0, 0 );
   }
   else if ( pMe->state <= AEEBT_OPP_STATE_CONNECTED )
   {
-    MSG_ERROR( "CloseCb: close req unexp, st=%x", pMe->state, 0, 0 );
+    MSG_FATAL( "CloseCb: close req unexp, st=%x", pMe->state, 0, 0 );
   }
   else if ( (void*)pMe->pFile != (void*)pEvCb->handle )
   {
-    MSG_ERROR( "CloseCb: wrong handle=%x", pEvCb->handle, 0, 0 );
+    MSG_FATAL( "CloseCb: wrong handle=%x", pEvCb->handle, 0, 0 );
   }
   else
   {
@@ -1318,7 +1318,7 @@ static void OEMBTExtOPP_CloseCb( OEMBTExtOPP_EvCb* pEvCb )
       }
       else
       {
-        MSG_ERROR( "CloseCb: no free notifications",0,0,0);
+        MSG_FATAL( "CloseCb: no free notifications",0,0,0);
       }
     }
     pMe->state = AEEBT_OPP_STATE_CONNECTED;
@@ -1344,7 +1344,7 @@ static void OEMBTExtOPP_PushDoneCb( OEMBTExtOPP_EvCb* pEvCb )
 
   if ( pMe->bIsServer == FALSE && pMe->clientConnID != pEvCb->connId )
   {
-    MSG_ERROR( "PushDoneCb: wrong conn id=%x", pEvCb->connId, 0, 0 );
+    MSG_FATAL( "PushDoneCb: wrong conn id=%x", pEvCb->connId, 0, 0 );
   }
   else
   {
@@ -1366,7 +1366,7 @@ static void OEMBTExtOPP_PushDoneCb( OEMBTExtOPP_EvCb* pEvCb )
     }
     else
     {
-      MSG_ERROR( "PushDoneCb: no free notifications",0,0,0);
+      MSG_FATAL( "PushDoneCb: no free notifications",0,0,0);
     }
   }
   TASKLOCK();
@@ -1390,7 +1390,7 @@ static void OEMBTExtOPP_PullDoneCb( OEMBTExtOPP_EvCb* pEvCb )
 
   if ( pMe->bIsServer == FALSE && pMe->clientConnID != pEvCb->connId )
   {
-    MSG_ERROR( "PushDoneCb: wrong conn id=%x", pEvCb->connId, 0, 0 );
+    MSG_FATAL( "PushDoneCb: wrong conn id=%x", pEvCb->connId, 0, 0 );
   }
   else
   {
@@ -1413,7 +1413,7 @@ static void OEMBTExtOPP_PullDoneCb( OEMBTExtOPP_EvCb* pEvCb )
     }
     else
     {
-      MSG_ERROR( "PushDoneCb: no free notifications",0,0,0);
+      MSG_FATAL( "PushDoneCb: no free notifications",0,0,0);
     }
   }
   TASKLOCK();
@@ -1443,7 +1443,7 @@ static void OEMBTExtOPP_DisconnectCb( OEMBTExtOPP_EvCb* pEvCb )
   if ( (pMe->bIsServer != FALSE) && (pMe->serverConnID != pEvCb->connId) ||
        (pMe->bIsServer == FALSE) && (pMe->clientConnID != pEvCb->connId) )
   {
-    MSG_ERROR( "DisconnectCb: wrong conn id=%x", pEvCb->connId, 0, 0 );
+    MSG_FATAL( "DisconnectCb: wrong conn id=%x", pEvCb->connId, 0, 0 );
   }
   else
   {
@@ -1476,7 +1476,7 @@ static void OEMBTExtOPP_DisconnectCb( OEMBTExtOPP_EvCb* pEvCb )
     }
     else
     {
-      MSG_ERROR( "DisconnectCb: no free notifications",0,0,0);
+      MSG_FATAL( "DisconnectCb: no free notifications",0,0,0);
     }
   }
   TASKLOCK();
@@ -1489,7 +1489,7 @@ static void OEMBTExtOPP_DisconnectCb( OEMBTExtOPP_EvCb* pEvCb )
     pMe->bDoDeregister = FALSE;
     if ( bt_cmd_pf_opp_srv_deregister( pMe->appId ) != BT_CS_GN_PENDING )
     {
-      MSG_ERROR( "DisconnectCb: S de-reg failed!", 0, 0, 0 );
+      MSG_FATAL( "DisconnectCb: S de-reg failed!", 0, 0, 0 );
     }
   }
 }
@@ -1596,7 +1596,7 @@ static void OEMBTExtOPP_OpenCb( OEMBTExtOPP_EvCb* pEvCb )
 
   if ( (pMe == NULL) || ( pMe->clientConnID != pEvCb->connId ) )
   {
-    MSG_ERROR( "OPPEvCb: C open wr req, wrong conn id=%x", 
+    MSG_FATAL( "OPPEvCb: C open wr req, wrong conn id=%x", 
                pEvCb->connId, 0, 0 );
     status = BT_CS_PF_OBEX_CONNECTION_NOT_FOUND;
 
@@ -1607,12 +1607,12 @@ static void OEMBTExtOPP_OpenCb( OEMBTExtOPP_EvCb* pEvCb )
   }
   else if ( pMe->state != AEEBT_OPP_STATE_PULL_STARTED )
   {
-    MSG_ERROR( "OPPEvCb: C open wr req unexpected", 0, 0, 0 );
+    MSG_FATAL( "OPPEvCb: C open wr req unexpected", 0, 0, 0 );
     status = BT_CS_PF_INVALID_STATE;
   }
   else if ( pMe->pFile == NULL )
   {
-    MSG_ERROR( "OPPEvCb: C open wr req, no obj handle", 0, 0, 0 );
+    MSG_FATAL( "OPPEvCb: C open wr req, no obj handle", 0, 0, 0 );
     status = BT_CS_PF_OBEX_PRECONDITION_FAILED;
   }
 
@@ -1629,7 +1629,7 @@ static void OEMBTExtOPP_OpenCb( OEMBTExtOPP_EvCb* pEvCb )
   if ( (IFILEMGR_Test( pMe->pFileMgr, pMe->szFileName ) == SUCCESS) &&
        (IFILEMGR_Remove( pMe->pFileMgr, pMe->szFileName ) != SUCCESS) )
   {
-    MSG_ERROR( "OPPEvCb: C open wr req, unable to del def f", 0, 0, 0 );
+    MSG_FATAL( "OPPEvCb: C open wr req, unable to del def f", 0, 0, 0 );
   }
      
   if ( pEvCb->nameLen != 0 )
@@ -1657,7 +1657,7 @@ static void OEMBTExtOPP_OpenCb( OEMBTExtOPP_EvCb* pEvCb )
   if ( (IFILEMGR_Test( pMe->pFileMgr, pMe->szFileName ) == SUCCESS) &&
        (IFILEMGR_Remove( pMe->pFileMgr,pMe->szFileName ) != SUCCESS) )
   {
-    MSG_ERROR( "OPPEvCb: C open wr req, unable to delete file", 0, 0, 0 );
+    MSG_FATAL( "OPPEvCb: C open wr req, unable to delete file", 0, 0, 0 );
     status = BT_CS_PF_OBEX_INTERNAL_SERVER_ERROR;
   }
   else
@@ -1667,7 +1667,7 @@ static void OEMBTExtOPP_OpenCb( OEMBTExtOPP_EvCb* pEvCb )
 
     if ( pMe->pFile == NULL )
     {
-      MSG_ERROR( "OPPEvCb: C open wr req, file open failed", 0, 0, 0 );
+      MSG_FATAL( "OPPEvCb: C open wr req, file open failed", 0, 0, 0 );
       status = BT_CS_PF_OBEX_INTERNAL_SERVER_ERROR;
     }
     else
@@ -1697,7 +1697,7 @@ static void OEMBTExtOPP_SrvOpenCb( OEMBTExtOPP_EvCb* pEvCb )
 #endif
     if( pMe == NULL )
     {
-      MSG_ERROR( "OEMBTExtOPP_SrvOpenCb - Can't get pMe.",
+      MSG_FATAL( "OEMBTExtOPP_SrvOpenCb - Can't get pMe.",
                  0, 0, 0 );
       TASKLOCK();
       pEvCb->bInUse = FALSE;
@@ -1707,7 +1707,7 @@ static void OEMBTExtOPP_SrvOpenCb( OEMBTExtOPP_EvCb* pEvCb )
   pN = IBTEXTNOTIFIER_GetFreeNotification( pMe->pNotifier );
   if( pN == NULL )
   {
-    MSG_ERROR( "OPPEvCb - Can't get free not.",
+    MSG_FATAL( "OPPEvCb - Can't get free not.",
                0, 0, 0 );
     TASKLOCK();
     pEvCb->bInUse = FALSE;
@@ -1757,13 +1757,13 @@ static void OEMBTExtOPP_SrvOpenCb( OEMBTExtOPP_EvCb* pEvCb )
     // error conditions
     if ( pMe->serverConnID != pEvCb->connId )
     {
-      MSG_ERROR( "OPPEvCb: S open wr req, wrong conn id=%x", 
+      MSG_FATAL( "OPPEvCb: S open wr req, wrong conn id=%x", 
                  pEvCb->connId, 0, 0 );
       status = BT_CS_PF_OBEX_CONNECTION_NOT_FOUND;
     }
     else if ( pMe->state != AEEBT_OPP_STATE_CONNECTED )
     {
-      MSG_ERROR( "OPPEvCb: S open wr req unexpected", 0, 0, 0 );
+      MSG_FATAL( "OPPEvCb: S open wr req unexpected", 0, 0, 0 );
       status = BT_CS_PF_INVALID_STATE;
     }
     else
@@ -1799,7 +1799,7 @@ static void OEMBTExtOPP_EventCallback( bt_ev_msg_type* ev_msg_ptr )
   pN = IBTEXTNOTIFIER_GetFreeNotification( pMe->pNotifier );
   if( pN == NULL )
   {
-    MSG_ERROR( "OPPEvCb - Can't get free not.",
+    MSG_FATAL( "OPPEvCb - Can't get free not.",
                0, 0, 0 );
     return;
   }
@@ -1822,7 +1822,7 @@ static void OEMBTExtOPP_EventCallback( bt_ev_msg_type* ev_msg_ptr )
     } // end of case BT_EV_GN_CMD_DONE
     case BT_EV_PF_OPP_CLI_CON_CFM:
     {
-      MSG_LOW( "OPPEvCb: C con cfm, id=%x stat=%x", 
+      MSG_FATAL( "OPPEvCb: C con cfm, id=%x stat=%x", 
                ev_msg_ptr->ev_msg.ev_opp_cli_con_cfm.conn_id,
                ev_msg_ptr->ev_msg.ev_opp_cli_con_cfm.status, 0 );
       if (ev_msg_ptr->ev_msg.ev_opp_cli_con_cfm.status == BT_CS_GN_SUCCESS )
@@ -1842,7 +1842,7 @@ static void OEMBTExtOPP_EventCallback( bt_ev_msg_type* ev_msg_ptr )
     }
     case BT_EV_PF_OPP_CLI_CON_PROG_IND:
     {
-      MSG_LOW( "OPPEvCb: C con prog ind, id=%x stat=%x", 
+      MSG_FATAL( "OPPEvCb: C con prog ind, id=%x stat=%x", 
                ev_msg_ptr->ev_msg.ev_opp_cli_con_prog_ind.conn_id,
                ev_msg_ptr->ev_msg.ev_opp_cli_con_prog_ind.status, 0 );
       if (ev_msg_ptr->ev_msg.ev_opp_cli_con_prog_ind.status == BT_CS_GN_SUCCESS )
@@ -1861,7 +1861,7 @@ static void OEMBTExtOPP_EventCallback( bt_ev_msg_type* ev_msg_ptr )
     }
     case BT_EV_PF_OPP_CLI_DCN_CFM:
     {
-      MSG_LOW( "OPPEvCb: C dcn cfm, stat=%x id=%x", 
+      MSG_FATAL( "OPPEvCb: C dcn cfm, stat=%x id=%x", 
                ev_msg_ptr->ev_msg.ev_opp_cli_dcn_cfm.status, 
                ev_msg_ptr->ev_msg.ev_opp_cli_dcn_cfm.conn_id, 0 );
 
@@ -1879,7 +1879,7 @@ static void OEMBTExtOPP_EventCallback( bt_ev_msg_type* ev_msg_ptr )
     }
     case BT_EV_PF_OPP_CLI_PSH_DNE:
     {
-      MSG_LOW( "OPPEvCb: C psh dne, stat=%x id=%x", 
+      MSG_FATAL( "OPPEvCb: C psh dne, stat=%x id=%x", 
                ev_msg_ptr->ev_msg.ev_opp_cli_push_done.status, 
                ev_msg_ptr->ev_msg.ev_opp_cli_push_done.conn_id, 0 );
 
@@ -1898,7 +1898,7 @@ static void OEMBTExtOPP_EventCallback( bt_ev_msg_type* ev_msg_ptr )
     }
     case BT_EV_PF_OPP_CLI_PUL_DNE:
     {
-      MSG_LOW( "OPPEvCb: C pull dne, stat=%x id=%x", 
+      MSG_FATAL( "OPPEvCb: C pull dne, stat=%x id=%x", 
                ev_msg_ptr->ev_msg.ev_opp_cli_pull_done.status, 
                ev_msg_ptr->ev_msg.ev_opp_cli_pull_done.conn_id, 0 );
 
@@ -1923,28 +1923,28 @@ static void OEMBTExtOPP_EventCallback( bt_ev_msg_type* ev_msg_ptr )
       bt_pf_ev_opp_cli_open_read_req_type* pEvt =
         &ev_msg_ptr->ev_msg.ev_opp_cli_open_read_req;
 
-      MSG_LOW( "OPPEvCb: C open rd req, id=%x st=%x", 
+      MSG_FATAL( "OPPEvCb: C open rd req, id=%x st=%x", 
                pEvt->conn_id, pMe->state, 0 );
       status = BT_CS_GN_SUCCESS;
       if ( pMe->clientConnID != pEvt->conn_id )
       {
-        MSG_ERROR( "OPPEvCb: C open rd req, wrong conn id=%x", 
+        MSG_FATAL( "OPPEvCb: C open rd req, wrong conn id=%x", 
                    pEvt->conn_id, 0, 0 );
         status = BT_CS_PF_OBEX_CONNECTION_NOT_FOUND;
       }
       else if ( pMe->state != AEEBT_OPP_STATE_PUSH_STARTED )
       {
-        MSG_ERROR( "OPPEvCb: C open rd req unexpected", 0, 0, 0 );
+        MSG_FATAL( "OPPEvCb: C open rd req unexpected", 0, 0, 0 );
         status = BT_CS_PF_INVALID_STATE;
       }
       else if ( pMe->pFile == NULL )
       {
-        MSG_ERROR( "OPPEvCb: C open rd req, no obj handle", 0, 0, 0 );
+        MSG_FATAL( "OPPEvCb: C open rd req, no obj handle", 0, 0, 0 );
         status = BT_CS_PF_OBEX_PRECONDITION_FAILED;
       }
       else if ( WSTRCMP( pMe->wName, (AECHAR*)pEvt->name_str ) != 0 )
       {
-        MSG_ERROR( "OPPEvCb: obj names differ", 0, 0, 0 );
+        MSG_FATAL( "OPPEvCb: obj names differ", 0, 0, 0 );
         status = BT_CS_PF_FAIL;
       }
       bt_cmd_pf_opp_cli_open_read_done( 
@@ -1960,7 +1960,7 @@ static void OEMBTExtOPP_EventCallback( bt_ev_msg_type* ev_msg_ptr )
       bt_pf_ev_opp_cli_open_write_req_type* pEvt =
         &ev_msg_ptr->ev_msg.ev_opp_cli_open_write_req;
 
-      MSG_LOW( "OPPEvCb: C open wr req, id=%x st=%x", 
+      MSG_FATAL( "OPPEvCb: C open wr req, id=%x st=%x", 
                pEvt->conn_id, pMe->state, 0 );
 
       pEvCb = OEMBTExtOPP_GetFreeEvCb();
@@ -1987,7 +1987,7 @@ static void OEMBTExtOPP_EventCallback( bt_ev_msg_type* ev_msg_ptr )
     case BT_EV_PF_OPP_CLI_CLOSE_REQ:
     {
       // current operation is complete; close object
-      MSG_LOW( "OPPEvCb: C close req, id=%x st=%x", 
+      MSG_FATAL( "OPPEvCb: C close req, id=%x st=%x", 
                ev_msg_ptr->ev_msg.ev_opp_cli_close_req.conn_id, pMe->state, 0 );
       pEvCb = OEMBTExtOPP_GetFreeEvCb();
       if ( pEvCb != NULL )
@@ -2006,7 +2006,7 @@ static void OEMBTExtOPP_EventCallback( bt_ev_msg_type* ev_msg_ptr )
     {
       // driver requesting the next chunk of data from the object to be pushed
       // to server
-      MSG_LOW( "OPPEvCb: C read req, id=%x h=%x", 
+      MSG_FATAL( "OPPEvCb: C read req, id=%x h=%x", 
                ev_msg_ptr->ev_msg.ev_opp_cli_read_req.conn_id, 
                ev_msg_ptr->ev_msg.ev_opp_cli_read_req.handle, 0 );
       pEvCb = OEMBTExtOPP_GetFreeEvCb();
@@ -2027,7 +2027,7 @@ static void OEMBTExtOPP_EventCallback( bt_ev_msg_type* ev_msg_ptr )
     {
       // driver giving the next block of data from the object pulled from
       // server
-      MSG_LOW( "OPPEvCb: C wr req, id=%x h=%x", 
+      MSG_FATAL( "OPPEvCb: C wr req, id=%x h=%x", 
                ev_msg_ptr->ev_msg.ev_opp_cli_write_req.conn_id, 
                ev_msg_ptr->ev_msg.ev_opp_cli_write_req.handle, 0 );
       pEvCb = OEMBTExtOPP_GetFreeEvCb();
@@ -2047,7 +2047,7 @@ static void OEMBTExtOPP_EventCallback( bt_ev_msg_type* ev_msg_ptr )
     }
     case BT_EV_PF_OPP_SRV_CON_IND:
     {
-      MSG_LOW( "OPPEvCb: S con ind, id=%x st=%x", 
+      MSG_FATAL( "OPPEvCb: S con ind, id=%x st=%x", 
                ev_msg_ptr->ev_msg.ev_opp_srv_con_ind.conn_id, pMe->state, 0 );
       if ( (pMe->state == AEEBT_OPP_STATE_INIT) ||
            (pMe->state >= AEEBT_OPP_STATE_CONNECTED) )
@@ -2065,7 +2065,7 @@ static void OEMBTExtOPP_EventCallback( bt_ev_msg_type* ev_msg_ptr )
     }
     case BT_EV_PF_OPP_SRV_DCN_IND:
     {
-      MSG_LOW( "OPPEvCb: S dcn req, id=%x h=%x", 
+      MSG_FATAL( "OPPEvCb: S dcn req, id=%x h=%x", 
                ev_msg_ptr->ev_msg.ev_opp_srv_dcn_ind.conn_id, 0, 0 );
 
       pEvCb = OEMBTExtOPP_GetFreeEvCb();
@@ -2086,7 +2086,7 @@ static void OEMBTExtOPP_EventCallback( bt_ev_msg_type* ev_msg_ptr )
       bt_pf_ev_opp_srv_open_read_req_type* pEvt =
         &ev_msg_ptr->ev_msg.ev_opp_srv_open_read_req;
 
-      MSG_LOW( "OPPEvCb: S open rd req, id=%x st=%x", 
+      MSG_FATAL( "OPPEvCb: S open rd req, id=%x st=%x", 
                pEvt->conn_id, pMe->state, 0 );
 
       if ( (pMe->serverConnID == pEvt->conn_id) &&
@@ -2101,13 +2101,13 @@ static void OEMBTExtOPP_EventCallback( bt_ev_msg_type* ev_msg_ptr )
       // error conditions
       if ( pMe->serverConnID != pEvt->conn_id )
       {
-        MSG_ERROR( "OPPEvCb: S open rd req, wrong conn id=%x", 
+        MSG_FATAL( "OPPEvCb: S open rd req, wrong conn id=%x", 
                    pEvt->conn_id, 0, 0 );
         status = OI_OBEX_NOT_FOUND;
       }
       else if ( pMe->state != AEEBT_OPP_STATE_CONNECTED )
       {
-        MSG_ERROR( "OPPEvCb: S open rd req unexp, st=%x", pMe->state, 0, 0 );
+        MSG_FATAL( "OPPEvCb: S open rd req unexp, st=%x", pMe->state, 0, 0 );
         status = BT_CS_PF_INVALID_STATE;
       }
       else
@@ -2128,7 +2128,7 @@ static void OEMBTExtOPP_EventCallback( bt_ev_msg_type* ev_msg_ptr )
       bt_pf_ev_opp_srv_open_write_req_type* pEvt =
         &ev_msg_ptr->ev_msg.ev_opp_srv_open_write_req;
 
-      MSG_LOW( "OPPEvCb: S open wr req, id=%x st=%x", 
+      MSG_FATAL( "OPPEvCb: S open wr req, id=%x st=%x", 
                pEvt->conn_id, pMe->state, 0 );
       pEvCb = OEMBTExtOPP_GetFreeEvCb();
       if((pEvCb != NULL))
@@ -2167,7 +2167,7 @@ static void OEMBTExtOPP_EventCallback( bt_ev_msg_type* ev_msg_ptr )
     case BT_EV_PF_OPP_SRV_CLOSE_REQ:
     {
       // current operation is complete; close object
-      MSG_LOW( "OPPEvCb: S close req, id=%x st=%x", 
+      MSG_FATAL( "OPPEvCb: S close req, id=%x st=%x", 
                ev_msg_ptr->ev_msg.ev_opp_cli_close_req.conn_id, pMe->state, 0 );
       pEvCb = OEMBTExtOPP_GetFreeEvCb();
       if ( pEvCb != NULL )
@@ -2187,7 +2187,7 @@ static void OEMBTExtOPP_EventCallback( bt_ev_msg_type* ev_msg_ptr )
     {
       // driver requesting the next chunk of data from the object client
       // is pulling
-      MSG_LOW( "OPPEvCb: S read req, id=%x h=%x", 
+      MSG_FATAL( "OPPEvCb: S read req, id=%x h=%x", 
                ev_msg_ptr->ev_msg.ev_opp_srv_read_req.conn_id, 
                ev_msg_ptr->ev_msg.ev_opp_srv_read_req.handle, 0 );
       pEvCb = OEMBTExtOPP_GetFreeEvCb();
@@ -2208,7 +2208,7 @@ static void OEMBTExtOPP_EventCallback( bt_ev_msg_type* ev_msg_ptr )
     {
       // driver giving the next chunk of data from the object client
       // is pushing
-      MSG_LOW( "OPPEvCb: S wr req, id=%x h=%x", 
+      MSG_FATAL( "OPPEvCb: S wr req, id=%x h=%x", 
                ev_msg_ptr->ev_msg.ev_opp_srv_write_req.conn_id, 
                ev_msg_ptr->ev_msg.ev_opp_srv_write_req.handle, 0 );
       pEvCb = OEMBTExtOPP_GetFreeEvCb();
@@ -2228,7 +2228,7 @@ static void OEMBTExtOPP_EventCallback( bt_ev_msg_type* ev_msg_ptr )
     }
     default:
     {
-      MSG_ERROR( "OPPEvCb - unexpect event %x", 
+      MSG_FATAL( "OPPEvCb - unexpect event %x", 
                  ev_msg_ptr->ev_hdr.ev_type, 0, 0 );
       IBTEXTNOTIFIER_ReleaseNotification( pMe->pNotifier, pN );
       return;
