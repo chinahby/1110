@@ -1376,7 +1376,7 @@
 		<Text>छोटा (बाधा डालना)</Text>
 	</String>
 	<String Id="1149" Name="IDS_HID_HOST_SCROLL_LOCK">
-		<Text>स्क्रोल लाक/Text>
+		<Text>स्क्रोल लाक</Text>
 	</String>
 	<String Id="1150" Name="IDS_HID_SET_REPORT_INTERRUPT_LARGE">
 		<Text>बड़ा (बाधा डालना)</Text>
