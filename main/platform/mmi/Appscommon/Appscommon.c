@@ -727,6 +727,9 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
             nResID_R = IDS_STRING_UNLOCK;
             nResID_L = IDS_SOS;
             break;
+        case BTBAR_UNLOCK_M:
+            nResID_M = IDS_STRING_UNLOCK;
+            break;    
 		case BTBAR_UNLOCK:
 			nResID_R = IDS_STRING_UNLOCK;
 			break;
@@ -2661,7 +2664,7 @@ void DrawPromptMessage (IDisplay *pIDisplay,
             titlerect.dx = TitleBgImgInfo.cx;
             titlerect.x = totalrect.x - TitleBgImgInfo.cx/2;
             titlerect.y = totalrect.y  - StringBgImgInfo.cy/2 + TitleBgImgInfo.cy/2;
-            #if defined(FEATURE_VERSION_W515V3) ||defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)
+            #if defined(FEATURE_VERSION_W515V3) ||defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_W027)
             strrect.dy = StringBgImgInfo.cy/2 + 20;
             strrect.dx = StringBgImgInfo.cx;
             strrect.x = totalrect.x - StringBgImgInfo.cx/2;
@@ -3159,6 +3162,9 @@ void DrawBottomBar_Ex(IShell    *m_pIShell, IDisplay  * pIDisplay, BottomBar_e_T
         case BTBAR_UNLOCK_SOS:
             nResID_R = IDS_STRING_UNLOCK;
             nResID_L = IDS_SOS;
+            break;
+        case BTBAR_UNLOCK_M:
+            nResID_M = IDS_STRING_UNLOCK;
             break;
 		case BTBAR_UNLOCK:
 			nResID_R = IDS_STRING_UNLOCK;

@@ -348,6 +348,7 @@ typedef enum BottomBar_e_Type
    BTBAR_MESSAGES_CONTACTS,   // 信息-----电话本
    BTBAR_MENU_SOS,            //主菜单  -----SOS
    BTBAR_UNLOCK,
+   BTBAR_UNLOCK_M,
    BTBAR_LUNLOCK,
    BTBAR_OPTION_SAVE_BACK,   
    BTBAR_PRIVIEW_BACK,
