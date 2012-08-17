@@ -59,10 +59,10 @@ when         who     what, where, why
 const flashi_nor_device *(spansion_parts[]) = {
   &S29WS256N0SB,
   &S29WS512P,
-  &S29VS128R_TOP,
-  &S29VS128R_BOT,
-  &S29VS256R_TOP,
-  &S29VS256R_BOT,
+  &S71VS128R_TOP,
+  &S71VS128R_BOT,
+  &S71VS256R_TOP,
+  &S71VS256R_BOT,
   NULL
 };
 
@@ -335,10 +335,6 @@ flash_nor_geometry_init (flashi_nor_device *nor_device, flash_ptr_type baseaddr)
     {
       case 0x0001:
         flash_geometry_data.family_type = FLASH_SPANSION_FAMILY;
-        if(nor_device->codes[1] == 0x7E)
-        {
-            flash_geometry_data.family_type = FLASH_SPANSION_2_FAMILY;
-        }
         break;
       case 0x0020:
       case 0x0089:
@@ -378,6 +374,9 @@ flash_nor_geometry_init (flashi_nor_device *nor_device, flash_ptr_type baseaddr)
       word boot_type = inp (cfi_data + SPANSION_EXT_CFI_BOOT_TYPE_OFFSET);
       switch (boot_type)
       {
+        case 0://Gemsea Add
+          /* Uniform    device.  Noneed to changeblock layout */ 
+          break;
         case 1:
           /* Dual Boot device. So need to change the block layout */
           break;
@@ -386,7 +385,7 @@ flash_nor_geometry_init (flashi_nor_device *nor_device, flash_ptr_type baseaddr)
           break;
         case 3:
           /* Top boot device. Block layout needs to be inverted */
-          bl_is_inverted = TRUE;
+          // Gemsea Remove bl_is_inverted = TRUE;
           break;
         default:
           boot_type_invalid = TRUE;
@@ -472,7 +471,7 @@ flash_nor_geometry_init (flashi_nor_device *nor_device, flash_ptr_type baseaddr)
 
     flash_geometry_data.num_total_blocks = total_block_count;
 
-    if (flash_geometry_data.family_type == FLASH_SPANSION_FAMILY || flash_geometry_data.family_type == FLASH_SPANSION_2_FAMILY)
+    if (flash_geometry_data.family_type == FLASH_SPANSION_FAMILY)
     {
       flash_geometry_data.x_iface = 
       	(flash_xiface_type) inpw(cfi_data +EXT_CFI_DEVICE_X_IFACE_OFFSET);

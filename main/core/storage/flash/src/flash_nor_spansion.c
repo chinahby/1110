@@ -143,7 +143,7 @@ struct flashi_nor_dev_ops flash_spansion_pl_op_functions =
 
 struct flashi_nor_dev_ops flash_spansion_vs_op_functions =
 {
-  fsi_spansion_configure,                         /* Config of hardware */
+  fsi_spansion_configure,                      /* Config of hardware */
   fsi_nor_device_worded_read,                     /* Read operation. */
   fsi_spansion_write_vs,                          /* Write for Spansion */
   fsi_spansion_erase_start_vs,                    /* Erase for Spansion. */
@@ -296,9 +296,9 @@ flashi_nor_device S71PL032J80_srw =
   &flash_spansion_pl_op_functions
 };
 
-flash_geometry_info S29VS256R_TOP_geometry =
+flash_geometry_info S71VS256R_TOP_geometry =
 {
-  FLASH_SPANSION_2_FAMILY,
+  FLASH_SPANSION_FAMILY,
   FLASH_SIZE_32MB,
   FLASH_XIFACE_16,
   FLASH_WBUF_64,
@@ -322,9 +322,9 @@ flash_geometry_info S29VS256R_TOP_geometry =
   }
 };  /*lint !e785*/
 
-flash_geometry_info S29VS256R_BOT_geometry =
+flash_geometry_info S71VS256R_BOT_geometry =
 {
-  FLASH_SPANSION_2_FAMILY,
+  FLASH_SPANSION_FAMILY,
   FLASH_SIZE_32MB,
   FLASH_XIFACE_16,
   FLASH_WBUF_64,
@@ -349,9 +349,9 @@ flash_geometry_info S29VS256R_BOT_geometry =
 };  /*lint !e785*/
 
 
-flash_geometry_info S29VS128R_TOP_geometry =
+flash_geometry_info S71VS128R_TOP_geometry =
 {
-  FLASH_SPANSION_2_FAMILY,
+  FLASH_SPANSION_FAMILY,
   FLASH_SIZE_32MB,
   FLASH_XIFACE_16,
   FLASH_WBUF_64,
@@ -375,9 +375,9 @@ flash_geometry_info S29VS128R_TOP_geometry =
   }
 };  /*lint !e785*/
 
-flash_geometry_info S29VS128R_BOT_geometry =
+flash_geometry_info S71VS128R_BOT_geometry =
 {
-  FLASH_SPANSION_2_FAMILY,
+  FLASH_SPANSION_FAMILY,
   FLASH_SIZE_32MB,
   FLASH_XIFACE_16,
   FLASH_WBUF_64,
@@ -401,9 +401,9 @@ flash_geometry_info S29VS128R_BOT_geometry =
   }
 };  /*lint !e785*/
 
-flashi_nor_device S29VS128R_TOP =
+flashi_nor_device S71VS128R_TOP =
 {
-  "SPANSION S29VS128R_TOP",
+  "SPANSION S71VS128R_TOP",
   4,                                              /* # of codes to match */
   {1,  0x007E, 0x0063, 0x0001 },                  /* Manufacture codes. */
   0,
@@ -412,13 +412,13 @@ flashi_nor_device S29VS128R_TOP =
   0,                                              /* Page Size */
   /* Use CFI to initialize flash geometry */
   INIT_USING_CFI_AT_RUNTIME,
-  &S29VS128R_TOP_geometry,
+  &S71VS128R_TOP_geometry,
   &flash_spansion_vs_op_functions
 };
 
-flashi_nor_device S29VS128R_BOT =
+flashi_nor_device S71VS128R_BOT =
 {
-  "SPANSION S29VS128R_BOT",
+  "SPANSION S71VS128R_BOT",
   4,                                              /* # of codes to match */
   {1,  0x007E, 0x0065, 0x0001 },                  /* Manufacture codes. */
   0,
@@ -427,13 +427,13 @@ flashi_nor_device S29VS128R_BOT =
   0,                                              /* Page Size */
   /* Use CFI to initialize flash geometry */
   INIT_USING_CFI_AT_RUNTIME,
-  &S29VS128R_BOT_geometry,
+  &S71VS128R_BOT_geometry,
   &flash_spansion_vs_op_functions
 };
 
-flashi_nor_device S29VS256R_TOP =
+flashi_nor_device S71VS256R_TOP =
 {
-  "SPANSION S29VS256R_TOP",
+  "SPANSION S71VS256R_TOP",
   4,                                              /* # of codes to match */
   {1,  0x007E, 0x0064, 0x0001 },                  /* Manufacture codes. */
   0,
@@ -442,13 +442,13 @@ flashi_nor_device S29VS256R_TOP =
   0,                                              /* Page Size */
   /* Use CFI to initialize flash geometry */
   INIT_USING_CFI_AT_RUNTIME,
-  &S29VS256R_TOP_geometry,
+  &S71VS256R_TOP_geometry,
   &flash_spansion_vs_op_functions
 };
 
-flashi_nor_device S29VS256R_BOT =
+flashi_nor_device S71VS256R_BOT =
 {
-  "SPANSION S29VS256R_BOT",
+  "SPANSION S71VS256R_BOT",
   4,                                              /* # of codes to match */
   {1,  0x007E, 0x0066, 0x0001 },                  /* Manufacture codes. */
   0,
@@ -457,7 +457,7 @@ flashi_nor_device S29VS256R_BOT =
   0,                                              /* Page Size */
   /* Use CFI to initialize flash geometry */
   INIT_USING_CFI_AT_RUNTIME,
-  &S29VS256R_BOT_geometry,
+  &S71VS256R_BOT_geometry,
   &flash_spansion_vs_op_functions
 };
 
@@ -1703,103 +1703,9 @@ fsi_spansion_fast_byte_write (byte *buffer,
 
 }
 
-#define SA_OFFSET_MASK	0xFFFFF000	 /* mask off the offset */
-/* LLD Command Definition */
-#define NOR_CFI_QUERY_CMD                ((0x98)*LLD_DEV_MULTIPLIER)
-#define NOR_CHIP_ERASE_CMD               ((0x10)*LLD_DEV_MULTIPLIER)
-#define NOR_ERASE_SETUP_CMD              ((0x80)*LLD_DEV_MULTIPLIER)
-#define NOR_RESET_CMD                    ((0xF0)*LLD_DEV_MULTIPLIER)
-#define NOR_SECSI_SECTOR_ENTRY_CMD       ((0x88)*LLD_DEV_MULTIPLIER)
-#define NOR_SECTOR_ERASE_CMD             ((0x30)*LLD_DEV_MULTIPLIER)
-#define NOR_WRITE_BUFFER_LOAD_CMD        ((0x25)*LLD_DEV_MULTIPLIER)
-#define NOR_WRITE_BUFFER_PGM_CONFIRM_CMD ((0x29)*LLD_DEV_MULTIPLIER) 
-#define NOR_SET_CONFIG_CMD			     ((0xD0)*LLD_DEV_MULTIPLIER)
-#define NOR_BIT_FIELD_CMD				 ((0xBF)*LLD_DEV_MULTIPLIER)
-
-#define NOR_ERASE_SUSPEND_CMD			 ((0xB0)*LLD_DEV_MULTIPLIER)
-#define NOR_ERASE_RESUME_CMD			 ((0x30)*LLD_DEV_MULTIPLIER)
-#define NOR_PROGRAM_SUSPEND_CMD			 ((0x51)*LLD_DEV_MULTIPLIER)
-#define NOR_PROGRAM_RESUME_CMD			 ((0x50)*LLD_DEV_MULTIPLIER)
-#define NOR_STATUS_REG_READ_CMD			 ((0x70)*LLD_DEV_MULTIPLIER)
-#define NOR_STATUS_REG_CLEAR_CMD		 ((0x71)*LLD_DEV_MULTIPLIER)
-#define NOR_BLANK_CHECK_CMD				 ((0x33)*LLD_DEV_MULTIPLIER)
-
-#define LLD_DEV_MULTIPLIER 0x00000001
-#define LLD_DB_READ_MASK   0x0000FFFF
-#define LLD_DEV_READ_MASK  0x0000FFFF
-#define LLD_UNLOCK_ADDR1   0x00000555
-#define LLD_UNLOCK_ADDR2   0x000002AA
-#define LLD_BYTES_PER_OP   0x00000002
-#define LLD_CFI_UNLOCK_ADDR1 0x00000555
-
-#define FLASH_OFFSET(b,o)       (*(( (flash_ptr_type)(b) ) + (o)))
-#define FLASH_WR(b,o,d) FLASH_OFFSET((b),(o)) = (d)
-#define FLASH_RD(b,o)   FLASH_OFFSET((b),(o))
-
-void lld_StatusRegReadCmd(flash_ptr_type base_addr, dword offset)
-{         
-  FLASH_WR(base_addr, (offset & SA_OFFSET_MASK) + LLD_UNLOCK_ADDR1, NOR_STATUS_REG_READ_CMD); 
-}
-
-void lld_ProgramSuspendCmd(flash_ptr_type base_addr)
-{         
-  /* Write Suspend Command */
-  FLASH_WR(base_addr, 0, NOR_PROGRAM_SUSPEND_CMD);
-}
-
-void lld_EraseSuspendCmd(flash_ptr_type base_addr)
-{       
-  /* Write Suspend Command */
-  FLASH_WR(base_addr, 0, NOR_ERASE_SUSPEND_CMD);
-}
-
-void lld_EraseResumeCmd(flash_ptr_type base_addr)
-{       
-  /* Write Resume Command */
-  FLASH_WR(base_addr, 0, NOR_ERASE_RESUME_CMD);
-}
-
-void lld_ProgramResumeCmd(flash_ptr_type base_addr)
-{       
-  /* Write Resume Command */
-  FLASH_WR(base_addr, 0, NOR_PROGRAM_RESUME_CMD);
-}
-
-void lld_SectorEraseCmd(flash_ptr_type base_addr, dword offset)
-{
-  /* Issue Sector Erase Command Sequence */
-  FLASH_WR(base_addr, (offset & SA_OFFSET_MASK) + LLD_UNLOCK_ADDR1, NOR_ERASE_SETUP_CMD);
-  FLASH_WR(base_addr, (offset & SA_OFFSET_MASK) + LLD_UNLOCK_ADDR2, NOR_SECTOR_ERASE_CMD);
-}
-
-void lld_WriteToBufferCmd(flash_ptr_type base_addr, dword offset)
-{  
-  FLASH_WR(base_addr, (offset & SA_OFFSET_MASK) + LLD_UNLOCK_ADDR1, NOR_WRITE_BUFFER_LOAD_CMD);
-}
- 
-void lld_ProgramBufferToFlashCmd(flash_ptr_type base_addr, dword offset)
-{
-  /* Transfer Buffer to Flash Command */
-  FLASH_WR(base_addr, (offset & SA_OFFSET_MASK) + LLD_UNLOCK_ADDR1, NOR_WRITE_BUFFER_PGM_CONFIRM_CMD); 
-}
-
-LOCAL word lld_Poll(flash_ptr_type base_addr, dword offset)
-{       
-  unsigned long polling_counter = 0xFFFFFFFF;
-  volatile word status_reg;
-
-  do
-  {
-    polling_counter--;
-	lld_StatusRegReadCmd( base_addr, offset );		/* Issue status register read command */
-	status_reg = FLASH_RD(base_addr, offset);       /* read the status register */
-	if( (status_reg & DEV_RDY_MASK) == DEV_RDY_MASK  )  /* Are all devices done bit 7 is 1 */
-		break;
-
-  }while(polling_counter);
-  
-  return( status_reg );          /* retrun the status reg. */
-}
+#define FLASH_POLLING_STATUS_TIME_LIMIT 7000 
+#define FS_AMD_DQ4  0x10 
+#define FS_AMD_DQ1  0x02
 
 /*===========================================================================
 FUNCTION FSI_SPANSION_SUSPEND
@@ -1822,16 +1728,51 @@ SIDE EFFECTS
 LOCAL flash_status
 fsi_spansion_suspend_vs (flash_ptr_type eraseaddr)
 {
-  word status_reg;
-
-  /* Issue the suspend erase command. */
-  lld_EraseSuspendCmd( eraseaddr );		/* issue erase suspend command */  
-
-  status_reg = lld_Poll(eraseaddr, 0);        /* wait for device done */
-
-  if( (status_reg & DEV_ERASE_SUSP_MASK) == DEV_ERASE_SUSP_MASK )
-        return( FLASH_SUCCESS  );        /* Erase suspend  */
-  return( FLASH_FAILURE );       /* Erase suspend error */
+    flash_status result = FLASH_SUCCESS; 
+    dword time_counter =0; 
+    word reg_val; 
+    eraseaddr = (volatile word*)((dword)eraseaddr&0xFFFFF000); 
+    *eraseaddr =0xB0; 
+    clk_busy_wait(30); 
+    while(1) 
+    { 
+        *(eraseaddr +0x555) =0x70; 
+        reg_val = *eraseaddr; 
+        if((reg_val&FS_AMD_DQ7)!=0) 
+        {
+            if ((reg_val & FS_AMD_DQ6) == FS_AMD_DQ6) 
+            { 
+                //erase suspend successfully 
+                result = FLASH_OP_NOT_COMPLETE; 
+            } 
+            else 
+            { 
+                if ((reg_val & FS_AMD_DQ5) == FS_AMD_DQ5) 
+                { 
+                //erase fail, The suspend didn't really happen.
+                result = FLASH_FAILURE ; 
+                } 
+                else 
+                { 
+                // erase successfully .  The suspenddidn't really happen.
+                result = FLASH_SUCCESS; 
+                } 
+                *eraseaddr =0xF0;
+            } 
+            break; 
+        } 
+        else 
+        { 
+            if(time_counter>FLASH_POLLING_STATUS_TIME_LIMIT) 
+            { 
+                FLASH_ERR_FATAL("Flash polling time out",0,0,0); 
+            } 
+            KICK_DOG_AND_CHECK_DATA(); 
+            clk_busy_wait(1); 
+            time_counter++; 
+        } 
+    } 
+    return result; 
 }
 
 /*===========================================================================
@@ -1851,9 +1792,10 @@ SIDE EFFECTS
 ===========================================================================*/
 LOCAL flash_status fsi_spansion_resume_vs (flash_ptr_type eraseaddr)
 {
-  /* Issue the resume command. */
-  lld_EraseResumeCmd(eraseaddr);
-  return FLASH_SUCCESS;
+    /* Issue the resume command. */ 
+    *eraseaddr =0x30; 
+    clk_busy_wait(4); 
+    return FLASH_SUCCESS;
 }/* fsi_and_resume */
 
 /*===========================================================================
@@ -1875,7 +1817,10 @@ SIDE EFFECTS
 ===========================================================================*/
 LOCAL flash_status fsi_spansion_erase_start_vs (flash_ptr_type baseaddr, dword offset)
 {
-  lld_SectorEraseCmd(baseaddr,BYTE_TO_WORD_OFFSET(offset));
+  volatile word *wptr; 
+  wptr =(word*)((dword*)((uint32)(baseaddr + BYTE_TO_WORD_OFFSET(offset))&0xFFFFF000));
+  wptr[0x555] =0x80; 
+  wptr[0x2AA] =0x30; 
   return FLASH_SUCCESS;
 }
 
@@ -1901,47 +1846,32 @@ SIDE EFFECTS
 ===========================================================================*/
 LOCAL flash_status fsi_spansion_erase_status_vs (flashi_nor_device *nor_device, flash_ptr_type eraseaddr )
 {
-  word status_reg;
-  
-  lld_StatusRegReadCmd( eraseaddr, 0 );		/* Issue status register read command */
-  status_reg = FLASH_RD(eraseaddr, 0);       /* read the status register */
-  if( (status_reg & DEV_RDY_MASK) == DEV_RDY_MASK  )  /* Are all devices done bit 7 is 1 */
-  {
-    if( status_reg & DEV_SEC_LOCK_MASK )
-	  return( FLASH_FAILURE );		/* sector locked */
-
-    if( (status_reg & DEV_ERASE_MASK) == DEV_ERASE_MASK )
-	  return( FLASH_FAILURE);		/* erase error */
+    word current, reg_val ; 
+    volatile word* secptr; 
+    secptr = (volatile word*)((dword)eraseaddr&0xFFFFF000); 
+    //ISSUE REGISTER READ COMMAND 
+    *(secptr +0x555) =0x70; 
+    reg_val = *secptr; 
+    if((reg_val&FS_AMD_DQ7)!=0) 
+    { 
+        if((reg_val&FS_AMD_DQ5)!=0) 
+        { 
+            FLASH_ERR_FATAL("Erase error",0,0,0); 
+        } 
+        if((reg_val&FS_AMD_DQ1)!=0) 
+        { 
+            FLASH_ERR_FATAL("Sector lock error",0,0,0); 
+        } 
+    } 
+    else 
+        return FLASH_OP_NOT_COMPLETE;
     
-#ifdef FLASH_CHECK  
-      {
-        dword i;
-  #if defined(BUILD_JFLASH) || defined(BUILD_ARMPRG)
-        extern dword curr_erase_sector_bsize;
-        dword size= curr_erase_sector_bsize >> 1;
-  #else
-        dword size = flash_nor_find_size_for_block_addr (nor_device,  
-                                                         (dword)eraseaddr);       
-        size >>= 1;
-  #endif
-    
-        for (i = 0; i < size; i++)
-        {
-          if(eraseaddr[i] != 0xFFFF)
-          {
-            FLASH_ERR_FATAL("Erase verify failed",0,0,0);
-          }
-          if ((i % 16) == 0)
-          {
-            KICK_DOG_AND_CHECK_DATA();
-          }
-        }
-      }
-#endif
-
-	return FLASH_SUCCESS;
-  }
-  return FLASH_OP_NOT_COMPLETE;
+    current =*eraseaddr; 
+    if(current !=0xFFFF) 
+    { 
+        FLASH_ERR_FATAL("Program fail",0,0,0); 
+    }
+    return FLASH_SUCCESS;
 }
 
 /*===========================================================================
@@ -2126,72 +2056,65 @@ fsi_spansion_buffer_write_vs (byte *buffer,
                dword offset,
                dword count)
 {
-  flash_status status = FLASH_SUCCESS;
-  word *word_buf_ptr = (word *)buffer;
-  dword word_offset, word_count;
-  dword status_reg, i;
-  volatile word *wptr;
-
-  /*----------------------------------------------------------------*/
-  KICK_DOG_AND_CHECK_DATA();
-
-  /* To do word operations convert byte offset to word offset */
-  word_offset = BYTE_TO_WORD_OFFSET(offset);
-  wptr = (baseaddr + word_offset);
-  /*========================================================
-   *
-   * Write buffer programming command sequences
-   *
-   * 1. Write Buffer Load Command Sector Address + 555h 0025h
-   *
-   * 2. Write Word Count Sector Address + 2AA Word Count (N¨C1)h
-   *
-   * 3. Load Buffer Word N Program Address, Word N Word N
-   *
-   * 4. Last Write Buffer to Flash Sector Address + 555h 0029h
-   *
-   *==================================================================*/
-
-  /* Issue Load Write Buffer Command Sequence */
-  lld_WriteToBufferCmd(baseaddr, word_offset);
-
-  /* Write # of locations to program */
-  word_count = count>>1;
-  word_count = (word)word_count - 1;
-  word_count *= LLD_DEV_MULTIPLIER;			/* For interleaving devices */
-  
-  /* In the datasheets of some latest Spansion devices, such as GLP, GLS, etc, the 
-  command sequence of "write to buffer" command states the address of word count is 
-  "Sector Address". Notice that to make LLD backward compatibility, the actual word 
-  count address implemented is "Sector Address + LLD_UNLOCK_ADDR2", since the lower 
-  address bits (a0-a15) are "don't care" bits and will be ignored anyway.
-  */
-  FLASH_WR(baseaddr, (word_offset & SA_OFFSET_MASK) + LLD_UNLOCK_ADDR2 , word_count);
-  
-  /* Write to the buffer */
-  for (i = 0; i <= word_count; i++)
-  {
-    /* Put together the next word to write to Flash. */
-    *wptr++ = word_buf_ptr[i];     //lint !e734 will never exceed 2 bytes
-  }
-
-  /* Issue Program Buffer to Flash command */
-  lld_ProgramBufferToFlashCmd(baseaddr, word_offset);
-
-  status_reg = lld_Poll(baseaddr, word_offset+word_count);
-
-  if( status_reg & DEV_SEC_LOCK_MASK )
-  {
-	  status = FLASH_FAILURE;
-  }
-
-  if( (status_reg & DEV_PROGRAM_MASK) == DEV_PROGRAM_MASK )
-  {
-	  status = FLASH_FAILURE;		/* program error */
-  }
-
-  KICK_DOG_AND_CHECK_DATA();
-
-  return status;
+    flash_status status = FLASH_SUCCESS; 
+    volatile word* secptr; 
+    word *word_buf_ptr = (word *)buffer; 
+    dword word_offset, word_count; 
+    dword reg_val, i; 
+    volatile word *wptr; 
+    dword time_counter =0; 
+    
+    /*----------------------------------------------------------------*/ 
+    KICK_DOG_AND_CHECK_DATA(); 
+    /* T o do word operations convertbyte offset to word of fset */ 
+    word_offset =offset>>1; 
+    wptr = (baseaddr + word_offset); 
+    secptr = (volatile word*)((dword)wptr&0xFFFFF000); 
+    *(secptr +0x555) =0x25; 
+    word_count = count>>1; 
+    *(secptr +0x2AA) = word_count -1; 
+    wptr--; 
+    
+    for(i=0;i<word_count;i++) 
+    { 
+        wptr++; 
+        *wptr = word_buf_ptr[i]; 
+    } 
+    *(secptr +0x555) =0x29; 
+    clk_busy_wait(4); 
+    while(1) 
+    {
+        *(secptr +0x555) =0x70; 
+        reg_val = *secptr; 
+        if((reg_val&FS_AMD_DQ7)!=0) 
+        { 
+            if((reg_val&FS_AMD_DQ4)!=0) 
+            { 
+                *(secptr +0x555) =0x71; //Cleare status register 
+                *secptr =0xF0; 
+                FLASH_ERR_FATAL("Program fail",0,0,0); 
+            } 
+            if((reg_val&FS_AMD_DQ1)!=0) 
+            { 
+                FLASH_ERR_FATAL("Sector locked error",0,0,0); 
+            } 
+            else 
+            { 
+                break; 
+            } 
+        }
+        else 
+        {
+            if(time_counter>FLASH_POLLING_STATUS_TIME_LIMIT) 
+            {
+                FLASH_ERR_FATAL("Flash polling time out",0,0,0); 
+            } 
+            KICK_DOG_AND_CHECK_DATA(); 
+            clk_busy_wait(1); 
+            time_counter++; 
+        }
+    }
+    KICK_DOG_AND_CHECK_DATA(); 
+    return status; 
 }
 

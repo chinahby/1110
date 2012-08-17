@@ -147,10 +147,10 @@ extern flashi_nor_device S71GL064A_bb;
 extern flashi_nor_device S71GL032A;
 extern flashi_nor_device S71PL032J80_nsrw;
 extern flashi_nor_device S71PL032J80_srw;
-extern flashi_nor_device S29VS128R_TOP;
-extern flashi_nor_device S29VS128R_BOT;
-extern flashi_nor_device S29VS256R_TOP;
-extern flashi_nor_device S29VS256R_BOT;
+extern flashi_nor_device S71VS128R_TOP;
+extern flashi_nor_device S71VS128R_BOT;
+extern flashi_nor_device S71VS256R_TOP;
+extern flashi_nor_device S71VS256R_BOT;
 
 /* Samsung Parts */
 extern flashi_nor_device K5N5629ABM;
