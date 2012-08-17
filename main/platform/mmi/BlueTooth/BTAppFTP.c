@@ -1114,7 +1114,7 @@ boolean BTApp_FTPInit( CBTApp* pMe )
 		  STRLCPY(pMe->mFTP.szCurrentFolder, BTAPP_ROOT_DIR, sizeof(pMe->mFTP.szCurrentFolder));
 		  STRTOWSTR(NEW_FOLDER_NAME, pMe->mFTP.wFolderName, sizeof(pMe->mFTP.wFolderName));
 		  pMe->mFTP.bObjectTransfer = FALSE;
-		  pMe->mFTP.u8StorageDevice = STORAGE_DEV_EFS;
+		  pMe->mFTP.u8StorageDevice = STORAGE_DEV_MEM_CARD;//STORAGE_DEV_EFS;
 
 		  uBTApp_NMask |= NMASK_BT_FTP;
 		  init_done = TRUE;

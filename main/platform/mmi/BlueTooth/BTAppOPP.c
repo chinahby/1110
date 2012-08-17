@@ -211,6 +211,8 @@ extern uint32 uBTApp_NMask;
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
 #endif //FEATURE_APP_TEST_AUTOMATION
+void BTApp_OPPConnect( CBTApp* pMe, AEEBTBDAddr* pBDAddr );
+boolean BTApp_EnableOPP( CBTApp*  pMe, boolean* pbSettingBondable, boolean* pbSettingDiscoverable );
 
 
 void BTApp_OPPUpdateSendingProgress( CBTApp* pMe )
@@ -1319,7 +1321,6 @@ void BTApp_OPPPush( CBTApp* pMe, AEEBTObjectType objType )
       }
       else
       {
-        MSG_FATAL( "OPP_Push() failed with %x", result, 0, 0 );
 		MSG_FATAL( "OPP_Push() failed with %x", result, 0, 0 );
 
 		//Add By zzg 2011_12_29	
@@ -1328,10 +1329,7 @@ void BTApp_OPPPush( CBTApp* pMe, AEEBTObjectType objType )
 
 			WSTRTOSTR(pwName, tempstr, 256);				
 			
-			UTF8TOWSTR((byte*)tempstr, 256, pwName, 	(256)*sizeof(AECHAR));	
-
-			DBGPRINTF("***zzg IMenuCtl_AddItem tempstr=%s***", tempstr);
-			DBGPRINTF("***zzg IMenuCtl_AddItem pwName=%s***", pwName);	
+			UTF8TOWSTR((byte*)tempstr, 256, pwName, 	(256)*sizeof(AECHAR));
 		}	
 		//Add End	
 				
@@ -1386,19 +1384,16 @@ void BTApp_OPPPushEx( CBTApp* pMe, char* filepath, AEEBTObjectType objType )
   if ( result == SUCCESS )
   {
     result = IBTEXTOPP_Push( pMe->mOPP.po, pwName, objType );
-
 	
-    if ( pMe->mOPP.bRegistered == FALSE ) // client?
+    //if ( pMe->mOPP.bRegistered == FALSE ) // client?
     {
       if ( result == SUCCESS )
       {
         pMe->mOPP.bObjectTransfer = TRUE;
-		
         //ShowBusyIcon( pMe->m_pShell, pMe->m_pIDisplay, &pMe->m_rect, FALSE );
       }
       else
-      {     		
-        MSG_FATAL( "BTApp_OPPPExush() failed with %x", result, 0, 0 );
+      {
 		MSG_FATAL( "BTApp_OPPPExush() failed with %x", result, 0, 0 );
 
 		//Add By zzg 2011_12_29	
@@ -1408,9 +1403,6 @@ void BTApp_OPPPushEx( CBTApp* pMe, char* filepath, AEEBTObjectType objType )
 			WSTRTOSTR(pwName, tempstr, 256);				
 			
 			UTF8TOWSTR((byte*)tempstr, 256, pwName, 	(256)*sizeof(AECHAR));	
-
-			DBGPRINTF("***zzg IMenuCtl_AddItem tempstr=%s***", tempstr);
-			DBGPRINTF("***zzg IMenuCtl_AddItem pwName=%s***", pwName);	
 		}	
 		//Add End	
 		
@@ -1449,6 +1441,7 @@ boolean BTApp_OPPInit( CBTApp* pMe )
       init_done = TRUE;
 
       pMe->mOPP.bObjectTransfer = FALSE;	  
+      pMe->mOPP.bPushFileReq = FALSE;
     }
   }
   return init_done;
@@ -2195,20 +2188,13 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 	switch (dwParam)
 	{
 		case EVT_OPP_CONN_REQ:
-		{
 			IBTEXTOPP_AcceptConnection(pMe->mOPP.po, &pMe->mOPP.remoteBDAddr, TRUE, TRUE);
 		  	break;
-		}
 
 	    //Server send file to Client
 		case EVT_OPP_PUSH_REQ:
-		{
-			//ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_BLUETOOTH_APP, "GetFile");	//Add By zzg 2010_11_25
-			
 			BTApp_OPPPull( pMe );
-			
 			break;
-		}
 
 		case EVT_OPP_PULL_REQ:
 		{	  
@@ -2239,9 +2225,15 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
 #endif 
+            if(pMe->mOPP.bPushFileReq)
+            {
+                pMe->mOPP.bPushFileReq = FALSE;
+                break;
+            }
+            
 			if(pMe->mEnablingType != BTAPP_ENABLING_NONE)
 			{
-				pMe->mEnablingType++;       
+				pMe->mEnablingType++;
 				BTApp_EnableBT(pMe);	//Del By zzg 2010_11_18
 			}
 			else
@@ -2257,7 +2249,10 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 #error code not present
 #endif 
 			BTApp_ClearBondable( pMe ); // no need to be bondable anymore
-			
+			if(pMe->mOPP.bPushFileReq)
+            {
+                break;
+            }
 			if (pMe->mEnablingType != BTAPP_ENABLING_NONE)
 			{
 				pMe->mEnablingType++;       
@@ -2279,6 +2274,10 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
 #endif 
+            if(pMe->mOPP.bPushFileReq)
+            {
+                BTApp_OPPConnect(pMe,&pMe->mOPP.remoteBDAddr);
+            }
 			break;
 		}
 
@@ -2321,30 +2320,6 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 
 		case EVT_OPP_DISCONNECTED:	  
 		{
-			//Add By zzg 2010_11_22
-			//If client, change to server , register
-			if (pMe->mOPP.bRegistered == FALSE)
-			{
-				int result;					
-
-				BTApp_SetBondable( pMe );
-
-				MSG_FATAL("***zzg EVT_OPP_DISCONNECTED***",0,0,0);
-
-				if ((result = IBTEXTOPP_Register( pMe->mOPP.po, AEEBT_OPP_FORMAT_ALL,szServerNameOPP )) != SUCCESS)
-				{
-					BTApp_ClearBondable(pMe); 
-				}
-				else
-				{
-					if (pMe->mSD.bDiscoverable == FALSE)
-					{
-						IBTEXTSD_SetDiscoverable(pMe->mSD.po, TRUE);
-					}		
-				} 	 
-			}
-			//Add End
-			
 			pMe->mOPP.bConnected = FALSE;
 			pMe->mOPP.bConnecting = FALSE;
 			pMe->mOPP.bObjectTransfer = FALSE;
@@ -2362,7 +2337,13 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 			{
 				BTApp_BuildTopMenu(pMe); // rebuild menu to hide 'C'
 			}
-
+            
+            if(pMe->mOPP.bPushFileReq)
+            {
+                boolean      bSettingBondable = FALSE;
+                boolean      bSettingDiscoverable = FALSE;
+                BTApp_EnableOPP(pMe, &bSettingBondable, &bSettingDiscoverable);
+            }
 			break;
 		}
 
@@ -2375,30 +2356,12 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 			BTApp_ClearBondable(pMe); // no need to be bondable anymore
 			BTApp_ShowMessage(pMe, IDS_MSG_CONN_FAILED, NULL, 3);
 			pMe->mOPP.bConnecting = FALSE;
-
-			//Add By zzg 2010_11_22
-			//If client, change to server , register
-			if (pMe->mOPP.bRegistered == FALSE)
-			{
-				int result;		
-				BTApp_SetBondable(pMe);
-
-				MSG_FATAL("***zzg EVT_OPP_DISCONNECTED***",0,0,0);
-
-				if ((result = IBTEXTOPP_Register( pMe->mOPP.po, AEEBT_OPP_FORMAT_ALL,szServerNameOPP)) != SUCCESS)
-				{
-					BTApp_ClearBondable( pMe ); 
-				}
-				else
-				{
-					if (pMe->mSD.bDiscoverable == FALSE)
-					{
-						IBTEXTSD_SetDiscoverable(pMe->mSD.po, TRUE);
-					}		
-				} 	 
-			}
-			//Add End
-
+            if(pMe->mOPP.bPushFileReq)
+            {
+                boolean      bSettingBondable = FALSE;
+                boolean      bSettingDiscoverable = FALSE;
+                BTApp_EnableOPP(pMe, &bSettingBondable, &bSettingDiscoverable);
+            }
 			break;
 		}
 		case EVT_OPP_OBJ_PUSHED:
@@ -2451,7 +2414,10 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 			}
 
 			//ISHELL_CloseApplet(pMe->m_pShell, FALSE );	//Add By zzg 2010_11_27
-
+            if(pMe->mOPP.bPushFileReq)
+            {
+                IBTEXTOPP_Disconnect( pMe->mOPP.po);
+            }
 			break;
 		}
 		case EVT_OPP_OBJ_PUSH_FAILED:
@@ -2499,7 +2465,10 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 			}
 
 			//ISHELL_CloseApplet(pMe->m_pShell, FALSE );	//Add By zzg 2010_11_27
-
+            if(pMe->mOPP.bPushFileReq)
+            {
+                IBTEXTOPP_Disconnect( pMe->mOPP.po);
+            }
 			break;
 		}
 		case EVT_OPP_OBJ_PULLED:
@@ -2576,30 +2545,29 @@ DESCRIPTION
 ============================================================================= */
 void BTApp_OPPConnect( CBTApp* pMe, AEEBTBDAddr* pBDAddr )
 {
+  if(pMe->mOPP.bRegistered)
+  {
+      int result;
+      pMe->mOPP.bPushFileReq = FALSE;
+      if ( (result = IBTEXTOPP_Deregister( pMe->mOPP.po )) != SUCCESS )
+      {
+        MSG_FATAL( "OPP_Deregister() failed with %x", result, 0, 0 );
+        BTApp_ClearBondable( pMe ); // no need to be bondable anymore
+        BTApp_ShowMessage( pMe, IDS_MSG_CONN_FAILED, NULL, 3 );
+        return;
+      }
+      else
+      {
+        pMe->mOPP.remoteBDAddr = *pBDAddr;
+        pMe->mOPP.bPushFileReq = TRUE;
+        return;
+      }
+  }
   BTApp_SetBondable( pMe );
   pMe->mOPP.remoteBDAddr = *pBDAddr;
   pMe->mOPP.bConnecting = FALSE;
-
+  
   MSG_FATAL("***zzg BTApp_OPPConnect***", 0, 0, 0);
-
-  	{
-		uint8 temp=0;
-		temp = IBTEXTOPP_Connect( pMe->mOPP.po, pBDAddr, 0 );
-
-		MSG_FATAL("***zzg BTApp_OPPConnect return=%x***", temp, 0, 0);
-
-		if ( temp != SUCCESS )
-		  {
-		    BTApp_ClearBondable( pMe ); // no need to be bondable anymore
-		    BTApp_ShowMessage( pMe, IDS_MSG_CONN_FAILED, NULL, 3 );
-		  }
-		  else
-		  {
-		    // BTApp_ShowBusyIcon( pMe ); // wait for connect confirm
-		  }
-	}
-
-  /*
   if ( IBTEXTOPP_Connect( pMe->mOPP.po, pBDAddr, 0 ) != SUCCESS )
   {
     BTApp_ClearBondable( pMe ); // no need to be bondable anymore
@@ -2609,7 +2577,6 @@ void BTApp_OPPConnect( CBTApp* pMe, AEEBTBDAddr* pBDAddr )
   {
     // BTApp_ShowBusyIcon( pMe ); // wait for connect confirm
   }
-  */
 }
 /* ==========================================================================
 FUNCTION BTApp_EnableOPP

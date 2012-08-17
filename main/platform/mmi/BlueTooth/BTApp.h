@@ -1305,6 +1305,7 @@ typedef struct _OPP
   uint16          wName[ AEE_MAX_FILE_NAME ];
   boolean         bServerEnable;
   boolean         bObjectTransfer;
+  boolean         bPushFileReq;
 } OPP;
 #endif
 

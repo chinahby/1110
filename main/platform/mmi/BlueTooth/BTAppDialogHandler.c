@@ -7186,28 +7186,6 @@ static boolean HandleSendFileDialogEvent(CBTApp *pMe,
         {
 			// 给菜单各菜单项加数字编号图标
             //BTApp_SetItemNumIcon(pMenu);
-			
-			//Add By zzg 2010_11_22
-			//If  server, change to client
-			if (pMe->mOPP.bRegistered == TRUE)
-			{
-				if ((IBTEXTOPP_Deregister(pMe->mOPP.po)) != SUCCESS)
-				{
-					MSG_FATAL("***zzg IBTEXTOPP_Deregister FAILED ", 0, 0, 0 ); 	   
-					//BTApp_ShowMessage( pMe, IDS_MSG_SVR_DEREG_FAILED, NULL, 3 );
-				}
-				else
-				{
-					bRegistered = pMe->mOPP.bRegistered; // backing up the value of mOPP.bRegistered
-					pMe->mOPP.bRegistered = FALSE;
-					BTApp_CheckToClearDiscoverable(pMe);
-					pMe->mOPP.bRegistered =bRegistered; 
-
-					MSG_FATAL("***zzg IBTEXTOPP_Deregister SUCCEED Deregister=%x", pMe->mOPP.bRegistered, 0, 0 );		 
-				}
-			}  
-			//Add End
-
             IMENUCTL_SetSel(pMenu, pMe->m_currDlgId);
 
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
@@ -7244,6 +7222,12 @@ static boolean HandleSendFileDialogEvent(CBTApp *pMe,
                 case AVK_CLR:
                 {
 					CLOSE_DIALOG(DLGRET_CANCELED)
+                    if(pMe->mOPP.bPushFileReq)
+                    {
+                        boolean      bSettingBondable = FALSE;
+	                    boolean      bSettingDiscoverable = FALSE;
+                        BTApp_EnableOPP(pMe, &bSettingBondable, &bSettingDiscoverable);
+                    }
                     return TRUE;
                 }
 
@@ -7263,50 +7247,43 @@ static boolean HandleSendFileDialogEvent(CBTApp *pMe,
             {
             	case IDS_CONNECT:	
 				{
-					MSG_FATAL("***zzg SendFileDlg IDS_CONNECT bRegistered=%d***", pMe->mOPP.bRegistered, 0, 0);
-					
-					if (pMe->mOPP.bRegistered == FALSE)
+					AEEBTDeviceEnumerator enumerator;
+					uint8				  i;						
+					AEEBTDeviceInfo*	  pDev;						
+
+					enumerator.control = AEEBT_RM_EC_MATCH_SERVICE_CLASS;
+					enumerator.svcCls  = AEEBT_COD_SC_OBJECT_TRANSFER;
+
+					pMe->m_obex_list_id = IDD_BT_SEND_FILE;
+						
+		
+					if (pMe->mRM.po == NULL)
 					{
-						AEEBTDeviceEnumerator enumerator;
-						uint8				  i;						
-						AEEBTDeviceInfo*	  pDev;						
-
-						enumerator.control = AEEBT_RM_EC_MATCH_SERVICE_CLASS;
-						enumerator.svcCls  = AEEBT_COD_SC_OBJECT_TRANSFER;
-
-						pMe->m_obex_list_id = IDD_BT_SEND_FILE;
-							
-			
-						if (pMe->mRM.po == NULL)
-						{
-							MSG_FATAL("***zzg ObexListServers pMe->mRM.po == NULL***", 0, 0, 0);
-						}
-						else
-						{				
-							if (IBTEXTRM_DeviceEnumInit(pMe->mRM.po, &enumerator) == SUCCESS)
-							{		
-								i	 = 0;
-								pDev = &pMe->mRM.device[i];
-			
-								while ((IBTEXTRM_DeviceEnumNext( pMe->mRM.po, pDev ) == SUCCESS) 
-										&& pDev->bValid && (i < MAX_DEVICES))
-								{
-									pDev = &pMe->mRM.device[++i];
-								}
+						MSG_FATAL("***zzg ObexListServers pMe->mRM.po == NULL***", 0, 0, 0);
+					}
+					else
+					{				
+						if (IBTEXTRM_DeviceEnumInit(pMe->mRM.po, &enumerator) == SUCCESS)
+						{		
+							i	 = 0;
+							pDev = &pMe->mRM.device[i];
+		
+							while ((IBTEXTRM_DeviceEnumNext( pMe->mRM.po, pDev ) == SUCCESS) 
+									&& pDev->bValid && (i < MAX_DEVICES))
+							{
+								pDev = &pMe->mRM.device[++i];
 							}
 						}
+					}
 
-						if (i > 0)
-						{
-							CLOSE_DIALOG(DLGRET_BT_OBEX_LIST_SERVERS)
-						}
-						else
-						{
-							BTApp_ShowMessage(pMe, IDS_MSG_NO_OBEX_SERVERS, NULL, 0);
-						}
-						
-						//CLOSE_DIALOG(DLGRET_BT_OBEX_LIST_SERVERS)
-					}					
+					if (i > 0)
+					{
+						CLOSE_DIALOG(DLGRET_BT_OBEX_LIST_SERVERS)
+					}
+					else
+					{
+						BTApp_ShowMessage(pMe, IDS_MSG_NO_OBEX_SERVERS, NULL, 0);
+					}
                     return TRUE;
             	}
 				
@@ -7572,7 +7549,7 @@ static boolean HandleObexListServersDialogEvent(CBTApp *pMe,
             	}
                 case AVK_CLR:
                 {
-					CLOSE_DIALOG(DLGRET_CANCELED)
+					CLOSE_DIALOG(DLGRET_CANCELED) 
                     return TRUE;
                 }
                 default:
@@ -7717,7 +7694,7 @@ static boolean HandleFileProgressDialogEvent(CBTApp *pMe,
 				}					
 			}
 			//Add End
-
+            
 			if ((pMe->mOPP.bConnected == TRUE) || ((pMe->mOPP.bConnecting == TRUE)))
 			{
 				if (IBTEXTOPP_Disconnect( pMe->mOPP.po) != SUCCESS)
@@ -7729,29 +7706,6 @@ static boolean HandleFileProgressDialogEvent(CBTApp *pMe,
 					pMe->mOPP.bConnecting = FALSE;
 				}
 			}
-			else
-			{		
-				if (pMe->mOPP.bRegistered == FALSE)
-				{
-					int result;						
-
-					BTApp_SetBondable(pMe);
-
-					if ((result = IBTEXTOPP_Register( pMe->mOPP.po,AEEBT_OPP_FORMAT_ALL,szOPPServerName)) != SUCCESS )
-					{
-						MSG_FATAL("***zzg BTApp_OPPPull OPP_Register() failed with %x***",result, 0, 0 );
-						BTApp_ClearBondable( pMe ); 
-					}
-					else
-					{	
-						if (pMe->mSD.bDiscoverable == FALSE)
-						{
-							IBTEXTSD_SetDiscoverable( pMe->mSD.po, TRUE );
-						}		
-					} 	 
-				}	
-			}	
-			
 			return TRUE;
 		}
 

@@ -11185,48 +11185,6 @@ boolean BTApp_HandleClearKey( CBTApp* pMe )
 
 		MSG_FATAL("***zzg BTApp_HandleClearKey BT_APP_MENU_MAIN bConnected=%d, bConnecting=%d, bRegistered=%d***", 
 						pMe->mOPP.bConnected, pMe->mOPP.bConnecting, pMe->mOPP.bRegistered);
-
-		//Add By zzg 2010_11_22		
-		//If client, change to server , first Disconnect
-		if ((pMe->mOPP.bConnected == TRUE) || ((pMe->mOPP.bConnecting == TRUE)))
-		{
-			if (IBTEXTOPP_Disconnect( pMe->mOPP.po) != SUCCESS)
-			{
-				MSG_FATAL("***zzg IBTEXTOPP_Disconnect != SUCCESS***", 0, 0, 0);
-			}	
-			else 
-			{
-				pMe->mOPP.bConnecting = FALSE;
-			}
-		}
-		else
-		{			
-			//If client, change to server , register
-			if (pMe->mOPP.bRegistered == FALSE)
-			{
-				int result;						
-
-				BTApp_SetBondable( pMe );
-
-				
-				if ( pMe->mOPP.po )
-				{
-					if ((result = IBTEXTOPP_Register( pMe->mOPP.po, AEEBT_OPP_FORMAT_ALL,szServerNameOPP )) != SUCCESS )
-					{
-						MSG_FATAL("***zzg BTApp_OPPPull OPP_Register() failed with %x***", result, 0, 0 );
-						BTApp_ClearBondable( pMe ); 
-					}
-					else
-					{					
-						if (pMe->mSD.bDiscoverable == FALSE)
-						{
-							IBTEXTSD_SetDiscoverable( pMe->mSD.po, TRUE );
-						}		
-					} 	 
-				}
-			}			
-		}		
-		//Add End
 	
         key_handled = FALSE;
       }
@@ -11429,33 +11387,6 @@ boolean BTApp_HandleClearKey( CBTApp* pMe )
 				pMe->mOPP.bConnecting = FALSE;
 			}
 		}
-		else
-		{
-			//Add By zzg 2010_11_22
-			//If client, change to server , register
-			if (pMe->mOPP.bRegistered == FALSE)
-			{
-				int result;		
-				
-				BTApp_SetBondable( pMe );
-
-				if ((result = IBTEXTOPP_Register( pMe->mOPP.po, AEEBT_OPP_FORMAT_ALL,szServerNameOPP )) != SUCCESS )
-				{
-					MSG_FATAL("***zzg BTApp_OPPPull OPP_Register() failed with %x***", result, 0, 0 );
-					BTApp_ClearBondable( pMe ); 
-				}
-				else
-				{			
-					MSG_FATAL("***zzg BTApp_OPPPull OPP_Register() Succeed ***", 0, 0, 0 );
-					if (pMe->mSD.bDiscoverable == FALSE)
-					{
-						IBTEXTSD_SetDiscoverable( pMe->mSD.po, TRUE );
-					}		
-				} 	 
-			}
-			//Add End
-		}
-		
 		//Add End
 		
 		ISHELL_CloseApplet(pMe->m_pShell, FALSE );

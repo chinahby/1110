@@ -669,10 +669,8 @@ int OEMBTExtOPP_Push(
     IFILEMGR_GetInfoEx( pMe->pFileMgr, szFileName, &fileInfoEx );
     pMe->dwFileSize = fileInfoEx.dwSize;
 
-	DBGPRINTF("***zzg OEMBTExtOPP_Push dwSize=%d***", fileInfoEx.dwSize);
-	DBGPRINTF("***zzg OEMBTExtOPP_Push pszFile=%s***", fileInfoEx.pszFile);
-	DBGPRINTF("***zzg OEMBTExtOPP_Push szFileName=%s***", szFileName);
-
+	DBGPRINTF("***zzg OEMBTExtOPP_Push dwSize=%d %s***", fileInfoEx.dwSize,szFileName);
+    
     pMe->pFile = IFILEMGR_OpenFile( pMe->pFileMgr, szFileName, _OFM_READ );
     (void) LEAVE_APP_CONTEXT( pCurAC );
 
@@ -709,6 +707,7 @@ int OEMBTExtOPP_Push(
     // to the client who issued PULL request
     if ( pMe->state != AEEBT_OPP_STATE_PULL_REQ_PENDING )
     {
+      DBGPRINTF("***zzg OEMBTExtOPP_Push EBADSTATE %d***",pMe->state);
       statOut = BT_CS_GN_BAD_CMD_STATE;
     }
     else
