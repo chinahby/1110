@@ -2234,7 +2234,7 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
                     MediaGallery_SetUSBCableConnect(pMe->m_bExtPwrState);
 #endif
 #if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T)
-                  if(!pMe->m_bBatteryActive)
+                  if(!pMe->m_bBatteryActive && pMe->m_eCurState == COREST_STANDBY)
                   {
                      pMe->m_bBatteryActive=TRUE;
                      pMe->m_nMsgID = IDS_BATTERY_FULLY_CHARGE;
