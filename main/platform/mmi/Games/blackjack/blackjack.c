@@ -182,6 +182,10 @@ when       who     what, where, why
 #ifdef FEATURE_LCD_TOUCH_ENABLE
 #define PT_IN_RECT(a,b,rct)      (boolean)( ((a) >= (rct).x && (a) <= ((rct).x + (rct).dx)) && ((b) >= (rct).y && (b) <= ((rct).y + (rct).dy)) )
 #endif
+#ifndef RELEASEIF
+#define RELEASEIF(p) do { if (p) { IBASE_Release((IBase*)(p)); p = 0; } } while (0)
+#endif
+
 //#define SetDeviceAttributeOff(pMe,devattr) ( pMe->m_deviceAttributeFlags &= ~devattr )
 
 
