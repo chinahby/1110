@@ -275,7 +275,7 @@
 		<Text>संख्या और प्रकार</Text>
 	</STRING>
 	<STRING Id="1027" Name="IDS_UNMARKALL">
-		<Text>Unmark all</Text>
+		<Text>सभी अचिह्नित</Text>
 	</STRING>
 	<STRING Id="1028" Name="IDS_ONEDIAL">
 		<Text>स्पीड डायल</Text>
@@ -461,7 +461,7 @@
 		<Text>आपातकालीन नंबर</Text>
 	</String>
 	<String Id="1089" Name="IDS_NUM_INVALID">
-		<Text>Invalid number</Text>
+		<Text>अवैध संख्या</Text>
 	</String>
 </Strings>
 <Dialogs>
