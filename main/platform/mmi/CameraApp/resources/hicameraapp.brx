@@ -35,7 +35,7 @@
 		<Text>Flash</Text>
 	</String>
 	<String Id="1012" Name="IDS_VIDEO_CAMERA">
-		<Text>Video Camera</Text>
+		<Text>वीडियो कैमरा</Text>
 	</String>
 	<String Id="1013" Name="IDS_CFG_QUALITY">
 		<Text>गुणवत्ता</Text>
@@ -137,13 +137,13 @@
 		<Text>memory card</Text>
 	</String>
 	<String Id="1077" Name="IDS_CAMERA_RECORD_FAILED">
-		<Text>Record failed</Text>
+		<Text>रिकॉर्ड में विफल रहा है</Text>
 	</String>
 	<String Id="1078" Name="IDS_CAMERA_RECORD_STOP">
-		<Text>Stop</Text>
+		<Text>रोक</Text>
 	</String>
 	<String Id="1079" Name="IDS_CAMERA_SAVE_VIDEO">
-		<Text>Save Video</Text>
+		<Text>वीडियो सहेजें</Text>
 	</String>
 </Strings>
 <Dialogs>
