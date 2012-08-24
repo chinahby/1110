@@ -2296,10 +2296,12 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
                                     nBarH); 
 						IDISPLAY_DrawRect(pContext->pIDisplay,&bgrc,RGB_BLACK,RGB_BLACK,IDF_RECT_FILL);
 					}
+                    #ifndef FEATURE_VERSION_SKY
                     IDISPLAY_SetClipRect(pContext->pIDisplay, &rc);
                     MEMSET(&TitleBar, 0, sizeof(TitleBar_Param_type));
                     TitleBar.prc = &rc;
-                    DrawTitleBar(pContext->pIDisplay, &TitleBar);
+                    DrawTitleBar(pContext->pIDisplay, &TitleBar); 
+                    #endif
                     nOldFontColor = IDISPLAY_SetColor(pContext->pIDisplay, CLR_USER_TEXT, RGB_WHITE);
                     
                     (void)IDISPLAY_DrawText(pContext->pIDisplay,

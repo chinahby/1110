@@ -2066,13 +2066,15 @@ static boolean CTextCtl_Redraw(ITextCtl * pITextCtl)
                 IDISPLAY_FillRect(pme->m_pIDisplay, &qrc,  pme->m_themeColor);
             }
 #else
+            #ifndef FEATURE_VERSION_SKY
             {
                 TitleBar_Param_type TitleBar;
                 
                 MEMSET(&TitleBar, 0, sizeof(TitleBar_Param_type));
                 TitleBar.prc = &qrc;
-                DrawTitleBar(pme->m_pIDisplay, &TitleBar);
+                DrawTitleBar(pme->m_pIDisplay, &TitleBar); 
             }
+           #endif
             
 
 #endif //FEATURE_FUNCS_THEME
@@ -4214,12 +4216,13 @@ static void TextCtl_ShowNetSymbolPage(CTextCtl * pme, int nDir)
                             szbottomText,
                             sizeof(szbottomText));
    TextCtl_ClearScreen(pme);
-
+   #ifndef FEATURE_VERSION_SKY
    {
        TitleBar.pwszTitle = szText;
        TitleBar.dwAlignFlags = IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_BOTTOM;
-       DrawTitleBar(pme->m_pIDisplay, &TitleBar);
+       DrawTitleBar(pme->m_pIDisplay, &TitleBar); 
    }
+   #endif
 #if 0   
    SETAEERECT(&titlerect, 0, 0, dm.cxScreen, pme->m_nFontHeight);   
 #ifdef FEATURE_FUNCS_THEME     
