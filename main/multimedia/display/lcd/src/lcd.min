@@ -14,6 +14,7 @@ LCD_SURF_C_SOURCES= \
 	disp_ic_st7735s_tft177.c \
 	disp_ic_ili9225b_tft20.c \
 	disp_ic_ili9225b_tft20_rot.c \
+	disp_ic_ili9225g_tft20_rot.c \
 	disp_ic_nt35601_tft20.c \
 	disp_ic_ili9342_tft23_rot.c \
 	disp_ic_ili9325d_tft26_rot.c \

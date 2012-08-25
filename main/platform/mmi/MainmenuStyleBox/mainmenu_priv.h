@@ -46,7 +46,7 @@
 #define  MAX_MATRIX_COLS 3
 #endif
 #elif defined (FEATURE_DISP_176X220)
-#ifdef FEATURE_VERSION_VG68
+#if defined(FEATURE_VERSION_VG68) || defined(FEATURE_VERSION_SKY)
 #define  MAX_MATRIX_ITEMS 9
 #define  MAX_MATRIX_ROWS 3
 #define  MAX_MATRIX_COLS 3
@@ -261,6 +261,8 @@ typedef struct _MainMenu
 #ifndef FEATURE_DISP_128X128
 #ifdef FEATURE_VERSION_C01   
     #define ICON_ANI_BG    "fs:/image/mainmenu/Backgroud.png"
+#elif defined (FEATURE_VERSION_SKY) 
+    #define ICON_ANI_BG    "fs:/image/mainmenu/Messages.gif"
 #elif defined (FEATURE_VERSION_VG68)
 	#define ICON1_ANI      "fs:/image/mainmenu/qsc1100_06.png"
     #define ICON2_ANI      "fs:/image/mainmenu/qsc1100_04.png"
@@ -331,6 +333,16 @@ typedef struct _MainMenu
     #define ICON7_ANI_1      "fs:/image/mainmenu/qsc1100_10_focus.png"
     #define ICON8_ANI_1      "fs:/image/mainmenu/qsc1100_11_focus.png"
 	#define ICON9_ANI_1      "fs:/image/mainmenu/qsc1100_03_focus.png"
+#elif defined (FEATURE_VERSION_SKY)
+    #define ICON1_ANI_1    "fs:/image/mainmenu/Messages.gif"
+    #define ICON2_ANI_1    "fs:/image/mainmenu/contacts.gif"
+    #define ICON3_ANI_1    "fs:/image/mainmenu/Recent_calls.gif"
+    #define ICON4_ANI_1    "fs:/image/mainmenu/Multimedia.gif"
+    #define ICON5_ANI_1    "fs:/image/mainmenu/Net_Serve.gif"
+    #define ICON6_ANI_1    "fs:/image/mainmenu/Tools.gif"
+    #define ICON7_ANI_1    "fs:/image/mainmenu/Game.gif"         
+    #define ICON8_ANI_1    "fs:/image/mainmenu/User_Profile.gif"
+    #define ICON9_ANI_1    "fs:/image/mainmenu/Setting.gif"
 #else
 	#ifdef FEATURE_LCD_TOUCH_ENABLE
 

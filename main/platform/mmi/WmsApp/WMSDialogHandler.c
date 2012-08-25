@@ -11502,7 +11502,19 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                                     0);
             return TRUE;
 
-        case EVT_USER_REDRAW:          
+        case EVT_USER_REDRAW: 
+            #ifdef FEATURE_VERSION_SKY
+            {
+            IImage *image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);
+            Appscommon_ResetBackground(pMe->m_pDisplay,image, APPSCOMMON_BG_COLOR, 
+                                                    &pMe->m_rc, 0, 0);
+             if( image != NULL)
+             {
+               IIMAGE_Draw( image, 0, 0);
+               IIMAGE_Release( image);
+             }
+            }
+            #endif
 #ifdef FEATURE_USES_MMS  
             MSG_FATAL("IDD_WRITEMSG_Handler EVT_USER_REDRAW mmsTotalSizeBig=%d",mmsTotalSizeBig,0,0);
             if(mmsTotalSizeBig)

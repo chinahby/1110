@@ -326,6 +326,7 @@ static void CContApp_SetInputMode(CContApp *pMe);
 static boolean CContApp_CheckNumberIsInValid(CContApp  *pMe, ITextCtl *pTextCtl);
 static boolean CContApp_Search_HasExceptionalChar(AECHAR* szContNumber);
 //Add End
+static void drawImage( CContApp *pMe, char *resFile, int16 resId, int x, int y);
 
 #ifdef FEATURE_OEMOMH 
 static boolean  CContApp_HandleEmergencyCallDlgEvent( CContApp  *pMe,
@@ -5087,7 +5088,19 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
                     IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
                 }
             }
-
+            #ifdef FEATURE_VERSION_SKY
+            {
+            IImage *image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);
+            Appscommon_ResetBackground(pMe->m_pDisplay,image, APPSCOMMON_BG_COLOR, 
+                                                    &pMe->m_rc, 0, 0);
+             if( image != NULL)
+             {
+               IIMAGE_Draw( image, 0, 0);
+               IIMAGE_Release( image);
+             }
+              IMENUCTL_Redraw(pMenuCtl);
+            }
+            #endif
             if(IS_ZERO_REC())
             {
                 CContApp_DrawNorecord(pMe, pMenuCtl);
@@ -6268,6 +6281,18 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
                 // Set menu select
                 IMENUCTL_SetSel(pMenuCtl, pMe->m_wSelectEdit);
             }
+            #ifdef FEATURE_VERSION_SKY
+            {
+            IImage *image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);
+            Appscommon_ResetBackground(pMe->m_pDisplay,image, APPSCOMMON_BG_COLOR, 
+                                                    &pMe->m_rc, 0, 0);
+             if( image != NULL)
+             {
+               IIMAGE_Draw( image, 0, 0);
+               IIMAGE_Release( image);
+             }
+            }
+            #endif
             (void)IMENUCTL_Redraw(pMenuCtl);
             // Draw prompt bar here
             if( IDI_ADDNEW_MENU_SELECTRINGTONE == IMENUCTL_GetSel(pMenuCtl))
@@ -7299,7 +7324,6 @@ static boolean  CContApp_HandleMainMenuDlgEvent( CContApp  *pMe,
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND);
 #endif
-
             // build options menu
             (void)CContApp_BuildMainMenuMenu(pMe, pMenuCtl);
             
@@ -7341,7 +7365,18 @@ static boolean  CContApp_HandleMainMenuDlgEvent( CContApp  *pMe,
                 // Set menu select
                 IMENUCTL_SetSel(pMenuCtl, pMe->m_wMainMenuSel);
             }
-            
+            #ifdef FEATURE_VERSION_SKY
+            {
+            IImage *image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);
+            Appscommon_ResetBackground(pMe->m_pDisplay,image, APPSCOMMON_BG_COLOR, 
+                                                    &pMe->m_rc, 0, 0);
+             if( image != NULL)
+             {
+               IIMAGE_Draw( image, 0, 0);
+               IIMAGE_Release( image);
+             }
+            }
+            #endif
             // Draw prompt bar here
             CONTAPP_DRAW_BOTTOMBAR(BTBAR_SELECT_BACK);
             (void)IMENUCTL_Redraw(pMenuCtl);
@@ -8560,6 +8595,19 @@ static boolean  CContApp_HandlePositionDlgEvent( CContApp  *pMe,
         //lint -fallthrough
         
         case EVT_USER_REDRAW:
+            #ifdef FEATURE_VERSION_SKY
+            {
+            IImage *image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);
+            Appscommon_ResetBackground(pMe->m_pDisplay,image, APPSCOMMON_BG_COLOR, 
+                                                    &pMe->m_rc, 0, 0);
+             if( image != NULL)
+             {
+               IIMAGE_Draw( image, 0, 0);
+               IIMAGE_Release( image);
+             }
+             IMENUCTL_Redraw(pMenuCtl);
+            }
+            #endif
             // Restore the menu select from suspend
             if(pMe->m_wSelectStore != MENU_SELECT_NULL)
             {
@@ -8778,6 +8826,19 @@ static boolean  CContApp_HandleCopyMoveDlgEvent( CContApp  *pMe,
         //lint -fallthrough
         
         case EVT_USER_REDRAW:
+            #ifdef FEATURE_VERSION_SKY
+            {
+            IImage *image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);
+            Appscommon_ResetBackground(pMe->m_pDisplay,image, APPSCOMMON_BG_COLOR, 
+                                                    &pMe->m_rc, 0, 0);
+             if( image != NULL)
+             {
+               IIMAGE_Draw( image, 0, 0);
+               IIMAGE_Release( image);
+             }
+             IMENUCTL_Redraw(pMenuCtl);
+            }
+            #endif
             // Restore the menu select from suspend
             if(pMe->m_wSelectStore != MENU_SELECT_NULL)
             {
@@ -9068,6 +9129,19 @@ static boolean  CContApp_HandleCopyDlgEvent( CContApp  *pMe,
         //lint -fallthrough
         
         case EVT_USER_REDRAW:
+            #ifdef FEATURE_VERSION_SKY
+            {
+            IImage *image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);
+            Appscommon_ResetBackground(pMe->m_pDisplay,image, APPSCOMMON_BG_COLOR, 
+                                                    &pMe->m_rc, 0, 0);
+             if( image != NULL)
+             {
+               IIMAGE_Draw( image, 0, 0);
+               IIMAGE_Release( image);
+             }
+             IMENUCTL_Redraw(pMenuCtl);
+            }
+            #endif
            /*必须在textctl初始化完毕后,才能获得icon id,而且要在dialog更新完之后再更新图标*/
            CContApp_DrawIMEIcon(pTextCtl, pMe->m_pDisplay);
                        
@@ -10394,6 +10468,18 @@ static boolean  CContApp_HandleEditDlgEvent( CContApp  *pMe,
         
         case EVT_USER_REDRAW:
         {
+            #ifdef FEATURE_VERSION_SKY
+            {
+            IImage *image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);
+            Appscommon_ResetBackground(pMe->m_pDisplay,image, APPSCOMMON_BG_COLOR, 
+                                                    &pMe->m_rc, 0, 0);
+             if( image != NULL)
+             {
+               IIMAGE_Draw( image, 0, 0);
+               IIMAGE_Release( image);
+             }
+            }
+            #endif
              // Restore the menu select from suspend
             if(pMe->m_wSelectStore != MENU_SELECT_NULL)
             {
@@ -11847,6 +11933,19 @@ static boolean  CContApp_HandleManagementDlgEvent( CContApp  *pMe,
         //lint -fallthrough
         
         case EVT_USER_REDRAW:
+            #ifdef FEATURE_VERSION_SKY
+            {
+            IImage *image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);
+            Appscommon_ResetBackground(pMe->m_pDisplay,image, APPSCOMMON_BG_COLOR, 
+                                                    &pMe->m_rc, 0, 0);
+             if( image != NULL)
+             {
+               IIMAGE_Draw( image, 0, 0);
+               IIMAGE_Release( image);
+             }
+             IMENUCTL_Redraw(pMenuCtl);
+            }
+            #endif
             // Restore the menu select from suspend
             if(pMe->m_wSelectStore != MENU_SELECT_NULL)
             {
@@ -16797,6 +16896,17 @@ static boolean CContApp_Search_HasExceptionalChar(AECHAR * szContNumber)
 }
 //Add End
 
+static void drawImage( CContApp *pMe, char *resFile, int16 resId, int x, int y)
+{
+
+    IImage *image = ISHELL_LoadResImage( pMe->m_pShell, resFile, resId);
+    if( image != NULL)
+    {
+
+        IIMAGE_Draw( image, x, y);
+        IIMAGE_Release( image);
+    }
+}
 
 #ifdef FEATURE_OEMOMH 
 static boolean  CContApp_HandleEmergencyCallDlgEvent(CContApp  *pMe,

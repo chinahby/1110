@@ -303,7 +303,6 @@ extern sSelectFieldListNode* pCurSelectFieldNode;
     BarParam.eBBarType = x;                         \
     DrawBottomBar(pMe->m_pDisplay, &BarParam);      \
 }
-
 // menu auto scroll
 #define MENU_AUTO_SCROLL(p, e, w)   //MenuAutoScroll(p, e, w)
 

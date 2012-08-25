@@ -2551,7 +2551,16 @@ void DrawPromptMessage (IDisplay *pIDisplay,
                             IDB_BACKGROUND);
     if(pMsgImg != NULL)
     {                  
+        #ifdef FEATURE_VERSION_SKY
+        {
+        AEERect rc;
+        SETAEERECT(&rc, 0, 0, 176,22);  
+        IDISPLAY_DrawRect(pIDisplay,&rc,RGB_BLACK,RGB_BLACK,IDF_RECT_FILL);
+        IIMAGE_Draw(pMsgImg, 0, 22);
+        }
+        #else
         IIMAGE_Draw(pMsgImg, 0, 0);
+        #endif
         IIMAGE_Release(pMsgImg);
         pMsgImg = NULL;
     }
@@ -4123,6 +4132,35 @@ void Appscommon_ResetBackground(IDisplay *pDisplay, IImage *BgImage, RGBVAL BgCo
     }
 }
 
+void Appscommon_ResetBackground_Start(IDisplay *pDisplay, IImage *BgImage, RGBVAL BgColor, AEERect * rect, int x, int y)
+{
+    if(pDisplay == NULL)
+    {
+        return;
+    }
+    
+    if(NULL != BgImage)
+    {
+        AEERect oldClip = {0};
+        
+        //IDisplay_GetClipRect(pDisplay, &oldClip);
+        //IDisplay_SetClipRect(pDisplay, rect);
+        IIMAGE_SetOffset(BgImage,x,rect->y);
+        IImage_SetDrawSize(BgImage,rect->dx,rect->dy);
+        IImage_Start(BgImage, x, rect->y);
+         // 设置动画速度(毫秒)
+        IIMAGE_SetAnimationRate(BgImage, 600);
+        IIMAGE_SetParm(BgImage, IPARM_PLAYTIMES, 1, 0);
+
+        // 设置图像中的帧数
+        IIMAGE_SetFrameCount(BgImage, 1);
+        //IDisplay_SetClipRect(pDisplay, &oldClip);
+    }
+    else
+    {
+        IDisplay_FillRect(pDisplay, rect, BgColor);
+    }
+}
 
 /*==============================================================================
 函数: 
