@@ -1,0 +1,1071 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="wms" VERSION="1">
+<Strings Encoding="Unicode">
+	<STRING Id="1" Name="IDS_INBOX">
+		<Text>Входящие</Text>
+	</STRING>
+	<STRING Id="2" Name="IDS_WRITEMESSAGE">
+		<Text>Создать</Text>
+	</STRING>
+	<STRING Id="3" Name="IDS_OUTBOX">
+		<Text>Исходящие</Text>
+	</STRING>
+	<STRING Id="4" Name="IDS_VOICEMAIL">
+		<Text>Голосовая почта</Text>
+	</STRING>
+	<STRING Id="5" Name="IDS_DRAFT">
+		<Text>Черновики</Text>
+	</STRING>
+	<STRING Id="6" Name="IDS_TEMPLATES">
+		<Text>Образцы</Text>
+	</STRING>
+	<STRING Id="7" Name="IDS_MENSTATUS">
+		<Text>Состояние памяти</Text>
+	</STRING>
+	<STRING Id="8" Name="IDS_DELETEMSGS">
+		<Text>Удалить сообщения</Text>
+	</STRING>
+	<STRING Id="9" Name="IDS_MSGSETTING">
+		<Text>Настройки сообщений</Text>
+	</STRING>
+	<STRING Id="10" Name="IDS_PHONE">
+		<Text>Телефон</Text>
+	</STRING>
+	<STRING Id="11" Name="IDS_RUIM">
+		<Text>UIM карта</Text>
+	</STRING>
+	<STRING Id="12" Name="IDS_EMPTY">
+		<Text>Нет записей</Text>
+	</STRING>
+	<STRING Id="13" Name="IDS_PHONEFULL">
+		<Text>Телефонные сообщения переполнены</Text>
+	</STRING>
+	<STRING Id="14" Name="IDS_FROM">
+		<Text>Из:</Text>
+	</STRING>
+	<STRING Id="15" Name="IDS_REPLY">
+		<Text>Ответить</Text>
+	</STRING>
+	<STRING Id="16" Name="IDS_FORWARD">
+		<Text>Вперед</Text>
+	</STRING>
+	<STRING Id="17" Name="IDS_LISTENVM">
+		<Text>Прослушать голосовую почту</Text>
+	</STRING>
+	<STRING Id="18" Name="IDS_SEND">
+		<Text>Отправить</Text>
+	</STRING>
+	<STRING Id="19" Name="IDS_EDIT">
+		<Text>Редактировать</Text>
+	</STRING>
+	<STRING Id="20" Name="IDS_DELETE">
+		<Text>Удалить</Text>
+	</STRING>
+	<STRING Id="21" Name="IDS_SAVENUM">
+		<Text>Извлеч номер</Text>
+	</STRING>
+	<STRING Id="22" Name="IDS_COPYTORUIM">
+		<Text>Копировать в UIM карту</Text>
+	</STRING>
+	<STRING Id="23" Name="IDS_COPYTOPNONE">
+		<Text>Копировать в телефон</Text>
+	</STRING>
+	<STRING Id="24" Name="IDS_CALL">
+		<Text>Вызов</Text>
+	</STRING>
+	<STRING Id="25" Name="IDS_TO">
+		<Text>В:</Text>
+	</STRING>
+	<STRING Id="26" Name="IDS_COPIED">
+		<Text>%d Скопированно</Text>
+	</STRING>
+	<STRING Id="27" Name="IDS_RUIMFULL">
+		<Text>UIM сообщения полные</Text>
+	</STRING>
+	<STRING Id="28" Name="IDS_VOICEMAIL_FMT">
+		<Text>Счет голосовых сообщений:%d</Text>
+	</STRING>
+	<STRING Id="29" Name="IDS_ALL">
+		<Text>Все</Text>
+	</STRING>
+	<STRING Id="30" Name="IDS_DELETED">
+		<Text>Удалено</Text>
+	</STRING>
+	<STRING Id="31" Name="IDS_DELETING">
+		<Text>Удаляется...</Text>
+	</STRING>
+	<STRING Id="32" Name="IDS_TEMPLATE1">
+		<Text>Я занять. Перезвоните мне позже.</Text>
+	</STRING>
+	<STRING Id="33" Name="IDS_TEMPLATE2">
+		<Text>С днем Рождения!</Text>
+	</STRING>
+	<STRING Id="34" Name="IDS_TEMPLATE3">
+		<Text>Пожалуйста, подождите минуту.</Text>
+	</STRING>
+	<STRING Id="35" Name="IDS_TEMPLATE4">
+		<Text>Где вы находитесь?</Text>
+	</STRING>
+	<STRING Id="36" Name="IDS_TEMPLATE5">
+		<Text>Как прошел день?</Text>
+	</STRING>
+	<STRING Id="37" Name="IDS_TEMPLATE6">
+		<Text>Удачи!</Text>
+	</STRING>
+	<STRING Id="38" Name="IDS_TEMPLATE7">
+		<Text>Пожалуйста, позвоните мне на домашний номер.</Text>
+	</STRING>
+	<STRING Id="39" Name="IDS_TEMPLATE8">
+		<Text>Я вам скоро перезвоню!</Text>
+	</STRING>
+	<STRING Id="40" Name="IDS_TEMPLATE9">
+		<Text>Я извеняюсь!</Text>
+	</STRING>
+	<STRING Id="41" Name="IDS_AUTOSAVE">
+		<Text>Автоматическое сохранение</Text>
+	</STRING>
+	<STRING Id="42" Name="IDS_PRIORITY">
+		<Text>Приоритет</Text>
+	</STRING>
+	<STRING Id="43" Name="IDS_DELIVERYREPORTS">
+		<Text>Отправлено в</Text>
+	</STRING>
+	<STRING Id="44" Name="IDS_STORAGE">
+		<Text>Хранение</Text>
+	</STRING>
+	<STRING Id="45" Name="IDS_NOTSAVE">
+		<Text>Не сохранено</Text>
+	</STRING>
+	<STRING Id="46" Name="IDS_OK">
+		<Text>Да</Text>
+	</STRING>
+	<STRING Id="47" Name="IDS_NORMAL">
+		<Text>Нормально</Text>
+	</STRING>
+	<STRING Id="48" Name="IDS_URGENT">
+		<Text>Срочно</Text>
+	</STRING>
+	<STRING Id="49" Name="IDS_ENABLE">
+		<Text>Вкл</Text>
+	</STRING>
+	<STRING Id="50" Name="IDS_DISABLE">
+		<Text>Выкл</Text>
+	</STRING>
+	<STRING Id="51" Name="IDS_RUIMANDPHONE">
+		<Text>UIM карта и телефон</Text>
+	</STRING>
+	<STRING Id="52" Name="IDS_ADDNEW">
+		<Text>Добавить</Text>
+	</STRING>
+	<STRING Id="53" Name="IDS_FULL">
+		<Text>Заданные сообщения переполнены</Text>
+	</STRING>
+	<STRING Id="54" Name="IDS_SAVED">
+		<Text>Сделано</Text>
+	</STRING>
+	<STRING Id="55" Name="IDS_TEXTFULL">
+		<Text>Текст переполнен</Text>
+	</STRING>
+	<STRING Id="56" Name="IDS_SENDINGTO">
+		<Text>Отправка в </Text>
+	</STRING>
+	<STRING Id="57" Name="IDS_MSGSENT">
+		<Text>Сообщения отправлены</Text>
+	</STRING>
+	<STRING Id="58" Name="IDS_FAILED">
+		<Text>Не успешно</Text>
+	</STRING>
+	<STRING Id="59" Name="IDS_INSERTTEMPLATES">
+		<Text>Заданные сообщения </Text>
+	</STRING>
+	<STRING Id="60" Name="IDS_SAVETODRAFT">
+		<Text>Сохранить в черновики</Text>
+	</STRING>
+	<STRING Id="61" Name="IDS_INSERTCONTACT">
+		<Text>Вставить контакты</Text>
+	</STRING>
+	<STRING Id="62" Name="IDS_CDG2_FAIL1">
+		<Text>Неизвестный адрес получателя</Text>
+	</STRING>
+	<STRING Id="63" Name="IDS_CDG2_FAIL97">
+		<Text>Отмена вызова</Text>
+	</STRING>
+	<STRING Id="64" Name="IDS_CDG2_FAIL100">
+		<Text>SMS не поддерживается</Text>
+	</STRING>
+	<STRING Id="65" Name="IDS_DRAFTFULL">
+		<Text>Черновик переполнен</Text>
+	</STRING>
+	<STRING Id="66" Name="IDS_APP_WMS">
+		<Text>Сообщения</Text>
+	</STRING>
+	<STRING Id="67" Name="IDS_BLANK">
+		<Text> </Text>
+	</STRING>
+	<STRING Id="68" Name="IDS_EMERGENCY">
+		<Text>Авария</Text>
+	</STRING>
+	<STRING Id="69" Name="IDS_NOVALIDNUM">
+		<Text>Нет действительного номера</Text>
+	</STRING>
+	<STRING Id="70" Name="IDS_OPTION">
+		<Text>Опции</Text>
+	</STRING>
+	<STRING Id="71" Name="IDS_RECEIVER">
+		<Text>Получатели</Text>
+	</STRING>
+	<STRING Id="72" Name="IDS_OUTBOXFULL">
+		<Text>Исходящие переполнены</Text>
+	</STRING>
+	<STRING Id="73" Name="IDS_NOTREADY">
+		<Text>Инициализация не завершена, пожалуйста попробуйте позже</Text>
+	</STRING>
+	<STRING Id="74" Name="IDS_DELETE_READMSG">
+		<Text>Удалить прочитанные сообщения</Text>
+	</STRING>
+	<STRING Id="75" Name="IDS_SENDMSG">
+		<Text>Отправить сообщения</Text>
+	</STRING>
+	<STRING Id="76" Name="IDS_PHONELOCKED">
+		<Text>Телефон заблокирован</Text>
+	</STRING>
+	<STRING Id="78" Name="IDS_CALLREJECTSMS">
+		<Text>Отмена вызова SMS</Text>
+	</STRING>
+	<STRING Id="79" Name="IDS_EDITCALLREJECTSMS">
+		<Text>Редактировать отмену вызова SMS</Text>
+	</STRING>
+	<STRING Id="80" Name="IDS_SAVEMSG">
+		<Text>Сохранить сообщения</Text>
+	</STRING>
+	<STRING Id="83" Name="IDS_REPORTTITLE">
+		<Text>Отчет о доставке</Text>
+	</STRING>
+	<STRING Id="84" Name="IDS_AUTODELETE">
+		<Text>Автоматическое удаление</Text>
+	</STRING>
+	<STRING Id="86" Name="IDS_INBOXSFULL">
+		<Text>SMS сообщения переполнены</Text>
+	</STRING>
+	<STRING Id="88" Name="IDS_RUIMALMOSTFULL">
+		<Text>UIM сообщения почти переполнены</Text>
+	</STRING>
+	<STRING Id="89" Name="IDS_PHONEALMOSTFULL">
+		<Text>Сообщения телефона почти переполнены</Text>
+	</STRING>
+	<STRING Id="90" Name="IDS_INBOXSALMOSTFULL">
+		<Text>SMS сообщения почти переполнены</Text>
+	</STRING>
+	<STRING Id="92" Name="IDS_VIEW">
+		<Text>Просмотр</Text>
+	</STRING>
+	<STRING Id="93" Name="IDS_NULLTXTALERT">
+		<Text>Пожалуйста введите текст</Text>
+	</STRING>
+	<STRING Id="94" Name="IDS_MULTISEND">
+		<Text>Отправить многим</Text>
+	</STRING>
+	<STRING Id="95" Name="IDS_INSERTDOMAIM">
+		<Text>Вставить символы</Text>
+	</STRING>
+	<STRING Id="96" Name="IDS_INSERTEMOTIONSYMBOL">
+		<Text>Вставить Эмоции</Text>
+	</STRING>
+	<STRING Id="97" Name="IDS_MSGVALIDITY">
+		<Text>Значимость сообщений</Text>
+	</STRING>
+	<STRING Id="98" Name="IDS_MSGVALIDITY_MAX">
+		<Text>Максимальное время</Text>
+	</STRING>
+	<STRING Id="99" Name="IDS_MSGVALIDITY_1HOUR">
+		<Text>1 час</Text>
+	</STRING>
+	<STRING Id="100" Name="IDS_MSGVALIDITY_6HOURS">
+		<Text>6 часов</Text>
+	</STRING>
+	<STRING Id="101" Name="IDS_MSGVALIDITY_24HOURS">
+		<Text>24 часов</Text>
+	</STRING>
+	<STRING Id="102" Name="IDS_MSGVALIDITY_3DAYS">
+		<Text>3 дня</Text>
+	</STRING>
+	<STRING Id="103" Name="IDS_MSGVALIDITY_1WEEK">
+		<Text>1 неделя</Text>
+	</STRING>
+	<STRING Id="104" Name="IDS_SENDONLY">
+		<Text>Только отправить</Text>
+	</STRING>
+	<STRING Id="105" Name="IDS_SAVEONLY">
+		<Text>Только сохранить</Text>
+	</STRING>
+	<STRING Id="106" Name="IDS_SENDANDSAVE">
+		<Text>Отправить и сохранить</Text>
+	</STRING>
+	<STRING Id="107" Name="IDS_CALLBACKNUM">
+		<Text>Номер обратного дозвона</Text>
+	</STRING>
+	<STRING Id="108" Name="IDS_SAVEEMAIL">
+		<Text>Извлеч номер e_mail</Text>
+	</STRING>
+	<STRING Id="109" Name="IDS_MOVETORUIM">
+		<Text>Переместить в UIM карту</Text>
+	</STRING>
+	<STRING Id="110" Name="IDS_MOVETOPHONE">
+		<Text>Переместить в телефон</Text>
+	</STRING>
+	<STRING Id="111" Name="IDS_IPCALL">
+		<Text>IP вызов</Text>
+	</STRING>
+	<STRING Id="112" Name="IDS_VMNUM">
+		<Text>Номер голосовой почты</Text>
+	</STRING>
+	<STRING Id="113" Name="IDS_VMNUM_WARNING">
+		<Text>Нет номера голосовой почты, добавить сейчас</Text>
+	</STRING>
+	<STRING Id="114" Name="IDS_RESEND">
+		<Text>Отправить снова</Text>
+	</STRING>
+	<STRING Id="115" Name="IDS_INSUFFICIENCY">
+		<Text>Недостаточно места для хранения объекта</Text>
+	</STRING>
+	<STRING Id="116" Name="IDS_SURECOPY">
+		<Text>Копировать</Text>
+	</STRING>
+	<STRING Id="117" Name="IDS_SUREMOVE">
+		<Text>Переместить</Text>
+	</STRING>
+	<STRING Id="118" Name="IDS_MSGCOPYING">
+		<Text>Копирование сообщений...</Text>
+	</STRING>
+	<STRING Id="119" Name="IDS_MSGMOVING">
+		<Text>Перемещение сообщений...</Text>
+	</STRING>
+	<STRING Id="120" Name="IDS_NOVALIDMAILADD">
+		<Text>Нет действительного e_mail адреса</Text>
+	</STRING>
+	<STRING Id="121" Name="IDS_SAVEURL">
+		<Text>Извлеч URL </Text>
+	</STRING>
+	<STRING Id="122" Name="IDS_NOVALIDURL">
+		<Text>Нет значения URL </Text>
+	</STRING>
+	<STRING Id="123" Name="IDS_EXTRACTDETAIL">
+		<Text>Извлеч детали</Text>
+	</STRING>
+	<STRING Id="124" Name="IDS_OUTBOXWILLFULL">
+		<Text>Исходящие будут переполнены</Text>
+	</STRING>
+	<STRING Id="125" Name="IDS_INBOXWILLFULL">
+		<Text>Входящие будут переполнены</Text>
+	</STRING>
+	<STRING Id="126" Name="IDS_RUIMWILLFULL">
+		<Text>UIM карта будет переполнена</Text>
+	</STRING>
+	<STRING Id="127" Name="IDS_ENABLEREPORT">
+		<Text>Вкл</Text>
+	</STRING>
+	<STRING Id="128" Name="IDS_DISABLEREPORT">
+		<Text>Выкл</Text>
+	</STRING>
+	<STRING Id="129" Name="IDS_STOREINSUFFICIENCY">
+		<Text>Недостаточно места для хранения</Text>
+	</STRING>
+	<STRING Id="130" Name="IDS_SENDDONE">
+		<Text>Отправка сообщений завершена! %d успешно %d  не успешно </Text>
+	</STRING>
+	<STRING Id="131" Name="IDS_RESERVEDMSG">
+		<Text>Duly messages</Text>
+	</STRING>
+	<STRING Id="132" Name="IDS_RESERVEDMSGS">
+		<Text>Duly messages</Text>
+	</STRING>
+	<STRING Id="133" Name="IDS_FAILEDRSVDMSGS">
+		<Text>Не успешные сообщения</Text>
+	</STRING>
+	<STRING Id="134" Name="IDS_NEWRESERVEDMSG">
+		<Text>Создать </Text>
+	</STRING>
+	<STRING Id="135" Name="IDS_AM">
+		<Text>AM</Text>
+	</STRING>
+	<STRING Id="136" Name="IDS_PM">
+		<Text>PM</Text>
+	</STRING>
+	<STRING Id="137" Name="IDS_DATE">
+		<Text>Дата</Text>
+	</STRING>
+	<STRING Id="138" Name="IDS_TIME">
+		<Text>Время</Text>
+	</STRING>
+	<STRING Id="139" Name="IDS_SAVE">
+		<Text>Сохранить</Text>
+	</STRING>
+	<STRING Id="140" Name="IDS_LOADMSG">
+		<Text>Загрузка сообщений...</Text>
+	</STRING>
+	<STRING Id="141" Name="IDS_TEMPLATE10">
+		<Text>Спасибо!</Text>
+	</STRING>
+	<STRING Id="142" Name="IDS_PWDTIPS">
+		<Text>Введите пароль</Text>
+	</STRING>
+	<STRING Id="143" Name="IDS_PWDERR">
+		<Text>Неверный пароль</Text>
+	</STRING>
+	<STRING Id="144" Name="IDS_CONTINUESENDQUERY">
+		<Text>Отправка сообщений не завершена, продолжить</Text>
+	</STRING>
+	<STRING Id="145" Name="IDS_YEARERR">
+		<Text>Введите номер года %d до 2099</Text>
+	</STRING>
+	<STRING Id="146" Name="IDS_TIMEERR">
+		<Text>Неверное время</Text>
+	</STRING>
+	<STRING Id="147" Name="IDS_ALERTTIMEOUT">
+		<Text>Отправка по умолчанию до появления сигнала тревоги</Text>
+	</STRING>
+	<STRING Id="148" Name="IDS_DELETEALL">
+		<Text>Удалить все</Text>
+	</STRING>
+	<STRING Id="149" Name="IDS_INPUTNULL">
+		<Text>Содержание не может быть пусто</Text>
+	</STRING>
+	<STRING Id="150" Name="IDS_SETCALLBACKNUM">
+		<Text>Установить номер обратного дозвона</Text>
+	</STRING>
+	<STRING Id="151" Name="IDS_SENDMODE">
+		<Text>Способ отправки</Text>
+	</STRING>
+	<STRING Id="152" Name="IDS_MSGMANAGEMENT">
+		<Text>Управление</Text>
+	</STRING>
+	<STRING Id="153" Name="IDS_COPYINBOX">
+		<Text>Копировать входящие</Text>
+	</STRING>
+	<STRING Id="154" Name="IDS_MOVEINBOX">
+		<Text>Переместиь входящие</Text>
+	</STRING>
+	<STRING Id="155" Name="IDS_UIMTOPHONE">
+		<Text>Из UIM карты в телефон</Text>
+	</STRING>
+	<STRING Id="156" Name="IDS_PHONETOUIM">
+		<Text>Из телефона в UIM карту</Text>
+	</STRING>
+	<STRING Id="157" Name="IDS_SAVEASPRESET">
+		<Text>Сохранить как заданный</Text>
+	</STRING>
+	<STRING Id="158" Name="IDS_SETTING">
+		<Text>Настройки </Text>
+	</STRING>
+	<STRING Id="159" Name="IDS_CONTACTS">
+		<Text>Контакты</Text>
+	</STRING>
+	<STRING Id="160" Name="IDS_GROUPLIST">
+		<Text>Перечень групп</Text>
+	</STRING>
+	<STRING Id="161" Name="IDS_RECENT_CALLS">
+		<Text>Принятые сообщения</Text>
+	</STRING>
+	<STRING Id="162" Name="IDS_LANGUAGE">
+		<Text>Язык</Text>
+	</STRING>
+	<STRING Id="163" Name="IDS_LANGUAGE_NOSPEC">
+		<Text>Не установленный</Text>
+	</STRING>
+	<STRING Id="164" Name="IDS_LANGUAGE_ENGLISH">
+		<Text>Английский</Text>
+	</STRING>
+	<STRING Id="165" Name="IDS_LANGUAGE_FRENCH">
+		<Text>Французский</Text>
+	</STRING>
+	<STRING Id="166" Name="IDS_LANGUAGE_SPANISH">
+		<Text>Испанский</Text>
+	</STRING>
+	<STRING Id="167" Name="IDS_LANGUAGE_JAPANESE">
+		<Text>Японский</Text>
+	</STRING>
+	<STRING Id="168" Name="IDS_LANGUAGE_KOREAN">
+		<Text>Корейский</Text>
+	</STRING>
+	<STRING Id="169" Name="IDS_LANGUAGE_CHINESE">
+		<Text>Китайский</Text>
+	</STRING>
+	<STRING Id="170" Name="IDS_LANGUAGE_HEBREW">
+		<Text>Иврит</Text>
+	</STRING>
+	<STRING Id="171" Name="IDS_AUTOREPLACE">
+		<Text>Автоматическое перемещение</Text>
+	</STRING>
+	<STRING Id="172" Name="IDS_VOICEMAIL_NOTI">
+		<Text>Уведомление о голосовом сообщении</Text>
+	</STRING>
+	<STRING Id="173" Name="IDS_MOVED">
+		<Text>%d Перемещено</Text>
+	</STRING>
+	<STRING Id="174" Name="IDS_SAVETOCONTACT">
+		<Text>Сохранить в контакты</Text>
+	</STRING>
+	<STRING Id="175" Name="IDS_EXIT_EDITOR">
+		<Text>Выйти их редактора</Text>
+	</STRING>
+	<String Id="176" Name="IDS_BROWSE">
+		<Text>Просмотр</Text>
+	</String>
+	<String Id="177" Name="IDS_FAILED_RESENDING">
+		<Text>Не успешно, переслать заново?</Text>
+	</String>
+	<String Id="178" Name="IDS_NO_PHONENUMBER">
+		<Text>Номер телефона НОЛЬ, нельзя переслать!</Text>
+	</String>
+	<String Id="179" Name="IDS_SENT">
+		<Text>SMS был отправлен</Text>
+	</String>
+	<String Id="180" Name="IDS_NEWWMSTIPS">
+		<Text>Получено %d новых сообщений</Text>
+	</String>
+	<String Id="181" Name="IDS_VMAILTIPS">
+		<Text>Новых голосовый сообщений:%d</Text>
+	</String>
+	<String Id="182" Name="IDS_NO_CARD">
+		<Text>Нет UIM карты</Text>
+	</String>
+	<String Id="183" Name="IDS_ENABLE_SHORT">
+		<Text>Вкл</Text>
+	</String>
+	<String Id="184" Name="IDS_SENDOPT_SAVEANDSEND_SHORT">
+		<Text>Отправить и копировать</Text>
+	</String>
+	<String Id="185" Name="IDS_ENABLEREPORT_SHORT">
+		<Text>on</Text>
+	</String>
+	<String Id="1001" Name="IDS_TEMPLATEHITZ0">
+		<Text>Извените, я вам перезвоню</Text>
+	</String>
+	<String Id="1002" Name="IDS_TEMPLATEHITZ1">
+		<Text>Пожалуйста, позвоните мне</Text>
+	</String>
+	<String Id="1003" Name="IDS_TEMPLATEHITZ2">
+		<Text>Извените, я занят</Text>
+	</String>
+	<String Id="1004" Name="IDS_TEMPLATEHITZ3">
+		<Text>Я скоро вернусь</Text>
+	</String>
+	<String Id="1005" Name="IDS_TEMPLATEHITZ4">
+		<Text>Извените</Text>
+	</String>
+	<String Id="1006" Name="IDS_TEMPLATEHITZ5">
+		<Text>Спасибо</Text>
+	</String>
+	<String Id="1007" Name="IDS_TEMPLATEHITZ6">
+		<Text>Как прошел день?</Text>
+	</String>
+	<String Id="1008" Name="IDS_TEMPLATEHITZ7">
+		<Text>Мы долго не виделись</Text>
+	</String>
+	<String Id="1009" Name="IDS_TEMPLATEHITZ8">
+		<Text>Я так тебя люблю/Text>
+	</String>
+	<String Id="1010" Name="IDS_TEMPLATEHITZ9">
+		<Text>Как дела?</Text>
+	</String>
+	<String Id="1011" Name="IDS_MSGVALIDITY_IMMEDIATE">
+		<Text>Immediate</Text>
+	</String>
+	<String Id="1012" Name="IDS_STR_FLASHSMS">
+		<Text>Flash sms</Text>
+	</String>
+	<String Id="1013" Name="IDS_INSERT_PICTURE">
+		<Text>Insert picture</Text>
+	</String>
+	<String Id="1014" Name="IDS_FROM_PICTURES">
+		<Text>From pictures</Text>
+	</String>
+	<String Id="1015" Name="IDS_NEW_PHOTO">
+		<Text>New photo</Text>
+	</String>
+	<String Id="1016" Name="IDS_INSERT_VIDEO">
+		<Text>Insert video</Text>
+	</String>
+	<String Id="1017" Name="IDS_FROM_MOVIES">
+		<Text>From movies</Text>
+	</String>
+	<String Id="1018" Name="IDS_NEW_VIDEO">
+		<Text>New video</Text>
+	</String>
+	<String Id="1019" Name="IDS_INSERT_SOUND">
+		<Text>Insert sound</Text>
+	</String>
+	<String Id="1020" Name="IDS_FROM_MUSIC">
+		<Text>From music</Text>
+	</String>
+	<String Id="1021" Name="IDS_NEW_SOUND">
+		<Text>New sound</Text>
+	</String>
+	<String Id="1022" Name="IDS_INSERT_FILE">
+		<Text>Insert file</Text>
+	</String>
+	<String Id="1023" Name="IDS_REMOVE_PICTURE">
+		<Text>Remove picture</Text>
+	</String>
+	<String Id="1024" Name="IDS_REMOVE_VIDEO">
+		<Text>Remove video</Text>
+	</String>
+	<String Id="1025" Name="IDS_REMOVE_SOUND">
+		<Text>Remove Sound</Text>
+	</String>
+	<String Id="1026" Name="IDS_OUTBOX_MMS">
+		<Text>Outbox  MMS</Text>
+	</String>
+	<String Id="1027" Name="IDS_INBOX_MMS">
+		<Text>Inbox  MMS</Text>
+	</String>
+	<STRING Id="1028" Name="IDS_MMSNOTIFY">
+		<Text>MMS Notify</Text>
+	</STRING>
+	<String Id="1029" Name="IDS_SENDERVISIBILITY">
+		<Text>MMS Sender Visibility</Text>
+	</String>
+	<String Id="1030" Name="IDS_MMSDELIVERYREPORT">
+		<Text>MMS Delivery Report</Text>
+	</String>
+	<String Id="1031" Name="IDS_READREPLY">
+		<Text>MMS Read Reply</Text>
+	</String>
+	<String Id="1032" Name="IDS_REPORTALLOWED">
+		<Text>MMS Report Allowed</Text>
+	</String>
+	<String Id="1033" Name="IDS_GETTINGFROM">
+		<Text>Receiving...</Text>
+	</String>
+	<String Id="1034" Name="IDS_MMS_SIZE_TOO_BIG">
+		<Text>Size of MMS too large</Text>
+	</String>
+	<String Id="1035" Name="IDS_SAVE_CURRENT_ITEM">
+		<Text>Save the current item</Text>
+	</String>
+	<String Id="1036" Name="IDS_INSERT_NEW_PICTURE">
+		<Text>Insert new picture</Text>
+	</String>
+	<String Id="1037" Name="IDS_DRAFT_MMS">
+		<Text>Draft mms</Text>
+	</String>
+	<String Id="1038" Name="IDS_SEND_TO_ALBUM_OR_EMAIL">
+		<Text>Send to album or email</Text>
+	</String>
+	<String Id="1039" Name="IDS_TIME_STAMP">
+		<Text>Time Stamp</Text>
+	</String>
+	<String Id="1040" Name="IDS_TIME_STAMP_ADJUST">
+		<Text>Adjust Time</Text>
+	</String>
+	<String Id="1041" Name="IDS_TIME_STAMP_ASRECEIVED">
+		<Text>As Received</Text>
+	</String>
+	<String Id="1042" Name="IDS_ADD_TO_RESTRICT_LIST" Encoding="Unicode">
+		<Text>Add to restrict list</Text>
+	</String>
+	<String Id="1043" Name="IDS_MMS_SERVER_ADDRESS" Encoding="Unicode">
+		<Text>MMS server address</Text>
+	</String>
+	<String Id="1044" Name="IDS_MMS_PROXY" Encoding="Unicode">
+		<Text>Proxy Address</Text>
+	</String>
+	<String Id="1045" Name="IDS_MMS_PORT" Encoding="Unicode">
+		<Text>Port</Text>
+	</String>
+	<String Id="1046" Name="IDS_DELIVERY" Encoding="Unicode">
+		<Text>message has been delivered to </Text>
+	</String>
+	<String Id="1047" Name="IDS_MMS_MENSTATUS" Encoding="Unicode">
+		<Text>MMS Memory status</Text>
+	</String>
+</Strings>
+<Dialogs>
+	<DIALOG Id="6001" Name="IDD_MAIN" Focus="7001">
+		<Controls>
+			<Menu Id="7001" Name="IDC_MAIN_MENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6002" Name="IDD_MESSAGELIST" Focus="7003">
+		<Controls>
+			<Menu Id="7003" Name="IDC_MESSAGELIST_MENU">
+				<Items/>
+			</Menu>
+		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</DIALOG>
+	<DIALOG Id="6003" Name="IDD_MSGBOX" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</DIALOG>
+	<DIALOG Id="6004" Name="IDD_MSGOPTS" Focus="0">
+		<Controls>
+			<Menu Id="7004" Name="IDC_MSGOPTS_MENU">
+				<Items/>
+			</Menu>
+		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</DIALOG>
+	<DIALOG Id="6005" Name="IDD_VIEWMSG" Focus="7005">
+		<Controls>
+			<Static Id="7005" Name="IDC_VIEWMSG_STATIC">
+				<Items/></Static>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6006" Name="IDD_WRITEMSG" Focus="7006">
+		<Controls>
+			<Text Id="7006" Name="IDC_WRITEMSG_TEXT">
+				<TitleID>IDS_BLANK</TitleID>
+				<Items/></Text>
+			<Menu Id="7045" Name="IDC_WRITEMSG_MENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<Dialog Id="6007" Name="IDD_PWD" Focus="0">
+		<Controls/>
+	</Dialog>
+	<Dialog Id="6008" Name="IDD_RESERVEDMSGALERT" Focus="0">
+		<Controls/>
+	</Dialog>
+	<DIALOG Id="6009" Name="IDD_DELETEMSGS" Focus="7009">
+		<Controls>
+			<Menu Id="7009" Name="IDC_DELETEMSGS_MENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6010" Name="IDD_CONFIRM" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</DIALOG>
+	<DIALOG Id="6011" Name="IDD_DELETING" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</DIALOG>
+	<DIALOG Id="6012" Name="IDD_TEMPLATES" Focus="7010">
+		<Controls>
+			<Menu Id="7010" Name="IDC_TEMPLATES_MENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6013" Name="IDD_SETTING" Focus="7011">
+		<Controls>
+			<Menu Id="7011" Name="IDC_SETTING_MENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6014" Name="IDD_OUTMSGSAVEOPT" Focus="7012">
+		<Controls>
+			<Menu Id="7012" Name="IDC_OUTMSGSAVEOPT_MENU">
+				<Items>
+					<Item Id="8022" Name="IDL_AUTOSAVE">
+						<TextID>IDS_AUTOSAVE</TextID>
+					</Item>
+					<Item Id="8023" Name="IDL_NOTSAVE">
+						<TextID>IDS_NOTSAVE</TextID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6015" Name="IDD_PRIORITY" Focus="7013">
+		<Controls>
+			<Menu Id="7013" Name="IDC_PRIORITY_MENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6016" Name="IDD_REPORTS" Focus="7014">
+		<Controls>
+			<Menu Id="7014" Name="IDC_REPORTS_MENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6017" Name="IDD_STORAGE" Focus="7015">
+		<Controls>
+			<Menu Id="7015" Name="IDC_STORAGE_MENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6018" Name="IDD_MEMSTATUS" Focus="0">
+		<Controls/>
+	</DIALOG>
+	<Dialog Id="6019" Name="IDD_RSVDMSGALERTTIMEOUT_SETTING" Focus="0">
+		<Controls>
+			<Menu Id="7007" Name="IDC_RSVDMSGALERTTIMEOUT_SETTING">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<DIALOG Id="6020" Name="IDD_EDITTEMPLATE" Focus="7017">
+		<Controls>
+			<Text Id="7017" Name="IDC_EDITTEMPLATE_TEXT">
+				<TitleID>IDS_BLANK</TitleID>
+				<Items/></Text>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6021" Name="IDD_TONUMLIST" Focus="7018">
+		<Controls>
+			<Menu Id="7018" Name="IDC_TONUMLIST_MENU">
+				<Items/>
+			</Menu>
+			<Text Id="7024" Name="IDC_NUMTEXT">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+				<Items/></Text>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6022" Name="IDD_SENDING" Focus="0">
+		<Controls/>
+	</DIALOG>
+	<DIALOG Id="6023" Name="IDD_EXTARCTEDITEMLIST" Focus="7019">
+		<Controls>
+			<Menu Id="7019" Name="IDC_SAVENUMLIST_MENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6024" Name="IDD_EXTARCTEDITEM_OPT" Focus="7021">
+		<Controls>
+			<Menu Id="7021" Name="IDC_SAVENUMLISTOPT_MENU">
+				<Items/>
+			</Menu>
+		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</DIALOG>
+	<Dialog Id="6025" Name="IDD_RESERVEDMSG" Focus="0">
+		<Controls>
+			<Menu Id="7002" Name="IDC_RESERVEDMSG_MENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<DIALOG Id="6026" Name="IDD_CALLREJECTSMS" Focus="7022">
+		<Controls>
+			<Menu Id="7022" Name="IDC_CALLREJECTSMS_MENU">
+				<Items>
+					<Item Id="8010" Name="IDL_CALLREJECTSMS_ENABLE">
+						<TextID>IDS_ENABLE</TextID>
+					</Item>
+					<Item Id="8011" Name="IDL_CALLREJECTSMS_DISABLE">
+						<TextID>IDS_DISABLE</TextID>
+					</Item>
+					<Item Id="8021" Name="IDL_EDIT_CALLREJECTSMS">
+						<TextID>IDS_EDITCALLREJECTSMS</TextID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6027" Name="IDD_AUTODELETE" Focus="7023">
+		<Controls>
+			<Menu Id="7023" Name="IDC_AUTODELETE_MENU">
+				<Items>
+					<Item Id="8024" Name="IDL_AUTODELETE_ON">
+						<TextID>IDS_ENABLE</TextID>
+					</Item>
+					<Item Id="8025" Name="IDL_AUTODELETE_OFF">
+						<TextID>IDS_DISABLE</TextID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<Dialog Id="6028" Name="IDD_MESSAGEVALIDITY" Focus="0">
+		<Controls>
+			<Menu Id="7025" Name="IDC_MESSAGEVALIDITY_MENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6029" Name="IDD_SENDOPTS" Focus="7029">
+		<Controls>
+			<List Id="7026" Name="IDC_MENU_SENDOPT">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+				<Items/>
+			</List>
+			<List Id="7027" Name="IDC_MENU_PRI">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+				<Items/>
+			</List>
+			<List Id="7028" Name="IDC_MENU_RPT">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+				<Items/>
+			</List>
+			<Text Id="7029" Name="IDC_TEXT_CBNUM">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+				<Items/></Text>
+			<List Id="7037" Name="IDC_MENU_CBNUM">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+				<Items/>
+			</List>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6030" Name="IDD_CALLBACKNUMSWITCH" Focus="7008">
+		<Controls>
+			<Menu Id="7008" Name="IDC_CALLBACKNUMSWITCH_MENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6031" Name="IDD_VOICEMAIL" Focus="0">
+		<Controls>
+			<Menu Id="7030" Name="IDC_VOICEMAIL_MENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6032" Name="IDD_VMNUM" Focus="0">
+		<Controls>
+			<Text Id="7031" Name="IDC_VMNUM_TEXT">
+				<Items/></Text>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6033" Name="IDD_LOADINGMSG" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<Dialog Id="6034" Name="IDD_CALLBACKNUM" Focus="7016">
+		<Controls>
+			<Text Id="7016" Name="IDC_CALLBACKNUM_TEXT">
+				<Items/></Text>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6035" Name="IDD_MSGCOPY" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<Dialog Id="6036" Name="IDD_EXTARCTDETAILS" Focus="0">
+		<Controls>
+			<Menu Id="7032" Name="IDC_MENU_EXTRACT">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6037" Name="IDD_GETDT" Focus="0">
+		<Controls/>
+	</Dialog>
+	<Dialog Id="6038" Name="IDD_MANAGEMENT" Focus="7020">
+		<Controls>
+			<Menu Id="7020" Name="IDC_MANAGEMENT_MENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6039" Name="IDD_COPYINBOX" Focus="7033">
+		<Controls>
+			<Menu Id="7033" Name="IDC_COPYINBOX_MENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6040" Name="IDD_MOVEINBOX" Focus="7034">
+		<Controls>
+			<Menu Id="7034" Name="IDC_MOVEINBOX_MENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6041" Name="IDD_SENDMODE" Focus="7035">
+		<Controls>
+			<Menu Id="7035" Name="IDC_SENDMODE_MENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6042" Name="IDD_SELECTFROMOPT" Focus="7036">
+		<Controls>
+			<Menu Id="7036" Name="IDC_SELECTFROM_MENU">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+				<Items/>
+			</Menu>
+		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<Dialog Id="6043" Name="IDD_AUTOREPLACE" Focus="7038">
+		<Controls>
+			<Menu Id="7038" Name="IDC_AUTOREPLACE_MENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6044" Name="IDD_RESEND_CONFIRM" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<Dialog Id="6045" Name="IDD_WMSNEWMSG" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<Dialog Id="6046" Name="IDD_NOPOPMSG" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<Dialog Id="6047" Name="IDD_FLASHSMS" Focus="7039">
+		<Controls>
+			<Static Id="7039" Name="IDC_STATIC_FLASHSMS">
+				<Items/></Static>
+		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<Dialog Id="6048" Name="IDD_VIEWMSG_MMS" Focus="7040">
+		<Controls>
+			<Static Id="7040" Name="IDC_VIEWMSG_MMS_STATIC">
+				<Items/></Static>
+			<Menu Id="7046" Name="IDC_VIEWMSG_MMS_MENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<DIALOG Id="6049" Name="IDD_MMSOPTION_YESNO" Focus="7041">
+		<Controls>
+			<Menu Id="7041" Name="IDC_MMSOPTION_YESNO">
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<Dialog Id="6050" Name="IDD_GETTING" Focus="0">
+		<Controls/>
+	</Dialog>
+	<Dialog Id="6051" Name="IDD_TIME_STAMP" Focus="0">
+		<Controls>
+			<Menu Id="7042" Name="IDC_TIME_STAMP_MENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6052" Name="IDD_ALBUMOREMAIN" Focus="7043">
+		<Controls>
+			<Text Id="7043" Name="IDC_EDIT_ALBUMOREMAIN">
+				<Items/></Text>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6053" Name="IDD_MMS_SERVER_ADDRESS" Focus="0">
+		<Controls>
+			<Text Id="7044" Name="IDC_MMS_SERVER_ADDRESS">
+				<Items/></Text>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6054" Name="IDD_MMS_PROXY" Focus="0">
+		<Controls>
+			<Text Id="7047" Name="IDC_MMS_PROXY">
+				<Items/></Text>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6055" Name="IDD_MMS_PORT" Focus="0">
+		<Controls>
+			<Text Id="7048" Name="IDC_MMS_PORT">
+				<Items/></Text>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6056" Name="IDD_MMS_MEMSTATUS" Focus="0">
+		<Controls/>
+	</Dialog>
+</Dialogs>
+</BREWRes>
