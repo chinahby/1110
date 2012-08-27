@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="stopwatch" VERSION="1">
+<Strings Encoding="Unicode">
+	<STRING Id="1" Name="IDS_STOPWATCH_TITLE">
+		<Text>Секундомер</Text>
+	</STRING>
+	<STRING Id="2" Name="IDS_RESET_CONFIRM">
+		<Text>Сброс</Text>
+	</STRING>
+	<STRING Id="3" Name="IDS_RESET_RECORDFULL">
+		<Text>Запись переполнена, Сброс</Text>
+	</STRING>
+	<STRING Id="4" Name="IDS_STOPWATCH1">
+		<Text>Секундомер 1</Text>
+	</STRING>
+	<STRING Id="5" Name="IDS_STOPWATCH2">
+		<Text>Секундомер 2</Text>
+	</STRING>
+	<STRING Id="6" Name="IDS_CHANGE_CONFIRM">
+		<Text>Поменять на другой секундомер</Text>
+	</STRING>
+</Strings>
+</BREWRes>
