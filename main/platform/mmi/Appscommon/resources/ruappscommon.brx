@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="appscommon" VERSION="1">
+<Strings Encoding="Unicode">
+	<STRING Id="1" Name="IDS_SELECT">
+		<Text>Выбор</Text>
+	</STRING>
+	<STRING Id="2" Name="IDS_DEL">
+		<Text>Удалить.</Text>
+	</STRING>
+	<STRING Id="3" Name="IDS_CANCEL">
+		<Text>Отмена</Text>
+	</STRING>
+	<STRING Id="4" Name="IDS_SEND">
+		<Text>Отправка</Text>
+	</STRING>
+	<STRING Id="5" Name="IDS_CONTINU">
+		<Text>Продолжить.</Text>
+	</STRING>
+	<STRING Id="6" Name="IDS_BACK">
+		<Text>Вернуть</Text>
+	</STRING>
+	<STRING Id="7" Name="IDS_FIND">
+		<Text>Поиск</Text>
+	</STRING>
+	<STRING Id="8" Name="IDS_OK">
+		<Text>Да</Text>
+	</STRING>
+	<STRING Id="9" Name="IDS_EDIT">
+		<Text>Редактировать</Text>
+	</STRING>
+	<STRING Id="10" Name="IDS_SAVE">
+		<Text>Сохранить</Text>
+	</STRING>
+	<STRING Id="11" Name="IDS_MENU">
+		<Text>Меню</Text>
+	</STRING>
+	<STRING Id="12" Name="IDS_NEXT">
+		<Text>Далее</Text>
+	</STRING>
+	<STRING Id="13" Name="IDS_READ">
+		<Text>Читать</Text>
+	</STRING>
+	<STRING Id="14" Name="IDS_OPTION">
+		<Text>Опции</Text>
+	</STRING>
+	<STRING Id="15" Name="IDS_SOS">
+		<Text>SOS</Text>
+	</STRING>
+	<STRING Id="16" Name="IDS_CLOSE">
+		<Text>Закрыть</Text>
+	</STRING>
+	<STRING Id="17" Name="IDS_RESET">
+		<Text>Перегрузить</Text>
+	</STRING>
+	<STRING Id="18" Name="IDS_END">
+		<Text>Завершить</Text>
+	</STRING>
+	<STRING Id="19" Name="IDS_STRING_CONTACTS">
+		<Text>Контакты</Text>
+	</STRING>
+	<STRING Id="20" Name="IDS_STRING_END_CALL">
+		<Text>Завершить звонок</Text>
+	</STRING>
+	<STRING Id="21" Name="IDS_STRING_CANCEL">
+		<Text>Отмена</Text>
+	</STRING>
+	<STRING Id="22" Name="IDS_MSG_CONFIRM_DELETE">
+		<Text>Удалить</Text>
+	</STRING>
+	<STRING Id="23" Name="IDS_MSG_INFORMATIVE_DELETE">
+		<Text>Удалён</Text>
+	</STRING>
+	<STRING Id="24" Name="IDS_MSG_CONFIRM_DELETEALL">
+		<Text>Удалить все</Text>
+	</STRING>
+	<STRING Id="25" Name="IDS_MSG_INFORMATIVE_DELETEALL">
+		<Text>Удалить все</Text>
+	</STRING>
+	<STRING Id="26" Name="IDS_MSG_CONFIRM_COPY">
+		<Text>Скопировать</Text>
+	</STRING>
+	<STRING Id="27" Name="IDS_MSG_INFORMATIVE_COPYED">
+		<Text>Успешно </Text>
+	</STRING>
+	<STRING Id="28" Name="IDS_SETTING">
+		<Text>Установить</Text>
+	</STRING>
+	<STRING Id="29" Name="IDS_TOTODAY">
+		<Text>Сегодня</Text>
+	</STRING>
+	<STRING Id="30" Name="IDS_STRING_IP">
+		<Text>IP</Text>
+	</STRING>
+	<STRING Id="31" Name="IDS_INPUT_NORMAL">
+		<Text>Нормально</Text>
+	</STRING>
+	<STRING Id="32" Name="IDS_INPUT_STROKE">
+		<Text>Stroke</Text>
+	</STRING>
+	<STRING Id="33" Name="IDS_INPUT_ZHUYIN">
+		<Text>Zhuyin</Text>
+	</STRING>
+	<STRING Id="34" Name="IDS_INPUT_RAPIDEN">
+		<Text>RapidEN</Text>
+	</STRING>
+	<STRING Id="35" Name="IDS_INPUT_NUMBERS">
+		<Text>Числа</Text>
+	</STRING>
+	<STRING Id="36" Name="IDS_MSG_KEYGUARD">
+		<Text>Нажмите "Разблокировать" делее *</Text>
+	</STRING>
+	<STRING Id="37" Name="IDS_INPUT_RAPIDTH">
+		<Text>RapidTH</Text>
+	</STRING>
+	<STRING Id="38" Name="IDS_INPUT_MULTITH">
+		<Text>MultiTH</Text>
+	</STRING>
+	<STRING Id="39" Name="IDS_INPUT_MAJUSCULE">
+		<Text>АБВ</Text>
+	</STRING>
+	<STRING Id="40" Name="IDS_INPUT_SMALL_LETTER">
+		<Text>абв</Text>
+	</STRING>
+	<STRING Id="41" Name="IDS_ANSWER">
+		<Text>Ответ</Text>
+	</STRING>
+	<STRING Id="42" Name="IDS_IGNORE">
+		<Text>Игнорировать</Text>
+	</STRING>
+	<STRING Id="43" Name="IDS_REJECT">
+		<Text>Отклонить</Text>
+	</STRING>
+	<STRING Id="44" Name="IDS_MUTE">
+		<Text>Беззвучно</Text>
+	</STRING>
+	<STRING Id="45" Name="IDS_UNMUTE">
+		<Text>Со звуком</Text>
+	</STRING>
+	<STRING Id="46" Name="IDS_STRING_UNLOCK">
+		<Text>Разблокировать</Text>
+	</STRING>
+	<STRING Id="47" Name="IDS_START">
+		<Text>Начать</Text>
+	</STRING>
+	<STRING Id="48" Name="IDS_CALL">
+		<Text>Вызов</Text>
+	</STRING>
+	<STRING Id="114" Name="IDS_OPTION_FM">
+		<Text>Опции</Text>
+	</STRING>
+	<STRING Id="1001" Name="IDS_RECORD">
+		<Text>Диктофон</Text>
+	</STRING>
+	<STRING Id="1002" Name="IDS_STOP">
+		<Text>Стоп</Text>
+	</STRING>
+	<STRING Id="1003" Name="IDS_APPSCOMMON_AM">
+		<Text>AM</Text>
+	</STRING>
+	<STRING Id="1004" Name="IDS_APPSCOMMON_PM">
+		<Text>PM</Text>
+	</STRING>
+	<STRING Id="1005" Name="IDS_RESUME">
+		<Text>Продолжить</Text>
+	</STRING>
+	<STRING Id="1006" Name="IDS_RETRY">
+		<Text>Повтор</Text>
+	</STRING>
+	<STRING Id="1007" Name="IDS_CREATE">
+		<Text>Создать</Text>
+	</STRING>
+	<STRING Id="1008" Name="IDS_ADD">
+		<Text>Добавить</Text>
+	</STRING>
+	<STRING Id="1009" Name="IDS_PAUSE">
+		<Text>Пауза</Text>
+	</STRING>
+	<STRING Id="1010" Name="IDS_PLAY">
+		<Text>Проигрывать</Text>
+	</STRING>
+	<STRING Id="1011" Name="IDS_POP_DONE">
+		<Text>Сделано</Text>
+	</STRING>
+	<STRING Id="1012" Name="IDS_EXCHANGE">
+		<Text>Заменить.</Text>
+	</STRING>
+	<STRING Id="1013" Name="IDS_JEWISH">
+		<Text>Дисплей</Text>
+	</STRING>
+	<STRING Id="1014" Name="IDS_HANDSFREE_ON">
+		<Text>Вкл Handsfree</Text>
+	</STRING>
+	<STRING Id="1015" Name="IDS_BLUETOOTH_ACCEPT">
+		<Text>Доступ</Text>
+	</STRING>
+	<STRING Id="1016" Name="IDS_HANDSFREE_OFF">
+		<Text>Выкл Handsfree</Text>
+	</STRING>
+	<STRING Id="1017" Name="IDS_REPLAY">
+		<Text>Воспроизвести заново</Text>
+	</STRING>
+	<STRING Id="1018" Name="IDS_UP">
+		<Text>Вернуть</Text>
+	</STRING>
+	<STRING Id="1019" Name="IDS_SPORT">
+		<Text>Спорт</Text>
+	</STRING>
+	<STRING Id="1020" Name="IDS_CONFIRM_OFF_FM">
+		<Text>Выкл FM</Text>
+	</STRING>
+	<STRING Id="1021" Name="IDS_CONFIRM_OFF_MP">
+		<Text>Выкл музыкальный пригрыватель</Text>
+	</STRING>
+	<STRING Id="1022" Name="IDS_FULLSCREEN">
+		<Text>Во весь экран</Text>
+	</STRING>
+	<STRING Id="1023" Name="IDS_GALLERY">
+		<Text>Галлерея</Text>
+	</STRING>
+	<STRING Id="1024" Name="IDS_YES">
+		<Text>Да</Text>
+	</STRING>
+	<STRING Id="1025" Name="IDS_NO">
+		<Text>Нет</Text>
+	</STRING>
+	<String Id="1026" Name="IDS_LOCK">
+		<Text>Lock Keypad</Text>
+	</String>
+	<String Id="1027" Name="IDS_FACEBOOK">
+		<Text>Facebook</Text>
+	</String>
+	<String Id="1028" Name="IDS_FRENDUO_LIST">
+		<Text>FrenDuo</Text>
+	</String>
+	<String Id="1029" Name="IDS_CHAT">
+		<Text>Чат</Text>
+	</String>
+	<String Id="1030" Name="IDS_MORE">
+		<Text>Более</Text>
+	</String>
+	<String Id="1031" Name="IDS_MESSAGES">
+		<Text>Сообщения</Text>
+	</String>
+	<String Id="1032" Name="IDS_MSG_KEYGUARD_SPACE">
+		<Text>Удержать кнопку пробела для разблокировки клавиатуры</Text>
+	</String>
+	<String Id="1033" Name="IDS_SHIFT" Encoding="Unicode">
+		<Text>Shift</Text>
+	</String>
+	<String Id="1034" Name="IDS_ALT" Encoding="Unicode">
+		<Text>Alt</Text>
+	</String>
+	<String Id="1035" Name="IDS_CAP" Encoding="Unicode">
+		<Text>Cap</Text>
+	</String>
+	<STRING Id="2001" Name="IDS_SNOOZE">
+		<Text>Продлить сон</Text>
+	</STRING>
+	<STRING Id="2002" Name="IDS_FM_BACK">
+		<Text>назад</Text>
+	</STRING>
+	<STRING Id="2003" Name="IDS_MSG_KEYGUARD_UNLOCKKEY">
+		<Text>Нажмите * для разблокировки клавиатуры</Text>
+	</STRING>
+	<STRING Id="2004" Name="IDS_MODIFY">
+		<Text>Изменить</Text>
+	</STRING>
+	<String Id="2005" Name="IDS_VIEW">
+		<Text>Просмотр</Text>
+	</String>
+	<String Id="2006" Name="IDS_FMUSLIM">
+		<Text>FMuslim</Text>
+	</String>
+	<String Id="2007" Name="IDS_FNASRANI">
+		<Text>FKristiani </Text>
+	</String>
+	<String Id="2008" Name="IDS_FPORTAL">
+		<Text>FPortal</Text>
+	</String>
+	<String Id="2009" Name="IDS_FGURU">
+		<Text>FGuru</Text>
+	</String>
+	<String Id="2010" Name="IDS_FMENU">
+		<Text>MyFlexi</Text>
+	</String>
+</Strings>
+</BREWRes>
