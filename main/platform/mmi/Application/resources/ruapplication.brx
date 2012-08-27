@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="application" VERSION="1">
+<Strings Encoding="Unicode">
+	<String Id="1001" Name="IDS_APPLICATION_LIST">
+		<Text>Приложения</Text>
+	</String>
+	<String Id="1002" Name="IDS_DIAG_AND_DATA">
+		<Text>Вкл</Text>
+	</String>
+	<String Id="1003" Name="IDS_MASS_STORAGE">
+		<Text>Выкл</Text>
+	</String>
+	<String Id="1004" Name="IDS_APPLICATION_WAPBROWSER">
+		<Text>Браузер</Text>
+	</String>
+	<STRING Id="1011" Name="IDS_APPLICATION_BAM">
+		<Text>BREW</Text>
+	</STRING>
+	<STRING Id="1012" Name="IDS_APPLICATION_TIMER">
+		<Text>Таймер</Text>
+	</STRING>
+	<STRING Id="1013" Name="IDS_APPLICATION_STOPWATCH">
+		<Text>Секундомер</Text>
+	</STRING>
+	<STRING Id="1014" Name="IDS_APPLICATION_ALARM">
+		<Text>Будильник</Text>
+	</STRING>
+	<String Id="1015" Name="IDS_APPLICATION_CONVERTER">
+		<Text>Конвертер</Text>
+	</String>
+	<String Id="1016" Name="IDS_APPLICATION_WORLDTIME">
+		<Text>Мировое время</Text>
+	</String>
+	<String Id="1017" Name="IDS_APPLICATION_RECORDER">
+		<Text>Диктофон</Text>
+	</String>
+	<String Id="1018" Name="IDS_APPLICATION_SCHEDULER">
+		<Text>Календарь</Text>
+	</String>
+	<String Id="1019" Name="IDS_APPLICATION_GAME">
+		<Text>Игры</Text>
+	</String>
+	<String Id="1020" Name="IDS_APPLICATION_CALCULATOR">
+		<Text>Калькулятор</Text>
+	</String>
+	<String Id="1021" Name="IDS_APPLICATION_CAMERA">
+		<Text>Камера</Text>
+	</String>
+	<String Id="1022" Name="IDS_APPLICATION_FMRADIO">
+		<Text>FM Радио</Text>
+	</String>
+	<String Id="1024" Name="IDS_APPLICATION_BROWSER">
+		<Text>Браузер</Text>
+	</String>
+	<String Id="1025" Name="IDS_APPLICATION_BLUETOOTH">
+		<Text>Блютуз</Text>
+	</String>
+	<String Id="1026" Name="IDS_APPLICATION_FLASHLIGHT">
+		<Text>Фонарь</Text>
+	</String>
+	<String Id="1027" Name="IDS_APPLICATION_MMS">
+		<Text>Mms</Text>
+	</String>
+	<String Id="1031" Name="IDS_TOOLS_LIST">
+		<Text>Инструменты</Text>
+	</String>
+	<String Id="1032" Name="IDS_STR_TRUNONTORCH">
+		<Text>TurnOn Torch</Text>
+	</String>
+	<String Id="1033" Name="IDS_STR_TRUNOFFFTORCH">
+		<Text>TurnOff Torch</Text>
+	</String>
+</Strings>
+<Dialogs>
+	<Dialog Id="6001" Name="IDD_FLASHLIGHT_SETTING" Focus="7002">
+		<Controls>
+			<Menu Id="7002" Name="IDC_FLASHLIGHT_SET">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6002" Name="IDD_MSGBOX" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<Dialog Id="6003" Name="IDD_LIST_APPLICATION" Focus="7001">
+		<Controls>
+			<Menu Id="7001" Name="IDC_APPLICATION_LIST">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+</Dialogs>
+</BREWRes>
