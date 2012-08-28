@@ -739,7 +739,7 @@ LOCAL camsensor_unactive_fn_type camsensor_unactive_value_table[CAMSENSOR_ID_MAX
 #endif
 
 #ifdef USE_CAMSENSOR_GC0311
-	camsensor_gc0311_ycbcr_unactive,
+	camsensor_GC0311_ycbcr_unactive,
 #endif
 
 #ifdef USE_CAMSENSOR_SP0828
@@ -891,7 +891,7 @@ LOCAL camsensor_active_fn_type camsensor_active_value_table[CAMSENSOR_ID_MAX] =
 #endif
 
 #ifdef USE_CAMSENSOR_GC0311
-	camsensor_gc0311_ycbcr_active,
+	camsensor_GC0311_ycbcr_active,
 #endif
 
 #ifdef USE_CAMSENSOR_SP0828
@@ -1062,7 +1062,7 @@ LOCAL boolean (*camsensor_detect_table[])(camsensor_function_table_type *, camct
 #endif
 
 #ifdef USE_CAMSENSOR_GC0311
-	camsensor_gc0311_init,
+	camsensor_GC0311_init,
 #endif
 
 #ifdef USE_CAMSENSOR_SP0828
