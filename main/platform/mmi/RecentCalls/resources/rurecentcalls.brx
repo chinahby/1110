@@ -1,125 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
 <BREWRes Name="recentcalls" VERSION="1">
-<Strings Encoding="ISOLATIN1">
+<Strings Encoding="Unicode">
 	<STRING Id="1" Name="IDS_SAVE">
-		<Text>Save</Text>
+		<Text>Сохранить</Text>
 	</STRING>
 	<STRING Id="2" Name="IDS_MIN">
-		<Text>m</Text>
+		<Text>м</Text>
 	</STRING>
 	<STRING Id="3" Name="IDS_SEC">
-		<Text>s</Text>
+		<Text>с</Text>
 	</STRING>
 	<STRING Id="4" Name="IDS_MISSED_CALLS">
-		<Text>Missed calls</Text>
+		<Text>Пропущенные вызовы</Text>
 	</STRING>
 	<STRING Id="5" Name="IDS_RECEIVED_CALLS">
-		<Text>Received calls</Text>
+		<Text>Полученные звонки</Text>
 	</STRING>
 	<STRING Id="6" Name="IDS_OUTGOING_CALLS">
-		<Text>Dialed calls</Text>
+		<Text>Набранные звонки</Text>
 	</STRING>
 	<STRING Id="7" Name="IDS_DELETE">
-		<Text>Delete</Text>
+		<Text>Удалить</Text>
 	</STRING>
 	<STRING Id="8" Name="IDS_SEND_SMS">
-		<Text>Send messages</Text>
+		<Text>Отправить сообщения</Text>
 	</STRING>
 	<STRING Id="9" Name="IDS_CALL_TIME">
-		<Text>Call time</Text>
+		<Text>Время вызова</Text>
 	</STRING>
 	<STRING Id="10" Name="IDS_ALL_CALLS">
-		<Text>All calls </Text>
+		<Text>Все звонки</Text>
 	</STRING>
 	<STRING Id="11" Name="IDS_RESET_TIME">
-		<Text>Reset time</Text>
+		<Text>Время сброса</Text>
 	</STRING>
 	<STRING Id="12" Name="IDS_DELETE_ALL">
-		<Text>Delete record</Text>
+		<Text>Удалить запись</Text>
 	</STRING>
 	<STRING Id="13" Name="IDS_DELETE_Q">
-		<Text>Delete</Text>
+		<Text>Удалить</Text>
 	</STRING>
 	<STRING Id="14" Name="IDS_RESET_TIME_Q">
-		<Text>Reset</Text>
+		<Text>Сброс</Text>
 	</STRING>
 	<STRING Id="15" Name="IDS_NO_CALLS">
-		<Text>No record</Text>
+		<Text>Нет записей</Text>
 	</STRING>
 	<STRING Id="16" Name="IDS_DURATION">
-		<Text>Duration:</Text>
+		<Text>Длительность:</Text>
 	</STRING>
 	<STRING Id="17" Name="IDS_DELETE_OK">
-		<Text>Done</Text>
+		<Text>Сделано</Text>
 	</STRING>
 	<STRING Id="18" Name="IDS_TIME_RESETED">
-		<Text>Reseted</Text>
+		<Text>Установленное время</Text>
 	</STRING>
 	<STRING Id="19" Name="IDS_UNKNOWN_NUMBER">
-		<Text>Unknown number</Text>
+		<Text>Неизвестный номер</Text>
 	</STRING>
 	<STRING Id="20" Name="IDS_DETAIL">
-		<Text>View</Text>
+		<Text>Обзор</Text>
 	</STRING>
 	<STRING Id="21" Name="IDS_CALLCOUNT">
-		<Text>Count</Text>
+		<Text>Счет</Text>
 	</STRING>
 	<STRING Id="22" Name="IDS_MAKE_CALL">
-		<Text>Call</Text>
+		<Text>Вызов</Text>
 	</STRING>
 	<STRING Id="23" Name="IDS_MAKE_IPCALL">
-		<Text>IP call</Text>
+		<Text>IP звонок</Text>
 	</STRING>
 	<STRING Id="24" Name="IDS_SEND_CONTACT">
-		<Text>Send contacts</Text>
+		<Text>Отправить контакты</Text>
 	</STRING>
 	<STRING Id="25" Name="IDS_RECENT_CALLS">
-		<Text>Recent calls</Text>
+		<Text>Последние звонки</Text>
 	</STRING>
 	<STRING Id="26" Name="IDS_PASSWORD">
-		<Text>Enter password</Text>
+		<Text>Введите пароль</Text>
 	</STRING>
 	<STRING Id="27" Name="IDS_MSG_INPUTINVALID">
-		<Text>Invalid password</Text>
+		<Text>Неверный пароль</Text>
 	</STRING>
 	<STRING Id="28" Name="IDS_CALLTIME">
-		<Text>Call time:</Text>
+		<Text>Время вызова:</Text>
 	</STRING>
 	<STRING Id="29" Name="IDS_LAST_CALL">
-		<Text>Last call</Text>
+		<Text>Последний звонок</Text>
 	</STRING>
 	<STRING Id="1001" Name="IDS_SAVE_AS">
-		<Text>Save as</Text>
+		<Text>Сохранить как</Text>
 	</STRING>
 	<STRING Id="1002" Name="IDS_SAVETOCONTACT">
-		<Text>Save to contacts</Text>
+		<Text>Сохранить в контакты</Text>
 	</STRING>
 	<STRING Id="1003" Name="IDS_ERR_UNKNOWN">
-		<Text>Unkown Error</Text>
+		<Text>Неизвестная ошибка</Text>
 	</STRING>
 	<STRING Id="1004" Name="IDS_NO_NUMBER">
-		<Text>No number</Text>
+		<Text>Нет номера</Text>
 	</STRING>
 	<STRING Id="1005" Name="IDS_EXECUTE">
-		<Text>Execute</Text>
+		<Text>Применить</Text>
 	</STRING>
 	<STRING Id="1006" Name="IDS_MARK">
-		<Text>Mark</Text>
+		<Text>Отметить</Text>
 	</STRING>
 	<STRING Id="1007" Name="IDS_MARKALL">
-		<Text>Mark all</Text>
+		<Text>Отметить все</Text>
 	</STRING>
 	<STRING Id="1008" Name="IDS_UNMARKALL">
-		<Text>Unmark all</Text>
+		<Text>Отменить пометку для всех</Text>
 	</STRING>
 	<STRING Id="1009" Name="IDS_UNMARK">
-		<Text>Unmark</Text>
+		<Text>Отменить пометку  </Text>
 	</STRING>
 	<STRING Id="1010" Name="IDS_MAX_SELECT">
-		<Text>Reach maximum contacts</Text>
+		<Text>Достигнуть максимум контактов</Text>
 	</STRING>
 	<STRING Id="1011" Name="IDS_EDIT_NUMBER">
-		<Text>Edit number</Text>
+		<Text>Редактировать номер</Text>
 	</STRING>
 	<STRING Id="1012" Name="IDS_HOUR">
 		<Text>h</Text>
