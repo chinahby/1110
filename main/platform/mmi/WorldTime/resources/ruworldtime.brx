@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="worldtime" VERSION="1">
+<Strings Encoding="Unicode">
+	<STRING Id="1" Name="IDS_TITLE">
+		<Text>Мировое время</Text>
+	</STRING>
+	<STRING Id="2" Name="IDS_CITY_0">
+		<Text>Касабланка, Лондон</Text>
+	</STRING>
+	<STRING Id="3" Name="IDS_CITY_1">
+		<Text>Берлин, Мадрид, Рим, Париж</Text>
+	</STRING>
+	<STRING Id="4" Name="IDS_CITY_2">
+		<Text>Афины, Хельсинки</Text>
+	</STRING>
+	<STRING Id="5" Name="IDS_CITY_3">
+		<Text>Багдад, Москва</Text>
+	</STRING>
+	<STRING Id="6" Name="IDS_CITY_4">
+		<Text>Абудаби</Text>
+	</STRING>
+	<STRING Id="7" Name="IDS_CITY_5">
+		<Text>Исламабад, Ташкент</Text>
+	</STRING>
+	<STRING Id="8" Name="IDS_CITY_6">
+		<Text>Дакка</Text>
+	</STRING>
+	<STRING Id="9" Name="IDS_CITY_7">
+		<Text>Бангкон, Джакарта</Text>
+	</STRING>
+	<STRING Id="10" Name="IDS_CITY_8">
+		<Text>Тайпей, Пекин, Гонг Конг</Text>
+	</STRING>
+	<STRING Id="11" Name="IDS_CITY_9">
+		<Text>Сеул, Токио</Text>
+	</STRING>
+	<STRING Id="12" Name="IDS_CITY_10">
+		<Text>Мельбурн, Сидней</Text>
+	</STRING>
+	<STRING Id="13" Name="IDS_CITY_11">
+		<Text>Владивосток</Text>
+	</STRING>
+	<STRING Id="14" Name="IDS_CITY_12">
+		<Text>Веллингтон</Text>
+	</STRING>
+	<STRING Id="15" Name="IDS_CITY_13">
+		<Text>Эниветок</Text>
+	</STRING>
+	<STRING Id="16" Name="IDS_CITY_14">
+		<Text>Мидвей</Text>
+	</STRING>
+	<STRING Id="17" Name="IDS_CITY_15">
+		<Text>Гонолулу, Гаваи</Text>
+	</STRING>
+	<STRING Id="18" Name="IDS_CITY_16">
+		<Text>Анкоридж</Text>
+	</STRING>
+	<STRING Id="19" Name="IDS_CITY_17">
+		<Text>Лос Анжелес, Сан Франциско</Text>
+	</STRING>
+	<STRING Id="20" Name="IDS_CITY_18">
+		<Text>Денвер, Финикс</Text>
+	</STRING>
+	<STRING Id="21" Name="IDS_CITY_19">
+		<Text>Чикаго, Даллас</Text>
+	</STRING>
+	<STRING Id="22" Name="IDS_CITY_20">
+		<Text>Нью Йорк, Майами</Text>
+	</STRING>
+	<STRING Id="23" Name="IDS_CITY_21">
+		<Text>Каракас. Ла-Пас</Text>
+	</STRING>
+	<STRING Id="24" Name="IDS_CITY_22">
+		<Text>Буэнос Айрес</Text>
+	</STRING>
+	<STRING Id="25" Name="IDS_CITY_23">
+		<Text>Центральная Атлантика</Text>
+	</STRING>
+	<STRING Id="26" Name="IDS_CITY_24">
+		<Text>Азорские острова</Text>
+	</STRING>
+	<STRING Id="27" Name="IDS_DATE_FORMAT">
+		<Text>%02d/%02d %02d:%02d</Text>
+	</STRING>
+	<STRING Id="28" Name="IDS_CITY_25">
+		<Text>Yangon</Text>
+	</STRING>
+	<String Id="29" Name="IDS_CITY_26">
+		<Text>NEW DELHI</Text>
+	</String>
+	<String Id="1001" Name="IDS_TIME_ZONE">
+		<Text>Временная зона:</Text>
+	</String>
+</Strings>
+</BREWRes>
