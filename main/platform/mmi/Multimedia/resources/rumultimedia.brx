@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="multimedia" VERSION="1">
+<Strings Encoding="Unicode">
+	<String Id="1001" Name="IDS_MULTIMEDIA_TITLE">
+		<Text>мультимедиа</Text>
+	</String>
+	<String Id="1002" Name="IDS_MULTIMEDIA_MEDIAGALLERY">
+		<Text>Управление файлами</Text>
+	</String>
+	<String Id="1003" Name="IDS_MULTIMEDIA_VIDEO_CAMERA">
+		<Text>видеокамеры</Text>
+	</String>
+	<STRING Id="1011" Name="IDS_MULTIMEDIA_CAMERA">
+		<Text>камера</Text>
+	</STRING>
+	<STRING Id="1012" Name="IDS_MULTIMEDIA_FMRADIO">
+		<Text>FM радио</Text>
+	</STRING>
+	<STRING Id="1013" Name="IDS_MULTIMEDIA_MUSICPLAYER">
+		<Text>Музыкальный плеер</Text>
+	</STRING>
+	<STRING Id="1014" Name="IDS_MULTIMEDIA_RECORDER">
+		<Text>регистратор</Text>
+	</STRING>
+	<STRING Id="1015" Name="IDS_MULTIMEDIA_VIDEOPLAYER">
+		<Text>видеоплеер</Text>
+	</STRING>
+	<STRING Id="1016" Name="IDS_MULTIMEDIA_TV">
+		<Text>телевизор</Text>
+	</STRING>
+</Strings>
+<Dialogs>
+	<Dialog Id="6003" Name="IDD_LIST_MULTIMEDIA_DIALOGS" Focus="7001">
+		<Controls>
+			<Menu Id="7001" Name="IDC_MULTIMEDIA_LIST">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+</Dialogs>
+</BREWRes>
