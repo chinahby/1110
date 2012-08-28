@@ -1,77 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
 <BREWRes Name="recorder" VERSION="1">
-<Strings Encoding="ISOLATIN1">
+<Strings Encoding="Unicode">
 	<STRING Id="1" Name="IDS_TITLE">
-		<Text>Voice memo</Text>
+		<Text>Голосовые заметки</Text>
 	</STRING>
 	<STRING Id="2" Name="IDS_RECORDER_MEMO_RINGER_NAME">
-		<Text>Voice memo</Text>
+		<Text>Голосовые заметки</Text>
 	</STRING>
 	<STRING Id="1001" Name="IDS_NEW_RECORD">
-		<Text>New recorder</Text>
+		<Text>Новый рекордер</Text>
 	</STRING>
 	<STRING Id="1002" Name="IDS_RECORD_LIST">
-		<Text>Record list</Text>
+		<Text>Запись списка</Text>
 	</STRING>
 	<STRING Id="1003" Name="IDS_RECORD_LIST_TITLE">
-		<Text>Record list</Text>
+		<Text>Запись списка</Text>
 	</STRING>
 	<STRING Id="1004" Name="IDS_RECORD_LIST_OPTION_PLAY">
-		<Text>Play</Text>
+		<Text>играть</Text>
 	</STRING>
 	<STRING Id="1005" Name="IDS_RECORD_LIST_OPTION_SET_AS">
-		<Text>Set as</Text>
+		<Text>Установить как</Text>
 	</STRING>
 	<STRING Id="1006" Name="IDS_RECORD_LIST_OPTION_DELETE">
-		<Text>Delete</Text>
+		<Text>удалять</Text>
 	</STRING>
 	<STRING Id="1007" Name="IDS_RECORD_LIST_OPTION_DELETE_ALL">
-		<Text>Delete all</Text>
+		<Text>Удалить все</Text>
 	</STRING>
 	<STRING Id="1008" Name="IDS_RECORD_PAUSE">
-		<Text>Pause</Text>
+		<Text>пауза</Text>
 	</STRING>
 	<STRING Id="1009" Name="IDS_SET_AS_RINGER">
 		<Text>Ringtone</Text>
 	</STRING>
 	<STRING Id="1010" Name="IDS_SET_AS_ALARM_ALERT">
-		<Text>Alarm tone</Text>
+		<Text>Звуковой сигнал</Text>
 	</STRING>
 	<STRING Id="1011" Name="IDS_SET_AS_SMS_ALERT">
-		<Text>SMS tone</Text>
+		<Text>SMS тон</Text>
 	</STRING>
 	<STRING Id="1012" Name="IDS_RECORD_DELETE_CONFIRM">
-		<Text>Delete</Text>
+		<Text>удалять</Text>
 	</STRING>
 	<STRING Id="1013" Name="IDS_RECORD_DELETE_ALL_CONFIRM">
-		<Text>Delete</Text>
+		<Text>удалять</Text>
 	</STRING>
 	<STRING Id="1014" Name="IDS_RECORD_OPEN_FILE_ERROR_1">
-		<Text>File exists</Text>
+		<Text>Файл существует</Text>
 	</STRING>
 	<STRING Id="1015" Name="IDS_RECORD_OPEN_FILE_ERROR_2">
-		<Text>Fail play</Text>
+		<Text>нормально играть</Text>
 	</STRING>
 	<STRING Id="1016" Name="IDS_RECORD_OPEN_FILE_ERROR_3">
-		<Text>Directory not empty</Text>
+		<Text>Каталог не пуст</Text>
 	</STRING>
 	<STRING Id="1017" Name="IDS_RECORD_OPEN_FILE_ERROR_4">
-		<Text>Invalid name</Text>
+		<Text>Неверное имя</Text>
 	</STRING>
 	<STRING Id="1018" Name="IDS_RECORD_OPEN_FILE_ERROR_5">
-		<Text>Invalid position</Text>
+		<Text>Неверная позиция</Text>
 	</STRING>
 	<STRING Id="1019" Name="IDS_RECORD_OPEN_FILE_ERROR_6">
-		<Text>Error</Text>
+		<Text>ошибка</Text>
 	</STRING>
 	<STRING Id="1020" Name="IDS_RECORD_OPEN_FILE_ERROR_7">
-		<Text>Full</Text>
+		<Text>полный</Text>
 	</STRING>
 	<STRING Id="1021" Name="IDS_RECORD_OPEN_FILE_ERROR_8">
-		<Text>Error</Text>
+		<Text>ошибка</Text>
 	</STRING>
 	<STRING Id="1022" Name="IDS_RECORD_OPEN_FILE_ERROR_9">
-		<Text>Full</Text>
+		<Text>полный</Text>
 	</STRING>
 	<STRING Id="1023" Name="IDS_RECORD_OPEN_FILE_ERROR_10">
 		<Text>Directory does not exist</Text>
@@ -131,13 +131,13 @@
 		<Text>Really discard the memo</Text>
 	</STRING>
 	<String Id="1042" Name="IDS_STORAGE_SETUP">
-		<Text>Storage</Text>
+		<Text>хранение</Text>
 	</String>
 	<String Id="1043" Name="IDS_STORAGE_SETUP_PHONE">
-		<Text>Phone</Text>
+		<Text>телефон</Text>
 	</String>
 	<String Id="1044" Name="IDS_STORAGE_SETUP_CARD0" Encoding="Unicode">
-		<Text>Memory card</Text>
+		<Text>карты памяти</Text>
 	</String>
 	<STRING Id="1100" Name="IDS_RECORD_MEDIA_ERROR">
 		<Text>Error</Text>
@@ -167,31 +167,31 @@
 		<Text>Init...</Text>
 	</STRING>
 	<STRING Id="1200" Name="IDS_MM_STATUS_READY">
-		<Text>Ready</Text>
+		<Text>готовый</Text>
 	</STRING>
 	<STRING Id="1201" Name="IDS_MM_STATUS_START">
-		<Text>Started</Text>
+		<Text>работы</Text>
 	</STRING>
 	<STRING Id="1202" Name="IDS_MM_STATUS_DONE">
-		<Text>Done</Text>
+		<Text>сделанный</Text>
 	</STRING>
 	<STRING Id="1203" Name="IDS_MM_STATUS_ABORT">
 		<Text>Aborted</Text>
 	</STRING>
 	<STRING Id="1204" Name="IDS_MM_STATUS_DATA_IO_DELAY">
-		<Text>Buffering...</Text>
+		<Text>Буферизация...</Text>
 	</STRING>
 	<STRING Id="1205" Name="IDS_MM_STATUS_SEEK_FAIL">
 		<Text>Seek failed</Text>
 	</STRING>
 	<STRING Id="1206" Name="IDS_MM_STATUS_PAUSE">
-		<Text>Paused</Text>
+		<Text>Приостановлена</Text>
 	</STRING>
 	<STRING Id="1207" Name="IDS_MM_STATUS_PAUSE_FAIL">
 		<Text>Pause failed</Text>
 	</STRING>
 	<STRING Id="1208" Name="IDS_MM_STATUS_RESUME">
-		<Text>Resumed</Text>
+		<Text>возобновленный</Text>
 	</STRING>
 	<STRING Id="1209" Name="IDS_MM_STATUS_RESUME_FAIL">
 		<Text>Resume failed</Text>
@@ -209,10 +209,10 @@
 		<Text>Unknown error</Text>
 	</STRING>
 	<STRING Id="1214" Name="IDS_MM_STATUS_PLAYING">
-		<Text>Playing...</Text>
+		<Text>Игра...</Text>
 	</STRING>
 	<STRING Id="1215" Name="IDS_MM_STATUS_RECORDING">
-		<Text>Recording...</Text>
+		<Text>запись...</Text>
 	</STRING>
 </Strings>
 </BREWRes>
