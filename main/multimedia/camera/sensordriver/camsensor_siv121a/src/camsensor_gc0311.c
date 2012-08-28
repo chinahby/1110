@@ -72,6 +72,9 @@ $Header: //depot/asic/msm6550/drivers/camsensor/camsensor_ SIV121A_ycbcr.c#3 $ $
 /* Strobe Flash Epoch Interrupt time before the end of line count */
 #define OV_SIV121A_YCBCR_EPOCH_LINES_DELAY       1
 
+#define GC0311_SET_PAGE0 	camsensor_GC0311_ycbcr_i2c_write_byte(0xfe, 0x00)
+#define GC0311_SET_PAGE1 	camsensor_GC0311_ycbcr_i2c_write_byte(0xfe, 0x01)
+
 /*===========================================================================
                           MACRO DEFINITIONS
 ============================================================================*/
