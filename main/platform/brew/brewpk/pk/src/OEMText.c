@@ -615,6 +615,21 @@ T9KeyMap Hindi2T9Map[] =
 };
 
 #endif    
+
+#ifdef FEATURE_LANG_RUSSIAN
+T9KeyMap RUSSIAN2T9Map[] = 
+{
+    {T9KEYAMBIG1,    AVK_1}, {T9KEYAMBIG2,    AVK_2}, {T9KEYAMBIG3,    AVK_3},
+    {T9KEYAMBIG4,    AVK_4}, {T9KEYAMBIG5,    AVK_5}, {T9KEYAMBIG6,    AVK_6}, 
+    {T9KEYAMBIG7,    AVK_7}, {T9KEYAMBIG8,    AVK_8}, {T9KEYAMBIG9,    AVK_9}, 
+    {T9KEYAMBIGA,    AVK_0}, {T9KEYAMBIGB,  AVK_STAR},{T9KEYAMBIGC, AVK_POUND},
+    {T9KEYNONE, AVK_SELECT}, {T9KEYCLEAR,   AVK_CLR}, {T9KEYNEXT,   AVK_DOWN}, 
+    {T9KEYPREV,     AVK_UP}, {T9KEYLEFT,   AVK_LEFT}, {T9KEYRIGHT, AVK_RIGHT},  
+    {T9KEYNONE,   AVK_SEND}, {T9KEYNONE,    AVK_END}, {0,0}
+};
+
+#endif    
+
 #ifdef FEATURE_T9_CHINESE
 /* Translates Zhuyin keys to T9 key codes */
 T9KeyMap Pinyin2T9Map[] = 
@@ -794,6 +809,23 @@ static ModeInfo sTextModes[NUM_OF_MODES] =
       T9TextCtl_Latin_Rapid_Exit ,
       {TEXT_MODE_T9_RAPID_HINDI, {0}}}
 #endif //FEATURE_T9_RAPID_HINDI
+
+#ifdef FEATURE_T9_MT_RUSSIAN
+    ,{T9TextCtl_MultitapRestart,
+      T9TextCtl_MultitapKey,
+      NULL,
+      T9TextCtl_MultitapExit,
+      {TEXT_MODE_MT_RUSSIAN, {0}}}
+#endif //FEATURE_T9_MT_RUSSIAN
+
+#ifdef FEATURE_T9_RAPID_RUSSIAN
+    ,{T9TextCtl_MultitapRestart,
+      T9TextCtl_MultitapKey,
+      NULL,
+      T9TextCtl_MultitapExit,
+      {TEXT_MODE_RAPID_RUSSIAN, {0}}}
+#endif //FEATURE_T9_RAPID_RUSSIAN
+
 
 #ifdef FEATURE_T9_MT_THAI
    ,{T9TextCtl_MultitapRestart,
@@ -6976,6 +7008,87 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
 	            }
             }
             //#endif
+            #elif defined(FEATURE_LANG_RUSSIAN)
+            //#ifdef FEATURE_LANG_RUSSIAN
+            if(pContext->byMode == 4)
+            {
+                MSG_FATAL("FEATURE_LANG_HINDI----1",0,0,0);
+            	pContext->uModeInfo.mtap.kLast = key; 
+	            if(pContext->uModeInfo.mtap.kLast != AVK_UNDEFINED)
+	            {
+	            	uint32 i,j;
+	            	uint32 AVK_Size = 0;
+                    MSG_FATAL("FEATURE_LANG_HINDI----2",0,0,0);
+	            	for(i = 0;i<MAX_HIKEYPAD_NUMBER;i++)
+	            	{
+                        MSG_FATAL("FEATURE_LANG_HINDI----3",0,0,0);
+	            		if (key == VLRUCharKeyItem[i].wParam)
+            			{
+            				AVK_Size = VLRUCharKeyItem[i].wsize;
+                            if(pContext->m_curarri !=i)
+                   			{
+                   				pContext->m_curpos = 0;
+                   			}
+                   			pContext->m_curarri = i;
+                            MSG_FATAL("AVK_Size---%d----pContext->m_curpos=%d",AVK_Size,pContext->m_curpos,0);
+            				if(pContext->m_curpos<AVK_Size)
+	            			{
+	            				pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart] = VLRUCharKeyItem[i].wp[pContext->m_curpos];
+	            			}
+	            			if(pContext->m_curpos<(AVK_Size-1))
+	            			{
+	            				pContext->m_curpos = pContext->m_curpos+1;
+	            				
+	            			}
+	            			else
+	            			{
+	            				pContext->m_curpos = 0;
+	            			}
+	            			MSG_FATAL("pContext->m_curpos==========%d--pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart]=%0x",pContext->m_curpos,pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart],0);
+            		}
+	            	}
+	            }
+            }
+            else if(pContext->byMode == 5)
+            {
+                MSG_FATAL("FEATURE_LANG_HINDI----1",0,0,0);
+            	pContext->uModeInfo.mtap.kLast = key; 
+	            if(pContext->uModeInfo.mtap.kLast != AVK_UNDEFINED)
+	            {
+	            	uint32 i,j;
+	            	uint32 AVK_Size = 0;
+                    MSG_FATAL("FEATURE_LANG_HINDI----2",0,0,0);
+	            	for(i = 0;i<MAX_HIKEYPAD_NUMBER;i++)
+	            	{
+                        MSG_FATAL("FEATURE_LANG_HINDI----3",0,0,0);
+	            		if (key == VLRAPIDRUCharKeyItem[i].wParam)
+            			{
+            				AVK_Size = VLRAPIDRUCharKeyItem[i].wsize;
+                            if(pContext->m_curarri !=i)
+                   			{
+                   				pContext->m_curpos = 0;
+                   			}
+                   			pContext->m_curarri = i;
+                            MSG_FATAL("AVK_Size---%d----pContext->m_curpos=%d",AVK_Size,pContext->m_curpos,0);
+            				if(pContext->m_curpos<AVK_Size)
+	            			{
+	            				pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart] = VLRAPIDRUCharKeyItem[i].wp[pContext->m_curpos];
+	            			}
+	            			if(pContext->m_curpos<(AVK_Size-1))
+	            			{
+	            				pContext->m_curpos = pContext->m_curpos+1;
+	            				
+	            			}
+	            			else
+	            			{
+	            				pContext->m_curpos = 0;
+	            			}
+	            			MSG_FATAL("pContext->m_curpos==========%d--pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart]=%0x",pContext->m_curpos,pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart],0);
+            		}
+	            	}
+	            }
+            }
+            //#endif
 			#elif defined(FEATURE_MT_MYANMRA)
 			if(pContext->byMode == 4)
 			{
@@ -9583,6 +9696,22 @@ static T9KEY T9_BrewKeyToT9AlphabeticKey(TextCtlContext *pContext,AEEEvent eCode
             break;
 		}
 #endif
+
+#ifdef FEATURE_LANG_RUSSIAN
+		case TEXT_MODE_MT_RUSSIAN:
+        //case FEATURE_T9_RAPID_RUSSIAN:    
+		{
+			for (i = 0; RUSSIAN2T9Map[i].cKey != 0; i++) 
+            {
+                if (RUSSIAN2T9Map[i].cKey == cKey)
+                {
+                    return RUSSIAN2T9Map[i].mKey;
+                }
+            }            
+            break;
+		}
+#endif
+
 
 #ifdef FEATURE_T9_MULTITAP    
         case TEXT_MODE_MULTITAP:    

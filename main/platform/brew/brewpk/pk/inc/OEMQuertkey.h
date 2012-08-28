@@ -56,6 +56,7 @@ when       who     what, where, why
 #define MAX_SHEFTKEYPAD_NUMBER 40
 #define MAX_ARKEYPAD_NUMBER    8
 #define MAX_HIKEYPAD_NUMBER    10
+#define MAX_RUKEYPAD_NUMBER    10
 #define MAX_MULTITAPS          10
 typedef struct _Mya_character_type Mya_character_type;
 
@@ -284,6 +285,7 @@ typedef struct _SheftKeyItem_Own  SheftKeyItem_Own;
 //typedef struct _UI_character_type UI_character_type ;
 typedef struct _AR_character_type AR_character_type;
 typedef struct _HI_character_type HI_character_type;
+typedef struct _RU_character_type RU_character_type;
 typedef struct _SE_character_type SE_character_type;
 
 struct _SheftKeyItem_Own
@@ -302,6 +304,12 @@ struct _HI_character_type
 {
 	uint16                 wParam;
 	uint16                 wp[15];
+	uint16                 wsize;
+};
+struct _RU_character_type   
+{
+	uint16                 wParam;
+	uint16                 wp[10];
 	uint16                 wsize;
 };
 
@@ -384,6 +392,36 @@ static HI_character_type VLHICharKeyItem[MAX_HIKEYPAD_NUMBER] =
     {AVK_9,  {0x092f, 0x0930, 0x0932, 0x0935, 0x0936, 0x0937, 0x0938, 0x0939, 0x0933, 0x0931, 0x0934, 0x095f, '9'}, 13},        /* key 9 */
     {AVK_0,  {' ', '0'}, 2}   /* key 0 */    
 };
+#endif
+
+#if defined(FEATURE_LANG_RUSSIAN)
+static RU_character_type VLRUCharKeyItem[MAX_RUKEYPAD_NUMBER] = 
+{
+    {AVK_1,{'.', ',', '?', '!', '1'},5},   /* key 1 */
+    {AVK_2,{0x0410, 0x0411, 0x0412, 0x0413, '2', 'A', 'B', 'C'},8},   /* key 2 */
+    {AVK_3,{0x0414, 0x0415, 0x0401, 0x0416, 0x0417, '3', 'D', 'E', 'F'},9},   /* key 3 */
+    {AVK_4,{0x0418, 0x0419, 0x041a, 0x041b, '4', 'G', 'H', 'I'},8},   /* key 4 */
+    {AVK_5,{0x041c, 0x041d, 0x041e, 0x041f, '5', 'J', 'K', 'L'},8},   /* key 5 */
+    {AVK_6,{0x0420, 0x0421, 0x0422, 0x0423, '6', 'M', 'N', 'O'},8},   /* key 6 */
+    {AVK_7,{0x0424, 0x0425, 0x0426, 0x0427, '7', 'P', 'Q', 'R', 'S'},9},  /* key 7 */
+    {AVK_8,{0x0428, 0x0429, 0x042a, 0x042b, '8', 'T', 'U', 'V'},8},  /* key 8 */
+    {AVK_9,{0x042c, 0x042d, 0x042e, 0x042f, '9', 'W', 'X', 'Y', 'Z'},9},   /* key 9 */
+    {AVK_0,{' ', '0'},2},    /* key 0 */   
+};
+static RU_character_type VLRAPIDRUCharKeyItem[MAX_RUKEYPAD_NUMBER] = 
+{
+    {AVK_1,{'.', ',', '?', '!', '1'},5},   /* key 1 */
+    {AVK_2,{0x0430, 0x0431, 0x0432, 0x0433, '2', 'a', 'b', 'c'},8},   /* key 2 */
+    {AVK_3,{0x0434, 0x0435, 0x0451, 0x0436, 0x0437, '3', 'd', 'e', 'f'},9},   /* key 3 */
+    {AVK_4,{0x0438, 0x0439, 0x043a, 0x043b, '4', 'g', 'h', 'i'},8},   /* key 4 */
+    {AVK_5,{0x043c, 0x043d, 0x043e, 0x043f, '5', 'j', 'k', 'l'},8},   /* key 5 */
+    {AVK_6,{0x0440, 0x0441, 0x0442, 0x0443, '6', 'm', 'n', 'o'},8},   /* key 6 */
+    {AVK_7,{0x0444, 0x0445, 0x0446, 0x0447, '7', 'p', 'q', 'r', 's'},9},  /* key 7 */
+    {AVK_8,{0x0448, 0x0449, 0x044a, 0x044b, '8', 't', 'u', 'v'},8},  /* key 8 */
+    {AVK_9,{0x044c, 0x044d, 0x044e, 0x044f, '9', 'w', 'x', 'y', 'z'},9},   /* key 9 */
+    {AVK_0,{' ', '0'},2},    /* key 0 */   
+};
+
 #endif
 
 #if defined (FEATURE_VERSION_VG68)&&defined(FEATURE_LANG_THAI)

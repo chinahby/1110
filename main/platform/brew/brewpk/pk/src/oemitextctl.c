@@ -3271,6 +3271,18 @@ static AEETextInputMode CTextCtl_SetInputMode(ITextCtl * po, AEETextInputMode m)
 				break;
 #endif
 
+#ifdef FEATURE_T9_MT_RUSSIAN
+            case TEXT_MODE_MT_RUSSIAN:
+                pme->m_wResID = IDI_MODE_MT_RUSSIAN;
+                break;
+#endif
+#ifdef FEATURE_T9_RAPID_RUSSIAN
+            case TEXT_MODE_RAPID_RUSSIAN:
+                pme->m_wResID = IDI_MODE_RAPID_RUSSIAN;
+                break;
+#endif
+
+
             default:
                 break;
         }
@@ -5234,6 +5246,26 @@ static void OEM_SetInputMode(CTextCtl * pme)
 	                          sizeof(boolean));
 			break;
 #endif
+
+#ifdef FEATURE_T9_MT_RUSSIAN
+        case OEM_MODE_T9_MT_RUSSIAN:
+            wMode = AEE_TM_RUSSIAN;   
+			pme->m_wResID = IDI_MODE_MT_RUSSIAN;
+			(void)OEM_SetConfig(CFGI_LANGUAGE_MOD,
+	                          (void*)&is_Taimod,
+	                          sizeof(boolean));
+            break;
+#endif
+#ifdef FEATURE_T9_RAPID_RUSSIAN
+        case OEM_MODE_T9_RAPID_RUSSIAN:
+            wMode = AEE_TM_RUSSIAN_R;   
+			pme->m_wResID = IDI_MODE_RAPID_RUSSIAN;
+			(void)OEM_SetConfig(CFGI_LANGUAGE_MOD,
+	                          (void*)&is_Taimod,
+	                          sizeof(boolean));
+            break;
+#endif
+
         case OEM_MODE_ZI_MT_ENGLISH_UP:
             wMode = AEE_TM_LETTERS;//大写字母输入模式
 #ifdef FEATURE_PREPAID_ISRAEL_HEBREW 
@@ -5624,6 +5656,26 @@ static void OEM_SetInputMode(CTextCtl * pme)
 							  sizeof(boolean));
 			break;
 #endif
+
+#ifdef FEATURE_T9_MT_RUSSIAN
+        case OEM_MODE_T9_MT_RUSSIAN:
+            wMode = AEE_TM_RUSSIAN;   
+            pme->m_wResID = IDI_MODE_MT_RUSSIAN;
+            (void)OEM_SetConfig(CFGI_LANGUAGE_MOD,
+                              (void*)&is_Taimod,
+                              sizeof(boolean));
+            break;
+#endif
+#ifdef FEATURE_T9_RAPID_RUSSIAN
+        case OEM_MODE_T9_RAPID_RUSSIAN:
+            wMode = AEE_TM_RUSSIAN_R;   
+            pme->m_wResID = IDI_MODE_RAPID_RUSSIAN;
+            (void)OEM_SetConfig(CFGI_LANGUAGE_MOD,
+                              (void*)&is_Taimod,
+                              sizeof(boolean));
+            break;
+#endif
+
 
         case OEM_MODE_T9_MT_ENGLISH_UP:
             wMode = AEE_TM_LETTERS;//大写字母输入模式
@@ -6029,6 +6081,15 @@ static void TextCtl_SetInputList(CTextCtl *pme)
 
 #endif
 
+#ifdef FEATURE_T9_MT_RUSSIAN
+        pme->m_nCurrInputModeList[i++] = OEM_MODE_T9_MT_RUSSIAN;
+#endif
+
+#ifdef FEATURE_T9_RAPID_RUSSIAN
+        pme->m_nCurrInputModeList[i++] = OEM_MODE_T9_RAPID_RUSSIAN;
+#endif
+
+
 #ifdef FEATURE_ZI_PINYIN
 	MSG_FATAL("TextCtl_SetInputList...333",0,0,0);
     pme->m_nCurrInputModeList[i++] = OEM_MODE_ZI_PINYIN;
@@ -6179,6 +6240,13 @@ static void TextCtl_SetInputList(CTextCtl *pme)
 
 #endif
 
+#ifdef FEATURE_T9_MT_RUSSIAN
+        pme->m_nCurrInputModeList[i++] = OEM_MODE_T9_MT_RUSSIAN;
+#endif
+
+#ifdef FEATURE_T9_RAPID_RUSSIAN
+        pme->m_nCurrInputModeList[i++] = OEM_MODE_T9_RAPID_RUSSIAN;
+#endif
 
 
 #ifdef FEATURE_T9_PINYIN
@@ -7025,6 +7093,18 @@ static int TextCtl_Oemmode_Textmode(byte oeminputmode)
 			break;
 #endif
 
+#ifdef FEATURE_T9_MT_RUSSIAN
+        case TEXT_MODE_MT_RUSSIAN:
+            wMode = AEE_TM_RUSSIAN;
+            break;
+#endif
+
+#ifdef FEATURE_T9_RAPID_RUSSIAN
+        case TEXT_MODE_RAPID_RUSSIAN:
+            wMode = AEE_TM_RUSSIAN_R;
+            break;
+#endif
+
 
 #ifdef FEATURE_ZI_RAPID_ENGLISH
         case OEM_MODE_ZI_RAPID_ENGLISH:
@@ -7239,6 +7319,18 @@ static int TextCtl_Oemmode_Textmode(byte oeminputmode)
 		case TEXT_MODE_MYANMAR:
 			wMode = AEE_TM_MYANMAR;   //add by yangdecai   2010-12-23
 			break;
+#endif
+
+#ifdef FEATURE_T9_MT_RUSSIAN
+        case TEXT_MODE_MT_RUSSIAN:
+            wMode = AEE_TM_RUSSIAN;
+            break;
+#endif
+
+#ifdef FEATURE_T9_RAPID_RUSSIAN
+        case TEXT_MODE_RAPID_RUSSIAN:
+            wMode = AEE_TM_RUSSIAN_R;
+            break;
 #endif
 
 

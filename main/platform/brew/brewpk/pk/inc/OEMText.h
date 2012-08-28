@@ -110,6 +110,11 @@ when       who     what, where, why
 //#define FEATURE_T9_RAPID_ARABIC
 #endif //FEATURE_LANG_ARABIC
 
+#ifdef FEATURE_LANG_RUSSIAN
+#define FEATURE_T9_MT_RUSSIAN
+#define FEATURE_T9_RAPID_RUSSIAN
+#endif
+
 #ifdef FEATURE_LANG_HEBREW
 #define FEATURE_T9_MT_HEBREW
 #define FEATURE_T9_RAPID_HEBREW
@@ -208,6 +213,15 @@ when       who     what, where, why
 #ifdef FEATURE_MT_MYANMRA
 #define TEXT_MODE_MT_MYANMAR       AEE_TM_MYANMAR_R
 #endif
+
+#ifdef FEATURE_T9_MT_RUSSIAN
+#define TEXT_MODE_MT_RUSSIAN      AEE_TM_RUSSIAN    
+#endif
+
+#ifdef FEATURE_T9_RAPID_RUSSIAN
+#define TEXT_MODE_RAPID_RUSSIAN   AEE_TM_RUSSIAN_R
+#endif
+
 #ifdef FEATURE_T9_PINYIN
 #define TEXT_MODE_T9_PINYIN        AEE_TM_PINYIN 
 #endif //FEATURE_T9_PINYIN
@@ -349,6 +363,15 @@ enum
 #ifdef FEATURE_MT_MYANMRA
 	,OEM_MT_MODE_MYANMAR
 #endif
+
+#ifdef FEATURE_T9_MT_RUSSIAN
+    ,OEM_MODE_T9_MT_RUSSIAN
+#endif
+
+#ifdef FEATURE_T9_RAPID_RUSSIAN
+    ,OEM_MODE_T9_RAPID_RUSSIAN
+#endif
+
 #ifdef FEATURE_T9_PINYIN
     ,OEM_MODE_T9_PINYIN
 #endif //FEATURE_T9_PINYIN
@@ -490,11 +513,26 @@ enum
 #else // #ifdef FEATURE_T9_PINYIN
 #define _T9_MYANMAR_MODE             (0)
 #endif //FEATURE_T9_PINYIN
+
 #ifdef FEATURE_MT_MYANMRA
 #define _MT_MYANMAR_MODE             (1)
 #else
 #define _MT_MYANMAR_MODE             (0) 
 #endif
+
+#ifdef FEATURE_T9_MT_RUSSIAN
+#define _MT_RUSSIAN_MODE             (1)
+#else
+#define _MT_RUSSIAN_MODE             (0) 
+#endif
+
+#ifdef FEATURE_T9_RAPID_RUSSIAN
+#define _RAPID_RUSSIAN_MODE          (1)
+#else
+#define _RAPID_RUSSIAN_MODE          (0) 
+#endif
+
+
 #ifdef FEATURE_T9_STROKE
 #define _T9_STROKE_MODE             (1)
 #else // #ifdef FEATURE_T9_STROKE
@@ -638,6 +676,8 @@ enum
                                 + _T9_RAPID_ENGLISH_MODE \
                                 + _T9_MYANMAR_MODE \
                                 + _MT_MYANMAR_MODE \
+                                + _MT_RUSSIAN_MODE \
+                                + _RAPID_RUSSIAN_MODE \
                                 + _T9_PINYIN_MODE \
                                 + _T9_STROKE_MODE \
                                 + _T9_ZHUYIN_MODE \
@@ -691,6 +731,15 @@ static const AECHAR englishTitle[NUM_OF_MODES][MAX_MODE_STR+1] =
 #ifdef FEATURE_MT_MYANMRA
    ,{'M','T','M','Y','A','N','M','A','R',0}
 #endif
+
+#ifdef FEATURE_T9_MT_RUSSIAN
+   ,{'M','T','R','U','S','S','I','A','N',0}
+#endif
+
+#ifdef FEATURE_T9_RAPID_RUSSIAN
+   ,{'R','A','P','I','D','R','U','S','S','I','A','N',0}
+#endif
+
 #ifdef FEATURE_T9_PINYIN
    ,{'T', '9','P', 'I', 'N', 'Y', 'I', 'N', 0}
 #endif //FEATURE_T9_PINYIN
@@ -808,9 +857,19 @@ static const AECHAR englishTitle[NUM_OF_MODES][MAX_MODE_STR+1] =
 #ifdef FEATURE_MYANMAR_INPUT_MOD      //add by yangdecai 2010-1223
    ,{'M','Y','A','N','M','A','R',0}
 #endif
+
 #ifdef FEATURE_MT_MYANMRA
    ,{'M','T','M','Y','A','N','M','A','R',0}
 #endif
+
+#ifdef FEATURE_T9_MT_RUSSIAN
+   ,{'M','T','R','U','S','S','I','A','N',0}
+#endif
+
+#ifdef FEATURE_T9_RAPID_RUSSIAN
+   ,{'R','A','P','I','D','R','U','S','S','I','A','N',0}
+#endif
+
 #ifdef FEATURE_T9_PINYIN
    ,{'T', '9','P', 'I', 'N', 'Y', 'I', 'N', 0}
 #endif //FEATURE_T9_PINYIN

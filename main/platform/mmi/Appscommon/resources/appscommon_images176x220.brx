@@ -193,6 +193,12 @@
 	<Object Id="5427" Name="IDI_MODE_MYANMAR" MimeType="image/png">
 		<File>..\images\176x220\common\IME\mya.png</File>
 	</Object>
+	<Object Id="5428" Name="IDI_MODE_MT_RUSSIAN" MimeType="image/png">
+		<File>..\images\176x220\common\IME\MTRU.png</File>
+	</Object>
+	<Object Id="5429" Name="IDI_MODE_RAPID_RUSSIAN" MimeType="image/png">
+		<File>..\images\176x220\common\IME\ru.png</File>
+	</Object>
 	<Object Id="5801" Name="IDB_TEMPLATE">
 		<File>..\images\176x220\common\Message\Icon\Template.bmp</File>
 	</Object>
