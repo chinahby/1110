@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="blackjack" VERSION="1">
+<Strings Encoding="Unicode">
+	<STRING Id="10" Name="IDC_NEW_GAME">
+		<Text>Новая игра</Text>
+	</STRING>
+	<STRING Id="11" Name="IDC_INSTRUCTIONS_OK">
+		<Text>Да</Text>
+	</STRING>
+	<STRING Id="12" Name="IDC_NEW_GAME_SHORT_TITLE">
+		<Text>Новая</Text>
+	</STRING>
+	<STRING Id="13" Name="IDC_CONTINUE_GAME">
+		<Text>Продолжить</Text>
+	</STRING>
+	<STRING Id="20" Name="IDC_DEAL">
+		<Text>Сделать</Text>
+	</STRING>
+	<STRING Id="21" Name="IDC_CHANGE_BET">
+		<Text>Ставка</Text>
+	</STRING>
+	<STRING Id="30" Name="IDC_HIT">
+		<Text>Бить</Text>
+	</STRING>
+	<STRING Id="31" Name="IDC_STAND">
+		<Text>Стоять</Text>
+	</STRING>
+	<STRING Id="32" Name="IDC_DOUBLE_DOWN">
+		<Text>Снести</Text>
+	</STRING>
+	<STRING Id="33" Name="IDC_SPLIT">
+		<Text>Разделить</Text>
+	</STRING>
+	<STRING Id="40" Name="IDC_WANT_INSURANCE">
+		<Text>Да</Text>
+	</STRING>
+	<STRING Id="41" Name="IDC_NO_INSURANCE">
+		<Text>Нет</Text>
+	</STRING>
+	<STRING Id="100" Name="IDS_TITLE">
+		<Text>BlackJack</Text>
+	</STRING>
+	<STRING Id="101" Name="IDS_INSTRUCTIONS">
+		<Text>Подойди ближе к 21 чем торговец без перебора 21. Значение карт: Туз 1 или 11; Король, королева, валет, десятка, 10 каждый; любая другая карта, ее номер.</Text>
+	</STRING>
+	<STRING Id="102" Name="IDS_CONTINUE_OR_NEW_TEXT">
+		<Text>Продолжить предыдущую игру или начать новую игру?</Text>
+	</STRING>
+	<STRING Id="110" Name="IDS_CASH_STATUS_FORMAT">
+		<Text>Наличные: $%d</Text>
+	</STRING>
+	<STRING Id="111" Name="IDS_BET_STATUS_FORMAT">
+		<Text>Ставка: $%d</Text>
+	</STRING>
+	<STRING Id="120" Name="IDS_HAND_VALUE_FORMAT">
+		<Text>%d</Text>
+	</STRING>
+	<STRING Id="121" Name="IDS_BLACKJACK_HAND">
+		<Text>BlackJack!</Text>
+	</STRING>
+	<STRING Id="130" Name="IDS_BETWEEN_HANDS_DEFAULT_TITLE">
+		<Text>Статус</Text>
+	</STRING>
+	<STRING Id="131" Name="IDS_PLAYER_BUSTED_TITLE">
+		<Text>Вы банкрот</Text>
+	</STRING>
+	<STRING Id="132" Name="IDS_DEALER_BUSTED_TITLE">
+		<Text>Торговец банкрот!  </Text>
+	</STRING>
+	<STRING Id="133" Name="IDS_PLAYER_WON_TITLE">
+		<Text>Вы победили!  </Text>
+	</STRING>
+	<STRING Id="134" Name="IDS_DEALER_WON_TITLE">
+		<Text>Вы проиграли  </Text>
+	</STRING>
+	<STRING Id="135" Name="IDS_PUSH_TITLE">
+		<Text>Толкать</Text>
+	</STRING>
+	<STRING Id="136" Name="IDS_PLAYER_BLACKJACK_TITLE">
+		<Text>BlackJack!  </Text>
+	</STRING>
+	<STRING Id="137" Name="IDS_DEALER_BLACKJACK_TITLE">
+		<Text>Торговец банкрот BlackJack</Text>
+	</STRING>
+	<STRING Id="140" Name="IDS_PLAYER_WINNINGS">
+		<Text>Торговец платит вам $%d.</Text>
+	</STRING>
+	<STRING Id="141" Name="IDS_PLAYER_LOSINGS">
+		<Text>Торговец собирает $%d.</Text>
+	</STRING>
+	<STRING Id="142" Name="IDS_PUSH_NO_WINNINGS">
+		<Text>Ничего не потеряно, ничего не выиграно.</Text>
+	</STRING>
+	<STRING Id="143" Name="IDS_BJ_PUSH_NO_WINNINGS">
+		<Text>У вас был BlackJack, но диллер сделал так :-(. Толкай. Ничего не потеряно, ничего не выиграно.</Text>
+	</STRING>
+	<STRING Id="144" Name="IDS_BJ_BUT_INSURANCE_NO_WINNINGS">
+		<Text>У торговца был BlackJack, но вы выбераете акции. Вы разбиваете.</Text>
+	</STRING>
+	<STRING Id="145" Name="IDS_BJ_PUSH_BUT_INSURANCE_WINNINGS">
+		<Text>У торговца был BlackJack, но :-( так сделал торговец. Торговец платит вам $%d для вашей ставки на акцию.</Text>
+	</STRING>
+	<STRING Id="150" Name="IDS_BET_LOW_CASH_TITLE">
+		<Text>Мало наличных</Text>
+	</STRING>
+	<STRING Id="151" Name="IDS_BET_INSUFFICIENT_CASH_TITLE">
+		<Text>Недостаточно наличных</Text>
+	</STRING>
+	<STRING Id="152" Name="IDS_BET_TOO_HIGH_TITLE">
+		<Text>Превышение максимума на столе</Text>
+	</STRING>
+	<STRING Id="153" Name="IDS_BET_TOO_LOW_TITLE">
+		<Text>ниже минимума на столе</Text>
+	</STRING>
+	<STRING Id="154" Name="IDS_BET_LOW_CASH_MSG">
+		<Text>У вас нет достаточно наличных  $%d  для акций. У вас есть остаток $%d.</Text>
+	</STRING>
+	<STRING Id="155" Name="IDS_BET_INSUFFICIENT_CASH_MSG">
+		<Text>У вас нет достаточно наличных для минимума на столе  $%d.  У вас есть остаток  $%d.</Text>
+	</STRING>
+	<STRING Id="156" Name="IDS_BET_TOO_HIGH_MSG">
+		<Text>Ваши акции $%d превышают максимум на столе $%d.</Text>
+	</STRING>
+	<STRING Id="157" Name="IDS_BET_TOO_LOW_MSG">
+		<Text>Ваши акции $%d ниже минимума на столе $%d.</Text>
+	</STRING>
+	<STRING Id="160" Name="IDS_SHUFFLING_TITLE">
+		<Text>Перетасовывать</Text>
+	</STRING>
+	<STRING Id="161" Name="IDS_SHUFFLING_MSG">
+		<Text>Почти не осталось карт на доске %d торговца.</Text>
+	</STRING>
+	<STRING Id="170" Name="IDC_BET_AMOUNT_10">
+		<Text>10</Text>
+	</STRING>
+	<STRING Id="171" Name="IDC_BET_AMOUNT_20">
+		<Text>20</Text>
+	</STRING>
+	<STRING Id="172" Name="IDC_BET_AMOUNT_50">
+		<Text>50</Text>
+	</STRING>
+	<STRING Id="173" Name="IDC_BET_AMOUNT_100">
+		<Text>100</Text>
+	</STRING>
+	<STRING Id="174" Name="IDC_BET_AMOUNT_150">
+		<Text>150</Text>
+	</STRING>
+	<STRING Id="175" Name="IDC_BET_AMOUNT_200">
+		<Text>200</Text>
+	</STRING>
+	<STRING Id="180" Name="IDS_INSURANCE_OFFER_TITLE">
+		<Text>Торговец Ас!</Text>
+	</STRING>
+	<STRING Id="181" Name="IDS_INSURANCE_OFFER_MSG">
+		<Text>Нужны акции? $%d ставка, по которой платит $%d если у торговца есть BlackJack.</Text>
+	</STRING>
+	<STRING Id="182" Name="IDS_INSURANCE_RESULT_TITLE">
+		<Text>Нет BlackJack</Text>
+	</STRING>
+	<STRING Id="183" Name="IDS_INSURANCE_RESULT_MSG">
+		<Text>Нет BlackJack! Вы проиграли свои ставки на акции $%d.</Text>
+	</STRING>
+</Strings>
+</BREWRes>
