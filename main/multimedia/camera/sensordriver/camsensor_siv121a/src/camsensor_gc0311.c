@@ -477,7 +477,7 @@ boolean camsensor_GC0311_init(camsensor_function_table_type *camsensor_function_
 	///camsensor_GC0311_ycbcr_i2c_write_byte(0xfc, 0x16);
 
 	clk_busy_wait(50*1000);
-	camsensor_GC0311_ycbcr_i2c_read_byte(0x00,&sensor_id);
+	camsensor_GC0311_ycbcr_i2c_read_byte(0xf0,&sensor_id);
 	MSG_FATAL("Sensor ID = 0x%x",sensor_id,0,0);
 	if ( sensor_id != CAMSENSOR_GC0311_SENSOR_ID ) 
 	{

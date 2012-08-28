@@ -2746,11 +2746,11 @@ else {
 #else
 	camera_timed_wait(13);
 	CAMERA_CONFIG_GPIO(CAMIF_EN_N);
-
+    MSG_FATAL("current_camsensor_id================%d %d",current_camsensor_id,CAMSENSOR_ID_MAX,0);
 	if ( current_camsensor_id < CAMSENSOR_ID_MAX)
 	{
 		camsensor_active_fn_type pfn_active = camsensor_active_value_table[current_camsensor_id];
-
+        
 		if(pfn_active)
 	    {
 		    gpio_out(CAMIF_EN_N, (GPIO_ValueType)pfn_active());
@@ -4766,7 +4766,6 @@ boolean camsensor_init (void)
 	{
 		return TRUE;
 	}
-
 #ifndef FEATURE_CAMERA_MULTI_SENSOR
   	camsensor_id = CAMSENSOR_ID_MAX;
 #endif /* FEATURE_CAMERA_MULTI_SENSOR */
@@ -4794,7 +4793,7 @@ boolean camsensor_init (void)
 		}
 	}
 #else
-
+    MSG_FATAL("current_camsensor_id================%d %d",current_camsensor_id,CAMSENSOR_ID_MAX,0);   
 	if ( current_camsensor_id <  CAMSENSOR_ID_MAX )
 	{
 		if (camsensor_detect_table[current_camsensor_id])
