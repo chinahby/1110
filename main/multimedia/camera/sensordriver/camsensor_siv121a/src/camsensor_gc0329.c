@@ -95,7 +95,6 @@ static boolean camsensor_gc0329_ycbcr_video_config( camsensor_static_params_type
 static void camsensor_gc0329_ycbcr_power_up(void);
 static boolean camsensor_gc0329_ycbcr_snapshot_config( 	camsensor_static_params_type *camsensor_params /* Other config params */);
 static camera_ret_code_type camsensor_gc0329_set_effect(int8 effect);
-static boolean camsensor_SIV120A_ycbcr_raw_snapshot_config(camsensor_static_params_type *camsensor_params /* Other config params */);
 static camera_ret_code_type camsensor_gc0329_set_wb(int8 wb);
 static camera_ret_code_type camsensor_gc0329_set_contrast(int8 contrast);
 static camera_ret_code_type camsensor_gc0329_set_antibanding(int8 antibanding);

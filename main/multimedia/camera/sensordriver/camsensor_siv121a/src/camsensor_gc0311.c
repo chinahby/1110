@@ -98,7 +98,6 @@ static boolean camsensor_GC0311_ycbcr_video_config( camsensor_static_params_type
 static void camsensor_GC0311_ycbcr_power_up(void);
 static boolean camsensor_GC0311_ycbcr_snapshot_config( 	camsensor_static_params_type *camsensor_params /* Other config params */);
 static camera_ret_code_type camsensor_GC0311_set_effect(int8 effect);
-static boolean camsensor_SIV120A_ycbcr_raw_snapshot_config(camsensor_static_params_type *camsensor_params /* Other config params */);
 static camera_ret_code_type camsensor_GC0311_set_wb(int8 wb);
 static camera_ret_code_type camsensor_GC0311_set_contrast(int8 contrast);
 static camera_ret_code_type camsensor_GC0311_set_antibanding(int8 antibanding);
@@ -454,7 +453,6 @@ boolean camsensor_GC0311_init(camsensor_function_table_type *camsensor_function_
 {
 	uint8 sensor_id = 0;
 	MSG_FATAL("camsensor_GC0311_init()\n",0,0,0);///yty 
-
 
 	camsensor_camclk_po_hz =24000000;
 
