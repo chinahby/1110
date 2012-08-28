@@ -1780,6 +1780,13 @@ uint32 GetLngCode(void)
             break;     
 #endif //FEATURE_LANG_HINDI
 
+#ifdef FEATURE_LANG_RUSSIAN
+         case NV_LANGUAGE_RUSSIAN:
+            LngCode = LNG_RUSSIAN;
+            break;     
+#endif //FEATURE_LANG_RUSSIAN
+
+
 #ifdef FEATURE_LANG_VIETNAMESE
          case NV_LANGUAGE_VIETNAMESE:
             LngCode = LNG_VIETNAMESE;
