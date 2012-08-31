@@ -538,95 +538,146 @@
 	<String Id="185" Name="IDS_ENABLEREPORT_SHORT">
 		<Text>开</Text>
 	</String>
-	<String Id="1001" Name="IDS_INSERT_PICTURE">
+	<String Id="1001" Name="IDS_TEMPLATEHITZ0">
+		<Text>Sorry, I'll call you back</Text>
+	</String>
+	<String Id="1002" Name="IDS_TEMPLATEHITZ1">
+		<Text>Please call me</Text>
+	</String>
+	<String Id="1003" Name="IDS_TEMPLATEHITZ2">
+		<Text>Sorry, I'm not free</Text>
+	</String>
+	<String Id="1004" Name="IDS_TEMPLATEHITZ3">
+		<Text>Be Right Back</Text>
+	</String>
+	<String Id="1005" Name="IDS_TEMPLATEHITZ4">
+		<Text>Sorry</Text>
+	</String>
+	<String Id="1006" Name="IDS_TEMPLATEHITZ5">
+		<Text>Thank you</Text>
+	</String>
+	<String Id="1007" Name="IDS_TEMPLATEHITZ6">
+		<Text>How was the day?</Text>
+	</String>
+	<String Id="1008" Name="IDS_TEMPLATEHITZ7">
+		<Text>Long Time, We Met</Text>
+	</String>
+	<String Id="1009" Name="IDS_TEMPLATEHITZ8">
+		<Text>I love you so much</Text>
+	</String>
+	<String Id="1010" Name="IDS_TEMPLATEHITZ9">
+		<Text>How are you?</Text>
+	</String>
+	<String Id="1011" Name="IDS_MSGVALIDITY_IMMEDIATE">
+		<Text>Immediate</Text>
+	</String>
+	<String Id="1012" Name="IDS_STR_FLASHSMS">
+		<Text>Flash sms</Text>
+	</String>
+	<String Id="1013" Name="IDS_INSERT_PICTURE">
 		<Text>插入图片</Text>
 	</String>
-	<String Id="1002" Name="IDS_FROM_PICTURES">
+	<String Id="1014" Name="IDS_FROM_PICTURES">
 		<Text>从图片文件夹</Text>
 	</String>
-	<String Id="1003" Name="IDS_NEW_PHOTO">
+	<String Id="1015" Name="IDS_NEW_PHOTO">
 		<Text>新图片</Text>
 	</String>
-	<String Id="1004" Name="IDS_INSERT_VIDEO">
+	<String Id="1016" Name="IDS_INSERT_VIDEO">
 		<Text>插入视频</Text>
 	</String>
-	<String Id="1005" Name="IDS_FROM_MOVIES">
+	<String Id="1017" Name="IDS_FROM_MOVIES">
 		<Text>从视频文件夹</Text>
 	</String>
-	<String Id="1006" Name="IDS_NEW_VIDEO">
+	<String Id="1018" Name="IDS_NEW_VIDEO">
 		<Text>新的视频</Text>
 	</String>
-	<String Id="1007" Name="IDS_INSERT_SOUND">
+	<String Id="1019" Name="IDS_INSERT_SOUND">
 		<Text>插入声音</Text>
 	</String>
-	<String Id="1008" Name="IDS_FROM_MUSIC">
+	<String Id="1020" Name="IDS_FROM_MUSIC">
 		<Text>从音乐文件夹</Text>
 	</String>
-	<String Id="1009" Name="IDS_NEW_SOUND">
+	<String Id="1021" Name="IDS_NEW_SOUND">
 		<Text>新的声音</Text>
 	</String>
-	<String Id="1010" Name="IDS_REMOVE_PICTURE">
+	<String Id="1022" Name="IDS_INSERT_FILE">
+		<Text>Insert file</Text>
+	</String>
+	<String Id="1023" Name="IDS_REMOVE_PICTURE">
 		<Text>移除图片</Text>
 	</String>
-	<String Id="1011" Name="IDS_REMOVE_VIDEO">
+	<String Id="1024" Name="IDS_REMOVE_VIDEO">
 		<Text>移除视频</Text>
 	</String>
-	<String Id="1012" Name="IDS_REMOVE_SOUND">
+	<String Id="1025" Name="IDS_REMOVE_SOUND">
 		<Text>移除声音</Text>
 	</String>
-	<String Id="1013" Name="IDS_OUTBOX_MMS">
+	<String Id="1026" Name="IDS_OUTBOX_MMS">
 		<Text>已发彩信</Text>
 	</String>
-	<STRING Id="1014" Name="IDS_MMSNOTIFY">
+	<String Id="1027" Name="IDS_INBOX_MMS">
+		<Text>彩信收件箱</Text>
+	</String>
+	<STRING Id="1028" Name="IDS_MMSNOTIFY">
 		<Text>彩信通知</Text>
 	</STRING>
-	<String Id="1015" Name="IDS_MMS_SIZE_TOO_BIG">
-		<Text>插入的彩信元素太大了</Text>
-	</String>
-	<String Id="1016" Name="IDS_SAVE_CURRENT_ITEM">
-		<Text>保存当前项</Text>
-	</String>
-	<String Id="1017" Name="IDS_INSERT_NEW_PICTURE">
-		<Text>插入新图片</Text>
-	</String>
-	<String Id="1018" Name="IDS_DRAFT_MMS">
-		<Text>彩信草稿箱</Text>
-	</String>
-	<String Id="1019" Name="IDS_SEND_TO_ALBUM_OR_EMAIL">
-		<Text>发送到相册或邮箱</Text>
-	</String>
-	<String Id="1020" Name="IDS_ADD_TO_RESTRICT_LIST">
-		<Text>添加到黑名单</Text>
-	</String>
-	<String Id="1021" Name="IDS_MMS_SERVER_ADDRESS">
-		<Text>服务器地址</Text>
-	</String>
-	<String Id="1022" Name="IDD_MMS_PORT">
-		<Text>代理网关</Text>
-	</String>
-	<String Id="1023" Name="IDS_MMS_PORT">
-		<Text>端口</Text>
-	</String>
-	<String Id="1024" Name="IDS_DELIVERY">
-		<Text>信息已发送到</Text>
-	</String>
-	<String Id="1025" Name="IDS_MMS_MENSTATUS">
-		<Text>彩信存储状态</Text>
-	</String>
-	<String Id="1026" Name="IDS_MMSDELIVERYREPORT">
-		<Text>使用彩信发送报告</Text>
-	</String>
-	<String Id="1027" Name="IDS_READREPLY">
-		<Text>彩信回执</Text>
-	</String>
-	<String Id="1028" Name="IDS_REPORTALLOWED">
-		<Text>显示彩信发送报告</Text>
-	</String>
 	<String Id="1029" Name="IDS_SENDERVISIBILITY">
 		<Text>显示彩信发送方号码</Text>
 	</String>
+	<String Id="1030" Name="IDS_MMSDELIVERYREPORT">
+		<Text>使用彩信发送报告</Text>
+	</String>
+	<String Id="1031" Name="IDS_READREPLY">
+		<Text>彩信回执</Text>
+	</String>
+	<String Id="1032" Name="IDS_REPORTALLOWED">
+		<Text>显示彩信发送报告</Text>
+	</String>
 	<String Id="1033" Name="IDS_GETTINGFROM">
 		<Text>接受中...</Text>
+	</String>
+	<String Id="1034" Name="IDS_MMS_SIZE_TOO_BIG">
+		<Text>插入的彩信元素太大了</Text>
+	</String>
+	<String Id="1035" Name="IDS_SAVE_CURRENT_ITEM">
+		<Text>保存当前项</Text>
+	</String>
+	<String Id="1036" Name="IDS_INSERT_NEW_PICTURE">
+		<Text>插入新图片</Text>
+	</String>
+	<String Id="1037" Name="IDS_DRAFT_MMS">
+		<Text>彩信草稿箱</Text>
+	</String>
+	<String Id="1038" Name="IDS_SEND_TO_ALBUM_OR_EMAIL">
+		<Text>发送到相册或邮箱</Text>
+	</String>
+	<String Id="1039" Name="IDS_TIME_STAMP">
+		<Text>Time Stamp</Text>
+	</String>
+	<String Id="1040" Name="IDS_TIME_STAMP_ADJUST">
+		<Text>Adjust Time</Text>
+	</String>
+	<String Id="1041" Name="IDS_TIME_STAMP_ASRECEIVED">
+		<Text>As Received</Text>
+	</String>
+	<String Id="1042" Name="IDS_ADD_TO_RESTRICT_LIST">
+		<Text>添加到黑名单</Text>
+	</String>
+	<String Id="1043" Name="IDS_MMS_SERVER_ADDRESS">
+		<Text>服务器地址</Text>
+	</String>
+	<String Id="1044" Name="IDD_MMS_PORT">
+		<Text>代理网关</Text>
+	</String>
+	<String Id="1045" Name="IDS_MMS_PORT">
+		<Text>端口</Text>
+	</String>
+	<String Id="1046" Name="IDS_DELIVERY">
+		<Text>信息已发送到</Text>
+	</String>
+	<String Id="1047" Name="IDS_MMS_MENSTATUS">
+		<Text>彩信存储状态</Text>
 	</String>
 </Strings>
 <Dialogs>
@@ -982,31 +1033,38 @@
 	<Dialog Id="6050" Name="IDD_GETTING" Focus="0">
 		<Controls/>
 	</Dialog>
-	<Dialog Id="6051" Name="IDD_ALBUMOREMAIN" Focus="7042">
+	<Dialog Id="6051" Name="IDD_TIME_STAMP" Focus="0">
 		<Controls>
-			<Text Id="7042" Name="IDC_EDIT_ALBUMOREMAIN">
+			<Menu Id="7042" Name="IDC_TIME_STAMP_MENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6052" Name="IDD_ALBUMOREMAIN" Focus="7043">
+		<Controls>
+			<Text Id="7043" Name="IDC_EDIT_ALBUMOREMAIN">
 				<Items/></Text>
 		</Controls>
 	</Dialog>
-	<Dialog Id="6052" Name="IDD_MMS_SERVER_ADDRESS" Focus="0">
+	<Dialog Id="6053" Name="IDD_MMS_SERVER_ADDRESS" Focus="0">
 		<Controls>
-			<Text Id="7043" Name="IDC_MMS_SERVER_ADDRESS">
+			<Text Id="7044" Name="IDC_MMS_SERVER_ADDRESS">
 				<Items/></Text>
 		</Controls>
 	</Dialog>
-	<Dialog Id="6053" Name="IDD_MMS_PROXY" Focus="0">
+	<Dialog Id="6054" Name="IDD_MMS_PROXY" Focus="0">
 		<Controls>
-			<Text Id="7044" Name="IDC_MMS_PROXY">
+			<Text Id="7047" Name="IDC_MMS_PROXY">
 				<Items/></Text>
 		</Controls>
 	</Dialog>
-	<Dialog Id="6054" Name="IDD_MMS_PORT" Focus="0">
+	<Dialog Id="6055" Name="IDD_MMS_PORT" Focus="0">
 		<Controls>
-			<Text Id="7047" Name="IDC_MMS_PORT">
+			<Text Id="7048" Name="IDC_MMS_PORT">
 				<Items/></Text>
 		</Controls>
 	</Dialog>
-	<Dialog Id="6055" Name="IDD_MMS_MEMSTATUS" Focus="0">
+	<Dialog Id="6056" Name="IDD_MMS_MEMSTATUS" Focus="0">
 		<Controls/>
 	</Dialog>
 </Dialogs>
