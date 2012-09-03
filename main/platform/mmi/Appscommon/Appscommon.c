@@ -1342,8 +1342,12 @@ void DrawBottomBg(IDisplay  * pIDisplay)
 	MEMSET(&devinfo, 0, sizeof(devinfo));
     ISHELL_GetDeviceInfo(pShell, &devinfo);
     SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
-	
+
+    #ifdef FEATURE_VERSION_SKY
+    pBarImg = ISHELL_LoadResImage(pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_BOTTOMBARBROWSER);
+    #else
 	pBarImg = ISHELL_LoadResImage(pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_BOTTOMBAR);
+    #endif
    
     // 绘制底部提示条
     if (NULL != pBarImg)
