@@ -602,7 +602,7 @@
 		<Text>新的声音</Text>
 	</String>
 	<String Id="1022" Name="IDS_INSERT_FILE">
-		<Text>Insert file</Text>
+		<Text>插入文件</Text>
 	</String>
 	<String Id="1023" Name="IDS_REMOVE_PICTURE">
 		<Text>移除图片</Text>
