@@ -91,8 +91,17 @@
 	<Object Id="5047" Name="IDB_PROMPT_MSG_BG" MimeType="image/png">
 		<File>..\images\176x220\common\Appscommon\MessageBox\background.png</File>
 	</Object>
+	<Object Id="5060" Name="IDB_CALCAPP_GROUND" MimeType="image/png">
+		<File>..\images\176x220\common\Calculator\background.png</File>
+	</Object>
+	<Object Id="5061" Name="IDB_CALCAPP_LINE" MimeType="image/png">
+		<File>..\images\176x220\common\Calculator\line.png</File>
+	</Object>
 	<Object Id="5081" Name="IDI_BOTTOMBAR" MimeType="image/png">
 		<File>..\images\176x220\common\Appscommon\Menu\bottombar\bottombar.png</File>
+	</Object>
+	<Object Id="5082" Name="IDI_BOTTOMBARBROWSER" MimeType="image/png">
+		<File>..\images\176x220\common\Appscommon\Menu\bottombar\bottombarbrowser.png</File>
 	</Object>
 	<Object Id="5101" Name="IDI_TITLEBAR" MimeType="image/png">
 		<File>..\images\176x220\common\Appscommon\Menu\titlebar\titlebar.png</File>
