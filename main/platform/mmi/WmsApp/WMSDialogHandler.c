@@ -11636,6 +11636,13 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
             }
 #endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH || defined FEATURE_CARRIER_THAILAND_CAT
             // 绘制底部操作提示条
+            
+            #ifdef FEATURE_VERSION_SKY
+            (void) ISHELL_PostEventEx(pMe->m_pShell,  EVTFLG_ASYNC,
+                                      AEECLSID_WMSAPP,
+                                      EVT_USER_REDRAW,
+                                      0, 0);
+            #else
             #ifdef FEATURE_ALL_KEY_PAD
              // Option     Back
              DRAW_BOTTOMBAR(BTBAR_OPTION_BACK)
@@ -11648,7 +11655,6 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                 {
                     nLen = WSTRLEN(pwstrText);
                 }
-                
                 if (nLen>0)
                 {
                     // Option     Delete
@@ -11661,7 +11667,8 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                 }
             }
             #endif
-            IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);             
+            IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);    
+            #endif
             return TRUE;
 
         case EVT_CTL_TEXT_MODECHANGED:  //切换输入法    这里增加画底条，否则从符号输入界面返回时无底条
