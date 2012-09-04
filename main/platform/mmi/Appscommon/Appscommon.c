@@ -1119,6 +1119,7 @@ void DrawBottomBar(IDisplay  * pIDisplay, BottomBar_Param_type *BParam)
 #endif// FEATURE_RANDOM_MENU_COLOR
 */
     {
+        #ifndef FEATURE_VERSION_SKY
         // 加载底条背景图片
         if ((STRLEN(BParam->strImgResFile) > 0) && 
             (BParam->nImgResID != 0))
@@ -1127,6 +1128,14 @@ void DrawBottomBar(IDisplay  * pIDisplay, BottomBar_Param_type *BParam)
                                           BParam->strImgResFile, 
                                           BParam->nImgResID);
         }
+        #else
+        if (BParam->nImgResID != 0)
+        {// 用户传入参数优先
+            pBarImg = ISHELL_LoadResImage(pShell, 
+                                          AEE_APPSCOMMONRES_IMAGESFILE, 
+                                          BParam->nImgResID);
+        }
+        #endif
 #ifdef FEATURE_FUNCS_THEME
 
         else if ((STRLEN(Theme_Param.strBBarImgResFile) > 0) && 
