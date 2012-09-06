@@ -846,6 +846,7 @@ TIMERAPP=               $(MMIDIR)/TimerApp
 VIDEOPLAYER=            $(MMIDIR)/VideoPlayer
 WORLDTIME=              $(MMIDIR)/WorldTime
 UTK=                    $(MMIDIR)/UTK
+UCWEB=                  $(MMIDIR)/UCWEB
 EDITAPPLET =            $(MMIDIR)/EditApplet
 EDITEXTENTSION =        $(MMIDIR)/EditExtension
 OEMEXTFOR3PART =        $(MMIDIR)/OEMExtFor3Part
