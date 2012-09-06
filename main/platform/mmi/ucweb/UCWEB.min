@@ -1,0 +1,27 @@
+#-------------------------------------------------------------------------------
+# UCWEB
+#-------------------------------------------------------------------------------
+
+vpath %.mod $(UCWEB)
+vpath %.mif $(UCWEB)
+vpath %.bar $(UCWEB)
+vpath %.mid $(UCWEB)
+vpath %.bin $(UCWEB)
+vpath %.dat $(UCWEB)
+vpath %.png $(UCWEB)
+vpath %.htm $(UCWEB)
+
+CONSTFILE_BIN_FILES+=\
+    ucweb.mif|fs:/mif/ucweb.mif \
+    ucweb.bar|fs:/mod/ucweb/ucweb.bar \
+    ucweb.mod|fs:/mod/ucweb/ucweb.mod \
+    parserplugin.bin|fs:/mod/ucweb/parserplugin.bin \
+    ucweb_about.htm|fs:/mod/ucweb/ucweb_about.htm \
+    ucweb_help_key.htm|fs:/mod/ucweb/ucweb_help_key.htm \
+    ucweb_l2.png|fs:/mod/ucweb/ucweb_l2.png \
+    ucweb_l.png|fs:/mod/ucweb/ucweb_l.png \
+    ucwebcursornm.dat|fs:/mod/ucweb/ucwebcursornm.dat \
+    ucwebcursorsf.dat|fs:/mod/ucweb/ucwebcursorsf.dat \
+    ucwebcursorzo.dat|fs:/mod/ucweb/ucwebcursorzo.dat \
+    ucwebstartlogo.dat|fs:/mod/ucweb/ucwebstartlogo.dat
+    
