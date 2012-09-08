@@ -597,7 +597,9 @@ static void tuneVolumeStop(CFmRadio* pMe)
     {
        // pMe->byVolumeLevel = 0;
 #if !defined( AEE_SIMULATOR)
+        #ifndef FEATURE_VERSION_SKY
         if (HS_HEADSET_ON())
+        #endif    
         {
             fm_set_volume( newvolumeLevel,pMe->fmSpeaker);
             pMe->fmVolumeStop=FALSE;
@@ -613,7 +615,9 @@ static void tuneVolumeStop(CFmRadio* pMe)
         
         newvolumeLevel = pMe->byVolumeLevel;
 #if !defined( AEE_SIMULATOR)
+        #ifndef FEATURE_VERSION_SKY
         if (HS_HEADSET_ON())
+        #endif    
         {
             fm_set_volume(newvolumeLevel,pMe->fmSpeaker);
             pMe->fmVolumeStop=TRUE;
@@ -902,7 +906,9 @@ static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier)
 			//Add By zzg 2010_9_16
 			else if (pMe->opMode == FM_RADIO_OPMODE_REFRESH_CHANNEL_LIST)
 			{
+                #ifndef FEATURE_VERSION_SKY
 				if (HS_HEADSET_ON())
+                #endif    
 			    {
 #ifdef FEATURE_ANALOG_TV
                     WarT_Fm_Mute(FALSE);
@@ -1041,7 +1047,9 @@ __handleKeyEvent_input_channel_done__:
 			//Add By zzg 2010_9_16
 			else if (pMe->opMode == FM_RADIO_OPMODE_REFRESH_CHANNEL_LIST)
 			{
+                #ifndef FEATURE_VERSION_SKY
 				if (HS_HEADSET_ON())
+                #endif    
 			    {
 #ifdef FEATURE_ANALOG_TV
                     WarT_Fm_Mute(FALSE);
@@ -1521,7 +1529,9 @@ static void changeVolume( CFmRadio *pMe, uint16 keyCode)
     }
 #if !defined( AEE_SIMULATOR)
     //Call driver to set Volume
+    #ifndef FEATURE_VERSION_SKY
     if (HS_HEADSET_ON())
+    #endif    
     {
 #ifdef FEATURE_ANALOG_TV
         WarT_Fm_Set_Volume( pMe->byVolumeLevel);
@@ -1697,12 +1707,12 @@ static void popOptionMenu( CFmRadio *pMe)
                         IDS_FMRADIO_OPTION_MENU_LIST,
                         IDS_FMRADIO_OPTION_MENU_GLOBAL_SEARCH,
                         #else
+						IDS_FMRADIO_OPTION_MENU_LIST,
                         #if defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_W515V3)
                         IDS_FMRADIO_OPTION_MENU_SEARCH,
                         #else
                         IDS_FMRADIO_OPTION_MENU_GLOBAL_SEARCH,
                         #endif						
-						IDS_FMRADIO_OPTION_MENU_LIST,
                         #endif                        
 						IDS_SAVE,
                         IDS_FMRADIO_SPEAKER,
@@ -1814,7 +1824,9 @@ static void popChannelListOptionMenu( CFmRadio *pMe)
 
 static void refreshChannelList( CFmRadio *pMe, boolean begin)
 {
+    #ifndef FEATURE_VERSION_SKY
     if (HS_HEADSET_ON())
+    #endif    
     {
 #ifdef FEATURE_ANALOG_TV
         WarT_Fm_Mute(TRUE);//add by xuhui
@@ -1938,7 +1950,9 @@ static void refreshChannelListCB( void *pme)
     }
     else
     {
+        #ifndef FEATURE_VERSION_SKY
         if (HS_HEADSET_ON())
+        #endif    
         {
 #ifdef FEATURE_ANALOG_TV
             WarT_Fm_Mute(FALSE);//add by xuhui

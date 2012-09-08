@@ -841,11 +841,22 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
 			//Add By zzg 2010_07_18
 #if FEATURE_FMRADIO_SUPPORT_BACKGROUND 			
 			if (!pMe->runOnBackground )
-#endif                
-			
+#endif      
+            #ifdef FEATURE_VERSION_SKY  
+			if (HS_HEADSET_ON())
+			{
+               pMe->fmSpeaker=FALSE;
+            }
+            else
+			{
+               pMe->fmSpeaker=TRUE;
+            }
+            #endif
 #if !defined( AEE_SIMULATOR)
             FmRadio_PowerUp( pMe);
+            #ifndef FEATURE_VERSION_SKY
 			if (HS_HEADSET_ON())
+            #endif    
 			{
 #ifdef FEATURE_ANALOG_TV
                 WarT_Fm_Mute(FALSE);
@@ -873,7 +884,6 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
             FmRadio_RunFSM( pMe);
         }
         return TRUE;
-
         case EVT_APP_STOP:			
             if( pMe->startFromBackground) 
             {
@@ -920,7 +930,9 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
 			if( !pMe->runOnBackground)
 #endif                
 			{
+                #ifndef FEATURE_VERSION_SKY
 				if (HS_HEADSET_ON())
+                #endif    
 				{
 #ifdef FEATURE_ANALOG_TV
                     WarT_Fm_Mute(TRUE);
@@ -1073,6 +1085,23 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
         
         case EVT_HEADSET:
         {
+            #ifdef FEATURE_VERSION_SKY
+            if (HS_HEADSET_ON())
+			{
+               pMe->fmSpeaker=FALSE;
+            }
+            else
+			{
+               pMe->fmSpeaker=TRUE;
+            }
+            pMe->byVolumeLevel=0;
+            fm_set_volume( pMe->byVolumeLevel,pMe->fmSpeaker);
+            (void) ICONFIG_GetItem(pMe->m_pConfig,
+     						   CFGI_FMRADIO_VOLUME,
+     						   &pMe->byVolumeLevel,
+     						   sizeof(byte));
+            fm_set_volume( pMe->byVolumeLevel,pMe->fmSpeaker);  
+            #endif   
         	if ( wParam )
         	{
                 //Nothing TODO
@@ -1324,9 +1353,9 @@ static void FmRadio_PowerUp(void *pme)
     }
 
     pMe->newSmsIncoming = FALSE;
-
+    #ifndef FEATURE_VERSION_SKY
     FmRadio_CheckRefuse( pMe);
-	
+	#endif
     if( pMe->refuseReason == FM_RADIO_REFUSE_REASON_VOICE_CALL_CONNECTED)
     {
 #ifndef WIN32
@@ -1390,7 +1419,9 @@ static void FmRadio_PowerUp(void *pme)
         {
             pMe->ledLightType = FM_RADIO_LED_LIGHT_IDLE;
         }
+        #ifndef FEATURE_VERSION_SKY
         if (HS_HEADSET_ON())
+        #endif    
         {
 #ifdef FEATURE_ANALOG_TV
             WarT_Fm_Set_Volume( pMe->byVolumeLevel);
