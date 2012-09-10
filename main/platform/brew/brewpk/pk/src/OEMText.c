@@ -613,8 +613,7 @@ T9KeyMap Hindi2T9Map[] =
     {T9KEYPREV,     AVK_UP}, {T9KEYLEFT,   AVK_LEFT}, {T9KEYRIGHT, AVK_RIGHT},  
     {T9KEYNONE,   AVK_SEND}, {T9KEYNONE,    AVK_END}, {0,0}
 };
-
-#endif    
+#endif  
 
 #ifdef FEATURE_LANG_RUSSIAN
 T9KeyMap RUSSIAN2T9Map[] = 
@@ -2957,7 +2956,7 @@ static void TextCtl_AddChar(TextCtlContext *pContext, AECHAR ch)
 
             // Write in the new character
             pContext->pszContents[pContext->wSelStart] = ch;
-            #if defined(FEATURE_VERSION_W515V3) //|| defined(FEATURE_VERSION_1110W516)//ndef FEATURE_ALL_KEY_PAD
+            #if 0 //defined(FEATURE_VERSION_W515V3) //|| defined(FEATURE_VERSION_1110W516)//ndef FEATURE_ALL_KEY_PAD
             if(!pContext->m_bDigital)
             {
 				pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart] = ch;
@@ -6103,7 +6102,9 @@ static void T9TextCtl_MultitapRestart(TextCtlContext *pContext)
                         break;    
 #endif //FEATURE_T9_MT_HEBREW
 
+
 /* #ifdef FEATURE_T9_MT_HINDI
+
                      case TEXT_MODE_T9_MT_HINDI:
                         sT9Status = T9AWSetLanguage ( &pContext->sT9awFieldInfo, 
                                                       T9PIDHindi, 0, 0 );   
@@ -6881,7 +6882,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
                    #endif
                 }                                        
             } 
-#if  defined(FEATURE_VERSION_W516) ||defined(FEATURE_VERSION_VG68) ||defined(FEATURE_VERSION_C01) || defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)
+#if  defined(FEATURE_VERSION_W516) ||defined(FEATURE_VERSION_VG68) ||defined(FEATURE_VERSION_C01) || defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)||defined(FEATURE_VERSION_W027V3)
 
             pContext->nMultitapCaps = MULTITAP_ALL_SMALL;
 #endif
@@ -9711,7 +9712,6 @@ static T9KEY T9_BrewKeyToT9AlphabeticKey(TextCtlContext *pContext,AEEEvent eCode
             break;
 		}
 #endif
-
 
 #ifdef FEATURE_T9_MULTITAP    
         case TEXT_MODE_MULTITAP:    
@@ -12660,7 +12660,7 @@ boolean OEM_isFirstCap (OEMCONTEXT hTextField)
     boolean bRet = FALSE;
     int maxsymbolcount;
     int i,j;
-	#if  defined(FEATURE_VERSION_W516) ||defined(FEATURE_VERSION_VG68) || defined(FEATURE_VERSION_C01) || defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)
+	#if  defined(FEATURE_VERSION_W516) ||defined(FEATURE_VERSION_VG68) || defined(FEATURE_VERSION_C01) || defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)||defined(FEATURE_VERSION_W027V3)
 
 	return FALSE;
 	#endif
