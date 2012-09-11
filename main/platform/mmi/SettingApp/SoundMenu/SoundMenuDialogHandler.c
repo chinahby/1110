@@ -1101,7 +1101,17 @@ static boolean  HandleSoundMenuProfilesDialogEvent(CSoundMenu *pMe,
                 //    break;
 
                 case IDS_VOLUME_TITLE:                    //音量
-                    CLOSE_DIALOG(DLGRET_VOLUME)
+                 #ifdef FEATURE_APP_MUSICPLAYER
+                    if(GetMp3PlayerStatus() == MP3STATUS_RUNONBACKGROUND)
+                    {
+                        pMe->m_sSubDlgId = IDS_CONFIRM_OFF_MP;
+                        CLOSE_DIALOG(DLGRET_MESSAGE)
+                    }
+                    else
+                 #endif       
+                    {
+                        CLOSE_DIALOG(DLGRET_VOLUME)
+                    }
                     break;
 
                 case IDS_MISSEDCALL_ALERT:        //未接来电提醒
@@ -3877,6 +3887,9 @@ static boolean  HandleVolumeSubDialogEvent(CSoundMenu *pMe,
                     
                     MEMSET(&BottomBar, NULL, sizeof(BottomBar_Param_type));
                     BottomBar.eBBarType = BTBAR_SELECT_BACK;
+                    #ifdef FEATURE_VERSION_SKY
+                    BottomBar.nImgResID = IDI_BOTTOMBARCONT;
+                    #endif
                     DrawBottomBar(pMe->m_pDisplay, &BottomBar);
                 }
                 

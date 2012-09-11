@@ -499,6 +499,23 @@ static NextFSMAction Sound_StateSoundMenuHandler(CSoundMenu *pMe)
             MOVE_TO_STATE(SOUNDMENUST_VOLUME)
             return NFSMACTION_CONTINUE;
 
+        case DLGRET_MESSAGE:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            SoundMenu_ShowDialog(pMe, IDD_WARNING_MESSEGE);
+            return NFSMACTION_WAIT;  
+
+        case DLGRET_MSGBOX_OK:    
+         if(pMe->m_sSubDlgId == IDS_CONFIRM_OFF_MP)
+            {
+                ISHELL_SendEvent( pMe->m_pShell, AEECLSID_APP_MUSICPLAYER, EVT_CLOSEAPP, 0, 0);
+            }
+            MOVE_TO_STATE(SOUNDMENUST_VOLUME)
+            return NFSMACTION_CONTINUE;
+            
+        case DLGRET_OK:
+        case DLGRET_MSGBOX_CANCEL:
+            MOVE_TO_STATE(SOUNDMENUST_SOUNDMENU)
+            return NFSMACTION_CONTINUE; 
 #if 0
         case DLGRET_WARNING:
             MOVE_TO_STATE(SOUNDMENUST_WARNING)
