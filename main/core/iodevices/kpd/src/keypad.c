@@ -183,7 +183,16 @@ static const hs_key_type keys[ KEYPAD_ROWS ][ KEYPAD_COLUMNS ] = {
    /* KEYSENSE_0 */
    /* 1,17          1,15        1,11         1,9          1,Memo*/
    { HS_SEND_K,      HS_DOWN_K,  HS_7_K,      HS_2_K,      HS_NONE_K/*HS_5_K*/},
-     
+
+   #ifdef FEATURE_VERSION_X3
+   /* KEYSENSE_1 */
+   /* 3,17          3,15        3,11         3,9          3,Memo*/
+   { HS_SEL_K,      HS_RIGHT_K, HS_8_K,      HS_DOWN_K,      HS_NONE_K/*HS_0_K*/},
+
+   /* KEYSENSE_2 */
+   /* 5,17          5,15        5,11         5,9          5,Memo*/
+   { HS_1_K,        HS_LEFT_K,  HS_9_K,      HS_UP_K,      HS_NONE_K/*HS_DOWN_K*/},
+   #else
    /* KEYSENSE_1 */
    /* 3,17          3,15        3,11         3,9          3,Memo*/
    { HS_SEL_K,      HS_RIGHT_K, HS_8_K,      HS_3_K,      HS_NONE_K/*HS_0_K*/},
@@ -191,7 +200,7 @@ static const hs_key_type keys[ KEYPAD_ROWS ][ KEYPAD_COLUMNS ] = {
    /* KEYSENSE_2 */
    /* 5,17          5,15        5,11         5,9          5,Memo*/
    { HS_1_K,        HS_LEFT_K,  HS_9_K,      HS_4_K,      HS_NONE_K/*HS_DOWN_K*/},
-
+   #endif
    /* KEYSENSE_3 */
    /* 7,17          7,15        7,11         7,9          7,Memo*/
    { HS_CLR_K,      HS_INFO_K,  HS_0_K,      HS_5_K,      HS_NONE_K/*HS_CLR_K*/},
