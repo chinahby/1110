@@ -119,7 +119,7 @@ static void disp_ic_init(void)
     LCD_WRITE_DATA(0xAA); // µ÷FILCK
 
     LCD_WRITE_CMD(0x36);
-    LCD_WRITE_DATA(0x08);
+    LCD_WRITE_DATA(0x48);
 
     LCD_WRITE_CMD(0x3A);
     LCD_WRITE_DATA(0x55);
@@ -130,7 +130,7 @@ static void disp_ic_init(void)
 
     LCD_WRITE_CMD(0xB6);
     LCD_WRITE_DATA(0x0A);
-    LCD_WRITE_DATA(0xA2);
+    LCD_WRITE_DATA(0xe2);
 
 
 
