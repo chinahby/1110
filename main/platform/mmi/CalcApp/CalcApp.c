@@ -1374,7 +1374,11 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
                 case AVK_SOFT1:
 #else
 #if defined(FEATURE_DISP_220X176)||defined(FEATURE_DISP_128X160)||defined(FEATURE_DISP_160X128) || defined(FEATURE_DISP_176X220)
-				case AVK_STAR:
+#ifdef FEATURE_VERSION_SKY
+				case AVK_POUND:
+#else
+                case AVK_STAR:
+#endif
 #else
                 case AVK_SELECT:
 #endif
@@ -1417,7 +1421,11 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
 //#if defined(FEATURE_DISP_176X220)
 //				case AVK_STAR:
 #if defined(FEATURE_DISP_220X176)||defined(FEATURE_DISP_128X160)||defined(FEATURE_DISP_160X128) || defined(FEATURE_DISP_176X220)
+#ifdef FEATURE_VERSION_SKY
+                case AVK_STAR:
+#else
 				case AVK_POUND:
+#endif                    
 #endif
                 case AVK_M:
                     Calc_AddChar(pme, (AECHAR)'.', TRUE);
