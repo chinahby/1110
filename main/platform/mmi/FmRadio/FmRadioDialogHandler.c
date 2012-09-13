@@ -30,6 +30,7 @@
 #include "fmradiols.brh"
 #include "Hs_mb6550.h"
 #include "snddev.h"
+
 /*==============================================================================
                                  宏定义和常数
 ==============================================================================*/
@@ -485,6 +486,18 @@ static boolean  HandleFmRadioMainDialogEvent(CFmRadio *pMe,
         #ifdef FEATURE_LCD_TOUCH_ENABLE
             TSIM_NumberKeypad(FALSE);
         #endif
+            #ifdef FEATURE_VERSION_SKY
+            if (HS_HEADSET_ON())
+            {
+             ISHELL_PostEvent( pMe->m_pShell,AEECLSID_CORE_APP,
+                               EVT_HEADSET_CONNECT,0,0);
+            }
+            else
+            {
+             ISHELL_PostEvent( pMe->m_pShell,AEECLSID_CORE_APP,
+                              EVT_HEADSET_DISCONNECT,0,0);
+            }
+            #endif
             hideMenu( pMe);
             ISHELL_CancelTimer( pMe->m_pShell, NULL, (void*)pMe);
             return TRUE;
@@ -598,12 +611,15 @@ static void tuneVolumeStop(CFmRadio* pMe)
        // pMe->byVolumeLevel = 0;
 #if !defined( AEE_SIMULATOR)
         #ifndef FEATURE_VERSION_SKY
-        if (HS_HEADSET_ON())
-        #endif    
+        if (HS_HEADSET_ON())  
         {
             fm_set_volume( newvolumeLevel,pMe->fmSpeaker);
             pMe->fmVolumeStop=FALSE;
         }
+        #else
+            fm_set_volume( newvolumeLevel,pMe->fmSpeaker); 
+            pMe->fmVolumeStop=FALSE;
+        #endif
 #endif
     }
     else
@@ -616,12 +632,21 @@ static void tuneVolumeStop(CFmRadio* pMe)
         newvolumeLevel = pMe->byVolumeLevel;
 #if !defined( AEE_SIMULATOR)
         #ifndef FEATURE_VERSION_SKY
-        if (HS_HEADSET_ON())
-        #endif    
+        if (HS_HEADSET_ON())   
         {
             fm_set_volume(newvolumeLevel,pMe->fmSpeaker);
             pMe->fmVolumeStop=TRUE;
         }
+        #else
+            pMe->byVolumeLevel=0;
+            fm_set_volume( pMe->byVolumeLevel,pMe->fmSpeaker);
+            (void) ICONFIG_GetItem(pMe->m_pConfig,
+     						   CFGI_FMRADIO_VOLUME,
+     						   &pMe->byVolumeLevel,
+     						   sizeof(byte));
+            fm_set_volume( pMe->byVolumeLevel,pMe->fmSpeaker); 
+            pMe->fmVolumeStop=TRUE;
+        #endif
 #endif
 
     }
