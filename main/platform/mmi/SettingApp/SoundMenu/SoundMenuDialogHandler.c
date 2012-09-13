@@ -3735,6 +3735,7 @@ static boolean  HandleVolumeSubDialogEvent(CSoundMenu *pMe,
     {
         case EVT_DIALOG_INIT:
             notifyFMRadioAlertEvent( pMe, TRUE);
+            pMe->m_sSubDlgId = 0;
             return TRUE;
 
         case EVT_DIALOG_START:
