@@ -608,7 +608,7 @@ static void tuneVolumeStop(CFmRadio* pMe)
     byte newvolumeLevel=0; 
     if(pMe->fmVolumeStop)
     {
-       // pMe->byVolumeLevel = 0;
+       //pMe->byVolumeLevel = 0;
 #if !defined( AEE_SIMULATOR)
         #ifndef FEATURE_VERSION_SKY
         if (HS_HEADSET_ON())  
@@ -617,6 +617,7 @@ static void tuneVolumeStop(CFmRadio* pMe)
             pMe->fmVolumeStop=FALSE;
         }
         #else
+            fm_set_volume( newvolumeLevel,pMe->fmSpeaker); 
             fm_set_volume( newvolumeLevel,pMe->fmSpeaker); 
             pMe->fmVolumeStop=FALSE;
         #endif
@@ -638,12 +639,8 @@ static void tuneVolumeStop(CFmRadio* pMe)
             pMe->fmVolumeStop=TRUE;
         }
         #else
-            pMe->byVolumeLevel=0;
-            fm_set_volume( pMe->byVolumeLevel,pMe->fmSpeaker);
-            (void) ICONFIG_GetItem(pMe->m_pConfig,
-     						   CFGI_FMRADIO_VOLUME,
-     						   &pMe->byVolumeLevel,
-     						   sizeof(byte));
+            newvolumeLevel=0;
+            fm_set_volume( newvolumeLevel,pMe->fmSpeaker);
             fm_set_volume( pMe->byVolumeLevel,pMe->fmSpeaker); 
             pMe->fmVolumeStop=TRUE;
         #endif
