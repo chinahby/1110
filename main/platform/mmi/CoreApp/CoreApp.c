@@ -495,7 +495,7 @@ boolean CoreApp_InitAppData(IApplet* po)
     pMe->m_bSuspended = FALSE;
     pMe->m_bChargFull = FALSE;
     pMe->m_bBatteryActive=FALSE;
-#ifdef FEATURE_VERSION_C11    
+#if defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_SKY)    
     pMe->m_keyinfoheld=FALSE;
 #endif    
     if (SUCCESS != ISHELL_CreateInstance(pMe->a.m_pIShell,
@@ -540,7 +540,8 @@ boolean CoreApp_InitAppData(IApplet* po)
     {
         return FALSE;
     }
-    
+
+    MediaGallery_StopUDisk(pMe);   // add by pengyuangui 防止U盘模式异常退出 T卡无法再使用
     IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,TRUE);
     CoreTask_SetPwrDnComplete(FALSE);
     
@@ -1171,7 +1172,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             default:
                 break;
             }
-            #if defined(FEATURE_VERSION_C11)
+            #if defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_SKY)
              if(wParam == AVK_INFO)
              {
                return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
