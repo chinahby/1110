@@ -155,7 +155,7 @@ static  boolean camsensor_gc0329_sensor_init(void)
 	camsensor_gc0329_ycbcr_i2c_write_byte(0x40, 0xff); //fe //ff
 	camsensor_gc0329_ycbcr_i2c_write_byte(0x41, 0x00);
 	camsensor_gc0329_ycbcr_i2c_write_byte(0x42, 0xfe); //
-	camsensor_gc0329_ycbcr_i2c_write_byte(0x46, 0x02); //sync mode
+	camsensor_gc0329_ycbcr_i2c_write_byte(0x46, 0x03); //sync mode_ 0x02
 	camsensor_gc0329_ycbcr_i2c_write_byte(0x4b, 0xcb);
 	camsensor_gc0329_ycbcr_i2c_write_byte(0x4d, 0x01); //[1]In_buf
 	camsensor_gc0329_ycbcr_i2c_write_byte(0x4f, 0x01);
@@ -369,7 +369,7 @@ static  boolean camsensor_gc0329_sensor_init(void)
 	camsensor_gc0329_ycbcr_i2c_write_byte(0xa0, 0xaf); //[7:4]bright_slope for special point
 	camsensor_gc0329_ycbcr_i2c_write_byte(0xa2, 0xff); //[for special point
 
-	camsensor_gc0329_ycbcr_i2c_write_byte(0x44, 0xa2); //23//output format
+	camsensor_gc0329_ycbcr_i2c_write_byte(0x44, 0xa0); //23//output format 0xa2
 
 	return  TRUE;
 } /* camsensor_gc0329_sensor_init */
