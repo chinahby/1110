@@ -208,6 +208,12 @@
 	<String Id="1073" Name="IDS_STR_TOUCH_FUR">
 		<Text>电话本</Text>
 	</String>
+	<String Id="1080" Name="IDS_MAIN_MENU_TORCHON">
+		<Text>电筒已打开</Text>
+	</String>
+	<String Id="1081" Name="IDS_MAIN_MENU_TORCHOFF">
+		<Text>电筒已关闭</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_UIMERR" Focus="7001">
