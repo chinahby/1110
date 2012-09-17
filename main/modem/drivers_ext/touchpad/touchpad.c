@@ -730,8 +730,8 @@ void touchpad_polling(int4 ms_interval)
                     cur_pen_event.pen_state = PEN_DOWN;
                     down_tick =  cur_pen_event.update_tick;
                     current_tick = down_tick;
-                    cur_pen_event.pen_x = pen_event.pen_x;
-                    cur_pen_event.pen_y = pen_event.pen_y;
+                    cur_pen_event.pen_x = 240-pen_event.pen_x;
+                    cur_pen_event.pen_y = 320-pen_event.pen_y;
                     touchpad_write_array(&cur_pen_event);
                     break;
 
@@ -746,8 +746,8 @@ void touchpad_polling(int4 ms_interval)
                     }
                     else
                     {
-                        cur_pen_event.pen_x = pen_event.pen_x;
-                        cur_pen_event.pen_y = pen_event.pen_y;
+                        cur_pen_event.pen_x =240- pen_event.pen_x;
+                        cur_pen_event.pen_y =320- pen_event.pen_y;
                         touchpad_write_array(&cur_pen_event);
                     }
                     break;
