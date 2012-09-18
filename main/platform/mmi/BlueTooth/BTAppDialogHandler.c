@@ -3409,7 +3409,7 @@ static boolean  HandleMyInfoEditDialogEvent(CBTApp *pMe,
                         else
                         {
 
-                            AECHAR newstrText[MAX_HANDLE_NAME_LEN] = {0};
+                            AECHAR newstrText[64] = {0};
                             nCount = WSTRNCOPYN(newstrText,sizeof(newstrText),pwstrText,nLen-1);
                             if(nCount == 0)
                             {
