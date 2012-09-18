@@ -261,16 +261,28 @@ typedef struct
 #ifdef FEATURE_CAMERA_MULTI_SENSOR
 static const CCameraSize g_CameraFrontSizeCFG[] = 
 {
-	{180,240,L"180*240"}, // VGA 
+#ifdef FEATURE_VERSION_X3
+    {240,320,L"240*320"}, // VGA
+    {324,432,L"480*640"}, // VGA
+    {0,0,NULL}
+#else
+	{180,240,L"180*240"}, // VGA
     {360,480,L"360*480"}, // VGA
     {0,0,NULL}
+#endif
 };
 
 static const CCameraSize g_CameraBackSizeCFG[] = 
 {
+#ifdef FEATURE_VERSION_X3
+    {240,320,L"240*320"}, // VGA
+    {324,432,L"480*640"}, // VGA
+    {0,0,NULL}
+#else
 	{480,640,L"480*640"}, // VGA 
     {600,800,L"600*800"}, // VGA
     {0,0,NULL}
+#endif
 };
 #else
 // ×î´óOEMNV_CAMERA_SIZE_MAX
@@ -4446,7 +4458,9 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
 #endif
 
 	MSG_FATAL("CameraApp_CPreviewStart sensor_type=%d",sensor_type,0,0);
-	if ( sensor_type == CAM_PARM_ID_PAIR_SIV121A_SID130B || CAM_PARM_ID_PAIR_SIV121D_SID130B || sensor_type == CAM_PARM_ID_PAIR_SIV120A_SID130B )
+	if ( sensor_type == CAM_PARM_ID_PAIR_SIV121A_SID130B 
+      || sensor_type == CAM_PARM_ID_PAIR_SIV121D_SID130B 
+      || sensor_type == CAM_PARM_ID_PAIR_SIV120A_SID130B )
 	{
 		if ( pMe->m_nCameraMulti == OEMNV_CAMERA_MULTI_ONE )
 		{
@@ -4470,6 +4484,23 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
 	    displaySize.cx = 240;
 	    displaySize.cy = 320;
 	}
+    else if(sensor_type == CAM_PARM_ID_PAIR_GC0329_GC0329)
+    {
+        if ( pMe->m_nCameraMulti == OEMNV_CAMERA_MULTI_ONE )
+		{
+			captureSize.cx = g_CameraFrontSizeCFG[pMe->m_nCameraSize].dx;//480;
+		    captureSize.cy = g_CameraFrontSizeCFG[pMe->m_nCameraSize].dy;//640;
+		    displaySize.cx = 240;
+		    displaySize.cy = 320;
+		}
+		else if ( pMe->m_nCameraMulti == OEMNV_CAMERA_MULTI_TWO)
+		{
+			captureSize.cx = g_CameraBackSizeCFG[pMe->m_nCameraSize].dx;//600;
+		    captureSize.cy = g_CameraBackSizeCFG[pMe->m_nCameraSize].dy;//800
+		    displaySize.cx = 240;
+		    displaySize.cy = 320;
+		}
+    }
 #else
 	MSG_FATAL("***zzg CPreviewStart ***", 0, 0, 0);
 
