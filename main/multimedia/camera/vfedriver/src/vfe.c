@@ -3811,9 +3811,11 @@ CAMQDSP_ReturnCodeType VFE_ConfigureSnapshot
         VFE_VerifyDefectPixelCorrectionType       (config->defectPixelCorrection) &&
         VFE_VerifyColorCorrectionType             (config->colorCorrection) &&
         VFE_VerifyColorConversionType             (config->colorConversion)
+#ifndef CUST_EDITION
 #ifdef QDSP_MODULE_VFE05_DEFINED
        && VFE_VerifyOutput1Size                   (config->output1Configuration)
 #endif /* QDSP_MODULE_VFE05_DEFINED */
+#endif
 #ifndef QDSP_MODULE_VFE25_DEFINED
         && VFE_Verify3x3LumaFilterType            (config->f3x3LumaFilter)
 #endif /* nQDSP_MODULE_VFE25_DEFINED */
