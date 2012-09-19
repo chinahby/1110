@@ -12,6 +12,8 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_CAMERA_MULTI_SENSOR    //Ë«ÉãÏñÍ·±êÇ©  
 #ifdef CUST_EDITION
 #define FEATURE_VERSION_X3
+#define FEATURE_VERSION_MYANMAR
+#define FEATURE_DISABLE_UIMPRL
 #define FEATURE_APP_BLUETOOTH
 #define FEATURE_BT
 #define FEATURE_IBT
@@ -42,9 +44,11 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_RUIM_PHONEBOOK
 #define FEATURE_ICARD_NO_UI_BASE
 #define FEATURE_LANG_ENGLISH
+#define FEATURE_LANG_MYANMAR
+#define FEATURE_LANG_THAI
 //#define FEATURE_NUM_KEY_MID
 //#define FEATURE_INPUTMODE_INDONESIAN //Add By zzg 2010_09_06
-#define FEATURE_LANG_CHINESE
+//#define FEATURE_LANG_CHINESE
 //#define FEATURE_NET_LOCK
 //#define FEATURE_SEAMLESS_SMS
 #define FEATURE_OMH_SMS
@@ -250,6 +254,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_XO 
 
 #ifdef CUST_EDITION
+#define FEATURE_LANGUAGE_MYANMAR
 //#define FEATURE_DUAL_UIMCARD
 #define FEATRUE_AUTO_SET_NEED_NV_VALUE
 #define FEATURE_FM_RADIO

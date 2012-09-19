@@ -52,7 +52,9 @@ typedef enum
    AEE_VKEY_DIALNUMBER,            //拨号键盘
    AEE_VKEY_CALCULATOR,              //计算器键盘
    AEE_VKEY_ZHUYIN,                  // 注音键盘
-   AEE_VKEY_USERKEYPAD             //用户自己定义键盘
+   AEE_VKEY_USERKEYPAD,             //用户自己定义键盘
+   AEE_VKEY_THAINUMBER,
+   AEE_VKEY_MYANMRANUMBER
 }VKeyCategory;
 
 typedef enum
@@ -89,6 +91,15 @@ struct _AEEVKeyItem_Own
 	AEEEvent        evt;
 	uint16          wp;
 	AECHAR          name[1];
+};
+
+typedef struct _AEETHAIVKeyItem_Own  AEETHAIVKeyItem_Own;
+struct _AEETHAIVKeyItem_Own
+{
+	AEEEvent        evt;
+	uint16          wp;
+	uint16          name[20];
+    uint16          m_Itemmax;
 };
 
 typedef struct _AEEVKeyPad_Own  AEEVKeyPad_Own;

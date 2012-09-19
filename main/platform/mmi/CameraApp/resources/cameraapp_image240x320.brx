@@ -61,6 +61,12 @@
 	<Object Id="5020" Name="IDI_CAMER_FLASH">
 		<File>..\..\Appscommon\images\240x320\common\CameraApp\flash.png</File>
 	</Object>
+	<Object Id="5021" Name="IDI_SIZE_240_320">
+		<File>..\..\Appscommon\images\240x320\common\CameraApp\240_320.PNG</File>
+	</Object>
+	<Object Id="5022" Name="IDI_SIZE_480_640">
+		<File>..\..\Appscommon\images\240x320\common\CameraApp\480_640.PNG</File>
+	</Object>
 	<Object Id="5023" Name="IDI_BANDING_50">
 		<File>..\..\Appscommon\images\240x320\common\CameraApp\50_Hz.PNG</File>
 	</Object>

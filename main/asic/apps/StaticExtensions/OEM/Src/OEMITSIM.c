@@ -379,6 +379,9 @@ OBJECT(CTSIM)
    boolean                    bcourshow;              //光标显示
    boolean                    bletterkeyPad;          //大小写切换
    boolean                    bpenyin;
+   uint32                     m_oldkey;
+   uint32                     m_curpros;
+   boolean                    b_multenter;
 }; 
 
 typedef boolean         (*PFN_PenDownHandler)(CTSIM *, uint32);
@@ -563,12 +566,26 @@ static void             TSIM_SymbolsExit(CTSIM *pme);
 static void             TSIM_SymbolsDraw(CTSIM *pme);
 static void             Symbols_Init(CTSIM *pme);
 
+//touch screen THAI inputmode
+static void             TSIM_THAIRestart(CTSIM *pme);
+static void             TSIM_THAIExit(CTSIM *pme);
+static void             TSIM_THAIDraw(CTSIM *pme);
+static void             THAI_Init(CTSIM *pme);
+
+//touch screen MYANMRA inputmode
+static void             TSIM_MYANMRARestart(CTSIM *pme);
+static void             TSIM_MYANMRAExit(CTSIM *pme);
+static void             TSIM_MYANMRADraw(CTSIM *pme);
+static void             MYANMRA_Init(CTSIM *pme);
+
+
 //touch screen Number inputmode
 static void             TSIM_NumberRestart(CTSIM *pme);
 static void             TSIM_NumberExit(CTSIM *pme);
 static void             TSIM_NumberDraw(CTSIM *pme);
 static void             Number_Init(CTSIM *pme);
        void             TSIM_NumberKeypad(boolean block);
+static void             OEMITSIM_keypadtimer(void * pUser);
 
 
 //just for clipboard             
@@ -583,6 +600,7 @@ static void             TSIM_Draw3DFrame(CTSIM * pme, AEERect *pRc, int nStyle);
 //-----------------------------------------------------------------------------
 static ModeInfo sTSIMModes[] =
 { 
+   #if 1
    {  TSIM_HanstrokeRestart,
       TSIM_HanstrokePenDown,
       TSIM_HanstrokePenUp,
@@ -600,6 +618,25 @@ static ModeInfo sTSIMModes[] =
       TSIM_PinyinExit,
   	  TSIM_PinyinDraw,
       {TSIM_PINYIN, {0x62fc, 0}}},//lint !e785
+    #endif  
+
+   {  TSIM_THAIRestart,
+      TSIM_LetSymPenDown,
+      TSIM_LetSymPenUp,
+      TSIM_LetSymPenMove,
+      TSIM_LetSymEvtChar,
+      TSIM_THAIExit,
+      TSIM_THAIDraw,
+      {TSIM_LETTERS, {0x6cf0, 0}}},//lint !6cf0
+          
+   {  TSIM_MYANMRARestart,
+      TSIM_LetSymPenDown,
+      TSIM_LetSymPenUp,
+      TSIM_LetSymPenMove,
+      TSIM_LetSymEvtChar,
+      TSIM_MYANMRAExit,
+      TSIM_MYANMRADraw,
+      {TSIM_LETTERS, {0x7f05, 0}}},//lint !7f05
 
    {  TSIM_LettersRestart,
       TSIM_LetSymPenDown,
@@ -637,6 +674,41 @@ static const AECHAR fullscreen_symbol[FULLSCREEN_SYMBOL_NUM] =
 static const AECHAR onerect_symbol[ONERECT_SYMBOL_NUM] =
 {
     ',', 0x3002, '!', '?', 0x201c, 0x201d, 0x2018, 0x2019, ';'
+};
+typedef struct _OEMITSIMKeyItem_Own  OEMITSIMKeyItem_Own;
+struct _OEMITSIMKeyItem_Own
+{
+	uint16          wp;
+	uint16          name[20];
+    uint16          m_Itemmax;
+};
+
+static OEMITSIMKeyItem_Own  OEMITSIMTHAIKeyItem[10] =
+{
+    {'0', {0x0E48,0x0E49,0x0E4A,0x0E4B,0x0E47,0x0E4C,0x0E39,0x0E30,'0'},'9'},
+    {'1', {'1'},'1'},
+    {'2', {0x0E01,0x0E02,0x0E03,0x0E04,0x0E05,0x0E06,0x0E07,0x0E08,0x0E09,'2'},'10'},
+    {'3', {0x0E0A,0x0E0B,0x0E0C,0x0E0D,0x0E0E,0x0E0F,0x0E10,'3'},'8'},
+    {'4', {0x0E11,0x0E12,0x0E13,0x0E14,0x0E15,0x0E16,0x0E17,'4'},'8'},
+    {'5', {0x0E18,0x0E19,0x0E1A,0x0E1B,0x0E1C,0x0E1D,0x0E1E,'5'},'8'},
+    {'6', {0x0E1F,0x0E20,0x0E21,0x0E22,0x0E23,0x0E25,0x0E27,'6'},'8'},
+    {'7', {0x0E28,0x0E29,0x0E2A,0x0E2B,0x0E2C,0x0E2D,0x0E2E,'7'},'8'},
+    {'8', {0x0E31,0x0E34,0x0E35,0x0E36,0x0E37,0x0E38,0x0E39,0x0E30,'8'},'9'},
+    {'9', {0x0E32,0x0E33,0x0E40,0x0E41,0x0E42,0x0E43,0x0E44,0x0E46,0x0E24,'9'},'10'},  
+};
+
+static OEMITSIMKeyItem_Own  OEMITSIMMYNAMMAKeyItem[10] =
+{
+    {'0', {' ', 0x1039, 0x1036, 0x1037, 0x1038, 0x103A, 0x103B, 0x103C, 0x103D, 0x103E, '.', 0x104A, 0x104B, 0x104C, 0x104D, 0x104E, 0x104F, 0x1040, '0'},'19'},
+    {'1', {0x1000, 0x1001, 0x1002, 0x1003, 0x1004, 0x1041, '1'},'7'},
+    {'2', {0x1005, 0x1006, 0x1007, 0x1008, 0x1009, 0x100A, 0x1042, '2'},'8'},
+    {'3', {0x100B, 0x100C, 0x100D, 0x100E, 0x100F, 0x1043, '3'},'7'},
+    {'4', {0x1010, 0x1011, 0x1012, 0x1013, 0x1014, 0x1044, '4'},'7'},
+    {'5', {0x1015, 0x1016, 0x1017, 0x1018, 0x1019, 0x1045, '5'},'7'},
+    {'6', {0x101A, 0x101B, 0x101C, 0x101D, 0x101E, 0x1046,  '6'},'7'},
+    {'7', {0x101F, 0x1020, 0x103F, 0x1047, '7'},'5'},
+    {'8', {0x1021, 0x1022, 0x1023, 0x1024, 0x1025, 0x1026, 0x1027, 0x1028, 0x1029, 0x102A, 0x1048, '8'},'12'},
+    {'9', {0x102B, 0x102C, 0x102D, 0x102E, 0x102F, 0x1030, 0x1031, 0x1032, 0x1033, 0x1034, 0x1035, 0x1049, '9'},'13'},
 };
 
 //---------------------------------------------------------------------
@@ -1080,22 +1152,23 @@ static boolean CTSIM_HandleEvent(ITSIM * pITSIM, AEEEvent eCode, uint16 wParam, 
                 //if the pen hit the touch modetitle
                 if (TSIM_IsInRange(dwParam, &pme->wholetmtitle_range))
                 {
-                    for (i = 0;  i < MAX_TSM_TYPE; i++)
+                    //for (i = 0;  i < MAX_TSM_TYPE; i++)
+                    for (i = 0;  i < MAX_TSM_TYPE-2; i++)
                     {
                         //i=i+3;
                         if (TSIM_IsInRange(dwParam, &(pme->tmtitle_range[i])))
                         {
                              DBGPRINTF("CTSIM-HandleEvent----------i=%d",i);
-                            if(CTSIM_GetInputMode(pITSIM, NULL) != (OEMTSIMInputMode)(i + 1))
+                            if(CTSIM_GetInputMode(pITSIM, NULL) != (OEMTSIMInputMode)(i + 3))
                             {
                                  DBGPRINTF("CTSIM-HandleEvent----------2");
-                                if((OEMTSIMInputMode)(i + 1) == TSIM_SYMBOLS)
+                                if((OEMTSIMInputMode)(i + 3) == TSIM_SYMBOLS)
                                 {
                                      DBGPRINTF("CTSIM-HandleEvent----------1");
                                     pme->m_tsm_last = CTSIM_GetInputMode(pITSIM, NULL);
                                 }
                                    DBGPRINTF("CTSIM-HandleEvent----------");
-                                (void)CTSIM_SetInputMode(pITSIM, (OEMTSIMInputMode)(i + 1));
+                                (void)CTSIM_SetInputMode(pITSIM, (OEMTSIMInputMode)(i + 3));
                                 //according to the inputmode to redraw
                                 //the keypad or handwrite area
                                 (void)CTSIM_Redraw(pITSIM);
@@ -9581,8 +9654,8 @@ static void Letters_Init(CTSIM *pme)
                    - (SOFTKEY_HEIGHT + TMTILE_HEIGHT+11)),
                    240,
                    (int16)((MAX_SCREEN_HEIGHT - SOFTKEY_HEIGHT) - 2));
-    
-    for (i = 0; i < MAX_TSM_TYPE; i++)
+    //for (i = 0; i < MAX_TSM_TYPE; i++)
+    for (i = 0; i < MAX_TSM_TYPE-2; i++)
     {
         SETCoordiRange(&(pme->tmtitle_range[i]),
                        (int16)(pme->m_rectDisplay.x + 1 + (i) * 48),
@@ -9714,7 +9787,7 @@ static boolean TSIM_LetSymPenDown(CTSIM *pme, uint32 dwparam)
 {                    
     //if the pendown point is in the pinyin keypad, then pass the event to the virtualkey controls
     DBGPRINTF("TSIM_LetSymPenDown    1");           
-    if((pme->m_tsm_curr == TSIM_LETTERS || pme->m_tsm_curr == TSIM_NUM) && TSIM_IsInRange(dwparam,&pme->selectdel_range))
+    if((pme->m_tsm_curr == TSIM_LETTERS || pme->m_tsm_curr == TSIM_NUM|| pme->m_tsm_curr == TSIM_THAI|| pme->m_tsm_curr == TSIM_MYANMRA) && TSIM_IsInRange(dwparam,&pme->selectdel_range))
     {
      if (pme->m_wContentsChars > 0)
         {
@@ -9923,10 +9996,112 @@ static boolean  TSIM_LetSymEvtChar(CTSIM* pme, AEEEvent eCode, AECHAR receivecha
             TSIM_AddChar(pme, receivechar);
             TSIM_Draw(pme);
         }
-        else if (pme->m_tsm_curr == TSIM_NUM)
+        else if (pme->m_tsm_curr == TSIM_NUM  || pme->m_tsm_curr ==TSIM_PINYIN)
         {
             TSIM_AddChar(pme, receivechar);
             TSIM_Draw(pme);
+        }
+        else if(pme->m_tsm_curr == TSIM_THAI)
+        {
+           DBGPRINTF("******THAI-------receivechar=%d------pme->m_oldkey=%d",receivechar,pme->m_oldkey);
+           if((receivechar-48) >= 0 && (receivechar-48) < 10)
+           {
+             AECHAR    temp;
+             if(pme->m_oldkey != receivechar)
+                {
+                    pme->m_oldkey=receivechar;  
+                    temp = OEMITSIMTHAIKeyItem[receivechar-48].name[0];                     
+                }
+                else
+                {
+                   //AEE_CancelTimer(OEMITSIM_keypadtimer,pme); 
+                   (void)ISHELL_CancelTimer(pme->m_pIShell,OEMITSIM_keypadtimer,pme); 
+                   if(pme->b_multenter == FALSE)
+                   {
+                    temp = OEMITSIMTHAIKeyItem[receivechar-48].name[0];   
+                   }
+                   else
+                   {
+                        temp = OEMITSIMTHAIKeyItem[receivechar-48].name[pme->m_curpros];
+                        if (pme->wSelStart && (pme->wSelStart == pme->wSelEnd))
+                        {
+                           if(temp > 0)
+                           {
+                             pme->wSelStart=pme->wSelStart-1;
+                           }  
+                        }
+                   }
+                   if(pme->m_curpros<(OEMITSIMTHAIKeyItem[receivechar-48].m_Itemmax-48))
+                  	{
+                  		pme->m_curpros ++;
+                  	}
+                  	else
+                  	{
+                  		pme->m_curpros = 0;
+                  	} 
+                    pme->b_multenter = TRUE;
+                    (void)ISHELL_SetTimer(pme->m_pIShell,1000,OEMITSIM_keypadtimer,pme);
+                   // AEE_SetTimer(1000,OEMITSIM_keypadtimer,pme);
+                } 
+              TSIM_AddChar(pme, temp);
+              TSIM_Draw(pme);
+           }
+           else
+           {
+              TSIM_AddChar(pme, receivechar);
+              TSIM_Draw(pme);
+           }
+        }
+        else if(pme->m_tsm_curr == TSIM_MYANMRA)
+        {
+           DBGPRINTF("******THAI-------receivechar=%d------pme->m_oldkey=%d",receivechar,pme->m_oldkey);
+           if((receivechar-48) >= 0 && (receivechar-48) < 10)
+           {
+             AECHAR    temp;
+             if(pme->m_oldkey != receivechar)
+                {
+                    pme->m_oldkey=receivechar;  
+                    temp = OEMITSIMMYNAMMAKeyItem[receivechar-48].name[0];                     
+                }
+                else
+                {
+                   //AEE_CancelTimer(OEMITSIM_keypadtimer,pme); 
+                   (void)ISHELL_CancelTimer(pme->m_pIShell,OEMITSIM_keypadtimer,pme); 
+                   if(pme->b_multenter == FALSE)
+                   {
+                    temp = OEMITSIMMYNAMMAKeyItem[receivechar-48].name[0];   
+                   }
+                   else
+                   {
+                        temp = OEMITSIMMYNAMMAKeyItem[receivechar-48].name[pme->m_curpros];
+                        if (pme->wSelStart && (pme->wSelStart == pme->wSelEnd))
+                        {
+                           if(temp > 0)
+                           {
+                             pme->wSelStart=pme->wSelStart-1;
+                           }  
+                        }
+                   }
+                   if(pme->m_curpros<(OEMITSIMMYNAMMAKeyItem[receivechar-48].m_Itemmax-48))
+                  	{
+                  		pme->m_curpros ++;
+                  	}
+                  	else
+                  	{
+                  		pme->m_curpros = 0;
+                  	} 
+                    pme->b_multenter = TRUE;
+                    (void)ISHELL_SetTimer(pme->m_pIShell,1000,OEMITSIM_keypadtimer,pme);
+                   // AEE_SetTimer(1000,OEMITSIM_keypadtimer,pme);
+                } 
+              TSIM_AddChar(pme, temp);
+              TSIM_Draw(pme);
+           }
+           else
+           {
+              TSIM_AddChar(pme, receivechar);
+              TSIM_Draw(pme);
+           }
         }
         else
         {
@@ -10297,6 +10472,394 @@ SEE ALSO:
 
 =============================================================================*/
 static void TSIM_SymbolsExit(CTSIM *pme)
+{
+    //set the virtualkey control to be not active
+    IVKEYCTL_SetActive(pme->m_pIVkeyCtl, FALSE);
+
+    //free the image pointer.
+    if (pme->m_pnothwimage)
+    {
+        IIMAGE_Release(pme->m_pnothwimage);
+        pme->m_pnothwimage = NULL;
+    }
+    
+    TSIM_NoSelection(pme);
+}
+
+/*=============================================================================
+FUNCTION: TSIM_THAIRestart
+
+DESCRIPTION:
+
+PARAMETERS:
+   *pme:pointer to the CTSIM object.
+
+RETURN VALUE:
+   None
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+static void TSIM_THAIRestart(CTSIM *pme)
+{
+    THAI_Init(pme);
+    TSIM_NoSelection(pme);
+    TSIM_TextChanged(pme);
+}
+
+/*=============================================================================
+FUNCTION: THAI_Init
+
+DESCRIPTION:  Initialize FuHao vars in pTextCtl
+
+PARAMETERS:
+   *pme:pointer to the CTSIM object.
+
+RETURN VALUE:
+   None
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+static void THAI_Init(CTSIM *pme)
+{
+    //pme->m_rectDisplay.dy = (int16)(pme->m_rc.dy - (6 * TSIMLINEHEIGHT + 29));
+    //initialize the variants of the symbols inputmode
+    pme->bselect_blackscrbar = FALSE;
+    pme->bkpaddown = FALSE;
+    pme->m_rectDisplay.dy=95;
+
+    //set the range of the text area
+    SETCoordiRange(&(pme->textrange),
+                   pme->m_rectDisplay.x,
+                   pme->m_rectDisplay.y,
+                   pme->m_rectDisplay.x + pme->m_rectDisplay.dx - 1,
+                   pme->m_rectDisplay.y + pme->m_rectDisplay.dy - 1);
+
+    //SET THE keypad area
+    SETCoordiRange(&pme->keypad,
+                   pme->m_rectDisplay.x,
+                   pme->m_rectDisplay.y + pme->m_rectDisplay.dy,
+                   (pme->m_rectDisplay.x + pme->m_rectDisplay.dx) - 1,
+                   //(pme->m_rectDisplay.y + pme->m_rectDisplay.dy
+                   //+ (int16)(4 * TSIMLINEHEIGHT + 19))
+                   pme->m_rectDisplay.dy+180);
+    SETCoordiRange(&pme->selectdel_range,
+                   DELRANGE_MINX+52,
+                   DELRANGE_MINY-125,
+                   DELRANGE_MAXX+67,
+                   DELRANGE_MAXY-106);    
+    SETCoordiRange(&pme->selectsk_range,
+                  pme->m_rectDisplay.x + 1,
+                  (int16)((MAX_SCREEN_HEIGHT - SOFTKEY_HEIGHT) -9),
+                  pme->m_rectDisplay.x
+                  + (pme->m_rectDisplay.dx/ 4 - 2),
+                  (int16)(MAX_SCREEN_HEIGHT - 2));
+    SETCoordiRange(&pme->copysk_range,
+                  pme->m_rectDisplay.x
+                  + pme->m_rectDisplay.dx / 4,
+                  (int16)((MAX_SCREEN_HEIGHT - SOFTKEY_HEIGHT) -9),
+                  pme->m_rectDisplay.x
+                  + (2 * pme->m_rectDisplay.dx/ 4 - 2),
+                  (int16)(MAX_SCREEN_HEIGHT - 2));
+    SETCoordiRange(&pme->pastesk_range,
+                  pme->m_rectDisplay.x
+                  + 2 * pme->m_rectDisplay.dx/ 4,
+                  (int16)((MAX_SCREEN_HEIGHT - SOFTKEY_HEIGHT) -9),
+                  pme->m_rectDisplay.x
+                  + (3 * pme->m_rectDisplay.dx/ 4 - 2),
+                  (int16)(MAX_SCREEN_HEIGHT - 2));
+    SETCoordiRange(&pme->clearsk_range,
+                  pme->m_rectDisplay.x
+                  + 3 * pme->m_rectDisplay.dx/ 4,
+                  (int16)((MAX_SCREEN_HEIGHT - SOFTKEY_HEIGHT) -9),
+                  pme->m_rectDisplay.x
+                  + (4 * pme->m_rectDisplay.dx/ 4 - 2),
+                  (int16)(MAX_SCREEN_HEIGHT - 2));
+    //load the image to the memory.
+    if (pme->language == NV_LANGUAGE_CHINESE)
+    {
+        //pme->m_pnothwimage = ISHELL_LoadResImage(pme->m_pIShell,
+        //                                      AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_PYBUTTONCH);
+    }
+    else if (pme->language == NV_LANGUAGE_ENGLISH)
+    {
+           pme->m_pnothwimage = ISHELL_LoadResImage(pme->m_pIShell,
+                                              AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_BUTTONEN);
+    }
+    if (pme->m_pnothwimage == NULL)
+    {
+        //ERR("LOAD IMAGE FAIL", 0, 0, 0);
+    }
+
+    return;
+}
+
+/*=============================================================================
+FUNCTION: TSIM_THAIDraw
+
+DESCRIPTION: draw Pinyin inputmode
+
+PARAMETERS:
+   *pme:the pointer to the CTSIM.
+
+RETURN VALUE:
+   None
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+static void  TSIM_THAIDraw(CTSIM *pme)
+{
+    AEERect   zmkpad_rc;
+    DBGPRINTF("TSIM_LettersDraw    1"); 
+    //draw the button image.
+    if (pme->m_pnothwimage == NULL)
+    {
+        //ERR("There is no image to draw", 0, 0, 0);
+        return;
+    }
+    //IIMAGE_Draw(pme->m_pnothwimage, 0, 164);
+     IIMAGE_Draw(pme->m_pnothwimage,HAND_IMAGE_X,HAND_IMAGE_Y+55); 
+    //display the zimu virtual keypad for user inputing
+    zmkpad_rc.x  = pme->m_rectDisplay.x;
+    zmkpad_rc.y  = pme->m_rectDisplay.dy;// pme->m_rectDisplay.y + pme->m_rectDisplay.dy;
+    zmkpad_rc.dx = pme->m_rectDisplay.dx;
+    zmkpad_rc.dy = 180;//(int16)(4 * TSIMLINEHEIGHT + 20);
+
+    //draw the virtual zimu keypad
+    IVKEYCTL_SetKeyPad(pme->m_pIVkeyCtl, &zmkpad_rc, AEE_VKEY_THAINUMBER);
+    //set the virtualkey control to be active
+    IVKEYCTL_SetActive(pme->m_pIVkeyCtl, TRUE);
+    return;
+}
+
+
+/*=============================================================================
+FUNCTION: TSIM_NumberExit
+
+DESCRIPTION:The Exit function for ZiMu Input Method.
+
+PARAMETERS:
+   *pme:pointer to the CTSIM object
+
+RETURN VALUE:
+   None
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+static void TSIM_THAIExit(CTSIM *pme)
+{
+    //set the virtualkey control to be not active
+    IVKEYCTL_SetActive(pme->m_pIVkeyCtl, FALSE);
+
+    //free the image pointer.
+    if (pme->m_pnothwimage)
+    {
+        IIMAGE_Release(pme->m_pnothwimage);
+        pme->m_pnothwimage = NULL;
+    }
+    
+    TSIM_NoSelection(pme);
+}
+
+/*=============================================================================
+FUNCTION: TSIM_MYANMRARestart
+
+DESCRIPTION:
+
+PARAMETERS:
+   *pme:pointer to the CTSIM object.
+
+RETURN VALUE:
+   None
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+static void TSIM_MYANMRARestart(CTSIM *pme)
+{
+    MYANMRA_Init(pme);
+    TSIM_NoSelection(pme);
+    TSIM_TextChanged(pme);
+}
+
+/*=============================================================================
+FUNCTION: MYANMRA_Init
+
+DESCRIPTION:  Initialize FuHao vars in pTextCtl
+
+PARAMETERS:
+   *pme:pointer to the CTSIM object.
+
+RETURN VALUE:
+   None
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+static void MYANMRA_Init(CTSIM *pme)
+{
+    //pme->m_rectDisplay.dy = (int16)(pme->m_rc.dy - (6 * TSIMLINEHEIGHT + 29));
+    //initialize the variants of the symbols inputmode
+    pme->bselect_blackscrbar = FALSE;
+    pme->bkpaddown = FALSE;
+    pme->m_rectDisplay.dy=95;
+
+    //set the range of the text area
+    SETCoordiRange(&(pme->textrange),
+                   pme->m_rectDisplay.x,
+                   pme->m_rectDisplay.y,
+                   pme->m_rectDisplay.x + pme->m_rectDisplay.dx - 1,
+                   pme->m_rectDisplay.y + pme->m_rectDisplay.dy - 1);
+
+    //SET THE keypad area
+    SETCoordiRange(&pme->keypad,
+                   pme->m_rectDisplay.x,
+                   pme->m_rectDisplay.y + pme->m_rectDisplay.dy,
+                   (pme->m_rectDisplay.x + pme->m_rectDisplay.dx) - 1,
+                   //(pme->m_rectDisplay.y + pme->m_rectDisplay.dy
+                   //+ (int16)(4 * TSIMLINEHEIGHT + 19))
+                   pme->m_rectDisplay.dy+180);
+    SETCoordiRange(&pme->selectdel_range,
+                   DELRANGE_MINX+52,
+                   DELRANGE_MINY-125,
+                   DELRANGE_MAXX+67,
+                   DELRANGE_MAXY-106);    
+    SETCoordiRange(&pme->selectsk_range,
+                  pme->m_rectDisplay.x + 1,
+                  (int16)((MAX_SCREEN_HEIGHT - SOFTKEY_HEIGHT) -9),
+                  pme->m_rectDisplay.x
+                  + (pme->m_rectDisplay.dx/ 4 - 2),
+                  (int16)(MAX_SCREEN_HEIGHT - 2));
+    SETCoordiRange(&pme->copysk_range,
+                  pme->m_rectDisplay.x
+                  + pme->m_rectDisplay.dx / 4,
+                  (int16)((MAX_SCREEN_HEIGHT - SOFTKEY_HEIGHT) -9),
+                  pme->m_rectDisplay.x
+                  + (2 * pme->m_rectDisplay.dx/ 4 - 2),
+                  (int16)(MAX_SCREEN_HEIGHT - 2));
+    SETCoordiRange(&pme->pastesk_range,
+                  pme->m_rectDisplay.x
+                  + 2 * pme->m_rectDisplay.dx/ 4,
+                  (int16)((MAX_SCREEN_HEIGHT - SOFTKEY_HEIGHT) -9),
+                  pme->m_rectDisplay.x
+                  + (3 * pme->m_rectDisplay.dx/ 4 - 2),
+                  (int16)(MAX_SCREEN_HEIGHT - 2));
+    SETCoordiRange(&pme->clearsk_range,
+                  pme->m_rectDisplay.x
+                  + 3 * pme->m_rectDisplay.dx/ 4,
+                  (int16)((MAX_SCREEN_HEIGHT - SOFTKEY_HEIGHT) -9),
+                  pme->m_rectDisplay.x
+                  + (4 * pme->m_rectDisplay.dx/ 4 - 2),
+                  (int16)(MAX_SCREEN_HEIGHT - 2));
+    //load the image to the memory.
+    if (pme->language == NV_LANGUAGE_CHINESE)
+    {
+        //pme->m_pnothwimage = ISHELL_LoadResImage(pme->m_pIShell,
+        //                                      AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_PYBUTTONCH);
+    }
+    else if (pme->language == NV_LANGUAGE_ENGLISH)
+    {
+           pme->m_pnothwimage = ISHELL_LoadResImage(pme->m_pIShell,
+                                              AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_BUTTONEN);
+    }
+    if (pme->m_pnothwimage == NULL)
+    {
+        //ERR("LOAD IMAGE FAIL", 0, 0, 0);
+    }
+
+    return;
+}
+
+/*=============================================================================
+FUNCTION: TSIM_MYANMRADraw
+
+DESCRIPTION: draw Pinyin inputmode
+
+PARAMETERS:
+   *pme:the pointer to the CTSIM.
+
+RETURN VALUE:
+   None
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+static void  TSIM_MYANMRADraw(CTSIM *pme)
+{
+    AEERect   zmkpad_rc;
+    DBGPRINTF("TSIM_LettersDraw    1"); 
+    //draw the button image.
+    if (pme->m_pnothwimage == NULL)
+    {
+        //ERR("There is no image to draw", 0, 0, 0);
+        return;
+    }
+    //IIMAGE_Draw(pme->m_pnothwimage, 0, 164);
+     IIMAGE_Draw(pme->m_pnothwimage,HAND_IMAGE_X,HAND_IMAGE_Y+55); 
+    //display the zimu virtual keypad for user inputing
+    zmkpad_rc.x  = pme->m_rectDisplay.x;
+    zmkpad_rc.y  = pme->m_rectDisplay.dy;// pme->m_rectDisplay.y + pme->m_rectDisplay.dy;
+    zmkpad_rc.dx = pme->m_rectDisplay.dx;
+    zmkpad_rc.dy = 180;//(int16)(4 * TSIMLINEHEIGHT + 20);
+
+    //draw the virtual zimu keypad
+    IVKEYCTL_SetKeyPad(pme->m_pIVkeyCtl, &zmkpad_rc, AEE_VKEY_MYANMRANUMBER);
+    //set the virtualkey control to be active
+    IVKEYCTL_SetActive(pme->m_pIVkeyCtl, TRUE);
+    return;
+}
+
+
+/*=============================================================================
+FUNCTION: TSIM_MYANMRAExit
+
+DESCRIPTION:The Exit function for ZiMu Input Method.
+
+PARAMETERS:
+   *pme:pointer to the CTSIM object
+
+RETURN VALUE:
+   None
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+static void TSIM_MYANMRAExit(CTSIM *pme)
 {
     //set the virtualkey control to be not active
     IVKEYCTL_SetActive(pme->m_pIVkeyCtl, FALSE);
@@ -11512,6 +12075,12 @@ void TSIM_NumberKeypad(boolean block)
    bnumberkeypad = block;
 }
 
+static void OEMITSIM_keypadtimer(void * pUser)
+{
+    CTSIM * pme = (CTSIM *)pUser;
+	pme->m_curpros = 0;
+	pme->b_multenter = FALSE;
+}
 
 /*****************************************************************************/
 //  Description : t9_CHINESE_search_char

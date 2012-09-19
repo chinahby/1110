@@ -4,6 +4,33 @@
 	<String Id="1001" Name="IDS_MAIN_MENU_STATIC_APPLICATION">
 		<Text>แอพพลิเคชั่น</Text>
 	</String>
+	<String Id="1002" Name="IDS_MAIN_MENU_FM">
+		<Text>เอฟเอ็ม</Text>
+	</String>
+	<String Id="1003" Name="IDS_MAIN_MENU_BT">
+		<Text>BT</Text>
+	</String>
+	<String Id="1004" Name="IDS_MAIN_MENU_UNIT">
+		<Text>Unit</Text>
+	</String>
+	<String Id="1005" Name="IDS_MAIN_MENU_WORLDCLO">
+		<Text>WorldTime</Text>
+	</String>
+	<String Id="1006" Name="IDS_MAIN_MENU_PINTU">
+		<Text>Pintu</Text>
+	</String>
+	<String Id="1007" Name="IDS_MAIN_MENU_TETIRS">
+		<Text>Tetirs</Text>
+	</String>
+	<String Id="1008" Name="IDS_MAIN_MENU_BRICKATTACK">
+		<Text>Brickattack</Text>
+	</String>
+	<String Id="1009" Name="IDS_MAIN_MENU_BLACKJACK">
+		<Text>Blackjack</Text>
+	</String>
+	<String Id="1010" Name="IDS_MAIN_MENU_CALIBRA">
+		<Text>Calibra</Text>
+	</String>
 	<STRING Id="1011" Name="IDS_MAIN_MENU_MEDIAGALLERY">
 		<Text>จัดการไฟล์</Text>
 	</STRING>
@@ -11,7 +38,7 @@
 		<Text>รายชื่อ</Text>
 	</STRING>
 	<STRING Id="1013" Name="IDS_MAIN_MENU_UTK">
-		<Text>เครื่องมือ</Text>
+		<Text>UTK</Text>
 	</STRING>
 	<STRING Id="1014" Name="IDS_MAIN_MENU_TOOLS">
 		<Text>กล้อง</Text>
@@ -35,7 +62,7 @@
 		<Text>ตั้งค่า</Text>
 	</STRING>
 	<STRING Id="1021" Name="IDS_MAIN_MENU_USERPROFILE">
-		<Text>เครื่องเล่นมัลติมีเดีย</Text>
+		<Text>รูปแบบ</Text>
 	</STRING>
 	<String Id="1022" Name="IDS_MAIN_MENU_CAMERA">
 		<Text>Camera</Text>
@@ -68,7 +95,7 @@
 		<Text>เครื่องคิดเลข</Text>
 	</STRING>
 	<STRING Id="1046" Name="IDS_MAIN_MENU_FMRADIO">
-		<Text>วิทยุ FM</Text>
+		<Text>เอฟเอ็ม</Text>
 	</STRING>
 	<STRING Id="1051" Name="IDS_MAIN_MENU_MUSICPLAYER">
 		<Text>เครื่องเล่นเพลง</Text>

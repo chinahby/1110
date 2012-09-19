@@ -130,6 +130,9 @@ typedef struct _VkeyCtl
    RGBVAL           m_Fillclr;               //用户设置填充的背景图片
    AEEVKeyPad       m_keypad;                //用户定义的键盘
    AEERect          UsrGridRc[60];           //用户定义的网络键盘
+   uint32           m_oldkey;
+   uint32           m_curpros;
+   boolean          b_multenter;
 }VkeyCtl;
 
 /*==============================================================================
@@ -163,7 +166,249 @@ static AEEVKeyItem_Own  VNumberKeyItem[15] =
     {EVT_CHAR, ' ', {' '}}    
 };
 
+static AEETHAIVKeyItem_Own  VNumberTHAIKeyItem[15] =
+{
+    {EVT_CHAR, '1', {'1'},'1'},
+    {EVT_CHAR, '2', {0x0E01,0x0E02,0x0E03,0x0E04,0x0E05,0x0E06,0x0E07,0x0E08,0x0E09,'2'},'10'},
+    {EVT_CHAR, '3', {0x0E0A,0x0E0B,0x0E0C,0x0E0D,0x0E0E,0x0E0F,0x0E10,'3'},'8'},
+    {EVT_CHAR, '4', {0x0E11,0x0E12,0x0E13,0x0E14,0x0E15,0x0E16,0x0E17,'4'},'8'},
+    {EVT_CHAR, ' ', {' '},'1'},
+        
+    {EVT_CHAR, '5', {0x0E18,0x0E19,0x0E1A,0x0E1B,0x0E1C,0x0E1D,0x0E1E,'5'},'8'},
+    {EVT_CHAR, '6', {0x0E1F,0x0E20,0x0E21,0x0E22,0x0E23,0x0E25,0x0E27,'6'},'8'},
+    {EVT_CHAR, '7', {0x0E28,0x0E29,0x0E2A,0x0E2B,0x0E2C,0x0E2D,0x0E2E,'7'},'8'},
+    {EVT_CHAR, '8', {0x0E31,0x0E34,0x0E35,0x0E36,0x0E37,0x0E38,0x0E39,0x0E30,'8'},'9'},
+    //{EVT_CHAR, '\n', {'\n'}},
+    {EVT_CHAR, '+', {'+'},'1'},
+    
+    {EVT_CHAR, '9', {0x0E32,0x0E33,0x0E40,0x0E41,0x0E42,0x0E43,0x0E44,0x0E46,0x0E24,'9'},'10'},
+    {EVT_CHAR, '0', {0x0E48,0x0E49,0x0E4A,0x0E4B,0x0E47,0x0E4C,0x0E39,0x0E30,'0'},'9'},
+    //{EVT_CHAR, '.', {'.'}},    
+    //{EVT_CHAR, ',', {','}},
+    {EVT_CHAR, '*', {'*'},'1'},
+    {EVT_CHAR, '#', {'#'},'1'},    
+    {EVT_CHAR, ' ', {' '},'1'}    
+};
 
+typedef enum
+{   
+	  /* DEVANAGARI SIGNS */
+	MYNAMMAR_DEVANAGARI_S_DANDA		= 0x0964,
+	MYNAMMAR_DEVANAGARI_S_DDANDA	= 0x0965,
+			
+    MYNAMMAR_C_KA   = 0x1000,
+    MYNAMMAR_C_KHA  = 0x1001,
+    MYNAMMAR_C_GA   = 0x1002,
+    MYNAMMAR_C_GHA  = 0x1003,
+    MYNAMMAR_C_NGA  = 0x1004,
+    MYNAMMAR_C_CA   = 0x1005,
+    MYNAMMAR_C_CHA  = 0x1006,
+    MYNAMMAR_C_JA   = 0x1007,
+    MYNAMMAR_C_JHA  = 0x1008,
+    MYNAMMAR_C_NYA  = 0x1009,
+    MYNAMMAR_C_NNYA = 0x100A,
+    MYNAMMAR_C_TTA  = 0x100B,
+    MYNAMMAR_C_TTHA = 0x100C,
+    MYNAMMAR_C_DDA  = 0x100D,
+    MYNAMMAR_C_DDHA = 0x100E,
+    MYNAMMAR_C_NNA  = 0x100F,
+    MYNAMMAR_C_TA   = 0x1010,
+    MYNAMMAR_C_THA  = 0x1011,
+    MYNAMMAR_C_DA   = 0x1012,
+    MYNAMMAR_C_DHA  = 0x1013,
+    MYNAMMAR_C_NA   = 0x1014,
+    MYNAMMAR_C_PA   = 0x1015,
+    MYNAMMAR_C_PHA  = 0x1016,
+    MYNAMMAR_C_BA   = 0x1017,
+    MYNAMMAR_C_BHA  = 0x1018,
+    MYNAMMAR_C_MA   = 0x1019,
+    MYNAMMAR_C_YA   = 0x101A,
+    MYNAMMAR_C_RA   = 0x101B,
+    MYNAMMAR_C_LA   = 0x101C,
+    MYNAMMAR_C_WA   = 0x101D,
+    MYNAMMAR_C_SA   = 0x101E,
+    MYNAMMAR_C_HA   = 0x101F,	
+    MYNAMMAR_C_LLA  = 0x1020,	
+	
+    MYNAMMAR_IV_A   = 0x1021,
+    MYNAMMAR_IV_SA  = 0x1022,
+    MYNAMMAR_IV_I   = 0x1023,
+    MYNAMMAR_IV_II  = 0x1024,
+    MYNAMMAR_IV_U   = 0x1025,
+    MYNAMMAR_IV_UU  = 0x1026,
+    MYNAMMAR_IV_E   = 0x1027,
+    MYNAMMAR_IV_ME  = 0x1028,
+    MYNAMMAR_IV_O   = 0x1029,
+    MYNAMMAR_IV_AU  = 0x102A,	
+
+	MYNAMMAR_DV_TAA = 0x102B,
+    MYNAMMAR_DV_AA  = 0x102C,
+    MYNAMMAR_DV_I   = 0x102D,
+    MYNAMMAR_DV_II  = 0x102E,
+    MYNAMMAR_DV_U   = 0x102F,
+    MYNAMMAR_DV_UU  = 0x1030,
+    MYNAMMAR_DV_E   = 0x1031,
+    MYNAMMAR_DV_AI  = 0x1032,
+    MYNAMMAR_DV_MON_II  = 0x1033,
+    MYNAMMAR_DV_MON_O   = 0x1034,
+    MYNAMMAR_DV_E_ABOVE = 0x1035,
+
+	
+    MYNAMMAR_S_ANUSVARA = 0x1036,
+    MYNAMMAR_S_DOT      = 0x1037,
+    MYNAMMAR_S_VISARGA  = 0x1038,
+    MYNAMMAR_S_VIRAMA   = 0x1039,
+    MYNAMMAR_S_ASAT     = 0x103A,
+    
+    MYNAMMAR_CS_YA      = 0x103B,
+    MYNAMMAR_CS_RA      = 0x103C,
+    MYNAMMAR_CS_WA      = 0x103D,
+    MYNAMMAR_CS_HA      = 0x103E,
+    
+    MYNAMMAR_C_GREAT_SA = 0x103F,
+
+    MYNAMMAR_D_ZERO  = 0x1040, /* MYNAMMAR digital 0 */
+    MYNAMMAR_D_ONE   = 0x1041, /* MYNAMMAR digital 1 */
+    MYNAMMAR_D_TWO   = 0x1042, /* MYNAMMAR digital 2 */
+    MYNAMMAR_D_THREE = 0x1043, /* MYNAMMAR digital 3 */
+    MYNAMMAR_D_FOUR  = 0x1044, /* MYNAMMAR digital 4 */
+    MYNAMMAR_D_FIVE  = 0x1045, /* MYNAMMAR digital 5 */
+    MYNAMMAR_D_SIX   = 0x1046, /* MYNAMMAR digital 6 */
+    MYNAMMAR_D_SEVEN = 0x1047, /* MYNAMMAR digital 7 */
+    MYNAMMAR_D_EIGHT = 0x1048, /* MYNAMMAR digital 8 */
+    MYNAMMAR_D_NINE  = 0x1049, /* MYNAMMAR digital 9 */
+
+    MYNAMMAR_S_LITTLE_SECTION = 0x104A,
+    MYNAMMAR_S_SECTION        = 0x104B,
+    
+    MYNAMMAR_S_LOCATIVE  = 0x104C,
+    MYNAMMAR_S_COMPLETED = 0x104D,
+    MYNAMMAR_S_AFOREMENTONED = 0x104E,
+    MYNAMMAR_S_GENITIVE      = 0x104F,
+    
+    MYNAMMAR_L_SHA = 0x1050,
+    MYNAMMAR_L_SSA = 0x1051,
+    MYNAMMAR_L_VR  = 0x1052,
+    MYNAMMAR_L_VRR = 0x1053,
+    MYNAMMAR_L_VL  = 0x1054,
+    MYNAMMAR_L_VLL = 0x1055,
+    MYNAMMAR_VS_VR = 0x1056,
+    MYNAMMAR_VS_VRR = 0x1057,
+    MYNAMMAR_VS_VL  = 0x1058,
+    MYNAMMAR_VS_VLL = 0x1059,
+    
+    MYNAMMAR_L_M_NGA = 0x105A,
+    MYNAMMAR_L_M_JHA = 0x105B,
+    MYNAMMAR_L_M_BBA = 0x105C,
+    MYNAMMAR_L_M_BBE = 0x105D,
+
+    MYNAMMAR_CS_MON_MEDIALNA = 0x105E,
+    MYNAMMAR_CS_MON_MEDIALMA = 0x105F,
+    MYNAMMAR_CS_MON_MEDIALLA = 0x1060,
+    
+    MYNAMMAR_LS_KAREN_SHA         = 0x1061,
+    MYNAMMAR_VS_SGAW_KAREN_EU     = 0x1062,
+    MYNAMMAR_TM_SGAW_KAREN_HATHI  = 0x1063,
+    MYNAMMAR_TM_SGAW_KAREN_KE_PHO = 0x1064,
+
+    MYNAMMAR_L_WPK_THA = 0x1065,
+    MYNAMMAR_L_WPK_PWA = 0x1066,
+    
+    MYNAMMAR_VS_WPK_EU = 0x1067,
+    MYNAMMAR_VS_WPK_UE = 0x1068, 
+    
+    MYNAMMAR_S_WPK_TONE1 = 0x1069, 
+    MYNAMMAR_S_WPK_TONE2 = 0x106A, 
+    MYNAMMAR_S_WPK_TONE3 = 0x106B, 
+    MYNAMMAR_S_WPK_TONE4 = 0x106C, 
+    MYNAMMAR_S_WPK_TONE5 = 0x106D, 
+    MYNAMMAR_L_EPK_NNA = 0x106E, 
+    MYNAMMAR_L_EPK_YWA = 0x106F, 
+    
+    MYNAMMAR_L_EPK_GHWA     = 0x1070,
+    
+    MYNAMMAR_VS_GEBA_KAREN1 = 0x1071, 
+    
+    MYNAMMAR_VSK_OE = 0x1072, 
+    MYNAMMAR_VSK_U  = 0x1073, 
+    MYNAMMAR_VSK_EE = 0x1074, 
+    
+    MYNAMMAR_LS_KA  = 0x1075,
+    MYNAMMAR_LS_KHA = 0x1076,
+    MYNAMMAR_LS_GA  = 0x1077,
+    MYNAMMAR_LS_CA  = 0x1078,
+    MYNAMMAR_LS_ZA  = 0x1079,
+    MYNAMMAR_LS_NYA = 0x107A,
+    MYNAMMAR_LS_DA  = 0x107B,
+    MYNAMMAR_LS_NA  = 0x107C,
+    MYNAMMAR_LS_PHA = 0x107D,
+    MYNAMMAR_LS_FA  = 0x107E,
+    MYNAMMAR_LS_BA  = 0x107F,
+    MYNAMMAR_LS_THA = 0x1080,
+    MYNAMMAR_LS_HA  = 0x1081,
+  
+    MYNAMMAR_CSSM_WA = 0x1082, 
+    MYNAMMAR_VSS_AA  = 0x1083, 
+    MYNAMMAR_VSS_E   = 0x1084, 
+    MYNAMMAR_VSS_EA  = 0x1085, 
+    MYNAMMAR_VSS_FY  = 0x1086, 
+    MYNAMMAR_SS_TONE2 = 0x1087, 
+    MYNAMMAR_SS_TONE3 = 0x1088, 
+    MYNAMMAR_SS_TONE5 = 0x1089, 
+    MYNAMMAR_SS_TONE6 = 0x108A, 
+    MYNAMMAR_SSC_TONE2 = 0x108B, 
+    MYNAMMAR_SSC_TONE3 = 0x108C, 
+    
+    MYNAMMAR_SSC_EMPHATICTONE = 0x108D, 
+    
+    MYNAMMAR_LRP_FA    = 0x108E, 
+    MYNAMMAR_SRP_TONE5 = 0x108F, 
+    
+    MYNAMMAR_SD_ZERO  = 0x1090, /* MYNAMMAR digital 0 */
+    MYNAMMAR_SD_ONE   = 0x1091, /* MYNAMMAR digital 1 */
+    MYNAMMAR_SD_TWO   = 0x1092, /* MYNAMMAR digital 2 */
+    MYNAMMAR_SD_THREE = 0x1093, /* MYNAMMAR digital 3 */
+    MYNAMMAR_SD_FOUR  = 0x1094, /* MYNAMMAR digital 4 */
+    MYNAMMAR_SD_FIVE  = 0x1095, /* MYNAMMAR digital 5 */
+    MYNAMMAR_SD_SIX   = 0x1096, /* MYNAMMAR digital 6 */
+    MYNAMMAR_SD_SEVEN = 0x1097, /* MYNAMMAR digital 7 */
+    MYNAMMAR_SD_EIGHT = 0x1098, /* MYNAMMAR digital 8 */
+    MYNAMMAR_SD_NINE  = 0x1099, /* MYNAMMAR digital 9 */
+    
+    MYNAMMAR_SK_TONE1 = 0x109A, /* sign */
+    MYNAMMAR_SK_TONE3 = 0x109B,
+    
+    MYNAMMAR_VSA_A  = 0x109C,
+    MYNAMMAR_VSA_AI = 0x109D,
+    MYNAMMAR_SS_ONE = 0x109E,
+    MYNAMMAR_SS_EXCLAMATION = 0x109F
+    
+}Mynammar_characters_enum;
+
+
+static AEETHAIVKeyItem_Own  VNumberMYNAMMAKeyItem[15] =
+{
+    {EVT_CHAR, '1', {MYNAMMAR_C_KA, MYNAMMAR_C_KHA, MYNAMMAR_C_GA, MYNAMMAR_C_GHA, MYNAMMAR_C_NGA, MYNAMMAR_D_ONE, '1'},'7'},
+    {EVT_CHAR, '2', {MYNAMMAR_C_CA, MYNAMMAR_C_CHA, MYNAMMAR_C_JA, MYNAMMAR_C_JHA, MYNAMMAR_C_NYA, MYNAMMAR_C_NNYA, MYNAMMAR_D_TWO, '2'},'8'},
+    {EVT_CHAR, '3', {MYNAMMAR_C_TTA, MYNAMMAR_C_TTHA, MYNAMMAR_C_DDA, MYNAMMAR_C_DDHA, MYNAMMAR_C_NNA, MYNAMMAR_D_THREE, '3'},'7'},
+    {EVT_CHAR, '4', {MYNAMMAR_C_TA, MYNAMMAR_C_THA, MYNAMMAR_C_DA, MYNAMMAR_C_DHA, MYNAMMAR_C_NA, MYNAMMAR_D_FOUR, '4'},'7'},
+    {EVT_CHAR, ' ', {' '},'1'},
+        
+    {EVT_CHAR, '5', {MYNAMMAR_C_PA, MYNAMMAR_C_PHA, MYNAMMAR_C_BA, MYNAMMAR_C_BHA, MYNAMMAR_C_MA, MYNAMMAR_D_FIVE, '5'},'7'},
+    {EVT_CHAR, '6', {MYNAMMAR_C_YA, MYNAMMAR_C_RA, MYNAMMAR_C_LA, MYNAMMAR_C_WA, MYNAMMAR_C_SA, MYNAMMAR_D_SIX,  '6'},'7'},
+    {EVT_CHAR, '7', {MYNAMMAR_C_HA, MYNAMMAR_C_LLA, MYNAMMAR_C_GREAT_SA, MYNAMMAR_D_SEVEN, '7'},'5'},
+    {EVT_CHAR, '8', {MYNAMMAR_IV_A, MYNAMMAR_IV_SA, MYNAMMAR_IV_I, MYNAMMAR_IV_II, MYNAMMAR_IV_U, MYNAMMAR_IV_UU, MYNAMMAR_IV_E, MYNAMMAR_IV_ME, MYNAMMAR_IV_O, MYNAMMAR_IV_AU, MYNAMMAR_D_EIGHT, '8'},'12'},
+    //{EVT_CHAR, '\n', {'\n'}},
+    {EVT_CHAR, '+', {'+'},'1'},
+    
+    {EVT_CHAR, '9', {MYNAMMAR_DV_TAA, MYNAMMAR_DV_AA, MYNAMMAR_DV_I, MYNAMMAR_DV_II, MYNAMMAR_DV_U, MYNAMMAR_DV_UU, MYNAMMAR_DV_E, MYNAMMAR_DV_AI, MYNAMMAR_DV_MON_II, MYNAMMAR_DV_MON_O, MYNAMMAR_DV_E_ABOVE, MYNAMMAR_D_NINE, '9'},'13'},
+    {EVT_CHAR, '0', {' ', MYNAMMAR_S_VIRAMA, MYNAMMAR_S_ANUSVARA, MYNAMMAR_S_DOT, MYNAMMAR_S_VISARGA, MYNAMMAR_S_ASAT, MYNAMMAR_CS_YA, MYNAMMAR_CS_RA, MYNAMMAR_CS_WA, MYNAMMAR_CS_HA, '.', MYNAMMAR_S_LITTLE_SECTION, MYNAMMAR_S_SECTION, MYNAMMAR_S_LOCATIVE, MYNAMMAR_S_COMPLETED, MYNAMMAR_S_AFOREMENTONED, MYNAMMAR_S_GENITIVE, MYNAMMAR_D_ZERO, '0'},'19'},
+    //{EVT_CHAR, '.', {'.'}},    
+    //{EVT_CHAR, ',', {','}},
+    {EVT_CHAR, '*', {'*'},'1'},
+    {EVT_CHAR, '#', {'#'},'1'},    
+    {EVT_CHAR, ' ', {' '},'1'}    
+};
 /*static AEEVKeyItem_Own  VNumberKeyItem[10] =
 {
     {EVT_CHAR, '1', {'1'}},
@@ -724,6 +969,10 @@ static void      VkeyCtl_SetNumberBigCharPad(VkeyCtl * pme,AEERect * prc);
 static void      VkeyCtl_SetDialNumberPad(VkeyCtl* pme, AEERect *prc);
 static void      VkeyCtl_SetCalculatorPad(VkeyCtl* pme, AEERect *prc);
 static void       VkeyCtl_SetZhuyinCharPad(VkeyCtl* pme, AEERect *prc);//tcl whewei050302 add
+static void      VkeyCtl_SetTHAIPad(VkeyCtl * pme,AEERect * prc);// add by pengyuangui 20120919
+static void      VkeyCtl_SetMYNAMMAPad(VkeyCtl * pme,AEERect * prc);// add by pengyuangui 20120919
+
+
 //设置用户自己定义的键盘
 static void      IVkeyCtl_SetColor(IVkeyCtl * po, RGBVAL Background , RGBVAL  ClrFill);
 static int       IVkeyCtl_SetUserKeyPad(IVkeyCtl * po, AEERect *prc, AEEVKeyPad  *usr_pad);
@@ -739,7 +988,10 @@ static boolean      VkeyCtl_MapNumberBigChar(VkeyCtl * pme,int x,int y,AEEEvent 
 static boolean      VkeyCtl_MapUserKeyPad(VkeyCtl * pme,int x,int y,AEEEvent *evt,uint16 *wp);
 static boolean      VkeyCtl_MapDialNumber(VkeyCtl * pme,int x,int y,AEEEvent *evt,uint16 *wp);
 static boolean      VkeyCtl_MapCalcNumber(VkeyCtl * pme,int x,int y,AEEEvent *evt,uint16 *wp);
-static boolean       VkeyCtl_MapZhuyinChar(VkeyCtl * pme,int x,int y,AEEEvent *evt,uint16 *wp);//tcl whewei050302 add
+static boolean      VkeyCtl_MapZhuyinChar(VkeyCtl * pme,int x,int y,AEEEvent *evt,uint16 *wp);//tcl whewei050302 add
+static boolean      VkeyCtl_MapTHAINumber(VkeyCtl * pme,int x,int y,AEEEvent *evt,uint16 *wp);  // add by pengyuangui 20120918
+static boolean      VkeyCtl_MapMYANMRANumber(VkeyCtl * pme,int x,int y,AEEEvent *evt,uint16 *wp);  // add by pengyuangui 20120918
+
 
 /*拨号键盘的事件传递待处理*/
 
@@ -758,6 +1010,7 @@ static void      VkeyCtl_HitZhuyinCharPad(VkeyCtl* pme, int x, int y,boolean sig
 
 
 //必要的补充函数
+static void      Virtualkey_keypadtimer(void *pUser);
 static boolean   IsInRect(int x,int y,AEERect *prc);
 /*=================================================================================*/
 //---------------------------------------------------------------------
@@ -1408,6 +1661,12 @@ static void      IVkeyCtl_SetKeyPad(IVkeyCtl * po,AEERect * prc,uint32  m_dwProp
         case AEE_VKEY_USERKEYPAD:
             VkeyCtl_SetUserKeyPad(pme, prc);
             break;
+        case AEE_VKEY_THAINUMBER:
+            VkeyCtl_SetTHAIPad(pme,prc);
+            break;
+        case AEE_VKEY_MYANMRANUMBER:
+            VkeyCtl_SetMYNAMMAPad(pme,prc);  
+            break;
         default:
             break;
     }
@@ -2014,6 +2273,163 @@ static void      VkeyCtl_SetZhuyinCharPad(VkeyCtl * pme,AEERect * prc)
    
     return;
 }
+
+/*=====================================================================
+
+IVkeyCtl_SetKeyPad()
+
+Description:
+    设置数字键盘
+
+Prototype:
+    void  VkeyCtl_SetTHAIPad(VkeyCtl * pme,AEERect * prc)
+
+Parameters:
+    pme:  Pointer to the IVkeyCtl Interface object.
+    prc: 键盘所要占有的矩形大小
+   
+
+Return Value:
+    None
+Comments:
+    如果设置的矩形太小将不进行设置；
+
+======================================================================*/
+static void      VkeyCtl_SetTHAIPad(VkeyCtl * pme,AEERect * prc)
+{
+    int   i, j, count = 0;
+    
+    if(pme == NULL)
+    {
+        return;
+    }
+    
+    /*=======================================================================
+    检查最小空间
+    =======================================================================*/
+    pme->m_rc = *prc;
+    if ((pme->m_rc.dx < OTHER_KEYPAD_MINWIDTH)
+       || (pme->m_rc.dy < OTHER_KEYPAD_MINHEIGHT))
+    {
+        return ;  //没有达到最小空间的要求
+    }
+    
+    if (pme->m_KeyPadNormal != NULL)
+    {
+        (void)IIMAGE_Release(pme->m_KeyPadNormal);
+    }
+    if (pme->m_KeyPadDown != NULL)
+    {
+        (void)IIMAGE_Release(pme->m_KeyPadDown);
+    }
+    pme->m_KeyPadNormal = ISHELL_LoadResImage(pme->m_pIShell,
+                                           AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_THAIUNPRESS);
+    pme->m_KeyPadDown = ISHELL_LoadResImage(pme->m_pIShell,
+                                        AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_THAIPRESS);
+    if ((pme->m_KeyPadNormal == NULL)
+       || (pme->m_KeyPadDown == NULL))
+    {
+        return;
+    }
+    
+    IIMAGE_Draw(pme->m_KeyPadNormal, pme->m_rc.x, pme->m_rc.y);
+
+    for(i = 0; i < VNumberKeyPad.row; i++)
+    {
+        for(j = 0; j < VNumberKeyPad.coloum; j++)
+        {
+            pme->GridRect[count].x = (int16)(pme->m_rc.x + 3*j + 45 * j);
+            pme->GridRect[count].y = (int16)((i == 0)?(pme->m_rc.y + 4):(pme->m_rc.y+8*i + 44 * i));
+            pme->GridRect[count].dx = 45;
+            pme->GridRect[count].dy = 44;//((i == 0)?18:19);
+            count++;
+        }
+     }
+    
+    
+    IDISPLAY_Update(pme->m_pIDisplay);
+   
+    return;
+}
+
+/*=====================================================================
+
+IVkeyCtl_SetKeyPad()
+
+Description:
+    设置数字键盘
+
+Prototype:
+    void  VkeyCtl_SetMYNAMMAPad(VkeyCtl * pme,AEERect * prc)
+
+Parameters:
+    pme:  Pointer to the IVkeyCtl Interface object.
+    prc: 键盘所要占有的矩形大小
+   
+
+Return Value:
+    None
+Comments:
+    如果设置的矩形太小将不进行设置；
+
+======================================================================*/
+static void      VkeyCtl_SetMYNAMMAPad(VkeyCtl * pme,AEERect * prc)
+{
+    int   i, j, count = 0;
+    
+    if(pme == NULL)
+    {
+        return;
+    }
+    
+    /*=======================================================================
+    检查最小空间
+    =======================================================================*/
+    pme->m_rc = *prc;
+    if ((pme->m_rc.dx < OTHER_KEYPAD_MINWIDTH)
+       || (pme->m_rc.dy < OTHER_KEYPAD_MINHEIGHT))
+    {
+        return ;  //没有达到最小空间的要求
+    }
+    
+    if (pme->m_KeyPadNormal != NULL)
+    {
+        (void)IIMAGE_Release(pme->m_KeyPadNormal);
+    }
+    if (pme->m_KeyPadDown != NULL)
+    {
+        (void)IIMAGE_Release(pme->m_KeyPadDown);
+    }
+    pme->m_KeyPadNormal = ISHELL_LoadResImage(pme->m_pIShell,
+                                           AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_MYNAMMAUNPRESS);
+    pme->m_KeyPadDown = ISHELL_LoadResImage(pme->m_pIShell,
+                                        AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_MYNAMMAPRESS);
+    if ((pme->m_KeyPadNormal == NULL)
+       || (pme->m_KeyPadDown == NULL))
+    {
+        return;
+    }
+    
+    IIMAGE_Draw(pme->m_KeyPadNormal, pme->m_rc.x, pme->m_rc.y);
+
+    for(i = 0; i < VNumberKeyPad.row; i++)
+    {
+        for(j = 0; j < VNumberKeyPad.coloum; j++)
+        {
+            pme->GridRect[count].x = (int16)(pme->m_rc.x + 3*j + 45 * j);
+            pme->GridRect[count].y = (int16)((i == 0)?(pme->m_rc.y + 4):(pme->m_rc.y+8*i + 44 * i));
+            pme->GridRect[count].dx = 45;
+            pme->GridRect[count].dy = 44;//((i == 0)?18:19);
+            count++;
+        }
+     }
+    
+    
+    IDISPLAY_Update(pme->m_pIDisplay);
+   
+    return;
+}
+
 /*=====================================================================
 VkeyCtl_CallEventHandler()
 
@@ -2136,7 +2552,18 @@ static boolean VkeyCtl_MapParam(VkeyCtl * pme,int cx,int cy,AEEEvent *evt,uint16
             ret = VkeyCtl_MapZhuyinChar(pme,cx,cy,evt,wp);
             return ret;
         }
-           
+
+        case AEE_VKEY_THAINUMBER:
+        {
+            ret = VkeyCtl_MapTHAINumber(pme,cx,cy,evt,wp);
+            return ret;
+        }
+
+        case AEE_VKEY_MYANMRANUMBER:
+        {
+            ret = VkeyCtl_MapMYANMRANumber(pme,cx,cy,evt,wp);
+            return ret;
+        }
         default:
            break;
     }
@@ -2603,6 +3030,184 @@ static boolean  VkeyCtl_MapZhuyinChar(VkeyCtl * pme,int x,int y,AEEEvent *evt,ui
     }
     return FALSE;
 }
+/*=====================================================================
+VkeyCtl_MapTHAINumber()
+
+Description:
+    处理点击数字键盘的映射事件
+
+Prototype:
+    boolean VkeyCtl_MapTHAINumber(VkeyCtl * pme,int x,int y,AEEEvent *evt,uint16 *wp)
+
+Parameters:
+    pme:  Pointer to the IVkeyCtl Interface object.
+    x,y: 传递的点的坐标
+    evt,wp：需要映射的值
+    
+
+Return Value:
+    TRUE:映射成功
+    FALSE:映射失败
+
+======================================================================*/
+static boolean VkeyCtl_MapTHAINumber(VkeyCtl * pme,int x,int y,AEEEvent *evt,uint16 *wp)
+{
+    int i,j,count;
+    //boolean outloop = FALSE;  //已经不在起作用
+    
+    count = 0;
+   
+    /* 2*5的键盘 */
+    for (i = 0; i < VNumberKeyPad.row; i++)
+    {
+        for (j = 0; j < VNumberKeyPad.coloum; j++,count++)
+        {
+            if( IsInRect(x,y,&pme->GridRect[count]) )
+            {
+                if(count != 4)
+                {
+                    #if 0
+                    DBGPRINTF("VkeyCtl_MapTHAINumber---pme->m_oldkey=%d----count=%d",pme->m_oldkey,count);
+                    if(pme->m_oldkey != count)
+                    {
+                        pme->m_oldkey=count;  
+                        //*wp = VNumberTHAIKeyItem[count].wp;
+                        *wp = VNumberTHAIKeyItem[count].name[0];
+                        *evt = VNumberTHAIKeyItem[count].evt;                        
+                    }
+                    else
+                    {
+                       AEE_CancelTimer(Virtualkey_keypadtimer,pme); 
+                        DBGPRINTF("VkeyCtl_MapTHAINumber---pme->b_multenter=%d----pme->m_curpros=%d-----[count].max=%d",pme->b_multenter,pme->m_curpros,VNumberTHAIKeyItem[count].m_Itemmax);
+                       if(pme->b_multenter == FALSE)
+                       {
+                        *wp = VNumberTHAIKeyItem[count].name[0];
+                        *evt = VNumberTHAIKeyItem[count].evt;  
+                       }
+                       else
+                       {
+                          *wp = VNumberTHAIKeyItem[count].name[pme->m_curpros];
+                          DBGPRINTF("VkeyCtl_MapTHAINumber---VNumberTHAIKeyItem[count].name[pme->m_curpros]=%d",VNumberTHAIKeyItem[count].name[pme->m_curpros]);
+                          *evt = VNumberTHAIKeyItem[count].evt;
+                       }
+                       if(pme->m_curpros<VNumberTHAIKeyItem[count].m_Itemmax)
+                      	{
+                      		pme->m_curpros ++;
+                      	}
+                      	else
+                      	{
+                      		pme->m_curpros = 0;
+                      	} 
+                        pme->b_multenter = TRUE;
+                        AEE_SetTimer(1000,Virtualkey_keypadtimer,pme);
+                    }
+                    #else
+                        *wp = VNumberKeyItem[count].wp;
+                        *evt = VNumberKeyItem[count].evt;
+                    #endif
+                 return TRUE; 
+                }
+            }
+            
+        }//end   for (j = 0;j < 5;j++,count++) 
+            
+    }//end for (i = 0;i < 2;i++)   
+    return FALSE;
+
+}
+/*=====================================================================
+VkeyCtl_MapMYANMRANumber()
+
+Description:
+    处理点击数字键盘的映射事件
+
+Prototype:
+    boolean VkeyCtl_MapMYANMRANumber(VkeyCtl * pme,int x,int y,AEEEvent *evt,uint16 *wp)
+
+Parameters:
+    pme:  Pointer to the IVkeyCtl Interface object.
+    x,y: 传递的点的坐标
+    evt,wp：需要映射的值
+    
+
+Return Value:
+    TRUE:映射成功
+    FALSE:映射失败
+
+======================================================================*/
+static boolean VkeyCtl_MapMYANMRANumber(VkeyCtl * pme,int x,int y,AEEEvent *evt,uint16 *wp)
+{
+    int i,j,count;
+    //boolean outloop = FALSE;  //已经不在起作用
+    
+    count = 0;
+   
+    /* 2*5的键盘 */
+    for (i = 0; i < VNumberKeyPad.row; i++)
+    {
+        for (j = 0; j < VNumberKeyPad.coloum; j++,count++)
+        {
+            if( IsInRect(x,y,&pme->GridRect[count]) )
+            {
+                if(count != 4)
+                {
+                    #if 0
+                    DBGPRINTF("VNumberMYNAMMAKeyItem---pme->m_oldkey=%d----count=%d---VNumberTHAIKeyItem[count].wp=%d",pme->m_oldkey,count,VNumberTHAIKeyItem[count].wp);
+                    if(pme->m_oldkey != count)
+                    {
+                        pme->m_oldkey=count;  
+                        //*wp = VNumberTHAIKeyItem[count].wp;
+                        *wp = VNumberMYNAMMAKeyItem[count].name[0];
+                        *evt = VNumberMYNAMMAKeyItem[count].evt;                        
+                    }
+                    else
+                    {
+                       //AEE_CancelTimer(Virtualkey_keypadtimer,pme); 
+                        DBGPRINTF("VNumberMYNAMMAKeyItem---pme->b_multenter=%d----pme->m_curpros=%d-----[count].max=%d",pme->b_multenter,pme->m_curpros,VNumberMYNAMMAKeyItem[count].m_Itemmax);
+                      /* if(pme->b_multenter == FALSE)
+                       {
+                        *wp = VNumberMYNAMMAKeyItem[count].name[0];
+                        *evt = VNumberMYNAMMAKeyItem[count].evt;  
+                       }
+                       else */
+                       {
+                          *wp = VNumberMYNAMMAKeyItem[count].name[pme->m_curpros];
+                          DBGPRINTF("VNumberMYNAMMAKeyItem---VNumberMYNAMMAKeyItem[count].name[pme->m_curpros]=%d",VNumberMYNAMMAKeyItem[count].name[pme->m_curpros]);
+                          *evt = VNumberMYNAMMAKeyItem[count].evt;
+                       }
+                       if(pme->m_curpros<VNumberMYNAMMAKeyItem[count].m_Itemmax)
+                      	{
+                      		pme->m_curpros ++;
+                      	}
+                      	else
+                      	{
+                      		pme->m_curpros = 0;
+                      	} 
+                        pme->b_multenter = TRUE;
+                        //AEE_SetTimer(1000,Virtualkey_keypadtimer,pme);
+                    }
+                    #else
+                        *wp = VNumberKeyItem[count].wp;
+                        *evt = VNumberKeyItem[count].evt;
+                    #endif
+                 return TRUE; 
+                }
+            }
+            
+        }//end   for (j = 0;j < 5;j++,count++) 
+            
+    }//end for (i = 0;i < 2;i++)   
+    return FALSE;
+
+}
+
+static void Virtualkey_keypadtimer(void *pUser)
+{
+	register VkeyCtl *pContext = (VkeyCtl *) pUser;
+	pContext->m_curpros = 0;
+	pContext->b_multenter = FALSE;
+}
+
 /*========================================================================
 VkeyCtl_HitPad()
 
@@ -2659,6 +3264,12 @@ static void      VkeyCtl_HitPad(VkeyCtl* pme, int x, int y,boolean sign)
         case AEE_VKEY_USERKEYPAD:
             VkeyCtl_HitUserKeyPad(pme, x, y, sign);
             break;
+        case AEE_VKEY_THAINUMBER:
+            VkeyCtl_HitNumberPad(pme, x, y, sign);
+            break;
+        case AEE_VKEY_MYANMRANUMBER:
+            VkeyCtl_HitNumberPad(pme, x, y, sign);
+            break;    
         default:
            break;
     }
