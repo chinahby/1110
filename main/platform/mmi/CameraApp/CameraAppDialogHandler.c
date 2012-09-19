@@ -4785,7 +4785,7 @@ static void CameraApp_RecordSnapShot(CCameraApp *pMe)
 	ICAMERA_GetCurrentSensor(pMe->m_pCamera,&sensor_type,&sensor_type);
 #endif
 
-	if ( sensor_type == CAM_PARM_ID_PAIR_SIV121A_SID130B || CAM_PARM_ID_PAIR_SIV121D_SID130B || sensor_type == CAM_PARM_ID_PAIR_SIV120A_SID130B )
+	if ( sensor_type == CAM_PARM_ID_PAIR_SIV121A_SID130B || sensor_type == CAM_PARM_ID_PAIR_SIV121D_SID130B || sensor_type == CAM_PARM_ID_PAIR_SIV120A_SID130B )
 	{
 		if ( pMe->m_nCameraMulti == OEMNV_CAMERA_MULTI_TWO)
 		{
