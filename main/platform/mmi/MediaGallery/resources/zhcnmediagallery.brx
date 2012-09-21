@@ -322,7 +322,34 @@
 	<String Id="1106" Name="IDS_MG_LOADING">
 		<Text>载入中...</Text>
 	</String>
-	<String Id="1107" Name="IDS_MG_ANIMATE_CANNOTSET_WALLPAPER">
+	<String Id="1107" Name="IDS_MSG_SAVEPLAYLIST">
+		<Text>Add to playlist</Text>
+	</String>
+	<String Id="1108" Name="IDS_DEFAULTPLAYLISTNAME">
+		<Text>Default playlist</Text>
+	</String>
+	<String Id="1109" Name="IDS_PLAYLIST_FULL">
+		<Text>Playlist full!</Text>
+	</String>
+	<String Id="1110" Name="IDS_ADD_SUCCESS">
+		<Text>Add music success</Text>
+	</String>
+	<String Id="1111" Name="IDS_USB_CONNECTED">
+		<Text>v3 data card connected</Text>
+	</String>
+	<String Id="1112" Name="IDS_USB_NOT_CONNECTED">
+		<Text>v3 data card not connected</Text>
+	</String>
+	<STRING Id="1113" Name="IDS_MG_STOPV3DATACARD">
+		<Text>v3 data card stopped</Text>
+	</STRING>
+	<STRING Id="1114" Name="IDS_MG_COPYING">
+		<Text>Copying</Text>
+	</STRING>
+	<STRING Id="1115" Name="IDS_MG_MOVEING">
+		<Text>Moveing</Text>
+	</STRING>
+	<String Id="1116" Name="IDS_MG_ANIMATE_CANNOTSET_WALLPAPER">
 		<Text>不能将动画设置为墙纸！</Text>
 	</String>
 </Strings>
@@ -363,6 +390,14 @@
 	</Dialog>
 	<Dialog Id="6006" Name="IDD_MG_SELECTPATH" Focus="0">
 		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<Dialog Id="6007" Name="IDD_MG_SAVETOPLAYLIST" Focus="7005">
+		<Controls>
+			<Menu Id="7005" Name="IDC_MENU_PLAYLIST">
+				<Items/>
+			</Menu>
+		</Controls>
 		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</Dialog>
 	<Dialog Id="6010" Name="IDD_MG_MSGBOX" Focus="0">
