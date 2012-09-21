@@ -162,6 +162,9 @@ extern boolean FmRadio_IsChannelValid( uint16 channel);
 #endif
 void resume( CFmRadio* pMe);
 void FmRadio_ShowDialog(CFmRadio *pMe, uint16 dlgResId);
+static void fmHeadseton(CFmRadio *pMe);
+static void fmHeadsetOff(CFmRadio *pMe);
+
 
 static void FmRadio_DrawVolumeImage(CFmRadio *pMe, uint16 ResID, int x, int y);
 static void FmRadio_RefreshVolumeImage(CFmRadio *pMe);
@@ -489,13 +492,15 @@ static boolean  HandleFmRadioMainDialogEvent(CFmRadio *pMe,
             #ifdef FEATURE_VERSION_SKY
             if (HS_HEADSET_ON())
             {
-             ISHELL_PostEvent( pMe->m_pShell,AEECLSID_CORE_APP,
-                               EVT_HEADSET_CONNECT,0,0);
+             //ISHELL_PostEvent( pMe->m_pShell,AEECLSID_CORE_APP,
+             //                  EVT_HEADSET_CONNECT,0,0);
+              fmHeadseton(pMe);
             }
             else
             {
-             ISHELL_PostEvent( pMe->m_pShell,AEECLSID_CORE_APP,
-                              EVT_HEADSET_DISCONNECT,0,0);
+              fmHeadsetOff(pMe);
+             //ISHELL_PostEvent( pMe->m_pShell,AEECLSID_CORE_APP,
+             //                 EVT_HEADSET_DISCONNECT,0,0);
             }
             #endif
             hideMenu( pMe);
@@ -3469,3 +3474,68 @@ static void FmRadio_RefreshVolumeImage(CFmRadio *pMe)
     FmRadio_DrawVolumeImage( pMe, ResID, FM_VOLUME_X, FM_VOLUME_Y);
 }
 
+static void fmHeadseton(CFmRadio *pMe)
+{
+    byte          return_ringer_level[PROFILENUMBER];
+    byte          return_beep_level[PROFILENUMBER];
+    byte          set_ringer_level;
+    byte          set_beep_level;
+    byte          m_CallVolume;  
+    byte          m_CurProfile;
+
+   // CFmRadio *pMe  = (CFmRadio*)pme;
+    uisnd_set_device_auto(NULL,NULL);
+    (void) ICONFIG_GetItem(pMe->m_pConfig,
+                      CFGI_PROFILE_RINGER_VOL,
+                      return_ringer_level,
+                      sizeof(return_ringer_level));
+
+    (void) ICONFIG_GetItem(pMe->m_pConfig,
+                      CFGI_PROFILE_BEEP_VOL,
+                      return_beep_level,
+                      sizeof(return_beep_level));
+     ICONFIG_GetItem(pMe->m_pConfig, CFGI_PROFILE_CUR_NUMBER,&m_CurProfile, sizeof(m_CurProfile));
+     (void) ICONFIG_GetItem(pMe->m_pConfig,CFGI_EAR_VOL,&m_CallVolume,sizeof(byte));
+  
+     set_ringer_level            =   return_ringer_level[m_CurProfile];
+     set_beep_level              =   return_beep_level[m_CurProfile];
+
+     snd_set_volume( SND_DEVICE_STEREO_HEADSET, SND_METHOD_KEY_BEEP,set_beep_level, NULL, NULL );
+     snd_set_volume( SND_DEVICE_STEREO_HEADSET, SND_METHOD_VOICE,m_CallVolume, NULL, NULL );     
+
+     snd_set_volume( SND_DEVICE_STEREO_HEADSET, SND_METHOD_MESSAGE,set_ringer_level, NULL, NULL );   
+     snd_set_volume( SND_DEVICE_STEREO_HEADSET, SND_METHOD_RING,set_ringer_level, NULL, NULL );  
+}
+
+static void fmHeadsetOff(CFmRadio *pMe)
+{
+    byte            return_ringer_level[PROFILENUMBER];
+    byte            return_beep_level[PROFILENUMBER];
+    byte            set_ringer_level;
+    byte            set_beep_level;
+    byte            m_CallVolume; 
+    byte            m_CurProfile;
+
+    //CFmRadio *pMe  = (CFmRadio*)pme;
+    uisnd_set_device_auto(NULL,NULL);
+    (void) ICONFIG_GetItem(pMe->m_pConfig,
+                        CFGI_PROFILE_RINGER_VOL,
+                        return_ringer_level,
+                        sizeof(return_ringer_level));
+
+    (void) ICONFIG_GetItem(pMe->m_pConfig,
+                        CFGI_PROFILE_BEEP_VOL,
+                        return_beep_level,
+                        sizeof(return_beep_level));
+    ICONFIG_GetItem(pMe->m_pConfig, CFGI_PROFILE_CUR_NUMBER,&m_CurProfile, sizeof(m_CurProfile));
+    (void) ICONFIG_GetItem(pMe->m_pConfig,CFGI_EAR_VOL,&m_CallVolume,sizeof(byte));
+                                                
+    set_ringer_level            =   return_ringer_level[m_CurProfile];
+    set_beep_level              =   return_beep_level[m_CurProfile];
+
+    snd_set_volume( SND_DEVICE_HANDSET, SND_METHOD_KEY_BEEP,set_beep_level, NULL, NULL );
+    snd_set_volume( SND_DEVICE_HANDSET, SND_METHOD_VOICE,m_CallVolume, NULL, NULL );        
+
+    snd_set_volume( SND_DEVICE_HANDSET, SND_METHOD_MESSAGE,set_ringer_level, NULL, NULL );  
+    snd_set_volume( SND_DEVICE_HANDSET, SND_METHOD_RING,set_ringer_level, NULL, NULL );
+}
