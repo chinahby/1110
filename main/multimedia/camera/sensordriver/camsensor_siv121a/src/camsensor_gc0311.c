@@ -963,22 +963,41 @@ static camera_ret_code_type camsensor_GC0311_set_wb(int8 wb)
 
 	MSG_FATAL ("+++++ camsensor_GC0311_set_wb wb = %d",wb,0,0);
 
-  	switch (wb)
+  	switch ((camera_wb_type)wb)
   	{
 		case  CAMERA_WB_AUTO://自动
+		    camsensor_GC0311_ycbcr_i2c_write_byte(0x42, 0xfe);
+			camsensor_GC0311_ycbcr_i2c_write_byte(0x77, 0x8c); //WB_manual_gain 
+			camsensor_GC0311_ycbcr_i2c_write_byte(0x78, 0x50);
+			camsensor_GC0311_ycbcr_i2c_write_byte(0x79, 0x40);
 	  		break;
 
 		case CAMERA_WB_CLOUDY_DAYLIGHT://多云
+		    camsensor_GC0311_ycbcr_i2c_write_byte(0x42, 0xfd);
+			camsensor_GC0311_ycbcr_i2c_write_byte(0x77, 0x8c); //WB_manual_gain 
+			camsensor_GC0311_ycbcr_i2c_write_byte(0x78, 0x50);
+			camsensor_GC0311_ycbcr_i2c_write_byte(0x79, 0x40);
 	  		break;
 	
 		case CAMERA_WB_INCANDESCENT://白炽灯
+		    camsensor_GC0311_ycbcr_i2c_write_byte(0x42, 0xfd);
+			camsensor_GC0311_ycbcr_i2c_write_byte(0x77, 0x48);
+			camsensor_GC0311_ycbcr_i2c_write_byte(0x78, 0x40);
+			camsensor_GC0311_ycbcr_i2c_write_byte(0x79, 0x5c);
 	  		break;
 
 		case CAMERA_WB_FLUORESCENT: //荧光
-			ret_val = CAMERA_SUCCESS;
+		    camsensor_GC0311_ycbcr_i2c_write_byte(0x42, 0xfd);
+			camsensor_GC0311_ycbcr_i2c_write_byte(0x77, 0x40);
+			camsensor_GC0311_ycbcr_i2c_write_byte(0x78, 0x42);
+			camsensor_GC0311_ycbcr_i2c_write_byte(0x79, 0x50);
 	  		break;	
 	  
 		case CAMERA_WB_DAYLIGHT:  //日光
+		    camsensor_GC0311_ycbcr_i2c_write_byte(0x42, 0xfd);
+			camsensor_GC0311_ycbcr_i2c_write_byte(0x77, 0x74); 
+			camsensor_GC0311_ycbcr_i2c_write_byte(0x78, 0x52);
+			camsensor_GC0311_ycbcr_i2c_write_byte(0x79, 0x40);
 			break;
 
 		default:
@@ -1099,8 +1118,8 @@ static void camsensor_GC0311_ycbcr_register (camsensor_function_table_type *cams
 	camsensor_function_table_ptr->camsensor_power_down          	= camsensor_GC0311_ycbcr_power_down;
 	camsensor_function_table_ptr->camsensor_write_exposure_gain 	= camsensor_GC0311_ycbcr_write_exposure_gain;
 	camsensor_function_table_ptr->camsensor_set_frame_rate        	= camsensor_GC0311_set_frame_rate;
-	camsensor_function_table_ptr->camsensor_set_effect				= camsensor_GC0311_set_effect; 
-	camsensor_function_table_ptr->camsensor_set_wb					= camsensor_GC0311_set_wb;
+	camsensor_function_table_ptr->camsensor_set_effect				= camsensor_GC0311_set_effect;
+	camsensor_function_table_ptr->camsensor_set_wb					= camsensor_GC0311_set_wb; 
 	camsensor_function_table_ptr->camsensor_set_brightness 			= camsensor_GC0311_set_brightness;	 
 	camsensor_function_table_ptr->camsensor_set_contrast 			= camsensor_GC0311_set_contrast;
 	camsensor_function_table_ptr->camsensor_set_antibanding 		= camsensor_GC0311_set_antibanding; 
