@@ -77,7 +77,7 @@ static word fm_playing_channel = 971;
 
 /* Used to send I2C command */
 static i2c_rw_cmd_type fm_i2c_command;
-
+	uint16 cChipID;	
 /***************************************************
 RDA5802
 ****************************************************/
@@ -210,6 +210,45 @@ uint8 RDA5802H_initialization_reg[]={
 	0x00,0x00,
 };
 
+uint8 RDA5802N_initialization_reg[]={
+	0xC4,0x05, //02h 
+	0x00,0x00,
+	0x04,0x00,
+	0xC6,0xED, //05h
+	0x60,0x00,
+	0x42,0x16,
+	0x00,0x00,
+	0x00,0x00,
+	0x00,0x00,  //0x0ah
+	0x00,0x00,
+	0x00,0x00,
+	0x00,0x00,
+	0x00,0x00,
+	0x00,0x00,
+	0x00,0x00,  //0x10h
+	0x00,0x19,
+	0x2A,0x11,
+	0xB0,0x42,  
+	0x2A,0x11,  
+	0xB8,0x31,  //0x15h 
+	0xC0,0x00,
+	0x2A,0x91,
+	0x94,0x00,
+	0x00,0xa8,
+	0xc4,0x00,  //0x1ah
+	0xF7,0xcF,   
+	0x24,0x14,  //0x1ch
+	0x80,0x6F, 
+	0x46,0x08,
+	0x00,0x86,
+	0x06,0x61, //0x20H
+	0x00,0x00,
+	0x10,0x9E,
+	0x23,0xC8,
+	0x04,0x06,
+	0x0E,0x1C, //0x25H
+};
+
 
 static uint8 OperationRDAFM_2w(FM_I2C_COMM_TYPE operation, uint8 *data, uint8 numBytes)
 {
@@ -262,6 +301,63 @@ static uint8 OperationRDAFM_2w(FM_I2C_COMM_TYPE operation, uint8 *data, uint8 nu
 
 }
 
+
+
+static uint8 OperationRDAFM_W(FM_I2C_COMM_TYPE operation, uint16 reg, uint16 data)
+{
+	uint8  	i = 0;
+	uint8   ret = 0;
+	uint8 data8[2]; 
+	if (data == NULL)
+	{
+		return FALSE;
+	}
+	data8[0] = data>>8;
+	data8[1] = data&0x00ff;
+
+	/* Configure I2C parameters */
+	fm_i2c_command.bus_id     = I2C_BUS_HW_CTRL;
+	fm_i2c_command.slave_addr = 0x22;
+	/*lint -save -e655 */
+	fm_i2c_command.options    = (i2c_options_type) (I2C_DFLT_ADDR_DEV | I2C_START_BEFORE_READ);
+	fm_i2c_command.addr.reg = reg;
+	fm_i2c_command.buf_ptr  = (byte *)(data8);
+	fm_i2c_command.len      = 2;
+
+	for (i =0; i < 3; ++i)
+	{
+		if ( operation == FM_I2C_READ )
+		{
+			if (i2c_read(&fm_i2c_command) == I2C_SUCCESS)
+			{
+				ret = 1;
+				break;
+			}
+		}
+		else
+		{
+			if (i2c_write(&fm_i2c_command) == I2C_SUCCESS)
+			{
+				ret = 1;
+				break;
+			}
+		}
+	}
+
+	if ( ret == 1 )
+	{
+		MSG_FATAL("OperationRDAFM_w reg = %xOK",reg,0,0);
+		return TRUE;
+	}
+
+	MSG_FATAL("OperationRDAFM_w reg =%x error",reg,0,0);		
+   
+	return FALSE;
+
+}
+
+
+
 static  uint8 RDA5802_GetSigLvl(int16 curf )  /*当满足rssi 的条件时，将信号记录，再选最强的9个频段*/
 {    
 	uint8 RDA5802_reg_data[4]={0};	
@@ -309,7 +405,8 @@ int fm_radio_init(void)
 	uint8 error_ind = 0;
 	uint8 RDA5802_REG[]={0x00,0x02};
 	uint8 RDAFM_reg_data[10]={0};
-	uint16 cChipID;	
+	uint8 i = 0;
+
 	
 	MSG_FATAL("fm_radio_init!!!",0,0,0);
 #if (defined(T_QSC1100) || defined(T_QSC1110))
@@ -337,7 +434,21 @@ int fm_radio_init(void)
 	//RDA5802E:5804
 	//RDA5802H:5801
 	fm_playing_mute = TRUE;
-	if ( 0x5804==cChipID )
+
+	if ( 0x5808==cChipID )
+	{
+		RDA5802_REG[0]=0x00;
+		RDA5802_REG[1]=0x02;	
+		error_ind = OperationRDAFM_2w(FM_I2C_WRITE, (uint8 *)&RDA5802_REG[0], 2);
+		clk_busy_wait(10*1000);
+
+		error_ind = OperationRDAFM_2w(FM_I2C_WRITE, (uint8 *)&RDA5802N_initialization_reg[0],sizeof(RDA5802N_initialization_reg));
+
+		for (i=0; i<8; i++)
+			RDA5802_initialization_reg[i] = RDA5802N_initialization_reg[i];
+		clk_busy_wait(50*1000);
+	}
+	else if ( 0x5804==cChipID )
 	{
 		RDA5802_REG[0]=0xC0;
 		RDA5802_REG[1]=0x01;
@@ -355,6 +466,8 @@ int fm_radio_init(void)
 		RDA5802E_initialization_reg[0] = 0xC0;
 		RDA5802E_initialization_reg[1] = 0x01;
 		error_ind = OperationRDAFM_2w(FM_I2C_WRITE, (uint8 *)&RDA5802E_initialization_reg[0],sizeof(RDA5802E_initialization_reg));
+		for (i=0; i<8; i++)
+			RDA5802_initialization_reg[i] = RDA5802E_initialization_reg[i];
 		clk_busy_wait(50*1000);
 	}
 	else if ( 0x5801==cChipID )
@@ -376,6 +489,8 @@ int fm_radio_init(void)
 		RDA5802H_initialization_reg[1] = 0x01;
 			
 		error_ind = OperationRDAFM_2w(FM_I2C_WRITE, (uint8 *)&RDA5802H_initialization_reg[0],sizeof(RDA5802H_initialization_reg));
+		for (i=0; i<8; i++)
+			RDA5802_initialization_reg[i] = RDA5802H_initialization_reg[i];
 		clk_busy_wait(50*1000);
 	}
 	else
@@ -472,7 +587,16 @@ static  uint8 RDA5802_ValidStop(int16 freq)
 	uint8 	RDA5802_channel_seek[] = {0xc0,0x01};
 	uint8 	falseStation = 0;
 	uint32  curChan;
-	
+
+	if ( 0x5808==cChipID )
+	{
+		if (freq <=950)
+			OperationRDAFM_W(FM_I2C_WRITE, 0x15, 0x8831);
+		else
+			OperationRDAFM_W(FM_I2C_WRITE, 0x15, 0xf831);
+		clk_busy_wait(10*1000);
+	}
+
 	curChan=RDA5802_FreqToChan(freq);
 	
 	RDA5802_reg_data[0]=RDA5802_channel_seek[0];
@@ -581,11 +705,46 @@ static uint32 RDA5802_FreqToChan(uint32 frequency)
 }
 
 
+
+static uint32 RDA5802_ChanToFreq(word Wchannel) 
+{
+	uint8 	channelSpacing = 0;
+	uint32 	bottomOfBand = 0;
+	uint32 	tFreq = 0;
+
+	if ((RDA5802_initialization_reg[3] & 0x0c) == 0x00)
+	{
+		bottomOfBand = 870;
+	}
+	else if ((RDA5802_initialization_reg[3] & 0x0c) == 0x04)
+	{
+		bottomOfBand = 760;
+	}
+	else if ((RDA5802_initialization_reg[3] & 0x0c) == 0x08)	
+	{
+		bottomOfBand = 760;	
+	}
+	if ((RDA5802_initialization_reg[3] & 0x03) == 0x00) 
+	{
+		channelSpacing = 1;
+	}
+	else if ((RDA5802_initialization_reg[3] & 0x03) == 0x01) 
+	{
+		channelSpacing = 2;
+	}
+	tFreq = Wchannel*channelSpacing + bottomOfBand;
+
+	return (tFreq);
+}
+
+
+
 int fm_tune_channel(word wChannel)
 {
 	uint8 	RDA5802_channel_start_tune[] ={0xc0,0x01,0x00,0x10}; 	//87.0MHz
 	uint8 	RDA5802_reg_data[4]={0};
 	uint32 	curChan;
+	uint16 tFreq = RDA5802_ChanToFreq(wChannel);
 
 	MSG_FATAL("fm_tune_channel wChannel = %d!!!",wChannel,0,0);
 	if(fm_work_status != FM_IDLE_STATUS)
@@ -601,7 +760,15 @@ int fm_tune_channel(word wChannel)
 	
     fm_work_status = FM_IN_PROGRESS;
 
-    
+	if ( 0x5808==cChipID )
+	{
+		if (tFreq <=950)
+			OperationRDAFM_W(FM_I2C_WRITE, 0x15, 0x8831);
+		else
+			OperationRDAFM_W(FM_I2C_WRITE, 0x15, 0xf831);
+		clk_busy_wait(10*1000);
+	}
+
 	fm_playing_channel = wChannel;
 	curChan=RDA5802_FreqToChan(wChannel);
 	RDA5802_channel_start_tune[2]=curChan>>2;
