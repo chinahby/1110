@@ -1585,8 +1585,10 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
 				AEEDeviceInfo devinfo;
 				int nBarH ;
 				AEERect rc;
+                AEERect bar_range[CAMERACFGLAST];
 				int16 wXPos = (int16)AEE_GET_X(dwParam);
 				int16 wYPos = (int16)AEE_GET_Y(dwParam);
+                int i;
                 MSG_FATAL("CameraApp_PreviewHandleEvent EVT_PEN_UP, wXPos=%d, wYPos=%d",wXPos, wYPos, 0);
 				nBarH = GetBottomBarHeight(pMe->m_pDisplay);
         
@@ -1594,6 +1596,24 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
 				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
 				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
 
+                for (i=CAMERACFGFIRST; i < CAMERACFGLAST+1; i++)
+                {
+                    SETAEERECT(&(bar_range[i]),
+                                   (int16)(0 + (i) * 21),
+                                    0,
+                                   (int16)(0 + 21+ (i) * 21),
+                                    21);
+                }
+                for(i=CAMERACFGFIRST; i < CAMERACFGLAST+1 ; i++)
+                {
+                   if(TOUCH_PT_IN_RECT(wXPos,wYPos,bar_range[i])) 
+                   {
+                      pMe->m_nCameraCFG = i;
+                      CameraApp_InitpopMenu(pMe, popMenu);
+                   }
+                }
+                 
+                    
 				if(TOUCH_PT_IN_RECT(wXPos,wYPos,rc))
 				{
                     IImage *pImage = NULL;

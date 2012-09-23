@@ -4,9 +4,15 @@
 	<STRING Id="1001" Name="IDS_ITEM_CAMERA">
 		<Text>กล้อง</Text>
 	</STRING>
+	<String Id="1002" Name="IDS_MULTI_PRE">
+		<Text>One กล้อง</Text>
+	</String>
 	<STRING Id="1003" Name="IDS_ITEM_CAMERA_GALLERY">
 		<Text>คลังภาพ</Text>
 	</STRING>
+	<String Id="1004" Name="IDS_MULTI_BACK">
+		<Text>Two กล้อง</Text>
+	</String>
 	<STRING Id="1005" Name="IDS_CFG_ENVIR">
 		<Text>แวดล้อม</Text>
 	</STRING>

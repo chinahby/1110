@@ -4,8 +4,14 @@
 	<String Id="1001" Name="IDS_ITEM_CAMERA">
 		<Text></Text>
 	</String>
+	<String Id="1002" Name="IDS_MULTI_PRE">
+		<Text>Camera One</Text>
+	</String>
 	<String Id="1003" Name="IDS_ITEM_CAMERA_GALLERY">
 		<Text></Text>
+	</String>
+	<String Id="1004" Name="IDS_MULTI_BACK">
+		<Text>Camera Two</Text>
 	</String>
 	<String Id="1005" Name="IDS_CFG_ENVIR">
 		<Text></Text>
