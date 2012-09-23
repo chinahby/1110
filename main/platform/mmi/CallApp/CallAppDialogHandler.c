@@ -1965,6 +1965,16 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                         {
                             return CallApp_LaunchApplet(pMe, AEECLSID_QUICKTEST);
                         }
+                        
+                        #ifdef FEATURE_VERSION_X3
+                        if (WSTRCMP(pMe->m_DialString, L"*#06#") == 0)
+                        {
+                            //return CallApp_LaunchApplet(pMe,  AEECLSID_FIELDDEBUGAPP);
+                            ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_FIELDDEBUGAPP, "*#06#");
+                            return TRUE;
+                        }
+                        #endif
+                        
                         if(WSTRCMP(pMe->m_DialString, L"*#0000#") == 0)   //add by yangdecai 2010-11-16
                         {
                         	#if defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_W515V3)
