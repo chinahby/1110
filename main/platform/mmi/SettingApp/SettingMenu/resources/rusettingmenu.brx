@@ -407,13 +407,13 @@
 		<Text>30 минут</Text>
 	</String>
 	<STRING Id="1136" Name="IDS_FMRADIO_OPTION_MENU_PLAY_MODLE">
-		<Text>Ringtones mode</Text>
+		<Text>Рингтоны режиме</Text>
 	</STRING>
 	<STRING Id="1137" Name="IDS_FMRADIO_PLAY_HANDSET">
-		<Text>Headset</Text>
+		<Text>наушники</Text>
 	</STRING>
 	<STRING Id="1138" Name="IDS_RADIO_PLAY_SPEAKER">
-		<Text>Handset</Text>
+		<Text>телефонная трубка</Text>
 	</STRING>
 	<String Id="1139" Name="IDS_IDLE_DATETIME_MOCD">
 		<Text>Timefont format</Text>

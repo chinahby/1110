@@ -59,7 +59,7 @@
 		<Text>воскресенье</Text>
 	</STRING>
 	<STRING Id="1020" Name="IDS_CLOCK_STATE">
-		<Text>установлен</Text>
+		<Text>статус</Text>
 	</STRING>
 	<STRING Id="1021" Name="IDS_CLOCK_TIME">
 		<Text>время</Text>
@@ -74,7 +74,7 @@
 		<Text>любая кнопка для выхода.</Text>
 	</STRING>
 	<STRING Id="1025" Name="IDS_CLOCK_SNOOZE">
-		<Text>не беспокоить</Text>
+		<Text>медлить</Text>
 	</STRING>
 	<STRING Id="1026" Name="IDS_CLEAR">
 		<Text>удалить</Text>

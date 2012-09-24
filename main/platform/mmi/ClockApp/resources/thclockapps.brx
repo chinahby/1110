@@ -74,7 +74,7 @@
 		<Text>ปิดได้ทุกปุ่ม</Text>
 	</STRING>
 	<STRING Id="1025" Name="IDS_CLOCK_SNOOZE">
-		<Text>เลื่อนไป</Text>
+		<Text>งีบหลับ</Text>
 	</STRING>
 	<STRING Id="1026" Name="IDS_CLEAR">
 		<Text>ลบ</Text>

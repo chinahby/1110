@@ -14,7 +14,7 @@
 		<Text>Отправка</Text>
 	</STRING>
 	<STRING Id="5" Name="IDS_CONTINU">
-		<Text>Продолжить.</Text>
+		<Text>вести</Text>
 	</STRING>
 	<STRING Id="6" Name="IDS_BACK">
 		<Text>Вернуть</Text>
@@ -50,7 +50,7 @@
 		<Text>Закрыть</Text>
 	</STRING>
 	<STRING Id="17" Name="IDS_RESET">
-		<Text>Перегрузить</Text>
+		<Text>сброс</Text>
 	</STRING>
 	<STRING Id="18" Name="IDS_END">
 		<Text>Завершить</Text>

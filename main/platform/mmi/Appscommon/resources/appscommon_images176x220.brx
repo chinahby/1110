@@ -100,9 +100,6 @@
 	<Object Id="5081" Name="IDI_BOTTOMBAR" MimeType="image/png">
 		<File>..\images\176x220\common\Appscommon\Menu\bottombar\bottombar.png</File>
 	</Object>
-	<Object Id="5082" Name="IDI_BOTTOMBARBROWSER" MimeType="image/png">
-		<File>..\images\176x220\common\Appscommon\Menu\bottombar\bottombarbrowser.png</File>
-	</Object>
 	<Object Id="5101" Name="IDI_TITLEBAR" MimeType="image/png">
 		<File>..\images\176x220\common\Appscommon\Menu\titlebar\titlebar.png</File>
 	</Object>
@@ -191,10 +188,10 @@
 		<File>..\images\176x220\common\IME\T9th.png</File>
 	</Object>
 	<Object Id="5417" Name="IDB_MODE_T9_MT_HINDI" MimeType="image/png">
-		<File>..\images\128x160\common\IME\hi.png</File>
+		<File>..\images\176x220\common\IME\hi.png</File>
 	</Object>
 	<Object Id="5418" Name="IDB_MODE_ZI_RAPID_HINDI" MimeType="image/png">
-		<File>..\images\128x160\common\IME\zihi.png</File>
+		<File>..\images\176x220\common\IME\zihi.png</File>
 	</Object>
 	<Object Id="5426" Name="IDB_EDIT_UP_DOWN_BMP" MimeType="image/png">
 		<File>..\images\176x220\common\IME\arrow.png</File>

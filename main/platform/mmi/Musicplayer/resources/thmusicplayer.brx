@@ -50,10 +50,10 @@
 		<Text>ไม่มีบันทึก</Text>
 	</STRING>
 	<STRING Id="1017" Name="IDS_VOLUME">
-		<Text>ระดับเสียง</Text>
+		<Text>ปริมาณ</Text>
 	</STRING>
 	<STRING Id="1018" Name="IDS_MUSICSORT">
-		<Text>เรียงโดย</Text>
+		<Text>ประเภท</Text>
 	</STRING>
 	<STRING Id="1019" Name="IDS_PLAYMODE_SINGLE">
 		<Text>เพลงเดียว</Text>

@@ -50,10 +50,10 @@
 		<Text>Нет записей</Text>
 	</STRING>
 	<STRING Id="1017" Name="IDS_VOLUME">
-		<Text>Громкость</Text>
+		<Text>звучать</Text>
 	</STRING>
 	<STRING Id="1018" Name="IDS_MUSICSORT">
-		<Text>Сортировать на</Text>
+		<Text>род</Text>
 	</STRING>
 	<STRING Id="1019" Name="IDS_PLAYMODE_SINGLE">
 		<Text>Одинарный</Text>
