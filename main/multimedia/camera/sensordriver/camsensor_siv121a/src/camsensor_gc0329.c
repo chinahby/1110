@@ -928,19 +928,36 @@ static camera_ret_code_type camsensor_gc0329_set_wb(int8 wb)
   	switch (wb)
   	{
 		case  CAMERA_WB_AUTO://自动
+		    camsensor_gc0329_ycbcr_i2c_write_byte(0x42, 0x7e);
 	  		break;
 
 		case CAMERA_WB_CLOUDY_DAYLIGHT://多云
+            camsensor_gc0329_ycbcr_i2c_write_byte(0x42, 0x7d); //WB_manual_gain 
+            camsensor_gc0329_ycbcr_i2c_write_byte(0x77, 0x8c); //WB_manual_gain 
+            camsensor_gc0329_ycbcr_i2c_write_byte(0x78, 0x50);
+            camsensor_gc0329_ycbcr_i2c_write_byte(0x79, 0x40);
 	  		break;
 	
 		case CAMERA_WB_INCANDESCENT://白炽灯
+   		
+           camsensor_gc0329_ycbcr_i2c_write_byte(0x42, 0x7d); 
+           camsensor_gc0329_ycbcr_i2c_write_byte(0x77, 0x48);
+           camsensor_gc0329_ycbcr_i2c_write_byte(0x78, 0x40);
+           camsensor_gc0329_ycbcr_i2c_write_byte(0x79, 0x5c);
 	  		break;
 
 		case CAMERA_WB_FLUORESCENT: //荧光
-			ret_val = CAMERA_SUCCESS;
+            camsensor_gc0329_ycbcr_i2c_write_byte(0x42, 0x7d); 
+            camsensor_gc0329_ycbcr_i2c_write_byte(0x77, 0x40);
+            camsensor_gc0329_ycbcr_i2c_write_byte(0x78, 0x42);
+            camsensor_gc0329_ycbcr_i2c_write_byte(0x79, 0x50);
 	  		break;	
 	  
 		case CAMERA_WB_DAYLIGHT:  //日光
+            camsensor_gc0329_ycbcr_i2c_write_byte(0x42, 0x7d); 
+            camsensor_gc0329_ycbcr_i2c_write_byte(0x77, 0x74); 
+            camsensor_gc0329_ycbcr_i2c_write_byte(0x78, 0x52);
+            camsensor_gc0329_ycbcr_i2c_write_byte(0x79, 0x40); 
 			break;
 
 		default:
