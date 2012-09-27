@@ -10597,6 +10597,7 @@ static boolean T9TextCtl_CJK_CHINESE_Key(TextCtlContext *pContext, AEEEvent eCod
     {
         return FALSE;
     } 
+#ifdef FEATURE_USES_MMS    
 if(AEE_Active()==AEECLSID_WMSAPP)
 {
     if(key == AVK_0)
@@ -10611,7 +10612,8 @@ if(AEE_Active()==AEECLSID_WMSAPP)
              IDISPLAY_FillRect(pContext->pIDisplay, &pRect, RGB_BLACK);
          }
     }
-}    
+} 
+#endif
     MSG_FATAL("T9TextCtl_CJK_CHINESE_Key--key=%d",key,0,0);
     mKey = T9_CJK_CHINESE_BrewKeyToT9Key (pContext, key );
 
@@ -10686,6 +10688,7 @@ if(AEE_Active()==AEECLSID_WMSAPP)
                 mKey = T9KEYCLEAR;
                 wT9KeyType = T9KEYTYPE_CONTROL;   
             }
+            #ifdef FEATURE_USES_MMS
             if(AEE_Active()==AEECLSID_WMSAPP)
             {
             SETAEERECT ( &pRect,0,127,176,48);     
@@ -10698,6 +10701,7 @@ if(AEE_Active()==AEECLSID_WMSAPP)
                  IDISPLAY_FillRect(pContext->pIDisplay, &pRect, RGB_BLACK);
              }
             }
+            #endif
             break;
         
         case AVK_SELECT:   
@@ -11447,6 +11451,7 @@ static void T9_CJK_CHINESE_DrawStrokeString(TextCtlContext *pContext)
                            MAKE_RGB(255, 255, 255));
 */
     // setup the Stroke Rect
+    #ifdef FEATURE_USES_MMS
     if(AEE_Active()==AEECLSID_WMSAPP)
     {
     SETAEERECT ( &pRect,
@@ -11454,7 +11459,9 @@ static void T9_CJK_CHINESE_DrawStrokeString(TextCtlContext *pContext)
                      127,        //iWindY+1,
                      iWindDx -4,  
                      iWindDy); 
-    }else{
+    }else
+    #endif
+    {
        SETAEERECT ( &pRect,
                      iWindX+2,   //+T9_FONT_WIDTH,   
                      iWindY+1,
@@ -11489,6 +11496,7 @@ static void T9_CJK_CHINESE_DrawStrokeString(TextCtlContext *pContext)
     {
         format = IDF_ALIGN_NONE;
         ch[0] = 0x003C; //'<'
+        #ifdef FEATURE_USES_MMS
         if(AEE_Active()==AEECLSID_WMSAPP)
         {
         (void) IDISPLAY_DrawText((IDisplay *)pContext->pIDisplay,
@@ -11499,7 +11507,9 @@ static void T9_CJK_CHINESE_DrawStrokeString(TextCtlContext *pContext)
                                129,       //iWindY+3,  // iWindY,
                                NULL,
                                format);
-        }else{
+        }else
+        #endif 
+        {
         (void) IDISPLAY_DrawText((IDisplay *)pContext->pIDisplay,
                                AEE_FONT_NORMAL,
                                ch,
@@ -11529,6 +11539,7 @@ static void T9_CJK_CHINESE_DrawStrokeString(TextCtlContext *pContext)
         ch[0] = *(pbBuffer+k);   // + 0x3129;
         ch[0] = StrokeMap[((int)ch[0])-1];
 		MSG_FATAL("draw........................ch==%x",ch[0],0,0);
+        #ifdef FEATURE_USES_MMS
         if(AEE_Active()==AEECLSID_WMSAPP)
         {
         (void) IDISPLAY_DrawText((IDisplay *)pContext->pIDisplay,
@@ -11539,7 +11550,9 @@ static void T9_CJK_CHINESE_DrawStrokeString(TextCtlContext *pContext)
                                129,       //iWindY+3,  // iWindY,
                                NULL,
                                format);
-        }else{
+        }else
+        #endif
+        {
         (void) IDISPLAY_DrawText((IDisplay *)pContext->pIDisplay,
                                AEE_FONT_NORMAL,
                                ch,
@@ -11602,7 +11615,7 @@ static void T9_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext )
     T9_CJK_CHINESE_AdjustInputInfoLocation(pContext, (unsigned int *)&iWindX, (unsigned int *)&iWindY, &iWindDx, &iWindDy);
     
     // setup the BMPF Rect
-    //#ifdef FEATURE_USES_MMS
+    #ifdef FEATURE_USES_MMS
     if(AEE_Active()==AEECLSID_WMSAPP)
     {
     SETAEERECT ( &pRect,
@@ -11612,6 +11625,7 @@ static void T9_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext )
                   iWindDy);  
     }
     else
+    #endif    
     {
     //#else
     SETAEERECT ( &pRect,
@@ -11850,6 +11864,7 @@ static void T9_CJK_CHINESE_DisplaySelection(TextCtlContext *pContext)
     MSG_FATAL("iWindX===%d,,,,,,iWindY====%d",iWindX,iWindY,0);
 	MSG_FATAL("iWindDx===%d,,,,,,iWindDy====%d",iWindX,iWindY,0);
     // setup the text Rect
+    #ifdef FEATURE_USES_MMS
     if(AEE_Active()==AEECLSID_WMSAPP)
     {
     SETAEERECT(&pRect,
@@ -11858,7 +11873,9 @@ static void T9_CJK_CHINESE_DisplaySelection(TextCtlContext *pContext)
               iWindDx -6,     
               iWindDy-1);  
     }
-    else{
+    else
+    #endif
+    {
     SETAEERECT(&pRect,
               iWindX+2,
               iWindY, // at the bottom line
