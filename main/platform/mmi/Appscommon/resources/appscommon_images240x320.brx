@@ -164,28 +164,49 @@
 		<File>..\images\240x320\common\IME\T9zhu.png</File>
 	</Object>
 	<Object Id="5407" Name="IDB_MODE_T9_RAPID_ENGLISH" MimeType="image/png">
-		<File>..\images\240x320\common\IME\ezenglish.png</File>
+		<File>..\images\176x220\common\IME\ezenglish.png</File>
 	</Object>
-	<Object Id="5408" Name="IDB_MODE_T9_MT_THAI">
-		<File>..\images\240x320\common\IME\thai.png</File>
+	<Object Id="5408" Name="IDB_MODE_T9_MT_INDONESIAN" MimeType="image/png">
+		<File>..\images\176x220\common\IME\Indo.png</File>
 	</Object>
-	<Object Id="5409" Name="IDB_MODE_T9_RAPID_THAI">
-		<File>..\images\240x320\common\IME\T9th.png</File>
+	<Object Id="5409" Name="IDB_MODE_T9_RAPID_INDONESIAN" MimeType="image/png">
+		<File>..\images\176x220\common\IME\T9In.png</File>
 	</Object>
 	<Object Id="5411" Name="IDB_MODE_T9_RAPID_ENGLISH_LOW" MimeType="image/png">
-		<File>..\images\240x320\common\IME\lowezenglish.png</File>
+		<File>..\images\176x220\common\IME\lowezenglish.png</File>
 	</Object>
 	<Object Id="5412" Name="IDB_MODE_T9_RAPID_ENGLISH_UP" MimeType="image/png">
-		<File>..\images\240x320\common\IME\upezenglish.png</File>
+		<File>..\images\176x220\common\IME\upezenglish.png</File>
 	</Object>
-	<Object Id="5413" Name="IDB_MODE_T9_MT_INDONESIAN" MimeType="image/png">
-		<File>..\images\240x320\common\IME\Indo.png</File>
+	<Object Id="5413" Name="IDB_MODE_T9_MT_ARABIC" MimeType="image/png">
+		<File>..\images\176x220\common\IME\Ar.png</File>
 	</Object>
-	<Object Id="5414" Name="IDB_MODE_T9_RAPID_INDONESIAN" MimeType="image/png">
-		<File>..\images\240x320\common\IME\T9In.png</File>
+	<Object Id="5414" Name="IDB_MODE_T9_RAPID_ARABIC" MimeType="image/png">
+		<File>..\images\176x220\common\IME\T9Ar.png</File>
 	</Object>
-	<Object Id="5415" Name="IDB_MODE_T9_RAPID_PORTUGUESE">
-		<File>..\images\240x320\common\IME\T9Por.png</File>
+	<Object Id="5415" Name="IDB_MODE_T9_MT_THAI" MimeType="image/png">
+		<File>..\images\176x220\common\IME\thai.png</File>
+	</Object>
+	<Object Id="5416" Name="IDB_MODE_T9_RAPID_THAI" MimeType="image/png">
+		<File>..\images\176x220\common\IME\T9th.png</File>
+	</Object>
+	<Object Id="5417" Name="IDB_MODE_T9_MT_HINDI" MimeType="image/png">
+		<File>..\images\128x160\common\IME\hi.png</File>
+	</Object>
+	<Object Id="5418" Name="IDB_MODE_ZI_RAPID_HINDI" MimeType="image/png">
+		<File>..\images\128x160\common\IME\zihi.png</File>
+	</Object>
+	<Object Id="5426" Name="IDB_EDIT_UP_DOWN_BMP" MimeType="image/png">
+		<File>..\images\176x220\common\IME\arrow.png</File>
+	</Object>
+	<Object Id="5427" Name="IDI_MODE_MYANMAR" MimeType="image/png">
+		<File>..\images\176x220\common\IME\mya.png</File>
+	</Object>
+	<Object Id="5428" Name="IDI_MODE_MT_RUSSIAN" MimeType="image/png">
+		<File>..\images\176x220\common\IME\MTRU.png</File>
+	</Object>
+	<Object Id="5429" Name="IDI_MODE_RAPID_RUSSIAN" MimeType="image/png">
+		<File>..\images\176x220\common\IME\ru.png</File>
 	</Object>
 	<Object Id="5801" Name="IDB_TEMPLATE">
 		<File>..\images\240x320\common\Message\Icon\Template.bmp</File>
@@ -543,6 +564,18 @@
 	</Object>
 	<Object Id="7173" Name="IDB_MODE_IME_PINYINUPPRESS">
 		<File>..\images\240x320\common\ime\IMAGE_INPUT_EG_PEN_PINYIN_UPPRESS.bmp</File>
+	</Object>
+	<Object Id="7180" Name="IDB_MODE_IME_THAIPRESS">
+		<File>..\images\240x320\common\ime\IMAGE_INPUT_EG_PEN_ONLY_THAI_PRESS.bmp</File>
+	</Object>
+	<Object Id="7181" Name="IDB_MODE_IME_THAIUNPRESS">
+		<File>..\images\240x320\common\ime\IMAGE_INPUT_EG_PEN_ONLY_THAI_UNPRESS.bmp</File>
+	</Object>
+	<Object Id="7182" Name="IDB_MODE_IME_MYNAMMAPRESS">
+		<File>..\images\240x320\common\ime\IMAGE_INPUT_EG_PEN_ONLY_MYNAMMA_PRESS.bmp</File>
+	</Object>
+	<Object Id="7183" Name="IDB_MODE_IME_MYNAMMAUNPRESS">
+		<File>..\images\240x320\common\ime\IMAGE_INPUT_EG_PEN_ONLY_MYNAMMA_UNPRESS.bmp</File>
 	</Object>
 	<Object Id="7200" Name="IDB_CALCAPP_ADD_DOWN" MimeType="image/png">
 		<File>..\images\240x320\common\Calculator\IMAGE_CALC_ADD_DOWN.png</File>
