@@ -8,7 +8,7 @@
 		<Text>转到日期</Text>
 	</STRING>
 	<STRING Id="1003" Name="IDS_OPTION_DELETE_ALL">
-		<Text>全部刪除</Text>
+		<Text>全部删除</Text>
 	</STRING>
 	<STRING Id="1004" Name="IDS_PWD_TITLE">
 		<Text>请输入密码</Text>
