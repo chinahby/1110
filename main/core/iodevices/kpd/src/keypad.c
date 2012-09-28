@@ -328,6 +328,16 @@ static const hs_key_type keys[ KEYPAD_ROWS ][ KEYPAD_COLUMNS ] = {
 /*
  * Table position of keys contributing to the "panic chord" 
  */
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+/* '*' Key */
+#define SEL_KEY_ROW     1
+#define SEL_KEY_COLUMN  0
+
+/* '#' Key */
+#define INFO_KEY_ROW    3
+#define INFO_KEY_COLUMN 1
+#endif
+
 /* '1' Key */
 #define ONE_KEY_ROW      1
 #define ONE_KEY_COLUMN   1
@@ -339,7 +349,6 @@ static const hs_key_type keys[ KEYPAD_ROWS ][ KEYPAD_COLUMNS ] = {
 /* '#' Key */
 #define POUND_KEY_ROW    3
 #define POUND_KEY_COLUMN 3
-
 /* 
  * Table positions of navigation keys 
  */
@@ -2065,9 +2074,14 @@ boolean keypad_is_panic_chord_pressed(void)
 
   /* the panic key chord is the combination of the 1 key, the star key, and
      the pound key */
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+  if ( keys_pressed[SEL_KEY_ROW][SEL_KEY_COLUMN]   == TRUE && /* "1" key */
+       keys_pressed[INFO_KEY_ROW][INFO_KEY_COLUMN] == TRUE )  /* "#" key */ 
+#else
   if ( keys_pressed[ONE_KEY_ROW][ONE_KEY_COLUMN]     == TRUE && /* "1" key */
        keys_pressed[STAR_KEY_ROW][STAR_KEY_COLUMN]   == TRUE && /* "*" key */
        keys_pressed[POUND_KEY_ROW][POUND_KEY_COLUMN] == TRUE )  /* "#" key */
+#endif       
   {
     panic_chord_pressed = TRUE;
   }
