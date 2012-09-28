@@ -685,30 +685,30 @@ struct _OEMITSIMKeyItem_Own
 
 static OEMITSIMKeyItem_Own  OEMITSIMTHAIKeyItem[10] =
 {
-    {'0', {0x0E48,0x0E49,0x0E4A,0x0E4B,0x0E47,0x0E4C,0x0E39,0x0E30,'0'},'9'},
-    {'1', {'1'},'1'},
-    {'2', {0x0E01,0x0E02,0x0E03,0x0E04,0x0E05,0x0E06,0x0E07,0x0E08,0x0E09,'2'},'10'},
-    {'3', {0x0E0A,0x0E0B,0x0E0C,0x0E0D,0x0E0E,0x0E0F,0x0E10,'3'},'8'},
-    {'4', {0x0E11,0x0E12,0x0E13,0x0E14,0x0E15,0x0E16,0x0E17,'4'},'8'},
-    {'5', {0x0E18,0x0E19,0x0E1A,0x0E1B,0x0E1C,0x0E1D,0x0E1E,'5'},'8'},
-    {'6', {0x0E1F,0x0E20,0x0E21,0x0E22,0x0E23,0x0E25,0x0E27,'6'},'8'},
-    {'7', {0x0E28,0x0E29,0x0E2A,0x0E2B,0x0E2C,0x0E2D,0x0E2E,'7'},'8'},
-    {'8', {0x0E31,0x0E34,0x0E35,0x0E36,0x0E37,0x0E38,0x0E39,0x0E30,'8'},'9'},
-    {'9', {0x0E32,0x0E33,0x0E40,0x0E41,0x0E42,0x0E43,0x0E44,0x0E46,0x0E24,'9'},'10'},  
+    {'0', {0x0E48,0x0E49,0x0E4A,0x0E4B,0x0E47,0x0E4C,0x0E39,0x0E30,'0'},9},
+    {'1', {'1'},1},
+    {'2', {0x0E01,0x0E02,0x0E03,0x0E04,0x0E05,0x0E06,0x0E07,0x0E08,0x0E09,'2'},10},
+    {'3', {0x0E0A,0x0E0B,0x0E0C,0x0E0D,0x0E0E,0x0E0F,0x0E10,'3'},8},
+    {'4', {0x0E11,0x0E12,0x0E13,0x0E14,0x0E15,0x0E16,0x0E17,'4'},8},
+    {'5', {0x0E18,0x0E19,0x0E1A,0x0E1B,0x0E1C,0x0E1D,0x0E1E,'5'},8},
+    {'6', {0x0E1F,0x0E20,0x0E21,0x0E22,0x0E23,0x0E25,0x0E27,'6'},8},
+    {'7', {0x0E28,0x0E29,0x0E2A,0x0E2B,0x0E2C,0x0E2D,0x0E2E,'7'},8},
+    {'8', {0x0E31,0x0E34,0x0E35,0x0E36,0x0E37,0x0E38,0x0E39,0x0E30,'8'},9},
+    {'9', {0x0E32,0x0E33,0x0E40,0x0E41,0x0E42,0x0E43,0x0E44,0x0E46,0x0E24,'9'},10}  
 };
 
 static OEMITSIMKeyItem_Own  OEMITSIMMYNAMMAKeyItem[10] =
 {
-    {'0', {' ', 0x1039, 0x1036, 0x1037, 0x1038, 0x103A, 0x103B, 0x103C, 0x103D, 0x103E, '.', 0x104A, 0x104B, 0x104C, 0x104D, 0x104E, 0x104F, 0x1040, '0'},'19'},
-    {'1', {0x1000, 0x1001, 0x1002, 0x1003, 0x1004, 0x1041, '1'},'7'},
-    {'2', {0x1005, 0x1006, 0x1007, 0x1008, 0x1009, 0x100A, 0x1042, '2'},'8'},
-    {'3', {0x100B, 0x100C, 0x100D, 0x100E, 0x100F, 0x1043, '3'},'7'},
-    {'4', {0x1010, 0x1011, 0x1012, 0x1013, 0x1014, 0x1044, '4'},'7'},
-    {'5', {0x1015, 0x1016, 0x1017, 0x1018, 0x1019, 0x1045, '5'},'7'},
-    {'6', {0x101A, 0x101B, 0x101C, 0x101D, 0x101E, 0x1046,  '6'},'7'},
-    {'7', {0x101F, 0x1020, 0x103F, 0x1047, '7'},'5'},
-    {'8', {0x1021, 0x1022, 0x1023, 0x1024, 0x1025, 0x1026, 0x1027, 0x1028, 0x1029, 0x102A, 0x1048, '8'},'12'},
-    {'9', {0x102B, 0x102C, 0x102D, 0x102E, 0x102F, 0x1030, 0x1031, 0x1032, 0x1033, 0x1034, 0x1035, 0x1049, '9'},'13'},
+    {'0', {' ', 0x1039, 0x1036, 0x1037, 0x1038, 0x103A, 0x103B, 0x103C, 0x103D, 0x103E, '.', 0x104A, 0x104B, 0x104C, 0x104D, 0x104E, 0x104F, 0x1040, '0'},19},
+    {'1', {0x1000, 0x1001, 0x1002, 0x1003, 0x1004, 0x1041, '1'},7},
+    {'2', {0x1005, 0x1006, 0x1007, 0x1008, 0x1009, 0x100A, 0x1042, '2'},8},
+    {'3', {0x100B, 0x100C, 0x100D, 0x100E, 0x100F, 0x1043, '3'},7},
+    {'4', {0x1010, 0x1011, 0x1012, 0x1013, 0x1014, 0x1044, '4'},7},
+    {'5', {0x1015, 0x1016, 0x1017, 0x1018, 0x1019, 0x1045, '5'},7},
+    {'6', {0x101A, 0x101B, 0x101C, 0x101D, 0x101E, 0x1046,  '6'},7},
+    {'7', {0x101F, 0x1020, 0x103F, 0x1047, '7'},5},
+    {'8', {0x1021, 0x1022, 0x1023, 0x1024, 0x1025, 0x1026, 0x1027, 0x1028, 0x1029, 0x102A, 0x1048, '8'},12},
+    {'9', {0x102B, 0x102C, 0x102D, 0x102E, 0x102F, 0x1030, 0x1031, 0x1032, 0x1033, 0x1034, 0x1035, 0x1049, '9'},13}
 };
 
 //---------------------------------------------------------------------
@@ -10009,7 +10009,8 @@ static boolean  TSIM_LetSymEvtChar(CTSIM* pme, AEEEvent eCode, AECHAR receivecha
              AECHAR    temp;
              if(pme->m_oldkey != receivechar)
                 {
-                    pme->m_oldkey=receivechar;  
+                    pme->m_oldkey=receivechar;
+                    pme->m_curpros=0;
                     temp = OEMITSIMTHAIKeyItem[receivechar-48].name[0];                     
                 }
                 else
@@ -10018,6 +10019,7 @@ static boolean  TSIM_LetSymEvtChar(CTSIM* pme, AEEEvent eCode, AECHAR receivecha
                    (void)ISHELL_CancelTimer(pme->m_pIShell,OEMITSIM_keypadtimer,pme); 
                    if(pme->b_multenter == FALSE)
                    {
+                    pme->m_curpros=0;
                     temp = OEMITSIMTHAIKeyItem[receivechar-48].name[0];   
                    }
                    else
@@ -10030,15 +10032,16 @@ static boolean  TSIM_LetSymEvtChar(CTSIM* pme, AEEEvent eCode, AECHAR receivecha
                              pme->wSelStart=pme->wSelStart-1;
                            }  
                         }
+                        if(pme->m_curpros<(OEMITSIMTHAIKeyItem[receivechar-48].m_Itemmax))
+                      	{
+                      		pme->m_curpros ++;
+                      	}
+                      	else
+                      	{
+                      		pme->m_curpros = 0;
+                      	} 
                    }
-                   if(pme->m_curpros<(OEMITSIMTHAIKeyItem[receivechar-48].m_Itemmax-48))
-                  	{
-                  		pme->m_curpros ++;
-                  	}
-                  	else
-                  	{
-                  		pme->m_curpros = 0;
-                  	} 
+                  
                     pme->b_multenter = TRUE;
                     (void)ISHELL_SetTimer(pme->m_pIShell,1000,OEMITSIM_keypadtimer,pme);
                    // AEE_SetTimer(1000,OEMITSIM_keypadtimer,pme);
@@ -10054,13 +10057,14 @@ static boolean  TSIM_LetSymEvtChar(CTSIM* pme, AEEEvent eCode, AECHAR receivecha
         }
         else if(pme->m_tsm_curr == TSIM_MYANMRA)
         {
-           DBGPRINTF("******THAI-------receivechar=%d------pme->m_oldkey=%d",receivechar,pme->m_oldkey);
+           DBGPRINTF("******MYANMRA-------receivechar=%d------pme->m_oldkey=%d",receivechar,pme->m_oldkey);
            if((receivechar-48) >= 0 && (receivechar-48) < 10)
            {
              AECHAR    temp;
              if(pme->m_oldkey != receivechar)
                 {
                     pme->m_oldkey=receivechar;  
+                    pme->m_curpros=0;
                     temp = OEMITSIMMYNAMMAKeyItem[receivechar-48].name[0];                     
                 }
                 else
@@ -10069,6 +10073,7 @@ static boolean  TSIM_LetSymEvtChar(CTSIM* pme, AEEEvent eCode, AECHAR receivecha
                    (void)ISHELL_CancelTimer(pme->m_pIShell,OEMITSIM_keypadtimer,pme); 
                    if(pme->b_multenter == FALSE)
                    {
+                    pme->m_curpros=0;
                     temp = OEMITSIMMYNAMMAKeyItem[receivechar-48].name[0];   
                    }
                    else
@@ -10081,15 +10086,16 @@ static boolean  TSIM_LetSymEvtChar(CTSIM* pme, AEEEvent eCode, AECHAR receivecha
                              pme->wSelStart=pme->wSelStart-1;
                            }  
                         }
+                        if(pme->m_curpros<(OEMITSIMMYNAMMAKeyItem[receivechar-48].m_Itemmax))
+                      	{
+                      		pme->m_curpros ++;
+                      	}
+                      	else
+                      	{
+                      		pme->m_curpros = 0;
+                      	} 
                    }
-                   if(pme->m_curpros<(OEMITSIMMYNAMMAKeyItem[receivechar-48].m_Itemmax-48))
-                  	{
-                  		pme->m_curpros ++;
-                  	}
-                  	else
-                  	{
-                  		pme->m_curpros = 0;
-                  	} 
+                   
                     pme->b_multenter = TRUE;
                     (void)ISHELL_SetTimer(pme->m_pIShell,1000,OEMITSIM_keypadtimer,pme);
                    // AEE_SetTimer(1000,OEMITSIM_keypadtimer,pme);
