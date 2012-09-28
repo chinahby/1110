@@ -8879,23 +8879,32 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                 DBGPRINTF("nCount = %d, pwstrText=%S",nCount, ITEXTCTL_GetTextPtr(pIText));
                 if (nCount<=0)
                 { 
-                    #if 1//def FEATURE_LCD_TOUCH_ENABLE
-                    {
-#ifdef FEATURE_USES_MMS                         
-                        if(pMe->m_isSendToAlbumOrEmain)
+                    #ifdef FEATURE_LCD_TOUCH_ENABLE    
                         {
-                            AECHAR *pwstrText = ITEXTCTL_GetTextPtr(pIText);
-                            ITEXTCTL_SetText(pIText, pwstrText, -1);   
+                         AECHAR *pwstrText = ITEXTCTL_GetTextPtr(pIText);
+                         ITEXTCTL_SetText(pIText, pwstrText, -1);   
                         }
-                        else
-#endif                            
-                        {
-                            ITEXTCTL_SetText(pIText, wstrText, -1); 
-                        }
-                        
-                    }
                     #else
-                    ITEXTCTL_SetText(pIText, wstrText, -1); 
+                      #ifdef FEATURE_USES_MMS
+                        if(pMe->m_isSendToAlbumOrEmain)
+                         {
+                             AECHAR *pwstrText = ITEXTCTL_GetTextPtr(pIText);
+                             if(pwstrText == NULL)
+                             {
+                                 DBGPRINTF("IDD_TONUMLIST_Handler pwstrText==NULL");   
+                             }
+                             else
+                             {
+                                 DBGPRINTF("IDD_TONUMLIST_Handler pwstrText=%S", pwstrText);   
+                             }
+                             ITEXTCTL_SetText(pIText, pwstrText, -1);   
+                         }
+                        else
+                      #else
+                         {
+                          ITEXTCTL_SetText(pIText, wstrText, -1); 
+                         }
+                      #endif
                     #endif
                     // 绘制底条提示
                     // Search      Back
