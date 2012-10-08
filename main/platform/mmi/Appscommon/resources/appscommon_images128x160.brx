@@ -22,9 +22,6 @@
 	<Object Id="5007" Name="IDB_MODE_T9_MT_ENGLISH_UP" MimeType="image/png">
 		<File>..\images\128x160\common\IME\upabc.png</File>
 	</Object>
-	<Object Id="5008" Name="IDI_MM_BACKGROUND">
-		<File>..\images\128x160\common\Appscommon\Menu\background\MM_BG.bmp</File>
-	</Object>
 	<Object Id="5009" Name="IDI_PLAYLISTMG">
 		<File>..\images\128x160\common\mediagallery\playlistplaying.bmp</File>
 	</Object>
@@ -199,11 +196,23 @@
 	<Object Id="5416" Name="IDB_MODE_T9_RAPID_THAI" MimeType="image/png">
 		<File>..\images\128x160\common\IME\T9th.png</File>
 	</Object>
+	<Object Id="5417" Name="IDB_MODE_T9_MT_HINDI" MimeType="image/png">
+		<File>..\images\128x160\common\IME\hi.png</File>
+	</Object>
+	<Object Id="5418" Name="IDB_MODE_T9_RAPID_HINDI" MimeType="image/png">
+		<File>..\images\128x160\common\IME\zihi.png</File>
+	</Object>
 	<Object Id="5426" Name="IDB_EDIT_UP_DOWN_BMP" MimeType="image/png">
 		<File>..\images\128x160\common\IME\arrow.png</File>
 	</Object>
 	<Object Id="5427" Name="IDI_MODE_MYANMAR" MimeType="image/png">
 		<File>..\images\128x160\common\IME\mya.png</File>
+	</Object>
+	<Object Id="5428" Name="IDI_MODE_MT_RUSSIAN" MimeType="image/png">
+		<File>..\images\128x160\common\IME\MTRU.png</File>
+	</Object>
+	<Object Id="5429" Name="IDI_MODE_RAPID_RUSSIAN" MimeType="image/png">
+		<File>..\images\128x160\common\IME\ru.png</File>
 	</Object>
 	<Object Id="5801" Name="IDB_TEMPLATE">
 		<File>..\images\128x160\common\Message\Icon\Template.bmp</File>
