@@ -1699,10 +1699,10 @@ void CoreTask_init( void )
    k1ExHandler_SetExceptionHandlerOf(ui_tcb.thread_id);
 #else
    (void) AEE_Init(AEE_APP_SIG);
-#ifdef FEATURE_MSHOP_DOWNLOAD_CONFIG_FOR_CT_AND_OMH
+#ifdef FEATURE_OEMOMH 
    MSG_ERROR("OMH: Calling OEMOMH_Init after AEE_Init()", 0, 0, 0);
    OEMOMH_Init();
-#endif
+#endif //FEATURE_MSHOP_DOWNLOAD_CONFIG_FOR_CT_AND_OMH
 #endif
     CoreTask_CreateAEEInstance();
 #if defined(FEATURE_BREWAPPCOORD)
