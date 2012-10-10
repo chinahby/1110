@@ -530,7 +530,7 @@ static boolean ITimeCtl_HandleEvent(ITimeCtl * po, AEEEvent eCode, uint16 wParam
 #if defined( AEE_SIMULATOR)
         wParam == AVK_STAR
 #else
-        (wParam == AVK_INFO || wParam == AVK_STAR)
+        (wParam == AVK_INFO) //|| wParam == AVK_STAR  //change by pyuangui 20121009  AVK_STAR按键会导致刷新问题 
 #endif
     )
     {
