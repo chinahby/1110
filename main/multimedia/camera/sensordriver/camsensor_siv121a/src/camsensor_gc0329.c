@@ -405,6 +405,37 @@ SIDE EFFECTS
   None
 
 ===========================================================================*/
+static void gc0329_0p1mp_H_V_Switch(uint8 direction)
+{
+    switch(direction) 
+    {
+        case 1:  // normal
+            camsensor_gc0329_ycbcr_i2c_write_byte(0x17, 0x14);    
+            break;
+        case 2:  // IMAGE_H_MIRROR
+            camsensor_gc0329_ycbcr_i2c_write_byte(0x17, 0x15);    
+            break;        
+        case 3:  // IMAGE_V_MIRROR
+            camsensor_gc0329_ycbcr_i2c_write_byte(0x17, 0x16);    
+            break;  
+        case 4:  // IMAGE_HV_MIRROR
+            camsensor_gc0329_ycbcr_i2c_write_byte(0x17, 0x17);    
+            break;  
+        default:
+            break;
+    } 
+}
+
+void gc0329_0p1mp_write_more_registers(uint8 direction)
+{
+	//  TODO: FAE Modify the Init Regs here!!!
+	/*Customer can adjust GAMMA, MIRROR & UPSIDEDOWN here!*/
+	//gc0329_0p1mp_gamma_select(2);
+	if(direction)
+  	gc0329_0p1mp_H_V_Switch(1);
+    else
+    gc0329_0p1mp_H_V_Switch(2);
+}
 
 boolean camsensor_gc0329_init(camsensor_function_table_type *camsensor_function_table_ptr, camctrl_tbl_type *camctrl_tbl_ptr)
 {

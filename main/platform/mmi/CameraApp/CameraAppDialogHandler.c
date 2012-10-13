@@ -954,6 +954,16 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
             
         case EVT_USER_REDRAW:
 			MSG_FATAL("EVT_USER_REDRAW........0000000000000000000",0,0,0);
+            #ifdef FEATURE_VERSION_X3
+            if(pMe->m_nCameraMulti == OEMNV_CAMERA_MULTI_ONE)
+            {
+              gc0329_0p1mp_write_more_registers(0);
+            }
+            else
+            {
+              gc0329_0p1mp_write_more_registers(1);
+            }
+            #endif
             // camera preview start....
 #ifndef FEATURE_DSP            
             if(pMe->m_pCamera && (!pMe->m_bIsPreview))
@@ -1043,6 +1053,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
             }
             
             CameraApp_DrawMidPic(pMe);
+            CameraApp_SetParamAfterPreview(pMe);
 #ifdef FEATURE_DSP
             CameraApp_Update(pMe);
 #else
@@ -4640,7 +4651,6 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
 
     pMe->m_nCameraState = CAM_PREVIEW;  
 
-    CameraApp_SetParamAfterPreview(pMe);
 
     pMe->m_bIsPreview = TRUE;
 }
