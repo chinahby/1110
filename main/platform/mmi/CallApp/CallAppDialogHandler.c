@@ -1532,7 +1532,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                         }
                         else
                         {
-                            #if defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_W027V3)
+                            #if defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_W027V3)|| defined(FEATURE_VERSION_H1201)
                             #else
                             CallApp_ProcessUIMMMIStr(pMe, pMe->m_DialString);
                             #endif
@@ -4390,7 +4390,7 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
                                                         CALL_NAME_DX,
                                                         CALL_LINE_HIGHT);
                 IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, CALLAPP_TEXT_COLOR);
-            #if defined(FEATURE_VERSION_C01) ||defined(FEATURE_VERSION_C11) ||defined(FEATURE_VERSION_C180)||defined(FEATURE_VERSION_W027V3)
+            #if defined(FEATURE_VERSION_C01) ||defined(FEATURE_VERSION_C11) ||defined(FEATURE_VERSION_C180)||defined(FEATURE_VERSION_W027V3)|| defined(FEATURE_VERSION_H1201)
              SETAEERECT(&rect,
                                                         CALL_NAME_X-20,
                                                         CALL_THIRD_LINE_Y+30,
@@ -8877,7 +8877,7 @@ static void CallApp_Build_NumEdit_Option_Menu(CCallApp *pMe,IMenuCtl   *pMenuCtl
             else
 #endif //FEATURE_APP_PAUSE_TIMER
             {
-#if defined(FEATURE_VERSION_W208S)||defined(FEATURE_VERSION_1110W516) ||defined(FEATURE_VERSION_C180) ||defined(FEATURE_VERSION_W027V3)
+#if defined(FEATURE_VERSION_W208S)||defined(FEATURE_VERSION_1110W516) ||defined(FEATURE_VERSION_C180) ||defined(FEATURE_VERSION_W027V3)|| defined(FEATURE_VERSION_H1201)
 #else
                 if(!pMe->m_call_info.b_emerg)
                 {
@@ -9510,7 +9510,7 @@ static void CallApp_Draw_Connect_Number_and_Name(CCallApp *pMe)
                                                 CALL_NAME_DX,
                                                 CALL_LINE_HIGHT);
                                                 
-            #if defined(FEATURE_VERSION_C01) ||defined(FEATURE_VERSION_C11)||defined(FEATURE_VERSION_C180)||defined(FEATURE_VERSION_W027V3)
+            #if defined(FEATURE_VERSION_C01) ||defined(FEATURE_VERSION_C11)||defined(FEATURE_VERSION_C180)||defined(FEATURE_VERSION_W027V3)|| defined(FEATURE_VERSION_H1201)
             SETAEERECT(&rect,
                                                 CALL_NAME_X-20,
                                                 CALL_SECOND_LINE_Y+30,
@@ -11324,7 +11324,7 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
             }
             else
             {
-                ISOUND_Vibrate(pMe->m_pSound, 5000);
+                //ISOUND_Vibrate(pMe->m_pSound, 2000);   //客户未要求不加振动提示  
                 pMe->m_msg_text_id = IDS_MSG_CURPROFILE_MEETING;
             }
             CLOSE_DIALOG(DLGRET_MSGBOX);
@@ -11355,7 +11355,7 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
             }
         }
 		//Add By zzg 2010_09_10
-		#if defined(FEAUTRE_VERSION_N450)||defined(FEATURE_VERSION_W0216A)|| defined(FEATURE_VERSION_C306) || defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_N68)||defined(FEATURE_LCD_TOUCH_ENABLE)||defined(FEATURE_VERSION_W516)||defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)
+		#if defined(FEAUTRE_VERSION_N450)||defined(FEATURE_VERSION_W0216A)|| defined(FEATURE_VERSION_C306) || defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_N68)||defined(FEATURE_LCD_TOUCH_ENABLE)||defined(FEATURE_VERSION_W516)||defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_H1201)
         #ifndef FEATURE_TORCH_KEY_INFO
 		else if (((AVKType)wParam == AVK_0) && (WSTRLEN(pMe->m_DialString) == 1))
 		{		
