@@ -2097,7 +2097,7 @@ LOCAL void bt_sio_open_error
 )
 {
 
-  BT_MSG_DEBUG( "BT SIO: Open Error I %x R %x", i, reason, 0 );
+  MSG_FATAL( "BT SIO: Open Error I %x R %x", i, reason, 0 );
 
   bt_sio_table[ i ].spp_reason = reason;
 

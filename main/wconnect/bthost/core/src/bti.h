@@ -1407,6 +1407,10 @@ typedef struct bt_event_q_info_struct
   #define DEFAULT_BT_NAME         "V3 Dew"
 #elif defined(FEATURE_VERSION_W516)
   #define DEFAULT_BT_NAME         "Q7"
+#elif defined(FEATURE_VERSION_W0271)
+  #define DEFAULT_BT_NAME         "CD035"
+#elif defined(FEATURE_VERSION_W317A)
+  #define DEFAULT_BT_NAME         "Lava ARC 8c"  
 #else
   #define DEFAULT_BT_NAME         "Hitz 233C"
 #endif
