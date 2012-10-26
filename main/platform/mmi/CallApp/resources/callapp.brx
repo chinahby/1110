@@ -77,7 +77,7 @@
 		<Text>No voice mail</Text>
 	</STRING>
 	<STRING Id="1026" Name="IDS_MUTE">
-		<Text>Mute</Text>
+		<Text>Silent</Text>
 	</STRING>
 	<STRING Id="1027" Name="IDS_UNMUTE">
 		<Text>Unmute</Text>
