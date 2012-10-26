@@ -7625,7 +7625,7 @@ static void CallApp_DrawDialerString(CCallApp   *pMe,  AECHAR const *dialStr)
         y -= pMe->m_nCurrNumHeight;
         srcStr -= pMe->m_nCurrLineFits[i];
         MSG_FATAL("pMe->m_nCurrNumHeight=%d---pMe->m_large_Num_Height=%d",pMe->m_nCurrNumHeight,pMe->m_large_Num_Height,0);
-        #if defined(FEATURE_VERSION_1110W516
+        #if defined(FEATURE_VERSION_1110W516)
         if((int)pMe->m_nCurrNumHeight == 30 ||(int)pMe->m_nCurrNumHeight == pMe->m_large_Num_Height)
           tempy = y-10;
         else
