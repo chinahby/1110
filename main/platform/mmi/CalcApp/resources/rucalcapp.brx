@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <BREWRes Name="calcapp" VERSION="1">
-	<Strings Encoding="Unicode">
+	<Strings Encoding="ISOLATIN1">
 		<STRING Id="1" Name="IDS_OVERFLOW">
 			<Text>Overflow</Text>
 		</STRING>
@@ -74,13 +74,13 @@
 			<Text>&lt;Other&gt;</Text>
 		</STRING>
 		<STRING Id="26" Name="IDS_BILL">
-			<Text>Билл:</Text>
+			<Text>Bill:</Text>
 		</STRING>
 		<STRING Id="27" Name="IDS_TIPDESC">
-			<Text>чаевые:</Text>
+			<Text>Tip:</Text>
 		</STRING>
 		<STRING Id="28" Name="IDS_TOTAL">
-			<Text>общий:</Text>
+			<Text>Total:</Text>
 		</STRING>
 		<STRING Id="29" Name="IDC_OK">
 			<Text>OK</Text>
@@ -110,7 +110,7 @@
 			<Text>Divide by 0</Text>
 		</STRING>
 		<STRING Id="100" Name="IDS_CALCTITLE">
-			<Text>калькулятор</Text>
+			<Text>Calculator</Text>
 		</STRING>
 		<STRING Id="200" Name="IDS_TIPTITLE">
 			<Text>Tip calculator</Text>

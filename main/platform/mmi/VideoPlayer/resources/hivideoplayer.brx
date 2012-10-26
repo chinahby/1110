@@ -14,13 +14,13 @@
 		<Text>मदद</Text>
 	</String>
 	<String Id="1013" Name="IDS_HELP">
-		<Text>कुंजी ऊपर और नीचे: मात्र समायोजित करें \n गलेरी : निर्देशिका में विडियो खोजें। नोट : फुल्ल स्क्रीन मोड़े में, पीछे आने के लिए किसी कुंजी को दबाएँ।.</Text>
+		<Text>Key Up and Down: Adjust the volume.\nGallery: Search videos in dirctory.\nNote: In full screen mode,press any key to come back.</Text>
 	</String>
 	<String Id="1014" Name="IDS_FILENAMETOOLONG">
-		<Text>FileName too long</Text>
+		<Text>बहुत लंबा फ़ाइल नाम</Text>
 	</String>	
 	<STRING Id="1015" Name="IDS_PLAYFORMATFAILD">
-		<Text>Play Format Failed</Text>
+		<Text>चलायें स्वरूप विफल</Text>
 	</STRING>
 </Strings>
 <Dialogs>

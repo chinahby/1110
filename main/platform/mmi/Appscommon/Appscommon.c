@@ -1154,9 +1154,20 @@ void DrawBottomBar(IDisplay  * pIDisplay, BottomBar_Param_type *BParam)
 #else
         else
         {
-            pBarImg = ISHELL_LoadResImage(pShell,
+            #ifdef FEATURE_VERSION_W317A
+            if(AEE_Active()==AEECLSID_MAIN_MENU)
+            {
+               pBarImg = ISHELL_LoadResImage(pShell,
+                                          AEE_APPSCOMMONRES_IMAGESFILE,
+                                          IDI_MAINMENU_BOTTOMBAR);
+            }
+            else
+            #endif
+            {
+              pBarImg = ISHELL_LoadResImage(pShell,
                                           AEE_APPSCOMMONRES_IMAGESFILE,
                                           IDI_BOTTOMBAR);
+            }
         }
 #endif /* FEATURE_FUNCS_THEME */   
 
@@ -1618,9 +1629,20 @@ void DrawTitleBar(IDisplay  * pIDisplay, TitleBar_Param_type *TParam)
 #else
         else
         {
-            pBarImg = ISHELL_LoadResImage(pShell,
+            #ifdef FEATURE_VERSION_W317A
+            if(AEE_Active()==AEECLSID_MAIN_MENU)
+            {
+               pBarImg = ISHELL_LoadResImage(pShell,
+                                          AEE_APPSCOMMONRES_IMAGESFILE,
+                                          IDI_MAINMENU_TITLEBAR);
+            }
+            else
+            #endif
+            {
+               pBarImg = ISHELL_LoadResImage(pShell,
                                           AEE_APPSCOMMONRES_IMAGESFILE,
                                           IDI_TITLEBAR);
+            }
         }
 #endif /* FEATURE_FUNCS_THEME */    
 //IDISPLAY_UpdateEx(pIDisplay, FALSE);//wlh
@@ -1689,7 +1711,16 @@ void DrawTitleBar(IDisplay  * pIDisplay, TitleBar_Param_type *TParam)
 #ifdef FEATURE_FUNCS_THEME    
         RGBVAL oldColor = IDISPLAY_SetColor(pIDisplay, CLR_USER_TEXT, Theme_Param.textColor);
 #else
-        IDISPLAY_SetColor(pIDisplay, CLR_USER_TEXT, RGB_WHITE);
+        #ifdef FEATURE_VERSION_W317A
+        if(AEE_Active()==AEECLSID_MAIN_MENU)
+        {
+          IDISPLAY_SetColor(pIDisplay, CLR_USER_TEXT, RGB_BLACK);
+        }
+        else
+        #endif
+        {
+          IDISPLAY_SetColor(pIDisplay, CLR_USER_TEXT, RGB_WHITE);
+        }
 #endif /* FEATURE_FUNCS_THEME */    
         
         dwFlags = TParam->dwAlignFlags | 

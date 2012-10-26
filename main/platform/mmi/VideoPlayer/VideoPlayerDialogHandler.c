@@ -319,7 +319,7 @@ static  boolean VPDVideoPlayer_HandleEvent(CVideoPlayer *pMe,AEEEvent eCode,uint
 			{
 		    AEERect rc = {0,0,SCR_W,SCR_H};   
 			IDisplay_FillRect(pMe->m_pDisplay,&rc,0x0);
-#ifdef FEATURE_DISP_128X160
+#if defined(FEATURE_DISP_128X160)
             if(!pMe->IsPlay)
             {
                 VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_PLAYERPICTURE_PLAY, 0, 0);                 
@@ -327,7 +327,7 @@ static  boolean VPDVideoPlayer_HandleEvent(CVideoPlayer *pMe,AEEEvent eCode,uint
             else
             {					
                 VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_PLAYERPICTURE_PAUSE, 0, 0);                
-            } 
+            }         
 #endif		
 			VideoPlayer_WriteTitleRes(pMe,AEE_APPSVIDEOPLAYER_RES_FILE,IDS_TITLE);
 			#ifndef FEATURE_DISP_128X160
@@ -338,7 +338,7 @@ static  boolean VPDVideoPlayer_HandleEvent(CVideoPlayer *pMe,AEEEvent eCode,uint
                 VideoPlayer_RefreshPlayerFileName(pMe); //刷新文件名
             }
 			#if !defined (FEATURE_DISP_240X320)&& !defined(FEATURE_DISP_220X176) && !defined(FEATURE_DISP_176X220)
-			VideoPlayer_RefreshVolBar(pMe);
+            VideoPlayer_RefreshVolBar(pMe);
 			#endif
             if(!pMe->IsPause && !pMe->IsPlay)                 
             {
@@ -350,6 +350,12 @@ static  boolean VPDVideoPlayer_HandleEvent(CVideoPlayer *pMe,AEEEvent eCode,uint
                 {
                     if(pMe->m_IsPlaynext)
                     {
+                        #if defined(FEATURE_DISP_176X220)
+                         if(pMe->IsPause) 
+                         {
+                              VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_PLAY, VIDEOPLAYER_PLAY_X,VIDEOPLAYER_PLAY_Y); //将中间图标刷新为三角形的小图标
+                         }           
+                        #endif	
                         DRAW_BOTTOMBAR(BTBAR_GALLERY_PLAY_BACK);
                     }
                     else
@@ -818,6 +824,7 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
                         pMe->IsPlay=TRUE;
                         pMe->IsPause=FALSE;
                         pMe->UserStop=FALSE; 
+                        pMe->m_bAppIsReady=TRUE;
                         videoplayer_play_flag = TRUE;
                     }
                     else// 当前状态为播放时
@@ -837,7 +844,8 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
                         SetDeviceState(DEVICE_TYPE_MP4,DEVICE_MP4_STATE_OFF);  
                         pMe->IsPlay=FALSE;
                         pMe->IsPause=TRUE;
-                        pMe->UserStop=FALSE;                       
+                        pMe->UserStop=FALSE; 
+                        pMe->m_bAppIsReady=TRUE;
                     }               
                 }
                 else // 全屏模式
@@ -859,6 +867,7 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
                         pMe->IsPlay=TRUE;;
                         pMe->IsPause=FALSE;
                         pMe->UserStop=FALSE;
+                        pMe->m_bAppIsReady=TRUE;
                         videoplayer_play_flag = TRUE;
                     }
                     else // 当前状态为播放时
@@ -869,6 +878,7 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
                         pMe->IsPlay=FALSE;
                         pMe->IsPause=TRUE;
                         pMe->UserStop=FALSE;
+                        pMe->m_bAppIsReady=TRUE;
                     }
                 }                
             }
@@ -923,7 +933,8 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
                     pMe->UserStop=TRUE;
                     pMe->IsPlay=FALSE;
                     pMe->IsPause=FALSE;
-                    
+                    pMe->m_bAppIsReady=FALSE;
+                   
                     if(pMe->m_pMedia)
 					{
 						IMEDIA_Stop((IMedia*)pMe->m_pMedia);
@@ -1072,11 +1083,15 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
             {
                 return TRUE;
             }
-            ISHELL_SetTimer(pMe->m_pShell,APPISREADY_TIMER,VideoPlayer_APPIsReadyTimer,pMe);
+            if(!pMe->m_bAppIsReady)
+            {
+                 return TRUE;  
+            }
+           /* ISHELL_SetTimer(pMe->m_pShell,APPISREADY_TIMER,VideoPlayer_APPIsReadyTimer,pMe);
             if((!pMe->m_bAppIsReady)||(pMe->UserStop))
             {
                 return TRUE;
-            }
+            }*/
             if(!pMe->IsFullScreen)
             {
 #if defined (FEATURE_DISP_240X320)||defined(FEATURE_DISP_220X176)|| defined(FEATURE_DISP_176X220)
@@ -1093,20 +1108,26 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
             {
                 VideoPlayer_PlayNext(pMe, FALSE); 
             }
-            pMe->m_bAppIsReady=FALSE;
+           // pMe->m_bAppIsReady=FALSE;
             return TRUE;
        
         //播放下一首   
         case AVK_RIGHT:  
+            MSG_FATAL("pMe->m_IsPlaynext=%d",pMe->m_IsPlaynext,0,0);
             if(! pMe->m_IsPlaynext)
             {
                 return TRUE;
             }
-            ISHELL_SetTimer(pMe->m_pShell,APPISREADY_TIMER,VideoPlayer_APPIsReadyTimer,pMe);
+            if(!pMe->m_bAppIsReady)
+            {
+                 return TRUE;  
+            }
+            /*ISHELL_SetTimer(pMe->m_pShell,APPISREADY_TIMER,VideoPlayer_APPIsReadyTimer,pMe);
+            MSG_FATAL("pMe->m_bAppIsReady=%d--pMe->UserStop=%d",pMe->m_bAppIsReady,pMe->UserStop,0);
             if((!pMe->m_bAppIsReady) ||(pMe->UserStop))
             {
                 return TRUE;
-            }
+            }*/
             if(!pMe->IsFullScreen)
             { 
 #if defined (FEATURE_DISP_240X320)||defined(FEATURE_DISP_220X176)|| defined(FEATURE_DISP_176X220)
@@ -1123,7 +1144,7 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
             {
                 VideoPlayer_PlayNext(pMe, TRUE); 
             }
-            pMe->m_bAppIsReady=FALSE;
+            //pMe->m_bAppIsReady=FALSE;
             return TRUE;          
           
         //增大音量   
@@ -1155,7 +1176,7 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
                     VideoPlayer_RefreshVolBar(pMe); // 重新刷新音量bar
 					pMe->m_rtype = TYPE_ADDVOLUME;
                     IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);                    
-                    (void) ISHELL_SetTimer(pMe->m_pShell, 100, (PFNNOTIFY)VideoPlayer_UpdateButton, pMe);// 50ms后画按钮弹起的图                
+                    //(void) ISHELL_SetTimer(pMe->m_pShell, 100, (PFNNOTIFY)VideoPlayer_UpdateButton, pMe);// 50ms后画按钮弹起的图                
                 }
             }             
             return TRUE;          
@@ -1181,7 +1202,7 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
                     VideoPlayer_RefreshVolBar(pMe);// 重新刷新音量bar 
 					pMe->m_rtype = TYPE_DECVOLUME;
                     IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
-                    (void) ISHELL_SetTimer(pMe->m_pShell, 100, (PFNNOTIFY)VideoPlayer_UpdateButton, pMe);// 50ms后画按钮弹起的图   
+                    //(void) ISHELL_SetTimer(pMe->m_pShell, 100, (PFNNOTIFY)VideoPlayer_UpdateButton, pMe);// 50ms后画按钮弹起的图   
                 }
             }            
             return TRUE;
@@ -1522,6 +1543,7 @@ void VideoPlayer_PlayVideo(CVideoPlayer *pMe)
     {  
     	MSG_FATAL("VideoPlayer_PlayVideo YY Said : Play!!! ",0,0,0);
     	VideoPlayer_ChangeScrState(pMe,TRUE);
+        pMe->m_bAppIsReady = TRUE;
 		b_is_GetFrame = FALSE;
         pMe->m_PlayFailed = IMEDIA_Play((IMedia*)pMe->m_pMedia);//播放          
         #if defined(FEATURE_DISP_240X320)
@@ -1542,6 +1564,7 @@ void VideoPlayer_PlayVideo(CVideoPlayer *pMe)
         VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_PAUSE, VIDEOPLAYER_PLAY_X,VIDEOPLAYER_PLAY_Y);
         VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_BEFORE, VIDEOPLAYER_PREVIOUS_X,VIDEOPLAYER_PREVIOUS_Y);
         VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_NEXT, VIDEOPLAYER_NEXT_X,VIDEOPLAYER_NEXT_Y);
+        VideoPlayer_RefreshVolBar(pMe); 
         #endif
         SetDeviceState(DEVICE_TYPE_MP4,DEVICE_MP4_STATE_ON);
 		MSG_FATAL("b_is_GetFrame===========%d",b_is_GetFrame,0,0);
@@ -1743,7 +1766,7 @@ void VideoPlayer_WriteTitle(CVideoPlayer *pMe,AECHAR* pText)
 					&rc_name, 
 					IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE|IDF_TEXT_TRANSPARENT);
     #elif defined(FEATURE_DISP_176X220)
-    VideoPlayer_RefreshVolBar(pMe);
+    //VideoPlayer_RefreshVolBar(pMe);
 	SETAEERECT(&rc_name, VIDEOPLAYER_NAMEPART_X+44,VIDEOPLAYER_NAMEPART_Y, VIDEOPLAYER_NAMEPART_W-88, VIDEOPLAYER_NAMEPART_H);
 	//写title
 	DrawTextWithProfile(pMe->m_pShell, 
@@ -2546,6 +2569,7 @@ static void VideoPlayer_VideoNotify(void * pUser, AEEMediaCmdNotify * pCmdNotify
                 pMe->IsPlay=FALSE;
                 pMe->IsPause=FALSE;
                 pMe->UserStop=TRUE; 
+                pMe->m_bAppIsReady=FALSE;
                 videoplayer_play_flag = FALSE;
         
                 pMe->bCurrentTime=0;

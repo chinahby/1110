@@ -592,15 +592,15 @@ if(!(x))         \
 #define LISTINDEX_Y 71 //95
 
 //当前歌曲的总时间
-#define TOTALTIME_X 120
+#define TOTALTIME_X 110
 #define TOTALTIME_Y 48 
 
 //当前播放时间
-#define PLAYINGTICK_X 25 //117
+#define PLAYINGTICK_X 10 //117
 #define PLAYINGTICK_Y 48 //47
 
 //播放时间和总时间的宽度高度
-#define TIME_WIDTH	38
+#define TIME_WIDTH	50
 #define TIME_HEIGHT 18
 
 //当前播放时间（简单播放）

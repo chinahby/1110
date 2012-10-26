@@ -8,7 +8,7 @@
 		<Text>File Management</Text>
 	</String>
 	<String Id="1003" Name="IDS_MULTIMEDIA_VIDEO_CAMERA">
-		<Text>Video Camera</Text>
+		<Text>वीडियो कैमरा</Text>
 	</String>
 	<STRING Id="1011" Name="IDS_MULTIMEDIA_CAMERA">
 		<Text>कैमरा</Text>

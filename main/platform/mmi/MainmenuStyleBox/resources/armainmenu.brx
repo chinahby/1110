@@ -37,6 +37,9 @@
 	<String Id="1021" Name="IDS_MAIN_MENU_USERPROFILE">
 		<Text>الاوضاع</Text>
 	</String>
+	<String Id="1022" Name="IDS_MAIN_MENU_CAMERA">
+		<Text>الكاميرا</Text>
+	</String>
 	<String Id="1034" Name="IDS_MENU_LIST">
 		<Text>القائمة</Text>
 	</String>
@@ -75,6 +78,9 @@
 	</String>
 	<String Id="1085" Name="IDS_MAIN_MENU_FRENDUO">
 		<Text>Frenduo</Text>
+	</String>
+	<String Id="1086" Name="IDS_MAIN_WAPBROWSER">
+		<Text>المتصفح</Text>
 	</String>
 	<String Id="1110" Name="IDS_MAIN_MENU_TIMER">
 		<Text>الموقت</Text>

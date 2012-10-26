@@ -58,6 +58,9 @@
  	<STRING Id="1026" Name="IDS_APPLICATION_FLASHLIGHT">
  		<Text>مصباح يدوي</Text>
  	</STRING>
+ 	<String Id="1028" Name="IDS_APPLICATION_UTK">
+		<Text>خدمات البطاقة</Text>
+	</String>
  	<STRING Id="1031" Name="IDS_TOOLS_LIST">
  		<Text>الأدوات</Text>
  	</STRING>

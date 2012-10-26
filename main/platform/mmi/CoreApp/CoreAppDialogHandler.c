@@ -1676,7 +1676,7 @@ static boolean  IDD_EMERGENCYNUMLIST_Handler(void  *pUser,
                     }
                     return TRUE;
   				case AVK_CAMERA:
-            	#if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)|| defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_W516)
+            	#if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)|| defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W027)
             	{
 				nv_item_type	SimChoice;
 				OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
@@ -3221,7 +3221,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 			
             if(pMe->m_pIAnn != NULL)
             {
-                #if defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_1110W516)
+                #if defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_1110W516)|| defined(FEATURE_VERSION_W027)
                 IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, FALSE);
                 #else
                 IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);//返回待机界面时，要把显示titlebar标志还原成TRUE
@@ -3566,7 +3566,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             (void) ISHELL_CancelTimer(pMe->a.m_pIShell,
                                       CoreApp_SearchingTimer,
                                       pMe);
-              #if defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_1110W516)
+              #if defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_1110W516)|| defined(FEATURE_VERSION_W027)
              IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
              #endif
 #ifdef FEATURE_VERSION_C11
@@ -3652,7 +3652,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 						//AEE_CancelTimer(CoreApp_keypadtimer,pMe);
 						//ISHELL_CancelTimer(pMe->a.m_pIShell,CoreApp_keypadtimer,pMe);
 					}
-#if defined(FEAUTRE_VERSION_N450)||defined(FEATURE_VERSION_W0216A)||defined(FEATURE_VERSION_1110W516)  //add by pyuangui
+#if defined(FEAUTRE_VERSION_N450)||defined(FEATURE_VERSION_W0216A)||defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W027) //add by pyuangui
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);   
 #else
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
@@ -3668,7 +3668,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);
                 case AVK_CAMERA:
                 	
-                	#if defined(FEATURE_VERSION_C306) ||defined(FEATURE_VERSION_W0216A)|| defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_W516)
+                	#if defined(FEATURE_VERSION_C306) ||defined(FEATURE_VERSION_W0216A)|| defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W027)
                 	{
                 	
 					nv_item_type	SimChoice;
@@ -3727,7 +3727,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             	    return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
 #elif defined (FEATURE_VERSION_W208S)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
-#elif defined(FEATURE_VERSION_C11)
+#elif defined(FEATURE_VERSION_C11)||defined(FEATURE_VERSION_W317A)
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CAMERA);
 #else
                 	return CoreApp_LaunchApplet(pMe, AEECLSID_MEDIAGALLERY);
@@ -3774,6 +3774,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
     #elif defined(FEATURE_VERSION_VG68)
                     return CoreApp_LaunchApplet(pMe, AEECLSID_WORLDTIME);
+    #elif defined(FEATURE_VERSION_W317A)
+                    return CoreApp_LaunchApplet(pMe, AEECLSID_SCHEDULEAPP);
 	#else
 					return CoreApp_LaunchApplet(pMe, AEECLSID_ALARMCLOCK); 
 	#endif
@@ -3831,7 +3833,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER); 
 #elif defined (FEATURE_VERSION_M8P)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
-#elif defined (FEATURE_VERSION_C11)
+#elif defined (FEATURE_VERSION_C11)||defined (FEATURE_VERSION_W317A)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #elif defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_SCHEDULEAPP);
@@ -3911,7 +3913,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                         #if defined( FEATURE_VERSION_W515V3) 
                            Mainmenu_KeypadLock(TRUE);
                         #endif
-                        #if defined(FEATURE_VERSION_MYANMAR) || defined( FEATURE_VERSION_C11) || defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_1110W516)
+                        #if defined(FEATURE_VERSION_MYANMAR) || defined( FEATURE_VERSION_C11) || defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W0271)
                            WMSDialog_KeypadLock(TRUE);
                         #endif
     				    #ifdef FEATURE_USES_BLACKBERRY
@@ -4051,6 +4053,9 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 							return TRUE;
 							//ISHELL_CancelTimer(pMe->a.m_pIShell,CoreApp_keypadtimer,pMe);
 						}
+#if defined(FEATURE_VERSION_W027)                       
+                        Mainmenu_KeypadLock(TRUE);
+#endif
 						return CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 #endif	
 
@@ -4246,7 +4251,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                         return TRUE;
                     case AVK_CAMERA:
                     
-						#if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)|| defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_W516)
+						#if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)|| defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W027)
 						{
 						nv_item_type	SimChoice;
 						OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
@@ -4279,7 +4284,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             	case AVK_SOFT2:		//Add By zzg 2010_09_08 for smart and m8
                 case AVK_CLR:
 
-#if  defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_1110W516)
+#if  defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_1110W516) //|| defined(FEATURE_VERSION_W027)
                 if(pMe->m_IsSametime)
                    {
                        return TRUE;
@@ -4297,6 +4302,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     return TRUE;
 
                 case AVK_SELECT:
+                #ifndef FEATURE_VERSION_W027     
                 #ifdef FEATURE_KEYGUARD
                  if(pMe->m_IsSametime)
 				    {
@@ -4315,6 +4321,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     }
                     }
 				#endif
+                #endif
                     //return   CoreApp_LaunchApplet(pMe, AEECLSID_DIALER);
                     return TRUE;
                  // 重拨
@@ -4379,7 +4386,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 				case AVK_O:
                     {
                         ICallApp         *pCallApp = NULL;
-                        #if defined( FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)|| defined(FEATURE_VERSION_MYANMAR) || defined( FEATURE_VERSION_C01) || defined( FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180) || defined( FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_1110W516)
+                        #if defined( FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)|| defined(FEATURE_VERSION_MYANMAR) || defined( FEATURE_VERSION_C01) || defined( FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180) || defined( FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W027)
                         if(pMe->m_iskeypadtime)
                         {
                         	if(wParam==AVK_STAR)
@@ -4394,8 +4401,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 				                                &bData,
 				                                sizeof(bData));
 				                    pMe->m_iskeypadtime = FALSE;
-                                    #if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_MYANMAR) || defined( FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_1110W516)
-                                        CoreApp_TimeKeyguard(pMe);
+                                    #if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_MYANMAR) || defined( FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W027)
+                                      CoreApp_TimeKeyguard(pMe);
                                     #else
 				        			if(bData)
 				        			{
@@ -6470,8 +6477,10 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 		#else
     		#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_S1000T)
     			eBBarType = BTBAR_UNLOCK_SOS;
-        	#elif defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_1110W516)
+        	#elif defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_1110W516) 
         		eBBarType = BTBAR_LUNLOCK;
+            #elif defined(FEATURE_VERSION_W027)
+                eBBarType = BTBAR_UNLOCK_M;
         	#elif defined(FEATURE_VERSION_VERYKOOL)
         		eBBarType = BTBAR_UNLOCK_SOS;
     		#else

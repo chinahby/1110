@@ -2694,7 +2694,7 @@ void uisnd_vibrate(uint16 wDuration,
        snd_cb_func_ptr_type callback_ptr,
        const void *client_data)
 {
-  #ifndef FEATURE_VERSION_C306   //add by yangdecai 20110312
+ /* #ifndef FEATURE_VERSION_C306   //add by yangdecai 20110312
   uisnd_vibrate_cmd(TRUE);
   clk_reg( &uisnd_vibrator_clk,
             uisnd_vibrator_cb,
@@ -2703,19 +2703,27 @@ void uisnd_vibrate(uint16 wDuration,
             FALSE );
            
             
-  #else 
-
+  #else  */
+#if defined(FEATURE_VERSION_C306) || defined(FEATURE_VERSION_W027)
   snd_freq_tone_start(SND_DEVICE_CURRENT,
 				   SND_METHOD_RING,
-				   175,
-				   175,
+				   160,
+				   160,
 				   (uint16)(1000),
 				   (snd_apath_type)(SND_APATH_LOCAL),
 				   callback_ptr,
 				   client_data
 				  );
+#else
+  uisnd_vibrate_cmd(TRUE);
+    clk_reg( &uisnd_vibrator_clk,
+              uisnd_vibrator_cb,
+              wDuration,
+              0,
+              FALSE );
+
   					 
-  #endif
+#endif
   vibrator_on = TRUE;
 }
 

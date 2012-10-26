@@ -4561,7 +4561,7 @@ static boolean  HandleRENDMenuDialogEvent(CDisplayMenu *pMe,
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_EFFECT_SHOW_VERT, IDS_REND_EFFECT_SHOW_VERT, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_EFFECT_MOVE_HORZ, IDS_REND_EFFECT_MOVE_HORZ, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_EFFECT_MOVE_VERT, IDS_REND_EFFECT_MOVE_VERT, NULL, 0);
-            #if !defined(FEATURE_VERSION_W516) && !defined(FEATURE_VERSION_W208S)
+            #if !defined(FEATURE_VERSION_W516) && !defined(FEATURE_VERSION_W208S) && !defined(FEATURE_VERSION_W027)
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_EFFECT_FLY_HORZ, IDS_REND_EFFECT_FLY_HORZ, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_EFFECT_FLY_VERT, IDS_REND_EFFECT_FLY_VERT, NULL, 0);
             #endif
@@ -4590,7 +4590,7 @@ static boolean  HandleRENDMenuDialogEvent(CDisplayMenu *pMe,
             case DISPLAYREND_TYPE_MOVE_VERT:
                 SetMenuIcon(pMenu, IDS_REND_EFFECT_MOVE_VERT, TRUE);
                 break;
-            #if !defined(FEATURE_VERSION_W516) && !defined(FEATURE_VERSION_W208S)
+            #if !defined(FEATURE_VERSION_W516) && !defined(FEATURE_VERSION_W208S) && !defined(FEATURE_VERSION_W027)
             case DISPLAYREND_TYPE_FLY_HORZ:
                 SetMenuIcon(pMenu, IDS_REND_EFFECT_FLY_HORZ, TRUE);
                 break; 
@@ -4674,7 +4674,7 @@ static boolean  HandleRENDMenuDialogEvent(CDisplayMenu *pMe,
             case IDS_REND_EFFECT_MOVE_VERT:
                 nOldRendState = DISPLAYREND_TYPE_MOVE_VERT;
                 break;
-            #if !defined(FEATURE_VERSION_W516) && !defined(FEATURE_VERSION_W208S)
+            #if !defined(FEATURE_VERSION_W516) && !defined(FEATURE_VERSION_W208S) && !defined(FEATURE_VERSION_W027)
             case IDS_REND_EFFECT_FLY_HORZ:
                 nOldRendState = DISPLAYREND_TYPE_FLY_HORZ;
                 break;

@@ -3144,7 +3144,7 @@ static AEETextInputMode CTextCtl_SetInputMode(ITextCtl * po, AEETextInputMode m)
 #if defined (FEATURE_ALL_KEY_PAD)
 			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
 #else
-			#if  defined(FEATURE_VERSION_W516) ||defined(FEATURE_VERSION_VG68) || defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)
+			#if  defined(FEATURE_VERSION_W516) ||defined(FEATURE_VERSION_VG68) || defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_W027)
 			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
 			#else
 			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
@@ -4696,7 +4696,8 @@ static void TextCtl_ShowSymbolDialog(CTextCtl * pme)
    // Disable the softkey but do not draw it!!!
 
    pm = pme->m_pSoftKey;
-   if(pm){
+   if(pm)
+   {
       nProps = IMENUCTL_GetProperties(pm);
       IMENUCTL_SetProperties(pm, nProps | MP_NO_REDRAW);
       IMENUCTL_SetActive(pm, FALSE);
@@ -5183,7 +5184,7 @@ static void OEM_SetInputMode(CTextCtl * pme)
 #if defined(FEATURE_ALL_KEY_PAD)
 			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
 #else
-			#if  defined(FEATURE_VERSION_W516) ||defined(FEATURE_VERSION_VG68) || defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)
+			#if  defined(FEATURE_VERSION_W516) ||defined(FEATURE_VERSION_VG68) || defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_W027)
 			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
 			#else
 			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
@@ -5223,7 +5224,7 @@ static void OEM_SetInputMode(CTextCtl * pme)
 			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
 	        #else
 			wMode = AEE_TM_CAPLOWER;//大小写字母输入模?
-            #if  defined(FEATURE_VERSION_W516) ||defined(FEATURE_VERSION_VG68) || defined(FEATURE_VERSION_C01) || defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)
+            #if  defined(FEATURE_VERSION_W516) ||defined(FEATURE_VERSION_VG68) || defined(FEATURE_VERSION_C01) || defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_W027)
             pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
 			#else
 			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
@@ -5275,7 +5276,7 @@ static void OEM_SetInputMode(CTextCtl * pme)
 #if defined(FEATURE_ALL_KEY_PAD)
 			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
 #else
-			#if  defined(FEATURE_VERSION_W516) 
+			#if  defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W027) 
 			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
             #else
 			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
@@ -5579,7 +5580,7 @@ static void OEM_SetInputMode(CTextCtl * pme)
 #if defined(FEATURE_ALL_KEY_PAD)
 			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
 #else
-			#if  defined(FEATURE_VERSION_W516) 
+			#if  defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W027)
 			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
             #elif defined(FEATURE_VERSION_VG68) || defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)
             pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP; 
@@ -5624,7 +5625,7 @@ static void OEM_SetInputMode(CTextCtl * pme)
             MSG_FATAL("IDB_MODE_T9_MT_ENGLISH_UP",0,0,0);
 	        #else
 			wMode = AEE_TM_CAPLOWER;//大小写字母输入模?
-			#if  defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W208S)
+			#if  defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W208S) || defined(FEATURE_VERSION_W027)
 			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
 			#else
 			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
@@ -5686,7 +5687,7 @@ static void OEM_SetInputMode(CTextCtl * pme)
 #if defined(FEATURE_ALL_KEY_PAD)
 			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
 #else
-			#if  defined(FEATURE_VERSION_W516) ||defined(FEATURE_VERSION_VG68) || defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_C180)
+			#if  defined(FEATURE_VERSION_W516) ||defined(FEATURE_VERSION_VG68) || defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_W027)
 			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
 			#else
 			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;

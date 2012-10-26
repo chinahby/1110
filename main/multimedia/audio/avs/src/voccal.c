@@ -15080,7 +15080,7 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_speaker_cal = {
   #endif /* FEATURE_AVS_NEXTGEN_EC */
   VOC_NS_ON,                       /* Noise suppressor enable */
 #if defined(CUST_EDITION) && !defined(FEATURE_OEMOMH)
-#if defined (FEATURE_VERSION_W516) || defined (FEATURE_VERSION_W208S)
+#if defined (FEATURE_VERSION_W516) || defined (FEATURE_VERSION_W208S) || defined(FEATURE_VERSION_W027)
   0x9000,						   /* Tx Voice Volume 		*/
   0x1000,						   /* Tx DTMF gain			*/
   0x5000,						   /* CODEC Tx gain			*/

@@ -431,6 +431,32 @@ else
             feeling_onoff.mp3|fs:/ringers/feeling_onoff.mp3 \
             ring1.mp3|fs:/ringers/ring1.mp3 \
             ring2.mp3|fs:/ringers/ring2.mp3
+    else ifeq ($(USES_RESDIR), W027)
+        CONSTFILE_FILES+=\
+            blues.mid|fs:/ringers/blues.mid \
+            blue_load.mid|fs:/ringers/blue_load.mid \
+            champagne.mid|fs:/ringers/champagne.mid \
+            clock.mid|fs:/ringers/clock.mid \
+            dance_craze.mid|fs:/ringers/dance_craze.mid \
+            green_line.mid|fs:/ringers/green_line.mid \
+            jumping.mid|fs:/ringers/jumping.mid \
+            lucky.mid|fs:/ringers/lucky.mid \
+            street_tale.mid|fs:/ringers/street_tale.mid \
+            techno_meto.mid|fs:/ringers/techno_meto.mid \
+            poweronoff.mp3|fs:/ringers/poweronoff.mp3
+	else ifeq ($(USES_RESDIR), W317A)
+        CONSTFILE_FILES+=\
+            alarm1.mp3|fs:/ringers/alarm1.mp3 \
+            alarm2.mp3|fs:/ringers/alarm2.mp3 \
+            alarm3.mp3|fs:/ringers/alarm3.mp3 \
+            ringtone1.mp3|fs:/ringers/ringtone1.mp3 \
+            ringtone2.mp3|fs:/ringers/ringtone2.mp3 \
+            ringtone3.mp3|fs:/ringers/ringtone3.mp3 \
+            ringtone4.mp3|fs:/ringers/ringtone4.mp3 \
+            ringtone5.mp3|fs:/ringers/ringtone5.mp3 \
+            ringtone6.mp3|fs:/ringers/ringtone6.mp3 \
+            ringtone7.mp3|fs:/ringers/ringtone7.mp3 \
+            poweronoff.mp3|fs:/ringers/poweronoff.mp3
     else ifeq ($(USES_RESDIR),C180)                                           
         CONSTFILE_FILES+=\
             blues.mid|fs:/ringers/blues.mid \

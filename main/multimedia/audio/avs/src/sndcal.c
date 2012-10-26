@@ -524,7 +524,7 @@ VOL_MEMORY snd_gen_level_voc_type snd_cal_handset_midi_vol[] = {
       defined(MSMAUD_QSC1110_AUDIO_CAL)
 VOL_MEMORY snd_gen_level_voc_type snd_cal_handset_midi_vol[] = {
 #if defined(CUST_EDITION) && !defined(FEATURE_OEMOMH)
-  #if defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W208S)
+  #if defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W208S) || defined(FEATURE_VERSION_W027)
   /* Internal CODEC - no pad values    */
   /*  rx                dtmf            pad        */
   { VOC_VOL_SILENCE , VOC_VOL_SILENCE ,  0 },
@@ -2150,7 +2150,7 @@ VOL_MEMORY snd_gen_level_voc_type snd_cal_sp_voice_vol[] = {
   /* Internal CODEC - no pad values    */
 #if defined(CUST_EDITION) && !defined(FEATURE_OEMOMH)
   /*  rx				dtmf			pad 	   */
-  #if defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W208S)
+  #if defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W208S) || defined(FEATURE_VERSION_W027)
   /* Internal CODEC - no pad values    */
   /*  rx                dtmf            pad        */
   { VOC_VOL_SILENCE , VOC_VOL_SILENCE ,  0 },

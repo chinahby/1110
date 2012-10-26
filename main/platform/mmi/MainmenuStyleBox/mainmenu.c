@@ -3093,7 +3093,7 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_IconTitle[11]    = IDS_MAIN_MENU_CALCULATOR;
     #endif
 #elif defined (FEATURE_DISP_176X220)
-#ifdef FEATURE_VERSION_VG68
+#if defined(FEATURE_VERSION_VG68)
     pMe->m_IconTitle[0]     = IDS_MAIN_MENU_RECENTCALLS;
     pMe->m_IconTitle[1]     = IDS_MAIN_MENU_MULTIMEDIA;
     pMe->m_IconTitle[2]     = IDS_MAIN_MENU_CONTACTS;
@@ -3103,6 +3103,19 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_IconTitle[6]     = IDS_MAIN_MENU_SETTINGS;
     pMe->m_IconTitle[7]     = IDS_MAIN_MENU_GAMES;
     pMe->m_IconTitle[8]     = IDS_MAIN_MENU_UTK;
+#elif defined(FEATURE_VERSION_W317A)
+    pMe->m_IconTitle[0]     = IDS_MAIN_MENU_CONTACTS;
+    pMe->m_IconTitle[1]     = IDS_MAIN_MENU_RECENTCALLS;
+    pMe->m_IconTitle[2]     = IDS_MAIN_MENU_SETTINGS;
+    pMe->m_IconTitle[3]     = IDS_MAIN_MENU_MEDIAGALLERY;
+    pMe->m_IconTitle[4]     = IDS_MAIN_MENU_MESSAGES;
+    pMe->m_IconTitle[5]     = IDS_MAIN_MENU_MULTIMEDIA;
+    pMe->m_IconTitle[6]     = IDS_MAIN_MENU_CAMERA;
+    pMe->m_IconTitle[7]     = IDS_MAIN_MENU_MUSICPLAYER;
+    pMe->m_IconTitle[8]     = IDS_MAIN_MENU_SCHEDULER;
+    pMe->m_IconTitle[9]     = IDS_MAIN_MENU_APPLICATION;
+    pMe->m_IconTitle[10]    = IDS_MAIN_MENU_GAMES;
+    pMe->m_IconTitle[11]    = IDS_MAIN_WAPBROWSER;
 #elif defined (FEATURE_VERSION_SKY)
     pMe->m_IconTitle[0]     = IDS_MAIN_MENU_MESSAGES;
     pMe->m_IconTitle[1]     = IDS_MAIN_MENU_CONTACTS;
@@ -3748,6 +3761,8 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
                 {
 #if defined (FEATURE_VERSION_H19C) || defined (FEATURE_VERSION_C01)|| defined (FEATURE_VERSION_SKY)
                     pMe->m_pImageBg = ISHELL_LoadImage(pMe->m_pShell,ICON_ANI[0]);
+#elif defined(FEATURE_VERSION_W317A)
+                    pMe->m_pImageBg = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_MAINMENU_BG);
 #else
                     pMe->m_pImageBg = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);//modi by yangdecai
 #endif                    
@@ -4476,6 +4491,10 @@ static int StartApplet(MainMenu *pMe, int i)
         Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_GAME);
         break;
         
+    case IDS_MAIN_WAPBROWSER:
+        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_UCWEB);
+        break;
+    
     case IDS_MAIN_MENU_CALCULATOR:
 		 Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CALCAPP);
         break;
@@ -4512,13 +4531,13 @@ static int StartApplet(MainMenu *pMe, int i)
     case IDS_MAIN_MENU_TIMER:
         Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPTIMER);
         break;
-    #ifdef FEATURE_VERSION_1110W516
-    	case IDS_MAIN_MENU_CAMERA:
+        
+    case IDS_MAIN_MENU_CAMERA:
 	{		
 		Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_CAMERA);
 		break;
-	}   
-    #endif    
+	}  
+    
     default:
         break;
 

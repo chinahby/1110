@@ -145,13 +145,14 @@ static void disp_ic_init(void)
     LCD_WRITE_CMD(0x0021); LCD_WRITE_DATA16(0x0000);   
     LCD_WRITE_CMD(0x0007); LCD_WRITE_DATA16(0x1017); 
     #else
+    
     LCD_WRITE_CMD(0x00d0); LCD_WRITE_DATA16(0x0003); // set SS and NL bit
 	LCD_WRITE_CMD(0x00eb); LCD_WRITE_DATA16(0x0b00); // set 1 line inversion
 	LCD_WRITE_CMD(0x00ec); LCD_WRITE_DATA16(0x004f); //1030 set GRAM write direction and BGR=1.
 	//LCD_SET_REG(0x00c7, 0x030f); // set BP and FP
 
 	LCD_WRITE_CMD(0x0001); LCD_WRITE_DATA16(0x011C); // set SS and NL bit
-	LCD_WRITE_CMD(0x0002); LCD_WRITE_DATA16(0x0000); // set 1 line inversion   0100
+	LCD_WRITE_CMD(0x0002); LCD_WRITE_DATA16(0x0100); // set 1 line inversion   0100
 #if defined(Rotate90)
     LCD_WRITE_CMD(0x0003); LCD_WRITE_DATA16(0x1018); 
 #elif defined (Rotate270)
@@ -163,14 +164,14 @@ static void disp_ic_init(void)
 	LCD_WRITE_CMD(0x0008); LCD_WRITE_DATA16(0x0808); // set BP and FP
 	LCD_WRITE_CMD(0x000C); LCD_WRITE_DATA16(0x0000); // RGB interface setting R0Ch=0x0110 for RGB 
 	LCD_WRITE_CMD(0x000F); LCD_WRITE_DATA16(0x0D01); // Set frame rate  0B01
-	//*************Power On sequence ****************//
+	//*************Power On sequence ****************
 	LCD_DELAY(50); // Delay 50ms
 	LCD_WRITE_CMD(0x0010); LCD_WRITE_DATA16(0x0000); // Set SAP,DSTB,STB
 	LCD_WRITE_CMD(0x0011); LCD_WRITE_DATA16(0x1B41); // Set APON,PON,AON,VCI1EN,VC
 	LCD_DELAY(50); // Delay 50ms
 	LCD_WRITE_CMD(0x0012); LCD_WRITE_DATA16(0x200E); // Internal reference voltage= Vci;
-	LCD_WRITE_CMD(0x0013); LCD_WRITE_DATA16(0x004a); //5D Set GVDD   //0x0064
-	LCD_WRITE_CMD(0x0014); LCD_WRITE_DATA16(0x4B50); //0x6561 // Set VCOMH/VCOML voltage   //4d5f  0x4B50  0x5150
+	LCD_WRITE_CMD(0x0013); LCD_WRITE_DATA16(0x003E); //5D Set GVDD   //0x0064
+	LCD_WRITE_CMD(0x0014); LCD_WRITE_DATA16(0x4B64); //0x6561 // Set VCOMH/VCOML voltage   //4d5f  0x4B50  0x5150
 	//Vcom=Vcom+0x100;
 	//------------- Set GRAM area ------------------//
 	LCD_WRITE_CMD(0x0030); LCD_WRITE_DATA16(0x0000);
@@ -201,6 +202,9 @@ static void disp_ic_init(void)
 	LCD_WRITE_CMD(0x0021); LCD_WRITE_DATA16(0x0000);
 	LCD_WRITE_CMD(0x0007); LCD_WRITE_DATA16(0x1017);//Display On
 	LCD_DELAY(150); // Delay 50ms
+	
+	
+
     #endif
 }
 
@@ -225,6 +229,7 @@ static void disp_ic_setwindow(uint32 start_row, uint32 start_col, uint32 end_row
     
     LCD_WRITE_CMD(0x22);
 }
+//uint32 kk=0x4b5E; 
 
 static void disp_ic_sleep(boolean bin)
 {
@@ -242,11 +247,15 @@ static void disp_ic_sleep(boolean bin)
         LCD_WRITE_CMD(0x10);
         LCD_WRITE_DATA16(0x0000);
         LCD_DELAY(50);
-
+        /*
+            LCD_WRITE_CMD(0x0012); LCD_WRITE_DATA16(0x200E); // Internal reference voltage= Vci;
+            LCD_WRITE_CMD(0x0013); LCD_WRITE_DATA16(0x003E); //5D Set GVDD   //0x0064
+            LCD_WRITE_CMD(0x0014); LCD_WRITE_DATA16(kk); //0x6561 // Set VCOMH/VCOML voltage   //4d5f  0x4B50  0x5150
+*/
         LCD_WRITE_CMD(0x07);
         LCD_WRITE_DATA16(0x1017); //Exit Sleep
         LCD_DELAY(50);
-
+  // kk=kk+0x0001;
     }
 }
 

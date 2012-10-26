@@ -1009,7 +1009,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
             return TRUE;
 #endif
         case EVT_KEY_RELEASE:
-#if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W208S)
+#if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W208S) || defined(FEATURE_VERSION_W027)
             {
 				nv_item_type	SimChoice;
 				OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
@@ -2280,7 +2280,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 #endif
 				case AVK_CAMERA:
             	{
-#if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_W516)|| defined(FEATURE_VERSION_W208S)
+#if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_W516)|| defined(FEATURE_VERSION_W208S) || defined(FEATURE_VERSION_W027)
 					nv_item_type	SimChoice;
 					OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
 					if(SimChoice.sim_select==AVK_SEND_TWO)
@@ -2451,7 +2451,7 @@ static boolean CallApp_Show_Ip_Number_DlgHandler(CCallApp *pMe,
             return TRUE;
 
         case EVT_KEY_PRESS:
-#if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W208S)
+#if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W208S) || defined(FEATURE_VERSION_W027)
         	{
 				nv_item_type	SimChoice;
 				OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
@@ -3653,7 +3653,7 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
 
 				
 				case AVK_CAMERA:
-#if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)|| defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W208S)
+#if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)|| defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W208S) || defined(FEATURE_VERSION_W027)
 				{
 					nv_item_type	SimChoice;
 					OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
@@ -3773,7 +3773,7 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
                     // We are allowing the IPHONE notifier to move us to the
                     // next state...
                     return TRUE;
-#if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)|| defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_W516)||defined(FEATURE_VERSION_W208S)
+#if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)|| defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_W516)||defined(FEATURE_VERSION_W208S) || defined(FEATURE_VERSION_W027)
                 case AVK_CAMERA:
                 {
 					nv_item_type	SimChoice;
@@ -5430,7 +5430,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
             return TRUE;
 
         case EVT_KEY:
-#if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)|| defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_W516)||defined(FEATURE_VERSION_W208S)
+#if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)|| defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_W516)||defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_W027)
 {
 			nv_item_type	SimChoice;
 			OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
@@ -5555,7 +5555,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
                     break;
 				case AVK_CAMERA:
 				{
-#if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)|| defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_W516)||defined(FEATURE_VERSION_W208S)
+#if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)|| defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_W516)||defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_W027)
 {
 					nv_item_type	SimChoice;
 					MSG_FATAL("AVK_SEND_TWO...............1111",0,0,0);
@@ -7625,7 +7625,7 @@ static void CallApp_DrawDialerString(CCallApp   *pMe,  AECHAR const *dialStr)
         y -= pMe->m_nCurrNumHeight;
         srcStr -= pMe->m_nCurrLineFits[i];
         MSG_FATAL("pMe->m_nCurrNumHeight=%d---pMe->m_large_Num_Height=%d",pMe->m_nCurrNumHeight,pMe->m_large_Num_Height,0);
-        #ifdef FEATURE_VERSION_1110W516
+        #if defined(FEATURE_VERSION_1110W516
         if((int)pMe->m_nCurrNumHeight == 30 ||(int)pMe->m_nCurrNumHeight == pMe->m_large_Num_Height)
           tempy = y-10;
         else
@@ -8564,7 +8564,7 @@ boolean CallApp_AnswerCall(CCallApp  *pMe, boolean bAnswerHold,AEEEvent eCode,ui
                                         &bKeyguardEnabled,
                                         sizeof(bKeyguardEnabled));
     CALL_ERR("CallApp_AnswerCall CFGI %x %d",pMe->m_anykey_answer,bKeyguardEnabled,0);
-    #if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)|| defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_W516)||defined(FEATURE_VERSION_W208S)
+    #if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)|| defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_W516)||defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_W027)
 	OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
 	if(SimChoice.sim_select==AVK_SEND_TWO)
 	{
@@ -8654,7 +8654,7 @@ boolean CallApp_AnswerCall(CCallApp  *pMe, boolean bAnswerHold,AEEEvent eCode,ui
         	   (AVK_A <= wParam && wParam <= AVK_Z) ||(AVK_CLR < wParam && wParam <AVK_SOFT1 ))
                  && !bKeyguardEnabled)
                  ||(wParam == AVK_SEND 
-                 #ifdef FEATURE_VERSION_1110W516
+                  #if defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W027)
                  || wParam == AVK_CAMERA || wParam == AVK_MUSIC
                  #endif
                  ))
@@ -8877,7 +8877,7 @@ static void CallApp_Build_NumEdit_Option_Menu(CCallApp *pMe,IMenuCtl   *pMenuCtl
             else
 #endif //FEATURE_APP_PAUSE_TIMER
             {
-#if defined(FEATURE_VERSION_W208S)||defined(FEATURE_VERSION_1110W516) ||defined(FEATURE_VERSION_C180) ||defined(FEATURE_VERSION_W027V3)|| defined(FEATURE_VERSION_H1201)
+#if defined(FEATURE_VERSION_W208S)||defined(FEATURE_VERSION_1110W516) ||defined(FEATURE_VERSION_C180) ||defined(FEATURE_VERSION_W027V3)|| defined(FEATURE_VERSION_H1201)|| defined(FEATURE_VERSION_W027)
 #else
                 if(!pMe->m_call_info.b_emerg)
                 {
@@ -11355,7 +11355,7 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
             }
         }
 		//Add By zzg 2010_09_10
-		#if defined(FEAUTRE_VERSION_N450)||defined(FEATURE_VERSION_W0216A)|| defined(FEATURE_VERSION_C306) || defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_N68)||defined(FEATURE_LCD_TOUCH_ENABLE)||defined(FEATURE_VERSION_W516)||defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_H1201)
+		#if defined(FEAUTRE_VERSION_N450)||defined(FEATURE_VERSION_W0216A)|| defined(FEATURE_VERSION_C306) || defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_N68)||defined(FEATURE_LCD_TOUCH_ENABLE)||defined(FEATURE_VERSION_W516)||defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_H1201)|| defined(FEATURE_VERSION_W027)
         #ifndef FEATURE_TORCH_KEY_INFO
 		else if (((AVKType)wParam == AVK_0) && (WSTRLEN(pMe->m_DialString) == 1))
 		{		

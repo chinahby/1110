@@ -142,6 +142,9 @@
 	<String Id="1085" Name="IDS_MAIN_MENU_FRENDUO">
 		<Text>Frenduo</Text>
 	</String>
+	<String Id="1086" Name="IDS_MAIN_WAPBROWSER">
+		<Text>Browser</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="0">

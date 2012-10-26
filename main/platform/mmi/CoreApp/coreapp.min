@@ -150,9 +150,16 @@ CONSTFILE_FILES+=\
 else ifeq ($(USES_RESDIR), W516)
 CONSTFILE_FILES+=\
 	poweronoff.gif|fs:/image/pwronoffani/poweronoff.gif	
-else ifeq ($(USES_RESDIR), SKY)
+else ifeq ($(USES_RESDIR), W027)
 CONSTFILE_FILES+=\
 	poweronoff.gif|fs:/image/pwronoffani/poweronoff.gif		
+else ifeq ($(USES_RESDIR), W317A)
+CONSTFILE_FILES+=\
+	poweron.gif|fs:/image/pwronoffani/poweron.gif \
+	poweroff.gif|fs:/image/pwronoffani/poweroff.gif
+else ifeq ($(USES_RESDIR), SKY)
+CONSTFILE_FILES+=\
+	poweronoff.gif|fs:/image/pwronoffani/poweronoff.gif	
 else ifeq ($(USES_RESDIR), C180)
 CONSTFILE_FILES+=\
 	poweronoff.png|fs:/image/pwronoffani/poweronoff.png

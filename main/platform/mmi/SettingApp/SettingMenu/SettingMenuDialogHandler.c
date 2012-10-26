@@ -842,7 +842,7 @@ static boolean  HandleCallSettingDialogEvent(CSettingMenu *pMe,
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_MINUTE_ALERT, IDS_MINUTE_ALERT, NULL, 0);
 #if 1   //删除自动重拨功能
 //Add By zzg 2010_09_16 : smart\m8  del the auto retry..
-#if defined(FEATURE_VERSION_SMART) || defined(FEATURE_VERSION_M8) || defined(FEATURE_VERSION_M8P) || defined(FEATURE_VERSION_M8021)||defined(FEATURE_VERSION_W516)||defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_W208S)
+#if defined(FEATURE_VERSION_SMART) || defined(FEATURE_VERSION_M8) || defined(FEATURE_VERSION_M8P) || defined(FEATURE_VERSION_M8021)||defined(FEATURE_VERSION_W516)||defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_W208S) || defined(FEATURE_VERSION_W027)
 #else
 			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_AUTO_REDIAL, IDS_AUTO_REDIAL, NULL, 0);
 #endif

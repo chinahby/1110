@@ -20,7 +20,7 @@
 		<File>..\images\176x220\common\IME\T9str.png</File>
 	</Object>
 	<Object Id="5007" Name="IDI_MUSIC" MimeType="image/png">
-		<File>..\images\160x128\common\Appscommon\Icon\music.png</File>
+		<File>..\images\176x220\common\Appscommon\Icon\music.png</File>
 	</Object>
 	<Object Id="5008" Name="IDI_VIDEO" MimeType="image/png">
 		<File>..\images\176x220\common\Appscommon\Icon\video.png</File>
@@ -37,11 +37,14 @@
 	<Object Id="5012" Name="IDB_RSSI5">
 		<File>..\images\176x220\common\Annunciator\rssi5.bmp</File>
 	</Object>
+	<Object Id="5013" Name="IDB_RSSI6">
+		<File>..\images\176x220\common\Annunciator\rssi6.bmp</File>
+	</Object>
 	<Object Id="5014" Name="IDB_PROMPT_MSG_STATIC_BG">
 		<File>..\images\176x220\common\Appscommon\MessageBox\background_static.bmp</File>
 	</Object>
-	<Object Id="5013" Name="IDB_RSSI6">
-		<File>..\images\176x220\common\Annunciator\rssi6.bmp</File>
+	<Object Id="5015" Name="IDB_MAINMENU_BG" MimeType="image/png">
+		<File>..\images\176x220\common\Appscommon\Menu\background\mainmenubg.png</File>
 	</Object>
 	<Object Id="5021" Name="IDB_CHECK_ON" MimeType="image/png">
 		<File>..\images\176x220\common\Appscommon\Icon\check_yes.png</File>
@@ -100,8 +103,14 @@
 	<Object Id="5081" Name="IDI_BOTTOMBAR" MimeType="image/png">
 		<File>..\images\176x220\common\Appscommon\Menu\bottombar\bottombar.png</File>
 	</Object>
+	<Object Id="5082" Name="IDI_MAINMENU_BOTTOMBAR" MimeType="image/png">
+		<File>..\images\176x220\common\Appscommon\Menu\bottombar\mmbottombar.png</File>
+	</Object>
 	<Object Id="5101" Name="IDI_TITLEBAR" MimeType="image/png">
 		<File>..\images\176x220\common\Appscommon\Menu\titlebar\titlebar.png</File>
+	</Object>
+	<Object Id="5102" Name="IDI_MAINMENU_TITLEBAR" MimeType="image/png">
+		<File>..\images\176x220\common\Appscommon\Menu\titlebar\mmtitlebar.png</File>
 	</Object>
 	<Object Id="5121" Name="IDB_SELECT_BAR" MimeType="image/png">
 		<File>..\images\176x220\common\Appscommon\Menu\selectbar\selectbar.png</File>

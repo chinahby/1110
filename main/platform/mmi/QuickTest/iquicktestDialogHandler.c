@@ -2072,7 +2072,7 @@ static boolean  QuickTest_BackLightTestHandler(CQuickTest *pMe,
                                     pMe->m_lineheight*2,
                                     NULL,
                                     IDF_TEXT_TRANSPARENT);
-#ifdef FEATURE_VERSION_W027V3            
+#if defined(FEATURE_VERSION_W027V3)|| defined(FEATURE_VERSION_W027)           
             MEMSET(string, 0, sizeof(string));              
             (void)ISHELL_LoadResString(pMe->m_pShell,
                                        AEE_QUICKTEST_RES_FILE,
@@ -2204,7 +2204,7 @@ static boolean  QuickTest_BackLightTestHandler(CQuickTest *pMe,
 #endif
                     IBACKLIGHT_TurnOff(pMe->m_pIBacklight);
                     break;
-#ifdef FEATURE_VERSION_W027V3
+#if defined(FEATURE_VERSION_W027V3)|| defined(FEATURE_VERSION_W027)   
                case AVK_3:
                     IBACKLIGHT_TurnOnTorch(pMe->m_pIBacklight);
                break;
@@ -3316,6 +3316,7 @@ static boolean  QuickTest_RestoreFactory_Handler(CQuickTest *pMe,
    				(void) OEMNV_Put( NV_SIM_SELECT_I, &nvi);
 				#endif
                 value = 0;
+
                 //add by pyuangui  ÷ÿ÷√LCD∆¡±≥π‚
                 {
                   IBacklight   *pBacklight = NULL;

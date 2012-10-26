@@ -959,7 +959,7 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
 #if defined (FEATURE_VERSION_VG68) ||defined(FEATURE_VERSION_C01)
             IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_MEDIAGALLERY,IDS_MULTIMEDIA_MEDIAGALLERY, NULL, 0);
 #endif
-#if defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W208S)
+#if defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W208S) || defined(FEATURE_VERSION_W027)
 #if !defined(FEATURE_PEKTEST)
             IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_VIDEO_CAMERA, IDS_MULTIMEDIA_VIDEO_CAMERA, NULL, 0);
 #endif
@@ -1105,7 +1105,7 @@ static int StartApplet(Multimed *pMe, int i)
     int Result = EUNSUPPORTED;
     switch(i)
     {
-#if defined (FEATURE_VERSION_W208S)||defined (FEATURE_VERSION_W516)
+#if defined (FEATURE_VERSION_W208S)||defined (FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W027)
 		case IDS_MULTIMEDIA_VIDEO_CAMERA:
 			Result = ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_APP_CAMERA, "record");
             break;

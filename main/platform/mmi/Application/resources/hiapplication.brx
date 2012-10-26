@@ -61,14 +61,17 @@
 	<String Id="1027" Name="IDS_APPLICATION_MMS">
 		<Text>Mms</Text>
 	</String>
+	<STRING Id="1028" Name="IDS_APPLICATION_UTK">
+		<Text>UTK</Text>
+	</STRING>
 	<String Id="1031" Name="IDS_TOOLS_LIST">
 		<Text>औजार</Text>
 	</String>
 	<String Id="1032" Name="IDS_STR_TRUNONTORCH">
-		<Text>TurnOn Torch</Text>
+		<Text>TurnOn मशाल</Text>
 	</String>
 	<String Id="1033" Name="IDS_STR_TRUNOFFFTORCH">
-		<Text>TurnOff Torch</Text>
+		<Text>TurnOff मशाल</Text>
 	</String>
 </Strings>
 <Dialogs>

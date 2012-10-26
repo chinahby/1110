@@ -1849,7 +1849,7 @@ boolean OEM_TextKeyPress(OEMCONTEXT hTextCtl,
 	}
     // Press and hold the number key to get the number
 	#ifndef FEATURE_ALL_KEY_PAD
-	#if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_1110W516)
+	#if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_1110W516) ||defined(FEATURE_VERSION_W027)
     if ((eCode == EVT_KEY_RELEASE)||(eCode == EVT_KEY_PRESS))
     #else
     #ifdef FEATURE_VERSION_X3
@@ -3597,7 +3597,7 @@ static void TextCtl_DrawCursor(TextCtlContext *pContext,
 #ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
     AEERect draw, scratch  = *cursRect;
     scratch.dx = 1;
-	#ifndef FEATURE_VERSION_1110W516
+	#if defined(FEATURE_VERSION_1110W516) //|| defined(FEATURE_VERSION_W027)
 	scratch.dy = 14; 
 	#else
     scratch.dy = 17; 
@@ -3648,7 +3648,7 @@ static void TextCtl_DrawCursor(TextCtlContext *pContext,
 	   MSG_FATAL("...............................2",0,0,0);
 	   scratch.x += (int16)( (uint16) scratch.dx >> 1 ) + 1;
 	   scratch.dx = 1;
-       #ifdef FEATURE_VERSION_1110W516
+       #if defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W027)
 	   scratch.dy = 17;
 	   #else
        scratch.dy =  pContext->nFontAscent + pContext->nFontDescent; 
@@ -6891,8 +6891,8 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
                    #endif
                 }                                        
             } 
-#if  defined(FEATURE_VERSION_W516) ||defined(FEATURE_VERSION_VG68) ||defined(FEATURE_VERSION_C01) || defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)||defined(FEATURE_VERSION_W027V3)
 
+#if  defined(FEATURE_VERSION_W516) ||defined(FEATURE_VERSION_VG68) ||defined(FEATURE_VERSION_C01) || defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)||defined(FEATURE_VERSION_W027V3)|| defined(FEATURE_VERSION_W027)
             pContext->nMultitapCaps = MULTITAP_ALL_SMALL;
 #endif
             MSG_FATAL("pContext->nMultitapCaps=========%d",pContext->nMultitapCaps,0,0);
@@ -12128,7 +12128,7 @@ static boolean TextCtl_NumbersKey(TextCtlContext *pContext, AEEEvent eCode,AVKTy
 	    {   
 #if !defined (FEATURE_ALL_KEY_PAD)
 	        case AVK_STAR:
-#if defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_X3)||defined(FEATURE_VERSION_1110W516) 
+#if defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_X3)||defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W027)
               if(eCode == EVT_KEY_HELD)
               {
                   if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
@@ -12144,7 +12144,7 @@ static boolean TextCtl_NumbersKey(TextCtlContext *pContext, AEEEvent eCode,AVKTy
               else
 #endif
               {
-                #if defined(FEATURE_VERSION_W515V3) ||defined(FEATURE_VERSION_1110W516) 
+                #if defined(FEATURE_VERSION_W515V3) ||defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W027)
                 	AEE_CancelTimer(TextCtl_keypadtimer,pContext);
                 	{    
             			if(pContext->m_curpros == 0)
@@ -12777,8 +12777,8 @@ boolean OEM_isFirstCap (OEMCONTEXT hTextField)
     boolean bRet = FALSE;
     int maxsymbolcount;
     int i,j;
-	#if  defined(FEATURE_VERSION_W516) ||defined(FEATURE_VERSION_VG68) || defined(FEATURE_VERSION_C01) || defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)||defined(FEATURE_VERSION_W027V3)
 
+	#if  defined(FEATURE_VERSION_W516) ||defined(FEATURE_VERSION_VG68) || defined(FEATURE_VERSION_C01) || defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)||defined(FEATURE_VERSION_W027V3)|| defined(FEATURE_VERSION_W027)
 	return FALSE;
 	#endif
     
