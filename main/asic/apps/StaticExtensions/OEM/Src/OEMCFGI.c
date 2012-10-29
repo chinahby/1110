@@ -1731,7 +1731,7 @@ static OEMConfigListType oemi_cache = {
    FALSE,                                           //CFGI_SMS_LOCK_CHECK
    FALSE,                                           //CFGI_CALENDAR_LOCK_CHECK
 
-#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_C01)
+#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_W317A)
    1,											//CFGI_KEY_LOCK_CHECK			
 #else
    0,
@@ -2488,6 +2488,7 @@ static ConfigItemTableEntry const customOEMItemTable[] =
    CFGTABLEITEM(CFGI_SMS_RESTRICT_RECEIVE_TOTAL, sizeof(uint8)),
    CFGTABLEITEM(CFGI_SMS_RESTRICT_RECEIVE_INFO, sizeof(sms_restrict_recive_info) * MAX_SMS_RESTRICT),
 #endif    
+   //CFGTABLEITEM(CFGI_SALES_TRACK_SMS_SEND, sizeof(boolean)),		//Add By zzg 2012_10_29
 };
 #endif
 
@@ -2684,7 +2685,7 @@ void OEM_RestoreFactorySetting( void )
 
 #ifdef FEATURE_PEKTEST
     oemi_cache.b_key_lock       =  0;
-#elif defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM) ||defined(FEATURE_VERSION_C01)
+#elif defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM) ||defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_W317A)
 	oemi_cache.b_key_lock       =  1; 
 #elif defined(FEATURE_VERSION_W208S)
     oemi_cache.b_key_lock       =  4; 
