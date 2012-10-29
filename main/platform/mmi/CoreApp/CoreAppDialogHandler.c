@@ -3311,41 +3311,87 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 	if ((ISHELL_ActiveApplet(pMe->a.m_pIShell) == AEECLSID_CORE_APP)&&
                                     (pMe->m_wActiveDlgID == IDD_IDLE))
                 	{
-                		switch(bData)
-                		{
-                			case 1:
-                			{
-                    			(void)ISHELL_SetTimer(pMe->a.m_pIShell,
-                                    30*1000,
-                                    CoreApp_TimeKeyguard,
-                                    pMe);
-                        	}
-                        	break;
-                        	case 2:
-                			{
-                    			(void)ISHELL_SetTimer(pMe->a.m_pIShell,
-                                    120*1000,
-                                    CoreApp_TimeKeyguard,
-                                    pMe);
-                        	}
-                        	break;
-                        	case 3:
-                			{
-                    			(void)ISHELL_SetTimer(pMe->a.m_pIShell,
-                                    300*1000,
-                                    CoreApp_TimeKeyguard,
-                                    pMe);
-                        	}
-							break;
-                            case 4:
-                            {
-                    			(void)ISHELL_SetTimer(pMe->a.m_pIShell,
-                                    60*1000,
-                                    CoreApp_TimeKeyguard,
-                                    pMe);
-                            }
-                        	break;
-                    	}
+                		//Add By zzg 2012_10_29
+                		#ifdef FEATURE_VERSION_W317A
+							switch(bData)
+	                		{
+	                			case 1:
+	                			{
+	                    			(void)ISHELL_SetTimer(pMe->a.m_pIShell,
+	                                    10*1000,
+	                                    CoreApp_TimeKeyguard,
+	                                    pMe);
+	                        	}
+	                        	break;
+								
+	                			case 2:
+	                			{
+	                    			(void)ISHELL_SetTimer(pMe->a.m_pIShell,
+	                                    30*1000,
+	                                    CoreApp_TimeKeyguard,
+	                                    pMe);
+	                        	}
+	                        	break;
+								
+	                        	case 3:
+	                			{
+	                    			(void)ISHELL_SetTimer(pMe->a.m_pIShell,
+	                                    120*1000,
+	                                    CoreApp_TimeKeyguard,
+	                                    pMe);
+	                        	}
+	                        	break;
+								
+	                        	case 4:
+	                			{
+	                    			(void)ISHELL_SetTimer(pMe->a.m_pIShell,
+	                                    300*1000,
+	                                    CoreApp_TimeKeyguard,
+	                                    pMe);
+	                        	}
+								break;
+								
+	                            default:
+	                        	break;
+	                    	}
+						#else
+							switch(bData)
+	                		{
+	                			case 1:
+	                			{
+	                    			(void)ISHELL_SetTimer(pMe->a.m_pIShell,
+	                                    30*1000,
+	                                    CoreApp_TimeKeyguard,
+	                                    pMe);
+	                        	}
+	                        	break;
+	                        	case 2:
+	                			{
+	                    			(void)ISHELL_SetTimer(pMe->a.m_pIShell,
+	                                    120*1000,
+	                                    CoreApp_TimeKeyguard,
+	                                    pMe);
+	                        	}
+	                        	break;
+	                        	case 3:
+	                			{
+	                    			(void)ISHELL_SetTimer(pMe->a.m_pIShell,
+	                                    300*1000,
+	                                    CoreApp_TimeKeyguard,
+	                                    pMe);
+	                        	}
+								break;
+	                            case 4:
+	                            {
+	                    			(void)ISHELL_SetTimer(pMe->a.m_pIShell,
+	                                    60*1000,
+	                                    CoreApp_TimeKeyguard,
+	                                    pMe);
+	                            }
+	                        	break;
+	                    	}
+						#endif
+						//Add End	
                  	}
             	}
             }
