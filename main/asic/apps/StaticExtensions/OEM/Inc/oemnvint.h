@@ -146,8 +146,13 @@ when       who     what, where, why
 #define OEMNV_RINGER_VOL_INIT {3,0,0,4,4}  
 // ∂˙ª˙“Ù¡ø    
 #define OEMNV_EAR_VOL_INIT {3,3,3,4,4}  
+
 // º¸≈Ã“Ù¡ø     
+#ifdef FEATURE_VERSION_W317A
+#define OEMNV_BEEP_VOL_INIT {0,0,0,1,1}   
+#else
 #define OEMNV_BEEP_VOL_INIT {1,0,0,1,1}     
+#endif
 
 // Phone Disposition -- CFGI_SCREENSAVER_TIME
 /////////////////////////////////////////////////////////////////////////
