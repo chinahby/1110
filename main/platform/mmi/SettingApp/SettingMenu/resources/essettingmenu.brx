@@ -445,6 +445,9 @@
 	<STRING Id="1148" Name="IDS_DELETE">
 		<Text>Borrar</Text>
 	</STRING>
+	<String Id="1149" Name="IDS_AKG_10SEC">
+		<Text>10 Sec</Text>
+	</String>
  </Strings>
  <Dialogs>
  	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="7001">

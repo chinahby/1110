@@ -981,6 +981,13 @@ static boolean   SecurityKeyLockDlgHandler(CSecurityMenu *pMe,
                         sizeof(WTitle));
 				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
             }
+
+			//Add By zzg 2012_10_29
+			#ifdef FEATURE_VERSION_W317A
+			IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_AKG_10SEC, IDS_AKG_10SEC, NULL, 0);
+			#endif
+			//Add End
+			
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_AKG_30SEC, IDS_AKG_30SEC, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_AKG_2MIN, IDS_AKG_2MIN, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_AKG_5MIN, IDS_AKG_5MIN, NULL, 0);
@@ -999,19 +1006,40 @@ static boolean   SecurityKeyLockDlgHandler(CSecurityMenu *pMe,
 
                 switch (AKG)
                 {
-                    case 1:   //30秒
-                      ui16_return = IDS_AKG_30SEC;
-                      break;
-                    case 2:    // 两分钟
-                      ui16_return = IDS_AKG_2MIN;
-                      break;
-                    case 3:    // 五分钟
-                      ui16_return = IDS_AKG_5MIN;
-                      break;
-                   default:
-                    case 0: //关
-                      ui16_return = IDS_OFF;
-                      break;
+                	//Add By zzg 2012_10_29
+                	#ifdef FEATURE_VERSION_W317A
+						case 1:   //10秒
+							ui16_return = IDS_AKG_10SEC;
+							break;
+						case 2:    // 30秒
+							ui16_return = IDS_AKG_30SEC;
+							break;
+						case 3:    // 两分钟
+							ui16_return = IDS_AKG_2MIN;
+							break;
+						case 4:    // 五分钟
+							ui16_return = IDS_AKG_5MIN;
+							break;
+						default:
+						case 0: //关
+							ui16_return = IDS_OFF;
+						break;
+					#else
+						case 1:   //30秒
+							ui16_return = IDS_AKG_30SEC;
+							break;
+						case 2:    // 两分钟
+							ui16_return = IDS_AKG_2MIN;
+							break;
+						case 3:    // 五分钟
+							ui16_return = IDS_AKG_5MIN;
+							break;
+						default:
+						case 0: //关
+							ui16_return = IDS_OFF;
+						break;
+					#endif
+					//Add End                    
                 }
 
                 InitMenuIcons(pMenu);
@@ -1053,24 +1081,49 @@ static boolean   SecurityKeyLockDlgHandler(CSecurityMenu *pMe,
             {
                 byte AKG = 0;
 
-                switch (wParam)
-                {
-                    case IDS_AKG_30SEC:     //30miao
-                        AKG = 1;
-                        break;
-                    case IDS_AKG_2MIN:     // 2minute
-                        AKG = 2;
-                        break;
-                    case IDS_AKG_5MIN:     //5minute
-                        AKG = 3;
-                        break;
-                    case IDS_OFF:     //关
-                        AKG = 0;
-                        break;
+				//Add By zzg 2012_10_29
+                #ifdef FEATURE_VERSION_W317A
+					switch (wParam)
+	                {
+	                	case IDS_AKG_10SEC:     //10miao
+	                        AKG = 1;
+	                        break;
+	                    case IDS_AKG_30SEC:     //30miao
+	                        AKG = 2;
+	                        break;
+	                    case IDS_AKG_2MIN:     // 2minute
+	                        AKG = 3;
+	                        break;
+	                    case IDS_AKG_5MIN:     //5minute
+	                        AKG = 4;
+	                        break;
+	                    case IDS_OFF:     //关
+	                        AKG = 0;
+	                        break;
 
-                    default:
-                        ASSERT_NOT_REACHABLE;
-                }
+	                    default:
+	                        ASSERT_NOT_REACHABLE;
+	                }
+				#else
+					switch (wParam)
+	                {
+	                    case IDS_AKG_30SEC:     //30miao
+	                        AKG = 1;
+	                        break;
+	                    case IDS_AKG_2MIN:     // 2minute
+	                        AKG = 2;
+	                        break;
+	                    case IDS_AKG_5MIN:     //5minute
+	                        AKG = 3;
+	                        break;
+	                    case IDS_OFF:     //关
+	                        AKG = 0;
+	                        break;
+
+	                    default:
+	                        ASSERT_NOT_REACHABLE;
+	                }
+				#endif
 
                 (void) ICONFIG_SetItem(pMe->m_pConfig,
                                        CFGI_KEY_LOCK_CHECK,

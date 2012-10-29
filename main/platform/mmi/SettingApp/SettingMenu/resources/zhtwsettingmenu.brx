@@ -382,6 +382,9 @@
 	<String Id="1127" Name="IDS_DELETE">
 		<Text>删除</Text>
 	</String>
+	<String Id="1128" Name="IDS_AKG_10SEC">
+		<Text>10 秒</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="7001">

@@ -202,6 +202,9 @@
  	<STRING Id="1076" Name="IDS_PIN_FAILED">
  		<Text>رمز غير صالح، أدخل رمز PUK</Text>
  	</STRING>
+ 	<String Id="1077" Name="IDS_AKG_10SEC">
+		<Text>10 Sec</Text>
+	</String>
  </Strings>
  <Dialogs>
  	<DIALOG Id="6001" Name="IDD_PHONELOCK_DIALOG" Focus="7001">
