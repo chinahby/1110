@@ -4140,6 +4140,53 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
         }
 #endif	
 
+//Add By zzg 2012_10_30
+#ifdef FEATURE_VERSION_W317A
+    // size cfgID
+    (void)ICONFIG_GetItem(pMe->m_pConfig,
+                          CFGI_CAMERA_SIZE,
+                         &pMe->m_nCameraSize,
+                          sizeof(pMe->m_nCameraSize));
+
+	if(pMe->m_isRecordMode == FALSE)
+	{
+	    switch(pMe->m_nCameraSize)
+	    {
+		    case OEMNV_CAMERA_SIZE_INDEX_0:
+		        nResID[CAMERACFGSIZE] = IDI_SIZE_176_220;
+		        break;
+
+		    case OEMNV_CAMERA_SIZE_INDEX_1:
+		        nResID[CAMERACFGSIZE] = IDI_SIZE_240_320;
+		        break;
+			case OEMNV_CAMERA_SIZE_INDEX_2:
+		        nResID[CAMERACFGSIZE] = IDI_SIZE_480_640;
+		        break;	
+		    default:
+		        nResID[CAMERACFGSIZE] = IDI_SIZE_176_220;
+		        break;
+	    }
+	}
+	else
+	{
+		switch(pMe->m_nCameraSize)
+	    {
+		    case OEMNV_CAMERA_SIZE_INDEX_0:
+		        nResID[CAMERACFGSIZE] = IDI_SIZE_128_160;
+		        break;
+
+		    case OEMNV_CAMERA_SIZE_INDEX_1:
+		        nResID[CAMERACFGSIZE] = IDI_SIZE_144_176;
+		        break;
+		    default:
+		        nResID[CAMERACFGSIZE] = IDI_SIZE_128_160;
+		        break;
+	    }
+	}
+#endif	
+//Add End
+
+
 #ifdef FEATURE_VERSION_VG68
     // size cfgID
     (void)ICONFIG_GetItem(pMe->m_pConfig,
