@@ -1271,8 +1271,13 @@ SEE ALSO:
 void OEMKeyguard_SetState(boolean bEnabled)
 {
     sbKeyguardEnabled = bEnabled;
-    IANNUNCIATOR_SetField (sgpIAnn, ANNUN_FIELD_LOCKSTATUS, sbKeyguardEnabled ? ANNUN_STATE_LOCKSTATUS_ON : ANNUN_STATE_LOCKSTATUS_OFF);
 
+	//Add By zzg 2012_10_30
+	#ifndef FEATURE_VERSION_W317A
+    IANNUNCIATOR_SetField (sgpIAnn, ANNUN_FIELD_LOCKSTATUS, sbKeyguardEnabled ? ANNUN_STATE_LOCKSTATUS_ON : ANNUN_STATE_LOCKSTATUS_OFF);
+	#endif
+	//Add End
+	
     if (sbKeyguardEnabled)
     {
         bDrawMessage = TRUE;

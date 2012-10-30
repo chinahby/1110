@@ -1848,7 +1848,9 @@ static OEMConfigListType oemi_cache = {
    ,OEMNV_CAMERA_SIZE_DEFAULT         /*CFGI_CAMERA_SIZE*/
 #ifdef FEATURE_CARRIER_CHINA_TELCOM
    ,OEMNV_CAMERA_SHUTTER_TONE_SHUTTER1/*CFGI_CAMERA_TONE*/
-#else   
+#elif defined(FEATURE_VERSION_W317A)
+   ,OEMNV_CAMERA_SHUTTER_TONE_DISABLE/*CFGI_CAMERA_TONE*/
+#else
    ,OEMNV_CAMERA_SHUTTER_TONE_ENABLE        /*CFGI_CAMERA_TONE*/
 #endif   
    ,OEMNV_CAMERA_BANDING_50HZ      /*CFGI_CAMERA_BANDING*/
@@ -3049,6 +3051,8 @@ void OEM_RestoreFactorySetting( void )
    oemi_cache.camera_size = OEMNV_CAMERA_SIZE_DEFAULT;
 #ifdef FEATURE_CARRIER_CHINA_TELCOM
    oemi_cache.camera_tone = OEMNV_CAMERA_SHUTTER_TONE_SHUTTER1;
+#elif defined FEATURE_VERSION_W317A
+   oemi_cache.camera_tone = OEMNV_CAMERA_SHUTTER_TONE_DISABLE;
 #else   
    oemi_cache.camera_tone = OEMNV_CAMERA_SHUTTER_TONE_ENABLE;
 #endif

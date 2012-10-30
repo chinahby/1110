@@ -58,7 +58,7 @@ typedef struct IAnnunciator IAnnunciator;
 #define ANNUN_FIELD_RINGTONE              9   /*Ringtone*/
 #define ANNUN_FIELD_BATT                     10   /*Battery*/
 
-#define ANNUN_FIELD_TCARD						1		//Add By zzg 2012_10_30
+#define ANNUN_FIELD_TCARD						2		//Add By zzg 2012_10_30
 
 
 

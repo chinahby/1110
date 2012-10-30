@@ -3658,8 +3658,14 @@ static void CallApp_ProcessCallStateVoiceConnect(CCallApp                 *pMe,
     pMe->m_Is3Way = FALSE;
     IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL/*ANNUN_FIELD_CALLFORWARD*/, ANNUN_STATE_CALL_INUSE_ON/*ANNUN_STATE_ON*/);
     pMe->m_bIsPrivacy |= call_table->call_info.is_privacy;
+	
+	//Add By zzg 2012_10_30
+	#ifndef FEATURE_VERSION_W317A
     IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_LOCKSTATUS/*ANNUN_FIELD_VOICE_PRIVACY*/,
                             (pMe->m_bIsPrivacy? ANNUN_STATE_VOICE_PRIV_ON/*ANNUN_STATE_ON*/ : ANNUN_STATE_VOICE_PRIV_OFF/*ANNUN_STATE_OFF*/));
+	#endif
+	//Add End
+	
 #ifdef FEATURE_ICM
     CallApp_Change_Call_Table_Call_Start_Time(pMe,call_table->call_info.other_party_no);
 #else
@@ -4060,9 +4066,15 @@ static void CallApp_ProcessCallStateVoice(CCallApp *pMe,
             CALL_ERR("%d AEECM_EVENT_CALL_PRIVACY=+=",call_table->call_info.is_privacy,0,0);
             // Update the privacy annunciator
             pMe->m_bIsPrivacy |= call_table->call_info.is_privacy;
+
+			//Add By zzg 2012_10_30
+			#ifndef FEATURE_VERSION_W317A
             IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_LOCKSTATUS/*ANNUN_FIELD_VOICE_PRIVACY*/,
                                                     (pMe->m_bIsPrivacy ? ANNUN_STATE_VOICE_PRIV_ON/*ANNUN_STATE_ON*/ : ANNUN_STATE_VOICE_PRIV_OFF/*ANNUN_STATE_OFF*/));
-            ISHELL_PostEvent( pMe->m_pShell,AEECLSID_DIALER,EVT_USER_REDRAW, 0,0);
+			#endif
+			//Add End
+			
+			ISHELL_PostEvent( pMe->m_pShell,AEECLSID_DIALER,EVT_USER_REDRAW, 0,0);
             break;
 
            /* Events added forcase CM 2.0 */

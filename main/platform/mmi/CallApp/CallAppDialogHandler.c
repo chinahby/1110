@@ -4180,8 +4180,14 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
 
         case EVT_DIALOG_START:
             //pMe->IncomIsready = FALSE;
+
+			//Add By zzg 2012_10_30
+			#ifndef FEATURE_VERSION_W317A
             IANNUNCIATOR_SetField ( pMe->m_pIAnn, ANNUN_FIELD_LOCKSTATUS/*ANNUN_FIELD_VOICE_PRIVACY*/, ANNUN_STATE_VOICE_PRIV_OFF/*ANNUN_STATE_OFF*/); 
-            IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL/*ANNUN_FIELD_CALLFORWARD*/, ANNUN_STATE_CALL_INUSE_OFF/*ANNUN_STATE_OFF*/);
+			#endif
+			//Add End
+						
+			IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL/*ANNUN_FIELD_CALLFORWARD*/, ANNUN_STATE_CALL_INUSE_OFF/*ANNUN_STATE_OFF*/);
             //CallApp_Set_Db_In_Idle(TRUE);
             (void) ISHELL_PostEvent(pMe->m_pShell,  AEECLSID_DIALER, EVT_USER_REDRAW, 0, 0);
             return TRUE;
