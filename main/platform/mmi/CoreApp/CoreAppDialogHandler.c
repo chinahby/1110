@@ -3408,6 +3408,25 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 		case EVT_USER_REDRAW:     
         case EVT_UPDATEIDLE:
         {        
+			//Add By zzg 2012_10_29
+			#ifdef FEATURE_VERSION_W317A				
+			IFileMgr *pFileMgr = NULL;
+		    ISHELL_CreateInstance(pMe->a.m_pIShell, AEECLSID_FILEMGR, (void **)&pFileMgr);
+			
+		    if (pFileMgr)
+		    {
+				if (IFILEMGR_Test(pFileMgr, AEEFS_CARD0_DIR)==SUCCESS)		
+				{
+					IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_TCARD, ANNUN_STATE_TCARD_ON);
+				}
+				else
+				{
+					IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_TCARD, ANNUN_STATE_TCARD_OFF);
+				}
+		    }			
+			#endif
+			//Add End
+				
             CoreApp_DrawWallPaper(pMe); // debug for wallpaper update issue
             if(pWallPaper)
             {
