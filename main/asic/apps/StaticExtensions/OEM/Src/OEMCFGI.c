@@ -1851,7 +1851,11 @@ static OEMConfigListType oemi_cache = {
 #elif defined(FEATURE_VERSION_W317A)
    ,OEMNV_CAMERA_SHUTTER_TONE_DISABLE/*CFGI_CAMERA_TONE*/
 #else
-   ,OEMNV_CAMERA_SHUTTER_TONE_ENABLE        /*CFGI_CAMERA_TONE*/
+   #if defined(FEATURE_VERSION_W317A)
+   ,OEMNV_CAMERA_SHUTTER_TONE_DISABLE      /*CFGI_CAMERA_TONE*/
+   #else
+   ,OEMNV_CAMERA_SHUTTER_TONE_ENABLE       /*CFGI_CAMERA_TONE*/
+   #endif
 #endif   
    ,OEMNV_CAMERA_BANDING_50HZ      /*CFGI_CAMERA_BANDING*/
    ,OEMNV_CAMERA_STORAGE_MEMORY_CARD/*CFGI_VIDEO_STORAGE*/ 
@@ -3054,7 +3058,11 @@ void OEM_RestoreFactorySetting( void )
 #elif defined FEATURE_VERSION_W317A
    oemi_cache.camera_tone = OEMNV_CAMERA_SHUTTER_TONE_DISABLE;
 #else   
+   #if defined(FEATURE_VERSION_W317A)
+   oemi_cache.camera_tone = OEMNV_CAMERA_SHUTTER_TONE_DISABLE;
+   #else
    oemi_cache.camera_tone = OEMNV_CAMERA_SHUTTER_TONE_ENABLE;
+   #endif
 #endif
    oemi_cache.camera_banding = OEMNV_CAMERA_BANDING_50HZ;
    oemi_cache.camera_storage = OEMNV_CAMERA_STORAGE_MEMORY_CARD;
@@ -3069,7 +3077,7 @@ void OEM_RestoreFactorySetting( void )
 
    //Add By zzg 2010_10_22
 #ifdef FEATURE_APP_BLUETOOTH
-	oemi_cache.bt_status = 0;
+    oemi_cache.bt_status = 0; 
 #endif
    oemi_cache.flashlight_status = 0;
    oemi_cache.wmswriteend_status = 1;
