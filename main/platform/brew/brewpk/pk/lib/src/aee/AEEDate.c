@@ -935,6 +935,16 @@ static boolean IDateCtl_GetDateString(IDateCtl * po, AECHAR * pBuffer, int nMaxS
 
    if (pnChars)
       *pnChars = 0;
+#ifdef FEATURE_VERSION_W317A
+	if(dwFormat == DFMT_DD_MM_YYYY)
+	{
+		dwFormat = DFMT_DD_MON_YY;
+	}
+	else if(dwFormat == DFMT_MM_DD_YYYY) 
+	{
+		dwFormat = DFMT_MON_DD_YY;
+	}
+#endif
 
    switch(dwFormat){
       case DFMT_DD_MONTH_YYYY:
@@ -1935,6 +1945,7 @@ phone screen.
 ==================================================================*/
 static boolean DateCtl_DrawMonthView(DateCtl * pme)
 {
+   ERR("DateCtl_DrawMonthView:22222:%d",pme->m_bValidDate,0,0);	
    ClearScreen(pme);
    
    if(pme->m_bValidDate){
