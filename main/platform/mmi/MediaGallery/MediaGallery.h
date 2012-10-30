@@ -71,13 +71,6 @@
 #define MG_VOICEMEMO_FOLDER         "voicememo"
 #define MG_CALLMEMO_FOLDER          "callmemo"
 #define MG_DOWNLOAD_FOLDER          "download"
-#elif defined(FEATURE_VERSION_W317A)
-#define MG_PICTURES_FOLDER          "pictures"
-#define MG_MUSIC_FOLDER             "Audio player"
-#define MG_VIDEOS_FOLDER            "video"
-#define MG_VOICEMEMO_FOLDER         "voicememo"
-#define MG_CALLMEMO_FOLDER          "callmemo"
-#define MG_DOWNLOAD_FOLDER          "download"
 #else
 #define MG_PICTURES_FOLDER          "pictures"
 #define MG_MUSIC_FOLDER             "music"
