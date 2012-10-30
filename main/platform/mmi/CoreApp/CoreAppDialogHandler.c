@@ -805,6 +805,7 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
                     set_time = 3000;
                     break;
                     
+                case IDS_BATTERY_FULLY_CHARGE:    
                 case IDS_CORE_DISPADN:
                 case IDS_WAITING:
                     set_time = 0;
@@ -3248,7 +3249,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #ifdef FEATURE_APP_BLUETOOTH
 				boolean bt_status = FALSE;
 				ICONFIG_GetItem(pMe->m_pConfig, CFGI_BT_STATUS, &bt_status, sizeof(bt_status));
-
+                MSG_FATAL("bt_status---=%d",bt_status,0,0);
 				if (bt_status == TRUE)
 				{					
 					MSG_FATAL("***zzg CoreApp EVT_DIALOG_INIT ISHELL_StartBackgroundApplet***", 0, 0, 0);
