@@ -3031,8 +3031,6 @@ static void CameraApp_InitCFGData(CCameraApp * pMe)
         pMe->m_nCameraQuality = OEMNV_CAMERA_QUALITY_HIGH;       
 #ifdef FEATURE_CARRIER_CHINA_TELCOM
         pMe->m_nCameraTone = OEMNV_CAMERA_SHUTTER_TONE_SHUTTER1;
-#elif defined FEATURE_VERSION_W317A
-		pMe->m_nCameraTone = OEMNV_CAMERA_SHUTTER_TONE_DISABLE;
 #else			
         pMe->m_nCameraTone = OEMNV_CAMERA_SHUTTER_TONE_ENABLE;
 #endif
