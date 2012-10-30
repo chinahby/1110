@@ -58,6 +58,9 @@ typedef struct IAnnunciator IAnnunciator;
 #define ANNUN_FIELD_RINGTONE              9   /*Ringtone*/
 #define ANNUN_FIELD_BATT                     10   /*Battery*/
 
+#define ANNUN_FIELD_TCARD						1		//Add By zzg 2012_10_30
+
+
 
 // Possible State of each annunciator field
 #define ANNUN_STATE_OFF       0
@@ -149,6 +152,11 @@ typedef struct IAnnunciator IAnnunciator;
 #define ANNUN_STATE_RSSI_5                ANNUN_EIGHTH_STATE
 #define ANNUN_STATE_RSSI_6                ANNUN_NINTH_STATE
 #endif
+
+//Add By zzg 2012_10_29
+#define ANNUN_STATE_TCARD_ON    ANNUN_FIRST_STATE
+#define ANNUN_STATE_TCARD_OFF   ANNUN_FIRST_STATE_OFF
+//Add End
 
 /*ANNUN_FIELD_WAP*/
 #define ANNUN_STATE_WAP_ON      ANNUN_FIRST_STATE

@@ -212,6 +212,14 @@ typedef struct {
   {ANNUN_STATE_RSSI_6, IDB_RSSI6, NULL}
 #endif
 };
+
+//Add By zzg 2012_10_29
+static OEMState_data tcard_image_data[]=
+{
+	{ANNUN_STATE_TCARD_ON, IDB_SD_CARD, NULL}
+};
+//Add End
+
 /*1x/Wap/Roam*/
 static OEMState_data wap_image_data[]=
 {
@@ -331,6 +339,14 @@ OEMAnnun_content rssi_content =
 #else
     {ANNUN_TYPE_IMAGE, 6, ANNUN_STATE_RSSI_NO_SERV, (void *)rssi_image_data};
 #endif
+
+
+//Add By zzg 2012_10_29
+/*ANNUN_TCARD_WAP*/
+OEMAnnun_content tcard_content =
+	{ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)tcard_image_data};
+//Add End
+
 /*ANNUN_FIELD_WAP*/
 OEMAnnun_content wap_content =
 #ifndef FEATURE_USES_LOWMEM
@@ -536,8 +552,15 @@ OEMAnnun_content batt_content =
 static OEMAnnun_data Annunciators[] =
 {
   {ANNUN_FIELD_RSSI,                ANNUN_ICON_POSITION_1,     ROW1_Y,  LG_IMG_WIDTH, IMG_HEIGHT,  &rssi_content},
-  {ANNUN_FIELD_WAP,                ANNUN_ICON_POSITION_2,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &wap_content},  
- // {ANNUN_FIELD_QQ,               ANNUN_ICON_POSITION_3,      ROW1_Y,  IMG_WIDTH,       IMG_HEIGHT,  &qq_content},
+  	
+#if defined(FEATURE_VERSION_W317A)
+  {ANNUN_FIELD_TCARD,               ANNUN_ICON_POSITION_2,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &tcard_content}, 
+#else  	
+  {ANNUN_FIELD_WAP,                ANNUN_ICON_POSITION_2,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &wap_content}, 
+#endif
+    
+ // {ANNUN_FIELD_QQ,               ANNUN_ICON_POSITION_3,      ROW1_Y,  IMG_WIDTH,       IMG_HEIGHT,  &qq_content},  
+
   {ANNUN_FIELD_LOCKSTATUS,     ANNUN_ICON_POSITION_3,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &lockstatus_content},
   {ANNUN_FIELD_CALL,                ANNUN_ICON_POSITION_4,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &call_content}, 
   {ANNUN_FIELD_SMS,                ANNUN_ICON_POSITION_5,      ROW1_Y,  IMG_WIDTH,       IMG_HEIGHT,  &sms_content}, 
