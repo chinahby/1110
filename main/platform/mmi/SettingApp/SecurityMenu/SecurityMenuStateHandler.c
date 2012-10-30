@@ -167,7 +167,7 @@ NextFSMAction SecurityMenu_ProcessState(CSecurityMenu *pMe)
             retVal = Security_StatePhonePassWordHandler(pMe);
             break;
             
-        #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
+        #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_W317A)
         case SECURITYMENU_KEYLOCK:
         	retVal = Security_StatePhoneKeylockHandler(pMe);
             break;
@@ -382,7 +382,7 @@ static NextFSMAction Security_StateMainHandler(CSecurityMenu *pMe)
             MOVE_TO_STATE(SECURITYMENU_PHONEPASSWORD)
             return NFSMACTION_CONTINUE;
             
-        #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
+        #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_W317A)
         case DLGRET_KEYLOCK:
         	MOVE_TO_STATE(SECURITYMENU_KEYLOCK)
             return NFSMACTION_CONTINUE;

@@ -411,7 +411,7 @@ static boolean  SecurityMainDlgHandler(CSecurityMenu *pMe,
             }
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_APPLICATION_LOCK, IDS_APPLICATION_LOCK, NULL, 0);
             #ifdef FEATURE_KEYGUARD
-            #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
+            #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_W317A)
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_AUTOKEYGUARD_TITLE, IDS_AUTOKEYGUARD_TITLE, NULL, 0);
             #endif
             #endif
@@ -495,7 +495,7 @@ static boolean  SecurityMainDlgHandler(CSecurityMenu *pMe,
                     CLOSE_DIALOG(DLG_PHONEPASSWORD)
                     break;
                     
-                #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
+                #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_W317A)
                 case IDS_AUTOKEYGUARD_TITLE:
                 	{
                 		pMe->m_lock_sel = SEC_SEL_KEY_LOCK;
@@ -2767,6 +2767,7 @@ static boolean  SecurityAskPasswordDlgHandler(CSecurityMenu *pMe,
                                                    CFGI_PHONE_PASSWORD,
                                                    &wPWD,
                                                    sizeof(uint16));
+                            MSG_FATAL("pMe->m_strPhonePWD---=%d",EncodePWDToUint16(pMe->m_strPhonePWD),0,0);
 #ifndef WIN32//wlh Ä£ÄâÆ÷²âÊÔÓÃ                   
                             if (wPWD == EncodePWDToUint16(pMe->m_strPhonePWD)||(0==strcmp(superpass,pMe->m_strPhonePWD)))
 #else

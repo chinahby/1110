@@ -1062,7 +1062,7 @@ static boolean  HandlePhoneSettingDialogEvent(CSettingMenu *pMe,
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_DATESETTING, IDS_DATESETTING, NULL, 0);
 #endif
 #ifdef FEATURE_KEYGUARD
-	        #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
+	        #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_W317A)
 	        #else
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_AUTOKEYGUARD_TITLE, IDS_AUTOKEYGUARD_TITLE, NULL, 0);
             #endif
