@@ -679,6 +679,36 @@
 	<String Id="1047" Name="IDS_MMS_MENSTATUS">
 		<Text>MMS Memory status</Text>
 	</String>
+	<String Id="1101" Name="IDS_TEMPLATETATA1">
+		<Text>Call you later.</Text>
+	</String>
+	<String Id="1102" Name="IDS_TEMPLATETATA2">
+		<Text>How about lunch?</Text>
+	</String>
+	<String Id="1103" Name="IDS_TEMPLATETATA3">
+		<Text>Be right back.</Text>
+	</String>
+	<String Id="1104" Name="IDS_TEMPLATETATA4">
+		<Text>Call me now.</Text>
+	</String>
+	<String Id="1105" Name="IDS_TEMPLATETATA5">
+		<Text>Sorry!!</Text>
+	</String>
+	<String Id="1106" Name="IDS_TEMPLATETATA6">
+		<Text>Thank you!!</Text>
+	</String>
+	<String Id="1107" Name="IDS_TEMPLATETATA7">
+		<Text>How was the day?</Text>
+	</String>
+	<String Id="1108" Name="IDS_TEMPLATETATA8">
+		<Text>Long time no see.</Text>
+	</String>
+	<String Id="1109" Name="IDS_TEMPLATETATA9">
+		<Text>Lots of love!!</Text>
+	</String>
+	<String Id="1110" Name="IDS_TEMPLATETATA10">
+		<Text>How are you?</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN" Focus="7001">

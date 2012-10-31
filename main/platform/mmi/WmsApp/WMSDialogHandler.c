@@ -12895,9 +12895,20 @@ static boolean IDD_TEMPLATES_Handler(void   *pUser,
                                               IDS_TEMPLATEHITZ8,
                                               IDS_TEMPLATEHITZ9,
                                               0};
+                #else defined(FEATURE_VERSION_C337)
+                uint16  nCmdID[PHRASE_MAX] = {IDS_TEMPLATETATA1,
+                                              IDS_TEMPLATETATA2,
+                                              IDS_TEMPLATETATA3,
+                                              IDS_TEMPLATETATA4,
+                                              IDS_TEMPLATETATA5,
+                                              IDS_TEMPLATETATA6,
+                                              IDS_TEMPLATETATA7,
+                                              IDS_TEMPLATETATA8,
+                                              IDS_TEMPLATETATA9,
+                                              IDS_TEMPLATETATA10,
+                                              0};
                 #else
-                
-               uint16  nCmdID[PHRASE_MAX] = {IDS_TEMPLATE1,
+                uint16  nCmdID[PHRASE_MAX] = {IDS_TEMPLATE1,
                                               IDS_TEMPLATE2,
                                               IDS_TEMPLATE3,
                                               IDS_TEMPLATE4,
