@@ -935,7 +935,7 @@ static boolean IDateCtl_GetDateString(IDateCtl * po, AECHAR * pBuffer, int nMaxS
 
    if (pnChars)
       *pnChars = 0;
-#ifdef FEATURE_VERSION_W317A
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
 	if(dwFormat == DFMT_DD_MM_YYYY)
 	{
 		dwFormat = DFMT_DD_MON_YY;
