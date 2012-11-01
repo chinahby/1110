@@ -463,6 +463,9 @@
 	<STRING Id="1089" Name="IDS_NUM_INVALID">
 		<Text>número no válido</Text>
  	</STRING>
+ 	<String Id="1090" Name="IDS_NAME_MODIFIED">
+		<Text>Name Modified</Text>
+	</String>
  </Strings>
  <Dialogs>
  	<DIALOG Id="6001" Name="IDD_MSGBOX" Focus="0">
