@@ -1497,6 +1497,7 @@ int CContApp_Copy2RUIM( CContApp *pMe,
 #endif
     if(WSTRLEN((AECHAR*)pNameFld->pBuffer) > nMaxchars)
     {
+    	pMe->m_bNameLengthLonger = TRUE;		//Add By zzg 2012_10_31
         ((AECHAR*)pNameFld->pBuffer)[nMaxchars] = (AECHAR)'\0';
         pNameFld->wDataLen = (nMaxchars) * sizeof(AECHAR);
     }
@@ -6650,6 +6651,7 @@ void CContApp_SaveOneDial(CContApp * pMe)
                  default:
                     break;
             }
+			
             (void)CContApp_SetConfig( pMe,
                               (ContAppCFG)pMe->m_eOneDialFld[numFldIndx].oneDialIndx,
                               tmp,

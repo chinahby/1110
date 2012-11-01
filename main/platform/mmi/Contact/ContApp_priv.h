@@ -989,6 +989,9 @@ typedef struct _CContApp
 #ifdef FEATURE_OEMOMH        
    // AEECardSessionReadTpStatus	*m_pReadStatus;
 #endif
+	boolean 	m_bNameLengthLonger;				//Add By zzg 2012_10_31
+	boolean		m_bSpeedDialParam;					//Add By zzg 2012_10_31
+	uint16		m_nSpeedDialNumber;					//Add By zzg 2012_11_01	
 } CContApp;
 
 /*==============================================================================

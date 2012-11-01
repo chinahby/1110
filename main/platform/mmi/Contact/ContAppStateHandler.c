@@ -948,6 +948,97 @@ static NextFSMAction Handler_STATE_MAINLIST(CContApp *pMe)
             // store the menu index
             PUSH_LISTMENU_IDX(pMe->m_wMainListIdx);
 
+			#ifdef FEATURE_VERSION_C337
+			MSG_FATAL("***zzg m_bSpeedDialParam=%x",pMe->m_bSpeedDialParam,0,0);
+			if ((pMe->m_bSpeedDialParam == TRUE) && (pMe->m_nSpeedDialNumber != 0))
+			{
+				// store the menu select
+	            PUSH_LISTMENU_SEL(pMe->m_wOneDialStatSel);
+				
+	            // store the menu index
+	            PUSH_LISTMENU_IDX(pMe->m_wOneDialStatIdx);	            
+	            
+	            // Load the current fields
+	            if(SUCCESS != CContApp_LoadAddrFlds( pMe, 
+	                                                 pMe->m_wSelectCont,
+	                                                 SINGLE_SELECT_NUMBER))
+	            {
+	                pMe->m_wErrStrID = IDS_ERR_LOADFIELDS;
+	                MOVE_TO_STATE(STATE_ERROR);
+	                return NFSMACTION_CONTINUE;
+	            }
+
+#ifdef FEATURE_SAVE_ONLY_NAME                    
+	            if(0 == CContApp_GetCurrFldNum(pMe, AEE_ADDRFIELD_PHONE_GENERIC))
+	            {
+	                // Show dialog message
+	                pMe->m_eMsgType = MESSAGE_WARNNING;
+	                if(SUCCESS != CContApp_ShowMsgBox(pMe, IDS_NO_NUMBER_TO_MAKECALL))
+	                {
+	                    MOVE_TO_STATE(STATE_EXIT);
+	                    return NFSMACTION_CONTINUE;
+	                }
+	                return NFSMACTION_WAIT;
+	            }
+#endif
+
+	            if(1 == CContApp_GetCurrFldNum(pMe, AEE_ADDRFIELD_PHONE_GENERIC))
+	            {
+	                //(void)CContApp_MakeCall(pMe, IDX_NUM_RUIM_FLD);
+	                AEEAddrField *pFld;
+	                
+	                pFld = IVector_ElementAt( pMe->m_pFldIv, (uint32)IDX_NUM_RUIM_FLD );
+	                if(WSTRLEN(pFld->pBuffer) <= 3)
+	                {
+	                    // Show dialog message
+	                    pMe->m_eMsgType = MESSAGE_WARNNING;
+	                    if(SUCCESS != CContApp_ShowMsgBox(pMe, IDS_MSG_SHORTNUMBER))
+	                    {
+	                        MOVE_TO_STATE(STATE_EXIT);
+	                        return NFSMACTION_CONTINUE;
+	                    }
+	                    return NFSMACTION_WAIT;
+	                }
+	                
+	                (void)CContApp_SetConfig( pMe,
+	                                          (ContAppCFG)(CONTCFG_SMARTDIAL+pMe->m_nSpeedDialNumber),
+	                                          (AECHAR *)pFld->pBuffer,
+	                                          sizeof((AECHAR *)pFld->pBuffer));
+
+					
+					//After save the Speed dial number, call it .    
+				    if ( SUCCESS != ISHELL_CreateInstance( pMe->m_pShell,
+				                                           AEECLSID_DIALER,
+				                                           (void **)&pMe->m_pCallApp))
+				    {
+				        return EFAILED;
+				    }
+				    
+				    // Make a voice call
+				    ICallApp_CallNumber(pMe->m_pCallApp, (AECHAR *)pFld->pBuffer);
+				    
+				    if (pMe->m_pCallApp != NULL) 
+				    {
+				        ICallApp_Release(pMe->m_pCallApp);
+				        pMe->m_pCallApp = NULL;
+				    }			
+
+					pMe->m_bSpeedDialParam = FALSE;
+					pMe->m_nSpeedDialNumber = 0;
+
+					MOVE_TO_STATE(STATE_EXIT);
+					return NFSMACTION_CONTINUE;
+	            }
+	            else
+	            {
+	                MOVE_TO_STATE(STATE_DETAIL);
+	            }
+	                
+	            return NFSMACTION_CONTINUE;
+			}
+			#endif
+			
+
             switch(pMe->m_eStartMethod)
             {
                 case STARTMETHOD_ADDFIELD:
@@ -5946,6 +6037,7 @@ static NextFSMAction Handler_STATE_ONEDIAL_OPT(CContApp *pMe)
             // Clear the onedial config
             pMe->m_pOneDialBuf[0] = ONEDIAL_NULL;
             MSG_FATAL("pMe->m_pOneDialBuf[0] = ONEDIAL_NULL",0,0,0);
+			
             (void)CContApp_SetConfig( pMe,
                                       (ContAppCFG)pMe->m_wSelectOneDial,
                                       pMe->m_pOneDialBuf,
@@ -6236,6 +6328,7 @@ static NextFSMAction Handler_STATE_ONEDIAL_SET_NUMFLDSEL(CContApp *pMe)
             
             // Save config
             //(void)WSTRCPY(pMe->m_pFldInputBuf, pMe->m_pOneDialBuf);
+            
             (void)CContApp_SetConfig( pMe,
                                       (ContAppCFG)pMe->m_wSelectOneDial,
                                       pMe->m_pOneDial,
@@ -7523,11 +7616,30 @@ static NextFSMAction Handler_STATE_SUCCESS(CContApp *pMe)
             
             // Show dialog
             pMe->m_eMsgType = MESSAGE_INFORMATIVE; 
+			#ifdef FEATURE_VERSION_C337
+			if (pMe->m_bNameLengthLonger == TRUE)
+			{
+				if(SUCCESS != CContApp_ShowMsgBox(pMe, IDS_NAME_MODIFIED))
+	            {
+	                MOVE_TO_STATE(STATE_EXIT);
+	                return NFSMACTION_CONTINUE;
+	            }
+			}
+			else
+			{	
+				if(SUCCESS != CContApp_ShowMsgBox(pMe, IDS_SUCCESS))
+	            {
+	                MOVE_TO_STATE(STATE_EXIT);
+	                return NFSMACTION_CONTINUE;
+	            }	
+			}			
+			#else
             if(SUCCESS != CContApp_ShowMsgBox(pMe, IDS_SUCCESS))
             {
                 MOVE_TO_STATE(STATE_EXIT);
                 return NFSMACTION_CONTINUE;
             }
+			#endif
             
             return NFSMACTION_WAIT;
             
@@ -7759,6 +7871,26 @@ static NextFSMAction Handler_STATE_DETAIL(CContApp *pMe)
         
         //Proccess yourself dialog retrn value here
         case DLGRET_OK:
+			
+			#ifdef FEATURE_VERSION_C337
+			if ((pMe->m_bSpeedDialParam == TRUE) && (pMe->m_nSpeedDialNumber != 0))
+			{
+				//pMe->m_bSpeedDialParam = FALSE;					
+				//pMe->m_nSpeedDialNumber = 0;
+			
+				pMe->m_eMsgType = MESSAGE_WARNNING;
+                if (SUCCESS != CContApp_ShowMsgBox(pMe, IDS_MSG_SHORTNUMBER))
+				{
+					MOVE_TO_STATE(STATE_EXIT);
+					return NFSMACTION_CONTINUE;
+				}
+
+				//(void) ISHELL_CloseApplet(pMe->m_pShell,FALSE);
+				//MOVE_TO_STATE(STATE_EXIT);
+	            return NFSMACTION_WAIT;
+			}
+			#endif			
+			
             FREEIF(pMe->m_pAddNewName);
             MOVE_TO_STATE(pMe->m_eOptsRetState);
             break;
@@ -7766,9 +7898,16 @@ static NextFSMAction Handler_STATE_DETAIL(CContApp *pMe)
 			MSG_FATAL("DLGRET_SELECT.................",0,0,0);
             MOVE_TO_STATE(STATE_OPTS);		
 			break;
+
+		//Add By zzg 2012_11_01
+		case DLGRET_MSGBOX_OK:
+			MOVE_TO_STATE(STATE_DETAIL);						
+			break;
+		//Add End
+		
         case DLGRET_CANCELED:
             // reset the menu select
-            pMe->m_wOptsStatSel = 0;
+            pMe->m_wOptsStatSel = 0;			
             
             if(IS_ZERO_REC())
             {

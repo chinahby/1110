@@ -2028,6 +2028,7 @@ int CContApp_DeletePhoneFld(CContApp *pMe, uint16 wContID, uint16 idx)
                 MSG_FATAL("pMe->m_pOneDialBuf[0] = ONEDIAL_NULL",0,0,0);
                 // Clear the onedial config
                 pMe->m_pOneDialBuf[0] = ONEDIAL_NULL;
+				
                 (void)CContApp_SetConfig( pMe,
                                           (ContAppCFG)i,
                                           pMe->m_pOneDialBuf,
@@ -2136,7 +2137,7 @@ int CContApp_DeleteCont(CContApp *pMe, uint16 wContID)
         {
             MSG_FATAL("pMe->m_pOneDialBuf[0] = ONEDIAL_NULL",0,0,0);
             // Clear the onedial config
-            pMe->m_pOneDialBuf[0] = ONEDIAL_NULL;
+            pMe->m_pOneDialBuf[0] = ONEDIAL_NULL;			
             (void)CContApp_SetConfig( pMe,
                                       (ContAppCFG)i,
                                       pMe->m_pOneDialBuf,
@@ -2628,7 +2629,7 @@ static boolean CContApp_SmartMenuHandle( CContApp *pMe,
                 pMe->m_nCurrentInputMode %= 2;
                 ITEXTCTL_SetInputMode( pTextCtl, pMe->m_nInputModeTable[pMe->m_nCurrentInputMode]);
                 ITEXTCTL_SetActive(pTextCtl, FALSE);
-
+				
                 if(FALSE == CContApp_SetConfig( pMe,
                                           CONTTCFG_QUICKSEARCH_INPUT_MODE,
                                           &(pMe->m_nCurrentInputMode),
@@ -5238,6 +5239,13 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
 	            }
 			}
 			//Add End
+
+			#ifdef FEATURE_VERSION_C337
+			if (pMe->m_bSpeedDialParam == TRUE)
+			{
+				CONTAPP_DRAW_BOTTOMBAR(BTBAR_OK_BACK);
+			}
+			#endif
 			
             /*必须在textctl初始化完毕后,才能获得icon id,而且要在dialog更新完之后再更新图标*/
             CContApp_DrawIMEIcon(pTextCtl, pMe->m_pDisplay);
@@ -5385,7 +5393,18 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
                     
                     // store the menu index
                     PUSH_LISTMENU_IDX(pMe->m_wMainListIdx);
-                    
+
+					MSG_FATAL("***zzg pMe->m_eCurState=%x", pMe->m_eCurState, 0, 0);
+					
+                    #ifdef FEATURE_VERSION_C337
+					MSG_FATAL("***zzg pMe->m_bSpeedDialParam=%x", pMe->m_bSpeedDialParam, 0, 0);
+					if (pMe->m_bSpeedDialParam == TRUE)
+					{						
+						CLOSE_DIALOG(DLGRET_OK);
+                        return TRUE;
+					}
+					#endif
+					
                     if(STATE_ONEDIAL_SET == pMe->m_eCurState)
                     {
                         CLOSE_DIALOG(DLGRET_OK);
@@ -5949,7 +5968,7 @@ static boolean  CContApp_HandleInputFldDlgEvent( CContApp  *pMe,
                                     // 存在单键拨号则需要修改单键拨号
                                     if(WSTRCMP(pMe->m_tmpBuf, pMe->m_pOneDialBuf) == 0)
                                     {
-                                        ERR("==========",0,0,0);
+                                        ERR("==========",0,0,0);										
                                         (void)CContApp_SetConfig( pMe,
                                                       (ContAppCFG)i,
                                                       pMe->m_pFldInputBuf,
@@ -13430,7 +13449,13 @@ static boolean  CContApp_HandleDetailDlgEvent( CContApp  *pMe,
             }
             
             // Draw prompt bar here
-            CONTAPP_DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
+            CONTAPP_DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);	
+			#ifdef FEATURE_VERSION_C337
+			if (pMe->m_bSpeedDialParam == TRUE)
+			{
+				CONTAPP_DRAW_BOTTOMBAR(BTBAR_OK_CANCEL);	
+			}
+			#endif
             IDISPLAY_Update(pMe->m_pDisplay);  
             return TRUE;
             
@@ -13441,12 +13466,79 @@ static boolean  CContApp_HandleDetailDlgEvent( CContApp  *pMe,
         {
         	 switch (wParam)
              {
+             	#ifdef FEATURE_VERSION_C337
+				case AVK_SELECT:					
+					if ((pMe->m_bSpeedDialParam == TRUE) && (pMe->m_nSpeedDialNumber != 0))
+					{
+						AECHAR* callNum;	                    
+	                    if ( SUCCESS != ISHELL_CreateInstance( pMe->m_pShell,
+	                                                           AEECLSID_DIALER,
+	                                                           (void **)&pMe->m_pCallApp))
+	                    {
+	                        return EFAILED;
+	                    }
+	                    
+	                    switch(IMENUCTL_GetSel(pMenuCtl))
+	                    {
+	                        case IDI_EDIT_MENU_MOBILE:
+	                            callNum = pMe->m_pAddNewMobile;
+	                            break;
+	                            
+	                        case IDI_EDIT_MENU_HOME:
+	                            callNum = pMe->m_pAddNewHome;
+	                            break;
+	                            
+	                        case IDI_EDIT_MENU_OFFICE:
+	                            callNum = pMe->m_pAddNewOffice;
+	                            break;
+	                            
+	                        case IDI_EDIT_MENU_FAX:
+	                            callNum = pMe->m_pAddNewFax;
+	                            break;
+
+	                        default:
+	                            return TRUE;
+	                    }
+
+						
+						if(WSTRLEN(callNum) <= 3)
+		                {
+		                    CLOSE_DIALOG(DLGRET_OK)		                   
+		                    return TRUE;
+		                }						
+						
+                        (void)CContApp_SetConfig( pMe,
+                                                  (ContAppCFG)(CONTCFG_SMARTDIAL+pMe->m_nSpeedDialNumber),
+                                                  callNum,
+                                                  sizeof(AECHAR)*(MAX_INPUT_NAME_EN+1));   
+						
+
+	                    // Make a voice call
+	                    ICallApp_CallNumber(pMe->m_pCallApp, (AECHAR *)callNum);
+
+	                    if (pMe->m_pCallApp != NULL) 
+	                    {
+	                        ICallApp_Release(pMe->m_pCallApp);
+	                        pMe->m_pCallApp = NULL;
+	                    }         
+
+						pMe->m_bSpeedDialParam = FALSE;
+						pMe->m_nSpeedDialNumber = 0;
+
+						(void) ISHELL_CloseApplet(pMe->m_pShell,FALSE);
+
+						return TRUE;
+					}
+					break;
+				#else
              	case AVK_SELECT:
-                    //CLOSE_DIALOG(DLGRET_OK);
+					//CLOSE_DIALOG(DLGRET_OK);
               		MSG_FATAL("AVK_SELECT........",0,0,0);
               		pMe->m_boptaleadyView = TRUE;
                     CLOSE_DIALOG(DLGRET_SELECT);
                     return TRUE;
+				#endif	
+                    
                 default:
                     break; 
              }
@@ -13459,12 +13551,83 @@ static boolean  CContApp_HandleDetailDlgEvent( CContApp  *pMe,
                 case AVK_CLR:
                 	//CLOSE_DIALOG(DLGRET_OK);
                     CLOSE_DIALOG(DLGRET_CANCELED);
-                    return TRUE;
-                case AVK_SELECT:
+                    return TRUE;		
+
+				#ifdef FEATURE_VERSION_C337
+				case AVK_INFO:
+				case AVK_SELECT:
+                    MSG_FATAL("***zzg Detail m_bSpeedDialParam=%x",pMe->m_bSpeedDialParam,0,0);
+					if ((pMe->m_bSpeedDialParam == TRUE) && (pMe->m_nSpeedDialNumber != 0))
+					{
+						AECHAR* callNum;	                    
+	                    if ( SUCCESS != ISHELL_CreateInstance( pMe->m_pShell,
+	                                                           AEECLSID_DIALER,
+	                                                           (void **)&pMe->m_pCallApp))
+	                    {
+	                        return EFAILED;
+	                    }
+	                    
+	                    switch(IMENUCTL_GetSel(pMenuCtl))
+	                    {
+	                        case IDI_EDIT_MENU_MOBILE:
+	                            callNum = pMe->m_pAddNewMobile;
+	                            break;
+	                            
+	                        case IDI_EDIT_MENU_HOME:
+	                            callNum = pMe->m_pAddNewHome;
+	                            break;
+	                            
+	                        case IDI_EDIT_MENU_OFFICE:
+	                            callNum = pMe->m_pAddNewOffice;
+	                            break;
+	                            
+	                        case IDI_EDIT_MENU_FAX:
+	                            callNum = pMe->m_pAddNewFax;
+	                            break;
+
+	                        default:
+	                            return TRUE;
+	                    }
+
+						
+						if(WSTRLEN(callNum) <= 3)
+		                {
+		                    CLOSE_DIALOG(DLGRET_OK)		                   
+		                    return TRUE;
+		                }						
+						
+                        (void)CContApp_SetConfig( pMe,
+                                                  (ContAppCFG)(CONTCFG_SMARTDIAL+pMe->m_nSpeedDialNumber),
+                                                  callNum,
+                                                  sizeof(AECHAR)*(MAX_INPUT_NAME_EN+1));   
+						
+
+	                    // Make a voice call
+	                    ICallApp_CallNumber(pMe->m_pCallApp, (AECHAR *)callNum);
+
+	                    if (pMe->m_pCallApp != NULL) 
+	                    {
+	                        ICallApp_Release(pMe->m_pCallApp);
+	                        pMe->m_pCallApp = NULL;
+	                    }         
+
+						pMe->m_bSpeedDialParam = FALSE;
+						pMe->m_nSpeedDialNumber = 0;
+
+						(void) ISHELL_CloseApplet(pMe->m_pShell,FALSE);
+
+						return TRUE;
+					}
+					CLOSE_DIALOG(DLGRET_CANCELED)
+					return TRUE;
+				#else
+				case AVK_SELECT:
                     //CLOSE_DIALOG(DLGRET_OK);
               		MSG_FATAL("AVK_SELECT........",0,0,0);
                     CLOSE_DIALOG(DLGRET_SELECT);
                     return TRUE;
+				#endif
+                
                 case AVK_CAMERA:
 				#if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)|| defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)
 				{
@@ -13517,7 +13680,7 @@ static boolean  CContApp_HandleDetailDlgEvent( CContApp  *pMe,
 				}
 				#endif
 				break;
-
+				
                 case AVK_SEND:
                 {
                     AECHAR* callNum;
@@ -14412,7 +14575,7 @@ static boolean  CContApp_HandleGroupOptEditDlgEvent( CContApp  *pMe,
                 case AVK_SELECT:
                     sGroup = WSTRDUP(ITEXTCTL_GetTextPtr(pTextCtl));                    
                     if(WSTRLEN(sGroup) > 0)
-                    {
+                    {                    	
                         (void)CContApp_SetConfig( pMe,
                                                   (ContAppCFG)pMe->m_wSelectGroup,
                                                   sGroup,

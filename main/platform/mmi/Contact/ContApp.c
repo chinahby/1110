@@ -833,6 +833,11 @@ static boolean  IContApp_HandleEvent( IContApp   *pi,
             MSG_FATAL("IContApp_HandleEvent EVT_APP_STOP",0,0,0);
             pMe->m_bSuspending = TRUE;
             pMe->m_bActive = FALSE;
+
+			//Add By zzg 2012_11_01
+			pMe->m_bSpeedDialParam = FALSE;					
+			pMe->m_nSpeedDialNumber = 0;
+			//Add End
 			
             // 转为后台模式
 //            *((boolean *)dwParam) = FALSE;
@@ -903,6 +908,7 @@ static boolean  IContApp_HandleEvent( IContApp   *pi,
 				repaint( TRUE);
 				return TRUE;
 			} */
+			
             if(OEM_IME_DIALOG == wParam)
 			{
 				return ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_CONTACT,EVT_USER_REDRAW,0,0);
@@ -994,6 +1000,20 @@ static boolean  IContApp_HandleEvent( IContApp   *pi,
 				}
 				return CContApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 			}
+#else
+		case EVT_USER:
+		{
+			if (wParam == PARAM_SPEED_DIAL) 
+			{
+				pMe->m_bSpeedDialParam = TRUE;
+				pMe->m_nSpeedDialNumber = (uint16)dwParam;
+
+				MSG_FATAL("***zzg PARAM_SPEED_DIAL m_nSpeedDialNumber=%x", pMe->m_nSpeedDialNumber, 0, 0);
+				
+				return CContApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);				
+			}
+			break;
+		}
 #endif            
         default:
             // 将接收到的事件路由至当前活动的对话框事件处理函数。
@@ -1081,6 +1101,9 @@ static int CContApp_Start(CContApp *pMe)
 #endif
     pMe->m_boptaleadyView = FALSE;
 	pMe->m_bNumberInvalid = FALSE;		//Add By zzg 2011-12_15
+	pMe->m_bNameLengthLonger = FALSE;		//Add By zzg 2012_10_31
+	pMe->m_bSpeedDialParam = FALSE;		//Add By zzg 2012_10_31
+	pMe->m_nSpeedDialNumber = 0;		//Add By zzg 2012_11_01
     CContApp_CFGCacheInit(pMe, &pMe->m_sCFGCache);
 	
     // Read the config file
@@ -1619,6 +1642,8 @@ int CContApp_SetConfig(CContApp        *pMe,
         ERR("pCFGCache == NULL",0,0,0);
         return EBADPARM;
     }
+
+	MSG_FATAL("***zzg CContApp_SetConfig eCFG=%x", eCFG, 0, 0);
 
     ERR("eCFG = %d",eCFG,0,0);
     // 查找配置项
