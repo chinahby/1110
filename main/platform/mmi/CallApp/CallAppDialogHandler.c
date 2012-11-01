@@ -136,6 +136,14 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
                                         uint16     wParam,
                                         uint32     dwParam);
 
+//Add By zzg 2012_10_31
+// 对话框 IDD_PROMPT事件处理函数
+static boolean  CallApp_ProMpt_DlgHandler(CCallApp *pMe,
+                                        AEEEvent   eCode,
+                                        uint16     wParam,
+                                        uint32     dwParam);
+//Add End
+
 // 对话框 IDD_MSGBOX 事件处理函数
 static boolean  CallApp_MsgBox_DlgHandler(CCallApp *pMe,
                                         AEEEvent   eCode,
@@ -526,6 +534,10 @@ boolean CallApp_RouteDialogEvent(CCallApp *pMe,
         case IDD_ENDCALL:
             return CallApp_Dialer_Callend_DlgHandler(pMe,eCode,wParam,dwParam);
 
+		//Add By zzg 2012_10_31
+		case IDD_PROMPT:
+			return CallApp_ProMpt_DlgHandler(pMe,eCode,wParam,dwParam);
+		//Add End
         case IDD_MSGBOX:
             return CallApp_MsgBox_DlgHandler(pMe,eCode,wParam,dwParam);
 
@@ -2812,7 +2824,13 @@ static boolean  CallApp_Dialer_Calling_DlgHandler(CCallApp *pMe,
             //DRAW SOFTKEY
             //CallApp_Draw_Softkey(pMe, 0, IDS_CANCEL);
             //drawBottomBar(pMe->m_pDisplay, AEE_FONT_NORMAL,BTBAR_END);
+
+			#ifdef FEATURE_VERSION_C337
+			REFUI_DRAW_BOTTOMBAR(BTBAR_END_CALL)
+			#else
             REFUI_DRAW_BOTTOMBAR(BTBAR_CANCEL)
+            #endif
+			
             if(pMe->m_b_auto_redial)
             {
                 AECHAR wBuf[20] = {0};
@@ -4737,7 +4755,7 @@ static boolean  CallApp_MsgBox_DlgHandler(CCallApp  *pMe,
                 case IDS_EMGNUMBER_CALL_ONLY:
                     m_PromptMsg.ePMsgType = MESSAGE_INFORMATION;
                     break;
-                    
+				
                 default:
                     m_PromptMsg.ePMsgType = MESSAGE_NONE;
                     break;
@@ -4870,6 +4888,127 @@ static boolean  CallApp_MsgBox_DlgHandler(CCallApp  *pMe,
 
     return FALSE;
 }  // CallApp_MsgBox_DlgHandler()
+
+//Add By zzg 2012_10_31
+static boolean  CallApp_ProMpt_DlgHandler(CCallApp  *pMe,
+                                          AEEEvent     eCode,
+                                          uint16       wParam,
+                                          uint32       dwParam)
+{	
+	static IStatic * m_pIStatic = NULL;
+		
+	if (NULL == pMe)
+	{
+		return FALSE;
+	}
+
+	if(pMe->m_pActiveDlg == NULL)
+	{
+		return FALSE;
+	}
+	
+	CALL_ERR("eCode= %x,w=%x,dw=%x CallApp_ProMpt_DlgHandler ",eCode,wParam,dwParam);
+
+	switch (eCode)
+	{
+		case EVT_DIALOG_INIT:
+		{
+			if (NULL == m_pIStatic)
+			{
+				AEERect rect = {0};
+				
+				if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_STATIC,(void **)&m_pIStatic))		  
+				{
+					CALL_ERR("ISHELL_CreateInstance,AEECLSID_STATIC 2",0,0,0);
+					return FALSE;			 
+				}		 
+				ISTATIC_SetRect(m_pIStatic, &rect);  
+			}
+		}
+			return TRUE;
+
+		case EVT_DIALOG_START:			
+			ISHELL_PostEvent(pMe->m_pShell, AEECLSID_DIALER, EVT_USER_REDRAW, 0,0);
+			return TRUE;
+
+		case EVT_USER_REDRAW:
+		{
+			PromptMsg_Param_type m_PromptMsg={0};
+			AECHAR	wstrText[MSGBOX_MAXTEXTLEN];
+
+			MSG_FATAL("***zzg CallApp_ProMpt_DlgHandler m_prompt_id=%d***", pMe->m_prompt_id, 0, 0);
+			
+			switch(pMe->m_prompt_id)
+			{
+				case IDS_SPEED_DIAL_QUERY:
+					m_PromptMsg.ePMsgType = MESSAGE_CONFIRM;	
+					break;
+				
+				default:
+					m_PromptMsg.ePMsgType = MESSAGE_NONE;
+					break;
+			}
+			
+			(void) ISHELL_LoadResString(pMe->m_pShell,
+											AEE_APPSCALLAPP_RES_FILE,
+											pMe->m_prompt_id,
+											wstrText,
+											sizeof(wstrText));
+			
+			m_PromptMsg.pwszMsg = wstrText;
+			if(pMe->m_prompt_id == IDS_SPEED_DIAL_QUERY)
+			{
+				AECHAR	 wsDispMsg[MSGBOX_MAXTEXTLEN] = {0};				
+				WSPRINTF(wsDispMsg, sizeof(wsDispMsg), wstrText, pMe->m_DialString);
+				m_PromptMsg.pwszMsg = wsDispMsg;
+				m_PromptMsg.eBBarType = BTBAR_YES_NO;				
+			}						
+			else
+			{
+				m_PromptMsg.eBBarType = BTBAR_BACK;
+			}
+			
+			DrawPromptMessage(pMe->m_pDisplay,m_pIStatic,&m_PromptMsg);
+			IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
+		}
+			return TRUE;
+
+		case EVT_DIALOG_END:	
+			ISTATIC_Release(m_pIStatic); 
+			m_pIStatic = NULL;
+			return TRUE;
+
+		case EVT_KEY_PRESS:			
+			if(pMe->m_prompt_id == IDS_SPEED_DIAL_QUERY)
+			{
+				switch (wParam)
+				{
+					case AVK_CLR:
+						pMe->m_bCloseAllApplet = FALSE;
+						CLOSE_DIALOG(DLGRET_OK)
+						return TRUE;
+					case AVK_INFO:
+					case AVK_SELECT:	
+						ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_CONTACT);
+						{
+							boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_CONTACT,EVT_USER, PARAM_SPEED_DIAL, (uint16)ATOI((char *)pMe->m_DialString));
+							MSG_FATAL("***zzg ISHELL_PostEvent AEECLSID_APP_CONTACT rt=%x", rt, 0, 0);
+						}
+						return TRUE;
+					default:
+						//not process the another event key
+						return TRUE;
+
+				}
+			}	
+		default:
+			break;
+	}
+    return FALSE;
+} 
+//Add End
+
+
 
 /*==============================================================================
 函数：
@@ -5255,7 +5394,11 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
             }
             else if (pMe->m_CallMuted == TRUE)
             {
-               REFUI_DRAW_BOTTOMBAR(BTBAR_ANSWER_MUTE);
+            	#ifdef FEATURE_VERSION_C337
+				REFUI_DRAW_BOTTOMBAR(BTBAR_ANSWER_SILENT);
+				#else
+               	REFUI_DRAW_BOTTOMBAR(BTBAR_ANSWER_MUTE);
+				#endif
             }
             else if (pMe->m_CallMuted == FALSE)
             {
@@ -6679,13 +6822,18 @@ static void CallApp_MakeSpeedDialCall(CCallApp  *pMe)
             return;
         }
         //load the speed dial empty resource string
-        pMe->m_msg_text_id = IDS_SPEED_DIAL_EMPTY;
+        #ifdef FEATURE_VERSION_C337
+		pMe->m_prompt_id = IDS_SPEED_DIAL_QUERY;
+		CLOSE_DIALOG(DLGRET_PROMPT)
+		#else
+        pMe->m_msg_text_id = IDS_SPEED_DIAL_EMPTY;		
         /*
         CallApp_Init_Msgbox_String(pMe, IDS_SPEED_DIAL_EMPTY, pMe->m_DialString);
 
         if(pMe->m_msg_text != NULL)
         {*/
         CLOSE_DIALOG(DLGRET_MSGBOX);
+		#endif
         //}
     }
 
@@ -11123,11 +11271,19 @@ static void CallApp_Draw_Connect_Softkey(CCallApp *pMe)
 		}
 		else if (pMe->m_bHandFree)
 		{
+			#ifdef FEATURE_VERSION_C337
+			REFUI_DRAW_BOTTOMBAR(BTBAR_OPTION_HANDS_HELD)
+			#else
 			REFUI_DRAW_BOTTOMBAR(BTBAR_OPTION_NORMAL)
+			#endif
 		}
 		else
 		{
+			#ifdef FEATURE_VERSION_C337
+			REFUI_DRAW_BOTTOMBAR(BTBAR_OPTION_HANDS_FREE)
+			#else
 			REFUI_DRAW_BOTTOMBAR(BTBAR_OPTION_HANDSFREEON)
+			#endif
 		}
 		//Add End
 	

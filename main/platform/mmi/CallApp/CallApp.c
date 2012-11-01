@@ -884,6 +884,7 @@ static int CallApp_InitAppData(CCallApp *pMe)
     pMe->m_auto_redial_count = 0;
     pMe->m_b_incall = FALSE;
     pMe->m_msg_text_id = 0;
+	pMe->m_prompt_id = 0;			//Add By zzg 2012_11_01
     pMe->m_b_from_numedit = TRUE;
     pMe->m_b_draw_dot = TRUE;
     pMe->m_curpros = 0;
@@ -1371,6 +1372,7 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
             //pMe->m_b_show_cdg = FALSE;
             pMe->m_cdg_row = 0;
             pMe->m_msg_text_id = 0;
+			pMe->m_prompt_id = 0;		//Add By zzg 2012_11_01
             CallApp_SetupCallAudio(pMe);
 #ifdef FEATRUE_AUTO_POWER
             if(pMe->m_b_powerdown)

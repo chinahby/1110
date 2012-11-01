@@ -570,6 +570,12 @@ static NextFSMAction STATE_CALLING_FROM_ANOTHERAPP_Handler(CCallApp *pMe)
             MOVE_TO_STATE(STATE_OUT_RESTRICT)
             return NFSMACTION_CONTINUE;
 
+		//Add By zzg 2012_10_31
+		case DLGRET_PROMPT:
+			CallApp_ShowDialog(pMe, IDD_PROMPT);
+            return NFSMACTION_WAIT;
+		//Add End	
+
         case DLGRET_MSGBOX:
             CallApp_ShowDialog(pMe, IDD_MSGBOX);
             return NFSMACTION_WAIT;
@@ -673,6 +679,12 @@ static NextFSMAction STATE_NUMBER_FROM_COREHandler(CCallApp *pMe)
             MOVE_TO_STATE(STATE_OUT_RESTRICT)
             return NFSMACTION_CONTINUE;
 
+		//Add By zzg 2012_10_31
+		case DLGRET_PROMPT:
+			CallApp_ShowDialog(pMe, IDD_PROMPT);
+            return NFSMACTION_WAIT;
+		//Add End
+		
         case DLGRET_MSGBOX:
             CallApp_ShowDialog(pMe, IDD_MSGBOX);
             return NFSMACTION_WAIT;
@@ -862,6 +874,12 @@ static NextFSMAction STATE_CONVERSATIONHandler(CCallApp *pMe)
             MOVE_TO_STATE(STATE_EXIT)
             return NFSMACTION_CONTINUE;
 
+		//Add By zzg 2012_10_31
+		case DLGRET_PROMPT:
+			CallApp_ShowDialog(pMe, IDD_PROMPT);
+            return NFSMACTION_WAIT;
+		//Add End
+		
         case DLGRET_MSGBOX:
             CallApp_ShowDialog(pMe, IDD_MSGBOX);
             return NFSMACTION_WAIT;
@@ -911,6 +929,12 @@ static NextFSMAction STATE_CONV_DIALERHandler(CCallApp *pMe)
             }
             return NFSMACTION_CONTINUE;
 
+		//Add By zzg 2012_10_31
+		case DLGRET_PROMPT:
+			CallApp_ShowDialog(pMe, IDD_PROMPT);
+            return NFSMACTION_WAIT;
+		//Add End
+		
         case DLGRET_MSGBOX:
             CallApp_ShowDialog(pMe, IDD_MSGBOX);
             return NFSMACTION_WAIT;
@@ -1057,6 +1081,12 @@ static NextFSMAction STATE_MISSEDCALLHandler(CCallApp *pMe)
             MOVE_TO_STATE(STATE_EXIT)
             return NFSMACTION_CONTINUE;
 
+		//Add By zzg 2012_10_31
+		case DLGRET_PROMPT:
+			CallApp_ShowDialog(pMe, IDD_PROMPT);
+            return NFSMACTION_WAIT;
+		//Add End
+		
         case DLGRET_MSGBOX:
             CallApp_ShowDialog(pMe, IDD_MSGBOX);
             return NFSMACTION_WAIT;
@@ -1564,6 +1594,12 @@ static NextFSMAction STATE_IP_Number_Set_Mode(CCallApp *pMe)
             MOVE_TO_STATE(STATE_CALLING)
             return NFSMACTION_CONTINUE;
 
+		//Add By zzg 2012_10_31
+		case DLGRET_PROMPT:
+			CallApp_ShowDialog(pMe, IDD_PROMPT);
+            return NFSMACTION_WAIT;
+		//Add End	
+
         case DLGRET_MSGBOX:
             CallApp_ShowMsgBox(pMe, IDS_RESTRICT_OUTGOING);
             /*
@@ -1601,6 +1637,12 @@ static NextFSMAction STATE_EDIT_REC_NUMBERHandler(CCallApp *pMe)
                 MOVE_TO_STATE(STATE_EXIT)
             }
             return NFSMACTION_CONTINUE;
+
+		//Add By zzg 2012_10_31
+		case DLGRET_PROMPT:
+			CallApp_ShowDialog(pMe, IDD_PROMPT);
+            return NFSMACTION_WAIT;
+		//Add End	
 
         case DLGRET_MSGBOX:
             CallApp_ShowDialog(pMe, IDD_MSGBOX);

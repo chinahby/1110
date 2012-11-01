@@ -209,6 +209,8 @@
 /*Temp add */
 #define FEATURE_APP_PAUSE_TIMER
 
+#define PARAM_SPEED_DIAL				 999		//Add By zzg 2012_10_31
+
 
 #if 0
 #define FEATURE_IMAGE_DIALING_DIGITS
@@ -341,6 +343,7 @@ typedef enum DLGRetValue
    DLGRET_CONV_DIAL,               //9
    DLGRET_BACK_TO_IDLE,            // Returned by Incoming Call dialog10
    DLGRET_CONNECT_OR_NUMEDIT,      //11
+   DLGRET_PROMPT,					//Add By zzg 2012_10_31
    DLGRET_MSGBOX,
    DLGRET_SEL_IP_NUMBER,
    DLGRET_EMGNUMBER_CALL_ONLY,
@@ -658,6 +661,7 @@ typedef struct _CCallApp
     uint16                     m_auto_redial_count;
     boolean                    m_b_incall;//is in connect??
     uint16                     m_msg_text_id;
+	uint16          		   m_prompt_id; 		//Add By zzg 2012_10_31
     boolean                    m_b_from_numedit;
     boolean                   m_b_draw_dot;
 #ifdef FEATURE_IMAGE_DIALING_DIGITS
