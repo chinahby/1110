@@ -4139,7 +4139,7 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
 #endif	
 
 //Add By zzg 2012_10_30
-#ifdef FEATURE_VERSION_W317A
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
     // size cfgID
     (void)ICONFIG_GetItem(pMe->m_pConfig,
                           CFGI_CAMERA_SIZE,
