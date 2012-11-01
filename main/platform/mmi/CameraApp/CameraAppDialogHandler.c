@@ -1535,6 +1535,32 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
                     MSG_FATAL("CameraApp_CameraCFGHandleEvent RIGHT END:%d",pMe->m_nCameraCFG,0,0);
                     break;
 
+                #ifdef FEATURE_VERSION_C337
+                case AVK_1:
+                     pMe->m_nCameraCFG=CAMERACFGENVIRMENT;
+                     break;
+
+                case AVK_2:
+                     pMe->m_nCameraCFG=CAMERACFGQUALITY;
+                     break;
+   
+                case AVK_3:
+                     pMe->m_nCameraCFG=CAMERACFGSIZE;
+                     break;
+   
+                case AVK_4:
+                     pMe->m_nCameraCFG=CAMERACFGTONE;
+                     break;
+   
+                case AVK_5:
+                     pMe->m_nCameraCFG=CAMERACFGSELFTIME;
+                     break;
+   
+                case AVK_6:
+                     pMe->m_nCameraCFG=CAMERACFGRESET;
+                     break;
+                #endif
+                
                 case AVK_UP:
                 case AVK_DOWN:   
                 	#ifdef FEATURE_DSP
