@@ -2688,7 +2688,14 @@ static boolean IDD_MESSAGELIST_Handler(void        *pUser,
 							}
 						}
 						#endif
+
+						MSG_FATAL("***zzg AVK_SEND CallPhoneNumber 111 m_eMBoxType=%x", pMe->m_eMBoxType, 0, 0);
+
+						#ifdef FEATURE_VERSION_C337
+						if ((pMe->m_eMBoxType == WMS_MB_INBOX) || (pMe->m_eMBoxType == WMS_MB_OUTBOX))						
+						#else
 						if (pMe->m_eMBoxType == WMS_MB_INBOX)
+						#endif							
 						{				
 						
 							pMe->m_wPrevMenuSel = IMENUCTL_GetSel(pMenu);
@@ -3162,10 +3169,20 @@ static boolean IDD_VIEWMSG_Handler(void         *pUser,
 						}
 					}
 					#endif
+
+					MSG_FATAL("***zzg AVK_SEND CallPhoneNumber 222 m_currState=%x", pMe->m_currState, 0, 0);
+
+					#ifdef FEATURE_VERSION_C337
+					if ((pMe->m_currState == WMSST_VIEWINBOXMSG) || (pMe->m_currState == WMSST_VIEWOUTBOXMSG))	
+					#else
 					if (pMe->m_currState == WMSST_VIEWINBOXMSG)
+					#endif	
                 	{                	
 #if 1//defined(FEATURE_CARRIER_VENEZUELA_MOVILNET) || defined(FEATURE_CARRIER_THAILAND_HUTCH)
 	                    // 该运营商要求 CBN 优先
+	                    
+	                    MSG_FATAL("***zzg m_szCallBkNum=%s", (char *)pMe->m_msCur.m_szCallBkNum, 0, 0);
+
 	                    if (WSTRLEN(pMe->m_msCur.m_szCallBkNum) > 0)
 	                    {
 	                        // 调用呼叫接口，本 Applet 会被挂起，返回时回到当前状态
@@ -15430,6 +15447,9 @@ static boolean IDD_EXTARCTEDITEMLIST_Handler(void *pUser,
 						}
 					}
 					#endif
+
+					MSG_FATAL("***zzg AVK_SEND CallPhoneNumber 333 m_ExtractType=%x", pMe->m_ExtractType, 0, 0);
+					
                     if (pMe->m_ExtractType == EXTRACT_NUM)
                     {
                         int32     i;
