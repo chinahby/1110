@@ -181,6 +181,9 @@
 	<STRING Id="1115" Name="IDS_NOOMH_CARD">
 		<Text>This is non-OMH Card, please upgrade to OMH R-UIM</Text>
  	</STRING>
+ 	<String Id="1116" Name="IDS_SPEED_DIAL_QUERY">
+		<Text>Speed Dial %s is Off,Set it On?</Text>
+	</String>
  </Strings>
  <Dialogs>
  	<DIALOG Id="6001" Name="IDD_NUMEDIT" Focus="0">
@@ -225,5 +228,9 @@
  	<Dialog Id="6009" Name="IDD_IP_NUMBER" Focus="0">
  		<Controls/>
  	</Dialog>
+ 	<Dialog Id="6011" Name="IDD_PROMPT" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
  </Dialogs>
  </BREWRes>

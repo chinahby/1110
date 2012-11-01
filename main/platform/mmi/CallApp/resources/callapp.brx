@@ -166,6 +166,9 @@
 	<String Id="1055" Name="IDS_PWDERR">
 		<Text>Invalid password</Text>
 	</String>
+	<String Id="1056" Name="IDS_SPEED_DIAL_QUERY">
+		<Text>Speed Dial %s is Off,Set it On?</Text>
+	</String>
 	<String Id="1057" Name="IDS_PWDTIPS">
 		<Text>Enter password</Text>
 	</String>
@@ -248,6 +251,10 @@
 	</Dialog>
 	<Dialog Id="6010" Name="IDD_PWD" Focus="0">
 		<Controls/>
+	</Dialog>
+	<Dialog Id="6011" Name="IDD_PROMPT" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</Dialog>
 </Dialogs>
 </BREWRes>
