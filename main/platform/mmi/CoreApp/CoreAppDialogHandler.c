@@ -3789,7 +3789,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 						//AEE_CancelTimer(CoreApp_keypadtimer,pMe);
 						//ISHELL_CancelTimer(pMe->a.m_pIShell,CoreApp_keypadtimer,pMe);
 					}
-#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)   //add by yangdecai
+#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_C337)   //add by yangdecai
             	    return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
 #elif defined (FEATURE_VERSION_W208S)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
@@ -3842,6 +3842,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     return CoreApp_LaunchApplet(pMe, AEECLSID_WORLDTIME);
     #elif defined(FEATURE_VERSION_W317A)
                     return CoreApp_LaunchApplet(pMe, AEECLSID_SCHEDULEAPP);
+    #elif defined(FEATURE_VERSION_C337)
+                    return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 	#else
 					return CoreApp_LaunchApplet(pMe, AEECLSID_ALARMCLOCK); 
 	#endif
@@ -3905,6 +3907,9 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					return CoreApp_LaunchApplet(pMe, AEECLSID_SCHEDULEAPP);
 #elif defined(FEATURE_VERSION_W208S)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APPMANAGER);
+#elif defined(FEATURE_VERSION_C337)
+                    return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);
+
 					return TRUE;
 #else
 					
@@ -3961,7 +3966,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                                 return FALSE;
                             }
 				    	}
-                        #elif defined(FEATURE_VERSION_VG68)
+                        #elif defined(FEATURE_VERSION_VG68)||defined(FEATURE_VERSION_C337)
                             return CoreApp_LaunchApplet(pMe, AEECLSID_ALARMCLOCK);
                         #elif defined(FEATURE_VERSION_C11)
                             return CoreApp_LaunchApplet(pMe, AEECLSID_APP_SETTINGMENU);
