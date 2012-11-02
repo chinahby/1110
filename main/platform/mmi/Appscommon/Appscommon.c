@@ -320,6 +320,12 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
             nResID_R = IDS_STRING_CANCEL;
             break;
 
+		//Add By zzg 2012_10_31
+		case BTBAR_END_CALL:
+            nResID_R = IDS_END_CALL;
+            break;
+		//Add End
+
             // -----¹Ø±Õ
          case BTBAR_CLOSE:
             nResID_R = IDS_CLOSE;
@@ -406,6 +412,13 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
             nResID_L = IDS_ANSWER;
             nResID_R = IDS_MUTE;
             break;
+
+		//Add By zzg 2012_10_31
+		case BTBAR_ANSWER_SILENT:
+            nResID_L = IDS_ANSWER;
+            nResID_R = IDS_SILENT;
+            break;
+		//Add End
 
          case BTBAR_ANSWER_UNMUTE:
             nResID_L = IDS_ANSWER;
@@ -574,7 +587,17 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
             nResID_L = IDS_OPTION;
             nResID_R = IDS_HANDSFREE_ON;  
             break;
-		
+
+		//Add By zzg 2012_10_31		
+		case BTBAR_OPTION_HANDS_FREE:
+			nResID_L = IDS_OPTION;
+            nResID_R = IDS_HANDS_FREE;  
+            break;
+		case BTBAR_OPTION_HANDS_HELD:
+			nResID_L = IDS_OPTION;
+            nResID_R = IDS_HANDS_HELD;  
+            break;	
+		//Add End
 
          case BTBAR_OPTION_NORMAL:
             nResID_L = IDS_OPTION;

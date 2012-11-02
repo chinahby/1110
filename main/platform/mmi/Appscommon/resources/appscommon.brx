@@ -253,6 +253,18 @@
 	<String Id="1035" Name="IDS_CAP" Encoding="Unicode">
 		<Text>Cap</Text>
 	</String>
+	<String Id="1036" Name="IDS_END_CALL">
+		<Text>End Call</Text>
+	</String>
+	<String Id="1037" Name="IDS_HANDS_FREE">
+		<Text>H-Free</Text>
+	</String>
+	<String Id="1038" Name="IDS_HANDS_HELD">
+		<Text>H-Held</Text>
+	</String>
+	<String Id="1039" Name="IDS_SILENT">
+		<Text>Silent</Text>
+	</String>
 	<STRING Id="2001" Name="IDS_SNOOZE">
 		<Text>Snooze</Text>
 	</STRING>

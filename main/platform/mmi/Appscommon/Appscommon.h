@@ -225,6 +225,7 @@ typedef enum BottomBar_e_Type
    /*******************start BTBAR_SINGLE_MASK*****************************/
    BTBAR_BACK= 0x1000 + 1,   // -----返回
    BTBAR_CANCEL,            // -----取消 
+   BTBAR_END_CALL,			//Add By zzg 2012_10_31
    BTBAR_CLOSE,              // -----关闭
    BTBAR_DELETE,             //guoys add @2008.10.20 for no match dont use select
    BTBAR_END,                // -----挂机
@@ -241,6 +242,7 @@ typedef enum BottomBar_e_Type
    BTBAR_ADD_BACK,
    BTBAR_ANSWER_IGNORE,
    BTBAR_ANSWER_MUTE,
+   BTBAR_ANSWER_SILENT,		//Add By zzg 2012_10_31
    BTBAR_ANSWER_REJECT,
    BTBAR_ANSWER_UNMUTE,
    BTBAR_BACK_DELETE,
@@ -278,6 +280,8 @@ typedef enum BottomBar_e_Type
    BTBAR_OPTION_ENDCALL,  // 选项-----挂机:
    BTBAR_OPTION_HANDSFREEON,
    BTBAR_OPTION_NORMAL,
+   BTBAR_OPTION_HANDS_FREE,		//Add By zzg 2012_10_31
+   BTBAR_OPTION_HANDS_HELD,		//Add By zzg 2012_10_31
    BTBAR_OPTION_UP,       // 选项-----向上
    BTBAR_0PTION_PLAY_BACK,
    BTBAR_PAUSE_BACK, 
