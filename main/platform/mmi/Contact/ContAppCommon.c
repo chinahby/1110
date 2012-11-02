@@ -787,7 +787,11 @@ uint16  CContApp_GetFldTitleID(AEEAddrFieldID wFldID)
             return IDS_ADDRESS;
 
         case AEE_ADDRFIELD_GROUP:
+#ifdef FEATURE_VERSION_C337
+			return IDS_CALLER_GROUPS;
+#else
             return IDS_INPUT_GROUP;
+#endif
 
         default:
             return 0;

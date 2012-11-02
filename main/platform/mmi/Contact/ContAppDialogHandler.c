@@ -8375,11 +8375,22 @@ static boolean  CContApp_HandleGroupDlgEvent( CContApp  *pMe,
             {
                 AECHAR WTitle[40] = {0};
                 //IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
-                (void)ISHELL_LoadResString(pMe->m_pShell,
-                CONTAPP_RES_FILE_LANG,                                
-                IDS_INPUT_GROUP,
-                WTitle,
-                sizeof(WTitle));
+
+                
+#ifdef FEATURE_VERSION_C337
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+							                CONTAPP_RES_FILE_LANG, 
+											IDS_CALLER_GROUPS,
+											WTitle,
+							                sizeof(WTitle));
+#else                
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+							                CONTAPP_RES_FILE_LANG, 
+											IDS_INPUT_GROUP,
+											WTitle,
+							                sizeof(WTitle));
+#endif                
+                
                 if(pMe->m_pIAnn != NULL)
                 {
                     IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
@@ -14451,11 +14462,21 @@ static boolean  CContApp_HandleGroupOptEditDlgEvent( CContApp  *pMe,
             {
                 AECHAR WTitle[40] = {0};
                 //IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+                
+#ifdef FEATURE_VERSION_C337
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+							                CONTAPP_RES_FILE_LANG,
+											IDS_CALLER_GROUPS,
+											WTitle,
+							                sizeof(WTitle));
+#else               
                 (void)ISHELL_LoadResString(pMe->m_pShell,
-                CONTAPP_RES_FILE_LANG,                                
-                IDS_INPUT_GROUP,
-                WTitle,
-                sizeof(WTitle));
+							                CONTAPP_RES_FILE_LANG,
+											IDS_INPUT_GROUP,
+											WTitle,
+							                sizeof(WTitle));
+#endif                
+                
 
                 (void)ITEXTCTL_SetTitle( pTextCtl, NULL,0,WTitle);
 

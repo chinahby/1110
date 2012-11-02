@@ -335,8 +335,11 @@ int CContApp_BuildMainMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
         }  
  }
 #endif *//* FEATURE_RUIM_PHONEBOOK */    
-
+#ifdef FEATURE_VERSION_C337
+	ai.wText       = IDS_CALLER_GROUPS;
+#else
     ai.wText       = IDS_INPUT_GROUP;
+#endif
     ai.wItemID     = IDI_MAINMENU_MENU_GROUP;
             
     if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
@@ -1161,7 +1164,11 @@ int CContApp_BuildEditMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl, boolean bAll)
 
                 if(pMe->m_wSelectGroup != 0)
                 {
-                   ai.wText       = IDS_INPUT_GROUP;
+#ifdef FEATURE_VERSION_C337
+				   ai.wText       = IDS_CALLER_GROUPS;
+#else
+				   ai.wText       = IDS_INPUT_GROUP;
+#endif
                    ai.wItemID   = IDI_EDIT_MENU_GROUP;
                    ai.wImage    = IDB_GROUP;
                    
