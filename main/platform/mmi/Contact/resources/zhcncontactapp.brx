@@ -466,6 +466,9 @@
 	<String Id="1090" Name="IDS_NAME_MODIFIED">
 		<Text>姓名已经更改</Text>
 	</String>
+	<String Id="1091" Name="IDS_CALLER_GROUPS">
+		<Text>Caller Groups</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MSGBOX" Focus="0">

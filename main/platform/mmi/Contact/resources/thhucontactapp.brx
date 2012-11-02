@@ -301,6 +301,9 @@
 	<String Id="1039" Name="IDS_NAME_MODIFIED">
 		<Text>Name Modified</Text>
 	</String>
+	<String Id="1040" Name="IDS_CALLER_GROUPS">
+		<Text>Caller Groups</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MSGBOX" Focus="0">
