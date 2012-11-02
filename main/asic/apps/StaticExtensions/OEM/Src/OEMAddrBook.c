@@ -134,7 +134,7 @@ static boolean              gbNameSearch;     // Flag to indicate if its a name-
 
 #define NUMBER_SEPARATOR    ((AECHAR)',')
 #if !defined(FEATURE_PEKTEST)
-#ifdef FEATURE_VERSION_1110W516
+#if defined(FEATURE_VERSION_1110W516)||defined(FEATURE_VERSION_C337)
 #define OEMPHONEBOOK_CAPACITY  1000 
 #else
 #define OEMPHONEBOOK_CAPACITY  500 
