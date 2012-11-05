@@ -1020,13 +1020,22 @@ uint16 CContApp_SetFldMaxSize(CContApp *pMe,ITextCtl *pIText,AEEAddrFieldID wFld
 #ifndef WIN32
                 nMaxchars = OEMRUIMAddr_GetRUIMMaxNumberSize();
 #else
+#ifdef FEATURE_VERSION_C337
+				nMaxchars = MAX_INPUT_NAME_EN;
+#else
                 nMaxchars = MAX_INPUT_NUM;
+#endif
 #endif
             }
             else
             {
+#ifdef FEATURE_VERSION_C337
+				nMaxchars = MAX_INPUT_NAME_EN;
+#else            
                 nMaxchars = MAX_INPUT_NUM;
+#endif
             }          
+			MSG_FATAL("***zzg ITEXTCTL_SetMaxSize 111 nMaxchars=%d", nMaxchars, 0, 0);
             ITEXTCTL_SetMaxSize( pIText,nMaxchars);            
             return TRUE;
             
@@ -1063,6 +1072,7 @@ uint16 CContApp_SetFldMaxSize(CContApp *pMe,ITextCtl *pIText,AEEAddrFieldID wFld
             break;
             
         default:
+			MSG_FATAL("***zzg ITEXTCTL_SetMaxSize 222 nMaxchars=%d", nMaxchars, 0, 0);
             ITEXTCTL_SetMaxSize( pIText,nMaxchars);            
             return FALSE;
     }
@@ -1071,11 +1081,12 @@ uint16 CContApp_SetFldMaxSize(CContApp *pMe,ITextCtl *pIText,AEEAddrFieldID wFld
         (ADDOREDIT_ADD == pMe->m_nAddnewOrEdit && pMe->m_nSaveType == CONTCFG_SAVETYPE_RUIM))
         && (HaveNoneASCIIChar(pwstrText, NULL)))
     {
+    	MSG_FATAL("***zzg ITEXTCTL_SetMaxSize 333 nMaxchars=%d", (nMaxchars-1)/2, 0, 0);
         ITEXTCTL_SetMaxSize( pIText,(nMaxchars-1)/2);
     }
     else
     {
-
+		MSG_FATAL("***zzg ITEXTCTL_SetMaxSize 444 nMaxchars=%d", nMaxchars, 0, 0);
         ITEXTCTL_SetMaxSize( pIText,nMaxchars);
         
         //nInputMode = ITEXTCTL_GetInputMode (pIText, NULL);
