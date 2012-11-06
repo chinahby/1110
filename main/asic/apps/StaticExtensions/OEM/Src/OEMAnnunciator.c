@@ -2340,19 +2340,42 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
 
 
 					DBGPRINTF("***zzg bgRect:%d,%d,%d,%d***", bgRect.x, bgRect.y, bgRect.dx, bgRect.dy);
-					
+
+					#ifdef FEATURE_VERSION_C337
+					{
+						IImage      *pBarImg = NULL;
+
+						pBarImg = ISHELL_LoadResImage(pMe->m_piShell,
+			                                          AEE_APPSCOMMONRES_IMAGESFILE,
+			                                          IDI_TITLEBAR);
+
+						if (NULL != pBarImg)
+				        {
+				            IIMAGE_Draw(pBarImg, 0, 0);
+				            IIMAGE_Release(pBarImg);
+				            pBarImg = NULL;
+				        }
+					}
+					#else
                     IDISPLAY_DrawRect(pMe->m_coreObj->m_piDisplay,
                                       &bgRect,
                                       RGB_NONE,
                                       MAKE_RGB(0,0,0),
                                       IDF_RECT_FILL);
+					#endif
 
 	                dwFlags =  IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
 	                rc.x = 0;
 	                rc.y = 0;
 	                rc.dx = SCREEN_WIDTH;
 	                rc.dy = STATEBAR_HEIGHT;
-	                IDISPLAY_SetColor(pMe->m_coreObj->m_piDisplay, CLR_USER_TEXT, RGB_WHITE);
+
+					#ifdef FEATURE_VERSION_C337
+					IDISPLAY_SetColor(pMe->m_coreObj->m_piDisplay, CLR_USER_TEXT, RGB_BLACK);
+					#else
+					IDISPLAY_SetColor(pMe->m_coreObj->m_piDisplay, CLR_USER_TEXT, RGB_WHITE);
+					#endif					
+	                
 	                // 绘制标题文本
 	                //DBGPRINTF("IAnnunCoreObj->m_Title:::::::::::::::::%s",IAnnunCoreObj->m_Title);
 	                (void) IDISPLAY_DrawText(pMe->m_coreObj->m_piDisplay, 
@@ -2362,7 +2385,7 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
 	                0, 
 	                0, 
 	                &rc, 
-	                dwFlags);
+	                dwFlags);					
 	                (void)IDISPLAY_SetColor(pMe->m_coreObj->m_piDisplay, CLR_USER_TEXT, RGB_BLACK);
 	                IDISPLAY_UpdateEx(pMe->m_coreObj->m_piDisplay, TRUE);
             	}

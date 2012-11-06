@@ -1741,9 +1741,16 @@ void DrawTitleBar(IDisplay  * pIDisplay, TitleBar_Param_type *TParam)
         }
         else
         #endif
-        {
+
+		#ifdef FEATURE_VERSION_C337
+		{
+          IDISPLAY_SetColor(pIDisplay, CLR_USER_TEXT, RGB_BLACK);
+        }
+		#else
+		{
           IDISPLAY_SetColor(pIDisplay, CLR_USER_TEXT, RGB_WHITE);
         }
+		#endif       
 #endif /* FEATURE_FUNCS_THEME */    
         
         dwFlags = TParam->dwAlignFlags | 
