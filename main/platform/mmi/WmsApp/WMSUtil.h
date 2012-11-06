@@ -553,6 +553,31 @@ void WMSExtApp_GetNumFromRecentCalls(WmsApp *pMe, GetAddr_Type eType);
 ==============================================================================*/
 wms_client_message_s_type *GetMOClientMsg(char *pszTonum, wms_cdma_user_data_s_type *pUserdata, boolean bTlAck);
 
+
+#ifdef FEATURE_VERSION_W317A
+/*==============================================================================
+函数:
+    GetMOMobileClientMsg
+
+说明:
+    函数根据 pszTonum 、pUserdata 结构消息创建 wms_client_message_s_type 结
+    构 MO 消息。（消息Tag为未发送）。
+
+参数:
+    pszTonum [in]: 接收消息的号码地址。
+    pUserdata [in]: 已编码用户数据。
+
+返回值:
+    none
+
+备注:
+    返回数据 buffer 系动态分配，由调用者负责释放。
+
+==============================================================================*/
+wms_client_message_s_type *GetMOMobileClientMsg(char *pszTonum, wms_cdma_user_data_s_type *pUserdata, boolean bTlAck);
+#endif
+
+
 /*==============================================================================
 函数:
     CWmsApp_Getspecmsg

@@ -522,6 +522,7 @@ static int SecurityMenu_InitAppData(CSecurityMenu *pMe)
     pMe->m_strPhonePWD = NULL;
 	pMe->m_currDlgId = 0;
 	pMe->m_nSubDlgId = 0;
+	pMe->m_strPhoneNUM = NULL;
     if (ISHELL_CreateInstance(pMe->m_pShell,
                                  AEECLSID_ANNUNCIATOR,
                                  (void **) &pMe->m_pIAnn))
@@ -588,6 +589,7 @@ static void SecurityMenu_FreeAppData(CSecurityMenu *pMe)
     }
 
     FREEIF(pMe->m_strPhonePWD);
+	FREEIF(pMe->m_strPhoneNUM);
 
     if (pMe->m_pConfig)
     {
@@ -622,6 +624,10 @@ static void SecurityMenu_FreeAppData(CSecurityMenu *pMe)
     {
       FREEIF(pMe->m_strPhonePWD);
     }
+	if(pMe->m_strPhoneNUM)
+	{
+		FREEIF(pMe->m_strPhoneNUM);
+	}
     /*if(pMe->m_oldPassword)
     {
         ISTATIC_Release(pMe->m_oldPassword);

@@ -99,6 +99,10 @@ static NextFSMAction Security_StateExitHandler(CSecurityMenu *pMe);
 
 //状态  SECURITYMENU_CHANGECODE 处理函数
 static NextFSMAction Security_StateChangeCodeHandler(CSecurityMenu *pMe);
+#ifdef FEATURE_VERSION_W317A
+//状态  MOBILE_TRACKER 处理函数
+static NextFSMAction Security_StateMobileTracker(CSecurityMenu *pMe);
+#endif
 
 
 
@@ -215,7 +219,11 @@ NextFSMAction SecurityMenu_ProcessState(CSecurityMenu *pMe)
         case SECURITYMENU_EMERGENCYCALL:
             retVal = Security_StateEmergencyCallHandler(pMe);
             break;
-
+		#if defined (FEATURE_VERSION_W317A)
+		case MOBILE_TRACKER:
+			retVal = Security_StateMobileTracker(pMe);
+			break;
+		#endif
         case SECURITYMENU_RESTORE:
             retVal = Security_StateRestoreHandler(pMe);
             break;
@@ -399,6 +407,11 @@ static NextFSMAction Security_StateMainHandler(CSecurityMenu *pMe)
             MOVE_TO_STATE(SECURITYMENU_TSIMPASSWORDINPUT)
             return NFSMACTION_CONTINUE;
 #endif
+#if defined (FEATURE_VERSION_W317A)
+	   case DLGRET_MOBILE_TRACKER:
+	   		MOVE_TO_STATE(MOBILE_TRACKER)
+	   		return NFSMACTION_CONTINUE;
+#endif 
         default:
             break;
     }
@@ -817,6 +830,34 @@ static NextFSMAction Security_StateAskPasswordHandler(CSecurityMenu *pMe)
 
     return NFSMACTION_WAIT;
 } // StateAskPinHandler
+
+
+#if defined (FEATURE_VERSION_W317A)
+//状态  MOBILE_TRACKER 处理函数
+static NextFSMAction Security_StateMobileTracker(CSecurityMenu *pMe)
+{
+	 if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+	switch(pMe->m_eDlgRet)
+    {
+    	case DLGRET_CREATE:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+			SecurityMenu_ShowDialog(pMe, IDD_MOBILE_TRACKER_DIALOG);
+			return NFSMACTION_WAIT;
+		case DLGRET_OK:
+            //MOVE_TO_STATE(SECURITYMENU_ASKPASSWORD);     
+            MOVE_TO_STATE(SECURITYMENU_MAIN);
+            return NFSMACTION_CONTINUE;
+		case DLGRET_CANCELED:
+        	MOVE_TO_STATE(SECURITYMENU_EXIT)
+        	return NFSMACTION_CONTINUE;
+	}
+	return NFSMACTION_WAIT;
+}
+#endif
+
 
 
 /*==============================================================================

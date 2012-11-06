@@ -1213,7 +1213,8 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                         		 (WSTRCMP(pMe->m_DialString, L"*#37*#") == 0)||
                         		 (WSTRCMP(pMe->m_DialString, L"*#7548*#") == 0)||
                         		 (WSTRCMP(pMe->m_DialString, L"*#629#") == 0)||
-                        		 (WSTRCMP(pMe->m_DialString, L"*85241#") == 0))
+                        		 (WSTRCMP(pMe->m_DialString, L"*85241#") == 0)||
+                        		 (WSTRCMP(pMe->m_DialString, L"*#7548135*#") == 0))
                         {
                             return CallApp_LaunchApplet(pMe, AEECLSID_QUICKTEST);
                         }

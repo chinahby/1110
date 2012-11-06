@@ -1090,6 +1090,15 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
             MSG_FATAL("ISHELL_SetTimer CoreApp_SendReginfoTimer",0,0,0);
 
 #endif
+#ifdef	FEATURE_VERSION_W317A
+			// 
+            (void)ISHELL_SetTimer(pMe->a.m_pIShell, 
+                                  MOBILETRACKERREGINFOR_TIME,
+                                  CoreApp_MobileTrackerTimer, 
+                                  pMe);
+
+            MSG_FATAL("ISHELL_SetTimer CoreApp_MobileTrackerTimer",0,0,0);
+#endif
 
 #ifdef FEATURE_SEAMLESS_SMS
             (void)ISHELL_SetTimer(pMe->a.m_pIShell, 

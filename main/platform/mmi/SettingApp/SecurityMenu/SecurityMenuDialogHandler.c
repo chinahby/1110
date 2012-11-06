@@ -146,8 +146,12 @@ static boolean  HandleChangeCodeDialogEvent(CSecurityMenu *pMe,
                                         AEEEvent eCode,
                                         uint16 wParam,
                                         uint32 dwParam);
-
-
+#ifdef FEATURE_VERSION_W317A
+static boolean  SecurityMobileTrackerHandler(CSecurityMenu *pMe,
+                                        AEEEvent eCode,
+                                        uint16 wParam,
+                                        uint32 dwParam);
+#endif
 static boolean  Security_HandleMsgBoxDlgEvent(CSecurityMenu* pMe,
     AEEEvent eCode,
     uint16   wParam,
@@ -351,7 +355,10 @@ boolean SecurityMenu_RouteDialogEvent(CSecurityMenu *pMe,
 
         case IDD_CHANGE_CODE:
             return HandleChangeCodeDialogEvent(pMe,eCode,wParam,dwParam);
-
+		#ifdef FEATURE_VERSION_W317A
+		case  IDD_MOBILE_TRACKER_DIALOG:
+			return SecurityMobileTrackerHandler(pMe,eCode,wParam,dwParam);
+		#endif
         default:
            return FALSE;
     }
@@ -418,6 +425,9 @@ static boolean  SecurityMainDlgHandler(CSecurityMenu *pMe,
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_PHONE_PASSWORD_CHANGE, IDS_PHONE_PASSWORD_CHANGE, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_RESTORE, IDS_RESTORE, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_DELETE, IDS_DELETE, NULL, 0);
+			#if defined (FEATURE_VERSION_W317A)
+			IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_MOBILE_TRACKER, IDS_MOBILE_TRACKER, NULL, 0);
+			#endif
             return TRUE;
 
         case EVT_DIALOG_START:
@@ -535,7 +545,11 @@ static boolean  SecurityMainDlgHandler(CSecurityMenu *pMe,
                 case IDS_DELETE:
                     CLOSE_DIALOG(DLGRET_DELETE)
                     break;
-
+				#if defined (FEATURE_VERSION_W317A)
+				case IDS_MOBILE_TRACKER:
+					CLOSE_DIALOG(DLGRET_MOBILE_TRACKER)
+					break;
+				#endif
                 default:
                     break;
             }
@@ -2373,6 +2387,305 @@ static boolean  SecurityPinChangeDlgHandler(CSecurityMenu *pMe,
     return FALSE;
 
 }
+
+#ifdef FEATURE_VERSION_W317A
+/*==============================================================================
+函数：
+       SecurityMobileTrackerHandler
+说明：
+        设置用来输入手机锁密码的ITextCtl控件的属性
+
+参数：
+      thePasswordTextCtl [in]：用来输入密码的ITextCtl控件
+
+返回值：
+
+备注：
+
+==============================================================================*/
+
+static boolean  SecurityMobileTrackerHandler(CSecurityMenu *pMe,
+                                        AEEEvent eCode,
+                                        uint16 wParam,
+                                        uint32 dwParam)
+{
+	AECHAR      wstrDisplay[OEMNV_LOCKMUM_MAXLEN+2] = {0};
+    int         nWLen = 0;
+    //char        strDisplay[OEMNV_LOCKPIN_MAXLEN+2] = {0};
+	if (NULL == pMe)
+    {
+        return FALSE;
+    }
+    
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT:
+			{
+				AECHAR wGetData[OEMNV_LOCKMUM_MAXLEN] = {0};
+	            if(NULL == pMe->m_strPhoneNUM)
+	            {
+	                pMe->m_strPhoneNUM = (char *)MALLOC((OEMNV_LOCKMUM_MAXLEN + 1)* sizeof(char));
+	            }
+				(void) ICONFIG_GetItem(pMe->m_pConfig,  
+                                        CFGI_MOBILE_TRACKER_PHONENUMB,
+                                        wGetData, 
+                                        sizeof(wGetData));
+				WSTRTOSTR(wGetData, pMe->m_strPhoneNUM ,OEMNV_LOCKMUM_MAXLEN);
+        	}
+            return TRUE;
+            
+        case EVT_DIALOG_START:
+            (void) ISHELL_PostEvent(pMe->m_pShell,
+                                    AEECLSID_APP_SECURITYMENU,
+                                    EVT_USER_REDRAW,
+                                    NULL,
+                                    NULL);
+
+            return TRUE;
+            
+        case EVT_USER_REDRAW:
+            // 绘制相关信息
+            {
+                AECHAR text[32] = {0};
+                RGBVAL nOldFontColor;
+                TitleBar_Param_type  TitleBar_Param = {0};
+                
+                // 先清屏
+#ifdef FEATURE_CARRIER_CHINA_VERTU
+                {
+                    IImage *pImageBg = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SECURITY_BACKGROUND);
+                    
+                    Appscommon_ResetBackground(pMe->m_pDisplay, pImageBg, APPSCOMMON_BG_COLOR, &pMe->m_rc, 0, 0);
+                    if(pImageBg != NULL)
+                    {
+                        IImage_Release(pImageBg);
+                    }
+                }
+#else
+                Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
+#endif
+                //IDISPLAY_FillRect  (pMe->m_pDisplay,&pMe->m_rc,RGB_BLACK);                  
+                (void)ISHELL_LoadResString(pMe->m_pShell, 
+                                                    AEE_APPSSECURITYMENU_RES_FILE,
+                                                    IDS_MOBILE_TRACKER, 
+                                                    text,
+                                                    sizeof(text));                  
+                // 画标题条
+                TitleBar_Param.pwszTitle = text;
+                TitleBar_Param.dwAlignFlags = IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
+                #if 0
+                DrawTitleBar(pMe->m_pDisplay, &TitleBar_Param);
+				#else
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,text);
+				#endif
+               (void)ISHELL_LoadResString(pMe->m_pShell, 
+                                                AEE_APPSSECURITYMENU_RES_FILE,
+                                                IDS_ENTER_PHONENUMBER, 
+                                                text,
+                                                sizeof(text));
+                nOldFontColor = IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
+                IDISPLAY_DrawText(pMe->m_pDisplay, 
+                                AEE_FONT_BOLD, 
+                                text,
+                                -1, 
+                                xOffset, 
+                                MENUITEM_HEIGHT*1/2, 
+                                NULL, 
+                                IDF_TEXT_TRANSPARENT);
+            
+            	
+                (void) STRTOWSTR(pMe->m_strPhoneNUM, wstrDisplay, sizeof(wstrDisplay));
+                IDISPLAY_DrawText(pMe->m_pDisplay, 
+                                AEE_FONT_BOLD, 
+                                wstrDisplay,
+                                -1, 
+                                2*xOffset, 
+                                MENUITEM_HEIGHT*3/2,
+                                NULL, 
+                                IDF_TEXT_TRANSPARENT);
+                nWLen = STRLEN(pMe->m_strPhoneNUM);
+                IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, nOldFontColor);
+            	#ifndef FEATURE_ALL_KEY_PAD
+                // 绘制底条提示
+                if (nWLen > 1)
+                {// 确定-----删除
+                    SEC_MENU_DRAW_BOTTOMBAR(BTBAR_OK_DELETE)
+                }
+                else if(nWLen > 0)
+                {// 删除
+                    SEC_MENU_DRAW_BOTTOMBAR(BTBAR_DELETE)
+                }
+                else
+                #else
+                // 绘制底条提示
+                if (nWLen > 1)
+                {// 确定-----删除
+                    SEC_MENU_DRAW_BOTTOMBAR(BTBAR_OK_BACK)
+                }
+                else if(nWLen > 0)
+                {// 删除
+                    SEC_MENU_DRAW_BOTTOMBAR(BTBAR_BACK)
+                }
+                else
+                #endif
+                {// 取消
+                    SEC_MENU_DRAW_BOTTOMBAR(BTBAR_CANCEL)
+                }
+        
+                // 更新显示
+                IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+            
+                return TRUE;
+            }
+            
+        case EVT_DIALOG_END:
+            if(!pMe->m_bSuspending)
+            {
+                FREEIF(pMe->m_strPhonePWD);
+            }
+            return TRUE;
+
+        case EVT_KEY:
+            {
+                char  chEnter = 0;
+                int   nLen = 0;
+                boolean bRedraw = FALSE;
+                
+                switch (wParam)
+                {
+                    case AVK_0:
+                    case AVK_1:
+                    case AVK_2:
+                    case AVK_3:
+                    case AVK_4:
+                    case AVK_5:
+                    case AVK_6:
+                    case AVK_7:
+                    case AVK_8:
+                    case AVK_9:
+                        chEnter = '0' + (wParam - AVK_0);
+                        break;
+
+                    case AVK_STAR:
+                        chEnter = '*';
+                        break;
+ 
+                    case AVK_POUND:
+                        chEnter = '#';
+                        break;
+                        
+                    case AVK_CLR:
+                        chEnter = 0;
+                        #ifndef FEATURE_ALL_KEY_PAD
+                        if (pMe->m_strPhoneNUM == NULL || STRLEN(pMe->m_strPhoneNUM) == 0)
+                        {
+                            CLOSE_DIALOG(DLGRET_CANCELED)
+                            return TRUE;
+                        }
+                        #else
+                        if(dwParam == 0)
+                        {
+                        	CLOSE_DIALOG(DLGRET_CANCELED)
+                            return TRUE;
+                        }
+                        else
+                        {
+                        	if (pMe->m_strPhoneNUM == NULL || STRLEN(pMe->m_strPhoneNUM) == 0)
+                        	{
+                            	CLOSE_DIALOG(DLGRET_CANCELED)
+                            	return TRUE;
+                        	}
+                        }
+                        #endif
+                        break;
+
+                    case AVK_DEL:    
+                        chEnter = 0;
+#ifdef FEATURE_ALL_KEY_PAD 
+                        if (pMe->m_strPhoneNUM == NULL || STRLEN(pMe->m_strPhoneNUM) == 0)
+                        {
+                            CLOSE_DIALOG(DLGRET_CANCELED)
+                            return TRUE;
+                        }
+#endif
+                    break;
+
+					case AVK_SELECT:
+                    case AVK_INFO:
+                        if (pMe->m_strPhoneNUM == NULL)
+                        {
+                            return TRUE;
+                        }
+                        else
+                        {
+                        	uint16 num = 0;
+							AEEMobileInfo     mi;
+							uint16 wData[OEMNV_LOCKMUM_MAXLEN] = {0};
+							uint16 wImsiData[OEMNV_LOCKIMSI_MAXLEN] = {0};
+							MSG_FATAL("AVK_SELECT..............AVK_INFO",0,0,0);
+							GetMobileInfo(&mi);
+							(void) STRTOWSTR(pMe->m_strPhoneNUM, wData, sizeof(wData));
+							num = WSTRLEN(wData);
+							MSG_FATAL("AVK_SELECT..............AVK_INFO==num=%d",num,0,0);
+                            (void) ICONFIG_SetItem(pMe->m_pConfig,  
+                                                            CFGI_MOBILE_TRACKER_PHONENUMB,
+                                                            wData, 
+                                                            sizeof(wData));
+							
+							(void) STRTOWSTR(mi.szMobileID, wImsiData, sizeof(wImsiData));
+							(void)ICONFIG_SetItem(pMe->m_pConfig,  
+                                                            CFGI_MOBILE_TRACKER_IMSI,
+                                                            wImsiData, 
+                                                            sizeof(wImsiData));
+                            
+                            CLOSE_DIALOG(DLGRET_OK)
+                            return TRUE;
+                        }
+
+                   
+                     
+                    
+                             
+                        default:
+                            return TRUE;
+                }
+				nLen = (pMe->m_strPhoneNUM == NULL)?(0):(STRLEN(pMe->m_strPhoneNUM)); 
+                if (chEnter == 0)
+                {
+                    // 删除字符
+                    if (nLen > 0)
+                    {
+                        bRedraw = TRUE;
+                        pMe->m_strPhoneNUM[nLen-1] = chEnter;
+                    }
+                }
+                else if (nLen < OEMNV_LOCKMUM_MAXLEN)
+                {
+                    pMe->m_strPhoneNUM[nLen] = chEnter;
+                    nLen++;
+                    pMe->m_strPhoneNUM[nLen] = 0;
+                    bRedraw = TRUE;
+                }
+				
+                if (bRedraw)
+                {
+                    (void) ISHELL_PostEvent(pMe->m_pShell,
+                                            AEECLSID_APP_SECURITYMENU,
+                                            EVT_USER_REDRAW,
+                                            NULL,
+                                            NULL);
+                }
+            }
+            return TRUE;
+
+        default:
+            break;
+    }
+    
+    return FALSE;
+}
+#endif
+
 
 /*==============================================================================
 函数：

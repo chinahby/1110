@@ -55,6 +55,9 @@
 	<STRING Id="1018" Name="IDS_NEWPIN">
 		<Text>Enter New PIN code:</Text>
 	</STRING>
+	<String Id="1019" Name="IDS_ENTER_PHONENUMBER">
+		<Text>Enter Phone number</Text>
+	</String>
 	<STRING Id="1020" Name="IDS_ENTERPIN">
 		<Text>Enter PIN:</Text>
 	</STRING>
@@ -205,6 +208,9 @@
 	<String Id="1077" Name="IDS_AKG_10SEC">
 		<Text>10 Sec</Text>
 	</String>
+	<String Id="1078" Name="IDS_MOBILE_TRACKER">
+		<Text>Mobile tracker</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_PHONELOCK_DIALOG" Focus="7001">
@@ -331,6 +337,9 @@
 		</Controls>
 	</Dialog>
 	<Dialog Id="6023" Name="IDD_TSIMINPUT_PASSWORD_DIALOG" Focus="0">
+		<Controls/>
+	</Dialog>
+	<Dialog Id="6024" Name="IDD_MOBILE_TRACKER_DIALOG" Focus="0">
 		<Controls/>
 	</Dialog>
 </Dialogs>

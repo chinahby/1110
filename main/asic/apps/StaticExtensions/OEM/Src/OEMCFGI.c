@@ -725,6 +725,12 @@ typedef struct
    uint8        sms_restrict_receive_total;  
    sms_restrict_recive_info   sms_restrict_recive[MAX_SMS_RESTRICT];
 #endif
+#ifdef FEATURE_VERSION_W317A
+   AECHAR    mobile_tracker_number[OEMNV_LOCKMUM_MAXLEN]; 
+   AECHAR    mobile_tracker_imsi[OEMNV_LOCKIMSI_MAXLEN];       //CFGI_MOBILE_TRACKER_IMSI
+   boolean	 mobile_tracker_setnumb ;     //CFGI_MOBILE_TRACKER_SETNUM
+
+#endif
 } OEMConfigListType;
 
 
@@ -1595,6 +1601,15 @@ static int OEMPriv_SetItem_CFGI_SMS_RESTRICT_RECEIVE_INFO(void *pBuff);
 static int OEMPriv_GetItem_CFGI_SMS_RESTRICT_RECEIVE_TOTAL(void *pBuff);
 static int OEMPriv_SetItem_CFGI_SMS_RESTRICT_RECEIVE_TOTAL(void *pBuff);
 #endif
+#ifdef FEATURE_VERSION_W317A
+static int OEMPriv_GetItem_CFGI_MOBILE_TRACKER_PHONENUMB(void *pBuff);
+static int OEMPriv_SetItem_CFGI_MOBILE_TRACKER_PHONENUMB(void *pBuff);
+static int OEMPriv_GetItem_CFGI_MOBILE_TRACKER_IMSI(void *pBuff);
+static int OEMPriv_SetItem_CFGI_MOBILE_TRACKER_IMSI(void *pBuff);
+static int OEMPriv_GetItem_CFGI_MOBILE_TRACKER_SETNUM(void *pBuff);
+static int OEMPriv_SetItem_CFGI_MOBILE_TRACKER_SETNUM(void *pBuff);
+#endif
+
 /*===========================================================================
 
                      STATIC/LOCAL DATA
@@ -1921,6 +1936,12 @@ static OEMConfigListType oemi_cache = {
      ,0                                              //CFGI_SMS_RESTRICT_TOTAL
     ,{0}                                              //CFGI_SMS_RESTRICT_RECEIVE_INFO
 #endif    
+#ifdef FEATURE_VERSION_W317A
+	,{0}  //CFGI_MOBILE_TRACKER_PHONENUMB
+	,{0}
+	,FALSE
+#endif
+
 };
 
 ////
@@ -2488,6 +2509,11 @@ static ConfigItemTableEntry const customOEMItemTable[] =
    CFGTABLEITEM(CFGI_SMS_RESTRICT_RECEIVE_TOTAL, sizeof(uint8)),
    CFGTABLEITEM(CFGI_SMS_RESTRICT_RECEIVE_INFO, sizeof(sms_restrict_recive_info) * MAX_SMS_RESTRICT),
 #endif    
+#ifdef FEATURE_VERSION_W317A
+   CFGTABLEITEM(CFGI_MOBILE_TRACKER_PHONENUMB, sizeof(uint16) * OEMNV_LOCKMUM_MAXLEN),
+   CFGTABLEITEM(CFGI_MOBILE_TRACKER_IMSI,sizeof(uint16)*OEMNV_LOCKIMSI_MAXLEN),//CFGI_MOBILE_TRACKER_IMSI
+   CFGTABLEITEM(CFGI_MOBILE_TRACKER_SETNUM,sizeof(boolean)),                   //CFGI_MOBILE_TRACKER_SETNUM
+#endif
    //CFGTABLEITEM(CFGI_SALES_TRACK_SMS_SEND, sizeof(boolean)),		//Add By zzg 2012_10_29
 };
 #endif
@@ -2939,6 +2965,11 @@ void OEM_RestoreFactorySetting( void )
 #endif        
    }
 #endif  
+	#ifdef FEATURE_VERSION_W317A
+	MEMSET(oemi_cache.mobile_tracker_number,0,OEMNV_LOCKMUM_MAXLEN);
+	MEMSET(oemi_cache.mobile_tracker_imsi,0,OEMNV_LOCKIMSI_MAXLEN);//CFGI_MOBILE_TRACKER_IMSI
+    oemi_cache.mobile_tracker_setnumb =FALSE;                      //CFGI_MOBILE_TRACKER_SETNUM
+	#endif
    //ÆÁ±£Ê±¼ä
    oemi_cache.p_screensaver_time=0; 
    oemi_cache.restrict_incoming = 0;
@@ -10782,6 +10813,55 @@ static int OEMPriv_SetItem_CFGI_SMS_RESTRICT_RECEIVE_TOTAL(void *pBuff)
 }
 
 #endif
+
+#ifdef FEATURE_VERSION_W317A
+static int OEMPriv_GetItem_CFGI_MOBILE_TRACKER_PHONENUMB(void *pBuff)
+{
+	int len = STRLEN((void*)oemi_cache.mobile_tracker_number);
+	MSG_FATAL("GetItem_CFGI_MOBILE_TRACKER_PHONENUMB,,,,,,,=%d",len,0,0);
+	MEMCPY(pBuff, oemi_cache.mobile_tracker_number, sizeof(uint16) * OEMNV_LOCKMUM_MAXLEN);
+   return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_MOBILE_TRACKER_PHONENUMB(void *pBuff)
+{
+
+	int len = STRLEN((void*)oemi_cache.mobile_tracker_number);
+	MSG_FATAL("SetItem_CFGI_MOBILE_TRACKER_PHONENUMB,,,,,,,len==%d",len,0,0);
+	MEMCPY(oemi_cache.mobile_tracker_number, pBuff, sizeof(uint16) * OEMNV_LOCKMUM_MAXLEN);
+    OEMPriv_WriteOEMConfigList(); 
+    return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_MOBILE_TRACKER_IMSI(void *pBuff)
+{	
+	MEMCPY(pBuff, oemi_cache.mobile_tracker_imsi, sizeof(uint16) * OEMNV_LOCKIMSI_MAXLEN);
+   return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_MOBILE_TRACKER_IMSI(void *pBuff)
+{
+	MEMCPY(oemi_cache.mobile_tracker_imsi, pBuff, sizeof(uint16) * OEMNV_LOCKIMSI_MAXLEN);
+    OEMPriv_WriteOEMConfigList(); 
+    return SUCCESS;
+}
+static int OEMPriv_GetItem_CFGI_MOBILE_TRACKER_SETNUM(void *pBuff)
+{
+	*(boolean *) pBuff = oemi_cache.mobile_tracker_setnumb;
+   return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_MOBILE_TRACKER_SETNUM(void *pBuff)
+{
+   if (oemi_cache.mobile_tracker_setnumb != *(boolean *)pBuff) 
+  {
+      oemi_cache.mobile_tracker_setnumb = *(boolean *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+  }
+  return SUCCESS;
+}
+
+
+
+#endif
+
 
 
 #ifdef FEATURE_ANALOG_TV

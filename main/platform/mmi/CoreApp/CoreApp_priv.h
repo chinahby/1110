@@ -95,6 +95,14 @@
 
 // 根据 BREW 3 的需要，重定义资源文件宏
 #define  AEE_COREAPPRES_LANGFILE (AEE_RES_LANGDIR COREAPP_RES_FILE)
+
+#ifdef FEATURE_VERSION_W317A
+#define IDLE_CFG_MOBILETRANKER_VERSION    10
+#define MOBILETRACKERREGINFOR_TIME   (60*1000)
+
+#endif
+
+
 #ifdef FEATURE_POWERUP_REGISTER_CHINAUNICOM
 #define IDLE_CFG_VERSION    1
 
@@ -726,6 +734,22 @@ typedef struct _IdleAPP_Config_Type
 } IdleAPP_Config_Type;
 #endif
 
+#ifdef FEATURE_VERSION_W317A
+typedef struct _MOBILETRACKER_ITEM
+{
+    char        szMobileIMSI[16];   // 手机 IMSI 号
+    
+} MOBILETRACKER;
+
+// 待机 Applet 配置结构
+typedef struct _IdleAPP_Config_MobileTracker_Type
+{
+    MOBILETRACKER   m_RegItem;
+	int   nMobiletrackerInitIndictor;  
+} IdleAPP_Config_MobileTracker_Type;
+
+#endif
+
 // 对话框事件处理函数指针类型定义
 typedef boolean (*PFNDLGHANDLER)(void *pUser, AEEEvent evt, uint16 w, uint32 dw);
 
@@ -1145,6 +1169,30 @@ void CoreApp_SendReginfoTimer(void *pme);
 ==============================================================================*/
 int CoreApp_SendReginfo(CCoreApp *pMe);
 #endif
+
+#ifdef FEATURE_VERSION_W317A
+/*==============================================================================
+函数：
+    CoreApp_MobileTracker
+
+说明：
+    函数用来发送注册信息。
+
+参数：
+    pMe [in]：指向CCoreApp Applet对象结构的指针。该结构包含小程序的特定信息。
+       
+返回值：
+    int 
+
+备注:
+
+==============================================================================*/
+int CoreApp_MobileTracker(CCoreApp *pme);
+void CoreApp_MobileTrackerTimer(void *pme);
+
+#endif
+
+
 void CoreApp_load_uim_esn(CCoreApp *pMe);
 int CoreApp_GetBatteryLevel(CCoreApp *pMe);
 #ifdef FEATURE_SEAMLESS_SMS

@@ -1350,6 +1350,21 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             }
             return TRUE;
 #endif
+
+#ifdef	FEATURE_VERSION_W317A
+		case EVT_MOBILE_TRACKER:
+			{
+				if(CoreApp_MobileTracker(pMe) != SUCCESS)
+				{
+					(void)ISHELL_SetTimer(pMe->a.m_pIShell, 
+                                  MOBILETRACKERREGINFOR_TIME,
+                                  CoreApp_MobileTrackerTimer, 
+                                  pMe);
+				}
+			}
+			return TRUE;
+#endif
+
 #ifdef FEATURE_SEAMLESS_SMS
         case EVT_SEND_SEAMLESSSMS:
             // 发送注册短信
@@ -3142,7 +3157,7 @@ void CoreApp_SendReginfoTimer(void *pme)
    // 发送EVT_DISPLAYDIALOGTIMEOUT事件
   (void) ISHELL_PostEvent(pMe->a.m_pIShell,
                           AEECLSID_CORE_APP,
-                          EVT_SENDREGINFOR,
+                          EVT_MOBILE_TRACKER,
                           0,
                           0);
 }
@@ -3259,6 +3274,123 @@ int CoreApp_SendReginfo(CCoreApp   *pMe)
     return result;
 }   
 #endif
+
+
+#ifdef FEATURE_VERSION_W317A
+/*==============================================================================
+函数：
+    CoreApp_MobileTracker
+
+说明：
+    函数用来发送注册信息。
+
+参数：
+    pMe [in]：指向CCoreApp Applet对象结构的指针。该结构包含小程序的特定信息。
+       
+返回值：
+    int 
+
+备注:
+
+==============================================================================*/
+int CoreApp_MobileTracker(CCoreApp *pme)
+{
+    IdleAPP_Config_MobileTracker_Type cfg;
+    int  result = SUCCESS;
+    AEEMobileInfo     mi;
+    IWmsApp *pIWmsApp = NULL;
+    AECHAR  wstr[120] = {0};
+	uint16  wstrNumber[20] = {0};
+	uint16  wstrImsi[16] = {0};
+	char strImsi[16] = {0};
+	uint16 len = 0;
+	AECHAR  wstrType[2] = {(AECHAR)MOBILE_TRACKER_MSG, 0};
+	
+    MSG_FATAL("START CoreApp_MobileTracker",0,0,0);
+    
+    if (pme == NULL)
+    {
+        return EFAILED;
+    }
+    
+    // 获取手机电子串号
+    OEM_GetConfig (CFGI_MOBILEINFO, &mi,  sizeof(AEEMobileInfo));
+	MSG_FATAL("mi.szMobileID!!!!!!!!!!!!=%0x",mi.szMobileID,0,0);
+    if (mi.szMobileID == 0)
+    {
+    	MSG_FATAL("NOT UIM card!!!!!!!!!!!!",0,0,0);
+        return EFAILED;
+    }
+    /*
+    (void)ISHELL_GetPrefs(pme->a.m_pIShell, 
+                AEECLSID_CORE_APP, 
+                IDLE_CFG_MOBILETRANKER_VERSION,
+                &cfg, 
+                sizeof(cfg));*/
+	(void) ICONFIG_GetItem(pme->m_pConfig,  
+                           CFGI_MOBILE_TRACKER_IMSI,
+                           wstrImsi, 
+                           sizeof(wstrImsi));
+	(void) WSTRTOSTR(wstrImsi, strImsi, sizeof(strImsi));
+
+	MSG_FATAL("cfg.m_RegItem.szMobileIMSI!!!!!!!!!!!!=%0x",strImsi,0,0);
+                            
+    
+    if ((STRCMP(strImsi, mi.szMobileID)==0))
+    {// 已注册,不需再注册
+    	MSG_FATAL("END CoreApp_MobileTracker=sucess=",0,0,0);
+        return SUCCESS;
+    }
+
+
+	(void) ICONFIG_GetItem(pme->m_pConfig,  
+                           CFGI_MOBILE_TRACKER_PHONENUMB,
+                           wstrNumber, 
+                           sizeof(wstrNumber));
+	 len = WSTRLEN(wstrNumber);
+	MSG_FATAL("wstrNumber len!!!!!!!!!!!!==%d",len,0,0);
+	if(WSTRLEN(wstrNumber)<5)
+	{
+		return SUCCESS;
+	}
+            
+    result = ISHELL_CreateInstance(pme->a.m_pIShell,
+                                 AEECLSID_WMSAPP,
+                                 (void **) &pIWmsApp);
+    if ((result == SUCCESS) && (NULL != pIWmsApp))
+    {
+        //result = IWmsApp_SendTextMessageExt(pIWmsApp,wstrNumber,wstr);
+        //IWmsApp_Release(pIWmsApp);
+        result = IWmsApp_SendSpecMessage(pIWmsApp, wstrType);
+        IWmsApp_Release(pIWmsApp);
+    }
+    
+    MSG_FATAL("END CoreApp_MobileTracker==%d",result,0,0);
+    return result;
+   
+   
+}
+
+void CoreApp_MobileTrackerTimer(void *pme)
+{
+	CCoreApp *pMe = (CCoreApp *)pme;
+   
+  	 if (NULL == pMe)
+   	{
+      	return;
+   	}
+   
+   	// 发送EVT_DISPLAYDIALOGTIMEOUT事件
+  	(void) ISHELL_PostEvent(pMe->a.m_pIShell,
+                          AEECLSID_CORE_APP,
+                          EVT_MOBILE_TRACKER,
+                          0,
+                          0);
+}
+
+#endif
+
+
 
 #ifdef FEATURE_SEAMLESS_SMS
 void CoreApp_SendSeamlessSMSTimer(void *pme)

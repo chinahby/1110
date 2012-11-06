@@ -143,6 +143,9 @@ typedef enum DLGRetValue
    #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_W317A)
    ,DLGRET_KEYLOCK
    #endif
+   #if defined (FEATURE_VERSION_W317A)
+   ,DLGRET_MOBILE_TRACKER
+   #endif
 
 } DLGRet_Value_e_Type;
 
@@ -175,6 +178,9 @@ typedef enum _SecurityMenuState
    SECURITYMENU_RESTORE,
    #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_W317A)
    SECURITYMENU_KEYLOCK,
+   #endif
+   #if defined (FEATURE_VERSION_W317A)
+   MOBILE_TRACKER,
    #endif
    SECURITYMENU_EXIT
 
@@ -269,6 +275,7 @@ typedef struct _CSecurityMenu
     char                  m_strPUK[UIM_MAX_CHV_DIGITS + 1];
     char                  *m_strPhonePWD;
     char                  m_strPIN[UIM_MAX_CHV_DIGITS + 1]; 
+	char                  *m_strPhoneNUM;
 } CSecurityMenu;
 
 

@@ -320,6 +320,7 @@ enum
 #ifdef FEATURE_QQ_APP
     EVT_QQ_ANNU_UPDATE,
 #endif    
+    EVT_MOBILE_TRACKER,
     EVT_CUST_MAX
 };
 #endif /*CUST_EDITION*/
