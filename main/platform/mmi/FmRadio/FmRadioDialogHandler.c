@@ -1167,6 +1167,10 @@ __handleKeyEvent_input_channel_done__:
 		case AVK_DOWN:
 		case AVK_I:
 		case AVK_O:
+	#ifdef FEATURE_VERSION_C337
+		case AVK_STAR:
+		case AVK_POUND:
+	#endif
 	#endif
 		{
 			if( pMe->opMode == FM_RADIO_OPMODE_PLAY)
@@ -1193,6 +1197,17 @@ __handleKeyEvent_input_channel_done__:
 						changeChannelClockwise( pMe);
 					}
 #endif
+					#ifdef FEATURE_VERSION_C337
+					if (key == AVK_STAR)
+					{
+						key = AVK_DOWN;
+					}
+					else if (key == AVK_POUND)
+					{
+						key = AVK_UP;
+					}						
+					#endif
+					
                     if(( key == AVK_DOWN) || ( key == AVK_UP)|| ( key == AVK_I)|| ( key == AVK_O))
                     {
                         if( pMe->opMode == FM_RADIO_OPMODE_PLAY)
