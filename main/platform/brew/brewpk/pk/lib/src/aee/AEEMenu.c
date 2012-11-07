@@ -4096,11 +4096,11 @@ static void Menu_SetItemColor(CMenuCtl * pme, IDisplay * pd, boolean bSel,RGBVAL
 	
    nBack = IDISPLAY_SetColor(pd, CLR_USER_BACKGROUND, nBack);
    
-	#ifdef FEATURE_VERSION_C337
-	IDISPLAY_SetColor(pd, CLR_USER_TEXT, RGB_WHITE);
-	#else
+	//#ifdef FEATURE_VERSION_C337
+	//IDISPLAY_SetColor(pd, CLR_USER_TEXT, RGB_WHITE);
+	//#else
 	IDISPLAY_SetColor(pd, CLR_USER_TEXT, nText);
-	#endif   
+	//#endif   
 
    if(pcBack)
       *pcBack = nBack;
