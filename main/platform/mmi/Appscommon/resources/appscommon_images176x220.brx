@@ -52,6 +52,15 @@
 	<Object Id="5017" Name="IDI_MENU_ITEM_FOCUS" MimeType="image/png">
 		<File>..\images\176x220\common\Appscommon\Menu\menu\menu_icon_focus.png</File>
 	</Object>
+	<Object Id="5018" Name="IDI_BACKGROUND_C337" MimeType="image/png">
+		<File>..\images\176x220\common\Appscommon\Menu\background\background_c337.png</File>
+	</Object>
+	<Object Id="5019" Name="IDI_BOTTOMBAR_C337" MimeType="image/png">
+		<File>..\images\176x220\common\Appscommon\Menu\bottombar\bottombar_c337.png</File>
+	</Object>
+	<Object Id="5020" Name="IDI_TITLEBAR_C337" MimeType="image/png">
+		<File>..\images\176x220\common\Appscommon\Menu\titlebar\titlebar_c337.png</File>
+	</Object>
 	<Object Id="5021" Name="IDB_CHECK_ON" MimeType="image/png">
 		<File>..\images\176x220\common\Appscommon\Icon\check_yes.png</File>
 	</Object>
@@ -78,6 +87,12 @@
 	</Object>
 	<Object Id="5029" Name="IDB_RIGHTARROW" MimeType="image/png">
 		<File>..\images\176x220\common\Appscommon\Icon\RightArrow.png</File>
+	</Object>
+	<Object Id="5030" Name="IDI_SELECTBAR_C337" MimeType="image/png">
+		<File>..\images\176x220\common\Appscommon\Menu\selectbar\selectbar_c337.png</File>
+	</Object>
+	<Object Id="5031" Name="IDI_SELECTBAR_SHORT_C337" MimeType="image/png">
+		<File>..\images\176x220\common\Appscommon\Menu\selectbar\selectbarshort_c337.png</File>
 	</Object>
 	<Object Id="5041" Name="IDB_ERROR" MimeType="image/png">
 		<File>..\images\176x220\common\Appscommon\MessageBox\error.png</File>
