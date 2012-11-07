@@ -1071,7 +1071,9 @@ static boolean IDD_MAIN_Handler(void        *pUser,
             MSG_FATAL("IDD_MAIN_Handler EVT_DIALOG_INIT 5",0,0,0);
             MENU_ADDITEM(pMenu, IDS_DRAFT);
 #if (!defined FEATURE_CARRIER_THAILAND_HUTCH)
+#if( !defined FEATURE_VERSION_C337)
             MENU_ADDITEM(pMenu, IDS_VOICEMAIL);
+#endif
 #endif //!defined FEATURE_CARRIER_THAILAND_HUTCH
 #ifdef FEATURE_RESERVEDMSG
             MENU_ADDITEM(pMenu, IDS_RESERVEDMSG);
