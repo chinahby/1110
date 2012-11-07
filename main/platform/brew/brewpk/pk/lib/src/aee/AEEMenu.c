@@ -4093,9 +4093,14 @@ static void Menu_SetItemColor(CMenuCtl * pme, IDisplay * pd, boolean bSel,RGBVAL
       nText = pme->m_c.cText;
       nBack = pme->m_c.cBack;
    }
-
+	
    nBack = IDISPLAY_SetColor(pd, CLR_USER_BACKGROUND, nBack);
-   IDISPLAY_SetColor(pd, CLR_USER_TEXT, nText);
+   
+	#ifdef FEATURE_VERSION_C337
+	IDISPLAY_SetColor(pd, CLR_USER_TEXT, RGB_WHITE);
+	#else
+	IDISPLAY_SetColor(pd, CLR_USER_TEXT, nText);
+	#endif   
 
    if(pcBack)
       *pcBack = nBack;
@@ -4784,18 +4789,52 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
         }
 #else
         //下面的20 和12可能要改成公式计算
-        SETAEERECT( &rect, ps->xOffset/*prc->x*/,prc->y + ps->yOffset, pme->m_cyFont, prc->dy);
+
+		#ifdef FEATURE_VERSION_C337		
+		SETAEERECT( &rect, ps->xOffset/*prc->x*/,prc->y + ps->yOffset, 3*pme->m_cyFont/2, prc->dy);
+		#else
+		SETAEERECT( &rect, ps->xOffset/*prc->x*/,prc->y + ps->yOffset, pme->m_cyFont, prc->dy);
+		#endif
 
         STRTOWSTR("%d.", wszFmt, sizeof(wszFmt));				
 		
         WSPRINTF(wszIndex,sizeof(wszIndex),wszFmt,pme->theDrawnItem);
+		
+		#ifdef FEATURE_VERSION_C337		
+		{
+			IImage      *pBarImg = NULL;
+
+			if (bSel)
+			{
+				pBarImg = ISHELL_LoadResImage(pme->m_pIShell,
+		                                      AEE_APPSCOMMONRES_IMAGESFILE,
+		                                      IDI_MENU_ITEM_FOCUS);
+			}
+			else
+			{
+				pBarImg = ISHELL_LoadResImage(pme->m_pIShell,
+		                                      AEE_APPSCOMMONRES_IMAGESFILE,
+		                                      IDI_MENU_ITEM);
+			}					
+
+			if (NULL != pBarImg)
+	        {	        	
+	            IIMAGE_Draw(pBarImg, rect.x, rect.y);
+	            IIMAGE_Release(pBarImg);
+	            pBarImg = NULL;
+	        }
+
+			prc->x  += rect.dx;
+        	prc->dx -= rect.dx;
+		}		
+		#else		
 
 #if !defined( FEATURE_CONTROL_BG_USE_IMAGE)
-        if(bSel){
+        if(bSel){			
             IDISPLAY_SetColor(pd,CLR_USER_BACKGROUND,RGB_WHITE);
             IDISPLAY_SetColor(pd,CLR_USER_TEXT,RGB_BLACK);//wlh mod 更改选中条的序号颜色
         }
-        else{
+        else{			
             IDISPLAY_SetColor(pd,CLR_USER_BACKGROUND,RGB_BLACK);
             IDISPLAY_SetColor(pd,CLR_USER_TEXT,RGB_WHITE);
         }
@@ -4804,6 +4843,7 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
         
         prc->x  += rect.dx;
         prc->dx -= rect.dx;
+		#endif
 #endif
     }
  }
@@ -5034,8 +5074,7 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
 #endif
 #endif //#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
 
-   // Reset the background color - it may have changed above...
-
+   // Reset the background color - it may have changed above...	
    IDISPLAY_SetColor(pd,CLR_USER_BACKGROUND,cBack);
 }
 
@@ -5068,7 +5107,7 @@ static void Menu_DrawODItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolea
    // Draw Item 
    pme->m_pfnCB(pme->m_pvContext, &cbData);
 
-   // Reset the background color
+   // Reset the background color   
    IDISPLAY_SetColor(pd,CLR_USER_BACKGROUND,cBack);
 }
 
@@ -5706,7 +5745,7 @@ CLR_USER_BACKGROUND, CLR_USER_TEXT and CLR_USER_FRAME.
 static void Menu_InitColors(CMenuCtl * pme, RGBVAL * pBack, RGBVAL * pText, RGBVAL * pFrame)
 {
    IDisplay * pd = pme->m_pIDisplay;
-
+	
    *pBack = IDISPLAY_SetColor(pd, CLR_USER_BACKGROUND, pme->m_c.cBack);
    *pText = IDISPLAY_SetColor(pd, CLR_USER_TEXT, pme->m_c.cText);
    *pFrame = IDISPLAY_SetColor(pd, CLR_USER_FRAME, pme->m_c.cFrame);
@@ -6066,10 +6105,10 @@ static boolean List_Draw(CMenuCtl * pme)
    CMenuItem * p = GetItemByIdx(pme->m_pItemList, pme->m_nSelect);
 
    // erase previous menu
-   IDISPLAY_FillRect(pd, &pme->m_rc, pme->m_c.cBack);
+   IDISPLAY_FillRect(pd, &pme->m_rc, pme->m_c.cBack); 
 
    clrBack = IDISPLAY_SetColor(pd, CLR_USER_BACKGROUND, pme->m_c.cTitle);
-   clrText = IDISPLAY_SetColor(pd, CLR_USER_TEXT, pme->m_c.cTitleText);
+   clrText = IDISPLAY_SetColor(pd, CLR_USER_TEXT, pme->m_c.cTitleText);   
 
    // draw the title text
    qrc = pme->m_rc;
@@ -6153,7 +6192,7 @@ static boolean List_Draw(CMenuCtl * pme)
       IDISPLAY_DrawText(pme->m_pIDisplay, p->nFont,p->text, -1, qrc.x , qrc.y + 2, &qrc, IDF_RECT_FILL | ParagraphAlignment((AECHAR *)(p->text), WSTRLEN(p->text)));
 #endif
    }
-
+	
    IDISPLAY_SetColor(pd, CLR_USER_BACKGROUND, clrBack);
    IDISPLAY_SetColor(pd, CLR_USER_TEXT, clrText);
    
