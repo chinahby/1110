@@ -46,6 +46,12 @@
 	<Object Id="5015" Name="IDB_MAINMENU_BG" MimeType="image/png">
 		<File>..\images\176x220\common\Appscommon\Menu\background\mainmenubg.png</File>
 	</Object>
+	<Object Id="5016" Name="IDI_MENU_ITEM" MimeType="image/png">
+		<File>..\images\176x220\common\Appscommon\Menu\menu\menu_icon.png</File>
+	</Object>
+	<Object Id="5017" Name="IDI_MENU_ITEM_FOCUS" MimeType="image/png">
+		<File>..\images\176x220\common\Appscommon\Menu\menu\menu_icon_focus.png</File>
+	</Object>
 	<Object Id="5021" Name="IDB_CHECK_ON" MimeType="image/png">
 		<File>..\images\176x220\common\Appscommon\Icon\check_yes.png</File>
 	</Object>
