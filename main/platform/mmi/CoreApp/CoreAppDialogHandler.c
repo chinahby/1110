@@ -7361,7 +7361,18 @@ void CoreApp_UpdateAnnunciator(CCoreApp *pMe)
 #endif
     if((missed_call_icon) && (pMe->m_pIAnn != NULL))
     {
-        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL, ANNUN_STATE_CALL_MISSEDCALL_ON);
+    	#ifdef FEATURE_VERSION_C337
+		if (pMe->m_pIRUIM != NULL)
+		{
+			if(IRUIM_IsCardConnected(pMe->m_pIRUIM))
+			{
+				IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL, ANNUN_STATE_CALL_MISSEDCALL_ON);
+			}
+		}
+		#else
+		IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL, ANNUN_STATE_CALL_MISSEDCALL_ON);
+		#endif
+        
     }
 
 	//Add By zzg 2010_11_22
