@@ -77,7 +77,7 @@
 		<Text>Converter</Text>
 	</String>
 	<String Id="1026" Name="IDS_MAIN_MENU_STOPWATCH">
-		<Text>StopWatch</Text>
+		<Text>Stopwatch</Text>
 	</String>
 	<String Id="1027" Name="IDS_MAIN_MENU_WORLDTIME">
 		<Text>WorldTime</Text>
