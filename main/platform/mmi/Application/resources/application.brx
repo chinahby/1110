@@ -20,7 +20,7 @@
 		<Text>Timer</Text>
 	</STRING>
 	<STRING Id="1013" Name="IDS_APPLICATION_STOPWATCH">
-		<Text>StopWatch</Text>
+		<Text>Stopwatch</Text>
 	</STRING>
 	<STRING Id="1014" Name="IDS_APPLICATION_ALARM">
 		<Text>Alarm</Text>
