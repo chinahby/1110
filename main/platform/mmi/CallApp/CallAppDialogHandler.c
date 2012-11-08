@@ -5148,14 +5148,14 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
             
 		case EVT_NO_CLOSEBACKLIGHT:
 			//wParam 1:±≥π‚∞Î¡¡, 0: ±≥π‚√	
-			#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A)
-			//if(wParam == 0)
-			#else
-			if(wParam == 0)
-			#endif
+#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A)
+			return TRUE;
+#else
+			if(wParam == 0)			
 			{
 			    return TRUE;
 			}
+#endif
             break;
             
         case EVT_USER_REDRAW:
