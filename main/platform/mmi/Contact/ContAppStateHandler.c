@@ -5698,11 +5698,21 @@ static NextFSMAction Handler_STATE_VIEWTYPE(CContApp *pMe)
 			#else
 			{
 				AECHAR WTitle[40] = {0};
+
+				#ifdef FEATURE_VERSION_W317A
 				(void)ISHELL_LoadResString(pMe->m_pShell,
-			            CONTAPP_RES_FILE_LANG,                                
-			            IDS_VIEWTYPE,
-			            WTitle,
-			            sizeof(WTitle));
+								            CONTAPP_RES_FILE_LANG,                                
+								            IDS_DISPLAY_OPTION,
+								            WTitle,
+								            sizeof(WTitle));
+				#else
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+								            CONTAPP_RES_FILE_LANG,                                
+								            IDS_VIEWTYPE,
+								            WTitle,
+								            sizeof(WTitle));
+				#endif
+				
 				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
 			}
 			#endif

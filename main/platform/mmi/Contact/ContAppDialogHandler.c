@@ -12090,7 +12090,10 @@ static boolean  CContApp_HandleManagementDlgEvent( CContApp  *pMe,
                 case IDS_DELETE_CONTACTS:
                     CLOSE_DIALOG(DLGRET_DELETE_SELECT);
                     return TRUE;
-                    
+
+				#ifdef FEATURE_VERSION_W317A
+				case IDS_DISPLAY_OPTION:
+				#endif
                 case IDS_VIEWTYPE:
                     CLOSE_DIALOG(DLGRET_VIEWTYPE);
                     return TRUE;

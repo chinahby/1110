@@ -590,8 +590,14 @@ int CContApp_BuildManagementMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
             return EFAILED;
         }
 
+		#ifdef FEATURE_VERSION_W317A
+		ai.wText	= IDS_DISPLAY_OPTION;
+        ai.wItemID	= IDS_DISPLAY_OPTION;
+		#else
         ai.wText       = IDS_VIEWTYPE;
         ai.wItemID   = IDS_VIEWTYPE;
+		#endif
+		
         //ai.wImage    = IDB_FAXNUM;
                 
         if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))

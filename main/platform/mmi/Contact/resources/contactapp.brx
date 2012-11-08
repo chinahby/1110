@@ -472,6 +472,9 @@
 	<STRING Id="1092" Name="IDS_PHONEBOOK">
 		<Text>Phonebook</Text>
 	</STRING>
+	<STRING Id="1093" Name="IDS_DISPLAY_OPTION">
+		<Text>Display option</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MSGBOX" Focus="0">
