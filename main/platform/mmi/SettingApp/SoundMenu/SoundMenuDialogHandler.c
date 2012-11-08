@@ -922,8 +922,19 @@ static boolean  HandleSoundMenuProfilesDialogEvent(CSoundMenu *pMe,
             //}
 
             //Sound_App_Add_Menu(pMenu,IDS_KEYTONE_LENGTH);
-            Sound_App_Add_Menu(pMenu,IDS_STARTUP_RINGER);
+
+	
+			#ifdef FEATURE_VERSION_W317A
+			if (pMe->m_ePreState != DLGRET_SCENEMODESUB)
+			{
+				Sound_App_Add_Menu(pMenu,IDS_STARTUP_RINGER);
+            	Sound_App_Add_Menu(pMenu,IDS_SHUTDOWN_RINGER);	
+			}
+			#else
+			Sound_App_Add_Menu(pMenu,IDS_STARTUP_RINGER);
             Sound_App_Add_Menu(pMenu,IDS_SHUTDOWN_RINGER);
+			#endif            
+            
             Sound_App_Add_Menu(pMenu,IDS_POWERONOFF_ALERT);
            // Sound_App_Add_Menu(pMenu,IDS_FMRADIO_OPTION_MENU_PLAY_MODLE);
             return TRUE;
