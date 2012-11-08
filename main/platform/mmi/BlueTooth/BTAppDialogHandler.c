@@ -562,6 +562,10 @@ static boolean  HandleMainDialogEvent(CBTApp *pMe,
 				titleID = IDS_ON;
 			} 
 
+			#if defined (FEATURE_VERSION_W317A)
+			titleID = IDS_BT_TITLE;
+			#endif
+
 			(void)ISHELL_LoadResString(pMe->m_pShell,
 				                        AEE_APPSBTAPP_RES_FILE,                                
 				                        titleID,
