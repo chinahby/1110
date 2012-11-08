@@ -2797,7 +2797,7 @@ void BTApp_FTPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 #error code not present
 #endif // FEATURE_APP_TEST_AUTOMATION
 		
-      BTApp_ShowMessage( pMe, IDS_MSG_SVR_DEREG_DONE, NULL, 2 );
+      //BTApp_ShowMessage( pMe, IDS_MSG_SVR_DEREG_DONE, NULL, 2 );		//Modify by zzg 2012_11_08
       pMe->mFTP.bRegistered = FALSE;
       BTApp_ClearBondable( pMe ); // no need to be bondable anymore
 	  
