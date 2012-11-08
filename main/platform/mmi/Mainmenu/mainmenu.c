@@ -910,7 +910,11 @@ static boolean MainMenu_ListMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
             }
      //       ERR("MainMenu_ListMenuHandler EVT_DIALOG_INIT",0,0,0);
             //IMENUCTL_SetTitle(pMenu, MAINMENU_RES_FILE_LANG, IDS_MENU_LIST, NULL);                
+            #ifdef FEATURE_VERSION_C337
+			IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_PHONEBOOK, IDS_PHONEBOOK, NULL, 0);
+			#else
             IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_CONTACTS, IDS_MAIN_MENU_CONTACTS, NULL, 0);
+			#endif
             IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_RECENTCALLS, IDS_MAIN_MENU_RECENTCALLS, NULL, 0);
             IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_MESSAGES, IDS_MAIN_MENU_MESSAGES, NULL, 0);
             IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_UTK, IDS_MAIN_MENU_UTK, NULL, 0);
@@ -1019,6 +1023,9 @@ static int StartApplet(MainMenu *pMe, int i)
     int Result = EUNSUPPORTED;
     switch(i)
     {
+    	#ifdef FEATURE_VERSION_C337
+		case IDS_PHONEBOOK:
+		#endif
         case IDS_MAIN_MENU_CONTACTS:
         {
             IContactApp *ca = NULL;

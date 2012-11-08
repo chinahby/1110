@@ -352,6 +352,9 @@
 	<String Id="1116" Name="IDS_MG_ANIMATE_CANNOTSET_WALLPAPER">
 		<Text>Animation can not set as wallpaper</Text>
 	</String>
+	<STRING Id="1117" Name="IDS_MG_MEDIAGALLERY_C337">
+		<Text>File Manager</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<Dialog Id="6001" Name="IDD_MG_MAINMENU" Focus="7001">

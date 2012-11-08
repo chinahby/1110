@@ -145,6 +145,30 @@
 	<String Id="1086" Name="IDS_MAIN_WAPBROWSER">
 		<Text>ब्राउजर</Text>
 	</String>
+	<STRING Id="1087" Name="IDS_PHONEBOOK">
+		<Text>Phonebook</Text>
+	</STRING>
+	<STRING Id="1088" Name="IDS_MAIN_MENU_USER_PROFILE">
+		<Text>User Profile</Text>
+	</STRING>
+	<STRING Id="1089" Name="IDS_MAIN_MENU_MSTORE">
+		<Text>M! Store</Text>
+	</STRING>
+	<STRING Id="1090" Name="IDS_MAIN_MENU_MZONE">
+		<Text>M! Zone</Text>
+	</STRING>
+	<STRING Id="1091" Name="IDS_MAIN_MENU_ORGANIZER">
+		<Text>Organizer</Text>
+	</STRING>
+	<STRING Id="1092" Name="IDS_MAIN_MENU_SERVICES">
+		<Text>Services</Text>
+	</STRING>
+	<STRING Id="1093" Name="IDS_MAIN_MENU_MEDIAGALLERY_C337">
+		<Text>File Manager</Text>
+	</STRING>
+	<STRING Id="1094" Name="IDS_MAIN_MENU_RECENTCALLS_C337">
+		<Text>Call Log</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="0">

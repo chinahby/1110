@@ -282,7 +282,12 @@ int CContApp_BuildMainMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
     ai.pszResText = CONTAPP_RES_FILE_LANG;
 
 // 1
-    ai.wText       = IDS_APPLET;
+	#ifdef FEATURE_VERSION_C337
+	ai.wText       = IDS_PHONEBOOK;
+	#else
+	ai.wText       = IDS_APPLET;
+	#endif
+    
     ai.wItemID   = IDI_MAINMENU_MENU_DIRECTORTLIST;
             
     if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))

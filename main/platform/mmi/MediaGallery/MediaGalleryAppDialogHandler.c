@@ -979,11 +979,21 @@ static boolean MediaGalleryApp_MainMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
 		 //add by yangdecai
 			{
 				AECHAR WTitle[40] = {0};
+				
+				#ifdef FEATURE_VERSION_C337
 				(void)ISHELL_LoadResString(pMe->m_pShell,
-                        MGRES_LANGFILE,                                
-                        IDS_MG_MEDIAGALLERY,
-                        WTitle,
-                        sizeof(WTitle));
+					                        MGRES_LANGFILE,                                
+					                        IDS_MG_MEDIAGALLERY_C337,
+					                        WTitle,
+					                        sizeof(WTitle));
+				#else
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+					                        MGRES_LANGFILE,                                
+					                        IDS_MG_MEDIAGALLERY,
+					                        WTitle,
+					                        sizeof(WTitle));
+				#endif
+				
 				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
             }
          MGMENU_ADDITEM(pMenuCtl, IDS_MG_PHONEMEMORY);
@@ -1001,12 +1011,22 @@ static boolean MediaGalleryApp_MainMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
       case EVT_DIALOG_START:
       {
          const char *pszResFile = MGRES_LANGFILE;
-         uint16 wResID = IDS_MG_MEDIAGALLERY;
+
+		 #ifdef FEATURE_VERSION_C337
+		 uint16 wResID = IDS_MG_MEDIAGALLERY_C337;
+		 #else
+		 uint16 wResID = IDS_MG_MEDIAGALLERY;
+		 #endif
+        
          MGStartMode eStartMode = pMe->m_StartMode;
 
          if(eStartMode == MGSM_NORMAL_EXPLORER)
          {
+         	#ifdef FEATURE_VERSION_C337
+			wResID = IDS_MG_MEDIAGALLERY_C337;
+			#else
             wResID = IDS_MG_MEDIAGALLERY;
+			#endif
          }
          else if(eStartMode == MGSM_MUSIC_ADD)
          {
@@ -1035,7 +1055,11 @@ static boolean MediaGalleryApp_MainMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
          else if(eStartMode == MGSM_RECORD_VIEW ||
                  eStartMode == MGSM_FILE_SELECT)
          {
+         	#ifdef FEATURE_VERSION_C337
+			wResID = IDS_MG_MEDIAGALLERY_C337;
+			#else
             wResID = IDS_MG_MEDIAGALLERY;
+			#endif
          }
 
          //IMENUCTL_SetTitle(pMenuCtl, pszResFile, wResID, NULL);

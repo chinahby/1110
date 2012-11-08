@@ -576,11 +576,20 @@ static boolean  RecentCalls_VerifyPasswordEvent(CRecentCalls *pMe,
                 //IDISPLAY_FillRect  (pMe->m_pDisplay,&pMe->m_rc, RGB_BLACK);
                     
                 // »­±êÌâÌõ
+                #ifdef FEATURE_VERSION_C337
+				(void)ISHELL_LoadResString(pMe->m_pShell, 
+                                            AEE_RECENTCALLSRES_LANGFILE,
+                                            IDS_RECENT_CALLS_C337, 
+                                            text,
+                                            sizeof(text));
+				#else
                 (void)ISHELL_LoadResString(pMe->m_pShell, 
-                                                            AEE_RECENTCALLSRES_LANGFILE,
-                                                            IDS_RECENT_CALLS, 
-                                                            text,
-                                                            sizeof(text));
+                                            AEE_RECENTCALLSRES_LANGFILE,
+                                            IDS_RECENT_CALLS, 
+                                            text,
+                                            sizeof(text));
+				#endif
+				
                 TitleBar_Param.pwszTitle = text;
                 TitleBar_Param.dwAlignFlags = IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
 				#if 0
@@ -861,11 +870,21 @@ static boolean RecentCalls_MainMenuEvent(CRecentCalls *pMe,
 		//add by yangdecai
 			{
 				AECHAR WTitle[40] = {0};
+
+				#ifdef FEATURE_VERSION_C337
 				(void)ISHELL_LoadResString(pMe->m_pShell,
-                        AEE_RECENTCALLSRES_LANGFILE,                                
-                        IDS_RECENT_CALLS,
-                        WTitle,
-                        sizeof(WTitle));
+					                        AEE_RECENTCALLSRES_LANGFILE,                                
+					                        IDS_RECENT_CALLS_C337,
+					                        WTitle,
+					                        sizeof(WTitle));
+				#else
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+					                        AEE_RECENTCALLSRES_LANGFILE,                                
+					                        IDS_RECENT_CALLS,
+					                        WTitle,
+					                        sizeof(WTitle));
+				#endif
+				
 				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
             }
         IMENUCTL_AddItem(pMe->pMenu, AEE_RECENTCALLSRES_LANGFILE, IDS_MISSED_CALLS, IDS_MISSED_CALLS, NULL, 0);
@@ -1214,7 +1233,11 @@ static boolean RecentCalls_ListRecordEvent(CRecentCalls *pMe,
                                            &missed_call_icon,
                                            sizeof(missed_call_icon));  
                     }
+					#ifdef FEATURE_VERSION_C337
+					pMe->selectState = IDS_RECENT_CALLS_C337;
+					#else
                     pMe->selectState = IDS_RECENT_CALLS;
+					#endif
                     break;
             }
 			#if 0
@@ -2088,8 +2111,13 @@ static boolean RecentCalls_DetailEvent(CRecentCalls *pMe,
                                 IDS_OUTGOING_CALLS, wstrDevice,sizeof(wstrDevice));
                   break;
                 case AEECALLHISTORY_CALL_TYPE_ALL://CALLHISTORY_ALL_CATEGORY:
+                  #ifdef FEATURE_VERSION_C337
+				  (void)ISHELL_LoadResString(pMe->m_pShell, AEE_RECENTCALLSRES_LANGFILE,
+                                IDS_RECENT_CALLS_C337, wstrDevice,sizeof(wstrDevice));
+				  #else
                   (void)ISHELL_LoadResString(pMe->m_pShell, AEE_RECENTCALLSRES_LANGFILE,
                                 IDS_RECENT_CALLS, wstrDevice,sizeof(wstrDevice));
+				  #endif
                   break;
             }  
 			#if 0

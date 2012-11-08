@@ -5079,11 +5079,21 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
                 //add by xuhui
                 AECHAR WTitle[40] = {0};
                 //IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
-                (void)ISHELL_LoadResString(pMe->m_pShell,
+
+				#ifdef FEATURE_VERSION_C337
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        CONTAPP_RES_FILE_LANG,                                
+                        IDS_PHONEBOOK,
+                        WTitle,
+                        sizeof(WTitle));
+				#else
+				(void)ISHELL_LoadResString(pMe->m_pShell,
                         CONTAPP_RES_FILE_LANG,                                
                         IDS_APPLET,
                         WTitle,
                         sizeof(WTitle));
+				#endif
+                
                 if(pMe->m_pIAnn != NULL)
                 {
                     IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
@@ -7351,11 +7361,20 @@ static boolean  CContApp_HandleMainMenuDlgEvent( CContApp  *pMe,
             {
                 AECHAR WTitle[40] = {0};
                 //IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+
+				#ifdef FEATURE_VERSION_C337
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+							                CONTAPP_RES_FILE_LANG,                                
+							                IDS_PHONEBOOK,
+							                WTitle,
+							                sizeof(WTitle));
+				#else
                 (void)ISHELL_LoadResString(pMe->m_pShell,
-                CONTAPP_RES_FILE_LANG,                                
-                IDS_APPLET,
-                WTitle,
-                sizeof(WTitle));
+							                CONTAPP_RES_FILE_LANG,                                
+							                IDS_APPLET,
+							                WTitle,
+							                sizeof(WTitle));
+				#endif
                 if(pMe->m_pIAnn != NULL)
                 {
                     IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
@@ -7957,11 +7976,19 @@ static boolean  CContApp_HandleFldOptsDlgEvent( CContApp  *pMe,
             {
                 AECHAR WTitle[40] = {0};
                 //IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+                #ifdef FEATURE_VERSION_C337
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+							                CONTAPP_RES_FILE_LANG,                                
+							                IDS_PHONEBOOK,
+							                WTitle,
+							                sizeof(WTitle));
+				#else
                 (void)ISHELL_LoadResString(pMe->m_pShell,
-                CONTAPP_RES_FILE_LANG,                                
-                IDS_APPLET,
-                WTitle,
-                sizeof(WTitle));
+							                CONTAPP_RES_FILE_LANG,                                
+							                IDS_APPLET,
+							                WTitle,
+							                sizeof(WTitle));
+				#endif
                 if(pMe->m_pIAnn != NULL)
                 {
                     IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
@@ -11438,11 +11465,20 @@ static boolean  CContApp_HandleInputDlgEvent( CContApp  *pMe,
                 IDISPLAY_FillRect  (pMe->m_pDisplay,&pMe->m_rc, RGB_BLACK);
                     
                 // »­±êÌâÌõ
+                #ifdef FEATURE_VERSION_C337
+				(void)ISHELL_LoadResString(pMe->m_pShell, 
+                                            CONTAPP_RES_FILE_LANG,
+                                            IDS_PHONEBOOK, 
+                                            text,
+                                            sizeof(text));
+				#else
                 (void)ISHELL_LoadResString(pMe->m_pShell, 
-                                                            CONTAPP_RES_FILE_LANG,
-                                                            IDS_APPLET, 
-                                                            text,
-                                                            sizeof(text));
+                                            CONTAPP_RES_FILE_LANG,
+                                            IDS_APPLET, 
+                                            text,
+                                            sizeof(text));
+				#endif
+				
                 TitleBar_Param.pwszTitle = text;
                 TitleBar_Param.dwAlignFlags = IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
 				#if 0
@@ -11747,11 +11783,20 @@ static boolean  CContApp_HandleSearchDlgEvent( CContApp  *pMe,
             {
                 AECHAR WTitle[40] = {0};
                 //IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+
+				#ifdef FEATURE_VERSION_C337
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+							                CONTAPP_RES_FILE_LANG,                                
+							                IDS_PHONEBOOK,
+							                WTitle,
+							                sizeof(WTitle));
+				#else
                 (void)ISHELL_LoadResString(pMe->m_pShell,
-                CONTAPP_RES_FILE_LANG,                                
-                IDS_APPLET,
-                WTitle,
-                sizeof(WTitle));
+							                CONTAPP_RES_FILE_LANG,                                
+							                IDS_APPLET,
+							                WTitle,
+							                sizeof(WTitle));
+				#endif
                 if(pMe->m_pIAnn != NULL)
                 {
                     IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
@@ -12982,11 +13027,21 @@ static boolean  CContApp_HandleSelectDlgEvent( CContApp  *pMe,
             {
                 AECHAR WTitle[40] = {0};
                 //IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+
+				#ifdef FEATURE_VERSION_C337
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+							                CONTAPP_RES_FILE_LANG,                                
+							                IDS_PHONEBOOK,
+							                WTitle,
+							                sizeof(WTitle));
+				#else
                 (void)ISHELL_LoadResString(pMe->m_pShell,
-                CONTAPP_RES_FILE_LANG,                                
-                IDS_APPLET,
-                WTitle,
-                sizeof(WTitle));
+							                CONTAPP_RES_FILE_LANG,                                
+							                IDS_APPLET,
+							                WTitle,
+							                sizeof(WTitle));
+				#endif
+				
                 if(pMe->m_pIAnn != NULL)
                 {
                     IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);

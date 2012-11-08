@@ -624,11 +624,19 @@ static boolean Application_HandleEvent( IApplication *pi,
                                         WTitle,
                                         sizeof(WTitle));
 #else
+				#ifdef FEATURE_VERSION_C337
 				(void)ISHELL_LoadResString(pMe->m_pShell,
-										APPLICATION_RES_FILE_LANG,								  
-										IDS_APPLICATION_LIST,
-										WTitle,
-										sizeof(WTitle));
+											APPLICATION_RES_FILE_LANG,								  
+											IDS_APPLICATION_LIST_C337,
+											WTitle,
+											sizeof(WTitle));
+				#else
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+											APPLICATION_RES_FILE_LANG,								  
+											IDS_APPLICATION_LIST,
+											WTitle,
+											sizeof(WTitle));
+				#endif
 
 #endif
                 if(pMe->m_pIAnn != NULL)
@@ -1011,17 +1019,30 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
                                     WTitle,
                                     sizeof(WTitle));
 #else
+			#ifdef FEATURE_VERSION_C337
 			(void)ISHELL_LoadResString(pMe->m_pShell,
-                                    APPLICATION_RES_FILE_LANG,                                
-                                    IDS_APPLICATION_LIST,
-                                    WTitle,
-                                    sizeof(WTitle));
+	                                    APPLICATION_RES_FILE_LANG,                                
+	                                    IDS_APPLICATION_LIST_C337,
+	                                    WTitle,
+	                                    sizeof(WTitle));
+			#else
+			(void)ISHELL_LoadResString(pMe->m_pShell,
+	                                    APPLICATION_RES_FILE_LANG,                                
+	                                    IDS_APPLICATION_LIST,
+	                                    WTitle,
+	                                    sizeof(WTitle));
+			#endif
 #endif
             if(pMe->m_pIAnn != NULL)
             {
 			    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
             }
 			#endif
+			
+
+#ifdef FEATURE_VERSION_C337
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_SCHEDULER, IDS_APPLICATION_SCHEDULER, NULL, 0);
+#endif
 			
 #if defined	(FEATURE_VERSION_FLEXI203) ||defined(FEATURE_VERSION_IVIO203) 
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_ALARM, IDS_APPLICATION_ALARM, NULL, 0);

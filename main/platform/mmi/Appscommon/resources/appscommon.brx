@@ -295,5 +295,8 @@
 	<String Id="2010" Name="IDS_FMENU">
 		<Text>MyFlexi</Text>
 	</String>
+	<STRING Id="2011" Name="IDS_PHONE_BOOK">
+		<Text>Phonebook</Text>
+	</STRING>
 </Strings>
 </BREWRes>

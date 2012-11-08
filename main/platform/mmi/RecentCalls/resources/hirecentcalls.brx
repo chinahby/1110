@@ -133,6 +133,9 @@
 	<String Id="1015" Name="IDS_SECURITY" Encoding="Unicode">
 		<Text>Enter password:</Text>
 	</String>
+	<STRING Id="1016" Name="IDS_RECENT_CALLS_C337">
+		<Text>Call Log</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<DIALOG Id="1" Name="IDD_RMAINMENU" Focus="1">

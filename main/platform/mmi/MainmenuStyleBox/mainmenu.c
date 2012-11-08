@@ -548,7 +548,11 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     
     // ³õÊ¼»¯²Ëµ¥Title
     pMe->m_IconTitle[0]      = IDS_MAIN_MENU_MEDIAGALLERY;
+	#ifdef FEATURE_VERSION_C337
+	pMe->m_IconTitle[1]      = IDS_PHONEBOOK;
+	#else
     pMe->m_IconTitle[1]      = IDS_MAIN_MENU_CONTACTS;
+	#endif
     pMe->m_IconTitle[2]      = IDS_MAIN_MENU_USERPROFILE;
     pMe->m_IconTitle[3]      = IDS_MAIN_MENU_RECENTCALLS;
     pMe->m_IconTitle[4]      = IDS_MAIN_MENU_MESSAGES;
@@ -2242,6 +2246,9 @@ static int StartApplet(MainMenu *pMe, int i)
         break;
         
     case IDS_MAIN_MENU_CONTACT:
+	#ifdef FEATURE_VERSION_C337
+	case IDS_PHONEBOOK:
+	#endif
     case IDS_MAIN_MENU_CONTACTS:
         {
             IContactApp *ca = NULL;
@@ -3117,18 +3124,18 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_IconTitle[10]    = IDS_MAIN_MENU_GAMES;
     pMe->m_IconTitle[11]    = IDS_MAIN_WAPBROWSER;
 #elif defined(FEATURE_VERSION_C337)
-    pMe->m_IconTitle[0]     = IDS_MAIN_MENU_MUSICPLAYER;
-    pMe->m_IconTitle[1]     = IDS_MAIN_MENU_CONTACTS;
-    pMe->m_IconTitle[2]     = IDS_MAIN_MENU_RECENTCALLS;
-    pMe->m_IconTitle[3]     = IDS_MAIN_WAPBROWSER;
+    pMe->m_IconTitle[0]     = IDS_MAIN_MENU_MULTIMEDIA;	//IDS_MAIN_MENU_MUSICPLAYER;	
+	pMe->m_IconTitle[1]     = IDS_PHONEBOOK;	
+    pMe->m_IconTitle[2]     = IDS_MAIN_MENU_RECENTCALLS_C337;	//IDS_MAIN_MENU_RECENTCALLS;
+    pMe->m_IconTitle[3]     = IDS_MAIN_MENU_SERVICES;	//IDS_MAIN_WAPBROWSER;
     pMe->m_IconTitle[4]     = IDS_MAIN_MENU_MESSAGES;
-    pMe->m_IconTitle[5]     = IDS_MAIN_MENU_MEDIAGALLERY;
+    pMe->m_IconTitle[5]     = IDS_MAIN_MENU_MEDIAGALLERY_C337;	//IDS_MAIN_MENU_MEDIAGALLERY;
 	
-    pMe->m_IconTitle[6]     = IDS_MAIN_MENU_CAMERA;		//m! STORE
-    pMe->m_IconTitle[7]     = IDS_MAIN_MENU_SCHEDULER;
-    pMe->m_IconTitle[8]     = IDS_MAIN_MENU_SCHEDULER;	//m! ZONE
+    pMe->m_IconTitle[6]     = IDS_MAIN_MENU_MSTORE;	//IDS_MAIN_MENU_MULTIMEDIA;		//m! STORE
+    pMe->m_IconTitle[7]     = IDS_MAIN_MENU_ORGANIZER;	//IDS_MAIN_MENU_APPLICATION;
+    pMe->m_IconTitle[8]     = IDS_MAIN_MENU_MZONE;	//IDS_MAIN_MENU_APPLICATION;		//m! ZONE
 	
-    pMe->m_IconTitle[9]     = IDS_MAIN_MENU_APPLICATION;
+    pMe->m_IconTitle[9]     = IDS_MAIN_MENU_USER_PROFILE;	//IDS_MAIN_MENU_USERPROFILE;	//IDS_MAIN_MENU_APPLICATION;
     pMe->m_IconTitle[10]    = IDS_MAIN_MENU_GAMES;
     pMe->m_IconTitle[11]    = IDS_MAIN_MENU_SETTINGS;	
 #elif defined (FEATURE_VERSION_SKY)
@@ -4434,11 +4441,15 @@ static int StartApplet(MainMenu *pMe, int i)
 	}
 #endif
     case IDS_MAIN_MENU_GALLERY:
+	case IDS_MAIN_MENU_MEDIAGALLERY_C337:	
     case IDS_MAIN_MENU_MEDIAGALLERY:
         Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MEDIAGALLERY);
         break;
         
     case IDS_MAIN_MENU_CONTACT:
+	#ifdef FEATURE_VERSION_C337
+	case IDS_PHONEBOOK:
+	#endif
     case IDS_MAIN_MENU_CONTACTS:
         {
             IContactApp *ca = NULL;
@@ -4457,10 +4468,12 @@ static int StartApplet(MainMenu *pMe, int i)
         break;
         
     case IDS_MAIN_MENU_TOOLS:
+	case IDS_MAIN_MENU_ORGANIZER:	
     case IDS_MAIN_MENU_APPLICATION:
         Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPLICATION);
         break;
-        
+
+	case IDS_MAIN_MENU_RECENTCALLS_C337:	
     case IDS_MAIN_MENU_RECENTCALLS:
         Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_RECENTCALL);
         break;
@@ -4497,7 +4510,20 @@ static int StartApplet(MainMenu *pMe, int i)
     case IDS_MAIN_MENU_SETTINGS:
         Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_SETTINGMENU);
         break;
-        
+
+	//Add By zzg 2012_11_08 for C337 
+	case IDS_MAIN_MENU_SERVICES:
+		Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_UCWEB);
+		break;
+	case IDS_MAIN_MENU_MSTORE:
+		Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_SETTINGMENU);
+		break;
+	case IDS_MAIN_MENU_MZONE:
+		Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_SETTINGMENU);
+		break;
+	//Add End
+	
+	case IDS_MAIN_MENU_USER_PROFILE:	
     case IDS_MAIN_MENU_USERPROFILE:
         Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_SOUNDMENU);
         break;
