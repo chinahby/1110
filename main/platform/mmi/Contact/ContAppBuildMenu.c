@@ -375,7 +375,12 @@ int CContApp_BuildMainMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
 //#ifdef FEATURE_RUIM_PHONEBOOK
     //if( IsRunAsUIMVersion() )
     //{
+    	#ifdef FEATURE_VERSION_W317A
+		ai.wText	= IDS_PHONEBOOK_SETTINGS;
+		#else
         ai.wText       = IDS_CONTACTS_MANAGEMENT;
+		#endif
+		
         ai.wItemID   = IDI_MAINMENU_MENU_CONTACT_MANAGEMENT;
                 
         if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
@@ -580,8 +585,14 @@ int CContApp_BuildManagementMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
 #ifdef FEATURE_RUIM_PHONEBOOK
     if( IsRunAsUIMVersion() && pMe->m_bADNRUIMSupport )
     {
+    	#ifdef FEATURE_VERSION_W317A
+		ai.wText	= IDS_STORAGE;
+        ai.wItemID	= IDS_STORAGE;
+		#else
         ai.wText       = IDS_SAVETO;
         ai.wItemID   = IDS_SAVETO;
+		#endif
+		
         //ai.wImage    = IDB_FAXNUM;
                 
         if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
@@ -3410,8 +3421,13 @@ int CContApp_BuildSaveToMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
         return EFAILED;
     }
 
+#ifdef FEATURE_VERSION_W317A
+	ai.wText       = IDS_ALWAYS_ASK;
+    ai.wItemID   = IDS_ALWAYS_ASK;
+#else
     ai.wText       = IDS_POSITION_SELECT;
     ai.wItemID   = IDS_POSITION_SELECT;
+#endif	
            
     if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
     {

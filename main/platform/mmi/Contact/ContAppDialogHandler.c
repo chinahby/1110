@@ -11980,11 +11980,21 @@ static boolean  CContApp_HandleManagementDlgEvent( CContApp  *pMe,
 			#else
 			{
 				AECHAR WTitle[40] = {0};
+
+				#ifdef FEATURE_VERSION_W317A
 				(void)ISHELL_LoadResString(pMe->m_pShell,
-						CONTAPP_RES_FILE_LANG,								  
-						IDS_CONTACTS_MANAGEMENT,
-						WTitle,
-						sizeof(WTitle));
+											CONTAPP_RES_FILE_LANG,								  
+											IDS_PHONEBOOK_SETTINGS,
+											WTitle,
+											sizeof(WTitle));
+				#else
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+											CONTAPP_RES_FILE_LANG,								  
+											IDS_CONTACTS_MANAGEMENT,
+											WTitle,
+											sizeof(WTitle));
+				#endif
+				
                 if(pMe->m_pIAnn != NULL)
                 {
 				    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
@@ -12097,6 +12107,9 @@ static boolean  CContApp_HandleManagementDlgEvent( CContApp  *pMe,
                 case IDS_VIEWTYPE:
                     CLOSE_DIALOG(DLGRET_VIEWTYPE);
                     return TRUE;
+				#ifdef FEATURE_VERSION_W317A
+				case IDS_STORAGE:
+				#endif
                 case IDS_SAVETO:
                     CLOSE_DIALOG(DLGRET_SAVETO);
                     return TRUE;

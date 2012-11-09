@@ -5564,11 +5564,21 @@ static NextFSMAction Handler_STATE_SAVETO(CContApp *pMe)
 			#else
 			{
 				AECHAR WTitle[40] = {0};
+
+				#ifdef FEATURE_VERSION_W317A
 				(void)ISHELL_LoadResString(pMe->m_pShell,
-			            CONTAPP_RES_FILE_LANG,                                
-			            IDS_SAVETO,
-			            WTitle,
-			            sizeof(WTitle));
+								            CONTAPP_RES_FILE_LANG,                                
+								            IDS_STORAGE,
+								            WTitle,
+								            sizeof(WTitle));
+				#else
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+								            CONTAPP_RES_FILE_LANG,                                
+								            IDS_SAVETO,
+								            WTitle,
+								            sizeof(WTitle));
+				#endif
+				
 				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
 			}
 			#endif
@@ -5585,8 +5595,13 @@ static NextFSMAction Handler_STATE_SAVETO(CContApp *pMe)
             switch(nData_saveto)
             {
                 case CONTCFG_SAVETYPE_SELECT:
+					#ifdef FEATURE_VERSION_W317A
+					SetMenuIcon(pMenuCtl, IDS_ALWAYS_ASK, TRUE);
+                    IMENUCTL_SetSel(pMenuCtl, IDS_ALWAYS_ASK);
+					#else
                     SetMenuIcon(pMenuCtl, IDS_POSITION_SELECT, TRUE);
                     IMENUCTL_SetSel(pMenuCtl, IDS_POSITION_SELECT);
+					#endif
                     break;
                     
                 case CONTCFG_SAVETYPE_PHONE:
@@ -5620,7 +5635,10 @@ static NextFSMAction Handler_STATE_SAVETO(CContApp *pMe)
                 case IDS_UIMCARD:
                     nData_saveto = CONTCFG_SAVETYPE_RUIM;
                     break;
-                    
+
+				#ifdef FEATURE_VERSION_W317A
+				case IDS_ALWAYS_ASK:
+				#endif
                 case IDS_POSITION_SELECT:
                 default:
                     nData_saveto = CONTCFG_SAVETYPE_SELECT;

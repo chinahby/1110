@@ -475,6 +475,15 @@
 	<STRING Id="1093" Name="IDS_DISPLAY_OPTION">
 		<Text>Display option</Text>
 	</STRING>
+	<STRING Id="1094" Name="IDS_ALWAYS_ASK">
+		<Text>Always ask</Text>
+	</STRING>
+	<STRING Id="1095" Name="IDS_STORAGE">
+		<Text>Contacts storage</Text>
+	</STRING>
+	<STRING Id="1096" Name="IDS_PHONEBOOK_SETTINGS">
+		<Text>Phonebook settings</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MSGBOX" Focus="0">
