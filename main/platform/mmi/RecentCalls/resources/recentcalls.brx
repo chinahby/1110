@@ -136,6 +136,12 @@
 	<STRING Id="1016" Name="IDS_RECENT_CALLS_C337">
 		<Text>Call Log</Text>
 	</STRING>
+	<STRING Id="1017" Name="IDS_DELETE_LOG">
+		<Text>Delete log</Text>
+	</STRING>
+	<STRING Id="1018" Name="IDS_CALL_DURATION">
+		<Text>Call duration</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<DIALOG Id="1" Name="IDD_RMAINMENU" Focus="1">

@@ -3112,7 +3112,7 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_IconTitle[8]     = IDS_MAIN_MENU_UTK;
 #elif defined(FEATURE_VERSION_W317A)
     pMe->m_IconTitle[0]     = IDS_MAIN_MENU_CONTACTS;
-    pMe->m_IconTitle[1]     = IDS_MAIN_MENU_RECENTCALLS;
+    pMe->m_IconTitle[1]     = IDS_MAIN_MENU_RECENTCALLS_C337;	//IDS_MAIN_MENU_RECENTCALLS;
     pMe->m_IconTitle[2]     = IDS_MAIN_MENU_SETTINGS;
     pMe->m_IconTitle[3]     = IDS_MAIN_MENU_MEDIAGALLERY;
     pMe->m_IconTitle[4]     = IDS_MAIN_MENU_MESSAGES;
@@ -4516,10 +4516,10 @@ static int StartApplet(MainMenu *pMe, int i)
 		Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_UCWEB);
 		break;
 	case IDS_MAIN_MENU_MSTORE:
-		Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_SETTINGMENU);
+		//Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_SETTINGMENU);
 		break;
 	case IDS_MAIN_MENU_MZONE:
-		Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_SETTINGMENU);
+		//Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_SETTINGMENU);
 		break;
 	//Add End
 	

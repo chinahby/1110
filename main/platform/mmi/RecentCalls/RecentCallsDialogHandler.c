@@ -576,7 +576,7 @@ static boolean  RecentCalls_VerifyPasswordEvent(CRecentCalls *pMe,
                 //IDISPLAY_FillRect  (pMe->m_pDisplay,&pMe->m_rc, RGB_BLACK);
                     
                 // 画标题条
-                #ifdef FEATURE_VERSION_C337
+                #if defined(FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A)
 				(void)ISHELL_LoadResString(pMe->m_pShell, 
                                             AEE_RECENTCALLSRES_LANGFILE,
                                             IDS_RECENT_CALLS_C337, 
@@ -871,7 +871,7 @@ static boolean RecentCalls_MainMenuEvent(CRecentCalls *pMe,
 			{
 				AECHAR WTitle[40] = {0};
 
-				#ifdef FEATURE_VERSION_C337
+				#if defined(FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A)
 				(void)ISHELL_LoadResString(pMe->m_pShell,
 					                        AEE_RECENTCALLSRES_LANGFILE,                                
 					                        IDS_RECENT_CALLS_C337,
@@ -889,9 +889,14 @@ static boolean RecentCalls_MainMenuEvent(CRecentCalls *pMe,
             }
         IMENUCTL_AddItem(pMe->pMenu, AEE_RECENTCALLSRES_LANGFILE, IDS_MISSED_CALLS, IDS_MISSED_CALLS, NULL, 0);
         IMENUCTL_AddItem(pMe->pMenu, AEE_RECENTCALLSRES_LANGFILE, IDS_RECEIVED_CALLS, IDS_RECEIVED_CALLS, NULL, 0);
-        IMENUCTL_AddItem(pMe->pMenu, AEE_RECENTCALLSRES_LANGFILE, IDS_OUTGOING_CALLS, IDS_OUTGOING_CALLS, NULL, 0);
-        IMENUCTL_AddItem(pMe->pMenu, AEE_RECENTCALLSRES_LANGFILE, IDS_CALL_TIME, IDS_CALL_TIME, NULL, 0);
+        IMENUCTL_AddItem(pMe->pMenu, AEE_RECENTCALLSRES_LANGFILE, IDS_OUTGOING_CALLS, IDS_OUTGOING_CALLS, NULL, 0);        
+		#ifdef FEATURE_VERSION_W317A
+		IMENUCTL_AddItem(pMe->pMenu, AEE_RECENTCALLSRES_LANGFILE, IDS_CALL_DURATION, IDS_CALL_DURATION, NULL, 0);
+		IMENUCTL_AddItem(pMe->pMenu, AEE_RECENTCALLSRES_LANGFILE, IDS_DELETE_LOG, IDS_DELETE_LOG, NULL, 0);
+		#else
+		IMENUCTL_AddItem(pMe->pMenu, AEE_RECENTCALLSRES_LANGFILE, IDS_CALL_TIME, IDS_CALL_TIME, NULL, 0);
         IMENUCTL_AddItem(pMe->pMenu, AEE_RECENTCALLSRES_LANGFILE, IDS_DELETE_ALL, IDS_DELETE_ALL, NULL, 0);
+		#endif
         return TRUE;
       
       case EVT_DIALOG_START:
@@ -936,11 +941,17 @@ static boolean RecentCalls_MainMenuEvent(CRecentCalls *pMe,
               pMe->m_callsCategory = AEECALLHISTORY_CALL_TYPE_TO;//CALLHISTORY_OUTGOING_CATEGORY;
               CLOSE_DIALOG(DLGRET_OUTGCALL)
               break;
-           
+
+		   #ifdef FEATURE_VERSION_W317A
+		   case IDS_CALL_DURATION:
+		   #endif
            case IDS_CALL_TIME:
               CLOSE_DIALOG(DLGRET_TIMEMENU)
               break;
-              
+
+		   #ifdef FEATURE_VERSION_W317A
+		   case IDS_DELETE_LOG:
+		   #endif
            case IDS_DELETE_ALL:
               CLOSE_DIALOG(DLGRET_DELMENU)
               break;
@@ -1233,7 +1244,7 @@ static boolean RecentCalls_ListRecordEvent(CRecentCalls *pMe,
                                            &missed_call_icon,
                                            sizeof(missed_call_icon));  
                     }
-					#ifdef FEATURE_VERSION_C337
+					#if defined(FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A)
 					pMe->selectState = IDS_RECENT_CALLS_C337;
 					#else
                     pMe->selectState = IDS_RECENT_CALLS;
@@ -1571,11 +1582,20 @@ static boolean RecentCalls_TimeMenuEvent(CRecentCalls *pMe,
 	  	//add by yangdecai
 			{
 				AECHAR WTitle[40] = {0};
+
+				#ifdef FEATURE_VERSION_W317A
 				(void)ISHELL_LoadResString(pMe->m_pShell,
-                        AEE_RECENTCALLSRES_LANGFILE,                                
-                        IDS_CALL_TIME,
-                        WTitle,
-                        sizeof(WTitle));
+					                        AEE_RECENTCALLSRES_LANGFILE,                                
+					                        IDS_CALL_DURATION,
+					                        WTitle,
+					                        sizeof(WTitle));
+				#else
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+					                        AEE_RECENTCALLSRES_LANGFILE,                                
+					                        IDS_CALL_TIME,
+					                        WTitle,
+					                        sizeof(WTitle));
+				#endif
 				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
             }
          IMENUCTL_AddItem(pMe->pMenu, AEE_RECENTCALLSRES_LANGFILE, IDS_LAST_CALL, IDS_LAST_CALL, NULL, 0);
@@ -1684,11 +1704,20 @@ static boolean RecentCalls_DelMenuEvent(CRecentCalls *pMe,
 	  	//add by yangdecai
 			{
 				AECHAR WTitle[40] = {0};
+
+				#ifdef FEATURE_VERSION_W317A
 				(void)ISHELL_LoadResString(pMe->m_pShell,
-                        AEE_RECENTCALLSRES_LANGFILE,                                
-                        IDS_DELETE_ALL,
-                        WTitle,
-                        sizeof(WTitle));
+					                        AEE_RECENTCALLSRES_LANGFILE,                                
+					                        IDS_DELETE_LOG,
+					                        WTitle,
+					                        sizeof(WTitle));
+				#else
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+					                        AEE_RECENTCALLSRES_LANGFILE,                                
+					                        IDS_DELETE_ALL,
+					                        WTitle,
+					                        sizeof(WTitle));
+				#endif
 				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
             }
          IMENUCTL_AddItem(pMe->pMenu, AEE_RECENTCALLSRES_LANGFILE, IDS_MISSED_CALLS, IDS_MISSED_CALLS, NULL, 0);
@@ -2111,7 +2140,7 @@ static boolean RecentCalls_DetailEvent(CRecentCalls *pMe,
                                 IDS_OUTGOING_CALLS, wstrDevice,sizeof(wstrDevice));
                   break;
                 case AEECALLHISTORY_CALL_TYPE_ALL://CALLHISTORY_ALL_CATEGORY:
-                  #ifdef FEATURE_VERSION_C337
+                  #if defined(FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A)
 				  (void)ISHELL_LoadResString(pMe->m_pShell, AEE_RECENTCALLSRES_LANGFILE,
                                 IDS_RECENT_CALLS_C337, wstrDevice,sizeof(wstrDevice));
 				  #else
@@ -3299,12 +3328,20 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines)
     
     IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
     //获取日期，时间，和通话时长
+
+	#ifdef FEATURE_VERSION_W317A
+	(void) ISHELL_LoadResString( pMe->m_pShell,
+			                    AEE_RECENTCALLSRES_LANGFILE,
+			                    IDS_DURATION,
+			                    szbuf,
+			                    sizeof( szbuf));
+	#else
     (void) ISHELL_LoadResString( pMe->m_pShell,
-                    AEE_RECENTCALLSRES_LANGFILE,
-                    IDS_CALLTIME,
-                    szbuf,
-                    sizeof( szbuf)
-                );
+			                    AEE_RECENTCALLSRES_LANGFILE,
+			                    IDS_CALLTIME,
+			                    szbuf,
+			                    sizeof( szbuf));
+	#endif
     (void) IDISPLAY_DrawText( pMe->m_pDisplay,
                     AEE_FONT_NORMAL,
                     szbuf,
