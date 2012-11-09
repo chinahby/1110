@@ -6351,7 +6351,11 @@ static boolean  CallApp_Missedcall_DlgHandler(CCallApp *pMe,
                                                     IDF_TEXT_TRANSPARENT);	
             IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_BLACK);
 
+			#ifdef FEATURE_VERSION_W317A
+			REFUI_DRAW_BOTTOMBAR(BTBAR_VIEW_CANCEL);
+			#else
             REFUI_DRAW_BOTTOMBAR(BTBAR_OK_CANCEL);
+			#endif
             
             // add Missing call icon
             IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);

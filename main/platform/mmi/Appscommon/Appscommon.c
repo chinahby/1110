@@ -506,8 +506,13 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
             //菜单---电话本
          case BTBAR_MENU_CONTACTS:
             nResID_L = IDS_MENU;
+			//#ifdef FEATURE_VERSION_C337
+			//nResID_R = IDS_PHONE_BOOK;
+			//#else
             nResID_R = IDS_STRING_CONTACTS;
+			//#endif
             break;
+			
             
         case BTBAR_OK_SOS:
             nResID_L = IDS_OK;
@@ -803,7 +808,11 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
     		break;
     		
     	case BTBAR_CONTACTS_FPORTAL:
+			//#ifdef FEATURE_VERSION_C337
+			//nResID_L = IDS_PHONE_BOOK;
+			//#else
     		nResID_L = IDS_STRING_CONTACTS;
+			//#endif
     		nResID_R = IDS_FPORTAL;
     		break;            
     	case BTBAR_OPTION_SAVE_BACK:
@@ -814,7 +823,11 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
 #endif
     	case BTBAR_FMENU_CANTACT:
     		nResID_L = IDS_FMENU;
+			//#ifdef FEATURE_VERSION_C337
+			//nResID_R = IDS_PHONE_BOOK;
+			//#else
     		nResID_R = IDS_STRING_CONTACTS;
+			//#endif
     		break; 
     	case BTBAR_MENU_FMENU:
     		nResID_L = IDS_MENU;
@@ -824,6 +837,13 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
             nResID_L = IDS_YES;
             nResID_R = IDS_NO;
             break;
+
+		//Add By zzg 2012_11_09
+		case BTBAR_VIEW_CANCEL:
+			nResID_L = IDS_VIEW;
+			nResID_R = IDS_CANCEL;
+			break;
+		//Add End	
          default:
             break;
       }
@@ -3199,12 +3219,20 @@ void DrawBottomBar_Ex(IShell    *m_pIShell, IDisplay  * pIDisplay, BottomBar_e_T
     {
         case BTBAR_MESSAGES_CONTACTS:
             nResID_L = IDS_MESSAGES;
+			//#ifdef FEATURE_VERSION_C337
+			//nResID_R = IDS_PHONE_BOOK;
+			//#else
             nResID_R = IDS_STRING_CONTACTS;
+			//#endif
             break;
             
         case BTBAR_MENU_CONTACTS:
             nResID_L = IDS_MENU;
+			//#ifdef FEATURE_VERSION_C337
+			//nResID_R = IDS_PHONE_BOOK;
+			//#else
             nResID_R = IDS_STRING_CONTACTS;
+			//#endif
             break;
             
 		case BTBAR_MENU_SOS:
@@ -3314,13 +3342,21 @@ void DrawBottomBar_Ex(IShell    *m_pIShell, IDisplay  * pIDisplay, BottomBar_e_T
             break;
             
         case BTBAR_CONTACTS_FPORTAL:
+			//#ifdef FEATURE_VERSION_C337
+			//nResID_L = IDS_PHONE_BOOK;
+			//#else
             nResID_L = IDS_STRING_CONTACTS;
+			//#endif
             nResID_R = IDS_FPORTAL;
             break;
 #endif  /*FEATURE_FLEXI_STATIC_BREW_APP*/
 		case BTBAR_FMENU_CANTACT:
 			nResID_L = IDS_FMENU;
+			//#ifdef FEATURE_VERSION_C337
+			//nResID_R = IDS_PHONE_BOOK;
+			//#else
 			nResID_R = IDS_STRING_CONTACTS;
+			//#endif
 			break; 
 		case BTBAR_MENU_FMENU:
 			nResID_L = IDS_MENU;
