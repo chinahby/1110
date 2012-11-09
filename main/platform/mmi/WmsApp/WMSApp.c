@@ -6059,11 +6059,100 @@ void WmsApp_UpdateAnnunciators(WmsApp * pMe)
         {// 用户优先使用RUIM
             if (pMe->m_memruimStatuse.used_tag_slots >= pMe->m_memruimStatuse.max_slots)
             {// UIM 存储空间已满
-                if (nInMsgs >= IN_MAX)
+#if defined(FEATURE_VERSION_C337)            
+                if (nInMsgs >= IN_MAX-1)
                 {// 存储空间已满
-                    rt.route = WMS_ROUTE_TRANSFER_ONLY;
-                    smsiconstatus[0] = TRUE;
+ 		    wms_cache_info_list   *pList = NULL;
+ 		    wms_cache_info_node   *pnode = NULL;
+		    int nRet=EFAILED;	
+		    int i = 0;	
+ 		    MSG_FATAL("WmsApp_UpdateAnnunciators nInMsgs=%d", nInMsgs, 0, 0);
+ 		    pList = wms_get_cacheinfolist(WMS_MB_INBOX);
+ 		    if (NULL == pList)
+ 		    {
+ 		    	 MSG_FATAL("WmsApp_UpdateAnnunciators NULL == pList", 0, 0, 0);
+ 		    }
+ 		    else
+ 		    {
+	 		    pnode = pList->pHead;
+	 		    if(pnode == NULL)
+	 		    {
+	 		    	MSG_FATAL("WmsApp_UpdateAnnunciators1 pnode == NULL", 0, 0, 0);
+	 		    }
+	 		    while (NULL != pnode)
+	 		    {
+	 		    	MSG_FATAL("mem_store=%d, msg_tag=%x", pnode->mem_store , pnode->msg_tag, 0);
+	 		        if ((++i <= IN_MAX) && (pnode->mem_store == WMS_MEMORY_STORE_NV_CDMA) &&
+				     (pnode->msg_tag != WMS_TAG_MT_NOT_READ))
+	 		        {
+	 		            MSG_FATAL("WmsApp_UpdateAnnunciators pnode != NULL", 0, 0, 0); 	
+	 		            break;
+	 		        }
+	 		        
+	 		        pnode = pnode->pNext;
+	 		    }
+			    MSG_FATAL("WmsApp_UpdateAnnunciators i=%d", i, 0, 0); 	
+	 		    if(pnode == NULL)
+	 		    {
+	 		    	MSG_FATAL("WmsApp_UpdateAnnunciators2 pnode == NULL", 0, 0, 0);
+	 		    }
+			    else
+			    {
+#ifdef FEATURE_SMS_UDH
+				if (pnode->pItems != NULL)
+				{
+					MEMCPY(pMe->m_CurMsgNodes, pnode->pItems, sizeof(pMe->m_CurMsgNodes));
+					MSG_FATAL("pnode->pItems != NUL",0,0,0);
+					for (; pMe->m_idxCur<LONGSMS_MAX_PACKAGES; pMe->m_idxCur++)
+					{
+						if (pMe->m_CurMsgNodes[pMe->m_idxCur] != NULL)
+						{
+							pnode = pMe->m_CurMsgNodes[pMe->m_idxCur];
+							break;
+						}
+					}
+				}
+				else
+#endif
+				{
+					MSG_FATAL("pnode->pItems is  NULL",0,0,0);
+					pMe->m_CurMsgNodes[0] = pnode;
+				}
+				for (i=0; i<LONGSMS_MAX_PACKAGES; i++)
+				{
+					if (pMe->m_CurMsgNodes[i] != NULL)
+					{
+						pnode = pMe->m_CurMsgNodes[i];
+						// 发布删除消息命令
+						nRet = ENOMEMORY;
+						do
+						{
+							nRet = IWMS_MsgDelete(pMe->m_pwms,
+							pMe->m_clientId,
+							&pMe->m_callback,
+							(void *)pMe,
+							pnode->mem_store,
+							pnode->index);
+							MSG_FATAL("DELEING...................",0,0,0);
+						} while(nRet != SUCCESS);
+						MSG_FATAL("DELEING...............nRet=%d",nRet,0,0);
+						pMe->m_CurMsgNodes[i] = NULL;
+					}
+				}			    
+			    }
+ 		    }
+                    rt.route = WMS_ROUTE_STORE_AND_NOTIFY;
+                    rt.mem_store = WMS_MEMORY_STORE_NV_CDMA;			
+                 //   rt.route = WMS_ROUTE_TRANSFER_ONLY;
+               //     smsiconstatus[0] = TRUE;
                 }
+#else
+		if (nInMsgs >= IN_MAX)
+		{
+                    rt.route = WMS_ROUTE_TRANSFER_ONLY;
+                    smsiconstatus[0] = TRUE;		
+		}
+#endif
                 else
                 {// 话机收件箱还有存储空间
                     rt.route = WMS_ROUTE_STORE_AND_NOTIFY;
@@ -6077,6 +6166,100 @@ void WmsApp_UpdateAnnunciators(WmsApp * pMe)
         }
         else
         {// 用户优先使用手机内存
+#if defined(FEATURE_VERSION_C337)            
+                if (nInMsgs >= IN_MAX-1)
+                {// 存储空间已满
+                   if (pMe->m_memruimStatuse.used_tag_slots >= pMe->m_memruimStatuse.max_slots)
+                   {
+	 		    wms_cache_info_list   *pList = NULL;
+	 		    wms_cache_info_node   *pnode = NULL;
+			    int nRet=EFAILED;	
+			    int i = 0;	
+	 		    MSG_FATAL("WmsApp_UpdateAnnunciators nInMsgs=%d", nInMsgs, 0, 0);
+	 		    pList = wms_get_cacheinfolist(WMS_MB_INBOX);
+	 		    if (NULL == pList)
+	 		    {
+	 		    	 MSG_FATAL("WmsApp_UpdateAnnunciators NULL == pList", 0, 0, 0);
+	 		    }
+	 		    else
+	 		    {
+		 		    pnode = pList->pHead;
+		 		    if(pnode == NULL)
+		 		    {
+		 		    	MSG_FATAL("WmsApp_UpdateAnnunciators1 pnode == NULL", 0, 0, 0);
+		 		    }
+		 		    while (NULL != pnode)
+		 		    {
+		 		    	MSG_FATAL("mem_store=%d, msg_tag=%x", pnode->mem_store , pnode->msg_tag, 0);
+		 		        if ((++i <= IN_MAX) && (pnode->mem_store == WMS_MEMORY_STORE_NV_CDMA) &&
+					     (pnode->msg_tag != WMS_TAG_MT_NOT_READ))
+		 		        {
+		 		            MSG_FATAL("WmsApp_UpdateAnnunciators pnode != NULL", 0, 0, 0); 	
+		 		            break;
+		 		        }
+		 		        
+		 		        pnode = pnode->pNext;
+		 		    }
+				    MSG_FATAL("WmsApp_UpdateAnnunciators i=%d", i, 0, 0); 	
+		 		    if(pnode == NULL)
+		 		    {
+		 		    	MSG_FATAL("WmsApp_UpdateAnnunciators2 pnode == NULL", 0, 0, 0);
+		 		    }
+				    else
+				    {
+#ifdef FEATURE_SMS_UDH
+					if (pnode->pItems != NULL)
+					{
+						MEMCPY(pMe->m_CurMsgNodes, pnode->pItems, sizeof(pMe->m_CurMsgNodes));
+						MSG_FATAL("pnode->pItems != NUL",0,0,0);
+						for (; pMe->m_idxCur<LONGSMS_MAX_PACKAGES; pMe->m_idxCur++)
+						{
+							if (pMe->m_CurMsgNodes[pMe->m_idxCur] != NULL)
+							{
+								pnode = pMe->m_CurMsgNodes[pMe->m_idxCur];
+								break;
+							}
+						}
+					}
+					else
+#endif
+					{
+						MSG_FATAL("pnode->pItems is  NULL",0,0,0);
+						pMe->m_CurMsgNodes[0] = pnode;
+					}
+					for (i=0; i<LONGSMS_MAX_PACKAGES; i++)
+					{
+						if (pMe->m_CurMsgNodes[i] != NULL)
+						{
+							pnode = pMe->m_CurMsgNodes[i];
+							// 发布删除消息命令
+							nRet = ENOMEMORY;
+							do
+							{
+								nRet = IWMS_MsgDelete(pMe->m_pwms,
+								pMe->m_clientId,
+								&pMe->m_callback,
+								(void *)pMe,
+								pnode->mem_store,
+								pnode->index);
+								MSG_FATAL("DELEING...................",0,0,0);
+							} while(nRet != SUCCESS);
+							MSG_FATAL("DELEING...............nRet=%d",nRet,0,0);
+							pMe->m_CurMsgNodes[i] = NULL;
+						}
+					}			    
+				    }
+	 		    }
+	                    rt.route = WMS_ROUTE_STORE_AND_NOTIFY;
+	                    rt.mem_store = WMS_MEMORY_STORE_NV_CDMA;			
+	                }
+			  else
+			  {
+	                    rt.route = WMS_ROUTE_STORE_AND_NOTIFY;
+	                    rt.mem_store = WMS_MEMORY_STORE_RUIM;			  
+			  }
+                }
+#else		
             if (nInMsgs >= IN_MAX)
             {// 话机收件箱已满
                 if (pMe->m_memruimStatuse.used_tag_slots >= pMe->m_memruimStatuse.max_slots)
@@ -6090,6 +6273,7 @@ void WmsApp_UpdateAnnunciators(WmsApp * pMe)
                     rt.mem_store = WMS_MEMORY_STORE_RUIM;
                 }
             }
+#endif			
             else
             {// 话机收件箱还有存储空间
                 rt.route = WMS_ROUTE_STORE_AND_NOTIFY;
