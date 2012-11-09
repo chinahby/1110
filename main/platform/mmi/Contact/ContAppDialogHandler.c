@@ -9543,6 +9543,9 @@ static boolean  CContApp_HandleOneDialDlgEvent( CContApp  *pMe,
                                               IDC_ONEDIAL_MENU);
                                               
     MENU_AUTO_SCROLL(pMenuCtl, eCode, wParam);
+
+	MSG_FATAL("***zzg CContApp_HandleOneDialDlgEvent eCode=%x", eCode, 0, 0);
+	
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
@@ -9614,7 +9617,8 @@ static boolean  CContApp_HandleOneDialDlgEvent( CContApp  *pMe,
             }
             else
             {
-                CONTAPP_DRAW_BOTTOMBAR(BTBAR_EDIT_BACK);
+				CONTAPP_DRAW_BOTTOMBAR(BTBAR_ADD_BACK);   	//Add By zzg 2012_11_09         	
+                //CONTAPP_DRAW_BOTTOMBAR(BTBAR_EDIT_BACK);
             }
             IDISPLAY_Update(pMe->m_pDisplay);  
             return TRUE;
@@ -9662,7 +9666,8 @@ static boolean  CContApp_HandleOneDialDlgEvent( CContApp  *pMe,
             }
             else
             {
-                CONTAPP_DRAW_BOTTOMBAR(BTBAR_EDIT_BACK);
+            	CONTAPP_DRAW_BOTTOMBAR(BTBAR_ADD_BACK);   	//Add By zzg 2012_11_09       
+                //CONTAPP_DRAW_BOTTOMBAR(BTBAR_EDIT_BACK);
             }
             return TRUE;
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
