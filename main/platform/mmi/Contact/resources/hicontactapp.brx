@@ -825,7 +825,7 @@
 			<Menu Id="7028" Name="IDC_ONEDIALOPT_MENU">
 				<Items>
 					<Item Id="8058" Name="IDI_ONEDIALOPT_MENU_SET">
-						<TextID>IDS_ONEDIAL_SET</TextID>
+						<TextID>IDS_EDIT</TextID>
 					</Item>
 					<Item Id="8059" Name="IDI_ONEDIALOPT_MENU_CLR">
 						<TextID>IDS_ONEDIAL_CLR</TextID>

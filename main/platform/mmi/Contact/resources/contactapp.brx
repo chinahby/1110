@@ -206,7 +206,7 @@
 		<Text>Send messages</Text>
 	</STRING>
 	<STRING Id="1004" Name="IDS_SENDDIRECTORY">
-		<Text>Send contacts</Text>
+		<Text>Send contact</Text>
 	</STRING>
 	<STRING Id="1005" Name="IDS_SEARCHOTHERDIRECTORY">
 		<Text>Search</Text>
