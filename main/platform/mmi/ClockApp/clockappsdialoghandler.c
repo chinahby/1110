@@ -1019,7 +1019,11 @@ static boolean  HandleAlarmSubDialogEvent(CClockApps *pMe,
                                0);
         for(nstrID = IDS_REP_MODE_3, nItemID = ITEM_REP_MODE_4; nItemID <= ITEM_REP_MODE_10; nstrID++, nItemID++)
 #else
+#if defined(FEATURE_VERSION_C337)  
+        for(nstrID = IDS_REP_MODE_10, nItemID = ITEM_REP_MODE_11; nItemID <= ITEM_REP_MODE_10; nstrID++, nItemID++)
+#else
         for(nstrID = IDS_REP_MODE_0, nItemID = ITEM_REP_MODE_1; nItemID <= ITEM_REP_MODE_10; nstrID++, nItemID++)
+#endif
 #endif
         {
             (void)IMENUCTL_AddItem(pMe->m_pRepMode,
