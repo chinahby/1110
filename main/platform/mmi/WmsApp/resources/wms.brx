@@ -158,7 +158,7 @@
 		<Text>Add</Text>
 	</STRING>
 	<STRING Id="53" Name="IDS_FULL">
-		<Text>Preset messages full</Text>
+		<Text>Templates full</Text>
 	</STRING>
 	<STRING Id="54" Name="IDS_SAVED">
 		<Text>Done</Text>
@@ -176,7 +176,7 @@
 		<Text>Failed</Text>
 	</STRING>
 	<STRING Id="59" Name="IDS_INSERTTEMPLATES">
-		<Text>Preset messages</Text>
+		<Text>Templates</Text>
 	</STRING>
 	<STRING Id="60" Name="IDS_SAVETODRAFT">
 		<Text>Save to draft</Text>

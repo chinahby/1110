@@ -2794,8 +2794,12 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
         ISHELL_CancelTimer(pMe->m_pShell,(PFNNOTIFY)MP3_MusicNameAutoScroll,pMe);
         pMe->m_rtype = TYPE_PLAYER;//wlh 20090415 mod 为了区别播放区域，加音量，减音量的刷新，加了个参数
         ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_DrawImageWithOffset,pMe);
+
+		#ifndef FEATURE_VERSION_C337
         ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_DrawForwardImage, pMe);
         ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_DrawRewindImage, pMe);
+		#endif
+		
 		ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_EnableKey, pMe);		//Add By zzg 2010_08_18
         CLOSE_DIALOG(DLGRET_OK);
         return TRUE;
@@ -2875,8 +2879,12 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
 
 		return TRUE;
 	 }        
-       
-    case AVK_UP:
+
+	#ifdef FEATURE_VERSION_C337
+	case AVK_STAR:
+	#else
+	case AVK_UP:
+	#endif         
 	case AVK_O:   //add by yangdecai
 		 pMe->m_rtype = TYPE_ADDVOLUME;//wlh 20090415 mod 为了区别播放区域，加音量，减音量的刷新，加了个参数
 		 #if defined( FEATURE_DISP_220X176) || defined( FEATURE_DISP_240X320) || defined(FEATURE_DISP_128X160)|| defined(FEATURE_DISP_176X220) || defined(FEATURE_DISP_160X128)
@@ -2907,8 +2915,12 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
          }
          IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);//wlh 20090415 mod true -> false
          return TRUE;
-         
-    case AVK_DOWN:
+
+	#ifdef FEATURE_VERSION_C337
+	case AVK_POUND:
+	#else
+	case AVK_DOWN:
+	#endif    
 	case AVK_I:   //add by yangdecai
 		  pMe->m_rtype = TYPE_DECVOLUME;//wlh 20090415 mod 为了区别播放区域，加音量，减音量的刷新，加了个参数
 		  #if defined( FEATURE_DISP_220X176) || defined( FEATURE_DISP_240X320) || defined(FEATURE_DISP_128X160) || defined(FEATURE_DISP_176X220) || defined(FEATURE_DISP_160X128)
@@ -2969,8 +2981,12 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
         CMusicPlayer_PlayNext(pMe,TRUE);//播放下一首
         pMe->m_bUserPressNext = FALSE;
         return TRUE;
-        
+
+	#ifdef FEATURE_VERSION_C337
+	case AVK_DOWN:
+	#else
     case AVK_CLR:
+	#endif	
 		MSG_FATAL("***zzg MP3_MusicPlayerHanleKeyEvt  AVK_CLR***", 0, 0, 0);
        if(pMe->m_bPlaying||pMe->m_bPaused)
        {
@@ -2978,8 +2994,12 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
             ISHELL_CancelTimer(pMe->m_pShell,(PFNNOTIFY) CMusicPlayer_PlayMusic,pMe);
 			  pMe->m_rtype = TYPE_PLAYER;//wlh 20090415 mod 为了区别播放区域，加音量，减音量的刷新，加了个参数
             ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_DrawImageWithOffset,pMe);
+
+			#ifndef FEATURE_VERSION_C337
             ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_DrawForwardImage, pMe);
             ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_DrawRewindImage, pMe);
+			#endif
+			
 			ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_EnableKey, pMe);		//Add By zzg 2010_08_18
             //停止
             if(pMe->m_pMedia)
@@ -2998,13 +3018,50 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
                                             0);       
                 }
             }
-         }
-       else
-       {
-          CLOSE_DIALOG(DLGRET_CANCELED);
-       }
+         }       
        return TRUE;
+	   
+	#ifdef FEATURE_VERSION_C337
+	case AVK_CLR:		
+       if(pMe->m_bPlaying||pMe->m_bPaused)
+       {
+            ISHELL_CancelTimer(pMe->m_pShell,(PFNNOTIFY)CMusicPlayer_InitMusic,pMe);
+            ISHELL_CancelTimer(pMe->m_pShell,(PFNNOTIFY) CMusicPlayer_PlayMusic,pMe);
+			  pMe->m_rtype = TYPE_PLAYER;//wlh 20090415 mod 为了区别播放区域，加音量，减音量的刷新，加了个参数
+            ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_DrawImageWithOffset,pMe);
 
+			#ifndef FEATURE_VERSION_C337
+            ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_DrawForwardImage, pMe);
+            ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_DrawRewindImage, pMe);
+			#endif
+			
+			ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_EnableKey, pMe);		//Add By zzg 2010_08_18
+            //停止
+            if(pMe->m_pMedia)
+            {  
+                if(SUCCESS == IMEDIA_Stop(pMe->m_pMedia))
+                {
+                	MSG_FATAL("***zzg IMEDIA_Stop==SUCCESS***", 0, 0, 0);
+                    pMe->m_bUserStopped= TRUE;
+                    pMe->m_nCurrentTime = 0;
+                    pMe->m_bPlaying = FALSE;
+                    pMe->m_bPaused= FALSE;
+                    (void) ISHELL_PostEvent(pMe->m_pShell, 
+                                            AEECLSID_APP_MUSICPLAYER,
+                                            EVT_USER_REDRAW,
+                                            0,
+                                            0);       
+                }
+            }
+       	}     
+       
+       CLOSE_DIALOG(DLGRET_CANCELED);
+       
+       return TRUE;
+	#endif
+	   
+
+	#ifndef FEATURE_VERSION_C337	
     case AVK_POUND:
         if(pMe->m_bPlaying && pMe->m_pMedia)
         {
@@ -3043,7 +3100,45 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
             
         }
         return TRUE;
-        
+	#endif
+
+	//Add By zzg 2012_11_10
+	#ifdef FEATURE_VERSION_C337
+	case AVK_UP:
+	{
+		switch (pMe->m_nPlayMode)
+		{
+			case PLAYMODE_SINGLE:
+			case PLAYMODE_ORDER:
+			case PLAYMODE_RANDOM:	
+			{
+				pMe->m_nPlayMode = PLAYMODE_REPEAT_ONE;
+				break;
+			}
+			case PLAYMODE_REPEAT_ONE:	
+			{
+				pMe->m_nPlayMode = PLAYMODE_CYCLE;
+				break;
+			}
+			case PLAYMODE_CYCLE:	
+			{
+				pMe->m_nPlayMode = PLAYMODE_RANDOM;
+				break;
+			}
+			default:
+			{
+				break;
+			}
+		}		
+
+		MSG_FATAL("***zzg AVK_UP m_nPlayMode=%x", pMe->m_nPlayMode, 0, 0);
+
+		pMe->m_MusicPlayerCfg.eMusicPlayMode = pMe->m_nPlayMode;
+		return;
+	}
+	#endif
+	//Add End
+		
     case AVK_BGPLAY:
         if(pMe->m_bPlaying)
         {
@@ -3770,6 +3865,9 @@ void Imenuctl_SetModeSel(CMusicPlayer *pMe)
    {
     return;
    }
+
+   MSG_FATAL("***zzg Imenuctl_SetModeSel m_nPlayMode=%x", pMe->m_nPlayMode, 0, 0);
+   
    if(pMe)
    {
     //switch(pMe->m_MusicPlayerCfg.eMusicPlayMode)
@@ -5544,8 +5642,11 @@ static void MP3_DrawPlayerWindows(CMusicPlayer *pMe)
 		MP3_DrawImage(pMe, IDI_PLAY, PLAY_X, PLAY_Y);
         MSG_FATAL("PLAY_X=%d----PLAY_Y=%d",PLAY_X,PLAY_Y,0);  
 	}
-    MP3_DrawRewindImage(pMe);
+
+	#ifndef FEATURE_VERSION_C337
+	MP3_DrawRewindImage(pMe);
     MP3_DrawForwardImage(pMe);
+	#endif   
 	// IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);//wlh test
 }
 

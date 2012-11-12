@@ -101,7 +101,7 @@
 		<Text>User Profile</Text>
 	</STRING>
 	<STRING Id="1037" Name="IDS_NORMALMODE">
-		<Text>Normal</Text>
+		<Text>General</Text>
 	</STRING>
 	<STRING Id="1038" Name="IDS_QUIETMODE">
 		<Text>Silent</Text>

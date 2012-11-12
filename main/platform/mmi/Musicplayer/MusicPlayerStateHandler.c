@@ -212,11 +212,16 @@ static NextFSMAction Handler_STATE_INIT(CMusicPlayer *pMe)
     }
     if(pMe->m_eStartMethod==STARTMETHOD_NORMAL)
     {
-       //MOVE_TO_STATE(STATE_PLAYMUSIC_WINDOWS);
+	#ifdef FEATURE_VERSION_C337
+		MOVE_TO_STATE(STATE_PLAYMUSIC_WINDOWS);
+	#else
+		//MOVE_TO_STATE(STATE_PLAYMUSIC_WINDOWS);
        pMe->m_nMsgResID = IDS_MSG_WAITING;
        pMe->m_eMsgRetState = STATE_PLAYMUSIC_WINDOWS;
        pMe->m_eMsgType = MESSAGE_WAITING;
        MOVE_TO_STATE(STATE_MSG);
+	#endif
+	   
     }
     else if(pMe->m_eStartMethod==STARTMETHOD_SIMPLEPLAYER)
     {

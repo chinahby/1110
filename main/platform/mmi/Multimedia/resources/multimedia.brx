@@ -28,6 +28,9 @@
 	<STRING Id="1016" Name="IDS_MULTIMEDIA_TV">
 		<Text>TV</Text>
 	</STRING>
+	<STRING Id="1017" Name="IDS_MULTIMEDIA_SOUND_RECORDER">
+		<Text>Sound Recorder</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<Dialog Id="6003" Name="IDD_LIST_MULTIMEDIA_DIALOGS" Focus="7001">

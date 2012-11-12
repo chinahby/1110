@@ -214,13 +214,24 @@
 #define SCROLLBAR_Y           160
 #define POPMENU_BOTTOM_X      60
 #define POPMENU_BOTTOM_Y      60
+
+#ifdef FEATURE_VERSION_C337
+#define POPMENU_WIDTH	   		130
+#else
 #define POPMENU_WIDTH         100 //117
+#endif
 
 //Add By zzg 2010_07_24
 #define CFGBAR_TEXT_X		   2
 #define CFGBAR_TEXT_Y		   21
+
+#ifdef FEATURE_VERSION_C337
+#define CFGBAR_TEXT_WIDTH	   120
+#define CFGBAR_TEXT_HEIGHT	   20		//NormalFont Height
+#else
 #define CFGBAR_TEXT_WIDTH	   80
 #define CFGBAR_TEXT_HEIGHT	   20		//NormalFont Height
+#endif
 
 #define CFGBAR_ARROW_WIDTH		8
 #define CFGBAR_ARROW_HEIGHT		14

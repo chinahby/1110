@@ -494,11 +494,20 @@ static boolean dialog_handler_of_state_main( Recorder* pme, AEEEvent evt, uint16
 			#else
 			{
 				AECHAR wszTitle[40] = {0};
+
+				#ifdef FEATURE_VERSION_C337
+				ISHELL_LoadResString( pme->a.m_pIShell,
+                                      AEE_RECORDER_RES_FILE,
+                                      IDS_TITLE_C337,
+                                      wszTitle,
+                                      sizeof(wszTitle));
+				#else
                 ISHELL_LoadResString( pme->a.m_pIShell,
                                       AEE_RECORDER_RES_FILE,
                                       IDS_TITLE,
                                       wszTitle,
                                       sizeof(wszTitle));
+				#endif
                 if(pme->m_pIAnn != NULL)
                 {
 				    IANNUNCIATOR_SetFieldText(pme->m_pIAnn,wszTitle);
@@ -4575,11 +4584,20 @@ static boolean dialog_handler_of_state_storage_setup( Recorder* pme, AEEEvent ev
     			#else
     			{
     				AECHAR wszTitle[16] = {0};
+					#ifdef FEATURE_VERSION_C337
+					ISHELL_LoadResString( pme->a.m_pIShell,
+                                          AEE_RECORDER_RES_FILE,
+                                          IDS_TITLE_C337,
+                                          wszTitle,
+                                          sizeof(wszTitle));
+					#else
                     ISHELL_LoadResString( pme->a.m_pIShell,
                                           AEE_RECORDER_RES_FILE,
                                           IDS_TITLE,
                                           wszTitle,
                                           sizeof(wszTitle));
+					#endif
+					
     				IANNUNCIATOR_SetFieldText(pme->m_pIAnn,wszTitle);            
     			}
     			#endif

@@ -1177,11 +1177,21 @@ static boolean dialog_handler_of_state_pwd(CScheduleApp* pme,
                 Appscommon_ResetBackgroundEx(pme->m_pDisplay, &pme->m_rc, TRUE);
 #endif
                 //IDISPLAY_FillRect  (pme->m_pDisplay,&pme->m_rc,RGB_BLACK);
+
+				#ifdef FEATURE_VERSION_C337
+				(void)ISHELL_LoadResString(pme->m_pShell, 
+	                                        AEE_SCHEDULEAPP_RES_FILE,
+	                                        IDS_CALENDAR, 
+	                                        text,
+	                                        sizeof(text));    
+				#else
                (void)ISHELL_LoadResString(pme->m_pShell, 
-                                                AEE_SCHEDULEAPP_RES_FILE,
-                                                IDS_APP, 
-                                                text,
-                                                sizeof(text));                  
+	                                        AEE_SCHEDULEAPP_RES_FILE,
+	                                        IDS_APP, 
+	                                        text,
+	                                        sizeof(text));    
+				#endif
+				
                 // »­±êÌâÌõ
                 TitleBar_Param.pwszTitle = text;
                 TitleBar_Param.dwAlignFlags = IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
@@ -1596,11 +1606,20 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
         }
         {
             AECHAR WTitle[20] = {0};
+
+			#ifdef FEATURE_VERSION_C337
+			(void)ISHELL_LoadResString(pme->m_pShell,
+							            AEE_SCHEDULEAPP_RES_FILE,                                
+							            IDS_CALENDAR,
+							            WTitle,
+							            sizeof(WTitle));
+			#else
             (void)ISHELL_LoadResString(pme->m_pShell,
-            AEE_SCHEDULEAPP_RES_FILE,                                
-            IDS_APP,
-            WTitle,
-            sizeof(WTitle));
+							            AEE_SCHEDULEAPP_RES_FILE,                                
+							            IDS_APP,
+							            WTitle,
+							            sizeof(WTitle));
+			#endif
             IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
         }   
         return TRUE;
@@ -2449,10 +2468,18 @@ static boolean  dialog_handler_of_state_gotodate( CScheduleApp* pme,
                     AECHAR text[16];
                     TitleBar_Param_type TitleBar = {0};
 
+					#ifdef FEATURE_VERSION_C337
+					ISHELL_LoadResString(pme->m_pShell, 
+                                            AEE_SCHEDULEAPP_RES_FILE, 
+                                            IDS_CALENDAR, 
+                                            text, sizeof(text));
+					#else
                     ISHELL_LoadResString(pme->m_pShell, 
                                             AEE_SCHEDULEAPP_RES_FILE, 
                                             IDS_APP, 
                                             text, sizeof(text));
+					#endif
+					
                     TitleBar.pwszTitle = text;
                     TitleBar.dwAlignFlags = IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
 					#if 0
@@ -3682,6 +3709,11 @@ static boolean  dialog_handler_of_state_event_edit( CScheduleApp* pme,
             {
                 titleBarParms.nTitleResID   = IDS_APP;
             }
+
+			#ifdef FEATURE_VERSION_C337
+			titleBarParms.nTitleResID   = IDS_CALENDAR;
+			#endif
+			
             STRCPY( titleBarParms.strTitleResFile, AEE_SCHEDULEAPP_RES_FILE);
 			#if 0
             DrawTitleBar( pme->m_pDisplay, &titleBarParms);
@@ -6071,11 +6103,19 @@ static boolean  dialog_handler_of_state_showalert( CScheduleApp* pme,
                     IDISPLAY_SetColor(pme->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
                     // schedule alert
                     {
+                    	#ifdef FEATURE_VERSION_C337
+						ISHELL_LoadResString(pme->m_pShell, 
+                                                AEE_SCHEDULEAPP_RES_FILE, 
+                                                IDS_CALENDAR, 
+                                                wstrTitle, 
+                                                sizeof(wstrTitle));
+						#else
                         ISHELL_LoadResString(pme->m_pShell, 
                                                 AEE_SCHEDULEAPP_RES_FILE, 
                                                 IDS_APP, 
                                                 wstrTitle, 
                                                 sizeof(wstrTitle));
+						#endif
                                                 
                         //SETAEERECT(&rc, 0, TITLEBAR_HEIGHT , pme->m_rc.dx, TITLEBAR_HEIGHT);
                         SETAEERECT(&rc, 0, 0 , pme->m_rc.dx, MENUITEM_HEIGHT);  //Add By zzg 2012_03_08

@@ -76,6 +76,9 @@
 	<String Id="1034" Name="IDS_APPLICATION_LIST_C337">
 		<Text>Organizer</Text>
 	</String>
+	<String Id="1035" Name="IDS_APPLICATION_CALENDAR">
+		<Text>Calendar</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<Dialog Id="6001" Name="IDD_FLASHLIGHT_SETTING" Focus="7002">

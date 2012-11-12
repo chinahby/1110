@@ -8,7 +8,7 @@
 		<Text>Camera One</Text>
 	</String>
 	<String Id="1003" Name="IDS_ITEM_CAMERA_GALLERY">
-		<Text>Photo gallery</Text>
+		<Text>Image viewer</Text>
 	</String>
 	<String Id="1004" Name="IDS_MULTI_BACK">
 		<Text>Camera Two</Text>

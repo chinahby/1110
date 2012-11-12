@@ -841,7 +841,11 @@ static boolean  HandleCallSettingDialogEvent(CSettingMenu *pMe,
 				IANNUNCIATOR_SetFieldText(pMe->m_pAnn,WTitle);
             }
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_ANSWER_MODE, IDS_ANSWER_MODE, NULL, 0);
+			#ifdef FEATURE_VERSION_W317A
+			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_CALL_TIME_REMINDER, IDS_CALL_TIME_REMINDER, NULL, 0);
+			#else
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_MINUTE_ALERT, IDS_MINUTE_ALERT, NULL, 0);
+			#endif
 #if 1   //删除自动重拨功能
 //Add By zzg 2010_09_16 : smart\m8  del the auto retry..
 #if defined(FEATURE_VERSION_SMART) || defined(FEATURE_VERSION_M8) || defined(FEATURE_VERSION_M8P) || defined(FEATURE_VERSION_M8021)||defined(FEATURE_VERSION_W516)||defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_W208S) || defined(FEATURE_VERSION_W027)
@@ -941,8 +945,15 @@ static boolean  HandleCallSettingDialogEvent(CSettingMenu *pMe,
                     break;
 #endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH  
 
+				#ifdef FEATURE_VERSION_W317A
+				case IDS_CALL_TIME_REMINDER:
+				#endif
                 case IDS_MINUTE_ALERT:     //50秒提醒
+                	#ifdef FEATURE_VERSION_W317A
+					pMe->m_CallSettingSel = IDS_MINUTE_ALERT;
+					#else
                     pMe->m_CallSettingSel = IDS_MINUTE_ALERT;
+					#endif
                     CLOSE_DIALOG(DLGRET_CALLSETTINGSEL)
                     break;
 
@@ -1267,6 +1278,9 @@ static boolean  HandleCallSettingSelDialogEvent(CSettingMenu *pMe,
                         break;
 
 
+					#ifdef FEATURE_VERSION_W317A
+					case IDS_CALL_TIME_REMINDER:
+					#endif
                     case IDS_MINUTE_ALERT:      //50秒提醒
                         ICONFIG_GetItem(pMe->m_pConfig,CFGI_MINUTE_ALERT,&byte_return,sizeof(byte_return));
                         break;
@@ -1494,6 +1508,9 @@ static boolean  HandleCallSettingSelDialogEvent(CSettingMenu *pMe,
                             CLOSE_DIALOG(DLGRET_CANCELED)
                             return TRUE;
 
+						#ifdef FEATURE_VERSION_W317A
+						case IDS_CALL_TIME_REMINDER:
+						#endif
                         case IDS_MINUTE_ALERT:      //50秒提醒
                             callset = OEMNV_ALERT_DISABLE;
                             ICONFIG_SetItem(pMe->m_pConfig,CFGI_MINUTE_ALERT,&callset,sizeof(callset));
@@ -1569,6 +1586,9 @@ static boolean  HandleCallSettingSelDialogEvent(CSettingMenu *pMe,
                             CLOSE_DIALOG(DLGRET_CANCELED)
                             return TRUE;
 
+						#ifdef FEATURE_VERSION_W317A
+						case IDS_CALL_TIME_REMINDER:
+						#endif
                         case IDS_MINUTE_ALERT:      //50秒提醒
                             callset = OEMNV_ALERT_ENABLE;
                             ICONFIG_SetItem(pMe->m_pConfig,CFGI_MINUTE_ALERT,&callset,sizeof(callset));

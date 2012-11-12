@@ -448,6 +448,9 @@
 	<String Id="1149" Name="IDS_AKG_10SEC" Encoding="Unicode">
 		<Text>10 Sec</Text>
 	</String>
+	<STRING Id="1150" Name="IDS_CALL_TIME_REMINDER">
+		<Text>Call time reminder</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="7001">

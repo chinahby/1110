@@ -924,12 +924,14 @@ static boolean  HandleSoundMenuProfilesDialogEvent(CSoundMenu *pMe,
             //Sound_App_Add_Menu(pMenu,IDS_KEYTONE_LENGTH);
 
 	
-			#ifdef FEATURE_VERSION_W317A
+			#if defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_C337)
+			/*
 			if (pMe->m_ePreState != DLGRET_SCENEMODESUB)
 			{
 				Sound_App_Add_Menu(pMenu,IDS_STARTUP_RINGER);
             	Sound_App_Add_Menu(pMenu,IDS_SHUTDOWN_RINGER);	
 			}
+			*/
 			#else
 			Sound_App_Add_Menu(pMenu,IDS_STARTUP_RINGER);
             Sound_App_Add_Menu(pMenu,IDS_SHUTDOWN_RINGER);

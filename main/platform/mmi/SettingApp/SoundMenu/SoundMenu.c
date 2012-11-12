@@ -1237,19 +1237,33 @@ void SoundMenu_InitRingerList(CSoundMenu *pMe)
                    {
                        AECHAR memo[64] = {0};
 
-                       if( ISHELL_LoadResString( pMe->m_pShell,
+					   #ifdef FEATURE_VERSION_C337
+					   if( ISHELL_LoadResString( pMe->m_pShell,
+                                             APP_RECORDER_RES_FILE,
+                                             IDS_RECORDER_MEMO_RINGER_NAME_C337,
+                                             memo,
+                                             sizeof( memo)
+                                         ) > 0
+                       )
+					   #else
+					   if( ISHELL_LoadResString( pMe->m_pShell,
                                              APP_RECORDER_RES_FILE,
                                              IDS_RECORDER_MEMO_RINGER_NAME,
                                              memo,
                                              sizeof( memo)
                                          ) > 0
                        )
+					   #endif                       
                        {
                            (void)WSTRCPY( ri.szName, memo);
                        }
                        else
                        {
+                       		#ifdef FEATURE_VERSION_C337
+							(void)WSTRCPY( ri.szName, L"Record");
+							#else
                            (void)WSTRCPY( ri.szName, L"Voice memo");
+							#endif
                        }
 
                    }

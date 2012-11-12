@@ -214,6 +214,9 @@
 	<STRING Id="2314" Name="IDS_SPORTS_TITLE">
 		<Text>खेल योजना</Text>
 	</STRING>
+	<STRING Id="2315" Name="IDS_CALENDAR">
+		<Text>Calendar</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<Dialog Id="6001" Name="IDD_PWD" Focus="0">

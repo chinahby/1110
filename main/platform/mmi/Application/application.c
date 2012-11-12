@@ -1041,7 +1041,7 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
 			
 
 #ifdef FEATURE_VERSION_C337
-			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_SCHEDULER, IDS_APPLICATION_SCHEDULER, NULL, 0);
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CALENDAR, IDS_APPLICATION_CALENDAR, NULL, 0);
 #endif
 			
 #if defined	(FEATURE_VERSION_FLEXI203) ||defined(FEATURE_VERSION_IVIO203) 
@@ -1474,7 +1474,10 @@ static int StartApplet(Application *pMe, int i)
     case IDS_APPLICATION_RECORDER:
         Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_RECORDER);
         break;
-        
+
+	#ifdef FEATURE_VERSION_C337
+	case IDS_APPLICATION_CALENDAR:
+	#endif
     case IDS_APPLICATION_SCHEDULER:
         Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SCHEDULEAPP);
         break;

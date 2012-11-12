@@ -8,7 +8,7 @@
 		<Text>Voice memo</Text>
 	</STRING>
 	<STRING Id="1001" Name="IDS_NEW_RECORD">
-		<Text>New recorder</Text>
+		<Text>New record</Text>
 	</STRING>
 	<STRING Id="1002" Name="IDS_RECORD_LIST">
 		<Text>Record list</Text>
@@ -213,6 +213,12 @@
 	</STRING>
 	<STRING Id="1215" Name="IDS_MM_STATUS_RECORDING">
 		<Text>Recording...</Text>
+	</STRING>
+	<STRING Id="1216" Name="IDS_RECORDER_MEMO_RINGER_NAME_C337">
+		<Text>Record</Text>
+	</STRING>
+	<STRING Id="1217" Name="IDS_TITLE_C337">
+		<Text>Sound recorder</Text>
 	</STRING>
 </Strings>
 </BREWRes>

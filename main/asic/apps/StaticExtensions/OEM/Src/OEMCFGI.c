@@ -1746,7 +1746,7 @@ static OEMConfigListType oemi_cache = {
    FALSE,                                           //CFGI_SMS_LOCK_CHECK
    FALSE,                                           //CFGI_CALENDAR_LOCK_CHECK
 
-#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_C01)
+#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_C337)
    1,											//CFGI_KEY_LOCK_CHECK			
 #else
    0,
@@ -1881,7 +1881,11 @@ static OEMConfigListType oemi_cache = {
 #endif
    ,FALSE
 #ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for rend
+#if defined (FEATURE_VERSION_C337)
+   ,DISPLAYREND_TYPE_MAX
+#else
    ,DISPLAYREND_TYPE_ONEBYONE
+#endif   
 #endif
 #ifdef FEATURE_LCD_TOUCH_ENABLE
    ,{-1,-1,-1,-1}
@@ -2711,7 +2715,7 @@ void OEM_RestoreFactorySetting( void )
 
 #ifdef FEATURE_PEKTEST
     oemi_cache.b_key_lock       =  0;
-#elif defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM) ||defined(FEATURE_VERSION_C01)
+#elif defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM) ||defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_C337)
 	oemi_cache.b_key_lock       =  1; 
 #elif defined(FEATURE_VERSION_W208S)
     oemi_cache.b_key_lock       =  4; 
@@ -3179,6 +3183,10 @@ void OEM_RestoreFactorySetting( void )
    nvi.back_light = OEMNV_BL_7S;
    (void) OEMNV_Put( NV_BACK_LIGHT_I, &nvi );
    nvi_cache.backlight = OEMNV_BL_7S;
+   #elif defined (FEATURE_VERSION_C337)
+   nvi.back_light = OEMNV_BL_30S;
+   (void) OEMNV_Put( NV_BACK_LIGHT_I, &nvi );
+   nvi_cache.backlight = OEMNV_BL_30S;
    #else
    nvi.back_light = OEMNV_BL_10S;
    (void) OEMNV_Put( NV_BACK_LIGHT_I, &nvi );
@@ -3287,7 +3295,7 @@ void OEM_RestoreFactorySetting( void )
         (void) OEMNV_Put( NV_LANGUAGE_SELECTION_I, &nvi );
         (void) AEE_IssueSystemCallback(AEE_SCB_DEVICE_INFO_CHANGED);
     }
-#ifdef FEATURE_VERSION_W208S
+#if defined (FEATURE_VERSION_W208S) || defined (FEATURE_VERSION_C337)
    nvi.set_time_format = NV_SET_TIME_FORMAT_12_HOUR;
    (void) OEMNV_Put( NV_SET_TIME_FORMAT_I, &nvi);
    nvi_cache.set_time_format = (byte)NV_SET_TIME_FORMAT_12_HOUR;

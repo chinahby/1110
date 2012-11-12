@@ -202,11 +202,21 @@ static boolean Recorder_HandleEvent( Recorder* pme, AEEEvent evt, uint16 wParam,
             ISHELL_GetDeviceInfo( pme->m_pShell, &di);
 			pme->m_rc.dy = di.cyScreen;
             IANNUNCIATOR_SetFieldIsActiveEx(pme->m_pIAnn,FALSE);
+
+			#ifdef FEATURE_VERSION_C337
+			ISHELL_LoadResString( pme->a.m_pIShell,
+                                      AEE_RECORDER_RES_FILE,
+                                      IDS_TITLE_C337,
+                                      wszTitle,
+                                      sizeof(wszTitle));
+			#else
             ISHELL_LoadResString( pme->a.m_pIShell,
                                       AEE_RECORDER_RES_FILE,
                                       IDS_TITLE,
                                       wszTitle,
                                       sizeof(wszTitle));
+			#endif
+			
 		    IANNUNCIATOR_SetFieldText(pme->m_pIAnn,wszTitle);
 			Recorder_RunFSM( pme);
 		}
