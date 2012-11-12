@@ -67,7 +67,7 @@ static void ClockApps_RunFSM(CClockApps *pMe);
 
 static void ClockApps_Delay(CClockApps *pMe);
 //定时器时间到，打开闹铃/振动
-static boolean ClockApps_Expired(CClockApps *pMe, AlarmType eAlarmType/*, boolean justRegister*/);
+static boolean ClockApps_Expired(CClockApps *pMe, AlarmType eAlarmType, boolean justRegister);
 static void ClockApps_APPIsReadyTimer(void *pme);
 /*==============================================================================
                                  全局数据
@@ -574,19 +574,16 @@ static void ClockApps_RunFSM(CClockApps *pMe)
 
 ==============================================================================*/
 #define EVT_REREGISTER_ALARMS   EVT_USER + 20
-//update by pyuangui
-static void reregisterAlarms( CClockApps *pMe , AlarmType eAlarmType) 
-{
-    #if 0
-	int i = 0;   
+static void reregisterAlarms( CClockApps *pMe)
+{ 
+
+	int i = 0;
+
 	for(i = 0; i < NUM_OF_ALARMCLOCK; i++)
 	{
 		// 执行闹钟
 		ClockApps_Expired(pMe, i, TRUE);
 	}
-    #else
-        ClockApps_Expired(pMe, eAlarmType); 
-    #endif
 }
 static boolean ClockApps_HandleEvent(IClockApps *pi,
     AEEEvent eCode,
@@ -646,7 +643,7 @@ static boolean ClockApps_HandleEvent(IClockApps *pi,
                 pMe->m_bAlarmOff = FALSE;
 
 #if 1
-                //ClockApps_Expired(pMe, wParam, FALSE);  //update by pyuangui
+                ClockApps_Expired(pMe, wParam, FALSE);
 #else
                     // 为了避免在设置有重复的闹钟和多个闹钟重起后有些闹钟不
                     // 能起闹的情况下,每次都全部判断一遍,若有重复的闹钟则都
@@ -658,7 +655,7 @@ static boolean ClockApps_HandleEvent(IClockApps *pi,
                     }
 #endif
 
-                ISHELL_PostEvent( pMe->m_pShell, AEECLSID_ALARMCLOCK, EVT_REREGISTER_ALARMS, wParam, dwParam); //update by pyuangui
+                ISHELL_PostEvent( pMe->m_pShell, AEECLSID_ALARMCLOCK, EVT_REREGISTER_ALARMS, 0, 0);
 
             }
         }
@@ -674,7 +671,7 @@ static boolean ClockApps_HandleEvent(IClockApps *pi,
 #if defined( FEATURE_POWERDOWN_ALARM)
             registerPowerdownAlarmclock();
 #endif
-            reregisterAlarms(pMe ,wParam);
+            reregisterAlarms( pMe);
         }
             return TRUE;
 
@@ -896,7 +893,7 @@ static void ClockApps_APPIsReadyTimer(void *pme)
     {
         return;
     }
-    MSG_FATAL("ClockApps_APPIsReadyTimer-----",0,0,0);
+
     (void) ISHELL_PostEvent( pMe->m_pShell,
                             AEECLSID_ALARMCLOCK,
                             EVT_APPISREADY,
@@ -923,7 +920,7 @@ static void ClockApps_APPIsReadyTimer(void *pme)
 备注：
 
 ==============================================================================*/
-static boolean ClockApps_Expired(CClockApps *pMe, AlarmType eAlarmType/*, boolean justRegister*/) //update by pyuangui
+static boolean ClockApps_Expired(CClockApps *pMe, AlarmType eAlarmType, boolean justRegister)
 {
     uint32 dwNow;
     uint32 dwAlarmTime;
@@ -943,7 +940,7 @@ static boolean ClockApps_Expired(CClockApps *pMe, AlarmType eAlarmType/*, boolea
 #if defined( FEATURE_ONCE_ALARM)
     boolean continueAlarm    = 0;
 #endif
-    MSG_FATAL("ClockApps_Expired-----",0,0,0);
+
     if (pMe == NULL)
     {
         return FALSE;
@@ -1260,14 +1257,12 @@ static boolean ClockApps_Expired(CClockApps *pMe, AlarmType eAlarmType/*, boolea
     )
     {
 #ifdef FEATURE_UIALARM
-        MSG_FATAL("CClockApps_UpdateAlarmTimer----eAlarmType=%d---dwTepTime=%d",eAlarmType,dwTepTime,0);
         (void) IAlarm_SetAlarm(pAlarm,
                                 AEECLSID_ALARMCLOCK,
                                 (uint16)eAlarmType,
                                 dwTepTime);
         IAlarm_Release(pAlarm);
 #else
-        MSG_FATAL("CClockApps_UpdateAlarmTimer----eAlarmType=%d---dwTepTime=%d",eAlarmType,dwTepTime,0);
         (void) ISHELL_SetAlarm(pMe->m_pShell,
                                AEECLSID_ALARMCLOCK,
                                 (uint16)eAlarmType,
@@ -1276,14 +1271,12 @@ static boolean ClockApps_Expired(CClockApps *pMe, AlarmType eAlarmType/*, boolea
     }
 #else
 #ifdef FEATURE_UIALARM
-    MSG_FATAL("CClockApps_UpdateAlarmTimer----eAlarmType=%d---dwTepTime=%d",eAlarmType,dwTepTime,0);
     (void) IAlarm_SetAlarm(pAlarm,
                             AEECLSID_ALARMCLOCK,
                             (uint16)eAlarmType,
                             dwTepTime);
     IAlarm_Release(pAlarm);
 #else
-    MSG_FATAL("CClockApps_UpdateAlarmTimer----eAlarmType=%d---dwTepTime=%d",eAlarmType,dwTepTime,0);
     (void) ISHELL_SetAlarm(pMe->m_pShell,
                            AEECLSID_ALARMCLOCK,
                             (uint16)eAlarmType,
@@ -1297,7 +1290,7 @@ static boolean ClockApps_Expired(CClockApps *pMe, AlarmType eAlarmType/*, boolea
     }
 
     // 星期闹钟
-    if (!pMe->m_bWeekAlarmEnabled /*|| justRegister*/)  
+    if (!pMe->m_bWeekAlarmEnabled || justRegister)
     {
         return FALSE;
     }
@@ -1372,7 +1365,7 @@ boolean ClockApps_CanAlert(CClockApps *pMe)
 #ifdef FEATURE_ICM
     ICM *pICM = NULL;
     uint16 num = 0;
-     MSG_FATAL("ClockApps_CanAlert-----",0,0,0);
+ 
     if(AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell, 
                                             AEECLSID_CM, 
                                             (void **)&pICM))
@@ -1466,7 +1459,6 @@ static void ClockApps_Delay(CClockApps *pMe)
 
     //更新显示的闹钟时间向后退移2分钟
     //...
-MSG_FATAL("ClockApps_Delay-----",0,0,0);
 
 #ifdef FEATURE_UIALARM
     (void) IAlarm_SetAlarm(pAlarm,
