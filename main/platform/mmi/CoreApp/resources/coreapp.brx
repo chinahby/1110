@@ -95,7 +95,7 @@
 		<Text>Alarm</Text>
 	</STRING>
 	<STRING Id="1032" Name="IDS_AUTO_POWER_OFF">
-		<Text>Could you want auto power off the phone</Text>
+		<Text>Do you want to power off?</Text>
 	</STRING>
 	<STRING Id="1033" Name="IDS_VMAILTIPS_FMT">
 		<Text>New voice mail:%d</Text>

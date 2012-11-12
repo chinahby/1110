@@ -1078,7 +1078,11 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
                 }
                 else if(pMe->m_sPinActionStatus.sStatus.sw1 == 0x98 && pMe->m_sPinActionStatus.sStatus.sw2 == 0x04)
                 {
+                	#ifdef FEATURE_VERSION_C337
+					pMe->m_nMsgID = IDS_INVALIDPIN;
+					#else
                     pMe->m_nMsgID = IDS_MSG_SECISSUE;
+					#endif
                 }
                 else if(pMe->m_sPinActionStatus.sStatus.sw1 == 0x98 && pMe->m_sPinActionStatus.sStatus.sw2 == 0x40)
                 {
