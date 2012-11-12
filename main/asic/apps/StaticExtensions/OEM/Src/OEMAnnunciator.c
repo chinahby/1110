@@ -879,7 +879,7 @@ static int DrawImageField (IAnnunciator *pMe, uint32 nAnnunID, uint32 nState)
     boolean bUpdate = TRUE;
     uint32 nFirstState = GetAnnunFirstState(nState);
     if ((pMe == NULL))
-        return EFAILED;
+        return EFAILED;	
 
     if(NULL == pMe->m_coreObj)
     {
@@ -1844,7 +1844,7 @@ FUNCTION:IAnnunciator_SetFieldIsActiveEx
 
 =============================================================================*/
 static int IAnnunciator_SetFieldIsActiveEx(IAnnunciator * pMe,boolean bActive)
-{	
+{		
 	if (pMe == NULL) 
     {
       return EFAILED;
@@ -1855,7 +1855,7 @@ static int IAnnunciator_SetFieldIsActiveEx(IAnnunciator * pMe,boolean bActive)
 }
 
 static int IAnnunciator_SetHasTitleText(IAnnunciator *pMe, boolean bHasTitleText)
-{
+{	
 	if (pMe == NULL) 
     {
       return EFAILED;
@@ -1884,7 +1884,9 @@ static int IAnnunciator_SetFieldText(IAnnunciator * pMe ,uint16 *cText)
     {
         IAnnunCoreObj->m_Title[0] = 0;
     }
-    IAnnunciator_Redraw(pMe);
+	
+	IAnnunciator_Redraw(pMe);	
+	
 	return SUCCESS;
 }
 
@@ -2135,14 +2137,15 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
    {
       MSG_LOW("Null core object ptr in annunciator redraw.", 0, 0, 0);
       return EFAILED;
-   }
-
+   }   
+	
    /* Run in the system context */
 #if MIN_BREW_VERSION(3, 0)
    pac = AEE_EnterAppContext(NULL);
 #else
    pac = AEE_SetAppContext(NULL);
-#endif // MIN_BREW_VERSION(3, 0)
+#endif // MIN_BREW_VERSION(3, 0)	
+
    if(pMe->m_coreObj->m_bAnnunciatorOn)
    {
 #if 0//def FEATURE_MDP
@@ -2226,9 +2229,32 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
         
         
 	    if(!IAnnunCoreObj->m_bActive)
-		{
+		{			
+			//Add By zzg 2012_11_12
+			if (IAnnunCoreObj->m_Title[0] == 0)
+			{
+#ifdef FEATURE_VERSION_C337
+					
+				IImage      *pBarImg = NULL;
+
+				pBarImg = ISHELL_LoadResImage(pMe->m_piShell,
+	                                          AEE_APPSCOMMONRES_IMAGESFILE,
+	                                          IDI_TITLEBAR);
+
+				if (NULL != pBarImg)
+		        {
+		            IIMAGE_Draw(pBarImg, 0, 0);
+		            IIMAGE_Release(pBarImg);
+		            pBarImg = NULL;
+		        }
+				
+				IDISPLAY_UpdateEx(pMe->m_coreObj->m_piDisplay, TRUE);					
+#endif
+			}
+			//Add End
+			
             if(IAnnunCoreObj->m_hasTitleText && IAnnunCoreObj->m_Title[0] != 0)
-            {
+            {            	
             	if (need_capture.b_capture != DB_CAPTURE_INIDLE)	//Add By zzg 2010_08_05
             	{
             	    //IIMAGE_Draw(pBackBmp,20, 0);
@@ -2339,8 +2365,9 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
 #endif
 
 
-					DBGPRINTF("***zzg bgRect:%d,%d,%d,%d***", bgRect.x, bgRect.y, bgRect.dx, bgRect.dy);
+					//DBGPRINTF("***zzg bgRect:%d,%d,%d,%d***", bgRect.x, bgRect.y, bgRect.dx, bgRect.dy);
 
+					
 					#ifdef FEATURE_VERSION_C337
 					{
 						IImage      *pBarImg = NULL;
@@ -2357,6 +2384,7 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
 				        }
 					}
 					#else
+					
                     IDISPLAY_DrawRect(pMe->m_coreObj->m_piDisplay,
                                       &bgRect,
                                       RGB_NONE,
@@ -2386,14 +2414,15 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
 	                0, 
 	                &rc, 
 	                dwFlags);					
-	                (void)IDISPLAY_SetColor(pMe->m_coreObj->m_piDisplay, CLR_USER_TEXT, RGB_BLACK);
+	                (void)IDISPLAY_SetColor(pMe->m_coreObj->m_piDisplay, CLR_USER_TEXT, RGB_BLACK);					
+					
 	                IDISPLAY_UpdateEx(pMe->m_coreObj->m_piDisplay, TRUE);
             	}
             }
            
 		  // IIMAGE_Release( pBackBmp);
 		}
-
+		
       // 待机界面下不必跟新显示，待机界面绘制完显示信息后再统一更新显示，如此可避免进入待机界面的闪屏
       if (need_capture.b_capture != DB_CAPTURE_INIDLE)
       {
