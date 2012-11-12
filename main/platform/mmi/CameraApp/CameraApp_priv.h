@@ -226,7 +226,7 @@
 #define CFGBAR_TEXT_Y		   21
 
 #ifdef FEATURE_VERSION_C337
-#define CFGBAR_TEXT_WIDTH	   120
+#define CFGBAR_TEXT_WIDTH	   130
 #define CFGBAR_TEXT_HEIGHT	   20		//NormalFont Height
 #else
 #define CFGBAR_TEXT_WIDTH	   80
