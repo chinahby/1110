@@ -40,6 +40,12 @@
 	<STRING Id="1013" Name="IDS_OPTION_SETUP">
 		<Text>ตั้งค่า</Text>
 	</STRING>
+	<String Id="1014" Name="IDS_ADD">
+		<Text>add event</Text>
+	</String>
+	<String Id="1015" Name="IDS_DELETE">
+		<Text>delete</Text>
+	</String>
 	<STRING Id="1016" Name="IDS_OPTION_VIEWDAY_DELETE_CONFIRM">
 		<Text>ลบ</Text>
 	</STRING>

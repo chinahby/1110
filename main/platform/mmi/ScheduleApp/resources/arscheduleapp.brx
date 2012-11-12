@@ -1,215 +1,221 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="scheduleapp" VERSION="1">
+<BREWRes Name="arscheduleapp" VERSION="1">
 <Strings Encoding="Unicode">
 	<STRING Id="1001" Name="IDS_OPTION_NEW_EVENT">
-        <Text>جديد</Text>
+		<Text>جديد</Text>
 	</STRING>
 	<STRING Id="1002" Name="IDS_OPTION_GOTODATE">
-        <Text>انتقال إلى تاريخ</Text>
+		<Text>انتقال إلى تاريخ</Text>
 	</STRING>
 	<STRING Id="1003" Name="IDS_OPTION_DELETE_ALL">
-        <Text>حذف الكل</Text>
+		<Text>حذف الكل</Text>
 	</STRING>
 	<STRING Id="1004" Name="IDS_PWD_TITLE">
-        <Text>أدخل كلمة المرور</Text>
+		<Text>أدخل كلمة المرور</Text>
 	</STRING>
 	<STRING Id="1005" Name="IDS_INVALID">
-        <Text>كلمة المرور غير صالحة</Text>
+		<Text>كلمة المرور غير صالحة</Text>
 	</STRING>
 	<STRING Id="1006" Name="IDS_SPORTS">
-        <Text>الرياضة! انتقال انتقال انتقال!</Text>
+		<Text>الرياضة! انتقال انتقال انتقال!</Text>
 	</STRING>
 	<STRING Id="1007" Name="IDS_DATE">
-        <Text>س س س س : ش ش : ي ي</Text>
+		<Text>س س س س : ش ش : ي ي</Text>
 	</STRING>
 	<STRING Id="1008" Name="IDS_INVALID_YEAR">
-        <Text>أدخل عامًا من 1900 إلى 2051</Text>
+		<Text>أدخل عامًا من 1900 إلى 2051</Text>
 	</STRING>
 	<STRING Id="1009" Name="IDS_DONE">
-        <Text>تم</Text>
+		<Text>تم</Text>
 	</STRING>
 	<STRING Id="1010" Name="IDS_OPTION_VIEWMONTH_VIEW_EVENT">
-        <Text>عرض</Text>
+		<Text>عرض</Text>
 	</STRING>
 	<STRING Id="1011" Name="IDS_OPTION_DELETE_TODAY">
-        <Text>حذف هذا اليوم</Text>
+		<Text>حذف هذا اليوم</Text>
 	</STRING>
 	<STRING Id="1012" Name="IDS_OPTION_DELETE_MONTH">
-        <Text>حذف هذا الشهر</Text>
+		<Text>حذف هذا الشهر</Text>
 	</STRING>
 	<STRING Id="1013" Name="IDS_OPTION_SETUP">
-        <Text>الإعدادات</Text>
+		<Text>الإعدادات</Text>
 	</STRING>
+	<String Id="1014" Name="IDS_ADD">
+		<Text>add event</Text>
+	</String>
+	<String Id="1015" Name="IDS_DELETE">
+		<Text>delete</Text>
+	</String>
 	<STRING Id="1016" Name="IDS_OPTION_VIEWDAY_DELETE_CONFIRM">
-        <Text>حذفه</Text>
+		<Text>حذفه</Text>
 	</STRING>
 	<STRING Id="1017" Name="IDS_OPTION_DELETE_ALL_CONFIRM">
-        <Text>حذف كافة المواعيد</Text>
+		<Text>حذف كافة المواعيد</Text>
 	</STRING>
 	<STRING Id="1018" Name="IDS_OPTION_DELETE_TODAY_CONFIRM">
-        <Text>حذف كافة مواعيد هذا اليوم</Text>
+		<Text>حذف كافة مواعيد هذا اليوم</Text>
 	</STRING>
 	<STRING Id="1019" Name="IDS_OPTION_DELETE_MONTH_CONFIRM">
-        <Text>حذف كافة مواعيد هذا الشهر</Text>
+		<Text>حذف كافة مواعيد هذا الشهر</Text>
 	</STRING>
 	<STRING Id="1020" Name="IDS_OPTION_VIEWDAY_EDIT_EVENT">
-        <Text>تحرير</Text>
+		<Text>تحرير</Text>
 	</STRING>
 	<STRING Id="1021" Name="IDS_OPTION_VIEWDAY_DELETE">
-        <Text>حذف</Text>
+		<Text>حذف</Text>
 	</STRING>
 	<STRING Id="1030" Name="IDS_EVENT_EDIT_TITLE_SUBJECT">
-        <Text>الموضوع</Text>
+		<Text>الموضوع</Text>
 	</STRING>
 	<STRING Id="1031" Name="IDS_EVENT_EDIT_TITLE_NOTE">
-        <Text>الموقع</Text>
+		<Text>الموقع</Text>
 	</STRING>
 	<STRING Id="1032" Name="IDS_EVENT_EDIT_TITLE_START">
-        <Text>وقت البدء</Text>
+		<Text>وقت البدء</Text>
 	</STRING>
 	<STRING Id="1033" Name="IDS_EVENT_EDIT_TITLE_DURATION">
-        <Text>المدة</Text>
+		<Text>المدة</Text>
 	</STRING>
 	<STRING Id="1034" Name="IDS_EVENT_EDIT_TITLE_ALARM">
-        <Text>التنبيه</Text>
+		<Text>التنبيه</Text>
 	</STRING>
 	<STRING Id="1035" Name="IDS_EVENT_EDIT_TITLE_RINGTONE">
-        <Text>نغمة الرنين</Text>
+		<Text>نغمة الرنين</Text>
 	</STRING>
 	<STRING Id="1040" Name="IDS_EVENT_EDIT_ALARM_OPTION_NO_ALARM">
-        <Text>بلا تنبيه</Text>
+		<Text>بلا تنبيه</Text>
 	</STRING>
 	<STRING Id="1041" Name="IDS_EVENT_EDIT_ALARM_OPTION_ON_TIME">
-        <Text>في الوقت المحدد</Text>
+		<Text>في الوقت المحدد</Text>
 	</STRING>
 	<STRING Id="1042" Name="IDS_EVENT_EDIT_ALARM_OPTION_1_MIN_BEFORE">
-        <Text>دقيقة واحدة قبل</Text>
+		<Text>دقيقة واحدة قبل</Text>
 	</STRING>
 	<STRING Id="1043" Name="IDS_EVENT_EDIT_ALARM_OPTION_5_MIN_BEFORE">
-        <Text>5 دقائق قبل</Text>
+		<Text>5 دقائق قبل</Text>
 	</STRING>
 	<STRING Id="1044" Name="IDS_EVENT_EDIT_ALARM_OPTION_10_MIN_BEFORE">
-        <Text>10 دقائق قبل</Text>
+		<Text>10 دقائق قبل</Text>
 	</STRING>
 	<STRING Id="1045" Name="IDS_EVENT_EDIT_ALARM_OPTION_15_MIN_BEFORE">
-        <Text>15 دقيقة قبل</Text>
+		<Text>15 دقيقة قبل</Text>
 	</STRING>
 	<STRING Id="1046" Name="IDS_EVENT_EDIT_ALARM_OPTION_30_MIN_BEFORE">
-        <Text>30 دقيقة قبل</Text>
+		<Text>30 دقيقة قبل</Text>
 	</STRING>
 	<STRING Id="1047" Name="IDS_EVENT_EDIT_ALARM_OPTION_1_HOUR_BEFORE">
-        <Text>ساعة واحدة قبل</Text>
+		<Text>ساعة واحدة قبل</Text>
 	</STRING>
 	<STRING Id="1048" Name="IDS_EVENT_EDIT_ALARM_OPTION_6_HOUR_BEFORE">
-        <Text>6 ساعات قبل</Text>
+		<Text>6 ساعات قبل</Text>
 	</STRING>
 	<STRING Id="1049" Name="IDS_EVENT_EDIT_ALARM_OPTION_12_HOUR_BEFORE">
-        <Text>12 ساعة قبل</Text>
+		<Text>12 ساعة قبل</Text>
 	</STRING>
 	<STRING Id="1050" Name="IDS_EVENT_EDIT_ALARM_OPTION_1_DAY_BEFORE">
-        <Text>يوم واحد قبل</Text>
+		<Text>يوم واحد قبل</Text>
 	</STRING>
 	<STRING Id="1060" Name="IDS_EVENT_EDIT_RINGTONE_OPTION_ALARM_CLOCK">
-        <Text>المنبه</Text>
+		<Text>المنبه</Text>
 	</STRING>
 	<STRING Id="1061" Name="IDS_EVENT_EDIT_RINGTONE_OPTION_SILENCE">
-        <Text>الوضع الصامت</Text>
+		<Text>الوضع الصامت</Text>
 	</STRING>
 	<STRING Id="1070" Name="IDS_SETUP_TITLE">
-        <Text>إعداد</Text>
+		<Text>إعداد</Text>
 	</STRING>
 	<STRING Id="1071" Name="IDS_SETUP_TITLE_AUTO_DELETE">
-        <Text>الحذف التلقائي</Text>
+		<Text>الحذف التلقائي</Text>
 	</STRING>
 	<STRING Id="1072" Name="IDS_SETUP_TITLE_DAILY_START_TIME">
-        <Text>وقت البدء اليومي</Text>
+		<Text>وقت البدء اليومي</Text>
 	</STRING>
 	<STRING Id="1073" Name="IDS_SETUP_TITLE_REMINDER_SNOOZE">
-        <Text>انتظار التذكير</Text>
+		<Text>انتظار التذكير</Text>
 	</STRING>
 	<STRING Id="1080" Name="IDS_SETUP_AUTO_DELETE_OPTION_30_DAY">
-        <Text>30 يوم</Text>
+		<Text>30 يوم</Text>
 	</STRING>
 	<STRING Id="1081" Name="IDS_SETUP_AUTO_DELETE_OPTION_60_DAY">
-        <Text>60 يوم</Text>
+		<Text>60 يوم</Text>
 	</STRING>
 	<STRING Id="1082" Name="IDS_SETUP_AUTO_DELETE_OPTION_90_DAY">
-        <Text>90 يوم</Text>
+		<Text>90 يوم</Text>
 	</STRING>
 	<STRING Id="1083" Name="IDS_SETUP_AUTO_DELETE_OPTION_180_DAY">
-        <Text>180 يوم</Text>
+		<Text>180 يوم</Text>
 	</STRING>
 	<STRING Id="1084" Name="IDS_SETUP_AUTO_DELETE_OPTION_1_YEAR">
-        <Text>عام واحد</Text>
+		<Text>عام واحد</Text>
 	</STRING>
 	<STRING Id="1085" Name="IDS_SETUP_AUTO_DELETE_OPTION_NEVER">
-        <Text>عدم الحذف مطلقًا</Text>
+		<Text>عدم الحذف مطلقًا</Text>
 	</STRING>
 	<STRING Id="1090" Name="IDS_SETUP_SNOOZE_OPTION_OFF">
-        <Text>إيقاف التشغيل</Text>
+		<Text>إيقاف التشغيل</Text>
 	</STRING>
 	<STRING Id="1091" Name="IDS_SETUP_SNOOZE_OPTION_5_MIN">
-        <Text>5 دقائق</Text>
+		<Text>5 دقائق</Text>
 	</STRING>
 	<STRING Id="1092" Name="IDS_SETUP_SNOOZE_OPTION_10_MIN">
-        <Text>10 دقائق</Text>
+		<Text>10 دقائق</Text>
 	</STRING>
 	<STRING Id="1093" Name="IDS_SETUP_SNOOZE_OPTION_15_MIN">
-        <Text>15 دقيقة</Text>
+		<Text>15 دقيقة</Text>
 	</STRING>
 	<STRING Id="1094" Name="IDS_SETUP_SNOOZE_OPTION_30_MIN">
-        <Text>30 دقيقة</Text>
+		<Text>30 دقيقة</Text>
 	</STRING>
 	<STRING Id="1100" Name="IDS_VIEW_PLAN_DETAIL_TITLE">
-        <Text>تفاصيل الخطة</Text>
+		<Text>تفاصيل الخطة</Text>
 	</STRING>
 	<STRING Id="2200" Name="IDS_APP">
-        <Text>المجدول</Text>
+		<Text>المجدول</Text>
 	</STRING>
 	<STRING Id="2300" Name="IDS_INITING">
-        <Text>جاري التحميل...</Text>
+		<Text>جاري التحميل...</Text>
 	</STRING>
 	<STRING Id="2301" Name="IDS_SAVING">
-        <Text>جاري الحفظ...</Text>
+		<Text>جاري الحفظ...</Text>
 	</STRING>
 	<STRING Id="2302" Name="IDS_DELETING">
-        <Text>جاري الحذف...</Text>
+		<Text>جاري الحذف...</Text>
 	</STRING>
 	<STRING Id="2303" Name="IDS_DB_ERROR">
-        <Text>فشل حفظ البيانات</Text>
+		<Text>فشل حفظ البيانات</Text>
 	</STRING>
 	<STRING Id="2304" Name="IDS_DB_ERROR_NOMEMORY">
-        <Text>"نفدت الذاكرة، يرجى حذف بعض المواعيد"</Text>
+		<Text>"نفدت الذاكرة، يرجى حذف بعض المواعيد"</Text>
 	</STRING>
 	<STRING Id="2305" Name="IDS_SPORTS_VIEW">
-        <Text>عرض خطة هذا اليوم</Text>
+		<Text>عرض خطة هذا اليوم</Text>
 	</STRING>
 	<STRING Id="2306" Name="IDS_SPORTS_LIST">
-        <Text>إدراج كل الخطط في قائمة</Text>
+		<Text>إدراج كل الخطط في قائمة</Text>
 	</STRING>
 	<STRING Id="2307" Name="IDS_SPORTS_JUMP">
-        <Text>انتقال إلى تاريخ</Text>
+		<Text>انتقال إلى تاريخ</Text>
 	</STRING>
 	<STRING Id="2308" Name="IDS_SPORTS_CREATE">
-        <Text>إنشاء</Text>
+		<Text>إنشاء</Text>
 	</STRING>
 	<STRING Id="2309" Name="IDS_SPORTS_RUN">
-        <Text>الجري</Text>
+		<Text>الجري</Text>
 	</STRING>
 	<STRING Id="2310" Name="IDS_SPORTS_WALK">
-        <Text>المشي</Text>
+		<Text>المشي</Text>
 	</STRING>
 	<STRING Id="2311" Name="IDS_SPORTS_DISTANCE">
-        <Text>المسافة (م)</Text>
+		<Text>المسافة (م)</Text>
 	</STRING>
 	<STRING Id="2312" Name="IDS_SPORTS_TIME">
-        <Text>الوقت (دقيقة)</Text>
+		<Text>الوقت (دقيقة)</Text>
 	</STRING>
 	<STRING Id="2313" Name="IDS_SPORTS_MODE">
-        <Text>الوضع</Text>
+		<Text>الوضع</Text>
 	</STRING>
 	<STRING Id="2314" Name="IDS_SPORTS_TITLE">
-        <Text>خطة ممارسة الرياضة</Text>
+		<Text>خطة ممارسة الرياضة</Text>
 	</STRING>
 </Strings>
 <Dialogs>

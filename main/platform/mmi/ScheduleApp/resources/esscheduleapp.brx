@@ -43,6 +43,9 @@
 	<String Id="1014" Name="IDS_VALID_DATE">
 		<Text>La fecha ya ha pasado</Text>
 	</String>
+	<String Id="1015" Name="IDS_ADD">
+		<Text>add event</Text>
+	</String>
 	<STRING Id="1016" Name="IDS_OPTION_VIEWDAY_DELETE_CONFIRM">
 		<Text>Borrarlo</Text>
 	</STRING>
@@ -61,6 +64,9 @@
 	<STRING Id="1021" Name="IDS_OPTION_VIEWDAY_DELETE">
 		<Text>Borrar</Text>
 	</STRING>
+	<String Id="1022" Name="IDS_DELETE">
+		<Text>delete</Text>
+	</String>
 	<STRING Id="1030" Name="IDS_EVENT_EDIT_TITLE_SUBJECT">
 		<Text>Asunto</Text>
 	</STRING>

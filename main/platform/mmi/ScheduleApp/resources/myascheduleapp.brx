@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="scheduleapp" VERSION="1">
+<BREWRes Name="myascheduleapp" VERSION="1">
 <Strings Encoding="UNICODE">
 	<STRING Id="1001" Name="IDS_OPTION_NEW_EVENT">
 		<Text></Text>
@@ -40,6 +40,12 @@
 	<STRING Id="1013" Name="IDS_OPTION_SETUP">
 		<Text></Text>
 	</STRING>
+	<String Id="1014" Name="IDS_ADD">
+		<Text>add event</Text>
+	</String>
+	<String Id="1015" Name="IDS_DELETE">
+		<Text>delete</Text>
+	</String>
 	<STRING Id="1016" Name="IDS_OPTION_VIEWDAY_DELETE_CONFIRM">
 		<Text></Text>
 	</STRING>

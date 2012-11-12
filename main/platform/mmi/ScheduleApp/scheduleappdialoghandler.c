@@ -2046,6 +2046,15 @@ static boolean  dialog_handler_of_state_option( CScheduleApp* pme,
         if( ( pme->m_CalMgr.m_dwMask & (1 << (pme->m_CalMgr.m_julianCurrentDay.wDay - 1)))
                                  && pme->m_subStateOption == SUBSTATE_OPTION_VIEWMONTH)
         {
+#if defined(FEATURE_VERSION_C337)  
+            IMENUCTL_AddItem( pMenu,
+                        AEE_SCHEDULEAPP_RES_FILE,
+                        IDS_DELETE,
+                        IDS_DELETE,
+                        0,
+                        0
+                    );
+#else
             IMENUCTL_AddItem( pMenu,
                         AEE_SCHEDULEAPP_RES_FILE,
                         IDS_OPTION_DELETE_TODAY,
@@ -2053,6 +2062,7 @@ static boolean  dialog_handler_of_state_option( CScheduleApp* pme,
                         0,
                         0
                     );
+#endif
         }
 #if 0
         if( ( pme->m_CalMgr.m_dwMask & (~(1 << (pme->m_CalMgr.m_julianCurrentDay.wDay - 1)))))
@@ -2288,8 +2298,12 @@ static boolean  dialog_handler_of_state_option( CScheduleApp* pme,
                     CLOSE_DIALOG( DLGRET_OPTION_VIEWDAY_DELETE)
                 }
                 break;
-
+				
+#if defined(FEATURE_VERSION_C337) 
+                case IDS_DELETE: 		
+#else
                 case IDS_OPTION_DELETE_TODAY:
+#endif					
                 {
                     *theSubState = SUBSTATE_DELETE_TODAY_CONFIRM;
                     CLOSE_DIALOG( DLGRET_OPTION_DELETE_TODAY)
@@ -3509,7 +3523,11 @@ static boolean  dialog_handler_of_state_event_edit( CScheduleApp* pme,
             }
             else
             {
+#if defined(FEATURE_VERSION_C337)    
+                IMENUCTL_SetSel( pAlarm, IDS_EVENT_EDIT_ALARM_OPTION_ON_TIME);                		 
+#else
                 IMENUCTL_SetSel( pAlarm, IDS_EVENT_EDIT_ALARM_OPTION_15_MIN_BEFORE);
+#endif
             }
 
             for( i = 0; i < 2; i ++)

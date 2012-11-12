@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="scheduleapp" VERSION="1">
+<BREWRes Name="hischeduleapp" VERSION="1">
 <Strings Encoding="Unicode">
 	<STRING Id="1001" Name="IDS_OPTION_NEW_EVENT">
 		<Text>नया</Text>
@@ -43,6 +43,9 @@
 	<String Id="1014" Name="IDS_VALID_DATE">
 		<Text>The date has already passed</Text>
 	</String>
+	<String Id="1015" Name="IDS_ADD">
+		<Text>add event</Text>
+	</String>
 	<STRING Id="1016" Name="IDS_OPTION_VIEWDAY_DELETE_CONFIRM">
 		<Text>इसे हटाएँ</Text>
 	</STRING>
@@ -61,6 +64,9 @@
 	<STRING Id="1021" Name="IDS_OPTION_VIEWDAY_DELETE">
 		<Text>मिटाएं</Text>
 	</STRING>
+	<String Id="1022" Name="IDS_DELETE">
+		<Text>delete</Text>
+	</String>
 	<STRING Id="1030" Name="IDS_EVENT_EDIT_TITLE_SUBJECT">
 		<Text>विषय</Text>
 	</STRING>
