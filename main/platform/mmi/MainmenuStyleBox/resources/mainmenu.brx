@@ -152,7 +152,7 @@
 		<Text>User Profile</Text>
 	</STRING>
 	<STRING Id="1089" Name="IDS_MAIN_MENU_MSTORE">
-		<Text>M! Store</Text>
+		<Text>M! Live</Text>
 	</STRING>
 	<STRING Id="1090" Name="IDS_MAIN_MENU_MZONE">
 		<Text>M! Zone</Text>
@@ -167,7 +167,7 @@
 		<Text>File Manager</Text>
 	</STRING>
 	<STRING Id="1094" Name="IDS_MAIN_MENU_RECENTCALLS_C337">
-		<Text>Call Log</Text>
+		<Text>Call Logs</Text>
 	</STRING>
 </Strings>
 <Dialogs>
