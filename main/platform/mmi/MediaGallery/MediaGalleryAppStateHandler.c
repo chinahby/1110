@@ -942,6 +942,60 @@ static NextFSMAction MGStateMediaMenuHandler(CMediaGalleryApp* pMe)
          return NFSMACTION_WAIT;
      }
 
+#if defined(FEATURE_VERSION_C337)  
+      case MGDLGRET_BGPLAYPROMPT:
+         {
+            uint16   nMsgBoxId =MediaGalleryApp_GetMsgBoxID(pMe);
+            //uint16   nTextResId;
+
+            MediaGalleryApp_ShowMsgBoxDlg(pMe,
+                                          APPSCOMMON_RES_LANG_FILE,
+                                          (uint16)(nMsgBoxId == MG_MSGID_FMPLAYBACKGROUND ?
+                                                   IDS_CONFIRM_OFF_FM : IDS_CONFIRM_OFF_MP),
+                                          MESSAGE_CONFIRM,
+                                          BTBAR_OK_CANCEL);
+         }
+         return NFSMACTION_WAIT;
+
+      case MGDLGRET_NO:
+        {
+           uint16   nMsgBoxId =MediaGalleryApp_GetMsgBoxID(pMe);
+
+           if(MG_MSGID_MP3PLAYBACKGROUND == nMsgBoxId ||
+                 MG_MSGID_FMPLAYBACKGROUND == nMsgBoxId)
+           {
+              MGMOVE_TO_STATE(pMe,STATE_EXIT);
+           }
+           break;
+        }		
+
+      case MGDLGRET_YES:
+        {
+           uint16   nMsgBoxId =MediaGalleryApp_GetMsgBoxID(pMe);
+
+           AEECLSID clsid;
+
+           if(MG_MSGID_MP3PLAYBACKGROUND == nMsgBoxId ||
+                 MG_MSGID_FMPLAYBACKGROUND == nMsgBoxId)
+           {
+              if(MG_MSGID_MP3PLAYBACKGROUND == nMsgBoxId)
+                 clsid = AEECLSID_APP_MUSICPLAYER;
+              else
+                 clsid = AEECLSID_APP_FMRADIO;
+
+              ISHELL_SendEvent(pMe->m_pShell, clsid, EVT_CLOSEAPP, 0, 0);
+              if(SUCCESS != MediaGalleryApp_ShowDialog(pMe, IDD_MG_MAINMENU))
+              {
+                 MGMOVE_TO_STATE(pMe,STATE_EXIT);
+                 break;
+              }
+              return NFSMACTION_WAIT;
+
+           }
+           break;
+        }	  
+#endif		
+
       case MGDLGRET_DIRNOTEMPTY:
          MediaGalleryApp_ShowMsgBoxDlg(pMe, APPSCOMMON_RES_LANG_FILE,
 			         IDS_MG_FOLDERNOTEMPTY,
@@ -1335,6 +1389,60 @@ static NextFSMAction MGStateVideoAddHandler(CMediaGalleryApp* pMe)
          MGExplorer_FreeMediaMenuItem(pMe->m_pMediaMenu);
          MGMOVE_TO_STATE(pMe, STATE_EXIT);
          break;
+
+#if defined(FEATURE_VERSION_C337)  
+      case MGDLGRET_BGPLAYPROMPT:
+         {
+            uint16   nMsgBoxId =MediaGalleryApp_GetMsgBoxID(pMe);
+            //uint16   nTextResId;
+
+            MediaGalleryApp_ShowMsgBoxDlg(pMe,
+                                          APPSCOMMON_RES_LANG_FILE,
+                                          (uint16)(nMsgBoxId == MG_MSGID_FMPLAYBACKGROUND ?
+                                                   IDS_CONFIRM_OFF_FM : IDS_CONFIRM_OFF_MP),
+                                          MESSAGE_CONFIRM,
+                                          BTBAR_OK_CANCEL);
+         }
+         return NFSMACTION_WAIT;
+
+      case MGDLGRET_NO:
+        {
+           uint16   nMsgBoxId =MediaGalleryApp_GetMsgBoxID(pMe);
+
+           if(MG_MSGID_MP3PLAYBACKGROUND == nMsgBoxId ||
+                 MG_MSGID_FMPLAYBACKGROUND == nMsgBoxId)
+           {
+              MGMOVE_TO_STATE(pMe,STATE_EXIT);
+           }
+           break;
+        }
+
+      case MGDLGRET_YES:
+        {
+           uint16   nMsgBoxId =MediaGalleryApp_GetMsgBoxID(pMe);
+
+           AEECLSID clsid;
+
+           if(MG_MSGID_MP3PLAYBACKGROUND == nMsgBoxId ||
+                 MG_MSGID_FMPLAYBACKGROUND == nMsgBoxId)
+           {
+              if(MG_MSGID_MP3PLAYBACKGROUND == nMsgBoxId)
+                 clsid = AEECLSID_APP_MUSICPLAYER;
+              else
+                 clsid = AEECLSID_APP_FMRADIO;
+
+              ISHELL_SendEvent(pMe->m_pShell, clsid, EVT_CLOSEAPP, 0, 0);
+              if(SUCCESS != MediaGalleryApp_ShowDialog(pMe, IDD_MG_MAINMENU))
+              {
+                 MGMOVE_TO_STATE(pMe,STATE_EXIT);
+                 break;
+              }
+              return NFSMACTION_WAIT;
+
+           }
+           break;
+        }	  
+#endif	
 
       case MGDLGRET_DONE:
       MGAppUtil_SetMediaDlgStat(pMe, MG_DLGSTAT_MESSAGEBOX);

@@ -1094,6 +1094,7 @@ static boolean MediaGalleryApp_MainMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
       {
          int nBackground;
          uint8 nState;
+#ifndef FEATURE_VERSION_C337   		 
          if((nBackground = app_media_scheduler()) != APP_MEDIA_ALLOW)
          {
             MG_FARF(ADDR, ("nBackground is %d", nBackground));
@@ -1103,7 +1104,9 @@ static boolean MediaGalleryApp_MainMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
                   MG_MSGID_FMPLAYBACKGROUND : MG_MSGID_MP3PLAYBACKGROUND));
             MGCLOSE_DIALOG(MGDLGRET_BGPLAYPROMPT);
          }
-         else if(MG_MENUITEM_NULL == *pPrevSelItemID)
+         else
+#endif		 	
+	  if(MG_MENUITEM_NULL == *pPrevSelItemID)
          {
             nState = MediaGalleryApp_GetCallbackState(pMe, MG_CBT_TESTCARD0);
             //Do not need test card0 when return from sublevel, or resume if
@@ -2480,7 +2483,19 @@ static boolean MediaGalleryApp_OnDefaultOperate(CMediaGalleryApp* pMe,
    else
    {
       MGMimeType     eMimeBase;
-
+#ifdef FEATURE_VERSION_C337 	  
+      int nBackground; 	    		 
+     if((nBackground = app_media_scheduler()) != APP_MEDIA_ALLOW)
+     {
+        MSG_FATAL("nBackground is %d", nBackground,0,0);
+        MGAppUtil_SetMediaDlgStat(pMe, MG_DLGSTAT_YESNOBOX);
+        MediaGalleryApp_SetMsgBoxID( pMe,
+        (uint16)(nBackground == APP_MEDIA_IMPACT_BY_FM ?
+              MG_MSGID_FMPLAYBACKGROUND : MG_MSGID_MP3PLAYBACKGROUND));
+        MGCLOSE_DIALOG(MGDLGRET_BGPLAYPROMPT);
+	return FALSE;	
+     }
+#endif
       eMimeBase = MediaGalleryApp_GetExplorerMime(pMe);
 	  MSG_FATAL("eMimeBase::::::::::::::::::::::%d:::::::::",eMimeBase,0,0);
       if(eMimeBase == MG_MIME_MISCELL ||
