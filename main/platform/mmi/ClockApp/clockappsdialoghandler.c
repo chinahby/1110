@@ -1019,11 +1019,7 @@ static boolean  HandleAlarmSubDialogEvent(CClockApps *pMe,
                                0);
         for(nstrID = IDS_REP_MODE_3, nItemID = ITEM_REP_MODE_4; nItemID <= ITEM_REP_MODE_10; nstrID++, nItemID++)
 #else
-#if defined(FEATURE_VERSION_C337)  
-        for(nstrID = IDS_REP_MODE_10, nItemID = ITEM_REP_MODE_11; nItemID <= ITEM_REP_MODE_10; nstrID++, nItemID++)
-#else
         for(nstrID = IDS_REP_MODE_0, nItemID = ITEM_REP_MODE_1; nItemID <= ITEM_REP_MODE_10; nstrID++, nItemID++)
-#endif
 #endif
         {
             (void)IMENUCTL_AddItem(pMe->m_pRepMode,
@@ -1314,12 +1310,14 @@ static boolean  HandleAlarmSubDialogEvent(CClockApps *pMe,
                 CLOCK_DRAW_BOTTOMBAR( BTBAR_SAVE_BACK);
             }
             //根据重复方式选择方式List选项
-#if defined( FEATURE_ONCE_ALARM)            
+#if defined( FEATURE_ONCE_ALARM)         
+#ifndef FEATURE_VERSION_C337  
             if(IMENUCTL_GetSel(pMe->m_pRepMode) == WEEK_ALARM_REP11)
             {
                 IMENUCTL_SetSel(pMe->m_pSnooze,ITEM_SNOOZE_4);
             }
             else
+#endif				
 #endif //defined( FEATURE_ONCE_ALARM)         
             {
                 if(pMe->m_ClockCfg.Snooze[pMe->m_eCurAlarmType] == 5*60)
@@ -1340,7 +1338,11 @@ static boolean  HandleAlarmSubDialogEvent(CClockApps *pMe,
                 }
             }
             
-            IMENUCTL_SetSel( pMe->m_pRepMode, pMe->m_ClockCfg.RepMode[pMe->m_eCurAlarmType]);
+#if defined(FEATURE_VERSION_C337)       
+            IMENUCTL_SetSel( pMe->m_pRepMode, WEEK_ALARM_REP11);		
+#else
+            IMENUCTL_SetSel( pMe->m_pRepMode, pMe->m_ClockCfg.RepMode[pMe->m_eCurAlarmType]);	    
+#endif            
             
             //STATE为真时,状态选中"开"
             IMENUCTL_SetSel(pMe->m_pState, pMe->m_ClockCfg.bStateOn[pMe->m_eCurAlarmType] ? ITEM_STATE_ON : ITEM_STATE_OFF);
@@ -2999,7 +3001,8 @@ static boolean CClockApps_HandleKeyEvent(CClockApps *pMe, uint16 wParam)
                     pMe->m_nNumKeyCount = 0;
                 }
             }
-#if defined( FEATURE_ONCE_ALARM)            
+#if defined( FEATURE_ONCE_ALARM)         
+#ifndef FEATURE_VERSION_C337  
             if(pMe->m_nCtlID == IDC_CLOCK_SNOOZE)
             {
                 if(IMENUCTL_GetSel(pMe->m_pRepMode) == ITEM_REP_MODE_11)
@@ -3014,7 +3017,8 @@ static boolean CClockApps_HandleKeyEvent(CClockApps *pMe, uint16 wParam)
                 {
                     IMENUCTL_SetSel(pMe->m_pSnooze,ITEM_SNOOZE_4);
                 }
-            }            
+            }  
+#endif			
 #endif //defined( FEATURE_ONCE_ALARM)         
             return TRUE;
 
