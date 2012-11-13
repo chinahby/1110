@@ -28,6 +28,9 @@
 	<String Id="1009" Name="IDS_ENVIR_MODE_SUNNY">
 		<Text></Text>
 	</String>
+	<String Id="1010" Name="IDS_NOMEMORY">
+		<Text>not enough memory</Text>
+	</String>
 	<String Id="1013" Name="IDS_CFG_QUALITY">
 		<Text></Text>
 	</String>

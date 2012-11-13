@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="cameraapp" VERSION="1">
+<BREWRes Name="arcameraapp" VERSION="1">
 <Strings Encoding="Unicode">
 	<String Id="1001" Name="IDS_ITEM_CAMERA">
- 		<Text>الكاميرا</Text>
+		<Text>الكاميرا</Text>
 	</String>
 	<String Id="1002" Name="IDS_MULTI_PRE">
 		<Text>الكاميرا الامامية</Text>
 	</String>
-    <String Id="1003" Name= "IDS_ITEM_CAMERA_GALLERY">
- 		<Text>معرض صور</Text>
-    </String>
+	<String Id="1003" Name="IDS_ITEM_CAMERA_GALLERY">
+		<Text>معرض صور</Text>
+	</String>
 	<String Id="1004" Name="IDS_MULTI_BACK">
 		<Text>الكاميرا الاساسية</Text>
 	</String>
-    <String Id="1005" Name= "IDS_CFG_ENVIR">
- 		<Text>البيئة</Text>
-    </String>
-    <String Id="1006" Name= "IDS_ENVIR_MODE_AUTO">
- 		<Text>تلقائي</Text>
-    </String>
-    <String Id="1007" Name= "IDS_ENVIR_MODE_NIGHT">
- 		<Text>الوضع الليلي</Text>
-    </String>
-    <String Id="1008" Name= "IDS_ENVIR_MODE_CLOUDY">
- 		<Text>وضع غائم</Text>
-    </String>
-    <String Id="1009" Name= "IDS_ENVIR_MODE_SUNNY">
- 		<Text>مشمس النمط</Text>
-    </String>
+	<String Id="1005" Name="IDS_CFG_ENVIR">
+		<Text>البيئة</Text>
+	</String>
+	<String Id="1006" Name="IDS_ENVIR_MODE_AUTO">
+		<Text>تلقائي</Text>
+	</String>
+	<String Id="1007" Name="IDS_ENVIR_MODE_NIGHT">
+		<Text>الوضع الليلي</Text>
+	</String>
+	<String Id="1008" Name="IDS_ENVIR_MODE_CLOUDY">
+		<Text>وضع غائم</Text>
+	</String>
+	<String Id="1009" Name="IDS_ENVIR_MODE_SUNNY">
+		<Text>مشمس النمط</Text>
+	</String>
 	<String Id="1010" Name="IDS_CFG_MULTI">
 		<Text>ثنائي الكاميرا</Text>
 	</String>
@@ -37,123 +37,98 @@
 	<String Id="1012" Name="IDS_VIDEO_CAMERA">
 		<Text>كاميرا فيديو</Text>
 	</String>
-    <String Id="1013" Name= "IDS_CFG_QUALITY">
- 		<Text>الجودة</Text>
-    </String>
-    <String Id="1014" Name= "IDS_QUALITY_HIGH">
-        <Text>عالي</Text>
-    </String>
-
-    <String Id="1015" Name= "IDS_QUALITY_MED">
-        <Text>متوسط</Text>
-    </String>
-
-    <String Id="1016" Name= "IDS_QUALITY_LOW">
-        <Text>منخفض</Text>
-    </String>
-
-    <String Id="1017" Name= "IDS_CFG_SIZE">
-        <Text>الحجم</Text>
-    </String>
-
-    <String Id="1018" Name= "IDS_CFG_TONE">
-        <Text>نغمة المصراع</Text>
-    </String>
-
-    <String Id="1019" Name= "IDS_TONE_DISABLE">
-        <Text>إيقاف</Text>
-    </String>
-
-    <String Id="1020" Name= "IDS_TONE_ENABLE">
- 		<Text>تشغيل</Text>
-    </String>
-
-    <String Id="1021" Name= "IDS_CFG_SELFTIMER">
-        <Text>الموقت الذاتي</Text>
-    </String>
-
-    <String Id="1022" Name= "IDS_SELFTIME_OFF">
- 		<Text>إيقاف</Text>
-    </String>
-
-    <String Id="1023" Name= "IDS_SELFTIME_SEC1">
-        <Text>5 ثواني</Text>
-    </String>
-
-    <String Id="1024" Name= "IDS_SELFTIME_SEC2">
-        <Text>10 ثواني</Text>
-    </String>
-
-    <String Id="1025" Name= "IDS_SELFTIME_SEC3">
-        <Text>15 ثانية</Text>
-    </String>
-
-    <String Id="1026" Name= "IDS_CFG_CAPMODE">
-        <Text>وضع الالتقاط</Text>
-    </String>
-
-    <String Id="1027" Name= "IDS_CAPTURE_OFF">
-        <Text>إيقاف</Text>
-    </String>
-
-    <String Id="1028" Name= "IDS_CAPTURE_MODE1">
-        <Text>لقطة واحدة</Text>
-    </String>
-
-    <String Id="1029" Name= "IDS_CAPTURE_MODE2">
-        <Text>3 لقطات</Text>
-    </String>
-
-    <String Id="1030" Name= "IDS_CAPTURE_MODE3">
-        <Text>5 لقطات</Text>
-    </String>
-
-    <String Id="1031" Name= "IDS_CFG_BANDING">
-        <Text>النطاق</Text>
-    </String>
-
-    <String Id="1032" Name= "IDS_BANDING_MODE1">
-        <Text>50 هرتز</Text>
-    </String>
-
-    <String Id="1033" Name= "IDS_BANDING_MODE2">
-        <Text>60 هرتز</Text>
-    </String>
-
-    <String Id="1037" Name= "IDS_CFG_RESET">
-        <Text>إعادة التعيين</Text>
-    </String>
-
-    <String Id="1058" Name= "IDS_NORMAL">
-        <Text>عادي</Text>
-    </String>
-
-    <String Id="1064" Name= "IDS_MSG_NOCAMERA">
-        <Text>بدون كاميرا</Text>
-    </String>
-
-    <String Id="1066" Name= "IDS_MSG_NOSDCARD">
-        <Text>ذاكرة الهاتف ممتلئة</Text>
-    </String>
-
-    <String Id="1067" Name= "IDS_MSG_PHONE_MEMERY_FULL_AND_NOSDCARD">
-        <Text>"ذاكرة الهاتف ممتلئة، يرجى إدخال بطاقة SD"</Text>
-    </String>
-
-    <String Id="1068" Name= "IDS_DONE">
-        <Text>تم</Text>
-    </String>
-
-    <String Id="1069" Name= "IDS_MSG_NOMEMORY">
-        <Text>ذاكرة الهاتف ممتلئة</Text>
-    </String>
-
-    <String Id="1070" Name= "IDS_MSG_WAITING">
-        <Text>انتظار</Text>
-    </String>
-
-    <String Id="1073" Name= "IDS_MSG_CAPTURE_FAILED">
-        <Text>فشل الالتقاط</Text>
+	<String Id="1013" Name="IDS_CFG_QUALITY">
+		<Text>الجودة</Text>
+	</String>
+	<String Id="1014" Name="IDS_QUALITY_HIGH">
+		<Text>عالي</Text>
+	</String>
+	<String Id="1015" Name="IDS_QUALITY_MED">
+		<Text>متوسط</Text>
+	</String>
+	<String Id="1016" Name="IDS_QUALITY_LOW">
+		<Text>منخفض</Text>
+	</String>
+	<String Id="1017" Name="IDS_CFG_SIZE">
+		<Text>الحجم</Text>
+	</String>
+	<String Id="1018" Name="IDS_CFG_TONE">
+		<Text>نغمة المصراع</Text>
+	</String>
+	<String Id="1019" Name="IDS_TONE_DISABLE">
+		<Text>إيقاف</Text>
+	</String>
+	<String Id="1020" Name="IDS_TONE_ENABLE">
+		<Text>تشغيل</Text>
+	</String>
+	<String Id="1021" Name="IDS_CFG_SELFTIMER">
+		<Text>الموقت الذاتي</Text>
+	</String>
+	<String Id="1022" Name="IDS_SELFTIME_OFF">
+		<Text>إيقاف</Text>
+	</String>
+	<String Id="1023" Name="IDS_SELFTIME_SEC1">
+		<Text>5 ثواني</Text>
+	</String>
+	<String Id="1024" Name="IDS_SELFTIME_SEC2">
+		<Text>10 ثواني</Text>
+	</String>
+	<String Id="1025" Name="IDS_SELFTIME_SEC3">
+		<Text>15 ثانية</Text>
+	</String>
+	<String Id="1026" Name="IDS_CFG_CAPMODE">
+		<Text>وضع الالتقاط</Text>
+	</String>
+	<String Id="1027" Name="IDS_CAPTURE_OFF">
+		<Text>إيقاف</Text>
+	</String>
+	<String Id="1028" Name="IDS_CAPTURE_MODE1">
+		<Text>لقطة واحدة</Text>
+	</String>
+	<String Id="1029" Name="IDS_CAPTURE_MODE2">
+		<Text>3 لقطات</Text>
+	</String>
+	<String Id="1030" Name="IDS_CAPTURE_MODE3">
+		<Text>5 لقطات</Text>
+	</String>
+	<String Id="1031" Name="IDS_CFG_BANDING">
+		<Text>النطاق</Text>
+	</String>
+	<String Id="1032" Name="IDS_BANDING_MODE1">
+		<Text>50 هرتز</Text>
+	</String>
+	<String Id="1033" Name="IDS_BANDING_MODE2">
+		<Text>60 هرتز</Text>
+	</String>
+	<String Id="1034" Name="IDS_NOMEMORY">
+		<Text>not enough memory</Text>
+	</String>
+	<String Id="1037" Name="IDS_CFG_RESET">
+		<Text>إعادة التعيين</Text>
+	</String>
+	<String Id="1058" Name="IDS_NORMAL">
+		<Text>عادي</Text>
+	</String>
+	<String Id="1064" Name="IDS_MSG_NOCAMERA">
+		<Text>بدون كاميرا</Text>
+	</String>
+	<String Id="1066" Name="IDS_MSG_NOSDCARD">
+		<Text>ذاكرة الهاتف ممتلئة</Text>
+	</String>
+	<String Id="1067" Name="IDS_MSG_PHONE_MEMERY_FULL_AND_NOSDCARD">
+		<Text>"ذاكرة الهاتف ممتلئة، يرجى إدخال بطاقة SD"</Text>
+	</String>
+	<String Id="1068" Name="IDS_DONE">
+		<Text>تم</Text>
+	</String>
+	<String Id="1069" Name="IDS_MSG_NOMEMORY">
+		<Text>ذاكرة الهاتف ممتلئة</Text>
+	</String>
+	<String Id="1070" Name="IDS_MSG_WAITING">
+		<Text>انتظار</Text>
+	</String>
+	<String Id="1073" Name="IDS_MSG_CAPTURE_FAILED">
+		<Text>فشل الالتقاط</Text>
 	</String>
 	<String Id="1074" Name="IDS_CAMERA_PHOTO_MODE">
 		<Text>مسار الصورة</Text>
@@ -163,16 +138,16 @@
 	</String>
 	<String Id="1076" Name="IDS_CAMERA_PHOTO_TFCARD">
 		<Text>بطاقة الذاكرة</Text>
-    </String>
-	  <String Id="1077" Name="IDS_CAMERA_RECORD_FAILED">
-			  <Text>فشل التسجيل</Text>
-	  </String>
-	  <String Id="1078" Name="IDS_CAMERA_RECORD_STOP">
-				<Text>توقف</Text>
-		</String>
-		<String Id="1079" Name="IDS_CAMERA_SAVE_VIDEO">
-		   <Text>حفظ فيديو</Text>
-	  </String>
+	</String>
+	<String Id="1077" Name="IDS_CAMERA_RECORD_FAILED">
+		<Text>فشل التسجيل</Text>
+	</String>
+	<String Id="1078" Name="IDS_CAMERA_RECORD_STOP">
+		<Text>توقف</Text>
+	</String>
+	<String Id="1079" Name="IDS_CAMERA_SAVE_VIDEO">
+		<Text>حفظ فيديو</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<Dialog Id="6001" Name="IDD_CMAINMENU" Focus="7001">

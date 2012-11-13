@@ -28,6 +28,9 @@
 	<STRING Id="1009" Name="IDS_ENVIR_MODE_SUNNY">
 		<Text>โหมดสว่าง</Text>
 	</STRING>
+	<String Id="1010" Name="IDS_NOMEMORY">
+		<Text>not enough memory</Text>
+	</String>
 	<STRING Id="1013" Name="IDS_CFG_QUALITY">
 		<Text>คุณภาพ</Text>
 	</STRING>
@@ -105,7 +108,7 @@
 	</STRING>
 	<String Id="1067" Name="IDS_MSG_PHONE_MEMERY_FULL_AND_NOSDCARD">
 		<Text>Phone Memory Full Please Insert SD Card</Text>
-	</String>	
+	</String>
 	<STRING Id="1068" Name="IDS_DONE">
 		<Text>ทำงาน</Text>
 	</STRING>
@@ -126,7 +129,7 @@
 	</String>
 	<String Id="1076" Name="IDS_CAMERA_PHOTO_TFCARD">
 		<Text>memory card</Text>
-	</String>	
+	</String>
 	<String Id="1077" Name="IDS_CAMERA_RECORD_FAILED">
 		<Text>Record failed</Text>
 	</String>
@@ -162,7 +165,7 @@
 				<Items/>
 			</Menu>
 		</Controls>
-	</Dialog>	
+	</Dialog>
 	<Dialog Id="6008" Name="IDD_CVIDEOCFG" Focus="7003">
 		<Controls>
 			<Menu Id="7003" Name="IDC_VIDEO_CFGMENU">

@@ -1161,13 +1161,21 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
 	                {
 	                	if ( pMe->m_isStartFromFacebook == TRUE)
 	                	{
+#if defined(FEATURE_VERSION_C337)   	 
+				pMe->m_wMsgID = IDS_NOMEMORY;
+#else
 	                    	pMe->m_wMsgID = IDS_MSG_NOMEMORY;
+#endif
 	                    }
 	                    else
 	                    {
 							if(pMe->m_bMemoryCardExist)
 		                    {
-		                        pMe->m_wMsgID = IDS_MSG_NOMEMORY;
+#if defined(FEATURE_VERSION_C337)   	 
+				pMe->m_wMsgID = IDS_NOMEMORY;
+#else
+	                    	pMe->m_wMsgID = IDS_MSG_NOMEMORY;
+#endif
 		                    }
 		                    else
 		                    {
@@ -1251,7 +1259,11 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
 	                {
 						if(pMe->m_bMemoryCardExist)
 	                    {
-	                        pMe->m_wMsgID = IDS_MSG_NOMEMORY;
+#if defined(FEATURE_VERSION_C337)   	 
+				pMe->m_wMsgID = IDS_NOMEMORY;
+#else
+	                    	pMe->m_wMsgID = IDS_MSG_NOMEMORY;
+#endif
 	                    }
 	                    else
 	                    {
@@ -2222,6 +2234,9 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
                     case IDS_MSG_NOSDCARD:
                     case IDS_MSG_NOCAMERA:
                     case IDS_MSG_NOMEMORY:
+#if defined(FEATURE_VERSION_C337)   
+		     case IDS_NOMEMORY:	
+#endif
                     case IDS_MSG_CAPTURE_FAILED:
                         PromptMsg.ePMsgType = MESSAGE_WARNNING;
                         break;
@@ -2253,7 +2268,11 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
             IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
 #ifdef FEATURE_DSP
             if(pMe->m_wMsgID == IDS_MSG_WAITING || pMe->m_wMsgID == IDS_DONE
-               || pMe->m_wMsgID == IDS_MSG_NOSDCARD || pMe->m_wMsgID == IDS_MSG_NOMEMORY) // &&(!pMe->m_pCamera)
+               || pMe->m_wMsgID == IDS_MSG_NOSDCARD || pMe->m_wMsgID == IDS_MSG_NOMEMORY
+#if defined(FEATURE_VERSION_C337)      
+		|| pMe->m_wMsgID == IDS_NOMEMORY
+#endif
+               ) // &&(!pMe->m_pCamera)
             {
                CameraApp_InitCameraCheck(pMe);    
 

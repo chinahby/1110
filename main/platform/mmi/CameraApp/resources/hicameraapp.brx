@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="cameraapp" VERSION="1">
+<BREWRes Name="hicameraapp" VERSION="1">
 <Strings Encoding="Unicode">
 	<String Id="1001" Name="IDS_ITEM_CAMERA">
 		<Text>कैमरा</Text>
@@ -99,6 +99,9 @@
 	</String>
 	<String Id="1033" Name="IDS_BANDING_MODE2">
 		<Text>60 Hz</Text>
+	</String>
+	<String Id="1034" Name="IDS_NOMEMORY">
+		<Text>not enough memory</Text>
 	</String>
 	<String Id="1037" Name="IDS_CFG_RESET">
 		<Text>रीसेट</Text>

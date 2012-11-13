@@ -4,6 +4,9 @@
 	<STRING Id="1001" Name="IDS_ITEM_CAMERA">
 		<Text>กล้อง</Text>
 	</STRING>
+	<String Id="1002" Name="IDS_NOMEMORY">
+		<Text>not enough memory</Text>
+	</String>
 	<STRING Id="1003" Name="IDS_ITEM_CAMERA_GALLERY">
 		<Text>คลังภาพ</Text>
 	</STRING>
@@ -117,7 +120,7 @@
 	</String>
 	<String Id="1076" Name="IDS_CAMERA_PHOTO_TFCARD">
 		<Text>memory card</Text>
-	</String>	
+	</String>
 	<String Id="1077" Name="IDS_CAMERA_RECORD_FAILED">
 		<Text>Record failed</Text>
 	</String>
@@ -153,7 +156,7 @@
 				<Items/>
 			</Menu>
 		</Controls>
-	</Dialog>	
+	</Dialog>
 	<Dialog Id="6008" Name="IDD_CVIDEOCFG" Focus="7003">
 		<Controls>
 			<Menu Id="7003" Name="IDC_VIDEO_CFGMENU">

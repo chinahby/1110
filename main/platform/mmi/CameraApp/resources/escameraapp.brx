@@ -100,6 +100,9 @@
 	<STRING Id="1033" Name="IDS_BANDING_MODE2">
 		<Text>60 Hz</Text>
 	</STRING>
+	<String Id="1034" Name="IDS_NOMEMORY">
+		<Text>not enough memory</Text>
+	</String>
 	<STRING Id="1037" Name="IDS_CFG_RESET">
 		<Text>Reconfigurar</Text>
 	</STRING>
