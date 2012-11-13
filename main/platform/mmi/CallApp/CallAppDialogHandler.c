@@ -3715,6 +3715,11 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
 
         case EVT_KEY_HELD:
             switch ((AVKType)wParam){
+            #ifdef FEATURE_VERSION_C337
+            case AVK_STAR:
+                CallApp_Process_HeldKey_Event(pMe,eCode,wParam,dwParam);
+                return TRUE;
+            #endif    
             #if defined(FEATURE_VERSION_S1000T)
    			//case AVK_RWD:  //add by yangdecai 2012-06-09
    			#else
