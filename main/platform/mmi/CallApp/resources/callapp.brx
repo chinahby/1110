@@ -172,6 +172,9 @@
 	<String Id="1057" Name="IDS_PWDTIPS">
 		<Text>Enter password</Text>
 	</String>
+	<String Id="1058" Name="IDS_MULTICALL" Encoding="Unicode">
+		<Text>Multi call</Text>
+	</String>
 	<STRING Id="1100" Name="IDS_OPTION_RECORDER_ON">
 		<Text>Recorder on</Text>
 	</STRING>

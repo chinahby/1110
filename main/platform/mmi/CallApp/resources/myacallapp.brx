@@ -166,6 +166,9 @@
 	<String Id="1055" Name="IDS_PWDERR">
 		<Text>Invalid password</Text>
 	</String>
+	<String Id="1056" Name="IDS_MULTICALL">
+		<Text>Multi call</Text>
+	</String>
 	<String Id="1057" Name="IDS_PWDTIPS">
 		<Text>Enter password</Text>
 	</String>

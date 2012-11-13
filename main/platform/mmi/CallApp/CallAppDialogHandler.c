@@ -4417,11 +4417,20 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
                 //  Position NAME
                 // Display on secend line
                 AECHAR mui_call[MAX_SIZE_NAME_TEXT] ={0};
+#if defined(FEATURE_VERSION_C337)  				
                 (void) ISHELL_LoadResString(pMe->m_pShell,
                                                         AEE_APPSCALLAPP_RES_FILE,
-                                                        IDS_MUTI_CALL,
+							    IDS_MULTICALL,                                                       
                                                         mui_call,
                                                         sizeof(mui_call));
+#else
+                (void) ISHELL_LoadResString(pMe->m_pShell,
+                                                        AEE_APPSCALLAPP_RES_FILE,
+                                                        IDS_MUTI_CALL,                                                        
+                                                        mui_call,
+                                                        sizeof(mui_call));
+#endif
+
                 SETAEERECT(&rect,
                                                         CALL_NAME_X,
                                                         CALL_THIRD_LINE_Y,
@@ -9679,11 +9688,19 @@ static void CallApp_Draw_Connect_Number_and_Name(CCallApp *pMe)
         if(!b_cdg)
         {
             AECHAR mui_call[MAX_SIZE_NAME_TEXT] ={0};
+#if defined(FEATURE_VERSION_C337) 			
             (void) ISHELL_LoadResString(pMe->m_pShell,
                                                 AEE_APPSCALLAPP_RES_FILE,
-                                                IDS_MUTI_CALL,
+							    IDS_MULTICALL,
                                                 mui_call,
                                                 sizeof(mui_call));
+#else
+            (void) ISHELL_LoadResString(pMe->m_pShell,
+                                                AEE_APPSCALLAPP_RES_FILE,
+                                                        IDS_MUTI_CALL,    
+                                                mui_call,
+                                                sizeof(mui_call));
+#endif 
             /*预留出动画的宽度*/
             SETAEERECT(&rect,
                                                 CALL_NAME_X,

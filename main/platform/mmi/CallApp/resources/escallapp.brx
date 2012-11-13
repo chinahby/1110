@@ -166,6 +166,9 @@
 	<STRING Id="1055" Name="IDS_PWDERR">
 		<Text>Contraseña inválida</Text>
 	</STRING>
+	<String Id="1056" Name="IDS_MULTICALL">
+		<Text>Multi call</Text>
+	</String>
 	<STRING Id="1057" Name="IDS_PWDTIPS">
 		<Text>Introducir contraseña</Text>
 	</STRING>

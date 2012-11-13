@@ -163,6 +163,9 @@
 	<STRING Id="1054" Name="IDS_MSG_CURPROFILE_NORMALMODE">
 		<Text>เปิดใช้งานโหมดปกติ</Text>
 	</STRING>
+	<String Id="1055" Name="IDS_MULTICALL">
+		<Text>Multi call</Text>
+	</String>
 	<STRING Id="1100" Name="IDS_OPTION_RECORDER_ON">
 		<Text>เปิดบันทึก</Text>
 	</STRING>
@@ -192,7 +195,7 @@
 	</STRING>
 	<STRING Id="1117" Name="IDS_INVALID">
 		<Text>Invalid password</Text>
-	</STRING>	
+	</STRING>
 	<String Id="1118" Name="IDS_SPEED_DIAL_QUERY">
 		<Text>Speed Dial %s is Off,Set it On?</Text>
 	</String>

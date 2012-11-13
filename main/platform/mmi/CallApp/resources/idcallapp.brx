@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="CallApp" VERSION="1">
+<BREWRes Name="idcallapp" VERSION="1">
 <Strings Encoding="ISOLATIN1">
 	<STRING Id="1001" Name="IDS_SK_MENU">
 		<Text>Menu</Text>
@@ -166,6 +166,9 @@
 	<String Id="1055" Name="IDS_PWDERR">
 		<Text>Invalid password</Text>
 	</String>
+	<String Id="1056" Name="IDS_MULTICALL" Encoding="Unicode">
+		<Text>Multi call</Text>
+	</String>
 	<String Id="1057" Name="IDS_PWDTIPS">
 		<Text>Enter password</Text>
 	</String>
@@ -195,7 +198,7 @@
 	</STRING>
 	<STRING Id="1117" Name="IDS_INVALID">
 		<Text>Invalid password</Text>
-	</STRING>	
+	</STRING>
 	<String Id="1118" Name="IDS_SPEED_DIAL_QUERY">
 		<Text>Speed Dial %s is Off,Set it On?</Text>
 	</String>
