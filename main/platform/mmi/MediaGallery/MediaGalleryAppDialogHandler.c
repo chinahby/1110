@@ -2487,13 +2487,33 @@ static boolean MediaGalleryApp_OnDefaultOperate(CMediaGalleryApp* pMe,
       int nBackground; 	    		 
      if((nBackground = app_media_scheduler()) != APP_MEDIA_ALLOW)
      {
-        MSG_FATAL("nBackground is %d", nBackground,0,0);
-        MGAppUtil_SetMediaDlgStat(pMe, MG_DLGSTAT_YESNOBOX);
-        MediaGalleryApp_SetMsgBoxID( pMe,
-        (uint16)(nBackground == APP_MEDIA_IMPACT_BY_FM ?
-              MG_MSGID_FMPLAYBACKGROUND : MG_MSGID_MP3PLAYBACKGROUND));
-        MGCLOSE_DIALOG(MGDLGRET_BGPLAYPROMPT);
-	return FALSE;	
+ 	  int        nRet;
+	  DBGPRINTF("pCurNode->szName=%s",pCurNode->szName); 
+         nRet = MGMediaInfo_GetMimeType(pMe->m_pShell,
+             pMe->m_pFileMgr,
+             pCurNode->szName,
+             MGMIME_BASE_IMAGE ,
+             &eMimeBase);     
+        MSG_FATAL("eMimeBase is %0x", eMimeBase,0,0);
+  	 if(SUCCESS == nRet &&
+	     	(eMimeBase == MG_MIME_PNG ||
+	     	eMimeBase == MG_MIME_BMP ||
+	     	eMimeBase == MG_MIME_JPEG ||
+	     	eMimeBase == MG_MIME_JPG))
+  	 {
+  	 	//操作图片时，不用检查当前是否打开了MP3或FM
+  	 	;
+  	 }
+	 else
+        {
+            MSG_FATAL("nBackground is %d", nBackground,0,0);
+            MGAppUtil_SetMediaDlgStat(pMe, MG_DLGSTAT_YESNOBOX);
+            MediaGalleryApp_SetMsgBoxID( pMe,
+            (uint16)(nBackground == APP_MEDIA_IMPACT_BY_FM ?
+                  MG_MSGID_FMPLAYBACKGROUND : MG_MSGID_MP3PLAYBACKGROUND));
+            MGCLOSE_DIALOG(MGDLGRET_BGPLAYPROMPT);
+    	     return FALSE;	
+        }
      }
 #endif
       eMimeBase = MediaGalleryApp_GetExplorerMime(pMe);
