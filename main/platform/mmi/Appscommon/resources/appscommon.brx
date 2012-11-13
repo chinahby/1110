@@ -265,6 +265,12 @@
 	<String Id="1039" Name="IDS_SILENT">
 		<Text>Silent</Text>
 	</String>
+	<String Id="1040" Name="IDS_MULTICALL" Encoding="Unicode">
+		<Text>Multi call</Text>
+	</String>
+	<String Id="1041" Name="IDS_CLEAR_EX" Encoding="Unicode">
+		<Text>Clear</Text>
+	</String>
 	<STRING Id="2001" Name="IDS_SNOOZE">
 		<Text>Snooze</Text>
 	</STRING>

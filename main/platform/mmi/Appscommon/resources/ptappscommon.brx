@@ -253,6 +253,12 @@
 	<String Id="1035" Name="IDS_CAP">
 		<Text>Cap</Text>
 	</String>
+	<String Id="1036" Name="IDS_MULTICALL">
+		<Text>Multi call</Text>
+	</String>
+	<String Id="1037" Name="IDS_CLEAR_EX">
+		<Text>Clear</Text>
+	</String>
 	<STRING Id="2001" Name="IDS_SNOOZE">
 		<Text>Snooze</Text>
 	</STRING>

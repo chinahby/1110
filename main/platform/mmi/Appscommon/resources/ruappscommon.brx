@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="appscommon" VERSION="1">
+<BREWRes Name="ruappscommon" VERSION="1">
 <Strings Encoding="Unicode">
 	<STRING Id="1" Name="IDS_SELECT">
 		<Text>Выбор</Text>
@@ -244,14 +244,20 @@
 	<String Id="1032" Name="IDS_MSG_KEYGUARD_SPACE">
 		<Text>Удержать кнопку пробела для разблокировки клавиатуры</Text>
 	</String>
-	<String Id="1033" Name="IDS_SHIFT" Encoding="Unicode">
+	<String Id="1033" Name="IDS_SHIFT">
 		<Text>Shift</Text>
 	</String>
-	<String Id="1034" Name="IDS_ALT" Encoding="Unicode">
+	<String Id="1034" Name="IDS_ALT">
 		<Text>Alt</Text>
 	</String>
-	<String Id="1035" Name="IDS_CAP" Encoding="Unicode">
+	<String Id="1035" Name="IDS_CAP">
 		<Text>Cap</Text>
+	</String>
+	<String Id="1036" Name="IDS_MULTICALL">
+		<Text>Multi call</Text>
+	</String>
+	<String Id="1037" Name="IDS_CLEAR_EX">
+		<Text>Clear</Text>
 	</String>
 	<STRING Id="2001" Name="IDS_SNOOZE">
 		<Text>Продлить сон</Text>
