@@ -326,6 +326,11 @@ typedef PACKED struct _Key_pad_Cfg
 #define  OEMNV_MMSPROXY    "10.0.0.0"
 #define  OEMNV_MMSPORT     "80"
 #endif
+
+#ifdef FEATURE_VERSION_C337
+#define  OEMNV_MIZONENUM  "13312905885"
+#endif
+
 /*
 
 */
@@ -823,8 +828,8 @@ typedef struct _OEMErrLogType {
 #define OEMNV_EMERG_NUM_LEN                    3
 #define OEMNV_EMERG_NUM_ONE                    "100"
 #define OEMNV_EMERG_NUM_TWO                    "101"
-#define OEMNV_EMERG_NUM_TRE                    "911"
-#define OEMNV_EMERG_NUM_FOR                    "112"
+#define OEMNV_EMERG_NUM_TRE                    "102"
+#define OEMNV_EMERG_NUM_FOR                    "108"
 #else
 #define OEMNV_EMERT_SEZE                       4
 #define OEMNV_EMERG_NUM_LEN                    3
