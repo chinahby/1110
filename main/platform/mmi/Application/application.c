@@ -1137,7 +1137,7 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_BAM, IDS_APPLICATION_BAM, NULL, 0);
 #endif
 #endif
-            #ifdef FEATURE_VERSION_W317A
+            #if defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_C337)
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_UTK, IDS_APPLICATION_UTK, NULL, 0);
             #endif
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TIMER, IDS_APPLICATION_TIMER, NULL, 0);

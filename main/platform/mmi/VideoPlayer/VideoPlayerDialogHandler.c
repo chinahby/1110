@@ -779,9 +779,9 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
 		return VideoPlayer_PlayMod(pMe,wParam);
     }
     switch(wParam)
-    {       
-        //播放或暂停
-        case AVK_INFO:
+    {   
+        //播放或暂停	
+		case AVK_INFO:
             (void)ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);
             if(pMe->m_InitFailed != SUCCESS)
             {
@@ -802,7 +802,9 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
                         VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE, IDI_PAUSE, VIDEOPLAYER_PLAY_X, VIDEOPLAYER_PLAY_Y); //"||"
 #endif
 						pMe->m_rtype = TYPE_PLAYER;
+
                         DRAW_BOTTOMBAR(BTBAR_FULLSCREEN_PAUSE_STOP);
+
                         IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
 
                         if(pMe->IsPause)// 当前状态为暂停时
@@ -1019,7 +1021,8 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
                 }
             }            
             return TRUE;
-                              
+			
+#ifndef FEATURE_VERSION_C337                              
         //前进
         case AVK_POUND:
             if(pMe->IsPlay)
@@ -1050,7 +1053,7 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
             return TRUE;
                 
         //后退
-        case AVK_STAR:
+        case AVK_STAR:			
             if(pMe->IsPlay)
             {               
                 if( pMe->bCurrentTime < 5)
@@ -1076,6 +1079,7 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
                 }
             }
             return TRUE;     
+#endif			
                
         //播放上一首   
         case AVK_LEFT: 
@@ -1148,7 +1152,11 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
             return TRUE;          
           
         //增大音量   
+#ifdef FEATURE_VERSION_C337
+		case AVK_STAR:
+#else
         case AVK_UP: 
+#endif			
 #ifdef FEATURE_ALL_KEY_PAD                     
         case AVK_O:
 #endif                
@@ -1182,7 +1190,11 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
             return TRUE;          
           
         //减小音量  
+#ifdef FEATURE_VERSION_C337
+		case AVK_POUND:
+#else
         case AVK_DOWN: 
+#endif			
 #ifdef FEATURE_ALL_KEY_PAD                     
         case AVK_I:
 #endif                
@@ -1229,8 +1241,12 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
         case AVK_GSENSOR_UPEND: 
         case AVK_GSENSOR_LEFT:
         case AVK_GSENSOR_RIGHT: 
- 
-        case AVK_SELECT:
+
+#ifdef FEATURE_VERSION_C337
+		case AVK_0:
+#else
+		case AVK_SELECT:
+#endif        
             if(pMe->IsPlay)
             {
             	MSG_FATAL("------->Fullscreen1",0,0,0);
@@ -1242,6 +1258,7 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
                 CMediaGallery_FileExplorer(GALLERY_VIDEO_ADDLIST,NULL);
                 return TRUE;
             }
+		
 #ifdef FEATURE_LCD_TOUCH_ENABLE//WLH ADD FOR LCD TOUCH
 		case EVT_PEN_UP:
 			{

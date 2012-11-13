@@ -857,7 +857,9 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
             break;
             
          case BTBAR_FULLSCREEN_PAUSE_STOP:
+		 	#ifndef FEATURE_VERSION_C337
             nResID_L = IDS_FULLSCREEN; 
+			#endif
             nResID_M = IDS_PAUSE;            
             nResID_R = IDS_STOP;
             break;  

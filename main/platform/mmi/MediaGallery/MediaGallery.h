@@ -73,8 +73,13 @@
 #define MG_DOWNLOAD_FOLDER          "download"
 #else
 #define MG_PICTURES_FOLDER          "pictures"
+#ifdef FEATURE_VERSION_C337
+#define MG_MUSIC_FOLDER				"My Music"
+#define MG_VIDEOS_FOLDER            "videos"
+#else
 #define MG_MUSIC_FOLDER             "music"
 #define MG_VIDEOS_FOLDER            "video"
+#endif
 #define MG_VOICEMEMO_FOLDER         "voicememo"
 #define MG_CALLMEMO_FOLDER          "callmemo"
 #define MG_DOWNLOAD_FOLDER          "download"

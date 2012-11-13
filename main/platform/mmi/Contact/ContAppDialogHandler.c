@@ -3763,7 +3763,12 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                 ITEXTCTL_SetProperties(pTextCtl, TP_FIXOEM|TP_FOCUS_NOSEL | TP_GRAPHIC_BG);
             }
 #else
+			#ifdef FEATURE_VERSION_C337
+			ITEXTCTL_SetProperties(pTextCtl, TP_STARKEY_SWITCH | TP_FIXOEM|TP_FOCUS_NOSEL);
+			#else
             ITEXTCTL_SetProperties(pTextCtl, TP_STARKEY_SWITCH | TP_FIXOEM|TP_FOCUS_NOSEL |TP_GRAPHIC_BG);
+            #endif
+			
             ITEXTCTL_SetRect(pTextCtl, &textrc);
             CContApp_DrawIMEIcon(pTextCtl, pMe->m_pDisplay);
             #if defined(FEATURE_LANG_ARABIC) ||defined(FEATURE_LANG_THAI)

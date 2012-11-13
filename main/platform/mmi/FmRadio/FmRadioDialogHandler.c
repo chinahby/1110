@@ -839,8 +839,9 @@ static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier)
         {
             AEERect     rect        = {0};
             int         fontHeight  = IDISPLAY_GetFontMetrics( pMe->m_pDisplay, AEE_FONT_BOLD, 0, 0);
+			
             int         width       = 64;
-
+			
             pMe->directInputChannel[0] = (AECHAR)( key - AVK_0 + '0');
             pMe->directInputChannel[1] = 0;
 
@@ -856,8 +857,11 @@ static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier)
 		#elif defined(FEATURE_DISP_128X160)
 			width = 40;
             SETAEERECT( &rect, ( 128 - width) / 2, ( 160 - fontHeight) / 2, width, fontHeight);	
-		#elif defined(FEATURE_DISP_176X220)
+		#elif defined(FEATURE_DISP_176X220)			
 			width = 40;
+			#ifdef FEATURE_VERSION_C337
+			width = 80;
+			#endif
             SETAEERECT( &rect, ( 176 - width) / 2, ( 220 - fontHeight) / 2, width, fontHeight);	
 		#elif defined(FEATURE_DISP_240X320)
 			width = 40;
@@ -2495,8 +2499,15 @@ static void paint( CFmRadio *pMe)
     {
     	drawSoftkey( pMe);
 	}
-	
-    drawOperationPrompt( pMe, IDS_FMRADIO_PROMPT_PLAYING, RGB_WHITE);
+
+	if(pMe->fmVolumeStop)
+    {
+    	drawOperationPrompt( pMe, IDS_FMRADIO_PROMPT_PLAYING, RGB_WHITE);
+	}
+	else
+	{
+		drawOperationPrompt( pMe, IDS_FMRADIO_PROMPT_PAUSED, RGB_WHITE);
+	}
 
 //#ifndef FEATURE_FMRADIO_SIMPLE_VERSION
 #if 0
@@ -2809,6 +2820,10 @@ static void paint( CFmRadio *pMe)
                     );	
 		#elif defined(FEATURE_DISP_176X220)
             int         width       = 70;
+
+			#ifdef FEATURE_VERSION_C337
+			width = 120;
+			#endif
 		
             SETAEERECT( &rect, ( 176 - width) / 2, (( 220 - fontHeight) / 2) - fontHeight, width, fontHeight);
             drawText( pMe,

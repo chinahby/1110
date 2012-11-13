@@ -6359,7 +6359,11 @@ static boolean  CallApp_Missedcall_DlgHandler(CCallApp *pMe,
 			#ifdef FEATURE_VERSION_W317A
 			REFUI_DRAW_BOTTOMBAR(BTBAR_VIEW_CANCEL);
 			#else
+			#ifdef FEATURE_VERSION_C337
+			REFUI_DRAW_BOTTOMBAR(BTBAR_OK);
+			#else
             REFUI_DRAW_BOTTOMBAR(BTBAR_OK_CANCEL);
+			#endif
 			#endif
             
             // add Missing call icon
@@ -6418,7 +6422,9 @@ static boolean  CallApp_Missedcall_DlgHandler(CCallApp *pMe,
                     (void)CallApp_MissedList(pMe);
                     return TRUE;
 
+								
                 case AVK_CLR:
+					#ifndef FEATURE_VERSION_C337
                     if (NULL != pMe->m_pwstrDialStringkeep)
                     {
                         pMe->m_DialString[0] = 0;
@@ -6430,9 +6436,8 @@ static boolean  CallApp_Missedcall_DlgHandler(CCallApp *pMe,
                     {
                         CLOSE_DIALOG(DLGRET_BACK_TO_IDLE)
                     }
-                    
-                    return TRUE;
-
+					#endif                    
+                    return TRUE;			
                 case AVK_ENDCALL:					
                     FREEIF(pMe->m_pwstrDialStringkeep);
                     CLOSE_DIALOG(DLGRET_BACK_TO_IDLE)

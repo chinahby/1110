@@ -94,5 +94,8 @@
 	<STRING Id="1031" Name="IDS_FMRADIO_CHANNEL_EDIT_SUCCESS">
 		<Text>Add Success</Text>
 	</STRING>		
+	<STRING Id="1032" Name="IDS_FMRADIO_PROMPT_PAUSED">
+		<Text>Paused</Text>
+	</STRING>	
 </Strings>
 </BREWRes>

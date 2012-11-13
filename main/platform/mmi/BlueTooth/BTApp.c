@@ -16385,6 +16385,7 @@ static void BTApp_BuildMyInfoMenu( CBTApp* pMe)
                                 LONG_TEXT_BUF_LEN - uLen, 
                                 pMe->mRM.myInfo.wName );
 #ifdef FEATURE_BT_2_1
+#ifndef FEATURE_VERSION_C337
     // BT ShortName
     if ( WSTRCMP (pMe->mRM.myInfo.wName , pMe->mRM.myInfo.wShortName ) == 0 )
     {
@@ -16394,11 +16395,13 @@ static void BTApp_BuildMyInfoMenu( CBTApp* pMe)
                                      LONG_TEXT_BUF_LEN - uLen, 
                                      pMe->mRM.myInfo.wShortName,
                                      bNameSame ); 
+#endif
 #endif /* FEATURE_BT_2_1 */
     // BD address
     uLen += BTApp_FormatBDAddress( pMe, &pMe->pText1[ uLen], 
                                    LONG_TEXT_BUF_LEN - uLen, 
                                    &pMe->mRM.myInfo.bdAddr );
+#ifndef FEATURE_VERSION_C337
     // Security Level
     uLen += BTApp_FormatSecurity( pMe, &pMe->pText1[ uLen], 
                                   LONG_TEXT_BUF_LEN - uLen, 
@@ -16407,10 +16410,13 @@ static void BTApp_BuildMyInfoMenu( CBTApp* pMe)
     uLen += BTApp_FormatBondable( pMe, &pMe->pText1[ uLen], 
                                   LONG_TEXT_BUF_LEN - uLen, 
                                   pMe->mRM.bBondable );
+#endif
+	
     // Discoverable status
     uLen += BTApp_FormatDiscoverable( pMe, &pMe->pText1[ uLen], 
                                       LONG_TEXT_BUF_LEN - uLen, 
                                       pMe->mSD.bDiscoverable );
+#ifndef FEATURE_VERSION_C337
     // Service Class
     uLen += BTApp_FormatSvcCls( pMe, &pMe->pText1[ uLen], 
                                 LONG_TEXT_BUF_LEN - uLen, 
@@ -16450,6 +16456,8 @@ static void BTApp_BuildMyInfoMenu( CBTApp* pMe)
                                   LONG_TEXT_BUF_LEN - uLen, 
                                   pMe->mRM.wManuData );
 #endif /* FEATURE_BT_2_1 */
+#endif
+
 
     // display text
     //ISTATIC_SetText( pMe->m_pStatic, wTitle, pMe->pText1, AEE_FONT_BOLD, AEE_FONT_NORMAL );
@@ -16469,8 +16477,10 @@ static void BTApp_BuildMyInfoMenu( CBTApp* pMe)
     // Add individual entries to the Menu
     BTApp_AddMenuItem( pMe, pMe->m_pISoftMenu, &ai, IDS_EDIT_NAME, 0 );
 #ifdef FEATURE_BT_2_1
+#ifndef FEATURE_VERSION_C337
     BTApp_AddMenuItem( pMe, pMe->m_pISoftMenu, &ai, IDS_EDIT_SHORT_NAME, 0 );
     BTApp_AddMenuItem( pMe, pMe->m_pISoftMenu, &ai, IDS_EDIT_MANU_DATA, 0 );
+#endif	
 #endif /* FEATURE_BT_2_1 */
 #ifndef FEATURE_BT_2_1
     BTApp_AddMenuItem( pMe, pMe->m_pISoftMenu, &ai, IDS_SECURITY, 0 );
@@ -18625,6 +18635,7 @@ static void BTApp_BuildDevInfo( CBTApp* pMe )
   {
       pDev->uValue1 = 0;
   }
+#ifndef FEATURE_VERSION_C337	  
 #ifdef FEATURE_BT_2_1
   // manufacturer data
   if (  pDev->EIRData.uManufDataSize > 0  )
@@ -18663,6 +18674,12 @@ static void BTApp_BuildDevInfo( CBTApp* pMe )
   uLen += BTApp_FormatBTName( pMe, &pMe->pText1[ uLen], 
                               LONG_TEXT_BUF_LEN - uLen, pDev->wName );
 #endif /* FEATURE_BT_2_1 */
+#else
+	uLen += BTApp_FormatBTName( pMe, &pMe->pText1[ uLen], 
+                              LONG_TEXT_BUF_LEN - uLen, pDev->wName );
+#endif
+
+#ifndef FEATURE_VERSION_C337
 #ifdef FEATURE_BT_2_1
    uLen += BTApp_FormatSSPCapable( pMe, &pMe->pText1[ uLen], 
                                    LONG_TEXT_BUF_LEN - uLen, 
@@ -18674,9 +18691,13 @@ static void BTApp_BuildDevInfo( CBTApp* pMe )
                                 LONG_TEXT_BUF_LEN - uLen, 
                                 pDev->linkKeyStatus );
 #endif /* FEATURE_BT_2_1 */
+#endif
+
   // BD address
   uLen += BTApp_FormatBDAddress( pMe, &pMe->pText1[ uLen], 
                                  LONG_TEXT_BUF_LEN - uLen, &pDev->bdAddr );
+
+#ifndef FEATURE_VERSION_C337
   // Security Level
   uLen += BTApp_FormatSecurity( pMe, &pMe->pText1[ uLen], 
                                 LONG_TEXT_BUF_LEN - uLen, pDev->security );
@@ -18722,6 +18743,7 @@ static void BTApp_BuildDevInfo( CBTApp* pMe )
                             LONG_TEXT_BUF_LEN - uLen,
                             pDev );
 #endif /* FEATURE_BT_2_1 */
+#endif
 
   // display text
   ISTATIC_SetText( pMe->m_pStatic, NULL, pMe->pText1, AEE_FONT_BOLD, AEE_FONT_NORMAL );

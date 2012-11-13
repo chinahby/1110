@@ -1648,7 +1648,7 @@ static boolean HandleDeviceInfoDialogEvent(CBTApp *pMe,
 			  pDev->uValue1 = 0;
 			}
 			
-			
+#ifndef FEATURE_VERSION_C337			
 #ifdef FEATURE_BT_2_1
 			// manufacturer data
 			if ( pDev->EIRData.uManufDataSize > 0)
@@ -1690,7 +1690,12 @@ static boolean HandleDeviceInfoDialogEvent(CBTApp *pMe,
 			uLen += BTApp_FormatBTName( pMe, &pMe->pText1[ uLen], 
 			                          LONG_TEXT_BUF_LEN - uLen, pDev->wName );
 #endif /* FEATURE_BT_2_1 */
+			uLen += BTApp_FormatBTName( pMe, &pMe->pText1[ uLen], 
+			                          LONG_TEXT_BUF_LEN - uLen, pDev->wName );
+#else
+#endif
 
+#ifndef FEATURE_VERSION_C337	
 #ifdef FEATURE_BT_2_1
 			uLen += BTApp_FormatSSPCapable( pMe, &pMe->pText1[ uLen], 
 			                                LONG_TEXT_BUF_LEN - uLen, 
@@ -1703,6 +1708,7 @@ static boolean HandleDeviceInfoDialogEvent(CBTApp *pMe,
 			                             LONG_TEXT_BUF_LEN - uLen, 
 			                             pDev->linkKeyStatus );
 #endif /* FEATURE_BT_2_1 */
+#endif
 
 			// BD address
 			uLen += BTApp_FormatBDAddress(pMe, &pMe->pText1[ uLen], 
@@ -1711,6 +1717,7 @@ static boolean HandleDeviceInfoDialogEvent(CBTApp *pMe,
 			
 			MSG_FATAL("***zzg DeviceInfo mRM.uCurDevIdx=%d, security=%d***", pMe->mRM.uCurDevIdx, pDev->security, 0);
 
+#ifndef FEATURE_VERSION_C337	
 			// Security Level
 			uLen += BTApp_FormatSecurity(pMe, &pMe->pText1[ uLen], 
 			                             LONG_TEXT_BUF_LEN - uLen, pDev->security );
@@ -1757,6 +1764,7 @@ static boolean HandleDeviceInfoDialogEvent(CBTApp *pMe,
 			                         LONG_TEXT_BUF_LEN - uLen,
 			                         pDev);
 #endif /* FEATURE_BT_2_1 */
+#endif
 
 			// display text
 			ISTATIC_SetText(pStatic, NULL, pMe->pText1, AEE_FONT_BOLD, AEE_FONT_NORMAL );
@@ -2918,6 +2926,7 @@ static boolean HandleMyInfoDialogEvent(CBTApp *pMe,
 										   pMe->mRM.myInfo.wName);
 
 #ifdef FEATURE_BT_2_1
+#ifndef FEATURE_VERSION_C337
 				// BT ShortName
 				if (WSTRCMP(pMe->mRM.myInfo.wName , pMe->mRM.myInfo.wShortName) == 0)
 				{
@@ -2927,11 +2936,14 @@ static boolean HandleMyInfoDialogEvent(CBTApp *pMe,
 												LONG_TEXT_BUF_LEN - uLen, 
 												pMe->mRM.myInfo.wShortName,
 												bNameSame); 
+#endif				
 #endif 
 				// BD address
 				uLen += BTApp_FormatBDAddress(pMe, &pMe->pText1[uLen], 
 											  LONG_TEXT_BUF_LEN - uLen, 
 											  &pMe->mRM.myInfo.bdAddr);
+
+#ifndef FEATURE_VERSION_C337
 				// Security Level
 				uLen += BTApp_FormatSecurity(pMe, &pMe->pText1[uLen], 
 											 LONG_TEXT_BUF_LEN - uLen, 
@@ -2940,10 +2952,12 @@ static boolean HandleMyInfoDialogEvent(CBTApp *pMe,
 				uLen += BTApp_FormatBondable(pMe, &pMe->pText1[uLen], 
 											 LONG_TEXT_BUF_LEN - uLen, 
 											 pMe->mRM.bBondable);
+#endif				
 				// Discoverable status
 				uLen += BTApp_FormatDiscoverable(pMe, &pMe->pText1[uLen], 
 												 LONG_TEXT_BUF_LEN - uLen, 
 												 pMe->mSD.bDiscoverable);
+#ifndef FEATURE_VERSION_C337
 				// Service Class
 				uLen += BTApp_FormatSvcCls(pMe, &pMe->pText1[uLen], 
 										   LONG_TEXT_BUF_LEN - uLen, 
@@ -2980,6 +2994,7 @@ static boolean HandleMyInfoDialogEvent(CBTApp *pMe,
 											  LONG_TEXT_BUF_LEN - uLen, 
 											  pMe->mRM.wManuData );
 #endif /* FEATURE_BT_2_1 */
+#endif
 
 				// display text 			
 				ISTATIC_SetText(pStatic, NULL, pMe->pText1, AEE_FONT_BOLD,AEE_FONT_NORMAL );
@@ -3075,8 +3090,12 @@ static boolean HandleMyInfoOpitionDialogEvent(CBTApp *pMe,
 			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);   
 
   			IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_EDIT_NAME, IDS_EDIT_NAME, NULL, 0);
+
+			#ifndef FEATURE_VERSION_C337
 			IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_EDIT_SHORT_NAME, IDS_EDIT_SHORT_NAME, NULL, 0);			
             IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_EDIT_MANU_DATA, IDS_EDIT_MANU_DATA, NULL, 0);
+			#endif
+			
             //IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_SECURITY, IDS_SECURITY, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_DISCOVERABLE, IDS_DISCOVERABLE, NULL, 0);
 			//IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_IOCAPABILITY, IDS_IOCAPABILITY, NULL, 0);

@@ -26,13 +26,13 @@
 		<Text>Minimize</Text>
 	</STRING>
 	<STRING Id="1009" Name="IDS_FMRADIO_OPTION_MENU_GLOBAL_SEARCH">
-		<Text>Global search</Text>
+		<Text>Auto search</Text>
 	</STRING>
 	<STRING Id="1010" Name="IDS_FMRADIO_OPTION_MENU_LIST">
 		<Text>Channel list</Text>
 	</STRING>
 	<STRING Id="1011" Name="IDS_FMRADIO_REFRESH_CHANNEL_LIST_CONFIRM">
-		<Text>Cover the current list</Text>
+		<Text>Replace the current list?</Text>
 	</STRING>
 	<STRING Id="1012" Name="IDS_FMRADIO_REFRESH_CHANNEL_LIST_SAVE_CONFIRM">
 		<Text>Searching finished,save</Text>
@@ -93,6 +93,9 @@
 	</STRING>	
 	<STRING Id="1031" Name="IDS_FMRADIO_CHANNEL_EDIT_SUCCESS">
 		<Text>Add Success</Text>
-	</STRING>		
+	</STRING>	
+	<STRING Id="1032" Name="IDS_FMRADIO_PROMPT_PAUSED">
+		<Text>Paused</Text>
+	</STRING>	
 </Strings>
 </BREWRes>
