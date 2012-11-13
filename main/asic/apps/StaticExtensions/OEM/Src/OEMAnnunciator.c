@@ -2230,6 +2230,7 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
         
 	    if(!IAnnunCoreObj->m_bActive)
 		{			
+			/*
 			//Add By zzg 2012_11_12
 			if (IAnnunCoreObj->m_Title[0] == 0)
 			{
@@ -2252,6 +2253,7 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
 #endif
 			}
 			//Add End
+			*/
 			
             if(IAnnunCoreObj->m_hasTitleText && IAnnunCoreObj->m_Title[0] != 0)
             {            	
