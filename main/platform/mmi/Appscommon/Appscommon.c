@@ -930,7 +930,11 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
          case BTBAR_OPTION_SAVE_DEL:
             nResID_L = IDS_OPTION;
             nResID_M = IDS_SAVE;
-            nResID_R = IDS_DEL;
+#if defined(FEATURE_VERSION_C337)  
+            nResID_R = IDS_CLEAR_EX;	
+#else
+            nResID_R = IDS_DEL;	
+#endif
             break;
 		case BTBAR_OPTION_SAVE_BACK:
 			nResID_L = IDS_OPTION;
