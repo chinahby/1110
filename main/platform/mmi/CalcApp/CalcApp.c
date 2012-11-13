@@ -1680,7 +1680,13 @@ static void Calc_ClearVals(CCalcApp *pme)
     pme->m_nValNum = 0;
     MEMSET( pme->m_pValList, 0, sizeof( pme->m_pValList));
 
-    pme->m_szText[0] = (AECHAR) '\0';
+	
+#ifdef FEATURE_VERSION_C337
+	MEMSET( pme->m_szText, 0, sizeof( pme->m_szText));		//Modify by zzg 2012_11_13
+#else
+	pme->m_szText[0] = (AECHAR) '\0';
+#endif
+    
     pme->m_wLastOperator = OP_UNDEFINED;
     pme->m_bClearLast = TRUE;
 }
