@@ -858,7 +858,7 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
                 if(pMe->m_nMsgID != 0xFFFF)
                 {
                     STRLCPY(m_PromptMsg.strMsgResFile, AEE_COREAPPRES_LANGFILE,MAX_FILE_NAME);
-                    if((pMe->m_nMsgID == IDS_FULLY_CHARGED) || (pMe->m_nMsgID == IDS_CHARGER_ON) || (pMe->m_nMsgID == IDS_WAITING))
+                    if((pMe->m_nMsgID == IDS_FULLY_CHARGED) || (pMe->m_nMsgID == IDS_CHARGER_ON) || (pMe->m_nMsgID == IDS_WAITING) || (pMe->m_nMsgID == IDS_CHARGER_USB_ON))
                     {
                         m_PromptMsg.eBBarType = BTBAR_NONE;
                     }

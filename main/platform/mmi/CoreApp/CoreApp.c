@@ -3101,13 +3101,21 @@ static void CoreApp_Process_Charger_Msg(CCoreApp   *pMe)
         MSG_FATAL("CoreApp_Process_Charger_Msg Start",0,0,0); 
         if(pMe->m_bExtPwrState)
         {
+            #ifdef FEATURE_VERSION_C337
+            pMe->m_nMsgID = IDS_CHARGER_USB_ON;
+            #else
             pMe->m_nMsgID = IDS_CHARGER_ON;
+            #endif
          CLOSE_DIALOG(DLGRET_BATT_INFO)
 
         }
        else
        {
+          #ifdef FEATURE_VERSION_C337
+          pMe->m_nMsgID = IDS_CHARGER_USB_OFF;
+          #else
           pMe->m_nMsgID = IDS_CHARGER_OFF;
+          #endif
           CLOSE_DIALOG(DLGRET_BATT_INFO)
 
        }
