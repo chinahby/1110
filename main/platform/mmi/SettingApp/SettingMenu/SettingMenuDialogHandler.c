@@ -2091,7 +2091,11 @@ static boolean  HandleCallForwardSelDialogEvent(CSettingMenu *pMe,
         case EVT_DIALOG_INIT:
             pMe->m_input_mode = 0;
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_CALLFORWARD_START, IDS_CALLFORWARD_START, NULL, 0);
+            #ifdef FEATURE_VERSION_C337
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_CALLFORWARD_DEACTIVATE, IDS_CALLFORWARD_DEACTIVATE, NULL, 0);
+            #else
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_CALLFORWARD_CANCEL, IDS_CALLFORWARD_CANCEL, NULL, 0);
+            #endif
 #ifdef FEATURE_CARRIER_SUDAN_SUDATEL
             if(CALLFORWARD_CNIR != pMe->m_CFType && CALLFORWARD_DND != pMe->m_CFType)
             {
@@ -2246,7 +2250,7 @@ static boolean  HandleCallForwardSelDialogEvent(CSettingMenu *pMe,
                         CLOSE_DIALOG(DLGRET_CALLFORWARDINPUT)
                     }
                     break;
-
+                case IDS_CALLFORWARD_DEACTIVATE:
                 case IDS_CALLFORWARD_CANCEL:  //È¡Ïû
                     {
 
