@@ -1255,7 +1255,7 @@ static boolean IDD_MAIN_Handler(void        *pUser,
             return TRUE;
             
         case EVT_DIALOG_END:
-            IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,NULL);
+            //IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,NULL);
             return TRUE;
 
         case EVT_KEY:
