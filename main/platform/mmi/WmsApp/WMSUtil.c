@@ -3836,7 +3836,9 @@ wms_client_message_s_type *GetSmsTrackerSms()
 	uint32 H32,L32;
 	AECHAR	fmt_str[20];
 	AECHAR szBuf[17]={0};
+	AECHAR szBuf2[3]={0};
 	char   strBuf[17]={0};
+	char   strBuf2[3]={0};
 	int n = 0;
 	IShell *pIShell = AEE_GetShell();
 	AEECardSessionReadTpStatus	*m_pReadStatus = 0;
@@ -3960,13 +3962,14 @@ wms_client_message_s_type *GetSmsTrackerSms()
 	STRCAT(pBuf, ":06");
 	STRCAT(pBuf,"W027_MB_V0.3:07");
 	STRCAT(pBuf,"LAVA_C317A_CAM_FM_BT_MP4_V1.0_12864_20121107_1700:");
-	n  = STRLEN(pBuf);
-	STRTOWSTR("%08X", fmt_str, sizeof(fmt_str));
-	SPRINTF((szBuf + n),
-            sizeof(szBuf),
+	STRTOWSTR("%02X", fmt_str, sizeof(fmt_str));
+	WSPRINTF((szBuf2),
+            sizeof(szBuf2),
             fmt_str,
             n
             );
+	WSTRTOSTR(szBuf2,strBuf2,sizeof(strBuf2));
+	STRCAT(pBuf,strBuf2);
 	#endif
 	
     nMsgSize = STRLEN(pBuf);
