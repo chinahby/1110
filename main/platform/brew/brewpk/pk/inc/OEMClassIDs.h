@@ -138,7 +138,7 @@ GENERAL DESCRIPTION:
 #define AEECLSID_BRW_APP    	    0x2104c960
 #define AEECLSID_NF3				0x01007016
 #define AEECLSID_UCWEB				0x20068888            //add by pengyuangui 2012/09/06
-
+#define AEECLSID_MiZone				0x20121106            //add by pengyuangui 2012/11/06
 
 #define AEECLSID_BLUETOOTH_APP    	0x01015223
 #define AEECLSID_NF3				0x01007016

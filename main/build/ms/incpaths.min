@@ -847,6 +847,7 @@ VIDEOPLAYER=            $(MMIDIR)/VideoPlayer
 WORLDTIME=              $(MMIDIR)/WorldTime
 UTK=                    $(MMIDIR)/UTK
 UCWEB=                  $(MMIDIR)/UCWEB
+MIZONE=                  $(MMIDIR)/MIZONE
 EDITAPPLET =            $(MMIDIR)/EditApplet
 EDITEXTENTSION =        $(MMIDIR)/EditExtension
 OEMEXTFOR3PART =        $(MMIDIR)/OEMExtFor3Part

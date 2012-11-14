@@ -599,6 +599,11 @@ extern int OEMTLGAtv_New(IShell *pIShell,AEECLSID ClsID,OEMINSTANCE* ppInterface
 #ifdef FEATURE_APP_QUICKTEST
 extern int QuickTest_Load(IShell *pIShell,void *ph,IModule **ppMod);
 #endif
+
+//#ifdef FEATURE_APP_MIZONE
+extern int MiZone_Load(IShell *pIShell,void *ph,IModule **ppMod);
+//#endif
+
 extern int CWMSMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
 extern int MainMenuMod_Load( IShell *pIShell, void *ph, IModule **ppMod);
 extern int ExtraMenuMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
@@ -1029,8 +1034,10 @@ static const AEEStaticMod gOEMStaticModList[] =
 #ifdef FEATURE_APP_QUICKTEST    
     //{AEEFS_MIF_DIR"extramenu.mif", ExtraMenuMod_Load},
     {AEEFS_MIF_DIR"quicktest.mif", QuickTest_Load},
-#endif    
-
+#endif  
+//#ifdef FEATURE_APP_MIZONE
+        {AEEFS_MIF_DIR"mizone.mif", MiZone_Load},
+//#endif 
     {AEEFS_MIF_DIR"clockapps.mif", ClockAppsMod_Load},
 #ifdef FEATURE_APP_CALC
     {AEEFS_MIF_DIR"calcapp.mif", CalcMod_Load},

@@ -145,6 +145,15 @@
 	<STRING Id="48" Name="IDS_CALL">
 		<Text>Call</Text>
 	</STRING>
+	<STRING Id="49" Name="IDS_MIZONEACTIVATE">
+		<Text>Activate</Text>
+	</STRING>
+	<STRING Id="50" Name="IDS_FUNZONE">
+		<Text>M!Zone+</Text>
+	</STRING>
+	<STRING Id="51" Name="IDS_SENDREQUEST">
+		<Text>Send request</Text>
+	</STRING>
 	<STRING Id="114" Name="IDS_OPTION_FM">
 		<Text>Option</Text>
 	</STRING>

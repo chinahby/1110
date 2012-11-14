@@ -2037,6 +2037,7 @@ static boolean CTextCtl_Redraw(ITextCtl * pITextCtl)
 
     if (!(pme->m_dwProps & TP_NODRAW)) 
     {
+         MSG_FATAL("pme->m_rc.dx=%d---pme->m_rc.dy=%d----pme->m_rc.y=%d",pme->m_rc.dx,pme->m_rc.dy,pme->m_rc.y);
         // clear the old
         if(pme->m_dwProps & TP_GRAPHIC_BG)
         {
@@ -2319,7 +2320,7 @@ static void CTextCtl_SetRect(ITextCtl * pITextCtl, const AEERect * prc)
 
    rcOld     = pme->m_rc;
    pme->m_rc = *prc;
-
+   MSG_FATAL("***prc.y=%d,prc.dx=%d,prc.dy=%d",prc->y,prc->dx,prc->dy);
    if (!(pme->m_dwProps & TP_NODRAW)) {
      if(pme->m_dwProps & TP_GRAPHIC_BG)
      {

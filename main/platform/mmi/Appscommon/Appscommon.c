@@ -546,7 +546,21 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
             nResID_L = IDS_OK;
             nResID_R = IDS_BACK;
             break;
+            
+         case BTBAR_ACTIVATE_BACK:
+            nResID_L = IDS_MIZONEACTIVATE;
+            nResID_R = IDS_BACK;
+            break; 
 
+         case BTBAR_MIZONE_SELECT_BACK:
+            nResID_L = IDS_SELECT;
+            nResID_R = IDS_BACK;
+            break; 
+
+         case BTBAR_FUNZONE_BACK:
+            nResID_L = IDS_FUNZONE;
+            nResID_R = IDS_BACK;
+            break; 
             // 确定-----取消
          case BTBAR_OK_CANCEL:
             nResID_L = IDS_OK;
@@ -735,7 +749,8 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
             nResID_L = IDS_SEND;
             nResID_R = IDS_BACK;
             break;  
-
+         
+            
          case BTBAR_SNOOZE_STOP:
             nResID_L = IDS_SNOOZE;
             nResID_R = IDS_STOP;
@@ -3367,7 +3382,15 @@ void DrawBottomBar_Ex(IShell    *m_pIShell, IDisplay  * pIDisplay, BottomBar_e_T
 		case BTBAR_MENU_FMENU:
 			nResID_L = IDS_MENU;
 			nResID_R = IDS_FMENU;
-			break;	
+			break;
+        case BTBAR_MIZONE_SELECT_BACK:
+            nResID_L = IDS_SELECT;
+            nResID_R = IDS_BACK;
+            break; 
+        case BTBAR_ACTIVATE_BACK:
+            nResID_L = IDS_MIZONEACTIVATE;
+            nResID_R = IDS_BACK;
+            break;     
     }
 	
     if(nResID_L)

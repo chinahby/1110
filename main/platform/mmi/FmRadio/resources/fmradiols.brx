@@ -89,7 +89,7 @@
 		<Text>OK</Text>
 	</STRING>	
 	<STRING Id="1030" Name="IDS_FMRADIO_CHANNEL_EDIT_ERROR">
-		<Text>Not OK</Text>
+		<Text>Frequency:87.5~108.0</Text>
 	</STRING>	
 	<STRING Id="1031" Name="IDS_FMRADIO_CHANNEL_EDIT_SUCCESS">
 		<Text>Add Success</Text>

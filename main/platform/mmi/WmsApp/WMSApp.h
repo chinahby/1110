@@ -89,6 +89,11 @@
 #ifdef FEATURE_VERSION_W317A
 #define  MOBILE_TRACKER_MSG             'M'
 #endif
+
+#ifdef FEATURE_VERSION_C337
+#define  MIZONE_MSG             'Z'
+#endif
+
 #ifdef FEATURE_SEAMLESS_SMS
 // 接收注册信息的服务器号码
 #define SEAMLESSSMS_SERVERNUM  "02170277582"

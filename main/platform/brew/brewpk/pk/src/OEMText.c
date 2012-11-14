@@ -7141,7 +7141,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
             break;        
 
         case T9KEYLEFT:
-            ERR("T9TextCtl_MultitapKey::5",0,0,0);
+            MSG_FATAL("T9TextCtl_MultitapKey::T9KEYLEFT",0,0,0);
             if(FOCUS_SELECTION == pContext->sFocus)
             {
                 pContext->sFocus = FOCUS_TEXT;             

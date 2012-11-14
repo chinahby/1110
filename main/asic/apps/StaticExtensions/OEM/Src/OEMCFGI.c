@@ -731,6 +731,10 @@ typedef struct
    boolean	 mobile_tracker_setnumb ;     //CFGI_MOBILE_TRACKER_SETNUM
 
 #endif
+#ifdef FEATURE_VERSION_C337
+   char    mizone_num[MAS_BREWSETINT_STRING];
+   char    mizone_smsinfo[MAS_BREWSETINT_STRING];   
+#endif
 } OEMConfigListType;
 
 
@@ -1609,6 +1613,13 @@ static int OEMPriv_SetItem_CFGI_MOBILE_TRACKER_IMSI(void *pBuff);
 static int OEMPriv_GetItem_CFGI_MOBILE_TRACKER_SETNUM(void *pBuff);
 static int OEMPriv_SetItem_CFGI_MOBILE_TRACKER_SETNUM(void *pBuff);
 #endif
+#ifdef FEATURE_VERSION_C337
+static int OEMPriv_GetItem_CFGI_MIZONE_NUM(void *pBuff);
+static int OEMPriv_SetItem_CFGI_MIZONE_NUM(void *pBuff);
+static int OEMPriv_GetItem_CFGI_MIZONE_SMSINFO(void *pBuff);
+static int OEMPriv_SetItem_CFGI_MIZONE_SMSINFO(void *pBuff);
+#endif
+
 
 /*===========================================================================
 
@@ -1945,6 +1956,11 @@ static OEMConfigListType oemi_cache = {
 	,{0}
 	,FALSE
 #endif
+#ifdef FEATURE_VERSION_C337
+    ,{OEMNV_MIZONENUM}
+    ,{0}
+#endif
+
 
 };
 
@@ -2518,6 +2534,10 @@ static ConfigItemTableEntry const customOEMItemTable[] =
    CFGTABLEITEM(CFGI_MOBILE_TRACKER_IMSI,sizeof(uint16)*OEMNV_LOCKIMSI_MAXLEN),//CFGI_MOBILE_TRACKER_IMSI
    CFGTABLEITEM(CFGI_MOBILE_TRACKER_SETNUM,sizeof(boolean)),                   //CFGI_MOBILE_TRACKER_SETNUM
 #endif
+#ifdef FEATURE_VERSION_C337
+   CFGTABLEITEM(CFGI_MIZONE_NUM,sizeof(char)*MAS_BREWSETINT_STRING),
+   CFGTABLEITEM(CFGI_MIZONE_SMSINFO,sizeof(char)*MAS_BREWSETINT_STRING), 
+#endif
    //CFGTABLEITEM(CFGI_SALES_TRACK_SMS_SEND, sizeof(boolean)),		//Add By zzg 2012_10_29
 };
 #endif
@@ -2974,6 +2994,12 @@ void OEM_RestoreFactorySetting( void )
 	MEMSET(oemi_cache.mobile_tracker_imsi,0,OEMNV_LOCKIMSI_MAXLEN);//CFGI_MOBILE_TRACKER_IMSI
     oemi_cache.mobile_tracker_setnumb =FALSE;                      //CFGI_MOBILE_TRACKER_SETNUM
 	#endif
+    #ifdef FEATURE_VERSION_C337
+    MEMCPY(oemi_cache.mizone_num,OEMNV_MIZONENUM, MAS_BREWSETINT_STRING/*FILESPECLEN*/); 
+    MEMCPY(oemi_cache.mizone_smsinfo,0, MAS_BREWSETINT_STRING/*FILESPECLEN*/); 
+    //MEMSET(oemi_cache.mizone_num,OEMNV_MIZONENUM,OEMNV_LOCKIMSI_MAXLEN);
+    //MEMSET(oemi_cache.mizone_smsinfo,0,OEMNV_LOCKIMSI_MAXLEN);
+    #endif
    //ÆÁ±£Ê±¼ä
    oemi_cache.p_screensaver_time=0; 
    oemi_cache.restrict_incoming = 0;
@@ -10870,6 +10896,46 @@ static int OEMPriv_SetItem_CFGI_MOBILE_TRACKER_SETNUM(void *pBuff)
 
 #endif
 
+#ifdef FEATURE_VERSION_C337
+static int OEMPriv_GetItem_CFGI_MIZONE_NUM(void *pBuff)
+{
+	/*int len = STRLEN((void*)oemi_cache.mizone_num);
+	MSG_FATAL("OEMPriv_GetItem_CFGI_MIZONE_NUM,,,,,,,=%d",len,0,0);
+	MEMCPY(pBuff, oemi_cache.mizone_num, sizeof(uint16) * OEMNV_LOCKMUM_MAXLEN);
+    */
+    MEMCPY(pBuff, (void*) &oemi_cache.mizone_num, sizeof(char) * MAS_BREWSETINT_STRING);
+    DBGPRINTF("CFGI_MMS_USER_NAME %s",oemi_cache.mizone_num);
+   return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_MIZONE_NUM(void *pBuff)
+{
+
+	/* int len = STRLEN((void*)oemi_cache.mizone_num);
+	MSG_FATAL("OEMPriv_SetItem_CFGI_MIZONE_NUM,,,,,,,len==%d",len,0,0);
+	MEMCPY(oemi_cache.mizone_num, pBuff, sizeof(uint16) * OEMNV_LOCKMUM_MAXLEN);
+    OEMPriv_WriteOEMConfigList(); 
+    */
+    MEMCPY((void*) &oemi_cache.mizone_num, pBuff, sizeof(char) * MAS_BREWSETINT_STRING);
+    DBGPRINTF("mizone_num %s",oemi_cache.mizone_num);
+    OEMPriv_WriteOEMConfigList(); 
+    return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_MIZONE_SMSINFO(void *pBuff)
+{	
+	//MEMCPY(pBuff, oemi_cache.mizone_smsinfo, sizeof(uint16) * OEMNV_LOCKMUM_MAXLEN);
+	  MEMCPY(pBuff, (void*) &oemi_cache.mizone_smsinfo, sizeof(char) * MAS_BREWSETINT_STRING);
+   return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_MIZONE_SMSINFO(void *pBuff)
+{
+	//MEMCPY(oemi_cache.mizone_smsinfo, pBuff, sizeof(uint16) * OEMNV_LOCKMUM_MAXLEN);
+	MEMCPY((void*) &oemi_cache.mizone_smsinfo, pBuff, sizeof(char) * MAS_BREWSETINT_STRING);
+    OEMPriv_WriteOEMConfigList(); 
+    return SUCCESS;
+}
+
+#endif
 
 
 #ifdef FEATURE_ANALOG_TV

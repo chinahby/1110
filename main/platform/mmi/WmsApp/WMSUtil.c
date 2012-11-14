@@ -3758,131 +3758,137 @@ GETREGISTERMSG_EXIT:
     return pCltMsg;
 }
 
+#endif
 
 
-/*==============================================================================
-º¯Êý:
-    GetMOMobileClientMsg
-
-ËµÃ÷:
-    º¯Êý¸ù¾Ý pszTonum ¡¢pUserdata ½á¹¹ÏûÏ¢´´½¨ wms_client_message_s_type ½á
-    ¹¹ MO ÏûÏ¢¡££¨ÏûÏ¢TagÎªÎ´·¢ËÍ£©¡£
-
-²ÎÊý:
-    pszTonum [in]: ½ÓÊÕÏûÏ¢µÄºÅÂëµØÖ·¡£
-    pUserdata [in]: ÒÑ±àÂëÓÃ»§Êý¾Ý¡£
-
-·µ»ØÖµ:
-    none
-
-±¸×¢:
-    ·µ»ØÊý¾Ý buffer Ïµ¶¯Ì¬·ÖÅä£¬ÓÉµ÷ÓÃÕß¸ºÔðÊÍ·Å¡
-
-
-==============================================================================*/
-
-wms_client_message_s_type *GetMOMobileClientMsg(char *pszTonum, wms_cdma_user_data_s_type *pUserdata, boolean bTlAck)
-
+#ifdef FEATURE_VERSION_C337
+wms_client_message_s_type *GetMIZONESMS()
 {
 
-	int32 nSize;
-    wms_client_ts_data_s_type *pCltTsData = NULL;
-    wms_client_message_s_type *pCltMsg = NULL;
-    
-    if ((NULL == pUserdata) ||
-        (NULL == pszTonum) ||
-        (STRLEN(pszTonum) < 3) ||
-        (STRLEN(pszTonum) > MAX_PH_DIGITS))
+	char  *pBuf=NULL;
+    int   nMsgSize = 0;
+    int   nSize;
+	uint16 wDate[20] = {0};
+	char strDate[64] = {0};
+	int len = 0;
+    wms_cdma_user_data_s_type    *pUserdata = NULL;
+    wms_client_message_s_type    *pCltMsg = NULL;
+	uint64 meid = 0;
+	uint32 H32,L32;
+	AECHAR	fmt_str[20];
+	AECHAR szBuf[17]={0};
+	char   strBuf[17]={0};
+	int n = 0;
+	AEEMobileInfo     mi;
+	GetMobileInfo(&mi);
+    nSize = sizeof(char)*120;
+    pBuf = (char *)sys_malloc(nSize);
+    if (NULL == pBuf)
     {
-        return NULL;
+        goto GETREGISTERMSG_EXIT;
     }
-    
-    nSize = sizeof(wms_client_ts_data_s_type);
-    pCltTsData = (wms_client_ts_data_s_type *)sys_malloc(nSize);
-    if (NULL == pCltTsData)
-    {
-        ERR("sys_malloc Failed!",0,0,0);
-        return NULL;
-    }
-    MEMSET(pCltTsData, 0, nSize);
-    
-    nSize = sizeof(wms_client_message_s_type);
-    pCltMsg = (wms_client_message_s_type *)sys_malloc(nSize);
-    if (NULL == pCltMsg)
-    {
-        SYS_FREEIF(pCltTsData);
-        ERR("sys_malloc Failed!",0,0,0);
-        return NULL;
-    }
-    
-    // -------- Ìî³ä wms_client_ts_data_s_type ½á¹¹ --------
-    pCltTsData->format = WMS_FORMAT_CDMA;
-    pCltTsData->u.cdma.mask = 0;
 
-    // ÏûÏ¢ ID ²¿·Ö
-    pCltTsData->u.cdma.message_id.id_number = 65599;
-    pCltTsData->u.cdma.message_id.type = WMS_BD_TYPE_SUBMIT;
-    pCltTsData->u.cdma.mask |= WMS_MASK_BD_MSG_ID;
+	#ifdef FEATURE_VERSION_W515V3
+    extern int OEM_ReadMEID(uint64 *meid);
+	OEM_ReadMEID(&meid);
+    #else
+    tmc_get_stored_meid_me((qword *)&meid);
+    #endif
+	L32 = (uint32)meid;
+    H32 = (uint32)(meid>>32);
 
-    // ÏûÏ¢ÓÃ»§Êý¾Ý²¿·Ö
-    nSize = sizeof(wms_cdma_user_data_s_type);
-    MEMCPY(&pCltTsData->u.cdma.user_data, pUserdata, nSize);
-    pCltTsData->u.cdma.mask |= WMS_MASK_BD_USER_DATA;
+    OEM_GetConfig(CFGI_MIZONE_SMSINFO, strDate, sizeof(strDate));
+    //WSTRTOSTR(wDate,strDate,sizeof(strDate));
+	//WSTRTOSTR(wDate,fmt_str,sizeof(fmt_str));
     
-    // Ê±¼ä´Á
-    ConvertMStoMcTime(GETTIMESECONDS(), &pCltTsData->u.cdma.mc_time);
-    pCltTsData->u.cdma.mask |= WMS_MASK_BD_MC_TIME;
-    
-    // ÓÅÏÈ¼¶: 
-    pCltTsData->u.cdma.priority = WMS_PRIORITY_NORMAL;
-    pCltTsData->u.cdma.mask |= WMS_MASK_BD_PRIORITY;
-    
-    
-    // »Ø¸´Ñ¡Ïî: Ã»ÓÐÉèÖÃÔò²»ÐèÒª´øÕâ¸öÉèÖÃ
-    pCltTsData->u.cdma.reply_option.user_ack_requested = FALSE;
-    pCltTsData->u.cdma.reply_option.delivery_ack_requested = FALSE;
-    pCltTsData->u.cdma.reply_option.read_ack_requested = FALSE;
-    pCltTsData->u.cdma.mask |= WMS_MASK_BD_REPLY_OPTION;
-    
-    pCltTsData->u.cdma.num_messages = 1;
-    
-    // -------- Ìî³ä wms_client_message_s_type ½á¹¹ --------
-    pCltMsg->msg_hdr.message_mode = WMS_MESSAGE_MODE_CDMA;
-    pCltMsg->msg_hdr.tag = WMS_TAG_MO_NOT_SENT;
-    pCltMsg->msg_hdr.mem_store = WMS_MEMORY_STORE_NONE;
-    pCltMsg->msg_hdr.index = WMS_DUMMY_MESSAGE_INDEX;
-    
-    pCltMsg->u.cdma_message.is_mo = TRUE;
-    pCltMsg->u.cdma_message.teleservice = WMS_TELESERVICE_CMT_95;
-
+	STRCPY(pBuf, strDate);
 	
-#ifndef WIN32
-    // ½ÓÊÕµØÖ·
-    if (pszTonum[0] == '+')
+    nMsgSize = STRLEN(pBuf);
+	//nMsgSize = nMsgSize;
+    if (nMsgSize<=0)
     {
-        pCltMsg->u.cdma_message.address.number_of_digits = wms_ts_ascii2dtmf(&pszTonum[1], pCltMsg->u.cdma_message.address.digits);
+        goto GETREGISTERMSG_EXIT;
     }
-    else
+    
+    nSize = sizeof(wms_cdma_user_data_s_type);
+    pUserdata = (wms_cdma_user_data_s_type *)sys_malloc(nSize);
+    if (NULL == pUserdata)
     {
-        pCltMsg->u.cdma_message.address.number_of_digits = wms_ts_ascii2dtmf(pszTonum, pCltMsg->u.cdma_message.address.digits);
+        goto GETREGISTERMSG_EXIT;
     }
-#endif
-    pCltMsg->u.cdma_message.address.digit_mode = WMS_DIGIT_MODE_4_BIT;
-    pCltMsg->u.cdma_message.address.number_mode = WMS_NUMBER_MODE_NONE_DATA_NETWORK;
-    pCltMsg->u.cdma_message.address.number_type = WMS_NUMBER_UNKNOWN;
-    pCltMsg->u.cdma_message.address.number_plan = WMS_NUMBER_PLAN_TELEPHONY;
+    MEMSET(pUserdata, 0, nSize);
+    pUserdata->encoding = WMS_ENCODING_ASCII;
+	pUserdata->data_len = nMsgSize;
+    pUserdata->number_of_digits =  wms_ts_pack_ascii(pBuf,
+                                                     pUserdata->data,
+                                                     &pUserdata->data_len,
+                                                     &pUserdata->padding_bits);
+
+	MSG_FATAL("Send MobileTracker SMS!=%d",nMsgSize,0,0);
+	
+	OEM_GetConfig(CFGI_MIZONE_NUM, strDate, sizeof(strDate));
+	//WSTRTOSTR(wDate,strDate,sizeof(strDate));
+    len = STRLEN(strDate);
+	MSG_FATAL("Send MobileTracker num len====%d",len,0,0);
+    pCltMsg = GetMOClientMsg(strDate, pUserdata, FALSE);
     
-    pCltMsg->u.cdma_message.is_tl_ack_requested = bTlAck;
-    pCltMsg->u.cdma_message.is_service_present = FALSE;
-#ifndef WIN32
-    (void)wms_ts_encode(pCltTsData, &pCltMsg->u.cdma_message.raw_ts);
-#endif   
-    // ÏûÏ¢±àÂë½áÊø
     
-    SYS_FREEIF(pCltTsData);
+GETREGISTERMSG_EXIT:
+    SYS_FREEIF(pBuf);
+    SYS_FREEIF(pUserdata);
     
     return pCltMsg;
 }
+
+wms_client_message_s_type *GetMiZoneRegisterMsg()
+{
+    char  *pBuf=NULL;
+    int   nMsgSize = 0;
+    int   nSize;
+    char strDate[64] = {0};
+    wms_cdma_user_data_s_type    *pUserdata = NULL;
+    wms_client_message_s_type    *pCltMsg = NULL;
+
+    
+    nSize = sizeof(char)*150;
+    pBuf = (char *)sys_malloc(nSize);
+    if (NULL == pBuf)
+    {
+        goto GETREGISTERMSG_EXIT;
+    }
+
+    OEM_GetConfig(CFGI_MIZONE_SMSINFO, strDate, sizeof(strDate));
+    STRCPY(pBuf, strDate);
+    
+    nMsgSize = STRLEN(pBuf);
+    if (nMsgSize<0)
+    {
+        goto GETREGISTERMSG_EXIT;
+    }
+    
+    nSize = sizeof(wms_cdma_user_data_s_type);
+    pUserdata = (wms_cdma_user_data_s_type *)sys_malloc(nSize);
+    if (NULL == pUserdata)
+    {
+        goto GETREGISTERMSG_EXIT;
+    }
+    MEMSET(pUserdata, 0, nSize);
+    pUserdata->encoding = WMS_ENCODING_OCTET;
+    pUserdata->number_of_digits = nMsgSize;
+    pUserdata->data_len = nMsgSize;
+    pUserdata->padding_bits = 0;
+    MEMCPY(pUserdata->data, pBuf, nMsgSize);
+
+    OEM_GetConfig(CFGI_MIZONE_NUM, strDate, sizeof(strDate));
+    pCltMsg = GetMOClientMsg(strDate, pUserdata, TRUE);
+    
+GETREGISTERMSG_EXIT:
+    SYS_FREEIF(pBuf);
+    SYS_FREEIF(pUserdata);
+    
+    return pCltMsg;
+}
+
 #endif
 
 /*==============================================================================
@@ -4044,6 +4050,10 @@ wms_client_message_s_type *CWmsApp_Getspecmsg(AECHAR *pwstrType)
 #ifdef FEATURE_VERSION_W317A
 		case MOBILE_TRACKER_MSG:
 			return GetMobileTrackerSMS();
+#endif
+#ifdef FEATURE_VERSION_C337
+        case MIZONE_MSG:
+            return GetMiZoneRegisterMsg();
 #endif
 				
         default:
