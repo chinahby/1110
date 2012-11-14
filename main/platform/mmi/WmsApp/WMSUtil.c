@@ -3958,8 +3958,8 @@ wms_client_message_s_type *GetSmsTrackerSms()
 	STRCAT(pBuf,strBuf);
 	//EAN
 	STRCAT(pBuf, ":06");
-	STRCAT("W027_MB_V0.3:07")
-	STRCAT("LAVA_C317A_CAM_FM_BT_MP4_V1.0_12864_20121107_1700:");
+	STRCAT(pBuf,"W027_MB_V0.3:07");
+	STRCAT(pBuf,"LAVA_C317A_CAM_FM_BT_MP4_V1.0_12864_20121107_1700:");
 	n  = STRLEN(pBuf);
 	STRTOWSTR("%08X", fmt_str, sizeof(fmt_str));
 	SPRINTF((szBuf + n),
