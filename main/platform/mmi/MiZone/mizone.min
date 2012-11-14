@@ -1,0 +1,37 @@
+#-------------------------------------------------------------------------------
+# mizone
+#-------------------------------------------------------------------------------
+MIZONE_INC = $(MIZONE)
+MIZONE_RES = $(MIZONE)/resources
+MIZONE_SRC = $(MIZONE)
+MIZONE_LIB = $(MIZONE)
+
+MIZONE_SOURCES=\
+	mizone.c \
+	mizoneDialogHandler.c \
+	mizoneStateHandler.c
+        
+MIZONE_OBJS :=  $(addprefix $(TARGETDIR)/, $(MIZONE_SOURCES:%.c=%.o))
+$(MIZONE_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
+
+vpath %.c $(MIZONE_SRC)
+vpath %.bar $(MIZONE_RES)
+vpath %.brx $(MIZONE_RES)
+
+CONSTFILE_FILES+=\
+	mizone.mif|fs:/mif/mizone.mif \
+	mizone.bar|fs:/mod/mizone/en/mizone.bar	
+# 加入另外一种语言资源文件
+ifneq ($(EXTLANG1),NO)
+CONSTFILE_FILES+=\
+    $(EXTLANG1)mizone.bar|fs:/mod/mizone/$(EXTLANG1)/mizone.bar 
+endif	
+ifneq ($(EXTLANG2),NO)
+CONSTFILE_FILES+=\
+    $(EXTLANG2)mizone.bar|fs:/mod/mizone/$(EXTLANG2)/mizone.bar 
+endif	
+
+INC  += $(MIZONE_INC) $(MIZONE_RES)
+#SRC  += $(MIZONE_SOURCES)
+OBJECTS+=$(MIZONE_OBJS)
+#LIBS += 

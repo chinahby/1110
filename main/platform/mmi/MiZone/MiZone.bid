@@ -1,0 +1,6 @@
+#ifndef MIZONE_BID
+#define MIZONE_BID
+
+#define AEECLSID_MIZONE        0x20121106
+
+#endif //MIZONE_BID
