@@ -4516,10 +4516,10 @@ static int StartApplet(MainMenu *pMe, int i)
 		Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_UCWEB);
 		break;
 	case IDS_MAIN_MENU_MSTORE:
-		//Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_SETTINGMENU);
+        Result = ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
 		break;
 	case IDS_MAIN_MENU_MZONE:
-		//Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_SETTINGMENU);
+		Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MiZone);
 		break;
 	//Add End
 	
@@ -4536,7 +4536,7 @@ static int StartApplet(MainMenu *pMe, int i)
         Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_UCWEB);
         break;
     
-    case IDS_MAIN_MENU_CALCULATOR:
+    case IDS_MAIN_MENU_CALCULATOR: 
 		 Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CALCAPP);
         break;
         
