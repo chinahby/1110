@@ -4207,6 +4207,9 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
             CallApp_Dialer_Connect_Turn_Off_Recorder( pMe);
 #endif
 
+#if defined(FEATURE_VERSION_C337)   	
+            pMe->m_isIncoming = FALSE;
+#endif
             return TRUE;
         }
 
@@ -5067,7 +5070,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
 
     //IImage  *pImage = NULL;
     PARAM_NOT_REF(dwParam)
-    CALL_ERR("eCode= %x,w=%x,dw=%x CallApp_IncomingCall_DlgHandler ",eCode,wParam,dwParam);
+    MSG_FATAL("eCode= %x,w=%x,dw=%x CallApp_IncomingCall_DlgHandler ",eCode,wParam,dwParam);
 
     switch (eCode)
     {
@@ -9293,6 +9296,7 @@ static void CallApp_Draw_Connect_Time(void *pUser)
     //AEERect        rect_record;
     //int            bOffset;
     int            bWidth;
+    int            tempWidth;	
     AECHAR         szText[20];
 #ifdef FEATURE_LANG_BIDI
     AECHAR         szTextTmp[100];
@@ -9404,6 +9408,36 @@ static void CallApp_Draw_Connect_Time(void *pUser)
                             &rect,
                             IDF_TEXT_TRANSPARENT|IDF_ALIGN_LEFT);
     IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_BLACK);
+
+#if defined(FEATURE_VERSION_C337)   
+    if(!pMe->m_isIncoming)
+    {
+        (void) ISHELL_LoadResString(pMe->m_pShell,
+                                    AEE_APPSCALLAPP_RES_FILE,
+                                    IDS_CALLING_DIALOG_TEXT,//Time
+                                    szText,
+                                    sizeof(szText));		
+	 bWidth = IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL,szText);
+        SETAEERECT(&rect,
+                                    pMe->m_rc.dx - bWidth -1,
+                                    CALL_FIRST_LINE_Y,
+                                    bWidth,
+                                    CALL_LINE_HIGHT);   
+        
+        IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, CALLAPP_TEXT_COLOR);
+        
+        (void)IDISPLAY_DrawText(pMe->m_pDisplay,
+                    AEE_FONT_SMALL,
+                    szText,
+                    -1,
+                    rect.x,
+                    rect.y,//0,
+                    &rect,
+                    IDF_TEXT_TRANSPARENT|IDF_ALIGN_LEFT);
+        IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_BLACK);
+    }
+#endif
+
 
 #else  // FEATURE_LANG_BIDI
     MEMSET(szText, 0, sizeof(szText));
@@ -9639,7 +9673,7 @@ static void CallApp_Draw_Connect_Number_and_Name(CCallApp *pMe)
     boolean b_cdg = FALSE;
     RGBVAL oldColor = 0;
     
-    CALL_FUN_START("CallApp_Draw_Connect_Number_and_Name", 0, 0, 0);
+    MSG_FATAL("CallApp_Draw_Connect_Number_and_Name pMe->m_b_incoming=%d", pMe->m_b_incoming, 0, 0);
     //clear the name and number area 2 to 4
     SETAEERECT(&rect,
                                             0,
@@ -9856,6 +9890,34 @@ static void CallApp_Draw_Connect_Number_and_Name(CCallApp *pMe)
             }
         }
     }
+#if defined(FEATURE_VERSION_C337)   
+    if(pMe->m_isIncoming)
+    {
+        AECHAR         szText[20];  
+	 int bWidth = 0;	
+        (void) ISHELL_LoadResString(pMe->m_pShell,
+                                    AEE_APPSCALLAPP_RES_FILE,
+                                    IDS_CALLING_DIALOG_TEXT,
+                                    szText,
+                                    sizeof(szText));		
+        bWidth = IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL,szText);	
+        SETAEERECT(&rect,
+                                                pMe->m_rc.dx-bWidth-2,
+                                                CALL_SECOND_LINE_Y+CALL_LINE_HIGHT+2,
+                                                CALL_TEXT_DX + 4,
+                                                3*CALL_LINE_HIGHT);	
+        IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, CALLAPP_TEXT_COLOR);
+        
+        (void)IDISPLAY_DrawText(pMe->m_pDisplay,
+                    AEE_FONT_SMALL,
+                    szText,
+                    -1,
+                    rect.x,
+                    rect.y,//0,
+                    &rect,
+                    IDF_TEXT_TRANSPARENT|IDF_ALIGN_LEFT);		
+    }
+#endif
     IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, oldColor);
 }
 

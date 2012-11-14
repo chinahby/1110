@@ -880,6 +880,9 @@ static int CallApp_InitAppData(CCallApp *pMe)
     pMe->m_cdg_row = 0;
     pMe->m_anykey_answer = OEM_AUTO_ANSWER_MODE;
     pMe->m_b_incoming = FALSE;
+#if defined(FEATURE_VERSION_C337)   	
+    pMe->m_isIncoming 	= FALSE;
+#endif
     pMe->m_b_auto_redial = FALSE;
     pMe->m_auto_redial_count = 0;
     pMe->m_b_incall = FALSE;
@@ -3319,6 +3322,9 @@ static void CallApp_ProcessCallStateVoice_Incoming(CCallApp      *pMe,
     pMe->m_auto_redial_count = 0;
     ICONFIG_GetItem(pMe->m_pConfig, CFGI_ANYKEY_ANSWER, &pMe->m_anykey_answer, sizeof(byte));
     pMe->m_b_incoming = TRUE;
+#if defined(FEATURE_VERSION_C337)   	
+    pMe->m_isIncoming = TRUE;
+#endif
 #ifdef FEATURE_ICM
     CallApp_Add_Number_To_Call_Table(pMe,call_table->call_info.other_party_no,call_table->call_id,
 #else

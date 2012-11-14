@@ -165,8 +165,11 @@
 #define CALL_NAME_DX                          (pMe->m_rc.dx- 2*CALL_TEXT_X -CALL_ANIMATION_WIDTH)
 #define CALL_NUM_DX                            (pMe->m_rc.dx- 2*CALL_TEXT_X -CALL_ANIMATION_WIDTH)
 /*两边各空2个像素*/
-
+#if defined(FEATURE_VERSION_C337)   
+#define CALL_TEXT_X                             (2)
+#else
 #define CALL_TEXT_X                             (3)
+#endif
 #define CALL_NAME_X                            (2*CALL_TEXT_X + CALL_ANIMATION_WIDTH)
 #define CALL_NUM_X                              (2*CALL_TEXT_X + CALL_ANIMATION_WIDTH)
 #else
@@ -176,7 +179,11 @@
 #define CALL_NUM_DX                            (pMe->m_rc.dx- 4*CALL_TEXT_X -CALL_ANIMATION_WIDTH)
 /*两边各空2个像素*/
 
+#if defined(FEATURE_VERSION_C337)   
+#define CALL_TEXT_X                             (2)
+#else
 #define CALL_TEXT_X                             (3)
+#endif
 #define CALL_NAME_X                            (4*CALL_TEXT_X + CALL_ANIMATION_WIDTH)
 #define CALL_NUM_X                              (4*CALL_TEXT_X + CALL_ANIMATION_WIDTH)
 #endif
@@ -726,6 +733,9 @@ typedef struct _CCallApp
 	int16   m_i;
 #endif
 	boolean            m_penup;
+#if defined(FEATURE_VERSION_C337)   
+       boolean                    m_isIncoming;
+#endif
 } CCallApp;
 
 /*==============================================================================
