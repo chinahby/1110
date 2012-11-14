@@ -178,4 +178,8 @@ ifeq ($(USES_NEMOBREW),yes)
 include $(NEMOMBREW_PATH)/nemobrew.min
 endif
 
+ifeq ($(USES_MIZONE),yes)
+include $(MIZONE)/mizone.min
+endif
+
 #include $(MMIDIR)/Extend/Extend.min
