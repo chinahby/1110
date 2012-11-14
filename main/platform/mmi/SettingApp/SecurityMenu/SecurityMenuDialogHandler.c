@@ -146,7 +146,7 @@ static boolean  HandleChangeCodeDialogEvent(CSecurityMenu *pMe,
                                         AEEEvent eCode,
                                         uint16 wParam,
                                         uint32 dwParam);
-#ifdef FEATURE_VERSION_W317A
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
 static boolean  SecurityMobileTrackerHandler(CSecurityMenu *pMe,
                                         AEEEvent eCode,
                                         uint16 wParam,
