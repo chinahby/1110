@@ -146,10 +146,10 @@
 		<Text>ब्राउजर</Text>
 	</String>
 	<STRING Id="1087" Name="IDS_PHONEBOOK">
-		<Text>Phonebook</Text>
+		<Text>फोन की किताब</Text>
 	</STRING>
 	<STRING Id="1088" Name="IDS_MAIN_MENU_USER_PROFILE">
-		<Text>User Profile</Text>
+		<Text>प्रयोक्ता रेखाचित्र</Text>
 	</STRING>
 	<STRING Id="1089" Name="IDS_MAIN_MENU_MSTORE">
 		<Text>M! Live</Text>
@@ -158,16 +158,16 @@
 		<Text>M! Zone</Text>
 	</STRING>
 	<STRING Id="1091" Name="IDS_MAIN_MENU_ORGANIZER">
-		<Text>Organizer</Text>
+		<Text>आयोजक</Text>
 	</STRING>
 	<STRING Id="1092" Name="IDS_MAIN_MENU_SERVICES">
-		<Text>Services</Text>
+		<Text>सेवाएं</Text>
 	</STRING>
 	<STRING Id="1093" Name="IDS_MAIN_MENU_MEDIAGALLERY_C337">
-		<Text>File Manager</Text>
+		<Text>फ़ाइल प्रबंधक</Text>
 	</STRING>
 	<STRING Id="1094" Name="IDS_MAIN_MENU_RECENTCALLS_C337">
-		<Text>Call Logs</Text>
+		<Text>कॉल लॉग</Text>
 	</STRING>
 </Strings>
 <Dialogs>

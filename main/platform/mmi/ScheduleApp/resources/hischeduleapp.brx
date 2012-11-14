@@ -221,7 +221,7 @@
 		<Text>खेल योजना</Text>
 	</STRING>
 	<STRING Id="2315" Name="IDS_CALENDAR">
-		<Text>Calendar</Text>
+		<Text>कैलेंडर</Text>
 	</STRING>
 </Strings>
 <Dialogs>

@@ -170,13 +170,13 @@
 		<Text>डीफाल्ट</Text>
 	</STRING>
 	<STRING Id="1060" Name="IDS_FMRADIO_OPTION_MENU_PLAY_MODLE">
-		<Text>FM Play mode</Text>
+		<Text>एफएम प्ले मोड</Text>
 	</STRING>
 	<STRING Id="1061" Name="IDS_FMRADIO_PLAY_HANDSET">
-		<Text>Handset</Text>
+		<Text>हैंडसेट</Text>
 	</STRING>
 	<STRING Id="1062" Name="IDS_RADIO_PLAY_SPEAKER">
-		<Text>Speaker</Text>
+		<Text>वक्ता</Text>
 	</STRING>
 </Strings>
 <Dialogs>
