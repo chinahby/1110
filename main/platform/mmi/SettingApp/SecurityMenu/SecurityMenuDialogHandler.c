@@ -355,7 +355,7 @@ boolean SecurityMenu_RouteDialogEvent(CSecurityMenu *pMe,
 
         case IDD_CHANGE_CODE:
             return HandleChangeCodeDialogEvent(pMe,eCode,wParam,dwParam);
-		#ifdef FEATURE_VERSION_W317A
+		#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
 		case  IDD_MOBILE_TRACKER_DIALOG:
 			return SecurityMobileTrackerHandler(pMe,eCode,wParam,dwParam);
 		#endif
@@ -425,7 +425,7 @@ static boolean  SecurityMainDlgHandler(CSecurityMenu *pMe,
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_PHONE_PASSWORD_CHANGE, IDS_PHONE_PASSWORD_CHANGE, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_RESTORE, IDS_RESTORE, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_DELETE, IDS_DELETE, NULL, 0);
-			#if defined (FEATURE_VERSION_W317A)
+			#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
 			IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_MOBILE_TRACKER, IDS_MOBILE_TRACKER, NULL, 0);
 			#endif
             return TRUE;
@@ -545,7 +545,7 @@ static boolean  SecurityMainDlgHandler(CSecurityMenu *pMe,
                 case IDS_DELETE:
                     CLOSE_DIALOG(DLGRET_DELETE)
                     break;
-				#if defined (FEATURE_VERSION_W317A)
+				#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
 				case IDS_MOBILE_TRACKER:
 					CLOSE_DIALOG(DLGRET_MOBILE_TRACKER)
 					break;
@@ -2388,7 +2388,7 @@ static boolean  SecurityPinChangeDlgHandler(CSecurityMenu *pMe,
 
 }
 
-#ifdef FEATURE_VERSION_W317A
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
 /*==============================================================================
 º¯Êý£º
        SecurityMobileTrackerHandler

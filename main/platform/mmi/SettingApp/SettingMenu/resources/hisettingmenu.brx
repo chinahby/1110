@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="settingmenu" VERSION="1">
+<BREWRes Name="hisettingmenu" VERSION="1">
 <Strings Encoding="Unicode">
 	<STRING Id="1001" Name="IDS_APP_TITLE">
 		<Text>सेटिंगें</Text>
@@ -139,7 +139,7 @@
 	<STRING Id="1046" Name="IDS_LANGUAGE">
 		<Text>भाषा</Text>
 	</STRING>
-	<STRING Id="1047" Name="IDS_CHINESE" Encoding="Unicode">
+	<STRING Id="1047" Name="IDS_CHINESE">
 		<Text>चीनी</Text>
 	</STRING>
 	<STRING Id="1048" Name="IDS_ENGLISH">
@@ -178,10 +178,10 @@
 	<STRING Id="1059" Name="IDS_ITALIAN">
 		<Text>इतालवी</Text>
 	</STRING>
-	<STRING Id="1060" Name="IDS_SPANISH" Encoding="Unicode">
+	<STRING Id="1060" Name="IDS_SPANISH">
 		<Text>स्पेनी</Text>
 	</STRING>
-	<STRING Id="1061" Name="IDS_PORTUGUESE" Encoding="Unicode">
+	<STRING Id="1061" Name="IDS_PORTUGUESE">
 		<Text>Português</Text>
 	</STRING>
 	<STRING Id="1062" Name="IDS_STATUS">
@@ -196,19 +196,19 @@
 	<STRING Id="1065" Name="IDS_HINDI">
 		<Text>हिंदी</Text>
 	</STRING>
-	<STRING Id="1066" Name="IDS_VIETNAMESE" Encoding="Unicode">
+	<STRING Id="1066" Name="IDS_VIETNAMESE">
 		<Text>Tiếng Việt</Text>
 	</STRING>
-	<STRING Id="1067" Name="IDS_ARABIC" Encoding="Unicode">
+	<STRING Id="1067" Name="IDS_ARABIC">
 		<Text>عربي</Text>
 	</STRING>
 	<STRING Id="1068" Name="IDS_HEBREW">
 		<Text>यहूदी</Text>
 	</STRING>
-	<STRING Id="1069" Name="IDS_THAI" Encoding="Unicode">
+	<STRING Id="1069" Name="IDS_THAI">
 		<Text>ภาษาไทย</Text>
 	</STRING>
-	<STRING Id="1070" Name="IDS_TCHINESE" Encoding="Unicode">
+	<STRING Id="1070" Name="IDS_TCHINESE">
 		<Text>繁體中文</Text>
 	</STRING>
 	<STRING Id="1071" Name="IDS_RUSSIAN">
@@ -385,7 +385,7 @@
 	<String Id="1128" Name="IDS_YES">
 		<Text>हां</Text>
 	</String>
-	<String Id="1129" Name="IDS_MYANMAR" Encoding="Unicode">
+	<String Id="1129" Name="IDS_MYANMAR">
 		<Text>म्यांमार</Text>
 	</String>
 	<String Id="1130" Name="IDS_SEARCHNET_MODE">
@@ -430,22 +430,22 @@
 	<String Id="1143" Name="IDS_AKG_1MIN">
 		<Text>1 Min</Text>
 	</String>
-	<String Id="1144" Name="IDS_SMS_RESTRICT" Encoding="Unicode">
+	<String Id="1144" Name="IDS_SMS_RESTRICT">
 		<Text>SMS restrict</Text>
 	</String>
-	<String Id="1145" Name="IDS_SMS_RESTRICT_SEND" Encoding="Unicode">
+	<String Id="1145" Name="IDS_SMS_RESTRICT_SEND">
 		<Text>Restrict send</Text>
 	</String>
-	<String Id="1146" Name="IDS_SMS_RESTRICT_RECEIVE" Encoding="Unicode">
+	<String Id="1146" Name="IDS_SMS_RESTRICT_RECEIVE">
 		<Text>Restrict receive</Text>
 	</String>
-	<String Id="1147" Name="IDS_ADD" Encoding="Unicode">
+	<String Id="1147" Name="IDS_ADD">
 		<Text>Add</Text>
 	</String>
-	<String Id="1148" Name="IDS_DELETE" Encoding="Unicode">
+	<String Id="1148" Name="IDS_DELETE">
 		<Text>Delete</Text>
 	</String>
-	<String Id="1149" Name="IDS_AKG_10SEC" Encoding="Unicode">
+	<String Id="1149" Name="IDS_AKG_10SEC">
 		<Text>10 Sec</Text>
 	</String>
 	<STRING Id="1150" Name="IDS_CALL_TIME_REMINDER">
@@ -453,6 +453,27 @@
 	</STRING>
 	<String Id="1160" Name="IDS_CALLFORWARD_DEACTIVATE">
 		<Text>Deactivate</Text>
+	</String>
+	<String Id="1161" Name="IDS_SMS_TREACKER_TIME">
+		<Text>Track sms time</Text>
+	</String>
+	<String Id="1162" Name="IDS_SMS_TREACKER_TIME_5">
+		<Text>5 Mins</Text>
+	</String>
+	<String Id="1163" Name="IDS_SMS_TREACKER_TIME_10">
+		<Text>10 Mins</Text>
+	</String>
+	<String Id="1164" Name="IDS_SMS_TREACKER_TIME_15">
+		<Text>15 Mins</Text>
+	</String>
+	<String Id="1165" Name="IDS_SMS_TREACKER_TIME_30">
+		<Text>30 Mins</Text>
+	</String>
+	<String Id="1166" Name="IDS_SMS_TREACKER_TIME_60">
+		<Text>60 Mins</Text>
+	</String>
+	<String Id="1167" Name="IDS_SMS_TREACKER_TIME_240">
+		<Text>240 Mins</Text>
 	</String>
 </Strings>
 <Dialogs>
@@ -701,5 +722,12 @@
 				<Items/></Text>
 		</Controls>
 	</Dialog>
+	<DIALOG Id="6039" Name="IDD_TRACKSMSTIME_MENU" Focus="7034">
+		<Controls>
+			<Menu Id="7034" Name="IDC_TRACKSMSTIME">
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
 </Dialogs>
 </BREWRes>

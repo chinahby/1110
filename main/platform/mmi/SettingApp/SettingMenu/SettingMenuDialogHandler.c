@@ -160,6 +160,16 @@ static boolean  HandleDateDialogEvent(CSettingMenu *pMe,
     uint32 dwParam
 );
 #endif
+
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A)
+static boolean   HandleTrackSmsDialogEvent(CSettingMenu *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+);
+#endif
+
+
 #ifdef  FEATURE_DOUBLE_SIM_CARD
 static boolean HandleSimDialogEvent(CSettingMenu *pMe,
     AEEEvent eCode,
@@ -494,6 +504,10 @@ boolean SettingMenu_RouteDialogEvent(CSettingMenu *pMe,
 
         case IDD_DATESETTING:
             return HandleDateDialogEvent(pMe,eCode,wParam,dwParam);
+#endif
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A)
+		case IDD_TRACKSMSTIME_MENU:
+			return HandleTrackSmsDialogEvent(pMe,eCode,wParam,dwParam);
 #endif
 #ifdef FEATURE_LANGUAGE
         case IDD_LANGUAGE_MENU:
@@ -1074,6 +1088,9 @@ static boolean  HandlePhoneSettingDialogEvent(CSettingMenu *pMe,
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_TIMESETTING, IDS_TIMESETTING, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_DATESETTING, IDS_DATESETTING, NULL, 0);
 #endif
+#if defined(FEATURE_VERSION_W317A)
+			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SMS_TREACKER_TIME, IDS_SMS_TREACKER_TIME, NULL, 0);
+#endif
 #ifdef FEATURE_KEYGUARD
 	        #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_W317A)
 	        #else
@@ -1177,6 +1194,12 @@ static boolean  HandlePhoneSettingDialogEvent(CSettingMenu *pMe,
                     CLOSE_DIALOG(DLGRET_DATESETTING)
                     break;
 #endif
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A)
+		 	   case IDS_SMS_TREACKER_TIME:     //TRRACK SMS设置
+			   		CLOSE_DIALOG(DLGRET_TRACKERSMSSETTING)
+			   		break;
+#endif
+
 #ifdef	FEATURE_VERSION_MYANMAR
 				case IDS_SEARCHNET_MODE:  //搜网设置
 					CLOSE_DIALOG(DLGRET_SEARCHMODE)
@@ -3423,6 +3446,184 @@ static boolean  HandleDateDialogEvent(CSettingMenu *pMe,
 } // HandleDATEDialogEvent
 
 #endif
+
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A)
+static boolean   HandleTrackSmsDialogEvent(CSettingMenu *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+)
+{
+	PARAM_NOT_REF(dwParam)
+
+    IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,
+                                                    IDC_TRACKSMSTIME);
+    if (pMenu == NULL)
+    {
+        return FALSE;
+    }
+    //实现菜单循环滚动功能
+    //DisplayMenu_AutoScroll(pMenu,eCode,wParam);
+
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT:
+            return TRUE;
+
+        case EVT_DIALOG_START:
+        {
+			uint16 m_alarm_time = OEMNV_TRACK_SMS_5;
+			uint16 wItemID;
+			//add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_APPSSETTINGMENU_RES_FILE,                                
+                        IDS_SMS_TREACKER_TIME,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pAnn,WTitle);
+            }
+
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SMS_TREACKER_TIME_5, IDS_SMS_TREACKER_TIME_5, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SMS_TREACKER_TIME_10, IDS_SMS_TREACKER_TIME_10, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SMS_TREACKER_TIME_15, IDS_SMS_TREACKER_TIME_15, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SMS_TREACKER_TIME_30, IDS_SMS_TREACKER_TIME_30, NULL, 0);
+			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SMS_TREACKER_TIME_60, IDS_SMS_TREACKER_TIME_60, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SMS_TREACKER_TIME_240, IDS_SMS_TREACKER_TIME_240, NULL, 0);
+
+  		    IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
+            IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
+  #ifdef FEATURE_CARRIER_CHINA_VERTU
+            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
+  #endif
+            IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
+            (void)OEM_GetConfig(CFGI_SMS_TRACKER_TIME,
+                           &m_alarm_time, 
+                           sizeof(uint16));
+			MSG_FATAL("m_alarm_time======%d",m_alarm_time,0,0);
+            switch (m_alarm_time)
+            {
+                case OEMNV_TRACK_SMS_5:      //30s
+                    wItemID = IDS_SMS_TREACKER_TIME_5;
+                    break;
+
+                case OEMNV_TRACK_SMS_10:      //50秒
+                    wItemID = IDS_SMS_TREACKER_TIME_10;
+                    break;
+
+                case OEMNV_TRACK_SMS_15:      //ALWAYS_ON
+                    wItemID = IDS_SMS_TREACKER_TIME_15;
+                    break;
+				case OEMNV_TRACK_SMS_30:      //30s
+                    wItemID = IDS_SMS_TREACKER_TIME_30;
+                    break;
+
+                case OEMNV_TRACK_SMS_60:      //50秒
+                    wItemID = IDS_SMS_TREACKER_TIME_60;
+                    break;
+
+                case OEMNV_TRACK_SMS_240:      //ALWAYS_ON
+                    wItemID = IDS_SMS_TREACKER_TIME_240;
+                    break;
+            }
+
+
+            InitMenuIcons(pMenu);
+            SetMenuIcon(pMenu, wItemID, TRUE);
+            IMENUCTL_SetSel(pMenu, wItemID);
+
+            (void) ISHELL_PostEvent( pMe->m_pShell,
+                                             AEECLSID_APP_SETTINGMENU,
+                                             EVT_USER_REDRAW,
+                                             0,
+                                             0);
+            return TRUE;
+        }
+
+        case EVT_USER_REDRAW:
+            // 绘制底部操作提示条
+            //DrawBottomBar(pMe->m_pShell,
+            //                                pMe->m_pDisplay,
+            //                                &pMe->m_rc,
+            //                                BTBAR_SELECT_BACK);
+
+            // 统一更新界面
+            IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+            (void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
+            return TRUE;
+
+        case EVT_DIALOG_END:
+            return TRUE;
+
+        case EVT_KEY:
+            switch(wParam)
+            {
+                case AVK_CLR:
+                    CLOSE_DIALOG(DLGRET_CANCELED)
+                    return TRUE;
+
+                default:
+                    break;
+            }
+            return TRUE;
+
+        case EVT_COMMAND:
+        {
+            uint16      m_alarm_time = OEMNV_TRACK_SMS_5;
+
+            switch (wParam)
+            {
+
+                case IDS_SMS_TREACKER_TIME_5:          //关
+                    m_alarm_time = OEMNV_TRACK_SMS_5;
+                    break;
+
+                case IDS_SMS_TREACKER_TIME_10:          //7秒
+                    m_alarm_time = OEMNV_TRACK_SMS_10;
+                    break;
+				
+                case IDS_SMS_TREACKER_TIME_15:          //10秒
+                    m_alarm_time = OEMNV_TRACK_SMS_15;
+                    break;
+
+                case IDS_SMS_TREACKER_TIME_30:          //30秒
+                    m_alarm_time = OEMNV_TRACK_SMS_30;
+                    break;
+
+                case IDS_SMS_TREACKER_TIME_60:          //50秒
+                    m_alarm_time = OEMNV_TRACK_SMS_60;
+                    break;
+
+                case IDS_SMS_TREACKER_TIME_240:          //50秒
+                    m_alarm_time = OEMNV_TRACK_SMS_240;
+                    break;
+
+                default:
+                    ASSERT_NOT_REACHABLE;
+            }
+
+			MSG_FATAL("m_alarm_time======%d",m_alarm_time,0,0);
+
+            (void)OEM_SetConfig(   CFGI_SMS_TRACKER_TIME,
+                                   &m_alarm_time,
+                                   sizeof(uint16));
+
+            //IBacklight_Enable(pMe->m_pIBacklight);      //NV立即生效
+            InitMenuIcons(pMenu);
+            SetMenuIcon(pMenu, wParam, TRUE);
+			(void)IMENUCTL_Redraw(pMenu);
+            CLOSE_DIALOG(DLGRET_WARNING)
+        }
+        return TRUE;
+
+        default:
+            break;
+    }
+    return FALSE;
+}
+#endif
+
 /*==============================================================================
 函数：
        HandleSearchModeDialogEvent

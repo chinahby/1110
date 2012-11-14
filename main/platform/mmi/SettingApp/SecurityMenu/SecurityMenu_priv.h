@@ -143,7 +143,7 @@ typedef enum DLGRetValue
    #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_W317A)
    ,DLGRET_KEYLOCK
    #endif
-   #if defined (FEATURE_VERSION_W317A)
+   #if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
    ,DLGRET_MOBILE_TRACKER
    #endif
 
@@ -179,7 +179,7 @@ typedef enum _SecurityMenuState
    #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_W317A)
    SECURITYMENU_KEYLOCK,
    #endif
-   #if defined (FEATURE_VERSION_W317A)
+   #if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
    MOBILE_TRACKER,
    #endif
    SECURITYMENU_EXIT

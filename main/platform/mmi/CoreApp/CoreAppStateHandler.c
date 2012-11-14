@@ -99,6 +99,14 @@ static NextFSMAction COREST_STANDBY_Handler(CCoreApp *pMe);
 static NextFSMAction COREST_SMSTIP_Handler(CCoreApp *pMe);
 #endif
 
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+// 状态 COREST_SALES_TRAKER 处理函数
+static NextFSMAction COREST_SALES_TRAKER_Handler(CCoreApp *pMe);
+// 状态 COREST_SALES_SUCCESS 处理函数
+static NextFSMAction COREST_SALES_SUCCESS_Handler(CCoreApp *pMe);
+#endif
+
+
 // 状态 COREST_NOTICE 处理函数
 static NextFSMAction COREST_NOTICE_Handler(CCoreApp *pMe);
 
@@ -248,7 +256,19 @@ NextFSMAction CoreApp_ProcessState(CCoreApp *pMe)
             MSG_FATAL("CoreApp_ProcessState Start COREST_SMSTIP",0,0,0);
             retVal = COREST_SMSTIP_Handler(pMe);
             break;
-#endif            
+#endif     
+
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+		case COREST_SALES_TRAKER:
+			MSG_FATAL("CoreApp_ProcessState Start COREST_SALES_TRAKER",0,0,0);
+            retVal = COREST_SALES_TRAKER_Handler(pMe);
+			break;
+		case COREST_SALES_SUCCESS:
+			MSG_FATAL("CoreApp_ProcessState Start COREST_SALES_SUCCESS_Handler",0,0,0);
+            retVal = COREST_SALES_SUCCESS_Handler(pMe);
+			break;
+#endif
+
         
         case COREST_DEEPSLEEP:
             MSG_FATAL("CoreApp_ProcessState Start COREST_DEEPSLEEP",0,0,0);
@@ -967,6 +987,7 @@ static NextFSMAction COREST_EMERGENCYCALL_Handler(CCoreApp *pMe)
 static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
 {
 
+	boolean m_bsendsalessms = FALSE;
     if (NULL == pMe)
     {
         return NFSMACTION_WAIT;
@@ -1090,14 +1111,33 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
             MSG_FATAL("ISHELL_SetTimer CoreApp_SendReginfoTimer",0,0,0);
 
 #endif
-#ifdef	FEATURE_VERSION_W317A
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
 			// 
-            (void)ISHELL_SetTimer(pMe->a.m_pIShell, 
-                                  MOBILETRACKERREGINFOR_TIME,
-                                  CoreApp_MobileTrackerTimer, 
-                                  pMe);
-
-            MSG_FATAL("ISHELL_SetTimer CoreApp_MobileTrackerTimer",0,0,0);
+			if (IRUIM_IsCardConnected(pMe->m_pIRUIM)) 
+			{
+		        (void)ISHELL_SetTimer(pMe->a.m_pIShell, 
+		                              MOBILETRACKERREGINFOR_TIME,
+		                              CoreApp_MobileTrackerTimer, 
+		                              pMe);
+				(void) ICONFIG_GetItem(pMe->m_pConfig,	
+										   CFGI_SMS_TRACKER_SEND_B,
+										   &m_bsendsalessms, 
+										   sizeof(m_bsendsalessms));
+				MSG_FATAL("m_bsendsalessms======%d",m_bsendsalessms,0,0);
+			    if(!m_bsendsalessms)
+			    {
+			    	(void)ISHELL_SetTimer(pMe->a.m_pIShell, 
+		                              SMS_TIME,
+		                              CoreApp_SalesTrackerTimer, 
+		                              pMe);
+					
+			    }
+		        MSG_FATAL("IAlarm_SetAlarm CoreApp_MobileTrackerTimer",0,0,0);
+			}
+			else
+			{
+				MSG_FATAL("NO UIM CARD...............",0,0,0);
+			}
 #endif
 
 #ifdef FEATURE_SEAMLESS_SMS
@@ -1482,7 +1522,18 @@ static NextFSMAction COREST_STANDBY_Handler(CCoreApp *pMe)
             MSG_FATAL("COREST_STANDBY_Handler DLGRET_SMSTIPS",0,0,0);
             MOVE_TO_STATE(COREST_SMSTIP)
             return NFSMACTION_CONTINUE;
-#endif            
+#endif      
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+		case DLGRET_SALES_TRACKER:
+			MSG_FATAL("COREST_STANDBY_Handler DLGRET_SALES_TRACKER",0,0,0);
+            MOVE_TO_STATE(COREST_SALES_TRAKER)
+            return NFSMACTION_CONTINUE;
+		case DLGRET_SALES_SUCESS:
+			MSG_FATAL("DLGRET_SALES_SUCESS_Handler DLGRET_SALES_TRACKER",0,0,0);
+            MOVE_TO_STATE(COREST_SALES_SUCCESS)
+            return NFSMACTION_CONTINUE;
+#endif
+
 
         case DLGRET_BATT_INFO:
             MSG_FATAL("COREST_STANDBY_Handler DLGRET_BATT_INFO",0,0,0);
@@ -1504,7 +1555,86 @@ static NextFSMAction COREST_STANDBY_Handler(CCoreApp *pMe)
     MSG_FATAL("COREST_STANDBY_Handler End",0,0,0);
     return NFSMACTION_WAIT;
 } // COREST_STANDBY_Handler
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+/*==============================================================================
+函数:
+    COREST_SALES_TRAKER_Handler
+       
+说明:
+    COREST_SALES_TRAKER 状态处理函数
+       
+参数:
+    pMe [in]:指向 Core Applet对象结构的指针。该结构包含小程序的特定信息。
+       
+返回值:
+    NFSMACTION_CONTINUE:指示后有子状态，状态机不能停止。
+    NFSMACTION_WAIT:指示因要显示对话框界面给用户，应挂起状态机。
+       
+备注:
+       
+==============================================================================*/
 
+static NextFSMAction COREST_SALES_TRAKER_Handler(CCoreApp *pMe)
+{
+	if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+    MSG_FATAL("COREST_SALES_TRAKER_Handler Start",0,0,0);
+    switch (pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            CoreApp_ShowDialog(pMe, IDD_SALESTRACKER);
+            return NFSMACTION_WAIT;
+		case DLGRET_MSGOK:
+			MOVE_TO_STATE(COREST_STANDBY)
+            return NFSMACTION_CONTINUE;
+        default:
+            break;
+    }
+	MSG_FATAL("COREST_SALES_TRAKER_Handler End",0,0,0);
+    return NFSMACTION_WAIT;
+}
+/*==============================================================================
+函数:
+    COREST_SALES_SUCCESS_Handler
+       
+说明:
+    COREST_SALES_SUCCESS 状态处理函数
+       
+参数:
+    pMe [in]:指向 Core Applet对象结构的指针。该结构包含小程序的特定信息。
+       
+返回值:
+    NFSMACTION_CONTINUE:指示后有子状态，状态机不能停止。
+    NFSMACTION_WAIT:指示因要显示对话框界面给用户，应挂起状态机。
+       
+备注:
+       
+==============================================================================*/
+static NextFSMAction COREST_SALES_SUCCESS_Handler(CCoreApp *pMe)
+{
+	if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+    MSG_FATAL("COREST_SALES_SUCCESS_Handler Start",0,0,0);
+    switch (pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            CoreApp_ShowDialog(pMe, IDD_SALESSUCCESS);
+            return NFSMACTION_WAIT;
+		case DLGRET_MSGOK:
+			MOVE_TO_STATE(COREST_STANDBY)
+            return NFSMACTION_CONTINUE;
+        default:
+            break;
+    }
+	MSG_FATAL("COREST_SALES_SUCCESS_Handler End",0,0,0);
+    return NFSMACTION_WAIT;
+}
+
+#endif
 #if defined(FEATURE_WMS_APP)
 /*==============================================================================
 函数:

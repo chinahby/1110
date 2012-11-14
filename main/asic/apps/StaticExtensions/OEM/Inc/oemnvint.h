@@ -505,6 +505,14 @@ typedef PACKED struct _Key_pad_Cfg
 #define   OEMNV_BL_10CALL  3
 #define   OEMNV_BL_30CALL  4
 
+#define   OEMNV_TRACK_SMS_5   5
+#define   OEMNV_TRACK_SMS_10  10
+#define   OEMNV_TRACK_SMS_15  15
+#define   OEMNV_TRACK_SMS_30  30
+#define   OEMNV_TRACK_SMS_60  60
+#define   OEMNV_TRACK_SMS_240 240
+
+
 /////////////////////////////////////////////////////////////////////////
 // Menu Format -- CFGI_MENU_FORMAT
 /////////////////////////////////////////////////////////////////////////

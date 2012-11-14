@@ -86,8 +86,14 @@
 
 #define  POWERUP_REGISTER_CHINAUNICOM   'R'
 #endif
-#ifdef FEATURE_VERSION_W317A
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
 #define  MOBILE_TRACKER_MSG             'M'
+#define SMS_TRACKER_MSG                'T'
+#ifdef FEATURE_VERSION_W317A
+#define SMS_TRACKER_NUMBER    			"9810017934" 
+#else
+#define SMS_TRACKER_NUMBER    			"+919212230707" 
+#endif
 #endif
 
 #ifdef FEATURE_VERSION_C337

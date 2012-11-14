@@ -321,6 +321,7 @@ enum
     EVT_QQ_ANNU_UPDATE,
 #endif    
     EVT_MOBILE_TRACKER,
+    EVT_SALES_TRACKER,
     EVT_CUST_MAX
 };
 #endif /*CUST_EDITION*/

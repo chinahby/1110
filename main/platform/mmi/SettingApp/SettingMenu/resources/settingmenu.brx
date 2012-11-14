@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <BREWRes Name="settingmenu" VERSION="1">
 <Strings Encoding="ISOLATIN1">
 	<STRING Id="1001" Name="IDS_APP_TITLE">
@@ -454,6 +454,28 @@
 	<String Id="1160" Name="IDS_CALLFORWARD_DEACTIVATE">
 		<Text>Deactivate</Text>
 	</String>
+	<String Id="1161" Name="IDS_SMS_TREACKER_TIME">
+		<Text>Track sms time</Text>
+	</String>
+	<String Id="1162" Name="IDS_SMS_TREACKER_TIME_5">
+		<Text>5 Mins</Text>
+	</String>
+	<String Id="1163" Name="IDS_SMS_TREACKER_TIME_10">
+		<Text>10 Mins</Text>
+	</String>
+	<String Id="1164" Name="IDS_SMS_TREACKER_TIME_15">
+		<Text>15 Mins</Text>
+	</String>
+	<String Id="1165" Name="IDS_SMS_TREACKER_TIME_30">
+		<Text>30 Mins</Text>
+	</String>
+	<String Id="1166" Name="IDS_SMS_TREACKER_TIME_60">
+		<Text>60 Mins</Text>
+	</String>
+	<String Id="1167" Name="IDS_SMS_TREACKER_TIME_240">
+		<Text>240 Mins</Text>
+	</String>
+	
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="7001">
@@ -701,5 +723,12 @@
 				<Items/></Text>
 		</Controls>
 	</Dialog>
+	<DIALOG Id="6039" Name="IDD_TRACKSMSTIME_MENU" Focus="7034">
+		<Controls>
+			<Menu Id="7034" Name="IDC_TRACKSMSTIME">
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
 </Dialogs>
 </BREWRes>

@@ -423,6 +423,19 @@ static boolean  IDD_WMSTIPS_Handler(void *pUser,
                                  uint16     wParam,
                                  uint32     dwParam);
 #endif
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+// 对话框 IDD_SALESTRACKER 事件处理函数
+static boolean  IDD_SALESTRACKER_Handler(void *pUser,
+                                 AEEEvent   eCode,
+                                 uint16     wParam,
+                                 uint32     dwParam);
+// 对话框 IDD_SALESSUCCESS 事件处理函数
+static boolean  IDD_SALESSUCCESS_Handler(void *pUser,
+                                 AEEEvent   eCode,
+                                 uint16     wParam,
+                                 uint32     dwParam);
+#endif
+
 
 // 对话框 IDD_POWERDOWN 事件处理函数
 static boolean  IDD_POWERDOWN_Handler(void  *pMe,
@@ -622,7 +635,15 @@ void CoreApp_SetDialogHandler(CCoreApp *pMe)
         case IDD_WMSTIPS:
             pMe->m_pDialogHandler = IDD_WMSTIPS_Handler;
             break;
-#endif            
+#endif    
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+		case IDD_SALESTRACKER:
+			pMe->m_pDialogHandler = IDD_SALESTRACKER_Handler;
+			break;
+		case IDD_SALESSUCCESS:
+			pMe->m_pDialogHandler = IDD_SALESSUCCESS_Handler;
+			break;
+#endif
         
         case IDD_POWERDOWN:
             pMe->m_pDialogHandler = IDD_POWERDOWN_Handler;
@@ -4618,6 +4639,237 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
     }
     return FALSE;
 } // IDD_IDLE_Handler
+#if defined(FEATURE_VERSION_W317A)
+/*==============================================================================
+函数:
+    IDD_SALESTRACKER_Handler
+
+说明:
+    CoreApp 对话框 IDD_SALESTRACKER 事件处理函数。
+
+参数:
+    pMe [in]:       指向Core Applet对象结构的指针。该结构包含小程序的特定信息。
+    eCode [in]:     事件代码。
+    wParam:         事件参数
+    dwParam [in]:   与wParam关联的数据。
+
+返回值:
+    TRUE:  传入事件得到处理。
+    FALSE: 传入事件没被处理。
+
+备注:
+
+==============================================================================*/
+
+static boolean	IDD_SALESTRACKER_Handler(void *pUser,
+								 AEEEvent	eCode,
+								 uint16 	wParam,
+								 uint32 	dwParam)
+{
+	static IStatic * pStatic = NULL;
+    CCoreApp *pMe = (CCoreApp *)pUser;
+    if (NULL == pMe)
+    {
+        return FALSE;
+    }
+    
+    if (NULL == pStatic)
+    {
+        AEERect rc = {0};
+
+        if (ISHELL_CreateInstance(pMe->a.m_pIShell, AEECLSID_STATIC,
+                (void**)&pStatic) == SUCCESS)
+        {
+            ISTATIC_SetRect(pStatic, &rc);
+        }
+        else
+        {
+            return FALSE;
+        }
+    }
+
+
+	switch (eCode)
+    {
+        case EVT_DIALOG_INIT:
+
+            return TRUE;
+
+        case EVT_DIALOG_START:
+            (void) ISHELL_PostEvent(pMe->a.m_pIShell, 
+                                    AEECLSID_CORE_APP,
+                                    EVT_USER_REDRAW,
+                                    0, 
+                                    0);
+            return TRUE;
+
+        case EVT_USER_REDRAW:
+            {
+                AECHAR  wstrText[64]={0};
+				PromptMsg_Param_type  Msg_Param={0};
+				BottomBar_Param_type bottomParam;
+                // 从资源文件取消息内容
+                (void)ISHELL_LoadResString(pMe->a.m_pIShell,
+                                AEE_COREAPPRES_LANGFILE,                                
+                                IDS_SALES_TRACKER,
+                                wstrText,
+                                sizeof(wstrText));
+				//Draw static
+				IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
+				ISTATIC_SetProperties(pStatic, ST_CENTERTEXT|ST_MIDDLETEXT); 
+				ISTATIC_SetFontColor(pStatic, RGB_BLACK);		//Add By zzg 2011_12_07
+        		(void)ISTATIC_SetText(pStatic, 
+                              NULL, 
+                              wstrText, 
+                              AEE_FONT_NORMAL, 
+                              AEE_FONT_NORMAL);
+   
+       			 //Redraw
+        		(void)ISTATIC_Redraw(pStatic);
+				 
+                //Draw bottom
+   				MEMSET(&bottomParam,0,sizeof(BottomBar_Param_type));
+            	bottomParam.eBBarType = BTBAR_OK; //BTBAR_SELECT_BACK;            
+				DrawBottomBar(pMe->m_pDisplay, &bottomParam);  
+                //DrawPromptMessage(pMe->m_pDisplay, pStatic, &Msg_Param);
+            }
+            //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+            
+            return TRUE;
+
+        case EVT_DIALOG_END:
+
+            ISTATIC_Release(pStatic);
+            pStatic = NULL;
+            return TRUE;
+  
+        case EVT_KEY:
+			{
+				
+				// 发送EVT_DISPLAYDIALOGTIMEOUT事件
+  				(void) ISHELL_PostEvent(pMe->a.m_pIShell,
+                          AEECLSID_CORE_APP,
+                          EVT_SALES_TRACKER,
+                          0,
+                          0);	
+				
+             	CLOSE_DIALOG(DLGRET_MSGOK)
+             	return TRUE;
+        	}
+            break;
+
+        default:
+            break;
+    }
+
+    return FALSE;
+	
+}
+
+/*==============================================================================
+函数:
+IDD_SALESSUCCESS_Handler
+
+说明:
+CoreApp 对话框 IDD_SALESSUCCESS 事件处理函数。
+
+参数:
+pMe [in]:		指向Core Applet对象结构的指针。该结构包含小程序的特定信息。
+eCode [in]: 	事件代码。
+wParam: 		事件参数
+dwParam [in]:	与wParam关联的数据。
+
+返回值:
+TRUE:  传入事件得到处理。
+FALSE: 传入事件没被处理。
+
+备注:
+
+==============================================================================*/
+
+static boolean  IDD_SALESSUCCESS_Handler(void *pUser,
+                                 AEEEvent   eCode,
+                                 uint16     wParam,
+                                 uint32     dwParam)
+{
+	
+	static IStatic * pStatic = NULL;
+	CCoreApp *pMe = (CCoreApp *)pUser;
+	if (NULL == pMe)
+	{
+		return FALSE;
+	}
+	
+	if (NULL == pStatic)
+	{
+		AEERect rc = {0};
+
+		if (ISHELL_CreateInstance(pMe->a.m_pIShell, AEECLSID_STATIC,
+				(void**)&pStatic) == SUCCESS)
+		{
+			ISTATIC_SetRect(pStatic, &rc);
+		}
+		else
+		{
+			return FALSE;
+		}
+	}
+
+	switch (eCode)
+	{
+		case EVT_DIALOG_INIT:
+			return TRUE;
+
+		case EVT_DIALOG_START:
+			(void) ISHELL_PostEvent(pMe->a.m_pIShell, 
+									AEECLSID_CORE_APP,
+									EVT_USER_REDRAW,
+									0, 
+									0);
+			return TRUE;
+
+		case EVT_USER_REDRAW:
+			{
+				AECHAR	wstrText[64]={0};
+				PromptMsg_Param_type  Msg_Param={0};
+
+				// 从资源文件取消息内容
+				(void)ISHELL_LoadResString(pMe->a.m_pIShell,
+								AEE_COREAPPRES_LANGFILE,								
+								IDS_SALES_SUCCESS,
+								wstrText,
+								sizeof(wstrText));
+
+				Msg_Param.ePMsgType = MESSAGE_INFORMATION;
+				Msg_Param.pwszMsg = wstrText;
+				Msg_Param.eBBarType = BTBAR_OK;
+				DrawPromptMessage(pMe->m_pDisplay, pStatic, &Msg_Param);
+			}
+			//IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+			
+			return TRUE;
+
+		case EVT_DIALOG_END:
+			ISTATIC_Release(pStatic);
+			pStatic = NULL;
+			return TRUE;
+  
+		case EVT_KEY:
+			{	
+				
+             	CLOSE_DIALOG(DLGRET_MSGOK)
+             	return TRUE;
+        	}
+            break;
+		default:
+			break;
+	}
+
+	return FALSE;
+}
+
+
+#endif
 
 #if defined(FEATURE_WMS_APP)
 /*==============================================================================
@@ -8351,6 +8603,28 @@ static void CoreApp_Issametimer(void *pUser)
 	pMe->m_IsSametime = FALSE;
 	
 }
+
+
+void CoreApp_HandleAlarm(CCoreApp  *pme, uint16 wPermID)
+{
+	 CCoreApp	*pMe = (CCoreApp *)pme;
+	 if( ISHELL_ActiveApplet(pMe->a.m_pIShell) == AEECLSID_CORE_APP)
+        {
+        	MSG_FATAL("ISHELL_ActiveApplet..............",0,0,0);
+            CLOSE_DIALOG(DLGRET_SALES_TRACKER)
+        }
+        else
+        {
+
+            {
+				MSG_FATAL("ISHELL_StartApplet..............",0,0,0);
+                ISHELL_StartApplet(pMe->a.m_pIShell, AEECLSID_CORE_APP);
+				CLOSE_DIALOG(DLGRET_SALES_TRACKER)
+            }
+        }
+}
+
+
 
 #ifdef FEATURE_KEYGUARD
 static void CoreApp_keypadtimer(void *pUser)

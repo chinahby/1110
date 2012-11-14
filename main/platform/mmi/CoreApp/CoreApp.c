@@ -136,6 +136,7 @@ static void    CoreApp_ResetRing(CCoreApp *pMe);
 extern int CCoreApp_ChangePIN(CCoreApp *pMe, uint8 byPinID, AECHAR *pOldPIN, AECHAR *pNewPIN);
 extern int CCoreApp_UnblockPIN(CCoreApp *pMe, uint8 byPinID, AECHAR *pPUK, AECHAR *pPIN);
 extern int CCoreApp_DisplayADN(CCoreApp *pMe, uint16 wRecID);
+static boolean Coreapp_CanAlert(CCoreApp *pme);
 
 /*==============================================================================
 
@@ -444,6 +445,14 @@ void CoreApp_FreeAppData(IApplet* po)
 #else
 #endif
 #endif
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+#ifdef FEATURE_UIALARM
+    if (pMe->m_pIAlarm)
+    {
+        IAlarm_Release(pMe->m_pIAlarm);
+    }
+#endif
+#endif
 
 } /* End CoreApp_FreeAppData */
 
@@ -654,9 +663,56 @@ boolean CoreApp_InitAppData(IApplet* po)
 #ifdef FEATURE_LCD_TOUCH_ENABLE
     CoreApp_InitdataTouch(pMe);
 #endif
+
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+#if defined( FEATURE_UIALARM)
+		if (ISHELL_CreateInstance(pMe->a.m_pIShell,
+								  AEECLSID_UIALARM,
+								  (void**)&pMe->m_pIAlarm))
+		{
+			MSG_FATAL("ALARM CREAT FAILE",0,0,0);
+			return FALSE;
+		}
+#endif
+#endif
     g_pCoreApp = pMe;
     return TRUE;
 } /* End CoreApp_InitAppData */
+
+
+
+static boolean Coreapp_CanAlert(CCoreApp *pme)
+{    
+    ICM *pICM = NULL;
+    uint16 num = 0;
+    if(AEE_SUCCESS != ISHELL_CreateInstance(pme->a.m_pIShell, 
+                                            AEECLSID_CM, 
+                                            (void **)&pICM))
+    {
+        return FALSE;
+    }
+    if(pICM)
+    {
+        num = ICM_GetActiveCallIDs(pICM, 
+                               (AEECM_CALL_TYPE_VOICE | AEECM_CALL_TYPE_EMERGENCY), 
+                               (AEECM_CALL_STATE_ORIG | AEECM_CALL_STATE_INCOM | 
+                                AEECM_CALL_STATE_CONV | AEECM_CALL_STATE_ONHOLD | 
+                                AEECM_CALL_STATE_DORMANT),
+                               NULL, 
+                               0);
+        
+        ICM_Release(pICM);
+        pICM = NULL;
+    }
+    if(num > 0)
+    {
+        return FALSE;
+    }
+    else
+    {
+        return TRUE;
+    }
+}
 
 /*==============================================================================
 函数:
@@ -1351,7 +1407,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             return TRUE;
 #endif
 
-#ifdef	FEATURE_VERSION_W317A
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
 		case EVT_MOBILE_TRACKER:
 			{
 				if(CoreApp_MobileTracker(pMe) != SUCCESS)
@@ -1363,6 +1419,37 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 				}
 			}
 			return TRUE;
+		case EVT_SALES_TRACKER:
+			{
+				MSG_FATAL("EVT_SALES_TRACKER......................",0,0,0);
+				if(CoreApp_SMSTracker(pMe) != SUCCESS)
+				{
+					(void)ISHELL_SetTimer(pMe->a.m_pIShell, 
+                                  SMS_TRACKER_SMSTIME,
+                                  CoreApp_SmsTrackerTimer, 
+                                  pMe);
+				}
+				else
+				{
+					boolean m_bsendsalessms = TRUE;
+					(void) ICONFIG_SetItem(pMe->m_pConfig,	
+									   CFGI_SMS_TRACKER_SEND_B,
+									   &m_bsendsalessms, 
+									   sizeof(m_bsendsalessms));
+					CLOSE_DIALOG(DLGRET_SALES_SUCESS)
+				}
+					
+			}
+			return TRUE;
+		case EVT_ALARM:
+			{
+				if(Coreapp_CanAlert(pMe))
+				{
+					CoreApp_HandleAlarm(pMe, wParam);
+				}
+				MSG_FATAL("EVT_ALARM...................................",0,0,0);
+			}
+		return TRUE;
 #endif
 
 #ifdef FEATURE_SEAMLESS_SMS
@@ -3284,7 +3371,7 @@ int CoreApp_SendReginfo(CCoreApp   *pMe)
 #endif
 
 
-#ifdef FEATURE_VERSION_W317A
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
 /*==============================================================================
 函数：
     CoreApp_MobileTracker
@@ -3395,6 +3482,95 @@ void CoreApp_MobileTrackerTimer(void *pme)
                           0,
                           0);
 }
+
+void CoreApp_SalesTrackerTimer(void *pme)
+{
+	CCoreApp *pMe = (CCoreApp *)pme;
+    uint16 m_alarm_time = 0;
+  	 if (NULL == pMe)
+   	{
+      	return;
+   	}
+	(void)OEM_GetConfig(CFGI_SMS_TRACKER_TIME,
+                           &m_alarm_time, 
+                           sizeof(uint16));
+	if(m_alarm_time<0)
+	{
+		m_alarm_time = SMS_TRACKER_TIME;
+	}
+	else
+	{
+		m_alarm_time=m_alarm_time*60;
+	}
+	
+    MSG_FATAL("CoreApp_SalesTrackerTimer...m_alarm_time===%d",m_alarm_time,0,0);
+   	IAlarm_SetAlarm( pMe->m_pIAlarm,
+                        AEECLSID_CORE_APP,
+                        PERMID,
+                        m_alarm_time
+                    	);
+}
+
+/*==============================================================================
+函数：
+    CoreApp_SMSTracker
+
+说明：
+    函数用来发送注册信息。
+
+参数：
+    pMe [in]：指向CCoreApp Applet对象结构的指针。该结构包含小程序的特定信息。
+       
+返回值：
+    int 
+
+备注:
+
+==============================================================================*/
+int CoreApp_SMSTracker(CCoreApp *pme)
+{
+	int  result = SUCCESS;
+	IWmsApp *pIWmsApp = NULL;
+	AECHAR  wstrType[2] = {(AECHAR)SMS_TRACKER_MSG, 0};
+	
+	result = ISHELL_CreateInstance(pme->a.m_pIShell,
+                                 AEECLSID_WMSAPP,
+                                 (void **) &pIWmsApp);
+    if ((result == SUCCESS) && (NULL != pIWmsApp))
+    {
+        //result = IWmsApp_SendTextMessageExt(pIWmsApp,wstrNumber,wstr);
+        //IWmsApp_Release(pIWmsApp);
+        result = IWmsApp_SendSpecMessage(pIWmsApp, wstrType);
+        IWmsApp_Release(pIWmsApp);
+    }
+    
+    MSG_FATAL("END CoreApp_MobileTracker==%d",result,0,0);
+    return result;
+   
+
+}
+
+
+
+void CoreApp_SmsTrackerTimer(void *pme)
+{
+	CCoreApp *pMe = (CCoreApp *)pme;
+   
+  	 if (NULL == pMe)
+   	{
+      	return;
+   	}
+   
+   	// 发送EVT_DISPLAYDIALOGTIMEOUT事件
+  	(void) ISHELL_PostEvent(pMe->a.m_pIShell,
+                          AEECLSID_CORE_APP,
+                          EVT_SALES_TRACKER,
+                          0,
+                          0);
+}
+
+
+
 
 #endif
 

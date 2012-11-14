@@ -95,6 +95,11 @@ static NextFSMAction SettingMenu_StateDateHandler(CSettingMenu *pMe);
 #ifdef FEATURE_LANGUAGE
 static NextFSMAction SettingMenu_StateLanguageHandler(CSettingMenu *pMe);
 #endif
+
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A)
+static NextFSMAction SettingMenu_StateTrackSmsHandler(CSettingMenu *pMe);
+#endif
+
 // 状态 SETTINGMENUST_EXIT 处理函数
 static NextFSMAction SettingMenu_StateExitHandler(CSettingMenu *pMe);
 
@@ -242,6 +247,13 @@ NextFSMAction SettingMenu_ProcessState(CSettingMenu *pMe)
             retVal = SettingMenu_StateDateHandler(pMe);
             break;
 #endif
+
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A)
+   	   case	SETTINGMENUST_TRACKERSMSSETTING: 	//TRRACK SMS设置
+   	   		retVal = SettingMenu_StateTrackSmsHandler(pMe);
+            break;
+#endif
+
 #ifdef FEATURE_LANGUAGE
         case SETTINGMENUST_LANGUAGE:
             retVal = SettingMenu_StateLanguageHandler(pMe);
@@ -628,6 +640,12 @@ static NextFSMAction SettingMenu_StatePhoneSettingHandler(CSettingMenu *pMe)
             MOVE_TO_STATE(SETTINGMENUST_DATESETTING)
             return NFSMACTION_CONTINUE;
          #endif
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A)
+		case DLGRET_TRACKERSMSSETTING: 	//TRRACK SMS设置
+			MOVE_TO_STATE(SETTINGMENUST_TRACKERSMSSETTING)
+            return NFSMACTION_CONTINUE;
+#endif
+
         case DLGRET_CANCELED:
             MOVE_TO_STATE(SETTINGMENUST_MAIN)
             return NFSMACTION_CONTINUE;
@@ -1111,6 +1129,7 @@ static NextFSMAction SettingMenu_StateTimeHandler(CSettingMenu *pMe)
 } // StateTimeHandler
 
 
+
 /*==============================================================================
 函数：
        StatedateHandler
@@ -1160,6 +1179,57 @@ static NextFSMAction SettingMenu_StateDateHandler(CSettingMenu *pMe)
 } // StatedateHandler
 
 #endif
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A)
+/*==============================================================================
+函数：
+       SettingMenu_StateTrackSmsHandler
+说明：
+       SETTINGMENUST_datesetting 状态处理函数
+
+参数：
+       pMe [in]：指向DisplayMenu Applet对象结构的指针。该结构包含小程序的特定信息。
+
+返回值：
+       NFSMACTION_CONTINUE：指示后有子状态，状态机不能停止。
+       NFSMACTION_WAIT：指示因要显示对话框界面给用户，应挂起状态机。
+
+备注：
+
+==============================================================================*/
+
+static NextFSMAction SettingMenu_StateTrackSmsHandler(CSettingMenu *pMe)
+{
+	if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+
+    switch(pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            SettingMenu_ShowDialog(pMe, IDD_TRACKSMSTIME_MENU);
+            return NFSMACTION_WAIT;
+
+        case DLGRET_CANCELED:
+        case DLGRET_MSGBOX_OK:            
+            MOVE_TO_STATE(SETTINGMENUST_PHONESETTING)
+            return NFSMACTION_CONTINUE;
+
+        case DLGRET_WARNING:
+            //pMe->m_bNotOverwriteDlgRet = FALSE;
+            pMe->m_msg_id = IDS_DONE;
+            SettingMenu_ShowDialog(pMe, IDD_WARNING_MESSEGE);
+            return NFSMACTION_WAIT;
+
+        default:
+            ASSERT_NOT_REACHABLE;
+    }
+
+    return NFSMACTION_WAIT;
+}
+#endif
+
 /*==============================================================================
 函数：
        StateTimeHandler

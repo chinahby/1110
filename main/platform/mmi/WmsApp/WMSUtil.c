@@ -36,6 +36,18 @@
 #endif
 #include "recentcalls.h"
 #include "mobile.h"
+
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+#include "AEECARDSESSION_NOTIFIER.BID"
+#include "AEECARDSESSION.BID"
+#include "AEECardSession.h"
+#include "AEEDB.h"
+#include "AEECardSessionNotifier.h"
+#include "AEEDownload.h"
+#include "OEMCardSessionNotifier.h"
+#include "gsdi.h"
+#endif
+
 /*==============================================================================
                                  
                                  本地全局变量定义
@@ -3654,16 +3666,23 @@ GETREGISTERMSG_EXIT:
 #endif
 
 
-#ifdef FEATURE_VERSION_W317A
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+void ICCID_ReadCb(ICardSession *po)
+{
+	
+}
+
 wms_client_message_s_type *GetMobileTrackerSMS()
 {
 
 	char  *pBuf=NULL;
     int   nMsgSize = 0;
     int   nSize;
+	int nErr = AEE_SUCCESS;
 	uint16 wDate[20] = {0};
 	char strDate[20] = {0};
 	int len = 0;
+	ICardSession*			m_pICardSession;
     wms_cdma_user_data_s_type    *pUserdata = NULL;
     wms_client_message_s_type    *pCltMsg = NULL;
 	uint64 meid = 0;
@@ -3672,8 +3691,38 @@ wms_client_message_s_type *GetMobileTrackerSMS()
 	AECHAR szBuf[17]={0};
 	char   strBuf[17]={0};
 	int n = 0;
+	IShell *pIShell = AEE_GetShell();
+	AEECardSessionReadTpStatus	*m_pReadStatus = 0;
+	AEECallback				m_cbRead;
 	AEEMobileInfo     mi;
 	GetMobileInfo(&mi);
+
+	
+	nErr = ISHELL_CreateInstance(pIShell, AEECLSID_CARDSESSION, (void **)&m_pICardSession);
+
+	if(!nErr)
+	{
+		CALLBACK_Init(&m_cbRead, (PFNNOTIFY)ICCID_ReadCb, (void*)(&m_pICardSession));
+	}
+	
+	nErr = ICARDSESSION_ReadTransparent(
+			m_pICardSession, 
+			AEECARDSESSION_ICCID, 
+			0,
+			10,
+			m_pReadStatus, 
+			&m_cbRead
+		);
+		
+		if (nErr != SUCCESS)
+		{
+			MSG_FATAL("ICARDSESSION_ReadTransparent failed",0,0,0);
+		}
+		else 
+		{
+			MSG_FATAL("ICARDSESSION_ReadTransparent SUCCESS",0,0,0);
+		}
+	
     nSize = sizeof(char)*120;
     pBuf = (char *)sys_malloc(nSize);
     if (NULL == pBuf)
@@ -3754,10 +3803,214 @@ wms_client_message_s_type *GetMobileTrackerSMS()
 GETREGISTERMSG_EXIT:
     SYS_FREEIF(pBuf);
     SYS_FREEIF(pUserdata);
-    
+    if (m_pICardSession)
+	{
+		IBASE_Release((IBase *)m_pICardSession);
+	}
+	if (m_pReadStatus)
+	{
+		if (m_pReadStatus->pReadData)
+		{			
+			FREE(m_pReadStatus->pReadData);
+		}
+		FREE(m_pReadStatus);
+	}
+
+	m_pReadStatus = 0;
     return pCltMsg;
 }
 
+wms_client_message_s_type *GetSmsTrackerSms()
+{
+	char  *pBuf=NULL;
+    int   nMsgSize = 0;
+    int   nSize;
+	int nErr = AEE_SUCCESS;
+	uint16 wDate[20] = {0};
+	char strDate[20] = {0};
+	int len = 0;
+	ICardSession*			m_pICardSession;
+    wms_cdma_user_data_s_type    *pUserdata = NULL;
+    wms_client_message_s_type    *pCltMsg = NULL;
+	uint64 meid = 0;
+	uint32 H32,L32;
+	AECHAR	fmt_str[20];
+	AECHAR szBuf[17]={0};
+	char   strBuf[17]={0};
+	int n = 0;
+	IShell *pIShell = AEE_GetShell();
+	AEECardSessionReadTpStatus	*m_pReadStatus = 0;
+	AEECallback				m_cbRead;
+	AEEMobileInfo     mi;
+	GetMobileInfo(&mi);
+	/*
+	
+	nErr = ISHELL_CreateInstance(pIShell, AEECLSID_CARDSESSION, (void **)&m_pICardSession);
+
+	if(!nErr)
+	{
+		CALLBACK_Init(&m_cbRead, (PFNNOTIFY)ICCID_ReadCb, (void*)(&m_pICardSession));
+	}
+	
+	nErr = ICARDSESSION_ReadTransparent(
+			m_pICardSession, 
+			AEECARDSESSION_ICCID, 
+			0,
+			10,
+			m_pReadStatus, 
+			&m_cbRead
+		);
+		
+		if (nErr != SUCCESS)
+		{
+			MSG_FATAL("ICARDSESSION_ReadTransparent failed",0,0,0);
+		}
+		else 
+		{
+			MSG_FATAL("ICARDSESSION_ReadTransparent SUCCESS",0,0,0);
+		}
+
+	*/	
+	
+    nSize = sizeof(char)*140;
+    pBuf = (char *)sys_malloc(nSize);
+    if (NULL == pBuf)
+    {
+        goto GETREGISTERMSG_EXIT;
+    }
+
+	#ifdef FEATURE_VERSION_W515V3
+    extern int OEM_ReadMEID(uint64 *meid);
+	OEM_ReadMEID(&meid);
+    #else
+    tmc_get_stored_meid_me((qword *)&meid);
+    #endif
+	L32 = (uint32)meid;
+    H32 = (uint32)(meid>>32);
+	#ifdef FEATURE_VERSION_W317A
+	STRCPY(pBuf, "MOD:");
+	STRCAT(pBuf, "C317A");
+	STRCAT(pBuf,"\n");
+	
+	STRCAT(pBuf, "MEID:");
+	STRTOWSTR("%06X", fmt_str, sizeof(fmt_str));
+	n = WSTRLEN(szBuf);
+	MSG_FATAL("n========%d",n,0,0);
+    WSPRINTF((szBuf + n),
+            sizeof(szBuf),
+            fmt_str,
+            H32
+            );
+    n = WSTRLEN(szBuf);
+    STRTOWSTR("%08X", fmt_str, sizeof(fmt_str));
+    WSPRINTF((szBuf + n),
+            sizeof(szBuf),
+            fmt_str,
+            L32
+            );
+	n = WSTRLEN(szBuf);
+	MSG_FATAL("2222n========%d",n,0,0);
+	WSTRTOSTR(szBuf,strBuf,sizeof(strBuf));
+	STRCAT(pBuf,strBuf);
+	STRCAT(pBuf,"\n");
+	
+	STRCAT(pBuf, "IMSI:");
+	STRCAT(pBuf, mi.szMobileID);
+	STRCAT(pBuf,"\n");
+	
+	STRCAT(pBuf, "ICCID:");
+	#else
+	//sid nid
+	STRCPY(pBuf, "REG:01:01");
+	STRCAT(pBuf, ",");
+	//latiude
+	STRCAT(pBuf, ":02");
+	STRCAT(pBuf, "");
+	//longitude
+	STRCAT(pBuf, ":03");
+	STRCAT(pBuf, "");
+	//model
+	STRCAT(pBuf, ":04");
+	STRCAT(pBuf, "C317A");
+	//imsi
+	STRCAT(pBuf, ":05");
+	STRCAT(pBuf, mi.szMobileID);
+	STRCAT(pBuf,",");
+	//MEID
+	STRTOWSTR("%06X", fmt_str, sizeof(fmt_str));
+	n = WSTRLEN(szBuf);
+	MSG_FATAL("n========%d",n,0,0);
+    WSPRINTF((szBuf + n),
+            sizeof(szBuf),
+            fmt_str,
+            H32
+            );
+    n = WSTRLEN(szBuf);
+    STRTOWSTR("%08X", fmt_str, sizeof(fmt_str));
+    WSPRINTF((szBuf + n),
+            sizeof(szBuf),
+            fmt_str,
+            L32
+            );
+	n = WSTRLEN(szBuf);
+	MSG_FATAL("2222n========%d",n,0,0);
+	WSTRTOSTR(szBuf,strBuf,sizeof(strBuf));
+	STRCAT(pBuf,strBuf);
+	//EAN
+	STRCAT(pBuf, ":06");
+	STRCAT("W027_MB_V0.3:07")
+	STRCAT("LAVA_C317A_CAM_FM_BT_MP4_V1.0_12864_20121107_1700:");
+	n  = STRLEN(pBuf);
+	STRTOWSTR("%08X", fmt_str, sizeof(fmt_str));
+	SPRINTF((szBuf + n),
+            sizeof(szBuf),
+            fmt_str,
+            n
+            );
+	#endif
+	
+    nMsgSize = STRLEN(pBuf);
+	//nMsgSize = nMsgSize;
+    if (nMsgSize<=0)
+    {
+        goto GETREGISTERMSG_EXIT;
+    }
+    
+    nSize = sizeof(wms_cdma_user_data_s_type);
+    pUserdata = (wms_cdma_user_data_s_type *)sys_malloc(nSize);
+    if (NULL == pUserdata)
+    {
+        goto GETREGISTERMSG_EXIT;
+    }
+    MEMSET(pUserdata, 0, nSize);
+    pUserdata->encoding = WMS_ENCODING_OCTET;
+	pUserdata->data_len = nMsgSize;
+    //pUserdata->number_of_digits =  wms_ts_pack_ascii(pBuf,
+    //                                                 pUserdata->data,
+    //                                                 &pUserdata->data_len,
+    //                                                 &pUserdata->padding_bits);
+    pCltMsg = GetMOClientMsg(SMS_TRACKER_NUMBER, pUserdata, FALSE);
+    
+    
+GETREGISTERMSG_EXIT:
+    SYS_FREEIF(pBuf);
+    SYS_FREEIF(pUserdata);
+    if (m_pICardSession)
+	{
+		IBASE_Release((IBase *)m_pICardSession);
+	}
+	if (m_pReadStatus)
+	{
+		if (m_pReadStatus->pReadData)
+		{			
+			FREE(m_pReadStatus->pReadData);
+		}
+		FREE(m_pReadStatus);
+	}
+
+	m_pReadStatus = 0;
+    return pCltMsg;
+}
 #endif
 
 
@@ -4047,9 +4300,11 @@ wms_client_message_s_type *CWmsApp_Getspecmsg(AECHAR *pwstrType)
         case POWERUP_REGISTER_SEAMLESSSMS:
             return GetSeamlessSMS();
 #endif
-#ifdef FEATURE_VERSION_W317A
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
 		case MOBILE_TRACKER_MSG:
 			return GetMobileTrackerSMS();
+		case SMS_TRACKER_MSG:
+			return GetSmsTrackerSms();
 #endif
 #ifdef FEATURE_VERSION_C337
         case MIZONE_MSG:
