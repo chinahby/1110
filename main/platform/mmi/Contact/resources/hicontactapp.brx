@@ -464,25 +464,25 @@
 		<Text>अवैध संख्या</Text>
 	</String>
 	<String Id="1090" Name="IDS_NAME_MODIFIED">
-		<Text>Name Modified</Text>
+		<Text>संशोधित नाम</Text>
 	</String>
 	<String Id="1091" Name="IDS_CALLER_GROUPS">
-		<Text>Caller Groups</Text>
+		<Text>कोलर समूह</Text>
 	</String>
 	<STRING Id="1092" Name="IDS_PHONEBOOK">
-		<Text>Phonebook</Text>
+		<Text>फोन की किताब</Text>
 	</STRING>
 	<STRING Id="1093" Name="IDS_DISPLAY_OPTION">
-		<Text>Display option</Text>
+		<Text>विकल्प प्रदर्शित</Text>
 	</STRING>
 	<STRING Id="1094" Name="IDS_ALWAYS_ASK">
-		<Text>Always ask</Text>
+		<Text>हमेशा पूछें</Text>
 	</STRING>
 	<STRING Id="1095" Name="IDS_STORAGE">
-		<Text>Contacts storage</Text>
+		<Text>संपर्क भंडारण</Text>
 	</STRING>
 	<STRING Id="1096" Name="IDS_PHONEBOOK_SETTINGS">
-		<Text>Phonebook settings</Text>
+		<Text>फोन पुस्तक सेटिंग</Text>
 	</STRING>
 </Strings>
 <Dialogs>

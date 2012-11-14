@@ -215,10 +215,10 @@
 		<Text>रिकॉर्डिंग हो रहा है...</Text>
 	</STRING>
 	<STRING Id="1216" Name="IDS_RECORDER_MEMO_RINGER_NAME_C337">
-		<Text>Record</Text>
+		<Text>रिकॉर्ड</Text>
 	</STRING>
 	<STRING Id="1217" Name="IDS_TITLE_C337">
-		<Text>Sound recorder</Text>
+		<Text>ध्वनि रिकॉर्डर</Text>
 	</STRING>
 </Strings>
 </BREWRes>
