@@ -104,10 +104,10 @@
 		<Text>प्राप्त %d नया संदेश</Text>
 	</STRING>
 	<STRING Id="1035" Name="IDS_CHARGER_ON">
-		<Text>अभियोक्ता शुरू</Text>
+		<Text>चार्जर लगा</Text>
 	</STRING>
 	<STRING Id="1036" Name="IDS_CHARGER_OFF">
-		<Text>अभियोक्ता रोक</Text>
+		<Text>चार्जर हटा</Text>
 	</STRING>
 	<STRING Id="1037" Name="IDS_EMERGENCY_NUMBER">
 		<Text>आपातकालीन नंबर</Text>
@@ -215,10 +215,10 @@
 		<Text>Torch Off</Text>
 	</String>
 	<String Id="1101" Name="IDS_CHARGER_USB_ON">
-		<Text>USB connected</Text>
+		<Text>हेडसेट लगाया गया</Text>
 	</String>
 	<String Id="1102" Name="IDS_CHARGER_USB_OFF">
-		<Text>USB removed</Text>
+		<Text>USB हटा</Text>
 	</String>
 	<String Id="1082" Name="IDS_SALES_TRACKER">
 		<Text>Dear Customer,Kindly press any key to register for warranty services.This will help us provide best service support to you</Text>

@@ -347,7 +347,7 @@
 		<Text>पासवर्ड लिखें</Text>
 	</STRING>
 	<STRING Id="1116" Name="IDS_DONE">
-		<Text>किया है</Text>
+		<Text>हो गया !</Text>
 	</STRING>
 	<STRING Id="1117" Name="IDS_PROCCESS">
 		<Text>पेडोमीटर प्रसंस्करित है</Text>
