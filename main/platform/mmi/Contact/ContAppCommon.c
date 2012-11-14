@@ -4445,6 +4445,121 @@ void CContApp_SetRecByFLDID(CContApp *pMe, uint16 wFLDID)
         pMe->m_pFldInputBuf = NULL;
 }
 
+//Add By zzg 2012_11_14
+int CContApp_CreateDefaultCont( CContApp *pMe)
+{
+    IAddrRec       *pAddrRec = NULL;
+    AEEAddrField    addrFld[11];
+	
+	AECHAR 			pName[20];
+	AECHAR			pNumber[20];
+	AEEAddrCat      mGroupCat = AEE_ADDR_CAT_NONE;
+	
+	int 			index = 0;
+	boolean 		sameRecord = FALSE;
+	boolean			m_bdftcont = FALSE;
+
+	STRTOWSTR("Micromax care", pName, sizeof(pName));
+	STRTOWSTR("18605008286", pNumber, sizeof(pNumber));		
+
+	MSG_FATAL("***zzg CContApp_CreateDefaultCont***", 0, 0, 0);
+    
+    ASSERT(pMe != NULL);
+
+	if(SUCCESS == IADDRBOOK_CheckSameRecord(pMe->m_pAddrPhone, pName, &sameRecord) && sameRecord == TRUE)
+    {
+    	MSG_FATAL("***zzg IADDRBOOK_CheckSameRecord sameRecord=%x***", sameRecord, 0, 0);
+        return EFAILED;
+    }
+	
+    // Set the name field
+    if(SUCCESS != CContApp_BuildAddrField( AEE_ADDRFIELD_NAME,
+                                           pName,
+                                           &addrFld[0],
+                                           FALSE))
+    {
+        return EFAILED;
+    }
+	
+    // Set the number field
+    if(SUCCESS != CContApp_BuildAddrField( AEE_ADDRFIELD_PHONE_GENERIC,
+                                           pNumber,
+                                           &addrFld[1],
+                                           FALSE))
+    {
+        return EFAILED;
+    }
+	
+    index = 1;
+
+	// Set the Group field
+    if(SUCCESS != CContApp_BuildAddrField( AEE_ADDRFIELD_GROUP,
+                                           &mGroupCat,
+                                           &addrFld[++index],
+                                           FALSE))
+    {
+        return EFAILED;
+    }	
+    
+	pAddrRec = IADDRBOOK_CreateRec( pMe->m_pAddrPhone,
+                                    pMe->m_nGroupCat,
+                                    addrFld,
+                                    index);
+   
+    if(NULL == pAddrRec)
+    {
+        return EFAILED;
+    }
+    
+    pMe->m_wEditCont = CContApp_RawToContID( pMe,
+                                             IADDRREC_GetRecID(pAddrRec),
+                                             FALSE);
+
+	m_bdftcont = TRUE;
+	ICONFIG_SetItem(pMe->m_pConfig, CFGI_DEFAULTCONT, &m_bdftcont, sizeof(m_bdftcont));
+
+		{
+			
+			boolean b_defaultcont = FALSE;	  
+			OEM_GetConfig(CFGI_DEFAULTCONT,&b_defaultcont, sizeof(b_defaultcont));
+	
+			MSG_FATAL("***zzg CContApp_CreateDefaultCont CFGI_DEFAULTCONT=%x***", b_defaultcont, 0, 0);
+		}
+	
+    IADDRREC_Release(pAddrRec);
+
+    
+    // reload all the cont info
+    if(STATE_GROUPVIEW_LIST == CContApp_GetReturnState(pMe))
+    {
+        CContApp_GetGroupCat(pMe, pMe->m_wselGroupId);
+        CContApp_LoadByCat(pMe, pMe->m_nGroupCat);
+    }
+    else
+    {
+        switch(pMe->m_nViewType)
+            {
+                case CONTCFG_VIEWTYPE_ALL:
+                    (void)CContApp_LoadByCondition(pMe,(pMe->m_pFindData==NULL ? 0 : WSTRSIZE(pMe->m_pFindData)));
+                    break;
+                    
+                case CONTCFG_VIEWTYPE_PHONE:
+                    (void) CContApp_LoadSingleStoreCont(pMe,
+                                                        pMe->m_wFindCat,
+                                                        pMe->m_wFindFldID,
+                                                        pMe->m_pFindData,
+                                                        ADDR_STORE_DBFILE);                    
+                    break;                    
+                default:
+                    break;
+            }
+    }	
+    
+    return SUCCESS;
+}
+
+//Add End
+
 /*=============================================================================
 
 FUNCTION: CContApp_CreateCont
@@ -4476,7 +4591,7 @@ int CContApp_CreateCont( CContApp *pMe,  boolean bCard)
     int index = 0;
     
     ASSERT(pMe != NULL);
-    
+	
     // Set the name field
     if(SUCCESS != CContApp_BuildAddrField( AEE_ADDRFIELD_NAME,
                                            pMe->m_pAddNewName,
@@ -4488,8 +4603,7 @@ int CContApp_CreateCont( CContApp *pMe,  boolean bCard)
     
     // Set the number field
     if (NULL !=pMe->m_pAddNewMobile)
-    {    	
-
+    {    
     	if(SUCCESS != CContApp_BuildAddrField( AEE_ADDRFIELD_PHONE_GENERIC,
                                                pMe->m_pAddNewMobile,
                                                &addrFld[1],
@@ -4504,11 +4618,12 @@ int CContApp_CreateCont( CContApp *pMe,  boolean bCard)
     {
            index = 0;
     }
+	
     if(!bCard)
     {
          // Set the home number field
         if (NULL !=pMe->m_pAddNewHome)
-        {
+        {        	
             if(SUCCESS != CContApp_BuildAddrField( AEE_ADDRFIELD_PHONE_HOME,
                                                    pMe->m_pAddNewHome,
                                                    &addrFld[++index],
@@ -4520,7 +4635,7 @@ int CContApp_CreateCont( CContApp *pMe,  boolean bCard)
 
          // Set the office number field
         if (NULL !=pMe->m_pAddNewOffice)
-        {
+        {        	
             if(SUCCESS != CContApp_BuildAddrField( AEE_ADDRFIELD_PHONE_WORK,
                                                    pMe->m_pAddNewOffice,
                                                    &addrFld[++index],
@@ -4532,7 +4647,7 @@ int CContApp_CreateCont( CContApp *pMe,  boolean bCard)
 
          // Set the Fax number field
         if (NULL !=pMe->m_pAddNewFax)
-        {
+        {        	
             if(SUCCESS != CContApp_BuildAddrField( AEE_ADDRFIELD_PHONE_FAX,
                                                    pMe->m_pAddNewFax,
                                                    &addrFld[++index],
@@ -4580,7 +4695,7 @@ int CContApp_CreateCont( CContApp *pMe,  boolean bCard)
 
          // Set the Remark field
         if (NULL !=pMe->m_pAddNewRemark)
-        {
+        {        	
             if(SUCCESS != CContApp_BuildAddrField( AEE_ADDRFIELD_NOTES,
                                                    pMe->m_pAddNewRemark,
                                                    &addrFld[++index],
@@ -4594,7 +4709,7 @@ int CContApp_CreateCont( CContApp *pMe,  boolean bCard)
         if (NULL !=pMe->m_nRingToneID && (AECHAR)'\0' != pMe->m_nRingToneID[0])
         {
             //AECHAR  nData[2] = {0}; 
-            //nData[0] = pMe->m_nRingToneID;
+            //nData[0] = pMe->m_nRingToneID;           
             if(SUCCESS != CContApp_BuildAddrField( AEE_ADDRFIELD_RINGTONE,
                                                    (void*)pMe->m_nRingToneID,
                                                    &addrFld[++index],
@@ -4606,7 +4721,7 @@ int CContApp_CreateCont( CContApp *pMe,  boolean bCard)
 
          // Set the Group field
         if (-1 !=pMe->m_nGroupCat)
-        {
+        {        	
             if(SUCCESS != CContApp_BuildAddrField( AEE_ADDRFIELD_GROUP,
                                                    &pMe->m_nGroupCat,
                                                    &addrFld[++index],
@@ -4618,7 +4733,7 @@ int CContApp_CreateCont( CContApp *pMe,  boolean bCard)
     }
     
     if(!bCard)
-    {
+    {    	
         pAddrRec = IADDRBOOK_CreateRec( pMe->m_pAddrPhone,
                                         pMe->m_nGroupCat,
                                         addrFld,

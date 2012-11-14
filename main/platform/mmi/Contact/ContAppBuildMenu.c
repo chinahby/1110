@@ -1347,11 +1347,27 @@ int CContApp_BuildListMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
     ASSERT(pMe != NULL); 
     
     FARF(ADDR, ("Build List menu %d,  %d ", pMe->m_nCurrIdx, IVector_Size(pMe->m_pAddList)));
+
+	MSG_FATAL("***zzg CContApp_BuildListMenu***", 0, 0, 0);
     
     if (pMenuCtl == NULL)
     {
         return EBADPARM;
     }
+
+	#ifdef FEATURE_VERSION_C337
+	{
+		boolean b_defaultcont = FALSE;	  
+	    OEM_GetConfig(CFGI_DEFAULTCONT,&b_defaultcont, sizeof(b_defaultcont));
+
+		MSG_FATAL("***zzg CContApp_BuildListMenu CFGI_DEFAULTCONT=%x***", b_defaultcont, 0, 0);
+
+		if (b_defaultcont == FALSE)
+		{
+			CContApp_CreateDefaultCont(pMe);	
+		}		
+	}
+	#endif
     
     (void)IMENUCTL_DeleteAll(pMenuCtl);
     nListItems = IVector_Size(pMe->m_pAddList);

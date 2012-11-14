@@ -433,6 +433,9 @@ enum{
     CFGI_GSENSOR,                      //type = uint32 
     CFGI_HEADSET_PRESENT,  // type=boolean
     CFGI_FM_BACKGROUND,    // type=boolean   
+#ifdef FEATURE_VERSION_C337    
+    CFGI_DEFAULTCONT,
+#endif    
 #ifdef FEATURE_RANDOM_MENU_COLOR
     /*Menu background RGB value*/
     CFGI_MENU_BGCOLOR,  // type=RGBVAL   

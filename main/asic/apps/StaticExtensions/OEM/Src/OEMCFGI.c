@@ -619,6 +619,9 @@ typedef struct
    // ‰»Î∑®…Ë÷√   
    byte     input_mode;                                //CFGI_INPUTMODE   
    boolean m_fm_background;                            /*CFGI_FM_BACKGROUND*/
+#ifdef FEATURE_VERSION_C337   
+   boolean	m_defaultcont;							/*CFGI_DEFAULTCONT Add by zzg 2012_11_14*/
+#endif
 #ifdef FEATURE_RANDOM_MENU_COLOR
    uint32 m_nmenubgcolor;                       //CFGI_MENU_BGCOLOR
    byte m_nrandommenu;                      //CFGI_RANDOM_MENU
@@ -1052,6 +1055,7 @@ static int OEMPriv_GetItem_CFGI_FORN_SID_REG(void *pBuff);
 static int OEMPriv_SetItem_CFGI_FORN_SID_REG(void *pBuff);
 static int OEMPriv_GetItem_CFGI_FORN_NID_REG(void *pBuff);
 static int OEMPriv_SetItem_CFGI_FORN_NID_REG(void *pBuff);
+
 #ifdef FEATURE_ACP
 #error code not present
 #endif /* FEATURE_ACP */
@@ -1432,6 +1436,14 @@ static int OEMPriv_SetItem_CFGI_KEYGUARD_ENABLED(void *pBuff);
 
 static int OEMPriv_GetItem_CFGI_FM_BACKGROUND(void *pBuff) ;
 static int OEMPriv_SetItem_CFGI_FM_BACKGROUND(void *pBuff) ;
+
+//Add By zzg 2012_11_14
+#ifdef FEATURE_VERSION_C337
+static int OEMPriv_GetItem_CFGI_DEFAULTCONT(void *pBuff) ;
+static int OEMPriv_SetItem_CFGI_DEFAULTCONT(void *pBuff) ;
+#endif
+//Add End
+
 #ifdef FEATURE_RANDOM_MENU_COLOR
 static int OEMPriv_GetItem_CFGI_MENU_BGCOLOR(void *pBuff);
 
@@ -1843,6 +1855,9 @@ static OEMConfigListType oemi_cache = {
    ,{OEMNV_CALLFORWARD_VOICEMAIL_ENABLE}                                    //CFGI_CALLFORWARD_VOICEMAIL_ENABLE
    ,OEMNV_INPUTMODE_DEFAULT                        //CFGI_INPUTMODE     
    ,FALSE                                          //CFGI_FM_BACKGROUND
+#ifdef FEATURE_VERSION_C337
+   ,FALSE											//CFGI_DEFAULTCONT
+#endif
 #ifdef FEATURE_RANDOM_MENU_COLOR
    ,APPSCOMMON_BG_COLOR  //CFGI_MENU_BGCOLOR
    ,0  //CFGI_RANDOM_MENU
@@ -2133,7 +2148,7 @@ static ConfigItemTableEntry const customItemTable[] =
    CFGTABLEITEM(CFGI_SECCODE,OEMNV_SECCODE_LENGTH * sizeof(AECHAR)),
 #ifdef FEATURE_ENABLE_OTKSL
    CFGTABLEITEM(CFGI_OTKSLCODE,OEMNV_SECCODE_LENGTH * sizeof(AECHAR)),
-#endif
+#endif   
    CFGTABLEITEM_READONLY(CFGI_ESN,sizeof(uint32)),
    CFGTABLEITEM(CFGI_SLOTINDEX,sizeof(uint8)),
    CFGTABLEITEM_EMPTY(CFGI_BUILD_VERSION),
@@ -2478,6 +2493,9 @@ static ConfigItemTableEntry const customOEMItemTable[] =
    CFGTABLEITEM_READONLY(CFGI_GSENSOR,sizeof(uint32)),
    CFGTABLEITEM_READONLY(CFGI_HEADSET_PRESENT,sizeof(boolean)),
    CFGTABLEITEM(CFGI_FM_BACKGROUND,sizeof(boolean)),
+#ifdef FEATURE_VERSION_C337
+   CFGTABLEITEM(CFGI_DEFAULTCONT,sizeof(boolean)),
+#endif
 #ifdef FEATURE_RANDOM_MENU_COLOR
    CFGTABLEITEM(CFGI_MENU_BGCOLOR,sizeof(uint32)),
    CFGTABLEITEM(CFGI_RANDOM_MENU,sizeof(byte)),
@@ -2789,6 +2807,10 @@ void OEM_RestoreFactorySetting( void )
    //Add By zzg 2010_08_21
    oemi_cache.b_calendar_lock          = FALSE;
    //Add End
+   
+#ifdef FEATURE_VERSION_C337
+	oemi_cache.m_defaultcont		   = FALSE;
+#endif
    
 #if defined(FEATURE_CARRIER_VENEZUELA_MOVILNET)
     nvi_cache.key_tone_length = OEMNV_KEYTONE_LONG;
@@ -7661,7 +7683,6 @@ static int OEMPriv_SetItem_CFGI_OTKSLCODE(void *pBuff)
 }
 
 #endif /* FEATURE_ENABLE_OTKSL */
-
 static int OEMPriv_GetItem_CFGI_ESN(void *pBuff)
 {
 #ifndef WIN32
@@ -11396,6 +11417,21 @@ static int OEMPriv_SetItem_CFGI_FM_BACKGROUND(void *pBuff)
     OEMPriv_WriteOEMConfigList();
     return SUCCESS;
 }
+
+#ifdef FEATURE_VERSION_C337
+static int OEMPriv_GetItem_CFGI_DEFAULTCONT(void *pBuff) 
+{
+   MEMCPY(pBuff, (void*) &oemi_cache.m_defaultcont, sizeof(boolean));
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_DEFAULTCONT(void *pBuff) 
+{
+    MEMCPY((void*) &oemi_cache.m_defaultcont, pBuff, sizeof(boolean));
+    OEMPriv_WriteOEMConfigList();
+    return SUCCESS;
+}
+#endif
 static int OEMPriv_GetItem_CFGI_BREWSET_USENAME(void *pBuff)
 {
 	 MEMCPY(pBuff, (void*) &oemi_cache.brewsetings_usename, sizeof(byte) * MAS_BREWSETINT_STRING);

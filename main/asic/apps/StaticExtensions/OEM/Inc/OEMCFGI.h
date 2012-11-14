@@ -292,7 +292,7 @@ enum /* OEM AEEConfigItem Values */
    CFGI_SECCODE,          // type=AECHAR *, len == OEMNV_SECCODE_LENGTH
 #ifdef FEATURE_ENABLE_OTKSL
    CFGI_OTKSLCODE,        // type=AECHAR *, len == OEMNV_SECCODE_LENGTH
-#endif
+#endif   
    CFGI_ESN,              // type=uint32 (read-only)
    CFGI_SLOTINDEX,        // type=byte
    CFGI_BUILD_VERSION,    // type=AECHAR * (ver_dir variable from mobile.h)

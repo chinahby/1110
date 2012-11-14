@@ -4639,7 +4639,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
     }
     return FALSE;
 } // IDD_IDLE_Handler
-#if defined(FEATURE_VERSION_W317A)
+#if defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_C337)
 /*==============================================================================
 º¯Êý:
     IDD_SALESTRACKER_Handler
