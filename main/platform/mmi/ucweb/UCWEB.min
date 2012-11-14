@@ -16,6 +16,7 @@ CONSTFILE_BIN_FILES+=\
     ucweb.bar|fs:/mod/ucweb/ucweb.bar \
     ucweb.mod|fs:/mod/ucweb/ucweb.mod \
     parserplugin.bin|fs:/mod/ucweb/parserplugin.bin \
+    ucweb.bin|fs:/mod/ucweb/ucweb.bin \
     ucweb_about.htm|fs:/mod/ucweb/ucweb_about.htm \
     ucweb_help_key.htm|fs:/mod/ucweb/ucweb_help_key.htm \
     ucweb_l2.png|fs:/mod/ucweb/ucweb_l2.png \
