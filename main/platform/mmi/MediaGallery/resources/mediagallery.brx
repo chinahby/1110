@@ -44,7 +44,7 @@
 		<Text>Detail</Text>
 	</STRING>
 	<STRING Id="1014" Name="IDS_MG_BLUETOOTH">
-		<Text>Send via bluetooth</Text>
+		<Text>Send via Bluetooth</Text>
 	</STRING>
 	<STRING Id="1015" Name="IDS_MG_COPY">
 		<Text>Copy</Text>
