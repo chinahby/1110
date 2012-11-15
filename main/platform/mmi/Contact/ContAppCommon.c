@@ -4515,16 +4515,19 @@ int CContApp_CreateDefaultCont( CContApp *pMe)
                                              IADDRREC_GetRecID(pAddrRec),
                                              FALSE);
 
+	#ifdef FEATURE_VERSION_C337
 	m_bdftcont = TRUE;
 	ICONFIG_SetItem(pMe->m_pConfig, CFGI_DEFAULTCONT, &m_bdftcont, sizeof(m_bdftcont));
 
-		{
-			
-			boolean b_defaultcont = FALSE;	  
-			OEM_GetConfig(CFGI_DEFAULTCONT,&b_defaultcont, sizeof(b_defaultcont));
+	{
+		
+		boolean b_defaultcont = FALSE;	  
+		OEM_GetConfig(CFGI_DEFAULTCONT,&b_defaultcont, sizeof(b_defaultcont));
+
+		MSG_FATAL("***zzg CContApp_CreateDefaultCont CFGI_DEFAULTCONT=%x***", b_defaultcont, 0, 0);
+	}
+	#endif
 	
-			MSG_FATAL("***zzg CContApp_CreateDefaultCont CFGI_DEFAULTCONT=%x***", b_defaultcont, 0, 0);
-		}
 	
     IADDRREC_Release(pAddrRec);
 
