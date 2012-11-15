@@ -2982,12 +2982,12 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
         pMe->m_bUserPressNext = FALSE;
         return TRUE;
 
-	#ifdef FEATURE_VERSION_C337
-	case AVK_DOWN:
-	#else
-    case AVK_CLR:
-	#endif	
-		MSG_FATAL("***zzg MP3_MusicPlayerHanleKeyEvt  AVK_CLR***", 0, 0, 0);
+#ifdef FEATURE_VERSION_C337
+	case AVK_DOWN:	
+#else
+	case AVK_CLR:	
+#endif	
+		MSG_FATAL("***zzg MP3_MusicPlayerHanleKeyEvt  AVK_CLR m_bPlaying=%x, m_bPaused=%x**", pMe->m_bPlaying, pMe->m_bPaused, 0);
        if(pMe->m_bPlaying||pMe->m_bPaused)
        {
             ISHELL_CancelTimer(pMe->m_pShell,(PFNNOTIFY)CMusicPlayer_InitMusic,pMe);
@@ -3018,10 +3018,16 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
                                             0);       
                 }
             }
-         }       
-       return TRUE;
+       	}       
+#ifndef FEATURE_VERSION_C337    
+	   else
+       {
+          CLOSE_DIALOG(DLGRET_CANCELED);
+       }
+#endif
+	   return TRUE;
 	   
-	#ifdef FEATURE_VERSION_C337
+#ifdef FEATURE_VERSION_C337
 	case AVK_CLR:		
        if(pMe->m_bPlaying||pMe->m_bPaused)
        {
@@ -3058,10 +3064,10 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
        CLOSE_DIALOG(DLGRET_CANCELED);
        
        return TRUE;
-	#endif
+#endif
 	   
 
-	#ifndef FEATURE_VERSION_C337	
+#ifndef FEATURE_VERSION_C337	
     case AVK_POUND:
         if(pMe->m_bPlaying && pMe->m_pMedia)
         {
@@ -3100,10 +3106,10 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
             
         }
         return TRUE;
-	#endif
+#endif
 
 	//Add By zzg 2012_11_10
-	#ifdef FEATURE_VERSION_C337
+#ifdef FEATURE_VERSION_C337
 	case AVK_UP:
 	{
 		switch (pMe->m_nPlayMode)
@@ -3136,7 +3142,7 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
 		pMe->m_MusicPlayerCfg.eMusicPlayMode = pMe->m_nPlayMode;
 		return;
 	}
-	#endif
+#endif
 	//Add End
 		
     case AVK_BGPLAY:
