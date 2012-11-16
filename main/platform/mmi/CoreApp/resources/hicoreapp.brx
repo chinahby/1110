@@ -214,17 +214,23 @@
 	<String Id="1081" Name="IDS_MAIN_MENU_TORCHOFF">
 		<Text>Torch Off</Text>
 	</String>
+	<String Id="1082" Name="IDS_SALES_TRACKER">
+		<Text>Dear Customer,Kindly press any key to register for warranty services.This will help us provide best service support to you</Text>
+	</String>
+	<String Id="1083" Name="IDS_SALES_SUCCESS">
+		<Text>Thank you for registering with Lava</Text>
+	</String>
 	<String Id="1101" Name="IDS_CHARGER_USB_ON">
 		<Text>हेडसेट लगाया गया</Text>
 	</String>
 	<String Id="1102" Name="IDS_CHARGER_USB_OFF">
 		<Text>USB हटा</Text>
 	</String>
-	<String Id="1082" Name="IDS_SALES_TRACKER">
-		<Text>Dear Customer,Kindly press any key to register for warranty services.This will help us provide best service support to you</Text>
+	<String Id="1103" Name="IDS_CHARGER_CONNECTED">
+		<Text>Charger connected</Text>
 	</String>
-	<String Id="1083" Name="IDS_SALES_SUCCESS">
-		<Text>Thank you for registering with Lava</Text>
+	<String Id="1104" Name="IDS_CHARGER_REMOVED">
+		<Text>Charger removed</Text>
 	</String>
 </Strings>
 <Dialogs>

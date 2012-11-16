@@ -3193,6 +3193,8 @@ static void CoreApp_Process_Charger_Msg(CCoreApp   *pMe)
         {
             #ifdef FEATURE_VERSION_C337
             pMe->m_nMsgID = IDS_CHARGER_USB_ON;
+            #elif defined(FEATURE_VERSION_W317A)
+            pMe->m_nMsgID = IDS_CHARGER_CONNECTED;
             #else
             pMe->m_nMsgID = IDS_CHARGER_ON;
             #endif
@@ -3203,6 +3205,8 @@ static void CoreApp_Process_Charger_Msg(CCoreApp   *pMe)
        {
           #ifdef FEATURE_VERSION_C337
           pMe->m_nMsgID = IDS_CHARGER_USB_OFF;
+          #elif defined(FEATURE_VERSION_W317A)
+          pMe->m_nMsgID = IDS_CHARGER_REMOVED;
           #else
           pMe->m_nMsgID = IDS_CHARGER_OFF;
           #endif
