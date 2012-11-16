@@ -7180,11 +7180,19 @@ static boolean HandleSendFileDialogEvent(CBTApp *pMe,
 		{			
 			AECHAR 		WTitle[40] = {0};			
 
+			#ifdef FEATURE_VERSION_W317A
+			(void)ISHELL_LoadResString(pMe->m_pShell,
+				                       AEE_APPSBTAPP_RES_FILE,                                
+				                       IDS_BT_TITLE,
+				                       WTitle,
+				                       sizeof(WTitle));
+			#else
 			(void)ISHELL_LoadResString(pMe->m_pShell,
 				                       AEE_APPSBTAPP_RES_FILE,                                
 				                       IDS_OPP_CLIENT,
 				                       WTitle,
 				                       sizeof(WTitle));
+			#endif
 			
 			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);   
 

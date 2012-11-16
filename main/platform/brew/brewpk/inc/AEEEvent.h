@@ -322,6 +322,7 @@ enum
 #endif    
     EVT_MOBILE_TRACKER,
     EVT_SALES_TRACKER,
+    EVT_WMS_DRAFT_SAVED,
     EVT_CUST_MAX
 };
 #endif /*CUST_EDITION*/

@@ -674,8 +674,15 @@ void BTApp_OPPBuildClientMenu( CBTApp* pMe )
   if ( pMe->mOPP.bConnected != FALSE )
   {
     szStatus[ 3 ] = 'C';
+	
+	#ifdef FEATURE_VERSION_W317A
+	ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, IDS_BT_TITLE, 
+                          pMe->pText2, SHORT_TEXT_BUF_LEN * sizeof( AECHAR ) );
+	#else
     ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, IDS_OPP_CLIENT, 
                           pMe->pText2, SHORT_TEXT_BUF_LEN * sizeof( AECHAR ) );
+	#endif
+	
     len = WSTRLEN( pMe->pText2 );
 
     STRTOWSTR( szStatus, &pMe->pText2[ len ], 
@@ -706,11 +713,20 @@ void BTApp_OPPBuildClientMenu( CBTApp* pMe )
 
 	{
 		AECHAR WTitle[20] = {0};
+
+		#ifdef FEATURE_VERSION_W317A
+		ISHELL_LoadResString(pMe->m_pShell,
+		                     AEE_APPSBTAPP_RES_FILE,                                
+		                     IDS_BT_TITLE,
+		                     WTitle,
+		                     sizeof(WTitle));
+		#else
 		ISHELL_LoadResString(pMe->m_pShell,
 		                     AEE_APPSBTAPP_RES_FILE,                                
 		                     IDS_OPP_CLIENT,
 		                     WTitle,
 		                     sizeof(WTitle));
+		#endif
 
 		if(pMe->m_pIAnn != NULL)
 		{
@@ -798,8 +814,15 @@ void BTApp_OPPBuildSendFileClientMenu( CBTApp* pMe )
   if ( pMe->mOPP.bConnected != FALSE )
   {
     szStatus[ 3 ] = 'C';
+
+	#ifdef FEATURE_VERSION_W317A
+	ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, IDS_BT_TITLE, 
+                          pMe->pText2, SHORT_TEXT_BUF_LEN * sizeof( AECHAR ) );
+	#else
     ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, IDS_OPP_CLIENT, 
                           pMe->pText2, SHORT_TEXT_BUF_LEN * sizeof( AECHAR ) );
+	#endif
+	
     len = WSTRLEN( pMe->pText2 );
 
     STRTOWSTR( szStatus, &pMe->pText2[ len ], 
@@ -830,11 +853,20 @@ void BTApp_OPPBuildSendFileClientMenu( CBTApp* pMe )
 
 	{
 		AECHAR WTitle[20] = {0};
+
+		#ifdef FEATURE_VERSION_W317A
+		ISHELL_LoadResString(pMe->m_pShell,
+		                     AEE_APPSBTAPP_RES_FILE,                                
+		                     IDS_BT_TITLE,
+		                     WTitle,
+		                     sizeof(WTitle));
+		#else
 		ISHELL_LoadResString(pMe->m_pShell,
 		                     AEE_APPSBTAPP_RES_FILE,                                
 		                     IDS_OPP_CLIENT,
 		                     WTitle,
 		                     sizeof(WTitle));
+		#endif
 
 		if(pMe->m_pIAnn != NULL)
 		{
@@ -896,8 +928,15 @@ void BTApp_OPPSettingClientMenu( CBTApp* pMe )
   if ( pMe->mOPP.bConnected != FALSE )
   {
     szStatus[ 3 ] = 'C';
+
+	#ifdef FEATURE_VERSION_W317A
+	ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, IDS_BT_TITLE, 
+                          pMe->pText2, SHORT_TEXT_BUF_LEN * sizeof( AECHAR ) );
+	#else
     ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, IDS_OPP_CLIENT, 
                           pMe->pText2, SHORT_TEXT_BUF_LEN * sizeof( AECHAR ) );
+	#endif
+	
     len = WSTRLEN( pMe->pText2 );
 
     STRTOWSTR( szStatus, &pMe->pText2[ len ], 
@@ -928,11 +967,20 @@ void BTApp_OPPSettingClientMenu( CBTApp* pMe )
 
 	{
 		AECHAR WTitle[20] = {0};
+
+		#ifdef FEATURE_VERSION_W317A
+		ISHELL_LoadResString(pMe->m_pShell,
+		                     AEE_APPSBTAPP_RES_FILE,                                
+		                     IDS_BT_TITLE,
+		                     WTitle,
+		                     sizeof(WTitle));
+		#else
 		ISHELL_LoadResString(pMe->m_pShell,
 		                     AEE_APPSBTAPP_RES_FILE,                                
 		                     IDS_OPP_CLIENT,
 		                     WTitle,
 		                     sizeof(WTitle));
+		#endif
 
 		if(pMe->m_pIAnn != NULL)
 		{

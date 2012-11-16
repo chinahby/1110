@@ -1444,6 +1444,16 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 					
 			}
 			return TRUE;
+			
+		//Add By zzg 2012_11_16	
+		case EVT_WMS_DRAFT_SAVED:
+		{
+			MSG_FATAL("EVT_WMS_DRAFT_SAVED",0,0,0);
+			CLOSE_DIALOG(DLGRET_WMS_DRAFT_SAVED)
+			return TRUE;
+		}
+		//Add End
+		
 		case EVT_ALARM:
 			{
 				if(Coreapp_CanAlert(pMe))

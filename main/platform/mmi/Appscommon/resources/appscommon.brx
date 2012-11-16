@@ -41,7 +41,7 @@
 		<Text>Read</Text>
 	</STRING>
 	<STRING Id="14" Name="IDS_OPTION">
-		<Text>Option</Text>
+		<Text>Options</Text>
 	</STRING>
 	<STRING Id="15" Name="IDS_SOS">
 		<Text>SOS</Text>
@@ -131,7 +131,7 @@
 		<Text>Reject</Text>
 	</STRING>
 	<STRING Id="44" Name="IDS_MUTE">
-		<Text>Mute</Text>
+		<Text>Silent</Text>
 	</STRING>
 	<STRING Id="45" Name="IDS_UNMUTE">
 		<Text>Unmute</Text>
@@ -155,7 +155,7 @@
 		<Text>Send request</Text>
 	</STRING>
 	<STRING Id="114" Name="IDS_OPTION_FM">
-		<Text>Option</Text>
+		<Text>Options</Text>
 	</STRING>
 	<STRING Id="1001" Name="IDS_RECORD">
 		<Text>Record</Text>
@@ -203,7 +203,7 @@
 		<Text>Accept</Text>
 	</STRING>
 	<STRING Id="1016" Name="IDS_HANDSFREE_OFF">
-		<Text>Normal</Text>
+		<Text>Handset</Text>
 	</STRING>
 	<STRING Id="1017" Name="IDS_REPLAY">
 		<Text>Replay</Text>
@@ -312,6 +312,9 @@
 	</String>
 	<STRING Id="2011" Name="IDS_PHONE_BOOK">
 		<Text>Phonebook</Text>
-	</STRING>
+	</STRING>	
+	<STRING Id="2012" Name="IDS_FILE_MANAGER">
+		<Text>File manager</Text>
+	</STRING>	
 </Strings>
 </BREWRes>

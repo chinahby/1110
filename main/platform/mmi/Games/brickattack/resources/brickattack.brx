@@ -23,10 +23,10 @@
 			<Text>GAME OVER</Text>
 		</STRING>
 		<STRING Id="9" Name="IDS_WELCOME">
-			<Text>  Paddle Left</Text>
+			<Text>  Move Left</Text>
 		</STRING>
 		<STRING Id="10" Name="IDS_WELCOME_R">
-			<Text>  Paddle Right</Text>
+			<Text>  Move Right</Text>
 		</STRING>
 		<STRING Id="11" Name="IDS_WELCOME_P">
 			<Text>  OK/CLR Pause</Text>

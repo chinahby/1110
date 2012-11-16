@@ -1532,6 +1532,10 @@ static NextFSMAction COREST_STANDBY_Handler(CCoreApp *pMe)
 			MSG_FATAL("DLGRET_SALES_SUCESS_Handler DLGRET_SALES_TRACKER",0,0,0);
             MOVE_TO_STATE(COREST_SALES_SUCCESS)
             return NFSMACTION_CONTINUE;
+		case DLGRET_WMS_DRAFT_SAVED:
+			MSG_FATAL("DLGRET_SALES_SUCESS_Handler DLGRET_WMS_DRAFT_SAVED",0,0,0);
+            CoreApp_ShowMsgDialog(pMe, IDS_WMS_DRAFT_SAVED);
+            return NFSMACTION_WAIT;           	
 #endif
 
 

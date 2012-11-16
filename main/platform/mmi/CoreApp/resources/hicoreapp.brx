@@ -185,7 +185,7 @@
 		<Text>FMRadio</Text>
 	</String>
 	<String Id="1062" Name="IDS_BATTERY_FULLY_CHARGE">
-		<Text>Charge Completed</Text>
+		<Text>Charging Completed</Text>
 	</String>
 	<String Id="1063" Name="IDS_USERPROFILE_MODE">
 		<Text>vibrate mode activated</Text>
@@ -231,6 +231,9 @@
 	</String>
 	<String Id="1104" Name="IDS_CHARGER_REMOVED">
 		<Text>Charger removed</Text>
+	</String>
+	<String Id="1084" Name="IDS_WMS_DRAFT_SAVED">
+		<Text>Message is saved in draft</Text>
 	</String>
 </Strings>
 <Dialogs>

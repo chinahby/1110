@@ -494,7 +494,11 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
             nResID_R = IDS_BACK;
             break;
          case BTBAR_GALLERY_BACK:
-            nResID_L = IDS_GALLERY;            
+#ifdef FEATURE_VERSION_W317A
+			nResID_L = IDS_FILE_MANAGER;  
+#else
+            nResID_L = IDS_GALLERY;     
+#endif
             nResID_R = IDS_BACK;
             break;              
             
@@ -571,7 +575,11 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
          case BTBAR_OK_DEL:
          case BTBAR_OK_DELETE:
             nResID_L = IDS_OK;
+#ifdef FEATURE_VERSION_W317A
+			nResID_R = IDS_CLEAR_EX;
+#else
             nResID_R = IDS_DEL;
+#endif
             break;
 
             // 选项-----返回
@@ -588,12 +596,20 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
             // 选项-----删除
          case BTBAR_OPTION_DELETE:
             nResID_L = IDS_OPTION;
+#ifdef FEATURE_VERSION_W317A
+			nResID_R = IDS_CLEAR_EX;
+#else			
             nResID_R = IDS_DEL;
+#endif
             break; 
 
          case BTBAR_OPTION_DEL:
             nResID_L = IDS_OPTION;
+#ifdef FEATURE_VERSION_W317A
+			nResID_R = IDS_CLEAR_EX;
+#else			
             nResID_R = IDS_DEL;
+#endif
             break;   
 
             //选项---挂机:
@@ -650,7 +666,9 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
             break; 
 
          case BTBAR_GALLERY_PLAY_BACK:
+#ifndef FEATURE_VERSION_C337
             nResID_L = IDS_GALLERY;
+#endif
             nResID_M = IDS_PLAY;            
             nResID_R = IDS_BACK;
             break;
@@ -701,7 +719,11 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
             // 保存-----删除
          case BTBAR_SAVE_DELETE:
             nResID_L = IDS_SAVE;
+#ifdef FEATURE_VERSION_W317A
+			nResID_R = IDS_CLEAR_EX;
+#else			
             nResID_R = IDS_DEL;
+#endif
             break;
 
             // 选择-----返回
@@ -945,7 +967,7 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
          case BTBAR_OPTION_SAVE_DEL:
             nResID_L = IDS_OPTION;
             nResID_M = IDS_SAVE;
-#if defined(FEATURE_VERSION_C337)  
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A)
             nResID_R = IDS_CLEAR_EX;	
 #else
             nResID_R = IDS_DEL;	
@@ -1093,8 +1115,6 @@ void DrawBottomBar(IDisplay  * pIDisplay, BottomBar_Param_type *BParam)
 #ifdef FEATURE_RANDOM_MENU_COLOR
     RGBVAL  nBgColor = APPSCOMMON_BG_COLOR;
 #endif
-
-	MSG_FATAL("***zzg DrawBottomBar***",0,0,0);
     
     if ((NULL == pShell) || (NULL == pIDisplay) || (NULL == BParam))
     {

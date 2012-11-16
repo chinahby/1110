@@ -3192,9 +3192,15 @@ void OEM_RestoreFactorySetting( void )
    nvi_cache.handset_ear_level = OEMNV_VOLUME_HIGH;
 
    // CFGI_BEEP_VOL:
+#ifdef FEATURE_VERSION_W317A
+	nvi.beep_level = OEMNV_VOLUME_OFF;
+   (void) OEMNV_Put( NV_BEEP_LVL_I, &nvi );
+   nvi_cache.beep_level = OEMNV_VOLUME_OFF;
+#else
    nvi.beep_level = OEMNV_VOLUME_LOW;
    (void) OEMNV_Put( NV_BEEP_LVL_I, &nvi );
    nvi_cache.beep_level = OEMNV_VOLUME_LOW;
+#endif
 
 #ifdef FEATURE_SMART_SOUND
    // CFGI_SMART_SOUND:

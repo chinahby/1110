@@ -9342,19 +9342,35 @@ static void CallApp_Draw_Connect_Time(void *pUser)
     //
     // TIMER TEXT
     //
+#ifdef FEATURE_VERSION_W317A
+	SETAEERECT(&rect,
+                0,
+                (SCREEN_HEIGHT-CALL_LINE_HIGHT)/2,
+                CALL_TEXT_DX+4,
+                CALL_LINE_HIGHT);
+#else
     SETAEERECT(&rect,
-                                            0,
-                                            CALL_FIRST_LINE_Y,
-                                            CALL_TEXT_DX+4,
-                                            CALL_LINE_HIGHT);
+                0,
+                CALL_FIRST_LINE_Y,
+                CALL_TEXT_DX+4,
+                CALL_LINE_HIGHT);
+#endif
     
-    Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &rect, TRUE);
+    Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &rect, TRUE);	
 
+#ifdef FEATURE_VERSION_W317A
+	SETAEERECT(&rect,
+                CALL_TEXT_X,
+                (SCREEN_HEIGHT-CALL_LINE_HIGHT)/2,
+                CALL_TEXT_DX,
+                CALL_LINE_HIGHT);
+#else
     SETAEERECT(&rect,
-                                            CALL_TEXT_X,
-                                            CALL_FIRST_LINE_Y,
-                                            CALL_TEXT_DX,
-                                            CALL_LINE_HIGHT);
+                CALL_TEXT_X,
+                CALL_FIRST_LINE_Y,
+                CALL_TEXT_DX,
+                CALL_LINE_HIGHT);
+#endif
 
 #ifndef FEATURE_LANG_BIDI
     (void) ISHELL_LoadResString(pMe->m_pShell,
@@ -9383,11 +9399,19 @@ static void CallApp_Draw_Connect_Time(void *pUser)
     // Offset for Timer is width of Time Text
     //bOffset = bWidth;// + 16;
 
+#ifdef FEATURE_VERSION_W317A	
+	SETAEERECT(&rect,
+	            CALL_NAME_X, //CALL_TEXT_X +bWidth +4 ,
+	            (SCREEN_HEIGHT-CALL_LINE_HIGHT)/2,
+	            CALL_TEXT_DX - bWidth -4,
+	            CALL_LINE_HIGHT);
+#else
     SETAEERECT(&rect,
-                                            CALL_NAME_X, //CALL_TEXT_X +bWidth +4 ,
-                                            CALL_FIRST_LINE_Y,
-                                            CALL_TEXT_DX - bWidth -4,
-                                            CALL_LINE_HIGHT);
+	            CALL_NAME_X, //CALL_TEXT_X +bWidth +4 ,
+	            CALL_FIRST_LINE_Y,
+	            CALL_TEXT_DX - bWidth -4,
+	            CALL_LINE_HIGHT);
+#endif
 
     //IDISPLAY_EraseRect(pMe->m_pDisplay, &rect);
     ITIMECTL_GetTimeString(pTimerCtl,
@@ -11379,6 +11403,8 @@ static void CallApp_Draw_Connect_Softkey(CCallApp *pMe)
 		{
 			#ifdef FEATURE_VERSION_C337
 			REFUI_DRAW_BOTTOMBAR(BTBAR_OPTION_HANDS_HELD)
+			#elif defined FEATURE_VERSION_W317A
+			REFUI_DRAW_BOTTOMBAR(BTBAR_OPTION_NORMAL)
 			#else
 			REFUI_DRAW_BOTTOMBAR(BTBAR_OPTION_NORMAL)
 			#endif

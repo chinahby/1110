@@ -291,6 +291,9 @@
 	</String>
 	<STRING Id="2011" Name="IDS_PHONE_BOOK">
 		<Text>Phonebook</Text>
-	</STRING>
+	</STRING>	
+	<STRING Id="2012" Name="IDS_FILE_MANAGER">
+		<Text>File manager</Text>
+	</STRING>	
 </Strings>
 </BREWRes>
