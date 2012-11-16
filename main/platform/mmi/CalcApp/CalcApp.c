@@ -1786,7 +1786,7 @@ SEE ALSO:
 static void Calc_DrawScreen(CCalcApp *pme)
 {
 	BottomBar_Param_type BarParam;        //wlh 20090417 add          
-	MEMSET(&BarParam, 0, sizeof(BarParam));//wlh 20090417 add         
+	MEMSET(&BarParam, 0, sizeof(BarParam));//wlh 20090417 add   
 	BarParam.eBBarType = BTBAR_BACK;      //wlh 20090417 add
 
 	Calc_SetupValRect(pme);
@@ -2566,6 +2566,9 @@ static void Calc_DrawNum( CCalcApp *pme)
     boolean   bSmall     = 0;
     int16     nWidth     = 0;
     AEERect   rc         = pme->m_valRect;
+    BottomBar_Param_type BarParam;                 
+	MEMSET(&BarParam, 0, sizeof(BarParam));
+    
 #if defined(FEATURE_DISP_220X176)||defined(FEATURE_DISP_128X160)||defined(FEATURE_DISP_160X128)|| defined(FEATURE_DISP_176X220)
 	drawImageWithOffset( pme,
                  AEE_APPSCOMMONRES_IMAGESFILE,
@@ -2649,6 +2652,16 @@ static void Calc_DrawNum( CCalcApp *pme)
 #endif
     //if (bUpdate)
     {
+         
+           if(pme->m_bClearLast == FALSE && WSTRLEN( pme->m_szText) > 0)
+       	   {
+             BarParam.eBBarType = BTBAR_DELETE;      
+           }
+           else
+           {
+       	     BarParam.eBBarType = BTBAR_BACK;     
+           }
+           DrawBottomBar(pme->a.m_pIDisplay,&BarParam);
            IDISPLAY_Update(pme->a.m_pIDisplay);
     }
 }
