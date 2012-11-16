@@ -1003,7 +1003,11 @@ static boolean MediaGalleryApp_MainMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
          if(pMe->m_StartMode == MGSM_NORMAL_EXPLORER)
          {
             MGMENU_ADDITEM(pMenuCtl, IDS_MG_MEMORYSTATUS);
+            #ifdef FEATURE_VERSION_W317A
+            MGMENU_ADDITEM(pMenuCtl, IDS_MG_MASSSTORAGE);
+            #else
             MGMENU_ADDITEM(pMenuCtl, IDS_MG_UDISK);
+            #endif
          }
          return TRUE;
       }
@@ -1206,7 +1210,9 @@ static boolean MediaGalleryApp_MainMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
          case IDS_MG_MEMORYSTATUS:
             MGCLOSE_DIALOG(MGDLGRET_MEMSTAT);
             return TRUE;
-
+         #ifdef FEATURE_VERSION_W317A
+         case IDS_MG_MASSSTORAGE:
+         #endif
          case IDS_MG_UDISK:
             MGCLOSE_DIALOG(MGDLGRET_UDISK);
             return TRUE;
@@ -1929,11 +1935,19 @@ static boolean MediaGalleryApp_UDiskDlg_HandleEvent(CMediaGalleryApp* pMe,
 		 //add by yangdecai
 			{
 				AECHAR WTitle[40] = {0};
+                #ifdef FEATURE_VERSION_W317A
+                (void)ISHELL_LoadResString(pMe->m_pShell,
+                        MGRES_LANGFILE,                                
+                        IDS_MG_MASSSTORAGE,
+                        WTitle,
+                        sizeof(WTitle));
+                #else
 				(void)ISHELL_LoadResString(pMe->m_pShell,
                         MGRES_LANGFILE,                                
                         IDS_MG_UDISK,
                         WTitle,
                         sizeof(WTitle));
+                #endif
 				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
             }
 

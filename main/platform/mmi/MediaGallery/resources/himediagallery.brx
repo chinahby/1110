@@ -358,6 +358,9 @@
 	<STRING Id="1120" Name="IDS_MG_DISSTORAGE">
 		<Text>Mass storage is disconnected</Text>
 	</STRING>
+	<STRING Id="1021" Name="IDS_MG_MASSSTORAGE">
+		<Text>Mass storage</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<Dialog Id="6001" Name="IDD_MG_MAINMENU" Focus="7001">
