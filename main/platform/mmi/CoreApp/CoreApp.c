@@ -447,6 +447,9 @@ void CoreApp_FreeAppData(IApplet* po)
 #endif
 #if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
 #ifdef FEATURE_UIALARM
+	IAlarm_CancelAlarm(pMe->m_pIAlarm,
+                       		AEECLSID_CORE_APP,
+                       		PERMID);
     if (pMe->m_pIAlarm)
     {
         IAlarm_Release(pMe->m_pIAlarm);

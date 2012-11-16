@@ -168,7 +168,7 @@ static AlarmInfo *CAlarm_FindAlarm(CAlarm *pMe,
                                         AEECLSID cls,
                                         uint16   nUserCode,
                                         uint32  *idx);
-static void       CAlarm_ScheduleAlarms(CAlarm *pMe);
+static void       CAlarm_ScheduleAlarms(CAlarm *pMe,uint16 nUserCode);
 static void       CAlarm_TimerCB(void *pUser);
 
 
@@ -351,6 +351,7 @@ static int CAlarm_SetAlarm(IAlarm *p,
    uint32       idx;
    AlarmInfo   *pai;
    DBGPRINTF( "CAlarm_SetAlarm  cls=0x%x nUserCode = %d--nMins=%d",cls,nUserCode,nMins);
+   MSG_FATAL("pMe->m_alarmsActive=====%d",pMe->m_alarmsActive,0,0);
    if (FALSE == pMe->m_alarmsActive) {
       return EFAILED;
    }
@@ -398,11 +399,12 @@ static int CAlarm_SetAlarm(IAlarm *p,
    
    pai->nExpireMin = nMins +
                      GET_SECONDS();
+   MSG_FATAL("pai->nExpireMin==%d,nMins==%d,GET_SECONDS()===%d",pai->nExpireMin,nMins,GET_SECONDS());
 //                     GET_SECONDS() / 60;
 
    CAlarm_SaveAlarmData(pMe);
 
-   CAlarm_ScheduleAlarms(pMe);
+   CAlarm_ScheduleAlarms(pMe,nUserCode);
 
    return SUCCESS;
 }
@@ -460,7 +462,7 @@ static int CAlarm_CancelAlarm(IAlarm *p,
 
    CAlarm_SaveAlarmData(pMe);
 
-   CAlarm_ScheduleAlarms(pMe);
+   CAlarm_ScheduleAlarms(pMe,nUserCode);
 
    return SUCCESS;
 }
@@ -492,7 +494,7 @@ static void CAlarm_SuspendAlarms(IAlarm *p)
 
    pMe->m_alarmsActive = FALSE;
 
-   CAlarm_ScheduleAlarms(pMe);
+   CAlarm_ScheduleAlarms(pMe,0);
 }
 
 
@@ -523,7 +525,7 @@ static void CAlarm_ResumeAlarms(IAlarm *p)
 
    pMe->m_alarmsActive = TRUE;
 
-   CAlarm_ScheduleAlarms(pMe);
+   CAlarm_ScheduleAlarms(pMe,0);
 }
 
 
@@ -759,7 +761,7 @@ SIDE EFFECTS:
 SEE ALSO:
 
 =============================================================================*/
-static void CAlarm_ScheduleAlarms(CAlarm *pMe)
+static void CAlarm_ScheduleAlarms(CAlarm *pMe,uint16 nUserCode)
 {
     uint32   i;
     uint32   nCurrSecs;
@@ -800,7 +802,9 @@ static void CAlarm_ScheduleAlarms(CAlarm *pMe)
         if (pai->nExpireMin <= nCurrMin) 
         {
             pOldContext = AEE_EnterAppContext(NULL);
-            ISHELL_PostEventEx(pMe->m_pShell, 0, pai->cls, EVT_ALARM, pai->nUserCode, 0);
+			{
+            	ISHELL_PostEventEx(pMe->m_pShell, 0, pai->cls, EVT_ALARM, pai->nUserCode, 0);
+			}
             DBGPRINTF( ";alarm expired class = 0x%x id = %d",pai->cls,pai->nUserCode);
             AEE_LeaveAppContext(pOldContext);
 
@@ -853,6 +857,8 @@ static void CAlarm_ScheduleAlarms(CAlarm *pMe)
         pOldContext = AEE_EnterAppContext(NULL);
         (void) ISHELL_SetTimer(pMe->m_pShell, (int32) nNextTimerMS, CAlarm_TimerCB, pMe);
         AEE_LeaveAppContext(pOldContext);
+		MSG_FATAL("nUserCode============%d",nUserCode,0,0);
+		if(nUserCode != 21)
         {
             IAnnunciator *pIAnn;
             if (SUCCESS == ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_ANNUNCIATOR, (void**)&pIAnn)) 
@@ -892,5 +898,5 @@ static void CAlarm_TimerCB(void *pUser)
 {
    register CAlarm *pMe = (CAlarm *)pUser;
 
-   CAlarm_ScheduleAlarms(pMe);
+   CAlarm_ScheduleAlarms(pMe,0);
 }
