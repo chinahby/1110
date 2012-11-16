@@ -1380,6 +1380,9 @@ static NextFSMAction WMSST_INBOXMSGOPTS_Handler(WmsApp *pMe)
 			//ADD BY YANGDECAI 2010-08-16
             pMe->m_eEraseWMSType = CLEAR_INBOXES;
             pMe->m_STSwitchToEditMsg = WMSST_MAIN;
+            #ifdef FEATURE_VERSION_W317A
+            pMe->m_wMsgResID = IDS_DELETEALL;
+            #endif
             MOVE_TO_STATE(WMSST_DELMSGCONFIRM)
             return NFSMACTION_CONTINUE;
 #ifdef FEATURE_CONTACT_APP
@@ -2232,6 +2235,9 @@ static NextFSMAction WMSST_DRAFTMSGOPTS_Handler(WmsApp *pMe)
         case DLGRET_CLEARALL:
             pMe->m_eEraseWMSType = CLEAR_DRAFT;
             pMe->m_STSwitchToEditMsg = WMSST_MAIN;
+            #ifdef FEATURE_VERSION_W317A
+            pMe->m_wMsgResID = IDS_DELETEALL;
+            #endif
             MOVE_TO_STATE(WMSST_DELMSGCONFIRM)
             return NFSMACTION_CONTINUE;
 
@@ -3998,6 +4004,9 @@ static NextFSMAction WMSST_OUTMSGOPTS_Handler(WmsApp *pMe)
 			
             pMe->m_eEraseWMSType = CLEAR_OUTBOX;
             pMe->m_STSwitchToEditMsg = WMSST_MAIN;
+            #ifdef FEATURE_VERSION_W317A
+            pMe->m_wMsgResID = IDS_DELETEALL;
+            #endif
             MOVE_TO_STATE(WMSST_DELMSGCONFIRM)
             return NFSMACTION_CONTINUE;
 
@@ -4274,7 +4283,15 @@ static NextFSMAction WMSST_DELMSGCONFIRM_Handler(WmsApp *pMe)
     switch (pMe->m_eDlgReturn)
     {
         case DLGRET_CREATE:
-            pMe->m_wMsgResID = IDS_DELETE;
+            #ifdef FEATURE_VERSION_W317A
+            if(pMe->m_wMsgResID == IDS_DELETEALL)
+            {
+              pMe->m_wMsgResID = IDS_DELETEALL;
+            }else
+            #endif
+            {
+              pMe->m_wMsgResID = IDS_DELETE;
+            }
             WmsApp_ShowDialog(pMe, IDD_CONFIRM);
             return NFSMACTION_WAIT;
 
