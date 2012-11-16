@@ -770,6 +770,7 @@ static void CAlarm_ScheduleAlarms(CAlarm *pMe,uint16 nUserCode)
     uint32   nNextMin;
     boolean  bAlarmsChanged;
     void    *pOldContext;
+	boolean  bAlarmSalesTracker = FALSE;
 
     pOldContext = AEE_EnterAppContext(NULL);
     (void) ISHELL_CancelTimer(pMe->m_pShell, CAlarm_TimerCB, NULL);
@@ -797,6 +798,11 @@ static void CAlarm_ScheduleAlarms(CAlarm *pMe,uint16 nUserCode)
     while (i < IVector_Size(pMe->m_alarms)) 
     {
         AlarmInfo *pai = IVector_ElementAt(pMe->m_alarms, i);
+		if((pai->nUserCode == 21) &&(IVector_Size(pMe->m_alarms) ==1))
+		{
+			bAlarmSalesTracker = TRUE;
+			nUserCode = 21;
+		}
         DBGPRINTF( "pai->nExpireMin = %d nCurrMin = %d---pai->nUserCode=%d",pai->nExpireMin,nCurrMin,pai->nUserCode);
         DBGPRINTF( "i = %d ---IVector_Size(pMe->m_alarms = %d",i,IVector_Size(pMe->m_alarms)); 
         if (pai->nExpireMin <= nCurrMin) 
@@ -867,6 +873,15 @@ static void CAlarm_ScheduleAlarms(CAlarm *pMe,uint16 nUserCode)
                 IANNUNCIATOR_Release(pIAnn);
             }
         }
+		else
+		{
+			IAnnunciator *pIAnn;
+            if (SUCCESS == ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_ANNUNCIATOR, (void**)&pIAnn)) 
+            {
+                IANNUNCIATOR_SetField(pIAnn, ANNUN_FIELD_ALARM, ANNUN_STATE_ALARM_OFF/*ANNUN_STATE_OFF*/);
+                IANNUNCIATOR_Release(pIAnn);
+            }
+		}
     }
 
     if (bAlarmsChanged) 
