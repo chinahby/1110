@@ -358,10 +358,10 @@
 	<STRING Id="1120" Name="IDS_MG_DISSTORAGE">
 		<Text>Mass storage is disconnected</Text>
 	</STRING>
-	<STRING Id="1021" Name="IDS_MG_MASSSTORAGE">
+	<STRING Id="1121" Name="IDS_MG_MASSSTORAGE">
 		<Text>Mass storage</Text>
 	</STRING>
-	<STRING Id="1022" Name="IDS_MG_CONSTORAGE">
+	<STRING Id="1122" Name="IDS_MG_CONSTORAGE">
 		<Text>Mass storage is connected</Text>
 	</STRING>
 </Strings>
