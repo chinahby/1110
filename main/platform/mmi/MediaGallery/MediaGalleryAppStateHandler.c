@@ -854,7 +854,11 @@ static NextFSMAction MGStateUDiskStateHandler(CMediaGalleryApp* pMe)
         #ifdef FEATURE_VERSION_W515V3
         MediaGalleryApp_ShowMsgBoxDlg(pMe,MGRES_LANGFILE,IDS_MG_STOPV3DATACARD,
                                       MESSAGE_INFORMATION,
-                                      BTBAR_OK);        
+                                      BTBAR_OK);       
+        #elif defined(FEATURE_VERSION_W317A)
+        MediaGalleryApp_ShowMsgBoxDlg(pMe,MGRES_LANGFILE,IDS_MG_DISSTORAGE,
+                                      MESSAGE_INFORMATION,
+                                      BTBAR_OK); 
         #else
         MediaGalleryApp_ShowMsgBoxDlg(pMe,MGRES_LANGFILE,IDS_MG_STOPUDISK,
                                       MESSAGE_INFORMATION,
