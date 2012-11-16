@@ -194,7 +194,7 @@
 		<Text>Can't rename</Text>
 	</STRING>
 	<STRING Id="1065" Name="IDS_MUSIC_PLAYER">
-		<Text>MusicPlayer</Text>
+		<Text>Music Player</Text>
 	</STRING>
 </Strings>
 <Dialogs>

@@ -113,7 +113,7 @@
 		<Text>FM Radio</Text>
 	</STRING>
 	<STRING Id="1051" Name="IDS_MAIN_MENU_MUSICPLAYER">
-		<Text>MusicPlayer</Text>
+		<Text>Music player</Text>
 	</STRING>
 	<STRING Id="1061" Name="IDS_MAIN_MENU_SMARTWORLD">
 		<Text>Smart World</Text>
