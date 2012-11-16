@@ -964,7 +964,7 @@ static boolean  HandleCallSettingDialogEvent(CSettingMenu *pMe,
 				#endif
                 case IDS_MINUTE_ALERT:     //50ÃëÌáÐÑ
                 	#ifdef FEATURE_VERSION_W317A
-					pMe->m_CallSettingSel = IDS_MINUTE_ALERT;
+					pMe->m_CallSettingSel = IDS_CALL_TIME_REMINDER;
 					#else
                     pMe->m_CallSettingSel = IDS_MINUTE_ALERT;
 					#endif

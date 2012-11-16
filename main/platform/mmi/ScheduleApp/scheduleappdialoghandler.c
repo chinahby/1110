@@ -1178,7 +1178,7 @@ static boolean dialog_handler_of_state_pwd(CScheduleApp* pme,
 #endif
                 //IDISPLAY_FillRect  (pme->m_pDisplay,&pme->m_rc,RGB_BLACK);
 
-				#ifdef FEATURE_VERSION_C337
+				#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A)
 				(void)ISHELL_LoadResString(pme->m_pShell, 
 	                                        AEE_SCHEDULEAPP_RES_FILE,
 	                                        IDS_CALENDAR, 
@@ -1607,7 +1607,7 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
         {
             AECHAR WTitle[20] = {0};
 
-			#ifdef FEATURE_VERSION_C337
+			#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A)
 			(void)ISHELL_LoadResString(pme->m_pShell,
 							            AEE_SCHEDULEAPP_RES_FILE,                                
 							            IDS_CALENDAR,
@@ -2482,7 +2482,7 @@ static boolean  dialog_handler_of_state_gotodate( CScheduleApp* pme,
                     AECHAR text[16];
                     TitleBar_Param_type TitleBar = {0};
 
-					#ifdef FEATURE_VERSION_C337
+					#if defined (FEATURE_VERSION_C337) ||defined (FEATURE_VERSION_W317A)
 					ISHELL_LoadResString(pme->m_pShell, 
                                             AEE_SCHEDULEAPP_RES_FILE, 
                                             IDS_CALENDAR, 
@@ -3728,7 +3728,7 @@ static boolean  dialog_handler_of_state_event_edit( CScheduleApp* pme,
                 titleBarParms.nTitleResID   = IDS_APP;
             }
 
-			#ifdef FEATURE_VERSION_C337
+			#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A)
 			titleBarParms.nTitleResID   = IDS_CALENDAR;
 			#endif
 			
@@ -6121,7 +6121,7 @@ static boolean  dialog_handler_of_state_showalert( CScheduleApp* pme,
                     IDISPLAY_SetColor(pme->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
                     // schedule alert
                     {
-                    	#ifdef FEATURE_VERSION_C337
+                    	#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A)
 						ISHELL_LoadResString(pme->m_pShell, 
                                                 AEE_SCHEDULEAPP_RES_FILE, 
                                                 IDS_CALENDAR, 

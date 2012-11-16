@@ -212,7 +212,7 @@ static NextFSMAction Handler_STATE_INIT(CMusicPlayer *pMe)
     }
     if(pMe->m_eStartMethod==STARTMETHOD_NORMAL)
     {
-	#ifdef FEATURE_VERSION_C337
+	#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A)
 		MOVE_TO_STATE(STATE_PLAYMUSIC_WINDOWS);
 	#else
 		//MOVE_TO_STATE(STATE_PLAYMUSIC_WINDOWS);

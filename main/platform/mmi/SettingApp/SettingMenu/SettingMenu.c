@@ -251,9 +251,7 @@ int  SettingMenuMod_New(int16  nSize,
 
     MEMSET(&gSettingMenuMod,0,sizeof(SettingMenuMod));
 
-    INIT_VTBL(&gSettingMenuMod,IModule,gModFuncs);
-
-	MSG_FATAL("***zzg gSettingMenuMod 1 m_nRefs=%x***", gSettingMenuMod.m_nRefs, 0, 0);
+    INIT_VTBL(&gSettingMenuMod,IModule,gModFuncs);	
 	
     gSettingMenuMod.m_nRefs = 1;
     *ppMod = (IModule *)&gSettingMenuMod;
@@ -277,8 +275,7 @@ int  SettingMenuMod_New(int16  nSize,
 
 ==============================================================================*/
 static uint32 SettingMenuMod_AddRef(IModule *po)
-{
-	MSG_FATAL("***zzg gSettingMenuMod 2 m_nRefs=%x***", ((SettingMenuMod *) po)->m_nRefs, 0, 0);
+{	
     return(++((SettingMenuMod *)po)->m_nRefs);
 }
 
@@ -300,8 +297,6 @@ static uint32 SettingMenuMod_AddRef(IModule *po)
 ==============================================================================*/
 static uint32 SettingMenuMod_Release(IModule *po)
 {
-	MSG_FATAL("***zzg gSettingMenuMod 3 m_nRefs=%x***", ((SettingMenuMod *) po)->m_nRefs, 0, 0);
-	
     if (((SettingMenuMod *) po)->m_nRefs == 0)
     {
         return 0;
@@ -410,9 +405,6 @@ static int SettingMenu_New(IShell *ps,
 )
 {
     int retVal = SUCCESS;
-
-	MSG_FATAL("***zzg gSettingMenuMod 4 m_nRefs=%x***", gSettingMenu.m_nRefs, 0, 0);
-
     if (0 == gSettingMenu.m_nRefs)
     {
         // Must initialize the object
@@ -452,9 +444,7 @@ static int SettingMenu_New(IShell *ps,
 ==============================================================================*/
 static uint32  SettingMenu_AddRef(ISettingMenu *pi)
 {
-    register CSettingMenu *pMe = (CSettingMenu*)pi;
-
-	MSG_FATAL("***zzg gSettingMenuMod 5 m_nRefs=%x***", pMe->m_nRefs, 0, 0);
+    register CSettingMenu *pMe = (CSettingMenu*)pi;	
 
     ASSERT(pMe != NULL);
     ASSERT(pMe->m_nRefs > 0);
@@ -484,8 +474,6 @@ static uint32  SettingMenu_Release (ISettingMenu *pi)
     register CSettingMenu *pMe = (CSettingMenu*)pi;
 
     ASSERT(pMe != NULL);
-
-	MSG_FATAL("***zzg gSettingMenuMod 6 m_nRefs=%x***", pMe->m_nRefs, 0, 0);
 
     if (pMe->m_nRefs == 0)
     {
@@ -527,8 +515,6 @@ static uint32  SettingMenu_Release (ISettingMenu *pi)
 static int SettingMenu_InitAppData(CSettingMenu *pMe)
 {
     AEEDeviceInfo  di;
-
-	MSG_FATAL("***zzg SettingMenu_InitAppData***", 0, 0, 0);
 
     if (NULL  == pMe)
     {
@@ -707,14 +693,10 @@ static boolean SettingMenu_HandleEvent(ISettingMenu *pi,
 
     ISHELL_GetDeviceInfo(pMe->m_pShell,&di);    
     //SETTING_ERR("%x, %x ,%x,SettingMenu_HandleEvent",eCode,wParam,dwParam);
-
-	MSG_FATAL("***zzg SettingMenu_HandleEvent ***", 0, 0, 0);
-    
+	
     switch (eCode)
     {
-        case EVT_APP_START:
-			MSG_FATAL("***zzg SettingMenu_HandleEvent EVT_APP_START***", 0, 0, 0);
-			
+        case EVT_APP_START:			
             pMe->m_bAppIsReady = FALSE;
             ASSERT(dwParam != 0);
             as = (AEEAppStart*)dwParam;
@@ -775,8 +757,7 @@ static boolean SettingMenu_HandleEvent(ISettingMenu *pi,
             SettingMenu_RunFSM(pMe);
             return TRUE;
 
-        case EVT_DIALOG_INIT:
-			MSG_FATAL("***zzg SettingMenu_HandleEvent EVT_DIALOG_INIT***", 0, 0, 0);
+        case EVT_DIALOG_INIT:			
 			if(OEM_IME_DIALOG == wParam)
 			{
 				return TRUE;

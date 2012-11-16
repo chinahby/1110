@@ -980,7 +980,7 @@ static boolean MediaGalleryApp_MainMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
 			{
 				AECHAR WTitle[40] = {0};
 				
-				#ifdef FEATURE_VERSION_C337
+				#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A)
 				(void)ISHELL_LoadResString(pMe->m_pShell,
 					                        MGRES_LANGFILE,                                
 					                        IDS_MG_MEDIAGALLERY_C337,
@@ -1016,7 +1016,7 @@ static boolean MediaGalleryApp_MainMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
       {
          const char *pszResFile = MGRES_LANGFILE;
 
-		 #ifdef FEATURE_VERSION_C337
+		 #if  defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A)
 		 uint16 wResID = IDS_MG_MEDIAGALLERY_C337;
 		 #else
 		 uint16 wResID = IDS_MG_MEDIAGALLERY;
@@ -1026,7 +1026,7 @@ static boolean MediaGalleryApp_MainMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
 
          if(eStartMode == MGSM_NORMAL_EXPLORER)
          {
-         	#ifdef FEATURE_VERSION_C337
+         	#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A)
 			wResID = IDS_MG_MEDIAGALLERY_C337;
 			#else
             wResID = IDS_MG_MEDIAGALLERY;
@@ -1059,7 +1059,7 @@ static boolean MediaGalleryApp_MainMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
          else if(eStartMode == MGSM_RECORD_VIEW ||
                  eStartMode == MGSM_FILE_SELECT)
          {
-         	#ifdef FEATURE_VERSION_C337
+         	#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A)
 			wResID = IDS_MG_MEDIAGALLERY_C337;
 			#else
             wResID = IDS_MG_MEDIAGALLERY;
@@ -6022,6 +6022,7 @@ static boolean MediaGalleryApp_VideoAddDlg_HandleEvent(CMediaGalleryApp* pMe,
                   MenuInsItem OptItems[] =
                   {
                      //{IDS_MG_BUILDPL, TRUE},
+					 {IDS_MG_PLAY, TRUE},
                      {IDS_MG_DELETE, TRUE}, {IDS_MG_DELALL, TRUE},
                      {IDS_MG_SORT, TRUE},  {IDS_MG_DETAIL, TRUE}
                   };
@@ -6033,6 +6034,8 @@ static boolean MediaGalleryApp_VideoAddDlg_HandleEvent(CMediaGalleryApp* pMe,
                      MP_WRAPSCROLL |
                      MP_BIND_ITEM_TO_NUMBER_KEY;
 
+				  MSG_FATAL("***zzg MediaGallery Detail 111***", 0, 0, 0);
+
                   MGAppUtil_UpdateSelItemCheck(pMe);
                   pItemData = MediaGalleryApp_GetCurrentNode(pMe);
                   if(NULL == pItemData)
@@ -6041,8 +6044,10 @@ static boolean MediaGalleryApp_VideoAddDlg_HandleEvent(CMediaGalleryApp* pMe,
                   bProtect = MG_FILE_PROTECT(pItemData->attrib);
                  // if(bProtect == TRUE)
                   {
-                     OptItems[1].bInsert = FALSE;
+                     //OptItems[1].bInsert = FALSE;
                      OptItems[2].bInsert = FALSE;
+
+					 OptItems[3].bInsert = FALSE;
                   }
 
                   retVal = MGAppUtil_CreatePopupMenu(&pMe->m_pMenuPopup,

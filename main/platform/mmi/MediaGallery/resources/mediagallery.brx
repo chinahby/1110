@@ -41,7 +41,7 @@
 		<Text>Delete all</Text>
 	</STRING>
 	<STRING Id="1013" Name="IDS_MG_DETAIL">
-		<Text>Detail</Text>
+		<Text>Details</Text>
 	</STRING>
 	<STRING Id="1014" Name="IDS_MG_BLUETOOTH">
 		<Text>Send via Bluetooth</Text>

@@ -903,12 +903,20 @@ static boolean  HandleSoundMenuProfilesDialogEvent(CSoundMenu *pMe,
             Sound_App_Add_Menu(pMenu,IDS_VOLUME_TITLE);
             Sound_App_Add_Menu(pMenu,IDS_CALLRING);
 #if defined(FEATURE_WMS_APP) && !defined(FEATURE_WMSAPP_ONLYSUPPORTVMAIL)
+#ifdef FEATURE_VERSION_W317A
+			Sound_App_Add_Menu(pMenu,IDS_MSG_TONE);
+#else
             Sound_App_Add_Menu(pMenu,IDS_SMSRING);
+#endif
 #endif
             Sound_App_Add_Menu(pMenu,IDS_ALARMRING);
             Sound_App_Add_Menu(pMenu,IDS_CALLHINT);
 #if defined(FEATURE_WMS_APP) && !defined(FEATURE_WMSAPP_ONLYSUPPORTVMAIL)
+#ifdef FEATURE_VERSION_W317A
+			Sound_App_Add_Menu(pMenu,IDS_MSG_ALERT_MODE);
+#else
             Sound_App_Add_Menu(pMenu,IDS_SMSHINT);
+#endif
 #endif
 #if defined(FEATURE_COLORKEYSND)
             Sound_App_Add_Menu(pMenu,IDS_COLORKEYSND);
@@ -1010,7 +1018,11 @@ static boolean  HandleSoundMenuProfilesDialogEvent(CSoundMenu *pMe,
                     break;
 
 #if defined(FEATURE_WMS_APP) && !defined(FEATURE_WMSAPP_ONLYSUPPORTVMAIL)
+#ifdef FEATURE_VERSION_W317A
+				case IDS_MSG_TONE:
+#else
                 case IDS_SMSRING:                  //消息铃声
+#endif                
 #ifdef FEATURE_SMSTONETYPE_MID                        
                     pMe->m_RingerType = SET_SMSTONE;
                     {
@@ -1090,7 +1102,11 @@ static boolean  HandleSoundMenuProfilesDialogEvent(CSoundMenu *pMe,
                     break;
                     
 #if defined(FEATURE_WMS_APP) && !defined(FEATURE_WMSAPP_ONLYSUPPORTVMAIL)
+#ifdef FEATURE_VERSION_W317A
+				case IDS_MSG_ALERT_MODE:
+#else
                 case IDS_SMSHINT:                   //短信提示方式
+#endif                
                     pMe->m_HintType = SET_SMSHINT;
 #if 0
                     if(pMe->m_RingCurVol[pMe->m_CurProfile] == OEMSOUND_MUTE_VOL)
@@ -1198,11 +1214,20 @@ static boolean  HandleHintDialogEvent(CSoundMenu *pMe,
 			//add by yangdecai
 			{
 				AECHAR WTitle[40] = {0};
+
+				#ifdef FEATURE_VERSION_W317A
 				(void)ISHELL_LoadResString(pMe->m_pShell,
-                        AEE_APPSSOUNDMENU_RES_FILE,                                
-                        IDS_SMSHINT,
-                        WTitle,
-                        sizeof(WTitle));
+					                        AEE_APPSSOUNDMENU_RES_FILE,                                
+					                        IDS_MSG_ALERT_MODE,
+					                        WTitle,
+					                        sizeof(WTitle));
+				#else
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+					                        AEE_APPSSOUNDMENU_RES_FILE,                                
+					                        IDS_SMSHINT,
+					                        WTitle,
+					                        sizeof(WTitle));
+				#endif
 				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
             }
             Sound_App_Add_Menu(pMenu,IDS_ITEM_OFF);
@@ -1245,7 +1270,11 @@ static boolean  HandleHintDialogEvent(CSoundMenu *pMe,
                                                CFGI_PROFILE_SMS_RINGER,
                                                byte_return,
                                                sizeof(byte_return));
+						#ifdef FEATURE_VERSION_W317A
+						pMe->m_wResID = IDS_MSG_ALERT_MODE;
+						#else
                         pMe->m_wResID = IDS_SMSHINT;
+						#endif
                         break;
 #endif
 
@@ -1582,7 +1611,11 @@ static boolean  HandleRingerDialogEvent(CSoundMenu *pMe,
 #ifdef FEATURE_SMSTONETYPE_MID               
             else if(pMe->m_RingerType == SET_SMSTONE)
             {
+#ifdef FEATURE_VERSION_W317A
+				pMe->m_wResID = IDS_MSG_TONE;
+#else
                 pMe->m_wResID = IDS_SMSRING;
+#endif
             }  
 #endif //#if defined FEATURE_SMSTONETYPE_MID		    
 #endif
@@ -1783,6 +1816,9 @@ static boolean  HandleRingerDialogEvent(CSoundMenu *pMe,
             
             InitMenuIcons(pMenu);
             SetMenuIcon(pMenu, wParam, TRUE);
+
+			MSG_FATAL("***zzg HandlerRingerDialogEvent wParam=%x***", wParam, 0, 0);
+			
             if(wParam == DOWNLOAD_MENU)
             {
 #ifdef FEATURE_APP_MEDIAGALLERY            
@@ -2004,11 +2040,20 @@ static boolean  HandleSmsRingDialogEvent(CSoundMenu *pMe,
 			//add by yangdecai
 			{
 				AECHAR WTitle[40] = {0};
+
+#ifdef FEATURE_VERSION_W317A
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_APPSSOUNDMENU_RES_FILE,                                
+                        IDS_MSG_TONE,
+                        WTitle,
+                        sizeof(WTitle));
+#else
 				(void)ISHELL_LoadResString(pMe->m_pShell,
                         AEE_APPSSOUNDMENU_RES_FILE,                                
                         IDS_SMSRING,
                         WTitle,
                         sizeof(WTitle));
+#endif
 				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
             }
             IMENUCTL_AddItem(pMenu, AEE_APPSSOUNDMENU_RES_FILE, IDS_GALLERY_PROFILE, IDS_GALLERY_PROFILE, NULL, 0);
@@ -2102,12 +2147,17 @@ static boolean  HandleSmsRingDialogEvent(CSoundMenu *pMe,
             InitMenuIcons(pMenu);
             SetMenuIcon(pMenu, wParam, TRUE);
             ICONFIG_GetItem(pMe->m_pConfig,CFGI_PROFILE_SMS_RINGER_ID,(void*)nNewConfigRinger, sizeof(nNewConfigRinger));
+
+			MSG_FATAL("***zzg HandlerSmsRingDialogEvent wParam=%x***", wParam, 0, 0);
+			
             if(wParam == IDS_GALLERY_PROFILE)
             {
 #ifdef FEATURE_APP_MEDIAGALLERY            
                 ExplorerPara sSoundPara={0};
                 
                 sSoundPara.nSelectProfile = pMe->m_CurProfile;
+
+				MSG_FATAL("***zzg HandlerSmsRingDialogEvent wParam==OEMNV_MP3_RINGER***", 0, 0, 0);
                 
                 CMediaGallery_RegisterCallback((PFNMGSELECTEDCB)SoundMenu_SetMp3ring, pMe);
                 CMediaGallery_FileExplorer(GALLERY_MUSIC_SETTING, &sSoundPara);            
@@ -2117,6 +2167,7 @@ static boolean  HandleSmsRingDialogEvent(CSoundMenu *pMe,
             }
             else
             {
+            	MSG_FATAL("***zzg HandlerSmsRingDialogEvent wParam==OEMNV_MID_RINGER***", 0, 0, 0);
                 nNewConfigRinger[pMe->m_CurProfile].midID = (uint16)(wParam);
                 nNewConfigRinger[pMe->m_CurProfile].ringType = OEMNV_MID_RINGER;
             }
@@ -3646,28 +3697,47 @@ static void RingerPreview(void *pUser)
 
 ==============================================================================*/
 static void VolumePreview(void *pUser)
-{
+{	
     CSoundMenu *pMe = (CSoundMenu*)pUser;
     ringID        ringerID[PROFILENUMBER];
 
-    if(AEE_SUCCESS != ICONFIG_GetItem(pMe->m_pConfig,  CFGI_PROFILE_CALL_RINGER, (void*)ringerID, sizeof(ringerID)))
+	MSG_FATAL("***zzg VolumePreview***", 0, 0, 0);
+
+	MSG_FATAL("***zzg VolumePreview ringType=%x***", ringerID[pMe->m_CurProfile].ringType, 0, 0);
+
+#ifdef FEATURE_VERSION_W317A
+	if(AEE_SUCCESS != ICONFIG_GetItem(pMe->m_pConfig,  CFGI_PROFILE_CALL_RINGER, (void*)ringerID, sizeof(ringerID)))
+    {
+        ringerID[pMe->m_CurProfile].ringType = OEMNV_MP3_RINGER;
+        pMe->m_RingerID[pMe->m_CurProfile].midID = OEMNV_DEFAULTRINGER;
+    }
+
+	IALERT_StartMp3Preview(pMe->m_pAlert, pMe->m_RingerID[pMe->m_CurProfile].szMusicname);
+#else
+	if(AEE_SUCCESS != ICONFIG_GetItem(pMe->m_pConfig,  CFGI_PROFILE_CALL_RINGER, (void*)ringerID, sizeof(ringerID)))
     {
         ringerID[pMe->m_CurProfile].ringType = OEMNV_MID_RINGER;
         pMe->m_RingerID[pMe->m_CurProfile].midID = OEMNV_DEFAULTRINGER;
     }
-
-    if(ringerID[pMe->m_CurProfile].ringType == OEMNV_MID_RINGER)
+	
+	if(ringerID[pMe->m_CurProfile].ringType == OEMNV_MID_RINGER)
     {
         if(pMe->m_RingerID[pMe->m_CurProfile].midID == 0)
         {
             pMe->m_RingerID[pMe->m_CurProfile].midID = OEMNV_DEFAULTRINGER;
         }
+
+		MSG_FATAL("***zzg VolumePreview OEMNV_MID_RINGER m_RingerID=%x***", pMe->m_RingerID[pMe->m_CurProfile].midID, 0, 0);
+		
+		MSG_FATAL("***zzg VolumePreview IALERT_StartRingerPreview***", 0, 0, 0);
         IALERT_StartRingerPreview(pMe->m_pAlert,pMe->m_RingerID[pMe->m_CurProfile].midID);
     }
     else
     {
+    	MSG_FATAL("***zzg VolumePreview IALERT_StartMp3Preview***", 0, 0, 0);
         IALERT_StartMp3Preview(pMe->m_pAlert, pMe->m_RingerID[pMe->m_CurProfile].szMusicname);
     }
+#endif   
 }
 
 static void SoundMenu_SetItemNumIcon(IMenuCtl   *pMenu)
@@ -3695,6 +3765,8 @@ static void notifyFMRadioAlertEvent( CSoundMenu *pMe, boolean toStartAlert)
     }
 static void ProfileNotifyMP3PlayerAlertEvent(CSoundMenu *pMe, boolean toStartAlert)
 {
+	MSG_FATAL("***zzg ProfileNotifyMP3PlayerAlertEvent m_bSuspending=%x***", pMe->m_bSuspending, 0, 0);
+	
  #ifdef FEATURE_APP_MUSICPLAYER
     if(pMe->m_bSuspending)
     {
@@ -3703,6 +3775,7 @@ static void ProfileNotifyMP3PlayerAlertEvent(CSoundMenu *pMe, boolean toStartAle
         //，在接电话的同时播放MP3
         if((GetMp3PlayerStatus() == MP3STATUS_RUNONBACKGROUND) && !toStartAlert)
         {
+        	MSG_FATAL("***zzg ProfileNotifyMP3PlayerAlertEvent ISHELL_SendEvent EVT_ALARM***", 0, 0, 0);
             ISHELL_SendEvent(pMe->m_pShell,
                              AEECLSID_APP_MUSICPLAYER,
                              EVT_ALARM,
@@ -3713,6 +3786,7 @@ static void ProfileNotifyMP3PlayerAlertEvent(CSoundMenu *pMe, boolean toStartAle
     }
     if(GetMp3PlayerStatus() == MP3STATUS_RUNONBACKGROUND)
     {
+    	MSG_FATAL("***zzg ProfileNotifyMP3PlayerAlertEvent MP3STATUS_RUNONBACKGROUND EVT_ALARM***", 0, 0, 0);
         ISHELL_SendEvent(pMe->m_pShell,
                          AEECLSID_APP_MUSICPLAYER,
                          EVT_ALARM,
@@ -3747,6 +3821,7 @@ static boolean  HandleVolumeSubDialogEvent(CSoundMenu *pMe,
 )
 {
     SOUND_ERR("eCode %x,  wParam %x, dwParam %x",eCode,wParam,dwParam);
+	
     switch(eCode)
     {
         case EVT_DIALOG_INIT:
@@ -3787,6 +3862,9 @@ static boolean  HandleVolumeSubDialogEvent(CSoundMenu *pMe,
                     default:
                         return FALSE;
                 }
+
+				MSG_FATAL("***zzg SoundMenuDialog m_VolType=%x***", pMe->m_VolType, 0, 0);
+				
                 ProfileNotifyMP3PlayerAlertEvent(pMe, TRUE);
                 ISHELL_PostEvent( pMe->m_pShell,AEECLSID_APP_SOUNDMENU,EVT_USER_REDRAW,0,0);
                 return TRUE;
@@ -3800,6 +3878,8 @@ static boolean  HandleVolumeSubDialogEvent(CSoundMenu *pMe,
                 AEERect   rect = {0};
                 AEEImageInfo ImageSize;
                 byte        byte_return;
+
+				MSG_FATAL("***zzg SoundMenuDialogHandler EVT_USER_REDRAW***", 0, 0, 0);
                 
                 switch(pMe->m_VolType)
                 {
@@ -3911,6 +3991,9 @@ static boolean  HandleVolumeSubDialogEvent(CSoundMenu *pMe,
                 }
                 
                 IDISPLAY_Update(pMe->m_pDisplay);
+
+				MSG_FATAL("***zzg SoundMenuDialogHandler pMe->m_VolType=%x***", pMe->m_VolType, 0, 0);
+				
                 if (pMe->m_VolType == SET_RINGER_VOL /*&& byte_return != OEMSOUND_MUTE_VOL*/)
                 {
                     IALERT_StopRingerAlert(pMe->m_pAlert);
@@ -4097,6 +4180,8 @@ int SoundMenu_SetMp3ring(void* pv, FileNamesBuf pBuf, uint32 nBufSize)
 {
     CSoundMenu *pMe = (CSoundMenu*)pv;
     ringID nNewConfigRinger[PROFILENUMBER];
+
+	MSG_FATAL("***zzg SoundMenu_SetMp3Ring m_RingerType=%x***", pMe->m_RingerType, 0, 0);
     
     if(NULL == pMe)
     {

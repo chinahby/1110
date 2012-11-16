@@ -71,7 +71,7 @@
 		<Text>IP call</Text>
 	</STRING>
 	<STRING Id="24" Name="IDS_SEND_CONTACT">
-		<Text>Send contacts</Text>
+		<Text>Send contact</Text>
 	</STRING>
 	<STRING Id="25" Name="IDS_RECENT_CALLS">
 		<Text>Recent calls</Text>
