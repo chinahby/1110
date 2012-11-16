@@ -11581,11 +11581,20 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                 }
             }
 #endif            
+
+#ifdef FEATURE_VERSION_W317A
+			(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_WMSAPPRES_LANGFILE,                                
+                        IDS_MSG_BODY,
+                        Annstr,
+                        sizeof(Annstr));
+#else
 			(void)ISHELL_LoadResString(pMe->m_pShell,
                         AEE_WMSAPPRES_LANGFILE,                                
                         IDS_EDIT,
                         Annstr,
                         sizeof(Annstr));
+#endif
 			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,Annstr);
             if (pMe->m_dwInsertPos == 0)
             {
@@ -11814,7 +11823,18 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                                                              (void*)pMe,
                                                              WMS_WRITE_MODE_INSERT,
                                                              pClientMsg);
-                                                             
+
+										#ifdef FEATURE_VERSION_W317A		
+										MSG_FATAL("***zzg IWMS_MsgWrite IDS_SAVED***", 0, 0, 0);
+
+										(void) ISHELL_PostEvent(pMe->m_pShell,
+							                                    AEECLSID_CORE_APP,
+							                                    EVT_WMS_DRAFT_SAVED,
+							                                    NULL,
+							                                    NULL);
+										
+										#endif
+															 
 #ifndef WIN32
                                         if (nRet == SUCCESS)
                                         {// 休眠10毫秒以确保有时间执行保存消息的操作
@@ -12656,7 +12676,9 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                             pMe->m_isMMS = FALSE; 
                             pMe->m_isSendToAlbumOrEmain = FALSE; 
                         }
-    					CLOSE_DIALOG(DLGRET_CANCELED)
+
+						
+						CLOSE_DIALOG(DLGRET_CANCELED)						
     					return TRUE;                        
                     }
 #endif                    
@@ -12744,7 +12766,13 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 		                nMode = ITEXTCTL_GetInputMode(pIText,NULL);
 		            }
 
+					MSG_FATAL("***zzg WMSDialog WmsApp_ShowMsgBox IDS_SAVED_EX***", 0, 0, 0);
+						
+					#ifdef FEATURE_VERSION_W317A
+					CLOSE_DIALOG(DLGRET_SAVE_TO_DRAFT)
+					#else
 					CLOSE_DIALOG(DLGRET_CANCELED)
+					#endif		
 
 					return TRUE;
 					
@@ -14957,6 +14985,8 @@ static boolean IDD_MSGBOX_Handler(void *pUser,
     {
         return FALSE;
     }
+
+	MSG_FATAL("***zzg IDD_MSGBOX_Handler***", 0, 0, 0);
     
     switch(eCode)
     {

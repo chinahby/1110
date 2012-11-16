@@ -3381,6 +3381,12 @@ static NextFSMAction WMSST_WRITEMSG_Handler(WmsApp *pMe)
             WmsApp_ShowMsgBox(pMe, IDS_INBOXSFULL);
             return NFSMACTION_WAIT;
 
+		//Add By zzg 2012_11_16
+		case DLGRET_SAVE_TO_DRAFT:
+			WmsApp_ShowMsgBox(pMe, IDS_SAVED_EX);
+            return NFSMACTION_WAIT;
+		//Add End
+
         case DLGRET_SAVE:
             {
                 uint16    nNew = 0;

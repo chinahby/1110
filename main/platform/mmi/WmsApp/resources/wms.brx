@@ -709,6 +709,12 @@
 	<String Id="1110" Name="IDS_TEMPLATETATA10">
 		<Text>How are you?</Text>
 	</String>
+	<String Id="1111" Name="IDS_MSG_BODY">
+		<Text>Message body</Text>
+	</String>
+	<STRING Id="1112" Name="IDS_SAVED_EX">
+		<Text>Saved</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN" Focus="7001">
