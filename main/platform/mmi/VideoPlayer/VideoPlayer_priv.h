@@ -106,8 +106,11 @@
 #define  MAX_STR_LEN             128//64
 
 //图片中名字显示区域的最大像素值
+#ifdef FEATURE_VERSION_W317A
+#define  MAX_NAME_LEN            60
+#else
 #define  MAX_NAME_LEN            120//167
-
+#endif
 // 从GALLERY进入VIDEOPLAYER的标志
 #define STARTARGS_GALLERY       ((char)'G')
 
