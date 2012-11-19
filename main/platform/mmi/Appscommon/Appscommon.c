@@ -333,7 +333,11 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
 
             /*guoys add @2008.10.20 for no match dont use select*/    
          case BTBAR_DELETE:
+#ifdef FEATURE_VERSION_W317A
+			nResID_R = IDS_CLEAR_EX;
+#else		 	
             nResID_R = IDS_DEL;
+#endif
             break;
 
             // -----¹Ò»ú: 

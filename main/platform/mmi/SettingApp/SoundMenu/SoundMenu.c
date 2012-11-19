@@ -1245,6 +1245,14 @@ void SoundMenu_InitRingerList(CSoundMenu *pMe)
                                              sizeof( memo)
                                          ) > 0
                        )
+                       #elif defined FEATURE_VERSION_W317A
+					   if( ISHELL_LoadResString( pMe->m_pShell,
+                                             APP_RECORDER_RES_FILE,
+                                             IDS_RECORDER,
+                                             memo,
+                                             sizeof( memo)
+                                         ) > 0
+                       )
 					   #else
 					   if( ISHELL_LoadResString( pMe->m_pShell,
                                              APP_RECORDER_RES_FILE,

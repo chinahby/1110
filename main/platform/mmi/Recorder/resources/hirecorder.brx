@@ -220,5 +220,8 @@
 	<STRING Id="1217" Name="IDS_TITLE_C337">
 		<Text>ध्वनि रिकॉर्डर</Text>
 	</STRING>
+	<STRING Id="1218" Name="IDS_RECORDER">
+		<Text>Recorder</Text>
+	</STRING>
 </Strings>
 </BREWRes>

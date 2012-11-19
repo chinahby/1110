@@ -1703,7 +1703,7 @@ static NextFSMAction WMSST_MSGCOPY_Handler(WmsApp *pMe)
     {
         return NFSMACTION_WAIT;
     }
-
+	
     switch (pMe->m_eDlgReturn)
     {
         case DLGRET_CREATE:
@@ -1711,18 +1711,34 @@ static NextFSMAction WMSST_MSGCOPY_Handler(WmsApp *pMe)
             return NFSMACTION_WAIT;
 
         case DLGRET_OK:
-            // 看是否需要提示空间满,在从主界面进入收件箱前会做此检查
+            // 看是否需要提示空间满,在从主界面进入收件箱前会做此检查        
 #if defined(FEATURE_CDSMS_RUIM)
-            if (COPYALLMTTORUIM == pMe->m_CopyType ||
+			#ifdef FEATURE_VERSION_W317A
+			if (COPYALLMTTORUIM == pMe->m_CopyType || 
+				COPYTORUIM == pMe->m_CopyType || 
+				COPYTOPHONEINBOXE == pMe->m_CopyType ||
                 COPYALLRUIMTOPHONE == pMe->m_CopyType)
+			#else
+			if (COPYALLMTTORUIM == pMe->m_CopyType ||
+                COPYALLRUIMTOPHONE == pMe->m_CopyType)
+			#endif		            
             {
+            	MSG_FATAL("***zzg WMSST_MSGCOPY_Handler WmsApp_ShowMsgBox IDS_COPIED***", 0, 0, 0);
                 pMe->m_ePMsgType = MESSAGE_INFORMATIVE;
                 WmsApp_ShowMsgBox(pMe, IDS_COPIED);
                 return NFSMACTION_WAIT;
             }
+			#ifdef FEATURE_VERSION_W317A
+			else if(MOVEALLMTTORUIM == pMe->m_CopyType || 
+					MOVETORUIM == pMe->m_CopyType ||
+					MOVETOPHONEINBOX == pMe->m_CopyType ||
+                    MOVEALLRUIMTOPHONE == pMe->m_CopyType)
+			#else
             else if(MOVEALLMTTORUIM == pMe->m_CopyType ||
                     MOVEALLRUIMTOPHONE == pMe->m_CopyType)
+			#endif                    
             {
+            	MSG_FATAL("***zzg WMSST_MSGCOPY_Handler WmsApp_ShowMsgBox IDS_MOVED***", 0, 0, 0);
                 pMe->m_ePMsgType = MESSAGE_INFORMATIVE;
                 WmsApp_ShowMsgBox(pMe, IDS_MOVED);
                 return NFSMACTION_WAIT;
@@ -1730,6 +1746,7 @@ static NextFSMAction WMSST_MSGCOPY_Handler(WmsApp *pMe)
             else
 #endif                
             {
+            	MSG_FATAL("***zzg WMSST_MSGCOPY_Handler DLGRET_INBOXES***", 0, 0, 0);
                 pMe->m_eDlgReturn = DLGRET_INBOXES;
             }
             MOVE_TO_STATE(WMSST_MAIN)
@@ -1737,7 +1754,18 @@ static NextFSMAction WMSST_MSGCOPY_Handler(WmsApp *pMe)
 
 #if defined(FEATURE_CDSMS_RUIM)
         case DLGRET_MSGBOX_OK:
-            MOVE_TO_STATE(WMSST_MANAGEMENT)
+			MSG_FATAL("***zzg WMSST_MSGCOPY_Handler DLGRET_MSGBOX_OK***", 0, 0, 0);
+			#ifdef FEATURE_VERSION_W317A
+			if (COPYTORUIM == pMe->m_CopyType || COPYTOPHONEINBOXE == pMe->m_CopyType ||
+				MOVETORUIM == pMe->m_CopyType ||MOVETOPHONEINBOX == pMe->m_CopyType)
+			{
+				MOVE_TO_STATE(WMSST_MAIN)
+			}
+			else
+			#endif
+            {
+            	MOVE_TO_STATE(WMSST_MANAGEMENT)
+			}
             return NFSMACTION_CONTINUE;
 #endif        
 

@@ -501,6 +501,12 @@ static boolean dialog_handler_of_state_main( Recorder* pme, AEEEvent evt, uint16
                                       IDS_TITLE_C337,
                                       wszTitle,
                                       sizeof(wszTitle));
+				#elif defined FEATURE_VERSION_W317A
+				ISHELL_LoadResString( pme->a.m_pIShell,
+                                      AEE_RECORDER_RES_FILE,
+                                      IDS_RECORDER,
+                                      wszTitle,
+                                      sizeof(wszTitle));
 				#else
                 ISHELL_LoadResString( pme->a.m_pIShell,
                                       AEE_RECORDER_RES_FILE,
@@ -4588,6 +4594,12 @@ static boolean dialog_handler_of_state_storage_setup( Recorder* pme, AEEEvent ev
 					ISHELL_LoadResString( pme->a.m_pIShell,
                                           AEE_RECORDER_RES_FILE,
                                           IDS_TITLE_C337,
+                                          wszTitle,
+                                          sizeof(wszTitle));
+					#elif defined FEATURE_VERSION_W317A
+					ISHELL_LoadResString( pme->a.m_pIShell,
+                                          AEE_RECORDER_RES_FILE,
+                                          IDS_RECORDER,
                                           wszTitle,
                                           sizeof(wszTitle));
 					#else

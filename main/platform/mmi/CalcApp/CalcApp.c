@@ -1211,6 +1211,9 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
 			MEMSET(&BarParam, 0, sizeof(BarParam));//wlh 20090417 add 
 			BarParam.eBBarType = BTBAR_BACK;      //wlh 20090417 add
 			DrawBottomBar(pme->a.m_pIDisplay,&BarParam);    //wlh 20090417 add
+
+			IDISPLAY_Update(pme->a.m_pIDisplay);
+			
             return TRUE;
 
         case EVT_APP_STOP:
@@ -1281,6 +1284,36 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
         }
         case EVT_KEY:
         {
+#ifdef FEATURE_VERSION_W317A	
+			MSG_FATAL("***zzg Calc WSTRLEN(pme->m_szText)=%x***", WSTRLEN(pme->m_szText), 0, 0);
+
+			if (pme->m_szText == 0)
+			{
+				MSG_FATAL("***zzg pme->m_szText == 0***", 0, 0, 0);
+			}
+			else
+			{
+				MSG_FATAL("***zzg pme->m_szText != 0***", 0, 0, 0);
+			}
+
+			if (WSTRLEN(pme->m_szText) != 0)
+			{
+				MEMSET(&BarParam, 0, sizeof(BarParam));
+				BarParam.eBBarType = BTBAR_DELETE;     		
+
+				MSG_FATAL("***zzg BarParam.eBBarType = BTBAR_DELETE***", 0, 0, 0);
+			}
+			else
+			{	
+				MEMSET(&BarParam, 0, sizeof(BarParam));
+				BarParam.eBBarType = BTBAR_BACK;    
+
+				MSG_FATAL("***zzg BarParam.eBBarType = BTBAR_BACK***", 0, 0, 0);
+			}
+			DrawBottomBar(pme->a.m_pIDisplay,&BarParam); 
+			IDISPLAY_Update(pme->a.m_pIDisplay);
+#endif
+
             switch (wParam)
             {
             	case AVK_O:

@@ -214,5 +214,14 @@
 	<STRING Id="1215" Name="IDS_MM_STATUS_RECORDING">
 		<Text>रिकॉर्डिंग हो रहा है...</Text>
 	</STRING>
+	<STRING Id="1216" Name="IDS_RECORDER_MEMO_RINGER_NAME_C337">
+		<Text>Record</Text>
+	</STRING>
+	<STRING Id="1217" Name="IDS_TITLE_C337">
+		<Text>Sound recorder</Text>
+	</STRING>
+	<STRING Id="1218" Name="IDS_RECORDER">
+		<Text>Recorder</Text>
+	</STRING>
 </Strings>
 </BREWRes>

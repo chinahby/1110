@@ -13851,6 +13851,8 @@ static boolean IDD_MSGCOPY_Handler(void *pUser,
     {
         return FALSE;
     }
+
+	MSG_FATAL("***zzg IDD_MSGCOPY_Handler eCode=%x***", eCode, 0, 0);
     
     switch (eCode) 
     {
@@ -14043,7 +14045,9 @@ static boolean IDD_MSGCOPY_HandlerExt(void *pUser,
     {
         return FALSE;
     }
-    
+
+	MSG_FATAL("***zzg IDD_MSGCOPY_HandlerExt eCode=%x***", eCode, 0, 0);
+	
     switch (eCode) 
     {
         case EVT_DIALOG_INIT:
@@ -15073,14 +15077,25 @@ static boolean IDD_MSGBOX_Handler(void *pUser,
                     case IDS_MOVED:
                     case IDS_COPIED:
                         {
-                            AECHAR wstrTep[MSGBOX_MAXTEXTLEN]={0};
-
-                            (void)ISHELL_LoadResString(pMe->m_pShell,
-                                            AEE_WMSAPPRES_LANGFILE,
-                                            pMe->m_wMsgResID,
-                                            wstrTep,
-                                            sizeof(wstrTep));
-                            WSPRINTF(wstrText, sizeof(wstrText), wstrTep, pMe->m_nCopyNum);
+                            AECHAR wstrTep[MSGBOX_MAXTEXTLEN]={0};						
+							
+							(void)ISHELL_LoadResString(pMe->m_pShell,
+				                                            AEE_WMSAPPRES_LANGFILE,
+				                                            pMe->m_wMsgResID,
+				                                            wstrTep,
+				                                            sizeof(wstrTep));
+							#ifdef FEATURE_VERSION_W317A
+							if (COPYTORUIM == pMe->m_CopyType || COPYTOPHONEINBOXE == pMe->m_CopyType ||
+								MOVETORUIM == pMe->m_CopyType ||MOVETOPHONEINBOX == pMe->m_CopyType)
+							{								
+								WSPRINTF(wstrText, sizeof(wstrText), wstrTep, 1);
+							}
+							else
+							#endif
+	                        {
+	                        	WSPRINTF(wstrText, sizeof(wstrText), wstrTep, pMe->m_nCopyNum);
+							}
+							
                         }
                         break;
 

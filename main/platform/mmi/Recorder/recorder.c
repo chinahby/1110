@@ -209,6 +209,12 @@ static boolean Recorder_HandleEvent( Recorder* pme, AEEEvent evt, uint16 wParam,
                                       IDS_TITLE_C337,
                                       wszTitle,
                                       sizeof(wszTitle));
+			#elif defined FEATURE_VERSION_W317A
+			ISHELL_LoadResString( pme->a.m_pIShell,
+                                      AEE_RECORDER_RES_FILE,
+                                      IDS_RECORDER,
+                                      wszTitle,
+                                      sizeof(wszTitle));
 			#else
             ISHELL_LoadResString( pme->a.m_pIShell,
                                       AEE_RECORDER_RES_FILE,
