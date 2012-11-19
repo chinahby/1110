@@ -3203,7 +3203,18 @@ int CContApp_BuildSelectOptMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
     MEMSET(&ai, 0, sizeof(ai));
     ai.pszResText = CONTAPP_RES_FILE_LANG;
 
+#ifdef FEATURE_VERSION_W317A
+    if(pMe->m_nCopyOrMove == MOVEMULTIPE ||pMe->m_nCopyOrMove == COPYMULTIPE)
+    {
+        ai.wText       = IDS_COPYMOVE;	
+    }
+    else
+    {
+    	ai.wText       = IDS_EXECUTE;
+    }
+#else
     ai.wText       = IDS_EXECUTE;
+#endif
     ai.wItemID   = IDS_EXECUTE;
             
     if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
