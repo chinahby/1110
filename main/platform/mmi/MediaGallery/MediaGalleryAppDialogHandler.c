@@ -7480,9 +7480,11 @@ static boolean MGAppUtil_UpdateMediaMenuSoftkey(CMediaGalleryApp* pMe)
       switch(pMe->m_StartMode)
       {
       case MGSM_MUSIC_ADD:
+#ifndef FEATURE_VERSION_W317A	  	
          if(0 == pMe->m_nSelNum)
             nSoftkeyType = BTBAR_BACK;
          else
+#endif		 	
             nSoftkeyType = BTBAR_SAVE_BACK;
          break;
 
