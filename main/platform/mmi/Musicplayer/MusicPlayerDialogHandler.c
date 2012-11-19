@@ -441,7 +441,11 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
 			}
 			else
 			{
-			    MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
+                #ifdef FEATURE_VERSION_W317A
+                MP3_DRAW_BOTTOMBAR(BTBAR_OPTIONS_BACK);
+                #else
+				MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
+                #endif
 			}
 			IDISPLAY_Update(pMe->m_pDisplay); //к╒фа
 			return TRUE;
@@ -885,7 +889,11 @@ static boolean MP3_Playlist_HandleEvent(CMusicPlayer *pMe,
             }
             else
             {
-              MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
+              #ifdef FEATURE_VERSION_W317A
+              MP3_DRAW_BOTTOMBAR(BTBAR_OPTIONS_BACK);
+              #else
+  			  MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
+              #endif
               IMENUCTL_Redraw(pMenuCtl);
             }
             return TRUE;
@@ -2115,7 +2123,11 @@ static boolean MP3_PlaylistOpts_HandleEvent(CMusicPlayer *pMe,
             }
             else
             {
-                MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
+                #ifdef FEATURE_VERSION_W317A
+                MP3_DRAW_BOTTOMBAR(BTBAR_OPTIONS_BACK);
+                #else
+				MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
+                #endif
                 IMENUCTL_Redraw(pMenuCtl);
             }
            
@@ -2249,8 +2261,11 @@ static boolean MP3_PlaylistOpts_HandleEvent(CMusicPlayer *pMe,
         {
             
             IMENUCTL_SetPopMenuRect(pMenuCtl);
-            IMENUCTL_SetBottomBarType(pMenuCtl,BTBAR_OPTION_BACK);
-            
+            #ifdef FEATURE_VERSION_W317A
+            IMENUCTL_SetBottomBarType(pMenuCtl,BTBAR_OPTIONS_BACK);
+            #else
+			IMENUCTL_SetBottomBarType(pMenuCtl,BTBAR_OPTION_BACK);
+            #endif
             // For redraw the dialog
             (void)ISHELL_PostEvent( pMe->m_pShell,
                                     AEECLSID_APP_MUSICPLAYER,

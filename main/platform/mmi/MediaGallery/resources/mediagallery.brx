@@ -364,6 +364,9 @@
 	<STRING Id="1122" Name="IDS_MG_CONSTORAGE">
 		<Text>Mass storage is connected</Text>
 	</STRING>
+	<STRING Id="1123" Name="IDS_MG_DETAILS">
+		<Text>Details</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<Dialog Id="6001" Name="IDD_MG_MAINMENU" Focus="7001">

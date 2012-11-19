@@ -2802,6 +2802,7 @@ static boolean MediaGalleryApp_OnPopupMenuCommand(CMediaGalleryApp* pMe,
       MGCLOSE_DIALOG(MGDLGRET_SORT);
       break;
 
+   case IDS_MG_DETAILS:
    case IDS_MG_DETAIL:
       MediaGalleryApp_SetOps(pMe, MG_OPS_DEFAULT, MG_OP_DETAIL);
       MGCLOSE_DIALOG(MGDLGRET_DETAIL);
@@ -3105,10 +3106,17 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
                if(eDlgStat == MG_DLGSTAT_NORMAL &&
                   (pMe->m_bImgLoadDone == TRUE))
                {
+                #ifdef FEATURE_VERSION_W317A
+                  MenuInsItem ImgViewOptions[]={
+                     {IDS_MG_ZOOM, TRUE}, {IDS_MG_SETWALLPAPER, TRUE},
+                     {IDS_MG_DELETE, TRUE}, {IDS_MG_DETAILS, TRUE}
+                  };
+                #else
                   MenuInsItem ImgViewOptions[]={
                      {IDS_MG_ZOOM, TRUE}, {IDS_MG_SETWALLPAPER, TRUE},
                      {IDS_MG_DELETE, TRUE}, {IDS_MG_DETAIL, TRUE}
                   };
+                #endif
                   AEEImageInfo ImgInfo;
                   IImage *pi = pMe->m_pImage;
 
@@ -5337,13 +5345,19 @@ static boolean MGAppPopupMenu_OnDetail(CMediaGalleryApp* pMe,
 
          if(!pMenuCtl)
             return FALSE;
-
+         #ifdef FEATURE_VERSION_W317A
+         ISHELL_LoadResString(pMe->m_pShell,
+                              MGRES_LANGFILE,
+                              IDS_MG_DETAILS,
+                              szDetail,
+                              sizeof(szDetail));
+         #else
          ISHELL_LoadResString(pMe->m_pShell,
                               MGRES_LANGFILE,
                               IDS_MG_DETAIL,
                               szDetail,
                               sizeof(szDetail));
-
+         #endif
          pszPath = MediaGalleryApp_GetCurrentNodeName(pMe);
          pszFileName = BASENAME(pszPath);
 
@@ -6021,10 +6035,16 @@ static boolean MediaGalleryApp_VideoAddDlg_HandleEvent(CMediaGalleryApp* pMe,
                {
                   MenuInsItem OptItems[] =
                   {
+                    #ifdef FEATURE_VERSION_W317A
+                    //{IDS_MG_BUILDPL, TRUE},
+                     {IDS_MG_DELETE, TRUE}, {IDS_MG_DELALL, TRUE},
+                     {IDS_MG_SORT, TRUE},  {IDS_MG_DETAILS, TRUE}
+                    #else
                      //{IDS_MG_BUILDPL, TRUE},
 					 {IDS_MG_PLAY, TRUE},
                      {IDS_MG_DELETE, TRUE}, {IDS_MG_DELALL, TRUE},
                      {IDS_MG_SORT, TRUE},  {IDS_MG_DETAIL, TRUE}
+                    #endif
                   };
                   int retVal = SUCCESS;
                   uint16 nItemNum = sizeof(OptItems)/sizeof(MenuInsItem);
@@ -6334,11 +6354,19 @@ static boolean MediaGalleryApp_ImageSettingDlg_HandleEvent(
             {
                if(eDlgStat == MG_DLGSTAT_NORMAL)
                {
+                #ifdef FEATURE_VERSION_W317A
+                  MenuInsItem OptItems[] =
+                  {
+                     {IDS_MG_VIEW, TRUE}, {IDS_MG_SETWALLPAPER, TRUE},
+                     {IDS_MG_SORT, TRUE}, {IDS_MG_DETAILS, TRUE}
+                  };
+                #else
                   MenuInsItem OptItems[] =
                   {
                      {IDS_MG_VIEW, TRUE}, {IDS_MG_SETWALLPAPER, TRUE},
                      {IDS_MG_SORT, TRUE}, {IDS_MG_DETAIL, TRUE}
                   };
+                #endif
                   int retVal = SUCCESS;
                   uint16 nItemNum = sizeof(OptItems)/sizeof(MenuInsItem);
                   uint32 dwProps = MP_UNDERLINE_TITLE | MP_WRAPSCROLL |
@@ -7014,10 +7042,17 @@ static int MGAppUtil_BuildPopupMenuItems(CMediaGalleryApp* pMe,
 
    if(pItemData->attrib == AEE_FA_DIR)
    {
+    #ifdef FEATURE_VERSION_W317A
+      MenuInsItem DirPopupItems[]={
+         {IDS_MG_OPEN, TRUE}, /*{IDS_MG_RENAME, TRUE}, */
+         {IDS_MG_DELETE, TRUE},{IDS_MG_DELALL, TRUE},
+         {IDS_MG_SORT, TRUE}, {IDS_MG_DETAILS, TRUE}};
+    #else
       MenuInsItem DirPopupItems[]={
          {IDS_MG_OPEN, TRUE}, /*{IDS_MG_RENAME, TRUE}, */
          {IDS_MG_DELETE, TRUE},{IDS_MG_DELALL, TRUE},
          {IDS_MG_SORT, TRUE}, {IDS_MG_DETAIL, TRUE}};
+    #endif
       boolean  bSysDir = FALSE;
 
       bSysDir = MGExplorer_IsSysDirInMassStorage(pItemData->szName,
@@ -7114,7 +7149,11 @@ static int MGAppUtil_BuildPopupMenuItems(CMediaGalleryApp* pMe,
       }
   
       MGMENU_ADDITEM(*ppPopupMenu, IDS_MG_SORT);
+      #ifdef FEATURE_VERSION_W317A
+      MGMENU_ADDITEM(*ppPopupMenu, IDS_MG_DETAILS);
+      #else
       MGMENU_ADDITEM(*ppPopupMenu, IDS_MG_DETAIL);
+      #endif
 	  
 #if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
       IMENUCTL_SetPopMenuRect(*ppPopupMenu);
@@ -7465,11 +7504,19 @@ static boolean MGAppUtil_UpdateMediaMenuSoftkey(CMediaGalleryApp* pMe)
 			else
 			{
                 MSG_FATAL("MGAppUtil_UpdateMediaMenuSoftkey 3",0,0,0);
+                #ifdef FEATURE_VERSION_W317A
+                nSoftkeyType = BTBAR_OPTIONS_BACK;
+                #else
 				nSoftkeyType = BTBAR_OPTION_BACK;
+                #endif
 			}
 			#else
             MSG_FATAL("MGAppUtil_UpdateMediaMenuSoftkey 4",0,0,0);
-            nSoftkeyType = BTBAR_OPTION_BACK;
+            #ifdef FEATURE_VERSION_W317A
+            nSoftkeyType = BTBAR_OPTIONS_BACK;
+            #else
+			nSoftkeyType = BTBAR_OPTION_BACK;
+            #endif
 			#endif
 #ifdef FEATURE_USES_MMS
             if(pMe->m_isForMMS && (pMe->m_StartMode == MGSM_VIDEO_BROWSE))
@@ -7553,7 +7600,11 @@ static boolean MGAppUtil_UpdateImgViewerSoftkey(CMediaGalleryApp* pMe)
           if( eDlgStat == MG_DLGSTAT_NORMAL &&
              (pMe->m_bImgLoadDone == TRUE))
           {
+            #ifdef FEATURE_VERSION_W317A
+             nLeftResID = IDS_BAROPTIONS;
+            #else
              nLeftResID = IDS_OPTION;
+            #endif
           }
 
           MGAppUtil_DrawSoftkeyOverImage(pMe,

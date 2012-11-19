@@ -157,6 +157,9 @@
 	<STRING Id="114" Name="IDS_OPTION_FM">
 		<Text>Options</Text>
 	</STRING>
+	<STRING Id="115" Name="IDS_BAROPTIONS">
+		<Text>Options</Text>
+	</STRING>
 	<STRING Id="1001" Name="IDS_RECORD">
 		<Text>Record</Text>
 	</STRING>

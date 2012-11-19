@@ -96,6 +96,6 @@
 	</STRING>	
 	<STRING Id="1032" Name="IDS_FMRADIO_PROMPT_PAUSED">
 		<Text>Paused</Text>
-	</STRING>	
+	</STRING>
 </Strings>
 </BREWRes>

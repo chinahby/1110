@@ -215,7 +215,7 @@
 #define POPMENU_BOTTOM_X      60
 #define POPMENU_BOTTOM_Y      60
 
-#ifdef FEATURE_VERSION_C337
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A)
 #define POPMENU_WIDTH	   		130
 #elif defined FEATURE_VERSION_W317A
 #define POPMENU_WIDTH         120 
@@ -227,7 +227,7 @@
 #define CFGBAR_TEXT_X		   2
 #define CFGBAR_TEXT_Y		   21
 
-#ifdef FEATURE_VERSION_C337
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A)
 #define CFGBAR_TEXT_WIDTH	   130
 #define CFGBAR_TEXT_HEIGHT	   20		//NormalFont Height
 #elif defined FEATURE_VERSION_W317A

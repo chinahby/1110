@@ -284,6 +284,7 @@ typedef enum BottomBar_e_Type
    BTBAR_OPTION_HANDS_HELD,		//Add By zzg 2012_10_31
    BTBAR_OPTION_UP,       // 选项-----向上
    BTBAR_0PTION_PLAY_BACK,
+   BTBAR_OPTIONS_BACK,
    BTBAR_PAUSE_BACK, 
    BTBAR_PLAY_BACK, 
    BTBAR_PLAY_STOP,   
