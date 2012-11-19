@@ -11,6 +11,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 
 #define FEATURE_VERSION_W027
 #define FEATURE_VERSION_W317A
+#define FEATRUE_MG_COPYMOVE		//Add By zzg 2012_11_19
 #ifdef CUST_EDITION
 #define FEATURE_APP_BLUETOOTH
 #define FEATURE_BT
