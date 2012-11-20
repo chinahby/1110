@@ -8608,6 +8608,8 @@ static void CoreApp_Issametimer(void *pUser)
 void CoreApp_HandleAlarm(CCoreApp  *pme, uint16 wPermID)
 {
 	 CCoreApp	*pMe = (CCoreApp *)pme;
+
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)	 
 	 if( ISHELL_ActiveApplet(pMe->a.m_pIShell) == AEECLSID_CORE_APP)
         {
         	MSG_FATAL("ISHELL_ActiveApplet..............",0,0,0);
@@ -8622,6 +8624,7 @@ void CoreApp_HandleAlarm(CCoreApp  *pme, uint16 wPermID)
 				CLOSE_DIALOG(DLGRET_SALES_TRACKER)
             }
         }
+#endif
 }
 
 
