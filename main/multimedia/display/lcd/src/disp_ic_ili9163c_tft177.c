@@ -74,6 +74,7 @@ static void disp_ic_mdp_scrupdate(uint32 *scr, uint32 start_row, uint32 start_co
 static void disp_ic_init(void)
 {
 #if 1
+	/*
 	LCD_WRITE_CMD(0x11); //Exit Sleep
 	LCD_DELAY(120);
 
@@ -158,6 +159,98 @@ static void disp_ic_init(void)
 	LCD_WRITE_DATA(0x3F);//p13
 	LCD_WRITE_DATA(0x3F);//p14
 	LCD_WRITE_DATA(0x3D);//p15
+	*/
+
+	LCD_WRITE_CMD(0x11); //Exit Sleep
+	LCD_DELAY(50);	 
+
+	LCD_WRITE_CMD(0x26); //Set Default Gamma
+	LCD_WRITE_DATA(0x04);
+
+	LCD_WRITE_CMD(0xB1);
+	LCD_WRITE_DATA(0x06);
+	LCD_WRITE_DATA(0x10);
+
+	LCD_WRITE_CMD(0xB4);
+	LCD_WRITE_DATA(0x07);
+
+
+	LCD_WRITE_CMD(0xC0); //Set VRH1[4:0] & VC[2:0] for VCI1 & GVDD
+	LCD_WRITE_DATA(0x10);
+	LCD_WRITE_DATA(0x00);
+
+	LCD_WRITE_CMD(0xC1); //Set BT[2:0] for AVDD & VCL & VGH & VGL
+	LCD_WRITE_DATA(0x03);
+
+	LCD_WRITE_CMD(0xC5); //Set VMH[6:0] & VML[6:0] for VOMH & VCOML
+	LCD_WRITE_DATA(0x34);
+	LCD_WRITE_DATA(0x39);
+
+	LCD_WRITE_CMD(0xC7);
+	LCD_WRITE_DATA(0xB4);
+
+	LCD_WRITE_CMD(0xEC);
+	LCD_WRITE_DATA(0x0C);
+
+	LCD_WRITE_CMD(0x3a); //Set Color Format
+	LCD_WRITE_DATA(0x05);
+
+	LCD_WRITE_CMD(0x2A); //Set Column Address
+	LCD_WRITE_DATA(0x00);
+	LCD_WRITE_DATA(0x00);
+	LCD_WRITE_DATA(0x00);
+	LCD_WRITE_DATA(0x7F);
+
+	LCD_WRITE_CMD(0x2B); //Set Page Address
+	LCD_WRITE_DATA(0x00);
+	LCD_WRITE_DATA(0x00);
+	LCD_WRITE_DATA(0x00);
+	LCD_WRITE_DATA(0x9F);
+
+	LCD_WRITE_CMD(0x36); //Set Scanning Direction
+	LCD_WRITE_DATA(0xC0);
+
+	LCD_WRITE_CMD(0xB7); //Set Source Output Direction
+	LCD_WRITE_DATA(0x00);
+
+	LCD_WRITE_CMD(0xf2); //Enable Gamma bit
+	LCD_WRITE_DATA(0x01);
+
+	LCD_WRITE_CMD(0xE0);
+	LCD_WRITE_DATA(0x3F);//p1
+	LCD_WRITE_DATA(0x25);//p2
+	LCD_WRITE_DATA(0x22);//p3
+	LCD_WRITE_DATA(0x2F);//p4
+	LCD_WRITE_DATA(0x28);//p5
+	LCD_WRITE_DATA(0x0C);//p6
+	LCD_WRITE_DATA(0x4F);//p7
+	LCD_WRITE_DATA(0xB7);//p8
+	LCD_WRITE_DATA(0x3C);//p9
+	LCD_WRITE_DATA(0x19);//p10
+	LCD_WRITE_DATA(0x16);//p11
+	LCD_WRITE_DATA(0x1E);//p12
+	LCD_WRITE_DATA(0x02);//p13
+	LCD_WRITE_DATA(0x01);//p14
+	LCD_WRITE_DATA(0x00);//p15
+
+	LCD_WRITE_CMD(0xE1);
+	LCD_WRITE_DATA(0x00);//p1
+	LCD_WRITE_DATA(0x1A);//p2
+	LCD_WRITE_DATA(0x1D);//p3
+	LCD_WRITE_DATA(0x10);//p4
+	LCD_WRITE_DATA(0x17);//p5
+	LCD_WRITE_DATA(0x13);//p6
+	LCD_WRITE_DATA(0x30);//p7
+	LCD_WRITE_DATA(0x48);//p8
+	LCD_WRITE_DATA(0x43);//p9
+	LCD_WRITE_DATA(0x06);//p10
+	LCD_WRITE_DATA(0x19);//p11
+	LCD_WRITE_DATA(0x21);//p12
+	LCD_WRITE_DATA(0x3D);//p13
+	LCD_WRITE_DATA(0x3E);//p14
+	LCD_WRITE_DATA(0x3F);//p15
+
+	LCD_WRITE_CMD(0x29); // Display On
 #else
     //--************ Start Initial Sequence **********--//
             
