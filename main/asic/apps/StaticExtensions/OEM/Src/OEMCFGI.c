@@ -12094,6 +12094,48 @@ void OEM_SetBAM_ADSAccount(void)
 #endif
 } /* OEM_SetBAM_ADSAccount */
 
+
+
+void OEM_SetBROWSER_ADSAccount(void)
+{
+#ifndef WIN32
+    nv_item_type nvi;
+    PppAccounts Account;
+    char username[PPP_MAX_USER_ID_LEN] = {0};
+    char password[PPP_MAX_PASSWD_LEN] = {0};
+    
+    OEMDSS_SetAppType(DA_WAP_TYPE);
+    
+    if(SUCCESS == OEM_GetPppAccounts(&Account, DS_WAP20_TYPE))
+    {
+    	MEMCPY(username, Account.user_id_info, STRLEN(Account.user_id_info));	
+    	MEMCPY(password, Account.passwd_info, STRLEN(Account.passwd_info));	
+    }
+    else
+    {
+        OEMPriv_GetItem_CFGI_BREWSET_USENAME((void*)username);
+        OEMPriv_GetItem_CFGI_BREWSET_PASSWORD((void*)password);
+    }
+    
+    // ’À∫≈
+
+    //(void)STRCPY((char *)nvi.pap_user_id.user_id, (char *)DEFAULT_BREW_USERNAME);
+    //nvi.pap_user_id.user_id_len = STRLEN((char *)DEFAULT_BREW_USERNAME);
+    (void)STRCPY((char *)nvi.pap_user_id.user_id, (char *)username);
+    nvi.pap_user_id.user_id_len = STRLEN((char *)username);
+    (void)OEMNV_Put(NV_PPP_USER_ID_I, &nvi);
+
+    // ’À∫≈√‹¬Î
+
+    //(void)STRCPY((char *)nvi.pap_password.password, (char *)DEFAULT_BREW_PASSWORD);
+    //nvi.pap_password.password_len = STRLEN((char *)DEFAULT_BREW_PASSWORD);
+    (void)STRCPY((char *)nvi.pap_password.password, (char *)password);
+    nvi.pap_password.password_len = STRLEN((char *)password);
+    (void)OEMNV_Put(NV_PPP_PASSWORD_I, &nvi);
+#endif
+} /* OEM_SetBAM_ADSAccount */
+
+
 #elif defined(FEATURE_FLEXI_STATIC_BREW_APP)
 void OEM_SetBAM_ADSAccount(STATIC_BREW_APP_e eApp)
 {
