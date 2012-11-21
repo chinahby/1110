@@ -4533,9 +4533,8 @@ static int StartApplet(MainMenu *pMe, int i)
         break;
         
     case IDS_MAIN_WAPBROWSER:
-#if(defined(FEATURE_OEMOMH)
+#if defined(FEATURE_OEMOMH)
 #if  (defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_W317A))	
-        extern void OEM_SetUCBROWSER_ADSAccount(void);
         OEM_SetUCBROWSER_ADSAccount();
 #endif		
 #endif		
