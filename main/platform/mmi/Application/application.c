@@ -1186,7 +1186,7 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
                 AECHAR  AppLabel[33];
                 MEMSET(AppLabel, 0x00, sizeof(AppLabel));
 #endif
-
+#ifndef FEATURE_VERSION_C337
                 (void)STRTOWSTR("%d. ",wsFmt,sizeof(wsFmt));
                 for (i=0;i<IMENUCTL_GetItemCount(pMenu);i++)
                 {
@@ -1210,8 +1210,11 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
                     WSTRLCAT(pwsz,pstr,sizeof(pwsz));
                     IMENUCTL_SetItemText(pMenu, wID, NULL, NULL, pwsz);
                 }
+				IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);				
+#else
+				IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY|MP_ACTIVE_NO_REDRAW);
+#endif
                 
-                IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
                 IMENUCTL_SetOemProperties( pMenu, OEMMP_USE_MENU_STYLE);
                 IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
                 IMENUCTL_SetSel(pMenu, pMe->m_MainSel);

@@ -11,6 +11,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 
 #define FEATURE_VERSION_W027
 #define FEATURE_VERSION_C337
+#define FEATURE_OEMOMH
 #ifdef CUST_EDITION
 #define FEATURE_APP_BLUETOOTH
 #define FEATURE_BT

@@ -1205,6 +1205,18 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 							
 						}
 #endif
+
+						//Add By zzg 2012_11_11
+#ifdef FEATURE_VERSION_C337						
+						if (WSTRCMP(pMe->m_DialString, L"*#07#") == 0)       	//SAR                 	
+                        { 
+							pMe->m_msg_text_id = IDS_SAR;	
+        					CLOSE_DIALOG(DLGRET_MSGBOX);
+							return TRUE;
+                        }   
+#endif
+						//Add End
+						
                         if (WSTRCMP(pMe->m_DialString, L"*#123456#") == 0)
                         {
                             return CallApp_LaunchApplet(pMe,  AEECLSID_APPMANAGER);
