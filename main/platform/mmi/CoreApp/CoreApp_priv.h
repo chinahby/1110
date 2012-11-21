@@ -615,7 +615,9 @@ typedef enum DLGRetValue
 #endif
 #if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
 	,DLGRET_SALES_TRACKER
+	#ifdef FEATURE_VERSION_W317A
 	,DLGRET_SALES_SUCESS
+	#endif 
 	,DLGRET_WMS_DRAFT_SAVED
 #endif
 } DLGRetValue;

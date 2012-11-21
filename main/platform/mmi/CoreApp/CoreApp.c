@@ -1439,7 +1439,9 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 									   CFGI_SMS_TRACKER_SEND_B,
 									   &m_bsendsalessms, 
 									   sizeof(m_bsendsalessms));
+					#if defined(FEATURE_VERSION_W317A)
 					CLOSE_DIALOG(DLGRET_SALES_SUCESS)
+					#endif
 				}
 					
 			}
