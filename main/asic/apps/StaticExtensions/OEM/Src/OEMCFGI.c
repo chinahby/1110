@@ -12095,8 +12095,8 @@ void OEM_SetBAM_ADSAccount(void)
 } /* OEM_SetBAM_ADSAccount */
 
 
-
-void OEM_SetBROWSER_ADSAccount(void)
+#if (defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_W317A))
+void OEM_SetUCBROWSER_ADSAccount(void)
 {
 #ifndef WIN32
     nv_item_type nvi;
@@ -12134,7 +12134,7 @@ void OEM_SetBROWSER_ADSAccount(void)
     (void)OEMNV_Put(NV_PPP_PASSWORD_I, &nvi);
 #endif
 } /* OEM_SetBAM_ADSAccount */
-
+#endif
 
 #elif defined(FEATURE_FLEXI_STATIC_BREW_APP)
 void OEM_SetBAM_ADSAccount(STATIC_BREW_APP_e eApp)
