@@ -4533,15 +4533,15 @@ static int StartApplet(MainMenu *pMe, int i)
         break;
         
     case IDS_MAIN_WAPBROWSER:
-#ifdef FEATURE_VERSION_C337
 #if(defined(FEATURE_OEMOMH) 
         extern void OEM_SetBROWSER_ADSAccount(void);
         OEM_SetBROWSER_ADSAccount();
-#endif
+#endif		
+        #ifdef FEATURE_VERSION_C337
         Result = ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
-#else
+        #else
         Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_UCWEB);
-#endif
+        #endif
         break;
     
     case IDS_MAIN_MENU_CALCULATOR: 
