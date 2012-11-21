@@ -161,7 +161,7 @@
 		<Text>आयोजक</Text>
 	</STRING>
 	<STRING Id="1092" Name="IDS_MAIN_MENU_SERVICES">
-		<Text>सेवाएं</Text>
+		<Text>संयोजकता</Text>
 	</STRING>
 	<STRING Id="1093" Name="IDS_MAIN_MENU_MEDIAGALLERY_C337">
 		<Text>फ़ाइल प्रबंधक</Text>

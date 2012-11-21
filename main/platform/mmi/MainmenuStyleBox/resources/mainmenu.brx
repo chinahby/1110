@@ -161,7 +161,7 @@
 		<Text>Organizer</Text>
 	</STRING>
 	<STRING Id="1092" Name="IDS_MAIN_MENU_SERVICES">
-		<Text>Services</Text>
+		<Text>connectivity</Text>
 	</STRING>
 	<STRING Id="1093" Name="IDS_MAIN_MENU_MEDIAGALLERY_C337">
 		<Text>File Manager</Text>
