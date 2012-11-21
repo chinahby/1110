@@ -3202,7 +3202,7 @@ static void CoreApp_Process_Charger_Msg(CCoreApp   *pMe)
         if(pMe->m_bExtPwrState)
         {
             #ifdef FEATURE_VERSION_C337
-            pMe->m_nMsgID = IDS_CHARGER_USB_ON;
+            pMe->m_nMsgID = IDS_CHARGER_CONNECTED;
             #elif defined(FEATURE_VERSION_W317A)
             pMe->m_nMsgID = IDS_CHARGER_CONNECTED;
             #else
@@ -3214,7 +3214,7 @@ static void CoreApp_Process_Charger_Msg(CCoreApp   *pMe)
        else
        {
           #ifdef FEATURE_VERSION_C337
-          pMe->m_nMsgID = IDS_CHARGER_USB_OFF;
+          pMe->m_nMsgID = IDS_CHARGER_REMOVED;
           #elif defined(FEATURE_VERSION_W317A)
           pMe->m_nMsgID = IDS_CHARGER_REMOVED;
           #else
@@ -4757,21 +4757,21 @@ static void    CoreApp_ResetRing(CCoreApp *pMe)
 	//ALASRM
 	if(nNewAlarmConfigRinger[OEMNV_PROFILE_NORMALMODE].ringType == OEMNV_MP3_RINGER)
 	{
-        if(STRNICMP(AEEFS_CARD0_DIR,nNewAlarmConfigRinger[OEMNV_PROFILE_NORMALMODE].szMusicname,STRLEN(AEEFS_CARD0_DIR)) == 0)
-        {
-    		nNewAlarmConfigRinger[OEMNV_PROFILE_NORMALMODE].ringType = OEMNV_MID_RINGER;
-    		nNewAlarmConfigRinger[OEMNV_PROFILE_NORMALMODE].midID = OEMNV_ALARM_RINGER;
-    		ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_ALARM_RINGER,(void*)nNewAlarmConfigRinger,sizeof(nNewAlarmConfigRinger));
-        }
+	        if(STRNICMP(AEEFS_CARD0_DIR,nNewAlarmConfigRinger[OEMNV_PROFILE_NORMALMODE].szMusicname,STRLEN(AEEFS_CARD0_DIR)) == 0)
+	        {
+	    		nNewAlarmConfigRinger[OEMNV_PROFILE_NORMALMODE].ringType = OEMNV_MID_RINGER;
+	    		nNewAlarmConfigRinger[OEMNV_PROFILE_NORMALMODE].midID = OEMNV_ALARM_RINGER;
+	    		ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_ALARM_RINGER,(void*)nNewAlarmConfigRinger,sizeof(nNewAlarmConfigRinger));
+	        }
 	}
 	if(nNewAlarmConfigRinger[OEMNV_PROFILE_QUIETMODE].ringType == OEMNV_MP3_RINGER)
    	{
-        if(STRNICMP(AEEFS_CARD0_DIR,nNewAlarmConfigRinger[OEMNV_PROFILE_QUIETMODE].szMusicname,STRLEN(AEEFS_CARD0_DIR)) == 0)
-        {
-       		nNewAlarmConfigRinger[OEMNV_PROFILE_QUIETMODE].ringType = OEMNV_MID_RINGER;
-    		nNewAlarmConfigRinger[OEMNV_PROFILE_QUIETMODE].midID = OEMNV_ALARM_RINGER;
-    		ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_ALARM_RINGER,(void*)nNewAlarmConfigRinger,sizeof(nNewAlarmConfigRinger));
-        }
+	        if(STRNICMP(AEEFS_CARD0_DIR,nNewAlarmConfigRinger[OEMNV_PROFILE_QUIETMODE].szMusicname,STRLEN(AEEFS_CARD0_DIR)) == 0)
+	        {
+	       		nNewAlarmConfigRinger[OEMNV_PROFILE_QUIETMODE].ringType = OEMNV_MID_RINGER;
+	    		nNewAlarmConfigRinger[OEMNV_PROFILE_QUIETMODE].midID = OEMNV_ALARM_RINGER;
+	    		ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_ALARM_RINGER,(void*)nNewAlarmConfigRinger,sizeof(nNewAlarmConfigRinger));
+	        }
    	}
 	   
     if(nNewAlarmConfigRinger[OEMNV_PROFILE_MEETING].ringType == OEMNV_MP3_RINGER)
