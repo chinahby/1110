@@ -1072,7 +1072,21 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
         //    db_put(DB_BACKLIGHT_LEVEL, &db_value);
         //}
         
-		
+#if defined(FEATURE_VERSION_C337)
+          {
+              IBacklight  *Backlight;
+              (void)ISHELL_CreateInstance(sgpShell,AEECLSID_BACKLIGHT,(void **)&Backlight);
+              if(!IBACKLIGHT_IsEnabled(Backlight))
+              {
+                if(EVT_KEY_PRESS ==evt)
+                  {
+                    return FALSE;
+                  }
+              } 
+              IBACKLIGHT_Release(Backlight);
+          }
+#endif		
+
 #if  defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W027)
         if(wParam == AVK_CLR)
 #else
