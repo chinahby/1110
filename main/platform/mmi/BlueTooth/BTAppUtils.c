@@ -445,19 +445,28 @@ uint16 BTApp_FormatBTName(
   AECHAR*       pwName )
 {  
 	AECHAR wBuf1[ 24 ];	//16 
-  
-#ifdef FEATURE_VERSION_C337
-	ISHELL_LoadResString(pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, IDS_BT_NAME, wBuf1, sizeof( wBuf1 )); 
-	WSTRLCAT( pwStr, wBuf1, ( uLen * sizeof(AECHAR)));  
-	wBuf1[ 0 ] = (AECHAR)(unsigned char) (':');
-	wBuf1[ 1 ] = (AECHAR)(unsigned char) ('\n');
-	wBuf1[ 2 ] = (AECHAR)(unsigned char) ('\0');
-	WSTRLCAT( pwStr, wBuf1, ( uLen * sizeof(AECHAR)));
+	AECHAR wStr[3];	
 
-	WSTRLCAT( pwStr, pwName, ( uLen * sizeof(AECHAR)));    
-	wBuf1[0] = (AECHAR)(unsigned char) ('\n');
-	wBuf1[1] = (AECHAR)(unsigned char) ('\0');
-	WSTRLCAT( pwStr, wBuf1, ( uLen * sizeof(AECHAR)));
+#ifdef FEATURE_VERSION_C337
+	MEMSET(pwStr, 0, WSTRLEN(pwStr)*sizeof(AECHAR));	
+	
+	ISHELL_LoadResString(pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, IDS_BT_NAME, wBuf1, sizeof( wBuf1 )); 
+	WSTRLCAT( pwStr, wBuf1, (WSTRLEN(wBuf1) * sizeof(AECHAR)));  
+	
+	MEMSET(wBuf1, 0, WSTRLEN(wBuf1)*sizeof(AECHAR));	
+	wStr[0] = (AECHAR)(unsigned char) (':');
+	wStr[1] = (AECHAR)(unsigned char) ('\n');
+	wStr[2] = (AECHAR)(unsigned char) ('\0');
+	
+	WSTRLCAT( pwStr, wStr, (uLen* sizeof(AECHAR)));
+
+	WSTRLCAT( pwStr, pwName, (uLen * sizeof(AECHAR)));  
+
+	MEMSET(wBuf1, 0, WSTRLEN(wBuf1)*sizeof(AECHAR));
+	wStr[0] = (AECHAR)(unsigned char) ('\n');
+	wStr[1] = (AECHAR)(unsigned char) ('\0');
+	
+	WSTRLCAT( pwStr, wStr, (uLen* sizeof(AECHAR)));	
 #else
 	ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, IDS_LABEL_BT_NAME, wBuf1, sizeof( wBuf1 ) );
 	WSPRINTF( pwStr, uLen*sizeof( AECHAR ), wBuf1, pwName );
@@ -465,7 +474,7 @@ uint16 BTApp_FormatBTName(
 	wBuf1[ 1 ] = (AECHAR)(unsigned char) ('\0');
 	WSTRLCAT( pwStr, wBuf1, ( uLen * sizeof(AECHAR) ) );
 #endif
-  
+
 	return WSTRLEN( pwStr );
 }
 
