@@ -106,6 +106,18 @@
 	<String Id="1037" Name="IDS_CFG_RESET">
 		<Text>Reset</Text>
 	</String>
+	<String Id="1038" Name="IDS_CFG_SCENEMODE">
+		<Text>Scene Mode</Text>
+	</String>
+	<String Id="1039" Name="IDS_CFG_IMAGEQUALITY">
+		<Text>Image Quality</Text>
+	</String>
+	<String Id="1040" Name="IDS_CFG_IMAGESIZE">
+		<Text>Image Size</Text>
+	</String>
+	<String Id="1041" Name="IDS_CFG_SOUND">
+		<Text>Shutter Sound</Text>
+	</String>
 	<String Id="1058" Name="IDS_NORMAL">
 		<Text>Normal</Text>
 	</String>

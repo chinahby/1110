@@ -4482,21 +4482,37 @@ static void CameraApp_DrawCFGPromptText(CCameraApp *pMe)
 				break;
 		    #endif
             case CAMERACFGENVIRMENT:
+                #ifdef FEATURE_VERSION_W317A
+                nResID = IDS_CFG_SCENEMODE;
+                #else
                 nResID = IDS_CFG_ENVIR;
+                #endif
                 break;
                 
             case CAMERACFGQUALITY:
+                #ifdef FEATURE_VERSION_W317A
+                nResID =IDS_CFG_IMAGEQUALITY;
+                #else
                 nResID = IDS_CFG_QUALITY;
+                #endif
                 break;
 
             //#ifndef FEATURE_VERSION_X3      
             case CAMERACFGSIZE:
+                #ifdef FEATURE_VERSION_W317A
+                nResID = IDS_CFG_IMAGESIZE;
+                #else
                 nResID = IDS_CFG_SIZE;
+                #endif
                 break;
             //#endif    
                 
             case CAMERACFGTONE:
+                #ifdef FEATURE_VERSION_W317A
+                nResID = IDS_CFG_SOUND;
+                #else
                 nResID = IDS_CFG_TONE;
+                #endif
                 break;
                 
             case CAMERACFGSELFTIME:
