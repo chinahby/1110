@@ -1967,6 +1967,10 @@ static int OEMALERT_PlayRinger
   case AEEALERT_ALERT_LOW_BATTERY: 
     IBACKLIGHT_Enable(pMe->m_pBacklight);
     OEMALERT_GetRingerVol(pMe);
+    #ifdef FEATURE_VERSION_C337
+    pMe->m_ringCurVol = OEMSOUND_1ST_VOL;
+    pMe->m_ringEndVol = OEMSOUND_1ST_VOL;
+    #endif
     OEMALERT_SetRingerVol(pMe, FALSE);
     OEMSOUND_Sound_Id_Start(SND_DEVICE_CURRENT,
                            (OEMALERT_InCall(pMe) || OEMALERT_RingInHeadset(pMe)) ?
