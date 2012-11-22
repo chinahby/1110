@@ -1864,6 +1864,7 @@ static boolean  IDD_SALES_EDIT_Handler(void *pUser,
     return FALSE;
 	
 }
+}
 #endif
 
 

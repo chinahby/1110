@@ -1921,7 +1921,7 @@ static boolean CoreApp_Start_Alarm(CCoreApp *pMe)
        
 ±¸×¢£º
        
-==============================================================================*/?
+==============================================================================*/
 static NextFSMAction COREST_SALES_EDIT_Handler(CCoreApp *pMe)
 {
 	if (NULL == pMe)
