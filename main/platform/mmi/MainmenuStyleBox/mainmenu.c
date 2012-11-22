@@ -4513,9 +4513,19 @@ static int StartApplet(MainMenu *pMe, int i)
 
 	//Add By zzg 2012_11_08 for C337 
 	case IDS_MAIN_MENU_SERVICES:
-		Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_UCWEB);
+#if defined(FEATURE_OEMOMH)
+#if  (defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_W317A))	
+            OEM_SetUCBROWSER_ADSAccount();
+#endif		
+#endif			
+	    Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_UCWEB);
 		break;
 	case IDS_MAIN_MENU_MSTORE:
+#if defined(FEATURE_OEMOMH)
+#if  (defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_W317A))	
+        OEM_SetUCBROWSER_ADSAccount();
+#endif		
+#endif			
         Result = ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
 		break;
 	case IDS_MAIN_MENU_MZONE:
