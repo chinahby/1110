@@ -3174,26 +3174,37 @@ static void CoreApp_Process_Batty_Msg(CCoreApp   *pMe, uint16  msg_id)
 }
 static void CoreApp_Process_BattyLow_Msg(CCoreApp   *pMe, uint16  msg_id)
 {
-    if(msg_id == IDS_LOWBATTMSG_TEXT)
+#ifdef FEATURE_VERSION_C337
+    if(pMe->m_battery_state)
+#endif
     {
-    IALERT_StartAlerting(pMe->m_pAlert, NULL, NULL, AEEALERT_ALERT_LOW_BATTERY);
-    }
-    else
-    {
-        IALERT_StartAlerting(pMe->m_pAlert, NULL, NULL, AEEALERT_ALERT_ROAMING);
-    }
-    if((pMe->m_wActiveDlgID == IDD_PWDIMSIMCC ||
-               pMe->m_wActiveDlgID == IDD_PWDINPUT ||
-               pMe->m_wActiveDlgID == IDD_UIMSECCODE ||
-               pMe->m_wActiveDlgID == IDD_EMERGENCYNUMLIST ||
-               pMe->m_wActiveDlgID == IDD_IDLE
-               ) && (pMe->m_bSuspended == FALSE))
-    {
-        pMe->m_nMsgID = msg_id;
-        MSG_FATAL("CoreApp_Process_Batty_Msg 1",0,0,0); 
-        CLOSE_DIALOG(DLGRET_BATT_INFO)
-      //ISHELL_MessageBox(pMe->a.m_pIShell,AEE_COREAPPRES_LANGFILE,NULL,IDS_LOWBATTMSG_TEXT);
-        pMe->m_battery_state = FALSE ;
+       
+       AEE_CancelTimer(CoreApp_Process_Batty_Msg_CB, (void*)pMe);
+       if(msg_id == IDS_LOWBATTMSG_TEXT)
+       {
+           IALERT_StartAlerting(pMe->m_pAlert, NULL, NULL, AEEALERT_ALERT_LOW_BATTERY);
+       }
+       else
+       {
+           IALERT_StartAlerting(pMe->m_pAlert, NULL, NULL, AEEALERT_ALERT_ROAMING);
+       }
+       if((pMe->m_wActiveDlgID == IDD_PWDIMSIMCC ||
+                  pMe->m_wActiveDlgID == IDD_PWDINPUT ||
+                  pMe->m_wActiveDlgID == IDD_UIMSECCODE ||
+                  pMe->m_wActiveDlgID == IDD_EMERGENCYNUMLIST ||
+                  pMe->m_wActiveDlgID == IDD_IDLE
+                  ) && (pMe->m_bSuspended == FALSE))
+       {
+           pMe->m_nMsgID = msg_id;
+           MSG_FATAL("CoreApp_Process_Batty_Msg 1",0,0,0); 
+           pMe->m_battery_state = FALSE ;
+           #ifdef FEATURE_VERSION_C337
+           AEE_SetSysTimer(10000, CoreApp_Process_Batty_Msg_CB, (void*)pMe);
+           #endif
+           CLOSE_DIALOG(DLGRET_BATT_INFO)
+         //ISHELL_MessageBox(pMe->a.m_pIShell,AEE_COREAPPRES_LANGFILE,NULL,IDS_LOWBATTMSG_TEXT);
+           
+       }
     }
 }
 

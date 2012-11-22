@@ -317,8 +317,6 @@
 #define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweroffani.png"
 #define    PWROFF_ANI_FRAME_COUNT                PWRON_ANI_FRAME_COUNT
 #define    PWROFF_ANI_RATE                       PWRON_ANI_RATE
-
-
 #elif defined FEATURE_VERSION_N021
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronoff.gif"
 #define    PWRON_ANI_FRAME_COUNT                 (1)

@@ -436,7 +436,7 @@ static boolean  IDD_SALESSUCCESS_Handler(void *pUser,
                                  uint32     dwParam);
 #endif
 #if defined(FEATURE_VERSION_W317A)
-// ¶Ô»°¿ò IDD_SALES_EDIT ÊÂ¼þ´¦Àíº¯Ê
+// ¶Ô»°¿ò IDD_SALES_EDIT ÊÂ¼þ´¦Àíº¯?
 static boolean  IDD_SALES_EDIT_Handler(void *pUser,
 								 AEEEvent   eCode,
                                  uint16     wParam,
@@ -4009,6 +4009,9 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 						//AEE_CancelTimer(CoreApp_keypadtimer,pMe);
 						//ISHELL_CancelTimer(pMe->a.m_pIShell,CoreApp_keypadtimer,pMe);
 					}
+                    #ifdef FEATURE_VERSION_W317A
+                    Mainmenu_KeypadLock(TRUE);   
+                    #endif
 #if defined	(FEATURE_VERSION_FLEXI203)||defined(FEATURE_VERSION_IVIO203) ||defined(FEATURE_VERSION_C500BE)
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_SETTINGMENU);
 #elif defined (FEATURE_VERSION_SMART)
@@ -4019,7 +4022,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER); 
 #elif defined (FEATURE_VERSION_M8P)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
-#elif defined (FEATURE_VERSION_C11)||defined (FEATURE_VERSION_W317A)
+#elif defined (FEATURE_VERSION_C11)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #elif defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_SCHEDULEAPP);
@@ -4027,6 +4030,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APPMANAGER);
 #elif defined(FEATURE_VERSION_C337)
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);
+#elif defined(FEATURE_VERSION_W317A)
+                    return CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 
 					return TRUE;
 #else
@@ -4245,7 +4250,11 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #if defined(FEATURE_VERSION_W027)                       
                         Mainmenu_KeypadLock(TRUE);
 #endif
+#ifdef FEATURE_VERSION_W317A
+                        return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
+#else
 						return CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
+#endif
 #endif	
 
 #endif
