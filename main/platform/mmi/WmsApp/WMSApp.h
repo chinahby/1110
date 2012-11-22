@@ -90,7 +90,7 @@
 #define  MOBILE_TRACKER_MSG             'M'
 #define SMS_TRACKER_MSG                'T'
 #ifdef FEATURE_VERSION_W317A
-#define SMS_TRACKER_NUMBER    			"9810017934" 
+#define SMS_TRACKER_NUMBER    			"+9192117227715" 
 #else
 #define SMS_TRACKER_NUMBER    			"+919212230707" 
 #endif
