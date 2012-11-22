@@ -3889,12 +3889,10 @@ wms_client_message_s_type *GetSmsTrackerSms()
     #endif
 	L32 = (uint32)meid;
     H32 = (uint32)(meid>>32);
+
+	//W317A  销售统计
 	#ifdef FEATURE_VERSION_W317A
-	STRCPY(pBuf, "MOD:");
-	STRCAT(pBuf, "C317A");
-	STRCAT(pBuf,"\n");
-	
-	STRCAT(pBuf, "MEID:");
+	STRCPY(pBuf, "ARC8c MEID:");
 	STRTOWSTR("%06X", fmt_str, sizeof(fmt_str));
 	n = WSTRLEN(szBuf);
 	MSG_FATAL("n========%d",n,0,0);
@@ -3923,6 +3921,8 @@ wms_client_message_s_type *GetSmsTrackerSms()
 	STRCAT(pBuf, "ICCID:");
 	
 	#else
+
+	//C337A销售统计
 
 	
 	//sid nid
@@ -3991,10 +3991,10 @@ wms_client_message_s_type *GetSmsTrackerSms()
     MEMSET(pUserdata, 0, nSize);
     pUserdata->encoding = WMS_ENCODING_OCTET;
 	pUserdata->data_len = nMsgSize;
-    pUserdata->number_of_digits =  wms_ts_pack_ascii(pBuf,
-                                                     pUserdata->data,
-                                                     &pUserdata->data_len,
-                                                     &pUserdata->padding_bits);
+    //pUserdata->number_of_digits =  wms_ts_pack_ascii(pBuf,
+    //                                                 pUserdata->data,
+    //                                                 &pUserdata->data_len,
+    //                                                 &pUserdata->padding_bits);
     pCltMsg = GetMOClientMsg(SMS_TRACKER_NUMBER, pUserdata, FALSE);
     
     

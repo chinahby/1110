@@ -583,6 +583,10 @@ boolean CoreApp_InitAppData(IApplet* po)
     pMe->m_b_needclose_core = FALSE;
 #endif
     MEMSET(pMe->m_strPhonePWD, 0, PINCODE_LENGTH + 1);
+#ifdef FEATURE_VERSION_W317A
+    MEMSET(pMe->m_strPhoneNUM, 0, PHONENUMBER+1);
+#endif
+
 #ifdef FEATURE_LCD_TOUCH_ENABLE
     MEMSET(pMe->m_strPhonePWDtemp, 0, PINCODE_LENGTH + 1);
 #endif
@@ -1493,7 +1497,16 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             CLOSE_DIALOG(DLGRET_CREATE)         
             return TRUE;
 #endif
+
+#ifdef FEATURE_VERSION_W317A
+		case EVT_SMS_TRACKER:
+			// 先改变当前状态
+            MOVE_TO_STATE(COREST_SALES_EDIT)
             
+            // 再以 DLGRET_CREATE 关闭当前对话框
+            CLOSE_DIALOG(DLGRET_CREATE)  
+			return TRUE;
+#endif
         case EVT_RTC:
         {
             if( pMe->m_eCurState == COREST_LPM)

@@ -106,6 +106,11 @@ static NextFSMAction COREST_SALES_TRAKER_Handler(CCoreApp *pMe);
 static NextFSMAction COREST_SALES_SUCCESS_Handler(CCoreApp *pMe);
 #endif
 
+#if defined(FEATURE_VERSION_W317A)
+// 状态 COREST_SALES_EDIT 处理函数
+static NextFSMAction COREST_SALES_EDIT_Handler(CCoreApp *pMe);
+
+#endif
 
 // 状态 COREST_NOTICE 处理函数
 static NextFSMAction COREST_NOTICE_Handler(CCoreApp *pMe);
@@ -286,6 +291,12 @@ NextFSMAction CoreApp_ProcessState(CCoreApp *pMe)
             retVal = COREST_UTKREFRESH_Handler(pMe);
             break;            
 #endif //FEATURE_UTK2
+#if defined(FEATURE_VERSION_W317A)
+		case COREST_SALES_EDIT:
+			retVal = COREST_SALES_EDIT_Handler(pMe);
+			break;
+#endif
+
         default:
             break;
     }
@@ -1892,6 +1903,46 @@ static boolean CoreApp_Start_Alarm(CCoreApp *pMe)
 #endif
 }
 
+#if defined(FEATURE_VERSION_W317A)
+/*==============================================================================
+函数：
+    COREST_SALES_EDIT_Handler
+说明：
+    COREST_SALES_EDIT 状态处理函数
+       
+参数：
+    pMe [in]：指向Core Applet对象结构的指针。该结构包含小程序的特定信息。
+       
+返回值：
+    NFSMACTION_CONTINUE：指示后有子状态，状态机不能停止。
+    NFSMACTION_WAIT：指示因要显示对话框界面给用户，应挂起状态机。
+       
+备注：
+       
+==============================================================================*/?
+static NextFSMAction COREST_SALES_EDIT_Handler(CCoreApp *pMe)
+{
+	if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+    MSG_FATAL("COREST_SALES_EDIT_Handler Start",0,0,0);
+    switch (pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            CoreApp_ShowDialog(pMe, IDD_SALES_EDIT);
+            return NFSMACTION_WAIT;
+            
+        case DLGRET_MSGOK:
+        default:
+            MOVE_TO_STATE(COREST_STANDBY)
+    }
+    MSG_FATAL("COREST_SALES_EDIT_Handler End",0,0,0);
+    return NFSMACTION_CONTINUE;
+}
+
+
+#endif
 
 #ifdef FEATURE_UTK2
 /*==============================================================================
@@ -1930,6 +1981,7 @@ static NextFSMAction COREST_UTKREFRESH_Handler(CCoreApp *pMe)
             
             pMe->m_nMsgID = IDS_UTKREFRESH;
                 
+          
             CoreApp_ShowDialog(pMe, IDD_UTKREFRESH);
             return NFSMACTION_WAIT;
             

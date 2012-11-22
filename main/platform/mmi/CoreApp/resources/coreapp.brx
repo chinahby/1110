@@ -220,6 +220,9 @@
 	<String Id="1083" Name="IDS_SALES_SUCCESS">
 		<Text>Thank you for registering with Lava</Text>
 	</String>
+	<String Id="1084" Name="IDS_WMS_DRAFT_SAVED">
+		<Text>Message is saved in draft</Text>
+	</String>
 	<String Id="1101" Name="IDS_CHARGER_USB_ON">
 		<Text>USB connected</Text>
 	</String>
@@ -231,9 +234,6 @@
 	</String>
 	<String Id="1104" Name="IDS_CHARGER_REMOVED">
 		<Text>Charger removed</Text>
-	</String>
-	<String Id="1084" Name="IDS_WMS_DRAFT_SAVED">
-		<Text>Message is saved in draft</Text>
 	</String>
 </Strings>
 <Dialogs>
@@ -304,6 +304,9 @@
 	<Dialog Id="6016" Name="IDD_SALESSUCCESS" Focus="0">
 		<Controls/>
 		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<Dialog Id="6017" Name="IDD_SALES_EDIT" Focus="0">
+		<Controls/>
 	</Dialog>
 </Dialogs>
 </BREWRes>

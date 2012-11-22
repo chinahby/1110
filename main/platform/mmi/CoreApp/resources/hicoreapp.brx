@@ -305,5 +305,8 @@
 		<Controls/>
 		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</Dialog>
+	<Dialog Id="6017" Name="IDD_SALES_EDIT" Focus="0">
+		<Controls/>
+	</Dialog>
 </Dialogs>
 </BREWRes>

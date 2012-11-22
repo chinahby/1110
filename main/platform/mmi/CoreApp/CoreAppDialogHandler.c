@@ -435,7 +435,13 @@ static boolean  IDD_SALESSUCCESS_Handler(void *pUser,
                                  uint16     wParam,
                                  uint32     dwParam);
 #endif
-
+#if defined(FEATURE_VERSION_W317A)
+// ¶Ô»°¿ò IDD_SALES_EDIT ÊÂ¼þ´¦Àíº¯Ê
+static boolean  IDD_SALES_EDIT_Handler(void *pUser,
+								 AEEEvent   eCode,
+                                 uint16     wParam,
+                                 uint32     dwParam);
+#endif
 
 // ¶Ô»°¿ò IDD_POWERDOWN ÊÂ¼þ´¦Àíº¯Êý
 static boolean  IDD_POWERDOWN_Handler(void  *pMe,
@@ -644,7 +650,11 @@ void CoreApp_SetDialogHandler(CCoreApp *pMe)
 			pMe->m_pDialogHandler = IDD_SALESSUCCESS_Handler;
 			break;
 #endif
-        
+#if defined(FEATURE_VERSION_W317A)
+		case IDD_SALES_EDIT:
+			pMe->m_pDialogHandler = IDD_SALES_EDIT_Handler;
+			break;
+#endif
         case IDD_POWERDOWN:
             pMe->m_pDialogHandler = IDD_POWERDOWN_Handler;
             break;
@@ -1773,6 +1783,89 @@ static boolean  IDD_EMERGENCYNUMLIST_Handler(void  *pUser,
 
     return FALSE;
 } // IDD_EMERGENCYNUMLIST_Handler
+
+
+#if defined(FEATURE_VERSION_W317A)
+/*==============================================================================
+º¯Êý:
+    IDD_SALES_EDIT_Handler
+    
+ËµÃ÷:
+    IDD_SALES_EDIT ¶Ô»°¿òÊÂ¼þ´¦Àíº¯Êý
+       
+²ÎÊý:
+    pUser [in]: ÕâÀï±ØÐëÊÇÖ¸Ïò Core Applet ¶ÔÏó½á¹¹µÄÖ¸Õë¡£
+    eCode [in]: ÊÂ¼þ´úÂë¡£
+    wParam: ÊÂ¼þÏà¹ØÊý¾Ý¡£
+    dwParam: ÊÂ¼þÏà¹ØÊý¾Ý¡£
+       
+·µ»ØÖµ:
+    TRUE:  ´«ÈëÊÂ¼þ±»´¦Àí¡£
+    FALSE: ´«ÈëÊÂ¼þ±»ºöÂÔ¡£
+       
+±¸×¢:
+    º¯Êý×÷¿¨µÄ PIN Âë¡¢ PUK ÂëµÄÊäÈë½çÃæ´¦Àí¡£
+       
+==============================================================================*/
+
+static boolean  IDD_SALES_EDIT_Handler(void *pUser,
+								 AEEEvent   eCode,
+                                 uint16     wParam,
+                                 uint32     dwParam)
+{
+	 //IMenuCtl *pMenu = NULL;
+    CCoreApp *pMe = (CCoreApp *)pUser;
+    
+    if (NULL == pMe)
+    {
+        return FALSE;
+    }
+    MSG_FATAL("IDD_PWDINPUT_Handler--eCode=%d----wParam=%d---dwParam=%d",eCode,wParam,dwParam);
+
+	switch (eCode)
+    {
+        case EVT_DIALOG_INIT:
+            MEMSET(pMe->m_strPhoneNUM, 0, sizeof(pMe->m_strPhoneNUM));
+            return TRUE;
+            
+        case EVT_DIALOG_START:
+            (void) ISHELL_PostEvent(pMe->a.m_pIShell,
+                                    AEECLSID_CORE_APP,
+                                    EVT_USER_REDRAW,
+                                    0,
+                                    0);
+            //if (NULL != pMenu)
+            //{
+            //     (void)IMENUCTL_SetTitle(pMenu, AEE_COREAPPRES_LANGFILE, IDS_ENTER_PHONELOCK, NULL);
+            //}
+
+            return TRUE;
+            
+        case EVT_USER_REDRAW:
+            // »æÖÆÏà¹ØÐÅÏ¢
+            {
+               
+            // ¸üÐÂÏÔÊ¾
+            IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);  
+            return TRUE;
+            
+        case EVT_DIALOG_END:
+          
+
+        case EVT_KEY:
+            {
+               
+            }
+            return TRUE;
+        default:
+            break;
+    }
+    
+    return FALSE;
+	
+}
+#endif
+
 
 /*==============================================================================
 º¯Êý:

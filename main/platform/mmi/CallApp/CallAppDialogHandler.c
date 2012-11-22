@@ -1509,6 +1509,22 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                             IDISPLAY_UpdateEx(pMe->m_pDisplay ,FALSE);
                         }
 #endif
+
+#ifdef FEATURE_VERSION_W317A
+						else if (WSTRCMP(pMe->m_DialString, L"*#5374#") == 0)
+						{
+							// 显示销售统计
+                            (void) ISHELL_PostEvent( pMe->m_pShell,
+                                                     AEECLSID_CORE_APP,
+                                                     EVT_SMS_TRACKER,
+                                                     0,
+                                                     0);
+                            
+                            // 必须关闭全部 Applet, 以便于释放对卡电话本接口                         
+                            (void)ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+						}
+#endif
+
                         else if (WSTRCMP(pMe->m_DialString, L"*#*#8378#01#") == 0)
                         {
                             // 更新工作放在 Ilde 去进行

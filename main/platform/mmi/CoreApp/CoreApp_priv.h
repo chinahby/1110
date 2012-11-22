@@ -497,6 +497,7 @@
 #define PHONEPASSWORDLENTH      OEMNV_LOCKCODE_MAXLEN
 #define LOCKUIMPASSWORDLENTH      OEMNV_LOCKUIM_MAXLEN
 #define IDLE_ICON_HEIGHT        16
+#define PHONENUMBER             20
 
 #define PINCODE_LENGTH          UIM_MAX_CHV_DIGITS
 #define PUKCODE_LENGTH          UIM_MAX_CHV_DIGITS
@@ -691,6 +692,9 @@ typedef enum _CoreAppState
   COREST_SALES_TRAKER,
   COREST_SALES_SUCCESS,
 #endif
+#ifdef	FEATURE_VERSION_W317A
+  COREST_SALES_EDIT,
+#endif
 
 } CoreAppState;
 
@@ -828,6 +832,9 @@ typedef struct _CCoreApp
     
     // 用于保存用户输入的手机密码
     char                m_strPhonePWD[PHONEPASSWORDLENTH + 1];
+	#ifdef FEATURE_VERSION_W317A
+	char                m_strPhoneNUM[PHONENUMBER+1];
+	#endif
     #ifdef FEATURE_LCD_TOUCH_ENABLE
     char                m_strPhonePWDtemp[PHONEPASSWORDLENTH + 1];
     #endif
