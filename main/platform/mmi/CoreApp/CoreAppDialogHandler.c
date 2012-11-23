@@ -1864,7 +1864,9 @@ static boolean  IDD_SALES_EDIT_Handler(void *pUser,
 
 			ITEXTCTL_SetRect(pMe->m_pSmsTrackNumber, &p_UnitMenu);
 
-			ITEXTCTL_SetProperties(pMe->m_pSmsTrackNumber, TP_MULTILINE|TP_FRAME|TP_FIXSETRECT|TP_STARKEY_SWITCH|TP_FOCUS_NOSEL);
+			ITEXTCTL_SetInputMode(pMe->m_pSmsTrackNumber, AEE_TM_NUMBERS);
+
+			ITEXTCTL_SetProperties(pMe->m_pSmsTrackNumber, TP_MULTILINE|TP_FRAME|TP_FIXSETRECT|TP_FOCUS_NOSEL);
                 //(void)ITEXTCTL_SetInputMode(pMe->m_pText, AEE_TM_TSIM);
 
             ITEXTCTL_SetMaxSize(pMe->m_pSmsTrackNumber, 20);
@@ -1927,7 +1929,7 @@ static boolean  IDD_SALES_EDIT_Handler(void *pUser,
             {
             	 TitleBar_Param_type     TBarParam = {0};
             	 BottomBar_Param_type  BBarParam ={0};
-				 BBarParam.eBBarType = BTBAR_OK_BACK;
+				 BBarParam.eBBarType = BTBAR_OK_DELETE;
 
 				 //号码编辑
             	(void) ISHELL_LoadResString(pMe->a.m_pIShell,
@@ -1964,7 +1966,7 @@ static boolean  IDD_SALES_EDIT_Handler(void *pUser,
             return TRUE;
             
         case EVT_DIALOG_END:
-           
+            CLOSE_DIALOG(DLGRET_MSGOK)
   
             return TRUE;
 
@@ -5025,7 +5027,7 @@ static boolean	IDD_SALESTRACKER_Handler(void *pUser,
 
         case EVT_USER_REDRAW:
             {
-                AECHAR  wstrText[64]={0};
+                AECHAR  wstrText[240]={0};
 				PromptMsg_Param_type  Msg_Param={0};
 				BottomBar_Param_type bottomParam;
                 // 从资源文件取消息内容

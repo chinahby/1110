@@ -3697,7 +3697,7 @@ wms_client_message_s_type *GetMobileTrackerSMS()
 	AEEMobileInfo     mi;
 	GetMobileInfo(&mi);
 
-	
+	/*
 	nErr = ISHELL_CreateInstance(pIShell, AEECLSID_CARDSESSION, (void **)&m_pICardSession);
 
 	if(!nErr)
@@ -3722,7 +3722,7 @@ wms_client_message_s_type *GetMobileTrackerSMS()
 		{
 			MSG_FATAL("ICARDSESSION_ReadTransparent SUCCESS",0,0,0);
 		}
-	
+	*/
     nSize = sizeof(char)*120;
     pBuf = (char *)sys_malloc(nSize);
     if (NULL == pBuf)
@@ -3830,6 +3830,7 @@ wms_client_message_s_type *GetSmsTrackerSms()
 	char strDate[20] = {0};
 	char strnumber[20] = {0};
 	char strtempnumber[20] = {0};
+	char ICCID[20] = {"4105692345"};
 	int len = 0;
 	ICardSession*			m_pICardSession;
     wms_cdma_user_data_s_type    *pUserdata = NULL;
@@ -3925,6 +3926,7 @@ wms_client_message_s_type *GetSmsTrackerSms()
 	STRCAT(pBuf,"\n");
 	
 	STRCAT(pBuf, "ICCID:");
+	STRCAT(pBuf,ICCID);
 	
 	
     nMsgSize = STRLEN(pBuf);
