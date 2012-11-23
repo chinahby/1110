@@ -466,9 +466,7 @@ else
             midi_02.mid|fs:/ringers/midi_02.mid \
             midi_03.mid|fs:/ringers/midi_03.mid \
             midi_04.mid|fs:/ringers/midi_04.mid \
-            midi_05.mid|fs:/ringers/midi_05.mid \
-            feeling_on.mid|fs:/ringers/feeling_on.mid \
-            feeling_off.mid|fs:/ringers/feeling_off.mid  		
+            midi_05.mid|fs:/ringers/midi_05.mid 
     else ifeq ($(USES_RESDIR),C180)                                           
         CONSTFILE_FILES+=\
             blues.mid|fs:/ringers/blues.mid \

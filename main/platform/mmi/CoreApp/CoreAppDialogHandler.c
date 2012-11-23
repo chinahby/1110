@@ -160,7 +160,7 @@ extern boolean   IsRunAsFactoryTestMode(void);
 #elif defined(FEATURE_DISP_176X220)
 
 #define IDLE_D_CLOCK_X 		15
-#define IDLE_D_CLOCK_Y 		150
+#define IDLE_D_CLOCK_Y 		120
 
 #define RPLMN_X				5
 #define RPLMN_Y				40

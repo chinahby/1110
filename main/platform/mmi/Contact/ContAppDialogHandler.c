@@ -13541,13 +13541,13 @@ static boolean  CContApp_HandleDetailDlgEvent( CContApp  *pMe,
             }
             
             // Draw prompt bar here
-            CONTAPP_DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);	
-			#ifdef FEATURE_VERSION_C337
-			if (pMe->m_bSpeedDialParam == TRUE)
-			{
-				CONTAPP_DRAW_BOTTOMBAR(BTBAR_OK_CANCEL);	
-			}
-			#endif
+            CONTAPP_DRAW_BOTTOMBAR(BTBAR_BACK);	
+#ifdef FEATURE_VERSION_C337
+            if (pMe->m_bSpeedDialParam == TRUE)
+            {
+            	CONTAPP_DRAW_BOTTOMBAR(BTBAR_OK_CANCEL);	
+            }
+#endif
             IDISPLAY_Update(pMe->m_pDisplay);  
             return TRUE;
             

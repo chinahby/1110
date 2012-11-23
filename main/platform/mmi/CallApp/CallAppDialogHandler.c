@@ -7026,7 +7026,9 @@ MAKE_CALL_VALUE CallApp_MakeCall(CCallApp *pMe)
 #ifndef FEATURE_ICM
 	AEETCalls po;
 #endif
-
+#if defined(FEATURE_VERSION_C337)   	
+    pMe->m_isIncoming 	= FALSE;
+#endif
 	MSG_FATAL("***zzg CallApp_MakeCall cls=%x***", cls, 0, 0);
 
     ISHELL_CancelTimer(pMe->m_pShell,(PFNNOTIFY)CallApp_MakeCall, pMe);
@@ -9330,7 +9332,7 @@ static void CallApp_Draw_Connect_Time(void *pUser)
     AECHAR         szTextTmp[100];
 #endif
     Dialer_call_table * temp = NULL;
-
+    MSG_FATAL("CallApp_Draw_Connect_Time",0,0,0);
     if(pMe == NULL)
     {
         //CALL_ERR("CallApp_Draw_Connect_Time pMe == NULL",0,0,0);
@@ -9462,6 +9464,7 @@ static void CallApp_Draw_Connect_Time(void *pUser)
     IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_BLACK);
 
 #if defined(FEATURE_VERSION_C337)   
+    MSG_FATAL("CallApp_Draw_Connect_Time m_isIncoming=%d",pMe->m_isIncoming,0,0);
     if(!pMe->m_isIncoming)
     {
         (void) ISHELL_LoadResString(pMe->m_pShell,
@@ -9475,7 +9478,6 @@ static void CallApp_Draw_Connect_Time(void *pUser)
                                     CALL_FIRST_LINE_Y,
                                     bWidth,
                                     CALL_LINE_HIGHT);   
-        
         IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, CALLAPP_TEXT_COLOR);
         
         (void)IDISPLAY_DrawText(pMe->m_pDisplay,
@@ -9955,7 +9957,7 @@ static void CallApp_Draw_Connect_Number_and_Name(CCallApp *pMe)
         bWidth = IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL,szText);	
         SETAEERECT(&rect,
                                                 pMe->m_rc.dx-bWidth-2,
-                                                CALL_SECOND_LINE_Y+CALL_LINE_HIGHT+2,
+                                                CALL_SECOND_LINE_Y+CALL_LINE_HIGHT*2+2,
                                                 CALL_TEXT_DX + 4,
                                                 3*CALL_LINE_HIGHT);	
         IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, CALLAPP_TEXT_COLOR);
