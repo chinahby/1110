@@ -29,10 +29,10 @@
 		<Text>Bondable</Text>
 	</String>
 	<String Id="10" Name="IDS_BT_ON">
-		<Text>Turn Bluetooth On</Text>
+		<Text>Turn On</Text>
 	</String>
 	<String Id="11" Name="IDS_BT_OFF">
-		<Text>Turn Bluetooth Off</Text>
+		<Text>Turn Off</Text>
 	</String>
 	<String Id="12" Name="IDS_ACTIVE">
 		<Text>Active</Text>
