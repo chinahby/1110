@@ -429,18 +429,21 @@ static boolean  IDD_SALESTRACKER_Handler(void *pUser,
                                  AEEEvent   eCode,
                                  uint16     wParam,
                                  uint32     dwParam);
-// 对话框 IDD_SALESSUCCESS 事件处理函数
-static boolean  IDD_SALESSUCCESS_Handler(void *pUser,
-                                 AEEEvent   eCode,
-                                 uint16     wParam,
-                                 uint32     dwParam);
-#endif
-#if defined(FEATURE_VERSION_W317A)
 // 对话框 IDD_SALES_EDIT 事件处理函?
 static boolean  IDD_SALES_EDIT_Handler(void *pUser,
 								 AEEEvent   eCode,
                                  uint16     wParam,
                                  uint32     dwParam);
+
+#endif
+#if defined(FEATURE_VERSION_W317A)
+// 对话框 IDD_SALESSUCCESS 事件处理函数
+static boolean  IDD_SALESSUCCESS_Handler(void *pUser,
+                                 AEEEvent   eCode,
+                                 uint16     wParam,
+                                 uint32     dwParam);
+
+
 #endif
 
 // 对话框 IDD_POWERDOWN 事件处理函数
@@ -646,13 +649,13 @@ void CoreApp_SetDialogHandler(CCoreApp *pMe)
 		case IDD_SALESTRACKER:
 			pMe->m_pDialogHandler = IDD_SALESTRACKER_Handler;
 			break;
-		case IDD_SALESSUCCESS:
-			pMe->m_pDialogHandler = IDD_SALESSUCCESS_Handler;
+		case IDD_SALES_EDIT:
+			pMe->m_pDialogHandler = IDD_SALES_EDIT_Handler;
 			break;
 #endif
 #if defined(FEATURE_VERSION_W317A)
-		case IDD_SALES_EDIT:
-			pMe->m_pDialogHandler = IDD_SALES_EDIT_Handler;
+		case IDD_SALESSUCCESS:
+			pMe->m_pDialogHandler = IDD_SALESSUCCESS_Handler;
 			break;
 #endif
         case IDD_POWERDOWN:
@@ -1785,7 +1788,8 @@ static boolean  IDD_EMERGENCYNUMLIST_Handler(void  *pUser,
 } // IDD_EMERGENCYNUMLIST_Handler
 
 
-#if defined(FEATURE_VERSION_W317A)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+
 /*==============================================================================
 函数:
     IDD_SALES_EDIT_Handler
@@ -1815,8 +1819,23 @@ static boolean  IDD_SALES_EDIT_Handler(void *pUser,
 {
 	 //IMenuCtl *pMenu = NULL;
     CCoreApp *pMe = (CCoreApp *)pUser;
-    
+	AEERect      p_UnitMenu       = {0};
+	int i = 0;
+	uint16 time = 0;
+    uint16 wItemID;
+	AECHAR      wszNumber[8];    // 号码编辑
+    AECHAR      wszTime[8];     //时间
+    AECHAR      wszENumber[20];
+	int len = 0;
+	
     if (NULL == pMe)
+    {
+        return FALSE;
+    }
+	
+	pMe->m_pSmsTrackNumber = (ITextCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,
+                                                    IDC_TEXT_NUMBER);
+	if (pMe->m_pSmsTrackNumber == NULL)
     {
         return FALSE;
     }
@@ -1825,7 +1844,73 @@ static boolean  IDD_SALES_EDIT_Handler(void *pUser,
 	switch (eCode)
     {
         case EVT_DIALOG_INIT:
+
+  		   
             MEMSET(pMe->m_strPhoneNUM, 0, sizeof(pMe->m_strPhoneNUM));
+			ICONFIG_GetItem( pMe->m_pConfig,CFGI_SMS_TRACKER_NUMBER, pMe->m_strPhoneNUM, sizeof(pMe->m_strPhoneNUM));
+			//OEM_GetConfig(CFGI_SMS_TRACKER_NUMBER, pMe->m_strPhoneNUM, sizeof(pMe->m_strPhoneNUM));
+			OEM_GetConfig(CFGI_SMS_TRACKER_TIME, &time, sizeof(uint16));
+
+
+			len = STRLEN( pMe->m_strPhoneNUM);
+			MSG_FATAL("start    pMe->m_strPhoneNUM====%d",pMe->m_strPhoneNUM,0,0);
+			IMENUCTL_SetOemProperties(pMe->m_pSmsTrackTime, OEMMP_SWITCHNAVIGATIONKEY | OEMMP_IDF_ALIGN_CENTER);
+			
+
+			SETAEERECT(&p_UnitMenu,60,100,100,40);
+    		IMENUCTL_SetRect(pMe->m_pSmsTrackTime, &p_UnitMenu);
+
+			SETAEERECT(&p_UnitMenu,60,30,100,40);
+
+			ITEXTCTL_SetRect(pMe->m_pSmsTrackNumber, &p_UnitMenu);
+
+			ITEXTCTL_SetProperties(pMe->m_pSmsTrackNumber, TP_MULTILINE|TP_FRAME|TP_FIXSETRECT|TP_STARKEY_SWITCH|TP_FOCUS_NOSEL);
+                //(void)ITEXTCTL_SetInputMode(pMe->m_pText, AEE_TM_TSIM);
+
+            ITEXTCTL_SetMaxSize(pMe->m_pSmsTrackNumber, 20);
+
+                //设置文本
+            STRTOWSTR(pMe->m_strPhoneNUM,wszENumber,sizeof(wszENumber));
+           (void)ITEXTCTL_SetText(pMe->m_pSmsTrackNumber,
+                            wszENumber,
+                            -1);
+			
+			for(i=0;i<6;i++)
+            {
+                (void)IMENUCTL_AddItem(pMe->m_pSmsTrackTime,
+                                                AEE_COREAPPRES_LANGFILE,
+                                                IDS_5_MIN + i,
+                                                IDS_5_MIN + i,
+                                                NULL,
+                                                0);
+
+            }
+			switch(time)
+			{
+				case OEMNV_TRACK_SMS_5:      //30s
+                    wItemID = IDS_5_MIN;
+                    break;
+
+                case OEMNV_TRACK_SMS_10:      //50秒
+                    wItemID = IDS_10_MIN;
+                    break;
+
+                case OEMNV_TRACK_SMS_15:      //ALWAYS_ON
+                    wItemID = IDS_15_MIN;
+                    break;
+				case OEMNV_TRACK_SMS_30:      //30s
+                    wItemID = IDS_30_MIN;
+                    break;
+
+                case OEMNV_TRACK_SMS_120:      //50秒
+                    wItemID = IDS_2_HOUR;
+                    break;
+
+                case OEMNV_TRACK_SMS_240:      //ALWAYS_ON
+                    wItemID = IDS_4_HOUR;
+                    break;
+			}
+			IMENUCTL_SetSel(pMe->m_pSmsTrackTime, wItemID);
             return TRUE;
             
         case EVT_DIALOG_START:
@@ -1834,27 +1919,160 @@ static boolean  IDD_SALES_EDIT_Handler(void *pUser,
                                     EVT_USER_REDRAW,
                                     0,
                                     0);
-            //if (NULL != pMenu)
-            //{
-            //     (void)IMENUCTL_SetTitle(pMenu, AEE_COREAPPRES_LANGFILE, IDS_ENTER_PHONELOCK, NULL);
-            //}
 
             return TRUE;
             
         case EVT_USER_REDRAW:
             // 绘制相关信息
             {
-               
-            // 更新显示
-            IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);  
+            	 TitleBar_Param_type     TBarParam = {0};
+            	 BottomBar_Param_type  BBarParam ={0};
+				 BBarParam.eBBarType = BTBAR_OK_BACK;
+
+				 //号码编辑
+            	(void) ISHELL_LoadResString(pMe->a.m_pIShell,
+                                        AEE_COREAPPRES_LANGFILE,
+                                        IDS_NUMBER,
+                                        wszNumber,
+                                        sizeof(wszNumber));
+
+           		 //时间标题
+            	(void) ISHELL_LoadResString(pMe->a.m_pIShell,
+                                        AEE_COREAPPRES_LANGFILE,
+                                        IDS_TIME,
+                                        wszTime,
+                                        sizeof(wszTime));
+				 Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
+
+				 IDISPLAY_SetColor( pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
+				 
+            	
+
+				 IDISPLAY_DrawText(pMe->m_pDisplay, AEE_FONT_NORMAL, wszNumber,-1, 0, 40, 0, IDF_TEXT_TRANSPARENT);
+				 IDISPLAY_DrawText(pMe->m_pDisplay, AEE_FONT_NORMAL, wszTime,-1, 0, 110, 0, IDF_TEXT_TRANSPARENT);
+				 
+				 IDISPLAY_SetColor( pMe->m_pDisplay, CLR_USER_TEXT, RGB_BLACK);
+				 
+				 DrawBottomBar(pMe->m_pDisplay, &BBarParam);
+				 ITEXTCTL_SetActive(pMe->m_pSmsTrackNumber,TRUE);
+               	
+            	 // 更新显示
+            	 IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);  
+
+			     (void)IMENUCTL_Redraw(pMe->m_pSmsTrackTime);
+            }
             return TRUE;
             
         case EVT_DIALOG_END:
-          
+           
+  
+            return TRUE;
 
         case EVT_KEY:
             {
-               
+				
+				switch (wParam)
+                {
+                	case AVK_UP:
+					case AVK_DOWN:
+						if(!IMENUCTL_IsActive(pMe->m_pSmsTrackTime))
+						{
+							IMENUCTL_SetActive(pMe->m_pSmsTrackTime,TRUE);
+							ITEXTCTL_SetActive(pMe->m_pSmsTrackNumber,FALSE);
+						}
+						else
+						{
+							IMENUCTL_SetActive(pMe->m_pSmsTrackTime,FALSE);
+							ITEXTCTL_SetActive(pMe->m_pSmsTrackNumber,TRUE);
+						}
+						
+						break;
+                	case AVK_INFO:
+					case AVK_SELECT:
+						{
+							AECHAR *pwsText  = ITEXTCTL_GetTextPtr(pMe->m_pSmsTrackNumber);
+							boolean m_bsendsalessms = FALSE;
+						 	IAlarm_CancelAlarm(pMe->m_pIAlarm,
+                       		AEECLSID_CORE_APP,
+                       		PERMID);
+							 wItemID = IMENUCTL_GetSel(pMe->m_pSmsTrackTime);
+							switch (wItemID)
+				            {
+
+				                case IDS_5_MIN:          //关
+				                    time = OEMNV_TRACK_SMS_5;
+				                    break;
+
+				                case IDS_10_MIN:          //7秒
+				                    time = OEMNV_TRACK_SMS_10;
+				                    break;
+								
+				                case IDS_15_MIN:          //10秒
+				                    time = OEMNV_TRACK_SMS_15;
+				                    break;
+
+				                case IDS_30_MIN:          //30秒
+				                    time = OEMNV_TRACK_SMS_30;
+				                    break;
+
+				                case IDS_2_HOUR:          //50秒
+				                    time = OEMNV_TRACK_SMS_120;
+				                    break;
+
+				                case IDS_4_HOUR:          //50秒
+				                    time = OEMNV_TRACK_SMS_240;
+				                    break;
+
+				                default:
+				                    break;
+				            }
+							OEM_SetConfig(CFGI_SMS_TRACKER_TIME, &time, sizeof(uint16));
+
+	               			//保存提示信息
+
+							len =WSTRLEN(pwsText);
+							MSG_FATAL("save 1111 pMe->m_strPhoneNUM====%d",pMe->m_strPhoneNUM,0,0);
+							WSTRTOSTR(pwsText,pMe->m_strPhoneNUM,sizeof(pMe->m_strPhoneNUM));
+
+							len = STRLEN(pMe->m_strPhoneNUM);
+							MSG_FATAL("save2222 pMe->m_strPhoneNUM====%d",pMe->m_strPhoneNUM,0,0);
+							DBGPRINTF("pMe->m_strPhoneNUM %s",pMe->m_strPhoneNUM);
+							
+							//OEM_SetConfig(CFGI_SMS_TRACKER_NUMBER, pMe->m_strPhoneNUM, sizeof(pMe->m_strPhoneNUM));
+							ICONFIG_SetItem( pMe->m_pConfig,CFGI_SMS_TRACKER_NUMBER, pMe->m_strPhoneNUM,sizeof(pMe->m_strPhoneNUM));
+
+							(void) ICONFIG_SetItem(pMe->m_pConfig,	
+									   CFGI_SMS_TRACKER_SEND_B,
+									   &m_bsendsalessms, 
+									   sizeof(m_bsendsalessms));
+
+							IAlarm_SetAlarm(pMe->m_pIAlarm,
+	                       		AEECLSID_CORE_APP,
+	                       		PERMID,
+	                       		time*60);
+						}
+						
+						CLOSE_DIALOG(DLGRET_MSGOK)
+						break;
+                	case AVK_CLR:
+						CLOSE_DIALOG(DLGRET_MSGOK)
+					default:
+						if (IMENUCTL_IsActive(pMe->m_pSmsTrackTime))
+ 			    		{
+ 			        		if(IMENUCTL_HandleEvent(pMe->m_pSmsTrackTime, eCode, wParam, dwParam))
+ 			        		{
+ 			            		return TRUE;
+ 			        		}
+ 			    		}
+						else
+						{
+							if(ITEXTCTL_HandleEvent(pMe->m_pSmsTrackNumber, eCode, wParam, dwParam))
+ 			        		{
+ 			            		return TRUE;
+ 			        		}
+						}
+						break;
+				}
             }
             return TRUE;
         default:
@@ -1863,7 +2081,6 @@ static boolean  IDD_SALES_EDIT_Handler(void *pUser,
     
     return FALSE;
 	
-}
 }
 #endif
 
@@ -4868,6 +5085,7 @@ static boolean	IDD_SALESTRACKER_Handler(void *pUser,
     return FALSE;
 	
 }
+#if defined(FEATURE_VERSION_W317A)
 
 /*==============================================================================
 函数:
@@ -4971,7 +5189,7 @@ static boolean  IDD_SALESSUCCESS_Handler(void *pUser,
 	return FALSE;
 }
 
-
+#endif
 #endif
 
 #if defined(FEATURE_WMS_APP)

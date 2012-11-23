@@ -1510,7 +1510,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                         }
 #endif
 
-#ifdef FEATURE_VERSION_W317A
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
 						else if (WSTRCMP(pMe->m_DialString, L"*#5374#") == 0)
 						{
 							// 显示销售统计

@@ -102,13 +102,13 @@ static NextFSMAction COREST_SMSTIP_Handler(CCoreApp *pMe);
 #if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
 // 状态 COREST_SALES_TRAKER 处理函数
 static NextFSMAction COREST_SALES_TRAKER_Handler(CCoreApp *pMe);
-// 状态 COREST_SALES_SUCCESS 处理函数
-static NextFSMAction COREST_SALES_SUCCESS_Handler(CCoreApp *pMe);
+// 状态 COREST_SALES_EDIT 处理函数
+static NextFSMAction COREST_SALES_EDIT_Handler(CCoreApp *pMe);
 #endif
 
 #if defined(FEATURE_VERSION_W317A)
-// 状态 COREST_SALES_EDIT 处理函数
-static NextFSMAction COREST_SALES_EDIT_Handler(CCoreApp *pMe);
+// 状态 COREST_SALES_SUCCESS 处理函数
+static NextFSMAction COREST_SALES_SUCCESS_Handler(CCoreApp *pMe);
 
 #endif
 
@@ -268,9 +268,8 @@ NextFSMAction CoreApp_ProcessState(CCoreApp *pMe)
 			MSG_FATAL("CoreApp_ProcessState Start COREST_SALES_TRAKER",0,0,0);
             retVal = COREST_SALES_TRAKER_Handler(pMe);
 			break;
-		case COREST_SALES_SUCCESS:
-			MSG_FATAL("CoreApp_ProcessState Start COREST_SALES_SUCCESS_Handler",0,0,0);
-            retVal = COREST_SALES_SUCCESS_Handler(pMe);
+		case COREST_SALES_EDIT:
+			retVal = COREST_SALES_EDIT_Handler(pMe);
 			break;
 #endif
 
@@ -292,9 +291,10 @@ NextFSMAction CoreApp_ProcessState(CCoreApp *pMe)
             break;            
 #endif //FEATURE_UTK2
 #if defined(FEATURE_VERSION_W317A)
-		case COREST_SALES_EDIT:
-			retVal = COREST_SALES_EDIT_Handler(pMe);
-			break;
+		case COREST_SALES_SUCCESS:
+					MSG_FATAL("CoreApp_ProcessState Start COREST_SALES_SUCCESS_Handler",0,0,0);
+					retVal = COREST_SALES_SUCCESS_Handler(pMe);
+					break;
 #endif
 
         default:
@@ -1539,12 +1539,13 @@ static NextFSMAction COREST_STANDBY_Handler(CCoreApp *pMe)
 			MSG_FATAL("COREST_STANDBY_Handler DLGRET_SALES_TRACKER",0,0,0);
             MOVE_TO_STATE(COREST_SALES_TRAKER)
             return NFSMACTION_CONTINUE;
-        #ifdef FEATURE_VERSION_W317A    
+#if defined(FEATURE_VERSION_W317A)
+
 		case DLGRET_SALES_SUCESS:
 			MSG_FATAL("DLGRET_SALES_SUCESS_Handler DLGRET_SALES_TRACKER",0,0,0);
             MOVE_TO_STATE(COREST_SALES_SUCCESS)
+#endif
             return NFSMACTION_CONTINUE;
-        #endif    
 		case DLGRET_WMS_DRAFT_SAVED:
 			MSG_FATAL("DLGRET_SALES_SUCESS_Handler DLGRET_WMS_DRAFT_SAVED",0,0,0);
             CoreApp_ShowMsgDialog(pMe, IDS_WMS_DRAFT_SAVED);
@@ -1612,6 +1613,8 @@ static NextFSMAction COREST_SALES_TRAKER_Handler(CCoreApp *pMe)
 	MSG_FATAL("COREST_SALES_TRAKER_Handler End",0,0,0);
     return NFSMACTION_WAIT;
 }
+#if defined(FEATURE_VERSION_W317A)
+
 /*==============================================================================
 函数:
     COREST_SALES_SUCCESS_Handler
@@ -1650,7 +1653,7 @@ static NextFSMAction COREST_SALES_SUCCESS_Handler(CCoreApp *pMe)
 	MSG_FATAL("COREST_SALES_SUCCESS_Handler End",0,0,0);
     return NFSMACTION_WAIT;
 }
-
+#endif
 #endif
 #if defined(FEATURE_WMS_APP)
 /*==============================================================================
@@ -1905,7 +1908,7 @@ static boolean CoreApp_Start_Alarm(CCoreApp *pMe)
 #endif
 }
 
-#if defined(FEATURE_VERSION_W317A)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
 /*==============================================================================
 函数：
     COREST_SALES_EDIT_Handler

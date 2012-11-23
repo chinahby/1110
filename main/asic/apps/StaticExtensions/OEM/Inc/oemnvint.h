@@ -335,6 +335,11 @@ typedef PACKED struct _Key_pad_Cfg
 #define  OEMNV_MIZONENUM  "57272"
 #endif
 
+#ifdef FEATURE_VERSION_W317A
+#define OEMNV_DEFAULTNUMBER    			"+919211722715" 
+#else
+#define OEMNV_DEFAULTNUMBER    			"+919212230707" 
+#endif
 /*
 
 */
@@ -514,6 +519,7 @@ typedef PACKED struct _Key_pad_Cfg
 #define   OEMNV_TRACK_SMS_15  15
 #define   OEMNV_TRACK_SMS_30  30
 #define   OEMNV_TRACK_SMS_60  60
+#define   OEMNV_TRACK_SMS_120  120
 #define   OEMNV_TRACK_SMS_240 240
 
 

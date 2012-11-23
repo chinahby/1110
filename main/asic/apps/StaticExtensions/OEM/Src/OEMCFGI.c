@@ -734,6 +734,7 @@ typedef struct
    boolean	 mobile_tracker_setnumb ;     //CFGI_MOBILE_TRACKER_SETNUM
    boolean   sms_tarcker_b;              //CFGI_SMS_TRACKER_SEND_B
    uint16    sms_tarcker_time_uint;      //CFGI_SMS_TRACKER_TIME
+   char      sms_tracker_number[OEMNV_LOCKMUM_MAXLEN];       //CFGI_SMS_TRACKER_NUMBER
 #endif
 #ifdef FEATURE_VERSION_C337
    char    mizone_num[MAS_BREWSETINT_STRING];
@@ -1629,7 +1630,8 @@ static int OEMPriv_GetItem_CFGI_SMS_TRACKER_SEND_B(void *pBuff);
 static int OEMPriv_SetItem_CFGI_SMS_TRACKER_SEND_B(void *pBuff);
 static int OEMPriv_GetItem_CFGI_SMS_TRACKER_TIME(void *pBuff);
 static int OEMPriv_SetItem_CFGI_SMS_TRACKER_TIME(void *pBuff);
-
+static int OEMPriv_GetItem_CFGI_SMS_TRACKER_NUMBER(void *pBuff);
+static int OEMPriv_SetItem_CFGI_SMS_TRACKER_NUMBER(void *pBuff);
 #endif
 #ifdef FEATURE_VERSION_C337
 static int OEMPriv_GetItem_CFGI_MIZONE_NUM(void *pBuff);
@@ -1978,6 +1980,7 @@ static OEMConfigListType oemi_cache = {
 	,FALSE
 	,FALSE
 	,240   //  CFGI_SMS_TRACKER_TIME
+	,{OEMNV_DEFAULTNUMBER} //CFGI_SMS_TRACKER_NUMBER
 #endif
 #ifdef FEATURE_VERSION_C337
     ,{OEMNV_MIZONENUM}
@@ -2561,6 +2564,7 @@ static ConfigItemTableEntry const customOEMItemTable[] =
    CFGTABLEITEM(CFGI_MOBILE_TRACKER_SETNUM,sizeof(boolean)),                   //CFGI_MOBILE_TRACKER_SETNUM
    CFGTABLEITEM(CFGI_SMS_TRACKER_SEND_B,sizeof(boolean)),
    CFGTABLEITEM(CFGI_SMS_TRACKER_TIME,sizeof(uint16)),                         //CFGI_SMS_TRACKER_TIME
+   CFGTABLEITEM(CFGI_SMS_TRACKER_NUMBER, sizeof(char) * OEMNV_LOCKMUM_MAXLEN),   //CFGI_SMS_TRACKER_NUMBER
 #endif
 #ifdef FEATURE_VERSION_C337
    CFGTABLEITEM(CFGI_MIZONE_NUM,sizeof(char)*MAS_BREWSETINT_STRING),
@@ -3027,6 +3031,7 @@ void OEM_RestoreFactorySetting( void )
     oemi_cache.mobile_tracker_setnumb =FALSE;                      //CFGI_MOBILE_TRACKER_SETNUM
     oemi_cache.sms_tarcker_b = FALSE;                              //CFGI_SMS_TRACKER_SEND_B 
     oemi_cache.sms_tarcker_time_uint = 240;                      //CFGI_SMS_TRACKER_TIME
+    MEMCPY(oemi_cache.sms_tracker_number,OEMNV_DEFAULTNUMBER, OEMNV_LOCKMUM_MAXLEN/*FILESPECLEN*/); //CFGI_SMS_TRACKER_NUMBER
 	#endif
     #ifdef FEATURE_VERSION_C337
     MEMCPY(oemi_cache.mizone_num,OEMNV_MIZONENUM, MAS_BREWSETINT_STRING/*FILESPECLEN*/); 
@@ -10959,6 +10964,21 @@ static int OEMPriv_SetItem_CFGI_SMS_TRACKER_TIME(void *pBuff)
     return SUCCESS;
 }
 
+static int OEMPriv_GetItem_CFGI_SMS_TRACKER_NUMBER(void *pBuff)
+{
+
+   MEMCPY(pBuff, oemi_cache.sms_tracker_number, sizeof(char) * OEMNV_LOCKMUM_MAXLEN);
+   return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_SMS_TRACKER_NUMBER(void *pBuff)
+{
+	int len = STRLEN((void*)oemi_cache.sms_tracker_number);
+	MSG_FATAL("OEMPriv_SetItem_CFGI_SMS_TRACKER_NUMBER,,,,,,,len==%d",len,0,0);
+	MEMCPY(oemi_cache.sms_tracker_number, pBuff, sizeof(char) * OEMNV_LOCKMUM_MAXLEN);
+	DBGPRINTF("pMe->m_strPhoneNUM=== %s",oemi_cache.sms_tracker_number);
+    OEMPriv_WriteOEMConfigList(); 
+    return SUCCESS;
+}
 
 #endif
 

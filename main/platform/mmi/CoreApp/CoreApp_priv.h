@@ -691,10 +691,10 @@ typedef enum _CoreAppState
 #endif //FEATURE_UTK2   
 #if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
   COREST_SALES_TRAKER,
-  COREST_SALES_SUCCESS,
+  COREST_SALES_EDIT,
 #endif
 #ifdef	FEATURE_VERSION_W317A
-  COREST_SALES_EDIT,
+  COREST_SALES_SUCCESS,
 #endif
 
 } CoreAppState;
@@ -833,8 +833,8 @@ typedef struct _CCoreApp
     
     // 用于保存用户输入的手机密码
     char                m_strPhonePWD[PHONEPASSWORDLENTH + 1];
-	#ifdef FEATURE_VERSION_W317A
-	char                m_strPhoneNUM[PHONENUMBER+1];
+	#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+	char                m_strPhoneNUM[PHONENUMBER];
 	#endif
     #ifdef FEATURE_LCD_TOUCH_ENABLE
     char                m_strPhonePWDtemp[PHONEPASSWORDLENTH + 1];
@@ -991,6 +991,8 @@ typedef struct _CCoreApp
 #ifdef FEATURE_UIALARM
    IAlarm      *m_pIAlarm;
 #endif
+   IMenuCtl       *m_pSmsTrackTime;           //IMenuCtl指针,"状态"
+   ITextCtl       *m_pSmsTrackNumber; 
 #endif
 
 } CCoreApp;

@@ -3828,6 +3828,8 @@ wms_client_message_s_type *GetSmsTrackerSms()
 	int nErr = AEE_SUCCESS;
 	uint16 wDate[20] = {0};
 	char strDate[20] = {0};
+	char strnumber[20] = {0};
+	char strtempnumber[20] = {0};
 	int len = 0;
 	ICardSession*			m_pICardSession;
     wms_cdma_user_data_s_type    *pUserdata = NULL;
@@ -3844,6 +3846,7 @@ wms_client_message_s_type *GetSmsTrackerSms()
 	AEECardSessionReadTpStatus	*m_pReadStatus = 0;
 	AEECallback				m_cbRead;
 	AEEMobileInfo     mi;
+	char temp[5] = {0};
 	GetMobileInfo(&mi);
 	/*
 	
@@ -3893,6 +3896,9 @@ wms_client_message_s_type *GetSmsTrackerSms()
 	//W317A  销售统计
 	#ifdef FEATURE_VERSION_W317A
 	STRCPY(pBuf, "ARC8c MEID:");
+	#else
+	STRCPY(pBuf, "C260 MEID:");
+	#endif
 	STRTOWSTR("%06X", fmt_str, sizeof(fmt_str));
 	n = WSTRLEN(szBuf);
 	MSG_FATAL("n========%d",n,0,0);
@@ -3920,60 +3926,6 @@ wms_client_message_s_type *GetSmsTrackerSms()
 	
 	STRCAT(pBuf, "ICCID:");
 	
-	#else
-
-	//C337A销售统计
-
-	
-	//sid nid
-	STRCPY(pBuf, "REG:01:01");
-	STRCAT(pBuf, ",");
-	//latiude
-	STRCAT(pBuf, ":02");
-	STRCAT(pBuf, "");
-	//longitude
-	STRCAT(pBuf, ":03");
-	STRCAT(pBuf, "");
-	//model
-	STRCAT(pBuf, ":04");
-	STRCAT(pBuf, "C317A");
-	//imsi
-	STRCAT(pBuf, ":05");
-	STRCAT(pBuf, mi.szMobileID);
-	STRCAT(pBuf,",");
-	//MEID
-	STRTOWSTR("%06X", fmt_str, sizeof(fmt_str));
-	n = WSTRLEN(szBuf);
-	MSG_FATAL("n========%d",n,0,0);
-    WSPRINTF((szBuf + n),
-            sizeof(szBuf),
-            fmt_str,
-            H32
-            );
-    n = WSTRLEN(szBuf);
-    STRTOWSTR("%08X", fmt_str, sizeof(fmt_str));
-    WSPRINTF((szBuf + n),
-            sizeof(szBuf),
-            fmt_str,
-            L32
-            );
-	n = WSTRLEN(szBuf);
-	MSG_FATAL("2222n========%d",n,0,0);
-	WSTRTOSTR(szBuf,strBuf,sizeof(strBuf));
-	STRCAT(pBuf,strBuf);
-	//EAN
-	STRCAT(pBuf, ":06");
-	STRCAT(pBuf,"W027_MB_V0.3:07");
-	STRCAT(pBuf,"LAVA_C317A_CAM_FM_BT_MP4_V1.0_12864_20121107_1700:");
-	STRTOWSTR("%02X", fmt_str, sizeof(fmt_str));
-	WSPRINTF((szBuf2),
-            sizeof(szBuf2),
-            fmt_str,
-            n
-            );
-	WSTRTOSTR(szBuf2,strBuf2,sizeof(strBuf2));
-	STRCAT(pBuf,strBuf2);
-	#endif
 	
     nMsgSize = STRLEN(pBuf);
 	//nMsgSize = nMsgSize;
@@ -3989,13 +3941,39 @@ wms_client_message_s_type *GetSmsTrackerSms()
         goto GETREGISTERMSG_EXIT;
     }
     MEMSET(pUserdata, 0, nSize);
-    pUserdata->encoding = WMS_ENCODING_OCTET;
+    pUserdata->encoding = WMS_ENCODING_ASCII;
 	pUserdata->data_len = nMsgSize;
-    //pUserdata->number_of_digits =  wms_ts_pack_ascii(pBuf,
-    //                                                 pUserdata->data,
-    //                                                 &pUserdata->data_len,
-    //                                                 &pUserdata->padding_bits);
-    pCltMsg = GetMOClientMsg(SMS_TRACKER_NUMBER, pUserdata, FALSE);
+    pUserdata->number_of_digits =  wms_ts_pack_ascii(pBuf,
+                                                     pUserdata->data,
+                                                     &pUserdata->data_len,
+                                                     &pUserdata->padding_bits);
+    OEM_GetConfig(CFGI_SMS_TRACKER_NUMBER, strnumber, sizeof(strnumber));
+	if(STRCMP(strnumber,"+919211722715") ==0)
+	{
+		STRCPY(strnumber,"9211722715");
+	}
+
+	if(STRCMP(strnumber,"09211722715") ==0)
+	{
+		STRCPY(strnumber,"9211722715");
+	}
+
+	if(STRCMP(strnumber,"+919212230707") == 0)
+	{
+		STRCPY(strnumber,"9212230707");
+	}
+	STRNCPY(temp,strnumber,3);
+
+	if(STRCMP(temp,"+91") == 0)
+	{
+		MSG_FATAL("000000000000",0,0,0);
+		STRCPY(strtempnumber,strnumber+3);
+		STRCPY(strnumber,strtempnumber);
+	}
+	
+	DBGPRINTF("strnumber.............%s",strnumber);
+	
+    pCltMsg = GetMOClientMsg(strnumber, pUserdata, FALSE);
     
     
 GETREGISTERMSG_EXIT:

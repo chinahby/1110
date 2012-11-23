@@ -354,7 +354,14 @@ void CoreApp_FreeAppData(IApplet* po)
         pMe->m_pIPhoneCtl = NULL;
     }
 #endif
-    
+	#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+	if(pMe->m_pSmsTrackTime != NULL)
+	   {
+		   (void)IMENUCTL_Release(pMe->m_pSmsTrackTime);
+		   pMe->m_pSmsTrackTime = NULL;
+	   }
+
+    #endif
     if (pMe->m_pConfig) 
     {
         (void)ICONFIG_Release(pMe->m_pConfig);
@@ -561,6 +568,17 @@ boolean CoreApp_InitAppData(IApplet* po)
     {
         return FALSE;
     }
+
+	#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+	  //闹钟开或关LIST 控件
+    if(AEE_SUCCESS != ISHELL_CreateInstance(pMe->a.m_pIShell,
+                         AEECLSID_LISTCTL,
+                         (void **)&pMe->m_pSmsTrackTime))
+    {
+        CoreApp_FreeAppData((IApplet*)pMe);
+        return EFAILED;
+    }
+	#endif
     pMe->bunlockuim =FALSE;
     pMe->m_nMsgID = 0;
     
@@ -583,8 +601,8 @@ boolean CoreApp_InitAppData(IApplet* po)
     pMe->m_b_needclose_core = FALSE;
 #endif
     MEMSET(pMe->m_strPhonePWD, 0, PINCODE_LENGTH + 1);
-#ifdef FEATURE_VERSION_W317A
-    MEMSET(pMe->m_strPhoneNUM, 0, PHONENUMBER+1);
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+    MEMSET(pMe->m_strPhoneNUM, 0, PHONENUMBER);
 #endif
 
 #ifdef FEATURE_LCD_TOUCH_ENABLE
@@ -1428,24 +1446,31 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 			return TRUE;
 		case EVT_SALES_TRACKER:
 			{
-				MSG_FATAL("EVT_SALES_TRACKER......................",0,0,0);
-				if(CoreApp_SMSTracker(pMe) != SUCCESS)
+				if (IRUIM_IsCardConnected(pMe->m_pIRUIM)) 
 				{
-					(void)ISHELL_SetTimer(pMe->a.m_pIShell, 
+					MSG_FATAL("EVT_SALES_TRACKER......................",0,0,0);
+					if(CoreApp_SMSTracker(pMe) != SUCCESS)
+					{
+						(void)ISHELL_SetTimer(pMe->a.m_pIShell, 
                                   SMS_TRACKER_SMSTIME,
                                   CoreApp_SmsTrackerTimer, 
                                   pMe);
-				}
-				else
-				{
-					boolean m_bsendsalessms = TRUE;
-					(void) ICONFIG_SetItem(pMe->m_pConfig,	
+					}
+					else
+					{
+						boolean m_bsendsalessms = TRUE;
+						(void) ICONFIG_SetItem(pMe->m_pConfig,	
 									   CFGI_SMS_TRACKER_SEND_B,
 									   &m_bsendsalessms, 
 									   sizeof(m_bsendsalessms));
-					#if defined(FEATURE_VERSION_W317A)
-					CLOSE_DIALOG(DLGRET_SALES_SUCESS)
-					#endif
+						#if defined(FEATURE_VERSION_W317A)
+						CLOSE_DIALOG(DLGRET_SALES_SUCESS)
+						#endif
+					}
+				}
+				else
+				{
+					MSG_FATAL("NO UIM CARD !!!!!!!!!!!!1",0,0,0);
 				}
 					
 			}
@@ -1498,7 +1523,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             return TRUE;
 #endif
 
-#ifdef FEATURE_VERSION_W317A
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
 		case EVT_SMS_TRACKER:
 			// 先改变当前状态
             MOVE_TO_STATE(COREST_SALES_EDIT)
