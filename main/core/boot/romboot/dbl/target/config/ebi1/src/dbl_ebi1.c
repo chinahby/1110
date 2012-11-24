@@ -93,6 +93,20 @@ dbl_nor_device S29WS512P =
   {1,  0x227e, 0x223D, 0x2200 },                  /* Manufacture codes. */
 };
 
+dbl_nor_device S71VS64R_TOP =
+{
+  "SPANSION S71VS64R_TOP",
+  4,                                              /* # of codes to match */
+  {1,  0x007e, 0x0061, 0x0001 },                  /* Manufacture codes. */
+};
+
+dbl_nor_device S71VS64R_BOT =
+{
+  "SPANSION S71VS64R_BOT",
+  4,                                              /* # of codes to match */
+  {1,  0x007e, 0x0061, 0x0002 },                  /* Manufacture codes. */
+};
+
 dbl_nor_device S71VS128R_TOP =
 {
   "SPANSION S71VS128R_TOP",
@@ -1641,7 +1655,7 @@ void dbl_ebi1_nor_configure
       DBL_ERR_FATAL(DBL_ERR_EBI1_CFG_FAILED);
     }
   }
-  else if ((dev == &S71VS128R_TOP) || (dev == &S71VS128R_BOT) || (dev == &S71VS256R_TOP) || (dev == &S71VS256R_BOT))
+  else if ((dev == &S71VS64R_TOP) || (dev == &S71VS64R_BOT) ||(dev == &S71VS128R_TOP) || (dev == &S71VS128R_BOT) || (dev == &S71VS256R_TOP) || (dev == &S71VS256R_BOT))
   {
     if( configured_clk_speed->ebi1 == 48 )
     {

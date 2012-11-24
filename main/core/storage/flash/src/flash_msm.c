@@ -59,6 +59,8 @@ when         who     what, where, why
 const flashi_nor_device *(spansion_parts[]) = {
   &S29WS256N0SB,
   &S29WS512P,
+  &S71VS64R_TOP,
+  &S71VS64R_BOT,
   &S71VS128R_TOP,
   &S71VS128R_BOT,
   &S71VS256R_TOP,
