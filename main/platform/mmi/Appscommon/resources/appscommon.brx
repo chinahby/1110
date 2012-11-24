@@ -319,5 +319,8 @@
 	<STRING Id="2012" Name="IDS_FILE_MANAGER">
 		<Text>File manager</Text>
 	</STRING>	
+	<STRING Id="2013" Name="IDS_SEARCH">
+		<Text>Search</Text>
+	</STRING>	
 </Strings>
 </BREWRes>

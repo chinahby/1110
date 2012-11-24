@@ -889,6 +889,9 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
 			nResID_L = IDS_VIEW;
 			nResID_R = IDS_CANCEL;
 			break;
+		case BTBAR_SEARCH_BACK:
+			nResID_L = IDS_SEARCH;
+			nResID_R = IDS_BACK;
 		//Add End	
          default:
             break;

@@ -318,6 +318,7 @@ typedef enum BottomBar_e_Type
    BTBAR_VIEW_STOP,
    BTBAR_YES_NO,
    BTBAR_VIEW_CANCEL,	//Add By zzg 2012_11_09
+   BTBAR_SEARCH_BACK,	//Add By zzg 2012_11_23
 
    /*******************start BTBAR_TRI_MASK*****************************/
    BTBAR_CANCEL_RESUME_NULL = 0x4000 + 1,
