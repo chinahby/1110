@@ -973,6 +973,7 @@ static void CallApp_FreeAppData(CCallApp *pMe)
     }
 
    FREEIF(pMe->m_strPhonePWD);
+  
 
    // ÊÍ·Å IConfig ½Ó¿Ú
     if (pMe->m_pConfig != NULL)

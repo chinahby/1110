@@ -8,7 +8,7 @@
 		<Text>File Management</Text>
 	</String>
 	<String Id="1003" Name="IDS_MULTIMEDIA_VIDEO_CAMERA">
-		<Text>वीडियो कैमरा</Text>
+		<Text>वीडियो रिकॉर्डर</Text>
 	</String>
 	<STRING Id="1011" Name="IDS_MULTIMEDIA_CAMERA">
 		<Text>कैमरा</Text>
@@ -17,7 +17,7 @@
 		<Text>एफएम रेडियो</Text>
 	</STRING>
 	<STRING Id="1013" Name="IDS_MULTIMEDIA_MUSICPLAYER">
-		<Text>संगीत प्लेयर</Text>
+		<Text>म्यूजिक</Text>
 	</STRING>
 	<STRING Id="1014" Name="IDS_MULTIMEDIA_RECORDER">
 		<Text>रिकॉर्डर</Text>

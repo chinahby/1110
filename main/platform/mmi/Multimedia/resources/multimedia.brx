@@ -17,7 +17,7 @@
 		<Text>FM radio</Text>
 	</STRING>
 	<STRING Id="1013" Name="IDS_MULTIMEDIA_MUSICPLAYER">
-		<Text>Music player</Text>
+		<Text>Music</Text>
 	</STRING>
 	<STRING Id="1014" Name="IDS_MULTIMEDIA_RECORDER">
 		<Text>Recorder</Text>

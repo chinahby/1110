@@ -1466,10 +1466,10 @@
 		<Text>%s से जुड़ने में असफल।.</Text>
 	</String>
 	<String Id="2006" Name="IDS_MSG_BT_ENABLED">
-		<Text>BT सक्रिय नहीं है।.</Text>
+		<Text>ब्लूटूथ शुरू कर दिया</Text>
 	</String>
 	<String Id="2007" Name="IDS_MSG_BT_DISABLED">
-		<Text>BT अब निष्क्रिय है।.</Text>
+		<Text>ब्लूटूथ बंद कर दिया</Text>
 	</String>
 	<String Id="2008" Name="IDS_MSG_DEV_INFO_UNAVAIL">
 		<Text>%s के लिए डिवाइस सूचना अनुपलब्ध है। .</Text>
