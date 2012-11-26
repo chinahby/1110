@@ -280,6 +280,7 @@ void BTApp_ProcessOPPNotifications(
       }
       else 
       {
+      	MSG_FATAL("***zzg DEREG uError=%x***", pData->uError, 0, 0);
         userEvent = EVT_OPP_DEREG_FAILED;
       }
       BTAPP_POST_USER_EVENT( OPP, userEvent );
@@ -311,6 +312,8 @@ void BTApp_ProcessOPPNotifications(
     }
     case AEEBT_OPP_EVT_PUSH_REQ:    // client pushing object to server
     {
+	  pMe->bStartFromPushReq = TRUE;		//Add By zzg 2012_11_23
+	  
       pMe->mOPP.objType = pData->OppObject.objType;
       WSTRLCPY( pMe->mOPP.wName, pData->OppObject.pwName, 
                 ARR_SIZE( pMe->mOPP.wName ) );
@@ -675,7 +678,7 @@ void BTApp_OPPBuildClientMenu( CBTApp* pMe )
   {
     szStatus[ 3 ] = 'C';
 	
-	#ifdef FEATURE_VERSION_W317A
+	#if defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_C337)
 	ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, IDS_BT_TITLE, 
                           pMe->pText2, SHORT_TEXT_BUF_LEN * sizeof( AECHAR ) );
 	#else
@@ -714,7 +717,7 @@ void BTApp_OPPBuildClientMenu( CBTApp* pMe )
 	{
 		AECHAR WTitle[20] = {0};
 
-		#ifdef FEATURE_VERSION_W317A
+		#if defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_C337)
 		ISHELL_LoadResString(pMe->m_pShell,
 		                     AEE_APPSBTAPP_RES_FILE,                                
 		                     IDS_BT_TITLE,
@@ -815,7 +818,7 @@ void BTApp_OPPBuildSendFileClientMenu( CBTApp* pMe )
   {
     szStatus[ 3 ] = 'C';
 
-	#ifdef FEATURE_VERSION_W317A
+	#if defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_C337)
 	ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, IDS_BT_TITLE, 
                           pMe->pText2, SHORT_TEXT_BUF_LEN * sizeof( AECHAR ) );
 	#else
@@ -854,7 +857,7 @@ void BTApp_OPPBuildSendFileClientMenu( CBTApp* pMe )
 	{
 		AECHAR WTitle[20] = {0};
 
-		#ifdef FEATURE_VERSION_W317A
+		#if defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_C337)
 		ISHELL_LoadResString(pMe->m_pShell,
 		                     AEE_APPSBTAPP_RES_FILE,                                
 		                     IDS_BT_TITLE,
@@ -929,7 +932,7 @@ void BTApp_OPPSettingClientMenu( CBTApp* pMe )
   {
     szStatus[ 3 ] = 'C';
 
-	#ifdef FEATURE_VERSION_W317A
+	#if defined (FEATURE_VERSION_W317A) ||  defined (FEATURE_VERSION_C337)
 	ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, IDS_BT_TITLE, 
                           pMe->pText2, SHORT_TEXT_BUF_LEN * sizeof( AECHAR ) );
 	#else
@@ -968,7 +971,7 @@ void BTApp_OPPSettingClientMenu( CBTApp* pMe )
 	{
 		AECHAR WTitle[20] = {0};
 
-		#ifdef FEATURE_VERSION_W317A
+		#if defined (FEATURE_VERSION_W317A) ||  defined (FEATURE_VERSION_C337)
 		ISHELL_LoadResString(pMe->m_pShell,
 		                     AEE_APPSBTAPP_RES_FILE,                                
 		                     IDS_BT_TITLE,
@@ -1257,6 +1260,7 @@ void BTApp_OPPPull( CBTApp* pMe )
     if ((STRLEN(szVCardName) + STRLEN(szName)) > AEEBT_MAX_FILE_NAME*2)
     {
       MSG_FATAL( "File / Folder name exceeds max length", 0, 0, 0 );
+	  MSG_FATAL("***zzg IDS_MSG_OBJ_PULL_FAILED 333 ***",0,0,0);
       BTApp_ShowMessage( pMe, IDS_MSG_OBJ_PULL_FAILED, pMe->mOPP.wName, 3 );
       return;
     }
@@ -1286,6 +1290,7 @@ void BTApp_OPPPull( CBTApp* pMe )
   if ( (result = IBTEXTOPP_Pull( pMe->mOPP.po, wRemoteVCardName )) != SUCCESS )
   {
     MSG_FATAL( "OPP_Pull() failed r=%x", result, 0, 0 );
+	 MSG_FATAL("***zzg IDS_MSG_OBJ_PULL_FAILED 444 ***",0,0,0);
     BTApp_ShowMessage( pMe, IDS_MSG_OBJ_PULL_FAILED, wRemoteVCardName, 3 );
   }
   else
@@ -1432,6 +1437,8 @@ void BTApp_OPPPushEx( CBTApp* pMe, char* filepath, AEEBTObjectType objType )
   if ( result == SUCCESS )
   {
     result = IBTEXTOPP_Push( pMe->mOPP.po, pwName, objType );
+
+	ShowBusyIcon( pMe->m_pShell, pMe->m_pIDisplay, &pMe->m_rect, FALSE );	//Add By zzg 2012_11_23
 	
     //if ( pMe->mOPP.bRegistered == FALSE ) // client?
     {
@@ -2273,6 +2280,8 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
 #endif 
+			MSG_FATAL("***zzg BTApp_OPP EVT_OPP_REG bPushFileReq=%x***", pMe->mOPP.bPushFileReq, 0, 0);
+
             if(pMe->mOPP.bPushFileReq)
             {
                 pMe->mOPP.bPushFileReq = FALSE;
@@ -2322,8 +2331,11 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
 #endif 
+			MSG_FATAL("***zzg BTApp_OPP EVT_OPP_DEREG bPushFileReq=%x***", pMe->mOPP.bPushFileReq, 0, 0);
+
             if(pMe->mOPP.bPushFileReq)
             {
+            	MSG_FATAL("***zzg BTApp_OPPConnect 555**", 0, 0, 0);
                 BTApp_OPPConnect(pMe,&pMe->mOPP.remoteBDAddr);
             }
 			break;
@@ -2348,13 +2360,24 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 #error code not present
 #endif 
 			//BTApp_BuildTopMenu( pMe ); // rebuild menu to show 'C'
-
+			
+			//Add By zzg 2012_11_22
+			if (pMe->bStartFromOtherApp == TRUE)
+			{
+				//if ((pMe->m_pActiveDlgID == IDD_SEARCH_RESULT) || (pMe->m_pActiveDlgID == IDD_BT_OBEX_LIST_SERVERS))
+				{
+					BTApp_OPPPushEx(pMe, pMe->m_pfilepath, AEEBT_OPP_UNKNOWN_TYPE);	
+				}
+			}
+			else
+			//Add End
+			
 			//Add By zzg 2011_01_22
 			if (pMe->m_pActiveDlgID == IDD_BT_OBEX_LIST_SERVERS)	//When Push Files, Connect first		
 			{
 				pMe->m_eDlgRet = DLGRET_BT_SEND_FILE; 		
 				(void) ISHELL_EndDialog(pMe->m_pShell);
-			}
+			}			
 			//Add End
 
 			break;
@@ -2385,13 +2408,13 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 			{
 				BTApp_BuildTopMenu(pMe); // rebuild menu to hide 'C'
 			}
-            
+			
             if(pMe->mOPP.bPushFileReq)
             {
                 boolean      bSettingBondable = FALSE;
                 boolean      bSettingDiscoverable = FALSE;
                 BTApp_EnableOPP(pMe, &bSettingBondable, &bSettingDiscoverable);
-            }
+            }			
 			break;
 		}
 
@@ -2404,12 +2427,13 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 			BTApp_ClearBondable(pMe); // no need to be bondable anymore
 			BTApp_ShowMessage(pMe, IDS_MSG_CONN_FAILED, NULL, 3);
 			pMe->mOPP.bConnecting = FALSE;
+			
             if(pMe->mOPP.bPushFileReq)
             {
                 boolean      bSettingBondable = FALSE;
                 boolean      bSettingDiscoverable = FALSE;
                 BTApp_EnableOPP(pMe, &bSettingBondable, &bSettingDiscoverable);
-            }
+            }			
 			break;
 		}
 		case EVT_OPP_OBJ_PUSHED:
@@ -2558,6 +2582,7 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 
 			if ( pMe->mOPP.bRegistered == FALSE )
 			{
+				 MSG_FATAL("***zzg IDS_MSG_OBJ_PULL_FAILED 555 ***",0,0,0);
 				msgID = IDS_MSG_OBJ_PULL_FAILED;
 				pMe->mOPP.bObjectTransfer = FALSE;
 			}
@@ -2593,6 +2618,16 @@ DESCRIPTION
 ============================================================================= */
 void BTApp_OPPConnect( CBTApp* pMe, AEEBTBDAddr* pBDAddr )
 {
+	//Add By zzg 2012_11_22
+	MSG_FATAL("***zzg BTApp_OPPConnect bConnecting=%x***", pMe->mOPP.bConnecting, 0, 0);
+	if (pMe->mOPP.bConnecting == TRUE)
+	{
+		return;
+	}
+	//Add End
+
+	MSG_FATAL("***zzg BTApp_OPPConnect bRegistered=%x***", pMe->mOPP.bRegistered, 0, 0);
+  	
   if(pMe->mOPP.bRegistered)
   {
       int result;
@@ -2616,6 +2651,18 @@ void BTApp_OPPConnect( CBTApp* pMe, AEEBTBDAddr* pBDAddr )
   pMe->mOPP.bConnecting = FALSE;
   
   MSG_FATAL("***zzg BTApp_OPPConnect***", 0, 0, 0);
+  {
+  	int result=0;
+	result = IBTEXTOPP_Connect( pMe->mOPP.po, pBDAddr, 0 );
+
+	MSG_FATAL("***zzg IBTEXTOPP_Connect result=%x***", result, 0, 0);
+
+	if (result != SUCCESS)
+	{
+		 BTApp_ClearBondable( pMe ); // no need to be bondable anymore
+    	BTApp_ShowMessage( pMe, IDS_MSG_CONN_FAILED, NULL, 3 );
+	}
+	/*
   if ( IBTEXTOPP_Connect( pMe->mOPP.po, pBDAddr, 0 ) != SUCCESS )
   {
     BTApp_ClearBondable( pMe ); // no need to be bondable anymore
@@ -2624,6 +2671,8 @@ void BTApp_OPPConnect( CBTApp* pMe, AEEBTBDAddr* pBDAddr )
   else
   {
     // BTApp_ShowBusyIcon( pMe ); // wait for connect confirm
+  }
+  */
   }
 }
 /* ==========================================================================

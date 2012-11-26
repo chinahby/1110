@@ -347,6 +347,7 @@ typedef struct _CBTApp
   uint16          uCurrMsgId;
   
   boolean		  bStartFromOtherApp;				//Add By zzg 2010_11_09  
+  boolean		  bStartFromPushReq;				//Add By zzg 2012_11_23
   boolean		  bUpdateProgress;					//Add By zzg 2010_11_27 
 
   uint16		  uDeviceSrhType;					//Add By zzg 2011_10_19

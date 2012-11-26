@@ -509,6 +509,11 @@ static boolean  HandleMainDialogEvent(CBTApp *pMe,
 	boolean	   bt_status = FALSE;
 			
     IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_BT_MAINMENU);
+
+	//Add By zzg 2012_11_23
+	IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn, FALSE); 
+	IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn,TRUE);		
+	//Add End
 		
     if (pMenu == NULL)
     {
@@ -562,7 +567,7 @@ static boolean  HandleMainDialogEvent(CBTApp *pMe,
 				titleID = IDS_ON;
 			} 
 
-			#if defined (FEATURE_VERSION_W317A)
+			#if defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_C337)
 			titleID = IDS_BT_TITLE;
 			#endif
 
@@ -587,7 +592,7 @@ static boolean  HandleMainDialogEvent(CBTApp *pMe,
             IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_DEVICES, IDS_DEVICES, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_MY_INFO, IDS_MY_INFO, NULL, 0);
 
-#if	1			
+#if	0			
 			IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_FTP, IDS_FTP, NULL, 0);
 
 			//IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_SETTINGS, IDS_SETTINGS, NULL, 0);
@@ -1314,6 +1319,87 @@ static boolean HandleSearchResultDialogEvent(CBTApp *pMe,
 						IBTEXTSD_StopDeviceDiscovery(pMe->mSD.po);
 					}
 
+					//Add By zzg 2012_11_22
+					MSG_FATAL("***zzg SearchResultDlgHandle bStartFromOtherApp=%d***", pMe->bStartFromOtherApp, 0, 0);
+					
+					if (pMe->bStartFromOtherApp)
+					{
+						if (IMENUCTL_GetItemCount(pMenu) > 0)
+						{	
+							pMe->mRM.uCurDevIdx = IMENUCTL_GetSel(pMenu);
+							MENU_SET_SEL(pMe->mRM.uCurDevIdx);
+							
+							pDev = &pMe->mRM.device[ pMe->mRM.uCurDevIdx];
+							
+							//Bond start
+							MSG_FATAL("***zzg IBTEXTRM_GetLocalInfo bBonded=%x, bBonding=%x***", pDev->bBonded, pMe->mRM.bBonding, 0);	
+							
+							if ((pDev->bBonded == FALSE) && (pMe->mRM.bBonding == FALSE))
+							{					
+								pMe->mRM.bBonding = TRUE;
+#ifdef FEATURE_BT_2_1
+								if (IBTEXTRM_GetLocalInfo(pMe->mRM.po,&pMe->mRM.myInfo) != SUCCESS)
+								{
+									MSG_FATAL("***zzg IBTEXTRM_GetLocalInfo Failed!***", 0, 0, 0);						
+								}
+								else
+								{
+									MSG_LOW("Local HC LMPVersion = %d",pMe->mRM.myInfo.uLMPVersion, 0, 0);
+									
+									MSG_FATAL("***zzg Local HC LMPVersion = %d***", pMe->mRM.myInfo.uLMPVersion, 0, 0);
+
+									if (pMe->mRM.myInfo.uLMPVersion > BTAPPDLG_BT_LMP_VER_2_0)	
+									{
+										// Host is 2.1 enabled and Host Controller is 2.1      		  
+										BTApp_SetBondable(pMe);//ACG
+										BTApp_BuildBondMenu(pMe);
+									}
+									else
+									{
+										// Host is 2.1 but, Host Controller is non 2.1         
+										if (WSTRLEN(pMe->mRM.device[pMe->mRM.uCurDevIdx].wName) == 0)
+										{
+											BTApp_BDAddr2Wstr(pMe->mRM.device[pMe->mRM.uCurDevIdx].wName,&pMe->mRM.device[pMe->mRM.uCurDevIdx].bdAddr);
+										}
+
+										WSTRLCPY(pMe->wEditBuf, pMe->mRM.device[pMe->mRM.uCurDevIdx].wName, ARR_SIZE(pMe->mRM.device[pMe->mRM.uCurDevIdx].wName));
+									
+										pMe->m_edit_id = IDS_PASS_KEY;
+										pMe->m_bEditNeedStr = TRUE;
+										pMe->m_edit_state_id = BTAPPST_DEVICEINFO;							
+										CLOSE_DIALOG(DLGRET_BT_EDIT)  
+									}
+								
+								}
+#endif 										
+							}
+							//Bond End													
+
+							MSG_FATAL("***zzg SearchResult bBonded=%x, mOPP.bConnected=%x***", pDev->bBonded, pMe->mOPP.bConnected, 0);
+
+							//if (pDev->bBonded == TRUE)
+							{
+								if (pMe->mOPP.bConnected == TRUE)
+								{
+									BTApp_OPPPushEx(pMe, pMe->m_pfilepath, AEEBT_OPP_UNKNOWN_TYPE);
+								}
+								else
+								{								
+#ifdef FEATURE_BT_2_1
+									//Client side service security settings
+									IBTEXTRM_SetSecBySvcCls(pMe->mRM.po, AEEBT_SD_SERVICE_CLASS_OBEX_OBJECT_PUSH, pMe->mOPP.srvSecType,FALSE,FALSE);
+#endif 
+									MSG_FATAL("***zzg BTApp_OPPConnect 222**", 0, 0, 0);
+									BTApp_OPPConnect( pMe, &pMe->mRM.device[ pMe->mRM.uCurDevIdx ].bdAddr);  
+									//CLOSE_DIALOG(DLGRET_DEVICEINFO)
+								}
+							}
+							
+							return TRUE;		
+						}
+					}					
+					//Add End
+
 					MSG_FATAL("***zzg BTApp_HandleSrhResultDlg AVK_INFO***", 0, 0, 0);
 
 					if (IMENUCTL_GetItemCount(pMenu) > 0)
@@ -1443,6 +1529,16 @@ static boolean HandleSearchResultDialogEvent(CBTApp *pMe,
 						
 						IBTEXTSD_StopDeviceDiscovery(pMe->mSD.po);
 						BTApp_CancelDevNameRequest(pMe);
+
+						
+						//Add By zzg 2012_11_22
+						if ((pMe->mOPP.bPushFileReq) && ((pMe->bStartFromOtherApp)))
+			            {
+			                boolean      bSettingBondable = FALSE;
+			                boolean      bSettingDiscoverable = FALSE;
+			                BTApp_EnableOPP(pMe, &bSettingBondable, &bSettingDiscoverable);
+			            }
+						//Add End
 
 						//AEEBT_SD_EVT_DEVICE_DISCOVERY_STOPPED will make a Msg_Box
 						return TRUE;	
@@ -7180,7 +7276,7 @@ static boolean HandleSendFileDialogEvent(CBTApp *pMe,
 		{			
 			AECHAR 		WTitle[40] = {0};			
 
-			#ifdef FEATURE_VERSION_W317A
+			#if defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_C337)
 			(void)ISHELL_LoadResString(pMe->m_pShell,
 				                       AEE_APPSBTAPP_RES_FILE,                                
 				                       IDS_BT_TITLE,
@@ -7200,8 +7296,8 @@ static boolean HandleSendFileDialogEvent(CBTApp *pMe,
 
 			// Add individual entries to the Menu
 			if ( pMe->mOPP.bConnected == FALSE )
-			{
-				IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_CONNECT, IDS_CONNECT, NULL, 0);				
+			{	
+				IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_CONNECT, IDS_CONNECT, NULL, 0);
 			}
 			else
 			{
@@ -7508,7 +7604,15 @@ static boolean HandleObexListServersDialogEvent(CBTApp *pMe,
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
 #endif
-            IMENUCTL_SetBottomBarType(pMenu, BTBAR_SELECT_BACK);
+			if (pMe->bStartFromOtherApp)
+			{
+				IMENUCTL_SetBottomBarType(pMenu, BTBAR_SEARCH_BACK);		//Modify by zzg 2012_11_23
+			}
+			else
+			{
+	            IMENUCTL_SetBottomBarType(pMenu, BTBAR_SELECT_BACK);
+	            
+			}
 
 			IMENUCTL_SetSel(pMenu,  MENU_SEL);  // highlight the selected item
 			
@@ -7542,41 +7646,133 @@ static boolean HandleObexListServersDialogEvent(CBTApp *pMe,
             	case AVK_INFO:	
 				case AVK_SELECT:
 				{
-
-					//Add By zzg 2011_02_16
-					MSG_FATAL("***zzg ObexListServerDlgHandle m_obex_list_id=%d***", pMe->m_obex_list_id, 0, 0);
-
-					if (pMe->m_obex_list_id == IDD_BT_FTP_CLIENT)					
+					//Add By zzg 2012_11_23
+					//Add By zzg 2012_11_22
+					MSG_FATAL("***zzg SearchResultDlgHandle bStartFromOtherApp=%d***", pMe->bStartFromOtherApp, 0, 0);
+					
+					if (pMe->bStartFromOtherApp)
 					{
-						if (IMENUCTL_GetItemCount(pMenu) > 0)
+						if (wParam == AVK_INFO)
 						{
-							pMe->mRM.uCurDevIdx = IMENUCTL_GetSel(pMenu);
-							MENU_SET_SEL(pMe->mRM.uCurDevIdx);
+							if (IMENUCTL_GetItemCount(pMenu) > 0)
+							{	
+								pMe->mRM.uCurDevIdx = IMENUCTL_GetSel(pMenu);
+								MENU_SET_SEL(pMe->mRM.uCurDevIdx);
+								
+								pDev = &pMe->mRM.device[ pMe->mRM.uCurDevIdx];
+								
+								//Bond start
+								MSG_FATAL("***zzg IBTEXTRM_GetLocalInfo bBonded=%x, bBonding=%x***", pDev->bBonded, pMe->mRM.bBonding, 0);	
+								
+								if ((pDev->bBonded == FALSE) && (pMe->mRM.bBonding == FALSE))
+								{					
+									pMe->mRM.bBonding = TRUE;
 #ifdef FEATURE_BT_2_1
-						//Client side service security settings
-							IBTEXTRM_SetSecBySvcCls(pMe->mRM.po, AEEBT_SD_SERVICE_CLASS_OBEX_FILE_TRANSFER, pMe->mFTP.srvSecType,FALSE,FALSE);
+									if (IBTEXTRM_GetLocalInfo(pMe->mRM.po,&pMe->mRM.myInfo) != SUCCESS)
+									{
+										MSG_FATAL("***zzg IBTEXTRM_GetLocalInfo Failed!***", 0, 0, 0);						
+									}
+									else
+									{
+										MSG_LOW("Local HC LMPVersion = %d",pMe->mRM.myInfo.uLMPVersion, 0, 0);
+										
+										MSG_FATAL("***zzg Local HC LMPVersion = %d***", pMe->mRM.myInfo.uLMPVersion, 0, 0);
+
+										if (pMe->mRM.myInfo.uLMPVersion > BTAPPDLG_BT_LMP_VER_2_0)	
+										{
+											// Host is 2.1 enabled and Host Controller is 2.1      		  
+											BTApp_SetBondable(pMe);//ACG
+											BTApp_BuildBondMenu(pMe);
+										}
+										else
+										{
+											// Host is 2.1 but, Host Controller is non 2.1         
+											if (WSTRLEN(pMe->mRM.device[pMe->mRM.uCurDevIdx].wName) == 0)
+											{
+												BTApp_BDAddr2Wstr(pMe->mRM.device[pMe->mRM.uCurDevIdx].wName,&pMe->mRM.device[pMe->mRM.uCurDevIdx].bdAddr);
+											}
+
+											WSTRLCPY(pMe->wEditBuf, pMe->mRM.device[pMe->mRM.uCurDevIdx].wName, ARR_SIZE(pMe->mRM.device[pMe->mRM.uCurDevIdx].wName));
+										
+											pMe->m_edit_id = IDS_PASS_KEY;
+											pMe->m_bEditNeedStr = TRUE;
+											pMe->m_edit_state_id = BTAPPST_DEVICEINFO;							
+											CLOSE_DIALOG(DLGRET_BT_EDIT)  
+										}
+									
+									}
+#endif 										
+								}
+								//Bond End														
+
+								MSG_FATAL("***zzg SearchResult bBonded=%x, mOPP.bConnected=%x***", pDev->bBonded, pMe->mOPP.bConnected, 0);
+
+								//if (pDev->bBonded == TRUE)
+								{
+									if (pMe->mOPP.bConnected == TRUE)
+									{
+										BTApp_OPPPushEx(pMe, pMe->m_pfilepath, AEEBT_OPP_UNKNOWN_TYPE);
+									}
+									else
+									{								
+#ifdef FEATURE_BT_2_1
+										//Client side service security settings
+										IBTEXTRM_SetSecBySvcCls(pMe->mRM.po, AEEBT_SD_SERVICE_CLASS_OBEX_OBJECT_PUSH, pMe->mOPP.srvSecType,FALSE,FALSE);
 #endif 
-							BTApp_FTPConnect(pMe, &pMe->mRM.device[pMe->mRM.uCurDevIdx].bdAddr);	
+										MSG_FATAL("***zzg BTApp_OPPConnect 333**", 0, 0, 0);
+										BTApp_OPPConnect( pMe, &pMe->mRM.device[ pMe->mRM.uCurDevIdx ].bdAddr);  
+										//CLOSE_DIALOG(DLGRET_DEVICEINFO)
+									}
+								}
+								
+								return TRUE;		
+							}
 						}
-					}
-					//Add End
-					else if (pMe->m_obex_list_id == IDD_BT_SEND_FILE)	
-					{
-						if (IMENUCTL_GetItemCount(pMenu) > 0)
+						else if (wParam == AVK_SELECT)
 						{
-							pMe->mRM.uCurDevIdx = IMENUCTL_GetSel(pMenu);
-							MENU_SET_SEL(pMe->mRM.uCurDevIdx);
-							
+							CLOSE_DIALOG(DLGRET_DEVICESRH) 									
+							return TRUE;
+						}
+					}					
+					else					
+					//Add End
+					{
+						//Add By zzg 2011_02_16
+						MSG_FATAL("***zzg ObexListServerDlgHandle m_obex_list_id=%d***", pMe->m_obex_list_id, 0, 0);
+
+						if (pMe->m_obex_list_id == IDD_BT_FTP_CLIENT)					
+						{
+							if (IMENUCTL_GetItemCount(pMenu) > 0)
+							{
+								pMe->mRM.uCurDevIdx = IMENUCTL_GetSel(pMenu);
+								MENU_SET_SEL(pMe->mRM.uCurDevIdx);
 #ifdef FEATURE_BT_2_1
 							//Client side service security settings
-							IBTEXTRM_SetSecBySvcCls(pMe->mRM.po, AEEBT_SD_SERVICE_CLASS_OBEX_OBJECT_PUSH, pMe->mOPP.srvSecType,FALSE,FALSE);
+								IBTEXTRM_SetSecBySvcCls(pMe->mRM.po, AEEBT_SD_SERVICE_CLASS_OBEX_FILE_TRANSFER, pMe->mFTP.srvSecType,FALSE,FALSE);
 #endif 
-							BTApp_OPPConnect( pMe, &pMe->mRM.device[ pMe->mRM.uCurDevIdx ].bdAddr);  
-							//CLOSE_DIALOG(DLGRET_DEVICEINFO)
-						}	
+								BTApp_FTPConnect(pMe, &pMe->mRM.device[pMe->mRM.uCurDevIdx].bdAddr);	
+							}
+						}
+						//Add End
+						else if (pMe->m_obex_list_id == IDD_BT_SEND_FILE)	
+						{
+							if (IMENUCTL_GetItemCount(pMenu) > 0)
+							{
+								pMe->mRM.uCurDevIdx = IMENUCTL_GetSel(pMenu);
+								MENU_SET_SEL(pMe->mRM.uCurDevIdx);
+								
+#ifdef FEATURE_BT_2_1
+								//Client side service security settings
+								IBTEXTRM_SetSecBySvcCls(pMe->mRM.po, AEEBT_SD_SERVICE_CLASS_OBEX_OBJECT_PUSH, pMe->mOPP.srvSecType,FALSE,FALSE);
+#endif 
+								MSG_FATAL("***zzg BTApp_OPPConnect 444**", 0, 0, 0);
+								BTApp_OPPConnect( pMe, &pMe->mRM.device[ pMe->mRM.uCurDevIdx ].bdAddr);  
+								//CLOSE_DIALOG(DLGRET_DEVICEINFO)
+							}	
+						}
+						
+						return TRUE;
 					}
-					
-					return TRUE;
             	}
                 case AVK_CLR:
                 {
@@ -7737,6 +7933,15 @@ static boolean HandleFileProgressDialogEvent(CBTApp *pMe,
 					pMe->mOPP.bConnecting = FALSE;
 				}
 			}
+
+			//Add By zzg 2012_11_22			
+			if (pMe->mOPP.bPushFileReq)
+            {
+                boolean      bSettingBondable = FALSE;
+                boolean      bSettingDiscoverable = FALSE;
+                BTApp_EnableOPP(pMe, &bSettingBondable, &bSettingDiscoverable);
+            }			
+			//Add End
 			return TRUE;
 		}
 

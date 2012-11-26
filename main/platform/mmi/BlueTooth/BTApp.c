@@ -2351,7 +2351,44 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 						if (BTApp_OPPInit(pMe) != FALSE)
 						{
 							MSG_FATAL("***zzg BTApp_OPPBuildMenu BT_APP_MENU_OPP_SENDFILE***", 0, 0, 0);
-							MOVE_TO_STATE(BTAPPST_BT_SEND_FILE)		//直接用CLIENT(如果是SERVER状态，则切换)								
+							//MOVE_TO_STATE(BTAPPST_BT_SEND_FILE)		//直接用CLIENT(如果是SERVER状态，则切换)	
+
+							{
+								AEEBTDeviceEnumerator enumerator;
+								uint8				  i;						
+								AEEBTDeviceInfo*	  pDev;						
+
+								enumerator.control = AEEBT_RM_EC_MATCH_SERVICE_CLASS;
+								enumerator.svcCls  = AEEBT_COD_SC_OBJECT_TRANSFER;
+									
+								if (pMe->mRM.po == NULL)
+								{
+									MSG_FATAL("***zzg ObexListServers pMe->mRM.po == NULL***", 0, 0, 0);
+								}
+								else
+								{				
+									if (IBTEXTRM_DeviceEnumInit(pMe->mRM.po, &enumerator) == SUCCESS)
+									{		
+										i	 = 0;
+										pDev = &pMe->mRM.device[i];
+					
+										while ((IBTEXTRM_DeviceEnumNext( pMe->mRM.po, pDev ) == SUCCESS) 
+												&& pDev->bValid && (i < MAX_DEVICES))
+										{
+											pDev = &pMe->mRM.device[ ++i ];
+										}
+									}
+								}
+
+								if (i > 0)
+								{
+									MOVE_TO_STATE(BTAPPST_BT_OBEX_LIST_SERVERS)	//Modify by zzg 2012_11_22
+								}
+								else
+								{
+									MOVE_TO_STATE(BTAPPST_DEVICESRH)			//Modify by zzg 2012_11_22;
+								}				
+							}	
 						}
 						else
 						{
@@ -2524,6 +2561,7 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 				
 				pMe->bSuspended = TRUE;
 				pMe->bStartFromOtherApp = FALSE;	//Add By zzg 2010_11_08
+				pMe->bStartFromPushReq  = FALSE;	//Add By zzg 2012_11_23				
 				pMe->bUpdateProgress	= FALSE;	//Add By zzg 2010_11_27
 				pMe->uDeviceSrhType		= AEEBT_COD_SC_ALL;	//Add By zzg 2011_10_19
 				pMe->uDeviceListType	= AEEBT_RM_EC_ALL;	//Add By zzg // 2011_10_26
@@ -4754,6 +4792,7 @@ static int BTApp_InitAppData(CBTApp *pMe)
     pMe->bSuspended       = FALSE;
 
 	pMe->bStartFromOtherApp	= FALSE;	//Add By zzg 2010_11_08
+	pMe->bStartFromPushReq  = FALSE;	//Add By zzg 2012_11_23
 	pMe->bUpdateProgress	= FALSE;	//Add By zzg 2010_11_27	
 
 	pMe->uDeviceSrhType		= AEEBT_COD_SC_ALL;	//Add By zzg 2011_10_19
@@ -9518,6 +9557,7 @@ static boolean BTApp_HandleDevListMenu( CBTApp* pMe, uint16 key )
 {
   boolean ev_processed = FALSE;
 
+MSG_FATAL("***zzg BTApp_HandleDevListMenu key=%x***", key, 0, 0);
   switch ( key )
   {
     case AVK_INFO:	//Add By zzg 2010_11_03  
@@ -9571,6 +9611,7 @@ static boolean BTApp_HandleDevListMenu( CBTApp* pMe, uint16 key )
                                        AEEBT_SD_SERVICE_CLASS_OBEX_OBJECT_PUSH , 
                                        pMe->mOPP.srvSecType,FALSE,FALSE );
 #endif /* FEATURE_BT_2_1 */
+				MSG_FATAL("***zzg BTApp_OPPConnect 111**", 0, 0, 0);
               BTApp_OPPConnect( 
                 pMe, &pMe->mRM.device[ pMe->mRM.uCurDevIdx ].bdAddr );
               break;
@@ -22829,7 +22870,15 @@ static void BTApp_ProcessRMNotifications(
 	  if (pMe->mRM.bBonding == FALSE)
       {
 		if (pData->pDevUpdateStatus->error == AEEBT_RM_ERR_NONE )
-		{			
+		{		
+			//Add by zzg 2012_11_22
+			if ((pMe->bStartFromOtherApp == TRUE) || (pMe->bStartFromPushReq== TRUE))
+			{
+				MSG_FATAL("***zzg SearchResult mOPP.bConnected=%x***", pMe->mOPP.bConnected, 0, 0);				
+				break;
+			}
+			//Add End
+			
 			msgID = IDS_MSG_DEV_ADDED;
 #ifdef FEATURE_APP_TEST_AUTOMATION
 			#error code not present

@@ -469,15 +469,33 @@ static NextFSMAction BTApp_StateMainHandler(CBTApp *pMe)
 
     switch (pMe->m_eDlgRet)
     {
-    	case DLGRET_MSGBOX_CANCELED:
+    	//case DLGRET_MSGBOX_CANCELED:
     	case DLGRET_PROMPT_CANCELED:
-		case DLGRET_PROGRESS_CANCELED:	
+		//case DLGRET_PROGRESS_CANCELED:	
         case DLGRET_CREATE:
         {
 			pMe->m_bNotOverwriteDlgRet = FALSE;
             BTApp_ShowDialog(pMe, IDD_BT_MAINMENU);
             return NFSMACTION_WAIT;
         }
+
+		//Add By zzg 2012_11_23
+		case DLGRET_MSGBOX_CANCELED:
+		case DLGRET_PROGRESS_CANCELED:
+		{
+			if (pMe->bStartFromPushReq == TRUE)
+			{
+				MOVE_TO_STATE(BTAPPST_EXIT)
+            	return NFSMACTION_CONTINUE;
+			}
+			else
+			{
+				pMe->m_bNotOverwriteDlgRet = FALSE;
+	            BTApp_ShowDialog(pMe, IDD_BT_MAINMENU);
+	            return NFSMACTION_WAIT;
+			}
+		}
+		//Add End
 
 		case DLGRET_DEVICESRH:			
 		{
@@ -634,8 +652,19 @@ static NextFSMAction BTApp_StateDeviceSearchHandler(CBTApp *pMe)
 			
 			BTApp_CancelDevNameRequest(pMe);
 
-            MOVE_TO_STATE(BTAPPST_MAIN)
-            return NFSMACTION_CONTINUE;
+			//Add By zzg 2012_11_22
+			MSG_FATAL("***zzg StateSearching bStartFromOtherApp=%d***", pMe->bStartFromOtherApp, 0, 0);
+			if (pMe->bStartFromOtherApp == TRUE) 
+			{
+				MOVE_TO_STATE(BTAPPST_EXIT)
+            	return NFSMACTION_CONTINUE;
+			}
+			else
+			//Add End	
+			{
+	            MOVE_TO_STATE(BTAPPST_MAIN)
+	            return NFSMACTION_CONTINUE;
+			}
 		}
 		
         default:
@@ -656,17 +685,53 @@ static NextFSMAction BTApp_StateSearchResultHandler(CBTApp *pMe)
 		return NFSMACTION_WAIT;
 	}
 
+	MSG_FATAL("***zzg BTApp_StateSearchResultHandler m_eDlgRet=%x***", pMe->m_eDlgRet, 0, 0);
+
 	switch(pMe->m_eDlgRet)
 	{
-		case DLGRET_MSGBOX_CANCELED:
+		//case DLGRET_MSGBOX_CANCELED:
 		case DLGRET_PROMPT_CANCELED:
-		case DLGRET_PROGRESS_CANCELED:
+		//case DLGRET_PROGRESS_CANCELED:
 		case DLGRET_CREATE:
 		{
 			pMe->m_bNotOverwriteDlgRet = FALSE;
 			BTApp_ShowDialog(pMe, IDD_SEARCH_RESULT);
 			return NFSMACTION_WAIT;
 		}	
+
+		//Add By zzg 2012_11_22
+		case DLGRET_MSGBOX_CANCELED:		
+		{
+			MSG_FATAL("***zzg StateSearchResult bStartFromOtherApp=%d***", pMe->bStartFromOtherApp, 0, 0);
+			if (pMe->bStartFromOtherApp == TRUE) 
+			{
+				MOVE_TO_STATE(BTAPPST_EXIT)
+				return NFSMACTION_CONTINUE;			
+			}
+			else
+			{
+				pMe->m_bNotOverwriteDlgRet = FALSE;
+				BTApp_ShowDialog(pMe, IDD_SEARCH_RESULT);
+				return NFSMACTION_WAIT;
+			}
+		}	
+
+		case DLGRET_PROGRESS_CANCELED:
+		{
+			MSG_FATAL("***zzg StateSearchResult bStartFromOtherApp=%d***", pMe->bStartFromOtherApp, 0, 0);
+			if (pMe->bStartFromOtherApp == TRUE) 
+			{
+				MOVE_TO_STATE(BTAPPST_EXIT)
+				return NFSMACTION_CONTINUE;			
+			}
+			else
+			{
+				pMe->m_bNotOverwriteDlgRet = FALSE;
+				BTApp_ShowDialog(pMe, IDD_SEARCH_RESULT);
+				return NFSMACTION_WAIT;
+			}
+		}
+		//Add End
 			
 		case DLGRET_DEVICEINFO:
 		{	
@@ -712,8 +777,17 @@ static NextFSMAction BTApp_StateSearchResultHandler(CBTApp *pMe)
 						
 		case DLGRET_CANCELED:
 		{	
-			MOVE_TO_STATE(BTAPPST_MAIN)
-			return NFSMACTION_CONTINUE;
+			MSG_FATAL("***zzg StateSearchResult bStartFromOtherApp=%d***", pMe->bStartFromOtherApp, 0, 0);
+			if (pMe->bStartFromOtherApp == TRUE) 
+			{
+				MOVE_TO_STATE(BTAPPST_EXIT)
+				return NFSMACTION_CONTINUE;			
+			}
+			else
+			{
+				MOVE_TO_STATE(BTAPPST_MAIN)
+				return NFSMACTION_CONTINUE;
+			}			
 		}	
 
 		default:
@@ -735,7 +809,7 @@ static NextFSMAction BTApp_StateDeviceInfoHandler(CBTApp * pMe)
 
 	switch(pMe->m_eDlgRet)
 	{
-		case DLGRET_MSGBOX_CANCELED:
+		//case DLGRET_MSGBOX_CANCELED:
 		case DLGRET_PROMPT_CANCELED:
 		case DLGRET_PROGRESS_CANCELED:	
 		case DLGRET_CREATE:
@@ -744,6 +818,23 @@ static NextFSMAction BTApp_StateDeviceInfoHandler(CBTApp * pMe)
 			BTApp_ShowDialog(pMe, IDD_BT_DEVICE_INFO);
 			return NFSMACTION_WAIT;
 		}
+
+		//Add By zzg 2012_11_23
+		case DLGRET_MSGBOX_CANCELED:
+		{
+			if (pMe->bStartFromOtherApp == TRUE)
+			{
+				MOVE_TO_STATE(BTAPPST_EXIT)
+				return NFSMACTION_CONTINUE;
+			}
+			else
+			{
+				pMe->m_bNotOverwriteDlgRet = FALSE;
+				BTApp_ShowDialog(pMe, IDD_BT_DEVICE_INFO);
+				return NFSMACTION_WAIT;
+			}
+		}
+		//Add End
 
 		case DLGRET_DEVICEINFO_OPITION:
 		{
@@ -2242,7 +2333,14 @@ static NextFSMAction BTApp_StateEditHandler(CBTApp *pMe)
 			
 		case DLGRET_CANCELED:				
 		{	
-			MOVE_TO_STATE(pMe->m_edit_state_id)					
+			if ((pMe->bStartFromOtherApp == TRUE) || (pMe->bStartFromPushReq == TRUE))
+			{
+				MOVE_TO_STATE(BTAPPST_MAIN)
+			}
+			else
+			{
+				MOVE_TO_STATE(pMe->m_edit_state_id)					
+			}
 			return NFSMACTION_CONTINUE;
 		}
 
@@ -2380,15 +2478,55 @@ static NextFSMAction BTApp_StateObexListServersHandler(CBTApp *pMe)
 
 	switch(pMe->m_eDlgRet)
 	{
-		case DLGRET_MSGBOX_CANCELED:
+		//case DLGRET_MSGBOX_CANCELED:
 		case DLGRET_PROMPT_CANCELED:
-		case DLGRET_PROGRESS_CANCELED:	
+		//case DLGRET_PROGRESS_CANCELED:	
 		case DLGRET_CREATE:
 		{	
 			pMe->m_bNotOverwriteDlgRet = FALSE;		
 			BTApp_ShowDialog(pMe, IDD_BT_OBEX_LIST_SERVERS);
 			return NFSMACTION_WAIT;		
 		}	
+
+		//Add By zzg 2012_11_23
+		case DLGRET_MSGBOX_CANCELED:		
+		{
+			MSG_FATAL("***zzg StateObexListServers bStartFromOtherApp=%d***", pMe->bStartFromOtherApp, 0, 0);
+			if (pMe->bStartFromOtherApp == TRUE) 
+			{
+				MOVE_TO_STATE(BTAPPST_EXIT)
+				return NFSMACTION_CONTINUE;			
+			}
+			else
+			{
+				pMe->m_bNotOverwriteDlgRet = FALSE;
+				BTApp_ShowDialog(pMe, IDD_BT_OBEX_LIST_SERVERS);
+				return NFSMACTION_WAIT;
+			}
+		}	
+
+		case DLGRET_PROGRESS_CANCELED:
+		{
+			MSG_FATAL("***zzg StateObexListServers bStartFromOtherApp=%d***", pMe->bStartFromOtherApp, 0, 0);
+			if (pMe->bStartFromOtherApp == TRUE) 
+			{
+				MOVE_TO_STATE(BTAPPST_EXIT)
+				return NFSMACTION_CONTINUE;			
+			}
+			else
+			{
+				pMe->m_bNotOverwriteDlgRet = FALSE;
+				BTApp_ShowDialog(pMe, IDD_BT_OBEX_LIST_SERVERS);
+				return NFSMACTION_WAIT;
+			}
+		}
+
+		case DLGRET_DEVICESRH:
+		{
+			MOVE_TO_STATE(BTAPPST_DEVICESRH)
+            return NFSMACTION_CONTINUE;
+		}
+		//Add End
 
 		//Add By zzg 2011_06_08
 		//have connected...
@@ -2443,7 +2581,12 @@ static NextFSMAction BTApp_StateObexListServersHandler(CBTApp *pMe)
 			
 		case DLGRET_CANCELED:		
 		{	
-			if (pMe->m_obex_list_id == IDD_BT_FTP_CLIENT)	
+			MSG_FATAL("***zzg StateObexListServers bStartFromOtherApp=%d***", pMe->bStartFromOtherApp, 0, 0);
+			if (pMe->bStartFromOtherApp == TRUE) 
+			{
+				MOVE_TO_STATE(BTAPPST_EXIT)						
+			}
+			else if (pMe->m_obex_list_id == IDD_BT_FTP_CLIENT)	
 			{
 				MOVE_TO_STATE(BTAPPST_FTP_CLIENT)
 			}

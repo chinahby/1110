@@ -1756,6 +1756,27 @@ void BTApp_ShowDevMsg(
 	MEMSET(pMe->wMsgBuf, 0, WSTRLEN(pMe->wMsgBuf)*sizeof(AECHAR));
 	WSTRCPY(pMe->wMsgBuf, dev.wName);	
 
+	//Add By zzg 2012_11_22
+	if ((pMe->bStartFromOtherApp == TRUE) && (msgID == IDS_MSG_BONDED))
+	{
+		MSG_FATAL("***zzg SearchResult mOPP.bConnected=%x***", pMe->mOPP.bConnected, 0, 0);
+
+		if (pMe->mOPP.bConnected == TRUE)
+		{
+			BTApp_OPPPushEx(pMe, pMe->m_pfilepath, AEEBT_OPP_UNKNOWN_TYPE);
+		}		
+		else
+		{					
+#ifdef FEATURE_BT_2_1
+			//Client side service security settings
+			IBTEXTRM_SetSecBySvcCls(pMe->mRM.po, AEEBT_SD_SERVICE_CLASS_OBEX_OBJECT_PUSH, pMe->mOPP.srvSecType,FALSE,FALSE);
+#endif 
+			BTApp_OPPConnect( pMe, &pMe->mRM.device[ pMe->mRM.uCurDevIdx ].bdAddr);  			
+		}		
+		return;
+	}
+	//Add End
+
 	//CLOSE_DIALOG(DLGRET_BT_MSGBOX)   
 	pMe->m_eDlgRet = DLGRET_BT_MSGBOX; 
 	(void) ISHELL_EndDialog(pMe->m_pShell); 	
@@ -1961,12 +1982,12 @@ boolean BTApp_CheckVoiceCallState( CBTApp* pMe, uint8 uState )
   uint8                index = 0;
   boolean              bCallState = FALSE;
 
-  MSG_FATAL("***zzg BTApp_CheckVoiceCallState uState=%x**", uState, 0, 0);
+  //MSG_FATAL("***zzg BTApp_CheckVoiceCallState uState=%x**", uState, 0, 0);
 
   uSizeOfCallsDesc = sizeof(AEETCalls) + (sizeof(AEECallDesc)*(BTAPP_MAX_NUM_CALLS - 1));
   pCallsDesc = (AEETCalls*)MALLOC( uSizeOfCallsDesc );
 
-  MSG_FATAL("***zzg BTApp_CheckVoiceCallState pCallsDesc=%x**", pCallsDesc, 0, 0);
+  //MSG_FATAL("***zzg BTApp_CheckVoiceCallState pCallsDesc=%x**", pCallsDesc, 0, 0);
   
   if ( pCallsDesc == NULL )
   {
@@ -1977,7 +1998,7 @@ boolean BTApp_CheckVoiceCallState( CBTApp* pMe, uint8 uState )
   if ( ITELEPHONE_GetCalls( pMe->pIPhone, pCallsDesc, 
                             uSizeOfCallsDesc ) == SUCCESS )
   {
-  	MSG_FATAL("***zzg BTApp_CheckVoiceCallState dwCount=%x**", pCallsDesc->dwCount, 0, 0);
+  	//MSG_FATAL("***zzg BTApp_CheckVoiceCallState dwCount=%x**", pCallsDesc->dwCount, 0, 0);
 	
     /* process information for each call */
     for ( index = 0; index < pCallsDesc->dwCount; index++ )
@@ -1992,8 +2013,8 @@ boolean BTApp_CheckVoiceCallState( CBTApp* pMe, uint8 uState )
         break;
       }
 
-	  MSG_FATAL("***zzg BTApp_CheckVoiceCallState index=%x, call_type=%x, call_state=%x**", 
-	  			pCallsDesc->dwCount, callInfo.call_type, callInfo.call_state);
+	  /*MSG_FATAL("***zzg BTApp_CheckVoiceCallState index=%x, call_type=%x, call_state=%x**", 
+	  			pCallsDesc->dwCount, callInfo.call_type, callInfo.call_state);*/
 	  
       if ( uState == BTAPP_VOICECALL_INCOMING )
       {
@@ -2027,7 +2048,7 @@ boolean BTApp_CheckVoiceCallState( CBTApp* pMe, uint8 uState )
   }
   FREEIF( pCallsDesc );
   
-  MSG_FATAL("***zzg BTApp_CheckVoiceCallState bCallState=%x**", bCallState, 0, 0);
+  //MSG_FATAL("***zzg BTApp_CheckVoiceCallState bCallState=%x**", bCallState, 0, 0);
   return bCallState;
 }
 
@@ -2071,7 +2092,7 @@ BTAppCallType BTApp_CallIncoming( CBTApp* pMe )
   }
 #endif /* FEATURE_BT_VT */
 
-  MSG_FATAL("***zzg BTApp_CallIncoming callIncoming=%x***", callIncoming, 0, 0);
+  //MSG_FATAL("***zzg BTApp_CallIncoming callIncoming=%x***", callIncoming, 0, 0);
 
   return callIncoming;
 }
