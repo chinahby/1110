@@ -131,7 +131,12 @@ when       who     what, where, why
 
 // How long the phone vibrates for an incoming call, if using the Ring Then
 // Vibrate setting (must be divisible evenly by TIME_MS_RINGERVIBRATE_DURATION)
+
+#ifdef FEATURE_VERSION_W317A
+#define TIME_MS_RINGERVIBRATE_ALERT_DURATION    4000
+#else
 #define TIME_MS_RINGERVIBRATE_ALERT_DURATION    12000
+#endif
 
 // Twice the number of times the phone should vibrate before starting to ring
 // when using the Vibrate Then Ring setting
