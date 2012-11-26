@@ -154,6 +154,12 @@ static boolean MediaGalleryApp_ShowMsgBox(CMediaGalleryApp* pMe,
                                           BottomBar_e_Type eMsgBoxBottomBar);
 static __inline void MediaGalleryApp_ShowDoneMsgBox(CMediaGalleryApp *pMe);
 
+#ifdef FEATURE_VERSION_W317A
+static boolean  MediaGalleryApp_PwdDlg_HandleEvent(CMediaGalleryApp* pMe,
+				                                                  AEEEvent eCode,
+				                                                  uint16   wParam,
+				                                                  uint32   dwParam);
+#endif
 static boolean MediaGalleryApp_MsgBoxDlg_HandleEvent(CMediaGalleryApp* pMe,
                                                      AEEEvent eCode,
                                                      uint16 wParam,
@@ -342,6 +348,11 @@ boolean MediaGalleryApp_RouteDialogEvent(CMediaGalleryApp* pMe,
    MSG_FATAL("MediaGalleryApp_RouteDialogEvent m_nActiveDlgID=%d", pMe->m_nActiveDlgID,0,0);
    switch(pMe->m_nActiveDlgID)
    {
+#ifdef FEATURE_VERSION_W317A
+ 	  case IDD_PWD:
+ 	  	 fcnPtr = MediaGalleryApp_PwdDlg_HandleEvent;
+ 	  	 break;
+#endif
       case IDD_MG_MSGBOX:
          fcnPtr = MediaGalleryApp_MsgBoxDlg_HandleEvent;
          break;
@@ -597,7 +608,6 @@ static __inline void MediaGalleryApp_ShowErrorMsgBox(CMediaGalleryApp *pMe)
                               BTBAR_BACK);//Prompt success!
 }//MediaGalleryApp_ShowDoneMsgBox
 
-
 static __inline void MediaGalleryApp_ShowProgressBox(CMediaGalleryApp *pMe,
                                                       uint16 nMsgBoxID)
 {
@@ -727,6 +737,269 @@ static boolean MediaGalleryApp_CancelMsgBoxTimer(CMediaGalleryApp* pMe,
    return bRet;
 }//MediaGalleryApp_CancelMsgBoxTimer
 
+#ifdef FEATURE_VERSION_W317A
+static boolean  MediaGalleryApp_PwdDlg_HandleEvent(CMediaGalleryApp* pMe,
+			                                                  AEEEvent eCode,
+			                                                  uint16   wParam,
+			                                                  uint32   dwParam)
+{
+	PARAM_NOT_REF(dwParam)
+    //static char   *m_strPhonePWD = NULL;
+    AECHAR      wstrDisplay[OEMNV_LOCKCODE_MAXLEN+2] = {0};
+    int             nLen = 0;
+    char        strDisplay[OEMNV_LOCKCODE_MAXLEN+2] = {0};
+    
+    if (NULL == pMe)
+    {
+        return FALSE;
+    }
+    
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT:
+            if(NULL == pMe->m_strPhonePWD)
+            {
+                pMe->m_strPhonePWD = (char *)MALLOC((OEMNV_LOCKCODE_MAXLEN + 1)* sizeof(char));
+            }
+            return TRUE;
+            
+        case EVT_DIALOG_START:  
+            (void) ISHELL_PostEvent(pMe->m_pShell,
+                                    AEECLSID_MEDIAGALLERY,
+                                    EVT_USER_REDRAW,
+                                    NULL,
+                                    NULL);
+
+            return TRUE;
+            
+        case EVT_USER_REDRAW:
+            // 绘制相关信息
+            {
+                AECHAR  text[32] = {0};
+                RGBVAL nOldFontColor;
+                TitleBar_Param_type  TitleBar_Param = {0};
+                
+                // 先清屏
+#ifdef FEATURE_CARRIER_CHINA_VERTU
+                {
+                    IImage *pImageBg = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SECURITY_BACKGROUND);
+                    
+                    Appscommon_ResetBackground(pMe->m_pDisplay, pImageBg, APPSCOMMON_BG_COLOR, &pMe->m_rc, 0, 0);
+                    if(pImageBg != NULL)
+                    {
+                        IImage_Release(pImageBg);
+                    }
+                }
+#else
+                Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
+#endif
+                //IDISPLAY_FillRect  (pMe->m_pDisplay,&pMe->m_rc,RGB_BLACK);
+
+				(void)ISHELL_LoadResString(pMe->m_pShell, 
+	                                        MGRES_LANGFILE,
+	                                        IDS_MG_MEDIAGALLERY_C337, 
+	                                        text,
+	                                        sizeof(text));    
+				 
+				
+                // 画标题条
+                TitleBar_Param.pwszTitle = text;
+                TitleBar_Param.dwAlignFlags = IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
+                #if 0
+                DrawTitleBar(pMe->m_pDisplay, &TitleBar_Param);
+				#else
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,text);
+				#endif
+
+               (void)ISHELL_LoadResString(pMe->m_pShell, 
+                                                MGRES_LANGFILE,
+                                                IDS_PWD_TITLE, 
+                                                text,
+                                                sizeof(text));
+                nOldFontColor = IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
+                
+                IDISPLAY_DrawText(pMe->m_pDisplay, 
+                                    AEE_FONT_BOLD, 
+                                    text,
+                                    -1, 
+                                    5, 
+                                    MENUITEM_HEIGHT*1/2, 
+                                    NULL, 
+                                    IDF_TEXT_TRANSPARENT);
+                   
+                nLen = (pMe->m_strPhonePWD == NULL)?(0):(STRLEN(pMe->m_strPhonePWD));
+                MEMSET(strDisplay, '*', nLen);
+                strDisplay[nLen] = '|';
+                strDisplay[nLen + 1] = '\0';
+                (void) STRTOWSTR(strDisplay, wstrDisplay, sizeof(wstrDisplay));
+                IDISPLAY_DrawText(pMe->m_pDisplay, 
+                                AEE_FONT_BOLD, 
+                                wstrDisplay,
+                                -1, 
+                                10, 
+                                MENUITEM_HEIGHT*3/2,
+                                NULL, 
+                                IDF_TEXT_TRANSPARENT);
+                (void)IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, nOldFontColor);
+        
+                // 绘制底条提示
+                if (nLen > 3)
+                {// 确定-----删除
+                	#ifndef FEATURE_ALL_KEY_PAD
+					MGAppUtil_DrawSoftkey(pMe, BTBAR_OK_DELETE);                    
+                    #else
+					MGAppUtil_DrawSoftkey(pMe, BTBAR_OK_BACK);                       
+                    #endif
+                }
+                else if(nLen > 0)
+                {
+                	#ifndef FEATURE_ALL_KEY_PAD
+                    MGAppUtil_DrawSoftkey(pMe,BTBAR_DELETE);
+                    #else
+                    MGAppUtil_DrawSoftkey(pMe,BTBAR_BACK);
+                    #endif
+                }
+                else
+                {// 确定-----取消
+                    MGAppUtil_DrawSoftkey(pMe,BTBAR_CANCEL);
+                }
+
+                // 更新显示
+                IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE); 
+        
+                return TRUE;
+            }
+            
+        case EVT_DIALOG_END:
+			if(!pMe->m_bSuspending)
+			{
+				 FREEIF(pMe->m_strPhonePWD);
+			}			
+			return TRUE;
+
+        case EVT_KEY:
+            {
+                char  chEnter = 0;
+                int   nLen = 0;
+                boolean bRedraw = FALSE;
+                
+                switch (wParam)
+                {
+                    case AVK_0:
+                    case AVK_1:
+                    case AVK_2:
+                    case AVK_3:
+                    case AVK_4:
+                    case AVK_5:
+                    case AVK_6:
+                    case AVK_7:
+                    case AVK_8:
+                    case AVK_9:
+                        chEnter = '0' + (wParam - AVK_0);
+                        break;
+
+                    case AVK_STAR:
+                        chEnter = '*';
+                        break;
+ 
+                    case AVK_POUND:
+                        chEnter = '#';
+                        break;
+                    //Add By zzg 2012_02_27					
+					case AVK_DEL:	 
+					{
+						chEnter = 0;
+						break;
+					}
+					//Add End	
+                    case AVK_CLR:
+                        chEnter = 0;       
+                        #ifndef FEATURE_ALL_KEY_PAD
+                        if (pMe->m_strPhonePWD == NULL || STRLEN(pMe->m_strPhonePWD) == 0)
+                        {
+                            MGCLOSE_DIALOG(MGDLGRET_CANCELED)
+                            return TRUE;
+                        }
+                        #else
+                        if(dwParam == 0)
+                        {
+                        	MGCLOSE_DIALOG(MGDLGRET_CANCELED)
+	                        return TRUE;
+                        }
+                        else
+                        {
+                        	if (pMe->m_strPhonePWD == NULL || STRLEN(pMe->m_strPhonePWD) == 0)
+	                        {
+	                            MGCLOSE_DIALOG(MGDLGRET_CANCELED)
+	                            return TRUE;
+	                        }
+                        }
+                        #endif
+                        break;
+                        
+                    case AVK_SELECT:
+                    case AVK_INFO:
+                        if (pMe->m_strPhonePWD == NULL || STRLEN(pMe->m_strPhonePWD) < 4)
+                        {
+                            return TRUE;
+                        }
+                        else
+                        //end added
+                        {
+                            uint16 wPWD=0;
+
+                            OEM_GetConfig(CFGI_PHONE_PASSWORD, &wPWD, sizeof(wPWD));
+                        
+                            if (wPWD == EncodePWDToUint16(pMe->m_strPhonePWD))
+                            {// 密码符合
+                                MGCLOSE_DIALOG(MGDLGRET_PASS)
+                            }
+                            else
+                            {// 密码错误
+                                MGCLOSE_DIALOG(MGDLGRET_FAILD)
+                            }
+                        }
+                        return TRUE;
+                        
+                    default:
+                        return TRUE;
+                }
+                nLen = (pMe->m_strPhonePWD == NULL)?(0):(STRLEN(pMe->m_strPhonePWD));
+                if (chEnter == 0)
+                {// 删除字符
+                    if (nLen > 0)
+                    {
+                        bRedraw = TRUE;
+                        pMe->m_strPhonePWD[nLen-1] = chEnter;
+                    }
+                }
+                else if (nLen < OEMNV_LOCKCODE_MAXLEN)
+                {
+                    pMe->m_strPhonePWD[nLen] = chEnter;
+                    nLen++;
+                    pMe->m_strPhonePWD[nLen] = 0;
+                    bRedraw = TRUE;
+                }
+                
+                if (bRedraw)
+                {
+                    (void) ISHELL_PostEvent(pMe->m_pShell,
+                                            AEECLSID_MEDIAGALLERY,
+                                            EVT_USER_REDRAW,
+                                            NULL,
+                                            NULL);
+                }
+            }
+            return TRUE;
+            
+        default:
+            break;
+    }
+    
+    return FALSE;
+}
+#endif
+
 /*============================================================================
  * FUNCTION:MediaGalleryApp_MsgBoxDlg_HandleEvent
  * DESCRIPTION:
@@ -747,13 +1020,18 @@ static boolean MediaGalleryApp_MsgBoxDlg_HandleEvent(CMediaGalleryApp* pMe,
                                                       uint32 dwParam)
 {
    MediaDlgStat eDlgStat;
+   uint16   nMsgBoxId;   
 
+   nMsgBoxId =MediaGalleryApp_GetMsgBoxID(pMe);
+  
    if(!pMe)
    {
       return FALSE;
    }
 
    MGAppUtil_GetMediaDlgStat(pMe, &eDlgStat);
+
+   MSG_FATAL("***zzg MsgBoxDlg eCode=%x***", eCode, 0, 0);
 
    switch(eCode)
    {
@@ -838,9 +1116,18 @@ static boolean MediaGalleryApp_MsgBoxDlg_HandleEvent(CMediaGalleryApp* pMe,
 
    case EVT_KEY:
       {
+	  	 MSG_FATAL("***zzg MsgBoxDlg EVT_KEY nMsgBoxId=%x***", nMsgBoxId, 0, 0);
+#ifdef FEATURE_VERSION_W317A
+	 	if (nMsgBoxId == MG_MSGID_VALIDPWD)
+	 	{
+	 		MSG_FATAL("***zzg MsgBoxDlg MGCLOSE_DIALOG(MGDLGRET_MSGBOX_OK)x***", 0, 0, 0);
+			MGCLOSE_DIALOG(MGDLGRET_MSGBOX_OK)
+			return TRUE;
+		}			
+#endif	
          switch(wParam)
          {
-         case AVK_CLR:
+         case AVK_CLR:			
             if(eDlgStat == MG_DLGSTAT_YESNOBOX )
             {
                //uint16   nMsgBoxId =MediaGalleryApp_GetMsgBoxID(pMe);
@@ -912,6 +1199,16 @@ static boolean MediaGalleryApp_MsgBoxDlg_HandleEvent(CMediaGalleryApp* pMe,
          MGDLGRetValue eMsgRet = MGDLGRET_MSGBOX_OK;
          uint16   nMsgBoxId =MediaGalleryApp_GetMsgBoxID(pMe);
          MSG_FATAL("EVT_DISPLAYDIALOGTIMEOUT Start",0,0,0);
+
+		 
+		 MSG_FATAL("***zzg MsgBoxDlg EVT_DISPLAYDIALOGTIMEOUT nMsgBoxId=%x***", nMsgBoxId, 0, 0);
+#ifdef FEATURE_VERSION_W317A
+	 	if (nMsgBoxId == MG_MSGID_VALIDPWD)
+	 	{
+			MGCLOSE_DIALOG(MGDLGRET_MSGBOX_OK)
+			return TRUE;
+		}			
+#endif		 
          switch(nMsgBoxId)
          {
          default:

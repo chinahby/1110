@@ -355,6 +355,9 @@ enum{
     CFGI_RECENTCALL_LOCK_CHECK, //type = boolean
     CFGI_SMS_LOCK_CHECK,        //type = boolean
     CFGI_CALENDAR_LOCK_CHECK,   //type = boolean
+#ifdef FEATURE_VERSION_W317A    
+    CFGI_MEDIAGALLERY_LOCK_CHECK,	//type = boolean	
+#endif    
     CFGI_KEY_LOCK_CHECK,      //type = boolean
     CFGI_LOCK_RUIM,   //type: boolean 
     CFGI_LOCK_MCCMNC_LIST,

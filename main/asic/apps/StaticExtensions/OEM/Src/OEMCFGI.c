@@ -558,6 +558,9 @@ typedef struct
    boolean       b_recentcall_lock;            //CFGI_RECENTCALL_LOCK_CHECK
    boolean       b_sms_lock;                   //CFGI_SMS_LOCK_CHECK
    boolean       b_calendar_lock;              //CFGI_CALENDAR_LOCK_CHECK
+#ifdef FEATURE_VERSION_W317A    
+   boolean		 b_mediagallery_lock;			//CFGI_MEDIAGALLERY_LOCK_CHECK
+#endif    
    byte          b_key_lock;                    //CFGI_KEY_LOCK_CHECK
    boolean       lock_ruim;  
    AEEConfigSIDNIDPairType lock_mccmnc[OEMNV_LOCK_MCCMNC_ARRSIZE];  
@@ -1342,6 +1345,10 @@ static int OEMPriv_SetItem_CFGI_SMS_LOCK_CHECK(void *pBuff);
 static int OEMPriv_GetItem_CFGI_CALENDAR_LOCK_CHECK(void *pBuff);
 static int OEMPriv_SetItem_CFGI_CALENDAR_LOCK_CHECK(void *pBuff);
 
+#ifdef FEATURE_VERSION_W317A
+static int OEMPriv_GetItem_CFGI_MEDIAGALLERY_LOCK_CHECK(void *pBuff);
+static int OEMPriv_SetItem_CFGI_MEDIAGALLERY_LOCK_CHECK(void *pBuff);
+#endif
 static int OEMPriv_GetItem_CFGI_KEY_LOCK_CHECK(void *pBuff);
 static int OEMPriv_SetItem_CFGI_KEY_LOCK_CHECK(void *pBuff);
 static int OEMPriv_GetItem_CFGI_LOCK_RUIM(void *pBuff);
@@ -1776,7 +1783,9 @@ static OEMConfigListType oemi_cache = {
    FALSE,                                           //CFGI_RECENTCALL_LOCK_CHECK
    FALSE,                                           //CFGI_SMS_LOCK_CHECK
    FALSE,                                           //CFGI_CALENDAR_LOCK_CHECK
-
+#ifdef FEATURE_VERSION_W317A    
+   FALSE,											//CFGI_MEDIAGALLERY_LOCK_CHECK
+#endif 
 #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_C337)
    1,											//CFGI_KEY_LOCK_CHECK			
 #else
@@ -2422,6 +2431,9 @@ static ConfigItemTableEntry const customOEMItemTable[] =
    CFGTABLEITEM(CFGI_RECENTCALL_LOCK_CHECK, sizeof(boolean)),//type = boolena
    CFGTABLEITEM(CFGI_SMS_LOCK_CHECK, sizeof(boolean)),       //type = boolena
    CFGTABLEITEM(CFGI_CALENDAR_LOCK_CHECK, sizeof(boolean)),  //type = boolean
+#ifdef FEATURE_VERSION_W317A
+   CFGTABLEITEM(CFGI_MEDIAGALLERY_LOCK_CHECK, sizeof(boolean)),  //type = boolean
+#endif
    CFGTABLEITEM(CFGI_KEY_LOCK_CHECK, sizeof(byte)),       //type = byte
    CFGTABLEITEM(CFGI_LOCK_RUIM,  sizeof(boolean)),            //type = boolean
    CFGTABLEITEM(CFGI_LOCK_MCCMNC_LIST,  sizeof(oemi_cache.lock_mccmnc)), 
@@ -2812,6 +2824,10 @@ void OEM_RestoreFactorySetting( void )
    oemi_cache.b_calendar_lock          = FALSE;
    //Add End
    
+#ifdef FEATURE_VERSION_W317A    
+   oemi_cache.b_mediagallery_lock      = FALSE;
+#endif 
+
 #ifdef FEATURE_VERSION_C337
 	oemi_cache.m_defaultcont		   = FALSE;
 #endif
@@ -10101,6 +10117,22 @@ static int OEMPriv_SetItem_CFGI_CALENDAR_LOCK_CHECK(void *pBuff)
 
    return SUCCESS;
 }
+
+#ifdef FEATURE_VERSION_W317A
+static int OEMPriv_GetItem_CFGI_MEDIAGALLERY_LOCK_CHECK(void *pBuff)
+{
+   *(byte *) pBuff = oemi_cache.b_mediagallery_lock;
+   return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_MEDIAGALLERY_LOCK_CHECK(void *pBuff)
+{
+   if (oemi_cache.b_mediagallery_lock != *(byte *)pBuff) {
+      oemi_cache.b_mediagallery_lock = *(byte *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+   return SUCCESS;
+}	
+#endif
 
 static int OEMPriv_GetItem_CFGI_KEY_LOCK_CHECK(void *pBuff) 
 {

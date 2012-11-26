@@ -46,6 +46,9 @@ typedef NextFSMAction (*MG_FSMSTATE_HANDLER)(CMediaGalleryApp* pMe);
 // MediaGalleryAppStateHandler.c)
 static NextFSMAction MGStateNoneOperationHandler(CMediaGalleryApp* pMe);
 static NextFSMAction MGStateInitHandler(CMediaGalleryApp* pMe);
+#ifdef FEATURE_VERSION_W317A
+static NextFSMAction MGStatePwdHandler(CMediaGalleryApp *pMe);
+#endif
 static NextFSMAction MGStateMainMenuHandler(CMediaGalleryApp* pMe);
 static NextFSMAction MGStatePhoneMemHandler(CMediaGalleryApp* pMe);
 static NextFSMAction MGStateCardMemHandler(CMediaGalleryApp* pMe);
@@ -120,7 +123,11 @@ NextFSMAction MediaGalleryApp_ProcessState(CMediaGalleryApp* pMe)
          case STATE_INIT:
             fcnPtr = MGStateInitHandler;
             break;
-
+#ifdef FEATURE_VERSION_W317A
+		case STATE_PWD:
+			fcnPtr = MGStatePwdHandler;
+			break;
+#endif
          case STATE_MAINMENU:
             fcnPtr = MGStateMainMenuHandler;
             break;
@@ -261,34 +268,133 @@ static NextFSMAction MGStateNoneOperationHandler(CMediaGalleryApp* pMe)
  */
 static NextFSMAction MGStateInitHandler(CMediaGalleryApp* pMe)
 {
-   if(!pMe)
-   {
+#ifdef FEATURE_VERSION_W317A
+	boolean locksel;
+
+	if(!pMe)
+	{
       return NFSMACTION_WAIT;
-   }
+	}
+		
+	OEM_GetConfig( CFGI_MEDIAGALLERY_LOCK_CHECK, &locksel, sizeof( locksel));
 
-   switch(pMe->m_eDlgRet)
-   {
-      case MGDLGRET_CREATE:
-         switch(pMe->m_StartMode)
-         {
-            case MGSM_SETTING_WALLPAPER:
-            case MGSM_SETTING_RINGTONE:
-               MGMOVE_TO_STATE(pMe,STATE_SETAS);
-               break;
+	if(locksel)
+	{
+		MGMOVE_TO_STATE(pMe, STATE_PWD);
+	}
+	else
+	{
+		switch(pMe->m_eDlgRet)
+		{
+			case MGDLGRET_CREATE:
+			{
+				switch(pMe->m_StartMode)
+				{
+					case MGSM_SETTING_WALLPAPER:
+					case MGSM_SETTING_RINGTONE:
+						MGMOVE_TO_STATE(pMe,STATE_SETAS);
+						break;
 
-            default:
-               MGMOVE_TO_STATE(pMe,STATE_MAINMENU);
-               break;
-         }
-         break;
+					default:
+						MGMOVE_TO_STATE(pMe,STATE_MAINMENU);
+						break;
+				}
+				break;
+			}
+			default:
+		    {
+				MGMOVE_TO_STATE(pMe,STATE_EXIT);
+		        break;
+			}
+		}
+	}
+#else
+	if(!pMe)
+	{
+      return NFSMACTION_WAIT;
+	}
+	
+	switch(pMe->m_eDlgRet)
+	{
+		case MGDLGRET_CREATE:
+		{
+			switch(pMe->m_StartMode)
+			{
+				case MGSM_SETTING_WALLPAPER:
+				case MGSM_SETTING_RINGTONE:
+					MGMOVE_TO_STATE(pMe,STATE_SETAS);
+					break;
 
-      default:
-         MGMOVE_TO_STATE(pMe,STATE_EXIT);
-            break;
-   }
+				default:
+					MGMOVE_TO_STATE(pMe,STATE_MAINMENU);
+					break;
+			}
+			break;
+		}
+		default:
+	    {
+			MGMOVE_TO_STATE(pMe,STATE_EXIT);
+	        break;
+		}
+	}
+#endif
 
    return NFSMACTION_CONTINUE;
 }//MGStateInitHandler
+
+
+#ifdef FEATURE_VERSION_W317A
+static NextFSMAction MGStatePwdHandler(CMediaGalleryApp *pMe)
+{
+	DBGPRINTF("***zzg MGStatePwdHandler m_eDlgRet=%x***", pMe->m_eDlgRet);
+	
+	switch(pMe->m_eDlgRet)
+    {
+        case MGDLGRET_CREATE:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            if(SUCCESS != MediaGalleryApp_ShowDialog(pMe, IDD_PWD))
+            {
+                MGMOVE_TO_STATE(pMe, STATE_EXIT);
+                return NFSMACTION_CONTINUE;
+            }
+            return NFSMACTION_WAIT;
+
+        case MGDLGRET_CANCELED:
+            MGMOVE_TO_STATE(pMe, STATE_EXIT);
+            return NFSMACTION_CONTINUE;
+
+        case MGDLGRET_PASS:            
+            switch(pMe->m_StartMode)
+			{
+				case MGSM_SETTING_WALLPAPER:
+				case MGSM_SETTING_RINGTONE:
+					MGMOVE_TO_STATE(pMe,STATE_SETAS);
+					break;
+
+				default:
+					MGMOVE_TO_STATE(pMe,STATE_MAINMENU);
+					break;
+			}
+            return NFSMACTION_CONTINUE;
+
+        case MGDLGRET_FAILD:    			
+			MediaGalleryApp_ShowMsgBoxDlg(pMe,
+							               MGRES_LANGFILE,
+							               IDS_INVALID,
+							               MESSAGE_INFORMATION,
+							               BTBAR_NONE);         
+            return NFSMACTION_WAIT;
+		
+        case MGDLGRET_MSGBOX_OK:
+            MGMOVE_TO_STATE(pMe, STATE_PWD);
+            return NFSMACTION_CONTINUE;        
+
+        default:
+            MGMOVE_TO_STATE(pMe, STATE_EXIT);
+            return NFSMACTION_CONTINUE;
+    }
+}
+#endif
 
 /*==========================================================================
  * FUNCTION: MGStateExitHandler
@@ -487,12 +593,23 @@ static NextFSMAction MGStateMainMenuHandler(CMediaGalleryApp* pMe)
                                       MG_MIME_SNDBASE);
             MGMOVE_TO_STATE(pMe,STATE_MEDIAMENU);
             break;
+			
 
          case MGSM_MUSIC_ADD:
-            MGState_StartFileExplorer(pMe,
+		 	/*
+		 	#ifdef FEATURE_VERSION_C337
+			MGState_StartFileExplorer(pMe,
+                                      MG_STMED_HANDSET,
+                                      MG_MASSCARD_ROOTDIR,
+                                      MG_MIME_SNDBASE);
+			#else
+			*/
+			MGState_StartFileExplorer(pMe,
                                       MG_STMED_HANDSET,
                                       MG_PHONEMUSIC_PATH,
                                       MG_MIME_SNDBASE);
+			//#endif
+            
             MGMOVE_TO_STATE(pMe,STATE_MUSIC_ADD);
             break;
 

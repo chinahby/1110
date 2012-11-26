@@ -1376,6 +1376,9 @@ static int MediaGalleryApp_InitAppData(CMediaGalleryApp* pMe)
       return EFAILED;
    }
 
+#ifdef FEATURE_VERSION_W317A
+   pMe->m_strPhonePWD = NULL;
+#endif
    pMe->m_bSuspending = FALSE;
    pMe->m_StartMode = MGSM_NORMAL_EXPLORER;
    pMe->m_bNotOverwriteDlgRet = FALSE;
@@ -1484,6 +1487,9 @@ static void MediaGalleryApp_FreeAppData(CMediaGalleryApp* pMe)
    {
       return;
    }
+#ifdef FEATURE_VERSION_W317A
+   FREEIF(pMe->m_strPhonePWD);
+#endif
 
    ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);
    CALLBACK_Cancel(&pMe->m_CallBack);

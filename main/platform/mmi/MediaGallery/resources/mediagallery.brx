@@ -367,6 +367,12 @@
 	<STRING Id="1123" Name="IDS_MG_DETAILS">
 		<Text>Details</Text>
 	</STRING>
+	<STRING Id="1124" Name="IDS_INVALID">
+		<Text>Invalid password</Text>
+	</STRING>
+	<STRING Id="1125" Name="IDS_PWD_TITLE">
+		<Text>Enter Password</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<Dialog Id="6001" Name="IDD_MG_MAINMENU" Focus="7001">
@@ -486,6 +492,9 @@
 				<Items/>
 			</Menu>
 		</Controls>
+	</Dialog>
+	<Dialog Id="6025" Name="IDD_PWD" Focus="0">
+		<Controls/>
 	</Dialog>
 </Dialogs>
 </BREWRes>

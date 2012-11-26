@@ -620,6 +620,10 @@ static boolean  SecurityApplicationLockDlgHandler(CSecurityMenu *pMe,
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_RECENT_CALL_LOCK, IDS_RECENT_CALL_LOCK, NULL, 0);
             //IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_MEDIALOCK, IDS_MEDIALOCK, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_CALENDARLOCK, IDS_CALENDARLOCK, NULL, 0);
+#ifdef FEATURE_VERSION_W317A
+			IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_MG_MEDIAGALLERY, IDS_MG_MEDIAGALLERY, NULL, 0);
+#endif
+
             return TRUE;
 
         case EVT_DIALOG_START:
@@ -655,6 +659,13 @@ static boolean  SecurityApplicationLockDlgHandler(CSecurityMenu *pMe,
                 (void) ICONFIG_GetItem(pMe->m_pConfig, CFGI_CALENDAR_LOCK_CHECK, &bData, sizeof(bData));
                 SetCheckBoxItem(pMenu, IDS_CALENDARLOCK, bData);
             }
+#ifdef FEATURE_VERSION_W317A
+			 //¼ì²éMediagallery Ëø×´Ì¬
+            {
+                (void) ICONFIG_GetItem(pMe->m_pConfig, CFGI_MEDIAGALLERY_LOCK_CHECK, &bData, sizeof(bData));
+                SetCheckBoxItem(pMenu, IDS_MG_MEDIAGALLERY, bData);
+            }
+#endif
             IMENUCTL_SetSel(pMenu, IDS_SMS_LOCK);
             (void) ISHELL_PostEvent(pMe->m_pShell,
                                             AEECLSID_APP_SECURITYMENU,
@@ -703,7 +714,11 @@ static boolean  SecurityApplicationLockDlgHandler(CSecurityMenu *pMe,
                     // ±£´æÈÕ³Ì±íËø×´Ì¬
                     bData = GetCheckBoxVal(pMenu, IDS_CALENDARLOCK);
                     (void) ICONFIG_SetItem(pMe->m_pConfig,CFGI_CALENDAR_LOCK_CHECK,&bData,sizeof(bData));
-                    
+#ifdef FEATURE_VERSION_W317A
+					// 
+                    bData = GetCheckBoxVal(pMenu, IDS_MG_MEDIAGALLERY);
+                    (void) ICONFIG_SetItem(pMe->m_pConfig,CFGI_MEDIAGALLERY_LOCK_CHECK,&bData,sizeof(bData));
+#endif                    
                     CLOSE_DIALOG(DLGRET_TOSHOWMSG)
                     break;
 

@@ -90,6 +90,9 @@ typedef enum _MGAppState
 {
    STATE_NONE = 0, //No state.
    STATE_INIT,     //Inital state.
+#ifdef FEATURE_VERSION_W317A
+   STATE_PWD,	   //Application lock
+#endif	
    STATE_EXIT,     //State where we close the applet.
    STATE_MAINMENU, //entry menu state
    STATE_PHONEMEM, //state that on phone memory menu
@@ -141,7 +144,10 @@ typedef enum _MGDLGRetValue
    MGDLGRET_BGPLAYPROMPT, //When mp3 player OR fm play on the background.
 
    MGDLGRET_DONE,         //Operation successfully
-
+#ifdef FEATURE_VERSION_W317A
+   MGDLGRET_PASS,
+   MGDLGRET_FAILD,
+#endif
    /*ALL MENU DIALOG*/
    MGDLGRET_MAINMENU,     //main menu dialog
    MGDLGRET_PHONEMEM,     //phone memory dialog, which explore multi-media file in the handset
@@ -318,6 +324,9 @@ typedef enum _MediaDialogMsgID
    MG_MSGID_BUILDVIDEOLIST,
 
    MG_MSGID_DONE,
+#ifdef FEATURE_VERSION_W317A
+   MG_MSGID_VALIDPWD,
+#endif   
    MG_MSGID_INVALIDNAME,
    MG_MSGID_NULLNAME,
    MG_MSGID_REPETITIONNAME,
@@ -464,6 +473,9 @@ struct  _CMediaGalleryApp{
    IAnnunciator        *m_pIAnn;
 #ifdef FEATURE_USES_MMS
    boolean           m_isForMMS;
+#endif
+#ifdef FEATURE_VERSION_W317A
+   char              *m_strPhonePWD;
 #endif
 } ;
 
@@ -632,7 +644,6 @@ int MediaGalleryApp_RegisterKeyEvent(CMediaGalleryApp *pMe);
  */
 int MediaGalleryApp_DeRegisterKeyEvent(CMediaGalleryApp *pMe);
 
-
 /*
  * ==========================================================================
  * FUNCTION     :  MediaGalleryApp_RegisterPlayNext
@@ -660,7 +671,6 @@ boolean MediaGalleryApp_RegisterPlayNext(CMediaGalleryApp *pMe,
  #define MG_PLAY_NEXT 3
 
 boolean MediaGalleryApp_PlayNext(CMediaGalleryApp *pMe, uint8 nPlayOn);
-
 
 /*
  * ==========================================================================
