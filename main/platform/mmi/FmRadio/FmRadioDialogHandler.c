@@ -1507,7 +1507,11 @@ static boolean setChannelTo( CFmRadio *pMe, uint16 theNewChannel)
     }
 #endif//#if !defined( AEE_SIMULATOR)
 
-    drawOperationPrompt( pMe, IDS_FMRADIO_PROMPT_PLAYING, RGB_WHITE);
+    if (pMe->globalSearching == FALSE)	//Modify by zzg 2012_11_26
+    {
+		drawOperationPrompt( pMe, IDS_FMRADIO_PROMPT_PLAYING, RGB_WHITE);
+	}
+	
     drawChannelIndicator( pMe);
     drawLedLight( pMe);
     return result;
@@ -2502,7 +2506,10 @@ static void paint( CFmRadio *pMe)
 
 	if(pMe->fmVolumeStop)
     {
-    	drawOperationPrompt( pMe, IDS_FMRADIO_PROMPT_PLAYING, RGB_WHITE);
+    	if (pMe->globalSearching == FALSE)	//Modify by zzg 2012_11_26
+    	{
+    		drawOperationPrompt( pMe, IDS_FMRADIO_PROMPT_PLAYING, RGB_WHITE);
+    	}
 	}
 	else
 	{
