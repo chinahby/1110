@@ -2204,7 +2204,7 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
     if (!pContext)
     {
         return;
-    }
+    }	
     
     if (pContext->bValid)
     {
@@ -2220,7 +2220,8 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
                 AECHAR          szRemainingCount[16];
                 uint16          szsmscount;
                 uint16          wRemainingChars = pContext->wMaxChars;
-                wRemainingChars = (uint16)(wRemainingChars - WSTRLEN(pContext->pszContents));
+                wRemainingChars = (uint16)(wRemainingChars - WSTRLEN(pContext->pszContents));				
+				
 #if defined(FEATURE_WMS_APP)
                 if(pContext->dwProperties & TP_DISPLAY_SMSCOUNT)
                 {
@@ -2301,7 +2302,7 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
                     {
 						m_nPixels = nPixels;
                     }
-                    
+					
                     if(nPixels != 0)
                     {
                         SETAEERECT(&rc,
@@ -2332,10 +2333,11 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
 						SETAEERECT(&bgrc,
                                     rect.x,
                                     rect.y-nBarH,
-                                    30,
+                                    nPixels, //30,	//Modify by zzg 2012_11_26
                                     nBarH); 
 						IDISPLAY_DrawRect(pContext->pIDisplay,&bgrc,RGB_BLACK,RGB_BLACK,IDF_RECT_FILL);
 					}
+					
                     #ifndef FEATURE_VERSION_SKY
                     IDISPLAY_SetClipRect(pContext->pIDisplay, &rc);
                     MEMSET(&TitleBar, 0, sizeof(TitleBar_Param_type));
