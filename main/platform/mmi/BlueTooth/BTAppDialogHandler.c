@@ -1377,7 +1377,7 @@ static boolean HandleSearchResultDialogEvent(CBTApp *pMe,
 
 							MSG_FATAL("***zzg SearchResult bBonded=%x, mOPP.bConnected=%x***", pDev->bBonded, pMe->mOPP.bConnected, 0);
 
-							//if (pDev->bBonded == TRUE)
+							if (pDev->bBonded == TRUE)
 							{
 								if (pMe->mOPP.bConnected == TRUE)
 								{
@@ -7707,7 +7707,7 @@ static boolean HandleObexListServersDialogEvent(CBTApp *pMe,
 
 								MSG_FATAL("***zzg SearchResult bBonded=%x, mOPP.bConnected=%x***", pDev->bBonded, pMe->mOPP.bConnected, 0);
 
-								//if (pDev->bBonded == TRUE)
+								if (pDev->bBonded == TRUE)
 								{
 									if (pMe->mOPP.bConnected == TRUE)
 									{
