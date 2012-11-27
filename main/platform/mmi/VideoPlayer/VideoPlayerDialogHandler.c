@@ -819,6 +819,7 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
                         }
                         else  
                         {
+                            VideoPlayer_RefreshPlayerFileName(pMe); //刷新文件名
                             VideoPlayer_PlayVideo(pMe);
                             //ISHELL_SetTimer(pMe->m_pShell,50,(PFNNOTIFY)VideoPlayer_PlayVideo,pMe);
                         }                        
@@ -837,6 +838,7 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
 						pMe->m_rtype = TYPE_PLAYER;
                         DRAW_BOTTOMBAR(BTBAR_PLAY_STOP); 
                         //IMEDIA_Pause(pMe->m_pMedia); // 不设时间的话，底条刷不出来
+                        VideoPlayer_RefreshPlayerFileName(pMe); //刷新文件名      
 						#if defined (FEATURE_DISP_240X320)||defined(FEATURE_DISP_220X176)||defined(FEATURE_DISP_176X220) 
                         VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE, IDI_SELECT_PLAY, VIDEOPLAYER_PLAY_X,VIDEOPLAYER_PLAY_Y);
                         (void) ISHELL_SetTimer(pMe->m_pShell, 50, (PFNNOTIFY)VideoPlayer_UpdateButton, pMe);
@@ -1785,7 +1787,7 @@ void VideoPlayer_WriteTitle(CVideoPlayer *pMe,AECHAR* pText)
     #elif defined(FEATURE_DISP_176X220)
     //VideoPlayer_RefreshVolBar(pMe);
 	SETAEERECT(&rc_name, VIDEOPLAYER_NAMEPART_X+44,VIDEOPLAYER_NAMEPART_Y, VIDEOPLAYER_NAMEPART_W-88, VIDEOPLAYER_NAMEPART_H);
-	//写title
+    //写title
 	DrawTextWithProfile(pMe->m_pShell, 
 					pMe->m_pDisplay, 
 					RGB_WHITE, //文本轮廓的RGBVAL颜色值,RGB_BLACK
