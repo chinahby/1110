@@ -950,6 +950,8 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
 
 #ifdef FEATURE_VERSION_C337
 			IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_SOUND_RECORDER, IDS_MULTIMEDIA_SOUND_RECORDER, NULL, 0);
+#elif defined(FEATURE_VERSION_W317A)
+            IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_AUDIORECORDER, IDS_MULTIMEDIA_AUDIORECORDER, NULL, 0);
 #else
             IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_RECORDER, IDS_MULTIMEDIA_RECORDER, NULL, 0);
 #endif
@@ -1135,6 +1137,9 @@ static int StartApplet(Multimed *pMe, int i)
 		#ifdef FEATURE_VERSION_C337
 		case IDS_MULTIMEDIA_SOUND_RECORDER:
 		#endif
+        #ifdef FEATURE_VERSION_W317A
+        case IDS_MULTIMEDIA_AUDIORECORDER
+        #endif
         case IDS_MULTIMEDIA_RECORDER:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_RECORDER);
             break;

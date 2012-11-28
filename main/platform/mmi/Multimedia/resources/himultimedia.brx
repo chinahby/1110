@@ -31,6 +31,9 @@
 	<STRING Id="1017" Name="IDS_MULTIMEDIA_SOUND_RECORDER">
 		<Text>ध्वनि रिकॉर्डर</Text>
 	</STRING>
+	<STRING Id="1018" Name="IDS_MULTIMEDIA_AUDIORECORDER">
+		<Text>ऑडियो रिकॉर्डर</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<Dialog Id="6003" Name="IDD_LIST_MULTIMEDIA_DIALOGS" Focus="7001">
