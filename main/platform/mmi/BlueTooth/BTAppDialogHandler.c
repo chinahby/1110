@@ -2900,6 +2900,50 @@ static boolean HandleDeviceListDialogEvent(CBTApp *pMe,
 						pMe->mRM.uCurDevIdx = IMENUCTL_GetSel(pMenu);
 						MENU_SET_SEL( pMe->mRM.uCurDevIdx );
 
+						//Add By zzg 2012_11_28
+						if (pMe->uDeviceListType == AEEBT_RM_EC_MATCH_VALUE_1)
+						{
+							AEEBTDeviceInfo* pDev = &pMe->mRM.device[pMe->mRM.uCurDevIdx];
+							boolean bSetBondable = FALSE;
+														
+							//AG Start
+							MSG_FATAL("***zzg AG bEnabled=%x, bConnected=%x, devType=%x***", 
+										pMe->mAG.bEnabled, pMe->mAG.bConnected, pMe->mAG.devType);
+
+							pMe->mAG.bdAddr = pDev->bdAddr;
+							//BTApp_WriteBtAddrConfigFile(pMe);
+							//BTApp_WriteConfigFile(pMe);
+
+							if ((TRUE == pMe->mAG.bEnabled) && (FALSE == pMe->mAG.bConnected))
+							{
+								if (pMe->mAG.bconnInPrgs == FALSE)
+								{
+									if (pMe->mAG.devType == AEEBT_AG_AUDIO_DEVICE_HEADSET)
+									{
+										MSG_MED("HndlSlction - connecting to HS", 0, 0, 0);
+									}
+									else
+									{
+										MSG_MED("HndlSlction - connecting to HF", 0, 0, 0);
+									}
+									
+									if (BTApp_CallConnected(pMe) != BT_APP_CALL_NONE)
+									{
+										pMe->mAG.bDevPickedUp = TRUE; // signal self to send audio to HS/HF
+									}
+									pMe->mAG.bconnInPrgs = TRUE;
+									IBTEXTAG_Connect(pMe->mAG.po, &pDev->bdAddr, pMe->mAG.devType);
+									BTApp_ShowBusyIcon(pMe);
+								}
+								else
+								{
+									BTApp_ShowMessage( pMe, IDS_AG_CONNECTION_IN_PRGS, NULL, 3 );
+								}				
+							}
+							return TRUE;
+						}
+						//Add End
+
 						pMe->m_dialog_id = IDD_DEVICE_LIST;
 						CLOSE_DIALOG(DLGRET_DEVICEINFO)
 					}				 				  
