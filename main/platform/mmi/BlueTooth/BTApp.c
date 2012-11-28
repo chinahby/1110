@@ -1902,7 +1902,7 @@ static boolean BTApp_CheckNotify(CBTApp* pMe, AEEEvent evt, NotificationData* pD
 					}
 					break;
 				}
-				case AEEBT_OPP_EVT_PUSH_REQ:
+				//case AEEBT_OPP_EVT_PUSH_REQ:		//Del by zzg 2012_11_28
 				case AEEBT_OPP_EVT_PROGRESS:
 				{
 					result = TRUE;
@@ -3070,11 +3070,13 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 				MSG_FATAL("***zzg BTApp Disconnect BtHeadSet A2DP bEnabled=%x, Connected=%x***", pMe->mA2DP.bEnabled, pMe->mA2DP.bConnected, 0);	
 				
 				MSG_FATAL("***zzg IDS_PROMPT_DISCONNECT***", 0, 0, 0);
-				
+
+				/*
 				if (ISHELL_ActiveApplet(pMe->m_pShell) != AEECLSID_BLUETOOTH_APP)
 				{
 					ISHELL_StartApplet(pMe->m_pShell, AEECLSID_BLUETOOTH_APP);
-				}		
+				}	
+				*/
 
 				if ((pMe->mA2DP.bEnabled == TRUE) && (pMe->mA2DP.bConnected == TRUE))
 				{
@@ -9112,6 +9114,8 @@ DESCRIPTION
 		MSG_FATAL("BuildBondMenu - MITM Enabled : %d", pMe->mRM.bMITMEnabled, 0, 0);
 
 		MSG_FATAL("***zzg BuildBondMenu - MITM Enabled : %d***", pMe->mRM.bMITMEnabled, 0, 0);
+
+		BTApp_BuildPrompt(pMe, BT_APP_WAITING);		//Add By zzg 2012_11_28
 
 		if (IBTEXTRM_SSPBond( pMe->mRM.po, &pDev->bdAddr, pMe->mRM.bMITMEnabled ) != SUCCESS)
 		{
@@ -18005,6 +18009,14 @@ DESCRIPTION
 		}		
 		//Add End
 
+		//Add By zzg 2012_11_28
+		case BT_APP_WAITING:
+		{
+			msgID = IDS_WAITING; 		
+			break;
+		}
+		//Add End
+
 		case BT_APP_MENU_REMOVE_ALL:
 		{
 			msgID = IDS_PROMPT_REMOVE_ALL;
@@ -22869,16 +22881,18 @@ static void BTApp_ProcessRMNotifications(
         BTApp_ShowDevMsg( pMe, msgID, &pData->pDevUpdateStatus->bdAddr, 2 );
       }
 	  */
+	  		break;		//Add By zzg 2012_11_28
 
+		/*
 	  //Add By zzg 2011_01_11
 	  if (pMe->mRM.bBonding == FALSE)
       {
 		if (pData->pDevUpdateStatus->error == AEEBT_RM_ERR_NONE )
 		{		
 			//Add by zzg 2012_11_22
-			if ((pMe->bStartFromOtherApp == TRUE) || (pMe->bStartFromPushReq== TRUE))
+			if ((pMe->bStartFromOtherApp == TRUE) || (pMe->bStartFromPushReq == TRUE)|| (pMe->bStartFromAudio == TRUE))
 			{
-				MSG_FATAL("***zzg SearchResult mOPP.bConnected=%x***", pMe->mOPP.bConnected, 0, 0);				
+				MSG_FATAL("***zzg show message box IDS_MSG_DEV_ADDED return***", 0, 0, 0);				
 				break;
 			}
 			//Add End
@@ -22919,10 +22933,12 @@ static void BTApp_ProcessRMNotifications(
 		//CLOSE_DIALOG(DLGRET_BT_MSGBOX)   
 		pMe->m_eDlgRet = DLGRET_BT_MSGBOX; 
         (void) ISHELL_EndDialog(pMe->m_pShell); 
+		
 
 		
       }
 	  //Add End	  
+	  */
 	  	
       break;
 	  

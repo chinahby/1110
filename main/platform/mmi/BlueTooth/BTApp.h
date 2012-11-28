@@ -1772,6 +1772,7 @@ typedef enum
   BT_APP_MENU_ON,				//Add By zzg 2011_05_25
   BT_APP_MENU_OFF,				//Add By zzg 2011_05_25
   BT_APP_OOB_CREATED,			//Add By zzg 2011_05_28
+  BT_APP_WAITING,				//Add By zzg 2012_11_28
 #endif
 
 #ifdef FEATURE_BT_EXTPF_OPP

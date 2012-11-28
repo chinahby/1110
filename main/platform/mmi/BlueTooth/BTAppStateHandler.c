@@ -481,9 +481,20 @@ static NextFSMAction BTApp_StateMainHandler(CBTApp *pMe)
 
 		//Add By zzg 2012_11_23
 		case DLGRET_MSGBOX_CANCELED:
-		case DLGRET_PROGRESS_CANCELED:
+		case DLGRET_PROGRESS_CANCELED:		
 		{			
-			if ((pMe->m_msg_id == IDS_MSG_AG_CONN) || (pMe->m_msg_id == IDS_MSG_AG_DISCONN)||(pMe->m_msg_id == IDS_MSG_AG_CONNF) || (pMe->bStartFromAudio== TRUE))
+			MSG_FATAL("***zzg BTApp_StateMainHandler pMe->m_msg_id=%d***", pMe->m_msg_id, 0, 0);
+			
+			if ((pMe->m_msg_id == IDS_MSG_AG_CONN) 
+				|| (pMe->m_msg_id == IDS_MSG_AG_DISCONN)
+				|| (pMe->m_msg_id == IDS_MSG_AG_CONNF) 
+				|| (pMe->m_msg_id == IDS_MSG_OBJ_PULLED) 
+				|| (pMe->m_msg_id == IDS_MSG_OBJ_PULL_FAILED)
+				|| (pMe->m_msg_id == IDS_MSG_OBJ_NOT_SENT)				
+				|| (pMe->m_msg_id == IDS_MSG_OBJ_SENT)
+				|| (pMe->m_msg_id == IDS_MSG_OBJ_NOT_RCVD)
+				|| (pMe->m_msg_id == IDS_MSG_OBJ_RCVD)
+				|| (pMe->bStartFromAudio== TRUE))
 			//if (pMe->bStartFromAudio== TRUE)	//pMe->bStartFromPushReq== TRUE
 			{
 				MOVE_TO_STATE(BTAPPST_EXIT)
@@ -655,7 +666,7 @@ static NextFSMAction BTApp_StateDeviceSearchHandler(CBTApp *pMe)
 
 			//Add By zzg 2012_11_22
 			MSG_FATAL("***zzg StateSearching bStartFromOtherApp=%d***", pMe->bStartFromOtherApp, 0, 0);
-			if (pMe->bStartFromOtherApp == TRUE) 
+			if ((pMe->bStartFromOtherApp == TRUE)  || (pMe->bStartFromAudio== TRUE))
 			{
 				MOVE_TO_STATE(BTAPPST_EXIT)
             	return NFSMACTION_CONTINUE;
@@ -720,7 +731,7 @@ static NextFSMAction BTApp_StateSearchResultHandler(CBTApp *pMe)
 		case DLGRET_PROGRESS_CANCELED:
 		{
 			MSG_FATAL("***zzg StateSearchResult bStartFromOtherApp=%d***", pMe->bStartFromOtherApp, 0, 0);
-			if (pMe->bStartFromOtherApp == TRUE) 
+			if ((pMe->bStartFromOtherApp == TRUE) || (pMe->bStartFromAudio== TRUE))
 			{
 				MOVE_TO_STATE(BTAPPST_EXIT)
 				return NFSMACTION_CONTINUE;			
@@ -779,7 +790,7 @@ static NextFSMAction BTApp_StateSearchResultHandler(CBTApp *pMe)
 		case DLGRET_CANCELED:
 		{	
 			MSG_FATAL("***zzg StateSearchResult bStartFromOtherApp=%d***", pMe->bStartFromOtherApp, 0, 0);
-			if (pMe->bStartFromOtherApp == TRUE) 
+			if ((pMe->bStartFromOtherApp == TRUE) || (pMe->bStartFromAudio== TRUE))
 			{
 				MOVE_TO_STATE(BTAPPST_EXIT)
 				return NFSMACTION_CONTINUE;			
@@ -2416,7 +2427,7 @@ static NextFSMAction BTApp_StateEditHandler(CBTApp *pMe)
 			{
 				MOVE_TO_STATE(pMe->m_edit_state_id)					
 			}
-			return NFSMACTION_CONTINUE;
+			return NFSMACTION_CONTINUE;		
 		}
 
 		case DLGRET_PROMPT:			

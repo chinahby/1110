@@ -1390,7 +1390,7 @@ static boolean HandleSearchResultDialogEvent(CBTApp *pMe,
 									IBTEXTRM_SetSecBySvcCls(pMe->mRM.po, AEEBT_SD_SERVICE_CLASS_OBEX_OBJECT_PUSH, pMe->mOPP.srvSecType,FALSE,FALSE);
 #endif 
 									MSG_FATAL("***zzg BTApp_OPPConnect 222**", 0, 0, 0);
-									BTApp_OPPConnect( pMe, &pMe->mRM.device[ pMe->mRM.uCurDevIdx ].bdAddr);  
+									BTApp_OPPConnect( pMe, &pMe->mRM.device[ pMe->mRM.uCurDevIdx ].bdAddr);  									
 									//CLOSE_DIALOG(DLGRET_DEVICEINFO)
 								}
 							}
@@ -1460,7 +1460,8 @@ static boolean HandleSearchResultDialogEvent(CBTApp *pMe,
 									}
 									pMe->mAG.bconnInPrgs = TRUE;
 									IBTEXTAG_Connect(pMe->mAG.po, &pDev->bdAddr, pMe->mAG.devType);
-									BTApp_ShowBusyIcon(pMe);
+									BTApp_BuildPrompt(pMe, BT_APP_WAITING);		//Add By zzg 2012_11_28
+									//BTApp_ShowBusyIcon(pMe);
 								}
 								else
 								{
@@ -2932,7 +2933,10 @@ static boolean HandleDeviceListDialogEvent(CBTApp *pMe,
 										pMe->mAG.bDevPickedUp = TRUE; // signal self to send audio to HS/HF
 									}
 									pMe->mAG.bconnInPrgs = TRUE;
+									
 									IBTEXTAG_Connect(pMe->mAG.po, &pDev->bdAddr, pMe->mAG.devType);
+									BTApp_BuildPrompt(pMe, BT_APP_WAITING);		//Add By zzg 2012_11_28
+									
 									BTApp_ShowBusyIcon(pMe);
 								}
 								else
@@ -6576,6 +6580,14 @@ static boolean  HandleProMptDialogEvent(CBTApp *pMe,
 			}
 			//Add End		
 
+			//Add By zzg 2012_11_28
+			if (IDS_WAITING == pMe->m_prompt_id) 
+			{
+				m_PromptMsg.ePMsgType = MESSAGE_WAITING;	
+				m_PromptMsg.eBBarType = BTBAR_NONE;
+			}
+			//Add End
+
 			MSG_FATAL("***zzg BTAppDlg DrawPromptMessage***", 0, 0, 0);
 			
 			DrawPromptMessage(pMe->m_pIDisplay, pStatic, &m_PromptMsg);
@@ -6604,6 +6616,13 @@ static boolean  HandleProMptDialogEvent(CBTApp *pMe,
 				return TRUE;	
 			}
 			//Add End	
+
+			//Add By zzg 2012_11_28
+			if (IDS_WAITING == pMe->m_prompt_id) 
+			{
+				return FALSE;
+			}
+			//Add End
 			
 			switch (wParam)
             {
@@ -7112,6 +7131,7 @@ static boolean HandleBtTextEditDialogEvent(CBTApp *pMe,
 #ifdef FEATURE_BT_2_1
 								if((pMe->mRM.ioCaptype == AEEBT_RM_IOC_KEYBOARD_ONLY) && (pMe->mRM.bPassKey == TRUE))
 								{
+									//BTApp_BuildPrompt(pMe, BT_APP_WAITING);		//Add By zzg 2012_11_28
 									if (IBTEXTRM_KeypressNotification(pMe->mRM.po, &pDev->bdAddr, AEEBT_RM_KPN_COMPLETED) != SUCCESS)
 									{
 										MSG_HIGH( "KeyPress Notification- Failed", 0, 0, 0 );
@@ -7126,6 +7146,8 @@ static boolean HandleBtTextEditDialogEvent(CBTApp *pMe,
 									}
 
 									DBGPRINTF_FATAL("TextEditHndlSave-BT_APP_MENU_PASSKEY with passKey=%s",passKey); 
+
+									//BTApp_BuildPrompt(pMe, BT_APP_WAITING);		//Add By zzg 2012_11_28
 																		
 									if (IBTEXTRM_PasskeyReply( pMe->mRM.po, &pDev->bdAddr, passKey ) != SUCCESS )
 									{
@@ -7137,7 +7159,8 @@ static boolean HandleBtTextEditDialogEvent(CBTApp *pMe,
 								}
 								else
 #endif 
-								{									
+								{			
+									//BTApp_BuildPrompt(pMe, BT_APP_WAITING);		//Add By zzg 2012_11_28
 									if (IBTEXTRM_Bond(pMe->mRM.po, &pDev->bdAddr, pMe->mRM.wPassKey) != SUCCESS)
 									{
 										MSG_FATAL("***zzg HandleBTTextEditDlg IBTEXTRM_Bond Failed!***", 0, 0, 0);
@@ -7159,6 +7182,7 @@ static boolean HandleBtTextEditDialogEvent(CBTApp *pMe,
 										BTApp_ShowBusyIcon( pMe );
 									}
 								}
+								
 							}
 							else
 							{
@@ -7168,6 +7192,7 @@ static boolean HandleBtTextEditDialogEvent(CBTApp *pMe,
 								{
 									MSG_HIGH( "Sending IBTEXTRM_KeypressNotification", 0, 0, 0 );
 
+									//BTApp_BuildPrompt(pMe, BT_APP_WAITING);		//Add By zzg 2012_11_28
 									if (IBTEXTRM_KeypressNotification(pMe->mRM.po, &pDev->bdAddr, AEEBT_RM_KPN_COMPLETED) != SUCCESS)
 									{
 										MSG_HIGH( "KeyPress Notification- Failed", 0, 0, 0 );
@@ -7184,6 +7209,7 @@ static boolean HandleBtTextEditDialogEvent(CBTApp *pMe,
 										BTApp_PadString(passKey, sizeof(passKey));
 									}
 
+									//BTApp_BuildPrompt(pMe, BT_APP_WAITING);		//Add By zzg 2012_11_28
 									if (IBTEXTRM_PasskeyReply( pMe->mRM.po, &pDev->bdAddr, passKey) != SUCCESS)
 									{
 										MSG_HIGH( "PassKey Reply- Failed", 0, 0, 0 );
@@ -7195,6 +7221,7 @@ static boolean HandleBtTextEditDialogEvent(CBTApp *pMe,
 								else
 #endif 
 								{
+									//BTApp_BuildPrompt(pMe, BT_APP_WAITING);		//Add By zzg 2012_11_28
 									if (IBTEXTRM_PinReply( pMe->mRM.po, &pDev->bdAddr, pMe->mRM.wPassKey) != SUCCESS)
 									{
 										MSG_ERROR( "TextEditSave - PinReply failed", 0, 0, 0 );
@@ -7204,7 +7231,7 @@ static boolean HandleBtTextEditDialogEvent(CBTApp *pMe,
 										pMe->mRM.bBonding = TRUE ;
 										BTApp_ShowBusyIcon( pMe );
 									}
-								}
+								}								
 							}
 							
 							break;
@@ -7754,7 +7781,7 @@ static boolean HandleObexListServersDialogEvent(CBTApp *pMe,
 								if (pDev->bBonded == TRUE)
 								{
 									if (pMe->mOPP.bConnected == TRUE)
-									{
+									{										
 										BTApp_OPPPushEx(pMe, pMe->m_pfilepath, AEEBT_OPP_UNKNOWN_TYPE);
 									}
 									else
@@ -7764,7 +7791,7 @@ static boolean HandleObexListServersDialogEvent(CBTApp *pMe,
 										IBTEXTRM_SetSecBySvcCls(pMe->mRM.po, AEEBT_SD_SERVICE_CLASS_OBEX_OBJECT_PUSH, pMe->mOPP.srvSecType,FALSE,FALSE);
 #endif 
 										MSG_FATAL("***zzg BTApp_OPPConnect 333**", 0, 0, 0);
-										BTApp_OPPConnect( pMe, &pMe->mRM.device[ pMe->mRM.uCurDevIdx ].bdAddr);  
+										BTApp_OPPConnect( pMe, &pMe->mRM.device[ pMe->mRM.uCurDevIdx ].bdAddr);  										
 										//CLOSE_DIALOG(DLGRET_DEVICEINFO)
 									}
 								}

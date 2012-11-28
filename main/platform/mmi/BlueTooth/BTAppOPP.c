@@ -1408,6 +1408,8 @@ void BTApp_OPPPushEx( CBTApp* pMe, char* filepath, AEEBTObjectType objType )
   
   AECHAR* pwName = wDefaultObjectName;  
 
+  BTApp_BuildPrompt(pMe, BT_APP_WAITING);		//Add By zzg 2012_11_28
+
   //gb2312_to_ucs2((unsigned char *)pszName, STRLEN(pszName), wDefaultObjectName, sizeof(wDefaultObjectName));	//Add By zzg 2011_12_29
   STRTOWSTR(pszName, wDefaultObjectName, sizeof(wDefaultObjectName));
 
@@ -2627,6 +2629,8 @@ void BTApp_OPPConnect( CBTApp* pMe, AEEBTBDAddr* pBDAddr )
 	{
 		return;
 	}
+
+	BTApp_BuildPrompt(pMe, BT_APP_WAITING);		//Add By zzg 2012_11_28
 	//Add End
 	
   if(pMe->mOPP.bRegistered)
