@@ -1138,7 +1138,7 @@ static int StartApplet(Multimed *pMe, int i)
 		case IDS_MULTIMEDIA_SOUND_RECORDER:
 		#endif
         #ifdef FEATURE_VERSION_W317A
-        case IDS_MULTIMEDIA_AUDIORECORDER
+        case IDS_MULTIMEDIA_AUDIORECORDER:
         #endif
         case IDS_MULTIMEDIA_RECORDER:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_RECORDER);
