@@ -359,6 +359,7 @@ typedef enum BottomBar_e_Type
    BTBAR_MENU_SOS,            //Ö÷²Ëµ¥  -----SOS
    BTBAR_UNLOCK,
    BTBAR_UNLOCK_M,
+   BTBAR_UNLOCK_L,
    BTBAR_LUNLOCK,
    BTBAR_OPTION_SAVE_BACK,   
    BTBAR_PRIVIEW_BACK,
