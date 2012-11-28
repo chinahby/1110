@@ -583,7 +583,11 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
 #if  defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_1110W516)
                 case AVK_SELECT:
 #elif  defined(FEATURE_VERSION_W027)
+#ifdef FEATURE_VERSION_W317A
+                case AVK_SELECT:
+#else
                 case AVK_INFO:
+#endif
 #else
                 case AVK_CLR:
 #endif
