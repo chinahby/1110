@@ -1059,7 +1059,11 @@ static boolean IDD_MAIN_Handler(void        *pUser,
             }
             MSG_FATAL("IDD_MAIN_Handler EVT_DIALOG_INIT 3",0,0,0);
             // 菜单项初始化
+            #ifdef FEATURE_VERSION_W317A
+            MENU_ADDITEM(pMenu, IDS_WRITEMESSAGEW317);
+            #else
             MENU_ADDITEM(pMenu, IDS_WRITEMESSAGE);
+            #endif
             MENU_ADDITEM(pMenu, IDS_INBOX);
             MENU_ADDITEM(pMenu, IDS_OUTBOX);
             MSG_FATAL("IDD_MAIN_Handler EVT_DIALOG_INIT 4",0,0,0);
@@ -1286,6 +1290,9 @@ static boolean IDD_MAIN_Handler(void        *pUser,
                     return TRUE;
                     
                 // 写消息
+                #ifdef FEATURE_VERSION_W317A
+                case IDS_WRITEMESSAGEW317:
+                #endif
                 case IDS_WRITEMESSAGE:
                     CLOSE_DIALOG(DLGRET_WRITEMSG)
                     return TRUE;              
@@ -9864,13 +9871,19 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                 }
 			
                 //初始化List Menu的颜色及清屏
-                
+                #ifdef FEATURE_VERSION_W317A
+                color.wMask = MC_SEL_TEXT | MC_SEL_BACK | MC_TEXT | MC_BACK;
+                color.cBack = RGB_BLACK;
+                color.cText =  0x84848400;	//RGB_BLACK;				
+                color.cSelBack = RGB_BLACK; //MAKE_RGB(255,128,64);        	        			
+                color.cSelText = RGB_WHITE; //RGB_WHITE;
+                #else
                 color.wMask = MC_SEL_TEXT | MC_SEL_BACK | MC_TEXT | MC_BACK;
                 color.cBack = RGB_WHITE;
                 color.cText =  0x84848400;	//RGB_BLACK;				//Add By zzg 2010_07_10	
                 color.cSelBack = RGB_WHITE; //MAKE_RGB(255,128,64);      //Add By zzg 2010_07_10  	        			
                 color.cSelText = RGB_BLACK; //RGB_WHITE;				//Add By zzg 2010_07_10
-                
+                #endif
                 //IDISPLAY_ClearScreen(pMe->m_pDisplay);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
                 {

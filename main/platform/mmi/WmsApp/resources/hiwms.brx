@@ -538,6 +538,9 @@
 	<String Id="185" Name="IDS_ENABLEREPORT_SHORT">
 		<Text>चालू</Text>
 	</String>
+	<STRING Id="186" Name="IDS_WRITEMESSAGEW317">
+		<Text>संदेश लिखें</Text>
+	</STRING>
 	<String Id="1001" Name="IDS_TEMPLATEHITZ0">
 		<Text>माफ करना,मैं तुम्हें वापस बुलाऊंगा</Text>
 	</String>

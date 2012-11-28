@@ -538,6 +538,9 @@
 	<String Id="185" Name="IDS_ENABLEREPORT_SHORT">
 		<Text>on</Text>
 	</String>
+	<STRING Id="186" Name="IDS_WRITEMESSAGEW317">
+		<Text>Write message</Text>
+	</STRING>
 	<String Id="1001" Name="IDS_TEMPLATEHITZ0">
 		<Text>Sorry, I'll call you back</Text>
 	</String>
