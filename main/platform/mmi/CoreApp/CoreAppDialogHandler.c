@@ -4229,9 +4229,6 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 						//AEE_CancelTimer(CoreApp_keypadtimer,pMe);
 						//ISHELL_CancelTimer(pMe->a.m_pIShell,CoreApp_keypadtimer,pMe);
 					}
-                    #ifdef FEATURE_VERSION_W317A
-                    Mainmenu_KeypadLock(TRUE);   
-                    #endif
 #if defined	(FEATURE_VERSION_FLEXI203)||defined(FEATURE_VERSION_IVIO203) ||defined(FEATURE_VERSION_C500BE)
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_SETTINGMENU);
 #elif defined (FEATURE_VERSION_SMART)
@@ -4324,7 +4321,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 				    int ret = 0;
 				    if(!OEMKeyguard_IsEnabled())
                     {
-                        #if defined( FEATURE_VERSION_W515V3) 
+                        #if defined( FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_W317A) 
                            Mainmenu_KeypadLock(TRUE);
                         #endif
                         #if defined(FEATURE_VERSION_MYANMAR) || defined( FEATURE_VERSION_C11) || defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W0271)
@@ -4398,7 +4395,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #else
     				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif	/*FEATURE_SMARTFREN_STATIC_BREW_APP*/
-#elif defined (FEATURE_VERSION_HITZ181) || defined (FEATURE_VERSION_W515V3)
+#elif defined (FEATURE_VERSION_HITZ181) || defined (FEATURE_VERSION_W515V3)|| defined (FEATURE_VERSION_W317A)
     				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 #else
                         ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
@@ -7130,7 +7127,11 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
         	#elif defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_1110W516) 
         		eBBarType = BTBAR_LUNLOCK;
             #elif defined(FEATURE_VERSION_W027)
+            #ifdef FEATURE_VERSION_W317A
+                eBBarType = BTBAR_UNLOCK_L;
+            #else
                 eBBarType = BTBAR_UNLOCK_M;
+            #endif
         	#elif defined(FEATURE_VERSION_VERYKOOL)
         		eBBarType = BTBAR_UNLOCK_SOS;
     		#else
@@ -7177,7 +7178,7 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 			eBBarType = BTBAR_MENU_CONTACTS; //add by yangdecai
 		}			
 	#else
-        #if defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W208S)
+        #if defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_W317A)
            eBBarType = BTBAR_MENU_CONTACTS;
         #else
 		   eBBarType = BTBAR_MESSAGES_CONTACTS; //add by yangdecai  BTBAR_MESSAGES_CONTACTS
