@@ -483,12 +483,14 @@ static NextFSMAction BTApp_StateMainHandler(CBTApp *pMe)
 		case DLGRET_MSGBOX_CANCELED:
 		case DLGRET_PROGRESS_CANCELED:
 		{
+			/*
 			if (pMe->bStartFromPushReq == TRUE)
 			{
 				MOVE_TO_STATE(BTAPPST_EXIT)
             	return NFSMACTION_CONTINUE;
 			}
 			else
+			*/	
 			{
 				pMe->m_bNotOverwriteDlgRet = FALSE;
 	            BTApp_ShowDialog(pMe, IDD_BT_MAINMENU);
@@ -2333,11 +2335,13 @@ static NextFSMAction BTApp_StateEditHandler(CBTApp *pMe)
 			
 		case DLGRET_CANCELED:				
 		{	
+			/*
 			if ((pMe->bStartFromOtherApp == TRUE) || (pMe->bStartFromPushReq == TRUE))
 			{
 				MOVE_TO_STATE(BTAPPST_MAIN)
 			}
 			else
+			*/	
 			{
 				MOVE_TO_STATE(pMe->m_edit_state_id)					
 			}

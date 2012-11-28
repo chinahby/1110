@@ -1438,7 +1438,7 @@ void BTApp_OPPPushEx( CBTApp* pMe, char* filepath, AEEBTObjectType objType )
   {
     result = IBTEXTOPP_Push( pMe->mOPP.po, pwName, objType );
 
-	ShowBusyIcon( pMe->m_pShell, pMe->m_pIDisplay, &pMe->m_rect, FALSE );	//Add By zzg 2012_11_23
+	//ShowBusyIcon( pMe->m_pShell, pMe->m_pIDisplay, &pMe->m_rect, FALSE );	//Add By zzg 2012_11_23
 	
     //if ( pMe->mOPP.bRegistered == FALSE ) // client?
     {
@@ -2620,32 +2620,45 @@ void BTApp_OPPConnect( CBTApp* pMe, AEEBTBDAddr* pBDAddr )
 {
 	//Add By zzg 2012_11_22
 	MSG_FATAL("***zzg BTApp_OPPConnect bConnecting=%x***", pMe->mOPP.bConnecting, 0, 0);
+	MSG_FATAL("***zzg BTApp_OPPConnect bRegistered=%x***", pMe->mOPP.bRegistered, 0, 0);
+	MSG_FATAL("***zzg BTApp_OPPConnect pMe->mOPP.po=%x***", pMe->mOPP.po, 0, 0);
+	
 	if (pMe->mOPP.bConnecting == TRUE)
 	{
 		return;
 	}
 	//Add End
-
-	MSG_FATAL("***zzg BTApp_OPPConnect bRegistered=%x***", pMe->mOPP.bRegistered, 0, 0);
-  	
+	
   if(pMe->mOPP.bRegistered)
   {
       int result;
-      pMe->mOPP.bPushFileReq = FALSE;
-      if ( (result = IBTEXTOPP_Deregister( pMe->mOPP.po )) != SUCCESS )
+      pMe->mOPP.bPushFileReq = FALSE;	  
+
+	  if (pMe->mOPP.po == NULL)
+	  {
+		MSG_FATAL("***zzg BTApp_OPPConnect pMe->mOPP.po== NULL***", 0, 0, 0);
+	  }
+
+	  if (pMe->mOPP.po != NULL)
       {
-        MSG_FATAL( "OPP_Deregister() failed with %x", result, 0, 0 );
-        BTApp_ClearBondable( pMe ); // no need to be bondable anymore
-        BTApp_ShowMessage( pMe, IDS_MSG_CONN_FAILED, NULL, 3 );
-        return;
-      }
-      else
-      {
-        pMe->mOPP.remoteBDAddr = *pBDAddr;
-        pMe->mOPP.bPushFileReq = TRUE;
-        return;
-      }
+      	  MSG_FATAL("***zzg BTApp_OPPConnect pMe->mOPP.po != NULL***", 0, 0, 0);
+		  
+	      if ((result = IBTEXTOPP_Deregister(pMe->mOPP.po)) != SUCCESS)
+	      {
+	        MSG_FATAL( "OPP_Deregister() failed with %x", result, 0, 0 );
+	        BTApp_ClearBondable( pMe ); // no need to be bondable anymore
+	        BTApp_ShowMessage( pMe, IDS_MSG_CONN_FAILED, NULL, 3 );
+	        return;
+	      }
+	      else
+	      {
+	        pMe->mOPP.remoteBDAddr = *pBDAddr;
+	        pMe->mOPP.bPushFileReq = TRUE;
+	        return;
+	      }	  	  
+	  }
   }
+  
   BTApp_SetBondable( pMe );
   pMe->mOPP.remoteBDAddr = *pBDAddr;
   pMe->mOPP.bConnecting = FALSE;

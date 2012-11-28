@@ -7060,8 +7060,8 @@ static boolean HandleBtTextEditDialogEvent(CBTApp *pMe,
 							WSTRLCPY(pMe->mRM.wPassKey, pMe->pText2, ARR_SIZE(pMe->mRM.wPassKey));
 #ifdef FEATURE_BT_2_1
 							DBGPRINTF_FATAL("TextEditHndlSave-BT_APP_MENU_PASSKEY with pMe->pText2=%s",pMe->pText2); 
-							MSG_MED( "TextEditHndlSave, pMe->mRM.bBonding=%d ", pMe->mRM.bBonding,0,0); 
-							MSG_MED( "TextEditHndlSave, pMe->mRM.ioCaptype=%d ", pMe->mRM.ioCaptype,0,0); 
+							DBGPRINTF_FATAL( "TextEditHndlSave, pMe->mRM.bBonding=%d ", pMe->mRM.bBonding,0,0); 
+							DBGPRINTF_FATAL( "TextEditHndlSave, pMe->mRM.ioCaptype=%d ", pMe->mRM.ioCaptype,0,0); 
 #endif 
 							if (pMe->mRM.bBonding)
 							{

@@ -633,6 +633,8 @@ int OEMBTExtRM_Bond(
   OEMBTExtRMobj_t*    pMe;
   int                 result;
 
+  DBGPRINTF("***zzg OEMBTExtRM_Bond Start***");
+
   if ( AEEHandle_From( &gOEMBTExtHandleList, pParent->m_hBT, 
                        (OEMINSTANCE*)&pMe ) != TRUE )
   {
@@ -656,6 +658,8 @@ int OEMBTExtRM_Bond(
   }
   AEEBT_FROM_WSTR( pPinCode, pin.pin_code, sizeof( pin.pin_code ) );
 
+  DBGPRINTF("***zzg bt_cmd_rm_bond Start***");
+
 #ifndef FEATURE_BT_2_1
   stat = bt_cmd_rm_bond( pMe->appId, (bt_bd_addr_type*)pBDAddr, &pin );
 #else
@@ -663,6 +667,8 @@ int OEMBTExtRM_Bond(
 #endif /* FEATURE_BT_2_1 */
   
   result = OEMBTExtRM_CheckCmdStatus( stat );
+
+  DBGPRINTF("***zzg bt_cmd_rm_bond result=%x,stat=%x***", result, stat);
 
   if ( result == SUCCESS )
   {

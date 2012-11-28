@@ -2352,7 +2352,7 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 						{
 							MSG_FATAL("***zzg BTApp_OPPBuildMenu BT_APP_MENU_OPP_SENDFILE***", 0, 0, 0);
 							//MOVE_TO_STATE(BTAPPST_BT_SEND_FILE)		//直接用CLIENT(如果是SERVER状态，则切换)	
-
+							
 							{
 								AEEBTDeviceEnumerator enumerator;
 								uint8				  i;						
@@ -2388,7 +2388,7 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 								{
 									MOVE_TO_STATE(BTAPPST_DEVICESRH)			//Modify by zzg 2012_11_22;
 								}				
-							}	
+							}								
 						}
 						else
 						{

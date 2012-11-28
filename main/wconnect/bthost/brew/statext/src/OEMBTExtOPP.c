@@ -368,6 +368,8 @@ int OEMBTExtOPP_Register( IBTExtOPP*     pParent,
   bt_cmd_status_type stat;
   OEMBTExtOPPobj_t   *pMe;
 
+  DBGPRINTF("***zzg OEMBTExtOPP_Register start***");
+  
   if( AEEHandle_From( &gOEMBTExtHandleList, pParent->m_hBT, 
                       (OEMINSTANCE*)&pMe ) != TRUE )
   {
@@ -386,6 +388,9 @@ int OEMBTExtOPP_Register( IBTExtOPP*     pParent,
   stat = bt_cmd_pf_opp_srv_register( pMe->appId, 
                                      (uint32)supportedFormat, 
                                      (char*)pszServiceName );
+
+  DBGPRINTF("***zzg OEMBTExtOPP_Register stat=%x***", stat);
+  
   if ( stat == BT_CS_GN_PENDING )
   {
     pMe->supportedFormat = supportedFormat;
@@ -400,11 +405,15 @@ int OEMBTExtOPP_Deregister( IBTExtOPP* pParent )
   bt_cmd_status_type          stat;
   OEMBTExtOPPobj_t            *pMe;
 
+  DBGPRINTF("***zzg OEMBTExtOPP_Deregister start***");
+
   if( AEEHandle_From( &gOEMBTExtHandleList, pParent->m_hBT, 
                       (OEMINSTANCE*)&pMe ) != TRUE )
   {
     return EFAILED;
   }
+
+  DBGPRINTF("***zzg OEMBTExtOPP_Deregister pMe->state=%x***", pMe->state);
 
   switch ( pMe->state )
   {
@@ -482,28 +491,27 @@ int OEMBTExtOPP_Connect(
   bt_cmd_status_type  stat;
   OEMBTExtOPPobj_t    *pMe;
 
-  MSG_FATAL("***zzg OEMBTExtOPP_Connect Start***", 0, 0, 0);
+  DBGPRINTF("***zzg OEMBTExtOPP_Connect Start***");
 
   if( AEEHandle_From( &gOEMBTExtHandleList, pParent->m_hBT, 
                       (OEMINSTANCE*)&pMe ) != TRUE )
-  {
-  	MSG_FATAL("***zzg OEMBTExtOPP_Connect return 1***", 0, 0, 0);
+  {  	
+	DBGPRINTF("***zzg OEMBTExtOPP_Connect return 1***");
     return EFAILED;
   }
   if ( pBDAddr == NULL )
-  {
-  	MSG_FATAL("***zzg OEMBTExtOPP_Connect return 2***", 0, 0, 0);
+  {  	
+	DBGPRINTF("***zzg OEMBTExtOPP_Connect return 2***");
     return EBADPARM;
   }
   if ( pMe->state >= AEEBT_OPP_STATE_CONNECTED )
-  {
-  	MSG_FATAL("***zzg OEMBTExtOPP_Connect return 3***", 0, 0, 0);
+  {  	
+	DBGPRINTF("***zzg OEMBTExtOPP_Connect return 3***");
     return EBADSTATE;
   }
   stat = bt_cmd_pf_opp_cli_connect( pMe->appId, (bt_bd_addr_type*)pBDAddr,
-                                    uChannelNumber );
-
-  MSG_FATAL("***zzg OEMBTExtOPP_Connect stat=%x***", stat, 0, 0);
+                                    uChannelNumber );  
+  DBGPRINTF("***zzg OEMBTExtOPP_Connect stat=%x***", stat);
   
   return OEMBTExtOPP_CheckCmdStatus( stat );
 }
