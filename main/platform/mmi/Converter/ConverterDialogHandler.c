@@ -912,11 +912,13 @@ static boolean  Converter_ConvertEvent(CConverter *pMe, AEEEvent eCode, uint16 w
             }
             else
             {
+#ifndef FEATURE_VERSION_W317A            
                 if(pMe->m_converterMode == CONVERTER_MODE_CURRENCY)
                 {
                     BBarParam.eBBarType = BTBAR_BACK;
                 }
                 else
+#endif					
                 {
                 	#ifdef FEATURE_ALL_KEY_PAD
                 	BBarParam.eBBarType = BTBAR_BACK;
