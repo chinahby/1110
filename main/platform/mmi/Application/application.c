@@ -114,14 +114,18 @@ void Application_ShowDialog(Application  *pMe,  uint16 dlgResId);
 // APPLICATIONST_MAIN 状态处理函数
 static NextFSMAction APPLICATIONST_MAIN_Handler(Application *pMe);
 static NextFSMAction APPLICATIONST_FLASHLIGHT_Handler(Application *pMe);
+#if defined(FEATURE_VERSION_W317A)
+static NextFSMAction APPLICATIONST_PCMODEM_Handler(Application *pMe);
+#endif
 
 
 //APPLICATIONST_EXIT  状态处理函数
 static NextFSMAction APPLICATIONST_EXIT_Handler(Application *pMe);
 static boolean  Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam);
 static boolean  Application_FlashlightMenuHandler(Application *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam);
-
-
+#if defined(FEATURE_VERSION_W317A)
+static boolean  Application_PcModemHandler(Application *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam);
+#endif
 
 /*==============================================================================
                               
@@ -385,6 +389,13 @@ static int CApplication_InitAppData(Application *pMe)
     {
         return EFAILED;
     }
+#if defined(FEATURE_VERSION_W317A)
+	if (!ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_STATIC,
+					(void**)&pMe->m_pIStatic) == SUCCESS)
+	{
+		return EFAILED;
+	}
+#endif
 
 	if (ISHELL_CreateInstance(pMe->m_pShell,
 									 AEECLSID_ANNUNCIATOR,
@@ -439,6 +450,13 @@ static void CApplication_FreeAppData(Application *pMe)
         (void) IDISPLAY_Release(pMe->m_pDisplay);
         pMe->m_pDisplay = NULL;
     }
+	#if defined(FEATURE_VERSION_W317A)
+	if (pMe->m_pIStatic != NULL)
+	{
+		ISTATIC_Release(pMe->m_pIStatic);
+		pMe->m_pIStatic = NULL;
+	}
+	#endif
 	if (pMe->m_pIAnn)
     {
         IANNUNCIATOR_Release(pMe->m_pIAnn);
@@ -786,6 +804,11 @@ NextFSMAction Application_ProcessState(Application *pMe)
             return APPLICATIONST_MAIN_Handler(pMe);
         case APPLICATIONST_FLASHLIGHT:
         	return APPLICATIONST_FLASHLIGHT_Handler(pMe);
+#if defined(FEATURE_VERSION_W317A)
+		case APPLICATIONST_PCMODEM:
+			return APPLICATIONST_PCMODEM_Handler(pMe);
+#endif
+
         case APPLICATIONST_EXIT:
             return APPLICATIONST_EXIT_Handler(pMe);            
 
@@ -828,11 +851,21 @@ static NextFSMAction APPLICATIONST_MAIN_Handler(Application *pMe)
 
             }
             return NFSMACTION_WAIT;
+
         case DLGRET_FLASHLITHT:
         	{
         		MOVE_TO_STATE(APPLICATIONST_FLASHLIGHT)
             	return NFSMACTION_CONTINUE;
         	}
+
+#if defined(FEATURE_VERSION_W317A)
+		case DLGRET_PCMODEM:
+			{
+				MOVE_TO_STATE(APPLICATIONST_PCMODEM)
+            	return NFSMACTION_CONTINUE;	
+			}
+#endif
+
         default:
             MOVE_TO_STATE(APPLICATIONST_EXIT)
             return NFSMACTION_CONTINUE;
@@ -865,6 +898,32 @@ static NextFSMAction APPLICATIONST_FLASHLIGHT_Handler(Application *pMe)
     }
 }
 
+#if defined(FEATURE_VERSION_W317A)
+static NextFSMAction APPLICATIONST_PCMODEM_Handler(Application *pMe)
+{
+	if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+    switch (pMe->m_eDlgReturn)
+    {
+        // 进入主界面
+        case DLGRET_CREATE:
+            {
+            	  MSG_FATAL("APPLICATIONST_PCMODEM_Handler DLGRET_CREATE",0,0,0);
+                  Application_ShowDialog(pMe, IDD_PC_MODEM);
+
+            }
+            return NFSMACTION_WAIT;
+         case DLGRET_CANCELED:         
+            MOVE_TO_STATE(APPLICATIONST_MAIN)
+            return NFSMACTION_CONTINUE;
+        default:
+            MOVE_TO_STATE(APPLICATIONST_EXIT)
+            return NFSMACTION_CONTINUE;
+    }
+}
+#endif
 
 /*==============================================================================
 函数:
@@ -977,6 +1036,11 @@ boolean Application_RouteDialogEvt(Application *pMe,
             return Application_ListMenuHandler(pMe, eCode, wParam, dwParam);
         case IDD_FLASHLIGHT_SETTING:
         	return Application_FlashlightMenuHandler(pMe, eCode, wParam,dwParam);
+#if defined(FEATURE_VERSION_W317A)
+		case IDD_PC_MODEM:
+			return Application_PcModemHandler(pMe, eCode, wParam,dwParam);
+#endif
+
         default:
             return FALSE;
     }
@@ -1172,6 +1236,10 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
 #endif
 #ifdef	FEATURE_APP_BLUETOOTH  //add by yangdecai
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_BLUETOOTH, IDS_APPLICATION_BLUETOOTH, NULL, 0); 
+#endif
+
+#if defined(FEATURE_VERSION_W317A)
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_PC_MODEM_HELP, IDS_PC_MODEM_HELP, NULL, 0); 
 #endif
             return TRUE;
             
@@ -1426,6 +1494,109 @@ static boolean  Application_FlashlightMenuHandler(Application *pMe, AEEEvent eCo
 	}
 }
 
+#if defined(FEATURE_VERSION_W317A)
+static boolean  Application_PcModemHandler(Application *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
+{
+	PARAM_NOT_REF(dwParam)
+    AECHAR WTitle[40] = {0};
+	BottomBar_Param_type BarParam;        //wlh 20090417 add 
+	AECHAR         sztitile[20];
+    
+    if(pMe->m_pIAnn != NULL)
+    {
+	    IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+    }
+	switch (eCode)
+    {
+        case EVT_DIALOG_INIT:
+			
+			(void)ISHELL_LoadResString(pMe->m_pShell,
+                                    APPLICATION_RES_FILE_LANG,                                
+                                    IDS_PC_MODEM_HELP,
+                                    WTitle,
+                                    sizeof(WTitle));
+
+			
+            if(pMe->m_pIAnn != NULL)
+            {
+			   IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
+ 
+            return TRUE;
+        case EVT_DIALOG_START:
+            {
+				   
+				   
+				(void) ISHELL_PostEvent( pMe->m_pShell,
+                                         AEECLSID_APPLICATION,
+                                         EVT_USER_REDRAW,
+                                         0,
+                                         0);
+            }
+            return TRUE;
+
+        case EVT_USER_REDRAW:
+			{
+				 AEERect rectInsuranceMessage = {0};
+  				 AECHAR         szSmallBuf[1200];
+				 (void)ISHELL_LoadResString(pMe->m_pShell,
+													 APPLICATION_RES_FILE_LANG, 							   
+													 IDS_PC_MODEM_STEP,
+													 szSmallBuf,
+													 sizeof(szSmallBuf));
+				 rectInsuranceMessage.x = 0;
+           		 rectInsuranceMessage.y = 0;
+                 rectInsuranceMessage.dx = pMe->m_rc.dx;
+                 rectInsuranceMessage.dy = pMe->m_rc.dy - GetBottomBarHeight(pMe->m_pDisplay);
+				 MSG_FATAL("dx=======%d,,,,dy========%d",rectInsuranceMessage.dx,rectInsuranceMessage.dy,0);
+				    
+				 //IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
+            		// 设置静态文本控件属性
+            	 
+				//Add By zzg 2010_10_29 	  
+				ISTATIC_SetProperties(pMe->m_pIStatic, ST_CENTERTITLE | ST_UNDERLINE | ST_NOSCROLL | ST_GRAPHIC_BG);
+           		ISTATIC_SetBackGround(pMe->m_pIStatic, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);
+				ISTATIC_SetRect(pMe->m_pIStatic, &rectInsuranceMessage); 
+				DBGPRINTF("oemi_cache.sms_restrict_receive_total = %s", szSmallBuf);
+      			(void) ISTATIC_SetText(pMe->m_pIStatic,
+                             NULL,
+                             szSmallBuf,
+                             AEE_FONT_NORMAL,
+                             AEE_FONT_NORMAL);
+				MEMSET(&BarParam, 0, sizeof(BarParam));
+				BarParam.eBBarType = BTBAR_BACK;   
+				DrawBottomBar(pMe->m_pDisplay,&BarParam); 
+      			(void) ISTATIC_Redraw(pMe->m_pIStatic);
+				ISTATIC_SetActive(pMe->m_pIStatic, TRUE);
+				IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE); 
+			}
+            return TRUE;
+
+        case EVT_DIALOG_END:
+			{
+
+            	return TRUE;
+        	}
+        case EVT_KEY:
+            switch(wParam)
+            {
+                case AVK_CLR:
+                    CLOSE_DIALOG(DLGRET_CANCELED)
+                    return TRUE;
+				case AVK_UP:
+                case AVK_DOWN:
+                    ISTATIC_HandleEvent(pMe->m_pIStatic, eCode, wParam, dwParam);
+					 return TRUE;
+					 break;
+                  default:
+                    break;
+            }
+            return TRUE;
+        default:
+        	break;
+	}
+}
+#endif
 
 /*=============================================================================
 FUNCTION:  StartApplet
@@ -1534,6 +1705,11 @@ static int StartApplet(Application *pMe, int i)
 	case IDS_APPLICATION_FLASHLIGHT:		
         CLOSE_DIALOG(DLGRET_FLASHLITHT)
         break;
+#endif
+#if defined(FEATURE_VERSION_W317A)
+	case IDS_PC_MODEM_HELP:
+		 CLOSE_DIALOG(DLGRET_PCMODEM)
+		break;
 #endif
     default:
         break;

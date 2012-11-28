@@ -30,6 +30,11 @@
 #ifdef FEATURE_OEMOMH
 #include "AEERUIM.h"
 #endif
+#include "AppComFunc.h"
+#include "Appscommon.h"
+//#include "AEECallList.h"
+#include "AEECallHistory.h"
+#include "appscommonimages.brh"
 
 /*==============================================================================
                                  
@@ -50,6 +55,9 @@ typedef enum ApplicationState
 {
     APPLICATIONST_MAIN,
     APPLICATIONST_FLASHLIGHT,
+#if defined(FEATURE_VERSION_W317A)
+    APPLICATIONST_PCMODEM,
+#endif
     APPLICATIONST_EXIT
 } ApplicationState;
 
@@ -65,6 +73,9 @@ typedef enum DLGRetValue
 {
     DLGRET_CREATE,
     DLGRET_FLASHLITHT,
+#if defined(FEATURE_VERSION_W317A)
+    DLGRET_PCMODEM,
+#endif
     DLGRET_CANCELED
 }DLGRetValue;
 
@@ -298,7 +309,9 @@ typedef struct _Application
     ApplicationState             m_currState;        // Applet当前状态
     AEERect     m_rc;
     IAnnunciator                    *m_pIAnn;
-    
+	#if defined(FEATURE_VERSION_W317A)
+    IStatic    						*m_pIStatic;      // Static for displaying information
+    #endif
     IBacklight     *m_pBacklight;       //背光接口指针
 #ifdef FEATURE_OEMOMH
     IRUIM        *m_pIRUIM;

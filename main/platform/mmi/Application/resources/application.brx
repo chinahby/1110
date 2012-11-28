@@ -13,6 +13,9 @@
 	<String Id="1004" Name="IDS_APPLICATION_WAPBROWSER">
 		<Text>Browser</Text>
 	</String>
+	<String Id="1005" Name="IDS_PC_MODEM_STEP">
+		<Text>PC Modem step:1:with USB into PC connected mobile phone according to system prompts to install the driver, driver folder in (checked),until success2:Select the PC machine on the network connection 3:Create a new connection 4:Select next 5:Choose to connect to the Internet(C),after choosing, click next.6:Select the manual setting my connection(M),after choosing,click next.7:Choose a dial-up modem connections,and click Next 8:Enter the ISP name, and click Next 9:Enter the phone number(P), and click Next 10:Enter a user name and password,and click next,and then choose to complete 11:Click on the create connection, dial,you can surf the internet.</Text>
+	</String>
 	<STRING Id="1011" Name="IDS_APPLICATION_BAM">
 		<Text>BREW</Text>
 	</STRING>
@@ -79,6 +82,9 @@
 	<String Id="1035" Name="IDS_APPLICATION_CALENDAR">
 		<Text>Calendar</Text>
 	</String>
+	<String Id="1036" Name="IDS_PC_MODEM_HELP">
+		<Text>PC Modem help</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<Dialog Id="6001" Name="IDD_FLASHLIGHT_SETTING" Focus="7002">
@@ -98,6 +104,10 @@
 				<Items/>
 			</Menu>
 		</Controls>
+	</Dialog>
+	<Dialog Id="6004" Name="IDD_PC_MODEM" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</Dialog>
 </Dialogs>
 </BREWRes>
