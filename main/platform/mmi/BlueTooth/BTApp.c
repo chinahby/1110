@@ -2458,6 +2458,8 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 							MSG_FATAL("***zzg BTApp AG: bconnInPrgs=%x, bAudioConnecting=%x, bAudioDisconnecting=%x***", 
 										pMe->mAG.bconnInPrgs, pMe->mAG.bAudioConnecting, pMe->mAG.bAudioDisconnecting);
 
+							pMe->bStartFromAudio = TRUE;		//Add By zzg 2012_11_28
+								
 							if (TRUE == BTApp_CheckAudioDeviceList(pMe))
 							{
 								pMe->uDeviceListType = AEEBT_RM_EC_MATCH_VALUE_1;	//AudioDeviceList
@@ -2561,7 +2563,8 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 				
 				pMe->bSuspended = TRUE;
 				pMe->bStartFromOtherApp = FALSE;	//Add By zzg 2010_11_08
-				pMe->bStartFromPushReq  = FALSE;	//Add By zzg 2012_11_23				
+				pMe->bStartFromPushReq  = FALSE;	//Add By zzg 2012_11_23		
+				pMe->bStartFromAudio	= FALSE;	//Add By zzg 2012_11_28
 				pMe->bUpdateProgress	= FALSE;	//Add By zzg 2010_11_27
 				pMe->uDeviceSrhType		= AEEBT_COD_SC_ALL;	//Add By zzg 2011_10_19
 				pMe->uDeviceListType	= AEEBT_RM_EC_ALL;	//Add By zzg // 2011_10_26
@@ -4793,6 +4796,7 @@ static int BTApp_InitAppData(CBTApp *pMe)
 
 	pMe->bStartFromOtherApp	= FALSE;	//Add By zzg 2010_11_08
 	pMe->bStartFromPushReq  = FALSE;	//Add By zzg 2012_11_23
+	pMe->bStartFromAudio	= FALSE;	//Add By zzg 2012_11_28
 	pMe->bUpdateProgress	= FALSE;	//Add By zzg 2010_11_27	
 
 	pMe->uDeviceSrhType		= AEEBT_COD_SC_ALL;	//Add By zzg 2011_10_19

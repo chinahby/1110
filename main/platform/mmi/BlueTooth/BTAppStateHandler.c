@@ -482,15 +482,14 @@ static NextFSMAction BTApp_StateMainHandler(CBTApp *pMe)
 		//Add By zzg 2012_11_23
 		case DLGRET_MSGBOX_CANCELED:
 		case DLGRET_PROGRESS_CANCELED:
-		{
-			/*
-			if (pMe->bStartFromPushReq == TRUE)
+		{			
+			if ((pMe->m_msg_id == IDS_MSG_AG_CONN) || (pMe->m_msg_id == IDS_MSG_AG_DISCONN)||(pMe->m_msg_id == IDS_MSG_AG_CONNF) || (pMe->bStartFromAudio== TRUE))
+			//if (pMe->bStartFromAudio== TRUE)	//pMe->bStartFromPushReq== TRUE
 			{
 				MOVE_TO_STATE(BTAPPST_EXIT)
             	return NFSMACTION_CONTINUE;
 			}
-			else
-			*/	
+			else			
 			{
 				pMe->m_bNotOverwriteDlgRet = FALSE;
 	            BTApp_ShowDialog(pMe, IDD_BT_MAINMENU);
@@ -705,7 +704,7 @@ static NextFSMAction BTApp_StateSearchResultHandler(CBTApp *pMe)
 		case DLGRET_MSGBOX_CANCELED:		
 		{
 			MSG_FATAL("***zzg StateSearchResult bStartFromOtherApp=%d***", pMe->bStartFromOtherApp, 0, 0);
-			if (pMe->bStartFromOtherApp == TRUE) 
+			if ((pMe->bStartFromOtherApp == TRUE) || (pMe->bStartFromAudio == TRUE))
 			{
 				MOVE_TO_STATE(BTAPPST_EXIT)
 				return NFSMACTION_CONTINUE;			
@@ -824,7 +823,7 @@ static NextFSMAction BTApp_StateDeviceInfoHandler(CBTApp * pMe)
 		//Add By zzg 2012_11_23
 		case DLGRET_MSGBOX_CANCELED:
 		{
-			if (pMe->bStartFromOtherApp == TRUE)
+			if ((pMe->bStartFromOtherApp == TRUE) || (pMe->bStartFromAudio == TRUE))
 			{
 				MOVE_TO_STATE(BTAPPST_EXIT)
 				return NFSMACTION_CONTINUE;
@@ -920,7 +919,7 @@ static NextFSMAction BTApp_StateDeviceInfoOpitionHandler(CBTApp * pMe)
 
 	switch(pMe->m_eDlgRet)
 	{
-		case DLGRET_MSGBOX_CANCELED:
+		//case DLGRET_MSGBOX_CANCELED:
 		case DLGRET_PROMPT_CANCELED:
 		case DLGRET_PROGRESS_CANCELED:	
 		case DLGRET_CREATE:
@@ -929,6 +928,24 @@ static NextFSMAction BTApp_StateDeviceInfoOpitionHandler(CBTApp * pMe)
 			BTApp_ShowDialog(pMe, IDD_BT_DEVICE_INFO_OPITION);
 			return NFSMACTION_WAIT;
 		}
+
+		//Add By zzg 2012_11_28
+		case DLGRET_MSGBOX_CANCELED:		
+		{
+			MSG_FATAL("***zzg BTApp_StateDeviceInfoOpitionHandler bStartFromOtherApp=%d***", pMe->bStartFromOtherApp, 0, 0);
+			if (pMe->bStartFromAudio == TRUE)
+			{
+				MOVE_TO_STATE(BTAPPST_EXIT)
+				return NFSMACTION_CONTINUE;			
+			}
+			else
+			{
+				pMe->m_bNotOverwriteDlgRet = FALSE;
+				BTApp_ShowDialog(pMe, IDD_BT_DEVICE_INFO_OPITION);
+				return NFSMACTION_WAIT;
+			}
+		}
+		//Add End
 
 		case DLGRET_BOND_OPITION:
 		{
@@ -997,7 +1014,7 @@ static NextFSMAction BTApp_StateBondOpitionHandler(CBTApp * pMe)
 
 	switch(pMe->m_eDlgRet)
 	{
-		case DLGRET_MSGBOX_CANCELED:
+		//case DLGRET_MSGBOX_CANCELED:
 		case DLGRET_PROMPT_CANCELED:
 		case DLGRET_PROGRESS_CANCELED:	
 		case DLGRET_CREATE:			
@@ -1006,6 +1023,24 @@ static NextFSMAction BTApp_StateBondOpitionHandler(CBTApp * pMe)
 			BTApp_ShowDialog(pMe, IDD_BT_BOND_OPITION);
 			return NFSMACTION_WAIT;
 		}
+
+		//Add By zzg 2012_11_28
+		case DLGRET_MSGBOX_CANCELED:		
+		{
+			MSG_FATAL("***zzg BTApp_StateBondOpitionHandler bStartFromOtherApp=%d***", pMe->bStartFromOtherApp, 0, 0);
+			if (pMe->bStartFromAudio == TRUE)
+			{
+				MOVE_TO_STATE(BTAPPST_EXIT)
+				return NFSMACTION_CONTINUE;			
+			}
+			else
+			{
+				pMe->m_bNotOverwriteDlgRet = FALSE;
+				BTApp_ShowDialog(pMe, IDD_BT_BOND_OPITION);
+				return NFSMACTION_WAIT;
+			}
+		}
+		//Add End
 			
 		case DLGRET_BT_MSGBOX:
 		{
@@ -1069,7 +1104,7 @@ static NextFSMAction BTApp_StateDeviceHandler(CBTApp *pMe)
 
 	switch(pMe->m_eDlgRet)
 	{		
-		case DLGRET_MSGBOX_CANCELED:
+		//case DLGRET_MSGBOX_CANCELED:
 		case DLGRET_PROMPT_CANCELED:
 		case DLGRET_PROGRESS_CANCELED:	
 		case DLGRET_CREATE:
@@ -1078,6 +1113,24 @@ static NextFSMAction BTApp_StateDeviceHandler(CBTApp *pMe)
 			BTApp_ShowDialog(pMe, IDD_DEVICE);
 			return NFSMACTION_WAIT;
 		}
+
+		//Add By zzg 2012_11_28
+		case DLGRET_MSGBOX_CANCELED:		
+		{
+			MSG_FATAL("***zzg BTApp_StateDeviceHandler bStartFromOtherApp=%d***", pMe->bStartFromOtherApp, 0, 0);
+			if (pMe->bStartFromAudio == TRUE)
+			{
+				MOVE_TO_STATE(BTAPPST_EXIT)
+				return NFSMACTION_CONTINUE;			
+			}
+			else
+			{
+				pMe->m_bNotOverwriteDlgRet = FALSE;
+				BTApp_ShowDialog(pMe, IDD_DEVICE);
+				return NFSMACTION_WAIT;
+			}
+		}
+		//Add End
 
 		case DLGRET_DEVICE_LIST:
 		{
@@ -1147,7 +1200,7 @@ static NextFSMAction BTApp_StateDeviceListHandler(CBTApp *pMe)
 
 	switch(pMe->m_eDlgRet)
 	{
-		case DLGRET_MSGBOX_CANCELED:
+		//case DLGRET_MSGBOX_CANCELED:
 		case DLGRET_PROMPT_CANCELED:
 		case DLGRET_PROGRESS_CANCELED:	
 		case DLGRET_CREATE:
@@ -1156,6 +1209,24 @@ static NextFSMAction BTApp_StateDeviceListHandler(CBTApp *pMe)
 			BTApp_ShowDialog(pMe, IDD_DEVICE_LIST);
 			return NFSMACTION_WAIT;	
 		}
+
+		//Add By zzg 2012_11_28
+		case DLGRET_MSGBOX_CANCELED:		
+		{
+			MSG_FATAL("***zzg BTApp_StateDeviceListHandler bStartFromOtherApp=%d***", pMe->bStartFromOtherApp, 0, 0);
+			if (pMe->bStartFromAudio == TRUE)
+			{
+				MOVE_TO_STATE(BTAPPST_EXIT)
+				return NFSMACTION_CONTINUE;			
+			}
+			else
+			{
+				pMe->m_bNotOverwriteDlgRet = FALSE;
+				BTApp_ShowDialog(pMe, IDD_DEVICE_LIST);
+				return NFSMACTION_WAIT;
+			}
+		}
+		//Add End
 
 		case DLGRET_DEVICEINFO:
 		{
