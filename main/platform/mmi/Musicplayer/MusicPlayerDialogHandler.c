@@ -4842,7 +4842,7 @@ void CMusicPlayer_PlayMusic(CMusicPlayer *pMe)
     }
    if(pMe->m_pMedia)
    {
-      (void)IMEDIA_Play(pMe->m_pMedia);//²¥·Å
+      (void)IMEDIA_Play(pMe->m_pMedia);//²¥·Å		
    } 
 }
 /*===========================================================================
@@ -4870,6 +4870,9 @@ void CMusicPlayer_SeekMusic(CMusicPlayer *pMe)
           IMEDIA_Seek(pMe->m_pMedia ,MM_SEEK_CURRENT,pMe->m_nPauseTime);
         }*/
         ret=IMEDIA_Seek(pMe->m_pMedia ,MM_SEEK_CURRENT,pMe->m_nCurrentTime * 1000);
+
+	   MSG_FATAL("***zzg CMusicPlayer_SeekMusic ret=%x***", ret, 0, 0);
+	   
        if(ret != SUCCESS)
        {
          pMe->m_nCurrentTime = 0;

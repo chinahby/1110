@@ -1426,7 +1426,7 @@ static void MP3_ResumeHandle(CMusicPlayer *pMe)
     if(pMe->m_bPlaying || pMe->m_bPaused)
     {
       ISHELL_SetTimer(pMe->m_pShell,800,(PFNNOTIFY) CMusicPlayer_PlayMusic,pMe);
-      ISHELL_SetTimer(pMe->m_pShell,2000, (PFNNOTIFY)CMusicPlayer_SeekMusic,pMe);
+      ISHELL_SetTimer(pMe->m_pShell,2000, (PFNNOTIFY)CMusicPlayer_SeekMusic,pMe);      
     }
     if(pMe->m_bPaused)
      {
