@@ -6411,7 +6411,7 @@ static void BTApp_HandleEventButtonPressed( CBTApp* pMe )
 #endif /* FEATURE_PHONE_VR */
   else
   {
-    BTApp_Dial( pMe );
+    //BTApp_Dial( pMe );
   }
 }
 
@@ -21907,7 +21907,7 @@ static void BTApp_ProcessAGNotifications(
       if ( pMe->mAG.bVREnabled == FALSE )
       {
         pMe->mAG.bUpdateVrState = TRUE;
-        BTApp_Dial( pMe );
+        //BTApp_Dial( pMe );
       }
       else
       {
