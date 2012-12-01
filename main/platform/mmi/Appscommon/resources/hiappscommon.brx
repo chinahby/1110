@@ -322,5 +322,8 @@
 	<STRING Id="2013" Name="IDS_SEARCH">
 		<Text>Search</Text>
 	</STRING>	
+	<STRING Id="2014" Name="IDS_NAMES">
+		<Text>नाम</Text>
+	</STRING>	
 </Strings>
 </BREWRes>

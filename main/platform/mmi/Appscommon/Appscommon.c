@@ -3288,7 +3288,11 @@ void DrawBottomBar_Ex(IShell    *m_pIShell, IDisplay  * pIDisplay, BottomBar_e_T
 			//#ifdef FEATURE_VERSION_C337
 			//nResID_R = IDS_PHONE_BOOK;
 			//#else
-            nResID_R = IDS_STRING_CONTACTS;
+#ifdef FEATURE_VERSION_C337
+			nResID_R = IDS_NAMES;
+#else
+			nResID_R = IDS_STRING_CONTACTS;
+#endif			            
 			//#endif
             break;
             
