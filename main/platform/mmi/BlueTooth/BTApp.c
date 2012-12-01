@@ -21524,11 +21524,11 @@ static void BTApp_ProcessAGNotifications(
 		       		((uint16)(pMe->mAG.bdAddr.uAddr[ 3 ] << 8) | pMe->mAG.bdAddr.uAddr[ 2 ]),
 		       		((uint16)(pMe->mAG.bdAddr.uAddr[ 1 ] << 8) | pMe->mAG.bdAddr.uAddr[ 0 ]));
 
-		/*
+		
         if ( BDADDR_VALID( &pMe->mAG.bdAddr ) &&
              (BTApp_CallPresent( pMe ) != BT_APP_CALL_NONE) )
-             */
-        if (BDADDR_VALID( &pMe->mAG.bdAddr ))	//Modify by zzg 2011_11_22 (first connect AG, then A2DP)
+            
+        //if (BDADDR_VALID( &pMe->mAG.bdAddr ))	//Modify by zzg 2011_11_22 (first connect AG, then A2DP)
         {
         	MSG_FATAL("***zzg AEEBT_AG_EVT_ENABLED***", 0, 0, 0);
           IBTEXTAG_Connect( pMe->mAG.po, &pMe->mAG.bdAddr, pMe->mAG.devType );
