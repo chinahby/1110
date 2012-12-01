@@ -801,10 +801,16 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
             nResID_R = IDS_STRING_UNLOCK;
             nResID_L = IDS_SOS;
             break;
+#ifdef FEATURE_VERSION_C337
+		case BTBAR_UNLOCK_M:
+            nResID_L = IDS_STRING_UNLOCK;
+            break; 
+#else
             
         case BTBAR_UNLOCK_M:
             nResID_M = IDS_STRING_UNLOCK;
             break;    
+#endif			
             
         case BTBAR_UNLOCK_L:
             nResID_L= IDS_STRING_UNLOCK;
@@ -816,7 +822,7 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
         case BTBAR_LUNLOCK:
             nResID_L = IDS_STRING_UNLOCK;
             nResID_R = IDS_SOS;
-            break;
+            break;		
             
 #ifdef FEATURE_SPORTS_APP
          case BTBAR_PAUSE_STOP:
@@ -3329,15 +3335,20 @@ void DrawBottomBar_Ex(IShell    *m_pIShell, IDisplay  * pIDisplay, BottomBar_e_T
 			nResID_M = IDS_OK;   ////add by yangdecai 2010-08-04
 			nResID_R = IDS_BACK;
 			break;
-            
         case BTBAR_UNLOCK_SOS:
             nResID_R = IDS_STRING_UNLOCK;
             nResID_L = IDS_SOS;
             break;
+#ifdef FEATURE_VERSION_C337
+		case BTBAR_UNLOCK_M:
+            nResID_L = IDS_STRING_UNLOCK;
+            break; 
+#else
             
         case BTBAR_UNLOCK_M:
             nResID_M = IDS_STRING_UNLOCK;
-            break;
+            break;    
+#endif	
             
         case BTBAR_UNLOCK_L:
             nResID_L= IDS_STRING_UNLOCK;
@@ -3350,7 +3361,7 @@ void DrawBottomBar_Ex(IShell    *m_pIShell, IDisplay  * pIDisplay, BottomBar_e_T
         case BTBAR_LUNLOCK:
             nResID_L = IDS_STRING_UNLOCK;
             nResID_R = IDS_SOS;
-            break;
+            break;			
             
         case BTBAR_BACK:
             nResID_R = IDS_BACK;

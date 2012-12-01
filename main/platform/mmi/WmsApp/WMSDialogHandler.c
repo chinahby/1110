@@ -157,7 +157,6 @@ if (NULL == pMe->m_pStatic)                                     \
     }                                                           \
 }           
 
-
 // 添加无图标菜单项宏定义
 #define MENU_ADDITEM(pMenu,ID)                                                \
     (void)IMENUCTL_AddItem((pMenu), AEE_WMSAPPRES_LANGFILE, (ID), (ID), 0, 0) 

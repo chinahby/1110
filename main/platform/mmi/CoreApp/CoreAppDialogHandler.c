@@ -4323,7 +4323,10 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     {
                         #if defined( FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_W317A) 
                            Mainmenu_KeypadLock(TRUE);
+						#elif defined ( FEATURE_VERSION_C337)
+						   WMSDialog_KeypadLock(TRUE);
                         #endif
+						
                         #if defined(FEATURE_VERSION_MYANMAR) || defined( FEATURE_VERSION_C11) || defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W0271)
                            WMSDialog_KeypadLock(TRUE);
                         #endif
@@ -4464,8 +4467,10 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 							return TRUE;
 							//ISHELL_CancelTimer(pMe->a.m_pIShell,CoreApp_keypadtimer,pMe);
 						}
-#if defined(FEATURE_VERSION_W027)                       
+#if defined(FEATURE_VERSION_W027)  
+#ifndef FEATURE_VERSION_C337
                         Mainmenu_KeypadLock(TRUE);
+#endif
 #endif
 #ifdef FEATURE_VERSION_W317A
                         return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
@@ -7130,6 +7135,8 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
             #ifdef FEATURE_VERSION_W317A
                 eBBarType = BTBAR_UNLOCK_L;
             #else
+                eBBarType = BTBAR_UNLOCK_M;
+			#elif defined(FEATURE_VERSION_C337)
                 eBBarType = BTBAR_UNLOCK_M;
             #endif
         	#elif defined(FEATURE_VERSION_VERYKOOL)
