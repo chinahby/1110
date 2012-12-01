@@ -68,7 +68,7 @@
 		<Text>Phone memory status</Text>
 	</STRING>
 	<STRING Id="1022" Name="IDS_MG_CARDMEMSTAT">
-		<Text>Card memory status</Text>
+		<Text>Memory card status</Text>
 	</STRING>
 	<STRING Id="1023" Name="IDS_MG_TOTALMEMSTAT">
 		<Text>Memory total status</Text>
