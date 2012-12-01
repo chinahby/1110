@@ -5,7 +5,7 @@
 		<Text>Inbox </Text>
 	</STRING>
 	<STRING Id="2" Name="IDS_WRITEMESSAGE">
-		<Text>Write New</Text>
+		<Text>Write new</Text>
 	</STRING>
 	<STRING Id="3" Name="IDS_OUTBOX">
 		<Text>Outbox </Text>
