@@ -7134,10 +7134,10 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
             #elif defined(FEATURE_VERSION_W027)
             #ifdef FEATURE_VERSION_W317A
                 eBBarType = BTBAR_UNLOCK_L;
-            #else
-                eBBarType = BTBAR_UNLOCK_M;
 			#elif defined(FEATURE_VERSION_C337)
                 eBBarType = BTBAR_UNLOCK_M;
+            #else
+                eBBarType = BTBAR_UNLOCK_M;			
             #endif
         	#elif defined(FEATURE_VERSION_VERYKOOL)
         		eBBarType = BTBAR_UNLOCK_SOS;
