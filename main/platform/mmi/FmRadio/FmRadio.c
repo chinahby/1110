@@ -612,13 +612,21 @@ static void FmRadio_InitFmRadioResource(CFmRadio *pMe)
 		}
 		else
 		{
+#ifdef FEATURE_VERSION_C337	
+			pMe->cfg.channel = 36;
+#else
 			pMe->cfg.channel = 0;
+#endif
 		}
 
 		pMe->cfg.tuningMode = FM_RADIO_TUNNING_MODE_LIST;
 	}
 #else
+#ifdef FEATURE_VERSION_C337	
+	pMe->cfg.channel = 36;
+#else
 	pMe->cfg.channel = 96;
+#endif
 	pMe->cfg.tuningMode = FM_RADIO_TUNNING_MODE_MANUAL;
 #endif
 
