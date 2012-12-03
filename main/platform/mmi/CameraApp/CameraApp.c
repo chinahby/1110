@@ -904,7 +904,11 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
 			
             pMe->m_rc = as->rc;
             CameraApp_RunFSM(pMe);
+            #ifdef FEATURE_VERSION_W317A
+            return CameraApp_RouteDialogEvent(pMe, eCode, wParam, dwParam);
+            #else
             return TRUE;
+            #endif
       
         case EVT_DIALOG_INIT:
             pMe->m_bAppIsReady = FALSE;
