@@ -117,7 +117,7 @@ byte UTK_parse_proactive_command(byte *cmd_data, word cmd_len)
 {
     /* Offset for the different TLVs */
     byte offset = 0;  /* offset to raw data */
-    
+    //MSG_FATAL("UTK_parse_proactive_command............................",0,0,0);
     if (cmd_data[0] == UIM_TK_END_PROACTIVE_SESSION)
     {
         return cmd_data[0];
@@ -739,7 +739,7 @@ void UTK_SendTerminalProfile (void)
                         UIM_TK_TERMINAL_PROFILE_DATA_LENGTH);
                     
                     /* Fill bit fields for command data */
-					#if defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_S1000T)
+					#if defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_S1000T)||defined(FEATURE_VERSION_W027)
 					 uim_cmd_ptr->terminal_profile.data[0]  |=
                         ( UIM_TK_B1_PROFILE_DOWNLOAD | UIM_TK_B1_CDMA_SMS_PP_DOWNLOAD|UIM_TK_B1_MENU_SELECTION|UIM_TK_B1_CDMA_SMS_PP_DOWNLOAD2);
 					uim_cmd_ptr->terminal_profile.data[1]  |= 
@@ -1106,6 +1106,7 @@ int CUTK_SetUTKMenu(CUTK *pMe, IMenuCtl *pMenu,
     if (utk_ptr != NULL)
     {
         // 跳过主动式RUIM 命令标签
+        //MSG_FATAL("utk_ptr is  not NULL............................",0,0,0);
         pos++;
         
         // 获取命令数据长度
@@ -2781,7 +2782,7 @@ void UTK_SendSimuData(const byte *pBuf, int nSize)
   }
   ui_buf_ptr->proactive_cmd.hdr.done_q_ptr = &ui_cmd_free_q;;
 #endif /* FEATURE_REX_DYNA_MEM_UI */
-
+  //MSG_FATAL("UTK_SendSimuData...............",0,0,0);
   ui_buf_ptr->proactive_cmd.hdr.cmd        = UI_PROACTIVE_UIM_F;
   ui_buf_ptr->proactive_cmd.hdr.task_ptr   = NULL;
   ui_buf_ptr->proactive_cmd.hdr.sigs       = 0;
