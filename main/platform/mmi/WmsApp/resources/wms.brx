@@ -128,7 +128,7 @@
 		<Text>Priority</Text>
 	</STRING>
 	<STRING Id="43" Name="IDS_DELIVERYREPORTS">
-		<Text>Delivered to</Text>
+		<Text>Delivery report</Text>
 	</STRING>
 	<STRING Id="44" Name="IDS_STORAGE">
 		<Text>Storage</Text>
