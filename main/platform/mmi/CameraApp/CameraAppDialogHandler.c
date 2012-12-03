@@ -1924,9 +1924,14 @@ static boolean CameraApp_VideoHandleEvent(CCameraApp *pMe, AEEEvent eCode, uint1
 		
         case EVT_USER_REDRAW:    	
 		{
-			AECHAR wfileName[MIN_PIC_WCHAR_NAME_LEN];			
+			AECHAR wfileName[MIN_PIC_WCHAR_NAME_LEN];
 			AEERect bottom_rc;
-			
+            #ifdef FEATURE_VERSION_W317A	
+            AECHAR pcText[MIN_PIC_WCHAR_NAME_LEN];
+			IImage *StringBgMsgImg; 
+            AEEImageInfo StringBgImgInfo = {0};
+            #endif
+            
 			SETAEERECT(&bottom_rc, 0, pMe->m_rc.dy - BOTTOMBAR_HEIGHT, pMe->m_rc.dx, BOTTOMBAR_HEIGHT);
 			
 			IDISPLAY_EraseRect(pMe->m_pDisplay, &bottom_rc);
@@ -1946,12 +1951,42 @@ static boolean CameraApp_VideoHandleEvent(CCameraApp *pMe, AEEEvent eCode, uint1
 			                        &pMe->m_rc, 
 			                        IDF_ALIGN_TOP|IDF_ALIGN_RIGHT|IDF_TEXT_TRANSPARENT);
 			}
-
+            #ifdef FEATURE_VERSION_W317A
+            StringBgMsgImg = ISHELL_LoadResImage(pMe->m_pShell,
+                            AEE_APPSCOMMONRES_IMAGESFILE,
+                            IDB_PROMPT_MSG_BG);
+            if(StringBgMsgImg != NULL)
+            {
+                IIMAGE_GetInfo(StringBgMsgImg, &StringBgImgInfo);
+                IIMAGE_Draw(StringBgMsgImg, (pMe->m_rc.dx- StringBgImgInfo.cx)/2, (pMe->m_rc.dy - StringBgImgInfo.cy)/2);
+                IIMAGE_Release(StringBgMsgImg);
+                StringBgMsgImg = NULL; 
+            }
+            (void)ISHELL_LoadResString(pMe->m_pShell, 
+                               AEE_APPSCAMERAAPP_RES_FILE,       
+                               IDS_CAMERA_SAVE_VIDEOFILE, 
+                               pcText, 
+                               sizeof(pcText));
+            DrawTextWithProfile(pMe->m_pShell, 
+			                        pMe->m_pDisplay, 
+			                        RGB_BLACK, 
+			                        AEE_FONT_NORMAL, 
+			                        pcText, 
+			                        -1, 
+			                        (pMe->m_rc.dx- StringBgImgInfo.cx)/2+5, 
+			                        (pMe->m_rc.dy - StringBgImgInfo.cy)/2+40, 
+			                        &pMe->m_rc, 
+			                        IDF_ALIGN_CENTER|IDF_TEXT_TRANSPARENT);
+            #endif
             //CameraApp_DrawBottomBarText(pMe, BTBAR_SAVE_DELETE);
             {
 				BottomBar_Param_type BarParam;					
-				MEMSET(&BarParam, 0, sizeof(BarParam)); 		
-				BarParam.eBBarType = BTBAR_SAVE_DELETE; 				
+				MEMSET(&BarParam, 0, sizeof(BarParam)); 
+				#ifdef FEATURE_VERSION_W317A
+				BarParam.eBBarType = BTBAR_YES_NO;
+				#else
+				BarParam.eBBarType = BTBAR_SAVE_DELETE; 
+				#endif
 				
 				DrawBottomBar(pMe->m_pDisplay, &BarParam);					
 			}            
