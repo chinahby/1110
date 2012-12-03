@@ -941,6 +941,9 @@ static boolean ClockApps_Expired(CClockApps *pMe, AlarmType eAlarmType, boolean 
     boolean continueAlarm    = 0;
 #endif
 
+#ifdef FEATURE_VERSION_C337
+	continueAlarm    = TRUE;
+#endif
     if (pMe == NULL)
     {
         return FALSE;
@@ -1193,8 +1196,8 @@ static boolean ClockApps_Expired(CClockApps *pMe, AlarmType eAlarmType, boolean 
 	dwAlarmTime += JULIANTOSECONDS(&jDate);
 #endif
     dwSnooze = (pMe->m_ClockCfg.Snooze[eAlarmType] + MAX_ALARM_MSECS/1000) * 10;
-    debug("dwSnooze = %d",dwSnooze);
-    debug("dwNow = %d;dwAlarmTime = %d",dwNow,dwAlarmTime);
+    MSG_FATAL("dwSnooze = %d",dwSnooze,0,0);
+    MSG_FATAL("dwNow = %d;dwAlarmTime = %d",dwNow,dwAlarmTime,0);
     if (dwAlarmTime > dwNow)
     {
         // 当天闹钟时间未到
