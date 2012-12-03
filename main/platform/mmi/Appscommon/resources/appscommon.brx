@@ -107,7 +107,7 @@
 		<Text>Numbers</Text>
 	</STRING>
 	<STRING Id="36" Name="IDS_MSG_KEYGUARD">
-		<Text>Press "Unlock" then * </Text>
+		<Text>Press "Unlock" then * key</Text>
 	</STRING>
 	<STRING Id="37" Name="IDS_INPUT_RAPIDTH">
 		<Text>RapidTH</Text>
@@ -324,6 +324,12 @@
 	</STRING>	
 	<STRING Id="2014" Name="IDS_NAMES">
 		<Text>Names</Text>
+	</STRING>	
+	<STRING Id="2015" Name="IDS_KEYPAD_LOCKED">
+		<Text>Keypad locked</Text>
+	</STRING>	
+	<STRING Id="2016" Name="IDS_KEYPAD_UNLOCKED">
+		<Text>Keypad unlocked</Text>
 	</STRING>	
 </Strings>
 </BREWRes>

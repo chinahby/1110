@@ -325,5 +325,11 @@
 	<STRING Id="2014" Name="IDS_NAMES">
 		<Text>नाम</Text>
 	</STRING>	
+	<STRING Id="2015" Name="IDS_KEYPAD_LOCKED">
+		<Text>द कीपैड</Text>
+	</STRING>	
+	<STRING Id="2016" Name="IDS_KEYPAD_UNLOCKED">
+		<Text>ला कीपैड</Text>
+	</STRING>	
 </Strings>
 </BREWRes>

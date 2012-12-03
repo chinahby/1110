@@ -3021,6 +3021,40 @@ void Appscomm_Draw_Keyguard_Msg(IDisplay *pIDisplay,IStatic *pStatic,boolean unl
     DrawPromptMessage(pIDisplay,pStatic,&m_PromptMsg);
     IDISPLAY_UpdateEx(pIDisplay,FALSE);
 }
+
+//Add By zzg 2012_12_03
+void Appscomm_Draw_Keyguard_Information(IDisplay *pIDisplay,IStatic *pStatic,boolean unlockkey)
+{
+    PromptMsg_Param_type m_PromptMsg;
+    AEERect rect = {0};
+    ISTATIC_SetRect(pStatic, &rect);
+    MEMSET(&m_PromptMsg,0,sizeof(PromptMsg_Param_type));
+    //SETAEERECT(&rect, 0, 16, 128, 112);
+    //m_PromptMsg.prc = &rect;
+
+	if ( (NULL == pIDisplay) 
+        || (NULL == pStatic))
+    {
+        return;
+    } 
+
+	if(TRUE == unlockkey)
+	{
+	    m_PromptMsg.nMsgResID = IDS_KEYPAD_UNLOCKED;
+	}
+	else
+	{
+	    m_PromptMsg.nMsgResID = IDS_KEYPAD_LOCKED;        
+	}
+    
+    STRLCPY(m_PromptMsg.strMsgResFile, AEE_APPSCOMMONRES_LANGFILE,MAX_FILE_NAME);
+    m_PromptMsg.ePMsgType = MESSAGE_WARNNING;        
+    m_PromptMsg.eBBarType = BTBAR_NONE;        
+    DrawPromptMessage(pIDisplay,pStatic,&m_PromptMsg);
+    IDISPLAY_UpdateEx(pIDisplay,FALSE);
+}
+//Add End
+
 #ifdef FEATURE_LCD_TOUCH_ENABLE 
 void Appscomm_Draw_Keyguard_Slide(IDisplay *pIDisplay,uint16 x,uint16 y)
 {

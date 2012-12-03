@@ -822,12 +822,12 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
 #ifdef FEATURE_KEYGUARD
                     if(OEMKeyguard_IsEnabled())
                     {
-                        OEMKeyguard_SetState(FALSE);
+                        OEMKeyguard_SetState(FALSE);						
                     }
 #endif
                     IBACKLIGHT_Enable(pMe->m_pBacklight);
                     set_time = 20000;
-                    break;
+                    break;			
 #endif /* FEATRUE_AUTO_POWER */
 
 #ifdef FEATURE_PLANEMODE
@@ -3602,7 +3602,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #ifdef FEATURE_KEYGUARD
             if(pMe->m_b_set_lock)
             {
-                OEMKeyguard_SetState(TRUE);
+                OEMKeyguard_SetState(TRUE);					
                 pMe->m_b_set_lock = FALSE;
             }
 #endif
@@ -3748,7 +3748,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
         case EVT_UPDATEIDLE:
         {        
 			//Add By zzg 2012_10_29
-			#ifdef FEATURE_VERSION_W317A				
+			#if (defined (FEATURE_VERSION_W317A)||defined (FEATURE_VERSION_C337))
 			IFileMgr *pFileMgr = NULL;
 		    ISHELL_CreateInstance(pMe->a.m_pIShell, AEECLSID_FILEMGR, (void **)&pFileMgr);
 			
@@ -4713,7 +4713,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                    {
                    if(OEMKeyguard_IsEnabled())
                    {
-                       OEMKeyguard_SetState(FALSE);
+                       OEMKeyguard_SetState(FALSE);				   
                        pMe->m_b_set_lock = TRUE;
                        CLOSE_DIALOG(DLGRET_EMGCALL)
                    }
@@ -4734,7 +4734,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     {
                     	MSG_FATAL("DLGRET_EMGCALL...................................777",0,0,0);
                     	#ifndef FEATURE_VERSION_HITZ181
-                        OEMKeyguard_SetState(FALSE);
+                        OEMKeyguard_SetState(FALSE);							
                         pMe->m_b_set_lock = TRUE;
                         CLOSE_DIALOG(DLGRET_EMGCALL)
                         #endif
@@ -5667,7 +5667,7 @@ static void CoreApp_TimeKeyguard(void *pUser)
 	
     if(pMe->m_b_set_lock)
     {    	
-        OEMKeyguard_SetState(TRUE);		
+        OEMKeyguard_SetState(TRUE);			
         CoreApp_UpdateBottomBar(pMe);		
         //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
         pMe->m_b_set_lock = FALSE;
@@ -7761,7 +7761,7 @@ void CoreApp_UpdateAnnunciator(CCoreApp *pMe)
 	//Add End
 
 	//Add By zzg 2012_10_29
-	#ifdef FEATURE_VERSION_W317A	
+	#if (defined (FEATURE_VERSION_W317A)||defined (FEATURE_VERSION_C337))
 	IFileMgr *pFileMgr = NULL;
     ISHELL_CreateInstance(pMe->a.m_pIShell, AEECLSID_FILEMGR, (void **)&pFileMgr);
 	

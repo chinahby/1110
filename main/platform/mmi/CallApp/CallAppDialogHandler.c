@@ -4774,7 +4774,7 @@ static boolean  CallApp_MsgBox_DlgHandler(CCallApp  *pMe,
             return TRUE;
 
         case EVT_DIALOG_START:
-            if(pMe->m_msg_text_id != IDS_INVALIDEMGNUM && pMe->m_msg_text_id != IDS_NOOMH_CARD)
+            if(pMe->m_msg_text_id != IDS_INVALIDEMGNUM && pMe->m_msg_text_id != IDS_NOOMH_CARD && pMe->m_msg_text_id != IDS_SAR)
             {
                 ISHELL_SetTimer(pMe->m_pShell, TIMEOUT_MS_INVALIDEMGNUMDIALOG_TIMER,
                                        CallApp_HandleDialogTimer, pMe);
@@ -4898,7 +4898,7 @@ static boolean  CallApp_MsgBox_DlgHandler(CCallApp  *pMe,
 
                 }
             }
-            else if(pMe->m_msg_text_id == IDS_NOOMH_CARD)
+            else if((pMe->m_msg_text_id == IDS_NOOMH_CARD) || (pMe->m_msg_text_id == IDS_SAR))
             {
                 switch (wParam)
                 {
@@ -6412,6 +6412,7 @@ static boolean  CallApp_Missedcall_DlgHandler(CCallApp *pMe,
             //                                        NULL, AEEALERT_ALERT_BUSY);
             if(pMe->m_b_miss_notify)
             {
+#ifndef FEATURE_VERSION_C337            
                 notifyFMRadioAlertEvent( pMe, TRUE);
                 //CallAppNotifyMP3PlayerAlertEvent(pMe,TRUE);
                 IALERT_StartMissedCallAlert(pMe->m_pAlert);
@@ -6419,6 +6420,7 @@ static boolean  CallApp_Missedcall_DlgHandler(CCallApp *pMe,
                                                         3000,
                                                         CallApp_HandleStopMissedAlertTimer,
                                                         pMe);
+#endif				
             }
             return TRUE;
 

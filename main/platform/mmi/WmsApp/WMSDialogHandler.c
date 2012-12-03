@@ -1270,7 +1270,10 @@ static boolean IDD_MAIN_Handler(void        *pUser,
                 case AVK_STAR:
                     if(gbWMSDialogLock)
                     {
-                        OEMKeyguard_SetState(TRUE);
+                        OEMKeyguard_SetState(TRUE);	
+#ifdef FEATURE_VERSION_C337
+						MSLEEP(500);
+#endif
                         ISHELL_CloseApplet(pMe->m_pShell, TRUE); 
                     }
                     return TRUE;                    

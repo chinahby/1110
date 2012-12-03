@@ -113,6 +113,7 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
                                             uint16    wParam,
                                             uint32    dwParam);
 static void    OEMPriv_DrawKeyguardMessage(boolean unlockkey);
+static void    OEMPriv_DrawKeyguardInformation(boolean unlockkey);	//Add By zzg 2012_12_03
 static void    OEMPriv_DrawKeyguardTime(void);
 static void    OEMPriv_DrawMessageCB(void *pUnused);
 //static void    OEMPriv_OnCallStatusCB(void *pUnused);
@@ -580,7 +581,7 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
 
 //Add By zzg 2010_11_23
 #ifndef FEATURE_UNLOCK_KEY_SPACE	
-#if  defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_1110W516)
+#if  defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_1110W516)|| defined(FEATURE_VERSION_C337)
                 case AVK_SELECT:
 #elif  defined(FEATURE_VERSION_W027)
 #ifdef FEATURE_VERSION_W317A
@@ -612,6 +613,8 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
                     break;
 
                 case AVK_STAR:
+					MSG_FATAL("***zzg OEMKeyguard AVK_STAR sUnlockState=%d***", sUnlockState, 0, 0);
+					
                     if (UNLOCKSTATE_1PRESSED == sUnlockState)
                     {
                         sUnlockState = UNLOCKSTATE_RESET;
@@ -628,13 +631,13 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
                             if(IBACKLIGHT_IsEnabled(Backlight))
                             {
                               // Unlock the keyguard
-                              OEMKeyguard_SetState(FALSE);
+                              OEMKeyguard_SetState(FALSE);							  
                             } 
                             IBACKLIGHT_Release(Backlight);
                         }
                         #else
                             // Unlock the keyguard
-                            OEMKeyguard_SetState(FALSE);
+                            OEMKeyguard_SetState(FALSE);							
                         #endif
                         OEMPriv_ResumeBREW();
                         return TRUE;
@@ -888,6 +891,52 @@ static void OEMPriv_DrawKeyguardMessage(boolean unlockkey)
     }
 }
 
+//Add By zzg 2012_12_03
+static void OEMPriv_DrawKeyguardInformation(boolean unlockkey)
+{
+    IDisplay      *pd;
+    IStatic       *pStatic;
+    KEYGUARD_ERR("OEMPriv_DrawKeyguardInformation %x",sgpShell,0,0);
+    (void) ISHELL_CreateInstance(sgpShell,AEECLSID_STATIC,(void**) &pStatic);
+    (void) ISHELL_CreateInstance(sgpShell,AEECLSID_DISPLAY,(void**) &pd);
+
+    if (pStatic && pd)
+    {
+        AEEDeviceInfo devinfo = {0};
+        IShell      *pShell = AEE_GetShell();
+        
+        ISHELL_GetDeviceInfo(pShell, &devinfo);
+        if(NULL != pDevBmp)
+        {
+            IDISPLAY_BitBlt(pd, 0, 0, devinfo.cxScreen, devinfo.cyScreen, 
+                            pDevBmp, 0, 0, AEE_RO_COPY);
+        }
+        else
+        {
+            IBitmap *pTempBmp = NULL;
+
+            IDISPLAY_GetDeviceBitmap(pd, &pTempBmp);
+            if(NULL != pTempBmp)
+            {
+                IBITMAP_CreateCompatibleBitmap(pTempBmp, &pDevBmp, devinfo.cxScreen, devinfo.cyScreen);
+                if(NULL != pDevBmp)
+                {
+                    IBITMAP_BltIn(pDevBmp, 0, 0, devinfo.cxScreen, devinfo.cyScreen, pTempBmp, 0, 0, AEE_RO_COPY);
+                }
+                IBITMAP_Release(pTempBmp);
+            }
+        }
+        OEMKeyguard_Set_Annunciator_Enable(FALSE);
+#ifdef FEATURE_KEYGUARD
+        Appscomm_Draw_Keyguard_Information(pd,pStatic,unlockkey);
+#endif
+        ISTATIC_Release(pStatic);
+        IDISPLAY_Release(pd);
+    }
+}
+
+//Add End
+
 #ifdef FEATURE_LCD_TOUCH_ENABLE
 static void    OEMPriv_DrawPenMoveBar(uint16 x,uint16 y)
 {
@@ -1082,24 +1131,26 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
               (void)ISHELL_CreateInstance(sgpShell,AEECLSID_BACKLIGHT,(void **)&Backlight);
               if(!IBACKLIGHT_IsEnabled(Backlight))
               {
-                if(EVT_KEY_PRESS ==evt)
-                  {
-                    return FALSE;
-                  }
+					if(EVT_KEY_PRESS ==evt)
+					{
+						return FALSE;
+					}
               } 
               IBACKLIGHT_Release(Backlight);
           }
 #endif		
 
 #if  defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W027)
-        if(wParam == AVK_CLR)
+        if(wParam == AVK_CLR)			
 #else
         if(wParam == AVK_SELECT)		
 #endif            
         {
-#ifndef FEATURE_VERSION_W208S        
+#ifndef FEATURE_VERSION_W208S    
+#ifndef FEATURE_VERSION_C337
 				OEMPriv_ResumeBREW();
 				return FALSE; 
+#endif				
 #else				
 				if (cls == AEECLSID_CORE_APP)		//For Emergency Call
 				{
@@ -1136,14 +1187,15 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
         if(wParam== AVK_SELECT||wParam == AVK_END || wParam == AVK_POWER || wParam == AVK_HEADSET_CONNECT || wParam == AVK_HEADSET_DISCONNECT)			
 #endif
         {        
-#ifndef FEATURE_VERSION_W208S          
+#ifndef FEATURE_VERSION_W208S  
+#ifndef FEATURE_VERSION_C337
         	return FALSE;
+#endif
 #else            
 			if(wParam != AVK_SELECT)
 			{
 				return FALSE;
-			}
-			
+			}			
 #endif
         }
 
@@ -1289,6 +1341,10 @@ SEE ALSO:
 void OEMKeyguard_SetState(boolean bEnabled)
 {
     sbKeyguardEnabled = bEnabled;
+
+#ifdef FEATURE_VERSION_C337
+	OEMPriv_DrawKeyguardInformation(!bEnabled);
+#endif
 
 	//Add By zzg 2012_10_30
 	#ifndef FEATURE_VERSION_W317A
