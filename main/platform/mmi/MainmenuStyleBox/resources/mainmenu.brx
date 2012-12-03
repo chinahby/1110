@@ -155,7 +155,7 @@
 		<Text>M! Live</Text>
 	</STRING>
 	<STRING Id="1090" Name="IDS_MAIN_MENU_MZONE">
-		<Text>M! Zone</Text>
+		<Text>M! Zone+</Text>
 	</STRING>
 	<STRING Id="1091" Name="IDS_MAIN_MENU_ORGANIZER">
 		<Text>Organizer</Text>
