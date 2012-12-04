@@ -12178,6 +12178,8 @@ void OEM_SetUCBROWSER_ADSAccount(void)
 	//	STRCPY(username,"wap@wap.mtsindia.in");
 	//	STRCPY(password,"wap");
 	//}
+	#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+	
 	DBGPRINTF("OEM_SetUCBROWSER_ADSAccountusername1 =%s", username);  
     DBGPRINTF("OEM_SetUCBROWSER_ADSAccountuserpassword1 =%s", password);
 	if(strstr (username,"mts"))
@@ -12205,6 +12207,7 @@ void OEM_SetUCBROWSER_ADSAccount(void)
 		STRCPY(username,"wap@ttsl.vmi.com");
 		STRCPY(password,"wap");
 	}
+	#endif
 	
 	DBGPRINTF("OEM_SetUCBROWSER_ADSAccountusername =%s", username);  
     DBGPRINTF("OEM_SetUCBROWSER_ADSAccountuserpassword =%s", password);
