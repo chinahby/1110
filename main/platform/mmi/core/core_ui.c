@@ -1992,8 +1992,16 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
             // AVK_END instead of AVK_HEADSET_SWITCH in conversation
             wParam = AVK_END;
         }else{
-            // AVK_SEND instead of AVK_HEADSET_SWITCH
-            wParam = AVK_SEND;
+            // add by pyuangui 20121204
+            #ifdef FEATURE_VERSION_W317A
+            if(AEE_Active()!=AEECLSID_APP_MUSICPLAYER)
+		    #endif
+        	{
+        	  MSG_FATAL("AVK_HEADSET_SWITCH---",0,0,0);
+              // AVK_SEND instead of AVK_HEADSET_SWITCH
+              wParam = AVK_SEND;
+        	}
+			// add end
         }
         bHandle = TRUE;
     }
