@@ -2970,6 +2970,26 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
         return  TRUE;
     //case AVK_GSENSOR_FORWARD:    
     case AVK_LEFT:
+#ifdef FEATURE_VERSION_C337
+        if(pMe->m_bPlaying && pMe->m_pMedia)
+        {
+            MP3_DrawImage(pMe, IDI_REWIND_PRESS, REWIND_X,REWIND_Y);
+            IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
+            ISHELL_SetTimer(pMe->m_pShell,50,(PFNNOTIFY)MP3_DrawRewindImage, pMe);
+            if(pMe->m_nCurrentTime < MS_FASTFORWARDREWIND_TIME/1000)
+            {
+                IMEDIA_Rewind(pMe->m_pMedia,pMe->m_nCurrentTime * 1000);
+                pMe->m_nCurrentTime = 0;
+            }
+            else
+            {
+                IMEDIA_Rewind(pMe->m_pMedia,MS_FASTFORWARDREWIND_TIME);
+                pMe->m_nCurrentTime = pMe->m_nCurrentTime - MS_FASTFORWARDREWIND_TIME/1000;
+            }
+            
+        }
+//xuhui
+#else		
         MP3_DrawImage( pMe,IDI_PREVIOUS_PRESS, PREVIOUSPRESS_X, PREVIOUSPRESS_Y);
         IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
 		pMe->m_rtype = TYPE_PREVIOUS;//wlh 20090415 mod 为了区别播放区域，加音量，减音量的刷新，加了个参数
@@ -2981,10 +3001,29 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
         ISHELL_SetTimer(pMe->m_pShell,50,(PFNNOTIFY)MP3_DrawImageWithOffset, pMe);
 #endif		
         CMusicPlayer_PlayNext(pMe,FALSE );//播放上一首
+#endif        
         return TRUE;
         
     //case AVK_GSENSOR_BACKWARD:   
     case AVK_RIGHT:
+#ifdef FEATURE_VERSION_C337	
+        if(pMe->m_bPlaying && pMe->m_pMedia)
+        {
+            MP3_DrawImage(pMe, IDI_FORWARD_PRESS, FORWARD_X,FORWARD_Y);
+            IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
+            ISHELL_SetTimer(pMe->m_pShell,50,(PFNNOTIFY)MP3_DrawForwardImage, pMe);
+            if((pMe->m_nTotalTime - pMe->m_nCurrentTime) < MS_FASTFORWARDREWIND_TIME/1000)
+            {
+                IMEDIA_FastForward(pMe->m_pMedia,1000*(pMe->m_nTotalTime - pMe->m_nCurrentTime));
+                pMe->m_nCurrentTime = pMe->m_nTotalTime;
+            }
+            else 
+            {
+                IMEDIA_FastForward(pMe->m_pMedia,MS_FASTFORWARDREWIND_TIME); 
+                pMe->m_nCurrentTime = pMe->m_nCurrentTime + MS_FASTFORWARDREWIND_TIME/1000;
+            }
+        }
+#else
         MP3_DrawImage( pMe,IDI_NEXT_PRESS,NEXTPRESS_X, NEXTPRESS_Y);
         IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
 		pMe->m_rtype = TYPE_NEXT;//wlh 20090415 mod 为了区别播放区域，加音量，减音量的刷新，加了个参数
@@ -2998,6 +3037,7 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
         pMe->m_bUserPressNext = TRUE;
         CMusicPlayer_PlayNext(pMe,TRUE);//播放下一首
         pMe->m_bUserPressNext = FALSE;
+#endif		
         return TRUE;
 
 #ifdef FEATURE_VERSION_C337
