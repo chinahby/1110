@@ -9476,10 +9476,10 @@ static void CallApp_Draw_Connect_Time(void *pUser)
                                     sizeof(szText));		
 	 bWidth = IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL,szText);
         SETAEERECT(&rect,
-                                    pMe->m_rc.dx - bWidth -1,
-                                    CALL_FIRST_LINE_Y,
+                                    CALL_NAME_X,
+                                    CALL_SECOND_UP_LINE_Y,
                                     bWidth,
-                                    CALL_LINE_HIGHT);   
+                                    CALL_LINE_HIGHT);   	
         IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, CALLAPP_TEXT_COLOR);
         
         (void)IDISPLAY_DrawText(pMe->m_pDisplay,

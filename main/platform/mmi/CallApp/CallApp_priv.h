@@ -201,9 +201,17 @@
 #define CALL_LINE_HIGHT                      (20) //18为NORMAL字体高度，目前只需要这个高度就够了
 #endif
 #define CALL_FIRST_LINE_Y                   (CALL_ANNU_HEIGHT)
+
+#if defined(FEATURE_VERSION_C337) 
+#define CALL_SECOND_UP_LINE_Y               (CALL_FIRST_LINE_Y +    CALL_LINE_HIGHT)
+#define CALL_SECOND_LINE_Y               (CALL_FIRST_LINE_Y +    2*CALL_LINE_HIGHT)
+#define CALL_THIRD_LINE_Y                  (CALL_FIRST_LINE_Y +3*CALL_LINE_HIGHT )
+#define CALL_FOURTH_LINE_Y               (CALL_FIRST_LINE_Y +4*CALL_LINE_HIGHT )
+#else
 #define CALL_SECOND_LINE_Y               (CALL_FIRST_LINE_Y +    CALL_LINE_HIGHT)
 #define CALL_THIRD_LINE_Y                  (CALL_FIRST_LINE_Y +2*CALL_LINE_HIGHT )
 #define CALL_FOURTH_LINE_Y               (CALL_FIRST_LINE_Y +3*CALL_LINE_HIGHT )
+#endif
 
 /*来电去电动画图片Y坐标*/
 #define CALL_ANIM_IMG_Y                  (CALL_FIRST_LINE_Y + 2*CALL_LINE_HIGHT+CALL_LINE_HIGHT/2)
