@@ -4071,18 +4071,19 @@ int OEM_GetPppAccounts(PppAccounts *pAccount, DataSvcType dsType)
    char *pszUserId, *pszPassWord;
    nv_item_type  nvi, nvi2;
    uint8 index;
-
+	//MSG_FATAL("OEM_GetPppAccounts......",0,0,0);
    if(NULL == pAccount)
       return EBADPARM;
     
-#ifdef FEATURE_DS_MULTIPLE_PROFILES
+#if 0//def FEATURE_DS_MULTIPLE_PROFILES
    // Get  the PPP NAI ID to NV FOR ACTIVE PROFILE.   
+   //MSG_FATAL("OEM_GetPppAccounts......0000000000000",0,0,0);
 #ifndef WIN32
    if(NV_DONE_S != OEMNV_Get(NV_DS_SIP_ACTIVE_PROFILE_INDEX_I, &nvi ))   {
       DBGPRINTF( "NV read fails for active profile index");
       return EFAILED;
    }   
-
+   //MSG_FATAL("OEM_GetPppAccounts...........NV_DS_SIP_NAI_INFO_I",0,0,0);
    index = nvi.ds_sip_active_profile_index;
 
    nvi.ds_sip_nai_info.index = index;  
@@ -4094,13 +4095,15 @@ int OEM_GetPppAccounts(PppAccounts *pAccount, DataSvcType dsType)
       DBGPRINTF(";get NV_DS_SIP_PPP_SS_INFO_I failed");  
 #endif   
 #else // FEATURE_DS_MULTIPLE_PROFILES
-   
+  // MSG_FATAL("OEM_GetPppAccounts...........NV_PPP_USER_ID_I",0,0,0);
    if(OEMNV_GetPPPItem(NV_PPP_USER_ID_I, &nvi) != NV_DONE_S)
       DBGPRINTF(";get NV_PPP_USER_ID_I failed");
    
    if(OEMNV_GetPPPItem(NV_PPP_PASSWORD_I, &nvi2) != NV_DONE_S) 
       DBGPRINTF(";get NV_PPP_PASSWORD_I failed");   
 #endif // FEATURE_DS_MULTIPLE_PROFILES
+
+	//MSG_FATAL("OEM_GetPppAccounts......11111111111",0,0,0);
 		
     switch(dsType)
     {
