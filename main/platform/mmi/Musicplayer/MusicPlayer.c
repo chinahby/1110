@@ -1808,8 +1808,11 @@ static void MP3_Build_DefaultPlaylist(CMusicPlayer *pMe)
    //Add By zzg 2010_08_17
     if(CMediaGallery_GetTflashStatus())		//有T 卡时
     {
+#if defined(FEATURE_VERSION_C337)    
+       (void)IFILEMGR_EnumInit(pMe->m_pFileMgr, MG_MASSCARDMUSIC_PATH, FALSE); //T卡根目录的文件
+#else
        (void)IFILEMGR_EnumInit(pMe->m_pFileMgr, AEEFS_CARD0_DIR, FALSE); //T卡根目录的文件
-
+#endif
 	     while (IFILEMGR_EnumNextEx(pMe->m_pFileMgr, &fi))
 	     {
 	          char *            psz = NULL;
@@ -1905,7 +1908,11 @@ static void MP3_Build_DefaultPlaylist(CMusicPlayer *pMe)
 	 //枚举playlist文件夹     
     if (CMediaGallery_GetTflashStatus())		//有T 卡时
     {
-       (void)IFILEMGR_EnumInit(pMe->m_pFileMgr, AEEFS_CARD0_DIR, TRUE); 	   
+#if defined(FEATURE_VERSION_C337)    
+       (void)IFILEMGR_EnumInit(pMe->m_pFileMgr, MG_MASSCARDMUSIC_PATH, FALSE); //T卡根目录的文件
+#else
+       (void)IFILEMGR_EnumInit(pMe->m_pFileMgr, AEEFS_CARD0_DIR, TRUE); //T卡根目录的文件
+#endif    
 		 count = 0;
 	     while ((IFILEMGR_EnumNextEx(pMe->m_pFileMgr, &fi)) &&(count<MUSIC_MAX_FILESNUM))
 	     {
