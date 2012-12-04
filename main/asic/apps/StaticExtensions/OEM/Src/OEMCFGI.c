@@ -12157,18 +12157,57 @@ void OEM_SetUCBROWSER_ADSAccount(void)
     char password[PPP_MAX_PASSWD_LEN] = {0};
     
     OEMDSS_SetAppType(DA_WAP_TYPE);
+
+	
     
     if(SUCCESS == OEM_GetPppAccounts(&Account, DS_WAP20_TYPE))
     {
+    	//MSG_FATAL("read uim card..................",0,0,0);
     	MEMCPY(username, Account.user_id_info, STRLEN(Account.user_id_info));	
     	MEMCPY(password, Account.passwd_info, STRLEN(Account.passwd_info));	
     }
     else
     {
+    	//MSG_FATAL("read uim cefs..................",0,0,0);
         OEMPriv_GetItem_CFGI_BREWSET_USENAME((void*)username);
         OEMPriv_GetItem_CFGI_BREWSET_PASSWORD((void*)password);
     }
-    
+
+	//if(STRCMP(username,"rew@rew.mtsindia.in") == 0)
+	//{
+	//	STRCPY(username,"wap@wap.mtsindia.in");
+	//	STRCPY(password,"wap");
+	//}
+	DBGPRINTF("OEM_SetUCBROWSER_ADSAccountusername1 =%s", username);  
+    DBGPRINTF("OEM_SetUCBROWSER_ADSAccountuserpassword1 =%s", password);
+	if(strstr (username,"mts"))
+	{
+		STRCPY(username,"wap@wap.mtsindia.in");
+		STRCPY(password,"wap");
+	}
+	else if(strstr (username,"tata"))
+	{
+		STRCPY(username,"wapuser");
+		STRCPY(password,"wapuser");
+	}
+	else if(strstr (username,"tata"))
+	{
+		STRCPY(username,"wapuser");
+		STRCPY(password,"wapuser");
+	}
+	else if(strstr (username,"reliance"))
+	{
+		STRCPY(username,"SpiceD88@wap.reliance.com");
+		STRCPY(password,"K39MspDeci");
+	}
+	else if(strstr (username,"vmi"))
+	{
+		STRCPY(username,"wap@ttsl.vmi.com");
+		STRCPY(password,"wap");
+	}
+	
+	DBGPRINTF("OEM_SetUCBROWSER_ADSAccountusername =%s", username);  
+    DBGPRINTF("OEM_SetUCBROWSER_ADSAccountuserpassword =%s", password);
     // ук╨е
 
     //(void)STRCPY((char *)nvi.pap_user_id.user_id, (char *)DEFAULT_BREW_USERNAME);
