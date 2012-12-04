@@ -112,7 +112,7 @@ static void    OEMPriv_ResetAutoguardTimer(void);
 static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
                                             uint16    wParam,
                                             uint32    dwParam);
-static void    OEMPriv_DrawKeyguardMessage(boolean unlockkey);
+static void    OEMPriv_DrawKeyguardMessage(boolean unlockkey, boolean unlocked);
 static void    OEMPriv_DrawKeyguardInformation(boolean unlockkey);	//Add By zzg 2012_12_03
 static void    OEMPriv_DrawKeyguardTime(void);
 static void    OEMPriv_DrawMessageCB(void *pUnused);
@@ -603,11 +603,11 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
                         {                    
                             IALERT_KeyBeep(spAlert, (AVKType) wParam, TRUE);
                         }
-                        OEMPriv_DrawKeyguardMessage(TRUE);                            
+                        OEMPriv_DrawKeyguardMessage(TRUE, FALSE);                            
                     }
                     else
                     {
-                        OEMPriv_DrawKeyguardMessage(FALSE);                      
+                        OEMPriv_DrawKeyguardMessage(FALSE, FALSE);                      
                         sUnlockState = UNLOCKSTATE_RESET;
                     }
                     break;
@@ -640,6 +640,11 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
                             OEMKeyguard_SetState(FALSE);							
                         #endif
                         OEMPriv_ResumeBREW();
+#ifdef FEATURE_VERSION_C337							
+#ifdef FEATURE_KEYGUARD
+                        OEMPriv_DrawKeyguardMessage(FALSE, TRUE);   
+#endif			
+#endif
                         return TRUE;
 
                     }
@@ -654,7 +659,7 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
                         }
                         else
                         {
-                            OEMPriv_DrawKeyguardMessage(FALSE);
+                            OEMPriv_DrawKeyguardMessage(FALSE, FALSE);
                         }
                         sUnlockState = UNLOCKSTATE_RESET;
                     }
@@ -683,7 +688,7 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
                     }
                     else
                     {
-                        OEMPriv_DrawKeyguardMessage(FALSE);
+                        OEMPriv_DrawKeyguardMessage(FALSE, FALSE);
                     }
                     sUnlockState = UNLOCKSTATE_RESET;
                     bDrawMessage = !bDrawMessage;
@@ -709,7 +714,7 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
                     }
                     else
                     {
-                        OEMPriv_DrawKeyguardMessage(FALSE);
+                        OEMPriv_DrawKeyguardMessage(FALSE, FALSE);
                     }
 					
                     sUnlockState = UNLOCKSTATE_RESET;
@@ -848,7 +853,7 @@ SIDE EFFECTS:
 SEE ALSO:
 
 =============================================================================*/
-static void OEMPriv_DrawKeyguardMessage(boolean unlockkey)
+static void OEMPriv_DrawKeyguardMessage(boolean unlockkey, boolean unlocked)
 {
     IDisplay      *pd;
     IStatic       *pStatic;
@@ -884,7 +889,7 @@ static void OEMPriv_DrawKeyguardMessage(boolean unlockkey)
         }
         OEMKeyguard_Set_Annunciator_Enable(FALSE);
 #ifdef FEATURE_KEYGUARD
-        Appscomm_Draw_Keyguard_Msg(pd,pStatic,unlockkey);
+        Appscomm_Draw_Keyguard_Msg(pd,pStatic,unlockkey, unlocked);
 #endif
         ISTATIC_Release(pStatic);
         IDISPLAY_Release(pd);
@@ -928,7 +933,7 @@ static void OEMPriv_DrawKeyguardInformation(boolean unlockkey)
         }
         OEMKeyguard_Set_Annunciator_Enable(FALSE);
 #ifdef FEATURE_KEYGUARD
-        Appscomm_Draw_Keyguard_Information(pd,pStatic,unlockkey);
+      //  Appscomm_Draw_Keyguard_Information(pd,pStatic,unlockkey);
 #endif
         ISTATIC_Release(pStatic);
         IDISPLAY_Release(pd);
