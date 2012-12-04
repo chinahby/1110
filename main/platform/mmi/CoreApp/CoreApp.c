@@ -626,6 +626,10 @@ boolean CoreApp_InitAppData(IApplet* po)
     pMe->m_b_set_lock = FALSE ;
     pMe->m_iskeypadtime = FALSE;
 #endif
+
+#ifdef FEATURE_VERSION_C337
+    pMe->m_bLocked = FALSE;	
+#endif
     
     pMe->m_bConfigSent  = FALSE;
     pMe->m_cdg_msgptr = NULL;

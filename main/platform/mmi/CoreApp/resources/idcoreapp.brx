@@ -196,6 +196,12 @@
 	<String Id="1065" Name="IDS_SUPER_SINGAL_OFF">
 		<Text>Super singal off!</Text>
 	</String>
+	<String Id="1066" Name="IDS_LOCKED" Encoding="Unicode">
+		<Text>Keypad locked</Text>
+	</String>
+	<String Id="1067" Name="IDS_UNLOCKED" Encoding="Unicode">
+		<Text>Keypad unlocked</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_UIMERR" Focus="7001">
