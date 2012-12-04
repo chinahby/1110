@@ -3765,16 +3765,6 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 		    }			
 			#endif
 			//Add End
-#ifdef FEATURE_VERSION_C337
-	    MSG_FATAL("IDD_IDLE_Handler m_bLocked=%d, wParam=%d",pMe->m_bLocked,wParam,0);	
-	     if(pMe->m_bLocked)
-	    { 
-	    	pMe->m_bLocked = FALSE;
-            	pMe->m_nMsgID = IDS_LOCKED;
-         	CLOSE_DIALOG(DLGRET_BATT_INFO)	
-		return TRUE;		
-	     }
-#endif			
 				
             CoreApp_DrawWallPaper(pMe); // debug for wallpaper update issue
             if(pWallPaper)
@@ -3783,7 +3773,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 IImage_Notify(pWallPaper, (PFNIMAGEINFO)CoreApp_ImageNotify, pMe);
             }
             return TRUE;            
-        }
+        } 
 #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM) ||defined(FEATURE_VERSION_S1000T)||defined(FEATURE_LCD_TOUCH_ENABLE)||defined(FEATURE_VERSION_C11)
 		case EVT_KEY_HELD:
 			 MSG_FATAL("***zzg EVT_KEY_HELD wParam=%x, dwParam=%x", wParam, dwParam, 0);
@@ -5677,20 +5667,10 @@ static void CoreApp_TimeKeyguard(void *pUser)
 	
     if(pMe->m_b_set_lock)
     {    	
-        OEMKeyguard_SetState(TRUE);	
-	 pMe->m_b_set_lock = FALSE;	
-#ifdef FEATURE_VERSION_C337
-        (void) ISHELL_PostEvent(pMe->a.m_pIShell, 
-                                AEECLSID_CORE_APP,
-                                EVT_USER_REDRAW,
-                                TRUE, 
-                                0);
-	pMe->m_bLocked = TRUE;	
-#else
-        CoreApp_UpdateBottomBar(pMe);	
-#endif
+        OEMKeyguard_SetState(TRUE);			
+        CoreApp_UpdateBottomBar(pMe);		
         //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-        
+        pMe->m_b_set_lock = FALSE;
     }
 }
 #endif

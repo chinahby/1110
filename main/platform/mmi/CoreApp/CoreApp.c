@@ -626,10 +626,6 @@ boolean CoreApp_InitAppData(IApplet* po)
     pMe->m_b_set_lock = FALSE ;
     pMe->m_iskeypadtime = FALSE;
 #endif
-
-#ifdef FEATURE_VERSION_C337
-    pMe->m_bLocked = FALSE;	
-#endif
     
     pMe->m_bConfigSent  = FALSE;
     pMe->m_cdg_msgptr = NULL;
@@ -1013,7 +1009,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             // 事件在EVT_DIALOG_END事件前发出。
             if (pMe->m_bSuspended == FALSE)
             {
-                // 跑状态机
+                // 跑状态机 
                 CoreApp_RunFSM(pMe);
             }
             return TRUE;

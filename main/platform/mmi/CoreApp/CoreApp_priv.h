@@ -917,14 +917,9 @@ typedef struct _CCoreApp
 #ifdef FEATURE_KEYGUARD
     boolean             m_b_set_lock;
 #endif
-
-#ifdef FEATURE_VERSION_C337
-    boolean             m_bLocked;	
-#endif
-
 #ifdef FEATRUE_SET_ANN_FULL_SCREEN
     db_capture_type     m_capture;
-#endif
+#endif 
     boolean             m_bProvisioned; 
     boolean             m_bConfigSent;
     AECHAR             *m_cdg_msgptr;
