@@ -280,7 +280,7 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
                                            AEEEvent    eCode,
                                            uint16      wParam,
                                            uint32      dwParam);
-#ifdef FEATURE_VERSION_W027V3
+#if defined(FEATURE_VERSION_W027V3) || defined(FEATURE_VERSION_W317A)
 static void CallApp_TorchTipTimeOut(CCallApp *pMe);
 #endif
 
@@ -1577,7 +1577,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                         }
                         else
                         {
-                            #if defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_W027V3)|| defined(FEATURE_VERSION_H1201)
+                            #if defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_W027V3)|| defined(FEATURE_VERSION_H1201) || defined(FEATURE_VERSION_W317A)
                             #else
                             CallApp_ProcessUIMMMIStr(pMe, pMe->m_DialString);
                             #endif
@@ -11704,7 +11704,7 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
 				}
 			}
 			OEM_SetConfig(CFGI_FLSHLITHG_STATUS,&TorchOn, sizeof(TorchOn));
-            #ifdef FEATURE_VERSION_W027V3
+            #if defined(FEATURE_VERSION_W027V3) || defined(FEATURE_VERSION_W317A)
             {
                 static IStatic * torch_pStatic = NULL;
                  PromptMsg_Param_type m_PromptMsg;
@@ -11784,7 +11784,7 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
     }
     return TRUE;
 }
-#ifdef FEATURE_VERSION_W027V3
+#if defined(FEATURE_VERSION_W027V3) || defined(FEATURE_VERSION_W317A)
 static void CallApp_TorchTipTimeOut(CCallApp *pMe)
 {
     if (NULL == pMe)
