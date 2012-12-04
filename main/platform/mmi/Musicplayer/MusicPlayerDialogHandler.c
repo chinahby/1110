@@ -223,6 +223,9 @@ static void MP3_DrawNoRecord(CMusicPlayer *pMe);
 static void MP3_EnableKey( void);
 //Add End
 
+#ifdef FEATURE_VERSION_W317A
+void CMusicPlayer_HeadsetSwitch(CMusicPlayer *pMe);
+#endif
 /*==============================================================================
                                  全局数据
 ==============================================================================*/
@@ -3159,7 +3162,24 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
 	}
 #endif
 	//Add End
-		
+
+    //Add by pyuangui 20121204
+    #ifdef FEATURE_VERSION_W317A
+    case AVK_HEADSET_SWITCH:
+		if(pMe->m_headsetSwitch)
+		{
+		   pMe->m_headsetSwitch =FALSE;
+           ISHELL_CancelTimer(pMe->m_pShell,(PFNNOTIFY)CMusicPlayer_HeadsetSwitch,pMe);
+		   MP3_MusicPlayerHandleKeyEvent(pMe,EVT_KEY,AVK_RIGHT,0);
+		}
+		else
+	    {
+     	   pMe->m_headsetSwitch =TRUE;
+     	   (void) ISHELL_SetTimer(pMe->m_pShell,1000,(PFNNOTIFY) CMusicPlayer_HeadsetSwitch,pMe);
+		}
+		return TRUE;
+	#endif	
+	//Add End
     case AVK_BGPLAY:
         if(pMe->m_bPlaying)
         {
@@ -4829,6 +4849,12 @@ void CMusicPlayer_MediaNotify(void * pUser, AEEMediaCmdNotify * pCmdNotify)
                 break;
         }
     }
+}
+
+void CMusicPlayer_HeadsetSwitch(CMusicPlayer *pMe)
+{  
+    pMe->m_headsetSwitch = FALSE;
+	MP3_MusicPlayerHandleKeyEvent(pMe,EVT_KEY,AVK_INFO,0);
 }
 
 /*===========================================================================

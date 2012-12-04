@@ -1078,6 +1078,7 @@ typedef struct _CMusicPlayer
     boolean    m_bNotContinue;
     boolean    m_bStartApp;
     boolean    m_bSimPlayFailed;
+	boolean    m_headsetSwitch;
     byte       m_keyBeepVol;
     boolean    m_bInterrupt;
     Mp3Player_Status m_ePreMp3Status;

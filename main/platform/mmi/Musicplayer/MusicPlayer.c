@@ -400,6 +400,7 @@ static int CMusicPlayer_InitAppData(CMusicPlayer *pMe)
     pMe->m_bUserPressNext = FALSE;
     pMe->m_bAppReady = FALSE;
     pMe->m_bRenameOpt = FALSE;
+	pMe->m_headsetSwitch = FALSE;
     pMe->m_nAutoScrollIdx = 0;
     pMe->m_nCurrentTime = 0;
     pMe->m_nTotalTime = 0;
