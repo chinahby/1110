@@ -2975,7 +2975,7 @@ void DrawPromptMessage (IDisplay *pIDisplay,
 }
 
 #ifdef FEATURE_KEYGUARD
-void Appscomm_Draw_Keyguard_Msg(IDisplay *pIDisplay,IStatic *pStatic,boolean unlockkey, boolean unlocked)
+void Appscomm_Draw_Keyguard_Msg(IDisplay *pIDisplay,IStatic *pStatic,boolean unlockkey)
 {
     PromptMsg_Param_type m_PromptMsg;
     AEERect rect = {0};
@@ -2989,33 +2989,31 @@ void Appscomm_Draw_Keyguard_Msg(IDisplay *pIDisplay,IStatic *pStatic,boolean unl
     {
         return;
     } 
-#ifdef FEATURE_VERSION_C337	
-    if(unlocked	)
+//Add By zzg 2010_11_23
+#ifdef FEATURE_UNLOCK_KEY_SPACE
+	m_PromptMsg.nMsgResID = IDS_MSG_KEYGUARD_SPACE;
+#else
+	if(TRUE == unlockkey)
+	{
+	    m_PromptMsg.nMsgResID = IDS_MSG_KEYGUARD_UNLOCKKEY;
+	}
+	else
+	{
+	    m_PromptMsg.nMsgResID = IDS_MSG_KEYGUARD;        
+	}
+#endif
+//Add End
+
+	/*
+    if(TRUE == unlockkey)
     {
-        m_PromptMsg.nMsgResID = IDS_UNLOCK;   
+        m_PromptMsg.nMsgResID = IDS_MSG_KEYGUARD_UNLOCKKEY;
     }
     else
-#endif		
     {
-        //Add By zzg 2010_11_23
-#ifdef FEATURE_UNLOCK_KEY_SPACE
-        m_PromptMsg.nMsgResID = IDS_MSG_KEYGUARD_SPACE;
-#else
-        if(TRUE == unlockkey)
-        {
-        m_PromptMsg.nMsgResID = IDS_MSG_KEYGUARD_UNLOCKKEY;
-        }
-        else
-        {
-#ifdef FEATURE_VERSION_C337	
-        m_PromptMsg.nMsgResID = IDS_MSG_KEYGUARD_C337;  
-#else
         m_PromptMsg.nMsgResID = IDS_MSG_KEYGUARD;        
-#endif
-        }
-#endif
-        //Add End
     }
+    */
     
     STRLCPY(m_PromptMsg.strMsgResFile, AEE_APPSCOMMONRES_LANGFILE,MAX_FILE_NAME);
     m_PromptMsg.ePMsgType = MESSAGE_WARNNING;        
