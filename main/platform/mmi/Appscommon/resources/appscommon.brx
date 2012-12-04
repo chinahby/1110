@@ -283,6 +283,12 @@
 	<String Id="1041" Name="IDS_CLEAR_EX" Encoding="Unicode">
 		<Text>Clear</Text>
 	</String>
+	<String Id="1042" Name="IDS_MSG_KEYGUARD_C337" Encoding="Unicode">
+		<Text>Press Unlock &amp; then  *  key</Text>
+	</String>
+	<String Id="1043" Name="IDS_UNLOCK" Encoding="Unicode">
+		<Text>Keypad unlocked</Text>
+	</String>
 	<STRING Id="2001" Name="IDS_SNOOZE">
 		<Text>Snooze</Text>
 	</STRING>
@@ -315,16 +321,16 @@
 	</String>
 	<STRING Id="2011" Name="IDS_PHONE_BOOK">
 		<Text>Phonebook</Text>
-	</STRING>	
+	</STRING>
 	<STRING Id="2012" Name="IDS_FILE_MANAGER">
 		<Text>File manager</Text>
-	</STRING>	
+	</STRING>
 	<STRING Id="2013" Name="IDS_SEARCH">
 		<Text>Search</Text>
-	</STRING>	
+	</STRING>
 	<STRING Id="2014" Name="IDS_NAMES">
 		<Text>Names</Text>
-	</STRING>	
+	</STRING>
 	<STRING Id="2015" Name="IDS_KEYPAD_LOCKED">
 		<Text>Keypad locked</Text>
 	</STRING>	

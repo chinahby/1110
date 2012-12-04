@@ -259,6 +259,12 @@
 	<String Id="1037" Name="IDS_CLEAR_EX" Encoding="Unicode">
 		<Text>Clear</Text>
 	</String>
+	<String Id="1038" Name="IDS_MSG_KEYGUARD_C337" Encoding="Unicode">
+		<Text>IDS_MSG_KEYGUARD_C337</Text>
+	</String>
+	<String Id="1039" Name="IDS_UNLOCK" Encoding="Unicode">
+		<Text>Keypad unlocked</Text>
+	</String>
 	<STRING Id="2001" Name="IDS_SNOOZE">
 		<Text>Tahan</Text>
 	</STRING>

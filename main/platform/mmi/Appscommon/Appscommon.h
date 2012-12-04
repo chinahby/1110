@@ -814,7 +814,7 @@ void CancelReDrawPromptMessage (void *pShell);
 ==============================================================================*/
 void DrawBackground( IDisplay *pDisplay, AEERect *pRect);
 #ifdef FEATURE_KEYGUARD
-void Appscomm_Draw_Keyguard_Msg(IDisplay *pIDisplay,IStatic *pStatic,boolean unlockkey);
+void Appscomm_Draw_Keyguard_Msg(IDisplay *pIDisplay,IStatic *pStatic,boolean unlockkey, boolean unlocked);
 void Appscomm_Draw_Keyguard_Information(IDisplay *pIDisplay,IStatic *pStatic,boolean unlockkey);	//Add By zzg 2012_12_03
 #ifdef FEATURE_LCD_TOUCH_ENABLE 
 void Appscomm_Draw_Keyguard_Slide(IDisplay *pIDisplay,uint16 x,uint16 y);
