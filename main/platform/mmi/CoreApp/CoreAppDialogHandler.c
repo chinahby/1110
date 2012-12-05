@@ -3560,7 +3560,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 			
             if(pMe->m_pIAnn != NULL)
             {
-                #if defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_1110W516)|| defined(FEATURE_VERSION_W027)
+                #if defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_1110W516)|| defined(FEATURE_VERSION_W027)||defined(FEATURE_VERSION_W027V3)
                 IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, FALSE);
                 #else
                 IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);//返回待机界面时，要把显示titlebar标志还原成TRUE
@@ -4133,6 +4133,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					return CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 #elif defined(FEATURE_VERSION_C11)||defined(FEATURE_VERSION_W317A)
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CAMERA);
+#elif defined(FEATURE_VERSION_W027V3)
+                    return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);
 #else
                 	return CoreApp_LaunchApplet(pMe, AEECLSID_MEDIAGALLERY);
 #endif
@@ -4168,7 +4170,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
 	#elif defined (FEATURE_VERSION_M8021)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
-	#elif defined (FEATURE_VERSION_M8P)
+	#elif defined (FEATURE_VERSION_M8P) || defined(FEATURE_VERSION_W027V3)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT); 
 	#elif defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO); 
@@ -4239,7 +4241,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER); 
 #elif defined (FEATURE_VERSION_M8P)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
-#elif defined (FEATURE_VERSION_C11)
+#elif defined (FEATURE_VERSION_C11) || defined(FEATURE_VERSION_W027V3)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #elif defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_SCHEDULEAPP);
@@ -4308,7 +4310,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 				    	}
                         #elif defined(FEATURE_VERSION_VG68)||defined(FEATURE_VERSION_C337)
                             return CoreApp_LaunchApplet(pMe, AEECLSID_ALARMCLOCK);
-                        #elif defined(FEATURE_VERSION_C11)
+                        #elif defined(FEATURE_VERSION_C11)||defined(FEATURE_VERSION_W027V3)
                             return CoreApp_LaunchApplet(pMe, AEECLSID_APP_SETTINGMENU);
 						#else
 							return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);//
