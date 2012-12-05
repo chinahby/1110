@@ -8186,7 +8186,9 @@ void cmx_pcm_record_data_processing (
       CMX_FREE(buffer);
       if(handle->link == CMX_PCM_REC_LINK_REVERSE) {
         snd_pcm_record_stop(SND_PCM_REC_DIR_REVERSE, NULL, NULL);
-      } else {
+      }else if(handle->link == CMX_PCM_REC_LINK_BOTH) {
+        snd_pcm_record_stop(SND_PCM_REC_DIR_BOTH, NULL, NULL);
+      }else {
         snd_pcm_record_stop(SND_PCM_REC_DIR_FORWARD, NULL, NULL);
       }
     } else if(do_buf) {
@@ -8236,6 +8238,10 @@ void cmx_pcm_record_done_processing (
       cmx_free_handle(handle_ptr->rec_tx_handle);
     }
     if (handle_ptr->link == CMX_PCM_REC_LINK_FORWARD &&
+        handle_ptr->rec_rx_handle != NULL) {
+      cmx_free_handle(handle_ptr->rec_rx_handle);
+    }
+    if (handle_ptr->link == CMX_PCM_REC_LINK_BOTH&&
         handle_ptr->rec_rx_handle != NULL) {
       cmx_free_handle(handle_ptr->rec_rx_handle);
     }
@@ -13826,7 +13832,8 @@ void cmx_pcm_record_processing (
   }
 
   if((rec_param->link == CMX_PCM_REC_LINK_REVERSE) ||
-     (rec_param->link == CMX_PCM_REC_LINK_FORWARD)) {
+     (rec_param->link == CMX_PCM_REC_LINK_FORWARD) ||
+     (rec_param->link == CMX_PCM_REC_LINK_BOTH)) {
 
     switch(handle->source_type) {
       case CMX_SOURCE_MEM:
@@ -13935,7 +13942,17 @@ void cmx_pcm_record_processing (
                          (snd_pcm_rec_cb_func_ptr_type) cmx_pcm_rec_snd_cb,
                          (void *) handle_ptr );
 
-      } else {
+      }else if(rec_param->link == CMX_PCM_REC_LINK_BOTH) {
+#ifdef FEATURE_EFS
+        if (handle->source_type == CMX_SOURCE_EFS) {
+          handle_ptr->rec_tx_handle = handle;
+        }
+#endif /* FEATURE_EFS */
+        snd_pcm_record ( SND_PCM_REC_DIR_BOTH, &snd_rec_cmd,
+                         (snd_pcm_rec_cb_func_ptr_type) cmx_pcm_rec_snd_cb,
+                         (void *) handle_ptr );
+
+      }else {
 #ifdef FEATURE_EFS
         if (handle->source_type == CMX_SOURCE_EFS) {
           handle_ptr->rec_rx_handle = handle;
@@ -14014,6 +14031,13 @@ void cmx_pcm_record_stop_processing (
       snd_pcm_record_stop(SND_PCM_REC_DIR_FORWARD, NULL, NULL);
       break;
 
+    case CMX_PCM_REC_LINK_BOTH:
+      if(cb_func != NULL) {
+        cb_func(CMX_SUCCESS, client_data);
+      }
+      snd_pcm_record_stop(SND_PCM_REC_DIR_BOTH, NULL, NULL);
+      break;
+
     default:
       if(cb_func != NULL) {
         cb_func(CMX_FAILURE, client_data);
@@ -14060,6 +14084,13 @@ void cmx_pcm_record_pause_processing (
       snd_pcm_record_pause(SND_PCM_REC_DIR_FORWARD, NULL, NULL);
       break;
 
+    case CMX_PCM_REC_LINK_BOTH:
+      if(cb_func != NULL) {
+        cb_func(CMX_SUCCESS, client_data);
+      }
+      snd_pcm_record_pause(SND_PCM_REC_DIR_BOTH, NULL, NULL);
+      break;
+
     default:
       if(cb_func != NULL) {
         cb_func(CMX_FAILURE, client_data);
@@ -14104,6 +14135,13 @@ void cmx_pcm_record_resume_processing (
         cb_func(CMX_SUCCESS, client_data);
       }
       snd_pcm_record_resume(SND_PCM_REC_DIR_FORWARD, NULL, NULL);
+      break;
+
+    case CMX_PCM_REC_LINK_BOTH:
+      if(cb_func != NULL) {
+        cb_func(CMX_SUCCESS, client_data);
+      }
+      snd_pcm_record_resume(SND_PCM_REC_DIR_BOTH, NULL, NULL);
       break;
 
     default:
@@ -14513,6 +14551,14 @@ void cmx_mm_record_processing (
                                     client_data);
 
         } else if (rec_param->mm_rec_link == CMX_MM_REC_LINK_FORWARD) {
+
+          cmx_qcp_record_processing(NULL,
+                                    handle,
+                                    (cmx_mm_rec_qcp_para_type *)
+                                    &(rec_param->mm_rec_param),
+                                    cb_func,
+                                    client_data);
+        } else if (rec_param->mm_rec_link == CMX_MM_REC_LINK_BOTH) {
 
           cmx_qcp_record_processing(NULL,
                                     handle,
@@ -18996,6 +19042,69 @@ void cmx_qcp_record_forward (
 
       packet->qcp_record.rec_param.mm_rec_format = CMX_MM_FORMAT_QCP;
       packet->qcp_record.rec_param.rec_path      = CMX_MM_REC_LINK_FORWARD;
+      packet->qcp_record.rec_param.format        = rec_param->format;
+      packet->qcp_record.rec_param.report_ms     = rec_param->report_ms;
+      packet->qcp_record.rec_param.auto_stop_ms  = rec_param->auto_stop_ms;
+      packet->qcp_record.rec_param.data_req_ms   = 0;
+
+      packet->qcp_record.cb_func        = cb_func;
+      packet->qcp_record.client_data    = client_data;
+
+      MSG_HIGH("cmx_qcp_record_forward(format=%d, report_ms=%d, auto_stop=%d)",
+               (uint16)rec_param->format,
+               rec_param->report_ms, rec_param->auto_stop_ms);
+      cmx_cmd (packet);
+      return;
+    } else {
+      cmx_free_handle(phandle);
+    }
+  }
+
+  if(cb_func != NULL) {
+    cb_func(CMX_FAILURE, client_data);
+  }
+}
+
+
+/* <EJECT> */
+/*===========================================================================
+
+FUNCTION cmx_qcp_record_forward_both
+
+DESCRIPTION
+  This function sends a command to start QCP recording on forward link.
+
+DEPENDENCIES
+  None.
+
+RETURN VALUE
+  None.
+
+SIDE EFFECTS
+  None.
+
+===========================================================================*/
+void cmx_qcp_record_both (
+  cmx_handle_type       *handle,
+  cmx_qcp_rec_para_type *rec_param,
+  cmx_cb_func_ptr_type  cb_func,
+  const void            *client_data
+) {
+  cmx_packet_type *packet;
+  cmx_handle_type *phandle;
+
+  phandle  = cmx_get_handle();
+  if(phandle != NULL) {
+    packet = cmx_cmd_get_pkt ();
+
+    if (packet != NULL) {
+      *phandle                          = *handle;
+      packet->hdr.cmd                   = CMX_QCP_CMD_REC;
+      packet->qcp_record.tx_handle      = NULL;
+      packet->qcp_record.rx_handle      = phandle;
+
+      packet->qcp_record.rec_param.mm_rec_format = CMX_MM_FORMAT_QCP;
+      packet->qcp_record.rec_param.rec_path      = CMX_MM_REC_LINK_BOTH;
       packet->qcp_record.rec_param.format        = rec_param->format;
       packet->qcp_record.rec_param.report_ms     = rec_param->report_ms;
       packet->qcp_record.rec_param.auto_stop_ms  = rec_param->auto_stop_ms;

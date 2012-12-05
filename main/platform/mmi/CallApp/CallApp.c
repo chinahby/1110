@@ -786,7 +786,7 @@ static int CallApp_InitAppData(CCallApp *pMe)
         return EFAILED;
     }
 
-#if defined( FEATURE_CALL_RECORDER)
+#if 0// defined( FEATURE_CALL_RECORDER)
 	if( !recorder_init_media( &pMe->m_Media))
 	{
 		return EFAILED;

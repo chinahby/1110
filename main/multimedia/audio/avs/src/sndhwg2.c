@@ -903,6 +903,8 @@ void *sndhw_adec_client_data = NULL;
 */
 boolean sndhw_pcm_rec_reverse_enabled = FALSE;
 boolean sndhw_pcm_rec_forward_enabled = FALSE;
+boolean sndhw_pcm_rec_both_enabled = FALSE;
+
 #endif /* FEATURE_PCM_REC */
 
 #ifdef FEATURE_MM_REC
@@ -3435,6 +3437,9 @@ void sndhw_pcm_record (
   } else if(link == SND_PCM_REC_DIR_FORWARD) {
     sndhw_pcm_rec_forward_enabled = (cb_func != NULL);
     voc_register_pcm_output_client(VOC_PCM_INTERFACE_RX_OUTPUT, cb_func);
+  } else if(link == SND_PCM_REC_DIR_BOTH) {
+    sndhw_pcm_rec_both_enabled = (cb_func != NULL);
+    voc_register_pcm_output_client(VOC_PCM_INTERFACE_RX_OUTPUT, cb_func);
   }
   sndhw_set_apath_out(&snd_crnt_path_out);
 }
@@ -3466,6 +3471,9 @@ void sndhw_pcm_record_stop (
     voc_register_pcm_output_client(VOC_PCM_INTERFACE_TX_OUTPUT, NULL);
   } else if(link == SND_PCM_REC_DIR_FORWARD) {
     sndhw_pcm_rec_forward_enabled = FALSE;
+    voc_register_pcm_output_client(VOC_PCM_INTERFACE_RX_OUTPUT, NULL);
+  } else if(link == SND_PCM_REC_DIR_BOTH) {
+    sndhw_pcm_rec_both_enabled = FALSE;
     voc_register_pcm_output_client(VOC_PCM_INTERFACE_RX_OUTPUT, NULL);
   }
   sndhw_set_apath_out(&snd_crnt_path_out);

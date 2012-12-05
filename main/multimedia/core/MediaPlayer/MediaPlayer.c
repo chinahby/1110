@@ -11934,6 +11934,17 @@ static int CPlayerWin_HandleCreateMedia(IWindow *po, AEEEvent eCode, uint16 wPar
             DBGPRINTF_ERROR("MP: Failed to set media1 audio path: %d[MM_APATH_LOCAL], ret %d = %s", (int32)MM_APATH_REMOTE, nRet,
                              MP_ErrorStateToString(nRet));
           }
+
+          nRet = IMEDIA_SetMediaParm(pme->m_pMedia1, MM_PARM_AUDIO_PATH, (int32)MM_APATH_BOTH, 0);
+          if(nRet == SUCCESS || nRet == MM_PENDING)
+          {
+            DBGPRINTF_HIGH("MP: Set media1 audio path:%d[MM_APATH_LOCAL], ret %d", (int32)MM_APATH_BOTH, nRet);
+          }
+          else
+          {
+            DBGPRINTF_ERROR("MP: Failed to set media1 audio path: %d[MM_APATH_LOCAL], ret %d = %s", (int32)MM_APATH_BOTH, nRet,
+                             MP_ErrorStateToString(nRet));
+          }
         }
         else
 #endif //BREW_VERSION_LESS_THAN(4, 0)

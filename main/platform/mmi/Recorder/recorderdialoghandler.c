@@ -4207,13 +4207,13 @@ int recorder_recordEx( Media* pme, PFNMEDIANOTIFY pfnNotify)
 	{
 		debug( ";SetMediaData failed, 0x%x", result);
 	}
-	else if( ( result = IMEDIA_SetMediaParm( pme->m_pMedia, MM_PARM_AUDIO_PATH, pme->m_bReverse ? MM_APATH_LOCAL : MM_APATH_REMOTE, 0)) != SUCCESS &&
+	else if( ( result = IMEDIA_SetMediaParm( pme->m_pMedia, MM_PARM_AUDIO_PATH,pme->m_bReverse ? MM_APATH_LOCAL : MM_APATH_REMOTE , 0)) != SUCCESS &&
 			 result != MM_PENDING
 	)
 	{
-		debug( ";setPath failed, 0x%x", result);
+		MSG_FATAL( ";setPath failed, 0x%x", result,0,0);
 	}
-#if 0 //handfreeÊ±ºòÂ¼ÒôÉùÒô±ä´ó
+#if 0 //handfreeÊ±ºòÂ¼ÒôÉùÒô±ä´ó  
 	else if( ( result = IMEDIA_SetVolume( pme->m_pMedia, AEE_MAX_VOLUME)) != SUCCESS &&
 			 result != MM_PENDING
 	)

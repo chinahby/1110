@@ -182,7 +182,7 @@
 		<Text>Recorder off</Text>
 	</STRING>
 	<STRING Id="1110" Name="IDS_RECORD_THE_OTHER_SIZE">
-		<Text>Yours</Text>
+		<Text>Your</Text>
 	</STRING>
 	<STRING Id="1111" Name="IDS_RECORD_SELF">
 		<Text>Mine</Text>

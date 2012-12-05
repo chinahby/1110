@@ -162,6 +162,8 @@ audadpcm_parse_ctl_type audadpcm_parse_ctl;
 */
 audpcm_rec_ctl_type audpcm_rec_reverse_ctl;
 audpcm_rec_ctl_type audpcm_rec_forward_ctl;
+audpcm_rec_ctl_type audpcm_rec_both_ctl;
+
 
 /* Header for PCM files */
 const uint8 audpcm_header[] = {
@@ -1973,6 +1975,30 @@ void audpcm_record_forward_cb (
 /* <EJECT> */
 /*===========================================================================
 
+FUNCTION audpcm_record_both_cb
+
+DESCRIPTION
+  This function is used as CB func for recording forward link.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  None
+
+SIDE EFFECTS
+  None
+
+===========================================================================*/
+void audpcm_record_both_cb (
+  const uint16 *pcm_data
+) {
+  audpcm_record_frame(&audpcm_rec_both_ctl, pcm_data);
+}
+
+/* <EJECT> */
+/*===========================================================================
+
 FUNCTION audpcm_record
 
 DESCRIPTION
@@ -2007,6 +2033,9 @@ voc_pcm_client_output_fn_type audpcm_record (
   } else if(link == SND_PCM_REC_DIR_FORWARD) {
     ctl_ptr = &audpcm_rec_forward_ctl;
     ret_val = audpcm_record_forward_cb;
+  } else if(link == SND_PCM_REC_DIR_BOTH) {
+    ctl_ptr = &audpcm_rec_both_ctl;
+    ret_val = audpcm_record_both_cb;
   }
 
   if((ctl_ptr != NULL) && !(ctl_ptr->status & AUDPCM_MASK_ENABLED)) {
@@ -2065,6 +2094,8 @@ audmain_status_type audpcm_record_stop (
     ctl_ptr = &audpcm_rec_reverse_ctl;
   } else if(link == SND_PCM_REC_DIR_FORWARD) {
     ctl_ptr = &audpcm_rec_forward_ctl;
+  }else if(link == SND_PCM_REC_DIR_BOTH) {
+    ctl_ptr = &audpcm_rec_both_ctl;
   }
 
   if((ctl_ptr != NULL) && (ctl_ptr->status & AUDPCM_MASK_ENABLED)) {
@@ -2132,6 +2163,8 @@ audmain_status_type audpcm_record_pause (
     ctl_ptr = &audpcm_rec_reverse_ctl;
   } else if(link == SND_PCM_REC_DIR_FORWARD) {
     ctl_ptr = &audpcm_rec_forward_ctl;
+  } else if(link == SND_PCM_REC_DIR_BOTH) {
+    ctl_ptr = &audpcm_rec_both_ctl;
   }
 
   if((ctl_ptr != NULL) && (ctl_ptr->status & AUDPCM_MASK_ENABLED)) {
@@ -2196,6 +2229,14 @@ void audpcm_rec_send_status (
         audpcm_rec_forward_ctl.cb_func(status, NULL,
                                        audpcm_rec_forward_ctl.client_data);
       }
+      
+      if((audpcm_rec_both_ctl.status & AUDPCM_MASK_ENABLED) &&
+         !(audpcm_rec_both_ctl.status & AUDPCM_MASK_INTERRUPTED) &&
+         (audpcm_rec_both_ctl.cb_func != NULL)) {
+        audpcm_rec_both_ctl.status |= AUDPCM_MASK_INTERRUPTED;
+        audpcm_rec_both_ctl.cb_func(status, NULL,
+                                       audpcm_rec_both_ctl.client_data);
+      }
       break;
 
     case SND_CMX_PCM_REC_INT_RESUME:
@@ -2213,6 +2254,14 @@ void audpcm_rec_send_status (
         audpcm_rec_forward_ctl.status &= ~AUDPCM_MASK_INTERRUPTED;
         audpcm_rec_forward_ctl.cb_func(status, NULL,
                                        audpcm_rec_forward_ctl.client_data);
+      }
+
+      if((audpcm_rec_both_ctl.status & AUDPCM_MASK_ENABLED) &&
+         (audpcm_rec_both_ctl.status & AUDPCM_MASK_INTERRUPTED) &&
+         (audpcm_rec_both_ctl.cb_func != NULL)) {
+        audpcm_rec_both_ctl.status &= ~AUDPCM_MASK_INTERRUPTED;
+        audpcm_rec_both_ctl.cb_func(status, NULL,
+                                       audpcm_rec_both_ctl.client_data);
       }
       break;
   }

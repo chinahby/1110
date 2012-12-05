@@ -1834,6 +1834,7 @@ typedef void (* snd_qcp_rec_cb_func_ptr_type) (
 typedef enum {
   SND_PCM_REC_DIR_REVERSE,  /* Record the reverse link */
   SND_PCM_REC_DIR_FORWARD,  /* Record the forward link */
+  SND_PCM_REC_DIR_BOTH,  /* Record the forward link */
   SND_PCM_REC_DIR_INVALID
 } snd_pcm_rec_dir_type;
 
