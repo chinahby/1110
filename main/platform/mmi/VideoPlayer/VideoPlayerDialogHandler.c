@@ -95,6 +95,9 @@ static void VideoPlayer_DrawImage(CVideoPlayer *pMe, char *resFile, int16 resId,
 //播放下一个文件
 static void VideoPlayer_PlayNext(CVideoPlayer *pMe, boolean bDirection); 
 
+//防止快速按健
+static void VideoPlayer_keybusy(CVideoPlayer *pMe);
+
 //重画player屏的上半部分的文件名
 static void VideoPlayer_RefreshPlayerFileName(CVideoPlayer *pMe);
 static void VideoPlayer_ShowName(CVideoPlayer *pMe);
@@ -782,7 +785,16 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
     {   
         //播放或暂停	
 		case AVK_INFO:
+            // add by pyuangui 20121203
+			#ifdef FEATURE_VERSION_W317A
+			if(pMe->m_keybusy)
+			{
+                 return TRUE;
+			}
+			#else
             (void)ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);
+			#endif
+			//add end
             if(pMe->m_InitFailed != SUCCESS)
             {
                 CLOSE_DIALOG(DLGRET_MSGBOX);
@@ -1084,7 +1096,7 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
 #endif			
                
         //播放上一首   
-        case AVK_LEFT: 
+        case AVK_LEFT:
             if(! pMe->m_IsPlaynext)
             {
                 return TRUE;
@@ -1093,6 +1105,12 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
             {
                  return TRUE;  
             }
+			#ifdef FEATURE_VERSION_W317A
+			{
+    		   pMe->m_keybusy = TRUE;			
+               ISHELL_SetTimer(pMe->m_pShell,3000,(PFNNOTIFY) VideoPlayer_keybusy,pMe);
+			}
+			#endif
            /* ISHELL_SetTimer(pMe->m_pShell,APPISREADY_TIMER,VideoPlayer_APPIsReadyTimer,pMe);
             if((!pMe->m_bAppIsReady)||(pMe->UserStop))
             {
@@ -1128,6 +1146,12 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
             {
                  return TRUE;  
             }
+			#ifdef FEATURE_VERSION_W317A
+			{
+    		   pMe->m_keybusy = TRUE;			
+               ISHELL_SetTimer(pMe->m_pShell,3000,(PFNNOTIFY) VideoPlayer_keybusy,pMe);
+			}
+			#endif
             /*ISHELL_SetTimer(pMe->m_pShell,APPISREADY_TIMER,VideoPlayer_APPIsReadyTimer,pMe);
             MSG_FATAL("pMe->m_bAppIsReady=%d--pMe->UserStop=%d",pMe->m_bAppIsReady,pMe->UserStop,0);
             if((!pMe->m_bAppIsReady) ||(pMe->UserStop))
@@ -1818,6 +1842,13 @@ void VideoPlayer_WriteTitleRes(CVideoPlayer *pMe,char* pResPath,int uResId)
   AECHAR pText[256] = {0};
   ISHELL_LoadResString(pMe->m_pShell,pResPath,uResId,pText,sizeof(pText));
   VideoPlayer_WriteTitle(pMe,pText);
+}
+
+//防止快速按健
+static void VideoPlayer_keybusy(CVideoPlayer *pMe) 
+{ 
+    pMe->m_keybusy = FALSE;
+  
 }
 
 

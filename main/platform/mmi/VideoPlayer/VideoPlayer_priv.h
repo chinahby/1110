@@ -967,7 +967,9 @@ typedef struct _CVideoPlayer
     // Applet是否准备好可以处理按键和命令事件。改变量主要用于快速按键引起的问题
     boolean          m_bAppIsReady;   
 
-    //media data
+	boolean          m_keybusy;
+
+	//media data
     AEEMediaData     m_md;
 
     //显示在屏幕上的文件名
