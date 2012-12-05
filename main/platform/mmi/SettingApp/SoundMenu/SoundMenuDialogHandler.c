@@ -922,7 +922,9 @@ static boolean  HandleSoundMenuProfilesDialogEvent(CSoundMenu *pMe,
             Sound_App_Add_Menu(pMenu,IDS_COLORKEYSND);
 #endif
 #if !defined(FEATURE_LANG_ARABIC)
+#ifndef FEATURE_VERSION_C337
             Sound_App_Add_Menu(pMenu,IDS_MISSEDCALL_ALERT);
+#endif
 #endif
             //if (pMe->m_bNaturalStart == NORMAL_ENTRY)
             //{
