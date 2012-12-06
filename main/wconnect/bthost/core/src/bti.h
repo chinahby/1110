@@ -1413,6 +1413,8 @@ typedef struct bt_event_q_info_struct
   #define DEFAULT_BT_NAME         "Lava ARC 8c"  
 #elif defined(FEATURE_VERSION_C337)
   #define DEFAULT_BT_NAME         "Micromax C260"   
+#elif defined(FEATURE_VERSION_C316)
+  #define DEFAULT_BT_NAME         "IN 50 PLUS"    
 #else
   #define DEFAULT_BT_NAME         "Hitz 233C"
 #endif
