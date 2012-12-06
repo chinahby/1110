@@ -4106,7 +4106,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					#elif defined(FEATURE_VERSION_MYANMAR) || defined(FEATURE_VERSION_W515V3)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);
                     #else
-					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CAMERA);
+					return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 					#endif
                     
 				case AVK_TV:
