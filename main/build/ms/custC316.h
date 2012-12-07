@@ -12,6 +12,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //#define FEATURE_VERSION_S106
 //#define FEATURE_VERSION_W516
 //#define FEATURE_VERSION_1110W516
+#define FEATURE_OEMOMH
 #define FEATURE_VERSION_C316
 #ifdef CUST_EDITION
 //#define FEATURE_SUPPORT_WAP_APP
