@@ -1306,11 +1306,13 @@ LOCAL void dssnet_process_ppp_open_cmd_ev
       /*---------------------------------------------------------------------
         Extra logic for SIP fallback
       ---------------------------------------------------------------------*/
+#ifndef CUST_EDITION
       if (dssneti_sm_cb.te2_call_override_qcmip)
       {
         qcmip = 2; 
       }
       else
+#endif
       {
         qcmip = dsat707_qcmip_val;  
       }
@@ -1322,7 +1324,7 @@ LOCAL void dssnet_process_ppp_open_cmd_ev
         QCMIP = 2  -> MIP or nothing
       ---------------------------------------------------------------------*/
       dssneti_sm_cb.will_sip = (qcmip == 2) ? FALSE : TRUE;
-
+      MSG_ERROR("MIP session qcmip %d %d %d",qcmip,dssneti_sm_cb.te2_call_override_qcmip,dsat707_qcmip_val);
       if (qcmip > 0)
       {
         dssneti_sm_cb.want_mip = TRUE;
@@ -1343,7 +1345,7 @@ LOCAL void dssnet_process_ppp_open_cmd_ev
         -------------------------------------------------------------------*/
         if (mip_config_session() == FALSE) // can't call this directly if dssnet moves to DS
         {
-          MSG_ERROR("MIP session configuration failed",0,0,0);
+          MSG_ERROR("MIP session configuration failed %d",dssneti_sm_cb.will_sip,0,0);
 
           /*  If SimpleIP is not an option, abort now */
           if (!dssneti_sm_cb.will_sip)

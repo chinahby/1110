@@ -12156,9 +12156,7 @@ void OEM_SetUCBROWSER_ADSAccount(void)
     char username[PPP_MAX_USER_ID_LEN] = {0};
     char password[PPP_MAX_PASSWD_LEN] = {0};
     
-    OEMDSS_SetAppType(DA_WAP_TYPE);
-
-	
+    OEMDSS_SetAppType(0);
     
     if(SUCCESS == OEM_GetPppAccounts(&Account, DS_WAP20_TYPE))
     {
@@ -12207,6 +12205,11 @@ void OEM_SetUCBROWSER_ADSAccount(void)
 		STRCPY(username,"wap@ttsl.vmi.com");
 		STRCPY(password,"wap");
 	}
+    else
+    {
+        STRCPY(username,"card");
+		STRCPY(password,"card");
+    }
 	#endif
 	
 	DBGPRINTF("OEM_SetUCBROWSER_ADSAccountusername =%s", username);  

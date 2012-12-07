@@ -2800,7 +2800,10 @@ static void CallApp_ProcessCallStateDATA(CCallApp                 *pMe,
 #else
            case AEET_EVENT_CALL_ORIG:
 #endif
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+#else
                ISHELL_SendEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_OMH_PROMPT,0,0);
+#endif
 #endif
             default:
                 break;

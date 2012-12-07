@@ -831,6 +831,9 @@ void dsat707_nv_sync(void)
   {
     MSG_ERROR("Bad NV read status %d for DS QCMIP", status, 0, 0 );
   }
+#ifdef CUST_EDITION
+  ds_nv_item.ds_qcmip = 1;
+#endif
   /*-------------------------------------------------------------------------
     Store $qcmip val retrieved from NV in default field, which will
     later (in init_table) be put in dsat707_qcmip_val.

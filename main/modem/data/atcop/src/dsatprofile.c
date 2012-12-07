@@ -129,7 +129,11 @@ dsat_num_item_type dsat707_crm_val = 0;
 #endif
 
 dsat_num_item_type dsat707_qcmdr_val = DS_MDR_MODE_DEFAULT;
+#ifdef CUST_EDITION
+dsat_num_item_type dsat707_qcmip_val = 1;
+#else
 dsat_num_item_type dsat707_qcmip_val = 0;
+#endif
 /* Which s.o. set */
 dsat_num_item_type dsat707_qcso_val = DS_SO_SET_DEFAULT;
 
@@ -222,13 +226,20 @@ void dsatprofile_nv_sync(void)
   {
     /* At time of first boot, the NV item may not have been initialized
        yet.  Initialize it from statically-initialized default. */
+#ifdef CUST_EDITION
+    ds_nv_item.ds_qcmip = 1;
+#else
     ds_nv_item.ds_qcmip = 0;
+#endif
     (void) dsatutil_put_nv_item( NV_DS_QCMIP_I, &ds_nv_item );
   }
   else if( status != NV_DONE_S)
   {
     MSG_ERROR("Bad NV read status %d for DS QCMIP", status, 0, 0 );
   }
+#ifdef CUST_EDITION
+  ds_nv_item.ds_qcmip = 1;
+#endif
   /*-------------------------------------------------------------------------
     Store $qcmip val retrieved from NV in default field, which will
     later (in init_table) be put in dsat707_qcmip_val.
