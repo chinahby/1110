@@ -12190,11 +12190,6 @@ void OEM_SetUCBROWSER_ADSAccount(void)
 		STRCPY(username,"wapuser");
 		STRCPY(password,"wapuser");
 	}
-	else if(strstr (username,"tata"))
-	{
-		STRCPY(username,"wapuser");
-		STRCPY(password,"wapuser");
-	}
 	else if(strstr (username,"reliance"))
 	{
 		STRCPY(username,"SpiceD88@wap.reliance.com");
