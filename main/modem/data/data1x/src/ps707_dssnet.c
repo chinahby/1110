@@ -1306,13 +1306,11 @@ LOCAL void dssnet_process_ppp_open_cmd_ev
       /*---------------------------------------------------------------------
         Extra logic for SIP fallback
       ---------------------------------------------------------------------*/
-#ifndef CUST_EDITION
       if (dssneti_sm_cb.te2_call_override_qcmip)
       {
         qcmip = 2; 
       }
       else
-#endif
       {
         qcmip = dsat707_qcmip_val;  
       }
@@ -2888,7 +2886,7 @@ void is707_get_ppp_auth_info_from_nv
 #ifdef FEATURE_DS_MULTIPLE_PROFILES
   is_omh_enabled = TRUE;
 #endif /* FEATURE_DS_OMH */
-
+  MSG_FATAL( "is707_get_ppp_auth_info_from_nv %d %d %d",is_omh_enabled , dsat707_qcmip_val, num_valid_profiles );
   if ( (is_omh_enabled == TRUE)
 #ifdef FEATURE_DS_MOBILE_IP
        &&(dsat707_qcmip_val == 0)
@@ -3026,7 +3024,11 @@ void is707_get_ppp_auth_info_from_nv
       passwd_read_failed = TRUE; /* PPP Password NV was never written */
     }
   } 
-
+  
+  MSG_FATAL( "is707_get_ppp_auth_info_from_nv %d %d %d",ppp_config->auth_info.user_id_info[0] , ppp_config->auth_info.user_id_info[1], ppp_config->auth_info.user_id_info[2] );
+  MSG_FATAL( "is707_get_ppp_auth_info_from_nv %d %d %d",ppp_config->auth_info.user_id_info[3] , ppp_config->auth_info.user_id_info[4], ppp_config->auth_info.user_id_len );
+  MSG_FATAL( "is707_get_ppp_auth_info_from_nv %d %d %d",ppp_config->auth_info.passwd_info[0] , ppp_config->auth_info.passwd_info[1], ppp_config->auth_info.passwd_info[2] );
+  MSG_FATAL( "is707_get_ppp_auth_info_from_nv %d %d %d",ppp_config->auth_info.passwd_info[3] , ppp_config->auth_info.passwd_info[4], ppp_config->auth_info.passwd_len );
   /*-------------------------------------------------------------------------
     If NV was never written then the length of the password is set to 0.
     This will ensure that no password is used in calculating AP response.
