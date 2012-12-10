@@ -2840,7 +2840,7 @@ void DrawPromptMessage (IDisplay *pIDisplay,
             titlerect.dx = TitleBgImgInfo.cx;
             titlerect.x = totalrect.x - TitleBgImgInfo.cx/2;
             titlerect.y = totalrect.y  - StringBgImgInfo.cy/2 + TitleBgImgInfo.cy/2;
-            #if defined(FEATURE_VERSION_W515V3) ||defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_W027)
+            #if defined(FEATURE_VERSION_W515V3) ||defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_C316)
             strrect.dy = StringBgImgInfo.cy/2 + 20;
             strrect.dx = StringBgImgInfo.cx;
             strrect.x = totalrect.x - StringBgImgInfo.cx/2;
