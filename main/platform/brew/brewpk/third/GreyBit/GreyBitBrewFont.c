@@ -74,7 +74,11 @@ static int OEMFont_MeasureTextCursorPos(IFont *pMe, int x, const AECHAR *pcText,
 #define BIGNUMBER_FONT_SIZE 40 
 #endif
 #define NORMAL_FONT_SIZE    20 
+#ifdef FEATURE_DISP_128X160
+#define LARGE_FONT_SIZE     24 
+#else
 #define LARGE_FONT_SIZE     28 
+#endif
 #define SMALL_FONT_SIZE     4
 
 #else
@@ -246,11 +250,11 @@ static boolean GetCombineOffSet(IFont *pMe, uint16 ch1, uint16 ch2, int *pOff)
     //switch()
     return bRet;
 }
-
+#ifndef FEATURE_DISP_128X160
 #define NEW_SIZE  17
 #define MATH_FACTOR_BIT         10
 #define SCALE_V_ONLY 
-
+#endif
 //#include "err.h"
 static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, int nChars,
 	int x, int xMin, int xMax, int sy, int oy, int dy, NativeColor clrText, NativeColor clrBack,
@@ -271,6 +275,7 @@ static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, i
         AECHAR nCharsContent = 0;
         AECHAR *pText = (AECHAR *)pcText,pTemp=NULL;
         int16 nRealSize = WSTRLEN(pcText);
+#ifndef FEATURE_DISP_128X160
 			   //第一步, 进行参数合法性检测
 		//宽度缩放比
 		uint32 fScalex =0;
@@ -280,7 +285,7 @@ static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, i
 		uint16* pbySrc = NULL;
 		uint32 xx=0,yy=0,xx_last=0;
 	//	uint16 Position[100] = {0};
-		
+#endif
         if(nRealSize > nChars)
         {
             nCharsContent = *(pcText + nChars - 1 + 1);
@@ -321,11 +326,12 @@ static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, i
         yend = (dy > 14)?(14):(dy);
 #endif        
         pfont = gFontDataBuffer;
-
+#ifndef FEATURE_DISP_128X160
 		fScalex =(yend<<MATH_FACTOR_BIT) / NEW_SIZE;
         fScaley =(yend<<MATH_FACTOR_BIT) / NEW_SIZE;
 #ifndef SCALE_V_ONLY			
 		xend = fScalex*NEW_SIZE/14;
+#endif
 #endif
         if(x < xMin)
         {
@@ -360,7 +366,7 @@ static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, i
         bmp_offset = sy*nPitch;
         dp = dbase = (word*)(pBmp + bmp_offset + (sx<<1));
 		
-
+#ifndef FEATURE_DISP_128X160
 		//MSG_FATAL("xloop=%d bTransparency=%d EngCount=%d",xloop,bTransparency,EngCount);
         for ( j = 0; j < NEW_SIZE; j++ )
         {        	
@@ -426,7 +432,46 @@ static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, i
                 }
             }
         }
-		
+#else
+        for ( j = 0; j < yend; j++ )
+        {
+            if (bTransparency)
+            {
+                for ( p = (unsigned char*) (pfont + m + oy*SCREENBYTEWIDTH + j*SCREENBYTEWIDTH), 
+                       dp = dbase + j*(nPitch>>1), kmask = (0x80>>n), i = 0;         i < xloop;         i++)
+                {
+                    if ( (*p) & kmask )
+                    {
+                        *dp = cText;  //this pixel contains font
+                    }
+                    dp++;
+                    
+                    kmask >>= 1;
+                    if ( !kmask )
+                    {
+                        kmask = 0x80;
+                        p++;
+                    }
+                }
+            }
+            else
+            {
+                for ( p = (unsigned char*) (pfont + m +  oy*SCREENBYTEWIDTH + j*SCREENBYTEWIDTH), 
+                         dp = dbase + j*(nPitch>>1), kmask = (0x80>>n), i = 0;        i < xloop;       i++)
+                {
+                    *dp++ = (*p & kmask)?(cText):(cBack);
+                    
+                    kmask >>= 1;
+                    if ( !kmask )
+                    {
+                        kmask = 0x80;
+                        p++;
+                    }
+                }
+            }
+        }
+
+#endif		
         *pOutWidth = xloop;
         return;
     }
@@ -1359,10 +1404,14 @@ static void ArphicLineCursorMeasure (const AECHAR *pcText, int nChars,
       }
 
       //decide cursor's real position
+#ifdef FEATURE_DISP_128X160
+      *curx = xstart + cursorpos;
+#else
 #ifdef SCALE_V_ONLY      
       *curx = (xstart + cursorpos);
 #else
 	  *curx = (xstart + cursorpos)*NEW_SIZE/14;
+#endif
 #endif
       if ( *curx < 0 )
          *curx = 0;
@@ -1414,10 +1463,14 @@ ArphicMeasureNChars(const AECHAR *pcText, int nChars)
     {
         pText[nChars] = nCharsContent;
     }
+#ifdef FEATURE_DISP_128X160
+    return ((fm.horiAdvance > 0)?(fm.horiAdvance):(0));
+#else
 #ifdef SCALE_V_ONLY    
     return ((fm.horiAdvance > 0)?(fm.horiAdvance):(0));
 #else
 	return ((fm.horiAdvance > 0)?(fm.horiAdvance*NEW_SIZE/14):(0));
+#endif
 #endif
 }
 
