@@ -3681,7 +3681,7 @@ wms_client_message_s_type *GetMobileTrackerSMS()
 	int nErr = AEE_SUCCESS;
 	uint16 wDate[20] = {0};
 	char strDate[20] = {0};
-	char ICCID[20] = {"4105692345"};
+	char ICCID[20] = {"8991100902141191740f"};
 	int len = 0;
 	ICardSession*			m_pICardSession;
     wms_cdma_user_data_s_type    *pUserdata = NULL;
@@ -3689,8 +3689,8 @@ wms_client_message_s_type *GetMobileTrackerSMS()
 	uint64 meid = 0;
 	uint32 H32,L32;
 	AECHAR	fmt_str[20];
-	AECHAR szBuf[17]={0};
-	char   strBuf[17]={0};
+	AECHAR szBuf[16]={0};
+	char   strBuf[16]={0};
 	int n = 0;
 	IShell *pIShell = AEE_GetShell();
 	AEECardSessionReadTpStatus	*m_pReadStatus = 0;
@@ -3833,7 +3833,7 @@ wms_client_message_s_type *GetSmsTrackerSms()
 	char strDate[20] = {0};
 	char strnumber[20] = {0};
 	char strtempnumber[20] = {0};
-	char ICCID[20] = {"4105692345"};
+	char ICCID[20] = {"8991100902141191740f"};
 	int len = 0;
 	ICardSession*			m_pICardSession;
     wms_cdma_user_data_s_type    *pUserdata = NULL;
@@ -3841,9 +3841,9 @@ wms_client_message_s_type *GetSmsTrackerSms()
 	uint64 meid = 0;
 	uint32 H32,L32;
 	AECHAR	fmt_str[20];
-	AECHAR szBuf[17]={0};
+	AECHAR szBuf[16]={0};
 	AECHAR szBuf2[3]={0};
-	char   strBuf[17]={0};
+	char   strBuf[16]={0};
 	char   strBuf2[3]={0};
 	int n = 0;
 	IShell *pIShell = AEE_GetShell();
@@ -3888,21 +3888,22 @@ wms_client_message_s_type *GetSmsTrackerSms()
         goto GETREGISTERMSG_EXIT;
     }
 
-	#ifdef FEATURE_VERSION_W515V3
-    extern int OEM_ReadMEID(uint64 *meid);
-	OEM_ReadMEID(&meid);
+	#if defined(FEATURE_VERSION_W515V3)
+	{
+    	extern int OEM_ReadMEID(uint64 *meid);
+		OEM_ReadMEID(&meid);
+	}
     #else
     tmc_get_stored_meid_me((qword *)&meid);
     #endif
 	L32 = (uint32)meid;
     H32 = (uint32)(meid>>32);
-
+	MSG_FATAL("L32========%d",L32,0,0);
+	MSG_FATAL("H32========%d",H32,0,0);
+	
 	//W317A  销售统计
 	#ifdef FEATURE_VERSION_W317A
-	STRCPY(pBuf, "ARC8c MEID:");
-	#else
-	STRCPY(pBuf, "C260 MEID:");
-	#endif
+	STRCPY(pBuf, "*TRACK* MOD:ARC8c IMEI:");
 	STRTOWSTR("%06X", fmt_str, sizeof(fmt_str));
 	n = WSTRLEN(szBuf);
 	MSG_FATAL("n========%d",n,0,0);
@@ -3922,14 +3923,39 @@ wms_client_message_s_type *GetSmsTrackerSms()
 	MSG_FATAL("2222n========%d",n,0,0);
 	WSTRTOSTR(szBuf,strBuf,sizeof(strBuf));
 	STRCAT(pBuf,strBuf);
-	STRCAT(pBuf,"\n");
+	STRCAT(pBuf," ");
 	
 	STRCAT(pBuf, "IMSI:");
 	STRCAT(pBuf, mi.szMobileID);
-	STRCAT(pBuf,"\n");
+	STRCAT(pBuf," ");
 	
 	STRCAT(pBuf, "ICCID:");
 	STRCAT(pBuf,ICCID);
+	#else
+	STRCPY(pBuf, "REG:01:0100000,00000:020000:0300000:04C2600:05");
+	STRTOWSTR("%06X", fmt_str, sizeof(fmt_str));
+	n = WSTRLEN(szBuf);
+	MSG_FATAL("n========%d",n,0,0);
+    WSPRINTF((szBuf + n),
+            sizeof(szBuf),
+            fmt_str,
+            H32
+            );
+    n = WSTRLEN(szBuf);
+    STRTOWSTR("%08X", fmt_str, sizeof(fmt_str));
+    WSPRINTF((szBuf + n),
+            sizeof(szBuf),
+            fmt_str,
+            L32
+            );
+	n = WSTRLEN(szBuf);
+	MSG_FATAL("2222n========%d",n,0,0);
+	WSTRTOSTR(szBuf,strBuf,sizeof(strBuf));
+	STRCAT(pBuf,strBuf);
+	STRCAT(pBuf,",8904132423176");
+	STRCAT(pBuf,":06W027MBV03:07W027MMX001:8F:");
+	#endif
+	
 	
 	
     nMsgSize = STRLEN(pBuf);

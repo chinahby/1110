@@ -88,12 +88,7 @@
 #endif
 #if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
 #define  MOBILE_TRACKER_MSG             'M'
-#define SMS_TRACKER_MSG                'T'
-#ifdef FEATURE_VERSION_W317A
-#define SMS_TRACKER_NUMBER    			"+9192117227715" 
-#else
-#define SMS_TRACKER_NUMBER    			"+919212230707" 
-#endif
+#define SMS_TRACKER_MSG                 'T'
 #endif
 
 #ifdef FEATURE_VERSION_C337

@@ -259,6 +259,9 @@
 	<String Id="1112" Name="IDS_TIME">
 		<Text>Time</Text>
 	</String>
+	<String Id="1113" Name="IDS_MMX_SELES_TRACK" Encoding="ISOLATIN1">
+		<Text>Micromax Registration, Congratulations on purchasing Micromax handset. Press Continue to register your phone with us for  warranty services, updates and more.Standard SMS charges applicable                                                                     </Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_UIMERR" Focus="7001">

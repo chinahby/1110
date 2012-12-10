@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <BREWRes Name="coreapp" VERSION="1">
 <Strings Encoding="ISOLATIN1">
 	<STRING Id="1001" Name="IDS_CORE_TITLE">
@@ -264,6 +264,9 @@
 	</String>
 	<String Id="1112" Name="IDS_TIME">
 		<Text>Time</Text>
+	</String>
+	<String Id="1113" Name="IDS_MMX_SELES_TRACK">
+		<Text>Micromax Registration, Congratulations on purchasing Micromax handset. Press Continue to register your phone with us for  warranty services, updates and more.Standard SMS charges applicable                                                                     </Text>
 	</String>
 </Strings>
 <Dialogs>

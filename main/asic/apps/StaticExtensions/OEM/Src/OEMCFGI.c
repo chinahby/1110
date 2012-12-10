@@ -1988,7 +1988,11 @@ static OEMConfigListType oemi_cache = {
 	,{0}
 	,FALSE
 	,FALSE
+#if defined(FEATURE_VERSION_W317A)
 	,240   //  CFGI_SMS_TRACKER_TIME
+#else
+	,10    //  CFGI_SMS_TRACKER_TIME
+#endif
 	,{OEMNV_DEFAULTNUMBER} //CFGI_SMS_TRACKER_NUMBER
 #endif
 #ifdef FEATURE_VERSION_C337

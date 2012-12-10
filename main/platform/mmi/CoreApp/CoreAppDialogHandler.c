@@ -5035,11 +5035,19 @@ static boolean	IDD_SALESTRACKER_Handler(void *pUser,
 				PromptMsg_Param_type  Msg_Param={0};
 				BottomBar_Param_type bottomParam;
                 // 从资源文件取消息内容
+                #ifdef FEATURE_VERSION_W317A
                 (void)ISHELL_LoadResString(pMe->a.m_pIShell,
                                 AEE_COREAPPRES_LANGFILE,                                
                                 IDS_SALES_TRACKER,
                                 wstrText,
                                 sizeof(wstrText));
+				#else
+				(void)ISHELL_LoadResString(pMe->a.m_pIShell,
+                                AEE_COREAPPRES_LANGFILE,                                
+                                IDS_MMX_SELES_TRACK,
+                                wstrText,
+                                sizeof(wstrText));
+				#endif
 				//Draw static
 				IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
 				ISTATIC_SetProperties(pStatic, ST_CENTERTEXT|ST_MIDDLETEXT); 
