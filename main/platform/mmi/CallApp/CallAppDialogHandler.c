@@ -11782,6 +11782,50 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
 		//Add End
 
     }
+	else
+	{
+		if ( (AVKType)wParam == AVK_STAR)
+        {
+			int len = 0;
+		    len = WSTRLEN(pMe->m_DialString);
+		    
+		    if(pMe->m_b_incall == FALSE )
+		    {
+		        if (len > MAX_SIZE_DIAL_STR -2)
+		        {
+		            CALL_ERR("IDLE state,m_DialString len is 32",0, 0, 0);		           
+		        }
+		    }
+		    else
+		    {
+		        if (len > MAX_SIZE_DIALER_TEXT -3)
+		        {
+		            CALL_ERR("DTMF state,m_DialString len is 128",0, 0, 0);		            
+		        }
+		    }		
+			
+			{
+				AECHAR wstrTemp[MAX_SIZE_DIALER_TEXT] = {0};
+
+				if (pMe->m_nCursorPos == 0)
+				{
+	                (void)WSTRCPY(&pMe->m_DialString[len-pMe->m_nCursorPos-1], L"+");	               
+				}
+				else
+				{
+					(void)WSTRCPY(wstrTemp, &pMe->m_DialString[len-pMe->m_nCursorPos]);
+	                (void)WSTRCPY(&pMe->m_DialString[len-pMe->m_nCursorPos-1], L"+");
+	                (void)WSTRCPY(&pMe->m_DialString[len-pMe->m_nCursorPos], wstrTemp);
+				}								
+
+				(void) ISHELL_PostEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_USER_REDRAW,0,0);				
+
+				//Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);            
+	            //CallApp_Draw_NumEdit_SoftKey(pMe);
+	            //CallApp_Display_Number(pMe);
+			}
+        }
+	}
     return TRUE;
 }
 #if defined(FEATURE_VERSION_W027V3) || defined(FEATURE_VERSION_W317A)
