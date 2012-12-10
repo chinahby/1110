@@ -331,5 +331,8 @@
 	<STRING Id="2016" Name="IDS_KEYPAD_UNLOCKED">
 		<Text>ला कीपैड</Text>
 	</STRING>	
+	<STRING Id="2017" Name="IDS_COMMON_HELP">
+		<Text>Help</Text>
+	</STRING>	
 </Strings>
 </BREWRes>
