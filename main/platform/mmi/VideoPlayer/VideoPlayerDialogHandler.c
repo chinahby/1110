@@ -347,7 +347,11 @@ static  boolean VPDVideoPlayer_HandleEvent(CVideoPlayer *pMe,AEEEvent eCode,uint
             {
                 if(!pMe->UserStop)
                 {
+ #ifdef FEATURE_VERSION_C337
+ 					DRAW_BOTTOMBAR(BTBAR_GALLERY_HELP_BACK);
+ #else
                     DRAW_BOTTOMBAR(BTBAR_GALLERY_BACK);
+ #endif
                 }
                 else
                 {
@@ -1035,10 +1039,13 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
                 }
             }            
             return TRUE;
-			
-#ifndef FEATURE_VERSION_C337                              
+			                           
         //前进
+#ifdef FEATURE_VERSION_C337    
+		case AVK_RIGHT:
+#else
         case AVK_POUND:
+#endif			
             if(pMe->IsPlay)
             {             
                 if((pMe->bTotalTime - pMe->bCurrentTime) < 5)
@@ -1067,7 +1074,11 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
             return TRUE;
                 
         //后退
-        case AVK_STAR:			
+#ifdef FEATURE_VERSION_C337    
+		case AVK_LEFT:
+#else       
+        case AVK_STAR:	
+#endif			
             if(pMe->IsPlay)
             {               
                 if( pMe->bCurrentTime < 5)
@@ -1092,11 +1103,14 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
                     (void) ISHELL_SetTimer(pMe->m_pShell, 100, (PFNNOTIFY)VideoPlayer_UpdateButton, pMe);            
                 }
             }
-            return TRUE;     
-#endif			
+            return TRUE;     		
                
         //播放上一首   
+#ifdef FEATURE_VERSION_C337
+		case AVK_UP:
+#else
         case AVK_LEFT:
+#endif			
             if(! pMe->m_IsPlaynext)
             {
                 return TRUE;
@@ -1136,7 +1150,11 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
             return TRUE;
        
         //播放下一首   
+#ifdef FEATURE_VERSION_C337
+		case AVK_DOWN:
+#else        
         case AVK_RIGHT:  
+#endif			
             MSG_FATAL("pMe->m_IsPlaynext=%d",pMe->m_IsPlaynext,0,0);
             if(! pMe->m_IsPlaynext)
             {
