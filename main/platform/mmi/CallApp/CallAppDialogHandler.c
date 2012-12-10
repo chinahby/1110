@@ -4096,18 +4096,28 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
 #ifdef FEATURE_SUPPORT_BT_AUDIO
 				case IDS_USE_BT_AG:
 				case IDS_USE_PHONE:
-				{					
+				{						
 					if (wParam == IDS_USE_PHONE)
 					{						
 						MSG_FATAL("***zzg CallApp_Dialer_Connect IDS_USE_PHONE***", 0, 0, 0);
-
 						CallApp_SwitchCallAudio(pMe, FALSE);						
                     }
                     else
                     {
                     	MSG_FATAL("***zzg CallApp_Dialer_Connect IDS_USE_BT_AG***", 0, 0, 0);
 
-						CallApp_SwitchCallAudio(pMe, TRUE);						
+						//CallApp_SwitchCallAudio(pMe, TRUE);	
+						
+						//Add By zzg 2012_12_05
+
+#ifdef FEATURE_SUPPORT_BT_AUDIO			
+						(void) ISHELL_PostEvent(pMe->m_pShell,
+												AEECLSID_BLUETOOTH_APP,
+												EVT_USER,
+												EVT_CALLAPP_CHECK_BT_STATUS,	
+												EVT_CALLAPP_USE_BT_HEADSET);			
+#endif						
+						//Add End											
                     }
 					pMe->m_bHandFree = FALSE;
 					CallApp_SetupCallAudio(pMe);
@@ -9178,6 +9188,14 @@ static void CallApp_Build_Connect_Option_Menu(CCallApp *pMe)
 
     pSKMenu = pMe->m_pMenu;
 
+#ifdef FEATURE_SUPPORT_BT_APP
+    MSG_FATAL("***zzg CallApp_Build_Connect_Option_Menu m_b_add_btag_menu=%x***", pMe->m_b_add_btag_menu, 0, 0);
+#endif
+
+#ifdef FEATURE_SUPPORT_BT_AUDIO
+	MSG_FATAL("***zzg CallApp_Build_Connect_Option_Menu m_bBtAvailable=%x***", pMe->m_bBtAvailable, 0, 0);
+#endif
+
     (void) IMENUCTL_DeleteAll(pSKMenu);
 
     if (pMe->m_PauseString[0] != 0)
@@ -9225,7 +9243,7 @@ static void CallApp_Build_Connect_Option_Menu(CCallApp *pMe)
 
 		MSG_FATAL("***zzg CallApp_Build_Connect m_bBtAvailable=%x***", pMe->m_bBtAvailable, 0, 0);
 
-		if (TRUE == pMe->m_bBtAvailable)
+		//if (TRUE == pMe->m_bBtAvailable)
 		{
 			if(CallApp_CheckBtHeadSetInUsing(pMe))			
 			{
@@ -12368,7 +12386,14 @@ static void CallApp_Play_Incoming_Tone(CCallApp *pMe)
     IRingerMgr      *RingerMgr = NULL;
     int ringerId = AEE_RINGER_ID_NONE;
     char        filename[MAX_FILE_NAME]={0};
-    
+
+	//Add By zzg 2011_10_25
+	uisnd_notify_data_s_type sndInfo;
+	uisnd_get_device(&sndInfo);
+	MSG_FATAL("***zzg CallApp_Play_Incoming_Tone - dev=%d sMute=%d mMute=%d***", 
+	  			sndInfo.out_device, sndInfo.speaker_mute, sndInfo.microphone_mute);	
+	//Add End
+	
     if((AECHAR)'\0' != pMe->m_CallsTable->ringer[0])
     {
         byte profilenum = 0;
@@ -13854,6 +13879,19 @@ void CallApp_SwitchCallAudio(CCallApp *pMe, boolean bIsBtAudio)
 	uisnd_get_device(&sndInfo);
 	MSG_FATAL("***zzg CallApp_SetupCallAudio - dev=%d sMute=%d mMute=%d***", 
 	  			sndInfo.out_device, sndInfo.speaker_mute, sndInfo.microphone_mute);	
+	//Add End
+
+	//Disconnect BTHeadSet
+
+	//Add By zzg 2012_12_08
+	if (bIsBtAudio == FALSE)
+	{
+		(void) ISHELL_PostEvent(pMe->m_pShell,
+							AEECLSID_BLUETOOTH_APP,
+							EVT_USER,
+							EVT_CALLAPP_DISCONNECT_FROM_BT,	
+							0);
+	}
 	//Add End
 
     if (SUCCESS != ICONFIG_GetItem(pMe->m_pConfig,CFGI_HEADSET_PRESENT,&headsetPresent,sizeof(headsetPresent)))

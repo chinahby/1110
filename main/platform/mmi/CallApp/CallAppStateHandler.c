@@ -1146,6 +1146,9 @@ static NextFSMAction STATE_INCOMINGCALLHandler(CCallApp *pMe)
                                            |AEECM_CALL_TYPE_STD_OTASP
                                            |AEECM_CALL_TYPE_NON_STD_OTASP), 
                                            AEECM_CALL_STATE_NONE, NULL, 0),0);
+
+	MSG_FATAL("***zzg STATE_INCOMINGCALLHandler m_eDlgRet: %d***",pMe->m_eDlgRet, 0,0);
+	
     switch(pMe->m_eDlgRet)
     {
         case DLGRET_CREATE:

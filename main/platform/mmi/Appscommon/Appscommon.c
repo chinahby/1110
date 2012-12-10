@@ -912,6 +912,13 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
    }
    else if(eBBarType & BTBAR_TRI_MASK) {
       switch (eBBarType) {
+	  	 //Add By zzg 2012_12_10
+	  	 case BTBAR_GALLERY_HELP_BACK:
+            nResID_L = IDS_GALLERY;   
+            nResID_M = IDS_COMMON_HELP;
+            nResID_R = IDS_BACK;
+			break;
+	  	 //Add End
          case BTBAR_CANCEL_RESUME_NULL:
             nResID_L = IDS_RESET;
             nResID_M = IDS_RESUME;

@@ -347,6 +347,11 @@ enum
 	
 #define EVT_BT_AG_AUDIO_CONNECTED			0x7005			//AG connected
 #define EVT_BT_A2DP_AUDIO_CONNECTED			0x7006			//A2DP Connected
+#define EVT_CALLAPP_USE_BT_HEADSET			0x7007			//CallApp use Bluetooth Headset
+#define EVT_BT_AG_AUDIO_DISCONNECTED		0x7008			//AG Disconnected
+#define EVT_BT_A2DP_AUDIO_DISCONNECTED		0x7009			//A2DP DisConnected
+
+#define EVT_CALLAPP_DISCONNECT_FROM_BT		0x710a			//Disconnect BtHeadSet for CallAppr
 //Add End
 
 #define AEEEvent  uint16

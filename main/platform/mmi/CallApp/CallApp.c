@@ -1709,7 +1709,21 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
 			if ((wParam == EVT_BT_AG_AUDIO_CONNECTED) || (wParam == EVT_BT_A2DP_AUDIO_CONNECTED))			
 			{              
 				pMe->m_bBtAvailable = TRUE;		
+				//CallApp_SetupCallAudio(pMe);
+
+				//Add By zzg 2012_12_05
+				CallApp_SwitchCallAudio(pMe, TRUE);	
+					
+				pMe->m_bHandFree = FALSE;
 				CallApp_SetupCallAudio(pMe);
+				//Add End
+			}
+			else if ((wParam == EVT_BT_AG_AUDIO_DISCONNECTED) || (wParam == EVT_BT_A2DP_AUDIO_DISCONNECTED))
+			{				
+				pMe->m_bBtAvailable = FALSE;	
+				CallApp_SwitchCallAudio(pMe, FALSE);	
+				pMe->m_bHandFree = FALSE;
+				CallApp_SetupCallAudio(pMe);				
 			}
 #endif
 			break;

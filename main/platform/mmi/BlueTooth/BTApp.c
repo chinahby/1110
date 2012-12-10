@@ -1702,8 +1702,8 @@ static boolean BTApp_CheckNotify(CBTApp* pMe, AEEEvent evt, NotificationData* pD
 				{
 					result = TRUE;
 					break;
-				}				
-
+				}	
+				
 				/*
 				case AEEBT_AG_EVT_CONFIGURED:
 				case AEEBT_AG_EVT_ENABLED:	
@@ -3063,7 +3063,8 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 			}
 			break;
 #endif
-			//Add By zzg 2011_10_25			
+			//Add By zzg 2011_10_25		
+			case EVT_CALLAPP_DISCONNECT_FROM_BT:
 			case EVT_MUSICPLAYER_DISCONNECT_FROM_BT:	//Disconnect BtHeadSet for MusicPlayer
 			{
 				MSG_FATAL("***zzg BTApp Disconnect BtHeadSet AG bEnabled=%x, Connected=%x***", pMe->mAG.bEnabled, pMe->mAG.bConnected, 0);	
@@ -3126,14 +3127,33 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 			{
 				MSG_FATAL("***zzg BTApp EVT_USER AGConnected=%x A2DPConnect=%x***", pMe->mAG.bConnected, pMe->mA2DP.bConnected, 0);
 				
+				//Add By zzg 2012_12_05				
+				if (dwParam == EVT_CALLAPP_USE_BT_HEADSET)
+				{
+					if ((FALSE == pMe->mAG.bConnected) && (FALSE == pMe->mA2DP.bConnected))
+					{
+						ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_BLUETOOTH_APP, "BtHeadSet"); 	
+						break;
+					}
+				}				
+				//Add End
+
 				if (TRUE == pMe->mAG.bConnected)
 				{
 					ISHELL_PostEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_USER,EVT_BT_AG_AUDIO_CONNECTED,0);
+				}
+				else
+				{
+					ISHELL_PostEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_USER,EVT_BT_AG_AUDIO_DISCONNECTED,0);
 				}
 				
 				if (TRUE == pMe->mA2DP.bConnected)
 				{
 					ISHELL_PostEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_USER,EVT_BT_A2DP_AUDIO_CONNECTED,0);
+				}
+				else
+				{
+					ISHELL_PostEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_USER,EVT_BT_A2DP_AUDIO_DISCONNECTED,0);
 				}
 				
 				break;
