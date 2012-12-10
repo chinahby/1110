@@ -59,7 +59,7 @@
 		<Text>संपर्क</Text>
 	</STRING>
 	<STRING Id="20" Name="IDS_STRING_END_CALL">
-		<Text>काल समाप्त</Text>
+		<Text>अबो्र्ट</Text>
 	</STRING>
 	<STRING Id="21" Name="IDS_STRING_CANCEL">
 		<Text>रद्द करें</Text>
