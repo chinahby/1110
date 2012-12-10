@@ -332,7 +332,7 @@
 		<Text>ला कीपैड</Text>
 	</STRING>	
 	<STRING Id="2017" Name="IDS_COMMON_HELP">
-		<Text>Help</Text>
+		<Text>मदद</Text>
 	</STRING>	
 </Strings>
 </BREWRes>
