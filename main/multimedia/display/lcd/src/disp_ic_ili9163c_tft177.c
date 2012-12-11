@@ -74,7 +74,7 @@ static void disp_ic_mdp_scrupdate(uint32 *scr, uint32 start_row, uint32 start_co
 static void disp_ic_init(void)
 {
 #if 1
-	#ifdef FEATURE_VERSION_C316
+	#if defined( FEATURE_VERSION_C316)||defined(FEATURE_VERSION_15E)
 	LCD_WRITE_CMD(0x11); //Exit Sleep
 	LCD_DELAY(120);
 
