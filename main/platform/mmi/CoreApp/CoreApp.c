@@ -3260,7 +3260,7 @@ static void CoreApp_Process_Charger_Msg(CCoreApp   *pMe)
             #endif
          CLOSE_DIALOG(DLGRET_BATT_INFO)
 
-        }
+        } 
        else
        {
           #if (defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_W317A)
