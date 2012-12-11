@@ -74,7 +74,7 @@ static void disp_ic_mdp_scrupdate(uint32 *scr, uint32 start_row, uint32 start_co
 static void disp_ic_init(void)
 {
 #if 1
-	/*
+	#ifdef FEATURE_VERSION_C316
 	LCD_WRITE_CMD(0x11); //Exit Sleep
 	LCD_DELAY(120);
 
@@ -159,7 +159,7 @@ static void disp_ic_init(void)
 	LCD_WRITE_DATA(0x3F);//p13
 	LCD_WRITE_DATA(0x3F);//p14
 	LCD_WRITE_DATA(0x3D);//p15
-	*/
+	#else
 
 	LCD_WRITE_CMD(0x11); //Exit Sleep
 	LCD_DELAY(50);	 
@@ -249,8 +249,9 @@ static void disp_ic_init(void)
 	LCD_WRITE_DATA(0x3D);//p13
 	LCD_WRITE_DATA(0x3E);//p14
 	LCD_WRITE_DATA(0x3F);//p15
-
+#endif
 	LCD_WRITE_CMD(0x29); // Display On
+
 #else
     //--************ Start Initial Sequence **********--//
             
