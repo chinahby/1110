@@ -1207,7 +1207,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 #endif
 
 						//Add By zzg 2012_11_11
-#ifdef FEATURE_VERSION_C337						
+#if (defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_C316))					
 						if (WSTRCMP(pMe->m_DialString, L"*#07#") == 0)       	//SAR                 	
                         { 
 							pMe->m_msg_text_id = IDS_SAR;	
