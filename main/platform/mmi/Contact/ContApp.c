@@ -532,6 +532,30 @@ static int CContApp_InitAppData(CContApp *pMe)
 		return EFAILED;
 	}
 
+#if defined(FEATURE_VERSION_C316)
+#ifdef FEATURE_CHECK_SAME_NAME             
+                    {
+                        boolean sameRecord = FALSE;
+                        IAddrBook          *addr;      // IADDRBOOK interface for RUIM
+
+                        addr = pMe->m_pAddrPhone;
+						  AECHAR  name[11] = {'I', 'N', 'T', 'E', 'X', ' ', 'C', 'A', 'R', 'E', '\0'};
+						  AECHAR Mobile[12] = {'1', '8', '0', '0', '1', '0', '3', '8', '8', '2', '2', '\0'};
+						  pMe->m_pAddNewMobile = WSTRDUP(Mobile);	
+						  pMe->m_pAddNewName = WSTRDUP(name);	 	
+                        if(SUCCESS == IADDRBOOK_CheckSameRecord(addr, name, &sameRecord) && sameRecord == TRUE)
+                        {
+                            ;
+                        }
+						  else
+						  {
+						      int result = 0;
+						      result=CContApp_CreateCont( pMe, FALSE)	;
+							  MSG_FATAL("CContApp_CreateCont result=%d", result,0,0)
+						  }
+                    }
+#endif
+#endif											
     return SUCCESS;
 } // CContApp_InitAppData
 

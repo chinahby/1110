@@ -581,7 +581,7 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
 
 //Add By zzg 2010_11_23
 #ifndef FEATURE_UNLOCK_KEY_SPACE	
-#if  defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_1110W516)|| defined(FEATURE_VERSION_C337)
+#if  defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_1110W516)|| defined(FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_C316)
                 case AVK_SELECT:
 #elif  defined(FEATURE_VERSION_W027)
 #ifdef FEATURE_VERSION_W317A
@@ -1125,7 +1125,7 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
         //    db_put(DB_BACKLIGHT_LEVEL, &db_value);
         //}
         
-#if defined(FEATURE_VERSION_C337)
+#if (defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_C316))
           {
               IBacklight  *Backlight;
               (void)ISHELL_CreateInstance(sgpShell,AEECLSID_BACKLIGHT,(void **)&Backlight);
@@ -1147,7 +1147,9 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
 #endif            
         {
 #ifndef FEATURE_VERSION_W208S    
-#ifndef FEATURE_VERSION_C337
+#if (defined( FEATURE_VERSION_C337) || defined( FEATURE_VERSION_C316) )
+				;
+#else
 				OEMPriv_ResumeBREW();
 				return FALSE; 
 #endif				
@@ -1188,8 +1190,10 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
 #endif
         {        
 #ifndef FEATURE_VERSION_W208S  
-#ifndef FEATURE_VERSION_C337
-        	return FALSE;
+#if (defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_C316))
+	;
+#else
+	return FALSE;
 #endif
 #else            
 			if(wParam != AVK_SELECT)
@@ -1342,7 +1346,7 @@ void OEMKeyguard_SetState(boolean bEnabled)
 {
     sbKeyguardEnabled = bEnabled;
 
-#ifdef FEATURE_VERSION_C337
+#if ((defined FEATURE_VERSION_C337) || (defined FEATURE_VERSION_C316))
 	OEMPriv_DrawKeyguardInformation(!bEnabled);
 #endif
 

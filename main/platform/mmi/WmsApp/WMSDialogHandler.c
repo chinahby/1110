@@ -11221,7 +11221,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 	    				WmsApp_FreeMsgNodeMs(pMe);
 	    
 	   					 pMe->m_idxCur = 0;
-						#ifdef FEATURE_SMS_UDH
+#ifdef FEATURE_SMS_UDH
 	    				if (pnode->pItems != NULL)
 	    				{
 	        				MEMCPY(pMe->m_CurMsgNodes, pnode->pItems, sizeof(pMe->m_CurMsgNodes));
@@ -17067,7 +17067,7 @@ static boolean IDD_LOADINGMSG_Handler(void   *pUser,
                 boolean bUIMSMS = FALSE;
                 MSG_FATAL("IDD_LOADINGMSG_Handler EVT_USER_REDRAW 2 wIndex=%d",pMe->m_wCurindex,0,0);
                 wIndex = pMe->m_wCurindex;
-                MSG_FATAL("EVT_USER_REDRAW,read......",0,0,0);
+                MSG_FATAL("EVT_USER_REDRAW,read.....wIndex=%d",wIndex,0,0);
                 // 取消息 cache info 节点
                 if (wIndex>=RUIM_MSGINDEX_BASE)
                 {
@@ -17078,7 +17078,7 @@ static boolean IDD_LOADINGMSG_Handler(void   *pUser,
                 {
                     pnode = wms_cacheinfolist_getnode(pMe->m_eMBoxType, WMS_MEMORY_STORE_NV_CDMA, wIndex);
                 }
-                
+                MSG_FATAL("EVT_USER_REDRAW, wIndex=%d",wIndex,0,0);
                 if (NULL == pnode)
                 {
                     CLOSE_DIALOG(DLGRET_LOADFAILED)

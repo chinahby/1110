@@ -289,6 +289,9 @@
 	<String Id="1043" Name="IDS_UNLOCK" Encoding="Unicode">
 		<Text>Keypad unlocked</Text>
 	</String>
+	<String Id="1044" Name="IDS_SHORTCUT" Encoding="Unicode">
+		<Text>Shortcut</Text>
+	</String>
 	<STRING Id="2001" Name="IDS_SNOOZE">
 		<Text>Snooze</Text>
 	</STRING>
@@ -333,12 +336,12 @@
 	</STRING>
 	<STRING Id="2015" Name="IDS_KEYPAD_LOCKED">
 		<Text>Keypad locked</Text>
-	</STRING>	
+	</STRING>
 	<STRING Id="2016" Name="IDS_KEYPAD_UNLOCKED">
 		<Text>Keypad unlocked</Text>
-	</STRING>	
+	</STRING>
 	<STRING Id="2017" Name="IDS_COMMON_HELP">
 		<Text>Help</Text>
-	</STRING>	
+	</STRING>
 </Strings>
 </BREWRes>

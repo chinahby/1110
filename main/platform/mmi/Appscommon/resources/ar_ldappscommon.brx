@@ -259,6 +259,9 @@
 	<String Id="1037" Name="IDS_CLEAR_EX">
 		<Text>Clear</Text>
 	</String>
+	<String Id="1038" Name="IDS_SHORTCUT">
+		<Text>Shortcut</Text>
+	</String>
 	<STRING Id="2001" Name="IDS_SNOOZE">
 		<Text>انتظار</Text>
 	</STRING>

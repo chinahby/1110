@@ -3039,7 +3039,7 @@ static boolean  CallApp_Dialer_Calling_DlgHandler(CCallApp *pMe,
 static void CallApp_Dialer_Show_Animation(void *pUser)
 {
     AEERect   rect;
-    AECHAR    wBuf[20] ={0};
+    AECHAR    wBuf[40] ={0};
     static byte calling_coute = 0;
     CCallApp *pMe = (CCallApp *)pUser;
 #if FEATURE_DIALER_ANIMAION_SUPPORT	
@@ -9347,7 +9347,7 @@ static void CallApp_Draw_Connect_Time(void *pUser)
     //int            bOffset;
     int            bWidth;
     int            tempWidth;	
-    AECHAR         szText[20];
+    AECHAR         szText[40];
 #ifdef FEATURE_LANG_BIDI
     AECHAR         szTextTmp[100];
 #endif
