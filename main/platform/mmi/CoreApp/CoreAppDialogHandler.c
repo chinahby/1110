@@ -2959,7 +2959,7 @@ static boolean  IDD_UIMERR_Handler(void       *pUser,
                 {
                     // 没插入卡
                     case UIMERR_NOUIM:
-                        nResID = IDS_NORUIM;
+  	   					nResID = IDS_NORUIM;
                         break;
                     // UIM 卡无效(原因输PUK码超过规定次数导致卡失效)
                     case UIMERR_BLOCKED:
@@ -3565,7 +3565,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 #else
                 IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);//返回待机界面时，要把显示titlebar标志还原成TRUE
                 #endif
-			}
+	    }
 
           #ifdef FEATURE_VERSION_C11
            if (NULL == pStatic)
@@ -4049,6 +4049,27 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					return CoreApp_LaunchApplet(pMe, AEECLSID_BLUETOOTH_APP);
 #endif
 #ifndef FEATURE_VERSION_C180
+/*
+		 case AVK_END:
+#ifdef FEATURE_KEYGUARD
+#ifdef FEATURE_VERSION_C316
+		     //AVK_END键不能做锁屏键，它要用来做关机键	
+                    if(!OEMKeyguard_IsEnabled())
+                    {//一键锁屏
+                          IBacklight   *pBacklight = NULL;
+                          OEMKeyguard_SetState(TRUE);  
+        		    ISHELL_CreateInstance(pMe->a.m_pIShell,
+        		                         AEECLSID_BACKLIGHT,
+        		                         (void**)&pBacklight);
+        		    if(pBacklight != NULL)
+        		    {
+        		        IBACKLIGHT_TurnOff(pBacklight);
+        		        IBACKLIGHT_Release(pBacklight);
+        		    }						
+                        return TRUE;
+                    }
+#endif					
+#endif	*/	 	
                 case AVK_MUSIC:
                 	if(pMe->m_iskeypadtime)
 					{
@@ -4325,7 +4346,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     {
                         #if defined( FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_W317A) 
                            Mainmenu_KeypadLock(TRUE);
-						#elif defined ( FEATURE_VERSION_C337)
+			  #elif (defined ( FEATURE_VERSION_C337) || defined ( FEATURE_VERSION_C316))
 						   WMSDialog_KeypadLock(TRUE);
                         #endif
 						
@@ -4370,6 +4391,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #endif  /*FEATURE_FLEXI_STATIC_BREW_APP*/
 #elif defined (FEATURE_VERSION_IVIO203)||defined (FEATURE_VERSION_C500BE)
     				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
+#elif defined (FEATURE_VERSION_C316)
+                                  ret= CoreApp_LaunchApplet(pMe, AEECLSID_APPLICATION);
 #elif defined (FEATURE_VERSION_FLEXI203P)
     				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_STATIC_APP);
 #elif defined (FEATURE_VERSION_SMART)
@@ -4470,7 +4493,9 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 							//ISHELL_CancelTimer(pMe->a.m_pIShell,CoreApp_keypadtimer,pMe);
 						}
 #if defined(FEATURE_VERSION_W027)  
-#ifndef FEATURE_VERSION_C337
+#if (defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_C316))
+			  ;
+#else
                         Mainmenu_KeypadLock(TRUE);
 #endif
 #endif
@@ -7144,7 +7169,7 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
             #elif defined(FEATURE_VERSION_W027)
             #ifdef FEATURE_VERSION_W317A
                 eBBarType = BTBAR_UNLOCK_L;
-			#elif defined(FEATURE_VERSION_C337)
+	    #elif (defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_C316))
                 eBBarType = BTBAR_UNLOCK_M;
             #else
                 eBBarType = BTBAR_UNLOCK_M;			
@@ -7197,6 +7222,8 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 	#else
         #if defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_W317A)
            eBBarType = BTBAR_MENU_CONTACTS;
+	#elif defined(FEATURE_VERSION_C316)
+	    eBBarType = BTBAR_SHORTCUT_CONTACTS;
         #else
 		   eBBarType = BTBAR_MESSAGES_CONTACTS; //add by yangdecai  BTBAR_MESSAGES_CONTACTS
 		#endif
@@ -8997,6 +9024,8 @@ static void CoreApp_keypadtimer(void *pUser)
 #endif  /*FEATURE_FLEXI_STATIC_BREW_APP*/
 #elif defined (FEATURE_VERSION_IVIO203)||defined (FEATURE_VERSION_C500BE)
 	ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
+#elif defined (FEATURE_VERSION_C316)
+	ret= CoreApp_LaunchApplet(pMe, AEECLSID_APPLICATION);	
 #elif defined (FEATURE_VERSION_FLEXI203P)
 	ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 #elif defined (FEATURE_VERSION_SMART)
