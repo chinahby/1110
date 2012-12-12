@@ -49,6 +49,8 @@
 #include "OEMConfig.h" 
 #include "OEMCFGI.h"
 #endif
+
+#include "AEERUIM.h"
 //#ifdef FEATURE_MDP
 //#error code not present
 //#endif
@@ -875,7 +877,8 @@ static int DrawImageField (IAnnunciator *pMe, uint32 nAnnunID, uint32 nState)
     int nWidth, nHeight;
     IBitmap *pBmp = NULL;
     IImage  *pBackBmp = NULL;
-    int i,j;
+    int i =0;
+	int j;
     boolean bUpdate = TRUE;
     uint32 nFirstState = GetAnnunFirstState(nState);
     if ((pMe == NULL))
@@ -921,8 +924,24 @@ static int DrawImageField (IAnnunciator *pMe, uint32 nAnnunID, uint32 nState)
  
     if (!pMe->m_coreObj->cached) 
     {
+#if defined(FEATURE_VERSION_C316)								
+		IRUIM               *pIRUIM;
+		int nRet = 0;
+	    nRet = ISHELL_CreateInstance(pMe->m_piShell,
+	                                 AEECLSID_RUIM,
+	                                 (void **) &pIRUIM);
+	    if (nRet == SUCCESS) 
+	    {		
+			if((pIRUIM!= NULL)  && !IRUIM_IsCardConnected(pIRUIM))
+			{
+				i = 1;
+		        IRUIM_Release(pIRUIM);
+		        pIRUIM = NULL;
+			}	
+	    }
+#endif	    
         // Cache all the bitmaps 
-        for (i=0; i < (int)ARR_SIZE(Annunciators); i++) 
+        for (; i < (int)ARR_SIZE(Annunciators); i++) 
 	    {
             if (Annunciators[i].pcontent->nFieldType == ANNUN_TYPE_IMAGE) 
 	        {	  	
