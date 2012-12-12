@@ -2431,7 +2431,14 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
         case EVT_APP_DIALOG_TIMEOUT:  
             if(pMe->m_wMsgID == IDS_MSG_WAITING)
             {
-                CLOSE_DIALOG(DLGRET_PREVIEW);
+            	if(pMe->m_pCamera)
+            	{
+                	CLOSE_DIALOG(DLGRET_PREVIEW);
+            	}
+				else
+				{
+					CLOSE_DIALOG(DLGRET_CANCELED);	
+				}
             }
             else
             {
@@ -4738,8 +4745,10 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
     displaySize.cx = 128;
     displaySize.cy = 96; 
 #elif defined(FEATURE_DISP_176X220)
+
     displaySize.cx = 176;
     displaySize.cy = 128;
+
 #else
     displaySize.cx = 96;
     displaySize.cy = 96;
@@ -4748,6 +4757,7 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
     pMe->m_rcPreview.y  = pMe->m_rc.y+(pMe->m_rc.dy-displaySize.cy)/2;
     pMe->m_rcPreview.dx = displaySize.cx;
     pMe->m_rcPreview.dy = displaySize.cy;
+
     ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_LCD_DIRECT_ACCESS, (int32)FALSE, (int32)&(pMe->m_rcPreview));
 #elif defined(T_QSC1110)
 {
