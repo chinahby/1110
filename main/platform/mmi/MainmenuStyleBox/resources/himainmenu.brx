@@ -169,6 +169,12 @@
 	<STRING Id="1094" Name="IDS_MAIN_MENU_RECENTCALLS_C337">
 		<Text>कॉल लॉग</Text>
 	</STRING>
+	<STRING Id="1095" Name="IDS_MAIN_MENU_SERVICES_C316">
+		<Text>Services</Text>
+	</STRING>
+	<STRING Id="1096" Name="IDS_MAIN_MENU_INTEXZONE">
+		<Text>Intex Zone</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="0">
