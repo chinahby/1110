@@ -47,7 +47,9 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_RUIM_PHONEBOOK
 #define FEATURE_ICARD_NO_UI_BASE
 #define FEATURE_LANG_ENGLISH
-#define FEATURE_LANG_ARABIC
+#define FEATURE_LANG_HINDI
+
+//#define FEATURE_LANG_ARABIC
 //#define FEATURE_LANG_INDONESIAN
 //#define FEATURE_NUM_KEY_MID
 //#define FEATURE_INPUTMODE_INDONESIAN //Add By zzg 2010_09_06
@@ -61,7 +63,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //#define FEATURE_LONG_NETLOCK   //add by yangdecai
 
 #define FEATURE_MOVIE_RECORD_SUPPORT
-#define FEATURE_ARPHIC_LAYOUT_ENGINE
+//#define FEATURE_ARPHIC_LAYOUT_ENGINE
 #define FEATURE_CAMERA_MULTI_NEW_AUTO_DETECT
 #define FEATURE_AMR_FIXED
 #endif
