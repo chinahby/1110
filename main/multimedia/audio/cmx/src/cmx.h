@@ -2391,7 +2391,6 @@ typedef enum {
 typedef enum {
   CMX_MM_REC_LINK_REVERSE,   /* Record reverse link */
   CMX_MM_REC_LINK_FORWARD,   /* Record forward link */
-  CMX_MM_REC_LINK_BOTH,   /* Record forward link */
   CMX_MM_REC_LINK_INVALID
 } cmx_mm_rec_link_type;
 
@@ -2534,7 +2533,6 @@ typedef union {
 typedef enum {
   CMX_PCM_REC_LINK_REVERSE,   /* Record reverse link */
   CMX_PCM_REC_LINK_FORWARD,   /* Record forward link */
-  CMX_PCM_REC_LINK_BOTH,   /* Record forward link */
   CMX_PCM_REC_LINK_INVALID
 } cmx_pcm_rec_link_type;
 

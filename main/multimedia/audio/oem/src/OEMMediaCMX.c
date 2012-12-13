@@ -5072,8 +5072,6 @@ static int CMediaMMLayer_Stop(CMediaBg * pme)
          link = CMX_PCM_REC_LINK_REVERSE;
       else if (pme->m_nAPath == MM_APATH_REMOTE)
          link = CMX_PCM_REC_LINK_FORWARD;
-      else if (pme->m_nAPath == MM_APATH_BOTH)
-         link = CMX_PCM_REC_LINK_BOTH;
       else
          link = CMX_PCM_REC_LINK_INVALID;
       
@@ -5187,9 +5185,7 @@ static int CMediaMMLayer_Pause(CMediaBg * pme)
          link = CMX_PCM_REC_LINK_REVERSE;
       else if (pme->m_nAPath == MM_APATH_REMOTE)
          link = CMX_PCM_REC_LINK_FORWARD;
-      else if (pme->m_nAPath == MM_APATH_BOTH)
-         link = CMX_PCM_REC_LINK_BOTH;
-      else
+   else
          link = CMX_PCM_REC_LINK_INVALID;
       
       if (link != CMX_PCM_REC_LINK_INVALID)
@@ -5262,8 +5258,6 @@ static int CMediaMMLayer_Resume(CMediaBg * pme)
          link = CMX_PCM_REC_LINK_REVERSE;
       else if (pme->m_nAPath == MM_APATH_REMOTE)
          link = CMX_PCM_REC_LINK_FORWARD;
-      else if (pme->m_nAPath == MM_APATH_BOTH)
-         link = CMX_PCM_REC_LINK_BOTH;
       else
          link = CMX_PCM_REC_LINK_INVALID;
       
@@ -5455,7 +5449,7 @@ static int CMediaMMLayer_QCPRecord(CMediaBg * pme, int nFormat)
       qcprecParam.report_ms = pme->m_dwTickTimeMS;
       qcprecParam.format = fmt;
 
-      if (pme->m_nAPath == MM_APATH_LOCAL || pme->m_nAPath == MM_APATH_REMOTE || pme->m_nAPath == MM_APATH_BOTH)
+      if (pme->m_nAPath == MM_APATH_LOCAL || pme->m_nAPath == MM_APATH_REMOTE)
       {
          CMXInfo  ci;
 
@@ -5463,7 +5457,7 @@ static int CMediaMMLayer_QCPRecord(CMediaBg * pme, int nFormat)
          ci.ph = &h;
          ci.dwCB = (uint32)CMediaMMLayer_RecordCB;
          ci.dwUserData = (uint32)pme->m_hObject;
-         OEMMedia_SetParm(pme->m_pMediaCMX, OEMCMX_ID_TYPE, (int32)&ci, (int32)&qcprecParam, (pme->m_nAPath == MM_APATH_REMOTE), TRUE); // MM_APATH_LOCAL
+         OEMMedia_SetParm(pme->m_pMediaCMX, OEMCMX_ID_TYPE, (int32)&ci, (int32)&qcprecParam, (pme->m_nAPath == MM_APATH_LOCAL), TRUE);
          OEMMedia_Start(pme->m_pMediaCMX);
       }
       else
@@ -5477,8 +5471,6 @@ static int CMediaMMLayer_QCPRecord(CMediaBg * pme, int nFormat)
       cmx_qcp_record_reverse(&h, fmt, pme->m_dwTickTimeMS, CMediaMMLayer_RecordCB, (void *)pme->m_hObject);
    else if (pme->m_nAPath == MM_APATH_REMOTE)
       cmx_qcp_record_forward(&h, fmt, pme->m_dwTickTimeMS, CMediaMMLayer_RecordCB, (void *)pme->m_hObject);
-   else if (pme->m_nAPath == MM_APATH_BOTH)
-      cmx_qcp_record_both(&h, fmt, pme->m_dwTickTimeMS, CMediaMMLayer_RecordCB, (void *)pme->m_hObject);
    else
    {
       CMediaMMLayer_FreeCallback(pcb);
@@ -5577,8 +5569,6 @@ static int CMediaMMLayer_PCMRecord(CMediaBg * pme)
       pcmrecParam.link = CMX_PCM_REC_LINK_REVERSE;
    else if (pme->m_nAPath == MM_APATH_REMOTE)
       pcmrecParam.link = CMX_PCM_REC_LINK_FORWARD;
-   else if (pme->m_nAPath == MM_APATH_BOTH)
-      pcmrecParam.link = CMX_PCM_REC_LINK_BOTH;
    else
       pcmrecParam.link = CMX_PCM_REC_LINK_INVALID;
 
@@ -5629,7 +5619,7 @@ static int CMediaMMLayer_EWBRecord(CMediaBg * pme)
       qcp_rec_param.report_ms = pme->m_dwTickTimeMS;
       qcp_rec_param.format = CMX_EVW_FORMAT_VAR_FULL_4GV_WB;
 
-      if (pme->m_nAPath == MM_APATH_LOCAL || pme->m_nAPath == MM_APATH_REMOTE || pme->m_nAPath == MM_APATH_BOTH)
+      if (pme->m_nAPath == MM_APATH_LOCAL || pme->m_nAPath == MM_APATH_REMOTE)
       {
          CMXInfo  ci;
 
@@ -5637,7 +5627,7 @@ static int CMediaMMLayer_EWBRecord(CMediaBg * pme)
          ci.ph = &h;
          ci.dwCB = (uint32)CMediaMMLayer_RecordCB;
          ci.dwUserData = (uint32)pme->m_hObject;
-         OEMMedia_SetParm(pme->m_pMediaCMX, OEMCMX_ID_TYPE, (int32)&ci, (int32)&qcp_rec_param, (pme->m_nAPath == MM_APATH_REMOTE), TRUE);
+         OEMMedia_SetParm(pme->m_pMediaCMX, OEMCMX_ID_TYPE, (int32)&ci, (int32)&qcp_rec_param, (pme->m_nAPath == MM_APATH_LOCAL), TRUE);
          OEMMedia_Start(pme->m_pMediaCMX);
       }
       else
@@ -5677,7 +5667,7 @@ static int CMediaMMLayer_EVRCBRecord(CMediaBg * pme)
       qcp_rec_param.report_ms = pme->m_dwTickTimeMS;
       qcp_rec_param.format = CMX_EVB_FORMAT_VAR_FULL_4GV_NB;
 
-      if (pme->m_nAPath == MM_APATH_LOCAL || pme->m_nAPath == MM_APATH_REMOTE || pme->m_nAPath == MM_APATH_BOTH)
+      if (pme->m_nAPath == MM_APATH_LOCAL || pme->m_nAPath == MM_APATH_REMOTE)
       {
          CMXInfo  ci;
 
@@ -5685,7 +5675,7 @@ static int CMediaMMLayer_EVRCBRecord(CMediaBg * pme)
          ci.ph = &h;
          ci.dwCB = (uint32)CMediaMMLayer_RecordCB;
          ci.dwUserData = (uint32)pme->m_hObject;
-         OEMMedia_SetParm(pme->m_pMediaCMX, OEMCMX_ID_TYPE, (int32)&ci, (int32)&qcp_rec_param, (pme->m_nAPath == MM_APATH_REMOTE), TRUE);
+         OEMMedia_SetParm(pme->m_pMediaCMX, OEMCMX_ID_TYPE, (int32)&ci, (int32)&qcp_rec_param, (pme->m_nAPath == MM_APATH_LOCAL), TRUE);
          OEMMedia_Start(pme->m_pMediaCMX);
       }
       else
@@ -5728,8 +5718,6 @@ static int CMediaMMLayer_AACRecord(CMediaBg * pme, int nFormat)
       aacrecParam.mm_rec_link  = CMX_MM_REC_LINK_REVERSE;
    else if (pme->m_nAPath == MM_APATH_REMOTE)
       aacrecParam.mm_rec_link = CMX_MM_REC_LINK_FORWARD;
-   else if (pme->m_nAPath == MM_APATH_BOTH)
-      aacrecParam.mm_rec_link = CMX_MM_REC_LINK_BOTH;
    else
       aacrecParam.mm_rec_link = CMX_MM_REC_LINK_INVALID;
 
@@ -5749,7 +5737,7 @@ static int CMediaMMLayer_AACRecord(CMediaBg * pme, int nFormat)
       ci.ph = &h;
       ci.dwCB = (uint32)CMediaMMLayer_RecordCB;
       ci.dwUserData = (uint32)pme->m_hObject;
-      OEMMedia_SetParm(pme->m_pMediaCMX, OEMCMX_ID_TYPE, (int32)&ci, (int32)&aacrecParam, (int32)(pme->m_nAPath == MM_APATH_REMOTE), TRUE);
+      OEMMedia_SetParm(pme->m_pMediaCMX, OEMCMX_ID_TYPE, (int32)&ci, (int32)&aacrecParam, (int32)(pme->m_nAPath == MM_APATH_LOCAL), TRUE);
       OEMMedia_Start(pme->m_pMediaCMX);
    }
    else
