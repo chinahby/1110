@@ -2515,9 +2515,11 @@ static char* ICON_ANI[] =
     ICON11_ANI,
     ICON12_ANI,    
 #elif defined (FEATURE_DISP_128X160)
+#ifndef FEATURE_VERSION_C316
     ICON10_ANI,
     ICON11_ANI,
     ICON12_ANI,
+#endif    
 #elif defined (FEATURE_DISP_176X220)
 #ifndef FEATURE_VERSION_VG68
     ICON10_ANI,
@@ -2557,9 +2559,11 @@ static char* ICON_ANI_1[] =
     ICON12_ANI_1,    
 #elif defined (FEATURE_DISP_128X160)
 #ifndef FEATURE_VERSION_C01
+#ifndef FEATURE_VERSION_C316
     ICON10_ANI_1,
     ICON11_ANI_1,
-    ICON12_ANI_1,  
+    ICON12_ANI_1,
+#endif    
 #endif    
 #elif defined (FEATURE_DISP_176X220)
 #ifndef FEATURE_VERSION_VG68
@@ -3085,6 +3089,16 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_IconTitle[6]     = IDS_MAIN_MENU_SETTINGS;
     pMe->m_IconTitle[7]     = IDS_MAIN_MENU_GAMES;
     pMe->m_IconTitle[8]     = IDS_MAIN_MENU_UTK;
+	#elif defined (FEATURE_VERSION_C316)
+    pMe->m_IconTitle[0]     = IDS_MAIN_MENU_CONTACTS;
+    pMe->m_IconTitle[1]     = IDS_MAIN_MENU_MESSAGES;
+    pMe->m_IconTitle[2]     = IDS_MAIN_MENU_RECENTCALLS;
+    pMe->m_IconTitle[3]     = IDS_MAIN_MENU_SETTINGS;
+    pMe->m_IconTitle[4]     = IDS_MAIN_MENU_MULTIMEDIA;
+    pMe->m_IconTitle[5]     = IDS_MAIN_MENU_MEDIAGALLERY;
+    pMe->m_IconTitle[6]     = IDS_MAIN_MENU_ORGANIZER;
+    pMe->m_IconTitle[7]     = IDS_MAIN_MENU_INTEXZONE;
+    pMe->m_IconTitle[8]     = IDS_MAIN_MENU_SERVICES_C316;
     #else
     pMe->m_IconTitle[0]     = IDS_MAIN_MENU_MEDIAGALLERY;
     pMe->m_IconTitle[1]     = IDS_MAIN_MENU_CONTACTS;
@@ -4461,7 +4475,7 @@ static int StartApplet(MainMenu *pMe, int i)
             }
         }
         break;
-        
+    case IDS_MAIN_MENU_INTEXZONE:    
     case IDS_MAIN_MENU_SMARTFRENACCESS:
     case IDS_MAIN_MENU_UTK:
         Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_UTK);
@@ -4545,7 +4559,8 @@ static int StartApplet(MainMenu *pMe, int i)
     case IDS_MAIN_MENU_GAMES:
         Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_GAME);
         break;
-        
+		
+    case IDS_MAIN_MENU_SERVICES_C316:    
     case IDS_MAIN_WAPBROWSER:
 #if defined(FEATURE_OEMOMH)
 #if  (defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_W317A))	

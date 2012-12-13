@@ -102,6 +102,28 @@ ifeq ($(USES_RESDIR),SKY)
 	Tools.gif|fs:/image/mainmenu/Tools.gif \
 	User_Profile.gif|fs:/image/mainmenu/User_Profile.gif
 else
+
+ifeq ($(USES_RESDIR),C316)
+	CONSTFILE_FILES+=\
+    phonebook.png|fs:/image/mainmenu/phonebook.png \
+	phonebook_focus.png|fs:/image/mainmenu/phonebook_focus.png \
+	message.png|fs:/image/mainmenu/message.png \
+	message_focus.png|fs:/image/mainmenu/message_focus.png \
+	Call_history.png|fs:/image/mainmenu/Call_history.png \
+	Call_history_focus.png|fs:/image/mainmenu/Call_history_focus.png \
+	Setting.png|fs:/image/mainmenu/Setting.png \
+	Setting_focus.png|fs:/image/mainmenu/Setting_focus.png \
+	multimedia.png|fs:/image/mainmenu/multimedia.png \
+	multimedia_focus.png|fs:/image/mainmenu/multimedia_focus.png \
+	file_manger.png|fs:/image/mainmenu/file_manger.png \
+	file_manger_focus.png|fs:/image/mainmenu/file_manger_focus.png \
+	organizer.png|fs:/image/mainmenu/organizer.png \
+	organizer_focus.png|fs:/image/mainmenu/organizer_focus.png \
+	Intex_zone.png|fs:/image/mainmenu/Intex_zone.png \
+	Intex_zone_focus.png|fs:/image/mainmenu/Intex_zone_focus.png \
+	Browser.png|fs:/image/mainmenu/Browser.png \
+	Browser_focus.png|fs:/image/mainmenu/Browser_focus.png
+else
 CONSTFILE_FILES+=\
 	qsc1100_01.png|fs:/image/mainmenu/qsc1100_01.png \
 	qsc1100_02.png|fs:/image/mainmenu/qsc1100_02.png \
@@ -127,6 +149,7 @@ CONSTFILE_FILES+=\
 	qsc1100_10_focus.png|fs:/image/mainmenu/qsc1100_10_focus.png \
 	qsc1100_11_focus.png|fs:/image/mainmenu/qsc1100_11_focus.png \
 	qsc1100_12_focus.png|fs:/image/mainmenu/qsc1100_12_focus.png
+endif
 endif
 endif	
 endif
