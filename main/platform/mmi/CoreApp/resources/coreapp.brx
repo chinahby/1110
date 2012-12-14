@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <BREWRes Name="coreapp" VERSION="1">
 <Strings Encoding="ISOLATIN1">
 	<STRING Id="1001" Name="IDS_CORE_TITLE">
@@ -201,6 +201,9 @@
 	</String>
 	<String Id="1067" Name="IDS_UNLOCKED" Encoding="Unicode">
 		<Text>Keypad unlocked</Text>
+	</String>
+	<String Id="1068" Name="IDS_COMPLETE_CHARGED" Encoding="Unicode">
+		<Text>Charge complete</Text>
 	</String>
 	<String Id="1070" Name="IDS_STR_TOUCH_ONE">
 		<Text>Dialer</Text>

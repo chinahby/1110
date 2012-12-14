@@ -2380,7 +2380,11 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
                 {
                     pMe->m_bChargFull = TRUE;
                     pMe->m_bExtPwrState = TRUE;
+#if defined(FEATURE_VERSION_C316)		
+                    CoreApp_Process_Batty_Msg(pMe, IDS_COMPLETE_CHARGED); 						
+#else
                     CoreApp_Process_Batty_Msg(pMe, IDS_FULLY_CHARGED);
+#endif
                     (void) ISHELL_CancelTimer(pMe->a.m_pIShell, CCharger_EnableICONCB, (void *) pMe);
                     if(pMe->m_pIAnn != NULL)
                     {
