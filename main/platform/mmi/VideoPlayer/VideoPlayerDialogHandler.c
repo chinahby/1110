@@ -1197,7 +1197,7 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
           
         //增大音量   
 #ifdef FEATURE_VERSION_C337
-		case AVK_STAR:
+		case AVK_POUND:
 #else
         case AVK_UP: 
 #endif			
@@ -1235,7 +1235,7 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
           
         //减小音量  
 #ifdef FEATURE_VERSION_C337
-		case AVK_POUND:
+		case AVK_STAR:
 #else
         case AVK_DOWN: 
 #endif			

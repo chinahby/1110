@@ -2899,7 +2899,7 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
 	 }        
 
 	#ifdef FEATURE_VERSION_C337
-	case AVK_STAR:
+	case AVK_POUND:
 	#else
 	case AVK_UP:
 	#endif         
@@ -2935,7 +2935,7 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
          return TRUE;
 
 	#ifdef FEATURE_VERSION_C337
-	case AVK_POUND:
+	case AVK_STAR:
 	#else
 	case AVK_DOWN:
 	#endif    
