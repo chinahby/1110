@@ -48,6 +48,7 @@
 /* FPS supported by this sensor */
 #define CAMSENSOR_30_FPS                    (30*Q8)
 #define CAMSENSOR_15_FPS                    (15*Q8)
+#define CAMSENDSOR_SP0828_POWER_PIN        GPIO_OUTPUT_41
 
 /*============================================================================
     LOCAL Variables 
@@ -115,9 +116,16 @@ boolean camsensor_sp0828_init(camsensor_function_table_type *camsensor_function_
     
     /*lint -save -e655 */
     camsensor_i2c_command.options    = (i2c_options_type) (I2C_REG_DEV | I2C_START_BEFORE_READ); 
-    
+	
+    CAMERA_CONFIG_GPIO(CAMSENDSOR_SP0828_POWER_PIN);
+    gpio_out(CAMSENDSOR_SP0828_POWER_PIN,0);
+    camera_timed_wait(100);
+    gpio_out(CAMSENDSOR_SP0828_POWER_PIN,1);
+	camera_timed_wait(100);
+	gpio_out(CAMSENDSOR_SP0828_POWER_PIN,0);
+	
 	i2c_operation_fs_set(25);
-	camera_timed_wait(10);  //ovt
+	camera_timed_wait(250);  //ovt
 
     
 	if( !sp0828_i2c_write_byte(0xfd,0x00)) 
