@@ -1615,13 +1615,12 @@ static void chapi_send_resp
   /*-------------------------------------------------------------------------
     Call the appropriate function to calculate the CHAP response
   -------------------------------------------------------------------------*/
-#ifndef CUST_EDITION
 #ifdef FEATURE_UIM_SUPPORT_3GPD
   if((UIM_3GPD_MIP_RUIM_SIP_RUIM == uim_3gpd_support() ||
       UIM_3GPD_MIP_NV_SIP_RUIM == uim_3gpd_support())
     )
   {
-    MSG_FATAL("chapi_calc_chap_md5_ruim_response",0,0,0);
+    MSG_FATAL("chapi_calc_chap_md5_ruim_response %d",uim_3gpd_support(),0,0);
     /*-----------------------------------------------------------------------
       If using RUIM, go to the RUIM to get the CHAP response
       This DOES NOT CHECK if it an SN Stream, only that it is NOT an AN Stream.
@@ -1635,9 +1634,8 @@ static void chapi_send_resp
   }
   else
 #endif /* FEATURE_UIM_SUPPORT_3GPD */
-#endif
   {
-    MSG_FATAL("chapi_calc_chap_md5_sw_response",0,0,0);
+    MSG_FATAL("chapi_calc_chap_md5_sw_response %d",uim_3gpd_support(),0,0);
     /*-----------------------------------------------------------------------
       Use the software MD-5 algorithm to calculate CHAP response
     -----------------------------------------------------------------------*/
