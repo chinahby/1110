@@ -4476,6 +4476,8 @@ static int StartApplet(MainMenu *pMe, int i)
         }
         break;
     case IDS_MAIN_MENU_INTEXZONE:    
+		Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_INDEX_ZONE);
+		break;
     case IDS_MAIN_MENU_SMARTFRENACCESS:
     case IDS_MAIN_MENU_UTK:
         Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_UTK);

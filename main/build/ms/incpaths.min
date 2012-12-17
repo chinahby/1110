@@ -865,6 +865,10 @@ ifeq ($(USES_FRENDUO),yes)
 FRENDUO  =         		$(MMIDIR)/FrenDuo
 endif
 
+ifeq ($(USES_INDEXZONE),yes)
+INDEXZONE  =         		$(MMIDIR)/IndexZone
+endif
+
 MULTIMEDIA =            $(MMIDIR)/Multimedia
 STATIC_BREW_APP=        $(MMIDIR)/staticbrewapp/$(USES_LCD_SIZE)
 STATIC_APP=             $(MMIDIR)/staticapp

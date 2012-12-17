@@ -511,6 +511,8 @@ else
             feeling_off.mid|fs:/ringers/feeling_off.mid 	
 	else ifeq ($(USES_RESDIR),C316)   
 	CONSTFILE_FILES+=\
+	Intex_M1.mp3|fs:/ringers/Intex_M1.mp3 \
+            Intex_M2.mp3|fs:/ringers/Intex_M2.mp3 \
             blues.mid|fs:/ringers/blues.mid \
             blue_load.mid|fs:/ringers/blue_load.mid \
             champagne.mid|fs:/ringers/champagne.mid \

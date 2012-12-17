@@ -150,6 +150,10 @@ ifeq ($(USES_FRENDUO),yes)
 include $(FRENDUO)/frenduo.min
 endif
 
+ifeq ($(USES_INDEXZONE),yes)
+include $(INDEXZONE)/indexzone.min
+endif
+
 ifneq ($(USES_LOWMEM),yes)
 include $(STATIC_BREW_APP)/staticbrewapp.min
 include $(STATIC_APP)/staticapp.min
