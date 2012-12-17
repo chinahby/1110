@@ -706,7 +706,9 @@ static void AppTimer_Vibrate(CAppTimer *pme)
     vib = !vib;
     if( vib )
     {
+        #ifndef FEATURE_VERSION_W317A
         ISOUND_Vibrate(pme->m_pSound, 1500);
+		#endif
         (void)ISHELL_SetTimer(pme->a.m_pIShell, 1500, (PFNNOTIFY)(AppTimer_Vibrate), pme);
     }
     else
@@ -1316,7 +1318,9 @@ static void AppTimer_Running(CAppTimer *pme)
                 }
                 else
                 {
+                    #ifndef FEATURE_VERSION_W317A
                     ISOUND_Vibrate(pme->m_pSound, 2000);
+					#endif
                     pme->timer_state = W_IDLE;
                     pme->m_nTimeCtlCount = 0;
                     pme->m_nNumKeyCount = 0;
