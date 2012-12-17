@@ -1591,6 +1591,30 @@ void FmRadio_SaveChannelList( CFmRadio* pMe)
         WSTRCPY(pMe->chanInfoList[19].szName ,L"107.5");
         pMe->chanInfoList[19].wChannel = 200;
     }
+	#elif defined(FEATURE_VERSION_C316)
+	if(pMe->byChannelMax <=0)   //add by yangdecai 
+    {
+
+		byMax = 9;
+    	WSTRCPY(pMe->chanInfoList[0].szName ,L"91.1");
+        pMe->chanInfoList[0].wChannel = 36;
+        WSTRCPY(pMe->chanInfoList[1].szName ,L"92.7");
+        pMe->chanInfoList[1].wChannel = 52;       
+        WSTRCPY(pMe->chanInfoList[2].szName ,L"93.5");
+        pMe->chanInfoList[2].wChannel = 60;  
+        WSTRCPY(pMe->chanInfoList[3].szName ,L"94.3");
+        pMe->chanInfoList[3].wChannel = 68; 
+        WSTRCPY(pMe->chanInfoList[4].szName ,L"95");
+        pMe->chanInfoList[4].wChannel = 75;  
+        WSTRCPY(pMe->chanInfoList[5].szName ,L"98.6");
+        pMe->chanInfoList[5].wChannel = 111;   
+        WSTRCPY(pMe->chanInfoList[6].szName ,L"102.4");
+        pMe->chanInfoList[6].wChannel = 149;    
+        WSTRCPY(pMe->chanInfoList[7].szName ,L"104");
+        pMe->chanInfoList[7].wChannel = 165;   
+        WSTRCPY(pMe->chanInfoList[8].szName ,L"106.4");
+        pMe->chanInfoList[8].wChannel = 189;  
+	}
     #endif
 	(void) ICONFIG_SetItem(pMe->m_pConfig,
 						   CFGI_FMRADIO_CHAN_TOTAL,

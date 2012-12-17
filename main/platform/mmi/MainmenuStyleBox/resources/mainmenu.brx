@@ -106,6 +106,9 @@
 	<String Id="1035" Name="IDS_MAIN_MENU_CALL_LOGS">
 		<Text>Call Logs</Text>
 	</String>
+	<String Id="1036" Name="IDS_SHORT_CUT">
+		<Text>short cut</Text>
+	</String>
 	<STRING Id="1043" Name="IDS_MAIN_MENU_CALCULATOR">
 		<Text>Calculator</Text>
 	</STRING>

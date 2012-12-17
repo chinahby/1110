@@ -96,7 +96,7 @@
 // 根据 BREW 3 的需要，重定义资源文件宏
 #define  AEE_COREAPPRES_LANGFILE (AEE_RES_LANGDIR COREAPP_RES_FILE)
 
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
 #define IDLE_CFG_MOBILETRANKER_VERSION    10
 #define MOBILETRACKERREGINFOR_TIME   (60*1000)
 #define SMS_TRACKER_TIME             (240*60)    //4
@@ -621,7 +621,7 @@ typedef enum DLGRetValue
     ,DLGRET_YES
     ,DLGRET_NO
 #endif
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
 	,DLGRET_SALES_TRACKER
 	#ifdef FEATURE_VERSION_W317A
 	,DLGRET_SALES_SUCESS
@@ -695,7 +695,7 @@ typedef enum _CoreAppState
    //UTK refresh
    COREST_UTKREFRESH,
 #endif //FEATURE_UTK2   
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
   COREST_SALES_TRAKER,
   COREST_SALES_EDIT,
 #endif
@@ -760,7 +760,7 @@ typedef struct _IdleAPP_Config_Type
 } IdleAPP_Config_Type;
 #endif
 
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
 typedef struct _MOBILETRACKER_ITEM
 {
     char        szMobileIMSI[16];   // 手机 IMSI 号
@@ -839,7 +839,7 @@ typedef struct _CCoreApp
     
     // 用于保存用户输入的手机密码
     char                m_strPhonePWD[PHONEPASSWORDLENTH + 1];
-	#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+	#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
 	char                m_strPhoneNUM[PHONENUMBER];
 	#endif
     #ifdef FEATURE_LCD_TOUCH_ENABLE
@@ -993,7 +993,7 @@ typedef struct _CCoreApp
 #ifdef FEATURE_OEMOMH 
     AEERect            timeRc;
 #endif
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
 #ifdef FEATURE_UIALARM
    IAlarm      *m_pIAlarm;
 #endif
@@ -1207,7 +1207,7 @@ void CoreApp_SendReginfoTimer(void *pme);
 int CoreApp_SendReginfo(CCoreApp *pMe);
 #endif
 
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
 /*==============================================================================
 函数：
     CoreApp_MobileTracker

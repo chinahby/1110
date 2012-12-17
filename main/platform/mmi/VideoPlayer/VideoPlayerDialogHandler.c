@@ -347,7 +347,7 @@ static  boolean VPDVideoPlayer_HandleEvent(CVideoPlayer *pMe,AEEEvent eCode,uint
             {
                 if(!pMe->UserStop)
                 {
- #ifdef FEATURE_VERSION_C337
+ #if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
  					DRAW_BOTTOMBAR(BTBAR_GALLERY_HELP_BACK);
  #else
                     DRAW_BOTTOMBAR(BTBAR_GALLERY_BACK);
@@ -1041,8 +1041,10 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
             return TRUE;
 			                           
         //前进
-#ifdef FEATURE_VERSION_C337    
+#if defined(FEATURE_VERSION_C337) 
 		case AVK_RIGHT:
+#elif defined(FEATURE_VERSION_C316) 
+		case AVK_UP:
 #else
         case AVK_POUND:
 #endif			
@@ -1074,8 +1076,10 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
             return TRUE;
                 
         //后退
-#ifdef FEATURE_VERSION_C337    
+#if defined(FEATURE_VERSION_C337)
 		case AVK_LEFT:
+#elif defined(FEATURE_VERSION_C316) 
+	    case AVK_DOWN:
 #else       
         case AVK_STAR:	
 #endif			
@@ -1196,7 +1200,7 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
             return TRUE;          
           
         //增大音量   
-#ifdef FEATURE_VERSION_C337
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316) 
 		case AVK_POUND:
 #else
         case AVK_UP: 
@@ -1234,7 +1238,7 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
             return TRUE;          
           
         //减小音量  
-#ifdef FEATURE_VERSION_C337
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316) 
 		case AVK_STAR:
 #else
         case AVK_DOWN: 
@@ -1286,8 +1290,9 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
         case AVK_GSENSOR_LEFT:
         case AVK_GSENSOR_RIGHT: 
 
-#ifdef FEATURE_VERSION_C337
+#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_C316)
 		case AVK_0:
+		case AVK_SELECT:
 #else
 		case AVK_SELECT:
 #endif        

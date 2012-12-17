@@ -354,7 +354,7 @@ void CoreApp_FreeAppData(IApplet* po)
         pMe->m_pIPhoneCtl = NULL;
     }
 #endif
-	#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+	#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
 	if(pMe->m_pSmsTrackTime != NULL)
 	   {
 		   (void)IMENUCTL_Release(pMe->m_pSmsTrackTime);
@@ -452,7 +452,7 @@ void CoreApp_FreeAppData(IApplet* po)
 #else
 #endif
 #endif
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
 #ifdef FEATURE_UIALARM
 	IAlarm_CancelAlarm(pMe->m_pIAlarm,
                        		AEECLSID_CORE_APP,
@@ -569,7 +569,7 @@ boolean CoreApp_InitAppData(IApplet* po)
         return FALSE;
     }
 
-	#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+	#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
 	  //闹钟开或关LIST 控件
     if(AEE_SUCCESS != ISHELL_CreateInstance(pMe->a.m_pIShell,
                          AEECLSID_LISTCTL,
@@ -601,7 +601,7 @@ boolean CoreApp_InitAppData(IApplet* po)
     pMe->m_b_needclose_core = FALSE;
 #endif
     MEMSET(pMe->m_strPhonePWD, 0, PINCODE_LENGTH + 1);
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
     MEMSET(pMe->m_strPhoneNUM, 0, PHONENUMBER);
 #endif
 
@@ -689,7 +689,7 @@ boolean CoreApp_InitAppData(IApplet* po)
     CoreApp_InitdataTouch(pMe);
 #endif
 
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
 #if defined( FEATURE_UIALARM)
 		if (ISHELL_CreateInstance(pMe->a.m_pIShell,
 								  AEECLSID_UIALARM,
@@ -1432,7 +1432,8 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             return TRUE;
 #endif
 
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+
 		case EVT_MOBILE_TRACKER:
 			{
 				if(CoreApp_MobileTracker(pMe) != SUCCESS)
@@ -1523,7 +1524,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             return TRUE;
 #endif
 
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
 		case EVT_SMS_TRACKER:
 			// 先改变当前状态
             MOVE_TO_STATE(COREST_SALES_EDIT)
@@ -3439,7 +3440,7 @@ int CoreApp_SendReginfo(CCoreApp   *pMe)
 #endif
 
 
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
 /*==============================================================================
 函数：
     CoreApp_MobileTracker

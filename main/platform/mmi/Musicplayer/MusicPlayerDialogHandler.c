@@ -2813,7 +2813,8 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
         pMe->m_rtype = TYPE_PLAYER;//wlh 20090415 mod 为了区别播放区域，加音量，减音量的刷新，加了个参数
         ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_DrawImageWithOffset,pMe);
 
-		#ifndef FEATURE_VERSION_C337
+		#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+		#else
         ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_DrawForwardImage, pMe);
         ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_DrawRewindImage, pMe);
 		#endif
@@ -2898,7 +2899,7 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
 		return TRUE;
 	 }        
 
-	#ifdef FEATURE_VERSION_C337
+	#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
 	case AVK_POUND:
 	#else
 	case AVK_UP:
@@ -2934,7 +2935,7 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
          IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);//wlh 20090415 mod true -> false
          return TRUE;
 
-	#ifdef FEATURE_VERSION_C337
+	#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
 	case AVK_STAR:
 	#else
 	case AVK_DOWN:
@@ -3125,7 +3126,8 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
 #endif
 	   
 
-#ifndef FEATURE_VERSION_C337	
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+#else
     case AVK_POUND:
         if(pMe->m_bPlaying && pMe->m_pMedia)
         {
@@ -5733,7 +5735,8 @@ static void MP3_DrawPlayerWindows(CMusicPlayer *pMe)
         MSG_FATAL("PLAY_X=%d----PLAY_Y=%d",PLAY_X,PLAY_Y,0);  
 	}
 
-	#ifndef FEATURE_VERSION_C337
+	#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+	#else
 	MP3_DrawRewindImage(pMe);
     MP3_DrawForwardImage(pMe);
 	#endif   

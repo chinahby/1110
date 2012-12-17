@@ -14,6 +14,7 @@
  */
 
 
+
 #include "customer.h"
 #include "OEMFeatures.h"
 #include "OEMClassIds.h"
@@ -46,6 +47,7 @@
 #endif //#if !defined( AEE_SIMULATOR)
 #include "err.h"
 #define PARAM_NOT_REF(x)
+#include "MediaGallery.h"
 
 /*==============================================================================
 
@@ -642,10 +644,16 @@ static boolean Application_HandleEvent( IApplication *pi,
                                         WTitle,
                                         sizeof(WTitle));
 #else
-				#ifdef FEATURE_VERSION_C337
+				#if defined(FEATURE_VERSION_C337)
 				(void)ISHELL_LoadResString(pMe->m_pShell,
 											APPLICATION_RES_FILE_LANG,								  
 											IDS_APPLICATION_LIST_C337,
+											WTitle,
+											sizeof(WTitle));
+				#elif defined(FEATURE_VERSION_C316)
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+											APPLICATION_RES_FILE_LANG,								  
+											IDS_SHORT_CUT,
 											WTitle,
 											sizeof(WTitle));
 				#else
@@ -1083,10 +1091,16 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
                                     WTitle,
                                     sizeof(WTitle));
 #else
-			#ifdef FEATURE_VERSION_C337
+			#if defined( FEATURE_VERSION_C337)
 			(void)ISHELL_LoadResString(pMe->m_pShell,
 	                                    APPLICATION_RES_FILE_LANG,                                
 	                                    IDS_APPLICATION_LIST_C337,
+	                                    WTitle,
+	                                    sizeof(WTitle));
+			#elif defined(FEATURE_VERSION_C316)
+			(void)ISHELL_LoadResString(pMe->m_pShell,
+	                                    APPLICATION_RES_FILE_LANG,                                
+	                                    IDS_SHORT_CUT,
 	                                    WTitle,
 	                                    sizeof(WTitle));
 			#else
@@ -1178,6 +1192,18 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_SCHEDULER, IDS_APPLICATION_SCHEDULER, NULL, 0);	
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CALCULATOR, IDS_APPLICATION_CALCULATOR, NULL, 0);
 #elif defined (FEATURE_DISP_128X160)
+#ifdef FEATURE_VERSION_C316
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_USER_PROFILES, IDS_USER_PROFILES, NULL, 0);
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_ALARM, IDS_APPLICATION_ALARM, NULL, 0);
+			#ifdef	FEATURE_APP_BLUETOOTH  //add by yangdecai
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_BLUETOOTH, IDS_APPLICATION_BLUETOOTH, NULL, 0); 
+			#endif
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_VIDEO_PLAYER,IDS_VIDEO_PLAYER,NULL,0);
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_FMRADIO,IDS_APPLICATION_FMRADIO,NULL,0);
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CALCULATOR, IDS_APPLICATION_CALCULATOR, NULL, 0);
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_IMAGE_VIEWER,IDS_IMAGE_VIEWER,NULL,0);
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_CALENDAR, IDS_CALENDAR,NULL,0);
+#else
 #ifdef FEATURE_APP_MANAGER
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_BAM, IDS_APPLICATION_BAM, NULL, 0);
 #endif
@@ -1194,6 +1220,7 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_SCHEDULER, IDS_APPLICATION_SCHEDULER, NULL, 0);	
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CALCULATOR, IDS_APPLICATION_CALCULATOR, NULL, 0);
             #endif
+#endif
 			
 #else
 #ifndef FEATURE_VERSION_W208S
@@ -1234,8 +1261,11 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_SCHEDULER, IDS_APPLICATION_SCHEDULER, NULL, 0); 
 #endif
 #endif
+#ifdef FEATURE_VERSION_C316
+#else
 #ifdef	FEATURE_APP_BLUETOOTH  //add by yangdecai
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_BLUETOOTH, IDS_APPLICATION_BLUETOOTH, NULL, 0); 
+#endif
 #endif
 
 #if defined(FEATURE_VERSION_W317A)
@@ -1652,10 +1682,24 @@ static int StartApplet(Application *pMe, int i)
     case IDS_APPLICATION_RECORDER:
         Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_RECORDER);
         break;
+	case IDS_VIDEO_PLAYER:
+		Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_VIDEOPLAYER);
+        break;
+
+	case IDS_USER_PROFILES:
+		Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_SOUNDMENU);
+		break;
+	
+	case IDS_IMAGE_VIEWER:
+		{
+				CMediaGallery_FileExplorer(GALLERY_PHOTO_BROWSE, NULL);
+		}
+		break;
 
 	#ifdef FEATURE_VERSION_C337
 	case IDS_APPLICATION_CALENDAR:
 	#endif
+	case IDS_CALENDAR:
     case IDS_APPLICATION_SCHEDULER:
         Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SCHEDULEAPP);
         break;

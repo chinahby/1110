@@ -11347,7 +11347,11 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 					#ifdef FEATURE_ALL_KEY_PAD
         	    	(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_RAPID);
         	    	#else
+					#ifdef FEATURE_VERSION_C316
+					(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_CAPLOWER);
+					#else
         	    	(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_LETTERS);
+					#endif
         	    	#endif
 					#endif
 				 }

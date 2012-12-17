@@ -99,7 +99,7 @@ static NextFSMAction Security_StateExitHandler(CSecurityMenu *pMe);
 
 //状态  SECURITYMENU_CHANGECODE 处理函数
 static NextFSMAction Security_StateChangeCodeHandler(CSecurityMenu *pMe);
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
 //状态  MOBILE_TRACKER 处理函数
 static NextFSMAction Security_StateMobileTracker(CSecurityMenu *pMe);
 #endif
@@ -219,7 +219,7 @@ NextFSMAction SecurityMenu_ProcessState(CSecurityMenu *pMe)
         case SECURITYMENU_EMERGENCYCALL:
             retVal = Security_StateEmergencyCallHandler(pMe);
             break;
-		#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+		#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
 		case MOBILE_TRACKER:
 			retVal = Security_StateMobileTracker(pMe);
 			break;
@@ -407,7 +407,7 @@ static NextFSMAction Security_StateMainHandler(CSecurityMenu *pMe)
             MOVE_TO_STATE(SECURITYMENU_TSIMPASSWORDINPUT)
             return NFSMACTION_CONTINUE;
 #endif
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
 	   case DLGRET_MOBILE_TRACKER:
 	   		MOVE_TO_STATE(MOBILE_TRACKER)
 	   		return NFSMACTION_CONTINUE;
@@ -832,7 +832,7 @@ static NextFSMAction Security_StateAskPasswordHandler(CSecurityMenu *pMe)
 } // StateAskPinHandler
 
 
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
 //状态  MOBILE_TRACKER 处理函数
 static NextFSMAction Security_StateMobileTracker(CSecurityMenu *pMe)
 {

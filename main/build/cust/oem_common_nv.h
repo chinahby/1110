@@ -148,7 +148,7 @@
 #define OEMNV_PHONE_PASSWORD                        11005                       //CFGI_PHONE_PASSWORD
 #elif defined (FEATURE_VERSION_W317A)
 #define OEMNV_PHONE_PASSWORD                        11234                    
-#elif defined (FEATURE_VERSION_W208S)
+#elif defined (FEATURE_VERSION_W208S)||defined(FEATURE_VERSION_C316)
 #define OEMNV_PHONE_PASSWORD                        14321                    //10670    
 #else
 #define OEMNV_PHONE_PASSWORD                        10670                    //10670                       //CFGI_PHONE_PASSWORD

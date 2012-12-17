@@ -99,7 +99,7 @@ static NextFSMAction COREST_STANDBY_Handler(CCoreApp *pMe);
 static NextFSMAction COREST_SMSTIP_Handler(CCoreApp *pMe);
 #endif
 
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
 // 状态 COREST_SALES_TRAKER 处理函数
 static NextFSMAction COREST_SALES_TRAKER_Handler(CCoreApp *pMe);
 // 状态 COREST_SALES_EDIT 处理函数
@@ -263,7 +263,7 @@ NextFSMAction CoreApp_ProcessState(CCoreApp *pMe)
             break;
 #endif     
 
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
 		case COREST_SALES_TRAKER:
 			MSG_FATAL("CoreApp_ProcessState Start COREST_SALES_TRAKER",0,0,0);
             retVal = COREST_SALES_TRAKER_Handler(pMe);
@@ -1122,7 +1122,7 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
             MSG_FATAL("ISHELL_SetTimer CoreApp_SendReginfoTimer",0,0,0);
 
 #endif
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
 			// 
 			if (IRUIM_IsCardConnected(pMe->m_pIRUIM)) 
 			{
@@ -1534,7 +1534,7 @@ static NextFSMAction COREST_STANDBY_Handler(CCoreApp *pMe)
             MOVE_TO_STATE(COREST_SMSTIP)
             return NFSMACTION_CONTINUE;
 #endif      
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
 		case DLGRET_SALES_TRACKER:
 			MSG_FATAL("COREST_STANDBY_Handler DLGRET_SALES_TRACKER",0,0,0);
             MOVE_TO_STATE(COREST_SALES_TRAKER)
@@ -1573,7 +1573,7 @@ static NextFSMAction COREST_STANDBY_Handler(CCoreApp *pMe)
     MSG_FATAL("COREST_STANDBY_Handler End",0,0,0);
     return NFSMACTION_WAIT;
 } // COREST_STANDBY_Handler
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
 /*==============================================================================
 函数:
     COREST_SALES_TRAKER_Handler
@@ -1908,7 +1908,7 @@ static boolean CoreApp_Start_Alarm(CCoreApp *pMe)
 #endif
 }
 
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
 /*==============================================================================
 函数：
     COREST_SALES_EDIT_Handler

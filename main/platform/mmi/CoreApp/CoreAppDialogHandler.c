@@ -423,7 +423,7 @@ static boolean  IDD_WMSTIPS_Handler(void *pUser,
                                  uint16     wParam,
                                  uint32     dwParam);
 #endif
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
 // 对话框 IDD_SALESTRACKER 事件处理函数
 static boolean  IDD_SALESTRACKER_Handler(void *pUser,
                                  AEEEvent   eCode,
@@ -645,7 +645,7 @@ void CoreApp_SetDialogHandler(CCoreApp *pMe)
             pMe->m_pDialogHandler = IDD_WMSTIPS_Handler;
             break;
 #endif    
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
 		case IDD_SALESTRACKER:
 			pMe->m_pDialogHandler = IDD_SALESTRACKER_Handler;
 			break;
@@ -1792,7 +1792,7 @@ static boolean  IDD_EMERGENCYNUMLIST_Handler(void  *pUser,
 } // IDD_EMERGENCYNUMLIST_Handler
 
 
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
 
 /*==============================================================================
 函数:
@@ -4156,7 +4156,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             	    return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
 #elif defined (FEATURE_VERSION_W208S)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
-#elif defined(FEATURE_VERSION_C11)||defined(FEATURE_VERSION_W317A)
+#elif defined(FEATURE_VERSION_C11)||defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C316)
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CAMERA);
 #elif defined(FEATURE_VERSION_W027V3)
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);
@@ -4209,6 +4209,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     return CoreApp_LaunchApplet(pMe, AEECLSID_SCHEDULEAPP);
     #elif defined(FEATURE_VERSION_C337)
                     return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
+	#elif defined(FEATURE_VERSION_C316)
+					return CoreApp_LaunchApplet(pMe, AEECLSID_VIDEOPLAYER);
 	#else
 					return CoreApp_LaunchApplet(pMe, AEECLSID_ALARMCLOCK); 
 	#endif
@@ -4266,7 +4268,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER); 
 #elif defined (FEATURE_VERSION_M8P)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
-#elif defined (FEATURE_VERSION_C11) || defined(FEATURE_VERSION_W027V3)
+#elif defined (FEATURE_VERSION_C11) || defined(FEATURE_VERSION_W027V3)|| defined(FEATURE_VERSION_C316)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #elif defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_SCHEDULEAPP);
@@ -4337,6 +4339,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                             return CoreApp_LaunchApplet(pMe, AEECLSID_ALARMCLOCK);
                         #elif defined(FEATURE_VERSION_C11)||defined(FEATURE_VERSION_W027V3)
                             return CoreApp_LaunchApplet(pMe, AEECLSID_APP_SETTINGMENU);
+						#elif defined(FEATURE_VERSION_C316)
+							return CoreApp_LaunchApplet(pMe, AEECLSID_SCHEDULEAPP);
 						#else
 							return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);//
 						#endif
@@ -4994,7 +4998,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
     }
     return FALSE;
 } // IDD_IDLE_Handler
-#if defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_C337)
+#if defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
 /*==============================================================================
 函数:
     IDD_SALESTRACKER_Handler
@@ -8985,7 +8989,7 @@ void CoreApp_HandleAlarm(CCoreApp  *pme, uint16 wPermID)
 {
 	 CCoreApp	*pMe = (CCoreApp *)pme;
 
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)	 
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)	 
 	 if( ISHELL_ActiveApplet(pMe->a.m_pIShell) == AEECLSID_CORE_APP)
         {
         	MSG_FATAL("ISHELL_ActiveApplet..............",0,0,0);
