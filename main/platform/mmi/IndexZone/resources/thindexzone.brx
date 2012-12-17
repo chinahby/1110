@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="thindexzone" VERSION="1">
+<Strings Encoding="ISOLATIN1">
+	<String Id="1002" Name="IDS_INDEX_ZONE_UTK">
+		<Text>UTK</Text>
+	</String>	
+</Strings>
+<Dialogs>
+	<Dialog Id="6001" Name="IDD_INDEXZONE_LIST" Focus="7001">
+		<Controls>
+			<Menu Id="7001" Name="IDC_INDEXZONE_LIST">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+</Dialogs>
+</BREWRes>

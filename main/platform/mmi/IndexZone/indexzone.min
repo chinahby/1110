@@ -1,0 +1,35 @@
+################################################################################
+# main menu gnumake variable definition
+################################################################################
+INDEXZONE_INC = $(INDEXZONE)
+INDEXZONE_RES = $(INDEXZONE)/resources
+INDEXZONE_SRC = $(INDEXZONE)
+INDEXZONE_LIB = $(INDEXZONE)
+INDEXZONE_SOURCES = IndexZoneApp.c
+
+INDEXZONE_OBJS :=  $(addprefix $(TARGETDIR)/, $(INDEXZONE_SOURCES:%.c=%.o))
+$(INDEXZONE_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
+
+vpath %.c $(INDEXZONE_SRC)
+vpath %.bar $(INDEXZONE_RES)
+vpath %.brx $(INDEXZONE_RES)
+
+CONSTFILE_FILES+=\
+indexzone.mif|fs:/mif/indexzone.mif \
+indexzone.bar|fs:/mod/indexzone/en/indexzone.bar
+
+
+ifneq ($(EXTLANG1),NO)
+CONSTFILE_FILES+=\
+$(EXTLANG1)indexzone.bar|fs:/mod/indexzone/$(EXTLANG1)/indexzone.bar
+endif
+ifneq ($(EXTLANG2),NO)
+CONSTFILE_FILES+=\
+$(EXTLANG2)indexzone.bar|fs:/mod/application/$(EXTLANG2)/indexzone.bar
+endif
+
+
+INC  += $(INDEXZONE_INC) $(INDEXZONE_RES)
+#SRC  += $(INDEXZONE_SOURCES)
+OBJECTS+=$(INDEXZONE_OBJS)
+#LIBS += 

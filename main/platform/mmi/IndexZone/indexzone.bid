@@ -1,0 +1,6 @@
+#ifndef INDEXZONE_BID
+#define INDEXZONE_BID
+
+#define AEECLSID_INDEX_ZONE        0x01006506
+
+#endif //INDEXZONE_BID
