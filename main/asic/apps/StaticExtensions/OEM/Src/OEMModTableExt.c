@@ -1010,7 +1010,9 @@ extern int GameMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 extern int FrenDuoAppMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 #endif
 
+#if defined(FEATURE_VERSION_C316)
 extern int IndexZoneAppMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
+#endif
 
 #ifdef FEATURE_APP_MULTIMEDIA
 extern int MultimedMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
@@ -1074,7 +1076,9 @@ static const AEEStaticMod gOEMStaticModList[] =
 	{AEEFS_MIF_DIR"frenduo.mif",FrenDuoAppMod_Load},
 #endif
 
+#if defined(FEATURE_VERSION_C316)
 	{AEEFS_MIF_DIR"indexzone.mif",IndexZoneAppMod_Load},
+#endif
 	
 #ifdef FEATURE_APP_MULTIMEDIA
 		{AEEFS_MIF_DIR"multimedia.mif",MultimedMod_Load},
