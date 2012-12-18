@@ -982,7 +982,68 @@ void Config_Data_Cb(void* po)
 }
 #endif 
 
+#include "OEMSVC.h"
 
+#define AEECLSID_MOBILESHOP	0x01010EA7
+
+extern void OEMDSS_SetAppType(uint32 uAppType);
+void OEMOMH_SetProfile(AEECLSID cls, AEEEvent evt)
+{
+ 	boolean fDynamic = FALSE;
+    boolean bBrowser = FALSE;
+ 	uint32 itemId;
+
+ 	itemId = ISHELL_GetClassItemID(AEE_GetShell(), cls);
+ 	fDynamic = (itemId < FAKE_MODULE_ID);
+ 	if (AEECLSID_MOBILESHOP == cls)
+ 	{
+ 		fDynamic = TRUE;
+ 	}
+    else if(AEECLSID_UCWEB == cls)
+    {
+        bBrowser = TRUE;
+    }
+    
+ 	switch(evt)
+ 	{
+ 		case EVT_APP_START:
+            if(fDynamic)
+            {
+                OEMDSS_SetAppType(DA_BREW_TYPE);
+            }
+            else if(bBrowser)
+            {
+                OEMDSS_SetAppType(DA_WAP_TYPE);
+            }
+            else
+            {
+                OEMDSS_SetAppType(0);
+            }
+ 			break;
+ 		case EVT_APP_STOP:
+ 			OEMDSS_SetAppType(0);
+ 			break;
+ 		case EVT_APP_SUSPEND:
+ 			OEMDSS_SetAppType(0);
+ 			break;
+ 		case EVT_APP_RESUME:
+ 			if(fDynamic)
+            {
+                OEMDSS_SetAppType(DA_BREW_TYPE);
+            }
+            else if(bBrowser)
+            {
+                OEMDSS_SetAppType(DA_WAP_TYPE);
+            }
+            else
+            {
+                OEMDSS_SetAppType(0);
+            }
+ 			break;
+ 		default:
+ 			return;
+ 	}
+}
 
 #endif
 

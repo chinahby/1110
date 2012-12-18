@@ -33,6 +33,10 @@ static AEECallback   gCBResetBREW;
 static boolean       gbInResetBREW = FALSE;
 #include "OEMVersion.h"
 
+#ifdef FEATURE_OEMOMH
+extern void OEMOMH_SetProfile(AEECLSID cls, AEEEvent evt);
+#endif
+
 #ifdef CUST_EDITION
 #include "OEMClassIDs.h"
 #else
@@ -354,6 +358,9 @@ int OEM_Notify(OEMNotifyEvent evt, uint32 dw)
          AEE_ResumeCallback(&gCBReset,0);
          break;
       case OEMNTF_APP_EVENT:
+#ifdef FEATURE_OEMOMH
+	  	 OEMOMH_SetProfile(pae->cls, pae->evt); 
+#endif
          if( pae->evt == EVT_APP_START   ||
              pae->evt == EVT_APP_STOP    ||
              pae->evt == EVT_APP_SUSPEND ||

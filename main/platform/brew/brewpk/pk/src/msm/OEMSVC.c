@@ -4075,7 +4075,7 @@ int OEM_GetPppAccounts(PppAccounts *pAccount, DataSvcType dsType)
    if(NULL == pAccount)
       return EBADPARM;
     
-#if 0//def FEATURE_DS_MULTIPLE_PROFILES
+#ifdef FEATURE_DS_MULTIPLE_PROFILES
    // Get  the PPP NAI ID to NV FOR ACTIVE PROFILE.   
    //MSG_FATAL("OEM_GetPppAccounts......0000000000000",0,0,0);
 #ifndef WIN32

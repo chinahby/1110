@@ -4641,70 +4641,69 @@ static int StartApplet(MainMenu *pMe, int i)
 static int SetBrowserArr_Main(MainMenu *pMe,char *purl)
 {
 	int Result = EUNSUPPORTED;
-	PppAccounts Account;
-    char username[PPP_MAX_USER_ID_LEN] = {0};
-    char password[PPP_MAX_PASSWD_LEN] = {0};
-	char access_point[40] = {0};
 	char urlCan[1024] = {0};
-
-	if(SUCCESS == OEM_GetPppAccounts(&Account, DS_WAP20_TYPE))
-    {
-    	MSG_FATAL("read uim card..................",0,0,0);
-    	MEMCPY(username, Account.user_id_info, STRLEN(Account.user_id_info));	
-    	MEMCPY(password, Account.passwd_info, STRLEN(Account.passwd_info));	
-    }
-    else
-    {
-    	MSG_FATAL("read uim cefs..................",0,0,0);
-
-    	OEM_GetConfig(CFGI_BREWSET_USENAME,&username,sizeof(username));
-		OEM_GetConfig(CFGI_BREWSET_PASSWORD,&password,sizeof(password));
-    }
-	MSG_FATAL("STRLEN(purl)===========%d",STRLEN(purl),0,0);
+    AECHAR  svc_p_name[UIM_CDMA_HOME_SERVICE_SIZE+1]={0};
+    char charsvc_p_name[UIM_CDMA_HOME_SERVICE_SIZE+1] = {0};
+    IRUIM *m_pIRUIM = NULL;
+    
+	ISHELL_CreateInstance(AEE_GetShell(),
+                                 AEECLSID_RUIM,
+                                 (void **) &m_pIRUIM);
 	
-	if(STRLEN(purl)>1)
+	IRUIM_Read_Svc_P_Name(m_pIRUIM,svc_p_name);
+
+	WSTRTOSTR(svc_p_name,charsvc_p_name,sizeof(charsvc_p_name));
+
+	if (m_pIRUIM != NULL)
+    {
+        IRUIM_Release(m_pIRUIM);
+        m_pIRUIM = NULL;
+    }
+    
+	DBGPRINTF("svc_p_name %s %d",charsvc_p_name,charsvc_p_name[0],0);
+	
+	if(purl && STRLEN(purl)>1)
 	{
-		STRCPY(urlCan,"call_ucweb:setexternurl:");
-		STRCAT(urlCan,purl);
-		STRCAT(urlCan,"\\2\\3useragent:BREW-Applet/0x20068888 (BREW/3.1.5.20; DeviceId: 8976509865757e; Lang: hi; Profile/MIDP-2.0_Configuration/CLDC-1.1) ucweb-squid");
+        SPRINTF(urlCan,"call_ucweb:setexternurl:%s\2\3",purl);
+		//STRCAT(urlCan,"useragent:BREW-Applet/0x20068888 (BREW/3.1.5.20; DeviceId: 8976509865757e; Lang: hi; Profile/MIDP-2.0_Configuration/CLDC-1.1) ucweb-squid\2\3");
 	}
 	else
 	{
-		
-		STRCAT(urlCan,"useragent:BREW-Applet/0x20068888 (BREW/3.1.5.20; DeviceId: 8976509865757e; Lang: hi; Profile/MIDP-2.0_Configuration/CLDC-1.1) ucweb-squid");
+		//STRCPY(urlCan,"useragent:BREW-Applet/0x20068888 (BREW/3.1.5.20; DeviceId: 8976509865757e; Lang: hi; Profile/MIDP-2.0_Configuration/CLDC-1.1) ucweb-squid\2\3");
 	}
-	STRCAT(urlCan,"\\2\\3");
-	STRCAT(urlCan,"access_point:proxy_is:");
-
-	if(strstr (username,"mts"))
+    
+	if(STRISTR (charsvc_p_name,"mts"))
 	{
-		STRCPY(access_point,"10.50.5.140:8080");
 		MSG_FATAL("mst................",0,0,0);
+        STRCAT(urlCan,"access_point:proxy_is:10.50.5.140:8080");
 	}
-	else if(strstr (username,"tata"))
+	else if(STRISTR (charsvc_p_name,"tata"))
 	{
-		STRCPY(access_point,"172.23.252.15:9401");
-		MSG_FATAL("tata................",0,0,0);
+        MSG_FATAL("tata................",0,0,0);
+        STRCAT(urlCan,"access_point:proxy_is:172.23.252.15:9401");
 	}
-	else if(strstr (username,"reliance"))
+	else if(STRISTR (charsvc_p_name,"reliance"))
 	{
-		STRCPY(access_point,"http://wapgw.ricinfo.com:8080");
-		MSG_FATAL("reliance................",0,0,0);
+        MSG_FATAL("reliance................",0,0,0);
+        STRCAT(urlCan,"access_point:proxy_is:http://wapgw.ricinfo.com:8080");
 	}
-	else if(strstr (username,"vmi"))
+	else if(STRISTR (charsvc_p_name,"vmi"))
 	{
-		STRCPY(access_point,"172.23.142.15:9401");
-		MSG_FATAL("vmi................",0,0,0);
+        MSG_FATAL("vmi................",0,0,0);
+        STRCAT(urlCan,"access_point:proxy_is:172.23.142.15:9401");
 	}
-	STRCAT(urlCan,access_point);
-	DBGPRINTF("urlCan==%s", urlCan);
-	DBGPRINTF("urlCan2==%s", urlCan+110);
-
-	Result = ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)urlCan);
-
-	return Result;	
-
 	
+	DBGPRINTF("urlCan==%s", urlCan);
+    if(urlCan[0])
+    {
+	    Result = ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)urlCan);
+    }
+    else
+    {
+        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_UCWEB);
+    }
+
+	return Result;
 }
 
 
