@@ -84,17 +84,11 @@ uint32                 dsat707_sec_ha_val;
 /*=========================================================================*/
 /* Defaults & Limits for MIP commands */
 /*=========================================================================*/
-#ifdef CUST_EDITION
-dflm_type dsat707_qcmip_dflm [] =
-{
-  { 1  , 0  , 2    },
-} ;
-#else
 dflm_type dsat707_qcmip_dflm [] =
 {
   { 0  , 0  , 2    },
 } ;
-#endif
+
 dflm_type dsat707_qcmipp_dflm [] =
 {
   { 0  , 0  , 5    },

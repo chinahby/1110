@@ -83,6 +83,10 @@ when        who    what, where, why
 #include "bit.h"
 #endif /* FEATURE_UIM_SUPPORT_3GPD */
 
+#ifdef FEATURE_DS_MULTIPLE_PROFILES // Gemsea Add for non-OMH card
+#include "ds707_data_session_profile.h"
+#endif /* FEATURE_DS_MULTIPLE_PROFILES */
+
 /*===========================================================================
 
                 LOCAL DEFINITIONS AND DECLARATIONS FOR MODULE
@@ -1618,6 +1622,9 @@ static void chapi_send_resp
 #ifdef FEATURE_UIM_SUPPORT_3GPD
   if((UIM_3GPD_MIP_RUIM_SIP_RUIM == uim_3gpd_support() ||
       UIM_3GPD_MIP_NV_SIP_RUIM == uim_3gpd_support())
+#ifdef FEATURE_DS_MULTIPLE_PROFILES // Gemsea ADD for non-OMH card
+      && (num_valid_profiles > 0)
+#endif
     )
   {
     MSG_FATAL("chapi_calc_chap_md5_ruim_response %d",uim_3gpd_support(),0,0);

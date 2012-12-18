@@ -3839,7 +3839,7 @@ if (!nvruim_lock_cache())
   /* If it is an R-UIM item:  */
   /*     Initialize the buffer with item pointer & size */
   /*     Reformat the data for R-UIM (reverse bytes & set flags)*/
-  /*     Select the offset into the EF  */ 
+  /*     Select the offset into the EF  */
 
   switch(nv_cmd_ptr->item)
   {
@@ -4021,7 +4021,7 @@ if (!nvruim_lock_cache())
     case NV_IMSI_MCC_I:
     case NV_IMSI_T_MCC_I:
     case NV_ACCOLC_I:
-#endif /* !FEATURE_NVRUIM_ADM_ACCESS */	  
+#endif /* !FEATURE_NVRUIM_ADM_ACCESS */
       nvruim_write_sprt_status = nvruim_check_uim_status_and_nam(nv_cmd_ptr, op_status);
       break;
 /************************END READ ONLY ITEMS***************************/
