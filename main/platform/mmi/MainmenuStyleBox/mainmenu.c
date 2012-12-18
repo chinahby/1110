@@ -32,6 +32,9 @@
 #include "mainmenu_priv.h" 
 #include "msg.h"
 #include "ContApp.h"
+#include "OEMNV.h"
+#include "OEMSVC.h"
+#include "OEMCFGI.h"
 
 #include "Appscommon.h"
 #include "appscommon.brh"
@@ -2456,6 +2459,9 @@ static void CalculateScreenParameters(MainMenu *pMe);
 static void MainMenu_DrawBackGround(MainMenu *pMe, AEERect *pRect);
 
 // 初始整个背景及全部初始图标
+
+static int SetBrowserArr_Main(MainMenu *pMe, char *purl);
+
 static void DrawMatrix(MainMenu *pMe);
 
 static void DrawFocusIcon(MainMenu *pMe);
@@ -4533,22 +4539,26 @@ static int StartApplet(MainMenu *pMe, int i)
 	case IDS_MAIN_MENU_SERVICES:
 #if defined(FEATURE_OEMOMH)
 #if  (defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_W317A))	
+			MSG_FATAL("IDS_MAIN_MENU_SERVICES...........000000",0,0,0);
+		
             OEM_SetUCBROWSER_ADSAccount();
 #endif		
 #endif			
 	    #ifdef FEATURE_VERSION_C337
-        Result = ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
+        Result = SetBrowserArr_Main(pMe,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
         #else
-        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_UCWEB);
+        Result = SetBrowserArr_Main(pMe,NULL);//ISHELL_StartApplet(pMe->m_pShell, AEECLSID_UCWEB);
         #endif
 		break;
 	case IDS_MAIN_MENU_MSTORE:
 #if defined(FEATURE_OEMOMH)
 #if  (defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_W317A))	
+		MSG_FATAL("IDS_MAIN_MENU_SERVICES...........11111111",0,0,0);
+	
         OEM_SetUCBROWSER_ADSAccount();
 #endif		
 #endif			
-        Result = ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
+        Result = Result = SetBrowserArr_Main(pMe,NULL);//ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
 		break;
 	case IDS_MAIN_MENU_MZONE:
 		Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MiZone);
@@ -4566,15 +4576,15 @@ static int StartApplet(MainMenu *pMe, int i)
 		
     case IDS_MAIN_MENU_SERVICES_C316:    
     case IDS_MAIN_WAPBROWSER:
-#if defined(FEATURE_OEMOMH)
 #if  (defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_W317A))	
+		MSG_FATAL("IDS_MAIN_MENU_SERVICES...........22222222222222",0,0,0);
+
         OEM_SetUCBROWSER_ADSAccount();
 #endif		
-#endif		
         #ifdef FEATURE_VERSION_C337
-        Result = ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
+        Result = SetBrowserArr_Main(pMe,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
         #else
-        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_UCWEB);
+        Result = SetBrowserArr_Main(pMe,(char*)""); //ISHELL_StartApplet(pMe->m_pShell, AEECLSID_UCWEB);
         #endif
         break;
     
@@ -4627,4 +4637,76 @@ static int StartApplet(MainMenu *pMe, int i)
     }
     return Result;
 }
+
+static int SetBrowserArr_Main(MainMenu *pMe,char *purl)
+{
+	int Result = EUNSUPPORTED;
+	PppAccounts Account;
+    char username[PPP_MAX_USER_ID_LEN] = {0};
+    char password[PPP_MAX_PASSWD_LEN] = {0};
+	char access_point[40] = {0};
+	char urlCan[1024] = {0};
+
+	if(SUCCESS == OEM_GetPppAccounts(&Account, DS_WAP20_TYPE))
+    {
+    	MSG_FATAL("read uim card..................",0,0,0);
+    	MEMCPY(username, Account.user_id_info, STRLEN(Account.user_id_info));	
+    	MEMCPY(password, Account.passwd_info, STRLEN(Account.passwd_info));	
+    }
+    else
+    {
+    	MSG_FATAL("read uim cefs..................",0,0,0);
+
+    	OEM_GetConfig(CFGI_BREWSET_USENAME,&username,sizeof(username));
+		OEM_GetConfig(CFGI_BREWSET_PASSWORD,&password,sizeof(password));
+    }
+	MSG_FATAL("STRLEN(purl)===========%d",STRLEN(purl),0,0);
+	
+	if(STRLEN(purl)>1)
+	{
+		STRCPY(urlCan,"call_ucweb:setexternurl:");
+		STRCAT(urlCan,purl);
+		STRCAT(urlCan,"\\2\\3useragent:BREW-Applet/0x20068888 (BREW/3.1.5.20; DeviceId: 8976509865757e; Lang: hi; Profile/MIDP-2.0_Configuration/CLDC-1.1) ucweb-squid");
+	}
+	else
+	{
+		
+		STRCAT(urlCan,"useragent:BREW-Applet/0x20068888 (BREW/3.1.5.20; DeviceId: 8976509865757e; Lang: hi; Profile/MIDP-2.0_Configuration/CLDC-1.1) ucweb-squid");
+	}
+	STRCAT(urlCan,"\\2\\3");
+	STRCAT(urlCan,"access_point:proxy_is:");
+
+	if(strstr (username,"mts"))
+	{
+		STRCPY(access_point,"10.50.5.140:8080");
+		MSG_FATAL("mst................",0,0,0);
+	}
+	else if(strstr (username,"tata"))
+	{
+		STRCPY(access_point,"172.23.252.15:9401");
+		MSG_FATAL("tata................",0,0,0);
+	}
+	else if(strstr (username,"reliance"))
+	{
+		STRCPY(access_point,"http://wapgw.ricinfo.com:8080");
+		MSG_FATAL("reliance................",0,0,0);
+	}
+	else if(strstr (username,"vmi"))
+	{
+		STRCPY(access_point,"172.23.142.15:9401");
+		MSG_FATAL("vmi................",0,0,0);
+	}
+	STRCAT(urlCan,access_point);
+	DBGPRINTF("urlCan==%s", urlCan);
+	DBGPRINTF("urlCan2==%s", urlCan+110);
+
+	Result = ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)urlCan);
+
+	return Result;	
+
+	
+}
+
+
+
 #endif

@@ -263,6 +263,13 @@ when       who     what, where, why
 #ifdef FEATURE_USES_MMS
 #include "WMSMMS.h"
 #endif
+
+#ifndef WIN32
+#include "uim.h"
+#include "mobile.h"             // for ver_modelname
+#include "mccdma.h"  //for use of cdma_bs_type
+#endif
+
 /*===========================================================================
 
                      DEFINES AND CONSTANTS
@@ -752,6 +759,8 @@ typedef struct
 #else
 #define OEMCFG_IMEI_SIZE 10
 #endif
+
+boolean b_first = FALSE;
 
 
 ////
@@ -12163,8 +12172,19 @@ void OEM_SetUCBROWSER_ADSAccount(void)
     PppAccounts Account;
     char username[PPP_MAX_USER_ID_LEN] = {0};
     char password[PPP_MAX_PASSWD_LEN] = {0};
-    
-    OEMDSS_SetAppType(0);
+
+	word curr_mcc;
+    byte curr_mnc;
+	IRUIM          *m_pIRUIM;
+	extern cdma_bs_type *cur_bs_ptr; 	
+    AECHAR              svc_p_name[UIM_CDMA_HOME_SERVICE_SIZE+1];
+	MEMSET(svc_p_name, 0, UIM_CDMA_HOME_SERVICE_SIZE + 1); 
+	
+	OEMDSS_SetAppType(DA_BREW_TYPE);
+	
+	ISHELL_CreateInstance(AEE_GetShell(),
+                                 AEECLSID_RUIM,
+                                 (void **) &m_pIRUIM);
     
     if(SUCCESS == OEM_GetPppAccounts(&Account, DS_WAP20_TYPE))
     {
@@ -12188,31 +12208,138 @@ void OEM_SetUCBROWSER_ADSAccount(void)
 	
 	DBGPRINTF("OEM_SetUCBROWSER_ADSAccountusername1 =%s", username);  
     DBGPRINTF("OEM_SetUCBROWSER_ADSAccountuserpassword1 =%s", password);
-	if(strstr (username,"mts"))
-	{
-		STRCPY(username,"wap@wap.mtsindia.in");
-		STRCPY(password,"wap");
-	}
-	else if(strstr (username,"tata"))
-	{
-		STRCPY(username,"wapuser");
-		STRCPY(password,"wapuser");
-	}
-	else if(strstr (username,"reliance"))
-	{
-		STRCPY(username,"SpiceD88@wap.reliance.com");
-		STRCPY(password,"K39MspDeci");
-	}
-	else if(strstr (username,"vmi"))
-	{
-		STRCPY(username,"wap@ttsl.vmi.com");
-		STRCPY(password,"wap");
-	}
-    else
+
+	curr_mcc = cur_bs_ptr->csp.esp.mcc + 111;
+    curr_mnc = cur_bs_ptr->csp.esp.imsi_11_12 + 11; 
+
+    //ERR("BS mcc(%d), BS mnc(%d)",cur_bs_ptr->esp.mcc,cur_bs_ptr->esp.imsi_11_12,0);
+
+    if ( curr_mcc % 10 == 0 )
     {
-        STRCPY(username,"card");
-		STRCPY(password,"card");
+       curr_mcc -= 10;
     }
+    if ( (curr_mcc/10) % 10 == 0 )
+    {
+       curr_mcc -= 100;
+    }
+    if ( curr_mcc >= 1000 )
+    {
+       curr_mcc -= 1000; 
+    } 
+
+    if ( curr_mnc % 10 == 0 )
+    {
+       curr_mnc -= 10;
+    }
+    if ( curr_mnc >= 100 )
+    {
+       curr_mnc -= 100;
+    } 
+	
+	IRUIM_Read_Svc_P_Name(m_pIRUIM,svc_p_name);
+
+    MSG_FATAL("curr_mnc====%d,,curr_mcc=====%d",curr_mnc,curr_mcc,0);
+
+	MSG_FATAL("STRLEN(svc_p_name)==========%d",WSTRLEN(svc_p_name),0,0);
+	if(WSTRLEN(svc_p_name)<1)
+	{
+		
+		if(strstr (username,"mts"))
+		{
+			STRCPY(username,"wap@wap.mtsindia.in");
+			STRCPY(password,"MTS");
+		}
+		else if(strstr (username,"tata"))
+		{
+			STRCPY(username,"wapuser");
+			STRCPY(password,"wapuser");
+		}
+		else if(strstr (username,"reliance"))
+		{
+			STRCPY(username,"SpiceD88@wap.reliance.com");
+			STRCPY(password,"K39MspDeci");
+		}
+		else if(strstr (username,"vmi"))
+		{
+			STRCPY(username,"wap@ttsl.vmi.com");
+			STRCPY(password,"wap");
+		}
+		else if (460 == curr_mcc && 3 == curr_mnc) 
+		{
+			STRCPY(username,"card");
+			STRCPY(password,"card");
+		}
+		else if ((404 == curr_mcc && 0 == curr_mnc)||(405 == curr_mcc && 25 == curr_mnc)||(405 == curr_mcc && 27 == curr_mnc)
+			   ||(405 == curr_mcc && 29 == curr_mnc)||(405 == curr_mcc && 30 == curr_mnc)||(405 == curr_mcc && 31 == curr_mnc)
+			   ||(405 == curr_mcc && 32 == curr_mnc)||(405 == curr_mcc && 34 == curr_mnc)||(405 == curr_mcc && 35 == curr_mnc)
+			   ||(405 == curr_mcc && 36 == curr_mnc)||(405 == curr_mcc && 37 == curr_mnc)||(405 == curr_mcc && 38 == curr_mnc)
+			   ||(405 == curr_mcc && 39 == curr_mnc)||(405 == curr_mcc && 41 == curr_mnc)||(405 == curr_mcc && 42 == curr_mnc)
+			   ||(405 == curr_mcc && 43 == curr_mnc)||(405 == curr_mcc && 44 == curr_mnc)||(405 == curr_mcc && 45 == curr_mnc)
+			   ||(405 == curr_mcc && 46 == curr_mnc)||(405 == curr_mcc && 47 == curr_mnc)) 
+		{
+			STRCPY(username,"wapuser");
+			STRCPY(password,"wapuser");
+		}
+		else if(405 == curr_mcc && 89 == curr_mnc) 
+		{
+			STRCPY(username,"wap@wap.mtsindia.in");
+			STRCPY(password,"MTS");
+		}
+	    else
+	    {
+			STRCPY(username,"wapuser");
+			STRCPY(password,"wapuser");
+	    }
+	}
+	else
+	{
+		if(strstr (username,"MTS"))
+		{
+			STRCPY(username,"wap@wap.mtsindia.in");
+			STRCPY(password,"MTS");
+		}
+		else if(strstr (username,"TATA"))
+		{
+			STRCPY(username,"wapuser");
+			STRCPY(password,"wapuser");
+		}
+		else if(strstr (username,"reliance"))
+		{
+			STRCPY(username,"SpiceD88@wap.reliance.com");
+			STRCPY(password,"K39MspDeci");
+		}
+		else if(strstr (username,"vmi"))
+		{
+			STRCPY(username,"wap@ttsl.vmi.com");
+			STRCPY(password,"wap");
+		}
+		else if (460 == curr_mcc && 3 == curr_mnc) 
+		{
+			STRCPY(username,"card");
+			STRCPY(password,"card");
+		}
+		else if ((404 == curr_mcc && 0 == curr_mnc)||(405 == curr_mcc && 25 == curr_mnc)||(405 == curr_mcc && 27 == curr_mnc)
+			   ||(405 == curr_mcc && 29 == curr_mnc)||(405 == curr_mcc && 30 == curr_mnc)||(405 == curr_mcc && 31 == curr_mnc)
+			   ||(405 == curr_mcc && 32 == curr_mnc)||(405 == curr_mcc && 34 == curr_mnc)||(405 == curr_mcc && 35 == curr_mnc)
+			   ||(405 == curr_mcc && 36 == curr_mnc)||(405 == curr_mcc && 37 == curr_mnc)||(405 == curr_mcc && 38 == curr_mnc)
+			   ||(405 == curr_mcc && 39 == curr_mnc)||(405 == curr_mcc && 41 == curr_mnc)||(405 == curr_mcc && 42 == curr_mnc)
+			   ||(405 == curr_mcc && 43 == curr_mnc)||(405 == curr_mcc && 44 == curr_mnc)||(405 == curr_mcc && 45 == curr_mnc)
+			   ||(405 == curr_mcc && 46 == curr_mnc)||(405 == curr_mcc && 47 == curr_mnc)) 
+		{
+			STRCPY(username,"wapuser");
+			STRCPY(password,"wapuser");
+		}
+		else if(405 == curr_mcc && 89 == curr_mnc) 
+		{
+			STRCPY(username,"wap@wap.mtsindia.in");
+			STRCPY(password,"MTS");
+		}
+		else
+		{
+			STRCPY(username,"wapuser");
+			STRCPY(password,"wapuser");
+		}
+	}
 	#endif
 	
 	DBGPRINTF("OEM_SetUCBROWSER_ADSAccountusername =%s", username);  
@@ -12232,6 +12359,13 @@ void OEM_SetUCBROWSER_ADSAccount(void)
     (void)STRCPY((char *)nvi.pap_password.password, (char *)password);
     nvi.pap_password.password_len = STRLEN((char *)password);
     (void)OEMNV_Put(NV_PPP_PASSWORD_I, &nvi);
+
+	if (m_pIRUIM != NULL)
+    {
+        IRUIM_Release(m_pIRUIM);
+        m_pIRUIM = NULL;
+    }
+	
 #endif
 } /* OEM_SetBAM_ADSAccount */
 #endif
