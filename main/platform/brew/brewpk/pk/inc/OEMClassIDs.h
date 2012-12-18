@@ -129,8 +129,9 @@ GENERAL DESCRIPTION:
 #if defined(FEATURE_VERSION_M8) || defined(FEATURE_VERSION_M8P) || defined (FEATURE_VERSION_M8021)
 #define AEECLSID_FRENDUO           (AEECLSID_OEM + 0x505)   //add by yangdecai
 #endif
+#if defined(FEATURE_VERSION_C316)
 #define AEECLSID_INDEX_ZONE			(AEECLSID_OEM + 0x506)	//Add By zzg for C316 index_zone
-	
+#endif
 #define AEECLSID_MULTIMEDIA_LIST   (AEECLSID_OEM + 0x600)   //add by yangdecai
 #define AEECLSID_STATIC_APP        (AEECLSID_OEM + 0x601)   //add by yangdecai
 #define AEECLSID_TVAPP            (AEECLSID_OEM + 0x602)   //add by pengyuangui  AEECLSID_Tv_APP
