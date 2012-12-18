@@ -12102,6 +12102,7 @@ static boolean TextCtl_NumbersKey(TextCtlContext *pContext, AEEEvent eCode,AVKTy
    else if(key == AVK_0)
    {
 #if  defined(FEATURE_OEMOMH) && !defined(FEATURE_VERSION_W515V3)
+#if  defined(FEATURE_OEMOMH) && !defined(FEATURE_VERSION_W515V3)  && !defined(FEATURE_VERSION_W317A)
         MSG_FATAL("KEY 0 bHold %d",(eCode == EVT_KEY_HELD)?TRUE:FALSE,0,0);
         if(eCode == EVT_KEY_HELD)
         {
