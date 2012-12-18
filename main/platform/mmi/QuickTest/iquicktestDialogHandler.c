@@ -2552,6 +2552,7 @@ static boolean  QuickTest_SDTestHandler(CQuickTest *pMe,
     AECHAR   string[MAX_STRING_LENGTH+1];
     AEERect  dlgrc;
     int  uim;
+    ITextCtl *pTextCtl;
 
     PARAM_NOT_REF(dwParam)
 
@@ -2577,9 +2578,21 @@ static boolean  QuickTest_SDTestHandler(CQuickTest *pMe,
         uim = 2;
     }
 
+    
+
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
+            //重新绘制标题add by xuke 2012.12.17
+            {
+                AECHAR newWTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_QUICKTEST_RES_FILE,                                
+                        IDS_QUICKTEST,
+                        newWTitle,
+                        sizeof(newWTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, newWTitle);
+            }
             return TRUE;
 
         case EVT_DIALOG_START:
@@ -3478,9 +3491,9 @@ static void QuickTest_Vibrate(CQuickTest *pMe)
     vib = !vib;
     if( vib )
     {
-        ISOUND_Vibrate(pMe->m_pISound, 5000);
+        ISOUND_Vibrate(pMe->m_pISound, 3000);
         (void)ISHELL_SetTimer(pMe->m_pShell,
-                             5000,
+                             3000,
                              (PFNNOTIFY)(QuickTest_Vibrate),
                              pMe);
     }
