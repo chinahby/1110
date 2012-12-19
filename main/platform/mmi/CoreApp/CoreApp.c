@@ -3257,8 +3257,10 @@ static void CoreApp_Process_Charger_Msg(CCoreApp   *pMe)
         MSG_FATAL("CoreApp_Process_Charger_Msg Start",0,0,0); 
         if(pMe->m_bExtPwrState)
         {
-            #if (defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_W317A)|| defined(FEATURE_VERSION_C316))
+            #if (defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_W317A))
             pMe->m_nMsgID = IDS_CHARGER_CONNECTED;
+			 #elif defined(FEATURE_VERSION_C316)			
+			 pMe->m_nMsgID = IDS_CHARGER_CONNECT;
             #else
             pMe->m_nMsgID = IDS_CHARGER_ON;
             #endif

@@ -205,6 +205,9 @@
 	<String Id="1068" Name="IDS_COMPLETE_CHARGED">
 		<Text>Charge complete</Text>
 	</String>
+	<String Id="1069" Name="IDS_CHARGER_CONNECT">
+		<Text>Charger connect</Text>
+	</String>
 	<String Id="1070" Name="IDS_STR_TOUCH_ONE">
 		<Text>Dialer</Text>
 	</String>
