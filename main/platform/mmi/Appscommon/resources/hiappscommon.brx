@@ -277,11 +277,14 @@
 	<String Id="1039" Name="IDS_SILENT">
 		<Text>Silent</Text>
 	</String>
-	<String Id="1040" Name="IDS_MULTICALL" Encoding="Unicode">
+	<String Id="1040" Name="IDS_MULTICALL">
 		<Text>Multi call</Text>
 	</String>
-	<String Id="1041" Name="IDS_CLEAR_EX" Encoding="Unicode">
+	<String Id="1041" Name="IDS_CLEAR_EX">
 		<Text>Clear</Text>
+	</String>
+	<String Id="1042" Name="IDS_SHORTCUT">
+		<Text>Shortcut</Text>
 	</String>
 	<STRING Id="2001" Name="IDS_SNOOZE">
 		<Text>स्नूज</Text>
@@ -315,24 +318,24 @@
 	</String>
 	<STRING Id="2011" Name="IDS_PHONE_BOOK">
 		<Text>Phonebook</Text>
-	</STRING>	
+	</STRING>
 	<STRING Id="2012" Name="IDS_FILE_MANAGER">
 		<Text>File manager</Text>
-	</STRING>	
+	</STRING>
 	<STRING Id="2013" Name="IDS_SEARCH">
 		<Text>Search</Text>
-	</STRING>	
+	</STRING>
 	<STRING Id="2014" Name="IDS_NAMES">
 		<Text>नाम</Text>
-	</STRING>	
+	</STRING>
 	<STRING Id="2015" Name="IDS_KEYPAD_LOCKED">
 		<Text>द कीपैड</Text>
-	</STRING>	
+	</STRING>
 	<STRING Id="2016" Name="IDS_KEYPAD_UNLOCKED">
 		<Text>ला कीपैड</Text>
-	</STRING>	
+	</STRING>
 	<STRING Id="2017" Name="IDS_COMMON_HELP">
 		<Text>मदद</Text>
-	</STRING>	
+	</STRING>
 </Strings>
 </BREWRes>
