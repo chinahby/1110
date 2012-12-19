@@ -675,7 +675,6 @@ static void MsgTimeOut( CFmRadio* pMe)
 
 static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier)
 {
-
     if( ( ( pMe->opMode  == FM_RADIO_OPMODE_MODE_SELECTION   ||
             pMe->opMode  == FM_RADIO_OPMODE_OPTION_SELECTION ||
          #if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
@@ -893,7 +892,8 @@ static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier)
     }
     #endif
 
-
+	MSG_FATAL("***zzg RMRadio handleKeyEvent key=%x***", key, 0, 0);
+	
     switch( key)
     {
 #if defined( AEE_SIMULATOR)
@@ -1164,6 +1164,20 @@ __handleKeyEvent_input_channel_done__:
 		}
 		return TRUE;
 
+#ifdef FEATURE_VERSION_C316
+		case AVK_HEADSET_SWITCH:
+		{
+			if( pMe->opMode == FM_RADIO_OPMODE_PLAY)
+			{				
+				pMe->cfg.tuningMode = FM_RADIO_TUNNING_MODE_LIST;
+				changeChannelClockwise( pMe);				
+			}
+		}
+		return TRUE;	
+#endif	
+
+		
+
         case AVK_GSENSOR_FORWARD:
         case AVK_GSENSOR_BACKWARD:
     #if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
@@ -1246,8 +1260,8 @@ __handleKeyEvent_input_channel_done__:
         }
         return TRUE;
 
-        case AVK_GSENSOR_BACKWARD:
-        case AVK_RIGHT:
+        case AVK_GSENSOR_BACKWARD:			
+        case AVK_RIGHT:			
         {
             if( pMe->opMode == FM_RADIO_OPMODE_PLAY)
             {

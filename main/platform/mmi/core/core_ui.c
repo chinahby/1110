@@ -1993,10 +1993,10 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
             wParam = AVK_END;
         }else{
             // add by pyuangui 20121204
-            #ifdef FEATURE_VERSION_W317A
-            if(AEE_Active()!=AEECLSID_APP_MUSICPLAYER)
+            #if defined( FEATURE_VERSION_W317A) || defined( FEATURE_VERSION_C316)
+            if((AEE_Active()!=AEECLSID_APP_MUSICPLAYER) && (AEE_Active()!=AEECLSID_APP_FMRADIO))
 		    #endif
-        	{
+        	{        	 
         	  MSG_FATAL("AVK_HEADSET_SWITCH---",0,0,0);
               // AVK_SEND instead of AVK_HEADSET_SWITCH
               wParam = AVK_SEND;
