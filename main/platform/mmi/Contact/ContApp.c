@@ -550,7 +550,7 @@ static int CContApp_InitAppData(CContApp *pMe)
 						  {
 						      int result = 0;
 						      result=CContApp_CreateCont( pMe, FALSE)	;
-							  MSG_FATAL("CContApp_CreateCont result=%d", result,0,0)
+							  MSG_FATAL("CContApp_CreateCont result=%d", result,0,0);
 						  }
                     }
 //#endif
