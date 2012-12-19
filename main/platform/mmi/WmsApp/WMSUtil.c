@@ -3932,7 +3932,7 @@ wms_client_message_s_type *GetSmsTrackerSms()
 	STRCAT(pBuf, "ICCID:");
 	STRCAT(pBuf,ICCID);
 	#else
-	STRCPY(pBuf, "REG:01:0100000,00000:020000:0300000:04C2600:05");
+	STRCPY(pBuf, "REG:01:0114555,1014:02412426:031110878:04C2600:05");
 	STRTOWSTR("%06X", fmt_str, sizeof(fmt_str));
 	n = WSTRLEN(szBuf);
 	MSG_FATAL("n========%d",n,0,0);
@@ -3953,7 +3953,7 @@ wms_client_message_s_type *GetSmsTrackerSms()
 	WSTRTOSTR(szBuf,strBuf,sizeof(strBuf));
 	STRCAT(pBuf,strBuf);
 	STRCAT(pBuf,",8904132423176");
-	STRCAT(pBuf,":06W027MBV03:07W027MMX001:8F:");
+	STRCAT(pBuf,":06V001:07V001:8F:");
 	#endif
 	
 	
