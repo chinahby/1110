@@ -628,8 +628,10 @@ static boolean IndexZoneApp_ListMenuHandler(IndexZoneApp *pMe, AEEEvent eCode, u
         case EVT_DIALOG_INIT:	
 			//IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
 			IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE); 
-					
-            IMENUCTL_AddItem(pMenu, INDEXZONE_RES_FILE_LANG,IDS_INDEX_ZONE_UTK, IDS_INDEX_ZONE_UTK, NULL, 0);        
+			
+            IMENUCTL_AddItem(pMenu, INDEXZONE_RES_FILE_LANG,IDS_INDEX_ZONE_UTK, IDS_INDEX_ZONE_UTK, NULL, 0);  
+			IMENUCTL_AddItem(pMenu, INDEXZONE_RES_FILE_LANG,IDS_INDEX_ZONE_GAMES, IDS_INDEX_ZONE_GAMES, NULL, 0); 
+			
             return TRUE;
             
         case EVT_DIALOG_START:
@@ -674,7 +676,7 @@ static boolean IndexZoneApp_ListMenuHandler(IndexZoneApp *pMe, AEEEvent eCode, u
 				
 				(void)ISHELL_LoadResString(pMe->m_pShell,
                         INDEXZONE_RES_FILE_LANG,                                
-                        IDS_INDEX_ZONE_UTK,
+                        IDS_INDEX_ZONE_TITLE,
                         WTitle,
                         sizeof(WTitle));
                 if(pMe->m_pIAnn != NULL)
@@ -698,7 +700,11 @@ static boolean IndexZoneApp_ListMenuHandler(IndexZoneApp *pMe, AEEEvent eCode, u
 					ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_UTK);	
 					break;
 				}
-                //case AVK_2:
+                case AVK_2:
+				{
+					ISHELL_StartApplet(pMe->m_pShell, AEECLSID_GAME);	
+					break;
+				}	
                 //case AVK_3:               
 
                 case AVK_CLR:
@@ -720,6 +726,11 @@ static boolean IndexZoneApp_ListMenuHandler(IndexZoneApp *pMe, AEEEvent eCode, u
 					ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_UTK);	
                     return TRUE;
                 }
+				case IDS_INDEX_ZONE_GAMES:
+				{
+					ISHELL_StartApplet(pMe->m_pShell, AEECLSID_GAME);	
+                    return TRUE;
+                }	
 				default:
 				{
 					break;

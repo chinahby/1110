@@ -74,7 +74,7 @@ typedef struct _IndexZoneApp
                                  
 ==============================================================================*/
 
-#define  MAX_MATRIX_ITEMS 1
+#define  MAX_MATRIX_ITEMS 3
 
 #define  INDEXZONE_RES_FILE_LANG        AEE_RES_LANGDIR INDEXZONE_RES_FILE
 
