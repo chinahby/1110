@@ -283,7 +283,7 @@
 	<String Id="1041" Name="IDS_CLEAR_EX">
 		<Text>Clear</Text>
 	</String>
-	<String Id="1042" Name="IDS_SHORTCUT">
+	<String Id="1044" Name="IDS_SHORTCUT" Encoding="Unicode">
 		<Text>Shortcut</Text>
 	</String>
 	<STRING Id="2001" Name="IDS_SNOOZE">
