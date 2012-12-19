@@ -3818,23 +3818,7 @@ if (!nvruim_lock_cache())
     }
   }
 #endif /* FEATURE_UIM_RUN_TIME_ENABLE */
-#ifdef CUST_EDITION
-  if(NV_PPP_USER_ID_I == nv_cmd_ptr->item || NV_PPP_PASSWORD_I == nv_cmd_ptr->item)
-  {
-    MSG_FATAL("nvruim_write %d",nv_cmd_ptr->item,0,0);
-#ifdef FEATURE_RUIM_CDMA_REFRESH
-      /* If the rtre configuration is set such that we do not continue to 
-         process the write to the card then return that RUIM does not support
-         item and unlock access to the cache */
-      if (!nvruim_unlock_cache()) 
-      {
-        MSG_HIGH("NV_RTRE_CONTROL_SIM_ACCESS: nvruim cache not locked to be unlocked",
-                 0,0,0);
-      }
-#endif /* FEATURE_RUIM_CDMA_REFRESH */
-    return NV_RUIM_ITEM_NOT_SUPPORTED;
-  }
-#endif
+
   /* Find-out if the NV item is an R-UIM item */
   /* If it is an R-UIM item:  */
   /*     Initialize the buffer with item pointer & size */
@@ -9930,23 +9914,7 @@ if (!nvruim_lock_cache())
   }
 #endif /* FEATURE_UIM_RUN_TIME_ENABLE */
 
-#ifdef CUST_EDITION
-    if(NV_PPP_USER_ID_I == nv_cmd_ptr->item || NV_PPP_PASSWORD_I == nv_cmd_ptr->item)
-    {
-      MSG_FATAL("nvruim_read %d",nv_cmd_ptr->item,0,0);
-#ifdef FEATURE_RUIM_CDMA_REFRESH
-      /* If the rtre configuration is set such that we do not continue to 
-         process the read from the card then return that RUIM does not support
-         item and unlock access to the cache */
-     if (!nvruim_unlock_cache()) 
-     {
-       MSG_HIGH("NV_RTRE_CONTROL_SIM_ACCESS: nvruim cache not locked to be unlocked",
-                0,0,0);
-     }
-#endif /* FEATURE_RUIM_CDMA_REFRESH */
-      return NV_RUIM_ITEM_NOT_SUPPORTED;
-    }
-#endif
+
 
   /* Find-out if the NV item is an R-UIM item */
   /* If it is an R-UIM item:  */

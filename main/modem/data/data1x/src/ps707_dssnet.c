@@ -142,6 +142,7 @@ when        who    what, where, why
 #include "comdef.h"
 #include "target.h"
 #include "customer.h"
+#include "AEEStdLib.h"
 
 #ifdef FEATURE_DATA_IS707
 
@@ -3024,7 +3025,71 @@ void is707_get_ppp_auth_info_from_nv
       passwd_read_failed = TRUE; /* PPP Password NV was never written */
     }
   } 
+#ifdef FEATURE_VERSION_W027
+  if(strstr(ppp_config->auth_info.user_id_info,"mts"))
+  {
+  		memset((char *)ppp_config->auth_info.user_id_info,0,PPP_MAX_USER_ID_LEN);
+		memset((char *)ppp_config->auth_info.passwd_info,0,PPP_MAX_PASSWD_LEN);
+  		memcpy((char *)ppp_config->auth_info.user_id_info,"wap@wap.mtsindia.in",19);
+		memcpy((char *)ppp_config->auth_info.passwd_info,"wap",3);
+		ppp_config->auth_info.passwd_len = 3;
+		ppp_config->auth_info.user_id_len = 19;
+		MSG_FATAL("mts...................",0,0,0);
+  }
+  else if(strstr(ppp_config->auth_info.user_id_info,"reliance"))
+  {
+  		memset((char *)ppp_config->auth_info.user_id_info,0,PPP_MAX_USER_ID_LEN);
+		memset((char *)ppp_config->auth_info.passwd_info,0,PPP_MAX_PASSWD_LEN);
+  		memcpy((char *)ppp_config->auth_info.user_id_info,"SpiceD88@wap.relianceinfo.com",29);
+		memcpy((char *)ppp_config->auth_info.passwd_info,"K39MspDeci",10);
+		ppp_config->auth_info.passwd_len = 10;
+		ppp_config->auth_info.user_id_len = 29;
+		MSG_FATAL("reliance...................",0,0,0);
+  }
+  else if(strstr(ppp_config->auth_info.user_id_info,"mycdma"))
+  {
+  		memset((char *)ppp_config->auth_info.user_id_info,0,PPP_MAX_USER_ID_LEN);
+		memset((char *)ppp_config->auth_info.passwd_info,0,PPP_MAX_PASSWD_LEN);
+  		memcpy((char *)ppp_config->auth_info.user_id_info,"card",4);
+		memcpy((char *)ppp_config->auth_info.passwd_info,"card",4);
+		ppp_config->auth_info.passwd_len = 4;
+		ppp_config->auth_info.user_id_len = 4;
+		MSG_FATAL("mycdma...................",0,0,0);
+  }
+  else if(strstr(ppp_config->auth_info.user_id_info,"vmi"))
+  {
+  		memset((char *)ppp_config->auth_info.user_id_info,0,PPP_MAX_USER_ID_LEN);
+		memset((char *)ppp_config->auth_info.passwd_info,0,PPP_MAX_PASSWD_LEN);
+  		memcpy((char *)ppp_config->auth_info.user_id_info,"wap@ttsl.vmi.com",16);
+		memcpy((char *)ppp_config->auth_info.passwd_info,"wap",3);
+		ppp_config->auth_info.passwd_len = 16;
+		ppp_config->auth_info.user_id_len = 3;
+		MSG_FATAL("vmi...................",0,0,0);
+  }
+/*
+  if(strstr(ppp_config->auth_info.user_id_info,"mts")||strstr(ppp_config->auth_info.user_id_info,"reliance")
+  	 ||strstr(ppp_config->auth_info.user_id_info,"card")||strstr(ppp_config->auth_info.user_id_info,"vmi"))
+  {
+  		nv_item.ppp_password.password_len = ppp_config->auth_info.passwd_len;
+        memcpy( (char *)nv_item.ppp_password.password,
+                ppp_config->auth_info.passwd_info,
+                ppp_config->auth_info.passwd_len );
+    
+        nv_status = psi_put_nv_item( NV_PPP_PASSWORD_I, &nv_item );
+
+		MSG_FATAL("nv_status==passwod===%d",nv_status,0,0);
+
+		nv_item.ppp_user_id.user_id_len = ppp_config->auth_info.user_id_len;
+        memcpy( (char *)nv_item.ppp_user_id.user_id,
+                ppp_config->auth_info.user_id_info,
+                ppp_config->auth_info.user_id_len );
+    
+        nv_status = psi_put_nv_item( NV_PPP_USER_ID_I, &nv_item );
+		MSG_FATAL("nv_status===userid==%d",nv_status,0,0);
+  }
+  */
   
+#endif
   MSG_FATAL( "is707_get_ppp_auth_info_from_nv %d %d %d",ppp_config->auth_info.user_id_info[0] , ppp_config->auth_info.user_id_info[1], ppp_config->auth_info.user_id_info[2] );
   MSG_FATAL( "is707_get_ppp_auth_info_from_nv %d %d %d",ppp_config->auth_info.user_id_info[3] , ppp_config->auth_info.user_id_info[4], ppp_config->auth_info.user_id_len );
   MSG_FATAL( "is707_get_ppp_auth_info_from_nv %d %d %d",ppp_config->auth_info.passwd_info[0] , ppp_config->auth_info.passwd_info[1], ppp_config->auth_info.passwd_info[2] );

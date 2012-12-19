@@ -4074,7 +4074,7 @@ int OEM_GetPppAccounts(PppAccounts *pAccount, DataSvcType dsType)
 	//MSG_FATAL("OEM_GetPppAccounts......",0,0,0);
    if(NULL == pAccount)
       return EBADPARM;
-    
+#ifndef FEATURE_VERSION_W027
 #ifdef FEATURE_DS_MULTIPLE_PROFILES
    // Get  the PPP NAI ID to NV FOR ACTIVE PROFILE.   
    //MSG_FATAL("OEM_GetPppAccounts......0000000000000",0,0,0);
@@ -4102,7 +4102,7 @@ int OEM_GetPppAccounts(PppAccounts *pAccount, DataSvcType dsType)
    if(OEMNV_GetPPPItem(NV_PPP_PASSWORD_I, &nvi2) != NV_DONE_S) 
       DBGPRINTF(";get NV_PPP_PASSWORD_I failed");   
 #endif // FEATURE_DS_MULTIPLE_PROFILES
-
+#endif
 	//MSG_FATAL("OEM_GetPppAccounts......11111111111",0,0,0);
 		
     switch(dsType)
@@ -4110,6 +4110,7 @@ int OEM_GetPppAccounts(PppAccounts *pAccount, DataSvcType dsType)
         case DS_BREW_TYPE:
         case DS_WAP20_TYPE:
         default:
+#ifndef FEATURE_VERSION_W027
 #ifdef FEATURE_DS_MULTIPLE_PROFILES
 #ifndef WIN32
             pszUserId = (char *)nvi.ds_sip_nai_info.nai;
@@ -4127,6 +4128,7 @@ int OEM_GetPppAccounts(PppAccounts *pAccount, DataSvcType dsType)
             TRIM_LEFT_CHAR(pszPassWord, '0');
 #endif
 #endif // FEATURE_DS_MULTIPLE_PROFILES
+#endif
 
             str_cpy_within_buf_size(pAccount->user_id_info, PPP_MAX_USER_ID_LEN, pszUserId);
             str_cpy_within_buf_size(pAccount->passwd_info, PPP_MAX_PASSWD_LEN, pszPassWord);		
