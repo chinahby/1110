@@ -71,7 +71,7 @@ when       who     what, where, why
 // USE T9 input method
 #define FEATURE_T9_INPUT
 #ifdef FEATURE_LANGUAGE_MYANMAR
-#if defined(FEATURE_VERSION_VG68)||defined(FEATURE_VERSION_X3)
+#if defined(FEATURE_VERSION_VG68)||defined(FEATURE_VERSION_X3)||defined(FEATURE_VERSION_C11)
 #define FEATURE_MT_MYANMRA
 #else
 #define FEATURE_MYANMAR_INPUT_MOD     //add by yangdecai 2010-12-23
