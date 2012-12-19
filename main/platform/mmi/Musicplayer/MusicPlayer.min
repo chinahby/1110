@@ -32,6 +32,7 @@ ifneq ($(RESOURCEDIR),S106)
 ifneq ($(RESOURCEDIR),X3)
 ifneq ($(RESOURCEDIR),C11)
 ifneq ($(RESOURCEDIR),C180)
+ifneq ($(RESOURCEDIR),C210)
 ifneq ($(RESOURCEDIR),SKY)
 ifneq ($(RESOURCEDIR),common)
 ifneq ($(RESOURCEDIR),C337)
@@ -44,6 +45,7 @@ endif
 endif
 endif
 endif	
+endif
 endif
 endif	
 endif
