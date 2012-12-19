@@ -66,6 +66,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //#define FEATURE_ARPHIC_LAYOUT_ENGINE
 #define FEATURE_CAMERA_MULTI_NEW_AUTO_DETECT
 #define FEATURE_AMR_FIXED
+#define FEATURE_CALL_RECORDER
 #endif
 
 #ifndef TARGSBW2_H
