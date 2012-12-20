@@ -2017,6 +2017,17 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
         break;
 #endif
 
+//Add by pyuangui 20121220
+#ifdef FEATURE_VERSION_W317A
+    case AVK_INFO:			
+		if (cls == AEECLSID_UCWEB)		
+		{
+			wParam = AVK_SELECT;
+			bHandle = TRUE;
+		}
+        break;  
+#endif
+//Add End
 
 #ifdef FEATURE_SMARTFREN_STATIC_BREW_APP 
 	case AVK_CLR:			
