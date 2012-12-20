@@ -3159,18 +3159,6 @@ void is707_get_ppp_auth_info_from_nv
           MSG_ERROR( "PPP user ID NV_DS_SIP_NAI_INFO_I", 0, 0, 0 );
        }
     }
-    /*-------------------------------------------------------------------------
-      If NV was never written then the length of the User_id is set to 0.
-      This will ensure that no user ID is included in the AP response.
-    -------------------------------------------------------------------------*/
-    else
-    {
-      /*-----------------------------------------------------------------------
-         Set the user_id length to 0.
-      -----------------------------------------------------------------------*/
-      ppp_config->auth_info.user_id_len = 0;
-      MSG_ERROR( "PPP user ID never written", 0, 0, 0 );
-    }
 #endif
 
     /*-------------------------------------------------------------------------
