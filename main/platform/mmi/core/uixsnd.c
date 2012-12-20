@@ -2705,6 +2705,14 @@ void uisnd_vibrate(uint16 wDuration,
             
   #else  */
 #if defined(FEATURE_VERSION_C306) || defined(FEATURE_VERSION_W027)
+#ifdef FEATURE_VERSION_C316
+  uisnd_vibrate_cmd(TRUE);
+	 clk_reg( &uisnd_vibrator_clk,
+	              uisnd_vibrator_cb,
+	              wDuration,
+	              0,
+	              FALSE );
+#else
   snd_freq_tone_start(SND_DEVICE_CURRENT,
 				   SND_METHOD_RING,
 				   160,
@@ -2714,6 +2722,7 @@ void uisnd_vibrate(uint16 wDuration,
 				   callback_ptr,
 				   client_data
 				  );
+#endif
 #else
   uisnd_vibrate_cmd(TRUE);
     clk_reg( &uisnd_vibrator_clk,
