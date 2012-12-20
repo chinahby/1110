@@ -2935,6 +2935,15 @@ SIDE EFFECTS
 static int DBToLevel (int nDBVal)
 {
     MSG_FATAL("DBToLevel",0,0,0);
+	//add by pyuangui 20121220
+	#ifdef FEATURE_VERSION_W317A
+	if (nDBVal < 92)
+        return ANNUN_STATE_RSSI_4;
+    else if (nDBVal < 108)
+        return ANNUN_STATE_RSSI_3;
+    else
+        return ANNUN_STATE_RSSI_0;
+	#else
 	#ifdef FEATURE_VERSION_VG68
     if (nDBVal < 92)
         return ANNUN_STATE_RSSI_6;
@@ -2958,6 +2967,7 @@ static int DBToLevel (int nDBVal)
         return ANNUN_STATE_RSSI_1;
     else
         return ANNUN_STATE_RSSI_0;
+	#endif
 }
 
 /*=============================================================================
