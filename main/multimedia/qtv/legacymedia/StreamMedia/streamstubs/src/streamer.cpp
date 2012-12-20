@@ -18,9 +18,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/legacymedia/streammedia/streamstubs/rel/1.0/src/streamer.cpp#3 $
-$DateTime: 2008/07/29 21:17:21 $
-$Change: 712884 $
+$Header: //source/qcom/qct/multimedia/qtv/legacymedia/streammedia/streamstubs/rel/1.0/src/streamer.cpp#4 $
+$DateTime: 2011/02/02 22:29:39 $
+$Change: 1605117 $
 
 ========================================================================== */
 
@@ -181,3 +181,38 @@ uint32 Streamer::getTotalRxDataRate()
   return 0;
 }
 
+void Streamer::setSpeed(float speed)
+{
+}
+
+void Streamer::setAccDuration(int time)
+{
+}
+
+bool Streamer::Reconnect
+(
+  bool &bError
+)
+{
+  return FALSE;
+}
+
+ReconnectionStatus Streamer::getReconnectionStatus()
+{
+ return RECONNECT_STATUS_INVALID;
+}
+
+bool Streamer::PrepareForReconnect(bool isReconnectForFirewall)
+{ 
+  return FALSE;
+}
+
+bool Streamer::isReconnectionInProgress()
+{
+  return FALSE;
+}
+
+bool Streamer::TeardownForReconnect()
+{
+  return FALSE;
+}

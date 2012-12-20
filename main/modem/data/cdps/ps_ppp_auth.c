@@ -83,10 +83,6 @@ when        who    what, where, why
 #include "bit.h"
 #endif /* FEATURE_UIM_SUPPORT_3GPD */
 
-#ifdef FEATURE_DS_MULTIPLE_PROFILES // Gemsea Add for non-OMH card
-#include "ds707_data_session_profile.h"
-#endif /* FEATURE_DS_MULTIPLE_PROFILES */
-
 /*===========================================================================
 
                 LOCAL DEFINITIONS AND DECLARATIONS FOR MODULE
@@ -187,7 +183,7 @@ void ppp_auth_start
   /*-------------------------------------------------------------------------
     Are we supposed to authenticate?
   -------------------------------------------------------------------------*/
-  MSG_FATAL("ppp_auth_start %d %d",ppp_cb_ptr->auth.mode,device,0);
+  MSG_FATAL("ppp_auth_start %d %d %d",ppp_cb_ptr->auth.mode,device,uim_3gpd_support());
   switch(ppp_cb_ptr->auth.mode)
   {
   case PPP_DO_CHAP:
@@ -1096,7 +1092,7 @@ static void papi_send_auth_req
   memcpy(insert_ptr,
          ppp_cb_ptr->auth.info.passwd_info,
          ppp_cb_ptr->auth.info.passwd_len);
-  
+
   /*-------------------------------------------------------------------------
     we are done - so transmit the packet
   -------------------------------------------------------------------------*/
@@ -1622,12 +1618,8 @@ static void chapi_send_resp
 #ifdef FEATURE_UIM_SUPPORT_3GPD
   if((UIM_3GPD_MIP_RUIM_SIP_RUIM == uim_3gpd_support() ||
       UIM_3GPD_MIP_NV_SIP_RUIM == uim_3gpd_support())
-#ifdef FEATURE_DS_MULTIPLE_PROFILES // Gemsea ADD for non-OMH card
-      && (num_valid_profiles > 0)
-#endif
     )
   {
-    MSG_FATAL("chapi_calc_chap_md5_ruim_response %d",uim_3gpd_support(),0,0);
     /*-----------------------------------------------------------------------
       If using RUIM, go to the RUIM to get the CHAP response
       This DOES NOT CHECK if it an SN Stream, only that it is NOT an AN Stream.
@@ -1642,7 +1634,6 @@ static void chapi_send_resp
   else
 #endif /* FEATURE_UIM_SUPPORT_3GPD */
   {
-    MSG_FATAL("chapi_calc_chap_md5_sw_response %d",uim_3gpd_support(),0,0);
     /*-----------------------------------------------------------------------
       Use the software MD-5 algorithm to calculate CHAP response
     -----------------------------------------------------------------------*/

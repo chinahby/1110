@@ -18,9 +18,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/utils/oscl/main/latest/inc/oscl_time.h#7 $
-$DateTime: 2008/05/08 14:04:55 $
-$Change: 656428 $
+$Header: //source/qcom/qct/multimedia/qtv/utils/oscl/main/latest/inc/oscl_time.h#8 $
+$DateTime: 2009/01/29 06:14:06 $
+$Change: 829425 $
 
 
 ========================================================================== */
@@ -75,7 +75,9 @@ typedef timeval BasicTimeStruct;
 class TimeValue;  // Forward definition
 
 //! The TimeUnits enum can be used when constructing a TimeValue class.
+#ifndef FEATURE_WINCE
 typedef enum { SECONDS=0, MILLISECONDS=1, MICROSECONDS=2 } TimeUnits;
+#endif // #ifndef FEATURE_WINCE
 
 /* -----------------------------------------------------------------------
 ** Global Constant Data Declarations 

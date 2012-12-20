@@ -25,10 +25,16 @@ is regulated by the U.S. Government. Diversion contrary to U.S. law prohibited.
 /*===========================================================================
                         EDIT HISTORY FOR MODULE
 
-$Header: //source/qcom/qct/modem/uim/su/baselines/qsc1110/rel/3.3.65/uim/mmgsdi/src/mmgsdiutil.c#2 $ $DateTime: 2010/01/28 00:23:15 $ $Author: khegde $
+$Header: //source/qcom/qct/modem/uim/su/baselines/qsc1110/rel/3.3.65/sqa/mmgsdi/src/2/mmgsdiutil.c#5 $ $DateTime: 2010/12/28 00:49:03 $ $Author: msaurabh $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+12/28/10   shr/ms  Fixed input path/AID length check when copying file
+                   access information
+11/18/10   yt      Fixed data length check utility
+10/12/10   shr     File path of depth greater than 5 file IDs needs
+                   to be rejected when handling REFRESH file registration
+10/19/10   shr     Send sync cmd to UIM only when in GSDI context
 01/15/10   shr     Fixed incorrect access of freed memory locations
 05/14/09   kp      Added compiler directive for demand Paging Changes
 05/11/09   kp      Demand Paging Changes
@@ -1993,7 +1999,8 @@ mmgsdi_return_enum_type mmgsdi_util_copy_access_type(
         0, 0, 0);
     break;
   case MMGSDI_BY_PATH_ACCESS:
-    if (src_access_ptr->file.path_type.path_len > MMGSDI_MAX_PATH_LEN)
+    if ((src_access_ptr->file.path_type.path_len > MMGSDI_MAX_PATH_LEN) ||
+        (src_access_ptr->file.path_type.path_len < 0))
     {
       MSG_ERROR("Path Len greater than MMGSDI_MAX_PATH_LEN 0x%x",
         src_access_ptr->file.path_type.path_len, 0, 0);
@@ -2010,7 +2017,8 @@ mmgsdi_return_enum_type mmgsdi_util_copy_access_type(
     }
     break;
   case MMGSDI_BY_APP_ID_ACCESS:
-    if (src_access_ptr->file.app_id.data_len > MMGSDI_MAX_AID_LEN)
+    if ((src_access_ptr->file.app_id.data_len > MMGSDI_MAX_AID_LEN) ||
+        (src_access_ptr->file.app_id.data_len < 0))
     {
       MSG_ERROR("App ID Len greater than MMGSDI_MAX_AID_LEN 0x%x",
         src_access_ptr->file.app_id.data_len, 0, 0);
@@ -4676,6 +4684,14 @@ mmgsdi_return_enum_type mmgsdi_send_cmd_to_uim_server_synch (
       return MMGSDI_ERROR;
     }
 
+    /* Commands can be sent to UIM in sync mode only in GSDI context */
+    if(&gsdi_task_tcb != rex_self())
+    {
+      MSG_HIGH("mmgsdi_send_cmd_to_uim_server_synch() in non GSDI context",
+               0, 0, 0);
+      return MMGSDI_ERROR;
+    }
+
     MMGSDIUTIL_RETURN_IF_NULL(cmd_ptr);
 
     MSG_HIGH("MMGSDI SEND CMD TO UIM",0,0,0);
@@ -7306,7 +7322,7 @@ boolean mmgsdi_chnl_mgt_is_data_len_valid(
   int32 data_len
 )
 {
-  if ( data_len == 0 )
+  if ( data_len <= 0 )
     return FALSE;
 
   /* --------------------------------------------------------------------------
@@ -10449,8 +10465,9 @@ mmgsdi_return_enum_type  mmgsdi_util_convert_to_refresh_file_paths(
 
   if(data_len == 0)
   {
-    MSG_ERROR("Bad Input Params data_len=0x%x",data_len,0,0);
-    return MMGSDI_INCORRECT_PARAMS;
+    MSG_ERROR("mmgsdi_util_convert_to_refresh_file_paths: Malloc Error, num_files: 0x%x",
+              *num_files_ptr,0,0);
+    return MMGSDI_ERROR;
   }
 
   memset(path, 0x00,(sizeof(uint16)*(MMGSDI_MAX_PATH_LEN)));
@@ -10478,6 +10495,16 @@ mmgsdi_return_enum_type  mmgsdi_util_convert_to_refresh_file_paths(
     /* Parse for each file path */
     do
     {
+      /* If input file path for a file exceeds 5 file ID depth, treat it
+         as invalid and return */
+      if(path_index >= MMGSDI_MAX_PATH_LEN)
+      {
+        MSG_ERROR("mmgsdi_util_convert_to_refresh_file_paths: Invalid input file path",
+                  0,0,0);
+        MMGSDIUTIL_TMC_MEM_FREE(file_path_ptr);
+        return MMGSDI_ERROR;
+      }
+
       path[path_index] = data_ptr[index++] << MMGSDIUTIL_BYTE_SHIFT;
       path[path_index] = path[path_index] | data_ptr[index++];
       MSG_HIGH("File path info - 0x%x", path[path_index],0,0);

@@ -17,17 +17,18 @@ EXTERNALIZED FUNCTIONS
    mip_reg_sm_session_active
      Check if MIP client currently has a valid registration 
 
-Copyright (c) 2000-2009 by QUALCOMM, Incorporated.  All Rights Reserved.
+Copyright (c) 2000-2011 by QUALCOMM, Incorporated.  All Rights Reserved.
 ===========================================================================*/
 /*===========================================================================
 
                             EDIT HISTORY FOR FILE
 
   $PVCSPath: O:/src/asw/COMMON/vcs/dsmip_regsm.c_v   1.39   24 Jan 2003 19:42:24   ubabbar  $
-  $Header: //source/qcom/qct/modem/data/1x/mip/main/lite/src/dsmip_regsm.c#3 $ $DateTime: 2009/05/27 05:07:18 $ $Author: nsivakum $
+  $Header: //source/qcom/qct/modem/data/1x/mip/main/lite/src/dsmip_regsm.c#4 $ $DateTime: 2011/02/24 23:31:53 $ $Author: msankar $
 
 when        who    what, where, why
 --------    ---    ----------------------------------------------------------
+02/25/11    ms     Ported MOBILE_IP_DEREG feature.
 04/29/09    sn     Ported support for call throttle feature (DCTM).
 06/02/08    ms     Fixed Critical/High Lint errors
 11/01/06    an     Featurize ATCOP, RMSM, Async Fax
@@ -208,6 +209,13 @@ void rsmi_rrq_timer_cb
   void *param
 );
 
+#ifdef FEATURE_DS_MOBILE_IP_DEREG
+void rsmi_derrq_timer_cb
+(
+  void *param
+);
+#endif /* FEATURE_DS_MOBILE_IP_DEREG */
+
 void rsmi_life_timer_cb
 (
   void *param
@@ -287,6 +295,16 @@ int mip_reg_sm_init
       return -1;
     }
     MSG_LOW("reg timer handle is %d\n", session->rsm_info.reg_timer, 0, 0);
+
+#ifdef FEATURE_DS_MOBILE_IP_DEREG
+    session->rsm_info.dereg_timer = ps_timer_alloc(rsmi_derrq_timer_cb,session);
+    if(session->rsm_info.dereg_timer == PS_TIMER_FAILURE)
+    {
+      MSG_HIGH( "Failed to allocate dereg timer for RSM!\n",0,0,0);
+      return -1;
+    }
+    MSG_LOW( "dereg timer handle is %d\n", session->rsm_info.dereg_timer,0,0);
+#endif /* FEATURE_DS_MOBILE_IP_DEREG */
 
     session->rsm_info.life_timer = ps_timer_alloc(rsmi_life_timer_cb,
                                                   session);
@@ -400,9 +418,14 @@ void mip_reg_sm_post_event
       /* ignore */
       MSG_MED("Got Exit M.IP Event in No Session state!\n", 0, 0, 0);
       break;
-
+#ifdef FEATURE_DS_MOBILE_IP_DEREG
+    case RSMI_DE_RRQ_STATE:
+#endif /* FEATURE_DS_MOBILE_IP_DEREG */
     case RSMI_RE_RRQ_STATE:
     case RSMI_REGISTERED_STATE:
+#ifdef FEATURE_DS_MOBILE_IP_DEREG
+    case RSMI_DEREGISTERED_STATE:
+#endif /* FEATURE_DS_MOBILE_IP_DEREG */
     case RSMI_INIT_RRQ_STATE:
       rsmi_transition_state(session, RSMI_NO_SESSION_STATE);
       break;
@@ -413,6 +436,41 @@ void mip_reg_sm_post_event
     } /* switch(rsm state) */
     break;
 
+#ifdef FEATURE_DS_MOBILE_IP_DEREG
+    /*-----------------------------------------------------------------------
+                               RSMI_DEREG_MIP_EV
+
+      DSSNET asked to deregister the MIP state machine.
+        No Session/De RRQ/Deregistered/Init RRQ: ignore
+        Re RRQ/Registered: proceed to De RRQ state
+    -----------------------------------------------------------------------*/
+  case RSMI_DEREG_MIP_EV:
+    switch(session->rsm_info.state)
+    {
+      case RSMI_RE_RRQ_STATE:
+        /* cancel the re-registration time */
+        timer_result = ps_timer_cancel(session->rsm_info.reg_timer);
+        ASSERT(timer_result != PS_TIMER_FAILURE);
+        /* fall through intentional */
+
+      case RSMI_REGISTERED_STATE:
+        session->rsm_info.rrq_cnt = 0;
+        rsmi_transition_state(session, RSMI_DE_RRQ_STATE);
+        break;
+
+      case RSMI_NO_SESSION_STATE: 
+      case RSMI_DE_RRQ_STATE:
+      case RSMI_DEREGISTERED_STATE:
+      case RSMI_INIT_RRQ_STATE:
+        /* ignore event and flag an error */
+        MSG_ERROR( "Got unexpected Deregister M.IP Event!",0,0,0);
+        break;
+
+      default:
+        ASSERT(0);
+    } /* switch(rsm state) */
+    break;
+#endif /* FEATURE_DS_MOBILE_IP_DEREG */
 
     /*-----------------------------------------------------------------------
                            RSM_NEED_NEW_FA_INFO_EV
@@ -441,8 +499,18 @@ void mip_reg_sm_post_event
       rsmi_transition_state(session, RSMI_NO_SESSION_STATE);
       break;
 
+#ifdef FEATURE_DS_MOBILE_IP_DEREG
+    case RSMI_DE_RRQ_STATE:
+      MSG_ERROR( "new fa info ev in de-rrq state!",0,0,0);
+      rsmi_transition_state(session, RSMI_DEREGISTERED_STATE);
+      break;
+#endif /* FEATURE_DS_MOBILE_IP_DEREG */
+
     case RSMI_NO_SESSION_STATE:
     case RSMI_REGISTERED_STATE:
+#ifdef FEATURE_DS_MOBILE_IP_DEREG
+    case RSMI_DEREGISTERED_STATE:
+#endif /* FEATURE_DS_MOBILE_IP_DEREG */
       /* ignore */
 #ifndef T_ARM
       MSG_MED("Got Need new FA info event in %s state\n",
@@ -479,6 +547,9 @@ void mip_reg_sm_post_event
 
     case RSMI_NO_SESSION_STATE:
     case RSMI_REGISTERED_STATE:
+#ifdef FEATURE_DS_MOBILE_IP_DEREG
+    case RSMI_DEREGISTERED_STATE:
+#endif /* FEATURE_DS_MOBILE_IP_DEREG */
       /* ignore */
 #ifndef T_ARM
       MSG_MED("Got RRQ Successful event in %s state\n",
@@ -488,6 +559,13 @@ void mip_reg_sm_post_event
               session->rsm_info.state, 0, 0);
 #endif
       break;
+
+#ifdef FEATURE_DS_MOBILE_IP_DEREG
+    case RSMI_DE_RRQ_STATE:
+      MSG_MED( "MIP deregistered successfully",0,0,0);
+      rsmi_transition_state(session, RSMI_DEREGISTERED_STATE);
+      break;
+#endif /* FEATURE_DS_MOBILE_IP_DEREG */
 
     default:
       ASSERT(0);
@@ -525,6 +603,9 @@ void mip_reg_sm_post_event
 
     case RSMI_NO_SESSION_STATE:
     case RSMI_REGISTERED_STATE:
+#ifdef FEATURE_DS_MOBILE_IP_DEREG
+    case RSMI_DEREGISTERED_STATE:
+#endif /* FEATURE_DS_MOBILE_IP_DEREG */
       /* ignore */
 #ifndef T_ARM
       MSG_MED("Got RRQ Failed no Retry event in %s state\n",
@@ -534,6 +615,13 @@ void mip_reg_sm_post_event
               session->rsm_info.state, 0, 0);
 #endif
       break;
+
+#ifdef FEATURE_DS_MOBILE_IP_DEREG
+    case RSMI_DE_RRQ_STATE:
+      MSG_MED( "MIP deregistration timed out.",0,0,0);
+      rsmi_transition_state(session, RSMI_DEREGISTERED_STATE);
+      break;
+#endif /* FEATURE_DS_MOBILE_IP_DEREG */
 
     default:
       ASSERT(0);
@@ -552,27 +640,32 @@ void mip_reg_sm_post_event
   case RSM_RRQ_FAIL_W_RETRY_EV:
     switch(session->rsm_info.state)
     {
-    case RSMI_INIT_RRQ_STATE:
-      session->rsm_info.rrq_cnt = 0;
-      /* fall through */
+      case RSMI_INIT_RRQ_STATE:
+#ifdef FEATURE_DS_MOBILE_IP_DEREG
+      case RSMI_DE_RRQ_STATE:
+#endif /* FEATURE_DS_MOBILE_IP_DEREG */
+        session->rsm_info.rrq_cnt = 0;
+        /* fall through */
 
-    case RSMI_RE_RRQ_STATE:
-      session->rsm_info.re_rrq_timeout =  session->base_retry_interval;
-      rsmi_transition_state(session, session->rsm_info.state);
-      break;
+      case RSMI_RE_RRQ_STATE:
+        session->rsm_info.re_rrq_timeout =  session->base_retry_interval;
+        rsmi_transition_state(session, session->rsm_info.state);
+        break;
       
-    case RSMI_NO_SESSION_STATE:
-    case RSMI_REGISTERED_STATE:
-      /* ignoree */
+      case RSMI_NO_SESSION_STATE:
+      case RSMI_REGISTERED_STATE:
+#ifdef FEATURE_DS_MOBILE_IP_DEREG
+      case RSMI_DEREGISTERED_STATE:
+#endif /* FEATURE_DS_MOBILE_IP_DEREG */
+        /* ignoree */
 #ifndef T_ARM
-      MSG_MED("Got RRQ Failed with Retry event in %s state\n",
-              rsmi_state_names[session->rsm_info.state], 0, 0);
+        MSG_MED("Got RRQ Failed with Retry event in %s state\n",
+                rsmi_state_names[session->rsm_info.state], 0, 0);
 #else
-      MSG_MED("Got RRQ Failed with Retry event in state %d\n",
-              session->rsm_info.state, 0, 0);
+        MSG_MED("Got RRQ Failed with Retry event in state %d\n",
+                session->rsm_info.state, 0, 0);
 #endif
-      
-      break;
+        break;
 
     default:
       ASSERT(0);
@@ -611,6 +704,16 @@ void mip_reg_sm_post_event
     case RSMI_NO_SESSION_STATE:
       rsmi_transition_state(session, RSMI_INIT_RRQ_STATE);
       break;
+#ifdef FEATURE_DS_MOBILE_IP_DEREG
+    case RSMI_DE_RRQ_STATE:
+      MSG_MED( "MIP deregistration timeout.",0,0,0);
+      rsmi_transition_state(session, RSMI_DEREGISTERED_STATE);
+      break;
+
+    case RSMI_DEREGISTERED_STATE:
+      MSG_HIGH( "Ignore RSM_MOVE in DEREGISTERED state",0,0,0);
+      break;
+#endif /* FEATURE_DS_MOBILE_IP_DEREG */
 
     default:
       ASSERT(0);
@@ -626,7 +729,9 @@ void mip_reg_sm_post_event
                      through 
         Re-RRQ: reduce the rrq timeout (will be re-increased on state 
                 transition), stop RRQ timer and return to current state
-        No Session/Registered: ignore
+        De-RRQ: reduce the rrq timeout (will be re-increased on state 
+                transition), stop RRQ timer and return to current state
+        No Session/Registered/Deregistered: ignore
     -----------------------------------------------------------------------*/  
   case RSM_IMMED_RETRY_EV:
     switch(session->rsm_info.state)
@@ -649,6 +754,41 @@ void mip_reg_sm_post_event
       rsmi_transition_state(session, session->rsm_info.state);
       break;
 
+#ifdef FEATURE_DS_MOBILE_IP_DEREG
+    case RSMI_DE_RRQ_STATE:
+      if(session->rsm_info.rrq_cnt > 0)
+      {
+        session->rsm_info.rrq_cnt -= 1;
+      }
+      else
+      {
+        ASSERT(0);
+      }
+      session->rsm_info.re_rrq_timeout /= MIP_RRQ_RETRY_BACKOFF_MULT;
+      timer_result = ps_timer_cancel(session->rsm_info.dereg_timer);
+      ASSERT(timer_result != PS_TIMER_FAILURE);
+      rsmi_transition_state(session, RSMI_DE_RRQ_STATE);
+
+#ifdef FEATURE_DS_MOBILE_IP_PERF
+      /*---------------------------------------------------------------------
+        This is the immediate retry event while we are in the RE_RRQ state.
+        In this case we want to start the re-reg Delay.
+      ---------------------------------------------------------------------*/
+      if( (qw_cmp(mip_perf_info[PERF_MIP_DEREG_DELAY].ts_start, ts_null)==0)
+          && ( session->rsm_info.state == RSMI_DE_RRQ_STATE) )
+      {    
+        /*-------------------------------------------------------------------
+          Notify M.IP call performance that M.IP de-registration is starting
+        -------------------------------------------------------------------*/
+        mip_perf_delay(&mip_perf_info[PERF_MIP_DEREG_DELAY],
+                       PERF_MIP_DEREG_DELAY,
+                       PERF_START_TS);
+      }
+#endif /* FEATURE_DS_MOBILE_IP_PERF */
+      break;
+
+    case RSMI_DEREGISTERED_STATE:
+#endif /* FEATURE_DS_MOBILE_IP_DEREG */
     case RSMI_NO_SESSION_STATE:
     case RSMI_REGISTERED_STATE:
       /* ignore */
@@ -687,6 +827,14 @@ void mip_reg_sm_post_event
     case RSMI_RE_RRQ_STATE:
       goto Re_RRQ_2_No_Session;
 
+#ifdef FEATURE_DS_MOBILE_IP_DEREG
+    case RSMI_DE_RRQ_STATE:
+      MSG_MED( "MIP HA unavailable. Continue tear-down",0,0,0);
+      rsmi_transition_state(session, RSMI_DEREGISTERED_STATE);
+      break;
+
+    case RSMI_DEREGISTERED_STATE:
+#endif /* FEATURE_DS_MOBILE_IP_DEREG */
     case RSMI_NO_SESSION_STATE:
     case RSMI_REGISTERED_STATE:
       /* ignore */
@@ -730,7 +878,27 @@ void mip_reg_sm_post_event
       rsmi_transition_state(session, RSMI_INIT_RRQ_STATE);
       break;
 
+#ifdef FEATURE_DS_MOBILE_IP_DEREG
+    case RSMI_DE_RRQ_STATE:
+      MSG_MED( "RRQ Timer expired.  Resend deregistration",0,0,0);
+      rsmi_transition_state(session, RSMI_DE_RRQ_STATE);
+      break;
+
+    case RSMI_DEREGISTERED_STATE:
+      /*---------------------------------------------------------------------
+        RRQ_TIMER_EXP_EV received while in DEREGISTERED state. - Ignore.
+      ---------------------------------------------------------------------*/
+      MSG_MED( "RRQ Timer expired while in DEREGISTERED state",0,0,0);
+      break;
+#endif /* FEATURE_DS_MOBILE_IP_DEREG */
+
     case RSMI_NO_SESSION_STATE:
+      /*---------------------------------------------------------------------
+        RRQ_TIMER_EXP_EV received while in NO_SESSION state. - Ignore.
+      ---------------------------------------------------------------------*/
+      MSG_MED( "RRQ Timer expired while in NO_SESSION state",0,0,0);
+      break;
+
     default:
       ASSERT(0);
 
@@ -756,8 +924,32 @@ void mip_reg_sm_post_event
     case RSMI_RE_RRQ_STATE:
       goto Re_RRQ_2_No_Session;
 
-    case RSMI_INIT_RRQ_STATE:
+#ifdef FEATURE_DS_MOBILE_IP_DEREG
+    case RSMI_DE_RRQ_STATE:
+      /*---------------------------------------------------------------------
+        Deinstall IP filters 
+      ---------------------------------------------------------------------*/
+      MSG_ERROR( "Life Timer expired in de-rrq state!",0,0,0);
+      rsmi_transition_state(session, RSMI_DEREGISTERED_STATE);
+      break;
+
+    case RSMI_DEREGISTERED_STATE:
+      /*---------------------------------------------------------------------
+        LIFE_TIMER_EXP_EV received while in DEREGISTERED state. - Ignore.
+      ---------------------------------------------------------------------*/
+      MSG_HIGH( "Life Timer expired while in DEREGISTERED state",0,0,0);
+      break;
+#endif /* FEATURE_DS_MOBILE_IP_DEREG */
+
+
     case RSMI_NO_SESSION_STATE:
+      /*---------------------------------------------------------------------
+        LIFE_TIMER_EXP_EV received while in NO_SESSION state. - Ignore.
+      ---------------------------------------------------------------------*/
+      MSG_ERROR( "Life Timer expired while in NO_SESSION state" ,0,0,0);
+      break;
+
+    case RSMI_INIT_RRQ_STATE:
     default:
       ASSERT(0);
 
@@ -766,7 +958,7 @@ void mip_reg_sm_post_event
 
 
     /*-----------------------------------------------------------------------
-                              RSM_SOL_FAILED_EV
+                           RSM_SOL_FAILED_EV
 
       Solicitation failed
         No Session/Re-RRQ/Registered: post Re-RRQ failure to Meta SM go to no
@@ -807,6 +999,19 @@ void mip_reg_sm_post_event
       rsmi_transition_state(session, RSMI_NO_SESSION_STATE);
       mip_meta_sm_post_event(MSM_RE_RRQ_FAILED_EV);
       break;
+
+#ifdef FEATURE_DS_MOBILE_IP_DEREG
+    case RSMI_DE_RRQ_STATE:
+      rsmi_transition_state(session, RSMI_DEREGISTERED_STATE);
+      break;
+
+    case RSMI_DEREGISTERED_STATE:
+      /*---------------------------------------------------------------------
+        SOL_FAILED_EV received while in DEREGISTERED state. - Ignore.
+      ---------------------------------------------------------------------*/
+      MSG_HIGH( "Ignore Sol Failed event while in DEREGISTERED state",0,0,0);
+      break;
+#endif /* FEATURE_DS_MOBILE_IP_DEREG */
 
     default:
       ASSERT(0);
@@ -908,6 +1113,56 @@ void rsmi_rrq_timer_cb
   mip_reg_sm_post_event((mip_session_info_type*)param, RSMI_RRQ_TIMER_EXP_EV);
 
 } /* rsmi_rrq_timer_cb() */
+
+#ifdef FEATURE_DS_MOBILE_IP_DEREG
+/*===========================================================================
+FUNCTION RSMI_DERRQ_TIMER_CB()
+
+DESCRIPTION
+  This function is the callback for the expiration of the deregistration
+  request timer.
+
+PARAMETERS
+  param: this is passed in as a void* put it should point to the relevant
+  Mobile IP session info block.
+
+RETURN VALUE
+  None
+
+DEPENDENCIES
+  None
+
+SIDE EFFECTS
+  None
+===========================================================================*/
+void rsmi_derrq_timer_cb
+(
+  void *param
+)
+{
+/*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+#ifdef FEATURE_DS_MOBILE_IP_PERF
+  /*-------------------------------------------------------------------------
+    If we are starting re-registration, notify the MIP performance module
+  -------------------------------------------------------------------------*/
+  if ( ( ( (mip_session_info_type *) param)->rsm_info.state == 
+               RSMI_REGISTERED_STATE ) ||
+       ( ( (mip_session_info_type *) param)->rsm_info.state == 
+               RSMI_RE_RRQ_STATE ) ) 
+  { 
+    {
+      mip_perf_delay(&mip_perf_info[PERF_MIP_REREG_DELAY],
+                     PERF_MIP_DEREG_DELAY,
+                     PERF_START_TS);
+    }
+  }
+#endif /* FEATURE_DS_MOBILE_IP_PERF */
+  
+  mip_reg_sm_post_event((mip_session_info_type*)param,RSMI_RRQ_TIMER_EXP_EV);
+
+} /* rsmi_derrq_timer_cb() */
+#endif /* FEATURE_DS_MOBILE_IP_DEREG */
 
 
 /*===========================================================================
@@ -1053,6 +1308,9 @@ void rsmi_transition_state
       DS_FLOW_MIP_REG1_MASK >> MIP_SES_PTR_2_INDEX(session),
       TRUE);
     timer_result = ps_timer_cancel(session->rsm_info.reg_timer);
+#ifdef FEATURE_DS_MOBILE_IP_DEREG
+    timer_result = ps_timer_cancel(session->rsm_info.dereg_timer);
+#endif /* FEATURE_DS_MOBILE_IP_DEREG */
     timer_result = ps_timer_cancel(session->rsm_info.life_timer);
     session->curr_ha_index = 0;
     session->reg_lifetime = 0;
@@ -1155,6 +1413,43 @@ void rsmi_transition_state
     }
     break;
 
+#ifdef FEATURE_DS_MOBILE_IP_DEREG
+    /*-----------------------------------------------------------------------
+                             RSMI_DE_RRQ_STATE
+                                   
+    -----------------------------------------------------------------------*/
+  case RSMI_DE_RRQ_STATE:
+#ifdef FEATURE_DS_MOBILE_IP_PERF
+    /*---------------------------------------------------------------------
+      Notify M.IP call performance that M.IP re-registration has stopped.
+    ---------------------------------------------------------------------*/
+    if (session->rsm_info.state == RSMI_RE_RRQ_STATE)
+    {  
+      mip_perf_delay(&mip_perf_info[PERF_MIP_REREG_DELAY],
+                     PERF_MIP_REREG_DELAY,
+                     PERF_END_TS);
+    }
+
+    /*-----------------------------------------------------------------------
+      This should only happen if there was data traffic since last de-reg so
+      we check to see if we are transitioning from REGISTERED_STATE or 
+      RE_RRQ_STATE.
+    -----------------------------------------------------------------------*/
+    if ( ( (session->rsm_info.state == RSMI_REGISTERED_STATE) || 
+           (session->rsm_info.state == RSMI_RE_RRQ_STATE) ) &&
+         qw_cmp(mip_perf_info[PERF_MIP_DEREG_DELAY].ts_start, ts_null)==0 )
+    {    
+      /*---------------------------------------------------------------------
+        Notify M.IP call performance that M.IP de-registration is starting.
+      ---------------------------------------------------------------------*/
+      mip_perf_delay(&mip_perf_info[PERF_MIP_DEREG_DELAY],
+                     PERF_MIP_DEREG_DELAY,
+                     PERF_START_TS);
+    }
+#endif /* FEATURE_DS_MOBILE_IP_PERF */
+    break;
+#endif /* FEATURE_DS_MOBILE_IP_DEREG */
+
     /*-----------------------------------------------------------------------
                             RSMI_REGISTERED_STATE
 
@@ -1209,6 +1504,23 @@ void rsmi_transition_state
 #endif /* FEATURE_DS_MOBILE_IP_PERF */
     break;
 
+#ifdef FEATURE_DS_MOBILE_IP_DEREG
+    /*-----------------------------------------------------------------------
+                            RSMI_DEREGISTERED_STATE
+    -----------------------------------------------------------------------*/
+  case RSMI_DEREGISTERED_STATE:
+#ifdef FEATURE_DS_MOBILE_IP_PERF
+    /*-----------------------------------------------------------------------
+      Notify M.IP call performance that M.IP de-registration is complete
+    -----------------------------------------------------------------------*/
+    mip_perf_delay(&mip_perf_info[PERF_MIP_DEREG_DELAY],
+                   PERF_MIP_DEREG_DELAY,
+                   PERF_END_TS);  
+
+#endif /* FEATURE_DS_MOBILE_IP_PERF */
+    break;
+#endif /* FEATURE_DS_MOBILE_IP_DEREG */
+
     /*-----------------------------------------------------------------------
                                    default
 
@@ -1234,6 +1546,11 @@ void rsmi_transition_state
       Nothing to do
     -----------------------------------------------------------------------*/
   case RSMI_NO_SESSION_STATE:
+#ifdef FEATURE_DS_MOBILE_IP_DEREG
+    mip_perf_delay(&mip_perf_info[PERF_MIP_DEREG_DELAY],
+                   PERF_MIP_DEREG_DELAY,
+                   PERF_CANCEL_TS);
+#endif /* FEATURE_DS_MOBILE_IP_DEREG */
     break;
 
     /*-----------------------------------------------------------------------
@@ -1461,6 +1778,79 @@ void rsmi_transition_state
     }
     break;
 
+#ifdef FEATURE_DS_MOBILE_IP_DEREG
+    /*-----------------------------------------------------------------------
+                              RSMI_DE_RRQ_STATE
+
+      Change Um stack to internal mode, send De-RRQ, start De-RRQ timer, 
+      and increment backoff if it hasn't hit the ceiling.
+    -----------------------------------------------------------------------*/
+  case RSMI_DE_RRQ_STATE:
+    timer_result = ps_timer_cancel(session->rsm_info.dereg_timer);
+    ASSERT(timer_result != PS_TIMER_FAILURE);
+
+    if(session->rsm_info.rrq_cnt < session->rsm_info.max_derrqs)
+    {
+      netmdl_set_mode(IFACE_UM_PPP_STACK, PPP_INTERNAL_MODE);
+
+      if (!mip_sol_sm_active())
+      {
+        mip_outmsg_send_dereg_rrq(session);
+      }
+
+      /*---------------------------------------------------------------------
+        We add an offset to the rrq_timeout to avoid the stale challenge 
+        problem caused by the request going out at fixed intervals
+      ---------------------------------------------------------------------*/
+      timer_result = ps_timer_start(session->rsm_info.dereg_timer,
+                                    session->rsm_info.re_rrq_timeout +
+                                    session->retry_interval_offset +
+                                    session->rsm_info.rtt_estimate);
+      ASSERT(timer_result != PS_TIMER_FAILURE);
+
+      MSG_MED( "Set registration timer for %dms\n", 
+               session->rsm_info.re_rrq_timeout +
+               session->retry_interval_offset +
+               session->rsm_info.rtt_estimate,0,0);
+      session->retry_interval_offset = 0;
+
+      if (!mip_sol_sm_active())
+      {
+        session->rsm_info.rrq_cnt += 1;
+        session->rsm_info.re_rrq_timeout *= MIP_RRQ_RETRY_BACKOFF_MULT;
+      }
+    }
+    else
+    {
+      MSG_MED( "Deregistration RRQ failed - giving up",0,0,0);
+      mip_reg_sm_post_event(session, RSM_RRQ_FAIL_NO_RETRY_EV);
+    }
+    break;
+
+    /*-----------------------------------------------------------------------
+                            RSMI_DEREGISTERED_STATE
+
+      comments inlined below
+    -----------------------------------------------------------------------*/
+  case RSMI_DEREGISTERED_STATE:
+
+    /*-----------------------------------------------------------------------
+      Cancel the registration and life timer. 
+    -----------------------------------------------------------------------*/
+    timer_result = ps_timer_cancel(session->rsm_info.dereg_timer);
+    ASSERT(timer_result != PS_TIMER_FAILURE);
+
+    timer_result = ps_timer_cancel(session->rsm_info.life_timer);
+    ASSERT(timer_result != PS_TIMER_FAILURE);
+
+    /*-----------------------------------------------------------------------
+      Post an event to the DSSNET State machine that M. IP deregistration has
+      completed successfully
+    -----------------------------------------------------------------------*/
+    mip_call_event_callback(MIP_DEREGED_EV);
+
+    break;
+#endif /* FEATURE_DS_MOBILE_IP_DEREG */
 
     /*-----------------------------------------------------------------------
                                    default

@@ -18,10 +18,10 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS:  Not Applicable
 ===========================================================================*/
 /*=========================================================================
                              Edit History
-                             
-$Header: //source/qcom/qct/multimedia/qtv/staticextensions/oem/main/latest/src/oemmediareal.c#2 $
-$DateTime: 2008/10/07 02:05:13 $
-$Change: 757820 $
+
+$Header: //source/qcom/qct/multimedia/qtv/staticextensions/oem/main/latest/src/oemmediareal.c#3 $
+$DateTime: 2009/10/22 23:30:49 $
+$Change: 1062062 $
 =========================================================================*/
 
 /*===========================================================================
@@ -36,7 +36,15 @@ $Change: 757820 $
    #include <stdlib.h>
 #endif
 
+#ifdef FEATURE_CMI
+#error code not present
+#else
 #include "clk.h"
+#endif
+
+#ifdef FEATURE_CMI_MM
+#error code not present
+#endif
 #include "msg.h"
 #include "BREWVersion.h"
 #include "OEMMedia.h"
@@ -59,7 +67,7 @@ $Change: 757820 $
 #include "OEMMediaMPEG4.h" // For AEENetPolicyInfo
 #endif
 #include "OEMFeatures.h"    /* For BREW_OFFSET_X/Y */
-#define OEMMEDIAREALTRANSLATION_CINTERFACE_ONLY 
+#define OEMMEDIAREALTRANSLATION_CINTERFACE_ONLY
 #define OEMMEDIAREALTRANSLATION_DEFINE_RESULT_CODES
 #include "OEMMediaRealTranslation.h"
 
@@ -114,8 +122,8 @@ static OEMCriticalSection gcmCriticalSection;
 #define OEMREAL_PROGRESS_UPDATE_INTERVAL_MSEC 250
 #define OEMREAL_BUFFER_COUNT 2
 // NetApp NetCache servers will optimize playback from RealMedia clients if
-// the User-Agent string begins with "RealMedia Player". If you do not need 
-// these optimizations, or do not intend to stream from NetApp NetCache servers 
+// the User-Agent string begins with "RealMedia Player". If you do not need
+// these optimizations, or do not intend to stream from NetApp NetCache servers
 // then the RTSP User Agent string may be set to anything
 #define RTSP_USER_AGENT_STRING "RealMedia Player (HelixDNAClient)/10.0.0.0 (Qualcomm Inc.)"
 
@@ -189,7 +197,7 @@ Example .tck file contents:
 
 ==============================================================================*/
 #ifdef FEATURE_REAL_QDSP_RELEASE_RESTORE
-// This global variable should be set to true by OEM if it wants Real Player 
+// This global variable should be set to true by OEM if it wants Real Player
 // to release the DSP with the subsequent call to pause.
 extern boolean real_cfg_enable_dsp_release;
 #endif /* FEATURE_REAL_QDSP_RELEASE_RESTORE */
@@ -473,7 +481,7 @@ static CMediaRealLayer * CMediaRealLayer_New(IMedia * po, PFNNOTIFY pfn)
             FREE(pme);
             pme = NULL;
          }
-         
+
 
         #if defined (FEATURE_ODM_UI) && defined(WOLF_5)
 #error code not present
@@ -647,7 +655,7 @@ DESCRIPTION:
 boolean IMedia_IsRealEnabled(void)
 {
     nv_item_type               nvi;
-    
+
     /* The default behavior is to enable the Real Player if NV item isn't ACTIVE */
     boolean CMedialReal_Enabled = TRUE;
 
@@ -671,7 +679,7 @@ void IMediaReal_Init(IShell * ps)
     if(IMedia_IsRealEnabled() == FALSE)
     {
         return;
-    } 
+    }
 #endif
 
 #ifdef REAL_PLAYER_DIAG
@@ -767,7 +775,7 @@ int IMediaReal_QueueCallback(void   *pClientData,
       pcb->cmdNotify.nStatus = nStatus;
       pcb->cmdNotify.nCmd = nCmd;
       pcb->cmdNotify.nSubCmd = nSubCmd;
-      pcb->cmdNotify.pCmdData = pData; 
+      pcb->cmdNotify.pCmdData = pData;
       pcb->cmdNotify.dwSize = dwSize;
 #if MIN_BREW_VERSION(3,0)
    AEE_ResumeCallback(&pcb->cb, pme->m_pAppContext);
@@ -788,27 +796,27 @@ static void CMediaReal_Delete(IMedia * po, boolean bFree)
    CMediaReal      * pme = (CMediaReal *)po;
    CMediaRealLayer * pReal = pme->m_pReal;
    int i;
-   
+
 #ifdef REAL_PLAYER_DIAG
    MSG_3(MSG_SSID_APPS_QTV, MSG_LEGACY_ERROR, "CMediaReal_Delete, bFree: %d", bFree, 0, 0);
 #endif
-   
+
    if (!pme->m_bRelMark)
    {
       pme->m_bRelMark = TRUE;
-      
+
       // Cancel the progress bar update timer
       ISHELL_CancelTimer(pme->m_pIShell, IMediaReal_UpdateProgressBar, pme);
       OEMMediaReal_Terminate();
 
       AEEObjectMgr_Unregister(pReal->m_hObject);
-      
+
       /* Cancel any pending callbacks */
       for (i = 0; i < OEMREAL_MAX_CB; i++)
       {
          CALLBACK_Cancel(&pReal->m_cb[i].cb);
       }
-      
+
       MM_RELEASEIF(pme->m_pReal->m_pISound);
       CMediaRealLayer_Delete(pme->m_pReal);
 
@@ -817,7 +825,7 @@ static void CMediaReal_Delete(IMedia * po, boolean bFree)
 
       AEEMedia_Delete(po);
    }
-   
+
    // Free object memory
    if (bFree)
    {
@@ -834,7 +842,7 @@ DESCRIPTION:
 static uint32 CMediaReal_Release(IMedia * po)
 {
    int32 nRef;
-   
+
    // Set flag to indicate a release is in progress to avoid doing another
    //  OpenURL when the BREW IMedia interface calls CMediaReal_Stop()
    releaseInProgress = TRUE;
@@ -863,7 +871,7 @@ void OEMMediaReal_GetVolumeCB(const void *client_data, snd_status_type status, u
   if(client_data == NULL)
     return;
 
-  CMediaReal_CallBack((unsigned long)client_data, OEM_MEDIA_REAL_CB_GET_VOLUME, 
+  CMediaReal_CallBack((unsigned long)client_data, OEM_MEDIA_REAL_CB_GET_VOLUME,
      (uint16)(volume*VOLUME_STEP), sizeof(uint16));
 }
 
@@ -984,7 +992,7 @@ static int CMediaReal_SetMediaParm(IMedia * po, int nParmID, int32 p1, int32 p2)
             /* this is extended data */
             /* Real Player does not support playback from seperate files */
             /* This feature can be used only to disable audio via the dwCaps value */
-           
+
             pme->m_pReal->m_dwCaps = mdex[0].dwCaps;
          }
 
@@ -1066,11 +1074,11 @@ static int CMediaReal_SetMediaParm(IMedia * po, int nParmID, int32 p1, int32 p2)
          break;
 
 #ifdef FEATURE_QTV_MDP_TRANSFORMATIONS
-      case MM_MP4_PARM_ROTATION:     
+      case MM_MP4_PARM_ROTATION:
          RealMDPVideo.rotation = (AEEMediaMPEG4RotationType) p1;
          break;
-          
-      case MM_MP4_PARM_SCALING:                                 
+
+      case MM_MP4_PARM_SCALING:
          RealMDPVideo.scaling = (AEEMediaMPEG4ScalingType) p1;
          break;
 #endif /* FEATURE_QTV_MDP_TRANSFORMATIONS */
@@ -1097,7 +1105,7 @@ DESCRIPTION:
 static int CMediaReal_GetMediaParm(IMedia * po, int nParmID, int32 * pP1, int32 * pP2)
 {
    CMediaReal * pme = (CMediaReal *)po;
-   CMediaRealLayer * pReal = pme->m_pReal; 
+   CMediaRealLayer * pReal = pme->m_pReal;
    int nRet = SUCCESS;
 
 //#ifdef REAL_PLAYER_DIAG
@@ -1164,7 +1172,7 @@ static int CMediaReal_GetMediaParm(IMedia * po, int nParmID, int32 * pP1, int32 
          { /* Invalid parameters */
             return EFAILED;
          }
-        
+
          if (pP1 == NULL)
          { /* App is calling IMEDIA_IsFrameCallback */
             *pP2 = pme->m_pReal->m_bFrameCBEnabled;
@@ -1179,7 +1187,7 @@ static int CMediaReal_GetMediaParm(IMedia * po, int nParmID, int32 * pP1, int32 
             pme->m_pReal->m_pDisplayDIB->pBmp   = info.RGBBuffer;
             pme->m_pReal->m_pDisplayDIB->cx     = info.Width;
             pme->m_pReal->m_pDisplayDIB->cy     = info.Height;
-            pme->m_pReal->m_pDisplayDIB->nPitch = 
+            pme->m_pReal->m_pDisplayDIB->nPitch =
                (info.Width * pme->m_pReal->m_iDisplayPitch) / pme->m_pReal->m_iDisplayWidth;
             IBITMAP_AddRef(pme->m_pReal->m_pDisplayBitmap);
             *pP1 = (int32)pme->m_pReal->m_pDisplayBitmap;
@@ -1278,9 +1286,9 @@ static int OEMMediaReal_Play_internal(CMediaReal *po, uint32 position)
       {
          // Borrow the reconnect code to handle back to back open/seek commands
          // Can't call seek until the open call has completed (for some reason it is OK
-         // to call play before the open has finished).  
-         // Setting pme->m_state == OEM_MEDIA_REAL_DISCONNECTED will cause 
-         // CMediaReal_Play_internal to be c called again once the open command completes 
+         // to call play before the open has finished).
+         // Setting pme->m_state == OEM_MEDIA_REAL_DISCONNECTED will cause
+         // CMediaReal_Play_internal to be c called again once the open command completes
          // (see function CMediaReal_CallBack)
          CMediaReal_reconnect_pos = position;
          pme->m_state = OEM_MEDIA_REAL_DISCONNECTED;
@@ -1329,11 +1337,11 @@ static int CMediaReal_Play(IMedia * po)
    if (CMediaReal_OpenFailed)
    {
       // Trigger a play failed message
-      CMediaReal_CallBack((unsigned long)((CMediaReal *)po), 
+      CMediaReal_CallBack((unsigned long)((CMediaReal *)po),
          OEM_MEDIA_REAL_CB_ONPLAYSTARTED, 0, 0);
-      CMediaReal_CallBack((unsigned long)((CMediaReal *)po), 
+      CMediaReal_CallBack((unsigned long)((CMediaReal *)po),
          OEM_MEDIA_REAL_CB_ONSTOP, 0, 0);
-      CMediaReal_CallBack((unsigned long)((CMediaReal *)po), 
+      CMediaReal_CallBack((unsigned long)((CMediaReal *)po),
          OEM_MEDIA_REAL_CB_ONPRESENTATIONCLOSED, 0, 0);
       return EFAILED;
    }
@@ -1389,7 +1397,7 @@ static int CMediaReal_Stop(IMedia * po)
 #ifdef REAL_PLAYER_DIAG
    MSG_3(MSG_SSID_APPS_QTV, MSG_LEGACY_ERROR, "CMediaReal_Stop,", 0, 0, 0);
 #endif
-   
+
    nRet = AEEMedia_Stop(po);
    if (nRet != SUCCESS)
       return nRet;
@@ -1451,7 +1459,7 @@ static int CMediaReal_Seek(IMedia * po, AEEMediaSeek eSeek, int32 lTimeMS)
    if (CMediaReal_OpenFailed)
    {
       // Trigger a seek failed message
-      CMediaReal_CallBack((unsigned long)((CMediaReal *)po), 
+      CMediaReal_CallBack((unsigned long)((CMediaReal *)po),
          OEM_MEDIA_REAL_CB_ONPRESEEK, userCurrentPlayTimeMsec, seekTime);
       return EFAILED;
    }
@@ -1471,7 +1479,7 @@ static int CMediaReal_Seek(IMedia * po, AEEMediaSeek eSeek, int32 lTimeMS)
 #ifdef REAL_PLAYER_DIAG
    MSG_3(MSG_SSID_APPS_QTV, MSG_LEGACY_ERROR, "CMediaReal_Seek, lTimeMS: %d", lTimeMS, 0, 0);
 #endif
-   
+
    nRet = AEEMedia_Seek(po, eSeek, seekTime);
    if (nRet != SUCCESS)
       return nRet;
@@ -1488,14 +1496,14 @@ DESCRIPTION:
 static int CMediaReal_Pause(IMedia * po)
 {
    int            nRet;
-   
+
 #ifdef FEATURE_REAL_QDSP_RELEASE_RESTORE
    AEEMedia * pme = (AEEMedia *)po;
 #endif /* FEATURE_REAL_QDSP_RELEASE_RESTORE */
    if (CMediaReal_OpenFailed)
    {
       // Trigger a pause failed message
-      CMediaReal_CallBack((unsigned long)((CMediaReal *)po), 
+      CMediaReal_CallBack((unsigned long)((CMediaReal *)po),
          OEM_MEDIA_REAL_CB_ONPAUSE, 0, 0);
       return EFAILED;
    }
@@ -1504,14 +1512,14 @@ static int CMediaReal_Pause(IMedia * po)
 #ifdef REAL_PLAYER_DIAG
    MSG_3(MSG_SSID_APPS_QTV, MSG_LEGACY_ERROR, "CMediaReal_Pause,", 0, 0, 0);
 #endif
-   
+
    nRet = AEEMedia_Pause(po);
    if (nRet != SUCCESS)
    {
 #ifdef FEATURE_REAL_QDSP_RELEASE_RESTORE
       if ( real_cfg_enable_dsp_release && AEEMedia_IsPlayPauseState(pme) )
       {
-         /* For incoming call interruption, allow pause processing to go 
+         /* For incoming call interruption, allow pause processing to go
          ** through if we are in the paused state.
          */
          nRet = OEMMediaReal_Pause();
@@ -1537,7 +1545,7 @@ static int CMediaReal_Resume(IMedia * po)
    if (CMediaReal_OpenFailed)
    {
       // Trigger a resume failed message
-      CMediaReal_CallBack((unsigned long)((CMediaReal *)po), 
+      CMediaReal_CallBack((unsigned long)((CMediaReal *)po),
          OEM_MEDIA_REAL_CB_RESUME, 0, 0);
       return EFAILED;
    }
@@ -1545,7 +1553,7 @@ static int CMediaReal_Resume(IMedia * po)
 #ifdef REAL_PLAYER_DIAG
    MSG_3(MSG_SSID_APPS_QTV, MSG_LEGACY_ERROR, "CMediaReal_Resume,", 0, 0, 0);
 #endif
-   
+
    nRet = AEEMedia_Resume(po);
    if (nRet != SUCCESS)
       return nRet;
@@ -1565,11 +1573,11 @@ static int CMediaReal_GetTotalTime(IMedia * po)
    int            nRet = SUCCESS;
    unsigned long  nDuration;
    CMediaReal *   pme = (CMediaReal *)po;
- 
+
 #ifdef REAL_PLAYER_DIAG
    MSG_3(MSG_SSID_APPS_QTV, MSG_LEGACY_ERROR, "CMediaReal_GetTotalTime,", 0, 0, 0);
 #endif
-   
+
    nRet = AEEMedia_GetTotalTime(po);
    if (nRet != SUCCESS)
       return nRet;
@@ -1648,7 +1656,7 @@ void CMediaReal_CallbackNotify(AEEMediaCallback * pcb)
 #if (defined FEATURE_REAL_QDSP_RELEASE_RESTORE && defined  FEATURE_QTV_MDP_TRANSFORMATIONS )
        /* The  real_cfg_enable_dsp_release is TRUE when MediaPlayer receives a Suspend
           event from the Brew layer. If this is the case, don't render the frame through
-          MDP since this could overwrite whatever the application that is causing the 
+          MDP since this could overwrite whatever the application that is causing the
           player SUSPEND has written to the screen
        */
        if (real_cfg_enable_dsp_release)
@@ -1707,7 +1715,7 @@ void CMediaReal_CallbackNotify(AEEMediaCallback * pcb)
                                  pReal->m_rectClip.dx,
                                  pReal->m_rectClip.dy );
 #endif /* !FEATURE_QTV_MDP_TRANSFORMATIONS */
-            }     
+            }
 
 
             /* Reset the clip rectangle changed flag */
@@ -1749,7 +1757,7 @@ void CMediaReal_CallbackNotify(AEEMediaCallback * pcb)
                IBITMAP_Release(pDevBitmap);
             }
 #endif /* FEATURE_QTV_MDP_TRANSFORMATIONS */
-         }      
+         }
 
          /* If the entire image is clipped, don't bother doing anything else.  This
          * is especially important for MDP where specifying a window w/ 0 h/w
@@ -1989,11 +1997,11 @@ void OEMMediaReal_UpdateOutputBuffers(CMediaRealLayer * pme, RealPlayer_MediaSpe
       pme->m_outputBuffers.BPP = (pme->m_pDisplayDIB->nPitch * 8) / pme->m_pDisplayDIB->cx;
       size = mediaSpec->dwVideoHeight * mediaSpec->dwVideoWidth * pme->m_outputBuffers.BPP / 8;
       /* MDP Hardware Bug Work-around */
-      /* When the MDP renders a frame with the height dimension non-divisible by 
-       * 16, it will read past the end of the YCbCr buffer when color 
-       * converting.  We work around the issue by mirroring the last two CbCr 
-       * lines past the valid portion of the buffer.  Thus, we must allocate 
-       * two extra lines of CbCr, or the value of the width.  In this case, 
+      /* When the MDP renders a frame with the height dimension non-divisible by
+       * 16, it will read past the end of the YCbCr buffer when color
+       * converting.  We work around the issue by mirroring the last two CbCr
+       * lines past the valid portion of the buffer.  Thus, we must allocate
+       * two extra lines of CbCr, or the value of the width.  In this case,
        * we use 16BPP, instead of the 12BPP needed for YCbCr, so we do allocate
        * enough memory */
 
@@ -2069,7 +2077,7 @@ void CMediaReal_CallBack(unsigned long userData, unsigned long cbEnumVal, unsign
    case OEM_MEDIA_REAL_CB_ONPRESENTATIONOPENED:
 #ifdef REAL_PLAYER_DIAG
       MSG_3(MSG_SSID_APPS_QTV, MSG_LEGACY_ERROR, ">>>CALLBACK = ONPRESENTATIONOPENED", 0, 0, 0);
-#endif      
+#endif
       cmd = MM_CMD_PLAY;
       subcmd = 0;
       if (CMediaReal_OpenFailed || CMediaReal_ErrorOccured)
@@ -2084,7 +2092,7 @@ void CMediaReal_CallBack(unsigned long userData, unsigned long cbEnumVal, unsign
          bufferingPercent = param2;
          data = (void *)&bufferingPercent;
          dataSize = sizeof(unsigned long);
-         
+
          if (pme->m_state == OEM_MEDIA_REAL_DISCONNECTED)
          {
             pme->m_state = OEM_MEDIA_REAL_OPENED;
@@ -2101,7 +2109,7 @@ void CMediaReal_CallBack(unsigned long userData, unsigned long cbEnumVal, unsign
    case OEM_MEDIA_REAL_CB_ONPRESENTATIONCLOSED:
 #ifdef REAL_PLAYER_DIAG
       MSG_3(MSG_SSID_APPS_QTV, MSG_LEGACY_ERROR, ">>>CALLBACK = ONPRESENTATIONCLOSED", 0, 0, 0);
-#endif      
+#endif
       // Flag that presentation is no longer open
       if (!releaseInProgress)
       {
@@ -2152,13 +2160,13 @@ void CMediaReal_CallBack(unsigned long userData, unsigned long cbEnumVal, unsign
    case OEM_MEDIA_REAL_CB_ONSTATISTICSCHANGED:
 #ifdef REAL_PLAYER_DIAG
       MSG_3(MSG_SSID_APPS_QTV, MSG_LEGACY_ERROR, ">>>CALLBACK = ONSTATISTICSCHANGED", 0, 0, 0);
-#endif      
+#endif
       break;
 
    case OEM_MEDIA_REAL_CB_ONPRESEEK:
 #ifdef REAL_PLAYER_DIAG
       MSG_3(MSG_SSID_APPS_QTV, MSG_LEGACY_ERROR, ">>>CALLBACK = ONPRESEEK", 0, 0, 0);
-#endif      
+#endif
       MMStatus = MM_STATUS_SEEK;
       if (CMediaReal_OpenFailed || CMediaReal_ErrorOccured)
       {
@@ -2178,7 +2186,7 @@ void CMediaReal_CallBack(unsigned long userData, unsigned long cbEnumVal, unsign
    case OEM_MEDIA_REAL_CB_ONSTOP:
 #ifdef REAL_PLAYER_DIAG
       MSG_3(MSG_SSID_APPS_QTV, MSG_LEGACY_ERROR, ">>>CALLBACK = ONSTOP", 0, 0, 0);
-#endif      
+#endif
       CMediaReal_Resuming = FALSE;
       if (CMediaReal_Valid)
       {
@@ -2189,7 +2197,7 @@ void CMediaReal_CallBack(unsigned long userData, unsigned long cbEnumVal, unsign
    case OEM_MEDIA_REAL_CB_ONPAUSE:
 #ifdef REAL_PLAYER_DIAG
       MSG_3(MSG_SSID_APPS_QTV, MSG_LEGACY_ERROR, ">>>CALLBACK = ONPAUSE", 0, 0, 0);
-#endif      
+#endif
       MMStatus = MM_STATUS_PAUSE;
       if (CMediaReal_OpenFailed || CMediaReal_ErrorOccured)
       {
@@ -2205,7 +2213,7 @@ void CMediaReal_CallBack(unsigned long userData, unsigned long cbEnumVal, unsign
    case OEM_MEDIA_REAL_CB_ONBEGIN:
 #ifdef REAL_PLAYER_DIAG
       MSG_3(MSG_SSID_APPS_QTV, MSG_LEGACY_ERROR, ">>>CALLBACK = ONBEGIN", 0, 0, 0);
-#endif      
+#endif
       break;
 
    case OEM_MEDIA_REAL_CB_ONBUFFERING:
@@ -2233,7 +2241,7 @@ void CMediaReal_CallBack(unsigned long userData, unsigned long cbEnumVal, unsign
       }
 #ifdef REAL_PLAYER_DIAG
       MSG_3(MSG_SSID_APPS_QTV, MSG_LEGACY_ERROR, ">>>CALLBACK = ONBUFFERING %d", param2, 0, 0);
-#endif      
+#endif
       break;
 
    case OEM_MEDIA_REAL_CB_ONCONTACTING:
@@ -2244,13 +2252,13 @@ void CMediaReal_CallBack(unsigned long userData, unsigned long cbEnumVal, unsign
       dataSize = 0;
 #ifdef REAL_PLAYER_DIAG
       MSG_3(MSG_SSID_APPS_QTV, MSG_LEGACY_ERROR, ">>>CALLBACK = ONCONTACTING", 0, 0, 0);
-#endif      
+#endif
       break;
 
    case OEM_MEDIA_REAL_CB_ONPLAYSTARTED:
 #ifdef REAL_PLAYER_DIAG
       MSG_3(MSG_SSID_APPS_QTV, MSG_LEGACY_ERROR, ">>>CALLBACK = ONPLAYSTARTED", 0, 0, 0);
-#endif    
+#endif
       pme->m_state = OEM_MEDIA_REAL_ACTIVE;
       if (CMediaReal_OpenFailed || CMediaReal_ErrorOccured)
       {
@@ -2277,7 +2285,7 @@ void CMediaReal_CallBack(unsigned long userData, unsigned long cbEnumVal, unsign
    case OEM_MEDIA_REAL_CB_RESUME:
 #ifdef REAL_PLAYER_DIAG
       MSG_3(MSG_SSID_APPS_QTV, MSG_LEGACY_ERROR, ">>>CALLBACK = RESUME", 0, 0, 0);
-#endif 
+#endif
       if (CMediaReal_Valid)
       {
          pme->m_state = OEM_MEDIA_REAL_ACTIVE;
@@ -2364,7 +2372,7 @@ static uint32 OEMMediaReal_MDPCalcTransforms(
   )
 {
   uint32 MDPOperation = 0;
-  
+
   switch( rot )
   {
     case MM_MPEG4_90_CW_ROTATION:
@@ -2430,7 +2438,7 @@ static void OEMMediaReal_MDPCalcTransformDimensions(
       pTransform->x = frame.cx << 1;
       pTransform->y = frame.cy << 1;
       break;
-   case MM_MPEG4_NO_SCALING: 
+   case MM_MPEG4_NO_SCALING:
       pTransform->x = frame.cx;
       pTransform->y = frame.cy;
       break;
@@ -2555,7 +2563,7 @@ static int CMediaReal_AcmSetMediaDataCB(ACM_Callback_data_type *po)
 
   if (po->state == ACM_RESOURCE_ACQUIRED)
   {
-    pAEEMedia->m_bResOwner = TRUE;         
+    pAEEMedia->m_bResOwner = TRUE;
     nRet = CMediaReal_SetMediaData_internal (pCMediaReal);
     if (nRet != SUCCESS)
     {

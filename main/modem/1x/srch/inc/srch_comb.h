@@ -13,7 +13,7 @@ GENERAL DESCRIPTION
    consists of all functions that deal with the symbol, power, and frequency
    combiner in the searcher subsystem.
 
-  Copyright (c) 2001, 2002, 2003, 2004, 2005 by QUALCOMM, Inc.
+  Copyright (c) 2001 - 2009 by QUALCOMM, Inc.
   All Rights Reserved.
 *====*====*====*====*====*====*====*====*====*====*====*====*====*====*===*/
 
@@ -24,10 +24,11 @@ GENERAL DESCRIPTION
 This section contains comments describing changes made to the module.
 Notice that changes are listed in reverse chronological order.
 
-$Header: //source/qcom/qct/modem/1x/srch/rel/1h08/inc/srch_comb.h#1 $
+$Header: //source/qcom/qct/modem/1x/srch/rel/1h08/inc/srch_comb.h#2 $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+11/06/09   bb      Defined srch_comb_init() method
 12/19/06   sst     Merge the following change from 11.02.02B branch
  12/01/06  sst      Remove setting of combiner_gain, it is now controlled by AFC
 10/06/05   bt      Added srch_comb_get_rtc_at_sync80.
@@ -629,5 +630,19 @@ SIDE EFFECTS   None
 
 ===========================================================================*/
 extern int32 srch_comb_get_rtc_at_sync80( void );
+
+/*===========================================================================
+
+FUNCTION       SRCH_COMB_INIT
+DESCRIPTION    This function initializes the combiner related Hardware 
+               variables
+
+DEPENDENCIES   None
+
+RETURN VALUE   None
+SIDE EFFECTS   None
+
+===========================================================================*/
+extern void srch_comb_init (void);
 
 #endif /* SRCH_COMB_H */

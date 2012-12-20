@@ -24,7 +24,7 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS
                         EDIT HISTORY FOR MODULE
 
   $PVCSPath: L:/src/asw/MM_DATA/vcs/ps_pppi.c_v   1.32   13 Feb 2003 20:13:04   jeffd  $
-  $Header: //source/qcom/qct/modem/data/cdps/ps/main/lite/src/ps_pppi.c#5 $ $DateTime: 2009/05/27 05:07:18 $ $Author: nsivakum $
+  $Header: //source/qcom/qct/modem/data/cdps/ps/main/lite/src/ps_pppi.c#6 $ $DateTime: 2011/04/12 15:12:44 $ $Author: mganjam $
 
 when        who    what, where, why
 --------    ---    ----------------------------------------------------------
@@ -2359,6 +2359,13 @@ void pppi_hdlc_sw_unframe
             temp_item_ptr->tracer = DSM_OUT_OF_ASY_IN_EOP;
 #endif
             temp_item_ptr->app_field = NULL;
+
+#ifdef FEATURE_DATA_PS_PPP_LOGGING
+            ppp_log_frames_ext (*item_head_ptr, 
+                                PPP_LOG_FRAMED_TX, 
+                                ppp_cb_ptr->bridge_dev); 
+#endif /*FEATURE_DATA_PS_PPP_LOGGING*/
+
             ppp_bridge_cb_ptr->tx_f_ptr(&temp_item_ptr, 
                                         ppp_bridge_cb_ptr->tx_user_data);
           } /* while(items before incoming_ptr) */
@@ -2521,7 +2528,14 @@ void pppi_hdlc_sw_unframe
           temp_item_ptr->tracer = DSM_OUT_OF_ASY_IN_EOP_HEAD;
 #endif
           temp_item_ptr->app_field = NULL;
-          ppp_bridge_cb_ptr->tx_f_ptr(&temp_item_ptr, 
+
+#ifdef FEATURE_DATA_PS_PPP_LOGGING
+            ppp_log_frames_ext (*item_head_ptr, 
+                                PPP_LOG_FRAMED_TX, 
+                                ppp_cb_ptr->bridge_dev); 
+#endif /*FEATURE_DATA_PS_PPP_LOGGING*/
+
+            ppp_bridge_cb_ptr->tx_f_ptr(&temp_item_ptr, 
                                       ppp_bridge_cb_ptr->tx_user_data);
 
           cur_byte_loc = 0;

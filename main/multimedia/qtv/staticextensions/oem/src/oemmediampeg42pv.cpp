@@ -11,7 +11,7 @@ PUBLIC CLASSES:  Not Applicable
 
 INITIALIZATION AND SEQUENCING REQUIREMENTS:  Not Applicable
 
-Copyright: 1999-2005 QUALCOMM Incorporated. All Rights Reserved.
+Copyright: 1999-2010 QUALCOMM Incorporated. All Rights Reserved.
 QUALCOMM Proprietary/GTDR
 =========================================================================*/
 /*!
@@ -29,9 +29,9 @@ QUALCOMM Proprietary/GTDR
 /*=========================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/staticextensions/oem/main/latest/src/oemmediampeg42pv.cpp#14 $
-$DateTime: 2009/01/08 00:46:58 $
-$Change: 815455 $
+$Header: //source/qcom/qct/multimedia/qtv/staticextensions/oem/main/latest/src/oemmediampeg42pv.cpp#65 $
+$DateTime: 2010/11/29 03:01:53 $
+$Change: 1533305 $
 
 =========================================================================*/
 
@@ -46,7 +46,16 @@ extern "C"
 #include "customer.h"
 #include "assert.h"
 #include "snd.h"
+#ifdef FEATURE_CMI
+#error code not present
+#else
 #include "clk.h"
+#endif
+
+#ifdef FEATURE_CMI_MM
+#error code not present
+#endif
+
 #include "uixsnd.h"
 #if defined(FEATURE_QTV_IPL_SCALING) || defined(FEATURE_MP4_AAC_PLUS)
 # include "qtv_ipl.h"
@@ -60,6 +69,9 @@ extern "C"
 
 extern "C"
 {
+#include <fs_fcntl.h>
+#include <fs_public.h>
+typedef int fs_handle_type;
 #include "BREWVersion.h"
 #include "OEMMediaMPEG4.h"
 #include "OEMCriticalSection.h"
@@ -139,11 +151,25 @@ static OEMCriticalSection releaseCS;
 
 =========================================================================*/
 
+#define RTSP_METHOD_DESCRIBE             "RTSP_METHOD_DESCRIBE"
+#define RTSP_METHOD_SETUP		 "RTSP_METHOD_SETUP"
+#define RTSP_METHOD_PLAY		 "RTSP_METHOD_PLAY"
+#define RTSP_METHOD_PAUSE		 "RTSP_METHOD_PAUSE"
+#define RTSP_METHOD_TEARDOWN		 "RTSP_METHOD_TEARDOWN"
+#define RTSP_METHOD_OPTIONS_RESPONSE     "RTSP_METHOD_OPTIONS_RESPONSE"
+
+#define RTSP_USER_AGENT			 "RTSP_USER_AGENT"
+#define RTSP_USER_AGENT_PARAM		 "RTSP_USER_AGENT_PARAM"
+#define RTP_UDP_DATA_PORT_RANGE	         "RTP_UDP_DATA_PORT_RANGE"
+
+#define OEM_RTSP_HEADER_ADD              "OEM_RTSP_HEADER_ADD"
+#define OEM_RTSP_HEADER_DELETE           "OEM_RTSP_HEADER_DELETE"
+
 #define FEATURE_MP4_ENABLE_SET_DEBUG_VARIABLES
 #define FEATURE_MP4_WRITE_CLIP_STATS_TO_FILE
 
 #ifdef FEATURE_MP4_ENABLE_SET_DEBUG_VARIABLES
-#define DEBUG_MAX_STRING_LENGTH        256
+#define DEBUG_MAX_STRING_LENGTH        2048
 #define DEBUG_URL_FILE_EXTENSION       ".url"
 #define PVX_FILE_EXTENSION             ".pvx"
 #define DEBUG_VARIABLE_VALUE_SEPARATOR '='
@@ -190,10 +216,7 @@ static OEMCriticalSection releaseCS;
                               FORWARD DECLARATIONS
 
 =========================================================================*/
-static void UpdateProgressBar(void *pData);
-#ifdef FEATURE_QTV_PROGRESSIVE_DL_STREAMING_2
-static void UpdateDownloadProgressBar(void *pData);
-#endif
+
 #ifdef FEATURE_MP4_ENABLE_SET_DEBUG_VARIABLES
 static int CheckDebugURLFile(char *videoFileName, char *audioFileName);
 #endif // FEATURE_MP4_ENABLE_SET_DEBUG_VARIABLES
@@ -258,9 +281,13 @@ extern "C" {
 
 static AEEVTBL(IBitmap)* g_pvtIBitmap;
 
-static QtvPlayer::FetchBufferedDataSizeT  g_cbFetchBufferedDataSize;
-static QtvPlayer::FetchBufferedDataT      g_cbFetchBufferedData;  
-static QtvPlayer::IsMimeTypeSupportedT    g_cbIsMimeSupported;
+static QtvPlayer::FetchBufferedDataSizeT  g_cbFetchBufferedDataSize = NULL;
+static QtvPlayer::FetchBufferedDataT      g_cbFetchBufferedData = NULL;  
+static QtvPlayer::IsMimeTypeSupportedT    g_cbIsMimeSupported = NULL;
+
+static void*                              g_pClientData = NULL;
+AEEFetchBufferedDataSizeT                 g_FetchBufferSizeCB = NULL;
+AEEFetchBufferedDataT                     g_FetchBufferCB = NULL;
 
 #ifdef FEATURE_USE_CLKREGIM_DEVMAN_REV2
 /*! Temporary control of display clocks */
@@ -295,7 +322,7 @@ DebugValueType DebugValueTypeTable[] =
 
 
 #ifdef FEATURE_QTV_STREAM_RECORD
-static boolean bEnableStreamRecord = FALSE;
+//static boolean bEnableStreamRecord = FALSE; // Variable not used, compiler warning
 static char fName[512] = {'\0'};
 static bool bRecFileOverWrite = FALSE;
 uint32 rec_clip_duration = 0;
@@ -396,12 +423,12 @@ extern "C" void QtvEngineCB(
       pOEM->m_bResumePending = FALSE;
       break;
 
-#ifdef FEATURE_QTV_RANDOM_ACCESS_REPOS
+#ifdef FEATURE_FILE_FRAGMENTATION
     case QtvPlayer::QTV_COMMAND_SKIP_CLIP_COMPLETE:
     case QtvPlayer::QTV_COMMAND_SKIP_CLIP_FAILED:
       pOEM->m_bSeekPending = FALSE;
       break;
-#endif /*FEATURE_QTV_RANDOM_ACCESS_REPOS*/
+#endif /*FEATURE_FILE_FRAGMENTATION*/
 
 #ifdef FEATURE_QTV_PLAYLIST
     case QtvPlayer::QTV_COMMAND_PLAYLIST_PLAY_COMPLETE:
@@ -456,24 +483,6 @@ extern "C" void QtvEngineCB(
       data = status;
       break;
 
-    #ifdef FEATURE_QTV_DRM_DCF
-
-	 /*
-	  * QTV error while creating IxStream for video/audio/text	  
-	  */
-	  case QtvPlayer::QTV_PLAYER_VIDEO_IXSTREAM_FAILED:
-	    MSG_LOW("QtvEngineCB:QtvPlayer::QTV_PLAYER_VIDEO_IXSTREAM_FAILED(%d,%d,%d)", status, pData, state);	    
-	    break;
-
-	  case QtvPlayer::QTV_PLAYER_AUDIO_IXSTREAM_FAILED:
-	    MSG_LOW("QtvEngineCB:QtvPlayer::QTV_PLAYER_AUDIO_IXSTREAM_FAILED(%d,%d,%d)", status, pData, state);	    
-	    break;
-
-	  case QtvPlayer::QTV_PLAYER_TEXT_IXSTREAM_FAILED:
-	    MSG_LOW("QtvEngineCB:QtvPlayer::QTV_PLAYER_TEXT_IXSTREAM_FAILED(%d,%d,%d)", status, pData, state);	   
-	    break;
-	#endif
-
     case QtvPlayer::QTV_PLAYER_STATUS_OPENING:
        pOEM->m_nMPEG4EngineState = status;
        break;
@@ -519,7 +528,11 @@ extern "C" void QtvEngineCB(
        cmd = MM_CMD_PLAY;
        MMStatus = MM_MP4_STATUS_TS_LAYER_PRESENT;       
        break;
+#ifdef FEATURE_QTV_FCS
+#error code not present
+#endif
     case QtvPlayer::QTV_PLAYER_STATUS_PLAYBACK_READY:
+      MSG_HIGH("QtvPlayer::QTV_PLAYER_STATUS_PLAYBACK_READY",0,0,0);
       pOEM->m_nMPEG4EngineState = status;
       // playback ready callback received, reset playback ready pending flag.
       pOEM->m_bPBReadyPending = FALSE;
@@ -565,6 +578,7 @@ extern "C" void QtvEngineCB(
           totalTimeStatus = MM_STATUS_DONE;
           duration = pOEM->m_MPEG4Spec.dwDuration;
         }
+        MSG_HIGH("QtvPlayer::QTV_PLAYER_STATUS_PLAYBACK_READY, notifying MM_CMD_GETTOTALTIME ",0,0,0);
 
         OEMMediaMPEG4_QueueCallback((void *)pData,
                                     totalTimeStatus,
@@ -598,10 +612,18 @@ extern "C" void QtvEngineCB(
                                   0);
 
       cmd = MM_CMD_PLAY;
-      MMStatus = MM_STATUS_REPOSITIONING;
-      data = pClipInfo->RepositioningAllowed;
-      size = sizeof(data);
-      pOEM->m_bStreamingError = FALSE;
+      if (status == QtvPlayer::QTV_PLAYER_STATUS_SWITCHING_IN_PROGRESS)
+      {
+        MMStatus = MM_MP4_STATUS_FCS_SWITCHING;
+      }
+      else
+      {
+         MMStatus = MM_STATUS_REPOSITIONING;
+         data = pClipInfo->RepositioningAllowed;
+         size = sizeof(data);
+         pOEM->m_bStreamingError = FALSE;
+         pOEM->m_bStreamingError = FALSE;
+      }
       break;
 
     case QtvPlayer::QTV_PLAYER_STATUS_PLAYING:
@@ -651,7 +673,22 @@ extern "C" void QtvEngineCB(
       MSG_HIGH("Internally suspending.", 0, 0, 0);
       break;
 
+    /* In live streaming pause is not allowed, so if pause is called from OEM 
+       layer then need to notify pause is failed in this scenario.
+     */
+    case QtvPlayer::QTV_COMMAND_PAUSE_FAILED:
+         pOEM->m_bPausePending = FALSE;
+         MSG_HIGH("Pause is failed.", 0, 0, 0);
+         break;
+
     case QtvPlayer::QTV_PLAYER_STATUS_PAUSED:
+    case QtvPlayer::QTV_PLAYER_STATUS_PAUSED_SUSPENDED:
+         if(QtvPlayer::QTV_PLAYER_STATUS_PAUSED_SUSPENDED == status)
+         {		
+   	    /* QTV_PLAYER_STATUS_PAUSED_SUSPENDED is notified only in case when qtv is paused because of incoming call */
+            /* So release the CMX resource as we are done with qtv suspend handler */
+    	    OEMMediaMPEG4_Conc_ACM_Stop(pOEM->m_pMedia);
+	 }
          pOEM->m_bSuspend = FALSE;
       // This is to handle the case when PAUSE during connecting state of a streaming clip.
       if(pOEM->m_bPBReadyPending == TRUE)
@@ -659,31 +696,13 @@ extern "C" void QtvEngineCB(
         pOEM->m_bSendTotalTime = TRUE;
       }
       
-      pOEM->m_nStartTime = state.playbackMsec;
+      if (pOEM->m_bPaused == FALSE)
+      {
+        pOEM->m_nStartTime = state.playbackMsec;
+      }
       pOEM->m_nMPEG4EngineState = status;
       cmd = MM_CMD_PLAY;
       MMStatus = MM_STATUS_PAUSE;
-      pOEM->m_bPaused = TRUE;
-      pOEM->m_bPausePending = FALSE;
-      // reset resume pending.  Add this for the case, after SEEK request, 
-      // while BUFFERING, send PAUSE and then RESUME request, the RESUME 
-      // will fail if resume pending flag is not reset here.
-      pOEM->m_bResumePending = FALSE;
-      pOEM->m_bPauseInProcess = FALSE;
-      break;
-
-    case QtvPlayer::QTV_PLAYER_STATUS_PAUSED_SUSPENDED:
-      pOEM->m_bSuspend = FALSE;
-      // This is to handle the case when PAUSE during connecting state of a streaming clip.
-      if(pOEM->m_bPBReadyPending == TRUE)
-      {
-        pOEM->m_bSendTotalTime = TRUE;
-      }
-      
-      pOEM->m_nStartTime = state.playbackMsec;
-      pOEM->m_nMPEG4EngineState = status;
-      cmd = MM_CMD_PLAY;
-      MMStatus = MM_MP4_STATUS_PAUSED_SUSPENDED;
       pOEM->m_bPaused = TRUE;
       pOEM->m_bPausePending = FALSE;
       // reset resume pending.  Add this for the case, after SEEK request, 
@@ -763,6 +782,8 @@ extern "C" void QtvEngineCB(
       /* The PV code never sends this error! */
     case QtvPlayer::QTV_PLAYER_STATUS_STREAM_ERROR:
     case QtvPlayer::QTV_PLAYER_STATUS_STREAM_SERVER_CLOSED:
+    case QtvPlayer::QTV_PLAYER_STATUS_SERVER_NOT_ENOUGH_BW:
+    case QtvPlayer::QTV_PLAYER_STATUS_DATA_INACTIVITY_ERROR:
       pOEM->m_nStartTime = 0;
       pOEM->m_bStreamingError = TRUE;
       /* Fall through */
@@ -881,10 +902,10 @@ extern "C" void QtvEngineCB(
 #endif /* FEATURE_MP4_FRAME_TRANSFORMATIONS */
 
     case QtvPlayer::QTV_PLAYER_STATUS_SCALING_FAILED:
-#ifdef FEATURE_MP4_FRAME_TRANSFORMATIONS
       cmd = MM_CMD_SETMEDIAPARM;
       subCmd = MM_MP4_PARM_SCALING;
       MMStatus = MM_STATUS_ABORT;
+#ifdef FEATURE_MP4_FRAME_TRANSFORMATIONS
       pOEM->m_bFrameTransformPending = FALSE;
       break;
 #endif /* FEATURE_MP4_FRAME_TRANSFORMATIONS */
@@ -898,12 +919,13 @@ extern "C" void QtvEngineCB(
         if (nRet == SUCCESS) 
         {
           pOEM->m_QtvCurrentScaling = OEM_ASCALE;
-          return;
+          MMStatus = MM_STATUS_DONE;
+          break;
         }
       }
 #endif /* FEATURE_QTV_MDP_ASCALE */
       pOEM->m_QtvCurrentScaling = OEM_NO_SCALING;
-      return;
+      break;
 #endif /* FEATURE_QTV_XSCALE_VIDEO */
 
     case QtvPlayer::QTV_COMMAND_OPEN_URN_COMPLETE:
@@ -1322,6 +1344,59 @@ extern "C" void QtvEngineCB(
         break;
       }
     #endif//#ifdef FEATURE_QTV_DIVX_DRM
+
+#ifdef FEATURE_QTV_FCS
+#error code not present
+#endif
+	case QtvPlayer::QTV_PLAYER_STATUS_VALID_CLIPINFO_DIMENSIONS:
+		{
+			cmd = MM_CMD_PLAY;
+			MMStatus = MM_MP4_STATUS_CLIPINFO_DIMENSION_READY;      
+			break;
+		}
+
+    case QtvPlayer::QTV_STREAM_TRACKLIST_UNKNOWN_CODEC:
+    {
+      cmd = MM_CMD_PLAY;
+      MMStatus = MM_MP4_STATUS_TRACKLIST_CODEC_CHECK_DONE;
+      break;
+    }
+
+    case QtvPlayer::QTV_PLAYER_STATUS_RECONNECT_SUCCESS:
+      { 
+        cmd = MM_CMD_PLAY;
+        MMStatus = MM_MP4_STATUS_RECONNECT_SUCCESS;
+        MSG_HIGH("MM_MP4_STATUS_RECONNECT_SUCCESS.", 0, 0, 0);
+        break;
+      }
+    case QtvPlayer::QTV_PLAYER_STATUS_RECONNECT_FAIL:
+      {
+        cmd = MM_CMD_PLAY;
+        MMStatus = MM_MP4_STATUS_RECONNECT_FAILED;
+        MSG_HIGH("MM_MP4_STATUS_RECONNECT_FAILED.", 0, 0, 0);
+        break;
+      }
+    case QtvPlayer::QTV_PLAYER_STATUS_RECONNECT_IN_PROGRESS:
+      {
+        cmd = MM_CMD_PLAY;
+        MMStatus = MM_MP4_STATUS_RECONNECT_IN_PROGRESS;
+        MSG_HIGH("MM_MP4_STATUS_RECONNECT_IN_PROGRESS.", 0, 0, 0);
+        break;
+      }
+    case QtvPlayer::QTV_PLAYER_STATUS_FCS_SWITCH_SUPPORTED:
+    {
+        cmd = MM_CMD_PLAY;
+        MMStatus = MM_MP4_STATUS_FCS_SWITCH_SUPPORTED;
+        MSG_HIGH("QTV_PLAYER_STATUS_FCS_SWITCH_SUPPORTED.", 0, 0, 0);
+		break;
+    }
+    case QtvPlayer::QTV_PLAYER_STATUS_RECONNECTING_USING_TCP_INTERLEAVE:
+    {
+        cmd = MM_CMD_PLAY;
+        MMStatus = MM_MP4_STATUS_RECONNECTING_USING_TCP_INTERLEAVE;
+        MSG_HIGH("MM_MP4_STATUS_RECONNECTING_USING_TCP_INTERLEAVE.", 0, 0, 0);
+        break;
+    }      
     default:
       break;
   }
@@ -1361,7 +1436,7 @@ extern "C" void QtvEngineCBShell(
 }
 
 #ifdef FEATURE_QTV_PROGRESSIVE_DL_STREAMING_2
-static void UpdateDownloadProgressBar(void *pData)
+void UpdateDownloadProgressBar(void *pData)
 {
    QtvPlayer::PlayerStateRecordT state = {0};
    QtvPlayer::ReturnT stateVal = QtvPlayer::QTV_RETURN_ERROR;
@@ -1382,17 +1457,13 @@ static void UpdateDownloadProgressBar(void *pData)
                                     MM_CMD_PLAY,
                                     0,
                                     (void *)state.downloadTime,
-                                    sizeof(state.downloadTime));          
-
-         AEE_SetTimer( pOEM->m_nTickInterval, UpdateDownloadProgressBar, (void*)pOEM );
+                                    sizeof(state.downloadTime));                 
    }
-
-
 }
 #endif
 
 
-static void UpdateProgressBar(void *pData)
+void UpdateProgressBar(void *pData)
 {
    QtvPlayer::PlayerStateRecordT state = {0};
    QtvPlayer::ReturnT stateVal = QtvPlayer::QTV_RETURN_ERROR;
@@ -1407,6 +1478,9 @@ static void UpdateProgressBar(void *pData)
         ( (pOEM->m_nMPEG4EngineState == QtvPlayer::QTV_PLAYER_STATUS_PLAYING) ||
           (pOEM->m_nMPEG4EngineState == QtvPlayer::QTV_PLAYER_STATUS_PLAYING_1P3X) ) )
    {
+     // Make sure that we give TICK_UPDATE to UI only when app sets m_nTickInterval
+     if(0 != pOEM->m_nTickInterval)
+     {
       if(pOEM->m_bRepositionInPauseUpdateTime != TRUE) // Check if repositioned during Pause
       {
         /* we should send some positive value to MM_STATUS_TICK_UPDATE,
@@ -1439,10 +1513,9 @@ static void UpdateProgressBar(void *pData)
                                   (void *)pOEM->m_nStartTime,sizeof(pOEM->m_nStartTime));
     
         pOEM->m_bRepositionInPauseUpdateTime = FALSE;
-
       }
-
-      AEE_SetTimer( pOEM->m_nTickInterval, UpdateProgressBar, (void*)pOEM );
+     }
+      
    }
    else
    {
@@ -1480,7 +1553,6 @@ static void UpdateProgressBar(void *pData)
                                       0,
                                       (void *)&pOEM->m_nPsdownloadrate,
                                       sizeof(pOEM->m_nPsdownloadrate));
-          AEE_SetTimer( pOEM->m_nTickInterval, UpdateProgressBar, (void*)pOEM );
         }
 #endif
 
@@ -1646,6 +1718,7 @@ extern "C" int OEMEditOemRtspHeaders(
 
 extern "C" int OEMMediaMPEG42PV_GetClipInfo(OEMHandle pOEM)
 {
+   MSG_HIGH("OEMMediaMPEG42PV_GetClipInfo, Entry", 0, 0, 0);
    pOEM = OEMMediaMPEG42PV_GetOEMLayer(pOEM);
    if(pOEM == NULL)
    {
@@ -1654,6 +1727,8 @@ extern "C" int OEMMediaMPEG42PV_GetClipInfo(OEMHandle pOEM)
    }
    if (pOEM->m_bClipInfoAvail == TRUE)
    {
+      MSG_HIGH("OEMMediaMPEG42PV_GetClipInfo...pOEM->m_bClipInfoAvail is TRUE",0,0,0);
+	  
       OEMMediaMPEG4_QueueCallback(pOEM->m_pCallbackData,
                                   MM_STATUS_DONE,
                                   MM_CMD_GETTOTALTIME,
@@ -1665,6 +1740,7 @@ extern "C" int OEMMediaMPEG42PV_GetClipInfo(OEMHandle pOEM)
    // MediaPlayer will wait for GetTotalTime callback before issuing IMEDIA_Play.
    else if (pOEM->m_bSendTotalTime == TRUE) 
    {
+     MSG_HIGH("OEMMediaMPEG42PV_GetClipInfo...pOEM->m_bSendTotalTime is TRUE",0,0,0);
      uint32 temp_duration = 0;
      pOEM->m_bSendTotalTime = FALSE;
      OEMMediaMPEG4_QueueCallback(pOEM->m_pCallbackData,
@@ -1677,11 +1753,14 @@ extern "C" int OEMMediaMPEG42PV_GetClipInfo(OEMHandle pOEM)
    else
    {
       pOEM->m_cbGenerateTotalTime = TRUE;
+      MSG_HIGH("OEMMediaMPEG42PV_GetClipInfo,(pending notification)m_cbGenerateTotalTime =%d",pOEM->m_cbGenerateTotalTime, 0, 0);
    }
    if (pOEM->m_bStreamingError)
    {
+      MSG_ERROR("OEMMediaMPEG42PV_GetClipInfo, pOEM->m_bStreamingError is TRUE. Return EFAILED", 0, 0, 0);
       return EFAILED;
    }
+   MSG_HIGH("OEMMediaMPEG42PV_GetClipInfo...return SUCCESS",0,0,0);
    return SUCCESS;
 }
 
@@ -1738,7 +1817,6 @@ static uint32 QtvBitmap_Release(
    * We must use the statically saved version of Release, otherwise it'll just
    * call us again */
   refs = g_pvtIBitmap->Release(po);
-  MUTEX_UNLOCK();
   MSG_HIGH("Current no of refs: %d ",refs,0,0);
 
   /* If we have 2 references left, then that means that we should release the
@@ -1778,7 +1856,6 @@ static uint32 QtvBitmap_Release(
   }
 
   /* Let the base class do its work--this time the object may be free'd */
-  MUTEX_LOCK();
   refs = g_pvtIBitmap->Release(po);
   MUTEX_UNLOCK();
   return refs;
@@ -1820,7 +1897,11 @@ static int QtvBitmap_New(IBitmap** ppo)
   }
 
 #ifdef FEATURE_QTV_MDP
+#ifdef FEATURE_QTV_MDP_COLOR_FORMAT_SWAP
+#error code not present
+#else
   rv = YCbCr_New( IYCBCR_COLORSCHEME_420LP, 0, 0, &me );
+#endif
 #else
   {
     IShell   *pShell = AEE_GetShell();
@@ -1879,7 +1960,8 @@ static int QtvBitmap_New(IBitmap** ppo)
 
 extern "C" int OEMMediaMPEG42PV_Init(OEMHandle pOEM)
 {
-  QtvPlayer::ReturnT retVal;
+  QtvPlayer::ReturnT retVal = QtvPlayer::QTV_RETURN_OK;
+  MSG_HIGH("OEMMediaMPEG42PV_Init, Entry ", 0, 0, 0);
 
 #if (defined FEATURE_QTV_QDSP_RELEASE_RESTORE && defined FEATURE_QTV_QOS_SELECTION)
 #error code not present
@@ -1892,8 +1974,10 @@ extern "C" int OEMMediaMPEG42PV_Init(OEMHandle pOEM)
   {
       MSG_ERROR("OEMMediaMPEG42PV_Init, MALLOC can't allocate %d bytes for m_pClipInfo", sizeof(QtvPlayer::ClipInfoT), 0, 0);
       return ENOMEMORY;
-  }
-
+  }  
+  pOEM->m_cbGenerateTotalTime = FALSE; 
+  pOEM->m_cbGenerateMediaSpec = FALSE; 
+  MSG_HIGH("OEMMediaMPEG42PV_Init, m_cbGenerateTotalTime = %d  ", pOEM->m_cbGenerateTotalTime, 0, 0);
   pOEM->m_nMPEG4EngineState = QtvPlayer::QTV_PLAYER_STATUS_IDLE;
 
 #ifdef FEATURE_QTV_DUAL_MONO_OUTPUT_SELECTION
@@ -1906,20 +1990,24 @@ extern "C" int OEMMediaMPEG42PV_Init(OEMHandle pOEM)
 
   // Initialize the Qtv Player
 #ifdef FEATURE_QTV_OEM_BUFFER_MGR
+  MSG_HIGH("OEMMediaMPEG42PV_Init, QtvPlayer::Init(AllocateOutputBuffer, ReleaseOutputBuffer, &pOEM->m_pHandle) ", 0, 0, 0);
   retVal = QtvPlayer::Init(AllocateOutputBuffer, ReleaseOutputBuffer, &pOEM->m_pHandle);
 #else
+  MSG_HIGH("OEMMediaMPEG42PV_Init, QtvPlayer::Init(AllocateOutputBuffer, FreeOutputBuffer, &pOEM->m_pHandle) ", 0, 0, 0);
   retVal = QtvPlayer::Init(AllocateOutputBuffer, FreeOutputBuffer, &pOEM->m_pHandle);
 #endif /* FEATURE_QTV_OEM_BUFFER_MGR */
   if(retVal == QtvPlayer::QTV_RETURN_OK && pOEM->m_pHandle != NULL)
   {
-  // enable the RTSP callback by default
-  QtvPlayer::SetRTSPStatusCallback(RTSPStatusCB, pOEM->m_pHandle, pOEM);
+   // enable the RTSP callback by default
+    QtvPlayer::SetRTSPStatusCallback(RTSPStatusCB, pOEM->m_pHandle, pOEM);
     char path[] = MEDIAPLAYER_ROOT_PATH;
     int pathExt = (int)path;
     QtvPlayer::SetQTVConfigItem(QtvConfig::QTVCONFIG_MEDIAPLAYER_ROOT_PATH,
                                 &pathExt,pOEM->m_pHandle);
     if(retVal == QtvPlayer::QTV_RETURN_OK)
     {
+    
+      MSG_HIGH("OEMMediaMPEG42PV_Init->SetQTVConfigItem, Exit ", 0, 0, 0);
       return SUCCESS;
     }
     else
@@ -1927,13 +2015,13 @@ extern "C" int OEMMediaMPEG42PV_Init(OEMHandle pOEM)
       MSG_ERROR("QtvPlayer::SetMediaplayerRootPath() failed: ret=%d", retVal, 0, 0);
       return EFAILED;
     }
-    return SUCCESS;
+
   }
   else
   {
     MSG_ERROR("QtvPlayer::Init failed, return val=%d", retVal, 0, 0);
     return EFAILED;
-  }
+  }   
 }
 
 extern "C" int OEMMediaMPEG42PV_OpenBufferURN(  unsigned char *pVideoBuf, uint32 dwVideoBufSize,
@@ -1953,9 +2041,7 @@ extern "C" int OEMMediaMPEG42PV_OpenBufferURN(  unsigned char *pVideoBuf, uint32
     MSG_ERROR("OEMMediaMPEG42PV_OpenBufferURN, pOEM is null.", 0, 0, 0);
     return EFAILED;
   }
-  /* reset any call backs pending */
-  pOEM->m_cbGenerateTotalTime = FALSE;
-  pOEM->m_cbGenerateMediaSpec = FALSE;
+  // Moved the resetting of callbacks to Init
   pOEM->m_bPBReadyPending = TRUE;
   pOEM->m_Sound.cmd_pending = FALSE;
   pOEM->m_Sound.cb_pending = FALSE;
@@ -2047,6 +2133,216 @@ extern "C" int OEMMediaMPEG42Qtv_SetNetPolicyInfo(AEENetPolicyInfo* qosInfo, OEM
 }
 #endif
 
+
+extern "C" int OEMMediaMPEG42Qtv_ISettings_Set(char *userString, const char *value, OEMHandle pOEM)
+{
+  /*  Needs to call below functions.
+  1.	static ReturnT SetUserAgent(const char * userAgentName, InstanceHandleT handle = NULL);
+  2.	static ReturnT SetUserAgentParameters(const char* params, InstanceHandleT handle = NULL);
+  3.	void QtvPlayer::SetDataPortRange(int beginPort, int endPort)
+  4.  static OemRtspHeaderResult EditOemRtspHeaders(
+       OemRtspHeaderCommand whatCommand,
+       uint32 whatMethods, 
+       const char *headerName,
+       const char *headerValue,
+       InstanceHandleT handle = NULL
+       );
+*/
+
+  int i = 0, pos = 0, posCommand=0, command = 0;
+  if (userString == NULL || value == NULL)
+  {
+    //return failure
+    return EFAILED;
+  }
+  for ( ; userString[i] != '\0'; i++)
+  {
+    if (userString[i] == ':' && userString[i+1] == ':')
+    {
+      pos=i;
+      break;
+    }
+  }
+  if (pos!=0)
+  {
+
+    for ( i=pos+2; userString[i] != '\0'; i++)
+    {
+      if (userString[i] == ':' && userString[i+1] == ':')
+      {
+        posCommand=i;
+        break;
+      }
+    }
+    if (posCommand!=0)
+    {
+      if (strcmp(&userString[posCommand+2], OEM_RTSP_HEADER_ADD) == 0)
+      {
+        command = 2;
+      }
+      else if (strcmp(&userString[posCommand+2], OEM_RTSP_HEADER_DELETE) == 0)
+      {
+        command = 1;
+      }
+      else
+      {
+        //return failure
+        return EFAILED;
+      }
+    }
+    else
+    {
+      //return failure
+      return EFAILED;
+    }
+
+    userString[posCommand] = '\0';
+
+    // this should be RTSPHeader request
+    if (!strncmp(userString, RTSP_METHOD_DESCRIBE, sizeof(RTSP_METHOD_DESCRIBE)-1))
+    {
+      // parsing logic to separate the RTSP_METHOD_DESCRIBE::CSEQ
+      QtvPlayer::OemRtspHeaderResult result = QtvPlayer::EditOemRtspHeaders((QtvPlayer::OemRtspHeaderCommand)command,
+                                                                            (QtvPlayer::AffectedRTSPMethod )1, &userString[pos+2], value, pOEM->m_pHandle);
+      if (result == QtvPlayer::OEM_RTSP_RESULT_OK)
+      {
+        return SUCCESS;
+      }
+      return EFAILED;
+    }
+    else if (!strncmp(userString, RTSP_METHOD_SETUP, sizeof(RTSP_METHOD_SETUP)-1))
+    {
+      QtvPlayer::OemRtspHeaderResult result = QtvPlayer::EditOemRtspHeaders((QtvPlayer::OemRtspHeaderCommand)command,
+                                                                            (QtvPlayer::AffectedRTSPMethod )2, &userString[pos+2], value, pOEM->m_pHandle);
+      if (result == QtvPlayer::OEM_RTSP_RESULT_OK)
+      {
+        return SUCCESS;
+      }
+      return EFAILED;
+    }
+    else if (!strncmp(userString, RTSP_METHOD_PLAY, sizeof(RTSP_METHOD_PLAY)-1))
+    {
+      QtvPlayer::OemRtspHeaderResult result = QtvPlayer::EditOemRtspHeaders((QtvPlayer::OemRtspHeaderCommand)command,
+                                                                            (QtvPlayer::AffectedRTSPMethod )4, &userString[pos+2], value, pOEM->m_pHandle);
+      if (result == QtvPlayer::OEM_RTSP_RESULT_OK)
+      {
+        return SUCCESS;
+      }
+      return EFAILED;
+    }
+    else if (!strncmp(userString, RTSP_METHOD_PAUSE, sizeof(RTSP_METHOD_PAUSE)-1))
+    {
+      QtvPlayer::OemRtspHeaderResult result = QtvPlayer::EditOemRtspHeaders((QtvPlayer::OemRtspHeaderCommand)command,
+                                                                            (QtvPlayer::AffectedRTSPMethod )8, &userString[pos+2], value, pOEM->m_pHandle);
+      if (result == QtvPlayer::OEM_RTSP_RESULT_OK)
+      {
+        return SUCCESS;
+      }
+      return EFAILED;
+    }
+    else if (!strncmp(userString, RTSP_METHOD_TEARDOWN, sizeof(RTSP_METHOD_TEARDOWN)-1))
+    {
+      QtvPlayer::OemRtspHeaderResult result = QtvPlayer::EditOemRtspHeaders((QtvPlayer::OemRtspHeaderCommand)command,
+                                                                            (QtvPlayer::AffectedRTSPMethod )16, &userString[pos+2], value, pOEM->m_pHandle);
+      if (result == QtvPlayer::OEM_RTSP_RESULT_OK)
+      {
+        return SUCCESS;
+      }
+      return EFAILED;
+    }
+    else if (!strncmp(userString, RTSP_METHOD_OPTIONS_RESPONSE, sizeof(RTSP_METHOD_OPTIONS_RESPONSE)-1))
+    {
+      QtvPlayer::OemRtspHeaderResult result = QtvPlayer::EditOemRtspHeaders((QtvPlayer::OemRtspHeaderCommand)command,
+                                                                            (QtvPlayer::AffectedRTSPMethod )32, &userString[pos+2], value, pOEM->m_pHandle);
+      if (result == QtvPlayer::OEM_RTSP_RESULT_OK)
+      {
+        return SUCCESS;
+      }
+      return EFAILED;
+    }
+    else
+    {
+      return EFAILED;
+    }
+  }
+  else
+  {
+    if (!strncmp(userString, RTSP_USER_AGENT, sizeof(RTSP_USER_AGENT)))
+    {
+      if (value == NULL)
+      {
+        return EFAILED;
+      }
+      else
+      {
+        if (QtvPlayer::SetUserAgent(value, pOEM->m_pHandle) == QtvPlayer::QTV_RETURN_OK)
+        {
+          return SUCCESS;
+        }
+        else
+        {
+          return EFAILED;
+        }
+      }
+    }
+    else if (!strncmp(userString, RTSP_USER_AGENT_PARAM, sizeof(RTSP_USER_AGENT_PARAM)))
+    {
+      if (value == NULL)
+      {
+        return EFAILED;
+      }
+      else
+      {
+        if (QtvPlayer::SetUserAgentParameters(value, pOEM->m_pHandle) == QtvPlayer::QTV_RETURN_OK)
+        {
+          return SUCCESS;
+        }
+        else
+        {
+          return EFAILED;
+        }
+      }
+    }
+    else if (!strncmp(userString, RTP_UDP_DATA_PORT_RANGE, sizeof(RTP_UDP_DATA_PORT_RANGE)))
+    {
+      if (value == NULL)
+      {
+        MSG_ERROR("value is NULL.. returning EFAILED",0,0,0);
+        return EFAILED;
+      }
+      else
+      {
+        int max = 0, min = 0, i = 0, pos = -1;
+
+        for ( ; value[i] != '\0'; i++)
+        {
+          if (value[i] == '$' && value[i+1] != '\0' && i>0 )
+          {
+            pos=i;
+            break;
+          }
+          min = min*10 + (value[i]-'0');
+        }
+        if (pos>0)
+        {
+          max = atoi(&value[pos + 1 ]);
+          MSG_HIGH("min : %d max %d", min, max, 0);
+          QtvPlayer::SetDataPortRange(min, max);
+          return SUCCESS;
+        }
+        MSG_ERROR("returning EFAILED",0,0,0);
+        return EFAILED;
+      }
+    }
+    else
+    {
+      MSG_ERROR("returning EFAILED",0,0,0);
+      return EFAILED;
+    }
+  }  
+}
+
+
 extern "C" int OEMMediaMPEG42Qtv_SetUserAgent(char *userAgentName)
 {
   if(userAgentName == NULL)
@@ -2068,10 +2364,11 @@ extern "C" int OEMMediaMPEG42Qtv_SetUserAgent(char *userAgentName)
 
 extern "C" int OEMMediaMPEG42PV_OpenURN(char *videoFileName, char *audioFileName, char *textFileName, OEMHandle pOEM)
 {
-  QtvPlayer::ReturnT retVal;
+  QtvPlayer::ReturnT retVal = QtvPlayer::QTV_RETURN_OK;
   pOEM->m_bRepositionInPauseUpdateTime = FALSE;
   char blankURN[] = "\0";
-
+  
+  MSG_HIGH("OEMMediaMPEG42PV_OpenURN Entry", 0, 0, 0);
   if( (!audioFileName || !strlen(audioFileName)) && (!videoFileName || !strlen(videoFileName)) 
       && (!textFileName || !strlen(textFileName)))
   {
@@ -2085,8 +2382,6 @@ extern "C" int OEMMediaMPEG42PV_OpenURN(char *videoFileName, char *audioFileName
     return EFAILED;
   }
   /* reset any call backs pending */
-  pOEM->m_cbGenerateTotalTime = FALSE;
-  pOEM->m_cbGenerateMediaSpec = FALSE;
   pOEM->m_bPBReadyPending = TRUE;
   pOEM->m_Sound.cmd_pending = FALSE;
   pOEM->m_Sound.cb_pending = FALSE;
@@ -2156,19 +2451,32 @@ extern "C" int OEMMediaMPEG42PV_OpenURN(char *videoFileName, char *audioFileName
                                (QtvPlayer::InstancePriorityT)pOEM->m_nPriority);
    if (retVal == QtvPlayer::QTV_RETURN_OK)
    {
+   
+	   MSG_HIGH("OEMMediaMPEG42PV_OpenURN SUCCESS Exit", 0, 0, 0);
       return SUCCESS;
    }
+   else if (retVal == QtvPlayer::QTV_RETURN_UNSUPPORTED)
+   {   
+	   MSG_HIGH("OEMMediaMPEG42PV_OpenURN EUNSUPPORTED Exit", 0, 0, 0);
+      return EUNSUPPORTED;
+   }  
    else
    {
+   
+	   MSG_HIGH("OEMMediaMPEG42PV_OpenURN EFAILED Exit", 0, 0, 0);
       return EFAILED;
    }  
 }
 
+#ifdef FEATURE_QTV_FCS
+#error code not present
+#endif
 
 extern "C" int OEMMediaMPEG42PV_Pause(OEMHandle pOEM)
 {
-   QtvPlayer::ReturnT retVal;
-
+   QtvPlayer::ReturnT retVal = QtvPlayer::QTV_RETURN_OK;
+	
+   MSG_HIGH("OEMMediaMPEG42PV_Pause,Entry", 0, 0, 0);
    pOEM = OEMMediaMPEG42PV_GetOEMLayer(pOEM);
    if(pOEM == NULL)
    {
@@ -2179,18 +2487,26 @@ extern "C" int OEMMediaMPEG42PV_Pause(OEMHandle pOEM)
    if (retVal == QtvPlayer::QTV_RETURN_OK)
    {
       pOEM->m_bPauseInProcess = TRUE; 
+      MSG_HIGH("OEMMediaMPEG42PV_Pause,Exit SUCCESS", 0, 0, 0);
       return SUCCESS;
    }
    else
    {
+      MSG_ERROR("OEMMediaMPEG42PV_Pause,Exit EFAILED", 0, 0, 0);
       return EFAILED;
    }
 }
+
+#ifdef FEATURE_QTV_FCS
+#error code not present
+#endif
 
 extern "C" int OEMMediaMPEG42PV_Play(int startPos, OEMHandle pOEM)
 {
   QtvPlayer::ReturnT retVal = QtvPlayer::QTV_RETURN_ERROR;
   pOEM = OEMMediaMPEG42PV_GetOEMLayer(pOEM);
+
+  MSG_HIGH("OEMMediaMPEG42PV_Play...startPos:%d",startPos,0,0);
 
   if(pOEM == NULL)
   {
@@ -2225,6 +2541,7 @@ extern "C" int OEMMediaMPEG42PV_Play(int startPos, OEMHandle pOEM)
   {
     if ( pOEM->m_bSeekPending == TRUE )
     {
+      MSG_ERROR("OEMMediaMPEG42PV_Play, returning EBADSTATE state.", 0, 0, 0);
       return EBADSTATE;
     }
   }
@@ -2282,6 +2599,9 @@ extern "C" int OEMMediaMPEG42PV_Play(int startPos, OEMHandle pOEM)
   }
   
   pOEM->m_bSkipInPause = FALSE;
+  
+  MSG_HIGH("OEMMediaMPEG42PV_Play...return EFAILED",0,0,0);
+  
   return EFAILED;
 }
 
@@ -2311,6 +2631,41 @@ extern "C" int OEMMediaMPEG42PV_RegisterForCallback(void *cbData, OEMHandle pOEM
    {
       return EFAILED;
    }
+}
+
+void FetchDataSize(uint32 userData, uint32 * dnldDataSize, boolean *  pbEndOfData, QtvPlayer::InstanceHandleT Insttype)
+{
+  if(g_FetchBufferSizeCB)
+  {
+    MUTEX_LOCK();
+    g_FetchBufferSizeCB(g_pClientData, dnldDataSize, pbEndOfData);
+    (void)userData;
+    (void)Insttype;	
+    MUTEX_UNLOCK();
+  }
+}
+
+uint32 HTTPFetchData (
+      void *      dataBuf,         /* Destination buffer to copy the data */
+      uint32      readSize,        /* Amount of data to be read */
+      uint32      readPos,         /* Data read offset */
+      uint32      TrcId,                      /* Media stream trackId */
+      QtvPlayer::InstanceHandleT InstHdl             /* Qtv Instance handle */ 
+    )
+{
+    MUTEX_LOCK();
+    uint32 numRead = 0;
+    
+    if(g_FetchBufferCB)
+    {
+      numRead = g_FetchBufferCB(g_pClientData, dataBuf, readSize, readPos);
+    }
+
+    (void)TrcId;
+    (void)InstHdl;	
+    MUTEX_UNLOCK();
+	
+    return numRead;
 }
 
 #if defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
@@ -2379,8 +2734,6 @@ extern "C" int OEMMediaMPEG4Qtv_OpenPseudoStream(unsigned char *pBuf, uint32 buf
     return EFAILED;
   }
   /* reset any call backs pending */
-  pOEM->m_cbGenerateTotalTime = FALSE;
-  pOEM->m_cbGenerateMediaSpec = FALSE;
   pOEM->m_bPBReadyPending = TRUE;
   pOEM->m_Sound.cmd_pending = FALSE;
   pOEM->m_Sound.cb_pending = FALSE;
@@ -2408,11 +2761,27 @@ extern "C" int OEMMediaMPEG4Qtv_OpenPseudoStream(unsigned char *pBuf, uint32 buf
     HTTPPullBufSize = bufSize;
     HTTPWriteBufferOffset = MAXIMUM_MIME_BUFFER_LENGTH;
 
-    retVal = QtvPlayer::OpenPullBufferedStream((QtvPlayer::FetchBufferedDataSizeT)HTTPFetchDnldDataSize,
-                                               (QtvPlayer::FetchBufferedDataT)HTTPFetchDnldData,
-                                               0x7,
-                                               (QtvPlayer::InstanceHandleT)pOEM->m_pHandle,
-                                               (QtvPlayer::InstancePriorityT)pOEM->m_nPriority);
+    if (pOEM->m_bPULLDataMode)
+    {
+      g_pClientData       = pOEM->m_pClientData;
+      g_FetchBufferSizeCB = pOEM->m_FetchBufferSizeCB;
+      g_FetchBufferCB     = pOEM->m_FetchBufferCB;
+
+      retVal = QtvPlayer::OpenPullBufferedStream((QtvPlayer::FetchBufferedDataSizeT)FetchDataSize,
+                                                 (QtvPlayer::FetchBufferedDataT)HTTPFetchData,
+                                                  0x7,
+                                                 (QtvPlayer::InstanceHandleT)pOEM->m_pHandle,
+                                                 (QtvPlayer::InstancePriorityT)pOEM->m_nPriority);
+    }
+    else
+    {
+
+      retVal = QtvPlayer::OpenPullBufferedStream((QtvPlayer::FetchBufferedDataSizeT)HTTPFetchDnldDataSize,
+                                                 (QtvPlayer::FetchBufferedDataT)HTTPFetchDnldData,
+                                                  0x7,
+                                                 (QtvPlayer::InstanceHandleT)pOEM->m_pHandle,
+                                                 (QtvPlayer::InstancePriorityT)pOEM->m_nPriority);
+    }
   }
   else
   {
@@ -2424,10 +2793,32 @@ extern "C" int OEMMediaMPEG4Qtv_OpenPseudoStream(unsigned char *pBuf, uint32 buf
 }
 
 extern "C" int OEMMediaMPEG4Qtv_SetStartAndBufferingTime(uint32 startupTime,
-                                                         uint32 bufferingResumeTime)
+                                                         uint32 bufferingResumeTime,
+							 OEMHandle pOEM)
 {
-  QtvPlayer::SetStartAndBufferingTime(startupTime, bufferingResumeTime);
+  QtvPlayer::ReturnT nReturn;
+  pOEM = OEMMediaMPEG42PV_GetOEMLayer(pOEM);
+  if(pOEM == NULL)
+  {
+      MSG_ERROR("OEMMediaMPEG42PV_GetFrame, pOEM is null.", 0, 0, 0);
+      return EFAILED;
+  }
+  if (pOEM->m_pHandle) 
+  {
+      nReturn = QtvPlayer::SetStartAndBufferingTime(startupTime, bufferingResumeTime, (QtvPlayer *)pOEM->m_pHandle);
+  }
+  else
+  {
+      nReturn = QtvPlayer::SetStartAndBufferingTime(startupTime, bufferingResumeTime);
+  }
+  if (nReturn == QtvPlayer::QTV_RETURN_OK)
+  {
   return SUCCESS;
+  }
+  else
+  {
+      return EFAILED;
+  }
 }
 
 #endif /* defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD) */
@@ -2463,6 +2854,7 @@ extern "C" int OEMMediaMPEG42PV_Seek(AEEMediaSeek eSeek, int32 TimeOrFrame, OEMH
   QtvPlayer::PlayerStateRecordT state;
   QtvPlayer::ReturnT retVal;
   pOEM = OEMMediaMPEG42PV_GetOEMLayer(pOEM);
+  MSG_HIGH("OEMMediaMPEG42PV_Seek, Entry", 0, 0, 0);
   if(pOEM == NULL)
   {
     MSG_ERROR("OEMMediaMPEG42PV_Seek, pOEM is null.", 0, 0, 0);
@@ -2487,6 +2879,7 @@ extern "C" int OEMMediaMPEG42PV_Seek(AEEMediaSeek eSeek, int32 TimeOrFrame, OEMH
 
    if (retVal == QtvPlayer::QTV_RETURN_FEATURE_NOT_AVAILABLE)
     {
+      MSG_ERROR("OEMMediaMPEG42PV_Seek, returning EUNSUPPORTED.", 0, 0, 0);
       return EUNSUPPORTED;
     }
     else if (retVal == QtvPlayer::QTV_RETURN_OK)
@@ -2497,6 +2890,7 @@ extern "C" int OEMMediaMPEG42PV_Seek(AEEMediaSeek eSeek, int32 TimeOrFrame, OEMH
 
   if (retVal != QtvPlayer::QTV_RETURN_OK)
   {
+    MSG_ERROR("OEMMediaMPEG42PV_Seek, returning EFAILED.", 0, 0, 0);
     return EFAILED;
   }
 
@@ -2568,6 +2962,7 @@ extern "C" int OEMMediaMPEG42PV_Seek(AEEMediaSeek eSeek, int32 TimeOrFrame, OEMH
         }
         else
         {
+          MSG_ERROR("OEMMediaMPEG42PV_Seek, returning EFAILED.", 0, 0, 0);
           return EFAILED;
         }
         pOEM->m_bSeekPending = TRUE;
@@ -2580,10 +2975,11 @@ extern "C" int OEMMediaMPEG42PV_Seek(AEEMediaSeek eSeek, int32 TimeOrFrame, OEMH
   // All other seek cases require that repositioning is allowed.
   if (pClipInfo->RepositioningAllowed == FALSE)
   {
+    MSG_ERROR("OEMMediaMPEG42PV_Seek, returning EFAILED.", 0, 0, 0);
     return EFAILED;
   }
 
-#ifdef FEATURE_QTV_RANDOM_ACCESS_REPOS
+#ifdef FEATURE_FILE_FRAGMENTATION
   if (eSeek & MM_SEEK_MODE_CHAPTER)
   {
     if (pOEM->m_nMPEG4EngineState != QtvPlayer::QTV_PLAYER_STATUS_PAUSED)
@@ -2593,27 +2989,30 @@ extern "C" int OEMMediaMPEG42PV_Seek(AEEMediaSeek eSeek, int32 TimeOrFrame, OEMH
       if (retVal != QtvPlayer::QTV_RETURN_OK)
       {
         pOEM->m_bSeekPending = FALSE;
+        MSG_ERROR("OEMMediaMPEG42PV_Seek, returning EFAILED.", 0, 0, 0);
         return EFAILED;
       }
     }
     return SUCCESS;
   }
-#else // seek by chapter is not supported in single file playback when FEATURE_QTV_RANDOM_ACCESS_REPOS is not defined
+#else // seek by chapter is not supported in single file playback when FEATURE_FILE_FRAGMENTATION is not defined
 #ifdef FEATURE_QTV_SERVER_SIDE_PLAYLIST
   if(pClipInfo->ExtInfo.StdInfo.NumClipsInServerSidePlaylist == 0)
   {
     if (eSeek & MM_SEEK_MODE_CHAPTER)
     {
+      MSG_ERROR("OEMMediaMPEG42PV_Seek, returning EUNSUPPORTED.", 0, 0, 0);
       return EUNSUPPORTED;
     }    
   }
 #else
   if (eSeek & MM_SEEK_MODE_CHAPTER)
   {
+    MSG_ERROR("OEMMediaMPEG42PV_Seek, returning EUNSUPPORTED.", 0, 0, 0);
     return EUNSUPPORTED;
   }  
 #endif /* FEATURE_QTV_SERVER_SIDE_PLAYLIST */
-#endif /*FEATURE_QTV_RANDOM_ACCESS_REPOS*/
+#endif /*FEATURE_FILE_FRAGMENTATION*/
 
   if(eSeek == MM_SEEK_START)
   {
@@ -2624,6 +3023,7 @@ extern "C" int OEMMediaMPEG42PV_Seek(AEEMediaSeek eSeek, int32 TimeOrFrame, OEMH
        */
       if(TimeOrFrame >= pClipInfo->Duration)
       {
+        MSG_ERROR("OEMMediaMPEG42PV_Seek, returning EBADPARM.", 0, 0, 0);
         return EBADPARM;
       }
       pOEM->m_nStartTime = MAX(0,TimeOrFrame);
@@ -2648,6 +3048,7 @@ extern "C" int OEMMediaMPEG42PV_Seek(AEEMediaSeek eSeek, int32 TimeOrFrame, OEMH
        */
       if(TimeOrFrame >= 0)
       {
+        MSG_ERROR("OEMMediaMPEG42PV_Seek, returning EBADPARM.", 0, 0, 0);
         return EBADPARM;
       }
       else
@@ -2657,6 +3058,7 @@ extern "C" int OEMMediaMPEG42PV_Seek(AEEMediaSeek eSeek, int32 TimeOrFrame, OEMH
     }
     else
     {
+        MSG_ERROR("OEMMediaMPEG42PV_Seek, returning EFAILED.", 0, 0, 0);
         return EFAILED;
     }
   }
@@ -2671,12 +3073,14 @@ extern "C" int OEMMediaMPEG42PV_Seek(AEEMediaSeek eSeek, int32 TimeOrFrame, OEMH
        */
       if(pOEM->m_nStartTime >= pClipInfo->Duration)
       {
+        MSG_ERROR("OEMMediaMPEG42PV_Seek, returning EBADPARM.", 0, 0, 0);
         return EBADPARM;
       }
     }
   }
   else
   {
+      MSG_ERROR("OEMMediaMPEG42PV_Seek, returning EFAILED.", 0, 0, 0);
       return EFAILED;
   }
 
@@ -2692,6 +3096,7 @@ extern "C" int OEMMediaMPEG42PV_Seek(AEEMediaSeek eSeek, int32 TimeOrFrame, OEMH
     {
       pOEM->m_bSeekPending = FALSE;
       pOEM->m_bResumePending = FALSE;
+      MSG_ERROR("OEMMediaMPEG42PV_Seek, returning EFAILED.", 0, 0, 0);
       return EFAILED;
     }
   }
@@ -2706,6 +3111,9 @@ extern "C" int OEMMediaMPEG42PV_Seek(AEEMediaSeek eSeek, int32 TimeOrFrame, OEMH
                               (void *)pOEM->m_nStartTime,
                               sizeof(pOEM->m_nStartTime));
   }
+  
+  MSG_HIGH("OEMMediaMPEG42PV_Seek...return SUCCESS",0,0,0);
+  
   return SUCCESS;
 }
 
@@ -2717,8 +3125,8 @@ extern "C" int OEMMediaMPEG42PV_GetFrame(IBitmap** ppFrame,
   QtvPlayer::ReturnT nReturn;
   IBitmap  *pIBitmap;
 
-  AEEMediaMP4CodecType videocodectype;
 #if (defined (FEATURE_MP4_AAC_PLUS) || defined (PLATFORM_LTK) )
+  AEEMediaMP4CodecType videocodectype;
   AEEMediaMP4CodecType audiocodectype;
 #endif /* FEATURE_MP4_AAC_PLUS || PLATFORM_LTK */
 #ifdef FEATURE_QTV_MDP
@@ -2749,7 +3157,14 @@ extern "C" int OEMMediaMPEG42PV_GetFrame(IBitmap** ppFrame,
   }
   else
   {
-    nReturn = QtvPlayer::GetFrameInfo(frameInfo);
+    if (pOEM->m_pHandle) 
+    {
+        nReturn = QtvPlayer::GetFrameInfo(frameInfo,(QtvPlayer *)pOEM->m_pHandle);
+    }
+    else
+    {
+        nReturn = QtvPlayer::GetFrameInfo(frameInfo);
+    }
   }
 #ifdef FEATURE_QTV_OEM_BUFFER_MGR
   AddRefOutputBuffer(frameInfo.RGBBuffer);
@@ -2797,7 +3212,10 @@ extern "C" int OEMMediaMPEG42PV_GetFrame(IBitmap** ppFrame,
     return EBADSTATE;
   }
 
+#if (defined (FEATURE_MP4_AAC_PLUS) || defined (PLATFORM_LTK) )
   videocodectype = OEMMediaMPEG42PV_GetVideoCodecType();
+#endif /* FEATURE_MP4_AAC_PLUS || PLATFORM_LTK */
+
 #ifdef FEATURE_MP4_AAC_PLUS
   audiocodectype = OEMMediaMPEG42PV_GetAudioCodecType();
 
@@ -2841,7 +3259,11 @@ extern "C" int OEMMediaMPEG42PV_GetFrame(IBitmap** ppFrame,
 
   pYCbCr->pLuma   = (void*)frameInfo.YUVBuffer;
   pYCbCr->pChroma = (void*)&(((byte*)frameInfo.YUVBuffer)[frameInfo.Width * frameInfo.Height]);
+#ifdef FEATURE_QTV_MDP_COLOR_FORMAT_SWAP
+#error code not present
+#else
   pYCbCr->uScheme = IYCBCR_COLORSCHEME_420LP;
+#endif
   pYCbCr->cx      = frameInfo.CropWindow.x2 - frameInfo.CropWindow.x1 + 1;
   pYCbCr->cy      = frameInfo.CropWindow.y2 - frameInfo.CropWindow.y1 + 1;
   pYCbCr->nYPitch = frameInfo.Width;
@@ -2942,7 +3364,8 @@ extern "C" int OEMMediaMPEG42PV_Stop(OEMHandle pOEM)
 {
   QtvPlayer::ReturnT retVal;
   dword totalSleepDuration = 0;
-
+  
+  MSG_HIGH("OEMMediaMPEG42PV_Stop, Entry", 0, 0, 0);
   pOEM = OEMMediaMPEG42PV_GetOEMLayer(pOEM);
   if(pOEM == NULL)
   {
@@ -3006,13 +3429,18 @@ extern "C" int OEMMediaMPEG42PV_Stop(OEMHandle pOEM)
     return EFAILED;
   }
    
+  MSG_HIGH("OEMMediaMPEG42PV_Stop, Exit", 0, 0, 0);
+  /* reset any call backs pending */
+  pOEM->m_cbGenerateTotalTime = FALSE;
+  pOEM->m_cbGenerateMediaSpec = FALSE;
   return SUCCESS;
 }
 
 extern "C" int OEMMediaMPEG42PV_Terminate(OEMHandle pOEM)
 {
   QtvPlayer::ReturnT retVal = QtvPlayer::QTV_RETURN_OK;
-
+  
+  MSG_HIGH("OEMMediaMPEG42PV_Terminate, Entry", 0, 0, 0);  
   // pOEM has already been removed from g_pOEMLayer to ensure it
   // can't be used by anyone while it is being destroyed.
   if (pOEM == NULL)
@@ -3039,10 +3467,6 @@ extern "C" int OEMMediaMPEG42PV_Terminate(OEMHandle pOEM)
   /* Initialized to no rotation */
   pOEM->m_IPLRotationFactor = MM_MPEG4_NO_ROTATION;
 #endif /* FEATURE_MP4_AAC_PLUS */
-  if (pOEM->m_pClipInfo)
-  {
-     FREE(pOEM->m_pClipInfo);
-  }
 
   AEE_CancelTimer(UpdateProgressBar, (void*)pOEM);
 
@@ -3062,12 +3486,26 @@ extern "C" int OEMMediaMPEG42PV_Terminate(OEMHandle pOEM)
     retVal = QtvPlayer::Terminate(pOEM->m_pHandle, TRUE);
     MSG_MED("QtvPlayer::Terminate() returned %d", retVal, 0, 0);
   }
+  
+
+     FREEIF(pOEM->m_pClipInfo);
+	 
+     FREEIF(pOEM->m_TimedText3GPP.pszText);
+     FREEIF(pOEM->m_TimedText3GPP.pSampleModifiersBuffer);
+     FREEIF(pOEM->m_TimedText3GPP.pFontList);
+
+  
 
   /* reset any repositioning request */
   pOEM->m_bRepositionInPause = FALSE;
   pOEM->m_bRepositionInPauseUpdateTime = FALSE;
 
   pOEM->m_pCallbackData = NULL;
+
+  // reset pull mode callback ptrs
+  g_pClientData = NULL;
+  g_FetchBufferSizeCB = NULL;
+  g_FetchBufferCB = NULL;
 
   if (retVal == QtvPlayer::QTV_RETURN_OK)
   {
@@ -3305,6 +3743,12 @@ AEEMediaMP4CodecType OEMMediaMPEG42PV_GetAudioCodecType(OEMHandle pOEM)
       AudioCodecType = MM_MPEG4_WMA_PRO_PLUS_CODEC;
       break;
 #endif /* defined (FEATURE_QTV_WMA_PRO_DECODER) || defined (FEATURE_QTV_WMA_PRO_DSP_DECODER) */
+#ifdef FEATURE_QTV_AVI_AC3
+#error code not present
+#endif /* FEATURE_QTV_AVI_AC3 */
+#ifdef FEATURE_QTV_PCM
+#error code not present
+#endif /* FEATURE_QTV_PCM */
 
     default:
       AudioCodecType = MM_MPEG4_UNKNOWN_CODEC;
@@ -3356,6 +3800,12 @@ static AEEMediaMP4CodecType OEMMediaMPEG42PV_GetVideoCodecType(void)
     case QtvPlayer::QTV_H264_CODEC:
       VideoCodecType = MM_MPEG4_H264_CODEC;
       break;
+
+#ifdef FEATURE_DIVX_311_ENABLE
+    case QtvPlayer::QTV_DIVX311_CODEC:
+      VideoCodecType = MM_MPEG4_DIVX311_CODEC;
+      break;
+#endif
 
 #ifdef FEATURE_QTV_WINDOWS_MEDIA
 
@@ -3572,17 +4022,17 @@ extern "C" int OEMMediaMPEG42PV_SetMuteCtl(OEMHandle pOEM, void * pbMute)
   @retval EFAILED, the sound command fails.
 */
 extern "C" int OEMMediaMPEG42PV_GetMuteCtl(OEMHandle pOEM, void *pbMute)
-  {
-  boolean *tmp_pbMute = (boolean *)pbMute;
+{
+  int32 *tmp_pbMute = (int32 *)pbMute;
 
   pOEM = OEMMediaMPEG42PV_GetOEMLayer(pOEM);
 
   // Need to provide valid OEMhandle, return if pOEM is NULL
   if(!pOEM)
     {
-    MSG_ERROR("OEMMediaMPEG42PV_GetVolume, pOEM passed in is NULL.", 0, 0, 0);
-         return EFAILED;
-       }
+      MSG_ERROR("OEMMediaMPEG42PV_GetVolume, pOEM passed in is NULL.", 0, 0, 0);
+      return EFAILED;
+    }
 
   if (!pOEM->m_pISound)
     return EUNSUPPORTED;
@@ -3592,11 +4042,11 @@ extern "C" int OEMMediaMPEG42PV_GetMuteCtl(OEMHandle pOEM, void *pbMute)
   if(pOEM->m_Sound.cmd_pending || pOEM->m_Sound.cb_pending)
   {
     return EALREADY;
-    }
+  }
 
-  *tmp_pbMute = pOEM->m_Sound.current_mute;
-      return SUCCESS;
-    }
+  *tmp_pbMute = (int32) pOEM->m_Sound.current_mute;
+  return SUCCESS;
+}
 
 /*!
   @brief
@@ -4083,9 +4533,9 @@ extern "C" int OEMMediaMPEG42PV_RotateVideo(AEEMediaMPEG4RotationType RotationTy
 #endif /* FEATURE_QTV_XSCALE_VIDEO */
   pOEM->m_QtvCurrentRotation = (OEMRotationType)RotationType;
   return nRet;
-#endif /* FEATURE_QTV_MDP_TRANSFORMATIONS */
 
-#ifdef FEATURE_MP4_FRAME_TRANSFORMATIONS  
+
+#elif defined( FEATURE_MP4_FRAME_TRANSFORMATIONS ) /* FEATURE_QTV_MDP_TRANSFORMATIONS */
   QtvPlayer::RotationType QtvRotationFactor;
   AEEMediaMP4CodecType audiocodectype, videocodectype;
 
@@ -4140,8 +4590,9 @@ extern "C" int OEMMediaMPEG42PV_RotateVideo(AEEMediaMPEG4RotationType RotationTy
     return MM_PENDING;
   }
   return EFAILED;
-#endif /* FEATURE_MP4_FRAME_TRANSFORMATIONS */
+#else /* FEATURE_MP4_FRAME_TRANSFORMATIONS */
   return nRet;
+#endif /* FEATURE_MP4_FRAME_TRANSFORMATIONS */
 }
 
 /* dx, dy are for use as Ascaling requests */
@@ -4149,12 +4600,15 @@ extern "C" int OEMMediaMPEG42PV_ScaleVideo(AEEMediaMPEG4ScalingType ScaleFactor,
                                            uint16 dx, uint16 dy, OEMHandle pOEM)
 {
   int nRet = EBADPARM;
+  int32 width =0, height = 0;  
   pOEM = OEMMediaMPEG42PV_GetOEMLayer(pOEM);
   if (pOEM == NULL)
   {
     MSG_ERROR("OEMMediaMPEG42PV_ScaleVideo, pOEM is null.", 0, 0, 0);
     return EFAILED;
   }
+  pOEM->m_bXscaleVideo = FALSE;
+  pOEM->m_bMDPScale = FALSE;
   nRet = OEMMediaMPEG42PV_CheckTransform(pOEM->m_QtvCurrentRotation, 
                                          (OEMScalingType)ScaleFactor, 
                                          dx, dy, pOEM);
@@ -4162,24 +4616,77 @@ extern "C" int OEMMediaMPEG42PV_ScaleVideo(AEEMediaMPEG4ScalingType ScaleFactor,
   {
     return nRet;
   }
+  QtvPlayer::ClipInfoT *pClipInfo = (QtvPlayer::ClipInfoT*)pOEM->m_pClipInfo;
+  if (ScaleFactor == MM_MPEG4_2P5X_ZOOM)
+  {
+    dx = width = (pClipInfo->Width*2.5);
+    dy = height = (pClipInfo->Height*2.5);        
+  }
+  else if (ScaleFactor== MM_MPEG4_2X_ZOOM)
+  {
+    dx = width = (pClipInfo->Width*2);
+    dy = height = (pClipInfo->Height*2);    
+  }
+  else if (ScaleFactor == MM_MPEG4_1P25X_ZOOM)
+  {
+    dx = width = pClipInfo->Width*1.25;
+    dy = height = pClipInfo->Height*1.25;
+  }  
+  else if (ScaleFactor == MM_MPEG4_NO_SCALING)
+  {
+    dx = width = pClipInfo->Width;
+    dy = height = pClipInfo->Height;
+  }
+  else if (ScaleFactor == MM_MPEG4_0P25X_SHRINK)
+  {
+    dx = width = pClipInfo->Width*0.25;
+    dy = height = pClipInfo->Height*0.25;	
+  }
+  else if(ScaleFactor == MM_MPEG4_2X_SHRINK)
+  {
+    dx = width = (pClipInfo->Width*0.5);
+    dy = height = (pClipInfo->Height*0.5); 
+  }
+  else if(ScaleFactor == MM_MPEG4_0P75X_SHRINK)
+  {
+    dx = width = (pClipInfo->Width*0.75);
+    dy = height = (pClipInfo->Height*0.75);		
+  }
+  else
+    MSG_HIGH("Scale factor: %d, width=%d and height=%d ",ScaleFactor,width,height);
+  
 
+  
 #ifdef FEATURE_QTV_XSCALE_VIDEO
 // If we no longer want XScaling, we need to turn it off.
-  if (pOEM->m_QtvCurrentScaling == OEM_XSCALE && ScaleFactor != MM_MPEG4_ASCALE) 
-  {
-    QtvPlayer::ClipInfoT *pClipInfo = (QtvPlayer::ClipInfoT*)pOEM->m_pClipInfo;
-    nRet = QtvPlayer::ScaleVideo(pClipInfo->Width, pClipInfo->Height, pOEM->m_pHandle);
-  }
+  pOEM->m_bXscaleVideo = TRUE;
+
+if (pOEM->m_QtvCurrentScaling == OEM_XSCALE &&(ScaleFactor != MM_MPEG4_ASCALE) && 
+                                              (ScaleFactor != MM_MPEG4_2P5X_ZOOM) && 
+                                              (ScaleFactor != MM_MPEG4_2X_ZOOM) &&
+                                              (ScaleFactor != MM_MPEG4_0P25X_SHRINK))
+{
+  nRet = QtvPlayer::ScaleVideo(width, height, pOEM->m_pHandle);
+}
+
 #endif /* FEATURE_QTV_XSCALE_VIDEO */
 
+
+
+
 #if defined(FEATURE_QTV_MDP_TRANSFORMATIONS) 
+  pOEM->m_bMDPScale = TRUE;
+#endif /* FEATURE_QTV_MDP_TRANSFORMATIONS */
+
 // If no arbitrary scaling is involved, we're done after this. 
-  if (ScaleFactor != MM_MPEG4_ASCALE) 
+  if ((ScaleFactor != MM_MPEG4_ASCALE) && 
+      (ScaleFactor != MM_MPEG4_2P5X_ZOOM) && 
+      (ScaleFactor != MM_MPEG4_2X_ZOOM) &&
+      (ScaleFactor != MM_MPEG4_0P25X_SHRINK))
   {
     pOEM->m_QtvCurrentScaling = (OEMScalingType)ScaleFactor;    
     return SUCCESS;
   }
-#endif /* FEATURE_QTV_MDP_TRANSFORMATIONS */
 
 #if defined(FEATURE_QTV_MDP_ASCALE) || defined(FEATURE_QTV_XSCALE_VIDEO)
   pOEM->m_QtvCurrentAScale.x = dx;
@@ -4190,7 +4697,10 @@ extern "C" int OEMMediaMPEG42PV_ScaleVideo(AEEMediaMPEG4ScalingType ScaleFactor,
   {
     nRet = QtvPlayer::ScaleVideo(dy, dx, pOEM->m_pHandle);
   }
-  else
+  else if ((ScaleFactor != MM_MPEG4_ASCALE) && 
+           (ScaleFactor != MM_MPEG4_2P5X_ZOOM) &&
+           (ScaleFactor != MM_MPEG4_2X_ZOOM) &&
+           (ScaleFactor != MM_MPEG4_0P25X_SHRINK))
   {
   nRet = QtvPlayer::ScaleVideo(dx, dy, pOEM->m_pHandle);
   }
@@ -4655,7 +5165,7 @@ extern "C" int OEMMediaMPEG42PV_RecordStream(AEEStreamRecordInfo* recInfo, OEMHa
     return EBADSTATE;
   }
 
-  bEnableStreamRecord = TRUE;
+//  bEnableStreamRecord = TRUE;
   aee_strlcpy(fName, recInfo->filename, 512);
   bRecFileOverWrite = (recInfo->overwrite)?true:false;
 
@@ -4700,13 +5210,16 @@ extern "C" int OEMMediaMPEG42PV_RecordStream(AEEStreamRecordInfo* recInfo, OEMHa
      recFile = (char *)fName;
   }
 
-  QtvPlayer::RecordClip( recFile,
-                         ( (bRecFileOverWrite)?true:false ),
-                         0xFF, /* mode is ignored */
-                         0,
-                         pOEM->m_pHandle);   /* duration is ignored */
+  if (recFile && pOEM)
+  {
+    QtvPlayer::RecordClip( recFile,
+                           ( (bRecFileOverWrite)?true:false ),
+                           0xFF, /* mode is ignored */
+                           0,
+                           pOEM->m_pHandle);   /* duration is ignored */
+  }
 
-  bEnableStreamRecord = FALSE;
+//  bEnableStreamRecord = FALSE;
   bRecFileOverWrite = FALSE;
   if((allocateRecFile == TRUE)&&recFile)
   {
@@ -4962,14 +5475,20 @@ int CheckDebugURLFile(char *videoFileName, char *audioFileName)
     if (pos && strcmp(pos,DEBUG_URL_FILE_EXTENSION) == 0)
     {
       char str[DEBUG_MAX_STRING_LENGTH];
-      FILE *fp = fopen(fileName, "r");
-      if (fp)
+
+      fs_handle_type efs_handle = efs_open(fileName, O_RDONLY); 
+      if(efs_handle < 0)
+      {
+         return FALSE;
+      }
+      else
       {
         char *variable;
         char *value;
-        int len = fread(str, 1, DEBUG_MAX_STRING_LENGTH, fp);
-        fclose(fp);
+        int len = efs_read(efs_handle, str, DEBUG_MAX_STRING_LENGTH);
+        efs_close(efs_handle);
         str[len] = '\0';
+
         if (strncmp(str, DEBUG_URL_FILE_TOKEN, strlen(DEBUG_URL_FILE_TOKEN)) == 0)
         {
           variable = str + strlen(DEBUG_URL_FILE_TOKEN);
@@ -5166,6 +5685,7 @@ bool OEMMediaMPEG42PV_PrepareTimedText(OEMHandle pOEM)
   }
   if(QtvPlayer::Get3GPPTimedTextInfo(&TextInfo))
   {
+    MUTEX_LOCK_CS(TimedText3gppCS);
     /* free if there is any buffer */
     if(pOEM->m_TimedText3GPP.pszText)
     {
@@ -5192,8 +5712,15 @@ bool OEMMediaMPEG42PV_PrepareTimedText(OEMHandle pOEM)
         uint16 nTextLen = pTextData[0];
         nTextLen = (nTextLen<<8) | pTextData[1];
         pOEM->m_TimedText3GPP.pszText = (AECHAR*)MALLOC((nTextLen+1)*sizeof(AECHAR));
+        if(NULL != pOEM->m_TimedText3GPP.pszText)
+       {
         MEMSET(pOEM->m_TimedText3GPP.pszText, 0, nTextLen+1);
         UTF8TOWSTR(pTextData+2, nTextLen, pOEM->m_TimedText3GPP.pszText, nTextLen*sizeof(AECHAR));
+        }
+        else
+        {
+            MSG_ERROR("OEMMediaMPEG42PV_PrepareTimedText, MALLOC(pOEM->m_TimedText3GPP.pszText) failed .", 0, 0, 0);
+        }
 
         pOEM->m_TimedText3GPP.dwSampleModifiersSize   = TextInfo.dwSampleModifiersSize;
         if ( TextInfo.dwSampleModifiersSize )
@@ -5243,6 +5770,7 @@ bool OEMMediaMPEG42PV_PrepareTimedText(OEMHandle pOEM)
       }
       FREE(pTextData);
     }
+   MUTEX_UNLOCK_CS(TimedText3gppCS);
   }
   return bRet;
 }
@@ -6216,7 +6744,7 @@ int OEMMediaMPEG42PV_OpenIxStreamFromISource(ISource* pSource, OEMHandle pOEM)
     nRet = SUCCESS;
     //Very unlikely that after E_SUCCESS, pStream will be NULL;
     //Just to be on safe side check for non NULL
-    if(pStream)
+    if(pStream && pOEM)
     {
       nRet = QtvPlayer::OpenIxStream( (dcf_ixstream_type)pStream,                                      
                                       0x07/*play audio/video/text*/, 
@@ -6276,6 +6804,8 @@ int OEMMediaMPEG42PV_SetSoundMethod(OEMHandle pOEM)
   AEESoundMethod        eMethod;
   QtvPlayer::CodecType  codecType;
 
+  pOEM = OEMMediaMPEG42PV_GetOEMLayer(pOEM);
+
   // Need to provide valid OEMhandle, return if pOEM is NULL
   if(!pOEM)
   {
@@ -6320,7 +6850,12 @@ int OEMMediaMPEG42PV_SetSoundMethod(OEMHandle pOEM)
 #ifdef FEATURE_QTV_3GPP_EVRC_WB
 #error code not present
 #endif /* FEATURE_QTV_3GPP_EVRC_WB */
-
+#ifdef FEATURE_QTV_AVI_AC3    
+#error code not present
+#endif /*  FEATURE_QTV_AVI_AC3 */
+#ifdef FEATURE_QTV_PCM
+#error code not present
+#endif /* FEATURE_QTV_PCM  */
 #ifdef FEATURE_AUDIO_FORMAT
       // snd_method_type is SND_METHOD_MIDI, map to AEESoundMethod based on OEMSound_Init.
       eMethod = AEE_SOUND_METHOD_MIDI;
@@ -6565,3 +7100,4 @@ int OEMMediaMPEG4Qtv_GetFrameRate(double* pFrameRate, OEMHandle pOEM)
 
   return nRet;
 }
+

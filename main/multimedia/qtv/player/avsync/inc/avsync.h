@@ -18,9 +18,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/player/avsync/main/latest/inc/avsync.h#10 $
-$DateTime: 2008/07/08 02:11:36 $
-$Change: 697217 $
+$Header: //source/qcom/qct/multimedia/qtv/player/avsync/main/latest/inc/avsync.h#13 $
+$DateTime: 2009/11/27 05:33:40 $
+$Change: 1097489 $
 
 
 ========================================================================== */
@@ -38,7 +38,7 @@ $Change: 697217 $
 #include "customer.h"
 #include "qtvInternalDefs.h"
 #include "qcplayer.h"
-
+#include "qtvsessionclock.h"
 /* ==========================================================================
 
                         DATA DECLARATIONS
@@ -56,7 +56,8 @@ $Change: 697217 $
 #define WARM_RESET             1
 #define DEC_CLK_FILTER_ID      1
 #define ARM_CLK_FILTER_ID      2
-
+#define PCR_FILTER_ID          0
+#define COLD_RESET             0
 /* -----------------------------------------------------------------------
 ** Type Declarations
 ** ----------------------------------------------------------------------- */
@@ -137,6 +138,12 @@ public:
 #ifdef FEATURE_QTV_GENERIC_BCAST_PCR
 #error code not present
 #endif
+
+ /*  Audio session clock Object, driven by ARM clock */
+SessionClock m_AudioRefClock;
+
+ /*  Audio session clock Object, driven by AFE clock*/
+SessionClock m_AudioAFEClock;
 
 private:
 

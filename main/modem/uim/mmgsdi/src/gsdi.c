@@ -18,7 +18,7 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS
 
                         COPYRIGHT INFORMATION
 
-Copyright (c) 2001 - 2010 QUALCOMM, Incorporated and its licensors.  All Rights
+Copyright (c) 2001 - 2011 QUALCOMM, Incorporated and its licensors.  All Rights
 Reserved.  QUALCOMM Proprietary.  Export of this technology or software
 is regulated by the U.S. Government. Diversion contrary to U.S. law prohibited.
 *====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*/
@@ -27,10 +27,16 @@ is regulated by the U.S. Government. Diversion contrary to U.S. law prohibited.
 /*===========================================================================
                         EDIT HISTORY FOR MODULE
 
-$Header: //source/qcom/qct/modem/uim/su/baselines/qsc1110/rel/3.3.65/uim/mmgsdi/src/gsdi.c#1 $$ $DateTime: 2010/02/23 05:19:22 $
+$Header: //source/qcom/qct/modem/uim/su/baselines/qsc1110/rel/3.3.65/uim/mmgsdi/src/gsdi.c#5 $$ $DateTime: 2011/04/28 23:26:10 $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+08/26/09   mib     mmgsdi_init_cache_binary checks if cache already inited
+03/22/11   ssr     Fixed the MEID cache
+03/08/11   ssr     Add non 3gpd cdma card check
+03/08/11   ssr     Setting NVRUIM control flags inside of 
+                   gsdi_cdma_post_pin1_init
+02/24/11   nmb     memset allocated cmd buffer space in gsdi_get_uim_buf
 01/18/10   ssr     Fixed len for store_esn command
 07/02/09   ssr     Operator MCC Check for 3GPD
 05/22/09   js      Added gsdi support for SELECT command for RUIM
@@ -2484,6 +2490,22 @@ static gsdi_returns_T mmgsdi_proc_post_pin1_init(
   gsdi_slot_id_type slot,
   int32             *returned_data_len,
   uint8             *data_ext_p
+);
+
+/*===========================================================================
+FUNCTION GSDI_CDMA_SVC_NVRUIM_INIT
+
+DESCRIPTION
+  This function initiates the control flags in nvruim
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  None
+===========================================================================*/
+static void gsdi_cdma_svc_nvruim_init (
+  gsdi_slot_id_type slot
 );
 
 #if defined (FEATURE_MMGSDI_UMTS) || defined (FEATURE_MMGSDI_GSM)
@@ -8872,7 +8894,10 @@ uim_cmd_type *gsdi_get_uim_buf (
     /* from TMC Heap   */
   cmd_ptr = (uim_cmd_type*)mmgsdi_malloc(sizeof(uim_cmd_type));
   if (cmd_ptr != NULL)
+  {
+    memset(cmd_ptr, 0x00, sizeof(uim_cmd_type));
     cmd_ptr->hdr.channel  = UIM_CHANNEL0;
+  }
   return cmd_ptr;
 }
 
@@ -11291,6 +11316,11 @@ void gsdimain_legacy (
 #error code not present
 #endif /* FEATURE_UIM_SKIP_GSM_IF_RUIM_ONLY */
 
+/* Cache the MEID value from NV memory */
+#if defined (FEATURE_MMGSDI_CDMA) || defined (FEATURE_CSIM)
+              mmgsdi_cache_meid_data();
+#endif /* FEATURE_MMGSDI_CDMA || FEATURE_CSIM */
+
 #ifdef FEATURE_MMGSDI_NV_ME_CONFIG
                   /* Read the nv parameter */
                   mmgsdi_status = mmgsdi_get_me_config_params_from_nv();
@@ -12145,7 +12175,10 @@ FUNCTION MMGSDI_INIT_CACHE_BINARY
 
 DESCRIPTION
   This function will initialize data in the cache during the initialization
-  process
+  process. The third argument data_ptr is used to retrieve the value of
+  the file: this function allocates the required memory and the caller is
+  responsible for freeing it. data_ptr can be NULL in case the value is not
+  required.
 
 DEPENDENCIES
   None
@@ -12202,6 +12235,51 @@ mmgsdi_return_enum_type mmgsdi_init_cache_binary(gsdi_slot_id_type     gsdi_slot
 
   if (file_ok_in_svr_table)
   {
+    /* Check if the file is already cached. In this case, there is no need
+       to read it again from the card */
+    mmgsdi_access_type file_access;
+    mmgsdi_len_type    file_len    = 0;
+
+    memset(&file_access, 0x00, sizeof(mmgsdi_access_type));
+    file_access.access_method  = MMGSDI_EF_ENUM_ACCESS;
+    file_access.file.file_enum = file;
+      
+    mmgsdi_status = mmgsdi_util_read_cache_len(slot,
+                                               &file_access,
+                                               &file_len,
+                                               0);
+    if (mmgsdi_status == MMGSDI_SUCCESS)
+    {
+      data_len = int32touint32(file_len);
+      if (data_len > 0 && data_ptr != NULL)
+      {
+        MMGSDIUTIL_TMC_MEM_MALLOC_AND_VALIDATE(data_ptr->data_ptr,
+                                               data_len,
+                                               mmgsdi_status);
+        if (mmgsdi_status == MMGSDI_SUCCESS)
+        {
+          data_ptr->data_len = file_len;
+          mmgsdi_status = mmgsdi_util_read_cache(slot,
+                                                 &file_access,
+                                                 data_ptr,
+                                                 0);
+          if (mmgsdi_status != MMGSDI_SUCCESS)
+          {
+            /* In case of error, free memory */
+            MMGSDIUTIL_TMC_MEM_FREE_NULL_OK(data_ptr->data_ptr);
+            data_ptr->data_len = 0;
+          }
+        }
+      }
+    }
+    /* If cache was already initialized and is read correctly
+       return success now, without proceeding. Otherwise, continue
+       with the normal code */
+    if (mmgsdi_status == MMGSDI_SUCCESS)
+    {
+      MSG_HIGH("Cache already inited for file 0x%x", file, 0, 0);
+      return mmgsdi_status;
+    }
 
     MMGSDIUTIL_RETURN_IF_TMC_MEM_MALLOC_ERROR(req_ptr, sizeof(mmgsdi_read_req_type));
 
@@ -12565,18 +12643,6 @@ gsdi_returns_T gsdi_icc_cdma_post_pin1_init (
 #ifdef FEATURE_UIM_SKIP_GSM_IF_RUIM_ONLY
 #error code not present
 #endif /* FEATURE_UIM_SKIP_GSM_IF_RUIM_ONLY */
-    
-    /* Checking for Operator card */
-    nv_return_staus = gsdi_get_nv(NV_IMSI_MCC_I, (nv_item_type *) &nv_data);
-    if (nv_return_staus == NV_DONE_S)
-    {
-      MSG_HIGH("Read MCC from Card", 0,0,0);
-      if ( NVRUIM_OPERATOR_MCC == nv_data.imsi_mcc.imsi_mcc)
-      {
-        nvruim_init_operator_card(TRUE);
-      }
-    }
-
     store_esn_req.esn_usage  = GSDI_RUIM_STORE_ESN_USE_UIM_ID;
     store_esn_req.esn_length = GSDI_RUIM_STORE_ESN_LENGTH;
 #ifdef FEATURE_UIM_EUIMID
@@ -12688,7 +12754,7 @@ gsdi_returns_T gsdi_icc_cdma_post_pin1_init (
 #ifdef FEATURE_UIM_RUIM_W_GSM_ACCESS
 #error code not present
 #endif /* FEATURE_UIM_RUIM_W_GSM_ACCESS */
-
+    gsdi_cdma_svc_nvruim_init(slot);
     MMGSDIUTIL_TMC_MEM_FREE_NULL_OK(mmgsdi_init_data->data_ptr);
     MMGSDIUTIL_TMC_MEM_FREE_NULL_OK(mmgsdi_init_data);
     if (mmgsdi_status != MMGSDI_SUCCESS)
@@ -13197,5 +13263,194 @@ gsdi_returns_T gsdi_perso_get_key (
 
   return gsdi_status;
 }
+
+
+/*===========================================================================
+FUNCTION GSDI_CDMA_SVC_NVRUIM_INIT
+
+DESCRIPTION
+  This function initiates the control flags in nvruim
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  None
+===========================================================================*/
+static void gsdi_cdma_svc_nvruim_init(
+  gsdi_slot_id_type slot
+)
+{
+#ifdef FEATURE_NV_RUIM
+  gsdi_sim_read_req_T       *read_req_ptr           = NULL;
+  byte                      rec_num_accessed        = 0;
+  byte                      num_records             = 0;
+  byte                      ret_data_len            = 0;
+  mmgsdi_return_enum_type   mmgsdi_status           = MMGSDI_SUCCESS;
+  gsdi_returns_T            gsdi_status             = GSDI_SUCCESS;
+  uim_svc_table_return_type support;
+#ifdef FEATURE_UIM_SUPPORT_HRPD_AN  
+  boolean                   support_an_hrpd         = FALSE;
+#endif /* FEATURE_UIM_SUPPORT_HRPD_AN */
+
+#ifdef FEATURE_UIM_SUPPORT_3GPD
+  boolean                   support_mip             = FALSE;
+  boolean                   support_sip             = FALSE;
+  boolean                   service_3gpd_extensions = FALSE;
+#endif /* FEATURE_UIM_SUPPORT_3GPD */
+
+#ifdef FEATURE_UIM_SUPPORT_LBS
+  boolean                   support_lbs             = FALSE;
+#endif /* FEATURE_UIM_SUPPORT_LBS */
+
+  boolean                   support_bcms            = FALSE;
+  boolean                   support_smscap          = FALSE;
+  byte                      data_ptr[GSDI_CDMA_SST_LBS_OFFSET + 1];
+
+#if defined(FEATURE_UIM_SUPPORT_3GPD_NV) && defined (FEATURE_UIM_SUPPORT_3GPD)
+  boolean                   non_3gpd_cdma_card      = FALSE;
+  mmgsdi_data_type          mmgsdi_data_buf;
+  mmgsdi_protocol_enum_type protocol                = MMGSDI_NO_PROTOCOL;  
+  uint16                    imsi_mcc                = 0;
+#endif /* FEATURE_UIM_SUPPORT_3GPD_NV && FEATURE_UIM_SUPPORT_3GPD */  
+
+  MMGSDIUTIL_TMC_MEM_MALLOC_AND_VALIDATE(read_req_ptr,
+     sizeof(gsdi_sim_read_req_T), mmgsdi_status);
+  if (mmgsdi_status != MMGSDI_SUCCESS)
+  {
+    MSG_ERROR("Could Not Allocate Memory for read_req_ptr pointer", 0,0,0);
+    return;
+  }
+
+  memset(data_ptr, 0x00, (GSDI_CDMA_SST_LBS_OFFSET + 1));
+  read_req_ptr->sim_filename = (word)UIM_CDMA_CDMA_SVC_TABLE;
+  read_req_ptr->message_header.slot = slot;
+  read_req_ptr->required_data_len = GSDI_CDMA_SST_LBS_OFFSET + 1;
+  gsdi_status = gsdi_cdma_proc_ruim_read(read_req_ptr,
+                                         &rec_num_accessed,
+                                         &num_records,
+                                         &ret_data_len,
+                                         data_ptr );
+  if (gsdi_status != GSDI_SUCCESS)
+  {
+    MSG_ERROR("Could Not Read UIM_CDMA_SVC_TABLE gsdi_status returned: 0x%x",
+               gsdi_status, 0,0);
+    MMGSDIUTIL_TMC_MEM_FREE(read_req_ptr);
+    return;
+  }
+
+  /* initiate the nvruim flags for corresponding services */
+#ifdef FEATURE_UIM_SUPPORT_HRPD_AN
+  /* an_hrpd_prefrence */
+  support = uim_return_cdma_svc_availabililty (UIM_CDMA_SVC_HRPD,
+                                               data_ptr);
+  if(support.allocated && support.activated)
+  {
+    support_an_hrpd = TRUE;
+  }
+  uim_init_an_hrpd_preference(support_an_hrpd);
+#endif /* FEATURE_UIM_SUPPORT_HRPD_AN */
+
+  /* 3gpd preference */
+#ifdef FEATURE_UIM_SUPPORT_3GPD
+  support = uim_return_cdma_svc_availabililty (UIM_CDMA_SVC_3GPD_SIP,
+                                               data_ptr);
+  if(support.allocated && support.activated)
+  {
+    support_sip = TRUE;
+  }
+
+  support = uim_return_cdma_svc_availabililty (UIM_CDMA_SVC_3GPD_MIP,
+                                               data_ptr);
+  if(support.allocated && support.activated)
+  {
+    support_mip = TRUE;
+  }
+
+  /* 3gpd extension support */
+  support = uim_return_cdma_svc_availabililty (UIM_CDMA_SVC_3GPD_MSG_EXT,
+                                               data_ptr);
+  if(support.allocated && support.activated)
+  {
+    service_3gpd_extensions = TRUE;
+  }
+
+  uim_init_3gpd_preference(support_sip, support_mip);
+  nvruim_data_3gpd_init_extensions_support(service_3gpd_extensions);
+#endif /* FEATURE_UIM_SUPPORT_3GPD */
+
+  /* lbs */
+#ifdef FEATURE_UIM_SUPPORT_LBS
+  support = uim_return_cdma_svc_availabililty (UIM_CDMA_SVC_LBS,
+                                               data_ptr);
+  if(support.allocated && support.activated)
+  {
+    support_lbs = TRUE;
+  }
+  nvruim_lbs_init_support(support_lbs);
+#endif /* FEATURE_UIM_SUPPORT_LBS */
+  /* wms services */
+  support = uim_return_cdma_svc_availabililty (UIM_CDMA_SVC_3GPD_MSG_EXT,
+                                               data_ptr);
+  if(support.allocated && support.activated)
+  {
+    support_smscap = TRUE;
+  }
+  support = uim_return_cdma_svc_availabililty (UIM_CDMA_SVC_BCSMS,
+                                               data_ptr);
+  if(support.allocated && support.activated)
+  {
+    support_bcms = TRUE;
+  }
+  nvruim_init_wms_svc_items( support_bcms, support_smscap );
+
+  MMGSDIUTIL_TMC_MEM_FREE(read_req_ptr);
+
+#if defined(FEATURE_UIM_SUPPORT_3GPD_NV) && defined (FEATURE_UIM_SUPPORT_3GPD)
+  /* check for non 3gpd cdma card */
+  memset(&mmgsdi_data_buf, 0x00, sizeof(mmgsdi_data_type));
+  (void) mmgsdi_util_determine_protocol(&protocol);
+  /* UICC card always have the 3GPD service, set non 3GPD card to false*/
+  if (protocol != MMGSDI_UICC)
+  {  
+    /* Read the MCC code for icc card */
+    mmgsdi_status = mmgsdi_init_cache_binary(slot,
+                                             MMGSDI_CDMA_IMSI_M,
+                                             &mmgsdi_data_buf);
+    if ((mmgsdi_status == MMGSDI_SUCCESS) && ( mmgsdi_data_buf.data_ptr != NULL)
+       && (mmgsdi_data_buf.data_len == MMGSDI_CDMA_IMSI_LEN))
+    {
+      imsi_mcc = (mmgsdi_data_buf.data_ptr[MMGSDI_CDMA_IMSI_LEN - 1] << 8);  // MSB
+      imsi_mcc |= mmgsdi_data_buf.data_ptr[MMGSDI_CDMA_IMSI_LEN - 2];  // LSB
+    }
+    /* check the MCC code for non 3GPD cdma card */
+    if (NVRUIM_NON_3GPD_CDMA_CARD_MCC == imsi_mcc)
+    {
+      non_3gpd_cdma_card = TRUE;
+      /* Read the SIPUPPEXT file */
+      mmgsdi_status = mmgsdi_init_cache_binary(slot,
+                                               MMGSDI_CDMA_3GPD_SIPUPPEXT,
+                                               &mmgsdi_data_buf);
+      if ((mmgsdi_status == MMGSDI_SUCCESS) && (mmgsdi_data_buf.data_ptr != NULL))
+      {
+        /* if SIPUPPEXT file is present and have valid value (any value other 
+           than 0x00, 0xFF) then 3GDP NV support not required */
+        if((mmgsdi_data_buf.data_len > 0) && 
+           (0xFF != mmgsdi_data_buf.data_ptr[0]) &&
+           (0x00 != mmgsdi_data_buf.data_ptr[0]))
+        {
+          /* card has the 3gpd ext credential*/
+          non_3gpd_cdma_card =  FALSE;
+        }
+      }
+    }
+    /* Free the memory allocated for read request */
+    MMGSDIUTIL_TMC_MEM_FREE(mmgsdi_data_buf.data_ptr);
+  }
+  nvruim_init_non_3gpd_cdma_card(non_3gpd_cdma_card);
+#endif /* FEATURE_UIM_SUPPORT_3GPD_NV && FEATURE_UIM_SUPPORT_3GPD */   
+#endif /* FEATURE_NV_RUIM */
+  (void) slot;
+} /* gsdi_cdma_svc_nvruim_init */
 
 

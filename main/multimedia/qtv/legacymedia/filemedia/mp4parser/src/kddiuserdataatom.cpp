@@ -24,9 +24,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/legacymedia/filemedia/mp4parser/main/latest/src/kddiuserdataatom.cpp#10 $
-$DateTime: 2008/08/08 06:01:23 $
-$Change: 719460 $
+$Header: //source/qcom/qct/multimedia/qtv/legacymedia/filemedia/mp4parser/main/latest/src/kddiuserdataatom.cpp#12 $
+$DateTime: 2010/04/01 01:53:20 $
+$Change: 1247377 $
 
 
 ========================================================================== */
@@ -178,7 +178,7 @@ KDDIContentPropertyAtom::KDDIContentPropertyAtom(OSCL_FILE *fp) : FullAtom(fp)
     {
       if ( atomType == FourCharConstToUint32('t', 'i', 't', 'l') )
       {
-        uint8 readSize = (uint8)MIN(atomSize-8, sizeof(tempBuf));
+        uint8 readSize = (uint8)MIN(atomSize-8, sizeof(tempBuf)-1);
         if ( !AtomUtils::readByteData(fp, readSize, tempBuf) ) /* 4 bytes for size and 4 bytes for type */
         {
           _success = false;
@@ -191,7 +191,7 @@ KDDIContentPropertyAtom::KDDIContentPropertyAtom(OSCL_FILE *fp) : FullAtom(fp)
       }
       else if ( atomType == FourCharConstToUint32('r', 'g', 'h', 't') )
       {
-        uint8 readSize = (uint8)MIN(atomSize-8, sizeof(tempBuf));
+        uint8 readSize = (uint8)MIN(atomSize-8, sizeof(tempBuf)-1);
         if ( !AtomUtils::readByteData(fp, readSize, tempBuf) ) /* 4 bytes for size and 4 bytes for type */
         {
           _success = false;
@@ -204,7 +204,7 @@ KDDIContentPropertyAtom::KDDIContentPropertyAtom(OSCL_FILE *fp) : FullAtom(fp)
       }
       else if ( atomType == FourCharConstToUint32('a', 't', 'h', 'r') )
       {
-        uint8 readSize = (uint8)MIN(atomSize-8, sizeof(tempBuf));
+        uint8 readSize = (uint8)MIN(atomSize-8, sizeof(tempBuf)-1);
         if ( !AtomUtils::readByteData(fp, readSize, tempBuf) ) /* 4 bytes for size and 4 bytes for type */
         {
           _success = false;
@@ -217,7 +217,7 @@ KDDIContentPropertyAtom::KDDIContentPropertyAtom(OSCL_FILE *fp) : FullAtom(fp)
       }
       else if ( atomType == FourCharConstToUint32('m', 'e', 'm', 'o') )
       {
-        uint8 readSize = (uint8)MIN(atomSize-8, sizeof(tempBuf));
+        uint8 readSize = (uint8)MIN(atomSize-8, sizeof(tempBuf)-1);
         if ( !AtomUtils::readByteData(fp, readSize, tempBuf) ) /* 4 bytes for size and 4 bytes for type */
         {
           _success = false;
@@ -640,6 +640,14 @@ KDDIGPSAtom::KDDIGPSAtom(OSCL_FILE *fp)
       if(_gpsIFDEntryVec)
       {
         (*_gpsIFDEntryVec) += ifdElement;
+      }
+      else
+      {
+        _success = false;
+        _fileErrorCode = (int32)READ_KDDI_GPS_ATOM_FAILED;
+        QTV_Delete(ifdElement);
+        ifdElement = NULL;
+        return;
       }
     }
     else

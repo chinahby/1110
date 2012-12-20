@@ -47,10 +47,7 @@ DESCRIPTION
      performance cost for this, the big expense is the additional 4 bytes of overhead
      per heap block.
 
-Copyright (c) 1997,1998 by QUALCOMM Incorporated.  All Rights Reserved.
-Copyright (c) 1999,2000 by QUALCOMM Incorporated.  All Rights Reserved.
-Copyright (c) 2001,2002 by QUALCOMM Incorporated.  All Rights Reserved.
-Copyright (c) 2003      by QUALCOMM Incorporated.  All Rights Reserved.
+Copyright (c) 1997-2009 by QUALCOMM Incorporated.  All Rights Reserved.
 ===========================================================================*/
 
 /*===========================================================================
@@ -58,10 +55,11 @@ Copyright (c) 2003      by QUALCOMM Incorporated.  All Rights Reserved.
                                  Edit History
 
 $PVCSPath: O:/src/asw/COMMON/vcs/memheap.h_v   1.1   07 Mar 2002 18:48:56   rajeevg  $
-$Header: //depot/asic/msmshared/services/common/memheap.h#10 $ $DateTime: 2007/08/29 15:45:50 $ $Author: cgross $
+$Header: //depot/asic/msmshared/services/common/memheap.h#13 $ $DateTime: 2009/04/03 14:42:23 $ $Author: pratapc $
 
 when       who     what, where, why
 --------   ---     --------------------------------------------------------
+03/31/009  sri     amssassert.h is further featurised based on APPS/QDSP6
 09/01/004   gr     Deleted the context argument to the debug versions of
                    the memheap functions; the context is no longer used.
 11/07/03    gr     More debug support.
@@ -90,7 +88,13 @@ when       who     what, where, why
    #include "customer.h"
 #endif
 #include "comdef.h"
-#include "assert.h"
+#ifndef FEATURE_WINCE
+#if !defined (IMAGE_APPS_PROC) && !defined (IMAGE_QDSP6_PROC)
+#include "amssassert.h"
+#endif
+#else
+#error code not present
+#endif
 #include <stddef.h>
 
 /* ------------------------------------------------------------------------
@@ -147,7 +151,7 @@ typedef void (*mem_free_fnc_type)( void );
 */
 typedef struct mem_block_header_struct {
 #if !FEATURE_HEAP_SMALLER_OVERHEAD
-  unsigned long back_offset; 
+  unsigned long backOffset; 
 #endif
   unsigned long forw_offset;
   char          free_flag;
@@ -157,6 +161,15 @@ typedef struct mem_block_header_struct {
 #ifdef FEATURE_MEM_DEBUG
 #error code not present
 #endif
+#ifdef FEATURE_MEM_HEADER_8BYTE
+  /* If FEATURE_MEM_HEADER_8BYTE is defined, we need to pad the header to a
+  ** multiple of 8-bytes.
+  */
+#if( ( defined(FEATURE_MEM_DEBUG) && FEATURE_HEAP_SMALLER_OVERHEAD ) || \
+     ( !defined(FEATURE_MEM_DEBUG) && !FEATURE_HEAP_SMALLER_OVERHEAD ) )
+  uint32        pad2;
+#endif /* (MEM_DEBUG && SMALLER) || (!MEM_DEBUG && !SMALLER) */
+#endif /* FEATURE_MEM_HEADER_8BYTE */
 } mem_block_header_type;
 
 /* Memory Heap

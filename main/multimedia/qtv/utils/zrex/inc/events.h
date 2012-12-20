@@ -18,9 +18,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/utils/zrex/main/latest/inc/events.h#13 $
-$DateTime: 2008/09/12 04:00:32 $
-$Change: 741917 $
+$Header: //source/qcom/qct/multimedia/qtv/utils/zrex/main/latest/inc/events.h#18 $
+$DateTime: 2010/02/21 21:35:19 $
+$Change: 1187322 $
 
 
 ========================================================================== */
@@ -117,6 +117,7 @@ enum PlayerEvents
 #endif /* FEATURE_QTV_GENERIC_AUDIO_FORMAT */
 
   , VIDEO_STATUS
+  , VIDEO_TIMING
   , STREAMER_STATUS
   , DOWNLOAD_FILE_SIZE_STATUS
   , DOWNLOAD_STATUS
@@ -133,7 +134,7 @@ enum PlayerEvents
 
   , PV_SET_AUDIOOVER
 
-#if defined (FEATURE_FILE_FRAGMENTATION) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
+#if defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
   , QTV_PAUSE_AUDIO
   , QTV_PAUSE_VIDEO
   , QTV_PAUSE_TEXT
@@ -142,7 +143,12 @@ enum PlayerEvents
   , QTV_RESUME_TEXT
 #endif /* FEATURE_FILE_FRAGMENTATION || defined FEATURE_QTV_3GPP_PROGRESSIVE_DNLD */
 
-#ifdef FEATURE_FILE_FRAGMENTATION
+#if defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
+  , QTV_HTTP_BUFFER_UPDATE
+  , QTV_HTTP_EVENT
+#endif
+
+#ifdef FEATURE_QTV_PSEUDO_STREAM
   , QTV_PS_PARSER_STATUS_EVENT
 #endif
 #ifdef FEATURE_QTV_PSEUDO_STREAM
@@ -157,9 +163,9 @@ enum PlayerEvents
   , PV_RECORD_CLIP
   , PV_RECORD_STOP
 #endif
-#ifdef FEATURE_QTV_RANDOM_ACCESS_REPOS
+#ifdef FEATURE_FILE_FRAGMENTATION
   , QTV_SKIP_CLIP
-#endif /*FEATURE_QTV_RANDOM_ACCESS_REPOS*/
+#endif /*FEATURE_FILE_FRAGMENTATION*/
 #ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
   , QTV_HTTP_STREAM_OPEN_EVENT
   , QTV_HTTP_STREAM_UPDATE_WBUFFER_OFFSET_EVENT
@@ -204,6 +210,7 @@ EVENT( PV_OPEN_URN )
 URL *videoURN;
 URL *audioURN;
 URL *textURN;
+QtvPlayer::OpenURNTypeT openType;
 EVENT_END
 
 EVENT( PV_OPEN_BUFFER_URN )
@@ -270,6 +277,7 @@ EVENT_END
 EVENT( PV_PLAY_CLIP )
 int32 startTime;
 int32 stopTime;
+URL *switchURN;
 Common::PlaybackSpeedType pbSpeed;
 EVENT_END
 
@@ -349,6 +357,10 @@ EVENT( AUDIO_TIMING )
 int playbackID;
 EVENT_END
 
+EVENT( VIDEO_TIMING )
+int playbackID;
+EVENT_END
+
 EVENT( AV_TICK )
 int playbackID;
 EVENT_END
@@ -360,6 +372,7 @@ int nVideoFrames;
 uint32 durationBuffered;
 EVENT_END
 
+#ifndef FEATURE_QTV_NOSTREAM
 EVENT( STREAMER_STATUS )
 int streamID;
 Common::StreamerStatusCode code;
@@ -381,7 +394,7 @@ char   playlistName[QTV_MAX_URN_BYTES];
 bool shouldStop;
 #endif /* FEATURE_QTV_SERVER_SIDE_PLAYLIST */
 EVENT_END
-
+#endif //FEATURE_QTV_NOSTREAM
 
 
 //Event structure to carry asyn status 
@@ -430,7 +443,7 @@ EVENT( PV_SET_AUDIOOVER )
 int audOverrideFormat;
 EVENT_END
 
-#if defined (FEATURE_FILE_FRAGMENTATION) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
+#if defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
 
 EVENT( QTV_PAUSE_AUDIO )
 EVENT_END
@@ -452,7 +465,25 @@ EVENT_END
 
 #endif /* FEATURE_FILE_FRAGMENTATION || FEATURE_QTV_3GPP_PROGRESSIVE_DNLD */
 
-#ifdef FEATURE_FILE_FRAGMENTATION
+#if defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
+
+EVENT(QTV_HTTP_BUFFER_UPDATE)
+bool bHasAudio;
+bool bHasVideo;
+bool bHasText;
+EVENT_END
+
+EVENT(QTV_HTTP_EVENT)
+Common::ParserStatusCode status;
+bool bHasAudio;
+bool bHasVideo;
+bool bHasText;
+EVENT_END
+
+#endif
+
+
+#ifdef FEATURE_QTV_PSEUDO_STREAM
 /* Posted by Qtv parser thread to mpeg4player thread */
 EVENT(QTV_PS_PARSER_STATUS_EVENT)
 Common::ParserStatusCode status;
@@ -523,7 +554,7 @@ EVENT_END
 
 #endif
 
-#ifdef FEATURE_QTV_RANDOM_ACCESS_REPOS
+#ifdef FEATURE_FILE_FRAGMENTATION
 EVENT( QTV_SKIP_CLIP )
 int32 skipNumber;
 EVENT_END

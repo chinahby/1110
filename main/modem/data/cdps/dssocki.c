@@ -86,7 +86,7 @@ EXTERNALIZED FUNCTIONS
     This function is the common input function for all the socket input
     functions.
 
-Copyright (c) 1998-2008 QUALCOMM Incorporated. 
+Copyright (c) 1998-2011 QUALCOMM Incorporated. 
 All Rights Reserved.
 Qualcomm Confidential and Proprietary
 ===========================================================================*/
@@ -99,10 +99,11 @@ Qualcomm Confidential and Proprietary
   Notice that changes are listed in reverse chronological order.
 
   $PVCSPath: L:/src/asw/MM_DATA/vcs/dssocki.c_v   1.25   28 Feb 2003 18:29:08   ubabbar  $
-  $Header: //source/qcom/qct/modem/data/cdps/ps/main/lite/src/dssocki.c#5 $ $DateTime: 2009/05/18 06:14:58 $ $Author: stzahi $
+  $Header: //source/qcom/qct/modem/data/cdps/ps/main/lite/src/dssocki.c#6 $ $DateTime: 2011/02/24 23:31:53 $ $Author: msankar $
 
 when        who    what, where, why
 --------    ---    ----------------------------------------------------------
+02/25/11    ms     Ported MOBILE_IP_DEREG feature.
 06/24/08    pp     Fixed RVCT compiler warnings.
 06/07/08    pp     OMH 1b Profile Arbitration development.
 17/09/07    scb    Added the Socket configuration control block.
@@ -3328,15 +3329,16 @@ sint15 dssocki_iface_check
     Make sure the iface is in the right state. For sys sockets it should be 
     either UP or ROUTEABLE, for non sys sockets it should be UP
   -------------------------------------------------------------------------*/
-  if(( ps_iface_state( ps_iface_ptr) != IFACE_UP) &&
-       ( ps_iface_state( ps_iface_ptr) != IFACE_ROUTEABLE))
+  if(( ps_iface_state( ps_iface_ptr) != IFACE_UP ) &&
+     ( ps_iface_state( ps_iface_ptr) != IFACE_ROUTEABLE ) &&
+     ( ps_iface_state( ps_iface_ptr) != IFACE_GOING_DOWN )    
+    )
   {
-
     MSG_HIGH("Sockfd %d iface 0x%x st %d NOT UP/ROUT", 
                   scb_ptr->sockfd, 
                   ps_iface_ptr->name, 
                   ps_iface_state( ps_iface_ptr)
-               );
+             );
     *dss_errno= DS_ENETDOWN;
     return( DSS_ERROR);
   }
@@ -4835,7 +4837,7 @@ sint15 dssocki_sendmsg
   -------------------------------------------------------------------------*/
   if (scb_ptr->fcn_ptr_table->is_writeable != NULL &&
       ((sndq_limit = 
-	scb_ptr->fcn_ptr_table->is_writeable(scb_ptr->protocol_ctl_blk)) == 0))
+       scb_ptr->fcn_ptr_table->is_writeable(scb_ptr->protocol_ctl_blk)) == 0))
   {
     MSG_MED("Sockfd %d NOT Writeable - blocked", sockfd, 0, 0 );
     *dss_errno= DS_EWOULDBLOCK;
@@ -4855,7 +4857,7 @@ sint15 dssocki_sendmsg
   else
   {
     count = dssocki_copy_buf_to_dsm(msg->msg_iov, msg->msg_iovlen, 
-				    MIN(sndq_limit, nbytes), &item_ptr);
+            MIN(sndq_limit, nbytes), &item_ptr);
   }
 
   /*-------------------------------------------------------------------------
@@ -4892,9 +4894,9 @@ sint15 dssocki_sendmsg
   if(scb_ptr->protocol == IPPROTO_UDP || scb_ptr->protocol == IPPROTO_ICMP)
   {
     if (dssocki_generate_meta_info( item_ptr,
-				    scb_ptr,
-				    flags,
-				    dss_errno ) != DSS_SUCCESS )
+        scb_ptr,
+        flags,
+        dss_errno ) != DSS_SUCCESS )
     {
       MSG_HIGH("MetaInfo gen. failed (%d)", dss_errno, 0, 0 );
       dsm_free_packet( &item_ptr);

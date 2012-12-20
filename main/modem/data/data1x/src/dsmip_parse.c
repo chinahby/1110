@@ -17,7 +17,7 @@ EXTERNALIZED FUNCTIONS
   mip_parse_msg()
     Parses a message, signals the MIP state machine appropriately.
 
- Copyright (c) 2000-2009 by QUALCOMM, Incorporated.  All Rights Reserved.
+ Copyright (c) 2000-2011 by QUALCOMM, Incorporated.  All Rights Reserved.
 ===========================================================================*/
 
 
@@ -26,10 +26,11 @@ EXTERNALIZED FUNCTIONS
                       EDIT HISTORY FOR FILE
 
   $PVCSPath: O:/src/asw/COMMON/vcs/dsmip_parse.c_v   1.44   14 Feb 2003 17:34:44   jeffd  $
-  $Header: //source/qcom/qct/modem/data/1x/mip/main/lite/src/dsmip_parse.c#5 $ $DateTime: 2009/05/27 05:07:18 $ $Author: nsivakum $
+  $Header: //source/qcom/qct/modem/data/1x/mip/main/lite/src/dsmip_parse.c#6 $ $DateTime: 2011/02/24 23:31:53 $ $Author: msankar $
 
 when        who    what, where, why
 --------    ---    ----------------------------------------------------------
+02/25/11    ms     Ported MOBILE_IP_DEREG feature.
 04/29/09    sn     Ported support for call throttle feature (DCTM).
 06/02/08    ms     Fixed Critical/High Lint errors
 12/12/07    sn     Modified MIP_RRP_CODE_FAILURE_FAILED_AUTH processing to 
@@ -1262,8 +1263,21 @@ static void mip_parsei_rrp
         /*-------------------------------------------------------------------
           Post event to SSM to obtain new FA info, including FAC
         -------------------------------------------------------------------*/
-        MSG_MED ("FA challenge was absent/old, resolicit",0,0,0);
-        mip_sol_sm_post_event (SSMI_IMMED_SOL_EV);
+        MSG_MED ("FA challenge was absent/old,",0,0,0);
+        if (ma_info.ma_lifetime != 0)
+	{
+	  /* -------------------------------------------------------------
+	  Post Event to SSM only if MIP is not in De-reg state. 
+	  MIP would be in de-reg state if lifetimer is timed out =0
+	  ---------------------------------------------------------------*/
+	  MSG_MED(" MIP is not in De-reg state,hence resolicit",0,0,0);
+          mip_sol_sm_post_event (SSMI_IMMED_SOL_EV);
+	}
+	else
+	{
+	  MSG_MED("MIP is already in De-reg state,hence no need to resolicit",
+                  0,0,0);
+	}
 
         /*-------------------------------------------------------------------
           Post an event to reg sm to await new FA info before resending 
@@ -1361,6 +1375,17 @@ static void mip_parsei_rrp
         Mip_Key_request -> send key data
     -----------------------------------------------------------------------*/
     case MIP_RRP_CODE_FAILURE_FA_VS_REASON:
+
+      /*--------------------------------------------------------------------- 
+        Force RRP Fail no retry event if DMU challenge received while doing
+        MIP Deregistration
+      ---------------------------------------------------------------------*/ 
+      if (ma_info.ma_lifetime == 0) 
+      {
+        MSG_HIGH("DMU: while MIP Dereg, posting RRP fail no retry",0,0,0);
+        fa_fail = TRUE;
+        break;
+      }
 
       /*---------------------------------------------------------------------
         Make sure DMU initialized correctly
@@ -1796,7 +1821,7 @@ _CONTINUE_PROCESSING_RRP:
               ma_info.ma_lifetime, 
               session->reg_lifetime);              
 
-      if (session->reg_lifetime == 0)
+      if (session->reg_lifetime == 0 && ma_info.ma_lifetime != 0) 
       {
         /*-------------------------------------------------------------------
           If RRP registration lifetime is 0, then fail and try next HA.

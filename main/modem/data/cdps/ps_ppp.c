@@ -971,7 +971,7 @@ int ppp_start
              config_ptr->rx_iface_ptr);
     return -1;
   }
-  MSG_FATAL("ppp_start %x %d",config_ptr->lcp_info.want_mask[0],device,0);
+
   /*-------------------------------------------------------------------------
     Configure PPP device
   -------------------------------------------------------------------------*/
@@ -1078,7 +1078,6 @@ int ppp_resync
       return -1;
     }
 
-    MSG_FATAL("ppp_resync %x %d",config_ptr->lcp_info.want_mask[0],device,0);
     config_ptr->rx_signal = ppp_cb_ptr->rx_signal;
     if(ppp_i_config(device, config_ptr) < 0)
     {

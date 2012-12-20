@@ -16,7 +16,7 @@ EXTERNALIZED FUNCTIONS
    mip_reg_sm_post_event_all()
      Pose an event to ALL of the Registrations State Machines.
 
-Copyright (c) 2000, 2001 by QUALCOMM, Incorporated.  All Rights Reserved.
+Copyright (c) 2000 - 2011 by QUALCOMM, Incorporated.  All Rights Reserved.
 ===========================================================================*/
 
 
@@ -25,10 +25,11 @@ Copyright (c) 2000, 2001 by QUALCOMM, Incorporated.  All Rights Reserved.
                             EDIT HISTORY FOR FILE
 
   $PVCSPath: O:/src/asw/COMMON/vcs/dsmip_regsm.h_v   1.23   10 Oct 2002 15:56:52   jayanthm  $
-  $Header: //source/qcom/qct/modem/data/1x/mip/main/lite/inc/dsmip_regsm.h#1 $ $DateTime: 2008/04/11 07:14:56 $ $Author: nsivakum $
+  $Header: //source/qcom/qct/modem/data/1x/mip/main/lite/inc/dsmip_regsm.h#2 $ $DateTime: 2011/02/24 23:31:53 $ $Author: msankar $
 
 when        who    what, where, why
 --------    ---    ----------------------------------------------------------
+02/25/11    ms     Ported MOBILE_IP_DEREG feature.
 06/11/03    jd     Added mip_reg_sm_set_rtt_estimation
 06/10/03    ss     Removed macro MIP_IS_REREG_IN_PROGRESS.
 05/05/03    jd     Added mip_reg_sm_session_active() prototype
@@ -100,6 +101,7 @@ typedef enum
   RSM_RRQ_FAIL_HA_UNAVAIL_EV,/* RRQ failed HA unavailable                  */
   RSMI_RRQ_TIMER_EXP_EV,    /* RRQ Timer expired - re-RRQ (internal event) */
   RSMI_LIFE_TIMER_EXP_EV,   /* Reg Lifetime expired (internal event)       */
+  RSMI_DEREG_MIP_EV,        /* Deregister M.IP before exiting M.IP         */
   RSM_MAX_EV
 } mip_reg_sm_event_type;
 

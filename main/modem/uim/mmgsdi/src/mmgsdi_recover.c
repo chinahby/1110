@@ -26,10 +26,13 @@ is regulated by the U.S. Government. Diversion contrary to U.S. law prohibited.
 /*===========================================================================
                         EDIT HISTORY FOR MODULE
 
-$Header: //source/qcom/qct/modem/uim/mmgsdi/rel/07H1_2/src/mmgsdi_recover.c#6 $$ $DateTime: 2009/05/15 02:20:16 $
+$Header: //source/qcom/qct/modem/uim/mmgsdi/rel/07H1_2/src/mmgsdi_recover.c#8 $$ $DateTime: 2011/03/25 06:51:16 $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+03/22/11   ssr     Fixed the MEID cache
+12/24/09   rm      Fix to correct the logic for recovery attempts when 
+                   recovery is triggered before SIM Initialization
 05/14/09   kp      Added compiler directive for demand Paging Changes
 05/11/09   kp      Demand Paging Changes
 04/21/09   kk      Clear RESET_COMPLETE_SIG before sending power down in case
@@ -151,9 +154,11 @@ static mmgsdi_return_enum_type mmgsdi_store_esn_synch(
   mmgsdi_return_enum_type               mmgsdi_status    = MMGSDI_SUCCESS;
   uim_slot_type                         uim_slot         = UIM_SLOT_NONE;
 #ifdef FEATURE_UIM_EUIMID
-  nv_item_type                          meid_nv_data;
+  mmgsdi_meid_data_type                 meid_nv_data;
   gsdi_slot_id_type                     gsdi_slot;
   nv_stat_enum_type                     nv_return_staus;
+
+  memset((byte*)(&meid_nv_data), 0x00, sizeof(mmgsdi_meid_data_type));
 #endif /* FEATURE_UIM_EUIMID */
 
   /* Convert to UIM slot */
@@ -209,22 +214,8 @@ static mmgsdi_return_enum_type mmgsdi_store_esn_synch(
   /* Check if service 9 is supported and activated. If the NV read to MEID */
   /* returns an error code then we assume that the handset does not have a */
   /* valid MEID and we continue with sending the ESN as if n9 is not enabled.*/
-#if defined(CUST_EDITION)
-  // 此处不能调用NV，因为在UIM Recovery的情况下，NV task本身也有可能处于访问
-  // UIM Task的状态，而UIM要从Recovery状态恢复还必须等MMGSDI的通知，这样形成了信号
-  // 死锁
-  nv_return_staus = tmc_get_stored_meid_me((qword *)&meid_nv_data);
-  if(nv_return_staus != NV_DONE_S)
-  {
-    extern void tmc_store_meid_me (qword meid_me, int status);
-    qword                 meid_me;
-    nv_return_staus = gsdi_get_nv(NV_MEID_ME_I, (nv_item_type *) &meid_nv_data);
-    qw_equ(meid_me, meid_nv_data.meid);
-    tmc_store_meid_me(meid_me,nv_return_staus);
-  }
-#endif
-  
-  if (nv_return_staus == NV_DONE_S && gsdi_is_meid_svc_activated(gsdi_slot)) 
+  meid_nv_data = mmgsdi_get_meid();  
+  if ((meid_nv_data.meid_available  == TRUE) && (gsdi_is_meid_svc_activated(gsdi_slot)))	  
   {  
     uim_cmd_ptr->hdr.command  = UIM_STORE_ESN_MEID_ME_F;
     uim_cmd_ptr->store_meid.len_and_usage = (GSDI_RUIM_STORE_MEID_LENGTH | 
@@ -244,8 +235,7 @@ static mmgsdi_return_enum_type mmgsdi_store_esn_synch(
     uim_cmd_ptr->store_esn.esn = 1111;
 #endif /* FEATURE_VIRTUAL_SIM */
   }
-  
-  MSG_FATAL("mmgsdi_store_esn_synch 0x%x 0x%x",uim_cmd_ptr->store_esn.len_and_usage,uim_cmd_ptr->store_esn.esn,0);
+
   /* Send the command to UIM synchronously.  If recovery is in progress,
    * the appropriate uim api would be used
    */
@@ -510,6 +500,15 @@ mmgsdi_return_enum_type mmgsdi_recover_after_reset(mmgsdi_slot_id_enum_type slot
 
   MSG_HIGH("mmgsdi_recover_after_reset", 0, 0, 0);
 
+  /* Reset the retry count only after SIM initialization. */
+  if(gsdi_data.gsdi_state == GSDI_SIM_INIT_COMPLETED_S)
+  {
+    /* Initialize the variable indicating the number of times recovery is
+     * re-tried
+     */
+    gsdi_data.recovery_retry_count = 0;
+  }
+
   /* Convert mmgsdi slot to gsti slot */
   mmgsdi_util_convert_mmgsdi_to_gsdi_slot(slot, &gsdi_slot);
   if ((gsdi_slot != GSDI_SLOT_1) && (gsdi_slot != GSDI_SLOT_2))
@@ -526,11 +525,6 @@ mmgsdi_return_enum_type mmgsdi_recover_after_reset(mmgsdi_slot_id_enum_type slot
   }
   /* Indicate that recovery is in progress */
   gsdi_data.recovering_after_reset = TRUE;
-
-  /* Initialize the variable indicating the number of times recovery is
-   * re-tried
-   */
-  gsdi_data.recovery_retry_count = 0;
 
   /* Clean up session table for non default channel and
     notify all the clients of Close Session */

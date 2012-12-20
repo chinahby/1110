@@ -1506,7 +1506,5 @@ extern tcxomgr_trk_lo_return_enum_type tcxomgr_set_polarity
 );
 
 #endif /* FEATURE_TCXOMGR_SET_POLARITY */
-#ifdef CUST_EDITION
-extern void tcxomgr_reset(void);
-#endif
+
 #endif /* !TCXOMGR_H */

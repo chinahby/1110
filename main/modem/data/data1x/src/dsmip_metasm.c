@@ -12,17 +12,18 @@ EXTERNALIZED FUNCTIONS
    mip_meta_post_event()
      Post an event to the Meta State Machine.
 
-Copyright (c) 2000-2009 by QUALCOMM, Incorporated.  All Rights Reserved.
+Copyright (c) 2000-2011 by QUALCOMM, Incorporated.  All Rights Reserved.
 ===========================================================================*/
 /*===========================================================================
 
                       EDIT HISTORY FOR FILE
 
   $PVCSPath: O:/src/asw/COMMON/vcs/dsmip_metasm.c_v   1.51   12 Feb 2003 19:38:24   akuzhiyi  $
-  $Header: //source/qcom/qct/modem/data/1x/mip/main/lite/src/dsmip_metasm.c#3 $ $DateTime: 2009/05/27 05:07:18 $ $Author: nsivakum $
+  $Header: //source/qcom/qct/modem/data/1x/mip/main/lite/src/dsmip_metasm.c#4 $ $DateTime: 2011/02/24 23:31:53 $ $Author: msankar $
 
 when        who    what, where, why
 --------    ---    ----------------------------------------------------------
+02/25/11    ms     Ported MOBILE_IP_DEREG feature.
 04/29/09    sn     Ported support for call throttle feature (DCTM).
 06/02/08    ms     Fixed Critical/High Lint errors
 11/10/06    an     Fixed compilation errors for 6020
@@ -519,6 +520,28 @@ void mip_meta_sm_post_event
     default:
       ASSERT(0);
     } /* switch(state) */
+    break;
+
+    /*-------------------------------------------------------------------------
+                              MSM_MIP_BRING_DOWN_CMD
+
+      Physical link up. wiating for MIP PPP to come up - transition to the
+      OPENING state if transitioning from the closed state initialize IO.
+    -------------------------------------------------------------------------*/
+  case MSM_BRING_DOWN_MIP_EV:
+    switch(msmi_info.state)
+    {
+      case MSMI_OPEN_STATE:
+        mip_reg_sm_post_event_all(RSMI_DEREG_MIP_EV);
+        break;
+      case MSMI_CLOSED_STATE:
+        MSG_HIGH("mip bring down cmd rcvd in %d state",msmi_info.state,0,0);
+        break;
+      default:
+        /*lint -save -e506, -e774 */
+        ASSERT(0);
+        /*lint -restore */
+    }
     break;
 
   default:

@@ -20,9 +20,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/player/playerif/main/latest/src/qtvplayer.cpp#33 $
-$DateTime: 2008/11/20 04:39:18 $
-$Change: 788859 $
+$Header: //source/qcom/qct/multimedia/qtv/player/playerif/main/latest/src/qtvplayer.cpp#77 $
+$DateTime: 2010/11/09 04:48:52 $
+$Change: 1509879 $
 
 ========================================================================== */
 
@@ -38,7 +38,11 @@ $Change: 788859 $
 #include "QtvPlayer.h"
 #include "Mpeg4Player.h"
 #include "Events.h"
+
+#ifndef FEATURE_WINCE
 #include "AEESound.h"
+#endif//FEATURE_WINCE
+
 #ifdef FEATURE_MP4_3GPP_TIMED_TEXT
 #include "timedtext.h"
 #endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
@@ -50,6 +54,12 @@ $Change: 788859 $
 #include "NetBase.h"
 
 #include "QtvConfig.h"
+#ifdef FEATURE_QTV_APP_PROC_SLEEP
+#error code not present
+#endif
+#ifdef PLATFORM_LTK
+#error code not present
+#endif //PLATFORM_LTK
 
 #ifdef FEATURE_QTV_RTSTREAMING_INCOMING_VTCALL
 #if (!defined FEATURE_QTV_QDSP_RELEASE_RESTORE ) || (!defined FEATURE_QTV_QOS_SELECTION )
@@ -115,6 +125,9 @@ and other items needed by this module.
 /* -----------------------------------------------------------------------
 ** Constant / Define Declarations
 ** ----------------------------------------------------------------------- */
+#ifdef FEATURE_QTV_APP_PROC_SLEEP
+#error code not present
+#endif
 
 /* all the ASF files starts with Header Object GUID, so if first 16 bytes of file matches the
  * array below (which is GUID for ASF Header Object), we can safely assume that file/buffer is
@@ -129,6 +142,9 @@ unsigned char asfFileIdentifier[] =
 
 /* How often to poll the player for its state to go to IDLE */
 #define PLAYER_STATE_POLL_INTERVAL          200 /* in ms */
+
+/* Initial Poll Interval for checking player state*/
+#define PLAYER_STATE_POLL_START_INTERVAL     20 /* in ms */
 
 /* -----------------------------------------------------------------------
 ** Type Declarations
@@ -630,38 +646,38 @@ const char * QtvPlayer::PlayerStatusString[] =
      attempt is made to playback. */
 
   ,"QTV_PLAYER_STATUS_PAUSED_SUSPENDED"
-  /* When Mpeg4Player is suspended both internally (due to incoming call) 
+  /* When Mpeg4Player is suspended both internally (due to incoming call)
      and externally (MP is suspended or has issued a pause). */
 
   ,"QTV_PLAYER_COMMAND_SEEK_SYNC_DONE"
   /* QTV_FEATURE_BCAST_GENERIC : SEEK SYNC Executed */
 
   ,"QTV_PLAYER_COMMAND_SEEK_SYNC_FAILED"
-  /* QTV_FEATURE_BCAST_GENERIC : SEEK SYNC Failed   */ 
- 
+  /* QTV_FEATURE_BCAST_GENERIC : SEEK SYNC Failed   */
+
   ,"QTV_PLAYER_COMMAND_PLAY_SYNC_FRAME_DONE"
   /* QTV_FEATURE_BCAST_GENERIC : PLAY SYNC Executed */
 
   ,"QTV_PLAYER_COMMAND_PLAY_SYNC_FRAME_FAILED"
-  /* QTV_FEATURE_BCAST_GENERIC : PLAY SYNC Failed */ 
+  /* QTV_FEATURE_BCAST_GENERIC : PLAY SYNC Failed */
 
   ,"QTV_PLAYER_COMMAND_REPOSITION_DONE"
   /* QTV_FEATURE_BCAST_GENERIC : REPOSITION DONE */
 
   ,"QTV_PLAYER_COMMAND_REPOSITION_FAILED "
-  /* QTV_FEATURE_BCAST_GENERIC : REPOSITION Failed     */                    
+  /* QTV_FEATURE_BCAST_GENERIC : REPOSITION Failed     */
 
   ,"QTV_PLAYER_STATUS_TRACK_LIST_UPDATE "
   /* QTV_FEATURE_BCAST_GENERIC : Track List Update */
 
   ,"QTV_PLAYER_COMMAND_MUTE_COMPLETE"
-  /* QTV_FEATURE_BCAST_GENERIC : MUTE COMPLETE */ 
+  /* QTV_FEATURE_BCAST_GENERIC : MUTE COMPLETE */
 
   ,"QTV_PLAYER_COMMAND_MUTE_FAILED  "
   /* QTV_FEATURE_BCAST_GENERIC : MUTE FAILED */
 
   ,"QTV_PLAYER_COMMAND_UNMUTE_COMPLETE "
-  /* QTV_FEATURE_BCAST_GENERIC : UNMUTE COMPLETE */ 
+  /* QTV_FEATURE_BCAST_GENERIC : UNMUTE COMPLETE */
 
   ,"QTV_PLAYER_COMMAND_UNMUTE_FAILED   "
   /* QTV_FEATURE_BCAST_GENERIC : UNMUTE FAILED */
@@ -670,7 +686,7 @@ const char * QtvPlayer::PlayerStatusString[] =
   /* QTV_FEATURE_BCAST_GENERIC : MUTE ALL FAILED */
 
   ,"QTV_PLAYER_COMMAND_SELECT_PB_TRACK_COMPLETE"
-  /* QTV_FEATURE_BCAST_GENERIC : SELECT PB TRACK DONE */ 
+  /* QTV_FEATURE_BCAST_GENERIC : SELECT PB TRACK DONE */
 
   ,"QTV_PLAYER_COMMAND_SELECT_PB_TRACK_FAILED"
   /* QTV_FEATURE_BCAST_GENERIC : SELECT PB TRACK Failed */
@@ -709,6 +725,52 @@ const char * QtvPlayer::PlayerStatusString[] =
 
   ,"QTV_PLAYER_CONSUME_RENTAL_VIEW_CONFIRMATION"
   /* Confirmation needed from user before consuming view count */
+
+  ,"QTV_PLAYER_STATUS_SERVER_TIMEOUT"
+  /*when real player gets timeout alert from server*/
+
+  ,"QTV_PLAYER_STATUS_SWITCHING_IN_PROGRESS"
+   /* Switch to new URL inProgress */
+
+  ,"QTV_PLAYER_STATUS_SWITCH_STREAM_FAILED"
+   /* Switch failed */
+
+   , "QTV_PLAYER_STATUS_FCS_PLAYBACK_COMPLETE"
+     /* FCS clip playback completed*/
+
+  , "QTV_COMMAND_PROBE_COMPLETE"
+    /* FCS probe command complete*/
+
+   , "QTV_COMMAND_PROBE_FAILED"
+    /* FCS probe command failed*/
+
+  ,"QTV_PLAYER_STATUS_SERVER_NOT_ENOUGH_BW"
+  /* SERVER Not having enough BW */
+
+  ,"QTV_PLAYER_STATUS_VALID_CLIPINFO_DIMENSIONS"
+  /*Valid CLip Info (width and height) notification*/
+
+  ,"QTV_PLAYER_STATUS_DATA_INACTIVITY_ERROR"
+  /* inactivity timer expire */
+
+ ,"QTV_STREAM_TRACKLIST_UNKNOWN_CODEC"
+   /* Stream mime type not supported/unknown codec */
+
+ ,"QTV_PLAYER_STATUS_RECONNECT_SUCCESS"   
+  /* Reconnect to the server is successfull*/
+
+  ,"QTV_PLAYER_STATUS_RECONNECT_FAIL"
+  /* Reconnect to server failed*/
+
+   ,"QTV_PLAYER_STATUS_RECONNECT_IN_PROGRESS"
+   /* Reconnect is in progress*/
+
+  ,"QTV_PLAYER_STATUS_FCS_SWITCH_SUPPORTED"
+
+   ,"QTV_PLAYER_STATUS_RECONNECTING_USING_TCP_INTERLEAVE"
+   /* Reconnecting using tcp interleaving*/
+
+    /*session supports switch */
 
 }; /* PlayerStatusString[] */
 
@@ -749,14 +811,21 @@ EVENT_SOURCE( PV_PAUSE, PV_API_POOL )
 #if (defined FEATURE_QTV_QDSP_RELEASE_RESTORE && defined FEATURE_QTV_QOS_SELECTION)
 #error code not present
 #endif
-#if defined (FEATURE_FILE_FRAGMENTATION) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
+#if defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
 EVENT_SOURCE( QTV_PAUSE_AUDIO, PV_API_POOL )
 EVENT_SOURCE( QTV_PAUSE_VIDEO, PV_API_POOL )
 EVENT_SOURCE( QTV_PAUSE_TEXT, PV_API_POOL )
 EVENT_SOURCE( QTV_RESUME_AUDIO, PV_API_POOL )
 EVENT_SOURCE( QTV_RESUME_VIDEO, PV_API_POOL )
 EVENT_SOURCE( QTV_RESUME_TEXT, PV_API_POOL )
-#endif /*FEATURE_FILE_FRAGMENTATION || FEATURE_QTV_3GPP_PROGRESSIVE_DNLD*/
+#endif
+
+#if defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
+EVENT_SOURCE( QTV_HTTP_BUFFER_UPDATE, PV_API_POOL )
+EVENT_SOURCE( QTV_HTTP_EVENT, PV_API_POOL )
+#endif
+
+
 EVENT_SOURCE( PV_STOP, PV_API_POOL )
 EVENT_SOURCE( PV_DELETE_DOWNLOAD_SESSION, PV_API_POOL )
 EVENT_SOURCE( PV_DOWNLOAD_CLIP, PV_API_POOL )
@@ -771,7 +840,7 @@ EVENT_SOURCE( PV_PREV_FRAME, PV_API_POOL )
 EVENT_SOURCE(PV_VIDEO_SCALE, PV_API_POOL )
 #endif /* FEATURE_MP4_FRAME_TRANSFORMATIONS || FEATURE_QTV_XSCALE_VIDEO */
 EVENT_SOURCE(PV_SET_AUDIOOVER, PV_API_POOL )
-#ifdef FEATURE_FILE_FRAGMENTATION
+#ifdef FEATURE_QTV_PSEUDO_STREAM
    /* May be this event has to go into QTV_PARSER_POOL*/
 EVENT_SOURCE(QTV_PS_PARSER_STATUS_EVENT, PV_API_POOL)
 #endif /* FEATURE_FILE_FRAGMENTATION */
@@ -802,9 +871,9 @@ EVENT_SOURCE( PV_RECORD_CLIP, PV_API_POOL )
 EVENT_SOURCE( PV_RECORD_STOP, PV_API_POOL )
 #endif /* FEATURE_QTV_STREAM_RECORD */
 
-#ifdef FEATURE_QTV_RANDOM_ACCESS_REPOS
+#ifdef FEATURE_FILE_FRAGMENTATION
    EVENT_SOURCE( QTV_SKIP_CLIP, PV_API_POOL );
-#endif /*FEATURE_QTV_RANDOM_ACCESS_REPOS*/
+#endif /*FEATURE_FILE_FRAGMENTATION*/
 
 EVENT_SOURCE( QTV_SUSPEND, PV_API_POOL );
 EVENT_SOURCE( QTV_RESUME, PV_API_POOL );
@@ -841,6 +910,9 @@ static void SetNullURLType(QtvPlayer::URLTypeT &t);
 static void SetNullClipInfo(QtvPlayer::ClipInfoT &i);
 static void SetNullAudioVideoStatistics(QtvPlayer::AudioVideoStatisticsT &s);
 static void SetNullRTPStatistics(QtvPlayer::RTPStatisticsT &s);
+#ifdef FEATURE_QTV_MEMORY_LEAK_DEBUG
+#error code not present
+#endif
 
 #ifdef FEATURE_QTV_QDSP_RELEASE_RESTORE
 extern "C" {
@@ -953,13 +1025,23 @@ QtvPlayer::QtvPlayer()
 #error code not present
 #endif
 
-   /* --------------------------------------------------------------------------
+  m_DRMKey = NULL;
+  m_DRMKeySize = 0;
+  /* --------------------------------------------------------------------------
    RAM file player variables
    ---------------------------------------------------------------------------*/
   RAMPlayer = NULL;
 
   /* Default setting for playback speed. */
   m_playbackSpeed = PLAYBACK_SPEED_NORMAL;
+
+  m_UserAgentStr[0] = '\0';
+  m_UserAgentParam_man[0] = '\0';
+  m_UserAgentParam_ctn[0] = '\0';
+  m_UserAgentParam_params[0] = '\0';
+#ifdef FEATURE_QTV_APP_PROC_SLEEP
+#error code not present
+#endif
 }
 
 /* ======================================================================
@@ -993,6 +1075,10 @@ QtvPlayer::~QtvPlayer(void)
 #endif
 
 #ifdef FEATURE_QTV_GENERIC_BCAST_FLO
+#error code not present
+#endif
+
+#ifdef FEATURE_QTV_APP_PROC_SLEEP
 #error code not present
 #endif
 }
@@ -1030,7 +1116,7 @@ QtvPlayer *QtvPlayer::GetPlayer(InstanceHandleT handle)
       ERR_FATAL("called with NULL QtvPlayer default Instance Handle",0,0,0);
     }
   }
-  
+
   return (QtvPlayer *)handle;
 }
 /* ======================================================================
@@ -1076,7 +1162,7 @@ QtvPlayer::ReturnT QtvPlayer::GetRegistrationCode(char*,int*,
   }
   if(drmclient->GetRegistrationCode(rcode,max_len))
   {
-    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,"drmclient->GetRegistrationCode is SUCCESSFUL");    
+    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,"drmclient->GetRegistrationCode is SUCCESSFUL");
     nReturn = QTV_RETURN_OK;
   }
   else
@@ -1246,7 +1332,12 @@ const char* QtvPlayer::MapPlayerStatusCodetoString(PlayerStatusT code)
 {
   const char *string_ptr;
 
-  if ( /*(code >= QTV_PLAYER_STATUS_FIRST) &&*/ (code <= QTV_PLAYER_STATUS_LAST) )
+  if((code > QTV_PLAYER_STATUS_LAST))
+  {
+    QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "Illegal code to MapPlayerStatusCodetoString()", code);
+    string_ptr = "";
+  }
+  else
   {
     /*-------------------------------------------------------------------------
       we have an array of strings in the class definition and just refer to
@@ -1254,11 +1345,7 @@ const char* QtvPlayer::MapPlayerStatusCodetoString(PlayerStatusT code)
     -------------------------------------------------------------------------*/
     string_ptr = PlayerStatusString[(int)code]; /*lint!e661 */
   }
-  else
-  {
-    QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "Illegal code to MapPlayerStatusCodetoString()", code);
-    string_ptr = "";
-  }
+
   return(string_ptr);
 
 }/* QtvPlayer::MapPlayerStatusCodetoString() */
@@ -1335,6 +1422,9 @@ boolean QtvPlayer::IsPlayerStatusErrorCode(PlayerStatusT code)
     case QTV_PLAYER_COMMAND_MUTE_ALL_FAILED:
     case QTV_PLAYER_COMMAND_UNMUTE_FAILED:
 #endif
+    case QTV_PLAYER_STATUS_SERVER_NOT_ENOUGH_BW:
+    case QTV_PLAYER_STATUS_DATA_INACTIVITY_ERROR:
+    case QTV_STREAM_TRACKLIST_UNKNOWN_CODEC:
 
       ret = true;
       break;
@@ -1550,7 +1640,7 @@ QtvPlayer::ReturnT QtvPlayer::Init
           // QtvPlayer creation succeeded, assign priority
           QtvInstances[QTV_PRIORITY_DEFAULT] = (InstanceHandleT)player;
           player->InstancePriority = QTV_PRIORITY_DEFAULT;
-	  numQtvPlayers++;
+    numQtvPlayers++;
         }
         else
         {
@@ -1571,10 +1661,10 @@ QtvPlayer::ReturnT QtvPlayer::Init
       // Init called with non NULL pHandle
       // Create an instance of QtvPlayer
       player = QTV_New(QtvPlayer);
-      // Output the new QtvPlayer instance handle 
+      // Output the new QtvPlayer instance handle
       *pHandle = (InstanceHandleT)player;
       if (player == NULL)
-      { 
+      {
         // QtvPlayer creation failed, return error
         QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "Init error, failed to create QtvPlayer instance");
         return QTV_RETURN_ERROR;
@@ -1753,16 +1843,16 @@ QtvPlayer::ReturnT QtvPlayer::Init
   QtvRealPlayer_SetAllocator(MallocOutputBuffer, FreeOutputBuffer);
 #endif /* FEATURE_REAL_PLAYER_USE_QTV_API */
 
-  RegisterForCallbackInternal(CallbackFunction, 
-                              CallbackInstanceFunction, 
-                              CallbackClientData, 
+  RegisterForCallbackInternal(CallbackFunction,
+                              CallbackInstanceFunction,
+                              CallbackClientData,
                               CallbackUserData);
 
   if (m_UserAgentStr[0] != '\0')
   {
     SetUserAgent(m_UserAgentStr, (InstanceHandleT)this);
   }
-  else if (m_UserAgentParam_params[0] != '\0')
+  if (m_UserAgentParam_params[0] != '\0')
   {
     SetUserAgentParameters(m_UserAgentParam_params, (InstanceHandleT)this);
   }
@@ -1779,18 +1869,13 @@ QtvPlayer::ReturnT QtvPlayer::Init
    * concurrency manager only if this is not the highest priority player.
    */
   if (m_registered &&
-      InstancePriority == QTV_PRIORITY_DEFAULT && 
+      InstancePriority == QTV_PRIORITY_DEFAULT &&
       (strcmp(mediaType, QTV_PLAYER_MIME_TYPE) == 0) ||
       (strcmp(mediaType, REAL_MEDIA_MIME_TYPE) == 0))
   {
-    if (!qtv_conc_mgr::init(pMpeg4Player, 
-                            mediaType, 
-                            numRegisteredQtvPlayers))
-    {
-      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,
-                   "Failed to Init qtv_conc_mgr");
-      qtv_conc_mgr::terminate(numRegisteredQtvPlayers);
-    }
+    qtv_conc_mgr::init(pMpeg4Player,
+                       mediaType,
+                       numRegisteredQtvPlayers);
   }
 #endif /* FEATURE_QTV_DISABLE_CONC_MGR */
   QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, ">>QtvPlayer::Init return %d",nReturn);
@@ -1803,12 +1888,12 @@ FUNCTION
   QtvPlayer::InitRollback (non API Method)
 
 DESCRIPTION
-  This routine is used to cancel the effect of Init() performed within the 
+  This routine is used to cancel the effect of Init() performed within the
   Open like routines earlier while bailing out.
 
 DEPENDENCIES
   Very specific to Open like routines such as Open Pseudo stream or push/pull
-  buffered stream. 
+  buffered stream.
 
 RETURN VALUE
   None.
@@ -1821,10 +1906,10 @@ void  QtvPlayer::InitRollback()
 {
   if(!pMpeg4Player)
   {
-    // bail out after giving on the spot fine 
+    // bail out after giving on the spot fine
     QTV_MSG_PRIO(QTVDIAG_GENERAL,QTVDIAG_PRIO_ERROR,
     "InitRollback is called in wrong Context!! ");
-    return; 
+    return;
   }
   //An error occurred, try to cleanup anyway.
   pMpeg4Player->SetAbortFlag();
@@ -1838,7 +1923,7 @@ void  QtvPlayer::InitRollback()
   }
   else
   {
-    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, 
+    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,
                  "InitRollback No memory to post event");
   }
 
@@ -1862,13 +1947,33 @@ void  QtvPlayer::InitRollback()
   }
   else
   {
-    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, 
+    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,
     "InitRollback called with invalid Resource Reference Count");
   }
 
   return;
 }
 
+void QtvPlayer::register_qtv_with_callmgr()
+{
+#ifndef FEATURE_QTV_DISABLE_CONC_MGR
+  /* The highest priority player can not be interrupted. So initialize
+   * concurrency manager only if this is not the highest priority player.
+   */
+  if (m_registered &&
+      InstancePriority == QTV_PRIORITY_DEFAULT &&
+      (strcmp(CurrentMIMEType, QTV_PLAYER_MIME_TYPE) == 0) ||
+      (strcmp(CurrentMIMEType, REAL_MEDIA_MIME_TYPE) == 0))
+  {
+    if (!qtv_conc_mgr::register_with_call_mgr())
+    {
+      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,
+                   "Failed to Init qtv_conc_mgr");
+      qtv_conc_mgr::terminate(numRegisteredQtvPlayers);
+    }
+  }
+#endif /* FEATURE_QTV_DISABLE_CONC_MGR */
+}
 /* ======================================================================
 FUNCTION
   QtvPlayer::Terminate
@@ -1895,7 +2000,7 @@ QtvPlayer::ReturnT QtvPlayer::Terminate(InstanceHandleT handle, bool destroyInst
 
   /* Checks for valid instances available or not */
   if(numQtvPlayers < 1)
-  {     
+  {
       /* Assign the respective return value to nReturn */
       nReturn = QTV_RETURN_NO_INSTANCE_AVAILABLE;
       /*If there is no Qtv instances available then we have to exit gracefully, to avoid fatal errors/crashes.*/
@@ -1925,7 +2030,7 @@ QtvPlayer::ReturnT QtvPlayer::Terminate(InstanceHandleT handle, bool destroyInst
   {
     QtvRealPlayer_Terminate();
   }
-#endif /* FEATURE_REAL_PLAYER_USE_QTV_API */ 
+#endif /* FEATURE_REAL_PLAYER_USE_QTV_API */
   if (player->MediaInfo)
   {
      QTV_Free(player->MediaInfo);
@@ -1964,14 +2069,28 @@ QtvPlayer::ReturnT QtvPlayer::Terminate(InstanceHandleT handle, bool destroyInst
     if (pEvent)
     {
       player->pMpeg4Player->PostMessage(pEvent);
-
+#ifndef FEATURE_WINCE
       dog_autokick = rex_autodog_enable(rex_self()->dog_report_val);
-
+#endif // #ifndef FEATURE_WINCE
       while (!player->pMpeg4Player->IsPlayerThreadIdle() &&
              (totalSleepDuration < PLAYER_TRANSITION_TO_IDLE_TIMEOUT))
       {
-        rex_sleep(PLAYER_STATE_POLL_INTERVAL);
-        totalSleepDuration += PLAYER_STATE_POLL_INTERVAL;
+        // To begin with we start checking at 20msec interval which
+        // is the start value. Once the duration reached 200msec
+        // we will check less frequently at 200msec. In this way
+        // checking frequency is increased only by five instead of
+        // 100 times if we would have checked at 20msec interval for
+        // the entire 25 second period.
+        if(totalSleepDuration < PLAYER_STATE_POLL_INTERVAL)
+        {
+          rex_sleep(PLAYER_STATE_POLL_START_INTERVAL);
+          totalSleepDuration += PLAYER_STATE_POLL_START_INTERVAL;
+        }
+        else
+        {
+          rex_sleep(PLAYER_STATE_POLL_INTERVAL);
+          totalSleepDuration += PLAYER_STATE_POLL_INTERVAL;
+        }
       }
       //Restoring to previous value of auto_dog_enable
       if (!dog_autokick)
@@ -2012,7 +2131,7 @@ QtvPlayer::ReturnT QtvPlayer::Terminate(InstanceHandleT handle, bool destroyInst
     }
       else
       {
-               QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_FATAL, 
+               QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_FATAL,
                             "QtvPlayer::Terminate (numRegisteredQtvPlayers==0)..!");
       }
     }
@@ -2041,9 +2160,13 @@ QtvPlayer::ReturnT QtvPlayer::Terminate(InstanceHandleT handle, bool destroyInst
    }
 #endif /* FEATURE_QTV_DEBUG_ONLY */
 
-   LogQtvCmd("Terminate","%d%d%d", 
+#ifdef FEATURE_QTV_MEMORY_LEAK_DEBUG
+#error code not present
+#endif
+
+   LogQtvCmd("Terminate","%d%d%d",
              (int32)nReturn, (int32)handle, (int32)destroyInst);
-   QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, 
+   QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,
                  ">>QtvPlayer::Terminate return %d",nReturn);
   return nReturn;
 }
@@ -2102,15 +2225,12 @@ SIDE EFFECTS
 ========================================================================== */
 QtvPlayer::ReturnT QtvPlayer::OpenURN(const char *videoURN, const char *audioURN, const char *textURN,
                                       InstanceHandleT handle,
-                                      InstancePriorityT priority)
+                                      InstancePriorityT priority,
+                                      OpenURNTypeT opentype)
 {
 
   ReturnT nReturn = QTV_RETURN_ERROR;
-  nReturn = RegisterInst (handle,priority);
-  if (nReturn != QTV_RETURN_OK)
-  {
-     return nReturn;
-  }
+
   QtvPlayer *player = GetPlayer(handle);
 
   //At least one URN should be valid/Non NULL
@@ -2128,10 +2248,14 @@ QtvPlayer::ReturnT QtvPlayer::OpenURN(const char *videoURN, const char *audioURN
   {
      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_FATAL, "Error:OpenURN GetMediaType returned NULL");
      QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,">>QtvPlayer::OpenURN(v,a,t) returning nReturn %d",nReturn);
-     return nReturn;
+     return QTV_RETURN_UNSUPPORTED;
   }
 
-
+  nReturn = RegisterInst (handle,priority);
+  if (nReturn != QTV_RETURN_OK)
+  {
+     return nReturn;
+  }
 
   #ifdef FEATURE_QTV_DRM_DCF
     /*
@@ -2203,8 +2327,8 @@ QtvPlayer::ReturnT QtvPlayer::OpenURN(const char *videoURN, const char *audioURN
     }
 #endif /* FEATURE_REAL_PLAYER_USE_QTV_API */
 
-    player->Init(player->MallocBufferFunction, 
-                 player->FreeBufferFunction, 
+    player->Init(player->MallocBufferFunction,
+                 player->FreeBufferFunction,
                  player->CurrentMIMEType);
 
 #ifdef FEATURE_REAL_PLAYER_USE_QTV_API
@@ -2267,6 +2391,7 @@ QtvPlayer::ReturnT QtvPlayer::OpenURN(const char *videoURN, const char *audioURN
          {
            pEvent->textURN->SetUrl(textURN);
          }
+         pEvent->openType = opentype;
          //Reset the abort flag before issueing playback.
          player->pMpeg4Player->SetMediaAbortFlag(false);
 
@@ -2275,6 +2400,11 @@ QtvPlayer::ReturnT QtvPlayer::OpenURN(const char *videoURN, const char *audioURN
        }
      }
    }
+#ifndef FEATURE_QTV_DISABLE_CONC_MGR
+   /* Registering qtv with call manager */
+   player->register_qtv_with_callmgr();
+#endif
+
    if(videoURN && audioURN && textURN)
    {
   LogQtvCmd("OpenURN", "%d%s%s%s%d%d", (int32)nReturn, videoURN, audioURN, textURN,(int32)handle, (int32)priority);
@@ -2371,7 +2501,7 @@ QtvPlayer::ReturnT QtvPlayer::OpenURN(unsigned char *VideoBuf, uint32 videoSize,
     else
     {
       buf  = TextBuf;
-      len =  textSize;  
+      len =  textSize;
     }
     player->CurrentMIMEType = QTV_PLAYER_MIME_TYPE;
     if (buf)
@@ -2380,9 +2510,9 @@ QtvPlayer::ReturnT QtvPlayer::OpenURN(unsigned char *VideoBuf, uint32 videoSize,
 
        if(!player->CurrentMIMEType)
        {
-         QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_FATAL, 
+         QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_FATAL,
                       "Error:OpenURN GetMIMEType returned NULL");
-         return nReturn;
+         return QTV_RETURN_ERROR;
        }
 
 #ifdef FEATURE_REAL_PLAYER_USE_QTV_API
@@ -2396,8 +2526,8 @@ QtvPlayer::ReturnT QtvPlayer::OpenURN(unsigned char *VideoBuf, uint32 videoSize,
        }
 #endif /* FEATURE_REAL_PLAYER_USE_QTV_API */
 
-       player->Init(player->MallocBufferFunction, 
-                    player->FreeBufferFunction, 
+       player->Init(player->MallocBufferFunction,
+                    player->FreeBufferFunction,
                     player->CurrentMIMEType);
 
 #ifdef FEATURE_REAL_PLAYER_USE_QTV_API
@@ -2469,7 +2599,7 @@ QtvPlayer::ReturnT QtvPlayer::SetPriority(InstanceHandleT handle, InstancePriori
     if (QtvInstances[priority] == NULL || QtvInstances[priority] == (InstanceHandleT)player)
     {
        // Clear old priority instance if any
-       QtvInstances[player->InstancePriority] = NULL;
+       QtvInstances[priority] = NULL;
        // Set new priority instance
        QtvInstances[priority] = (InstanceHandleT)player;
        // Set new priority
@@ -2534,6 +2664,7 @@ QtvPlayer::ReturnT QtvPlayer::SuspendLowPriorityInstance(InstanceHandleT handle)
           }
           else
           {
+#ifndef FEATURE_QTV_DISABLE_CONC_MGR
             //Call the concurrency manager and suspend this instance
             qtv_conc_mgr::set_suspend_type(qtv_conc_mgr::SUSPENDED_EXTERNALLY,
                                            ((QtvPlayer*)QtvInstances[index])->pMpeg4Player,
@@ -2542,6 +2673,7 @@ QtvPlayer::ReturnT QtvPlayer::SuspendLowPriorityInstance(InstanceHandleT handle)
 
             QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "QtvPlayer::SuspendLowPriorityInsts :suspended instPrio=%d"
                           ,((QtvPlayer*)QtvInstances[index])->InstancePriority);
+#endif
           }
         }
       }
@@ -2555,9 +2687,9 @@ FUNCTION
   QtvPlayer::CheckInstances
 
 DESCRIPTION
-  Checks if any instance exists whose priority is higher than the current 
+  Checks if any instance exists whose priority is higher than the current
   instance priority
-  
+
 DEPENDENCIES
   None.
 
@@ -2616,7 +2748,7 @@ SIDE EFFECTS
 ========================================================================== */
 QtvPlayer::ReturnT QtvPlayer::RegisterForCallback(CallbackFuncT callback, void *pClientData)
 {
-  QTV_MSG_PRIO2(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, 
+  QTV_MSG_PRIO2(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW,
                 ">>QtvPlayer::RegisterForCallback %d %d",
                 callback, pClientData);
 
@@ -2630,7 +2762,7 @@ QtvPlayer::ReturnT QtvPlayer::RegisterForCallback(CallbackFuncT callback, void *
 
 QtvPlayer::ReturnT QtvPlayer::RegisterForCallback(CallbackInstanceFuncT callback, void *pClientData, InstanceHandleT handle, void *pUserData)
 {
-  QTV_MSG_PRIO4(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, 
+  QTV_MSG_PRIO4(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW,
                 ">>QtvPlayer::RegisterForCallback %p %p %p %p",
                 callback,pClientData,handle,pUserData);
 
@@ -2663,12 +2795,12 @@ SIDE EFFECTS
 ========================================================================== */
 QtvPlayer::ReturnT QtvPlayer::RegisterForCallbackInternal(
   CallbackFuncT callback,
-  CallbackInstanceFuncT callbackInstance, 
+  CallbackInstanceFuncT callbackInstance,
   void *pClientData,
   void *pUserData
   )
 {
-  QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, 
+  QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW,
                ">>QtvPlayer::RegisterForCallbackInternal");
 
   ReturnT nReturn = QTV_RETURN_OK;
@@ -2721,7 +2853,7 @@ QtvPlayer::ReturnT QtvPlayer::RegisterForCallbackInternal(
     }
   }
   LogQtvCmd("RegisterForCallbackInternal", "%d%d%d%d%d", (int32)nReturn, (int32)callback,(int32)callbackInstance,(int32)pClientData, (int32)pUserData);
-  QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, 
+  QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW,
                 ">>QtvPlayer::RegisterForCallbackInternal return %d",nReturn);
   return nReturn;
 }
@@ -2742,9 +2874,31 @@ RETURN VALUE
 
 SIDE EFFECTS
   Detail any side effects.
-
 ========================================================================== */
 QtvPlayer::ReturnT QtvPlayer::PlayClip(int32 startTime, int32 stopTime, InstanceHandleT handle)
+{
+  return PlayClip(startTime,stopTime,NULL,handle);
+}
+
+/* ======================================================================
+FUNCTION
+  QtvPlayer::PlayClip
+
+DESCRIPTION
+  Thorough, meaningful description of what this function does.
+
+DEPENDENCIES
+  List any dependencies for this function, global variables, state,
+  resource availability, etc.
+
+RETURN VALUE
+  Enumerate possible return values
+
+SIDE EFFECTS
+  Detail any side effects.
+
+========================================================================== */
+QtvPlayer::ReturnT QtvPlayer::PlayClip(int32 startTime, int32 stopTime,const char *switchToURN, InstanceHandleT handle)
 {
   QTV_MSG_PRIO2(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, ">>QtvPlayer::PlayClip %d %d",startTime,stopTime);
 
@@ -2754,15 +2908,17 @@ QtvPlayer::ReturnT QtvPlayer::PlayClip(int32 startTime, int32 stopTime, Instance
   /*Check if we are trying to preempt a high priority instance */
   if(CheckInstances(handle) == QTV_RETURN_ERROR)
   {
-    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, 
+    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,
                  "Cannot play clip...Higher prioriy instance is active!!!");
     return nReturn;
   }
-  
+
   /* PlayClip was called by the app, set app suspended to false */
+#ifndef FEATURE_QTV_DISABLE_CONC_MGR
   qtv_conc_mgr::set_suspend_type(qtv_conc_mgr::NOT_SUSPENDED_EXTERNALLY,
                                  player->pMpeg4Player,
                                  player->CurrentMIMEType);
+#endif
 
 #ifdef FEATURE_REAL_PLAYER_USE_QTV_API
   if (QtvRAMPlayer_RAMFilePlaying(player))
@@ -2786,6 +2942,15 @@ QtvPlayer::ReturnT QtvPlayer::PlayClip(int32 startTime, int32 stopTime, Instance
       {
         pEvent->startTime=startTime;
         pEvent->stopTime=stopTime;
+        pEvent->switchURN = NULL;
+        if(switchToURN != NULL)
+        {
+          pEvent->switchURN = QTV_New(URL);
+          if((pEvent->switchURN != NULL))
+          {
+            pEvent->switchURN->SetUrl(switchToURN);
+          }
+        }
         pEvent->pbSpeed = player->pMpeg4Player->MapQtvPBSpeedToCommonPBSpeed(player->m_playbackSpeed);
 
         //Reset the abort flag before issueing playback.
@@ -2826,7 +2991,7 @@ SIDE EFFECTS
 ========================================================================== */
 QtvPlayer::ReturnT QtvPlayer::SkipClip(int32 skipNumber, InstanceHandleT handle)
 {
-#ifdef FEATURE_QTV_RANDOM_ACCESS_REPOS
+#ifdef FEATURE_FILE_FRAGMENTATION
   QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, ">>QtvPlayer::SkipClip %d ",skipNumber);
 
   QtvPlayer *player = GetPlayer(handle);
@@ -2834,9 +2999,11 @@ QtvPlayer::ReturnT QtvPlayer::SkipClip(int32 skipNumber, InstanceHandleT handle)
   ReturnT nReturn = QTV_RETURN_ERROR;
 
   /* SkipClip was called by the app, set app suspended to false */
+#ifndef FEATURE_QTV_DISABLE_CONC_MGR
   qtv_conc_mgr::set_suspend_type(qtv_conc_mgr::NOT_SUSPENDED_EXTERNALLY,
                                  player->pMpeg4Player,
                                  player->CurrentMIMEType);
+#endif
 
   if (player->pMpeg4Player)
   {
@@ -3323,9 +3490,11 @@ QtvPlayer::ReturnT QtvPlayer::Pause(InstanceHandleT handle)
   boolean pauseIsSuspend = true;
 
   /* Set the suspend type to APP_SUSPEND */
+#ifndef FEATURE_QTV_DISABLE_CONC_MGR
   qtv_conc_mgr::set_suspend_type(qtv_conc_mgr::SUSPENDED_EXTERNALLY,
                                  player->pMpeg4Player,
                                  player->CurrentMIMEType);
+#endif
 
 #ifdef FEATURE_REAL_PLAYER_USE_QTV_API
   if (player->CurrentMIMEType && strcmp(player->CurrentMIMEType, REAL_MEDIA_MIME_TYPE) == 0)
@@ -3356,7 +3525,7 @@ QtvPlayer::ReturnT QtvPlayer::Pause(InstanceHandleT handle)
         {
           pEvent->bSuspendIsExternal = true;
 
-          QTV_MSG_PRIO1(QTVDIAG_GENERAL, 
+          QTV_MSG_PRIO1(QTVDIAG_GENERAL,
             QTVDIAG_PRIO_LOW, "suspendtype %d",pEvent->bSuspendIsExternal);
 
           player->pMpeg4Player->PostMessage(pEvent);
@@ -3440,9 +3609,11 @@ QtvPlayer::ReturnT QtvPlayer::PlayNextFrame(InstanceHandleT handle)
   ReturnT nReturn = QTV_RETURN_ERROR;
 
   /* PlayNextFrame was called by the app, set app suspended to false */
+#ifndef FEATURE_QTV_DISABLE_CONC_MGR
   qtv_conc_mgr::set_suspend_type(qtv_conc_mgr::NOT_SUSPENDED_EXTERNALLY,
                                  player->pMpeg4Player,
                                  player->CurrentMIMEType);
+#endif
 
   if (player->pMpeg4Player)
   {
@@ -3496,9 +3667,11 @@ QtvPlayer::ReturnT QtvPlayer::PlayPrevFrame(InstanceHandleT handle)
   ReturnT nReturn = QTV_RETURN_ERROR;
 
   /* PlayPrevFrame was called by the app, set app suspended to false */
+#ifndef FEATURE_QTV_DISABLE_CONC_MGR
   qtv_conc_mgr::set_suspend_type(qtv_conc_mgr::NOT_SUSPENDED_EXTERNALLY,
                                  player->pMpeg4Player,
                                  player->CurrentMIMEType);
+#endif
 
   if (player->pMpeg4Player)
   {
@@ -3602,25 +3775,25 @@ FUNCTION:
   QtvPlayer::OpenPseudoStream (External API)
 
 DESCRIPTION:
-  Method to open a pseudo stream. Attempt to open second instance with 
-  different priority will be failed. 
+  Method to open a pseudo stream. Attempt to open second instance with
+  different priority will be failed.
 
 PARAMETERS:
   pBuf
     Pointer to the beginning of pseudo stream buffer.
-    
+
   dwBufSize
     Size of pseudo stream buffer.
-    
+
   wPtrOffset
     Current pseudo stream buffer write pointer offset.
     It is assumed that enough bytes shall be present in the buffer to figure
-    out the mime type. Attempt to open the stream with insufficient number of 
-    bytes shall be failed. 
-    
+    out the mime type. Attempt to open the stream with insufficient number of
+    bytes shall be failed.
+
   handle
     Handle to the player instance.
-    
+
   priority
     Priority of the player.
 
@@ -3633,7 +3806,7 @@ SIDE EFFECTS:
 QtvPlayer::ReturnT  QtvPlayer::OpenPseudoStream( unsigned char *pBuf,
                                   uint32 dwBufSize,
                                   uint32 wPtrOffset,
-  InstanceHandleT handle, 
+  InstanceHandleT handle,
   InstancePriorityT priority)
   {
   ReturnT nReturn = QTV_RETURN_ERROR;
@@ -3643,8 +3816,8 @@ QtvPlayer::ReturnT  QtvPlayer::OpenPseudoStream( unsigned char *pBuf,
   uint32 bmTrackSelection = ( QTV_VIDEO_TRACK_SELECTED |
                               QTV_AUDIO_TRACK_SELECTED |
                               QTV_TEXT_TRACK_SELECTED);
-    
-  nReturn = OpenPseudoStream(pBuf, dwBufSize, wPtrOffset, bmTrackSelection, 
+
+  nReturn = OpenPseudoStream(pBuf, dwBufSize, wPtrOffset, bmTrackSelection,
                              handle, priority);
 
   QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED,
@@ -3659,8 +3832,8 @@ QtvPlayer::ReturnT  QtvPlayer::OpenPseudoStream( unsigned char *pBuf,
     QTV_USE_ARG1(dwBufSize);
     QTV_USE_ARG1(wPtrOffset);
     nReturn = QTV_RETURN_FEATURE_NOT_AVAILABLE;
-#endif /* FEATURE_QTV_PSEUDO_STREAM */ 
-   
+#endif /* FEATURE_QTV_PSEUDO_STREAM */
+
     return nReturn;
   }
 
@@ -3669,32 +3842,32 @@ FUNCTION:
   QtvPlayer::OpenPseudoStream (Internal Method)
 
 DESCRIPTION:
-  Method to open a pseudo stream. Attempt to open second instance with 
-  different priority will be failed. 
+  Method to open a pseudo stream. Attempt to open second instance with
+  different priority will be failed.
 
 PARAMETERS:
   pBuf
     Pointer to the beginning of pseudo stream buffer.
-    
+
   dwBufSize
     Size of pseudo stream buffer.
-    
+
   wPtrOffset
     Current pseudo stream buffer write pointer offset.
     It is assumed that enough bytes shall be present in the buffer to figure
-    out the mime type. Attempt to open the stream with insufficient number of 
-    bytes shall be failed. 
-    
+    out the mime type. Attempt to open the stream with insufficient number of
+    bytes shall be failed.
+
   dwTrackSelected
-    Bit mask which specifies which combination of tracks to play 
-    QTV_NO_TRACK_SELECTED          
-    QTV_VIDEO_TRACK_SELECTED        
-    QTV_AUDIO_TRACK_SELECTED         
-    QTV_TEXT_TRACK_SELECTED           
-    
+    Bit mask which specifies which combination of tracks to play
+    QTV_NO_TRACK_SELECTED
+    QTV_VIDEO_TRACK_SELECTED
+    QTV_AUDIO_TRACK_SELECTED
+    QTV_TEXT_TRACK_SELECTED
+
   InstanceHandleT  handle
     Handle to the player instance.
-    
+
   InstancePriorityT priority
     Priority of the player.
 
@@ -3708,7 +3881,7 @@ QtvPlayer::ReturnT  QtvPlayer::OpenPseudoStream( unsigned char *pBuf,
                                   uint32 dwBufSize,
                                   uint32 wPtrOffset,
                                   uint32 dwTrackSelected,
-  InstanceHandleT handle, 
+  InstanceHandleT handle,
   InstancePriorityT priority)
   {
   ReturnT nReturn = QTV_RETURN_ERROR;
@@ -3716,20 +3889,20 @@ QtvPlayer::ReturnT  QtvPlayer::OpenPseudoStream( unsigned char *pBuf,
 #ifdef FEATURE_QTV_PSEUDO_STREAM
 
 
-  
+
   QtvPlayer *player = GetPlayer(handle);
 
   player->CurrentMIMEType = QTV_PLAYER_MIME_TYPE;
 
     /* Pseudo stream buffer should not be NULL */
-  if (pBuf && dwBufSize && 
-      wPtrOffset && (wPtrOffset <= dwBufSize) && 
-      dwTrackSelected && (priority > QTV_PRIORITY_INVALID) && 
+  if (pBuf && dwBufSize &&
+      wPtrOffset && (wPtrOffset <= dwBufSize) &&
+      dwTrackSelected && (priority > QTV_PRIORITY_INVALID) &&
       (priority < QTV_PRIORITY_COUNT))
   {
-    /* Constraint - 1: Multiple instances check 
-    ** If another registered instance is already present, 
-    ** then this API will not be functional for the second instance. 
+    /* Constraint - 1: Multiple instances check
+    ** If another registered instance is already present,
+    ** then this API will not be functional for the second instance.
     */
     if((numRegisteredQtvPlayers >= 1) && (player->InstancePriority != priority))
     {
@@ -3742,8 +3915,8 @@ QtvPlayer::ReturnT  QtvPlayer::OpenPseudoStream( unsigned char *pBuf,
     if (player->CurrentMIMEType)
     {
 #ifdef FEATURE_REAL_PLAYER_USE_QTV_API
-      /* The Qtv RAM Player must be initialized before initializing the Qtv 
-      ** Player. Otherwise the set callback function for the RAM Player in 
+      /* The Qtv RAM Player must be initialized before initializing the Qtv
+      ** Player. Otherwise the set callback function for the RAM Player in
       ** QtvPlayer::Init will fail.
       */
       QtvRAMPlayer_Init(player);
@@ -3755,11 +3928,11 @@ QtvPlayer::ReturnT  QtvPlayer::OpenPseudoStream( unsigned char *pBuf,
       }
 #endif /* FEATURE_REAL_PLAYER_USE_QTV_API */
 
-      player->Init(player->MallocBufferFunction, 
-                   player->FreeBufferFunction, 
+      player->Init(player->MallocBufferFunction,
+                   player->FreeBufferFunction,
                    player->CurrentMIMEType);
 
-      if (player->pMpeg4Player && 
+      if (player->pMpeg4Player &&
           player->pMpeg4Player->StartThread())
       {
 #ifdef FEATURE_QTV_MFDRM
@@ -3792,7 +3965,7 @@ QtvPlayer::ReturnT  QtvPlayer::OpenPseudoStream( unsigned char *pBuf,
             "OpenPseudoStream failed due to trouble observed while registering");
             player->InitRollback();
             #ifdef FEATURE_REAL_PLAYER_USE_QTV_API
-            // Cancel the RAM player Init too. Dont want to leak any memory 
+            // Cancel the RAM player Init too. Dont want to leak any memory
             // in case client forget to issue the subsequent open.
             QtvRAMPlayer_Terminate(player);
             #endif
@@ -3822,8 +3995,8 @@ QtvPlayer::ReturnT  QtvPlayer::OpenPseudoStream( unsigned char *pBuf,
     "OpenPseudoStream failed due to invalid parameters");
   }
 
-  LogQtvCmd("OpenPseudoStream", "%d%d%d%d%d", 
-            (int32)nReturn, dwBufSize, wPtrOffset, dwTrackSelected, 
+  LogQtvCmd("OpenPseudoStream", "%d%d%d%d%d",
+            (int32)nReturn, dwBufSize, wPtrOffset, dwTrackSelected,
             (int32)handle, (int32)priority);
 
   QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED,
@@ -3842,7 +4015,7 @@ QtvPlayer::ReturnT  QtvPlayer::OpenPseudoStream( unsigned char *pBuf,
     QTV_USE_ARG1(dwTrackSelected);
   nReturn = QTV_RETURN_FEATURE_NOT_AVAILABLE;
 #endif /* FEATURE_QTV_PSEUDO_STREAM */
-   
+
   return nReturn;
   }
 
@@ -3986,33 +4159,33 @@ FUNCTION:
   QtvPlayer::OpenPushBufferedStream (Internal Method)
 
 DESCRIPTION:
-  Method to open an buffered stream with push interface. 
-  Attempt to open second instance with different priority 
-  will be failed. 
+  Method to open an buffered stream with push interface.
+  Attempt to open second instance with different priority
+  will be failed.
 
 PARAMETERS:
   pBuf
-    Pointer to the beginning of Push Buffered stream. 
-    
+    Pointer to the beginning of Push Buffered stream.
+
   dwBufSize
-    Size of Push Buffered stream. 
-    
+    Size of Push Buffered stream.
+
   writePtrOffset
     Current Push Buffered stream write pointer offset.
     It is assumed that enough bytes shall be present in the buffer to figure
-    out the mime type. Attempt to open the stream with insufficient number of 
-    bytes shall be failed. 
-    
+    out the mime type. Attempt to open the stream with insufficient number of
+    bytes shall be failed.
+
   uint32 dwTrackSelected
-    Bit mask which specifies which combination of tracks to play 
-    QTV_NO_TRACK_SELECTED          
-    QTV_VIDEO_TRACK_SELECTED        
-    QTV_AUDIO_TRACK_SELECTED         
-    QTV_TEXT_TRACK_SELECTED           
-    
+    Bit mask which specifies which combination of tracks to play
+    QTV_NO_TRACK_SELECTED
+    QTV_VIDEO_TRACK_SELECTED
+    QTV_AUDIO_TRACK_SELECTED
+    QTV_TEXT_TRACK_SELECTED
+
   InstanceHandleT  handle
     Handle to the player instance.
-    
+
   InstancePriorityT priority
     Priority of the player.
 
@@ -4027,35 +4200,35 @@ QtvPlayer::ReturnT QtvPlayer::OpenPushBufferedStream( unsigned char *pBuf,
   uint32 dwBufSize,
   uint32 writePtrOffset,
   uint32 dwTrackSelected,
-                                                      InstanceHandleT handle, 
+                                                      InstanceHandleT handle,
                                                       InstancePriorityT priority)
 #else
-QtvPlayer::ReturnT QtvPlayer::OpenPushBufferedStream( unsigned char *, 
-                                                      uint32, 
-                                                      uint32, 
-                                                      uint32, 
-                                                      InstanceHandleT, 
+QtvPlayer::ReturnT QtvPlayer::OpenPushBufferedStream( unsigned char *,
+                                                      uint32,
+                                                      uint32,
+                                                      uint32,
+                                                      InstanceHandleT,
                                                       InstancePriorityT)
 #endif /* FEATURE_QTV_3GPP_PROGRESSIVE_DNLD */
 {
 #ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
-  
+
 
   ReturnT nReturn = QTV_RETURN_ERROR;
   QtvPlayer *player = GetPlayer(handle);
 
   player->CurrentMIMEType = QTV_PLAYER_MIME_TYPE;
-  if (pBuf && dwBufSize && 
-      writePtrOffset && (writePtrOffset <= dwBufSize) && 
+  if (pBuf && dwBufSize &&
+      writePtrOffset && (writePtrOffset <= dwBufSize) &&
       dwTrackSelected &&
       (priority > QTV_PRIORITY_INVALID) && (priority < QTV_PRIORITY_COUNT) )
   {
     if((numRegisteredQtvPlayers >= 1) && (player->InstancePriority != priority))
   {
-      /* Constraint - 1: Multiple instances check 
-      ** If another registered instance is already present, 
-      ** then this API will not be functional for the second instance. 
-      */ 
+      /* Constraint - 1: Multiple instances check
+      ** If another registered instance is already present,
+      ** then this API will not be functional for the second instance.
+      */
       QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,
       "OpenPushBufferedStream failed due to multiple instances");
       return QTV_RETURN_MULTIPLE_INSTANCE_RUNNING;
@@ -4074,8 +4247,8 @@ QtvPlayer::ReturnT QtvPlayer::OpenPushBufferedStream( unsigned char *,
       }
 #endif /* FEATURE_REAL_PLAYER_USE_QTV_API */
 
-      player->Init(player->MallocBufferFunction, 
-                   player->FreeBufferFunction, 
+      player->Init(player->MallocBufferFunction,
+                   player->FreeBufferFunction,
                    player->CurrentMIMEType);
 
   /* Atleast one track should be selected */
@@ -4110,7 +4283,7 @@ QtvPlayer::ReturnT QtvPlayer::OpenPushBufferedStream( unsigned char *,
             "OpenPushBufferedStream failed due to trouble observed while registering");
             player->InitRollback();
             #ifdef FEATURE_REAL_PLAYER_USE_QTV_API
-            // Cancel the RAM player Init too. Dont want to leak any memory 
+            // Cancel the RAM player Init too. Dont want to leak any memory
             // in case client forget to issue the subsequent open.
             QtvRAMPlayer_Terminate(player);
             #endif
@@ -4140,7 +4313,7 @@ QtvPlayer::ReturnT QtvPlayer::OpenPushBufferedStream( unsigned char *,
     "OpenPushBufferedStream failed due to invalid parameters passed");
   }
 
-  LogQtvCmd("OpenPushBufferedStream", "%d%d%d%d%d%d", (int32)nReturn, dwBufSize, writePtrOffset, 
+  LogQtvCmd("OpenPushBufferedStream", "%d%d%d%d%d%d", (int32)nReturn, dwBufSize, writePtrOffset,
             dwTrackSelected,(int32)handle,(int32)priority);
   QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED,">>QtvPlayer::OpenPushBufferedStream returned %d",
                 nReturn);
@@ -4156,27 +4329,27 @@ FUNCTION:
   QtvPlayer::OpenPullBufferedStream (Internal Method)
 
 DESCRIPTION:
-  Method to open an buffered stream with pull interface. 
-  Attempt to open second instance with different priority 
-  will be failed. 
+  Method to open an buffered stream with pull interface.
+  Attempt to open second instance with different priority
+  will be failed.
 
 PARAMETERS:
-  FetchBufferedDataSize 
+  FetchBufferedDataSize
     OEM callback to pull the size of the data currently buffered.
-    
+
   FetchBufferedData
     OEM callback to the pull the buffered data.
-    
+
   dwTrackSelected
-    Bit mask which specifies which combination of tracks to play 
-    QTV_NO_TRACK_SELECTED          
-    QTV_VIDEO_TRACK_SELECTED        
-    QTV_AUDIO_TRACK_SELECTED         
-    QTV_TEXT_TRACK_SELECTED           
-    
+    Bit mask which specifies which combination of tracks to play
+    QTV_NO_TRACK_SELECTED
+    QTV_VIDEO_TRACK_SELECTED
+    QTV_AUDIO_TRACK_SELECTED
+    QTV_TEXT_TRACK_SELECTED
+
   handle
     Handle to the player instance.
-    
+
   priority
     Priority of the player.
 
@@ -4187,22 +4360,22 @@ SIDE EFFECTS:
   None.
 ======================================================================*/
 #if (defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)) && defined(FEATURE_QTV_BUFFERED_PULL_INTERFACE)
-QtvPlayer::ReturnT QtvPlayer::OpenPullBufferedStream( FetchBufferedDataSizeT FetchBufferedDataSize, 
+QtvPlayer::ReturnT QtvPlayer::OpenPullBufferedStream( FetchBufferedDataSizeT FetchBufferedDataSize,
   FetchBufferedDataT FetchBufferedData,
   uint32 dwTrackSelected,
-                                                      InstanceHandleT handle, 
+                                                      InstanceHandleT handle,
                                                       InstancePriorityT priority)
 #else
-QtvPlayer::ReturnT QtvPlayer::OpenPullBufferedStream( FetchBufferedDataSizeT, 
-                                                      FetchBufferedDataT, 
-                                                      uint32, 
-                                                      InstanceHandleT, 
+QtvPlayer::ReturnT QtvPlayer::OpenPullBufferedStream( FetchBufferedDataSizeT,
+                                                      FetchBufferedDataT,
+                                                      uint32,
+                                                      InstanceHandleT,
                                                       InstancePriorityT)
 #endif /* FEATURE_QTV_3GPP_PROGRESSIVE_DNLD && FEATURE_QTV_BUFFERED_PULL_INTERFACE */
 {
 
 #if (defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)) && defined(FEATURE_QTV_BUFFERED_PULL_INTERFACE)
-  
+
 
   ReturnT nReturn = QTV_RETURN_ERROR;
 
@@ -4240,8 +4413,8 @@ QtvPlayer::ReturnT QtvPlayer::OpenPullBufferedStream( FetchBufferedDataSizeT,
          }
 #endif /* FEATURE_REAL_PLAYER_USE_QTV_API */
 
-         player->Init(player->MallocBufferFunction, 
-                      player->FreeBufferFunction, 
+         player->Init(player->MallocBufferFunction,
+                      player->FreeBufferFunction,
                       player->CurrentMIMEType);
         if (player->pMpeg4Player && player->pMpeg4Player->StartThread())
     {
@@ -4279,7 +4452,7 @@ QtvPlayer::ReturnT QtvPlayer::OpenPullBufferedStream( FetchBufferedDataSizeT,
               "OpenPullBufferedStream failed due to trouble observed while registering");
               player->InitRollback();
               #ifdef FEATURE_REAL_PLAYER_USE_QTV_API
-              // Cancel the RAM player Init too. Dont want to leak any memory 
+              // Cancel the RAM player Init too. Dont want to leak any memory
               // in case client forget to issue the subsequent open.
               QtvRAMPlayer_Terminate(player);
               #endif
@@ -4316,7 +4489,7 @@ QtvPlayer::ReturnT QtvPlayer::OpenPullBufferedStream( FetchBufferedDataSizeT,
   }
 
   /* Atleast one track should be selected */
-  LogQtvCmd("OpenPullBufferedStream", "%d%d%d%d%d", (int32)nReturn,(int32)FetchBufferedDataSize, 
+  LogQtvCmd("OpenPullBufferedStream", "%d%d%d%d%d", (int32)nReturn,(int32)FetchBufferedDataSize,
             (int32)FetchBufferedData,dwTrackSelected,(int32)handle,(int32)priority);
   QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED,">>QtvPlayer::OpenPullBufferedStream returned %d",
                 nReturn);
@@ -4669,7 +4842,7 @@ QtvPlayer::ReturnT QtvPlayer::GetFrameInfo(FrameInfoT &frameInfo, InstanceHandle
 
   if (player->pMpeg4Player)
   {
-    nReturn = player->pMpeg4Player->GetFrameInfo(frameInfo);
+    nReturn = player->pMpeg4Player->GetFrameInfo(frameInfo, NULL);
   }
 #ifdef FEATURE_REAL_PLAYER_USE_QTV_API
   else if (player->CurrentMIMEType && strcmp(player->CurrentMIMEType, REAL_MEDIA_MIME_TYPE) == 0)
@@ -4705,6 +4878,7 @@ SIDE EFFECTS
 QtvPlayer::ReturnT QtvPlayer::GetExtFrameInfo
 (
   FrameInfoT &frameInfo,
+  void **ppExtFrmInfo,
   InstanceHandleT handle
 )
 {
@@ -4718,7 +4892,7 @@ QtvPlayer::ReturnT QtvPlayer::GetExtFrameInfo
 
   if (player->pMpeg4Player)
   {
-    nReturn = player->pMpeg4Player->GetFrameInfo(frameInfo);
+    nReturn = player->pMpeg4Player->GetFrameInfo(frameInfo,ppExtFrmInfo);
   }
   LogQtvCmd("GetExtFrameInfo", "%d%d%d", (int32)nReturn, &frameInfo,(int32)handle);
   QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, ">>QtvPlayer::GetExtFrameInfo return %d",nReturn);
@@ -5036,7 +5210,7 @@ QtvPlayer::ReturnT QtvPlayer::ScaleVideo(
       if (player->pMpeg4Player->StartThread())
       {
         PV_VIDEO_SCALE_type *pEvent = QCCreateMessage(PV_VIDEO_SCALE, player->pMpeg4Player);
-  
+
         if (pEvent)
         {
           pEvent->scaling = ScaleFactor;
@@ -5062,13 +5236,13 @@ QtvPlayer::ReturnT QtvPlayer::ScaleVideo(
   QtvPlayer::ScaleVideo
 
 DESCRIPTION
-  Perform arbitrary video scaling from 0.3x - 1,9x with DSP xScalar. It posts a 
+  Perform arbitrary video scaling from 0.3x - 1,9x with DSP xScalar. It posts a
   scale message onto the MPEG4 player's task. This function doesn't
   do any notification of the callback itself, it relies on the MPEG4 player
   to do it.
   If the requested output dimensions fall outside the supported scaling range,
   MPEG4 Player shall notify an error.
-  
+
 DEPENDENCIES
   None.
 
@@ -5082,8 +5256,8 @@ SIDE EFFECTS
 ========================================================================== */
 QtvPlayer::ReturnT QtvPlayer::ScaleVideo(
 #ifdef FEATURE_QTV_XSCALE_VIDEO
-  uint32 outWidth, 
-                                         uint32 outHeight, 
+  uint32 outWidth,
+                                         uint32 outHeight,
   InstanceHandleT handle
 #else
   uint32,
@@ -5130,7 +5304,7 @@ QtvPlayer::ReturnT QtvPlayer::ScaleVideo(
     }
   }
 
-  
+
   QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, ">>QtvPlayer::ScaleVideo return %d",nReturn);
   return nReturn;
 #else
@@ -5404,7 +5578,7 @@ QtvPlayer::ReturnT QtvPlayer::GetAudioVideoStatistics(AudioVideoStatisticsT &sta
   QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, "QtvPlayer::GetAudioVideoStatistics");
 
   QtvPlayer *player = GetPlayer(handle);
- 
+
   ReturnT nReturn = QtvPlayer::QTV_RETURN_ERROR;
   SetNullAudioVideoStatistics(statistics);
 
@@ -5527,6 +5701,7 @@ QtvPlayer::CodecType QtvPlayer::GetAudioCodecType(InstanceHandleT handle)
         codecType = QTV_H263_CODEC;
         break;
       case Media::STILL_IMAGE_CODEC:
+	  case Media::STILL_IMAGE_H263_CODEC:
         codecType = QTV_STILL_IMAGE_CODEC;
         break;
 #ifdef FEATURE_MP4_3GPP_TIMED_TEXT
@@ -5565,16 +5740,21 @@ QtvPlayer::CodecType QtvPlayer::GetAudioCodecType(InstanceHandleT handle)
 #if defined (FEATURE_QTV_WMA_PRO_DECODER) || defined (FEATURE_QTV_WMA_PRO_DSP_DECODER)
         case Media::WMA_PRO_CODEC:
           codecType = QTV_WMA_PRO_CODEC;
-          break;        
+          break;
         case Media::WMA_PRO_PLUS_CODEC:
           codecType = QTV_WMA_PRO_PLUS_CODEC;
-          break;        
+          break;
 #endif /* defined (FEATURE_QTV_WMA_PRO_DECODER) || defined (FEATURE_QTV_WMA_PRO_DSP_DECODER) */
 
 #ifdef FEATURE_QTV_IN_CALL_VIDEO
 #error code not present
 #endif /* FEATURE_QTV_IN_CALL_VIDEO */
-
+#ifdef FEATURE_QTV_AVI_AC3
+#error code not present
+#endif /* FEATURE_QTV_AVI_AC3 */
+#ifdef FEATURE_QTV_PCM
+#error code not present
+#endif /* FEATURE_QTV_PCM */
       case Media::UNKNOWN_CODEC:
       default:
         break;
@@ -5626,11 +5806,18 @@ QtvPlayer::CodecType QtvPlayer::GetVideoCodecType(InstanceHandleT handle)
         codecType = QTV_H263_CODEC;
         break;
 
+#ifdef FEATURE_DIVX_311_ENABLE
+      case Media::DIVX311_CODEC:
+        codecType = QTV_DIVX311_CODEC;
+        break;
+#endif
+
       case Media::H264_CODEC:
         codecType = QTV_H264_CODEC;
         break;
 
       case Media::STILL_IMAGE_CODEC:
+	  case Media::STILL_IMAGE_H263_CODEC:
         codecType = QTV_STILL_IMAGE_CODEC;
         break;
 
@@ -5798,7 +5985,9 @@ boolean QtvPlayer::Get3GPPTimedTextData(uint8 * pDataBuf, int nBufSize,
   if(pData && nTextDataSize && pDataBuf)
   {
     memcpy(pDataBuf, pData, MIN(nBufSize, nTextDataSize));
-    LogQtvCmd("GetRTPStatistics", "%d%d%d", (int32)true,(int32) pDataBuf, nBufSize,(int32)handle); 
+    LogQtvCmd("GetRTPStatistics", "%d%d%d", (int32)true,(int32) pDataBuf, nBufSize,(int32)handle);
+    QTV_MSG_PRIO2(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,
+    "QtvPlayer::Get3GPPTimedTextData: Text Data->%s Text Size-> %d",pDataBuf,nBufSize);
     return true;
   }
   return false;
@@ -5839,7 +6028,7 @@ boolean QtvPlayer::Get3GPPTimedTextBGRGB(uint8 * pRGBBuf, int nBufSize,
   if(pBackgroundColorRGBA && pRGBBuf)
   {
     memcpy(pRGBBuf, pBackgroundColorRGBA, MIN(nBufSize, PVTEXT_MAX_TEXT_COLORS));
-    LogQtvCmd("Get3GPPTimedTextBGRGB", "%d%d%d", (int32)true,(int32)pRGBBuf, nBufSize,(int32)handle); 
+    LogQtvCmd("Get3GPPTimedTextBGRGB", "%d%d%d", (int32)true,(int32)pRGBBuf, nBufSize,(int32)handle);
     return true;
   }
   return false;
@@ -5880,7 +6069,7 @@ boolean QtvPlayer::Get3GPPTimedTextTxtRGB(uint8 * pRGBBuf, int nBufSize,
   if(pTextColorRGBA && pRGBBuf)
   {
     memcpy(pRGBBuf, pTextColorRGBA, MIN(nBufSize, PVTEXT_MAX_TEXT_COLORS));
-    LogQtvCmd("Get3GPPTimedTextTxtRGB", "%d%d%d", (int32)true, (int32)pRGBBuf, nBufSize,(int32)handle); 
+    LogQtvCmd("Get3GPPTimedTextTxtRGB", "%d%d%d", (int32)true, (int32)pRGBBuf, nBufSize,(int32)handle);
     return true;
   }
   return false;
@@ -5926,7 +6115,7 @@ QtvPlayer::ReturnT QtvPlayer::GetNextTelopElement(QtvPlayer::TelopElementT &telo
   {
     nReturn = TimedText::GetNextTelopElement(telopElement);
     QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, ">>QtvPlayer::GetNextTelopElement");
-    LogQtvCmd("GetNextTelopElement", "%d%d%d", (int32)nReturn, &telopElement, (int32)handle);  
+    LogQtvCmd("GetNextTelopElement", "%d%d%d", (int32)nReturn, &telopElement, (int32)handle);
   }
 #else
   nReturn = QTV_RETURN_FEATURE_NOT_AVAILABLE;
@@ -5967,7 +6156,7 @@ bool QtvPlayer::GetTelopSubString(TelopSubStringT* pUserSubStr, int32 index,
   if(pSubStr && pUserSubStr)
   {
     memcpy(pUserSubStr, pSubStr, sizeof(TelopSubStringT));
-    LogQtvCmd("GetTelopSubString", "%d%d%d%d", (int32)true,pUserSubStr, index,(int32)handle); 
+    LogQtvCmd("GetTelopSubString", "%d%d%d%d", (int32)true,pUserSubStr, index,(int32)handle);
     return true;
   }
   return false;
@@ -6047,22 +6236,24 @@ QtvPlayer::ReturnT QtvPlayer::GetGenericTextData(uint8** pTextFormat, uint8* pDa
   {
     nTextDataSize = (uint32)TimedText::GetTextBufSize();
     pData = (uint8 *)TimedText::GetText();
-    nInputBufSize = *pBufSize;                                        /* copy the "pDataBuf" size */ 
-    *pTextFormat   = (uint8 *)TimedText::GetTextFormatString();       /* copy the Text Format String */ 
-    
+    nInputBufSize = *pBufSize;                                        /* copy the "pDataBuf" size */
+    *pTextFormat   = (uint8 *)TimedText::GetTextFormatString();       /* copy the Text Format String */
+
     if(pDataBuf)
     {
       if(pData && nTextDataSize)
       {
         memcpy(pDataBuf, pData, MIN(nInputBufSize, nTextDataSize));
       }
-      *pBufSize = MIN(nInputBufSize, nTextDataSize);                  /* copy the output text data size */        
+      *pBufSize = MIN(nInputBufSize, nTextDataSize);                  /* copy the output text data size */
       if(nInputBufSize < nTextDataSize)
       {
         nReturn = QTV_RETURN_BUFFER_UNDERRUN;
       }
       else
       {
+        QTV_MSG_PRIO2(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,
+    "QtvPlayer::GetGenericTextData: Text Data->%s Text Size-> %d",pDataBuf,*pBufSize);
         nReturn = QTV_RETURN_OK;
       }
    }
@@ -6116,7 +6307,6 @@ QtvPlayer::ReturnT QtvPlayer::SetUserAgentParameters(const char *man,
   {
     std_strlcpy(player->m_UserAgentParam_ctn, ctn, QTV_MAX_USER_AGENT_CTN_BYTES+1);
   }
-  player->m_UserAgentStr[0] = '\0';
   player->m_UserAgentParam_params[0] = '\0';
 
 #ifdef FEATURE_REAL_PLAYER_USE_QTV_API
@@ -6175,9 +6365,6 @@ QtvPlayer::ReturnT QtvPlayer::SetUserAgent(const char * userAgentName,
   {
     std_strlcpy(player->m_UserAgentStr, userAgentName, QTV_MAX_USER_AGENT_STR_BYTES+1);
   }
-  player->m_UserAgentParam_man[0] = '\0';
-  player->m_UserAgentParam_ctn[0] = '\0';
-  player->m_UserAgentParam_params[0] = '\0';
 
 #ifdef FEATURE_REAL_PLAYER_USE_QTV_API
   if (player->CurrentMIMEType && strcmp(player->CurrentMIMEType, REAL_MEDIA_MIME_TYPE) == 0)
@@ -6232,10 +6419,10 @@ QtvPlayer::ReturnT QtvPlayer::SetUserAgentParameters(const char* params,
   ReturnT nReturn = QTV_RETURN_OK;
 
   if (player->m_UserAgentParam_params != params)
-  {  
+  {
     std_strlcpy(player->m_UserAgentParam_params, params, QTV_MAX_USER_AGENT_STR_BYTES+1);
   }
-  player->m_UserAgentStr[0] = '\0';
+
   player->m_UserAgentParam_man[0] = '\0';
   player->m_UserAgentParam_ctn[0] = '\0';
 
@@ -6259,6 +6446,15 @@ QtvPlayer::ReturnT QtvPlayer::SetUserAgentParameters(const char* params,
      QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Cannot log Qtv cmd %u", params);
   }
   return nReturn;
+}
+
+/*Function used internally to register a QtvPlayer inst within the
+QtvInstances[] lookup array*/
+
+QtvPlayer::ReturnT QtvPlayer::RegisterQTVInstance( InstanceHandleT handle,
+                                 InstancePriorityT priority )
+{
+  return RegisterInst(handle,priority);
 }
 
 /* ======================================================================
@@ -6285,6 +6481,8 @@ SIDE EFFECTS
 ========================================================================== */
 void QtvPlayer::SetDataPortRange(int beginPort, int endPort)
 {
+  QTV_MSG_PRIO2(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,
+               "QtvPlayer::beginPort %d endPort %d", beginPort, endPort );
   NetBase::setDataPortRange((uint16) beginPort, (uint16) endPort);
    LogQtvCmd("SetDataPortRange", "%d%d%d", 0, beginPort, endPort);
 }
@@ -6448,7 +6646,7 @@ void SetNullClipInfo(QtvPlayer::ClipInfoT &i)
   i.RepositioningAllowed=true;    /* by default repositioning is allowed */
   i.VideoOnlyPlaybackAllowed=false;
   i.AudioOnlyPlaybackAllowed=false;
-#ifdef FEATURE_QTV_PDCF 
+#ifdef FEATURE_QTV_PDCF
   i.encryptionType = QtvPlayer::ENCRYPT_NONE;
 #endif /* FEATURE_QTV_PDCF */
   for (int j = 0; j < QTV_MAX_MEDIA_TRACKS; j++)
@@ -6458,7 +6656,6 @@ void SetNullClipInfo(QtvPlayer::ClipInfoT &i)
 }
 
 
-#ifdef FEATURE_REAL_PLAYER_USE_QTV_API
 /* ======================================================================
 FUNCTION
   QtvPlayer::GetFileExtension
@@ -6505,7 +6702,7 @@ const char *GetFileExtension(const char *file)
   {
     pos = (char *)strrchr(file, '.');
   }
-  
+
   if (pos)
   {
     int len;
@@ -6546,7 +6743,6 @@ const char *GetFileExtension(const char *file)
   }
   return pos;
 }
-#endif
 
 /* ======================================================================
 FUNCTION
@@ -6560,7 +6756,7 @@ const char *QtvPlayer::GetMediaType(
 #ifdef FEATURE_REAL_PLAYER_USE_QTV_API
   const char *file
 #else
-  const char *
+  const char *file
 #endif /* FEATURE_REAL_PLAYER_USE_QTV_API */
   )
 {
@@ -6569,13 +6765,15 @@ const char *QtvPlayer::GetMediaType(
   const char *ext = GetFileExtension(file);
   if (ext)
   {
-    if ((std_strcmp(ext, REAL_MEDIA_EXT) == 0) || 
+    if ((std_strcmp(ext, REAL_MEDIA_EXT) == 0) ||
         (std_strcmp(ext, REAL_AUDIO_EXT) == 0) ||
         (std_strcmp(ext, REAL_VIDEO_EXT) == 0))
     {
       retVal = REAL_MEDIA_MIME_TYPE;
     }
-    else if ((ZUtils::StrncmpI(ext, SDP_FILE_EXT,3) == true) && (ZUtils::StrncmpI(file,"rtsp://", 7) != true))
+    else if ((ZUtils::StrncmpI(ext, SDP_FILE_EXT,3) == true) && 
+                    ((ZUtils::StrncmpI(file,"rtsp://", 7) != true) ||
+                     (ZUtils::StrncmpI(file,"rtspt://", 8) != true)))
     {
       retVal = QTVMediaSDP_GetMIMEType(file);
     }
@@ -6583,15 +6781,17 @@ const char *QtvPlayer::GetMediaType(
     // content can be played from .url files.
     else if (strcmp(ext, RAM_FILE_EXT) == 0)
     {
-      if (std_strncmp(file,"rtsp://", 7) == 0 || std_strncmp(file,"http://", 7) == 0)
+      if (std_strncmp(file,"rtsp://", 7) == 0 || 
+           std_strncmp(file,"rtspt://", 8) == 0 ||
+           std_strncmp(file,"http://", 7) == 0)
       {
-         // The Qtv and RAM file players are not capable of handing .ram files 
+         // The Qtv and RAM file players are not capable of handing .ram files
          // located on servers, so play them using the Real Player.
         retVal = REAL_MEDIA_MIME_TYPE;
       }
       else if (QtvRAMPlayer_IsRmfContent(file))
       {
-        //rm local fileplayback content is in 
+        //rm local fileplayback content is in
         //.ram file, so act accordingly
         retVal = REAL_MEDIA_MIME_TYPE;
       }
@@ -6602,9 +6802,11 @@ const char *QtvPlayer::GetMediaType(
     }
     else if (strcmp(ext, URL_FILE_EXT) == 0)
     {
-      if (strncmp(file,"rtsp://", 7) == 0 || strncmp(file,"http://", 7) == 0)
+      if (strncmp(file,"rtsp://", 7) == 0 || 
+           strncmp(file,"rtspt://", 8) == 0 || 
+           strncmp(file,"http://", 7) == 0)
       {
-         // The Real Player is not capable of handing .url files 
+         // The Real Player is not capable of handing .url files
          // located on servers, so play them using the Qtv Player.
         retVal = QTV_PLAYER_MIME_TYPE;
       }
@@ -6624,6 +6826,20 @@ const char *QtvPlayer::GetMediaType(
     return retVal;
   }
   else
+#else
+  const char *ext = GetFileExtension(file);
+  if (ext)
+  {
+    if ((std_strcmp(ext, REAL_MEDIA_EXT) == 0) || 
+        (std_strcmp(ext, REAL_AUDIO_EXT) == 0) ||
+        (std_strcmp(ext, REAL_VIDEO_EXT) == 0))
+    {
+      retVal = NULL;  
+      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_FATAL, "Error:OpenURN GetMediaType returning NULL");
+    }
+    return retVal;
+  }
+ else
 #endif
   {
     // Player streaming files without an extension using the QTV player
@@ -6651,6 +6867,10 @@ const char *QtvPlayer::GetMIMEType(unsigned char *pBuf, uint32 dwBufSize, uint32
     {
       memcpy(buffer, pBuf, MP4_MIME_BUFFER_LENGTH);
       if (memcmp(buffer+4, FMT_MP4_MARK, 4) == 0)
+      {
+        MIMEType = QTV_PLAYER_MIME_TYPE;
+      }
+      else if(memcmp(buffer+4, FMT_MP4_MARK_1, 4) == 0)
       {
         MIMEType = QTV_PLAYER_MIME_TYPE;
       }
@@ -6703,9 +6923,9 @@ const char *QtvPlayer::GetMIMEType(unsigned char *pBuf, uint32 dwBufSize, uint32
     }
 
     /* Incase of AVI */
-    if(dwBufSize >= RIFF_MIME_BUFFER_LENGTH)
+    if(dwBufSize >= RIFF_AVI_MIME_BUFFER_LENGTH)
     {
-      memcpy(buffer, pBuf, RIFF_MIME_BUFFER_LENGTH);
+      memcpy(buffer, pBuf, RIFF_AVI_MIME_BUFFER_LENGTH);
       if (!memcmp(buffer, FMT_RIFF_MARK, RIFF_MIME_BUFFER_LENGTH) && !memcmp(buffer+8, FMT_AVI_MARK, AVI_MIME_BUFFER_LENGTH))
       {
         MIMEType = QTV_PLAYER_MIME_TYPE;
@@ -6718,7 +6938,7 @@ const char *QtvPlayer::GetMIMEType(unsigned char *pBuf, uint32 dwBufSize, uint32
       if (!memcmp(pBuf, FMT_RIFF_MARK, 4) && !memcmp(pBuf+8, FMT_QCP_QLCM,4))
       {
         MIMEType = QTV_PLAYER_MIME_TYPE;
-      }  
+      }
     }
   }
   if(MIMEType)
@@ -6803,7 +7023,7 @@ SIDE EFFECTS
 const char *QtvPlayer::GetMIMEType(unsigned char *buffer, int length)
 {
   const char *MIMEType = NULL;
-  MIMEType = QtvPlayer::GetMIMEType(buffer,length,length); 
+  MIMEType = QtvPlayer::GetMIMEType(buffer,length,length);
   return MIMEType;
 }
 /* ======================================================================
@@ -6842,9 +7062,9 @@ QtvPlayer::ReturnT QtvPlayer::GetTrackTimeScale(TrackType trackType, uint32 *pTi
         *pTimeScale = (uint32)pMedia->GetVideoTimescale(0);
         nReturn = QTV_RETURN_OK;
       }
-	  else
+    else
       {
-		nReturn = QTV_RETURN_DATA_NOT_AVAILABLE;
+    nReturn = QTV_RETURN_DATA_NOT_AVAILABLE;
       }
     }
     else if (trackType == AudioTrack)
@@ -6855,9 +7075,9 @@ QtvPlayer::ReturnT QtvPlayer::GetTrackTimeScale(TrackType trackType, uint32 *pTi
         *pTimeScale = (uint32)pMedia->GetAudioTimescale(0);
         nReturn = QTV_RETURN_OK;
       }
-	  else
+    else
       {
-		nReturn = QTV_RETURN_DATA_NOT_AVAILABLE;
+    nReturn = QTV_RETURN_DATA_NOT_AVAILABLE;
       }
     }
 #ifdef FEATURE_MP4_3GPP_TIMED_TEXT
@@ -6869,9 +7089,9 @@ QtvPlayer::ReturnT QtvPlayer::GetTrackTimeScale(TrackType trackType, uint32 *pTi
         *pTimeScale = (uint32)pMedia->GetTextTimescale(0);
         nReturn = QTV_RETURN_OK;
       }
-	  else
+    else
       {
-		nReturn = QTV_RETURN_DATA_NOT_AVAILABLE;			
+    nReturn = QTV_RETURN_DATA_NOT_AVAILABLE;
       }
     }
 #endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
@@ -6984,14 +7204,14 @@ QtvPlayer::ReturnT QtvPlayer::SetMediaInfo(
 {
   QtvPlayer *player = GetPlayer(handle);
   ReturnT nReturn = QTV_RETURN_ERROR;
-  // Currently this routine is used only by bcast flo media module. 
+  // Currently this routine is used only by bcast flo media module.
   // Size check to avoid denial-of-service kind of attacks through size parameter
   // Currently the size of the flo media info structure can not exceed 200 bytes
-  // Considering the near future and broadcast integration work going on , 
-  // checking for ten times of this value. 
+  // Considering the near future and broadcast integration work going on ,
+  // checking for ten times of this value.
   if(!player || (size > QTV_MAX_MEDIA_INFO_SIZE))
   {
-    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, 
+    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,
                  "Invalid size passed to SetMediaInfo or player obj. invalid");
     return nReturn;
   }
@@ -7048,10 +7268,10 @@ SIDE EFFECTS
   Detail any side effects.
 
 ========================================================================== */
-QtvPlayer::ReturnT QtvPlayer::RegisterDRMDecryptMethod( QtvPlayer::DRMDecryptMethodT pDecryptFunction, void *pClientData, 
+QtvPlayer::ReturnT QtvPlayer::RegisterDRMDecryptMethod( QtvPlayer::DRMDecryptMethodT pDecryptFunction, void *pClientData,
 #ifdef FEATURE_QTV_WM_DRM_API
                                                         InstanceHandleT handle)
-#else 
+#else
                                                         InstanceHandleT /*handle*/ )
 #endif /* FEATURE_QTV_WM_DRM_API */
 {
@@ -7065,12 +7285,12 @@ QtvPlayer::ReturnT QtvPlayer::RegisterDRMDecryptMethod( QtvPlayer::DRMDecryptMet
   if ( player && player->pMpeg4Player)
   {
     if (player->pMpeg4Player->StartThread())
-    {     
+    {
       QTV_REGISTER_DRM_DECRYPT_METHOD_EVENT_type *pEvent = QCCreateMessage(QTV_REGISTER_DRM_DECRYPT_METHOD_EVENT, player->pMpeg4Player);
       if (pEvent)
       {
         pEvent->pDecryptFunction = pDecryptFunction;
-        pEvent->pClientData = pClientData;        
+        pEvent->pClientData = pClientData;
         player->pMpeg4Player->PostMessage(pEvent);
         nReturn = QTV_RETURN_OK;
       }
@@ -7659,6 +7879,8 @@ SIDE EFFECTS
 ========================================================================== */
 QtvPlayer::ReturnT QtvPlayer::InitializeTelopElements(InstanceHandleT handle)
 {
+  TimedText *pTText = NULL;
+
 #ifdef FEATURE_MP4_KDDI_TELOP_TEXT
   QtvPlayer *player = GetPlayer(handle);
   if(numRegisteredQtvPlayers > 1)
@@ -7669,7 +7891,9 @@ QtvPlayer::ReturnT QtvPlayer::InitializeTelopElements(InstanceHandleT handle)
   if(player->pMpeg4Player && player->pMpeg4Player->IsThreadActive())
   {
     Media     *pMedia  = player->pMpeg4Player->GetTextMedia();
-    TimedText *pTText  = player->pMpeg4Player->GetTextPlayer();
+#ifndef FEATURE_WINCE
+    pTText  = player->pMpeg4Player->GetTextPlayer();
+#endif
     if(pMedia && pTText)
     {
       if(pMedia->IsTelopPresent())
@@ -7707,6 +7931,7 @@ SIDE EFFECTS
 ========================================================================== */
 QtvPlayer::ReturnT QtvPlayer::SetupNextTelopElement(InstanceHandleT handle)
 {
+  TimedText *pTText = NULL;
 #ifdef FEATURE_MP4_KDDI_TELOP_TEXT
   QtvPlayer *player = GetPlayer(handle);
   if(numRegisteredQtvPlayers > 1)
@@ -7716,7 +7941,9 @@ QtvPlayer::ReturnT QtvPlayer::SetupNextTelopElement(InstanceHandleT handle)
   ReturnT nReturn = QTV_RETURN_ERROR;
   if(player->pMpeg4Player && player->pMpeg4Player->IsThreadActive())
   {
-    TimedText *pTText  = player->pMpeg4Player->GetTextPlayer();
+#ifndef FEATURE_WINCE
+    pTText  = player->pMpeg4Player->GetTextPlayer();
+#endif
     if(pTText)
     {
       if(pTText->SetupNextTelopElement())
@@ -7763,7 +7990,7 @@ void QtvPlayer::SetUnhandledRTSPHeaderCallback(
   if(numRegisteredQtvPlayers == 1)
   {
     player->unprocessedRtspHeaderCallback = newCallback;
-    LogQtvCmd("SetUnhandledRTSPHeaderCallback", "%d%d%d", 0,(int32)newCallback, (int32)handle);  
+    LogQtvCmd("SetUnhandledRTSPHeaderCallback", "%d%d%d", 0,(int32)newCallback, (int32)handle);
   }
 }
 
@@ -8054,7 +8281,7 @@ QtvPlayer::ReturnT QtvPlayer::SetNetPolicyInfo(NetPolicyInfo *netPolicyInfo,
       {
          RealPlayer_SetPDPProfileNumber(player->NetPolicy.primaryPDPProfileNo);
       }
-#endif /* FEATURE_REAL_PLAYER_USE_QTV_API */  
+#endif /* FEATURE_REAL_PLAYER_USE_QTV_API */
       nReturn = QTV_RETURN_OK;
   }
   LogQtvCmd("SetNetPolicyInfo", "%d%d%d", (int32)nReturn, (int32)netPolicyInfo, (int32)handle);
@@ -8141,7 +8368,7 @@ QtvPlayer::ReturnT QtvPlayer::SetDescramblerHandler(void *descrambler,
 {
 #ifdef FEATURE_QTV_ENCRYPTED_STREAMS
   QtvPlayer *player = GetPlayer(handle);
-  
+
   if(numQtvPlayers > 1)
   {
     return QTV_RETURN_MULTIPLE_INSTANCE_RUNNING;
@@ -8168,7 +8395,7 @@ QtvPlayer::ReturnT QtvPlayer::SetDescramblerHandler(void *descrambler,
 
    QTV_USE_ARG1(descrambler);
    QTV_USE_ARG1(handle);
-   
+
    return QTV_RETURN_FEATURE_NOT_AVAILABLE;
 #endif
 }
@@ -8468,7 +8695,7 @@ void QtvPlayer::ReleaseCurrentVideoFrameBuffer( void *pBuffer, InstanceHandleT h
 
   if(numRegisteredQtvPlayers == 0 || player == NULL)
   {
-    QTV_MSG_PRIO2(QTVDIAG_GENERAL, 
+    QTV_MSG_PRIO2(QTVDIAG_GENERAL,
                   QTVDIAG_PRIO_HIGH,
                   "QTVPlayer already Destroyed.numRegisteredQtvPlayers= %d, player= %d",
                    numRegisteredQtvPlayers,player);
@@ -8553,7 +8780,11 @@ bool QtvPlayer::CopyBufferToFile(
            {
               QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "CopyBuffer::Malloc Failed");
               QTV_Free(pEvent);
-           } 
+           }
+        }
+        else
+        {
+          QTV_Free(pEvent);
         }
       }
     }
@@ -8622,6 +8853,7 @@ SIDE EFFECTS:
 
 void QtvPlayer::LogQtvCmd(const char *cmd ,...)
 {
+#ifndef FEATURE_DISABLE_QTV_DIAG_IFACE
   QTV_LOG_CMD_TYPE *qtv_cmd = NULL;
   int32 cmd_len;
   int32 j=0;
@@ -8709,7 +8941,7 @@ void QtvPlayer::LogQtvCmd(const char *cmd ,...)
       {
       case 's':
         arg_types[num_args] = 's';
-        tstr_args[num_args] = va_arg(v_args,char*);  
+        tstr_args[num_args] = va_arg(v_args,char*);
         tmp_length = FPOS(QTV_ARG_STR,arg_str[0]);
         tmp_length += strlen(tstr_args[num_args]) *
           FSIZ(QTV_ARG_STR,arg_str[0]);
@@ -8720,7 +8952,7 @@ void QtvPlayer::LogQtvCmd(const char *cmd ,...)
       case 'd':
         arg_types[num_args] = 'd';
 
-        tint_args[num_args]=  va_arg(v_args,int32); 
+        tint_args[num_args]=  va_arg(v_args,int32);
         t_total_args_len += sizeof(int32);
         num_args++;
         break;
@@ -8728,7 +8960,7 @@ void QtvPlayer::LogQtvCmd(const char *cmd ,...)
       case 'u':
         arg_types[num_args] = 'u';
 
-        tuint_args[num_args]=  va_arg(v_args,uint32); 
+        tuint_args[num_args]=  va_arg(v_args,uint32);
         t_total_args_len += sizeof(uint32);
         num_args++;
         break;
@@ -8789,7 +9021,7 @@ void QtvPlayer::LogQtvCmd(const char *cmd ,...)
 
     /*write number of args*/
     *tptr++ = (num_args & 0xFF);
-    *tptr++ = (num_args >> 8); 
+    *tptr++ = (num_args >> 8);
 
     /*write args itself*/
     for( j=0; j<num_args; j++ )
@@ -8839,7 +9071,7 @@ void QtvPlayer::LogQtvCmd(const char *cmd ,...)
           *tptr++ = (temp_double >> 16) & 0xFF;
           *tptr++ = (temp_double >> 24) & 0xFF;
 
-          temp_double = abs((tdouble_args[j]*10000 - int(tdouble_args[j])*10000 ) ) ; 
+          temp_double = abs((tdouble_args[j]*10000 - int(tdouble_args[j])*10000 ) ) ;
           *tptr++ = temp_double  & 0xFF;
           *tptr++ = (temp_double >> 8) & 0xFF;
         } break ;
@@ -8869,6 +9101,7 @@ void QtvPlayer::LogQtvCmd(const char *cmd ,...)
   if (tdouble_args) QTV_Free(tdouble_args);
   if (tstr_args) QTV_Free(tstr_args);
   if (arg_types) QTV_Free(arg_types);
+#endif //FEATURE_DISABLE_QTV_DIAG_IFACE
 }/*lint !e529 suppressed*/
 
 /* ======================================================================
@@ -8947,9 +9180,9 @@ FUNCTION:
   MutePlaybackTracks
 
 DESCRIPTION:
-  This  method is executed in the player thread asynchronously. This 
-  Primitive is used to mute/un-mute the selected audio/video/text track of 
-  the player.  
+  This  method is executed in the player thread asynchronously. This
+  Primitive is used to mute/un-mute the selected audio/video/text track of
+  the player.
 
 INPUT/OUTPUT PARAMETERS:
   handle(I)   - Qtv Player Instance Handle
@@ -8959,25 +9192,25 @@ INPUT/OUTPUT PARAMETERS:
   #define QTV_AUDIO_TRACK_SELECTED          0x02
   #define QTV_TEXT_TRACK_SELECTED           0x04
 
-  eAction(I)   - Whether to Mute the track or not.  
+  eAction(I)   - Whether to Mute the track or not.
   #define QTV_TRACK_MUTE           0x01
   #define QTV_TRACK_UNMUTE         0x02
 
 RETURN VALUE:
   QtvPlayer ReturnT type
-  QTV_RETURN_OK - Successful mute or play of the specified tracks 
-  QTV_RETURN_ERROR - Media source returned error or invalid player 
-                     instance. 
+  QTV_RETURN_OK - Successful mute or play of the specified tracks
+  QTV_RETURN_ERROR - Media source returned error or invalid player
+                     instance.
 
 SIDE EFFECTS:
-  None. 
+  None.
 ======================================================================*/
-QtvPlayer::ReturnT QtvPlayer::MutePlaybackTracks(uint32      bmTrackSelected, 
+QtvPlayer::ReturnT QtvPlayer::MutePlaybackTracks(uint32      bmTrackSelected,
                                      MuteActionT         eAction,
                                      InstanceHandleT handle )
 {
-  QTV_MSG_PRIO2(QTVDIAG_GENERAL, 
-                QTVDIAG_PRIO_LOW, 
+  QTV_MSG_PRIO2(QTVDIAG_GENERAL,
+                QTVDIAG_PRIO_LOW,
                 ">>QtvPlayer::Mute %d %d",
                 bmTrackSelected,
                 eAction);
@@ -9002,7 +9235,7 @@ QtvPlayer::ReturnT QtvPlayer::MutePlaybackTracks(uint32      bmTrackSelected,
 
   else if (player->pMpeg4Player && player->pMpeg4Player->StartThread())
   {
-      QTV_MUTE_type *pEvent = QCCreateMessage(QTV_MUTE, 
+      QTV_MUTE_type *pEvent = QCCreateMessage(QTV_MUTE,
                                               player->pMpeg4Player);/*lint !e641 */
       if (pEvent)
       {
@@ -9012,13 +9245,13 @@ QtvPlayer::ReturnT QtvPlayer::MutePlaybackTracks(uint32      bmTrackSelected,
         nReturn = QTV_RETURN_OK;
       }
   }
-  LogQtvCmd("Mute", "%d%d%d%d", 
-            (int32)nReturn, 
+  LogQtvCmd("Mute", "%d%d%d%d",
+            (int32)nReturn,
             (int32)bmTrackSelected,
             (int32)eAction,(int32)handle);
 
-  QTV_MSG_PRIO1(QTVDIAG_GENERAL, 
-                QTVDIAG_PRIO_LOW, 
+  QTV_MSG_PRIO1(QTVDIAG_GENERAL,
+                QTVDIAG_PRIO_LOW,
                 ">>QtvPlayer::Mute return %d",
                 nReturn);
   return nReturn;
@@ -9028,41 +9261,41 @@ FUNCTION:
   ReadPlaybackTracks
 
 DESCRIPTION:
-  This Synchronous method can be used to read the audio, video and text track 
-  information. Track information returned contains the track identifier, 
-  media type and codec type such h264/AAC.  
+  This Synchronous method can be used to read the audio, video and text track
+  information. Track information returned contains the track identifier,
+  media type and codec type such h264/AAC.
 
 
 INPUT/OUTPUT PARAMETERS:
   handle     (I) - Qtv Player Instance Handle
-  nTrackCount(O) - When the trackList is passed as NULL pointer 
-                   the exact number of tracks presnet shall be 
-                   returned in this parameter. 
-  pTrackList (IO)- Track List Information pointer. Once the caller 
+  nTrackCount(O) - When the trackList is passed as NULL pointer
+                   the exact number of tracks presnet shall be
+                   returned in this parameter.
+  pTrackList (IO)- Track List Information pointer. Once the caller
                    obtain the track count, he/she will allocate
-                   enough memory. Allocated memory address is passed 
-                   in this parameter. Memory should be allocated 
-                   for the amount of nTrackCount multiplied by the 
-                   sizeof(TrackListT). 
+                   enough memory. Allocated memory address is passed
+                   in this parameter. Memory should be allocated
+                   for the amount of nTrackCount multiplied by the
+                   sizeof(TrackListT).
 
 RETURN VALUE:
   QtvPlayer ReturnT type
-  QTV_RETURN_OK    - Successful 
+  QTV_RETURN_OK    - Successful
   QTV_RETURN_ERROR - When the media source returns error or player
-                     is not initialized yet. 
+                     is not initialized yet.
 
 SIDE EFFECTS:
-  None. 
+  None.
 ======================================================================*/
-QtvPlayer::ReturnT QtvPlayer::ReadPlaybackTracks(uint32 *pnTrackCount, 
+QtvPlayer::ReturnT QtvPlayer::ReadPlaybackTracks(uint32 *pnTrackCount,
                            TrackListT *pTrackList,
                            InstanceHandleT handle )
 {
   ReturnT nReturn = QTV_RETURN_ERROR;
   QtvPlayer *player = GetPlayer(handle);
 
-  QTV_MSG_PRIO2(QTVDIAG_GENERAL, 
-                QTVDIAG_PRIO_LOW, 
+  QTV_MSG_PRIO2(QTVDIAG_GENERAL,
+                QTVDIAG_PRIO_LOW,
                 ">>QtvPlayer::ReadPlaybackTracks %d %d",
                 pnTrackCount,
                 pTrackList);
@@ -9075,19 +9308,19 @@ QtvPlayer::ReturnT QtvPlayer::ReadPlaybackTracks(uint32 *pnTrackCount,
 
   else if(player->pMpeg4Player)
   {
-    nReturn = 
-    player->pMpeg4Player->ReadPlaybackTracks( pnTrackCount, 
+    nReturn =
+    player->pMpeg4Player->ReadPlaybackTracks( pnTrackCount,
                                               pTrackList );
   }
 
-  LogQtvCmd("ReadPlaybackTracks", 
-            "%d%d%d%d", 
-            (int32)nReturn, 
+  LogQtvCmd("ReadPlaybackTracks",
+            "%d%d%d%d",
+            (int32)nReturn,
             (int32)pnTrackCount,
             (int32)pTrackList,(int32)handle);
 
-  QTV_MSG_PRIO1(QTVDIAG_GENERAL, 
-                QTVDIAG_PRIO_LOW, 
+  QTV_MSG_PRIO1(QTVDIAG_GENERAL,
+                QTVDIAG_PRIO_LOW,
                 ">>QtvPlayer::ReadPlaybackTracks return %d",nReturn);
   return nReturn;
 }
@@ -9098,45 +9331,45 @@ FUNCTION:
   SelectPlaybackTracks
 
 DESCRIPTION:
-  Asynchronous method used to select the new set of tracks from which to pull 
+  Asynchronous method used to select the new set of tracks from which to pull
   data. First parameter denotes the media combination and the remaining
-  are the track identifiers which are to be selected.  This primitive is 
-  applicable only before the player starts running. If the primitive is 
-  invoked in other states then invalid state error is returned. 
-   
+  are the track identifiers which are to be selected.  This primitive is
+  applicable only before the player starts running. If the primitive is
+  invoked in other states then invalid state error is returned.
+
 
 INPUT/OUTPUT PARAMETERS:
   handle         (I) - Qtv Player Instance Handle
-  
+
   bmTrackSelected(I) - Track selection bit mask
     #define QTV_NO_TRACK_SELECTED             0x00
     #define QTV_VIDEO_TRACK_SELECTED          0x01
     #define QTV_AUDIO_TRACK_SELECTED          0x02
     #define QTV_TEXT_TRACK_SELECTED           0x04
-  
-  nAudioTrackID  (I) - Audio Track Identifier 
-  nVideoTrackID  (I) - Video Track Identifier 
-  nTextTrackID   (I) - Text Track Identifier  
+
+  nAudioTrackID  (I) - Audio Track Identifier
+  nVideoTrackID  (I) - Video Track Identifier
+  nTextTrackID   (I) - Text Track Identifier
 RETURN VALUE:
   QtvPlayer ReturnT type
   QTV_RETURN_OK - All of the track selection succeeded.
-  QTV_RETURN_INVALID_PARAM - Any of the track identifiers invalid.  
-  QTV_RETURN_ERROR - When the media source returns generic error or 
-                     player is not initialized. 
+  QTV_RETURN_INVALID_PARAM - Any of the track identifiers invalid.
+  QTV_RETURN_ERROR - When the media source returns generic error or
+                     player is not initialized.
 
 SIDE EFFECTS:
   None.
 ======================================================================*/
-QtvPlayer::ReturnT QtvPlayer::SelectPlaybackTracks(uint32 bmTrackSelected, 
+QtvPlayer::ReturnT QtvPlayer::SelectPlaybackTracks(uint32 bmTrackSelected,
                              uint32 nAudioTrackID,
-                             uint32 nVideoTrackID, 
+                             uint32 nVideoTrackID,
                              uint32 nTextTrackID,
                              InstanceHandleT handle)
 {
   ReturnT nReturn = QTV_RETURN_ERROR;
   QtvPlayer *player = GetPlayer(handle);
-  QTV_MSG_PRIO1(QTVDIAG_GENERAL, 
-                QTVDIAG_PRIO_LOW, 
+  QTV_MSG_PRIO1(QTVDIAG_GENERAL,
+                QTVDIAG_PRIO_LOW,
                 ">>QtvPlayer::SelectPlaybackTracks %d ",
                 bmTrackSelected);
 
@@ -9148,11 +9381,11 @@ QtvPlayer::ReturnT QtvPlayer::SelectPlaybackTracks(uint32 bmTrackSelected,
     nReturn = QTV_RETURN_INVALID_PARAMETER;
   }
 
-  // Validation of the Track Identifiers shall be done asynchronously. 
+  // Validation of the Track Identifiers shall be done asynchronously.
   else if(player->pMpeg4Player && player->pMpeg4Player->StartThread())
   {
-                                                    
-    QTV_SELECT_PB_TRACK_type *pEvent = QCCreateMessage(QTV_SELECT_PB_TRACK, 
+
+    QTV_SELECT_PB_TRACK_type *pEvent = QCCreateMessage(QTV_SELECT_PB_TRACK,
                                             player->pMpeg4Player);/*lint !e641 */
     if (pEvent)
     {
@@ -9164,14 +9397,14 @@ QtvPlayer::ReturnT QtvPlayer::SelectPlaybackTracks(uint32 bmTrackSelected,
       nReturn = QTV_RETURN_OK;
     }
   }
-  LogQtvCmd("SelectPlaybackTracks", "%d%d%d%d%d%d", 
-            (int32)nReturn, 
+  LogQtvCmd("SelectPlaybackTracks", "%d%d%d%d%d%d",
+            (int32)nReturn,
             (int32)bmTrackSelected,
             (int32)nAudioTrackID,
             (int32)nVideoTrackID,
             (int32)nTextTrackID,(int32)handle);
-  QTV_MSG_PRIO1(QTVDIAG_GENERAL, 
-                QTVDIAG_PRIO_LOW, 
+  QTV_MSG_PRIO1(QTVDIAG_GENERAL,
+                QTVDIAG_PRIO_LOW,
                 ">>QtvPlayer::SelectPlaybackTracks return %d",nReturn);
   return nReturn;
 }
@@ -9183,8 +9416,8 @@ FUNCTION:
 
 DESCRIPTION:
   This is an Asynchronous method. This is used to move the media cursor
-  to the absolute time offset specified while the player is paused. 
-  
+  to the absolute time offset specified while the player is paused.
+
 INPUT/OUTPUT PARAMETERS:
   handle(I)     - Qtv Player Instance Handle
   nTimestamp(I) - Absolute time stamp
@@ -9192,19 +9425,19 @@ INPUT/OUTPUT PARAMETERS:
 
 RETURN VALUE:
   QtvPlayer ReturnT type
-  QTV_RETURN_OK - Primitive is successfully queued. Real response 
-                  will be delivered through the player status 
-                  callback. 
-  QTV_RETURN_ERROR - Error occured while queuing the primitive. 
+  QTV_RETURN_OK - Primitive is successfully queued. Real response
+                  will be delivered through the player status
+                  callback.
+  QTV_RETURN_ERROR - Error occured while queuing the primitive.
 
 SIDE EFFECTS:
-  Following ASynchronous events shall be posted by the QTV through 
-  the status callbacks registered: 
-  + QTV_PLAYER_STATUS_REPOSITION_DONE 
-    This event carries the new media cursor time offset along 
-    with usual attributes such as state, duration etc., 
+  Following ASynchronous events shall be posted by the QTV through
+  the status callbacks registered:
+  + QTV_PLAYER_STATUS_REPOSITION_DONE
+    This event carries the new media cursor time offset along
+    with usual attributes such as state, duration etc.,
   + QTV_PLAYER_STATUS_REPOSITION_FAILED
-    
+
 ======================================================================*/
 QtvPlayer::ReturnT QtvPlayer::Reposition(uint32 nTimestamp,
                    uint32 *puTransID,
@@ -9212,8 +9445,8 @@ QtvPlayer::ReturnT QtvPlayer::Reposition(uint32 nTimestamp,
 {
   ReturnT nReturn = QTV_RETURN_ERROR;
   QtvPlayer *player = GetPlayer(handle);
-  QTV_MSG_PRIO2(QTVDIAG_GENERAL, 
-                QTVDIAG_PRIO_LOW, 
+  QTV_MSG_PRIO2(QTVDIAG_GENERAL,
+                QTVDIAG_PRIO_LOW,
                 ">>QtvPlayer::Reposition %d %d",
                 nTimestamp,
                 puTransID);
@@ -9225,7 +9458,7 @@ QtvPlayer::ReturnT QtvPlayer::Reposition(uint32 nTimestamp,
 
   else if(player->pMpeg4Player && player->pMpeg4Player->StartThread())
   {
-    QTV_REPOSITION_type *pEvent = QCCreateMessage(QTV_REPOSITION, 
+    QTV_REPOSITION_type *pEvent = QCCreateMessage(QTV_REPOSITION,
                                             player->pMpeg4Player);/*lint !e641 */
     if (pEvent)
     {
@@ -9236,13 +9469,13 @@ QtvPlayer::ReturnT QtvPlayer::Reposition(uint32 nTimestamp,
       nReturn = QTV_RETURN_OK;
     }
   }
-  LogQtvCmd("Reposition", 
-            "%d%d%d%d", 
-            (int32)nReturn, 
+  LogQtvCmd("Reposition",
+            "%d%d%d%d",
+            (int32)nReturn,
             (int32)nTimestamp,
             (int32)puTransID,(int32)handle);
-  QTV_MSG_PRIO1(QTVDIAG_GENERAL, 
-                QTVDIAG_PRIO_LOW, 
+  QTV_MSG_PRIO1(QTVDIAG_GENERAL,
+                QTVDIAG_PRIO_LOW,
                 ">>QtvPlayer::Reposition return %d",
                 nReturn);
   return nReturn;
@@ -9254,45 +9487,45 @@ FUNCTION:
 
 DESCRIPTION:
   This is an Asynchronous method. This is used to move the media cursor
-  in a relative manner by specified number of sync frames. This movement 
-  could be either in the forward or in the backward direction. Once this 
-  operation is successful which is communicated asynchronously through 
+  in a relative manner by specified number of sync frames. This movement
+  could be either in the forward or in the backward direction. Once this
+  operation is successful which is communicated asynchronously through
   the status callback, PlayNextFrame should be able to display that Sync
   Frame at the cursor. This method is not applicable to live broadcast streams.
-  Pre-condition for the successful execution of this method is that the 
-  player must be paused.  If the first I-frame is to the right of the 
-  media cursor , then negative offsets position the cursor at the first 
-  I-frame. If the last I-frame is to the left of the media cursor then 
-  positive offsets move the cursor to the last I-frame. If the cursor 
+  Pre-condition for the successful execution of this method is that the
+  player must be paused.  If the first I-frame is to the right of the
+  media cursor , then negative offsets position the cursor at the first
+  I-frame. If the last I-frame is to the left of the media cursor then
+  positive offsets move the cursor to the last I-frame. If the cursor
   is already positioned at the first/Last sync frame , then Prev/Next
-  Sync operations results in error respectively. If the offset is zero 
-  and cursor is not on a I-frame then it will move to the previous/first 
-  sync frame whichever is present. If the cursor is already on a sync frame 
-  then zero offset is equivalent to a No-OP. 
-  
+  Sync operations results in error respectively. If the offset is zero
+  and cursor is not on a I-frame then it will move to the previous/first
+  sync frame whichever is present. If the cursor is already on a sync frame
+  then zero offset is equivalent to a No-OP.
+
 INPUT/OUTPUT PARAMETERS:
   handle(I)      - Qtv Player Instance Handle
   uTransID (O)   - Transaction identifier
-  nSyncOffset(I) - Positive value move the cursor forward and 
+  nSyncOffset(I) - Positive value move the cursor forward and
                    negative values move it backward by specified
-                   number of Sync frames. 
+                   number of Sync frames.
 
 RETURN VALUE:
   QtvPlayer ReturnT type
-  QTV_RETURN_OK - Primitive is successfully queued. Real response 
-                  will be delivered through the player status 
-                  callback. 
-  QTV_RETURN_ERROR - Error occured while queuing the primitive. 
+  QTV_RETURN_OK - Primitive is successfully queued. Real response
+                  will be delivered through the player status
+                  callback.
+  QTV_RETURN_ERROR - Error occured while queuing the primitive.
 
 SIDE EFFECTS:
-  Following ASynchronous events shall be posted by the QTV through 
-  the status callbacks registered: 
-  + QTV_PLAYER_STATUS_SEEK_SYNC_DONE 
-    This event carries the new media cursor time offset along 
-    with usual attributes such as state, duration etc., 
+  Following ASynchronous events shall be posted by the QTV through
+  the status callbacks registered:
+  + QTV_PLAYER_STATUS_SEEK_SYNC_DONE
+    This event carries the new media cursor time offset along
+    with usual attributes such as state, duration etc.,
   + QTV_PLAYER_STATUS_SEEK_SYNC_FAILED
   + QTV_PLAYER_NO_SYNC_FRAME_ERROR
-    
+
 ======================================================================*/
 QtvPlayer::ReturnT QtvPlayer::SeekToSync(sint31 nSyncOffset,
                           uint32 *puTransID,
@@ -9300,8 +9533,8 @@ QtvPlayer::ReturnT QtvPlayer::SeekToSync(sint31 nSyncOffset,
 {
   ReturnT nReturn = QTV_RETURN_ERROR;
   QtvPlayer *player = GetPlayer(handle);
-  QTV_MSG_PRIO2(QTVDIAG_GENERAL, 
-                QTVDIAG_PRIO_LOW, 
+  QTV_MSG_PRIO2(QTVDIAG_GENERAL,
+                QTVDIAG_PRIO_LOW,
                 ">>QtvPlayer::SeekToSync %d %d",
                 nSyncOffset,
                 puTransID);
@@ -9312,7 +9545,7 @@ QtvPlayer::ReturnT QtvPlayer::SeekToSync(sint31 nSyncOffset,
 
   else if(player->pMpeg4Player && player->pMpeg4Player->StartThread())
   {
-    QTV_SEEK_SYNC_type *pEvent = QCCreateMessage(QTV_SEEK_SYNC, 
+    QTV_SEEK_SYNC_type *pEvent = QCCreateMessage(QTV_SEEK_SYNC,
                                             player->pMpeg4Player);/*lint !e641 */
     if (pEvent)
     {
@@ -9323,14 +9556,14 @@ QtvPlayer::ReturnT QtvPlayer::SeekToSync(sint31 nSyncOffset,
       nReturn = QTV_RETURN_OK;
     }
   }
-  LogQtvCmd("SeekToSync", 
-            "%d%d%d%d", 
-            (int32)nReturn, 
+  LogQtvCmd("SeekToSync",
+            "%d%d%d%d",
+            (int32)nReturn,
             (int32)nSyncOffset,
             (int32)puTransID,(int32)handle);
 
-  QTV_MSG_PRIO1(QTVDIAG_GENERAL, 
-                QTVDIAG_PRIO_LOW, 
+  QTV_MSG_PRIO1(QTVDIAG_GENERAL,
+                QTVDIAG_PRIO_LOW,
                 ">>QtvPlayer::SeekToSync return %d",
                 nReturn);
   return nReturn;
@@ -9341,31 +9574,31 @@ FUNCTION:
   PlaySyncFrame
 
 DESCRIPTION:
-  ASynchronous method used to move the video track back by specified number 
-  of Sync frames in both directions while the player is paused. This method 
-  is not applicable to live broadcast streams.  This method is equivalent 
-  the seekSync followed by playNextFrame while the player is paused. 
-  
+  ASynchronous method used to move the video track back by specified number
+  of Sync frames in both directions while the player is paused. This method
+  is not applicable to live broadcast streams.  This method is equivalent
+  the seekSync followed by playNextFrame while the player is paused.
+
 INPUT/OUTPUT PARAMETERS:
   handle(I)      - Qtv Player Instance Handle
   nSyncOffset(I) -  Denotes the number of sync frames by which media cursor
-                      has to be moved forward/backward. 
+                      has to be moved forward/backward.
   uTransID (O)   - Transaction identifier
 
 RETURN VALUE:
   QtvPlayer ReturnT type
-  QTV_RETURN_OK    - Successfully queued. 
-  QTV_RETURN_ERROR - Couldnt queue the primitive 
+  QTV_RETURN_OK    - Successfully queued.
+  QTV_RETURN_ERROR - Couldnt queue the primitive
 
 SIDE EFFECTS:
-  Following ASynchronous events shall be posted by the QTV through 
-  the status callbacks registered: 
-  + QTV_PLAYER_STATUS_PLAY_SYNC_FRAME_DONE 
-    This event carries the new media cursor time offset along 
-    with usual attributes such as state, duration etc., 
+  Following ASynchronous events shall be posted by the QTV through
+  the status callbacks registered:
+  + QTV_PLAYER_STATUS_PLAY_SYNC_FRAME_DONE
+    This event carries the new media cursor time offset along
+    with usual attributes such as state, duration etc.,
   + QTV_PLAYER_STATUS_PLAY_SYNC_FRAME_FAILED
-  + QTV_PLAYER_NO_SYNC_FRAME_ERROR 
-    
+  + QTV_PLAYER_NO_SYNC_FRAME_ERROR
+
 ======================================================================*/
 QtvPlayer::ReturnT QtvPlayer::PlaySyncFrame(sint31 nSyncOffset,
                       uint32 *puTransID,
@@ -9373,8 +9606,8 @@ QtvPlayer::ReturnT QtvPlayer::PlaySyncFrame(sint31 nSyncOffset,
 {
   ReturnT nReturn = QTV_RETURN_ERROR;
   QtvPlayer *player = GetPlayer(handle);
-  QTV_MSG_PRIO2(QTVDIAG_GENERAL, 
-                QTVDIAG_PRIO_LOW, 
+  QTV_MSG_PRIO2(QTVDIAG_GENERAL,
+                QTVDIAG_PRIO_LOW,
                 ">>QtvPlayer::PlaySyncFrame %d %d",
                 nSyncOffset,
                 puTransID);
@@ -9385,7 +9618,7 @@ QtvPlayer::ReturnT QtvPlayer::PlaySyncFrame(sint31 nSyncOffset,
 
   else if(player->pMpeg4Player && player->pMpeg4Player->StartThread())
   {
-    QTV_PLAY_SYNC_type *pEvent = QCCreateMessage(QTV_PLAY_SYNC, 
+    QTV_PLAY_SYNC_type *pEvent = QCCreateMessage(QTV_PLAY_SYNC,
                                             player->pMpeg4Player);/*lint !e641 */
     if (pEvent)
     {
@@ -9396,14 +9629,14 @@ QtvPlayer::ReturnT QtvPlayer::PlaySyncFrame(sint31 nSyncOffset,
       nReturn = QTV_RETURN_OK;
     }
   }
-  LogQtvCmd("PlaySyncFrame", 
-            "%d%d%d%d", 
-            (int32) nReturn, 
-            (int32)nSyncOffset, 
+  LogQtvCmd("PlaySyncFrame",
+            "%d%d%d%d",
+            (int32) nReturn,
+            (int32)nSyncOffset,
             (int32)puTransID, (int32)handle);
 
-  QTV_MSG_PRIO1(QTVDIAG_GENERAL, 
-                QTVDIAG_PRIO_LOW, 
+  QTV_MSG_PRIO1(QTVDIAG_GENERAL,
+                QTVDIAG_PRIO_LOW,
                 ">>QtvPlayer::PlaySyncFrame return %d",
                 nReturn);
   return nReturn;
@@ -9418,7 +9651,7 @@ FUNCTION
 
 DESCRIPTION
   Trigger to get the media information from the source.
-  Some Validation is performed on the input parameters. 
+  Some Validation is performed on the input parameters.
 
 DEPENDENCIES
   None.
@@ -9436,13 +9669,13 @@ QtvPlayer::ReturnT QtvPlayer::GetMediaInfo(
   InstanceHandleT handle
 )
 {
-  
+
   ReturnT nReturn = QTV_RETURN_ERROR;
-  
-  // If the double pointer is null return immediately. 
+
+  // If the double pointer is null return immediately.
   if(!ppInfo || !pnSize)
   {
-    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, 
+    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,
                  "Passed Invalid Output Parameters");
     return nReturn;
   }
@@ -9465,7 +9698,7 @@ QtvPlayer::ReturnT QtvPlayer::GetMediaInfo(
     QTV_MSG_PRIO(QTVDIAG_GENERAL,QTVDIAG_PRIO_ERROR,
                  "QtvPlayer::GetMediaInfo failed ;invalid Qtv or Mpeg4 player object or thread");
   }
-  
+
   LogQtvCmd("GetMediaInfo", "%d%d%d%d", (int32)nReturn, (int32)*ppInfo,(int32)pnSize, (int32)handle);
   return nReturn;
 }
@@ -9502,7 +9735,7 @@ QtvPlayer::ReturnT QtvPlayer::SetPlaybackSpeed(
                 ">>QtvPlayer::SetPlaybackSpeed %d", pbSpeed);
 
   QtvPlayer *player = GetPlayer(handle);
-    
+
   if (player)
   {
     player->m_playbackSpeed = pbSpeed;
@@ -9535,7 +9768,7 @@ RETURN VALUE
     Enum of the Qtv return type.
 ========================================================================== */
 QtvPlayer::ReturnT QtvPlayer::SetDualMonoOutput(
-  DualMonoOutputT dualMonoOutput, 
+  DualMonoOutputT dualMonoOutput,
   InstanceHandleT handle)
 {
   ReturnT nReturn = QTV_RETURN_ERROR;
@@ -9593,9 +9826,9 @@ QtvPlayer::ReturnT QtvPlayer::SetDualMonoOutput(
   }
 #else
   QTV_USE_ARG1(dualMonoOutput);
-  QTV_USE_ARG1(handle); 
+  QTV_USE_ARG1(handle);
   nReturn = QTV_RETURN_FEATURE_NOT_AVAILABLE;
-#endif /* FEATURE_QTV_DUAL_MONO_OUTPUT_SELECTION */ 
+#endif /* FEATURE_QTV_DUAL_MONO_OUTPUT_SELECTION */
 
   return nReturn;
 }
@@ -9676,7 +9909,7 @@ QtvPlayer::ReturnT QtvPlayer::SetVDECParameter( QtvVDECParameterIdT inputParamId
   ReturnT nReturn = QTV_RETURN_ERROR;
   QtvPlayer *player = GetPlayer(handle);
 
-  QTV_MSG_PRIO2(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, 
+  QTV_MSG_PRIO2(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW,
                 ">>QtvPlayer::QtvVDECParameterIdT: %d  >>QtvPlayer::QtvVDECParameterDataT->freEnable.bFreEnable: %d",
                 inputParamId, (pInputParam->freEnable.bFreEnable));
 
@@ -9684,8 +9917,89 @@ QtvPlayer::ReturnT QtvPlayer::SetVDECParameter( QtvVDECParameterIdT inputParamId
   {
     nReturn = player->pMpeg4Player->SetVDECParameter(inputParamId,pInputParam);
   }
-  QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, 
+  QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW,
                 ">>QtvPlayer::SetVDECParameter return %d", nReturn);
   return nReturn;
 }
+
+#ifdef FEATURE_WINCE
+#error code not present
+#endif
+
+
+/* ======================================================================
+FUNCTION:
+  QtvPlayer::setSpeed
+
+DESCRIPTION:
+  sets speed for Fast start/Fast Cache
+
+INPUT/OUTPUT PARAMETERS:
+  speed
+
+RETURN VALUE:
+  None
+
+SIDE EFFECTS:
+  None.
+======================================================================*/
+ void QtvPlayer::setSpeed(float speed,InstanceHandleT handle)
+ {
+   QtvPlayer *player = GetPlayer(handle);
+   // Push to mpeg4player
+   if( player->pMpeg4Player)
+   {
+     QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW,
+                ">>QtvPlayer::setSpeed %d", speed);
+     player->pMpeg4Player->setSpeed(speed);
+   }
+   else
+   {
+    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,
+                "pMpeg4Player: NULL");
+   }
+ }
+
+/* ======================================================================
+FUNCTION:
+  QtvPlayer::setAccDuration
+
+DESCRIPTION:
+  sets AccDuration for Fast start/Fast Cache
+
+INPUT/OUTPUT PARAMETERS:
+  speed
+
+RETURN VALUE:
+  None
+
+SIDE EFFECTS:
+  None.
+======================================================================*/
+ void QtvPlayer::setAccDuration(int time,InstanceHandleT handle)
+ {
+   QtvPlayer *player = GetPlayer(handle);
+   if( player->pMpeg4Player)
+   {
+     QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW,
+                ">>QtvPlayer::setAccDuration %d", time);
+     // Push to mpeg4player
+     player->pMpeg4Player->setAccDuration ((int)time);
+   }
+   else
+   {
+    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,
+                "pMpeg4Player: NULL");
+   }
+ }
+
+
+
+#ifdef FEATURE_QTV_FCS
+#error code not present
+#endif /* FEATURE_QTV_FCS */
+
+#ifdef FEATURE_QTV_MEMORY_LEAK_DEBUG
+#error code not present
+#endif
 

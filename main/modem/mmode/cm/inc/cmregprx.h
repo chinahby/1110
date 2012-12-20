@@ -19,7 +19,7 @@ Copyright (c) 2002 - 2006 by QUALCOMM, Incorporated.  All Rights Reserved.
    This section contains comments describing changes made to this file.
    Notice that changes are listed in reverse chronological order.
 
-$Header: //source/qcom/qct/modem/mmode/cm/rel/08H1/inc/cmregprx.h#1 $
+$Header: //source/qcom/qct/modem/mmode/cm/rel/08H1_QSC1110_3.X/inc/cmregprx.h#1 $
 
 when       who     what, where, why
 --------   ---    -------------------------------------------------------

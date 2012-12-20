@@ -489,7 +489,6 @@ void otasp_get_rl_stats
   (void) mcc_nv_cmd( &otasp_nv_buf);
   
   /* Extract header of PRL*/
-  
   prl_hdr_extract( prl_hdr_ptr, 
                    (byte *)nv_pr_list.roaming_list, 
                    (prl_sspr_p_rev_e_type)nv_sspr_p_rev );
@@ -3676,7 +3675,6 @@ void sspr_cfg_rsp_populate_prl_blk
             prl_hdr_ptr->pr_list_id,
             otasp_is_nv_pr_list_valid );
 
-
   /* The the PRL id does not match and nv is invalid, reject the request. */
   if( (otasp_roam_size.pr_list_id != prl_hdr_ptr->pr_list_id ) &&
       ! otasp_is_nv_pr_list_valid )
@@ -3688,20 +3686,17 @@ void sspr_cfg_rsp_populate_prl_blk
     return;
   }
 
-
   /* The the PRL id does not match but nv is valid, use nv PRL.
   */
   if( ( otasp_roam_size.pr_list_id != prl_hdr_ptr->pr_list_id ) &&
       otasp_is_nv_pr_list_valid )
   {
     MSG_HIGH(" SSPR CONF REQ: use nv PRL", 0, 0, 0 );
-	
     roaming_list_ptr = &nv_pr_list;
   }
   #else
   roaming_list_ptr = &mcc_roaming_list;
   #endif /* FEATURE_MEM_REDUCE_PRL */
-
 
   MSG_MED("Reporting IS-683 PRL ",0,0,0);
 
@@ -5171,7 +5166,6 @@ word otasp_process_msg
                 nv_pr_list.valid = TRUE;
               }
 
-
 #ifdef FEATURE_SSPR_800
               if (!mcc_pcs_band_is_supported()) {
               /* For 800 MHz CDMA phones, the list can be enabled or disabled  */
@@ -5207,7 +5201,6 @@ word otasp_process_msg
 
               /* Set the PRL version before committing */
               nv_pr_list.prl_version = prl_version;
-
             }
 
 #ifdef FEATURE_EHRPD

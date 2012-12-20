@@ -17,7 +17,7 @@ EXTERNALIZED FUNCTIONS
   mip_outmsg_send_rrq()
     Composes and expedites a registration request via the mip_io module
 
-Copyright (c) 2000-2008 by QUALCOMM, Incorporated.  All Rights Reserved.
+Copyright (c) 2000-2011 by QUALCOMM, Incorporated.  All Rights Reserved.
 ===========================================================================*/
 
 
@@ -26,10 +26,11 @@ Copyright (c) 2000-2008 by QUALCOMM, Incorporated.  All Rights Reserved.
                       EDIT HISTORY FOR FILE
 
 $PVCSPath: O:/src/asw/COMMON/vcs/dsmip_outmsg.c_v   1.30   29 Dec 2002 15:44:10   jeffd  $
-$Header: //source/qcom/qct/modem/data/1x/mip/main/lite/src/dsmip_outmsg.c#4 $ $DateTime: 2008/06/02 08:26:53 $ $Author: msankar $
+$Header: //source/qcom/qct/modem/data/1x/mip/main/lite/src/dsmip_outmsg.c#5 $ $DateTime: 2011/02/24 23:31:53 $ $Author: msankar $
 
 when        who    what, where, why
 --------    ---    ----------------------------------------------------------
+02/25/11    ms     Ported MOBILE_IP_DEREG feature.
 06/02/08    ms     Fixed Critical/High Lint errors
 02/26/08    sn     Merged lint error fix.
 09/21/07 sq/mga/yz Merged changes to support FEATURE_UIM_SUPPORT_3GPD.
@@ -825,5 +826,49 @@ void mip_outmsg_send_rrq
   }
 
 } /* mip_outmsg_send_rrq() */
-                                                              
+
+#ifdef FEATURE_DS_MOBILE_IP_DEREG
+/*===========================================================================
+FUNCTION MIPOUT_SEND_DEREG_RRQ()
+
+DESCRIPTION
+  Composes and sends a deregistration request to the specified foreign agent.
+
+  The format and expected values of this message are described in the
+  Mobile Interface Specification.
+
+NOTES:
+  * we ask to use the first listed COA in the agent advertisement as per
+    rfc2002bis
+  * we generate the following extensions:
+    - MN_NAI
+    - MN-HA authentication
+    - MN-FA challenge, if rx'd in AAM or last RRP from this FA
+    - MN-AAA authentication, if MN-FA challenge is present
+
+PARAMETERS
+  session - pointer to session info block for which we are registering.
+             (RRQ is based on this and the mobility agent info block)
+
+RETURN VALUE
+  None
+
+DEPENDENCIES
+  None
+
+SIDE EFFECTS
+  None
+===========================================================================*/
+void mip_outmsg_send_dereg_rrq
+(
+  mip_session_info_type *  session
+)
+{
+  ma_info.ma_lifetime = 0;
+  MSG_HIGH( "Sending Deregistration RRQ",0,0,0);
+  mip_outmsg_send_rrq (session);
+} /* mip_outmsg_send_dereg_rrq() */
+/*lint -restore Restore lint error 641*/
+
+#endif  /* FEATURE_DS_MOBILE_IP_DEREG */
 #endif  /* FEATURE_DS_MOBILE_IP */

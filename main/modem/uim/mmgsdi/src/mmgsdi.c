@@ -27,10 +27,11 @@ is regulated by the U.S. Government. Diversion contrary to U.S. law prohibited.
 /*===========================================================================
                         EDIT HISTORY FOR MODULE
 
-$Header: //source/qcom/qct/modem/uim/mmgsdi/rel/07H1_2/src/mmgsdi.c#19 $$ $DateTime: 2009/05/15 02:20:16 $
+$Header: //source/qcom/qct/modem/uim/su/baselines/qsc1110/rel/3.3.65/uim/mmgsdi/src/mmgsdi.c#2 $$ $DateTime: 2011/03/25 06:51:16 $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+03/22/11   ssr     Caching the MEID data
 05/14/09   kp      Added compiler directive for demand Paging Changes
 05/11/09   kp      Demand Paging Changes
 04/29/09   js      Added prototype for static function, fixed compile warnings
@@ -327,6 +328,7 @@ mmgsdi_record_cache_node_list_type mmgsdi_record_cache_list_node;
 
 static boolean mmgsdi_cmd_in_progress        = FALSE;
 static uint8   mmgsdi_queue_service_counter  = 1;
+static mmgsdi_meid_data_type  mmgsdi_data_meid = {{0,0}, FALSE};
 
 #if defined(FEATURE_MMGSDI_GSM) || defined(FEATURE_MMGSDI_UMTS)
 #error code not present
@@ -5936,4 +5938,64 @@ void mmgsdi_free(void * ptr)
 #ifdef FEATURE_NON_DEMAND_PAGED_FUNCTION
 /***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
 #endif /* FEATURE_NON_DEMAND_PAGED_FUNCTION */
+
+
+/*===========================================================================
+
+FUNCTION MMGSDI_CACHE_MEID_DATA
+
+DESCRIPTION
+  Caching MEID data from NV memory.
+
+DEPENDENCIES
+  None.
+
+RETURN VALUE
+  None.
+
+SIDE EFFECTS
+  None.
+===========================================================================*/
+void mmgsdi_cache_meid_data(void)
+{
+#ifndef TEST_FRAMEWORK
+  nv_item_type meid_nv_data;
+  memset((byte*)(&meid_nv_data), 0x00, sizeof(nv_item_type));
+  if (NV_DONE_S == gsdi_get_nv(NV_MEID_ME_I, (nv_item_type *) &meid_nv_data))
+  {
+    MSG_HIGH("MEID is enabled", 0,0,0);
+    mmgsdi_data_meid.meid_available = TRUE;
+    qw_equ(mmgsdi_data_meid.meid, meid_nv_data.meid);
+  }
+  else
+  {
+    MSG_HIGH("MEID is not enabled", 0,0,0);
+    mmgsdi_data_meid.meid_available = FALSE;    
+  }
+#else
+  mmgsdi_data_meid.meid_available = FALSE;
+#endif /* TEST_FRAMEWORK */
+} /* mmgsdi_cache_meid_data */
+
+
+/*===========================================================================
+FUNCTION MMGSDI_GET_MEID
+
+DESCRIPTION
+  It returns cached MEID data.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  mmgsdi_meid_data_type
+
+SIDE EFFECTS
+  None.
+===========================================================================*/
+
+mmgsdi_meid_data_type mmgsdi_get_meid(void)
+{
+  return mmgsdi_data_meid;
+} /* mmgsdi_get_meid */
 

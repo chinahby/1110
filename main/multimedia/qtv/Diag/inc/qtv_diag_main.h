@@ -14,9 +14,9 @@ Copyright (c) 2002-2004 by QUALCOMM, Incorporated.  All Rights Reserved.
 
 /*===========================================================================
 
-$Header: //source/qcom/qct/multimedia/qtv/diag/main/latest/inc/qtv_diag_main.h#8 $
-$DateTime: 2008/09/24 02:10:11 $
-$Change: 749684 $
+$Header: //source/qcom/qct/multimedia/qtv/diag/main/latest/inc/qtv_diag_main.h#9 $
+$DateTime: 2010/06/10 03:10:55 $
+$Change: 1329416 $
                            Edit History
 
 when       who     what, where, why
@@ -776,8 +776,10 @@ typedef enum
  QTVDIAG_FRAMEWORK_SET_USER_AGENT = 54,
   
  //SetVDECParameter
- QTVDIAG_FRAMEWORK_SET_VDEC_PARAMETER = 55
+ QTVDIAG_FRAMEWORK_SET_VDEC_PARAMETER = 55,
 
+ //Reset testapp underrun flag
+ QTVDIAG_FRAMEWORK_RESET_TESTAPP_UNDERRUN_FLAG = 56
 } qtvdiag_framework_api_id_e_type;
 
 // Unpacking to a BYTE(8Bits) value

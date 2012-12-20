@@ -15,9 +15,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/utils/zrex/main/latest/src/zrex2rex.c#10 $
-$DateTime: 2009/01/09 02:29:17 $
-$Change: 816284 $
+$Header: //source/qcom/qct/multimedia/qtv/utils/zrex/main/latest/src/zrex2rex.c#17 $
+$DateTime: 2010/09/03 07:37:49 $
+$Change: 1426732 $
 
 ========================================================================== */
 
@@ -26,16 +26,22 @@ $Change: 816284 $
 #include "qtvInternalDefs.h"
 #include "zrex.h"
 #include "qw.h"
+#ifdef FEATURE_CMI
+#error code not present
+#else
 #include "clk.h"
+#endif
 #include "assert.h"
 #include "qtvsystem.h"
 #include "qtv_msg.h"
+#ifndef FEATURE_WINCE
 #include "OEMFeatures.h"
 
 #ifdef FEATURE_BREW_3_0
 #include "OEMHeap.h"
 #include "AEE_OEMHeap.h"
 #endif
+#endif /* NOT FEATURE_WINCE */
 
 #ifdef FEATURE_QTV_MEMORY_DEBUG
 #include <stdio.h>
@@ -162,8 +168,11 @@ int zrex_bsd_init(void)
    default_sigs.dns = DNS_SIG;
    default_sigs.abort = NET_ABORT_SIG;
    default_sigs.tcp_close_timeout = TCP_CLOSE_TIMEOUT_SIG;
-
+#ifndef FEATURE_WINCE
    retVal = bsd_init(&default_sigs, 0, NULL, 0, 0);
+#else
+#error code not present
+#endif
 
    if (retVal < 0)
    {
@@ -191,7 +200,11 @@ SIDE EFFECTS:
 ========================================================================== */
 int zrex_bsd_shutdown(void *ptr)
 {
+#ifndef FEATURE_WINCE
    if (bsd_shutdown(ptr) == 0)
+#else
+#error code not present
+#endif
    {
       QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,"zrex_bsd_shutdown successful");
       return 0;
@@ -850,6 +863,7 @@ RETURN VALUE:
 SIDE EFFECTS:
   None.
 ========================================================================== */
+/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
 void zrex_kill_thread(
    zrex_handle_type handle
       /* Handle returned by zrex_create_thread
@@ -941,7 +955,15 @@ void zrex_kill_thread(
       num_ztcbs--;
    }
    INTFREE();
+
+   INTLOCK();
+   /* de-initialize zrex2rex */
+   if( bInitialized ) {
+      zrex2rex_dinit();
+   }
+   INTFREE();
 }
+/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
 
 /* ======================================================================
 FUNCTION:
@@ -1001,6 +1023,13 @@ void zrex_release_event_q(
    }
    rex_leave_crit_sect(&zrex_em_crit_sect);
 
+   INTLOCK();
+   /* de-initialize zrex2rex */
+   if( bInitialized ) {
+      zrex2rex_dinit();
+   }
+   INTFREE();
+   
    return;
 }
 
@@ -1081,12 +1110,14 @@ RETURN VALUE:
 SIDE EFFECTS:
   None.
 ========================================================================== */
+/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
 void zrex_sleep(
    unsigned long ms
 )
 {
   rex_sleep(ms);
 } /* zrex_sleep() */
+/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
 
 
 /***********************
@@ -1188,6 +1219,7 @@ RETURN VALUE:
 SIDE EFFECTS:
   None.
 ========================================================================== */
+/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
 void zrex_release_sync_event(
    zrex_sync_event_type *event_ptr
       /* Handle to the event
@@ -1207,7 +1239,7 @@ void zrex_release_sync_event(
      num_sync_events--;
 
      /* remove this sync event from all the waiting tcb list*/
-     TASKLOCK(); 
+     TASKLOCK();
      /* Scan the TCB array  to find the TCBs
      * having current sync event pointer and remove the sync event.
      */
@@ -1218,16 +1250,17 @@ void zrex_release_sync_event(
          /* reset event pointer */
          ztcbs[i]->event_ptr = NULL;
        }
-     }    
+     }
      TASKFREE();
    }
    else
    {
-     QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, 
+     QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,
                   "zrex_release_sync_event: Error, num_sync_events is zero");
    }
    INTFREE();
 }
+/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
 
 
 /* ======================================================================
@@ -1247,6 +1280,7 @@ RETURN VALUE:
 SIDE EFFECTS:
   None.
 ========================================================================== */
+/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
 void zrex_reset_sync_event(
    zrex_sync_event_type *event_ptr
       /* Handle to the event
@@ -1264,6 +1298,7 @@ void zrex_reset_sync_event(
 
    return;
 } /* END zrex_reset_sync_event */
+/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
 
 /* ======================================================================
 FUNCTION:
@@ -1281,6 +1316,7 @@ RETURN VALUE:
 SIDE EFFECTS:
   None.
 ========================================================================== */
+/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
 void zrex_release_all_sync_event(void)
 {
   if( (sync_signal_bits) || (num_sync_events))
@@ -1290,6 +1326,7 @@ void zrex_release_all_sync_event(void)
     num_sync_events = 0;
   }
 }
+/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
 
 /* ======================================================================
 FUNCTION:
@@ -1309,6 +1346,7 @@ RETURN VALUE:
 SIDE EFFECTS:
   None.
 ========================================================================== */
+/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
 static void zrex_remove_tcb_from_event_queue(
    zrex_sync_event_type *event_ptr,
    rex_tcb_type *tcb_ptr
@@ -1352,6 +1390,7 @@ static void zrex_remove_tcb_from_event_queue(
          event_ptr->ztcb_index[event_ptr->num_waiting_tcbs];
    }
 }
+/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
 
 
 /* ======================================================================
@@ -1373,6 +1412,7 @@ RETURN VALUE:
 SIDE EFFECTS:
   None.
 ========================================================================== */
+/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
 static void
 zrex_set_sync_event_internal(
    zrex_sync_event_type *event_ptr
@@ -1387,6 +1427,9 @@ zrex_set_sync_event_internal(
     * an auto reset event, then only one waiting task, the one with then highest
     * priority is signalled.
     */
+   if( event_ptr == NULL )
+     return;
+
    INTLOCK();
    TASKLOCK();
    if ( event_ptr->reset_type == (int)ZREX_MANUAL_RESET )
@@ -1464,6 +1507,7 @@ zrex_set_sync_event_internal(
    TASKFREE();
    INTFREE();
 }
+/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
 
 
 /* ======================================================================
@@ -1483,6 +1527,7 @@ RETURN VALUE:
 SIDE EFFECTS:
   None.
 ========================================================================== */
+/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
 void
 zrex_set_sync_event(
    zrex_sync_event_type *event_ptr
@@ -1505,6 +1550,7 @@ zrex_set_sync_event(
 
    return;
 }
+/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
 
 
 /* ======================================================================
@@ -1526,6 +1572,7 @@ RETURN VALUE:
 SIDE EFFECTS:
   None.
 ========================================================================== */
+/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
 zrex_sync_event_status_type
 zrex_wait_for_sync_event(
    zrex_sync_event_type *event_ptr,
@@ -1615,8 +1662,8 @@ zrex_wait_for_sync_event(
    {
      return ZREX_SYNC_EVENT_TMO;
    }
-   
-   if (milli_secs != ZREX_INFINITE)
+
+   if (milli_secs < ZREX_INFINITE)
    {
       (void)rex_set_timer(&ztcbs[i]->sync_event_timer, milli_secs);
       ztcbs[i]->timer_on = TRUE;
@@ -1685,6 +1732,7 @@ zrex_wait_for_sync_event(
 #error code not present
 #endif /* FEATURE_MP4_UNUSED_CODE */
 }
+/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
 
 
 /***********************
@@ -1710,6 +1758,7 @@ RETURN VALUE:
 SIDE EFFECTS:
   None.
 ========================================================================== */
+/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
 zrex_event_type* zrex_create_event_ex(
    zrex_event_id_type     id,
    unsigned long          size,
@@ -1731,6 +1780,7 @@ zrex_event_type* zrex_create_event_ex(
    }
    return (zrex_event_type *) event_hdr;
 }
+/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
 
 /* ======================================================================
 FUNCTION:
@@ -1819,6 +1869,7 @@ RETURN VALUE:
 SIDE EFFECTS:
   None.
 ========================================================================== */
+/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
 void zrex_event_release(
    zrex_event_type *event_ptr     /* Pointer to the event */
 )
@@ -1849,6 +1900,7 @@ void zrex_event_release(
    }
    rex_leave_crit_sect(&zrex_em_crit_sect);
 }
+/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
 
 
 /* ======================================================================
@@ -1898,72 +1950,84 @@ zrex_event_type* zrex_get_next_event( void )
 
      #ifdef FEATURE_QTV_DRM_DCF
        #ifndef FEATURE_NATIVE_KXIPC
-	       sigType = rex_wait(GEM_SIG | QTV_DRM_DCF_IPC_SIG );
+         sigType = rex_wait(GEM_SIG | QTV_DRM_DCF_IPC_SIG );
        #else
          sigType = GEM_SIG ;
          kxipc_req_sigs = QTV_DRM_DCF_IPC_SIG ;
          ixipc_ret_sigtype = ixipc_sig_wait(&sigType, &kxipc_req_sigs) ;
        #endif /* #ifdef FEATURE_NATIVE_KXIPC */
-	   #else
-	     (void)rex_wait(GEM_SIG);
+         #else
+           (void)rex_wait(GEM_SIG);
      #endif//#ifdef FEATURE_QTV_DRM_DCF
 
      #ifdef FEATURE_QTV_DRM_DCF
-      #ifndef FEATURE_NATIVE_KXIPC
-	    if(sigType & QTV_DRM_DCF_IPC_SIG)
-      #else
-      if(ixipc_ret_sigtype != IXIPC_REX_SIG_TYPE)
-      #endif /* #ifdef FEATURE_NATIVE_KXIPC */
-	    {
-	      //IPC signal is set, return so that IPC handler will handle the IPC msg.
-	      return NULL;
-	    }
-	    else
-	   #endif//#ifdef FEATURE_QTV_DRM_DCF
-	    {
-          if (!dog_autokick)
-          {
-            (void)rex_autodog_disable();
-          }
+       #ifndef FEATURE_NATIVE_KXIPC
+         if(sigType & QTV_DRM_DCF_IPC_SIG)
+       #else
+         if(ixipc_ret_sigtype != IXIPC_REX_SIG_TYPE)
+       #endif /* #ifdef FEATURE_NATIVE_KXIPC */
+	 {
+	   INTLOCK();
+           /* de-initialize zrex2rex */
+           if( bInitialized ) {
+              zrex2rex_dinit();
+              }
+           INTFREE();
+	   //IPC signal is set, return so that IPC handler will handle the IPC msg.
+	   return NULL;
+	 }
+	 else
+	 #endif//#ifdef FEATURE_QTV_DRM_DCF
+	 {
+           if (!dog_autokick)
+           {
+             (void)rex_autodog_disable();
+           }
 
-          rex_enter_crit_sect(&zrex_em_crit_sect);
-          /* Find the task's event queue in the event table */
-          for (i = 0; i < MAX_PV_THREAD; i++)
-          {
-            if (generic_event_table[i].tcb_ptr == tcb_ptr)
-            {
-              break;
-            }
-          }
+           rex_enter_crit_sect(&zrex_em_crit_sect);
+           /* Find the task's event queue in the event table */
+           for (i = 0; i < MAX_PV_THREAD; i++)
+           {
+             if (generic_event_table[i].tcb_ptr == tcb_ptr)
+             {
+               break;
+             }
+           }
 
-          ASSERT(i != MAX_PV_THREAD);
+           ASSERT(i != MAX_PV_THREAD);
 
-          /* When removing an event item from the event queue, it is necessary to
-          * store the event item pointer in a variable that will still be valid
-          * should the sink task that removes the event item gets killed before
-          * the task gets a chance to release the event.
-          */
-          /* below if condition is added to clear lint warnings */
-          if (i < MAX_PV_THREAD)
-          {
+           /* When removing an event item from the event queue, it is necessary to
+           * store the event item pointer in a variable that will still be valid
+           * should the sink task that removes the event item gets killed before
+           * the task gets a chance to release the event.
+           */
+           /* below if condition is added to clear lint warnings */
+           if (i < MAX_PV_THREAD)
+           {
              TASKLOCK();
              evt_ptr = q_get(&generic_event_table[i].event_q);
              if (q_cnt(&generic_event_table[i].event_q) == 0)
-             { 
+             {
                (void)rex_clr_sigs(rex_self(), GEM_SIG);
              }
              TASKFREE();
 
              generic_event_table[i].g_event_ptr = evt_ptr;
-          }
-          rex_leave_crit_sect(&zrex_em_crit_sect);
+           }
+           rex_leave_crit_sect(&zrex_em_crit_sect);
 
-          if (evt_ptr != NULL)
-          {
-            return evt_ptr;
-          }
-	    }
-   }//end while(1)
+           if (evt_ptr != NULL)
+           {
+             INTLOCK();
+             /* de-initialize zrex2rex */
+             if( bInitialized ) {
+               zrex2rex_dinit();
+             }
+             INTFREE();
+             return evt_ptr;
+           }
+	 }
+   }//end while(1) 
 }
 
 
@@ -1984,6 +2048,7 @@ RETURN VALUE:
 SIDE EFFECTS:
   None.
 ========================================================================== */
+/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
 void zrex_post_event(
    zrex_event_type *event_ptr
 )
@@ -2044,7 +2109,15 @@ void zrex_post_event(
    {
      zrex_event_release(event_ptr);
    }
+
+   INTLOCK();
+   /* de-initialize zrex2rex */
+   if( bInitialized ) {
+      zrex2rex_dinit();
+   }
+   INTFREE();
 }
+/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
 
 
 /* ======================================================================
@@ -2116,6 +2189,13 @@ void zrex_set_event_dispatch_table(
      generic_event_table[i].event_sink_ptr = table;
    }
    rex_leave_crit_sect(&zrex_em_crit_sect);
+
+   INTLOCK();
+   /* de-initialize zrex2rex */
+   if( bInitialized ) {
+      zrex2rex_dinit();
+   }
+   INTFREE();
 }
 
 
@@ -2138,9 +2218,10 @@ RETURN VALUE:
   None.
 
 SIDE EFFECTS:
-The implementation will affect the implementation of 
+The implementation will affect the implementation of
 zrex_convert_time_to_systime()
 ========================================================================== */
+/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
 void zrex_get_current_time_offset(
    zrex_time_offset_type *offset
 )
@@ -2151,10 +2232,16 @@ void zrex_get_current_time_offset(
    //clk_read_ms(ms);
    /* here we use clock uptime, so even after loosing/getting RF signal, our
       relative values will not change and we don't need actual time */
-   clk_uptime_ms(ms);
+
+   #ifdef FEATURE_CMI
+#error code not present
+   #else
+      clk_uptime_ms(ms);
+   #endif
    offset->milliseconds = qw_div(s, ms, 1000);
    offset->seconds = qw_lo(s);
 }
+/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
 
 /* ======================================================================
 FUNCTION:
@@ -2170,7 +2257,7 @@ RETURN VALUE:
   None.
 
 SIDE EFFECTS:
-The implementation is totally depends on the implementation of 
+The implementation is totally depends on the implementation of
 zrex_get_current_time_offset()
 ========================================================================== */
 void zrex_convert_time_to_systime(
@@ -2180,13 +2267,18 @@ void zrex_convert_time_to_systime(
   qword up_ms, ms;
   qword s;
   // get power_on_ms
-  clk_uptime_ms(up_ms);
-  clk_read_ms(ms);
+
+  #ifdef FEATURE_CMI
+#error code not present
+  #else
+    clk_uptime_ms(up_ms);
+    clk_read_ms(ms);
+  #endif
   qw_sub(ms, ms, up_ms);
   // add back power_on_ms
   offset->milliseconds += qw_div(s, ms, 1000);
   offset->seconds += qw_lo(s);
-  if (offset->milliseconds >= 1000) 
+  if (offset->milliseconds >= 1000)
   {
     // carry over
     offset->seconds += offset->milliseconds / 1000;
@@ -2215,6 +2307,7 @@ RETURN VALUE:
 SIDE EFFECTS:
   None.
 ========================================================================== */
+/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
 void zrex2rex_init(void)
 {
    unsigned long i;
@@ -2239,3 +2332,33 @@ void zrex2rex_init(void)
 
    bInitialized = TRUE;
 }
+/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
+
+/* ======================================================================
+FUNCTION:
+  zrex2rex_dinit
+
+DESCRIPTION:
+  De-Initalization function
+
+INPUT/OUPUT PARAMETERS:
+  None.
+
+RETURN VALUE:
+  None.
+
+SIDE EFFECTS:
+  None.
+========================================================================== */
+void zrex2rex_dinit(void)
+{
+/* ------
+Commented out, since this code goes to all targets as common and 
+below REX API is not currently ported to all active targets and baselines.
+--------- */
+
+  //rex_del_crit_sect(&zrex_em_crit_sect);
+  //bInitialized = FALSE;
+}
+
+

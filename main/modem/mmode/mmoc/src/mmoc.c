@@ -60,10 +60,11 @@ Diversion contrary to U.S. law prohibited.
   This section contains comments describing changes made to the module.
   Notice that changes are listed in reverse chronological order.
 
-  $Header: //source/qcom/qct/modem/mmode/mmoc/rel/08H1/src/mmoc.c#8 $
+  $Header: //source/qcom/qct/modem/mmode/mmoc/rel/08H1_QSC1110_3.X/src/mmoc.c#2 $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+03/03/11   sg      MMOC would call TMC heap API to allocate memory dynamically.
 05/31/09   pm      Change EXTERN define to MMEXTN to resolve compile error 
                    when other modules define EXTERN
 05/05/09   aj      When MMOC and protocol are not in sync,print error
@@ -399,6 +400,38 @@ static char                            mmoc_debug_str[256];
 static timer_group_type                mmoc_timer_group;
 #endif /* FEATURE_USE_TIME_VU */
 
+#ifdef FEATURE_MMOC_TMC_HEAP
+/*---------------------------------------------------------------------------
+                                 MMOC HEAP
+---------------------------------------------------------------------------*/
+
+
+static mem_heap_type     mmoc_heap;
+
+static uint8 mmoc_heap_mem_buffer[MMOC_HEAP_BUFFER_SIZE];
+
+/* No. of free slots in the MMOC heap.
+*/
+/*lint -esym(765, mmoc_heap_slots_left)
+** Accessed by unit test cases.
+*/
+/*lint -esym(552, mmoc_heap_slots_left)
+** Doesn't consider MMOC_MSG_HIGH as an access.
+*/
+uint8 mmoc_heap_slots_left;
+
+/* No. of blocks currently allocated from the TMC heap.
+*/
+/*lint -esym(765, mmoc_tmc_heap_blocks)
+** Accessed by unit test cases.
+*/
+/*lint -esym(552, mmoc_tmc_heap_blocks)
+** Doesn't consider MMOC_MSG_HIGH as an access.
+*/
+uint8 mmoc_tmc_heap_blocks;
+
+#endif /* FEATURE_MMOC_TMC_HEAP */
+
 /* <EJECT> */
 /*===========================================================================
 =============================================================================
@@ -407,6 +440,72 @@ static timer_group_type                mmoc_timer_group;
 =============================================================================
 =============================================================================
 ===========================================================================*/
+
+#ifdef FEATURE_MMOC_TMC_HEAP
+/* <EJECT> */
+/*===========================================================================
+
+FUNCTION mmoc_mem_free
+
+DESCRIPTION
+   This function returuns the specified memory back to the Heap.
+
+   If the memory came from MMOC heap then it is returned there else
+   it is returned to the TMC heap.
+
+DEPENDENCIES
+
+   MMOC and TMC heap must have been initialized.
+
+RETURN VALUE
+  none
+
+SIDE EFFECTS
+  none
+
+===========================================================================*/
+static void mmoc_mem_free(
+
+  void *ptr
+
+)
+{
+
+  if(ptr == NULL)
+  {
+    MMOC_MSG_HIGH("Null ptr to mmoc_mem_free",0,0,0);
+    return;
+  }
+
+  /*
+  ** If we allocated memory from MMOC Heap, then return there
+  ** else we need to return back to the TMC heap.
+  */
+  /*lint -e{826} keep it suppressed for general / specific walks as well */
+  if( (ptr >= (void *)(mmoc_heap_mem_buffer) &&
+      (ptr <  (void *)(mmoc_heap_mem_buffer + MMOC_HEAP_BUFFER_SIZE)))
+    )
+  {
+    mmoc_heap_slots_left++;
+    mem_free( &(mmoc_heap),ptr );
+  }
+  else
+  {
+    if( ptr < (void *)(tmc_heap_mem_buffer) &&
+                 ptr >=  (void *)(tmc_heap_mem_buffer + TMC_HEAP_MEM_BUFFER_SIZE)
+      )
+    {
+      MMOC_MSG_ERROR("Invalid mem ptr",0,0,0);
+      return;
+    }
+    mmoc_tmc_heap_blocks--;
+    mem_free( &(tmc_heap),ptr);
+  }
+
+  MMOC_MSG_HIGH("MMOC free: MMOC Left, TMC Used = %d, %d", mmoc_heap_slots_left, mmoc_tmc_heap_blocks, 0);
+
+} /* mmoc_mem_free() */
+#endif /* FEATURE_MMOC_TMC_HEAP */
 
 /* <EJECT> */
 /*===========================================================================
@@ -3907,6 +4006,9 @@ static mmoc_cmd_msg_s_type*            mmoc_get_cmd_buf_else_err_fatal
 
 )
 {
+  #ifdef FEATURE_MMOC_TMC_HEAP
+  mmoc_cmd_msg_s_type *mmoc_cmd_ptr;
+  #else
   /* Pointer to MMoC's task info.
   */
   mmoc_task_info_s_type*  mmoc_task_ptr = mmoc_get_task_info_ptr();
@@ -3930,12 +4032,51 @@ static mmoc_cmd_msg_s_type*            mmoc_get_cmd_buf_else_err_fatal
 
   /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  #endif /* FEATURE_MMOC_TMC_HEAP */
+
+  #ifdef FEATURE_MMOC_TMC_HEAP
+     mmoc_cmd_ptr =
+               (mmoc_cmd_msg_s_type*)mem_malloc(&mmoc_heap,
+                                                sizeof(mmoc_cmd_msg_s_type));
+
+  /* If allocation failed, try TMC heap
+  */
+  if( mmoc_cmd_ptr == NULL )
+  {
+    MMOC_MSG_HIGH("MMOC Heap full, requesting from TMC Heap",0,0,0);
+
+    mmoc_cmd_ptr = (mmoc_cmd_msg_s_type*)mem_malloc(&tmc_heap,
+                                     sizeof(mmoc_cmd_msg_s_type));
+    if(mmoc_cmd_ptr != NULL)
+    {
+      mmoc_tmc_heap_blocks++;
+    }
+    else
+    {
+      /* Allocation failed, error fatal.
+      */
+      MMOC_ERR_FATAL( "Can't get MMoC cmd buf from TMC heap",0,0,0 );
+    }
+  }
+  else
+  {
+    mmoc_heap_slots_left--;
+  }
+
+  MMOC_MSG_HIGH("MMOC malloc: MMOC Left=%d, TMC Used=%d", mmoc_heap_slots_left, mmoc_tmc_heap_blocks, 0);
+
+  #endif /* FEATURE_MMOC_TMC_HEAP */
 
   /* If we got here, allocation is successful,
   ** so indicate queue to place command buffer on when done,
   ** and specify NO task to be signalled when done
   */
+  #ifdef FEATURE_MMOC_TMC_HEAP
+  mmoc_cmd_ptr->cmd.hdr.done_q_ptr      = NULL;
+  #else
   mmoc_cmd_ptr->cmd.hdr.done_q_ptr      = &mmoc_task_ptr->cmd_free_q;
+  #endif /* FEATURE_MMOC_TMC_HEAP */
+
   mmoc_cmd_ptr->cmd.hdr.task_ptr        = NULL;
 
 
@@ -4023,6 +4164,10 @@ static mmoc_rpt_msg_s_type*            mmoc_get_rpt_buf_else_err_fatal
 
 )
 {
+  #ifdef FEATURE_MMOC_TMC_HEAP    
+  mmoc_rpt_msg_s_type *mmoc_rpt_ptr;
+  #else
+
   /* Pointer to MMoC's task info.
   */
   mmoc_task_info_s_type*  mmoc_task_ptr = mmoc_get_task_info_ptr();
@@ -4046,11 +4191,50 @@ static mmoc_rpt_msg_s_type*            mmoc_get_rpt_buf_else_err_fatal
 
   /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  #endif /* FEATURE_MMOC_TMC_HEAP */
+
+  #ifdef FEATURE_MMOC_TMC_HEAP   
+
+    mmoc_rpt_ptr =
+               (mmoc_rpt_msg_s_type*) mem_malloc(&mmoc_heap,
+                                                sizeof(mmoc_rpt_msg_s_type));
+
+  /* If allocation failed, try TMC heap
+  */
+  if( mmoc_rpt_ptr == NULL )
+  {
+    MMOC_MSG_HIGH("MMOC Heap full, requesting from TMC Heap",0,0,0);
+    mmoc_rpt_ptr = (mmoc_rpt_msg_s_type*)mem_malloc(&tmc_heap,
+                                     sizeof(mmoc_rpt_msg_s_type));
+    if(mmoc_rpt_ptr != NULL)
+    {
+      mmoc_tmc_heap_blocks++;
+    }
+    else
+    {
+      /* Allocation failed, error fatal.
+      */
+      MMOC_ERR_FATAL( "Can't get MMoC rpt buf",0,0,0 );
+    }
+  }
+  else
+  {
+    mmoc_heap_slots_left--;
+  }
+
+  MMOC_MSG_HIGH("MMOC malloc: MMOC Left=%d, TMC Used=%d", mmoc_heap_slots_left, mmoc_tmc_heap_blocks, 0);
+
+  /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+  #endif /* FEATURE_MMOC_TMC_HEAP */
 
   /* If we got here, allocation is successful, so indicate queue to place
   ** command buffer on when done.
   */
+  #ifdef FEATURE_MMOC_TMC_HEAP
+  mmoc_rpt_ptr->rpt.hdr.done_q_ptr      = NULL;
+  #else
   mmoc_rpt_ptr->rpt.hdr.done_q_ptr      = &mmoc_task_ptr->rpt_free_q;
+  #endif /* FEATURE_MMOC_TMC_HEAP */
   mmoc_rpt_ptr->rpt.hdr.task_ptr        = NULL;
 
 
@@ -4143,15 +4327,25 @@ MMEXTN  void                           mmoc_task_init
 
 )
 {
+  #ifndef FEATURE_MMOC_TMC_HEAP
   /* loop counter.
   */
   unsigned int i;
+  #endif /* FEATURE_MMOC_TMC_HEAP */
 
   /* Pointer to MMoC's task information.
   */
   mmoc_task_info_s_type          *mmoc_task_ptr = mmoc_get_task_info_ptr();
 
 
+  #ifdef FEATURE_MMOC_TMC_HEAP
+  mmoc_large_obj_unused *unused_ptr = NULL;
+
+  /* To clear the compiler warning caused by
+  ** mmoc_large_obj_unused
+  */
+  SYS_ARG_NOT_USED(unused_ptr);
+  #endif /* FEATURE_MMOC_TMC_HEAP */
   /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 
@@ -4178,6 +4372,7 @@ MMEXTN  void                           mmoc_task_init
 
   /* Initialize report queues. */
   ( void ) q_init( &mmoc_task_ptr->rpt_q );
+  #ifndef FEATURE_MMOC_TMC_HEAP
   ( void ) q_init( &mmoc_task_ptr->rpt_free_q );
 
 
@@ -4197,6 +4392,7 @@ MMEXTN  void                           mmoc_task_init
          );
   }
 
+  #endif /* FEATURE_MMOC_TMC_HEAP  */
 
   /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -4204,6 +4400,7 @@ MMEXTN  void                           mmoc_task_init
   /* Initialize command queue.
   */
   (void) q_init( &mmoc_task_ptr->cmd_q );
+  #ifndef FEATURE_MMOC_TMC_HEAP  
   (void) q_init( &mmoc_task_ptr->cmd_free_q );
 
 
@@ -4224,7 +4421,20 @@ MMEXTN  void                           mmoc_task_init
 
 
   /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+  #endif /* FEATURE_MMOC_TMC_HEAP  */
 
+  #ifdef FEATURE_MMOC_TMC_HEAP
+  /*
+  ** Initialize MMOC Heap.
+  */
+
+  mem_init_heap(&mmoc_heap,
+                mmoc_heap_mem_buffer,
+                MMOC_HEAP_BUFFER_SIZE,
+                NULL);
+  mmoc_heap_slots_left = MMOC_HEAP_SLOT_COUNT;
+  mmoc_tmc_heap_blocks = 0;
+  #endif /* FEATURE_MMOC_TMC_HEAP */
 
   /* Initialize err_fatal debug info.
   */
@@ -11544,7 +11754,13 @@ LOCALF void                            mmoc_remove_dup_pref_sys_cmds
      {
         MMOC_MSG_HIGH(" Duplicate pref_sys_chgd", 0, 0, 0 );
         q_delete( &mmoc_task_ptr->cmd_q, &pref_sys_cmd_ptr->cmd.hdr.link );
+
+        #ifdef FEATURE_MMOC_TMC_HEAP
+        mmoc_mem_free( pref_sys_cmd_ptr );
+        #else
         cmd_done( &pref_sys_cmd_ptr->cmd.hdr );
+        #endif /* FEATURE_MMOC_TMC_HEAP */
+
         pref_sys_cmd_ptr = next_cmd_ptr;
 
      }
@@ -11616,7 +11832,11 @@ MMEXTN void                            mmoc_process_event
       }
                                             
       mmoc_call_trans_hndlr(cmd_ptr, NULL, mmoc_info_ptr );
+      #ifdef FEATURE_MMOC_TMC_HEAP
+      mmoc_mem_free( cmd_ptr );
+      #else
       cmd_done( &cmd_ptr->cmd.hdr );
+      #endif /* FEATURE_MMOC_TMC_HEAP */
       cmd_ptr = NULL;
     }
     else if ( rpt_ptr != NULL )
@@ -11635,7 +11855,11 @@ MMEXTN void                            mmoc_process_event
       }
 
       mmoc_call_trans_hndlr(NULL, rpt_ptr, mmoc_info_ptr );
+      #ifdef FEATURE_MMOC_TMC_HEAP
+      mmoc_mem_free( rpt_ptr );
+      #else
       cmd_done( &rpt_ptr->rpt.hdr );
+      #endif /* FEATURE_MMOC_TMC_HEAP */
       rpt_ptr = NULL;
     }
 

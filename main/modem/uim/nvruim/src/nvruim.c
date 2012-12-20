@@ -23,10 +23,18 @@ Copyright (c) 2000-2010 by QUALCOMM Incorporated. All Rights Reserved.
                         EDIT HISTORY FOR MODULE
 
 $PVCSPath: O:/src/asw/COMMON/vcs/nvruim.c_v   1.33   05 Sep 2002 08:19:14   tsummers  $
-$Header: //source/qcom/qct/modem/uim/nvruim/rel/07H1_2/src/nvruim.c#24 $ $DateTime: 2010/04/06 05:33:18 $ $Author: sratnu $
+$Header: //source/qcom/qct/modem/uim/nvruim/rel/07H1_2/src/nvruim.c#31 $ $DateTime: 2011/03/30 20:35:04 $ $Author: sratnu $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+03/31/11   ssr     Fixed legacy PPP NV items(NV_PPP_USER_ID_I and NV_PPP_PASSWORD_I) 
+                   to return the NV value instead of the card profile 0 for OMH card.
+03/09/11   ssr     Fixed compilation error
+06/28/10   ssr     Fixed FEATURE_UIM_MISCONFIG_RUIM_N5_WORKAROUND_OPTIMIZED
+05/21/10   ssr     Add non 3gpd cdma card check
+04/30/10   ssr     Fixed nvruim clear cache
+04/23/10   ssr     Fixed UIM 3GPD NV support
+04/14/10   yk      Fixed UIM dog fatal due to a typo in access api 
 03/25/10   ssr     Added nvruim_data_3gpd_ext_support
 03/22/10   nmb     Removed eight extra 0's from nvruim_an_cave_nai 
 02/19/10   ssr     Fixed NV_SMS_MO_ON_TRAFFIC_CHANNEL_I reading
@@ -427,7 +435,10 @@ LOCAL byte  nvruim_smscap_ef_buf[NVRUIM_SMSCAP_SIZE];
 the R-UIM or from NV */
 
 uim_3gpd_support_status nvruim_3gpd_control=UIM_3GPD_MIP_NV_SIP_NV;
-LOCAL boolean nvruim_operator_card = FALSE;
+
+#if defined(FEATURE_UIM_SUPPORT_3GPD_NV) && defined (FEATURE_UIM_SUPPORT_3GPD)
+LOCAL  nvruim_3gpd_nv_card_status nvruim_non_3gpd_cdma_card = NVRUIM_NO_CARD;
+#endif /* FEATURE_UIM_SUPPORT_3GPD_NV && FEATURE_UIM_SUPPORT_3GPD */
 
 /* Constants and data for LBS  */
 #ifdef FEATURE_UIM_SUPPORT_LBS
@@ -554,11 +565,15 @@ elementary files for 3GPD */
 
 #endif /* FEATURE_UIM_SUPPORT_3GPD */
 
-#ifdef FEATURE_UIM_SUPPORT_HRPD_AN
+#if defined(FEATURE_UIM_SUPPORT_HRPD_AN) || defined(FEATURE_UIM_MISCONFIG_RUIM_N5_WORKAROUND)
 
 #define NVRUIM_MAX_HRPDUPP_SIZE 255
 
-#endif /* FEATURE_UIM_SUPPORT_HRPD_AN */
+#endif /* FEATURE_UIM_SUPPORT_HRPD_AN  || FEATURE_UIM_MISCONFIG_RUIM_N5_WORKAROUND */
+
+#ifdef FEATURE_RUIM_CDMA_REFRESH
+void nvruim_process_refresh(void);
+#endif /* FEATURE_RUIM_CDMA_REFRESH */
 
 
 /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -647,10 +662,10 @@ LOCAL word                              nvruim_sip_ext_profile_bit_index[NVRUIM_
 #endif /* FEATURE_UIM_3GPD_MULTIPLE_SIP_PROFILES */
 #endif /* FEATURE_UIM_SUPPORT_3GPD */
 
-#ifdef FEATURE_UIM_SUPPORT_HRPD_AN
+#if defined(FEATURE_UIM_SUPPORT_HRPD_AN) || defined(FEATURE_UIM_MISCONFIG_RUIM_N5_WORKAROUND)
 LOCAL byte                        nvruim_hrpdupp_ef_buf[NVRUIM_MAX_HRPDUPP_SIZE];
 boolean                           nvruim_hrpd_cdma_svc=FALSE;
-#endif /* FEATURE_UIM_SUPPORT_HRPD_AN */
+#endif /* FEATURE_UIM_SUPPORT_HRPD_AN || FEATURE_UIM_MISCONFIG_RUIM_N5_WORKAROUND */
 
 /* This variable is used to indicate whether the current R-UIM card supports
  HRPD AN Authentication, as per the CDMA service table */
@@ -660,10 +675,16 @@ uim_an_hrpd_support_status nvruim_hrpd_control=UIM_AN_HRPD_NO_SUPPORT;
 boolean  nvruim_rtre_config_initialized = FALSE;
 
 #ifdef FEATURE_RUIM_CDMA_REFRESH
-boolean nvruim_cache_locked = FALSE;
+uint32 nvruim_refresh_file_cache = RUIM_NO_CACHE_VALUE;
 #endif /* FEATURE_RUIM_CDMA_REFRESH */
 
 static boolean uim_hrpd_disabled_card(void);
+
+#ifdef FEATURE_UIM_MISCONFIG_RUIM_N5_WORKAROUND_OPTIMIZED
+static boolean uim_hrpd_disabled_card_flag = FALSE;
+static boolean uim_use_cave_default = FALSE;
+#endif /* FEATURE_UIM_MISCONFIG_RUIM_N5_WORKAROUND_OPTIMIZED */
+
 
 /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 /*                                                                         */
@@ -1182,7 +1203,7 @@ uim_rpt_status nvruim_access
         if ((sigs_received & NV_RPT_TIMER_SIG) != 0)
         {
           /* Clear the dog report timer signal */
-          (void) rex_clr_sigs(&uim_tcb, NV_RPT_TIMER_SIG);
+          (void) rex_clr_sigs(&nv_tcb, NV_RPT_TIMER_SIG);
 
           /* Kick watchdog and reset timer */
           dog_report(DOG_NV_RPT);
@@ -1365,16 +1386,16 @@ static nv_ruim_support_status nvruim_check_uim_status_and_nam(
 #endif /* FEATURE_UIM_RUIM_W_GSM_ACCESS && !FEATURE_UIM_RUN_TIME_ENABLE */
     {
       /* Only process the NAM parameters for the RUIM
-      This check assumes the first byte of the data contains the NAM */ 
+      This check assumes the first byte of the data contains the NAM */
       if(NV_RUIM_NAM != nv_cmd_ptr->data_ptr->min1.nam)
       {
-        /* Go to NV for this item */		
+        /* Go to NV for this item */
         return NV_RUIM_ITEM_NOT_SUPPORTED;
       }
 
       *op_status = NV_READONLY_S; /* Error, read-only   */
 
-      nv_cmd_ptr->status = *op_status;	  
+      nv_cmd_ptr->status = *op_status;
 
       return NV_RUIM_SUPPORTS_ITEM;
     }
@@ -1532,8 +1553,7 @@ static nv_ruim_support_status nvruim_write_imsi_m(
                         sizeof (nvruim_imsi_m_cache_buf.imsi_s1),
                         3,
                         UIM_CDMA_IMSI_M,
-                        RUIM_IMSI_M_CACHE_BIT);	  
-	  
+                        RUIM_IMSI_M_CACHE_BIT);
       break;
 
     case NV_MIN2_I:
@@ -2631,7 +2651,7 @@ static nv_ruim_support_status nvruim_write_spc_enable(
         break;
     #endif /*FEATURE_OTASP_OTAPA*/
     
-      case NV_SPC_CHANGE_ENABLED_I: 
+      case NV_SPC_CHANGE_ENABLED_I:
 #ifdef FEATURE_VERSION_W208S
 		if(nv_cmd_ptr->data_ptr->spc_change_enabled)
         {
@@ -2639,17 +2659,16 @@ static nv_ruim_support_status nvruim_write_spc_enable(
 			nvruim_otapa_spc_enable_cache_buf |= NVRUIM_SPC_ENABLE_MASK;
         }		
 #else
-		/* Reset SPC_Change_Enable bit (bit 4) */
+        /* Reset SPC_Change_Enable bit (bit 4) */
         nvruim_otapa_spc_enable_cache_buf &= NVRUIM_SPC_ENABLE_MASK;
-
-		/* A value of 0 indicates that SPC is enabled and '1' indicates
+    
+        /* A value of 0 indicates that SPC is enabled and '1' indicates
         that SPC is disabled */
         if(!nv_cmd_ptr->data_ptr->spc_change_enabled)
         {
           nvruim_otapa_spc_enable_cache_buf |= NVRUIM_SPC_DISABLE;
         }
 #endif    
-        
         break;
       default:
         return NV_RUIM_ITEM_NOT_SUPPORTED;
@@ -3475,6 +3494,16 @@ static nv_ruim_support_status nvruim_write_ppp_passwd(
   {
     return NV_RUIM_ITEM_NOT_SUPPORTED;  
   }
+
+  /* No need to write PPP NAI\Password Legacy NV items to 
+     RUIM for OMH card*/
+  if((nv_cmd_ptr->item == NV_PPP_PASSWORD_I) && 
+     (TRUE == nvruim_data_3gpd_ext_support()))
+  {
+    MSG_HIGH("Not writing legacy NV_PPP_PASSWORD_I NV items to RUIM",0,0,0);
+    return(NV_RUIM_ITEM_NOT_SUPPORTED);
+  }
+  
 #ifndef FEATURE_UIM_3GPD_FALLBACK
   if(nvruim_3gpd_sip_svc == FALSE)
   {
@@ -3775,15 +3804,8 @@ nv_ruim_support_status nvruim_write
   cmd.hdr.user_data = nv_cmd_ptr->sigs;   
 
 #ifdef FEATURE_RUIM_CDMA_REFRESH
-/* Check if the nvruim cache can be locked, if it is locked by another 
-   process then return to avoid accessing the cache when some other process
-   may be writing to, reading, or clearing it. */
-if (!nvruim_lock_cache())
-{
-  MSG_ERROR("nvruim cache is locked cannot continue with nvruim_write",0,0,0);
-  *op_status = NV_NOTACTIVE_S;
-  return nvruim_write_sprt_status;
-}
+  /* always refresh the nvruim buffer if we have clear refresh flag */
+  nvruim_process_refresh();
 #endif /* FEATURE_RUIM_CDMA_REFRESH */
 
 #if defined( FEATURE_UIM_RUN_TIME_ENABLE )
@@ -3803,16 +3825,6 @@ if (!nvruim_lock_cache())
 #endif /* FEATURE_UIM_RUIM_W_GSM_ACCESS */
     )
     {
-#ifdef FEATURE_RUIM_CDMA_REFRESH
-      /* If the rtre configuration is set such that we do not continue to 
-         process the write to the card then return that RUIM does not support
-         item and unlock access to the cache */
-      if (!nvruim_unlock_cache()) 
-      {
-        MSG_HIGH("NV_RTRE_CONTROL_SIM_ACCESS: nvruim cache not locked to be unlocked",
-                 0,0,0);
-      }
-#endif /* FEATURE_RUIM_CDMA_REFRESH */
       /* Do not try to access the R-UIM card.  Get item from NV */
       return NV_RUIM_ITEM_NOT_SUPPORTED;
     }
@@ -3907,8 +3919,12 @@ if (!nvruim_lock_cache())
     case NV_DS_SIP_NAI_INFO_I:
 #endif /* FEATURE_UIM_3GPD_MULTIPLE_SIP_PROFILES */
     case NV_PPP_USER_ID_I:
-      if(UIM_3GPD_MIP_RUIM_SIP_NV == uim_3gpd_support() ||
-      UIM_3GPD_MIP_NV_SIP_NV == uim_3gpd_support())
+  /* No need to write PPP NAI\Password Legacy NV items to 
+     RUIM for OMH card*/
+      if( (UIM_3GPD_MIP_RUIM_SIP_NV == uim_3gpd_support()) ||
+          (UIM_3GPD_MIP_NV_SIP_NV   == uim_3gpd_support()) || 
+          ( (TRUE == nvruim_data_3gpd_ext_support()) && 
+            (nv_cmd_ptr->item == NV_PPP_USER_ID_I)))
       {
         nvruim_write_sprt_status = NV_RUIM_ITEM_NOT_SUPPORTED;  
       }
@@ -4090,7 +4106,7 @@ if (!nvruim_lock_cache())
 #ifdef FEATURE_OTASP_OTAPA
     case NV_OTAPA_ENABLED_I:
 #endif /* FEATURE_OTASP_OTAPA */
-    case NV_SPC_CHANGE_ENABLED_I:		
+    case NV_SPC_CHANGE_ENABLED_I:
       nvruim_write_sprt_status = nvruim_write_spc_enable(nv_cmd_ptr, 
                                                          op_status);
       break;
@@ -4203,15 +4219,6 @@ if (!nvruim_lock_cache())
       nvruim_write_sprt_status = NV_RUIM_ITEM_NOT_SUPPORTED;
       break;
   }
-
-#ifdef FEATURE_RUIM_CDMA_REFRESH
-  /* nvruim write has completed, unlock access to the cache */
-  if (!nvruim_unlock_cache()) 
-  {
-    MSG_HIGH("nvruim_write: nvruim cache cannnot be unlocked",
-             0,0,0);
-  }
-#endif /* FEATURE_RUIM_CDMA_REFRESH */ 
   return nvruim_write_sprt_status;
 } /* nvruim_write */
 
@@ -4630,7 +4637,7 @@ static nv_ruim_support_status nvruim_read_imsi_m(
 )
 {
   boolean dummy;
-  nv_ruim_support_status support_status = NV_RUIM_SUPPORTS_ITEM;  
+  nv_ruim_support_status support_status = NV_RUIM_SUPPORTS_ITEM;
 
   /* Only process the NAM parameters for the RUIM
      This check assumes the first byte of the data contains the NAM */
@@ -4690,7 +4697,7 @@ static nv_ruim_support_status nvruim_read_imsi_m(
         nvruim_imsi_m_cache_buf.imsi_11_12;
     } /* end if - the read was successful. */
   }
-  else if(nv_cmd_ptr->item == NV_MIN1_I){  	
+  else if(nv_cmd_ptr->item == NV_MIN1_I){
   #ifdef FEATURE_NVRUIM_DEBUG_FORCE_MIN1
     /* Debug code to override the MIN1 */
     nv_cmd_ptr->data_ptr-> min1.min1[NV_CDMA_MIN_INDEX] = 0x00792971;
@@ -4707,10 +4714,10 @@ static nv_ruim_support_status nvruim_read_imsi_m(
 #endif
     /* Copy the contents of CDMA MIN1 to Amps MIN1 */
     nv_cmd_ptr->data_ptr->min1.min1[0] =
-    nv_cmd_ptr->data_ptr-> min1.min1[NV_CDMA_MIN_INDEX];	 
+    nv_cmd_ptr->data_ptr-> min1.min1[NV_CDMA_MIN_INDEX] ;
   }
   else if(nv_cmd_ptr->item == NV_MIN2_I)
-  {  	
+  {
   #ifdef FEATURE_NVRUIM_DEBUG_FORCE_MIN2
      /* Debug code to override the MIN2 */
      nv_cmd_ptr->data_ptr->min2.min2[NV_CDMA_MIN_INDEX] = 0x02EB;
@@ -4726,7 +4733,7 @@ static nv_ruim_support_status nvruim_read_imsi_m(
   #endif
   /* Copy the contents of CDMA MIN2 to Amps MIN2 */
     nv_cmd_ptr->data_ptr->min2.min2[0] =
-    nv_cmd_ptr->data_ptr-> min2.min2[NV_CDMA_MIN_INDEX];  
+    nv_cmd_ptr->data_ptr-> min2.min2[NV_CDMA_MIN_INDEX] ;
   }
   else if(nv_cmd_ptr->item == NV_IMSI_MCC_I)
   {
@@ -5070,9 +5077,7 @@ static nv_ruim_support_status nvruim_read_msisdn(
       */
       /* Initialize the temp buffer to character '0' */
       for(i = 0; i < NV_DIR_NUMB_SIZ; i++)
-      {
-      	temp_msisdn_buffer[i] = 0x30;
-      }
+        temp_msisdn_buffer[i] = 0x30;
     
       /* this is the number of BCD digits in the MDN that are returned */
       num_bcd_digits = msisdn_buffer[ NVRUIM_MSISDN_ND_INDEX ] & 0x0F;
@@ -6001,7 +6006,7 @@ static nv_ruim_support_status nvruim_read_prl(
       nv_cmd_ptr->data_ptr->roaming_list.size *= 8;
   
       /* Fill up list id */
-      nv_cmd_ptr->data_ptr->roaming_list.prl_version  = *prl_ptr++ << 8;  
+      nv_cmd_ptr->data_ptr->roaming_list.prl_version  = *prl_ptr++ << 8;
       nv_cmd_ptr->data_ptr->roaming_list.prl_version |= *prl_ptr++;
   
     }
@@ -6081,12 +6086,11 @@ static nv_ruim_support_status nvruim_read_spc_enabled(
   
   switch(nv_cmd_ptr->item)
   {
-    case NV_SPC_CHANGE_ENABLED_I:		
+    case NV_SPC_CHANGE_ENABLED_I:
       if(NV_DONE_S == *op_status)
-      {    
-    
+      {
 #ifdef FEATURE_VERSION_W208S
-		nv_cmd_ptr->data_ptr->spc_change_enabled = 
+        nv_cmd_ptr->data_ptr->spc_change_enabled =
           !((nvruim_otapa_spc_enable_cache_buf & NVRUIM_SPC_DISABLE) == 0);
 #else
 		nv_cmd_ptr->data_ptr->spc_change_enabled = 
@@ -7031,6 +7035,15 @@ static nv_ruim_support_status nvruim_read_3gpd_sipupp(
   {
     return(NV_RUIM_ITEM_NOT_SUPPORTED);  
   }
+  /* Return the NV value for NV_PPP_USER_ID_I and NV_PPP_PASSWORD_I
+     for OMH card */
+  if((nv_cmd_ptr->item == NV_PPP_USER_ID_I) && 
+     (TRUE == nvruim_data_3gpd_ext_support())) 
+  {
+    MSG_HIGH("Returning the NV value for NV_PPP_USER_ID_I for OMH card",0,0,0);
+    return(NV_RUIM_ITEM_NOT_SUPPORTED);
+  }
+  
 #ifndef FEATURE_UIM_3GPD_FALLBACK
   if(!nvruim_3gpd_sip_svc)
   {
@@ -8980,6 +8993,15 @@ static nv_ruim_support_status nvruim_read_3gpd_sippapss(
     return(NV_RUIM_ITEM_NOT_SUPPORTED);  
   }
 
+  /* Return the NV value for NV_PPP_USER_ID_I and NV_PPP_PASSWORD_I
+     for OMH card */
+  if((nv_cmd_ptr->item == NV_PPP_PASSWORD_I) && 
+     (TRUE == nvruim_data_3gpd_ext_support()))
+  {
+    MSG_HIGH("Returning the NV value for NV_PPP_PASSWORD_I for OMH card",0,0,0);
+    return(NV_RUIM_ITEM_NOT_SUPPORTED);
+  }
+
   if(nv_cmd_ptr->item == NV_PPP_PASSWORD_I)
   {
     nv_cmd_ptr->data_ptr->ppp_password.password_len = 0;
@@ -9869,15 +9891,8 @@ nv_ruim_support_status nvruim_read(
   cmd.hdr.user_data = nv_cmd_ptr->sigs;   
 
 #ifdef FEATURE_RUIM_CDMA_REFRESH
-/* Check if the nvruim cache can be locked, if it is locked by another 
-   process then return to avoid accessing the cache when some other process
-   may be writing to or clearing it. */
-if (!nvruim_lock_cache())
-{
-  MSG_ERROR("nvruim cache s locked cannot continue with nvruim_read",0,0,0);
-  *op_status = NV_NOTACTIVE_S;
-  return nvruim_read_support_status;
-}
+  /* always refresh the nvruim buffer if we have clear refresh flag */
+  nvruim_process_refresh();
 #endif /* FEATURE_RUIM_CDMA_REFRESH */
 
 #if defined( FEATURE_UIM_RUN_TIME_ENABLE )
@@ -9898,16 +9913,6 @@ if (!nvruim_lock_cache())
     )
    {
      /* Do not try to access the R-UIM card.  Get item from NV */
-#ifdef FEATURE_RUIM_CDMA_REFRESH
-      /* If the rtre configuration is set such that we do not continue to 
-         process the read from the card then return that RUIM does not support
-         item and unlock access to the cache */
-     if (!nvruim_unlock_cache()) 
-     {
-       MSG_HIGH("NV_RTRE_CONTROL_SIM_ACCESS: nvruim cache not locked to be unlocked",
-                0,0,0);
-     }
-#endif /* FEATURE_RUIM_CDMA_REFRESH */
      return NV_RUIM_ITEM_NOT_SUPPORTED;
    }
 
@@ -9942,7 +9947,7 @@ if (!nvruim_lock_cache())
     case NV_MIN2_I:
     case NV_IMSI_11_12_I:
     case NV_IMSI_MCC_I:
-    case NV_IMSI_ADDR_NUM_I:		
+    case NV_IMSI_ADDR_NUM_I:
       nvruim_read_support_status =  nvruim_read_imsi_m(nv_cmd_ptr, op_status);
       break;                       
 
@@ -10059,7 +10064,7 @@ if (!nvruim_lock_cache())
 #ifdef FEATURE_OTASP_OTAPA
     case NV_OTAPA_ENABLED_I:
 #endif
-    case NV_SPC_CHANGE_ENABLED_I:		
+    case NV_SPC_CHANGE_ENABLED_I:
       nvruim_read_support_status = nvruim_read_spc_enabled(nv_cmd_ptr, 
                                                            op_status);
       break;
@@ -10291,14 +10296,6 @@ if (!nvruim_lock_cache())
   }
 
   /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-#ifdef FEATURE_RUIM_CDMA_REFRESH
-  /* nvruim read has completed, unlock access to the cache */
-  if (!nvruim_unlock_cache()) 
-  {
-    MSG_HIGH("nvruim_read: nvruim cache cannot be unlocked",
-             0,0,0);
-  }
-#endif /* FEATURE_RUIM_CDMA_REFRESH */ 
   return nvruim_read_support_status;
 } /* nvruim_read */
 
@@ -10656,6 +10653,12 @@ nv_stat_enum_type nvruim_process_rtre_configuration
   {
     nvruim_set_esn_usage(NV_RUIM_USE_ESN);
   }
+#ifdef FEATURE_UIM_MISCONFIG_RUIM_N5_WORKAROUND_OPTIMIZED
+  if(NV_RTRE_CONFIG_RUIM_ONLY == cmd_ptr->data_ptr->rtre_config)
+  {
+    uim_hrpd_disabled_card_flag = uim_hrpd_disabled_card();
+  }
+#endif /* FEATURE_UIM_MISCONFIG_RUIM_N5_WORKAROUND_OPTIMIZED */
 
 #ifdef FEATURE_UIM_SUPPORT_HRPD_AN
   uim_init_an_hrpd_preference(nvruim_hrpd_cdma_svc);
@@ -10706,12 +10709,13 @@ void nvruim_init_wms_svc_items
 
 /*===========================================================================
 
-FUNCTION NVRUIM_INIT_OPERATOR_CARD
+FUNCTION NVRUIM_INIT_NON_3GPD_CDMA_CARD
 
 DESCRIPTION
-This function is called from mmgsdi task during post pin initialization.
-It passes in a boolean which indicates wheather given card is a CT card 
-or not
+  This function is called from mmgsdi task during post pin initialization.
+  It passes in a boolean, where
+    TRUE : it is 3GPD disabled card
+    FALSE: it is 3GPD enabled  card
 
 DEPENDENCIES
 None.
@@ -10719,29 +10723,78 @@ None.
 RETURN VALUE
 
 SIDE EFFECTS
-Sets the nvruim_operator_card global variable for RUIM support of 3GPD
-global variables to indicate CARD is CT card or not 
+none
 ===========================================================================*/ 
-void nvruim_init_operator_card(
-  boolean is_operator_card
+void nvruim_init_non_3gpd_cdma_card (
+  boolean non_3gpd_cdma_card
 )
 {
-#ifdef FEATURE_NV_RUIM
-#ifdef FEATURE_UIM_SUPPORT_3GPD
+#ifdef FEATURE_NV_RUIM	
+#if defined(FEATURE_UIM_SUPPORT_3GPD_NV) && defined (FEATURE_UIM_SUPPORT_3GPD)
+#ifdef FEATURE_UIM_RUN_TIME_ENABLE
   if(NV_RTRE_CONTROL_USE_RUIM != nv_rtre_control())
   {
-    /* Use NV for 3GPD support */
-    nvruim_operator_card = FALSE;
+    /* NV mode, Set to No card */
+    nvruim_non_3gpd_cdma_card = NVRUIM_NO_CARD;
   }
   else
+#endif /* FEATURE_UIM_RUN_TIME_ENABLE */
   {
-    nvruim_operator_card = is_operator_card;
+    /* RUIM mode, set flag for cdma card */	  
+    if ( TRUE == non_3gpd_cdma_card)
+    {
+      MSG_HIGH("Non 3GPD CDMA Card : TRUE",0,0,0);
+      nvruim_non_3gpd_cdma_card = NVRUIM_NON_3GPD_CARD;
+      /* Reset the 3GPD credential to NV */
+      nvruim_3gpd_control       = UIM_3GPD_MIP_NV_SIP_NV;
+    }
+    else
+    {
+      MSG_HIGH("Non 3GPD CDMA Card : FALSE",0,0,0);
+      nvruim_non_3gpd_cdma_card = NVRUIM_3GPD_CARD;
+    }	    
   }
-#endif /* FEATURE_UIM_SUPPORT_3GPD */
-#else
-  (void) is_operator_card;   
+#endif /* FEATURE_UIM_SUPPORT_3GPD_NV && FEATURE_UIM_SUPPORT_3GPD  */
 #endif /* FEATURE_NV_RUIM */
-} /* nvruim_init_operator_card */
+  (void) non_3gpd_cdma_card;
+} /* nvruim_init_non_3gpd_cdma_card */
+
+
+/*===========================================================================
+
+FUNCTION NVRUIM_CHECK_NON_3GPD_CDMA_CARD
+
+DESCRIPTION
+ This function returns the non legacy cdma card presence.
+
+DEPENDENCIES
+This function should only be called after SUBSCRIPTION_READY evt
+
+RETURN VALUE
+  nvruim_3gpd_nv_card_status where
+  NVRUIM_NO_CARD        : NO Card 
+  NVRUIM_NON_3GPD_CARD  : 3GPD disabled card 
+  NVRUIM_3GPD_CARD      : 3GPD enabled card
+
+SIDE EFFECTS
+none
+===========================================================================*/ 
+nvruim_3gpd_nv_card_status nvruim_check_non_3gpd_cdma_card (
+  void
+)
+{
+#ifdef FEATURE_NV_RUIM	
+#if defined(FEATURE_UIM_SUPPORT_3GPD_NV) && defined (FEATURE_UIM_SUPPORT_3GPD)
+  return nvruim_non_3gpd_cdma_card;
+#else 
+  /* No need to check non 3GPD card as 3GPD is disabled there */
+  return NVRUIM_3GPD_CARD;
+#endif /* FEATURE_UIM_SUPPORT_3GPD_NV && FEATURE_UIM_SUPPORT_3GPD */
+#else
+  /* NV mode */
+  return NVRUIM_NO_CARD;
+#endif /* FEATURE_NV_RUIM */
+} /* nvruim_check_non_3gpd_cdma_card */
 
 
 /*===========================================================================
@@ -10781,11 +10834,6 @@ void uim_init_3gpd_preference(
     /* Use NV for 3GPD support */
     nvruim_3gpd_control = UIM_3GPD_MIP_NV_SIP_NV;
   }
-  else if(TRUE == nvruim_operator_card)
-  {
-    /* nv_ruim_3gpd control flag to UIM_3GPD_MIP_NV_SIP_NV for Operator card */	  
-    nvruim_3gpd_control = UIM_3GPD_MIP_NV_SIP_NV;
-  }
   else
 #endif /* FEATURE_UIM_RUN_TIME_ENABLE */
 #ifdef FEATURE_UIM_3GPD_FALLBACK
@@ -10809,6 +10857,16 @@ void uim_init_3gpd_preference(
     nvruim_3gpd_control = UIM_3GPD_MIP_NV_SIP_NV;
   }
 #endif /* FEATURE_UIM_3GPD_FALLBACK */
+
+#ifdef FEATURE_UIM_SUPPORT_3GPD_NV
+  if(NVRUIM_NON_3GPD_CARD == nvruim_non_3gpd_cdma_card)
+  {
+    /* set nv_ruim_3gpd control flag to 
+       UIM_3GPD_MIP_NV_SIP_NV for non 3gpd card*/
+    nvruim_3gpd_control = UIM_3GPD_MIP_NV_SIP_NV;
+  }
+#endif /* FEATURE_UIM_SUPPORT_3GPD_NV */
+  
 #else
   nvruim_3gpd_control = UIM_3GPD_MIP_NV_SIP_NV;
 #endif /* FEATURE_UIM_SUPPORT_3GPD */
@@ -10946,7 +11004,11 @@ void uim_init_an_hrpd_preference(
   }
   else
 #endif /* FEATURE_UIM_RUN_TIME_ENABLE */
-  if(service_hrpd)
+  if(service_hrpd
+#ifdef FEATURE_UIM_MISCONFIG_RUIM_N5_WORKAROUND_OPTIMIZED
+ && (!(uim_hrpd_disabled_card_flag || uim_use_cave_default))
+#endif /* FEATURE_UIM_MISCONFIG_RUIM_N5_WORKAROUND_OPTIMIZED */
+    )
   {
     /* Use R-UIM for HRPD Support */
     nvruim_hrpd_control = UIM_AN_HRPD_SUPPORT;
@@ -11143,28 +11205,10 @@ boolean nvruim_clear_cache(
   const uim_items_enum_type *file_list_p
 )
 {
-  int i = 0;
-  uim_items_enum_type *refresh_files_p = NULL;
-  uint8                num_refresh_files;
+  int                  i                      = 0;
+  uim_items_enum_type *refresh_files_p        = NULL;
+  uint32               nvruim_temp_cache_list = RUIM_NO_CACHE_VALUE;  
 
-  uim_items_enum_type nvruim_cache_files[NVRUIM_MAX_REFRESH_FILES] = 
-  { 
-   UIM_CDMA_IMSI_M,              UIM_CDMA_IMSI_T,           UIM_CDMA_RUIM_ID,   
-   UIM_CDMA_CALL_TERM_MODE_PREF, UIM_CDMA_OTAPA_SPC_ENABLE, UIM_CDMA_NAM_LOCK,
-   UIM_CDMA_SERVICE_PREF,        UIM_CDMA_TMSI,             
-   UIM_CDMA_DIST_BASED_REGN_IND, UIM_CDMA_SF_EUIM_ID,       
-   UIM_CDMA_3GPD_3GPDOPM,        UIM_CDMA_3GPD_MIPFLAGS,    
-   UIM_CDMA_3GPD_TCPCONFIG,      UIM_CDMA_3GPD_SIPUPP,      
-   UIM_CDMA_3GPD_MIPUPP,         UIM_CDMA_3GPD_MIPSP,       
-   UIM_CDMA_3GPD_SIPPAPSS,       UIM_CDMA_HRPD_HRPDUPP,
-   UIM_CDMA_ANALOG_LOCN_AND_REGN_IND,                       
-   UIM_CDMA_ZONE_BASED_REGN_IND,                            
-   UIM_CDMA_SYS_REGN_IND,        UIM_CDMA_3GPD_SIPUPPEXT,    UIM_CDMA_3GPD_SIPSP,
-   UIM_CDMA_3GPD_DGC,            UIM_CDMA_LBS_V2CONFIG,      UIM_CDMA_LBS_XCONFIG,
-   UIM_CDMA_LBS_V2PDEADDR,       UIM_CDMA_LBS_V2MPCADDR
-  };
-
-  
   if (num_files != NVRUIM_CLEAR_ALL_CACHE && file_list_p == NULL) 
   {
     MSG_ERROR("Null file list pointer passed into nvruim_clear_cache", 0,0,0);
@@ -11181,212 +11225,138 @@ boolean nvruim_clear_cache(
 
   if (num_files == NVRUIM_CLEAR_ALL_CACHE && file_list_p == NULL) 
   {
-    refresh_files_p = nvruim_cache_files;
-    num_refresh_files = NVRUIM_MAX_REFRESH_FILES;
     MSG_HIGH("nvruim_clear_cache: Clearing All nvruim cache items",0,0,0);
-  }
-  else
-  {
-    refresh_files_p = uim_malloc(sizeof(uim_items_enum_type)* num_files);
-    if ( refresh_files_p == NULL )
-    {
-      MSG_ERROR("Could not allocate memory for the file list",0,0,0);
-      return FALSE;
-    }
-    memcpy(refresh_files_p, file_list_p, sizeof(uim_items_enum_type) * 
-                                         num_files);
-    num_refresh_files = num_files;
-    MSG_HIGH("nvruim_clear_cache: Clearing %d files",num_files,0,0);
-  }
-  
-  /* Check if the nvruim cache can be locked, if it is locked by another 
-     process then return to avoid accessing the cache when some other process
-     may be writing to, reading or clearing it. */
-  if (!nvruim_lock_cache())
-  {
-    MSG_ERROR("nvruim cache is locked cannot continue with cearing cache",0,0,0);
-    if (num_files != NVRUIM_CLEAR_ALL_CACHE)
-    {
-      uim_free(refresh_files_p); 
-    } 
-    return FALSE;
+    nvruim_refresh_file_cache |=  nvruim_cache_control;    
+    return TRUE;
   }
 
+  refresh_files_p = uim_malloc(sizeof(uim_items_enum_type)* num_files);
+  if ( refresh_files_p == NULL )
+  {
+    MSG_ERROR("Could not allocate memory for the file list",0,0,0);
+    return FALSE;
+  }
+  memcpy(refresh_files_p, file_list_p, sizeof(uim_items_enum_type) * 
+                                       num_files);
+  MSG_HIGH("nvruim_clear_cache: Clearing %d files",num_files,0,0);
+  
   /* Go through each file in file list and determine if cache exists if so
      clear cache and cache bit*/
-  for (i = 0; i < num_refresh_files; i++) 
+  /* Set the refresh cache bit for given file list */
+  for (i = 0; i < num_files; i++)
   {
-    MSG_HIGH("nvruim_clear_cache: clearing cache for file 0x%x", 
+    MSG_HIGH("nvruim_clear_cache: clearing cache for file 0x%x",
              refresh_files_p[i], 0, 0);
-    switch (refresh_files_p[i]) 
+    switch (refresh_files_p[i])
     {
       case UIM_CDMA_IMSI_M:
-        memset((byte *)&nvruim_imsi_m_cache_buf, 0x00, sizeof(nvruim_imsi_type));
-        nvruim_cache_control &= ~RUIM_IMSI_M_CACHE_BIT;
+        nvruim_temp_cache_list |= RUIM_IMSI_M_CACHE_BIT;
         break;
 
       case UIM_CDMA_IMSI_T:
-        memset((byte *)&nvruim_imsi_t_cache_buf, 0x00, sizeof(nvruim_imsi_type));
-        nvruim_cache_control &= ~RUIM_IMSI_T_CACHE_BIT;
+        nvruim_temp_cache_list |=RUIM_IMSI_T_CACHE_BIT;
         break;
 
       case UIM_CDMA_RUIM_ID:
-        memset((byte *)&nvruim_ruim_id_cache_buf, 0x00, 
-               sizeof(nvruim_ruim_id_cache_buf));
-        nvruim_cache_control &= RUIM_RUIM_ID_CACHE_BIT;
+        nvruim_temp_cache_list |= RUIM_RUIM_ID_CACHE_BIT;
         break;
 
       case UIM_CDMA_CALL_TERM_MODE_PREF:
-        nvruim_call_term_mode_pref_cache_buf = 0x00;
-        nvruim_cache_control &= ~RUIM_CALL_TERM_MODE_PREF_CACHE_BIT;
+        nvruim_temp_cache_list |= RUIM_CALL_TERM_MODE_PREF_CACHE_BIT;
         break;
 
       case UIM_CDMA_OTAPA_SPC_ENABLE:
-        nvruim_otapa_spc_enable_cache_buf = 0x00;
-        nvruim_cache_control &= ~RUIM_OTAPA_SPC_ENABLE_CACHE_BIT;
+        nvruim_temp_cache_list |= RUIM_OTAPA_SPC_ENABLE_CACHE_BIT;
         break;
 
-      case UIM_CDMA_NAM_LOCK:
-        nvruim_nam_lock_buf = 0x00;
-        nvruim_cache_control &= ~RUIM_NO_CACHE_VALUE;
-        break;
-        
       case UIM_CDMA_SERVICE_PREF:
-        nvruim_svc_pref_cache_buf = 0x00;
-        nvruim_cache_control &= ~RUIM_SVC_PREF_CACHE_BIT;
+        nvruim_temp_cache_list |= RUIM_SVC_PREF_CACHE_BIT;
         break;
 
       case UIM_CDMA_TMSI:
-        memset((byte *)&nvruim_tmsi_cache_buf, 0x00, sizeof(nvruim_tmsi_type));
-        nvruim_cache_control &= ~RUIM_TMSI_CACHE_BIT;
+        nvruim_temp_cache_list |= RUIM_TMSI_CACHE_BIT;
         break;
 
       case UIM_CDMA_ANALOG_LOCN_AND_REGN_IND:
-        memset((byte *)&nvruim_analog_reg_ind_cache_buf, 0x00, 
-               sizeof(nvruim_analog_reg_ind_type));
-        nvruim_cache_control &= ~RUIM_ANALOG_REG_IND_CACHE_BIT;
+        nvruim_temp_cache_list |= RUIM_ANALOG_REG_IND_CACHE_BIT;
         break;
 
       case UIM_CDMA_ZONE_BASED_REGN_IND:
-        memset((byte *)&nvruim_zone_reg_ind_cache_buf, 0x00, 
-               sizeof(nvruim_zone_reg_ind_type));
-        nvruim_cache_control &= ~RUIM_ZONE_REG_IND_CACHE_BIT;
+        nvruim_temp_cache_list |= RUIM_ZONE_REG_IND_CACHE_BIT;
         break;
 
       case UIM_CDMA_SYS_REGN_IND:
-        memset((byte *)&nvruim_sys_reg_ind_cache_buf, 0x00, 
-               sizeof(nvruim_sys_reg_ind_type));
-        nvruim_cache_control &= ~RUIM_SYS_REG_IND_CACHE_BIT;
+        nvruim_temp_cache_list |= RUIM_SYS_REG_IND_CACHE_BIT;
         break;
 
       case UIM_CDMA_DIST_BASED_REGN_IND:
-        memset((byte *)&nvruim_dist_reg_ind_cache_buf, 0x00, 
-               sizeof(nvruim_dist_reg_ind_type));
-        nvruim_cache_control &= ~RUIM_DIST_REG_IND_CACHE_BIT;
+        nvruim_temp_cache_list |= RUIM_DIST_REG_IND_CACHE_BIT;
         break;
 
 #ifdef FEATURE_UIM_EUIMID
       case UIM_CDMA_SF_EUIM_ID:
-        qw_set(nvruim_sf_euim_id_cache_buf, 0x00, 0x00);
-        nvruim_cache_control &= ~RUIM_SF_EUIMID_CACHE_BIT;
+        nvruim_temp_cache_list |= RUIM_SF_EUIMID_CACHE_BIT;
         break;
-#endif /* FEATURE_UIM_EUIMID */  
+#endif /* FEATURE_UIM_EUIMID */
 
 #ifdef FEATURE_UIM_SUPPORT_LBS
       case UIM_CDMA_LBS_V2CONFIG:
-        memset(nvruim_lbs_v2_config_ef_buf , 0x00, 
-             sizeof(byte) * NVRUIM_MAX_LBS_V2_CONFIG_SIZE);
-        nvruim_cache_control &= ~RUIM_LBS_V2_CONFIG_EF_CACHE_BIT;
+        nvruim_temp_cache_list |= RUIM_LBS_V2_CONFIG_EF_CACHE_BIT;
         break;
       case UIM_CDMA_LBS_XCONFIG:
-        memset(nvruim_lbs_xtra_config_ef_buf, 0x00, 
-             sizeof(byte) * NVRUIM_MAX_LBS_XTRA_CONFIG_SIZE);
-        nvruim_cache_control &= ~RUIM_LBS_XTRA_CONFIG_EF_CACHE_BIT;
+        nvruim_temp_cache_list |= RUIM_LBS_XTRA_CONFIG_EF_CACHE_BIT;
         break;
       case UIM_CDMA_LBS_V2PDEADDR:
-        memset(nvruim_lbs_v2_pde_address_buf , 0x00, 
-             sizeof(byte) * NVRUIM_MAX_LBS_V2_PDE_ADDRESS_SIZE);
-        nvruim_cache_control &= ~RUIM_LBS_V2_PDE_ADDRESS_EF_CACHE_BIT;
+        nvruim_temp_cache_list |= RUIM_LBS_V2_PDE_ADDRESS_EF_CACHE_BIT;
         break;
       case UIM_CDMA_LBS_V2MPCADDR:
-        memset(nvruim_lbs_v2_mpc_address_buf , 0x00, 
-           sizeof(byte) * NVRUIM_MAX_LBS_V2_MPC_ADDRESS_SIZE);
-        nvruim_cache_control &= ~RUIM_LBS_V2_MPC_ADDRESS_EF_CACHE_BIT;
+        nvruim_temp_cache_list |= RUIM_LBS_V2_MPC_ADDRESS_EF_CACHE_BIT;
         break;
 #endif /* FEATURE_UIM_SUPPORT_LBS */
 
 #ifdef FEATURE_UIM_SUPPORT_3GPD
-      case UIM_CDMA_3GPD_3GPDOPM:
-        nvruim_3GPD_op_mode_ef_buf = 0x00;
-        nvruim_cache_control &= ~RUIM_NO_CACHE_VALUE;
-        break;
-      
       case UIM_CDMA_3GPD_MIPFLAGS:
-        nvruim_3gpd_mipflags_ef_buf = 0x00;
-        nvruim_cache_control &= ~RUIM_MIPFLAGS_EF_CACHE_BIT;
+        nvruim_temp_cache_list |= RUIM_MIPFLAGS_EF_CACHE_BIT;
         break;
 
       case UIM_CDMA_3GPD_TCPCONFIG:
-        memset(nvruim_3gpd_tcp_config_ef_buf, 0x00, 
-               sizeof(byte) * NVRUIM_MAX_TCPCONFIG_SIZE);
-        nvruim_cache_control &= ~RUIM_TCPCONFIG_EF_CACHE_BIT;
+        nvruim_temp_cache_list |= RUIM_TCPCONFIG_EF_CACHE_BIT;
         break;
 #ifdef FEATURE_NVRUIM_HANDLE_ENHANCED_3GPD_PARAMS
       case UIM_CDMA_3GPD_DGC:
-        memset(nvruim_3gpd_dcg_ef_buf, 0x00, 
-             sizeof(byte) * NVRUIM_MAX_DGC_SIZE);
-        nvruim_cache_control &= ~RUIM_DGC_EF_CACHE_BIT ;
+        nvruim_temp_cache_list |= RUIM_DGC_EF_CACHE_BIT ;
         break;
 #endif /* FEATURE_NVRUIM_HANDLE_ENHANCED_3GPD_PARAMS */
       case UIM_CDMA_3GPD_SIPUPP:
-        memset(nvruim_sipupp_ef_buf, 0x00, 
-               sizeof(byte) * NVRUIM_MAX_SIPUPP_SIZE);
-        memset(nvruim_sip_profile_bit_index, 0x00, 
-               sizeof(word) * NVRUIM_MAX_NUM_SIP_PROFILES);
-        nvruim_cache_control &= ~RUIM_SIPUPP_EF_CACHE_BIT;
+        nvruim_temp_cache_list |= RUIM_SIPUPP_EF_CACHE_BIT;
         break;
 
       case UIM_CDMA_3GPD_MIPUPP:
-        memset(nvruim_mipupp_ef_buf, 0x00, 
-               sizeof(byte) * NVRUIM_MAX_MIPUPP_SIZE);
-        memset(nvruim_mip_profile_bit_index, 0x00, 
-               sizeof(word) * NVRUIM_MAX_NUM_MIP_PROFILES);
-        nvruim_cache_control &= ~RUIM_MIPUPP_EF_CACHE_BIT;
+        nvruim_temp_cache_list |= RUIM_MIPUPP_EF_CACHE_BIT;
         break;
 
       case UIM_CDMA_3GPD_MIPSP:
-        nvruim_mipsp_ef_buf = 0x00;
-        nvruim_cache_control &= ~RUIM_MIPSP_EF_CACHE_BIT;
+        nvruim_temp_cache_list |= RUIM_MIPSP_EF_CACHE_BIT;
         break;
 
       case UIM_CDMA_3GPD_SIPPAPSS:
-        memset(nvruim_sippapss_ef_buf, 0x00, 
-             sizeof(byte) * NVRUIM_MAX_SIPPAPSS_SIZE);
-        memset(nvruim_sip_pap_ss_profile_bit_index, 0x00, 
-             sizeof(word) * NVRUIM_MAX_NUM_SIP_PROFILES);
-        nvruim_cache_control &= ~RUIM_SIPPAPSS_EF_CACHE_BIT;
+        nvruim_temp_cache_list |= RUIM_SIPPAPSS_EF_CACHE_BIT;
         break;
 
 #ifdef FEATURE_UIM_3GPD_MULTIPLE_SIP_PROFILES
       case UIM_CDMA_3GPD_SIPUPPEXT:
-        memset(nvruim_sipuppext_ef_buf, 0x00, 
-             sizeof(byte) * NVRUIM_MAX_SIPUPPEXT_SIZE);
-        nvruim_cache_control &= ~RUIM_SIPUPPEXT_EF_CACHE_BIT;
+        nvruim_temp_cache_list |= RUIM_SIPUPPEXT_EF_CACHE_BIT;
         break;
 
       case UIM_CDMA_3GPD_SIPSP:
-        nvruim_sipsp_ef_buf = 0;
-        nvruim_cache_control &= ~RUIM_SIPSP_EF_CACHE_BIT;
+        nvruim_temp_cache_list |= RUIM_SIPSP_EF_CACHE_BIT;
         break;
 #endif /* FEATURE_UIM_3GPD_MULTIPLE_SIP_PROFILES */
 #endif /* FEATURE_UIM_SUPPORT_3GPD */
 
 #ifdef FEATURE_UIM_SUPPORT_HRPD_AN
       case UIM_CDMA_HRPD_HRPDUPP:
-
-        memset(nvruim_hrpdupp_ef_buf, 0x00, 
-               sizeof(byte) * NVRUIM_MAX_HRPDUPP_SIZE);
-        nvruim_cache_control &= ~RUIM_HRPD_NAI_CACHE_BIT;
+        nvruim_temp_cache_list |= RUIM_HRPD_NAI_CACHE_BIT;
         break;
 #endif /* FEATURE_UIM_SUPPORT_HRPD_AN */
 
@@ -11395,18 +11365,10 @@ boolean nvruim_clear_cache(
         break;
     }
   } /* end switch for uim file*/
+  uim_free(refresh_files_p);
 
-  /* done clearing cache, nvruim cache can be unlocked*/
-  if (!nvruim_unlock_cache()) 
-  {
-    MSG_HIGH("nvruim_clear_cache: nvruim cache cannnot be unlocked",
-             0,0,0);
-  }
-  if (num_files != NVRUIM_CLEAR_ALL_CACHE)
-  {
-    uim_free(refresh_files_p); 
-  }
-  
+  /* Update the refresh cache list */
+  nvruim_refresh_file_cache |= nvruim_temp_cache_list;
   return TRUE;
 } /* nvruim_clear_cache()*/
 
@@ -11558,84 +11520,224 @@ void nvruim_uim_file_to_nv_item(
     default:
       nv_items_ptr->num_nv_items = 0;
   }  
-}
+} /* nvruim_uim_file_to_nv_item */
 
 
 /*===========================================================================
 
-FUNCTION nvruim_lock_cache
+FUNCTION nvruim_process_refresh
 
 DESCRIPTION
-  This function will lock nvruim cache so to prevent simultaneous access by
-  read, write, or clear cache actions. 
+  This function is called from nv request context as part of nv read\ write 
+  operation. This function will clear the nvruim cache, before doing nv operation
+  there if a refresh on one of the files is requested.
 
 DEPENDENCIES
   None.
 
 RETURN VALUE
-  TRUE:  If nvruim cache could be locked.
-  FALSE: If nnvruim cache could not be locked, because it already was. 
+ None.
 
 SIDE EFFECTS
-  None
+  nvruim cache will be cleared
 
-===========================================================================*/ 
-boolean nvruim_lock_cache(void)
+===========================================================================*/
+void nvruim_process_refresh( void
+)
 {
-   boolean cache_lock_success = FALSE;
-   TASKLOCK();
-   if (nvruim_cache_locked)
-   {
-     MSG_ERROR("Cache is already locked, cannot lock",0,0,0);
-     cache_lock_success  = FALSE;
-   }
-   else
-   {
-     nvruim_cache_locked = TRUE;
-     cache_lock_success  = TRUE;
-   }
-   TASKFREE();
-   return cache_lock_success;
-}
+  int     i                         =  0;
+  uint32  nvruim_temp_cache_control =  RUIM_NO_CACHE_VALUE;
+  uint32  nvruim_cache_mask         =  RUIM_IMSI_M_CACHE_BIT;
+  
+  /* get nvruim refresh cache file list */
+  nvruim_temp_cache_control = nvruim_refresh_file_cache;
 
+  if (nvruim_temp_cache_control == RUIM_NO_CACHE_VALUE)
+  {
+      /* No refresh is require */
+      return;
+  }
 
-/*===========================================================================
+  /* Go through each file in nvruim_temp_cache_control and determine if cache exists
+     if so clear cache and cache bit*/
+  for (i = 0; i < NVRUIM_CLEAR_ALL_CACHE; i++)
+  {
+    switch (nvruim_temp_cache_control & nvruim_cache_mask)
+    {
+      case RUIM_IMSI_M_CACHE_BIT:
+        memset((byte *)&nvruim_imsi_m_cache_buf, 0x00, sizeof(nvruim_imsi_type));
+        nvruim_cache_control &= ~RUIM_IMSI_M_CACHE_BIT;
+        break;
 
-FUNCTION nvruim_unlock_cache
+      case RUIM_IMSI_T_CACHE_BIT:
+        memset((byte *)&nvruim_imsi_t_cache_buf, 0x00, sizeof(nvruim_imsi_type));
+        nvruim_cache_control &= ~RUIM_IMSI_T_CACHE_BIT;
+        break;
 
-DESCRIPTION
-  This function will unlock nvruim cache so that a read, write, or clear cache
-  can continue.
+      case RUIM_RUIM_ID_CACHE_BIT:
+        memset((byte *)&nvruim_ruim_id_cache_buf, 0x00,
+               sizeof(nvruim_ruim_id_cache_buf));
+        nvruim_cache_control &= RUIM_RUIM_ID_CACHE_BIT;
+        break;
 
-DEPENDENCIES
-  None.
+      case RUIM_CALL_TERM_MODE_PREF_CACHE_BIT:
+        nvruim_call_term_mode_pref_cache_buf = 0x00;
+        nvruim_cache_control &= ~RUIM_CALL_TERM_MODE_PREF_CACHE_BIT;
+        break;
 
-RETURN VALUE
-  TRUE:  If nvruim cache could be unlocked.
-  FALSE: If nnvruim cache could not be unlocked, because it already was. 
+      case RUIM_OTAPA_SPC_ENABLE_CACHE_BIT:
+        nvruim_otapa_spc_enable_cache_buf = 0x00;
+        nvruim_cache_control &= ~RUIM_OTAPA_SPC_ENABLE_CACHE_BIT;
+        break;
 
-SIDE EFFECTS
-  None
+      case RUIM_SVC_PREF_CACHE_BIT:
+        nvruim_svc_pref_cache_buf = 0x00;
+        nvruim_cache_control &= ~RUIM_SVC_PREF_CACHE_BIT;
+        break;
 
-===========================================================================*/ 
-boolean nvruim_unlock_cache(void)
-{
-   boolean cache_lock_success = FALSE;
-   TASKLOCK();
-   if (!nvruim_cache_locked)
-   {
-     MSG_ERROR("Cache is not locked, cannot unlock",0,0,0);
-     cache_lock_success  = FALSE;
-   }
-   else
-   {
-     nvruim_cache_locked = FALSE;
-     cache_lock_success  = TRUE;
-   }
-   TASKFREE();
-   return cache_lock_success;
-}
+      case RUIM_TMSI_CACHE_BIT:
+        memset((byte *)&nvruim_tmsi_cache_buf, 0x00, sizeof(nvruim_tmsi_type));
+        nvruim_cache_control &= ~RUIM_TMSI_CACHE_BIT;
+        break;
 
+      case RUIM_ANALOG_REG_IND_CACHE_BIT:
+        memset((byte *)&nvruim_analog_reg_ind_cache_buf, 0x00,
+               sizeof(nvruim_analog_reg_ind_type));
+        nvruim_cache_control &= ~RUIM_ANALOG_REG_IND_CACHE_BIT;
+        break;
+
+      case RUIM_ZONE_REG_IND_CACHE_BIT:
+        memset((byte *)&nvruim_zone_reg_ind_cache_buf, 0x00,
+               sizeof(nvruim_zone_reg_ind_type));
+        nvruim_cache_control &= ~RUIM_ZONE_REG_IND_CACHE_BIT;
+        break;
+
+      case RUIM_SYS_REG_IND_CACHE_BIT:
+        memset((byte *)&nvruim_sys_reg_ind_cache_buf, 0x00,
+               sizeof(nvruim_sys_reg_ind_type));
+        nvruim_cache_control &= ~RUIM_SYS_REG_IND_CACHE_BIT;
+        break;
+
+      case RUIM_DIST_REG_IND_CACHE_BIT:
+        memset((byte *)&nvruim_dist_reg_ind_cache_buf, 0x00,
+               sizeof(nvruim_dist_reg_ind_type));
+        nvruim_cache_control &= ~RUIM_DIST_REG_IND_CACHE_BIT;
+        break;
+
+#ifdef FEATURE_UIM_EUIMID
+      case RUIM_SF_EUIMID_CACHE_BIT:
+        qw_set(nvruim_sf_euim_id_cache_buf, 0x00, 0x00);
+        nvruim_cache_control &= ~RUIM_SF_EUIMID_CACHE_BIT;
+        break;
+#endif /* FEATURE_UIM_EUIMID */
+
+#ifdef FEATURE_UIM_SUPPORT_LBS
+      case RUIM_LBS_V2_CONFIG_EF_CACHE_BIT:
+        memset(nvruim_lbs_v2_config_ef_buf , 0x00,
+             sizeof(byte) * NVRUIM_MAX_LBS_V2_CONFIG_SIZE);
+        nvruim_cache_control &= ~RUIM_LBS_V2_CONFIG_EF_CACHE_BIT;
+        break;
+      case RUIM_LBS_XTRA_CONFIG_EF_CACHE_BIT:
+        memset(nvruim_lbs_xtra_config_ef_buf, 0x00,
+             sizeof(byte) * NVRUIM_MAX_LBS_XTRA_CONFIG_SIZE);
+        nvruim_cache_control &= ~RUIM_LBS_XTRA_CONFIG_EF_CACHE_BIT;
+        break;
+      case RUIM_LBS_V2_PDE_ADDRESS_EF_CACHE_BIT:
+        memset(nvruim_lbs_v2_pde_address_buf , 0x00,
+             sizeof(byte) * NVRUIM_MAX_LBS_V2_PDE_ADDRESS_SIZE);
+        nvruim_cache_control &= ~RUIM_LBS_V2_PDE_ADDRESS_EF_CACHE_BIT;
+        break;
+      case RUIM_LBS_V2_MPC_ADDRESS_EF_CACHE_BIT:
+        memset(nvruim_lbs_v2_mpc_address_buf , 0x00,
+           sizeof(byte) * NVRUIM_MAX_LBS_V2_MPC_ADDRESS_SIZE);
+        nvruim_cache_control &= ~RUIM_LBS_V2_MPC_ADDRESS_EF_CACHE_BIT;
+        break;
+#endif /* FEATURE_UIM_SUPPORT_LBS */
+
+#ifdef FEATURE_UIM_SUPPORT_3GPD
+      case RUIM_MIPFLAGS_EF_CACHE_BIT:
+        nvruim_3gpd_mipflags_ef_buf = 0x00;
+        nvruim_cache_control &= ~RUIM_MIPFLAGS_EF_CACHE_BIT;
+        break;
+
+      case RUIM_TCPCONFIG_EF_CACHE_BIT:
+        memset(nvruim_3gpd_tcp_config_ef_buf, 0x00,
+               sizeof(byte) * NVRUIM_MAX_TCPCONFIG_SIZE);
+        nvruim_cache_control &= ~RUIM_TCPCONFIG_EF_CACHE_BIT;
+        break;
+#ifdef FEATURE_NVRUIM_HANDLE_ENHANCED_3GPD_PARAMS
+      case RUIM_DGC_EF_CACHE_BIT:
+        memset(nvruim_3gpd_dcg_ef_buf, 0x00,
+             sizeof(byte) * NVRUIM_MAX_DGC_SIZE);
+        nvruim_cache_control &= ~RUIM_DGC_EF_CACHE_BIT ;
+        break;
+#endif /* FEATURE_NVRUIM_HANDLE_ENHANCED_3GPD_PARAMS */
+      case RUIM_SIPUPP_EF_CACHE_BIT:
+        memset(nvruim_sipupp_ef_buf, 0x00,
+               sizeof(byte) * NVRUIM_MAX_SIPUPP_SIZE);
+        memset(nvruim_sip_profile_bit_index, 0x00,
+               sizeof(word) * NVRUIM_MAX_NUM_SIP_PROFILES);
+        nvruim_cache_control &= ~RUIM_SIPUPP_EF_CACHE_BIT;
+        break;
+
+      case RUIM_MIPUPP_EF_CACHE_BIT:
+        memset(nvruim_mipupp_ef_buf, 0x00,
+               sizeof(byte) * NVRUIM_MAX_MIPUPP_SIZE);
+        memset(nvruim_mip_profile_bit_index, 0x00,
+               sizeof(word) * NVRUIM_MAX_NUM_MIP_PROFILES);
+        nvruim_cache_control &= ~RUIM_MIPUPP_EF_CACHE_BIT;
+        break;
+
+      case RUIM_MIPSP_EF_CACHE_BIT:
+        nvruim_mipsp_ef_buf = 0x00;
+        nvruim_cache_control &= ~RUIM_MIPSP_EF_CACHE_BIT;
+        break;
+
+      case RUIM_SIPPAPSS_EF_CACHE_BIT:
+        memset(nvruim_sippapss_ef_buf, 0x00,
+             sizeof(byte) * NVRUIM_MAX_SIPPAPSS_SIZE);
+        memset(nvruim_sip_pap_ss_profile_bit_index, 0x00,
+             sizeof(word) * NVRUIM_MAX_NUM_SIP_PROFILES);
+        nvruim_cache_control &= ~RUIM_SIPPAPSS_EF_CACHE_BIT;
+        break;
+
+#ifdef FEATURE_UIM_3GPD_MULTIPLE_SIP_PROFILES
+      case RUIM_SIPUPPEXT_EF_CACHE_BIT:
+        memset(nvruim_sipuppext_ef_buf, 0x00,
+             sizeof(byte) * NVRUIM_MAX_SIPUPPEXT_SIZE);
+        nvruim_cache_control &= ~RUIM_SIPUPPEXT_EF_CACHE_BIT;
+        break;
+
+      case RUIM_SIPSP_EF_CACHE_BIT:
+        nvruim_sipsp_ef_buf = 0;
+        nvruim_cache_control &= ~RUIM_SIPSP_EF_CACHE_BIT;
+        break;
+#endif /* FEATURE_UIM_3GPD_MULTIPLE_SIP_PROFILES */
+#endif /* FEATURE_UIM_SUPPORT_3GPD */
+
+#ifdef FEATURE_UIM_SUPPORT_HRPD_AN
+      case RUIM_HRPD_NAI_CACHE_BIT:
+
+        memset(nvruim_hrpdupp_ef_buf, 0x00,
+               sizeof(byte) * NVRUIM_MAX_HRPDUPP_SIZE);
+        nvruim_cache_control &= ~RUIM_HRPD_NAI_CACHE_BIT;
+        break;
+#endif /* FEATURE_UIM_SUPPORT_HRPD_AN */
+
+      default:
+        break;
+    }/* end switch for uim file*/
+    /* read the next file */
+    nvruim_cache_mask = nvruim_cache_mask << 1;
+  } 
+
+  nvruim_nam_lock_buf = 0x00;
+#ifdef FEATURE_UIM_SUPPORT_3GPD
+  nvruim_3GPD_op_mode_ef_buf = 0x00;
+#endif /* FEATURE_UIM_SUPPORT_3GPD */  
+  /* update the refresh flag for cache */
+  nvruim_refresh_file_cache &= ~nvruim_temp_cache_control;
+} /* nvruim_process_refresh()*/
 #endif /* FEATURE_RUIM_CDMA_REFRESH */
 
 
@@ -11977,61 +12079,103 @@ SIDE EFFECTS
 ===================================================================*/
 static boolean uim_hrpd_disabled_card()
 {
-#ifdef FEATURE_UIM_MISCONFIG_RUIM_N5_WORKAROUND
-  boolean is_hrpd_disabled = FALSE;
+#ifdef FEATURE_UIM_MISCONFIG_RUIM_N5_WORKAROUND	
   word    mcc              = 0;
+
+  MSG_HIGH("uim_hrpd_disabled_card()",0,0,0);
 
   if (!(nvruim_cache_control & RUIM_IMSI_M_CACHE_BIT))
   {
-    cmd.access_uim.access = UIM_READ_F;
+    /* Read IMSI */
+    cmd.access_uim.access    = UIM_READ_F;
     cmd.access_uim.num_bytes = sizeof(nvruim_imsi_type);
-    cmd.access_uim.data_ptr = (byte *) &(nvruim_imsi_m_cache_buf);
-    cmd.access_uim.item= UIM_CDMA_IMSI_M;
-    cmd.access_uim.offset = 0;
+    cmd.access_uim.data_ptr  = (byte *) &(nvruim_imsi_m_cache_buf);
+    cmd.access_uim.item      = UIM_CDMA_IMSI_M;
+    cmd.access_uim.offset    = 0;
     if (nvruim_access(&cmd) != UIM_PASS)
+    {
+      MSG_HIGH("Not able to read IMSI",0,0,0);
       return (FALSE);
+    }
     else
+    {
       nvruim_cache_control |= RUIM_IMSI_M_CACHE_BIT;
+    }
   }
   mcc = (nvruim_imsi_m_cache_buf.imsi_mcc[1] << 8) |
           nvruim_imsi_m_cache_buf.imsi_mcc[0];
   MSG_HIGH("IMSI of R-UIM card is 0x%x", mcc, 0, 0);
 
-  /* mcc = 359, which converts to country code of 460 */
-  if (mcc != NVRUIM_OPERATOR_MCC)
+  /* Check if mcc is same as that of hrpd disabled card */
+  if (mcc != NVRUIM_NON_3GPD_CDMA_CARD_MCC)
+  {
     return (FALSE);
+  }
 
-  cmd.access_uim.access = UIM_READ_F;
-  cmd.access_uim.num_bytes = NVRUIM_MAX_HRPDUPP_SIZE;
-  cmd.access_uim.data_ptr = (byte *) &(nvruim_hrpdupp_ef_buf);
-  cmd.access_uim.offset = 0;
-  cmd.access_uim.item = UIM_CDMA_HRPD_HRPDUPP;
-  if (nvruim_access( &cmd )== UIM_PASS)
+  if(!(nvruim_cache_control & RUIM_HRPD_NAI_CACHE_BIT))
   {
-    MSG_HIGH("HRPD NAI is %s, length is 0x%x",(byte*)&(nvruim_hrpdupp_ef_buf[2]),
-               nvruim_hrpdupp_ef_buf[1],0);
-    if (((nvruim_hrpdupp_ef_buf[0]==0xFF)&&(nvruim_hrpdupp_ef_buf[1]==0xFF)) ||
-          ((nvruim_hrpdupp_ef_buf[0]==0x00)&&(nvruim_hrpdupp_ef_buf[1]==0x00)))
+    /* Read HRPD data */
+    cmd.access_uim.access    = UIM_READ_F;
+    cmd.access_uim.num_bytes = NVRUIM_MAX_HRPDUPP_SIZE;
+    cmd.access_uim.data_ptr  = (byte *) &(nvruim_hrpdupp_ef_buf);
+    cmd.access_uim.offset    = 0;
+    cmd.access_uim.item      = UIM_CDMA_HRPD_HRPDUPP;
+    if (nvruim_access(&cmd) != UIM_PASS)
     {
-      is_hrpd_disabled=TRUE;
-      MSG_HIGH("wrong NAI",0,0,0);
+      MSG_HIGH("SW1 is 0x%x and SW2 is 0x%x", nvruim_sw1, nvruim_sw2,0);
+      if (nvruim_sw1 == SW1_REFERENCE && nvruim_sw2== SW2_NOT_FOUND)
+      {
+        MSG_HIGH("EF HRPDUPP is not provisioned",0,0,0);
+        return (TRUE);
+      }
+#ifdef FEATURE_UIM_MISCONFIG_RUIM_N5_WORKAROUND_OPTIMIZED      
+      else
+      {
+        MSG_HIGH("EF HRPDUPP is provisioned",0,0,0);
+        return (FALSE);
+      }
+#endif /*FEATURE_UIM_MISCONFIG_RUIM_N5_WORKAROUND_OPTIMIZED */      
     }
-    nvruim_cache_control |= RUIM_HRPD_NAI_CACHE_BIT;
   }
-  else
+  if (((nvruim_hrpdupp_ef_buf[0]==0xFF)&&(nvruim_hrpdupp_ef_buf[1]==0xFF)) ||
+        ((nvruim_hrpdupp_ef_buf[0]==0x00)&&(nvruim_hrpdupp_ef_buf[1]==0x00)))
   {
-    MSG_HIGH("SW1 is 0x%x and SW2 is 0x%x", nvruim_sw1, nvruim_sw2,0);
-    if (nvruim_sw1 == SW1_REFERENCE && nvruim_sw2== SW2_NOT_FOUND)
-    {
-      MSG_HIGH("EF HRPDUPP is not provisioned",0,0,0);
-      is_hrpd_disabled=TRUE;
-    }
+    MSG_HIGH("wrong NAI",0,0,0);
+    return (TRUE);
   }
-  return is_hrpd_disabled;
-#else /* FEATURE_UIM_MISCONFIG_RUIM_N5_WORKAROUND */
+  return (FALSE);
+#else  
   return FALSE;
-#endif /* FEATURE_UIM_MISCONFIG_RUIM_N5_WORKAROUND */
+#endif /* FEATURE_UIM_MISCONFIG_RUIM_N5_WORKAROUND */  
 } /* uim_hrpd_disabled_card */
+
+/*===================================================================
+FUNCTION NVRUIM_PPP_CAVE_FALLBACK
+
+DESCRIPTION
+  Sets the hrpd control variable to Cave
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  None
+
+SIDE EFFECTS
+  None
+
+==================================================================*/
+void nvruim_ppp_cave_fallback( void
+)
+{
+#if defined(FEATURE_UIM_MISCONFIG_RUIM_N5_WORKAROUND_OPTIMIZED)
+  MSG_HIGH("MD5 failed, falling back to cave",0,0,0);
+  nvruim_hrpd_control  = UIM_AN_HRPD_USE_CAVE;
+  uim_use_cave_default = TRUE;
+#else
+  MSG_HIGH("Fallback to CAVE is not enabled ",0,0,0);  
+#endif /* FEATURE_UIM_MISCONFIG_RUIM_N5_WORKAROUND_OPTIMIZED */
+} /* nvruim_ppp_cave_fallback */
 
 
 /*===================================================================
@@ -12076,7 +12220,7 @@ boolean nvruim_generate_an_nai_with_imsi(
   mcc = (nvruim_imsi_m_cache_buf.imsi_mcc[1] << 8) |
         nvruim_imsi_m_cache_buf.imsi_mcc[0];
   /* mcc = 359, which converts to country code of 460 */
-  if(mcc != NVRUIM_OPERATOR_MCC)
+  if(mcc != NVRUIM_NON_3GPD_CDMA_CARD_MCC)
     return(FALSE);
   memcpy((byte*)user_id_info_ptr,
           nvruim_an_cave_nai,
@@ -12139,4 +12283,3 @@ boolean nvruim_sms_ems_support(void)
 #endif
 
 #endif /*FEATURE_NV_RUIM*/
-

@@ -24,9 +24,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/legacymedia/filemedia/mp4parser/main/latest/src/mp4fragmentfile.cpp#14 $
-$DateTime: 2008/12/11 02:28:12 $
-$Change: 803007 $
+$Header: //source/qcom/qct/multimedia/qtv/legacymedia/filemedia/mp4parser/main/latest/src/mp4fragmentfile.cpp#32 $
+$DateTime: 2010/10/25 00:21:29 $
+$Change: 1491087 $
 
 
 ========================================================================== */
@@ -109,17 +109,9 @@ Mp4FragmentFile::Mp4FragmentFile(  OSCL_STRING filename,
 #endif /* defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD) */
                            )
 {
-#ifdef FEATURE_QTV_INTER_FRAG_REPOS
-   fragmentinfoCount      = 0;
-#endif
   if(_success)
   {
      Mp4FragmentFile::InitData();
-
-#if defined (FEATURE_QTV_PSEUDO_STREAM) || defined(FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
-      bPseudoStreaming  = bPseudoStream;
-      m_bufferOffset    = wBufferOffset;
-#endif
   }
 }
 
@@ -159,10 +151,6 @@ Mp4FragmentFile::Mp4FragmentFile(  dcf_ixstream_type inputStream,
                            bPlayAudio,
                            bPlayText)
 {
-
-#ifdef FEATURE_QTV_INTER_FRAG_REPOS
-   fragmentinfoCount      = 0;
-#endif
   if(_success)
   {
      InitData();
@@ -180,34 +168,13 @@ DESCRIPTION
 void Mp4FragmentFile::InitData()
 {
 #if defined( FEATURE_QTV_3GPP_PROGRESSIVE_DNLD) || defined(FEATURE_QTV_PSEUDO_STREAM)
-   bPseudoStreaming       = false;
-   m_bufferOffset         = 0;
-   m_currentParseFragment = 0;
-   bGetFragmentSize       = FALSE;
-   bDataIncomplete        = FALSE;
-   bQtvPlayerPaused       = TRUE;
-   bsendParseFragmentCmd  = FALSE;
    QCUtils::InitCritSect(&videoFMT_Access_CS);
 #endif
-
+  fragmentinfoCount      = 0;
    QCUtils::InitCritSect(&m_trackwrite_CS);
    QCUtils::InitCritSect(&pause_CS);
-
-#if defined( FEATURE_QTV_3GPP_PROGRESSIVE_DNLD) || defined(FEATURE_QTV_PSEUDO_STREAM)
-   fragmentNumber         = 0;
-   minOffsetRequired      = 0;
-#endif
-
-   m_pauseVideo           = FALSE;
-   m_pauseAudio           = FALSE;
-   m_pauseText            = FALSE;
-
    AudioPlayerPtr         = NULL;
    VideoPlayerPtr         = NULL;
-   parserState            = Common::PARSER_IDLE;
-
-#ifdef FEATURE_QTV_INTER_FRAG_REPOS
-   fragmentinfoCount      = 0;
    /*Make room initially for fragmentInfoArray to hold entires for a DEFAULTFRAGMENTCOUNT(5000) through malloc
    This would avoid numerous realloc of fragmentInfoArray during the playback of a large fragmented file
    that may lead to heap fragmentation*/
@@ -217,182 +184,8 @@ void Mp4FragmentFile::InitData()
      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_FATAL, "Can't allocate memory for initial fragmentInfoArray" );
      _fileErrorCode = MEMORY_ALLOCATION_FAILED;
    }
-#endif /*FEATURE_QTV_INTER_FRAG_REPOS*/
-}
-
- /*===========================================================================
-
-FUNCTION  parseFirstFragment
-
-DESCRIPTION
-  Public method to parse the first fragment inside the MP4 file.
-
-===========================================================================*/
-void Mp4FragmentFile::parseFirstFragment()
-{
-   if(_success)
-   {
-#if defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
-      if(!initializeVideoFMT())
-      {
-         _fileErrorCode = (int)READ_FAILED; // Read past EOF
-         _success = false;
-         QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_FATAL, "VIDEO_FMT_FAILURE");
-      }
-#else
-      // Parse the file as an MP4 file, building a list of atom information
-      // structures.
-      video_fmt_open (mp4ParseStatusCallback, this, VIDEO_FMT_MP4,0xff);
-
-      while(  (m_mp4ParseLastStatus != VIDEO_FMT_INFO) &&
-         (m_mp4ParseLastStatus != VIDEO_FMT_FAILURE) &&
-         (m_mp4ParseLastStatus != VIDEO_FMT_FRAGMENT) &&
-         (m_mp4ParseLastStatus != VIDEO_FMT_DATA_CORRUPT)  )
-      {
-         if( (m_mp4ParseContinueCb == NULL) ||
-            (m_mp4ParseServerData == NULL)  )
-            break;
-         else
-            m_mp4ParseContinueCb(m_mp4ParseServerData);
-      }
-      if(m_mp4ParseLastStatus == VIDEO_FMT_FRAGMENT)
-      {
-         m_isFragmentedFile = true;
-      }
-#endif /*FEATURE_QTV_PSEUDO_STREAM */
-
-      // Check for any atoms that may have read past the EOF that were not
-      // already caught by any earlier error handling
-      if( (m_mp4ParseLastStatus == VIDEO_FMT_FAILURE) ||
-         (m_mp4ParseLastStatus == VIDEO_FMT_DATA_CORRUPT)  )
-      {
-         _fileErrorCode = (int)READ_FAILED; // Read past EOF
-         _success = false;
-         (void)OSCL_FileClose( m_parseFilePtr );
-         m_parseFilePtr = NULL;
-         QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_FATAL, "VIDEO_FMT_FAILURE");
-         return;
-      }
-
-#if defined( FEATURE_QTV_3GPP_PROGRESSIVE_DNLD) || defined(FEATURE_QTV_PSEUDO_STREAM)
-      if( !bPseudoStreaming && (m_parseFilePtr) )
-#else
-      if( m_parseFilePtr )
-#endif
-      {
-         (void)OSCL_FileClose( m_parseFilePtr );
-         m_parseFilePtr = NULL;
-         if(!getNumTracks() && _success)
-         {
-            _success = false;
-            _fileErrorCode = NO_MEDIA_TRACKS_IN_FILE;
-            return;
-         }
-      }
-#ifdef FEATURE_MP4_KDDI_TELOP_TEXT
-      //if parsing was successful, parse KDDI Telop Text
-      if (_success && _kddiTelopElement)
-      {
-         Mpeg4File::process_kddi_telop_text();
-      }
-#endif /* FEATURE_MP4_KDDI_TELOP_TEXT */
-
-#if defined(FEATURE_QTV_SKT_MOD_MIDI)
-      Mpeg4File::process_mod_midi_atom();
-#endif /* FEATURE_QTV_SKT_MOD_MIDI */
-
-      /* if video track does not have STSS table, then all video frames are SYNC frame */
-      if(_success && m_playVideo)
-      {
-         /* if clip has video and we don't have STSS table, we can't reposition */
-         video_fmt_stream_info_type *p_track;
-         for(uint32 index = 0; index < m_videoFmtInfo.num_streams; index++)
-         {
-            p_track = m_videoFmtInfo.streams + index;
-            if( p_track->type == VIDEO_FMT_STREAM_VIDEO )
-            {
-               video_fmt_mp4r_context_type  *context;
-               video_fmt_mp4r_stream_type   *stream;
-               context = (video_fmt_mp4r_context_type *) m_videoFmtInfo.server_data;
-               if(index <= context->num_streams)
-               {
-                  stream = &context->stream_state [index];
-                  if(!stream->stss.table_size)
-                  {
-                     m_allSyncVideo = true;
-                     QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "no Video STSS, assuming all frames are sync frames");
                   }
-               }
-            }
-         }
-      } /* end of if(m_playVideo) */
 
-      if((_success)&& (m_playAudio))
-      {
-         video_fmt_stream_info_type *p_track=0;
-         uint32 framelength=0;
-         for(uint32 index = 0; index < m_videoFmtInfo.num_streams; index++)
-         {
-            p_track = m_videoFmtInfo.streams + index;
-            if( (p_track)                                                  &&
-               (p_track->type == VIDEO_FMT_STREAM_AUDIO)                  &&
-               (p_track->subinfo.audio.format==VIDEO_FMT_STREAM_AUDIO_AMR)
-               )
-            {
-               video_fmt_sample_info_type sampleInfo;
-               memset(&sampleInfo, 0x0, sizeof(video_fmt_sample_info_type));
-               bool retStat = false;
-               uint32 sampleId = 0;
-               do
-               {
-                  //Keep reading untill we get valid sample with non zero DELTA and non zero SIZE
-                  retStat = (getSampleInfo(p_track->stream_num, sampleId, 1, &sampleInfo)>0)?true:false;
-                  sampleId++;
-               }while( (retStat) && (m_mp4ReadLastStatus[p_track->stream_num] == VIDEO_FMT_IO_DONE) &&
-                  (!sampleInfo.delta || !sampleInfo.size) );
-
-
-               if( !retStat || (m_mp4ReadLastStatus[p_track->stream_num] != VIDEO_FMT_IO_DONE) )
-               {
-                  _success = false;
-                  QTV_MSG_PRIO(QTVDIAG_GENERAL,
-                     QTVDIAG_PRIO_HIGH,
-                     "parseFirstFragment encountered an error making (_success = false)");
-                  return;
-               }
-
-               /* for some clips, SamplesPerFrame value is wrongly set to 10 and the correct
-               value was one. This check is to fix those clips and we also try to
-               minimize the scope of this fix by checking this value in clip and
-               size of first AMR sample from a clip in question/given clip*/
-               if( ((sampleInfo.size==32) || (sampleInfo.size==13)|| (sampleInfo.size==21) || (sampleInfo.size==18))&&
-                  (p_track->subinfo.audio.audio_params.frames_per_sample==10) )
-               {
-                  QTV_MSG_PRIO1(QTVDIAG_GENERAL,
-                     QTVDIAG_PRIO_ERROR,
-                     "SamplesPerFrame=%d for AMR track, but using 1.",
-
-                     p_track->subinfo.audio.audio_params.frames_per_sample);
-                  p_track->subinfo.audio.audio_params.frames_per_sample = 1;
-               }
-
-               if(p_track->subinfo.audio.audio_params.frames_per_sample && p_track->media_timescale)
-               {
-                  framelength=
-                     ((sampleInfo.delta*1000)/(p_track->subinfo.audio.audio_params.frames_per_sample))/(p_track->media_timescale);
-               }
-
-               if((framelength<(DURATION_OF_AMR_FRAME_BLOCK-1))||(framelength>(DURATION_OF_AMR_FRAME_BLOCK+1)))
-               {
-            //CMX validates AMR frame contents so QTV check is redundant.
-                  //_success = false;
-                  QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Invalid(?) AMR Audio content:Duration of Frame Block=%d",framelength);
-               }
-            }
-         }//for(uint32 index = 0; index < m_videoFmtInfo.num_streams; index++)
-      }//if((_success)&& (m_playAudio))
-   }//if(_success)
-}
 /*===========================================================================
 
 FUNCTION  getMovieDuration
@@ -454,456 +247,6 @@ int32 Mp4FragmentFile::getNextFragTrackMaxBufferSizeDB(uint32 id)
 
 /*===========================================================================
 
-FUNCTION  pauseTrack
-
-DESCRIPTION
-===========================================================================*/
-void Mp4FragmentFile::pauseTrack(video_fmt_stream_info_type *track)
-{
-    if(track->type == VIDEO_FMT_STREAM_AUDIO)
-    {
-      m_hasAudio = false;
-
-      QCUtils::EnterCritSect(&pause_CS);
-      QTV_MSG_PRIO2(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "PAUSED: frames = %d m_nextSample = %d", track->frames,
-                                 m_nextSample[track->stream_num]);
-#ifdef FEATURE_QTV_PSEUDO_STREAM
-      if(bPseudoStreaming)
-      {
-        //Send PS_PLAYER_PAUSE since Video is also paused
-        if(m_playVideo)
-        {
-          if(m_pauseVideo)
-            sendPlayerPauseEvent(track->type);
-        }
-      }
-#endif /*FEATURE_QTV_PSEUDO_STREAM*/
-      sendAudioPauseEvent();
-      QCUtils::LeaveCritSect(&pause_CS);
-
-      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Paused Audio From App");
-    }
-    else if(track->type == VIDEO_FMT_STREAM_VIDEO)
-    {
-      m_hasVideo = false;
-
-      QCUtils::EnterCritSect(&pause_CS);
-      QTV_MSG_PRIO2(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "PAUSED: frames %d m_nextSample %d", track->frames,
-                                  m_nextSample[track->stream_num]);
-#ifdef FEATURE_QTV_PSEUDO_STREAM
-      if(bPseudoStreaming)
-      {
-        //Send PS_PLAYER_PAUSE since Audio is also paused
-        if(m_playAudio)
-        {
-          if(m_pauseAudio)
-            sendPlayerPauseEvent(track->type);
-        }
-      }
-#endif /*FEATURE_QTV_PSEUDO_PAUSE*/
-      sendVideoPauseEvent();
-      /*if text track exists pause it now for sync */
-      if(m_playText && !m_pauseText)
-      {
-        m_hasText = false;
-        sendTextPauseEvent();
-      }
-      QCUtils::LeaveCritSect(&pause_CS);
-    }
-    else if(track->type == VIDEO_FMT_STREAM_TEXT)
-    {
-      m_hasText = FALSE;
-      QCUtils::EnterCritSect(&pause_CS);
-      QTV_MSG_PRIO2(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "PAUSED: parse->frames %d, m_nextSample %d", track->frames,
-                                  m_nextSample[track->stream_num]);
-#ifdef FEATURE_QTV_PSEUDO_STREAM
-      if(bPseudoStreaming)
-      {
-        if((m_playAudio && m_pauseAudio) &&
-           (m_playVideo && m_pauseVideo))
-            sendPlayerPauseEvent(track->type);
-      }
-#endif /*FEATURE_QTV_PSEUDO_PAUSE*/
-      sendTextPauseEvent();
-      QCUtils::LeaveCritSect(&pause_CS);
-    }
-}
-
-/*===========================================================================
-
-FUNCTION  resumeMedia
-
-DESCRIPTION
-  Public method used to parse the fragment
-
-===========================================================================*/
-void Mp4FragmentFile::resumeMedia( void )
-{
-    if((AudioPlayerPtr) && (m_pauseAudio) && (m_playAudio)
-      && (m_hasAudio || m_parsedEndofFile))
-    {
-      sendAudioResumeEvent();
-    }
-
-    if((VideoPlayerPtr) && (m_pauseVideo) && (m_playVideo)
-        && (m_hasVideo || m_parsedEndofFile))
-    {
-      sendVideoResumeEvent();
-    }
-
-    if((TextPlayerPtr) && (m_pauseText) && (m_playText)
-        && (m_hasText || m_parsedEndofFile))
-    {
-      sendTextResumeEvent();
-    }
-}
-
-/*===========================================================================
-
-FUNCTION  sendAudioPauseEvent
-
-DESCRIPTION
-  Public method used send parser events
-
-===========================================================================*/
-void Mp4FragmentFile::sendAudioPauseEvent( void )
-{
-  //QTV_PAUSE_AUDIO
-  QTV_PAUSE_AUDIO_type *pEvent = QCCreateMessage(QTV_PAUSE_AUDIO, m_pMpeg4Player);
-  if (pEvent)
-  {
-    postMessage(pEvent);
-  }
-}
-
-/*===========================================================================
-
-FUNCTION  sendVideoPauseEvent
-
-DESCRIPTION
-  Public method used send parser events
-
-===========================================================================*/
-void Mp4FragmentFile::sendVideoPauseEvent( void )
-{
-  //QTV_PAUSE_VIDEO
-  QTV_PAUSE_VIDEO_type *pEvent = QCCreateMessage(QTV_PAUSE_VIDEO, m_pMpeg4Player);
-  if (pEvent)
-  {
-    postMessage(pEvent);
-  }
-}
-
-/*===========================================================================
-
-FUNCTION  sendTextPauseEvent
-
-DESCRIPTION
-  Public method used send parser events
-
-===========================================================================*/
-void Mp4FragmentFile::sendTextPauseEvent( void )
-{
-  //QTV_PAUSE_TEXT
-  QTV_PAUSE_TEXT_type *pEvent = QCCreateMessage(QTV_PAUSE_TEXT, m_pMpeg4Player);
-  if (pEvent)
-  {
-    postMessage(pEvent);
-  }
-}
-
-/*===========================================================================
-
-FUNCTION  sendAudioResumeEvent
-
-DESCRIPTION
-  Public method used send parser events
-
-===========================================================================*/
-void Mp4FragmentFile::sendAudioResumeEvent( void )
-{
-  //QTV_RESUME_AUDIO
-  QTV_RESUME_AUDIO_type *pEvent = QCCreateMessage(QTV_RESUME_AUDIO, m_pMpeg4Player);
-  if (pEvent)
-  {
-    postMessage(pEvent);
-  }
-}
-
-/*===========================================================================
-
-FUNCTION  sendVideoResumeEvent
-
-DESCRIPTION
-  Public method used send parser events
-
-===========================================================================*/
-void Mp4FragmentFile::sendVideoResumeEvent( void )
-{
-  //QTV_RESUME_VIDEO
-  QTV_RESUME_VIDEO_type *pEvent = QCCreateMessage(QTV_RESUME_VIDEO, m_pMpeg4Player);
-  if (pEvent)
-  {
-    postMessage(pEvent);
-  }
-}
-
-/*===========================================================================
-
-FUNCTION  sendTextResumeEvent
-
-DESCRIPTION
-  Public method used send parser events
-
-===========================================================================*/
-void Mp4FragmentFile::sendTextResumeEvent( void )
-{
-  //QTV_RESUME_TEXT
-  QTV_RESUME_TEXT_type *pEvent = QCCreateMessage(QTV_RESUME_TEXT, m_pMpeg4Player);
-  if (pEvent)
-  {
-    postMessage(pEvent);
-  }
-}
-
-/*===========================================================================
-
-FUNCTION  setPausedAudio
-
-DESCRIPTION
-  Public method used get if fragment has audio
-
-===========================================================================*/
-void Mp4FragmentFile::setPausedAudio ( boolean bPausedAudio )
-{
-  m_pauseAudio = bPausedAudio;
-#ifdef FEATURE_QTV_PSEUDO_STREAM
-  if(bPseudoStreaming && (m_pauseAudio == FALSE))
-     bQtvPlayerPaused = FALSE;
-#endif /*FEATURE_QTV_PSEUDO_STREAM*/
-}
-
-/*===========================================================================
-
-FUNCTION  setPausedVideo
-
-DESCRIPTION
-  Public method used get if fragment has video
-
-===========================================================================*/
-void Mp4FragmentFile::setPausedVideo ( boolean bPausedVideo )
-{
-  m_pauseVideo = bPausedVideo;
-#ifdef FEATURE_QTV_PSEUDO_STREAM
-  if(bPseudoStreaming && (m_pauseVideo == FALSE))
-     bQtvPlayerPaused = FALSE;
-#endif /*FEATURE_QTV_PSEUDO_STREAM*/
-}
-
-/*===========================================================================
-
-FUNCTION  setPausedText
-
-DESCRIPTION
-  Public method used get if fragment has Text
-
-===========================================================================*/
-void Mp4FragmentFile::setPausedText ( boolean bPausedText )
-{
-  m_pauseText = bPausedText;
-#ifdef FEATURE_QTV_PSEUDO_STREAM
-  if(bPseudoStreaming && (m_pauseText == FALSE))
-     bQtvPlayerPaused = FALSE;
-#endif /*FEATURE_QTV_PSEUDO_STREAM*/
-}
-
-/*===========================================================================
-
-FUNCTION  getPausedAudio
-
-DESCRIPTION
-  Public method used get if fragment has audio
-
-===========================================================================*/
-boolean Mp4FragmentFile::getPausedAudio ( void )
-{
-  return m_pauseAudio;
-}
-
-/*===========================================================================
-
-FUNCTION  getPausedVideo
-
-DESCRIPTION
-  Public method used get if fragment has video
-
-===========================================================================*/
-boolean Mp4FragmentFile::getPausedVideo ( void )
-{
-  return m_pauseVideo;
-}
-
-/*===========================================================================
-
-FUNCTION  getPausedText
-
-DESCRIPTION
-  Public method used get if fragment has Text
-
-===========================================================================*/
-boolean Mp4FragmentFile::getPausedText ( void )
-{
-  return m_pauseText;
-}
-
-/*===========================================================================
-
-FUNCTION  sendParserEvent
-
-DESCRIPTION
-  Public method used send parser events
-
-===========================================================================*/
-void Mp4FragmentFile::sendParserEvent(Common::ParserStatusCode status)
-{
-  parserState = status;
-  #ifdef FEATURE_QTV_PSEUDO_STREAM
-  QTV_PS_PARSER_STATUS_EVENT_type *pEvent = QCCreateMessage(QTV_PS_PARSER_STATUS_EVENT, m_pMpeg4Player);
-  #else
-  QTV_HTTP_PARSER_STATUS_EVENT_type *pEvent = QCCreateMessage(QTV_HTTP_PARSER_STATUS_EVENT, m_pMpeg4Player);
-  #endif
-  if (pEvent)
-  {
-    pEvent->status = status;
-    pEvent->bHasVideo = m_playVideo;
-    pEvent->bHasAudio = m_playAudio;
-    pEvent->bHasText = m_playText;
-    postMessage(pEvent);
-  }
-}
-
-
-#ifdef FEATURE_QTV_PSEUDO_STREAM
-
-/*===========================================================================
-
-FUNCTION  updateBufferWritePtr
-
-DESCRIPTION
-  Public method used to parse the fragment
-
-===========================================================================*/
-void Mp4FragmentFile::updateBufferWritePtr ( uint32 writeOffset )
-{
-  //Executing in the UI thread context.
-  m_bufferOffset = writeOffset;
-  if(parserState == Common::PARSER_PAUSE)
-  {
-     //Calling parsePseudoStream() in the Player thread context, which
-     //will parse the next fragment(if suff. data available) and
-     //resume the media if the fragment got parsed successfully.
-     //If no audio/video/text in the parsed fragment then parseUntilSampleFound
-    //shall take care of further parsing until one reqd fragment is available.
-     sendParsePseudoStreamEvent();
-  }
-}
-
-/*===========================================================================
-
-FUNCTION  parsePseudoStream
-
-DESCRIPTION
-  Public method used to parse the fragment
-
-===========================================================================*/
-bool Mp4FragmentFile::parsePseudoStream ( void )
-{
-  bool returnStatus = true;
-
-  if(bGetFragmentSize)
-     returnStatus = getFragmentSize();
-
-  if(returnStatus && (m_mp4ParseLastStatus == VIDEO_FMT_FRAGMENT_SIZE))
-  {
-    bGetFragmentSize = FALSE;
-  }
-  else if(!returnStatus && (m_mp4ParseLastStatus == VIDEO_FMT_DATA_INCOMPLETE))
-  {
-    //QTV_PS_PARSER_STATUS_PAUSED
-    sendParserEvent(Common::PARSER_PAUSE);
-    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Parser State = Common::PARSER_PAUSE");
-    PauseAllStreams();
-    return returnStatus;
-  }
-
-  QTV_MSG_PRIO2(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "parsePseudoStream: m_bufferOffset=%d, minOffsetRequired=%d",
-      m_bufferOffset, minOffsetRequired);
-
-  if((m_bufferOffset >= minOffsetRequired)
-      && m_bufferOffset && minOffsetRequired)
-  {
-    if(!bDataIncomplete && !bsendParseFragmentCmd)
-    {
-      bsendParseFragmentCmd = TRUE;
-      //QTV_PS_PARSER_STATUS_RESUME
-      sendParserEvent(Common::PARSER_RESUME);
-      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Parser State = Common::PARSER_RESUME");
-     if(!parseFragment())
-        returnStatus = false;
-    }
-    else
-      returnStatus = false;
-  }
-  else
-  {
-    //QTV_PS_PARSER_STATUS_PAUSED
-    //This event does not pause the track[audio/video]. Its just
-    //a notification to the upper layers. Tracks actually gets paused
-    //with pauseTrack() called within parseUntilSampleFound().
-    sendParserEvent(Common::PARSER_PAUSE);
-    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Parser State = Common::PARSER_PAUSE");
-    PauseAllStreams();
-    returnStatus = false;
-  }
-  return returnStatus;
-}
-/*===========================================================================
-
-FUNCTION  PauseAllStreams
-
-DESCRIPTION
-  Private method to pause all tracks when one of them encounters data_under-run.
-
-===========================================================================*/
-void Mp4FragmentFile::PauseAllStreams()
-{
- video_fmt_stream_info_type *p_track = NULL;
- QTV_MSG_PRIO3(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Mp4FragmentFile::PauseAllStreams m_playAudio %d m_playVideo %d m_playText %d",m_playAudio,m_playVideo,m_playText);
- for(uint32 index = 0; index < m_videoFmtInfo.num_streams; index++)
- {
-   p_track = m_videoFmtInfo.streams + index;
-   if( (p_track) && (p_track->type == VIDEO_FMT_STREAM_VIDEO ) )
-   {
-     QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Mp4FragmentFile::PauseAllStreams calling sendVideoPauseEvent");
-     sendVideoPauseEvent();
-   }
-   if( (p_track) && (p_track->type == VIDEO_FMT_STREAM_AUDIO ) )
-   {
-     QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Mp4FragmentFile::PauseAllStreams calling sendAudioPauseEvent");
-     sendAudioPauseEvent();
-   }
-   if( (p_track) && (p_track->type == VIDEO_FMT_STREAM_TEXT ) )
-   {
-     QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Mp4FragmentFile::PauseAllStreams calling sendTextPauseEvent");
-     sendTextPauseEvent();
-   }
-  }
-}
-#endif
-
-#ifdef FEATURE_FILE_FRAGMENTATION
-/*===========================================================================
-
 FUNCTION  parsePseudoStreamLocal
 
 DESCRIPTION
@@ -915,23 +258,23 @@ bool Mp4FragmentFile::parsePseudoStreamLocal ( void )
   bool returnStatus = true;
   uint32 numFragment = m_currentParseFragment;
   m_currentParseFragment = 0;
-  minOffsetRequired = 0;
+  m_minOffsetRequired = 0;
 
   for(uint i = 0; i <= numFragment; i++)
   {
     m_currentParseFragment = i;
-    returnStatus = getFragmentSize();
+    returnStatus = getMetaDataSize();
   }
 
   if(returnStatus)
   {
-    QTV_MSG_PRIO2(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "parsePseudoStreamLocal: m_bufferOffset=%d, minOffsetRequired=%d",
-        m_bufferOffset, minOffsetRequired);
+    QTV_MSG_PRIO2(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "parsePseudoStreamLocal: m_bufferOffset=%d, m_minOffsetRequired=%d",
+                  m_wBufferOffset, m_minOffsetRequired);
 
-    if((m_bufferOffset >= minOffsetRequired)
-        && m_bufferOffset && minOffsetRequired)
+    if((m_wBufferOffset >= m_minOffsetRequired)
+        && m_wBufferOffset && m_minOffsetRequired)
     {
-       if(!parseFragment())
+       if(!ParseStream())
        {
           returnStatus = false;
           QTV_MSG_PRIO2(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "parsePseudoStreamLocal: parsing failed for fragNo=%d, m_mp4ParseLastStatus=%d",
@@ -949,121 +292,6 @@ bool Mp4FragmentFile::parsePseudoStreamLocal ( void )
           m_currentParseFragment,m_mp4ParseLastStatus);
   }
   return returnStatus;
-}
-
-/*===========================================================================
-
-FUNCTION  initializeVideoFMT
-
-DESCRIPTION
-  Public method used to initialize VideoFMT
-
-===========================================================================*/
-boolean Mp4FragmentFile::initializeVideoFMT ( void )
-{
-  boolean returnStatus = TRUE;
-
-  // Parse the file as an MP4 file, building a list of atom information
-  // structures.
-  video_fmt_open (mp4ParseStatusCallback, this, VIDEO_FMT_MP4,0xff);
-
-  while ((m_mp4ParseLastStatus != VIDEO_FMT_INIT)
-           && (m_mp4ParseLastStatus != VIDEO_FMT_FAILURE)
-           && (m_mp4ParseLastStatus != VIDEO_FMT_DATA_CORRUPT)
-        )
-  {
-   if((m_mp4ParseContinueCb == NULL) ||
-      (m_mp4ParseServerData == NULL))
-      break;
-   else
-        m_mp4ParseContinueCb(m_mp4ParseServerData);
-  }
-
-  if((m_mp4ParseLastStatus == VIDEO_FMT_FAILURE)||
-           (m_mp4ParseLastStatus == VIDEO_FMT_DATA_CORRUPT))
-  return FALSE;
-
-  if((m_mp4ParseLastStatus == VIDEO_FMT_INIT) && !bPseudoStreaming)
-  {
-    if(parseFragment())
-      returnStatus = TRUE;
-    else
-      returnStatus = FALSE;
-
-    if(m_mp4ParseLastStatus == VIDEO_FMT_FRAGMENT)
-      m_isFragmentedFile = true;
-  }
-  else if ((m_mp4ParseLastStatus == VIDEO_FMT_INIT) && (bPseudoStreaming ||bHttpStreaming))
-  {
-    m_currentParseFragment = 0;
-    bGetFragmentSize = TRUE;
-    bDataIncomplete = TRUE;
-    bGetMetaDataSize = TRUE;
-    m_mp4InitialParseStatus = m_mp4ParseLastStatus;
-#ifdef FEATURE_QTV_PSEUDO_STREAM
-   (void)parsePseudoStream();
-#else
-   (void)parseHTTPStream();
-#endif
-    returnStatus = TRUE;
-  }
-  return returnStatus;
-}
-
-
-/*===========================================================================
-
-FUNCTION  getFragmentSize
-
-DESCRIPTION
-  Public method used to parse the fragment
-
-===========================================================================*/
-bool Mp4FragmentFile::getFragmentSize ( void )
-{
-  video_fmt_mp4r_context_type *video_fmt_parse_context;
-
-  QCUtils::EnterCritSect(&videoFMT_Access_CS);
-  m_videoFmtInfo.fragment_size_cb (m_videoFmtInfo.server_data,
-                                                          m_currentParseFragment);
-
-  while ((m_mp4ParseLastStatus != VIDEO_FMT_FRAGMENT_SIZE)
-         && (m_mp4ParseLastStatus != VIDEO_FMT_FAILURE)
-         && (m_mp4ParseLastStatus != VIDEO_FMT_DATA_INCOMPLETE)
-         && (m_mp4ParseLastStatus != VIDEO_FMT_DATA_CORRUPT))
-  {
-   if((m_mp4ParseContinueCb == NULL) ||
-      (m_mp4ParseServerData == NULL))
-      break;
-   else
-        m_mp4ParseContinueCb (m_mp4ParseServerData);
-  }
-  QCUtils::LeaveCritSect(&videoFMT_Access_CS);
-
-  switch(m_mp4ParseLastStatus)
-  {
-    case VIDEO_FMT_FAILURE:
-    case VIDEO_FMT_DATA_CORRUPT:
-        return false;
-
-    case VIDEO_FMT_FRAGMENT_SIZE:
-        video_fmt_parse_context = (video_fmt_mp4r_context_type *)m_videoFmtInfo.server_data;
-        if(m_currentParseFragment == video_fmt_parse_context->fragment_requested)
-        {
-           minOffsetRequired += video_fmt_parse_context->fragment_size;
-           fragmentNumber = video_fmt_parse_context->fragment_requested;
-           m_currentParseFragment = fragmentNumber + 1;
-        }
-        bDataIncomplete = FALSE;
-        return true;
-
-    case VIDEO_FMT_DATA_INCOMPLETE:
-        bDataIncomplete = TRUE;
-        return false;
-
-    default:
-        return false;
-  }
 }
 
 /*===========================================================================
@@ -1091,57 +319,7 @@ uint16 Mp4FragmentFile::getReadFragmentNum( void )
 {
     return (uint16)fragmentNumber;
 }
-#endif
-#ifdef FEATURE_QTV_PSEUDO_STREAM
-/*===========================================================================
 
-FUNCTION  sendPlayerPauseEvent
-
-DESCRIPTION
-  Public method used send parser events
-
-===========================================================================*/
-void Mp4FragmentFile::sendPlayerPauseEvent( video_fmt_stream_type type )
-{
-  //QTV_PLAYER_PSEUDO_PAUSE
-  QTV_PS_PAUSE_EVENT_type *pEvent = QCCreateMessage(QTV_PS_PAUSE_EVENT, m_pMpeg4Player);
-  if (pEvent)
-  {
-    postMessage(pEvent);
-  }
-  if(type == VIDEO_FMT_STREAM_AUDIO)
-    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "QTV_PLAYER_PSEUDO_PAUSE: AUDIO");
-  else if(type == VIDEO_FMT_STREAM_VIDEO)
-    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "QTV_PLAYER_PSEUDO_PAUSE: VIDEO");
-  else if(type == VIDEO_FMT_STREAM_TEXT)
-    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "QTV_PLAYER_PSEUDO_PAUSE: TEXT");
-
-}
-
-/*===========================================================================
-
-FUNCTION  sendParsePseudoStreamEvent
-
-DESCRIPTION
-  Public method used to switch contexts and call the parseFragment event
-
-===========================================================================*/
-void Mp4FragmentFile::sendParsePseudoStreamEvent(void)
-{
-  QTV_PS_PROCESS_PSEUDO_STREAM_type *pEvent = QCCreateMessage(QTV_PS_PROCESS_PSEUDO_STREAM, m_pMpeg4Player);
-
-  if (pEvent)
-  {
-    pEvent->bPSHasAudio = (bool) m_playAudio;
-    pEvent->bPSHasVideo = (bool) m_playVideo;
-    pEvent->bPSHasText = (bool) m_playText;
-    postMessage(pEvent);
-  }
-}
-
-#endif //FEATURE_QTV_PSEUDO_STREAM
-
-#ifdef FEATURE_QTV_RANDOM_ACCESS_REPOS
 uint16 Mp4FragmentFile::m_minTfraRewindLimit = QTV_MPEG4_MIN_TFRA_REW_LIMIT;
 /* ======================================================================
 FUNCTION
@@ -1228,10 +406,8 @@ bool Mp4FragmentFile::getAccessPointSampleInfo(video_fmt_stream_info_type *p_tra
                                          uint32                     *newTimeStamp,
                                          uint32                     currentPosTimeStampMsec)
 {
-#ifdef FEATURE_QTV_INTER_FRAG_REPOS
-  boolean fragmentRepositioned = FALSE;
-#endif /*FEATURE_QTV_INTER_FRAG_REPOS*/
 
+  boolean fragmentRepositioned = FALSE;
   uint32 streamNum = p_track->stream_num;
 
   uint32 reqSampleNum = 0;
@@ -1482,18 +658,23 @@ bool Mp4FragmentFile::findSampleFromTfra(video_fmt_stream_info_type *input_track
 
 
 #if defined( FEATURE_QTV_3GPP_PROGRESSIVE_DNLD) || defined(FEATURE_QTV_PSEUDO_STREAM)
-      if(bPseudoStreaming)
+      if(bHttpStreaming)
       {
         parseReturn = parsePseudoStreamLocal();
       }
       else
 #endif /*#if defined( FEATURE_QTV_3GPP_PROGRESSIVE_DNLD) || defined(FEATURE_QTV_PSEUDO_STREAM)*/
       {
-        parseReturn = parseFragment();
+        parseReturn = parseMetaData();
+        if( (parseReturn) && (m_currentParseFragment > 0) )
+        {
+          //Decrement the current fragment count because we successfully parsed the fragment
+          m_currentParseFragment -= 1;
+        }
       }
       if(parseReturn)
       {
-        QCUtils::EnterCritSect(&m_trackwrite_CS);
+        QCUtils::EnterCritSect(&m_trackwrite_CS);        
         for(i = 0; i < m_trackCount; i++)
         {
           track = m_track[i];
@@ -1571,7 +752,7 @@ bool Mp4FragmentFile::findSampleFromTfra(video_fmt_stream_info_type *input_track
         {
         bDoParse = FALSE;
 #if defined( FEATURE_QTV_3GPP_PROGRESSIVE_DNLD) || defined(FEATURE_QTV_PSEUDO_STREAM)
-          if(bPseudoStreaming)
+          if(bHttpStreaming)
           {
             m_currentParseFragment = fragment_info->fragment_number + 1;
             parseReturn = parsePseudoStreamLocal();
@@ -1579,14 +760,19 @@ bool Mp4FragmentFile::findSampleFromTfra(video_fmt_stream_info_type *input_track
           else
 #endif /*#if defined( FEATURE_QTV_3GPP_PROGRESSIVE_DNLD) || defined(FEATURE_QTV_PSEUDO_STREAM) */
           {
-            parseReturn = parseFragment();
+            parseReturn = parseMetaData();
             fragmentRepositioned = TRUE;
+            if(parseReturn)
+            {
+              //Increment the current fragment count because we successfully parsed the fragment
+              m_currentParseFragment += 1;
+            }
           }
           if(parseReturn != true)
           {
             fragmentRepositioned = FALSE;
             break;
-          }
+          }         
         }
         else
           break;
@@ -1612,7 +798,7 @@ bool Mp4FragmentFile::findSampleFromTfra(video_fmt_stream_info_type *input_track
          {
             reinitializeFragmentData(input_track, index, reqSampleNum, iRewind);
 #if defined( FEATURE_QTV_3GPP_PROGRESSIVE_DNLD) || defined(FEATURE_QTV_PSEUDO_STREAM)
-            if(bPseudoStreaming)
+        if(bHttpStreaming)
             {
                m_currentParseFragment = fragment_info->fragment_number;
                parseReturn = parsePseudoStreamLocal();
@@ -1620,13 +806,18 @@ bool Mp4FragmentFile::findSampleFromTfra(video_fmt_stream_info_type *input_track
             else
 #endif /*#if defined( FEATURE_QTV_3GPP_PROGRESSIVE_DNLD) || defined(FEATURE_QTV_PSEUDO_STREAM)*/
             {
-               parseReturn = parseFragment();
+              parseReturn = parseMetaData();
+              if(parseReturn)
+              {
+                //Increment the current fragment count because we successfully parsed the fragment
+                m_currentParseFragment += 1;
+              }
             }
             if(!parseReturn)
             {
                fragmentRepositioned  = FALSE;
                return FALSE;
-            }
+            }            
          }
 
       fragment_info = fragmentInfoArray[index-1];
@@ -1657,8 +848,6 @@ bool Mp4FragmentFile::findSampleFromTfra(video_fmt_stream_info_type *input_track
   }
   return returnValue;
 }
-
-#endif /* FEATURE_QTV_RANDOM_ACCESS_REPOS */
 
 /*===========================================================================
 
@@ -1720,16 +909,19 @@ int32 Mp4FragmentFile::processFragmentBoundary(video_fmt_stream_info_type *track
   uint32 streamNum = track->stream_num;
   video_fmt_mp4r_context_type * VideoFMTContext;
   qtv_fragment_event_fire_info_type FragmentEventSourceInfo;
+  QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "Mp4FragmentFile::processFragmentBoundary" );
 
 
 #if defined (FEATURE_QTV_PSEUDO_STREAM) || defined(FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
-  if(bPseudoStreaming)
+  if(bHttpStreaming)
   {
     qtv_event_fragment_pb_info_type qtv_event_fragment_pb_complete;
     qtv_event_fragment_pb_complete.fragment_number = (uint16)fragmentNumber;
+#ifndef FEATURE_WINCE
     event_report_payload(EVENT_QTV_FRAGMENT_PLAYBACK_COMPLETE,
                         sizeof(qtv_event_fragment_pb_info_type),
                         &qtv_event_fragment_pb_complete);
+#endif
   }
 #endif
 
@@ -1764,9 +956,11 @@ int32 Mp4FragmentFile::processFragmentBoundary(video_fmt_stream_info_type *track
           if(VideoFMTContext->current_sequence_number == 1)
           {
             //Throw EVENT_QTV_FRAGMENTED_FILE_DECODE_START
+#ifndef FEATURE_WINCE
             event_report_payload(EVENT_QTV_FRAGMENTED_FILE_DECODE_START,
                                  sizeof(qtv_fragment_event_fire_info_type),
                                  &FragmentEventSourceInfo);
+#endif
           }
         }//end of if(m_mp4ParseLastStatus == VIDEO_FMT_INFO)
 
@@ -1775,17 +969,21 @@ int32 Mp4FragmentFile::processFragmentBoundary(video_fmt_stream_info_type *track
           if(VideoFMTContext->current_sequence_number == 1)
           {
             //Throw EVENT_QTV_FRAGMENTED_FILE_DECODE_START
+#ifndef FEATURE_WINCE
             event_report_payload(EVENT_QTV_FRAGMENTED_FILE_DECODE_START,
                                  sizeof(qtv_fragment_event_fire_info_type),
                                  &FragmentEventSourceInfo);
+#endif
           }
           else if(VideoFMTContext->current_sequence_number > 1)
           {
             qtv_event_fragment_pb_info_type qtv_event_fragment_pb_complete;
             qtv_event_fragment_pb_complete.fragment_number = (uint16)VideoFMTContext->current_sequence_number;
+#ifndef FEATURE_WINCE
             event_report_payload(EVENT_QTV_FRAGMENT_PLAYBACK_COMPLETE,
                                  sizeof(qtv_event_fragment_pb_info_type),
                                  &qtv_event_fragment_pb_complete);
+#endif
           }
         }//end of if(m_mp4ParseLastStatus == VIDEO_FMT_FRAGMENT)
        }//end of if(VideoFMTContext)
@@ -1802,13 +1000,15 @@ int32 Mp4FragmentFile::processFragmentBoundary(video_fmt_stream_info_type *track
     else
     {
 #if defined( FEATURE_QTV_3GPP_PROGRESSIVE_DNLD) || defined(FEATURE_QTV_PSEUDO_STREAM)
-      if(bPseudoStreaming)
+      if(bHttpStreaming)
       {
         qtv_event_fragment_pb_info_type qtv_event_fragment_pb_begin;
         qtv_event_fragment_pb_begin.fragment_number = (uint16)fragmentNumber;
+#ifndef FEATURE_WINCE
         event_report_payload(EVENT_QTV_FRAGMENT_PLAYBACK_BEGIN,
                             sizeof(qtv_event_fragment_pb_info_type),
                             &qtv_event_fragment_pb_begin);
+#endif
       }
 #endif
       return returnVal;
@@ -1830,92 +1030,6 @@ int32 Mp4FragmentFile::processFragmentBoundary(video_fmt_stream_info_type *track
 
 /*===========================================================================
 
-FUNCTION  parseFragment
-
-DESCRIPTION
-  Public method used to parse the fragment
-
-===========================================================================*/
-bool Mp4FragmentFile::parseFragment ( void )
-{
-  bool returnValue = false;
-
-  if((m_videoFmtInfo.parse_fragment_cb == NULL) ||
-    (m_videoFmtInfo.server_data == NULL))
-       return false;
-
-  m_videoFmtInfo.parse_fragment_cb (m_videoFmtInfo.server_data);
-
-  while ((m_mp4ParseLastStatus != VIDEO_FMT_INFO)
-         && (m_mp4ParseLastStatus != VIDEO_FMT_FAILURE)
-         && (m_mp4ParseLastStatus != VIDEO_FMT_FRAGMENT)
-         && (m_mp4ParseLastStatus != VIDEO_FMT_DATA_CORRUPT)
-       && (_fileErrorCode == EVERYTHING_FINE))
-  {
-   if((m_mp4ParseContinueCb == NULL) ||
-      (m_mp4ParseServerData == NULL))
-      break;
-   else
-        m_mp4ParseContinueCb (m_mp4ParseServerData);
-  }
-
-  if(_fileErrorCode != EVERYTHING_FINE)
-  {
-   QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_FATAL, "Mp4FragmentFile::parseFragment _fileErrorCode != EVERYTHING_FINE");
-   return false;
-  }
-
-  if( (m_parsedEndofFragment || m_parsedEndofFile) && !m_corruptFile )
-  {
-#if defined( FEATURE_QTV_3GPP_PROGRESSIVE_DNLD) || defined(FEATURE_QTV_PSEUDO_STREAM)
-        if(bPseudoStreaming)
-        {
-        if(m_mp4ParseLastStatus == VIDEO_FMT_FRAGMENT)
-         m_isFragmentedFile = true;
-
-          if(bQtvPlayerPaused)
-          {
-          //bQtvPlayerPaused: used to initially kickoff playing after the first
-          //PS fragment is parsed.
-            //QTV_PS_PARSER_STATUS_READY
-            QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Parser State = Common::PARSER_READY");
-            sendParserEvent(Common::PARSER_READY);
-          }
-        else
-        {
-           if((AudioPlayerPtr) && (m_pauseAudio) && (m_playAudio))
-           {
-            //If paused => Resume the media even if u have/don't-have the
-            //media in the current fragment so as to fetch media from the
-            //next few possibly downloaded fragments.
-            //If it cannnot find then it shall re-pause itself.
-             sendParserEvent(Common::PARSER_READY);
-           }
-           else if((VideoPlayerPtr) && (m_pauseVideo) && (m_playVideo))
-           {
-             sendParserEvent(Common::PARSER_READY);
-           }
-           else if((TextPlayerPtr) && (m_pauseText) && (m_playText))
-           {
-             sendParserEvent(Common::PARSER_READY);
-           }
-        }
-          bsendParseFragmentCmd = FALSE;
-        }
-#endif /*#if defined( FEATURE_QTV_3GPP_PROGRESSIVE_DNLD) || defined(FEATURE_QTV_PSEUDO_STREAM)D*/
-      returnValue = true;
-  }
-  else
-  {
-      returnValue = false;
-  }
-
-  // Let any waiting process know that we are done with fragment
-  return returnValue;
-}
-
-/*===========================================================================
-
 FUNCTION  parseUntilSampleFound
 
 DESCRIPTION
@@ -1924,10 +1038,11 @@ DESCRIPTION
 ===========================================================================*/
 boolean Mp4FragmentFile::parseUntilSampleFound (video_fmt_stream_info_type *track)
 {
+  QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, " Mp4FragmentFile::parseUntilSampleFound" );
   if(!m_parsedEndofFile)
   {
 #if defined( FEATURE_QTV_3GPP_PROGRESSIVE_DNLD) || defined(FEATURE_QTV_PSEUDO_STREAM)
-    if(bPseudoStreaming)
+    if(bHttpStreaming)
     {
       //keep parsing the next fragment (if present) until
       //u find audio/video/text frame || u reach the EndOfFile
@@ -1935,43 +1050,23 @@ boolean Mp4FragmentFile::parseUntilSampleFound (video_fmt_stream_info_type *trac
 
       if(track->type == VIDEO_FMT_STREAM_AUDIO)
       {
-        do{
+        do
+        {
           //Handling a special case when u had to pause: when
           //u knew the fragment size but did not have sufficient data
           //to continue fragment parsing.
           if(m_mp4ParseLastStatus == VIDEO_FMT_FRAGMENT_SIZE)
-#ifdef FEATURE_QTV_PSEUDO_STREAM
-            bGetFragmentSize = FALSE;
-#else
             bGetMetaDataSize = FALSE;
-#endif
           else
-#ifdef FEATURE_QTV_PSEUDO_STREAM
-            bGetFragmentSize = TRUE;
-#else
             bGetMetaDataSize = TRUE;
-#endif
-          if(
-#ifdef FEATURE_QTV_PSEUDO_STREAM
-		!parsePseudoStream()
-#else
-		!parseHTTPStream()
-#endif
-	    )
+
+          if(!ParseStream())
           {
             m_hasAudio = false;
-            //Pause the track..insufficient download data
-            //minOffsetRequired is updated only if you get a complete fragment size.
-            //so we need to check bDataIncomplete ==>VIDEO_FMT_DATA_INCOMPLETE.
-#ifdef FEATURE_QTV_PSEUDO_STREAM           
-            if((m_bufferOffset < minOffsetRequired) ||
-               (m_bufferOffset >= minOffsetRequired && bDataIncomplete))
-#else
             if((m_wBufferOffset < m_minOffsetRequired) ||
                (m_wBufferOffset >= m_minOffsetRequired && bDataIncomplete))
-#endif
             {
-              pauseTrack(track);
+              sendParserEvent(Common::PARSER_PAUSE);
             }
             break;
           }
@@ -1982,38 +1077,20 @@ boolean Mp4FragmentFile::parseUntilSampleFound (video_fmt_stream_info_type *trac
       }
       else if(track->type == VIDEO_FMT_STREAM_VIDEO)
       {
-        do{
+        do
+        {
           if(m_mp4ParseLastStatus == VIDEO_FMT_FRAGMENT_SIZE)
-#ifdef FEATURE_QTV_PSEUDO_STREAM
-            bGetFragmentSize = FALSE;
-#else
             bGetMetaDataSize = FALSE;
-#endif
           else
-#ifdef FEATURE_QTV_PSEUDO_STREAM
-            bGetFragmentSize = TRUE;
-#else
             bGetMetaDataSize = TRUE;
-#endif
-          if(
-		  	#ifdef FEATURE_QTV_PSEUDO_STREAM
-		  	!parsePseudoStream()
-		  	#else
-			!parseHTTPStream()
-            #endif
-			)
+
+          if(!ParseStream())
           {
             m_hasVideo = false;
-            //Pause the track..insufficient download data
-#ifdef FEATURE_QTV_PSEUDO_STREAM           
-            if((m_bufferOffset < minOffsetRequired) ||
-               (m_bufferOffset >= minOffsetRequired && bDataIncomplete))
-#else
             if((m_wBufferOffset < m_minOffsetRequired) ||
                (m_wBufferOffset >= m_minOffsetRequired && bDataIncomplete))
-#endif
             {
-              pauseTrack(track);
+              sendParserEvent(Common::PARSER_PAUSE);
             }
             break;
           }
@@ -2023,38 +1100,21 @@ boolean Mp4FragmentFile::parseUntilSampleFound (video_fmt_stream_info_type *trac
       }
       else if(track->type == VIDEO_FMT_STREAM_TEXT)
       {
-        do{
+        do
+        {
           if(m_mp4ParseLastStatus == VIDEO_FMT_FRAGMENT_SIZE)
-#ifdef FEATURE_QTV_PSEUDO_STREAM
-            bGetFragmentSize = FALSE;
-#else
             bGetMetaDataSize = FALSE;
-#endif
           else
-#ifdef FEATURE_QTV_PSEUDO_STREAM
-            bGetFragmentSize = TRUE;
-#else
             bGetMetaDataSize = TRUE;
-#endif
-          if(
-		  	#ifdef FEATURE_QTV_PSEUDO_STREAM
-		  	!parsePseudoStream()
-		  	#else
-			!parseHTTPStream()
-		  	#endif
-			)
+
+          if(!ParseStream())
           {
             m_hasText = false;
             //Pause the track..insufficient download data
-#ifdef FEATURE_QTV_PSEUDO_STREAM           
-            if((m_bufferOffset < minOffsetRequired) ||
-               (m_bufferOffset >= minOffsetRequired && bDataIncomplete))
-#else
             if((m_wBufferOffset < m_minOffsetRequired) ||
                (m_wBufferOffset >= m_minOffsetRequired && bDataIncomplete))
-#endif
             {
-              pauseTrack(track);
+              sendParserEvent(Common::PARSER_PAUSE);
             }
             break;
           }
@@ -2070,12 +1130,9 @@ boolean Mp4FragmentFile::parseUntilSampleFound (video_fmt_stream_info_type *trac
       //audio/video/text frame || u reach the EndOfFile
       if(track->type == VIDEO_FMT_STREAM_AUDIO)
       {
-        do{
-#ifdef FEATURE_QTV_PSEUDO_STREAM
-          if(!parseFragment())
-#else
-          if(!parseMetaData())
-#endif
+        do
+        {
+          if(!ParseStream())
           {
             m_hasAudio = false;
             break;
@@ -2086,12 +1143,9 @@ boolean Mp4FragmentFile::parseUntilSampleFound (video_fmt_stream_info_type *trac
       }
       else if (track->type == VIDEO_FMT_STREAM_VIDEO)
       {
-        do{
-#ifdef FEATURE_QTV_PSEUDO_STREAM
-          if(!parseFragment())
-#else
-          if(!parseMetaData())
-#endif
+        do
+        {
+          if(!ParseStream())
           {
             m_hasVideo = false;
             break;
@@ -2102,12 +1156,9 @@ boolean Mp4FragmentFile::parseUntilSampleFound (video_fmt_stream_info_type *trac
       }
       else if (track->type == VIDEO_FMT_STREAM_TEXT)
       {
-        do{
-#ifdef FEATURE_QTV_PSEUDO_STREAM
-          if(!parseFragment())
-#else
-          if(!parseMetaData())
-#endif
+        do
+        {
+          if(!ParseStream())
           {
             m_hasText = false;
             break;
@@ -2116,7 +1167,7 @@ boolean Mp4FragmentFile::parseUntilSampleFound (video_fmt_stream_info_type *trac
 
         return m_hasText;
       }
-    }//!bPseudoStreaming
+    }
   }//!m_parsedEndofFile
 
   return FALSE;
@@ -2133,8 +1184,6 @@ DESCRIPTION
 
 ===========================================================================*/
 void Mp4FragmentFile::postMessage(QCMessageType *pEvent)
-//
-// post an event
 {
   QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, "Mp4FragmentFile::PostEvent" );
 
@@ -2214,10 +1263,6 @@ void Mp4FragmentFile::setTextPlayerData( const void *client_data )
 #endif
 }
 
-
-
-
-#ifdef FEATURE_QTV_INTER_FRAG_REPOS
 /*===========================================================================
 
 FUNCTION  findiFrameFragment
@@ -2291,18 +1336,23 @@ bool Mp4FragmentFile::findiFrameFragment(video_fmt_stream_info_type *input_track
       reinitializeFragmentData(input_track, index, reqSampleNum, iRewind);
 
 #if defined( FEATURE_QTV_3GPP_PROGRESSIVE_DNLD) || defined(FEATURE_QTV_PSEUDO_STREAM)
-      if(bPseudoStreaming)
+    if(bHttpStreaming)
       {
         parseReturn = parsePseudoStreamLocal();
       }
       else
 #endif /*#if defined( FEATURE_QTV_3GPP_PROGRESSIVE_DNLD) || defined(FEATURE_QTV_PSEUDO_STREAM)*/
       {
-        parseReturn = parseFragment();
+      parseReturn = parseMetaData();
+        if( (parseReturn) && (m_currentParseFragment > 0) )
+        {
+          //Decrement the current fragment count because we successfully parsed the fragment
+          m_currentParseFragment -= 1;
+        }
       }
       if(parseReturn)
       {
-        QCUtils::EnterCritSect(&m_trackwrite_CS);
+        QCUtils::EnterCritSect(&m_trackwrite_CS);          
         fragmentParsed = TRUE;
         for(i = 0; i < m_trackCount; i++)
         {
@@ -2364,7 +1414,7 @@ bool Mp4FragmentFile::findiFrameFragment(video_fmt_stream_info_type *input_track
       {
         bDoParse = FALSE;
 #if defined( FEATURE_QTV_3GPP_PROGRESSIVE_DNLD) || defined(FEATURE_QTV_PSEUDO_STREAM)
-        if(bPseudoStreaming)
+        if(bHttpStreaming)
         {
           m_currentParseFragment = fragment_info->fragment_number + 1;
           parseReturn = parsePseudoStreamLocal();
@@ -2372,10 +1422,15 @@ bool Mp4FragmentFile::findiFrameFragment(video_fmt_stream_info_type *input_track
         else
 #endif /*#if defined( FEATURE_QTV_3GPP_PROGRESSIVE_DNLD) || defined(FEATURE_QTV_PSEUDO_STREAM)*/
         {
-          parseReturn = parseFragment();
+          parseReturn = parseMetaData();
+          if(parseReturn)
+          {
+	    //Increment the current fragment count because we successfully parsed the fragment
+            m_currentParseFragment += 1;
+          }
         }
         if(parseReturn == true)
-        {
+        {          
           fragmentParsed = TRUE;
           if(m_parsedEndofFile && (input_track->track_frag_info.first_frame!=0) && (reqSampleNum >= input_track->frames) )
           {
@@ -2411,7 +1466,7 @@ bool Mp4FragmentFile::findiFrameFragment(video_fmt_stream_info_type *input_track
       {
          reinitializeFragmentData(input_track, index, reqSampleNum, iRewind);
 #if defined( FEATURE_QTV_3GPP_PROGRESSIVE_DNLD) || defined(FEATURE_QTV_PSEUDO_STREAM)
-         if(bPseudoStreaming)
+      if(bHttpStreaming)
          {
             m_currentParseFragment = fragment_info->fragment_number;
             parseReturn = parsePseudoStreamLocal();
@@ -2419,12 +1474,18 @@ bool Mp4FragmentFile::findiFrameFragment(video_fmt_stream_info_type *input_track
          else
 #endif /*#if defined( FEATURE_QTV_3GPP_PROGRESSIVE_DNLD) || defined(FEATURE_QTV_PSEUDO_STREAM)*/
          {
-            parseReturn = parseFragment();
+           parseReturn = parseMetaData();
+           if(parseReturn)
+           {
+             //Increment the current fragment count because we successfully parsed the fragment
+             m_currentParseFragment += 1;
+           }
          }
-         if(!parseReturn){
+      if(!parseReturn)
+      {
             fragmentParsed = FALSE;
             return FALSE;
-         }
+         }         
       }
 
     QCUtils::EnterCritSect(&m_trackwrite_CS);
@@ -2475,6 +1536,7 @@ void Mp4FragmentFile::reinitializeFragmentData(video_fmt_stream_info_type *input
       video_fmt_context->abs_pos = 0;
       video_fmt_context->in_buffer_size = 0;
       video_fmt_context->num_streams = 0;
+      video_fmt_context->atom_stack_top = 0;
 
       for(i = 0; i < m_trackCount; i++)
       {
@@ -2486,7 +1548,7 @@ void Mp4FragmentFile::reinitializeFragmentData(video_fmt_stream_info_type *input
       }
 
 #if defined( FEATURE_QTV_3GPP_PROGRESSIVE_DNLD) || defined(FEATURE_QTV_PSEUDO_STREAM)
-      if(bPseudoStreaming)
+      if(bHttpStreaming)
       {
         m_currentParseFragment = 0;
       }
@@ -2511,7 +1573,7 @@ void Mp4FragmentFile::reinitializeFragmentData(video_fmt_stream_info_type *input
         reinitializeFragmentStreamInfo(p_stream_info, fragment_info, stream_num);
       }
 #if defined( FEATURE_QTV_3GPP_PROGRESSIVE_DNLD) || defined(FEATURE_QTV_PSEUDO_STREAM)
-      if(bPseudoStreaming)
+      if(bHttpStreaming)
       {
         if(next_fragment_info)
         {
@@ -2540,7 +1602,7 @@ void Mp4FragmentFile::reinitializeFragmentData(video_fmt_stream_info_type *input
       video_fmt_context->abs_pos = fragment_info->fragment_offset;
       video_fmt_context->in_buffer_size = 0;
 #if defined( FEATURE_QTV_3GPP_PROGRESSIVE_DNLD) || defined(FEATURE_QTV_PSEUDO_STREAM)
-      if(bPseudoStreaming)
+      if(bHttpStreaming)
       {
         m_currentParseFragment = fragment_info->fragment_number;
       }
@@ -2575,6 +1637,7 @@ void Mp4FragmentFile::reinitializeFragmentStream(video_fmt_mp4r_stream_type  *in
     input_stream->sample_byte_offset = 0;
     input_stream->sample_timestamp = 0;
     input_stream->sample_delta_count = 0;
+    input_stream->sample_ctts_offset_count = 0;
     input_stream->last_sample_offset = 0;
     // Need to Initialize the tables because the repositioning
     /* in VideoFMT in main fragment is done by counting down the samples
@@ -2705,8 +1768,6 @@ void Mp4FragmentFile::reinitializeFragmentStreamInfo(video_fmt_stream_info_type 
   }
 }
 
-#endif //FEATURE_QTV_INTER_FRAG_REPOS
-
 /*===========================================================================
 
 FUNCTION  getSampleInfoError
@@ -2721,6 +1782,9 @@ int32 Mp4FragmentFile::getSampleInfoError(video_fmt_stream_info_type *p_track)
 {
    int32 returnVal = 0;
    qtv_fragment_event_fire_info_type FragmentEventSourceInfo;
+   QTV_MSG_PRIO2(QTVDIAG_GENERAL, QTVDIAG_PRIO_FATAL,"In getSampleInfoError %d %d",
+    m_isFragmentedFile,m_corruptFile);
+
    if (m_isFragmentedFile && !m_corruptFile)
    {
       returnVal = processFragmentBoundary(p_track);
@@ -2743,28 +1807,13 @@ int32 Mp4FragmentFile::getSampleInfoError(video_fmt_stream_info_type *p_track)
                FragmentEventSourceInfo.bPlayAudio = 0;
                FragmentEventSourceInfo.bPlayVideo = 0;
             }
+#ifndef FEATURE_WINCE
             event_report_payload(EVENT_QTV_FRAGMENTED_FILE_END_SUCCESS,
                sizeof(qtv_fragment_event_fire_info_type),
                &FragmentEventSourceInfo);
+#endif
          }
          return returnVal;
-      }
-      else
-      {
-         if((p_track->type == VIDEO_FMT_STREAM_AUDIO) && m_playAudio && m_hasAudio)
-         {
-            m_pauseAudio = FALSE;
-         }
-         else if ((p_track->type == VIDEO_FMT_STREAM_VIDEO) && m_playVideo && m_hasVideo)
-         {
-            m_pauseVideo = FALSE;
-         }
-         else if (p_track->type == VIDEO_FMT_STREAM_TEXT)
-         {
-            m_playText = TRUE;
-            if(m_hasText)
-               m_pauseText = FALSE;
-         }
       }
    }
    return returnVal;
@@ -2783,7 +1832,6 @@ void Mp4FragmentFile::process_video_fmt_info(video_fmt_status_type status,
 {
    Mpeg4File::process_video_fmt_info(status,info);
 
-#ifdef FEATURE_QTV_INTER_FRAG_REPOS
    //Adding fragment information.
     video_fmt_stream_info_type *p_track = NULL;
     fragment_info_type *fragment_info = NULL;
@@ -2960,8 +2008,6 @@ void Mp4FragmentFile::process_video_fmt_info(video_fmt_status_type status,
             }
       }
     }
-#endif /*FEATURE_QTV_INTER_FRAG_REPOS*/
-
 }
 
 
@@ -2977,7 +2023,6 @@ Mp4FragmentFile::~Mp4FragmentFile()
 {
   uint32 i;
 
-#ifdef FEATURE_QTV_INTER_FRAG_REPOS
   for (i = 0; i < fragmentinfoCount; i++)
   {
     if((fragmentInfoArray)[i] &&
@@ -2988,7 +2033,6 @@ Mp4FragmentFile::~Mp4FragmentFile()
     }
 
   }
-#endif /*FEATURE_QTV_INTER_FRAG_REPOS */
 }
 
 /*===========================================================================
@@ -3012,28 +2056,19 @@ bool Mp4FragmentFile::getSampleAtTimestamp(video_fmt_stream_info_type *p_track,
   int32 curSample = (int32)m_sampleInfo[streamNum].sample;
 
   int32 reqSampleNum;
-
-#ifdef FEATURE_QTV_INTER_FRAG_REPOS
   boolean fragmentParsed = FALSE;
-#endif /*FEATURE_QTV_INTER_FRAG_REPOS*/
-
 
   if ( iRewind )
   {
-#ifdef FEATURE_QTV_INTER_FRAG_REPOS
     if(m_sampleInfo[streamNum].sample >= p_track->frames)
     {
       //has been repositioned to an earlier fragment
       //actual frames go from 0 ....; p_track->frames go from 1 ....
       m_sampleInfo[streamNum].sample = p_track->frames - 1;
     }
-#endif /*FEATURE_QTV_INTER_FRAG_REPOS*/
-
     for ( reqSampleNum = m_sampleInfo[streamNum].sample;
          reqSampleNum >= 0; --reqSampleNum )
     {
-
-#ifdef FEATURE_QTV_INTER_FRAG_REPOS
       if ( m_isFragmentedFile && (reqSampleNum < p_track->track_frag_info.first_frame) )
       {
           //parse to the previous fragment..
@@ -3046,8 +2081,6 @@ bool Mp4FragmentFile::getSampleAtTimestamp(video_fmt_stream_info_type *p_track,
               m_parsedEndofFile = false;
           }
       }
-#endif //FEATURE_QTV_INTER_FRAG_REPOS
-
       if ( getSampleInfo(streamNum, reqSampleNum, 1, sampleInfo) > 0 )
         retStat = true;
 
@@ -3069,13 +2102,11 @@ bool Mp4FragmentFile::getSampleAtTimestamp(video_fmt_stream_info_type *p_track,
   } // rewind
   else
   {   // forward
-#ifdef FEATURE_QTV_INTER_FRAG_REPOS
     if(m_sampleInfo[streamNum].sample < p_track->track_frag_info.first_frame)
     {
       //has been repositioned to a later fragment
       m_sampleInfo[streamNum].sample = p_track->track_frag_info.first_frame;
     }
-#endif /*FEATURE_QTV_INTER_FRAG_REPOS*/
     for ( reqSampleNum = m_sampleInfo[streamNum].sample; ; ++reqSampleNum )
     {
       if((m_isFragmentedFile && m_parsedEndofFile) ||
@@ -3086,7 +2117,6 @@ bool Mp4FragmentFile::getSampleAtTimestamp(video_fmt_stream_info_type *p_track,
           break;
         }
       }
-#ifdef FEATURE_QTV_INTER_FRAG_REPOS
       if ( m_isFragmentedFile && (reqSampleNum >= p_track->frames) )
       {
           //parse to the next fragment..
@@ -3095,8 +2125,6 @@ bool Mp4FragmentFile::getSampleAtTimestamp(video_fmt_stream_info_type *p_track,
               break;
           }
       }
-#endif //FEATURE_QTV_INTER_FRAG_REPOS
-
       if ( getSampleInfo(streamNum, reqSampleNum, 1, sampleInfo) > 0 )
         retStat = true;
       if (  (sampleInfo->time==timestamp) ||
@@ -3136,13 +2164,14 @@ uint32 Mp4FragmentFile::skipNSyncSamples(int offset, uint32 id, bool *bError, ui
   int8   noOfSyncSamplesSkipped = 0;
   bool   result = false;
   uint32 newTimeStamp =0;
-
-  #ifdef FEATURE_QTV_INTER_FRAG_REPOS
   boolean fragmentParsed = FALSE;
   boolean fragmentRepositioned = FALSE;
-  #endif /*FEATURE_QTV_INTER_FRAG_REPOS*/
-
   video_fmt_stream_info_type *p_track = getTrackInfoForID(id);
+
+  if(p_track == NULL)
+  {
+      QTV_MSG_PRIO1( QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "Track Id is not available= %d", id);
+  }
 
   int streamNum = p_track->stream_num;
 
@@ -3169,7 +2198,7 @@ uint32 Mp4FragmentFile::skipNSyncSamples(int offset, uint32 id, bool *bError, ui
       else
       {
         //check are we reached end of the file in case of fragmented file
-#ifdef FEATURE_QTV_INTER_FRAG_REPOS
+
         if ( m_isFragmentedFile )
         {
           //move to previous fragment..
@@ -3189,7 +2218,6 @@ uint32 Mp4FragmentFile::skipNSyncSamples(int offset, uint32 id, bool *bError, ui
             continue;
           }
         }
-#endif //FEATURE_QTV_INTER_FRAG_REPOS
         // This indicates no more Sync samples found
         break;
       }
@@ -3231,7 +2259,6 @@ uint32 Mp4FragmentFile::skipNSyncSamples(int offset, uint32 id, bool *bError, ui
       }
       else
       {
-#ifdef FEATURE_QTV_INTER_FRAG_REPOS
         if ( m_isFragmentedFile && !m_parsedEndofFile )
         {
           // move to the next fragment..
@@ -3251,7 +2278,6 @@ uint32 Mp4FragmentFile::skipNSyncSamples(int offset, uint32 id, bool *bError, ui
             continue;
           }
         }
-#endif //FEATURE_QTV_INTER_FRAG_REPOS
         // Not successfull in skipping desired sync samplese so return the old time stamp.
         break;
       }
@@ -3298,11 +2324,8 @@ bool Mp4FragmentFile::getTimestampedSampleInfo(
   bool                        bSetToSyncSample,
   uint32                      currentPosTimeStamp)
 {
-#ifdef FEATURE_QTV_INTER_FRAG_REPOS
   boolean fragmentRepositioned = FALSE;
   boolean fragmentParsed = FALSE;
-#endif /*FEATURE_QTV_INTER_FRAG_REPOS*/
-
   // media timescale = number of time units per second
   // if media_timescale == 1000, the time units are miliseconds (1000/sec)
   uint32 timescaledTime = (uint32)(((float)TimeStamp/1000.0F)*p_track->media_timescale);
@@ -3312,17 +2335,17 @@ bool Mp4FragmentFile::getTimestampedSampleInfo(
   uint32 streamNum = p_track->stream_num;
   uint32 maxFrames = p_track->frames;
 
-#ifdef FEATURE_QTV_INTER_FRAG_REPOS
   uint32 minFrames = 0;
-#else
-  uint32 minFrames = p_track->track_frag_info.first_frame;
-#endif
-
    uint32 sampleDelta = 1;
    uint32 reqSampleNum = 0;
    int32 timeOffset = 0;
    bool  iRewind = false;
    bool retStat = false;
+  if( (!m_isFragmentedFile) && (maxFrames == 0) )
+  {
+    QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_FATAL, "No valid frames for given track %d",p_track->track_id);
+    return false;
+  }
 
    if( (m_nextSample[streamNum]==0) && (m_sampleInfo[streamNum].size==0) && (p_track->dec_specific_info.obj_type!=MPEG4_IMAGE) )
    {
@@ -3331,7 +2354,7 @@ bool Mp4FragmentFile::getTimestampedSampleInfo(
       do
       {
          retStat = (getSampleInfo(streamNum, sampleId, 1, &m_sampleInfo[streamNum])>0)?true:false;
-      QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Reading first valid sampleInfo. SampleId=%d",sampleId);
+         QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Reading first valid sampleInfo. SampleId=%d",sampleId);
          sampleId++;
       }
       while(retStat && (m_mp4ReadLastStatus[streamNum] == VIDEO_FMT_IO_DONE)
@@ -3345,6 +2368,21 @@ bool Mp4FragmentFile::getTimestampedSampleInfo(
    if ( p_track->type == VIDEO_FMT_STREAM_AUDIO )
    {
       userRewind = (timeOffset > 0)? true:false;
+      if(p_track->subinfo.audio.format == VIDEO_FMT_STREAM_AUDIO_MPEG4_AAC &&
+         aac_data_type == AAC_FORMAT_UNK)
+      {
+        uint8 buffer[3];
+        getSample (streamNum,VIDEO_FMT_DATA_UNIT_BYTE,
+                   m_sampleInfo[streamNum].offset,2,buffer);
+        if((buffer[0] == 0xFF) && (buffer[1]&0xF0 == 0xF0))
+        {
+          aac_data_type = AAC_FORMAT_ADTS;
+        }
+        else
+        {
+          aac_data_type = AAC_FORMAT_NON_ADTS;
+        }
+      }
    }
    else
    {
@@ -3361,7 +2399,7 @@ bool Mp4FragmentFile::getTimestampedSampleInfo(
   QTV_MSG_PRIO3(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "CurrentMpeg4Sample=%d, ReqdTS=%d, curPosTS=%d",
             m_sampleInfo[streamNum].sample,TimeStamp,currentPosTimeStamp);
 
-  if( (p_track->type == VIDEO_FMT_STREAM_VIDEO) && bSetToSyncSample)
+  if( (p_track->type == VIDEO_FMT_STREAM_VIDEO) && bSetToSyncSample && !m_allSyncVideo)
   {
     uint32 frameTime;
 
@@ -3387,35 +2425,34 @@ bool Mp4FragmentFile::getTimestampedSampleInfo(
     {
 
         sampleDelta = (uint32)abs(timeOffset) / m_sampleInfo[streamNum].delta;
-            if(timeOffset > 0)
-            {
-               //rewind
-               if(m_sampleInfo[streamNum].sample > sampleDelta)
-               {
-                  reqSampleNum = m_sampleInfo[streamNum].sample - sampleDelta;
-               }
-               else
-               {
-                  reqSampleNum = 0;
-               }
-            }
-            else
-            {
-               //forward
-               if(!m_isFragmentedFile &&
-                  ((m_sampleInfo[streamNum].sample + sampleDelta) >= (p_track->frames-1))
-                  )
-               {
-                  reqSampleNum = p_track->frames-1;
-               }
-               else
-               { //for fragmented files we dont know the final sample number which
-                  // we would only know after parsing to the last fragment.
-                  reqSampleNum = m_sampleInfo[streamNum].sample + sampleDelta;
-               }
-            }
+        if(timeOffset > 0)
+        {
+           //rewind
+           if(m_sampleInfo[streamNum].sample > sampleDelta)
+           {
+              reqSampleNum = m_sampleInfo[streamNum].sample - sampleDelta;
+           }
+           else
+           {
+              reqSampleNum = 0;
+           }
+        }
+        else
+        {
+           //forward
+           if(!m_isFragmentedFile &&
+              ((m_sampleInfo[streamNum].sample + sampleDelta) >= (p_track->frames-1))
+             )
+           {
+              reqSampleNum = p_track->frames-1;
+           }
+           else
+           { //for fragmented files we dont know the final sample number which
+              // we would only know after parsing to the last fragment.
+              reqSampleNum = m_sampleInfo[streamNum].sample + sampleDelta;
+           }
+       }
 
-    #ifdef FEATURE_QTV_INTER_FRAG_REPOS
         /* If the required sample is not in the current fragment skip the fragment
         * to go to the required fragment. Also insures that the target fragment has
         * an I Frame or else the repositioning will fail
@@ -3445,7 +2482,6 @@ bool Mp4FragmentFile::getTimestampedSampleInfo(
                 return false;
             }
         }
-    #endif /* FEATURE_QTV_INTER_FRAG_REPOS */
 
         retStat = (getSampleInfo(streamNum, reqSampleNum, 1, sampleInfo)>0)?true:false;
         if(retStat)
@@ -3487,8 +2523,6 @@ bool Mp4FragmentFile::getTimestampedSampleInfo(
       {
         /*reqSampleNum is always within the current parsed fragment at this point*/
         retStat = getSyncSampleInfo(streamNum, reqSampleNum, iRewind, sampleInfo);
-
-#ifdef FEATURE_QTV_INTER_FRAG_REPOS
         QTV_MSG_PRIO3(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Rewind1: SynchSample=%d, frag_info.first_frame=%d, eof=%d"
                   , sampleInfo->sample, p_track->track_frag_info.first_frame,m_parsedEndofFile);
 
@@ -3533,7 +2567,6 @@ bool Mp4FragmentFile::getTimestampedSampleInfo(
             }
           }
         }
-#endif /* FEATURE_QTV_INTER_FRAG_REPOS */
 
         frameTime = sampleInfo->time;
 
@@ -3579,16 +2612,16 @@ bool Mp4FragmentFile::getTimestampedSampleInfo(
     /* FF case */
     if(!iRewind)
       {
-         for( ; frameTime<timescaledTime && retStat; )
+         for( ; frameTime<=timescaledTime && retStat; )
          {
+            video_fmt_sample_info_type tempSampleInfo;
+            memset(&tempSampleInfo,0x00,sizeof(tempSampleInfo));
             /*reqSampleNum is always within the current parsed fragment at this point*/
-#ifdef FEATURE_INTER_FRAGMENT_REPOS_DEBUG
             QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "invoking getSyncSampleInfo with reqSampleNum %d",
                reqSampleNum);
-#endif
-            retStat = getSyncSampleInfo(streamNum, reqSampleNum, iRewind, sampleInfo);
-
-#ifdef FEATURE_QTV_INTER_FRAG_REPOS
+            retStat = getSyncSampleInfo(streamNum, reqSampleNum, iRewind, &tempSampleInfo);
+            if(tempSampleInfo.sync)
+               memcpy(sampleInfo,&tempSampleInfo,sizeof(tempSampleInfo));
             QTV_MSG_PRIO4(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Forward1: SynchSample=%d =>offset=%d =>size=%d time %d",
                sampleInfo->sample, sampleInfo->offset, sampleInfo->size,sampleInfo->time);
 
@@ -3603,19 +2636,13 @@ bool Mp4FragmentFile::getTimestampedSampleInfo(
                {
                   maxFrames = p_track->frames;
                   fragmentRepositioned = TRUE;
-#ifdef FEATURE_INTER_FRAGMENT_REPOS_DEBUG
                   QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "came back in getTimestampedSampleInfo from findiFrameFragment");
                   QTV_MSG_PRIO3(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "reqSampleNum %d p_track->track_frag_info.first_frame %d maxFrames %d",reqSampleNum,p_track->track_frag_info.first_frame,maxFrames);
-#endif
                   reqSampleNum = MAX(reqSampleNum,p_track->track_frag_info.first_frame);
-#ifdef FEATURE_INTER_FRAGMENT_REPOS_DEBUG
                   QTV_MSG_PRIO2(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "updated reqsample by MAX reqSampleNum %d p_track->track_frag_info.first_frame %d",reqSampleNum,p_track->track_frag_info.first_frame);
-#endif
                   retStat = true;
                   QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Forward2.. found iFrameFragment");
-#ifdef FEATURE_INTER_FRAGMENT_REPOS_DEBUG
                   QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Forward2.. found iFrameFragment,continuing..");
-#endif
                   continue;
                }
                else
@@ -3639,37 +2666,27 @@ bool Mp4FragmentFile::getTimestampedSampleInfo(
                     }
                   }
                   QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Forward2..did not find an iFrameFragment");
-#ifdef FEATURE_INTER_FRAGMENT_REPOS_DEBUG
                   QTV_MSG_PRIO7(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Forward2..sampleInfo->sample %d (maxFrames-1)%d m_parsedEndofFile %d fragmentParsed %d fragmentRepositioned %d reqSampleNum %d retStat %d",
                      sampleInfo->sample,(maxFrames-1),m_parsedEndofFile,fragmentParsed,fragmentRepositioned,reqSampleNum,retStat);
-#endif
                   if((fragmentParsed) || (fragmentRepositioned))
                   {
                      // If the inter fragment repositioning failed and the fragment has been repositioned
                      // Now reposition to the correct fragment
                      m_parsedEndofFile = false;
                      iRewind = (m_sampleInfo[streamNum].sample < reqSampleNum)?true:false;
-#ifdef FEATURE_INTER_FRAGMENT_REPOS_DEBUG
                      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Forward2..resetting m_parsedEndofFile and determining iRewind?");
                      QTV_MSG_PRIO7(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Forward2..sampleInfo->sample %d (maxFrames-1)%d m_parsedEndofFile %d fragmentParsed %d fragmentRepositioned %d reqSampleNum %d iRewind %d",
                         sampleInfo->sample,(maxFrames-1),m_parsedEndofFile,fragmentParsed,fragmentRepositioned,reqSampleNum,iRewind);
-#endif
                      (void)findiFrameFragment(p_track, m_sampleInfo[streamNum].sample, iRewind, FALSE, fragmentParsed);
-#ifdef FEATURE_INTER_FRAGMENT_REPOS_DEBUG
                      QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Forward2..came back in getTimestampedSampleInfo from findiFrameFragment with frg. repositioned to m_sampleInfo[streamNum].sample %d",m_sampleInfo[streamNum].sample);
-#endif
                   }
-#ifdef FEATURE_INTER_FRAGMENT_REPOS_DEBUG
                   QTV_MSG_PRIO2(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Forward2..m_sampleInfo[streamNum].sample+1 %d p_track->frames %d",
                      (m_sampleInfo[streamNum].sample+1),p_track->frames);
-#endif
                   //If this was the last sample in the current fragment, then reset the
                   //stream offset, as this fragment will not be processed in the videoFMT reader.
                   if(m_sampleInfo[streamNum].sample+1 == p_track->frames)
                   {
-#ifdef FEATURE_INTER_FRAGMENT_REPOS_DEBUG
                      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Forward2..inside (m_sampleInfo[streamNum].sample+1 == p_track->frames)");
-#endif
                        /* Since we fail the repositioning, we had parsed the current fragment again and
                         videoFMT will be pointing to the start of fragment.
                         By calling getSampleInfo, VideoFMT will move its current pointer again to the
@@ -3679,18 +2696,13 @@ bool Mp4FragmentFile::getTimestampedSampleInfo(
                   }
                   *newTimeStamp = 0;
                   retStat = false;
-#ifdef FEATURE_INTER_FRAGMENT_REPOS_DEBUG
                   QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Forward2..making *newTimeStamp 0 and retStat as false");
-#endif
                   break;
                }
             }
-#endif /* FEATURE_QTV_INTER_FRAG_REPOS */
             frameTime = sampleInfo->time;
-#ifdef FEATURE_INTER_FRAGMENT_REPOS_DEBUG
             QTV_MSG_PRIO3(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "updated frameTime to sampleInfo->time %d timescaledTime %d retStat %d",
                frameTime,timescaledTime,retStat);
-#endif
 
             /* if we have found the frame, so we don't need to go further */
             if(frameTime>=timescaledTime && retStat)
@@ -3716,10 +2728,8 @@ bool Mp4FragmentFile::getTimestampedSampleInfo(
         {
           if(m_parsedEndofFile)
           {
-#ifdef FEATURE_INTER_FRAGMENT_REPOS_DEBUG
             QTV_MSG_PRIO3(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "(sampleInfo->sample >= (maxFrames-1)), sampleInfo->sample %d (maxFrames-1)%d m_parsedEndofFile %d",
                          sampleInfo->sample,(maxFrames-1),m_parsedEndofFile);
-#endif
             retStat = false;
             QTV_MSG_PRIO2(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "breaking (sampleInfo->sample >= (maxFrames-1)), as m_parsedEndofFile is TRUE sampleInfo->sample %d (maxFrames-1)%d",
                        sampleInfo->sample,(maxFrames-1));
@@ -3746,16 +2756,11 @@ bool Mp4FragmentFile::getTimestampedSampleInfo(
           }
         }
         reqSampleNum = sampleInfo->sample+1;
-#ifdef FEATURE_INTER_FRAGMENT_REPOS_DEBUG
             QTV_MSG_PRIO2(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "sampleInfo->sample %d reqSampleNum(increasing sampleInfo->sample by 1) %d",
                sampleInfo->sample,reqSampleNum);
-#endif
          }
-
-#ifdef FEATURE_INTER_FRAGMENT_REPOS_DEBUG
          QTV_MSG_PRIO6(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "out of loop for loop retStat %d sampleInfo->sync %d m_parsedEndofFile %d sampleInfo->sample %d, (p_track->frames-1)%d,sampleInfo->time %d",
             retStat,sampleInfo->sync,m_parsedEndofFile,sampleInfo->sample,(p_track->frames-1),sampleInfo->time);
-#endif
 
       if(!m_isFragmentedFile && retStat == false)
       {
@@ -3784,15 +2789,12 @@ bool Mp4FragmentFile::getTimestampedSampleInfo(
     if(retStat)
     {
       *newTimeStamp = (uint32)((float)sampleInfo->time * 1000.0F / p_track->media_timescale);
-#ifdef FEATURE_INTER_FRAGMENT_REPOS_DEBUG
       QTV_MSG_PRIO3(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "out of for loop when retStat is TRUE updated *newTimeStamp to %d,sampleInfo->time %d,p_track->media_timescale %d",
                        (*newTimeStamp),sampleInfo->time,p_track->media_timescale);
-#endif
+
     }
-#ifdef FEATURE_INTER_FRAGMENT_REPOS_DEBUG
     QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "returning retStat as %d",
                        retStat);
-#endif
     return retStat;
   }
 
@@ -3842,7 +2844,6 @@ bool Mp4FragmentFile::getTimestampedSampleInfo(
       reqSampleNum = minFrames;
     }
 
-#ifdef FEATURE_QTV_INTER_FRAG_REPOS
     if( ( (reqSampleNum < p_track->track_frag_info.first_frame)||(!bHasFrames) ) &&
      (m_isFragmentedFile))
     {
@@ -3856,8 +2857,6 @@ bool Mp4FragmentFile::getTimestampedSampleInfo(
         return false;
       }
     }
-#endif /*FEATURE_QTV_INTER_FRAG_REPOS*/
-
   }
    else
    {    // timeOffset < 0
@@ -3871,7 +2870,6 @@ bool Mp4FragmentFile::getTimestampedSampleInfo(
       {
          reqSampleNum = m_sampleInfo[streamNum].sample;
       }
-#ifdef FEATURE_QTV_INTER_FRAG_REPOS
       if((reqSampleNum >= maxFrames) && (!m_parsedEndofFile) &&
          (m_isFragmentedFile))
 
@@ -4018,7 +3016,6 @@ bool Mp4FragmentFile::getTimestampedSampleInfo(
             }
          }
       }
-#endif /*FEATURE_QTV_INTER_FRAG_REPOS*/
 
       if ( reqSampleNum >= maxFrames )
       {

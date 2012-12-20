@@ -17,7 +17,7 @@ EXTERNALIZED FUNCTIONS
 INITIALIZATION AND SEQUENCING REQUIREMENTS
   None
 
-Copyright (c) 1990-2005 by QUALCOMM, Incorporated.  All Rights Reserved.
+Copyright (c) 1990-2010 by QUALCOMM, Incorporated.  All Rights Reserved.
 
 *====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*/
 
@@ -29,10 +29,11 @@ This section contains comments describing changes made to the module.
 Notice that changes are listed in reverse chronological order.
 
 $PVCSPath: L:/src/asw/MSM5100/CP_REL_A/vcs/caix.c_v   1.121   02 Oct 2002 22:52:22   louiel  $
-$Header: //source/qcom/qct/modem/1x/cp/rel/1h08/src/caix.c#1 $ $DateTime: 2009/05/29 03:54:56 $ $Author: prabhuk $
+$Header: //source/qcom/qct/modem/1x/cp/rel/1h08/src/caix.c#2 $ $DateTime: 2010/10/08 00:34:51 $ $Author: sshahi $
 
 when       who     what, where, why
 --------   ---     ---------------------------------------------------------- 
+10/08/10   ssh     Added overhead parameters range checks.
 03/30/09   pk      Added new information record MEID_ME parser and modified 
                    existing ESN_ME to be supported for FEATURE_HWID_SUPPORT
 03/13/09   jj      Fixed discrepancy in array reference mismatch. 
@@ -746,7 +747,7 @@ cai_tmo_type cai_tmo =
   int_ptr->ext = b_unpackw(buf_ptr, *ext_msg_pos, FSIZ(type, field));  \
   *ext_msg_pos += FSIZ(type, field)
 
-void xlate_int_non_neg_srv_cfg
+word xlate_int_non_neg_srv_cfg
 (
   byte *buf_ptr,
     /* Pointer to message buffer which is to contain translated
@@ -4904,6 +4905,15 @@ word xlate_ext_srv_cfg
       {
         int_ptr->num_for_sch = b_unpackb(buf_ptr, buf_pos,
           FSIZ(FTYPE, num_for_sch));
+
+        if(int_ptr->num_for_sch > CAI_MAX_NUM_FOR_SCH)
+        {
+          MSG_ERROR("Unsupported num_for_sch = %d is received",
+            int_ptr->num_for_sch, 0, 0);
+          status = CAIX_INV_MSG_S;
+          return status;
+        }
+
         buf_pos += FSIZ(FTYPE, num_for_sch);
 
         #define VTYPE1 cai_for_sch_type
@@ -4965,6 +4975,15 @@ word xlate_ext_srv_cfg
       {
         int_ptr->num_rev_sch = b_unpackb(buf_ptr, buf_pos,
           FSIZ(FTYPE, num_rev_sch));
+        
+        if(int_ptr->num_rev_sch > CAI_MAX_NUM_REV_SCH)
+        {
+          MSG_ERROR("Unsupported num_rev_sch = %d is received",
+            int_ptr->num_rev_sch, 0, 0);
+          status = CAIX_INV_MSG_S;
+          return status;
+        }
+ 
         buf_pos += FSIZ(FTYPE, num_rev_sch);
 
         #define VTYPE1 cai_rev_sch_type
@@ -5450,8 +5469,12 @@ word xlate_ext_srv_con
          )
 #endif /* FEATURE_IS2000_REL_A */
       {
-        xlate_int_non_neg_srv_cfg(buf_ptr, &buf_pos,
+        status = xlate_int_non_neg_srv_cfg(buf_ptr, &buf_pos,
                                   &(int_ptr->srv_con.non_neg_cfg));
+        if (status != CAIX_DONE_S)
+        {
+          return status;
+        }
       }
     }
     
@@ -6084,6 +6107,15 @@ word xlate_ext_scam
           {
             int_ptr->scam.fix.num_sup_plt = b_unpackb(buf_ptr, msg_pos,
               FSIZ(cai_scam_var3_type, num_sup_plt));
+           
+            if(int_ptr->scam.fix.num_sup_plt > CAI_MAX_SUP_PILOTS)
+            {
+              MSG_ERROR("Unsupported num_sup_plt = %d is received",
+                int_ptr->scam.fix.num_sup_plt, 0, 0);
+              status = CAIX_INV_MSG_S;
+              return status;
+            }
+
             msg_pos += FSIZ(cai_scam_var3_type, num_sup_plt);
 
             int_ptr->scam.fix.num_sup =
@@ -8638,9 +8670,10 @@ word xlate_ext_ho_for_inc
 
     if (int_ptr->ho.sup.num_for_sup > CAI_MAX_NUM_SUP)
     {
-      /* We would write past the end of th array */
-
-      return (status = CAIX_INV_LEN_S);
+      MSG_ERROR("Unsupported num_for_sup = %d is received",
+        int_ptr->ho.sup.num_for_sup, 0, 0);
+      status = CAIX_INV_MSG_S;
+      return status;
     }
   }
 
@@ -9007,7 +9040,7 @@ SIDE EFFECTS
 
 ===========================================================================*/
 
-void xlate_ho_enc_cc
+word xlate_ho_enc_cc
 (
   byte *buf_ptr,
     /* Pointer to received message to be translated */
@@ -9018,6 +9051,8 @@ void xlate_ho_enc_cc
 )
 {
     int i;
+      /* Status returned to calling procedure */
+    word status = CAIX_DONE_S;      
     word ext_msg_pos = *ext_msg_pos_ptr;
 
     if (int_ptr->ho.extra_parms)
@@ -9104,6 +9139,15 @@ void xlate_ho_enc_cc
            {
              int_ptr->ho.cc.num_calls_assign =  b_unpackb( buf_ptr, ext_msg_pos,
                          FSIZ(cai_cc_info_fix_type, num_calls_assign));
+
+             if(int_ptr->ho.cc.num_calls_assign > CAI_SCM_MAX_NUM_CALLS_ASSIGN)
+             {
+               MSG_ERROR("Unsupported num_calls_assign = %d is received",
+                 int_ptr->ho.cc.num_calls_assign, 0, 0);
+               status = CAIX_INV_MSG_S;
+               return status;
+             }
+
              ext_msg_pos += FSIZ(cai_cc_info_fix_type, num_calls_assign);
 
              for (i=0; i<int_ptr->ho.cc.num_calls_assign ; i++ )
@@ -9149,7 +9193,7 @@ void xlate_ho_enc_cc
     } // if (int_ptr->ho.extra_parms)
 
     *ext_msg_pos_ptr = ext_msg_pos;
-
+    return status;
 }
 #endif /* FEATURE_IS2000_REL_A || FEATURE_MEID_SUPPORT */
 
@@ -9326,8 +9370,12 @@ word xlate_ext_ho_msg
       ext_msg_pos += FSIZ(cai_ho_msg_is2000_type,nnscr_included);
       if (int_ptr->ho.extra.nnscr_included)
       {
-        xlate_int_non_neg_srv_cfg(buf_ptr,&ext_msg_pos,
+        status = xlate_int_non_neg_srv_cfg(buf_ptr,&ext_msg_pos,
                                   &(int_ptr->ho.extra.non_neg_cfg));
+        if (status != CAIX_DONE_S)
+        {
+          return status;
+        }
       }
     }
   }
@@ -9460,6 +9508,10 @@ word xlate_ext_ho_msg
     }
 
     status = xlate_ext_ho_chan(buf_ptr, int_ptr, &ext_msg_pos); /*lint !e725*/
+    if (status != CAIX_DONE_S)
+    {
+      return status;
+    }
   }
 
   /**********************************************************
@@ -9489,7 +9541,16 @@ word xlate_ext_ho_msg
     if (int_ptr->ho.sch_incl)
     {
       UNPACKB_PG(ho.num_for_assign, cai_ho_msg_is2000_type, num_for_assign);
-      for (i=0;i<int_ptr->ho.num_for_assign && i<CAI_MAX_NUM_FOR_SCH;i++)
+
+      if(int_ptr->ho.num_for_assign > CAI_MAX_NUM_FOR_SCH)
+      {
+        MSG_ERROR("Unsupported num_for_assign = %d is received",
+          int_ptr->ho.num_for_assign, 0, 0);
+        status = CAIX_INV_MSG_S;
+        return status;
+      }
+
+      for (i=0;i<int_ptr->ho.num_for_assign;i++)
       {
         UNPACKB_PG(ho.for_assign[i].for_sch_id,cai_ho_msg_is2000_type,
                    for_sch_id);
@@ -9573,9 +9634,17 @@ word xlate_ext_ho_msg
 
       UNPACKB_PG(ho.num_pilots,cai_ho_msg_fix_type,num_pilots);
 
+      if(int_ptr->ho.num_pilots > CAI_HO_MSG_MAX_PILOTS)
+      {
+        MSG_ERROR("Unsupported num_pilots = %d is received",
+          int_ptr->ho.num_pilots, 0, 0);
+        status = CAIX_INV_MSG_S;
+        return status;
+      }
+
       UNPACKB_PG(ho.srch_offset_incl,cai_ho_msg_is2000_type,srch_offset_incl);
 
-      for (i=0;i<int_ptr->ho.num_pilots && i<CAI_HO_MSG_MAX_PILOTS;i++)
+      for (i=0;i<int_ptr->ho.num_pilots;i++)
       {
         UNPACKW_PG(ho.pilot[i].pilot_pn,cai_ho_msg_pilot_type,pilot_pn);
         if (int_ptr->ho.srch_offset_incl)
@@ -10027,6 +10096,15 @@ word xlate_ext_ho_msg
             
             int_ptr->ho.num_pdcch = 
               b_unpackb(buf_ptr, ext_msg_pos, FSIZ(cai_ho_msg_ch_ind_0_type, num_pdcch));
+ 
+            if((int_ptr->ho.num_pdcch + 1) > CAI_MAX_NUM_FOR_PDCCH)
+            {
+              MSG_ERROR("Unsupported num_pdcch = %d is received",
+                int_ptr->ho.num_pdcch, 0, 0);
+              status = CAIX_INV_MSG_S;
+              return status;
+            }
+
             ext_msg_pos += FSIZ(cai_ho_msg_ch_ind_0_type, num_pdcch);
   
             for (i=0; i<int_ptr->ho.num_pdcch + 1; i++)     
@@ -10095,6 +10173,15 @@ word xlate_ext_ho_msg
         
             int_ptr->ho.pilot[i].num_pdcch = 
               b_unpackb(buf_ptr, ext_msg_pos, FSIZ(cai_ho_msg_ch_ind_0_type, num_pdcch));
+            
+            if((int_ptr->ho.pilot[i].num_pdcch + 1) > CAI_MAX_NUM_FOR_PDCCH)
+            {
+              MSG_ERROR("Unsupported num_pdcch = %d is received",
+                int_ptr->ho.pilot[i].num_pdcch, 0, 0);
+              status = CAIX_INV_MSG_S;
+              return status;
+            }
+
             ext_msg_pos += FSIZ(cai_ho_msg_ch_ind_0_type, num_pdcch);
         
             for (j=0; j<int_ptr->ho.pilot[i].num_pdcch + 1; j++)     
@@ -10344,7 +10431,11 @@ word xlate_ext_ho_msg
 #endif /* FEATURE_MEID_SUPPORT */
        )
     {
-      xlate_ho_enc_cc(buf_ptr, int_ptr, &ext_msg_pos);
+      status = xlate_ho_enc_cc(buf_ptr, int_ptr, &ext_msg_pos);
+      if(status != CAIX_DONE_S)
+      {
+        return status;
+      }
       int_ptr->ho.cs_supported =  b_unpackb(buf_ptr, ext_msg_pos,
         FSIZ(cai_ho_msg_cs_type, cs_supported));
       ext_msg_pos += FSIZ(cai_ho_msg_cs_type, cs_supported);
@@ -10564,8 +10655,12 @@ word xlate_ext_ho_msg
 
       if (int_ptr->ho.extra.nnscr_included)
       {
-        xlate_int_non_neg_srv_cfg(buf_ptr,&ext_msg_pos,
+        status = xlate_int_non_neg_srv_cfg(buf_ptr,&ext_msg_pos,
                                   &(int_ptr->ho.extra.non_neg_cfg));
+        if (status != CAIX_DONE_S)
+        {
+          return status;
+        }
       }
     }
 
@@ -10590,8 +10685,12 @@ word xlate_ext_ho_msg
 #ifdef FEATURE_IS2000_REL_A
     if (caix_p_rev_in_use >= CAIX_P_REV_IS2000_REL_A)
     {
-      xlate_ho_enc_cc(buf_ptr, int_ptr, &ext_msg_pos);
-
+      status = xlate_ho_enc_cc(buf_ptr, int_ptr, &ext_msg_pos);
+      if(status != CAIX_DONE_S)
+      {
+        MSG_ERROR("Translation of enc info (xlate_ho_enc_cc) failed ", 0, 0, 0);
+        return status;
+      }
       int_ptr->ho.cs_supported = b_unpackb(buf_ptr, ext_msg_pos,
         FSIZ(cai_ho_msg_cs_type, cs_supported));
       ext_msg_pos += FSIZ(cai_ho_msg_cs_type, cs_supported);
@@ -10764,12 +10863,16 @@ word xlate_ext_tc_escam
 
       int_ptr->escam.num_rev_sch = b_unpackb(buf_ptr, msg_pos,
         FSIZ(MTYPE, num_rev_sch));
-      msg_pos += FSIZ(MTYPE, num_rev_sch);
 
-      if ((int_ptr->escam.num_rev_sch) > CAI_ESCAM_MAX_REV_SCH)
+      if(int_ptr->escam.num_rev_sch > CAI_ESCAM_MAX_REV_SCH)
       {
-        return CAIX_INV_LEN_S;
+        MSG_ERROR("Unsupported num_rev_sch = %d is received",
+          int_ptr->escam.num_rev_sch, 0, 0);
+        status = CAIX_INV_MSG_S;
+        return status;
       }
+
+      msg_pos += FSIZ(MTYPE, num_rev_sch);
 
       for (i=0; i<int_ptr->escam.num_rev_sch; i++)
       {
@@ -10832,12 +10935,16 @@ word xlate_ext_tc_escam
 
           int_ptr->escam.for_cfg[i].num_sup_sho =
             b_unpackb(buf_ptr, msg_pos, FSIZ(MTYPE, num_sup_sho));
-          msg_pos += FSIZ(MTYPE, num_sup_sho);
 
           if ((int_ptr->escam.for_cfg[i].num_sup_sho+1) > CAI_ESCAM_MAX_SUP_SHO)
           {
-            return CAIX_INV_LEN_S;
+            MSG_ERROR("Unsupported num_sup_sho = %d is received",
+              int_ptr->escam.for_cfg[i].num_sup_sho, 0, 0);
+            status = CAIX_INV_MSG_S;
+            return status;
           }
+
+          msg_pos += FSIZ(MTYPE, num_sup_sho);
 
           for (k=0; k<(int_ptr->escam.for_cfg[i].num_sup_sho+1); k++)
           {
@@ -11022,6 +11129,15 @@ word xlate_ext_tc_escam
 
           int_ptr->escam.num_threex_cfg =
       b_unpackb(buf_ptr, msg_pos, FSIZ(MTYPE, num_threex_cfg));
+             
+          if(int_ptr->escam.num_threex_cfg > CAI_ESCAM_MAX_THREEX_CFG)
+          {
+            MSG_ERROR("Unsupported num_threex_cfg = %d is received",
+              int_ptr->escam.num_threex_cfg, 0, 0);
+            status = CAIX_INV_MSG_S;
+            return status;
+          }
+ 
           msg_pos += FSIZ(MTYPE, num_threex_cfg);
 
           for (i=0; i < int_ptr->escam.num_threex_cfg; i++)
@@ -17011,6 +17127,14 @@ word xlate_ext_ext_sys_parm
             UNPACKB_PG(ext_sysparm.pdch_softer_switching_delay, MTYPE, pdch_softer_switching_delay);
             UNPACKB_PG(ext_sysparm.walsh_table_id, MTYPE, walsh_table_id);
             UNPACKB_PG(ext_sysparm.num_pdcch, MTYPE, num_pdcch);
+
+            if((int_ptr->ext_sysparm.num_pdcch + 1) > CAI_MAX_NUM_FOR_PDCCH)
+            {
+              MSG_ERROR("Unsupported num_pdcch = %d is rxed",
+               int_ptr->ext_sysparm.num_pdcch, 0, 0);
+              status = CAIX_INV_MSG_S;
+              return status;
+            }
 
             for (i = 0; i < int_ptr->ext_sysparm.num_pdcch+1; i++)
             {
@@ -24444,7 +24568,7 @@ SIDE EFFECTS
   None
 
 ===========================================================================*/
-void xlate_int_non_neg_srv_cfg
+word xlate_int_non_neg_srv_cfg
 (
   byte *buf_ptr,
     /* Pointer to message buffer which is to contain translated
@@ -24463,6 +24587,7 @@ void xlate_int_non_neg_srv_cfg
   word record_len;
   word record_start_pos;
   word i;
+  word status = CAIX_DONE_S;
 #ifdef FEATURE_IS2000_REL_A
   word j, k;
   byte temp_mux_header_len;
@@ -25156,6 +25281,7 @@ void xlate_int_non_neg_srv_cfg
 
   ext_msg_pos = record_start_pos + record_len;
   *buf_pos = ext_msg_pos;
+  return status;
 
 } /* xlate_int_non_neg_srv_cfg */
 

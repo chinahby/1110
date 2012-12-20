@@ -16,7 +16,7 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS
 
                         COPYRIGHT INFORMATION
 
-Copyright (c) 2001-2009 QUALCOMM, Incorporated and its licensors.  All Rights
+Copyright (c) 2001-2010 QUALCOMM, Incorporated and its licensors.  All Rights
 Reserved.  QUALCOMM Proprietary.  Export of this technology or software
 is regulated by the U.S. Government. Diversion contrary to U.S. law prohibited.
 *====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*/
@@ -25,10 +25,11 @@ is regulated by the U.S. Government. Diversion contrary to U.S. law prohibited.
 /*===========================================================================
                         EDIT HISTORY FOR MODULE
 
-$Header: //source/qcom/qct/modem/uim/mmgsdi/rel/07H1_2/src/gsdiutil.c#12 $
+$Header: //source/qcom/qct/modem/uim/su/baselines/sqa/mmgsdi/rel/07H1_2/src/gsdiutil_c/rev12/gsdiutil.c#2 $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+12/02/10   nmb     DEEPSEC buffer check for copying data when building a cnf
 05/14/09   kp      Added compiler directive for demand Paging Changes
 05/11/09   kp      Demand Paging Changes
 05/05/09   js      Fixed warnings
@@ -2051,7 +2052,14 @@ gsdi_returns_T gsdi_util_send_gsdi_cnf (
       msg.read_cnf.sim_filename = ((gsdi_sim_read_req_T *)cmd_p)->sim_filename;
 
       if ((msg.read_cnf.sim_filename & (UIM_EF_PATH_START << 8)) == (UIM_EF_PATH_START << 8))
+      {
         msg.read_cnf.sim_filename = (word)UIM_EF_BY_PATH;
+      }
+
+      if (sizeof(msg.read_cnf.data) < int32touint32(returned_data_len))
+      {
+        returned_data_len = sizeof(msg.read_cnf.data);
+      }
 
       if (gsdi_status == GSDI_SUCCESS)
       {
@@ -2125,6 +2133,11 @@ gsdi_returns_T gsdi_util_send_gsdi_cnf (
       break;
 
     case GSDI_SIM_INCREASE_RSP:
+      if (sizeof(msg.increase_cnf.data) < int32touint32(returned_data_len))
+      {
+        returned_data_len = sizeof(msg.increase_cnf.data);
+      }
+
       if (gsdi_status == GSDI_SUCCESS)
       {
         /* Set the Buffer to 0xFF */
@@ -2141,6 +2154,11 @@ gsdi_returns_T gsdi_util_send_gsdi_cnf (
       break;
 
     case GSDI_RUN_GSM_ALGORITHM_RSP:
+      if (sizeof(msg.run_gsm_alg_cnf.data) < int32touint32(returned_data_len))
+      {
+        returned_data_len = sizeof(msg.run_gsm_alg_cnf.data);
+      }
+
       if (gsdi_status == GSDI_SUCCESS)
       {
         /* Clear the buffer with 0xFF */
@@ -2157,6 +2175,11 @@ gsdi_returns_T gsdi_util_send_gsdi_cnf (
       break;
 
     case GSDI_SELECT_RSP:
+      if (sizeof(msg.select_cnf.data) < int32touint32(returned_data_len))
+      {
+        returned_data_len = sizeof(msg.select_cnf.data);
+      }
+
       if (gsdi_status == GSDI_SUCCESS)
       {
         MMGSDI_RETURN_IF_NULL(data_p);
@@ -2927,16 +2950,22 @@ gsdi_returns_T gsdi_util_send_gsdi_cnf (
 
     case GSDI_USIM_AUTHENTICATION_RSP:
       MMGSDI_RETURN_IF_NULL(data_p);
-      msg.usim_auth_cnf.returned_data_len = int32touint8(returned_data_len);
 
+      if (sizeof(msg.usim_auth_cnf.data) < int32touint32(returned_data_len) )
+      {
+        returned_data_len = sizeof(msg.usim_auth_cnf.data);
+      }
       /* clear up the buffer with FF */
       memset( msg.usim_auth_cnf.data, 0xFF, GSDI_MAX_DATA_BLOCK_LEN );
 
-      if (gsdi_status == GSDI_SUCCESS) { /* fill with data from uim */
-           memcpy(
-             msg.usim_auth_cnf.data, data_p, int32touint32(returned_data_len));
+      if (gsdi_status == GSDI_SUCCESS) 
+      { 
+        msg.usim_auth_cnf.returned_data_len = int32touint8(returned_data_len);
+        /* fill with data from uim */
+        memcpy(msg.usim_auth_cnf.data, data_p, int32touint32(returned_data_len));
       }
-      else { /* return data len of 1 and set the data[0] to 0 to represent error */
+      else 
+      { /* return data len of 1 and set the data[0] to 0 to represent error */
            msg.usim_auth_cnf.returned_data_len = 1;
            msg.usim_auth_cnf.data[0] = 0x00;
       }
@@ -2987,6 +3016,11 @@ gsdi_returns_T gsdi_util_send_gsdi_cnf (
 #ifdef FEATURE_MMGSDI_CHANNEL_MANAGEMENT
     case GSDI_OPEN_CHANNEL_RSP:
       MMGSDI_RETURN_IF_NULL(data_p);
+      if (sizeof(msg.open_channel_cnf.data_buffer) < int32touint32(returned_data_len))
+      {
+        returned_data_len = sizeof(msg.open_channel_cnf.data_buffer);
+      }
+
       if ( gsdi_status == GSDI_SUCCESS )
       {
         if ( returned_data_len > 0x02 )
@@ -3014,6 +3048,11 @@ gsdi_returns_T gsdi_util_send_gsdi_cnf (
 
     case GSDI_CLOSE_CHANNEL_RSP:
       MMGSDI_RETURN_IF_NULL(data_p);
+      if (sizeof(msg.close_channel_cnf.data_buffer) < int32touint32(returned_data_len))
+      {
+        returned_data_len = sizeof(msg.close_channel_cnf.data_buffer);
+      }
+
       if ( gsdi_status == GSDI_SUCCESS )
       {
         --returned_data_len;
@@ -3057,6 +3096,11 @@ gsdi_returns_T gsdi_util_send_gsdi_cnf (
       ** to the data
       */
       MMGSDI_RETURN_IF_NULL(data_p);
+      if (sizeof(msg.send_channel_data_cnf.data_buffer) + 3  < int32touint32(returned_data_len))
+      {
+        returned_data_len = sizeof(msg.send_channel_data_cnf.data_buffer) + 3 ;
+      }
+
       if ( gsdi_status == GSDI_SUCCESS )
       {
         if(returned_data_len >= 3)

@@ -10,7 +10,7 @@ Copyright 2004 QUALCOMM Incorporated, All Rights Reserved
 
 /* =======================================================================
                              PERFORCE HEADER
-$Header: //source/qcom/qct/multimedia/qtv/legacymedia/filemedia/aviparser/main/latest/inc/aviparser.h#14 $
+$Header: //source/qcom/qct/multimedia/qtv/legacymedia/filemedia/aviparser/main/latest/inc/aviparser.h#22 $
 ========================================================================== */
 #include "customer.h"
 
@@ -28,10 +28,12 @@ $Header: //source/qcom/qct/multimedia/qtv/legacymedia/filemedia/aviparser/main/l
 //#define AVI_PARSER_DEBUG
 
 /*
-* When enabled, PARSER will skip parsing IDX1 information.
-* This will reduce the start up time as parsing will be done within a second.
-* Not recommended to disable this feature as it will increase
-* memory requirement by huge when clip is really really long.
+* When this feature is defined, parser will not load the indexing information during intial parsing.
+* Thus, playback will start as quickly as possible.
+* 
+* Undefining this feature will make parser cache in entire idx1 and prepare key-frame table for video
+* and indexing table for all audio streams. This will delay the intial parsing and will also
+* consume additional memory. Size of memory depends on size of idx1.
 */
 #define AVI_PARSER_FAST_START_UP
 
@@ -79,6 +81,7 @@ class aviParser
   virtual avi_uint32     GetTotalNumberOfVideoTracks(void){return m_hAviSummary.n_video_tracks;}
 
   virtual aviErrorType   StartParsing(void);
+  virtual aviErrorType   GetNumOfRiff(avi_uint64 nOffset, int* m_nNumOfRiff);
   virtual aviErrorType   GetAVIHeader(avi_mainheader_avih* pAviHdrPtr);
   virtual aviErrorType   GetAudioInfo(avi_uint8 trackId,avi_audio_info* pAudioInfo);
   virtual aviErrorType   GetVideoInfo(avi_uint8 trackId,avi_video_info* pVideoInfo);
@@ -108,11 +111,13 @@ class aviParser
                               avi_sample_info*,
                               bool canSyncToNonKeyFrame=false,                              
                               int  nSyncFramesToSkip = 0);
+  virtual void           SetIDX1Cache(void*);
+  virtual void*          GetIDX1Cache();
 
   virtual avi_uint8*     GetDRMInfo(int*);
   virtual bool           IsDRMProtection(){return m_bDRMProtection;};
   bool                   getDataFromINFO(char*, char*, avi_uint16*);
-
+  
   #ifdef WALK_INDEX_TABLES
     virtual void         WalkIDX1Table();
   #endif
@@ -135,7 +140,12 @@ class aviParser
 
   //Start/size of 'movi' chunk
   avi_uint64       m_nMoviOffset;
+  avi_uint64       m_nStartOfMovi;
   avi_uint64       m_nMoviSize;
+
+  int              m_nNumOfRiff;
+  bool             m_bisAVIXpresent;
+  avi_riff_info*   m_pMultipleRiff;
 
   //Start/size of 'idx1' chunk
   avi_uint64       m_nIdx1Offset;
@@ -164,6 +174,8 @@ class aviParser
   avi_uint32       m_nCurrVideoFrameCount[AVI_MAX_VIDEO_TRACKS];
   avi_uint32       m_nCurrAudioPayloadSize[AVI_MAX_AUDIO_TRACKS];
   avi_uint32       m_nCurrAudioFrameCount[AVI_MAX_AUDIO_TRACKS];
+  avi_uint64       m_nParserAudSampleEndTime[AVI_MAX_AUDIO_TRACKS];
+
   bool             m_bDiscardAudioIndex;
   bool             m_bDiscardVideoIndex;
   bool             m_bDRMProtection;
@@ -208,7 +220,8 @@ class aviParser
   aviErrorType     parseHDRL(avi_uint64*);
   aviErrorType     parseINFO(avi_uint64 offset,int);
   avi_uint64       skipToNextValidMediaChunk(avi_uint64);
-  aviErrorType     parseIDX1(avi_uint64);
+  aviErrorType     parseIDX1(avi_uint64*);
+  aviErrorType     cacheIDX1(avi_uint64*,avi_uint32);
   aviErrorType     updateSampleRetrievedOffset(CHUNK_t,avi_uint8);
   aviErrorType     parseINDX(avi_uint64,fourCC_t);
   aviErrorType     parseIX(avi_uint64,int*);
@@ -216,26 +229,32 @@ class aviParser
   aviErrorType     updateInfoChunkInfo(fourCC_t,avi_uint32,int);
   avi_info_chunk*  getInfoChunkHandle(fourCC_t);
   aviErrorType     parseSTRD(avi_uint64*);
+
+aviErrorType       searchIDX1Cache(avi_uint32,
+                                   avi_uint64,
+                                   avi_idx1_entry*,
+                                   bool,
+                                   CHUNK_t,
+                                   int nSyncFramesToSkip,
+                                   bool* endOfFileReached);
+
   bool             isVOLReadDone(avi_uint8,int,avi_int8*,bool*,avi_uint8* membuf=NULL);
-#ifndef AVI_PARSER_FAST_START_UP
-  aviErrorType     virtualParseIDX1(int,avi_uint8,avi_idx1_entry,avi_uint64,avi_idx1_entry*);
-#else
-  aviErrorType     seekInIDX1(avi_uint8,
+
+  aviErrorType     seekInIDX1(avi_uint32,
                               avi_uint64,
                               avi_idx1_entry*,
                               bool,
                               CHUNK_t,
-                              int nSyncFramesToSkip);
-  avi_uint32       readFromIdx1SeekCache(avi_int32 nOffset, 
+                              int nSyncFramesToSkip,
+                              bool* endOfFileReached);
+
+  avi_uint32       readFromIdx1SeekCache(avi_uint64 nOffset, 
                                          avi_int32 nNumBytesRequest,
                                          avi_int32 nMaxSize,
                                          unsigned char *ppData);
 
   void             flushIdx1SeekCache(void);
-#endif
-#if defined(AVI_PARSER_SEEK_SANITY_TEST) && defined(AVI_PARSER_FAST_START_UP)
   bool             doSanityCheckBeforeSeek(avi_uint8,CHUNK_t,aviParserState);
-#endif
   avi_int64        getCurrentPlaybackTime(avi_uint8);
 avi_uint32         isCurrentFrameEncrypted(avi_uint8/*trackid*/,
                                            avi_uint64/*current offset in idx1*/,

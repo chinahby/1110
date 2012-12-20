@@ -31,7 +31,7 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS
   this task again (to log errors) and could cause an infinite loop.
   
 
-Copyright (c) 2005-2008 by QUALCOMM, Incorporated.
+Copyright (c) 2005-2009 by QUALCOMM, Incorporated.
 All Rights Reserved.
 Qualcomm Confidential and Proprietary
 
@@ -42,10 +42,14 @@ Qualcomm Confidential and Proprietary
 
                            EDIT HISTORY FOR FILE
 
-$Header: //depot/asic/msmshared/services/nv1/nvim.c#22 $ $DateTime: 2008/06/17 12:17:06 $ $Author: pratapc $
+$Header: //depot/asic/msmshared/services/nv1/nvim.c#26 $ $DateTime: 2009/06/17 14:02:03 $ $Author: pratapc $
    
 when       who     what, where, why
 --------   ---     ---------------------------------------------------------
+05/27/09   sri     Adding "default" case in nvim_remove_item and the function
+                   nv_cmd_remote() modified to protect some NV items remote
+                   read/write access under FEATURE_NV_ACCESS_FILTER
+03/18/09   sri     NV task priority is kept unchanged.
 01/08/08   pc      Ensured mutex initialization for synchronous calls.
 12/13/07   pc      Introduced kxmutexes around NV access.
 06/08/07   pc      Added support for mdn based nai
@@ -65,9 +69,7 @@ when       who     what, where, why
 #ifdef FEATURE_NV_ITEM_MGR
 
 #include "fs.h"
-#include "nv.h"
 #include "nvim.h"
-#include "nvi.h"
 #include "msg.h"
 #include "nvio.h"
 #include "err.h"
@@ -201,7 +203,6 @@ byte fact_data[NVIM_FACTORY_DATA_SIZE];
 
 static boolean          nverr_init( void );
 static void             nverr_update_log( void );
-
 
 /* Structure used to essentially double buffer the error log  */
 struct 
@@ -855,11 +856,9 @@ nvim_build_sec(void)
    word               cnt;       /* Counter for attempts to write variable */
    
    /* Initialize the lock code to the default value (0000)   */
-   for( cnt=0; cnt<NV_LOCK_CODE_SIZE; cnt++)  
-   {
+   for( cnt=0; cnt<NV_LOCK_CODE_SIZE; cnt++)  {
      local_item.lock_code.digits[ cnt] = '0';
    }
-   
    local_cmd.item       = NV_LOCK_CODE_I;
    local_cmd.tcb_ptr    = NULL;
    local_cmd.sigs       = 0;
@@ -1078,8 +1077,6 @@ nvim_init_prl_data (void)
                                 NV_ROAMING_LIST_HEADER_SIZE);/* data count */
     /* Set state data items -- note that the item's active flag */
     /* occupies the "nam" field in the external type.           */
-
-	
     if ((status == NV_DONE_S) && ((boolean)prl_header.nam == TRUE)) {
       nv_prl_version_data[nam] = prl_header.prl_version;
       nv_prl_valid_data[nam] = prl_header.valid;
@@ -1088,8 +1085,6 @@ nvim_init_prl_data (void)
       nv_prl_version_data[nam] = NV_PRL_VERSION_INVALID;
       nv_prl_valid_data[nam] = FALSE;
     }
-
-
   }
   return;
 }
@@ -1154,7 +1149,8 @@ nvim_remove_item (
           efs_unlink(file_name);
         }
         break;
-        /* Creating file name for array item*/
+      default:
+        status = NV_BADPARM_S;
     }/*switch*/
   }/* else */
   return status;
@@ -1547,7 +1543,7 @@ nv_otasp_commit (
 
 #define NV_COMMIT_DONE            255
 
-  word         nv_task_pri;        /* REX priority of the NV task */
+  /* word         nv_task_pri;        *//* REX priority of the NV task */
   boolean      item_to_be_written; /* Flag controls whether write occurs */
   byte         i, commit_state=0;  /* Index variables */
 
@@ -1566,7 +1562,7 @@ nv_otasp_commit (
 
   /* Raise NV task priority for OTASP commit operation (and save */
   /* original priority so it can be restored at end of commit)   */
-  nv_task_pri = rex_set_pri(SRCH_PRI+3);
+  /* nv_task_pri = rex_set_pri(SRCH_PRI+3); */
 
   MSG_HIGH ("NV Priority raised for OTASP", 0, 0, 0);
   /* Set up generic command buffer parameters */
@@ -2090,7 +2086,7 @@ nv_otasp_commit (
 
       default:
         /* Restore original NV task priority before returning */
-        (void)rex_set_pri(nv_task_pri);
+        /* (void)rex_set_pri(nv_task_pri); */
  
         MSG_HIGH ("NV Priority Returned to NORMAL", 0, 0, 0);
         return(cmd_ptr->status = NV_BADCMD_S);
@@ -2101,7 +2097,7 @@ nv_otasp_commit (
       local_cmd.status = nvio_write(&local_cmd);
       if (local_cmd.status != NV_DONE_S) {
         /* Restore original NV task priority before returning */
-        (void)rex_set_pri(nv_task_pri);
+        /* (void)rex_set_pri(nv_task_pri); */
        
         MSG_HIGH ("NV Priority Returned to NORMAL", 0, 0, 0);
         return (local_cmd.status);
@@ -2113,7 +2109,7 @@ nv_otasp_commit (
   } /* while */  
 
   /* Restore original NV task priority before returning */
-  (void)rex_set_pri(nv_task_pri);
+  /* (void)rex_set_pri(nv_task_pri); */
 
   MSG_HIGH ("NV Priority Returned to NORMAL", 0, 0, 0);
   return (local_cmd.status);
@@ -2182,6 +2178,7 @@ SIDE EFFECTS
   None.
 
 ===========================================================================*/
+
 word  nv_prl_version
 (
   byte   nam          /* Which NAM the request is for */
@@ -2192,8 +2189,6 @@ word  nv_prl_version
 
   /* Note that prl_version field is set to NV_PRL_VERSION_INVALID if   */
   /* the roaming list is NOT_ACTIVE                                    */
-
-	
   return nv_prl_version_data[nam];
 }
 
@@ -2896,6 +2891,26 @@ nv_cmd_remote (
 )
 {
   nv_cmd_type nv_rpc_cmd;
+
+#ifdef FEATURE_NV_ACCESS_FILTER
+  if(cmd == NV_READ_F)
+  {
+    if(unreadable_nv_item(item))
+    {
+      return NV_BADPARM_S;   
+    }
+  }
+  else 
+  { 
+    if((cmd == NV_WRITE_F)||(cmd == NV_REPLACE_F))
+    {
+      if(unwritable_nv_item(item))
+      {
+        return NV_BADPARM_S;   
+      }
+    }
+  }
+#endif
 
   nv_rpc_cmd.status = NV_BUSY_S;
   (void) q_link(&nv_rpc_cmd, &nv_rpc_cmd.link);

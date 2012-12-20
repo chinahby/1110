@@ -1050,6 +1050,114 @@ void OEMDSS_SetAppType(uint32 uAppType)
     g_uAppType = uAppType;
 }
 
+#include "OEMSVC.h"
+#include "AEERUIM.h"
+#include "ds707_data_session_profile.h"
+extern char charsvc_p_name[UIM_CDMA_HOME_SERVICE_SIZE+1];
+void OEMDSS_SetPPPAccount(int nProfile, uint32 uAppType)
+{
+    char  user_id_info[PPP_MAX_USER_ID_LEN];
+    char  passwd_info[PPP_MAX_PASSWD_LEN];
+    nv_item_type nvi;
+    boolean bUsedUserID = FALSE;
+
+    OEM_GetConfig(CFGI_BREWSET_USENAME, user_id_info, MAS_BREWSETINT_STRING);
+    OEM_GetConfig(CFGI_BREWSET_PASSWORD, passwd_info, MAS_BREWSETINT_STRING);
+    
+    switch(uAppType){
+    case DA_WAP_TYPE:
+        if(STRISTR (charsvc_p_name,"mts"))
+    	{
+            STRCPY(user_id_info,"wap@wap.mtsindia.in");
+            STRCPY(passwd_info,"wap");
+    	}
+    	else if(STRISTR (charsvc_p_name,"tata"))
+    	{
+            STRCPY(user_id_info,"wapuser");
+            STRCPY(passwd_info,"wapuser");
+    	}
+    	else if(STRISTR (charsvc_p_name,"reliance"))
+    	{
+            bUsedUserID = TRUE; // Reliance的卡不标准，需要使用本地用户名
+            STRCPY(user_id_info,"SpiceD88@wap.relianceinfo.com");
+            STRCPY(passwd_info,"K39MspDeci");
+    	}
+    	else if(STRISTR (charsvc_p_name,"vmi"))
+    	{
+            STRCPY(user_id_info,"wap@ttsl.vmi.com");
+            STRCPY(passwd_info,"wap");
+    	}
+        break;
+    case DA_BREW_TYPE:
+        if(STRISTR (charsvc_p_name,"mts"))
+    	{
+            STRCPY(user_id_info,"wap@wap.mtsindia.in");
+            STRCPY(passwd_info,"wap");
+    	}
+    	else if(STRISTR (charsvc_p_name,"tata"))
+    	{
+            STRCPY(user_id_info,"brewuser");
+            STRCPY(passwd_info,"brewuser");
+    	}
+    	else if(STRISTR (charsvc_p_name,"reliance"))
+    	{
+            bUsedUserID = TRUE;// Reliance的卡不标准，需要使用本地用户名
+            STRCPY(user_id_info,"SpiceD88@wap.relianceinfo.com");
+            STRCPY(passwd_info,"K39MspDeci");
+    	}
+    	else if(STRISTR (charsvc_p_name,"vmi"))
+    	{
+            STRCPY(user_id_info,"wap@ttsl.vmi.com");
+            STRCPY(passwd_info,"wap");
+    	}
+        break;
+    default:
+        DBGPRINTF("OEMDSS_SetPPPAccount unsupport type %d",uAppType);
+        return;
+    }
+	
+	DBGPRINTF("OEMDSS_SetPPPAccount %s %s %d %d",user_id_info,passwd_info,nProfile,bUsedUserID);
+
+    if(nProfile != DATA_SESSION_PROFILE_ID_INVALID)
+    {
+        if(bUsedUserID)
+        {
+        	(void)STRCPY((char *)nvi.pap_user_id.user_id, (char *)user_id_info);
+            nvi.pap_user_id.user_id_len = STRLEN((char *)user_id_info);
+            if(OEMNV_Put(NV_PPP_USER_ID_I, &nvi) != NV_DONE_S)
+            {
+                DBGPRINTF(";put NV_PPP_USER_ID_I failed");
+            }
+        }
+        else
+        {
+            // 设置本地用户为空，底层在读取的时候优先使用NV_PPP_USER_ID_I,没有内容才使用NV_DS_SIP_NAI_INFO_I
+            nvi.pap_user_id.user_id[0]  = 0;
+            nvi.pap_user_id.user_id_len = 0;
+            if(OEMNV_Put(NV_PPP_USER_ID_I, &nvi) != NV_DONE_S)
+            {
+                DBGPRINTF(";put NV_PPP_USER_ID_I failed");
+            }
+        }
+    }
+    else
+    {
+        (void)STRCPY((char *)nvi.pap_user_id.user_id, (char *)user_id_info);
+        nvi.pap_user_id.user_id_len = STRLEN((char *)user_id_info);
+        if(OEMNV_Put(NV_PPP_USER_ID_I, &nvi) != NV_DONE_S)
+        {
+            DBGPRINTF(";put NV_PPP_USER_ID_I failed");
+        }
+        
+        (void)STRCPY((char *)nvi.pap_password.password, (char *)passwd_info);
+        nvi.pap_password.password_len = STRLEN((char *)passwd_info);
+        if(OEMNV_Put(NV_PPP_PASSWORD_I, &nvi) != NV_DONE_S)
+        {
+            DBGPRINTF(";put NV_PPP_PASSWORD_I failed");
+        }
+    }
+}
+
 void OEMDSS_SetCDMAProfileId(int nNetwork, dss_net_policy_info_type* policy_info) 
 {
 #ifdef CDMA_DATA_SESSION_PROFILE_ID_SUPPORTED
@@ -1059,6 +1167,15 @@ void OEMDSS_SetCDMAProfileId(int nNetwork, dss_net_policy_info_type* policy_info
     if((cdma_profile_id == 0) && (g_uAppType != 0))
     {
         policy_info->cdma.data_session_profile_id = dss_get_app_profile_id(g_uAppType);
+        if(policy_info->cdma.data_session_profile_id>=DATA_SESSION_MIN_PROFILE)
+        {
+            OEMDSS_SetPPPAccount(policy_info->cdma.data_session_profile_id-DATA_SESSION_MIN_PROFILE,g_uAppType);
+        }
+        else
+        {
+            OEMDSS_SetPPPAccount(DATA_SESSION_PROFILE_ID_INVALID,g_uAppType);
+        }
+        
         if(policy_info->cdma.data_session_profile_id < 0)
         {
             policy_info->cdma.data_session_profile_id = 0;

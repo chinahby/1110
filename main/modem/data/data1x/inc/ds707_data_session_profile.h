@@ -25,10 +25,13 @@ Copyright (c) 2000-2010 by QUALCOMM, Incorporated.  All Rights Reserved.
 
                       EDIT HISTORY FOR FILE
 
-  $Header: //source/qcom/qct/modem/data/1x/707/main/lite/inc/ds707_data_session_profile.h#5 $ $DateTime: 2010/01/28 08:30:33 $ $Author: parmjeet $
+  $Header: //source/qcom/qct/modem/data/1x/707/main/lite/inc/ds707_data_session_profile.h#8 $ $DateTime: 2011/03/30 08:44:12 $ $Author: msankar $
 
   when      who    what, where, why
 --------    ---    ----------------------------------------------------------
+03/30/11   ms      Added support to pick non-default profile for non-OMH apps.
+05/28/10   ps      Added support to pick up the profile id with unspecified bit
+                   set for Legacy/Non-OMH Applications.
 19/01/10   ps      Added code changes to reset requesting and current
                    profile IDs when IFACE is brought down.
 11/20/08   psng    Added multiple profile id look up support for Laptop call
@@ -58,8 +61,10 @@ Copyright (c) 2000-2010 by QUALCOMM, Incorporated.  All Rights Reserved.
                              PUBLIC CONSTANTS
 
 ===========================================================================*/
+#define  DATA_SESSION_MIN_PROFILE          1
 #define  DATA_SESSION_MAX_PROFILES        16
 #define  DATA_SESSION_PROFILE_ID_INVALID  -1
+#define DATA_SESSION_PROFILE_INIT_VAL      0
 
 #define  DEFAULT_PROFILE                   0x00000001
 #define  TETHERED_MODE_APP_TYPE            0x00000040
@@ -100,6 +105,7 @@ extern ds707_data_session_profile_info_type
                   ds707_data_session_profile_info[DATA_SESSION_MAX_PROFILES];
 extern ds707_data_session_info_type ds707_data_session[DS707_MAX_PKT_CALLS];
 extern uint8                        num_valid_profiles;
+extern uint8                        num_valid_nais;
 
 
 /*===========================================================================
@@ -250,6 +256,48 @@ RETURN VALUE  None
 SIDE EFFECTS  None
 ===========================================================================*/
 void ds707_data_session_init ( void );
+
+/*===========================================================================
+FUNCTION DS707_DATA_SESSION_GET_DEFAULT_PROFILE()
+
+DESCRIPTION
+  This function will return the profile ID corresponds to un-specified bit set
+  in app_type bit mask.
+
+DEPENDENCIES
+  None.
+
+PARAMETERS
+  None
+  
+RETURN VALUE
+  Valid profile id on success.
+  -1 on failure.
+
+SIDE EFFECTS
+  None.
+===========================================================================*/
+int8 ds707_data_session_get_default_profile(void);
+
+/*===========================================================================
+FUNCTION DS707_DATA_SESSION_GET_PROFILE_ID_FOR_SPECIAL_NAI
+
+DESCRIPTION
+  This function will return the priority for the special NAI.
+
+DEPENDENCIES
+  None.
+
+PARAMETERS
+  None.
+
+RETURN VALUE
+  int8 - Profile ID
+  
+SIDE EFFECTS
+  None.
+===========================================================================*/
+int8 ds707_data_session_get_profile_id_for_special_nai(void);
 
 #endif /* FEATURE_DS_MULTIPLE_PROFILES */
 #endif /* DS707_DATA_SESSION_PROFILE_H */

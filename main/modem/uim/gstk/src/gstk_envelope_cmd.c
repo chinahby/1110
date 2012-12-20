@@ -51,7 +51,7 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS
 /*===========================================================================
                         COPYRIGHT INFORMATION
 
-Copyright (c) 2003-2009 QUALCOMM, Incorporated and its licensors.  All Rights
+Copyright (c) 2003-2009, 2011 QUALCOMM, Incorporated and its licensors.  All Rights
 Reserved.  QUALCOMM Proprietary.  Export of this technology or software
 is regulated by the U.S. Government. Diversion contrary to U.S. law prohibited.
 
@@ -61,10 +61,11 @@ This section contains comments describing changes made to the module.
 Notice that changes are listed in reverse chronological order.
 
 
-$Header: //source/qcom/qct/modem/uim/gstk/rel/07H1_2/src/gstk_envelope_cmd.c#2 $
+$Header: //source/qcom/qct/modem/uim/su/baselines/sqa/gstk/rel/07H1_2/src/gstk_envelope_cmd_c/rev2/gstk_envelope_cmd.c#2 $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+02/03/11   adp     Fixed buffer over flow issue in SMS-PP DL 
 01/19/09   yb      Added secondary support for cell id information when 
                    rr_get_cell_id returns NULL in gstk_mo_sms_ctrl_ind()
 10/07/08   xz      Fixed Klockwork errors
@@ -617,13 +618,34 @@ static gstk_status_enum_type gstk_sms_pp_dl_ind(
            STK_envelope_cmd.length += uint32touint8(addr_length);
          }
 
+         if(offset > UIM_MAX_CHARS - 1)
+         {
+           MSG_ERROR("Length of command exceeding Max Chars in UIM Buffer", 0, 0, 0);
+           gstk_sms_pp_dl_ind_cleanup(sms_pp_cmd);
+           return GSTK_MEMORY_ERROR;
+         }
+
          /* copy tpdu */
          /* copy tag, length */
          uim_cmd_ptr->envelope.data[offset++] = STK_envelope_cmd.tpdu.tag;
          if (STK_envelope_cmd.tpdu.length > GSTK_TLV_LENGTH_1_BYTE_OFFSET_LIMIT) {
+            if(offset > UIM_MAX_CHARS - 1)
+            {
+              MSG_ERROR("Length of command exceeding Max Chars in UIM Buffer", 0, 0, 0);
+              gstk_sms_pp_dl_ind_cleanup(sms_pp_cmd);
+              return GSTK_MEMORY_ERROR;
+            }
+
            uim_cmd_ptr->envelope.data[offset++] = GSTK_2_BYTE_LENGTH_FIRST_VALUE;
            STK_envelope_cmd.length++;
          }
+         if(offset > UIM_MAX_CHARS - 1)
+         {
+           MSG_ERROR("Length of command exceeding Max Chars in UIM Buffer", 0, 0, 0);
+           gstk_sms_pp_dl_ind_cleanup(sms_pp_cmd);
+           return GSTK_MEMORY_ERROR;
+         }
+
          uim_cmd_ptr->envelope.data[offset++] = STK_envelope_cmd.tpdu.length;
 
          if (gstk_check_envelope_offset(uim_cmd_ptr, offset, STK_envelope_cmd.tpdu.length) !=

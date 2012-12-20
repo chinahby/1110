@@ -11,7 +11,7 @@
 /*===========================================================================
                         COPYRIGHT INFORMATION
 
-Copyright (c) 2001-2009 QUALCOMM, Incorporated and its licensors.  All Rights
+Copyright (c) 2001-2010 QUALCOMM, Incorporated and its licensors.  All Rights
 Reserved.  QUALCOMM Proprietary.  Export of this technology or software
 is regulated by the U.S. Government. Diversion contrary to U.S. law prohibited.
 
@@ -20,10 +20,12 @@ is regulated by the U.S. Government. Diversion contrary to U.S. law prohibited.
 This section contains comments describing changes made to the module.
 Notice that changes are listed in reverse chronological order.
 
-$Header: //source/qcom/qct/modem/uim/mmgsdi/rel/07H1_2/src/gsdi.h#13 $ $DateTime: 2009/06/08 12:45:56 $
+$Header: //source/qcom/qct/modem/uim/su/baselines/qsc1110/rel/3.3.65/uim/mmgsdi/src/gsdi.h#2 $ $DateTime: 2011/03/09 23:17:08 $
 
 when       who     what, where, why
 -------------------------------------------------------------------------------
+06/07/10   ssr     Setting NVRUIM control flags inside of 
+                   gsdi_cdma_post_pin1_init
 06/08/09   js      Added prototype for gsdi_cdma_proc_select
 06/03/09   xz      Extend GSDI_WAIT_FOR_GSTK_TO_TP_DL value
 06/03/09   yb      Changing GSDI_WAIT_FOR_GSTK_TO_TP_DL timer value for win mob to
@@ -507,6 +509,7 @@ extern gsdi_uim_omh_cap_type gsdi_uim_omh_cap;
 #define GSDI_SST_RPLMNWACT_OFFSET       12
 #define GSDI_SST_PNN_OFFSET             12
 #define GSDI_SST_OPL_OFFSET             12
+#define GSDI_CDMA_SST_LBS_OFFSET        6
 
 
 #define GSDI_SST_CHV1_DISABLE_MASK  0x03   /* 0000 0011 */

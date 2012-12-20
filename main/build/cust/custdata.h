@@ -5,7 +5,7 @@
 DESCRIPTION
   Configuration for DATA.
 
-  Copyright (c) 2002 - 2010 by QUALCOMM Incorporated. All Rights Reserved.
+  Copyright (c) 2002 - 2011 by QUALCOMM Incorporated. All Rights Reserved.
 ===========================================================================*/
 
 
@@ -16,10 +16,11 @@ DESCRIPTION
   This section contains comments describing changes made to the module.
   Notice that changes are listed in reverse chronological order.
 
-$Header: //source/qcom/qct/modem/data/build/main/lite/custdata.h#12 $ $DateTime: 2010/04/20 23:13:35 $ $Author: nsivakum $
+$Header: //source/qcom/qct/modem/data/build/main/lite/custdata.h#13 $ $DateTime: 2011/02/24 23:31:53 $ $Author: msankar $
 
 when       who     what, where, why
 --------   ---     ------------------------------------------------------------
+02/25/11   ms      Enabled Mobile IP Deregistration feature.
 04/19/10   sn      Merged support for PAP internal auth.
 05/30/09   ms      Added EPZID Hysteresis Feature definitions.
 09/29/08   sn      Added FEATURE_DMU check to define FEATURE_DS_MOBILE_IP_DMU.
@@ -74,6 +75,9 @@ when       who     what, where, why
    
      /* Enable Mobile IP performance metrics */
      #define FEATURE_DS_MOBILE_IP_PERF
+    
+     /* Enable Mobile IP Deregistration feature */
+     #define FEATURE_DS_MOBILE_IP_DEREG
 
      /* FEATURE_DMU needs to be defined/enabled in .builds file of the target 
       * depending on which tier (low/mid/high) requires MIP DMU feature.

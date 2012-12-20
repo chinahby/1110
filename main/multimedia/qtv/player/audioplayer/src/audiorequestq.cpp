@@ -24,9 +24,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/player/audioplayer/main/latest/src/audiorequestq.cpp#7 $
-$DateTime: 2008/05/08 08:09:22 $
-$Change: 656074 $
+$Header: //source/qcom/qct/multimedia/qtv/player/audioplayer/main/latest/src/audiorequestq.cpp#8 $
+$DateTime: 2009/11/30 03:18:44 $
+$Change: 1098040 $
 
 
 ========================================================================== */
@@ -59,6 +59,7 @@ and other items needed by this module.
 #define CS_ENTER()   QCUtils::EnterCritSect(&CriticalSection)
 #define CS_LEAVE()   QCUtils::LeaveCritSect(&CriticalSection)
 #define CS_INIT()    QCUtils::InitCritSect(&CriticalSection)
+#define CS_DINIT()   QCUtils::DinitCritSect(&CriticalSection)
 
 /* -----------------------------------------------------------------------
 ** Type Declarations
@@ -288,5 +289,5 @@ SIDE EFFECTS
 ========================================================================== */
 AudioRequestQ::~AudioRequestQ()
 {
-
+  CS_DINIT();
 }

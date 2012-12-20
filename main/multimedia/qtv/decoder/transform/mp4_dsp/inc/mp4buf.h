@@ -21,9 +21,9 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/decoder/transform/mp4_dsp/rel/2.0/inc/mp4buf.h#1 $
-$DateTime: 2008/11/03 04:38:22 $
-$Change: 775446 $
+$Header: //source/qcom/qct/multimedia/qtv/decoder/transform/mp4_dsp/rel/2.0/inc/mp4buf.h#3 $
+$DateTime: 2010/05/19 05:37:12 $
+$Change: 1304658 $
 
 ========================================================================== */
 
@@ -60,6 +60,7 @@ $Change: 775446 $
 #define MP4_ONEEIGHTH_VGA_HEIGHT  160
 #define MP4_ONEQUARTER_VGA_WIDTH  320
 #define MP4_ONEQUARTER_VGA_HEIGHT 240
+#define MP4_WQVGA_WIDTH           400
 #define MP4_VGA_WIDTH             640
 #define MP4_VGA_HEIGHT            480
 #define MP4_WVGA_WIDTH            800 
@@ -77,6 +78,10 @@ $Change: 775446 $
 #else
   #ifdef FEATURE_DISABLE_QVGA_DECODE
     #define MP4_MAX_DSP_WIDTH         MP4_QCIF_WIDTH
+  #elif defined (FEATURE_QTV_VGA_ENABLE)
+    #define MP4_MAX_DSP_WIDTH         MP4_VGA_WIDTH
+  #elif defined (FEATURE_QTV_WQVGA_ENABLE)
+#error code not present
   #else
     #define MP4_MAX_DSP_WIDTH         MP4_ONEQUARTER_VGA_WIDTH
   #endif  /* FEATURE_DISABLE_QVGA_DECODE */
@@ -100,6 +105,11 @@ $Change: 775446 $
   #ifdef FEATURE_DISABLE_QVGA_DECODE
     #define MP4_MAX_DECODE_WIDTH    MP4_QCIF_WIDTH
     #define MP4_MAX_DECODE_HEIGHT   MP4_QCIF_HEIGHT
+  #elif defined (FEATURE_QTV_VGA_ENABLE)
+    #define MP4_MAX_DECODE_WIDTH    MP4_VGA_WIDTH
+    #define MP4_MAX_DECODE_HEIGHT   MP4_VGA_HEIGHT
+  #elif defined (FEATURE_QTV_WQVGA_ENABLE)
+#error code not present
   #else
     #define MP4_MAX_DECODE_WIDTH    MP4_ONEQUARTER_VGA_WIDTH
     #define MP4_MAX_DECODE_HEIGHT   MP4_ONEQUARTER_VGA_HEIGHT

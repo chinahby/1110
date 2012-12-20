@@ -27,15 +27,21 @@ EXTERNALIZED FUNCTIONS
   ds707_rmsm_rt_acl_post_proc()
     Post processing function for IS707 iface ACL.
 
-Copyright (c) 2001 - 2009 by QUALCOMM, Incorporated.  All Rights Reserved.
+Copyright (c) 2001 - 2011 by QUALCOMM, Incorporated.  All Rights Reserved.
 ===========================================================================*/
 /*===========================================================================
 
                             EDIT HISTORY FOR FILE
-  $Header: //source/qcom/qct/modem/data/1x/707/main/lite/src/ds707_rmsm.c#8 $
+  $Header: //source/qcom/qct/modem/data/1x/707/main/lite/src/ds707_rmsm.c#11 $
 
 when        who    what, where, why
---------    ---    ----------------------------------------------------------
+--------    ---    ---------------------------------------------------------- 
+03/09/11    sn     Fix to read RM NAI (multiple NAI) only if phone is in NV 
+                   mode.
+07/29/10    rp     Added check to ds707_rmsmi_sio_tx_rlp_data to only send 
+                   rlp data if connect has been sent to Apps processor. 
+05/28/10    ps     Added support to pick up the profile id with unspecified bit
+                   set for Legacy/Non-OMH Applications.
 08/31/09    sn     Fixed the issue of laptop/PC not receiving term ACK from AT 
                    when disconnecting UART network model data call.
 04/29/09    sn     Ported support for call throttle feature (DCTM).
@@ -189,6 +195,10 @@ when        who    what, where, why
 #include "dsdctm.h"
 #endif /* FEATURE_CALL_THROTTLE */
 
+#ifdef FEATURE_UIM_SUPPORT_3GPD
+#include "nvruimi.h"
+#endif /* FEATURE_UIM_SUPPORT_3GPD */
+
 
 /*= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
                             INTERNAL DEFINITIONS
@@ -238,6 +248,7 @@ typedef struct
   q_type sio_fwd_wmk_q;                /* Corresponding SIO FWD LINK queue */
   dsm_watermark_type sio_rev_wmk;      /* SIO REV Link wm, laptop to SIO   */
   q_type sio_rev_wmk_q;                /* Corresponding SIO REV LINK queue */
+  boolean rmsm_sent_connect;
 } ds707_rmsmi_info_type;
 
 LOCAL ds707_rmsmi_info_type ds707_rmsmi_info;
@@ -536,7 +547,9 @@ boolean ds707_rmsm_init
     return FALSE;
   }
 
+  ds707_rmsmi_info.rmsm_sent_connect = FALSE;
   ds707_rmsmi_info.inited = TRUE;
+
   return TRUE;
 } /* ds707_rmsm_init() */
 
@@ -930,11 +943,19 @@ LOCAL void ds707_rmsmi_process_rm_wants_pkt_call_ev
       if ( dsat707_qcmip_val > 0 )
       {
         /*---------------------------------------------------------------------
-          For laptop MIP calls NAI is different from sockets calls. Register
+          For laptop MIP calls NAI is different from sockets calls. Register 
           for mip_config_session callbacks to be called at the completion
-          of MIP config session so that the NAIs may be updated.
+          of MIP config session so that the NAIs may be updated. Multiple NAIs 
+          are applicable only for NV mode and so check if phone is in NV mode 
+          before registering callback.
         ---------------------------------------------------------------------*/
-        mip_reg_ses_info_cb( ds707_rmsm_get_mip_session_info_cb );
+#ifdef FEATURE_UIM_SUPPORT_3GPD
+        if(uim_3gpd_support() == NVRUIM_3GPD_MIP_NV_SIP_RUIM || 
+           uim_3gpd_support() == NVRUIM_3GPD_MIP_NV_SIP_NV)
+#endif /* FEATURE_UIM_SUPPORT_3GPD */
+        {
+          mip_reg_ses_info_cb( ds707_rmsm_get_mip_session_info_cb );
+        }
       }
 #endif /* FEATURE_DS_MOBILE_IP && FEATURE_DS_MULTIPLE_NAI */
 
@@ -1050,11 +1071,13 @@ LOCAL void ds707_rmsmi_process_rm_wants_pkt_call_ev
             ds707_data_session_set_current_profile( 
               ds707_rmsmi_info.IS707pkt_iface_ptr );
 
-	    nv_item.ds_sip_active_profile_index = profile_id;
+	    nv_item.ds_sip_active_profile_index = profile_id - 
+                                          DATA_SESSION_MIN_PROFILE;
             nv_status = dsi_put_nv_item( NV_DS_SIP_ACTIVE_PROFILE_INDEX_I, &nv_item );
             if( nv_status == NV_DONE_S )
             {
-              MSG_HIGH( "Wrote active profile ID %d to NV", profile_id, 0, 0 );
+              MSG_HIGH( "Wrote active profile index %d to NV", 
+                        nv_item.ds_sip_active_profile_index, 0, 0 );
             }
 	    else
             {
@@ -1408,6 +1431,7 @@ LOCAL void ds707_rmsmi_process_um_phys_link_up_ev
                                   IFACE_PHYS_LINK_UP_EV,
                                   ds707_rmsmi_info.phys_link_up_buf_ptr );
 
+      
       ds707_rmsmi_transition_state( DS707_RMSM_UM_RM_UP_RELAY_OR_SIP_STATE );
       break;
     }
@@ -2082,9 +2106,9 @@ LOCAL void ds707_rmsmi_transition_state
 /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 #ifdef T_ARM
-  MSG_FATAL( "RMSM state goes %d to %d", ds707_rmsmi_info.state, new_state, 0 );
+  MSG_MED( "RMSM state goes %d to %d", ds707_rmsmi_info.state, new_state, 0 );
 #else
-  MSG_FATAL( "RMSM state goes '%s' to '%s'\n",
+  MSG_MED( "RMSM state goes '%s' to '%s'\n",
            ds707_rmsmi_state_names[ds707_rmsmi_info.state],
            ds707_rmsmi_state_names[new_state],
            0
@@ -2214,6 +2238,12 @@ LOCAL void ds707_rmsmi_transition_state
       ---------------------------------------------------------------------*/
       MSG_MED("RMSM setting abort cback to NULL",0,0,0);
       ds707_pkt_set_abort_f_ptr(DS707_DEF_PKT_INSTANCE, NULL);
+
+        /*---------------------------------------------------------------------
+        Reset the flag that determines if the connect was sent
+      ---------------------------------------------------------------------*/
+      ds707_rmsmi_info.rmsm_sent_connect = FALSE;
+
 
       break;
     }
@@ -2645,7 +2675,8 @@ LOCAL void ds707_rmsmi_transition_state
                                NULL );
 
       dsat_send_result_code( DSAT_CONNECT );
-
+      ds707_rmsmi_info.rmsm_sent_connect = TRUE;
+      
       ds3g_siolib_set_cd_state( DS3G_SIOLIB_REMOTE_CARRIER_ON );
 
       break;
@@ -3544,13 +3575,21 @@ LOCAL void ds707_rmsmi_sio_tx_rlp_data( void )
   dsm_item_type     *item_ptr;             /* pointer to DSM item          */
 /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /*-------------------------------------------------------------------------
+/*-------------------------------------------------------------------------
     Remove each item from Completed Data queue and pass to Serial Driver.
   -------------------------------------------------------------------------*/
   while( ( item_ptr = ( dsm_item_type *)q_get( &ds707_rmsmi_info.rlp_fwd_q ) 
          ) != NULL )
   {
-    ds3g_siolib_setup_tx( item_ptr, FALSE );
+    if ( ds707_rmsmi_info.rmsm_sent_connect == TRUE )
+    {
+      ds3g_siolib_setup_tx( item_ptr, FALSE );
+    }
+    else
+    {
+      MSG_HIGH("Emptying rlp fwd item.No Connect sent yet",0,0,0);    
+      (void)dsm_free_packet ( &item_ptr );      
+    }
   }
 } /* ds707_rmsmi_sio_tx_rlp_data() */
 

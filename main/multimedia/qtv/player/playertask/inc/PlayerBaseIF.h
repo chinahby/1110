@@ -24,9 +24,9 @@ Copyright 2008 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/player/playertask/main/latest/inc/PlayerBaseIF.h#8 $
-$DateTime: 2008/12/31 01:49:21 $
-$Change: 812886 $
+$Header: //source/qcom/qct/multimedia/qtv/player/playertask/main/latest/inc/PlayerBaseIF.h#10 $
+$DateTime: 2009/10/08 21:35:07 $
+$Change: 1048967 $
 
 ========================================================================== */
 
@@ -547,6 +547,11 @@ public:
   {
      QTV_MSG( QTVDIAG_VIDEO_TASK, "PlayerBaseIF::WakeRenderer" );
   }
+  virtual void set_last_frame_rendered_(const uint64&)
+  {
+	  QTV_MSG( QTVDIAG_VIDEO_TASK, "PlayerBaseIF::set_last_frame_rendered_" );
+  }
+  
 
   ///////////////////////////////////////////////////////////////////////////
   // Video-buffer flushing                                                 //

@@ -19,17 +19,18 @@ EXTERNALIZED FUNCTIONS
      tethered device and stores them in the mip session info.
   
 
-Copyright (c) 2000-2009 by QUALCOMM, Incorporated.  All Rights Reserved.
+Copyright (c) 2000-2011 by QUALCOMM, Incorporated.  All Rights Reserved.
 ===========================================================================*/
 /*===========================================================================
 
                       EDIT HISTORY FOR FILE
 
   $PVCSPath: O:/src/asw/COMMON/vcs/dsmip.c_v   1.5   19 Feb 2003 15:54:24   jeffd  $
-  $Header: //source/qcom/qct/modem/data/1x/mip/main/lite/src/dsmip.c#5 $ $DateTime: 2009/05/27 05:07:18 $ $Author: nsivakum $
+  $Header: //source/qcom/qct/modem/data/1x/mip/main/lite/src/dsmip.c#6 $ $DateTime: 2011/02/24 23:31:53 $ $Author: msankar $
 
 when        who    what, where, why
 --------    ---    ----------------------------------------------------------
+02/25/11    ms     Ported MOBILE_IP_DEREG feature.
 04/29/09    sn     Merged MIP event registration support and Ported support 
                    for call throttle feature (DCTM).
 04/16/09    sn     Merged support for separate NAI for Tethered SIP and MIP 
@@ -181,10 +182,12 @@ LOCAL sint15 mipi_get_nv_info
   /*-------------------------------------------------------------------------
     Default values for missing NV items
   -------------------------------------------------------------------------*/
-#define MIP_NV_DEFAULT_RRQ_RETRIES  2
-#define MIP_NV_DEFAULT_RETRY_INT    0
-#define MIP_NV_DEFAULT_PRE_RRQ_TIME 0
-
+#define MIP_NV_DEFAULT_RRQ_RETRIES    2
+#define MIP_NV_DEFAULT_RETRY_INT      0
+#define MIP_NV_DEFAULT_PRE_RRQ_TIME   0
+#ifdef FEATURE_DS_MOBILE_IP_DEREG
+#define MIP_NV_DEFAULT_DERRQ_RETRIES  0
+#endif /* FEATURE_DS_MOBILE_IP_DEREG */
 /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
   /*-------------------------------------------------------------------------
     Check to be sure the a valid session control block was specified
@@ -232,6 +235,24 @@ LOCAL sint15 mipi_get_nv_info
   {
     session->rsm_info.max_rrqs = ps_nv_item.ds_mip_retries + 1;
   }
+
+#ifdef FEATURE_DS_MOBILE_IP_DEREG
+  /*-------------------------------------------------------------------------
+    Retrieve Mobile IP max deregistration retries from NV - set max deRRQs
+    variable as this plus one (total attempts is retries + 1.)
+  -------------------------------------------------------------------------*/
+  nv_status = psi_get_nv_item( NV_DS_MIP_DEREG_RETRIES_I, &ps_nv_item);
+  if( nv_status != NV_DONE_S )
+  {
+    MSG_HIGH( "MIP max retry unavail:default %d", 
+              MIP_NV_DEFAULT_DERRQ_RETRIES,0,0 );
+    session->rsm_info.max_derrqs = MIP_NV_DEFAULT_DERRQ_RETRIES + 1;
+  }
+  else
+  {
+    session->rsm_info.max_derrqs = ps_nv_item.ds_mip_retries + 1;
+  }
+#endif /* FEATURE_DS_MOBILE_IP_DEREG */
 
   /*-------------------------------------------------------------------------
     Retrieve Mobile IP retry interval from NV.
@@ -1018,6 +1039,9 @@ int32 mip_event_register
   uint8 supported_events = MIP_SUCCESS_EV_MASK | MIP_FAILURE_EV_MASK;
   
 /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+#ifdef FEATURE_DS_MOBILE_IP_DEREG
+  supported_events  = supported_events | MIP_DEREGED_EV_MASK;
+#endif /* FEATURE_DS_MOBILE_IP_DEREG */
   /*-------------------------------------------------------------------------
     Verify that the passed arguments are valid
   -------------------------------------------------------------------------*/

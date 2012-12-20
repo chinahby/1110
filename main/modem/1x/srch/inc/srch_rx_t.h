@@ -13,7 +13,7 @@ EXTERNALIZED FUNCTIONS
   
 INITIALIZATION AND SEQUENCING REQUIREMENTS
 
-      Copyright (c) 2005 - 2008
+      Copyright (c) 2005 - 2010
                     by QUALCOMM, Inc.  All Rights Reserved.
 *====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*/
 
@@ -24,15 +24,16 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS
   This section contains comments describing changes made to the module.
   Notice that changes are listed in reverse chronological order.
 
-$Header: //source/qcom/qct/modem/1x/srch/rel/1h08/inc/srch_rx_t.h#1 $
+$Header: //source/qcom/qct/modem/1x/srch/rel/1h08/inc/srch_rx_t.h#2 $
 
 when       who     what, where, why 
 --------   ---     ----------------------------------------------------------
+04/05/10   pk      Added invalid field to chain_name and freq_range enum types.
 09/17/08   vks     Added FEATURE_SRCH_HIGHER_BAND_CLASSES_SUPPORTED_BY_RF to
                    cover band classes 16 through 19.
 09/09/08   aps     Converted RF chains to enum type
-09/03/08   aps     corrected checkin error
-09/03/08   aps     corrected enum mapping for srch_rx_band_type
+09/03/08   aps     Corrected checkin error
+09/03/08   aps     Corrected enum mapping for srch_rx_band_type
 08/18/08   adw     Added SINGLE_ANTENNA to featurize alt chain for ULC.
                    Added FEATURE_SRCH_HAS_NO_TRM to remove TRM for ULC.
 06/20/08   mca     Merge from //depot
@@ -80,15 +81,17 @@ when       who     what, where, why
 -------------------------------------------------------------------------*/
 typedef enum
 {
+  NO_CHAIN = -1,   /* no chain for the specified client (error) */
   DEMOD_CHAIN = 0,
   #ifndef FEATURE_SRCH_SINGLE_ANTENNA
   ALT_CHAIN,
   #endif  /* FEATURE_SRCH_SINGLE_ANTENNA */
-  MAX_CHAIN
+  MAX_CHAINS
 } srch_rx_chain_name_type;
 
 typedef enum
 {
+  SRCH_RX_INVALID_FREQ_RANGE = -1,
   SRCH_RX_450MHZ_FREQ_RANGE,  
   SRCH_RX_800MHZ_FREQ_RANGE,  
   SRCH_RX_2GHZ_FREQ_RANGE,

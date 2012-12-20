@@ -203,10 +203,11 @@ is regulated by the U.S. Government. Diversion contrary to U.S. law prohibited.
 /*===========================================================================
                         EDIT HISTORY FOR MODULE
 
-$Header: //source/qcom/qct/modem/uim/mmgsdi/rel/07H1_2/src/gsdilib.c#11 $ $DateTime: 2009/05/31 13:57:44 $ $Author: jsharma $
+$Header: //source/qcom/qct/modem/uim/su/baselines/qsc1110/rel/3.3.65/sqa/mmgsdi/src/11/gsdilib.c#2 $ $DateTime: 2010/11/04 05:20:19 $ $Author: rmandala $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+10/07/10   shr     Fixed input data length check when handling an OTA Deperso
 05/22/09   js      Fixed file path logic in gsdi_file_select()
 05/14/09   kp      Added compiler directive for demand Paging Changes
 05/11/09   kp      Demand Paging Changes
@@ -8538,7 +8539,7 @@ gsdi_returns_T gsdi_perso_ota_deperso(
     MMGSDI_DEBUG_MSG_ERROR("BAD Slot ID: %x",sms_ota_user_data->slot,0,0);
     return GSDI_INCORRECT_PARAMS;
   }
-  if ( sms_ota_user_data->num_bytes == 0x00 ||
+  if ( sms_ota_user_data->num_bytes <= 0x00 ||
        sms_ota_user_data->num_bytes > GSDI_PERSO_MAX_OTA_DEPERSO_BYTES )
   {
     MMGSDI_DEBUG_MSG_ERROR("bad length provided: %x",sms_ota_user_data->num_bytes,0,0);

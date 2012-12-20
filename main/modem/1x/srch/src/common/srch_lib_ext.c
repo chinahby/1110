@@ -14,7 +14,7 @@ EXTERNALIZED FUNCTIONS
 INITIALIZATION AND SEQUENCING REQUIREMENTS
   None
 
-      Copyright (c) 2004, 2005, 2006, 2007, 2008
+      Copyright (c) 2004 - 2010
                     by QUALCOMM, Inc.  All Rights Reserved.
 *====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*=*/
 
@@ -26,10 +26,12 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS
   This section contains comments describing changes made to the module.
   Notice that changes are listed in reverse chronological order.
 
-$Header: //source/qcom/qct/modem/1x/srch/rel/1h08/src/common/srch_lib_ext.c#1 $
+$Header: //source/qcom/qct/modem/1x/srch/rel/1h08/src/common/srch_lib_ext.c#3 $
 
 when       who     what, where, why
 --------   ---     -----------------------------------------------------------
+02/18/10   sst     Added TC AGC check flags and thresholds
+08/31/09   vks     Added PCH->QPCH channel estimator threshold type
 09/03/08   tjc     Correct the RDDS capacity thresholds
 07/28/08   aps     T_MSM8650B bringup changes
 06/25/08   adw     Added min_sleep_setup_time_safewin_ms
@@ -112,10 +114,14 @@ const srch_lib_ext_defines_type srch_lib_defs =
     #endif
 
     #if (defined( T_QSC60X5 ) || defined( T_MSM8650B ))
-    AFC_VCO_GAIN_X5_SRL_X2
+    AFC_VCO_GAIN_X5_SRL_X2,
     #else /* T_QSC60X5 || T_MSM8650B */
 #error code not present
     #endif  /* T_QSC60X5 || T_MSM8650B */
+
+    TRUE,        /* tc_rxd_agc_ck */
+    25,          /* tc_rxd_agc_dis_delta */
+    20,          /* tc_rxd_agc_en_delta */
   },
   /* init defs */
   {
@@ -163,6 +169,15 @@ const srch_lib_ext_defines_type srch_lib_defs =
       3,     /* FAST_RAHO_SRCH_PENALTY */
       6,     /* FAST_RAHO_REG_PENALTY */
       200    /* FAILED_REACQ_SCAN_TIME_MS */
+    },
+
+    /* qpch defs */
+    {
+      #ifdef FEATURE_JCDMA
+      THRESH_TYPE_OLD      /* ch_est_thresh_tab_type */
+      #else
+      THRESH_TYPE_NEW      /* ch_est_thresh_tab_type */
+      #endif /* FEATURE_JCDMA */
     }
   },
   /* nv_items defs */

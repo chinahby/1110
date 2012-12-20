@@ -522,7 +522,6 @@ nvio_read_prl_item (
 
   snprintf(f_name,sizeof(f_name),"/nvm/prl_%d",num);
 
-
     /* Check if the file is present or not. */
   if(efs_stat(f_name,&temp_buf) == -1) {
     return NV_NOTACTIVE_S;
@@ -662,7 +661,6 @@ nvio_read_roaming_list (
   MSG_MED("size: %d", item_size, 0, 0);
  
   snprintf(f_name,sizeof(f_name),"/nvm/prl_%d",cmd_ptr->data_ptr->roaming_list.nam);
-
   
     /* Check if the file is present or not. */
   if(efs_stat(f_name,&temp_buf) == -1) {
@@ -702,7 +700,6 @@ nvio_read_roaming_list (
 
 
 
-
 /*===========================================================================
 
 FUNCTION NVIO_READ
@@ -745,8 +742,6 @@ nvio_read (
   byte  local_imei[NV_UE_IMEI_SIZE];
   int i;
 #endif
-
-  //MSG_FATAL("***zzg nvio_read item=%d***", cmd_ptr->item, 0, 0);
  
 /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -756,20 +751,6 @@ nvio_read (
     return NV_BADPARM_S;
   }
   else {                 
-#if 0//def FEATURE_VERSION_W208S
-  if(cmd_ptr->item ==NV_HOME_SID_NID_I)
-  {
-   /* Only process the NAM parameters for the RUIM
-	This check assumes the first byte of the data contains the NAM */
-	
-
-	cmd_ptr->data_ptr->home_sid_nid.nam=0;
-	cmd_ptr->data_ptr->home_sid_nid.pair[0].sid=0x7b00;
-	cmd_ptr->data_ptr->home_sid_nid.pair[0].nid=0xffff;	
-	status = NV_DONE_S; 	
-	return;
-  }
-#endif
 
 #ifdef FEATURE_NV_RUIM
 
@@ -1113,22 +1094,6 @@ nvio_read (
 #error code not present
 #endif
 
-/*
-#ifdef FEATURE_VERSION_W208S
-	//Add By zzg 2011_12_19
-	 case NV_SID_NID_LOCK_I:
-	 {
-	 	cmd_ptr->data_ptr->sid_nid_lock.nam=0;
-		memcpy((void *) cmd_ptr->data_ptr->sid_nid_lock.pair,
-               nv_sid_nid_lock_pair, 
-               sizeof(nv_sid_nid_lock_pair));
-        status = NV_DONE_S;		
-		break;
-	 }
-#endif
-	//Add End
-*/	
-
       default:
 
         /* Check if there's an actual entry */
@@ -1450,7 +1415,6 @@ nvio_write_roaming_list (
 
   snprintf(f_name,sizeof(f_name),"/nvm/prl_%d",cmd_ptr->data_ptr->roaming_list.nam);
 
-
   fd = efs_open(f_name, O_RDWR | O_CREAT , 0777 );
 
   nbytes = item_size;
@@ -1485,7 +1449,6 @@ nvio_write_roaming_list (
   }
   else
     status = NV_DONE_S;
-
 
   nv_prl_version_data[cmd_ptr->data_ptr->roaming_list.nam] = 
           cmd_ptr->data_ptr->roaming_list.prl_version;
@@ -1762,16 +1725,14 @@ nvio_write_dir_number (
     status = NV_BADPARM_S;
   }
   else
-  {	
+  {
     status = nvio_write_item(cmd_ptr->item,
                             index,
                             ((byte *)cmd_ptr->data_ptr) + sizeof(index),
                             nvim_op_get_size(cmd_ptr->item));
   }
 
-  if (status != NV_DONE_S) return status; 
-  
-  //Add End
+  if (status != NV_DONE_S) return status;
 
   /* Set up generic command buffer parameters */
   local_cmd.cmd         = NV_WRITE_F;
@@ -1790,7 +1751,7 @@ nvio_write_dir_number (
          nvt_translate_to_internal
             (cmd_ptr->data_ptr->dir_number.dir_number[i]);
     }      
-    local_item.mob_dir_number.n_digits = NV_DIR_NUMB_SIZ;	
+    local_item.mob_dir_number.n_digits = NV_DIR_NUMB_SIZ;
   }
   else {
     if (cmd_ptr->data_ptr->mob_dir_number.n_digits > 15) {
@@ -1798,42 +1759,35 @@ nvio_write_dir_number (
     }
     local_cmd.item = NV_DIR_NUMBER_I;
     local_item.dir_number.nam = cmd_ptr->data_ptr->mob_dir_number.nam;
-
-    for (i=0; i<NV_DIR_NUMB_SIZ; ++i) 
-	{
+    for (i=0; i<NV_DIR_NUMB_SIZ; ++i) {
       local_item.dir_number.dir_number[i] = 0x20;  /* ASCII blank */
     }
 
     /* If n_digits is nonzero, translate and copy the digits; otherwise */
     /* we've already blanked out all the digits                         */
-    if (cmd_ptr->data_ptr->mob_dir_number.n_digits != 0) 
-	{
+    if (cmd_ptr->data_ptr->mob_dir_number.n_digits != 0) {
       pcs_index = MAX(0,(cmd_ptr->data_ptr->mob_dir_number.n_digits-10)); 
-      gem_index = MAX(0, (10-cmd_ptr->data_ptr->mob_dir_number.n_digits)); 
-	  
-      while ((gem_index < NV_DIR_NUMB_SIZ)&&(pcs_index < NV_DIR_NUMB_PCS_SIZ)) 
-	  {
+      gem_index = MAX(0, (10-cmd_ptr->data_ptr->mob_dir_number.n_digits));
+      while ((gem_index < NV_DIR_NUMB_SIZ)&&(pcs_index < NV_DIR_NUMB_PCS_SIZ)) {
         local_item.dir_number.dir_number[gem_index++] = 
            nvt_translate_to_external
               (cmd_ptr->data_ptr->mob_dir_number.digitn[pcs_index++]);
       }
-    }		
+    }
   }     
 
    /* Finally, update the "other" nv item */
    index = *((byte *)local_cmd_ptr->data_ptr);
-
-  
    if (index >= NV_MAX_NAMS)
    {
      status = NV_BADPARM_S;
    }
-   else   
+   else
    {
      status = nvio_write_item(local_cmd_ptr->item,
                              index,
                              ((byte *)local_cmd_ptr->data_ptr) + sizeof(index),
-                             nvim_op_get_size(local_cmd_ptr->item));     
+                             nvim_op_get_size(local_cmd_ptr->item));
  }
 
   return status;
@@ -1973,7 +1927,6 @@ nvio_write_prl_item (
 
   snprintf(f_name,sizeof(f_name),"/nvm/prl_%d",num);
 
-  
   fd = efs_open(f_name, O_RDWR | O_CREAT, 0777 );
 
   nbytes = item_size;
@@ -2444,8 +2397,6 @@ nvio_write (
   /* Check that the item code is within range. If it is not */
   /* then exit with fail status, else switch on item type.  */
 
-MSG_FATAL("***zzg nvio_write item=%d***", cmd_ptr->item, 0, 0);
-
   if (cmd_ptr->item >= NV_MAX_I) {
     return NV_BADPARM_S;
   }
@@ -2730,19 +2681,6 @@ MSG_FATAL("***zzg nvio_write item=%d***", cmd_ptr->item, 0, 0);
                                   (byte *)cmd_ptr->data_ptr, 
                                   nvim_op_get_size(cmd_ptr->item));
         break;
-
-
-/*
-#ifdef FEATURE_VERSION_W208S		
-		//Add By zzg 2011_12_19
-		case NV_SID_NID_LOCK_I:
-		{	
-			//Do nothing
-			break;
-		}
-		//Add End
-#endif
-*/		
 
 	  //Add By zzg 2012_02_02
 #ifdef FEATURE_VERSION_W208S	

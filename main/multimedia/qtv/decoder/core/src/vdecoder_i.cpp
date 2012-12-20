@@ -22,10 +22,14 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/decoder/core/rel/2.0/src/vdecoder_i.cpp#4 $
-$DateTime: 2009/01/07 05:38:48 $
-$Change: 814822 $
+$Header: //source/qcom/qct/multimedia/qtv/decoder/core/rel/2.0/src/vdecoder_i.cpp#12 $
+$DateTime: 2009/07/28 03:13:21 $
+$Change: 979818 $
 
+when       who      what, where, why
+--------   ---      ---------------------------------------------------------
+04/08/09    vs      Remove the dependencies of other modules.
+--------   ---      ---------------------------------------------------------
 ========================================================================== */
 
 /* ==========================================================================
@@ -34,10 +38,14 @@ $Change: 814822 $
 
 ========================================================================== */
 #include "vdecoder_i.h"
-
+#include "vdecoder_utils.h"
 #include "assert.h"
 #include "comdef.h"
 #include "AEEstd.h"
+
+#ifdef FEATURE_VIDEO_PLAYER_INTERFACE_REV_2A_TURBO
+#error code not present
+#endif
 
 extern VDEC_INSTANCE_LIST gInstanceList[MAX_NO_OF_INSTANCES];
 extern rex_crit_sect_type gInstanceList_cs;
@@ -87,7 +95,6 @@ bool      VideoDecoder::sm_registryIsInitialized =
 //extern "C" void qdsp_set_dspwdog_timeout_memory_dump(void);
 #endif /* T_MSM7500 */
 
-#define LOG_MPEG4_LOG_ALLOC_WAIT_MS 20
 /* =======================================================================
 **                          Macro Definitions
 ** ======================================================================= */
@@ -126,8 +133,13 @@ bool VideoDecoder::InitializeFtypRegistry( void )
 #endif
 
 #ifdef FEATURE_H264_DECODER
-  extern VideoDecoder::VDEC_FTYP_HANDLER_RECORD H264Decoder_handlerRecord;
-  RegisterWithFtypRegistry( &H264Decoder_handlerRecord );
+#ifdef FEATURE_VIDEO_PLAYER_INTERFACE_REV_2A_TURBO
+#error code not present
+#endif
+  {
+    extern VideoDecoder::VDEC_FTYP_HANDLER_RECORD H264Decoder_handlerRecord;
+    RegisterWithFtypRegistry( &H264Decoder_handlerRecord );
+  }
 #endif
 
 #ifdef FEATURE_QTV_OSCAR_DECODER
@@ -248,13 +260,15 @@ RETURN VALUE:
 SIDE EFFECTS:
   none.
 ===========================================================================*/
-bool VideoDecoder::IsInstanceValid(VDEC_STREAM_ID stream)
+/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
+
+int VideoDecoder::IsInstanceValid(VDEC_STREAM_ID stream)
 {
   uint32 uLoop;
   
   if (stream == NULL)
   {
-    return FALSE;
+    return(-1);
   }
   rex_enter_crit_sect( &gInstanceList_cs );  
   for (uLoop = 0; uLoop < MAX_NO_OF_INSTANCES; uLoop++)
@@ -264,13 +278,15 @@ bool VideoDecoder::IsInstanceValid(VDEC_STREAM_ID stream)
       if (gInstanceList[uLoop].StreamID == stream)
       {
         rex_leave_crit_sect( &gInstanceList_cs );
-        return TRUE;
+        return uLoop;
       }
     }
   }
   rex_leave_crit_sect( &gInstanceList_cs );
-  return FALSE;
+  return(-1);
 }
+
+/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
 
 /* ======================================================================
 FUNCTION
@@ -458,6 +474,8 @@ RETURN VALUE
   A VDEC_ERROR tells the world if everything worked.
 
 ========================================================================== */
+/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
+
 VDEC_ERROR VideoDecoder::Queue
 (
   VDEC_INPUT_BUFFER * const pInput,
@@ -477,7 +495,7 @@ VDEC_ERROR VideoDecoder::Queue
 
   if(m_bDecoderInitialized == false)
   {
-      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,
+      VDEC_MSG_PRIO(VDECDIAG_GENERAL, VDECDIAG_PRIO_ERROR,
            "Error - vdec_initialize not called before calling vdec_queue!" );
 	  return VDEC_ERR_RESOURCE_UNAVAILABLE;
   }
@@ -496,8 +514,8 @@ VDEC_ERROR VideoDecoder::Queue
 
   if ( !bHaveData )
   {
-    QTV_MSG_PRIO( QTVDIAG_VIDEO_TASK, 
-                  QTVDIAG_PRIO_LOW, 
+    VDEC_MSG_PRIO( VDECDIAG_VIDEO_TASK, 
+                  VDECDIAG_PRIO_LOW, 
                   "vdec_queue given empty buffer, rejecting..." );
     return VDEC_ERR_NO_INPUT_AVAILABLE;
   }
@@ -519,12 +537,30 @@ VDEC_ERROR VideoDecoder::Queue
     return VDEC_ERR_OUT_OF_MEMORY;
   }
 
+#ifndef PLATFORM_LTK
+  for ( i = 0; i < pInput->layers; ++i )
+  {
+      if ( pInput->buffer_size[ i ] > 0 )
+      { 
+        if (std_strcmp(VideoDecoder::m_fourcc,"avc1"))
+        {
+           log_bitstream_buffer( pInput->buffer[i],
+                    pInput->buffer_size[i] ); 
+        }
+        break;
+      }
+  }
+#endif /* PLATFORM_LTK */ 
+
   pInputQ = m_inputQ.Lock();
   q_put( pInputQ, &( pNode->link ) );
   m_inputQ.Unlock( pInputQ );
 
   return VDEC_ERR_EVERYTHING_FINE;
 }
+
+/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
+
 
 /* ======================================================================
 FUNCTION
@@ -591,6 +627,7 @@ VDEC_ERROR VideoDecoder::Queue_eOS_Buffer(uint32 nLayers)
     m_eOS_InputBuffer.eOSIndicator[i] = true;
     m_eOS_InputBuffer.layers = nLayers;
     m_eOS_InputBuffer.timestamp[i] = 0;
+    m_eOS_InputBuffer.delta[i] = 0;
     m_eOS_InputBuffer.userData[i] = NULL;
   }
 
@@ -729,6 +766,8 @@ RETURN VALUE
   A VDEC_ERROR tells the world if everything worked.
 
 ========================================================================== */
+/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
+
 VDEC_ERROR VideoDecoder::Flush( void )
 {
   InputQNode *pI;
@@ -749,6 +788,9 @@ VDEC_ERROR VideoDecoder::Flush( void )
 
   return VDEC_ERR_EVERYTHING_FINE;
 }
+
+/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
+
 
 /* ======================================================================
 FUNCTION
@@ -792,7 +834,7 @@ VDEC_BLOB* VideoDecoder::AllocateBLOB
   // The -1 accounts for the fact that we had to waste a byte while
   // declaring the data array to be of size 1 in the struct definition.
   //
-  pBlob = (VDEC_BLOB *)QTV_Malloc( sizeof( VDEC_BLOB ) + size - 1 );
+  pBlob = (VDEC_BLOB *)Vdec_Malloc( sizeof( VDEC_BLOB ) + size - 1 );
   if ( pBlob != NULL )
   {
     memset( (VDEC_BLOB *)pBlob, 0, ( sizeof( VDEC_BLOB ) + size - 1 ) );
@@ -831,7 +873,7 @@ VDEC_ERROR VideoDecoder::FreeBLOB
     // Because the blob was allocated as only one chunk of memory,
     // we only need one call to 'free'.
     //
-    QTV_Free( pBlob );
+    Vdec_Free( pBlob );
 
   return VDEC_ERR_EVERYTHING_FINE;
 }
@@ -911,6 +953,8 @@ RETURN VALUE
   layer id for the layer that is next in line to be decoded.
 
 ========================================================================== */
+/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
+
 int VideoDecoder::GetLayerIDWithEarliestTimeStamp(
   uint32 NumBytes[MAX_MP4_LAYERS],        /* array of nr. of bytes to decode        */
   uint64 TimeStamp[MAX_MP4_LAYERS],       /* array of timestamps returned w/ rgb    */
@@ -946,6 +990,8 @@ int VideoDecoder::GetLayerIDWithEarliestTimeStamp(
   return EarliestTimeStampID;
 }
 
+/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
+
 /* ======================================================================
 FUNCTION
   VideoDecoder::WatchdogCallback
@@ -967,7 +1013,7 @@ void VideoDecoder::WatchdogCallback( void *pThisAsVoid )
 
   ASSERT( pThis );
 
-  QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,
+  VDEC_MSG_PRIO(VDECDIAG_GENERAL, VDECDIAG_PRIO_ERROR,
            "DSP watchdog timeout!  Generating VDEC_STATUS_FATAL_ERROR" );
 
 #ifndef T_MSM7500
@@ -1038,6 +1084,8 @@ RETURN VALUE
   InputQNode*: the newly 'allocated' node.
 
 ========================================================================== */
+/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
+
 VideoDecoder::InputQNode* VideoDecoder::AllocateInputNode
 (
   VDEC_INPUT_BUFFER * const pBuf,
@@ -1046,7 +1094,7 @@ VideoDecoder::InputQNode* VideoDecoder::AllocateInputNode
   VideoDecoder * const      pDecoder
 )
 {
-  InputQNode * pNode( QTV_New( InputQNode ) );
+  InputQNode * pNode( Vdec_New( InputQNode ) );
   if ( pNode != NULL )
   {
     q_link( pNode, &( pNode->link ) );
@@ -1059,6 +1107,9 @@ VideoDecoder::InputQNode* VideoDecoder::AllocateInputNode
 
   return pNode;
 }
+
+/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
+
 
 /* ======================================================================
 FUNCTION
@@ -1075,6 +1126,8 @@ RETURN VALUE
   None.
 
 ========================================================================== */
+/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
+
 void VideoDecoder::ReleaseNode( InputQNode* const pNode )
 {
   if ( pNode )
@@ -1083,9 +1136,12 @@ void VideoDecoder::ReleaseNode( InputQNode* const pNode )
 
     ( pNode->pFnCb )( this, pNode->pBuf, pNode->pCbData );
 
-    QTV_Delete( pNode );
+    Vdec_Delete( pNode );
   }
 }
+
+/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
+
 
 /* ======================================================================
 FUNCTION
@@ -1154,6 +1210,7 @@ VideoDecoder::VirtualInputBuffer::VirtualInputBuffer( VideoDecoder &decoder )
 
         m_virtualBuffer.buffer     [ i ] = pNode->pBuf->buffer     [ i ];
         m_virtualBuffer.timestamp  [ i ] = pNode->pBuf->timestamp  [ i ];
+        m_virtualBuffer.delta      [ i ] = pNode->pBuf->delta      [ i ];
         m_virtualBuffer.buffer_size[ i ] = pNode->pBuf->buffer_size[ i ];
         m_virtualBuffer.buffer_pos [ i ] = pNode->pBuf->buffer_pos [ i ];
         m_virtualBuffer.userData   [ i ] = pNode->pBuf->userData   [ i ];
@@ -1246,6 +1303,8 @@ VideoDecoder::VirtualInputBuffer::~VirtualInputBuffer( void )
         m_virtualBuffer.buffer_pos[ vLayer ];
       pNode->pBuf->timestamp[ vLayer ] =
         m_virtualBuffer.timestamp[ vLayer ];
+      pNode->pBuf->delta[ vLayer ] =
+        m_virtualBuffer.delta[ vLayer ];
 
 #ifndef ALWAYS_RETURN_TOUCHED_INPUT_BUFFERS
       // Has this change resulted in the complete consumption of this
@@ -1293,7 +1352,7 @@ VideoDecoder::VirtualInputBuffer::~VirtualInputBuffer( void )
 
   if (q_cnt(pInputQ ) > 1)
   {
-     QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,
+     VDEC_MSG_PRIO1(VDECDIAG_GENERAL, VDECDIAG_PRIO_HIGH,
                   "Multiple input buffers queued: %d",q_cnt(pInputQ));
   }
 
@@ -1362,7 +1421,7 @@ RETURN VALUE
 ========================================================================== */
 VideoDecoder::FrameQNode* VideoDecoder::AllocateFrameNode( void )
 {
-   FrameQNode* pNode( ( FrameQNode* )QTV_Malloc( sizeof( FrameQNode ) ) );
+   FrameQNode* pNode( ( FrameQNode* )Vdec_Malloc( sizeof( FrameQNode ) ) );
 
    if ( pNode )
    {
@@ -1388,13 +1447,17 @@ RETURN VALUE
   None.
 
 ========================================================================== */
+/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
+
 void VideoDecoder::ReleaseNode( FrameQNode* const pNode )
 {
    if ( pNode )
    {
-      QTV_Free( pNode );
+      Vdec_Free( pNode );
    }
 }
+
+/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
 
 #ifndef PLATFORM_LTK
 /* ======================================================================
@@ -1418,16 +1481,16 @@ void VideoDecoder::LogArmDecodeTime_stats(
                                 const uint8 Video_type)
 
 {
-  log_arm_decode_stats_type *pBuf = NULL ;
+  log_vdec_arm_decode_stats_type *pBuf = NULL ;
 
 
   /* Check if logging is turned on */
-  if (!log_status( LOG_ARM_VIDEO_DECODE_STATS ) )
+  if (!log_status( LOG_VDEC_ARM_VIDEO_DECODE_STATS ) )
   {
       return;
   }
   /* Allocate a buffer */
-  pBuf = (log_arm_decode_stats_type*) log_alloc( LOG_ARM_VIDEO_DECODE_STATS, sizeof(*pBuf) );
+  pBuf = (log_vdec_arm_decode_stats_type*) log_alloc( LOG_VDEC_ARM_VIDEO_DECODE_STATS, sizeof(*pBuf) );
 
   if ( pBuf )
   {
@@ -1535,14 +1598,14 @@ void VideoDecoder::LogQTVFrameDecodeStats(uint32 videoFramePTS )
 {
 #ifndef PLATFORM_LTK
 
-  log_QTV_VideoFrame_DecodeStats_type *pBuf = NULL;
+  log_vdec_VideoFrame_DecodeStats_type *pBuf = NULL;
   
   /* Check the log code status and allocate buffer for the log*/
-  if(log_status( LOG_QTV_VIDEO_FRAME_DECODE_INFO_C ))
+  if(log_status( LOG_VDEC_VIDEO_FRAME_DECODE_INFO_C ))
   {
-    pBuf = (log_QTV_VideoFrame_DecodeStats_type*) 
-           log_alloc( LOG_QTV_VIDEO_FRAME_DECODE_INFO_C, 
-           sizeof(log_QTV_VideoFrame_DecodeStats_type) );
+    pBuf = (log_vdec_VideoFrame_DecodeStats_type*) 
+           log_alloc( LOG_VDEC_VIDEO_FRAME_DECODE_INFO_C, 
+           sizeof(log_vdec_VideoFrame_DecodeStats_type) );
   }
 
   if ( pBuf )
@@ -1581,86 +1644,3 @@ void VideoDecoder::LogQTVFrameDecodeStats(uint32 videoFramePTS )
   }
 #endif //!PLATFORM_LTK
 }
-
-/*===========================================================================
-Function: wait_for_bitstream_log_buffer
-
-Description: Obtain a log buffer.  If log_alloc() is out of memory wait until
-             the memory is available.  Return NULL if logging is disabled.
-
-Return Value:
-   NULL or a pointer to a log buffer.
-
-Side Effects:
-
-============================================================================*/
-log_video_bitstream_type* VideoDecoder::wait_for_bitstream_log_buffer( void )
-{
-  log_video_bitstream_type *pBitstreamBuf = NULL;
-
-  /* Because log_alloc() will return NULL when it is out of memory we
-   * need to keep looping until we get memory.  We'll monitor
-   * log_status() just in case the log gets disabled.
-   */
-  while ( !pBitstreamBuf && log_status( LOG_QTV_VIDEO_BITSTREAM ) )
-  {
-    pBitstreamBuf = (log_video_bitstream_type*) log_alloc( LOG_QTV_VIDEO_BITSTREAM, sizeof(*pBitstreamBuf) );
-    if(!pBitstreamBuf)
-    {
-      rex_sleep(LOG_MPEG4_LOG_ALLOC_WAIT_MS);
-    }
-  }
-
-  return pBitstreamBuf;
-}
-
-
-/* <EJECT> */
-/*===========================================================================
-Function: log_bitstream_buffer
-
-Description: Log bitstream on a frame basis by breaking it up into chuncks acceptable
-             to the logging subsystem.  Won't return until the entire buffer has
-             been logged or the logging is turned off by the DM.
-
-Return Value:
-   None.
-
-Side Effects:
-============================================================================*/
-void VideoDecoder::log_bitstream_buffer( uint8 *pBitstream, uint32 numBytes )
-{
-  uint16 LogChunkCount = 0;
-  uint16 LogSize = (uint32) MIN( numBytes, LOG_BITSTREAM_MAX_SIZE );
-
-  log_video_bitstream_type *pLogBitstream = wait_for_bitstream_log_buffer();
-
-  if (pLogBitstream)
-  {
-    while (pLogBitstream && pBitstream)
-    {
-      ASSERT(pLogBitstream);
-      ASSERT(pBitstream);
-
-      pLogBitstream->ChunkNum = LogChunkCount++;
-      pLogBitstream->NBytes = LogSize;
-      memcpy( (void *) pLogBitstream->Data, pBitstream, LogSize );
-      log_commit( pLogBitstream );
-
-      numBytes -= LogSize;
-      pBitstream += LogSize;
-
-      if (numBytes > 0)
-      {
-        LogSize = (uint32) MIN( numBytes, LOG_BITSTREAM_MAX_SIZE );
-
-        pLogBitstream = wait_for_bitstream_log_buffer();
-      }
-      else
-      {
-        pLogBitstream = NULL;
-      }
-    } /* while there is more bitstream to log */
-  }
-}
-

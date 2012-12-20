@@ -24,9 +24,9 @@ Copyright 2003 QUALCOMM Incorpo rated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/player/audioplayer/main/latest/src/audiocmx.cpp#15 $
-$DateTime: 2008/12/01 15:36:22 $
-$Change: 795490 $
+$Header: //source/qcom/qct/multimedia/qtv/player/audioplayer/main/latest/src/audiocmx.cpp#48 $
+$DateTime: 2011/02/23 02:44:00 $
+$Change: 1628608 $
 
 ========================================================================== */
 
@@ -78,12 +78,12 @@ and other items needed by this module.
 #endif
 
 #if defined (FEATURE_QTV_WMA_PRO_DECODER) || defined (FEATURE_QTV_WMA_PRO_DSP_DECODER)
-   /* We need to fine tune this value by trying with various clips like 
+   /* We need to fine tune this value by trying with various clips like
       very low bitrate and very high bitrate clips. */
    #define MAX_AHEAD_FOR_WM_PRO 2400  //Msec
 
    #ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES
-    #define AUDIO_CMX_AV_SYNC_INTERVAL_AUDIO_ONLY_PLAYBACK 500 //in milliseconds  
+    #define AUDIO_CMX_AV_SYNC_INTERVAL_AUDIO_ONLY_PLAYBACK 500 //in milliseconds
   #endif
 #endif /* defined (FEATURE_QTV_WMA_PRO_DECODER) || defined (FEATURE_QTV_WMA_PRO_DSP_DECODER) */
 
@@ -91,16 +91,16 @@ and other items needed by this module.
 #include "fs_public.h"
 #include "fs_fcntl.h"
 #include "qtv_diag_main.h"
-#include "oscl_file_io.h" 
+#include "oscl_file_io.h"
 #endif
 
 /* Tried with various size combinations like 1024, 1500, etc
    but 512 seems to have more real time performance
 */
-#define LOG_AUDIO_BUFER_MAX_DATA_SIZE  512 
-LOG_RECORD_DEFINE(LOG_QTV_CMX_AUDIO_DATA_C) 
+#define LOG_AUDIO_BUFER_MAX_DATA_SIZE  512
+LOG_RECORD_DEFINE(LOG_QTV_CMX_AUDIO_DATA_C)
   uint16 ChunkNumber;          /* Chunk number in the packet */
-  uint16 DataSize;             /* Size of the audio packet */ 
+  uint16 DataSize;             /* Size of the audio packet */
   uint8  Data[LOG_AUDIO_BUFER_MAX_DATA_SIZE];    /* Dump of AUDIO data from QTV to CMX */
 LOG_RECORD_END
 typedef LOG_QTV_CMX_AUDIO_DATA_C_type log_qtv_to_cmx_audio_buffer_type;
@@ -115,7 +115,7 @@ static const long CMX_BUFFER_SIZE_MSEC = 800;
 //beyond this much the audio manager will wait for audio playback
 //to catch up.
 #ifdef FEATURE_QTV_LOW_POWER_AUDIO
-  static const int CMX_MAX_AHEAD_MSEC_LOW_POWER	= 14000;
+  static const int CMX_MAX_AHEAD_MSEC_LOW_POWER   = 14000;
 #endif
 static const int CMX_MAX_AHEAD_MSEC = 500;
 
@@ -129,7 +129,7 @@ static const long CMX_PLAY_POLLTIME=20;
 const uint32 AudioCMX::SAFE_TO_ACCEPT_DATA_REQS   = 0xABBADABA;
 const uint32 AudioCMX::UNSAFE_TO_ACCEPT_DATA_REQS = 0x00000000;
 
-//Both the following sigs are the same as the one used by zrex to do sync 
+//Both the following sigs are the same as the one used by zrex to do sync
 // events
 #ifdef T_MSM7500
 #error code not present
@@ -152,9 +152,10 @@ static long logfileSize = 0;
 ** Local Object Definitions
 ** ----------------------------------------------------------------------- */
 AudioMgr * pAudioMgr=NULL;
-
+AudioCMX * pLocalAudioCMX = NULL;
 static bool bPlaying=false;
 static rex_crit_sect_type  cmxDataCS;
+static rex_crit_sect_type  ImageChangeCS;
 
 /* -----------------------------------------------------------------------
 ** Forward Declarations Test
@@ -254,15 +255,15 @@ static log_qtv_to_cmx_audio_buffer_type *qtv_to_cmx_alloc_audio_log_buffer( void
     pBuf = (log_qtv_to_cmx_audio_buffer_type*) log_alloc( LOG_QTV_CMX_AUDIO_DATA_C, sizeof(*pBuf) );
     if (!pBuf)
     {
-      rex_sleep(LOG_QTV_SLEEP_TIMEOUT);      
+      rex_sleep(LOG_QTV_SLEEP_TIMEOUT);
     }
     no_of_attempts--;
 
   }
   if(!pBuf)
   {
-    QTV_MSG_PRIO(QTVDIAG_GENERAL, 
-                 QTVDIAG_PRIO_ERROR, 
+    QTV_MSG_PRIO(QTVDIAG_GENERAL,
+                 QTVDIAG_PRIO_ERROR,
                  "qtv_to_cmx_alloc_audio_log_buffer: Log attempts failed");
   }
 
@@ -326,6 +327,48 @@ LOCAL void qtv_to_cmx_log_audio_buffer( unsigned char *pAudioBuf, int bufSize )
 } /* end qtv_to_cmx_log_audio_buffer */
 
 
+#ifndef PLATFORM_LTK
+/* ======================================================================
+FUNCTION
+  AudioCMX::ImageChangeCallback
+
+DESCRIPTION
+  Callback that is used by CMX to inform QTV that an image change has
+  occured and QTV has to take appropriate action.
+
+DEPENDENCIES
+  List any dependencies for this function, global variables, state,
+  resource availability, etc.
+
+RETURN VALUE
+  void.
+
+SIDE EFFECTS
+  Detail any side effects.
+
+========================================================================== */
+void AudioCMX::ImageChangeCallback(uint32 status)
+{
+  (void)status; //Compiler warning fix
+  // We dont use status as of now
+
+  if(pAudioMgr)
+  {
+    QTV_MSG( QTVDIAG_AUDIO_TASK, "AudioCMX::ImageChangeCallback");
+    if(!pLocalAudioCMX->no_flush)
+    {
+       QTV_MSG( QTVDIAG_AUDIO_TASK, "flush issued from ImageChangeCallback");
+       pLocalAudioCMX->Flush();
+    }
+    else
+    {
+       QTV_MSG( QTVDIAG_AUDIO_TASK, "cmx already flushed...so avoid flush again");
+    }
+    pLocalAudioCMX->no_flush = false;
+  }
+}
+
+#endif // !PLATFORM_LTK
 /* ======================================================================
 FUNCTION
   AudioCMX::Resume
@@ -347,26 +390,29 @@ SIDE EFFECTS
 ========================================================================== */
 bool AudioCMX::Resume(long &tResume)
 {
+	rex_timer_type cmx_resume_sync_timer;
 
     //Init response
     resumeResponse.bResponse=true;
     resumeResponse.callerTcb = rex_self();
 
     //init the sync event timer.
-    rex_def_timer( &cmx_sync_timer, rex_self(), CMX_SYNC_EVENT_TIMER_SIG );
-  
+    rex_def_timer( &cmx_resume_sync_timer, rex_self(), CMX_SYNC_EVENT_TIMER_SIG );
+
 #ifdef SHOW_CMX_DEBUG_INFO
     QTV_MSG( QTVDIAG_AUDIO_TASK, "Resuming CMX");
 #endif
 
+#ifndef FEATURE_WINCE
     cmx_audfmt_resume(ResumeCallback, (void *)this);
+#endif
 
     //Wait on response
-    if(rex_timed_wait((CMX_SYNC_EVENT_SIG|CMX_SYNC_EVENT_TIMER_SIG), &cmx_sync_timer, COMMON_CMX_RESPONSE_TIMEOUT_MSEC)
+    if(rex_timed_wait((CMX_SYNC_EVENT_SIG|CMX_SYNC_EVENT_TIMER_SIG),&cmx_resume_sync_timer, COMMON_CMX_RESPONSE_TIMEOUT_MSEC)
        & CMX_SYNC_EVENT_SIG)
     {
         (void)rex_clr_sigs(rex_self(), CMX_SYNC_EVENT_SIG);
-        (void)rex_clr_timer(&cmx_sync_timer);
+        (void)rex_clr_timer(&cmx_resume_sync_timer);
 
         if (resumeResponse.bSuccess)
         {
@@ -376,19 +422,22 @@ bool AudioCMX::Resume(long &tResume)
                 //Update audio resume time
                 tResume = ZUtils::Clock();
                 #ifdef FEATURE_QTV_EXTENDED_CMX_API
+                  if((_codec == Media::AAC_CODEC) && (cmx_codec.aac_codec.format == CMX_AF_AAC_DATA_FORMAT_ADTS))
+                  {
                   if(pAudioMgr && pAudioMgr->IsFastPlaybackModeEnabled())
                   {
                     /* For fast playback modes disable SBR */
-                    DisableSbrMode(); 
-                    QTV_MSG( QTVDIAG_AUDIO_TASK, 
+                    DisableSbrMode();
+                    QTV_MSG( QTVDIAG_AUDIO_TASK,
                     "AudioCMX Resume: SBR disabled since fast playback enabled");
                   }
                   else
                   {
                     /* For normal playback modes enable SBR */
-                    EnableSbrMode(); 
-                    QTV_MSG( QTVDIAG_AUDIO_TASK, 
+                    EnableSbrMode();
+                    QTV_MSG( QTVDIAG_AUDIO_TASK,
                     "AudioCMX Resume: SBR enabled for normal playback mode");
+                  }
                   }
                 #endif
                 return true;
@@ -415,8 +464,8 @@ FUNCTION
   audiocmx_avsync_callback()
 
 DESCRIPTION
-  This is the callback function that will report the number of PCM samples 
-  played. 
+  This is the callback function that will report the number of PCM samples
+  played.
 
 DEPENDENCIES
   None
@@ -428,7 +477,7 @@ SIDE EFFECTS
   None
 
 ========================================================================== */
-#ifdef  FEATURE_QTV_CMX_AV_SYNC_BYTES 
+#ifdef  FEATURE_QTV_CMX_AV_SYNC_BYTES
   void AudioCMX::audiocmx_avsync_callback(qword timestamp,qword num_of_samples,qword num_of_bytes,const void *client_data )
 #else
   #ifdef FEATURE_QTV_CMX_AV_SYNC_INTERFACE
@@ -437,20 +486,25 @@ SIDE EFFECTS
     void AudioCMX::audiocmx_avsync_callback(qword timestamp,qword num_of_samples)
   #endif
 #endif
-{      
+{
   QTV_MSG( QTVDIAG_AUDIO_TASK, "AudioCMX::Callback");
   QTV_MSG2( QTVDIAG_AUDIO_TASK, "audioCMX:current time reported by CMX but not used:%d %d",qw_hi(timestamp),qw_lo(timestamp));
 
 #if(defined FEATURE_QTV_CMX_AV_SYNC_INTERFACE || defined FEATURE_QTV_CMX_AV_SYNC_BYTES)
   QTV_MSG1( QTVDIAG_AUDIO_TASK, "audioCMX:client_data reported by CMX but not used:%d",&client_data);
 #endif
+  
+  if (!bPlaying)
+  {
+     return;
+  }
 
   uint64 samples;
   QTV_MSG2( QTVDIAG_AUDIO_TASK, "audioCMX:num of samples:%d %d",qw_hi(num_of_samples),qw_lo(num_of_samples));
   samples = (((uint64)qw_hi(num_of_samples))<< 32) + qw_lo(num_of_samples);
 
 #ifdef  FEATURE_QTV_CMX_AV_SYNC_BYTES
-  QTV_MSG2( QTVDIAG_AUDIO_TASK, "audioCMX:num of bytes:%d %d",qw_hi(num_of_bytes),qw_lo(num_of_bytes));        
+  QTV_MSG2( QTVDIAG_AUDIO_TASK, "audioCMX:num of bytes:%d %d",qw_hi(num_of_bytes),qw_lo(num_of_bytes));
   Media::CodecType audioCodec = Media::UNKNOWN_CODEC;
   if(pAudioMgr)
   {
@@ -460,21 +514,25 @@ SIDE EFFECTS
   if( (pAudioMgr) && (AudioMgr::IS_BYTE_BASED_AVSYNC_SUPPORTED(audioCodec)))
   {
     long nBytes;
-    QTV_MSG2( QTVDIAG_AUDIO_TASK, "audioCMX:num of bytes:%d %d",qw_hi(num_of_bytes),qw_lo(num_of_bytes));        
+    QTV_MSG2( QTVDIAG_AUDIO_TASK, "audioCMX:num of bytes:%d %d",qw_hi(num_of_bytes),qw_lo(num_of_bytes));
     nBytes = qw_lo(num_of_bytes);
-    /* this function is called to do the computation of the offset based on 
+    /* this function is called to do the computation of the offset based on
        the number of bytes played. The offset will determine the sleep time
-       required for video */     
-    #ifndef T_MSM7500   
-    pAudioMgr->UpdateAVSyncFromCMXBytes(nBytes);       
+       required for video */
+    #ifndef T_MSM7500
+    pAudioMgr->UpdateAVSyncFromCMXBytes(nBytes);
     #else  /* T_MSM7500 */
 #error code not present
-    #endif /* T_MSM7500 */       
-  }     
-  else 
+    #endif /* T_MSM7500 */
+    if (pLocalAudioCMX && pLocalAudioCMX->no_flush && nBytes > 0)
+    {
+      pLocalAudioCMX->no_flush = false;
+    }
+  }
+  else
 #endif
-  {    
-    /* this function is called to do the computation of the offset based on 
+  {
+    /* this function is called to do the computation of the offset based on
        the number of samples played. The offset will determine the sleep time
        required for video */
     /* SetCurTimeStamp should not updated at end of clip or samples become zero. */
@@ -490,7 +548,7 @@ SIDE EFFECTS
   client_data = NULL;       /* To Fix compiler warnings */
   timestamp = 0;
 #endif
-    
+
 }
 #endif
 
@@ -501,11 +559,11 @@ FUNCTION
   audiocmx_avsync_callback_ex()
 
 DESCRIPTION
-  This is the extended AV Sync callback function that will report the number 
-  of PCM samples or byte count rendered. This callback is very specific to 
-  AAC ADTS Codec. Hence it calls the generic AV Sync Callback Processing 
-  routine depending on the target and/or features enabled. Main intention here 
-  is not to duplicate the AVSync Callback processing in two different places.  
+  This is the extended AV Sync callback function that will report the number
+  of PCM samples or byte count rendered. This callback is very specific to
+  AAC ADTS Codec. Hence it calls the generic AV Sync Callback Processing
+  routine depending on the target and/or features enabled. Main intention here
+  is not to duplicate the AVSync Callback processing in two different places.
 
 DEPENDENCIES
   None
@@ -517,12 +575,12 @@ SIDE EFFECTS
   None
 
 ========================================================================== */
-void AudioCMX::audiocmx_avsync_callback_ex(cmx_av_sync_info_type info, 
+void AudioCMX::audiocmx_avsync_callback_ex(cmx_av_sync_info_type info,
                                            const void *client_data )
 
-{      
+{
   QTV_MSG1( QTVDIAG_AUDIO_TASK, "AudioCMX::Callback_Ex(Sample Rate = %d)",info.sample_rate);
-  #ifdef  FEATURE_QTV_CMX_AV_SYNC_BYTES 
+  #ifdef  FEATURE_QTV_CMX_AV_SYNC_BYTES
     audiocmx_avsync_callback(info.timestamp,info.num_of_samples,info.num_of_bytes,client_data );
   #else
     #ifdef FEATURE_QTV_CMX_AV_SYNC_INTERFACE
@@ -531,7 +589,7 @@ void AudioCMX::audiocmx_avsync_callback_ex(cmx_av_sync_info_type info,
       audiocmx_avsync_callback(info.timestamp,info.num_of_samples)
     #endif
   #endif
-  return;    
+  return;
 }
 
 /* ======================================================================
@@ -541,7 +599,7 @@ FUNCTION
 DESCRIPTION
   This callback routine reports the changes in either sample frequency
   or number of channels. Whenever the content changes from stereo/mono
-  to dual-mono, CMX/DSP trigger this callback with appropriate data. 
+  to dual-mono, CMX/DSP trigger this callback with appropriate data.
 
 DEPENDENCIES
   None
@@ -553,33 +611,33 @@ SIDE EFFECTS
   None
 
 ========================================================================== */
-void AudioCMX::audiocmx_codec_update_callback(cmx_af_codec_info_type info, 
+void AudioCMX::audiocmx_codec_update_callback(cmx_af_codec_info_type info,
                                               const void *client_data )
 
-{      
+{
    QTV_MSG2( QTVDIAG_AUDIO_TASK, "AudioCMX::Codec Param update(Sample Rate = %d),ch=%d",
-   	         info.aac_info.sample_rate,info.aac_info.channel_mode);
+              info.aac_info.sample_rate,info.aac_info.channel_mode);
    AudioCMX * pThis = (AudioCMX *)client_data;
 
    if(!pThis)
    {
      QTV_MSG_PRIO(QTVDIAG_AUDIO_TASK,QTVDIAG_PRIO_ERROR,
      "Ignoring Codec Update callback since client_data is NULL");
-     return; 
+     return;
    }
    if(!pAudioMgr)
    {
      QTV_MSG_PRIO(QTVDIAG_AUDIO_TASK,QTVDIAG_PRIO_ERROR,
      "Ignoring Codec Update callback since AudioMgr object does not exist");
-     return; 
+     return;
    }
-   /*  Track state change notification 
-    *  Assumption is that This callback is used to raise the channel change 
-    *  notifications independent of the target differences. 
-    *  For 7k targets we use this callback to raise the sampling rate chagne 
-    *  notification also. 
+   /*  Track state change notification
+    *  Assumption is that This callback is used to raise the channel change
+    *  notifications independent of the target differences.
+    *  For 7k targets we use this callback to raise the sampling rate chagne
+    *  notification also.
     */
-   
+
    Common::ChannelConfigType eCC;   /* Channel Configuration */
    Common::AudioTrackState  eState; /* Audio Track State */
    int nSamplingFreq;  /* Sampling Frequency */
@@ -587,12 +645,12 @@ void AudioCMX::audiocmx_codec_update_callback(cmx_af_codec_info_type info,
    pAudioMgr->GetAudioTrackSpec(eState,eCC,nSamplingFreq);
    /* Convert the cmx channel configuration value to its QTV equivalent */
    eCC = ConvertChannelConfigurationDefn(info.aac_info.channel_mode);
-   nSamplingFreq = info.aac_info.sample_rate; 
-   
+   nSamplingFreq = info.aac_info.sample_rate;
+
    if (eState == Common::AUDIO_TRACK_STATE_INVALID)
    {
      // Do not raise the change notification for the first time
-     eState = Common::AUDIO_TRACK_STATE_SELECTED; 
+     eState = Common::AUDIO_TRACK_STATE_SELECTED;
      // Setup the Track Spec Parameters for the first time
      pAudioMgr->SetAudioTrackSpec(eState,eCC,nSamplingFreq);
    }
@@ -601,15 +659,15 @@ void AudioCMX::audiocmx_codec_update_callback(cmx_af_codec_info_type info,
      if(info.aac_info.channel_mode == CMX_AF_AAC_CHANNEL_UNSUPPORTED)
      {
        // Update the channel to disabled if needed
-       eState = Common::AUDIO_TRACK_STATE_DISABLED; 
+       eState = Common::AUDIO_TRACK_STATE_DISABLED;
      }
      // Setup the Track Spec Parameters
      pAudioMgr->SetAudioTrackSpec(eState,eCC,nSamplingFreq);
-     // Raise the Track State Change Notificaton 
+     // Raise the Track State Change Notificaton
      (pThis->pNotify)(Common::NOTIFY_TRACK_STATE_CHANGE, pThis->m_pClientData, NULL);
    }
    return;
-    
+
 }
 #endif
 
@@ -618,8 +676,8 @@ FUNCTION
   ConvertChannelConfigurationDefn
 
 DESCRIPTION
-  This function maps the CMX channel configuration value to the one that 
-  could be understood by QTV 
+  This function maps the CMX channel configuration value to the one that
+  could be understood by QTV
 
 DEPENDENCIES
   None
@@ -631,10 +689,10 @@ SIDE EFFECTS
   None
 
 ========================================================================== */
-Common::ChannelConfigType 
+Common::ChannelConfigType
 AudioCMX::ConvertChannelConfigurationDefn(cmx_af_aac_channel_enum_type eCC)
-{ 
-  Common::ChannelConfigType eRet = Common::AUDIO_CHANNEL_UNKNOWN;  
+{
+  Common::ChannelConfigType eRet = Common::AUDIO_CHANNEL_UNKNOWN;
   switch(eCC)
   {
     case CMX_AF_AAC_CHANNEL_UNKNOWN:
@@ -643,24 +701,24 @@ AudioCMX::ConvertChannelConfigurationDefn(cmx_af_aac_channel_enum_type eCC)
       eRet = Common::AUDIO_CHANNEL_UNKNOWN;
       break;
     }
-    case CMX_AF_AAC_CHANNEL_MONO:      
+    case CMX_AF_AAC_CHANNEL_MONO:
     {
       QTV_MSG(QTVDIAG_AUDIO_TASK,
       "Audio channel switched to Single channel (mono) data");
       eRet = Common::AUDIO_CHANNEL_MONO;
       break;
     }
-    case CMX_AF_AAC_CHANNEL_DUAL:       
+    case CMX_AF_AAC_CHANNEL_DUAL:
     {
       QTV_MSG(QTVDIAG_AUDIO_TASK,"Audio channel switched to Stereo data 2(CPE)");
       eRet = Common::AUDIO_CHANNEL_DUAL;
       break;
     }
-    case CMX_AF_AAC_CHANNEL_TRIPLE:    /*  (UNSUPPORTED) */ 
+    case CMX_AF_AAC_CHANNEL_TRIPLE:    /*  (UNSUPPORTED) */
     {
       QTV_MSG(QTVDIAG_AUDIO_TASK,"Audio channel switched to 3 channels: 1+2");
       eRet = Common::AUDIO_CHANNEL_TRIPLE;
-      
+
       break;
     }
     case CMX_AF_AAC_CHANNEL_QUAD:       /*  (UNSUPPORTED) */
@@ -691,7 +749,7 @@ AudioCMX::ConvertChannelConfigurationDefn(cmx_af_aac_channel_enum_type eCC)
 #ifdef FEATURE_QTV_EXTENDED_CMX_API
     case CMX_AF_AAC_CHANNEL_DUAL_MONO:  /*  */
     {
-      QTV_MSG(QTVDIAG_AUDIO_TASK,"Audio channel switched to Dual Mono: 1+1 (Two SCEs)"); 
+      QTV_MSG(QTVDIAG_AUDIO_TASK,"Audio channel switched to Dual Mono: 1+1 (Two SCEs)");
       eRet = Common::AUDIO_CHANNEL_DUAL_MONO;
       break;
     }
@@ -703,15 +761,15 @@ AudioCMX::ConvertChannelConfigurationDefn(cmx_af_aac_channel_enum_type eCC)
     }
 #endif /* ifdef FEATURE_QTV_EXTENDED_CMX_API */
 
-    default: 
+    default:
     {
       QTV_MSG(QTVDIAG_AUDIO_TASK, "Audio channel switched to Unknown by default");
       eRet = Common::AUDIO_CHANNEL_UNKNOWN;
       break;
     }
-  }    
- 
-  return eRet;  
+  }
+
+  return eRet;
 }
 
 /* ======================================================================
@@ -741,19 +799,28 @@ bool AudioCMX::Start(long &tStart)
     return true;
   }
 
+  rex_timer_type cmx_start_sync_timer;
+
   //Init resposne
   playResponse.bResponse=true;
   playResponse.callerTcb = rex_self();
+#if (!defined PLATFORM_LTK) && (!defined T_MSM7600) && (!defined T_MSM7500) && (!defined T_MSM7200)
+  #ifndef FEATURE_WINCE
+  snd_set_qtv_cb_func(ImageChangeCallback);
+  #endif
+#endif // !PLATFORM_LTK
 
   //init the sync event timer.
-  rex_def_timer( &cmx_sync_timer, rex_self(), CMX_SYNC_EVENT_TIMER_SIG );
+  rex_def_timer( &cmx_start_sync_timer, rex_self(), CMX_SYNC_EVENT_TIMER_SIG );
 
 
 #ifdef SHOW_CMX_DEBUG_INFO
     QTV_MSG( QTVDIAG_AUDIO_TASK, "Starting CMX");
 #endif
+
+#ifndef FEATURE_WINCE
 #ifdef FEATURE_QTV_GENERIC_AUDIO_FORMAT
-    if( ( _codec == Media::NONMP4_MP3_CODEC) || 
+    if( ( _codec == Media::NONMP4_MP3_CODEC) ||
         ( _codec == Media::NONMP4_AAC_CODEC ) ||
         ( _codec == Media::NONMP4_AMR_CODEC ) ||
         ( _codec == Media::QCP_CODEC ) ||
@@ -765,21 +832,21 @@ bool AudioCMX::Start(long &tStart)
     else
 #endif /* FEATURE_QTV_GENERIC_AUDIO_FORMAT */
     {
-    #ifndef FEATURE_QTV_AVI     
+    #ifndef FEATURE_QTV_AVI
     if(_codec == Media::MP3_CODEC)
     {
       cmx_audfmt_play_codec(&handle, &cmx_codec, PlayCallback, (void *)this);
     }
     else
     #else
-      #ifndef FEATURE_QTV_CMX_AV_SYNC_BYTES_MP3      
+      #ifndef FEATURE_QTV_CMX_AV_SYNC_BYTES_MP3
       //To Do: Need to know if the media is AVI file instance
       //Byte Based AV SYNC for Mp3 when played in AVI/DivX
       if(_codec == Media::MP3_CODEC)
       {
         cmx_audfmt_play_codec(&handle, &cmx_codec, PlayCallback, (void *)this);
       }
-      else        
+      else
       #endif
     #endif
     {
@@ -787,20 +854,20 @@ bool AudioCMX::Start(long &tStart)
       #if(defined FEATURE_QTV_CMX_AV_SYNC || defined FEATURE_QTV_CMX_AV_SYNC_BYTES)
           /* if the cmx a/v sync callback support is enabled, then we call this function and pass
           cmx_av_sync having the callback interval and the callback function */
-          #ifndef FEATURE_QTV_CMX_AV_SYNC_BYTES 
+          #ifndef FEATURE_QTV_CMX_AV_SYNC_BYTES
             if(_codec == Media::WMA_CODEC)
             {
               /*
               * When FEATURE_QTV_CMX_AV_SYNC_BYTES is not defined and codec in WMA,
               * audiocmx::initplay won't fill in AV SYNC callback information in cmx_av_sync.
               * Thus, if we call  cmx_audfmt_play_codec_av_sync AudioCMX::Start will fail and WMA clips
-              * won't play. 
+              * won't play.
               */
               cmx_audfmt_play_codec(&handle, &cmx_codec, PlayCallback, (void *)this);
             }
             else
             {
-              cmx_audfmt_play_codec_av_sync(&handle, &cmx_codec, &cmx_av_sync, PlayCallback, (void *)this);
+              cmx_audfmt_avsync_playback(&handle, &cmx_codec, &cmx_av_sync, AVSyncPlayCallback, (void *)this);
             }
           #else
             #ifdef FEATURE_QTV_EXTENDED_CMX_API
@@ -808,18 +875,18 @@ bool AudioCMX::Start(long &tStart)
               {
                 // Convert To Extended AAC ADTS Codec Specification
                 // Adaptation for new cmx interface changes
-		            PrepExtendedCodecSpec(cmx_codec,m_aacADTSSpec);
-		            PrepExtendedAVSyncCfg(cmx_av_sync,m_aacADTSAVSync);
-	              QTV_MSG(QTVDIAG_AUDIO_TASK,"Audio Start through *NEW* play codec av sync invoked");
-		            cmx_audfmt_play_codec_av_sync_ex(&handle, &m_aacADTSSpec, &m_aacADTSAVSync, PlayCallback, (void *)this);
+                      PrepExtendedCodecSpec(cmx_codec,m_aacADTSSpec);
+                      PrepExtendedAVSyncCfg(cmx_av_sync,m_aacADTSAVSync);
+                   QTV_MSG(QTVDIAG_AUDIO_TASK,"Audio Start through *NEW* play codec av sync invoked");
+                      cmx_audfmt_play_codec_av_sync_ex(&handle, &m_aacADTSSpec, &m_aacADTSAVSync, PlayCallback, (void *)this);
               }
               else
             #endif
               {
-                cmx_audfmt_play_codec_av_sync(&handle, &cmx_codec, &cmx_av_sync, PlayCallback, (void *)this);                
+                cmx_audfmt_avsync_playback(&handle, &cmx_codec, &cmx_av_sync, AVSyncPlayCallback, (void *)this);
               }
           #endif
-      #else                                                                                            
+      #else
           cmx_audfmt_play_codec(&handle, &cmx_codec, PlayCallback, (void *)this);
       #endif
     }
@@ -828,11 +895,11 @@ bool AudioCMX::Start(long &tStart)
     tStart=(-1);
 
     //Wait on command response
-    if(rex_timed_wait((CMX_SYNC_EVENT_SIG|CMX_SYNC_EVENT_TIMER_SIG), &cmx_sync_timer, COMMON_CMX_RESPONSE_TIMEOUT_MSEC)
+    if(rex_timed_wait((CMX_SYNC_EVENT_SIG|CMX_SYNC_EVENT_TIMER_SIG), &cmx_start_sync_timer, COMMON_CMX_RESPONSE_TIMEOUT_MSEC)
        & CMX_SYNC_EVENT_SIG)
     {
         (void)rex_clr_sigs(rex_self(), CMX_SYNC_EVENT_SIG);
-        (void)rex_clr_timer(&cmx_sync_timer);
+        (void)rex_clr_timer(&cmx_start_sync_timer);
 
         if (playResponse.bSuccess)
         {
@@ -850,6 +917,7 @@ bool AudioCMX::Start(long &tStart)
     QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "ERROR: CMX Start failed");
     return false;
 }
+#endif
   //device does not start until data is sent.
   tStart=(-1);
   return true;
@@ -907,29 +975,29 @@ void AudioCMX::PrepExtendedCodecSpec(cmx_codec_spec_type &original,
 {
   extended.aac_bc_codec.codec_type.file_type = CMX_AF_FILE_AAC_BROADCAST;
 #ifdef FEATURE_QTV_DUAL_MONO_OUTPUT_SELECTION
-  extended.aac_bc_codec.dual_mono_mode       = 
+  extended.aac_bc_codec.dual_mono_mode       =
     MapCommonDMTypeToCMXDMType(m_dualMonoOutput);
 #else
     extended.aac_bc_codec.dual_mono_mode       = CMX_AF_DUAL_MONO_MODE_DEFAULT;
-#endif /* FEATURE_QTV_DUAL_MONO_OUTPUT_SELECTION */ 
+#endif /* FEATURE_QTV_DUAL_MONO_OUTPUT_SELECTION */
   extended.aac_bc_codec.sbr_mode             = CMX_AF_SBR_MODE_DEFAULT;
   extended.aac_bc_codec.sample_rate          = original.aac_codec.sample_rate;
   extended.aac_bc_codec.codec_update_cb_func = audiocmx_codec_update_callback ;
   if(pAudioMgr && pAudioMgr->IsFastPlaybackModeEnabled())
   {
     /* For fast playback modes disable SBR */
-    extended.aac_bc_codec.sbr_mode       = CMX_AF_SBR_MODE_DISABLE; 
-    QTV_MSG( QTVDIAG_AUDIO_TASK, 
+    extended.aac_bc_codec.sbr_mode       = CMX_AF_SBR_MODE_DISABLE;
+    QTV_MSG( QTVDIAG_AUDIO_TASK,
     "PrepExtendedCodecSpec: SBR disabled since fast playback enabled");
   }
   // If the sample rate is more than 48K  then truncate it to 48K
-  // This includes the Unknown sample rate also. Since we take the 
-  // sample rate from the valid ADTS header , it can not have the 
-  // unknown configuration any way. 
-  if (extended.aac_bc_codec.sample_rate > CMX_AF_SAMPLE_RATE_48000) 
+  // This includes the Unknown sample rate also. Since we take the
+  // sample rate from the valid ADTS header , it can not have the
+  // unknown configuration any way.
+  if (extended.aac_bc_codec.sample_rate > CMX_AF_SAMPLE_RATE_48000)
   {
     extended.aac_bc_codec.sample_rate = CMX_AF_SAMPLE_RATE_48000;
-    QTV_MSG( QTVDIAG_AUDIO_TASK,"Sample rate truncated to 48K "); 
+    QTV_MSG( QTVDIAG_AUDIO_TASK,"Sample rate truncated to 48K ");
   }
   QTV_MSG( QTVDIAG_AUDIO_TASK, "PrepExtendedCodecSpec: Codec = AAC ADTS");
   return;
@@ -940,7 +1008,7 @@ FUNCTION
 
 DESCRIPTION
 Enable the SBR mode through newly designed CMX API.  If the SBR mode is enabled then audio
-decoder render AAC SBR content. This is used when play mode switched normal from 1P3X mode. 
+decoder render AAC SBR content. This is used when play mode switched normal from 1P3X mode.
 
 DEPENDENCIES
   None.
@@ -955,13 +1023,15 @@ SIDE EFFECTS
 void AudioCMX::EnableSbrMode()
 {
   cmx_audio_playback_cmd_param_type cmdParam;
-  
+
   QTV_MSG( QTVDIAG_AUDIO_TASK,  "AudioCMX Enable SBR Mode ");
   cmdParam.sbr_mode_cmd.mode = CMX_AF_SBR_MODE_ENABLE;
-  // At present CMX implementation always return success , 
-  // after queueing the command to the sound task. 
-  // Hence callback function is not supplied. 
+  // At present CMX implementation always return success ,
+  // after queueing the command to the sound task.
+  // Hence callback function is not supplied.
+#ifndef FEATURE_WINCE
   cmx_audio_playback_control_ex(CMX_AUDIO_PB_CMD_SBR_MODE,&cmdParam,NULL,0);
+#endif
   return;
 }
 /* ======================================================================
@@ -987,13 +1057,15 @@ void AudioCMX::DisableSbrMode()
 
   QTV_MSG( QTVDIAG_AUDIO_TASK,  "AudioCMX Disable SBR Mode ");
   cmdParam.sbr_mode_cmd.mode = CMX_AF_SBR_MODE_DISABLE;
-  // At present CMX implementation always return success , 
-  // after queueing the command to the sound task. 
-  // Hence callback function is not supplied. 
+  // At present CMX implementation always return success ,
+  // after queueing the command to the sound task.
+  // Hence callback function is not supplied.
+#ifndef FEATURE_WINCE
   cmx_audio_playback_control_ex(CMX_AUDIO_PB_CMD_SBR_MODE,&cmdParam,NULL,0);
+#endif
   return;
 }
-#endif 
+#endif
 
 /* ======================================================================
 FUNCTION
@@ -1027,8 +1099,9 @@ bool AudioCMX::Pause(long &tPause)
 #ifdef SHOW_CMX_DEBUG_INFO
     QTV_MSG( QTVDIAG_AUDIO_TASK, "Pausing CMX");
 #endif
-
+#ifndef FEATURE_WINCE
     cmx_audio_playback_control(CMX_AUDIO_PB_CMD_PAUSE, PauseCallback, (void *)this);
+#endif
 
     //Wait on response
     if(rex_timed_wait((CMX_SYNC_EVENT_SIG|CMX_SYNC_EVENT_TIMER_SIG), &cmx_sync_timer, COMMON_CMX_RESPONSE_TIMEOUT_MSEC)
@@ -1085,9 +1158,11 @@ void AudioCMX::Abort(long &tStop)
 
     if (bPlaying)
     {
+#ifndef FEATURE_WINCE
         cmx_audio_playback_control(CMX_AUDIO_PB_CMD_STOP, NULL, 0);
+#endif
         FlushDataRequests();
-        (void)WaitTilNotPlaying();        
+        (void)WaitTilNotPlaying();
     }
 #ifdef LOG_AUDIO_BUFFER_SENT_TO_CMX
   if (fp != NULL)
@@ -1122,15 +1197,15 @@ SIDE EFFECTS
 bool AudioCMX::Stop(long &tStop)
 {
     QTV_MSG( QTVDIAG_AUDIO_TASK, "AudioCMX CMX STOP" );
-
+    rex_timer_type cmx_stop_sync_timer;
 #if(defined FEATURE_QTV_CMX_AV_SYNC || defined FEATURE_QTV_CMX_AV_SYNC_BYTES)
-    if( (_codec != Media::WMA_CODEC) && 
-        (_codec != Media::MP3_CODEC) && 
+    if( (_codec != Media::WMA_CODEC) &&
+        (_codec != Media::MP3_CODEC) &&
         (_codec != Media::NONMP4_MP3_CODEC) &&
         (_codec != Media::QCP_CODEC) &&
         (_codec != Media::NONMP4_AMR_CODEC) &&
         (_codec != Media::NONMP4_AAC_CODEC) &&
-        (_codec != Media::MIDI_CODEC)  
+        (_codec != Media::MIDI_CODEC)
 #ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES
          && ( (pAudioMgr) && (! (AudioMgr::IS_BYTE_BASED_AVSYNC_SUPPORTED(_codec)) ) )
 #endif//#ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES
@@ -1147,10 +1222,6 @@ bool AudioCMX::Stop(long &tStop)
     stopResponse.bResponse=true;
     stopResponse.callerTcb = rex_self();
 
-    //init the sync event timer.
-    rex_def_timer( &cmx_sync_timer, rex_self(), CMX_SYNC_EVENT_TIMER_SIG );
-
-
     //keep track of audio end time for our stats
     tStop=ZUtils::Clock();
 
@@ -1160,14 +1231,19 @@ bool AudioCMX::Stop(long &tStop)
     }
     else
     {
+      //init the sync event timer.
+      rex_def_timer( &cmx_stop_sync_timer, rex_self(), CMX_SYNC_EVENT_TIMER_SIG );
+
+#ifndef FEATURE_WINCE
       cmx_audio_playback_control(CMX_AUDIO_PB_CMD_FLUSH, StopCallback, (void *)this);
+#endif
 
       //Wait on response
-      if(rex_timed_wait((CMX_SYNC_EVENT_SIG|CMX_SYNC_EVENT_TIMER_SIG), &cmx_sync_timer, COMMON_CMX_RESPONSE_TIMEOUT_MSEC)
+      if(rex_timed_wait((CMX_SYNC_EVENT_SIG|CMX_SYNC_EVENT_TIMER_SIG), &cmx_stop_sync_timer, COMMON_CMX_RESPONSE_TIMEOUT_MSEC)
          & CMX_SYNC_EVENT_SIG)
       {
         (void)rex_clr_sigs(rex_self(), CMX_SYNC_EVENT_SIG);
-        (void)rex_clr_timer(&cmx_sync_timer);
+        (void)rex_clr_timer(&cmx_stop_sync_timer);
 
         if (stopResponse.bSuccess)
         {
@@ -1210,14 +1286,14 @@ SIDE EFFECTS
 bool AudioCMX::InitPlay(bool bRestart)
 {
 
-if(   
-   #ifndef FEATURE_QTV_AVI 
-   (_codec != Media::MP3_CODEC) && 
+if(
+   #ifndef FEATURE_QTV_AVI
+   (_codec != Media::MP3_CODEC) &&
    #else
      //Byte Based AV SYNC for Mp3 when played in AVI/DivX
      //To Do: Need to know if the media is AVI file instance
      #ifndef FEATURE_QTV_CMX_AV_SYNC_BYTES_MP3
-     (_codec != Media::MP3_CODEC) &&      
+     (_codec != Media::MP3_CODEC) &&
      #endif
    #endif
    (_codec != Media::NONMP4_MP3_CODEC) &&
@@ -1235,11 +1311,11 @@ if(
 #else
   if(isAudioOnlyLocalPlayback() && _codec == Media::AAC_CODEC)
 #endif /* FEATURE_QTV_BSAC */
-    cmx_av_sync.av_sync_interval = AUDIO_CMX_AV_SYNC_INTERVAL_LOW_POWER;  
+    cmx_av_sync.av_sync_interval = AUDIO_CMX_AV_SYNC_INTERVAL_LOW_POWER;
   else
 #endif
 
-  cmx_av_sync.av_sync_interval = AUDIO_CMX_AV_SYNC_INTERVAL;  
+  cmx_av_sync.av_sync_interval = AUDIO_CMX_AV_SYNC_INTERVAL;
   cmx_av_sync.av_sync_cb_func = audiocmx_avsync_callback;
   cmx_av_sync.client_data = (void *)this;
 
@@ -1255,14 +1331,14 @@ if(
     pAudioMgr->cmx_avsync_update.nFrames = 0;
   }
   #if defined (FEATURE_QTV_WMA_PRO_DECODER) || defined (FEATURE_QTV_WMA_PRO_DSP_DECODER)
-	if( (AudioMgr::IS_BYTE_BASED_AVSYNC_SUPPORTED(_codec)) &&
+     if( (AudioMgr::IS_BYTE_BASED_AVSYNC_SUPPORTED(_codec)) &&
       ((_codec == Media::WMA_PRO_CODEC) || (_codec == Media::WMA_PRO_PLUS_CODEC) ) )
-	{
+     {
       cmx_av_sync.av_sync_interval = AUDIO_CMX_AV_SYNC_INTERVAL_AUDIO_ONLY_PLAYBACK;//In MSEC
   }
   #endif//defined (FEATURE_QTV_WMA_PRO_DECODER) || defined (FEATURE_QTV_WMA_PRO_DSP_DECODER)
 #else
-   #ifdef FEATURE_QTV_CMX_AV_SYNC                 
+   #ifdef FEATURE_QTV_CMX_AV_SYNC
 #error code not present
    #endif
 #endif
@@ -1317,7 +1393,7 @@ stats.nAnswered=0;
             case Media::AAC_DATA_FORMAT_ADTS:
 #ifdef FEATURE_QTV_BSAC
 #error code not present
-#endif /* FEATURE_QTV_BSAC */							
+#endif /* FEATURE_QTV_BSAC */
               cmx_codec.aac_codec.format = CMX_AF_AAC_DATA_FORMAT_ADTS;
               break;
 
@@ -1332,7 +1408,9 @@ stats.nAnswered=0;
 
             case Media::AAC_DATA_FORMAT_LOAS:
               cmx_codec.aac_codec.format = CMX_AF_AAC_DATA_FORMAT_LOAS;
-              pMedia->SetAacFrameMarkerNeeded(true);
+			  //Removing this function call as AAC frame marker is not needed
+              //for LOAS. 
+              //pMedia->SetAacFrameMarkerNeeded(true);
               break;
           }
 
@@ -1382,9 +1460,9 @@ stats.nAnswered=0;
 #error code not present
 #endif /* FEATURE_QTV_BSAC */
 #if( defined(FEATURE_MP4_MP3) && defined( FEATURE_MP3 ) )
-    case Media::MP3_CODEC:       
+    case Media::MP3_CODEC:
        cmx_codec.mp3_codec.codec_type.file_type  = CMX_AF_FILE_MP3;
-       nAudioIFMaxAheadMsec = 2400;//In MSEC
+       nAudioIFMaxAheadMsec = 500;//In MSEC
        if(pAudioMgr)
        {
          Media* pMedia = pAudioMgr->GetMediaPtr();
@@ -1405,10 +1483,10 @@ stats.nAnswered=0;
     case Media::NONMP4_AMR_CODEC:
        cmx_codec.qcp_codec.file_type = CMX_AF_FILE_AMR;
        break;
-    case Media::QCP_CODEC:    
+    case Media::QCP_CODEC:
        cmx_codec.qcp_codec.file_type = CMX_AF_FILE_QCP_13K;
        break;
-    case Media::MIDI_CODEC:    
+    case Media::MIDI_CODEC:
        cmx_codec.qcp_codec.file_type = CMX_AF_FILE_MIDI;
        break;
 #endif /* FEATURE_QTV_GENERIC_AUDIO_FORMAT */
@@ -1416,7 +1494,7 @@ stats.nAnswered=0;
 #if defined(FEATURE_QTV_WINDOWS_MEDIA) && defined(FEATURE_WMA)
     case Media::WMA_CODEC:
 #endif
-#ifdef FEATURE_QTV_WMA_PRO_DSP_DECODER    
+#ifdef FEATURE_QTV_WMA_PRO_DSP_DECODER
     case Media::WMA_PRO_CODEC:
     case Media::WMA_PRO_PLUS_CODEC:
 #endif
@@ -1425,22 +1503,22 @@ stats.nAnswered=0;
         cmx_codec.wma_codec.file_type = CMX_AF_FILE_WMA;
         cmx_codec.wma_codec.sample_rate = TranslateSampleRateForCMX(pAudioMgr->GetSampleRate());
         cmx_codec.wma_codec.version = pAudioMgr->GetCodecVersion();
-        cmx_codec.wma_codec.channels = pAudioMgr->GetNumChannels(); 
+        cmx_codec.wma_codec.channels = pAudioMgr->GetNumChannels();
         cmx_codec.wma_codec.bytes_per_second = (uint16)((pAudioMgr->GetBitRate()) / 8);
         cmx_codec.wma_codec.encoder_options = (uint16)pAudioMgr->GetEncoderOptions();
 #ifdef FEATURE_QTV_WMA_PRO_DSP_DECODER
         cmx_codec.wma_codec.advanced_encoder_opt1 = (uint16)pAudioMgr->GetAdvancedEncodeOptions();
         cmx_codec.wma_codec.advanced_encoder_opt2 = (uint32)pAudioMgr->GetAdvancedEncodeOptions2();
-        cmx_codec.wma_codec.channel_mask = pAudioMgr->GetChannelMask(); 
-        cmx_codec.wma_codec.format_tag = 0X162;    
+        cmx_codec.wma_codec.channel_mask = pAudioMgr->GetChannelMask();
+        cmx_codec.wma_codec.format_tag = 0X162;
         cmx_codec.wma_codec.bits_per_sample = (uint16)pAudioMgr->GetValidBitsperSample();
-#endif 
+#endif
         cmx_codec.wma_codec.virtual_pkt_len = pAudioMgr->GetVirtualPacketSize();
- 
+
         /* Tuned to allow WM DSP to have enough audio data for low bitrate
         ** decoding. Audio delays are heard through-out the otherwise.
         */
-        nAudioIFMaxAheadMsec = 2400;//In MSEC   
+        nAudioIFMaxAheadMsec = 2400;//In MSEC
        }
        break;
 #endif /* FEATURE_QTV_WINDOWS_MEDIA */
@@ -1450,9 +1528,9 @@ stats.nAnswered=0;
     case Media::WMA_PRO_PLUS_CODEC:
        cmx_codec.wave_codec.file_type       = CMX_AF_FILE_WAVE;
        cmx_codec.wave_codec.format          = CMX_AF_WAVE_FORMAT_LINEAR_PCM;
-       cmx_codec.wave_codec.sample_format   = CMX_AF_WAVE_SAMPLE_FMT_SIGNED;       
-       cmx_codec.wave_codec.sample_rate     = pAudioMgr->GetSampleRate();	   
-       cmx_codec.wave_codec.channels        = pAudioMgr->GetNumChannels();    	   
+       cmx_codec.wave_codec.sample_format   = CMX_AF_WAVE_SAMPLE_FMT_SIGNED;
+       cmx_codec.wave_codec.sample_rate     = pAudioMgr->GetSampleRate();
+       cmx_codec.wave_codec.channels        = pAudioMgr->GetNumChannels();
        cmx_codec.wave_codec.bits_per_sample = pAudioMgr->audioInfo.nBitsPerSample;
        nAudioIFMaxAheadMsec                 = MAX_AHEAD_FOR_WM_PRO;
        break;
@@ -1471,25 +1549,17 @@ stats.nAnswered=0;
 #ifdef FEATURE_QTV_3GPP_EVRC_WB
 #error code not present
 #endif /* FEATURE_QTV_3GPP_EVRC_WB */
+#if defined (FEATURE_QTV_AVI_AC3) || defined (FEATURE_QTV_PCM)
+#error code not present
+#endif /* (FEATURE_QTV_AVI_AC3) || defined (FEATURE_QTV_PCM) */
+
     default:
       QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "Unknown CMX codec(%d)", _codec );
       return false;
     }
 
-    //set the max data length if we know it, otherwise set to all F's
-#ifdef FEATURE_QTV_WMA_PRO_DECODER
-    if( ( _codec == Media::WMA_PRO_CODEC ) || 
-        ( _codec == Media::WMA_PRO_PLUS_CODEC ))
-    {
-      handle.client.data_len = ~0;
-    }	
-    else
-  #endif /*  FEATURE_QTV_WMA_PRO_DECODER  */	
-    {
-    handle.client.data_len
-        = (pAudioMgr->audioInfo.nTotalBytes > 0) ? pAudioMgr->audioInfo.nTotalBytes : ~0;
-    }
-        
+    handle.client.data_len = ~0;
+
     return true;
 }
 
@@ -1498,13 +1568,13 @@ FUNCTION
  AudioCMX::DeferredInitPlay
 
 DESCRIPTION
- This is called before deferred start to init play. 
+ This is called before deferred start to init play.
 
 DEPENDENCIES
- None. 
+ None.
 
 RETURN VALUE
- True/False. 
+ True/False.
 
 SIDE EFFECTS
  None.
@@ -1550,7 +1620,7 @@ void AudioCMX::Create(void * pMgr, Common::AudioNotifyFuncT pNotifyFunc, void* p
 {
   //save the input parameter
   pAudioMgr=(AudioMgr *)pMgr;
-
+  pLocalAudioCMX = this;
   //save data
   pNotify = pNotifyFunc;
 
@@ -1560,11 +1630,13 @@ void AudioCMX::Create(void * pMgr, Common::AudioNotifyFuncT pNotifyFunc, void* p
   if(nAudioIFMaxAheadMsec)
   {
      nAudioIFBufferSizeMsec = CMX_BUFFER_SIZE_MSEC;
+#ifndef FEATURE_WINCE
      QTV_MSG2( QTVDIAG_AUDIO_TASK,
                "AudioCMX:: Buffer size %d(Msec),"
                "Max Audio device Lead: %d(Msec)",
                 nAudioIFBufferSizeMsec,
                 nAudioIFMaxAheadMsec);
+#endif
   }
   else
   {
@@ -1573,7 +1645,7 @@ void AudioCMX::Create(void * pMgr, Common::AudioNotifyFuncT pNotifyFunc, void* p
 #error code not present
 #else
     if (isAudioOnlyLocalPlayback() && (_codec == Media::AAC_CODEC))
-#endif /* FEATURE_QTV_BSAC */			
+#endif /* FEATURE_QTV_BSAC */
       nAudioIFMaxAheadMsec = CMX_MAX_AHEAD_MSEC_LOW_POWER;
     else
 #endif
@@ -1593,7 +1665,7 @@ void AudioCMX::Create(void * pMgr, Common::AudioNotifyFuncT pNotifyFunc, void* p
 #endif /* FEATURE_QTV_BSAC */
      {
          /* Tuned for stream recording */
-         nAudioIFBufferSizeMsec = CMX_BUFFER_SIZE_MSEC;         
+         nAudioIFBufferSizeMsec = CMX_BUFFER_SIZE_MSEC;
 
          QTV_MSG2( QTVDIAG_AUDIO_TASK,
                "AudioCMX::AAC Buffer size %d(Msec),"
@@ -1605,14 +1677,16 @@ void AudioCMX::Create(void * pMgr, Common::AudioNotifyFuncT pNotifyFunc, void* p
 #endif /* FEATURE_AAC && (FEATURE_QTV_STREAM_RECORD or BCAST_FLO or GENERIC_BCAST)*/
      {
          nAudioIFBufferSizeMsec = CMX_BUFFER_SIZE_MSEC;
+#ifndef FEATURE_WINCE
          QTV_MSG2( QTVDIAG_AUDIO_TASK,
                "AudioCMX::Buffer size %d(Msec),"
                "Max Audio Device Lead: %d(Msec)",
                 nAudioIFBufferSizeMsec,
                 nAudioIFMaxAheadMsec);
+#endif
      }
 
-  }  
+  }
   //set the audio starvation threshold.
   nAudioIFMaxBehindMsec = CMX_AUDIO_STARVATION_THRESHOLD_MSEC;
 
@@ -1664,21 +1738,29 @@ void AudioCMX::Destroy()
     ** would work as long as it's not equal to SAFE_TO_ACCEPT_DATA_REQS.
     */
     m_canAcceptDataRequests = UNSAFE_TO_ACCEPT_DATA_REQS;
-
+#ifndef FEATURE_WINCE
     //stop cmx
     cmx_audio_playback_control(CMX_AUDIO_PB_CMD_STOP, NULL, 0);
+#endif
     (void)WaitTilNotPlaying();
 
     /* This critical section prevents destruction of AudioMgr
        while SendData() is not complete
     */
-    rex_enter_crit_sect(&cmxDataCS);
+    QCUtils::EnterCritSect(&cmxDataCS);
     pAudioMgr=NULL;
+    pLocalAudioCMX = NULL;
     FlushDataRequests();
-    rex_leave_crit_sect(&cmxDataCS);
+    no_flush = true;
+    /* Deregister the ImageChangeCallback function */
+#if (!defined PLATFORM_LTK) && (!defined T_MSM7600) && (!defined T_MSM7500) && (!defined T_MSM7200)
+  #ifndef FEATURE_WINCE
+  snd_set_qtv_cb_func(NULL);
+  #endif
+#endif // !PLATFORM_LTK
+    QCUtils::LeaveCritSect(&cmxDataCS);
 
-    CleanupPlay();
-
+    //CleanupPlay();
 }
 
 /* ======================================================================
@@ -1756,10 +1838,11 @@ void AudioCMX::Flush()
   //init the sync event timer.
   rex_def_timer( &cmx_sync_timer, rex_self(), CMX_SYNC_EVENT_TIMER_SIG );
 
-
+#ifndef FEATURE_WINCE
   cmx_audio_playback_control(CMX_AUDIO_PB_CMD_FLUSH,
                              FlushCallback,
                              (void *)this);
+#endif
 
   //Wait on response
   if(rex_timed_wait((CMX_SYNC_EVENT_SIG|CMX_SYNC_EVENT_TIMER_SIG), &cmx_sync_timer, COMMON_CMX_RESPONSE_TIMEOUT_MSEC)
@@ -1804,10 +1887,9 @@ void AudioCMX::FlushSingleDataRequest
 )
 {
   ASSERT( data_req_cb );
-
-  //Flush with 0 length but non-Null buffer, hence, 0x00000001
-  QTV_MSG( QTVDIAG_AUDIO_TASK, "Flush data request with 0 length buffer");
-  (*data_req_cb)( CMX_SUCCESS, (unsigned char*)0x00000001, 0, server_client_data );
+  static char dummy_bites[100];
+  QTV_MSG( QTVDIAG_AUDIO_TASK, "Flush data request with 100 dummy bytes buffer");
+  (*data_req_cb)( CMX_SUCCESS, (unsigned char*)&dummy_bites, 100, server_client_data );
 }
 
 /* ======================================================================
@@ -1889,7 +1971,7 @@ bool AudioCMX::SendDataToCmx(
          }
        }
 #endif
-                      
+
             qtv_to_cmx_log_audio_buffer(pAudioBuffer->pData,pAudioBuffer->nData);
             //set start play time for the first buffer.
             //we assume audio starts immediately after the
@@ -1930,6 +2012,72 @@ bool AudioCMX::SendData(long &tPlayBegin,long &nWaitMsec)
     tPlayBegin=(-1);
     nWaitMsec=0;
 
+
+  QCUtils::EnterCritSect(&ImageChangeCS);
+  if(image_swap && pAudioMgr)
+  {
+    //Set the flags in the restore buffer to make sure that the next data
+    //that will be played out is the unacknowledged data.Invaliate the regular
+    //buffers.
+      pAudioMgr->audioBuffer.nPendingData   = 0;
+      pAudioMgr->audioBuffer.nPendingOffset = 0;
+
+      pAudioMgr->nAVSyncAudioBufferWriteIndex= 0;
+      pAudioMgr->nAVSyncAudioBufferSize      = 0;
+      pAudioMgr->nAVSyncAudioWriteByteOffSet = 0;
+      pAudioMgr->RestoreDataBufferInfo.nEntriesToRestore =
+            pAudioMgr->RestoreDataBufferInfo.nEntriesInRestoreBuffer;
+      if((int)pAudioMgr->RestoreDataBufferInfo.nEntriesToRestore < 0)
+      {
+         pAudioMgr->RestoreDataBufferInfo.nEntriesToRestore = 0;
+      }
+      pAudioMgr->RestoreDataBufferInfo.nTmpReadIndex = pAudioMgr->RestoreDataBufferInfo.nReadIndex;
+
+
+#if(defined FEATURE_QTV_CMX_AV_SYNC || defined FEATURE_QTV_CMX_AV_SYNC_BYTES)
+      if( (pLocalAudioCMX->_codec != Media::WMA_CODEC) &&
+          (pLocalAudioCMX->_codec != Media::MP3_CODEC) &&
+          (pLocalAudioCMX->_codec != Media::NONMP4_MP3_CODEC) &&
+          (pLocalAudioCMX->_codec != Media::QCP_CODEC) &&
+          (pLocalAudioCMX->_codec != Media::NONMP4_AMR_CODEC) &&
+          (pLocalAudioCMX->_codec != Media::NONMP4_AAC_CODEC) &&
+          (pLocalAudioCMX->_codec != Media::MIDI_CODEC)
+#ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES
+           && ( (pAudioMgr) && (! (AudioMgr::IS_BYTE_BASED_AVSYNC_SUPPORTED(pLocalAudioCMX->_codec)) ) )
+#endif
+         )
+      {
+      /*  if cmxPause was set to true, we need to set it to false */
+        pAudioMgr->cmx_avsync_update.cmxPause=false;
+        pAudioMgr->cmx_avsync_update.prevResumedTimeStamp=-1;
+        pAudioMgr->cmx_avsync_update.prevResumedFrame=0;
+      }
+#endif
+      pAudioMgr->EndElapsedTime(ZUtils::Clock());
+
+
+    /* Resume after a reposition */
+      pAudioMgr->InitAVTiming();
+#ifdef  FEATURE_QTV_CMX_AV_SYNC_BYTES
+      if(AudioMgr::IS_BYTE_BASED_AVSYNC_SUPPORTED(pLocalAudioCMX->_codec))
+      {
+        pAudioMgr->m_bCurrentTSFromCMXBytesUpdatePending = true;
+      }
+#endif
+
+      //Resume
+      if (pAudioMgr->xferInfo.startOfInterval.bValid)
+      {
+         pAudioMgr->xferInfo.startOfInterval.time = ZUtils::Clock();
+         pAudioMgr->SetPlaybackOffset(pAudioMgr->xferInfo.startOfInterval.time,
+                             pAudioMgr->xferInfo.startOfInterval.timestamp);
+      }
+      pAudioMgr->StartElapsedTime();
+  }
+  image_swap = false;
+  QCUtils::LeaveCritSect(&ImageChangeCS);
+
+
     // get the next data request and put it into the
     // global current request.
     if (requestQ.GetDataRequest(currentRequest))
@@ -1953,20 +2101,20 @@ bool AudioCMX::SendData(long &tPlayBegin,long &nWaitMsec)
 
     //Send data
     /* Critical section to prevent destruction of AudioMgr while SendData is not complete */
-    rex_enter_crit_sect(&cmxDataCS);
+    QCUtils::EnterCritSect(&cmxDataCS);
 
     if (pAudioMgr)
     {
         //fill buffer
-        if ( ! (pAudioMgr->audioBuffer.nData) )
+        if (!pAudioMgr->audioBuffer.nData )
         {
           (void)pAudioMgr->FillAudioBuffer(currentRequest.max_len,currentRequest.offset );
           if(pAudioMgr->IsCodecParamChanged())
           {
             // Since this change has to be acted immediately, i am not setting any waiting time here.
             QTV_MSG(QTVDIAG_AUDIO_TASK,
-	            "Dynamic Codec Param change detected while sending data to CMX");
-	  }
+                 "Dynamic Codec Param change detected while sending data to CMX");
+       }
 
             //send data, even if its of 0 size to satisfy CMX Data Request
             bSent = SendDataToCmx(&pAudioMgr->audioBuffer, tPlayBegin);
@@ -1977,7 +2125,7 @@ bool AudioCMX::SendData(long &tPlayBegin,long &nWaitMsec)
             pAudioMgr->audioBuffer.nData = 0;
         }
     }
-    rex_leave_crit_sect(&cmxDataCS);
+    QCUtils::LeaveCritSect(&cmxDataCS);
 
     if (!bSent)
     {
@@ -2025,12 +2173,6 @@ bool AudioCMX::FlushData( void )
     if (requestQ.GetDataRequest(currentRequest))
     {
       stats.nGet++;
-      if (currentRequest.stale)
-      {
-        FlushSingleDataRequest( currentRequest.data_req_cb,
-                                currentRequest.server_client_data );
-        return false;
-      }
     }
     else
     {
@@ -2174,7 +2316,7 @@ void AudioCMX::CallbackResponse(const cmx_status_type status, CmxResponse &respo
 {
     if (response.bResponse)
     {
-        QTV_MSG1( QTVDIAG_AUDIO_TASK, "AudioCMX::CallbackResponse callerTcb=0x%x", 
+        QTV_MSG1( QTVDIAG_AUDIO_TASK, "AudioCMX::CallbackResponse callerTcb=0x%x",
                   response.callerTcb);
 
         //response needed.
@@ -2321,6 +2463,170 @@ void AudioCMX::ResumeCallback (
 
 /* ======================================================================
 FUNCTION
+  AudioCMX::AVSyncPlayCallback
+
+DESCRIPTION
+//
+//  CMX is notifying us of results of Play command.
+//
+
+DEPENDENCIES
+  List any dependencies for this function, global variables, state,
+  resource availability, etc.
+
+RETURN VALUE
+  Enumerate possible return values
+
+SIDE EFFECTS
+  Detail any side effects.
+
+========================================================================== */
+void AudioCMX::AVSyncPlayCallback(
+  cmx_status_type status,
+  const void * client_data,
+  cmx_af_server_data_type *server_data
+)
+{
+    AudioCMX * pThis = (AudioCMX *)client_data;
+    /*
+       Sometimes in rapid start stop scenarios, CMX takes more time than
+       the timeout of 1s and QTV deletes the AudioCMX instance. By the time
+       we get this callback, QTV might have a new AudioCMX instance for new
+       playback.If we ignore this callback, CMX can proceed with new playback
+    */
+    if (pAudioMgr && pThis != pAudioMgr->pAudioCMX)
+    {
+       return;
+    }
+    #ifdef SHOW_CMX_DEBUG_INFO
+       QTV_MSG( QTVDIAG_AUDIO_TASK, "CMX play callback"); ShowStatus(status);
+    #endif
+
+    //catch state changes.
+    switch(status)
+    {
+      case CMX_SUCCESS:
+      case CMX_RESUME:
+        bPlaying=true;
+        break;
+      case CMX_ABORTED:
+      case CMX_DONE:
+      case CMX_PAUSE:
+      case CMX_FAILURE:
+        bPlaying=false;
+        break;
+      case CMX_FLUSHED:
+        QTV_MSG( QTVDIAG_AUDIO_TASK, "Recieved CMX_FLUSHED");
+        if(pAudioMgr && pThis)
+        {
+          pThis->requestQ.InvalidateDataRequests();
+        }
+        QCUtils::EnterCritSect(&ImageChangeCS);
+	if(pThis)
+	{
+           pThis->image_swap = true;
+	   pThis->no_flush = true;
+	}
+        rex_leave_crit_sect(&ImageChangeCS);
+        break;
+    }
+
+    if (pAudioMgr && pThis)
+    {
+      // Provide command response to audio thread.
+      pThis->CallbackResponse(status, pThis->playResponse);
+    }
+
+    // Catch callback status updates.
+    switch (status)
+    {
+    case CMX_DATA_ACCESS_DELAY:
+        QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "Data Access Delay/EOF/EOS?");
+
+      #ifdef FEATURE_QTV_WINDOWS_MEDIA
+        if( pAudioMgr
+           && ((pAudioMgr->GetAudioCodecType()== Media::WMA_CODEC)
+           #ifdef FEATURE_QTV_WMA_PRO_DSP_DECODER
+            ||(pAudioMgr->GetAudioCodecType()== Media::WMA_PRO_CODEC)
+            ||(pAudioMgr->GetAudioCodecType()== Media::WMA_PRO_PLUS_CODEC)
+           #endif /* FEATURE_QTV_WMA_PRO_DSP_DECODER */
+               ) && (pAudioMgr->isStartOfDummyBytes()) )
+        {
+          //We have already started sending DUMMY bytes and when we get
+          //DATA_ACCESS_DELAY from CMX, we won't be getting any more data request
+          //so we may not be able to send all of the dummy bytes.In this case,
+          //audio will be aborted with audio device starved error.
+          //We should indicate Media::DATA_END in sucs case;
+          pAudioMgr->SetMediaStatus(Media::DATA_END);
+        }
+        else if ( pAudioMgr && (pAudioMgr->GetAudioCodecType()== Media::WMA_CODEC) )
+        {
+          //Reset data lead calculation if we are throttling currently and
+          //we receive DATA ACCESS DELAY, which means CMX is out of data
+          QTV_MSG_PRIO(QTVDIAG_AUDIO_TASK, QTVDIAG_PRIO_ERROR, "Calling pAudioMgr->ResetThrottling()");
+      #ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES
+          pAudioMgr->ResetThrottling();
+      #endif
+        }
+      #endif
+#ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES
+      if( (pAudioMgr)                                        &&
+          (pAudioMgr->GetAudioCodecType()!= Media::WMA_CODEC)&&
+          (AudioMgr::IS_BYTE_BASED_AVSYNC_SUPPORTED(pAudioMgr->GetAudioCodecType()))  )
+        {
+          //Reset data lead calculation if we are throttling currently and
+          //we receive DATA ACCESS DELAY, which means CMX is out of data
+          QTV_MSG_PRIO(QTVDIAG_AUDIO_TASK, QTVDIAG_PRIO_ERROR, "Calling pAudioMgr->ResetThrottling()");
+          pAudioMgr->ResetThrottling();
+        }
+#endif//#ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES
+
+        // this means cmx is out of data.
+        if (pAudioMgr && pThis && pThis->pNotify)
+        {
+          (pThis->pNotify)(Common::NOTIFY_DELAY, pThis->m_pClientData, NULL);
+        }
+        break;
+
+    case CMX_DONE:
+        //we'll get this if we provided a data byte count
+        //when we started up and all bytes have been played.
+        if (pAudioMgr && pThis && pThis->pNotify)
+        {
+          (pThis->pNotify)(Common::NOTIFY_DONE, pThis->m_pClientData, NULL);
+        }
+        break;
+
+    case CMX_ERROR:
+    case CMX_FAILURE:
+
+     if (pAudioMgr && pThis && pThis->pNotify)
+     {
+       (pThis->pNotify)(Common::NOTIFY_ERROR, pThis->m_pClientData, NULL);
+     }
+     break;
+
+    case CMX_ABORTED:
+
+     switch(server_data->abort_status)
+     {
+       case CMX_ABORT_STATUS_CLIENT_ABORT:
+         break;
+
+       case CMX_ABORT_STATUS_DATA_ACCESS_ERR:
+       case CMX_ABORT_STATUS_DATA_ERR:
+       case CMX_ABORT_STATUS_REASON_UNKNOWN:
+       case CMX_ABORT_STATUS_RESOURCE_ERR:
+       case CMX_ABORT_STATUS_PREEMPTED:
+         if (pAudioMgr && pThis && pThis->pNotify)
+         {
+           (pThis->pNotify)(Common::NOTIFY_ERROR, pThis->m_pClientData, NULL);
+         }
+       }
+     }
+}
+/* ======================================================================
+FUNCTION
   AudioCMX::PlayCallback
 
 DESCRIPTION
@@ -2345,6 +2651,16 @@ void AudioCMX::PlayCallback(
 )
 {
     AudioCMX * pThis = (AudioCMX *)client_data;
+    /*
+       Sometimes in rapid start stop scenarios, CMX takes more time than
+       the timeout of 1s and QTV deletes the AudioCMX instance. By the time
+       we get this callback, QTV might have a new AudioCMX instance for new
+       playback.If we ignore this callback, CMX can proceed with new playback
+    */
+    if (pAudioMgr && pThis != pAudioMgr->pAudioCMX)
+    {
+       return;
+    }
 
 #ifdef SHOW_CMX_DEBUG_INFO
     QTV_MSG( QTVDIAG_AUDIO_TASK, "CMX play callback"); ShowStatus(status);
@@ -2365,10 +2681,18 @@ void AudioCMX::PlayCallback(
         break;
       case CMX_FLUSHED:
         // Invalidate queued data requests.
+        QTV_MSG( QTVDIAG_AUDIO_TASK, "Recieved CMX_FLUSHED");
         if(pAudioMgr && pThis)
         {
         pThis->requestQ.InvalidateDataRequests();
         }
+        QCUtils::EnterCritSect(&ImageChangeCS);
+	if (pThis)
+	{
+           pThis->image_swap = true;
+	   pThis->no_flush = true;
+	}
+        rex_leave_crit_sect(&ImageChangeCS);
         break;
     }
 
@@ -2382,45 +2706,45 @@ void AudioCMX::PlayCallback(
     switch (status)
     {
     case CMX_DATA_ACCESS_DELAY:
-        QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "Data Access Delay/EOF/EOS?");        
-        
-      #ifdef FEATURE_QTV_WINDOWS_MEDIA       
-        if( pAudioMgr 
+        QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "Data Access Delay/EOF/EOS?");
+
+      #ifdef FEATURE_QTV_WINDOWS_MEDIA
+        if( pAudioMgr
            && ((pAudioMgr->GetAudioCodecType()== Media::WMA_CODEC)
-           #ifdef FEATURE_QTV_WMA_PRO_DSP_DECODER       
+           #ifdef FEATURE_QTV_WMA_PRO_DSP_DECODER
             ||(pAudioMgr->GetAudioCodecType()== Media::WMA_PRO_CODEC)
             ||(pAudioMgr->GetAudioCodecType()== Media::WMA_PRO_PLUS_CODEC)
            #endif /* FEATURE_QTV_WMA_PRO_DSP_DECODER */
                ) && (pAudioMgr->isStartOfDummyBytes()) )
-        {                            
-          //We have already started sending DUMMY bytes and when we get 
+        {
+          //We have already started sending DUMMY bytes and when we get
           //DATA_ACCESS_DELAY from CMX, we won't be getting any more data request
           //so we may not be able to send all of the dummy bytes.In this case,
-          //audio will be aborted with audio device starved error.              
-          //We should indicate Media::DATA_END in sucs case;  
-          pAudioMgr->SetMediaStatus(Media::DATA_END);                       
+          //audio will be aborted with audio device starved error.
+          //We should indicate Media::DATA_END in sucs case;
+          pAudioMgr->SetMediaStatus(Media::DATA_END);
         }
         else if ( pAudioMgr && (pAudioMgr->GetAudioCodecType()== Media::WMA_CODEC) )
         {
           //Reset data lead calculation if we are throttling currently and
-          //we receive DATA ACCESS DELAY, which means CMX is out of data            
+          //we receive DATA ACCESS DELAY, which means CMX is out of data
           QTV_MSG_PRIO(QTVDIAG_AUDIO_TASK, QTVDIAG_PRIO_ERROR, "Calling pAudioMgr->ResetThrottling()");
       #ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES
           pAudioMgr->ResetThrottling();
-      #endif    
-        }          
       #endif
-#ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES         
-      if( (pAudioMgr)                                        && 
+        }
+      #endif
+#ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES
+      if( (pAudioMgr)                                        &&
           (pAudioMgr->GetAudioCodecType()!= Media::WMA_CODEC)&&
           (AudioMgr::IS_BYTE_BASED_AVSYNC_SUPPORTED(pAudioMgr->GetAudioCodecType()))  )
         {
           //Reset data lead calculation if we are throttling currently and
-          //we receive DATA ACCESS DELAY, which means CMX is out of data            
+          //we receive DATA ACCESS DELAY, which means CMX is out of data
           QTV_MSG_PRIO(QTVDIAG_AUDIO_TASK, QTVDIAG_PRIO_ERROR, "Calling pAudioMgr->ResetThrottling()");
           pAudioMgr->ResetThrottling();
-        }          
-#endif//#ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES 
+        }
+#endif//#ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES
 
         // this means cmx is out of data.
         if (pAudioMgr && pThis && pThis->pNotify)
@@ -2449,7 +2773,7 @@ void AudioCMX::PlayCallback(
     }
 }
 
-#ifdef FEATURE_QTV_GENERIC_AUDIO_FORMAT    			
+#ifdef FEATURE_QTV_GENERIC_AUDIO_FORMAT
 /* ======================================================================
 FUNCTION
   AudioCMX::setAudioSpec
@@ -2470,17 +2794,17 @@ SIDE EFFECTS
 void AudioCMX::setAudioSpec(cmx_af_audio_spec_type * psd)
 {
 
-  /* 
-     If user presses Start/Stop button rapidly, in some cases AudioManger object might 
+  /*
+     If user presses Start/Stop button rapidly, in some cases AudioManger object might
      be deleted before we receive response from CMX so check whether pAudioMgr is still
-     valid or not.If it's already deleted then simply ignore the reponse 
+     valid or not.If it's already deleted then simply ignore the reponse
    */
   if( pAudioMgr )
   {
     if (CMX_AF_FILE_MP3 == psd->file_type)
     {
       cmx_af_mp3_spec_type *  pc = (cmx_af_mp3_spec_type *)psd;
-      pAudioMgr->audioInfo.nVersion = (int)pc->version;		
+      pAudioMgr->audioInfo.nVersion = (int)pc->version;
       pAudioMgr->audioInfo.nBitRate = (uint32)pc->bitrate;
       pAudioMgr->audioInfo.nChannels = (byte)pc->channel;
       // Convert the sample rate...
@@ -2499,7 +2823,7 @@ void AudioCMX::setAudioSpec(cmx_af_audio_spec_type * psd)
 #endif // defined(FEATURE_STEREO_DAC)
         case CMX_AF_MP3_SAMPLE_RATE_UNKNOWN: // fall thru...
         default:
-          pAudioMgr->audioInfo.nSamplingRate = 0; 
+          pAudioMgr->audioInfo.nSamplingRate = 0;
           break;
       }
     }
@@ -2556,7 +2880,7 @@ void AudioCMX::setAudioSpec(cmx_af_audio_spec_type * psd)
     {
       /* Here we need to set all the parameters that we received from CMX
          based on the requirement we can add more */
-    }  
+    }
     pAudioMgr->SetAudioSpec();
   }
 }
@@ -2594,14 +2918,14 @@ void AudioCMX::genericPlayCallback(
 #ifdef SHOW_CMX_DEBUG_INFO
   QTV_MSG( QTVDIAG_AUDIO_TASK, "CMX play callback"); ShowStatus(status);
 #endif
-  
+
   //catch state changes.
   switch(status)
   {
     case CMX_SUCCESS:
     case CMX_RESUME:
       bPlaying=true;
-      break;		  
+      break;
     case CMX_ABORTED:
     case CMX_DONE:
     case CMX_PAUSE:
@@ -2622,37 +2946,37 @@ void AudioCMX::genericPlayCallback(
         }
       break;
   }
-  
+
   if (pAudioMgr && pThis)
   {
     // Provide command response to audio thread.
     pThis->CallbackResponse(status, pThis->playResponse);
   }
-  
+
   // Catch callback status updates.
   switch (status)
   {
     case CMX_DATA_ACCESS_DELAY:
-      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "Data Access Delay/EOF/EOS?");        
-#ifdef FEATURE_QTV_WINDOWS_MEDIA       
+      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "Data Access Delay/EOF/EOS?");
+#ifdef FEATURE_QTV_WINDOWS_MEDIA
     if( pAudioMgr && (pAudioMgr->GetAudioCodecType()== (int)Media::WMA_CODEC) && (pAudioMgr->isStartOfDummyBytes()) )
-    {                            
-      //We have already started sending DUMMY bytes and when we get 
+    {
+      //We have already started sending DUMMY bytes and when we get
       //DATA_ACCESS_DELAY from CMX, we won't be getting any more data request
       //so we may not be able to send all of the dummy bytes.In this case,
-      //audio will be aborted with audio device starved error.              
-      //We should indicate Media::DATA_END in sucs case;  
-      pAudioMgr->SetMediaStatus(Media::DATA_END);                       
+      //audio will be aborted with audio device starved error.
+      //We should indicate Media::DATA_END in sucs case;
+      pAudioMgr->SetMediaStatus(Media::DATA_END);
     }
     else if ( pAudioMgr && (pAudioMgr->GetAudioCodecType()== (int)Media::WMA_CODEC) )
     {
       //Reset data lead calculation if we are throttling currently and
-      //we receive DATA ACCESS DELAY, which means CMX is out of data            
+      //we receive DATA ACCESS DELAY, which means CMX is out of data
       QTV_MSG_PRIO(QTVDIAG_AUDIO_TASK, QTVDIAG_PRIO_ERROR, "Calling pAudioMgr->ResetThrottling()");
       #ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES
       pAudioMgr->ResetThrottling();
-      #endif 
-    }          
+      #endif
+    }
 #endif
     // this means cmx is out of data.
     if (pAudioMgr && pThis && pThis->pNotify)
@@ -2660,7 +2984,7 @@ void AudioCMX::genericPlayCallback(
       (pThis->pNotify)(Common::NOTIFY_DELAY, pThis->m_pClientData, NULL);
     }
     break;
-  
+
   case CMX_DONE:
     //we'll get this if we provided a data byte count
     //when we started up and all bytes have been played.
@@ -2669,11 +2993,11 @@ void AudioCMX::genericPlayCallback(
       (pThis->pNotify)(Common::NOTIFY_DONE, pThis->m_pClientData, NULL);
     }
     break;
-  
-  case CMX_AUDIO_SPEC:   
+
+  case CMX_AUDIO_SPEC:
     setAudioSpec((cmx_af_audio_spec_type *)server_data);
     break;
-  
+
   case CMX_ERROR:
   case CMX_FAILURE:
   case CMX_ABORTED:
@@ -2749,11 +3073,11 @@ void AudioCMX::DataRequestCallback(
       {
         (pThis->pNotify)(Common::NOTIFY_ERROR, pThis->m_pClientData, NULL);
       }
-      /* This is to give the data to CMX even the audio player is in the paused state 
+      /* This is to give the data to CMX even the audio player is in the paused state
          to fix the repositioning issue in generic audio formats*/
 
       if( (!bPlaying) &&
-          (( pThis->_codec == Media::NONMP4_MP3_CODEC) || 
+          (( pThis->_codec == Media::NONMP4_MP3_CODEC) ||
           (pThis->_codec == Media::NONMP4_AAC_CODEC) ||
           (pThis->_codec == Media::NONMP4_AMR_CODEC) ||
           (pThis->_codec == Media::QCP_CODEC)))
@@ -2785,17 +3109,17 @@ void AudioCMX::DataRequestCallback(
             else
             {
               //Audio was not sent.
-              QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, "Info:No audio sent on polling: nWaitMsec(%d)",nWaitMsec);      
+              QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, "Info:No audio sent on polling: nWaitMsec(%d)",nWaitMsec);
             }
           }
           else
-          {       
+          {
             /*
              * Audio thread polls for DATA_REQUEST every REQUEST_POLL_TIME_MSEC milliseconds.
              * For ARM based decoder,we need to provide the data in strict timely manner
-             * otherwise, it leads to glitches.This is because the the audio data duration sent to CMX 
+             * otherwise, it leads to glitches.This is because the the audio data duration sent to CMX
              * is typically smaller than REQUEST_POLL_TIME_MSEC.
-             * Reducing REQUEST_POLL_TIME_MSEC does not help either as 
+             * Reducing REQUEST_POLL_TIME_MSEC does not help either as
              * audio keeps waking too frequently which kind of puts additional overhead.
              * So, we need to wake audio thread immediately as soon as CMX requests DATA.
              */
@@ -2810,7 +3134,7 @@ void AudioCMX::DataRequestCallback(
                */
                if(nLead <= 0)
                {
-                 (pThis->pNotify)(Common::NOTIFY_INITIATE_IMMEDIATE_DATA_DELIVERY, pThis->m_pClientData, NULL);            
+                 (pThis->pNotify)(Common::NOTIFY_INITIATE_IMMEDIATE_DATA_DELIVERY, pThis->m_pClientData, NULL);
                }
             }
          }
@@ -2889,6 +3213,8 @@ void AudioCMX::CleanupPlay()
     QTV_MSG1( QTVDIAG_AUDIO_TASK, "...nReturned %d",stats.nReturned);
     QTV_MSG1( QTVDIAG_AUDIO_TASK, "...nAnswered %d",stats.nAnswered);
 #endif
+  QCUtils::DinitCritSect(&cmxDataCS);
+  QCUtils::DinitCritSect(&ImageChangeCS);
 }
 
 /* ======================================================================
@@ -2913,39 +3239,41 @@ AudioCMX::AudioCMX(Media::CodecType codec) :
 m_canAcceptDataRequests( UNSAFE_TO_ACCEPT_DATA_REQS ),
 _codec(codec)
 {
-	nAudioIFBufferSizeMsec=800;
-	nAudioIFMaxAheadMsec=0;
-	nAudioIFMaxBehindMsec=10000;
-	pNotify = NULL;
+     nAudioIFBufferSizeMsec=800;
+     nAudioIFMaxAheadMsec=0;
+     nAudioIFMaxBehindMsec=10000;
+     pNotify = NULL;
 
 #ifdef FEATURE_QTV_DUAL_MONO_OUTPUT_SELECTION
   /* Default setting for dual mono output */
   m_dualMonoOutput = Common::DUAL_MONO_OUTPUT_MAIN_TO_L_AND_R;
 #endif /* FEATURE_QTV_DUAL_MONO_OUTPUT_SELECTION */
 
-    rex_init_crit_sect( &cmxDataCS);
-#if(defined FEATURE_QTV_CMX_AV_SYNC || defined FEATURE_QTV_CMX_AV_SYNC_BYTES)  
-	memset(&cmx_av_sync,0,sizeof(cmx_av_sync_type));
+    QCUtils::InitCritSect( &cmxDataCS);
+    QCUtils::InitCritSect( &ImageChangeCS);
+#if(defined FEATURE_QTV_CMX_AV_SYNC || defined FEATURE_QTV_CMX_AV_SYNC_BYTES)
+     memset(&cmx_av_sync,0,sizeof(cmx_av_sync_type));
     #ifdef FEATURE_QTV_EXTENDED_CMX_API
       // Initialize Extended AV Sync configuration object
       memset(&m_aacADTSAVSync,0,sizeof(m_aacADTSAVSync));
     #endif
-#endif 
-	memset(&handle,0,sizeof(cmx_handle_type ));
-	memset(&cmx_codec,0,sizeof(cmx_codec_spec_type));
+#endif
+     memset(&handle,0,sizeof(cmx_handle_type ));
+     memset(&cmx_codec,0,sizeof(cmx_codec_spec_type));
   #ifdef FEATURE_QTV_EXTENDED_CMX_API
     // Initialize Extended configuration objects
     memset(&m_aacADTSSpec,0,sizeof(m_aacADTSSpec));
   #endif
-	memset(&aac_spec,0,sizeof(cmx_af_aac_spec_type));
-	memset(&stopResponse,0,sizeof(CmxResponse));
-	memset(&pauseResponse,0,sizeof(CmxResponse));
-	memset(&playResponse,0,sizeof(CmxResponse));
-	memset(&resumeResponse,0,sizeof(CmxResponse));
-	memset(&flushResponse,0,sizeof(CmxResponse));
-	memset(&currentRequest,0,sizeof( AudioRequestQ::DataRequest));
-	memset(&stats,0,sizeof(Stats ));
-
+     memset(&aac_spec,0,sizeof(cmx_af_aac_spec_type));
+     memset(&stopResponse,0,sizeof(CmxResponse));
+     memset(&pauseResponse,0,sizeof(CmxResponse));
+     memset(&playResponse,0,sizeof(CmxResponse));
+     memset(&resumeResponse,0,sizeof(CmxResponse));
+     memset(&flushResponse,0,sizeof(CmxResponse));
+     memset(&currentRequest,0,sizeof( AudioRequestQ::DataRequest));
+     memset(&stats,0,sizeof(Stats ));
+     image_swap = false;
+     no_flush = false;
 #ifdef FEATURE_QTV_GENERIC_BCAST_PCR
 #error code not present
 #endif /* FEATURE_QTV_GENERIC_BCAST_PCR */
@@ -2971,7 +3299,7 @@ SIDE EFFECTS
 ========================================================================== */
 cmx_af_sample_rate_enum_type AudioCMX::TranslateSampleRateForCMX(uint32 SampleRate)
 {
-  cmx_af_sample_rate_enum_type cmxSampleRate;  
+  cmx_af_sample_rate_enum_type cmxSampleRate;
   switch(SampleRate)
   {
     case 8000:
@@ -3001,7 +3329,7 @@ cmx_af_sample_rate_enum_type AudioCMX::TranslateSampleRateForCMX(uint32 SampleRa
     case 32000:
       cmxSampleRate = CMX_AF_SAMPLE_RATE_32000;
       break;
- 
+
     case 44100:
       cmxSampleRate = CMX_AF_SAMPLE_RATE_44100;
       break;
@@ -3044,16 +3372,17 @@ PARAMETERS:
     The desired dual mono output configuration.
 
 RETURN VALUE:
-  bool 
+  bool
     TRUE if configuration was set successfully, FALSE otherwise.
 ========================================================================== */
 bool AudioCMX::SetDualMonoOutput(Common::DualMonoOutputType dualMonoOutput)
 {
-  QTV_MSG1(QTVDIAG_AUDIO_TASK, 
+  QTV_MSG1(QTVDIAG_AUDIO_TASK,
            "Audio CMX SetDualMonoOutput %d", dualMonoOutput);
 
   bool bRet = true;
   cmx_audio_playback_cmd_param_type cmxPlaybackCmdParam;
+  rex_timer_type cmx_dual_mono_sync_timer;
 
   /* Save the new setting */
   m_dualMonoOutput = dualMonoOutput;
@@ -3061,7 +3390,7 @@ bool AudioCMX::SetDualMonoOutput(Common::DualMonoOutputType dualMonoOutput)
   /* Send the command to CMX only if we're playing */
   if (bPlaying)
   {
-    cmxPlaybackCmdParam.dm_mode_cmd.chan_mode = 
+    cmxPlaybackCmdParam.dm_mode_cmd.chan_mode =
       MapCommonDMTypeToCMXDMType(m_dualMonoOutput);
 
     /* Init response */
@@ -3069,23 +3398,24 @@ bool AudioCMX::SetDualMonoOutput(Common::DualMonoOutputType dualMonoOutput)
     dualMonoOutputResponse.callerTcb = rex_self();
 
     /* Init the sync event timer */
-    rex_def_timer( &cmx_sync_timer, rex_self(), CMX_SYNC_EVENT_TIMER_SIG );
-
+    rex_def_timer( &cmx_dual_mono_sync_timer, rex_self(), CMX_SYNC_EVENT_TIMER_SIG );
+#ifndef FEATURE_WINCE
     cmx_audio_playback_control_ex(CMX_AUDIO_PB_CMD_DUAL_MONO_MODE,
                                   &cmxPlaybackCmdParam,
-                                  DualMonoOutputCallback, 
+                                  DualMonoOutputCallback,
                                   (void *)this);
+#endif
 
     /* Wait on response */
-    if(rex_timed_wait((CMX_SYNC_EVENT_SIG|CMX_SYNC_EVENT_TIMER_SIG), &cmx_sync_timer, COMMON_CMX_RESPONSE_TIMEOUT_MSEC)
+    if(rex_timed_wait((CMX_SYNC_EVENT_SIG|CMX_SYNC_EVENT_TIMER_SIG), &cmx_dual_mono_sync_timer, COMMON_CMX_RESPONSE_TIMEOUT_MSEC)
      & CMX_SYNC_EVENT_SIG)
     {
       (void)rex_clr_sigs(rex_self(), CMX_SYNC_EVENT_SIG);
-      (void)rex_clr_timer(&cmx_sync_timer);
+      (void)rex_clr_timer(&cmx_dual_mono_sync_timer);
 
       if (!dualMonoOutputResponse.bSuccess)
       {
-        QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, 
+        QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,
                      "Audio CMX SetDualMonoOutput failed");
 
         bRet = false;
@@ -3095,14 +3425,14 @@ bool AudioCMX::SetDualMonoOutput(Common::DualMonoOutputType dualMonoOutput)
     {
       (void)rex_clr_sigs(rex_self(), CMX_SYNC_EVENT_TIMER_SIG);
 
-      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, 
+      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,
                    "Audio CMX SetDualMonoOutput timed out");
 
       bRet = false;
     }
   }
 
-  QTV_MSG1(QTVDIAG_AUDIO_TASK, 
+  QTV_MSG1(QTVDIAG_AUDIO_TASK,
            "Audio CMX SetDualMonoOutput returns %d", bRet);
 
   return bRet;
@@ -3122,7 +3452,7 @@ PARAMETERS:
     Client data.
 
 RETURN VALUE:
-  None. 
+  None.
 ========================================================================== */
 void AudioCMX::DualMonoOutputCallback(
   cmx_status_type    status,
@@ -3131,7 +3461,7 @@ void AudioCMX::DualMonoOutputCallback(
 {
   AudioCMX * pThis = (AudioCMX *)client_data;
 
-  QTV_MSG( QTVDIAG_AUDIO_TASK, "CMX DualMonoOutput callback"); 
+  QTV_MSG( QTVDIAG_AUDIO_TASK, "CMX DualMonoOutput callback");
 #ifdef SHOW_CMX_DEBUG_INFO
   ShowStatus(status);
 #endif /* SHOW_CMX_DEBUG_INFO */
@@ -3155,7 +3485,7 @@ PARAMETERS:
     The desired dual mono output configuration.
 
 RETURN VALUE:
-  cmx_af_dual_mono_mode_enum_type 
+  cmx_af_dual_mono_mode_enum_type
     The mapped dual mono output.
 ========================================================================== */
 cmx_af_dual_mono_mode_enum_type AudioCMX::MapCommonDMTypeToCMXDMType(
@@ -3167,7 +3497,7 @@ cmx_af_dual_mono_mode_enum_type AudioCMX::MapCommonDMTypeToCMXDMType(
   {
     case Common::DUAL_MONO_OUTPUT_MAIN_TO_L_AND_R:
     {
-      mappedDualMonoOutput = CMX_AF_DUAL_MONO_MODE_FL_FR; 
+      mappedDualMonoOutput = CMX_AF_DUAL_MONO_MODE_FL_FR;
       break;
     }
 
@@ -3179,19 +3509,19 @@ cmx_af_dual_mono_mode_enum_type AudioCMX::MapCommonDMTypeToCMXDMType(
 
     case Common::DUAL_MONO_OUTPUT_MAIN_TO_L_SUB_TO_R:
     {
-      mappedDualMonoOutput = CMX_AF_DUAL_MONO_MODE_FL_SR; 
+      mappedDualMonoOutput = CMX_AF_DUAL_MONO_MODE_FL_SR;
       break;
     }
 
     case Common::DUAL_MONO_OUTPUT_SUB_TO_L_MAIN_TO_R:
     {
-      mappedDualMonoOutput = CMX_AF_DUAL_MONO_MODE_SL_FR; 
+      mappedDualMonoOutput = CMX_AF_DUAL_MONO_MODE_SL_FR;
       break;
     }
 
-    default: 
+    default:
     {
-      mappedDualMonoOutput = CMX_AF_DUAL_MONO_MODE_FL_FR; 
+      mappedDualMonoOutput = CMX_AF_DUAL_MONO_MODE_FL_FR;
       break;
     }
   } /* switch (dualMonoOutput) */
@@ -3210,3 +3540,5 @@ bool AudioCMX::isAudioOnlyLocalPlayback()
   return false;
 }
 #endif
+
+

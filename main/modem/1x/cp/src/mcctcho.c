@@ -137,7 +137,7 @@ EXTERNALIZED FUNCTIONS
 
 INITIALIZATION AND SEQUENCING REQUIREMENTS
 
-Copyright (c) 1990-2005 by QUALCOMM, Incorporated.  All Rights Reserved.
+Copyright (c) 1990-2010 by QUALCOMM, Incorporated.  All Rights Reserved.
 
 *====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*/
 
@@ -149,10 +149,11 @@ This section contains comments describing changes made to the module.
 Notice that changes are listed in reverse chronological order.
 
 $PVCSPath: L:/src/asw/MSM5100/CP_REL_A/vcs/mcctcho.c_v   1.43   03 Oct 2002 10:51:10   phosabet  $
-$Header: //source/qcom/qct/modem/1x/cp/rel/1h08/src/mcctcho.c#2 $ $DateTime: 2009/06/02 00:23:21 $ $Author: anishg $
+$Header: //source/qcom/qct/modem/1x/cp/rel/1h08/src/mcctcho.c#3 $ $DateTime: 2010/11/09 07:33:32 $ $Author: sshahi $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+11/04/10   ssh     Added processing of SMCM with use_time as TRUE.
 06/01/09   ag      Support to display network parameters on UI
 05/13/09   pk      Fixing compiler warnings
 04/22/09   pk      Changed IS2OOO_SCH to IS2000_SCH 
@@ -5607,10 +5608,6 @@ void mcctcho_process_srch_cf_nset_rpt
   }
  
 } /* mcctcho_process_srch_cf_nset_rpt */
-
-#ifdef FEATURE_ACP
-#error code not present
-#endif /* FEATURE_ACP */
 
 #ifdef FEATURE_GPS_MODE
 #error code not present

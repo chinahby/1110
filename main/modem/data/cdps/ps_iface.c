@@ -13,7 +13,7 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS
   In order to use the functions defined in this module it is important that
   the interface data structure be "created" using the create() function.
 
-Copyright (c) 2002-2008 QUALCOMM Incorporated. 
+Copyright (c) 2002-2011 QUALCOMM Incorporated. 
 All Rights Reserved.
 Qualcomm Confidential and Proprietary
 *====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*/
@@ -23,10 +23,11 @@ Qualcomm Confidential and Proprietary
                             EDIT HISTORY FOR FILE
 
   $PVCSPath: L:/src/asw/MM_DATA/vcs/ps_iface.c_v   1.27   24 Feb 2003 10:55:32   ubabbar  $
-  $Header: //source/qcom/qct/modem/data/cdps/ps/main/lite/src/ps_iface.c#2 $ $DateTime: 2008/06/27 15:37:54 $ $Author: praveenp $
+  $Header: //source/qcom/qct/modem/data/cdps/ps/main/lite/src/ps_iface.c#3 $ $DateTime: 2011/02/24 23:31:53 $ $Author: msankar $
 
 when        who    what, where, why
 --------    ---    ----------------------------------------------------------
+02/25/11    ms     Ported support for MOBILE_IP_DEREG feature.
 06/17/08    pp     Fixed RVCT compiler warnings.
 07/29/03    ss     Changed ps_iface_sdb_status_handler() to call the upper
                    layer handler through a function pointer
@@ -2272,7 +2273,9 @@ int ps_iface_tx_cmd
     If the interface is ROUTEABLE or UP call the TX function
   -------------------------------------------------------------------------*/
   if(ps_iface_state(this_iface_ptr) == IFACE_UP       ||
-     ps_iface_state(this_iface_ptr) == IFACE_ROUTEABLE)
+     ps_iface_state(this_iface_ptr) == IFACE_ROUTEABLE ||
+     ps_iface_state(this_iface_ptr) == IFACE_GOING_DOWN
+    )
   {
     PS_BRANCH_TASKFREE();
     return tx_cmd(this_iface_ptr,

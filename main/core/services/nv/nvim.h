@@ -10,7 +10,7 @@ DESCRIPTION
   lookup of mapping between an NV item and the Flash File System files
   which simulate storage in an EEPROM.
   
-Copyright (c) 2008 by QUALCOMM, Incorporated.
+Copyright (c) 2010 by QUALCOMM, Incorporated.
 All Rights Reserved.
 Qualcomm Confidential and Proprietary
 
@@ -21,7 +21,7 @@ Qualcomm Confidential and Proprietary
 
                       EDIT HISTORY FOR FILE
 
-$Header: //depot/asic/msmshared/services/nv1/nvim.h#6 $ $DateTime: 2008/06/17 12:21:51 $ $Author: pratapc $
+$Header: //depot/asic/msmshared/services/nv1/orphans/1.0/nvim.h#1 $ $DateTime: 2010/08/04 19:51:06 $ $Author: pratapc $
   
 This section contains comments describing changes made to this file.
 Notice that changes are listed in reverse chronological order.
@@ -47,6 +47,7 @@ when       who     what, where, why
 #include "nvi.h"                 
 #include "fs.h"                  /* for fs_ types */
 #include "nv_items.h"
+#include "nvdiag.h"
 
 #if !defined(NV_LOCK)
 #define NV_LOCK

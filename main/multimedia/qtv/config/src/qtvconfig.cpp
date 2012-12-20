@@ -13,9 +13,9 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/config/main/latest/src/qtvconfig.cpp#13 $
-$DateTime: 2008/12/16 10:11:43 $
-$Change: 806362 $
+$Header: //source/qcom/qct/multimedia/qtv/config/main/latest/src/qtvconfig.cpp#32 $
+$DateTime: 2010/11/09 04:48:52 $
+$Change: 1509879 $
 
 ========================================================================== */
 
@@ -72,7 +72,6 @@ $Change: 806362 $
 #define DEFAULT_NETWORK_ABORT_DELAY (DEFAULT_RTSP_TEARDOWN_TIMEOUT + DEFAULT_TCP_CLOSE_TIMEOUT + 400)
 
 #ifdef FEATURE_QTV_WINDOWS_MEDIA
-#define DEFAULT_FAST_START_MAX_BANDWIDTH_PERCENT 90
 #define DEFAULT_MAX_WM_BITRATE 384000
 
 #ifdef FEATURE_QTV_WM_SERVER_SIDE_PLAYLIST
@@ -88,6 +87,8 @@ $Change: 806362 $
 
 #define DEFAULT_RTCP_RR_INTERVAL  -1 
 #define DEFAULT_STREAMING_VIDEO_MIN_PREROLL 1000
+
+#define DEFAULT_WM_FAST_RECONNECT_ATTEMPS  2
 
 /* -----------------------------------------------------------------------
 ** Type Declarations
@@ -181,7 +182,6 @@ bool QtvConfig::SetQTVConfigItem(QtvConfigItemId item_id, int32 value)
     case QTVCONFIG_USE_INTERLEAVED_TCP_FOR_WM:
     case QTVCONFIG_WM_FAST_START_MAX_BW_PERCENT:
 #endif /* FEATURE_QTV_WINDOWS_MEDIA */
-    case QTVCONFIG_DATA_INACTIVITY_TIME_OUT: 
     case QTVCONFIG_RTSP_OPTIONS_KEEPALIVE_ENABLED :
 #ifdef FEATURE_QTV_RTCP_KEEP_ALIVE  
     case QTVCONFIG_RTCP_KEEP_ALIVE_ENABLED:
@@ -222,6 +222,19 @@ bool QtvConfig::SetQTVConfigItem(QtvConfigItemId item_id, int32 value)
 #error code not present
 #endif /* FEATURE_QTV_AUDIO_DISCONTINUITY */
     case QTVCONFIG_MAX_FRAME_DROPS_TO_IFRAME: 
+    case QTVCONFIG_WRITE_STATS_TO_FILE:
+    case QTVCONFIG_RTSP_LINK_CHAR_ENABLE:
+    case QTVCONFIG_AUTO_FALLBACK_OVER_TCP:
+    case QTVCONFIG_ENABLE_WM_FAST_RECONNECT:
+    case QTVCONFIG_WM_FAST_RECONNECT_MAX_ATTEMPTS:
+    case QTVCONFIG_RTP_MIN_BUFF_TIME:
+    case QTVCONFIG_RTP_MAX_BUFF_TIME:
+    case QTVCONFIG_USE_INTERLEAVED_TCP_FOR_3GP:    
+    case QTVCONFIG_VIDEO_ADUIO_VOICE_MIXING:
+    case QTVCONFIG_ACCEPT_SERVER_ANNOUNCED_CLIENT_PORTS:    
+    case QTVCONFIG_DISABLE_PIPELINING_FOR_FIREWALL_PROBE_ENABLED:
+    case QTVCONFIG_ENABLE_PIPELINING_FOR_SDP_PLAYBACK:
+    case QTVCONFIG_ENABLE_PIPELINING_FOR_STREAMING:
       if (value < 0)
       {
          return false;
@@ -269,6 +282,13 @@ bool QtvConfig::SetQTVConfigItem(QtvConfigItemId item_id, int32 value)
        break;
 #endif
 
+    case QTVCONFIG_ENABLEVIDEO_AT_KEY_FRAME:
+       if (value < 0 || value > 1)
+       {
+         return false;
+       }
+       break;
+
     case QTVCONFIG_DROP_PACKET_PATTERN:
     // Can be NULL or a pointer value.
     case QTVCONFIG_MAX_RTCP_BW_PERCENTAGE:
@@ -279,6 +299,9 @@ bool QtvConfig::SetQTVConfigItem(QtvConfigItemId item_id, int32 value)
     case QTVCONFIG_STREAMING_REBUFFER_PREROLL:
     case QTVCONFIG_STREAMING_VIDEO_MIN_PREROLL:
     case QTVCONFIG_STREAMING_MIN_BUFFER_DURATION:
+#ifdef FEATURE_QTV_STREAM_RECORD
+    case QTVCONFIG_STREAM_RECORD_DEC_BUF_DURATION:
+#endif
     case QTVCONFIG_STREAMING_AUDIO_CMX_THRESHOLD:
     case QTVCONFIG_TREAT_RESUME_AS_SEEK_FOR_MCAST_OR_LIVESTREAM :
     case QTVCONFIG_TCP_NODELAY_FOR_RTSP:
@@ -298,12 +321,14 @@ bool QtvConfig::SetQTVConfigItem(QtvConfigItemId item_id, int32 value)
     case QTVCONFIG_GENERIC_VIDEO_RENDERING_QUALITY:
     case QTVCONFIG_ENABLE_SEI_FOR_SINGLE_NAL_DROP:
     case QTVCONFIG_ENABLE_BRAZIL_SPECIFIC_H264_VUI_PARAM_TYPE:
+#ifdef FEATURE_QTV_FCS
+#error code not present
+#endif 
       break;
 
 #ifdef FEATURE_QTV_ENCRYPTED_STREAMS 
     case QTVCONFIG_SESSION_ID:
       return SetSessionID((SessionIDType*)value);
-      break;
 #endif /*FEATURE_QTV_ENCRYPTED_STREAMS*/
 #ifdef FEATURE_QTV_STREAM_RECORD
     case QTVCONFIG_STREAM_RECORD_USE_PREALLOC_BUFFER:
@@ -311,6 +336,17 @@ bool QtvConfig::SetQTVConfigItem(QtvConfigItemId item_id, int32 value)
 #endif
     case QTVCONFIG_MEDIAPLAYER_ROOT_PATH:
       return SetMediaPlayerRootPath((char *)value);
+#ifdef FEATURE_QTV_FCS
+#error code not present
+#endif
+    case QTVCONFIG_HTTP_FILE_SAVE_TO_EFS_PATH:
+      return SetHTTPPDRootPath((char *)value);
+    case QTVCONFIG_DATA_INACTIVITY_TIME_OUT: 
+    if (value <= 0)
+    {
+      return false;
+    } 
+    break;
     default:
     return false;
   }
@@ -337,6 +373,7 @@ SIDE EFFECTS
 
 QtvConfig::QtvConfig(const char *configFile)
 {
+   memset(http_pd_root_path,0,sizeof(http_pd_root_path));
    Reset(configFile);
    PrintValues();
 }
@@ -365,6 +402,7 @@ void QtvConfig::Reset(const char *configFile)
    ResetHardCodedValues();
    ReadItemsFromNV(); /*lint !e534*/
    ReadItemsFromConfigFile(configFile); /*lint !e534*/
+   ReadItemsFromConfigFile(DEFAULT_QTVCONFIG_INI_FILENAME); /*read data from qtv_config.ini*/
 }
 
 
@@ -443,6 +481,7 @@ void QtvConfig::ResetHardCodedValues()
     config_items[QTVCONFIG_NETWORK_ABORT_DELAY] =
        DEFAULT_NETWORK_ABORT_DELAY;
     config_items[QTVCONFIG_ABORT_ON_MISSING_OPTIONS_RESPONSE] =  0;
+	config_items[QTVCONFIG_WRITE_STATS_TO_FILE] = 0;
 
 #ifdef FEATURE_QTV_WINDOWS_MEDIA
     config_items[QTVCONFIG_USE_INTERLEAVED_TCP_FOR_WM] =  0;
@@ -497,6 +536,9 @@ void QtvConfig::ResetHardCodedValues()
     config_items[QTVCONFIG_STREAMING_REBUFFER_PREROLL] = -1;
     config_items[QTVCONFIG_STREAMING_VIDEO_MIN_PREROLL] = 
                                          DEFAULT_STREAMING_VIDEO_MIN_PREROLL;
+#ifdef FEATURE_QTV_STREAM_RECORD
+    config_items[QTVCONFIG_STREAM_RECORD_DEC_BUF_DURATION] = -1;
+#endif
     config_items[QTVCONFIG_DEFAULT_RTSP_MESSAGE_TIMEOUT] = DEFAULT_TIMEOUT;
     config_items[QTVCONFIG_STREAMING_MIN_BUFFER_DURATION] = -1;
     config_items[QTVCONFIG_STREAMING_AUDIO_CMX_THRESHOLD] = 0;  
@@ -505,7 +547,7 @@ void QtvConfig::ResetHardCodedValues()
     config_items[QTVCONFIG_STREAM_SILENCE_INSERTION_ENABLED] = true;
     config_items[QTVCONFIG_IGNORE_TIAS_BANDWITH] = false;
     config_items[QTVCONFIG_ENABLED_RATE_ADAPTATION] =true; 
-    config_items[QTVCONFIG_QTV_RTSP_OPTIONS_FIRST] = false;
+    config_items[QTVCONFIG_QTV_RTSP_OPTIONS_FIRST] = true;
 #ifdef FEATURE_QTV_PLAYLIST
     config_items[QTVCONFIG_PLAY_DURING_SKIP] = 0;
 #endif /* FEATURE_QTV_PLAYLIST */
@@ -555,7 +597,26 @@ void QtvConfig::ResetHardCodedValues()
 #else
     config_items[QTVCONFIG_ENABLE_QFRE] = false;
 #endif
+
+    config_items[QTVCONFIG_ENABLEVIDEO_AT_KEY_FRAME] = false;
+
     config_items[QTVCONFIG_MAX_FRAME_DROPS_TO_IFRAME] = 4;
+#ifdef FEATURE_QTV_FCS
+#error code not present
+#endif
+    config_items[QTVCONFIG_RTSP_LINK_CHAR_ENABLE] = false;
+    config_items[QTVCONFIG_ENABLE_WM_FAST_RECONNECT] = false;
+    config_items[QTVCONFIG_WM_FAST_RECONNECT_MAX_ATTEMPTS] = DEFAULT_WM_FAST_RECONNECT_ATTEMPS; 
+    config_items[QTVCONFIG_USE_INTERLEAVED_TCP_FOR_3GP] = false;
+    config_items[QTVCONFIG_RTP_MIN_BUFF_TIME] = DEFAULT_RTP_MIN_BUFFER_DURATION;
+    config_items[QTVCONFIG_RTP_MAX_BUFF_TIME] = DEFAULT_RTP_MAX_BUFFER_DURATION;
+    config_items[QTVCONFIG_VIDEO_ADUIO_VOICE_MIXING] = 0;   
+    config_items[QTVCONFIG_ACCEPT_SERVER_ANNOUNCED_CLIENT_PORTS] = false;
+    config_items[QTVCONFIG_DISABLE_PIPELINING_FOR_FIREWALL_PROBE_ENABLED] = false;
+    config_items[QTVCONFIG_ENABLE_PIPELINING_FOR_STREAMING] = false;
+    config_items[QTVCONFIG_ENABLE_PIPELINING_FOR_SDP_PLAYBACK] = -1;
+    config_items[QTVCONFIG_HTTP_FILE_SAVE_TO_EFS_PATH] = (int32)&http_pd_root_path;
+    config_items[QTVCONFIG_AUTO_FALLBACK_OVER_TCP] = false; 
 }
 
 /* ======================================================================
@@ -702,4 +763,40 @@ bool QtvConfig::SetMediaPlayerRootPath(char* value)
    return true;
 }
 
+
+bool QtvConfig::SetProbeURL(ProbeURLType* value)
+{
+    //First element of the value is length
+    //Second Element of the value is the address of the byte array
+    bool result = true;
+
+    if(!value || value->length == 0)
+    {
+     return false;
+    }
+
+    if (value->length <= QTV_MAX_PROBE_URN_LEN)
+    {
+      probeURL.length = value->length;
+      memcpy(probeURL.URL, value->URL, value->length);
+    }
+    else
+    {
+      result = false;
+    }
+
+    return result;
+}
+
+
+bool QtvConfig::SetHTTPPDRootPath(char* value)
+{ 
+   if(NULL != value)
+   {
+     std_strlcpy(http_pd_root_path,(char*)value, sizeof(http_pd_root_path));
+     return true;
+   }
+   return false;
+  
+}
 

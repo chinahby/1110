@@ -16,9 +16,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/utils/f3/main/latest/inc/qtv_msg.h#1 $
-$DateTime: 2008/05/08 11:03:24 $
-$Change: 656211 $
+$Header: //source/qcom/qct/multimedia/qtv/utils/f3/main/latest/inc/qtv_msg.h#3 $
+$DateTime: 2009/10/27 04:20:28 $
+$Change: 1065213 $
 
 
 ========================================================================== */
@@ -40,11 +40,16 @@ extern "C" {
 #include "customer.h"
 #include "qtvInternalDefs.h"
 #include "msg.h"
-
+#ifdef FEATURE_WINCE
+#error code not present
+#endif
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
+#ifdef FEATURE_WINCE
+#error code not present
+#endif // #ifdef FEATURE_WINCE
 /* ==========================================================================
 
                         DATA DECLARATIONS
@@ -535,7 +540,7 @@ extern "C" {
 #else
 
 /* Macros for Qtv Diagnostic messages 2.0*/
-
+#ifndef FEATURE_WINCE
 #define QTV_MSG(xx_ss_mask, xx_fmt) \
   do { \
     /*lint -e506 -e774*/ \
@@ -549,12 +554,16 @@ extern "C" {
   /*lint -e717 */ \
   } while (0) \
                /* lint +e717 */
+#else
+#error code not present
+#endif /* NOT FEATURE_WINCE */               
 
 #define QTV_MSG_PRIO(xx_ss_mask, xx_prio, xx_fmt) QTV_MSG(xx_ss_mask, xx_fmt) 
 
 /*---------------------------------------------------------------------------
   Macro for messages with 1 parameter.
 ---------------------------------------------------------------------------*/
+#ifndef FEATURE_WINCE
 #define QTV_MSG1(xx_ss_mask, xx_fmt, xx_arg1) \
   do { \
     /*lint -e506 -e774*/ \
@@ -569,11 +578,15 @@ extern "C" {
   } while (0) \
                /* lint +e717 */
 
+#else
+#error code not present
+#endif /* NOT FEATURE_WINCE */
 #define QTV_MSG_PRIO1(xx_ss_mask, xx_prio, xx_fmt, xx_arg1) QTV_MSG1(xx_ss_mask, xx_fmt, xx_arg1) 
 
 /*---------------------------------------------------------------------------
   Macro for messages with 2 parameters.
 ---------------------------------------------------------------------------*/
+#ifndef FEATURE_WINCE
 #define QTV_MSG2(xx_ss_mask, xx_fmt, xx_arg1, xx_arg2) \
   do { \
     /*lint -e506 -e774*/ \
@@ -587,11 +600,15 @@ extern "C" {
   /*lint -e717 */ \
   } while (0) \
                /* lint +e717 */
+#else
+#error code not present
+#endif /* NOT FEATURE_WINCE */
 #define QTV_MSG_PRIO2(xx_ss_mask, xx_prio, xx_fmt, xx_arg1, xx_arg2) QTV_MSG2(xx_ss_mask, xx_fmt, xx_arg1, xx_arg2) 
 
 /*---------------------------------------------------------------------------
   This is the macro for messages with 3 parameters.
 ---------------------------------------------------------------------------*/
+#ifndef FEATURE_WINCE
 #define QTV_MSG3(xx_ss_mask, xx_fmt, xx_arg1, xx_arg2, xx_arg3) \
   do { \
     /*lint -e506 -e774*/ \
@@ -606,7 +623,9 @@ extern "C" {
   /*lint -e717 */ \
   } while (0) \
                /* lint +e717 */
-
+#else
+#error code not present
+#endif /* NOT FEATURE_WINCE */
 #define QTV_MSG_PRIO3(xx_ss_mask, xx_prio, xx_fmt, xx_arg1, xx_arg2, xx_arg3) \
   QTV_MSG3(xx_ss_mask, xx_fmt, xx_arg1, xx_arg2, xx_arg3) 
 
@@ -616,6 +635,7 @@ extern "C" {
   function call.  So for this case the  msg_send_var() uses var arg list 
   supported by the compiler.
 ---------------------------------------------------------------------------*/
+#ifndef FEATURE_WINCE
 #define QTV_MSG4(xx_ss_mask, xx_fmt, xx_arg1, xx_arg2, xx_arg3, \
                                             xx_arg4) \
   do { \
@@ -631,7 +651,9 @@ extern "C" {
   /*lint -e717 */ \
   } while (0) \
                /* lint +e717 */
-
+#else
+#error code not present
+#endif /* NOT FEATURE_WINCE */
 #define QTV_MSG_PRIO4(xx_ss_mask, xx_prio, xx_fmt, xx_arg1, xx_arg2, xx_arg3, xx_arg4) \
   QTV_MSG4(xx_ss_mask, xx_fmt, xx_arg1, xx_arg2, xx_arg3, xx_arg4) 
 
@@ -639,6 +661,7 @@ extern "C" {
   This is the macro for messages with 5 parameters. msg_send_var() uses var 
   arg list supported by the compiler.
 ---------------------------------------------------------------------------*/
+#ifndef FEATURE_WINCE
 #define QTV_MSG5(xx_ss_mask, xx_fmt, xx_arg1, xx_arg2, xx_arg3, \
                                             xx_arg4, xx_arg5) \
   do { \
@@ -655,6 +678,9 @@ extern "C" {
   /*lint -e717 */ \
   } while (0) \
                /* lint +e717 */
+#else
+#error code not present
+#endif /* NOT FEATURE_WINCE */
 
 #define QTV_MSG_PRIO5(xx_ss_mask, xx_prio, xx_fmt, xx_arg1, xx_arg2, xx_arg3, xx_arg4, xx_arg5) \
   QTV_MSG5(xx_ss_mask, xx_fmt, xx_arg1, xx_arg2, xx_arg3, xx_arg4, xx_arg5) 
@@ -663,6 +689,7 @@ extern "C" {
   This is the macro for messages with 6 parameters. msg_send_var() uses var 
   arg list supported by the compiler.
 ---------------------------------------------------------------------------*/
+#ifndef FEATURE_WINCE
 #define QTV_MSG6(xx_ss_mask, xx_fmt, xx_arg1, xx_arg2, xx_arg3, \
                                             xx_arg4, xx_arg5, xx_arg6) \
   do { \
@@ -679,7 +706,9 @@ extern "C" {
   /*lint -e717 */ \
   } while (0) \
                /* lint +e717 */
-
+#else
+#error code not present
+#endif /* NOT FEATURE_WINCE */
 #define QTV_MSG_PRIO6(xx_ss_mask, xx_prio, xx_fmt, xx_arg1, xx_arg2, xx_arg3, xx_arg4, xx_arg5, xx_arg6) \
   QTV_MSG6(xx_ss_mask, xx_fmt, xx_arg1, xx_arg2, xx_arg3, xx_arg4, xx_arg5, xx_arg6) 
 
@@ -687,6 +716,7 @@ extern "C" {
   This is the macro for messages with 7 parameters. msg_send_var() uses var 
   arg list supported by the compiler.
 ---------------------------------------------------------------------------*/
+#ifndef FEATURE_WINCE
 #define QTV_MSG7(xx_ss_mask, xx_fmt, xx_arg1, xx_arg2, xx_arg3, \
                                             xx_arg4, xx_arg5, xx_arg6, \
                                             xx_arg7) \
@@ -706,6 +736,9 @@ extern "C" {
   } while (0)                                                             \
                /* lint +e717 */
 
+#else
+#error code not present
+#endif /* NOT FEATURE_WINCE */
 #define QTV_MSG_PRIO7(xx_ss_mask, xx_prio, xx_fmt, xx_arg1, xx_arg2, xx_arg3, xx_arg4, xx_arg5, xx_arg6, xx_arg7) \
   QTV_MSG7(xx_ss_mask, xx_fmt, xx_arg1, xx_arg2, xx_arg3, xx_arg4, xx_arg5, xx_arg6, xx_arg7) 
 
@@ -713,6 +746,7 @@ extern "C" {
   This is the macro for messages with 8 parameters. msg_send_var() uses var 
   arg list supported by the compiler.
 ---------------------------------------------------------------------------*/
+#ifndef FEATURE_WINCE
 #define QTV_MSG8(xx_ss_mask, xx_fmt, xx_arg1, xx_arg2, xx_arg3, \
                                             xx_arg4, xx_arg5, xx_arg6, \
                                             xx_arg7, xx_arg8) \
@@ -731,6 +765,9 @@ extern "C" {
   /*lint -e717 */ \
   } while (0) \
                /* lint +e717 */
+#else
+#error code not present
+#endif /* FEATURE_WINCE */
 
 #define QTV_MSG_PRIO8(xx_ss_mask, xx_prio, xx_fmt, xx_arg1, xx_arg2, xx_arg3, xx_arg4, xx_arg5, xx_arg6, xx_arg7, xx_arg8) \
   QTV_MSG8(xx_ss_mask, xx_fmt, xx_arg1, xx_arg2, xx_arg3, xx_arg4, xx_arg5, xx_arg6, xx_arg7, xx_arg8) 
@@ -739,6 +776,7 @@ extern "C" {
   This is the macro for messages with 9 parameters. msg_send_var() uses var 
   arg list supported by the compiler.
 ---------------------------------------------------------------------------*/
+#ifndef FEATURE_WINCE
 #define QTV_MSG9(xx_ss_mask, xx_fmt, xx_arg1, xx_arg2, xx_arg3, \
                                             xx_arg4, xx_arg5, xx_arg6, \
                                             xx_arg7, xx_arg8, xx_arg9) \
@@ -758,6 +796,9 @@ extern "C" {
   /*lint -e717 */ \
   } while (0) \
                /* lint +e717 */
+#else
+#error code not present
+#endif /* FEATURE_WINCE */
 
 #define QTV_MSG_PRIO9(xx_ss_mask, xx_prio, xx_fmt, xx_arg1, xx_arg2, xx_arg3, xx_arg4, xx_arg5, xx_arg6, xx_arg7, xx_arg8, xx_arg9) \
   QTV_MSG9(xx_ss_mask, xx_fmt, xx_arg1, xx_arg2, xx_arg3, xx_arg4, xx_arg5, xx_arg6, xx_arg7, xx_arg8, xx_arg9) 
@@ -767,6 +808,7 @@ extern "C" {
   uses var arg list supported by the compiler.This Macro is used when xx_fmt
   is passed as a literal.
 ---------------------------------------------------------------------------*/
+#ifndef FEATURE_WINCE
 #define QTV_MSG_SPRINTF_1(xx_ss_mask, xx_fmt, xx_arg1) \
   do { \
     /*lint -e506 -e774*/ \
@@ -780,7 +822,9 @@ extern "C" {
   /*lint -e717 */ \
   } while (0) \
                /* lint +e717 */
-
+#else
+#error code not present
+#endif /* NOT FEATURE_WINCE */
 #define QTV_MSG_SPRINTF_PRIO_1(xx_ss_mask, xx_prio, xx_fmt, xx_arg1) \
    QTV_MSG_SPRINTF_1(xx_ss_mask, xx_fmt, xx_arg1) 
 
@@ -789,6 +833,7 @@ extern "C" {
   uses var arg list supported by the compiler.This Macro is used when xx_fmt
   is passed as a literal.
 ---------------------------------------------------------------------------*/
+#ifndef FEATURE_WINCE
 #define QTV_MSG_SPRINTF_2(xx_ss_mask, xx_fmt, xx_arg1, xx_arg2) \
   do { \
     /*lint -e506 -e774*/ \
@@ -803,6 +848,9 @@ extern "C" {
   /*lint -e717 */ \
   } while (0) \
                /* lint +e717 */
+#else
+#error code not present
+#endif /* NOT FEATURE_WINCE */
 #define QTV_MSG_SPRINTF_PRIO_2(xx_ss_mask, xx_prio, xx_fmt, xx_arg1, xx_arg2) \
    QTV_MSG_SPRINTF_2(xx_ss_mask, xx_fmt, xx_arg1, xx_arg2) 
 
@@ -811,6 +859,7 @@ extern "C" {
   uses var arg list supported by the compiler.This Macro is used when xx_fmt
   is passed as a literal.
 ---------------------------------------------------------------------------*/
+#ifndef FEATURE_WINCE
 #define QTV_MSG_SPRINTF_3(xx_ss_mask, xx_fmt, xx_arg1, xx_arg2, xx_arg3) \
   do { \
     /*lint -e506 -e774*/ \
@@ -825,7 +874,9 @@ extern "C" {
   /*lint -e717 */ \
   } while (0) \
                /* lint +e717 */
-
+#else
+#error code not present
+#endif /* FEATURE_WINCE */
 #define QTV_MSG_SPRINTF_PRIO_3(xx_ss_mask, xx_prio, xx_fmt, xx_arg1, xx_arg2, xx_arg3) \
    QTV_MSG_SPRINTF_3(xx_ss_mask, xx_fmt, xx_arg1, xx_arg2, xx_arg3) 
 
@@ -834,6 +885,7 @@ extern "C" {
   uses var arg list supported by the compiler.This Macro is used when xx_fmt
   is passed as a literal.
 ---------------------------------------------------------------------------*/
+#ifndef FEATURE_WINCE
 #define QTV_MSG_SPRINTF_4(xx_ss_mask, xx_fmt, xx_arg1, xx_arg2, xx_arg3, xx_arg4) \
   do { \
     /*lint -e506 -e774*/ \
@@ -849,7 +901,9 @@ extern "C" {
   /*lint -e717 */ \
   } while (0) \
                /* lint +e717 */
-
+#else
+#error code not present
+#endif /* NOT FEATURE_WINCE */
 #define QTV_MSG_SPRINTF_PRIO_4(xx_ss_mask, xx_prio, xx_fmt, xx_arg1, xx_arg2, xx_arg3, xx_arg4) \
    QTV_MSG_SPRINTF_4(xx_ss_mask, xx_fmt, xx_arg1, xx_arg2, xx_arg3, xx_arg4) 
 
@@ -858,6 +912,7 @@ extern "C" {
   uses var arg list supported by the compiler.This Macro is used when xx_fmt
   is passed as a literal.
 ---------------------------------------------------------------------------*/
+#ifndef FEATURE_WINCE
 #define QTV_MSG_SPRINTF_5(xx_ss_mask, xx_fmt, xx_arg1, xx_arg2, xx_arg3, xx_arg4, xx_arg5) \
   do { \
     /*lint -e506 -e774*/ \
@@ -873,7 +928,9 @@ extern "C" {
   /*lint -e717 */ \
   } while (0) \
                /* lint +e717 */
-
+#else
+#error code not present
+#endif /* NOT FEATURE_WINCE */
 #define QTV_MSG_SPRINTF_PRIO_5(xx_ss_mask, xx_prio, xx_fmt, xx_arg1, xx_arg2, xx_arg3, xx_arg4, xx_arg5) \
    QTV_MSG_SPRINTF_5(xx_ss_mask, xx_fmt, xx_arg1, xx_arg2, xx_arg3, xx_arg4, xx_arg5) 
 
@@ -881,6 +938,7 @@ extern "C" {
   This is the macro for sprintf messages with 3 parameters. This Macro is 
   used when xx_fmt is passed at runtime.
 ---------------------------------------------------------------------------*/
+#ifndef FEATURE_WINCE
 #define QTV_MSG_SPRINTF_FMT_VAR_3(xx_ss_mask, xx_fmt, xx_arg1, xx_arg2, xx_arg3) \
   do { \
     /*lint -e506 -e774*/ \
@@ -895,6 +953,9 @@ extern "C" {
   /*lint -e717 */ \
   } while (0)
 
+#else
+#error code not present
+#endif /* NOT FEATURE_WINCE */
 #define QTV_MSG_SPRINTF_FMT_VAR_PRIO_3(xx_ss_mask, xx_prio, xx_fmt, xx_arg1, xx_arg2, xx_arg3) QTV_MSG_SPRINTF_FMT_VAR_3(xx_ss_mask, xx_fmt, xx_arg1, xx_arg2, xx_arg3)
 
 /* QTV Message Priorities (not used) */
@@ -958,3 +1019,4 @@ we need to limit our argument as well to 100 so that it won't crash*/
 ** ======================================================================= */
 
 #endif  /* QTV_MSG_H */
+

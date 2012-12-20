@@ -5,7 +5,7 @@
 DESCRIPTION
   Configuration for AVS
 
-  Copyright (c) 2007 by QUALCOMM Incorporated. All Rights Reserved.
+  Copyright (c) 2011 by QUALCOMM Incorporated. All Rights Reserved.
 ===========================================================================*/
 
 
@@ -16,10 +16,11 @@ DESCRIPTION
   This section contains comments describing changes made to the module.
   Notice that changes are listed in reverse chronological order.
 
-$Header: //source/qcom/qct/multimedia/audio/6k/build/cust/main/latest/inc/custavs.h#14 $ $DateTime: 2009/06/01 06:09:07 $ $Author: nrchella $
+$Header: //source/qcom/qct/multimedia/audio/6k/build/cust/main/latest/inc/custavs.h#15 $ $DateTime: 2011/02/08 06:22:14 $ $Author: shravb $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+02/08/11   sb      Enabled FEATURE_LOCAL_DTMF_TX_VOICE
 06/01/09   nr      AMR NB disbaled for ULC Low Tier builds.
 05/05/09   knm     Defined FEATURE_ULC_WARMUP_DELAY macro for ULC
 02/21/09   sj      Added FEATURE_AVS_QCAM_COMBO_VOC_INTERFACE feature for
@@ -55,6 +56,8 @@ when       who     what, where, why
 #define FEATURE_AVS_NEXTGEN_EC
 
 #define FEATURE_PCM_PKT_LOG
+
+#define FEATURE_LOCAL_DTMF_TX_VOICE
 
 /* Enable the vocoder PCM interfaces */
 #define FEATURE_VOC_PCM_INTERFACE

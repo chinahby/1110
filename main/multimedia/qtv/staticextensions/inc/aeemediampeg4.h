@@ -29,9 +29,9 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS:  Not Applicable
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/staticextensions/main/latest/inc/aeemediampeg4.h#7 $
-$DateTime: 2008/12/21 22:01:10 $
-$Change: 809822 $
+$Header: //source/qcom/qct/multimedia/qtv/staticextensions/main/latest/inc/aeemediampeg4.h#17 $
+$DateTime: 2010/11/09 04:48:52 $
+$Change: 1509879 $
 
 
 ========================================================================== */
@@ -113,8 +113,16 @@ $Change: 809822 $
 #define MM_MP4_STATUS_DRM_PLAYBACK_GENERAL_ERROR       (MM_STATUS_USER_BASE+45)  // General DRM error
 #define MM_MP4_STATUS_CONSUME_RENTAL_VIEW_CONFIRMATION (MM_STATUS_USER_BASE+46)  // Confirmation needed before consuming play count
 #define MM_MP4_STATUS_PAUSED_SUSPENDED                 (MM_STATUS_USER_BASE+47)  // Qtv is suspended due to incoming call
-#define MM_MP4_STATUS_GENERIC_TTEXT                    (MM_STATUS_USER_BASE+48) 																				 // 
-
+#define MM_MP4_STATUS_GENERIC_TTEXT                    (MM_STATUS_USER_BASE+48) 		
+#define MM_MP4_STATUS_FCS_DONE                         (MM_STATUS_USER_BASE+49)  // FCS playback done status for the current clip	
+#define MM_MP4_STATUS_FCS_SWITCHING                    (MM_STATUS_USER_BASE+50) // FCS switching to new clip is in progress																	 // 
+#define MM_MP4_STATUS_CLIPINFO_DIMENSION_READY	       (MM_STATUS_USER_BASE+51) //Valid Height and width of clip
+#define MM_MP4_STATUS_TRACKLIST_CODEC_CHECK_DONE       (MM_STATUS_USER_BASE+52)  // tracklist check for supporting the mime type
+#define MM_MP4_STATUS_RECONNECT_SUCCESS                (MM_STATUS_USER_BASE+53)   // reconnect succeeded 
+#define MM_MP4_STATUS_RECONNECT_FAILED                 (MM_STATUS_USER_BASE+54)   // reconnect failed
+#define MM_MP4_STATUS_RECONNECT_IN_PROGRESS            (MM_STATUS_USER_BASE+55)   // reconnect is in progress
+#define MM_MP4_STATUS_FCS_SWITCH_SUPPORTED             (MM_STATUS_USER_BASE+56)   //FCS switching supported
+#define MM_MP4_STATUS_RECONNECTING_USING_TCP_INTERLEAVE (MM_STATUS_USER_BASE+57)  //reconnecting using tcp interleaving																		 
 //
 // MP4 only parameters 
 //
@@ -310,15 +318,13 @@ $Change: 809822 $
 // HTTP Download Free the buffer 
 #define MM_MP4_PARAM_HTTP_FREE_DOWNLOAD_BUFFER (MM_PARM_USER_BASE + 64)
 
-// HTTP Download Callback registering
+// DRM Callback registering
 // Callback to get data size
-#define MM_MP4_PARAM_HTTP_REGISTER_CALLBACK_BUFFER_DATA_SIZE (MM_PARM_USER_BASE + 65)
-
+#define MM_MP4_PARAM_REGISTER_DRM_CALLBACK_BUFFER_DATA_SIZE (MM_PARM_USER_BASE + 65)
 // Callback to get data buffer                           
-#define MM_MP4_PARAM_HTTP_REGISTER_CALLBACK_BUFFER_DATA (MM_PARM_USER_BASE + 66)
-
+#define MM_MP4_PARAM_REGISTER_DRM_CALLBACK_BUFFER_DATA (MM_PARM_USER_BASE + 66)
 // Callback to figure if MIME is supported or not                              
-#define MM_MP4_PARAM_HTTP_REGISTER_CALLBACK_BUFFER_SUPPORTED_TYPE (MM_PARM_USER_BASE + 67)
+#define MM_MP4_PARAM_REGISTER_DRM_CALLBACK_BUFFER_SUPPORTED_TYPE (MM_PARM_USER_BASE + 67)
 
 
 // HTTP Download Dir path to save downloaded file
@@ -406,6 +412,9 @@ $Change: 809822 $
 // be sent to Qtv for playback
 #define MM_MP4_PARM_DRM_DECRYPTION          (MM_PARM_USER_BASE + 95)           
 
+#define MM_MP4_PARM_FCS_PROBE              (MM_PARM_USER_BASE + 96) 
+#define MM_MP4_PARM_FCS_SWITCH             (MM_PARM_USER_BASE + 97) 
+
 // p1= pointer to AEEMFDecryptKey struct (QTV threats it as void pointer), p2=size
 // SKA - special case, please do not change
 #define MM_MP4_PARM_DECRYPT_KEY         (MM_PARM_USER_BASE + 200)
@@ -426,6 +435,14 @@ $Change: 809822 $
 //p2 = Indicate MAX size allocated. 
 //When P1 is NULL, Code length is returned in P2
 #define MM_MP4_PARM_DRM_REG_CODE            (MM_PARM_BASE + 204)  
+
+
+// Callback registering for PULL mode replay
+// Callback to get data size
+#define MM_MP4_PARAM_REGISTER_CALLBACK_BUFFER_DATA_SIZE (MM_PARM_USER_BASE + 205)
+// Callback to get data buffer                           
+#define MM_MP4_PARAM_REGISTER_CALLBACK_BUFFER_DATA      (MM_PARM_USER_BASE + 206)
+
 
 /* these values are only for baclward compatibility. Now uses should use the
    new values in AEEMediaMpeg4.h */
@@ -599,7 +616,8 @@ typedef enum AEEMediaMP4CodecType
   ,MM_MPEG4_AAC_CODEC
   ,MM_MPEG4_GSM_AMR_CODEC
   ,MM_MPEG4_MPEG4_CODEC
-  ,MM_MPEG4_H263_CODEC 
+  ,MM_MPEG4_H263_CODEC
+  ,MM_MPEG4_DIVX311_CODEC 
   ,MM_MPEG4_STILL_IMAGE_CODEC
   ,MM_MPEG4_TIMED_TEXT_CODEC
   ,MM_MPEG4_MP3_CODEC
@@ -619,6 +637,8 @@ typedef enum AEEMediaMP4CodecType
   ,MM_MPEG4_RV40_CODEC
   ,MM_MPEG4_EVRC_NB_CODEC
   ,MM_MPEG4_EVRC_WB_CODEC
+  ,MM_AVI_AC3_CODEC
+  ,MM_PCM_CODEC
 } AEEMediaMP4CodecType;
 
 
@@ -634,6 +654,7 @@ typedef enum AEEQtvTrackType
   ,TRACK_VIDEO_H263_2000  /* H.263 video         */
   ,TRACK_VIDEO_H264       /* H.264 video         */
   ,TRACK_3GPP_TIMED_TEXT  /* 3GPP Timed Text     */
+  ,TRACK_GENERIC_TEXT
   ,TRACK_WM_AUDIO         /* Windows Media Audio */
   ,TRACK_WM1_VIDEO        /* Windows Media Video 7 */
   ,TRACK_WM2_VIDEO        /* Windows Media Video 8 */
@@ -1050,6 +1071,21 @@ typedef struct AEEMediaDataWithQoS
 
 } AEEMediaDataWithQoS; 
 
+
+//AEEFetchBufferedDataSizeT Function Prototype Callback Function
+// pUserData, user's data
+// nDataSize, data size
+// pbEndOfData,  this should be TRUE if entire data available in the buffer
+typedef void (*AEEFetchBufferedDataSizeT)(void* pUserData, uint32* nDataSize, boolean* pbEndOfData);
+
+//AEEFetchBufferedDataT Function Prototype Callback Function
+// pUserData, user's data
+// dataBuf, to be filled with data
+// readSize, size of the buffer
+// readPos, read pos
+typedef uint32 (*AEEFetchBufferedDataT)(void* pUserData, void* pDataBuf, uint32 nReadSize, uint32 nReadPos);
+
+
 /* Reference function for implementing media with QoS settings */
 int AEEMediaUtil_CreateQoSMedia(IShell * ps,
                                 AEEMediaDataWithQoS * pmd,
@@ -1449,6 +1485,51 @@ MM_MP4_PARM_DRM_DECRYPTION
 IMEDIA_SetMediaParm()
 
 =============================================================================================
+AEEFetchBufferedDataSizeT
+
+Description:
+PULL mode replay prototype callback function for retrieving data size
+
+Definition:
+typedef void (*AEEFetchBufferedDataSizeT)(void* pUserData, uint32* nDataSize, boolean* pbEndOfData);
+
+ 
+Members:
+    pUserData: pointer to user's private data
+    nDataSize: data size
+    pbEndOfData: set to true if nDataSize indicates file size
+
+Comments:
+This function is registered by setting MM_MP4_PARAM_REGISTER_CALLBACK_BUFFER_DATA_SIZE.
+
+See Also:
+MM_MP4_PARAM_REGISTER_CALLBACK_BUFFER_DATA_SIZE
+IMEDIA_SetMediaParm()
+
+=============================================================================================
+AEEFetchBufferedDataT
+
+Description:
+PULL mode replay prototype callback function for retrieving data
+
+Definition:
+typedef uint32 (*AEEFetchBufferedDataT)(void* pUserData, void* pDataBuf, uint32 nReadSize, uint32 nReadPos);
+
+ 
+Members:
+    pUserData: pointer to user's private data
+    pDataBuf: point to data buffer
+    nReadSize: requested read size
+    nReadPos: starting position
+
+Comments:
+This function is registered by setting MM_MP4_PARAM_REGISTER_CALLBACK_BUFFER_DATA.
+
+See Also:
+MM_MP4_PARAM_REGISTER_CALLBACK_BUFFER_DATA
+IMEDIA_SetMediaParm()
+
+=============================================================================================
 
 MP4 Control Parameters (MM_MP4_PARM_XXX)
 
@@ -1497,6 +1578,16 @@ Set:  Registers the DRM decryption callback function. QTV will call this functio
       p1 = pointer to OEM layer DRM decryption callback function
       p2 = pointer to client data provided by OEM when registering callback
 
+MM_MP4_PARAM_REGISTER_CALLBACK_BUFFER_DATA_SIZE
+Set:  Register callback function for PULL mode replay to retrieve data size
+      p1 = point to callback function
+      p2 = point to client data
+
+MM_MP4_PARAM_REGISTER_CALLBACK_BUFFER_DATA
+Set:  Register callback function for PULL mode replay to retrieve data
+      p1 = point to callback function
+      p2 = point to client data
+
 MM_MP4_PARM_BUFFER_UPDATE       - Indicate Buffering
 MM_MP4_PARM_CONNECT_UPDATE      - Indicate Connection Setup to user
 MM_MP4_PARM_PB_READY            - Indicate PB Ready
@@ -1525,6 +1616,10 @@ MM_MP4_PARM_VIDEO_FRAME_RATE_EX  - get Video Frame Rate, p1(output) = (* double)
 MM_MP4_PARM_VIDEO_AVERAGE_BIT_RATE - get Video Bit Rate, p1(output) = (* unsigned long), valid after MediaSpec is available
 MM_MP4_PARM_AUDIO_AVERAGE_BIT_RATE - get Audio Bit Rate, p1(output) = (* unsigned long), valid after MediaSpec is available
 MM_MP4_PARM_DRM_REG_CODE           - retrieve registration code,   p1(input/output)= (*char),p2(*int) = Specifying size allocated for p1.
+MM_MP4_PARAM_REGISTER_DRM_CALLBACK_BUFFER_DATA_SIZE - registers DRM callback for OEM to retrieve data size 
+MM_MP4_PARAM_REGISTER_DRM_CALLBACK_BUFFER_DATA - registers DRM callback for OEM to decrypt data 
+MM_MP4_PARAM_REGISTER_DRM_CALLBACK_BUFFER_SUPPORTED_TYPE - registers callback to determine if MIME is supported or not
+      
 
 ===================================================================== 
   INTERFACES   DOCUMENTATION

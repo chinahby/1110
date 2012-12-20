@@ -37,10 +37,11 @@ Copyright (c) 2001-2009 by QUALCOMM, Incorporated.  All Rights Reserved.
                         EDIT HISTORY FOR MODULE
 
 $PVCSPath: O:/src/asw/COMMON/vcs/uim.c_v   1.30   14 Oct 2002 10:39:42   ckrishna  $
-$Header: //source/qcom/qct/modem/uim/su/baselines/qsc1110/rel/3.3.65/uim/uimdrv/src/uim.c#4 $ $DateTime: 2010/02/09 01:36:21 $ $Author: bharathd $
+$Header: //source/qcom/qct/modem/uim/su/baselines/qsc1110/rel/3.3.65/uim/uimdrv/src/uim.c#5 $ $DateTime: 2011/03/09 23:17:08 $ $Author: sratnu $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+06/03/10   ssr     Added support for BCSMS service in cdma service table
 02/08/10   bd      Fixed POLLLING OFF issue
 12/22/09   yb      Fix for voltage class switching G.C.F. failure on ULC
 12/22/09   yb      1. Fix to avoid clock stop during recovery
@@ -4744,6 +4745,16 @@ uim_svc_table_return_type uim_return_cdma_svc_availabililty (
       {
         svc.allocated = TRUE;
         if (table[7] & UIM_CDMA_IPV6_ACTIVATED_MASK)
+          svc.activated = TRUE;
+      }
+      break;
+
+    case UIM_CDMA_SVC_BCSMS:
+      /* Check BCSMS service */
+      if ( table[3] & UIM_CDMA_SVC_BCSMS_ALLOCATED_MASK )
+      {
+        svc.allocated = TRUE;
+        if (table[3] & UIM_CDMA_SVC_BCSMS_ACTIVATED_MASK)
           svc.activated = TRUE;
       }
       break;

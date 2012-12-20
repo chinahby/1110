@@ -19,9 +19,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/player/videoplayer/main/latest/inc/video.h#18 $
-$DateTime: 2008/10/20 02:46:12 $
-$Change: 766080 $
+$Header: //source/qcom/qct/multimedia/qtv/player/videoplayer/main/latest/inc/video.h#21 $
+$DateTime: 2009/08/14 03:00:59 $
+$Change: 996932 $
 
 ========================================================================== */
 
@@ -123,6 +123,7 @@ public:
   virtual void TimingUpdate();
   virtual long GetElapsedTime();
   virtual void SetPlayTimes(long start,long stop);
+  virtual void set_last_frame_rendered_(const uint64& ts);
   
   virtual void UpdateStats(VideoDec::StatUpdateType action);
   // Flush all frames to be decoded and rendered. If render is true, render them as well.
@@ -188,7 +189,7 @@ public:
                    );
 
   virtual void StartRendering();
-
+  virtual void UpdateClipInfoDimensions(int height, int width);
   /////////////////////////
   // OS callbacks (must be public
   // though only used internally)
@@ -527,11 +528,15 @@ public:
   // A little utility function which handles all the bookkeeping commonly
   // associated with waking the renderer.
 
+#ifndef FEATURE_WINCE
   virtual void WakeRenderer( void );
+#endif
 
 #endif /* FEATURE_QTV_DISCARD_VIDEO_PLAYER */
 
+#ifndef FEATURE_WINCE
   qtv_vrend_class* m_pRenderer;
+#endif
 
 
   ///////////////////////////////////////////////////////////////////////////

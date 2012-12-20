@@ -25,7 +25,7 @@ Diversion contrary to U.S. law prohibited.
   This section contains comments describing changes made to the module.
   Notice that changes are listed in reverse chronological order.
 
-  $Header: //source/qcom/qct/modem/mmode/cm/rel/08H1/inc/sys_gw.h#1 $
+  $Header: //source/qcom/qct/modem/mmode/cm/rel/08H1_QSC1110_3.X/inc/sys_gw.h#1 $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------

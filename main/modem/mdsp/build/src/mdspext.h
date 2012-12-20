@@ -4,7 +4,7 @@
 /*
 WARNING: This file is auto-generated.
 
-Generated at:    Sat Apr 24 00:58:44 2010
+Generated at:    Fri Apr 29 05:59:57 2011
 Generated using: MSMSHARED_EXT_PARSER.00.11.00
 Generated from:
 
@@ -13,9 +13,9 @@ Configuration file:
    1478 04/09/2008 11:19:25 mdspext.cfg
 -------------------------------------------------------------------------------
 IMAGE[0] cdma
-  83964 06/15/2009 10:51:44 ..\..\cdma\bin\pedro_cdma.h
-  83964 06/15/2009 10:51:44 ..\..\cdma\bin\pedro_cdma.h
- 135044 06/15/2009 10:51:44 ..\..\cdma\bin\pedro_cdma.ext
+  84015 11/05/2010 17:00:32 ..\..\cdma\bin\pedro_cdma.h
+  84015 11/05/2010 17:00:32 ..\..\cdma\bin\pedro_cdma.h
+ 135059 11/05/2010 17:00:31 ..\..\cdma\bin\pedro_cdma.ext
 -------------------------------------------------------------------------------
 */
 
@@ -30,7 +30,7 @@ DESCRIPTION
 
 REFERENCES
 
-Copyright (c) 2010 by QUALCOMM, Incorporated.  All Rights Reserved.
+Copyright (c) 2011 by QUALCOMM, Incorporated.  All Rights Reserved.
 ===========================================================================*/
 
 /* <EJECT> */
@@ -184,10 +184,11 @@ extern const qdspext_data_type mdsp_data_table;
 #define MASK_microSrchCmd__SCHEDULE_SR_FLUSH             0x00001000
 #define MASK_microSrchCmd__SR_FLUSH                      0x00004000
 #define MDSP_CDMA_APP_PRESENT                            0x40000003
-#define MDSP_CDMA_BUILD_DATE                             0x0615
-#define MDSP_CDMA_BUILD_TIME                             0x1051
-#define MDSP_CDMA_BUILD_YEAR                             0x2009
+#define MDSP_CDMA_BUILD_DATE                             0x1105
+#define MDSP_CDMA_BUILD_TIME                             0x1637
+#define MDSP_CDMA_BUILD_YEAR                             0x2010
 #define MDSP_CDMA_FIRMWARE_VERSION                       0x0110
+#define MDSP_CDMA_FIRMWARE_VERSION_1                     0x0001
 #define MDSP_LOG_MAX_CHUNK_SIZE                          64
 #define MDSP_MC_APP_BT                                   2
 #define MDSP_MC_APP_CDMA1X                               0
@@ -1407,9 +1408,9 @@ extern const qdspext_data_type mdsp_data_table;
 ** Firmware image length in bytes.
 */
 #define MDSP_IMAGE_CDMA_DEFINED
-#define MDSP_IMAGE_CDMA_LENGTH 18634
+#define MDSP_IMAGE_CDMA_LENGTH 18628
 
-#define MDSP_IMAGE_ALL_LENGTH 18634
+#define MDSP_IMAGE_ALL_LENGTH 18628
 
 /* The MDSP firmware images */
 typedef enum

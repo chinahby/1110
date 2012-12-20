@@ -14,9 +14,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/player/playerif/main/latest/inc/qtvplayer.h#27 $
-$DateTime: 2008/11/04 19:43:15 $
-$Change: 777038 $
+$Header: //source/qcom/qct/multimedia/qtv/player/playerif/main/latest/inc/qtvplayer.h#53 $
+$DateTime: 2010/11/09 04:48:52 $
+$Change: 1509879 $
 
 ========================================================================== */
 
@@ -181,6 +181,7 @@ class DispatchThread;
 #define MP3_MIME_BUFFER_LENGTH            3
 #define AAC_MIME_BUFFER_LENGTH            4
 #define QCP_MIME_BUFFER_LENGTH            12
+#define RIFF_AVI_MIME_BUFFER_LENGTH       11
 #define AVI_MIME_BUFFER_LENGTH            3
 #define RIFF_MIME_BUFFER_LENGTH           4
 
@@ -196,6 +197,7 @@ extern unsigned char asfFileIdentifier[WM_MIME_BUFFER_LENGTH];
 
 #define FMT_RM_MARK ".RMF"
 #define FMT_MP4_MARK "ftyp"
+#define FMT_MP4_MARK_1 "mdat"
 #define FMT_WM_MARK   asfFileIdentifier
 #define FMT_AMR_BEGIN "#!AMR"
 #define FMT_QCP_QLCM  "QLCM"
@@ -233,6 +235,7 @@ extern unsigned char asfFileIdentifier[WM_MIME_BUFFER_LENGTH];
 
  enum UserAgentParamsType
   {
+    QTV_STREAMING_EXTENSIONS_NONE,
     QTV_LGT_STREAMING_EXTENSIONS,
     QTV_SKT_STREAMING_EXTENSIONS
   };
@@ -322,6 +325,12 @@ public:
     QTV_PRIORITY_COUNT
   };
 
+  enum OpenURNTypeT
+  {
+    OPEN_URN_NORMAL,
+    FCS_PROBE
+  };
+
 
   /* Return codes for all API methods. */
   enum ReturnT
@@ -332,6 +341,9 @@ public:
 
     ,QTV_RETURN_ERROR
     /* Command error, command cannot be processed */
+
+   ,QTV_RETURN_UNSUPPORTED
+   /*Unsupported MIME type*/
 
     ,QTV_RETURN_FEATURE_NOT_AVAILABLE
     /* Command rejected, feature is not available. */
@@ -410,6 +422,9 @@ public:
     ,URN_BCAST_TDMB           /* URN is T-DMB broadcast media */
     ,URN_MAPI_MEDIA_MASK      /* Media mask URN */
     ,URN_MAPI_REPLAY          /* Media mask log URN */
+#ifdef FEATURE_QTV_GENERIC_BCAST_CMMB
+#error code not present
+#endif
   } ;
 
   /* URL Types */
@@ -475,6 +490,7 @@ public:
     TRACK_VIDEO_H263_2000,  /* H.263 video         */
     TRACK_VIDEO_H264,       /* H.264 video         */
     TRACK_3GPP_TIMED_TEXT,  /* 3GPP Timed Text     */
+    TRACK_GENERIC_TEXT,
     TRACK_WM_AUDIO,         /* Windows Media Audio */
     TRACK_WM1_VIDEO,        /* Windows Media Video 7 */
     TRACK_WM2_VIDEO,        /* Windows Media Video 8 */
@@ -491,9 +507,10 @@ public:
     TRACK_AUDIO_AMR_WB_PLUS, /* AMR-WB+ audio       */
     TRACK_WM_PRO_AUDIO ,        /* Windows Media PRO */
     TRACK_WM_PRO_PLUS_AUDIO,     /* Windows Media PRO PLUS*/
-    TRACK_GENERIC_TEXT,
     TRACK_AUDIO_EVRC_NB,     /* EVRC-NB audio        */
-    TRACK_AUDIO_EVRC_WB /* EVRC-WB audio       */
+    TRACK_AUDIO_EVRC_WB, /* EVRC-WB audio       */
+    TRACK_AUDIO_AC3,
+    TRACK_AUDIO_PCM
   } ;
 
   typedef enum SysModeT
@@ -1379,7 +1396,51 @@ public:
     ,QTV_PLAYER_STATUS_SERVER_TIMEOUT                   = 186
     /*when real player gets timeout alert from server*/
 
-    ,QTV_PLAYER_STATUS_LAST                             = 186
+    ,QTV_PLAYER_STATUS_SWITCHING_IN_PROGRESS           = 187
+     /* Switch Stream success for switch */
+
+    /* Switch partial status for a switch request*/
+
+    ,QTV_PLAYER_STATUS_SWITCH_STREAM_FAILED             = 188
+    /* Switch Stream failed status for a switch request*/
+
+    ,QTV_PLAYER_STATUS_FCS_PLAYBACK_COMPLETE            = 189
+    /* current clip playback somplete status for FCS session*/
+
+    ,QTV_COMMAND_PROBE_COMPLETE                         = 190
+      /* Probe URN command complete */
+
+    ,QTV_COMMAND_PROBE_FAILED                           = 191
+      /* Probe URN command complete */
+
+    ,QTV_PLAYER_STATUS_SERVER_NOT_ENOUGH_BW             = 192
+    /* SERVER not having enough BW */
+
+   ,QTV_PLAYER_STATUS_VALID_CLIPINFO_DIMENSIONS        = 193
+    /* to notify validation of clip*/
+
+   ,QTV_PLAYER_STATUS_DATA_INACTIVITY_ERROR		= 194
+    /* Inactivity timer expired */
+
+   ,QTV_STREAM_TRACKLIST_UNKNOWN_CODEC                  = 195
+      /* stream track mime not supported/unknown codec */	
+   
+    ,QTV_PLAYER_STATUS_RECONNECT_SUCCESS                = 196
+    /* Reconnect to the server is successfull*/
+
+    ,QTV_PLAYER_STATUS_RECONNECT_FAIL                   = 197
+    /* Reconnect to server failed*/
+
+    ,QTV_PLAYER_STATUS_RECONNECT_IN_PROGRESS            = 198
+    /* Reconnection to server is in progress*/
+   
+   ,QTV_PLAYER_STATUS_FCS_SWITCH_SUPPORTED             = 199
+    /*session supports switch */
+
+   ,QTV_PLAYER_STATUS_RECONNECTING_USING_TCP_INTERLEAVE = 200
+    /* Reconnecting using tcp interleaving*/
+
+   ,QTV_PLAYER_STATUS_LAST                             = 200
     /* This is the last and has value equal to the one before */
   };
 
@@ -1751,7 +1812,8 @@ typedef void     (*FreeOutputBufferT)( const VDEC_STREAM_ID  streamID,
      if you want to play video, audio and text from the same file. */
   static ReturnT OpenURN(const char *VideoURN, const char *AudioURN, const char *TextURN,
                          InstanceHandleT handle = NULL,
-                         InstancePriorityT priority = QTV_PRIORITY_DEFAULT);
+                         InstancePriorityT priority = QTV_PRIORITY_DEFAULT,
+                         OpenURNTypeT opentype = OPEN_URN_NORMAL );
 
   /* Method to select the buffer. Video buffer will only play video, audio
      buffer will only play audio and text buffer will only play text. Pass same buffer in all,
@@ -1761,6 +1823,9 @@ typedef void     (*FreeOutputBufferT)( const VDEC_STREAM_ID  streamID,
                          unsigned char *TextBuf, uint32 textBufSize,
                          InstanceHandleT handle = NULL,
                          InstancePriorityT priority = QTV_PRIORITY_DEFAULT);
+#ifdef FEATURE_QTV_FCS
+#error code not present
+#endif
 
   /* Methods to get information about the URN, URL, and/or PVX file. */
   static ReturnT GetURNType(URNTypeT &URNType, bool bVideoURN=true, InstanceHandleT handle = NULL);
@@ -1775,6 +1840,9 @@ typedef void     (*FreeOutputBufferT)( const VDEC_STREAM_ID  streamID,
 
   /* Methods to control playback. */
   static ReturnT PlayClip(int32 startTime, int32 stopTime, InstanceHandleT handle = NULL);
+
+  /* Overloaded PlayClip to support content switching */
+  static ReturnT PlayClip(int32 startTime, int32 stopTime,const char *switchURN,InstanceHandleT handle = NULL);
 
   static ReturnT RecordClip(char* filename,
                              bool overwrite,
@@ -1818,7 +1886,7 @@ typedef void     (*FreeOutputBufferT)( const VDEC_STREAM_ID  streamID,
 
   /* Extended version of the GetFrameInfo function that retrieves extended
      metadata information in addition to the the decoded frame. */
-  static ReturnT GetExtFrameInfo(FrameInfoT &frameInfo, InstanceHandleT handle = NULL);
+  static ReturnT GetExtFrameInfo(FrameInfoT &frameInfo, void **ppExtFrmInfo, InstanceHandleT handle = NULL);
 
   /* Methods to get information about the clip */
   static ReturnT GetClipInfo(ClipInfoT &clipInfo, InstanceHandleT handle = NULL);
@@ -2253,6 +2321,7 @@ typedef void     (*FreeOutputBufferT)( const VDEC_STREAM_ID  streamID,
     QTV_BSAC_CODEC,
     QTV_GSM_AMR_CODEC,
     QTV_MPEG4_CODEC,
+    QTV_DIVX311_CODEC,
     QTV_H263_CODEC,
     QTV_STILL_IMAGE_CODEC,
     QTV_TIMED_TEXT_CODEC,
@@ -2276,6 +2345,8 @@ typedef void     (*FreeOutputBufferT)( const VDEC_STREAM_ID  streamID,
     QTV_NONMP4_AMR_CODEC,
     QTV_NONMP4_AAC_CODEC,
     QTV_MIDI_CODEC,
+    QTV_AC3_CODEC,
+    QTV_PCM_CODEC,
     QTV_UNKNOWN_CODEC
   };
 
@@ -2308,6 +2379,8 @@ typedef void     (*FreeOutputBufferT)( const VDEC_STREAM_ID  streamID,
      messages to the streaming server for the value of the User-Agent header:
        User-Agent: QtvPlayer */
   static ReturnT SetUserAgent(const char * userAgentName, InstanceHandleT handle = NULL);
+
+  static ReturnT RegisterQTVInstance( InstanceHandleT handle,InstancePriorityT priority );
 
   /*--------------------------------------------------
      Audio/Video statistics
@@ -2362,6 +2435,15 @@ typedef void     (*FreeOutputBufferT)( const VDEC_STREAM_ID  streamID,
       /*video data lead*/
       int32 maxDataLead;
       int32 minDataLead;
+
+
+      /*Count of different types of frames*/
+      uint32 nIFrameTally; // Count of I Frames 
+      uint32 nPFrameTally; // Count of P Frames
+      uint32 nBFrameTally; // Count of B Frames
+
+      /*Total B-Frames Received*/
+      int32 nBFramesReceived;      
     } Video;
 
     /* Audio stats */
@@ -3088,6 +3170,12 @@ RETURN VALUE
 ========================================================================== */
 static ReturnT SetVDECParameter( QtvVDECParameterIdT inputParamId,  QtvVDECParameterDataT* pInputParam, InstanceHandleT handle = NULL);
 
+#ifdef FEATURE_WINCE
+#error code not present
+#endif
+static void setSpeed(float speed,InstanceHandleT handle = NULL);
+static void setAccDuration(int time,InstanceHandleT handle = NULL);
+ void register_qtv_with_callmgr();
 private:
 
   friend class QtvPlayerDispatch;
@@ -3155,6 +3243,7 @@ private:
   ** instance ("priority" set to QTV_PRIORITY_HIGHEST when calling OpenURN) */
   static ReturnT RegisterInst( InstanceHandleT handle,
                                InstancePriorityT priority );
+
 
   /*Function used internally to rollback Init() effect within open like routines
   ** such as open pseudo stream , open push buffered stream or pull buffered 

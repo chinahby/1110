@@ -9,7 +9,7 @@ GENERAL DESCRIPTION
   This module contains AT commands funcions and variables if the main AT 
   commands code is featurized out of the build 
 
-  Copyright (c) 2001 - 2009 by QUALCOMM, Incorporated.
+  Copyright (c) 2001 - 2011 by QUALCOMM, Incorporated.
   All Rights Reserved.
   Qualcomm Confidential and Proprietary.
 
@@ -19,10 +19,11 @@ GENERAL DESCRIPTION
 This section contains comments describing changes made to the module.
 Notice that changes are listed in reverse chronological order.
 
-$Header: //source/qcom/qct/modem/data/common/commonatcop/main/lite/src/dsatprofile.c#6 $ $DateTime: 2009/05/13 04:39:11 $ $Author: bhaviks $
+$Header: //source/qcom/qct/modem/data/common/commonatcop/main/lite/src/dsatprofile.c#7 $ $DateTime: 2011/03/31 04:12:21 $ $Author: c_pthoot $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+03/31/11   pt      Included "assert.h".
 03/05/09   bs      Added support for mmgsdi interface.
 01/30/09   sn      Added support to read CTA timer, SCRM, TRTL values from NV.
 07/11/08   sn      Changed FEATURE_DS_SIP_MULTIPLE_PROFILE to 
@@ -43,6 +44,7 @@ when       who     what, where, why
 #include "customer.h"
 
 #ifdef FEATURE_DATA_STRIP_ATCOP
+#include "assert.h"
 #include "dsatprofile.h"
 #include "ds707.h"
 #include "task.h"

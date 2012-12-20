@@ -1,6 +1,6 @@
 /* =======================================================================
                                audio.cpp
-DESCRIPTION  
+DESCRIPTION
   Meaningful description of the definitions contained in this file.
   Description must specify if the module is portable specific, mobile
   specific, or common to both, and it should alert the reader if the
@@ -24,9 +24,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/player/audioplayer/main/latest/src/audio.cpp#15 $
-$DateTime: 2008/10/23 04:15:23 $
-$Change: 768864 $
+$Header: //source/qcom/qct/multimedia/qtv/player/audioplayer/main/latest/src/audio.cpp#34 $
+$DateTime: 2010/08/17 05:07:51 $
+$Change: 1404572 $
 
 ========================================================================== */
 
@@ -45,6 +45,7 @@ $Change: 768864 $
 #include "AVSync.h"
 #include "audioMsgTypes.h"
 #include "audioPlayerIf.h"
+#include "mpeg4player.h"
 
 /* ==========================================================================
 
@@ -420,33 +421,53 @@ bool AudioPlayer::Prep(int playbackID,bool bRestart,Media * pMpeg4In)
 
     if(audioMgr)
     {
+#ifdef FEATURE_QTV_FCS
+#error code not present
+#endif
       audioMgr->SetAudioCodec(m_audioCodec);
     }
 
-    /* If Media has reached to end, but CMX has not yet done playing and 
-       we get another Prep, then reset MEDIA STATUS back to MEDIA_OK, so 
+    /* If Media has reached to end, but CMX has not yet done playing and
+       we get another Prep, then reset MEDIA STATUS back to MEDIA_OK, so
        that audio player can run and then exit properly */
-    if( !TrackHasEnded() && 
+    if( !TrackHasEnded() &&
         audioMgr->GetMediaStatus()== Media::DATA_END )
     {
-      audioMgr->SetMediaStatus(Media::DATA_OK);      
-      audioDataState = Media::DATA_OK;      
+      audioMgr->SetMediaStatus(Media::DATA_OK);
+      audioDataState = Media::DATA_OK;
     }
 
-    InitPlayData();    
+    InitPlayData();
 
     if( audioMgr )
     {
       /*
-      * Once we set audio codec in audioMgr, invoke 
+      * Once we set audio codec in audioMgr, invoke
       * audioMgr->InitPlayData. This will make sure that
       * if BYTE BASED AV SYNC is enabled for given audio codec,
       * and if we have released DSP earlier, restore
       * Buffer entries won't be flushed out.
-      * bRestart == FALSE indicates that the audio interface is 
+      * bRestart == FALSE indicates that the audio interface is
       * being created.
       */
       audioMgr->InitPlayData(bRestart);
+      
+      /* For DCF playback, Calling task needs to register an IPC signal. This signal is set by IxStream on completion
+         * of an asynchronous operation. IPC handler for the calling task will make sure
+         * to invoke IxStreamDispatchMsg which eventually invokes the callback provided by QTV in calling task context.
+      */
+      #ifdef FEATURE_QTV_DRM_DCF
+      if(m_bIsAudioTaskRegisteredForIPC == false)
+      {
+        /*
+         * Before reading any audio data from IxStream,
+         * AUDIO task needs to have an IPC signal and to be registered with ixipc.
+         * Without this, read from AUDIO task will get blocked foreever on DRM suite.
+         */
+         ixipc_init(0,QTV_DRM_DCF_IPC_SIG) ;
+         m_bIsAudioTaskRegisteredForIPC = true;
+      }
+      #endif
 
       if ( !audioMgr->Prep(pMpeg4,TIMING_UPDATE_INTERVAL_MSEC,bRestart) )
       {
@@ -456,7 +477,7 @@ bool AudioPlayer::Prep(int playbackID,bool bRestart,Media * pMpeg4In)
       }
 
       #ifdef FEATURE_QTV_DUAL_MONO_OUTPUT_SELECTION
-      /* At this point both audioMgr and audioCMX have been created, so set 
+      /* At this point both audioMgr and audioCMX have been created, so set
       ** the dual mono output selection.
       */
       audioMgr->SetDualMonoOutput(m_dualMonoOutput);
@@ -554,11 +575,7 @@ void AudioPlayer::Stop(bool &bError)
 {
   QTV_MSG( QTVDIAG_AUDIO_TASK, "AudioPlayer::Stop");
   bError=false;
-  bPlayingNotifyPending = FALSE;  
-  if( audioMgr )
-  {
-	audioMgr->InitElapsedTime(0);
-  }
+  bPlayingNotifyPending = FALSE;
   if ( !SendCommand(STOP, COMMON_AUDIO_STOP_TIMEOUT_MSEC) )
   {
     QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "Audio stop timeout");
@@ -657,7 +674,7 @@ bool AudioPlayer::Pause(bool &bError)
     {
       QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "Audio pause timeout");
       bError=true;
-    }    
+    }
   }
   /* If the Audio state not changed to paused then return false. */
   if(state != PAUSED )
@@ -806,7 +823,7 @@ void AudioPlayer::ResetData()
 }
 
 /* ======================================================================
-FUNCTION 
+FUNCTION
   AudioPlayer::initializeAudioplayer
 
 DESCRIPTION
@@ -833,14 +850,14 @@ void AudioPlayer::initializeAudioplayer
   if(audioMgr == NULL)
   {
 #ifdef FEATURE_QTV_GENERIC_AUDIO_FORMAT
-    /*if audio only file type create generic audio manger 
+    /*if audio only file type create generic audio manger
       otherwise create audio manger */
     if (audio_type && (strcmp(audio_type, AUDIO_ONLY_MIME_TYPE) == 0))
     {
       audioMgr = QTV_New( genericAudioMgr );
-    } 
+    }
     else
-#endif /* FEATURE_QTV_GENERIC_AUDIO_FORMAT */  
+#endif /* FEATURE_QTV_GENERIC_AUDIO_FORMAT */
     {
       audioMgr = QTV_New_Args( AudioMgr, (pMedia) );
     }
@@ -850,25 +867,25 @@ void AudioPlayer::initializeAudioplayer
     audioMgr->SetAVSyncObj(m_pAVSync);
     audioMgr->InitElapsedTime(0);
     audioMgr->InitPlayData(false);
-#ifdef FEATURE_FILE_FRAGMENTATION
+
     audioMgr->SetClientData(this);
-#endif
+
     audioMgr->InitFrame();
     audioMgr->InitStatistics();
     audioMgr->SetAudioCodec(m_audioCodec);
     #ifdef FEATURE_QTV_FAST_PLAYBACK_AUDIO
-      // At times when player thread sets the playback speed, Audio Manager 
-      // may not exist. In those scenarios, received command is queued. 
+      // At times when player thread sets the playback speed, Audio Manager
+      // may not exist. In those scenarios, received command is queued.
       // Queued up command is issued here. If there were more than one setting
-      // latest command is preserved in the audio player object. 
+      // latest command is preserved in the audio player object.
       if(m_bPlaybackSpeedQueued)
       {
         QTV_MSG_PRIO1(QTVDIAG_AUDIO_TASK,QTVDIAG_PRIO_HIGH,
         "Issued Queued up playback speed setting command for %d",m_ePlaybackSpeed);
         // clear the boolean flag
-        m_bPlaybackSpeedQueued = false; 
-        // Issue the playback setting command to audio manager. 
-        SetPlaybackSpeed(m_ePlaybackSpeed);   
+        m_bPlaybackSpeedQueued = false;
+        // Issue the playback setting command to audio manager.
+        SetPlaybackSpeed(m_ePlaybackSpeed);
       }
     #endif
     //create audio interface
@@ -877,7 +894,7 @@ void AudioPlayer::initializeAudioplayer
       QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "AudioPlayer::Create failed");
     }
   }
-  /* to fix the compilation warning if the 
+  /* to fix the compilation warning if the
      FEATURE_QTV_GENERIC_AUDIO_FORMAT is turned off*/
  (void)audio_type;
 }
@@ -1017,7 +1034,7 @@ void AudioPlayer::InitDefaults()
 #if (defined (FEATURE_QTV_IN_CALL_PHASE_2) || \
      defined (FEATURE_QTV_IN_CALL_VIDEO))
 #error code not present
-#endif /* FEATURE_QTV_IN_CALL_PHASE_2 || 
+#endif /* FEATURE_QTV_IN_CALL_PHASE_2 ||
           FEATURE_QTV_IN_CALL_VIDEO */
 }
 
@@ -1056,9 +1073,9 @@ void AudioPlayer::InitPlayData()
   //    is in buffering state, next play request will properly put QTV in BUFFERING
   //    instead of REBUFFERING state.
   audioDataState = Media::DATA_OK;
-  // Configure or Re-configure play mode members 
-  m_bPlayModeValid = false; 
-  m_bPlayMode      = false; 
+  // Configure or Re-configure play mode members
+  m_bPlayModeValid = false;
+  m_bPlayMode      = false;
 }
 
 
@@ -1091,9 +1108,9 @@ void AudioPlayer::CleanupPlay(void)
   }
   m_bCMXInterfaceStartDone = FALSE;
   pMpeg4=NULL;
-  // Configure or Re-configure play mode members 
-  m_bPlayModeValid = false; 
-  m_bPlayMode      = false; 
+  // Configure or Re-configure play mode members
+  m_bPlayModeValid = false;
+  m_bPlayMode      = false;
 }
 
 
@@ -1129,6 +1146,9 @@ void AudioPlayer::AudioNotice
   {
     switch ( notify )
     {
+    case Common::NOTIFY_IMAGE_CHANGE:
+      pThis->InitPlayData();
+    break;
     case Common::NOTIFY_DONE:
       pThis->interfaceState.tDone = ZUtils::Clock();
       pThis->interfaceState.bDone=true;
@@ -1165,18 +1185,18 @@ case Common::NOTIFY_INITIATE_IMMEDIATE_DATA_DELIVERY:
       /*
        * Audio thread polls for DATA_REQUEST every REQUEST_POLL_TIME_MSEC milliseconds.
        * For ARM based decoder,we need to provide the data in strict timely manner
-       * otherwise, it leads to glitches.This is because the the audio data duration sent to CMX 
+       * otherwise, it leads to glitches.This is because the the audio data duration sent to CMX
        * is typically smaller than REQUEST_POLL_TIME_MSEC.
-       * Reducing REQUEST_POLL_TIME_MSEC does not help either as 
+       * Reducing REQUEST_POLL_TIME_MSEC does not help either as
        * audio keeps waking too frequently which kind of puts additional overhead.
-       * So, we need to wake audio thread immediately as soon as CMX requests DATA.       
+       * So, we need to wake audio thread immediately as soon as CMX requests DATA.
        */
       pThis->InterfaceStateUpdate();
       break;
 #ifdef FEATURE_QTV_GENERIC_BCAST_PCR
 #error code not present
 #endif /* FEATURE_QTV_GENERIC_BCAST_PCR */
-    case Common::NOTIFY_TRACK_STATE_CHANGE: 
+    case Common::NOTIFY_TRACK_STATE_CHANGE:
     {
       //Simply post the event using the Player callback.
       QTV_MSG( QTVDIAG_AUDIO_TASK, "AudioPlayer::Notify  Track State Change");
@@ -1314,22 +1334,23 @@ void AudioPlayer::TimingUpdate()
 {
   QTV_MSG( QTVDIAG_AUDIO_TASK, "AudioPlayer::TimingUpdate");
 
-  // If playing is not yet stable then flip it 
+  // If playing is not yet stable then flip it
   if( (!m_bPlayingStable) && (state == PLAYING) )
   {
     QTV_MSG( QTVDIAG_AUDIO_TASK, "TimingUpdate: Playing Stable is true");
-    m_bPlayingStable = true; 
+    m_bPlayingStable = true;
   }
 
   if ( m_playerCB )
     {
-        AUDIO_TIMING_type *pEvent = QCCreateMessage(AUDIO_TIMING, m_pClientData);/*lint !e641 */
+		AUDIO_TIMING_type *pEvent = QCCreateMessage(AUDIO_TIMING, m_pClientData);/*lint !e641 */
+
         if ( pEvent )
         {
-      pEvent->playbackID = currentPlaybackID;
-
-        //Post the event using the client callback..
-        (m_playerCB)(pEvent, m_pClientData);
+           pEvent->hdr.user_data = (void *)m_pClientData;
+           pEvent->playbackID = currentPlaybackID;
+           //Post the event using the client callback..
+          (m_playerCB)(pEvent, m_pClientData);
       }
     }
   }
@@ -1413,15 +1434,15 @@ void AudioPlayer::SetState(State newState)
   if ( state!=newState )
   {
     // For any state transitions reset the syncing flag safely
-    // This member is local to the particular state. 
-    // This will make sure that this member is initialized properly 
-    // while entering to playing/buffering/re-buffering states. 
-    m_bSyncing = false; 
+    // This member is local to the particular state.
+    // This will make sure that this member is initialized properly
+    // while entering to playing/buffering/re-buffering states.
+    m_bSyncing = false;
     ShowState(newState);
     if(newState == PLAYING)
     {
       QTV_MSG( QTVDIAG_AUDIO_TASK, "SetState: Playing Stable is false");
-      m_bPlayingStable = false; 
+      m_bPlayingStable = false;
     }
   }
 
@@ -1506,12 +1527,12 @@ void AudioPlayer::Notify(State newState,
 }
 #ifdef FEATURE_QTV_GENERIC_AUDIO_FORMAT
 /* ======================================================================
-FUNCTION 
+FUNCTION
   AudioPlayer::NotifySPec
 
 DESCRIPTION
 
-  notify player thread of updated status 
+  notify player thread of updated status
 
 DEPENDENCIES
   List any dependencies for this function, global variables, state,
@@ -1522,7 +1543,7 @@ RETURN VALUE
 
 SIDE EFFECTS
   Detail any side effects.
-  
+
 ========================================================================== */
 void AudioPlayer::NotifySPec()
 {
@@ -1541,12 +1562,12 @@ void AudioPlayer::NotifySPec()
 #endif /* FEATURE_QTV_GENERIC_AUDIO_FORMAT */
 
 /* ======================================================================
-FUNCTION 
+FUNCTION
   AudioPlayer::NotifyTrackStateChange
 
 DESCRIPTION
 
-  notify track state change to the player thread 
+  notify track state change to the player thread
 
 DEPENDENCIES
   None.
@@ -1555,16 +1576,18 @@ RETURN VALUE
   None.
 
 SIDE EFFECTS
-  None. 
-  
+  None.
+
 ========================================================================== */
 void AudioPlayer::NotifyTrackStateChange()
 {
   if ( m_playerCB )
   {
     AUDIO_STATUS_type *pEvent = QCCreateMessage(AUDIO_STATUS, m_pClientData);/*lint !e641 */
+
     if ( pEvent )
     {
+      pEvent->hdr.user_data = (void *)m_pClientData;
       pEvent->playbackID       = currentPlaybackID;
       pEvent->status           = Common::AUDIO_TRACK_STATE_CHANGE_NOTICE;
       pEvent->nAudioFrames     = 0;
@@ -1576,7 +1599,7 @@ void AudioPlayer::NotifyTrackStateChange()
       (m_playerCB)(pEvent, m_pClientData);
     }
   }
-  return; 
+  return;
 }
 
 /* ======================================================================
@@ -1667,7 +1690,7 @@ void AudioPlayer::ProcessInterfaceState()
       //CALLBACK ERROR
       //Error during callback processing.
       AbortAudioOutput();
-      Notify(IDLE,Common::AUDIO_ERROR_ABORT);      
+      Notify(IDLE,Common::AUDIO_ERROR_ABORT);
       QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,
                    "Audio Callback Error");
       return;
@@ -1701,13 +1724,13 @@ void AudioPlayer::ProcessInterfaceState()
       else
       {
 #ifndef FEATURE_QTV_GENERIC_BCAST
-        if (pMpeg4 && 
+        if (pMpeg4 &&
             (Media::BCAST_FLO_SOURCE == pMpeg4->GetSource() ||
             Media::BCAST_ISDB_SOURCE == pMpeg4->GetSource() ))
 #else
-        /* For all Bcast Media sources audio codec hardware data delay 
+        /* For all Bcast Media sources audio codec hardware data delay
          * treated as true codec underrun. Even for file based play
-         * this is applicable. 
+         * this is applicable.
          */
         if (is_GenericBcastMedia(pMpeg4))
 #endif
@@ -1724,7 +1747,7 @@ void AudioPlayer::ProcessInterfaceState()
           if (PLAYING == state)
           {
             interfaceState.bDataDelay = false;
-            
+
             if (pMpeg4->IsAudioAvailable() || (!m_bPlayingStable))
             {
               /*-------------------------------------------------------------
@@ -1776,7 +1799,7 @@ bool AudioPlayer::PauseAudioOutput()
 #error code not present
   #endif /* FEATURE_QTV_AUDIO_DISCONTINUITY */
   #ifndef FEATURE_QTV_AUDIO_DISCONTINUITY
-  if ( state==PLAYING && !bPlayDoneRendering )
+  if ( (state==PLAYING || state == BUFFERING || state == REBUFFERING || state == BUFFERING_DONE ) && !bPlayDoneRendering )
   #else  /* FEATURE_QTV_AUDIO_DISCONTINUITY */
 #error code not present
   #endif /* FEATURE_QTV_AUDIO_DISCONTINUITY */
@@ -1823,12 +1846,12 @@ bool AudioPlayer::ResumeAudioOutput(bool bRestart)
   }
   return false;
 }
-  
+
 
 #if (defined (FEATURE_QTV_IN_CALL_PHASE_2) || \
      defined (FEATURE_QTV_IN_CALL_VIDEO))
 #error code not present
-#endif /* FEATURE_QTV_IN_CALL_PHASE_2 || 
+#endif /* FEATURE_QTV_IN_CALL_PHASE_2 ||
           FEATURE_QTV_IN_CALL_VIDEO */
 
 /* ======================================================================
@@ -1958,13 +1981,13 @@ bool AudioPlayer::CanSuspend()
 {
  #ifdef FEATURE_QTV_PROGRESSIVE_DL_STREAMING_2
   return(state!=IDLE && state!=POLLING_DOWNLOAD
-         /* If PAUSED_DISABLED then audio is already stopped. 
+         /* If PAUSED_DISABLED then audio is already stopped.
           * No need to do it again.
           */
          && state!=PAUSED_DISABLED
         );
  #else
-  /* If PAUSED_DISABLED then audio is already stopped. 
+  /* If PAUSED_DISABLED then audio is already stopped.
    * No need to do it again.
    */
   return(state!=IDLE && state!=PAUSED_DISABLED);
@@ -2088,11 +2111,18 @@ void AudioPlayer::ProcessCommands()
   case PAUSE:
     if ( CanPause() )
     {
-      if ( state!=PAUSED && PauseAudioOutput())
+      if ( state!=PAUSED )
+      {
+         if( (state == BUFFERING) || (state == BUFFERING_DONE) )
+         {
+          /* we don't have to pause CMX, as we have not started CMX yet */
+            Notify(PAUSED,Common::AUDIO_PAUSED);
+         }
+         else if( PauseAudioOutput())
       {
         Notify(PAUSED,Common::AUDIO_PAUSED);
       }
-      break;
+      }
     }
     break;
 
@@ -2105,9 +2135,9 @@ void AudioPlayer::ProcessCommands()
     break;
 
 #if (defined (FEATURE_QTV_IN_CALL_PHASE_2) || \
-     defined (FEATURE_QTV_IN_CALL_VIDEO))      
+     defined (FEATURE_QTV_IN_CALL_VIDEO))
 #error code not present
-#endif /* FEATURE_QTV_IN_CALL_PHASE_2 || 
+#endif /* FEATURE_QTV_IN_CALL_PHASE_2 ||
           FEATURE_QTV_IN_CALL_VIDEO */
 
   case PLAY:
@@ -2229,10 +2259,10 @@ bool AudioPlayer::IsDataAvailable()
 {
 #ifndef FEATURE_QTV_ADTS_PARSER
   return (pMpeg4?(pMpeg4->IsAudioAvailable()):false);
-#else 
+#else
 #error code not present
 #endif
-  
+
 }
 
 /* ======================================================================
@@ -2323,7 +2353,7 @@ bool AudioPlayer::RestartAudioOutput()
         //DataIsAvailable will change the status to DATA_OK
         //Do not change the state if data state is DATA_END
         //to end the audio properly.
-        audioMgr->DataIsAvailable(); 
+        audioMgr->DataIsAvailable();
       }
     }
 
@@ -2380,8 +2410,9 @@ bool AudioPlayer::RestartAudioOutput()
 #error code not present
          #endif /* FEATURE_QTV_AUDIO_DISCONTINUITY */
          {
-           // Skip the flush whenever the last state is WAITING 
-         audioMgr->FlushDataRequests();
+#ifdef FEATURE_QTV_GENERIC_BCAST_PCR
+#error code not present
+#endif // FEATURE_QTV_GENERIC_BCAST_PCR
        }
        }
       #endif
@@ -2411,8 +2442,8 @@ bool AudioPlayer::RestartAudioOutput()
   {
     //If Start/Resume failed but media status is DATA_END, fake that audio resumed/started.
     //This will make audio player to detect DATA_END and end the playback gracefully.
-    bOK = true;      
-    /* This is to set the end delay returning in PredictEndDelay to 500ms 
+    bOK = true;
+    /* This is to set the end delay returning in PredictEndDelay to 500ms
        to avoid avoid any race conditions if we hit this case*/
 #ifdef FEATURE_QTV_GENERIC_AUDIO_FORMAT
     audioMgr->SetEndDelay();
@@ -2555,12 +2586,12 @@ void AudioPlayer::ProcessStateTransition(void)
           if (++count % 10 == 0)
           {
             durationBuffered = GetAudioDurationAvailable();
-            // Once we are in the rebuffering state we should 
+            // Once we are in the rebuffering state we should
             // stay in that state no matter what the audiodatastate
             // Similar thing holds good for buffering also.
-            // In live broadcast we will be switching between different 
-            // states of data availability. In those scenario state 
-            // should remain the same. 
+            // In live broadcast we will be switching between different
+            // states of data availability. In those scenario state
+            // should remain the same.
 
             if(REBUFFERING == state)
             {
@@ -2583,7 +2614,7 @@ void AudioPlayer::ProcessStateTransition(void)
           if (state == BUFFERING)
 #endif /* FEATURE_QTV_GENERIC_BCAST_PCR */
           {
-            #ifdef FEATURE_QTV_AUDIO_DISCONTINUITY 
+            #ifdef FEATURE_QTV_AUDIO_DISCONTINUITY
 #error code not present
             #endif /* FEATURE_QTV_AUDIO_DISCONTINUITY */
             // Notify the player which will in turn restart audio when it's
@@ -2649,13 +2680,33 @@ void AudioPlayer::ProcessStateTransition(void)
         }
       }
       // Intelligent re-sync case when play mode swtich from buffered to live
-      else if (IsResyncReqd() && audioMgr && !IsPTSSyncd(audioMgr->GetAmtBufferedMsec(ZUtils::Clock())))
+      else if (IsResyncReqd())
       {
+#ifdef FEATURE_QTV_GENERIC_BCAST_PCR
+#error code not present
+#endif
+          if( audioMgr && !IsPTSSyncd(audioMgr->GetAmtBufferedMsec(ZUtils::Clock())) )
+          {
+            /* we are transitioning from TSB to live and there is data loss/discontinuety */
+            /* Force audio player to re-buffering state. Any way smoother transition from TSB to live is not possible in this scenario. */
+
+            QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Audio Re-buffering when transition from TSB to Live ");
           m_nWaitMsec = COMMON_BUFFERING_POLL_TIME_MSEC;
-          QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, 
-          "Audio Waiting to re-sync in %dms",m_nWaitMsec);
+#ifdef FEATURE_QTV_GENERIC_BCAST_PCR
+#error code not present
+#endif
+          }
+          else
+          {
+            QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Audio Smooth transition from TSB to Live ");
+          }
+
+#ifdef FEATURE_QTV_GENERIC_BCAST_PCR
+#error code not present
+#endif
+
       }
-      
+
       else
       {
         //
@@ -2664,24 +2715,6 @@ void AudioPlayer::ProcessStateTransition(void)
 
         long cmxDataLeadEstimation = 0;
         audioDataState = Media::DATA_OK;
-
-        /**
-		 * For DCF playback, Calling task needs to register an IPC signal. This signal is set by IxStream on completion
-		 * of an asynchronous operation. IPC handler for the calling task will make sure
-		 * to invoke IxStreamDispatchMsg which eventually invokes the callback provided by QTV in calling task context.
-		 */
-		#ifdef FEATURE_QTV_DRM_DCF
-		  if(m_bIsAudioTaskRegisteredForIPC == false)
-		  {
-		    /*
-			 * Before reading any audio data from IxStream,
-			 * AUDIO task needs to have an IPC signal and to be registered with ixipc.
-			 * Without this, read from AUDIO task will get blocked foreever on DRM suite.
-			 */
-			 ixipc_init(0,QTV_DRM_DCF_IPC_SIG) ;
-			 m_bIsAudioTaskRegisteredForIPC = true;
-		  }
-        #endif
 
        bool bError = false;
        long nWaitMsec = 0;
@@ -2698,8 +2731,8 @@ void AudioPlayer::ProcessStateTransition(void)
             {
               HandleDynamicCodecParamChange(bError);
             }
-            
- 
+
+
             // Didn't send data, check the reason.
             if ( bError )
             {
@@ -2715,6 +2748,11 @@ void AudioPlayer::ProcessStateTransition(void)
               switch ( audioDataState )
               {
               case Media::DATA_END:
+                if(audioMgr->IsDataBeingRestored())
+                {
+                  audioDataState = Media::DATA_OK;
+                  break;
+                }
                 //we're out of data,
                 // inform Mpeg4Player (no need to change audio player state) only once
                 if( (bPlayEnding==false) && (bPlayEndingMustBeSet==false) )
@@ -2741,6 +2779,17 @@ void AudioPlayer::ProcessStateTransition(void)
                   bPlayEndingMustBeSet = true;
                 }
 
+		//This is required in case Audio track is shorter than the video track
+                //ans seek location is greater than the audio track length AV sync offset 
+                // is wrongly set based on the last audio time stamps because of which video 
+                // frames start sleeping if
+                //if Audio media end occurs and we reset the Video AVsync offset it will enable 
+                //video to set the AVsync offset and video frames will display without freeze
+                if(m_bHasVideo)
+                {
+                  m_pAVSync->ProhibitAVSync(true);    
+                  m_pAVSync->ResetPlaybackOffset(AVSync::VideoAV);
+                }
                 break;
 
               case Media::DATA_UNDERRUN:
@@ -2783,7 +2832,7 @@ void AudioPlayer::ProcessStateTransition(void)
                 if (IsFileBcastMediaSource(pMpeg4,m_pAVSync))
 #endif
                 {
-                    /* Reverting back STARVING_TIME to 10s */                 
+                    /* Reverting back STARVING_TIME to 10s */
                     #define MAX_STARVING_TIME 10000
                    // we should send, but did not. Either there is no CMX request or
                   //    we are not below low-watermark
@@ -2804,7 +2853,7 @@ void AudioPlayer::ProcessStateTransition(void)
                 }
 #endif
                 break;
-  
+
               case Media::DATA_FRAGMENT:
                 audioMgr->DataIsAvailable();
                 m_nWaitMsec = COMMON_FRAGMENT_WAIT_TIMEOUT_MSEC;
@@ -2883,13 +2932,13 @@ FUNCTION
 
 DESCRIPTION
   This routine handles the critical codec parameter changes during normal playback.
-  Basically restart the audio DSP from the scratch. 
+  Basically restart the audio DSP from the scratch.
 
 DEPENDENCIES
   None.
 
 RETURN VALUE
-  Error is signalled through the output parameter passed. 
+  Error is signalled through the output parameter passed.
 
 SIDE EFFECTS
   None.
@@ -2898,30 +2947,30 @@ SIDE EFFECTS
 void AudioPlayer::HandleDynamicCodecParamChange(bool &bError)
 {
   // By default assume that everything will go fine ; Dont do the mistake of returning error always
-  bError = false; 
-  
+  bError = false;
+
   if(!audioMgr)
   {
-    // This should never happen since this is invoked from the ProcessStateTransition when we are 
-    // in the playing state. 
+    // This should never happen since this is invoked from the ProcessStateTransition when we are
+    // in the playing state.
     QTV_MSG_PRIO(QTVDIAG_GENERAL,QTVDIAG_PRIO_ERROR,
                  "AudioMgr is NULL. This is not possible");
     bError = true;
     return;
   }
-  
+
   if(audioMgr->IsCodecParamChanged())
   {
     // Restart the audio DSP if the sample frequency change detected
     QTV_MSG_PRIO(QTVDIAG_GENERAL,QTVDIAG_PRIO_HIGH,
                  "Attempting to Restart the Audio DSP");
-    #ifndef FEATURE_QTV_CODEC_CHANGE_RESTART       
+    #ifndef FEATURE_QTV_CODEC_CHANGE_RESTART
     // Reset the flag before acting ; Dont want to forget this and debug for a day or so
     audioMgr->SetCodecParamChanged(false);
     #endif
-			  
+
     bError = RestartAudioDSP();
-			  
+
     if(bError)
     {
       QTV_MSG_PRIO(QTVDIAG_GENERAL,QTVDIAG_PRIO_ERROR,
@@ -2932,7 +2981,7 @@ void AudioPlayer::HandleDynamicCodecParamChange(bool &bError)
       QTV_MSG_PRIO(QTVDIAG_GENERAL,QTVDIAG_PRIO_HIGH,
                    "Audio Restart Succeeded  Thanks to DSP");
     }
-		
+
   }
   // either no sample freq change or error is set through RestartAudioDSP method
   return ;
@@ -2995,9 +3044,9 @@ AudioPlayer::AudioPlayer( CLIENT_NOTIFY_CB_FN  playerCB,
 
   InitDefaults();
 
-  rex_init_crit_sect( &m_SelfDispatchCS);
+  QCUtils::InitCritSect( &m_SelfDispatchCS);
   #ifdef FEATURE_QTV_FAST_PLAYBACK_AUDIO
-    m_bPlaybackSpeedQueued = false; 
+    m_bPlaybackSpeedQueued = false;
     m_ePlaybackSpeed       = Common::PLAYBACK_SPEED_NORMAL;
   #endif
   // Initialize the Intra state member to remember the syncing
@@ -3005,7 +3054,7 @@ AudioPlayer::AudioPlayer( CLIENT_NOTIFY_CB_FN  playerCB,
   #ifdef FEATURE_QTV_AUDIO_DISCONTINUITY
 #error code not present
   #endif /* FEATURE_QTV_AUDIO_DISCONTINUITY */
-  m_bPlayingStable = false; 
+  m_bPlayingStable = false;
 
 }
 
@@ -3035,10 +3084,15 @@ AudioPlayer::~AudioPlayer()
     //reset variable so that we can register during next playback.
     m_bIsAudioTaskRegisteredForIPC = false;
 #endif
+    QCUtils::EnterCritSect(&m_SelfDispatchCS);
     if(m_msgType)
     {
       m_pDispatcher->cancel_dispatch(m_msgType);
-    }     
+    }
+    QCUtils::LeaveCritSect(&m_SelfDispatchCS);
+
+  QCUtils::DinitCritSect(&m_SelfDispatchCS);
+
   //not needed, the Destroy routine will be used
 }
 
@@ -3160,7 +3214,7 @@ RETURN VALUE
   None
 
 SIDE EFFECTS
-  CMX will be stopped and started immediately 
+  CMX will be stopped and started immediately
 ========================================================================== */
 bool AudioPlayer::RestartAudioDSP()
 {
@@ -3171,8 +3225,8 @@ bool AudioPlayer::RestartAudioDSP()
 
    if (IsDone())
    {
-     // If the audio track is finished then ignore the request to restart the audio DSP 
-     QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, 
+     // If the audio track is finished then ignore the request to restart the audio DSP
+     QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,
 	 	          "Request to restart audio track after audio track ended");
      return bError;
    }
@@ -3188,7 +3242,7 @@ bool AudioPlayer::RestartAudioDSP()
 }
 
 
- 
+
 
 
 /* ======================================================================
@@ -3252,7 +3306,7 @@ void AudioPlayer::dispatch( qtv_msg_struct* const msg_ptr )
     }
     else
     {
-      QTV_MSG_PRIO( QTVDIAG_AUDIO_TASK, 
+      QTV_MSG_PRIO( QTVDIAG_AUDIO_TASK,
                     QTVDIAG_PRIO_FATAL,
                     "AudioPlayer::dispatch found 0 dispatches pending" );
     }
@@ -3276,16 +3330,16 @@ void AudioPlayer::dispatch( qtv_msg_struct* const msg_ptr )
         }
         else
         {
-          QTV_MSG_PRIO( QTVDIAG_AUDIO_TASK, 
+          QTV_MSG_PRIO( QTVDIAG_AUDIO_TASK,
                         QTVDIAG_PRIO_FATAL,
                         "AudioPlayer::dispatch found 0 dispatches pending" );
         }
-        rex_enter_crit_sect(&m_SelfDispatchCS);
+        QCUtils::EnterCritSect(&m_SelfDispatchCS);
         if(m_msgType)
         {
           m_pDispatcher->cancel_dispatch(m_msgType);
         }
-        rex_leave_crit_sect(&m_SelfDispatchCS);
+        QCUtils::LeaveCritSect(&m_SelfDispatchCS);
         m_nWaitMsec = 0;
         m_msgType = 0;
       }
@@ -3452,7 +3506,7 @@ void AudioPlayer::dispatch( qtv_msg_struct* const msg_ptr )
 #if (defined (FEATURE_QTV_IN_CALL_PHASE_2) || \
      defined (FEATURE_QTV_IN_CALL_VIDEO))
 #error code not present
-#endif /* FEATURE_QTV_IN_CALL_PHASE_2 || 
+#endif /* FEATURE_QTV_IN_CALL_PHASE_2 ||
           FEATURE_QTV_IN_CALL_VIDEO */
 
         case AudioMsgTypes::AUDIO_PLAYER_DISABLE:
@@ -3550,7 +3604,7 @@ bool AudioPlayer::CheckSelfDelayedDispatch( qtv_msg_struct* const msg_ptr )
     bSelfDelayedDispatch = true;
   }
   //audioDispatchMsg->delay_ms == 0 implies that it was sent via AudioPlayer::InterfaceStateUpdate
-  //it shoudl not be the case that m_nWaitMsec == 0 and audioDispatchMsg->delay_ms != 0..it 
+  //it shoudl not be the case that m_nWaitMsec == 0 and audioDispatchMsg->delay_ms != 0..it
   //essentially means that delayed_dispatch msg did not get cancelled when we recvd an incoming
   //command..
   QTV_MSG_PRIO2(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,
@@ -3600,14 +3654,18 @@ qtv_task_if_class::dispatch_id_type AudioPlayer::SelfDispatch(uint32 delay_ms)
   if(sizeof(audioDispatchMsg) <= sizeof(msg->payload))
   {
     memcpy(msg->payload,(void*)&audioDispatchMsg,sizeof(audioDispatchMsg));
-    //dispatch the msg to the "PV Audio" task..    
+    //dispatch the msg to the "PV Audio" task..
     ++m_numAudioDispatchesPending;
-    rex_enter_crit_sect(&m_SelfDispatchCS); 
     if (m_pDispatcher)
-    {       
-      msgType = m_pDispatcher->dispatch( this, msg, delay_ms );   
+    {
+      QCUtils::EnterCritSect(&m_SelfDispatchCS);
+      msgType = m_pDispatcher->dispatch( this, msg, delay_ms );
+      QCUtils::LeaveCritSect(&m_SelfDispatchCS);
     }
-    rex_leave_crit_sect(&m_SelfDispatchCS); 
+    else
+    {
+      qtv_msg_struct::free(msg);
+    }
   }
   else
   {
@@ -3665,25 +3723,25 @@ RETURN VALUE:
 ===========================================================================*/
 void AudioPlayer::SetPlaybackSpeed(Common::PlaybackSpeedType ePlaybackSpeed)
 {
-  m_ePlaybackSpeed = ePlaybackSpeed; 
+  m_ePlaybackSpeed = ePlaybackSpeed;
   if(audioMgr)
   {
     switch(ePlaybackSpeed)
     {
-      case Common::PLAYBACK_SPEED_1P3X: 
+      case Common::PLAYBACK_SPEED_1P3X:
       {
         QTV_MSG(QTVDIAG_AUDIO_TASK,"SetPlaybackAudioSpeed  to 1P3X");
         audioMgr->StartFastAudioPlayback(AUDIO_PLAYBACK_SPEED_1P3X_WINDOW,
                                          AUDIO_PLAYBACK_SPEED_1P3X_DROP_COUNT);
         break;
       }
-      case Common::PLAYBACK_SPEED_NORMAL: 
+      case Common::PLAYBACK_SPEED_NORMAL:
       {
         QTV_MSG(QTVDIAG_AUDIO_TASK,"SetPlaybackAudioSpeed  to Normal");
         audioMgr->StopFastAudioPlayback();
         break;
       }
-      default: 
+      default:
       {
         QTV_MSG(QTVDIAG_AUDIO_TASK,
                 "SetPlaybackAudioSpeed received No Change; Ignored");
@@ -3695,8 +3753,8 @@ void AudioPlayer::SetPlaybackSpeed(Common::PlaybackSpeedType ePlaybackSpeed)
   {
     QTV_MSG_PRIO(QTVDIAG_AUDIO_TASK,QTVDIAG_PRIO_HIGH,
             "SetPlaybackAudioSpeed Queued since Audio Manager Not created yet");
-    m_bPlaybackSpeedQueued = true; 
-    m_ePlaybackSpeed       = ePlaybackSpeed; 
+    m_bPlaybackSpeedQueued = true;
+    m_ePlaybackSpeed       = ePlaybackSpeed;
   }
   return;
 }
@@ -3713,7 +3771,7 @@ DESCRIPTION:
 PARAMETERS:
   uint32 &trackState
     The audio track state.
-    
+
   Common::ChannelConfigType &eChannelConfig
     The audio channel configuration.
 
@@ -3721,18 +3779,18 @@ PARAMETERS:
     The audio sampling frequency.
 
 RETURN VALUE:
-  bool 
+  bool
     TRUE if the track information was obtained, FALSE otherwise.
 ===========================================================================*/
-bool AudioPlayer::GetAudioTrackSpec( uint32                    &bmTrackState, 
-                                     Common::ChannelConfigType &eChannelConfig, 
+bool AudioPlayer::GetAudioTrackSpec( uint32                    &bmTrackState,
+                                     Common::ChannelConfigType &eChannelConfig,
                                      int                       &nSamplingFreq)
 {
-  bool bRet= true; 
+  bool bRet= true;
   // Default values in case audio manager does not exist
-  bmTrackState   = 0; 
-  eChannelConfig = Common::AUDIO_CHANNEL_UNKNOWN; 
-  nSamplingFreq  = 0; 
+  bmTrackState   = 0;
+  eChannelConfig = Common::AUDIO_CHANNEL_UNKNOWN;
+  nSamplingFreq  = 0;
   if(audioMgr)
   {
     Common::AudioTrackState eState;  /* Audio Track State */
@@ -3741,11 +3799,11 @@ bool AudioPlayer::GetAudioTrackSpec( uint32                    &bmTrackState,
     // <TBD> Following logic need to be moved to Mpeg4Player module later
     if(eState == Common::AUDIO_TRACK_STATE_READY)
     {
-      bmTrackState = QTV_TRACK_STATE_READY; 
+      bmTrackState = QTV_TRACK_STATE_READY;
     }
     else if(eState == Common::AUDIO_TRACK_STATE_DISABLED)
     {
-      bmTrackState = QTV_TRACK_STATE_DISABLED; 
+      bmTrackState = QTV_TRACK_STATE_DISABLED;
     }
     else
     {
@@ -3754,11 +3812,11 @@ bool AudioPlayer::GetAudioTrackSpec( uint32                    &bmTrackState,
   }
   else
   {
-    bRet = false; 
+    bRet = false;
     QTV_MSG(QTVDIAG_AUDIO_TASK,
             "GetAudioTrackSpec returning default values due to null audio mgr");
   }
-  return bRet; 
+  return bRet;
 }
 #endif /* FEATURE_QTV_GENERIC_BCAST */
 
@@ -3775,7 +3833,7 @@ PARAMETERS:
     The desired dual mono output configuration.
 
 RETURN VALUE:
-  bool 
+  bool
     TRUE if configuration was set successfully, FALSE otherwise.
 ===========================================================================*/
 bool AudioPlayer::SetDualMonoOutput(Common::DualMonoOutputType dualMonoOutput)
@@ -3805,10 +3863,10 @@ FUNCTION
 
 DESCRIPTION
 //
-// This method is used to check whether the next media sample 
-// is sync'd to the PCR. This method receive the audio data 
-// lead parameter to account for the sample queued in the 
-// CMX buffer. 
+// This method is used to check whether the next media sample
+// is sync'd to the PCR. This method receive the audio data
+// lead parameter to account for the sample queued in the
+// CMX buffer.
 
 DEPENDENCIES
    Depends of FEATURE_QTV_GENERIC_BCAST_PCR
@@ -3828,7 +3886,7 @@ bool AudioPlayer::IsPTSSyncd(int nDataLead)
 #error code not present
 #else
   QTV_USE_ARG1(nDataLead);
-  return true; 
+  return true;
 #endif /* FEATURE_QTV_GENERIC_BCAST_PCR */
 }
 
@@ -3841,8 +3899,8 @@ FUNCTION
 
 DESCRIPTION
 //
-// This method is used to check whether the audio stream 
-// needs to be re-syncd in playing state. 
+// This method is used to check whether the audio stream
+// needs to be re-syncd in playing state.
 
 DEPENDENCIES
    Depends of FEATURE_QTV_GENERIC_BCAST_PCR
@@ -3861,10 +3919,300 @@ bool AudioPlayer::IsResyncReqd(void)
 #ifdef FEATURE_QTV_GENERIC_BCAST_PCR
 #error code not present
 #else
-  return false; 
+  return false;
 #endif /* FEATURE_QTV_GENERIC_BCAST_PCR */
 }
 
 #ifdef FEATURE_QTV_AUDIO_DISCONTINUITY
 #error code not present
 #endif /* FEATURE_QTV_AUDIO_DISCONTINUITY */
+
+/* ========================================================================
+FUNCTION:
+  EventMSG::EventMSG
+
+DESCRIPTION:
+  Constructor EventMSG will memset to ZERO for all class members and create MIN_EVENT_COUNT Event Message.
+
+PARAMETERS:
+
+
+RETURN VALUE:
+  None.
+===========================================================================*/
+
+EventMSG::EventMSG()
+{
+  QCUtils::InitCritSect( &m_event_cs);
+
+  audio_timing_e.readIndex = audio_timing_e.writeIndex = audio_timing_e.count = 0;
+  audio_status_e.readIndex = audio_status_e.writeIndex = audio_status_e.count = 0;
+
+  pushEvents();
+}
+
+/* ========================================================================
+FUNCTION:
+  EventMSG::~EventMSG
+
+DESCRIPTION:
+  ~EventMSG will release unused Events from array event_ptr.
+
+PARAMETERS:
+
+
+RETURN VALUE:
+  None.
+===========================================================================*/
+EventMSG::~EventMSG()
+{
+  QTV_MSG_PRIO2(QTVDIAG_AUDIO_TASK,QTVDIAG_PRIO_LOW, "EventMSG::~EventMSG() audio_timing_e.count: %d audio_status_e.count: %d", audio_timing_e.count, audio_status_e.count);
+
+  QCUtils::EnterCritSect(&m_event_cs);
+  if( audio_timing_e.count != 0 )
+  {
+    releaseEvents(AUDIO_TIMING);
+  }
+  if( audio_status_e.count != 0 )
+  {
+    releaseEvents(AUDIO_STATUS);
+  }
+  QCUtils::LeaveCritSect(&m_event_cs);
+
+  QCUtils::DinitCritSect(&m_event_cs);
+}
+
+/* ========================================================================
+FUNCTION:
+  EventMSG::releaseEvents
+
+DESCRIPTION:
+  ~EventMSG will release unused Events from array event_ptr.
+
+PARAMETERS:
+
+
+RETURN VALUE:
+  None.
+===========================================================================*/
+void EventMSG::releaseEvents(uint16 eventID)
+{
+  event_info *eventInfo = NULL;
+
+  if(eventID == AUDIO_TIMING)
+  {
+    eventInfo = &audio_timing_e;
+  }
+  else if(eventID == AUDIO_STATUS)
+  {
+    eventInfo = &audio_status_e;
+  }
+  else
+  {
+    return;
+  }
+  if(eventInfo->readIndex > eventInfo->writeIndex)
+  {
+    do
+    {
+      zrex_event_release(eventInfo->event_ptr[eventInfo->readIndex]);
+      if(eventInfo->readIndex == (MAX_EVENT_COUNT - 1 ))
+        eventInfo->readIndex = 0;
+      else
+        eventInfo->readIndex ++;
+    }while(eventInfo->readIndex != eventInfo->writeIndex);
+  }
+  else
+  {
+    do
+    {
+      zrex_event_release(eventInfo->event_ptr[eventInfo->readIndex]);
+      eventInfo->readIndex ++;
+    }while(eventInfo->readIndex < eventInfo->writeIndex);
+  }
+  eventInfo->readIndex = eventInfo->writeIndex = eventInfo->count = 0;
+}
+/* ========================================================================
+FUNCTION:
+  EventMSG::pushEvents
+
+DESCRIPTION:
+  This function will adds Events in an array event_ptr.
+
+PARAMETERS:
+
+
+RETURN VALUE:
+  None.
+===========================================================================*/
+void EventMSG::pushEvents()
+{
+  QTV_MSG_PRIO3( QTVDIAG_AUDIO_TASK, QTVDIAG_PRIO_LOW, "EventMSG::pushEvent audio_timing_e.count: %d , audio_timing_e.readIndex: %d, audio_timing_e.writeIndex: %d", audio_timing_e.count, audio_timing_e.readIndex, audio_timing_e.writeIndex);
+
+  QCUtils::EnterCritSect(&m_event_cs);
+
+  if(audio_timing_e.count != MIN_EVENT_COUNT)
+  {
+    QCUtils::LeaveCritSect(&m_event_cs);
+
+    while(true)
+    {
+      if(pushEvent(AUDIO_TIMING) == false)
+      {
+        break;
+      }
+
+      QCUtils::EnterCritSect(&m_event_cs);
+      if(audio_timing_e.count >= MIN_EVENT_COUNT)
+      {
+        QCUtils::LeaveCritSect(&m_event_cs);
+    	break;
+      }
+      QCUtils::LeaveCritSect(&m_event_cs);
+    }
+  }
+  else
+  {
+    QCUtils::LeaveCritSect(&m_event_cs);
+  }
+
+  QTV_MSG_PRIO3(QTVDIAG_AUDIO_TASK,QTVDIAG_PRIO_LOW, "EventMSG::pushEvent audio_status_e.count: %d , audio_status_e.readIndex: %d, audio_status_e.writeIndex: %d", audio_status_e.count, audio_status_e.readIndex, audio_status_e.writeIndex);
+
+  QCUtils::EnterCritSect(&m_event_cs);
+  if(audio_status_e.count!=MIN_EVENT_COUNT)
+  {
+    QCUtils::LeaveCritSect(&m_event_cs);
+    while(true)
+    {
+      if(pushEvent(AUDIO_STATUS) == false)
+      {
+        break;
+      }
+      QCUtils::EnterCritSect(&m_event_cs);
+      if(audio_status_e.count >= MIN_EVENT_COUNT)
+      {
+        QCUtils::LeaveCritSect(&m_event_cs);
+        break;
+      }
+      QCUtils::LeaveCritSect(&m_event_cs);
+    }
+  }
+  else
+  {
+    QCUtils::LeaveCritSect(&m_event_cs);
+  }
+}
+
+/* ========================================================================
+FUNCTION:
+  EventMSG::pushEvents
+
+DESCRIPTION:
+  This function will create Event and add to array called event_ptr.
+
+PARAMETERS:
+
+
+RETURN VALUE:
+  Success / Failure.
+===========================================================================*/
+bool EventMSG::pushEvent(uint16 eventID)
+{
+  event_info *eventInfo = NULL;
+
+  if(eventID == AUDIO_TIMING)
+  {
+    void * event_ptr = QCCreateMessage( AUDIO_TIMING, NULL);
+    if(event_ptr == NULL)
+    {
+      return false;
+    }
+    eventInfo = &audio_timing_e;
+
+    QCUtils::EnterCritSect(&m_event_cs);
+    eventInfo->event_ptr[eventInfo->writeIndex] = event_ptr;
+    QCUtils::LeaveCritSect(&m_event_cs);
+  }
+  else if(eventID == AUDIO_STATUS)
+  {
+    void * event_ptr = QCCreateMessage( AUDIO_STATUS, NULL);
+    if(event_ptr == NULL)
+    {
+      return false;
+    }
+    eventInfo = &audio_status_e;
+
+    QCUtils::EnterCritSect(&m_event_cs);
+    eventInfo->event_ptr[eventInfo->writeIndex] = event_ptr;
+    QCUtils::LeaveCritSect(&m_event_cs);
+  }
+  else
+  {
+    return false;
+  }
+
+  QCUtils::EnterCritSect(&m_event_cs);
+  eventInfo->count++;
+  eventInfo->writeIndex++;
+  if(eventInfo->writeIndex >= MAX_EVENT_COUNT)
+  {
+    eventInfo->writeIndex = 0;
+  }
+  QCUtils::LeaveCritSect(&m_event_cs);
+
+  return true;
+}
+
+/* ========================================================================
+FUNCTION:
+  EventMSG::popEvent
+
+DESCRIPTION:
+  This function will pop Event from array called event_ptr and will return Event pointer.
+
+PARAMETERS:
+
+
+RETURN VALUE:
+  Event Pointer.
+===========================================================================*/
+void* EventMSG::popEvent(uint16 eventID)
+{
+  event_info *eventInfo = NULL;
+  void *pEvent = NULL;
+
+  if(eventID == AUDIO_TIMING)
+  {
+    eventInfo = &audio_timing_e;
+  }
+  else if(eventID == AUDIO_STATUS)
+  {
+    eventInfo = &audio_status_e;
+  }
+  else
+  {
+    return NULL;
+  }
+
+  QTV_MSG_PRIO(QTVDIAG_AUDIO_TASK,QTVDIAG_PRIO_LOW, "EventMSG::popEvent");
+
+  QCUtils::EnterCritSect(&m_event_cs);
+  if(eventInfo->count == 0)
+  {
+    QCUtils::LeaveCritSect(&m_event_cs);
+    QTV_MSG_PRIO1(QTVDIAG_AUDIO_TASK,QTVDIAG_PRIO_HIGH, "EventMSG::popEvent count is ZERO nothing to POP eventId: %d", eventID);
+    return NULL;
+  }
+  else
+  {
+    pEvent = eventInfo->event_ptr[eventInfo->readIndex];
+    eventInfo->count--;
+    eventInfo->readIndex++;
+    if(eventInfo->readIndex >= MAX_EVENT_COUNT)
+    {
+      eventInfo->readIndex = 0;
+    }
+  }
+  QCUtils::LeaveCritSect(&m_event_cs);
+  return pEvent;
+}

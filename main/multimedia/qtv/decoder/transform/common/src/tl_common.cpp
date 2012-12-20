@@ -23,16 +23,19 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/decoder/transform/common/rel/2.0/src/tl_common.cpp#5 $
-$DateTime: 2008/11/24 05:29:25 $
-$Change: 791229 $
+$Header: //source/qcom/qct/multimedia/qtv/decoder/transform/common/rel/2.0/src/tl_common.cpp#14 $
+$DateTime: 2010/12/01 00:09:49 $
+$Change: 1536495 $
 
+when       who      what, where, why
+--------   ---      ---------------------------------------------------------
+04/08/09    vs      Remove the dependencies of other modules.
+--------   ---      ---------------------------------------------------------
 ========================================================================== */
 
 #include "assert.h"
 #include "TL_common.h"
-#include "qtv_msg.h"
-#include "qtvsystem.h"
+#include "vdecoder_utils.h"
 
 #ifdef FEATURE_QTV_LCU_QVGA_DYNAMIC_DISABLING
 #error code not present
@@ -44,6 +47,9 @@ extern "C" {
 }
 #endif /* T_QSC6055 */
 
+#ifdef FEATURE_VIDEO_PLAYER_INTERFACE_REV_2A_TURBO
+#error code not present
+#endif
 
 /* QTV config variables */
 
@@ -115,6 +121,7 @@ boolean qtv_cfg_play_unsupported_profile_level = TRUE;
 boolean qtv_cfg_enable_dynamic_cpu_switching = TRUE;
 #endif /* FEATURE_QTV_DYNAMIC_CPU_SWITCHING */
 
+boolean qtv_cfg_init_frames_to_black = FALSE;
 /*===========================================================================
 Function: LogYuvBuffer
 
@@ -189,6 +196,7 @@ Side Effects:
 log_yuv_type* WaitForYuvLogBuffer( void )
 {
   log_yuv_type *pBuf = NULL;
+  uint32 TotalWaitTime = 0;
 
   /* Because log_alloc() will return NULL when it is out of memory we
    * need to keep looping until we get memory.  We'll monitor
@@ -199,7 +207,17 @@ log_yuv_type* WaitForYuvLogBuffer( void )
     pBuf = (log_yuv_type*) log_alloc( LOG_MPEG4_YUV_FRAME_C, sizeof(*pBuf) );
     if (!pBuf)
     {
-      rex_sleep(LOG_MPEG4_LOG_ALLOC_WAIT_MS);
+      if (TotalWaitTime < LOG_MPEG4_LOG_ALLOC_MAX_WAIT_MS)
+      {
+        rex_sleep(LOG_MPEG4_LOG_ALLOC_WAIT_MS);
+        TotalWaitTime += LOG_MPEG4_LOG_ALLOC_WAIT_MS;        
+      }
+      else
+      {
+        VDEC_MSG_PRIO(VDECDIAG_GENERAL, VDECDIAG_PRIO_ERROR, 
+                      "Couldn't get memory to log YUV buffer" );
+        break;
+      }  
     }
   }
 
@@ -262,6 +280,7 @@ Side Effects:
 log_dec_crc_type* WaitForCRCLogBuffer( void )
 {
   log_dec_crc_type *pBuf = NULL;
+  uint32 TotalWaitTime = 0;
 
   /* Because log_alloc() will return NULL when it is out of memory we
    * need to keep looping until we get memory.  We'll monitor
@@ -272,7 +291,17 @@ log_dec_crc_type* WaitForCRCLogBuffer( void )
     pBuf = (log_dec_crc_type*) log_alloc( LOG_DEC_CRC_FRAME_C, sizeof(*pBuf) );
     if (!pBuf)
     {
-      rex_sleep(LOG_MPEG4_LOG_ALLOC_WAIT_MS);
+      if (TotalWaitTime < LOG_MPEG4_LOG_ALLOC_MAX_WAIT_MS)
+      {    
+        rex_sleep(LOG_MPEG4_LOG_ALLOC_WAIT_MS);
+        TotalWaitTime += LOG_MPEG4_LOG_ALLOC_WAIT_MS;		
+      }
+      else
+      {
+        VDEC_MSG_PRIO(VDECDIAG_GENERAL, VDECDIAG_PRIO_ERROR, 
+                      "Couldn't get memory to log CRC buffer" );
+        break;
+      }  	  
     }
   }
 
@@ -294,6 +323,7 @@ Side Effects:
 log_dec_xscale_yuv_type *WaitForXscaleYUVLogBuffer( void )
 {
   log_dec_xscale_yuv_type *pBuf = NULL;
+  uint32 TotalWaitTime = 0;    
 
   /* Because log_alloc() will return NULL when it is out of memory we
    * need to keep looping until we get memory.  We'll monitor
@@ -304,7 +334,17 @@ log_dec_xscale_yuv_type *WaitForXscaleYUVLogBuffer( void )
     pBuf = (log_dec_xscale_yuv_type*) log_alloc( LOG_DEC_XSCALE_YUV_FRAME_C, sizeof(*pBuf) );
     if (!pBuf)
     {
-      rex_sleep(LOG_MPEG4_LOG_ALLOC_WAIT_MS);      
+      if (TotalWaitTime < LOG_MPEG4_LOG_ALLOC_MAX_WAIT_MS)
+      {        
+        rex_sleep(LOG_MPEG4_LOG_ALLOC_WAIT_MS);  
+		TotalWaitTime += LOG_MPEG4_LOG_ALLOC_WAIT_MS;
+      }
+      else
+      {
+        VDEC_MSG_PRIO(VDECDIAG_GENERAL, VDECDIAG_PRIO_ERROR, 
+                      "Couldn't get memory to log Xscale YUV buffer" );
+        break;
+      }	  
     }
   }
 
@@ -326,6 +366,7 @@ Side Effects:
 log_dec_xscale_crc_type *WaitForXscaleCRCLogBuffer( void )
 {
   log_dec_xscale_crc_type *pBuf = NULL;
+  uint32 TotalWaitTime = 0;  
 
   /* Because log_alloc() will return NULL when it is out of memory we
    * need to keep looping until we get memory.  We'll monitor
@@ -336,7 +377,17 @@ log_dec_xscale_crc_type *WaitForXscaleCRCLogBuffer( void )
     pBuf = (log_dec_xscale_crc_type*) log_alloc( LOG_DEC_XSCALE_CRC_FRAME_C, sizeof(*pBuf) );
     if (!pBuf)
     {
-      rex_sleep(LOG_MPEG4_LOG_ALLOC_WAIT_MS);      
+      if (TotalWaitTime < LOG_MPEG4_LOG_ALLOC_MAX_WAIT_MS)
+      {    
+        rex_sleep(LOG_MPEG4_LOG_ALLOC_WAIT_MS);  
+        TotalWaitTime += LOG_MPEG4_LOG_ALLOC_WAIT_MS; 		
+      }
+      else
+      {
+        VDEC_MSG_PRIO(VDECDIAG_GENERAL, VDECDIAG_PRIO_ERROR, 
+                      "Couldn't get memory to log Xscale CRC buffer" );
+        break;
+      }	  
     }
   }
 
@@ -483,7 +534,7 @@ void colour_convert_planar_to_reverse_interlaced
 
   if ((pSrcBuffer == NULL) || pTempYCbCrBuf == NULL)
   {
-    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "mp4_colour_convert_planar_to_reverse_interlaced: \
+    VDEC_MSG_PRIO(VDECDIAG_GENERAL, VDECDIAG_PRIO_HIGH, "mp4_colour_convert_planar_to_reverse_interlaced: \
                  Memory pointers NULL" );
     return ;
   }
@@ -530,7 +581,7 @@ SIDE EFFECTS:
 boolean check_allowed_input_dimensions(uint32 Width,uint32 Height,VideoDecoderType VideoType)
 {
 
-  QTV_USE_ARG1(VideoType);
+  VDEC_USE_ARG1(VideoType);
    
 #ifdef FEATURE_QTV_LCU_QVGA_DYNAMIC_DISABLING
   if (hw_msm_id() == HW_QSC6240)
@@ -551,17 +602,31 @@ boolean check_allowed_input_dimensions(uint32 Width,uint32 Height,VideoDecoderTy
 #endif /*!(defined T_QSC6065) && !(defined T_QSC6075) && !(defined T_QSC6085) */
       )    
   {
-    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Video not supported on 6055" );
+    VDEC_MSG_PRIO(VDECDIAG_GENERAL, VDECDIAG_PRIO_HIGH, "Video not supported on 6055" );
     return false;
   }
 
-  if ( ((Width > DEC_QCIF_WIDTH) || (Height * Width ) > (DEC_QCIF_WIDTH * DEC_QCIF_HEIGHT)) && (VideoType !=VIDEO_MP4))
+  if ( ((Width > DEC_QCIF_WIDTH) || (Height * Width ) > (DEC_QCIF_WIDTH * DEC_QCIF_HEIGHT)) && (VideoType !=VIDEO_MP4)
+#ifdef FEATURE_VIDEO_PLAYER_INTERFACE_REV_2A_TURBO
+#error code not present
+#endif
+     )
   {
     return FALSE;
   }
 #else /* T_QSC6055 */
-  QTV_USE_ARG2(Width, Height);
+  VDEC_USE_ARG2(Width, Height);
 #endif /* FEATURE_QTV_LCU_QVGA_DYNAMIC_DISABLING */
+
+#ifdef FEATURE_VIDEO_NPA
+#error code not present
+#else
+ if ((((Width * Height) >> 8) > MB_COUNT_QVGA) &&  VIDEO_WMV == VideoType)
+#endif
+ {
+   return FALSE;
+ }
+
   return TRUE;
 }
 

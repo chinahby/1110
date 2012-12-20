@@ -11,7 +11,8 @@ DESCRIPTION
 REFERENCES
   IS-820, Removable User Identity Module (RUIM) for Spread Spectrum Systems
 
-Copyright (c) 2000, 2001, 2002-2008 by QUALCOMM Incorporated.  All Rights Reserved.
+Copyright (c) 2000, 2001, 2002-2008, 2009, 2010 by QUALCOMM Incorporated.  
+All Rights Reserved.
 ===========================================================================*/
 
 /*===========================================================================
@@ -19,10 +20,14 @@ Copyright (c) 2000, 2001, 2002-2008 by QUALCOMM Incorporated.  All Rights Reserv
                         EDIT HISTORY FOR FILE
 
 $PVCSPath: O:/src/asw/COMMON/vcs/nvruimi.h_v   1.15   06 Sep 2002 10:04:06   tsummers  $
-$Header: //source/qcom/qct/modem/uim/nvruim/rel/07H1_2/inc/nvruimi.h#4 $ $DateTime: 2010/04/06 05:33:18 $ $Author: sratnu $
+$Header: //source/qcom/qct/modem/uim/nvruim/rel/07H1_2/inc/nvruimi.h#8 $ $DateTime: 2010/07/15 00:05:49 $ $Author: sratnu $
    
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+06/29/10   ssr     Fixed FEATURE_UIM_MISCONFIG_RUIM_N5_WORKAROUND_OPTIMIZED
+05/21/10   ssr     Add non 3gpd cdma card check
+04/30/10   ssr     Fixed nvruim clear cache 
+04/23/10   ssr     Fixed UIM 3GPD NV support
 03/25/10   ssr     Added nvruim_data_3gpd_ext_support
 07/27/09   yb      Fixed bad RUIM card issue with HRPD Service n5 in CDMA 
                    Service Table improperly set
@@ -228,6 +233,13 @@ typedef struct {
 }nvruim_nv_conversion;
 #endif /* FEATURE_RUIM_CDMA_REFRESH */
 
+/* Types of return values for nv 3gpd check from Data Services */
+typedef enum {
+  NVRUIM_NO_CARD=0,                 /* NO Card  */
+  NVRUIM_NON_3GPD_CARD=1,           /* 3GPD disabled card  */
+  NVRUIM_3GPD_CARD=2                /* 3GPD enabled card   */
+} nvruim_3gpd_nv_card_status;
+
 /* Mask of bit indicating the IMSI was programmed */
 #define NVRUIM_IMSI_PROGRAMMED  0x80
 
@@ -327,8 +339,9 @@ extern byte nvruim_ef_buffer[NVRUIM_EF_BUF_SIZE];
 
 /* Number of bytes in the array to hold digits from converted MIN */
 #define NVRUIM_NUM_MIN_DIGITS 15
-/* MCC code for operator */
-#define NVRUIM_OPERATOR_MCC        0x167
+
+/* Non 3GPD cdma card   */
+#define NVRUIM_NON_3GPD_CDMA_CARD_MCC  0x167
 
 
 /*===========================================================================
@@ -1008,59 +1021,17 @@ void nvruim_uim_file_to_nv_item
   uim_items_enum_type  uim_file,
   nvruim_nv_conversion *nv_items_ptr
 );
-
-/*===========================================================================
-
-FUNCTION nvruim_lock_cache
-
-DESCRIPTION
-  This function will lock nvruim cache so to prevent simultaneous access by
-  read, write, or clear cache actions. 
-
-DEPENDENCIES
-  None.
-
-RETURN VALUE
-  TRUE:  If nvruim cache could be locked.
-  FALSE: If nnvruim cache could not be locked, because it already was. 
-
-SIDE EFFECTS
-  None
-
-===========================================================================*/ 
-boolean nvruim_lock_cache(void);
-
-/*===========================================================================
-
-FUNCTION nvruim_unlock_cache
-
-DESCRIPTION
-  This function will unlock nvruim cache so that a read, write, or clear cache
-  can continue.
-
-DEPENDENCIES
-  None.
-
-RETURN VALUE
-  TRUE:  If nvruim cache could be unlocked.
-  FALSE: If nnvruim cache could not be unlocked, because it already was. 
-
-SIDE EFFECTS
-  None
-
-===========================================================================*/ 
-boolean nvruim_unlock_cache(void);
 #endif /* FEATURE_RUIM_CDMA_REFRESH */
 
-
 /*===========================================================================
 
-FUNCTION NVRUIM_INIT_OPERATOR_CARD
+FUNCTION NVRUIM_INIT_NON_3GPD_CDMA_CARD
 
 DESCRIPTION
-This function is called from mmgsdi task during post pin initialization.
-It passes in a boolean which indicates wheather given card is a CT card 
-or not
+  This function is called from mmgsdi task during post pin initialization.
+  It passes in a boolean, where
+    TRUE : it is 3gpd disabled card
+    FALSE: it is 3gpd enabled  card 
 
 DEPENDENCIES
 None.
@@ -1068,14 +1039,12 @@ None.
 RETURN VALUE
 
 SIDE EFFECTS
-Sets the nvruim_CT_card global variable for RUIM support of 3GPD
-global variables to indicate CARD is CT card or not 
+none
 ===========================================================================*/ 
-extern void nvruim_init_operator_card 
+void nvruim_init_non_3gpd_cdma_card
 ( 
-  boolean is_operator_card
+  boolean non_3gpd_cdma_card
 );
-
 
 /*===================================================================
 FUNCTION NVRUIM_GENERATE_AN_NAI_WITH_IMSI
@@ -1096,7 +1065,6 @@ extern boolean nvruim_generate_an_nai_with_imsi(
   uint8 *user_id_len_ptr, 
   char *user_id_info_ptr
 );
-
 
 /*===========================================================================
 
@@ -1121,5 +1089,53 @@ boolean nvruim_data_3gpd_ext_support( void
 #ifdef FEATURE_HTORPC_METACOMMENTS
 /*~ FUNCTION nvruim_data_3gpd_ext_support */
 #endif 
+
+/*===========================================================================
+
+FUNCTION NVRUIM_CHECK_NON_3GPD_CDMA_CARD
+
+DESCRIPTION
+ This function returns the non 3gpd cdma card presence.
+
+DEPENDENCIES
+This function should only be called after SUBSCRIPTION_READY evt
+
+RETURN VALUE
+  nvruim_3gpd_nv_card_status where
+  NVRUIM_NO_CARD        : NO Card 
+  NVRUIM_NON_3GPD_CARD  : 3GPD disabled card 
+  NVRUIM_3GPD_CARD      : 3GPD enabled card
+
+SIDE EFFECTS
+none
+===========================================================================*/ 
+nvruim_3gpd_nv_card_status nvruim_check_non_3gpd_cdma_card (
+  void
+);
+#ifdef FEATURE_HTORPC_METACOMMENTS
+/*~ FUNCTION nvruim_check_non_3gpd_cdma_card */
+#endif
+
+/*===================================================================
+FUNCTION NVRUIM_PPP_CAVE_FALLBACK
+
+DESCRIPTION
+  Sets the hrpd control variable to Cave
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  None
+
+SIDE EFFECTS
+  None
+
+==================================================================*/
+void nvruim_ppp_cave_fallback( void
+);
+#ifdef FEATURE_HTORPC_METACOMMENTS
+/*~ FUNCTION nvruim_ppp_cave_fallback */
+#endif
 
 #endif /* NVRUIMI_H */

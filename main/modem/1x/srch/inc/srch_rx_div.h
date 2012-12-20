@@ -10,6 +10,7 @@ GENERAL DESCRIPTION
 
 EXTERNALIZED FUNCTIONS  (all SRCH regional)
  
+  srch_rx_div_is_enabling - returns true if diversity is active or enabling.
   srch_rx_div_is_enabled - returns true if we're currently doing rx diversity.
   srch_rx_div_is_disabled - returns true if diversity is not in progress.
   srch_rx_div_allowed_for_bc - returns true if div is allowed for band class.
@@ -24,6 +25,8 @@ EXTERNALIZED FUNCTIONS  (all SRCH regional)
                                           switching is enabled.
   srch_rx_div_set_bc_enable_mask - sets the band class enable mask RX diversity
                                    nv item.
+  srch_rx_div_is_bc_enable_mask_enabled - returns true if band class diversity
+                                          switching is enabled.
   srch_rx_div_bc_enable_mask - returns the band class enable mask.
   srch_rx_div_request - requests that the SRCH_RX_DIV state machine
                         try and do diversity.
@@ -38,7 +41,7 @@ EXTERNALIZED FUNCTIONS  (all SRCH regional)
 INITIALIZATION AND SEQUENCING REQUIREMENTS
   None.
 
-      Copyright (c) 2005 - 2008
+      Copyright (c) 2005 - 2010
                     by QUALCOMM, Inc.  All Rights Reserved.
 *====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*/
 
@@ -49,10 +52,11 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS
   This section contains comments describing changes made to the module.
   Notice that changes are listed in reverse chronological order.
 
-$Header: //source/qcom/qct/modem/1x/srch/rel/1h08/inc/srch_rx_div.h#1 $
+$Header: //source/qcom/qct/modem/1x/srch/rel/1h08/inc/srch_rx_div.h#2 $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+04/05/10   pk      Added a func to return true if div is active or enabling.
 11/13/08   adw     Added external function srch_rx_div_allowed_for_bc().
 05/01/07   tjc     Add bit to rx diversity nv item to enable/disable rx
                    diversity when FFPC is not available.
@@ -68,6 +72,7 @@ when       who     what, where, why
 01/05/05   gs      Implementation, first cut.
 ===========================================================================*/
 
+#include "comdef.h"
 #include "customer.h"
 
 #ifdef FEATURE_CDMA_RX_DIVERSITY
@@ -99,6 +104,24 @@ typedef enum
 /*-------------------------------------------------------------------------
       Prototypes
 -------------------------------------------------------------------------*/
+/*===========================================================================
+
+FUNCTION       SRCH_RX_DIV_IS_ENABLING
+
+DESCRIPTION    This function returns true if we're currently enabling or
+               actively doing rx diversity.
+
+DEPENDENCIES   None
+
+RETURN VALUE   TRUE if the div state machine is in the DIV_REQUESTED,
+               DIV_INITING, or DIV_ENABLED state and stop_requested is
+               not true,  FALSE otherwise.
+
+SIDE EFFECTS   None
+
+===========================================================================*/
+extern boolean srch_rx_div_is_enabling( void );
+
 /*===========================================================================
 
 FUNCTION       SRCH_RX_DIV_IS_ENABLED

@@ -6,17 +6,18 @@
 Supports automated testing of SIM/USIM/RUIM cards via DIAG commands.
 Implements packet processing.
 
-Copyright (c) 2003-2009 by QUALCOMM, Incorporated.  All Rights Reserved.
+Copyright (c) 2003-2009 , 2011 by QUALCOMM, Incorporated.  All Rights Reserved.
 *====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*/
 
 /*===========================================================================
 
                               Edit History
 
- $Header: //source/qcom/qct/modem/uim/mmgsdi/rel/07H1_2/src/gsdidiag.c#21 $ $DateTime: 2009/07/06 22:29:19 $ $Author: ramn $
+ $Header: //source/qcom/qct/modem/uim/su/baselines/sqa/mmgsdi/rel/07H1_2/src/gsdidiag_c/rev21/gsdidiag.c#2 $ $DateTime: 2011/03/08 02:14:45 $ $Author: amitp $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+02/16/11   yt      Handle case where EFS filename string does not end in NULL
 07/01/09   rn      Fixed memory leaks
 05/21/09   js      Fixed memory alignment issue in gsdidiag_sim_get_file_attributes
 05/14/09   kp      Added compiler directive for demand Paging Changes
@@ -1608,31 +1609,25 @@ static PACKED void * gsdidiag_sim_get_file_attributes (
     return NULL;
   }
 
-  if(pkt_len <= GSDIDIAG_SIM_FILENAME_OFFSET)
+  if(pkt_len < sizeof(gsdidiag_sim_get_file_attributes_cmd_req_type))
   {
     MSG_ERROR("gsdidiag_sim_get_file_attr req incorrect pkt_len 0x%x",
                pkt_len,0,0);
     return NULL;
   }
 
-  MMGSDIUTIL_TMC_MEM_MALLOC_AND_VALIDATE(req_ptr,pkt_len,mmgsdi_status);
+  /*Allocate one additional byte in case EFS filename string is not 
+    null-terminated*/
+  MMGSDIUTIL_TMC_MEM_MALLOC_AND_VALIDATE(req_ptr,pkt_len+1,mmgsdi_status);
 
-  if ( mmgsdi_status != MMGSDI_SUCCESS)
+  if ( mmgsdi_status != MMGSDI_SUCCESS || req_ptr == NULL)
   {
     MSG_ERROR("gsdidiag_sim_get_file_attr malloc err req_ptr",0,0,0);
     return NULL;
   }
   else
   {
-    /* copy data prior to sim filename */
-    memcpy((void *)req_ptr,(void *)req, GSDIDIAG_SIM_FILENAME_OFFSET);
-    if(pkt_len > GSDIDIAG_SIM_FILENAME_OFFSET)
-    {
-      /* copy data from sim_filename till the end */
-      memcpy((void *)&(req_ptr->sim_elementary_file),
-             (void *)((byte*)req+GSDIDIAG_SIM_FILENAME_OFFSET),
-             int32touint32(pkt_len - GSDIDIAG_SIM_FILENAME_OFFSET));
-    }
+    memcpy((void *)req_ptr,(void *)req, pkt_len);
   }
 
   filename_len = strlen((const char*)req_ptr->efs_filename);
@@ -1647,8 +1642,7 @@ static PACKED void * gsdidiag_sim_get_file_attributes (
   }
 
   /* length of rsp */
-  rsp_len = sizeof(gsdidiag_sim_get_file_attributes_cmd_rsp_type)
-                  + filename_len + GSDIDAG_NULL_CHAR_LEN;
+  rsp_len = sizeof(gsdidiag_sim_get_file_attributes_cmd_rsp_type) + filename_len;
 
   /* allocate memory for the rsp */
   rsp_ptr = (gsdidiag_sim_get_file_attributes_cmd_rsp_type *)
@@ -9663,30 +9657,25 @@ static PACKED void * gsdidiag_sim_read (
       return NULL;
     }
 
-    if(pkt_len <= GSDIDIAG_SIM_FILENAME_OFFSET)
+    if(pkt_len < sizeof(gsdidiag_sim_read_cmd_req_type))
     {
       MSG_ERROR("gsdidiag_sim_read req incorrect pkt_len 0x%x",
                  pkt_len,0,0);
       return NULL;
     }
-    MMGSDIUTIL_TMC_MEM_MALLOC_AND_VALIDATE(req_ptr,pkt_len,mmgsdi_status);
 
-    if ( mmgsdi_status != MMGSDI_SUCCESS)
+    /* Allocate one additional byte in case EFS filename string is not 
+    null-terminated */
+    MMGSDIUTIL_TMC_MEM_MALLOC_AND_VALIDATE(req_ptr,pkt_len+1,mmgsdi_status);
+
+    if ( mmgsdi_status != MMGSDI_SUCCESS || req_ptr == NULL)
     {
       MSG_ERROR("gsdidiag_sim_read malloc err req_ptr",0,0,0);
       return NULL;
     }
     else
     {
-      /* copy data prior to sim filename */
-      memcpy((void *)req_ptr,(void *)req, GSDIDIAG_SIM_FILENAME_OFFSET);
-      if(pkt_len > GSDIDIAG_SIM_FILENAME_OFFSET)
-      {
-        /* copy data from sim_filename till the end */
-        memcpy((void *)&(req_ptr->sim_elementary_file),
-               (void *)((byte*)req+GSDIDIAG_SIM_FILENAME_OFFSET),
-               int32touint32(pkt_len - GSDIDIAG_SIM_FILENAME_OFFSET));
-      }
+      memcpy((void *)req_ptr,(void *)req, pkt_len);
     }
 
     filename_len = strlen((const char*)req_ptr->efs_filename);
@@ -9702,8 +9691,7 @@ static PACKED void * gsdidiag_sim_read (
     }
 
     /* length of rsp */
-    rsp_len = sizeof(gsdidiag_sim_read_cmd_rsp_type) + filename_len +
-              GSDIDAG_NULL_CHAR_LEN;
+    rsp_len = sizeof(gsdidiag_sim_read_cmd_rsp_type) + filename_len;
 
     /* allocate memory for the rsp*/
     rsp_ptr = (gsdidiag_sim_read_cmd_rsp_type *)diagpkt_subsys_alloc( (uint8)DIAG_SUBSYS_GSDI,
@@ -9957,30 +9945,25 @@ static PACKED void * gsdidiag_sim_write (
       return NULL;
     }
 
-    if(pkt_len <= GSDIDIAG_SIM_FILENAME_OFFSET)
+    if(pkt_len < sizeof(gsdidiag_sim_write_cmd_req_type))
     {
       MSG_ERROR("gsdidiag_sim_write req incorect pkt_len 0x%x",
                  pkt_len,0,0);
       return NULL;
     }
-    MMGSDIUTIL_TMC_MEM_MALLOC_AND_VALIDATE(req_ptr,pkt_len,mmgsdi_status);
 
-    if (mmgsdi_status != MMGSDI_SUCCESS)
+    /*Allocate one additional byte in case EFS filename string is not 
+    null-terminated*/
+    MMGSDIUTIL_TMC_MEM_MALLOC_AND_VALIDATE(req_ptr,pkt_len+1,mmgsdi_status);
+
+    if (mmgsdi_status != MMGSDI_SUCCESS || req_ptr == NULL)
     {
       MSG_ERROR("gsdidiag_sim_write malloc err req_ptr",0,0,0);
       return NULL;
     }
     else
     {
-      /* copy data prior to sim filename */
-      memcpy((void *)req_ptr,(void *)req,GSDIDIAG_SIM_FILENAME_OFFSET);
-      /* copy data from sim_filename till the end */
-      if(pkt_len > GSDIDIAG_SIM_FILENAME_OFFSET)
-      {
-          memcpy((void *)&(req_ptr->sim_elementary_file),
-                 (void *)((byte*)req+GSDIDIAG_SIM_FILENAME_OFFSET),
-                 int32touint32(pkt_len-GSDIDIAG_SIM_FILENAME_OFFSET));
-      }
+      memcpy((void *)req_ptr,(void *)req,pkt_len);
     }
 
     filename_len = uint32toint32(strlen((const char*)req_ptr->efs_filename));
@@ -9996,8 +9979,7 @@ static PACKED void * gsdidiag_sim_write (
     }
 
     /* rsp length */
-    rsp_len = sizeof(gsdidiag_sim_write_cmd_rsp_type) +
-              int32touint32(filename_len) + GSDIDAG_NULL_CHAR_LEN;
+    rsp_len = sizeof(gsdidiag_sim_write_cmd_rsp_type) + int32touint32(filename_len);
 
     /* allocate the rsp */
     rsp_ptr = (gsdidiag_sim_write_cmd_rsp_type *)diagpkt_subsys_alloc((uint8)DIAG_SUBSYS_GSDI,
@@ -22917,6 +22899,7 @@ static PACKED void * gsdidiag_sim_select (
     int                            i = 0;
     int index;
     int                            j = 0;
+    mmgsdi_return_enum_type        mmgsdi_status    = MMGSDI_ERROR;
 
     if(req == NULL)
     {
@@ -22924,7 +22907,25 @@ static PACKED void * gsdidiag_sim_select (
         return NULL;
     }
 
-    req_ptr = (gsdidiag_select_cmd_req_type*)req;
+    if(pkt_len < sizeof(gsdidiag_select_cmd_req_type))
+    {
+        MSG_ERROR("gsdidiag_sim_select: invalid pkt_len 0x%x",pkt_len,0,0);
+        return NULL;
+    }
+
+    /* Allocate one additional byte in case EFS filename string is not 
+    null-terminated */
+    MMGSDIUTIL_TMC_MEM_MALLOC_AND_VALIDATE(req_ptr,pkt_len+1,mmgsdi_status);
+
+    if (mmgsdi_status != MMGSDI_SUCCESS || req_ptr == NULL)
+    {
+      MSG_ERROR("gsdidiag_sim_select malloc err req_ptr",0,0,0);
+      return NULL;
+    }
+    else
+    {
+      memcpy((void *)req_ptr,(void *)req,pkt_len);
+    }
 
     (void)memset(path_p, 0xFF, sizeof(word)*UIM_MAX_PATH_ELEMENTS);
 
@@ -22936,12 +22937,12 @@ static PACKED void * gsdidiag_sim_select (
         /* return error */
         MMGSDI_DEBUG_MSG_ERROR("Filename too long(%d). Max length=%d",
                   filename_len, GSDIDIAG_MAX_FILENAME_LENGTH, 0);
+        MMGSDIUTIL_TMC_MEM_FREE(req_ptr);
         return NULL;
     }
 
     /* length of rsp */
-    rsp_len = sizeof(gsdidiag_select_cmd_rsp_type) + filename_len +
-              GSDIDAG_NULL_CHAR_LEN;
+    rsp_len = sizeof(gsdidiag_select_cmd_rsp_type) + filename_len;
 
     /* allocate memory for the rsp*/
     rsp_ptr = (gsdidiag_select_cmd_rsp_type  *)diagpkt_subsys_alloc( (uint8)DIAG_SUBSYS_GSDI,
@@ -22950,6 +22951,7 @@ static PACKED void * gsdidiag_sim_select (
 
     if (rsp_ptr==NULL)
     {
+        MMGSDIUTIL_TMC_MEM_FREE(req_ptr);   
         return NULL;
     }
 
@@ -22998,6 +23000,7 @@ static PACKED void * gsdidiag_sim_select (
     if (req_table[index].var[0]==NULL) {
         /* mmgsdi_malloc failed */
         MMGSDI_DEBUG_MSG_ERROR("mmgsdi_malloc failed",0,0,0);
+        MMGSDIUTIL_TMC_MEM_FREE(req_ptr);
         gsdidiag_free_index(index);
         rsp_ptr->status = GSDIDIAG_MEMORY_ERR;
         diagpkt_commit(rsp_ptr);
@@ -23131,9 +23134,9 @@ static PACKED void * gsdidiag_sim_select (
       gsdidiag_free_index(index);
     }
     diagpkt_commit(rsp_ptr);
-
+    MMGSDIUTIL_TMC_MEM_FREE(req_ptr);
     return NULL;
-}
+} /* gsdidiag_sim_select */
 #endif /*FEATURE_MMGSDI_DELAYED_RESPONSE_OPTIMIZATION*/
 
 #ifdef FEATURE_MMGSDI_PERSONALIZATION
@@ -24407,6 +24410,7 @@ static PACKED void * gsdidiag_get_feature_indicator_key (
     gsdi_perso_get_feature_key_req_T   perso_get_key_req;
     uint32                             filename_len;
     uint32                             rsp_len;
+    mmgsdi_return_enum_type            mmgsdi_status     = MMGSDI_ERROR;
 
     MSG_HIGH("GSDI DIAG PERSO GET FEATURE KEY",0,0,0);
 
@@ -24417,7 +24421,25 @@ static PACKED void * gsdidiag_get_feature_indicator_key (
         return NULL;
     }
 
-    req_ptr = (gsdidiag_get_feature_key_req_type*)req;
+    if(pkt_len < sizeof(gsdidiag_get_feature_key_req_type))
+    {
+        MSG_ERROR("Invalid pkt_len: 0x%x",pkt_len,0,0);
+        return NULL;
+    }
+
+    /* Allocate one additional byte in case EFS filename string is not 
+    null-terminated */
+    MMGSDIUTIL_TMC_MEM_MALLOC_AND_VALIDATE(req_ptr,pkt_len+1,mmgsdi_status);
+
+    if (mmgsdi_status != MMGSDI_SUCCESS || req_ptr == NULL)
+    {
+      MSG_ERROR("gsdidiag_sim_write malloc err req_ptr",0,0,0);
+      return NULL;
+    }
+    else
+    {
+      memcpy((void *)req_ptr,(void *)req,pkt_len);
+    }
 
     filename_len = strlen((const char*)req_ptr->efs_filename);
 
@@ -24427,18 +24449,23 @@ static PACKED void * gsdidiag_get_feature_indicator_key (
         /* return error */
         MMGSDI_DEBUG_MSG_ERROR("Filename too long(%d). Max length=%d",
                   filename_len, GSDIDIAG_MAX_FILENAME_LENGTH, 0);
+        MMGSDIUTIL_TMC_MEM_FREE(req_ptr);
         return NULL;
     }
 
-    rsp_len = sizeof( gsdidiag_get_feature_key_rsp_type ) + filename_len +
-              GSDIDAG_NULL_CHAR_LEN;
+    rsp_len = sizeof(gsdidiag_get_feature_key_rsp_type) + filename_len;
 
     /* allocate the rsp pointer*/
     rsp_ptr = (gsdidiag_get_feature_key_rsp_type *)diagpkt_subsys_alloc((uint8)DIAG_SUBSYS_GSDI,
                                    (uint16)GSDIDIAG_GET_FEATURE_INDICATOR_KEY_CMD,
                                    rsp_len );
     if (rsp_ptr==NULL)
+    {
+      MSG_ERROR("gsdidiag_get_feature_indicator_key: Unable to allocate memory",
+                 0, 0, 0);
+      MMGSDIUTIL_TMC_MEM_FREE(req_ptr);
         return NULL;
+    }
 
     /*copy req_ptr to rsp_ptr*/
     rsp_ptr->sim_slot_number = req_ptr->sim_slot_number;
@@ -24472,6 +24499,7 @@ static PACKED void * gsdidiag_get_feature_indicator_key (
         gsdidiag_free_index(index);
         rsp_ptr->status = GSDIDIAG_MEMORY_ERR;
         diagpkt_commit(rsp_ptr);
+        MMGSDIUTIL_TMC_MEM_FREE(req_ptr);
         return rsp_ptr;
     }
 
@@ -24492,6 +24520,7 @@ static PACKED void * gsdidiag_get_feature_indicator_key (
         gsdidiag_free_index(index);
         gsdidiag_convert_gsdi_status_to_gsdidiag_status(gsdi_status, &rsp_ptr->status);
         diagpkt_commit(rsp_ptr);
+        MMGSDIUTIL_TMC_MEM_FREE(req_ptr);
         return rsp_ptr;
     }
 
@@ -24644,6 +24673,7 @@ static PACKED void * gsdidiag_get_feature_indicator_key (
 
     gsdidiag_convert_gsdi_status_to_gsdidiag_status(gsdi_status, &rsp_ptr->status);
     diagpkt_commit(rsp_ptr);
+    MMGSDIUTIL_TMC_MEM_FREE(req_ptr);
     return rsp_ptr;
 } /* gsdidiag_get_feature_indicator_key */
 
@@ -25212,6 +25242,7 @@ static PACKED void * gsdidiag_get_feature_indicator_data (
   gsdi_perso_enum_type                   feature      = GSDI_PERSO_NONE;/* Perso Feature affected    */
   uint32                                 filename_len = 0;
   uint32                                 rsp_len      = 0;
+  mmgsdi_return_enum_type                mmgsdi_status  = MMGSDI_ERROR;
 
   MSG_HIGH("GSDI DIAG PERSO GET FEATURE INDICATOR DATA",0,0,0);
 
@@ -25222,7 +25253,25 @@ static PACKED void * gsdidiag_get_feature_indicator_data (
     return NULL;
   }
 
-  req_ptr = (gsdidiag_get_feature_ind_data_req_type*)packed_req_ptr;
+  if(pkt_len < sizeof(gsdidiag_get_feature_ind_data_req_type))
+  {
+    MSG_ERROR("Invalid pkt_len: 0x%x",pkt_len,0,0);
+    return NULL;
+  }
+
+  /* Allocate one additional byte in case EFS filename string is not 
+    null-terminated */
+  MMGSDIUTIL_TMC_MEM_MALLOC_AND_VALIDATE(req_ptr,pkt_len+1,mmgsdi_status);
+
+  if (mmgsdi_status != MMGSDI_SUCCESS || req_ptr == NULL)
+  {
+    MSG_ERROR("gsdidiag_sim_write malloc err req_ptr",0,0,0);
+    return NULL;
+  }
+  else
+  {
+    memcpy((void *)req_ptr,(void *)packed_req_ptr,pkt_len);
+  }
 
   filename_len = strlen((const char*)req_ptr->efs_filename);
 
@@ -25232,11 +25281,11 @@ static PACKED void * gsdidiag_get_feature_indicator_data (
     /* return error */
     MMGSDI_DEBUG_MSG_ERROR("Filename too long(0x%x). Max length=0x%x",
               filename_len, GSDIDIAG_MAX_FILENAME_LENGTH, 0);
+    MMGSDIUTIL_TMC_MEM_FREE(req_ptr);
     return NULL;
   }
 
-  rsp_len = sizeof( gsdidiag_get_feature_ind_data_rsp_type )
-              + filename_len + GSDIDIAG_NULL_CHAR_LEN;
+  rsp_len = sizeof( gsdidiag_get_feature_ind_data_rsp_type ) + filename_len;
 
   /* allocate the rsp pointer*/
   rsp_ptr = (gsdidiag_get_feature_ind_data_rsp_type *)diagpkt_subsys_alloc(
@@ -25246,6 +25295,7 @@ static PACKED void * gsdidiag_get_feature_indicator_data (
   if (rsp_ptr==NULL)
   {
     MSG_ERROR("rsp_ptr ERR:NULL",0,0,0);
+    MMGSDIUTIL_TMC_MEM_FREE(req_ptr);
     return NULL;
   }
 
@@ -25267,6 +25317,7 @@ static PACKED void * gsdidiag_get_feature_indicator_data (
     /*req_table if full*/
     rsp_ptr->status = GSDIDIAG_MAX_ASYNC_REQ_EXCEED_ERR;
     diagpkt_commit(rsp_ptr);
+    MMGSDIUTIL_TMC_MEM_FREE(req_ptr);
     return rsp_ptr;
   }
 
@@ -25283,6 +25334,7 @@ static PACKED void * gsdidiag_get_feature_indicator_data (
     gsdidiag_free_index(index);
     rsp_ptr->status = GSDIDIAG_MEMORY_ERR;
     diagpkt_commit(rsp_ptr);
+    MMGSDIUTIL_TMC_MEM_FREE(req_ptr);
     return rsp_ptr;
   }
 
@@ -25313,6 +25365,7 @@ static PACKED void * gsdidiag_get_feature_indicator_data (
     gsdidiag_free_index(index);
     gsdidiag_convert_gsdi_status_to_gsdidiag_status(gsdi_status, &rsp_ptr->status);
     diagpkt_commit(rsp_ptr);
+    MMGSDIUTIL_TMC_MEM_FREE(req_ptr);
     return rsp_ptr;
   }
 
@@ -25338,6 +25391,7 @@ static PACKED void * gsdidiag_get_feature_indicator_data (
 
   gsdidiag_convert_gsdi_status_to_gsdidiag_status(gsdi_status, &rsp_ptr->status);
   diagpkt_commit(rsp_ptr);
+  MMGSDIUTIL_TMC_MEM_FREE(req_ptr);
   return rsp_ptr;
 } /* gsdidiag_get_feature_indicator_data */
 #endif /* FEATURE_MMGSDI_PERSONALIZATION */

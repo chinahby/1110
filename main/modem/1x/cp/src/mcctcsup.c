@@ -73,7 +73,7 @@ EXTERNALIZED FUNCTIONS
 
 INITIALIZATION AND SEQUENCING REQUIREMENTS
 
-Copyright (c) 1990-2009 by QUALCOMM, Incorporated.  All Rights Reserved.
+Copyright (c) 1990-2010 by QUALCOMM, Incorporated.  All Rights Reserved.
 
 *====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*/
 
@@ -85,10 +85,11 @@ This section contains comments describing changes made to the module.
 Notice that changes are listed in reverse chronological order.
 
 $PVCSPath: L:/src/asw/MSM5100/CP_REL_A/vcs/mcctcsup.c_v   1.64   03 Oct 2002 15:46:44   phosabet  $
-$Header: //source/qcom/qct/modem/1x/cp/rel/1h08/src/mcctcsup.c#4 $ $DateTime: 2009/09/01 06:19:12 $ $Author: anishg $
+$Header: //depot/asic/qsc1100/modem/1x/cp/src/mcctcsup.c#2 $ $DateTime: 2010/11/25 07:53:16 $ $Author: sshahi $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+11/04/10   ssh     Added processing of SMCM with use_time as TRUE.
 09/01/09   ag      Added support for sending neighbor search mode to searcher
 07/29/09   ag      Calling sd_ss_ind_misc_orig_success only for MO call.
 06/01/09   ag      Featurized otasp session status under FEATURE_OTASP_STATUS
@@ -2120,9 +2121,11 @@ void tc_action_chk
         action_time = msg_ptr->tc_ord.gen.action_time;
         break;
 
-      case CAI_FM_HO_MSG:
-        action_time = msg_ptr->fm_ho.action_time;
+      #ifdef FEATURE_IS2000_REL_A
+      case CAI_SECURITY_MODE_MSG:
+        action_time = msg_ptr->tcsmcm.action_time;
         break;
+      #endif /* FEATURE_IS2000_REL_A */
 
       default:
         /* Message does not have action time - software madness */
@@ -2186,15 +2189,21 @@ void tc_action_chk
 
           /* Set use_time to 0 to mark that action time has been processed */
           tc_action_msg.tc_ord.gen.use_time = FALSE;
+
+          MSG_MED("Started the action timer for CAI_TC_FWD_ORD_MSG", 0, 0, 0);
           break;
 
-         case CAI_FM_HO_MSG:
+        #ifdef FEATURE_IS2000_REL_A
+        case CAI_SECURITY_MODE_MSG:          
           /* Move message to action message buffer */
-          tc_action_msg.fm_ho = msg_ptr->fm_ho;
+          tc_action_msg.tcsmcm = msg_ptr->tcsmcm;
 
           /* Set use_time to 0 to mark that action time has been processed */
-          tc_action_msg.fm_ho.use_time = FALSE;
+          tc_action_msg.tcsmcm.use_time = FALSE;
+
+          MSG_MED("Started the action timer for CAI_SECURITY_MODE_MSG", 0, 0, 0);
           break;
+        #endif /* FEATURE_IS2000_REL_A */
 
         default:
           /* Message does not have action time - software madness */

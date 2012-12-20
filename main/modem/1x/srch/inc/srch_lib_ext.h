@@ -15,7 +15,7 @@ EXTERNALIZED FUNCTIONS
 INITIALIZATION AND SEQUENCING REQUIREMENTS
   None
 
-      Copyright (c) 2004 - 2008
+      Copyright (c) 2004 - 2010
                     by QUALCOMM, Inc.  All Rights Reserved.
 *====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*=*/
 
@@ -27,10 +27,12 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS
   This section contains comments describing changes made to the module.
   Notice that changes are listed in reverse chronological order.
 
-$Header: //source/qcom/qct/modem/1x/srch/rel/1h08/inc/srch_lib_ext.h#1 $
+$Header: //source/qcom/qct/modem/1x/srch/rel/1h08/inc/srch_lib_ext.h#3 $
 
 when       who     what, where, why
 --------   ---     -----------------------------------------------------------
+02/18/10   sst     Added TC AGC check flags and thresholds
+08/31/09   vks     Added PCH->QPCH channel estimator threshold type
 06/25/08   adw     Added min_sleep_setup_time_safewin_ms and _chips
 06/20/08   mca     Merge from //depot
 03/13/08   sst     Modify FTS version to be determined at runtime
@@ -129,6 +131,10 @@ typedef struct
      performance impacts on both GPS and FLO, especially in moving scenarios */
   const uint8              afc_vco_gain_srl_multiplier;
 
+  const boolean            tc_rxd_agc_ck;
+  const int32              tc_rxd_agc_dis_delta;
+  const int32              tc_rxd_agc_en_delta;
+
 } srch_lib_ext_common_defines_type;
 
 /** END COMMON DEFINES **/
@@ -187,11 +193,23 @@ typedef struct
 
 } srch_lib_ext_sched_defines_type;
 
+typedef enum
+{
+  THRESH_TYPE_OLD,
+  THRESH_TYPE_NEW
+}srch_lib_ext_ch_est_thresh_tab_type;
+
+typedef struct
+{
+  const srch_lib_ext_ch_est_thresh_tab_type  ch_est_thresh_tab_type;
+} srch_lib_ext_qpch_defines_type;
+
 
 typedef struct
 {
   const srch_lib_ext_warmup_defines_type warmup;
   const srch_lib_ext_sched_defines_type  sched;
+  const srch_lib_ext_qpch_defines_type   qpch;
 
 } srch_lib_ext_idle_defines_type;
 

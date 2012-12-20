@@ -1,5 +1,5 @@
 #-------------------------------------------------------------------------------
-# $Header: //source/qcom/qct/modem/mmode/mmoc/rel/08H1/src/mmoc.min#1 $
+# $Header: //source/qcom/qct/modem/mmode/mmoc/rel/08H1_QSC1110_3.X/src/mmoc.min#1 $
 # MMOC 
 #-------------------------------------------------------------------------------
 MMOC_SOURCES=\

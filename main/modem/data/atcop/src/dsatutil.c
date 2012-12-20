@@ -96,7 +96,7 @@ EXTERNALIZED FUNCTIONS
 INITIALIZATION AND SEQUENCING REQUIREMENTS
 
 
-   Copyright (c) 2001 - 2009 by QUALCOMM Incorporated.
+   Copyright (c) 2001 - 2011 by QUALCOMM Incorporated.
    All Rights Reserved.
    Qualcomm Confidential and Proprietary.
 *====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*/
@@ -110,10 +110,11 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS
   Notice that changes are listed in reverse chronological order.
 
 $PVCSPath: L:/src/asw/MM_DATA/vcs/dsatutil.c_v   1.7   11 Nov 2002 14:02:48   sbandaru  $
-$Header: //source/qcom/qct/modem/data/common/commonatcop/main/lite/src/dsatutil.c#3 $ $DateTime: 2009/01/22 06:46:48 $ $Author: bhaviks $
+$Header: //source/qcom/qct/modem/data/common/commonatcop/main/lite/src/dsatutil.c#4 $ $DateTime: 2011/04/20 04:28:48 $ $Author: c_avijay $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+04/20/11   dvk     Fixed compilation issues.
 01/02/09   bs      Added support for 1X AT Phonebook commands.
 04/11/08   bs      Fixed Lint High's.
 10/29/07   sn      Replaced banned string APIs.
@@ -1456,82 +1457,7 @@ int dsatutil_strcmp_ig_sp_case
 
   return d;
 } /*  dsatutil_strcmp_ig_sp_case  */
-
-/*===========================================================================
 
-FUNCTION DSATUTIL_ATOI
-
-DESCRIPTION
-  This function converts an ASCII string to an integer, using a specified
-  radix.  Spaces are ignored. Letters used for radices above 10 may be of
-  either case.
-
-DEPENDENCIES
-
-
-RETURN VALUE
-  Returns 
-    ATOI_OK           : for a correct conversion,
-    ATOI_NO_ARG       : 1 if no argument was found,
-    ATOI_OUT_OF_RANGE : if a character or the total value is out of range.
-
-SIDE EFFECTS
-
-===========================================================================*/
-
-atoi_enum_type dsatutil_atoi
-(
-  dsat_num_item_type *val_arg_ptr,      /*  value returned  */
-  const byte *s,                        /*  points to string to eval  */
-  unsigned int r                        /*  radix */
-)
-{
-  atoi_enum_type err_ret = ATOI_NO_ARG;
-  byte c;
-  dsat_num_item_type val, val_lim, dig_lim;
-
-  val = 0;
-  val_lim = (dsat_num_item_type) ((unsigned int)MAX_VAL_NUM_ITEM / r);
-  dig_lim = (dsat_num_item_type) ((unsigned int)MAX_VAL_NUM_ITEM % r);
-
-  while ( (c = *s++) != '\0')
-  {
-    if (c != ' ')
-    {
-      c = (byte) UPCASE (c);
-      if (c >= '0' && c <= '9')
-      {
-        c -= '0';
-      }
-      else if (c >= 'A')
-      {
-        c -= 'A' - 10;
-      }
-      else
-      {
-        err_ret = ATOI_OUT_OF_RANGE;  /*  char code too small */
-        break;
-      }
-
-      if (c >= r || val > val_lim
-          || (val == val_lim && c > dig_lim))
-      {
-        err_ret = ATOI_OUT_OF_RANGE;  /*  char code too large */
-        break;
-      }
-      else
-      {
-        err_ret = ATOI_OK;            /*  arg found: OK so far*/
-        val = (dsat_num_item_type) (val * r + c);
-      }
-    }
-    *val_arg_ptr =  val;
-  }
-  
-  return err_ret;
-
-} /*  dsatutil_atoi */
-
 /*===========================================================================
 FUNCTION DSATUTIL_STRIP_QUOTES_OUT
 
@@ -3300,6 +3226,79 @@ nv_stat_enum_type dsatutil_put_nv_item
   return( nv_command.status );
 }
 
+/*===========================================================================
+
+FUNCTION DSATUTIL_ATOI
+
+DESCRIPTION
+  This function converts an ASCII string to an integer, using a specified
+  radix.  Spaces are ignored. Letters used for radices above 10 may be of
+  either case.
+
+DEPENDENCIES
+
+
+RETURN VALUE
+  Returns 
+    ATOI_OK           : for a correct conversion,
+    ATOI_NO_ARG       : 1 if no argument was found,
+    ATOI_OUT_OF_RANGE : if a character or the total value is out of range.
+
+SIDE EFFECTS
+
+===========================================================================*/
+atoi_enum_type dsatutil_atoi
+(
+  dsat_num_item_type *val_arg_ptr,      /*  value returned  */
+  const byte *s,                        /*  points to string to eval  */
+  unsigned int r                        /*  radix */
+)
+{
+  atoi_enum_type err_ret = ATOI_NO_ARG;
+  byte c;
+  dsat_num_item_type val, val_lim, dig_lim;
+
+  val = 0;
+  val_lim = (dsat_num_item_type) ((unsigned int)MAX_VAL_NUM_ITEM / r);
+  dig_lim = (dsat_num_item_type) ((unsigned int)MAX_VAL_NUM_ITEM % r);
+
+  while ( (c = *s++) != '\0')
+  {
+    if (c != ' ')
+    {
+      c = (byte) UPCASE (c);
+      if (c >= '0' && c <= '9')
+      {
+        c -= '0';
+      }
+      else if (c >= 'A')
+      {
+        c -= 'A' - 10;
+      }
+      else
+      {
+        err_ret = ATOI_OUT_OF_RANGE;  /*  char code too small */
+        break;
+      }
+
+      if (c >= r || val > val_lim
+          || (val == val_lim && c > dig_lim))
+      {
+        err_ret = ATOI_OUT_OF_RANGE;  /*  char code too large */
+        break;
+      }
+      else
+      {
+        err_ret = ATOI_OK;            /*  arg found: OK so far*/
+        val = (dsat_num_item_type) (val * r + c);
+      }
+    }
+    *val_arg_ptr =  val;
+  }
+  
+  return err_ret;
+
+} /*  dsatutil_atoi */
 
 #endif /* FEATURE_DATA */
 

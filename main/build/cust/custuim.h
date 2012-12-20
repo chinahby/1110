@@ -7,7 +7,7 @@
 DESCRIPTION
   Configuration for RUIM Feature.
 
-  Copyright (c) 2000, 2001, 2002, 2003, 2005-2009 by QUALCOMM Incorporated. All Rights Reserved.
+  Copyright (c) 2000, 2001, 2002, 2003, 2005-2010 by QUALCOMM Incorporated. All Rights Reserved.
 ===========================================================================*/
 
 
@@ -19,10 +19,17 @@ DESCRIPTION
   Notice that changes are listed in reverse chronological order.
 
 $PVCSPath:  L:/src/asw/MSM6050/vcs/custruim.h_v   1.2   05 Mar 2002 19:48:16   ropalsky  $
-$Header: //source/qcom/qct/modem/uim/su/baselines/qsc1100/main/latest/build/cust/custuim.h#17 $ $DateTime: 2009/07/23 05:53:26 $ $Author: sratnu $
+$Header: //source/qcom/qct/modem/uim/su/baselines/qsc1100/main/latest/build/cust/custuim.h#21 $ $DateTime: 2011/03/30 01:32:46 $ $Author: amitp $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+03/30/11   adp     Defining FEATURE_APP_CAT always and defining 
+                   FEATURE_APP_CATAPP only for non-Mango UI builds
+03/25/11   adp     Removing feature FEATURE_APP_CAT from uim, since UIM does   
+                   not own the feature 
+03/09/11   ssr     Fixed compialtion error
+07/09/10   ssr     Enable FEATURE_UIM_MISCONFIG_RUIM_N5_WORKAROUND
+04/23/10   ssr     Enable UIM 3GPD NV support
 07/23/09   ssr     Added FEATURE_UIM_RUIM_SUPPORT_SCI
 06/22/09   yb      Enable FEATURE_CAT_REL6
 06/22/09   ssr     Removed FEATURE_UIM_RUIM_SUPPORT_SCI
@@ -359,6 +366,8 @@ when       who     what, where, why
 #define FEATURE_UIM_3GPD_FALLBACK
 #define FEATURE_UIM_3GPD_MULTIPLE_SIP_PROFILES
 #define FEATURE_NVRUIM_HANDLE_ENHANCED_3GPD_PARAMS
+/* 3GPD NV support for non legacy cdma card */
+#define FEATURE_UIM_SUPPORT_3GPD_NV
 
 /* Feature to support LBS on RUIM */
 #define FEATURE_UIM_SUPPORT_LBS

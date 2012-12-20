@@ -25,9 +25,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/player/audioplayer/main/latest/src/audio.h#11 $
-$DateTime: 2008/10/23 04:15:23 $
-$Change: 768864 $
+$Header: //source/qcom/qct/multimedia/qtv/player/audioplayer/main/latest/src/audio.h#13 $
+$DateTime: 2009/11/26 23:17:22 $
+$Change: 1097320 $
 
 ========================================================================== */
 
@@ -57,6 +57,9 @@ $Change: 768864 $
 #ifdef FEATURE_QTV_AUDIO_DISCONTINUITY
 #error code not present
 #endif /* FEATURE_QTV_AUDIO_DISCONTINUITY */
+
+#define MAX_EVENT_COUNT 60
+#define MIN_EVENT_COUNT 50
 
 /* ==========================================================================
 
@@ -106,6 +109,53 @@ DESCRIPTION:
 /* =======================================================================
 **                        Class Declarations
 ** ======================================================================= */
+
+
+/* ======================================================================
+CLASS
+  EventMSG
+
+DESCRIPTION
+   event_ptr:  Implemented as an array of size MAX_EVENT_COUNT, of whatever type you need 
+   readIndex:  A read index (whichever is more efficient for your processor) 
+  writeIndex: A write index 
+       count: A counter indicating how much data is in the array  
+			  Every time you write data, you advance the write index and increment the counter. When you read data, 
+			  you increase the read index and decrement the counter. If either pointer reaches n, set it to zero.
+
+
+DEPENDENCIES
+  List any dependencies for this function, global variables, state,
+  resource availability, etc.
+
+RETURN VALUE
+  Enumerate possible return values
+
+SIDE EFFECTS
+  Detail any side effects.
+
+========================================================================== */
+class EventMSG
+{
+private:
+  struct event_info
+  {
+    void *event_ptr[MAX_EVENT_COUNT];	
+    int readIndex, writeIndex, count;
+  };
+  struct event_info audio_timing_e;
+  struct event_info audio_status_e;
+
+  rex_crit_sect_type  m_event_cs;
+
+  bool pushEvent(uint16 eventID);
+  void releaseEvents(uint16 eventID);
+public: 
+  EventMSG();
+  ~EventMSG();
+  void pushEvents();
+  void* popEvent(uint16 eventID);
+};
 
 /* ======================================================================
 CLASS
@@ -218,10 +268,14 @@ public:
 #error code not present
 #endif /* FEATURE_QTV_GENERIC_BCAST_PCR */
 
+#ifdef FEATURE_QTV_AUDIO_DISCONTINUITY
+#error code not present
+#endif /* FEATURE_QTV_AUDIO_DISCONTINUITY */
+
 private:
 
   AVSync* m_pAVSync;
-
+  EventMSG m_eventMsg;
   CLIENT_NOTIFY_CB_FN m_playerCB;
   QCConditionType &m_responseSync;
 
@@ -261,10 +315,6 @@ private:
 #endif /* FEATURE_QTV_PROGRESSIVE_DL_STREAMING_2 */
   bool IsPlaying();
   
-#ifdef FEATURE_QTV_AUDIO_DISCONTINUITY
-#error code not present
-#endif /* FEATURE_QTV_AUDIO_DISCONTINUITY */
-
   bool IsPaused();
   bool IsPausedDisabled();
 

@@ -47,10 +47,10 @@ Diversion contrary to U.S. law prohibited.
   This section contains comments describing changes made to the module.
   Notice that changes are listed in reverse chronological order.
 
-  $Header: //source/qcom/qct/modem/mmode/cm/rel/08H1/src/cmxcall.c#15 $
+  $Header: //source/qcom/qct/modem/mmode/cm/rel/08H1_QSC1110_3.X/src/cmxcall.c#2 $
 
 when       who     what, where, why
---------   ---     ----------------------------------------------------------
+10/15/09   mh/gm   Allowing CS data call in CDMA Only mode
 06/10/09   rm      CM should not error fatal for non-EF_RAT refresh.
                    Also CM should handle MMGSDI_REFRESH_NAA_INIT_FCN
 06/10/09   em      Lint cleanup
@@ -1110,27 +1110,8 @@ static boolean cmxcall_is_valid_mode_pref(
 
     /* The following mode preferences can be used in conjunction
     ** with DATA call type.
-    ** For CS_DATA Type, CM does not support this type with CDMA_ONLY Mode Pref
     */
     case CM_CALL_TYPE_CS_DATA:
-      switch( mode_pref )
-      {
-        case CM_MODE_PREF_DIGITAL_LESS_HDR_ONLY:
-        case CM_MODE_PREF_DIGITAL_ONLY:
-        case CM_MODE_PREF_CDMA_HDR_ONLY:
-        case CM_MODE_PREF_HDR_ONLY:
-        case CM_MODE_PREF_CDMA_WLAN:
-        case CM_MODE_PREF_HDR_WLAN:
-        case CM_MODE_PREF_CDMA_HDR_WLAN:
-        case CM_MODE_PREF_CDMA_AMPS_HDR_WLAN_ONLY:
-        case CM_MODE_PREF_CDMA_AMPS_WLAN_ONLY:
-          return TRUE;
-        default:
-          break;
-      }
-
-      return FALSE;
-
     case CM_CALL_TYPE_PS_DATA:
       switch( mode_pref )
       {
@@ -3266,7 +3247,7 @@ boolean cmcall_determine_orig_srv_opt(
     default:
 
       is_so_found= FALSE;
-      CM_MSG_ERROR( "Unexpected call type=%d",call_ptr->call_type,0,0 );
+      CM_MSG_HIGH( "Unexpected call type=%d",call_ptr->call_type,0,0 );
       break;
   }
 

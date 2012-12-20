@@ -260,7 +260,7 @@ void mc_default_values (
     case NV_ESN_CHKSUM_I:         /*   1 */
       /* These are handled at the NV RUIM functions. */
       break;
-		
+
     #ifdef FEATURE_ACP
 #error code not present
     #endif
@@ -307,7 +307,7 @@ void mc_default_values (
       data_ptr->imsi_11_12.imsi_11_12 = IMSI_11_12_ZERO;  /* default to '00' */
       break;
 
-    case NV_DIR_NUMBER_I:         /* 178 */		
+    case NV_DIR_NUMBER_I:         /* 178 */
       memcpy( (byte*)(data_ptr->dir_number.dir_number),
               dir_number, 10 );
       break;

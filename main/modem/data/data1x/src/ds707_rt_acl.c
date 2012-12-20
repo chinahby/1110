@@ -20,9 +20,11 @@ Copyright (c) 2002-2010 by QUALCOMM, Incorporated.  All Rights Reserved.
 /*===========================================================================
 
                       EDIT HISTORY FOR FILE
-$Header: //source/qcom/qct/modem/data/1x/707/main/lite/src/ds707_rt_acl.c#8 $ $DateTime: 2010/04/21 00:25:58 $ $Author: nsivakum $
+$Header: //source/qcom/qct/modem/data/1x/707/main/lite/src/ds707_rt_acl.c#9 $ $DateTime: 2010/05/28 04:37:56 $ $Author: parmjeet $
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+05/28/10   ps      Added support to pick up the profile id with unspecified bit
+                   set for Legacy/Non-OMH Applications.
 04/19/10   sn      Changes to support 3GPD Ext (n15) disabled scenario in OMH.
 11/24/08   psng    Added support to use legacy NV items if number of valid SIP
                    profiles is zero.
@@ -194,14 +196,13 @@ boolean ds707_rti_process_priority
   void                 *this_if_ptr
 )
 {
-   int8          current_profile_id; 
-   int8          requesting_profile_id;
+   int8          current_profile_id = DATA_SESSION_PROFILE_ID_INVALID; 
+   int8          requesting_profile_id = DATA_SESSION_PROFILE_ID_INVALID;
    uint8         current_app_priority;
    uint8         requesting_app_priority; 
    ps_iface_type *iface_ptr=NULL;
    boolean       ret_val = FALSE;
    uint32        pkt_instance = DS707_DEF_PKT_INSTANCE;
-   uint8         index = 0;
    ds707_event_payload_type ds707_event_payload;
 /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
  
@@ -229,25 +230,18 @@ boolean ds707_rti_process_priority
    current_profile_id = ds707_data_session[pkt_instance].current_profile_id;
    requesting_profile_id = policy_info_ptr->data_session_profile_id;
    
-   if( requesting_profile_id == DATA_SESSION_PROFILE_ID_INVALID )
-   {
-     for( index=0; index<num_valid_profiles; index++ )
-     {
-       if( ds707_data_session_profile_info[index].app_type & DEFAULT_PROFILE )
-       {
-         requesting_profile_id = index;
-         policy_info_ptr->data_session_profile_id = index;
-         break;
-       }
-     }
-   }
-   
    if( requesting_profile_id <= DATA_SESSION_PROFILE_ID_INVALID ||
-       requesting_profile_id >= num_valid_profiles )
+       requesting_profile_id >  num_valid_profiles )
    {
      MSG_HIGH( "Bad requesting app profile id=%d ",
                requesting_profile_id, 0, 0 );
      return FALSE;
+   }
+
+   if( requesting_profile_id == DATA_SESSION_PROFILE_INIT_VAL )
+   {
+     requesting_profile_id = ds707_data_session_get_default_profile();
+     policy_info_ptr->data_session_profile_id = requesting_profile_id;
    }
 
    MSG_MED( "Current App Profile ID=%d; Requesting App Profile ID=%d", 

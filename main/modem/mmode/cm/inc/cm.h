@@ -30,7 +30,7 @@ Diversion contrary to U.S. law prohibited.
   This section contains comments describing changes made to the module.
   Notice that changes are listed in reverse chronological order.
 
-  $Header: //source/qcom/qct/modem/mmode/cm/rel/08H1/inc/cm.h#30 $
+  $Header: //source/qcom/qct/modem/mmode/cm/rel/08H1_QSC1110_3.X/inc/cm.h#1 $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
@@ -19370,10 +19370,6 @@ typedef enum cm_client_type_e {
   #endif /* FEATURE_RPC */
 
 } cm_client_type_e_type;
-// YY :MODIFY #define CM_CLIENT_TYPE_BREW_APPS OUT OF ENUM
-#ifdef FEATURE_CM_LOW_MEM_TARGET
-	#define CM_CLIENT_TYPE_BREW_APPS CM_CLIENT_TYPE_MFLO
-#endif
 
 
 /** Enumeration of client API return status

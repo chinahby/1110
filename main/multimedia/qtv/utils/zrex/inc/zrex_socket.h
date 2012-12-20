@@ -19,9 +19,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/utils/zrex/main/latest/inc/zrex_socket.h#7 $
-$DateTime: 2008/05/08 14:44:36 $
-$Change: 656482 $
+$Header: //source/qcom/qct/multimedia/qtv/utils/zrex/main/latest/inc/zrex_socket.h#8 $
+$DateTime: 2009/01/29 06:14:06 $
+$Change: 829425 $
 
 ========================================================================== */
 
@@ -43,7 +43,12 @@ $Change: 656482 $
 #include "customer.h"
 #include "qtvInternalDefs.h"
 #include "zrex_os.h"
+#ifndef FEATURE_WINCE
 #include "dsbsd.h"
+#else
+#error code not present
+#endif
+
 
 
 /* ==========================================================================
@@ -71,7 +76,9 @@ extern "C" {
 /* -----------------------------------------------------------------------
 ** Type Declarations
 ** ----------------------------------------------------------------------- */
+#ifndef FEATURE_WINCE
 typedef int SOCKET;
+#endif
 /* -----------------------------------------------------------------------
 ** Constant / Define Declarations
 ** ----------------------------------------------------------------------- */
@@ -105,9 +112,11 @@ typedef int SOCKET;
 #endif
 
 #define INVALID_SOCKET  (SOCKET)(~0)
+#ifndef FEATURE_WINCE
 #define SOCKET_ERROR            (-1)
 #define WSAEWOULDBLOCK			EWOULDBLOCK
 #define WSAEMSGSIZE				DS_EMSGSIZE
+#endif
 
 /* -----------------------------------------------------------------------
 ** Global Constant Data Declarations 

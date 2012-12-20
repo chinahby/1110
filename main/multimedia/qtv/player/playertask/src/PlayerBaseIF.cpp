@@ -23,9 +23,9 @@ Copyright 2008 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/player/playertask/main/latest/src/PlayerBaseIF.cpp#3 $
-$DateTime: 2008/07/18 06:05:43 $
-$Change: 704966 $
+$Header: //source/qcom/qct/multimedia/qtv/player/playertask/main/latest/src/PlayerBaseIF.cpp#6 $
+$DateTime: 2010/04/23 00:39:40 $
+$Change: 1276762 $
 
 ========================================================================== */
 
@@ -60,7 +60,7 @@ $Change: 704966 $
 ////////////////////////////////////////////////////////////////////
 
 // Source
-EVENT_POOL( VIDEO_POOL, 10 );
+EVENT_POOL( VIDEO_POOL, 10 )
   //to player
 EVENT_SOURCE( VIDEO_STATUS, VIDEO_POOL )
   //EVENT_SOURCE( AV_TICK, VIDEO_POOL ); //already in audio pool
@@ -93,12 +93,14 @@ PlayerBaseIF* PlayerBaseIF::CreateVideoPlayerInstance()
 /* Destroys the Instance of Video Player */
 void PlayerBaseIF::DestroyVideoPlayerInstance(PlayerBaseIF* pActiveVideoPlayer)
 {
+  if(pActiveVideoPlayer != NULL)
+  {
 #ifndef FEATURE_QTV_DISCARD_VIDEO_PLAYER
-    if(pActiveVideoPlayer)
-    {
-        QTV_Delete(pActiveVideoPlayer);
-    }
+    QTV_Delete(pActiveVideoPlayer);
+#else
+    QTV_USE_ARG1(pActiveVideoPlayer);
 #endif /* FEATURE_QTV_DISCARD_VIDEO_PLAYER */
+  }
 }
 
 

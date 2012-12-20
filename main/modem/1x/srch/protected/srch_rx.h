@@ -13,7 +13,7 @@ EXTERNALIZED FUNCTIONS
 
 INITIALIZATION AND SEQUENCING REQUIREMENTS
 
-      Copyright (c) 2005 - 2009
+      Copyright (c) 2005 - 2010
                     by QUALCOMM, Inc.  All Rights Reserved.
 *====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*/
 
@@ -24,10 +24,13 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS
   This section contains comments describing changes made to the module.
   Notice that changes are listed in reverse chronological order.
 
-$Header: //source/qcom/qct/modem/1x/srch/rel/1h08/protected/srch_rx.h#2 $
+$Header: //source/qcom/qct/modem/1x/srch/rel/1h08/protected/srch_rx.h#4 $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+04/12/10   sst     Added srch_rx_mdsp_pause() api
+04/05/10   pk      Removed _chain_assn() as it should not be exported.
+                   and few Lint fixes.
 01/30/09   sst     Added srch_rx_release_owned_chains()
 11/10/08   mca     Added new RF warmup API
 10/27/08   aps     Removed featurization of srch_rx_mdsp_chain_assn()
@@ -101,6 +104,17 @@ typedef void (*srch_rx_granted_cb_t)( void );
 /* Callback function definition for tune completions. */
 typedef void (*srch_rx_tune_cb_t)( void );
 
+/* this is emulating the rf device type provided by rfcom_device_enum_type,
+   found in rfcom.h */
+typedef enum
+{
+  SRCH_RF_TRANSCEIVER_0,             /* Primary Radio transceiver */
+  SRCH_RF_RECEIVER_1,                /* Secondary Receiver        */
+  SRCH_RF_RECEIVER_DIV,              /* Recieve Diversity         */
+  SRCH_RF_RECEIVER_DUAL,             /* Independent Rx Chains     */
+  SRCH_RF_MAX_DEVICES
+}
+srch_rx_device_enum_type;
 
 /*-------------------------------------------------------------------------
       Prototypes
@@ -137,7 +151,7 @@ SIDE EFFECTS  None
 ===========================================================================*/
 extern void srch_rx_complete_tune
 (
-  uint32 chain  /* The completed tune's chain */
+  srch_rx_chain_name_type chain  /* The completed tune's chain */
 );
 
 /*===========================================================================
@@ -154,7 +168,7 @@ RETURN VALUE   The rf device.
 SIDE EFFECTS   None.
 
 ===========================================================================*/
-extern rfcom_device_enum_type srch_rx_get_device
+extern srch_rx_device_enum_type srch_rx_get_device
 (
   srch_rx_chain_name_type chain_name    /* chain */
 );
@@ -178,6 +192,29 @@ SIDE EFFECTS   None.
 extern sample_server_rx_chain_type srch_rx_get_sample_buffer
 (
   srch_rx_chain_name_type chain_name    /* chain */
+);
+
+/*===========================================================================
+
+FUNCTION SRCH_RX_MDSP_PAUSE
+
+DESCRIPTION    This function is designed for subsystems outside of search
+               to pause and resume mDSP writes to the RxF rotators for
+               any ready chains. This function must be called in pairs,
+               first TRUE, then FALSE.
+
+DEPENDENCIES   Note these functions are not thread safe, so if anyone calls
+               this function, someone else could still re-enable the writes
+               async to these calls.
+
+RETURN VALUE   None.
+
+SIDE EFFECTS   mDSP writes to the RxF rotators may be disabled
+
+===========================================================================*/
+extern void srch_rx_mdsp_pause
+(
+  boolean pause                       /* TRUE = pause mdsp, FALSE = resume */
 );
 
 /*===========================================================================
@@ -529,7 +566,7 @@ RETURN VALUE   None.
 SIDE EFFECTS   None.
 
 ===========================================================================*/
-extern void srch_rx_enter_mode( uint8 chain );
+extern void srch_rx_enter_mode( srch_rx_chain_name_type chain );
 
 #ifndef FEATURE_SRCH_SINGLE_ANTENNA
 /*===========================================================================
@@ -833,7 +870,7 @@ RETURN VALUE   None.
 SIDE EFFECTS   None.
 
 ===========================================================================*/
-void srch_rx_bypass_rtc_sync
+extern void srch_rx_bypass_rtc_sync
 (
   srch_rx_bypass_rtc_sync_type    bypass_rtc_sync,
   srch_rx_flush_samp_ram_type     flush_samp_ram,
@@ -1154,7 +1191,7 @@ RETURN VALUE   None.
 SIDE EFFECTS   None.
 
 ========================================================================*/
-void srch_rx_request_and_notify_last_failed
+extern void srch_rx_request_and_notify_last_failed
 (
  trm_duration_t          duration,       /* How long it's needed (in sclks) */
  srch_rx_granted_cb_t    granted_cb      /* Callback to notify client */
@@ -1175,7 +1212,7 @@ RETURN VALUE   TRM Request Reason.
 SIDE EFFECTS   None.
 
 ========================================================================*/
-trm_reason_enum_t srch_rx_get_alt_chain_demod_reason(void);
+extern trm_reason_enum_t srch_rx_get_alt_chain_demod_reason(void);
 
 /*========================================================================
 
@@ -1193,7 +1230,7 @@ SIDE EFFECTS   RF API to flip the GPIO switch which connects secondary
                 chain to primary antenna
 
 ========================================================================*/
-void srch_rx_set_max_sense_mode( boolean max_sense_mode );
+extern void srch_rx_set_max_sense_mode( boolean max_sense_mode );
 
 /*========================================================================
 
@@ -1210,7 +1247,7 @@ RETURN VALUE   TRUE if max_sensitivity_mode is set
 SIDE EFFECTS   None
 
 ========================================================================*/
-boolean srch_rx_get_max_sense_mode( void );
+extern boolean srch_rx_get_max_sense_mode( void );
 
 /*========================================================================
 
@@ -1227,7 +1264,7 @@ RETURN VALUE   TRUE if requests resulted in a viable antenna-chain
 SIDE EFFECTS   None
 
 ========================================================================*/
-boolean srch_rx_request_both_chains
+extern boolean srch_rx_request_both_chains
 (
   timetick_type duration,
   boolean       orig_pending
@@ -1247,7 +1284,7 @@ RETURN VALUE   None
 SIDE EFFECTS   None
 
 ========================================================================*/
-void srch_rx_reserve_both_chains
+extern void srch_rx_reserve_both_chains
 (
  timetick_type when,
  timetick_type duration
@@ -1268,7 +1305,7 @@ RETURN VALUE   TRUE if antenna is tunable for band class
 SIDE EFFECTS   None
 
 ========================================================================*/
-boolean srch_rx_is_band_tunable
+extern boolean srch_rx_is_band_tunable
 (
  srch_rx_band_type       band
 );
@@ -1288,7 +1325,7 @@ SIDE EFFECTS   Subsequent request for DEMOD chain will be made with
                 MAX_SENSE reason if set to TRUE
 
 ========================================================================*/
-void srch_rx_set_max_sense_required ( boolean max_sense_required );
+extern void srch_rx_set_max_sense_required ( boolean max_sense_required );
 
 /*========================================================================
 
@@ -1304,7 +1341,7 @@ RETURN VALUE   TRUE if max sense requirement has been set
 SIDE EFFECTS   None
 
 ========================================================================*/
-boolean srch_rx_get_max_sense_required ( void );
+extern boolean srch_rx_get_max_sense_required ( void );
 
 #endif  /* FEATURE_SRCH_FTS_BAND_CONFIGURABILTY */
 
@@ -1326,7 +1363,7 @@ SIDE EFFECTS   Updates static structure with trm_resource_enum_t translation
                of TRM_RX_ANY.
 
 ===========================================================================*/
-void srch_rx_set_rx_chain_trans
+extern void srch_rx_set_rx_chain_trans
 (
   srch_nv_dbg_mask_type    rx_chain_trans,
   trm_resource_enum_t      request_type
@@ -1346,7 +1383,7 @@ RETURN VALUE   None.
 SIDE EFFECTS   None.
 
 ===========================================================================*/
-trm_resource_enum_t srch_rx_get_rx_chain_trans
+extern trm_resource_enum_t srch_rx_get_rx_chain_trans
 (
   trm_resource_enum_t   request_type
 );
@@ -1370,27 +1407,12 @@ SIDE EFFECTS
   None.
 
 ===========================================================================*/
-void srch_rx_build_rf_sub
+extern void srch_rx_build_rf_sub
 (
   srch_genlog_packet_id_type   id,       /* id of packet to commit sub */
   sub_commit_func_type         commit_fp /* function to call to commit the
                                             subpacket */
 );
-
-/*===========================================================================
-
-FUNCTION SRCH_RX_MDSP_CHAIN_ASSN
-
-DESCRIPTION    Wrapper function for macro SRCH_RX_MDSP_CHAIN_ASSN
-
-DEPENDENCIES   MDSP should be enabled before this function is called
-
-RETURN VALUE   None.
-
-SIDE EFFECTS   None.
-
-===========================================================================*/
-void srch_rx_mdsp_chain_assn( void );
 
 /*===========================================================================
 

@@ -21,9 +21,9 @@ Copyright 2004 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              PERFORCE HEADER
 
-$Header: //source/qcom/qct/multimedia/qtv/legacymedia/filemedia/asfparser/main/latest/src/asffile.cpp#28 $
-$DateTime: 2009/01/15 02:54:21 $
-$Change: 819695 $
+$Header: //source/qcom/qct/multimedia/qtv/legacymedia/filemedia/asfparser/main/latest/src/asffile.cpp#55 $
+$DateTime: 2010/11/03 00:06:10 $
+$Change: 1502826 $
 
 ========================================================================== */
 
@@ -51,7 +51,7 @@ $Change: 819695 $
   #define WMA_PRO_TRACK_VERSION 3
   #define ENCOPT3_FRM_SIZE_MOD  0x0006
   #define FORMAT_WMAPRO           0x162
-  #define WMAPRO_FRAME_IN_PACKET  1  
+  #define WMAPRO_FRAME_IN_PACKET  1
 #endif /* defined(FEATURE_QTV_WINDOWS_MEDIA) || defined(FEATURE_QTV_WMA_PRO_DSP_DECODER) */
 
   #define SEEKABLE_BIT  0x08
@@ -110,6 +110,14 @@ and other items needed by this module.
 #define MIN_PREROLL_REQUIRED 3400
 #endif
 
+#define UNICODE_TO_UTF8 3
+
+#define BYTE_1_REP          0x80    /* if <, will be represented in 1 byte */
+#define BYTE_2_REP          0x800   /* if <, will be represented in 2 bytes */
+
+#define SURROGATE_MIN       0xd800
+#define SURROGATE_MAX       0xdfff
+
 /* -----------------------------------------------------------------------
 ** Type Declarations
 ** ----------------------------------------------------------------------- */
@@ -155,6 +163,10 @@ extern "C" tWMCDecStatus WMCDecGetLastBufferedVideoTS(HWMCDECODER hWMCDec, U64_W
 extern "C" tWMCDecStatus WMCDecHasGivenAnyOutput(HWMCDECODER hWMCDec, tMediaType_WMC Type);
 
 extern "C" tWMCDecStatus WMCDecResetToFirstPacket(HWMCDECODER hWMCDec);
+extern "C" tWMCDecStatus WMCDecGetPreviousFrameTime (HWMCDECODER hWMCDec, 
+                                                     U16_WMC wStreamId, 
+                                                     U64_WMC u64TimeRequest, 
+                                                     U64_WMC* pu64TimeReturn);
 
 
 static INLINE int32 ROUNDF(float f)
@@ -168,7 +180,6 @@ static INLINE int32 ROUNDF(float f)
 static INLINE int32 LOG2(uint32 i)
 { // returns n where n = log2(2^n) = log2(2^(n+1)-1)
   uint32 iLog2 = 0;
-  ASSERT (i != 0);
   while ((i >> iLog2) > 1)
       iLog2++;
   return iLog2;
@@ -498,7 +509,7 @@ void ASFFile::InitData()
     m_HttpDataBufferMinOffsetRequired.Offset = 0;
     m_HttpDataBufferMinOffsetRequired.bValid = FALSE;
     parserState = Common::PARSER_IDLE;
-    m_startupTime = 0;
+    m_startupTime = HTTP_DEFAULT_STARTUP_TIME;
     memset(m_maxPlayableTime, 0, sizeof(m_maxPlayableTime));
     m_fpFetchBufferedDataSize = NULL;
     m_fpFetchBufferedData = NULL;
@@ -620,7 +631,7 @@ ASFFile::ASFFile( dcf_ixstream_type inputStream, Mpeg4Player *pMpeg4Player, bool
     return;
   }
   IxStream* pStream = (IxStream* )m_inputStream;
-  #if defined(FEATURE_QTV_PSEUDO_STREAM) || defined(FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)    
+  #if defined(FEATURE_QTV_PSEUDO_STREAM) || defined(FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
     if(pStream->IsProgressive())
     {
       bHttpStreaming = true;
@@ -634,7 +645,7 @@ ASFFile::ASFFile( dcf_ixstream_type inputStream, Mpeg4Player *pMpeg4Player, bool
       memset(m_maxPlayableTime, 0, sizeof(m_maxPlayableTime));
       //Get from IxStream C interface
       m_fpFetchBufferedDataSize = (QtvPlayer::FetchBufferedDataSizeT) ixstream_length;
-    }     
+    }
     else
   #endif //#if defined(FEATURE_QTV_PSEUDO_STREAM) || defined(FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
     {
@@ -662,15 +673,15 @@ ASFFile::ASFFile( dcf_ixstream_type inputStream, Mpeg4Player *pMpeg4Player, bool
     #endif
     return;
   }
-    m_isDSPWMA_pro  = false;      
+    m_isDSPWMA_pro  = false;
     m_AsfFilePtr = OSCL_FileOpen(m_inputStream);
-    
+
   if(m_AsfFilePtr || m_bStreaming)
   {
-	  QTV_MSG_PRIO(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_ERROR, "ASFFILE constructor for dcf_ixstream_type, calling OSCL_FileTell");
-	  OSCL_FileTell(  m_AsfFilePtr );
+       QTV_MSG_PRIO(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_ERROR, "ASFFILE constructor for dcf_ixstream_type, calling OSCL_FileTell");
+       OSCL_FileTell(  m_AsfFilePtr );
     m_hASFDecoder = WMCDecCreate ((U32_WMC)this);
-	  if(m_hASFDecoder != NULL )
+       if(m_hASFDecoder != NULL )
     {
 #if defined(FEATURE_QTV_PSEUDO_STREAM) || defined(FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
       if (bHttpStreaming)
@@ -680,11 +691,11 @@ ASFFile::ASFFile( dcf_ixstream_type inputStream, Mpeg4Player *pMpeg4Player, bool
         return;
       }
 #endif
-	    if( ParseMetaData() == WMCDec_Succeeded )
-	    {
-	      _success = true;
+         if( ParseMetaData() == WMCDec_Succeeded )
+         {
+           _success = true;
       }
-	  } /* end of if(m_hASFDecoder != NULL ) */
+       } /* end of if(m_hASFDecoder != NULL ) */
   } /* end of if(m_AsfFilePtr || m_bStreaming) */
 }
 #endif /*FEATURE_QTV_DRM_DCF*/
@@ -723,11 +734,11 @@ ASFFile::ASFFile( const OSCL_STRING &filename,
                  ,QtvPlayer::FetchBufferedDataT FetchBufferedData
                  ,QtvPlayer::InstanceHandleT handle
 #endif //#if defined(FEATURE_QTV_PSEUDO_STREAM) || defined(FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
-				  )
+                      )
 {
   InitData();
 
-  m_pMpeg4Player= pMpeg4Player;  
+  m_pMpeg4Player= pMpeg4Player;
   m_dataSource = dataSource;
   m_playAudio = bPlayAudio;
   m_playVideo = bPlayVideo;
@@ -1279,8 +1290,13 @@ int32 ASFFile::getNextMediaSample(uint32 id, uint8 *buf, uint32 size, uint32 &in
           else
           #endif
           {
-          nRet = GetAudioFrame(id, streamType, buf, size, &nOutDataSize);
-        }
+#ifndef OUTPUT_STANDARD_WMA_BITSTREAM
+            nRet = GetAudioFrame(id, streamType, buf, size, &nOutDataSize);
+#else
+#error code not present
+#endif
+
+          }
         }
         while( (nRet==WMCDec_Succeeded) && (nOutDataSize==0) );
   #endif
@@ -1303,18 +1319,7 @@ int32 ASFFile::getNextMediaSample(uint32 id, uint8 *buf, uint32 size, uint32 &in
   {
     QTV_MSG_PRIO3(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_HIGH, "HTTP Stream Buffer Underrun m_playAudio = %d, m_playVideo = %d, m_playText = %d", m_playAudio,m_playVideo,m_playText);
     m_HttpDataBufferMinOffsetRequired.bValid = FALSE;
-
-#ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
     sendHTTPStreamUnderrunEvent();
-#else //#ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
-    //We run out of data, notify Mpeg4Player with parser event PARSER_PAUSE
-    sendParserEvent(Common::PARSER_PAUSE);
-
-    //Now PAUSE Mpeg4/audio/video player
-    sendPlayerPauseEvent();//Pause Mpeg4Player
-    sendAudioPauseEvent();//Pause audio player
-    sendVideoPauseEvent();//pause video player
-#endif//#ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
     return INSUFFICIENT_DATA;
   }
 #endif//#if defined(FEATURE_QTV_PSEUDO_STREAM) || defined(FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
@@ -1350,7 +1355,7 @@ tWMCDecStatus ASFFile::GetVideoFrame( uint32 id, tMediaType_WMC streamType, uint
   U32_WMC nStreamIdReady = 0xff;
   U32_WMC nDecodedDataSize;
   tWMCDecStatus nRet = WMADec_Failed;
-  I64_WMC PresentationTime=0;  
+  I64_WMC PresentationTime=0;
   Bool_WMC IsKeyFrame=0;
   uint32 StreamNum;
 
@@ -1576,17 +1581,17 @@ tWMCDecStatus ASFFile::GetAudioDecodedSamples(uint32 id,
         //It should be same as m_nDecodedDataSize[StreamNum]
         if(m_nDecodedDataSize[StreamNum] > nReadPacketSize)
         {
-			//If we fail to read in all available PCM samples and WMCDecGetAudioOutput returns  WMCDec_Succeeded,
-			//most likely it's because BUFFER provided is not sufficient.
-			//Rather than ASSERT, exit gracefully.
+               //If we fail to read in all available PCM samples and WMCDecGetAudioOutput returns  WMCDec_Succeeded,
+               //most likely it's because BUFFER provided is not sufficient.
+               //Rather than ASSERT, exit gracefully.
 
             QTV_MSG_PRIO2(QTVDIAG_FILE_OPS,
                     QTVDIAG_PRIO_FATAL,
                     "ASF-GetAudioDecodedSamples could not retrieve PCM samples-BUFFER not large enough!!!#PCM available %d, #Retrieved %d",
                     m_nDecodedDataSize[StreamNum],nReadPacketSize);
-		    *pOutDataSize = 0;
-			return WMCDec_Fail;
-		}
+              *pOutDataSize = 0;
+               return WMCDec_Fail;
+          }
         sizeOfSamples = m_nDecodedDataSize[StreamNum] * m_sWAVEFormatEx.Format.nChannels * m_sWAVEFormatEx.Format.wBitsPerSample/8;
       }
     }
@@ -1687,7 +1692,7 @@ tWMCDecStatus ASFFile::GetAudioFrame( uint32 id, tMediaType_WMC streamType,
   int nFrameSize = 0;
   int nMin = 0;
   int pktsPassed = 0;
-  
+
   if(streamType!=Audio_WMC)
   {
     return WMADec_Failed;
@@ -1697,19 +1702,19 @@ tWMCDecStatus ASFFile::GetAudioFrame( uint32 id, tMediaType_WMC streamType,
   nRet = GetStreamNumForID(&StreamNum, id);
 
   if( (nRet==WMCDec_Succeeded) && m_bWMADecodeDone)
-  {    
+  {
     if(m_nWMATotalDummyBytesSent >= WMA_TOTAL_DUMMY_BYTES_TO_SEND)
     {
       /*
       There is no WMA data to decode and we have already sent all the dummy bytes.
-	  Reset dummy bytes counter and return  WMCDec_DecodeComplete to trigger END of AUDIO.
-	  We should not Reset m_bIsDummyBytesStart and m_bWMADecodeDone here, as in some cases,
-	  ASFFILE may finish all dummy bytes but playback is not yet finished. In such case,
-	  isStartOfDummyBytes will return false;
-	  */
+       Reset dummy bytes counter and return  WMCDec_DecodeComplete to trigger END of AUDIO.
+       We should not Reset m_bIsDummyBytesStart and m_bWMADecodeDone here, as in some cases,
+       ASFFILE may finish all dummy bytes but playback is not yet finished. In such case,
+       isStartOfDummyBytes will return false;
+       */
 
-	  m_nWMATotalDummyBytesSent = 0;
-	  QTV_MSG_PRIO(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_HIGH,"ASF-GetAudioFrame:returning WMCDec_DecodeComplete...");
+       m_nWMATotalDummyBytesSent = 0;
+       QTV_MSG_PRIO(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_HIGH,"ASF-GetAudioFrame:returning WMCDec_DecodeComplete...");
       return WMCDec_DecodeComplete;
     }
     else /* if(m_nWMATotalDummyBytesSent < WMA_TOTAL_DUMMY_BYTES_TO_SEND) */
@@ -1741,8 +1746,12 @@ tWMCDecStatus ASFFile::GetAudioFrame( uint32 id, tMediaType_WMC streamType,
     /* loop till you decode some sample of desired stream */
     while( (nRet==WMCDec_Succeeded) && (m_nDecodedDataSize[StreamNum]==0) )
     {
-      nDecodedDataSize = 0;      
-      nRet = WMCDecDecodeData (m_hASFDecoder, &nStreamIdReady, &nDecodedDataSize, (-1));      
+      nDecodedDataSize = 0;
+      nRet = WMCDecDecodeData (m_hASFDecoder, &nStreamIdReady, &nDecodedDataSize, (-1));
+      if(nRet == WMCDec_DRMFail)
+      {
+        return nRet;
+      }
       if(nDecodedDataSize)
       {
         uint32 localStreamNum;
@@ -1759,10 +1768,10 @@ tWMCDecStatus ASFFile::GetAudioFrame( uint32 id, tMediaType_WMC streamType,
     }
 
     if(nRet==WMCDec_DecodeComplete)
-    {      
+    {
       //Data from the last ASF packet will be in buffer, so retrieve it before starting dummy bytes.
       if(m_bBufferValid)
-      {        
+      {
         memmove(buf,m_pasfDataBuffer,m_nCntCurBytes);
         nFrameSize = nFrameSize + m_nCntCurBytes;
         m_nTotalAudioBytesSent += m_nCntCurBytes;
@@ -1831,19 +1840,37 @@ tWMCDecStatus ASFFile::GetAudioFrame( uint32 id, tMediaType_WMC streamType,
         if(m_pAudioPacketBuffer)
           QTV_Free(m_pAudioPacketBuffer);
         m_pAudioPacketBuffer = (uint8*)QTV_Malloc(m_nLargestFrame[StreamNum]);
-        ASSERT(m_pAudioPacketBuffer);
+        if (m_pAudioPacketBuffer == NULL)
+        {
+          QTV_MSG_PRIO1(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_HIGH, 
+                        "m_pAudioPacketBuffer malloc failed size = %d",
+                        m_nLargestFrame[StreamNum]);
+          return WMCDec_BadMemory;
+        }
         m_nAudioPacketBufferSize = m_nLargestFrame[StreamNum];
         return WMCDec_BufferTooSmall;
       }
-      
+
       /* read the sample */
       nRet = WMCDecGetAudioOutput( m_hASFDecoder, (I16_WMC *)m_pAudioPacketBuffer, m_nAudioPacketBufferSize, NULL,
                                    m_nAudioPacketBufferSize, &nReadPacketSize, &PresentationTime );
       /* make sure we have not overwritten m_pAudioPacketBuffer */
-      ASSERT(nReadPacketSize <= m_nAudioPacketBufferSize);
+      if (nReadPacketSize > m_nAudioPacketBufferSize)
+      {
+        QTV_MSG_PRIO2(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_HIGH, 
+                      "nReadPacketSize = %d is > m_nAudioPacketBufferSize = %d",
+                      nReadPacketSize,
+                      m_nAudioPacketBufferSize);
+        return WMCDec_Fail;
+      }
       m_nDecodedDataSize[StreamNum] = m_nDecodedDataSize[StreamNum] - nReadPacketSize;
       /* we should have read all the decoded data in one shot */
-      ASSERT(m_nDecodedDataSize[StreamNum] == 0);
+      if (m_nDecodedDataSize[StreamNum] != 0)
+      {
+        QTV_MSG_PRIO(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_HIGH, 
+          "m_nDecodedDataSize[StreamNum] is  ! 0 !!");
+        return WMCDec_Fail;
+      }
     }
 
     if( (nRet==WMCDec_Succeeded) && nReadPacketSize )
@@ -1851,7 +1878,7 @@ tWMCDecStatus ASFFile::GetAudioFrame( uint32 id, tMediaType_WMC streamType,
       /* pre-parse audio payload (packet level decoding) */
 
       if(m_bAllowWmaPackets)
-      {        
+      {
         int nSrcBitOffset = 0, nDestOffset = 0, nPrevBytes, nPrevExtraBits;
 
         int nBlockAlignBoundaryCount = nReadPacketSize/blockAlign;
@@ -1859,18 +1886,25 @@ tWMCDecStatus ASFFile::GetAudioFrame( uint32 id, tMediaType_WMC streamType,
         cNumFrm = 0;
         wNumFrmInPacket = 0;
 #ifdef FEATURE_QTV_WMA_PRO_DSP_DECODER
-        int nSpillOverBits = 0;        
+        int nSpillOverBits = 0;
         uint8 two_bits_in_header = 0;
 #endif /* FEATURE_QTV_WMA_PRO_DSP_DECODER */
         int bits_left = 0;
         uint8 seekable_frame_in_packet = 0;
-        uint8 spliced_packet = 0;        
+        uint8 spliced_packet = 0;
         uint32 remainingBytes = 0;
 
-        ASSERT(  m_nAsfDataBufferSize >= (2 * nReadPacketSize) );
+        if (m_nAsfDataBufferSize < (2 * nReadPacketSize))
+        {
+          QTV_MSG_PRIO2(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_HIGH, 
+                        "m_nAsfDataBufferSize is (%d)< 2 * nReadPacketSize(%d)",
+                        m_nAsfDataBufferSize,
+                        (2 * nReadPacketSize));
+          return WMCDec_Fail;
+        }
 
         for(int itr = 0;itr < nBlockAlignBoundaryCount ; itr++)
-        {          
+        {
           nFrameSize = 0;
           if(!m_isDSPWMA_pro)
           {
@@ -1882,10 +1916,10 @@ tWMCDecStatus ASFFile::GetAudioFrame( uint32 id, tMediaType_WMC streamType,
             cPacketNum = (m_pAudioPacketBuffer[nCurrentReadIndex] & 0xF0) >> 4;
           }
 #ifdef FEATURE_QTV_WMA_PRO_DSP_DECODER
-     	  else
+            else
           {
             cNumFrm = WMAPRO_FRAME_IN_PACKET;
-	    /* first 4 bits are number of packet number */
+         /* first 4 bits are number of packet number */
             cPacketNum = (m_pAudioPacketBuffer[nCurrentReadIndex] & 0xF0) >> 4;
             /* packet_number - 4 bits */
             /* seekable_frame_in_packet - 1 bit */
@@ -1905,6 +1939,11 @@ tWMCDecStatus ASFFile::GetAudioFrame( uint32 id, tMediaType_WMC streamType,
              logic would be different */
           if(m_isDSPWMA_pro)
           {
+            if (nReadPacketSize == 0)
+            {
+              QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "nReadPacketSize is 0!!");
+              return WMCDec_BadData;
+            }
             m_nWmaNumPrevFrameBits =  LOG2(nReadPacketSize * 8 ) + 1;
           }
 #endif /* FEATURE_QTV_WMA_PRO_DSP_DECODER */
@@ -1933,10 +1972,10 @@ tWMCDecStatus ASFFile::GetAudioFrame( uint32 id, tMediaType_WMC streamType,
 #endif  /* FEATURE_QTV_WMA_PRO_DSP_DECODER */
           if(!m_isDSPWMA_pro)
           {
-          nSrcBitOffset = m_nWmaNumPrevFrameBits + 8 + nSrcBitOffset;
+            nSrcBitOffset = m_nWmaNumPrevFrameBits + 8 + nSrcBitOffset;
           }
 #ifdef FEATURE_QTV_WMA_PRO_DSP_DECODER
-       	  else
+          else
           {
             nSrcBitOffset = m_nWmaNumPrevFrameBits + 6 + nSrcBitOffset;
           }
@@ -1954,8 +1993,8 @@ tWMCDecStatus ASFFile::GetAudioFrame( uint32 id, tMediaType_WMC streamType,
           else
           {
             if( ((pktsPassed < 0) && (pktsPassed != -15)) ||
-		                                     (pktsPassed > 1) ||
-											 //( (pktsPassed == 1) && ((PresentationTime - m_prvSampleInfo[StreamNum].time) > (2*m_nASFAudioPacketDuration) ) )||
+                                               (pktsPassed > 1) ||
+                                                        //( (pktsPassed == 1) && ((PresentationTime - m_prvSampleInfo[StreamNum].time) > (2*m_nASFAudioPacketDuration) ) )||
                 ((!pktsPassed) && (m_prvSampleInfo[StreamNum].time != PresentationTime)) )
             {
               m_bIsPacketDrop = true;
@@ -2001,7 +2040,7 @@ tWMCDecStatus ASFFile::GetAudioFrame( uint32 id, tMediaType_WMC streamType,
 
           }
 
-          ///////////////////////////////////////////////////////////////////////          
+          ///////////////////////////////////////////////////////////////////////
 
           //If bBufferValid is true, pull the buffered data from previous ASF packet.
           if(m_bBufferValid)
@@ -2009,8 +2048,8 @@ tWMCDecStatus ASFFile::GetAudioFrame( uint32 id, tMediaType_WMC streamType,
             memmove(buf+(*pOutDataSize),m_pasfDataBuffer,m_nCntCurBytes);
             nFrameSize = nFrameSize + m_nCntCurBytes;
             nDestOffset = nDestOffset + m_nCntCurBytes;
-	//Don't make m_bBufferValid to false here;We might have to subtract number of frames
-	//if buffer was valid and packet drop is detected.
+            //Don't make m_bBufferValid to false here;We might have to subtract number of frames
+            //if buffer was valid and packet drop is detected.
             //m_bBufferValid = false;
           }
           for(i=0; i<nPrevBytes; i++)
@@ -2027,6 +2066,7 @@ tWMCDecStatus ASFFile::GetAudioFrame( uint32 id, tMediaType_WMC streamType,
               //decrement number of frames from previous ASF packet by 1 and break;
               *(buf+4) = *(buf+4) - 1;
               QTV_MSG_PRIO1(QTVDIAG_FILE_OPS,QTVDIAG_PRIO_HIGH,"current #frames %ld,decrementing it by 1 as packet drop is detected",*(buf+4));
+              nSrcBitOffset += (nPrevBytes*8);
               break;
             }
             nSrcBitOffset = nSrcBitOffset + 8;
@@ -2050,7 +2090,7 @@ tWMCDecStatus ASFFile::GetAudioFrame( uint32 id, tMediaType_WMC streamType,
             }
             nSrcBitOffset = nSrcBitOffset + nPrevExtraBits;
           }
-		  m_bBufferValid = false;
+            m_bBufferValid = false;
 
           /* we have to start DSP frame header from WORD boundary */
           if( (m_nTotalAudioBytesSent+nFrameSize) % 2 )
@@ -2072,7 +2112,7 @@ tWMCDecStatus ASFFile::GetAudioFrame( uint32 id, tMediaType_WMC streamType,
 
           //if number of frames > 0 , then only append frame header..
           if(cNumFrm)
-          {            
+          {
             //Push everything into asfDataBuffer. This will be pulled when we start with next packet.
             u16Temp = htons((uint16)0xfff0);  /* sync + lost bits */
             m_pasfDataBuffer[0] = *((uint8*)&u16Temp);
@@ -2084,7 +2124,7 @@ tWMCDecStatus ASFFile::GetAudioFrame( uint32 id, tMediaType_WMC streamType,
             u16Temp = htons((blockAlign+1)/2);  /* size of packet in words */
 
             m_pasfDataBuffer[2] = *((uint8*)&u16Temp);
-            m_pasfDataBuffer[3] = *(((uint8*)&u16Temp)+1);            
+            m_pasfDataBuffer[3] = *(((uint8*)&u16Temp)+1);
             nFrameSize = nFrameSize + 2;
             if(!m_isDSPWMA_pro)
             {
@@ -2106,7 +2146,8 @@ tWMCDecStatus ASFFile::GetAudioFrame( uint32 id, tMediaType_WMC streamType,
             if(spliced_packet)
                  m_pasfDataBuffer[5] |= SPLICE_BIT;
 
-            nFrameSize = nFrameSize + 1;
+            //This seems to be redundant..
+            //nFrameSize = nFrameSize + 1;
 
             //BE CAREFUL!!!
             //Following statement will introduce
@@ -2119,21 +2160,30 @@ tWMCDecStatus ASFFile::GetAudioFrame( uint32 id, tMediaType_WMC streamType,
 
 
             nFrameSize = nFrameSize + 1;
+            uint32 padBits = 0;
+            if(m_isDSPWMA_pro)
+            {
+              padBits = 6;
+            }
+            else
+            {
+              padBits = 8;
+            }
 
             /* now copy rest of the data */
 
             //(blockAlign - ((m_nWmaNumPrevFrameBits+8+(nPrevBytes*8) + nPrevExtraBits)/8)
             //gives number of bytes to copy.
-	    if ( (blockAlign <=((m_nWmaNumPrevFrameBits+6+nPrevExtraBits)/8 +nPrevBytes)) )                              
-	    {
+            if ( (blockAlign <=((m_nWmaNumPrevFrameBits+padBits+nPrevExtraBits)/8 +nPrevBytes)) )
+            {
               QTV_MSG_PRIO(QTVDIAG_FILE_OPS,QTVDIAG_PRIO_HIGH,"blockAlign <=((m_nWmaNumPrevFrameBits+6+nPrevExtraBits)/8 +nPrevBytes)");
               remainingBytes = 0;
             }
             else
             {
-              remainingBytes = blockAlign - ((m_nWmaNumPrevFrameBits+6+(nPrevBytes*8) + nPrevExtraBits)/8);
+              remainingBytes = blockAlign - ((m_nWmaNumPrevFrameBits+padBits+(nPrevBytes*8) + nPrevExtraBits)/8);
             }
-                       
+
             memmove(m_pasfDataBuffer+(WMA_DSP_PACKET_HEADER_LEN), m_pAudioPacketBuffer+(nSrcBitOffset/8),
                                                 remainingBytes );
 
@@ -2166,14 +2216,14 @@ tWMCDecStatus ASFFile::GetAudioFrame( uint32 id, tMediaType_WMC streamType,
           nCurrentReadIndex += blockAlign;
 
           if( nBlockAlignBoundaryCount > 1)
-	      {
+           {
             QTV_MSG_PRIO3(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_HIGH,"ASF-GetAudioFrame NumFrm=%d, pktNum=%d Time=%d", wNumFrmInPacket, cPacketNum, PresentationTime);
             UpdateSamplesInformation(cPacketNum,cNumFrm,StreamNum,(uint32)PresentationTime,*pOutDataSize,wNumFrmInPacket);
-	      }//if( nBlockAlignBoundaryCount > 1)
+           }//if( nBlockAlignBoundaryCount > 1)
         }
       }
       else
-      {        
+      {
         int nSrcOffset, nDestOffset;
 
         /* if m_bAllowWmaPackets is FALSE, then we have complete multiple audio frames in one ASF packet.
@@ -2250,7 +2300,105 @@ tWMCDecStatus ASFFile::GetAudioFrame( uint32 id, tMediaType_WMC streamType,
     m_bAudioReposPending = false;
   return nRet;
 }
+/* ======================================================================
+FUNCTION:
+  ASFFile::GetStandardAudioFrame
 
+DESCRIPTION:
+  gets next sample of the audio stream.
+
+INPUT/OUTPUT PARAMETERS:
+  None.
+
+RETURN VALUE:
+ size of sample
+
+SIDE EFFECTS:
+  None.
+======================================================================*/
+tWMCDecStatus  ASFFile::GetStandardAudioFrame( uint32 id, tMediaType_WMC streamType,
+                                               U8_WMC * buf, U32_WMC size, 
+                                               U32_WMC * pOutDataSize )
+{
+  tWMCDecStatus nRet = WMADec_Failed;
+  uint32 StreamNum;
+  U32_WMC nDecodedDataSize; 
+  U32_WMC nStreamIdReady = 0xff;   
+  I64_WMC PresentationTime;  
+  U32_WMC nReadPacketSize=0;
+
+  if(streamType!=Audio_WMC)
+  {
+    nRet = WMADec_Failed;
+  }
+  else
+  {
+    *pOutDataSize = 0;
+    nRet = GetStreamNumForID(&StreamNum, id);
+
+    if(nRet == WMCDec_Succeeded)
+    {
+      /* loop till you decode some sample of desired stream */
+      while( (nRet==WMCDec_Succeeded) && (m_nDecodedDataSize[StreamNum]==0) )
+      {
+        nDecodedDataSize = 0;      
+        nRet = WMCDecDecodeData (m_hASFDecoder, &nStreamIdReady, &nDecodedDataSize, (-1));      
+        if(nDecodedDataSize)
+        {
+          uint32 localStreamNum;
+          GetStreamNumForID(&localStreamNum, nStreamIdReady);
+          m_nDecodedDataSize[localStreamNum] = nDecodedDataSize;
+        }
+        if ( m_bStreaming && (nRet != WMCDec_Succeeded) && (m_dataSource != NULL) &&
+             m_dataSource->isEOS())
+        {
+          nRet = WMCDec_DecodeComplete;
+          QTV_MSG_PRIO(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_HIGH,
+                       "ASF-GetStandardAudioFrame:Detected EOS in data source...");
+        }
+      }
+      if(nRet==WMCDec_DecodeComplete)
+      {             
+        //End of audio media is reached
+        QTV_MSG_PRIO(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_HIGH,
+                     "ASF-GetStandardAudioFrame:Detected end of WMA track!!!");
+      }
+      /* if we have more samples for this track */
+      if(m_nDecodedDataSize[StreamNum])
+      {
+        /*Make sure we have large enough buffer to copy the payload*/
+        if(m_nDecodedDataSize[StreamNum] > size)
+        {
+          m_nLargestFrame[StreamNum] = m_nDecodedDataSize[StreamNum];         
+          return WMCDec_BufferTooSmall;
+        }      
+        /* read the sample */
+        nRet = WMCDecGetAudioOutput( m_hASFDecoder, (I16_WMC*)buf, size, NULL,
+                                     size, &nReadPacketSize, &PresentationTime );
+        /* make sure we have not overwritten m_pAudioPacketBuffer */
+        //ASSERT(nReadPacketSize <= m_nAudioPacketBufferSize); //to do surbhi
+        m_nDecodedDataSize[StreamNum] = m_nDecodedDataSize[StreamNum] - nReadPacketSize;
+        /* we should have read all the decoded data in one shot */
+        //ASSERT(m_nDecodedDataSize[StreamNum] == 0); //to do surbhi
+        m_sampleInfo[StreamNum].time = (uint32)PresentationTime;
+        m_sampleInfo[StreamNum].sample++;
+        m_sampleInfo[StreamNum].size = nReadPacketSize;
+        m_sampleInfo[StreamNum].sync = 1;
+        *pOutDataSize = nReadPacketSize;
+        m_sampleInfo[StreamNum].delta = ((WMFDecoderEx *)m_hASFDecoder)->tHeaderInfo.ppex.wDuration;
+      }
+    }//if(nRet == WMCDec_Succeeded)
+    if( m_wmStreamingInfo.bAudioValid && m_bStreaming )
+    {
+      m_wmStreamingInfo.bAudioValid = false;
+    }
+    if (!(m_wmStreamingInfo.bAudioValid && m_bStreaming))
+    {
+      m_bAudioReposPending = false;
+    }
+  }//end of else of if(streamType!=Audio_WMC)
+  return nRet;
+}
 /* ======================================================================
 FUNCTION:
   ASFFile::getMediaTimestampForCurrentSample
@@ -2273,6 +2421,32 @@ uint32 ASFFile::getMediaTimestampForCurrentSample(uint32 id)
   if(GetStreamNumForID(&StreamNum, id) == WMCDec_Succeeded)
   {
     return m_sampleInfo[StreamNum].time;
+  }
+  return 0;
+}
+
+/* ======================================================================
+FUNCTION:
+  ASFFile::getMediaTimestampDeltaForCurrentSample
+
+DESCRIPTION:
+  gets duration of current sample of the track.
+
+INPUT/OUTPUT PARAMETERS:
+  None.
+
+RETURN VALUE:
+ time stamp in track time scale unit
+
+SIDE EFFECTS:
+  None.
+======================================================================*/
+uint32 ASFFile::getMediaTimestampDeltaForCurrentSample(uint32 id)
+{
+  uint32 StreamNum;
+  if(GetStreamNumForID(&StreamNum, id) == WMCDec_Succeeded)
+  {
+    return m_sampleInfo[StreamNum].delta;
   }
   return 0;
 }
@@ -2434,9 +2608,9 @@ uint32 ASFFile::resetPlayback(  uint32 repos_time, uint32 id, bool /*bSetToSyncS
             retStatus = WMCDecResetToFirstPacket(m_hASFDecoder);
             if(retStatus == WMCDec_Succeeded)
             {
-	     //This assumes that first video frame is key frame. if come across a scenario
-	     //where first frame is not key frame (??) or server doesn't start from key frame
-	     //uncomment following if block.
+          //This assumes that first video frame is key frame. if come across a scenario
+          //where first frame is not key frame (??) or server doesn't start from key frame
+          //uncomment following if block.
               if(reposTime > 0)
                 m_bVideoReposPending = true;
             }
@@ -2444,10 +2618,10 @@ uint32 ASFFile::resetPlayback(  uint32 repos_time, uint32 id, bool /*bSetToSyncS
 
           case Audio_WMC:
             m_wmStreamingInfo.bAudioValid = true;
-          	retStatus = WMCDecResetToFirstPacket(m_hASFDecoder);
-          	if(retStatus == WMCDec_Succeeded)
-          	{
-          	  m_bAudioReposPending = true;
+               retStatus = WMCDecResetToFirstPacket(m_hASFDecoder);
+               if(retStatus == WMCDec_Succeeded)
+               {
+                 m_bAudioReposPending = true;
 
               //When repositioning, as a resule of flush,
               //start from start to keep track of audio bytes sent.
@@ -2458,16 +2632,16 @@ uint32 ASFFile::resetPlayback(  uint32 repos_time, uint32 id, bool /*bSetToSyncS
               m_bWMADecodeDone = false;
               m_bIsDummyBytesStart = false;
 
-	      //reset variables to record packet drops.
-	      m_nPreviousAudioPacketNum = 0;
-	      m_bIsPacketDrop = false;
+           //reset variables to record packet drops.
+           m_nPreviousAudioPacketNum = 0;
+           m_bIsPacketDrop = false;
 
-	      //Reset m_nWMATotalDummyBytesSent sent, as after reposition,
-	      //there may be some data available to decode.
-	      m_nCntCurBytes = 0;
-	      m_nCntPrvBytes = 0;
-	      m_bBufferValid = false;
-  		      }
+           //Reset m_nWMATotalDummyBytesSent sent, as after reposition,
+           //there may be some data available to decode.
+           m_nCntCurBytes = 0;
+           m_nCntPrvBytes = 0;
+           m_bBufferValid = false;
+                }
             break;
           default:
             QTV_MSG_PRIO(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_ERROR, "Unknown track type in updateASFStreamingRepositioningInfo..");
@@ -2554,12 +2728,19 @@ OSCL_STRING ASFFile::getTitle() const
   if(m_pContentDesc && m_pContentDesc->uiTitle_len)
   {
     OSCL_STRING sTitle;
-    char *pStr = (char *)QTV_Malloc(m_pContentDesc->uiTitle_len+1);
-    ConvertUnicodeToAscii(pStr, m_pContentDesc->pchTitle, m_pContentDesc->uiTitle_len);
-    pStr[m_pContentDesc->uiTitle_len] = '\0';
-    sTitle = pStr;
-    QTV_Free(pStr);
-    return sTitle;
+    uint8* pStr = NULL;
+    /* Here we are allocating these many bytes because we are coverting this
+    unicode string to UTF8 at max we may require three times of the uinicode 
+    string length */
+    uint32 destLen = (m_pContentDesc->uiTitle_len - 1)* UNICODE_TO_UTF8; 
+    pStr = (uint8 *)QTV_Malloc(destLen + 1);    
+	if(pStr)
+	{
+	    ConvertUnicodeToUTF8(pStr, destLen + 1, m_pContentDesc->pchTitle, m_pContentDesc->uiTitle_len -1);    
+	    sTitle = (char*)pStr;
+	    QTV_Free(pStr);
+	    return sTitle;
+	}
   }
   return NULL;
 }
@@ -2585,12 +2766,19 @@ OSCL_STRING ASFFile::getAuthor() const
   if(m_pContentDesc && m_pContentDesc->uiAuthor_len)
   {
     OSCL_STRING sAuthor;
-    char *pStr = (char *)QTV_Malloc(m_pContentDesc->uiAuthor_len+1);
-    ConvertUnicodeToAscii(pStr, m_pContentDesc->pchAuthor, m_pContentDesc->uiAuthor_len);
-    pStr[m_pContentDesc->uiAuthor_len] = '\0';
-    sAuthor = pStr;
-    QTV_Free(pStr);
-    return sAuthor;
+    uint8* pStr = NULL;
+    /* Here we are allocating these many bytes because we are coverting this
+    unicode string to UTF8 at max we may require three times of the uinicode 
+    string length */
+    uint32 destLen = (m_pContentDesc->uiAuthor_len - 1)* UNICODE_TO_UTF8; 
+    pStr = (uint8 *)QTV_Malloc(destLen + 1);
+	if(pStr)
+	{
+	    ConvertUnicodeToUTF8(pStr, destLen + 1, m_pContentDesc->pchAuthor, m_pContentDesc->uiAuthor_len -1);    
+	    sAuthor = (char*)pStr;
+	    QTV_Free(pStr);
+	    return sAuthor; 
+	}
   }
   return NULL;
 }
@@ -2616,12 +2804,19 @@ OSCL_STRING ASFFile::getDescription() const
   if(m_pContentDesc && m_pContentDesc->uiDescription_len)
   {
     OSCL_STRING sDescription;
-    char *pStr = (char *)QTV_Malloc(m_pContentDesc->uiDescription_len+1);
-    ConvertUnicodeToAscii(pStr, m_pContentDesc->pchDescription, m_pContentDesc->uiDescription_len);
-    pStr[m_pContentDesc->uiDescription_len] = '\0';
-    sDescription = pStr;
-    QTV_Free(pStr);
-    return sDescription;
+    uint8* pStr = NULL;
+    /* Here we are allocating these many bytes because we are coverting this
+    unicode string to UTF8 at max we may require three times of the uinicode 
+    string length */
+    uint32 destLen = (m_pContentDesc->uiDescription_len - 1)* UNICODE_TO_UTF8; 
+    pStr = (uint8 *)QTV_Malloc(destLen + 1);
+	if(pStr)
+	{
+	    ConvertUnicodeToUTF8(pStr, destLen + 1, m_pContentDesc->pchDescription, m_pContentDesc->uiDescription_len -1);        
+	    sDescription = (char*)pStr;
+	    QTV_Free(pStr);
+	    return sDescription;
+	}
   }
   return NULL;
 }
@@ -2647,12 +2842,19 @@ OSCL_STRING ASFFile::getRating() const
   if(m_pContentDesc && m_pContentDesc->uiRating_len)
   {
     OSCL_STRING sRating;
-    char *pStr = (char *)QTV_Malloc(m_pContentDesc->uiRating_len+1);
-    ConvertUnicodeToAscii(pStr, m_pContentDesc->pchRating, m_pContentDesc->uiRating_len);
-    pStr[m_pContentDesc->uiRating_len] = '\0';
-    sRating = pStr;
-    QTV_Free(pStr);
-    return sRating;
+    uint8* pStr = NULL;
+    /* Here we are allocating these many bytes because we are coverting this
+    unicode string to UTF8 at max we may require three times of the uinicode 
+    string length */
+    uint32 destLen = (m_pContentDesc->uiRating_len - 1)* UNICODE_TO_UTF8;
+	if(pStr)
+	{
+	    pStr = (uint8 *)QTV_Malloc(destLen + 1);
+	    ConvertUnicodeToUTF8(pStr, destLen + 1, m_pContentDesc->pchRating, m_pContentDesc->uiRating_len -1);           
+	    sRating = (char*)pStr;
+	    QTV_Free(pStr);
+	    return sRating;
+	}
   }
   return NULL;
 }
@@ -2678,12 +2880,19 @@ OSCL_STRING ASFFile::getCopyright() const
   if(m_pContentDesc && m_pContentDesc->uiCopyright_len)
   {
     OSCL_STRING sCopyright;
-    char *pStr = (char *)QTV_Malloc(m_pContentDesc->uiCopyright_len+1);
-    ConvertUnicodeToAscii(pStr, m_pContentDesc->pchCopyright, m_pContentDesc->uiCopyright_len);
-    pStr[m_pContentDesc->uiCopyright_len] = '\0';
-    sCopyright = pStr;
-    QTV_Free(pStr);
-    return sCopyright;
+    uint8* pStr = NULL;
+    /* Here we are allocating these many bytes because we are coverting this
+    unicode string to UTF8 at max we may require three times of the uinicode 
+    string length */
+    uint32 destLen = (m_pContentDesc->uiCopyright_len - 1)* UNICODE_TO_UTF8; 
+    pStr = (uint8 *)QTV_Malloc(destLen + 1);
+	if(pStr)
+	{
+	    ConvertUnicodeToUTF8(pStr, destLen + 1, m_pContentDesc->pchCopyright, m_pContentDesc->uiCopyright_len -1);               
+	    sCopyright = (char*)pStr;
+	    QTV_Free(pStr);
+		return sCopyright;
+	}
   }
   return NULL;
 }
@@ -3085,8 +3294,8 @@ void ASFFile::UpdateSamplesInformation(uint8 cPacketNum, uint8 cNumFrm,
 
   if( (m_prvSampleInfo[StreamNum].size > 0)&&(!m_bIsPacketDrop)&&(!m_bAudioReposPending) )
   {
-	  if( (PresentationTime - m_prvSampleInfo[StreamNum].time)  > 0)
-		{
+       if( (PresentationTime - m_prvSampleInfo[StreamNum].time)  > 0)
+          {
       m_prvSampleInfo[StreamNum].delta = (uint32)(PresentationTime - m_prvSampleInfo[StreamNum].time);
 
       if(m_nASFAudioPacketDuration == 0)
@@ -3100,7 +3309,7 @@ void ASFFile::UpdateSamplesInformation(uint8 cPacketNum, uint8 cNumFrm,
       }
       QTV_MSG_PRIO1(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_HIGH,"adjusted m_nASFAudioPacketDuration %ld",m_nASFAudioPacketDuration);
     }
-	}
+     }
   m_prvSampleInfo[StreamNum].sync = 1;
   m_prvSampleInfo[StreamNum].size = size;
 
@@ -3288,14 +3497,18 @@ uint32 ASFFile::getTrackMediaDuration(uint32 id)
   AUDIOSTREAMINFO *pAudioStreamInfo = GetAudioStreamInfo(id);
   if(pAudioStreamInfo)
   {
-    if(pAudioStreamInfo->pExtnStreamProperties && pAudioStreamInfo->pExtnStreamProperties->u64EndTime)
+    if(pAudioStreamInfo->pExtnStreamProperties)
     {
-      return (uint32)( pAudioStreamInfo->pExtnStreamProperties->u64EndTime -
-                       pAudioStreamInfo->pExtnStreamProperties->u64StartTime );
-    }
-    else if(m_strHeaderInfo.u32PlayDuration)
-    {
-      return (uint32)(m_strHeaderInfo.u32PlayDuration - m_strHeaderInfo.u32Preroll);
+      if(pAudioStreamInfo->pExtnStreamProperties->u64StartTime &&
+         pAudioStreamInfo->pExtnStreamProperties->u64EndTime)
+      {
+         return (uint32)(pAudioStreamInfo->pExtnStreamProperties->u64EndTime -
+                         pAudioStreamInfo->pExtnStreamProperties->u64StartTime);
+      }
+      else if(m_strHeaderInfo.u32PlayDuration)
+      {
+        return (uint32)(m_strHeaderInfo.u32PlayDuration - m_strHeaderInfo.u32Preroll);
+      }
     }
   }
   return 0;
@@ -3542,6 +3755,58 @@ unsigned long ASFFile::GetNumAudioChannels(int id)
   }
   return 0;
 }
+/* ======================================================================
+FUNCTION:
+  ASFFile::GetFormatTag
+
+DESCRIPTION:
+  returns format tag for the given track id
+
+INPUT/OUTPUT PARAMETERS:
+  None.
+
+RETURN VALUE:
+ none
+
+SIDE EFFECTS:
+  None.
+======================================================================*/
+uint16 ASFFile::GetFormatTag(int id)
+{
+  uint16 formattag = 0;
+  AUDIOSTREAMINFO *pAudioStreamInfo = GetAudioStreamInfo(id);
+  if(pAudioStreamInfo)
+  {  
+    formattag = pAudioStreamInfo->wFormatTag;
+  }
+  return formattag;
+}
+/* ======================================================================
+FUNCTION:
+  ASFFile::GetBlockAlign
+
+DESCRIPTION:
+  returns block align for the given track id
+
+INPUT/OUTPUT PARAMETERS:
+  None.
+
+RETURN VALUE:
+ none
+
+SIDE EFFECTS:
+  None.
+======================================================================*/
+uint32 ASFFile::GetBlockAlign(int id)
+{
+  uint32 blockalign = 0;
+  AUDIOSTREAMINFO *pAudioStreamInfo = GetAudioStreamInfo(id);
+  if(pAudioStreamInfo)
+  {  
+    blockalign = pAudioStreamInfo->nBlockAlign;
+  }
+  return blockalign;
+}
 
 /* ======================================================================
 FUNCTION:
@@ -3614,12 +3879,17 @@ SIDE EFFECTS:
 uint32 ASFFile::peekCurSample(uint32 trackid, file_sample_info_type *pSampleInfo)
 {
   uint32 StreamNum;
+  if (pSampleInfo == NULL)
+  {
+    QTV_MSG_PRIO(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_ERROR, "pSampleInfo is NULL !!");
+    return DEFAULT_ERROR;
+  }
   if(GetStreamNumForID(&StreamNum, trackid) != WMCDec_Succeeded)
   {
     QTV_MSG_PRIO1(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_ERROR, "peekCurSample, unknown track id = %d", trackid);
     return DEFAULT_ERROR;
   }
-  ASSERT(pSampleInfo);
+
   *pSampleInfo = m_sampleInfo[StreamNum];
   return EVERYTHING_FINE;
 }
@@ -4056,6 +4326,48 @@ uint16 ASFFile::GetAudioChannelMask(int id)
 
 /* ======================================================================
 FUNCTION:
+  ASFFile::UpdateTrackIdInFilePointer
+
+DESCRIPTION:
+  Updates pull buffer's Track ID.
+
+INPUT/OUTPUT PARAMETERS:
+  None.
+
+RETURN VALUE:
+ none
+
+SIDE EFFECTS:
+  None.
+======================================================================*/
+bool ASFFile::UpdateTrackIdInFilePointer()
+{
+  AUDIOSTREAMINFO *pAudioStreamInfo = NULL;
+  VIDEOSTREAMINFO *pVideoStreamInfo = NULL;
+  
+  if (m_playAudio)
+  {
+      pAudioStreamInfo = ((WMFDecoderEx *)m_hASFDecoder)->tAudioStreamInfo[0];
+      if(pAudioStreamInfo)
+      {
+	    m_AsfFilePtr->pullBuf.trackId = pAudioStreamInfo->wStreamId;
+        return true;
+      }
+  }
+  else if (m_playVideo)
+  {
+      pVideoStreamInfo = ((WMFDecoderEx *)m_hASFDecoder)->tVideoStreamInfo[0];
+      if(pVideoStreamInfo)
+      {
+	    m_AsfFilePtr->pullBuf.trackId = pVideoStreamInfo->wStreamId;
+        return true;
+      }    
+  }
+
+  return false;
+}
+/* ======================================================================
+FUNCTION:
   ASFFile::GetAudioArmDataReqThr
 
 DESCRIPTION:
@@ -4234,7 +4546,7 @@ bool ASFFile::isVideoCodecSupported()
       uint32 MaxBitrate = 0;
       MaxBitrate = GetMaximumBitRateForTrack(pDecoder->tVideoStreamInfo[0]->wStreamId);
 
-			if( MaxBitrate > MAX_VIDEO_BIT_RATE_ALLOWED )
+               if( MaxBitrate > MAX_VIDEO_BIT_RATE_ALLOWED )
       {
         _fileErrorCode = TRACK_VIDEO_UNSUPPORTED_BITRATE;
         QTV_MSG_PRIO2(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_ERROR, "Error:Unsupported Max/Avg Video BitRate %ld (MAX Allowed is %ld)",MaxBitrate,MAX_VIDEO_BIT_RATE_ALLOWED);
@@ -4551,17 +4863,17 @@ uint16 ASFFile::GetAudioVirtualPacketSize(int id)
   nFreq = getTrackAudioSamplingFreq(id);
   if(nFreq < 16000)
   {
-  		return 900;
+          return 900;
   }
 
   if( (16000 <= nFreq) && (nFreq <= 32000) )
   {
-  		return 4600;
+          return 4600;
   }
 
   if(nFreq > 32000)
   {
-  		return 6560;
+          return 6560;
   }
   return 0;
 }
@@ -4697,6 +5009,7 @@ bool ASFFile::SetTimeStampedSample(uint32 id, uint32 TimeStamp, uint32 *newTimeS
   tMediaType_WMC Type;
   U64_WMC u64TempTimeReturn = 0;
   uint32 StreamNum;
+  U64_WMC TimeStamp2 = 0;
 
   if(GetMediaTypeForStreamID(&Type, id) == WMCDec_Succeeded)
   {
@@ -4737,8 +5050,16 @@ bool ASFFile::SetTimeStampedSample(uint32 id, uint32 TimeStamp, uint32 *newTimeS
           return false;
         }
       }
-
-      Ret = WMCDecSeek (m_hASFDecoder, TimeStamp, &u64TimeReturn);
+      TimeStamp2 = (U64_WMC)TimeStamp;
+      if (Type == Audio_WMC && isRewind && TimeStamp != 0 )
+      {
+        Ret = WMCDecGetPreviousFrameTime (m_hASFDecoder, (U16_WMC)id, TimeStamp, &TimeStamp2);
+        if (Ret == WMCDec_Succeeded)
+        {
+          QTV_MSG_PRIO1(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_HIGH,"Audio Rewind, Seek to previous frame TS %d",TimeStamp);
+        }
+      }
+      Ret = WMCDecSeek (m_hASFDecoder, TimeStamp2, &u64TimeReturn);
       if( (Ret == WMCDec_Succeeded)|| (Ret == WMCDec_DecodeComplete) )
       {
         if(Ret == WMCDec_DecodeComplete)
@@ -4746,7 +5067,7 @@ bool ASFFile::SetTimeStampedSample(uint32 id, uint32 TimeStamp, uint32 *newTimeS
           *newTimeStamp = (uint32)TimeStamp;
           if(GetStreamNumForID(&StreamNum, id) == WMCDec_Succeeded)
           {
-          	m_sampleInfo[StreamNum].time = (uint32)TimeStamp;
+               m_sampleInfo[StreamNum].time = (uint32)TimeStamp;
             m_bWMADecodeDone = true;
             m_nWMATotalDummyBytesSent = WMA_TOTAL_DUMMY_BYTES_TO_SEND;
             m_sampleInfo[StreamNum].size = 0;
@@ -4950,6 +5271,78 @@ void ConvertUnicodeToAscii(char *pDest, uint16 *pSrc , uint32 size)
   }
 }
 
+/* ======================================================================
+FUNCTION:
+  ConvertUnicodeToUTF8
+
+DESCRIPTION:
+  Converts Unicode String to UTF8 string and appends NULL at the end.
+
+INPUT/OUTPUT PARAMETERS:
+  None.
+
+RETURN VALUE:
+ none
+
+SIDE EFFECTS:
+  None.
+======================================================================*/
+void ConvertUnicodeToUTF8(uint8 *pDest,  uint32 destLen, uint16 *pSrc , uint32 srcLen) 
+{
+  uint8 ch_tmp_byte;
+  int32 i_cur_output=0; 
+  uint32 i;
+  for ( i=0; i<srcLen; i++ )
+  {	 
+    if ( BYTE_1_REP > pSrc[i] ) /* 1 byte utf8 representation */
+    {
+      if ( i_cur_output+1<destLen )
+        pDest[i_cur_output++]=(uint8)pSrc[i];
+      else
+        return; /* ERROR_INSUFFICIENT_BUFFER */
+    }
+    else if ( BYTE_2_REP > pSrc[i] ) /* 2 byte utf8 representation */
+    {
+      if ( i_cur_output+2<destLen )
+      {
+        pDest[i_cur_output++]=(int8)(pSrc[i] >> 6 | 0xc0);
+        pDest[i_cur_output++]=(int8)(pSrc[i] & 0x3f | 0x80);
+      }
+      else
+      {
+        return; /* ERROR_INSUFFICIENT_BUFFER */
+      }
+    }
+    else if ( SURROGATE_MAX > pSrc[i] && SURROGATE_MIN < pSrc[i] )
+    {        /* 4 byte surrogate pair representation */
+      if ( i_cur_output+4<destLen )
+      {
+        ch_tmp_byte = (int8)(((pSrc[i] & 0x3c0) >> 6) + 1);
+        pDest[i_cur_output++]=(int8)(ch_tmp_byte >> 2 | 0xf0); 
+        pDest[i_cur_output++]=(int8)((ch_tmp_byte & 0x03 | 0x80) | (pSrc[i] & 0x3e) >> 2);
+      }
+      else
+      {
+        return; /* ERROR_INSUFFICIENT_BUFFER */
+      }
+    }
+    else /* 3 byte utf8 representation */
+    {
+      if ( i_cur_output+3<destLen )
+      {
+        pDest[i_cur_output++]=(int8)(pSrc[i] >> 12 | 0xe0);
+        pDest[i_cur_output++]=(int8)(pSrc[i] >> 6  & 0x3f | 0x80);
+        pDest[i_cur_output++]=(int8)(pSrc[i] & 0x3f | 0x80);
+      }
+      else
+      {
+        return; /* ERROR_INSUFFICIENT_BUFFER */
+      }
+    } 
+  }  
+  pDest[i_cur_output] = '\0';
+}
+
 /*===========================================================================
 FUNCTION:
   GetByteFromBitStream
@@ -5145,6 +5538,13 @@ tWMCDecStatus ASFFile::ParseMetaData ( void )
           {
             /* initialize stream pattern and also limit max munber of streams */
             m_pStreamDecodePattern = (tStreamIdPattern_WMC*) QTV_Malloc(m_nNumStreams*sizeof(tStreamIdPattern_WMC));
+            if( m_pStreamDecodePattern == NULL)
+            {
+                QTV_MSG_PRIO(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_ERROR, "Memory allocation is failed for m_pStreamDecodePattern" );
+                _success = false;
+                wmerr = WMCDec_Fail;
+                return wmerr;
+            }
 
             #ifdef FEATURE_QTV_WMA_PRO_DECODER
             //m_bUseARMDecoder is set to TRUE/FALSE in following function.
@@ -5210,23 +5610,36 @@ tWMCDecStatus ASFFile::ParseMetaData ( void )
                       //Do not need the buffer if we will be using ARM based decoder.
                       if(m_pStreamDecodePattern[i].tPattern == Compressed_WMC)
                       {
+#ifndef OUTPUT_STANDARD_WMA_BITSTREAM
                         m_nAudioPacketBufferSize = getTrackMaxBufferSizeDB(m_ptMediaTypeStreams[i].wStreamId);
                         m_pAudioPacketBuffer = (uint8*)QTV_Malloc(m_nAudioPacketBufferSize);
+#endif
                       }
                       /* calculate Num of prev bit length (sec 3.6/3.7 of WMA doc) */
                       float bits_per_sample = ((float)m_strAudioInfo.u32BitsPerSecond) /
                                         (m_strAudioInfo.u32SamplesPerSecond*m_strAudioInfo.u16NumChannels);
 
-                      m_nWmaNumPrevFrameBits = LOG2(ROUNDF( bits_per_sample *
+                      uint32 round_value    = ROUNDF( bits_per_sample *
                                                           getAudioSamplesPerFrame(m_ptMediaTypeStreams[i].wStreamId)
-                                                          / 8.0F )
-                                                  ) + 2 + 3;
+                                                      / 8.0F );
+                      if (round_value == 0)
+                      {
+                        QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "round_value is 0!!");
+                        return WMCDec_BadData;
+                      }
+
+                      m_nWmaNumPrevFrameBits = LOG2(round_value) + 2 + 3;
                        AUDIOSTREAMINFO* pAudioStrmPtr = GetAudioStreamInfo(m_ptMediaTypeStreams[i].wStreamId);
                        m_bAllowWmaPackets = (pAudioStrmPtr && (pAudioStrmPtr->nEncodeOpt & 0x02))?true:false;
-                      // if(m_isDSPWMA_pro)
-                      // {
+                       #ifdef FEATURE_QTV_WMA_PRO_DSP_DECODER
+                         uint8 format = 0xFF;
+                         // Sets m_isDSPWMA_pro to true if wma pro clips are decoded using DSP
+                         (void)isWmaProDecoderNeeded(m_ptMediaTypeStreams[i].wStreamId, &format);
+                       #endif
+                       if(m_isDSPWMA_pro)
+                       {
                            m_bAllowWmaPackets = true;
-                      // }
+                       }
                     }
                     else
                       m_pStreamDecodePattern[i].tPattern = Discard_WMC;
@@ -5249,12 +5662,6 @@ tWMCDecStatus ASFFile::ParseMetaData ( void )
                   WMCDecGetVideoInfo (m_hASFDecoder, m_ptMediaTypeStreams[i].wStreamId, &m_strVideoInfo);
                   m_pStreamDecodePattern[i].wStreamId = m_ptMediaTypeStreams[i].wStreamId;
 
-                  if (!isVideoCodecSupported())
-                  {
-                     _success = false;
-                     wmerr = WMCDec_Fail;
-                     return wmerr;
-                  }
                    if( ( ((!bVideoStreamSelected)&&(m_playVideo))||
                          ((!GetTotalNumberOfAudioStreams()) && (GetTotalNumberOfVideoStreams())) ) )
 
@@ -5268,7 +5675,7 @@ tWMCDecStatus ASFFile::ParseMetaData ( void )
                     {
                       if(!isVideoCodecSupported())
                       {
-                      	_success = false;
+                         _success = false;
                         wmerr = WMCDec_Fail;
                         return wmerr;
                       }
@@ -5342,11 +5749,19 @@ tWMCDecStatus ASFFile::ParseMetaData ( void )
         else
         #endif
         {
+#ifndef OUTPUT_STANDARD_WMA_BITSTREAM
           m_nAsfDataBufferSize = 2 * GetAsfPacketSize();
           m_pasfDataBuffer = (U8_WMC*)QTV_Malloc( m_nAsfDataBufferSize);
-          ASSERT(m_pasfDataBuffer);
+          if (m_pasfDataBuffer == NULL)
+          {
+            QTV_MSG_PRIO1(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_HIGH, 
+                          "m_pasfDataBuffer malloc failed size = %ld",m_nAsfDataBufferSize);
+            return WMCDec_BadMemory;
+          }
+
           memset(m_pasfDataBuffer,0,m_nAsfDataBufferSize);
           QTV_MSG_PRIO1(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_HIGH, "m_nAsfDataBufferSize %ld",m_nAsfDataBufferSize);
+#endif
         }
       }
       else
@@ -5357,8 +5772,8 @@ tWMCDecStatus ASFFile::ParseMetaData ( void )
     else
       m_pasfDataBuffer = NULL;
   if( wmerr == WMCDec_Succeeded )
-	{
-	  #if defined (FEATURE_QTV_DRM_DCF) && defined (FEATURE_SME_DRMMS)
+     {
+       #if defined (FEATURE_QTV_DRM_DCF) && defined (FEATURE_SME_DRMMS)
       if (m_inputStream)
       {
         if( ((IxStreamMedia*)m_inputStream)->IsProtected() )
@@ -5370,7 +5785,7 @@ tWMCDecStatus ASFFile::ParseMetaData ( void )
       }
     #endif /*FEATURE_SME_DRMMS*/
   }
-	return wmerr;
+     return wmerr;
 
 }
 
@@ -5398,11 +5813,7 @@ void ASFFile::updateBufferWritePtr ( uint32 writeOffset )
   {
      //check if we got sufficient data to start parsing the
      //meta data.
-    #ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
       sendParseHTTPStreamEvent();
-    #elif defined (FEATURE_QTV_PSEUDO_STREAM)
-      parseHTTPStream();
-    #endif
   }
 }
 /*===========================================================================
@@ -5445,7 +5856,8 @@ tWMCDecStatus ASFFile::getMetaDataSize ( void )
 {
   tWMCDecStatus wmerr = WMCDec_Fail;
   uint32 nHttpDownLoadBufferOffset = 0;
-  boolean bHttpDownLoadBufferOffsetValid = GetHTTPStreamDownLoadedBufferOffset(&nHttpDownLoadBufferOffset);
+  boolean bEndOfData = false;
+  boolean bHttpDownLoadBufferOffsetValid = GetHTTPStreamDownLoadedBufferOffset(&nHttpDownLoadBufferOffset,bEndOfData );
   WMFDecoderEx *pDecoder = (WMFDecoderEx *)m_hASFDecoder;
   U32_WMC nAsfHeaderSize = 0;
   if( pDecoder && bHttpDownLoadBufferOffsetValid && (nHttpDownLoadBufferOffset > (MIN_OBJECT_SIZE + sizeof(U32_WMC) + 2*sizeof(U8_WMC)) ) )
@@ -5456,14 +5868,12 @@ tWMCDecStatus ASFFile::getMetaDataSize ( void )
   {
     m_HttpDataBufferMinOffsetRequired.Offset = nAsfHeaderSize;
     bGetMetaDataSize = FALSE;
-    return wmerr;
   }
   else
   {
     bGetMetaDataSize = TRUE;
-    return wmerr;
   }
-  return WMCDec_Fail;
+  return wmerr;
 }
 
 /*===========================================================================
@@ -5480,8 +5890,13 @@ bool ASFFile::CanPlayTracks(uint32 nTotalPBTime)
   uint32 nMediaMaxPlayableTime = 0;
   uint32  nTotalAvgBitRate = 0;
   uint32 nHttpDownLoadBufferOffset = 0;
-  boolean bHttpDownLoadBufferOffsetValid = GetHTTPStreamDownLoadedBufferOffset(&nHttpDownLoadBufferOffset);
+  boolean bEndOfData = false;
+  boolean bHttpDownLoadBufferOffsetValid = GetHTTPStreamDownLoadedBufferOffset(&nHttpDownLoadBufferOffset,bEndOfData);
 
+  if (bEndOfData)
+  {
+     return true;
+  }
   if( (m_HttpDataBufferMinOffsetRequired.bValid == FALSE) && GetTotalAvgBitRate( &nTotalAvgBitRate ) )
   {
     /* Compute Required Buffering/Rebuffering time */
@@ -5552,7 +5967,8 @@ bool ASFFile::parseHTTPStream ( void )
 
   //GetHTTPStreamDownLoadedBufferOffset returns amount of data downloaded so far.
   //With PULL interface, value is fetched with fetch data function, for PULL interface, it is same as pDecoder->wHttpDataBuffer.Offset
-  boolean bHttpDownLoadBufferOffsetValid = GetHTTPStreamDownLoadedBufferOffset(&nHttpDownLoadBufferOffset);
+  boolean bEndOfData = false;
+  boolean bHttpDownLoadBufferOffsetValid = GetHTTPStreamDownLoadedBufferOffset(&nHttpDownLoadBufferOffset,bEndOfData);
 
   if(bGetMetaDataSize)
   {
@@ -5580,21 +5996,22 @@ bool ASFFile::parseHTTPStream ( void )
          //This will be set once for each playback and will never be reset.
 
          if(ParseMetaData() == WMCDec_Succeeded)
-	       {
+         {
            bIsMetaDataParsed = TRUE;
            bPLaybackStarted = false;
            //Even though we have meta-data, we may not have sufficient bytes to begin the playback.
            //This will be checked via CanPlayTracks. Please see below.
+           UpdateTrackIdInFilePointer();
          }
-	       else
-	       {
+            else
+            {
            //Data not sufficient: Notify
            //QTV_PS_PARSER_STATUS_PAUSED
            sendParserEvent(Common::PARSER_PAUSE);
            bPLaybackStarted = false;
            QTV_MSG_PRIO(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_HIGH, "not enough data to parse meta-data,notifying Common::PARSER_PAUSE");
            returnStatus = false;
-	       }
+            }
        }
      }
      //Check if we have sufficient data. When m_startupTime is 0,
@@ -5653,7 +6070,7 @@ DESCRIPTION
   Public method used to switch contexts and notify the player about buffer-underrun.
 
 ===========================================================================*/
-boolean ASFFile::GetHTTPStreamDownLoadedBufferOffset(U32_WMC * pOffset)
+boolean ASFFile::GetHTTPStreamDownLoadedBufferOffset(U32_WMC * pOffset, boolean &bEod)
 {
   WMFDecoderEx *pDecoder = (WMFDecoderEx *)m_hASFDecoder;
 
@@ -5662,13 +6079,14 @@ boolean ASFFile::GetHTTPStreamDownLoadedBufferOffset(U32_WMC * pOffset)
     if(m_fpFetchBufferedDataSize)
     {
       boolean bEndOfData = false;
-      U32_WMC userData = 0;      
+      U32_WMC userData = 0;
       #ifdef FEATURE_QTV_DRM_DCF
         userData = (U32_WMC)m_inputStream;
       #endif
       //Pull interface so pull dnld data size from OEM
       m_fpFetchBufferedDataSize( userData ,&(pDecoder->wHttpDataBuffer.Offset),&bEndOfData, m_QtvInstancehandle);
       pDecoder->wHttpDataBuffer.bValid = TRUE;
+      bEod = bEndOfData;
     }
     if( pDecoder->wHttpDataBuffer.bValid )
     {
@@ -5754,7 +6172,7 @@ tWMCDecStatus ASFFile::GetMediaMaxPlayableTime(U32_WMC *nMaxPBTime)
 }
 #endif//#if defined(FEATURE_QTV_PSEUDO_STREAM) || defined(FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
 
-#if defined(FEATURE_QTV_PSEUDO_STREAM) || defined(FEATURE_QTV_3GPP_PROGRESSIVE_DNLD) 
+#if defined(FEATURE_QTV_PSEUDO_STREAM) || defined(FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
 /*===========================================================================
 
 FUNCTION  ASFFile::parsePseudoStream
@@ -5767,144 +6185,11 @@ bool ASFFile::parsePseudoStream( void )
 {
   return parseHTTPStream();
 }
-#endif//#if defined(FEATURE_QTV_PSEUDO_STREAM) || defined(FEATURE_QTV_3GPP_PROGRESSIVE_DNLD) 
+#endif//#if defined(FEATURE_QTV_PSEUDO_STREAM) || defined(FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
 
 
-#ifdef FEATURE_QTV_PSEUDO_STREAM
 
-/*===========================================================================
-
-FUNCTION  ASFFile::sendPlayerPauseEvent
-
-DESCRIPTION
-  Event to pause Mpeg4Player
-
-===========================================================================*/
-void ASFFile::sendPlayerPauseEvent(void)
-{
-  QTV_PS_PAUSE_EVENT_type *pEvent = QCCreateMessage(QTV_PS_PAUSE_EVENT, m_pMpeg4Player);
-  if (pEvent)
-  {
-    QCUtils::PostMessage(pEvent,0,NULL);
-  }
-}
-/*===========================================================================
-
-FUNCTION  ASFFile::sendAudioPauseEvent
-
-DESCRIPTION
-  Event to Pause the audio player
-
-===========================================================================*/
-void ASFFile::sendAudioPauseEvent(void)
-{
-  //QTV_PAUSE_AUDIO
-  if(m_playAudio)
-  {
-    QTV_PAUSE_AUDIO_type *pEvent = QCCreateMessage(QTV_PAUSE_AUDIO, m_pMpeg4Player);
-    if (pEvent)
-    {
-      QCUtils::PostMessage(pEvent,0,NULL);
-      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Sent QTV_PAUSE_AUDIO");
-    }
-  }
-}
-/*===========================================================================
-
-FUNCTION  ASFFile::sendVideoPauseEvent
-
-DESCRIPTION
-  Event to pause the video player
-
-===========================================================================*/
-void ASFFile::sendVideoPauseEvent(void)
-{
-  //QTV_PAUSE_VIDEO
-  /*
-  * Not allowing audio instance to PAUSE video has following problem:
-  *
-  * Since audio data lead is 2.4 seconds, audio hits UNDER-RUN before video.
-  * So, video will keep running untill it detects UNDER-RUN, this makes
-  * video TS to go ahead of audio TS. This will make PLAYER to be in BUFFERING state
-  * but video will continue to play for few seconds.
-  *
-  * When we come out of rebuffering,video will freeze/sleep on last frame because
-  * checkframe value will be large. This is because audio will set A/V offset to the TS when it was PAUSED
-  * and now video has already moved ahead.
-  *
-  * This is different than how 3GPP_PROGRESSIVE_DNLD works.
-  * In that, we send QTV_HTTP_STREAM_BUFFER_UNDERRUN_EVENT to Mpeg4Player which causes
-  * Mpeg4Player::HttpPause to be invoked, which does audio/video/text pause if clip has them.
-  * We don't have counterpart function for Mpeg4Player::HTTPPause in PSEUDO_STREAMING.
-  */
-  {
-    QTV_PAUSE_VIDEO_type *pEvent = QCCreateMessage(QTV_PAUSE_VIDEO, m_pMpeg4Player);
-    if (pEvent)
-    {
-      QCUtils::PostMessage(pEvent,0,NULL);
-      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Sent QTV_PAUSE_VIDEO");
-    }
-  }
-}
-/*===========================================================================
-
-FUNCTION  ASFFile::resumeMedia
-
-DESCRIPTION
-  Called from Mpeg4Player to resume playback
-
-===========================================================================*/
-void ASFFile::resumeMedia( void )
-{
-  QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "ASFFile::resumeMedia");
-  if(m_playAudio)
-  {
-    sendAudioResumeEvent();
-  }
-  if(m_playVideo)
-  {
-    sendVideoResumeEvent();
-  }
-}
-/*===========================================================================
-
-FUNCTION  ASFFile::sendVideoPauseEvent
-
-DESCRIPTION
-  Event to resume audio player
-
-===========================================================================*/
-void ASFFile::sendAudioResumeEvent(void)
-{
-  //QTV_RESUME_AUDIO
-  QTV_RESUME_AUDIO_type *pEvent = QCCreateMessage(QTV_RESUME_AUDIO, m_pMpeg4Player);
-  if (pEvent)
-  {
-    QCUtils::PostMessage(pEvent,0,NULL);
-    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Sent QTV_RESUME_AUDIO");
-  }
-}
-/*===========================================================================
-
-FUNCTION  ASFFile::sendVideoResumeEvent
-
-DESCRIPTION
-  Event to resume video player
-
-===========================================================================*/
-void ASFFile::sendVideoResumeEvent(void)
-{
-  //QTV_RESUME_VIDEO
-  QTV_RESUME_VIDEO_type *pEvent = QCCreateMessage(QTV_RESUME_VIDEO, m_pMpeg4Player);
-  if (pEvent)
-  {
-    QCUtils::PostMessage(pEvent,0,NULL);
-    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Sent QTV_RESUME_VIDEO");
-  }
-}
-#endif//#ifdef FEATURE_QTV_PSEUDO_STREAM
-
-#ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
+#if defined FEATURE_QTV_3GPP_PROGRESSIVE_DNLD ||defined FEATURE_QTV_PSEUDO_STREAM
 /*===========================================================================
 
 FUNCTION  sendHTTPStreamUnderrunEvent
@@ -5915,15 +6200,7 @@ DESCRIPTION
 ===========================================================================*/
 void ASFFile::sendHTTPStreamUnderrunEvent(void)
 {
-  QTV_HTTP_STREAM_BUFFER_UNDERRUN_EVENT_type *pEvent = QCCreateMessage(QTV_HTTP_STREAM_BUFFER_UNDERRUN_EVENT, m_pMpeg4Player);
-
-  if (pEvent)
-  {
-    pEvent->bAudio = (bool) m_playAudio;
-    pEvent->bVideo = (bool) m_playVideo;
-    pEvent->bText = (bool) m_playText;
-    QCUtils::PostMessage(pEvent, 0, NULL);
-  }
+  sendParserEvent(Common::PARSER_PAUSE);
 }
 /*===========================================================================
 
@@ -5935,13 +6212,13 @@ DESCRIPTION
 ===========================================================================*/
 void ASFFile::sendParseHTTPStreamEvent(void)
 {
-  QTV_PROCESS_HTTP_STREAM_type *pEvent = QCCreateMessage(QTV_PROCESS_HTTP_STREAM, m_pMpeg4Player);
+  QTV_HTTP_BUFFER_UPDATE_type *pEvent = QCCreateMessage(QTV_HTTP_BUFFER_UPDATE, m_pMpeg4Player);
 
   if (pEvent)
   {
-    pEvent->bHasAudio = (bool) m_playAudio;
-    pEvent->bHasVideo = (bool) m_playVideo;
-    pEvent->bHasText = (bool) m_playText;
+    pEvent->bHasAudio = m_playAudio ;
+    pEvent->bHasVideo = m_playVideo;
+    pEvent->bHasText  = m_playText;
     QCUtils::PostMessage(pEvent, 0, NULL);
   }
 }

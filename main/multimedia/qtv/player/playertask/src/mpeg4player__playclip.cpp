@@ -10,9 +10,9 @@
 // ============================================================================
 //                              Edit History
 // 
-// $Header: //source/qcom/qct/multimedia/qtv/player/playertask/main/latest/src/mpeg4player__playclip.cpp#11 $
-// $DateTime: 2008/10/07 02:11:56 $
-// $Change: 757823 $
+// $Header: //source/qcom/qct/multimedia/qtv/player/playertask/main/latest/src/mpeg4player__playclip.cpp#26 $
+// $DateTime: 2010/07/08 00:58:18 $
+// $Change: 1359722 $
 // 
 // ============================================================================
 
@@ -26,13 +26,26 @@
 //
 // ============================================================================
 #include "qtvinternaldefs.h" // must be first so features are defined correctly
-
 #ifdef FEATURE_QTV_GENERIC_BCAST
 #include "gbm_ui.h"
 #include "genericbcastmedia.h"
 #endif
 #include "mpeg4player.h"
 #include "qtv_conc_mgr.h"
+
+extern "C"
+{
+#include "clkregim.h"
+#ifdef FEATURE_CMI
+#error code not present
+#else
+#include "clk.h"
+#endif
+
+#ifdef FEATURE_CMI_MM
+#error code not present
+#endif
+}
 
 #ifdef FEATURE_QTV_MAPI_STREAM_MEDIA
 #include "qtv_mapi_params.h"
@@ -89,6 +102,7 @@
 /// ---------------------------------------------------------------------------
 bool Mpeg4Player::PlayClip( int32 startTime, 
                             int32 stopTime,
+                            const URL* urlToSwitch,
                             Common::PlaybackSpeedType pbSpeed )
 {
    // get the start time
@@ -134,6 +148,7 @@ bool Mpeg4Player::PlayClip( int32 startTime,
    /*Allow Video to set AV Offset when Audio is underrun..Used for MFLO Only */
    bAllowVidToSetOffSetOnAudUnderrun = true;
 
+#ifndef FEATURE_QTV_DISABLE_CONC_MGR
    if ( qtv_conc_mgr::can_process_command(this, QTV_PLAYER_MIME_TYPE) )
    {
       UpdateAudioConcState();
@@ -152,6 +167,7 @@ bool Mpeg4Player::PlayClip( int32 startTime,
       Notify(QtvPlayer::QTV_PLAYER_STATUS_PLAY_NOT_SUPPORTED);
       return (false);
    }
+#endif
 
 #ifdef FEATURE_QTV_PROGRESSIVE_DL_STREAMING_2
    if ( clip.bDownload )
@@ -312,7 +328,41 @@ bool Mpeg4Player::PlayClip( int32 startTime,
 #endif /* FEATURE_QTV_PROGRESSIVE_DL_STREAMING_2 */
       if ( clip.bStreaming )
    {
-      // Stream PlayClip
+     if (streamer->isReconnectionInProgress() && (startTime > 0) && 
+         (playerState != PB_READY ))
+     {
+       QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,
+                    "Ignoring this seek request, reconnection in progress");
+       return false;
+     }
+ 
+     if(streamer->isReconnectionInProgress() && ( startTime == -1 ) &&
+        ((playerState != PLAYING) && (playerState != PAUSED) && 
+        (playerState != SUSPENDED) && ( playerState != BUFFERING )))
+     {
+       QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,
+                    "Ignoring this resume request (not compatible player state)\
+                     reconnection in progress");
+       return false;
+     }
+
+    if(streamer->isReconnectionInProgress() && 
+       (playerState == PB_READY))
+    {
+      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,
+                   "Ignoring this play request (in pb_ready)\
+                   reconnection in progress, this should \
+                   never be the case");
+      return false;
+     }
+#ifdef FEATURE_QTV_FCS   
+#error code not present
+#endif
+    {
+#ifdef FEATURE_QTV_PIPELINING	
+#error code not present
+#endif	  
+	  // Stream PlayClip
       switch ( playerState )
       {
          case IDLE:
@@ -322,6 +372,12 @@ bool Mpeg4Player::PlayClip( int32 startTime,
 
          case CONNECTING:
             // waiting on connection.
+#ifdef FEATURE_QTV_FCS
+#error code not present
+#elif FEATURE_QTV_PIPELINING 
+#error code not present
+#endif
+
             bDoStartAsap=true;
             break;
 
@@ -359,6 +415,7 @@ bool Mpeg4Player::PlayClip( int32 startTime,
             QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "Weird state in PlayClip for stream");
             return (false);
       }
+    }
    }
 #ifndef FEATURE_QTV_GENERIC_BCAST
    else if ( clip.bBcastFLO || clip.bBcastISDB )
@@ -444,6 +501,10 @@ bool Mpeg4Player::PlayClip( int32 startTime,
 
                bDoResume=true;
             }
+            break;
+	  case OPENING:
+            QTV_MSG(QTVDIAG_MP4_PLAYER, "PlayClip: Bcast is OPENING");
+            bDoStartAsap=true;
             break;
 #endif
 
@@ -655,11 +716,11 @@ bool Mpeg4Player::PlayClip( int32 startTime,
          ErrorAbort(OPEN_CLIP_ERROR);
          return (false);
       }
-
+#ifndef FEATURE_WINCE   
       event_report_payload(EVENT_QTV_CLIP_STARTED,
                            sizeof(qtv_event_clip_started_type),
                            &qtv_event_clip_started_payload);
-
+#endif
       return (true);
    }
 
@@ -688,10 +749,11 @@ bool Mpeg4Player::PlayClip( int32 startTime,
             ErrorAbort(OPEN_CLIP_ERROR);
             return (false);
          }
-
+#ifndef FEATURE_WINCE
          event_report_payload(EVENT_QTV_CLIP_STARTED,
                               sizeof(qtv_event_clip_started_type),
                               &qtv_event_clip_started_payload);
+#endif
       }
       else
       {
@@ -749,8 +811,17 @@ bool Mpeg4Player::PlayClip( int32 startTime,
          */
         if ( !streamer->IsPaused())
          {
+          if(acceleratedDuration > -1)
+          {
+            streamer->setAccDuration (acceleratedDuration);
+          }
+          if(speed > -1)
+          {
+            streamer->setSpeed(speed);
+          }
+ 
             //server is connected, start streaming now.
-            if ( !StartStreaming() )
+            if ( !StartStreaming(urlToSwitch) )
             {
                ErrorAbort(STREAM_START_ERROR);
             }
@@ -782,6 +853,10 @@ bool Mpeg4Player::PlayClip( int32 startTime,
          */
          else
          {
+#ifdef FEATURE_QTV_FCS
+#error code not present
+#endif /* FEATURE_QTV_FCS */
+          {
             bool bError = false;
           if (streamer && streamer->Resume(bError))
             {
@@ -799,11 +874,13 @@ bool Mpeg4Player::PlayClip( int32 startTime,
                   }
                }
             }
-         }
-
+          }
+        }
+#ifndef FEATURE_WINCE
          event_report_payload(EVENT_QTV_CLIP_STARTED,
                               sizeof(qtv_event_clip_started_type),
                               &qtv_event_clip_started_payload);
+#endif
 
 #ifdef FEATURE_QTV_QDSP_RELEASE_RESTORE
          playingBeforeVoiceCall = TRUE;
@@ -844,9 +921,11 @@ bool Mpeg4Player::PlayClip( int32 startTime,
          }
 
 #ifdef FEATURE_QTV_PSEUDO_STREAM
+#ifndef FEATURE_WINCE
 /* if pseudo streaming, generate EVENT_QTV_PSEUDO_STREAM_STARTED */
          if ( clip.bPseudoStreaming )
             event_report(EVENT_QTV_PSEUDO_STREAM_STARTED);
+#endif
 #endif
 
 #ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
@@ -855,9 +934,11 @@ bool Mpeg4Player::PlayClip( int32 startTime,
          //   event_report(EVENT_QTV_HTTP_STREAM_STARTED);
 #endif /*FEATURE_QTV_3GPP_PROGRESSIVE_DNLD*/
 
+#ifndef FEATURE_WINCE
          event_report_payload(EVENT_QTV_CLIP_STARTED,
                               sizeof(qtv_event_clip_started_type),
                               &qtv_event_clip_started_payload);
+#endif
 
 #ifdef FEATURE_QTV_QDSP_RELEASE_RESTORE
          playingBeforeVoiceCall = TRUE;
@@ -911,10 +992,12 @@ bool Mpeg4Player::PlayClip( int32 startTime,
             {
                if ( qtv_cfg_enable_dsp_release )
                {
+#ifndef FEATURE_WINCE
                   if (pActiveVideoPlayer)
                   {
                      pActiveVideoPlayer->RestoreVideo();
                   }
+#endif   /*    FEATURE_WINCE   */
                }
             }
          }
@@ -960,10 +1043,11 @@ bool Mpeg4Player::PlayClip( int32 startTime,
 
          qtv_event_clip_pause_resume_type qtv_event_clip_pause_resume_payload;
          qtv_event_clip_pause_resume_payload.resume_time = start;
-
+#ifndef FEATURE_WINCE
          event_report_payload(EVENT_QTV_CLIP_PAUSE_RESUME,
                               sizeof(qtv_event_clip_pause_resume_type),
                               &qtv_event_clip_pause_resume_payload   );
+#endif
 
 #ifdef FEATURE_QTV_QDSP_RELEASE_RESTORE
          playingBeforeVoiceCall = TRUE;
@@ -984,6 +1068,22 @@ bool Mpeg4Player::PlayClip( int32 startTime,
              start == 0) )
       {
          QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "Replaying Same Clip");
+
+#ifdef FEATURE_QTV_GENERIC_BCAST
+		//Start the Media Mode to Play or Live based on the mode
+		if ( clip.bBcastGeneric && !clip.bLiveBcast )
+		{
+			bool bRet;
+			bRet = GENERIC_BCAST_MEDIA_PLAY( clip.pVideoMpeg4Playback, UID_QTV_MEDIA_PARAM_PLAY_MODE_PLAY );
+			if ( !bRet )
+			{
+				QTV_MSG_PRIO(QTVDIAG_GENERAL, 
+							 QTVDIAG_PRIO_ERROR, 
+							 "Generic Bcast Media Play failed");
+			}
+		}
+#endif
+
       }
       else
       {
@@ -1024,9 +1124,15 @@ bool Mpeg4Player::PlayClip( int32 startTime,
       qtv_event_clip_repositioning_payload.current_time = 0;
       //get elapsed time.
       unsigned long temp_var=0;
-      if (clip.bHasVideo && pActiveVideoPlayer)
+      if (clip.bHasVideo
+#ifndef FEATURE_WINCE
+          && pActiveVideoPlayer
+#endif   /*    FEATURE_WINCE   */
+)
       {
+#ifndef FEATURE_WINCE
          temp_var=(unsigned long) pActiveVideoPlayer->GetElapsedTime();
+#endif   /*    FEATURE_WINCE   */
          qtv_event_clip_repositioning_payload.current_time =
          ZMAX(qtv_event_clip_repositioning_payload.current_time,
               temp_var);
@@ -1034,15 +1140,18 @@ bool Mpeg4Player::PlayClip( int32 startTime,
 
       if ( clip.bHasAudio )
       {
+#ifndef FEATURE_WINCE
          temp_var=(unsigned long)AudioPlayerIf::GetElapsedTime(activeAudioPlayerId);
+#endif   /*    FEATURE_WINCE   */
          qtv_event_clip_repositioning_payload.current_time =
          ZMAX(qtv_event_clip_repositioning_payload.current_time,
               temp_var);
       }
-
+#ifndef FEATURE_WINCE
       event_report_payload(EVENT_QTV_CLIP_REPOSITIONING,
                            sizeof(qtv_event_clip_repositioning_type),
                            &qtv_event_clip_repositioning_payload);
+#endif   /*    FEATURE_WINCE   */
 
       //Set restart time.
 #ifdef FEATURE_QTV_PSEUDO_STREAM
@@ -1069,9 +1178,11 @@ bool Mpeg4Player::PlayClip( int32 startTime,
          {/* This is a FF operation */
             if ( PLAYER_HTTP_PAUSE == playerState )
             { /* FF, when HTTP stream is in pseudo pause state */
+#ifndef FEATURE_WINCE  
                QTV_MSG( QTVDIAG_MP4_PLAYER,
                         "PlayClip: FF, when HTTP Stream is in pseudo pause state."
                         "Remain in state PLAYER_HTTP_PAUSE");
+#endif						
                Notify(PLAYER_HTTP_PAUSE);
                return (false);
             }

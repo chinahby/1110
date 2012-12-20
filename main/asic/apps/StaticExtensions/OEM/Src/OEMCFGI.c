@@ -3466,9 +3466,6 @@ void OEM_RestoreFactorySetting( void )
 	
    //oemi_cache.input_mode=OEMNV_INPUTMODE_DEFAULT;
 #endif //CUST_EDITION
-
-   // Reset for acquired CDMA1x network
-   tcxomgr_reset();
 }
 
 /*=============================================================================
@@ -12123,257 +12120,60 @@ static int OEMPriv_SetItem_CFGI_CALLFORWARD_CNIR_DISABLE(void *pBuff)
     ±¾º¯Êý½ö¹© BREW App Manager Ê¹ÓÃ¡£
 ==============================================================================*/
 #if defined(FEATURE_OEMOMH)
-extern void OEMDSS_SetAppType(uint32 uAppType);
+#include "Gsdi.h"
 void OEM_SetBAM_ADSAccount(void)
 {
 #ifndef WIN32
-    nv_item_type nvi;
-    PppAccounts Account;
-    char username[PPP_MAX_USER_ID_LEN] = {0};
-    char password[PPP_MAX_PASSWD_LEN] = {0};
-    
-    OEMDSS_SetAppType(DA_BREW_TYPE);
-    
-    if(SUCCESS == OEM_GetPppAccounts(&Account, DS_BREW_TYPE))
+    if(!gsdi_uim_omh_cap.omh_enabled)
     {
-    	MEMCPY(username, Account.user_id_info, STRLEN(Account.user_id_info));	
-    	MEMCPY(password, Account.passwd_info, STRLEN(Account.passwd_info));	
-    }
-    else
-    {
+        nv_item_type nvi;
+        char username[MAS_BREWSETINT_STRING] = {0};
+        char password[MAS_BREWSETINT_STRING] = {0};
+
         OEMPriv_GetItem_CFGI_BREWSET_USENAME((void*)username);
         OEMPriv_GetItem_CFGI_BREWSET_PASSWORD((void*)password);
+        DBGPRINTF("OEM_SetBAM_ADSAccount username=%s ",username);
+        DBGPRINTF("OEM_SetBAM_ADSAccoun passwordt=%s",password);
+
+        // ÕËºÅ
+        (void)STRCPY((char *)nvi.pap_user_id.user_id, (char *)username);
+        nvi.pap_user_id.user_id_len = STRLEN((char *)username);
+        (void)OEMNV_Put(NV_PPP_USER_ID_I, &nvi);
+
+
+        // ÕËºÅÃÜÂë
+        (void)STRCPY((char *)nvi.pap_password.password, (char *)password);
+        nvi.pap_password.password_len = STRLEN((char *)password);
+        (void)OEMNV_Put(NV_PPP_PASSWORD_I, &nvi);
     }
-    
-    // ÕËºÅ
-
-    //(void)STRCPY((char *)nvi.pap_user_id.user_id, (char *)DEFAULT_BREW_USERNAME);
-    //nvi.pap_user_id.user_id_len = STRLEN((char *)DEFAULT_BREW_USERNAME);
-    (void)STRCPY((char *)nvi.pap_user_id.user_id, (char *)username);
-    nvi.pap_user_id.user_id_len = STRLEN((char *)username);
-    (void)OEMNV_Put(NV_PPP_USER_ID_I, &nvi);
-
-    // ÕËºÅÃÜÂë
-
-    //(void)STRCPY((char *)nvi.pap_password.password, (char *)DEFAULT_BREW_PASSWORD);
-    //nvi.pap_password.password_len = STRLEN((char *)DEFAULT_BREW_PASSWORD);
-    (void)STRCPY((char *)nvi.pap_password.password, (char *)password);
-    nvi.pap_password.password_len = STRLEN((char *)password);
-    (void)OEMNV_Put(NV_PPP_PASSWORD_I, &nvi);
 #endif
 } /* OEM_SetBAM_ADSAccount */
 
-
-#if (defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_W317A))
 void OEM_SetUCBROWSER_ADSAccount(void)
 {
 #ifndef WIN32
-    nv_item_type nvi;
-    PppAccounts Account;
-    char username[PPP_MAX_USER_ID_LEN] = {0};
-    char password[PPP_MAX_PASSWD_LEN] = {0};
+    if(!gsdi_uim_omh_cap.omh_enabled)
+    {
+        nv_item_type nvi;
+        char username[MAS_BREWSETINT_STRING] = {0};
+        char password[MAS_BREWSETINT_STRING] = {0};
 
-	word curr_mcc;
-    byte curr_mnc;
-	IRUIM          *m_pIRUIM;
-	extern cdma_bs_type *cur_bs_ptr; 	
-    AECHAR              svc_p_name[UIM_CDMA_HOME_SERVICE_SIZE+1];
-	char                charsvc_p_name[UIM_CDMA_HOME_SERVICE_SIZE+1];
-	MEMSET(svc_p_name, 0, UIM_CDMA_HOME_SERVICE_SIZE + 1); 
-	MEMSET(charsvc_p_name,0,UIM_CDMA_HOME_SERVICE_SIZE + 1);
-	
-	OEMDSS_SetAppType(0);
-	
-	ISHELL_CreateInstance(AEE_GetShell(),
-                                 AEECLSID_RUIM,
-                                 (void **) &m_pIRUIM);
-    
-    if(SUCCESS == OEM_GetPppAccounts(&Account, DS_WAP20_TYPE))
-    {
-    	//MSG_FATAL("read uim card..................",0,0,0);
-    	MEMCPY(username, Account.user_id_info, STRLEN(Account.user_id_info));	
-    	MEMCPY(password, Account.passwd_info, STRLEN(Account.passwd_info));	
-    }
-    else
-    {
-    	//MSG_FATAL("read uim cefs..................",0,0,0);
         OEMPriv_GetItem_CFGI_BREWSET_USENAME((void*)username);
         OEMPriv_GetItem_CFGI_BREWSET_PASSWORD((void*)password);
+        DBGPRINTF("OEM_SetBROWSER_ADSAccount username=%s ",username);
+        DBGPRINTF("OEM_SetBROWSER_ADSAccoun passwordt=%s",password);
+        
+        // ÕËºÅ
+        (void)STRCPY((char *)nvi.pap_user_id.user_id, (char *)username);
+        nvi.pap_user_id.user_id_len = STRLEN((char *)username);
+        (void)OEMNV_Put(NV_PPP_USER_ID_I, &nvi);
+        // ÕËºÅÃÜÂë
+        (void)STRCPY((char *)nvi.pap_password.password, (char *)password);
+        nvi.pap_password.password_len = STRLEN((char *)password);
+        (void)OEMNV_Put(NV_PPP_PASSWORD_I, &nvi);
     }
-
-	//if(STRCMP(username,"rew@rew.mtsindia.in") == 0)
-	//{
-	//	STRCPY(username,"wap@wap.mtsindia.in");
-	//	STRCPY(password,"wap");
-	//}
-	#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
-	
-	DBGPRINTF("yangOEM_SetUCBROWSER_ADSAccountusername1 =%s", username);  
-    DBGPRINTF("yangOEM_SetUCBROWSER_ADSAccountuserpassword1 =%s", password);
-
-	curr_mcc = cur_bs_ptr->csp.esp.mcc + 111;
-    curr_mnc = cur_bs_ptr->csp.esp.imsi_11_12 + 11; 
-
-    //ERR("BS mcc(%d), BS mnc(%d)",cur_bs_ptr->esp.mcc,cur_bs_ptr->esp.imsi_11_12,0);
-
-    if ( curr_mcc % 10 == 0 )
-    {
-       curr_mcc -= 10;
-    }
-    if ( (curr_mcc/10) % 10 == 0 )
-    {
-       curr_mcc -= 100;
-    }
-    if ( curr_mcc >= 1000 )
-    {
-       curr_mcc -= 1000; 
-    } 
-
-    if ( curr_mnc % 10 == 0 )
-    {
-       curr_mnc -= 10;
-    }
-    if ( curr_mnc >= 100 )
-    {
-       curr_mnc -= 100;
-    } 
-	
-	IRUIM_Read_Svc_P_Name(m_pIRUIM,svc_p_name);
-
-    MSG_FATAL("curr_mnc====%d,,curr_mcc=====%d",curr_mnc,curr_mcc,0);
-
-	MSG_FATAL("STRLEN(svc_p_name)==========%d",WSTRLEN(svc_p_name),0,0);
-	WSTRTOSTR(svc_p_name,charsvc_p_name,sizeof(charsvc_p_name));
-
-	DBGPRINTF("OEM_SetUCBROWSER_ADScharsvc_p_name =%s", charsvc_p_name); 
-	if(WSTRLEN(svc_p_name)<1)
-	{
-		
-		if(STRISTR (username,"mts"))
-		{
-			STRCPY(username,"wap@wap.mtsindia.in");
-			STRCPY(password,"wap");
-		}
-		else if(STRISTR (username,"tata")||STRISTR (username,"wapuser"))
-		{
-			STRCPY(username,"wapuser");
-			STRCPY(password,"wapuser");
-		}
-		else if(STRISTR (username,"Reliance"))
-		{
-			STRCPY(username,"SpiceD88@wap.relianceinfo.com");
-			STRCPY(password,"K39MspDeci");
-		}
-		else if(STRISTR (username,"vmi"))
-		{
-			STRCPY(username,"wap@ttsl.vmi.com");
-			STRCPY(password,"wap");
-		}
-		else if (460 == curr_mcc && 3 == curr_mnc) 
-		{
-			STRCPY(username,"card");
-			STRCPY(password,"card");
-		}
-		else if ((404 == curr_mcc && 0 == curr_mnc)||(405 == curr_mcc && 25 == curr_mnc)||(405 == curr_mcc && 27 == curr_mnc)
-			   ||(405 == curr_mcc && 29 == curr_mnc)||(405 == curr_mcc && 30 == curr_mnc)||(405 == curr_mcc && 31 == curr_mnc)
-			   ||(405 == curr_mcc && 32 == curr_mnc)||(405 == curr_mcc && 34 == curr_mnc)||(405 == curr_mcc && 35 == curr_mnc)
-			   ||(405 == curr_mcc && 36 == curr_mnc)||(405 == curr_mcc && 37 == curr_mnc)||(405 == curr_mcc && 38 == curr_mnc)
-			   ||(405 == curr_mcc && 39 == curr_mnc)||(405 == curr_mcc && 41 == curr_mnc)||(405 == curr_mcc && 42 == curr_mnc)
-			   ||(405 == curr_mcc && 43 == curr_mnc)||(405 == curr_mcc && 44 == curr_mnc)||(405 == curr_mcc && 45 == curr_mnc)
-			   ||(405 == curr_mcc && 46 == curr_mnc)||(405 == curr_mcc && 47 == curr_mnc)) 
-		{
-			STRCPY(username,"wapuser");
-			STRCPY(password,"wapuser");
-		}
-		else if(405 == curr_mcc && 89 == curr_mnc) 
-		{
-			STRCPY(username,"wap@wap.mtsindia.in");
-			STRCPY(password,"wap");
-		}
-	    else
-	    {
-			STRCPY(username,"wapuser");
-			STRCPY(password,"wapuser");
-	    }
-	}
-	else
-	{
-		if(STRISTR (charsvc_p_name,"mts"),STRISTR(username,"mts"))
-		{
-			STRCPY(username,"wap@wap.mtsindia.in");
-			STRCPY(password,"wap");
-		}
-		else if(STRISTR (charsvc_p_name,"tata")||STRISTR (charsvc_p_name,"wapuser")||STRISTR (username,"tata")||STRISTR (username,"wapuser"))
-		{
-			STRCPY(username,"wapuser");
-			STRCPY(password,"wapuser");
-		}
-		else if(STRISTR (charsvc_p_name,"Reliance")||STRISTR(username,"reliance"))
-		{
-			STRCPY(username,"SpiceD88@wap.relianceinfo.com");
-			STRCPY(password,"K39MspDeci");
-		}
-		else if(STRISTR (charsvc_p_name,"vmi")||STRISTR(username,"vmi"))
-		{
-			STRCPY(username,"wap@ttsl.vmi.com");
-			STRCPY(password,"wap");
-		}
-		else if (460 == curr_mcc && 3 == curr_mnc) 
-		{
-			STRCPY(username,"card");
-			STRCPY(password,"card");
-		}
-		else if ((404 == curr_mcc && 0 == curr_mnc)||(405 == curr_mcc && 25 == curr_mnc)||(405 == curr_mcc && 27 == curr_mnc)
-			   ||(405 == curr_mcc && 29 == curr_mnc)||(405 == curr_mcc && 30 == curr_mnc)||(405 == curr_mcc && 31 == curr_mnc)
-			   ||(405 == curr_mcc && 32 == curr_mnc)||(405 == curr_mcc && 34 == curr_mnc)||(405 == curr_mcc && 35 == curr_mnc)
-			   ||(405 == curr_mcc && 36 == curr_mnc)||(405 == curr_mcc && 37 == curr_mnc)||(405 == curr_mcc && 38 == curr_mnc)
-			   ||(405 == curr_mcc && 39 == curr_mnc)||(405 == curr_mcc && 41 == curr_mnc)||(405 == curr_mcc && 42 == curr_mnc)
-			   ||(405 == curr_mcc && 43 == curr_mnc)||(405 == curr_mcc && 44 == curr_mnc)||(405 == curr_mcc && 45 == curr_mnc)
-			   ||(405 == curr_mcc && 46 == curr_mnc)||(405 == curr_mcc && 47 == curr_mnc)) 
-		{
-			STRCPY(username,"wapuser");
-			STRCPY(password,"wapuser");
-		}
-		else if(405 == curr_mcc && 89 == curr_mnc) 
-		{
-			STRCPY(username,"wap@wap.mtsindia.in");
-			STRCPY(password,"wap");
-		}
-		else
-		{
-			STRCPY(username,"wapuser");
-			STRCPY(password,"wapuser");
-		}
-	}
-	#endif
-	
-	DBGPRINTF("OEM_SetUCBROWSER_ADSAccountusername =%s", username);  
-    DBGPRINTF("OEM_SetUCBROWSER_ADSAccountuserpassword =%s", password);
-    // ÕËºÅ
-
-    //(void)STRCPY((char *)nvi.pap_user_id.user_id, (char *)DEFAULT_BREW_USERNAME);
-    //nvi.pap_user_id.user_id_len = STRLEN((char *)DEFAULT_BREW_USERNAME);
-    (void)STRCPY((char *)nvi.pap_user_id.user_id, (char *)username);
-    nvi.pap_user_id.user_id_len = STRLEN((char *)username);
-    (void)OEMNV_Put(NV_PPP_USER_ID_I, &nvi);
-
-    // ÕËºÅÃÜÂë
-
-    //(void)STRCPY((char *)nvi.pap_password.password, (char *)DEFAULT_BREW_PASSWORD);
-    //nvi.pap_password.password_len = STRLEN((char *)DEFAULT_BREW_PASSWORD);
-    (void)STRCPY((char *)nvi.pap_password.password, (char *)password);
-    nvi.pap_password.password_len = STRLEN((char *)password);
-    (void)OEMNV_Put(NV_PPP_PASSWORD_I, &nvi);
-
-	if (m_pIRUIM != NULL)
-    {
-        IRUIM_Release(m_pIRUIM);
-        m_pIRUIM = NULL;
-    }
-	
 #endif
 } /* OEM_SetBAM_ADSAccount */
-#endif
 
 #elif defined(FEATURE_FLEXI_STATIC_BREW_APP)
 void OEM_SetBAM_ADSAccount(STATIC_BREW_APP_e eApp)

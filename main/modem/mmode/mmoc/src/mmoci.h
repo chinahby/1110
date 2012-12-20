@@ -25,10 +25,11 @@ Diversion contrary to U.S. law prohibited.
   Notice that changes are listed in reverse chronological order.
 
   $PVCSPath:  L:/src/asw/MSM_MM/APPS/vcs/mmoci.h_v   1.2   18 Jun 2002 16:40:50   sjaikuma  $
-  $Header: //source/qcom/qct/modem/mmode/mmoc/rel/08H1/src/mmoci.h#3 $ $DateTime: 2009/06/01 01:50:11 $ $Author: pmao $
+  $Header: //source/qcom/qct/modem/mmode/mmoc/rel/08H1_QSC1110_3.X/src/mmoci.h#2 $ $DateTime: 2011/03/02 23:45:43 $ $Author: skgupta $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+03/01/11   sg      MMOC would call TMC heap API to allocate memory dynamically.
 05/31/09   pm      Change EXTERN define to MMEXTN to resolve compile error 
                    when other modules define EXTERN
 12/18/08   sg      Get "mmoc_state_info" ptr throug a function.
@@ -660,7 +661,51 @@ typedef void (mmoc_sanity_err_f_type) (
 
 );
 
+#ifdef FEATURE_MMOC_TMC_HEAP
+/*---------------------------------------------------------------------------
+                                 MMOC HEAP
+---------------------------------------------------------------------------*/
 
+/*
+** This union is of the largest objects for which memory is dynamically
+** allocated in the code. The SOLE purpose of the datatype is to obtain
+** the size of the largest object for the MMOC_SIZE_OF_LARGEST_DYN_OBJ macro.
+** It is not used anywhere else in the code.
+*/
+/*lint -esym(552, mmoc_large_obj_unused) disable not accessed error */
+/*lint -esym(551, mmoc_large_obj_unused) disable not accessed error */
+/*lint -esym(728, mmoc_large_obj_unused) disable not accessed error */
+/*lint -esym(754, size_cal_dummy1) disable not accessed error */
+/*lint -esym(754, size_cal_dummy2) disable not accessed error */
+typedef union
+{
+  mmoc_rpt_msg_s_type     size_cal_dummy1;
+
+  mmoc_cmd_msg_s_type     size_cal_dummy2;
+} mmoc_large_obj_unused;
+
+#define   MMOC_SIZE_OF_LARGEST_DYN_OBJ  ((unsigned long) \
+                                          sizeof(mmoc_large_obj_unused))
+
+/* The exact number of bytes that will be used to satisfy a malloc request
+** for the largest object in CM.  As of not, the largest object is
+** cmcall_s_type.
+*/
+#define   MMOC_MAX_ACTUAL_ALLOC_SIZE   ((( MMOC_SIZE_OF_LARGEST_DYN_OBJ \
+                                         + sizeof(mem_block_header_type) \
+                                         + kMinChunkSize - 1 ) / kMinChunkSize ) \
+                                      * kMinChunkSize )
+
+/* No. of fixed size requests that must be satisfied by the MMOC heap.
+*/
+#define   MMOC_HEAP_SLOT_COUNT         6
+
+/* The additional 15 bytes is to take into account the paragraph boundary
+** alignment done by mem_init_heap().
+*/
+#define   MMOC_HEAP_BUFFER_SIZE        ((MMOC_MAX_ACTUAL_ALLOC_SIZE * \
+                                      MMOC_HEAP_SLOT_COUNT) + 15)
+#endif /* FEATURE_MMOC_TMC_HEAP */
 
 /* <EJECT> */
 /*===========================================================================
@@ -709,7 +754,7 @@ typedef void (mmoc_sanity_err_f_type) (
 
 /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-
+#ifndef FEATURE_MMOC_TMC_HEAP
 /* The number of command buffers or command q size.
 */
 #ifdef FEATURE_MMOC_LOW_MEM_TARGET
@@ -721,7 +766,7 @@ typedef void (mmoc_sanity_err_f_type) (
 /* The number of report buffers or report q size.
 */
 #define  MMOC_RPT_BUFS_NUM               6
-
+#endif /* FEATURE_MMOC_TMC_HEAP */
 
 /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -780,14 +825,17 @@ typedef struct
   */
   q_type                               rpt_q;
 
+  #ifndef FEATURE_MMOC_TMC_HEAP
   /* Free queue for reports to MMoC task.
   */
   q_type                               rpt_free_q;
+  #endif /* FEATURE_MMOC_TMC_HEAP */
 
   /* Queue for commands to MMoC task.
   */
   q_type                               cmd_q;
 
+  #ifndef FEATURE_MMOC_TMC_HEAP
   /* Free queue for commands to MMoC task.
   */
   q_type                               cmd_free_q;
@@ -799,6 +847,7 @@ typedef struct
   /* Statically allocated space for free command queue buffers.
   */
   mmoc_cmd_msg_s_type                  cmd_pool[MMOC_CMD_BUFS_NUM];
+  #endif /* FEATURE_MMOC_TMC_HEAP */
 
 
   /* System selection timer for SS_MAIN.

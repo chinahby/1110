@@ -1,5 +1,5 @@
-#ifndef __FileBase_H__ 
-#define __FileBase_H__ 
+#ifndef __FileBase_H__
+#define __FileBase_H__
 /* =======================================================================
                               FileBase.h
 DESCRIPTION
@@ -18,9 +18,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/legacymedia/filemedia/base/main/latest/inc/filebase.h#16 $
-$DateTime: 2008/12/11 02:28:12 $
-$Change: 803007 $
+$Header: //source/qcom/qct/multimedia/qtv/legacymedia/filemedia/base/main/latest/inc/filebase.h#29 $
+$DateTime: 2010/08/11 06:04:10 $
+$Change: 1398024 $
 
 ========================================================================== */
 
@@ -59,7 +59,7 @@ $Change: 803007 $
 
 #endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
 
-//When following feature is defined, 
+//When following feature is defined,
 //media type(mpeg4/WM) will be determined by analysing the file extension.
 //This avoids File Open/Close once for each track.
 //#define FEATURE_QTV_USE_FILE_EXTENSION_FOR_MEDIA_TYPE
@@ -86,6 +86,7 @@ class Mpeg4Player;
 #define FILE_MAX_MEDIA_STREAMS  6
 #endif
 
+#define MPG4_FILE_SIGNATURE_BYTES 4
 /* -----------------------------------------------------------------------
 ** Type Declarations
 ** ----------------------------------------------------------------------- */
@@ -113,7 +114,9 @@ enum AudioDataFormatType
   AUDIO_XMF,
   AUDIO_DLS,
   QCP_QLCM,
-  VIDEO_PMD
+  VIDEO_PMD,
+  AUDIO_AC3,
+  AUDIO_PCM
 };
 typedef struct
 {
@@ -215,6 +218,7 @@ public:
   return: The timestamp of the most recently return media sample in the "media timescale"
   */
   virtual  uint32 getMediaTimestampForCurrentSample(uint32 id)= 0;
+  virtual  uint32 getMediaTimestampDeltaForCurrentSample(uint32) {return 0;};
 
   /* resets the playback for given track */
   virtual bool resetMediaPlayback(uint32 id) = 0;
@@ -233,10 +237,10 @@ public:
   virtual OSCL_STRING getVersion()const = 0;    // return _version string
   virtual OSCL_STRING getCreationDate()const = 0; // return _creationDate string
   virtual OSCL_STRING getPerf()const=0;           // return _performance string
-  virtual OSCL_STRING getGenre()const=0;		  // return _genre string
-  virtual OSCL_STRING getClsf()const=0;			  // return _classification string
-  virtual OSCL_STRING getKywd()const=0;			  // return _keyword string
-  virtual OSCL_STRING getLoci()const=0;			  // return _location string
+  virtual OSCL_STRING getGenre()const=0;          // return _genre string
+  virtual OSCL_STRING getClsf()const=0;           // return _classification string
+  virtual OSCL_STRING getKywd()const=0;           // return _keyword string
+  virtual OSCL_STRING getLoci()const=0;           // return _location string
   virtual OSCL_STRING getAlbum()const = 0;    // return _album string
   virtual OSCL_STRING getYrrc()const = 0;    // return recording year
   // from 'ftyp' atom
@@ -288,11 +292,11 @@ public:
   virtual void resetInitialization(){m_bMediaInitialized = false;};
   virtual OSCL_STRING getAudioTrackLanguage(uint32 ) {return 0;};
   virtual unsigned int UserCompare(bool &, int, int, int) {return 0;}
-
-
-#if defined(FEATURE_QTV_WINDOWS_MEDIA) || defined(FEATURE_QTV_WMA_PRO_DSP_DECODER) 
-  /* use these functions only for windows media audio, other formats may not implement it */
+  virtual bool   isADTSHeader(){return false;};
   virtual unsigned long GetAudioBitsPerSample(int) {return 0;};
+
+#if defined(FEATURE_QTV_WINDOWS_MEDIA) || defined(FEATURE_QTV_WMA_PRO_DSP_DECODER)
+  /* use these functions only for windows media audio, other formats may not implement it */
   virtual unsigned long GetFixedAsfAudioPacketSize(int) {return 0;};
   virtual unsigned long GetAudioEncoderOptions(int) {return 0;}
 
@@ -315,6 +319,8 @@ public:
 
 #ifdef FEATURE_QTV_AVI
    virtual long getAudioFrameDuration(int){return 0;}
+   virtual void  SetIDX1Cache(void*){}
+   virtual void* GetIDX1Cache(){return NULL;}
 #endif
 
 #ifdef FEATURE_FILE_FRAGMENTATION
@@ -330,29 +336,29 @@ public:
   virtual uint16 getReadFragmentNum( void ){return 0;};
 #endif
 
-#ifdef FEATURE_QTV_PSEUDO_STREAM
-  virtual bool parsePseudoStream( void ){return FALSE;};
-#endif
 
 #if defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
   virtual void updateBufferWritePtr(uint32){};
-#endif /* FEATURE_QTV_PSEUDO_STREAM || FEATURE_QTV_3GPP_PROGRESSIVE_DNLD */
-
-#ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
   virtual bool parseHTTPStream( void ){return FALSE;}
   virtual bool CanPlayTracks(uint32) {return FALSE;}
-#ifdef FEATURE_QTV_GENERIC_AUDIO_FORMAT
+#endif /* FEATURE_QTV_PSEUDO_STREAM || FEATURE_QTV_3GPP_PROGRESSIVE_DNLD */
+
+#ifdef FEATURE_QTV_PSEUDO_STREAM
+  virtual bool parsePseudoStream( void ){return parseHTTPStream();};
+#endif
+
+#if defined FEATURE_QTV_GENERIC_AUDIO_FORMAT && defined FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
   virtual int32  setFileSize(uint32 id)= 0;
 #endif /* FEATURE_QTV_GENERIC_AUDIO_FORMAT */
-#endif /* FEATURE_QTV_3GPP_PROGRESSIVE_DNLD */
 
-#ifdef FEATURE_QTV_RANDOM_ACCESS_REPOS
+
+#ifdef FEATURE_FILE_FRAGMENTATION
   virtual uint32 repositionAccessPoint(int32, uint32, bool &bError ,uint32 )
   {
      bError = true;
      return 0;
   }
-#endif /*FEATURE_QTV_RANDOM_ACCESS_REPOS*/
+#endif /*FEATURE_FILE_FRAGMENTATION*/
 
   virtual uint8 *getTrackDecoderSpecificInfoContent(uint32){return NULL;};
   virtual uint32 getTrackDecoderSpecificInfoSize(uint32){return 0;};
@@ -381,6 +387,10 @@ public:
                                    bool bPlayText);
 #endif
 
+  static bool MAKE_AAC_AUDIO_CONFIG(uint8* pBuffer,uint16 nAudObjectType,
+                                  uint16 nSamplingFreq,uint16 nChannelsConfig,
+                                  uint8* pConfigSize);
+
   static FileBase *openMediaFile(  unsigned char *pBuf,
                                    Mpeg4Player *pMpeg4Player,
                                    uint32 bufSize,
@@ -400,7 +410,13 @@ public:
                                  );
 
 #ifdef FEATURE_QTV_WM_DRM_API
-  virtual bool RegisterDRMDecryptMethod(QtvPlayer::DRMDecryptMethodT pDRMDecryptFunction, void *pClientData) { pDRMDecryptFunction = NULL; pClientData = NULL; return false; }
+  virtual bool RegisterDRMDecryptMethod(QtvPlayer::DRMDecryptMethodT pDRMDecryptFunction, void *pClientData)
+    {
+        pDRMDecryptFunction = NULL;
+        pClientData = NULL;
+        QTV_USE_ARG2(pDRMDecryptFunction,pClientData); //added to remove warning.
+        return false;
+    }
 #endif /* FEATURE_QTV_WM_DRM_API */
 
   virtual void resetPlayback() = 0;
@@ -409,16 +425,17 @@ public:
 
 #ifdef FEATURE_QTV_REPOSITION_SYNC_FRAME
   virtual uint32 skipNSyncSamples(int, uint32, bool *, uint32 )= 0;
-#endif /* FEATURE_QTV_REPOSITION_SYNC_FRAME */  
+#endif /* FEATURE_QTV_REPOSITION_SYNC_FRAME */
 
   virtual void resetPlaybackPos(uint32){return;}
 
 #ifdef FEATURE_FILE_FRAGMENTATION
   virtual bool parseFragment( void ){return FALSE;};
+#endif
   virtual void setAudioPlayerData(const void *){};
   virtual void setVideoPlayerData(const void *){};
   virtual void setTextPlayerData(const void *){};
-#endif
+
 
   virtual uint8 getAllowAudioOnly() = 0;
   virtual uint8 getAllowVideoOnly() = 0;
@@ -532,11 +549,11 @@ protected:
         /*
         * When a media/interface is created,
         * m_bMediaInitialized will be initialized to FALSE to indicate that
-        * initialization is not yet done. This is particularly 
+        * initialization is not yet done. This is particularly
         * useful when playing generic audio formats as CMX expects
         * certain commands only when their internal state is initialized.
-        * 
-        * For generic audio formats, when posting Seek command, 
+        *
+        * For generic audio formats, when posting Seek command,
         * Mpeg4Player will wait on this flag(inside GenericAudioFile::ResetPlayback)before issuing SEEK commands to CMX.
         */
         bool m_bMediaInitialized;
@@ -548,8 +565,8 @@ protected:
       */
   static uint32 readFile(dcf_ixstream_type inputStream,
                          uint8 *buffer,
-  					     uint32 pos,
-   						 uint32 size );
+                         uint32 pos,
+                         uint32 size );
 
   #endif
 
@@ -577,10 +594,14 @@ protected:
   static bool IsASFFile(uint8 * pBuf, uint32 size);
   static bool IsASFFile(QtvPlayer::FetchBufferedDataSizeT FetchBufferedDataSize, QtvPlayer::FetchBufferedDataT FetchBufferedData, QtvPlayer::InstanceHandleT handle = NULL);
 #endif /* FEATURE_QTV_WINDOWS_MEDIA */
-#ifdef FEATURE_QTV_AVI  
-  static bool IsAVIFile(OSCL_STRING,uint8*,bool); 
+#ifdef FEATURE_QTV_AVI
+  static bool IsAVIFile(OSCL_STRING,uint8*,bool);
   static bool IsAVIFile(QtvPlayer::FetchBufferedDataSizeT FetchBufferedDataSize, QtvPlayer::FetchBufferedDataT FetchBufferedData, QtvPlayer::InstanceHandleT handle = NULL);
 #endif
+
+  static bool isMp4Filebool(uint8* pBuf, uint32 mp4size);
+  static bool IsMP4_3GPFile(uint8* pBuf, uint32 mp4size);
+  static bool IsMP4_3GPFile(QtvPlayer::FetchBufferedDataSizeT FetchBufferedDataSize, QtvPlayer::FetchBufferedDataT FetchBufferedData, QtvPlayer::InstanceHandleT handle = NULL);
 
 };
 

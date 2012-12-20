@@ -7,7 +7,7 @@
 DESCRIPTION
   This contains all the declarations for the Authentication Task.
 
-Copyright (c) 2001-2008 by QUALCOMM, Incorporated.  All Rights Reserved.
+Copyright (c) 2001-2010 by QUALCOMM, Incorporated.  All Rights Reserved.
 
 ===========================================================================*/
 
@@ -16,10 +16,11 @@ Copyright (c) 2001-2008 by QUALCOMM, Incorporated.  All Rights Reserved.
                       EDIT HISTORY FOR FILE
 
 $PVCSPath: O:/src/asw/COMMON/vcs/uim.h_v   1.19   11 Oct 2002 09:54:00   ckrishna  $
-$Header: //source/qcom/qct/modem/uim/uimdrv/rel/07H1_2/inc/uim.h#3 $ $DateTime: 2009/06/10 06:57:52 $ $Author: ybansal $
+$Header: //source/qcom/qct/modem/uim/su/baselines/qsc1110/rel/3.3.65/uim/uimdrv/inc/uim.h#2 $ $DateTime: 2011/03/09 23:17:08 $ $Author: sratnu $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+06/06/10   ssr     Added support for BCSMS service in cdma service table
 06/10/09   yb      Fix to send status word as received in get response to AT COP
                    even if card returns error for envelope sent.
 04/29/09   kk      Updated EF file path info for non-spec defined telecom EFs
@@ -2997,6 +2998,7 @@ typedef enum {
   UIM_CDMA_SVC_3GPD_SIP,
   UIM_CDMA_SVC_3GPD_MIP,
   UIM_CDMA_SVC_3GPD_MSG_EXT,
+  UIM_CDMA_SVC_BCSMS,
   UIM_CDMA_SVC_HRPD,
   UIM_CDMA_SVC_RC,
   UIM_CDMA_SVC_BROWSER,
@@ -3033,6 +3035,7 @@ extern uim_store_esn_me_rsp_type uim_store_esn_me_rsp;
 #define  UIM_CDMA_SVC_3GPD_MSG_ALLOCATED_MASK           0x10
 #define  UIM_CDMA_SVC_3GPD_SIP_ALLOCATED_MASK           0x40
 #define  UIM_CDMA_SVC_3GPD_MIP_ALLOCATED_MASK           0x04
+#define  UIM_CDMA_SVC_BCSMS_ALLOCATED_MASK              0x04
 #define  UIM_CDMA_SVC_HRPD_ALLOCATED_MASK                0x01
 #define  UIM_CDMA_SVC_RC_ALLOCATED_MASK                  0x40
 #define  UIM_CDMA_SVC_BROWSER_ALLOCATED_MASK             0x01
@@ -3059,6 +3062,7 @@ extern uim_store_esn_me_rsp_type uim_store_esn_me_rsp;
 #define  UIM_CDMA_SVC_3GPD_MSG_ACTIVATED_MASK           0x20
 #define  UIM_CDMA_SVC_3GPD_SIP_ACTIVATED_MASK           0x80
 #define  UIM_CDMA_SVC_3GPD_MIP_ACTIVATED_MASK           0x08
+#define  UIM_CDMA_SVC_BCSMS_ACTIVATED_MASK              0x08
 #define UIM_CDMA_SVC_HRPD_ACTIVATED_MASK                0x02
 #define  UIM_CDMA_SVC_RC_ACTIVATED_MASK                 0x80
 #define  UIM_CDMA_SVC_BROWSER_ACTIVATED_MASK            0x02

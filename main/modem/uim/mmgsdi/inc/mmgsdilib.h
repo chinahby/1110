@@ -40,7 +40,7 @@
 /*===========================================================================
                         COPYRIGHT INFORMATION
 
-Copyright (c) 2004 - 2009 QUALCOMM, Incorporated and its licensors.  All
+Copyright (c) 2004 - 2010 QUALCOMM, Incorporated and its licensors.  All
 Rights Reserved.  QUALCOMM Proprietary.  Export of this technology or software
 is regulated by the U.S. Government. Diversion contrary to U.S. law prohibited.
 
@@ -49,10 +49,11 @@ is regulated by the U.S. Government. Diversion contrary to U.S. law prohibited.
 This section contains comments describing changes made to the module.
 Notice that changes are listed in reverse chronological order.
 
-$Header: //source/qcom/qct/modem/uim/mmgsdi/rel/07H1_2/inc/mmgsdilib.h#5 $$ $DateTime: 2009/04/15 09:06:25 $ $Author: xiaominz $
+$Header: //source/qcom/qct/modem/uim/su/baselines/qsc1110/rel/3.3.65/uim/mmgsdi/inc/mmgsdilib.h#2 $$ $DateTime: 2011/03/09 23:17:08 $ $Author: sratnu $
 
 when       who     what, where, why
 --------   ---     -----------------------------------------------------------
+06/07/10   ssr     Add non 3gpd cdma card check
 04/15/09   xz      Fix issue of generating RPC code for modem restart
 03/19/09   js      Support for Enhanced NAA Refresh by file path
 03/02/09   mib     Added original mode in mmgsdi_refresh_evt_info_type
@@ -378,6 +379,14 @@ typedef enum
                greater than to hold all possible PKCS15 EFs
   ---------------------------------------------------------------------------*/
 #define MMGSDI_MAX_PKCS15_TABLE_ENTRIES        10
+
+/* ----------------------------------------------------------------------------
+  DEFINE:      MMGSDI_CDMA_IMSI_LEN
+
+  DESCRIPTION: Defined the CDMS IMSI FILE SIZE
+  ---------------------------------------------------------------------------*/
+#define MMGSDI_CDMA_IMSI_LEN   10
+
 
 /*=============================================================================
 
@@ -2880,8 +2889,8 @@ typedef struct {
    STRUCTURE: MMGSDI_PKCS15_LOOKUP_TABLE_ENTRIES
    DESCRIPTION:
    The mmgsdi_pkcs15_lookup_table consists of two categories
-   1. EF Enum – List of PKCS15 EFs whose path is extracted from EF-ODF
-   2. File Path Info – File path info of the PKCS15 EF
+   1. EF Enum ? List of PKCS15 EFs whose path is extracted from EF-ODF
+   2. File Path Info ? File path info of the PKCS15 EF
 -------------------------------------------------------------------------------*/
 typedef struct {
   mmgsdi_file_enum_type      pkcs15_file_enum;
@@ -2892,8 +2901,8 @@ typedef struct {
    STRUCTURE: MMGSDI_PKCS15_LOOKUP_TABLE
    DESCRIPTION:
    The mmgsdi_pkcs15_lookup_table consists of
-   1. EF Enum – List of PKCS15 EFs whose path is extracted from EF-ODF
-   2. File Path Info – File path info of the PKCS15 EF
+   1. EF Enum ? List of PKCS15 EFs whose path is extracted from EF-ODF
+   2. File Path Info ? File path info of the PKCS15 EF
 -------------------------------------------------------------------------------*/
 typedef struct {
   uint8                               no_of_pkcs15_lookup_table_entries;
@@ -3542,7 +3551,7 @@ typedef struct {
    DESCRIPTION:
      It contains the confirmation for get subscriber Id for MediaFLO
      ADF, the len is specified in the “Qualcomm MediaFLO
-     Authentication Manager Applet Functional Specification”
+     Authentication Manager Applet Functional Specification?
 ----------------------------------------------------------------*/
 typedef struct {
   mmgsdi_response_header_type    response_header;
@@ -3555,7 +3564,7 @@ typedef struct {
    DESCRIPTION:
      It contains the confirmation for get public key for MediaFLO
      ADF, the len is specified in the “Qualcomm MediaFLO
-     Authentication Manager Applet Functional Specification”
+     Authentication Manager Applet Functional Specification?
 ----------------------------------------------------------------*/
 typedef struct {
   mmgsdi_response_header_type    response_header;
@@ -6665,8 +6674,8 @@ mmgsdi_return_enum_type mmgsdi_register_for_refresh (
       Refresh_files:    Files that the Client is no longer interested in
                         getting notification for
       vote_for_init:    Deregister from Voting,
-                        FALSE – NO changes to Current Registration,
-                        TRUE – DeRegister from Voting
+                        FALSE ? NO changes to Current Registration,
+                        TRUE ? DeRegister from Voting
       option       :   optional parameter, not used right now
       Response_cb_ptr:  Callback to this command
       client_ref:       User Data returned upon completion of this cmd.

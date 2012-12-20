@@ -14,9 +14,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/utils/qc/main/latest/inc/qcplayer_oscl_utils.h#1 $
-$DateTime: 2008/05/09 08:14:38 $
-$Change: 657007 $
+$Header: //source/qcom/qct/multimedia/qtv/utils/qc/main/latest/inc/qcplayer_oscl_utils.h#2 $
+$DateTime: 2009/01/29 06:14:06 $
+$Change: 829425 $
 
 
 ========================================================================== */
@@ -177,8 +177,9 @@ public:
   static char Lower(const char c);
   static int FindR(const char *s, const char *pat) ;
   static int StrcpyN(char *d, const char *s,int max_length,bool bNullTerm=true);
-
+#ifndef FEATURE_WINCE
   static bool  readNVItem(nv_items_enum_type , nv_item_type *);
+#endif //FEATURE_WINCE  
   
   #ifdef FEATURE_QTV_PROGRESSIVE_DL_STREAMING_2
   ///////////////////////////////

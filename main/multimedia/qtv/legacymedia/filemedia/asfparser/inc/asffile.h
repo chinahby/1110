@@ -15,9 +15,9 @@ Copyright 2004 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              PERFORCE HEADER
 
-$Header: //source/qcom/qct/multimedia/qtv/legacymedia/filemedia/asfparser/main/latest/inc/asffile.h#17 $
-$DateTime: 2008/12/11 02:28:12 $
-$Change: 803007 $
+$Header: //source/qcom/qct/multimedia/qtv/legacymedia/filemedia/asfparser/main/latest/inc/asffile.h#23 $
+$DateTime: 2010/03/21 22:20:53 $
+$Change: 1230509 $
 
 ========================================================================== */
 
@@ -97,6 +97,7 @@ class Mpeg4Player;
 **                          Function Declaration
 ** ======================================================================= */
 void ConvertUnicodeToAscii(char *pDest, uint16 *pSrc , uint32 size);
+void ConvertUnicodeToUTF8(uint8 *pDest,  uint32 destLen, uint16 *pSrc , uint32 srcLen); 
 void GetByteFromBitStream(uint8 *pByte, uint8 *pSrc, int nFromBit, int nBits);
 
 /* =======================================================================
@@ -177,6 +178,8 @@ public:
   virtual int32 getNextMediaSample(uint32 id, uint8 *buf, uint32 size, uint32 &index);
   virtual uint32 getMediaTimestampForCurrentSample(uint32 id);
 
+  virtual uint32 getMediaTimestampDeltaForCurrentSample(uint32 id);
+
   virtual void resetPlayback();
   virtual uint32 resetPlayback(uint32 repos_time, uint32 id, bool bSetToSyncSample,
                                bool *bError, uint32 currentPosTimeStamp);
@@ -249,7 +252,11 @@ public:
   virtual uint32 GetAudioAdvancedEncodeOptions2(int id);
   virtual uint16 GetAudioChannelMask(int id);
   virtual uint16 GetAudioArmDataReqThr(int id);
+  virtual bool   UpdateTrackIdInFilePointer();
   virtual uint8 GetAudioValidBitsperSample(int id);
+  virtual uint16 GetFormatTag(int id);
+  virtual uint32 GetBlockAlign(int id);
+
 
   /* this returns Sequence (VOL) Header and its size */
   virtual uint8 *getTrackDecoderSpecificInfoContent(uint32 id);
@@ -381,6 +388,10 @@ private:
                                    uint32 size, U32_WMC * pOutDataSize, bool bSyncFrame );
   tWMCDecStatus     GetAudioFrame( uint32 id, tMediaType_WMC streamType,
                                    U8_WMC * buf, U32_WMC size, U32_WMC * pOutDataSize );
+  
+  tWMCDecStatus    GetStandardAudioFrame( uint32 id, tMediaType_WMC streamType,
+                                          U8_WMC * buf, U32_WMC size, U32_WMC * pOutDataSize );
+
 #ifdef FEATURE_QTV_WMA_PRO_DECODER
   //To pull PCM samples out of WMA decoder
   tWMCDecStatus GetAudioDecodedSamples(uint32 id, tMediaType_WMC streamType,
@@ -464,28 +475,14 @@ private:
    tWMCDecStatus getMetaDataSize ( void );
    virtual bool CanPlayTracks(uint32 pbTime);
    virtual bool parseHTTPStream ( void );   
-   boolean GetHTTPStreamDownLoadedBufferOffset(U32_WMC *pOffset);
+   boolean GetHTTPStreamDownLoadedBufferOffset(U32_WMC *pOffset, boolean &bEod);
    bool GetTotalAvgBitRate(U32_WMC * pBitRate);
    tWMCDecStatus GetMediaMaxPlayableTime(U32_WMC *nMaxPBTime);
 
-#ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD   
+
   virtual void sendParseHTTPStreamEvent(void);      
   virtual void sendHTTPStreamUnderrunEvent(void);
   virtual bool parsePseudoStream( void );
-#elif defined (FEATURE_QTV_PSEUDO_STREAM)
-  virtual bool parsePseudoStream( void );
-      
-  //To PAUSE Mpeg4/audio/video player
-  virtual void sendPlayerPauseEvent();
-  virtual void sendAudioPauseEvent(void);
-  virtual void sendVideoPauseEvent(void);
-   
-  //To RESUME audio/video player   
-  virtual void sendAudioResumeEvent( void );
-  virtual void sendVideoResumeEvent( void );
-  virtual void resumeMedia( void );
-#endif
-
 
 #ifdef FEATURE_QTV_GENERIC_AUDIO_FORMAT
    virtual int32 setFileSize(uint32){return 0;};

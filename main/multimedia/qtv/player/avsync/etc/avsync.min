@@ -3,7 +3,8 @@
 #-------------------------------------------------------------------------------
 
 QTV_AVSYNC_CPP_SOURCES=\
-        avsync.cpp 
+        avsync.cpp \
+        qtvsessionclock.cpp
 
 QTV_AVSYNC_C_SOURCES=\
         driftcorrection.c 

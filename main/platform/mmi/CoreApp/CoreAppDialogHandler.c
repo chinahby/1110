@@ -349,6 +349,7 @@ static boolean bImageDecoded = FALSE;
 static boolean bsupersingal = FALSE;
 static StartInfo start_info;
 
+char charsvc_p_name[UIM_CDMA_HOME_SERVICE_SIZE+1] = {0};
 
 /*==============================================================================
 
@@ -9021,7 +9022,11 @@ static void CoreApp_GetSPN(CCoreApp *pMe)
                 {
                     ICONFIG_GetItem(pMe->m_pConfig, CFGI_BANNER, pMe->svc_p_name, (NV_MAX_LTRS+1)*sizeof(AECHAR));
                 }
-            }        
+            }
+            else
+            {
+                WSTRTOSTR(pMe->svc_p_name,charsvc_p_name,sizeof(charsvc_p_name));
+            }
         }
         else
         {

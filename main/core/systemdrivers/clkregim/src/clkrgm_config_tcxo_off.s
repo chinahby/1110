@@ -86,6 +86,8 @@ SET_ARM_SRC_SEL1_TO_XO                  EQU     0x00000000
 ARM_SLEEP_ENABLE                        EQU     0x00004000
 ARM_SLEEP_ENABLE_MASK                   EQU     0xFFFFBFFF
 
+EBI_CLK_DISABLE_MASK                     EQU     0xFFFFFFF3
+
 ;PMIC_CTL_TCXO                           EQU     0x00000004
 
 ;;; Need to access the the PMIC_CONTROL register
@@ -103,6 +105,9 @@ SAVED_ARM_CLK_SRC_VAL                   RN      R7
 SAVED_ARM_MUX_SRC_VAL                   RN      R8
 ARM_CLK_CFG_EN_SLEEP                    RN      R9
 
+ARM_CLK_EN_REG_ADDR                     RN      R10
+ARM_CLK_EN_REG_VAL                      RN      R11
+SAVED_ARM_CLK_EN_REG_VAL                RN      R12
 
 
 ;===================================================================
@@ -149,8 +154,12 @@ set_micro_to_32khz_and_kill_tcxo precache_entry
 
     ldr    PMIC_CONTROL_REG_ADDR,=HWIO_ADDR(PMIC_CONTROL)      	; REGISTER COPY OF ADDRESS PMIC_CONTROL
     ldr    ARM_CLK_CFG_REG_ADDR,=HWIO_ADDR(ARM_CFG_REG)       	; REGISTER COPY OF ADDRESS ARM_CFG_REG
- ;   ldr    ARM_CLK_MOD_REG_ADDR,=HWIO_ADDR(ARM_MOD_REG)       	; REGISTER COPY OF ADDRESS ARM_MOD_REG
- 
+;   ldr    ARM_CLK_MOD_REG_ADDR,=HWIO_ADDR(ARM_MOD_REG)       	; REGISTER COPY OF ADDRESS ARM_MOD_REG
+
+    ldr    ARM_CLK_EN_REG_ADDR,=HWIO_ADDR(ARM_CLK_EN_REG)      	; REGISTER COPY OF ADDRESS ARM_CLK_EN
+    ldr    ARM_CLK_EN_REG_VAL,[ARM_CLK_EN_REG_ADDR]      	; Read ARM_CLK_EN register value
+    mov    SAVED_ARM_CLK_EN_REG_VAL, ARM_CLK_EN_REG_VAL         ; save it to use after wake up.
+
     ; Switching ARM from XO to Sleep Clock(32Khz)
     ; As Switching to Sleep Clock is switching to low speed clock from XO
     ; Set ARM_DIV value for the 'x' source path (where x=0or1)
@@ -215,11 +224,16 @@ switch_to_src0_slpclk
     orr    ARM_CLK_CFG_REG_VAL, ARM_CLK_CFG_REG_VAL,#SET_ARM_SRC_SEL_TO_SRC0      ; Set the value into ARM_CFG_REG register( (bit 4 to 0x0)
 
 commit_slpclk
+
+    ; Clear EBI_CLK_EN AND EBI1_IO_CLK_EN bits(3:4) in ARM_CLK_EN_REG
+    
+    and    ARM_CLK_EN_REG_VAL,ARM_CLK_EN_REG_VAL,#EBI_CLK_DISABLE_MASK   ; Mask the bits(2:3) to zero
+    str    ARM_CLK_EN_REG_VAL,[ARM_CLK_EN_REG_ADDR]  ; Write the value into ARM_CLK_EN_REG register
+
     ; Avoid computing as much as we can when ARM is running at 32 kHz.
     ; It helps to precompute all neccessary configuration values which
     ; need to use during ARM is running at 32 kHz.
     orr     ARM_CLK_CFG_EN_SLEEP,ARM_CLK_CFG_REG_VAL,#ARM_SLEEP_ENABLE       	; Set bit 14 to put ARM into sleep
-
 
     ldr    PMIC_CONTROL_ENABLE_VAL,[PMIC_CONTROL_REG_ADDR]      ; Read PMIC_CONTROL register value into r2
     and    PMIC_CONTROL_DISABLE_VAL,PMIC_CONTROL_ENABLE_VAL,#0x3; As this register has got only 0:2 bits valid,
@@ -242,10 +256,27 @@ commit_slpclk
 ;;; Enable XO buffer
     str    PMIC_CONTROL_ENABLE_VAL,[PMIC_CONTROL_REG_ADDR]   	; Write the value to PMIC_CONTROL register
 
+;;; Allow time for PFM to PWM (~250usec). Running at 32KHz so we need 8 nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+
 ;;; Restore the ARM clock to where it configured prior going to sleep    
     str    SAVED_ARM_MUX_SRC_VAL, [ARM_CLK_CFG_REG_ADDR]
 
 ;;; It is now running at 19.2 mHz
+;;; Set EBI_CLK_EN AND EBI1_IO_CLK_EN bits(3:4) in ARM_CLK_EN_REG
+    str    SAVED_ARM_CLK_EN_REG_VAL,[ARM_CLK_EN_REG_ADDR]  ; Set Bits (3:4) in ARM_CLK_EN_REG register
+;;; Allow time for EBI1 access (need to check this and not sure about the same)
+    nop
+    nop
+    nop
+
     ldmfd sp!, {r4-r12,pc}                  	; POP REGISTERS + RETURN
     LTORG
 set_micro_to_32khz_and_kill_tcxo precache_exit

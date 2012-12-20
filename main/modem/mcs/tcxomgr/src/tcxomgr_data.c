@@ -1696,38 +1696,6 @@ void tcxomgr_reset_rgs_and_temp_table
 
   /* Restart last update time, since we just blew the table away. */
   tcxomgr.vco.last_update_secs = clk_read_secs();
+
 } /* tcxomgr_reset_rgs_and_temp_table */
-
-#ifdef CUST_EDITION
-void tcxomgr_reset(void)
-{
-#if 0
-  tcxomgr.rgs.system    = TCXOMGR_CLIENT_NONE;
-  (void) tcxomgr_nv_cmd( NV_WRITE_F, NV_RGS_TYPE_I );
-#ifdef FEATURE_XO
-  /* Initialize values, so "else { ... }" clauses are not needed */
-  tcxomgr.xo_trim.curr_val        = XO_TRIM_DEFAULT_VALUE;
-  tcxomgr.xo_trim.table_val       = XO_TRIM_DEFAULT_VALUE;
-  
-  /* ensure the cap value from the tcxomgr is the same as that which is in
-     the PMIC */
-  if ( pm_xo_get_xo_trim() != tcxomgr.xo_trim.curr_val )
-  {
-    /* send the request for the new xo_trim value to the PMIC */
-    (void) pm_xo_set_xo_trim( tcxomgr.xo_trim.curr_val );
-  }
-
-  /* Attempt to write the current and table xo_trim value */
-  tcxomgr.nv.item.xo_trim_values.current = (uint8)tcxomgr.xo_trim.curr_val;
-  tcxomgr.nv.item.xo_trim_values.table   = (uint8)tcxomgr.xo_trim.table_val;
-
-  #ifdef T_QSC60X5
-  (void) tcxomgr_nv_cmd( NV_WRITE_F, NV_XO_TRIM_VALUES_I );
-  #else
-#error code not present
-  #endif
-#endif
-#endif
-}
-#endif
 

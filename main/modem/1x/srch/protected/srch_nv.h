@@ -21,10 +21,11 @@ EXTERNALIZED FUNCTIONS
   This section contains comments describing changes made to the module.
   Notice that changes are listed in reverse chronological order.
 
-$Header: //source/qcom/qct/modem/1x/srch/rel/1h08/protected/srch_nv.h#1 $
+$Header: //source/qcom/qct/modem/1x/srch/rel/1h08/protected/srch_nv.h#2 $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+10/26/09   mca     Moved the QLIC enable/disable to the RX Diversity NV item
 11/07/08   pa      Fixed #define for header
 11/06/08   pk      Fixes for Q6 compiler
 02/16/07   sst     Add QLIC support
@@ -56,11 +57,6 @@ when       who     what, where, why
 #define SRCH_NV_RX_DEFAULT                     0x0
 #define SRCH_NV_RX_0                           0x1
 #define SRCH_NV_RX_1                           0x2
-
-/* Bit 6
-   Enables/Disables QLIC */
-#define SRCH_NV_QLIC_DISABLE_MASK              0x1
-#define SRCH_NV_QLIC_DISABLE_SHIFT             6
 
 /*--------------------------------------------------------------------------*
  *                          Typedefs and Macros                             *

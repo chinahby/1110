@@ -72,7 +72,7 @@ EXTERNALIZED FUNCTIONS INTERNAL TO DSAT UNIT
 
 INITIALIZATION AND SEQUENCING REQUIREMENTS
 
-   Copyright (c) 2004-2009 by QUALCOMM Incorporated.
+   Copyright (c) 2004-2010 by QUALCOMM Incorporated.
    All Rights Reserved.
    Qualcomm Confidential and Proprietary.
 *====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*/
@@ -85,10 +85,11 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS
   This section contains comments describing changes made to the module.
   Notice that changes are listed in reverse chronological order.
 
-  $Header: //source/qcom/qct/modem/data/common/commonatcop/main/lite/src/dsatme.c#10 $
+  $Header: //source/qcom/qct/modem/data/common/commonatcop/main/lite/src/dsatme.c#11 $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+05/03/10   ad      Fixed qccpbr command . 
 03/05/09   bs      Added support for mmgsdi interface.
 02/03/09   bs      Fixed compilation errors/warnings.
 01/02/09   bs      Added support for 1X AT Phonebook commands.
@@ -1018,12 +1019,6 @@ dsat_result_enum_type dsat_send_cme_error
     }
     else
     {
-      /* Format response, send the response to the user as information text, */
-      /* clear the regional block indications flag, & free raw_rsp_ptr */
-      dsatcmdp_handle_async_cmd_rsp(raw_rsp_ptr, DSAT_COMPLETE_RSP);  
-
-      dsm_free_packet(&raw_rsp_ptr);
-    
       /* Indicate abort command processing has completed if not disabled.
          This function performs no action if abort command processing is
          not currently in progress. */
@@ -1031,6 +1026,13 @@ dsat_result_enum_type dsat_send_cme_error
       {
         dsatcmdp_command_abort_complete( );
       }
+      /* Format response, send the response to the user as information text, */
+      /* clear the regional block indications flag, & free raw_rsp_ptr */
+      dsatcmdp_handle_async_cmd_rsp(raw_rsp_ptr, DSAT_COMPLETE_RSP); 
+
+      raw_rsp_ptr = NULL;
+    
+
     }
   }
 

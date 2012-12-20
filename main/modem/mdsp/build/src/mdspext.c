@@ -1,7 +1,7 @@
 /*
 WARNING: This file is auto-generated.
 
-Generated at:    Sat Apr 24 00:58:44 2010
+Generated at:    Fri Apr 29 05:59:57 2011
 Generated using: MSMSHARED_EXT_PARSER.00.11.00
 Generated from:
 
@@ -10,9 +10,9 @@ Configuration file:
    1478 04/09/2008 11:19:25 mdspext.cfg
 -------------------------------------------------------------------------------
 IMAGE[0] cdma
-  83964 06/15/2009 10:51:44 ..\..\cdma\bin\pedro_cdma.h
-  83964 06/15/2009 10:51:44 ..\..\cdma\bin\pedro_cdma.h
- 135044 06/15/2009 10:51:44 ..\..\cdma\bin\pedro_cdma.ext
+  84015 11/05/2010 17:00:32 ..\..\cdma\bin\pedro_cdma.h
+  84015 11/05/2010 17:00:32 ..\..\cdma\bin\pedro_cdma.h
+ 135059 11/05/2010 17:00:31 ..\..\cdma\bin\pedro_cdma.ext
 -------------------------------------------------------------------------------
 */
 
@@ -79,7 +79,7 @@ EXTERNALIZED MACROS
 
 INITIALIZATION AND SEQUENCING REQUIREMENTS
 
-Copyright (c) 2010 by QUALCOMM, Incorporated.  All Rights Reserved.
+Copyright (c) 2011 by QUALCOMM, Incorporated.  All Rights Reserved.
 ===========================================================================*/
 /* Global Lint directives */
 /* Suppresses repeatedly included header file message */
@@ -128,8 +128,7 @@ uint8 mdsp_cdma_cdma110 = 1;
 /* RAM segment descriptors - starting address and length */
 static MDSP_RELOCATE_MODE_TYPE qdspext_segment_type mdsp_cdma_rama_segment_list[] =
 {
-  { (MICRO_MDSP_BASE + 0x0), 4 },
-  { (MICRO_MDSP_BASE + 0xa), 4 },
+  { (MICRO_MDSP_BASE + 0x0), 9 },
   { (MICRO_MDSP_BASE + 0x76), 1 },
   { (MICRO_MDSP_BASE + 0x7e), 3 },
   { (MICRO_MDSP_BASE + 0x4f6), 331 },
@@ -166,16 +165,14 @@ static MDSP_RELOCATE_MODE_TYPE qdspext_segment_type mdsp_cdma_rami_segment_list[
 static const uint16 mdsp_cdma_rama_image_data[] =
 {
 
-  /* DSP destination Address = 0, Length = 4 */
-  0x0110, 0x2009, 0x0615, 0x1051,
-  /* DSP destination Address = 0xa, Length = 4 */
-  0x0000, 0x0001, 0xffff, 0x0000,
+  /* DSP destination Address = 0, Length = 9 */
+  0x0110, 0x2010, 0x1105, 0x1637, 0x0001, 0x0000, 0x0001, 0xffff, 0x0000,
   /* DSP destination Address = 0x76, Length = 1 */
   0x8000,
   /* DSP destination Address = 0x7e, Length = 3 */
   0x0044, 0xffff, 0x0002,
   /* DSP destination Address = 0x4f6, Length = 331 */
-  0x0430, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+  0x0435, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
   0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
   0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
   0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
@@ -589,7 +586,7 @@ static const uint32 mdsp_cdma_rami_image_data[] =
   0x11b2598f, 0xab79d4af, 0x11e5abaf, 0xa750aeac, 0xfadb02df, 0x970c7edf, 0x82a40910,
   0x4c3f7ef0, 0xbc977ef0, 0x7c95fadf, 0x8705e1ef, 0x11ce6263, 0xebafcaab, 0x3efb064a,
   0xf2cf054f, 0x129fabc0, 0x4bafd5af, 0xface4ecf, 0x10ffb4eb, 0x7b1fb9e8, 0xa60dadcf,
-  0x7ae06d9d, 0xaebd6bcf, 0x89237de3, 0xfe92a67b, 0x5a5f917d, 0xa6525f5f, 0x91f53e82,
+  0x7ae06d9d, 0xaebd6bcf, 0x89237de3, 0xfe92a67b, 0x5a5f917c, 0xa6525f5f, 0x91f53e82,
   0x2e9c02cf, 0x13728bc0, 0x7b1f29a0, 0xa60d54cf, 0x7ae06bf3, 0x85671cbd, 0x0ebf0eef,
   0xc7b67eeb, 0x0e2ffe73, 0x07208e1d, 0x3ed1075d, 0xdfcf3ed1, 0x875fdfcf, 0x7eec0e2f,
   0x7eeb0e2b, 0x116fa35b, 0xabfe0930, 0x7e912e4f, 0x07436c07, 0x93204757, 0x654b4757,
@@ -885,7 +882,7 @@ static const qdspext_ram_image_16bit_type mdsp_cdma_rama_image =
 {
    (uint16*)mdsp_cdma_rama_image_data,
    (qdspext_segment_type*)mdsp_cdma_rama_segment_list,
-   8
+   7
 };
 
 static const qdspext_ram_image_16bit_type mdsp_cdma_ramb_image =

@@ -15,7 +15,7 @@ Copyright 2004 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              PERFORCE HEADER
 
-$Header: //source/qcom/qct/multimedia/qtv/legacymedia/filemedia/aviparser/main/latest/inc/avifile.h#14 $
+$Header: //source/qcom/qct/multimedia/qtv/legacymedia/filemedia/aviparser/main/latest/inc/avifile.h#22 $
 ========================================================================== */
 
 /* =======================================================================
@@ -48,6 +48,7 @@ $Header: //source/qcom/qct/multimedia/qtv/legacymedia/filemedia/aviparser/main/l
 //Need to update this value based on MOBILE PROFILE
 #define AVI_STREAM_TIME_SCALE 1000      // AVI Code has Milli Sec interface
 
+#define AVI_MAX_VIDEO_FRAMES_READ_AHEAD 4
 /* -----------------------------------------------------------------------
 ** Type Declarations
 ** ----------------------------------------------------------------------- */
@@ -59,6 +60,26 @@ class aviParser;
 /* -----------------------------------------------------------------------
 ** Global Constant Data Declarations
 ** ----------------------------------------------------------------------- */
+#ifdef FEATURE_MPEG4_B_FRAMES
+typedef struct video_sample
+{
+  AVI_VOP_TYPE vop_type;
+  uint8 bVopCount;
+  uint32 size;
+  file_sample_info_type   m_sampleInfo;
+  uint32 buff_Size;
+  uint8 * buff;
+}avi_video_sample;
+
+/* This is available only for AVI MPEG4 */
+typedef struct read_ahead_buffer
+{
+  bool                   firstVideoFrame;  // To know if we are reading the first frame  
+  uint8                  currentSampleIndex; // current frame that we need to send 
+  uint8                  validSampleIndex;  // index to read the next video frame from file 
+  bool                   allocatedForReadAhead;  // TO allocate only once the read ahead buffer to hold frames
+}avi_read_ahead_buffer;
+#endif /* FEATURE_MPEG4_B_FRAMES */
 
 /* -----------------------------------------------------------------------
 ** Global Data Declarations
@@ -121,6 +142,7 @@ public:
 
   virtual int32 getNextMediaSample(uint32 id, uint8 *buf, uint32 size, uint32 &index);
   virtual uint32 getMediaTimestampForCurrentSample(uint32 id);
+  virtual uint32 getMediaTimestampDeltaForCurrentSample(uint32 id);
 
   virtual void resetPlayback();
   virtual uint32 resetPlayback(uint32 repos_time, uint32 id, bool bSetToSyncSample,
@@ -181,6 +203,8 @@ public:
   virtual int32  getTrackMaxBitrate(uint32 id);
   virtual uint32 getLargestFrameSize(uint32 id); 
   virtual long   getAudioFrameDuration(int);
+  virtual void   SetIDX1Cache(void*);
+  virtual void*  GetIDX1Cache();
 
    
   // use these functions only for windows media audio, other formats may not implement it //
@@ -196,6 +220,7 @@ public:
   virtual uint8 getAllowVideoOnly();
   virtual bool isGenericAudioFileInstance(){return false;}; 
   virtual bool isAviFileInstance(){return true;}
+  virtual bool isADTSHeader();
 
 #ifdef FEATURE_QTV_GENERIC_AUDIO_FORMAT
   virtual int32 setTrackAverageBitrate(uint32){return 0;};
@@ -249,8 +274,16 @@ private:
   avi_uint32                        m_videoLargestSize;
 
   file_sample_info_type   m_sampleInfo[FILE_MAX_MEDIA_STREAMS];
+#ifdef FEATURE_MPEG4_B_FRAMES  
+  //These are required to read ahead to know any B-Frames are following for Mpeg4 
+  avi_video_sample       m_avi_video_samples[AVI_MAX_VIDEO_FRAMES_READ_AHEAD];
+  avi_read_ahead_buffer  m_videoFramesReadAhead;
+#endif /* FEATURE_MPEG4_B_FRAMES */
+
   uint32                  m_nDecodedDataSize[FILE_MAX_MEDIA_STREAMS];
   uint32                  m_nLargestFrame[FILE_MAX_MEDIA_STREAMS];
+
+  uint8                   m_TrackDecoderSpecificInfo[2]; // used for AAC Header preparation
 
   //only one of "m_pFileBuf" or "m_filename" can be non-zero 
   OSCL_STRING     m_filename;  // EFS file path //
@@ -305,6 +338,7 @@ private:
    QtvPlayer::FetchBufferedDataT m_fpFetchBufferedData;
    QtvPlayer::InstanceHandleT m_QtvInstancehandle;
 
+   void   UpdateTrackIdInFilePointer();
    void sendParserEvent(Common::ParserStatusCode status);
    void sendParseHTTPStreamEvent(void);
    // virtual void updateBufferWritePtr ( uint32 writeOffset );
@@ -326,7 +360,10 @@ private:
   virtual avi_uint8*  GetDRMInfo(int*);
   void*        m_pClipDrmInfo;
 #endif  
-
+#ifdef FEATURE_MPEG4_B_FRAMES
+  AVI_VOP_TYPE whichVop(uint8*, int, uint8 *);
+#endif /* FEATURE_MPEG4_B_FRAMES */
+  int32 getNextAVIMediaSample(uint32 id, uint8 *buf, uint32 size, uint32 &index);
   Mpeg4Player *m_pMpeg4Player;  
 };
 #endif //FEATURE_QTV_AVI

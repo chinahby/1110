@@ -4638,31 +4638,14 @@ static int StartApplet(MainMenu *pMe, int i)
     return Result;
 }
 
+extern char charsvc_p_name[UIM_CDMA_HOME_SERVICE_SIZE+1];
 static int SetBrowserArr_Main(MainMenu *pMe,char *purl)
 {
 	int Result = EUNSUPPORTED;
-	PppAccounts Account;
-    char username[PPP_MAX_USER_ID_LEN] = {0};
-    char password[PPP_MAX_PASSWD_LEN] = {0};
-	char access_point[40] = {0};
 	char urlCan[1024] = {0};
-
-	if(SUCCESS == OEM_GetPppAccounts(&Account, DS_WAP20_TYPE))
-    {
-    	MSG_FATAL("read uim card..................",0,0,0);
-    	MEMCPY(username, Account.user_id_info, STRLEN(Account.user_id_info));	
-    	MEMCPY(password, Account.passwd_info, STRLEN(Account.passwd_info));	
-    }
-    else
-    {
-    	MSG_FATAL("read uim cefs..................",0,0,0);
-
-    	OEM_GetConfig(CFGI_BREWSET_USENAME,&username,sizeof(username));
-		OEM_GetConfig(CFGI_BREWSET_PASSWORD,&password,sizeof(password));
-    }
-	MSG_FATAL("STRLEN(purl)===========%d",STRLEN(purl),0,0);
-	DBGPRINTF("SetBrowserArr_Main_ADSAccountusername1 =%s", username);  
-    DBGPRINTF("SetBrowserArr_Main_ADSAccountuserpassword1 =%s", password);
+    
+	DBGPRINTF("svc_p_name %s %d",charsvc_p_name,charsvc_p_name[0],0);
+	
 	if(purl && STRLEN(purl)>1)
 	{
         SPRINTF(urlCan,"call_ucweb:setexternurl:%s\2\3",purl);
@@ -4673,27 +4656,27 @@ static int SetBrowserArr_Main(MainMenu *pMe,char *purl)
 		//STRCPY(urlCan,"useragent:BREW-Applet/0x20068888 (BREW/3.1.5.20; DeviceId: 8976509865757e; Lang: hi; Profile/MIDP-2.0_Configuration/CLDC-1.1) ucweb-squid\2\3");
 	}
     
-	if(STRISTR (username,"mts"))
+	if(STRISTR (charsvc_p_name,"mts"))
 	{
-		STRCPY(access_point,"10.50.5.140:8080");
 		MSG_FATAL("mst................",0,0,0);
+        STRCAT(urlCan,"access_point:proxy_is:10.50.5.140:8080");
 	}
-	else if(STRISTR (username,"tata")||STRISTR (username,"wapuser"))
+	else if(STRISTR (charsvc_p_name,"tata"))
 	{
-		STRCPY(access_point,"172.23.252.15:9401");
-		MSG_FATAL("tata................",0,0,0);
+        MSG_FATAL("tata................",0,0,0);
+        STRCAT(urlCan,"access_point:proxy_is:172.23.252.15:9401");
 	}
-	else if(STRISTR (username,"reliance"))
+	else if(STRISTR (charsvc_p_name,"reliance"))
 	{
-		STRCPY(access_point,"http://wapgw.ricinfo.com:8080");
-		MSG_FATAL("reliance................",0,0,0);
+        MSG_FATAL("reliance................",0,0,0);
+        STRCAT(urlCan,"access_point:proxy_is:http://wapgw.ricinfo.com:8080");
 	}
-	else if(STRISTR (username,"vmi"))
+	else if(STRISTR (charsvc_p_name,"vmi"))
 	{
-		STRCPY(access_point,"172.23.142.15:9401");
-		MSG_FATAL("vmi................",0,0,0);
+        MSG_FATAL("vmi................",0,0,0);
+        STRCAT(urlCan,"access_point:proxy_is:172.23.142.15:9401");
 	}
-	STRCAT(urlCan,access_point);
+	
 	DBGPRINTF("urlCan==%s", urlCan);
     if(urlCan[0])
     {
@@ -4705,10 +4688,6 @@ static int SetBrowserArr_Main(MainMenu *pMe,char *purl)
     }
 
 	return Result;	
-
-	
 }
-
-
-
 #endif
+

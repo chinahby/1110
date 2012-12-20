@@ -1,6 +1,6 @@
 #-------------------------------------------------------------------------------
 # DS 707
-# $Header: //source/qcom/qct/modem/data/1x/707/main/lite/src/modem_data_1x_707.min#6 $
+# $Header: //source/qcom/qct/modem/data/1x/707/main/lite/src/modem_data_1x_707.min#7 $
 #-------------------------------------------------------------------------------
 DS707_SOURCES=\
         ds707_async_mgr.c\
@@ -37,6 +37,7 @@ DS707_SOURCES=\
         dsdctm.c\
         ps707_async.c\
         ps707_dssnet.c\
+        ds707_util.c\
 
 DS707_RMSM_SOURCES=\
         ds707_rmsm.c\

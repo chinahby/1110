@@ -25,7 +25,7 @@ EXTERNALIZED FUNCTIONS
   ps_set_cmd_handler()    
     Set a handler to process a cmd in PS context
 
-Copyright (c) 1998-2007 by QUALCOMM, Incorporated.  All Rights Reserved.
+Copyright (c) 1998-2011 by QUALCOMM, Incorporated.  All Rights Reserved.
 ===========================================================================*/
 
 
@@ -34,10 +34,11 @@ Copyright (c) 1998-2007 by QUALCOMM, Incorporated.  All Rights Reserved.
                       EDIT HISTORY FOR FILE
 
     $PVCSPath: L:/src/asw/MM_DATA/vcs/ps_svc.h_v   1.13   13 Feb 2003 14:14:26   ubabbar  $
-    $Header: //source/qcom/qct/modem/data/cdps/ps/main/lite/src/ps_svc.h#3 $ $DateTime: 2007/12/10 23:14:44 $ $Author: nsivakum $
+    $Header: //source/qcom/qct/modem/data/cdps/ps/main/lite/src/ps_svc.h#5 $ $DateTime: 2011/03/09 07:43:48 $ $Author: nsivakum $
 
 when        who    what, where, why
 --------    ---    ----------------------------------------------------------
+02/25/11    ms     Ported support for MOBILE_IP_DEREG feature.
 06/09/07    scb    Added PS_UIM_CMD_SIGNAL and PS_GSDI_EVENT_HANDLER_CMD.
 11/23/07    sn     Added MIP DMU command PS_DMU_PREENCRYPT_CMD definition.
 04/15/03    ss     Added PS_LO_TX_DATA_Q_SIGNAL
@@ -228,6 +229,10 @@ typedef enum
 #endif /* FEATURE_DS_MOBILE_IP && FEATURE_DS_MOBILE_IP_DMU */
 
   ,PS_GSDI_EVENT_HANDLER_CMD     = 45  /* To handle SIM_INIT_COMPLETED ev  */
+#if (defined(FEATURE_DS_MOBILE_IP) && defined(FEATURE_DS_MOBILE_IP_DEREG))
+  ,PS_DSSNET_MIP_DEREGED_EV_CMD  = 46  /* To handle MIP Dereg event */
+#endif /* FEATURE_DS_MOBILE_IP && FEATUER_DS_MOBILE_IP_DEREG */
+
   ,PS_MAX_DEFINED_CMD_TYPES
 
 } ps_cmd_enum_type;

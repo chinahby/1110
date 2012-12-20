@@ -9,9 +9,9 @@ DESCRIPTION
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/config/main/latest/src/configfilereader.cpp#16 $
-$DateTime: 2008/12/16 10:11:43 $
-$Change: 806362 $
+$Header: //source/qcom/qct/multimedia/qtv/config/main/latest/src/configfilereader.cpp#34 $
+$DateTime: 2010/11/09 04:48:52 $
+$Change: 1509879 $
 
 ========================================================================== */
 
@@ -128,27 +128,45 @@ const char *QtvConfigFileReader::upperCaseNameForConfigItem[] =
    "MAX_FRAME_DROPS_TO_IFRAME",                    // 75
    "PCR_SYNC_USE_SW_TIMESTAMPS",                   // 76
    "ENABLE_BRAZIL_SPECIFIC_H264_VUI_PARAM_TYPE",   // 77
-   "BSD_IFACE_SELECTION",                          // 78 
-   "DROP_PACKET_PATTERN",                          // 79  
-   "STREAMING_UDP_DROPRATE",                       // 80   
-   "SIMULATE_OLD_WM_SERVER",                       // 81
-   "STA_IFACE_ENABLED",                            // 82
-   "PCR_DRIFT_CORRECTION_ENABLED",                 // 83
-   "SR_AVG_DRIFT_FILTER_ZERO_PADDING",             // 84
-   "RD_AVG_DRIFT_FILTER_ZERO_PADDING",             // 85
-   "SR_DRIFT_FILTER_UPDATE_DELAY",                 // 86
-   "RD_DRIFT_FILTER_UPDATE_DELAY",                 // 87
-   "DRIFT_CORRECTION_DELAY",                       // 88
-   "SR_DRIFT_FILTER_TYPE",                         // 89
-   "RD_DRIFT_FILTER_TYPE",                         // 90
-   "SR_DRIFT_FILTER_UPDATE_INTERVAL",              // 91
-   "RD_DRIFT_FILTER_UPDATE_INTERVAL",              // 92
-   "SR_DRIFT_FILTER_TIME_CONSTANT",                // 93
-   "RD_DRIFT_FILTER_TIME_CONSTANT",                // 94
-   "SR_DRIFT_FILTER_MAX_ITEMS_IN_MEMORY",          // 95
-   "RD_DRIFT_FILTER_MAX_ITEMS_IN_MEMORY",          // 96
-   "SR_DRIFT_FILTER_MEASUREMENT_INTERVAL",         // 99
-   "RD_DRIFT_FILTER_MEASUREMENT_INTERVAL",         //100
+   "WRITE_STATS_TO_FILE",                          // 78
+   "BSD_IFACE_SELECTION",                          // 79 
+   "ENABLE_WM_FAST_RECONNECT",                     // 80
+   "WM_FAST_RECONNECT_MAX_ATTEMPTS",               // 81   
+   "PROBE_URN",                                    // 82
+   "FCS_KEEPALIVE_SESSION_TIMEOUT",                // 83
+   "ENABLE_LINK_CHAR",                             // 84   
+   "STREAM_RECORD_DEC_BUF_DURATION",               // 85   
+   "RTP_MIN_BUFF_TIME",                            // 86
+   "RTP_MAX_BUFF_TIME",                            // 87 
+   "ENABLEVIDEO_AT_KEY_FRAME",                     // 88         
+   "USE_INTERLEAVED_TCP_FOR_3GP",                  // 89  
+   "VIDEO_ADUIO_VOICE_MIXING",                     // 90
+   "ACCEPT_SERVER_ANNOUNCED_CLIENT_PORTS",         // 91 
+   "DISABLE_PIPELINING_FOR_FIREWALL_PROBE_ENABLED", // 92
+   "ENABLE_PIPELINING_FOR_SDP_PLAYBACK",           // 93
+   "ENABLE_PIPELINING_FOR_STREAMING",              // 94  
+   "HTTP_FILE_SAVE_TO_EFS_PATH",		    //95
+   "AUTO_FALLBACK_OVER_TCP",                        //96
+   "DROP_PACKET_PATTERN",                          // 97  
+   "STREAMING_UDP_DROPRATE",                       // 98   
+   "SIMULATE_OLD_WM_SERVER",                       // 99
+   "STA_IFACE_ENABLED",                            // 100
+   "PCR_DRIFT_CORRECTION_ENABLED",                 // 101
+   "SR_AVG_DRIFT_FILTER_ZERO_PADDING",             // 102
+   "RD_AVG_DRIFT_FILTER_ZERO_PADDING",             // 103
+   "SR_DRIFT_FILTER_UPDATE_DELAY",                 // 104
+   "RD_DRIFT_FILTER_UPDATE_DELAY",                 // 105
+   "DRIFT_CORRECTION_DELAY",                       // 106
+   "SR_DRIFT_FILTER_TYPE",                         // 107
+   "RD_DRIFT_FILTER_TYPE",                         // 108
+   "SR_DRIFT_FILTER_UPDATE_INTERVAL",              // 109
+   "RD_DRIFT_FILTER_UPDATE_INTERVAL",              // 110
+   "SR_DRIFT_FILTER_TIME_CONSTANT",                // 111
+   "RD_DRIFT_FILTER_TIME_CONSTANT",                // 112
+   "SR_DRIFT_FILTER_MAX_ITEMS_IN_MEMORY",          // 113
+   "RD_DRIFT_FILTER_MAX_ITEMS_IN_MEMORY",          // 114
+   "SR_DRIFT_FILTER_MEASUREMENT_INTERVAL",         // 115
+   "RD_DRIFT_FILTER_MEASUREMENT_INTERVAL",         // 116
 };
 
 /* -----------------------------------------------------------------------
@@ -238,6 +256,10 @@ int QtvConfigFileReader::parseItemsFromConfigString(
 #ifdef FEATURE_QTV_ENCRYPTED_STREAMS
       SessionIDType sIDvalue;
 #endif /* FEATURE_QTV_ENCRYPTED_STREAMS */
+
+#ifdef FEATURE_QTV_FCS
+#error code not present
+#endif 
 
       if (!get_next_line(section_start_ptr, end_ptr, 
           line_start_ptr, line_end_ptr) || 
@@ -387,6 +409,13 @@ int QtvConfigFileReader::parseItemsFromConfigString(
            break;
 #endif /* FEATURE_QTV_ENCRYPTED_STREAMS */
          case QtvConfig::QTVCONFIG_MEDIAPLAYER_ROOT_PATH:
+           value = (void*)&temp_str;
+           convertRsl = true;
+           break;
+#ifdef FEATURE_QTV_FCS
+#error code not present
+#endif
+         case QtvConfig::QTVCONFIG_HTTP_FILE_SAVE_TO_EFS_PATH:
            value = (void*)&temp_str;
            convertRsl = true;
            break;
@@ -696,3 +725,27 @@ bool QtvConfigFileReader::convertSessionID(const char *setting_value_str,
   return returnCode;
 }
 #endif
+
+bool QtvConfigFileReader::convertProbeURL(const char *setting_value_str, 
+                                           int value_str_length,
+                                           ProbeURLType* pValue)
+{
+  bool returnCode = false;
+
+  if (!pValue || !setting_value_str || value_str_length == 0)
+  {
+    return false;
+  }
+
+  memset( pValue->URL, 0x00, QTV_MAX_PROBE_URN_LEN);
+
+  if(value_str_length < (QTV_MAX_PROBE_URN_LEN -1))
+  {
+    memcpy(pValue->URL,setting_value_str,value_str_length);
+    pValue->URL[value_str_length+1] = '\0';
+    pValue->length = value_str_length+1;
+    returnCode = true;
+  }
+
+  return returnCode;
+}

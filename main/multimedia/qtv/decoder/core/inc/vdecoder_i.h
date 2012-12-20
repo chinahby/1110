@@ -14,10 +14,14 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/decoder/core/rel/2.0/inc/vdecoder_i.h#1 $
-$DateTime: 2008/11/03 04:38:22 $
-$Change: 775446 $
+$Header: //source/qcom/qct/multimedia/qtv/decoder/core/rel/2.0/inc/vdecoder_i.h#6 $
+$DateTime: 2009/10/14 01:39:25 $
+$Change: 1052854 $
 
+when       who      what, where, why
+--------   ---      ---------------------------------------------------------
+04/08/09    vs      Remove the dependencies of other modules.
+--------   ---      ---------------------------------------------------------
 ========================================================================== */
 
 /* =======================================================================
@@ -31,7 +35,6 @@ $Change: 775446 $
 ========================================================================== */
 #include "vdecoder_types.h"
 #include "vdecoder_types_i.h"
-#include "qcplayer.h" /* for COMMON_MAX_LAYERS */
 #include "list.h"
 
 #ifdef __cplusplus
@@ -43,8 +46,8 @@ extern "C"
 }
 #endif
 
-#include "qtv_utils.h"
-#include "qtv_log.h"
+#include "vdecoder_utils.h"
+#include "vdecoder_log.h"
 /* ==========================================================================
 
                         DATA DECLARATIONS
@@ -106,6 +109,50 @@ SIDE EFFECTS
 /* =======================================================================
 **                        Class Declarations
 ** ======================================================================= */
+//----------------------------------------------------------------------------
+// Vdec_LockableQueue associates a q_type with a rex_crit_sect_type, forcing
+// users to lock the CS before messing with the queue.
+//
+class Vdec_LockableQueue
+{
+public:
+  Vdec_LockableQueue( void )
+  {
+    q_init( &m_q );
+    rex_init_crit_sect( &m_cs );
+  }
+
+  virtual ~Vdec_LockableQueue( void )
+  {
+    if ( q_cnt( &m_q ) > 0 )
+    {
+      VDEC_MSG_PRIO(VDECDIAG_GENERAL, VDECDIAG_PRIO_ERROR, "~Vdec_LockableQueue with items queued" );
+    }
+  }
+
+  q_type* Lock( void )
+  {
+    rex_enter_crit_sect( &m_cs );
+
+    return &m_q;
+  }
+
+  void Unlock( q_type* &pQ )
+  {
+    pQ = NULL;
+    rex_leave_crit_sect( &m_cs );
+  }
+
+  int GetCnt( void )
+  {
+    return q_cnt( &m_q );
+  }
+
+private:
+  q_type             m_q;
+  rex_crit_sect_type m_cs;
+
+};
 
 /* ======================================================================
 CLASS
@@ -206,12 +253,6 @@ public:
     VDEC_CREATION_FUNC      pCreateFn; /* to create a vdec                  */
   }
   VDEC_FTYP_HANDLER_RECORD;
-#ifndef PLATFORM_LTK
-  log_video_bitstream_type* wait_for_bitstream_log_buffer( void );
-  void log_bitstream_buffer( uint8 *pBitstream, uint32 numBytes );
-  
-#endif /* PLATFORM_LTK */
-
 
 protected:
 
@@ -238,7 +279,7 @@ public:
   // to do the construction.
   //
 
-  static bool IsInstanceValid(VDEC_STREAM_ID stream);
+  static int IsInstanceValid(VDEC_STREAM_ID stream);
   
   static VideoDecoder * Create
   (
@@ -292,6 +333,8 @@ public:
   virtual VDEC_ERROR Decode( void ) = 0;
 
   virtual VDEC_ERROR GetStats( VDEC_STATS * const pStats_out );
+
+  virtual void Destroy (void) {return ;}
 
   virtual void ClearStats( void );
 
@@ -370,6 +413,17 @@ public:
     VDEC_TYPE_OSCAR,
     VDEC_TYPE_REAL
   };
+
+ /* An internal state which helps us keep track of the DSP.
+ */
+  enum
+  {
+    VDEC_STATE_ERROR         = -1,
+    VDEC_STATE_UNINITIALIZED,
+    VDEC_STATE_INITIALIZED,
+    VDEC_STATE_DESTRUCTING
+  }
+  m_state;
 
   DECODER_TYPE DecoderType( void ) const;
 
@@ -467,7 +521,7 @@ protected:
                                  VideoDecoder * const      pDecoder );
   void ReleaseNode( InputQNode* const pNode );
 
-  QTV_LockableQueue        m_inputQ;
+  Vdec_LockableQueue        m_inputQ;
 
   /* EOS buffers */
   VDEC_INPUT_BUFFER  m_eOS_InputBuffer;
@@ -593,7 +647,7 @@ protected:
     // representing - this lets us propogate changes to the virtual node
     // back to the real nodes during destruction.
 
-    InputQNode* m_aNodes[ COMMON_MAX_LAYERS ];
+    InputQNode* m_aNodes[ VDEC_COMMON_MAX_LAYERS ];
   };
 
   //
@@ -617,7 +671,7 @@ protected:
   FrameQNode* AllocateFrameNode( void );
   void ReleaseNode( FrameQNode* const pNode );
 
-  QTV_LockableQueue m_frameQ;        // the frame-buffer queue
+  Vdec_LockableQueue m_frameQ;        // the frame-buffer queue
   
   /* Stats maintained for video decoders. Since we need this info
   ** for ARM based decode stats.

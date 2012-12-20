@@ -31,7 +31,7 @@ EXTERNALIZED FUNCTIONS
 INITIALIZATION AND SEQUENCING REQUIREMENTS
   None.
 
-Copyright (c) 1991 through 2008 by QUALCOMM, Incorporated.  All Rights Reserved.
+Copyright (c) 1991 through 2010 by QUALCOMM, Incorporated.  All Rights Reserved.
 *====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*/
 
 /*===========================================================================
@@ -39,47 +39,55 @@ Copyright (c) 1991 through 2008 by QUALCOMM, Incorporated.  All Rights Reserved.
                         EDIT HISTORY FOR MODULE
 
 $PVCSPath: O:/src/asw/COMMON/vcs/txccommon.c_v   1.36   15 Oct 2002 18:30:58   donb  $
-$Header: //source/qcom/qct/modem/1x/mux/rel/ulc/src/txccommon.c#3 $ $DateTime: 2008/07/18 10:34:36 $ $Author: joshuam $
+$Header: //source/qcom/qct/modem/1x/mux/rel/ulc/src/txccommon.c#7 $ $DateTime: 2010/11/22 03:07:58 $ $Author: bbatchu $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+09/24/10   bb      Changes to call txc_tx_shutdown() to clean up TXC and etc
+                   resources, while processing TXC_EXIT_F command
+09/07/10   trc     Always delay by a frame+ at the end of access or traffic
+                   in txc_cdma_enc_shutdown().  Do not minimize tx_adjust.
+                   Ensure TX_ON goes low 20us prior to RF teardown.
+04/28/10   jtm     Removed check in txc_cmd() for qcnt > 0 to prevent false
+                   err_fatals from occuring since it is expected to have multiple
+                   *unique* items in the queue.
 07/16/08   jtm     Removed FEATURE_IS2000_REL_C_DV and FEATURE_DELAYED_TX_CLOCK_SHUTDOWN.
                    Removed unused variables and functions for ULC effort to
                    reduce memory. Reduced debug string sizes.
 03/31/08   vlc     Added check for illegal consecutive calls to txc_cmd().
-04/03/07   vlc     Removed txc_flush_enc() call because it clobbered HDR 
+04/03/07   vlc     Removed txc_flush_enc() call because it clobbered HDR
                    encoded data in SHDR Rel A mode.  No PA issue has been
                    reported with this code base.
 04/02/07   vlc     Added new PCG define for bin0 ENC ISRs specifically for loop
-                   back calls.  Moved default PCG to 1 for bin0 ENC ISRs for 
+                   back calls.  Moved default PCG to 1 for bin0 ENC ISRs for
                    all other calls.
 10/30/06   bn      Added code to support DO/UMTS to 1x handoff
 09/05/06   vlc     Implemented TX gain enhancements to increase digital gain
                    resolution.
 08/03/06   vlc     Added call to txc_flush_enc() in function txc_subtask().
 06/09/06   trc     Remove T_MSM6700 featurization
-05/19/06   vlc     In function txc_cdma_enc_shutdown(), check if 1X is 
-                   operating on the primary transceiver before disabling the 
-                   transmit chain.  
+05/19/06   vlc     In function txc_cdma_enc_shutdown(), check if 1X is
+                   operating on the primary transceiver before disabling the
+                   transmit chain.
                    Change was merged from MSM6550 code base.
 03/20/06   vlc     In traffic state, wait for 1 extra frame before turning off
                    PA so the last encoded frame (if any) could be transmitted.
 10/17/05   rkc     Remove wrapper function txc_enc_set_frame_off().
 10/12/05   rkc     Add wrapper function txc_enc_set_frame_off().
 09/08/05   ejv     Use new srch_mux interface calls.
-07/26/05   vlc     Applied code review comments for RL jump to hyperspace 
+07/26/05   vlc     Applied code review comments for RL jump to hyperspace
                    enhancement.
 07/25/05   rkc     Fixed lint errors.
 05/23/05   vlc     Changed FEATURE_IS2000_REL_D_JUMP to FEATURE_RL_JUMP_ENHANCEMENT.
                    Added F3 debug message to function txc_cdma_enc_shutdown().
-                   In function txc_subtask(), added support for Fast Call Set Up 
-                   - New Jump to Hyperspace command feature.                      
+                   In function txc_subtask(), added support for Fast Call Set Up
+                   - New Jump to Hyperspace command feature.
 04/27/05   vlc     Main lined code in current targets, cleaned out obsolete targets,
-                   cleaned out obsolete features.                                   
+                   cleaned out obsolete features.
 03/14/05   vlc     Fixed compiler warnings for MSM6700.
 03/14/05   vlc     Merged in changes for MSM7500.  Changed T_QUASAR_BB to T_IO_CARD.
                    (dlb')
-03/07/05   vlc     Added support for Fast Call Set Up - New Jump to 
+03/07/05   vlc     Added support for Fast Call Set Up - New Jump to
                    Hyperspace command feature.
                    Removed check for OK to sleep in txc_exit(), now always
                    turn off ENC clocks in txc_exit().
@@ -94,7 +102,7 @@ when       who     what, where, why
 06/16/04   sr      Merged in changes from 6500 5004 build
 06/14/04   sr/va   Added HHO cleanup under FEATURE_HHO_ENHANCEMENTS
 06/09/04   jyw     modified the txc_subtask() to allow TXC_EXIT_F as the first
-                   command issued to TXC from MC; This modification corresponds the 
+                   command issued to TXC from MC; This modification corresponds the
                    new SEARCH_INACTIVE_STATE.
 05/21/04   jyw     Intorduce the new RF PA backoff interface
 05/18/04   jrp     Reset SCH RC to 3 at txc_exit() for subsequent access.
@@ -104,12 +112,12 @@ when       who     what, where, why
                    signalling messages for voice calls/data calls/svd calls.
 04/26/04   bn      Added a function to turn off the TX code in encoder shutdown function
 04/20/04   jrp     Fixed lint warnings.
-03/29/04   sr      Removed SAM check before turning off PA in 
+03/29/04   sr      Removed SAM check before turning off PA in
                    txc_cdma_enc_shutdown()
 03/10/04   vlc     Added support for centralized transaction engine handling
                    under feature FEATURE_TRANS_MANAGER.
 03/09/04   sr/bkm  Featurized DV code
-12/16/03   aaj     Do not disable Tx if 1x does not own RF 
+12/16/03   aaj     Do not disable Tx if 1x does not own RF
 10/30/03   jrp     Fixed compiler warnings.
 09/15/03   jrp     Added check for FEATURE_DELAYED_TX_CLOCK_SHUTDOWN when
                    leaving CDMA mode.
@@ -118,20 +126,20 @@ when       who     what, where, why
 10/15/02   dlb     Added new power control logging to combine power control
                    and frame type logging.
 09/24/02   jrp     Handled FPC_MODE_FFPC_DISABLED case in txc_set_fpc_mode().
-08/30/02   sr      Moved the clearing of TX_ISR up to top of 
+08/30/02   sr      Moved the clearing of TX_ISR up to top of
                    txc_cdma_enc_shutdown() before resetting the RC to 1
 08/08/02   vlc     Fixed compiler error when FEATURE_IS95B_MAHHO is turned off.
 08/01/02   jrp     Removed txc_flag_eib(), txc_flag_qib(), and txc_flag_sch_eib().
-                   These are now modified directly by rxctraffic.  Added featurization 
-                   for FPC modes 4,5,6.  Changed FPC_MODE enums to be more descriptive 
+                   These are now modified directly by rxctraffic.  Added featurization
+                   for FPC modes 4,5,6.  Changed FPC_MODE enums to be more descriptive
                    due to SVD.
 07/17/02   hrk     Support for RPC logging for simulataneous R-FCH and R-DCCH.
 06/18/02   jrp     Added support for FFPC Modes 4,5,6.
-05/29/02   jrp     Changed txc_suspend_tx() to call txc_acc_probe_resume() to 
+05/29/02   jrp     Changed txc_suspend_tx() to call txc_acc_probe_resume() to
                    resume probing only if probing was previously suspended.
-05/22/02   bn      Added new logics to support VP2 RPC 
+05/22/02   bn      Added new logics to support VP2 RPC
 04/08/02   tc      Supported REACH 20ms frame, 38400bps pad size.
-02/25/02   bn      Added support for  MUX SVD signaling 
+02/25/02   bn      Added support for  MUX SVD signaling
 04/02/02   sr      Changed 32X gains to 8 bit values for P2 also
 01/15/02   hrk     Changed RF_ENABLE_PWR_WAIT to RF_ENABLE_TX_PWR_WAIT when using
                    FEATURE_RF_WAIT_CHANGES.
@@ -141,7 +149,7 @@ when       who     what, where, why
 11/08/01   hrk     Setting MOD_PCBIT_TEST_MASK for FPC_MODE=3 for MSM5100.
 10/30/01   bn      Added support for Release A RDCH logging
 08/13/01   bn,hrk  Fixed :
-                   1. incorrect turn around constant during R-SCH transition in RPC logs. 
+                   1. incorrect turn around constant during R-SCH transition in RPC logs.
                    2. multiple channel adjustment gain for FCH was delayed by 1 frame in
                       RPC logs.
 06/15/01   snn     Added two new functions for DCCH UI display.
@@ -153,8 +161,8 @@ when       who     what, where, why
 05/11/01   vlc     Merged in datapump changes for PLT (ks.)
 05/03/01   sr      Supported reverse link DCCH PLT.
 04/20/01   sr      Merged in from MSM5100 archive
-04/18/01   sr      Merged with MSM_MUX1X.01.00.00 
-           hrk     Default gain table, txc_pch_fch_sch_gain_tab, used by PLT/FTM 
+04/18/01   sr      Merged with MSM_MUX1X.01.00.00
+           hrk     Default gain table, txc_pch_fch_sch_gain_tab, used by PLT/FTM
                    is based on Nominal Attribute gains specified in IS2000.
            lcc,hrk Added support for FEATURE_IS2000_P2
                    Moved txc_scr_action() and txc_scr_trans_cmd to another file.
@@ -553,6 +561,7 @@ when       who     what, where, why
 #include "rfm.h"
 #include "ulpn.h"
 #include "rxc.h"
+#include "clk.h"
 
 #ifdef FEATURE_DS
   #if  defined (FEATURE_IS95B_MDR)
@@ -711,7 +720,7 @@ txc_gain_type txc_pch_fch_sch_gain_tab[ ENC_NUM_SCH_RATES ]
                                 { 71<<7,  65<<7,  236<<7 }
 #ifdef FEATURE_32X_SCH_DATA_RATE
                                ,{ 61<<7,  43<<7,  244<<7 }
-#endif /* FEATURE_32X_SCH_DATA_RATE */ 
+#endif /* FEATURE_32X_SCH_DATA_RATE */
                                            };
 #else
 
@@ -728,7 +737,7 @@ txc_gain_type txc_pch_fch_sch_gain_tab[ ENC_NUM_SCH_RATES ]
                                 { 71<<7,  65<<7,  65<<7,  236<<7 }
 #ifdef FEATURE_32X_SCH_DATA_RATE
                                ,{ 61<<7,  43<<7,  43<<7,  244<<7 }
-#endif /* FEATURE_32X_SCH_DATA_RATE */ 
+#endif /* FEATURE_32X_SCH_DATA_RATE */
                                            };
 #endif /* FEATURE_IS2000_P2 */
 
@@ -1092,8 +1101,8 @@ void txc_cdma_enc_setup(void)
     ** Load the TX long code state.
     ** Load the TX long code mask.
     */
-    enc_stmr_cmd( ENC_STMR_CMD_LC_STATE_80MS_V | 
-                  ENC_STMR_CMD_LC_MASK_20MS_V 
+    enc_stmr_cmd( ENC_STMR_CMD_LC_STATE_80MS_V |
+                  ENC_STMR_CMD_LC_MASK_20MS_V
                 );
 
 #ifndef T_IO_CARD
@@ -1143,9 +1152,9 @@ SIDE EFFECTS
 ===========================================================================*/
 void txc_cdma_enc_shutdown()
 {
-  if (txc_state == TXC_TRAFFIC_S)
+  /* Always delay at least 1 frame before traffic/access teardown */
   {
-    MSG_HIGH ("Traffic st, delay shutdown enc clks by 1 fr",0,0,0);
+    MSG_HIGH ("Delay shutdown enc clocks by 1 frame",0,0,0);
 
     /* kick the dog before using the report timer */
     dog_report( DOG_TX_RPT );
@@ -1167,7 +1176,15 @@ void txc_cdma_enc_shutdown()
   if ( srch_mux_owns_tx() )
   {
     MSG_HIGH ("1X has pri chain, shutdown enc clks",0,0,0);
-  srch_mux_set_tx_adj( TXC_PWR_MIN );  /* power down from transmission */
+
+    /* Ensure TX_ON is off */
+    HWIO_OUTM( MODEM_PA_ON_CTL,
+               HWIO_FMSK( MODEM_PA_ON_CTL, TX_ON_EN),
+               0 );
+
+    /* Wait sufficient time for RTR DA_OUT to be off before PA_ON goes low */
+    clk_busy_wait( 20 );
+
   enc_tx_enable ( FALSE );
 
   /* Force the PA off.  The TX_PUNCT was set "off" during the last Tx interrupt
@@ -1223,7 +1240,12 @@ SIDE EFFECTS
 void txc_exit (void )
 {
 
-    txc_cdma_enc_shutdown ();  /* turn off clocks, pa, etc. */
+    /* Turn off clocks, pa, etc. */
+  #ifdef FEATURE_RL_JUMP_ENHANCEMENT
+    txc_tx_shutdown();
+  #else
+    txc_cdma_enc_shutdown();
+  #endif /* FEATURE_RL_JUMP_ENHANCEMENT */
 
   /* clear timer */
   ( void )rex_clr_timer( &txc_rpt_timer );
@@ -1242,7 +1264,7 @@ void txc_exit (void )
   }
 #endif /* FEATURE_LOG_PC_INFO_2 */
 #ifdef FEATURE_IS2000_REL_A
-  if (log_status(LOG_RDCH_FRAME_INFO_C)) 
+  if (log_status(LOG_RDCH_FRAME_INFO_C))
   {
     txc_rdch_frame_info_send_log();
   }
@@ -1714,7 +1736,7 @@ void txc_subtask (void )
   else
   {
     /* To correspond to the new search inactive state, the first command from MC
-       MC to TXC can be the TXC_EXIT_F; 
+       MC to TXC can be the TXC_EXIT_F;
        If this is the case, the txc FSM is put at the TXC_EXIT_S and return w/o
        doing anything further. */
     if( !((cmd_ptr->hdr.command == TXC_CDMA_F) ||
@@ -1727,7 +1749,7 @@ void txc_subtask (void )
       cmd_ptr->hdr.status = TXC_DONE_S;
       cmd_done( &cmd_ptr->hdr.cmd_hdr );
       /* Begin CDMA subtask processing */
-      if(cmd_ptr->hdr.command == TXC_EXIT_F) 
+      if(cmd_ptr->hdr.command == TXC_EXIT_F)
       {
         txc_state = TXC_EXIT_S;
       }
@@ -1779,19 +1801,6 @@ void txc_subtask (void )
             break;
           } /* switch */
         } while ( txc_state != TXC_EXIT_S );  /* never exit this loop... */
-#if defined (FEATURE_RL_JUMP_ENHANCEMENT)
-        /* This shutdown code is here for the case when we are leaving
-         * CDMA mode before the transmit clock is turned off.  This would
-         * only occur if an access attempt just completed within the last
-         * two seconds, and TXC_EXIT_S is given to TXC to leave CDMA mode.
-         * In this case, the code here transitions to the same state it
-         * would have been in if this feature were undefined.
-         */
-        if ( !txc_ok_to_sleep() )
-        {
-          txc_tx_shutdown();
-        }
-#endif // FEATURE_RL_JUMP_ENHANCEMENT
       } /* if (cmd_ptr->hdr.command == TXC_EXIT_F ) */
     } /* if (cmd_ptr->hdr.command != TXC_CDMA_F ) */
   } /* if( (cmd_ptr = (txc_cmd_type*) q_get(&txc_cmd_q)) == NULL ) */
@@ -1822,23 +1831,14 @@ void txc_cmd
   txc_cmd_type *cmd_ptr                    /* the command to queue up */
 )
 {
-  if (q_cnt(&txc_cmd_q) > 0)
-  {
-    /* This function should only be called by MC and MC only has 1 buffer
-    ** allocated to send commands to TXC (mcc_tx_buf.)  If the buffer is 
-    ** already queued, queueing it again before TXC has a chance to process 
-    ** it will trigger a page fault.  It's better to error fatal to confirm 
-    ** that this function is being called twice.
-    */
-    ERR_FATAL("Bad call to txc_cmd()",0,0,0);
-  }
-
+  INTLOCK();
   (void) q_link( cmd_ptr, &cmd_ptr->hdr.cmd_hdr.link );  /* init link */
   cmd_ptr->hdr.status = TXC_BUSY_S;        /* mark it as queued */
 
   q_put( &txc_cmd_q, &cmd_ptr->hdr.cmd_hdr.link ); /* and queue it */
 
   (void)rex_set_sigs( &tx_tcb, TXC_CMD_Q_SIG ); /* signal the transmit task */
+  INTFREE();
 }
 
 /*===========================================================================
@@ -2084,7 +2084,7 @@ DESCRIPTION This function returns current configuration information for
             the SCHs. This is used by the UI in the data display.
 
             PARAMETERS:
-            sch_rc -       gives the Radio configuration of the R-SCH 
+            sch_rc -       gives the Radio configuration of the R-SCH
             sch_rate_ptr - points to the current SCH rate.
             double_ptr   - is TRUE when double sized PDUs are being used
                            is FALSE when single sized PDUs are being used
@@ -2138,7 +2138,7 @@ FUNCTION TXC_UPDATE_CHAN_CONFIG_TO_RF
 
 DESCRIPTION This function calls by MUX to update the actual channel config to RF
 
-            
+
 
 DEPENDENCIES None
 

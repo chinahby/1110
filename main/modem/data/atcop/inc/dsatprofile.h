@@ -11,7 +11,7 @@ GENERAL DESCRIPTION
   This module contains AT commands funcions and variables if the main AT 
   commands code is featurized out of the build 
 
-   Copyright (c) 2001 - 2009 by QUALCOMM Incorporated.
+   Copyright (c) 2001 - 2011 by QUALCOMM Incorporated.
    All Rights Reserved.
    Qualcomm Confidential and Proprietary.
 
@@ -21,10 +21,11 @@ GENERAL DESCRIPTION
 This section contains comments describing changes made to the module.
 Notice that changes are listed in reverse chronological order.
 
-$Header: //source/qcom/qct/modem/data/common/commonatcop/main/lite/inc/dsatprofile.h#4 $ $DateTime: 2009/05/19 04:55:34 $ $Author: bhaviks $
+$Header: //source/qcom/qct/modem/data/common/commonatcop/main/lite/inc/dsatprofile.h#5 $ $DateTime: 2011/04/20 04:28:48 $ $Author: c_avijay $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+04/20/11   dvk     Fixed compilation issues.
 05/18/09   bs      Fixed compilation issues.
 03/05/09   bs      Added support for mmgsdi interface.
 01/30/09   sn      Added support for SCRM, TRTL.
@@ -138,6 +139,13 @@ typedef enum
 
 } dsat_result_enum_type;
 
+typedef enum
+{                       
+  ATOI_OK,              /*  conversion complete             */
+  ATOI_NO_ARG,          /*  nothing to convert              */
+  ATOI_OUT_OF_RANGE     /*  character or value out of range */
+} atoi_enum_type;
+
 /*-------------------------------------------------------------------------
   Dial string for Packet/QNC calls. Defaults to "#777". Note that if the
   default string is changed, the length variable should also be updated.
@@ -183,6 +191,7 @@ extern dsat_num_item_type dsat707_qcscrm_val;
 extern dsat_num_item_type dsat707_qctrtl_val;
 #endif /* FEATURE_IS2000_R_SCH */
 
+#define MAX_VAL_NUM_ITEM 0xFFFFFFFF /*  Max value of a numeric AT parm     */
 
 /*---------------------------------------------------------------------------
                            NV interface data 

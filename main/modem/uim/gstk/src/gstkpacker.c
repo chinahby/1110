@@ -129,7 +129,7 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS
 
                         COPYRIGHT INFORMATION
 
-Copyright (c) 2003-2009 QUALCOMM, Incorporated and its licensors.  All Rights
+Copyright (c) 2003-2009, 2011 QUALCOMM, Incorporated and its licensors.  All Rights
 Reserved.  QUALCOMM Proprietary.  Export of this technology or software
 is regulated by the U.S. Government. Diversion contrary to U.S. law prohibited.
 *====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*/
@@ -139,10 +139,11 @@ is regulated by the U.S. Government. Diversion contrary to U.S. law prohibited.
                         EDIT HISTORY FOR MODULE
 
 
-$Header: //source/qcom/qct/modem/uim/gstk/rel/07H1_2/src/gstkpacker.c#5 $
+$Header: //source/qcom/qct/modem/uim/su/baselines/sqa/gstk/rel/07H1_2/src/gstkpacker_c/rev5/gstkpacker.c#2 $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+02/08/11   adp     Fix buffer overflow issue 
 06/25/09   dd      Adding time zone information
 06/20/09   dd      Enable SMS for CDMA
 06/18/09   dd      Changed GSTK_MAX_RAW_SMS_LEN to 255
@@ -1524,7 +1525,11 @@ gstk_status_enum_type gstk_packer_address_tlv(
       }
     }
 
-    while(i < data->length) {
+    while((i < data->length)
+          &&
+          (address_tlv->length < GSTK_MAX_BCD_ADDRESS_LEN))
+    {
+    
       if(i+1 < data->length) {
         if ((data->address[i+1] >= 0x30) && (data->address[i+1] < 0x40))
         {
@@ -1586,6 +1591,16 @@ gstk_status_enum_type gstk_packer_address_tlv(
       }
       i+=2;
       address_tlv->length++;
+    }
+
+    if (address_tlv->length == GSTK_MAX_BCD_ADDRESS_LEN)
+    {
+      MSG_ERROR("BCD buffer too small!", 0, 0, 0);
+      gstk_util_dump_byte_array(
+        "data->address",
+        data->address,
+        data->length);
+      return GSTK_ERROR;
     }
 
     address_tlv->length++; /* add the TON byte */

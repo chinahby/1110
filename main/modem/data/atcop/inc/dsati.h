@@ -15,7 +15,7 @@ DESCRIPTION
   enumerated constants and function prototypes required for the 
   data services AT command processor.
 
-   Copyright (c) 2001-2009 by QUALCOMM Incorporated.
+   Copyright (c) 2001-2011 by QUALCOMM Incorporated.
    All Rights Reserved.
    Qualcomm Confidential and Proprietary.
 ===========================================================================*/
@@ -29,10 +29,11 @@ DESCRIPTION
   Notice that changes are listed in reverse chronological order.
 
   $PVCSPath: L:/src/asw/MM_DATA/vcs/dsati.h_v   1.12   11 Nov 2002 14:02:32   sbandaru  $
-  $Header: //source/qcom/qct/modem/data/common/commonatcop/main/lite/inc/dsati.h#4 $ $DateTime: 2009/01/23 10:36:19 $ $Author: nchagant $
+  $Header: //source/qcom/qct/modem/data/common/commonatcop/main/lite/inc/dsati.h#5 $ $DateTime: 2011/04/20 04:28:48 $ $Author: c_avijay $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+04/20/11   dvk     Fixed compilation issues.
 01/21/09   nc      Added support for SMS Commands.
 01/02/09   bs      Added support for 1X AT Phonebook commands.
 04/11/08   bs      Fixed Lint High's.
@@ -1892,34 +1893,6 @@ extern int dsatutil_strcmp_ig_sp_case
   const byte *s2              /*  Pointer to string 2 */
 );
 
-
-/*===========================================================================
-
-FUNCTION DSATUTIL_ATOI
-
-DESCRIPTION
-  This function converts an ASCII string to an integer, using a specified
-  radix.  Spaces are ignored. Letters used for radices above 10 may be of
-  either case.
-
-DEPENDENCIES
-
-
-RETURN VALUE
-  Returns 0 for a correct conversion,
-          1 if no argument was found,
-          2 if a character or the total value is out of range.
-
-SIDE EFFECTS
-
-===========================================================================*/
-extern atoi_enum_type dsatutil_atoi
-(
-  dsat_num_item_type *val_arg_ptr,      /*  value returned  */
-  const byte *s,                        /*  points to string to eval  */
-  unsigned int r                        /*  radix */
-);
-
 /*===========================================================================
 FUNCTION DSATUTIL_STRIP_QUOTES_OUT
 
@@ -2227,6 +2200,32 @@ nv_stat_enum_type dsatutil_put_nv_item
   nv_item_type       *data_ptr        /* Pointer to space for item */
 );
 
+/*===========================================================================
+
+FUNCTION DSATUTIL_ATOI
+
+DESCRIPTION
+  This function converts an ASCII string to an integer, using a specified
+  radix.  Spaces are ignored. Letters used for radices above 10 may be of
+  either case.
+
+DEPENDENCIES
+
+
+RETURN VALUE
+  Returns 0 for a correct conversion,
+          1 if no argument was found,
+          2 if a character or the total value is out of range.
+
+SIDE EFFECTS
+
+===========================================================================*/
+extern atoi_enum_type dsatutil_atoi
+(
+  dsat_num_item_type *val_arg_ptr,      /*  value returned  */
+  const byte *s,                        /*  points to string to eval  */
+  unsigned int r                        /*  radix */
+);
 
 #endif /* DSATI_H */
 

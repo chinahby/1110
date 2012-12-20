@@ -87,10 +87,12 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS
                            EDIT HISTORY FOR MODULE
 
   $PVCSPath: L:/src/asw/MM_DATA/vcs/ds707_pkt_mgr.c_v   1.45   25 Feb 2003 14:25:02   ajithp  $
-  $Header: //source/qcom/qct/modem/data/1x/707/main/lite/src/ds707_pkt_mgr.c#15 $ $DateTime: 2010/01/28 08:30:33 $ $Author: parmjeet $
+  $Header: //source/qcom/qct/modem/data/1x/707/main/lite/src/ds707_pkt_mgr.c#16 $ $DateTime: 2010/05/28 04:37:56 $ $Author: parmjeet $
 
 when        who    what, where, why
 --------    ---    ----------------------------------------------------------
+05/28/10    ps     Added support to pick up the profile id with unspecified bit
+                   set for Legacy/Non-OMH Applications.
 19/01/10    ps     Added code changes to reset requesting and current
                    profile IDs when IFACE is brought down.
 05/30/09    ms     Added Support for EPZID Hysteresis.
@@ -2799,6 +2801,7 @@ LOCAL void ds707_pkti_iface_up_cmd_hdlr
 #ifdef FEATURE_DS_MULTIPLE_PROFILES
   nv_stat_enum_type nv_status;             /* status from NV call          */
   nv_item_type      nv_item;
+  int8              profile_index = DATA_SESSION_PROFILE_ID_INVALID;
 #endif
 /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -2806,15 +2809,21 @@ LOCAL void ds707_pkti_iface_up_cmd_hdlr
   ASSERT(IS_IN_DS_TASK());
 
 #ifdef FEATURE_DS_MULTIPLE_PROFILES
-  nv_item.ds_sip_active_profile_index = 
-                        ds707_data_session[pkt_instance].current_profile_id;
-  nv_status = dsi_put_nv_item( NV_DS_SIP_ACTIVE_PROFILE_INDEX_I, &nv_item );
+  profile_index = ds707_data_session[pkt_instance].current_profile_id -
+                        DATA_SESSION_MIN_PROFILE;
+  nv_item.ds_sip_active_profile_index = profile_index;
 
-  if( nv_status != NV_DONE_S )
+  nv_status = dsi_put_nv_item( NV_DS_SIP_ACTIVE_PROFILE_INDEX_I, &nv_item );
+  if( nv_status == NV_DONE_S )
   {
-    MSG_ERROR( "Active Profile Index NV write failed", 0, 0, 0 );
+    MSG_HIGH( "Writing Active Profile Index %d ", profile_index, 0, 0 );
   }
-#endif
+  else
+   {
+     MSG_ERROR("Active Profile Index NV write failed, error %d",
+                nv_status,0,0);
+    }
+#endif /* FEATURE_DS_MULTIPLE_PROFILES */
 
 #ifdef FEATURE_DS_SOCKETS      /* UNFINISHED */
   dssnet_sm_post_event(DSSNET_PPP_OPEN_CMD_EV);
@@ -4893,7 +4902,6 @@ int ds707_pkt_setup_SN_ppp
 /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
   ppp_get_default_opts( &ppp_config_info );
 
-  MSG_FATAL("ds707_pkt_setup_SN_ppp",0,0,0);
   is707_get_ppp_auth_info_from_nv( &ppp_config_info, dsi_get_nv_item );
 
   ppp_config_info.rx_f_ptr       = ds707_pkt_rx_um_SN_data;

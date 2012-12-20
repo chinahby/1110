@@ -3597,7 +3597,10 @@ LOCAL   void                       tmc_libraries_init_before_tasks_start(
 #error code not present
     #endif /* defined(SIRIUS_PLATFORM) && defined(WOLF_5) */
 
-    
+    #if 0 // Gemsea Remove def FEATURE_USE_TIME_VU
+      /* The PMIC has been initialized, get time-of-day from the PMIC's RTC */
+      time_set_from_pmic();
+    #endif /* FEATURE_USE_TIME_VU */
 
     #endif /* FEATURE_PMIC */
 
@@ -3656,6 +3659,7 @@ LOCAL   void                       tmc_libraries_init_before_tasks_start(
   #ifndef FEATURE_BRINGUP_DIAG_ONLY
   #if (defined ( FEATURE_UIM_DRIVER ) && !defined (FEATURE_GSM_PLT))
   {
+    //Gemsea Remove extern int uim_dev_init( void );
     uim_dev_init();
   }
   #endif /* FEATURE_UIM_DRIVER && !FEATURE_GSM_PLT*/

@@ -88,7 +88,7 @@ EXTERNALIZED FUNCTIONS
   dss_shutdown
     Shuts down a connected socket in the specified direction.
 
-Copyright (c) 2003-2008 QUALCOMM Incorporated. 
+Copyright (c) 2003-2011 QUALCOMM Incorporated. 
 All Rights Reserved.
 Qualcomm Confidential and Proprietary
 ===========================================================================*/
@@ -101,10 +101,14 @@ Qualcomm Confidential and Proprietary
   Notice that changes are listed in reverse chronological order.
 
   $PVCSPath: L:/src/asw/MM_DATA/vcs/dssocket.c_v   1.29   27 Feb 2003 12:00:40   ubabbar  $
-  $Header: //source/qcom/qct/modem/data/cdps/ps/main/lite/src/dssocket.c#5 $ $DateTime: 2008/12/19 05:28:30 $ $Author: spathuru $
+  $Header: //source/qcom/qct/modem/data/cdps/ps/main/lite/src/dssocket.c#9 $ $DateTime: 2011/04/18 01:26:00 $ $Author: nsivakum $
 
 when        who    what, where, why
 --------    ---    ----------------------------------------------------------
+04/18/11    sn     Fixed compilation error.
+03/30/11    ms     Added support to pick non-default profile for non-OMH apps.
+05/28/10    ps     Added support to pick up the profile id with unspecified bit
+                   set for Legacy/Non-OMH Applications.
 12/19/08    sp     Setting the value of data_session_profile_id to -1 in
                    dss_init_net_policy_info().
 06/24/08    pp     Fixed RVCT compiler warnings.
@@ -383,6 +387,7 @@ when        who    what, where, why
 
 #ifdef FEATURE_DS_SOCKETS
 #include "msg.h"
+
 #include "err.h"
 #include "dssocket.h"
 #include "dssocki.h"
@@ -4054,7 +4059,7 @@ void dss_init_net_policy_info
     policy_info_ptr->ipsec_disabled = FALSE;
     policy_info_ptr->family = AF_INET;
     policy_info_ptr->umts.pdp_profile_num = 0;
-    policy_info_ptr->cdma.data_session_profile_id = -1; /* default */
+    policy_info_ptr->cdma.data_session_profile_id = 0; /* default */
     policy_info_ptr->dss_netpolicy_private.cookie = DSS_NETPOLICY_COOKIE;
   }
   else
@@ -4099,6 +4104,10 @@ sint15 dss_set_app_net_policy
 {
   acb_type *acb_ptr;         /* ptr to application control block structure */
   dss_net_policy_info_type  default_policy;      /* default network policy */
+#ifdef FEATURE_DS_MULTIPLE_PROFILES
+  int8 profile_id = DATA_SESSION_PROFILE_ID_INVALID;
+#endif /* FEATURE_DS_MULTIPLE_PROFILES */
+
 /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   MSG_MED("dss_set_app_net_policy() called %d", dss_nethandle, 0, 0);
@@ -4158,8 +4167,29 @@ sint15 dss_set_app_net_policy
 
   /* Generate ACL policy info in ACB from the incoming policy info */
   memset(&(acb_ptr->acl_netpolicy_info), 0, sizeof(acl_policy_info_type));
-  acb_ptr->acl_netpolicy_info.data_session_profile_id =
+
+#ifdef FEATURE_DS_MULTIPLE_PROFILES
+  if(policy_info_ptr->cdma.data_session_profile_id == 0)
+  {
+    profile_id = ds707_data_session_get_profile_id_for_special_nai();
+    if(profile_id != DATA_SESSION_PROFILE_ID_INVALID)
+    {
+      acb_ptr->acl_netpolicy_info.data_session_profile_id = profile_id;
+    }
+    else
+    {
+      acb_ptr->acl_netpolicy_info.data_session_profile_id = 
+                             policy_info_ptr->cdma.data_session_profile_id;
+    }
+  }
+  else
+  {
+#endif /* FEATURE_DS_MULTIPLE_PROFILES */
+    acb_ptr->acl_netpolicy_info.data_session_profile_id =
                             policy_info_ptr->cdma.data_session_profile_id;
+#ifdef FEATURE_DS_MULTIPLE_PROFILES
+  }
+#endif /* FEATURE_DS_MULTIPLE_PROFILES */
 
   return (DSS_SUCCESS);
 } /* dss_set_app_net_policy() */

@@ -43,10 +43,12 @@ is regulated by the U.S. Government. Diversion contrary to U.S. law prohibited.
 /*===========================================================================
                         EDIT HISTORY FOR MODULE
 
-$Header: //source/qcom/qct/modem/uim/mmgsdi/rel/07H1_2/src/mmgsdilib.c#6 $$ $DateTime: 2009/05/15 02:20:16 $
+$Header: //source/qcom/qct/modem/uim/su/baselines/qsc1110/rel/3.3.65/sqa/mmgsdi/src/6/mmgsdilib.c#2 $$ $DateTime: 2010/11/04 05:20:19 $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+10/25/10   shr     Fixed input data length check when handling a
+                   Compute IP Auth request
 05/14/09   kp      Added compiler directive for demand Paging Changes
 05/11/09   kp      Demand Paging Changes
 04/29/09   js      Fixed compiler warning
@@ -4901,8 +4903,9 @@ mmgsdi_return_enum_type mmgsdi_compute_ip_auth (
   {
 #ifdef FEATURE_UIM_SUPPORT_3GPD
     case MMGSDI_CMPT_IP_SIP_CHAP:
-      if(compute_ip_data.data.sip_chap_data.chap_challenge_length >
-         MMGSDI_MAX_3GPD_CHAP_CHALLENGE_LENGTH)
+      if((compute_ip_data.data.sip_chap_data.chap_challenge_length >
+          MMGSDI_MAX_3GPD_CHAP_CHALLENGE_LENGTH) ||
+         (compute_ip_data.data.sip_chap_data.chap_challenge_length <= 0))
       {
         MSG_ERROR("Invalid Length for SIP CHAP",0,0,0);
         return MMGSDI_ERROR;
@@ -4910,8 +4913,9 @@ mmgsdi_return_enum_type mmgsdi_compute_ip_auth (
       var_len[0] = 0;
       break;
     case MMGSDI_CMPT_IP_MIP_MN_HA:
-      if(compute_ip_data.data.mn_ha_data.registration_data_length >
-         MMGSDI_MAX_3GPD_MN_HA_REG_DATA_LENGTH)
+      if((compute_ip_data.data.mn_ha_data.registration_data_length >
+          MMGSDI_MAX_3GPD_MN_HA_REG_DATA_LENGTH)||
+         (compute_ip_data.data.mn_ha_data.registration_data_length <= 0))
       {
         MSG_ERROR("Invalid Length for MIP MN HA",0,0,0);
         return MMGSDI_ERROR;
@@ -4919,8 +4923,9 @@ mmgsdi_return_enum_type mmgsdi_compute_ip_auth (
       var_len[0] = compute_ip_data.data.mn_ha_data.registration_data_length;
       break;
     case MMGSDI_CMPT_IP_MIP_RRQ:
-      if(compute_ip_data.data.rrq_data.rrq_data_length >
-         MMGSDI_MAX_3GPD_HASH_RRQ_DATA_LENGTH)
+      if((compute_ip_data.data.rrq_data.rrq_data_length >
+          MMGSDI_MAX_3GPD_HASH_RRQ_DATA_LENGTH) ||
+         (compute_ip_data.data.rrq_data.rrq_data_length <= 0))
       {
         MSG_ERROR("Invalid Length for MIP RRQ HASH",0,0,0);
         return MMGSDI_ERROR;
@@ -4928,8 +4933,9 @@ mmgsdi_return_enum_type mmgsdi_compute_ip_auth (
       var_len[0] = compute_ip_data.data.rrq_data.rrq_data_length;
       break;
     case MMGSDI_CMPT_IP_MIP_MN_AAA:
-      if(compute_ip_data.data.mn_aaa_data.challenge_length >
-         MMGSDI_3GPD_MAX_MIP_CHALLENGE_LENGTH)
+      if((compute_ip_data.data.mn_aaa_data.challenge_length >
+          MMGSDI_3GPD_MAX_MIP_CHALLENGE_LENGTH) ||
+         (compute_ip_data.data.mn_aaa_data.challenge_length <= 0))
       {
         MSG_ERROR("Invalid Length for MIP MN AAA",0,0,0);
         return MMGSDI_ERROR;
@@ -4939,8 +4945,9 @@ mmgsdi_return_enum_type mmgsdi_compute_ip_auth (
 #endif /* FEATURE_UIM_SUPPORT_3GPD */
 #ifdef FEATURE_UIM_SUPPORT_HRPD_AN
     case MMGSDI_CMPT_IP_HRPD_CHAP:
-      if(compute_ip_data.data.hrpd_chap_data.chap_challenge_length >
-         MMGSDI_MAX_HRPD_CHAP_CHALLENGE_LENGTH)
+      if((compute_ip_data.data.hrpd_chap_data.chap_challenge_length >
+          MMGSDI_MAX_HRPD_CHAP_CHALLENGE_LENGTH) ||
+         (compute_ip_data.data.hrpd_chap_data.chap_challenge_length <= 0))
       {
         MSG_ERROR("Invalid Length for HRPD AN CHAP",0,0,0);
         return MMGSDI_ERROR;
@@ -6279,8 +6286,8 @@ mmgsdi_return_enum_type mmgsdi_register_for_refresh (
       Refresh_files:    Files that the Client is no longer interested in
                         getting notification for
       vote_for_init:    Deregister from Voting,
-                        FALSE – NO changes to Current Registration,
-                        TRUE – DeRegister from Voting
+                        FALSE ? NO changes to Current Registration,
+                        TRUE ? DeRegister from Voting
       option       :   optional parameter, not used right now
       Response_cb_ptr:  Callback to this command
       client_ref:       User Data returned upon completion of this cmd.

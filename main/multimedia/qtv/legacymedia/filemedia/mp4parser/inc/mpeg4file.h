@@ -18,9 +18,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/legacymedia/filemedia/mp4parser/main/latest/inc/mpeg4file.h#14 $
-$DateTime: 2008/12/11 02:28:12 $
-$Change: 803007 $
+$Header: //source/qcom/qct/multimedia/qtv/legacymedia/filemedia/mp4parser/main/latest/inc/mpeg4file.h#21 $
+$DateTime: 2010/01/07 03:31:52 $
+$Change: 1129999 $
 
 
 ========================================================================== */
@@ -94,6 +94,11 @@ const int32 AMRBitRates[8] =
 /* to break the VideoFMT read loop, if videoFMT hangs */
 #define MPEG4_VIDEOFMT_MAX_LOOP 50000
 
+static const uint32 AAC_FORMAT_UNK = 0;
+static const uint32 AAC_FORMAT_ADTS = 1;
+static const uint32 AAC_FORMAT_NON_ADTS = 2;
+
+
 #define QTV_MPEG4_COARSE_REPOS_LIMIT 5*60*1000       //5min
 #ifdef FEATURE_QTV_BSAC
 #error code not present
@@ -114,6 +119,12 @@ static const uint8 maskByte[8] = { 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x8
 ** Forward Declarations
 ** ----------------------------------------------------------------------- */
 class Mpeg4Player;
+class AudioPlayer;
+class VideoPlayer;
+#ifdef FEATURE_MP4_3GPP_TIMED_TEXT
+class TimedText;
+#endif
+
 
 /* =======================================================================
 **                          Macro Definitions
@@ -196,6 +207,7 @@ public:
 
   virtual int32 getNextMediaSample(uint32 id, uint8 *buf, uint32 size, uint32 &index);
   virtual uint32 getMediaTimestampForCurrentSample(uint32 id);
+  virtual uint32 getMediaTimestampDeltaForCurrentSample(uint32 id);
 
 #ifdef FEATURE_H264_DECODER
   uint32 m_nextSeqSample;
@@ -285,7 +297,7 @@ public:
 
   /* Mp4 Clip may has meta data */
   virtual bool HasMetaData() {return true;};
-
+  virtual bool   isADTSHeader();
 #ifdef FEATURE_MP4_3GPP_TIMED_TEXT
 
   /* 3GPP timed text related APIs */
@@ -362,9 +374,13 @@ public:
   virtual int32 getTrackMaxBufferSizeDB(uint32 id);
 
   virtual bool  isAudioPresentInClip();
-
-#ifdef FEATURE_FILE_FRAGMENTATION
-  virtual int32  getNextFragTrackMaxBufferSizeDB(uint32 id) = 0;
+  virtual void setAudioPlayerData(const void *client_data);
+  virtual void setVideoPlayerData(const void *client_data);
+  virtual void setTextPlayerData(const void *client_data);
+  AudioPlayer *AudioPlayerPtr;
+  VideoPlayer *VideoPlayerPtr;
+#ifdef FEATURE_MP4_3GPP_TIMED_TEXT
+  TimedText   *TextPlayerPtr;
 #endif
 
   virtual int32 getTrackAverageBitrate(uint32 id);
@@ -379,29 +395,6 @@ public:
 
   virtual uint8 getAllowAudioOnly();
   virtual uint8 getAllowVideoOnly();
-
-#ifdef FEATURE_FILE_FRAGMENTATION
-    virtual void resumeMedia( void ) = 0;
-    virtual void setPausedVideo ( boolean bPausedVideo ) = 0;
-    virtual void setPausedAudio ( boolean bPausedVideo ) = 0;
-    virtual void setPausedText ( boolean bPausedVideo ) = 0;
-    virtual boolean getPausedVideo( void) = 0;
-    virtual boolean getPausedAudio( void) = 0;
-    virtual boolean getPausedText( void) = 0;
-#endif
-
-#ifdef FEATURE_QTV_PSEUDO_STREAM
-  virtual void updateBufferWritePtr(uint32 writeOffset) = 0;
-  virtual bool parsePseudoStream( void ) = 0;
-#endif
-#if defined (FEATURE_FILE_FRAGMENTATION)
-  virtual uint16 getParseFragmentNum( void ) = 0;
-  virtual uint16 getReadFragmentNum( void ) = 0;
-#endif
-
-#ifdef FEATURE_QTV_RANDOM_ACCESS_REPOS
-  virtual uint32 repositionAccessPoint( int32 skipNumber, uint32 id, bool &bError ,uint32 currentPosTimeStampMsec) = 0;
-#endif /*FEATURE_QTV_RANDOM_ACCESS_REPOS*/
 
 // Operations
 public:
@@ -467,15 +460,17 @@ public:
   virtual void parseFirstFragment();
   virtual uint32 getLargestFrameSize (uint32 id);
 
-#ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
+#if defined FEATURE_QTV_3GPP_PROGRESSIVE_DNLD ||defined FEATURE_QTV_PSEUDO_STREAM
   virtual bool CanPlayTracks(uint32 pbTime);
   virtual void updateBufferWritePtr(uint32 writeOffset);
   virtual bool parseHTTPStream( void );
-  boolean initializeVideoFMT(void);
+  virtual bool ParseStream();
+  virtual boolean initializeVideoFMT(void);
   void sendParseHTTPStreamEvent( void );
   void sendHTTPStreamUnderrunEvent(void);
   void sendParserEvent(Common::ParserStatusCode status);
   bool parseMetaData (void);
+  bool peekMetaDataSize (uint32 fragment_num);
   bool getMetaDataSize ( void );
   uint32 getSampleAbsOffset (uint32 streamNum,
                              uint32 sampleOffset,
@@ -543,9 +538,8 @@ protected:
   /* using this member variable to distinguish between udta vs. kddi 'titl' atom */
   bool                              m_bUdtaAtomPresent;
 
-#ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
+
   uint32                            m_absFileOffset[VIDEO_FMT_MAX_MEDIA_STREAMS];
-#endif //FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
 
   videoFMTClientData                m_clientData[VIDEO_FMT_MAX_MEDIA_STREAMS];
 
@@ -638,7 +632,9 @@ protected:
    QtvPlayer::FetchBufferedDataSizeT m_fpFetchBufferedDataSize;
    QtvPlayer::FetchBufferedDataT m_fpFetchBufferedData;
    QtvPlayer::InstanceHandleT m_QtvInstancehandle;
-
+   uint32 mdat_size;
+   boolean Initialized;
+   boolean Parsed;
 #endif /* defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD) */
 
 #ifdef FEATURE_MEASURE_TIMING
@@ -716,6 +712,10 @@ private:
 
 protected:
   Mpeg4Player *m_pMpeg4Player;
+
+
+public:
+  uint32  aac_data_type;
 };
 
 #endif  // __Mpeg4File_H__

@@ -16,7 +16,7 @@ EXTERNALIZED FUNCTIONS
   dssnet_sm_init()
     Initialize the DSSNET State machine
 
-Copyright (c) 1998-2009 by QUALCOMM, Incorporated.  All Rights Reserved.
+Copyright (c) 1998-2011 by QUALCOMM, Incorporated.  All Rights Reserved.
 ===========================================================================*/
 
 /*===========================================================================
@@ -24,7 +24,7 @@ Copyright (c) 1998-2009 by QUALCOMM, Incorporated.  All Rights Reserved.
                       EDIT HISTORY FOR FILE
 
   $PVCSPath: L:/src/asw/MM_DATA/vcs/ps707_dssnet.c_v   1.25   28 Feb 2003 10:27:32   sramacha  $
-  $Header: //source/qcom/qct/modem/data/1x/707/main/lite/src/ps707_dssnet.c#13 $ $DateTime: 2009/05/27 05:07:18 $ $Author: nsivakum $
+  $Header: //source/qcom/qct/modem/data/1x/707/main/lite/src/ps707_dssnet.c#15 $ $DateTime: 2011/03/09 07:43:48 $ $Author: nsivakum $
 
   This section contains comments describing changes made to the module.
   Notice that changes are listed in reverse chronological order.
@@ -32,6 +32,7 @@ Copyright (c) 1998-2009 by QUALCOMM, Incorporated.  All Rights Reserved.
 
 when        who    what, where, why
 --------    ---    ----------------------------------------------------------
+02/25/11    ms     Ported MOBILE_IP_DEREG feature.
 04/29/09    sn     Ported support for call throttle feature (DCTM).
 12/01/08    psng   Fixed compilation error.
 11/25/08    psng   Fixed compilation error.
@@ -142,7 +143,6 @@ when        who    what, where, why
 #include "comdef.h"
 #include "target.h"
 #include "customer.h"
-#include "AEEStdLib.h"
 
 #ifdef FEATURE_DATA_IS707
 
@@ -175,7 +175,7 @@ when        who    what, where, why
 #endif
 
 #include "ds707_p_rev.h"
-
+#include "ds707_drs.h"
 #ifdef FEATURE_DS_MOBILE_IP_PERF
 #include "dsmip_perf.h"
 #endif /* FEATURE_DS_MOBILE_IP_PERF */
@@ -255,7 +255,12 @@ typedef enum
   DSSNETI_NET_IFACE_UP_WITH_SIP_STATE = 6,
   DSSNETI_CLOSING_STATE = 7,
   DSSNETI_WAITING_FOR_PHY_IFACE_DOWN_STATE = 8,
-  DSSNETI_PPP_RESYNC_STATE = 9
+  DSSNETI_PPP_RESYNC_STATE = 9,
+#ifdef FEATURE_DS_MOBILE_IP
+#ifdef FEATURE_DS_MOBILE_IP_DEREG
+  DSSNETI_WAITING_FOR_MIP_DEREG_STATE  = 10
+#endif /* FEATURE_DS_MOBILE_IP_DEREG */
+#endif /* FEATURE_DS_MOBILE_IP */
 } dssneti_netstate_enum_type;
 
 /*---------------------------------------------------------------------------
@@ -391,6 +396,14 @@ static void dssneti_handle_mip_ev_cback
   mip_fail_reason_e_type fail_reason,
   void                   *user_data
 );
+
+#ifdef FEATURE_DS_MOBILE_IP_DEREG
+static void dssneti_process_mip_dereged_ev
+(
+  ps_cmd_enum_type       cmd,                      /* PS command type      */
+ void                   *data_ptr                  /* Pointer to user data */
+);
+#endif /* FEATURE_DS_MOBILE_IP_DEREG */
 #endif /* FEATURE_DS_MOBILE_IP */
 
 
@@ -674,7 +687,7 @@ LOCAL void dssneti_set_netstate
     This function should always execute in the PS task context, so dont need
     INTLOCKS 
   -------------------------------------------------------------------------*/
-  MSG_FATAL("Transition net state %d to %d", 
+  MSG_MED("Transition net state %d to %d", 
            dssneti_sm_cb.netstate, 
            new_netstate,
            0);  
@@ -707,7 +720,7 @@ LOCAL void dssneti_set_netstate
             ps_timer_cancel((uint8) dssneti_sm_cb.phy_iface_timer);
       ASSERT(timer_result != PS_TIMER_FAILURE);
 
-      MSG_FATAL("PPP is down",0,0,0);
+      MSG_MED("PPP is down",0,0,0);
 
       /*---------------------------------------------------------------------
         Set lcp_auth_disabled to FALSE.
@@ -796,7 +809,7 @@ LOCAL void dssneti_set_netstate
       /*---------------------------------------------------------------------
         Set the abort function cback in 707 Packet Manager.
       ---------------------------------------------------------------------*/
-      MSG_FATAL("dssnet setting abort_cback",0,0,0);
+      MSG_MED("dssnet setting abort_cback",0,0,0);
       ds707_pkt_set_abort_f_ptr(DS707_DEF_PKT_INSTANCE,
                                 dssneti_ppp_abort_cback);
 
@@ -932,7 +945,6 @@ LOCAL void dssneti_set_netstate
       /*---------------------------------------------------------------------
         Configure the PPP auth info for Um and start ppp on the device
       ---------------------------------------------------------------------*/
-      MSG_FATAL("dssneti_set_netstate %x",ppp_config.lcp_info.want_mask[0],0,0);
       is707_get_ppp_auth_info_from_nv( &ppp_config, ps_get_nv_item );
       if(ppp_start(PPP_UM_SN_DEV, &ppp_config) < 0)
       {
@@ -976,17 +988,13 @@ LOCAL void dssneti_set_netstate
       /*---------------------------------------------------------------------
         Notify MIP meta_sm that iface is up with MIP 
       ---------------------------------------------------------------------*/
-      MSG_FATAL("Iface up, Waiting on MIP registration",0,0,0); 
+      MSG_MED("Iface up, Waiting on MIP registration",0,0,0); 
       mip_meta_sm_post_event(MSM_IFACE_UP_W_MIP_EV);
       break;
 
     case DSSNETI_NET_IFACE_UP_WITH_MIP_STATE:
 #endif /* FEATURE_DS_MOBILE_IP */
     case DSSNETI_NET_IFACE_UP_WITH_SIP_STATE:
-
-// JD - check the ordering here.  The UP indication will generate UM_MIP_UP
-//      to RMSM.  but if waiting for SIP up, we later send IFACE_UP_WO_MIP /
-//      to meta_sm.  Does this work for SIP fallback??
       /*---------------------------------------------------------------------
         Send iface up indication.
       ---------------------------------------------------------------------*/
@@ -1009,12 +1017,12 @@ LOCAL void dssneti_set_netstate
         /*-------------------------------------------------------------------
           Notify MIP meta_sm that iface is up with SIP 
         -------------------------------------------------------------------*/  
-        MSG_FATAL("Iface up with SimpleIP ",0,0,0); 
+        MSG_MED("Iface up with SimpleIP ",0,0,0); 
         mip_meta_sm_post_event(MSM_IFACE_UP_WO_MIP_EV);
       }
       else
       {
-        MSG_FATAL("Iface up with MIP",0,0,0); 
+        MSG_MED("Iface up with MIP",0,0,0); 
       }
 #endif /* FEATURE_DS_MOBILE_IP */
       break;
@@ -1023,7 +1031,7 @@ LOCAL void dssneti_set_netstate
       /*---------------------------------------------------------------------
         Close PPP.
       ---------------------------------------------------------------------*/
-      MSG_FATAL("Closing PPP on Iface" ,0,0,0);
+      MSG_MED("Closing PPP on Iface" ,0,0,0);
       ppp_stop(PPP_UM_SN_DEV);
 
       /*---------------------------------------------------------------------
@@ -1034,7 +1042,7 @@ LOCAL void dssneti_set_netstate
       break;
 
     case DSSNETI_WAITING_FOR_PHY_IFACE_DOWN_STATE:
-      MSG_FATAL("Bring down phy iface" ,0 ,0, 0);
+      MSG_HIGH("Bring down phy iface" ,0 ,0, 0);
       /*---------------------------------------------------------------------
         Send command to bring down the traffic channel.
       ---------------------------------------------------------------------*/
@@ -1091,6 +1099,15 @@ LOCAL void dssneti_set_netstate
                             DS_FLOW_CTRL_DSSNET_MASK);
       break;
 
+#ifdef FEATURE_DS_MOBILE_IP
+#ifdef FEATURE_DS_MOBILE_IP_DEREG
+   case DSSNETI_WAITING_FOR_MIP_DEREG_STATE:
+      /* send bring down mip event to meta sm*/
+      mip_meta_sm_post_event( MSM_BRING_DOWN_MIP_EV );
+      break;
+#endif /* FEATURE_DS_MOBILE_IP_DEREG */
+#endif /* FEATURE_DS_MOBILE_IP */
+
     default:
       /*---------------------------------------------------------------------
         Sanity Check
@@ -1146,6 +1163,11 @@ void dssneti_reg_mip_event
       (void) mip_event_register( dssneti_sm_cb.mip_event_handle,
                                  MIP_SUCCESS_EV_MASK
                                );
+    #ifdef FEATURE_DS_MOBILE_IP_DEREG
+      (void) mip_event_register( dssneti_sm_cb.mip_event_handle,
+                                 MIP_DEREGED_EV_MASK
+                               );                           
+    #endif /* FEATURE_DS_MOBILE_IP_DEREG */
     }
 
     dssneti_mip_event_registered = TRUE;
@@ -1323,7 +1345,7 @@ LOCAL void dssnet_process_ppp_open_cmd_ev
         QCMIP = 2  -> MIP or nothing
       ---------------------------------------------------------------------*/
       dssneti_sm_cb.will_sip = (qcmip == 2) ? FALSE : TRUE;
-      MSG_ERROR("MIP session qcmip %d %d %d",qcmip,dssneti_sm_cb.te2_call_override_qcmip,dsat707_qcmip_val);
+
       if (qcmip > 0)
       {
         dssneti_sm_cb.want_mip = TRUE;
@@ -1344,7 +1366,7 @@ LOCAL void dssnet_process_ppp_open_cmd_ev
         -------------------------------------------------------------------*/
         if (mip_config_session() == FALSE) // can't call this directly if dssnet moves to DS
         {
-          MSG_ERROR("MIP session configuration failed %d",dssneti_sm_cb.will_sip,0,0);
+          MSG_ERROR("MIP session configuration failed",0,0,0);
 
           /*  If SimpleIP is not an option, abort now */
           if (!dssneti_sm_cb.will_sip)
@@ -1482,13 +1504,25 @@ LOCAL void dssnet_process_phy_iface_up_ev
         MSG_MED ("Waiting for link up to do MIP",0,0,0);
         dssneti_set_netstate( DSSNETI_WAITING_FOR_LINK_LAYER_WITH_MIP_STATE);
       }
-      else
+      else if (dssneti_sm_cb.will_sip)
       {
         dssneti_sm_cb.work_mip = FALSE; /* in case no more mip support */
-#endif /* FEATURE_DS_MOBILE_IP */
         MSG_MED ("Waiting for link up to do SimpleIP",0,0,0);
         dssneti_set_netstate( DSSNETI_WAITING_FOR_LINK_LAYER_WITH_SIP_STATE);
-#ifdef FEATURE_DS_MOBILE_IP
+      }
+      else 
+      {
+        /*---------------------------------------------------------------
+          If SimpleIP is not an option, abort now
+        ---------------------------------------------------------------*/
+        MSG_MED( "Can't try SIP, ending call",0,0,0);
+        dssneti_set_netstate(DSSNETI_CLOSED_STATE);
+        break;
+      }
+#else 
+      {
+        MSG_MED ("Waiting for link up to do SimpleIP",0,0,0);
+        dssneti_set_netstate( DSSNETI_WAITING_FOR_LINK_LAYER_WITH_SIP_STATE);
       }
 #endif /* FEATURE_DS_MOBILE_IP */
       break;
@@ -1503,6 +1537,9 @@ LOCAL void dssnet_process_phy_iface_up_ev
     case DSSNETI_WAITING_FOR_LINK_LAYER_WITH_MIP_STATE: 
     case DSSNETI_WAITING_FOR_MIP_REG_STATE: 
     case DSSNETI_NET_IFACE_UP_WITH_MIP_STATE: 
+#ifdef FEATURE_DS_MOBILE_IP_DEREG
+    case DSSNETI_WAITING_FOR_MIP_DEREG_STATE:
+#endif /* FEATURE_DS_MOBILE_IP_DEREG */
 #endif /* FEATURE_DS_MOBILE_IP */
       /*---------------------------------------------------------------------
         Ignore event.
@@ -1601,6 +1638,9 @@ LOCAL void dssnet_process_link_layer_up_with_mip_ev
 #ifdef FEATURE_DS_MOBILE_IP
     case DSSNETI_WAITING_FOR_MIP_REG_STATE:
     case DSSNETI_NET_IFACE_UP_WITH_MIP_STATE:
+#ifdef FEATURE_DS_MOBILE_IP_DEREG
+    case DSSNETI_WAITING_FOR_MIP_DEREG_STATE:
+#endif /* FEATURE_DS_MOBILE_IP_DEREG */
 #endif /* FEATURE_DS_MOBILE_IP */
       /*---------------------------------------------------------------------
         Unexpected event. Report an error.
@@ -1726,6 +1766,9 @@ LOCAL void dssnet_process_link_layer_up_with_sip_ev
       break;
 
     case DSSNETI_WAITING_FOR_MIP_REG_STATE:
+#ifdef FEATURE_DS_MOBILE_IP_DEREG
+    case DSSNETI_WAITING_FOR_MIP_DEREG_STATE:
+#endif /* FEATURE_DS_MOBILE_IP_DEREG */
     case DSSNETI_NET_IFACE_UP_WITH_MIP_STATE:
 #endif /* FEATURE_DS_MOBILE_IP */
     case DSSNETI_NET_IFACE_UP_WITH_SIP_STATE:
@@ -1819,6 +1862,9 @@ LOCAL void dssnet_process_mip_up_success_ev
 #ifdef FEATURE_DS_MOBILE_IP
     case DSSNETI_WAITING_FOR_LINK_LAYER_WITH_MIP_STATE:
     case DSSNETI_NET_IFACE_UP_WITH_MIP_STATE:
+#ifdef FEATURE_DS_MOBILE_IP_DEREG
+    case DSSNETI_WAITING_FOR_MIP_DEREG_STATE:
+#endif /* FEATURE_DS_MOBILE_IP_DEREG */
 #endif /* FEATURE_DS_MOBILE_IP */
       /*---------------------------------------------------------------------
         Ignore event.
@@ -1889,7 +1935,7 @@ LOCAL void dssnet_process_mip_failure_ev
 #endif /* FEATURE_DS_MOBILE_IP */
 /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  MSG_FATAL("MIP_FAILURE_EV recd in %d state", 
+  MSG_MED("MIP_FAILURE_EV recd in %d state", 
            dssneti_sm_cb.netstate,0,0);
 
   switch(dssneti_sm_cb.netstate)
@@ -1955,7 +2001,6 @@ LOCAL void dssnet_process_mip_failure_ev
         /*-------------------------------------------------------------------
           Configure the PPP auth info for Um and start ppp on the device
         -------------------------------------------------------------------*/
-        MSG_FATAL("dssnet_process_mip_failure_ev",0,0,0);
         is707_get_ppp_auth_info_from_nv( &ppp_config, ps_get_nv_item );
 
         /*-------------------------------------------------------------------
@@ -2023,6 +2068,15 @@ LOCAL void dssnet_process_mip_failure_ev
                              NULL);
       break;
 
+#ifdef FEATURE_DS_MOBILE_IP
+#ifdef FEATURE_DS_MOBILE_IP_DEREG
+    case DSSNETI_WAITING_FOR_MIP_DEREG_STATE:
+      MSG_ERROR("dssnet unexpected MIP_FAILURE_EV in %d state",
+                dssneti_sm_cb.netstate,0,0);
+      break;
+#endif /* FEATURE_DS_MOBILE_IP_DEREG */
+#endif /* FEATURE_DS_MOBILE_IP */
+
     default:
       /*---------------------------------------------------------------------
         Sanity Check
@@ -2073,6 +2127,19 @@ static void dssneti_handle_mip_ev_cback
       (void) dssnet_sm_post_event(DSSNET_MIP_UP_SUCCESS_EV);
       break;
     }
+
+#ifdef FEATURE_DS_MOBILE_IP
+#ifdef FEATURE_DS_MOBILE_IP_DEREG
+    case MIP_DEREGED_EV:
+    {
+      /*lint -e534 return value not required */
+      (void)dssnet_sm_post_event( DSSNET_MIP_DEREGED_EV);
+      /*lint -restore*/
+      break;
+    }
+#endif /* FEATURE_DS_MOBILE_IP_DEREG */
+#endif /* FEATURE_DS_MOBILE_IP */
+
     case MIP_FAILURE_EV:
     {
 #ifdef FEATURE_CALL_THROTTLE
@@ -2095,8 +2162,61 @@ static void dssneti_handle_mip_ev_cback
     }
   }
 } /* dssneti_handle_mip_ev_cback() */
-#endif /* FEATURE_DS_MOBILE_IP */
 
+#ifdef FEATURE_DS_MOBILE_IP_DEREG
+/*===========================================================================
+FUNCTION DSSNET4_PROCESS_MIP_DEREGED_EV()
+
+DESCRIPTION
+  This function processes the DSSNET_MIP_DEREGED_EV. Changes state to
+  DSSNETI_LINK_CLOSING_STATE if in DSSNETI_WAITING_FOR_MIP_DEREG_STATE
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  None
+
+SIDE EFFECTS
+  None
+===========================================================================*/
+LOCAL void dssneti_process_mip_dereged_ev
+(
+  ps_cmd_enum_type       cmd,                      /* PS command type      */
+  void                  *data_ptr                  /* Pointer to user data */
+)
+{
+  MSG_MED("MIP_DEREGED_EV recd in %d state",dssneti_sm_cb.netstate,0,0);
+
+  switch(dssneti_sm_cb.netstate)
+  {
+    case DSSNETI_WAITING_FOR_MIP_DEREG_STATE:
+      dssneti_set_netstate(DSSNETI_CLOSING_STATE);
+      break;
+
+    case DSSNETI_CLOSING_STATE:
+    case DSSNETI_CLOSED_STATE:
+      MSG_HIGH("Ignoring MIP_DEREG in CLOSING states",0,0,0);
+      break;
+
+    case DSSNETI_NET_IFACE_UP_WITH_MIP_STATE:
+    case DSSNETI_WAITING_FOR_LINK_LAYER_WITH_MIP_STATE:
+    case DSSNETI_WAITING_FOR_LINK_LAYER_WITH_SIP_STATE:
+    case DSSNETI_WAITING_FOR_MIP_REG_STATE:
+    case DSSNETI_PPP_RESYNC_STATE:
+      /* Fall through */
+
+    default:
+      MSG_ERROR("dssnet4 unexpected MIP_DEREGED_EV in %d state",
+                dssneti_sm_cb.netstate,0,0);
+      /*---------------------------------------------------------------------
+        Sanity Check
+      ---------------------------------------------------------------------*/
+      ASSERT(0);
+  }
+}
+#endif /* FEATURE_DS_MOBILE_IP_DEREG */
+#endif /* FEATURE_DS_MOBILE_IP */
 
 /*===========================================================================
 FUNCTION DSSNET_PROCESS_NET_IFACE_DOWN_EV()
@@ -2214,6 +2334,9 @@ LOCAL void dssnet_process_net_iface_down_ev
     case DSSNETI_PPP_RESYNC_STATE:
 #ifdef FEATURE_DS_MOBILE_IP
     case DSSNETI_NET_IFACE_UP_WITH_MIP_STATE:
+#ifdef FEATURE_DS_MOBILE_IP_DEREG
+    case DSSNETI_WAITING_FOR_MIP_DEREG_STATE:
+#endif /* FEATURE_DS_MOBILE_IP_DEREG */
 #endif /* FEATURE_DS_MOBILE_IP */
       /*-------------------------------------------------------------------
         Bring down the ps_iface. This is necessary as otherwise the iface 
@@ -2299,13 +2422,30 @@ LOCAL void dssnet_process_ppp_close_cmd_ev
 #ifdef FEATURE_DS_MOBILE_IP
     case DSSNETI_WAITING_FOR_LINK_LAYER_WITH_MIP_STATE:
     case DSSNETI_WAITING_FOR_MIP_REG_STATE:
-    case DSSNETI_NET_IFACE_UP_WITH_MIP_STATE:
 #endif // FEATURE_DS_MOBILE_IP
       /*-------------------------------------------------------------------
         Transition to CLOSING_STATE in all other cases 
       -------------------------------------------------------------------*/
       dssneti_set_netstate(DSSNETI_CLOSING_STATE);
       break;
+
+#ifdef FEATURE_DS_MOBILE_IP
+    case DSSNETI_NET_IFACE_UP_WITH_MIP_STATE:
+#ifdef FEATURE_DS_MOBILE_IP_DEREG
+     dssneti_set_netstate(DSSNETI_WAITING_FOR_MIP_DEREG_STATE);
+#else
+     dssneti_set_netstate(DSSNETI_CLOSING_STATE);
+#endif /* FEATURE_DS_MOBILE_IP_DEREG */ 
+     break;
+#endif /* FEATURE_DS_MOBILE_IP */
+
+#ifdef FEATURE_DS_MOBILE_IP
+#ifdef FEATURE_DS_MOBILE_IP_DEREG
+    case DSSNETI_WAITING_FOR_MIP_DEREG_STATE:
+      MSG_ERROR( "Got PPP_CLOSE in MIPDEREG STATE",0,0,0);
+      break;
+#endif /* FEATURE_DS_MOBILE_IP_DEREG */
+#endif /* FEATURE_DS_MOBILE_IP */
 
     default:
       /*---------------------------------------------------------------------
@@ -2463,6 +2603,26 @@ LOCAL void dssnet_process_phy_iface_down_ev
       dssneti_set_netstate(DSSNETI_CLOSED_STATE);
       break;
 
+#ifdef FEATURE_DS_MOBILE_IP
+#ifdef FEATURE_DS_MOBILE_IP_DEREG
+    case DSSNETI_WAITING_FOR_MIP_DEREG_STATE:
+      /*---------------------------------------------------------------------
+        Call ppp_abort().
+      ---------------------------------------------------------------------*/
+      (void)ppp_abort(PPP_UM_SN_DEV);
+      /*---------------------------------------------------------------------
+       Traffic channel is torn down. Cancel the timer
+      ---------------------------------------------------------------------*/
+      timer_result = ps_timer_cancel(dssneti_sm_cb.phy_iface_timer);
+      ASSERT(timer_result != PS_TIMER_FAILURE);
+      /*---------------------------------------------------------------------
+        Transition to DSSNETI_CLOSED_STATE.
+      ---------------------------------------------------------------------*/
+      dssneti_set_netstate(DSSNETI_CLOSED_STATE);
+      break;
+#endif /* FEATURE_DS_MOBILE_IP_DEREG */
+#endif /* FEATURE_DS_MOBILE_IP */
+
     default:
       /*---------------------------------------------------------------------
         Sanity Check
@@ -2531,6 +2691,15 @@ LOCAL void dssnet_process_ppp_resync_ev
       ---------------------------------------------------------------------*/
       dssneti_set_netstate(DSSNETI_PPP_RESYNC_STATE);
       break;
+
+#ifdef FEATURE_DS_MOBILE_IP
+#ifdef FEATURE_DS_MOBILE_IP_DEREG
+    case DSSNETI_WAITING_FOR_MIP_DEREG_STATE:
+      MSG_MED( "got LINK_RESYNC_EV in MIP_DEREG state, closing PPP",0,0,0);
+      dssneti_set_netstate(DSSNETI_CLOSING_STATE);
+      break;
+#endif /* FEATURE_DS_MOBILE_IP_DEREG */
+#endif /* FEATURE_DS_MOBILE_IP */
 
     default:
       /*---------------------------------------------------------------------
@@ -2702,6 +2871,14 @@ void dssnet_sm_post_event
       cmd_type = PS_DSSNET_MIP_FAILURE_CMD;
       break;
 
+#ifdef FEATURE_DS_MOBILE_IP
+#ifdef FEATURE_DS_MOBILE_IP_DEREG
+    case DSSNET_MIP_DEREGED_EV:
+      cmd_type = PS_DSSNET_MIP_DEREGED_EV_CMD;
+      break;
+#endif /* FEATURE_DS_MOBILE_IP_DEREG */
+#endif /* FEATURE_DS_MOBILE_IP */
+
     case DSSNET_NET_IFACE_DOWN_EV:
       cmd_type = PS_DSSNET_NET_IFACE_DOWN_CMD;
       break;
@@ -2829,6 +3006,12 @@ void dssnet_sm_init
                      dssnet_process_ppp_resync_ev);
   ps_set_cmd_handler(PS_DSSNET_PHY_LINK_DOWN_PPP_ABORT_CMD, 
                      dssnet_process_phy_link_down_ppp_abort_cmd_ev);
+#ifdef FEATURE_DS_MOBILE_IP
+#ifdef FEATURE_DS_MOBILE_IP_DEREG
+  ps_set_cmd_handler(PS_DSSNET_MIP_DEREGED_EV_CMD, 
+                     dssneti_process_mip_dereged_ev);
+#endif /* FEATURE_DS_MOBILE_IP_DEREG */
+#endif /* FEATURE_DS_MOBILE_IP */
 
   /*-------------------------------------------------------------------------
     Allocate ps_iface event buffers
@@ -2903,12 +3086,12 @@ void is707_get_ppp_auth_info_from_nv
     nv_status = nv_get(NV_DS_SIP_ACTIVE_PROFILE_INDEX_I, &nv_item );
     if( nv_status == NV_DONE_S )
     {
-      MSG_FATAL( "NV read success, active profile index is %d", 
+      MSG_MED( "NV read success, active profile index is %d", 
                nv_item.ds_sip_active_profile_index, 0, 0 );
     }
     else
     {
-      MSG_FATAL( "NV read failed for active profile index", 0, 0, 0 );
+      MSG_MED( "NV read failed for active profile index", 0, 0, 0 );
       ppp_config->auth_info.user_id_len = 0;
       ppp_config->auth_info.passwd_len = 0;
       return;
@@ -2923,6 +3106,7 @@ void is707_get_ppp_auth_info_from_nv
 #ifdef FEATURE_UIM_SUPPORT_3GPD
     ppp_config->auth_info.nai_entry_index=index;
 #endif /* FEATURE_UIM_SUPPORT_3GPD */
+
     /*-------------------------------------------------------------------------
     	Read the PPP NAI ID from NV FOR ACTIVE PROFILE.
      -------------------------------------------------------------------------*/
@@ -2938,7 +3122,7 @@ void is707_get_ppp_auth_info_from_nv
       memcpy( ppp_config->auth_info.user_id_info,
               (char *)nv_item.ds_sip_nai_info.nai,
               ppp_config->auth_info.user_id_len );
-      MSG_FATAL( "User id succesfully read",0 , 0, 0 );
+      MSG_MED( "User id succesfully read",0 , 0, 0 );
     }
     /*-------------------------------------------------------------------------
       If NV was never written then the length of the User_id is set to 0.
@@ -2950,8 +3134,44 @@ void is707_get_ppp_auth_info_from_nv
         Set the user_id length to 0.
       -----------------------------------------------------------------------*/
       ppp_config->auth_info.user_id_len = 0;
-      MSG_FATAL( "PPP user ID never written", 0, 0, 0 );
+      MSG_ERROR( "PPP user ID never written", 0, 0, 0 );
     }
+#ifdef CUST_EDITION
+    /*-------------------------------------------------------------------------
+      Read the PPP User ID from NV. 
+    -------------------------------------------------------------------------*/
+    nv_status = nv_get( NV_PPP_USER_ID_I, &nv_item );
+
+    /*-------------------------------------------------------------------------
+      If NV read succeeds, load the user ID into the provided ppp config
+    -------------------------------------------------------------------------*/
+    if( nv_status == NV_DONE_S)
+    {
+       if(nv_item.ppp_user_id.user_id_len > 0)
+       {
+          ppp_config->auth_info.user_id_len = nv_item.ppp_user_id.user_id_len;
+          memcpy( ppp_config->auth_info.user_id_info,
+                  (char *)nv_item.ppp_user_id.user_id,
+                   ppp_config->auth_info.user_id_len );
+       }
+       else
+       {
+          MSG_ERROR( "PPP user ID NV_DS_SIP_NAI_INFO_I", 0, 0, 0 );
+       }
+    }
+    /*-------------------------------------------------------------------------
+      If NV was never written then the length of the User_id is set to 0.
+      This will ensure that no user ID is included in the AP response.
+    -------------------------------------------------------------------------*/
+    else
+    {
+      /*-----------------------------------------------------------------------
+         Set the user_id length to 0.
+      -----------------------------------------------------------------------*/
+      ppp_config->auth_info.user_id_len = 0;
+      MSG_ERROR( "PPP user ID never written", 0, 0, 0 );
+    }
+#endif
 
     /*-------------------------------------------------------------------------
       Read the PPP password from NV. 
@@ -2968,7 +3188,7 @@ void is707_get_ppp_auth_info_from_nv
       memcpy( ppp_config->auth_info.passwd_info,
               (char *)nv_item.ds_sip_ppp_ss_info.ss,
               ppp_config->auth_info.passwd_len );
-      MSG_FATAL( " password  succesfully read",0 , 0, 0 );
+      MSG_MED( " password  succesfully read",0 , 0, 0 );
     }
     else
     {
@@ -3002,7 +3222,7 @@ void is707_get_ppp_auth_info_from_nv
          Set the user_id length to 0.
       -----------------------------------------------------------------------*/
       ppp_config->auth_info.user_id_len = 0;
-      MSG_FATAL( "PPP user ID never written", 0, 0, 0 );
+      MSG_ERROR( "PPP user ID never written", 0, 0, 0 );
     }
 
     /*-------------------------------------------------------------------------
@@ -3024,72 +3244,8 @@ void is707_get_ppp_auth_info_from_nv
     {
       passwd_read_failed = TRUE; /* PPP Password NV was never written */
     }
-  } 
-#ifdef FEATURE_VERSION_W027
-  if(strstr(ppp_config->auth_info.user_id_info,"mts"))
-  {
-  		memset((char *)ppp_config->auth_info.user_id_info,0,PPP_MAX_USER_ID_LEN);
-		memset((char *)ppp_config->auth_info.passwd_info,0,PPP_MAX_PASSWD_LEN);
-  		memcpy((char *)ppp_config->auth_info.user_id_info,"wap@wap.mtsindia.in",19);
-		memcpy((char *)ppp_config->auth_info.passwd_info,"wap",3);
-		ppp_config->auth_info.passwd_len = 3;
-		ppp_config->auth_info.user_id_len = 19;
-		MSG_FATAL("mts...................",0,0,0);
   }
-  else if(strstr(ppp_config->auth_info.user_id_info,"reliance"))
-  {
-  		memset((char *)ppp_config->auth_info.user_id_info,0,PPP_MAX_USER_ID_LEN);
-		memset((char *)ppp_config->auth_info.passwd_info,0,PPP_MAX_PASSWD_LEN);
-  		memcpy((char *)ppp_config->auth_info.user_id_info,"SpiceD88@wap.relianceinfo.com",29);
-		memcpy((char *)ppp_config->auth_info.passwd_info,"K39MspDeci",10);
-		ppp_config->auth_info.passwd_len = 10;
-		ppp_config->auth_info.user_id_len = 29;
-		MSG_FATAL("reliance...................",0,0,0);
-  }
-  else if(strstr(ppp_config->auth_info.user_id_info,"mycdma"))
-  {
-  		memset((char *)ppp_config->auth_info.user_id_info,0,PPP_MAX_USER_ID_LEN);
-		memset((char *)ppp_config->auth_info.passwd_info,0,PPP_MAX_PASSWD_LEN);
-  		memcpy((char *)ppp_config->auth_info.user_id_info,"card",4);
-		memcpy((char *)ppp_config->auth_info.passwd_info,"card",4);
-		ppp_config->auth_info.passwd_len = 4;
-		ppp_config->auth_info.user_id_len = 4;
-		MSG_FATAL("mycdma...................",0,0,0);
-  }
-  else if(strstr(ppp_config->auth_info.user_id_info,"vmi"))
-  {
-  		memset((char *)ppp_config->auth_info.user_id_info,0,PPP_MAX_USER_ID_LEN);
-		memset((char *)ppp_config->auth_info.passwd_info,0,PPP_MAX_PASSWD_LEN);
-  		memcpy((char *)ppp_config->auth_info.user_id_info,"wap@ttsl.vmi.com",16);
-		memcpy((char *)ppp_config->auth_info.passwd_info,"wap",3);
-		ppp_config->auth_info.passwd_len = 16;
-		ppp_config->auth_info.user_id_len = 3;
-		MSG_FATAL("vmi...................",0,0,0);
-  }
-/*
-  if(strstr(ppp_config->auth_info.user_id_info,"mts")||strstr(ppp_config->auth_info.user_id_info,"reliance")
-  	 ||strstr(ppp_config->auth_info.user_id_info,"card")||strstr(ppp_config->auth_info.user_id_info,"vmi"))
-  {
-  		nv_item.ppp_password.password_len = ppp_config->auth_info.passwd_len;
-        memcpy( (char *)nv_item.ppp_password.password,
-                ppp_config->auth_info.passwd_info,
-                ppp_config->auth_info.passwd_len );
-    
-        nv_status = psi_put_nv_item( NV_PPP_PASSWORD_I, &nv_item );
-
-		MSG_FATAL("nv_status==passwod===%d",nv_status,0,0);
-
-		nv_item.ppp_user_id.user_id_len = ppp_config->auth_info.user_id_len;
-        memcpy( (char *)nv_item.ppp_user_id.user_id,
-                ppp_config->auth_info.user_id_info,
-                ppp_config->auth_info.user_id_len );
-    
-        nv_status = psi_put_nv_item( NV_PPP_USER_ID_I, &nv_item );
-		MSG_FATAL("nv_status===userid==%d",nv_status,0,0);
-  }
-  */
   
-#endif
   MSG_FATAL( "is707_get_ppp_auth_info_from_nv %d %d %d",ppp_config->auth_info.user_id_info[0] , ppp_config->auth_info.user_id_info[1], ppp_config->auth_info.user_id_info[2] );
   MSG_FATAL( "is707_get_ppp_auth_info_from_nv %d %d %d",ppp_config->auth_info.user_id_info[3] , ppp_config->auth_info.user_id_info[4], ppp_config->auth_info.user_id_len );
   MSG_FATAL( "is707_get_ppp_auth_info_from_nv %d %d %d",ppp_config->auth_info.passwd_info[0] , ppp_config->auth_info.passwd_info[1], ppp_config->auth_info.passwd_info[2] );
@@ -3102,7 +3258,7 @@ void is707_get_ppp_auth_info_from_nv
   {
 #ifdef FEATURE_DATA_PPP_DEFAULT_PASSWD
     
-    MSG_FATAL( "SN PPP Password not provisioned, using default", 0, 0, 0 );
+    MSG_MED( "SN PPP Password not provisioned, using default", 0, 0, 0 );
     /*-----------------------------------------------------------------------
       Write the default password to NV
     -----------------------------------------------------------------------*/
@@ -3125,12 +3281,12 @@ void is707_get_ppp_auth_info_from_nv
 
       if( nv_status != NV_DONE_S )
       {
-        MSG_FATAL( "Failed to write default SN PPP password to NV", 0, 0, 0);
+        MSG_ERROR( "Failed to write default SN PPP password to NV", 0, 0, 0);
       }
     }
     else
     {    
-      MSG_FATAL( "Default PPP pwd too long to fit in NV. Skipping NV Write", 
+      MSG_ERROR( "Default PPP pwd too long to fit in NV. Skipping NV Write", 
                  0, 0, 0 );
     }
 
@@ -3147,7 +3303,7 @@ void is707_get_ppp_auth_info_from_nv
     else
     {
       ppp_config->auth_info.passwd_len = 0;
-      MSG_FATAL( "Default PPP password too long to fit in PPP config. "
+      MSG_ERROR( "Default PPP password too long to fit in PPP config. "
                  "SN PPP password not configured", 0, 0, 0);
     }
 #else
@@ -3155,7 +3311,7 @@ void is707_get_ppp_auth_info_from_nv
       Set the user_id length as 0.
     -----------------------------------------------------------------------*/
     ppp_config->auth_info.passwd_len = 0;
-    MSG_FATAL( "PPP password never written", 0, 0, 0 );
+    MSG_ERROR( "PPP password never written", 0, 0, 0 );
 #endif /* FEATURE_DATA_PPP_DEFAULT_PASSWD */
   }
 } /* is707_get_ppp_auth_info_from_nv() */
@@ -3186,7 +3342,6 @@ void dssnet_set_in_qnc_call
 )
 {
 /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-  MSG_FATAL( "dssnet_set_in_qnc_call %d", in_qnc_call, 0, 0 );
   dssneti_sm_cb.disable_lcp_auth = in_qnc_call;
 } /* dssnet_set_in_qnc_call() */
 

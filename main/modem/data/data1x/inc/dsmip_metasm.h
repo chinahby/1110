@@ -16,7 +16,7 @@ EXTERNALIZED FUNCTIONS
    mip_meta_sm_config_session()
      Load MIP session defaults from NV to all sessions.
 
-Copyright (c) 2000, 2001 by QUALCOMM, Incorporated.  All Rights Reserved.
+Copyright (c) 2000 - 2011 by QUALCOMM, Incorporated.  All Rights Reserved.
 ===========================================================================*/
 
 
@@ -25,10 +25,11 @@ Copyright (c) 2000, 2001 by QUALCOMM, Incorporated.  All Rights Reserved.
                       EDIT HISTORY FOR FILE
 
   $PVCSPath: O:/src/asw/COMMON/vcs/dsmip_metasm.h_v   1.10   29 Dec 2002 15:45:36   jeffd  $
-  $Header: //source/qcom/qct/modem/data/1x/mip/main/lite/inc/dsmip_metasm.h#1 $ $DateTime: 2008/04/11 07:14:56 $ $Author: nsivakum $
+  $Header: //source/qcom/qct/modem/data/1x/mip/main/lite/inc/dsmip_metasm.h#2 $ $DateTime: 2011/02/24 23:31:53 $ $Author: msankar $
 
 when        who    what, where, why
 --------    ---    ----------------------------------------------------------
+02/25/11    ms     Ported MOBILE_IP_DEREG feature.
 11/14/02    jd     Removed netmodel_mode from msmi_info (unused)
                    mip_meta_sm_set_in_flow takes uint32 mask instead of 16
 05/10/02    jd     moved session info array, ui session & password data
@@ -70,11 +71,12 @@ when        who    what, where, why
 typedef enum
 {
   MSM_MIN_EV = -1,
-  MSM_IFACE_UP_W_MIP_EV,     /* Interface is UP and M.IP is supported      */
-  MSM_IFACE_UP_WO_MIP_EV,    /* Interface is UP and M.IP is unsupported    */
-  MSM_IFACE_DOWN_EV,         /* Interface is down                          */
-  MSM_INIT_RRQ_FAILED_EV,    /* Initial Reg Req failed                     */ 
-  MSM_RE_RRQ_FAILED_EV,      /* Re-Reg Req failed                          */
+  MSM_IFACE_UP_W_MIP_EV  = 0,    /* Interface is UP and M.IP is supported    */
+  MSM_IFACE_UP_WO_MIP_EV = 1,    /* Interface is UP and M.IP is unsupported  */
+  MSM_IFACE_DOWN_EV      = 2,    /* Interface is down                        */
+  MSM_INIT_RRQ_FAILED_EV = 3,    /* Initial Reg Req failed                   */ 
+  MSM_RE_RRQ_FAILED_EV   = 4,    /* Re-Reg Req failed                        */
+  MSM_BRING_DOWN_MIP_EV  = 5,    /* Start M.IP deregistration                */
   MSM_MAX_EV
 } mip_meta_sm_event_type;
 

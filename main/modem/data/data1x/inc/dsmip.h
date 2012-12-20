@@ -29,17 +29,18 @@ EXTERNALIZED FUNCTIONS
      Retrieves the NAIs for a given MIP profile for the
      tethered device and stores them in the mip session info.  
 
-Copyright (c) 2000-2009 by QUALCOMM, Incorporated.  All Rights Reserved.
+Copyright (c) 2000-2011 by QUALCOMM, Incorporated.  All Rights Reserved.
 ===========================================================================*/
 /*===========================================================================
 
                       EDIT HISTORY FOR FILE
 
   $PVCSPath: O:/src/asw/COMMON/vcs/dsmip.h_v   1.9   10 Oct 2002 15:54:16   jayanthm  $
-  $Header: //source/qcom/qct/modem/data/1x/mip/main/lite/inc/dsmip.h#3 $ $DateTime: 2009/05/27 05:07:18 $ $Author: nsivakum $
+  $Header: //source/qcom/qct/modem/data/1x/mip/main/lite/inc/dsmip.h#4 $ $DateTime: 2011/02/24 23:31:53 $ $Author: msankar $
 
 when        who    what, where, why
 --------    ---    ----------------------------------------------------------
+02/25/11    ms     Ported MOBILE_IP_DEREG feature.
 04/29/09    sn     Merged MIP event registration support and Ported support 
                    for call throttle feature (DCTM).
 04/16/09    sn     Merged support for separate NAI for Tethered SIP and MIP 
@@ -173,6 +174,9 @@ typedef enum
   RSMI_INIT_RRQ_STATE,               /* Initial RRQ state                  */
   RSMI_REGISTERED_STATE,             /* Registered state                   */
   RSMI_RE_RRQ_STATE,                 /* Re-RRQ state                       */
+  RSMI_DE_RRQ_STATE,                 /* De-registration RRQ state          */
+  RSMI_DEREGISTERED_STATE,           /* De-registered state                */
+                                     /* for future enhancements            */
   RSMI_MAX_STATE
 } rsmi_state_type;
 
@@ -186,11 +190,14 @@ typedef struct
   uint32  re_rrq_timeout;            /* period between RRQ's (ms)          */
   int     life_timer;                /* Registration lifetime timer handle */
   int     reg_timer;                 /* Registration timeout timer handle  */
+  int     dereg_timer;               /* Deregistration timeout timer handle*/
+                                     /* RRQ holdoff (1s) timer handle      */
   int     rrq_holdoff_timer;         /* RRQ holdoff (1s) timer handle      */
   uint16  rtt_estimate;              /* Estimated RTT from RRQ -> RRP      */ 
   sint15  app_id;                    /* Stores the socket App ID           */
   byte    rrq_cnt;                   /* retries sent                       */
   byte    max_rrqs;                  /* max number of rrqs                 */
+  byte    max_derrqs;                /* max number of dereg rrqs           */
   boolean one_second_since_last_rrq; /* false when holdoff timer is active */
   boolean force_dormancy;            /* This boolean determines if the     */
                                      /* callis forced to go dormant on     */
@@ -224,6 +231,7 @@ typedef enum
   MIP_MIN_EV       = 0,
   MIP_SUCCESS_EV   = 0,
   MIP_FAILURE_EV   = 1,
+  MIP_DEREGED_EV   = 2,
   MIP_MAX_EV
 } mip_event_e_type;
 
@@ -236,7 +244,8 @@ DESCRIPTION
 typedef enum
 {
   MIP_FAILURE_EV_MASK = (1 << MIP_FAILURE_EV),
-  MIP_SUCCESS_EV_MASK = (1 << MIP_SUCCESS_EV)
+  MIP_SUCCESS_EV_MASK = (1 << MIP_SUCCESS_EV),
+  MIP_DEREGED_EV_MASK = (1 << MIP_DEREGED_EV)
 } mip_event_mask_e_type;
 
 /*---------------------------------------------------------------------------

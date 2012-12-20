@@ -18,9 +18,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/legacymedia/filemedia/mp4parser/main/latest/inc/atomdefs.h#11 $
-$DateTime: 2008/07/25 16:29:32 $
-$Change: 710395 $
+$Header: //source/qcom/qct/multimedia/qtv/legacymedia/filemedia/mp4parser/main/latest/inc/atomdefs.h#13 $
+$DateTime: 2010/04/20 22:35:42 $
+$Change: 1273913 $
 
 
 ========================================================================== */
@@ -291,6 +291,8 @@ typedef enum
   WM_PRO_PLUS_AUDIO = 0x88,
   MPEG4_VIDEO       = 0x20,
   H263_VIDEO        = 0xc0,
+  AC3_AUDIO         = 0xA5,
+  EAC3_AUDIO        = 0xA6,
 
 //#ifdef FEATURE_H264_DECODER
   H264_VIDEO        = 0xc1,   /* temp value, update when correct value is known */
@@ -301,6 +303,7 @@ typedef enum
   WM_VIDEO_9        = 0xc4,   /* temp value, update when correct value is known */
 
   WM_AUDIO          = 0xc5,   /* temp value, update when correct value is known */ 
+  PCM_AUDIO         = 0xc6,   /* temp value, update when correct value is known */ 
 
 #ifdef FEATURE_MP4_3GPP_TIMED_TEXT
   TIMED_TEXT        = 0xFD,
@@ -313,6 +316,7 @@ typedef enum
 #endif /* FEATURE_QTV_SKT_MOD */
 
   MPEG4_IMAGE       = 0xFE,
+  H263_IMAGE	    = 0xFC,
   MPEG4_SYS_OD      = 0x01,
   MPEG4_SYS_BIFS    = 0x01,
 

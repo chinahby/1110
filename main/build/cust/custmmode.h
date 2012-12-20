@@ -17,10 +17,11 @@ DESCRIPTION
   This section contains comments describing changes made to the module.
   Notice that changes are listed in reverse chronological order.
 
-$Header: //source/qcom/qct/modem/mmode/build/rel/08H1/cust/inc/custmmode.h#8 $
+$Header: //source/qcom/qct/modem/mmode/build/rel/08H1_QSC1110_3.X/cust/inc/custmmode.h#2 $
 
 when       who   what, where, why
 --------   ---   ---------------------------------------------------------
+03/03/11   sg    Enable FEATURE_MMOC_TMC_HEAP, for all targets.
 06/01/09   sv    Enable HICPS feature to Sync GSM and HDR protocol ACQ's
                  when UOOS is not enabled
 04/09/09   aj    Add FEATURE_CM_SS_MEAS
@@ -174,6 +175,8 @@ when       who   what, where, why
   #ifdef FEATURE_IRAT_PILOT_MEAS
 #error code not present
   #endif 
+
+  #define FEATURE_MMOC_TMC_HEAP
 
   /*
   ** Multi Mode features that are WCDMA or GSM specific

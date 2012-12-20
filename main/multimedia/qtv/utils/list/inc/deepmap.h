@@ -14,9 +14,9 @@ Copyright 2007 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/utils/list/main/latest/inc/deepmap.h#1 $
-$DateTime: 2008/05/08 11:03:24 $
-$Change: 656211 $
+$Header: //source/qcom/qct/multimedia/qtv/utils/list/main/latest/inc/deepmap.h#2 $
+$DateTime: 2009/10/26 21:51:26 $
+$Change: 1064894 $
 
 ========================================================================== */
 
@@ -231,8 +231,11 @@ private:
       m_table[bin] = NULL;
     }    
 
-    QTV_Delete_Array(m_table);
-    m_table = NULL;
+    if(m_table != NULL)
+    {
+      QTV_Delete_Array(m_table);
+      m_table = NULL;
+    }
 
     m_size = 0;
   }

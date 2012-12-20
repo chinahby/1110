@@ -18,7 +18,7 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS
   The mobile station must have received a Traffic Channel assignement
   message before entering this state.
 
-Copyright (c) 1990-2005 by QUALCOMM, Incorporated.  All Rights Reserved.
+Copyright (c) 1990-2010 by QUALCOMM, Incorporated.  All Rights Reserved.
 
 *====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*/
 
@@ -30,10 +30,11 @@ This section contains comments describing changes made to the module.
 Notice that changes are listed in reverse chronological order.
 
 $PVCSPath: L:/src/asw/MSM5100/CP_REL_A/vcs/mcctc.c_v   1.63   03 Oct 2002 15:46:42   phosabet  $
-$Header: //source/qcom/qct/modem/1x/cp/rel/1h08/src/mcctc.c#1 $ $DateTime: 2009/05/29 03:54:56 $ $Author: prabhuk $
+$Header: //depot/asic/qsc1100/modem/1x/cp/src/mcctc.c#2 $ $DateTime: 2010/11/25 07:53:16 $ $Author: sshahi $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+11/04/10   ssh     Added processing of SMCM with use_time as TRUE.
 01/28/09   ag      Fixed handling of maximum invalid SPC validation attempts.
 05/26/08   ss      Fixed PMRM reporting problem, by setting the variables that
                    control Power Measurement Reporting.
@@ -2130,10 +2131,13 @@ void tc_release( void )
       else
       {
         /* Fill in the order that was stored when it arrived */
+        if(tc_action_msg.gen_tc.msg_type == CAI_TC_FWD_ORD_MSG)
+        {
         msg_ptr->msg.msg.tc_ord = tc_action_msg.tc_ord;
 
         /* Process the Order */
         tc_rel_msg( &msg_ptr->msg );
+        }
 
         /* Put the rxtx buffer back on the free queue */
         q_put( &mcc_rxtx_free_q, &msg_ptr->hdr.cmd_hdr.link );
@@ -3543,17 +3547,12 @@ void tc_tc_msg
       **------------------------------------------------------------------*/
       MSG_MED( "Rxed Analog Handoff Msg", 0, 0, 0 );
 
-      #ifdef FEATURE_ACP
-#error code not present
-      #endif /* FEATURE_ACP */
-
-      {
         /* Unsupported Operation mode or band class */
         rej_parms.rej_msg_type = CAI_FM_HO_MSG;
         rej_parms.rej_code = CAI_REJ_CAP;
         send_rej_order( &rej_parms);
         MSG_HIGH("Analog not supported, rej AHDM", 0, 0, 0);
-      }
+
       break;
 
 
@@ -4417,11 +4416,29 @@ void tc_tc( void )
       }
       else
       {
-        /* Fill in the order that was stored when it arrived */
+        /* Fill in the msg that was stored when it arrived */
+        
+        if(tc_action_msg.gen_tc.msg_type == CAI_TC_FWD_ORD_MSG)
+        {
         msg_ptr->msg.msg.tc_ord = tc_action_msg.tc_ord;
 
         /* Process the Order */
         tc_tc_msg( &msg_ptr->msg );
+        }
+        #ifdef FEATURE_IS2000_REL_A
+        else if(tc_action_msg.gen_tc.msg_type == CAI_SECURITY_MODE_MSG)
+        {
+          msg_ptr->msg.msg.tcsmcm  = tc_action_msg.tcsmcm;
+
+          /* Process the SMCM */
+          tc_tc_msg( &msg_ptr->msg );
+        }
+        #endif /* FEATURE_IS2000_REL_A */
+        else
+        {
+          ERR("Timer expired for unknown msg type %d",
+            tc_action_msg.gen_tc.msg_type, 0, 0); 
+        }
 
         /* Put the rxtx buffer back on the free queue */
         q_put( &mcc_rxtx_free_q, &msg_ptr->hdr.cmd_hdr.link );

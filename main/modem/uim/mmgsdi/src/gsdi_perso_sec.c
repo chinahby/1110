@@ -17,7 +17,7 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS
 
                         COPYRIGHT INFORMATION
 
-Copyright (c) 2001 - 2010 QUALCOMM, Incorporated and its licensors.  All Rights
+Copyright (c) 2001 - 2011 QUALCOMM, Incorporated and its licensors.  All Rights
 Reserved.  QUALCOMM Proprietary.  Export of this technology or software
 is regulated by the U.S. Government. Diversion contrary to U.S. law prohibited.
 *====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*/
@@ -26,10 +26,11 @@ is regulated by the U.S. Government. Diversion contrary to U.S. law prohibited.
 /*===========================================================================
                         EDIT HISTORY FOR MODULE
 
-$Header: //source/qcom/qct/modem/uim/su/baselines/qsc1110/rel/3.3.65/uim/mmgsdi/src/gsdi_perso_sec.c#1 $$ $DateTime: 2010/03/22 01:47:31 $
+$Header: //source/qcom/qct/modem/uim/su/baselines/qsc1110/rel/3.3.65/uim/mmgsdi/src/gsdi_perso_sec.c#2 $$ $DateTime: 2011/02/24 16:39:02 $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+02/12/11   nmb     Fixed perso check of EFs GID1 and GID2 
 03/04/10   nmb     Fixed range of perso keys between 0 and 9
 05/04/09   js      Fixed warnings
 04/16/09   mib     Reset perso counter when control key is correct
@@ -3178,7 +3179,7 @@ static gsdi_returns_T gsdi_perso_sec_check_sim_sp_codes(
   gsdi_returns_T         gsdi_status    = GSDI_SUCCESS;
   uint32                 i              = 0;
   uint32                 loop_control   = 0;
-  boolean                mismatch       = FALSE;
+  boolean                mismatch       = TRUE;
 
   MMGSDI_RETURN_IF_NULL(features);
   MMGSDI_RETURN_IF_NULL(sim_data_p);
@@ -3230,7 +3231,7 @@ static gsdi_returns_T gsdi_perso_sec_check_sim_sp_codes(
 }
 
 /*===========================================================================
-FUNCTION GSDI_PERSO_CHECK_SIM_cP_CODES
+FUNCTION GSDI_PERSO_CHECK_SIM_CP_CODES
 
 DESCRIPTION
   This function is a function used to read the SIM Contents and check them
@@ -3258,7 +3259,7 @@ static gsdi_returns_T gsdi_perso_sec_check_cp_sim_codes(
   gsdi_returns_T        gsdi_status    = GSDI_SUCCESS;
   uint32                i              = 0;
   uint32                loop_control   = 0;
-  boolean               mismatch       = FALSE;
+  boolean               mismatch       = TRUE;
 
 
   MMGSDI_RETURN_IF_NULL(features);

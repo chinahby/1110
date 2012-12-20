@@ -14,9 +14,9 @@ Copyright 2006 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/utils/trackselection/main/latest/src/DefaultTrackSelectionPolicy.cpp#8 $
-$DateTime: 2008/08/26 16:02:10 $
-$Change: 731094 $
+$Header: //source/qcom/qct/multimedia/qtv/utils/trackselection/main/latest/src/DefaultTrackSelectionPolicy.cpp#10 $
+$DateTime: 2010/04/26 00:39:24 $
+$Change: 1278389 $
 
 ========================================================================== */
 /* Includes custmp4.h. The following 2 includes must be the first includes in this file! */
@@ -204,7 +204,7 @@ void DefaultTrackSelectionPolicy::SelectTracks(ITrackList *trackList /* in */,
     else
     {      
       if ((selectedVideoTrack < 0) &&
-          (codecType == Media::H263_CODEC))
+          (codecType == Media::H263_CODEC)||(codecType == Media::STILL_IMAGE_H263_CODEC))
       {
         //Select track.
         if (trackList->SelectTrack(i))
@@ -213,7 +213,8 @@ void DefaultTrackSelectionPolicy::SelectTracks(ITrackList *trackList /* in */,
         }
       }
 #ifdef FEATURE_H264_DECODER
-      else if ((codecType == Media::H264_CODEC) && !m_doBlockH264)
+      else if ((selectedVideoTrack < 0)&& 
+               (codecType == Media::H264_CODEC) && !m_doBlockH264)
       {
         //Select track.
         if (trackList->SelectTrack(i))

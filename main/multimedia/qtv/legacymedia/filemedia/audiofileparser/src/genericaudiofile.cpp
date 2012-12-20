@@ -24,7 +24,7 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                      Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/legacymedia/filemedia/audiofileparser/main/latest/src/genericaudiofile.cpp#13 $
+$Header: //source/qcom/qct/multimedia/qtv/legacymedia/filemedia/audiofileparser/main/latest/src/genericaudiofile.cpp#14 $
 
 ========================================================================== */
 
@@ -615,7 +615,9 @@ void GenericAudioFile::SetTotalTime()
   handle.client.data_len = m_fileSize;  
   
   /* Call CMX API to get the total playback time */
+#ifndef FEATURE_WINCE
   cmx_audfmt_get_time(&handle, GetTotalTimeCallback, (void *)this);  
+#endif
   (void)QCUtils::WaitForCondition(&genericAudio_wakeupSync,COMMON_IDLE_WAIT_TIMEOUT_MSEC);
   /* Reset the file read position */  
 }
@@ -777,7 +779,9 @@ void GenericAudioFile::GetAudioSpec()
   handle.client.data_len = m_fileSize;
   QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "created the wait condition in GenericAudioFile");
   /* Call CMX API to get the audio spec */
+#ifndef FEATURE_WINCE
   cmx_audfmt_get_specs(&handle, GetAudioSpecCallback, (void *)this);  
+#endif
   (void)QCUtils::WaitForCondition(&genericAudio_wakeupSync,COMMON_IDLE_WAIT_TIMEOUT_MSEC);    
 }
 
@@ -1255,7 +1259,9 @@ uint32 GenericAudioFile::resetPlayback (
     if((res_time != 0) && ( res_time == currentPosTimeStamp))
     {
       QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,"GenericAudioFile::resetPlayback calling cmx_audfmt_fforward as res_time==currentPosTimeStamp");        
+#ifndef FEATURE_WINCE
       cmx_audfmt_fforward( res_time, SeekCallback, (void *) this );   
+#endif
       isSeekIssued = true;
     }
     else
@@ -1300,7 +1306,9 @@ uint32 GenericAudioFile::resetPlayback (
           {
             time_ms = res_time - currentPosTimeStamp;           
             QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,"calling cmx_audfmt_fforward with time_ms %d",time_ms);          
+#ifndef FEATURE_WINCE
             cmx_audfmt_fforward( time_ms, SeekCallback, (void *) this );
+#endif
             isSeekIssued = true;
             m_repositioned = true;
           }
@@ -1319,7 +1327,9 @@ uint32 GenericAudioFile::resetPlayback (
           time_ms = currentPosTimeStamp - res_time;        
         }
           QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,"calling cmx_audfmt_rewind with time_ms %d",time_ms);          
+#ifndef FEATURE_WINCE
           cmx_audfmt_rewind( time_ms, SeekCallback, (void *) this );
+#endif
           isSeekIssued = true;
           m_repositioned = true;
         }    

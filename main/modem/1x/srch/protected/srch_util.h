@@ -13,7 +13,7 @@ GENERAL DESCRIPTION
    searcher files (srch_hw.c, srch_8xhw.c, srch_16xhw.c, srch_Xxhw.c,
    srch_fing.c, srch_comb.c, srch_util.c, srch_PN.c).
 
-  Copyright (c) 2001-2007
+  Copyright (c) 2001-2009
                 by QUALCOMM, Inc.  All Rights Reserved.
 *====*====*====*====*====*====*====*====*====*====*====*====*====*====*===*/
 
@@ -24,10 +24,11 @@ GENERAL DESCRIPTION
 This section contains comments describing changes made to the module.
 Notice that changes are listed in reverse chronological order.
 
-$Header: //source/qcom/qct/modem/1x/srch/rel/1h08/protected/srch_util.h#1 $
+$Header: //source/qcom/qct/modem/1x/srch/rel/1h08/protected/srch_util.h#2 $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+11/09/09   bb      Define the srch_util_gen_epoch() method
 02/23/07   sst     Create position comparison macros
 12/15/06   tjc     Modified traffic to use the sector module
 09/20/06   pa      Export srch_util_rf_reset().
@@ -222,4 +223,20 @@ SIDE EFFECTS   Various demod chip registers.
 ===========================================================================*/
 
 extern void srch_util_rf_reset( void );
+
+/*===========================================================================
+
+FUNCTION       SRCH_UTIL_GEN_EPOCH
+
+DESCRIPTION    This function generates an EPOCH, which establishes an
+               arbitrary zero-offset time reference.
+
+DEPENDENCIES   None.
+
+RETURN VALUE   None.
+
+SIDE EFFECTS   PN generates, fingers, searcher, PDM's etc initialized.
+
+===========================================================================*/
+extern void srch_util_gen_epoch ( void );
 #endif /* SRCH_UTIL_H */

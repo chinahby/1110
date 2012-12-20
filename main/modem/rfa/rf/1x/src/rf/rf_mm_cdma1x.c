@@ -84,10 +84,11 @@ Copyright (c) 2009             by QUALCOMM, Incorporated.  All Rights Reserved.
   This section contains comments describing changes made to the module.
   Notice that changes are listed in reverse chronological order.
 
-$Header: //source/qcom/qct/modem/rfa/rf/1x/main/qsc1100/src/rf/rf_mm_cdma1x.c#28 $
+$Header: //source/qcom/qct/modem/rfa/rf/1x/main/qsc1100/src/rf/rf_mm_cdma1x.c#29 $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+11/1/10    nv      RF is put to sleep after initialization in rf_init_delayed() 
 02/11/09   vb      Bug fix for RFCOM_RECEIVER_1 case in rf_init_cdma1x()
 02/05/09   vb      Added support for RF_HW_QSC11X0_TRI_BAND_BC5_TRI_STATE_PA
 01/20/09   vb      Sleep current Optimization: Changed the PA control to HW during 
@@ -4135,6 +4136,10 @@ rf_init_status_type rf_init_delayed( rfcom_device_enum_type device )
         ERR("RF CAL not valid", 0,0,0);
         init_status = RF_INIT_INVALID_RFCAL;
     }
+
+     /* Disable Primary Chain */
+    rf_sleep_cdma1x( RFCOM_TRANSCEIVER_0 );
+    rf_stay_asleep_cdma1x( RFCOM_TRANSCEIVER_0 );
 
     break;
 

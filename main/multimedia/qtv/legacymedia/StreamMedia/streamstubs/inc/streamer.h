@@ -18,9 +18,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/legacymedia/streammedia/streamstubs/rel/1.0/inc/streamer.h#3 $
-$DateTime: 2008/09/18 21:24:40 $
-$Change: 746805 $
+$Header: //source/qcom/qct/multimedia/qtv/legacymedia/streammedia/streamstubs/rel/1.0/inc/streamer.h#4 $
+$DateTime: 2011/02/02 22:29:39 $
+$Change: 1605117 $
 
 ========================================================================== */
 
@@ -46,6 +46,16 @@ class QtvStream;
 class QtvConfig;
 class StreamMedia;
 
+enum ReconnectionStatus
+{
+  RECONNECT_STATUS_INVALID,
+  RECONNECT_STATUS_REQUIRED,
+  RECONNECT_STATUS_IN_PROGRESS,
+  RECONNECT_STATUS_COMPLETE,
+  RECONNECT_STATUS_EOS_DETECTED
+};
+
+
 
 // Streamer functions used in Mpeg4Player
 class Streamer
@@ -62,6 +72,11 @@ public:
   bool Create(void * pContext, QtvStream * pQtvStream, QtvConfig *configObject);
 
   bool IsPaused() ;
+
+ void setSpeed(float speed);
+ void setAccDuration(int time);
+ bool Reconnect(bool &bError );
+ 
   bool StartStreaming( bool &bError,
                        long nStart,
                        long nStop,
@@ -93,6 +108,12 @@ public:
   {
   };
 #endif
+
+ReconnectionStatus getReconnectionStatus();
+bool PrepareForReconnect(bool isReconnectForFirewall = false);
+bool isReconnectionInProgress();
+bool TeardownForReconnect();
+
   bool InitiateStop();
   uint32 getTotalRxDataRate();
 #ifdef  FEATURE_QTV_QOS_SELECTION

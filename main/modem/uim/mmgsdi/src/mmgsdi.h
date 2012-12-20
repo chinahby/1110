@@ -22,10 +22,11 @@ is regulated by the U.S. Government. Diversion contrary to U.S. law prohibited.
 This section contains comments describing changes made to the module.
 Notice that changes are listed in reverse chronological order.
 
-$Header: //source/qcom/qct/modem/uim/mmgsdi/rel/07H1_2/src/mmgsdi.h#3 $$ $DateTime: 2009/03/19 16:48:40 $
+$Header: //source/qcom/qct/modem/uim/su/baselines/qsc1110/rel/3.3.65/uim/mmgsdi/src/mmgsdi.h#2 $$ $DateTime: 2011/03/25 06:51:16 $
 
 when       who     what, where, why
 --------   ---     -----------------------------------------------------------
+03/22/11   ssr     Fixed the MEID cache
 03/19/09   js      Support for Enhanced NAA Refresh by file path
 02/12/09   kk      Add files to refresh file list for re-reading during FCN
 11/18/08   js      Updated featurization for Send APDU related code
@@ -1855,6 +1856,20 @@ typedef struct {
 }mmgsdi_jcdma_card_attr_type;
 #endif  /* FEATURE_UIM_JCDMA_RUIM_SUPPORT */
 
+
+/* ----------------------------------------------------------------------------
+   STRUCTURE:      MMGSDI_MEID_DATA_TYPE
+
+   DESCRIPTION:
+     Data Structure to hold MEID value.
+-------------------------------------------------------------------------------*/
+
+typedef struct {
+  qword                      meid;
+  boolean                    meid_available;
+} mmgsdi_meid_data_type;
+
+
 /*=============================================================================
 
                                    MMGSDI MACROS
@@ -2146,6 +2161,41 @@ SIDE EFFECTS
 ===========================================================================*/
 void mmgsdi_free(void * ptr);
 
+
+/*===========================================================================
+FUNCTION MMGSDI_GET_MEID
+
+DESCRIPTION
+  It returns cached MEID data.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  mmgsdi_meid_data_type
+
+SIDE EFFECTS
+  None.
+===========================================================================*/
+mmgsdi_meid_data_type mmgsdi_get_meid(void);
+
+/*===========================================================================
+
+FUNCTION MMGSDI_CACHE_MEID_DATA
+
+DESCRIPTION
+  Caching MEID data from NV memory.
+
+DEPENDENCIES
+  None.
+
+RETURN VALUE
+  None.
+
+SIDE EFFECTS
+  None.
+===========================================================================*/
+void mmgsdi_cache_meid_data(void);
 
 #endif /* MMGSDI_H */
 

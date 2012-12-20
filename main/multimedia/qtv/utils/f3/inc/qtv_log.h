@@ -14,9 +14,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/utils/f3/main/latest/inc/qtv_log.h#3 $
-$DateTime: 2008/07/29 05:52:03 $
-$Change: 712286 $
+$Header: //source/qcom/qct/multimedia/qtv/utils/f3/main/latest/inc/qtv_log.h#5 $
+$DateTime: 2009/05/09 01:17:43 $
+$Change: 908545 $
 
 
 ========================================================================== */
@@ -182,6 +182,12 @@ LOG_RECORD_DEFINE(LOG_MPEG4_CLIP_STATS_VER3_C)
   uint32  AudioFormat;
   /* (PV) Video format */
   uint32  VideoFormat;
+  /* (PV) Count of I Frames */
+  uint32 nIFrameTally;
+  /* (PV) Count of P Frames */
+  uint32 nPFrameTally;
+  /* (PV) Count of B Frames */
+  uint32 nBFrameTally;
   /* (PV) Encoded audio bitrate */
   uint32  AudioEncodedBitrate;
   /*Drops due to AV sync failure*/
@@ -639,7 +645,7 @@ typedef PACKED struct
   {
     byte sign; /* bool 1-positive, o-negative */
     uint32 arg_double_int_part;
-    uint8 arg_double_frac_part;
+    uint16 arg_double_frac_part;
   } QTV_ARG_DOUBLE; 
 
 /*

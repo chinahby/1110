@@ -24,7 +24,7 @@ EXTERNALIZED FUNCTIONS
   netmdl_reset_ppp()
     reset the TE-IWF PPP by either terminatingf the link or restarting LCP
 
-  Copyright (c) 1998-2010 QUALCOMM Incorporated. 
+  Copyright (c) 1998-2011 QUALCOMM Incorporated. 
   All Rights Reserved.
   Qualcomm Confidential and Proprietary
 *====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*/
@@ -35,11 +35,13 @@ EXTERNALIZED FUNCTIONS
                         EDIT HISTORY FOR MODULE
 
   $PVCSPath: L:/src/asw/MM_DATA/vcs/ps_ppp_netmodel.c_v   1.17   03 Feb 2003 19:25:44   jeffd  $
-  $Header: //source/qcom/qct/modem/data/cdps/ps/main/lite/src/ps_ppp_netmodel.c#12 $
-  $Author: nsivakum $ $DateTime: 2010/04/20 23:13:35 $
+  $Header: //source/qcom/qct/modem/data/cdps/ps/main/lite/src/ps_ppp_netmodel.c#13 $
+  $Author: nsivakum $ $DateTime: 2011/03/09 10:06:08 $
 
 when        who    what, where, why
 --------    ---    ----------------------------------------------------------
+03/09/11    sn     Fix to read RM NAI (multiple NAI) only if phone is in NV 
+                   mode.
 04/19/10    sn     Merged support for PAP internal auth.
 11/30/09    ps     Fixed the issue of not picking up credentials from DUN when
                    Legacy RUIM card is inserted in an OMH phone.
@@ -1497,9 +1499,16 @@ LOCAL snoop_cb_ret_val_enum_type netmdli_um_chap_cback
 #ifdef FEATURE_DS_MULTIPLE_NAI
   /*-------------------------------------------------------------------------
     Set RM NAI in ppp_cb_array to laptop value before sending the 
-    CHAP response.
+    CHAP response. Multiple NAIs are applicable only for NV mode and so check 
+    if phone is in NV mode before copying RM NAI.
   -------------------------------------------------------------------------*/
-  netmdli_copy_rm_nai(device);
+#ifdef FEATURE_UIM_SUPPORT_3GPD
+  if(uim_3gpd_support() == NVRUIM_3GPD_MIP_RUIM_SIP_NV || 
+     uim_3gpd_support() == NVRUIM_3GPD_MIP_NV_SIP_NV)
+#endif /* FEATURE_UIM_SUPPORT_3GPD */
+  {
+    netmdli_copy_rm_nai(device);
+  }
 #endif /* FEATURE_DS_MULTIPLE_NAI */
 
   chap_proc(device, &dup_item);

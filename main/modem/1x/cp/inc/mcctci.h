@@ -9,7 +9,7 @@ GENERAL DESCRIPTION
   This module externalizes data items needed by the support routines
   for Mobile Station Control on the Traffic Channel state.
 
-Copyright (c) 1990-2005 by QUALCOMM, Incorporated.  All Rights Reserved.
+Copyright (c) 1990-2010 by QUALCOMM, Incorporated.  All Rights Reserved.
 
 *====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*/
 
@@ -21,10 +21,11 @@ This section contains comments describing changes made to the module.
 Notice that changes are listed in reverse chronological order.
 
 $PVCSPath: L:/src/asw/MSM5100/CP_REL_A/vcs/mcctci.h_v   1.1.2.0   30 Nov 2001 17:23:58   fchan  $
-$Header: //source/qcom/qct/modem/1x/cp/rel/1h08/inc/mcctci.h#1 $ $DateTime: 2009/05/29 03:54:56 $ $Author: prabhuk $
+$Header: //source/qcom/qct/modem/1x/cp/rel/1h08/inc/mcctci.h#2 $ $DateTime: 2010/11/09 07:33:32 $ $Author: sshahi $
    
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+11/04/10   ssh     Added processing of SMCM with use_time as TRUE.
 04/08/07   pg      Featurization and general code cleanup for memory reduction
                    effort.
 09/29/05   sb      Removed tc_value.
@@ -66,8 +67,11 @@ extern const word pwr_rep_frames [];
 /* Buffer for message with requested action time                           */
 typedef union
 {
+  caii_gen_tc_type   gen_tc;
   caii_ftc_ord_type  tc_ord;
-  caii_fm_ho_type    fm_ho;
+  #ifdef FEATURE_IS2000_REL_A
+  caii_security_mode_cmd_type  tcsmcm;
+  #endif /* FEATURE_IS2000_REL_A */
 } tc_action_msg_type;
 
 extern tc_action_msg_type tc_action_msg;

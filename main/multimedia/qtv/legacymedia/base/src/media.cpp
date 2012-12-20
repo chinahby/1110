@@ -24,9 +24,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/legacymedia/base/main/latest/src/media.cpp#14 $
-$DateTime: 2009/01/08 01:25:59 $
-$Change: 815471 $
+$Header: //source/qcom/qct/multimedia/qtv/legacymedia/base/main/latest/src/media.cpp#21 $
+$DateTime: 2010/04/20 22:35:42 $
+$Change: 1273913 $
 
 
 ========================================================================== */
@@ -191,6 +191,7 @@ bool Media::CanPlay(const TrackInfo *pTrackInfo)
 #error code not present
 #endif /* FEATURE_QTV_OSCAR_DECODER */
     case STILL_IMAGE_CODEC:
+    case STILL_IMAGE_H263_CODEC:
 #ifdef FEATURE_MP4_3GPP_TIMED_TEXT
     case TIMED_TEXT_CODEC:
 #endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
@@ -220,6 +221,12 @@ bool Media::CanPlay(const TrackInfo *pTrackInfo)
 #ifdef FEATURE_DIVX_311_ENABLE
     case DIVX311_CODEC:
 #endif
+#ifdef FEATURE_QTV_AVI_AC3
+#error code not present
+#endif /*  FEATURE_QTV_AVI_AC3 */ 
+#ifdef FEATURE_QTV_PCM
+#error code not present
+#endif /* FEATURE_QTV_PCM */
       bRet = true;
       break;
 
@@ -315,12 +322,13 @@ bool Media::CanCodecPlay(TrackInfo *pTrackInfo)
 #error code not present
 #endif /* FEATURE_QTV_OSCAR_DECODER */
     case STILL_IMAGE_CODEC:
+    case STILL_IMAGE_H263_CODEC:
 #ifdef FEATURE_MP4_3GPP_TIMED_TEXT
     case TIMED_TEXT_CODEC:
 #endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
 #ifdef FEATURE_QTV_ISDB_SUBTITLES
 #error code not present
-#endif
+#endif /* FEATURE_QTV_ISDB_SUBTITLES */
 #ifdef FEATURE_QTV_SKT_MOD
     case JPEG_CODEC:
 #endif /* FEATURE_QTV_SKT_MOD */
@@ -345,6 +353,12 @@ bool Media::CanCodecPlay(TrackInfo *pTrackInfo)
 #ifdef FEATURE_QTV_3GPP_EVRC_WB
 #error code not present
 #endif /* FEATURE_QTV_3GPP_EVRC_WB */
+#ifdef FEATURE_QTV_AVI_AC3
+#error code not present
+#endif /*  FEATURE_QTV_AVI_AC3 */ 
+#ifdef FEATURE_QTV_PCM
+#error code not present
+#endif /* FEATURE_QTV_PCM */ 
       bRet = true;
       break;
 
@@ -414,6 +428,12 @@ bool Media::IsAudioCodec(CodecType codec)
 #ifdef FEATURE_QTV_3GPP_EVRC_WB
 #error code not present
 #endif /* FEATURE_QTV_3GPP_EVRC_WB */
+#ifdef FEATURE_QTV_AVI_AC3
+#error code not present
+#endif /*  FEATURE_QTV_AVI_AC3 */ 
+#ifdef FEATURE_QTV_PCM
+#error code not present
+#endif /* FEATURE_QTV_PCM */
     return true;
 
     default:
@@ -450,6 +470,7 @@ bool Media::IsVideoCodec(CodecType codec)
 #error code not present
 #endif /* FEATURE_QTV_OSCAR_DECODER */
     case STILL_IMAGE_CODEC:
+    case STILL_IMAGE_H263_CODEC:
 #ifdef FEATURE_QTV_SKT_MOD
     case JPEG_CODEC:
 #endif /* FEATURE_QTV_SKT_MOD */
@@ -662,6 +683,8 @@ void Media::BaseInitData()
   AACChannelMode = 0;
   numVideoTracks = 0;
   videoLoopTrackTimeOffset = 0;
+  audioLoopTrackTimeOffset = 0;
+  textLoopTrackTimeOffset  = 0;
 #ifdef FEATURE_MP4_3GPP_TIMED_TEXT
   numTextTracks = 0;
 #endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
@@ -970,11 +993,12 @@ bool Media::GetAudioTrackLanguage(OSCL_STRING &, uint32)
   return 0;
 }
 
-#if defined(FEATURE_QTV_WINDOWS_MEDIA) || defined(FEATURE_QTV_WMA_PRO_DSP_DECODER) 
 unsigned long Media::GetAudioBitsPerSample(int)
 {
   return 0;
 }
+
+#if defined(FEATURE_QTV_WINDOWS_MEDIA) || defined(FEATURE_QTV_WMA_PRO_DSP_DECODER) 
 
 unsigned long Media::GetAudioCodecVersion(int)
 {
@@ -1282,7 +1306,7 @@ void Media::SetMediaPlayerCb(pfnMediaPlayerCb MediaPlayerCb)
   MediaPlayerCbFn = MediaPlayerCb;
 }
 
-#ifdef FEATURE_QTV_RANDOM_ACCESS_REPOS
+#ifdef FEATURE_FILE_FRAGMENTATION
 /* ======================================================================
 FUNCTION
   Media::RepositionVideoAccessPoint
@@ -1328,5 +1352,50 @@ SIDE EFFECTS
      return 0;
    }
    
-#endif /*FEATURE_QTV_RANDOM_ACCESS_REPOS*/
+#endif /*FEATURE_FILE_FRAGMENTATION*/
 
+/* ======================================================================
+FUNCTION
+Media::GetTimestampDeltaForCurrentLayeredVideoSample
+
+DESCRIPTION
+Gets the current time stamp delta for the input layer/track.
+All the media sources can further implement this method to return the 
+correct time stamp delta.
+
+DEPENDENCIES
+  None
+
+INPUT  
+  layer
+
+RETURN VALUE
+  The timestamp delta value for the current sample. Default to 0.
+SIDE EFFECTS
+  None.
+========================================================================== */
+unsigned long Media::GetTimestampDeltaForCurrentLayeredVideoSample(int)
+{
+  return 0;
+}
+/* ======================================================================
+FUNCTION
+Media::GetTimestampDeltaForCurrentAudioSample
+
+DESCRIPTION
+
+DEPENDENCIES
+  None
+
+INPUT  
+  layer
+
+RETURN VALUE
+  The timestamp delta value for the current sample. Default to 0.
+SIDE EFFECTS
+  None.
+========================================================================== */
+unsigned long Media::GetTimestampDeltaForCurrentAudioSample(int)
+{
+  return 0;
+}

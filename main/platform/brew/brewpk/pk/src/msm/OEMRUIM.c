@@ -1399,7 +1399,6 @@ static int OEMRUIM_Read_Svc_P_Name(IRUIM *pMe , AECHAR *svc_p_name)
     else      
     {
         status = SUCCESS;
-        DBGPRINTF("hahahaha pData = %s, Length=%d",pData, STRLEN((char*)pData));
         OEMRUIM_Conversion_Uimdata_To_Spn(pData,svc_p_name,pnDataSize);//wszBuf中存放从UIM卡中读出的数?
         DBGPRINTF("svc_p_name = %S, Length=%d",svc_p_name, WSTRLEN(svc_p_name));
     }    

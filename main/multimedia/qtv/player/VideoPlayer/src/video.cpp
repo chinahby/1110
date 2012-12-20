@@ -23,9 +23,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/player/videoplayer/main/latest/src/video.cpp#19 $
-$DateTime: 2008/10/14 06:16:40 $
-$Change: 762221 $
+$Header: //source/qcom/qct/multimedia/qtv/player/videoplayer/main/latest/src/video.cpp#28 $
+$DateTime: 2010/08/12 04:25:09 $
+$Change: 1399701 $
 
 ========================================================================== */
 
@@ -496,12 +496,13 @@ void VideoPlayer::Destroy()
   //cleanup
   CleanupPlay();
 
+#ifndef FEATURE_WINCE
   if ( m_pRenderer != NULL )
   {
     QTV_Delete( m_pRenderer );
     m_pRenderer = NULL;
   }
-
+#endif
   //destroy embedded objects
   decIF.Destroy();
 
@@ -2276,6 +2277,7 @@ bool VideoPlayer::DisplayFrame(
                                   ( frame.frameType == VDEC_FRAMETYPE_I ? true : false ),
                                   (void *)frame.extFrame.pPostFilterMbInfo,
                                   frame.extFrame.numIntraMbs,
+                                  frame.pMetaData,
                                   frame.cwin.x2,
                                   frame.cwin.y2);
 #ifdef FEATURE_QTV_MDP
@@ -3586,6 +3588,10 @@ void VideoPlayer::DecoderThread(void)
                 QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Waiting for %d Msec to poll for video data", COMMON_VIDEO_DATA_POLL_TIME_MSEC);
                (void)QCUtils::WaitForCondition(&wakeupSync, COMMON_VIDEO_DATA_POLL_TIME_MSEC );
             }
+            /* This will make sure that Video Player will come out of 
+               UNDERRUN in some corner cases
+             */
+            GetElapsedTime(); 
             break;
           }
         
@@ -3783,11 +3789,21 @@ VideoPlayer::~VideoPlayer()
      QCUtils::DestroyCondition(&responseSync);
      pCurrActiveVideoPlayerInst = NULL;	  
   }
+  else if(pCurrActiveVideoPlayerInst == (VideoPlayer *)this)
+  {
+     pCurrActiveVideoPlayerInst = NULL;
+  }
 
   QTV_MSG2( QTVDIAG_VIDEO_TASK, "this (0x%x) Owner ( 0x%x)  ",(uint32)this,pCurrActiveVideoPlayerInst);	
 
+  if (1 == guVideoPlayerInstanceCnt)
+  {
+    QCUtils::DinitCritSect( &m_commandQ_CS );
+    QCUtils::DinitCritSect(&m_processCommands_CS);
+  }
    // decrement the instance reference count
    --guVideoPlayerInstanceCnt;
+   QCUtils::DinitCritSect(&bufferInfo_CS);
 }
 
 /* ======================================================================
@@ -3911,16 +3927,7 @@ SIDE EFFECTS:
 ======================================================================*/
 void VideoPlayer::ReleaseBuffer( const QtvPlayer::FrameInfoT &frame )
 {
-   if ( m_pRenderer )
-   {
-      m_pRenderer->release_frame( frame );
-   }
-   else
-   {
-      QTV_MSG_PRIO( QTVDIAG_VIDEO_TASK,
-                    QTVDIAG_PRIO_FATAL,
-                    "ReleaseBuffer called with no renderer available" );
-   }   
+   decIF.ReleaseBuffer( frame ); 
 }
 
 #ifdef FEATURE_QTV_QDSP_RELEASE_RESTORE
@@ -4213,3 +4220,53 @@ void VideoPlayer::StopVideoPlayerSync()
       Notify(IDLE,Common::VIDEO_STOPPED);
     }
 }
+
+
+/* ======================================================================
+FUNCTION:
+  VideoPlayer::UpdateClipInfoDimensions
+
+DESCRIPTION:
+ This is a sync funciton which updates the height and width of clipinfo.
+
+INPUT/OUTPUT PARAMETERS:
+  int height : height of enoded frame.
+  int width  : width of encoded frame.
+
+RETURN VALUE:
+  None
+
+SIDE EFFECTS:
+  None.
+======================================================================*/
+void VideoPlayer::UpdateClipInfoDimensions(int height, int width)
+{
+	if (pAVPlayer)
+	{
+       pAVPlayer->UpdateClipInfoDimensions(height, width);
+	}
+}
+/* ======================================================================
+FUNCTION:
+  VideoPlayer::set_last_frame_rendered_
+
+DESCRIPTION:
+ This will set the last rendered time stanp inside renderer
+
+INPUT/OUTPUT PARAMETERS:
+  const uint64
+
+RETURN VALUE:
+  None
+
+SIDE EFFECTS:
+  None.
+======================================================================*/
+void VideoPlayer::set_last_frame_rendered_(const uint64& ts )
+{
+	if ( m_pRenderer != NULL )
+	{
+		m_pRenderer->set_last_frame_rendered_(ts);
+	}
+}
+

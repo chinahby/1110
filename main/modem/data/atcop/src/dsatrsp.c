@@ -51,7 +51,7 @@ EXTERNALIZED FUNCTIONS INTERNAL TO DSAT UNIT
 INITIALIZATION AND SEQUENCING REQUIREMENTS
 
 
-   Copyright (c) 1995-2009 by QUALCOMM Incorporated.
+   Copyright (c) 1995-2010 by QUALCOMM Incorporated.
    All Rights Reserved.
    Qualcomm Confidential and Proprietary.
 *====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*/
@@ -65,10 +65,11 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS
   Notice that changes are listed in reverse chronological order.
 
   $PVCSPath: L:/src/asw/MM_DATA/vcs/dsatrsp.c_v   1.3   07 Nov 2002 16:20:12   wxie  $
-  $Header: //source/qcom/qct/modem/data/common/commonatcop/main/lite/src/dsatrsp.c#4 $ $DateTime: 2009/01/22 06:46:48 $ $Author: bhaviks $
+  $Header: //source/qcom/qct/modem/data/common/commonatcop/main/lite/src/dsatrsp.c#5 $ $DateTime: 2010/05/04 04:14:50 $ $Author: adubey $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+05/03/10   ad      Fixed qccpbr command .
 01/02/09   bs      Added support for 1X AT Phonebook commands.
 12/31/08   bs      Changed the large DSM item with small.
 03/28/08   bs      Fixed Lint High's.
@@ -872,9 +873,6 @@ void dsat_send_result_code
     return; /* Need not execute rest of the function */
   }
 
-  /* Format and send result code */
-  dsatrsp_send_cell_result( result_code );
-
   /* Indicate abort command processing has completed if not disabled.
      This function performs no action if abort command processing is
      not currently in progress. */
@@ -882,6 +880,8 @@ void dsat_send_result_code
   {
     dsatcmdp_command_abort_complete( );
   }
+  /* Format and send result code */
+  dsatrsp_send_cell_result( result_code );
 
   /* If result code is not CONNECT, clear the regional block indications
      flag to indicate indications can now be sent to the TE. */

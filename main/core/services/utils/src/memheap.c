@@ -4,10 +4,7 @@ DESCRIPTION
   Implementation of a simple sub-allocator to manage memory allocations
   and deallocations using a Next Fit strategy.  
 
-Copyright (c) 1997,1998 by QUALCOMM Incorporated.  All Rights Reserved.
-Copyright (c) 1999,2000 by QUALCOMM Incorporated.  All Rights Reserved.
-Copyright (c) 2001,2002 by QUALCOMM Incorporated.  All Rights Reserved.
-Copyright (c) 2003      by QUALCOMM Incorporated.  All Rights Reserved.
+Copyright (c) 1997-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 ============================================================================ */
 
 /* =========================================================================
@@ -15,11 +12,18 @@ Copyright (c) 2003      by QUALCOMM Incorporated.  All Rights Reserved.
                              Edit History
 
 $PVCSPath: O:/src/asw/COMMON/vcs/memheap.c_v   1.2   22 Mar 2002 16:54:42   rajeevg  $
-$Header: //depot/asic/qsc1100/services/common/memheap.c#3 $ $DateTime: 2008/09/24 23:07:09 $ $Author: rrevanur $
+$Header: //depot/asic/msmshared/services/common/memheap.c#28 $ $DateTime: 2010/05/28 09:14:21 $ $Author: pratapc $
 
 when       who     what, where, why
 --------   ---     ---------------------------------------------------------
-09/01/004   gr     Deleted the context argument to the debug versions of
+08/04/10   sri     Added checks for size variable overflow in mem_malloc()
+07/03/09   sri     Mainlined the features FEATURE_MEMHEAP_MT, FEATURE_EFS2 
+06/01/09   sri     Avoid compiler warnings based on MEMHEAP_ASSERT_NONE
+04/14/09   sri     Replaced sprintf, strcat with snprintf, std_strlcat 
+                   respectively, memheap_write_data_to_file() is changed to 
+                   return void.
+03/31/09   sri     qmutex attribute updated for qmutex_create()
+09/01/04    gr     Deleted the context argument to the debug versions of
                    the memheap functions; the context is no longer used.
 04/06/04    gr     Fixed a bug in the definition of the BEGIN_CRITICAL_SECTION
                    and END_CRITICAL_SECTION macros.
@@ -79,12 +83,15 @@ when       who     what, where, why
 #include <stdio.h>
 #include <string.h>
 #include "err.h"
+#include "AEEstd.h"
 
-#ifndef FEATURE_WINCE
-#include "rex.h"
-#else /* !FEATURE_WINCE */
+#if defined(FEATURE_QUBE)
+  #include <qube.h>
+#elif defined(FEATURE_WINCE)
 #error code not present
-#endif /* !FEATURE_WINCE */
+#else 
+  #include "rex.h"
+#endif
 
 #ifdef FEATURE_MEM_DEBUG
 #error code not present
@@ -97,6 +104,31 @@ when       who     what, where, why
 /* ------------------------------------------------------------------------
 ** Defines
 ** ------------------------------------------------------------------------ */
+
+/* NOTUSED */
+#define NOTUSED(i) if(i){}
+
+#ifdef FEATURE_QUBE
+#define TCB_TYPE              qthread_t
+#define TCB_SELF()            qthread_myself()
+#define rex_is_in_irq_mode()  FALSE
+
+#ifdef INTLOCK
+#undef INTLOCK
+#endif /* INTLOCK */
+#define INTLOCK()             mem_heap_lock_mutex()
+
+#ifdef INTFREE
+#undef INTFREE
+#endif /* INTFREE */
+#define INTFREE()             mem_heap_unlock_mutex()
+
+/*lint -emacro(506, MEMHEAP_ASSERT) */
+/*lint -emacro(506, MEMHEAP_ASSERT_EX) */
+#else
+#define TCB_TYPE     rex_tcb_type*
+#define TCB_SELF()   rex_self()
+#endif /* FEATURE_QUBE */
 
 /* By default, MEMHEAP_ASSERT will generate a fatal error.
 */
@@ -112,7 +144,7 @@ when       who     what, where, why
      if( !(xx_exp) ) \
      { \
         ERR( "In task 0x%x, Assertion " #xx_exp " failed", \
-           (unsigned long) rex_self(), 0, 0 ); \
+           (unsigned long) TCB_SELF(), 0, 0 ); \
      }
 
    #else /* FEATURE_WINCE */
@@ -122,39 +154,41 @@ when       who     what, where, why
    #define MEMHEAP_ASSERT_EX( xx_exp, xx_file, xx_line ) \
       MEMHEAP_ASSERT( xx_exp )
 #else
-   #ifdef FEATURE_EFS2
+   #ifdef MEMHEAP_ASSERT_LOG
    #include "fs_public.h"
    #else
-   #include "fs.h"
-   #endif
+      #define memheap_log_error(a, b, c)
+   #endif /* MEMHEAP_ASSERT_LOG */
 
    #define MEMHEAP_ASSERT( xx_exp ) \
      if( !(xx_exp) ) \
      { \
+        TCB_TYPE  self = TCB_SELF();                             \
         memheap_log_error( #xx_exp, "", 0 ); \
         ERR_FATAL( "In task 0x%x, Assertion " #xx_exp " failed", \
-           (unsigned long) rex_self(), 0, 0 ); \
+                   (unsigned long) self, 0, 0 );                 \
      }
 
    #define MEMHEAP_ASSERT_EX( xx_exp, xx_file, xx_line ) \
      if( !(xx_exp) ) \
      { \
+        TCB_TYPE  self = TCB_SELF();                             \
         memheap_log_error( #xx_exp, xx_file, xx_line ); \
         ERR_FATAL( "In task 0x%x, Assertion " #xx_exp " failed", \
-           (unsigned long) rex_self(), 0, 0 ); \
+                   (unsigned long) self, 0, 0 );                 \
      }
 
-
+   #ifdef MEMHEAP_ASSERT_LOG
    #define MEMHEAP_ASSERT_BUF_SIZE 512
    static char memheap_assert_buffer[MEMHEAP_ASSERT_BUF_SIZE];
    static char temp_buf[40];
    static char *memheap_assert_log_dir  = "memheap_dir";
    static char *memheap_assert_log_file = "memheap_dir/report.txt";
+   #endif /* MEMHEAP_ASSERT_LOG */
 #endif
 
 /* Code to enter and exit critical sections.
 */
-#ifdef FEATURE_MEMHEAP_MT
    #define BEGIN_CRITICAL_SECTION(heap) \
      do { \
        if ((heap)->lock_fnc_ptr) \
@@ -165,10 +199,6 @@ when       who     what, where, why
        if ((heap)->free_fnc_ptr) \
          (heap)->free_fnc_ptr(); \
      } while (0)
-#else
-   #define BEGIN_CRITICAL_SECTION(heap) (void) 0
-   #define END_CRITICAL_SECTION(heap) (void) 0
-#endif
 
 mem_allocator_failed_proc_type mem_allocator_failed_hook = NULL;
 
@@ -180,8 +210,34 @@ static mem_block_header_type *mem_find_free_block(mem_heap_type*,unsigned long);
 #error code not present
 #endif
 
-#ifdef FEATURE_MEMHEAP_MT
+#ifdef FEATURE_QUBE
+static qmutex_t  memheap_mutex = 0;
+/* Lock function that works using Qube mutexes.
+*/
+static void
+mem_heap_lock_mutex( void )
+{
+#ifdef MEMHEAP_ASSERT_NONE
+  (void) qmutex_lock( memheap_mutex );
+#else /* MEMHEAP_ASSERT_NONE */
+  int status = qmutex_lock( memheap_mutex );
+  MEMHEAP_ASSERT( status == EOK );
+#endif /* MEMHEAP_ASSERT_NONE */
+} /* END mem_heap_int_lock */
 
+/* Matching free function for mem_heap_lock_mutex().
+*/
+static void
+mem_heap_unlock_mutex( void )
+{
+#ifdef MEMHEAP_ASSERT_NONE
+  (void) qmutex_unlock( memheap_mutex );
+#else /* MEMHEAP_ASSERT_NONE */
+  int status = qmutex_unlock( memheap_mutex );
+  MEMHEAP_ASSERT( status == EOK );
+#endif /* MEMHEAP_ASSERT_NONE */
+} /* END mem_heap_int_free */
+#else
 /* Lock function that works by locking interrupts. A heap that uses this
 ** lock function can be used by both ISRs and tasks.
 */
@@ -218,29 +274,28 @@ mem_heap_task_free( void )
 {
    rex_task_free( );
 } /* END mem_heap_task_free */
+#endif /* FEATURE_QUBE */
 
-#endif /* FEATURE_MEMHEAP_MT */
-
+#ifdef FEATURE_QUBE
+/*lint -emacro(506,mem_heap_callable_by_isr) */
+#define mem_heap_callable_by_isr(h)  FALSE
+#else
 static int
 mem_heap_callable_by_isr( mem_heap_type *heap_ptr )
 {
-#ifdef FEATURE_MEMHEAP_MT
    if (heap_ptr->lock_fnc_ptr == NULL ||
        heap_ptr->lock_fnc_ptr == mem_heap_int_lock)
       return 1;
    else
       return 0;
-#else
-   return 1;
-#endif
 } /* END mem_heap_callable_by_isr */
-
+#endif /* FEATURE_QUBE */
 
 #ifdef FEATURE_MEM_DEBUG_EX
 #error code not present
 #endif /* FEATURE_MEM_DEBUG_EX */
 
-#if !defined(MEMHEAP_ASSERT_NONE) && !defined(MEMHEAP_ASSERT_WARN)
+#if !defined(MEMHEAP_ASSERT_NONE) && !defined(MEMHEAP_ASSERT_WARN) && defined(MEMHEAP_ASSERT_LOG)
 
 extern rex_tcb_type dog_tcb;
 extern rex_tcb_type fs_tcb;
@@ -256,28 +311,9 @@ DESCRIPTION
 static int
 memheap_create_err_dir_and_file( void )
 {
-#ifdef FEATURE_EFS2
    (void) efs_mkdir( memheap_assert_log_dir, 0666 );
    return efs_open( memheap_assert_log_file, O_CREAT | O_RDWR, 0755 );
-#else
-   fs_rsp_msg_type fs_rsp;
-   fs_open_xparms_type open_params;
 
-   fs_mkdir( memheap_assert_log_dir, NULL, &fs_rsp );
-
-   fs_remove( memheap_assert_log_file, NULL, &fs_rsp );
-
-   open_params.create.cleanup_option   = FS_OC_CLOSE;
-   open_params.create.buffering_option = FS_OB_ALLOW;
-   open_params.create.attribute_mask   = FS_FA_UNRESTRICTED;
-   fs_open( memheap_assert_log_file, FS_OA_CREATE,
-      &open_params, NULL, &fs_rsp );
-  if ( ( fs_rsp.open.status != FS_OKAY_S ) ||
-       ( fs_rsp.open.handle == FS_NULL_HANDLE ) )
-     return -1;
-  else
-     return fs_rsp.open.handle;
-#endif
 } /* END memheap_create_err_dir_and_file */
 
 /*===========================================================================
@@ -286,17 +322,11 @@ FUNCTION MEMHEAP_WRITE_DATA_TO_FILE
 DESCRIPTION
    Writes specified data into the file specified using the input fd.
 ===========================================================================*/
-static int
+void
 memheap_write_data_to_file( int fd, void *buf, unsigned int nbytes )
 {
-#ifdef FEATURE_EFS2
    (void) efs_write( fd, buf, nbytes );
    (void) efs_close( fd );
-#else
-   fs_rsp_msg_type fs_rsp;
-   fs_write( fd, buf, nbytes, NULL, &fs_rsp );
-   fs_close( fd, NULL, &fs_rsp );
-#endif
 } /* END memheap_write_data_to_file */
 
 /*===========================================================================
@@ -312,7 +342,7 @@ memheap_log_error( const char *assertion, char *filename,
 {
    int fd;
    char dword_buf[8];
-   rex_tcb_type *curr_task;
+   TCB_TYPE  curr_task;
    unsigned int chars_to_print;
    unsigned int chars_printed;
    char *stack_ptr;
@@ -342,23 +372,24 @@ memheap_log_error( const char *assertion, char *filename,
    if ( fd < 0 )
       return;
 
-   curr_task = rex_self( );
+   curr_task = TCB_SELF( );
    
-   sprintf( memheap_assert_buffer, "Assertion: %s\r\n", assertion );
-   sprintf( temp_buf, "Filename: %s\r\n", filename );
-   strcat( memheap_assert_buffer, temp_buf );
-   sprintf( temp_buf, "Line Number: %u\r\n", linenum );
-   strcat( memheap_assert_buffer, temp_buf );
-   sprintf( temp_buf,
-      "Task Info\r\n  Name: %s\r\n", curr_task->task_name );
-   strcat( memheap_assert_buffer, temp_buf );
-   sprintf( temp_buf, "  Priority: %u\r\n",
-      (unsigned int) curr_task->pri );
-   strcat( memheap_assert_buffer, temp_buf );
-   sprintf( temp_buf, "  Set sigs: 0x%X\r\n",
-      (unsigned int) curr_task->sigs );
-   strcat( memheap_assert_buffer, temp_buf );
-   strcat( memheap_assert_buffer, "Stack Dump\r\n" );
+   snprintf(memheap_assert_buffer, sizeof(memheap_assert_buffer), 
+                                      "Assertion: %s\r\n", assertion);
+   snprintf(temp_buf, sizeof(temp_buf), "Filename: %s\r\n", filename);
+   std_strlcat(memheap_assert_buffer, temp_buf, sizeof(memheap_assert_buffer));
+   snprintf(temp_buf, sizeof(temp_buf), "Line Number: %u\r\n", linenum);
+   std_strlcat(memheap_assert_buffer, temp_buf, sizeof(memheap_assert_buffer));
+   snprintf(temp_buf, sizeof(temp_buf), 
+            "Task Info\r\n  Name: %s\r\n", curr_task->task_name );
+   std_strlcat(memheap_assert_buffer, temp_buf, sizeof(memheap_assert_buffer));
+   snprintf(temp_buf, sizeof(temp_buf), "  Priority: %u\r\n",
+             (unsigned int) curr_task->pri );
+   std_strlcat(memheap_assert_buffer, temp_buf, sizeof(memheap_assert_buffer));
+   snprintf(temp_buf, sizeof(temp_buf), "  Set sigs: 0x%X\r\n",
+                                   (unsigned int) curr_task->sigs );
+   std_strlcat(memheap_assert_buffer, temp_buf, sizeof(memheap_assert_buffer));
+   std_strlcat(memheap_assert_buffer, "Stack Dump\r\n", sizeof(memheap_assert_buffer));
 
    chars_printed  = strlen( memheap_assert_buffer );
    chars_to_print = sizeof( memheap_assert_buffer ) -  chars_printed;
@@ -408,7 +439,7 @@ memheap_log_error( const char *assertion, char *filename,
 
 } /* END memheap_log_error */
 
-#endif /* !MEMHEAP_ASSERT_NONE && !MEMHEAP_ASSERT_WARN */
+#endif /* !MEMHEAP_ASSERT_NONE && !MEMHEAP_ASSERT_WARN && MEMHEAP_ASSERT_LOG */
 
 /*===========================================================================
 FUNCTION MEM_GET_NEXT_BLOCK
@@ -434,6 +465,8 @@ static mem_block_header_type *mem_get_next_block
      */
 )
 {
+   MEMHEAP_ASSERT(block_ptr != NULL);
+   MEMHEAP_ASSERT(heap_ptr  != NULL);
    MEMHEAP_ASSERT(block_ptr->pad1 == MEMHEAP_PAD_CHAR);
    return block_ptr->last_flag  ? heap_ptr->first_block
           : (mem_block_header_type *) ((char *) block_ptr + block_ptr->forw_offset);
@@ -486,13 +519,29 @@ void mem_init_heap(
     */
 
   MEMHEAP_ASSERT(heap_ptr);
+  MEMHEAP_ASSERT(heap_mem_ptr);
   MEMHEAP_ASSERT(heap_mem_size);
   MEMHEAP_ASSERT(heap_mem_size >= (2*kMinChunkSize-1));
 
-#ifdef FEATURE_MEMHEAP_MT
+#ifdef FEATURE_QUBE
+  /* Initialize the memheap mutex */
+  if( memheap_mutex == 0 )
+  {
+    qmutex_attr_t  qmutexattr;
+    qmutexattr.type = QMUTEX_LOCAL;
+#ifdef MEMHEAP_ASSERT_NONE
+    (void) qmutex_create( &memheap_mutex, &qmutexattr );
+#else /* MEMHEAP_ASSERT_NONE */
+    int status = qmutex_create( &memheap_mutex, &qmutexattr );
+    MEMHEAP_ASSERT( status == EOK );
+#endif /* MEMHEAP_ASSERT_NONE */
+  }
+  heap_ptr->lock_fnc_ptr = mem_heap_lock_mutex;
+  heap_ptr->free_fnc_ptr = mem_heap_unlock_mutex;
+#else
   heap_ptr->lock_fnc_ptr = mem_heap_task_lock;
   heap_ptr->free_fnc_ptr = mem_heap_task_free;
-#endif
+#endif /* FEATURE_QUBE */
 
   memory_start_ptr = (char *)heap_mem_ptr;
   memory_end_ptr   = memory_start_ptr + heap_mem_size;
@@ -556,7 +605,7 @@ void mem_init_block_header(
   block_ptr->extra       = 0;
   block_ptr->forw_offset = size;
 #if !FEATURE_HEAP_SMALLER_OVERHEAD
-  block_ptr->back_offset = 0;
+  block_ptr->backOffset = 0;
 #endif
   return;
 } /* END mem_init_block_header */
@@ -664,7 +713,7 @@ DESCRIPTION
     /* the computed number of unused bytes at the end of the allocated
        memory block.  Will always be < kMinChunkSize */
 
-  mem_block_header_type *freeBlock;
+  mem_block_header_type *freeBlock = NULL;
     /* the free block found of size >= actualSize */
 
   void *answer = NULL;
@@ -684,6 +733,13 @@ DESCRIPTION
 
   if (rex_is_in_irq_mode() && !mem_heap_callable_by_isr(heap_ptr))
      return NULL;
+
+  /* quick check if requested size of memory is available */
+  if( (unsigned long) size > heap_ptr->total_bytes ) return NULL;
+
+  /* chunks overflow check : check max memory that can be malloc'd at a time */
+  if( (0xFFFFFFFF - (unsigned long) size) < (sizeof(mem_block_header_type) 
+                                            + kMinChunkSize - 1) ) return NULL;
 
   chunks = ((unsigned long) size + sizeof(mem_block_header_type)
             + kMinChunkSize - 1) / kMinChunkSize;
@@ -795,13 +851,6 @@ DESCRIPTION
 #error code not present
 #endif
 
-  
-  if( answer )
-   {
-	 
-	 memset(answer,0,size);
-   }
-
   return answer;
 } /* END mem_malloc */
 
@@ -834,7 +883,6 @@ DESCRIPTION
     /* The computed address of the memory header block in the heap that
        controls the memory referenced by ptr */
 
-  if (!ptr) return;
 /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   #ifdef FEATURE_MEM_DEBUG
@@ -1286,6 +1334,9 @@ DESCRIPTION
 ===========================================================================*/
 size_t mem_heap_overhead (mem_heap_type *heap_ptr)
 {
+#ifdef FEATURE_QUBE  
+  NOTUSED(heap_ptr);
+#endif
   return sizeof (mem_block_header_type);
 }
 
@@ -1413,6 +1464,7 @@ unsigned long mem_get_block_logical_size(
      */
 )
 {
+  MEMHEAP_ASSERT(block_hdr_ptr);
   return block_hdr_ptr->forw_offset - sizeof(mem_block_header_type)
             - (block_hdr_ptr->free_flag ? 0 : block_hdr_ptr->extra);
 } /* mem_get_block_logical_size */
@@ -1460,6 +1512,7 @@ void mem_heap_block_iterator_reset(
      */
 )
 {
+  MEMHEAP_ASSERT(block_iter_ptr);
   block_iter_ptr->mBlock = NULL;
 } /* mem_heap_block_iterator_reset */
 
@@ -1612,12 +1665,19 @@ DESCRIPTION
   freeing at its locking mechanism.
   Returns 1 on success and 0 on failure.
 ===========================================================================*/
+#ifdef FEATURE_QUBE
+int
+mem_heap_set_int_lock( mem_heap_type *heap_ptr )
+{
+  NOTUSED(heap_ptr);
+  return 0;
+}
+#else
 int
 mem_heap_set_int_lock( mem_heap_type *heap_ptr )
 {
    MEMHEAP_ASSERT (heap_ptr != NULL);
 
-#ifdef FEATURE_MEMHEAP_MT
    if ( heap_ptr != NULL )
    {
       heap_ptr->lock_fnc_ptr = mem_heap_int_lock;
@@ -1626,11 +1686,8 @@ mem_heap_set_int_lock( mem_heap_type *heap_ptr )
    }
    else
       return 0;
-#else
-   return 1;
-#endif
 } /* END mem_heap_set_int_lock */
-
+#endif /* FEATURE_QUBE */
 
 /*===========================================================================
 FUNCTION MEM_HEAP_SET_TASK_LOCK
@@ -1640,12 +1697,19 @@ DESCRIPTION
   freeing at its locking mechanism.
   Returns 1 on success and 0 on failure.
 ===========================================================================*/
+#ifdef FEATURE_QUBE
+int
+mem_heap_set_task_lock( mem_heap_type *heap_ptr )
+{
+  NOTUSED(heap_ptr);
+  return 0;
+}
+#else
 int
 mem_heap_set_task_lock( mem_heap_type *heap_ptr )
 {
    MEMHEAP_ASSERT (heap_ptr != NULL);
 
-#ifdef FEATURE_MEMHEAP_MT
    if ( heap_ptr != NULL )
    {
       heap_ptr->lock_fnc_ptr = mem_heap_task_lock;
@@ -1654,11 +1718,8 @@ mem_heap_set_task_lock( mem_heap_type *heap_ptr )
    }
    else
       return 0;
-#else
-   return 1;
-#endif
 } /* END mem_heap_set_task_lock */
-
+#endif /* FEATURE_QUBE */
 
 /*===========================================================================
 FUNCTION MEM_HEAP_SET_NO_LOCK
@@ -1673,7 +1734,6 @@ mem_heap_set_no_lock( mem_heap_type *heap_ptr )
 {
    MEMHEAP_ASSERT (heap_ptr != NULL);
 
-#ifdef FEATURE_MEMHEAP_MT
    if ( heap_ptr != NULL )
    {
       heap_ptr->lock_fnc_ptr = NULL;
@@ -1682,9 +1742,6 @@ mem_heap_set_no_lock( mem_heap_type *heap_ptr )
    }
    else
       return 0;
-#else
-   return 1;
-#endif
 } /* END mem_heap_set_no_lock */
 
 
@@ -1759,6 +1816,9 @@ DESCRIPTION
 unsigned int
 mem_heap_get_chunk_size( mem_heap_type *heap_ptr )
 {
+#ifdef FEATURE_QUBE  
+  NOTUSED(heap_ptr);
+#endif
   return (unsigned int) kMinChunkSize;
 } /* END mem_heap_get_chunk_size */
 

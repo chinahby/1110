@@ -87,7 +87,7 @@ EXTERNALIZED FUNCTIONS
   mip_perf_delay()
     Sets start and end times for specified delay.
 
-Copyright (c) 2002 by QUALCOMM, Incorporated.  All Rights Reserved.
+Copyright (c) 2002 - 2011 by QUALCOMM, Incorporated.  All Rights Reserved.
 ===========================================================================*/
 
 
@@ -96,11 +96,12 @@ Copyright (c) 2002 by QUALCOMM, Incorporated.  All Rights Reserved.
                             EDIT HISTORY FOR FILE
 
   $PVCSPath: O:/src/asw/COMMON/vcs/dsmip_perf.h_v   1.4   16 Nov 2002 00:34:04   jeffd  $
-  $Header: //source/qcom/qct/modem/data/1x/mip/main/lite/inc/dsmip_perf.h#1 $ $DateTime: 2008/04/11 07:14:56 $ $Author: nsivakum $
+  $Header: //source/qcom/qct/modem/data/1x/mip/main/lite/inc/dsmip_perf.h#2 $ $DateTime: 2011/02/24 23:31:53 $ $Author: msankar $
 
 
 when        who    what, where, why
 --------    ---    ----------------------------------------------------------
+02/25/11    ms     Ported MOBILE_IP_DEREG feature.
 02/20/02    sjy    Updated delay descriptions to reflect changes made in the
                    performance metrics.
 02/19/02    sjy    Updated delay descriptions to reflect changes made in the
@@ -137,6 +138,7 @@ typedef enum
   PERF_MIP_REREG_DELAY,           /* mobile IP re-registration delay       */
   PERF_TOTAL_CALL_SETUP_DELAY,    /* total call setup time                 */
   PERF_TOTAL_HANDOFF_DELAY,       /* total inter-PDSN handoff setup time   */
+  PERF_MIP_DEREG_DELAY,           /* mobile IP de-registration delay       */
   PERF_MAX_DELAY
 } mip_perf_delay_type;
 
@@ -148,6 +150,7 @@ typedef enum
   PERF_MIN_TS = -1,
   PERF_START_TS,                  /* start time stamp                      */
   PERF_END_TS,                    /* end time stamp                        */
+  PERF_CANCEL_TS,
   PERF_MAX_TS
 } mip_perf_ts_type;
 

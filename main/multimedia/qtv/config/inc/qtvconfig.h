@@ -10,9 +10,9 @@ DESCRIPTION
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/config/main/latest/inc/qtvconfig.h#11 $
-$DateTime: 2008/12/16 10:11:43 $
-$Change: 806362 $
+$Header: //source/qcom/qct/multimedia/qtv/config/main/latest/inc/qtvconfig.h#27 $
+$DateTime: 2010/11/09 04:48:52 $
+$Change: 1509879 $
 
 ========================================================================== */
 
@@ -44,7 +44,9 @@ $Change: 806362 $
 ** ----------------------------------------------------------------------- */
 #define MAX_SESSIONID_LEN 16
 #define DEFAULT_MEDIAPLAYER_ROOT_PATH                         "/brew/mod/mediaplayer/media/"
+#define DEFAULT_HTTP_PD_ROOT_PATH                                 "/mod/mediaplayer/media/"
 #define MAX_MEDIAPLAYER_ROOT_PATH_BYTES                       256 
+#define QTV_MAX_PROBE_URN_LEN                                       2048
 
 /* -----------------------------------------------------------------------
 ** Type Declarations
@@ -53,6 +55,11 @@ typedef struct {
 uint8 length;
 uint8 sID[MAX_SESSIONID_LEN];
 }SessionIDType;
+
+typedef struct {
+  uint16 length;
+  uint8 URL[QTV_MAX_PROBE_URN_LEN];
+}ProbeURLType;
 
 /* -----------------------------------------------------------------------
 ** Global Constant Data Declarations
@@ -65,7 +72,14 @@ uint8 sID[MAX_SESSIONID_LEN];
 **                          Macro Definitions
 ** ======================================================================= */
 // Filename from which to read configuration items.
+#ifndef FEATURE_WINCE
 #define DEFAULT_QTVCONFIG_FILENAME "/mod/mediaplayer/qtv_config.cfg"
+#define DEFAULT_QTVCONFIG_INI_FILENAME "/mod/QTVISettings/qtv_config.inix"
+
+#else
+#error code not present
+#endif
+
 
 /* =======================================================================
 **                        Function Declarations
@@ -172,8 +186,26 @@ public:
     QTVCONFIG_MAX_FRAME_DROPS_TO_IFRAME = 75,
     QTVCONFIG_PCR_SYNC_USE_SW_TIMESTAMPS = 76,
     QTVCONFIG_ENABLE_BRAZIL_SPECIFIC_H264_VUI_PARAM_TYPE = 77,
-    QTVCONFIG_BSD_IFACE_SELECTION = 78,
-    QTVCONFIG_USER_ITEM_LAST = QTVCONFIG_BSD_IFACE_SELECTION,
+    QTVCONFIG_WRITE_STATS_TO_FILE = 78,
+    QTVCONFIG_BSD_IFACE_SELECTION = 79,
+    QTVCONFIG_ENABLE_WM_FAST_RECONNECT = 80,
+    QTVCONFIG_WM_FAST_RECONNECT_MAX_ATTEMPTS = 81,
+    QTVCONFIG_PROBE_URN = 82,
+    QTVCONFIG_FCS_KEEPALIVE_SESSION_TIMEOUT = 83,
+    QTVCONFIG_RTSP_LINK_CHAR_ENABLE = 84,
+    QTVCONFIG_STREAM_RECORD_DEC_BUF_DURATION = 85,
+    QTVCONFIG_RTP_MIN_BUFF_TIME= 86,
+    QTVCONFIG_RTP_MAX_BUFF_TIME= 87,
+    QTVCONFIG_ENABLEVIDEO_AT_KEY_FRAME = 88,
+    QTVCONFIG_USE_INTERLEAVED_TCP_FOR_3GP =89,
+    QTVCONFIG_VIDEO_ADUIO_VOICE_MIXING = 90,
+    QTVCONFIG_ACCEPT_SERVER_ANNOUNCED_CLIENT_PORTS = 91,
+    QTVCONFIG_DISABLE_PIPELINING_FOR_FIREWALL_PROBE_ENABLED = 92,
+    QTVCONFIG_ENABLE_PIPELINING_FOR_SDP_PLAYBACK = 93,
+    QTVCONFIG_ENABLE_PIPELINING_FOR_STREAMING = 94,
+    QTVCONFIG_HTTP_FILE_SAVE_TO_EFS_PATH = 95,
+    QTVCONFIG_AUTO_FALLBACK_OVER_TCP = 96,
+    QTVCONFIG_USER_ITEM_LAST = QTVCONFIG_AUTO_FALLBACK_OVER_TCP,
 
     // Configuration items after this one should not be set by OEMs.
     // They are for debugging purposes only.
@@ -224,11 +256,16 @@ private:
   // elements
   int32 config_items[QTVCONFIG_ITEM_COUNT];  
   char mediaplayer_root_path[MAX_MEDIAPLAYER_ROOT_PATH_BYTES];
+  char http_pd_root_path[MAX_MEDIAPLAYER_ROOT_PATH_BYTES];
   bool SetMediaPlayerRootPath(char* value);
 #ifdef FEATURE_QTV_ENCRYPTED_STREAMS
   SessionIDType sessionID;
   bool SetSessionID(SessionIDType* value);
 #endif
+
+  ProbeURLType probeURL;
+  bool SetProbeURL(ProbeURLType* value);
+  bool SetHTTPPDRootPath(char *value);
 };
 
 #endif /* _QTV_CONFIG_H_ */

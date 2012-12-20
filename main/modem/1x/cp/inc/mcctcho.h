@@ -10,7 +10,7 @@ GENERAL DESCRIPTION
   This module externalizes the handoff support routines for the CDMA
   Sub-system, Mobile Station Control on the Traffic Channel state.
 
-Copyright (c) 1990-2005 by QUALCOMM, Incorporated.  All Rights Reserved.
+Copyright (c) 1990-2010 by QUALCOMM, Incorporated.  All Rights Reserved.
 
 *====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*/
 
@@ -22,10 +22,11 @@ This section contains comments describing changes made to the module.
 Notice that changes are listed in reverse chronological order.
 
 $PVCSPath: L:/src/asw/MSM5100/CP_REL_A/vcs/mcctcho.h_v   1.5   02 Oct 2002 16:02:12   azafer  $
-$Header: //source/qcom/qct/modem/1x/cp/rel/1h08/inc/mcctcho.h#1 $ $DateTime: 2009/05/29 03:54:56 $ $Author: prabhuk $
+$Header: //source/qcom/qct/modem/1x/cp/rel/1h08/inc/mcctcho.h#2 $ $DateTime: 2010/11/09 07:33:32 $ $Author: sshahi $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+11/04/10   ssh     Added processing of SMCM with use_time as TRUE.
 01/15/07   sb      VOIP-1X handoff updates.
 10/12/06   fc      Fixed the issue of sending bogus CFSRM before the 
                    completion all NSET searches.
@@ -438,10 +439,6 @@ SIDE EFFECTS
 
 ===========================================================================*/
 extern void save_serving_config_parms(void);
-
-#ifdef FEATURE_ACP
-#error code not present
-#endif /* FEATURE_ACP */
 
 /*===========================================================================
 

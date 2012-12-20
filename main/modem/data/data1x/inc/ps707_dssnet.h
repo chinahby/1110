@@ -16,14 +16,14 @@ EXTERNALIZED FUNCTIONS
   dssnet_sm_init()
     Initialize the DSSNET State machine
 
-Copyright (c) 1998-2009 by QUALCOMM Incorporated.  All Rights Reserved.
+Copyright (c) 1998-2011 by QUALCOMM Incorporated.  All Rights Reserved.
 ===========================================================================*/
 /*===========================================================================
 
                             EDIT HISTORY FOR FILE
 
   $PVCSPath: L:/src/asw/MM_DATA/vcs/ps707_dssnet.h_v   1.3   28 Feb 2003 10:28:02   sramacha  $
-  $Header: //source/qcom/qct/modem/data/1x/707/main/lite/inc/ps707_dssnet.h#2 $ $DateTime: 2009/05/27 05:07:18 $ $Author: nsivakum $
+  $Header: //source/qcom/qct/modem/data/1x/707/main/lite/inc/ps707_dssnet.h#3 $ $DateTime: 2011/02/24 23:31:53 $ $Author: msankar $
 
   This section contains comments describing changes made to the module.
   Notice that changes are listed in reverse chronological order.
@@ -31,6 +31,7 @@ Copyright (c) 1998-2009 by QUALCOMM Incorporated.  All Rights Reserved.
 
 when        who    what, where, why
 --------    ---    ----------------------------------------------------------
+02/25/11    ms     Ported MOBILE_IP_DEREG feature.
 04/29/09    sn     Ported support for call throttle feature (DCTM).
 05/05/03    jd     Removed dssnet_get_iface_status, dssnet_set_close_reason,
 04/10/03    ss     Moved dss_iface_status_type typedef to this file from
@@ -86,8 +87,9 @@ typedef enum
   DSSNET_PHY_IFACE_DOWN_EV = 9,
   DSSNET_PPP_RESYNC_EV = 10,
   DSSNET_PHY_LINK_DOWN_PPP_ABORT_CMD_EV = 11,
+  DSSNET_MIP_DEREGED_EV = 12,
   
-  DSSNET_NUM_OF_EV = 12
+  DSSNET_NUM_OF_EV = 13
 } dssnet_sm_event_type;
 
 /*---------------------------------------------------------------------------

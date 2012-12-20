@@ -22,10 +22,12 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS
   This section contains comments describing changes made to the module.
   Notice that changes are listed in reverse chronological order.
 
-$Header: //source/qcom/qct/modem/1x/srch/rel/1h08/inc/srch_stm.h#3 $
+$Header: //source/qcom/qct/modem/1x/srch/rel/1h08/inc/srch_stm.h#5 $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+04/22/10   sst     Added Div's DIV_AGC_CK_CMD
+10/30/09   bb      Added SRCH_SCLK_COMPLETE_CMD command
 04/10/09   tjc     Abort OFREQ searching if we cannot register srch4
 03/09/09   vks     Added DIV_AUTO_IS_DATA_CALL_CMD and removed 
                    DIV_AUTO_SCH_ENABLED_CMD for DIV_AUTO
@@ -205,6 +207,7 @@ typedef enum
   ENTER_AMPS_CMD,
   ENTER_CDMA_CMD,
   SRCH4_MDSP_REG_CMD,
+  SRCH_SCLK_COMPLETE_CMD,
   WAIT_DONE_CMD,
 
   /* CDMA State Internal Commands */
@@ -236,6 +239,7 @@ typedef enum
   DIV_PAUSE_CMD,
   DIV_STOP_CMD,
   DIV_RELEASE_CMD,
+  DIV_AGC_CK_CMD,
 
   /* Traffic GPS State Machine Internal Commands */
   TCG_VISIT_REQUEST_CMD,

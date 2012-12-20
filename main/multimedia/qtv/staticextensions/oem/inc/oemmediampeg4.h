@@ -20,10 +20,10 @@
   
                              PERFORCE HEADER
 
-$Header: //source/qcom/qct/multimedia/qtv/staticextensions/oem/main/latest/inc/oemmediampeg4.h#6 $
-$Author: atulp $
-$DateTime: 2008/11/14 02:00:30 $
-$Change: 784561 $
+$Header: //source/qcom/qct/multimedia/qtv/staticextensions/oem/main/latest/inc/oemmediampeg4.h#19 $
+$Author: spandiri $
+$DateTime: 2010/11/01 06:28:10 $
+$Change: 1499827 $
 
  ============================================================================*/
 
@@ -41,6 +41,10 @@ $Change: 784561 $
 #include "OEMMedia.h"
 #include "AEEMediaFormats.h"
 #include "OEMObjectMgr.h"
+
+#if MIN_BREW_VERSION(3,0)
+#include "OEMCriticalSection.h"
+#endif
 
 #ifdef FEATURE_QTV_OEM_BUFFER_MGR
 #include "queue.h"
@@ -61,11 +65,17 @@ extern "C" {
 /*-------------------------------------------------------------------
       Macros Declarations
 -------------------------------------------------------------------*/
-#define OEMMPEG4_MAX_CB     20  /*!< Static number of callback structures
+#define OEMMPEG4_MAX_CB     40  /*!< Static number of callback structures
                                   provided for use in the BREW/UI context */
 #define MAX_NUM_OEM_PLAYBACK_INST 3 /*!< Max possible number of OEM Layer 
                                      instances; must match MAX_NUM_QTV_PLAYBACK_INST */ 
 #define VGA_SIZE 480
+
+
+extern OEMCriticalSection TimedText3gppCS;
+#define MUTEX_LOCK_CS(a)     OEMCriticalSection_Enter(&a)
+#define MUTEX_UNLOCK_CS(a)   OEMCriticalSection_Leave(&a)
+
 
 /* The following macros allow a common code base on MDP and non-MDP targets. 
  * For MDP targets, we use IYCbCr objects to hold Qtv video frames. For non-MDP targets, 
@@ -196,10 +206,13 @@ typedef struct OEMMediaMPEG4Layer
 
   AEEMediaCallback  m_cb[OEMMPEG4_MAX_CB];
   uint32            m_dwCaps;           /*!< Capabilities of IMedia */
+  uint32            m_dwEnabledCaps;    /*!< Capabilities enabled by caller of IMedia */
   ISound *          m_pISound;
   OEMSoundType      m_Sound;
   AEEMediaCallback  m_cbCommand;
   boolean           m_bFrameCBEnabled;  /*!< Frame callbacks enabled? */
+  boolean           m_bXscaleVideo;     /*!< XScaleVideo enabled? */
+  boolean           m_bMDPScale;        /*!< MDP Scaling enabled? */
   IDisplay *        m_pIDisplay;        /*!< Pointer to display interface */
   AEERect           m_rectClip;         /*!< rectClip is the clipping region set
                                          * by the application.  We can only draw
@@ -316,6 +329,12 @@ typedef struct OEMMediaMPEG4Layer
   boolean           m_bPauseInProcess;
   AEERTSPStatus     m_RTSPStatus;
   AEEUnhandledSDP_RTSP_Status m_SDPStatus;
+
+  boolean                    m_bPULLDataMode;
+  void*                      m_pClientData;
+  AEEFetchBufferedDataSizeT  m_FetchBufferSizeCB;
+  AEEFetchBufferedDataT      m_FetchBufferCB;
+
 } OEMMediaMPEG4Layer;
 
 typedef OEMMediaMPEG4Layer* OEMHandle;
@@ -344,6 +363,10 @@ int OEMMediaMPEG4_QueueCallback( void *pClientData,
                                  void *pData,
                                  uint32 dwSize );
 
+
+void OEMMediaMPEG4_Conc_ACM_Stop(AEEMedia *pOEM);
+
+
 #ifdef FEATURE_QTV_DRM_DCF
 #include "AEESource.h"
 #ifdef __cplusplus
@@ -356,10 +379,27 @@ int OEMMediaMPEG42PV_OpenIxStreamFromISource(ISource*, OEMHandle pMPEG4);
 #endif /* __cplusplus */
 #endif /* FEATURE_QTV_DRM_DCF */
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif /* __cplusplus */
+void UpdateProgressBar(void *pData);
+#ifdef FEATURE_QTV_PROGRESSIVE_DL_STREAMING_2
+void UpdateDownloadProgressBar(void *pData);
+#endif
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+
+
 int OEMMediaMPEG42PV_GetClipInfo(OEMHandle pOEM);
 int OEMMediaMPEG42PV_Init(OEMHandle pOEM);
 int OEMMediaMPEG42PV_OpenURN(char *videoFileName, char *audioFileName,
                              char *textFileName, OEMHandle pOEM);
+#ifdef FEATURE_QTV_FCS
+#error code not present
+#endif
 int OEMMediaMPEG42PV_OpenBufferURN(  unsigned char *pVideoBuf, uint32 dwVideoBufSize,
                                      unsigned char *pAudioBuf, uint32 dwAudioBufSize,
                                      OEMHandle pOEM );
@@ -398,7 +438,7 @@ int OEMMediaMPEG4Qtv_UpdatePSBufferOffset(unsigned int offset);
 #endif /* FEATURE_QTV_PSEUDO_STREAM || FEATURE_QTV_3GPP_PROGRESSIVE_DNLD */
 
 #ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
-int OEMMediaMPEG4Qtv_SetStartAndBufferingTime(uint32 startupTime, uint32 bufferingResumeTime);
+int OEMMediaMPEG4Qtv_SetStartAndBufferingTime(uint32 startupTime, uint32 bufferingResumeTime, OEMHandle pOEM);
 #endif /* FEATURE_QTV_3GPP_PROGRESSIVE_DNLD */
 
 #ifdef FEATURE_QTV_MFDRM
@@ -421,6 +461,8 @@ int OEMMediaMPEG42Qtv_SetDescramblerHandler(void *descrHandler, OEMHandle pOEM);
 #endif
 
 int OEMMediaMPEG42Qtv_SetUserAgent(char*);
+int OEMMediaMPEG42Qtv_ISettings_Set(char *userString, const char *value, OEMHandle pOEM);
+
 
 int OEMMediaMPEG42PV_SetRTSPStatusNotify(boolean notifyEnable, OEMHandle pOEM);
 

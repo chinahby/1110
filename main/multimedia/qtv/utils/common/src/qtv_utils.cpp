@@ -13,9 +13,9 @@ Copyright 2005 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/utils/common/main/latest/src/qtv_utils.cpp#1 $
-$DateTime: 2008/05/08 11:03:24 $
-$Change: 656211 $
+$Header: //source/qcom/qct/multimedia/qtv/utils/common/main/latest/src/qtv_utils.cpp#2 $
+$DateTime: 2009/03/18 21:44:35 $
+$Change: 866593 $
 
 ========================================================================== */
 
@@ -42,7 +42,9 @@ $Change: 656211 $
 /* -----------------------------------------------------------------------
 ** Constant / Define Declarations
 ** ----------------------------------------------------------------------- */
-
+#ifdef PLATFORM_LTK
+#error code not present
+#endif
 /* -----------------------------------------------------------------------
 ** Type Declarations
 ** ----------------------------------------------------------------------- */
