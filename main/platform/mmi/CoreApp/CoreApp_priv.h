@@ -989,7 +989,7 @@ typedef struct _CCoreApp
 	#ifdef FEATURE_KEYGUARD
 	boolean             m_iskeypadtime;
 	#endif
-    #ifdef FEATURE_VERSION_C11
+    #if defined(FEATURE_VERSION_C11)||defined(FEATURE_VERSION_W317A)
 	boolean             m_keyinfoheld;
 	#endif
 	boolean             m_IsSametime;
