@@ -502,11 +502,11 @@ static void CoreApp_keypadtimer(void *pUser);
 static void CoreApp_Issametimer(void *pUser);
 
 static void CoreApp_UpdateBottomBar(CCoreApp    *pMe); 
-
-#ifdef FEATURE_VERSION_C11
+//Add by pyuangui 20121220
+#if defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_W317A)
 static void CCoreApp_TorchTipTimeOut(CCoreApp *pMe);
 #endif
-
+//Add End
 //static void CoreApp_GetRecordCount(CCoreApp *pMe);
 
 //static boolean CoreApp_PowerAlarm_Event(CCoreApp *pMe);
@@ -3546,9 +3546,11 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #ifdef FEATURE_KEYGUARD	 
     byte  bData;
 #endif
-#ifdef FEATURE_VERSION_C11    
+//Add by pyuangui 20121220
+#if defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_W317A)    
     static IStatic * pStatic = NULL;
 #endif
+//Add End
     if (NULL == pMe)
     {
         return FALSE;
@@ -3569,9 +3571,9 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 #else
                 IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);//返回待机界面时，要把显示titlebar标志还原成TRUE
                 #endif
-	    }
-
-          #ifdef FEATURE_VERSION_C11
+	       }
+          //Add by pyuangui 20121220
+          #if defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_W317A)
            if (NULL == pStatic)
             {
                 AEERect rect = {0};
@@ -3581,8 +3583,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 }
                 ISTATIC_SetRect(pStatic, &rect);
             }
-           #endif
-           
+          #endif
+          // Add End 
             MEMSET(pMe->m_wstrEnterNum, 0, sizeof(pMe->m_wstrEnterNum));
 			MSG_FATAL("***zzg CoreApp EVT_DIALOG_INIT bFirstStart=%x***", bFirstStart, 0, 0);
 			
@@ -3778,7 +3780,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             }
             return TRUE;            
         } 
-#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM) ||defined(FEATURE_VERSION_S1000T)||defined(FEATURE_LCD_TOUCH_ENABLE)||defined(FEATURE_VERSION_C11)
+#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM) ||defined(FEATURE_VERSION_S1000T)||defined(FEATURE_LCD_TOUCH_ENABLE)||defined(FEATURE_VERSION_C11)||defined(FEATURE_VERSION_W317A)
 		case EVT_KEY_HELD:
 			 MSG_FATAL("***zzg EVT_KEY_HELD wParam=%x, dwParam=%x", wParam, dwParam, 0);
 			
@@ -3802,6 +3804,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 				}
 			}
 #else
+// Add by pyuangui 20121220
 #ifdef FEATURE_VERSION_C11
             if(wParam == AVK_INFO)
             {
@@ -3842,7 +3845,49 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 
                 return TRUE;
             }
-#endif            
+#endif
+#ifdef FEATURE_VERSION_W317A
+			if(wParam == AVK_CLR)
+            {
+                boolean TorchOn = FALSE;
+                pMe->m_keyinfoheld=TRUE;
+                OEM_GetConfig(CFGI_FLSHLITHG_STATUS,&TorchOn, sizeof(TorchOn));
+                if (TorchOn == FALSE )
+                {
+                    TorchOn = TRUE;
+                    if (pMe->m_pBacklight)
+                    {
+                        IBACKLIGHT_TurnOnTorch(pMe->m_pBacklight);
+                    }
+                }
+                else
+                {
+                    TorchOn = FALSE;
+                    if (pMe->m_pBacklight)
+                    {                           
+                        IBACKLIGHT_TurnOffTorch(pMe->m_pBacklight);
+                    }
+                }
+                OEM_SetConfig(CFGI_FLSHLITHG_STATUS,&TorchOn, sizeof(TorchOn));
+               {
+                 PromptMsg_Param_type m_PromptMsg;
+                 MEMSET(&m_PromptMsg,0,sizeof(PromptMsg_Param_type));
+                 if(TorchOn)
+                 m_PromptMsg.nMsgResID= IDS_MAIN_MENU_TORCHON;
+                 else
+                 m_PromptMsg.nMsgResID= IDS_MAIN_MENU_TORCHOFF;   
+                 m_PromptMsg.ePMsgType = MESSAGE_WARNNING;
+                 STRLCPY(m_PromptMsg.strMsgResFile, AEE_COREAPPRES_LANGFILE,MAX_FILE_NAME);
+                 m_PromptMsg.eBBarType = BTBAR_NONE;
+                 DrawPromptMessage(pMe->m_pDisplay,pStatic,&m_PromptMsg);
+                 IDISPLAY_UpdateEx(pMe->m_pDisplay,TRUE);
+                 (void)ISHELL_SetTimer(pMe->a.m_pIShell,1000, (PFNNOTIFY)CCoreApp_TorchTipTimeOut,pMe);
+                }
+                
+                return TRUE;
+            }
+#endif   
+//Add end
     		if(wParam == AVK_SPACE)
             {
             	boolean bData;
@@ -3862,7 +3907,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #endif	
 				return TRUE;
             }
-#ifndef FEATURE_VERSION_C11
+#if defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_W317A)
+#else
 #if defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_HITZ181)
 	     if(wParam == AVK_SHIFT)
 #elif defined(FEATURE_VERSION_S1000T) 
@@ -3977,12 +4023,14 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
               #if defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_1110W516)|| defined(FEATURE_VERSION_W027)
              IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
              #endif
-#ifdef FEATURE_VERSION_C11
+//Add by pyuangui 20121220			 
+#if defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_W317A)
              ISTATIC_Release(pStatic);
              pStatic = NULL;
              pMe->m_keyinfoheld=FALSE;
              IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
 #endif
+//Add End
 #ifdef FEATURE_KEYGUARD	    
 	     (void)ISHELL_CancelTimer(pMe->a.m_pIShell, 
                                     CoreApp_TimeKeyguard,
@@ -4017,8 +4065,10 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 		}
 #endif		
 		//Add End
-#ifdef FEATURE_VERSION_C11		
+//Add by pyuangui 20121220		
+#if defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_W317A)		
 		case EVT_KEY_RELEASE:
+		#ifdef FEATURE_VERSION_C11
         if((AVKType)wParam == AVK_INFO)
         {
             if(pMe->m_keyinfoheld)
@@ -4030,8 +4080,23 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                return CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
             }
         }
-            return TRUE;
- #endif
+        #endif
+        #ifdef FEATURE_VERSION_W317A
+		if((AVKType)wParam == AVK_CLR)
+        {
+            if(pMe->m_keyinfoheld)
+            {
+               return TRUE;
+            }
+            else
+            {
+               return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
+            }
+        }
+        #endif
+        return TRUE;
+#endif
+// Add End 
         case EVT_KEY_PRESS: 
             if(pMe->m_bemergencymode)
             {
@@ -4542,7 +4607,10 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 						return CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_SFM); 
 #else                   
 						return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);		
-#endif	/*FEATURE_SMARTFREN_STATIC_BREW_APP*/				
+#endif	/*FEATURE_SMARTFREN_STATIC_BREW_APP*/	
+#elif defined (FEATURE_VERSION_W317A) 
+                        pMe->m_keyinfoheld=FALSE;
+                        return TRUE;
 #elif defined (FEATURE_VERSION_M8) || defined(FEATURE_VERSION_M8021)
 #ifdef FEATURE_SMARTFREN_STATIC_BREW_APP   
 						OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_SFM);
@@ -8770,8 +8838,8 @@ static const ServiceProviderList List_SP[] =
        
 };
 #endif
-
-#ifdef FEATURE_VERSION_C11
+//Add by pyuangui 20121220
+#if defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_W317A)
 static void CCoreApp_TorchTipTimeOut(CCoreApp *pMe)
 {
     if (NULL == pMe)
@@ -8786,7 +8854,7 @@ static void CCoreApp_TorchTipTimeOut(CCoreApp *pMe)
                             0);
 }
 #endif
-
+//Add End
 static void CoreApp_GetSPN(CCoreApp *pMe)
 {
 

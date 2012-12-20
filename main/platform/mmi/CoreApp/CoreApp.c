@@ -514,9 +514,11 @@ boolean CoreApp_InitAppData(IApplet* po)
     pMe->m_bSuspended = FALSE;
     pMe->m_bChargFull = FALSE;
     pMe->m_bBatteryActive=FALSE;
-#if defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_SKY)    
+// Add by pyuangui	
+#if defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_SKY) || defined(FEATURE_VERSION_W317A)   
     pMe->m_keyinfoheld=FALSE;
 #endif    
+//Add End
     if (SUCCESS != ISHELL_CreateInstance(pMe->a.m_pIShell,
                                          AEECLSID_CARD,
                                          (void **) &pMe->m_pICard))
@@ -1253,12 +1255,22 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             default:
                 break;
             }
+			//Add by pyuangui 20121220
             #if defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_SKY)
              if(wParam == AVK_INFO)
              {
                return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
              }
             #endif
+
+			#if defined(FEATURE_VERSION_W317A)
+             if(wParam == AVK_CLR)
+             {
+               return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+             }
+            #endif
+			//Add End
+			
             #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)||defined(FEATURE_LCD_TOUCH_ENABLE)
 			
 			return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
