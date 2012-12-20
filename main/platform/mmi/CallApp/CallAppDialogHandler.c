@@ -11702,7 +11702,11 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
 		#if defined(FEATURE_VERSION_C316)||defined(FEAUTRE_VERSION_N450)||defined(FEATURE_VERSION_W0216A)|| defined(FEATURE_VERSION_C306) || defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_N68)||defined(FEATURE_LCD_TOUCH_ENABLE)||defined(FEATURE_VERSION_W516)||defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_H1201)|| defined(FEATURE_VERSION_W027)
         #ifndef FEATURE_TORCH_KEY_INFO
 		else if (((AVKType)wParam == AVK_0) && (WSTRLEN(pMe->m_DialString) == 1))
-		{		
+		{	
+		    #ifdef FEATURE_VERSION_W317A
+            CallApp_LaunchApplet(pMe,  AEECLSID_APP_FMRADIO);  // add by pyuangui 20121220
+			#else
+		    {
 		    boolean TorchOn = FALSE;
 			OEM_GetConfig(CFGI_FLSHLITHG_STATUS,&TorchOn, sizeof(TorchOn));
 			if (TorchOn == FALSE )
@@ -11752,7 +11756,8 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
             #else
 			  ISHELL_CloseApplet(pMe->m_pShell, TRUE);
             #endif
-			
+			}
+			#endif
     	}
         #endif
     	#else
