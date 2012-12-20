@@ -454,6 +454,119 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
 			return TRUE;
             
         }
+
+		//Add By zzg 2012_12_18
+		case EVT_BT_A2DP_PAUSE:		
+		case EVT_BT_A2DP_RESUME:
+		{
+			MSG_FATAL("***zzg MP3_PlayMusic_Window EVT_BT_A2DP_PAUSE or EVT_BT_A2DP_RESUME***", 0, 0, 0);
+
+			if (eCode == EVT_BT_A2DP_PAUSE)
+			{
+				MSG_FATAL("***zzg EVT_BT_A2DP_PAUSE m_bPlaying=%x, m_bPaused=%x***", pMe->m_bPlaying, pMe->m_bPaused, 0);
+				
+				if(pMe->m_bPlaying)
+		        {
+					//当开始播放和临近结束时暂停会有问题，在这里进行出错处理
+					if (pMe->m_nCurrentTime == pMe->m_nTotalTime || pMe->m_nCurrentTime == 0)
+					{          
+						return TRUE;
+					}
+					
+					if (pMe->m_pMedia)
+					{    
+						MSG_FATAL("***zzg IMEDIA_Pause***", 0, 0, 0);
+						if (SUCCESS == IMEDIA_Pause(pMe->m_pMedia))
+						{  
+						   pMe->m_bPaused= TRUE;
+						   pMe->m_bPlaying = FALSE;  
+
+						    MSG_FATAL("***zzg MP3_DrawImage IDI_PLAY***", 0, 0, 0);
+							
+							MP3_DrawImage(pMe, IDI_PLAY, PLAY_X, PLAY_Y);	                       
+							MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_STOP);            
+							IDISPLAY_Update(pMe->m_pDisplay);							
+						}
+					}     
+		        }       
+			}
+			else
+			{
+				MSG_FATAL("***zzg EVT_BT_A2DP_RESUME m_bPlaying=%x, m_bPaused=%x***", pMe->m_bPlaying, pMe->m_bPaused, 0);
+				
+				if (pMe->m_bPaused)
+		        {            
+		        	MSG_FATAL("***zzg IMEDIA_Resume***", 0, 0, 0);
+		            if (pMe->m_pMedia)
+		            {              	
+		                (void)IMEDIA_Resume(pMe->m_pMedia);
+		                pMe->m_bPaused=FALSE;
+		                pMe->m_bPlaying = TRUE;		
+
+						MSG_FATAL("***zzg MP3_DrawImage IDI_PAUSE***", 0, 0, 0);
+						
+						MP3_DrawImage(pMe, IDI_PAUSE, PLAY_X, PLAY_Y);	
+						MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_STOP);            
+		            	IDISPLAY_Update(pMe->m_pDisplay);
+						
+		            }
+		        }				
+			}
+						
+			/*
+			if (TRUE == m_bKeyEnable)
+			{		
+				m_bKeyEnable = FALSE;
+				ISHELL_SetTimer(pMe->m_pShell, MUSIC_KEY_ENABLE_TIME, (PFNNOTIFY)MP3_EnableKey, pMe);
+				
+				if (pMe->m_bPaused)
+		        {            
+		            if (pMe->m_pMedia)
+		            {              	
+		                (void)IMEDIA_Resume(pMe->m_pMedia);
+		                pMe->m_bPaused=FALSE;
+		                pMe->m_bPlaying = TRUE;
+
+						//(void) ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_MUSICPLAYER,EVT_USER_REDRAW,0,0);       
+
+						//Add By zzg 2010_08_18
+						MP3_DrawImage(pMe, IDI_PAUSE, PLAY_X, PLAY_Y);	
+						MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_STOP);            
+		            	IDISPLAY_Update(pMe->m_pDisplay);
+						//Add End
+		            }
+		        }
+	       		else if(pMe->m_bPlaying)
+		        {
+					//当开始播放和临近结束时暂停会有问题，在这里进行出错处理
+					if (pMe->m_nCurrentTime == pMe->m_nTotalTime || pMe->m_nCurrentTime == 0)
+					{          
+						return TRUE;
+					}
+					if (pMe->m_pMedia)
+					{    
+						if (SUCCESS == IMEDIA_Pause(pMe->m_pMedia))
+						{  
+						   pMe->m_bPaused= TRUE;
+						   pMe->m_bPlaying = FALSE;  
+
+						   //(void) ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_MUSICPLAYER,EVT_USER_REDRAW,0,0);       
+						  
+							//Add By zzg 2010_08_18
+							MP3_DrawImage(pMe, IDI_PLAY, PLAY_X, PLAY_Y);
+	                        MSG_FATAL("PLAY_X=%d----PLAY_Y=%d",PLAY_X,PLAY_Y,0);
+							MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_STOP);            
+							IDISPLAY_Update(pMe->m_pDisplay);
+							//Add End
+						}
+					}     
+		        }        
+			}
+			*/
+			return TRUE;
+		}	
+		//Add End
+		
 		//Add By zzg 2010_08_19
 		case EVT_USER:
 		{
@@ -4744,6 +4857,8 @@ void CMusicPlayer_MediaNotify(void * pUser, AEEMediaCmdNotify * pCmdNotify)
         default: 
             break;
     }
+	
+	MSG_FATAL("***zzg CMusicPlayer_MediaNotify nStatus=%x***", pCmdNotify->nStatus, 0, 0);
       
     if (pCmdNotify->nCmd == MM_CMD_PLAY&&pMe->m_eStartMethod !=STARTMETHOD_SIMPLEPLAYER) //播放音乐
     {

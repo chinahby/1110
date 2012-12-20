@@ -352,6 +352,9 @@ enum
 #define EVT_BT_A2DP_AUDIO_DISCONNECTED		0x7009			//A2DP DisConnected
 
 #define EVT_CALLAPP_DISCONNECT_FROM_BT		0x710a			//Disconnect BtHeadSet for CallAppr
+
+#define EVT_BT_A2DP_PAUSE					0x710b			
+#define EVT_BT_A2DP_RESUME					0x710c
 //Add End
 
 #define AEEEvent  uint16

@@ -867,6 +867,12 @@ when       who  what, where, why
 
 #include "AEEAppletCtl.h"  	//Add By zzg 2011_10_20
 
+#ifdef FEATURE_APP_MUSICPLAYER
+#include "MusicPlayer.h"
+#include "MediaGallery.h"
+#endif 
+
+
 
 #ifdef FEATURE_BT_EXTPF_HID_HOST
 #error code not present
@@ -1968,6 +1974,8 @@ static boolean BTApp_CheckNotify(CBTApp* pMe, AEEEvent evt, NotificationData* pD
 		case NMASK_BT_A2DP:
 		{
 
+			MSG_FATAL("***zzg BTApp_CheckNotify NMASK_BT_A2DP, evt=%x***", evt, 0, 0);
+			
 			switch (evt)
 			{
 				case AEEBT_A2DP_EVT_CONNECTED:
@@ -1977,10 +1985,32 @@ static boolean BTApp_CheckNotify(CBTApp* pMe, AEEEvent evt, NotificationData* pD
 					//result = TRUE;
 					break;
 				}
-
-				case AEEBT_A2DP_EVT_BITRATE:
+				
 				case AEEBT_A2DP_EVT_START:
+				{
+#ifdef FEATURE_APP_MUSICPLAYER
+	                (void)ISHELL_SendEvent(pMe->m_pShell,
+                                           AEECLSID_APP_MUSICPLAYER,
+                                           EVT_BT_A2DP_RESUME,
+                                           0,
+                                           0);                	
+#endif
+					break;
+				}
 				case AEEBT_A2DP_EVT_SUSPEND:
+				{
+#ifdef FEATURE_APP_MUSICPLAYER
+					(void)ISHELL_SendEvent(pMe->m_pShell,
+										   AEECLSID_APP_MUSICPLAYER,
+										   EVT_BT_A2DP_PAUSE,
+										   0,
+										   0);						
+					
+#endif
+					break;
+				}	
+
+				case AEEBT_A2DP_EVT_BITRATE:				
 				case AEEBT_A2DP_EVT_OPEN:
 				case AEEBT_A2DP_EVT_CLOSE:
 				default:
