@@ -935,7 +935,8 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
 #endif
 
 #ifdef FEATURE_BREW_CAMERA
-#ifndef FEATURE_VERSION_W208S
+#if defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_W317A)
+#else
             IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_CAMERA, IDS_MULTIMEDIA_CAMERA, NULL, 0);
 #endif
 #endif
