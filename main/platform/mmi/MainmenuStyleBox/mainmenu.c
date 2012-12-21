@@ -4325,7 +4325,8 @@ static void MoveCursorTo(MainMenu *pMe, int row, int column)
                       pMe->m_IconFocus_Pt[theFocus].y, 
                       ICON_ANIMATED_WIDTH, 
                       ICON_ANIMATED_HEIGHT);
-    
+	MSG_FATAL("***pyg***pMe->m_IconFocus_Pt[theFocus].x=%d---pMe->m_IconFocus_Pt[theFocus].y=%d",pMe->m_IconFocus_Pt[theFocus].x,pMe->m_IconFocus_Pt[theFocus].y,0);
+    MSG_FATAL("***pyg***ICON_ANIMATED_WIDTH=%d---ICON_ANIMATED_HEIGHT=%d",ICON_ANIMATED_WIDTH,ICON_ANIMATED_HEIGHT,0);
     MainMenu_DrawBackGround(pMe, &rect);
     
     if (pMe->m_pImageIcon[theFocus])

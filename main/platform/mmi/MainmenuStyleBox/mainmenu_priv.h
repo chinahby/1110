@@ -225,6 +225,11 @@ typedef struct _MainMenu
 #define ICON_HEIGHT             41
 #define ICON_ANIMATED_WIDTH     41
 #define ICON_ANIMATED_HEIGHT    41
+#elif defined(FEATURE_VERSION_C316)  // add by pyuangui 20121221
+#define ICON_WIDTH              40
+#define ICON_HEIGHT             40
+#define ICON_ANIMATED_WIDTH     40
+#define ICON_ANIMATED_HEIGHT    40
 #else
 #define ICON_WIDTH              40
 #define ICON_HEIGHT             32
