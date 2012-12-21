@@ -22,6 +22,9 @@
 	<Object Id="5007" Name="IDB_MODE_T9_MT_ENGLISH_UP" MimeType="image/png">
 		<File>..\images\128x160\common\IME\upabc.png</File>
 	</Object>
+	<Object Id="5008" Name="IDB_UNLOCK" MimeType="image/png">
+		<File>..\images\128x160\common\Appscommon\MessageBox\Unlock.png</File>
+	</Object>
 	<Object Id="5009" Name="IDI_PLAYLISTMG">
 		<File>..\images\128x160\common\mediagallery\playlistplaying.bmp</File>
 	</Object>

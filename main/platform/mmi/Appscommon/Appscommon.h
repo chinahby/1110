@@ -401,7 +401,10 @@ typedef enum PromptMsg_e_Type
     
     /* 手机加对勾图标*/
     //事件完成后消息提示，底部提示条有确认－返回，允许有按键处理，待按键处理完后返回  
-    MESSAGE_INFORMATIVE           
+    MESSAGE_INFORMATIVE       
+#ifdef FEATURE_VERSION_C316 
+	,MESSAGE_UNLOCK
+#endif
 } PromptMsg_e_Type;
 
 typedef struct _Theme_Param_type

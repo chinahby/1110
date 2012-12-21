@@ -2694,7 +2694,14 @@ void DrawPromptMessage (IDisplay *pIDisplay,
             drawbottomStr = FALSE;
             pMsgImgResID = IDB_WARNNING;        
             break;
-            
+
+#ifdef FEATURE_VERSION_C316
+        case MESSAGE_UNLOCK:
+            drawbottomStr = FALSE;
+            pMsgImgResID = IDB_UNLOCK;        
+            break;
+#endif
+						
         case MESSAGE_WAITING:
             drawbottomStr = FALSE;
             pMsgImgResID = IDB_WAITING;        
@@ -3023,7 +3030,11 @@ void Appscomm_Draw_Keyguard_Msg(IDisplay *pIDisplay,IStatic *pStatic,boolean unl
     */
     
     STRLCPY(m_PromptMsg.strMsgResFile, AEE_APPSCOMMONRES_LANGFILE,MAX_FILE_NAME);
-    m_PromptMsg.ePMsgType = MESSAGE_WARNNING;        
+#ifdef FEATURE_VERSION_C316 
+    m_PromptMsg.ePMsgType = MESSAGE_UNLOCK;
+#else
+    m_PromptMsg.ePMsgType = MESSAGE_WARNNING;
+#endif
     m_PromptMsg.eBBarType = BTBAR_NONE;        
     DrawPromptMessage(pIDisplay,pStatic,&m_PromptMsg);
     IDISPLAY_UpdateEx(pIDisplay,FALSE);
@@ -3055,7 +3066,11 @@ void Appscomm_Draw_Keyguard_Information(IDisplay *pIDisplay,IStatic *pStatic,boo
 	}
     
     STRLCPY(m_PromptMsg.strMsgResFile, AEE_APPSCOMMONRES_LANGFILE,MAX_FILE_NAME);
-    m_PromptMsg.ePMsgType = MESSAGE_WARNNING;        
+#ifdef FEATURE_VERSION_C316 
+    m_PromptMsg.ePMsgType = MESSAGE_UNLOCK;
+#else
+    m_PromptMsg.ePMsgType = MESSAGE_WARNNING;
+#endif 
     m_PromptMsg.eBBarType = BTBAR_NONE;        
     DrawPromptMessage(pIDisplay,pStatic,&m_PromptMsg);
     IDISPLAY_UpdateEx(pIDisplay,FALSE);
