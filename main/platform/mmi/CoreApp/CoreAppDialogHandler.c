@@ -7245,12 +7245,14 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 		#else
     		#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_S1000T)
     			eBBarType = BTBAR_UNLOCK_SOS;
+			#elif defined(FEATURE_VERSION_C316)	
+			    eBBarType = BTBAR_UNLOCK_L;
         	#elif defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_1110W516) 
         		eBBarType = BTBAR_LUNLOCK;
             #elif defined(FEATURE_VERSION_W027)
             #ifdef FEATURE_VERSION_W317A
                 eBBarType = BTBAR_UNLOCK_L;
-	    #elif (defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_C316))
+	    #elif (defined(FEATURE_VERSION_C337) || )
                 eBBarType = BTBAR_UNLOCK_M;
             #else
                 eBBarType = BTBAR_UNLOCK_M;			
