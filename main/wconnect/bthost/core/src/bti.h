@@ -1405,6 +1405,8 @@ typedef struct bt_event_q_info_struct
 #ifdef CUST_EDITION
 #if defined (FEATURE_VERSION_S1000T)
   #define DEFAULT_BT_NAME         "V3 Dew"
+#elif defined(FEATURE_VERSION_C316)
+  #define DEFAULT_BT_NAME         "IN 50 PLUS"  	
 #elif defined(FEATURE_VERSION_W516)
   #define DEFAULT_BT_NAME         "Q7"
 #elif defined(FEATURE_VERSION_W0271)
@@ -1412,9 +1414,7 @@ typedef struct bt_event_q_info_struct
 #elif defined(FEATURE_VERSION_W317A)
   #define DEFAULT_BT_NAME         "Lava ARC 8c"  
 #elif defined(FEATURE_VERSION_C337)
-  #define DEFAULT_BT_NAME         "Micromax C260"   
-#elif defined(FEATURE_VERSION_C316)
-  #define DEFAULT_BT_NAME         "IN 50 PLUS"    
+  #define DEFAULT_BT_NAME         "Micromax C260"     
 #else
   #define DEFAULT_BT_NAME         "Hitz 233C"
 #endif
