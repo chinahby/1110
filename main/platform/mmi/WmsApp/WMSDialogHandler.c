@@ -8887,8 +8887,19 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                                 sizeof(wstrTitle));
                                 
                     nLen = WSTRLEN(wstrTitle);
+					// add by pyuangui 20121221
+					#ifdef FEATURE_VERSION_W317A
+					if(nCount >= MAXNUM_MULTISEND)
+                    {
+                       nCount = MAXNUM_MULTISEND-1;
+                    }
+					WSPRINTF(&wstrTitle[nLen], (MAX_TITLE_LEN-nLen)*sizeof(AECHAR), 
+                        L" (%d/%d)", nCount+1, MAXNUM_MULTISEND); 
+					#else
                     WSPRINTF(&wstrTitle[nLen], (MAX_TITLE_LEN-nLen)*sizeof(AECHAR), 
                         L" (%d/%d)", nCount, MAXNUM_MULTISEND); 
+					#endif
+					//add end
 					#if 0
                     (void)IMENUCTL_SetTitle(pMenu, NULL, 0, wstrTitle);
 					#else
