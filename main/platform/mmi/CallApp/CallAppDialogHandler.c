@@ -3401,7 +3401,7 @@ static void recorder_show_media_spec( CCallApp* ref, RGBVAL color)
 
 	SETAEERECT( &rect,
 				0,
-				ref->m_rc.dy - GetBottomBarHeight( ref->m_pDisplay) - height - 2,
+				ref->m_rc.dy - GetBottomBarHeight( ref->m_pDisplay)*2 - height - 2,
 				ref->m_rc.dx,
 				height
 			);
@@ -3444,7 +3444,7 @@ static void recorder_show_media_spec( CCallApp* ref, RGBVAL color)
 
 		SETAEERECT( &rect,
 				0,
-				ref->m_rc.dy - GetBottomBarHeight( ref->m_pDisplay),
+				ref->m_rc.dy - GetBottomBarHeight( ref->m_pDisplay)*2,
 				ref->m_rc.dx,
 				GetBottomBarHeight( ref->m_pDisplay)
 			);
