@@ -52,6 +52,9 @@
 	<Object Id="5017" Name="IDI_MENU_ITEM_FOCUS" MimeType="image/png">
 		<File>..\images\176x220\common\Appscommon\Menu\menu\menu_icon_focus.png</File>
 	</Object>
+	<Object Id="5018" Name="IDB_MAINMENU_YPJBG" MimeType="image/png">
+		<File>..\images\176x220\common\Appscommon\Menu\background\ypjbackground.png</File>
+	</Object>
 	<Object Id="5021" Name="IDB_CHECK_ON" MimeType="image/png">
 		<File>..\images\176x220\common\Appscommon\Icon\check_yes.png</File>
 	</Object>
@@ -112,11 +115,17 @@
 	<Object Id="5082" Name="IDI_MAINMENU_BOTTOMBAR" MimeType="image/png">
 		<File>..\images\176x220\common\Appscommon\Menu\bottombar\mmbottombar.png</File>
 	</Object>
+	<Object Id="5083" Name="IDI_MAINMENU_YPJBOTTOMBAR" MimeType="image/png">
+		<File>..\images\176x220\common\Appscommon\Menu\bottombar\ypjbottombar.png</File>
+	</Object>
 	<Object Id="5101" Name="IDI_TITLEBAR" MimeType="image/png">
 		<File>..\images\176x220\common\Appscommon\Menu\titlebar\titlebar.png</File>
 	</Object>
 	<Object Id="5102" Name="IDI_MAINMENU_TITLEBAR" MimeType="image/png">
 		<File>..\images\176x220\common\Appscommon\Menu\titlebar\mmtitlebar.png</File>
+	</Object>
+	<Object Id="5103" Name="IDI_MAINMENU_YPJTITLEBAR" MimeType="image/png">
+		<File>..\images\176x220\common\Appscommon\Menu\titlebar\ypjtitlebar.png</File>
 	</Object>
 	<Object Id="5121" Name="IDB_SELECT_BAR" MimeType="image/png">
 		<File>..\images\176x220\common\Appscommon\Menu\selectbar\selectbar.png</File>

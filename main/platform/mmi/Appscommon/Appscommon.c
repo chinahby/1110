@@ -1270,12 +1270,21 @@ void DrawBottomBar(IDisplay  * pIDisplay, BottomBar_Param_type *BParam)
 #else
         else
         {
+            // Add by pyuangui 20121221
             #ifdef FEATURE_VERSION_W317A
             if(AEE_Active()==AEECLSID_MAIN_MENU)
             {
                pBarImg = ISHELL_LoadResImage(pShell,
                                           AEE_APPSCOMMONRES_IMAGESFILE,
                                           IDI_MAINMENU_BOTTOMBAR);
+            }
+            else
+		    #elif defined(FEATURE_VERSION_C310)
+			if(AEE_Active()==AEECLSID_MAIN_MENU)
+            {
+               pBarImg = ISHELL_LoadResImage(pShell,
+                                          AEE_APPSCOMMONRES_IMAGESFILE,
+                                          IDI_MAINMENU_YPJBOTTOMBAR);
             }
             else
             #endif
@@ -1745,6 +1754,7 @@ void DrawTitleBar(IDisplay  * pIDisplay, TitleBar_Param_type *TParam)
 #else
         else
         {
+            //Add by pyuangui 20121221
             #ifdef FEATURE_VERSION_W317A
             if(AEE_Active()==AEECLSID_MAIN_MENU)
             {
@@ -1753,7 +1763,15 @@ void DrawTitleBar(IDisplay  * pIDisplay, TitleBar_Param_type *TParam)
                                           IDI_MAINMENU_TITLEBAR);
             }
             else
-            #endif
+			#elif defined(FEATURE_VERSION_C310)
+			if(AEE_Active()==AEECLSID_MAIN_MENU)
+            {
+               pBarImg = ISHELL_LoadResImage(pShell,
+                                          AEE_APPSCOMMONRES_IMAGESFILE,
+                                          IDI_MAINMENU_YPJTITLEBAR);
+            }
+            else
+            #endif //Add End
             {
                pBarImg = ISHELL_LoadResImage(pShell,
                                           AEE_APPSCOMMONRES_IMAGESFILE,
