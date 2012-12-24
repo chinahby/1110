@@ -750,6 +750,10 @@ typedef struct
    char    mizone_num[MAS_BREWSETINT_STRING];
    char    mizone_smsinfo[MAS_BREWSETINT_STRING];   
 #endif
+
+#ifdef FEATURE_VERSION_C316   
+   boolean	m_onekey_lock_keypad;							/*CFGI_ONEKEY_LOCK_KEYPAD Add by xuhui 2012/12/24*/
+#endif
 } OEMConfigListType;
 
 
@@ -1461,6 +1465,13 @@ static int OEMPriv_SetItem_CFGI_DEFAULTCONT(void *pBuff) ;
 #endif
 //Add End
 
+//Add By zzg 2012_11_14
+#ifdef FEATURE_VERSION_C316
+static int OEMPriv_GetItem_CFGI_ONEKEY_LOCK_KEYPAD(void *pBuff) ;
+static int OEMPriv_SetItem_CFGI_ONEKEY_LOCK_KEYPAD(void *pBuff) ;
+#endif
+//Add End
+
 #ifdef FEATURE_RANDOM_MENU_COLOR
 static int OEMPriv_GetItem_CFGI_MENU_BGCOLOR(void *pBuff);
 
@@ -2013,6 +2024,9 @@ static OEMConfigListType oemi_cache = {
     ,{0}
 #endif
 
+#ifdef FEATURE_VERSION_C316
+   ,TRUE											//CFGI_ONEKEY_LOCK_KEYPAD
+#endif
 
 };
 
@@ -2598,6 +2612,10 @@ static ConfigItemTableEntry const customOEMItemTable[] =
 #ifdef FEATURE_VERSION_C337
    CFGTABLEITEM(CFGI_MIZONE_NUM,sizeof(char)*MAS_BREWSETINT_STRING),
    CFGTABLEITEM(CFGI_MIZONE_SMSINFO,sizeof(char)*MAS_BREWSETINT_STRING), 
+#endif
+
+#ifdef FEATURE_VERSION_C316
+   CFGTABLEITEM(CFGI_ONEKEY_LOCK_KEYPAD,sizeof(boolean)),
 #endif
    //CFGTABLEITEM(CFGI_SALES_TRACK_SMS_SEND, sizeof(boolean)),		//Add By zzg 2012_10_29
 };
@@ -11500,6 +11518,22 @@ static int OEMPriv_GetItem_CFGI_DEFAULTCONT(void *pBuff)
 static int OEMPriv_SetItem_CFGI_DEFAULTCONT(void *pBuff) 
 {
     MEMCPY((void*) &oemi_cache.m_defaultcont, pBuff, sizeof(boolean));
+    OEMPriv_WriteOEMConfigList();
+    return SUCCESS;
+}
+#endif
+
+
+#ifdef FEATURE_VERSION_C316
+static int OEMPriv_GetItem_CFGI_ONEKEY_LOCK_KEYPAD(void *pBuff) 
+{
+   MEMCPY(pBuff, (void*) &oemi_cache.m_onekey_lock_keypad, sizeof(boolean));
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_ONEKEY_LOCK_KEYPAD(void *pBuff) 
+{
+    MEMCPY((void*) &oemi_cache.m_onekey_lock_keypad, pBuff, sizeof(boolean));
     OEMPriv_WriteOEMConfigList();
     return SUCCESS;
 }
