@@ -4067,8 +4067,32 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #endif		
 		//Add End
 //Add by pyuangui 20121220		
-#if defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_W317A)		
+#if defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_C316)	
 		case EVT_KEY_RELEASE:
+#ifdef FEATURE_VERSION_C316			
+#ifdef FEATURE_KEYGUARD
+		if(wParam == AVK_END)
+		{
+		    boolean bData = FALSE;
+		    OEM_GetConfig(CFGI_ONEKEY_LOCK_KEYPAD,&bData, sizeof(bData));
+			if(!OEMKeyguard_IsEnabled() && bData)
+			{//一键锁屏
+				IBacklight   *pBacklight = NULL;
+				OEMKeyguard_SetState(TRUE);  
+				ISHELL_CreateInstance(pMe->a.m_pIShell,
+					AEECLSID_BACKLIGHT,
+					(void**)&pBacklight);
+				if(pBacklight != NULL)
+				{
+					IBACKLIGHT_TurnOff(pBacklight);
+					IBACKLIGHT_Release(pBacklight);
+				}						
+				return TRUE;
+			}
+		}
+#endif					
+#endif		 
+			
 		#ifdef FEATURE_VERSION_C11
         if((AVKType)wParam == AVK_INFO)
         {
@@ -4119,27 +4143,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					return CoreApp_LaunchApplet(pMe, AEECLSID_BLUETOOTH_APP);
 #endif
 #ifndef FEATURE_VERSION_C180
-/*
-		 case AVK_END:
-#ifdef FEATURE_KEYGUARD
-#ifdef FEATURE_VERSION_C316
-		     //AVK_END键不能做锁屏键，它要用来做关机键	
-                    if(!OEMKeyguard_IsEnabled())
-                    {//一键锁屏
-                          IBacklight   *pBacklight = NULL;
-                          OEMKeyguard_SetState(TRUE);  
-        		    ISHELL_CreateInstance(pMe->a.m_pIShell,
-        		                         AEECLSID_BACKLIGHT,
-        		                         (void**)&pBacklight);
-        		    if(pBacklight != NULL)
-        		    {
-        		        IBACKLIGHT_TurnOff(pBacklight);
-        		        IBACKLIGHT_Release(pBacklight);
-        		    }						
-                        return TRUE;
-                    }
-#endif					
-#endif	*/	 	
+	
                 case AVK_MUSIC:
                 	if(pMe->m_iskeypadtime)
 					{
