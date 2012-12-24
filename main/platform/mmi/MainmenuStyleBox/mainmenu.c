@@ -3130,6 +3130,16 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_IconTitle[6]     = IDS_MAIN_MENU_SETTINGS;
     pMe->m_IconTitle[7]     = IDS_MAIN_MENU_GAMES;
     pMe->m_IconTitle[8]     = IDS_MAIN_MENU_UTK;
+#elif defined (FEATURE_VERSION_C310) // add by pyuangui 20121224
+    pMe->m_IconTitle[0]     = IDS_MAIN_MENU_CONTACTS;
+    pMe->m_IconTitle[1]     = IDS_MAIN_MENU_MESSAGES;
+    pMe->m_IconTitle[2]     = IDS_MAIN_MENU_RECENTCALLS;
+    pMe->m_IconTitle[3]     = IDS_MAIN_MENU_SETTINGS;
+    pMe->m_IconTitle[4]     = IDS_MAIN_MENU_MULTIMEDIA;
+    pMe->m_IconTitle[5]     = IDS_MAIN_MENU_TOOLS;
+    pMe->m_IconTitle[6]     = IDS_MAIN_MENU_SERVICES_C316;
+    pMe->m_IconTitle[7]     = IDS_MAIN_MENU_UTK;
+    pMe->m_IconTitle[8]     = IDS_MAIN_MENU_MEDIAGALLERY;
 #elif defined(FEATURE_VERSION_W317A)
     pMe->m_IconTitle[0]     = IDS_MAIN_MENU_CONTACTS;
     pMe->m_IconTitle[1]     = IDS_MAIN_MENU_RECENTCALLS_C337;	//IDS_MAIN_MENU_RECENTCALLS;
@@ -3803,8 +3813,12 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
                 {
 #if defined (FEATURE_VERSION_H19C) || defined (FEATURE_VERSION_C01)|| defined (FEATURE_VERSION_SKY)
                     pMe->m_pImageBg = ISHELL_LoadImage(pMe->m_pShell,ICON_ANI[0]);
+//Add by pyuangui 20121221
 #elif defined(FEATURE_VERSION_W317A)
                     pMe->m_pImageBg = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_MAINMENU_BG);
+#elif defined(FEATURE_VERSION_C310)
+                    pMe->m_pImageBg = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_MAINMENU_YPJBG);
+//Add by pyuangui 20121221
 #else
                     pMe->m_pImageBg = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);//modi by yangdecai
 #endif                    
@@ -4577,7 +4591,7 @@ static int StartApplet(MainMenu *pMe, int i)
 		
     case IDS_MAIN_MENU_SERVICES_C316:    
     case IDS_MAIN_WAPBROWSER:
-#if  (defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_W317A))	
+#if  (defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C310))	
 		MSG_FATAL("IDS_MAIN_MENU_SERVICES...........22222222222222",0,0,0);
 
         OEM_SetUCBROWSER_ADSAccount();
