@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="securitymenu" VERSION="1">
+<BREWRes Name="hisecuritymenu" VERSION="1">
 <Strings Encoding="Unicode">
 	<STRING Id="1001" Name="IDS_PINCHANGE_TITLE">
 		<Text>PIN बदलें</Text>
@@ -79,6 +79,9 @@
 	<STRING Id="1027" Name="IDS_RESTRICT_OUTGOING_INTERNATIONAL">
 		<Text>अंतर्राष्ट्रीय</Text>
 	</STRING>
+	<String Id="1028" Name="IDS_ONEKEY_LOCK_KEPAD">
+		<Text>Red key locks keypad</Text>
+	</String>
 	<STRING Id="1031" Name="IDS_RESTRICT_TITLE">
 		<Text>प्रतिबंधित</Text>
 	</STRING>
@@ -210,7 +213,7 @@
 	</String>
 	<STRING Id="1178" Name="IDS_MG_MEDIAGALLERY">
 		<Text>फाइल मेनेजर</Text>
-	</STRING>	
+	</STRING>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_PHONELOCK_DIALOG" Focus="7001">
@@ -338,6 +341,13 @@
 	</Dialog>
 	<Dialog Id="6023" Name="IDD_TSIMINPUT_PASSWORD_DIALOG" Focus="0">
 		<Controls/>
+	</Dialog>
+	<Dialog Id="6025" Name="IDD_ONEKEY_LOCK_KEYPAD_DIALOG" Focus="7012">
+		<Controls>
+			<Menu Id="7012" Name="IDM_ONEKEY_LOCK_KEYPAD">
+				<Items/>
+			</Menu>
+		</Controls>
 	</Dialog>
 </Dialogs>
 </BREWRes>

@@ -146,7 +146,9 @@ typedef enum DLGRetValue
    #if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
    ,DLGRET_MOBILE_TRACKER
    #endif
-
+#ifdef FEATURE_VERSION_C316	
+    ,DLGRET_ONEKEY_LOCK_KEYPAD
+#endif
 } DLGRet_Value_e_Type;
 
 /*----------------------状态机相关数据类型声明---------------------*/
@@ -182,6 +184,10 @@ typedef enum _SecurityMenuState
    #if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
    MOBILE_TRACKER,
    #endif
+
+#ifdef FEATURE_VERSION_C316	
+    SECURITYMENU_ONEKEY_LOCK_KEYPAD,
+#endif
    SECURITYMENU_EXIT
 
 } SecurityMenuState;
@@ -216,6 +222,9 @@ typedef enum
     SEC_SEL_RECENTCALL_LOCK,
     SEC_SEL_SMS_LOCK,
     SEC_SEL_KEY_LOCK
+#ifdef FEATURE_VERSION_C316
+    ,SEC_SEL_ONE_KEY_LOCK_KEYPAD
+#endif
 }SEC_LOCK_SEL;
 // SecurityMenu Applet对象结构体：
 typedef struct _CSecurityMenu

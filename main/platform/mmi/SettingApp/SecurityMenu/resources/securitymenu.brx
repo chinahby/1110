@@ -82,6 +82,9 @@
 	<STRING Id="1027" Name="IDS_RESTRICT_OUTGOING_INTERNATIONAL">
 		<Text>International</Text>
 	</STRING>
+	<String Id="1028" Name="IDS_ONEKEY_LOCK_KEPAD" Encoding="Unicode">
+		<Text>Red key locks keypad</Text>
+	</String>
 	<STRING Id="1031" Name="IDS_RESTRICT_TITLE">
 		<Text>Restrict</Text>
 	</STRING>
@@ -213,7 +216,7 @@
 	</String>
 	<STRING Id="1178" Name="IDS_MG_MEDIAGALLERY">
 		<Text>File Manager</Text>
-	</STRING>	
+	</STRING>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_PHONELOCK_DIALOG" Focus="7001">
@@ -344,6 +347,13 @@
 	</Dialog>
 	<Dialog Id="6024" Name="IDD_MOBILE_TRACKER_DIALOG" Focus="0">
 		<Controls/>
+	</Dialog>
+	<Dialog Id="6025" Name="IDD_ONEKEY_LOCK_KEYPAD_DIALOG" Focus="7012">
+		<Controls>
+			<Menu Id="7012" Name="IDM_ONEKEY_LOCK_KEYPAD">
+				<Items/>
+			</Menu>
+		</Controls>
 	</Dialog>
 </Dialogs>
 </BREWRes>

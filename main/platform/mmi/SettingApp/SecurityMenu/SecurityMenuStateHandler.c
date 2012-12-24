@@ -104,6 +104,9 @@ static NextFSMAction Security_StateChangeCodeHandler(CSecurityMenu *pMe);
 static NextFSMAction Security_StateMobileTracker(CSecurityMenu *pMe);
 #endif
 
+#ifdef FEATURE_VERSION_C316	
+static NextFSMAction Security_StateOneKeyLockKeypadHandler(CSecurityMenu *pMe);
+#endif
 
 
 /*==============================================================================
@@ -231,6 +234,12 @@ NextFSMAction SecurityMenu_ProcessState(CSecurityMenu *pMe)
         case SECURITYMENU_EXIT:
             retVal = Security_StateExitHandler(pMe);
             break;
+
+#ifdef FEATURE_VERSION_C316	
+        case SECURITYMENU_ONEKEY_LOCK_KEYPAD:
+            retVal = Security_StateOneKeyLockKeypadHandler(pMe);
+            break;
+#endif
 
         default:
             break;
@@ -389,6 +398,12 @@ static NextFSMAction Security_StateMainHandler(CSecurityMenu *pMe)
         case DLG_PHONEPASSWORD:
             MOVE_TO_STATE(SECURITYMENU_PHONEPASSWORD)
             return NFSMACTION_CONTINUE;
+
+#ifdef FEATURE_VERSION_C316	
+        case DLGRET_ONEKEY_LOCK_KEYPAD:
+            MOVE_TO_STATE(SECURITYMENU_ONEKEY_LOCK_KEYPAD)
+            return NFSMACTION_CONTINUE;
+#endif
             
         #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_W317A)
         case DLGRET_KEYLOCK:
@@ -464,6 +479,64 @@ static NextFSMAction Security_StateApplicationLockHandler(CSecurityMenu *pMe)
 
     return NFSMACTION_WAIT;
 } // StateApplicationLockHandler
+
+
+#ifdef FEATURE_VERSION_C316
+/*==============================================================================
+函数：
+       Security_StateOneKeyLockKeypadHandler
+说明：
+       SECURITYMENU_ONEKEY_LOCK_KEYPAD 状态处理函数
+
+参数：
+       pMe [in]：指向SecurityMenu Applet对象结构的指针。该结构包含小程序的特定信息。
+
+返回值：
+       NFSMACTION_CONTINUE：指示后有子状态，状态机不能停止。
+       NFSMACTION_WAIT：指示因要显示对话框界面给用户，应挂起状态机。
+
+备注：
+
+==============================================================================*/
+static NextFSMAction Security_StateOneKeyLockKeypadHandler(CSecurityMenu *pMe)
+{
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+    switch(pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            SecurityMenu_ShowDialog(pMe, IDD_ONEKEY_LOCK_KEYPAD_DIALOG);
+            return NFSMACTION_WAIT;
+
+        case DLGRET_CANCELED:
+        case DLGRET_MSGBOX_OK:
+            if( pMe->m_lock_sel == SEC_SEL_PHONE_LOCK)
+            {
+                MOVE_TO_STATE(SECURITYMENU_MAIN)
+            }
+            else
+            {
+                MOVE_TO_STATE(SECURITYMENU_MAIN)
+            }
+            return NFSMACTION_CONTINUE;
+
+        case DLGRET_TOSHOWMSG:
+            //pMe->m_wMsgID = IDS_SAVED;
+            Security_ShowMsgBox(pMe, IDS_SAVED);
+            return NFSMACTION_WAIT; 
+
+        default:
+            break;
+    }
+
+    return NFSMACTION_WAIT;
+
+}
+
+#endif
 
 /*==============================================================================
 函数：

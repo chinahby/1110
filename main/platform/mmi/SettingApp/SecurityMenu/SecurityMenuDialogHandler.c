@@ -178,6 +178,12 @@ static void CSecurtyMenu_DialogTimeout(void *pme);
 
 static void SecurityMenu_SetItemNumIcon(IMenuCtl   *pMenu);
 
+#ifdef FEATURE_VERSION_C316	
+static boolean  SecurityOneKeyLockKeypadDlgHandler(CSecurityMenu *pMe,
+                                        AEEEvent eCode,
+                                        uint16 wParam,
+                                        uint32 dwParam);
+#endif
 /*==============================================================================
                                  全局数据
 ==============================================================================*/
@@ -359,6 +365,11 @@ boolean SecurityMenu_RouteDialogEvent(CSecurityMenu *pMe,
 		case  IDD_MOBILE_TRACKER_DIALOG:
 			return SecurityMobileTrackerHandler(pMe,eCode,wParam,dwParam);
 		#endif
+
+#ifdef FEATURE_VERSION_C316	
+        case IDD_ONEKEY_LOCK_KEYPAD_DIALOG:
+            return SecurityOneKeyLockKeypadDlgHandler(pMe,eCode,wParam,dwParam);
+#endif
         default:
            return FALSE;
     }
@@ -428,6 +439,9 @@ static boolean  SecurityMainDlgHandler(CSecurityMenu *pMe,
 			#if defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_C316)
 			IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_MOBILE_TRACKER, IDS_MOBILE_TRACKER, NULL, 0);
 			#endif
+#ifdef FEATURE_VERSION_C316	
+            IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_ONEKEY_LOCK_KEPAD, IDS_ONEKEY_LOCK_KEPAD, NULL, 0);
+#endif
             return TRUE;
 
         case EVT_DIALOG_START:
@@ -482,6 +496,13 @@ static boolean  SecurityMainDlgHandler(CSecurityMenu *pMe,
                     pMe->m_lock_sel = SEC_SEL_PHONE_LOCK;
                     CLOSE_DIALOG(DLG_PHONEPASSWORD)
                     break;
+
+#ifdef FEATURE_VERSION_C316	
+                case IDS_ONEKEY_LOCK_KEPAD:           //一键锁屏
+                    pMe->m_lock_sel = SEC_SEL_ONE_KEY_LOCK_KEYPAD;
+                    CLOSE_DIALOG(DLGRET_ONEKEY_LOCK_KEYPAD)
+                    break;
+#endif
                 
                 case IDS_APPLICATION_LOCK:
                     CLOSE_DIALOG(DLG_APPLICATIONLOCK)
@@ -736,6 +757,171 @@ static boolean  SecurityApplicationLockDlgHandler(CSecurityMenu *pMe,
     }
     return FALSE;
 } // SecurityApplicationlockDlgHandler
+
+
+#ifdef FEATURE_VERSION_C316	
+/*==============================================================================
+函数：
+       SecurityOneKeyLockKeypadDlgHandler
+说明：
+       SecurityOneKeyLockKeypadDlgHandler对话框事件处理函数
+
+参数：
+       pMe [in]：指向SecurityMenu Applet对象结构的指针。该结构包含小程序的特定信息。
+       eCode [in]：事件代码。
+       wParam：事件相关数据。
+       dwParam：事件相关数据。
+
+返回值：
+       TRUE：传入事件被处理。
+       FALSE：传入事件被忽略。
+
+备注：
+
+==============================================================================*/
+static boolean  SecurityOneKeyLockKeypadDlgHandler(CSecurityMenu *pMe,
+                                           AEEEvent       eCode,
+                                           uint16         wParam,
+                                           uint32         dwParam)
+{
+    PARAM_NOT_REF(dwParam)
+    IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,
+                                        IDM_ONEKEY_LOCK_KEYPAD);
+    static boolean bData = 0; //用于保存NV项中的 CFGI_PHONE_PASSWORD_CHECK
+    uint16   cfgi_value = CFGI_PHONE_PASSWORD_CHECK;
+    SEC_ERR("%x,%x,%x,SecurityOneKeyLockKeypadDlgHandler",eCode,wParam,dwParam);
+    if (pMenu == NULL)
+    {
+        return FALSE;
+    }
+    //实现菜单循环滚动功能
+    //SecurityMenu_AutoScroll(pMenu,eCode,wParam);
+
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT:
+			
+            IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_ON, IDS_ON, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_OFF, IDS_OFF, NULL, 0);
+            return TRUE;
+
+        case EVT_DIALOG_START:
+        {
+            uint16 wItemID;
+            uint16 string_id = IDS_ONEKEY_LOCK_KEPAD;//IDS_PHONE_PASSWORD_CHECK_TITLE;
+            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT|MP_ACTIVE_NO_REDRAW);
+            IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
+#ifdef FEATURE_CARRIER_CHINA_VERTU
+            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SECURITY_BACKGROUND);
+#endif
+            IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
+		    {
+		  		AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_APPSSECURITYMENU_RES_FILE,                                
+                        string_id,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+		    }
+            OEM_GetConfig(CFGI_ONEKEY_LOCK_KEYPAD,&bData, sizeof(bData));
+            SetMenu_SetRadioIconAsOff(pMenu);
+
+            if(bData == TRUE)
+            {
+                wItemID = IDS_ON;
+            }
+            else
+            {
+                wItemID = IDS_OFF;
+            }
+
+            SetMenuIcon(pMenu, wItemID, TRUE);
+            //SetControlRect(pMe,pMenu);
+
+
+            (void) ISHELL_PostEvent(pMe->m_pShell,
+                                            AEECLSID_APP_SECURITYMENU,
+                                            EVT_USER_REDRAW,
+                                            0,
+                                            0);
+
+            return TRUE;
+        }
+        case EVT_USER_REDRAW:
+            //(void)IMENUCTL_Redraw(pMenu);   
+            return TRUE;
+
+        case EVT_DIALOG_END:
+            return TRUE;
+
+        case EVT_KEY:
+            switch(wParam)
+            {
+                case AVK_CLR:
+                    CLOSE_DIALOG(DLGRET_CANCELED)
+                    return TRUE;
+
+                default:
+                    break;
+            }
+
+            return TRUE;
+
+        case EVT_COMMAND:
+        {
+            boolean bNewData;
+            switch(wParam)
+            {
+                case IDS_ON:
+                    bNewData = TRUE;
+                    break;
+
+                case IDS_OFF:
+                    bNewData = FALSE;
+                    break;
+
+                default:
+                    return FALSE;
+
+            }
+
+            if (bNewData != bData)
+            {
+                (void)ICONFIG_SetItem(pMe->m_pConfig,
+                                                CFGI_ONEKEY_LOCK_KEYPAD/*CFGI_ONEKEY_LOCK_KEYPAD*/,
+                                                &bNewData,
+                                                sizeof(bNewData));
+                //将选中的选项标出
+                bData = bNewData;
+                SetMenu_SetRadioIconAsOff(pMenu);
+                SetMenuIcon(pMenu, wParam, TRUE);
+                (void)IMENUCTL_Redraw(pMenu);
+
+            }
+
+			MSG_FATAL("***xuhui SecurityOneKeyLockKeypadDlgHandler ISHELL_SetTimer CSecurtyMenu_DialogTimeout 111***", 0, 0, 0);
+			
+            (void) ISHELL_SetTimer(pMe->m_pShell,
+                                    750,
+                                    CSecurtyMenu_DialogTimeout,
+                                    pMe);
+            return TRUE;
+        }
+
+
+        //自动返回上级对话框
+        case EVT_DISPLAYDIALOGTIMEOUT:
+            CLOSE_DIALOG(DLGRET_TOSHOWMSG)
+
+        default:
+            break;
+    }
+    return FALSE;
+} // SecurityOneKeyLockKeypadDlgHandler
+
+#endif
+
 
 /*==============================================================================
 函数：
