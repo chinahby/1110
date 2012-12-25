@@ -131,6 +131,7 @@ GENERAL DESCRIPTION:
 #endif
 #if defined(FEATURE_VERSION_C316)
 #define AEECLSID_INDEX_ZONE			(AEECLSID_OEM + 0x506)	//Add By zzg for C316 index_zone
+#define AEECLSID_SERVICE			(AEECLSID_OEM + 0x507)	//Add By zzg for C316 index_zone
 #endif
 #define AEECLSID_MULTIMEDIA_LIST   (AEECLSID_OEM + 0x600)   //add by yangdecai
 #define AEECLSID_STATIC_APP        (AEECLSID_OEM + 0x601)   //add by yangdecai

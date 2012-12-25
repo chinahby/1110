@@ -869,6 +869,10 @@ ifeq ($(USES_INDEXZONE),yes)
 INDEXZONE  =         		$(MMIDIR)/IndexZone
 endif
 
+ifeq ($(USES_SERVICE),yes)
+SERVICE  =         			$(MMIDIR)/Service
+endif
+
 MULTIMEDIA =            $(MMIDIR)/Multimedia
 STATIC_BREW_APP=        $(MMIDIR)/staticbrewapp/$(USES_LCD_SIZE)
 STATIC_APP=             $(MMIDIR)/staticapp
