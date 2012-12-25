@@ -2867,7 +2867,8 @@ void DrawPromptMessage (IDisplay *pIDisplay,
             titlerect.y = totalrect.y  - StringBgImgInfo.cy/2 + TitleBgImgInfo.cy/2;
             #if defined(FEATURE_VERSION_W515V3) ||defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_C316)
             strrect.dy = StringBgImgInfo.cy/2 + 30;
-			#ifdef FEATURE_VERSION_W317A
+			#ifdef FEATURE_VERSION_W317A   // add by pyuangui 20121225
+			strrect.dy = StringBgImgInfo.cy/2 + 40;
 			strrect.dx = StringBgImgInfo.cx+10;
 			#else
             strrect.dx = StringBgImgInfo.cx;
