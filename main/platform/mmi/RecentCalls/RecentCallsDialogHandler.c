@@ -1602,8 +1602,10 @@ static boolean RecentCalls_TimeMenuEvent(CRecentCalls *pMe,
          IMENUCTL_AddItem(pMe->pMenu, AEE_RECENTCALLSRES_LANGFILE, IDS_RECEIVED_CALLS, IDS_RECEIVED_CALLS, NULL, 0);
          IMENUCTL_AddItem(pMe->pMenu, AEE_RECENTCALLSRES_LANGFILE, IDS_OUTGOING_CALLS, IDS_OUTGOING_CALLS, NULL, 0);
          IMENUCTL_AddItem(pMe->pMenu, AEE_RECENTCALLSRES_LANGFILE, IDS_ALL_CALLS, IDS_ALL_CALLS, NULL, 0);
-         //IMENUCTL_AddItem(pMe->pMenu, AEE_RECENTCALLSRES_LANGFILE, IDS_RESET_TIME, IDS_RESET_TIME, NULL, 0);
-         return TRUE;
+         #ifdef FEATURE_VERSION_C316
+		 IMENUCTL_AddItem(pMe->pMenu, AEE_RECENTCALLSRES_LANGFILE, IDS_RESET_TIME, IDS_RESET_TIME, NULL, 0); //modi by pyuangui 20121225
+         #endif
+		 return TRUE;
       
       case EVT_DIALOG_START:
         //IMENUCTL_SetProperties(pMe->pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
@@ -1640,11 +1642,15 @@ static boolean RecentCalls_TimeMenuEvent(CRecentCalls *pMe,
             case IDS_ALL_CALLS:
                CLOSE_DIALOG(DLGRET_TIME)
                break;
-               
-            /*case IDS_RESET_TIME:
+			   
+			//modi by pyuangui 20121225   
+            #ifdef FEATURE_VERSION_C316
+            case IDS_RESET_TIME:
                CLOSE_DIALOG(DLGRET_TIMECLEAR)
-               break;*/
-               
+               break;
+            #endif
+			//modi end
+			
             default:
                break;
          }

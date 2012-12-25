@@ -442,11 +442,18 @@ static NextFSMAction statetimemenuhandle(CRecentCalls *pMe)
         case DLGRET_TIME:
             MOVE_TO_STATE(STATE_RTIME)
             return NFSMACTION_CONTINUE;
-
-        /*case DLGRET_TIMECLEAR:
-            MOVE_TO_STATE(STATE_RWARN)
-            return NFSMACTION_CONTINUE;*/
-
+			
+//modi by pyuangui 20121225
+#ifdef FEATURE_VERSION_C316
+        case DLGRET_TIMECLEAR:
+#if defined (FEATURE_VERSION_C316)      
+                    MOVE_TO_STATE(STATE_ASKPASSWORD)
+#else 
+                    MOVE_TO_STATE(STATE_RWARN)
+#endif			
+            return NFSMACTION_CONTINUE;
+#endif
+//modi end
         case DLGRET_CANCELED:
             MOVE_TO_STATE(STATE_RMAINMENU)
             return NFSMACTION_CONTINUE;
@@ -678,7 +685,7 @@ static NextFSMAction statetimehandle(CRecentCalls *pMe)
             return NFSMACTION_WAIT;
         case DLGRET_TIMECLEAR:
 			MSG_FATAL("---------ok2",0,0,0);
-#if defined (FEATURE_VERSION_W515)||defined (FEATURE_VERSION_S1000T)       
+#if defined (FEATURE_VERSION_W515)||defined (FEATURE_VERSION_S1000T)||defined (FEATURE_VERSION_C316)  //modi by pyuangui 20121225    
                     MOVE_TO_STATE(STATE_ASKPASSWORD)
 #else 
                     MOVE_TO_STATE(STATE_RWARN)
