@@ -671,7 +671,7 @@ static boolean ServiceApp_ListMenuHandler(ServiceApp *pMe, AEEEvent eCode, uint1
                 IMENUCTL_SetOemProperties( pMenu, OEMMP_USE_MENU_STYLE);
                 IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
                 IMENUCTL_SetSel(pMenu, pMe->m_MainSel);
-                (void) ISHELL_PostEvent(pMe->m_pShell, AEECLSID_INDEX_ZONE, EVT_USER_REDRAW,0,0);
+                (void) ISHELL_PostEvent(pMe->m_pShell, AEECLSID_SERVICE, EVT_USER_REDRAW,0,0);
             }
             return TRUE;
             
