@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="service" VERSION="1">
+<Strings Encoding="ISOLATIN1">
+	<String Id="1002" Name="IDS_SERVICE_TITLE">
+		<Text>Service</Text>
+	</String>	
+	<String Id="1003" Name="IDS_SERVICE_UTK">
+		<Text>UTK</Text>
+	</String>		
+	<String Id="1004" Name="IDS_SERVICE_BROWSER">
+		<Text>Browser</Text>
+	</String>	
+</Strings>
+<Dialogs>
+	<Dialog Id="6001" Name="IDD_SERVICE_LIST" Focus="7001">
+		<Controls>
+			<Menu Id="7001" Name="IDC_SERVICE_LIST">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+</Dialogs>
+</BREWRes>

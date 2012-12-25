@@ -1,0 +1,35 @@
+################################################################################
+# main menu gnumake variable definition
+################################################################################
+SERVICE_INC = $(SERVICE)
+SERVICE_RES = $(SERVICE)/resources
+SERVICE_SRC = $(SERVICE)
+SERVICE_LIB = $(SERVICE)
+SERVICE_SOURCES = ServiceApp.c
+
+SERVICE_OBJS :=  $(addprefix $(TARGETDIR)/, $(SERVICE_SOURCES:%.c=%.o))
+$(SERVICE_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
+
+vpath %.c $(SERVICE_SRC)
+vpath %.bar $(SERVICE_RES)
+vpath %.brx $(SERVICE_RES)
+
+CONSTFILE_FILES+=\
+service.mif|fs:/mif/service.mif \
+service.bar|fs:/mod/service/en/service.bar
+
+
+ifneq ($(EXTLANG1),NO)
+CONSTFILE_FILES+=\
+$(EXTLANG1)service.bar|fs:/mod/service/$(EXTLANG1)/service.bar
+endif
+ifneq ($(EXTLANG2),NO)
+CONSTFILE_FILES+=\
+$(EXTLANG2)service.bar|fs:/mod/application/$(EXTLANG2)/service.bar
+endif
+
+
+INC  += $(SERVICE_INC) $(SERVICE_RES)
+#SRC  += $(SERVICE_SOURCES)
+OBJECTS+=$(SERVICE_OBJS)
+#LIBS += 

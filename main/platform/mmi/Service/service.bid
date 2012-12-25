@@ -1,0 +1,6 @@
+#ifndef SERVICE_BID
+#define SERVICE_BID
+
+#define AEECLSID_SERVICE        0x01006507
+
+#endif //SERVICE_BID
