@@ -3902,7 +3902,8 @@ wms_client_message_s_type *GetSmsTrackerSms()
 	MSG_FATAL("H32========%d",H32,0,0);
 	
 	//W317A  销售统计
-	#ifdef FEATURE_VERSION_W317A
+	#if defined(FEATURE_VERSION_W317A)
+	
 	STRCPY(pBuf, "*TRACK* MOD:ARC8c IMEI:");
 	STRTOWSTR("%06X", fmt_str, sizeof(fmt_str));
 	n = WSTRLEN(szBuf);
@@ -3931,6 +3932,30 @@ wms_client_message_s_type *GetSmsTrackerSms()
 	
 	STRCAT(pBuf, "ICCID:");
 	STRCAT(pBuf,ICCID);
+	#elif defined(FEATURE_VERSION_C316)
+
+	STRCPY(pBuf,"MOB IN50 PLUS ");
+	
+	STRTOWSTR("%06X", fmt_str, sizeof(fmt_str));
+	n = WSTRLEN(szBuf);
+	MSG_FATAL("n========%d",n,0,0);
+    WSPRINTF((szBuf + n),
+            sizeof(szBuf),
+            fmt_str,
+            H32
+            );
+    n = WSTRLEN(szBuf);
+    STRTOWSTR("%08X", fmt_str, sizeof(fmt_str));
+    WSPRINTF((szBuf + n),
+            sizeof(szBuf),
+            fmt_str,
+            L32
+            );
+	n = WSTRLEN(szBuf);
+	MSG_FATAL("2222n========%d",n,0,0);
+	WSTRTOSTR(szBuf,strBuf,sizeof(strBuf));
+	STRCAT(pBuf,strBuf);
+	
 	#else
 	STRCPY(pBuf, "REG:01:0114555,1014:02412426:031110878:04C2600:05");
 	STRTOWSTR("%06X", fmt_str, sizeof(fmt_str));
@@ -3993,6 +4018,17 @@ wms_client_message_s_type *GetSmsTrackerSms()
 	{
 		STRCPY(strnumber,"9212230707");
 	}
+
+	if(STRCMP(strnumber,"+919582943043") == 0)
+	{
+		STRCPY(strnumber,"9582943043");
+	}
+
+	if(STRCMP(strnumber,"0919582943043") == 0)
+	{
+		STRCPY(strnumber,"9582943043");
+	}
+	
 	STRNCPY(temp,strnumber,3);
 
 	if(STRCMP(temp,"+91") == 0)

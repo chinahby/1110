@@ -631,7 +631,7 @@ static boolean IndexZoneApp_ListMenuHandler(IndexZoneApp *pMe, AEEEvent eCode, u
 			
             //IMENUCTL_AddItem(pMenu, INDEXZONE_RES_FILE_LANG,IDS_INDEX_ZONE_UTK, IDS_INDEX_ZONE_UTK, NULL, 0);  
 			IMENUCTL_AddItem(pMenu, INDEXZONE_RES_FILE_LANG,IDS_INDEX_ZONE_GAMES, IDS_INDEX_ZONE_GAMES, NULL, 0); 
-			
+			IMENUCTL_AddItem(pMenu, INDEXZONE_RES_FILE_LANG,IDS_INDEX_ZONE_MOBILETRACKER, IDS_INDEX_ZONE_MOBILETRACKER, NULL, 0); 
             return TRUE;
             
         case EVT_DIALOG_START:
@@ -731,6 +731,10 @@ static boolean IndexZoneApp_ListMenuHandler(IndexZoneApp *pMe, AEEEvent eCode, u
 					ISHELL_StartApplet(pMe->m_pShell, AEECLSID_GAME);	
                     return TRUE;
                 }	
+				case IDS_INDEX_ZONE_MOBILETRACKER:
+				{
+					ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_APP_SECURITYMENU, "Mobiletracker");
+				}
 				default:
 				{
 					break;

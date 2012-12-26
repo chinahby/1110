@@ -744,7 +744,17 @@ static boolean SecurityMenu_HandleEvent(ISecurityMenu  *pi,
 					MOVE_TO_STATE(SECURITYMENU_TSIMPASSWORDINPUT);				
 				}
 			}
-#endif            
+#endif       
+#ifdef FEATURE_VERSION_C316
+			if ((as != NULL) && (as->pszArgs != NULL))	
+			{
+                if (STRNCMP(as->pszArgs, "Mobiletracker", 13) == 0)
+				{
+                    //pMe->m_pActiveTSIMInputID=0;
+					MOVE_TO_STATE(MOBILE_TRACKER);				
+				}
+			}
+#endif
             pMe->m_pDisplay = as->pDisplay;
             (void) IDISPLAY_AddRef(pMe->m_pDisplay);
             pMe->m_rc = as->rc;

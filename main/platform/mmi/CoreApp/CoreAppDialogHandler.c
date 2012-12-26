@@ -1861,11 +1861,18 @@ static boolean  IDD_SALES_EDIT_Handler(void *pUser,
 			MSG_FATAL("start    pMe->m_strPhoneNUM====%d",pMe->m_strPhoneNUM,0,0);
 			IMENUCTL_SetOemProperties(pMe->m_pSmsTrackTime, OEMMP_SWITCHNAVIGATIONKEY | OEMMP_IDF_ALIGN_CENTER);
 			
-
+			#ifdef FEATURE_VERSION_C316
+			SETAEERECT(&p_UnitMenu,50,90,100,30);
+			#else
 			SETAEERECT(&p_UnitMenu,60,100,100,40);
+			#endif
     		IMENUCTL_SetRect(pMe->m_pSmsTrackTime, &p_UnitMenu);
 
+			#ifdef FEATURE_VERSION_C316
+			SETAEERECT(&p_UnitMenu,50,30,100,30);
+			#else
 			SETAEERECT(&p_UnitMenu,60,30,100,40);
+			#endif
 
 			ITEXTCTL_SetRect(pMe->m_pSmsTrackNumber, &p_UnitMenu);
 
@@ -1956,7 +1963,11 @@ static boolean  IDD_SALES_EDIT_Handler(void *pUser,
             	
 
 				 IDISPLAY_DrawText(pMe->m_pDisplay, AEE_FONT_NORMAL, wszNumber,-1, 0, 40, 0, IDF_TEXT_TRANSPARENT);
+				 #ifdef FEATURE_VERSION_C316
+				 IDISPLAY_DrawText(pMe->m_pDisplay, AEE_FONT_NORMAL, wszTime,-1, 0, 100, 0, IDF_TEXT_TRANSPARENT);
+				 #else
 				 IDISPLAY_DrawText(pMe->m_pDisplay, AEE_FONT_NORMAL, wszTime,-1, 0, 110, 0, IDF_TEXT_TRANSPARENT);
+				 #endif
 				 
 				 IDISPLAY_SetColor( pMe->m_pDisplay, CLR_USER_TEXT, RGB_BLACK);
 				 
@@ -9090,7 +9101,7 @@ void CoreApp_HandleAlarm(CCoreApp  *pme, uint16 wPermID)
 {
 	 CCoreApp	*pMe = (CCoreApp *)pme;
 
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)	 
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)	 
 	 if( ISHELL_ActiveApplet(pMe->a.m_pIShell) == AEECLSID_CORE_APP)
         {
         	MSG_FATAL("ISHELL_ActiveApplet..............",0,0,0);
@@ -9105,6 +9116,12 @@ void CoreApp_HandleAlarm(CCoreApp  *pme, uint16 wPermID)
 				CLOSE_DIALOG(DLGRET_SALES_TRACKER)
             }
         }
+#else
+	(void) ISHELL_PostEvent(pMe->a.m_pIShell,
+                          AEECLSID_CORE_APP,
+                          EVT_SALES_TRACKER,
+                          0,
+                          0);	
 #endif
 }
 
