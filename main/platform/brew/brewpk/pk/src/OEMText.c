@@ -1621,6 +1621,7 @@ void OEM_TextSetMaxChars(OEMCONTEXT hTextCtl, uint16 wMaxChars)
    {
        wMaxChars = MAX_INPUTTEXT_SIZE;
    }
+   MSG_FATAL("***pyg****wMaxChars=%d----pContext->wMaxChars=%d",wMaxChars,pContext->wMaxChars,0);
    if (pContext && wMaxChars != pContext->wMaxChars) {
       if (!wMaxChars || wMaxChars >= pContext->wContentsChars) {
          // Just pick up the new value, no changes necessary
@@ -2220,7 +2221,47 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
                 AECHAR          szRemainingCount[16];
                 uint16          szsmscount;
                 uint16          wRemainingChars = pContext->wMaxChars;
-                wRemainingChars = (uint16)(wRemainingChars - WSTRLEN(pContext->pszContents));				
+				uint16          IntexnItems;
+				uint16          IntexRemainingChars = 160;
+                wRemainingChars = (uint16)(wRemainingChars - WSTRLEN(pContext->pszContents));	
+
+				//Add by pyuangui 20121226
+				#ifdef FEATURE_VERSION_W317A
+				if(AEE_Active()==AEECLSID_WMSAPP)
+				{
+				if(WSTRLEN(pContext->pszContents)<160)
+				{
+				    IntexnItems=1;
+				    IntexRemainingChars = (uint16)(160 - WSTRLEN(pContext->pszContents));
+				}
+				else if((WSTRLEN(pContext->pszContents)<306))
+				{
+				    IntexnItems=2;	
+				    IntexRemainingChars = (uint16)(306 - WSTRLEN(pContext->pszContents));
+				}
+				else if((WSTRLEN(pContext->pszContents)<459))
+				{
+	   				IntexnItems=3;	
+	   				IntexRemainingChars = (uint16)(459 - WSTRLEN(pContext->pszContents));
+			    }
+				else if((WSTRLEN(pContext->pszContents)<612))
+				{
+					IntexnItems=4;	
+					IntexRemainingChars = (uint16)(612 - WSTRLEN(pContext->pszContents));
+				}
+				else if((WSTRLEN(pContext->pszContents)<765))
+				{
+					IntexnItems=5;
+					IntexRemainingChars = (uint16)(765 - WSTRLEN(pContext->pszContents));
+				}
+				else if((WSTRLEN(pContext->pszContents)<=918))
+				{
+					IntexnItems=6;
+					IntexRemainingChars = (uint16)(918 - WSTRLEN(pContext->pszContents));
+				}
+				}
+				#endif
+				//Add End
 				
 #if defined(FEATURE_WMS_APP)
                 if(pContext->dwProperties & TP_DISPLAY_SMSCOUNT)
@@ -2235,7 +2276,19 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
                     #else
                     STR_TO_WSTR("%d/%d   ", szFormat, sizeof(szFormat));
                     #endif
-                    WSPRINTF(szRemainingCount, sizeof(szRemainingCount), szFormat, wRemainingChars, szsmscount);                    
+						
+					#ifdef FEATURE_VERSION_W317A    // Add by pyuangui 20121226
+					if(AEE_Active()==AEECLSID_WMSAPP)
+					{
+					   WSPRINTF(szRemainingCount, sizeof(szRemainingCount), szFormat, IntexRemainingChars, IntexnItems);
+					}
+					else
+					{
+                       WSPRINTF(szRemainingCount, sizeof(szRemainingCount), szFormat, wRemainingChars, szsmscount); 
+					}
+					#else
+                    WSPRINTF(szRemainingCount, sizeof(szRemainingCount), szFormat, wRemainingChars, szsmscount);   
+					#endif
 
                     /*
                     WSPRINTF(szRemainingCount, 
