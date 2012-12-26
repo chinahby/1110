@@ -209,7 +209,7 @@
 		<Text>10 Sec</Text>
 	</String>
 	<String Id="1078" Name="IDS_MOBILE_TRACKER">
-		<Text>Mobile tracker</Text>
+		<Text>मोबाइल ट्रैकर</Text>
 	</String>
 	<STRING Id="1178" Name="IDS_MG_MEDIAGALLERY">
 		<Text>फाइल मेनेजर</Text>
