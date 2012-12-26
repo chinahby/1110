@@ -4589,9 +4589,12 @@ static int StartApplet(MainMenu *pMe, int i)
         Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_GAME);
         break;
 		
+	#ifdef FEATURE_VERSION_C316
     case IDS_MAIN_MENU_SERVICES_C316:  
 		Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SERVICE);
         break;
+	#endif	
+	
     case IDS_MAIN_WAPBROWSER:
 #if  (defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C310))	
 		MSG_FATAL("IDS_MAIN_MENU_SERVICES...........22222222222222",0,0,0);
