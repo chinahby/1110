@@ -2226,7 +2226,7 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
                 wRemainingChars = (uint16)(wRemainingChars - WSTRLEN(pContext->pszContents));	
 
 				//Add by pyuangui 20121226
-				#ifdef FEATURE_VERSION_W317A
+				#ifdef FEATURE_VERSION_C316
 				if(AEE_Active()==AEECLSID_WMSAPP)
 				{
 				if(WSTRLEN(pContext->pszContents)<160)
@@ -2277,7 +2277,7 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
                     STR_TO_WSTR("%d/%d   ", szFormat, sizeof(szFormat));
                     #endif
 						
-					#ifdef FEATURE_VERSION_W317A    // Add by pyuangui 20121226
+					#ifdef FEATURE_VERSION_C316  // Add by pyuangui 20121226
 					if(AEE_Active()==AEECLSID_WMSAPP)
 					{
 					   WSPRINTF(szRemainingCount, sizeof(szRemainingCount), szFormat, IntexRemainingChars, IntexnItems);
