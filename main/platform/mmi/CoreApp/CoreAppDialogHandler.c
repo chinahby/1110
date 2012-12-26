@@ -4152,7 +4152,9 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 						//ISHELL_CancelTimer(pMe->a.m_pIShell,CoreApp_keypadtimer,pMe);
 					}
 #if defined(FEAUTRE_VERSION_N450)||defined(FEATURE_VERSION_W0216A)||defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W027) //add by pyuangui
-                    return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);   
+                    return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);  
+#elif defined(FEATURE_VERSION_C310) 
+                    return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CAMERA);  // add by pyuangui 20121226
 #else
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
 #endif    
@@ -4197,6 +4199,26 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     	}
 					}
 					return FALSE;
+					}
+					#elif defined(FEATURE_VERSION_C310) // add by pyuangui 20121226
+					{
+                      if ( pMe->TorchOn == FALSE )
+                      {
+                          pMe->TorchOn = TRUE;
+                          if (pMe->m_pBacklight)
+                          {
+                              IBACKLIGHT_TurnOnTorch(pMe->m_pBacklight);
+                          }
+                      }
+                      else
+                      {
+                          pMe->TorchOn = FALSE;
+                          if (pMe->m_pBacklight)
+                          {
+                              IBACKLIGHT_TurnOffTorch(pMe->m_pBacklight);
+                          }
+                      }
+					  return TRUE;
 					}
 					#elif defined(FEATURE_VERSION_MYANMAR) || defined(FEATURE_VERSION_W515V3)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);
