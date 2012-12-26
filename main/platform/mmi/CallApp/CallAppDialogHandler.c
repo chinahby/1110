@@ -4125,8 +4125,8 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
 				}
 #endif
 				//Add End
-
-
+				case IDS_MUTE_OFF:
+				case IDS_MUTE_ON:
                 case IDS_MUTE:
                 case IDS_UNMUTE:
 
@@ -4166,7 +4166,8 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
                 break;
 #endif
 
-                case IDS_CONTACT:                    
+                case IDS_CONTACT: 
+				case IDS_PHONE_BOOKS:
                     CallApp_LaunchApplet(pMe,  AEECLSID_APP_CONTACT);
                     return TRUE;
 
@@ -9213,13 +9214,23 @@ static void CallApp_Build_Connect_Option_Menu(CCallApp *pMe)
 #endif /* FEATURE_IS2000_SCC_CODES */
     if (pMe->m_CallMuted)
     {
+    	#ifdef FEATURE_VERSION_C316
+		(void) IMENUCTL_AddItem(pSKMenu,AEE_APPSCALLAPP_RES_FILE,IDS_MUTE_OFF,IDS_MUTE_OFF,
+                                                (AECHAR*)NULL,(uint32)NULL);
+		#else
         (void) IMENUCTL_AddItem(pSKMenu,AEE_APPSCALLAPP_RES_FILE,IDS_UNMUTE,IDS_UNMUTE,
                                                 (AECHAR*)NULL,(uint32)NULL);
+		#endif
     }
     else
     {
+    	#ifdef FEATURE_VERSION_C316
+		(void) IMENUCTL_AddItem(pSKMenu,AEE_APPSCALLAPP_RES_FILE,IDS_MUTE_ON,IDS_MUTE_ON,
+                                                (AECHAR*)NULL,(uint32)NULL);
+		#else
         (void) IMENUCTL_AddItem(pSKMenu,AEE_APPSCALLAPP_RES_FILE,IDS_MUTE,IDS_MUTE,
                                                 (AECHAR*)NULL,(uint32)NULL);
+		#endif
     }
 #ifdef FEATURE_SUPPORT_BT_APP
     if(pMe->m_b_add_btag_menu ==TRUE/* && pMe->m_bt_audio == SEND_NONE*/)
@@ -9299,10 +9310,13 @@ static void CallApp_Build_Connect_Option_Menu(CCallApp *pMe)
 #if defined( FEATURE_CALL_RECORDER)
     CallApp_build_recorder_option_menu( pMe, pSKMenu);
 #endif
-
+	#ifdef FEATURE_VERSION_C316
+	(void) IMENUCTL_AddItem(pSKMenu,AEE_APPSCALLAPP_RES_FILE,IDS_PHONE_BOOKS,IDS_PHONE_BOOKS,
+                                            (AECHAR*)NULL,(uint32)NULL);
+	#else
     (void) IMENUCTL_AddItem(pSKMenu,AEE_APPSCALLAPP_RES_FILE,IDS_CONTACT,IDS_CONTACT,
                                             (AECHAR*)NULL,(uint32)NULL);
-
+    #endif
     (void) IMENUCTL_AddItem(pSKMenu,AEE_APPSCALLAPP_RES_FILE,IDS_SMS,IDS_SMS,
                                             (AECHAR*)NULL,(uint32)NULL);
 
