@@ -175,6 +175,15 @@
 	<String Id="1058" Name="IDS_MULTICALL" Encoding="Unicode">
 		<Text>Multi call</Text>
 	</String>
+	<String Id="1059" Name="IDS_MUTE_ON">
+		<Text>Mute(on)</Text>
+	</String>
+	<String Id="1060" Name="IDS_MUTE_OFF">
+		<Text>Mute(off)</Text>
+	</String>
+	<String Id="1061" Name="IDS_PHONE_BOOKS">
+		<Text>Phonebook</Text>
+	</String>
 	<STRING Id="1100" Name="IDS_OPTION_RECORDER_ON">
 		<Text>Recorder on</Text>
 	</STRING>

@@ -172,6 +172,15 @@
 	<String Id="1057" Name="IDS_PWDTIPS">
 		<Text>पासवर्ड लिखें.</Text>
 	</String>
+	<String Id="1059" Name="IDS_MUTE_ON">
+		<Text>Mute(on)</Text>
+	</String>
+	<String Id="1060" Name="IDS_MUTE_OFF">
+		<Text>Mute(off)</Text>
+	</String>
+	<String Id="1061" Name="IDS_PHONE_BOOKS">
+		<Text>Phonebook</Text>
+	</String>
 	<STRING Id="1100" Name="IDS_OPTION_RECORDER_ON">
 		<Text>पर रिकॉर्डर</Text>
 	</STRING>
