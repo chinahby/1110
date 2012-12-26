@@ -56,9 +56,10 @@
 #else
 #ifdef FEATURE_SUPPORT_ID
 #define  WMS_MSG_MAXCHARS       1537
+#elif defined(FEATURE_VERSION_W317A) //Add by pyuangui 20121226
+#define  WMS_MSG_MAXCHARS       918
 #else
 #define  WMS_MSG_MAXCHARS       1024
-
 #endif
 #endif
 
