@@ -9,16 +9,10 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define CUST_EDITION
 #endif
 
-//#define FEATURE_VERSION_S106
 #define FEATURE_VERSION_W516
-//#define FEATURE_VERSION_1110W516
 #define FEATURE_OEMOMH
-///#define FEATURE_VERSION_W027
 #define FEATURE_VERSION_C316
-#define FEATURE_LANG_DEFAULT_ENGLISH
 #ifdef CUST_EDITION
-//#define FEATURE_SUPPORT_WAP_APP
-#define FEATURE_SUPPORT_JAVA_APP
 #define FEATURE_APP_BLUETOOTH
 #define FEATURE_BT
 #define FEATURE_IBT
@@ -27,6 +21,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_BT_SEND_FILE_ONLY		//Add By zzg 2010_11_03
 #define FEATURE_SUPPORT_BT_AUDIO
 
+#define FEATURE_LANG_DEFAULT_ENGLISH
 #define FEATURE_ENABLE_OTKSL
 #define BT_QSC1110//FEATURE_BT_QSC1100
 #define FEATURE_BT_QSOC_BTS4025_B2   //this is now we used  bluetooth  ÐÍºÅ
@@ -38,8 +33,6 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_GPIO_31_SIGNAL_OUPUT_31		//GPIO_31_SIGNAL == GPIO_OUTPUT_31
 //Add End
 
-//#define FEATURE_USES_MMS
-//#define FEATURE_USES_MMS_TEST
 #define FEATURE_SMS_UDH
 //#define FEATURE_SUPPORT_ID
 #define FEATURE_WMS_APP
@@ -49,7 +42,6 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_ICARD_NO_UI_BASE
 #define FEATURE_LANG_ENGLISH
 #define FEATURE_LANG_HINDI
-
 //#define FEATURE_LANG_ARABIC
 //#define FEATURE_LANG_INDONESIAN
 //#define FEATURE_NUM_KEY_MID
@@ -67,7 +59,12 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //#define FEATURE_ARPHIC_LAYOUT_ENGINE
 #define FEATURE_CAMERA_MULTI_NEW_AUTO_DETECT
 #define FEATURE_AMR_FIXED
+
+#define FEATURE_AUDIO_EQUALIZER 
+#define FEATURE_AUDIO_QCONCERT 
+#define FEATURE_AUDIO_SPECTRUM_ANALYZER 
 #define FEATURE_CALL_RECORDER
+
 #endif
 
 #ifndef TARGSBW2_H
@@ -126,7 +123,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_UIM_BLOCK_MODE_BITS_IN_SIM_CONFIG_REG 
 //#define FEATURE_ICARD_IMODEL 
 #define FEATURE_RUIM_CDMA_REFRESH 
-#define FEATURE_RTRE_DEFAULT_IS_NV 
+//#define FEATURE_RTRE_DEFAULT_IS_NV 
 #define FEATURE_AUTH 
 #define FEATURE_AUTH_DIGITS 
 #define SCL_AMSS_DATA_BASE_ADDR 0x08005000
