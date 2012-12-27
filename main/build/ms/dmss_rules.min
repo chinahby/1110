@@ -254,11 +254,11 @@ endif
 QCTLIBS := $(QCTLIBS) $(LIBDIR)/hw.lib
 
 QCTLIBS := $(QCTLIBS) $(LIBDIR)/boot.lib
-ifeq ($(USES_DS_1536), yes)
-QCTLIBS := $(QCTLIBS) $(LIBDIR)/srch1536.lib
-else
+#ifeq ($(USES_DS_1536), yes)
+#QCTLIBS := $(QCTLIBS) $(LIBDIR)/srch1536.lib
+#else
 QCTLIBS := $(QCTLIBS) $(LIBDIR)/srch.lib
-endif
+#endif
 QCTLIBS := $(QCTLIBS) $(LIBDIR)/tcxomgr.lib
 
 ifeq ($(USES_USB_HOST), yes)
@@ -266,11 +266,11 @@ ifeq ($(USES_USB_HOST), yes)
 endif
 
 #ifeq ($(USES_REL_C), yes)
-ifeq ($(USES_DS_1536), yes)
-	QCTLIBS := $(QCTLIBS) $(LIBDIR)/cp1536.lib
-else
+#ifeq ($(USES_DS_1536), yes)
+#	QCTLIBS := $(QCTLIBS) $(LIBDIR)/cp1536.lib
+#else
 	QCTLIBS := $(QCTLIBS) $(LIBDIR)/cp.lib
-endif
+#endif
 #endif
 
 ifeq ($(USES_VR), yes)
