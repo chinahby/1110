@@ -1012,6 +1012,7 @@ extern int FrenDuoAppMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 
 #if defined(FEATURE_VERSION_C316)
 extern int IndexZoneAppMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
+extern int ServiceAppMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 #endif
 
 #ifdef FEATURE_APP_MULTIMEDIA
@@ -1078,6 +1079,7 @@ static const AEEStaticMod gOEMStaticModList[] =
 
 #if defined(FEATURE_VERSION_C316)
 	{AEEFS_MIF_DIR"indexzone.mif",IndexZoneAppMod_Load},
+	{AEEFS_MIF_DIR"service.mif",ServiceAppMod_Load},
 #endif
 	
 #ifdef FEATURE_APP_MULTIMEDIA
