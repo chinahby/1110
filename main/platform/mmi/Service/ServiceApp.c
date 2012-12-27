@@ -707,7 +707,7 @@ static boolean ServiceApp_ListMenuHandler(ServiceApp *pMe, AEEEvent eCode, uint1
 				}
                 case AVK_2:
 				{
-#if  (defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_W317A))	
+#if  (defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C316))	
 					MSG_FATAL("IDS_MAIN_MENU_SERVICES...........22222222222222",0,0,0);
 
 					OEM_SetUCBROWSER_ADSAccount();
@@ -743,7 +743,7 @@ static boolean ServiceApp_ListMenuHandler(ServiceApp *pMe, AEEEvent eCode, uint1
                 }
 				case IDS_SERVICE_BROWSER:
 				{
-#if  (defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_W317A))	
+#if  (defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C316))	
 					MSG_FATAL("IDS_MAIN_MENU_SERVICES...........22222222222222",0,0,0);
 
 					OEM_SetUCBROWSER_ADSAccount();
