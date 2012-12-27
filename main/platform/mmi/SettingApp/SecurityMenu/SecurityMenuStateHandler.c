@@ -920,8 +920,12 @@ static NextFSMAction Security_StateMobileTracker(CSecurityMenu *pMe)
 			SecurityMenu_ShowDialog(pMe, IDD_MOBILE_TRACKER_DIALOG);
 			return NFSMACTION_WAIT;
 		case DLGRET_OK:
-            //MOVE_TO_STATE(SECURITYMENU_ASKPASSWORD);     
-            MOVE_TO_STATE(SECURITYMENU_MAIN);
+            //MOVE_TO_STATE(SECURITYMENU_ASKPASSWORD);   
+            #ifdef FEATURE_VERSION_C316
+            MOVE_TO_STATE(SECURITYMENU_EXIT);
+			#else
+			MOVE_TO_STATE(SECURITYMENU_MAIN);
+			#endif
             return NFSMACTION_CONTINUE;
 		case DLGRET_CANCELED:
         	MOVE_TO_STATE(SECURITYMENU_EXIT)
