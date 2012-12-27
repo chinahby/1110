@@ -707,17 +707,9 @@ static boolean ServiceApp_ListMenuHandler(ServiceApp *pMe, AEEEvent eCode, uint1
 				}
                 case AVK_2:
 				{
-#if  (defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C316))	
 					MSG_FATAL("IDS_MAIN_MENU_SERVICES...........22222222222222",0,0,0);
-
 					OEM_SetUCBROWSER_ADSAccount();
-#endif		
-#ifdef FEATURE_VERSION_C337
-					SetBrowserArr_MainEx(pMe,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
-#else
-					SetBrowserArr_MainEx(pMe,(char*)""); //ISHELL_StartApplet(pMe->m_pShell, AEECLSID_UCWEB);
-#endif
-   
+					SetBrowserArr_MainEx(pMe,(char*)""); //ISHELL_StartApplet(pMe->m_pShell, AEECLSID_UCWEB);   
 					break;
 				}	
                 //case AVK_3:               
@@ -743,16 +735,9 @@ static boolean ServiceApp_ListMenuHandler(ServiceApp *pMe, AEEEvent eCode, uint1
                 }
 				case IDS_SERVICE_BROWSER:
 				{
-#if  (defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C316))	
 					MSG_FATAL("IDS_MAIN_MENU_SERVICES...........22222222222222",0,0,0);
-
 					OEM_SetUCBROWSER_ADSAccount();
-#endif		
-#ifdef FEATURE_VERSION_C337
-					SetBrowserArr_MainEx(pMe,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
-#else
 					SetBrowserArr_MainEx(pMe,(char*)""); //ISHELL_StartApplet(pMe->m_pShell, AEECLSID_UCWEB);
-#endif
                     return TRUE;
                 }	
 				default:
