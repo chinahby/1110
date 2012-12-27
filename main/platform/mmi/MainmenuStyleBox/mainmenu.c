@@ -4553,7 +4553,7 @@ static int StartApplet(MainMenu *pMe, int i)
 	//Add By zzg 2012_11_08 for C337 
 	case IDS_MAIN_MENU_SERVICES:
 #if defined(FEATURE_OEMOMH)
-#if  (defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_W317A))	
+#if  (defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_W317A))||defined(FEATURE_VERSION_C316)		
 			MSG_FATAL("IDS_MAIN_MENU_SERVICES...........000000",0,0,0);
 		
             OEM_SetUCBROWSER_ADSAccount();
@@ -4567,7 +4567,7 @@ static int StartApplet(MainMenu *pMe, int i)
 		break;
 	case IDS_MAIN_MENU_MSTORE:
 #if defined(FEATURE_OEMOMH)
-#if  (defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_W317A))	
+#if  (defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C316))	
 		MSG_FATAL("IDS_MAIN_MENU_SERVICES...........11111111",0,0,0);
 	
         OEM_SetUCBROWSER_ADSAccount();
@@ -4596,7 +4596,7 @@ static int StartApplet(MainMenu *pMe, int i)
 	#endif	
 	
     case IDS_MAIN_WAPBROWSER:
-#if  (defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C310))	
+#if  (defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C310)||defined(FEATURE_VERSION_C316))	
 		MSG_FATAL("IDS_MAIN_MENU_SERVICES...........22222222222222",0,0,0);
 
         OEM_SetUCBROWSER_ADSAccount();
