@@ -46,7 +46,7 @@
 #define  MAX_MATRIX_COLS 3
 #endif
 #elif defined (FEATURE_DISP_176X220)
-#if defined(FEATURE_VERSION_VG68) || defined(FEATURE_VERSION_SKY)|| defined(FEATURE_VERSION_C310)
+#if defined(FEATURE_VERSION_VG68) || defined(FEATURE_VERSION_SKY)
 #define  MAX_MATRIX_ITEMS 9
 #define  MAX_MATRIX_ROWS 3
 #define  MAX_MATRIX_COLS 3
