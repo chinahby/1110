@@ -90,7 +90,7 @@ typedef enum _MGAppState
 {
    STATE_NONE = 0, //No state.
    STATE_INIT,     //Inital state.
-#ifdef FEATURE_VERSION_W317A
+#if defined(FEATURE_VERSION_W317A) ||defined(FEATURE_VERSION_C316)
    STATE_PWD,	   //Application lock
 #endif	
    STATE_EXIT,     //State where we close the applet.
@@ -144,7 +144,7 @@ typedef enum _MGDLGRetValue
    MGDLGRET_BGPLAYPROMPT, //When mp3 player OR fm play on the background.
 
    MGDLGRET_DONE,         //Operation successfully
-#ifdef FEATURE_VERSION_W317A
+#if defined(FEATURE_VERSION_W317A) ||defined(FEATURE_VERSION_C316)
    MGDLGRET_PASS,
    MGDLGRET_FAILD,
 #endif
@@ -324,7 +324,7 @@ typedef enum _MediaDialogMsgID
    MG_MSGID_BUILDVIDEOLIST,
 
    MG_MSGID_DONE,
-#ifdef FEATURE_VERSION_W317A
+#if defined(FEATURE_VERSION_W317A) ||defined(FEATURE_VERSION_C316)
    MG_MSGID_VALIDPWD,
 #endif   
    MG_MSGID_INVALIDNAME,
@@ -474,7 +474,7 @@ struct  _CMediaGalleryApp{
 #ifdef FEATURE_USES_MMS
    boolean           m_isForMMS;
 #endif
-#ifdef FEATURE_VERSION_W317A
+#if defined(FEATURE_VERSION_W317A) ||defined(FEATURE_VERSION_C316)
    char              *m_strPhonePWD;
 #endif
 } ;

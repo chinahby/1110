@@ -46,7 +46,7 @@ typedef NextFSMAction (*MG_FSMSTATE_HANDLER)(CMediaGalleryApp* pMe);
 // MediaGalleryAppStateHandler.c)
 static NextFSMAction MGStateNoneOperationHandler(CMediaGalleryApp* pMe);
 static NextFSMAction MGStateInitHandler(CMediaGalleryApp* pMe);
-#ifdef FEATURE_VERSION_W317A
+#if defined(FEATURE_VERSION_W317A) ||defined(FEATURE_VERSION_C316)
 static NextFSMAction MGStatePwdHandler(CMediaGalleryApp *pMe);
 #endif
 static NextFSMAction MGStateMainMenuHandler(CMediaGalleryApp* pMe);
@@ -123,7 +123,7 @@ NextFSMAction MediaGalleryApp_ProcessState(CMediaGalleryApp* pMe)
          case STATE_INIT:
             fcnPtr = MGStateInitHandler;
             break;
-#ifdef FEATURE_VERSION_W317A
+#if defined(FEATURE_VERSION_W317A) ||defined(FEATURE_VERSION_C316)
 		case STATE_PWD:
 			fcnPtr = MGStatePwdHandler;
 			break;
@@ -268,7 +268,8 @@ static NextFSMAction MGStateNoneOperationHandler(CMediaGalleryApp* pMe)
  */
 static NextFSMAction MGStateInitHandler(CMediaGalleryApp* pMe)
 {
-#ifdef FEATURE_VERSION_W317A
+#if defined(FEATURE_VERSION_W317A) ||defined(FEATURE_VERSION_C316)
+
 	boolean locksel;
 
 	if(!pMe)
@@ -343,7 +344,7 @@ static NextFSMAction MGStateInitHandler(CMediaGalleryApp* pMe)
 }//MGStateInitHandler
 
 
-#ifdef FEATURE_VERSION_W317A
+#if defined(FEATURE_VERSION_W317A) ||defined(FEATURE_VERSION_C316)
 static NextFSMAction MGStatePwdHandler(CMediaGalleryApp *pMe)
 {
 	DBGPRINTF("***zzg MGStatePwdHandler m_eDlgRet=%x***", pMe->m_eDlgRet);

@@ -565,9 +565,13 @@ typedef struct
    boolean       b_recentcall_lock;            //CFGI_RECENTCALL_LOCK_CHECK
    boolean       b_sms_lock;                   //CFGI_SMS_LOCK_CHECK
    boolean       b_calendar_lock;              //CFGI_CALENDAR_LOCK_CHECK
-#ifdef FEATURE_VERSION_W317A    
+#if defined(FEATURE_VERSION_W317A) ||defined(FEATURE_VERSION_C316)   
    boolean		 b_mediagallery_lock;			//CFGI_MEDIAGALLERY_LOCK_CHECK
 #endif    
+#ifdef FEATURE_VERSION_C316
+   boolean       b_filemanger_lock;	   //CFGI_FILEMANGER_LOCK_CHECK,
+   boolean       b_multimedia_lock;	   //CFGI_MULTIMEDIA_LOCK_CHECK,
+#endif
    byte          b_key_lock;                    //CFGI_KEY_LOCK_CHECK
    boolean       lock_ruim;  
    AEEConfigSIDNIDPairType lock_mccmnc[OEMNV_LOCK_MCCMNC_ARRSIZE];  
@@ -750,7 +754,6 @@ typedef struct
    char    mizone_num[MAS_BREWSETINT_STRING];
    char    mizone_smsinfo[MAS_BREWSETINT_STRING];   
 #endif
-
 #ifdef FEATURE_VERSION_C316   
    boolean	m_onekey_lock_keypad;							/*CFGI_ONEKEY_LOCK_KEYPAD Add by xuhui 2012/12/24*/
 #endif
@@ -1358,10 +1361,18 @@ static int OEMPriv_SetItem_CFGI_SMS_LOCK_CHECK(void *pBuff);
 static int OEMPriv_GetItem_CFGI_CALENDAR_LOCK_CHECK(void *pBuff);
 static int OEMPriv_SetItem_CFGI_CALENDAR_LOCK_CHECK(void *pBuff);
 
-#ifdef FEATURE_VERSION_W317A
+#if defined(FEATURE_VERSION_W317A) ||defined(FEATURE_VERSION_C316)
 static int OEMPriv_GetItem_CFGI_MEDIAGALLERY_LOCK_CHECK(void *pBuff);
 static int OEMPriv_SetItem_CFGI_MEDIAGALLERY_LOCK_CHECK(void *pBuff);
 #endif
+
+#ifdef FEATURE_VERSION_C316
+static int OEMPriv_GetItem_CFGI_FILEMANGER_LOCK_CHECK(void *pBuff);
+static int OEMPriv_SetItem_CFGI_FILEMANGER_LOCK_CHECK(void *pBuff);
+static int OEMPriv_GetItem_CFGI_MULTIMEDIA_LOCK_CHECK(void *pBuff);
+static int OEMPriv_SetItem_CFGI_MULTIMEDIA_LOCK_CHECK(void *pBuff);
+#endif
+
 static int OEMPriv_GetItem_CFGI_KEY_LOCK_CHECK(void *pBuff);
 static int OEMPriv_SetItem_CFGI_KEY_LOCK_CHECK(void *pBuff);
 static int OEMPriv_GetItem_CFGI_LOCK_RUIM(void *pBuff);
@@ -1471,7 +1482,6 @@ static int OEMPriv_GetItem_CFGI_ONEKEY_LOCK_KEYPAD(void *pBuff) ;
 static int OEMPriv_SetItem_CFGI_ONEKEY_LOCK_KEYPAD(void *pBuff) ;
 #endif
 //Add End
-
 #ifdef FEATURE_RANDOM_MENU_COLOR
 static int OEMPriv_GetItem_CFGI_MENU_BGCOLOR(void *pBuff);
 
@@ -1803,9 +1813,13 @@ static OEMConfigListType oemi_cache = {
    FALSE,                                           //CFGI_RECENTCALL_LOCK_CHECK
    FALSE,                                           //CFGI_SMS_LOCK_CHECK
    FALSE,                                           //CFGI_CALENDAR_LOCK_CHECK
-#ifdef FEATURE_VERSION_W317A    
+#if defined(FEATURE_VERSION_W317A) ||defined(FEATURE_VERSION_C316)   
    FALSE,											//CFGI_MEDIAGALLERY_LOCK_CHECK
 #endif 
+#ifdef FEATURE_VERSION_C316
+   FALSE,
+   FALSE,
+#endif
 #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_C337)
    1,											//CFGI_KEY_LOCK_CHECK			
 #else
@@ -2462,8 +2476,12 @@ static ConfigItemTableEntry const customOEMItemTable[] =
    CFGTABLEITEM(CFGI_RECENTCALL_LOCK_CHECK, sizeof(boolean)),//type = boolena
    CFGTABLEITEM(CFGI_SMS_LOCK_CHECK, sizeof(boolean)),       //type = boolena
    CFGTABLEITEM(CFGI_CALENDAR_LOCK_CHECK, sizeof(boolean)),  //type = boolean
-#ifdef FEATURE_VERSION_W317A
+#if defined(FEATURE_VERSION_W317A) ||defined(FEATURE_VERSION_C316)
    CFGTABLEITEM(CFGI_MEDIAGALLERY_LOCK_CHECK, sizeof(boolean)),  //type = boolean
+#endif
+#ifdef FEATURE_VERSION_C316
+   CFGTABLEITEM(CFGI_FILEMANGER_LOCK_CHECK, sizeof(boolean)),  //type = boolean
+   CFGTABLEITEM(CFGI_MULTIMEDIA_LOCK_CHECK, sizeof(boolean)),  //type = boolean
 #endif
    CFGTABLEITEM(CFGI_KEY_LOCK_CHECK, sizeof(byte)),       //type = byte
    CFGTABLEITEM(CFGI_LOCK_RUIM,  sizeof(boolean)),            //type = boolean
@@ -2613,7 +2631,6 @@ static ConfigItemTableEntry const customOEMItemTable[] =
    CFGTABLEITEM(CFGI_MIZONE_NUM,sizeof(char)*MAS_BREWSETINT_STRING),
    CFGTABLEITEM(CFGI_MIZONE_SMSINFO,sizeof(char)*MAS_BREWSETINT_STRING), 
 #endif
-
 #ifdef FEATURE_VERSION_C316
    CFGTABLEITEM(CFGI_ONEKEY_LOCK_KEYPAD,sizeof(boolean)),
 #endif
@@ -3484,6 +3501,7 @@ void OEM_RestoreFactorySetting( void )
 	
    //oemi_cache.input_mode=OEMNV_INPUTMODE_DEFAULT;
 #endif //CUST_EDITION
+
 }
 
 /*=============================================================================
@@ -10150,7 +10168,7 @@ static int OEMPriv_SetItem_CFGI_CALENDAR_LOCK_CHECK(void *pBuff)
    return SUCCESS;
 }
 
-#ifdef FEATURE_VERSION_W317A
+#if defined(FEATURE_VERSION_W317A) ||defined(FEATURE_VERSION_C316)
 static int OEMPriv_GetItem_CFGI_MEDIAGALLERY_LOCK_CHECK(void *pBuff)
 {
    *(byte *) pBuff = oemi_cache.b_mediagallery_lock;
@@ -10164,6 +10182,34 @@ static int OEMPriv_SetItem_CFGI_MEDIAGALLERY_LOCK_CHECK(void *pBuff)
    }
    return SUCCESS;
 }	
+#endif
+#ifdef FEATURE_VERSION_C316
+static int OEMPriv_GetItem_CFGI_FILEMANGER_LOCK_CHECK(void *pBuff)
+{
+   *(byte *) pBuff = oemi_cache.b_filemanger_lock;
+   return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_FILEMANGER_LOCK_CHECK(void *pBuff)
+{
+  if (oemi_cache.b_filemanger_lock != *(byte *)pBuff) {
+      oemi_cache.b_filemanger_lock = *(byte *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+   return SUCCESS;
+}
+static int OEMPriv_GetItem_CFGI_MULTIMEDIA_LOCK_CHECK(void *pBuff)
+{
+   *(byte *) pBuff = oemi_cache.b_multimedia_lock;
+   return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_MULTIMEDIA_LOCK_CHECK(void *pBuff)
+{
+  if (oemi_cache.b_multimedia_lock != *(byte *)pBuff) {
+      oemi_cache.b_multimedia_lock = *(byte *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+   return SUCCESS;
+}
 #endif
 
 static int OEMPriv_GetItem_CFGI_KEY_LOCK_CHECK(void *pBuff) 
@@ -11522,8 +11568,6 @@ static int OEMPriv_SetItem_CFGI_DEFAULTCONT(void *pBuff)
     return SUCCESS;
 }
 #endif
-
-
 #ifdef FEATURE_VERSION_C316
 static int OEMPriv_GetItem_CFGI_ONEKEY_LOCK_KEYPAD(void *pBuff) 
 {
@@ -12208,6 +12252,7 @@ void OEM_SetUCBROWSER_ADSAccount(void)
     }
 #endif
 } /* OEM_SetBAM_ADSAccount */
+
 
 #elif defined(FEATURE_FLEXI_STATIC_BREW_APP)
 void OEM_SetBAM_ADSAccount(STATIC_BREW_APP_e eApp)

@@ -27,6 +27,9 @@
 #include "MediaGallery.h" 
 #endif
 #include "ContApp.h"
+#include "AEETelephone.h"
+#include "AEETelDef.h"
+
 //#include "Scheduleapp.h"
 /*==============================================================================
                                  宏定义和常数
@@ -157,7 +160,9 @@ static boolean  Security_HandleMsgBoxDlgEvent(CSecurityMenu* pMe,
     uint16   wParam,
     uint32   dwParam
 );
-
+#ifdef FEATURE_VERSION_C316
+void HandleTimer(IPhoneCtl *m_pIPhoneCtl);
+#endif
 //恢复出场设置函数
 static void SecurityMenu_RestoryFactorySet(CSecurityMenu *pMe);
 
@@ -640,10 +645,16 @@ static boolean  SecurityApplicationLockDlgHandler(CSecurityMenu *pMe,
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_PHONEBOOK_LOCK, IDS_PHONEBOOK_LOCK, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_RECENT_CALL_LOCK, IDS_RECENT_CALL_LOCK, NULL, 0);
             //IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_MEDIALOCK, IDS_MEDIALOCK, NULL, 0);
+            #ifdef FEATURE_VERSION_C316
+			IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_FILEMANGERLOCK, IDS_FILEMANGERLOCK, NULL, 0);
+			IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_MULTIMEDIALOCK, IDS_MULTIMEDIALOCK, NULL, 0);
+			#else
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_CALENDARLOCK, IDS_CALENDARLOCK, NULL, 0);
+			#endif
 #ifdef FEATURE_VERSION_W317A
 			IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_MG_MEDIAGALLERY, IDS_MG_MEDIAGALLERY, NULL, 0);
 #endif
+
 
             return TRUE;
 
@@ -680,13 +691,28 @@ static boolean  SecurityApplicationLockDlgHandler(CSecurityMenu *pMe,
                 (void) ICONFIG_GetItem(pMe->m_pConfig, CFGI_CALENDAR_LOCK_CHECK, &bData, sizeof(bData));
                 SetCheckBoxItem(pMenu, IDS_CALENDARLOCK, bData);
             }
-#ifdef FEATURE_VERSION_W317A
+#if defined(FEATURE_VERSION_W317A)
 			 //检查Mediagallery 锁状态
             {
                 (void) ICONFIG_GetItem(pMe->m_pConfig, CFGI_MEDIAGALLERY_LOCK_CHECK, &bData, sizeof(bData));
                 SetCheckBoxItem(pMenu, IDS_MG_MEDIAGALLERY, bData);
             }
 #endif
+
+#ifdef FEATURE_VERSION_C316
+			 //检查Mediagallery 锁状态
+			{
+				(void) ICONFIG_GetItem(pMe->m_pConfig, CFGI_MEDIAGALLERY_LOCK_CHECK, &bData, sizeof(bData));
+				SetCheckBoxItem(pMenu, IDS_FILEMANGERLOCK, bData);
+			}
+			//检查Mediagallery 锁状态
+			{
+				(void) ICONFIG_GetItem(pMe->m_pConfig, CFGI_MULTIMEDIA_LOCK_CHECK, &bData, sizeof(bData));
+				SetCheckBoxItem(pMenu, IDS_MULTIMEDIALOCK, bData);
+			}
+
+#endif
+
             IMENUCTL_SetSel(pMenu, IDS_SMS_LOCK);
             (void) ISHELL_PostEvent(pMe->m_pShell,
                                             AEECLSID_APP_SECURITYMENU,
@@ -735,11 +761,19 @@ static boolean  SecurityApplicationLockDlgHandler(CSecurityMenu *pMe,
                     // 保存日程表锁状态
                     bData = GetCheckBoxVal(pMenu, IDS_CALENDARLOCK);
                     (void) ICONFIG_SetItem(pMe->m_pConfig,CFGI_CALENDAR_LOCK_CHECK,&bData,sizeof(bData));
-#ifdef FEATURE_VERSION_W317A
+#if defined(FEATURE_VERSION_W317A)
 					// 
                     bData = GetCheckBoxVal(pMenu, IDS_MG_MEDIAGALLERY);
                     (void) ICONFIG_SetItem(pMe->m_pConfig,CFGI_MEDIAGALLERY_LOCK_CHECK,&bData,sizeof(bData));
-#endif                    
+#endif     
+#ifdef FEATURE_VERSION_C316
+					bData = GetCheckBoxVal(pMenu, IDS_FILEMANGERLOCK);
+                    (void) ICONFIG_SetItem(pMe->m_pConfig,CFGI_MEDIAGALLERY_LOCK_CHECK,&bData,sizeof(bData));
+					// 
+					bData = GetCheckBoxVal(pMenu, IDS_MULTIMEDIALOCK);
+					(void) ICONFIG_SetItem(pMe->m_pConfig,CFGI_MULTIMEDIA_LOCK_CHECK,&bData,sizeof(bData));
+#endif  
+
                     CLOSE_DIALOG(DLGRET_TOSHOWMSG)
                     break;
 
@@ -6338,7 +6372,10 @@ static void SecurityMenu_RestoryFactorySet(CSecurityMenu *pMe)
     //ICallList      *m_pCallList = NULL;uint32 value;
     //ICallHistory *pCallHistory = NULL;
     uint32        value;
-    
+	#ifdef FEATURE_VERSION_C316
+	IPhoneCtl *pIPhoneCtl = NULL;
+	int nReturnStatus = 1;
+    #endif
     if (NULL == pMe)
     {
          return;
@@ -6349,6 +6386,13 @@ static void SecurityMenu_RestoryFactorySet(CSecurityMenu *pMe)
 	ISHELL_StartBackgroundApplet(pMe->m_pShell, AEECLSID_BLUETOOTH_APP, "ResetBT");	
 	//ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_BLUETOOTH_APP, "ResetBT");
 #endif
+	#ifdef FEATURE_VERSION_C316
+	nReturnStatus = ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_PHONECTL, (void **) &pIPhoneCtl);   
+    if((pIPhoneCtl == NULL) || (SUCCESS != nReturnStatus))
+    {
+        return ;
+    }
+	#endif
 //Add End   
     OEM_RestoreFactorySetting();
     //AEEOEM_RestoreFactorySetting(pMe->m_pOEM_TSGBridge);     
@@ -6430,7 +6474,23 @@ static void SecurityMenu_RestoryFactorySet(CSecurityMenu *pMe)
     }
 
     IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_ALARM, ANNUN_STATE_ALARM_OFF/*ANNUN_STATE_OFF*/);
+#ifdef FEATURE_VERSION_C316
+
+	IPHONECTL_SetOperatingMode(pIPhoneCtl, AEET_OPRT_MODE_OFFLINE);
+	(void)ISHELL_SetTimer(pMe->m_pShell,
+                                500,
+                              	 (PFNNOTIFY)HandleTimer,
+                                pIPhoneCtl);
+#endif
 }
+#ifdef FEATURE_VERSION_C316
+void HandleTimer(IPhoneCtl *m_pIPhoneCtl)
+{
+	IPHONECTL_SetOperatingMode(m_pIPhoneCtl, AEET_OPRT_MODE_RESET);
+    IPHONECTL_Release(m_pIPhoneCtl);
+    m_pIPhoneCtl = NULL;
+}
+#endif
 
 static void SecurityMenu_SetItemNumIcon(IMenuCtl   *pMenu)
 {

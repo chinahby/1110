@@ -85,6 +85,12 @@
 	<String Id="1028" Name="IDS_ONEKEY_LOCK_KEPAD" Encoding="Unicode">
 		<Text>Red key locks keypad</Text>
 	</String>
+	<String Id="1029" Name="IDS_FILEMANGERLOCK">
+		<Text>File manger</Text>
+	</String>
+	<String Id="1030" Name="IDS_MULTIMEDIALOCK">
+		<Text>Multimedia</Text>
+	</String>
 	<STRING Id="1031" Name="IDS_RESTRICT_TITLE">
 		<Text>Restrict</Text>
 	</STRING>

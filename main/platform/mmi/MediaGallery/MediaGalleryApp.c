@@ -1376,7 +1376,7 @@ static int MediaGalleryApp_InitAppData(CMediaGalleryApp* pMe)
       return EFAILED;
    }
 
-#ifdef FEATURE_VERSION_W317A
+#if defined(FEATURE_VERSION_W317A) ||defined(FEATURE_VERSION_C316)
    pMe->m_strPhonePWD = NULL;
 #endif
    pMe->m_bSuspending = FALSE;
@@ -1487,7 +1487,7 @@ static void MediaGalleryApp_FreeAppData(CMediaGalleryApp* pMe)
    {
       return;
    }
-#ifdef FEATURE_VERSION_W317A
+#if defined(FEATURE_VERSION_W317A) ||defined(FEATURE_VERSION_C316)
    FREEIF(pMe->m_strPhonePWD);
 #endif
 

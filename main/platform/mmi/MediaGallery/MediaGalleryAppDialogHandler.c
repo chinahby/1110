@@ -154,7 +154,7 @@ static boolean MediaGalleryApp_ShowMsgBox(CMediaGalleryApp* pMe,
                                           BottomBar_e_Type eMsgBoxBottomBar);
 static __inline void MediaGalleryApp_ShowDoneMsgBox(CMediaGalleryApp *pMe);
 
-#ifdef FEATURE_VERSION_W317A
+#if defined(FEATURE_VERSION_W317A) ||defined(FEATURE_VERSION_C316)
 static boolean  MediaGalleryApp_PwdDlg_HandleEvent(CMediaGalleryApp* pMe,
 				                                                  AEEEvent eCode,
 				                                                  uint16   wParam,
@@ -348,7 +348,7 @@ boolean MediaGalleryApp_RouteDialogEvent(CMediaGalleryApp* pMe,
    MSG_FATAL("MediaGalleryApp_RouteDialogEvent m_nActiveDlgID=%d", pMe->m_nActiveDlgID,0,0);
    switch(pMe->m_nActiveDlgID)
    {
-#ifdef FEATURE_VERSION_W317A
+#if defined(FEATURE_VERSION_W317A) ||defined(FEATURE_VERSION_C316)
  	  case IDD_PWD:
  	  	 fcnPtr = MediaGalleryApp_PwdDlg_HandleEvent;
  	  	 break;
@@ -737,7 +737,7 @@ static boolean MediaGalleryApp_CancelMsgBoxTimer(CMediaGalleryApp* pMe,
    return bRet;
 }//MediaGalleryApp_CancelMsgBoxTimer
 
-#ifdef FEATURE_VERSION_W317A
+#if defined(FEATURE_VERSION_W317A) ||defined(FEATURE_VERSION_C316)
 static boolean  MediaGalleryApp_PwdDlg_HandleEvent(CMediaGalleryApp* pMe,
 			                                                  AEEEvent eCode,
 			                                                  uint16   wParam,
@@ -1117,7 +1117,7 @@ static boolean MediaGalleryApp_MsgBoxDlg_HandleEvent(CMediaGalleryApp* pMe,
    case EVT_KEY:
       {
 	  	 MSG_FATAL("***zzg MsgBoxDlg EVT_KEY nMsgBoxId=%x***", nMsgBoxId, 0, 0);
-#ifdef FEATURE_VERSION_W317A
+#if defined(FEATURE_VERSION_W317A) ||defined(FEATURE_VERSION_C316)
 	 	if (nMsgBoxId == MG_MSGID_VALIDPWD)
 	 	{
 	 		MSG_FATAL("***zzg MsgBoxDlg MGCLOSE_DIALOG(MGDLGRET_MSGBOX_OK)x***", 0, 0, 0);
@@ -1202,7 +1202,7 @@ static boolean MediaGalleryApp_MsgBoxDlg_HandleEvent(CMediaGalleryApp* pMe,
 
 		 
 		 MSG_FATAL("***zzg MsgBoxDlg EVT_DISPLAYDIALOGTIMEOUT nMsgBoxId=%x***", nMsgBoxId, 0, 0);
-#ifdef FEATURE_VERSION_W317A
+#if defined(FEATURE_VERSION_W317A) ||defined(FEATURE_VERSION_C316)
 	 	if (nMsgBoxId == MG_MSGID_VALIDPWD)
 	 	{
 			MGCLOSE_DIALOG(MGDLGRET_MSGBOX_OK)

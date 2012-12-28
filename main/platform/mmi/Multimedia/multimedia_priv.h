@@ -45,6 +45,10 @@ typedef struct _MultimediaMod
 typedef enum MultimediaState
 {
     MULTIMEDIAST_MAIN,
+#if defined(FEATURE_VERSION_C316)
+   STATE_PWD,	   //Application lock
+   STATE_PWDINALD,
+#endif	
     MULTIMEDIAST_EXIT
 } MultimediaState;
 
@@ -58,6 +62,11 @@ typedef enum
 typedef enum DLGRetValue
 {
     DLGRET_CREATE,
+#if defined(FEATURE_VERSION_W317A) ||defined(FEATURE_VERSION_C316)
+   MGDLGRET_PASS,
+   MGDLGRET_FAILD,
+   MGDLGRET_MSGBOX_OK,
+#endif
     DLGRET_CANCELED
 }DLGRetValue;
 
@@ -96,7 +105,11 @@ typedef struct _Multimed
     MultimediaState m_currState;        // Appletµ±Ç°×´Ì¬
     AEERect         m_rc;
     
-    IAnnunciator   *m_pIAnn;
+    IAnnunciator    *m_pIAnn;
+#if defined(FEATURE_VERSION_C316)
+   char             *m_strPhonePWD;
+   boolean          b_pwdWright;
+#endif
 } Multimed;
 
 /*==============================================================================

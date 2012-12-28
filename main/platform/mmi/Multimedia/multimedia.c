@@ -20,7 +20,7 @@
 #ifndef AEECLSID_MULTIMEDIA_LIST
     #error AEECLSID_MULTIMEDIA_LIST must be defined
 #endif
-
+#include "AppComFunc.h"
 #include "AEEShell.h"
 #include "AEE_OEM.h"
 #include "AEEModGen.h"
@@ -112,12 +112,22 @@ void Multimed_ShowDialog(Multimed  *pMe,  uint16 dlgResId);
 
 // MAINST_MAIN 状态处理函数
 static NextFSMAction MAINST_MULTIMED_Handler(Multimed *pMe);
-
-
+#ifdef FEATURE_VERSION_C316
+static NextFSMAction MANINPWD_INPUTPWD_Handler(Multimed *pMe);
+#endif
 //MAINST_EXIT  状态处理函数
 static NextFSMAction MULTIMEDST_EXIT_Handler(Multimed *pMe);
 static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam);
-
+#ifdef FEATURE_VERSION_C316
+static boolean Multimed_PassWordHandler(Multimed *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam);
+static void Multimedia_ShowMsgBoxDlg(Multimed *pMe, uint16 nDlgResId);
+static __inline void MTAppUtil_DrawSoftkey(Multimed* pMe,
+                                       BottomBar_e_Type eSoftkeyType);
+static boolean Multimed_PopMsgHandler(Multimed *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam);
+static void Multimedia_MsgBoxTimeout(void* pUser);
+//static NextFSMAction MANINPWD_INPUTPWDINVAD_Handler(Multimed *pMe);
+void Multimed_ShowPopDialog(Multimed  *pMe,  uint16 dlgResId);
+#endif
 
 
 /*==============================================================================
@@ -376,7 +386,12 @@ static int CMultimed_InitAppData(Multimed *pMe)
     {
         return EFAILED;
     }
-
+	
+	#if defined(FEATURE_VERSION_C316)
+   	pMe->m_strPhonePWD = NULL;
+	pMe->b_pwdWright = FALSE;
+	#endif
+	
     pMe->m_MainSel  = 0;
     
     if (ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_DISPLAY, 
@@ -416,6 +431,10 @@ static void CMultimed_FreeAppData(Multimed *pMe)
     {
         return;
     }
+#ifdef FEATURE_VERSION_C316
+	pMe->b_pwdWright = FALSE;
+	pMe->m_strPhonePWD = NULL;
+#endif
     pMe->m_eAppStatus = MULTIMEDIA_STOP; 
     
     if (pMe->m_pDisplay != NULL)
@@ -579,8 +598,13 @@ boolean Multimed_RouteDialogEvt(Multimed *pMe,
 
         case IDD_LIST_MULTIMEDIA_DIALOGS:
             return Multimed_ListMenuHandler(pMe, eCode, wParam, dwParam);
-
-        default:
+#ifdef FEATURE_VERSION_C316
+		case IDD_PWD:
+			return Multimed_PassWordHandler(pMe, eCode, wParam, dwParam);
+		case IDD_PWD_INVAD:
+			return Multimed_PopMsgHandler(pMe, eCode, wParam, dwParam);
+#endif        
+default:
             return FALSE;
     }
 }
@@ -770,14 +794,20 @@ NextFSMAction Multimed_ProcessState(Multimed *pMe)
     {
         return retVal;
     }
-    
+    MSG_FATAL("Multimed_ProcessState=%d",pMe->m_currState,0,0);
     switch(pMe->m_currState)
     {
         case MULTIMEDIAST_MAIN:
             return MAINST_MULTIMED_Handler(pMe);
 
         case MULTIMEDIAST_EXIT:
-            return MULTIMEDST_EXIT_Handler(pMe);            
+            return MULTIMEDST_EXIT_Handler(pMe);    
+#ifdef FEATURE_VERSION_C316
+		case STATE_PWD:
+			return MANINPWD_INPUTPWD_Handler(pMe);
+#endif
+		//case STATE_PWDINALD:
+		//	return MANINPWD_INPUTPWDINVAD_Handler(pMe);
 
         default:
             break;
@@ -805,25 +835,109 @@ NextFSMAction Multimed_ProcessState(Multimed *pMe)
 ==============================================================================*/
 static NextFSMAction MAINST_MULTIMED_Handler(Multimed *pMe)
 {
+	boolean locksel;
     if (NULL == pMe)
     {
         return NFSMACTION_WAIT;
     }
-    switch (pMe->m_eDlgReturn)
-    {
-        // 进入主界面
-        case DLGRET_CREATE:
-            Multimed_ShowDialog(pMe, IDD_LIST_MULTIMEDIA_DIALOGS);
-            return NFSMACTION_WAIT;
+#ifdef FEATURE_VERSION_C316
+		
+	OEM_GetConfig(CFGI_MULTIMEDIA_LOCK_CHECK, &locksel, sizeof( locksel));
+
+	if((locksel) && (!pMe->b_pwdWright))
+	{
+		MOVE_TO_STATE(STATE_PWD);
+	}
+	else
+#endif
+	{
+    	switch (pMe->m_eDlgReturn)
+    	{
+        	// 进入主界面
+        	case DLGRET_CREATE:
+            	Multimed_ShowDialog(pMe, IDD_LIST_MULTIMEDIA_DIALOGS);
+            	return NFSMACTION_WAIT;
             
+        	default:
+            	MOVE_TO_STATE(MULTIMEDIAST_EXIT)
+            	return NFSMACTION_CONTINUE;
+    	}
+	}
+}
+/*
+static NextFSMAction MANINPWD_INPUTPWDINVAD_Handler(Multimed *pMe)
+{
+	MSG_FATAL("MANINPWD_INPUTPWDINVAD_Handler...==%d",pMe->m_eDlgReturn,0,0);
+	switch(pMe->m_eDlgReturn)
+    {
+        case DLGRET_CREATE:
+            Multimed_ShowPopDialog(pMe, IDD_PWD_INVAD);
+            return NFSMACTION_WAIT;
+
+        case DLGRET_CANCELED:
+            MOVE_TO_STATE(MULTIMEDIAST_EXIT);
+            return NFSMACTION_CONTINUE;
+		default:
+            MOVE_TO_STATE(MULTIMEDIAST_EXIT);
+            return NFSMACTION_CONTINUE;
+	}
+}
+
+*/
+#ifdef FEATURE_VERSION_C316
+static NextFSMAction MANINPWD_INPUTPWD_Handler(Multimed *pMe)
+{
+	MSG_FATAL("MANINPWD_INPUTPWD_Handler....",0,0,0);
+	switch(pMe->m_eDlgReturn)
+    {
+        case DLGRET_CREATE:
+            Multimed_ShowDialog(pMe, IDD_PWD);
+            return NFSMACTION_WAIT;
+
+        case DLGRET_CANCELED:
+            MOVE_TO_STATE(MULTIMEDIAST_EXIT);
+            return NFSMACTION_CONTINUE;
+
+        case MGDLGRET_PASS:            
+            
+			MOVE_TO_STATE(MULTIMEDIAST_MAIN);
+			break;
+			
+            return NFSMACTION_CONTINUE;
+
+        case MGDLGRET_FAILD:    
+			MSG_FATAL("MGDLGRET_FAILD.............",0,0,0);
+			Multimed_ShowPopDialog(pMe, IDD_PWD_INVAD);
+			//pMe->m_eDlgReturn = DLGRET_CREATE;
+			//MOVE_TO_STATE(STATE_PWDINALD); 
+			//break;
+            return NFSMACTION_WAIT;
+		
+        case MGDLGRET_MSGBOX_OK:
+            MOVE_TO_STATE(STATE_PWD);
+            return NFSMACTION_CONTINUE;        
+
         default:
-            MOVE_TO_STATE(MULTIMEDIAST_EXIT)
+            MOVE_TO_STATE(MULTIMEDIAST_EXIT);
             return NFSMACTION_CONTINUE;
     }
 }
 
 
 
+static void Multimedia_ShowMsgBoxDlg(Multimed *pMe, uint16 nDlgResId)
+{
+	int nRet;
+
+   if(!pMe)
+   {
+      return ;
+   }
+   Multimed_ShowDialog(pMe, nDlgResId);
+
+}
+
+#endif
 /*==============================================================================
 函数:
     GAMEST_EXIT_Handler
@@ -888,8 +1002,31 @@ void Multimed_ShowDialog(Multimed  *pMe,  uint16 dlgResId)
     }
     
 }
-
-
+#ifdef FEATURE_VERSION_C316
+void Multimed_ShowPopDialog(Multimed  *pMe,  uint16 dlgResId)
+{
+   int nRet;
+   if(!pMe)
+   {
+      return ;
+   }
+   /*At most one dialog open at once*/
+   if(NULL != ISHELL_GetActiveDialog(pMe->m_pShell))
+   {
+      /*Looks like there is one dialog already opened.
+       * Flag an error  return without doing anything.
+       */
+      return ;
+   }
+   nRet = ISHELL_CreateDialog(pMe->m_pShell,
+                              MULTIMEDIA_RES_FILE_LANG,
+                              dlgResId,
+                              NULL);
+   if(nRet != SUCCESS)
+   {
+   }
+}
+#endif
 /*=============================================================================
 FUNCTION:  Multimed_ListMenuHandler
 
@@ -1010,7 +1147,7 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
                 IMENUCTL_SetOemProperties( pMenu, OEMMP_USE_MENU_STYLE);
                 IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
                 IMENUCTL_SetSel(pMenu, pMe->m_MainSel);
-                (void) ISHELL_PostEvent(pMe->m_pShell, AEECLSID_MAIN_MENU, EVT_USER_REDRAW,0,0);
+                (void) ISHELL_PostEvent(pMe->m_pShell, AEECLSID_MULTIMEDIA_LIST, EVT_USER_REDRAW,0,0);
             }
             return TRUE;
             
@@ -1104,10 +1241,371 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
     }             
     return FALSE;
 }
+#ifdef FEATURE_VERSION_C316
+static void Multimedia_MsgBoxTimeout(void* pUser)
+{
+   Multimed* pMe = (Multimed*)pUser;
+   MSG_FATAL("MediaGalleryApp_MsgBoxTimeout Start",0,0,0);
+   if(NULL == pMe )
+   {
+      return;
+   }
+
+
+   ISHELL_PostEvent(pMe->m_pShell,
+                       AEECLSID_MULTIMEDIA_LIST,
+                       EVT_DISPLAYDIALOGTIMEOUT,
+                       0,
+                       0);
+
+}//MediaGalleryApp_MsgBoxTimeout
 
 
 
+static boolean Multimed_PopMsgHandler(Multimed *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
+{
+   PARAM_NOT_REF(dwParam)
+   uint16   nMsgBoxId;   
+   if(!pMe)
+   {
+      return FALSE;
+   }
+   
+   MSG_FATAL("***zzg Multimed_PopMsgHandler eCode=%x***", eCode, 0, 0);
 
+   switch(eCode)
+   {
+   	  case EVT_DIALOG_INIT:
+      {
+         
+         return TRUE;
+      }
+   case EVT_DIALOG_START:
+      {
+         ISHELL_PostEvent(pMe->m_pShell, AEECLSID_MULTIMEDIA_LIST,
+                          EVT_USER_REDRAW, 0, 0);
+         return TRUE;
+      }
+   case EVT_USER_REDRAW:
+      {
+	  	 IStatic* pIStatic = NULL;
+         AECHAR szText[256];
+         PromptMsg_Param_type MsgParam={0};
+		 Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
+		 MSG_FATAL("***zzg Multimed_PopMsgHandler eCode=%x,%d,%d***", pMe->m_rc.x, pMe->m_rc.y, pMe->m_rc.dy);
+         if(SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
+                                             AEECLSID_STATIC,
+                                             (void **)&pIStatic))
+         {
+            return FALSE;
+         }
+
+         ISHELL_LoadResString(pMe->m_pShell,
+                              MULTIMEDIA_RES_FILE_LANG,
+                              IDS_INVALID,
+                              szText,
+                              sizeof(szText));
+         MsgParam.ePMsgType = MESSAGE_INFORMATION;
+         MsgParam.pwszMsg = szText;
+         MsgParam.eBBarType = BTBAR_NONE;
+         
+        DrawPromptMessage(pMe->m_pDisplay, pIStatic, &MsgParam);
+       
+        ISHELL_SetTimer(pMe->m_pShell,
+                            PROMPTMSG_TIMER,
+                            Multimedia_MsgBoxTimeout,
+                            pMe);
+         return TRUE;
+      }
+
+   case EVT_DIALOG_END:
+      {
+		    return TRUE;
+      }
+
+   case EVT_KEY:
+      {
+		 switch(wParam)
+         {
+         case AVK_CLR:	
+		 	{
+               ISHELL_CancelTimer(pMe->m_pShell,
+                                  Multimedia_MsgBoxTimeout, pMe);
+               CLOSE_DIALOG(DLGRET_CANCELED);
+         	}
+            break;
+
+         case AVK_SELECT:
+		 	{
+               CLOSE_DIALOG(DLGRET_CANCELED);
+         	}
+            break;
+
+         default:
+            break;
+         }
+
+         return TRUE;
+         break;
+      }
+
+
+   case EVT_DISPLAYDIALOGTIMEOUT:
+      {
+		 CLOSE_DIALOG(DLGRET_CANCELED)
+         return TRUE;
+      }
+
+   default:
+      break;
+   }
+
+   return FALSE;
+}
+
+
+static boolean Multimed_PassWordHandler(Multimed *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
+{
+	PARAM_NOT_REF(dwParam)
+    //static char   *m_strPhonePWD = NULL;
+    AECHAR      wstrDisplay[OEMNV_LOCKCODE_MAXLEN+2] = {0};
+    int             nLen = 0;
+    char        strDisplay[OEMNV_LOCKCODE_MAXLEN+2] = {0};
+    MSG_FATAL("Multimed_PassWordHandler....",0,0,0);
+    if (NULL == pMe)
+    {
+        return FALSE;
+    }
+    
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT:
+            if(NULL == pMe->m_strPhonePWD)
+            {
+                pMe->m_strPhonePWD = (char *)MALLOC((OEMNV_LOCKCODE_MAXLEN + 1)* sizeof(char));
+            }
+            return TRUE;
+            
+        case EVT_DIALOG_START:  
+            (void) ISHELL_PostEvent(pMe->m_pShell,
+                                    AEECLSID_MULTIMEDIA_LIST,
+                                    EVT_USER_REDRAW,
+                                    NULL,
+                                    NULL);
+
+            return TRUE;
+            
+        case EVT_USER_REDRAW:
+            // 绘制相关信息
+            {
+                AECHAR  text[32] = {0};
+                RGBVAL nOldFontColor;
+                TitleBar_Param_type  TitleBar_Param = {0};
+                
+                Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
+                //IDISPLAY_FillRect  (pMe->m_pDisplay,&pMe->m_rc,RGB_BLACK);
+
+				(void)ISHELL_LoadResString(pMe->m_pShell, 
+	                                        MULTIMEDIA_RES_FILE_LANG,
+	                                        IDS_MULTIMEDIA_TITLE, 
+	                                        text,
+	                                        sizeof(text));    
+				 
+				
+                // 画标题条
+                TitleBar_Param.pwszTitle = text;
+                TitleBar_Param.dwAlignFlags = IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
+                #if 0
+                DrawTitleBar(pMe->m_pDisplay, &TitleBar_Param);
+				#else
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,text);
+				#endif
+
+               (void)ISHELL_LoadResString(pMe->m_pShell, 
+                                                MULTIMEDIA_RES_FILE_LANG,
+                                                IDS_PWD_TITLE, 
+                                                text,
+                                                sizeof(text));
+                nOldFontColor = IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
+                
+                IDISPLAY_DrawText(pMe->m_pDisplay, 
+                                    AEE_FONT_BOLD, 
+                                    text,
+                                    -1, 
+                                    5, 
+                                    MENUITEM_HEIGHT*1/2, 
+                                    NULL, 
+                                    IDF_TEXT_TRANSPARENT);
+                   
+                nLen = (pMe->m_strPhonePWD == NULL)?(0):(STRLEN(pMe->m_strPhonePWD));
+                MEMSET(strDisplay, '*', nLen);
+                strDisplay[nLen] = '|';
+                strDisplay[nLen + 1] = '\0';
+                (void) STRTOWSTR(strDisplay, wstrDisplay, sizeof(wstrDisplay));
+                IDISPLAY_DrawText(pMe->m_pDisplay, 
+                                AEE_FONT_BOLD, 
+                                wstrDisplay,
+                                -1, 
+                                10, 
+                                MENUITEM_HEIGHT*3/2,
+                                NULL, 
+                                IDF_TEXT_TRANSPARENT);
+                (void)IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, nOldFontColor);
+        
+                // 绘制底条提示
+                if (nLen > 3)
+                {// 确定-----删除
+                	#ifndef FEATURE_ALL_KEY_PAD
+					MTAppUtil_DrawSoftkey(pMe, BTBAR_OK_DELETE);                    
+                    #else
+					MTAppUtil_DrawSoftkey(pMe, BTBAR_OK_BACK);                       
+                    #endif
+                }
+                else if(nLen > 0)
+                {
+                	#ifndef FEATURE_ALL_KEY_PAD
+                    MTAppUtil_DrawSoftkey(pMe,BTBAR_DELETE);
+                    #else
+                    MTAppUtil_DrawSoftkey(pMe,BTBAR_BACK);
+                    #endif
+                }
+                else
+                {// 确定-----取消
+                    MTAppUtil_DrawSoftkey(pMe,BTBAR_CANCEL);
+                }
+
+                // 更新显示
+                IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE); 
+        
+                return TRUE;
+            }
+            
+        case EVT_DIALOG_END:
+			if(pMe->m_strPhonePWD)
+			{
+				 FREEIF(pMe->m_strPhonePWD);
+			}			
+			return TRUE;
+
+        case EVT_KEY:
+            {
+                char  chEnter = 0;
+                int   nLen = 0;
+                boolean bRedraw = FALSE;
+                
+                switch (wParam)
+                {
+                    case AVK_0:
+                    case AVK_1:
+                    case AVK_2:
+                    case AVK_3:
+                    case AVK_4:
+                    case AVK_5:
+                    case AVK_6:
+                    case AVK_7:
+                    case AVK_8:
+                    case AVK_9:
+                        chEnter = '0' + (wParam - AVK_0);
+                        break;
+
+                    case AVK_STAR:
+                        chEnter = '*';
+                        break;
+ 
+                    case AVK_POUND:
+                        chEnter = '#';
+                        break;
+                    //Add By zzg 2012_02_27					
+					case AVK_DEL:	 
+					{
+						chEnter = 0;
+						break;
+					}
+					//Add End	
+                    case AVK_CLR:
+                        chEnter = 0;       
+                        if (pMe->m_strPhonePWD == NULL || STRLEN(pMe->m_strPhonePWD) == 0)
+	                    {
+	                         CLOSE_DIALOG(DLGRET_CANCELED)
+	                         return TRUE;
+	                    }
+                        break;
+                        
+                    case AVK_SELECT:
+                    case AVK_INFO:
+                        if (pMe->m_strPhonePWD == NULL || STRLEN(pMe->m_strPhonePWD) < 4)
+                        {
+                            return TRUE;
+                        }
+                        else
+                        //end added
+                        {
+                            uint16 wPWD=0;
+
+                            OEM_GetConfig(CFGI_PHONE_PASSWORD, &wPWD, sizeof(wPWD));
+                        
+                            if (wPWD == EncodePWDToUint16(pMe->m_strPhonePWD))
+                            {// 密码符合
+                            	pMe->b_pwdWright = TRUE;
+                                CLOSE_DIALOG(MGDLGRET_PASS)
+                            }
+                            else
+                            {// 密码错误
+                                CLOSE_DIALOG(MGDLGRET_FAILD)
+                            }
+                        }
+                        return TRUE;
+                        
+                    default:
+                        return TRUE;
+                }
+                nLen = (pMe->m_strPhonePWD == NULL)?(0):(STRLEN(pMe->m_strPhonePWD));
+                if (chEnter == 0)
+                {// 删除字符
+                    if (nLen > 0)
+                    {
+                        bRedraw = TRUE;
+                        pMe->m_strPhonePWD[nLen-1] = chEnter;
+                    }
+                }
+                else if (nLen < OEMNV_LOCKCODE_MAXLEN)
+                {
+                    pMe->m_strPhonePWD[nLen] = chEnter;
+                    nLen++;
+                    pMe->m_strPhonePWD[nLen] = 0;
+                    bRedraw = TRUE;
+                }
+                
+                if (bRedraw)
+                {
+                    (void) ISHELL_PostEvent(pMe->m_pShell,
+                                            AEECLSID_MULTIMEDIA_LIST,
+                                            EVT_USER_REDRAW,
+                                            NULL,
+                                            NULL);
+                }
+            }
+            return TRUE;
+            
+        default:
+            break;
+    }
+    
+    return FALSE;
+}
+
+static __inline void MTAppUtil_DrawSoftkey(Multimed* pMe,
+                                       BottomBar_e_Type eSoftkeyType)
+{
+   if(pMe)
+   {
+      BottomBar_Param_type BarParam={0};
+      BarParam.eBBarType = eSoftkeyType;
+      DrawBottomBar(pMe->m_pDisplay, &BarParam);
+      IDISPLAY_Update(pMe->m_pDisplay);
+   }
+}//MGAppUtil_DrawSoftkey
+#endif
 /*=============================================================================
 FUNCTION:  StartApplet
 
