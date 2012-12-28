@@ -40,8 +40,14 @@
 	<String Id="1022" Name="IDS_MAIN_MENU_CAMERA">
 		<Text>الكاميرا</Text>
 	</String>
+	<String Id="1030" Name="IDS_MAIN_MENU_FILEMGR">
+		<Text>معرض الوسائط</Text>
+	</String>
 	<String Id="1034" Name="IDS_MENU_LIST">
 		<Text>القائمة</Text>
+	</String>
+	<String Id="1035" Name="IDS_MAIN_MENU_CALL_LOGS">
+		<Text>سجلات المكالمات</Text>
 	</String>
 	<String Id="1043" Name="IDS_MAIN_MENU_CALCULATOR">
 		<Text>الآلة الحاسبة</Text>
