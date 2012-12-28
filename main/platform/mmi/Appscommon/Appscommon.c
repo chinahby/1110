@@ -1279,14 +1279,6 @@ void DrawBottomBar(IDisplay  * pIDisplay, BottomBar_Param_type *BParam)
                                           IDI_MAINMENU_BOTTOMBAR);
             }
             else
-		    #elif defined(FEATURE_VERSION_C310)
-			if(AEE_Active()==AEECLSID_MAIN_MENU)
-            {
-               pBarImg = ISHELL_LoadResImage(pShell,
-                                          AEE_APPSCOMMONRES_IMAGESFILE,
-                                          IDI_MAINMENU_YPJBOTTOMBAR);
-            }
-            else
             #endif
             {
               pBarImg = ISHELL_LoadResImage(pShell,
@@ -1761,14 +1753,6 @@ void DrawTitleBar(IDisplay  * pIDisplay, TitleBar_Param_type *TParam)
                pBarImg = ISHELL_LoadResImage(pShell,
                                           AEE_APPSCOMMONRES_IMAGESFILE,
                                           IDI_MAINMENU_TITLEBAR);
-            }
-            else
-			#elif defined(FEATURE_VERSION_C310)
-			if(AEE_Active()==AEECLSID_MAIN_MENU)
-            {
-               pBarImg = ISHELL_LoadResImage(pShell,
-                                          AEE_APPSCOMMONRES_IMAGESFILE,
-                                          IDI_MAINMENU_YPJTITLEBAR);
             }
             else
             #endif //Add End
