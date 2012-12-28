@@ -4600,11 +4600,15 @@ static int StartApplet(MainMenu *pMe, int i)
 	#endif	
 	
     case IDS_MAIN_WAPBROWSER:
-#if  (defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C310)||defined(FEATURE_VERSION_C316))	
+#if  (defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C316))	
 		MSG_FATAL("IDS_MAIN_MENU_SERVICES...........22222222222222",0,0,0);
 
         OEM_SetUCBROWSER_ADSAccount();
-#endif		
+#endif
+
+#ifdef FEATURE_VERSION_C310
+        OEM_SetBROWSER_ADSAccount();
+#endif
         #ifdef FEATURE_VERSION_C337
         Result = SetBrowserArr_Main(pMe,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
         #else
