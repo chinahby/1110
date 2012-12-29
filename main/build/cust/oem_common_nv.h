@@ -139,6 +139,8 @@
 #define OEMNV_CALLFORWARD_VOICEMAIL_ENABLE          "0"                         //CFGI_CALLFORWARD_VOICEMAIL_ENABLE 
 #ifdef FEATURE_VERSION_W208S
 #define OEMNV_VOICEMAIL_NUMBER                      L"*9"                         //NV_SMS_VM_NUMBER_I  
+#elif defined FEATURE_VERSION_C316
+#define OEMNV_VOICEMAIL_NUMBER                      L""                           //NV_SMS_VM_NUMBER_I  
 #else
 #define OEMNV_VOICEMAIL_NUMBER                      L"0"                         //NV_SMS_VM_NUMBER_I  
 #endif
