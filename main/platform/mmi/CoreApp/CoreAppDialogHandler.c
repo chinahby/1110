@@ -4182,6 +4182,9 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 	
                 	#if defined(FEATURE_VERSION_C306) ||defined(FEATURE_VERSION_W0216A)|| defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W027)
                 	{
+                	#ifdef FEATURE_VERSION_C316
+                    return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
+                    #else
                 	
 					nv_item_type	SimChoice;
 					if(pMe->m_iskeypadtime)
@@ -4208,8 +4211,9 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                         	}
                         	return TRUE;                        
                     	}
-					}
+					}                    
 					return FALSE;
+                    #endif
 					}
 					#elif defined(FEATURE_VERSION_C310) // add by pyuangui 20121226
 					{
