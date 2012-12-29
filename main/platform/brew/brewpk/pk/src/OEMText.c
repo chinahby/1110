@@ -575,6 +575,20 @@ T9KeyMap Alphabetic2T9Map[] =
     {T9KEYNONE,   AVK_SEND}, {T9KEYNONE,    AVK_END}, {0,0}
 };
 
+//Add By zzg 2012_12_29
+T9KeyMap Alphabetic2T9MapEx[] = 
+{
+    {T9KEYAMBIG1,    AVK_1}, {T9KEYAMBIG2,    AVK_2}, {T9KEYAMBIG3,    AVK_3},
+    {T9KEYAMBIG4,    AVK_4}, {T9KEYAMBIG5,    AVK_5}, {T9KEYAMBIG6,    AVK_6}, 
+    {T9KEYAMBIG7,    AVK_7}, {T9KEYAMBIG8,    AVK_8}, {T9KEYAMBIG9,    AVK_9}, 
+    {T9KEYAMBIGA,     AVK_0}, {T9KEYNONE,   AVK_STAR}, {T9KEYNONE,  AVK_POUND},
+    {T9KEYNONE, AVK_SELECT}, {T9KEYCLEAR,   AVK_CLR}, {T9KEYNEXT,   AVK_DOWN}, 
+    {T9KEYPREV,     AVK_UP}, {T9KEYLEFT,   AVK_LEFT}, {T9KEYRIGHT, AVK_RIGHT},  
+    {T9KEYNONE,   AVK_SEND}, {T9KEYNONE,    AVK_END}, {0,0}
+};
+
+//Add End
+
 T9KeyMap MultitapAlphabetic2T9Map[] = 
 {
     {T9KEYAMBIG1,    AVK_1}, {T9KEYAMBIG2,    AVK_2}, {T9KEYAMBIG3,    AVK_3},
@@ -9368,6 +9382,7 @@ static boolean T9_AW_DisplayText(TextCtlContext *pContext, AVKType key)
         }
         pContext->pszContents = pNewContents;
         MSG_FATAL("T9_AW_DisplayText........11122key==%d",key,0,0);
+        MSG_FATAL("***zzg OEM_TextGetCurrentMode==%d",OEM_TextGetCurrentMode((OEMCONTEXT)pContext),0,0);
         if((TEXT_MODE_MULTITAP == OEM_TextGetCurrentMode((OEMCONTEXT)pContext) 
 #ifdef FEATURE_T9_CAP_LOWER_ENGLISH
         ||TEXT_MODE_T9_CAP_LOWER_ENGLISH == OEM_TextGetCurrentMode((OEMCONTEXT)pContext)
@@ -9402,9 +9417,11 @@ static boolean T9_AW_DisplayText(TextCtlContext *pContext, AVKType key)
 #endif // FEATURE_CARRIER_CHINA_TELCOM
                 if(MULTITAP_ALL_SMALL != pContext->nMultitapCaps)
                 {
-                    kInsert[0] = pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart];
-                    WSTRUPPER(kInsert);
-                    pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart] = kInsert[0];                
+                    
+                        kInsert[0] = pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart];
+                        WSTRUPPER(kInsert);
+                        pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart] = kInsert[0];  
+                                               
                 }
           #ifdef FEATURE_LANG_PORTUGUESE  
                 else if(MULTITAP_ALL_SMALL == pContext->nMultitapCaps)
@@ -9416,7 +9433,7 @@ static boolean T9_AW_DisplayText(TextCtlContext *pContext, AVKType key)
           #endif
             }
             else
-            {                
+            {             
                 pContext->uModeInfo.mtap.nMax = WSTRLEN((AECHAR*)saMultitapStrings[(int)key-(int)AVK_0]);               
                 kInsert[0] = saMultitapStrings[(int)key - (int)AVK_0][pContext->uModeInfo.mtap.nSubChar];  
                 pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart] = kInsert[0];
@@ -9477,7 +9494,7 @@ static boolean T9_AW_DisplayText(TextCtlContext *pContext, AVKType key)
                 }
             }
             else
-            {                
+            {     
                 pContext->uModeInfo.mtap.nMax = WSTRLEN((AECHAR*)esaMultitapStrings[(int)key-(int)AVK_0]);               
                 kInsert[0] = esaMultitapStrings[(int)key - (int)AVK_0][pContext->uModeInfo.mtap.nSubChar];  
                 pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart] = kInsert[0];
@@ -9540,7 +9557,7 @@ static boolean T9_AW_DisplayText(TextCtlContext *pContext, AVKType key)
                 }
             }
             else
-            {                
+            {                                
                 pContext->uModeInfo.mtap.nMax = WSTRLEN((AECHAR*)fraMultitapStrings[(int)key-(int)AVK_0]);               
                 kInsert[0] = fraMultitapStrings[(int)key - (int)AVK_0][pContext->uModeInfo.mtap.nSubChar];  
                 pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart] = kInsert[0];
@@ -9561,7 +9578,7 @@ static boolean T9_AW_DisplayText(TextCtlContext *pContext, AVKType key)
             {
                 if(MULTITAP_ALL_CAPS == pContext->nMultitapCaps)
                 {
-                    int i;
+                    int i;                    
                     for(i=0; i<pContext->sT9awFieldInfo.G.nWordLen; i++)
                     {
                         kInsert[0] = pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart+i];
@@ -9570,7 +9587,7 @@ static boolean T9_AW_DisplayText(TextCtlContext *pContext, AVKType key)
                     }
                 }
                 else if(MULTITAP_ALL_SMALL != pContext->nMultitapCaps)
-                {
+                {                    
                     kInsert[0] = pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart];
                     WSTRUPPER(kInsert);
                     pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart] = kInsert[0];  
@@ -9583,7 +9600,7 @@ static boolean T9_AW_DisplayText(TextCtlContext *pContext, AVKType key)
         {
 #ifdef FEATURE_CARRIER_THAILAND_HUTCH           
             if (AVK_2 == key)
-            {
+            {                    
                     pContext->uModeInfo.mtap.nMax = WSTRLEN(sszT9Multitap2SpecialThai);
                     kInsert[0] = sszT9Multitap2SpecialThai[pContext->uModeInfo.mtap.nSubChar];  
                     pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart] = kInsert[0];
@@ -9594,7 +9611,7 @@ static boolean T9_AW_DisplayText(TextCtlContext *pContext, AVKType key)
             }
 #endif //FEATURE_CARRIER_THAILAND_HUTCH
             if (AVK_0 == key)
-            {
+            {               
                 if(!isThaiCnsntChar(pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart-1]))
                 {
                     pContext->uModeInfo.mtap.nMax = WSTRLEN(sszT9Multitap0SpecialThai);
@@ -9608,7 +9625,7 @@ static boolean T9_AW_DisplayText(TextCtlContext *pContext, AVKType key)
             }
             
             if(AVK_POUND == key)
-            {
+            {                
                 if(!isThaiCnsntChar(pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart-1]) 
                     && !isThaiAboveVowelChar(pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart-1]) 
                     && !isThaiBelowVowelChar(pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart-1]))
@@ -9622,7 +9639,7 @@ static boolean T9_AW_DisplayText(TextCtlContext *pContext, AVKType key)
                     }
                 } 
                 else if(!isThaiCnsntChar(pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart-1]))
-                {
+                {                    
                     pContext->uModeInfo.mtap.nMax = WSTRLEN(sszT9MultitapPound2SpecialThai);
                     kInsert[0] = sszT9MultitapPound2SpecialThai[pContext->uModeInfo.mtap.nSubChar];  
                     pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart] = kInsert[0];
@@ -9637,7 +9654,7 @@ static boolean T9_AW_DisplayText(TextCtlContext *pContext, AVKType key)
 
 #ifdef FEATURE_PREPAID_ISRAEL_HEBREW
  	     if (AVK_1== key)
-            {
+            {                   
                     pContext->uModeInfo.mtap.nMax = WSTRLEN(sszT9Multitap1SpecialHebrew);
                     kInsert[0] = sszT9Multitap1SpecialHebrew[pContext->uModeInfo.mtap.nSubChar];  
                     pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart] = kInsert[0];
@@ -9796,6 +9813,19 @@ static T9KEY T9_BrewKeyToT9AlphabeticKey(TextCtlContext *pContext,AEEEvent eCode
             break;
 #endif //FEATURE_T9_MULTITAP
 
+#ifdef FEATURE_T9_CAP_LOWER_ENGLISH  //add by yangdecai   2010-09-09
+        case TEXT_MODE_T9_CAP_LOWER_ENGLISH:
+        {
+            for (i = 0; Alphabetic2T9MapEx[i].cKey != 0; i++) 
+            {
+                if (Alphabetic2T9MapEx[i].cKey == cKey)
+                {
+                    return Alphabetic2T9MapEx[i].mKey;
+                }
+            }
+            break;
+        }
+#endif    
         default:  
             for (i = 0; Alphabetic2T9Map[i].cKey != 0; i++) 
             {
