@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <BREWRes Name="settingmenu" VERSION="1">
 <Strings Encoding="ISOLATIN1">
 	<STRING Id="1001" Name="IDS_APP_TITLE">
@@ -451,6 +451,9 @@
 	<STRING Id="1150" Name="IDS_CALL_TIME_REMINDER">
 		<Text>Call time reminder</Text>
 	</STRING>
+	<String Id="1151" Name="IDS_ONEKEYLOCKKEYPAD_TITLE" Encoding="Unicode">
+		<Text>Red key locks keypad</Text>
+	</String>
 	<String Id="1160" Name="IDS_CALLFORWARD_DEACTIVATE">
 		<Text>Deactivate</Text>
 	</String>
@@ -475,7 +478,6 @@
 	<String Id="1167" Name="IDS_SMS_TREACKER_TIME_240">
 		<Text>240 Mins</Text>
 	</String>
-	
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="7001">

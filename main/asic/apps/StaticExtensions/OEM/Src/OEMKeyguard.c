@@ -683,6 +683,19 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
                     }
                     else
                     {
+#if defined(FEATURE_VERSION_C316)	
+						   if(wParam == AVK_END)
+					      {
+							    boolean bData = FALSE;
+							    OEM_GetConfig(CFGI_ONEKEY_LOCK_KEYPAD,&bData, sizeof(bData));
+								if(OEMKeyguard_IsEnabled() && bData)
+							    {
+    			                    sUnlockState = UNLOCKSTATE_RESET;
+    			                    bDrawMessage = !bDrawMessage;							    
+							        return ;
+								}
+					      }
+#endif		                    
                         OEMPriv_DrawKeyguardMessage(FALSE);
                     }
                     sUnlockState = UNLOCKSTATE_RESET;

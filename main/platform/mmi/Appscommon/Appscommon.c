@@ -409,7 +409,11 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
 
          case BTBAR_ANSWER_REJECT:
             nResID_L = IDS_ANSWER;
+#ifdef FEATURE_VERSION_C316
+            nResID_R = IDS_END_CALL;
+#else
             nResID_R = IDS_REJECT;
+#endif
             break;
 
          case BTBAR_ANSWER_MUTE:
@@ -2661,7 +2665,7 @@ void DrawPromptMessage (IDisplay *pIDisplay,
     boolean         drawbgimage = FALSE;  
     AECHAR         *pwszMsg = NULL;  
 
-	DBGPRINTF("***zzg DrawPromptMessage***");
+	MSG_FATAL("***zzg DrawPromptMessage***",0,0,0);
                
     pShell = AEE_GetShell();                       
     
@@ -3042,7 +3046,7 @@ void Appscomm_Draw_Keyguard_Msg(IDisplay *pIDisplay,IStatic *pStatic,boolean unl
 #else
     m_PromptMsg.ePMsgType = MESSAGE_WARNNING;
 #endif
-    m_PromptMsg.eBBarType = BTBAR_NONE;        
+    m_PromptMsg.eBBarType = BTBAR_NONE;   
     DrawPromptMessage(pIDisplay,pStatic,&m_PromptMsg);
     IDISPLAY_UpdateEx(pIDisplay,FALSE);
 }
@@ -3052,6 +3056,16 @@ void Appscomm_Draw_Keyguard_Information(IDisplay *pIDisplay,IStatic *pStatic,boo
 {
     PromptMsg_Param_type m_PromptMsg;
     AEERect rect = {0};
+#if defined(FEATURE_VERSION_C316)
+      {
+		    boolean bData = FALSE;
+		    OEM_GetConfig(CFGI_ONEKEY_LOCK_KEYPAD,&bData, sizeof(bData));
+			if(OEMKeyguard_IsEnabled() && bData)
+		    {
+		        return ;
+			}
+      }
+#endif		
     ISTATIC_SetRect(pStatic, &rect);
     MEMSET(&m_PromptMsg,0,sizeof(PromptMsg_Param_type));
     //SETAEERECT(&rect, 0, 16, 128, 112);

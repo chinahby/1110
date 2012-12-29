@@ -5457,7 +5457,11 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
             {
                REFUI_DRAW_BOTTOMBAR(BTBAR_ANSWER_IGNORE);
             }
-            else if (pMe->m_bincoming_rsk == IDS_REJECT)
+            else if( (pMe->m_bincoming_rsk == IDS_REJECT)
+#ifdef FEATURE_VERSION_C316	
+                        ||(pMe->m_bincoming_rsk == IDS_END_CALL)
+#endif
+			          )
             {
                REFUI_DRAW_BOTTOMBAR(BTBAR_ANSWER_REJECT);
             }
@@ -5703,7 +5707,11 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
                     // Pressing CLR will cancel the In-band call dialog
                     //normal incoming call
                     //if (AEECM_CALL_STATE_CONV != pMe->m_lastCallState &&pMe->m_bincoming_rsk == IDS_REJECT)
-                    if((pMe->m_b_incall == FALSE ) &&pMe->m_bincoming_rsk == IDS_REJECT)
+                    if((pMe->m_b_incall == FALSE ) &&((pMe->m_bincoming_rsk == IDS_REJECT)
+#ifdef FEATURE_VERSION_C316		
+                        || (pMe->m_bincoming_rsk == IDS_END_CALL))
+#endif
+						)
                     {
 #ifndef FEATURE_ICM
                     	ICall *pCall= NULL;
@@ -5732,7 +5740,11 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
                     }
                     else if(pMe->m_bincoming_rsk == IDS_MUTE)
                     {
+#ifdef FEATURE_VERSION_C316    
+                        pMe->m_bincoming_rsk = IDS_END_CALL;
+#else
                         pMe->m_bincoming_rsk = IDS_REJECT;
+#endif
                         //IALERT_StopAlerting(pMe->m_pAlert);
                         IALERT_StopRingerAlert(pMe->m_pAlert);
                         IALERT_StopMp3Alert(pMe->m_pAlert);
@@ -6249,7 +6261,11 @@ static void CallApp_IncomingCall_Dlg_Init(CCallApp *pMe)
         if(alertType == OEMNV_ALERTTYPE_OFF)
         {
             pMe->m_CallMuted = TRUE;
+#ifdef FEATURE_VERSION_C316 
+            pMe->m_bincoming_rsk = IDS_END_CALL;
+#else
             pMe->m_bincoming_rsk = IDS_REJECT;
+#endif
         }
 #if !defined( FEATURE_RECORDER)
         CallApp_SetupCallAudio(pMe);

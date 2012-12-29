@@ -434,11 +434,13 @@ static int CMusicPlayer_InitAppData(CMusicPlayer *pMe)
                                sizeof(CMusicPlayerCfg)))
   {
     pMe->m_MusicPlayerCfg.eMusicPlayMode =PLAYMODE_ORDER;
-    #ifdef FEATURE_VERSION_C11
+#ifdef FEATURE_VERSION_C11
     pMe->m_MusicPlayerCfg.eMusicVolume=VOLUME_FIVE;
-    #else
+#elif defined (FEATURE_VERSION_C316)
+    pMe->m_MusicPlayerCfg.eMusicVolume=VOLUME_FIVE;
+#else
     pMe->m_MusicPlayerCfg.eMusicVolume=VOLUME_THREE;
-    #endif
+#endif
     pMe->m_MusicPlayerCfg.eMusicSortBy=SORT_NONE;
 #ifdef FEATURE_MP3PLAYER_SWITCHSKIN
     pMe->m_MusicPlayerCfg.eMp3Skin = PLAYERSKIN1;

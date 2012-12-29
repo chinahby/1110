@@ -3880,6 +3880,27 @@ static NextFSMAction Handler_STATE_ADDNEW(CContApp *pMe)
         case DLGRET_OK:
             {
                 boolean bCard = (pMe->m_nSaveType == CONTCFG_SAVETYPE_RUIM);
+#if defined (FEATURE_VERSION_C316)
+				 if ((pMe->m_pAddNewName == NULL) && (!IS_NO_PHONENUMBER()))
+				 {
+				     if(pMe->m_pAddNewMobile != NULL)
+				     {
+				         pMe->m_pAddNewName = WSTRDUP(pMe->m_pAddNewMobile);	
+				     }
+					 else if(pMe->m_pAddNewHome != NULL)
+					 {
+					     pMe->m_pAddNewName = WSTRDUP(pMe->m_pAddNewHome);	
+					 }
+					 else if(pMe->m_pAddNewOffice != NULL)
+					 {
+					     pMe->m_pAddNewName = WSTRDUP(pMe->m_pAddNewOffice);	
+					 }		
+					 else if(pMe->m_pAddNewFax != NULL)
+					 {
+					     pMe->m_pAddNewName = WSTRDUP(pMe->m_pAddNewFax);	
+					 }							 
+				 }
+#endif
                 if (pMe->m_pAddNewName == NULL)
                 {
                     pMe->m_wSelectEdit =IDI_ADDNEW_MENU_NAME;
@@ -4354,6 +4375,27 @@ static NextFSMAction Handler_STATE_EDIT(CContApp *pMe)
 #endif
         case DLGRET_OK:
         {
+#if defined (FEATURE_VERSION_C316)
+				 if ((pMe->m_pAddNewName == NULL) && (!IS_NO_PHONENUMBER()))
+				 {
+				     if(pMe->m_pAddNewMobile != NULL)
+				     {
+				         pMe->m_pAddNewName = WSTRDUP(pMe->m_pAddNewMobile);	
+				     }
+					 else if(pMe->m_pAddNewHome != NULL)
+					 {
+					     pMe->m_pAddNewName = WSTRDUP(pMe->m_pAddNewHome);	
+					 }
+					 else if(pMe->m_pAddNewOffice != NULL)
+					 {
+					     pMe->m_pAddNewName = WSTRDUP(pMe->m_pAddNewOffice);	
+					 }		
+					 else if(pMe->m_pAddNewFax != NULL)
+					 {
+					     pMe->m_pAddNewName = WSTRDUP(pMe->m_pAddNewFax);	
+					 }							 
+				 }
+#endif					
             if (pMe->m_pAddNewName == NULL)
             {
                 pMe->m_wSelectEdit =IDI_EDIT_MENU_NAME;

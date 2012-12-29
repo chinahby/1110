@@ -184,6 +184,9 @@
 	<String Id="1061" Name="IDS_PHONE_BOOKS">
 		<Text>Phonebook</Text>
 	</String>
+	<String Id="1062" Name="IDS_END_CALL" Encoding="Unicode">
+		<Text>End Call</Text>
+	</String>
 	<STRING Id="1100" Name="IDS_OPTION_RECORDER_ON">
 		<Text>Recorder on</Text>
 	</STRING>

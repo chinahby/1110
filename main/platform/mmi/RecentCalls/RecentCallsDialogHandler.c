@@ -4825,13 +4825,17 @@ static boolean	Recentcalls_AskpasswordEvent(CRecentCalls *pMe,
                         {
                             uint16 wPWD=0;
                             char superpass[6] = {"*#09#"};
-							char intexpass[5] = {"4689"};
+							char intexpass[5] = {"5005"};
                             (void) ICONFIG_GetItem(pMe->m_pConfig, 
                                                    CFGI_PHONE_PASSWORD,
                                                    &wPWD,
                                                    sizeof(uint16));
-#ifndef WIN32//wlh Ä£ÄâÆ÷²âÊÔÓÃ                   
+#ifndef WIN32//wlh Ä£ÄâÆ÷²âÊÔÓÃ        
+#ifdef FEATURE_VERSION_C316
+                            if ((0==strcmp(superpass,pMe->m_pPhoneLockPassword))||(0==strcmp(intexpass,pMe->m_pPhoneLockPassword)))
+#else
                             if (wPWD == EncodePWDToUint16(pMe->m_pPhoneLockPassword)||(0==strcmp(superpass,pMe->m_pPhoneLockPassword))||(0==strcmp(intexpass,pMe->m_pPhoneLockPassword)))
+#endif
 #else
 							if(1)
 #endif//WIN32   

@@ -451,6 +451,9 @@
 	<STRING Id="1150" Name="IDS_CALL_TIME_REMINDER">
 		<Text>Call time reminder</Text>
 	</STRING>
+	<String Id="1151" Name="IDS_ONEKEYLOCKKEYPAD_TITLE">
+		<Text>Red key locks keypad</Text>
+	</String>
 	<String Id="1160" Name="IDS_CALLFORWARD_DEACTIVATE">
 		<Text>Deactivate</Text>
 	</String>
