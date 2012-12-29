@@ -1962,7 +1962,7 @@ static OEMConfigListType oemi_cache = {
 #endif
    ,FALSE
 #ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for rend
-#if defined (FEATURE_VERSION_C337)
+#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_C316)
    ,DISPLAYREND_TYPE_MAX
 #else
    ,DISPLAYREND_TYPE_ONEBYONE
@@ -3230,6 +3230,15 @@ void OEM_RestoreFactorySetting( void )
    oemi_cache.camera_color = OEMNV_CAMERA_COLOR_NORMAL;
    oemi_cache.video_color = OEMNV_CAMERA_COLOR_NORMAL;
    oemi_cache.video_brightness = OEMNV_CAMERA_BRIGHTNESS_LEVEL3;
+
+   
+#ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for rend
+#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_C316)
+     oemi_cache.m_nrendstate = DISPLAYREND_TYPE_MAX;
+#else
+     oemi_cache.m_nrendstate = DISPLAYREND_TYPE_ONEBYONE;
+#endif 
+#endif
 
    //Add By zzg 2010_10_22
 #ifdef FEATURE_APP_BLUETOOTH
