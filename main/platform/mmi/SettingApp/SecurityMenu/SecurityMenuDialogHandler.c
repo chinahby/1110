@@ -445,7 +445,7 @@ static boolean  SecurityMainDlgHandler(CSecurityMenu *pMe,
 			IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_MOBILE_TRACKER, IDS_MOBILE_TRACKER, NULL, 0);
 			#endif
 #ifdef FEATURE_VERSION_C316	
-            IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_ONEKEY_LOCK_KEPAD, IDS_ONEKEY_LOCK_KEPAD, NULL, 0);
+            //IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_ONEKEY_LOCK_KEPAD, IDS_ONEKEY_LOCK_KEPAD, NULL, 0);
 #endif
             return TRUE;
 
@@ -502,7 +502,7 @@ static boolean  SecurityMainDlgHandler(CSecurityMenu *pMe,
                     CLOSE_DIALOG(DLG_PHONEPASSWORD)
                     break;
 
-#ifdef FEATURE_VERSION_C316	
+#if 0//def FEATURE_VERSION_C316	
                 case IDS_ONEKEY_LOCK_KEPAD:           //Ò»¼üËøÆÁ
                     pMe->m_lock_sel = SEC_SEL_ONE_KEY_LOCK_KEYPAD;
                     CLOSE_DIALOG(DLGRET_ONEKEY_LOCK_KEYPAD)

@@ -4084,12 +4084,12 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #ifdef FEATURE_KEYGUARD
 		if(wParam == AVK_END)
 		{
-		    boolean bData = FALSE;
-		    OEM_GetConfig(CFGI_ONEKEY_LOCK_KEYPAD,&bData, sizeof(bData));
-			if(!OEMKeyguard_IsEnabled() && bData)
+	//	    boolean bData = FALSE;
+//		    OEM_GetConfig(CFGI_ONEKEY_LOCK_KEYPAD,&bData, sizeof(bData));
+//			if(!OEMKeyguard_IsEnabled() && bData)
 			{//Ò»¼üËøÆÁ
 				IBacklight   *pBacklight = NULL;
-				OEMKeyguard_SetState(TRUE);  
+			//	OEMKeyguard_SetState(TRUE);  
 				ISHELL_CreateInstance(pMe->a.m_pIShell,
 					AEECLSID_BACKLIGHT,
 					(void**)&pBacklight);

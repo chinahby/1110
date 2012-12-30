@@ -4712,10 +4712,11 @@ static NextFSMAction WMSST_MSGSETTING_Handler(WmsApp *pMe)
             MOVE_TO_STATE(WMSST_MMS_PORT)
             return NFSMACTION_CONTINUE;                
 #endif
+#ifndef FEATURE_VERSION_C316
         case DLGRET_CALLBACKNUM:
             MOVE_TO_STATE(WMSST_CALLBACKNUMSWITCH)
             return NFSMACTION_CONTINUE;           
-
+#endif
         case DLGRET_MSGVALIDITY:
             MOVE_TO_STATE(WMSST_MSGVALIDITY)
             return NFSMACTION_CONTINUE;
@@ -5788,11 +5789,11 @@ static NextFSMAction WMSST_CALLBACKNUMSWITCH_Handler(WmsApp *pMe)
             pMe->m_ePMsgType = MESSAGE_INFORMATIVE;
             WmsApp_ShowMsgBox(pMe, IDS_SAVED);
             return NFSMACTION_WAIT;
-            
+#ifndef FEATURE_VERSION_C316            
         case DLGRET_CALLBACKNUM:
             MOVE_TO_STATE(WMSST_CALLBACKNUMSET)
             return NFSMACTION_CONTINUE;
-            
+#endif            
         default:
             // 用退出程序代替宏断言
             MOVE_TO_STATE(WMSST_EXIT)

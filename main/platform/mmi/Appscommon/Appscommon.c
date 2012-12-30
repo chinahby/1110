@@ -428,6 +428,14 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
             break;
 		//Add End
 
+
+#ifdef FEATURE_VERSION_C316
+         case BTBAR_OPTION_SILENT:
+            nResID_L = IDS_OPTION;
+            nResID_R = IDS_MUTE;
+            break;
+#endif
+
          case BTBAR_ANSWER_UNMUTE:
             nResID_L = IDS_ANSWER;
             nResID_R = IDS_UNMUTE;
@@ -3056,7 +3064,7 @@ void Appscomm_Draw_Keyguard_Information(IDisplay *pIDisplay,IStatic *pStatic,boo
 {
     PromptMsg_Param_type m_PromptMsg;
     AEERect rect = {0};
-#if defined(FEATURE_VERSION_C316)
+#if 0//defined(FEATURE_VERSION_C316)
       {
 		    boolean bData = FALSE;
 		    OEM_GetConfig(CFGI_ONEKEY_LOCK_KEYPAD,&bData, sizeof(bData));

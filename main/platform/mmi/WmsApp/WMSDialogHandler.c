@@ -730,7 +730,7 @@ void WmsApp_SetDialogHandler(WmsApp *pMe)
             pMe->m_pDialogHandler = IDD_AUTOREPLACE_Handler;
             break;
 #endif            
-            
+#ifndef FEATURE_VERSION_C316            
         case IDD_CALLBACKNUMSWITCH:
             pMe->m_pDialogHandler = IDD_CALLBACKNUMSWITCH_Handler;
             break;
@@ -738,7 +738,7 @@ void WmsApp_SetDialogHandler(WmsApp *pMe)
         case IDD_CALLBACKNUM:
             pMe->m_pDialogHandler = IDD_CALLBACKNUM_Handler;
             break;
-            
+#endif            
         case IDD_AUTODELETE:
             pMe->m_pDialogHandler = IDD_AUTODELETE_Handler;
             break;
@@ -3578,7 +3578,9 @@ static boolean IDD_SETTING_Handler(void   *pUser,
 #endif                   
 #if 1//def FEATURE_CARRIER_TAIWAN_APBW        //add by yangdecai   2010-08-23 
             MSG_FATAL("IDD_SETTING_Handler EVT_DIALOG_INIT IDS_CALLBACKNUM", 0, 0, 0);
+#ifndef FEATURE_VERSION_C316
             MENU_ADDITEM(pMenu, IDS_CALLBACKNUM);
+#endif
 #endif 
 #ifdef FEATURE_USES_MMS  
             MENU_ADDITEM(pMenu,IDS_MMSNOTIFY);
@@ -3659,9 +3661,11 @@ static boolean IDD_SETTING_Handler(void   *pUser,
 #if 1//def FEATURE_CARRIER_TAIWAN_APBW        //add by yangdecai   2010-08-23 
                 // 发出短信是否带回叫号码
                 MSG_FATAL("IDD_SETTING_Handler EVT_COMMAND IDS_CALLBACKNUM", 0, 0, 0);
+#ifndef FEATURE_VERSION_C316
                 case IDS_CALLBACKNUM:
                     CLOSE_DIALOG(DLGRET_CALLBACKNUM)
                     return TRUE;
+#endif										
 #endif
                 //发送模式
                 case IDS_SENDMODE:
@@ -6282,6 +6286,7 @@ static boolean IDD_CALLBACKNUMSWITCH_Handler(void *pUser,
         case EVT_COMMAND:
             switch (wParam)
             {
+#ifndef FEATURE_VERSION_C316            
                 // 发短信要求带 Callback number
                 case IDS_ENABLE:
                     /*{
@@ -6294,7 +6299,7 @@ static boolean IDD_CALLBACKNUMSWITCH_Handler(void *pUser,
                     }*/
                     CLOSE_DIALOG(DLGRET_CALLBACKNUM)
                     break;
-                    
+#endif                    
                     
                 // 发短信不要求带 Callback number
                 case IDS_DISABLE:
@@ -9795,14 +9800,14 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                     ISHELL_LoadResString(pMe->m_pShell, AEE_WMSAPPRES_LANGFILE, IDS_DELIVERYREPORTS, wstrText[nControls], sizeof(wstrText));
                     nControls++;
                 }
-
+#ifndef FEATURE_VERSION_C316
                 if (mask & 0x10)
                 {
                     wControls[nControls] = IDC_MENU_CBNUM;
                     ISHELL_LoadResString(pMe->m_pShell, AEE_WMSAPPRES_LANGFILE, IDS_CALLBACKNUM, wstrText[nControls], sizeof(wstrText));
                     nControls++;
                 }
-                
+#endif                
                 if (mask & 0x01)
                 {
                     wControls[nControls] = IDC_TEXT_CBNUM;

@@ -320,6 +320,10 @@ typedef enum BottomBar_e_Type
    BTBAR_VIEW_CANCEL,	//Add By zzg 2012_11_09
    BTBAR_SEARCH_BACK,	//Add By zzg 2012_11_23
 
+#ifdef FEATURE_VERSION_C316
+   BTBAR_OPTION_SILENT,
+#endif
+
    /*******************start BTBAR_TRI_MASK*****************************/
    BTBAR_CANCEL_RESUME_NULL = 0x4000 + 1,
    BTBAR_FULLSCREEN_PAUSE_STOP,

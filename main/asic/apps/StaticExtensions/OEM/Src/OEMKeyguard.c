@@ -683,7 +683,7 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
                     }
                     else
                     {
-#if defined(FEATURE_VERSION_C316)	
+#if 0//defined(FEATURE_VERSION_C316)	
 						   if(wParam == AVK_END)
 					      {
 							    boolean bData = FALSE;
