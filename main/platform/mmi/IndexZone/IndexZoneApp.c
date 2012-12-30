@@ -97,7 +97,15 @@ void IndexZoneApp_ShowDialog(IndexZoneApp  *pMe,  uint16 dlgResId);
 
 
 static boolean  IndexZoneApp_ListMenuHandler(IndexZoneApp *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam);
+//Add by pyuangui 20121230
+static boolean  IndexZoneApp_CallRecordHandler(IndexZoneApp *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam);
 
+boolean IndexZoneApp_RouteDialogEvt(IndexZoneApp *pMe,
+    AEEEvent    eCode,
+    uint16      wParam,
+    uint32      dwParam
+);
+//Add End
 
 
 /*==============================================================================
@@ -461,6 +469,55 @@ static uint32  IndexZoneApp_Release( IIndexZoneApp *pi)
 
     return 0;
 }
+//Add by pyuangui 20121230
+/*==============================================================================
+函数:
+      IndexZoneApp_RouteDialogEvt
+说明:
+       函数将BREW事件路由给当前活动对话框的事件处理函数。
+
+参数:
+       pMe [In]: 指向IndexZone Applet对象结构的指针,该结构包含小程序的特定信息.
+       eCode [in]：事件代码。
+       wParam [in]：与事件eCode关联的数据。
+       dwParam [in]：与事件eCode关联的数据。
+
+返回值:
+       TRUE：传入事件被处理。
+       FALSE：传入事件没被处理。
+
+备注:
+
+==============================================================================*/
+boolean IndexZoneApp_RouteDialogEvt(IndexZoneApp *pMe,
+    AEEEvent    eCode,
+    uint16  wParam,
+    uint32 dwParam
+)
+
+{
+    if (NULL == pMe)
+    {
+        return FALSE;
+    }
+	MSG_FATAL("IndexZoneApp_RouteDialogEvt----m_pActivedlgID=%d--m_pActiveIDlg=%d",pMe->m_pActivedlgID,pMe->m_pActiveIDlg,0);
+
+    if (NULL == pMe->m_pActiveIDlg)
+    {
+        return FALSE;
+    }    
+    switch( pMe->m_pActivedlgID)
+    {
+
+        case IDD_INDEXZONE_LIST:
+            return IndexZoneApp_ListMenuHandler(pMe, eCode, wParam, dwParam);
+        case IDD_INDEXZONE_CALLRECORD:
+        	return IndexZoneApp_CallRecordHandler(pMe, eCode, wParam,dwParam);
+        default:
+            return FALSE;
+    }
+}
+//Add End
 
 /*=============================================================================
 FUNCTION:  IndexZone_HandleEvent
@@ -520,19 +577,19 @@ static boolean IndexZoneApp_HandleEvent( IIndexZoneApp *pi,
             pMe->m_pActiveIDlg = (IDialog*)dwParam;
             pMe->m_pActivedlgID = wParam;
             
-            return IndexZoneApp_ListMenuHandler(pMe, eCode, wParam, dwParam);
+            return IndexZoneApp_RouteDialogEvt(pMe, eCode, wParam, dwParam);
 
         case EVT_USER:
         case EVT_DIALOG_START:
 
-            return IndexZoneApp_ListMenuHandler(pMe, eCode, wParam, dwParam);
+            return IndexZoneApp_RouteDialogEvt(pMe, eCode, wParam, dwParam);
        
         case EVT_USER_REDRAW:
-            return IndexZoneApp_ListMenuHandler(pMe, eCode, wParam, dwParam);
+            return IndexZoneApp_RouteDialogEvt(pMe, eCode, wParam, dwParam);
 			
         case EVT_DIALOG_END:
 		  
-            (void) IndexZoneApp_ListMenuHandler(pMe, eCode, wParam, dwParam);
+            (void) IndexZoneApp_RouteDialogEvt(pMe, eCode, wParam, dwParam);
             pMe->m_pActiveIDlg = NULL;
             pMe->m_pActivedlgID = 0;            
             return TRUE;
@@ -549,14 +606,14 @@ static boolean IndexZoneApp_HandleEvent( IIndexZoneApp *pi,
                 return TRUE;
             }
 #endif
-            return IndexZoneApp_ListMenuHandler(pMe, eCode, wParam, dwParam);
+            return IndexZoneApp_RouteDialogEvt(pMe, eCode, wParam, dwParam);
 
         case EVT_KEY_PRESS:
         case EVT_KEY_RELEASE:
         case EVT_COMMAND:
-            return IndexZoneApp_ListMenuHandler(pMe, eCode, wParam, dwParam);
+            return IndexZoneApp_RouteDialogEvt(pMe, eCode, wParam, dwParam);
         default:
-            return IndexZoneApp_ListMenuHandler(pMe, eCode, wParam, dwParam);
+            return IndexZoneApp_RouteDialogEvt(pMe, eCode, wParam, dwParam);
     }
 }
 
@@ -632,6 +689,7 @@ static boolean IndexZoneApp_ListMenuHandler(IndexZoneApp *pMe, AEEEvent eCode, u
             //IMENUCTL_AddItem(pMenu, INDEXZONE_RES_FILE_LANG,IDS_INDEX_ZONE_UTK, IDS_INDEX_ZONE_UTK, NULL, 0);  
 			IMENUCTL_AddItem(pMenu, INDEXZONE_RES_FILE_LANG,IDS_INDEX_ZONE_GAMES, IDS_INDEX_ZONE_GAMES, NULL, 0); 
 			IMENUCTL_AddItem(pMenu, INDEXZONE_RES_FILE_LANG,IDS_INDEX_ZONE_MOBILETRACKER, IDS_INDEX_ZONE_MOBILETRACKER, NULL, 0); 
+			IMENUCTL_AddItem(pMenu, INDEXZONE_RES_FILE_LANG,IDS_INDEX_ZONE_CALLRECORD, IDS_INDEX_ZONE_CALLRECORD, NULL, 0); 
             return TRUE;
             
         case EVT_DIALOG_START:
@@ -735,6 +793,13 @@ static boolean IndexZoneApp_ListMenuHandler(IndexZoneApp *pMe, AEEEvent eCode, u
 				{
 					ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_APP_SECURITYMENU, "Mobiletracker");
 				}
+				//Add by pyuangui 20121230
+				case IDS_INDEX_ZONE_CALLRECORD:
+				{
+					ISHELL_EndDialog(pMe->m_pShell);
+                    IndexZoneApp_ShowDialog(pMe, IDD_INDEXZONE_CALLRECORD);
+				}
+				//Add End
 				default:
 				{
 					break;
@@ -747,3 +812,105 @@ static boolean IndexZoneApp_ListMenuHandler(IndexZoneApp *pMe, AEEEvent eCode, u
     }             
     return FALSE;
 }
+
+//Add by pyuangui 20121230
+/*=============================================================================
+FUNCTION:  IndexZoneApp_CallRecordHandler
+
+DESCRIPTION:   auto call record
+
+PARAMETERS:
+
+=============================================================================*/
+
+static boolean IndexZoneApp_CallRecordHandler(IndexZoneApp *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
+{
+    PARAM_NOT_REF(dwParam)
+    IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveIDlg,IDC_MENU_AUTOCALLRECORD);
+        
+    if (pMenu == NULL)
+    {
+        return FALSE;
+    }
+    MSG_FATAL("IndexZoneApp_CallRecordHandler---eCode=%d",eCode,0,0);
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT:	
+			IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE); 
+			
+			IMENUCTL_AddItem(pMenu, INDEXZONE_RES_FILE_LANG,IDS_INDEX_ZONE_YES, IDS_INDEX_ZONE_YES, NULL, 0); 
+			IMENUCTL_AddItem(pMenu, INDEXZONE_RES_FILE_LANG,IDS_INDEX_ZONE_NO, IDS_INDEX_ZONE_NO, NULL, 0);  
+            return TRUE;
+            
+        case EVT_DIALOG_START:
+            {      
+                IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
+                IMENUCTL_SetOemProperties( pMenu, OEMMP_USE_MENU_STYLE);
+                IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
+                IMENUCTL_SetSel(pMenu, pMe->m_MainSel);
+                (void) ISHELL_PostEvent(pMe->m_pShell, AEECLSID_INDEX_ZONE, EVT_USER_REDRAW,0,0);
+            }
+            return TRUE;
+            
+        case EVT_USER_REDRAW:			
+			{				
+		  		AECHAR WTitle[40] = {0};
+				
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        INDEXZONE_RES_FILE_LANG,                                
+                        IDS_INDEX_ZONE_CALLRECORD,
+                        WTitle,
+                        sizeof(WTitle));
+                if(pMe->m_pIAnn != NULL)
+                {                								
+				    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+                }
+		    }
+		
+            (void)IMENUCTL_Redraw(pMenu);
+            return TRUE;
+
+        case EVT_DIALOG_END:			
+			//ISHELL_CloseApplet(pMe->m_pShell, FALSE);
+            return TRUE;
+		
+        case EVT_KEY:
+            switch(wParam)
+            {
+                case AVK_CLR:
+					ISHELL_EndDialog(pMe->m_pShell);
+                    IndexZoneApp_ShowDialog(pMe, IDD_INDEXZONE_LIST);                   
+                    return TRUE;
+                    
+                default:
+                    break;
+          
+            }
+            return TRUE;
+            
+        case EVT_COMMAND:
+            pMe->m_MainSel = wParam;
+            switch (wParam)
+            {   
+                case IDS_INDEX_ZONE_YES:
+                {	
+                    return TRUE;
+                }
+				case IDS_INDEX_ZONE_NO:
+				{	
+                    return TRUE;
+                }
+				
+				default:
+				{
+					break;
+				}
+            }
+            return TRUE;       
+            
+        default:
+            break;
+    }             
+    return FALSE;
+}
+//Add End
