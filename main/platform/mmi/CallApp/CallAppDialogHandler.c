@@ -5761,9 +5761,9 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
                     //if (AEECM_CALL_STATE_CONV != pMe->m_lastCallState &&pMe->m_bincoming_rsk == IDS_REJECT)
                     if((pMe->m_b_incall == FALSE ) &&((pMe->m_bincoming_rsk == IDS_REJECT)
 #ifdef FEATURE_VERSION_C316		
-                        || (pMe->m_bincoming_rsk == IDS_END_CALL))
+                        || (pMe->m_bincoming_rsk == IDS_END_CALL)
 #endif
-						)
+						))
                     {
 #ifndef FEATURE_ICM
                     	ICall *pCall= NULL;
