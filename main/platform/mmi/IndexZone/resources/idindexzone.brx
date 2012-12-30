@@ -9,12 +9,31 @@
 	</String>	
 	<String Id="1004" Name="IDS_INDEX_ZONE_GAMES">
 		<Text>Games</Text>
-	</String>		
+	</String>
+    <String Id="1005" Name="IDS_INDEX_ZONE_MOBILETRACKER">
+		<Text>Mobile tracker</Text>
+	</String>	
+    <String Id="1006" Name="IDS_INDEX_ZONE_CALLRECORD">
+		<Text>Auto call record</Text>
+	</String>
+	<String Id="1007" Name="IDS_INDEX_ZONE_YES">
+		<Text>Yes</Text>
+	</String>
+	<String Id="1008" Name="IDS_INDEX_ZONE_NO">
+		<Text>No</Text>
+	</String>	
 </Strings>
 <Dialogs>
 	<Dialog Id="6001" Name="IDD_INDEXZONE_LIST" Focus="7001">
 		<Controls>
 			<Menu Id="7001" Name="IDC_INDEXZONE_LIST">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6002" Name="IDD_INDEXZONE_CALLRECORD" Focus="0">
+		<Controls>
+			<Menu Id="7002" Name="IDC_MENU_AUTOCALLRECORD">
 				<Items/>
 			</Menu>
 		</Controls>
