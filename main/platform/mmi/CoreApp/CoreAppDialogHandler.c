@@ -4461,8 +4461,10 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     {
                         #if defined( FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_W317A) 
                            Mainmenu_KeypadLock(TRUE);
-			  #elif (defined ( FEATURE_VERSION_C337) || defined ( FEATURE_VERSION_C316))
+			            #elif defined ( FEATURE_VERSION_C337)
 						   WMSDialog_KeypadLock(TRUE);
+						#elif defined (FEATURE_VERSION_C316)
+						   APPDialog_KeypadLock(TRUE);
                         #endif
 						
                         #if defined(FEATURE_VERSION_MYANMAR) || defined( FEATURE_VERSION_C11) || defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W0271)
