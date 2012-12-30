@@ -129,6 +129,12 @@ static boolean  Application_FlashlightMenuHandler(Application *pMe, AEEEvent eCo
 static boolean  Application_PcModemHandler(Application *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam);
 #endif
 
+//Add by pyuangui 20121230
+#ifdef FEATURE_VERSION_C316
+static boolean  gbAPPDialogLock = FALSE;
+static void APPDialog_keypadtimer(void *pUser); 
+#endif
+//Add End
 /*==============================================================================
                               
                               本地（静态）数据
@@ -1117,7 +1123,13 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
             }
 			#endif
 			
-
+			// Add by pyuangui 20121230
+			#ifdef FEATURE_VERSION_C316
+            AEE_CancelTimer(APPDialog_keypadtimer,pMe);
+			AEE_SetTimer(5*1000,APPDialog_keypadtimer,pMe); 
+			#endif
+			// Add End
+			
 #ifdef FEATURE_VERSION_C337
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CALENDAR, IDS_APPLICATION_CALENDAR, NULL, 0);
 #endif
@@ -1350,7 +1362,19 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
                     return TRUE;
                     
                 case AVK_STAR:
-                    StartApplet(pMe, IMENUCTL_GetItemID(pMenu, 10));
+					 // Add by pyuangui 20121230
+					 #ifdef FEATURE_VERSION_C316
+					 if(gbAPPDialogLock) 
+                     {
+                        OEMKeyguard_SetState(TRUE);
+                        ISHELL_CloseApplet(pMe->m_pShell, TRUE); 
+                     }
+					 else
+					 #endif	
+					 //Add End
+					 {
+                        StartApplet(pMe, IMENUCTL_GetItemID(pMenu, 10));
+					 }
                     return TRUE;
                     
                 case AVK_POUND:
@@ -1378,6 +1402,18 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
     return FALSE;
 }
 
+//Add by pyuangui 20121230
+#ifdef FEATURE_VERSION_C316
+void APPDialog_KeypadLock(boolean block)
+{
+   gbAPPDialogLock = block;
+}
+static void APPDialog_keypadtimer(void *pUser)
+{
+   gbAPPDialogLock =FALSE;
+}
+#endif
+//Add End
 
 static boolean  Application_FlashlightMenuHandler(Application *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
 {
