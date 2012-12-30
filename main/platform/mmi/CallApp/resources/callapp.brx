@@ -187,6 +187,9 @@
 	<String Id="1062" Name="IDS_END_CALL" Encoding="Unicode">
 		<Text>End Call</Text>
 	</String>
+	<String Id="1063" Name="IDS_END_WITH_SMS" Encoding="Unicode">
+		<Text>end with sms</Text>
+	</String>
 	<STRING Id="1100" Name="IDS_OPTION_RECORDER_ON">
 		<Text>Recorder on</Text>
 	</STRING>
