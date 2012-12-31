@@ -3496,6 +3496,7 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
 #if defined( FEATURE_RECORDER)
         	CallApp_SetupCallAudio(pMe);
 #endif
+			
             pMe->m_cdg_row = 0;
             //pMe->m_b_show_cdg = TRUE;
             pMe->m_dtmf_length = OEMNV_KEYTONE_NORMAL;
@@ -3596,7 +3597,24 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
         }
 #endif
 
-
+//Add by pyuangui 20121231
+#ifdef  FEATURE_CALL_RECORDER
+      if(pMe->m_bRecorderOn == FALSE)
+       {
+        boolean m_autocallrecord;
+        (void) ICONFIG_GetItem(pMe->m_pConfig,
+                                         CFGI_AUTOCALLRECORD,
+                                         &m_autocallrecord,
+                                         sizeof(m_autocallrecord));
+                                         
+         if (m_autocallrecord) 
+         {
+           pMe->m_bRecorderOn = TRUE;            
+		   CallApp_Dialer_Connect_Turn_On_Recorder( pMe);
+         }
+       }
+#endif
+//Add End
             return TRUE;
         }
 
