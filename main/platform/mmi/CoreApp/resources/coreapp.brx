@@ -274,6 +274,12 @@
 	<String Id="1113" Name="IDS_MMX_SELES_TRACK">
 		<Text>Micromax Registration, Congratulations on purchasing Micromax handset. Press Continue to register your phone with us for  warranty services, updates and more.Standard SMS charges applicable                                                                     </Text>
 	</String>
+	<String Id="1114" Name="IDS_CHARGING_CONNECTED">
+		<Text>Charging connected</Text>
+	</String>
+	<String Id="1115" Name="IDS_CHARGING_REMOVED">
+		<Text>Charging removed</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_UIMERR" Focus="7001">
