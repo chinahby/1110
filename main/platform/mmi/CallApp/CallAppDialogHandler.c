@@ -712,11 +712,15 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 #endif
 			IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
 #if defined( FEATURE_CALL_RECORDER)
-        if( pMe->m_bRecorderOn && !pMe->m_bShowPopMenu)
+        //modi by pyuangui 20121231  为防止在输入界面重叠 不画录音提示和时间
+        #if defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_C316)  
+        #else
+		if( pMe->m_bRecorderOn && !pMe->m_bShowPopMenu)
         {
         	recorder_show_media_spec( pMe, RGB_WHITE);
         }
-
+        #endif
+		
         if( pMe->m_bSettingVolume && pMe->m_b_incall)
         {
 			CallApp_RefreshVolBar( pMe);
