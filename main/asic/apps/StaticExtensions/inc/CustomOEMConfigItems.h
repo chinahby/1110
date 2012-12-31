@@ -518,6 +518,7 @@ enum{
 #endif
 
 #ifdef FEATURE_VERSION_C316   
+    CFGI_AUTOCALLRECORD,
     CFGI_ONEKEY_LOCK_KEYPAD,
 #endif    
     CFGI_NET_LOCK_ENABLED,
