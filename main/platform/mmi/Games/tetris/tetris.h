@@ -62,6 +62,7 @@ AUTHOR: whewei
 #define CLR_BT    MAKE_RGB(0x63,0xb8,0xff)
 //#define CLR_TEXT  MAKE_RGB(0x91,0x2c,0xee)
 
+#ifdef FEATURE_LCD_TOUCH_ENABLE
 #define LARGE_POP_WIN_X    25
 #define LARGE_POP_WIN_Y    45
 #define LARGE_POP_WIN_DX   140
@@ -71,6 +72,32 @@ AUTHOR: whewei
 #define SMALL_POP_WIN_Y    60
 #define SMALL_POP_WIN_DX   120
 #define SMALL_POP_WIN_DY   160
+
+#else
+#if defined(FEATURE_DISP_128X160)
+#define LARGE_POP_WIN_X    14
+#define LARGE_POP_WIN_Y    40
+#define LARGE_POP_WIN_DX   100
+#define LARGE_POP_WIN_DY   80
+
+#define SMALL_POP_WIN_X    24
+#define SMALL_POP_WIN_Y    50
+#define SMALL_POP_WIN_DX   80
+#define SMALL_POP_WIN_DY   60
+#else
+#define LARGE_POP_WIN_X    25
+#define LARGE_POP_WIN_Y    45
+#define LARGE_POP_WIN_DX   140
+#define LARGE_POP_WIN_DY   200
+
+#define SMALL_POP_WIN_X    35
+#define SMALL_POP_WIN_Y    60
+#define SMALL_POP_WIN_DX   120
+#define SMALL_POP_WIN_DY   160
+#endif
+#endif
+
+
 
 //Styles of the menu
 #define MENU_COLOR_MASK             (MC_BACK | MC_SEL_BACK | MC_SEL_TEXT | MC_SCROLLBAR | MC_SCROLLBAR_FILL)        

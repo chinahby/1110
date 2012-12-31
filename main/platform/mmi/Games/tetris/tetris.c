@@ -967,9 +967,15 @@ static void SetGameScreen(CTetrisApp * pMe)
     pMe->m_rVNum = VNum;
 
     pMe->m_rNextStartX = pMe->m_MainRect.x + pMe->m_MainRect.dx + 2 * NEXT_BLOCK_SIZE;
+
+#ifdef FEATURE_LCD_TOUCH_ENABLE    
     pMe->m_rNextStartY = pMe->m_MainRect.y + pMe->m_MainRect.dy / 2 - BUTTON_DY
                         - 3 * pMe->m_rLineHeight - NEXT_MAX_YNUM * NEXT_BLOCK_SIZE / 2;
                                         // The position where next block displays.
+#else
+    pMe->m_rNextStartY = pMe->m_MainRect.y + pMe->m_MainRect.dy / 2 - 3 * pMe->m_rLineHeight - NEXT_MAX_YNUM * NEXT_BLOCK_SIZE / 2;
+                                        // The position where next block displays.
+#endif
 
     if(pMe->m_rHNum % 2 == 0)
     {
@@ -2392,6 +2398,7 @@ static void DrawButtons(CTetrisApp * pMe, boolean bDrawTwo, boolean bPaused)
     AECHAR   Content[10];
     AEERect  rect;
 
+#ifdef FEATURE_LCD_TOUCH_ENABLE
     rect.x = pMe->m_MainRect.x + pMe->m_MainRect.dx + 2;
     rect.y = pMe->m_rNextStartY + NEXT_MAX_YNUM * NEXT_BLOCK_SIZE + 6 * pMe->m_rLineHeight;
     rect.dx = pMe->m_rScreenWidth - rect.x;
@@ -2447,6 +2454,7 @@ static void DrawButtons(CTetrisApp * pMe, boolean bDrawTwo, boolean bPaused)
                             0,
                             &rect,
                             IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE | IDF_TEXT_TRANSPARENT);
+#endif    
 }
 /*===============================================================================
 FUNCTION: UpdateScore
@@ -2473,7 +2481,7 @@ static void UpdateScore(CTetrisApp * pMe)
     AECHAR  Speed[10];
     AEERect rect;
     RGBVAL  OldTextColor;
-    
+  
     XPos = pMe->m_rNextStartX - NEXT_BLOCK_SIZE - 4;
     YPos = pMe->m_rNextStartY + BLOCK_NUM * NEXT_BLOCK_SIZE;
 
