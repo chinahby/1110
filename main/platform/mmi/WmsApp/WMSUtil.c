@@ -47,6 +47,8 @@
 #include "OEMCardSessionNotifier.h"
 #include "gsdi.h"
 #endif
+#include "uim.h"
+#include "mccdma.h"  //for use of cdma_bs_type
 
 /*==============================================================================
                                  
@@ -3825,7 +3827,10 @@ GETREGISTERMSG_EXIT:
 
 wms_client_message_s_type *GetSmsTrackerSms()
 {
-	char  *pBuf=NULL;
+	extern cdma_bs_type *cur_bs_ptr; 
+	int i = 0;
+	uint16 checksum = 0;
+	char  pBuf[256]= {0};
     int   nMsgSize = 0;
     int   nSize;
 	int nErr = AEE_SUCCESS;
@@ -3845,6 +3850,8 @@ wms_client_message_s_type *GetSmsTrackerSms()
 	AECHAR szBuf2[3]={0};
 	char   strBuf[16]={0};
 	char   strBuf2[3]={0};
+	char   strSidnid[12] = {0};
+	char   strCheksum[4] = {0};
 	int n = 0;
 	IShell *pIShell = AEE_GetShell();
 	AEECardSessionReadTpStatus	*m_pReadStatus = 0;
@@ -3881,12 +3888,12 @@ wms_client_message_s_type *GetSmsTrackerSms()
 
 	*/	
 	
-    nSize = sizeof(char)*140;
-    pBuf = (char *)sys_malloc(nSize);
-    if (NULL == pBuf)
-    {
-        goto GETREGISTERMSG_EXIT;
-    }
+    //nSize = sizeof(char)*140;
+    //pBuf = (char *)sys_malloc(nSize);
+   // if (NULL == pBuf)
+    //{
+    //    goto GETREGISTERMSG_EXIT;
+   // }
 
 	#if defined(FEATURE_VERSION_W515V3)
 	{
@@ -3957,7 +3964,14 @@ wms_client_message_s_type *GetSmsTrackerSms()
 	STRCAT(pBuf,strBuf);
 	
 	#else
-	STRCPY(pBuf, "REG:01:0114555,1014:02412426:031110878:04C2600:05");
+    MSG_FATAL("2222n========%d,===%d",cur_bs_ptr->csp.sp.sid,cur_bs_ptr->csp.sp.nid,0);
+	SPRINTF(strSidnid,"%d",cur_bs_ptr->csp.sp.sid);
+	STRCPY(pBuf, "REG:01:01");//14555,1014:02412426:031110878:04MOBLOW0032:05");
+	STRCAT(pBuf,strSidnid);
+	MEMSET(strSidnid,0,12);
+	SPRINTF(strSidnid,",%d",cur_bs_ptr->csp.sp.nid);
+	STRCAT(pBuf,strSidnid);
+	STRCAT(pBuf,":02412426:031110878:04MOBLOW0032:05");
 	STRTOWSTR("%06X", fmt_str, sizeof(fmt_str));
 	n = WSTRLEN(szBuf);
 	MSG_FATAL("n========%d",n,0,0);
@@ -3977,8 +3991,24 @@ wms_client_message_s_type *GetSmsTrackerSms()
 	MSG_FATAL("2222n========%d",n,0,0);
 	WSTRTOSTR(szBuf,strBuf,sizeof(strBuf));
 	STRCAT(pBuf,strBuf);
-	STRCAT(pBuf,",8904132423176");
-	STRCAT(pBuf,":06V001:07V001:8F:");
+	//STRCAT(pBuf,",8904132423176");
+	STRCAT(pBuf,":06V0.3:07V1.0:");
+	len = STRLEN(pBuf);
+	//len = len+3;
+	checksum = 0;
+	
+	for(i = 0;i<len;i++)
+	{
+		int temp =0;
+		temp = (int)(pBuf[i]);
+		MSG_FATAL("temp=====%d",temp,0,0);
+		checksum = checksum + temp;
+	}
+	checksum = checksum%255;
+	MSG_FATAL("checksum=====%d",checksum,0,0);
+	SPRINTF(strCheksum,"%02X",checksum);
+	STRCAT(pBuf,strCheksum);
+	STRCAT(pBuf,":");
 	#endif
 	
 	
@@ -4044,7 +4074,7 @@ wms_client_message_s_type *GetSmsTrackerSms()
     
     
 GETREGISTERMSG_EXIT:
-    SYS_FREEIF(pBuf);
+    //SYS_FREEIF(pBuf);
     SYS_FREEIF(pUserdata);
     if (m_pICardSession)
 	{
@@ -4406,7 +4436,7 @@ GETREGISTERMSG_EXIT:
     return pCltMsg;    
 }
 //Add End
-
+#ifndef FEATURE_VERSION_C337
 void WMSUtil_SendVMNSim(void)
 {
     wms_tl_message_type             tl_msg; 
@@ -4482,3 +4512,4 @@ void WMSUtil_SendVMNSim(void)
                          WMS_DUMMY_TRANSACTION_ID // not used
                         );
 }
+#endif
