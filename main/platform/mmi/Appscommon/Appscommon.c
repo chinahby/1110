@@ -511,7 +511,8 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
             break;
          case BTBAR_GALLERY_BACK:
 #ifdef FEATURE_VERSION_W317A
-			nResID_L = IDS_FILE_MANAGER;  
+			nResID_L = IDS_FILE_MANAGER; 
+            nResID_M = IDS_COMMON_HELP;
 #else
             nResID_L = IDS_GALLERY;     
 #endif
@@ -1355,7 +1356,7 @@ void DrawBottomBar(IDisplay  * pIDisplay, BottomBar_Param_type *BParam)
                     &rc, 
                     IDF_ALIGN_BOTTOM | IDF_ALIGN_RIGHT | IDF_TEXT_TRANSPARENT);
     }
-    
+   
     // 绘制文本-中间键
     if (WSTRLEN(wszBar_M)>0)
     {
@@ -1385,6 +1386,27 @@ void DrawBottomBar(IDisplay  * pIDisplay, BottomBar_Param_type *BParam)
         (void)IDISPLAY_SetColor(pIDisplay, CLR_USER_TEXT, RGB_WHITE);
         rc.y += 2;
         */  //modi by yangdecai
+        
+         // add by pyuangui 20121231
+         #ifdef FEATURE_VERSION_W317A
+         if(BParam->eBBarType == BTBAR_GALLERY_BACK)
+          {
+            if (WSTRLEN(wszBar_M)>0)
+            	{
+      	  	(void) IDISPLAY_DrawText(pIDisplay, 
+                          AEE_FONT_BOLD, 
+                          wszBar_M, 
+                          -1, 
+                          95, 
+                          0, 
+                          &rc, 
+                          IDF_ALIGN_BOTTOM | IDF_TEXT_TRANSPARENT);
+            	}
+      	  }
+		  else
+		  #endif	
+		  //Add End
+		  {
             (void) IDISPLAY_DrawText(pIDisplay, 
                     AEE_FONT_BOLD, 
                     wszBar_M, 
@@ -1393,6 +1415,7 @@ void DrawBottomBar(IDisplay  * pIDisplay, BottomBar_Param_type *BParam)
                     0, 
                     &rc, 
                     IDF_ALIGN_BOTTOM | IDF_ALIGN_CENTER | IDF_TEXT_TRANSPARENT);
+		  }
 #endif
     }
 
