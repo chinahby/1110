@@ -158,7 +158,7 @@
 		<Text>विकल्प</Text>
 	</STRING>
 	<STRING Id="115" Name="IDS_BAROPTIONS">
-		<Text>Options</Text>
+		<Text>विकल्प</Text>
 	</STRING>
 	<STRING Id="1001" Name="IDS_RECORD">
 		<Text>रिकॉर्ड</Text>
@@ -320,7 +320,7 @@
 		<Text>Phonebook</Text>
 	</STRING>
 	<STRING Id="2012" Name="IDS_FILE_MANAGER">
-		<Text>File manager</Text>
+		<Text>फ़ाइल प्रबंधक</Text>
 	</STRING>
 	<STRING Id="2013" Name="IDS_SEARCH">
 		<Text>Search</Text>
