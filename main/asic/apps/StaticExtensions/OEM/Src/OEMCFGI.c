@@ -755,6 +755,7 @@ typedef struct
    char    mizone_smsinfo[MAS_BREWSETINT_STRING];   
 #endif
 #ifdef FEATURE_VERSION_C316   
+   boolean  autocallrecord;                                 //CFGI_AUTOCALLRECORD Add by pyuangui 20121231 
    boolean	m_onekey_lock_keypad;							/*CFGI_ONEKEY_LOCK_KEYPAD Add by xuhui 2012/12/24*/
 #endif
 } OEMConfigListType;
@@ -1676,6 +1677,12 @@ static int OEMPriv_SetItem_CFGI_MIZONE_NUM(void *pBuff);
 static int OEMPriv_GetItem_CFGI_MIZONE_SMSINFO(void *pBuff);
 static int OEMPriv_SetItem_CFGI_MIZONE_SMSINFO(void *pBuff);
 #endif
+//Add by pyuangui 20121231
+#ifdef FEATURE_VERSION_C316
+static int OEMPriv_GetItem_CFGI_AUTOCALLRECORD(void *pBuff);
+static int OEMPriv_SetItem_CFGI_AUTOCALLRECORD(void *pBuff);
+#endif
+//Add End
 
 
 /*===========================================================================
@@ -2039,6 +2046,7 @@ static OEMConfigListType oemi_cache = {
 #endif
 
 #ifdef FEATURE_VERSION_C316
+   ,TRUE
    ,TRUE											//CFGI_ONEKEY_LOCK_KEYPAD
 #endif
 
@@ -2632,6 +2640,7 @@ static ConfigItemTableEntry const customOEMItemTable[] =
    CFGTABLEITEM(CFGI_MIZONE_SMSINFO,sizeof(char)*MAS_BREWSETINT_STRING), 
 #endif
 #ifdef FEATURE_VERSION_C316
+   CFGTABLEITEM(CFGI_AUTOCALLRECORD,sizeof(boolean)),               //Add by pyuangui 20121231
    CFGTABLEITEM(CFGI_ONEKEY_LOCK_KEYPAD,sizeof(boolean)),
 #endif
    //CFGTABLEITEM(CFGI_SALES_TRACK_SMS_SEND, sizeof(boolean)),		//Add By zzg 2012_10_29
@@ -3106,6 +3115,9 @@ void OEM_RestoreFactorySetting( void )
     MEMCPY(oemi_cache.mizone_smsinfo,0, MAS_BREWSETINT_STRING/*FILESPECLEN*/); 
     //MEMSET(oemi_cache.mizone_num,OEMNV_MIZONENUM,OEMNV_LOCKIMSI_MAXLEN);
     //MEMSET(oemi_cache.mizone_smsinfo,0,OEMNV_LOCKIMSI_MAXLEN);
+    #endif
+	#ifdef FEATURE_VERSION_C316
+    oemi_cache.autocallrecord = TRUE;  //CFGI_AUTOCALLRECORD
     #endif
    //ÆÁ±£Ê±¼ä
    oemi_cache.p_screensaver_time=0; 
@@ -11142,6 +11154,24 @@ static int OEMPriv_SetItem_CFGI_MIZONE_SMSINFO(void *pBuff)
 
 #endif
 
+//Add by pyuangui 20121231
+#ifdef FEATURE_VERSION_C316
+static int OEMPriv_GetItem_CFGI_AUTOCALLRECORD(void *pBuff)
+{
+	MEMCPY(pBuff, (void*) &oemi_cache.autocallrecord, sizeof(boolean));
+    DBGPRINTF("AUTOCALLRECORD %s",oemi_cache.autocallrecord);
+   return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_AUTOCALLRECORD(void *pBuff)
+{
+
+	MEMCPY((void*) &oemi_cache.autocallrecord, pBuff, sizeof(boolean));
+    DBGPRINTF("AUTOCALLRECORD %s",oemi_cache.autocallrecord);
+    OEMPriv_WriteOEMConfigList(); 
+    return SUCCESS;
+}
+#endif
+//Add End
 
 #ifdef FEATURE_ANALOG_TV
 static int OEMPriv_SetItem_CFGI_TV_OR_CAMERA(void *pBuff)
