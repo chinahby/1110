@@ -929,6 +929,10 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
        
         case EVT_KEY:
         MSG_FATAL("EVT_KEY................1",0,0,0);
+		if((pme->m_dwProps & TP_MB_PROPERTY) && (wParam == AVK_UP || wParam == AVK_DOWN))
+		{
+			return FALSE;
+		}
         #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
         if((pme->m_nCurrInputMode == OEM_MODE_T9_MT_ENGLISH_UP) && (wParam == AVK_SHIFT))
          	{
@@ -2083,7 +2087,8 @@ static boolean CTextCtl_Redraw(ITextCtl * pITextCtl)
             IDISPLAY_DrawText(pme->m_pIDisplay, 
                 AEE_FONT_BOLD,pme->m_pTitle, -1,
                 qrc.x, qrc.y,&qrc,IDF_TEXT_TRANSPARENT | IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER);
-            IDISPLAY_SetColor(pme->m_pIDisplay, CLR_USER_TEXT, RGB_BLACK);//恢复文本显示颜色            
+            IDISPLAY_SetColor(pme->m_pIDisplay, CLR_USER_TEXT, RGB_BLACK);//恢复文本显示颜色     
+            //MSG_FATAL("0pme->m_wResID:::::::::::::::::::%d,m_Mode=%d",pme->m_wResID,m_Mode,0);
             if ((!pme->m_pSoftKey)&&(pme->m_dwProps&TP_STARKEY_SWITCH))
             {
             	
@@ -2093,7 +2098,7 @@ static boolean CTextCtl_Redraw(ITextCtl * pITextCtl)
                     IImage *RightTopImg; 
                     AEEImageInfo m_Imageinfo = {0};
                     RightTopImg = NULL;   
-					//MSG_FATAL("1pme->m_wResID:::::::::::::::::::%d,m_Mode=%d",pme->m_wResID,m_Mode,0);
+					MSG_FATAL("1pme->m_wResID:::::::::::::::::::%d,m_Mode=%d",pme->m_wResID,m_Mode,0);
                     RightTopImg = ISHELL_LoadResImage(pme->m_pIShell,
                                         AEE_APPSCOMMONRES_IMAGESFILE,
                                         pme->m_wResID);
@@ -2245,7 +2250,7 @@ See Also: None
 static void CTextCtl_SetActive(ITextCtl * pITextCtl, boolean bActive)
 {
    CTextCtl * pme = (CTextCtl *)pITextCtl;
-
+   //MSG_FATAL("CTextCtl_SetActive............",0,0,0);
    TextCtl_SetMode(pITextCtl, bActive, pme->m_tmLast, TRUE);
    if (pme->m_clsMe == AEECLSID_TEXTCTL && !(pme->m_dwProps & TP_FOCUS_NOSEL) && bActive)
    {
@@ -3287,7 +3292,7 @@ static AEETextInputMode CTextCtl_SetInputMode(ITextCtl * po, AEETextInputMode m)
             default:
                 break;
         }
-
+		//MSG_FATAL("OEM_TextSetEdit000000000",0,0,0);
         OEM_TextSetEdit(pme->m_pText, (boolean)pme->m_bActive, tmSetMode);
         tmNext = CTextCtl_GetInputMode(po, NULL);
         if (tmCurr != tmNext)
@@ -3699,7 +3704,7 @@ static void TextCtl_CalcRects(CTextCtl * pme)
       OEM_TextSet(pme->m_pText, pme->m_text, pme->m_textSize);
       OEM_TextSetMaxChars(pme->m_pText, pme->m_nMaxChars);
       OEM_TextSetBackGround(pme->m_pText, pme->m_pImageBg);
-
+	  //MSG_FATAL("OEM_TextSetEdit00000000222",0,0,0);
       if (mode != AEE_TM_CURRENT) {
          OEM_TextSetEdit(pme->m_pText, (boolean)pme->m_bActive, mode);
       }
@@ -4655,7 +4660,7 @@ static void TextCtl_ReturnToEditMode(CTextCtl * pme, AEETextInputMode mode)
 
    tmCur = CTextCtl_GetInputMode((ITextCtl *)pme, NULL);
    TextCtl_KillModeMenu(pme);
-
+   //MSG_FATAL("TextCtl_ReturnToEditMode......",0,0,0);
    IMENUCTL_SetActive(pme->m_pSoftKey, FALSE);
    TextCtl_SetMode((ITextCtl *)pme, TRUE, mode, TRUE);
    tmNext = CTextCtl_GetInputMode((ITextCtl *)pme, NULL);
@@ -4927,7 +4932,7 @@ static void TextCtl_SetMode(ITextCtl * pITextCtl,
       bEdit = FALSE;
 
    pme->m_bActive = bEdit;
-
+   //MSG_FATAL("OEM_TextSetEdit0000000333",0,0,0);
    OEM_TextSetEdit(pme->m_pText,bEdit,mode);
    TextCtl_CheckEntryMode(pme);
 
@@ -5048,6 +5053,7 @@ See Also:
 static void CTextCtl_SetSelection(ITextCtl * po, uint32 dwSel)
 {
    CTextCtl * pme = (CTextCtl*)po;
+   //MSG_FATAL("CTextCtl_SetSelection................",0,0,0);
    OEM_TextSetSel(pme->m_pText, TC_SEL_GET_START(dwSel), TC_SEL_GET_END(dwSel));
    if (!(pme->m_dwProps & TP_NODRAW)){
       OEM_TextUpdate(pme->m_pText);

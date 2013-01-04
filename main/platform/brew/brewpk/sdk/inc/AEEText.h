@@ -32,6 +32,8 @@ typedef struct _ITextCtl ITextCtl;
 #define TP_FRAME           0x00010000
 #define TP_MULTILINE       0x00020000
 #define TP_BT_PROPERTY     0x00040000
+#define TP_MB_PROPERTY     0x00008000
+
 
 //#define TP_              0x00040000  // Placeholder: Future Property Here
 #define TP_RAPID_MODE      0x00080000  // Supports Rapid Entry and uses as default

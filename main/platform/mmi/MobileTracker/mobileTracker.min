@@ -1,0 +1,36 @@
+################################################################################
+# main menu gnumake variable definition
+################################################################################
+MOBILETRACKER_INC = $(MOBILETRACKER)
+MOBILETRACKER_RES = $(MOBILETRACKER)/resources
+MOBILETRACKER_SRC = $(MOBILETRACKER)
+MOBILETRACKER_LIB = $(MOBILETRACKER)
+MOBILETRACKER_SOURCES = MobileTracker.c
+
+MOBILETRACKER_OBJS :=  $(addprefix $(TARGETDIR)/, $(MOBILETRACKER_SOURCES:%.c=%.o))
+$(MOBILETRACKER_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
+
+vpath %.c $(MOBILETRACKER_SRC)
+vpath %.bar $(MOBILETRACKER_RES)
+vpath %.brx $(MOBILETRACKER_RES)
+
+CONSTFILE_FILES+=\
+mobiletracker.mif|fs:/mif/mobiletracker.mif \
+mobiletracker.bar|fs:/mod/mobiletracker/en/mobiletracker.bar
+
+
+ifneq ($(EXTLANG1),NO)
+CONSTFILE_FILES+=\
+$(EXTLANG1)mobiletracker.bar|fs:/mod/mobiletracker/$(EXTLANG1)/mobiletracker.bar
+endif
+ifneq ($(EXTLANG2),NO)
+CONSTFILE_FILES+=\
+$(EXTLANG2)mobiletracker.bar|fs:/mod/mobiletracker/$(EXTLANG2)/mobiletracker.bar
+endif
+
+
+INC  += $(MOBILETRACKER) 
+INC  += $(MOBILETRACKER_RES)
+#SRC  += $(MOBILETRACKER_SOURCES)
+OBJECTS+=$(MOBILETRACKER_OBJS)
+#LIBS += 

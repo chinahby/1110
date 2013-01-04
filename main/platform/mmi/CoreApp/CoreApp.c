@@ -3495,6 +3495,13 @@ int CoreApp_MobileTracker(CCoreApp *pme)
 	char strImsi[16] = {0};
 	uint16 len = 0;
 	AECHAR  wstrType[2] = {(AECHAR)MOBILE_TRACKER_MSG, 0};
+	AECHAR  wstrTypeT[2] = {(AECHAR)SMS_TRACKER_TOW, 0};
+	AECHAR  wstrTypeTH[2] = {(AECHAR)SMS_TRACKER_THREE, 0};
+	boolean b_MobileTracker = TRUE;
+	#ifdef FEATURE_VERSION_C316
+	uint16  wstrNumbertow[20] = {0};
+	uint16  wstrNumberthree[20] = {0};
+   #endif
 	
     MSG_FATAL("START CoreApp_MobileTracker",0,0,0);
     
@@ -3531,30 +3538,74 @@ int CoreApp_MobileTracker(CCoreApp *pme)
     	MSG_FATAL("END CoreApp_MobileTracker=sucess=",0,0,0);
         return SUCCESS;
     }
-
+	#ifdef FEATURE_VERSION_C316
+	(void) ICONFIG_GetItem(pme->m_pConfig,  
+                           CFGI_MOBILETRACKER_LOCK_CHECK,
+                           &b_MobileTracker, 
+                           sizeof(b_MobileTracker));
+	if(!b_MobileTracker)
+	{
+		MSG_FATAL("END CoreApp_MobileTracker off=sucess=",0,0,0);
+        return SUCCESS;
+	}
+	#endif
 
 	(void) ICONFIG_GetItem(pme->m_pConfig,  
                            CFGI_MOBILE_TRACKER_PHONENUMB,
                            wstrNumber, 
                            sizeof(wstrNumber));
+
+	(void) ICONFIG_GetItem(pme->m_pConfig,  
+                           CFGI_MOBILE_TRACKER_PHONENUMBTWO,
+                           wstrNumbertow, 
+                           sizeof(wstrNumbertow));
+
+	(void) ICONFIG_GetItem(pme->m_pConfig,  
+                           CFGI_MOBILE_TRACKER_PHONENUMBTHREE,
+                           wstrNumberthree, 
+                           sizeof(wstrNumberthree));
 	 len = WSTRLEN(wstrNumber);
-	MSG_FATAL("wstrNumber len!!!!!!!!!!!!==%d",len,0,0);
-	if(WSTRLEN(wstrNumber)<5)
-	{
-		return SUCCESS;
-	}
-            
-    result = ISHELL_CreateInstance(pme->a.m_pIShell,
+	 MSG_FATAL("wstrNumber len1!!!!!!!!!!!!==%d",len,0,0);
+	 len = WSTRLEN(wstrNumbertow);
+	 MSG_FATAL("wstrNumber len2!!!!!!!!!!!!==%d",len,0,0);
+	 len = WSTRLEN(wstrNumberthree);
+	 MSG_FATAL("wstrNumber len3!!!!!!!!!!!!==%d",len,0,0);
+	 result = ISHELL_CreateInstance(pme->a.m_pIShell,
                                  AEECLSID_WMSAPP,
                                  (void **) &pIWmsApp);
+	if(WSTRLEN(wstrNumber)>5)
+	{
+		 if ((result == SUCCESS) && (NULL != pIWmsApp))
+    	{
+        	result = IWmsApp_SendSpecMessage(pIWmsApp, wstrType);
+        	
+    	}
+	}
+    #ifdef FEATURE_VERSION_C316
+	if(WSTRLEN(wstrNumbertow)>5)
+	{
+		WSTRCPY(wstrType,L"Y");
+		 if ((result == SUCCESS) && (NULL != pIWmsApp))
+    	{
+        	result = IWmsApp_SendSpecMessage(pIWmsApp, wstrTypeT);
+        	
+    	}
+	}
+	if(WSTRLEN(wstrNumberthree)>5)
+	{	
+		WSTRCPY(wstrType,L"Z");
+		 if ((result == SUCCESS) && (NULL != pIWmsApp))
+    	{
+        	result = IWmsApp_SendSpecMessage(pIWmsApp, wstrTypeTH);
+        	
+    	}
+	}
+	#endif
     if ((result == SUCCESS) && (NULL != pIWmsApp))
     {
-        //result = IWmsApp_SendTextMessageExt(pIWmsApp,wstrNumber,wstr);
-        //IWmsApp_Release(pIWmsApp);
-        result = IWmsApp_SendSpecMessage(pIWmsApp, wstrType);
-        IWmsApp_Release(pIWmsApp);
+		IWmsApp_Release(pIWmsApp);
     }
-    
+
     MSG_FATAL("END CoreApp_MobileTracker==%d",result,0,0);
     return result;
    

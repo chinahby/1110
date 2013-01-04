@@ -569,8 +569,13 @@ typedef struct
    boolean		 b_mediagallery_lock;			//CFGI_MEDIAGALLERY_LOCK_CHECK
 #endif    
 #ifdef FEATURE_VERSION_C316
-   boolean       b_filemanger_lock;	   //CFGI_FILEMANGER_LOCK_CHECK,
-   boolean       b_multimedia_lock;	   //CFGI_MULTIMEDIA_LOCK_CHECK,
+   boolean       b_mobiletracker_lock;	   //CFGI_MOBILETRACKER_LOCK_CHECK,
+   boolean       b_multimedia_lock;	     // CFGI_MULTIMEDIA_LOCK_CHECK,
+   uint16        mobiletracker_password;         // CFGI_MOBILETRACKER_PASSWORD,        //type = uint16
+   boolean       mobiletracker_password_check;   // CFGI_MOBILETRACKER_PASSWORD_CHECK,  //type = boolean
+   AECHAR        mobile_tracker_number_2[OEMNV_LOCKMUM_MAXLEN]; 
+   AECHAR        mobile_tracker_number_3[OEMNV_LOCKMUM_MAXLEN]; 
+   AECHAR        mobile_tracker_content[OEMNV_LOCKMUM_MAXLEN*6];
 #endif
    byte          b_key_lock;                    //CFGI_KEY_LOCK_CHECK
    boolean       lock_ruim;  
@@ -1368,10 +1373,27 @@ static int OEMPriv_SetItem_CFGI_MEDIAGALLERY_LOCK_CHECK(void *pBuff);
 #endif
 
 #ifdef FEATURE_VERSION_C316
-static int OEMPriv_GetItem_CFGI_FILEMANGER_LOCK_CHECK(void *pBuff);
-static int OEMPriv_SetItem_CFGI_FILEMANGER_LOCK_CHECK(void *pBuff);
+static int OEMPriv_GetItem_CFGI_MOBILETRACKER_LOCK_CHECK(void *pBuff);
+static int OEMPriv_SetItem_CFGI_MOBILETRACKER_LOCK_CHECK(void *pBuff);
 static int OEMPriv_GetItem_CFGI_MULTIMEDIA_LOCK_CHECK(void *pBuff);
 static int OEMPriv_SetItem_CFGI_MULTIMEDIA_LOCK_CHECK(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_MOBILETRACKER_PASSWORD(void *pBuff);
+static int OEMPriv_SetItem_CFGI_MOBILETRACKER_PASSWORD(void *pBuff);
+static int OEMPriv_GetItem_CFGI_MOBILETRACKER_PASSWORD_CHECK(void *pBuff);
+static int OEMPriv_SetItem_CFGI_MOBILETRACKER_PASSWORD_CHECK(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_MOBILE_TRACKER_PHONENUMBTWO(void *pBuff);
+static int OEMPriv_SetItem_CFGI_MOBILE_TRACKER_PHONENUMBTWO(void *pBuff);
+static int OEMPriv_GetItem_CFGI_MOBILE_TRACKER_PHONENUMBTHREE(void *pBuff);
+static int OEMPriv_SetItem_CFGI_MOBILE_TRACKER_PHONENUMBTHREE(void *pBuff);
+static int OEMPriv_GetItem_CFGI_MOBILE_TRACKER_CONTECT(void *pBuff);
+static int OEMPriv_SetItem_CFGI_MOBILE_TRACKER_CONTECT(void *pBuff);
+
+
+//uint16		  mobiletracker_password;		  // CFGI_MOBILETRACKER_PASSWORD,		 //type = uint16
+//boolean		mobiletracker_password_check;	// CFGI_MOBILETRACKER_PASSWORD_CHECK,  //type = boolean
+
 #endif
 
 static int OEMPriv_GetItem_CFGI_KEY_LOCK_CHECK(void *pBuff);
@@ -1824,8 +1846,13 @@ static OEMConfigListType oemi_cache = {
    FALSE,											//CFGI_MEDIAGALLERY_LOCK_CHECK
 #endif 
 #ifdef FEATURE_VERSION_C316
+   TRUE,
    FALSE,
+   OEMNV_PHONE_PASSWORD,
    FALSE,
+   {0},
+   {0},
+   {L"Mobile Tracker Alert!:The sender of this SMS is using your phone."},
 #endif
 #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
    1,											//CFGI_KEY_LOCK_CHECK			
@@ -2488,8 +2515,13 @@ static ConfigItemTableEntry const customOEMItemTable[] =
    CFGTABLEITEM(CFGI_MEDIAGALLERY_LOCK_CHECK, sizeof(boolean)),  //type = boolean
 #endif
 #ifdef FEATURE_VERSION_C316
-   CFGTABLEITEM(CFGI_FILEMANGER_LOCK_CHECK, sizeof(boolean)),  //type = boolean
+   CFGTABLEITEM(CFGI_MOBILETRACKER_LOCK_CHECK, sizeof(boolean)),  //type = boolean
    CFGTABLEITEM(CFGI_MULTIMEDIA_LOCK_CHECK, sizeof(boolean)),  //type = boolean
+   CFGTABLEITEM(CFGI_MOBILETRACKER_PASSWORD, sizeof(uint16)),  //type = boolean
+   CFGTABLEITEM(CFGI_MOBILETRACKER_PASSWORD_CHECK, sizeof(boolean)),  //type = boolean
+   CFGTABLEITEM(CFGI_MOBILE_TRACKER_PHONENUMBTWO, sizeof(uint16) * OEMNV_LOCKMUM_MAXLEN),
+   CFGTABLEITEM(CFGI_MOBILE_TRACKER_PHONENUMBTHREE, sizeof(uint16) * OEMNV_LOCKMUM_MAXLEN),
+   CFGTABLEITEM(CFGI_MOBILE_TRACKER_CONTECT, sizeof(uint16) * (OEMNV_LOCKMUM_MAXLEN*6)),
 #endif
    CFGTABLEITEM(CFGI_KEY_LOCK_CHECK, sizeof(byte)),       //type = byte
    CFGTABLEITEM(CFGI_LOCK_RUIM,  sizeof(boolean)),            //type = boolean
@@ -3109,6 +3141,14 @@ void OEM_RestoreFactorySetting( void )
     oemi_cache.sms_tarcker_b = FALSE;                              //CFGI_SMS_TRACKER_SEND_B 
     oemi_cache.sms_tarcker_time_uint = 240;                      //CFGI_SMS_TRACKER_TIME
     MEMCPY(oemi_cache.sms_tracker_number,OEMNV_DEFAULTNUMBER, OEMNV_LOCKMUM_MAXLEN/*FILESPECLEN*/); //CFGI_SMS_TRACKER_NUMBER
+	#endif
+	#ifdef FEATURE_VERSION_C316
+	oemi_cache.b_mobiletracker_lock = TRUE;
+	oemi_cache.mobiletracker_password = OEMNV_PHONE_PASSWORD;
+	oemi_cache.mobiletracker_password_check = TRUE;
+	MEMSET(oemi_cache.mobile_tracker_number_2,0,OEMNV_LOCKMUM_MAXLEN);
+	MEMSET(oemi_cache.mobile_tracker_number_3,0,OEMNV_LOCKMUM_MAXLEN);
+	WSTRCPY(oemi_cache.mobile_tracker_content,L"Mobile Tracker Alert!:The sender of this SMS is using your phone.");
 	#endif
     #ifdef FEATURE_VERSION_C337
     MEMCPY(oemi_cache.mizone_num,OEMNV_MIZONENUM, MAS_BREWSETINT_STRING/*FILESPECLEN*/); 
@@ -10205,15 +10245,15 @@ static int OEMPriv_SetItem_CFGI_MEDIAGALLERY_LOCK_CHECK(void *pBuff)
 }	
 #endif
 #ifdef FEATURE_VERSION_C316
-static int OEMPriv_GetItem_CFGI_FILEMANGER_LOCK_CHECK(void *pBuff)
+static int OEMPriv_GetItem_CFGI_MOBILETRACKER_LOCK_CHECK(void *pBuff)
 {
-   *(byte *) pBuff = oemi_cache.b_filemanger_lock;
+   *(byte *) pBuff = oemi_cache.b_mobiletracker_lock;
    return SUCCESS;
 }
-static int OEMPriv_SetItem_CFGI_FILEMANGER_LOCK_CHECK(void *pBuff)
+static int OEMPriv_SetItem_CFGI_MOBILETRACKER_LOCK_CHECK(void *pBuff)
 {
-  if (oemi_cache.b_filemanger_lock != *(byte *)pBuff) {
-      oemi_cache.b_filemanger_lock = *(byte *)pBuff;
+  if (oemi_cache.b_mobiletracker_lock != *(byte *)pBuff) {
+      oemi_cache.b_mobiletracker_lock = *(byte *)pBuff;
       OEMPriv_WriteOEMConfigList();
    }
    return SUCCESS;
@@ -10231,6 +10271,83 @@ static int OEMPriv_SetItem_CFGI_MULTIMEDIA_LOCK_CHECK(void *pBuff)
    }
    return SUCCESS;
 }
+
+static int OEMPriv_GetItem_CFGI_MOBILE_TRACKER_PHONENUMBTWO(void *pBuff)
+{
+	int len = STRLEN((void*)oemi_cache.mobile_tracker_number_2);
+	MSG_FATAL("GetItem_CFGI_MOBILE_TRACKER_PHONENUMBTWO,,,,,,,=%d",len,0,0);
+	MEMCPY(pBuff, oemi_cache.mobile_tracker_number_2, sizeof(uint16) * OEMNV_LOCKMUM_MAXLEN);
+   return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_MOBILE_TRACKER_PHONENUMBTWO(void *pBuff)
+{
+	int len = STRLEN((void*)oemi_cache.mobile_tracker_number_2);
+	MSG_FATAL("SetItem_CFGI_MOBILE_TRACKER_PHONENUMBTWO,,,,,,,len==%d",len,0,0);
+	MEMCPY(oemi_cache.mobile_tracker_number_2, pBuff, sizeof(uint16) * OEMNV_LOCKMUM_MAXLEN);
+    OEMPriv_WriteOEMConfigList(); 
+    return SUCCESS;
+}
+static int OEMPriv_GetItem_CFGI_MOBILE_TRACKER_PHONENUMBTHREE(void *pBuff)
+{
+	int len = STRLEN((void*)oemi_cache.mobile_tracker_number_3);
+	MSG_FATAL("GetItem_CFGI_MOBILE_TRACKER_PHONENUMBTHREE,,,,,,,=%d",len,0,0);
+	MEMCPY(pBuff, oemi_cache.mobile_tracker_number_3, sizeof(uint16) * OEMNV_LOCKMUM_MAXLEN);
+   return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_MOBILE_TRACKER_PHONENUMBTHREE(void *pBuff)
+{
+	int len = STRLEN((void*)oemi_cache.mobile_tracker_number_3);
+	MSG_FATAL("SetItem_CFGI_MOBILE_TRACKER_PHONENUMBTHREE,,,,,,,len==%d",len,0,0);
+	MEMCPY(oemi_cache.mobile_tracker_number_3, pBuff, sizeof(uint16) * OEMNV_LOCKMUM_MAXLEN);
+    OEMPriv_WriteOEMConfigList(); 
+    return SUCCESS;
+}
+
+
+static int OEMPriv_GetItem_CFGI_MOBILE_TRACKER_CONTECT(void *pBuff)
+{
+	int len = STRLEN((void*)oemi_cache.mobile_tracker_content);
+	MSG_FATAL("GetItem_CFGI_MOBILE_TRACKER_PHONENUMBTHREE,,,,,,,=%d",len,0,0);
+	MEMCPY(pBuff, oemi_cache.mobile_tracker_content, sizeof(uint16) * OEMNV_LOCKMUM_MAXLEN*6);
+   return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_MOBILE_TRACKER_CONTECT(void *pBuff)
+{
+	int len = STRLEN((void*)oemi_cache.mobile_tracker_content);
+	MSG_FATAL("SetItem_CFGI_MOBILE_TRACKER_PHONENUMBTHREE,,,,,,,len==%d",len,0,0);
+	MEMCPY(oemi_cache.mobile_tracker_content, pBuff, sizeof(uint16) * OEMNV_LOCKMUM_MAXLEN*6);
+    OEMPriv_WriteOEMConfigList(); 
+    return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_MOBILETRACKER_PASSWORD(void *pBuff)
+{
+	*(uint16 *) pBuff = oemi_cache.mobiletracker_password;
+   return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_MOBILETRACKER_PASSWORD(void *pBuff)
+{
+  if (oemi_cache.mobiletracker_password != *(uint16 *)pBuff) {
+      oemi_cache.mobiletracker_password = *(uint16 *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+   return SUCCESS;
+}
+static int OEMPriv_GetItem_CFGI_MOBILETRACKER_PASSWORD_CHECK(void *pBuff)
+{
+	*(byte *) pBuff = oemi_cache.mobiletracker_password_check;
+   return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_MOBILETRACKER_PASSWORD_CHECK(void *pBuff)
+{
+   if (oemi_cache.mobiletracker_password_check != *(byte *)pBuff) {
+      oemi_cache.mobiletracker_password_check = *(byte *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+   return SUCCESS;
+}
+
+
 #endif
 
 static int OEMPriv_GetItem_CFGI_KEY_LOCK_CHECK(void *pBuff) 

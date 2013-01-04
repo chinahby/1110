@@ -90,6 +90,8 @@
 #if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
 #define  MOBILE_TRACKER_MSG             'M'
 #define SMS_TRACKER_MSG                 'T'
+#define SMS_TRACKER_TOW                 'Y'
+#define SMS_TRACKER_THREE               'Z'
 #endif
 
 #ifdef FEATURE_VERSION_C337

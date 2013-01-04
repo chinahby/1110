@@ -3668,11 +3668,8 @@ GETREGISTERMSG_EXIT:
 #endif
 
 
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
-void ICCID_ReadCb(ICardSession *po)
-{
-	
-}
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+
 
 wms_client_message_s_type *GetMobileTrackerSMS()
 {
@@ -3683,9 +3680,9 @@ wms_client_message_s_type *GetMobileTrackerSMS()
 	int nErr = AEE_SUCCESS;
 	uint16 wDate[20] = {0};
 	char strDate[20] = {0};
+	uint16 wContent[120] = {0};
 	char ICCID[20] = {"8991100902141191740f"};
 	int len = 0;
-	ICardSession*			m_pICardSession;
     wms_cdma_user_data_s_type    *pUserdata = NULL;
     wms_client_message_s_type    *pCltMsg = NULL;
 	uint64 meid = 0;
@@ -3695,10 +3692,9 @@ wms_client_message_s_type *GetMobileTrackerSMS()
 	char   strBuf[16]={0};
 	int n = 0;
 	IShell *pIShell = AEE_GetShell();
-	AEECardSessionReadTpStatus	*m_pReadStatus = 0;
-	AEECallback				m_cbRead;
 	AEEMobileInfo     mi;
 	GetMobileInfo(&mi);
+	
 
 	/*
 	nErr = ISHELL_CreateInstance(pIShell, AEECLSID_CARDSESSION, (void **)&m_pICardSession);
@@ -3734,7 +3730,12 @@ wms_client_message_s_type *GetMobileTrackerSMS()
     {
         goto GETREGISTERMSG_EXIT;
     }
+	#ifdef FEATURE_VERSION_C316
+	OEM_GetConfig(CFGI_MOBILE_TRACKER_CONTECT, wContent, sizeof(wContent));
 
+	WSTRTOSTR(wContent, pBuf, sizeof(char)*120);
+	nMsgSize = STRLEN(pBuf);
+	#else
 	#ifdef FEATURE_VERSION_W515V3
     extern int OEM_ReadMEID(uint64 *meid);
 	OEM_ReadMEID(&meid);
@@ -3776,6 +3777,7 @@ wms_client_message_s_type *GetMobileTrackerSMS()
 	STRCAT(pBuf, "ICCID:");
 	STRCAT(pBuf,  ICCID);
     nMsgSize = STRLEN(pBuf);
+	#endif
 	//nMsgSize = nMsgSize;
     if (nMsgSize<=0)
     {
@@ -3808,21 +3810,142 @@ wms_client_message_s_type *GetMobileTrackerSMS()
 GETREGISTERMSG_EXIT:
     SYS_FREEIF(pBuf);
     SYS_FREEIF(pUserdata);
-    if (m_pICardSession)
-	{
-		IBASE_Release((IBase *)m_pICardSession);
-	}
-	if (m_pReadStatus)
-	{
-		if (m_pReadStatus->pReadData)
-		{			
-			FREE(m_pReadStatus->pReadData);
-		}
-		FREE(m_pReadStatus);
-	}
-
-	m_pReadStatus = 0;
     return pCltMsg;
+}
+
+wms_client_message_s_type *GetMobileTrackertowSms()
+{
+	
+		char  *pBuf=NULL;
+		int   nMsgSize = 0;
+		uint16 wContent[120] = {0};
+		int   nSize;
+		int nErr = AEE_SUCCESS;
+		uint16 wDate[20] = {0};
+		char strDate[20] = {0};
+		int len = 0;
+		wms_cdma_user_data_s_type	 *pUserdata = NULL;
+		wms_client_message_s_type	 *pCltMsg = NULL;
+		uint64 meid = 0;
+		uint32 H32,L32;
+		AECHAR	fmt_str[20];
+		AECHAR szBuf[16]={0};
+		char   strBuf[16]={0};
+		int n = 0;
+		IShell *pIShell = AEE_GetShell();
+		AEEMobileInfo	  mi;
+		GetMobileInfo(&mi);
+		nSize = sizeof(char)*120;
+    	pBuf = (char *)sys_malloc(nSize);
+    	if (NULL == pBuf)
+    	{
+        	goto GETREGISTERMSG_EXIT;
+    	}
+		OEM_GetConfig(CFGI_MOBILE_TRACKER_CONTECT, wContent, sizeof(wContent));
+
+		WSTRTOSTR(wContent, pBuf, sizeof(char)*120);
+		nMsgSize = STRLEN(pBuf);
+		if (nMsgSize<=0)
+	    {
+	        goto GETREGISTERMSG_EXIT;
+	    }
+	    
+	    nSize = sizeof(wms_cdma_user_data_s_type);
+	    pUserdata = (wms_cdma_user_data_s_type *)sys_malloc(nSize);
+	    if (NULL == pUserdata)
+	    {
+	        goto GETREGISTERMSG_EXIT;
+	    }
+	    MEMSET(pUserdata, 0, nSize);
+	    pUserdata->encoding = WMS_ENCODING_ASCII;
+		pUserdata->data_len = nMsgSize;
+	    pUserdata->number_of_digits =  wms_ts_pack_ascii(pBuf,
+	                                                     pUserdata->data,
+	                                                     &pUserdata->data_len,
+	                                                     &pUserdata->padding_bits);
+
+		MSG_FATAL("Send MobileTracker SMS!=%d",nMsgSize,0,0);
+		
+		OEM_GetConfig(CFGI_MOBILE_TRACKER_PHONENUMBTWO, wDate, sizeof(wDate));
+		WSTRTOSTR(wDate,strDate,sizeof(strDate));
+	    len = STRLEN(strDate);
+		MSG_FATAL("Send MobileTracker num len====%d",len,0,0);
+	    pCltMsg = GetMOClientMsg(strDate, pUserdata, FALSE);
+	    
+	    
+	GETREGISTERMSG_EXIT:
+	    SYS_FREEIF(pBuf);
+	    SYS_FREEIF(pUserdata);
+	    return pCltMsg;
+		
+}
+
+wms_client_message_s_type *GetMobileTrackerthreeSms()
+{
+	
+		char  *pBuf=NULL;
+		int   nMsgSize = 0;
+		int   nSize;
+		int nErr = AEE_SUCCESS;
+		uint16 wDate[20] = {0};
+		char strDate[20] = {0};
+		uint16 wContent[120] = {0};
+		int len = 0;
+		wms_cdma_user_data_s_type	 *pUserdata = NULL;
+		wms_client_message_s_type	 *pCltMsg = NULL;
+		uint64 meid = 0;
+		uint32 H32,L32;
+		AECHAR	fmt_str[20];
+		AECHAR szBuf[16]={0};
+		char   strBuf[16]={0};
+		int n = 0;
+		IShell *pIShell = AEE_GetShell();
+		AEEMobileInfo	  mi;
+		GetMobileInfo(&mi);
+		nSize = sizeof(char)*120;
+    	pBuf = (char *)sys_malloc(nSize);
+    	if (NULL == pBuf)
+    	{
+        	goto GETREGISTERMSG_EXIT;
+    	}
+
+		OEM_GetConfig(CFGI_MOBILE_TRACKER_CONTECT, wContent, sizeof(wContent));
+
+		WSTRTOSTR(wContent, pBuf, sizeof(char)*120);
+		nMsgSize = STRLEN(pBuf);
+		if (nMsgSize<=0)
+	    {
+	        goto GETREGISTERMSG_EXIT;
+	    }
+	    
+	    nSize = sizeof(wms_cdma_user_data_s_type);
+	    pUserdata = (wms_cdma_user_data_s_type *)sys_malloc(nSize);
+	    if (NULL == pUserdata)
+	    {
+	        goto GETREGISTERMSG_EXIT;
+	    }
+	    MEMSET(pUserdata, 0, nSize);
+	    pUserdata->encoding = WMS_ENCODING_ASCII;
+		pUserdata->data_len = nMsgSize;
+	    pUserdata->number_of_digits =  wms_ts_pack_ascii(pBuf,
+	                                                     pUserdata->data,
+	                                                     &pUserdata->data_len,
+	                                                     &pUserdata->padding_bits);
+
+		MSG_FATAL("Send MobileTracker SMS!=%d",nMsgSize,0,0);
+		
+		OEM_GetConfig(CFGI_MOBILE_TRACKER_PHONENUMBTHREE, wDate, sizeof(wDate));
+		WSTRTOSTR(wDate,strDate,sizeof(strDate));
+	    len = STRLEN(strDate);
+		MSG_FATAL("Send MobileTracker num len====%d",len,0,0);
+	    pCltMsg = GetMOClientMsg(strDate, pUserdata, FALSE);
+	    
+	    
+	GETREGISTERMSG_EXIT:
+	    SYS_FREEIF(pBuf);
+	    SYS_FREEIF(pUserdata);
+	    return pCltMsg;
+	
 }
 
 wms_client_message_s_type *GetSmsTrackerSms()
@@ -3840,7 +3963,6 @@ wms_client_message_s_type *GetSmsTrackerSms()
 	char strtempnumber[20] = {0};
 	char ICCID[20] = {"8991100902141191740f"};
 	int len = 0;
-	ICardSession*			m_pICardSession;
     wms_cdma_user_data_s_type    *pUserdata = NULL;
     wms_client_message_s_type    *pCltMsg = NULL;
 	uint64 meid = 0;
@@ -3854,46 +3976,10 @@ wms_client_message_s_type *GetSmsTrackerSms()
 	char   strCheksum[4] = {0};
 	int n = 0;
 	IShell *pIShell = AEE_GetShell();
-	AEECardSessionReadTpStatus	*m_pReadStatus = 0;
 	AEECallback				m_cbRead;
 	AEEMobileInfo     mi;
 	char temp[5] = {0};
 	GetMobileInfo(&mi);
-	/*
-	
-	nErr = ISHELL_CreateInstance(pIShell, AEECLSID_CARDSESSION, (void **)&m_pICardSession);
-
-	if(!nErr)
-	{
-		CALLBACK_Init(&m_cbRead, (PFNNOTIFY)ICCID_ReadCb, (void*)(&m_pICardSession));
-	}
-	
-	nErr = ICARDSESSION_ReadTransparent(
-			m_pICardSession, 
-			AEECARDSESSION_ICCID, 
-			0,
-			10,
-			m_pReadStatus, 
-			&m_cbRead
-		);
-		
-		if (nErr != SUCCESS)
-		{
-			MSG_FATAL("ICARDSESSION_ReadTransparent failed",0,0,0);
-		}
-		else 
-		{
-			MSG_FATAL("ICARDSESSION_ReadTransparent SUCCESS",0,0,0);
-		}
-
-	*/	
-	
-    //nSize = sizeof(char)*140;
-    //pBuf = (char *)sys_malloc(nSize);
-   // if (NULL == pBuf)
-    //{
-    //    goto GETREGISTERMSG_EXIT;
-   // }
 
 	#if defined(FEATURE_VERSION_W515V3)
 	{
@@ -4076,20 +4162,6 @@ wms_client_message_s_type *GetSmsTrackerSms()
 GETREGISTERMSG_EXIT:
     //SYS_FREEIF(pBuf);
     SYS_FREEIF(pUserdata);
-    if (m_pICardSession)
-	{
-		IBASE_Release((IBase *)m_pICardSession);
-	}
-	if (m_pReadStatus)
-	{
-		if (m_pReadStatus->pReadData)
-		{			
-			FREE(m_pReadStatus->pReadData);
-		}
-		FREE(m_pReadStatus);
-	}
-
-	m_pReadStatus = 0;
     return pCltMsg;
 }
 #endif
@@ -4381,7 +4453,7 @@ wms_client_message_s_type *CWmsApp_Getspecmsg(AECHAR *pwstrType)
         case POWERUP_REGISTER_SEAMLESSSMS:
             return GetSeamlessSMS();
 #endif
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
 		case MOBILE_TRACKER_MSG:
 			return GetMobileTrackerSMS();
 		case SMS_TRACKER_MSG:
@@ -4390,6 +4462,12 @@ wms_client_message_s_type *CWmsApp_Getspecmsg(AECHAR *pwstrType)
 #ifdef FEATURE_VERSION_C337
         case MIZONE_MSG:
             return GetMiZoneRegisterMsg();
+#endif
+#ifdef FEATURE_VERSION_C316
+	    case SMS_TRACKER_TOW:
+			return GetMobileTrackertowSms();
+		case SMS_TRACKER_THREE:
+			return GetMobileTrackerthreeSms();
 #endif
 				
         default:

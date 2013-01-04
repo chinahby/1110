@@ -1901,6 +1901,12 @@ boolean OEM_TextKeyPress(OEMCONTEXT hTextCtl,
 	        {
 	            return FALSE;            
 	        }
+			//MSG_FATAL("11111111111000",0,0,0);
+			if((key == AVK_UP || key == AVK_DOWN) && pContext->dwProperties &TP_MB_PROPERTY)
+			{
+				//MSG_FATAL("11111111111",0,0,0);
+				return FALSE;  
+			}
         }
         else
         {
@@ -1911,7 +1917,7 @@ boolean OEM_TextKeyPress(OEMCONTEXT hTextCtl,
 	        }
 			//Add End
 		}
-        MSG_FATAL("...........................2",0,0,0);
+        MSG_FATAL("................pContext->bEditable==%d",pContext->bEditable,0,0);
         if (pContext->bEditable) 
         {
             switch (key) 

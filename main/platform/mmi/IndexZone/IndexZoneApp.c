@@ -358,6 +358,7 @@ static int CIndexZoneApp_InitAppData(IndexZoneApp *pMe)
     {
         return EFAILED;
     }
+	MSG_FATAL("CIndexZoneApp_InitAppData.........",0,0,0);
 
     pMe->m_MainSel  = 0;
 
@@ -688,7 +689,7 @@ static boolean IndexZoneApp_ListMenuHandler(IndexZoneApp *pMe, AEEEvent eCode, u
 {
     PARAM_NOT_REF(dwParam)
     IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveIDlg,IDC_INDEXZONE_LIST);
-        
+    MSG_FATAL("IndexZoneApp_ListMenuHandler==%d,,==%x",pMe->m_MainSel,eCode,0);    
     if (pMenu == NULL)
     {
         return FALSE;
@@ -771,12 +772,12 @@ static boolean IndexZoneApp_ListMenuHandler(IndexZoneApp *pMe, AEEEvent eCode, u
             {
                 case AVK_1:
 				{
-					ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_UTK);	
+					ISHELL_StartApplet(pMe->m_pShell, AEECLSID_GAME);		
 					break;
 				}
                 case AVK_2:
 				{
-					ISHELL_StartApplet(pMe->m_pShell, AEECLSID_GAME);	
+					//ISHELL_StartApplet(pMe->m_pShell, AEECLSID_GAME);	
 					break;
 				}	
                 //case AVK_3:               
@@ -807,7 +808,7 @@ static boolean IndexZoneApp_ListMenuHandler(IndexZoneApp *pMe, AEEEvent eCode, u
                 }	
 				case IDS_INDEX_ZONE_MOBILETRACKER:
 				{
-					ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_APP_SECURITYMENU, "Mobiletracker");
+					ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MOBILETRACKER);
 				}
 				//Add by pyuangui 20121230
 				case IDS_INDEX_ZONE_CALLRECORD:

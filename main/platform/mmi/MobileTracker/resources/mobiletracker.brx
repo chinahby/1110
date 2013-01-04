@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="mobiletracker" VERSION="1">
+<Strings Encoding="ISOLATIN1">
+	<String Id="1001" Name="IDS_MOBILETRACKER_TITLE">
+		<Text>MobileTracker</Text>
+	</String>
+	<String Id="1002" Name="IDS_MOBILETRAXKER_ONOFF">
+		<Text>Enable Mobile Tracker(Off/On)</Text>
+	</String>
+	<String Id="1003" Name="IDS_MOBILETRACKER_DESIGNATENUMBER">
+		<Text>Designate Numbers</Text>
+	</String>
+	<String Id="1004" Name="IDS_PWD_TITLE">
+		<Text>Enter Password</Text>
+	</String>
+	<String Id="1005" Name="IDS_INVALID">
+		<Text>Invalid password</Text>
+	</String>
+	<String Id="1006" Name="IDS_MOBILETRACKER_VIEW_IMSI">
+		<Text>View IMSI</Text>
+	</String>
+	<String Id="1007" Name="IDS_MOBILETRACKER_OWNERNAME">
+		<Text>Owner Name</Text>
+	</String>
+	<String Id="1008" Name="IDS_MOBILETRAXKER_PWDCHG">
+		<Text>Change Password</Text>
+	</String>
+	<String Id="1009" Name="IDS_ENABLE_ON">
+		<Text>On</Text>
+	</String>
+	<String Id="1010" Name="IDS_EANBLE_OFF">
+		<Text>Off</Text>
+	</String>
+	<String Id="1011" Name="IDS_NUMBER_1">
+		<Text>Number1:</Text>
+	</String>
+	<String Id="1012" Name="IDS_NUMBER_2">
+		<Text>Number2:</Text>
+	</String>
+	<String Id="1013" Name="IDS_NUMBER_3">
+		<Text>Number3:</Text>
+	</String>
+	<String Id="1014" Name="IDS_CONTENT">
+		<Text>Content</Text>
+	</String>
+</Strings>
+<Dialogs>
+	<Dialog Id="1" Name="IDD_LIST_MOBILETRACKER_DIALOGS" Focus="7001">
+		<Controls>
+			<Menu Id="7001" Name="IDC_MOBILETRACKER_LIST">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="2" Name="IDD_PWD" Focus="0">
+		<Controls/>
+	</Dialog>
+	<Dialog Id="3" Name="IDD_PWD_INVAD" Focus="0">
+		<Controls/>
+	</Dialog>
+	<Dialog Id="4" Name="IDD_VIEW_IMSI" Focus="0">
+		<Controls/>
+	</Dialog>
+	<Dialog Id="5" Name="IDD_DIS_EANABLE" Focus="7002">
+		<Controls>
+			<Menu Id="7002" Name="IDC_EANABLE">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6" Name="IDD_D_NUMBER" Focus="7007">
+		<Controls>
+			<Text Id="7005" Name="IDC_TEXT_NUMBERONE">
+				<Items/></Text>
+			<Text Id="7006" Name="IDC_TEXT_NUMBERTOW">
+				<Items/></Text>
+			<Text Id="7007" Name="IDC_TEXT_NUMBERTHREE">
+				<Items/></Text>
+		</Controls>
+	</Dialog>
+	<Dialog Id="7" Name="IDD_OWER_NAME" Focus="7004">
+		<Controls>
+			<Text Id="7004" Name="IDC_TEXT_OWERNAME">
+				<Items/></Text>
+		</Controls>
+	</Dialog>
+	<Dialog Id="8" Name="IDD_CHANGEPASS_WORD" Focus="7003">
+		<Controls>
+			<Text Id="7003" Name="IDC_CHANGEPASSWORD">
+				<Items/></Text>
+		</Controls>
+	</Dialog>
+	<Dialog Id="9" Name="IDD_CONTENT" Focus="7008">
+		<Controls>
+			<Text Id="7008" Name="IDC_TEXT_CONTEXT">
+				<Items/></Text>
+		</Controls>
+	</Dialog>
+</Dialogs>
+</BREWRes>
