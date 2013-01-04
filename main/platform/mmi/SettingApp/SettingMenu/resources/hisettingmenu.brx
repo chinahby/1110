@@ -478,6 +478,15 @@
 	<String Id="1167" Name="IDS_SMS_TREACKER_TIME_240">
 		<Text>240 Mins</Text>
 	</String>
+	<String Id="1168" Name="IDS_CALLSETTING_CALLRECORD">
+		<Text>ऑटो कॉल रिकॉर्ड</Text>
+	</String>
+	<String Id="1169" Name="IDS_CALLSETTING__YES">
+		<Text>हां</Text>
+	</String>
+	<String Id="1170" Name="IDS_CALLSETTING__NO">
+		<Text>नहीं</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="7001">
@@ -732,5 +741,12 @@
 			</Menu>
 		</Controls>
 	</DIALOG>
+	<Dialog Id="6040" Name="IDD_SETTING_CALLRECORD" Focus="0">
+		<Controls>
+			<Menu Id="7035" Name="IDC_MENU_AUTOCALLRECORD">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
 </Dialogs>
 </BREWRes>
