@@ -3281,14 +3281,22 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
 #endif
 	   
 
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+#if defined(FEATURE_VERSION_C337)
+#else
+#ifdef FEATURE_VERSION_C316
+	 case AVK_DOWN:
 #else
     case AVK_POUND:
+#endif
         if(pMe->m_bPlaying && pMe->m_pMedia)
         {
+        	#ifndef FEATURE_VERSION_C316
             MP3_DrawImage(pMe, IDI_FORWARD_PRESS, FORWARD_X,FORWARD_Y);
+			#endif
             IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
+			#ifndef FEATURE_VERSION_C316
             ISHELL_SetTimer(pMe->m_pShell,50,(PFNNOTIFY)MP3_DrawForwardImage, pMe);
+			#endif
             if((pMe->m_nTotalTime - pMe->m_nCurrentTime) < MS_FASTFORWARDREWIND_TIME/1000)
             {
                 IMEDIA_FastForward(pMe->m_pMedia,1000*(pMe->m_nTotalTime - pMe->m_nCurrentTime));
@@ -3301,13 +3309,20 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
             }
         }
         return TRUE;
-
+#ifdef FEATURE_VERSION_C316
+	case AVK_UP:
+#else
     case AVK_STAR:
+#endif
         if(pMe->m_bPlaying && pMe->m_pMedia)
         {
+        	#ifndef FEATURE_VERSION_C316
             MP3_DrawImage(pMe, IDI_REWIND_PRESS, REWIND_X,REWIND_Y);
+            #endif
             IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
+			#ifndef FEATURE_VERSION_C316
             ISHELL_SetTimer(pMe->m_pShell,50,(PFNNOTIFY)MP3_DrawRewindImage, pMe);
+			#endif
             if(pMe->m_nCurrentTime < MS_FASTFORWARDREWIND_TIME/1000)
             {
                 IMEDIA_Rewind(pMe->m_pMedia,pMe->m_nCurrentTime * 1000);
