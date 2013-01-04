@@ -2207,7 +2207,13 @@
 		<Text>Waiting</Text>
 	</String>
 	<String Id="4069" Name="IDS_DEVICE_NAME">
-		<Text>युक्ति नाम: %s</Text>
+		<Text>डिवाइस नाम: %s</Text>
+	</String>
+	<String Id="4070" Name="IDS_EDIT_DEVICE_NAME">
+		<Text>डिवाइस का नाम संपादित करें</Text>
+	</String>
+	<String Id="4071" Name="IDS_DISCOVERABLE_MODE">
+		<Text>डिस्कवरेबल मोड</Text>
 	</String>
 </Strings>
 <Objects MimeType="image/bmp">

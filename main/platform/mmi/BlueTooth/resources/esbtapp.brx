@@ -2206,6 +2206,12 @@
  	<String Id="4069" Name="IDS_DEVICE_NAME">
 		<Text>Device name: %s</Text>
 	</String>
+	<String Id="4070" Name="IDS_EDIT_DEVICE_NAME">
+		<Text>Edit device name</Text>
+	</String>
+	<String Id="4071" Name="IDS_DISCOVERABLE_MODE">
+		<Text>Discoverable mode</Text>
+	</String>
  </Strings>
  <Objects MimeType="image/bmp">
  	<Object Id="5001" Name="IDB_BT_CHECK_ON">
