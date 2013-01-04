@@ -759,8 +759,10 @@ typedef struct
    char    mizone_num[MAS_BREWSETINT_STRING];
    char    mizone_smsinfo[MAS_BREWSETINT_STRING];   
 #endif
-#ifdef FEATURE_VERSION_C316   
+#if defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_W317A)
    boolean  autocallrecord;                                 //CFGI_AUTOCALLRECORD Add by pyuangui 20121231 
+#endif
+#ifdef FEATURE_VERSION_C316   
    boolean	m_onekey_lock_keypad;							/*CFGI_ONEKEY_LOCK_KEYPAD Add by xuhui 2012/12/24*/
 #endif
 } OEMConfigListType;
@@ -1700,7 +1702,7 @@ static int OEMPriv_GetItem_CFGI_MIZONE_SMSINFO(void *pBuff);
 static int OEMPriv_SetItem_CFGI_MIZONE_SMSINFO(void *pBuff);
 #endif
 //Add by pyuangui 20121231
-#ifdef FEATURE_VERSION_C316
+#if defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_W317A)
 static int OEMPriv_GetItem_CFGI_AUTOCALLRECORD(void *pBuff);
 static int OEMPriv_SetItem_CFGI_AUTOCALLRECORD(void *pBuff);
 #endif
@@ -2071,9 +2073,12 @@ static OEMConfigListType oemi_cache = {
     ,{OEMNV_MIZONENUM}
     ,{0}
 #endif
-
+//Add by pyuangui 20120104
+#if defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_W317A)
+    ,TRUE
+#endif
+//Add End
 #ifdef FEATURE_VERSION_C316
-   ,TRUE
    ,TRUE											//CFGI_ONEKEY_LOCK_KEYPAD
 #endif
 
@@ -2671,8 +2676,10 @@ static ConfigItemTableEntry const customOEMItemTable[] =
    CFGTABLEITEM(CFGI_MIZONE_NUM,sizeof(char)*MAS_BREWSETINT_STRING),
    CFGTABLEITEM(CFGI_MIZONE_SMSINFO,sizeof(char)*MAS_BREWSETINT_STRING), 
 #endif
+#if defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_W317A)
+   CFGTABLEITEM(CFGI_AUTOCALLRECORD,sizeof(boolean)),				 //Add by pyuangui 20121231
+#endif
 #ifdef FEATURE_VERSION_C316
-   CFGTABLEITEM(CFGI_AUTOCALLRECORD,sizeof(boolean)),               //Add by pyuangui 20121231
    CFGTABLEITEM(CFGI_ONEKEY_LOCK_KEYPAD,sizeof(boolean)),
 #endif
    //CFGTABLEITEM(CFGI_SALES_TRACK_SMS_SEND, sizeof(boolean)),		//Add By zzg 2012_10_29
@@ -3156,7 +3163,7 @@ void OEM_RestoreFactorySetting( void )
     //MEMSET(oemi_cache.mizone_num,OEMNV_MIZONENUM,OEMNV_LOCKIMSI_MAXLEN);
     //MEMSET(oemi_cache.mizone_smsinfo,0,OEMNV_LOCKIMSI_MAXLEN);
     #endif
-	#ifdef FEATURE_VERSION_C316
+	#if defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_W317A)
     oemi_cache.autocallrecord = TRUE;  //CFGI_AUTOCALLRECORD
     #endif
    //ÆÁ±£Ê±¼ä
@@ -11272,7 +11279,7 @@ static int OEMPriv_SetItem_CFGI_MIZONE_SMSINFO(void *pBuff)
 #endif
 
 //Add by pyuangui 20121231
-#ifdef FEATURE_VERSION_C316
+#if defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_W317A)
 static int OEMPriv_GetItem_CFGI_AUTOCALLRECORD(void *pBuff)
 {
 	MEMCPY(pBuff, (void*) &oemi_cache.autocallrecord, sizeof(boolean));
