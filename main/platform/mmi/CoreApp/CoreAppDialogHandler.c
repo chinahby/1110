@@ -816,7 +816,14 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
                 case IDS_EXIT_EMERGENCY_MODE:
                     set_time = 0;
                     break;
-
+                //Add by pyuangui 2013-01-04
+				#ifdef FEATURE_VERSION_W317A
+				case IDS_CHARGING_CONNECTED:
+					set_time = 2500;
+					break;
+				#endif	
+                //Add End
+                
 #ifdef FEATRUE_AUTO_POWER
                 case IDS_AUTO_POWER_OFF:
                     //in this state,we need to disable the key guard.                     
