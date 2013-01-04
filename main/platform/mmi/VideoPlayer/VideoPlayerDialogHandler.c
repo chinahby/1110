@@ -1044,7 +1044,7 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
 #if defined(FEATURE_VERSION_C337) 
 		case AVK_RIGHT:
 #elif defined(FEATURE_VERSION_C316) 
-		case AVK_UP:
+		case AVK_DOWN:
 #else
         case AVK_POUND:
 #endif			
@@ -1079,7 +1079,7 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
 #if defined(FEATURE_VERSION_C337)
 		case AVK_LEFT:
 #elif defined(FEATURE_VERSION_C316) 
-	    case AVK_DOWN:
+	    case AVK_UP:
 #else       
         case AVK_STAR:	
 #endif			
