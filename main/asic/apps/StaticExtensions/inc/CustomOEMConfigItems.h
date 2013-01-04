@@ -521,9 +521,12 @@ enum{
     CFGI_MIZONE_NUM,
     CFGI_MIZONE_SMSINFO,
 #endif
-
-#ifdef FEATURE_VERSION_C316   
+//Add by pyuangui 20130104
+#if defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_W317A)   
     CFGI_AUTOCALLRECORD,
+#endif
+//Add End
+#ifdef FEATURE_VERSION_C316
     CFGI_ONEKEY_LOCK_KEYPAD,
 #endif    
     CFGI_NET_LOCK_ENABLED,
