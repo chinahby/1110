@@ -388,6 +388,7 @@ static int CApplication_InitAppData(Application *pMe)
     {
         return EFAILED;
     }
+	MSG_FATAL("CApplication_InitAppData....",0,0,0);
 
     pMe->m_MainSel  = 0;
     
@@ -1106,7 +1107,7 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
 			#elif defined(FEATURE_VERSION_C316)
 			(void)ISHELL_LoadResString(pMe->m_pShell,
 	                                    APPLICATION_RES_FILE_LANG,                                
-	                                    IDS_SHORT_CUT,
+	                                    IDS_APPLICATION_LIST_C337,
 	                                    WTitle,
 	                                    sizeof(WTitle));
 			#else
@@ -1327,7 +1328,7 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
 #else
 				IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY|MP_ACTIVE_NO_REDRAW);
 #endif
-                
+                MSG_FATAL("pMe->m_MainSel======%d",pMe->m_MainSel,0,0);
                 IMENUCTL_SetOemProperties( pMenu, OEMMP_USE_MENU_STYLE);
                 IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
                 IMENUCTL_SetSel(pMenu, pMe->m_MainSel);
