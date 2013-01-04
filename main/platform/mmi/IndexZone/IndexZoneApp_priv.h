@@ -57,7 +57,8 @@ typedef struct _IndexZoneApp
     IModule     *m_pModule;
     IDisplay    *m_pDisplay;
     IShell      *m_pShell;
-
+    IConfig     *m_pConfig;     //Add by pyuangui 20121231
+	
     IDialog     *m_pActiveIDlg;
     uint32       m_pActivedlgID;
     uint16       m_MainSel;   				//一级菜单光标

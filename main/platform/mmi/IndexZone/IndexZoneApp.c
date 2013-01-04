@@ -371,7 +371,14 @@ static int CIndexZoneApp_InitAppData(IndexZoneApp *pMe)
         CIndexZoneApp_FreeAppData(pMe);
         return EFAILED;
     }    
-
+    //Add by pyuangui 20121231
+	if (ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_CONFIG,
+                             (void **)&pMe->m_pConfig) != SUCCESS)
+    {
+        CIndexZoneApp_FreeAppData(pMe);
+        return EFAILED;
+    }
+	//Add End
     return SUCCESS;
 }
 
@@ -408,6 +415,13 @@ static void CIndexZoneApp_FreeAppData(IndexZoneApp *pMe)
         IANNUNCIATOR_Release(pMe->m_pIAnn);
         pMe->m_pIAnn = NULL;
     }   
+	//Add by pyuangui 20121231
+	if (NULL != pMe->m_pConfig)
+    {
+        ICONFIG_Release(pMe->m_pConfig);
+        pMe->m_pConfig = NULL;
+    }
+	//Add End
 }
 
 /*=============================================================================
@@ -688,9 +702,11 @@ static boolean IndexZoneApp_ListMenuHandler(IndexZoneApp *pMe, AEEEvent eCode, u
 			
             //IMENUCTL_AddItem(pMenu, INDEXZONE_RES_FILE_LANG,IDS_INDEX_ZONE_UTK, IDS_INDEX_ZONE_UTK, NULL, 0);  
 			IMENUCTL_AddItem(pMenu, INDEXZONE_RES_FILE_LANG,IDS_INDEX_ZONE_GAMES, IDS_INDEX_ZONE_GAMES, NULL, 0); 
-			IMENUCTL_AddItem(pMenu, INDEXZONE_RES_FILE_LANG,IDS_INDEX_ZONE_MOBILETRACKER, IDS_INDEX_ZONE_MOBILETRACKER, NULL, 0); 
-			IMENUCTL_AddItem(pMenu, INDEXZONE_RES_FILE_LANG,IDS_INDEX_ZONE_CALLRECORD, IDS_INDEX_ZONE_CALLRECORD, NULL, 0); 
-            return TRUE;
+			IMENUCTL_AddItem(pMenu, INDEXZONE_RES_FILE_LANG,IDS_INDEX_ZONE_MOBILETRACKER, IDS_INDEX_ZONE_MOBILETRACKER, NULL, 0);
+            #ifdef FEATURE_VERSION_C316
+			IMENUCTL_AddItem(pMenu, INDEXZONE_RES_FILE_LANG,IDS_INDEX_ZONE_CALLRECORD, IDS_INDEX_ZONE_CALLRECORD, NULL, 0);    //Add by pyuangui 20121231
+            #endif
+			return TRUE;
             
         case EVT_DIALOG_START:
             {  
@@ -827,6 +843,7 @@ static boolean IndexZoneApp_CallRecordHandler(IndexZoneApp *pMe, AEEEvent eCode,
 {
     PARAM_NOT_REF(dwParam)
     IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveIDlg,IDC_MENU_AUTOCALLRECORD);
+	boolean m_autocallrecord;
         
     if (pMenu == NULL)
     {
@@ -848,6 +865,25 @@ static boolean IndexZoneApp_CallRecordHandler(IndexZoneApp *pMe, AEEEvent eCode,
                 IMENUCTL_SetOemProperties( pMenu, OEMMP_USE_MENU_STYLE);
                 IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
                 IMENUCTL_SetSel(pMenu, pMe->m_MainSel);
+				InitMenuIcons(pMenu);
+				{
+                  uint16 nSelID = IDS_INDEX_ZONE_YES;
+                  (void) ICONFIG_GetItem(pMe->m_pConfig,
+                                         CFGI_AUTOCALLRECORD,
+                                         &m_autocallrecord,
+                                         sizeof(m_autocallrecord));
+                                         
+                  if (m_autocallrecord)
+                  {
+                      nSelID = IDS_INDEX_ZONE_YES;
+                  }
+                  else
+                  {
+                      nSelID = IDS_INDEX_ZONE_NO;
+                  }
+                  SetMenuIcon(pMenu, nSelID, TRUE);
+                  IMENUCTL_SetSel(pMenu, nSelID);
+                }
                 (void) ISHELL_PostEvent(pMe->m_pShell, AEECLSID_INDEX_ZONE, EVT_USER_REDRAW,0,0);
             }
             return TRUE;
@@ -889,23 +925,30 @@ static boolean IndexZoneApp_CallRecordHandler(IndexZoneApp *pMe, AEEEvent eCode,
             return TRUE;
             
         case EVT_COMMAND:
-            pMe->m_MainSel = wParam;
             switch (wParam)
             {   
                 case IDS_INDEX_ZONE_YES:
                 {	
-                    return TRUE;
+					m_autocallrecord = TRUE;
+                    break;
                 }
 				case IDS_INDEX_ZONE_NO:
 				{	
-                    return TRUE;
+					m_autocallrecord = FALSE;
+                    break;
                 }
 				
 				default:
 				{
-					break;
+					return FALSE;
 				}
             }
+			 (void) ICONFIG_SetItem(pMe->m_pConfig,
+                                       CFGI_AUTOCALLRECORD,
+                                       &m_autocallrecord,
+                                       sizeof(m_autocallrecord));
+			 ISHELL_EndDialog(pMe->m_pShell);
+             IndexZoneApp_ShowDialog(pMe, IDD_INDEXZONE_LIST); 
             return TRUE;       
             
         default:
