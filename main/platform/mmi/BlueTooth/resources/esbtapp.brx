@@ -2203,6 +2203,9 @@
  	<STRING Id="4067" Name="IDS_FILE_PROGRESS">
  		<Text>Progreso de Transmisión del Archivo:</Text>
  	</STRING>
+ 	<String Id="4069" Name="IDS_DEVICE_NAME">
+		<Text>Device name: %s</Text>
+	</String>
  </Strings>
  <Objects MimeType="image/bmp">
  	<Object Id="5001" Name="IDB_BT_CHECK_ON">

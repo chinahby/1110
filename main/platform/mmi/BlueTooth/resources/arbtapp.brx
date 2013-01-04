@@ -2203,6 +2203,9 @@
 	<String Id="4067" Name="IDS_FILE_PROGRESS">
 		<Text>تقدم نقل الملف:</Text>
 	</String>
+	<String Id="4069" Name="IDS_DEVICE_NAME">
+		<Text>Device name: %s</Text>
+	</String>
 </Strings>
 <Objects MimeType="image/bmp">
 	<Object Id="5001" Name="IDB_BT_CHECK_ON">

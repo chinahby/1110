@@ -2203,6 +2203,9 @@
 	<String Id="4067" Name="IDS_FILE_PROGRESS">
 		<Text>文件传输进度: </Text>
 	</String>
+	<String Id="4069" Name="IDS_DEVICE_NAME">
+		<Text>设备名称: %s</Text>
+	</String>
 </Strings>
 <Objects MimeType="image/bmp">
 	<Object Id="5001" Name="IDB_BT_CHECK_ON">

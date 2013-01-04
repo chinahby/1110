@@ -2206,6 +2206,9 @@
 	<String Id="4068" Name="IDS_WAITING">
 		<Text>Waiting</Text>
 	</String>
+	<String Id="4069" Name="IDS_DEVICE_NAME">
+		<Text>Device name: %s</Text>
+	</String>
 </Strings>
 <Objects MimeType="image/bmp">
 	<Object Id="5001" Name="IDB_BT_CHECK_ON">
