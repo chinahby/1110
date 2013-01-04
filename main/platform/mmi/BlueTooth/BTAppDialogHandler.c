@@ -1787,9 +1787,10 @@ static boolean HandleDeviceInfoDialogEvent(CBTApp *pMe,
 			uLen += BTApp_FormatBTName( pMe, &pMe->pText1[ uLen], 
 			                          LONG_TEXT_BUF_LEN - uLen, pDev->wName );
 #endif /* FEATURE_BT_2_1 */
-			uLen += BTApp_FormatBTName( pMe, &pMe->pText1[ uLen], 
-			                          LONG_TEXT_BUF_LEN - uLen, pDev->wName );
+			
 #else
+            uLen += BTApp_FormatBTName( pMe, &pMe->pText1[ uLen], 
+			                          LONG_TEXT_BUF_LEN - uLen, pDev->wName );
 #endif
 
 #ifndef FEATURE_VERSION_C337	
@@ -2108,6 +2109,13 @@ static boolean HandleDeviceInfoOpitionDialogEvent(CBTApp *pMe,
 				{
 					pDev->bValid = TRUE;
           			IBTEXTRM_DeviceAdd(pMe->mRM.po, pDev);	//BTApp.c里会收到RSP ，然后做响应
+
+                    (void) ISHELL_PostEvent( pMe->m_pShell,
+                                     AEECLSID_BLUETOOTH_APP,
+                                     EVT_USER_REDRAW,
+                                     0,
+                                     0);
+                    
 					return TRUE;
 				}
 				case IDS_DISCARD:
@@ -3064,10 +3072,14 @@ static boolean HandleMyInfoDialogEvent(CBTApp *pMe,
 				ISTATIC_SetBackGround(pStatic, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);	
 				//Add End
 
-				// BT name
+
+                // BT name
 				uLen += BTApp_FormatBTName(pMe, &pMe->pText1[uLen], 
 										   LONG_TEXT_BUF_LEN - uLen, 
-										   pMe->mRM.myInfo.wName);
+										   pMe->mRM.myInfo.wName);               
+
+#ifndef FEATURE_VERSION_W317A
+                
 
 #ifdef FEATURE_BT_2_1
 #ifndef FEATURE_VERSION_C337
@@ -3140,9 +3152,10 @@ static boolean HandleMyInfoDialogEvent(CBTApp *pMe,
 #endif /* FEATURE_BT_2_1 */
 #endif
 
+#endif
+
 				// display text 			
-				ISTATIC_SetText(pStatic, NULL, pMe->pText1, AEE_FONT_BOLD,AEE_FONT_NORMAL );
-					   
+				ISTATIC_SetText(pStatic, NULL, pMe->pText1, AEE_FONT_BOLD,AEE_FONT_NORMAL );					   
 			}
 
 
@@ -3233,15 +3246,24 @@ static boolean HandleMyInfoOpitionDialogEvent(CBTApp *pMe,
 			
 			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);   
 
+#ifdef FEATURE_VERSION_W317A
+            IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_EDIT_DEVICE_NAME, IDS_EDIT_DEVICE_NAME, NULL, 0);
+#else
   			IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_EDIT_NAME, IDS_EDIT_NAME, NULL, 0);
-
-			#ifndef FEATURE_VERSION_C337
+#endif
+            
+			#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A)
+            #else
 			IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_EDIT_SHORT_NAME, IDS_EDIT_SHORT_NAME, NULL, 0);			
             IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_EDIT_MANU_DATA, IDS_EDIT_MANU_DATA, NULL, 0);
 			#endif
 			
             //IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_SECURITY, IDS_SECURITY, NULL, 0);
+#ifdef FEATURE_VERSION_W317A
+            IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_DISCOVERABLE_MODE, IDS_DISCOVERABLE_MODE, NULL, 0);
+#else            
             IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_DISCOVERABLE, IDS_DISCOVERABLE, NULL, 0);
+#endif
 			//IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_IOCAPABILITY, IDS_IOCAPABILITY, NULL, 0);
 			//IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_DBG_KEY, IDS_DBG_KEY, NULL, 0);
 			//IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_WRITE_OOB, IDS_WRITE_OOB, NULL, 0);
@@ -3305,6 +3327,9 @@ static boolean HandleMyInfoOpitionDialogEvent(CBTApp *pMe,
 			pMe->m_currDlgId = wParam;		
             switch (wParam)
             {
+#ifdef FEATURE_VERSION_W317A
+                case IDS_EDIT_DEVICE_NAME:
+#endif
             	case IDS_EDIT_NAME:					
 				case IDS_EDIT_SHORT_NAME:
 				case IDS_EDIT_MANU_DATA:	
@@ -3318,7 +3343,10 @@ static boolean HandleMyInfoOpitionDialogEvent(CBTApp *pMe,
 					CLOSE_DIALOG(DLGRET_SET_SECURITY)
                     return TRUE;
 				}
-				
+
+#ifdef FEATURE_VERSION_W317A
+                case IDS_DISCOVERABLE_MODE:
+#endif                
 				case IDS_DISCOVERABLE:	
 				{	
 					CLOSE_DIALOG(DLGRET_SET_DISCOVERABLE)
@@ -3408,6 +3436,9 @@ static boolean  HandleMyInfoEditDialogEvent(CBTApp *pMe,
 			
 			switch(pMe->m_currDlgId)
 			{
+#ifdef FEATURE_VERSION_W317A
+                case IDS_EDIT_DEVICE_NAME:
+#endif
 				case IDS_EDIT_NAME:				
 				{
 					ITEXTCTL_SetText(pIText, pMe->mRM.myInfo.wName, WSTRLEN(pMe->mRM.myInfo.wName));	
@@ -3451,6 +3482,9 @@ static boolean  HandleMyInfoEditDialogEvent(CBTApp *pMe,
 			
 			switch(pMe->m_currDlgId)
 			{
+#ifdef FEATURE_VERSION_W317A
+                case IDS_EDIT_DEVICE_NAME:
+#endif			
 				case IDS_EDIT_NAME:				
 				{
 					(void)ISHELL_LoadResString(pMe->m_pShell,
@@ -3850,12 +3884,20 @@ static boolean  HandleSetDiscoverableDialogEvent(CBTApp *pMe,
 			case EVT_DIALOG_START:
 			{
 				AECHAR		WTitle[40] = {0};		
-				
+
+#ifdef FEATURE_VERSION_W317A                
+                (void)ISHELL_LoadResString(pMe->m_pShell,
+											AEE_APPSBTAPP_RES_FILE, 							   
+											IDS_DISCOVERABLE_MODE,
+											WTitle,
+											sizeof(WTitle));    
+#else                 
 				(void)ISHELL_LoadResString(pMe->m_pShell,
 											AEE_APPSBTAPP_RES_FILE, 							   
 											IDS_DISCOVERABLE,
 											WTitle,
 											sizeof(WTitle));
+#endif
 				
 				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);   
 	  
@@ -8052,7 +8094,10 @@ static boolean BTApp_SaveTextEdit( CBTApp* pMe, uint16 DlgID)
 	}
 
 	switch (DlgID)
-	{			
+	{	
+#ifdef FEATURE_VERSION_W317A
+        case IDS_EDIT_DEVICE_NAME:
+#endif	
 		case IDS_EDIT_NAME: 		
 		{
 			if (WSTRCMP(pMe->mRM.myInfo.wName, pMe->pText2) != 0)
