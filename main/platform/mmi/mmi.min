@@ -194,9 +194,9 @@ ifeq ($(USES_MIZONE),yes)
 include $(MIZONE)/mizone.min
 endif
 
-#ifeq ($(USES_MOBILETRACKER),yes)
+ifeq ($(USES_MOBILETRACKER),yes)
 include $(MOBILETRACKER)/mobileTracker.min
-#endif
+endif
 
 
 #include $(MMIDIR)/Extend/Extend.min
