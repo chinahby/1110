@@ -302,7 +302,7 @@ static const CCameraSize g_CameraSizeCFG[] =
     {176,220,L"176*220"}, // QCIF
     {240,320,L"240*320"}, // QVGA   
  #ifdef FEATURE_VERSION_C316
-    {480,640,L"480*640"}, // VGA
+    //{480,640,L"480*640"}, // VGA
  #endif
 #elif defined(FEATURE_DISP_176X220)
     {176,220,L"176*220"}, // QCIF
