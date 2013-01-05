@@ -624,7 +624,7 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
                         {
                             IALERT_KeyBeep(spAlert, (AVKType) wParam, TRUE);
                         }
-                        #ifdef FEATURE_VERSION_W027
+                        #if defined(FEATURE_VERSION_W027) || defined(FEATURE_VERSION_M74)
                         {
                             IBacklight  *Backlight;
                             (void)ISHELL_CreateInstance(sgpShell,AEECLSID_BACKLIGHT,(void **)&Backlight);
