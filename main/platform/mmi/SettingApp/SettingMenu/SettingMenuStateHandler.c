@@ -47,6 +47,11 @@ static NextFSMAction SettingMenu_StateMainHandler(CSettingMenu *pMe);
 // 状态 SETTINGMENUST_CALLSETTING 处理函数
 static NextFSMAction SettingMenu_StateCallSettingHandler(CSettingMenu *pMe);
 
+#ifdef FEATURE_VERSION_W317A
+// 状态 SETTINGMENUST_AUTOCALLRECORD 处理函数
+static NextFSMAction SettingMenu_AutoCallRecordHandler(CSettingMenu *pMe); // Add by pyuangui 20130104
+#endif
+
 // 状态 SETTINGMENUST_PHONESETTING 处理函数
 static NextFSMAction SettingMenu_StatePhoneSettingHandler(CSettingMenu *pMe);
 
@@ -202,7 +207,15 @@ NextFSMAction SettingMenu_ProcessState(CSettingMenu *pMe)
         case SETTINGMENUST_CALLSETTING:
             retVal = SettingMenu_StateCallSettingHandler(pMe);
             break;
-
+			
+        //Add by pyuangui 20130104
+        #ifdef FEATURE_VERSION_W317A
+	    case SETTING_AUTOCALLRECORD:
+			retVal = SettingMenu_AutoCallRecordHandler(pMe);
+            break;
+        #endif
+		//Add End
+		
         case SETTINGMENUST_PHONESETTING:
             retVal = SettingMenu_StatePhoneSettingHandler(pMe);
             break;
@@ -456,9 +469,16 @@ static NextFSMAction SettingMenu_StateMainHandler(CSettingMenu *pMe)
         case DLGRET_CALLSETTING:
             MOVE_TO_STATE(SETTINGMENUST_CALLSETTING)
             return NFSMACTION_CONTINUE;
+//Add by pyuangui 20130104
+#ifdef FEATURE_VERSION_W317A
+		case DLGRET_AUTOCALLRECORD:
+			MOVE_TO_STATE(SETTING_AUTOCALLRECORD)
+            return NFSMACTION_CONTINUE;
+#endif
+//Add End
 
 #ifdef FEATURE_VERSION_W208S
-      case DLGRET_SMSRESTRICT:
+        case DLGRET_SMSRESTRICT:
           MOVE_TO_STATE(SETTINGMENUST_SMSRESTRICT)
           return NFSMACTION_CONTINUE;
 #endif
@@ -558,10 +578,16 @@ static NextFSMAction SettingMenu_StateCallSettingHandler(CSettingMenu *pMe)
             MOVE_TO_STATE(SETTINGMENUST_MAIN)
             return NFSMACTION_CONTINUE;
             
-         case DLGRET_FMMODE:
+        case DLGRET_FMMODE:
             MOVE_TO_STATE(SETTINGMENUST_FMMODE)
             return NFSMACTION_CONTINUE;
-            
+//Add by pyuangui 2013-01-04			
+#ifdef FEATURE_VERSION_W317A
+        case DLGRET_AUTOCALLRECORD:
+			MOVE_TO_STATE(SETTING_AUTOCALLRECORD)
+            return NFSMACTION_CONTINUE;
+#endif			
+//Add End
 #ifdef FEATRUE_SET_IP_NUMBER
         case DLGRET_IP_NUMBER_SET:
             MOVE_TO_STATE(SETTINGMENUST_IP_NUMBER_SET)
@@ -578,6 +604,49 @@ static NextFSMAction SettingMenu_StateCallSettingHandler(CSettingMenu *pMe)
     return NFSMACTION_WAIT;
 } // StateCallSettingHandler
 
+//Add by pyuangui 20130104
+#ifdef FEATURE_VERSION_W317A
+/*==============================================================================
+函数：
+       SettingMenu_AutoCallRecordHandler
+说明：
+       SETTING_AUTOCALLRECORD 状态处理函数
+
+参数：
+       pMe [in]：指向SettingMenu Applet对象结构的指针。该结构包含小程序的特定信息。
+
+返回值：
+       NFSMACTION_CONTINUE：指示后有子状态，状态机不能停止。
+       NFSMACTION_WAIT：指示因要显示对话框界面给用户，应挂起状态机。
+
+备注：
+
+==============================================================================*/
+static NextFSMAction SettingMenu_AutoCallRecordHandler(CSettingMenu *pMe)
+{
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+
+    switch(pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            SettingMenu_ShowDialog(pMe, IDD_SETTING_CALLRECORD);
+            return NFSMACTION_WAIT;
+
+        case DLGRET_CANCELED:
+            MOVE_TO_STATE(SETTINGMENUST_CALLSETTING)
+            return NFSMACTION_CONTINUE;
+        default:
+            ASSERT_NOT_REACHABLE;
+    }
+
+    return NFSMACTION_WAIT;
+} // SETTING_AUTOCALLRECORD
+#endif
+//Add End
 
 /*==============================================================================
 函数：

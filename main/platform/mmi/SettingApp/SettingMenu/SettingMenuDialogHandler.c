@@ -103,6 +103,12 @@ static boolean  HandleCallSettingDialogEvent(CSettingMenu *pMe,
     uint32 dwParam
 );
 
+// 对话框 IDD_SETTING_CALLRECORD 事件处理函数
+static boolean HandleAutoCallRecordDialogEvent(CSettingMenu *pMe,
+	AEEEvent eCode, 
+	uint16 wParam, 
+	uint32 dwParam);	
+
 //对话框 IDD_CALLSETTINGSEL 事件处理函数
 static boolean  HandleCallSettingSelDialogEvent(CSettingMenu *pMe,
     AEEEvent eCode,
@@ -578,6 +584,13 @@ boolean SettingMenu_RouteDialogEvent(CSettingMenu *pMe,
 			return HandleTimeFontModeDialogEvent(pMe,eCode,wParam,dwParam);
 #endif
 
+//Add by pyuangui 2013-01-04
+#ifdef FEATURE_VERSION_W317A
+        case IDD_SETTING_CALLRECORD:
+			return HandleAutoCallRecordDialogEvent(pMe,eCode,wParam,dwParam);
+#endif
+//Add Endif
+			
 #ifdef FEATURE_VERSION_W208S
         case IDD_SMS_RESTRICT:
             return Setting_Handle_SMSRestrict(pMe,eCode,wParam,dwParam);
@@ -884,7 +897,10 @@ static boolean  HandleCallSettingDialogEvent(CSettingMenu *pMe,
 #ifdef FEATURE_OEMOMH
 			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_KEYTONE_LENGTH, IDS_KEYTONE_LENGTH, NULL, 0);
 #endif
-            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_CALL_RESTRICT, IDS_CALL_RESTRICT, NULL, 0);            
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_CALL_RESTRICT, IDS_CALL_RESTRICT, NULL, 0);   
+            //Add by pyuangui 2012-01-04
+			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_CALLSETTING_CALLRECORD, IDS_CALLSETTING_CALLRECORD, NULL, 0);
+			//Add End
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_VOICE_PRIVACY, IDS_VOICE_PRIVACY, NULL, 0);
 #ifndef FEATURE_VERSION_W208S            
             //IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_FMRADIO_OPTION_MENU_PLAY_MODLE, IDS_FMRADIO_OPTION_MENU_PLAY_MODLE, NULL, 0);
@@ -1001,6 +1017,15 @@ static boolean  HandleCallSettingDialogEvent(CSettingMenu *pMe,
                 case IDS_CALL_RESTRICT:
                     CLOSE_DIALOG(DLGRET_PASSWORD)
                     break;
+					
+//Add by pyuangui 20130104
+#ifdef FEATURE_VERSION_W317A
+				case IDS_CALLSETTING_CALLRECORD:
+					CLOSE_DIALOG(DLGRET_AUTOCALLRECORD)
+					break;
+#endif
+//Add End
+					
 #ifndef FEATURE_VERSION_W208S                     
                 case IDS_FMRADIO_OPTION_MENU_PLAY_MODLE: //FM播放模式
                 	CLOSE_DIALOG(DLGRET_FMMODE)
@@ -1016,6 +1041,133 @@ static boolean  HandleCallSettingDialogEvent(CSettingMenu *pMe,
     }
     return FALSE;
 } // HandleCallSettingDialogEvent
+
+
+//Add by pyuangui 2013-01-04
+/*=============================================================================
+FUNCTION:  HandleAutoCallRecordDialogEvent
+
+DESCRIPTION:   auto call record
+
+PARAMETERS:
+
+=============================================================================*/
+
+static boolean HandleAutoCallRecordDialogEvent(CSettingMenu *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
+{
+    PARAM_NOT_REF(dwParam)
+    IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,IDC_MENU_AUTOCALLRECORD);
+	boolean m_autocallrecord;
+        
+    if (pMenu == NULL)
+    {
+        return FALSE;
+    }
+    MSG_FATAL("HandleAutoCallRecordDialogEvent---eCode=%d",eCode,0,0);
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT:	
+			IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pAnn,FALSE); 
+			
+			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE,IDS_CALLSETTING__YES, IDS_CALLSETTING__YES, NULL, 0); 
+			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE,IDS_CALLSETTING__NO, IDS_CALLSETTING__NO, NULL, 0);  
+            return TRUE;
+            
+        case EVT_DIALOG_START:
+            {      
+                IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
+                IMENUCTL_SetOemProperties( pMenu, OEMMP_USE_MENU_STYLE);
+                IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
+				InitMenuIcons(pMenu);
+				{
+                  uint16 nSelID = IDS_CALLSETTING__YES;
+                  (void) ICONFIG_GetItem(pMe->m_pConfig,
+                                         CFGI_AUTOCALLRECORD,
+                                         &m_autocallrecord,
+                                         sizeof(m_autocallrecord));
+                                         
+                  if (m_autocallrecord)
+                  {
+                      nSelID = IDS_CALLSETTING__YES;
+                  }
+                  else
+                  {
+                      nSelID = IDS_CALLSETTING__NO;
+                  }
+                  SetMenuIcon(pMenu, nSelID, TRUE);
+                  IMENUCTL_SetSel(pMenu, nSelID);
+                }
+                (void) ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_SETTINGMENU, EVT_USER_REDRAW,0,0);
+            }
+            return TRUE;
+            
+        case EVT_USER_REDRAW:			
+			{				
+		  		AECHAR WTitle[40] = {0};
+				
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_APPSSETTINGMENU_RES_FILE,                                
+                        IDS_CALLSETTING_CALLRECORD,
+                        WTitle,
+                        sizeof(WTitle));
+                if(pMe->m_pAnn != NULL)
+                {                								
+				    IANNUNCIATOR_SetFieldText(pMe->m_pAnn,WTitle);
+                }
+		    }
+		
+            (void)IMENUCTL_Redraw(pMenu);
+            return TRUE;
+
+        case EVT_DIALOG_END:			
+			//ISHELL_CloseApplet(pMe->m_pShell, FALSE);
+            return TRUE;
+		
+        case EVT_KEY:
+            switch(wParam)
+            {
+                case AVK_CLR:
+					CLOSE_DIALOG(DLGRET_CANCELED)                  
+                    return TRUE;
+                    
+                default:
+                    break;
+          
+            }
+            return TRUE;
+            
+        case EVT_COMMAND:
+            switch (wParam)
+            {   
+                case IDS_CALLSETTING__YES:
+                {	
+					m_autocallrecord = TRUE;
+                    break;
+                }
+				case IDS_CALLSETTING__NO:
+				{	
+					m_autocallrecord = FALSE;
+                    break;
+                }
+				
+				default:
+				{
+					return FALSE;
+				}
+            }
+			 (void) ICONFIG_SetItem(pMe->m_pConfig,
+                                       CFGI_AUTOCALLRECORD,
+                                       &m_autocallrecord,
+                                       sizeof(m_autocallrecord));
+			  CLOSE_DIALOG(DLGRET_CANCELED)
+            return TRUE;       
+            
+        default:
+            break;
+    }             
+    return FALSE;
+}
+//Add End
 
 
 /*==============================================================================
