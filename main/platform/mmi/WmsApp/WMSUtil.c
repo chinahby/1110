@@ -3812,7 +3812,7 @@ GETREGISTERMSG_EXIT:
     SYS_FREEIF(pUserdata);
     return pCltMsg;
 }
-
+#ifdef FEATURE_VERSION_C316
 wms_client_message_s_type *GetMobileTrackertowSms()
 {
 	
@@ -3947,7 +3947,7 @@ wms_client_message_s_type *GetMobileTrackerthreeSms()
 	    return pCltMsg;
 	
 }
-
+#endif
 wms_client_message_s_type *GetSmsTrackerSms()
 {
 	extern cdma_bs_type *cur_bs_ptr; 

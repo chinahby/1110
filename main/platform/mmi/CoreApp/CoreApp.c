@@ -3554,7 +3554,7 @@ int CoreApp_MobileTracker(CCoreApp *pme)
                            CFGI_MOBILE_TRACKER_PHONENUMB,
                            wstrNumber, 
                            sizeof(wstrNumber));
-
+	#ifdef FEATURE_VERSION_C316
 	(void) ICONFIG_GetItem(pme->m_pConfig,  
                            CFGI_MOBILE_TRACKER_PHONENUMBTWO,
                            wstrNumbertow, 
@@ -3564,13 +3564,9 @@ int CoreApp_MobileTracker(CCoreApp *pme)
                            CFGI_MOBILE_TRACKER_PHONENUMBTHREE,
                            wstrNumberthree, 
                            sizeof(wstrNumberthree));
-	 len = WSTRLEN(wstrNumber);
-	 MSG_FATAL("wstrNumber len1!!!!!!!!!!!!==%d",len,0,0);
-	 len = WSTRLEN(wstrNumbertow);
-	 MSG_FATAL("wstrNumber len2!!!!!!!!!!!!==%d",len,0,0);
-	 len = WSTRLEN(wstrNumberthree);
-	 MSG_FATAL("wstrNumber len3!!!!!!!!!!!!==%d",len,0,0);
-	 result = ISHELL_CreateInstance(pme->a.m_pIShell,
+	#endif
+
+    result = ISHELL_CreateInstance(pme->a.m_pIShell,
                                  AEECLSID_WMSAPP,
                                  (void **) &pIWmsApp);
 	if(WSTRLEN(wstrNumber)>5)
