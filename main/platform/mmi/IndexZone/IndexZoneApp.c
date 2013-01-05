@@ -354,13 +354,24 @@ static int IndexZoneApp_New( IShell *ps, IModule *pIModule, IIndexZoneApp **ppOb
 ==============================================================================*/
 static int CIndexZoneApp_InitAppData(IndexZoneApp *pMe)
 {
+	boolean m_MobileTracker = FALSE;
     if (NULL == pMe)
     {
         return EFAILED;
     }
 	MSG_FATAL("CIndexZoneApp_InitAppData.........",0,0,0);
-
-    pMe->m_MainSel  = 0;
+	OEM_GetConfig(CFGI_MOBILE_TRACKER_BACK,&m_MobileTracker,sizeof(boolean));
+	MSG_FATAL("CIndexZoneApp_InitAppData.........==%d",m_MobileTracker,0,0);
+	if(m_MobileTracker)
+	{
+		pMe->m_MainSel  = IDS_INDEX_ZONE_MOBILETRACKER;
+		m_MobileTracker = FALSE;
+		OEM_SetConfig(CFGI_MOBILE_TRACKER_BACK,&m_MobileTracker,sizeof(boolean));
+	}
+	else
+	{
+    	pMe->m_MainSel  = 0;
+	}
 
     if (ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_DISPLAY, (void **) &pMe->m_pDisplay) != SUCCESS)
     {    	

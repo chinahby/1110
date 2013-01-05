@@ -390,6 +390,7 @@ static int MobileTracker_New( IShell *ps, IModule *pIModule, IMobileTracker **pp
 ==============================================================================*/
 static int CMobileTracker_InitAppData(MobileTracker *pMe)
 {
+	
     if (NULL == pMe)
     {
         return EFAILED;
@@ -880,15 +881,16 @@ static NextFSMAction MANINPWD_INPUTPWD_Handler(MobileTracker *pMe)
             return NFSMACTION_WAIT;
 
         case DLGRET_CANCELED:
-            MOVE_TO_STATE(MULTIMEDIAST_EXIT);
-            return NFSMACTION_CONTINUE;
+			{
+				boolean m_MobileTracker = TRUE; 
+				OEM_SetConfig(CFGI_MOBILE_TRACKER_BACK,&m_MobileTracker,sizeof(boolean));
+            	MOVE_TO_STATE(MULTIMEDIAST_EXIT);
+            	return NFSMACTION_CONTINUE;
+        	}
 
         case MGDLGRET_PASS:            
-            
 			MOVE_TO_STATE(MOBILETRACKERIAST_MAIN);
-			break;
-			
-            return NFSMACTION_CONTINUE;
+			return NFSMACTION_CONTINUE;
 
         case MGDLGRET_FAILD:    
 			MSG_FATAL("MGDLGRET_FAILD.............",0,0,0);
@@ -906,6 +908,7 @@ static NextFSMAction MANINPWD_INPUTPWD_Handler(MobileTracker *pMe)
             MOVE_TO_STATE(MULTIMEDIAST_EXIT);
             return NFSMACTION_CONTINUE;
     }
+	return NFSMACTION_CONTINUE;
 }
 
 static NextFSMAction STATE_ENABLE_Handler(MobileTracker *pMe)
@@ -1068,14 +1071,12 @@ static NextFSMAction MOBILETRACKER_EXIT_Handler(MobileTracker *pMe)
 void MobileTracker_ShowDialog(MobileTracker  *pMe,  uint16 dlgResId)
 {
     int nRet;
-	MSG_FATAL("MobileTracker_ShowDialog.....==%d",dlgResId,0,0);
     // 每次最多打开一个对话框
     if (ISHELL_GetActiveDialog(pMe->m_pShell) != NULL)
     {
         // 如果当前已经有对话框被打开，直接返回
         return;
     }
-    MSG_FATAL("MobileTracker_ShowDialog.....000000",0,0,0);
     
 	if (NULL != pMe->m_pDisplay)
     {
@@ -1087,11 +1088,9 @@ void MobileTracker_ShowDialog(MobileTracker  *pMe,  uint16 dlgResId)
         IDISPLAY_SetClipRect(pMe->m_pDisplay, &pMe->m_rc);
     }
 	
-    MSG_FATAL("MobileTracker_ShowDialog.....11111",0,0,0);
     nRet = ISHELL_CreateDialog(pMe->m_pShell,MOBILETRACKER_RES_FILE_LANG,dlgResId,NULL);
     if (nRet != SUCCESS)
     {
-    	MSG_FATAL("MobileTracker_ShowDialog.....faile==%d",nRet,0,0);
     }
     
 }
@@ -1220,8 +1219,12 @@ static boolean MobileTracker_ListMenuHandler(MobileTracker *pMe, AEEEvent eCode,
                     return TRUE;
                     
                 case AVK_CLR:
-                    CLOSE_DIALOG(DLGRET_CANCELED)
-                    return TRUE;
+					{
+						boolean m_MobileTracker = TRUE; 
+						OEM_SetConfig(CFGI_MOBILE_TRACKER_BACK,&m_MobileTracker,sizeof(boolean));
+                    	CLOSE_DIALOG(DLGRET_CANCELED)
+                    	return TRUE;
+                	}
                     
                 default:
                     break;
@@ -1531,10 +1534,10 @@ static boolean MobileTracker_DnumberHandler(MobileTracker *pMe, AEEEvent eCode, 
 			 pMe->m_Number_three = (ITextCtl*)IDIALOG_GetControl(pMe->m_pActiveIDlg,
                                                     IDC_TEXT_NUMBERTHREE);
 
-			ITEXTCTL_SetActive(pMe->m_Number_three, FALSE);
-			ITEXTCTL_SetActive(pMe->m_Number_tow, FALSE);
 			ITEXTCTL_SetActive(pMe->m_Number_one, FALSE);
-
+			ITEXTCTL_SetActive(pMe->m_Number_tow, FALSE);
+			ITEXTCTL_SetActive(pMe->m_Number_three, FALSE);
+			ITEXTCTL_SetActive(pMe->m_Number_one,TRUE);
 		
 			 pMe->m_nitems = 1;
 
@@ -1634,12 +1637,12 @@ static boolean MobileTracker_DnumberHandler(MobileTracker *pMe, AEEEvent eCode, 
 	      {
 		  	switch(wParam)
             {
-            	MSG_FATAL("EVT_KEY..................",0,0,0);
+            	//MSG_FATAL("EVT_KEY..................",0,0,0);
             	case AVK_UP:
 					{
 						if(pMe->m_nitems == 1)
 						{
-							MSG_FATAL("m_Number_one..............",0,0,0);
+							//MSG_FATAL("m_Number_one..............",0,0,0);
 							ITEXTCTL_SetActive(pMe->m_Number_three,TRUE);
 							ITEXTCTL_SetActive(pMe->m_Number_one,FALSE);
 							ITEXTCTL_SetActive(pMe->m_Number_tow,FALSE);
@@ -1648,7 +1651,7 @@ static boolean MobileTracker_DnumberHandler(MobileTracker *pMe, AEEEvent eCode, 
 						}
 						else if(pMe->m_nitems == 2)
 						{
-							MSG_FATAL("m_Number_tow..............",0,0,0);
+							//MSG_FATAL("m_Number_tow..............",0,0,0);
 							ITEXTCTL_SetActive(pMe->m_Number_one,TRUE);
 							ITEXTCTL_SetActive(pMe->m_Number_tow,FALSE);
 							ITEXTCTL_SetActive(pMe->m_Number_three,FALSE);
@@ -1658,7 +1661,7 @@ static boolean MobileTracker_DnumberHandler(MobileTracker *pMe, AEEEvent eCode, 
 						}
 						else if(pMe->m_nitems == 3)
 						{
-							MSG_FATAL("m_Number_three..............",0,0,0);
+							//MSG_FATAL("m_Number_three..............",0,0,0);
 							ITEXTCTL_SetActive(pMe->m_Number_tow,TRUE);
 							ITEXTCTL_SetActive(pMe->m_Number_three,FALSE);
 							ITEXTCTL_SetActive(pMe->m_Number_one,FALSE);
@@ -1672,7 +1675,7 @@ static boolean MobileTracker_DnumberHandler(MobileTracker *pMe, AEEEvent eCode, 
 					{
 						if(pMe->m_nitems == 1)
 						{
-							MSG_FATAL("m_Number_one..............",0,0,0);
+							//MSG_FATAL("m_Number_one..............",0,0,0);
 							ITEXTCTL_SetActive(pMe->m_Number_tow,TRUE);
 							ITEXTCTL_SetActive(pMe->m_Number_one,FALSE);
 							ITEXTCTL_SetActive(pMe->m_Number_three,FALSE);
@@ -1681,7 +1684,7 @@ static boolean MobileTracker_DnumberHandler(MobileTracker *pMe, AEEEvent eCode, 
 						}
 						else if(pMe->m_nitems == 2)
 						{
-							MSG_FATAL("m_Number_tow..............",0,0,0);
+							//MSG_FATAL("m_Number_tow..............",0,0,0);
 							ITEXTCTL_SetActive(pMe->m_Number_three,TRUE);
 							ITEXTCTL_SetActive(pMe->m_Number_tow,FALSE);
 							ITEXTCTL_SetActive(pMe->m_Number_one,FALSE);
@@ -1690,7 +1693,7 @@ static boolean MobileTracker_DnumberHandler(MobileTracker *pMe, AEEEvent eCode, 
 						}
 						else if(pMe->m_nitems == 3)
 						{
-							MSG_FATAL("m_Number_three..............",0,0,0);
+							//MSG_FATAL("m_Number_three..............",0,0,0);
 							ITEXTCTL_SetActive(pMe->m_Number_one,TRUE);
 							ITEXTCTL_SetActive(pMe->m_Number_three,FALSE);
 							ITEXTCTL_SetActive(pMe->m_Number_tow,FALSE);
