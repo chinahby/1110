@@ -5682,6 +5682,12 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
             break;
 
         case EVT_KEY_RELEASE:
+#if defined(FEATURE_VERSION_C316)						
+            if ( pMe->m_bShowPopMenu )
+            {
+                return TRUE;
+            }
+#endif					
             switch ((AVKType)wParam)
             {
                 case AVK_SELECT:
