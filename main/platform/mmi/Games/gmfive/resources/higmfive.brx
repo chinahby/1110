@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="higmfive" VERSION="1">
+<Strings Encoding="ISOLATIN1">
+	<STRING Id="1" Name="IDS_APP_TITLE">
+		<Text>Backgammon</Text>
+	</STRING>
+	<STRING Id="2" Name="IDS_GAME_NEW">
+		<Text>New games</Text>
+	</STRING>
+	<STRING Id="3" Name="IDS_GAME_UNDO">
+		<Text>Undo</Text>
+	</STRING>
+	<STRING Id="4" Name="IDS_GAME_EXIT">
+		<Text>Exit</Text>
+	</STRING>
+	<STRING Id="5" Name="IDS_GAME_HELP">
+		<Text>Help</Text>
+	</STRING>
+	<STRING Id="6" Name="IDS_GAME_ABOUT">
+		<Text>About</Text>
+	</STRING>
+	<STRING Id="7" Name="IDS_OK">
+		<Text>OK</Text>
+	</STRING>
+	<STRING Id="8" Name="IDS_HELP_TITLE">
+		<Text>Help</Text>
+	</STRING>
+	<STRING Id="9" Name="IDS_HELP_CONTENT">
+		<Text>Game Description: \ 1, rules of the game: first Lazi in the next three games were against three, or sentenced to lose; game black and white sides turn Lazi, either on the board first in the formation of horizontal, vertical, diagonal in the same row the five pieces of one color wins; \ 2 key operation: the game, press the * key to restore the situation in the previous step, the arrow keys to control cursor movement, select the middle button Lazi, CLR key to exit the current game, 2,4,6,8 number keys corresponding to the arrow keys, numeric 1,3,7,9 keys corresponding to the ramp move up and down, the number 5 key corresponding to the Lazi; \ 3, select the game mode: You can choose one first down and the first machine, the level sub-junior game, amateur, expert, master of the four levels; \ 4, heroes: win under all levels will be recorded at least when the pace of the machine, but can also clear the history, re-record the results. \ 5, press the # key to control the background music of the switch, click the speaker icon on the screen point pen can control the sound.</Text>
+	</STRING>
+	<STRING Id="10" Name="IDS_TOTAL_POINT">
+		<Text>Score %d</Text>
+	</STRING>
+	<STRING Id="11" Name="IDS_GAME_OVER">
+		<Text>The game is over! Your score is:%d</Text>
+	</STRING>
+	<STRING Id="12" Name="IDS_SELECT_RESULT_TITLE">
+		<Text>Selection result is:</Text>
+	</STRING>
+	<STRING Id="13" Name="IDS_SELECT_RESULT">
+		<Text>%s</Text>
+	</STRING>
+	<STRING Id="14" Name="IDS_HERO_OK">
+		<Text>OK</Text>
+	</STRING>
+	<STRING Id="15" Name="IDS_HERO_RESUME_INIT">
+		<Text>Remove</Text>
+	</STRING>
+	<STRING Id="16" Name="IDS_RINGER_TITLE">
+		<Text>Ringer</Text>
+	</STRING>
+	<STRING Id="17" Name="IDS_RINGER_SELECT">
+		<Text>Select</Text>
+	</STRING>
+	<STRING Id="18" Name="IDS_RINGER_CANCEL">
+		<Text>Cancel</Text>
+	</STRING>
+	<STRING Id="19" Name="IDS_CHESS_LEVLE">
+		<Text>Level Select</Text>
+	</STRING>
+	<STRING Id="20" Name="IDS_GAME_LEVEL_1">
+		<Text>Primary</Text>
+	</STRING>
+	<STRING Id="21" Name="IDS_GAME_LEVEL_2">
+		<Text>Amateur</Text>
+	</STRING>
+	<STRING Id="22" Name="IDS_GAME_LEVEL_3">
+		<Text>Expert</Text>
+	</STRING>
+	<STRING Id="23" Name="IDS_GAME_LEVEL_4">
+		<Text>Master</Text>
+	</STRING>
+	<STRING Id="24" Name="IDS_BACKRINGER_SELECT">
+		<Text>Back ringer</Text>
+	</STRING>
+	<STRING Id="25" Name="IDS_MAINMENU_STYLE">
+		<Text>Menu Style</Text>
+	</STRING>
+	<STRING Id="26" Name="IDS_CONTINUE_GAME">
+		<Text>Contitue</Text>
+	</STRING>
+	<STRING Id="27" Name="IDS_MENU_RETURN">
+		<Text>Return</Text>
+	</STRING>
+	<STRING Id="28" Name="IDS_PRE_LISTEN_RINGER">
+		<Text>Pre-listen</Text>
+	</STRING>
+	<STRING Id="29" Name="IDS_PLAY_CHESS_MODE">
+		<Text>Play Mode</Text>
+	</STRING>
+	<STRING Id="30" Name="IDS_GAME_GO_MODE_1">
+		<Text>You first</Text>
+	</STRING>
+	<STRING Id="31" Name="IDS_GAME_GO_MODE_2">
+		<Text>Phone first</Text>
+	</STRING>
+	<STRING Id="32" Name="IDS_STOP_RINGER">
+		<Text>Stop</Text>
+	</STRING>
+	<STRING Id="40" Name="IDS_HERO_SCORE">
+		<Text>Score</Text>
+	</STRING>
+	<STRING Id="41" Name="IDS_HERO_SCORE_TITLE">
+		<Text>  Level    Steps</Text>
+	</STRING>
+	<STRING Id="50" Name="IDS_SOUND_SET">
+		<Text>Sound Setting</Text>
+	</STRING>
+	<STRING Id="51" Name="IDS_SOUND_CLOSE_MODE">
+		<Text>Close</Text>
+	</STRING>
+	<STRING Id="52" Name="IDS_SOUND_OPEN_MODE">
+		<Text>Open</Text>
+	</STRING>
+	<STRING Id="61" Name="IDS_LISTMENU_MODE">
+		<Text>List</Text>
+	</STRING>
+	<STRING Id="62" Name="IDS_ICON_MODE">
+		<Text>Icon</Text>
+	</STRING>
+	<STRING Id="100" Name="IDS_CHESS_RESULT_2">
+		<Text>Congratulations, you win!</Text>
+	</STRING>
+	<STRING Id="101" Name="IDS_CHESS_RESULT_1">
+		<Text>Haha, you lose!</Text>
+	</STRING>
+	<STRING Id="102" Name="IDS_CHESS_RESULT_3">
+		<Text>Interestingly,The same level</Text>
+	</STRING>
+	<STRING Id="103" Name="IDS_CHESS_RESULT_TITLE">
+		<Text>Result</Text>
+	</STRING>
+	<STRING Id="104" Name="IDS_NO_RINGER">
+		<Text>No ringer!</Text>
+	</STRING>
+	<STRING Id="105" Name="IDS_CHESS_RESULT_4">
+		<Text>You first, the next three three cut-off hands of failed!</Text>
+	</STRING>
+	<STRING Id="106" Name="IDS_CHESS_RESULT_5">
+		<Text>Phone first, the next three three cut-off hand, you win at it!</Text>
+	</STRING>
+	<STRING Id="110" Name="IDS_GAME_INFORMATION">
+		<Text>Company Name: \ Sichuan Great Wall Software Technology Co., Ltd. \ Customer Service Tel :028 -86617036 \ \ website: \ http://www.gwsoft.com.cn \ Software Name: backgammon \ version: V1.0</Text>
+	</STRING>
+</Strings>
+<Objects MimeType="image/bmp">
+	<Object Id="1" Name="IDB_GAME_NEW">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\startgame.bmp</File>
+	</Object>
+	<Object Id="3" Name="IDB_GAME_HELP">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\help.bmp</File>
+	</Object>
+	<Object Id="4" Name="IDB_GAME_ABOUT">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\about.bmp</File>
+	</Object>
+	<Object Id="5" Name="IDB_GAME_EXIT">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\exit.bmp</File>
+	</Object>
+	<Object Id="6" Name="IDB_SPLASH">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\splash.bmp</File>
+	</Object>
+	<Object Id="8" Name="IDB_GAME_RADIO_UNSEL">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\RadioUnselIcon.bmp</File>
+	</Object>
+	<Object Id="9" Name="IDB_GAME_RADIO_SEL">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\RadioSelIcon.bmp</File>
+	</Object>
+	<Object Id="10" Name="IDB_RINGER_VIEW">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\ringerview.bmp</File>
+	</Object>
+	<Object Id="11" Name="IDB_SOUND_SET">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\soundset.bmp</File>
+	</Object>
+	<Object Id="12" Name="IDB_HERO_SCORE">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\hero.bmp</File>
+	</Object>
+	<Object Id="14" Name="IDB_CHESS_MODE">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\chessmode.bmp</File>
+	</Object>
+	<Object Id="15" Name="IDB_GAME_LEVEL">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\gamelevel.bmp</File>
+	</Object>
+	<Object Id="16" Name="IDB_SOFTKEY_BUTTOM">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\softkeybottom.bmp</File>
+	</Object>
+	<Object Id="17" Name="IDB_TOP_BGBMP">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\topTitle.bmp</File>
+	</Object>
+	<Object Id="18" Name="IDB_BOTTOM">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\BGbottom.bmp</File>
+	</Object>
+	<Object Id="19" Name="IDB_SOUNDON">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\SoundOn.bmp</File>
+	</Object>
+	<Object Id="20" Name="IDB_SOUNDOFF">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\SoundOff.bmp</File>
+	</Object>
+</Objects>
+</BREWRes>
