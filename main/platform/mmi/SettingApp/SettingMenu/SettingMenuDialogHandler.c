@@ -103,11 +103,13 @@ static boolean  HandleCallSettingDialogEvent(CSettingMenu *pMe,
     uint32 dwParam
 );
 
+#if defined(FEATURE_VERSION_W317A)
 // 对话框 IDD_SETTING_CALLRECORD 事件处理函数
 static boolean HandleAutoCallRecordDialogEvent(CSettingMenu *pMe,
 	AEEEvent eCode, 
 	uint16 wParam, 
 	uint32 dwParam);	
+#endif
 
 //对话框 IDD_CALLSETTINGSEL 事件处理函数
 static boolean  HandleCallSettingSelDialogEvent(CSettingMenu *pMe,
@@ -1042,7 +1044,7 @@ static boolean  HandleCallSettingDialogEvent(CSettingMenu *pMe,
     return FALSE;
 } // HandleCallSettingDialogEvent
 
-
+#if  defined(FEATURE_VERSION_W317A)
 //Add by pyuangui 2013-01-04
 /*=============================================================================
 FUNCTION:  HandleAutoCallRecordDialogEvent
@@ -1168,7 +1170,7 @@ static boolean HandleAutoCallRecordDialogEvent(CSettingMenu *pMe, AEEEvent eCode
     return FALSE;
 }
 //Add End
-
+#endif
 
 /*==============================================================================
 函数：
