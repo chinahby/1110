@@ -286,13 +286,13 @@ LOCAL boolean camsensor_sp0a18_sensor_init(void)
         //ae target                                         
         camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);                                      
         camsensor_SP0A18_ycbcr_i2c_write_byte(0xed , 0x7c);//80);//90                                   
-        camsensor_SP0A18_ycbcr_i2c_write_byte(0xf7 , 0x78);//7c);//8c                                   
-        camsensor_SP0A18_ycbcr_i2c_write_byte(0xf8 , 0x70);//70);//84                                   
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xf7 , 0x80);//7c);//8c                                   
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xf8 , 0x80);//70);//84                                   
         camsensor_SP0A18_ycbcr_i2c_write_byte(0xec , 0x6c);//6c);//80                                                                                    
                                                    
         camsensor_SP0A18_ycbcr_i2c_write_byte(0xef , 0x6c);//99                                   
-        camsensor_SP0A18_ycbcr_i2c_write_byte(0xf9 , 0x68);//90                                   
-        camsensor_SP0A18_ycbcr_i2c_write_byte(0xfa , 0x60);//80                                   
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xf9 , 0x70);//90                                   
+        camsensor_SP0A18_ycbcr_i2c_write_byte(0xfa , 0x68);//80                                   
         camsensor_SP0A18_ycbcr_i2c_write_byte(0xee , 0x5c);//78                                   
                                                    
         //gamma                                             
