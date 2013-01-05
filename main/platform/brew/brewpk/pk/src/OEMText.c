@@ -2291,7 +2291,9 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
                     AECHAR   * pszText;
                     pszText = OEM_TextGet(pContext);
                     szsmscount = 1;
+					MSG_FATAL("szsmscount======1==%d",szsmscount,0,0);
                     szsmscount = WMSUtil_CalculateMessagesCount(pszText, NULL, NULL);
+					MSG_FATAL("szsmscount======2==%d",szsmscount,0,0);
                     // Draw the number of remaining characters.
                     #ifdef FEATURE_DISP_160X128
                     STR_TO_WSTR("%d/%d     ", szFormat, sizeof(szFormat));
@@ -2311,6 +2313,7 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
 					#else
                     WSPRINTF(szRemainingCount, sizeof(szRemainingCount), szFormat, wRemainingChars, szsmscount);   
 					#endif
+					MSG_FATAL("szsmscount======3==%d",szsmscount,0,0);
 
                     /*
                     WSPRINTF(szRemainingCount, 
@@ -2476,6 +2479,7 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
                     &pContext->rectDisplay, RGB_WHITE);
         }
     }
+	MSG_FATAL("OEM_TextDraw...................over",0,0,0);
     pContext->bNeedsDraw = FALSE;
 }
 
@@ -9286,6 +9290,8 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 static void T9TextCtl_Cap_Lower_Rapid_Exit(TextCtlContext *pContext)
 {
 	T9_AW_Destroy ( pContext );  
+	(void) ISHELL_CancelTimer((IShell *)pContext->pIShell,
+                                       TextCtl_MultitapTimer, pContext);
     TextCtl_NoSelection(pContext);
 	pContext->m_bCaplk = FALSE;
 }
