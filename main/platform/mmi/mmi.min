@@ -98,6 +98,10 @@ ifeq ($(USES_RESDIR),X3)
 include $(PINTU)/Pintu.min
 include $(TETRIS)/Tetris.min
 endif
+ifeq ($(USES_RESDIR),C316) 
+include $(GMFIVE)/GmFive.min
+include $(TETRIS)/Tetris.min
+endif
 endif
 
 #Apps

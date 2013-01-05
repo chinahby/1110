@@ -937,9 +937,15 @@ static boolean Game_ListMenuHandler(Game *pMe, AEEEvent eCode, uint16 wParam, ui
 				    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
                 }
 		    }
-			#endif
+			#endif           
+#ifdef FEATURE_VERSION_C316      
+            IMENUCTL_AddItem(pMenu, GAME_RES_FILE_LANG,IDS_GAME_TITLE_BRICK, IDS_GAME_TITLE_BRICK, NULL, 0);
+            //IMENUCTL_AddItem(pMenu, GAME_RES_FILE_LANG,IDS_GAME_TITLE_GMFIVE, IDS_GAME_TITLE_GMFIVE, NULL, 0);
+            IMENUCTL_AddItem(pMenu, GAME_RES_FILE_LANG,IDS_GAME_TITLE_TETRIS, IDS_GAME_TITLE_TETRIS, NULL, 0);                         
+#else
             IMENUCTL_AddItem(pMenu, GAME_RES_FILE_LANG,IDS_GAME_TITLE_BLACKJACK, IDS_GAME_TITLE_BLACKJACK, NULL, 0);
             IMENUCTL_AddItem(pMenu, GAME_RES_FILE_LANG,IDS_GAME_TITLE_BRICK, IDS_GAME_TITLE_BRICK, NULL, 0);
+#endif
 
 #ifndef FEATURE_VERSION_W208S			
         #ifdef FEATURE_SMARTFREN_MAGIC
@@ -1092,6 +1098,7 @@ static boolean StartApplet(Game *pMe, int i)
     int Result = FALSE;
 
    	//MSG_ERROR("StartApplet:::::%d",i,0,0);
+   	MSG_FATAL("***zzg Game StartApplet:::::%d***",i,0,0);
     switch(i)
     {
         case IDS_GAME_TITLE_BLACKJACK:
@@ -1107,6 +1114,7 @@ static boolean StartApplet(Game *pMe, int i)
             
         case IDS_GAME_TITLE_GMFIVE:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_GMFIVE);
+            MSG_FATAL("***zzg Game Start AEECLSID_GMFIVE Result=%d***",Result,0,0);
             break;
 		case IDS_GAME_TITLE_PINTU:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_PINTU);
@@ -1114,6 +1122,7 @@ static boolean StartApplet(Game *pMe, int i)
             
         case IDS_GAME_TITLE_TETRIS:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_TETRIS);
+            MSG_FATAL("***zzg Game Start AEECLSID_TETRIS Result=%d***",Result,0,0);
             break;
            #if defined (FEATURE_SMARTFREN_STATIC_BREW_APP)
         case IDS_GAME_TITLE_MAGICSUSHI:
