@@ -541,20 +541,10 @@ else
             feeling_off.mid|fs:/ringers/feeling_off.mid 	
 	else ifeq ($(USES_RESDIR),C316)   
 	CONSTFILE_FILES+=\
-						index_m1.mp3|fs:/ringers/intex1.mp3 \
+	     index_m1.mp3|fs:/ringers/intex1.mp3 \
             index_m2.mp3|fs:/ringers/intex2.mp3 \
-            blues.mid|fs:/ringers/intex3.mid \
-            blue_load.mid|fs:/ringers/intex4.mid \
-            champagne.mid|fs:/ringers/intex5.mid \
-            clock.mid|fs:/ringers/intex6.mid \
-            dance_craze.mid|fs:/ringers/intex7.mid \
-            green_line.mid|fs:/ringers/intex8.mid \
-            jumping.mid|fs:/ringers/intex9.mid \
-            lucky.mid|fs:/ringers/intex10.mid \
-            street_tale.mid|fs:/ringers/intex11.mid \
-            techno_meto.mid|fs:/ringers/intex12.mid \
-            feeling_on.mp3|fs:/ringers/intex13.mp3 \
-            feeling_off.mp3|fs:/ringers/intex14.mp3 
+            feeling_on.mp3|fs:/ringers/intex3.mp3 \
+            feeling_off.mp3|fs:/ringers/intex4.mp3 
 	else ifeq ($(USES_RESDIR),M74)                                           
         CONSTFILE_FILES+=\
             blues.mid|fs:/ringers/blues.mid \

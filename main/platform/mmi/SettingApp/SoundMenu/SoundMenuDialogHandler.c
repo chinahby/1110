@@ -934,7 +934,7 @@ static boolean  HandleSoundMenuProfilesDialogEvent(CSoundMenu *pMe,
             //Sound_App_Add_Menu(pMenu,IDS_KEYTONE_LENGTH);
 
 	
-			#if defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_C337)
+			#if defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_C316)
 			/*
 			if (pMe->m_ePreState != DLGRET_SCENEMODESUB)
 			{

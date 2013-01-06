@@ -3536,6 +3536,12 @@ static void CameraApp_PopMenu_SizeInit(CCameraApp *pMe, IMenuCtl *popMenu)
 					{
 						break;
 					}
+					#ifdef FEATURE_VERSION_C316
+					if(i ==3)
+					{
+						break;
+					}
+					#endif
 					IMENUCTL_AddItem(popMenu, 
 					             NULL, 
 					             0,

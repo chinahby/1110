@@ -40,7 +40,9 @@
       #error AEECLSID_VIDEOPLAYER must be defined
    #endif
 #endif
+#ifndef FEATURE_VERSION_C316
 #define VIDEOPLAYER_HELP
+#endif
 #include "videoplayer.brh"
 
 #include "AEEShell.h"

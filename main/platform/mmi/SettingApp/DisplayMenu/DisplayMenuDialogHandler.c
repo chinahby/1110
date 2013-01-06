@@ -446,7 +446,9 @@ static boolean  HandleMainDialogEvent(CDisplayMenu *pMe,
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_COLORFUL_MENU_TITLE, IDS_COLORFUL_MENU_TITLE, NULL, 0);
 #endif
 #ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for REND
+#ifndef FEATURE_VERSION_C316
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_MENU_TITLE, IDS_REND_MENU_TITLE, NULL, 0);
+#endif
 #endif
             return TRUE;
         case EVT_DIALOG_START:
