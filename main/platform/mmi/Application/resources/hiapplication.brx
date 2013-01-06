@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="application" VERSION="1">
+<BREWRes Name="hiapplication" VERSION="1">
 <Strings Encoding="Unicode">
 	<String Id="1001" Name="IDS_APPLICATION_LIST">
 		<Text>अप्लिकेशन</Text>
@@ -17,19 +17,19 @@
 		<Text>PC Modem step:1:with USB into PC connected mobile phone according to system prompts to install the driver, driver folder in (checked),until success2:Select the PC machine on the network connection 3:Create a new connection 4:Select next 5:Choose to connect to the Internet(C),after choosing, click next.6:Select the manual setting my connection(M),after choosing,click next.7:Choose a dial-up modem connections,and click Next 8:Enter the ISP name, and click Next 9:Enter the phone number(P), and click Next 10:Enter a user name and password,and click next,and then choose to complete 11:Click on the create connection, dial,you can surf the internet.</Text>
 	</String>
 	<String Id="1006" Name="IDS_SHORT_CUT">
-		<Text>shortcut</Text>
+		<Text>शॉर्टकट</Text>
 	</String>
 	<String Id="1007" Name="IDS_USER_PROFILES">
-		<Text>User Profiles</Text>
+		<Text>उपयोगकर्ता प्रोफाइल</Text>
 	</String>
 	<String Id="1008" Name="IDS_VIDEO_PLAYER">
-		<Text>Video player</Text>
+		<Text>वीडियो प्लेयर</Text>
 	</String>
 	<String Id="1009" Name="IDS_CALENDAR">
-		<Text>Calendar</Text>
+		<Text>कैलेंडर</Text>
 	</String>
 	<String Id="1010" Name="IDS_IMAGE_VIEWER">
-		<Text>Image viewer</Text>
+		<Text>छवि दर्शक</Text>
 	</String>
 	<STRING Id="1011" Name="IDS_APPLICATION_BAM">
 		<Text>बी ए एम</Text>
