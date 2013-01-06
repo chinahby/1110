@@ -284,7 +284,7 @@
 		<Text>साफ़</Text>
 	</String>
 	<String Id="1044" Name="IDS_SHORTCUT" Encoding="Unicode">
-		<Text>Shortcut</Text>
+		<Text>शॉर्टकट</Text>
 	</String>
 	<STRING Id="2001" Name="IDS_SNOOZE">
 		<Text>स्नूज</Text>
