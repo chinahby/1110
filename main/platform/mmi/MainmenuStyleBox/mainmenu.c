@@ -4577,7 +4577,11 @@ static int StartApplet(MainMenu *pMe, int i)
         OEM_SetUCBROWSER_ADSAccount();
 #endif		
 #endif			
+#ifdef FEATURE_VERSION_C337
+        Result = SetBrowserArr_Main(pMe,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");      
+#else
         Result = Result = SetBrowserArr_Main(pMe,NULL);//ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
+#endif
 		break;
 	case IDS_MAIN_MENU_MZONE:
 		Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MiZone);
