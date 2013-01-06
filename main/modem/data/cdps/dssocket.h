@@ -216,15 +216,9 @@ when        who    what, where, why
                      Specify the number of applications
 ---------------------------------------------------------------------------*/
 #define DSS_MAX_SYS_APPS     1 /* max no of sys apps, 1 for lingering sock */
-#ifdef FEATURE_LOW_MEMORY_USAGE
-#if (T_SRAM_SIZE >= 0x800000)
-  #define DSS_MAX_APPS         (25 + DSS_MAX_SYS_APPS)      /* max no of apps */
-#else
-  #define DSS_MAX_APPS         ( 3 + DSS_MAX_SYS_APPS)      /* max no of apps */
-#endif
-#else
-  #define DSS_MAX_APPS         (25 + DSS_MAX_SYS_APPS)      /* max no of apps */
-#endif
+
+#define DSS_MAX_APPS         (25 + DSS_MAX_SYS_APPS)      /* max no of apps */
+
 
 /*---------------------------------------------------------------------------
   Constants to be defined for Multiple Sockets
@@ -234,23 +228,17 @@ when        who    what, where, why
         socket will use at least 2 of these, and will need backlog+1 
         available for the listen call to succeed. 
 ---------------------------------------------------------------------------*/
-#ifndef FEATURE_LOW_MEMORY_USAGE
-  #define DSS_SOMAXCONN        (3)       /* Maximum value for listen backlog */
-#else
-  #define DSS_SOMAXCONN        (2)       /* Maximum value for listen backlog */
-#endif
-#ifndef FEATURE_LOW_MEMORY_USAGE
-  #define DSS_MAX_TCP_SOCKS    (20)            /* Maximum TCP sockets allowed */
-#else
-  #define DSS_MAX_TCP_SOCKS    (6)            /* Maximum TCP sockets allowed */
-#endif
+
+#define DSS_SOMAXCONN        (3)       /* Maximum value for listen backlog */
+
+
+#define DSS_MAX_TCP_SOCKS    (20)            /* Maximum TCP sockets allowed */
+
 
 /* Maximum number  of UDP sockets available to applications */
-#ifndef FEATURE_LOW_MEMORY_USAGE
-  #define DSS_MAX_UDP_APP_SOCKS 10
-#else
-  #define DSS_MAX_UDP_APP_SOCKS  5
-#endif
+
+#define DSS_MAX_UDP_APP_SOCKS 10
+
 
 /*-------------------------------------------------------------------------
   Maximum number of sockets available system wide -- application sockets 
