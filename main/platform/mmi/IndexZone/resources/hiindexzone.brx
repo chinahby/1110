@@ -2,27 +2,26 @@
 <BREWRes Name="hiindexzone" VERSION="1">
 <Strings Encoding="ISOLATIN1">
 	<String Id="1002" Name="IDS_INDEX_ZONE_TITLE">
-		<Text>Index Zone</Text>
+		<Text>सूचकांक जोन</Text>
 	</String>
 	<String Id="1003" Name="IDS_INDEX_ZONE_UTK">
 		<Text>UTK</Text>
 	</String>
 	<String Id="1004" Name="IDS_INDEX_ZONE_GAMES">
-		<Text>Games</Text>
+		<Text>खेल</Text>
 	</String>
 	<String Id="1005" Name="IDS_INDEX_ZONE_MOBILETRACKER" Encoding="Unicode">
 		<Text>मोबाइल ट्रैकर</Text>
 	</String>
 	<String Id="1006" Name="IDS_INDEX_ZONE_CALLRECORD">
-		<Text>Auto call record</Text>
+		<Text>ऑटो कॉल रिकॉर्ड</Text>
 	</String>
 	<String Id="1007" Name="IDS_INDEX_ZONE_YES">
-		<Text>Yes</Text>
+		<Text>हां</Text>
 	</String>
 	<String Id="1008" Name="IDS_INDEX_ZONE_NO">
-		<Text>No</Text>
+		<Text>नहीं</Text>
 	</String>
-
 </Strings>
 <Dialogs>
 	<Dialog Id="6001" Name="IDD_INDEXZONE_LIST" Focus="7001">
