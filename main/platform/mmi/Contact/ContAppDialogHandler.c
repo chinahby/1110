@@ -17243,6 +17243,7 @@ static boolean  CContApp_HandleEmergencyCallDlgEvent(CContApp  *pMe,
                 IMENUCTL_AddItem(pMenu, NULL, NULL, i, wstrNum, NULL);
             }
 
+#ifndef FEATURE_VERSION_C337
             // ADD RUIM Number
             {
                 byte  Assnum[RUIM_ECC_NUMBER][RUIM_ECC_MAXSIZE+1];
@@ -17273,6 +17274,7 @@ static boolean  CContApp_HandleEmergencyCallDlgEvent(CContApp  *pMe,
                 }
 #endif//WIN32                
             }
+#endif
             
             IMENUCTL_Redraw(pMenu);
             
