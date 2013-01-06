@@ -202,6 +202,9 @@
 	<String Id="1118" Name="IDS_SPEED_DIAL_QUERY">
 		<Text>Speed Dial %s is Off,Set it On?</Text>
 	</String>
+	<String Id="1123" Name="IDS_SAR_C337">
+		<Text>SAR: 0.212W/kg@1g(h)0.169W/kg@1g(b)</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_NUMEDIT" Focus="0">
