@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="mainmenu" VERSION="1">
+<BREWRes Name="himainmenu" VERSION="1">
 <Strings Encoding="Unicode">
-	<String Id="1001" Name="IDS_MAIN_MENU_STATIC_APPLICATION" Encoding="Unicode">
+	<String Id="1001" Name="IDS_MAIN_MENU_STATIC_APPLICATION">
 		<Text>अप्लिकेशन</Text>
 	</String>
 	<String Id="1002" Name="IDS_MAIN_MENU_FM">
@@ -86,7 +86,7 @@
 		<Text>Alarm</Text>
 	</String>
 	<String Id="1029" Name="IDS_MAIN_MENU_VIDEOPLAYER">
-		<Text>VideoPlayer</Text>
+		<Text>वीडियो प्लेयर</Text>
 	</String>
 	<String Id="1030" Name="IDS_MAIN_MENU_FILEMGR">
 		<Text>File Manager</Text>
@@ -125,7 +125,7 @@
 		<Text>SmartFren Access</Text>
 	</STRING>
 	<STRING Id="1065" Name="IDS_MAIN_MENU_CALENDAR">
-		<Text>Calendar</Text>
+		<Text>कैलेंडर</Text>
 	</STRING>
 	<STRING Id="1066" Name="IDS_MAIN_MENU_CONTACT">
 		<Text>Contact</Text>
@@ -173,10 +173,10 @@
 		<Text>कॉल लॉग</Text>
 	</STRING>
 	<STRING Id="1095" Name="IDS_MAIN_MENU_SERVICES_C316">
-		<Text>Services</Text>
+		<Text>सेवाएं</Text>
 	</STRING>
 	<STRING Id="1096" Name="IDS_MAIN_MENU_INTEXZONE">
-		<Text>Intex Zone</Text>
+		<Text>इंटेक्स जोन</Text>
 	</STRING>
 </Strings>
 <Dialogs>
