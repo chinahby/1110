@@ -2054,8 +2054,12 @@ static boolean HandleDeviceInfoOpitionDialogEvent(CBTApp *pMe,
 				
 				IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, pDev->bBonded ? IDS_UNBOND : IDS_BOND, pDev->bBonded ? IDS_UNBOND : IDS_BOND, NULL, 0);				
 #ifdef FEATURE_BT_2_1			
+#ifdef FEATURE_VERSION_C337                		
+				IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_READ_OOB, IDS_READ_OOB, NULL, 0);
+#else
 				IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_BOND_OPTIONS, IDS_BOND_OPTIONS, NULL, 0);			
 				IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_READ_OOB, IDS_READ_OOB, NULL, 0);
+#endif                
 #endif
 				IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_DISCARD, IDS_DISCARD, NULL, 0);
 
@@ -2064,8 +2068,10 @@ static boolean HandleDeviceInfoOpitionDialogEvent(CBTApp *pMe,
 			{				
 				IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, pDev->bValid? IDS_DISCARD : IDS_KEEP, pDev->bValid? IDS_DISCARD : IDS_KEEP, NULL, 0);
 				IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, pDev->bBonded ? IDS_UNBOND : IDS_BOND, pDev->bBonded ? IDS_UNBOND : IDS_BOND, NULL, 0);
-#ifdef FEATURE_BT_2_1			
-				IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_BOND_OPTIONS, IDS_BOND_OPTIONS, NULL, 0);			
+#ifdef FEATURE_BT_2_1	
+#ifndef FEATURE_VERSION_C337  
+				IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_BOND_OPTIONS, IDS_BOND_OPTIONS, NULL, 0);	
+#endif
 				//IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_READ_OOB, IDS_READ_OOB, NULL, 0);
 #endif			
 				//暂时屏蔽，功能待添加
