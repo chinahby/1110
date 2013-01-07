@@ -6082,7 +6082,6 @@ static void CallApp_Add_OneCall_To_History(CCallApp       *pMe,
     boolean             bHasNumber = FALSE;
     boolean             bHasName = FALSE;
     uint16              nCount = 1;
-
     if (ISHELL_CreateInstance(pMe->m_pShell,
                               AEECLSID_CALLHISTORY,
                               (void **) &pCallHistory))
@@ -6092,6 +6091,29 @@ static void CallApp_Add_OneCall_To_History(CCallApp       *pMe,
 
     if ((NULL != number) && (WSTRLEN(number)>0))
     {
+#if defined(FEATURE_VERSION_C337) 
+        {
+        	if((WSTRLEN(number)>=4) && WSTRNCMP(number,L"+91",3)==0)
+        	{
+        		AECHAR   wstrNumberbuf[AEECALLHISTORY_MAXDIGITS] = {0};
+        		WSTRLCAT(wstrNumberbuf,&number[3],AEECALLHISTORY_MAXDIGITS);
+        		WSTRLCPY(number,wstrNumberbuf,AEECALLHISTORY_MAXDIGITS);
+        	}
+			else	if((WSTRLEN(number)>=4) && WSTRNCMP(number,L"091",3)==0) 	
+        	{
+        		AECHAR   wstrNumberbuf[AEECALLHISTORY_MAXDIGITS] = {0};
+        		WSTRLCAT(wstrNumberbuf,&number[3],AEECALLHISTORY_MAXDIGITS);
+        		WSTRLCPY(number,wstrNumberbuf,AEECALLHISTORY_MAXDIGITS);
+        	}				
+			else	if((WSTRLEN(number)>=5) && WSTRNCMP(number,L"0091",4)==0) 	
+        	{
+        		AECHAR   wstrNumberbuf[AEECALLHISTORY_MAXDIGITS] = {0};
+        		WSTRLCAT(wstrNumberbuf,&number[4],AEECALLHISTORY_MAXDIGITS);
+        		WSTRLCPY(number,wstrNumberbuf,AEECALLHISTORY_MAXDIGITS);
+        	}								
+        }												
+#endif
+		
         nSize = (WSTRLEN(number)+1)*sizeof(char);
         pInNumber = (char *)MALLOC(nSize);
         if (NULL == pInNumber)
