@@ -2893,7 +2893,13 @@ void DrawPromptMessage (IDisplay *pIDisplay,
             strrect.dx = StringBgImgInfo.cx;
 			#endif
             strrect.x = totalrect.x - StringBgImgInfo.cx/2;
-            strrect.y = totalrect.y - 15;
+            //Add by pyuangui 2013-01-07
+			#ifdef FEATURE_VERSION_W027
+            strrect.y = totalrect.y - 25;
+			#else
+			strrect.y = totalrect.y - 15;
+			#endif
+			//Add end
             #else
             strrect.dy = StringBgImgInfo.cy/2;
             strrect.dx = StringBgImgInfo.cx;
