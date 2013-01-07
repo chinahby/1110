@@ -4800,22 +4800,64 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
 		
         WSPRINTF(wszIndex,sizeof(wszIndex),wszFmt,pme->theDrawnItem);
 		
-		#ifdef FEATURE_VERSION_C337		
+#ifdef FEATURE_VERSION_C337		
 		{
 			IImage      *pBarImg = NULL;
 
-			if (bSel)
-			{
-				pBarImg = ISHELL_LoadResImage(pme->m_pIShell,
-		                                      AEE_APPSCOMMONRES_IMAGESFILE,
-		                                      IDI_MENU_ITEM_FOCUS);
-			}
-			else
-			{
-				pBarImg = ISHELL_LoadResImage(pme->m_pIShell,
-		                                      AEE_APPSCOMMONRES_IMAGESFILE,
-		                                      IDI_MENU_ITEM);
-			}					
+            if (IS_PROP_SET( pme->m_dwProps, MP_ICON_ANIMATED))
+            {
+            
+#if defined (FEATURE_DISP_176X220)
+                switch(pme->theDrawnItem)
+                {
+                    case 1:
+                    {
+                        pBarImg = ISHELL_LoadResImage(pme->m_pIShell,
+    		                                      AEE_APPSCOMMONRES_IMAGESFILE,
+    		                                      IDI_MENU_ITEM_PROFILE_ALERT);    
+                        break;
+                    }
+                    case 2:
+                    {
+                        pBarImg = ISHELL_LoadResImage(pme->m_pIShell,
+    		                                      AEE_APPSCOMMONRES_IMAGESFILE,
+    		                                      IDI_MENU_ITEM_PROFILE_SILENCE);    
+                        break;
+                    }
+                    case 3:
+                    {
+                        pBarImg = ISHELL_LoadResImage(pme->m_pIShell,
+    		                                      AEE_APPSCOMMONRES_IMAGESFILE,
+    		                                      IDI_MENU_ITEM_PROFILE_MEETING);
+                        break;
+                    }
+                    case 4:
+                    {
+                        pBarImg = ISHELL_LoadResImage(pme->m_pIShell,
+    		                                      AEE_APPSCOMMONRES_IMAGESFILE,
+    		                                      IDI_MENU_ITEM_PROFILE_OUTDOOR);
+                        break;
+                    }
+                    default:
+                        break;
+                }    
+#endif                
+            }
+            else
+            {
+                if (bSel)
+    			{
+    				pBarImg = ISHELL_LoadResImage(pme->m_pIShell,
+    		                                      AEE_APPSCOMMONRES_IMAGESFILE,
+    		                                      IDI_MENU_ITEM_FOCUS);
+    			}
+    			else
+    			{
+    				pBarImg = ISHELL_LoadResImage(pme->m_pIShell,
+    		                                      AEE_APPSCOMMONRES_IMAGESFILE,
+    		                                      IDI_MENU_ITEM);
+    			}		
+            }
 
 			if (NULL != pBarImg)
 	        {	        	
@@ -4827,7 +4869,7 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
 			prc->x  += rect.dx;
         	prc->dx -= rect.dx;
 		}		
-		#else		
+#else		
 
 #if !defined( FEATURE_CONTROL_BG_USE_IMAGE)
         if(bSel){			
