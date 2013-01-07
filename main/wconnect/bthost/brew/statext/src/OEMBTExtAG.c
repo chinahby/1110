@@ -336,6 +336,8 @@ int OEMBTExtAG_Connect(
   int                  result;
   OEMBTExtAGobj_t*     pMe = OEMBTExtAG_CheckParentPtr( pParent );
 
+  DBGPRINTF("***zzg OEMBTExtAG_Connect***");
+
   if ( pMe == NULL )
   {
     return EBADPARM;
