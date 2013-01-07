@@ -1983,6 +1983,27 @@ static void refreshChannelListCB( void *pme)
         countSearchChanne = 0;
         ready = FALSE;        
     }
+
+#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A)
+    if( !FmRadio_FindChanListNode(68))        //94.3
+    {
+        sChanInfo info = { 0};
+        info.wChannel = 68;
+        WSTRCPY(info.szName, L"94.3");        
+        FmRadio_AddChanListNode( &info);
+        FmRadio_SaveChannelList( pMe);
+    }
+
+    if( !FmRadio_FindChanListNode(181))       //105.6
+    {
+        sChanInfo info = { 0};
+        info.wChannel = 181;
+        WSTRCPY(info.szName, L"105.6");  
+        FmRadio_AddChanListNode( &info);
+        FmRadio_SaveChannelList( pMe);
+    }  
+#endif
+
     if(ready)
     {
         if( changeChannelClockwise(pme))

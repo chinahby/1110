@@ -1616,6 +1616,7 @@ void FmRadio_SaveChannelList( CFmRadio* pMe)
         pMe->chanInfoList[8].wChannel = 189;  
 	}
     #endif
+    
 	(void) ICONFIG_SetItem(pMe->m_pConfig,
 						   CFGI_FMRADIO_CHAN_TOTAL,
 						   &byMax,
