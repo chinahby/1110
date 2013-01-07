@@ -917,7 +917,8 @@ static void OEMPriv_DrawKeyguardInformation(boolean unlockkey)
     {
         AEEDeviceInfo devinfo = {0};
         IShell      *pShell = AEE_GetShell();
-        
+
+       /*
         ISHELL_GetDeviceInfo(pShell, &devinfo);
         if(NULL != pDevBmp)
         {
@@ -939,6 +940,8 @@ static void OEMPriv_DrawKeyguardInformation(boolean unlockkey)
                 IBITMAP_Release(pTempBmp);
             }
         }
+        */
+        
         OEMKeyguard_Set_Annunciator_Enable(FALSE);
 #ifdef FEATURE_KEYGUARD
         Appscomm_Draw_Keyguard_Information(pd,pStatic,unlockkey);
