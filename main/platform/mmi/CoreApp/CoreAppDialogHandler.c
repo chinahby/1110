@@ -6032,7 +6032,8 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
 			//Do Nothing
 #else
 #ifdef FEATURE_VERSION_C337
-			STRTOWSTR("C260", wszBuf, nSize);
+			//STRTOWSTR("C260", wszBuf, nSize);
+			STRTOWSTR("", wszBuf, nSize);
 #else
             STRTOWSTR(ver_modelname, wszBuf, nSize);
 #endif
