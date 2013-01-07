@@ -139,6 +139,9 @@
 	<String Id="1044" Name="IDS_STORAGE_SETUP_CARD0" Encoding="Unicode">
 		<Text>स्मृति कार्ड</Text>
 	</String>
+	<STRING Id="1045" Name="IDS_RECORD_START">
+		<Text>प्रारंभ</Text>
+	</STRING>
 	<STRING Id="1100" Name="IDS_RECORD_MEDIA_ERROR">
 		<Text>त्रुटि</Text>
 	</STRING>

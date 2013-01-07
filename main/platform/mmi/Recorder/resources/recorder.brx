@@ -139,6 +139,9 @@
 	<String Id="1044" Name="IDS_STORAGE_SETUP_CARD0" Encoding="Unicode">
 		<Text>Memory card</Text>
 	</String>
+	<STRING Id="1045" Name="IDS_RECORD_START">
+		<Text>Start</Text>
+	</STRING>
 	<STRING Id="1100" Name="IDS_RECORD_MEDIA_ERROR">
 		<Text>Error</Text>
 	</STRING>
