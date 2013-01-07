@@ -493,5 +493,17 @@
 	<Object Id="7102" Name="IDB_MMS_SPACE" MimeType="image/png">
 		<File>..\images\176x220\common\Appscommon\Icon\space.png</File>
 	</Object>
+	<Object Id="7103" Name="IDI_MENU_ITEM_PROFILE_ALERT" MimeType="image/png">
+		<File>..\images\176x220\common\Appscommon\Menu\menu\alert.png</File>
+	</Object>
+	<Object Id="7104" Name="IDI_MENU_ITEM_PROFILE_SILENCE" MimeType="image/png">
+		<File>..\images\176x220\common\Appscommon\Menu\menu\silence.png</File>
+	</Object>
+	<Object Id="7105" Name="IDI_MENU_ITEM_PROFILE_MEETING" MimeType="image/png">
+		<File>..\images\176x220\common\Appscommon\Menu\menu\vibrator.png</File>
+	</Object>
+	<Object Id="7106" Name="IDI_MENU_ITEM_PROFILE_OUTDOOR" MimeType="image/png">
+		<File>..\images\176x220\common\Appscommon\Menu\menu\vibring.png</File>
+	</Object>
 </Objects>
 </BREWRes>
