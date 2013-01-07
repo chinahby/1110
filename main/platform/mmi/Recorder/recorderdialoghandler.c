@@ -82,6 +82,9 @@ static boolean recorder_format_file_name( Media* pme, char* fileNameBuffer, int 
 static void recorder_close_record_dialog_cb( Recorder* pme);
 #endif
 static void recorder_scroll_title( Recorder* pme);
+#ifdef FEATURE_VERSION_C316
+static void recorder_Sleep( Recorder* pme);  //add by pyuangui 2013-01-07
+#endif
 extern void OEMOS_Sleep(uint32 nMSecs);
 //-------------------------------------------------------------------------------------------------
 int Recorder_ShowDialog( Recorder* pme, uint16 dlgResId)
@@ -1302,6 +1305,16 @@ static void recorder_tick_simulator( Recorder* pme)
 }
 #endif
 
+//Add by pyuangui 2013-01-07
+#ifdef FEATURE_VERSION_C316
+static void recorder_Sleep( Recorder* pme)
+{
+	if(pme->m_bFristStart)
+	  dialog_handler_of_state_record(pme, EVT_KEY, AVK_INFO, 0);
+}
+#endif
+//Add end
+
 static void recorder_scroll_title( Recorder* pme)
 {
 
@@ -1435,6 +1448,9 @@ static boolean  dialog_handler_of_state_record( Recorder* pme, AEEEvent evt, uin
 			}
 			pme->m_ptr[0] = (int)&subState;
 			pme->m_ptr[1] = (int)&reserve;
+			#ifdef FEATURE_VERSION_C316
+			pme->m_bFristStart = TRUE;
+			#endif
 			recorder_set_media_event_notify( &pme->m_Media, recorder_media_event_handler, pme);
 		}
 		return TRUE;
@@ -1492,8 +1508,9 @@ static boolean  dialog_handler_of_state_record( Recorder* pme, AEEEvent evt, uin
 		case EVT_DIALOG_END:
 		{		
 			ISHELL_CancelTimer( pme->m_pShell, 0, pme);
-
-			
+			#ifdef FEATURE_VERSION_C316
+            pme->m_bFristStart = TRUE;
+			#endif
 #if !defined( AEE_SIMULATOR)
 
 			if (pme->m_bSuspended)
@@ -1553,7 +1570,6 @@ __dialog_handler_of_state_record_stop__:
 
 		case EVT_USER_REDRAW:
 		{
-
 #if defined( AEE_SIMULATOR)
 			drawImage( pme, pme->m_Media.m_bRecorder ? IDI_RECORDER_BG_RECORD : IDI_RECORDER_BG_PLAY);
 #else
@@ -1575,7 +1591,11 @@ __dialog_handler_of_state_record_stop__:
 			{
 
 				static BottomBar_e_Type	button[][2] = { { 0, IDS_BACK}, { IDS_SAVE, IDS_BACK}};
+				#ifdef FEATURE_VERSION_C316     //Add by pyuangui 2013-01-07
+				static uint16			resId[]	  	= { IDS_RECORD_START, IDS_RECORD_PAUSE};
+				#else
 				static uint16			resId[]	  	= { IDS_RECORD_RESUME, IDS_RECORD_PAUSE};
+				#endif
 				int						state	  	= ( pme->m_Media.m_eState == MEDIA_STATE_PAUSED ? 0 : 1);
 				Media*					pmedia    	= &pme->m_Media;
 
@@ -1603,6 +1623,14 @@ __dialog_handler_of_state_record_stop__:
 #endif
 					)
 #endif
+                  #if 0  
+       			   if(pme->m_bFristStart)
+                   {
+                      pme->m_Media.m_eState = MEDIA_STATE_PAUSED;
+       			      subState = 0;
+       			      recorder_pause( &pme->m_Media);
+                   }
+		          #endif
 					recorder_draw_button( pme, resId[state], pmedia->m_bRecorder);
 				}
 			}
@@ -1611,8 +1639,16 @@ __dialog_handler_of_state_record_stop__:
 			{
 				drawModalDialog( pme->m_pDisplay, pStatic, IDS_RECORD_CANCEL_CONFIRM, TRUE);
 			}
-
 			IDISPLAY_UpdateEx( pme->m_pDisplay, FALSE);
+			MSG_FATAL("pme->m_bAppIsReady=%d ---- pme->m_bLockkey=%d",pme->m_bAppIsReady, pme->m_bLockkey,0);
+            //Add by pyuangui 2013-01-07
+            #ifdef FEATURE_VERSION_C316
+			if(pme->m_bFristStart)
+			{
+			  ISHELL_SetTimer( pme->m_pShell, 500, (PFNNOTIFY)recorder_Sleep, pme);
+			}
+			#endif
+			//Add end
 		}
 		return TRUE;
 
@@ -1644,7 +1680,7 @@ __dialog_handler_of_state_record_stop__:
 					}
 				case AVK_CLR:
 				case AVK_SOFT2:
-				{					
+				{		
 					if( pme->m_Media.m_bRecorder && ( subState == 1 || subState == 3))
 					{						
 						if( !pme->m_Media.m_bMediaError &&
@@ -1730,7 +1766,7 @@ __dialog_handler_of_state_record_pause_resume__:
 					}
 					else
 #endif
-					if( pme->m_Media.m_eState == MEDIA_STATE_PLAYING || pme->m_Media.m_eState == MEDIA_STATE_RECORDING)
+                    if( pme->m_Media.m_eState == MEDIA_STATE_PLAYING || pme->m_Media.m_eState == MEDIA_STATE_RECORDING)
 					{
 						if( 0
 #if defined( FEATURE_RECORDER_RECORD_PAUSE)
@@ -1744,7 +1780,7 @@ __dialog_handler_of_state_record_pause_resume__:
 #if defined( AEE_SIMULATOR)
 							pme->m_Media.m_eState = MEDIA_STATE_PAUSED;
 #else
-							pme->m_bLockkey = TRUE;
+                            pme->m_bLockkey = TRUE;
 							recorder_pause( &pme->m_Media);
 #endif
 						}
@@ -1784,7 +1820,9 @@ __dialog_handler_of_state_record_pause_resume__:
 #endif
 						}
 					}
-
+					#ifdef FEATURE_VERSION_C316
+                    pme->m_bFristStart = FALSE;
+					#endif
 #if defined( AEE_SIMULATOR)
 					repaint( TRUE);
 #endif
@@ -4247,12 +4285,12 @@ int recorder_pause( Media* pme)
 
 	int result = 0;
 
-	debug( ";--------------------------------------");
-	debug( ";recorder_pause, [%s]", pme->m_pszName);
+	MSG_FATAL( ";--------------------------------------",0,0,0);
+	MSG_FATAL( ";recorder_pause, [%s]", pme->m_pszName,0,0);
 
 	if( !pme->m_pMedia || ( result = IMEDIA_Pause( pme->m_pMedia)) != SUCCESS)
 	{
-		debug( ";pause failed, 0x%x", result);
+		MSG_FATAL( ";pause failed, 0x%x", result,0,0);
 	}
 
 	return result;

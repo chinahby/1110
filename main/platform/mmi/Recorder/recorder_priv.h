@@ -164,6 +164,9 @@ typedef struct
 	boolean					m_bSuspended;
 	boolean 				m_bAppIsReady;
 	boolean					m_bLockkey;
+    #ifdef FEATURE_VERSION_C316
+	boolean                 m_bFristStart;   //Add by pyuangui 2013-01-07
+	#endif
 	IFileMgr*				m_pFileManager;
 	Media					m_Media;
 	int						m_nLastOperationError;
