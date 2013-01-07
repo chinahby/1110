@@ -2959,7 +2959,7 @@ void DrawPromptMessage (IDisplay *pIDisplay,
 #endif
 */
 
-#ifdef FEATURE_VERSION_C337
+#if defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_W317A)
         strrect.x += 5;
         strrect.dx -= 10;        
         strrect.dy -= 20;
@@ -2999,7 +2999,7 @@ void DrawPromptMessage (IDisplay *pIDisplay,
         if (TRUE== drawbgimage)
         {
         	DBGPRINTF("***zzg Appscommon DrawPromptMessage***");                 
-#ifdef FEATURE_VERSION_C337            
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A)            
             ISTATIC_SetProperties(pStatic, ST_CENTERTEXT|ST_MIDDLETEXT|ST_TRANSPARENTBACK|ST_SPECIAL_BG);   	//Modify by zzg 2011_12_31
 #else
             ISTATIC_SetProperties(pStatic, ST_CENTERTEXT|ST_MIDDLETEXT|ST_TRANSPARENTBACK);   
