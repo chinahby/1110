@@ -432,8 +432,12 @@ static boolean  SecurityMainDlgHandler(CSecurityMenu *pMe,
             {
                 IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_PIN_SET, IDS_PIN_SET, NULL, 0);
             }
+#ifdef FEATURE_VERSION_C316	
+            IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_DATA_PROTECTION, IDS_DATA_PROTECTION, NULL, 0);
+#else
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_APPLICATION_LOCK, IDS_APPLICATION_LOCK, NULL, 0);
-            #ifdef FEATURE_KEYGUARD
+#endif
+			 #ifdef FEATURE_KEYGUARD
             #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_W317A)
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_AUTOKEYGUARD_TITLE, IDS_AUTOKEYGUARD_TITLE, NULL, 0);
             #endif
@@ -508,7 +512,9 @@ static boolean  SecurityMainDlgHandler(CSecurityMenu *pMe,
                     CLOSE_DIALOG(DLGRET_ONEKEY_LOCK_KEYPAD)
                     break;
 #endif
-                
+#ifdef FEATURE_VERSION_C316	
+                case IDS_DATA_PROTECTION:
+#endif
                 case IDS_APPLICATION_LOCK:
                     CLOSE_DIALOG(DLG_APPLICATIONLOCK)
                     break;
@@ -630,11 +636,19 @@ static boolean  SecurityApplicationLockDlgHandler(CSecurityMenu *pMe,
 			//add by yangdecai
 			{
 				AECHAR WTitle[40] = {0};
+#ifdef FEATURE_VERSION_C316	
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_APPSSECURITYMENU_RES_FILE,                                
+                        IDS_DATA_PROTECTION,
+                        WTitle,
+                        sizeof(WTitle));                        
+#else                        
 				(void)ISHELL_LoadResString(pMe->m_pShell,
                         AEE_APPSSECURITYMENU_RES_FILE,                                
                         IDS_APPLICATION_LOCK,
                         WTitle,
                         sizeof(WTitle));
+#endif
 				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
             }
             

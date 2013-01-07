@@ -94,6 +94,9 @@
 	<STRING Id="1031" Name="IDS_RESTRICT_TITLE">
 		<Text>Restrict</Text>
 	</STRING>
+	<String Id="1032" Name="IDS_DATA_PROTECTION" Encoding="Unicode">
+		<Text>data protection</Text>
+	</String>
 	<STRING Id="1033" Name="IDS_PHONE_LOCK">
 		<Text>Phone lock</Text>
 	</STRING>
