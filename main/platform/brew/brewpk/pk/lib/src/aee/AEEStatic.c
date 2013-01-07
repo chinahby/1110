@@ -717,6 +717,9 @@ static boolean AStatic_Redraw(IStatic * po)
     }
 #endif
 
+   DBGPRINTF("***zzg AStatic_Redraw***");
+
+
    rc = pme->m_rc;   
    
     if(pme->m_dwProps & ST_TRANSPARENT) 
@@ -1492,6 +1495,8 @@ static void AStatic_RedrawText(AStatic * pme)
    rc.y     += pme->m_cyTitle;
    rc.dy    -= pme->m_cyTitle;
 
+   DBGPRINTF("***zzg AStatic_RedrawText***");
+
    // Right aligned text support - Take the width of the scrollbar into account.
   if (pme->m_nLines > pme->m_nPageLines)
      rc.dx -= pme->m_nSBWidth + 1;   // Now paired with Recalc
@@ -1536,8 +1541,12 @@ static void AStatic_RedrawText(AStatic * pme)
 
 			if (pFrame != NULL) 
 			{
+			    DBGPRINTF("***zzg AStatic_RedrawText bi.cx=%d, bi.cy=%d***", bi.cx, bi.cy);
+                DBGPRINTF("***zzg AStatic_RedrawText rc.x=%d, rc.y=%d***", rc.x, rc.y);
+                DBGPRINTF("***zzg AStatic_RedrawText rc.dx=%d, rc.dy=%d***", rc.dx, rc.dy);
+                
 				IBITMAP_GetInfo(pFrame, &bi, sizeof(bi));
-				IDISPLAY_BitBlt(pd, rc.x, rc.y, rc.dx, rc.dy, pFrame, 1, (bi.cy-rc.dy), AEE_RO_COPY);
+				IDISPLAY_BitBlt(pd, rc.x, rc.y, rc.dx, rc.dy, pFrame, 0, 0, AEE_RO_COPY);
 				IBITMAP_Release(pFrame);
 				pFrame = NULL;
 		 	}
@@ -1827,6 +1836,8 @@ static void AStatic_DrawScrollBar(AStatic * pme,int nScrollItem)
 {
    AEERect     rcFrame, rcThumb;
    IDisplay *  pd = pme->m_pDisplay;
+
+   DBGPRINTF("***zzg AStatic_DrawScrollBar***");
 
    if( !AStatic_GetScrollBarRects(pme, nScrollItem, &rcFrame, &rcThumb) ){
       // Draw the frame and Thumb...
@@ -2581,6 +2592,8 @@ static void AStatic_FillRect_Transparence(AStatic * pme, AEERect rc)
 static void     AStatic_DrawBackground(AStatic * pme, AEERect *rc)
 {
     IImage *pImageBg = NULL;
+
+    DBGPRINTF("***zzg AStatic_DrawBackground***");
 
     if(pme->m_nBgImgResID != 0 && STRLEN(pme->m_strBgImgResFile) != 0)
     {

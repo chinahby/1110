@@ -2858,6 +2858,10 @@ void DrawPromptMessage (IDisplay *pIDisplay,
             IIMAGE_GetInfo(StringBgMsgImg, &StringBgImgInfo);
             //totalrect.x = (devinfo.cxScreen - StringBgImgInfo.cx)/2;
             IIMAGE_Draw(StringBgMsgImg, totalrect.x - StringBgImgInfo.cx/2, totalrect.y - StringBgImgInfo.cy/2);
+            
+            MSG_FATAL("***zzg DrawPromptMessage StringBgImgInfo.dx=%d, StringBgImgInfo.dy=%d***",StringBgImgInfo.cx,StringBgImgInfo.cy,0);
+            MSG_FATAL("***zzg DrawPromptMessage BGImage.x=%d, BGImage.y=%d***",totalrect.x - StringBgImgInfo.cx/2,totalrect.y - StringBgImgInfo.cy/2,0);
+           
             IIMAGE_Release(StringBgMsgImg);
             StringBgMsgImg = NULL;  
             
@@ -2960,6 +2964,15 @@ void DrawPromptMessage (IDisplay *pIDisplay,
 	strrect.dx -= 10;
 #endif
 */
+
+#ifdef FEATURE_VERSION_C337
+        strrect.x += 5;
+        strrect.dx -= 10;        
+        strrect.dy -= 20;
+#endif
+
+    MSG_FATAL("***zzg DrawPromptMessage strrect.x=%d, strrect.y=%d***",strrect.x,strrect.y,0);
+    MSG_FATAL("***zzg DrawPromptMessage strrect.dx=%d, strrect.dy=%d***",strrect.dx,strrect.dy,0);
      
     //Draw string  
     ISTATIC_SetRect(pStatic, &strrect);
@@ -2991,9 +3004,12 @@ void DrawPromptMessage (IDisplay *pIDisplay,
 #endif
         if (TRUE== drawbgimage)
         {
-        	DBGPRINTF("***zzg Appscommon DrawPromptMessage***");
-            ISTATIC_SetProperties(pStatic, ST_CENTERTEXT|ST_MIDDLETEXT|ST_TRANSPARENTBACK);          
-            //ISTATIC_SetProperties(pStatic, ST_CENTERTEXT|ST_MIDDLETEXT|ST_TRANSPARENTBACK|ST_SPECIAL_BG);   	//Modify by zzg 2011_12_31
+        	DBGPRINTF("***zzg Appscommon DrawPromptMessage***");                 
+#ifdef FEATURE_VERSION_C337            
+            ISTATIC_SetProperties(pStatic, ST_CENTERTEXT|ST_MIDDLETEXT|ST_TRANSPARENTBACK|ST_SPECIAL_BG);   	//Modify by zzg 2011_12_31
+#else
+            ISTATIC_SetProperties(pStatic, ST_CENTERTEXT|ST_MIDDLETEXT|ST_TRANSPARENTBACK);   
+#endif
         }
         else
         {
