@@ -412,6 +412,10 @@ static int CMusicPlayer_InitAppData(CMusicPlayer *pMe)
     pMe->m_bSimPlayFailed = FALSE;
     g_nInterruptRef = 0;
     pMe->m_nRandNum = 0;
+#ifdef FEATURE_VERSION_C337		
+	pMe->keystart_time = 0;	
+    pMe->keyend_time = 0;
+#endif
 #ifdef FEATURE_SUPPORT_BT_APP
 #ifndef WIN32
     pMe->m_nBTID = BCMAPP_AG_BAD_APPID;

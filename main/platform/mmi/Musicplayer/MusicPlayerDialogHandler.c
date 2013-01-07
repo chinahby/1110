@@ -624,9 +624,73 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
 
 
 #endif//FEATURE_LCD_TOUCH_ENABLE
+
+#ifdef FEATURE_VERSION_C337
+        case EVT_KEY_PRESS:	
+			if((wParam == AVK_LEFT) ||(wParam == AVK_RIGHT))
+			{
+	            pMe->keystart_time = GETUPTIMEMS();	
+				 MSG_FATAL("pMe->keystart_time1=%d",pMe->keystart_time,0,0);
+			}
+			break;
+
+        case EVT_KEY_RELEASE:
+			 if((wParam == AVK_LEFT) ||(wParam == AVK_RIGHT))	
+			 {
+			     pMe->keyend_time= GETUPTIMEMS();	
+				  MSG_FATAL("pMe->keystart_time2=%d",pMe->keystart_time,0,0); 	 
+				  MSG_FATAL("pMe->keyend_time=%d",pMe->keyend_time,0,0); 	  	
+				  if(pMe->keyend_time - pMe->keystart_time < 1000)
+				  {
+				      //short press
+				      if(wParam == AVK_LEFT)
+				      {
+                          MP3_DrawImage( pMe,IDI_PREVIOUS_PRESS, PREVIOUSPRESS_X, PREVIOUSPRESS_Y);
+                          IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
+                  		pMe->m_rtype = TYPE_PREVIOUS;//wlh 20090415 mod 为了区别播放区域，加音量，减音量的刷新，加了个参数
+                  #if defined( FEATURE_DISP_220X176) 
+                  		ISHELL_SetTimer(pMe->m_pShell,1500,(PFNNOTIFY)MP3_DrawImageWithOffset, pMe);
+                  #elif defined(FEATURE_DISP_128X160) || defined(FEATURE_DISP_160X128)
+                          ISHELL_SetTimer(pMe->m_pShell,1500,(PFNNOTIFY)MP3_DrawImageWithOffset, pMe);
+                  #else			
+                          ISHELL_SetTimer(pMe->m_pShell,50,(PFNNOTIFY)MP3_DrawImageWithOffset, pMe);
+                  #endif		
+                          CMusicPlayer_PlayNext(pMe,FALSE );//播放上一首
+				      }
+					  else
+					  {
+                         MP3_DrawImage( pMe,IDI_NEXT_PRESS,NEXTPRESS_X, NEXTPRESS_Y);
+                         IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
+                 		pMe->m_rtype = TYPE_NEXT;//wlh 20090415 mod 为了区别播放区域，加音量，减音量的刷新，加了个参数
+                 #if defined(FEATURE_DISP_220X176)		
+                         ISHELL_SetTimer(pMe->m_pShell,1500,(PFNNOTIFY)MP3_DrawImageWithOffset, pMe);
+                 #elif defined(FEATURE_DISP_128X160)	|| defined(FEATURE_DISP_160X128)
+                 		ISHELL_SetTimer(pMe->m_pShell,1500,(PFNNOTIFY)MP3_DrawImageWithOffset, pMe);
+                 #else
+                 		ISHELL_SetTimer(pMe->m_pShell,50,(PFNNOTIFY)MP3_DrawImageWithOffset, pMe);
+                 #endif		
+                         pMe->m_bUserPressNext = TRUE;
+                         CMusicPlayer_PlayNext(pMe,TRUE);//播放下一首
+                         pMe->m_bUserPressNext = FALSE;					  
+					  }
+				  }
+			 }
+			 pMe->keyend_time = 0;
+			 pMe->keystart_time = 0;
+			 break;
+#endif						
         case EVT_KEY:
+#ifdef FEATURE_VERSION_C337
+            {
+                uint32 keycurrent_time= GETUPTIMEMS();	
+			     if(keycurrent_time - pMe->keystart_time > 1000)//long press	
+			     {
+			         return MP3_MusicPlayerHandleKeyEvent(pMe,eCode,wParam,dwParam);
+			     }
+             }
+#else
              return MP3_MusicPlayerHandleKeyEvent(pMe,eCode,wParam,dwParam);
-             
+#endif             
         default:
             break;
         }//switch (eCode)
