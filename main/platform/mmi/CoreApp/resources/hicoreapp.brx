@@ -134,7 +134,7 @@
 		<Text>चीन दूरसंचार</Text>
 	</STRING>
 	<STRING Id="1045" Name="IDS_HEADSET_ON">
-		<Text>हेडसेट प्लग में</Text>
+		<Text>हेडसेट लगाया गया</Text>
 	</STRING>
 	<STRING Id="1046" Name="IDS_HEADSET_OFF">
 		<Text>हेडसेट प्लग बाहर</Text>
@@ -233,10 +233,10 @@
 		<Text>USB हटा</Text>
 	</String>
 	<String Id="1103" Name="IDS_CHARGER_CONNECTED">
-		<Text>Charger connected</Text>
+		<Text>चार्जर लगा</Text>
 	</String>
 	<String Id="1104" Name="IDS_CHARGER_REMOVED">
-		<Text>Charger removed</Text>
+		<Text>चार्जर हटा</Text>
 	</String>
 	<String Id="1105" Name="IDS_5_MIN">
 		<Text>5 MIN</Text>
