@@ -2931,9 +2931,14 @@ void OEM_RestoreFactorySetting( void )
    oemi_cache.b_calendar_lock          = FALSE;
    //Add End
    
-#ifdef FEATURE_VERSION_W317A    
+#if defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_C316)  
    oemi_cache.b_mediagallery_lock      = FALSE;
 #endif 
+
+#if defined(FEATURE_VERSION_C316)  
+   oemi_cache.b_multimedia_lock         = FALSE;
+#endif 
+
 
 #ifdef FEATURE_VERSION_C337
 	oemi_cache.m_defaultcont		   = FALSE;
