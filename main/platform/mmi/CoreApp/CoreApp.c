@@ -928,6 +928,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             //pMe->m_pDisplay = as->pDisplay;
             //(void) IDISPLAY_AddRef(pMe->m_pDisplay);
             pMe->m_rc = as->rc;
+
 #ifdef FEATURE_ICM
             pMe->m_bemergencymode = CoreApp_IsEmergencyMode(pMe->m_pCM);
             // 关闭全部通话。以前出现过访问数据业务后电流过大的问题
@@ -939,6 +940,20 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 #endif
             pMe->m_bSuspended = FALSE;
             pMe->m_bActive = TRUE;
+//Add by pyuangui 2013-01-08 
+#ifdef FEATURE_VERSION_C337
+			if(pMe->m_bemergencymode)
+			{
+			  ICM_SetSystemPreference(pMe->m_pCM,
+							AEECM_MODE_PREF_PERSISTENT, AEECM_PREF_TERM_PERMANENT, 0,
+							AEECM_GW_ACQ_ORDER_PREF_NO_CHANGE, AEECM_BAND_PREF_NO_CHANGE,
+							AEECM_ROAM_PREF_NO_CHANGE, AEECM_HYBR_PREF_NO_CHANGE,
+							AEECM_SRV_DOMAIN_PREF_NO_CHANGE, AEECM_NETWORK_SEL_MODE_PREF_NO_CHANGE,
+							NULL, NULL, NULL);
+			  pMe->m_bemergencymode = FALSE;
+			}	
+#endif
+//Add End
 
             // 跑状态机
             CoreApp_RunFSM(pMe);
