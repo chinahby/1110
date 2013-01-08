@@ -7425,8 +7425,19 @@ MAKE_CALL_VALUE CallApp_MakeCall(CCallApp *pMe)
         ||pMe->idle_info.uimLocked)
         &&!b_energency)
     {
+    //Add by pyuangui 2013-01-08
+    #ifdef FEATURE_VERSION_C337
+        ICM_SetSystemPreference(pMe->m_pICM,
+                            AEECM_MODE_PREF_PERSISTENT, AEECM_PREF_TERM_PERMANENT, 0,
+                            AEECM_GW_ACQ_ORDER_PREF_NO_CHANGE, AEECM_BAND_PREF_NO_CHANGE,
+                            AEECM_ROAM_PREF_NO_CHANGE, AEECM_HYBR_PREF_NO_CHANGE,
+                            AEECM_SRV_DOMAIN_PREF_NO_CHANGE, AEECM_NETWORK_SEL_MODE_PREF_NO_CHANGE,
+                            NULL, NULL, NULL);
+	#else
         CLOSE_DIALOG(DLGRET_DIALER_INVALID_EMGNUMBER)
         return CALL_FAIL_EMERGENCY_MODE;
+	#endif
+	//Add End
     }
 #if 0
     if(IsRunAsFactoryTestMode() && !b_energency)
