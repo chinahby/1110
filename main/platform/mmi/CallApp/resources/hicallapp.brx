@@ -14,7 +14,7 @@
 		<Text>आईपी ​​संख्या खाली है</Text>
 	</STRING>
 	<STRING Id="1005" Name="IDS_CALLING_DIALOG_TEXT">
-		<Text>कॉल आ रही हे</Text>
+		<Text>कॉल हो रही हे</Text>
 	</STRING>
 	<STRING Id="1006" Name="IDS_ENDCALL_DIALOG_TEXT">
 		<Text>कॉल समाप्त.</Text>
