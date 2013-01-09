@@ -3466,7 +3466,10 @@ static void recorder_show_media_spec( CCallApp* ref, RGBVAL color)
 				ref->m_rc.dx,
 				GetBottomBarHeight( ref->m_pDisplay)
 			);
+		
+		#ifndef FEATURE_VERSION_C316    //modi by pyuangui 2013-01-09
 		drawText3( ref, &rect, AEE_APPSCALLAPP_RES_FILE, resId, color);
+		#endif
 	}
 
 	IDISPLAY_Update( ref->m_pDisplay);
