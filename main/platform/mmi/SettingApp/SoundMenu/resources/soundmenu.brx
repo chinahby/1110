@@ -184,6 +184,9 @@
 	<STRING Id="1064" Name="IDS_MSG_ALERT_MODE">
 		<Text>Message alert mode</Text>
 	</STRING>
+	<STRING Id="1065" Name="IDS_PROFILE_BLUETOOTH">
+		<Text>Bluetooth</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_SOUNDMENU_PROFILES" Focus="0">

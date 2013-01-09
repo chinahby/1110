@@ -169,6 +169,9 @@
  	<STRING Id="1059" Name="IDS_DEFAULT">
  		<Text>الوضع الافتراضي</Text>
  	</STRING>
+ 	<STRING Id="1065" Name="IDS_PROFILE_BLUETOOTH">
+		<Text>Bluetooth</Text>
+	</STRING>
  </Strings>
  <Dialogs>
  	<DIALOG Id="6001" Name="IDD_SOUNDMENU_PROFILES" Focus="0">

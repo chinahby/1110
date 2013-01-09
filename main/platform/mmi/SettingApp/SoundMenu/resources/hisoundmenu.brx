@@ -179,10 +179,13 @@
 		<Text>वक्ता</Text>
 	</STRING>
 	<STRING Id="1063" Name="IDS_MSG_TONE">
-		<Text>Message tone</Text>
+		<Text>संदेश टोन</Text>
 	</STRING>
 	<STRING Id="1064" Name="IDS_MSG_ALERT_MODE">
-		<Text>Message alert mode</Text>
+		<Text>संदेश अलर्ट मोड</Text>
+	</STRING>
+	<STRING Id="1065" Name="IDS_PROFILE_BLUETOOTH">
+		<Text>ब्लूटूथ</Text>
 	</STRING>
 </Strings>
 <Dialogs>
