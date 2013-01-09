@@ -5960,7 +5960,13 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
                     }
 #elif defined(FEATURE_VERSION_C316)		
 						 MSG_FATAL("CallApp_IncomingCall SELECT 2 m_bShowPopMenu=%d",pMe->m_bShowPopMenu,0,0);
-						 if ( !pMe->m_bShowPopMenu )
+                         //Add By zzg 2013_01_09
+                         if ((AVKType)wParam == AVK_SEND)
+                         {
+                            CallApp_AnswerCall(pMe,FALSE,eCode,wParam,FALSE);                            
+                         }
+                         //Add End
+						 else if ( !pMe->m_bShowPopMenu )
 	                    {
 	                       (void) ISHELL_CancelTimer(pMe->m_pShell, CallApp_Dialer_Show_Animation,pMe); 
 	                        pMe->m_bShowPopMenu = TRUE;
