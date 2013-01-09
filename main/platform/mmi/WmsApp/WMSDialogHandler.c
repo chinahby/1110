@@ -7953,6 +7953,30 @@ static boolean IDD_SENDING_Handler(void *pUser,
 #else
                 Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
 #endif
+                //Add by pyuangui 2013-01-09
+                { 
+	                AECHAR wstrTitle[MAX_TITLE_LEN] = {0};
+	                int nLen = 0;
+	                
+	                (void)ISHELL_LoadResString(pMe->m_pShell, 
+	                            AEE_WMSAPPRES_LANGFILE,
+	                            IDS_RECEIVER,
+	                            wstrTitle,
+	                            sizeof(wstrTitle));
+	                            
+	                nLen = WSTRLEN(wstrTitle);
+					WSPRINTF(&wstrTitle[nLen], (MAX_TITLE_LEN-nLen)*sizeof(AECHAR), 
+	                    L" (%d/%d)", IVector_Size(pMe->m_pSendList), MAXNUM_MULTISEND); 
+					#if 0
+	                (void)IMENUCTL_SetTitle(pMenu, NULL, 0, wstrTitle);
+					#else
+					{
+					
+					IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wstrTitle);
+					}
+					#endif
+            	}	
+                //Add End
                 
                 //获得系统字体高度
                 nLineHeight = IDISPLAY_GetFontMetrics(pMe->m_pDisplay,
@@ -8904,19 +8928,8 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                                 sizeof(wstrTitle));
                                 
                     nLen = WSTRLEN(wstrTitle);
-					// add by pyuangui 20121221
-					#ifdef FEATURE_VERSION_W317A
-					if(nCount >= MAXNUM_MULTISEND)
-                    {
-                       nCount = MAXNUM_MULTISEND-1;
-                    }
-					WSPRINTF(&wstrTitle[nLen], (MAX_TITLE_LEN-nLen)*sizeof(AECHAR), 
-                        L" (%d/%d)", nCount+1, MAXNUM_MULTISEND); 
-					#else
                     WSPRINTF(&wstrTitle[nLen], (MAX_TITLE_LEN-nLen)*sizeof(AECHAR), 
                         L" (%d/%d)", nCount, MAXNUM_MULTISEND); 
-					#endif
-					//add end
 					#if 0
                     (void)IMENUCTL_SetTitle(pMenu, NULL, 0, wstrTitle);
 					#else
