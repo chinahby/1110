@@ -420,6 +420,10 @@ static boolean  HandleMainDialogEvent(CSoundMenu *pMe,
             Sound_App_Add_Menu(pMenu,IDS_QUIETMODE);
             Sound_App_Add_Menu(pMenu,IDS_MEETING);
             Sound_App_Add_Menu(pMenu,IDS_NOISEMODE);
+#ifdef FEATURE_VERSION_C316
+            Sound_App_Add_Menu(pMenu,IDS_PROFILE_BLUETOOTH);
+#endif
+
 #if 0          
             Sound_App_Add_Menu(pMenu,IDS_CARMODE);
 #endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH  
@@ -445,6 +449,12 @@ static boolean  HandleMainDialogEvent(CSoundMenu *pMe,
                 case OEMNV_PROFILE_NOISEMODE:           //户外模式
                     pMe->m_currDlgId = IDS_NOISEMODE;
                     break;
+
+#ifdef FEATURE_VERSION_C316
+                case OEMNV_PROFILE_BLUETOOTH:           //蓝牙模式
+                    pMe->m_currDlgId = IDS_PROFILE_BLUETOOTH;
+                    break;
+#endif
 
                 case OEMNV_PROFILE_CARMODE:             //车载模式
                     pMe->m_currDlgId = IDS_CARMODE;
@@ -518,6 +528,15 @@ static boolean  HandleMainDialogEvent(CSoundMenu *pMe,
                             pMe->m_sSubDlgId = IDS_ACTIVATING;                           
                             CLOSE_DIALOG(DLGRET_MESSAGE)
                             break;
+#ifdef FEATURE_VERSION_C316
+                        case IDS_PROFILE_BLUETOOTH:        //户外模式
+                            pMe->m_ProfileType = SET_BLUETOOTH;
+                            pMe->m_CurProfile=OEMNV_PROFILE_BLUETOOTH;
+                            pMe->m_ScenemodesubType = SET_ACTIVATE;                          
+                            pMe->m_sSubDlgId = IDS_ACTIVATING;                           
+                            CLOSE_DIALOG(DLGRET_MESSAGE)
+                            break;    
+#endif                            
         
                         default:
                             ASSERT_NOT_REACHABLE;                           
@@ -561,6 +580,13 @@ static boolean  HandleMainDialogEvent(CSoundMenu *pMe,
                      pMe->m_CurProfile=OEMNV_PROFILE_CARMODE;
                      CLOSE_DIALOG(DLGRET_SCENEMODESUB)
                      break;
+#ifdef FEATURE_VERSION_C316
+                case IDS_PROFILE_BLUETOOTH:          //蓝牙模式
+                     pMe->m_ProfileType = SET_BLUETOOTH;
+                     pMe->m_CurProfile=OEMNV_PROFILE_BLUETOOTH;
+                     CLOSE_DIALOG(DLGRET_SCENEMODESUB)
+                     break;
+#endif
 
                 default:
                      ASSERT_NOT_REACHABLE;
@@ -898,6 +924,26 @@ static boolean  HandleSoundMenuProfilesDialogEvent(CSoundMenu *pMe,
 		    }
 		    #endif
             break;
+#ifdef FEATURE_VERSION_C316
+        case OEMNV_PROFILE_BLUETOOTH:
+			#if 0
+            (void)IMENUCTL_SetTitle(pMenu,
+                                    AEE_APPSSOUNDMENU_RES_FILE,
+                                    IDS_PROFILE_BLUETOOTH,
+                                    NULL);
+			#else
+		    {
+		  		AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                                        AEE_APPSSOUNDMENU_RES_FILE,                                
+                                        IDS_PROFILE_BLUETOOTH,
+                                        WTitle,
+                                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+		    }
+		    #endif
+            break;
+#endif
         default:
             break;
     }
@@ -3550,7 +3596,11 @@ static void SoundMenu_SceneModeActivate(CSoundMenu *pMe)
           case OEMNV_PROFILE_CARMODE:             //车载模式
               IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_VIBRING);
               break;
-
+#ifdef FEATURE_VERSION_C316
+          case OEMNV_PROFILE_BLUETOOTH:             //蓝牙模式
+              IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_VIBRING);
+        break;
+#endif
           default:
               break;
       }

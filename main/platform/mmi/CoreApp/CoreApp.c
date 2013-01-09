@@ -4750,7 +4750,11 @@ static void CoreApp_SceneMode(CCoreApp *pMe)
 		case OEMNV_PROFILE_CARMODE:             //车载模式
 		  IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_VIBRING);
 		  break;
-
+#ifdef FEATURE_VERSION_C316
+        case OEMNV_PROFILE_BLUETOOTH:           //蓝牙模式
+		  IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_VIBRING);
+		  break;
+#endif
 		default:
 		  break;
 	}
@@ -4853,7 +4857,18 @@ static void    CoreApp_ResetRing(CCoreApp *pMe)
     		ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_SMS_RINGER_ID,(void*)nNewSmsConfigRinger,sizeof(nNewSmsConfigRinger));
         }
 	}
-	
+#ifdef FEATURE_VERSION_C316
+    if(  nNewSmsConfigRinger[OEMNV_PROFILE_BLUETOOTH].ringType == OEMNV_MP3_RINGER)
+	{
+        if(STRNICMP(AEEFS_CARD0_DIR,nNewSmsConfigRinger[OEMNV_PROFILE_BLUETOOTH].szMusicname,STRLEN(AEEFS_CARD0_DIR)) == 0)
+        {
+    		nNewSmsConfigRinger[OEMNV_PROFILE_BLUETOOTH].ringType = OEMNV_MID_RINGER;
+    		nNewSmsConfigRinger[OEMNV_PROFILE_BLUETOOTH].midID =OEMNV_SMS_RINGER_ID;
+    		ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_SMS_RINGER_ID,(void*)nNewSmsConfigRinger,sizeof(nNewSmsConfigRinger));
+        }
+	}
+#endif
+    
 	//CALL
 	if(nNewCallConfigRinger[OEMNV_PROFILE_NORMALMODE].ringType == OEMNV_MP3_RINGER)
 	{
@@ -4892,7 +4907,17 @@ static void    CoreApp_ResetRing(CCoreApp *pMe)
     		ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_CALL_RINGER,(void*)nNewCallConfigRinger,sizeof(nNewCallConfigRinger));
         }
 	}
-
+#ifdef FEATURE_VERSION_C316
+    if(  nNewCallConfigRinger[OEMNV_PROFILE_BLUETOOTH].ringType == OEMNV_MP3_RINGER)
+	{
+        if(STRNICMP(AEEFS_CARD0_DIR,nNewCallConfigRinger[OEMNV_PROFILE_BLUETOOTH].szMusicname,STRLEN(AEEFS_CARD0_DIR)) == 0)
+        {
+    		nNewCallConfigRinger[OEMNV_PROFILE_BLUETOOTH].ringType = OEMNV_MID_RINGER;
+    		nNewCallConfigRinger[OEMNV_PROFILE_BLUETOOTH].midID =OEMNV_DEFAULTRINGER;
+    		ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_CALL_RINGER,(void*)nNewCallConfigRinger,sizeof(nNewCallConfigRinger));
+        }
+	}
+#endif
 
 	//ALASRM
 	if(nNewAlarmConfigRinger[OEMNV_PROFILE_NORMALMODE].ringType == OEMNV_MP3_RINGER)
@@ -4932,6 +4957,17 @@ static void    CoreApp_ResetRing(CCoreApp *pMe)
     		ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_ALARM_RINGER,(void*)nNewAlarmConfigRinger,sizeof(nNewAlarmConfigRinger));
         }
 	}
+#ifdef FEATURE_VERSION_C316   
+    if(  nNewAlarmConfigRinger[OEMNV_PROFILE_BLUETOOTH].ringType == OEMNV_MP3_RINGER)
+	{
+        if(STRNICMP(AEEFS_CARD0_DIR,nNewAlarmConfigRinger[OEMNV_PROFILE_BLUETOOTH].szMusicname,STRLEN(AEEFS_CARD0_DIR)) == 0)
+        {
+    		nNewAlarmConfigRinger[OEMNV_PROFILE_BLUETOOTH].ringType = OEMNV_MID_RINGER;
+    		nNewAlarmConfigRinger[OEMNV_PROFILE_BLUETOOTH].midID = OEMNV_ALARM_RINGER;
+    		ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_ALARM_RINGER,(void*)nNewAlarmConfigRinger,sizeof(nNewAlarmConfigRinger));
+        }
+	}
+#endif
 }
 //add by yangdecai end
 
