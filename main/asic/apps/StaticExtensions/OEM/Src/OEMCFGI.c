@@ -1853,7 +1853,7 @@ static OEMConfigListType oemi_cache = {
    FALSE,											//CFGI_MEDIAGALLERY_LOCK_CHECK
 #endif 
 #ifdef FEATURE_VERSION_C316
-   TRUE,
+   FALSE,
    FALSE,
    OEMNV_PHONE_PASSWORD,
    FALSE,
@@ -3162,7 +3162,7 @@ void OEM_RestoreFactorySetting( void )
     MEMCPY(oemi_cache.sms_tracker_number,OEMNV_DEFAULTNUMBER, OEMNV_LOCKMUM_MAXLEN/*FILESPECLEN*/); //CFGI_SMS_TRACKER_NUMBER
 	#endif
 	#ifdef FEATURE_VERSION_C316
-	oemi_cache.b_mobiletracker_lock = TRUE;
+	oemi_cache.b_mobiletracker_lock = FALSE;
 	oemi_cache.mobiletracker_password = OEMNV_PHONE_PASSWORD;
 	oemi_cache.mobiletracker_password_check = TRUE;
 	MEMSET(oemi_cache.mobile_tracker_number_2,0,OEMNV_LOCKMUM_MAXLEN);
