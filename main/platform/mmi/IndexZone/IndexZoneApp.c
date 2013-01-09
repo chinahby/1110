@@ -718,7 +718,20 @@ static boolean IndexZoneApp_ListMenuHandler(IndexZoneApp *pMe, AEEEvent eCode, u
             #ifdef FEATURE_VERSION_C316
 			IMENUCTL_AddItem(pMenu, INDEXZONE_RES_FILE_LANG,IDS_INDEX_ZONE_CALLRECORD, IDS_INDEX_ZONE_CALLRECORD, NULL, 0);    //Add by pyuangui 20121231
             #endif
-			return TRUE;
+			{				
+		  		AECHAR WTitle[40] = {0};
+				
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        INDEXZONE_RES_FILE_LANG,                                
+                        IDS_INDEX_ZONE_TITLE,
+                        WTitle,
+                        sizeof(WTitle));
+                if(pMe->m_pIAnn != NULL)
+                {                								
+				    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+                }
+		    }
+		    return TRUE;
             
         case EVT_DIALOG_START:
             {  
@@ -757,7 +770,7 @@ static boolean IndexZoneApp_ListMenuHandler(IndexZoneApp *pMe, AEEEvent eCode, u
             return TRUE;
             
         case EVT_USER_REDRAW:			
-			{				
+/*			{				
 		  		AECHAR WTitle[40] = {0};
 				
 				(void)ISHELL_LoadResString(pMe->m_pShell,
@@ -769,7 +782,7 @@ static boolean IndexZoneApp_ListMenuHandler(IndexZoneApp *pMe, AEEEvent eCode, u
                 {                								
 				    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
                 }
-		    }
+		    }*/
 		
             (void)IMENUCTL_Redraw(pMenu);
             return TRUE;
@@ -865,8 +878,20 @@ static boolean IndexZoneApp_CallRecordHandler(IndexZoneApp *pMe, AEEEvent eCode,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:	
-			IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE); 
-			
+			//IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE); 
+			{				
+		  		AECHAR WTitle[40] = {0};
+				
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        INDEXZONE_RES_FILE_LANG,                                
+                        IDS_INDEX_ZONE_CALLRECORD,
+                        WTitle,
+                        sizeof(WTitle));
+                if(pMe->m_pIAnn != NULL)
+                {                								
+				    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+                }
+		    }			
 			IMENUCTL_AddItem(pMenu, INDEXZONE_RES_FILE_LANG,IDS_INDEX_ZONE_YES, IDS_INDEX_ZONE_YES, NULL, 0); 
 			IMENUCTL_AddItem(pMenu, INDEXZONE_RES_FILE_LANG,IDS_INDEX_ZONE_NO, IDS_INDEX_ZONE_NO, NULL, 0);  
             return TRUE;
@@ -901,7 +926,7 @@ static boolean IndexZoneApp_CallRecordHandler(IndexZoneApp *pMe, AEEEvent eCode,
             return TRUE;
             
         case EVT_USER_REDRAW:			
-			{				
+/*			{				
 		  		AECHAR WTitle[40] = {0};
 				
 				(void)ISHELL_LoadResString(pMe->m_pShell,
@@ -913,7 +938,7 @@ static boolean IndexZoneApp_CallRecordHandler(IndexZoneApp *pMe, AEEEvent eCode,
                 {                								
 				    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
                 }
-		    }
+		    }*/
 		
             (void)IMENUCTL_Redraw(pMenu);
             return TRUE;

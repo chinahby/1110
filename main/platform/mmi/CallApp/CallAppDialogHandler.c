@@ -5928,6 +5928,13 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
                     	
                         ICM_OriginateVoiceCall(pMe->m_pICM, L"1", &nCallID);
                     }
+#if defined(FEATURE_VERSION_C316)		
+                   else
+                   {
+						CallApp_AnswerCall(pMe,FALSE,EVT_KEY_RELEASE,AVK_SELECT,FALSE);
+                   }
+#endif										
+
 #else
                     if(pMe->m_b_press_1)
                     {   ICall *pCall = NULL;
@@ -5938,7 +5945,9 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
 						}
                     }
 #endif
+					  break;
                 }
+								
                 case AVK_USER_HEADSET:
                 case AVK_SELECT:
 #if defined(NOFEATURE_VERSION_S1000T)|| defined(NOFEATURE_VERSION_W515V3)
@@ -6087,7 +6096,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
                     pMe->m_lastCallState = AEET_CALL_STATE_IDLE;
                     ICALLMGR_EndAllCalls(pMe->m_pICallMgr);
 #endif								
-                    CallApp_LaunchApplet(pMe,  AEECLSID_WMSAPP);
+					 ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_WMSAPP, "CallApp"); 	
                     return TRUE;	
 
 				 default:

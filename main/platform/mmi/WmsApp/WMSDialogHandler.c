@@ -1659,11 +1659,21 @@ static boolean  IDD_PWD_Handler(void       *pUser,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
-            if(NULL == pMe->m_strPhonePWD)
-            {
-                pMe->m_strPhonePWD = (char *)MALLOC((OEMNV_LOCKCODE_MAXLEN + 1)* sizeof(char));
-            }
-            return TRUE;
+			{
+    			 AECHAR  text[32] = {0};		
+                if(NULL == pMe->m_strPhonePWD)
+                {
+                    pMe->m_strPhonePWD = (char *)MALLOC((OEMNV_LOCKCODE_MAXLEN + 1)* sizeof(char));
+                }
+                 (void)ISHELL_LoadResString(pMe->m_pShell, 
+                                                  AEE_WMSAPPRES_LANGFILE,
+                                                  IDS_APP_WMS, 
+                                                  text,
+                                                  sizeof(text));                  
+                  // »­±êÌâÌõ
+    			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,text);
+                return TRUE;
+        	}
             
         case EVT_DIALOG_START:  
             (void) ISHELL_PostEvent(pMe->m_pShell,
@@ -1693,7 +1703,9 @@ static boolean  IDD_PWD_Handler(void       *pUser,
                     }
                 }
 #else
-                Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
+				  MSG_FATAL("IDD_PWD_Handler pMe->m_rc.x=%d, pMe->m_rc.y=%d", pMe->m_rc.x, pMe->m_rc.y, 0);
+				  pMe->m_rc.y = 0;	
+				  Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
 #endif
                 //IDISPLAY_FillRect  (pMe->m_pDisplay,&pMe->m_rc,RGB_BLACK);
                (void)ISHELL_LoadResString(pMe->m_pShell, 
@@ -1708,7 +1720,7 @@ static boolean  IDD_PWD_Handler(void       *pUser,
                 
                 DrawTitleBar(pMe->m_pDisplay, &TitleBar_Param);
 				#else
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,text);
+			//	IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,text);
 				#endif
 
                (void)ISHELL_LoadResString(pMe->m_pShell, 

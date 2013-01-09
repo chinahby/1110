@@ -761,6 +761,16 @@ static boolean  MediaGalleryApp_PwdDlg_HandleEvent(CMediaGalleryApp* pMe,
             {
                 pMe->m_strPhonePWD = (char *)MALLOC((OEMNV_LOCKCODE_MAXLEN + 1)* sizeof(char));
             }
+			 {
+			 	AECHAR  text[32] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell, 
+	                                        MGRES_LANGFILE,
+	                                        IDS_MG_MEDIAGALLERY_C337, 
+	                                        text,
+	                                        sizeof(text));    
+				 
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,text);
+            }
             return TRUE;
             
         case EVT_DIALOG_START:  
@@ -807,7 +817,7 @@ static boolean  MediaGalleryApp_PwdDlg_HandleEvent(CMediaGalleryApp* pMe,
                 TitleBar_Param.dwAlignFlags = IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
                 #if 0
                 DrawTitleBar(pMe->m_pDisplay, &TitleBar_Param);
-				#else
+				//#else
 				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,text);
 				#endif
 

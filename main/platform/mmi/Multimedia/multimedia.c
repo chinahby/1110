@@ -1384,6 +1384,15 @@ static boolean Multimed_PassWordHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
             {
                 pMe->m_strPhonePWD = (char *)MALLOC((OEMNV_LOCKCODE_MAXLEN + 1)* sizeof(char));
             }
+			 {
+			 	AECHAR  text[32] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell, 
+	                                        MULTIMEDIA_RES_FILE_LANG,
+	                                        IDS_MULTIMEDIA_TITLE, 
+	                                        text,
+	                                        sizeof(text));    
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,text);
+            }
             return TRUE;
             
         case EVT_DIALOG_START:  

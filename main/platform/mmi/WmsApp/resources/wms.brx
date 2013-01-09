@@ -765,6 +765,7 @@
 	</DIALOG>
 	<Dialog Id="6007" Name="IDD_PWD" Focus="0">
 		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</Dialog>
 	<Dialog Id="6008" Name="IDD_RESERVEDMSGALERT" Focus="0">
 		<Controls/>

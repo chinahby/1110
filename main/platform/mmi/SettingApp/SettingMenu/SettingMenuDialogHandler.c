@@ -687,7 +687,9 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
 
 #endif
 #ifdef FEATURE_SET_SOUND_TITLE
+#ifndef FEATURE_VERSION_C316
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SOUND_TITLE, IDS_SOUND_TITLE, NULL, 0);
+#endif
 #endif
 #ifdef FEATURE_PERU_VERSION
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_PHONE_NUMBER, IDS_PHONE_NUMBER, NULL, 0);

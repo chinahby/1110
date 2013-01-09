@@ -538,6 +538,23 @@ static boolean  RecentCalls_VerifyPasswordEvent(CRecentCalls *pMe,
             {
                 pMe->m_pPhoneLockPassword = (char *)MALLOC((OEMNV_LOCKCODE_MAXLEN + 1)* sizeof(char));
             }
+			 {
+                 AECHAR  text[32] = {0};
+                #if defined(FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A)
+				(void)ISHELL_LoadResString(pMe->m_pShell, 
+                                            AEE_RECENTCALLSRES_LANGFILE,
+                                            IDS_RECENT_CALLS_C337, 
+                                            text,
+                                            sizeof(text));
+				#else
+                (void)ISHELL_LoadResString(pMe->m_pShell, 
+                                            AEE_RECENTCALLSRES_LANGFILE,
+                                            IDS_RECENT_CALLS, 
+                                            text,
+                                            sizeof(text));
+				#endif
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,text);
+            }
             return TRUE;
             
         case EVT_DIALOG_START:
@@ -594,7 +611,7 @@ static boolean  RecentCalls_VerifyPasswordEvent(CRecentCalls *pMe,
                 TitleBar_Param.dwAlignFlags = IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
 				#if 0
                 DrawTitleBar(pMe->m_pDisplay, &TitleBar_Param);
-				#else
+				//#else
 				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,text);
 				#endif
                     

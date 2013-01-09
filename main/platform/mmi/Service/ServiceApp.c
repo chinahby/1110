@@ -632,8 +632,20 @@ static boolean ServiceApp_ListMenuHandler(ServiceApp *pMe, AEEEvent eCode, uint1
     {
         case EVT_DIALOG_INIT:	
 			//IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
-			IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE); 
-			
+			//IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE); 
+			{				
+		  		AECHAR WTitle[40] = {0};
+				
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        SERVICE_RES_FILE_LANG,                                
+                        IDS_SERVICE_TITLE,
+                        WTitle,
+                        sizeof(WTitle));
+                if(pMe->m_pIAnn != NULL)
+                {                								
+				    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+                }
+		    }
             IMENUCTL_AddItem(pMenu, SERVICE_RES_FILE_LANG,IDS_SERVICE_UTK, IDS_SERVICE_UTK, NULL, 0); 
 			IMENUCTL_AddItem(pMenu, SERVICE_RES_FILE_LANG,IDS_SERVICE_BROWSER, IDS_SERVICE_BROWSER, NULL, 0); 
 			
@@ -676,7 +688,7 @@ static boolean ServiceApp_ListMenuHandler(ServiceApp *pMe, AEEEvent eCode, uint1
             return TRUE;
             
         case EVT_USER_REDRAW:			
-			{				
+	/*		{				
 		  		AECHAR WTitle[40] = {0};
 				
 				(void)ISHELL_LoadResString(pMe->m_pShell,
@@ -688,7 +700,7 @@ static boolean ServiceApp_ListMenuHandler(ServiceApp *pMe, AEEEvent eCode, uint1
                 {                								
 				    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
                 }
-		    }
+		    }*/
 		
             (void)IMENUCTL_Redraw(pMenu);
             return TRUE;

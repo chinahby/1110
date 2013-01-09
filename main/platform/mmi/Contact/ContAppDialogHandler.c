@@ -11437,6 +11437,27 @@ static boolean  CContApp_HandleInputDlgEvent( CContApp  *pMe,
             {
                 pMe->m_strPhonePWD = (char *)MALLOC((OEMNV_LOCKCODE_MAXLEN + 1)* sizeof(char));
             }
+			 {
+			 	AECHAR  text[32] = {0}; 
+                #ifdef FEATURE_VERSION_C337
+				(void)ISHELL_LoadResString(pMe->m_pShell, 
+                                            CONTAPP_RES_FILE_LANG,
+                                            IDS_PHONEBOOK, 
+                                            text,
+                                            sizeof(text));
+				#else
+                (void)ISHELL_LoadResString(pMe->m_pShell, 
+                                            CONTAPP_RES_FILE_LANG,
+                                            IDS_APPLET, 
+                                            text,
+                                            sizeof(text));
+				#endif
+				
+                if(pMe->m_pIAnn != NULL)
+                {
+				    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,text);
+                }
+            }
             return TRUE;
             
         case EVT_DIALOG_START:
@@ -11493,7 +11514,7 @@ static boolean  CContApp_HandleInputDlgEvent( CContApp  *pMe,
                 TitleBar_Param.dwAlignFlags = IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
 				#if 0
                 DrawTitleBar(pMe->m_pDisplay, &TitleBar_Param);
-				#else
+				//#else
                 if(pMe->m_pIAnn != NULL)
                 {
 				    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,text);
