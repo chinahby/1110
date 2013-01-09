@@ -1746,13 +1746,19 @@ void BTApp_ShowDevMsg(
 {
 	AEEBTDeviceInfo dev;
 	dev.bdAddr = *pAddr;
+    
+    MSG_FATAL("***zzg BTApp_ShowDevMsg 111 msgID=%x***", msgID, 0, 0);
+    
+	//IDISPLAY_Backlight(pMe->m_pIDisplay, TRUE);
 
-	IDISPLAY_Backlight(pMe->m_pIDisplay, TRUE);
+    MSG_FATAL("***zzg BTApp_ShowDevMsg 222 msgID=%x***", msgID, 0, 0);
 
 	if ((IBTEXTRM_DeviceRead(pMe->mRM.po, &dev) != SUCCESS) || (WSTRLEN(dev.wName) == 0))
 	{
 		BTApp_BDAddr2Wstr(dev.wName, pAddr);
 	}
+
+    MSG_FATAL("***zzg BTApp_ShowDevMsg 333 msgID=%x***", msgID, 0, 0);
 
 	//BTApp_ShowMessage( pMe, msgID, dev.wName, secondsUp );
 
@@ -1763,6 +1769,8 @@ void BTApp_ShowDevMsg(
 	MEMSET(pMe->wMsgBuf, 0, WSTRLEN(pMe->wMsgBuf)*sizeof(AECHAR));
 	WSTRCPY(pMe->wMsgBuf, dev.wName);	
 
+    MSG_FATAL("***zzg SearchResult bStartFromOtherApp=%x***", pMe->bStartFromOtherApp, 0, 0);
+    
 	//Add By zzg 2012_11_22
 	if ((pMe->bStartFromOtherApp == TRUE) && (msgID == IDS_MSG_BONDED))
 	{
