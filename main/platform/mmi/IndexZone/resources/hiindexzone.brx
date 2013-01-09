@@ -17,10 +17,10 @@
 		<Text>ऑटो कॉल रिकॉर्ड</Text>
 	</String>
 	<String Id="1007" Name="IDS_INDEX_ZONE_YES">
-		<Text>हां</Text>
+		<Text>पर</Text>
 	</String>
 	<String Id="1008" Name="IDS_INDEX_ZONE_NO">
-		<Text>नहीं</Text>
+		<Text>रवाना</Text>
 	</String>
 </Strings>
 <Dialogs>

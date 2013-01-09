@@ -17,10 +17,10 @@
 		<Text>Auto call record</Text>
 	</String>
 	<String Id="1007" Name="IDS_INDEX_ZONE_YES">
-		<Text>Yes</Text>
+		<Text>ON</Text>
 	</String>
 	<String Id="1008" Name="IDS_INDEX_ZONE_NO">
-		<Text>No</Text>
+		<Text>OFF</Text>
 	</String>
 </Strings>
 <Dialogs>
