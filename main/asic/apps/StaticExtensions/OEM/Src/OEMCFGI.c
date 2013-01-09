@@ -2081,7 +2081,7 @@ static OEMConfigListType oemi_cache = {
 #endif
 //Add by pyuangui 20120104
 #if defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_W317A)
-    ,TRUE
+    ,FALSE
 #endif
 //Add End
 #ifdef FEATURE_VERSION_C316
@@ -3177,7 +3177,7 @@ void OEM_RestoreFactorySetting( void )
     //MEMSET(oemi_cache.mizone_smsinfo,0,OEMNV_LOCKIMSI_MAXLEN);
     #endif
 	#if defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_W317A)
-    oemi_cache.autocallrecord = TRUE;  //CFGI_AUTOCALLRECORD
+    oemi_cache.autocallrecord = FALSE;  //CFGI_AUTOCALLRECORD    //Add by pyuangui 2013-01-09 
     #endif
    //ÆÁ±£Ê±¼ä
    oemi_cache.p_screensaver_time=0; 
