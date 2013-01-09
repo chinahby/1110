@@ -68,7 +68,7 @@
 			</Menu>
 		</Controls>
 	</Dialog>
-	<Dialog Id="6" Name="IDD_D_NUMBER" Focus="7007">
+	<Dialog Id="6" Name="IDD_D_NUMBER" Focus="7005">
 		<Controls>
 			<Text Id="7005" Name="IDC_TEXT_NUMBERONE">
 				<Items/></Text>
