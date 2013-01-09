@@ -313,6 +313,7 @@ typedef struct _Application
     IStatic    						*m_pIStatic;      // Static for displaying information
     #endif
     IBacklight     *m_pBacklight;       //背光接口指针
+    boolean        m_StartCore;
 #ifdef FEATURE_OEMOMH
     IRUIM        *m_pIRUIM;
 #endif

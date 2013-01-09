@@ -637,6 +637,17 @@ static boolean Application_HandleEvent( IApplication *pi,
             pMe->m_currState  = APPLICATIONST_MAIN;
             pMe->m_eDlgReturn = DLGRET_CREATE;
             pMe->m_eAppStatus = APPLICATION_RUNNING;
+			pMe->m_StartCore = FALSE;
+#ifdef FEATURE_VERSION_C316
+			if ((as != NULL) && (as->pszArgs != NULL))	
+			{
+                if (STRNCMP(as->pszArgs, "shortcut", 8) == 0)
+				{
+                    pMe->m_StartCore = TRUE;
+									
+				}
+			}
+#endif
             if(pMe->m_pIAnn != NULL)
             {	    			
                 IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);				
@@ -1130,6 +1141,22 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
 			AEE_SetTimer(5*1000,APPDialog_keypadtimer,pMe); 
 			#endif
 			// Add End
+			#ifdef FEATURE_VERSION_C316
+			if(pMe->m_StartCore)
+			{
+				IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_USER_PROFILES, IDS_USER_PROFILES, NULL, 0);
+				IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_ALARM, IDS_APPLICATION_ALARM, NULL, 0);
+				#ifdef	FEATURE_APP_BLUETOOTH  //add by yangdecai
+            	IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_BLUETOOTH, IDS_APPLICATION_BLUETOOTH, NULL, 0); 
+				#endif
+				IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_FMRADIO,IDS_APPLICATION_FMRADIO,NULL,0);
+				IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CALCULATOR, IDS_APPLICATION_CALCULATOR, NULL, 0);
+				IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_IMAGE_VIEWER,IDS_IMAGE_VIEWER,NULL,0);
+				IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_CALENDAR, IDS_CALENDAR,NULL,0);
+			}
+			else
+			#endif
+			{
 			
 #ifdef FEATURE_VERSION_C337
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CALENDAR, IDS_APPLICATION_CALENDAR, NULL, 0);
@@ -1287,6 +1314,7 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
 #if defined(FEATURE_VERSION_W317A)
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_PC_MODEM_HELP, IDS_PC_MODEM_HELP, NULL, 0); 
 #endif
+}
             return TRUE;
             
         case EVT_DIALOG_START:
@@ -1341,6 +1369,7 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
             return TRUE;
             
         case EVT_DIALOG_END:
+			pMe->m_StartCore = FALSE;
             return TRUE;
 
         case EVT_KEY:
@@ -1383,6 +1412,7 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
                     return TRUE;
                     
                 case AVK_CLR:
+					pMe->m_StartCore = FALSE;
                     CLOSE_DIALOG(DLGRET_CANCELED)
                     return TRUE;
                     

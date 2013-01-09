@@ -4516,7 +4516,16 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #elif defined (FEATURE_VERSION_IVIO203)||defined (FEATURE_VERSION_C500BE)
     				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #elif defined (FEATURE_VERSION_C316)
-                                  ret= CoreApp_LaunchApplet(pMe, AEECLSID_APPLICATION);
+						ret = ISHELL_StartAppletArgs(pMe->a.m_pIShell, AEECLSID_APPLICATION,"shortcut");
+						if (SUCCESS != ret) 
+    					{
+        					ERR("Failed to start Applet ",0,0,0);		
+        					return FALSE;
+    					} 
+						else
+						{
+    						pMe->m_pAppStart=TRUE;
+						}
 #elif defined (FEATURE_VERSION_FLEXI203P)
     				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_STATIC_APP);
 #elif defined (FEATURE_VERSION_SMART)
@@ -5187,13 +5196,13 @@ static boolean	IDD_SALESTRACKER_Handler(void *pUser,
 				PromptMsg_Param_type  Msg_Param={0};
 				BottomBar_Param_type bottomParam;
                 // 从资源文件取消息内容
-                #ifdef FEATURE_VERSION_W317A
+                #if defined(FEATURE_VERSION_W317A)
                 (void)ISHELL_LoadResString(pMe->a.m_pIShell,
                                 AEE_COREAPPRES_LANGFILE,                                
                                 IDS_SALES_TRACKER,
                                 wstrText,
                                 sizeof(wstrText));
-				#else
+				#elif defined(FEATURE_VERSION_C337)
 				(void)ISHELL_LoadResString(pMe->a.m_pIShell,
                                 AEE_COREAPPRES_LANGFILE,                                
                                 IDS_MMX_SELES_TRACK,
