@@ -5767,7 +5767,7 @@ wms_client_message_s_type *WmsApp_GetClientMsgMO(WmsApp *pMe, boolean bSend)
 #endif
     // 接收地址
     MEMSET(strNum, 0, sizeof(strNum));
-
+    MSG_FATAL("......................................",0,0,0);
     (void)WSTRTOSTR(pMe->m_msSend.m_szNum, strNum, sizeof(strNum));
     if (strNum[0] == '+')
     {
@@ -6677,6 +6677,7 @@ void WmsApp_FreeSendClentMsgList(WmsApp * pMe)
 备注:
        
 ==============================================================================*/
+extern char charsvc_p_name[UIM_CDMA_HOME_SERVICE_SIZE+1];
 void WmsApp_BuildSendClentMsgList(WmsApp * pMe)
 {
     int    i;
@@ -6684,6 +6685,9 @@ void WmsApp_BuildSendClentMsgList(WmsApp * pMe)
     int32  nSize;
     CMultiSendItemInfo *pItem = NULL;
     wms_client_message_s_type *pClientMsg = NULL;
+	AECHAR TempTo[MAX_EMAILADD_LEN+1] = {0};
+	AECHAR TempToStr[MAX_EMAILADD_LEN+1] = {0};
+	char temp[MAX_EMAILADD_LEN+1] = {0};
 
     WmsApp_FreeSendClentMsgList(pMe);
     
@@ -6707,6 +6711,21 @@ void WmsApp_BuildSendClentMsgList(WmsApp * pMe)
 
     // 拷贝当前号码
     pMe->m_msSend.m_szNum[0] = 0;
+	WSTRTOSTR(pItem->m_szTo,temp,MAX_EMAILADD_LEN+1);
+	if(STRISTR (charsvc_p_name,"tata")||STRISTR(temp,"+91"))
+	{
+		WSTRCPY(TempToStr,L"0091");
+		WSTRCPY(TempTo,pItem->m_szTo+3);
+		WSTRCAT(TempToStr,TempTo);
+		DBGPRINTF("TempToStr=%S", TempTo);
+		DBGPRINTF("TempToStr=%S", TempToStr);
+		DBGPRINTF("pItem->m_szTo=%S", pItem->m_szTo);
+		MEMSET(pItem->m_szTo,0,(sizeof(pItem->m_szTo))+1);
+		WSTRCPY(pItem->m_szTo,TempToStr);
+		DBGPRINTF("pItem->m_szTo=%S", pItem->m_szTo);
+		MSG_FATAL("pMe->m_msSend.m_szNum........111111111",0,0,0);
+	}
+	
     (void)WSTRCPY(pMe->m_msSend.m_szNum, pItem->m_szTo);
     
     nSize = nItems*sizeof(wms_client_message_s_type *);
