@@ -391,7 +391,7 @@ static int CApplication_InitAppData(Application *pMe)
 	MSG_FATAL("CApplication_InitAppData....",0,0,0);
 
     pMe->m_MainSel  = 0;
-    
+    pMe->m_StartCore = FALSE;
 	
     if (ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_DISPLAY, 
             (void **) &pMe->m_pDisplay) != SUCCESS)
@@ -637,7 +637,7 @@ static boolean Application_HandleEvent( IApplication *pi,
             pMe->m_currState  = APPLICATIONST_MAIN;
             pMe->m_eDlgReturn = DLGRET_CREATE;
             pMe->m_eAppStatus = APPLICATION_RUNNING;
-			pMe->m_StartCore = FALSE;
+
 #ifdef FEATURE_VERSION_C316
 			if ((as != NULL) && (as->pszArgs != NULL))	
 			{
@@ -646,6 +646,14 @@ static boolean Application_HandleEvent( IApplication *pi,
                     pMe->m_StartCore = TRUE;
 									
 				}
+				else
+				{
+					pMe->m_StartCore = FALSE;
+				}
+			}
+			else
+			{
+				pMe->m_StartCore = FALSE;
 			}
 #endif
             if(pMe->m_pIAnn != NULL)
@@ -1369,7 +1377,6 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
             return TRUE;
             
         case EVT_DIALOG_END:
-			pMe->m_StartCore = FALSE;
             return TRUE;
 
         case EVT_KEY:
@@ -1412,7 +1419,6 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
                     return TRUE;
                     
                 case AVK_CLR:
-					pMe->m_StartCore = FALSE;
                     CLOSE_DIALOG(DLGRET_CANCELED)
                     return TRUE;
                     
