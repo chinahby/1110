@@ -482,10 +482,10 @@
 		<Text>Auto call record</Text>
 	</String>
 	<String Id="1169" Name="IDS_CALLSETTING__YES">
-		<Text>Yes</Text>
+		<Text>ON</Text>
 	</String>
 	<String Id="1170" Name="IDS_CALLSETTING__NO">
-		<Text>No</Text>
+		<Text>OFF</Text>
 	</String>
 </Strings>
 <Dialogs>

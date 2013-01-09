@@ -482,10 +482,10 @@
 		<Text>ऑटो कॉल रिकॉर्ड</Text>
 	</String>
 	<String Id="1169" Name="IDS_CALLSETTING__YES">
-		<Text>हां</Text>
+		<Text>पर</Text>
 	</String>
 	<String Id="1170" Name="IDS_CALLSETTING__NO">
-		<Text>नहीं</Text>
+		<Text>रवाना</Text>
 	</String>
 </Strings>
 <Dialogs>
