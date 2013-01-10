@@ -6539,8 +6539,18 @@ static boolean TextCtl_SetNextInputMode(CTextCtl *pme)
     for (i=0; i<pme->m_nCurrInputModeCount; i++)
     {
         MSG_FATAL("setnextinputmode------i=%d",i,0,0);
+		
         if ( pme->m_nCurrInputMode == pme->m_nCurrInputModeList[i] )
         {
+			#ifdef FEATURE_VERSION_C316
+        	if(pme->m_dwProps & TP_NO_HI)
+			{
+				if(pme->m_nCurrInputMode == 0)
+				{
+					i++; 
+				}
+			}
+			#endif
         	 MSG_FATAL("setnextinputmode------i=%d-----pme->m_nCurrInputMode%d",i,pme->m_nCurrInputMode,0);	
 #if defined FEATURE_CARRIER_THAILAND_HUTCH || defined FEATURE_CARRIER_THAILAND_CAT
             if(pme->m_dwProps & TP_NOSYMBOL)
@@ -6630,23 +6640,6 @@ static boolean TextCtl_SetNextInputMode(CTextCtl *pme)
                     	 
                     	#if defined(FEATURE_VERSION_MYANMAR)||defined(FEATURE_VERSION_MYANMAR_MTM)
                     	pme->m_nCurrInputMode = pme->m_nCurrInputModeList[i+1]; 
-                        #if 0
-                		if(!(pme->m_dwProps & TP_MULTILINE)/*&&( 2== i)*/)
-                		{
-                            MSG_FATAL("TP_MULTILINE2",0,0,0);
-                			
-                			if(
-								#ifdef FEATURE_MT_MYANMRA
-								pme->m_nCurrInputMode == OEM_MT_MODE_MYANMAR 
-								#else
-								pme->m_nCurrInputMode == OEM_MODE_MYANMAR
-								#endif
-								)
-                			{
-                				pme->m_nCurrInputMode = OEM_MODE_T9_RAPID_ENGLISH;
-                			}
-                		}
-                        #endif
                 		#else
                 		pme->m_nCurrInputMode = pme->m_nCurrInputModeList[i+1];                        
                 		#endif

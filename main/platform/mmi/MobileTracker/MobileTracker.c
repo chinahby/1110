@@ -1814,6 +1814,7 @@ static boolean MobileTracker_ContentHandler(MobileTracker *pMe, AEEEvent eCode, 
 	   case EVT_DIALOG_INIT:
 	      {
 		  	  AEERect m_ContentRect = {0};
+			  AECHAR WTTitle[2] = {0};
 	          AECHAR WTitle[40] = {0};
 			  AECHAR m_wstrContect[120] = {0};
 			 (void)ISHELL_LoadResString(pMe->m_pShell,
@@ -1826,13 +1827,11 @@ static boolean MobileTracker_ContentHandler(MobileTracker *pMe, AEEEvent eCode, 
 			    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
              }
 			 Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
-			 SETAEERECT(&m_ContentRect,0,0,128,128);
+			 SETAEERECT(&m_ContentRect,0,0,pMe->m_rc.dx, pMe->m_rc.dy - GetBottomBarHeight(pMe->m_pDisplay));
 			 ITEXTCTL_SetRect(pMe->m_Content, &m_ContentRect);
-			 ITEXTCTL_SetTitle(pMe->m_Content,
-                      NULL,
-                      0, 0);
+			 (void)ITEXTCTL_SetTitle( pMe->m_Content, NULL,0,WTTitle);
   			 ITEXTCTL_SetInputMode(pMe->m_Content, AEE_TM_LETTERS);
-  			 ITEXTCTL_SetProperties(pMe->m_Content, TP_MULTILINE|TP_FRAME|TP_FOCUS_NOSEL|TP_FIXSETRECT|TP_STARKEY_SWITCH|TP_DISPLAY_COUNT|TP_NOUPDATE|TP_GRAPHIC_BG);
+  			 ITEXTCTL_SetProperties(pMe->m_Content, TP_MULTILINE|TP_FRAME|TP_FOCUS_NOSEL|TP_FIXSETRECT|TP_STARKEY_SWITCH|TP_DISPLAY_COUNT|TP_NOUPDATE|TP_GRAPHIC_BG|TP_NO_HI);
              ITEXTCTL_SetMaxSize(pMe->m_Content, 120);
 			 OEM_GetConfig(CFGI_MOBILE_TRACKER_CONTECT,&m_wstrContect,sizeof(uint16)*120);
 			 ITEXTCTL_SetText(pMe->m_Content,m_wstrContect,sizeof(uint16)*120);
@@ -1853,7 +1852,7 @@ static boolean MobileTracker_ContentHandler(MobileTracker *pMe, AEEEvent eCode, 
 	   			 DrawBottomBar(pMe->m_pDisplay, &BBarParam);
 				 ITEXTCTL_Redraw(pMe->m_Content);
 	   	       	 // ¸üÐÂÏÔÊ¾
-	   	       	 IDISPLAY_Update(pMe->m_pDisplay); 
+	   	       	 IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE); 
 				 return TRUE;
 	   	  }
 	     case EVT_DIALOG_END:
@@ -1942,8 +1941,8 @@ static boolean MobileTracker_ChangPassWordHandler(MobileTracker *pMe, AEEEvent e
 			 ITEXTCTL_SetRect(pMe->m_cpwdword, &p_ConfirmPassWord);
   			 ITEXTCTL_SetInputMode(pMe->m_ppwdword, AEE_TM_NUMBERS);
 			 ITEXTCTL_SetInputMode(pMe->m_cpwdword, AEE_TM_NUMBERS);
-  			 ITEXTCTL_SetProperties(pMe->m_ppwdword, TP_FRAME|TP_FIXSETRECT|TP_FOCUS_NOSEL);
-			 ITEXTCTL_SetProperties(pMe->m_cpwdword, TP_FRAME|TP_FIXSETRECT|TP_FOCUS_NOSEL);
+  			 ITEXTCTL_SetProperties(pMe->m_ppwdword, TP_FRAME|TP_FIXSETRECT|TP_FOCUS_NOSEL|TP_NOUPDATE);
+			 ITEXTCTL_SetProperties(pMe->m_cpwdword, TP_FRAME|TP_FIXSETRECT|TP_FOCUS_NOSEL|TP_NOUPDATE);
              ITEXTCTL_SetMaxSize(pMe->m_ppwdword, 20);
 		     ITEXTCTL_SetMaxSize(pMe->m_cpwdword, 20);
 	         return TRUE;

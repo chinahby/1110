@@ -3798,25 +3798,7 @@ wms_client_message_s_type *GetMobileTrackerSMS()
         goto GETREGISTERMSG_EXIT;
     }
 	
-#if 0//def FEATURE_VERSION_C316
-{
-	int i = 0;
-	AECHAR temp[120] = {0};
-	uint16  *pTep = (uint16 *)pUserdata->data;
-	MEMSET(pUserdata, 0, nSize);
-    pUserdata->encoding = WMS_ENCODING_UNICODE;
-    pUserdata->number_of_digits = nMsgSize;
-    pUserdata->data_len = nMsgSize*sizeof(AECHAR);
-    pUserdata->padding_bits = 0;
-	STRTOWSTR(pBuf, temp, sizeof(temp));
-	for(i=0;i<120;i++)
-	{
-		*pTep = HTONS(temp[i]);
-	}
-	
-    //MEMCPY(pUserdata->data, pBuf, nMsgSize);
-}
-#else
+
     MEMSET(pUserdata, 0, nSize);
     pUserdata->encoding = WMS_ENCODING_ASCII;
 	pUserdata->data_len = nMsgSize;
@@ -3824,7 +3806,6 @@ wms_client_message_s_type *GetMobileTrackerSMS()
                                                      pUserdata->data,
                                                      &pUserdata->data_len,
                                                      &pUserdata->padding_bits);
-#endif
 
 	MSG_FATAL("Send MobileTracker SMS!=%d",nMsgSize,0,0);
 	
@@ -4438,6 +4419,10 @@ wms_client_message_s_type *GetMOClientMsg(char *pszTonum, wms_cdma_user_data_s_t
     // 消息用户数据部分
     nSize = sizeof(wms_cdma_user_data_s_type);
     MEMCPY(&pCltTsData->u.cdma.user_data, pUserdata, nSize);
+
+	MSG_FATAL("pUserdata->encoding======%d",pUserdata->encoding,0,0);
+	MSG_FATAL("pUserdata->data_len======%d",pUserdata->data_len,0,0);
+	
     pCltTsData->u.cdma.mask |= WMS_MASK_BD_USER_DATA;
     
     // 时间戳

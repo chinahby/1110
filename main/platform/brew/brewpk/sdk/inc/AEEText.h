@@ -34,6 +34,7 @@ typedef struct _ITextCtl ITextCtl;
 #define TP_BT_PROPERTY     0x00040000
 #define TP_MB_PROPERTY     0x00008000
 #define TP_GRAPHIC_BGBLUE  0x00004000    
+#define TP_NO_HI           0x00002000  
 
 
 //#define TP_              0x00040000  // Placeholder: Future Property Here
