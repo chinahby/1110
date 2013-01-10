@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <BREWRes Name="hisecuritymenu" VERSION="1">
 <Strings Encoding="Unicode">
 	<STRING Id="1001" Name="IDS_PINCHANGE_TITLE">
@@ -94,9 +94,6 @@
 	<STRING Id="1031" Name="IDS_RESTRICT_TITLE">
 		<Text>प्रतिबंधित</Text>
 	</STRING>
-	<String Id="1032" Name="IDS_DATA_PROTECTION" Encoding="Unicode">
-		<Text>data protection</Text>
-	</String>
 	<STRING Id="1033" Name="IDS_PHONE_LOCK">
 		<Text>फोन लॉक</Text>
 	</STRING>
