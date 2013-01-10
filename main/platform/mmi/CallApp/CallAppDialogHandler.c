@@ -1371,11 +1371,31 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 //Add End   
 							OEM_RestoreFactorySetting();
 							{
+                                //Add By zzg 2013_01_10
+                                uisnd_notify_data_s_type sndInfo;       
+                                boolean bBTHeadSetConnected=FALSE;
+                                //Add End
+                                
 								byte alertType;  
 			                    (void) ICONFIG_GetItem(pMe->m_pConfig,
 			                                           CFGI_ALERT_TYPE,
 			                                           &alertType,
 			                                           sizeof(alertType));
+
+                                uisnd_get_device(&sndInfo);
+                            	MSG_FATAL("***zzg UseBTDevice - dev=%d sMute=%d mMute=%d***", 
+                            	  			sndInfo.out_device, sndInfo.speaker_mute, sndInfo.microphone_mute);
+#ifdef FEATURE_SUPPORT_BT_AUDIO
+                            	if ((SND_DEVICE_BT_HEADSET == sndInfo.out_device) || (SND_DEVICE_BT_A2DP_HEADSET == sndInfo.out_device))
+                            	{
+                            	    bBTHeadSetConnected = TRUE;     
+                            	}
+                            	else
+                            	{
+                            		bBTHeadSetConnected = FALSE; 
+                            	}
+                            	//Add End
+#endif
 			                    switch(alertType)
 			                    {
 			                        case OEMNV_ALERTTYPE_OFF :
@@ -1385,6 +1405,13 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 
 			                        case OEMNV_ALERTTYPE_RINGER :
 			                            //IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RING, ANNUN_STATE_ON);
+#ifdef FEATURE_VERSION_C316			                            
+			                            if (bBTHeadSetConnected == TRUE)
+                                        {
+                                            IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_BLUETOOTH);
+                                        }   
+                                        else
+#endif                                            
 			                            IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_ALERT);
 			                            break;
 
@@ -11072,6 +11099,15 @@ static void CallApp_ShortcutQuiet(CCallApp *pMe)
                                 CFGI_PROFILE_CUR_NUMBER,
                                 &curProfile,
                                 sizeof(curProfile));
+
+#ifdef FEATURE_VERSION_C316
+    if (curProfile == OEMNV_PROFILE_BLUETOOTH)
+    {
+        pMe->m_Profile=OEMNV_PROFILE_BLUETOOTH;
+        return;
+    }
+#endif
+
     if(curProfile == OEMNV_PROFILE_MEETING)
     {
         curProfile = OEMNV_PROFILE_NORMALMODE;
@@ -11852,6 +11888,14 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
         	MSG_FATAL("POSTEVETN..................................",0,0,0);
 			//ISHELL_PostEvent(pMe->m_pShell,AEECLSID_CORE_APP,EVT_USER,EVT_MODE_CHANGE,0);
             CallApp_ShortcutQuiet( pMe );
+            
+#ifdef FEATURE_VERSION_C316
+            if (pMe->m_Profile  == OEMNV_PROFILE_BLUETOOTH)
+            {
+                //Do Nothing.............
+                return TRUE;
+            }
+#endif           
             if(pMe->m_Profile == OEMNV_PROFILE_NORMALMODE)
             {
                 pMe->m_msg_text_id = IDS_MSG_CURPROFILE_NORMALMODE;

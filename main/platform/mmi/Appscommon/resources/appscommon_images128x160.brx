@@ -484,5 +484,8 @@
 	<Object Id="7102" Name="IDB_MMS_SPACE" MimeType="image/png">
 		<File>..\images\128x160\common\Appscommon\Icon\space.png</File>
 	</Object>
+	<Object Id="7103" Name="IDB_PROFILE_BLUETOOTH">
+		<File>..\images\128x160\common\Annunciator\bt.bmp</File>
+	</Object>
 </Objects>
 </BREWRes>

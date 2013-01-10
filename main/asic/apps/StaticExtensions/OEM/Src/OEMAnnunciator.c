@@ -305,6 +305,9 @@ static OEMState_data ringtone_image_data[]=
   {ANNUN_STATE_RINGTONE_SILENT, IDB_SILENCE, NULL},
   {ANNUN_STATE_RINGTONE_VIBRING, IDB_VIBRING, NULL},
   {ANNUN_STATE_RINGTONE_VIBRATOR, IDB_VIBRATOR, NULL}
+#ifdef FEATURE_VERSION_C316
+  ,{ANNUN_STATE_RINGTONE_BLUETOOTH, IDB_PROFILE_BLUETOOTH, NULL}
+#endif
 };
 /*Battery*/
 static OEMState_data batt_image_data[]=
@@ -399,8 +402,13 @@ OEMAnnun_content mms_content =
      {ANNUN_TYPE_IMAGE, 4, ANNUN_STATE_OFF, (void *)mms_image_data};
 #endif
 /*ANNUN_FIELD_RINGTONE*/
+#ifdef FEATURE_VERSION_C316
+OEMAnnun_content ringtone_content =
+     {ANNUN_TYPE_IMAGE, 5, ANNUN_STATE_OFF, (void *)ringtone_image_data};
+#else
 OEMAnnun_content ringtone_content =
      {ANNUN_TYPE_IMAGE, 4, ANNUN_STATE_OFF, (void *)ringtone_image_data};
+#endif
 /*ANNUN_FIELD_BATT*/
 OEMAnnun_content batt_content =
      {ANNUN_TYPE_IMAGE, 5, ANNUN_STATE_OFF, (void *)batt_image_data};

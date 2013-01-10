@@ -33,6 +33,10 @@
 #ifdef FEATURE_APP_MEDIAGALLERY
 #include "MediaGallery.h"
 #endif
+
+#include "uixsnd.h"
+
+
 /*==============================================================================
                                  宏定义和常数
 ==============================================================================*/
@@ -395,6 +399,9 @@ static boolean  HandleMainDialogEvent(CSoundMenu *pMe,
 
     IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,
                                                     IDC_SCENEMODE);
+
+    uisnd_notify_data_s_type sndInfo;   //Add By zzg 2013_01_10
+    
     if (pMenu == NULL)
     {
         return FALSE;
@@ -489,63 +496,110 @@ static boolean  HandleMainDialogEvent(CSoundMenu *pMe,
         case EVT_DIALOG_END:
             return TRUE;
 
-        case EVT_KEY:
+        case EVT_KEY:            
             switch(wParam)
             {
                 case AVK_CLR:
                     CLOSE_DIALOG(DLGRET_CANCELED)
                     return TRUE;
-                case AVK_INFO:
+                case AVK_INFO:         
+                                       
+                	uisnd_get_device(&sndInfo);
+                	MSG_FATAL("***zzg UseBTDevice - dev=%d sMute=%d mMute=%d***", 
+                	  			sndInfo.out_device, sndInfo.speaker_mute, sndInfo.microphone_mute);
+#ifdef FEATURE_SUPPORT_BT_AUDIO
+                	if ((SND_DEVICE_BT_HEADSET == sndInfo.out_device) || (SND_DEVICE_BT_A2DP_HEADSET == sndInfo.out_device))
+                	{
+                	    pMe->m_bBTHeadSetConnected = TRUE;     
+                	}
+                	else
+                	{
+                		pMe->m_bBTHeadSetConnected = FALSE; 
+                	}
+                	//Add End
+#endif
+
                     pMe->m_currDlgId = IMENUCTL_GetSel(pMenu);
+
                     switch (pMe->m_currDlgId )
                     {
                         case IDS_NORMALMODE:        //正常模式
-                            pMe->m_ProfileType = SET_NORMALMODE;
-                            pMe->m_CurProfile=OEMNV_PROFILE_NORMALMODE;
-                            pMe->m_ScenemodesubType = SET_ACTIVATE;
-                            pMe->m_sSubDlgId = IDS_ACTIVATING;                           
-                            CLOSE_DIALOG(DLGRET_MESSAGE)
+#ifdef FEATURE_VERSION_C316                       
+                            if (pMe->m_bBTHeadSetConnected == FALSE)
+#endif                                
+                            {
+                                pMe->m_ProfileType = SET_NORMALMODE;
+                                pMe->m_CurProfile=OEMNV_PROFILE_NORMALMODE;
+                                pMe->m_ScenemodesubType = SET_ACTIVATE;
+                                pMe->m_sSubDlgId = IDS_ACTIVATING;                           
+                                CLOSE_DIALOG(DLGRET_MESSAGE)
+                            }                            
                             break;
                              
                         case IDS_QUIETMODE:         //安静模式
-                            pMe->m_ProfileType = SET_QUIETMODE;
-                            pMe->m_CurProfile=OEMNV_PROFILE_QUIETMODE;
-                            pMe->m_ScenemodesubType = SET_ACTIVATE;                          
-                            pMe->m_sSubDlgId = IDS_ACTIVATING;                           
-                            CLOSE_DIALOG(DLGRET_MESSAGE)
+#ifdef FEATURE_VERSION_C316                       
+                            if (pMe->m_bBTHeadSetConnected == FALSE)
+#endif                            
+                            {
+                                pMe->m_ProfileType = SET_QUIETMODE;
+                                pMe->m_CurProfile=OEMNV_PROFILE_QUIETMODE;
+                                pMe->m_ScenemodesubType = SET_ACTIVATE;                          
+                                pMe->m_sSubDlgId = IDS_ACTIVATING;                           
+                                CLOSE_DIALOG(DLGRET_MESSAGE)
+                            }
                             break;
                         case IDS_MEETING:           //会议模式
-                            pMe->m_ProfileType = SET_MEETING;
-                            pMe->m_CurProfile=OEMNV_PROFILE_MEETING;
-                            pMe->m_ScenemodesubType = SET_ACTIVATE;                          
-                            pMe->m_sSubDlgId = IDS_ACTIVATING;                           
-                            CLOSE_DIALOG(DLGRET_MESSAGE)
+#ifdef FEATURE_VERSION_C316                       
+                            if (pMe->m_bBTHeadSetConnected == FALSE)
+#endif                            
+                            {
+                                pMe->m_ProfileType = SET_MEETING;
+                                pMe->m_CurProfile=OEMNV_PROFILE_MEETING;
+                                pMe->m_ScenemodesubType = SET_ACTIVATE;                          
+                                pMe->m_sSubDlgId = IDS_ACTIVATING;                           
+                                CLOSE_DIALOG(DLGRET_MESSAGE)
+                            }
                             break;
                         case IDS_NOISEMODE:        //户外模式
-                            pMe->m_ProfileType = SET_NOISEMODE;
-                            pMe->m_CurProfile=OEMNV_PROFILE_NOISEMODE;
-                            pMe->m_ScenemodesubType = SET_ACTIVATE;                          
-                            pMe->m_sSubDlgId = IDS_ACTIVATING;                           
-                            CLOSE_DIALOG(DLGRET_MESSAGE)
+#ifdef FEATURE_VERSION_C316                       
+                            if (pMe->m_bBTHeadSetConnected == FALSE)
+#endif                            
+                            {
+                                pMe->m_ProfileType = SET_NOISEMODE;
+                                pMe->m_CurProfile=OEMNV_PROFILE_NOISEMODE;
+                                pMe->m_ScenemodesubType = SET_ACTIVATE;                          
+                                pMe->m_sSubDlgId = IDS_ACTIVATING;                           
+                                CLOSE_DIALOG(DLGRET_MESSAGE)
+                            }
                             break;
 #ifdef FEATURE_VERSION_C316
-                        case IDS_PROFILE_BLUETOOTH:        //户外模式
-                            pMe->m_ProfileType = SET_BLUETOOTH;
-                            pMe->m_CurProfile=OEMNV_PROFILE_BLUETOOTH;
-                            pMe->m_ScenemodesubType = SET_ACTIVATE;                          
-                            pMe->m_sSubDlgId = IDS_ACTIVATING;                           
-                            CLOSE_DIALOG(DLGRET_MESSAGE)
+                        case IDS_PROFILE_BLUETOOTH:        //户外模式                        
+                        {      
+                            if (pMe->m_bBTHeadSetConnected == TRUE)   //蓝牙已连接
+                            {
+                                pMe->m_ProfileType = SET_BLUETOOTH;
+                                pMe->m_CurProfile=OEMNV_PROFILE_BLUETOOTH;
+                                pMe->m_ScenemodesubType = SET_ACTIVATE;                          
+                                pMe->m_sSubDlgId = IDS_ACTIVATING;                           
+                                CLOSE_DIALOG(DLGRET_MESSAGE)
+                            }
+                            else
+                            {
+                                pMe->m_sSubDlgId = IDS_WARNING_NO_BT_HEADSET;
+                                CLOSE_DIALOG(DLGRET_MESSAGE)
+                            }
                             break;    
-#endif                            
-        
+                        }
+#endif                                        
                         default:
                             ASSERT_NOT_REACHABLE;                           
                     }
+                    
                     return TRUE;
 
-            default:
-                break;
-            }
+                default:
+                    break;               
+             }
             return TRUE;
         case EVT_COMMAND:
             //pMe->m_currDlgId = IMENUCTL_GetSel(pMenu);
@@ -629,6 +683,8 @@ static boolean  HandleSceneModeSubDialogEvent(CSoundMenu *pMe,
 
     IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,
                                                     IDC_SCENEMODE_SUB);
+
+    uisnd_notify_data_s_type sndInfo;       //Add By zzg 2013_01_10
 
     if (pMenu == NULL)
     {
@@ -726,14 +782,62 @@ static boolean  HandleSceneModeSubDialogEvent(CSoundMenu *pMe,
 
             return TRUE;
 
-        case EVT_COMMAND:
-            pMe->m_nSubDlgId = IMENUCTL_GetSel(pMenu);
+        case EVT_COMMAND:            
+            pMe->m_nSubDlgId = IMENUCTL_GetSel(pMenu);            
             switch(wParam)
             {
-                case IDS_ACTIVATE:         //启动
+                case IDS_ACTIVATE:         //启动                   
+                	uisnd_get_device(&sndInfo);
+                	MSG_FATAL("***zzg UseBTDevice - dev=%d sMute=%d mMute=%d***", 
+                	  			sndInfo.out_device, sndInfo.speaker_mute, sndInfo.microphone_mute);
+#ifdef FEATURE_SUPPORT_BT_AUDIO
+                	if ((SND_DEVICE_BT_HEADSET == sndInfo.out_device) || (SND_DEVICE_BT_A2DP_HEADSET == sndInfo.out_device))
+                	{
+                	    pMe->m_bBTHeadSetConnected = TRUE;     
+                	}
+                	else
+                	{
+                		pMe->m_bBTHeadSetConnected = FALSE; 
+                	}
+                	//Add End
+#endif
+                 
+
+
+#ifdef FEATURE_VERSION_C316
+                    if (pMe->m_ProfileType == SET_BLUETOOTH)
+                    {           
+                        if (pMe->m_bBTHeadSetConnected == TRUE)   //蓝牙已连接
+                        {
+                            pMe->m_ScenemodesubType = SET_ACTIVATE;
+                            pMe->m_sSubDlgId = IDS_ACTIVATING;
+                            CLOSE_DIALOG(DLGRET_MESSAGE)
+                        }
+                        else
+                        {
+                            pMe->m_sSubDlgId = IDS_WARNING_NO_BT_HEADSET;
+                            CLOSE_DIALOG(DLGRET_MESSAGE)
+                        }
+                    }
+                    else
+                    {
+                        if (pMe->m_bBTHeadSetConnected == FALSE) 
+                        {
+                            pMe->m_ScenemodesubType = SET_ACTIVATE;
+                            pMe->m_sSubDlgId = IDS_ACTIVATING;
+                            CLOSE_DIALOG(DLGRET_MESSAGE)
+                        }
+                        else
+                        {
+                            //pMe->m_sSubDlgId = IDS_ACTIVATING;
+                            CLOSE_DIALOG(DLGRET_MESSAGE)
+                        }
+                    }
+#else           
                     pMe->m_ScenemodesubType = SET_ACTIVATE;
                     pMe->m_sSubDlgId = IDS_ACTIVATING;
                     CLOSE_DIALOG(DLGRET_MESSAGE)
+#endif                    
                     break;
 
                 case IDS_PERSONALISE:      // 编辑
@@ -2964,7 +3068,14 @@ static boolean  HandleWarningMessegeDialogEvent(CSoundMenu *pMe,
                     SoundMenu_SceneModeActivate(pMe);
                     STRLCPY(m_PromptMsg.strMsgResFile, AEE_APPSSOUNDMENU_RES_FILE,MAX_FILE_NAME);
                     break;
-
+#ifdef FEATURE_VERSION_C316
+                case IDS_WARNING_NO_BT_HEADSET:
+                    m_PromptMsg.nMsgResID= pMe->m_sSubDlgId;
+                    m_PromptMsg.ePMsgType = MESSAGE_WAITING;
+                    m_PromptMsg.eBBarType = BTBAR_NONE;
+                    STRLCPY(m_PromptMsg.strMsgResFile, AEE_APPSSOUNDMENU_RES_FILE,MAX_FILE_NAME);
+                    break;
+#endif
                 case IDS_CONFIRM_OFF_FM:
                 case IDS_CONFIRM_OFF_MP:
                     ISHELL_CancelTimer(pMe->m_pShell, NULL,  pMe);
@@ -3598,7 +3709,7 @@ static void SoundMenu_SceneModeActivate(CSoundMenu *pMe)
               break;
 #ifdef FEATURE_VERSION_C316
           case OEMNV_PROFILE_BLUETOOTH:             //蓝牙模式
-              IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_VIBRING);
+              IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_BLUETOOTH);
         break;
 #endif
           default:

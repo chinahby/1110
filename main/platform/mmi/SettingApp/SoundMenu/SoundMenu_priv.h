@@ -295,6 +295,7 @@ typedef struct _CSoundMenu
     boolean            m_ringer_be;
 	//MODI BY YANGDECAI 09-27
 	uint16             m_slecet_id;
+    boolean             m_bBTHeadSetConnected;      //Add By zzg 2013_01_09
 } CSoundMenu;
 
 /*==============================================================================
