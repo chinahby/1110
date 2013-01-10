@@ -55,8 +55,8 @@
 	<STRING Id="1018" Name="IDS_NEWPIN">
 		<Text>नया PIN कोड दर्ज करें:</Text>
 	</STRING>
-	<String Id="1019" Name="IDS_DATA_PROTECTION">
-		<Text>data protection</Text>
+	<String Id="1019" Name="IDS_ENTER_PHONENUMBER">
+		<Text>फोन नंबर दर्ज करें</Text>
 	</String>
 	<STRING Id="1020" Name="IDS_ENTERPIN">
 		<Text>PIN दर्ज करें:</Text>
@@ -94,6 +94,9 @@
 	<STRING Id="1031" Name="IDS_RESTRICT_TITLE">
 		<Text>प्रतिबंधित</Text>
 	</STRING>
+	<String Id="1032" Name="IDS_DATA_PROTECTION" Encoding="Unicode">
+		<Text>data protection</Text>
+	</String>
 	<STRING Id="1033" Name="IDS_PHONE_LOCK">
 		<Text>फोन लॉक</Text>
 	</STRING>
