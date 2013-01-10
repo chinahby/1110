@@ -70,7 +70,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #endif
 
 #ifndef TARGSBW2_H
-   #include "targsb12864.h"
+   #include "targsb12832.h"
 #endif
 
 
