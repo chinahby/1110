@@ -2046,6 +2046,8 @@ static boolean CTextCtl_Redraw(ITextCtl * pITextCtl)
         if(pme->m_dwProps & TP_GRAPHIC_BG)
         {
             TextCtl_DrawBackGround(pme, &pme->m_rc);
+            // IDISPLAY_FillRect(pme->m_pIDisplay, &pme->m_rc, RGB_WHITE);//CLR_SYS_WIN);
+            //(void)IDISPLAY_SetColor(pme->m_pIDisplay, CLR_USER_BACKGROUND, MAKE_RGB(255,255,255));
         }
         else
         {
@@ -2330,6 +2332,7 @@ static void CTextCtl_SetRect(ITextCtl * pITextCtl, const AEERect * prc)
      if(pme->m_dwProps & TP_GRAPHIC_BG)
      {
          TextCtl_DrawBackGround(pme, &rcOld);
+         //IDISPLAY_FillRect(pme->m_pIDisplay, &rcOld, CLR_SYS_WIN);
      }
      else
      {
@@ -2446,7 +2449,18 @@ static void CTextCtl_SetProperties(ITextCtl * pITextCtl, uint32 nProperties)
             }
             else
             {
+            	#ifdef FEATURE_VERSION_C316
+				if(nProperties & TP_GRAPHIC_BGBLUE)
+				{
+					pme->m_pImageBg = ISHELL_LoadResImage(pme->m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_BACKGROUD_BLUE);
+				}
+				else
+				{
+					pme->m_pImageBg = ISHELL_LoadResImage(pme->m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);
+				}
+				#else
                 pme->m_pImageBg = ISHELL_LoadResImage(pme->m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);
+				#endif
             }
         }
         OEM_TextSetBackGround(pme->m_pText, pme->m_pImageBg);
@@ -7552,7 +7566,19 @@ static void TextCtl_DrawBackGround(CTextCtl * pme, AEERect *pRect)
         }
         else
         {
-            pme->m_pImageBg = ISHELL_LoadResImage(pme->m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);
+            
+			#ifdef FEATURE_VERSION_C316
+			if(pme->m_dwProps & TP_GRAPHIC_BGBLUE)
+			{
+				pme->m_pImageBg = ISHELL_LoadResImage(pme->m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_BACKGROUD_BLUE);
+			}
+			else
+			{
+				pme->m_pImageBg = ISHELL_LoadResImage(pme->m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);
+			}
+			#else
+			pme->m_pImageBg = ISHELL_LoadResImage(pme->m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);
+			#endif
         }
         OEM_TextSetBackGround(pme->m_pText, pme->m_pImageBg);
     }

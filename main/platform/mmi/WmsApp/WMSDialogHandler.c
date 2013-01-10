@@ -9247,6 +9247,7 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                                     {
                                         int index = 0;
                                         char TempTo[MAX_EMAILADD_LEN];
+										char TempToStr[MAX_EMAILADD_LEN];
                                         for(; index < count; ++index)
                                         {
                                             pItem = (CMultiSendItemInfo *)IVector_ElementAt(pMe->m_pSendList, index);
@@ -10946,7 +10947,11 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 #if defined FEATURE_CARRIER_THAILAND_HUTCH || defined FEATURE_CARRIER_THAILAND_CAT
                 ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT|TP_FOCUS_NOSEL);
 #else
+#ifdef FEATURE_VERSION_C316
+				ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BGBLUE|TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
+#else
                 ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
+#endif
 #endif
                 SetControlRect(pMe, pIText);
 #endif
@@ -11191,7 +11196,11 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                         rc.dy = GetBottomBarHeight(pMe->m_pDisplay);
                         rc.dx = pMe->m_rc.dx;//five pixels for right edge, 
                         ITEXTCTL_SetRect( pIText, &rc);
+						#ifdef FEATURE_VERSION_C316
+						ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BGBLUE|TP_FIXSETRECT |TP_EDITNUMBER_PTSTRING |TP_FIXOEM | TP_USELESS_UPDOWN | TP_GRAPHIC_BG | TP_FOCUS_NOSEL| TP_STARKEY_SWITCH);
+						#else
                         ITEXTCTL_SetProperties( pIText, (TP_FIXSETRECT |TP_EDITNUMBER_PTSTRING |TP_FIXOEM | TP_USELESS_UPDOWN | TP_GRAPHIC_BG | TP_FOCUS_NOSEL| TP_STARKEY_SWITCH));
+						#endif
                         if (NULL != pMe->m_msSend.m_szMessage)
                         {
                             ITEXTCTL_SetText( pIText, pMe->m_msSend.m_szMessage, WSTRLEN(pMe->m_msSend.m_szMessage));
@@ -11208,7 +11217,11 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 #if defined FEATURE_CARRIER_THAILAND_HUTCH || defined FEATURE_CARRIER_THAILAND_CAT
                         ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT|TP_FOCUS_NOSEL);
 #else
+						#ifdef FEATURE_VERSION_C316
+						ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BGBLUE|TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
+						#else
                         ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
+						#endif
 #endif
                         SetControlRect(pMe, pIText);                        
                     }
@@ -11628,7 +11641,11 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     rc.dx = pMe->m_rc.dx;//five pixels for right edge, 
                     ITEXTCTL_SetRect( pIText, &rc);
                     MSG_FATAL("EVT_USER_REDRAW rc.x=%d, rc.y=%d, rc.dy=%d", rc.x, rc.y, rc.dy);
+					#ifdef FEATURE_VERSION_C316
+					ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BGBLUE|TP_FIXSETRECT |TP_EDITNUMBER_PTSTRING |TP_FIXOEM | TP_USELESS_UPDOWN | TP_GRAPHIC_BG | TP_FOCUS_NOSEL| TP_STARKEY_SWITCH);
+					#else
                     ITEXTCTL_SetProperties( pIText, (TP_FIXSETRECT |TP_EDITNUMBER_PTSTRING |TP_FIXOEM | TP_USELESS_UPDOWN | TP_GRAPHIC_BG | TP_FOCUS_NOSEL| TP_STARKEY_SWITCH));
+					#endif
                     //IDISPLAY_ClearScreen(pMe->m_pDisplay);
                     if(NULL != pMe->m_msSend.m_szMessage)
                     {
@@ -13181,7 +13198,11 @@ static boolean IDD_EDITTEMPLATE_Handler(void *pUser,
         case EVT_DIALOG_INIT:
             // add the code on 080818
             ITEXTCTL_SetMaxSize(pIText, WMS_TEMPMSG_MAXCHARS);
+			#ifdef FEATURE_VERSION_C316
+			ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BGBLUE|TP_GRAPHIC_BG| TP_FRAME | TP_MULTILINE|TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
+			#else
             ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG| TP_FRAME | TP_MULTILINE|TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
+			#endif
             {
                 AEERect rc;
                 
@@ -21040,8 +21061,12 @@ static boolean IDD_EDIT_ALBUMOREMAIN_Handler(void *pUser,
                 AECHAR WTitle[2] = {0};
                 MSG_FATAL("IDD_EDIT_ALBUMOREMAIN_Handler EVT_DIALOG_INIT",0,0,0);
                 IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
-                SetControlRect(pMe, pIText);       
+                SetControlRect(pMe, pIText);   
+				#ifdef FEATURE_VERSION_C316
+				ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BGBLUE|TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
+				#else
                 ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
+				#endif
                 (void)ITEXTCTL_SetTitle( pIText, NULL,0,WTitle);
                 ITEXTCTL_SetMaxSize(pIText, MAX_EMAILADD_LEN);              
 				if(NULL != pMe->m_szEmail)

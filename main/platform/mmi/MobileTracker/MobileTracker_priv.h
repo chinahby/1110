@@ -150,6 +150,7 @@ typedef struct _MobileTracker
 	
     boolean          b_pwdWright;
 	ITextCtl         *m_ppwdword; 
+	ITextCtl         *m_cpwdword;
 
 	ITextCtl         *m_Owner_Name;
 
@@ -158,6 +159,7 @@ typedef struct _MobileTracker
 	ITextCtl         *m_Number_three;
 	int              m_nitems;
 	ITextCtl         *m_Content;
+	boolean          m_Rturnpass;
 } MobileTracker;
 
 

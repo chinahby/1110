@@ -75,6 +75,99 @@ static void disp_ic_init(void)
 {
 #if 1
 	#if defined( FEATURE_VERSION_C316)||defined(FEATURE_VERSION_15E)
+	//CPT  TXDT180CA-68v4
+	
+	LCD_WRITE_CMD(0x11); //Exit Sleep
+	LCD_DELAY(120);
+
+	LCD_WRITE_CMD(0x26); //Set Default Gamma
+	LCD_WRITE_DATA(0x04);
+
+	LCD_WRITE_CMD(0xB1);
+	LCD_WRITE_DATA(0x08);
+	LCD_WRITE_DATA(0x10);
+
+	LCD_WRITE_CMD(0xC0); //Set VRH1[4:0] & VC[2:0] for VCI1 & GVDD
+	LCD_WRITE_DATA(0x10);
+	LCD_WRITE_DATA(0x00);
+
+	LCD_WRITE_CMD(0xC1); //Set BT[2:0] for AVDD & VCL & VGH & VGL
+	LCD_WRITE_DATA(0x03);
+
+	LCD_WRITE_CMD(0xC5); //Set VMH[6:0] & VML[6:0] for VOMH & VCOML
+	LCD_WRITE_DATA(0x4D);
+	LCD_WRITE_DATA(0x40);
+
+	LCD_WRITE_CMD(0xC7);
+	LCD_WRITE_DATA(0xB7);    //0xBA
+
+	LCD_WRITE_CMD(0x2A); //Set Column Address
+	LCD_WRITE_DATA(0x00);
+	LCD_WRITE_DATA(0x00);
+	LCD_WRITE_DATA(0x00);
+	LCD_WRITE_DATA(0x7F);
+
+	LCD_WRITE_CMD(0x2B); //Set Page Address
+	LCD_WRITE_DATA(0x00);
+	LCD_WRITE_DATA(0x00);
+	LCD_WRITE_DATA(0x00);
+	LCD_WRITE_DATA(0x9F);
+    
+	LCD_WRITE_CMD(0xEC);
+	LCD_WRITE_DATA(0x1B);
+    
+	LCD_WRITE_CMD(0xB7);
+	LCD_WRITE_DATA(0x00);
+
+	LCD_WRITE_CMD(0x3a); //Set Color Format
+	LCD_WRITE_DATA(0x55);
+
+	LCD_WRITE_CMD(0x36); //Set Scanning Direction
+	LCD_WRITE_DATA(0xC8);
+
+	LCD_WRITE_CMD(0xB4); //Set Source Output Direction
+	LCD_WRITE_DATA(0x02);
+
+	LCD_WRITE_CMD(0xf2); //Enable Gamma bit
+	LCD_WRITE_DATA(0x01);
+
+	LCD_WRITE_CMD(0xE0);
+	LCD_WRITE_DATA(0x3F);//p1
+	LCD_WRITE_DATA(0x29);//p2
+	LCD_WRITE_DATA(0x27);//p3
+	LCD_WRITE_DATA(0x2F);//p4
+	LCD_WRITE_DATA(0x27);//p5
+	LCD_WRITE_DATA(0x0E);//p6
+	LCD_WRITE_DATA(0x51);//p7
+	LCD_WRITE_DATA(0xC8);//p8
+	LCD_WRITE_DATA(0x3C);//p9
+	LCD_WRITE_DATA(0x18);//p10
+	LCD_WRITE_DATA(0x17);//p11
+	LCD_WRITE_DATA(0x16);//p12
+	LCD_WRITE_DATA(0x08);//p13
+	LCD_WRITE_DATA(0x05);//p14
+	LCD_WRITE_DATA(0x00);//p15
+
+	LCD_WRITE_CMD(0xE1);
+	LCD_WRITE_DATA(0x00);//p1
+	LCD_WRITE_DATA(0x16);//p2
+	LCD_WRITE_DATA(0x18);//p3
+	LCD_WRITE_DATA(0x10);//p4
+	LCD_WRITE_DATA(0x18);//p5
+	LCD_WRITE_DATA(0x11);//p6
+	LCD_WRITE_DATA(0x2E);//p7
+	LCD_WRITE_DATA(0x37);//p8
+	LCD_WRITE_DATA(0x43);//p9
+	LCD_WRITE_DATA(0x07);//p10
+	LCD_WRITE_DATA(0x18);//p11
+	LCD_WRITE_DATA(0x29);//p12
+	LCD_WRITE_DATA(0x37);//p13
+	LCD_WRITE_DATA(0x3A);//p14
+	LCD_WRITE_DATA(0x3F);//p15
+	
+	//648V4
+	/*
+	//TXDT180TA-98  //ÌìÂí
 	LCD_WRITE_CMD(0x11); //Exit Sleep
 	LCD_DELAY(120);
 
@@ -113,6 +206,9 @@ static void disp_ic_init(void)
     
 	LCD_WRITE_CMD(0xEC);
 	LCD_WRITE_DATA(0x0C);
+    
+	LCD_WRITE_CMD(0xB7);
+	LCD_WRITE_DATA(0x00);
 
 	LCD_WRITE_CMD(0x3a); //Set Color Format
 	LCD_WRITE_DATA(0x55);
@@ -121,9 +217,9 @@ static void disp_ic_init(void)
 	LCD_WRITE_DATA(0xC8);
 
 	LCD_WRITE_CMD(0xB4); //Set Source Output Direction
-	LCD_WRITE_DATA(0x07);
+	LCD_WRITE_DATA(0x02);
 
-	LCD_WRITE_CMD(0xf2); //Enable Gamma bit
+	LCD_WRITE_CMD(0xF2); //Enable Gamma bit
 	LCD_WRITE_DATA(0x01);
 
 	LCD_WRITE_CMD(0xE0);
@@ -131,7 +227,7 @@ static void disp_ic_init(void)
 	LCD_WRITE_DATA(0x20);//p2
 	LCD_WRITE_DATA(0x1C);//p3
 	LCD_WRITE_DATA(0x24);//p4
-	LCD_WRITE_DATA(0x1d);//p5
+	LCD_WRITE_DATA(0x1D);//p5
 	LCD_WRITE_DATA(0x0B);//p6
 	LCD_WRITE_DATA(0x48);//p7
 	LCD_WRITE_DATA(0xB7);//p8
@@ -145,7 +241,7 @@ static void disp_ic_init(void)
 
 	LCD_WRITE_CMD(0xE1);
 	LCD_WRITE_DATA(0x00);//p1
-	LCD_WRITE_DATA(0x1f);//p2
+	LCD_WRITE_DATA(0x1F);//p2
 	LCD_WRITE_DATA(0x23);//p3
 	LCD_WRITE_DATA(0x0B);//p4
 	LCD_WRITE_DATA(0x12);//p5
@@ -159,6 +255,8 @@ static void disp_ic_init(void)
 	LCD_WRITE_DATA(0x3F);//p13
 	LCD_WRITE_DATA(0x3F);//p14
 	LCD_WRITE_DATA(0x3D);//p15
+	*/
+		
 	#else
 
 	LCD_WRITE_CMD(0x11); //Exit Sleep

@@ -43,6 +43,9 @@
 	<String Id="1014" Name="IDS_CONTENT">
 		<Text>Content</Text>
 	</String>
+	<String Id="1015" Name="IDS_CONFIRM_PASSWORD">
+		<Text>Confirm password:</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<Dialog Id="1" Name="IDD_LIST_MOBILETRACKER_DIALOGS" Focus="7001">
@@ -87,6 +90,8 @@
 	<Dialog Id="8" Name="IDD_CHANGEPASS_WORD" Focus="7003">
 		<Controls>
 			<Text Id="7003" Name="IDC_CHANGEPASSWORD">
+				<Items/></Text>
+			<Text Id="7009" Name="IDC_CONFIRM_PASSWORD">
 				<Items/></Text>
 		</Controls>
 	</Dialog>

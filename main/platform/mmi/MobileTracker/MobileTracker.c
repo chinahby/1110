@@ -894,6 +894,7 @@ static NextFSMAction MANINPWD_INPUTPWD_Handler(MobileTracker *pMe)
 
         case MGDLGRET_FAILD:    
 			MSG_FATAL("MGDLGRET_FAILD.............",0,0,0);
+			pMe->m_Rturnpass = FALSE;
 			MobileTracker_ShowPopDialog(pMe, IDD_PWD_INVAD);
 			//pMe->m_eDlgReturn = DLGRET_CREATE;
 			//MOVE_TO_STATE(STATE_PWDINALD); 
@@ -1009,6 +1010,11 @@ static NextFSMAction STATE_CHAGNEPASSWOWRD_Handler(MobileTracker *pMe)
     {
         case DLGRET_CREATE:
             MobileTracker_ShowDialog(pMe, IDD_CHANGEPASS_WORD);
+            return NFSMACTION_WAIT;
+		case MGDLGRET_FAILD:    
+			MSG_FATAL("MGDLGRET_FAILD.............",0,0,0);
+			pMe->m_Rturnpass = TRUE;
+			MobileTracker_ShowPopDialog(pMe, IDD_PWD_INVAD);
             return NFSMACTION_WAIT;
 
         case DLGRET_CANCELED:
@@ -1350,6 +1356,10 @@ static boolean MobileTracker_EanbleHandler(MobileTracker *pMe, AEEEvent eCode, u
 	   	 }
 	   case EVT_COMMAND:
 	      {
+		  		uint16 num = 0;
+				AEEMobileInfo     mi;
+				uint16 wImsiData[OEMNV_LOCKIMSI_MAXLEN] = {0};
+		  		GetMobileInfo(&mi);
 		  		switch(wParam)
 		  		{
                 	case IDS_ENABLE_ON:
@@ -1364,6 +1374,10 @@ static boolean MobileTracker_EanbleHandler(MobileTracker *pMe, AEEEvent eCode, u
 
 		  		}
 				MSG_FATAL("EVT_COMMANDmoblile_lock====%d",moblile_lock,0,0);
+				
+				(void) STRTOWSTR(mi.szMobileID, wImsiData, sizeof(wImsiData));
+				OEM_SetConfig(CFGI_MOBILE_TRACKER_IMSI,wImsiData,sizeof(wImsiData));
+				
 				OEM_SetConfig(CFGI_MOBILETRACKER_LOCK_CHECK,
                                        &moblile_lock,
                                        sizeof(moblile_lock));
@@ -1709,7 +1723,7 @@ static boolean MobileTracker_DnumberHandler(MobileTracker *pMe, AEEEvent eCode, 
 						AECHAR *pNumber1Text  = ITEXTCTL_GetTextPtr(pMe->m_Number_one);
 						AECHAR *pNumber2Text  = ITEXTCTL_GetTextPtr(pMe->m_Number_tow);
 						AECHAR *pNumber3Text  = ITEXTCTL_GetTextPtr(pMe->m_Number_three);
-
+						
 						WSTRCPY(m_NumberStr1,pNumber1Text);
 						WSTRCPY(m_NumberStr2,pNumber2Text);
 						WSTRCPY(m_NumberStr3,pNumber3Text);
@@ -1717,6 +1731,7 @@ static boolean MobileTracker_DnumberHandler(MobileTracker *pMe, AEEEvent eCode, 
 						OEM_SetConfig(CFGI_MOBILE_TRACKER_PHONENUMB,pNumber1Text,sizeof(uint16)*20);
 						OEM_SetConfig(CFGI_MOBILE_TRACKER_PHONENUMBTWO,pNumber2Text,sizeof(uint16)*20);
 						OEM_SetConfig(CFGI_MOBILE_TRACKER_PHONENUMBTHREE,pNumber3Text,sizeof(uint16)*20);
+                            
 						CLOSE_DIALOG(DLGRET_CANCELED)
 						return TRUE;
 					}
@@ -1810,13 +1825,14 @@ static boolean MobileTracker_ContentHandler(MobileTracker *pMe, AEEEvent eCode, 
              {
 			    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
              }
-			 SETAEERECT(&m_ContentRect,2,0,124,120);
+			 Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
+			 SETAEERECT(&m_ContentRect,0,0,128,128);
 			 ITEXTCTL_SetRect(pMe->m_Content, &m_ContentRect);
 			 ITEXTCTL_SetTitle(pMe->m_Content,
                       NULL,
                       0, 0);
   			 ITEXTCTL_SetInputMode(pMe->m_Content, AEE_TM_LETTERS);
-  			 ITEXTCTL_SetProperties(pMe->m_Content, TP_MULTILINE|TP_FIXOEM |TP_STARKEY_SWITCH|TP_FOCUS_NOSEL);
+  			 ITEXTCTL_SetProperties(pMe->m_Content, TP_MULTILINE|TP_FRAME|TP_FOCUS_NOSEL|TP_FIXSETRECT|TP_STARKEY_SWITCH|TP_DISPLAY_COUNT|TP_NOUPDATE|TP_GRAPHIC_BG);
              ITEXTCTL_SetMaxSize(pMe->m_Content, 120);
 			 OEM_GetConfig(CFGI_MOBILE_TRACKER_CONTECT,&m_wstrContect,sizeof(uint16)*120);
 			 ITEXTCTL_SetText(pMe->m_Content,m_wstrContect,sizeof(uint16)*120);
@@ -1825,30 +1841,20 @@ static boolean MobileTracker_ContentHandler(MobileTracker *pMe, AEEEvent eCode, 
 	   case EVT_DIALOG_START:
 	      {
 		  	 //CFGI_MOBILE_TRACKER_CONTECT
-	         ISHELL_PostEvent(pMe->m_pShell, AEECLSID_MOBILETRACKER,
-	                          EVT_USER_REDRAW, 0, 0);
+	         ISHELL_PostEvent(pMe->m_pShell, AEECLSID_MOBILETRACKER,EVT_USER_REDRAW, 0, 0);
 	         return TRUE;
 	      }
 	   case EVT_USER_REDRAW:
 	      {
 		  		 TitleBar_Param_type     TBarParam = {0};
-				 AECHAR WTitle[40] = {0};
 	   	       	 BottomBar_Param_type  BBarParam ={0};
+				 
 	   		     BBarParam.eBBarType = BTBAR_OK_DELETE;
-	   	      		 //时间标题
-	   	       	 //(void) ISHELL_LoadResString(pMe->m_pShell,
-	   	         //                          MOBILETRACKER_RES_FILE_LANG,
-	   	         //                          IDS_CONTENT,
-	   	          //                         WTitle,
-	   	          //                         sizeof(WTitle));
-	   			 Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
-	   			 //IDISPLAY_SetColor( pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
-	   			 //IDISPLAY_DrawText(pMe->m_pDisplay, AEE_FONT_NORMAL, WTitle,-1, 0, 0, 0, IDF_TEXT_TRANSPARENT);
-	   			 //IDISPLAY_SetColor( pMe->m_pDisplay, CLR_USER_TEXT, RGB_BLACK);
 	   			 DrawBottomBar(pMe->m_pDisplay, &BBarParam);
-	   			 ITEXTCTL_SetActive(pMe->m_Content,TRUE);
+				 ITEXTCTL_Redraw(pMe->m_Content);
 	   	       	 // 更新显示
-	   	       	 IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);  
+	   	       	 IDISPLAY_Update(pMe->m_pDisplay); 
+				 return TRUE;
 	   	  }
 	     case EVT_DIALOG_END:
 	      {
@@ -1869,7 +1875,6 @@ static boolean MobileTracker_ContentHandler(MobileTracker *pMe, AEEEvent eCode, 
 					AECHAR *pwsText  = ITEXTCTL_GetTextPtr(pMe->m_Content);
 					
 					WSTRCPY(m_wstrContect,pwsText);
-					//OEM_SetConfig(CFGI_SMS_TRACKER_NUMBER, pMe->m_strPhoneNUM, sizeof(pMe->m_strPhoneNUM));
 					OEM_SetConfig(CFGI_MOBILE_TRACKER_CONTECT,&m_wstrContect,sizeof(uint16)*120);
 					CLOSE_DIALOG(DLGRET_CANCELED)
 					return TRUE;
@@ -1899,6 +1904,7 @@ static boolean MobileTracker_ChangPassWordHandler(MobileTracker *pMe, AEEEvent e
 {
    PARAM_NOT_REF(dwParam)
    AEERect      p_PassWordMenu       = {0};
+   AEERect      p_ConfirmPassWord    = {0};
    AECHAR      wszTile[24];     //时间
    AECHAR      wszPassWord[20];
    if(!pMe)
@@ -1908,6 +1914,8 @@ static boolean MobileTracker_ChangPassWordHandler(MobileTracker *pMe, AEEEvent e
    
    pMe->m_ppwdword = (ITextCtl*)IDIALOG_GetControl(pMe->m_pActiveIDlg,
                                                     IDC_CHANGEPASSWORD);
+   pMe->m_cpwdword = (ITextCtl*)IDIALOG_GetControl(pMe->m_pActiveIDlg,
+                                                    IDC_CONFIRM_PASSWORD);
 
    if (pMe->m_ppwdword == NULL)
    {
@@ -1929,11 +1937,15 @@ static boolean MobileTracker_ChangPassWordHandler(MobileTracker *pMe, AEEEvent e
              }
 
 			 SETAEERECT(&p_PassWordMenu,2,40,124,20);
+			 SETAEERECT(&p_ConfirmPassWord,2,80,124,20);
 			 ITEXTCTL_SetRect(pMe->m_ppwdword, &p_PassWordMenu);
+			 ITEXTCTL_SetRect(pMe->m_cpwdword, &p_ConfirmPassWord);
   			 ITEXTCTL_SetInputMode(pMe->m_ppwdword, AEE_TM_NUMBERS);
+			 ITEXTCTL_SetInputMode(pMe->m_cpwdword, AEE_TM_NUMBERS);
   			 ITEXTCTL_SetProperties(pMe->m_ppwdword, TP_FRAME|TP_FIXSETRECT|TP_FOCUS_NOSEL);
+			 ITEXTCTL_SetProperties(pMe->m_cpwdword, TP_FRAME|TP_FIXSETRECT|TP_FOCUS_NOSEL);
              ITEXTCTL_SetMaxSize(pMe->m_ppwdword, 20);
-		     
+		     ITEXTCTL_SetMaxSize(pMe->m_cpwdword, 20);
 	         return TRUE;
 	      }
 	   case EVT_DIALOG_START:
@@ -1944,22 +1956,30 @@ static boolean MobileTracker_ChangPassWordHandler(MobileTracker *pMe, AEEEvent e
 	      }
 	   case EVT_USER_REDRAW:
 	      {
+		  		 AECHAR      wcpTile[24];     //时间
 		  		 TitleBar_Param_type     TBarParam = {0};
             	 BottomBar_Param_type  BBarParam ={0};
 				 BBarParam.eBBarType = BTBAR_OK_BACK;
-           		 //时间标题
+           		 //
             	(void) ISHELL_LoadResString(pMe->m_pShell,
                                         MOBILETRACKER_RES_FILE_LANG,
                                         IDS_PWD_TITLE,
                                         wszTile,
                                         sizeof(wszTile));
+				(void) ISHELL_LoadResString(pMe->m_pShell,
+                                        MOBILETRACKER_RES_FILE_LANG,
+                                        IDS_CONFIRM_PASSWORD,
+                                        wcpTile,
+                                        sizeof(wcpTile));
 				 WSTRCAT(wszTile,L":");
 				 Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
 				 IDISPLAY_SetColor( pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
 				 IDISPLAY_DrawText(pMe->m_pDisplay, AEE_FONT_NORMAL, wszTile,-1, 0, 20, 0, IDF_TEXT_TRANSPARENT);
+				 IDISPLAY_DrawText(pMe->m_pDisplay, AEE_FONT_NORMAL, wcpTile,-1, 0, 60, 0, IDF_TEXT_TRANSPARENT);
 				 IDISPLAY_SetColor( pMe->m_pDisplay, CLR_USER_TEXT, RGB_BLACK);
 				 DrawBottomBar(pMe->m_pDisplay, &BBarParam);
 				 ITEXTCTL_SetActive(pMe->m_ppwdword,TRUE);
+				 ITEXTCTL_SetActive(pMe->m_cpwdword,FALSE);
             	 // 更新显示
             	 IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);  
 				 return TRUE;
@@ -1982,19 +2002,40 @@ static boolean MobileTracker_ChangPassWordHandler(MobileTracker *pMe, AEEEvent e
 					uint16 wPWD=0;
 					char m_strPhonePWD[24] = {0};
 					AECHAR *pwsText  = ITEXTCTL_GetTextPtr(pMe->m_ppwdword);
-					
+					AECHAR *PcpText  = ITEXTCTL_GetTextPtr(pMe->m_cpwdword);
+					MSG_FATAL("avk_selectpws==%d,,pcp===%d",WSTRLEN(pwsText),WSTRLEN(PcpText),0);
 					len =WSTRLEN(pwsText);
+					if(WSTRCMP(pwsText,PcpText) != 0 || len<3)
+					{
+						CLOSE_DIALOG(MGDLGRET_FAILD)
+						return TRUE;
+					}
+
 					WSTRTOSTR(pwsText,m_strPhonePWD,sizeof(m_strPhonePWD));
 					len = STRLEN(m_strPhonePWD);
 					DBGPRINTF("pMe->m_strPhoneNUM %s",m_strPhonePWD);
                     wPWD = EncodePWDToUint16(m_strPhonePWD);
-					//OEM_SetConfig(CFGI_SMS_TRACKER_NUMBER, pMe->m_strPhoneNUM, sizeof(pMe->m_strPhoneNUM));
 					OEM_SetConfig(CFGI_MOBILETRACKER_PASSWORD,&wPWD,sizeof(uint16));
 					CLOSE_DIALOG(DLGRET_CANCELED)
 					return TRUE;
 					
 				}
 				break;
+				case AVK_UP:
+				case AVK_DOWN:
+					{
+						if(ITEXTCTL_IsActive(pMe->m_ppwdword))
+						{
+							ITEXTCTL_SetActive(pMe->m_ppwdword,FALSE);
+							ITEXTCTL_SetActive(pMe->m_cpwdword,TRUE);
+						}
+						else
+						{
+							ITEXTCTL_SetActive(pMe->m_ppwdword,TRUE);
+							ITEXTCTL_SetActive(pMe->m_cpwdword,FALSE);
+						}
+					}
+					break;
 				case AVK_CLR:
 					CLOSE_DIALOG(DLGRET_CANCELED)
 				    return TRUE;
@@ -2084,13 +2125,27 @@ static boolean MobileTracker_PopMsgHandler(MobileTracker *pMe, AEEEvent eCode, u
 		 	{
                ISHELL_CancelTimer(pMe->m_pShell,
                                   MobileTracker_MsgBoxTimeout, pMe);
-               CLOSE_DIALOG(DLGRET_CANCELED);
+			   if(pMe->m_Rturnpass)
+			   {
+			   		CLOSE_DIALOG(DLGRET_CHAGNEPASSWOWRD);
+			   }
+			   else
+			   {
+               		CLOSE_DIALOG(DLGRET_CANCELED);
+			   }
          	}
             break;
 
          case AVK_SELECT:
 		 	{
-               CLOSE_DIALOG(DLGRET_CANCELED);
+               if(pMe->m_Rturnpass)
+			   {
+			   		CLOSE_DIALOG(DLGRET_CHAGNEPASSWOWRD);
+			   }
+			   else
+			   {
+               		CLOSE_DIALOG(DLGRET_CANCELED);
+			   }
          	}
             break;
 
