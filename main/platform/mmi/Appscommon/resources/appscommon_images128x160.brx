@@ -94,6 +94,9 @@
 	<Object Id="5031" Name="IDB_MODE_T9_RAPID_SPANISH_UP" MimeType="image/png">
 		<File>..\images\128x160\common\IME\sp_5.png</File>
 	</Object>
+	<Object Id="5032" Name="IDI_BACKGROUD_BLUE" MimeType="image/png">
+		<File>..\images\128x160\common\Appscommon\Menu\background\backgroundblue.png</File>
+	</Object>
 	<Object Id="5041" Name="IDB_ERROR" MimeType="image/png">
 		<File>..\images\128x160\common\Appscommon\MessageBox\error.png</File>
 	</Object>
