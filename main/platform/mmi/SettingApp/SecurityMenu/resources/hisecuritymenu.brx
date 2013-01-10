@@ -94,6 +94,9 @@
 	<STRING Id="1031" Name="IDS_RESTRICT_TITLE">
 		<Text>प्रतिबंधित</Text>
 	</STRING>
+	<String Id="1032" Name="IDS_DATA_PROTECTION" Encoding="Unicode">
+		<Text>data protection</Text>
+	</String>
 	<STRING Id="1033" Name="IDS_PHONE_LOCK">
 		<Text>फोन लॉक</Text>
 	</STRING>
@@ -349,6 +352,9 @@
 		</Controls>
 	</Dialog>
 	<Dialog Id="6023" Name="IDD_TSIMINPUT_PASSWORD_DIALOG" Focus="0">
+		<Controls/>
+	</Dialog>
+	<Dialog Id="6024" Name="IDD_MOBILE_TRACKER_DIALOG" Focus="0">
 		<Controls/>
 	</Dialog>
 	<Dialog Id="6025" Name="IDD_ONEKEY_LOCK_KEYPAD_DIALOG" Focus="7012">
