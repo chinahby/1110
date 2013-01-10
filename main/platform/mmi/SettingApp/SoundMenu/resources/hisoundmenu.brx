@@ -187,6 +187,9 @@
 	<STRING Id="1065" Name="IDS_PROFILE_BLUETOOTH">
 		<Text>ब्लूटूथ</Text>
 	</STRING>
+	<STRING Id="1066" Name="IDS_WARNING_NO_BT_HEADSET">
+		<Text>कोई नहीं बीटी हेडसेट</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_SOUNDMENU_PROFILES" Focus="0">
