@@ -148,6 +148,9 @@
 	<String Id="1079" Name="IDS_CAMERA_SAVE_VIDEO">
 		<Text>Save Video</Text>
 	</String>
+	<String Id="1080" Name="IDS_CAMERA_SAVE_VIDEOFILE">
+		<Text>Save recorded file?</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<Dialog Id="6001" Name="IDD_CMAINMENU" Focus="7001">
