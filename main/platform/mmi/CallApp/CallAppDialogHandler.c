@@ -198,6 +198,7 @@ static void CallApp_DrawDialerString(CCallApp *pMe,AECHAR const *dialStr);
 //Converts  AVKType to the ASCII equivalent
 static char CallApp_AVKType2ASCII(AVKType key);
 static void CallApp_keypadtimer(void *pUser);
+static boolean CallApp_FindMemoryCardExist(CCallApp *pMe);  //Add by pyuangui 2013-01-10
 static AECHAR CallApp_AVKSTAR_2ASCII(CCallApp *pMe);
 
 //Determines the current DTMF tone length
@@ -3195,7 +3196,6 @@ static void CallApp_Dialer_Connect_Record_Reverse( CCallApp* pme)
 
 static void CallApp_Dialer_Connect_Turn_On_Recorder( CCallApp* pme)
 {
-
 	CallApp_Dialer_Connect_Record_Forward( pme);
 }
 
@@ -3233,7 +3233,35 @@ static void recorder_media_event_handler( void* pUser, MediaEventNotify* pEventN
 
 static void CallApp_Dialer_Connect_Record( CCallApp* pme)
 {
-
+    //Add by pyuangui 2013-01-09
+    #ifdef FEATURE_VERSION_C316
+    char FilePath[AEE_MAX_FILE_NAME] = {0};
+    if(CallApp_FindMemoryCardExist(pme))
+    {
+		 char strBuf[AEE_MAX_FILE_NAME] = {0};
+		 STRCPY(FilePath, MG_MASSCARDCALLRECOED_PATH);
+		 if(WSTRLEN(pme->m_CallsTable->call_name) > 0)
+		 {
+	         WSTRTOSTR(pme->m_CallsTable->call_name,strBuf,sizeof(strBuf));
+	         STRCAT(FilePath, strBuf);
+			 STRCAT(FilePath, DIRECTORY_STR);
+		 }
+		 else
+		 {
+             WSTRTOSTR(pme->m_CallsTable->call_number,strBuf,sizeof(strBuf));
+	         STRCAT(FilePath, strBuf);
+			 STRCAT(FilePath, DIRECTORY_STR);
+		 }
+         MSG_FATAL("****pyg****CallRecord---FilePath=%s",FilePath,0,0);
+          
+         if(SUCCESS != IFILEMGR_Test(pme->m_pFileMgr, FilePath))
+         {
+             MSG_FATAL("****pyg****CallRecord---FilePath=%s",FilePath,0,0);
+             IFILEMGR_MkDir(pme->m_pFileMgr, FilePath);
+         }
+    }
+	#endif
+	//Add End
 	if( recorder_get_memo_number( &pme->m_Media) < RECORDER_FILE_NUMBER_LIMIT)
 	{
 		pme->m_bRecorderOn 		= TRUE;
@@ -3246,7 +3274,13 @@ static void CallApp_Dialer_Connect_Record( CCallApp* pme)
 		recorder_set_media_volume( &pme->m_Media, AEE_MAX_VOLUME);
 #endif
 		recorder_set_media_event_notify( &pme->m_Media, recorder_media_event_handler, pme);
+        //Add by pyuangui 2013-01-10
+        #ifdef FEATURE_VERSION_C316
+		recorder_process_media_operation_result( &pme->m_Media, recorder_call_record(  &pme->m_Media,FilePath), MEDIA_STATE_READY);
+		#else
 		recorder_process_media_operation_result( &pme->m_Media, recorder_record(  &pme->m_Media), MEDIA_STATE_READY);
+		#endif
+		//Add End
 	}
 	else
 	{
@@ -3657,6 +3691,7 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
            pMe->m_bRecorderOn = TRUE;            
 		   CallApp_Dialer_Connect_Turn_On_Recorder( pMe);
          }
+ 
        }
 #endif
 //Add End
@@ -8107,6 +8142,15 @@ static AECHAR CallApp_AVKSTAR_2ASCII(CCallApp *pMe)
 		return L'W';
 	}
 }
+
+//Add by pyuangui 2013-01-10
+#ifdef FEATURE_VERSION_C316
+static boolean CallApp_FindMemoryCardExist(CCallApp *pMe)
+{   
+    return (IFILEMGR_Test(pMe->m_pFileMgr, AEEFS_CARD0_DIR)==SUCCESS)?TRUE:FALSE;	
+}
+#endif
+//Add End
 
 /*=============================================================================
 FUNCTION: CallApp_AVKType2ASCII

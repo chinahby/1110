@@ -671,6 +671,16 @@ static int CallApp_InitAppData(CCallApp *pMe)
         return EFAILED;
     }
 #endif
+//Add by pyuangui 2013-01-10
+#ifdef FEATURE_VERSION_C316
+   if(AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell, 
+										   AEECLSID_FILEMGR, 
+										   (void **)&pMe->m_pFileMgr))
+   {
+	   return EFAILED;
+   }
+#endif
+//Add end
 #ifdef FEATURE_ICM
     if(ISHELL_CreateInstance(pMe->m_pShell,
                                             AEECLSID_CM,
@@ -989,6 +999,15 @@ static void CallApp_FreeAppData(CCallApp *pMe)
         pMe->m_pIRUIM = NULL;
     }
 #endif
+//Add by pyuangui 2013-01-10
+#ifdef FEATURE_VERSION_C316
+    if(pMe->m_pFileMgr)
+    {
+        IFILEMGR_Release(pMe->m_pFileMgr);
+        pMe->m_pFileMgr = NULL;            
+    }
+#endif
+//Add end
 #ifdef FEATURE_ICM
     if(pMe->m_pICM != NULL)
     {

@@ -533,12 +533,14 @@ typedef struct _CCallApp
     // 是否不改写对话框返回结果，一般情况需要改写(FALSE)。
     boolean                m_bNotOverwriteDlgRet;
     // Applet 前一状态
-    CallAppState         m_ePreState;
+    CallAppState           m_ePreState;
     // Applet 当前状态
-    CallAppState         m_eCurState;
+    CallAppState           m_eCurState;
     // Applet是否处于挂起状态
     boolean                m_bSuspending;
-
+#ifdef FEATURE_VERSION_C316
+    IFileMgr              *m_pFileMgr;     //Add by pyuangui 2013-01-10
+#endif
 #ifdef FEATURE_SUB_LCD
     IDisplaySub            *m_pDisplaySub;
     AEERect                m_RectSub;
