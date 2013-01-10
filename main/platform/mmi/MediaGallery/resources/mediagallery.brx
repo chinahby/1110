@@ -373,6 +373,9 @@
 	<STRING Id="1125" Name="IDS_PWD_TITLE">
 		<Text>Enter Password</Text>
 	</STRING>
+	<STRING Id="1126" Name="IDS_MG_AUTOCALLRECORD">
+		<Text>Auto Call Record</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<Dialog Id="6001" Name="IDD_MG_MAINMENU" Focus="7001">

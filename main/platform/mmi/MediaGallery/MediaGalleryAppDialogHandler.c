@@ -1679,6 +1679,12 @@ static boolean MediaGalleryApp_PhoneMemDlg_HandleEvent(CMediaGalleryApp* pMe,
             pDirs = MG_PHONEVIDEOS_PATH;
             eFolderType=MG_MIME_VIDEOBASE;
             break;
+#ifdef FEATURE_VERSION_C316			
+          case IDS_MG_AUTOCALLRECORD:
+    	   	pDirs = MG_MASSCARDCALLRECOED_PATH;
+            eFolderType= MG_MIME_QCP;
+            break;			
+#endif			
 #if 0
          case IDS_MG_CALLMEMO:
             pDirs = MG_PHONECALLMEMO_PATH;
@@ -1884,7 +1890,12 @@ static boolean MediaGalleryApp_CardMemDlg_HandleEvent(CMediaGalleryApp* pMe,
                   pDirs = MG_MASSCARDVOICEMEMO_PATH;
                   eFolderType= MG_MIME_VOICEREC;
                   break;
-
+#ifdef FEATURE_VERSION_C316				  
+               case IDS_MG_AUTOCALLRECORD:
+			   	  pDirs = MG_MASSCARDCALLRECOED_PATH;
+                  eFolderType= MG_MIME_QCP;
+                  break;
+#endif				  
 #ifdef FEATURE_MG_WAPMMS_SUPPORT
                case IDS_MG_DOWNLOAD:
                   pDirs = MG_MASSCARDDOWNLOAD_PATH;

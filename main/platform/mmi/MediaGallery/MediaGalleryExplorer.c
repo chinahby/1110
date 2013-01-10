@@ -2476,6 +2476,12 @@ static boolean MGExplorer_GetSysDirStr(IShell *pIShell,
    {
       nResID = IDS_MG_CALLMEMO;
    }
+#ifdef FEATURE_VERSION_C316
+   else if(0 == STRCMP(pBaseName, MG_AUTOCALLRECOED_FOLDER))
+   {
+      nResID = IDS_MG_AUTOCALLRECORD;
+   }
+#endif   
 #ifdef FEATURE_MG_WAPMMS_SUPPORT
    else if(0 == STRCMP(pBaseName, MG_DOWNLOAD_FOLDER))
    {
@@ -2537,6 +2543,11 @@ boolean MGExplorer_IsSysDirInMassStorage(const char *pszFile,
       else if(0 == STRCMP(pBaseName, MG_VOICEMEMO_FOLDER)){
          bSysDir = TRUE;
       }
+#ifdef FEATURE_VERSION_C316
+      else if(0 == STRCMP(pBaseName, MG_AUTOCALLRECOED_FOLDER)){
+         bSysDir = TRUE;
+      }
+#endif
 #ifdef FEATURE_MG_WAPMMS_SUPPORT
       else if(0 == STRCMP(pBaseName, MG_DOWNLOAD_FOLDER)){
          bSysDir = TRUE;
