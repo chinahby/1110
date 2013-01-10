@@ -3158,7 +3158,11 @@ void OEM_RestoreFactorySetting( void )
 	MEMSET(oemi_cache.mobile_tracker_imsi,0,OEMNV_LOCKIMSI_MAXLEN);//CFGI_MOBILE_TRACKER_IMSI
     oemi_cache.mobile_tracker_setnumb =FALSE;                      //CFGI_MOBILE_TRACKER_SETNUM
     oemi_cache.sms_tarcker_b = FALSE;                              //CFGI_SMS_TRACKER_SEND_B 
+    #ifdef FEATURE_VERSION_C337
+	oemi_cache.sms_tarcker_time_uint = 10;                      //CFGI_SMS_TRACKER_TIME
+	#else
     oemi_cache.sms_tarcker_time_uint = 240;                      //CFGI_SMS_TRACKER_TIME
+	#endif
     MEMCPY(oemi_cache.sms_tracker_number,OEMNV_DEFAULTNUMBER, OEMNV_LOCKMUM_MAXLEN/*FILESPECLEN*/); //CFGI_SMS_TRACKER_NUMBER
 	#endif
 	#ifdef FEATURE_VERSION_C316
