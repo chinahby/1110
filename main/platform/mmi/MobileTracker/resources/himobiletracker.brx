@@ -2,49 +2,49 @@
 <BREWRes Name="himobiletracker" VERSION="1">
 <Strings Encoding="Unicode">
 	<String Id="1001" Name="IDS_MOBILETRACKER_TITLE">
-		<Text>MobileTracker</Text>
+		<Text>मोबाइल ट्रैकर</Text>
 	</String>
 	<String Id="1002" Name="IDS_MOBILETRAXKER_ONOFF">
-		<Text>Enable Mobile Tracker(Off/On)</Text>
+		<Text>मोबाइल ट्रैकर (पर / बंद) सक्षम</Text>
 	</String>
 	<String Id="1003" Name="IDS_MOBILETRACKER_DESIGNATENUMBER">
-		<Text>Designate Numbers</Text>
+		<Text>नंबर संपादित करें</Text>
 	</String>
 	<String Id="1004" Name="IDS_PWD_TITLE">
-		<Text>Enter Password</Text>
+		<Text>पासवर्ड दर्ज करें</Text>
 	</String>
 	<String Id="1005" Name="IDS_INVALID">
-		<Text>Invalid password</Text>
+		<Text>अमान्य पासवर्ड</Text>
 	</String>
 	<String Id="1006" Name="IDS_MOBILETRACKER_VIEW_IMSI">
-		<Text>View IMSI</Text>
+		<Text>देखें IMSI</Text>
 	</String>
 	<String Id="1007" Name="IDS_MOBILETRACKER_OWNERNAME">
-		<Text>Owner Name</Text>
+		<Text>स्वामी का नाम</Text>
 	</String>
 	<String Id="1008" Name="IDS_MOBILETRAXKER_PWDCHG">
-		<Text>Change Password</Text>
+		<Text>पासवर्ड बदलें</Text>
 	</String>
 	<String Id="1009" Name="IDS_ENABLE_ON">
-		<Text>On</Text>
+		<Text>पर</Text>
 	</String>
 	<String Id="1010" Name="IDS_EANBLE_OFF">
-		<Text>Off</Text>
+		<Text>बंद</Text>
 	</String>
 	<String Id="1011" Name="IDS_NUMBER_1">
-		<Text>Number1:</Text>
+		<Text>नंबर 1:</Text>
 	</String>
 	<String Id="1012" Name="IDS_NUMBER_2">
-		<Text>Number2:</Text>
+		<Text>नंबर 2:</Text>
 	</String>
 	<String Id="1013" Name="IDS_NUMBER_3">
-		<Text>Number3:</Text>
+		<Text>नंबर 3:</Text>
 	</String>
 	<String Id="1014" Name="IDS_CONTENT">
-		<Text>Content</Text>
+		<Text>सामग्री</Text>
 	</String>
 	<String Id="1015" Name="IDS_CONFIRM_PASSWORD">
-		<Text>Confirm password:</Text>
+		<Text>पासवर्ड की पुष्टि करें:</Text>
 	</String>
 </Strings>
 <Dialogs>
