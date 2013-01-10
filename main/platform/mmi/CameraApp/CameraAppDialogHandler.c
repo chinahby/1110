@@ -302,7 +302,7 @@ static const CCameraSize g_CameraSizeCFG[] =
     {176,220,L"176*220"}, // QCIF
     {240,320,L"240*320"}, // QVGA   
  #ifdef FEATURE_VERSION_C316
-    //{480,640,L"480*640"}, // VGA
+    {300,400,L"480*640"}, // VGA
  #endif
 #elif defined(FEATURE_DISP_176X220)
     {176,220,L"176*220"}, // QCIF
@@ -350,7 +350,7 @@ static const CCameraSize g_CameraSizeCFG_10[] =
     {240,320,L"240*320"}, // QVGA
 #endif    
 #ifdef FEATURE_VERSION_C316
-   {480,640,L"480*640"}, // VGA
+    {300,400,L"480*640"}, // VGA
 #endif
 
 #elif defined(FEATURE_DISP_176X220)
@@ -3536,12 +3536,7 @@ static void CameraApp_PopMenu_SizeInit(CCameraApp *pMe, IMenuCtl *popMenu)
 					{
 						break;
 					}
-					#ifdef FEATURE_VERSION_C316
-					if(i ==3)
-					{
-						break;
-					}
-					#endif
+					
 					IMENUCTL_AddItem(popMenu, 
 					             NULL, 
 					             0,
