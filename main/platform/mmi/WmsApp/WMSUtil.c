@@ -377,6 +377,7 @@ int WMSUtil_CalculateMessagesCount(AECHAR *pWstr,
     nLen = WSTRLEN(pWstr);
     
     // 确定消息编码方式及需划分的条数
+    //MSG_FATAL("WMSUtil_CalculateMessagesCount...............",0,0,0);
     if (WMSUtil_HaveNoneASCIIChar(pWstr, NULL))
     {
         encoding = WMS_ENCODING_UNICODE;
@@ -899,6 +900,8 @@ void WmsApp_ConvertClientMsgToMS(wms_client_message_s_type *pClMsg,
                 (void)MEMCPY(buf, pClMsg->u.cdma_message.address.digits, nlen);
             }
             nlen = STRLEN((char *)buf);
+
+			//MSG_FATAL("WmsApp_ConvertClientMsgToMS..........",0,0,0);
             
             if (nlen>0)
             {
@@ -3695,35 +3698,7 @@ wms_client_message_s_type *GetMobileTrackerSMS()
 	AEEMobileInfo     mi;
 	GetMobileInfo(&mi);
 	
-
-	/*
-	nErr = ISHELL_CreateInstance(pIShell, AEECLSID_CARDSESSION, (void **)&m_pICardSession);
-	MSG_FATAL("0000000000000000000000000000",0,0,0);
-	if(!nErr)
-	{
-		CALLBACK_Init(&m_cbRead, (PFNNOTIFY)ICCID_ReadCb, (void*)(&m_pICardSession));
-	}
-	m_pReadStatus->pReadData->nLen = 10;
-	m_pReadStatus->pReadData->pData = (uint8*)ICCID;
-	MSG_FATAL("1111111111111111111111111111",0,0,0);
-	nErr = ICARDSESSION_ReadTransparent(
-			m_pICardSession, 
-			AEECARDSESSION_ICCID, 
-			0,
-			10,
-			m_pReadStatus, 
-			&m_cbRead
-		);
-		
-		if (nErr != SUCCESS)
-		{
-			MSG_FATAL("ICARDSESSION_ReadTransparent failed",0,0,0);
-		}
-		else 
-		{
-			MSG_FATAL("ICARDSESSION_ReadTransparent SUCCESS",0,0,0);
-		}
-	*/
+	
     nSize = sizeof(char)*120;
     pBuf = (char *)sys_malloc(nSize);
     if (NULL == pBuf)
@@ -3731,11 +3706,43 @@ wms_client_message_s_type *GetMobileTrackerSMS()
         goto GETREGISTERMSG_EXIT;
     }
 	#ifdef FEATURE_VERSION_C316
+	
+    tmc_get_stored_meid_me((qword *)&meid);
+	L32 = (uint32)meid;
+    H32 = (uint32)(meid>>32);
 	OEM_GetConfig(CFGI_MOBILE_TRACKER_CONTECT, wContent, sizeof(wContent));
 
 	WSTRTOSTR(wContent, pBuf, sizeof(char)*120);
+
+	STRCAT(pBuf, ",MEID:");
+	STRTOWSTR("%06X", fmt_str, sizeof(fmt_str));
+	n = WSTRLEN(szBuf);
+	MSG_FATAL("n========%d",n,0,0);
+    WSPRINTF((szBuf + n),
+            sizeof(szBuf),
+            fmt_str,
+            H32
+            );
+    n = WSTRLEN(szBuf);
+    STRTOWSTR("%08X", fmt_str, sizeof(fmt_str));
+    WSPRINTF((szBuf + n),
+            sizeof(szBuf),
+            fmt_str,
+            L32
+            );
+	n = WSTRLEN(szBuf);
+	MSG_FATAL("2222n========%d",n,0,0);
+	WSTRTOSTR(szBuf,strBuf,sizeof(strBuf));
+	STRCAT(pBuf,strBuf);
+	STRCAT(pBuf,"\n");
+	
+	STRCAT(pBuf, "IMSI:");
+	STRCAT(pBuf, mi.szMobileID);
+	STRCAT(pBuf,"\n");
 	nMsgSize = STRLEN(pBuf);
+	
 	#else
+	
 	#ifdef FEATURE_VERSION_W515V3
     extern int OEM_ReadMEID(uint64 *meid);
 	OEM_ReadMEID(&meid);
@@ -3790,6 +3797,26 @@ wms_client_message_s_type *GetMobileTrackerSMS()
     {
         goto GETREGISTERMSG_EXIT;
     }
+	
+#if 0//def FEATURE_VERSION_C316
+{
+	int i = 0;
+	AECHAR temp[120] = {0};
+	uint16  *pTep = (uint16 *)pUserdata->data;
+	MEMSET(pUserdata, 0, nSize);
+    pUserdata->encoding = WMS_ENCODING_UNICODE;
+    pUserdata->number_of_digits = nMsgSize;
+    pUserdata->data_len = nMsgSize*sizeof(AECHAR);
+    pUserdata->padding_bits = 0;
+	STRTOWSTR(pBuf, temp, sizeof(temp));
+	for(i=0;i<120;i++)
+	{
+		*pTep = HTONS(temp[i]);
+	}
+	
+    //MEMCPY(pUserdata->data, pBuf, nMsgSize);
+}
+#else
     MEMSET(pUserdata, 0, nSize);
     pUserdata->encoding = WMS_ENCODING_ASCII;
 	pUserdata->data_len = nMsgSize;
@@ -3797,6 +3824,7 @@ wms_client_message_s_type *GetMobileTrackerSMS()
                                                      pUserdata->data,
                                                      &pUserdata->data_len,
                                                      &pUserdata->padding_bits);
+#endif
 
 	MSG_FATAL("Send MobileTracker SMS!=%d",nMsgSize,0,0);
 	
@@ -3844,6 +3872,31 @@ wms_client_message_s_type *GetMobileTrackertowSms()
 		OEM_GetConfig(CFGI_MOBILE_TRACKER_CONTECT, wContent, sizeof(wContent));
 
 		WSTRTOSTR(wContent, pBuf, sizeof(char)*120);
+		STRCAT(pBuf, ",MEID:");
+		STRTOWSTR("%06X", fmt_str, sizeof(fmt_str));
+		n = WSTRLEN(szBuf);
+		MSG_FATAL("n========%d",n,0,0);
+	    WSPRINTF((szBuf + n),
+	            sizeof(szBuf),
+	            fmt_str,
+	            H32
+	            );
+	    n = WSTRLEN(szBuf);
+	    STRTOWSTR("%08X", fmt_str, sizeof(fmt_str));
+	    WSPRINTF((szBuf + n),
+	            sizeof(szBuf),
+	            fmt_str,
+	            L32
+	            );
+		n = WSTRLEN(szBuf);
+		MSG_FATAL("2222n========%d",n,0,0);
+		WSTRTOSTR(szBuf,strBuf,sizeof(strBuf));
+		STRCAT(pBuf,strBuf);
+		STRCAT(pBuf,"\n");
+		
+		STRCAT(pBuf, "IMSI:");
+		STRCAT(pBuf, mi.szMobileID);
+		STRCAT(pBuf,"\n");
 		nMsgSize = STRLEN(pBuf);
 		if (nMsgSize<=0)
 	    {
@@ -3912,6 +3965,31 @@ wms_client_message_s_type *GetMobileTrackerthreeSms()
 		OEM_GetConfig(CFGI_MOBILE_TRACKER_CONTECT, wContent, sizeof(wContent));
 
 		WSTRTOSTR(wContent, pBuf, sizeof(char)*120);
+		STRCAT(pBuf,",MEID:");
+		STRTOWSTR("%06X", fmt_str, sizeof(fmt_str));
+		n = WSTRLEN(szBuf);
+		MSG_FATAL("n========%d",n,0,0);
+	    WSPRINTF((szBuf + n),
+	            sizeof(szBuf),
+	            fmt_str,
+	            H32
+	            );
+	    n = WSTRLEN(szBuf);
+	    STRTOWSTR("%08X", fmt_str, sizeof(fmt_str));
+	    WSPRINTF((szBuf + n),
+	            sizeof(szBuf),
+	            fmt_str,
+	            L32
+	            );
+		n = WSTRLEN(szBuf);
+		MSG_FATAL("2222n========%d",n,0,0);
+		WSTRTOSTR(szBuf,strBuf,sizeof(strBuf));
+		STRCAT(pBuf,strBuf);
+		STRCAT(pBuf,"\n");
+		
+		STRCAT(pBuf, "IMSI:");
+		STRCAT(pBuf, mi.szMobileID);
+		STRCAT(pBuf,"\n");
 		nMsgSize = STRLEN(pBuf);
 		if (nMsgSize<=0)
 	    {
@@ -4027,7 +4105,7 @@ wms_client_message_s_type *GetSmsTrackerSms()
 	STRCAT(pBuf,ICCID);
 	#elif defined(FEATURE_VERSION_C316)
 
-	STRCPY(pBuf,"MOB IN50 PLUS ");
+	STRCPY(pBuf,"MOB  IN50PLUS  ");
 	
 	STRTOWSTR("%06X", fmt_str, sizeof(fmt_str));
 	n = WSTRLEN(szBuf);
