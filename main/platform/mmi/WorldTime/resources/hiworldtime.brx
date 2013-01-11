@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="worldtime" VERSION="1">
+<BREWRes Name="hiworldtime" VERSION="1">
 <Strings Encoding="Unicode">
 	<STRING Id="1" Name="IDS_TITLE">
 		<Text>लोक समय</Text>
@@ -83,10 +83,10 @@
 		<Text>%02d/%02d %02d:%02d</Text>
 	</STRING>
 	<STRING Id="28" Name="IDS_CITY_25">
-		<Text>Yangon</Text>
+		<Text>यांगून</Text>
 	</STRING>
 	<String Id="29" Name="IDS_CITY_26">
-		<Text>NEW DELHI</Text>
+		<Text>नई दिल्ली</Text>
 	</String>
 	<String Id="1001" Name="IDS_TIME_ZONE">
 		<Text>समय क्षेत्र:</Text>
