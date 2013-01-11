@@ -719,7 +719,7 @@ static int SoundMenu_InitAppData(CSoundMenu *pMe)
         //SoundMenu_InitRingerList(pMe);
     }
 
-    pMe->m_bBTHeadSetConnected = FALSE;      //Add By zzg 2013_01_09
+    //pMe->m_bBTHeadSetConnected = FALSE;      //Add By zzg 2013_01_09
     
     //if(ISHELL_RegisterNotify(pMe->m_pShell, AEECLSID_APP_SOUNDMENU,
     //    AEECLSID_ALERT_NOTIFIER, NMASK_ALERT_ONOFF | NMASK_ALERT_MUTED) != SUCCESS)

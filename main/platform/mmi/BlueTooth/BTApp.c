@@ -21614,9 +21614,11 @@ static void BTApp_ProcessAGNotifications(
 #endif //FEATURE_APP_TEST_AUTOMATION
       }
 	  */
+/*	  
 #ifdef FEATURE_VERSION_C316
     ISHELL_PostEvent(pMe->m_pShell,AEECLSID_CORE_APP,EVT_USER,EVT_BT_AG_AUDIO_CONNECTED,0);
 #endif
+*/
 
 	//Add By zzg 2011_10_24
 	BTApp_ShowDevMsg( pMe, IDS_MSG_AG_CONN, &pData->bdAddr, 2 );
@@ -21695,9 +21697,11 @@ static void BTApp_ProcessAGNotifications(
 #endif //FEATURE_APP_TEST_AUTOMATION
       }
 	  */
+/*	  
 #ifdef FEATURE_VERSION_C316
     ISHELL_PostEvent(pMe->m_pShell,AEECLSID_CORE_APP,EVT_USER,EVT_BT_AG_AUDIO_DISCONNECTED,0);
 #endif
+*/
 
 	//Add By zzg 2011_10_24
 	BTApp_ShowDevMsg( pMe, IDS_MSG_AG_DISCONN, &pMe->mAG.connectedBDAddr, 2);

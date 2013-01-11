@@ -1142,14 +1142,15 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 					
                     // 长按切换情景模式
                     ICONFIG_GetItem(pMe->m_pConfig, CFGI_PROFILE_CUR_NUMBER,&pMe->m_CurProfile, sizeof(pMe->m_CurProfile));//CFGI_ALERT_TYPE
-
+/*
 #ifdef FEATURE_VERSION_C316
                     if (pMe->m_CurProfile  == OEMNV_PROFILE_BLUETOOTH)
                     {
                         //Do Nothing.............
                         return TRUE;
                     }
-#endif                     
+#endif   
+*/
                     if(pMe->m_CurProfile != OEMNV_PROFILE_QUIETMODE)
                     {
                         pMe->m_CurProfile = OEMNV_PROFILE_QUIETMODE;
@@ -1672,6 +1673,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
           			CLOSE_DIALOG(DLGRET_BATT_INFO)
             	}
             	break;
+/*                
 #ifdef FEATURE_VERSION_C316
             case EVT_BT_AG_AUDIO_CONNECTED:
             {
@@ -1708,6 +1710,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                 break;
             }  
 #endif
+*/
 #ifdef FEATURE_QQ_APP                 
             case EVT_QQ_ANNU_UPDATE:
                  IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_QQ*/, ANNUN_STATE_QQ_OFFLINE);
@@ -4793,11 +4796,13 @@ static void CoreApp_SceneMode(CCoreApp *pMe)
 		case OEMNV_PROFILE_CARMODE:             //车载模式
 		  IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_VIBRING);
 		  break;
+/*          
 #ifdef FEATURE_VERSION_C316
         case OEMNV_PROFILE_BLUETOOTH:           //蓝牙模式
 		  IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_BLUETOOTH);
 		  break;
 #endif
+*/
 		default:
 		  break;
 	}

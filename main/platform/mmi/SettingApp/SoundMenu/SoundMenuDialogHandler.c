@@ -34,7 +34,7 @@
 #include "MediaGallery.h"
 #endif
 
-#include "uixsnd.h"
+//#include "uixsnd.h"
 
 
 /*==============================================================================
@@ -400,7 +400,7 @@ static boolean  HandleMainDialogEvent(CSoundMenu *pMe,
     IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,
                                                     IDC_SCENEMODE);
 
-    uisnd_notify_data_s_type sndInfo;   //Add By zzg 2013_01_10
+    //uisnd_notify_data_s_type sndInfo;   //Add By zzg 2013_01_10
     
     if (pMenu == NULL)
     {
@@ -503,7 +503,7 @@ static boolean  HandleMainDialogEvent(CSoundMenu *pMe,
                     CLOSE_DIALOG(DLGRET_CANCELED)
                     return TRUE;
                 case AVK_INFO:         
-                                       
+/*                                       
                 	uisnd_get_device(&sndInfo);
                 	MSG_FATAL("***zzg UseBTDevice - dev=%d sMute=%d mMute=%d***", 
                 	  			sndInfo.out_device, sndInfo.speaker_mute, sndInfo.microphone_mute);
@@ -518,15 +518,18 @@ static boolean  HandleMainDialogEvent(CSoundMenu *pMe,
                 	}
                 	//Add End
 #endif
+*/
 
                     pMe->m_currDlgId = IMENUCTL_GetSel(pMenu);
 
                     switch (pMe->m_currDlgId )
                     {
                         case IDS_NORMALMODE:        //正常模式
+/*                        
 #ifdef FEATURE_VERSION_C316                       
                             if (pMe->m_bBTHeadSetConnected == FALSE)
-#endif                                
+#endif    
+*/
                             {
                                 pMe->m_ProfileType = SET_NORMALMODE;
                                 pMe->m_CurProfile=OEMNV_PROFILE_NORMALMODE;
@@ -537,9 +540,11 @@ static boolean  HandleMainDialogEvent(CSoundMenu *pMe,
                             break;
                              
                         case IDS_QUIETMODE:         //安静模式
+/*
 #ifdef FEATURE_VERSION_C316                       
                             if (pMe->m_bBTHeadSetConnected == FALSE)
-#endif                            
+#endif     
+*/
                             {
                                 pMe->m_ProfileType = SET_QUIETMODE;
                                 pMe->m_CurProfile=OEMNV_PROFILE_QUIETMODE;
@@ -549,9 +554,11 @@ static boolean  HandleMainDialogEvent(CSoundMenu *pMe,
                             }
                             break;
                         case IDS_MEETING:           //会议模式
+/*                        
 #ifdef FEATURE_VERSION_C316                       
                             if (pMe->m_bBTHeadSetConnected == FALSE)
-#endif                            
+#endif     
+*/
                             {
                                 pMe->m_ProfileType = SET_MEETING;
                                 pMe->m_CurProfile=OEMNV_PROFILE_MEETING;
@@ -561,9 +568,11 @@ static boolean  HandleMainDialogEvent(CSoundMenu *pMe,
                             }
                             break;
                         case IDS_NOISEMODE:        //户外模式
+/*
 #ifdef FEATURE_VERSION_C316                       
                             if (pMe->m_bBTHeadSetConnected == FALSE)
-#endif                            
+#endif   
+*/
                             {
                                 pMe->m_ProfileType = SET_NOISEMODE;
                                 pMe->m_CurProfile=OEMNV_PROFILE_NOISEMODE;
@@ -572,6 +581,7 @@ static boolean  HandleMainDialogEvent(CSoundMenu *pMe,
                                 CLOSE_DIALOG(DLGRET_MESSAGE)
                             }
                             break;
+/*
 #ifdef FEATURE_VERSION_C316
                         case IDS_PROFILE_BLUETOOTH:        //户外模式                        
                         {      
@@ -590,7 +600,8 @@ static boolean  HandleMainDialogEvent(CSoundMenu *pMe,
                             }
                             break;    
                         }
-#endif                                        
+#endif       
+*/
                         default:
                             ASSERT_NOT_REACHABLE;                           
                     }
@@ -684,7 +695,7 @@ static boolean  HandleSceneModeSubDialogEvent(CSoundMenu *pMe,
     IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,
                                                     IDC_SCENEMODE_SUB);
 
-    uisnd_notify_data_s_type sndInfo;       //Add By zzg 2013_01_10
+    //uisnd_notify_data_s_type sndInfo;       //Add By zzg 2013_01_10
 
     if (pMenu == NULL)
     {
@@ -786,7 +797,8 @@ static boolean  HandleSceneModeSubDialogEvent(CSoundMenu *pMe,
             pMe->m_nSubDlgId = IMENUCTL_GetSel(pMenu);            
             switch(wParam)
             {
-                case IDS_ACTIVATE:         //启动                   
+                case IDS_ACTIVATE:         //启动            
+/*            
                 	uisnd_get_device(&sndInfo);
                 	MSG_FATAL("***zzg UseBTDevice - dev=%d sMute=%d mMute=%d***", 
                 	  			sndInfo.out_device, sndInfo.speaker_mute, sndInfo.microphone_mute);
@@ -801,9 +813,10 @@ static boolean  HandleSceneModeSubDialogEvent(CSoundMenu *pMe,
                 	}
                 	//Add End
 #endif
-                 
+*/
 
 
+/*
 #ifdef FEATURE_VERSION_C316
                     if (pMe->m_ProfileType == SET_BLUETOOTH)
                     {           
@@ -828,11 +841,12 @@ static boolean  HandleSceneModeSubDialogEvent(CSoundMenu *pMe,
                             CLOSE_DIALOG(DLGRET_MESSAGE)
                         }                        
                     }
-#else           
+#else   
+*/
                     pMe->m_ScenemodesubType = SET_ACTIVATE;
                     pMe->m_sSubDlgId = IDS_ACTIVATING;
                     CLOSE_DIALOG(DLGRET_MESSAGE)
-#endif                    
+//#endif                    
                     break;
 
                 case IDS_PERSONALISE:      // 编辑
@@ -3063,6 +3077,7 @@ static boolean  HandleWarningMessegeDialogEvent(CSoundMenu *pMe,
                     SoundMenu_SceneModeActivate(pMe);
                     STRLCPY(m_PromptMsg.strMsgResFile, AEE_APPSSOUNDMENU_RES_FILE,MAX_FILE_NAME);
                     break;
+/*                    
 #ifdef FEATURE_VERSION_C316
                 case IDS_WARNING_NO_BT_HEADSET:
                     m_PromptMsg.nMsgResID= pMe->m_sSubDlgId;
@@ -3071,6 +3086,7 @@ static boolean  HandleWarningMessegeDialogEvent(CSoundMenu *pMe,
                     STRLCPY(m_PromptMsg.strMsgResFile, AEE_APPSSOUNDMENU_RES_FILE,MAX_FILE_NAME);
                     break;
 #endif
+*/
                 case IDS_CONFIRM_OFF_FM:
                 case IDS_CONFIRM_OFF_MP:
                     ISHELL_CancelTimer(pMe->m_pShell, NULL,  pMe);
@@ -3702,11 +3718,13 @@ static void SoundMenu_SceneModeActivate(CSoundMenu *pMe)
           case OEMNV_PROFILE_CARMODE:             //车载模式
               IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_VIBRING);
               break;
+/*
 #ifdef FEATURE_VERSION_C316
           case OEMNV_PROFILE_BLUETOOTH:             //蓝牙模式
               IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_BLUETOOTH);
         break;
 #endif
+*/
           default:
               break;
       }

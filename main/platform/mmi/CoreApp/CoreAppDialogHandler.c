@@ -3955,6 +3955,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 			    }
 #else
 
+/*
 #ifdef FEATURE_VERSION_C316
                 if (curProfile  == OEMNV_PROFILE_BLUETOOTH)
                 {
@@ -3962,6 +3963,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     return TRUE;
                 }
 #endif  
+*/
 			    if(curProfile == OEMNV_PROFILE_MEETING)
 			    {
 			        curProfile = OEMNV_PROFILE_NORMALMODE;
@@ -8042,11 +8044,13 @@ void CoreApp_UpdateAnnunciator(CCoreApp *pMe)
         case OEMNV_PROFILE_CARMODE:             //OEMNV_ALERTTYPE_VIBANDRINGER :
             iann = ANNUN_STATE_RINGTONE_VIBRING;//ANNUN_FIELD_ALERT;
             break;
+/*
  #ifdef FEATURE_VERSION_C316
         case OEMNV_PROFILE_BLUETOOTH:           //OEMNV_ALERTTYPE_VIBRINGER :
             iann = ANNUN_STATE_RINGTONE_BLUETOOTH;//ANNUN_FIELD_ALERT;
             break;
  #endif
+ */
 
         default :
             break;            
