@@ -4905,6 +4905,7 @@ static void    CoreApp_ResetRing(CCoreApp *pMe)
     		ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_SMS_RINGER_ID,(void*)nNewSmsConfigRinger,sizeof(nNewSmsConfigRinger));
         }
 	}
+/*    
 #ifdef FEATURE_VERSION_C316
     if(  nNewSmsConfigRinger[OEMNV_PROFILE_BLUETOOTH].ringType == OEMNV_MP3_RINGER)
 	{
@@ -4916,6 +4917,7 @@ static void    CoreApp_ResetRing(CCoreApp *pMe)
         }
 	}
 #endif
+*/
     
 	//CALL
 	if(nNewCallConfigRinger[OEMNV_PROFILE_NORMALMODE].ringType == OEMNV_MP3_RINGER)
@@ -4955,6 +4957,7 @@ static void    CoreApp_ResetRing(CCoreApp *pMe)
     		ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_CALL_RINGER,(void*)nNewCallConfigRinger,sizeof(nNewCallConfigRinger));
         }
 	}
+/*    
 #ifdef FEATURE_VERSION_C316
     if(  nNewCallConfigRinger[OEMNV_PROFILE_BLUETOOTH].ringType == OEMNV_MP3_RINGER)
 	{
@@ -4966,6 +4969,7 @@ static void    CoreApp_ResetRing(CCoreApp *pMe)
         }
 	}
 #endif
+*/
 
 	//ALASRM
 	if(nNewAlarmConfigRinger[OEMNV_PROFILE_NORMALMODE].ringType == OEMNV_MP3_RINGER)
@@ -5005,6 +5009,7 @@ static void    CoreApp_ResetRing(CCoreApp *pMe)
     		ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_ALARM_RINGER,(void*)nNewAlarmConfigRinger,sizeof(nNewAlarmConfigRinger));
         }
 	}
+/*    
 #ifdef FEATURE_VERSION_C316   
     if(  nNewAlarmConfigRinger[OEMNV_PROFILE_BLUETOOTH].ringType == OEMNV_MP3_RINGER)
 	{
@@ -5016,6 +5021,7 @@ static void    CoreApp_ResetRing(CCoreApp *pMe)
         }
 	}
 #endif
+*/
 }
 //add by yangdecai end
 

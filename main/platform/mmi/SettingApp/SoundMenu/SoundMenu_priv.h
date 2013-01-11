@@ -155,9 +155,11 @@ typedef enum {
    SET_MEETING,         //会议模式
    SET_NOISEMODE,       //户外模式
    SET_CARMODE          //车载模式
+/*   
 #ifdef FEATURE_VERSION_C316
    ,SET_BLUETOOTH       //蓝牙模式
 #endif
+*/
 } SET_PROFILE_TYPE;
 
 // 情景模式操作类型
