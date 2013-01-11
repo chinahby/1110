@@ -196,7 +196,7 @@
 	<String Id="1065" Name="IDS_SUPER_SINGAL_OFF">
 		<Text>Super singal off!</Text>
 	</String>
-	<String Id="1066" Name="IDS_CHARGER_CONNECT">
+	<String Id="1069" Name="IDS_CHARGER_CONNECT">
 		<Text>चार्जर कनेक्ट</Text>
 	</String>
 	<String Id="1070" Name="IDS_STR_TOUCH_ONE">
