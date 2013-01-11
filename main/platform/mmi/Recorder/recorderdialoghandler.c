@@ -1580,7 +1580,7 @@ __dialog_handler_of_state_record_stop__:
 			IDISPLAY_SetColor( pme->m_pDisplay, CLR_USER_TEXT, pme->m_ThemeTextColor);
 			IDISPLAY_DrawText( pme->m_pDisplay, AEE_FONT_NORMAL, pme->m_Title, -1, pme->m_nTitleX, 0, 0, IDF_TEXT_TRANSPARENT);
 
-			
+			MSG_FATAL("****pyg****pme->m_Media.m_bMediaError=%d",pme->m_Media.m_bMediaError,0,0);
 			if( pme->m_Media.m_bMediaError)
 			{
 				uint16 	resId   = recorder_get_res_id_from_error_code( &pme->m_Media);
@@ -3837,12 +3837,12 @@ static void recorder_media_notify_handler( Media* pme, AEEMediaCmdNotify* pCmdNo
 				"GetTotalTime",
 			};
 
-	debug( ";------------------------------");
-	debug( ";recorder_media_event_handler");
-	debug( ";media object = [%s], 0x%x", pme->m_pszName, pCmdNotify->pIMedia);
-	debug( ";cmd = %s", cmd[pCmdNotify->nCmd - MM_CMD_BASE - 1]);
-	debug( ";subCmd = 0x%x", pCmdNotify->nSubCmd);
-	debug( ";status = 0x%x", pCmdNotify->nStatus);
+	MSG_FATAL( ";------------------------------",0,0,0);
+	MSG_FATAL( ";recorder_media_event_handler",0,0,0);
+	MSG_FATAL( ";media object = [%s], 0x%x", pme->m_pszName, pCmdNotify->pIMedia,0);
+	MSG_FATAL( ";cmd = %s", cmd[pCmdNotify->nCmd - MM_CMD_BASE - 1],0,0);
+	MSG_FATAL( ";subCmd = 0x%x", pCmdNotify->nSubCmd,0,0);
+	MSG_FATAL( ";status = 0x%x", pCmdNotify->nStatus,0,0);
 
 	if( pCmdNotify->nStatus == MM_STATUS_ABORT)
 	{
@@ -3953,7 +3953,7 @@ static void recorder_media_notify_handler( Media* pme, AEEMediaCmdNotify* pCmdNo
 #endif
             case MM_STATUS_SPACE_ERROR:				
 				
-            	debug( ";space warning or error");
+            	MSG_FATAL( ";space warning or error",0,0,0);
             	recorder_stop_if( pme);
 				pme->m_nLastOperationError 	= recorder_get_error_2( pCmdNotify->nStatus);
 				pme->m_bMediaError			= TRUE;
@@ -3971,7 +3971,7 @@ __recorder_media_notify_handler_abort__:
             case MM_STATUS_SEEK_FAIL:
             case MM_STATUS_PAUSE_FAIL:
             case MM_STATUS_RESUME_FAIL:
-				
+				MSG_FATAL( ";MM_STATUS_PAUSE_FAIL",0,0,0);
             	recorder_stop_if( pme);
             	if( pCmdNotify->nStatus == MM_STATUS_ABORT)
             	{
@@ -4153,8 +4153,18 @@ static void recorder_record2( Media* pme)
 
 int recorder_record( Media* pme)
 {
-	return recorder_recordEx( pme, (PFNMEDIANOTIFY)recorder_media_notify_handler);
+    MSG_FATAL("*****recorder_record******",0,0,0);
+	return recorder_recordEx(pme, (PFNMEDIANOTIFY)recorder_media_notify_handler, NULL);   //modi by pyuangui 2013-01-10
 }
+
+//Add by pyuangui 2013-01-10
+#ifdef FEATURE_VERSION_C316
+int recorder_call_record( Media* pme,char* path)
+{
+	return recorder_recordEx( pme, (PFNMEDIANOTIFY)recorder_media_notify_handler,path);
+}
+#endif
+//Add end
 
 #if !defined( AEE_SIMULATOR)
 static int recorder_set_format( Media* pme)
@@ -4179,16 +4189,16 @@ static int recorder_set_format( Media* pme)
 }
 #endif
 
-int recorder_recordEx( Media* pme, PFNMEDIANOTIFY pfnNotify)
+int recorder_recordEx( Media* pme, PFNMEDIANOTIFY pfnNotify,char* path)
 {
 
 	AEEMediaData	mediaData 	 = {0};
 	int				result		 = 0;
 	IFile*			pFile		 = 0;
 
-	debug( ";--------------------------------------");
-	debug( ";recorder_record, [%s]", pme->m_pszName);
-
+	MSG_FATAL( ";--------------------------------------",0,0,0);
+	MSG_FATAL( ";recorder_record, [%s]", pme->m_pszName,0,0);
+    MSG_FATAL("***pyg****recorder_recordEx=%d---path=%s",STRLEN(path),path,0);
 	{
 		RecorderPreference prefs = {0};
 		ISHELL_GetPrefs( AEE_GetShell(),
@@ -4202,6 +4212,9 @@ int recorder_recordEx( Media* pme, PFNMEDIANOTIFY pfnNotify)
 		//if( prefs.storage == 1 && recorder_is_tf_card_exist())	//Modify by zzg 2012_03_01
 		if(recorder_is_tf_card_exist())	//Modify by zzg 2012_03_01
 		{
+		    if(path)  //Add by pyuangui 2013-01-10
+			pme->m_pszSaveDir = path;
+			else
 			pme->m_pszSaveDir = RECORDER_MEMO_SAVE_DIR_CARD0;
 		}
 		else

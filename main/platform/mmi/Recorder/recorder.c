@@ -483,7 +483,7 @@ boolean recorder_create_media_if( Media* pme)
 	}
 
 	recorder_init_media( pme);
-	debug( ";recorder_create_media_if, [%s] ok", pme->m_pszName);
+	MSG_FATAL( ";recorder_create_media_if, [%s] ok", pme->m_pszName,0,0);
 	g_m_recorder_is_on = TRUE;
 	return TRUE;
 }

@@ -163,7 +163,7 @@ int	recorder_set_media_volume( Media* pme, int32 volume);
 void recorder_set_save_dir( Media* pme, char* dir);
 
 int recorder_record( Media* pme);
-int recorder_recordEx( Media* pme, PFNMEDIANOTIFY pfnNotify);
+int recorder_recordEx( Media* pme, PFNMEDIANOTIFY pfnNotify,char* path);   //modi by pyuangui 2013-01-10
 int recorder_pause( Media* pme);
 int recorder_resume( Media* pme);
 void recorder_stop_if( Media* pme);
