@@ -104,6 +104,7 @@ typedef enum {
 static boolean OEMPriv_IsPhoneIdle(void);
 static void    OEMPriv_ResumeBREW(void);
 static void    OEMPriv_MessageTimerCB(void *pUser);
+static void    OEMPriv_MessageTimerCBInformation(void *pUser);
 static void    OEMPriv_ResetMessageTimer(void);
 #ifdef FEATURE_SET_AUTOKEYGUARD
 static void    OEMPriv_AutoguardTimerCB(void *pUser);
@@ -131,6 +132,8 @@ static void    OEMPriv_DrawTouchBackground(uint16 x,uint16 y);
 ===========================================================================*/
 
 // TRUE while the keyguard message is being displayed
+boolean m_bEnabled = FALSE;
+
 static boolean sbMessageActive = FALSE;
 #ifdef FEATURE_LCD_TOUCH_ENABLE
 static uint16 m_privpinter_x = 0;
@@ -163,6 +166,7 @@ static UnlockStateEnum sUnlockState = UNLOCKSTATE_RESET;
 static boolean bDrawMessage = TRUE; 
 
 static IBitmap *pDevBmp = NULL;
+
 
 /*===========================================================================
 
@@ -301,6 +305,8 @@ static void OEMPriv_ResumeBREW(void)
         IBITMAP_Release(pDevBmp);
         pDevBmp = NULL;
     }
+
+
     bDrawMessage = TRUE;
 }
 
@@ -334,6 +340,16 @@ static void OEMPriv_MessageTimerCB(void *pUser)
     }
     OEMKeyguard_Set_Annunciator_Enable(TRUE);
 }
+
+
+
+static void OEMPriv_MessageTimerCBInformation(void *pUser)
+{
+    //PARAM_NOT_REF(pUser)
+    OEMPriv_DrawKeyguardInformation(!m_bEnabled);
+}
+
+
 
 /*=============================================================================
 FUNCTION: OEMPriv_ResetMessageTimer
@@ -618,7 +634,7 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
                     if (UNLOCKSTATE_1PRESSED == sUnlockState)
                     {
                         sUnlockState = UNLOCKSTATE_RESET;
-
+						MSG_FATAL("***zzg OEMKeyguard AVK_STAR sUnlockState=%d***", spAlert, 0, 0);
                         // Correct key, make a beep...
                         if (spAlert)
                         {
@@ -640,6 +656,7 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
                             OEMKeyguard_SetState(FALSE);							
                         #endif
                         OEMPriv_ResumeBREW();
+						MSG_FATAL("OEMPriv_ResumeBREW.....................",0,0,0);
                         return TRUE;
 
                     }
@@ -909,46 +926,22 @@ static void OEMPriv_DrawKeyguardInformation(boolean unlockkey)
 {
     IDisplay      *pd;
     IStatic       *pStatic;
+	
     KEYGUARD_ERR("OEMPriv_DrawKeyguardInformation %x",sgpShell,0,0);
-    (void) ISHELL_CreateInstance(sgpShell,AEECLSID_STATIC,(void**) &pStatic);
-    (void) ISHELL_CreateInstance(sgpShell,AEECLSID_DISPLAY,(void**) &pd);
+    (void) ISHELL_CreateInstance(AEE_GetShell(),AEECLSID_STATIC,(void**) &pStatic);
+    (void) ISHELL_CreateInstance(AEE_GetShell(),AEECLSID_DISPLAY,(void**) &pd);
 
     if (pStatic && pd)
     {
         AEEDeviceInfo devinfo = {0};
-        IShell      *pShell = AEE_GetShell();
-
-       /*
-        ISHELL_GetDeviceInfo(pShell, &devinfo);
-        if(NULL != pDevBmp)
-        {
-            IDISPLAY_BitBlt(pd, 0, 0, devinfo.cxScreen, devinfo.cyScreen, 
-                            pDevBmp, 0, 0, AEE_RO_COPY);
-        }
-        else
-        {
-            IBitmap *pTempBmp = NULL;
-
-            IDISPLAY_GetDeviceBitmap(pd, &pTempBmp);
-            if(NULL != pTempBmp)
-            {
-                IBITMAP_CreateCompatibleBitmap(pTempBmp, &pDevBmp, devinfo.cxScreen, devinfo.cyScreen);
-                if(NULL != pDevBmp)
-                {
-                    IBITMAP_BltIn(pDevBmp, 0, 0, devinfo.cxScreen, devinfo.cyScreen, pTempBmp, 0, 0, AEE_RO_COPY);
-                }
-                IBITMAP_Release(pTempBmp);
-            }
-        }
-        */
-        
-        OEMKeyguard_Set_Annunciator_Enable(FALSE);
 #ifdef FEATURE_KEYGUARD
         Appscomm_Draw_Keyguard_Information(pd,pStatic,unlockkey);
 #endif
-        ISTATIC_Release(pStatic);
+
+		 ISTATIC_Release(pStatic);
         IDISPLAY_Release(pd);
     }
+   
 }
 
 //Add End
@@ -1304,6 +1297,7 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
             // Pass the event to the keyguard event handler
             bRet = OEMPriv_KeyguardEventHandler(evt, wParam, dwParam);
         }
+		MSG_FATAL("sbMessageActive 3===========%d",sbMessageActive,0,0);
 
     }
 #ifdef FEATURE_SET_AUTOKEYGUARD
@@ -1361,9 +1355,16 @@ SEE ALSO:
 void OEMKeyguard_SetState(boolean bEnabled)
 {
     sbKeyguardEnabled = bEnabled;
-
-#if ((defined FEATURE_VERSION_C337) || (defined FEATURE_VERSION_C316))
+	bDrawMessage = TRUE;
+	MSG_FATAL("bEnabled======%d",0,0,0);
+#if ((defined FEATURE_VERSION_C337) /*|| (defined FEATURE_VERSION_C316)*/)
 	OEMPriv_DrawKeyguardInformation(!bEnabled);
+#endif
+#ifdef FEATURE_VERSION_C316
+	m_bEnabled = bEnabled;
+	(void) AEE_SetSysTimer(800,
+                          OEMPriv_MessageTimerCBInformation,
+                          NULL);
 #endif
 
 	//Add By zzg 2012_10_30
@@ -1371,6 +1372,7 @@ void OEMKeyguard_SetState(boolean bEnabled)
     IANNUNCIATOR_SetField (sgpIAnn, ANNUN_FIELD_LOCKSTATUS, sbKeyguardEnabled ? ANNUN_STATE_LOCKSTATUS_ON : ANNUN_STATE_LOCKSTATUS_OFF);
 	#endif
 	//Add End
+	MSG_FATAL("sbKeyguardEnabled======%d",sbKeyguardEnabled,0,0);
 	
     if (sbKeyguardEnabled)
     {
@@ -1402,6 +1404,7 @@ void OEMKeyguard_SetState(boolean bEnabled)
             IBITMAP_Release(pDevBmp);
             pDevBmp = NULL;
         }
+
     }
 }
 /*=============================================================================
