@@ -1360,13 +1360,12 @@ void OEMKeyguard_SetState(boolean bEnabled)
 #if ((defined FEATURE_VERSION_C337) /*|| (defined FEATURE_VERSION_C316)*/)
 	OEMPriv_DrawKeyguardInformation(!bEnabled);
 #endif
-/*
-#ifdef FEATURE_VERSION_C316
+
+#if 0//def FEATURE_VERSION_C316
 	m_bEnabled = bEnabled;
 	(void) AEE_SetSysTimer(800,
                           OEMPriv_MessageTimerCBInformation,
                           NULL);
-	*/
 #endif
 
 	//Add By zzg 2012_10_30
