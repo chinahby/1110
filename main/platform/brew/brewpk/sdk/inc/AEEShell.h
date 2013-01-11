@@ -996,6 +996,7 @@ static __inline boolean ISHELL_SendURL( IShell *pShell, const char *pszURL )
 #ifdef CUST_EDITION	
 #define ST_DISPLAY_CONT_DETAIL         0x00001000
 #endif /*CUST_EDITION*/
+#define ST_GRAPHIC_BLUE    0x00002000
 #define ST_CENTERTEXT      0x00010000  // Center Text
 #define ST_CENTERTITLE     0x00020000  // Center Title
 #define ST_NOSCROLL        0x00040000  // Do not scroll text

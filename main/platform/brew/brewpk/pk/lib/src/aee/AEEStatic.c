@@ -2601,7 +2601,15 @@ static void     AStatic_DrawBackground(AStatic * pme, AEERect *rc)
     }
     else
     {    	
-        pImageBg = ISHELL_LoadResImage(pme->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);       
+    	if(pme->m_dwProps & ST_GRAPHIC_BLUE)
+    	{
+    		pImageBg = ISHELL_LoadResImage(pme->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_BACKGROUD_BLUE);
+    	}
+		else
+		{
+			pImageBg = ISHELL_LoadResImage(pme->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);  
+		}
+             
     }
     
     Appscommon_ResetBackground(pme->m_pDisplay, pImageBg, APPSCOMMON_BG_COLOR, rc, 0, 0);

@@ -2837,7 +2837,11 @@ static boolean IDD_VIEWMSG_Handler(void         *pUser,
             }
             IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
             // 设置静态文本控件属性
-            ISTATIC_SetProperties(pStatic, ST_CENTERTITLE | ST_NOSCROLL | ST_DISPLATSMS | ST_GRAPHIC_BG);
+            #ifdef FEATURE_VERSION_C316
+            ISTATIC_SetProperties(pStatic, ST_CENTERTITLE | ST_NOSCROLL | ST_DISPLATSMS | ST_GRAPHIC_BG |ST_GRAPHIC_BLUE);
+			#else
+			ISTATIC_SetProperties(pStatic, ST_CENTERTITLE | ST_NOSCROLL | ST_DISPLATSMS | ST_GRAPHIC_BG);
+			#endif
             return TRUE;
 
         case EVT_DIALOG_START:
