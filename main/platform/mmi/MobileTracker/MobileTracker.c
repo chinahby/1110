@@ -1941,8 +1941,8 @@ static boolean MobileTracker_ChangPassWordHandler(MobileTracker *pMe, AEEEvent e
 			 ITEXTCTL_SetRect(pMe->m_cpwdword, &p_ConfirmPassWord);
   			 ITEXTCTL_SetInputMode(pMe->m_ppwdword, AEE_TM_NUMBERS);
 			 ITEXTCTL_SetInputMode(pMe->m_cpwdword, AEE_TM_NUMBERS);
-  			 ITEXTCTL_SetProperties(pMe->m_ppwdword, TP_FRAME|TP_FIXSETRECT|TP_FOCUS_NOSEL|TP_NOUPDATE);
-			 ITEXTCTL_SetProperties(pMe->m_cpwdword, TP_FRAME|TP_FIXSETRECT|TP_FOCUS_NOSEL|TP_NOUPDATE);
+  			 ITEXTCTL_SetProperties(pMe->m_ppwdword, TP_FRAME|TP_FIXSETRECT|TP_FOCUS_NOSEL|TP_MB_PROPERTY);
+			 ITEXTCTL_SetProperties(pMe->m_cpwdword, TP_FRAME|TP_FIXSETRECT|TP_MB_PROPERTY);
              ITEXTCTL_SetMaxSize(pMe->m_ppwdword, 20);
 		     ITEXTCTL_SetMaxSize(pMe->m_cpwdword, 20);
 	         return TRUE;
