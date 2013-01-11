@@ -2600,12 +2600,14 @@ static void     AStatic_DrawBackground(AStatic * pme, AEERect *rc)
         pImageBg = ISHELL_LoadResImage(pme->m_pShell, pme->m_strBgImgResFile, pme->m_nBgImgResID);
     }
     else
-    {    	
+    {    
+#ifdef FEATURE_VERSION_C316	
     	if(pme->m_dwProps & ST_GRAPHIC_BLUE)
     	{
     		pImageBg = ISHELL_LoadResImage(pme->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_BACKGROUD_BLUE);
     	}
 		else
+#endif
 		{
 			pImageBg = ISHELL_LoadResImage(pme->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);  
 		}
