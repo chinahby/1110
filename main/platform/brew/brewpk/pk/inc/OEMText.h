@@ -1004,6 +1004,9 @@ static const AECHAR sszSymbolList[] =
     ',','.','@','\'','(',')','_','!',' ','?',
     '*','#','%','\"',':','+','<','>','=',
     '/','&','-','$',';',
+#ifdef FEATURE_VERSION_C316
+    0x20B9,
+#endif
 #endif
 #if (!defined FEATURE_CARRIER_TELEFONICA_VENEZUELA) \
         &&(!defined FEATURE_PERU_VERSION) \
