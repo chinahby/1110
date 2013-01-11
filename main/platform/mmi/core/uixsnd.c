@@ -2704,7 +2704,7 @@ void uisnd_vibrate(uint16 wDuration,
            
             
   #else  */
-#if defined(FEATURE_VERSION_C306) || defined(FEATURE_VERSION_W027)
+#if defined(FEATURE_VERSION_C306) || defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_M74)
 #ifdef FEATURE_VERSION_C316
   uisnd_vibrate_cmd(TRUE);
 	 clk_reg( &uisnd_vibrator_clk,
