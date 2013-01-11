@@ -2629,6 +2629,7 @@ static boolean IDD_MESSAGELIST_Handler(void        *pUser,
 #endif
                         {
                             pMe->m_wCurindex = pMe->m_wPrevMenuSel - MSG_CMD_BASE;
+                            MSG_FATAL("IDD_MESSAGELIST_Handler pMe->m_wCurindex:%d, m_wPrevMenuSel:%d", pMe->m_wCurindex,pMe->m_wPrevMenuSel,0);
                             CLOSE_DIALOG(DLGRET_LOAD)
                         }
                         return TRUE;
@@ -11233,12 +11234,13 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 	            ICONFIG_GetItem(pMe->m_pConfig,CFGI_WMSWRITD_END_STATUS,&Is_notend,sizeof(Is_notend));
                 MSG_FATAL("Is_notend=%d",Is_notend,0,0);
 				if(NULL != pMe->m_msSend.m_szMessage)
-					{
-						ITEXTCTL_SetMaxSize ( pIText, WMS_MSG_MAXCHARS);
-	                	(void)ITEXTCTL_SetText(pIText,pMe->m_msSend.m_szMessage,-1);
-					}
+				{
+				    MSG_FATAL("IDD_WRITEMSG_Handler NULL != pMe->m_msSend.m_szMessage",0,0,0);
+					ITEXTCTL_SetMaxSize ( pIText, WMS_MSG_MAXCHARS);
+                	(void)ITEXTCTL_SetText(pIText,pMe->m_msSend.m_szMessage,-1);
+				}
 				else
-					{
+				{
 	            if(!Is_notend)
 	            {
 	            	uint16 m_nCount = 0;
@@ -11252,8 +11254,12 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
     				
                     pMe->m_eMBoxType = WMS_MB_DRAFT;
                     wms_cacheinfolist_getcounts(WMS_MB_DRAFT, NULL, NULL, &m_nCount);
+                    
+                    MSG_FATAL("***zzg ReadMessage  DRAFT_m_nCount=%d***",m_nCount,0,0);
+                    
                     pMe->m_wPrevMenuSel = 5320+m_nCount;
                     pMe->m_wCurindex = pMe->m_wPrevMenuSel - MSG_CMD_BASE;
+                    
                     wIndex = pMe->m_wCurindex;
     				MSG_FATAL("WmsApp_ReadMsg:::1:::::::::::::%d",wIndex,0,0);
     				// 取消息 cache info 节点
@@ -11262,10 +11268,31 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
         				wIndex = wIndex - RUIM_MSGINDEX_BASE;
         				pnode = wms_cacheinfolist_getnode(pMe->m_eMBoxType, WMS_MEMORY_STORE_RUIM, wIndex);
     				}
-   					 else
+   					else
     				{
         				pnode = wms_cacheinfolist_getnode(pMe->m_eMBoxType, WMS_MEMORY_STORE_NV_CDMA, wIndex);
     				}
+
+                    //Add By zzg 2013_01_11
+                    if (NULL == pnode)
+                    {
+                        pMe->m_wPrevMenuSel -= 1;
+                        pMe->m_wCurindex = pMe->m_wPrevMenuSel - MSG_CMD_BASE;
+                        
+                        wIndex = pMe->m_wCurindex;
+                        MSG_FATAL("WmsApp_ReadMsg:::111:::::::::::::%d",wIndex,0,0);
+                        
+                        if (wIndex>=RUIM_MSGINDEX_BASE)
+        				{
+            				wIndex = wIndex - RUIM_MSGINDEX_BASE;
+            				pnode = wms_cacheinfolist_getnode(pMe->m_eMBoxType, WMS_MEMORY_STORE_RUIM, wIndex);
+        				}
+       					else
+        				{
+            				pnode = wms_cacheinfolist_getnode(pMe->m_eMBoxType, WMS_MEMORY_STORE_NV_CDMA, wIndex);
+        				}                                       
+                    }                	
+                    //Add End
     
     				if (NULL != pnode)
     				{
@@ -11859,6 +11886,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                 {		                
                     {
                         pMe->m_msSend.m_szMessage = WSTRDUP(ITEXTCTL_GetTextPtr(pIText));
+                        
                         if (pMe->m_eAppStatus == WMSAPP_STOP && pMe->m_eDlgReturn != DLGRET_EXIT_EDITOR)
                         {// 程序被中断退出，保存输入到草稿箱
                             int32  nItems = 0;
@@ -11876,6 +11904,8 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                             
                             // 获取草稿箱消息数
                             wms_cacheinfolist_getcounts(WMS_MB_DRAFT, NULL, NULL, &nMsgs);
+
+                            MSG_FATAL("***zzg nMsgs=%d, nItems=%d***",nMsgs,nItems,0);
                             
                             if ((nMsgs+nItems) <= DRAFT_MAX)
                             {// 存储空间足够，保存中断的输入到草稿箱
@@ -11894,6 +11924,8 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                                     nRet = ENOMEMORY;
                                     do 
                                     {
+                                        MSG_FATAL("***zzg IWMS_MsgWrite***",0,0,0);
+                                        
                                         nRet = IWMS_MsgWrite(pMe->m_pwms, 
                                                              pMe->m_clientId, 
                                                              &pMe->m_callback,
