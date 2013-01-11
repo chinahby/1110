@@ -346,7 +346,7 @@ static void OEMPriv_MessageTimerCB(void *pUser)
 static void OEMPriv_MessageTimerCBInformation(void *pUser)
 {
     //PARAM_NOT_REF(pUser)
-    OEMPriv_DrawKeyguardInformation(!m_bEnabled);
+    m_bEnabled = TRUE;
 }
 
 
@@ -608,7 +608,12 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
 #else
                 case AVK_CLR:
 #endif
-                    
+					#if ((defined FEATURE_VERSION_C337) || (defined FEATURE_VERSION_C316))
+					m_bEnabled = FALSE;
+                    (void) AEE_SetSysTimer(300,
+                          OEMPriv_MessageTimerCBInformation,
+                          NULL);
+					#endif
                     MSG_FATAL("***zzg KeyguardEvtHandler wParam=%x, sUnlockState=%x***", wParam, sUnlockState, 0);
                     bDrawMessage = TRUE;
                     if (UNLOCKSTATE_RESET == sUnlockState)
@@ -629,6 +634,12 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
                     break;
 
                 case AVK_STAR:
+					#if ((defined FEATURE_VERSION_C337) || (defined FEATURE_VERSION_C316))
+					if(!m_bEnabled)
+					{
+						return TRUE;
+					}
+					#endif
 					MSG_FATAL("***zzg OEMKeyguard AVK_STAR sUnlockState=%d***", sUnlockState, 0, 0);
 					
                     if (UNLOCKSTATE_1PRESSED == sUnlockState)
@@ -938,7 +949,7 @@ static void OEMPriv_DrawKeyguardInformation(boolean unlockkey)
         Appscomm_Draw_Keyguard_Information(pd,pStatic,unlockkey);
 #endif
 
-		 ISTATIC_Release(pStatic);
+		ISTATIC_Release(pStatic);
         IDISPLAY_Release(pd);
     }
    
@@ -1357,15 +1368,8 @@ void OEMKeyguard_SetState(boolean bEnabled)
     sbKeyguardEnabled = bEnabled;
 	bDrawMessage = TRUE;
 	MSG_FATAL("bEnabled======%d",0,0,0);
-#if ((defined FEATURE_VERSION_C337) /*|| (defined FEATURE_VERSION_C316)*/)
+#if ((defined FEATURE_VERSION_C337) || (defined FEATURE_VERSION_C316))
 	OEMPriv_DrawKeyguardInformation(!bEnabled);
-#endif
-
-#if 0//def FEATURE_VERSION_C316
-	m_bEnabled = bEnabled;
-	(void) AEE_SetSysTimer(800,
-                          OEMPriv_MessageTimerCBInformation,
-                          NULL);
 #endif
 
 	//Add By zzg 2012_10_30
