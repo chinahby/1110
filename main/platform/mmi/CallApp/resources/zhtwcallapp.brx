@@ -185,7 +185,7 @@
 		<Text>Speed Dial %s is Off,Set it On?</Text>
 	</String>
 	<String Id="1122" Name="IDS_SAR">
-		<Text>SAR: 0.280W/kg@1g(h)0.242W/kg@1g(b)</Text>
+		<Text>SAR: 0.280W/kg</Text>
 	</String>
 	<String Id="1123" Name="IDS_SAR_C337">
 		<Text>SAR: 0.212W/kg@1g(Head)0.169W/kg@1g(Body)</Text>
