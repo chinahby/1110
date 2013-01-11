@@ -826,12 +826,7 @@ static boolean  HandleSceneModeSubDialogEvent(CSoundMenu *pMe,
                             pMe->m_ScenemodesubType = SET_ACTIVATE;
                             pMe->m_sSubDlgId = IDS_ACTIVATING;
                             CLOSE_DIALOG(DLGRET_MESSAGE)
-                        }
-                        else
-                        {
-                            //pMe->m_sSubDlgId = IDS_ACTIVATING;
-                            CLOSE_DIALOG(DLGRET_MESSAGE)
-                        }
+                        }                        
                     }
 #else           
                     pMe->m_ScenemodesubType = SET_ACTIVATE;
