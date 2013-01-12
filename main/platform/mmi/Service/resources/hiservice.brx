@@ -7,7 +7,7 @@
 	<String Id="1003" Name="IDS_SERVICE_UTK">
 		<Text>UTK</Text>
 	</String>
-	<String Id="1004" Name="IDS_SERVICE_BROWSER">
+	<String Id="1004" Name="IDS_SERVICE_BROWSER" Encoding="Unicode">
 		<Text>ब्राउज़र</Text>
 	</String>
 </Strings>
