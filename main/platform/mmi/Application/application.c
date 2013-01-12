@@ -1124,11 +1124,22 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
 	                                    WTitle,
 	                                    sizeof(WTitle));
 			#elif defined(FEATURE_VERSION_C316)
-			(void)ISHELL_LoadResString(pMe->m_pShell,
+			if(pMe->m_StartCore)
+			{
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+	                                    APPLICATION_RES_FILE_LANG,                                
+	                                    IDS_SHORT_CUT,
+	                                    WTitle,
+	                                    sizeof(WTitle));
+			}
+			else
+			{
+				(void)ISHELL_LoadResString(pMe->m_pShell,
 	                                    APPLICATION_RES_FILE_LANG,                                
 	                                    IDS_APPLICATION_LIST_C337,
 	                                    WTitle,
 	                                    sizeof(WTitle));
+			}
 			#else
 			(void)ISHELL_LoadResString(pMe->m_pShell,
 	                                    APPLICATION_RES_FILE_LANG,                                
@@ -1241,15 +1252,13 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CALCULATOR, IDS_APPLICATION_CALCULATOR, NULL, 0);
 #elif defined (FEATURE_DISP_128X160)
 #ifdef FEATURE_VERSION_C316
-			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_USER_PROFILES, IDS_USER_PROFILES, NULL, 0);
+			
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_ALARM, IDS_APPLICATION_ALARM, NULL, 0);
 			#ifdef	FEATURE_APP_BLUETOOTH  //add by yangdecai
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_BLUETOOTH, IDS_APPLICATION_BLUETOOTH, NULL, 0); 
 			#endif
 		//	IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_VIDEO_PLAYER,IDS_VIDEO_PLAYER,NULL,0);
-			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_FMRADIO,IDS_APPLICATION_FMRADIO,NULL,0);
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CALCULATOR, IDS_APPLICATION_CALCULATOR, NULL, 0);
-			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_IMAGE_VIEWER,IDS_IMAGE_VIEWER,NULL,0);
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_CALENDAR, IDS_CALENDAR,NULL,0);
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_STOPWATCH, IDS_APPLICATION_STOPWATCH, NULL, 0);
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_WORLDTIME, IDS_APPLICATION_WORLDTIME, NULL, 0);

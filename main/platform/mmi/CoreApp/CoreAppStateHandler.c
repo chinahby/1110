@@ -100,8 +100,10 @@ static NextFSMAction COREST_SMSTIP_Handler(CCoreApp *pMe);
 #endif
 
 #if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+#ifndef FEATURE_VERSION_C316
 // 状态 COREST_SALES_TRAKER 处理函数
 static NextFSMAction COREST_SALES_TRAKER_Handler(CCoreApp *pMe);
+#endif
 // 状态 COREST_SALES_EDIT 处理函数
 static NextFSMAction COREST_SALES_EDIT_Handler(CCoreApp *pMe);
 #endif
@@ -264,10 +266,12 @@ NextFSMAction CoreApp_ProcessState(CCoreApp *pMe)
 #endif     
 
 #if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+#ifndef FEATURE_VERSION_C316
 		case COREST_SALES_TRAKER:
 			MSG_FATAL("CoreApp_ProcessState Start COREST_SALES_TRAKER",0,0,0);
             retVal = COREST_SALES_TRAKER_Handler(pMe);
 			break;
+#endif
 		case COREST_SALES_EDIT:
 			retVal = COREST_SALES_EDIT_Handler(pMe);
 			break;
@@ -1534,7 +1538,7 @@ static NextFSMAction COREST_STANDBY_Handler(CCoreApp *pMe)
             MOVE_TO_STATE(COREST_SMSTIP)
             return NFSMACTION_CONTINUE;
 #endif      
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
 		case DLGRET_SALES_TRACKER:
 			MSG_FATAL("COREST_STANDBY_Handler DLGRET_SALES_TRACKER",0,0,0);
             MOVE_TO_STATE(COREST_SALES_TRAKER)
@@ -1573,7 +1577,7 @@ static NextFSMAction COREST_STANDBY_Handler(CCoreApp *pMe)
     MSG_FATAL("COREST_STANDBY_Handler End",0,0,0);
     return NFSMACTION_WAIT;
 } // COREST_STANDBY_Handler
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
 /*==============================================================================
 函数:
     COREST_SALES_TRAKER_Handler

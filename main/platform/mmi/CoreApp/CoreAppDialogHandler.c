@@ -425,11 +425,13 @@ static boolean  IDD_WMSTIPS_Handler(void *pUser,
                                  uint32     dwParam);
 #endif
 #if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+#ifndef FEATURE_VERSION_C316
 // 对话框 IDD_SALESTRACKER 事件处理函数
 static boolean  IDD_SALESTRACKER_Handler(void *pUser,
                                  AEEEvent   eCode,
                                  uint16     wParam,
                                  uint32     dwParam);
+#endif
 // 对话框 IDD_SALES_EDIT 事件处理函?
 static boolean  IDD_SALES_EDIT_Handler(void *pUser,
 								 AEEEvent   eCode,
@@ -647,9 +649,11 @@ void CoreApp_SetDialogHandler(CCoreApp *pMe)
             break;
 #endif    
 #if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+#ifndef FEATURE_VERSION_C316
 		case IDD_SALESTRACKER:
 			pMe->m_pDialogHandler = IDD_SALESTRACKER_Handler;
 			break;
+#endif
 		case IDD_SALES_EDIT:
 			pMe->m_pDialogHandler = IDD_SALES_EDIT_Handler;
 			break;
@@ -5157,7 +5161,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 备注:
 
 ==============================================================================*/
-
+#ifndef FEATURE_VERSION_C316
 static boolean	IDD_SALESTRACKER_Handler(void *pUser,
 								 AEEEvent	eCode,
 								 uint16 	wParam,
@@ -5270,6 +5274,7 @@ static boolean	IDD_SALESTRACKER_Handler(void *pUser,
     return FALSE;
 	
 }
+#endif
 #if defined(FEATURE_VERSION_W317A)
 
 /*==============================================================================
