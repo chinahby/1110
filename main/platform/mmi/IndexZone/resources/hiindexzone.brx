@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <BREWRes Name="hiindexzone" VERSION="1">
-<Strings Encoding="ISOLATIN1">
+<Strings Encoding="Unicode">
 	<String Id="1002" Name="IDS_INDEX_ZONE_TITLE">
-		<Text>सूचकांक जोन</Text>
+		<Text>इंटेक्स जोन</Text>
 	</String>
-	<String Id="1003" Name="IDS_INDEX_ZONE_UTK">
+	<String Id="1003" Name="IDS_INDEX_ZONE_UTK" Encoding="ISOLATIN1">
 		<Text>UTK</Text>
 	</String>
 	<String Id="1004" Name="IDS_INDEX_ZONE_GAMES">
 		<Text>खेल</Text>
 	</String>
-	<String Id="1005" Name="IDS_INDEX_ZONE_MOBILETRACKER" Encoding="Unicode">
+	<String Id="1005" Name="IDS_INDEX_ZONE_MOBILETRACKER">
 		<Text>मोबाइल ट्रैकर</Text>
 	</String>
 	<String Id="1006" Name="IDS_INDEX_ZONE_CALLRECORD">
