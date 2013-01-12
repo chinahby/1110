@@ -905,9 +905,6 @@ static NextFSMAction MANINPWD_INPUTPWD_Handler(Multimed *pMe)
         case MGDLGRET_FAILD:    
 			MSG_FATAL("MGDLGRET_FAILD.............",0,0,0);
 			Multimed_ShowPopDialog(pMe, IDD_PWD_INVAD);
-			//pMe->m_eDlgReturn = DLGRET_CREATE;
-			//MOVE_TO_STATE(STATE_PWDINALD); 
-			//break;
             return NFSMACTION_WAIT;
 		
         case MGDLGRET_MSGBOX_OK:
