@@ -2003,7 +2003,7 @@ static boolean MobileTracker_ChangPassWordHandler(MobileTracker *pMe, AEEEvent e
 					AECHAR *PcpText  = ITEXTCTL_GetTextPtr(pMe->m_cpwdword);
 					MSG_FATAL("avk_selectpws==%d,,pcp===%d",WSTRLEN(pwsText),WSTRLEN(PcpText),0);
 					len =WSTRLEN(pwsText);
-					if(WSTRCMP(pwsText,PcpText) != 0 || len<3)
+					if(WSTRCMP(pwsText,PcpText) != 0 || len<4)
 					{
 						CLOSE_DIALOG(MGDLGRET_FAILD)
 						return TRUE;
