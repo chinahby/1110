@@ -1513,13 +1513,15 @@ static boolean MobileTracker_DnumberHandler(MobileTracker *pMe, AEEEvent eCode, 
    AECHAR         m_NumberStr1[20] = {0};
    AECHAR         m_NumberStr2[20] = {0};
    AECHAR         m_NumberStr3[20] = {0};
-   
-   
+   IMenuCtl *pMenuCtl = NULL;
    if(!pMe)
    {
       return FALSE;
    }
-      switch(eCode)
+   pMenuCtl = (IMenuCtl*)IDIALOG_GetControl( pMe->m_pActiveIDlg, IDC_NUMBER_MENU);
+   
+
+   switch(eCode)
    {
 	   case EVT_DIALOG_INIT:
 	      {
@@ -1794,11 +1796,13 @@ static boolean MobileTracker_OwernameHandler(MobileTracker *pMe, AEEEvent eCode,
 
 static boolean MobileTracker_ContentHandler(MobileTracker *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
 {
-   PARAM_NOT_REF(dwParam)
+   //PARAM_NOT_REF(dwParam)
+   //IMenuCtl *pMenuCtl = NULL;
    if(!pMe)
    {
       return FALSE;
    }
+   //pMenuCtl = (IMenuCtl*)IDIALOG_GetControl( pMe->m_pActiveIDlg, IDC_CONTENT_MENU);
    pMe->m_Content = (ITextCtl*)IDIALOG_GetControl(pMe->m_pActiveIDlg,IDC_TEXT_CONTEXT);
    if (pMe->m_Content == NULL)
    {
@@ -1823,12 +1827,13 @@ static boolean MobileTracker_ContentHandler(MobileTracker *pMe, AEEEvent eCode, 
              {
 			    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
              }
+			 //IMENUCTL_SetProperties(pMenuCtl,MP_NO_UPDOWN);
 			 Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
 			 SETAEERECT(&m_ContentRect,0,0,pMe->m_rc.dx, pMe->m_rc.dy - GetBottomBarHeight(pMe->m_pDisplay));
 			 ITEXTCTL_SetRect(pMe->m_Content, &m_ContentRect);
 			 (void)ITEXTCTL_SetTitle( pMe->m_Content, NULL,0,WTTitle);
   			 ITEXTCTL_SetInputMode(pMe->m_Content, AEE_TM_LETTERS);
-  			 ITEXTCTL_SetProperties(pMe->m_Content, TP_MULTILINE|TP_FRAME|TP_FOCUS_NOSEL|TP_FIXSETRECT|TP_STARKEY_SWITCH|TP_DISPLAY_COUNT|TP_NOUPDATE|TP_GRAPHIC_BG|TP_NO_HI);
+  			 ITEXTCTL_SetProperties(pMe->m_Content, TP_MULTILINE|TP_FRAME|TP_FOCUS_NOSEL|TP_FIXSETRECT|TP_STARKEY_SWITCH|TP_DISPLAY_COUNT|TP_GRAPHIC_BG|TP_NO_HI);
              ITEXTCTL_SetMaxSize(pMe->m_Content, 120);
 			 OEM_GetConfig(CFGI_MOBILE_TRACKER_CONTECT,&m_wstrContect,sizeof(uint16)*120);
 			 ITEXTCTL_SetText(pMe->m_Content,m_wstrContect,sizeof(uint16)*120);
@@ -1844,7 +1849,7 @@ static boolean MobileTracker_ContentHandler(MobileTracker *pMe, AEEEvent eCode, 
 	      {
 		  		 TitleBar_Param_type     TBarParam = {0};
 	   	       	 BottomBar_Param_type  BBarParam ={0};
-				 
+				 ITEXTCTL_SetActive(pMe->m_Content,TRUE);
 	   		     BBarParam.eBBarType = BTBAR_OK_DELETE;
 	   			 DrawBottomBar(pMe->m_pDisplay, &BBarParam);
 				 ITEXTCTL_Redraw(pMe->m_Content);
@@ -1877,6 +1882,12 @@ static boolean MobileTracker_ContentHandler(MobileTracker *pMe, AEEEvent eCode, 
 					
 				}
 				break;
+				case AVK_UP:
+				case AVK_DOWN:
+					{
+						ITEXTCTL_SetActive(pMe->m_Content,TRUE);
+					}
+				break;
 				case AVK_CLR:
 					CLOSE_DIALOG(DLGRET_CANCELED)
 				    return TRUE;
@@ -1898,16 +1909,18 @@ static boolean MobileTracker_ContentHandler(MobileTracker *pMe, AEEEvent eCode, 
 
 static boolean MobileTracker_ChangPassWordHandler(MobileTracker *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
 {
-   PARAM_NOT_REF(dwParam)
+   //PARAM_NOT_REF(dwParam)
    AEERect      p_PassWordMenu       = {0};
    AEERect      p_ConfirmPassWord    = {0};
    AECHAR      wszTile[24];     //Ê±¼ä
    AECHAR      wszPassWord[20];
+   IMenuCtl *pMenuCtl = NULL;
+  
    if(!pMe)
    {
       return FALSE;
    }
-   
+   pMenuCtl = (IMenuCtl*)IDIALOG_GetControl( pMe->m_pActiveIDlg, IDC_CHANGEPAD_MENU);
    pMe->m_ppwdword = (ITextCtl*)IDIALOG_GetControl(pMe->m_pActiveIDlg,
                                                     IDC_CHANGEPASSWORD);
    pMe->m_cpwdword = (ITextCtl*)IDIALOG_GetControl(pMe->m_pActiveIDlg,

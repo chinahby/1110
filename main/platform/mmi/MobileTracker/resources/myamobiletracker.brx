@@ -79,6 +79,9 @@
 				<Items/></Text>
 			<Text Id="7007" Name="IDC_TEXT_NUMBERTHREE">
 				<Items/></Text>
+			<Menu Id="7011" Name="IDC_NUMBER_MENU">
+				<Items/>
+			</Menu>
 		</Controls>
 	</Dialog>
 	<Dialog Id="7" Name="IDD_OWER_NAME" Focus="7004">
@@ -93,12 +96,20 @@
 				<Items/></Text>
 			<Text Id="7009" Name="IDC_CONFIRM_PASSWORD">
 				<Items/></Text>
+			<Menu Id="7010" Name="IDC_CHANGEPAD_MENU">
+				<Items/>
+			</Menu>
 		</Controls>
 	</Dialog>
 	<Dialog Id="9" Name="IDD_CONTENT" Focus="7008">
 		<Controls>
 			<Text Id="7008" Name="IDC_TEXT_CONTEXT">
 				<Items/></Text>
+			<Static Id="7012" Name="IDC_IDC_CONTENT_STATIC">
+				<Items/></Static>
+			<Menu Id="7013" Name="IDC_CONTENT_MENU">
+				<Items/>
+			</Menu>
 		</Controls>
 	</Dialog>
 </Dialogs>
