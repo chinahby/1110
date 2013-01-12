@@ -355,9 +355,6 @@ static void callApp_draw_pendown(CCallApp* pMe,int16 x,int16 y);
 static void callApp_draw_penmove(CCallApp* pMe,int16 x,int16 y);
 #endif
 
-#if defined(FEATURE_VERSION_C316)	
-static void CallApp_Build_Answer_Option_Menu(CCallApp *pMe);
-#endif
 /*==============================================================================
                                  全局数据
 ==============================================================================*/
@@ -5217,23 +5214,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
     //IImage  *pImage = NULL;
     PARAM_NOT_REF(dwParam)
     MSG_FATAL("eCode= %x,w=%x,dw=%x CallApp_IncomingCall_DlgHandler ",eCode,wParam,dwParam);
-#if defined(FEATURE_VERSION_C316)		
-    MSG_FATAL("CallApp_IncomingCall_DlgHandler m_bShowPopMenu=%d", pMe->m_bShowPopMenu,0,0);
-    if ( pMe->m_bShowPopMenu && IMENUCTL_IsActive(pMe->m_pMenu) )
-    {
-        if ( IMENUCTL_HandleEvent(pMe->m_pMenu, eCode, wParam, dwParam) )
-        {
-            MSG_FATAL("CallApp_IncomingCall_DlgHandler 1",0,0,0);
-            return TRUE;
-        }
-    }
-    if(pMe->m_bShowPopMenu &&(eCode == EVT_KEY || eCode == EVT_KEY_PRESS || eCode == EVT_KEY_RELEASE)&&(wParam != AVK_SELECT && (AVKType)wParam != AVK_CLR && (AVKType)wParam != AVK_UP && (AVKType)wParam != AVK_DOWN && (AVKType)wParam != AVK_SEND && (AVKType)wParam != AVK_END))
-	{
-	    MSG_FATAL("CallApp_IncomingCall_DlgHandler 2",0,0,0);
-		return TRUE;
-	}
-#endif		
-    
+
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
@@ -5283,9 +5264,6 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
             	//add by yangdecai 2010-08-04
             	AECHAR StrBuf[20] = {0};
 				boolean RingtonesPlaymode =FALSE;
-#if defined(FEATURE_VERSION_C316)					
-				pMe->m_bShowPopMenu = FALSE;
-#endif
                // boolean headsetPresent =FALSE;
 				(void) ISHELL_LoadResString(pMe->m_pShell,
                                             AEE_APPSCALLAPP_RES_FILE,
@@ -5347,12 +5325,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
             AECHAR    wBuf[MAX_SIZE_BANNER_TEXT+1];
             AEERect   rect;//, rc;
             boolean b_cdg = FALSE;
-#ifdef FEATURE_VERSION_C316					
-            if( pMe->m_bShowPopMenu)
-        	{
-        		return TRUE;
-        	}      
-#endif						
+            
             Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
 
             //  BANNER
@@ -5599,13 +5572,11 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
             }
             else if (pMe->m_CallMuted == TRUE)
             {
-#ifdef FEATURE_VERSION_C337
+            	#ifdef FEATURE_VERSION_C337
 				REFUI_DRAW_BOTTOMBAR(BTBAR_ANSWER_SILENT);
-#elif defined(FEATURE_VERSION_C316)
-               REFUI_DRAW_BOTTOMBAR(BTBAR_OPTION_SILENT);						
-#else
-               REFUI_DRAW_BOTTOMBAR(BTBAR_ANSWER_MUTE);
-#endif
+				#else
+               	REFUI_DRAW_BOTTOMBAR(BTBAR_ANSWER_MUTE);
+				#endif
             }
             else if (pMe->m_CallMuted == FALSE)
             {
@@ -5637,11 +5608,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
             pMe->m_b_incoming = FALSE;
             pMe->m_b_press_1=FALSE;
             pMe->Ispwpass=FALSE;
-#if defined(FEATURE_VERSION_C316)		
-            pMe->m_bShowPopMenu = FALSE;
-            IMENUCTL_SetActive ( pMe->m_pMenu, FALSE );
-#endif
-						
+            
             Appscomm_is_incoming_state(0);
             //CallApp_Set_Db_In_Idle(FALSE);
 	        (void) ISHELL_CancelTimer(pMe->m_pShell,(PFNNOTIFY)CallApp_Dialer_Show_Animation,pMe);
@@ -5723,12 +5690,6 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
 
         //上下键没有EVT_KEY发出，只有PRESS和RELEASE，相应任意键接听修改
         case EVT_KEY_PRESS:
-#if defined(FEATURE_VERSION_C316)						
-            if ( pMe->m_bShowPopMenu )
-            {
-                break;
-            }
-#endif
             switch ((AVKType)wParam)
             {
                 case AVK_UP:
@@ -5765,12 +5726,6 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
             break;
 
         case EVT_KEY_RELEASE:
-#if defined(FEATURE_VERSION_C316)						
-            if ( pMe->m_bShowPopMenu )
-            {
-                return TRUE;
-            }
-#endif					
             switch ((AVKType)wParam)
             {
                 case AVK_SELECT:
@@ -5802,16 +5757,6 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
             return TRUE;
 
         case EVT_KEY:
-#ifdef FEATURE_VERSION_C316						
-            if ( pMe->m_bShowPopMenu && (AVK_LEFT != wParam) && (AVK_RIGHT!= wParam))
-            {
-                // cancel the pop menu...
-                pMe->m_bShowPopMenu = FALSE;
-                IMENUCTL_SetActive ( pMe->m_pMenu, FALSE );
-                (void)ISHELL_PostEvent( pMe->m_pShell, AEECLSID_DIALER/*AEECLSID_CALL*/,EVT_USER_REDRAW,0,0 );
-                return TRUE;
-            }
-#endif
 #if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)|| defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_W516)||defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_W027)
 {
 			nv_item_type	SimChoice;
@@ -6043,14 +5988,6 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
                             CallApp_AnswerCall(pMe,FALSE,eCode,wParam,FALSE);                            
                          }
                          //Add End
-						 else if ( !pMe->m_bShowPopMenu )
-	                    {
-	                       (void) ISHELL_CancelTimer(pMe->m_pShell, CallApp_Dialer_Show_Animation,pMe); 
-	                        pMe->m_bShowPopMenu = TRUE;
-	                        CallApp_Build_Answer_Option_Menu ( pMe );
-	                        REFUI_DRAW_BOTTOMBAR(BTBAR_OK_BACK)
-							  IDISPLAY_Update(pMe->m_pDisplay);						
-	                    };//xuhui
                         return TRUE;											
 #else
                          CallApp_AnswerCall(pMe,FALSE,eCode,wParam,FALSE);
@@ -6144,35 +6081,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
             }
             break;
 #endif
-#if defined(FEATURE_VERSION_C316)		
-        case EVT_COMMAND:
-			MSG_FATAL("CallApp_IncomingCall_DlgHandler EVT_COMMAND",0,0,0);
-            pMe->m_bShowPopMenu = FALSE;
-            IMENUCTL_SetActive ( pMe->m_pMenu, FALSE );
-            switch (wParam)
-            {
-                case IDS_ANSWER:
-                    CallApp_AnswerCall(pMe,FALSE,EVT_KEY_RELEASE,AVK_SELECT,FALSE);
-                    break;
 
-                case IDS_END_WITH_SMS:
-                    pMe->m_userCanceled = TRUE;
-#ifdef FEATURE_ICM
-                    pMe->m_lastCallState = AEECM_CALL_STATE_IDLE;
-                    ICM_EndAllCalls(pMe->m_pICM);
-#else
-                    pMe->m_lastCallState = AEET_CALL_STATE_IDLE;
-                    ICALLMGR_EndAllCalls(pMe->m_pICallMgr);
-#endif								
-					 ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_WMSAPP, "CallApp"); 	
-                    return TRUE;	
-
-				 default:
-				 	break;
-            }	
-            (void)ISHELL_SendEvent( pMe->m_pShell, AEECLSID_DIALER,EVT_USER_REDRAW,0,0 );
-            return TRUE;
-#endif
         default:
             break;
     }
@@ -14264,33 +14173,5 @@ void CallApp_SwitchCallAudio(CCallApp *pMe, boolean bIsBtAudio)
 #endif
 
 //Add End
-#ifdef FEATURE_VERSION_C316
-static void CallApp_Build_Answer_Option_Menu(CCallApp *pMe)
-{
-    //AEERect   rc_softkey;
-    IMenuCtl   *pSKMenu;
-    ASSERT(IDD_INCOMINGCALL == pMe->m_pActiveDlgID);
-
-    pSKMenu = pMe->m_pMenu;
-
-
-    (void) IMENUCTL_DeleteAll(pSKMenu);
-
-
-	(void) IMENUCTL_AddItem(pSKMenu,AEE_APPSCALLAPP_RES_FILE,IDS_ANSWER,IDS_ANSWER,
-                                            (AECHAR*)NULL,(uint32)NULL);
-    (void) IMENUCTL_AddItem(pSKMenu,AEE_APPSCALLAPP_RES_FILE,IDS_END_WITH_SMS,IDS_END_WITH_SMS,
-                                            (AECHAR*)NULL,(uint32)NULL);
-    ISHELL_CancelTimer(pMe->m_pShell,
-                                                    (PFNNOTIFY)CallApp_HandleDialogTimer_Redraw,
-                                                    pMe);
-
-    IMENUCTL_SetPopMenuRect(pSKMenu);
-    IMENUCTL_SetProperties ( pSKMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL |MP_BIND_ITEM_TO_NUMBER_KEY );
-    IMENUCTL_SetBottomBarType(pSKMenu,BTBAR_SELECT_BACK);
-    IMENUCTL_SetActive ( pSKMenu, TRUE );
-    (void) IMENUCTL_Redraw ( pSKMenu );
-}
-#endif
 
 

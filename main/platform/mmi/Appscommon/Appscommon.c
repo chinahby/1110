@@ -3103,7 +3103,7 @@ void Appscomm_Draw_Keyguard_Information(IDisplay *pIDisplay,IStatic *pStatic,boo
 {
     PromptMsg_Param_type m_PromptMsg;
     AEERect rect = {0};
-#if 0//defined(FEATURE_VERSION_C316)
+#if defined(FEATURE_VERSION_C316)
       {
 		    boolean bData = FALSE;
 		    OEM_GetConfig(CFGI_ONEKEY_LOCK_KEYPAD,&bData, sizeof(bData));
