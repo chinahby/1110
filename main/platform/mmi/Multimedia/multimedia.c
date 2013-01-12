@@ -899,10 +899,7 @@ static NextFSMAction MANINPWD_INPUTPWD_Handler(Multimed *pMe)
             return NFSMACTION_CONTINUE;
 
         case MGDLGRET_PASS:            
-            
 			MOVE_TO_STATE(MULTIMEDIAST_MAIN);
-			break;
-			
             return NFSMACTION_CONTINUE;
 
         case MGDLGRET_FAILD:    
@@ -1482,7 +1479,7 @@ static boolean Multimed_PassWordHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
                 {// 确定-----取消
                     MTAppUtil_DrawSoftkey(pMe,BTBAR_CANCEL);
                 }
-
+				
                 // 更新显示
                 IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE); 
         
