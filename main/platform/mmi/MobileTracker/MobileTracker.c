@@ -1934,14 +1934,16 @@ static boolean MobileTracker_ChangPassWordHandler(MobileTracker *pMe, AEEEvent e
 
 			 SETAEERECT(&p_PassWordMenu,2,40,124,20);
 			 SETAEERECT(&p_ConfirmPassWord,2,80,124,20);
-			 ITEXTCTL_SetRect(pMe->m_ppwdword, &p_PassWordMenu);
-			 ITEXTCTL_SetRect(pMe->m_cpwdword, &p_ConfirmPassWord);
+			 //ITEXTCTL_SetRect(pMe->m_ppwdword, &p_PassWordMenu);
+			 //ITEXTCTL_SetRect(pMe->m_cpwdword, &p_ConfirmPassWord);
+			 ICONTROL_SetRect((IControl*)pMe->m_ppwdword, &p_PassWordMenu);
+			 ICONTROL_SetRect((IControl*)pMe->m_cpwdword, &p_ConfirmPassWord);
   			 ITEXTCTL_SetInputMode(pMe->m_ppwdword, AEE_TM_NUMBERS);
 			 ITEXTCTL_SetInputMode(pMe->m_cpwdword, AEE_TM_NUMBERS);
   			 ITEXTCTL_SetProperties(pMe->m_ppwdword, TP_FRAME|TP_FIXSETRECT|TP_FOCUS_NOSEL|TP_MB_PROPERTY);
 			 ITEXTCTL_SetProperties(pMe->m_cpwdword, TP_FRAME|TP_FIXSETRECT|TP_MB_PROPERTY);
-             ITEXTCTL_SetMaxSize(pMe->m_ppwdword, 20);
-		     ITEXTCTL_SetMaxSize(pMe->m_cpwdword, 20);
+             ITEXTCTL_SetMaxSize(pMe->m_ppwdword, 5);
+		     ITEXTCTL_SetMaxSize(pMe->m_cpwdword, 5);
 	         return TRUE;
 	      }
 	   case EVT_DIALOG_START:
