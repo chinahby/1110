@@ -1576,7 +1576,7 @@ static boolean MediaGalleryApp_CheckMassStorgeDir(CMediaGalleryApp* pMe)
       MG_MASSCARDVIDEO_PATH ,
       MG_MASSCARDVOICEMEMO_PATH,
 #ifdef FEATURE_VERSION_C316
-      MG_MASSCARDCALLRECOED_PATH,      //Add by pyuangui 2013-01-09
+      //MG_MASSCARDCALLRECOED_PATH,      //Add by pyuangui 2013-01-09
 #endif
 #ifdef FEATURE_MG_WAPMMS_SUPPORT
       MG_MASSCARDDOWNLOAD_PATH,
