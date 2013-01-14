@@ -105,11 +105,6 @@
 		<Controls>
 			<Text Id="7008" Name="IDC_TEXT_CONTEXT">
 				<Items/></Text>
-			<Static Id="7012" Name="IDC_IDC_CONTENT_STATIC">
-				<Items/></Static>
-			<Menu Id="7013" Name="IDC_CONTENT_MENU">
-				<Items/>
-			</Menu>
 		</Controls>
 	</Dialog>
 </Dialogs>
