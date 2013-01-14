@@ -1828,7 +1828,7 @@ static boolean MobileTracker_ContentHandler(MobileTracker *pMe, AEEEvent eCode, 
 			    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
              }
 			 //IMENUCTL_SetProperties(pMenuCtl,MP_NO_UPDOWN);
-			 Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
+			 //Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
 			 SETAEERECT(&m_ContentRect,0,0,pMe->m_rc.dx, pMe->m_rc.dy - GetBottomBarHeight(pMe->m_pDisplay));
 			 ITEXTCTL_SetRect(pMe->m_Content, &m_ContentRect);
 			 (void)ITEXTCTL_SetTitle( pMe->m_Content, NULL,0,WTTitle);
@@ -2016,7 +2016,7 @@ static boolean MobileTracker_ChangPassWordHandler(MobileTracker *pMe, AEEEvent e
 					AECHAR *PcpText  = ITEXTCTL_GetTextPtr(pMe->m_cpwdword);
 					MSG_FATAL("avk_selectpws==%d,,pcp===%d",WSTRLEN(pwsText),WSTRLEN(PcpText),0);
 					len =WSTRLEN(pwsText);
-					if(WSTRCMP(pwsText,PcpText) != 0 || len<5)
+					if(WSTRCMP(pwsText,PcpText) != 0 || len<4)
 					{
 						CLOSE_DIALOG(MGDLGRET_FAILD)
 						return TRUE;
