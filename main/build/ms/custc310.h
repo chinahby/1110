@@ -11,25 +11,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 
 #define FEATURE_VERSION_C11
 #define FEATURE_VERSION_C310
-//#define FEATURE_VERSION_W317A
-//#define FEATURE_OEMOMH
-#define FEATRUE_MG_COPYMOVE		//Add By zzg 2012_11_19
 #ifdef CUST_EDITION
-//#define FEATURE_APP_BLUETOOTH
-//#define FEATURE_BT
-//#define FEATURE_IBT
-//#define FEATURE_BT_QSOC_INBAND_SLEEP  
-//#define FEATURE_DRM_NO_BREW 
-//#define FEATURE_BT_SEND_FILE_ONLY		//Add By zzg 2010_11_03
-//#define FEATURE_SUPPORT_BT_AUDIO
-
-//#define FEATURE_LANG_DEFAULT_ENGLISH
-#define FEATURE_ENABLE_OTKSL
-//#define BT_QSC1110//FEATURE_BT_QSC1100
-//#define FEATURE_BT_QSOC_BTS4025_B2   //this is now we used  bluetooth  型号
-//Add by zzg 2010_10_13
-//#define FEATURE_TORCH_KEY_CAMERA			//手电筒功能按键
-//#define FEATURE_IDLE_TORCH_DOWNKEY			//idle界面的向下键对应手电筒功能
 #define FEATURE_GPIO_LAMP_EN_OUTPUT_31		//GPIO_OUTPUT_31
 #define FEATURE_SIM_SEL_GPIO_34_PULL_DOWN	//SIM_SEL== GPIO_OUP(34,GROUP_GPIO_1,GPIO_PULL_DOWN)
 #define FEATURE_GPIO_31_SIGNAL_OUPUT_31		//GPIO_31_SIGNAL == GPIO_OUTPUT_31
@@ -57,14 +39,9 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //#define FEATURE_SPN_FROM_BSMCCMNC
 //#define FEATURE_LONG_NETLOCK   //add by yangdecai
 
-#define FEATURE_MOVIE_RECORD_SUPPORT
 #define FEATURE_ARPHIC_LAYOUT_ENGINE
 #define FEATURE_CAMERA_MULTI_NEW_AUTO_DETECT
-#define FEATURE_AMR_FIXED
 
-#define FEATURE_AUDIO_EQUALIZER 
-#define FEATURE_AUDIO_QCONCERT 
-#define FEATURE_AUDIO_SPECTRUM_ANALYZER 
 //#define FEATURE_CALL_RECORDER
 
 #endif
@@ -78,7 +55,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_STD_MIDI 
 //#define FEATURE_GSTK 
 #define FEATURE_DIAG_LOWMEM 
-#define FEATURE_AMR_VOCODER
+//#define FEATURE_AMR_VOCODER 
 #define T_QSC1110
 #define CUST_MOB_MODEL 25
 #define FEATURE_PLL_192 
@@ -86,7 +63,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_AUDIO_CONFIGURATION_MINIMAL 
 //Gemsea Remove #define FEATURE_AUDIO_CONFIGURATION_LO_TIER 
 //#define FEATURE_IPL_NO_CAMERA
-//#define FEATURE_IIPL
+#define FEATURE_IIPL
 #define FEATURE_UIM_QSC1100_LOW_MEMORY 
 #define CM_FEATURE_HSBASED_PLUS_DIAL_DISPLAY 
 //#define FEATURE_AUDIO_EQUALIZER 
@@ -94,11 +71,9 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //#define FEATURE_AUDIO_SPECTRUM_ANALYZER 
 #define CLKRGM_INCLUDE_TD 
 #define FEATURE_MMODE_LOW_MEM_TARGET 
-//#define FEATURE_LOWTIER_LOWMEM 
+#define FEATURE_LOWTIER_LOWMEM 
 #define FEATURE_REX_IPC 
 #define FEATURE_ASYNC_DATA_NOOP 
-#define HS_USB_SCSI_BUFFER_SIZE (512 * 2)
-#define FEATURE_HFAT
 #define FEATURE_HS_USB_PMIC_PHY 
 #define FEATURE_HS_USB_USER_EVENT_POST 
 #define FEATURE_RRC_SIB_HEAP 
@@ -110,13 +85,10 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_DIAG_SMALL_BUFFER 
 #define FEATURE_IPC_SMALL_MEMORY_POOL 
 #define FEATURE_APP_DIALER 
-#define FEATURE_MM_REC 
 //#define FEATURE_VOC_ADPCM 
 #define FEATURE_QVGANOTSUPPORTED 
-#define FEATURE_AUDFMT_AMR 
 #define FEATURE_MDP_LAYER1_PRIMARY 
 #define FEATURE_DISP_TASK 
-#define FEATURE_BUILD_MMC
 #define FEATURE_RUIM 
 #define FEATURE_UIM1 
 #define FEATURE_UIM_PMIC_ON_UIM1 
@@ -273,22 +245,25 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_COMBINED_PWR_END_KEYS
 //#define FEATURE_FLEXI_STATIC_BREW_APP
 #define FEATURE_DRV_SDCC
+#define FEATURE_HFAT
 #define FEATURE_SDCC_CLK_CONFIG
 #define FEATURE_HS_USB_MS_FD
 #define FEATURE_AUDIO_CAMERA_CONCURRENCY // FOR MP3
-#define FEATURE_AAC
-#define FEATURE_AAC_PLUS
-#define FEATURE_ENHANCED_AAC_PLUS
 #endif
 
 #include "custdisplay.h"
 
 
 #ifdef USES_CAMERA
-#ifdef FEATURE_MOVIE_RECORD_SUPPORT
-#include "custcamcorder.h"
-#endif
 #include "custcamera.h"
+#undef USE_CAMSENSOR_SIV121A
+#undef USE_CAMSENSOR_SIV120A
+#undef USE_CAMSENSOR_DB8B63A
+#undef USE_CAMSENSOR_SID130B
+#undef USE_CAMSENSOR_SP0838
+#undef USE_CAMSENSOR_SP0A18
+#undef USE_CAMSENSOR_MICRON_SIV121D_0M3
+#undef USE_CAMSENSOR_GC0329
 #include "custjpeg.h"
 #endif
 #include "custuim.h"
@@ -298,10 +273,6 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #include "custmmode.h"
 #include "custcdma.h"
 #include "custrf.h"
-#ifdef FEATURE_BT
-#include "custqbt.h"
-#include "custbt.h"
-#endif
 #include "custsec.h"
 #include "custcdma2000.h"
 #include "custdebug.h"
@@ -313,7 +284,6 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #include "custui.h"
 #include "custmcs.h"
 #include "custpmic3.h"
-#include "custmp4.h"
 #include "custefs.h"
 //#include "custfmrds.h"
 #include "custnvm.h"
@@ -404,8 +374,5 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
    #undef FEATURE_UNIFORM_SCAN_OOS
 #endif
 
-//#ifdef CAMERA_USES_SOFTDSP
-//#define FEATURE_CAMERA_NOFULLSCREEN
-//#endif
 
 #endif /* CUSTSB2_H */
