@@ -1866,8 +1866,11 @@ static void CoreApp_Process_SS_info(CCoreApp * pMe ,AEETSSEventData *ss)
 #else
                 case AEET_ROAM_STATUS_ON:
 #endif
-                    IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_WAP/*ANNUN_FIELD_ROAM*/, ANNUN_STATE_ROAM_ON/*ANNUN_STATE_ON*/);
-                    break;
+					if(IRUIM_IsCardConnected(pMe->m_pIRUIM)) //add by yangdecai  2013-0115
+					{
+                    	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_WAP/*ANNUN_FIELD_ROAM*/, ANNUN_STATE_ROAM_ON/*ANNUN_STATE_ON*/);
+					}
+					break;
 #ifdef FEATURE_ICM
                 case AEECM_ROAM_STATUS_BLINK:
 #else

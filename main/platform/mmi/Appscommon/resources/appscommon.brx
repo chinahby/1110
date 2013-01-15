@@ -292,6 +292,9 @@
 	<String Id="1044" Name="IDS_SHORTCUT" Encoding="Unicode">
 		<Text>Shortcut</Text>
 	</String>
+	<String Id="1045" Name="IDS_CONTINUE">
+		<Text>Continue</Text>
+	</String>
 	<STRING Id="2001" Name="IDS_SNOOZE">
 		<Text>Snooze</Text>
 	</STRING>

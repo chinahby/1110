@@ -586,7 +586,8 @@ static boolean CFieldDebug_EsnMenuHandleEvent(CFieldDebug *pme,
 static void CFieldDebug_DrawEsnScreen(CFieldDebug *pme);
 
 static void SetTextControlRect(CFieldDebug *pme, void  *Ctl);
-
+static byte CharToHex(char ch);
+static byte CalcMEIDDSP(char * Str);
 
 /*===========================================================================
 全局数据
@@ -6833,9 +6834,15 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
     IDialog *p_dlg;
     IStatic *p_stk;
     int n = 0;
+	int tn = 0;
     uint32 esn;
     //dword date = 0;
     AECHAR fmt_str[20];
+	char fmt_tstr[20];
+	char tstrbuf[20];
+	char sp[2] = {0};
+	AECHAR Wsp[2] = {0};
+	char temp = 0;
     //int i, j, count;
     AECHAR  sTitle[45]; 
     int ret = 0;
@@ -6904,22 +6911,89 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
         L32 = (uint32)meid;
         H32 = (uint32)(meid>>32);
     }
-    MSG_FATAL("CFieldDebug_DrawEsnScreen L32=%d, H32=%d", L32, H32, 0);
+    MSG_FATAL("DrawEsnScreen L32=%d,H32==%d", L32, H32, 0);
     
-    STRTOWSTR("%06X", fmt_str, sizeof(fmt_str));
+    STRTOWSTR("%08X", fmt_str, sizeof(fmt_str));
     WSPRINTF((szBuf + n),
             sizeof(szBuf),
             fmt_str,
             H32
             );
     n = WSTRLEN(szBuf);
-    STRTOWSTR("%08X", fmt_str, sizeof(fmt_str));
+    STRTOWSTR("%06X", fmt_str, sizeof(fmt_str));
     WSPRINTF((szBuf + n),
             sizeof(szBuf),
             fmt_str,
             L32
             );
-  
+
+	STRCPY(fmt_tstr, "%08X");
+    SPRINTF((tstrbuf),
+            fmt_tstr,
+            H32
+            );
+    tn = STRLEN(tstrbuf);
+    STRCPY(fmt_tstr, "%06X");
+    SPRINTF((tstrbuf + tn),
+            fmt_tstr,
+            L32);
+   tn = STRLEN(tstrbuf);
+   temp = CalcMEIDDSP(tstrbuf);
+   //STRTOWSTR(sp,Wsp,sizeof(Wsp));
+   switch(temp)
+   {
+   	  case 0:
+	  	WSTRCAT(szBuf,(AECHAR*)L"0");
+		break;
+	  case 1:
+	  	WSTRCAT(szBuf,(AECHAR*)L"1");
+		break;
+	  case 2:
+	  	WSTRCAT(szBuf,(AECHAR*)L"2");
+		break;
+	  case 3:
+	  	WSTRCAT(szBuf,(AECHAR*)L"3");
+		break;
+	  case 4:
+	  	WSTRCAT(szBuf,(AECHAR*)L"4");
+		break;
+	  case 5:
+	  	WSTRCAT(szBuf,(AECHAR*)L"5");
+		break;
+	  case 6:
+	  	WSTRCAT(szBuf,(AECHAR*)L"6");
+		break;
+	  case 7:
+	  	WSTRCAT(szBuf,(AECHAR*)L"7");
+		break;
+	  case 8:
+	  	WSTRCAT(szBuf,(AECHAR*)L"8");
+		break;
+	  case 9:
+	  	WSTRCAT(szBuf,(AECHAR*)L"9");
+		break;
+	  case 10:
+	  	WSTRCAT(szBuf,(AECHAR*)L"A");
+		break;
+	  case 11:
+	  	WSTRCAT(szBuf,(AECHAR*)L"B");
+		break;
+	  case 12:
+	  	WSTRCAT(szBuf,(AECHAR*)L"C");
+		break;
+	  case 13:
+	  	WSTRCAT(szBuf,(AECHAR*)L"D");
+		break;
+	  case 14:
+	  	WSTRCAT(szBuf,(AECHAR*)L"E");
+		break;
+	  case 15:
+	  	WSTRCAT(szBuf,(AECHAR*)L"F");
+		break;
+	  default:
+	  	break;
+   }
+   DBGPRINTF("szBuf Address =%s", szBuf);
    p_dlg = ISHELL_GetActiveDialog(pme->a.m_pIShell);
    p_stk = (IStatic *) IDIALOG_GetControl(p_dlg, IDC_ESN_STATIC);
 
@@ -8028,3 +8102,83 @@ static void SetTextControlRect(CFieldDebug *pme, void  *Ctl)
                 pme->m_screen_rc.dy - GetBottomBarHeight(pme->m_pDisplay));
     ICONTROL_SetRect((IControl*)Ctl, &ctlRect);
 }
+
+static byte CharToHex(char ch)
+{
+	byte Hex = 0;
+	if(ch >= '0' && ch <= '9')
+	{
+		Hex = ch - '0';
+	}
+	else if(ch >= 'A' && ch <= 'F')
+	{
+		Hex = 0xA+(ch - 'A');
+	}
+	else if(ch >= 'a' && ch <= 'f')
+	{
+		Hex = 0xA+(ch - 'a');
+	}
+	return Hex;
+}
+static byte CalcMEIDDSP(char * Str)
+{
+	byte SP;
+	byte oH = 0;
+	byte oL = 0;
+	char temp_str [16] = {0};
+	STRCPY(temp_str,Str);
+	SP  = CharToHex(temp_str[1]);
+	SP  = 2*SP;
+	oH += SP/0x10;
+	oL += SP%0x10;
+
+	SP  = CharToHex(temp_str[3]);
+	SP  = 2*SP;
+	oH += SP/0x10;
+	oL += SP%0x10;
+
+	SP  = CharToHex(temp_str[5]);
+	SP  = 2*SP;
+	oH += SP/0x10;
+	oL += SP%0x10;
+
+	SP  = CharToHex(temp_str[7]);
+	SP  = 2*SP;
+	oH += SP/0x10;
+	oL += SP%0x10;
+
+	SP  = CharToHex(temp_str[9]);
+	SP  = 2*SP;
+	oH += SP/0x10;
+	oL += SP%0x10;
+
+	SP  = CharToHex(temp_str[11]);
+	SP  = 2*SP;
+	oH += SP/0x10;
+	oL += SP%0x10;
+
+	SP  = CharToHex(temp_str[13]);
+	SP  = 2*SP;
+	oH += SP/0x10;
+	oL += SP%0x10;
+
+
+	SP  = 0;
+	SP += CharToHex(temp_str[0]);
+	SP += CharToHex(temp_str[2]);
+	SP += CharToHex(temp_str[4]);
+	SP += CharToHex(temp_str[6]);
+	SP += CharToHex(temp_str[8]);
+	SP += CharToHex(temp_str[10]);
+	SP += CharToHex(temp_str[12]);
+	SP += CharToHex(temp_str[14]);
+	SP += oH + oL;
+
+	SP = SP%0x10;
+	if(SP>0)
+	{
+		SP = 0x10 - SP;
+	}
+	return SP;
+}
+

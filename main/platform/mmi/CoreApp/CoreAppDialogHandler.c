@@ -5238,7 +5238,7 @@ static boolean	IDD_SALESTRACKER_Handler(void *pUser,
 				 
                 //Draw bottom
    				MEMSET(&bottomParam,0,sizeof(BottomBar_Param_type));
-            	bottomParam.eBBarType = BTBAR_OK; //BTBAR_SELECT_BACK;            
+            	bottomParam.eBBarType = BTBAR_CONTINUE; //BTBAR_SELECT_BACK;            
 				DrawBottomBar(pMe->m_pDisplay, &bottomParam);  
                 //DrawPromptMessage(pMe->m_pDisplay, pStatic, &Msg_Param);
             }
