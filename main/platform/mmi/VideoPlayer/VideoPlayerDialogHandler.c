@@ -401,11 +401,97 @@ static  boolean VPDVideoPlayer_HandleEvent(CVideoPlayer *pMe,AEEEvent eCode,uint
   
         case EVT_DIALOG_END:            
             return TRUE;
-        
+
+
+#ifdef FEATURE_VERSION_C337
+        case EVT_KEY_PRESS:	
+			if((wParam == AVK_LEFT) ||(wParam == AVK_RIGHT))
+			{
+	            pMe->keystart_time = GETUPTIMEMS();	
+				 MSG_FATAL("pMe->keystart_time1=%d",pMe->keystart_time,0,0);
+			}
+			break;
+
+        case EVT_KEY_RELEASE:
+			 if((wParam == AVK_LEFT) ||(wParam == AVK_RIGHT))	
+			 {
+			     pMe->keyend_time= GETUPTIMEMS();	
+				  MSG_FATAL("pMe->keystart_time2=%d",pMe->keystart_time,0,0); 	 
+				  MSG_FATAL("pMe->keyend_time=%d",pMe->keyend_time,0,0); 	  	
+				  if(pMe->keyend_time - pMe->keystart_time < 1000)
+				  {
+  		  			  pMe->keyend_time = 0;
+  		  			  pMe->keystart_time = 0;				  
+				      //short press
+				      if(wParam == AVK_LEFT)
+				      {
+    			            if(! pMe->m_IsPlaynext)
+    			            {
+    			                return TRUE;
+    			            }
+    			            if(!pMe->m_bAppIsReady)
+    			            {
+    			                 return TRUE;  
+    			            }
+    			            if(!pMe->IsFullScreen)
+    			            {
+    #if defined (FEATURE_DISP_240X320)||defined(FEATURE_DISP_220X176)|| defined(FEATURE_DISP_176X220)
+    			                VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE, IDI_BEFORE_SELECT, VIDEOPLAYER_PREVIOUS_X, VIDEOPLAYER_PREVIOUS_Y); //画按键按下去的小图标
+    #endif
+    			                pMe->bOldTime=0;
+    			                pMe->m_rtype = TYPE_PREVIOUS;
+    			                IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
+    			                VideoPlayer_PlayNext(pMe, FALSE); 
+    			            }
+    			            else if(!pMe->IsPause)
+    			            {
+    			                VideoPlayer_PlayNext(pMe, FALSE); 
+    			            }
+				      }
+					  else
+					  {
+                        if(! pMe->m_IsPlaynext)
+                        {
+                            return TRUE;
+                        }
+                        if(!pMe->m_bAppIsReady)
+                        {
+                             return TRUE;  
+                        }
+                        if(!pMe->IsFullScreen)
+                        { 
+            #if defined (FEATURE_DISP_240X320)||defined(FEATURE_DISP_220X176)|| defined(FEATURE_DISP_176X220)
+                            VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_NEXT_SELECT, VIDEOPLAYER_NEXT_X, VIDEOPLAYER_NEXT_Y);//画按键按下去的小图标  
+            #endif
+                            pMe->bOldTime=0;
+            				  pMe->m_rtype = TYPE_NEXT;
+                            IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
+                            VideoPlayer_PlayNext(pMe, TRUE);
+                        }            
+                        else if(!pMe->IsPause)//全屏播放状态
+                        {
+                            VideoPlayer_PlayNext(pMe, TRUE); 
+                        }
+					  }
+				  }
+			 }
+			 break;
+#endif					
+				
         case EVT_KEY: 
             if(pMe->IsGallery)
             {
+#ifdef FEATURE_VERSION_C337
+            {
+                uint32 keycurrent_time= GETUPTIMEMS();	
+			     if(keycurrent_time - pMe->keystart_time > 1000)//long press	
+			     {
+			         return VPDVideoPlayer_HandleKeyEvent(pMe,eCode,wParam,dwParam);
+			     }
+             }
+#else            
                 return  VPDVideoPlayer_HandleKeyEvent(pMe,eCode,wParam,dwParam); 
+#endif
             }
             else 
             {

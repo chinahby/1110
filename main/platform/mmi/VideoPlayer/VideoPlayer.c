@@ -367,6 +367,10 @@ static int VideoPlayer_InitAppData(CVideoPlayer *pMe)
     pMe->Is848Busy      = FALSE;
 	pMe->m_InitFailed   = TRUE;
 
+#ifdef FEATURE_VERSION_C337		
+	pMe->keystart_time = 0;	
+    pMe->keyend_time = 0;
+#endif
     pMe->TickUpdateImg[IDI_SCHEDULE_EMPTY_PRELOAD] = ISHELL_LoadResImage(pMe->m_pShell, VIDEOPLAYER_IMAGES_RES_FILE, IDI_SCHEDULE_EMPTY);
         
     pMe->TickUpdateImg[IDI_GLIDER_PRELOAD] = ISHELL_LoadResImage(pMe->m_pShell, VIDEOPLAYER_IMAGES_RES_FILE, IDI_GLIDER);

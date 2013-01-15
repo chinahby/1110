@@ -1094,6 +1094,11 @@ typedef struct _CVideoPlayer
     IImage *        TickUpdateImg[IDI_PNG_PRELOAD_MAX];
 
 	CHelpPtr         m_pHelp;
+
+#ifdef FEATURE_VERSION_C337		
+	uint32 keystart_time;	
+    uint32 keyend_time;	
+#endif	
 }CVideoPlayer;
 
 /*=================================================================================================================
