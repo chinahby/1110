@@ -3683,6 +3683,7 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
 #ifdef  FEATURE_CALL_RECORDER
       if(pMe->m_bRecorderOn == FALSE)
        {
+	#if defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_W317A)
         boolean m_autocallrecord;
         (void) ICONFIG_GetItem(pMe->m_pConfig,
                                          CFGI_AUTOCALLRECORD,
@@ -3690,6 +3691,7 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
                                          sizeof(m_autocallrecord));
                                          
          if (m_autocallrecord) 
+	#endif
          {
            pMe->m_bRecorderOn = TRUE;            
 		   CallApp_Dialer_Connect_Turn_On_Recorder( pMe);
