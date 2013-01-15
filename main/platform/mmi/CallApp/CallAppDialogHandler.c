@@ -5775,7 +5775,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
             	}
             }
 }
-            #endif
+#endif
             #if defined(FEATURE_VERSION_C01) 
 			{
 				nv_item_type	SimChoice;
@@ -5937,13 +5937,13 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
 					}
 					}
 					#endif
-                    MSG_FATAL("AVK_SEND_TWO...............33333",0,0,0);
+                    MSG_FATAL("AVK_SEND_TWO...............33333==%d",pMe->m_b_press_1,0,0);
                     if(pMe->m_b_press_1)
                     {
                     	
                         ICM_OriginateVoiceCall(pMe->m_pICM, L"1", &nCallID);
                     }
-#if defined(FEATURE_VERSION_C316)		
+#if defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_C310)		
                    else
                    {
 						CallApp_AnswerCall(pMe,FALSE,EVT_KEY_RELEASE,AVK_SELECT,FALSE);

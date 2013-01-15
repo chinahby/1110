@@ -198,7 +198,11 @@
 #ifdef FEATURE_VERSION_X3
 #define CALL_LINE_HIGHT                      (25) 
 #else
+#ifdef FEATURE_VERSION_C310
+#define CALL_LINE_HIGHT                      (22) //18为NORMAL字体高度，目前只需要这个高度就够了
+#else
 #define CALL_LINE_HIGHT                      (20) //18为NORMAL字体高度，目前只需要这个高度就够了
+#endif
 #endif
 #define CALL_FIRST_LINE_Y                   (CALL_ANNU_HEIGHT)
 
