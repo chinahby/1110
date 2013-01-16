@@ -2,7 +2,7 @@
 <BREWRes Name="armultimedia" VERSION="1">
 <Strings Encoding="Unicode">
 	<String Id="1001" Name="IDS_MULTIMEDIA_TITLE">
-		<Text>الوسائط المتعددة</Text>
+		<Text>الاستوديو</Text>
 	</String>
 	<String Id="1002" Name="IDS_MULTIMEDIA_MEDIAGALLERY">
 		<Text>مدير الملفات</Text>
