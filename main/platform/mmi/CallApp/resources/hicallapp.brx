@@ -235,9 +235,6 @@
 	</DIALOG>
 	<DIALOG Id="6003" Name="IDD_CONVERSATION" Focus="7004">
 		<Controls>
-			<SoftKey Id="7001" Name="IDDC_CONVERSATION_SK">
-				<Items/>
-			</SoftKey>
 			<Stopwatch Id="7004" Name="IDDC_CONVERSATION_TIMER">
 				<Items/></Stopwatch>
 		</Controls>
