@@ -221,7 +221,7 @@
 		<Text>SAR: 0.280W/kg</Text>
 	</String>
 	<String Id="1123" Name="IDS_SAR_C337">
-		<Text>SAR: 0.212W/kg@1g(Head)0.169W/kg@1g(Body)</Text>
+		<Text>SAR: 0.212W/kg@1g(Head)   0.169W/kg@1g(Body).</Text>
 	</String>
 </Strings>
 <Dialogs>
