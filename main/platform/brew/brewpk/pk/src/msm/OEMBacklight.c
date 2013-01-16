@@ -362,8 +362,10 @@ static int AEEBacklight_Enable(IBacklight *pme)
 
       case AEECLSID_BACKLIGHT_DISPLAY1:
          disp_on();
-		 #if defined(FEATURE_DISP_240X320)||defined(FEATURE_VERSION_C316)
-         clk_busy_wait(150*1000);
+		 #if defined(FEATURE_DISP_240X320)
+		 clk_busy_wait(150*1000);
+		 #elif defined(FEATURE_VERSION_C316)
+         clk_busy_wait(100*1000);
 		 #endif
          // Update Screen
          AEEBacklight_FlushDisplay(pme, AEECLSID_DISPLAY1);
