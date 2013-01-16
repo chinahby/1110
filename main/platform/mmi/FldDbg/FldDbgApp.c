@@ -8132,38 +8132,59 @@ static byte CalcMEIDDSP(char * Str)
 	STRCPY(temp_str,Str);
 	SP  = CharToHex(temp_str[1]);
 	SP  = 2*SP;
-	oH += SP/0x10;
-	oL += SP%0x10;
+	if(SP>0)
+	{
+		oH += SP/0x10;
+		oL += SP%0x10;
+	}
 
 	SP  = CharToHex(temp_str[3]);
 	SP  = 2*SP;
-	oH += SP/0x10;
-	oL += SP%0x10;
+	if(SP>0)
+	{
+		oH += SP/0x10;
+		oL += SP%0x10;
+	}
 
 	SP  = CharToHex(temp_str[5]);
 	SP  = 2*SP;
-	oH += SP/0x10;
-	oL += SP%0x10;
+	if(SP>0)
+	{
+		oH += SP/0x10;
+		oL += SP%0x10;
+	}
 
 	SP  = CharToHex(temp_str[7]);
 	SP  = 2*SP;
-	oH += SP/0x10;
-	oL += SP%0x10;
+	if(SP>0)
+	{
+		oH += SP/0x10;
+		oL += SP%0x10;
+	}
 
 	SP  = CharToHex(temp_str[9]);
 	SP  = 2*SP;
-	oH += SP/0x10;
-	oL += SP%0x10;
+	if(SP>0)
+	{
+		oH += SP/0x10;
+		oL += SP%0x10;
+	}
 
 	SP  = CharToHex(temp_str[11]);
 	SP  = 2*SP;
-	oH += SP/0x10;
-	oL += SP%0x10;
+	if(SP>0)
+	{
+		oH += SP/0x10;
+		oL += SP%0x10;
+	}
 
 	SP  = CharToHex(temp_str[13]);
 	SP  = 2*SP;
-	oH += SP/0x10;
-	oL += SP%0x10;
+	if(SP>0)
+	{
+		oH += SP/0x10;
+		oL += SP%0x10;
+	}
 
 
 	SP  = 0;
@@ -8176,8 +8197,10 @@ static byte CalcMEIDDSP(char * Str)
 	SP += CharToHex(temp_str[12]);
 	SP += CharToHex(temp_str[14]);
 	SP += oH + oL;
-
-	SP = SP%0x10;
+	if(SP>0)
+	{
+		SP = SP%0x10;
+	}
 	if(SP>0)
 	{
 		SP = 0x10 - SP;
