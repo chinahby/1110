@@ -6913,31 +6913,33 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
     }
     MSG_FATAL("DrawEsnScreen L32=%d,H32==%d", L32, H32, 0);
     
-    STRTOWSTR("%08X", fmt_str, sizeof(fmt_str));
+    STRTOWSTR("%06X", fmt_str, sizeof(fmt_str));
     WSPRINTF((szBuf + n),
             sizeof(szBuf),
             fmt_str,
             H32
             );
     n = WSTRLEN(szBuf);
-    STRTOWSTR("%06X", fmt_str, sizeof(fmt_str));
+    STRTOWSTR("%08X", fmt_str, sizeof(fmt_str));
     WSPRINTF((szBuf + n),
             sizeof(szBuf),
             fmt_str,
             L32
             );
 
-	STRCPY(fmt_tstr, "%08X");
+	STRCPY(fmt_tstr, "%06X");
     SPRINTF((tstrbuf),
             fmt_tstr,
             H32
             );
     tn = STRLEN(tstrbuf);
-    STRCPY(fmt_tstr, "%06X");
+    STRCPY(fmt_tstr, "%08X");
     SPRINTF((tstrbuf + tn),
             fmt_tstr,
             L32);
    tn = STRLEN(tstrbuf);
+   if (tn>13)
+   {
    temp = CalcMEIDDSP(tstrbuf);
    //STRTOWSTR(sp,Wsp,sizeof(Wsp));
    switch(temp)
@@ -6992,6 +6994,7 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
 		break;
 	  default:
 	  	break;
+   }
    }
    DBGPRINTF("szBuf Address =%s", szBuf);
    p_dlg = ISHELL_GetActiveDialog(pme->a.m_pIShell);
