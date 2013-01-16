@@ -6840,8 +6840,6 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
     AECHAR fmt_str[20];
 	char fmt_tstr[20];
 	char tstrbuf[20];
-	char sp[2] = {0};
-	AECHAR Wsp[2] = {0};
 	char temp = 0;
     //int i, j, count;
     AECHAR  sTitle[45]; 
