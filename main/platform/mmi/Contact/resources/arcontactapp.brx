@@ -2,7 +2,7 @@
 <BREWRes Name="arcontactapp" VERSION="1">
 <Strings Encoding="Unicode">
 	<STRING Id="1" Name="IDS_APPLET">
-		<Text>جهات الاتصال</Text>
+		<Text>الاسماء</Text>
 	</STRING>
 	<STRING Id="2" Name="IDS_NAME">
 		<Text>الاسم</Text>
