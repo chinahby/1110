@@ -65,7 +65,7 @@
 		<Text>استخراج الرقم</Text>
 	</String>
 	<String Id="22" Name="IDS_COPYTORUIM">
-		<Text>نسخ إلى البطاقة</Text>
+		<Text>نسخ إلى بطاقة يمن موبايل</Text>
 	</String>
 	<String Id="23" Name="IDS_COPYTOPNONE">
 		<Text>نسخ إلى الهاتف</Text>
