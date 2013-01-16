@@ -388,7 +388,9 @@ int CContApp_BuildMainMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
             FARF(ADDR, ("Failed to Add Opts item %d", ai.wItemID));
             return EFAILED;
         }      
-#ifndef FEATURE_VERSION_S1000T   //add by yangdecai 07-19
+#if (defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_C316))    //add by yangdecai 07-19
+		;
+#else
 #ifdef FEATURE_OEMOMH 
         ai.wText       = IDS_EMERGENCY_CALL;
         ai.wItemID   = IDI_MAINMENU_MENU_EMERGENCY_CALL;
