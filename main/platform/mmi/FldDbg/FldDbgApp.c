@@ -6909,7 +6909,7 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
         L32 = (uint32)meid;
         H32 = (uint32)(meid>>32);
     }
-    MSG_FATAL("DrawEsnScreen L32=%d,H32==%d", L32, H32, 0);
+    //MSG_FATAL("DrawEsnScreen L32=%d,H32==%d", L32, H32, 0);
     
     STRTOWSTR("%06X", fmt_str, sizeof(fmt_str));
     WSPRINTF((szBuf + n),
@@ -6939,7 +6939,6 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
    if (tn>13)
    {
    temp = CalcMEIDDSP(tstrbuf);
-   //STRTOWSTR(sp,Wsp,sizeof(Wsp));
    switch(temp)
    {
    	  case 0:
@@ -6994,7 +6993,6 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
 	  	break;
    }
    }
-   DBGPRINTF("szBuf Address =%s", szBuf);
    p_dlg = ISHELL_GetActiveDialog(pme->a.m_pIShell);
    p_stk = (IStatic *) IDIALOG_GetControl(p_dlg, IDC_ESN_STATIC);
 
