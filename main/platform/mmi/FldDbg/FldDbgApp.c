@@ -6909,7 +6909,6 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
         L32 = (uint32)meid;
         H32 = (uint32)(meid>>32);
     }
-    //MSG_FATAL("DrawEsnScreen L32=%d,H32==%d", L32, H32, 0);
     
     STRTOWSTR("%06X", fmt_str, sizeof(fmt_str));
     WSPRINTF((szBuf + n),
@@ -8111,11 +8110,11 @@ static byte CharToHex(char ch)
 	}
 	else if(ch >= 'A' && ch <= 'F')
 	{
-		Hex = 0xA+(ch - 'A');
+		Hex = 0xA + (ch - 'A');
 	}
 	else if(ch >= 'a' && ch <= 'f')
 	{
-		Hex = 0xA+(ch - 'a');
+		Hex = 0xA + (ch - 'a');
 	}
 	return Hex;
 }
@@ -8191,7 +8190,6 @@ static byte CalcMEIDDSP(char * Str)
 	SP += CharToHex(temp_str[8]);
 	SP += CharToHex(temp_str[10]);
 	SP += CharToHex(temp_str[12]);
-	SP += CharToHex(temp_str[14]);
 	SP += oH + oL;
 	if(SP>0)
 	{
