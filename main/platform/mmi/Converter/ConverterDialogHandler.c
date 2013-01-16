@@ -1917,7 +1917,7 @@ static boolean  Converter_ChangeCurrencyEvent(CConverter *pMe, AEEEvent eCode, u
                 {
                     coefficient1 = currencymenu[0];
                     coefficient2 = currencymenu[0] + 1;
-                    #if defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W027)
+                    #if defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_C310)
     				#else
                     coefficient3 = currencymenu[0] + 2;
                     #endif
@@ -1926,7 +1926,7 @@ static boolean  Converter_ChangeCurrencyEvent(CConverter *pMe, AEEEvent eCode, u
                 {
                     coefficient1 = (uint + currencymenu[0])/2 + coeffNum1 - pMe->m_nCtlID;
                     coefficient2 = (uint + currencymenu[0])/2 + coeffNum2 - pMe->m_nCtlID;
-                    #if defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W027)
+                    #if defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_C310)
     				#else
                     coefficient3 = (uint + currencymenu[0])/2 + coeffNum3 - pMe->m_nCtlID;
                     #endif
@@ -1939,7 +1939,7 @@ static boolean  Converter_ChangeCurrencyEvent(CConverter *pMe, AEEEvent eCode, u
                 (void)Converter_FloatToWstr(source, wstrDisplay, sizeof(wstrDisplay));
                 ITEXTCTL_SetText(pMe->coeff2, wstrDisplay, -1);
                 
-                #if defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W027)
+                #if defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_C310)
     			#else
                 source = pMe->m_CurrencyCFG.customCurrency[coefficient3 - currencymenu[0]] / pMe->m_CurrencyCFG.customCurrency[pMe->basiccoefficient - IDS_CURRENCY_EUR];
                 (void)Converter_FloatToWstr(source, wstrDisplay, sizeof(wstrDisplay));
@@ -1952,7 +1952,7 @@ static boolean  Converter_ChangeCurrencyEvent(CConverter *pMe, AEEEvent eCode, u
             {
                 ITEXTCTL_SetActive(pMe->coeff1, FALSE);
                 ITEXTCTL_SetActive(pMe->coeff2, FALSE);
-                #if defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_W516)|| defined(FEATURE_VERSION_W027)
+                #if defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_W516)|| defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_C310)
     			#else
                 ITEXTCTL_SetActive(pMe->coeff3, FALSE);
                 #endif
@@ -1961,7 +1961,7 @@ static boolean  Converter_ChangeCurrencyEvent(CConverter *pMe, AEEEvent eCode, u
             {
                 (void)ITEXTCTL_Redraw(pMe->coeff1);
                 (void)ITEXTCTL_Redraw(pMe->coeff2);
-                #if defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_W516)|| defined(FEATURE_VERSION_W027)
+                #if defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_W516)|| defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_C310)
     			#else
                 (void)ITEXTCTL_Redraw(pMe->coeff3);
                 #endif
@@ -2045,7 +2045,7 @@ static boolean  Converter_ChangeCurrencyEvent(CConverter *pMe, AEEEvent eCode, u
                         {
                             ITEXTCTL_SetText(pMe->coeff2, wstrDisplay, -1);
                         }
-                        #if defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_W516)|| defined(FEATURE_VERSION_W027)
+                        #if defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_W516)|| defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_C310)
     					#else
                         if(pMe->m_nCtlID == coeffNum3)
                         {
@@ -2080,7 +2080,7 @@ static boolean  Converter_ChangeCurrencyEvent(CConverter *pMe, AEEEvent eCode, u
                         {
                             ITEXTCTL_SetText(pMe->coeff2, wstrDisplay, -1);
                         }
-                        #if defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_W516)|| defined(FEATURE_VERSION_W027)
+                        #if defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_W516)|| defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_C310)
 						#else
                         if(pMe->m_nCtlID == coeffNum3)
                         {
@@ -2112,7 +2112,7 @@ static boolean  Converter_ChangeCurrencyEvent(CConverter *pMe, AEEEvent eCode, u
                         {
                             ITEXTCTL_SetText(pMe->coeff2, wstrDisplay, -1);
                         }
-                        #if defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_W516)|| defined(FEATURE_VERSION_W027)
+                        #if defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_W516)|| defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_C310)
     					#else
                         if(pMe->m_nCtlID == coeffNum3)
                         {
@@ -2161,7 +2161,7 @@ static boolean  Converter_ChangeCurrencyEvent(CConverter *pMe, AEEEvent eCode, u
                             {
                                 ITEXTCTL_GetText(pMe->coeff2, wstrDisplay, sizeof(wstrDisplay));
                             }
-                            #if defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_W516)|| defined(FEATURE_VERSION_W027)
+                            #if defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_W516)|| defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_C310)
     						#else
                             else
                             {
@@ -2218,7 +2218,7 @@ static boolean  Converter_ChangeCurrencyEvent(CConverter *pMe, AEEEvent eCode, u
                                     ITEXTCTL_GetText(pMe->coeff2, wstrDisplay, sizeof(wstrDisplay));
                                     ITEXTCTL_SetActive(pMe->coeff2, TRUE);
                                 }
-                                #if defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_W516)|| defined(FEATURE_VERSION_W027)
+                                #if defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_W516)|| defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_C310)
     							#else
                                 else
                                 {
@@ -2265,7 +2265,7 @@ static boolean  Converter_ChangeCurrencyEvent(CConverter *pMe, AEEEvent eCode, u
 	                        {
 	                            ITEXTCTL_SetText(pMe->coeff2, wstrDisplay, -1);
 	                        }
-	                        #if defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_W516)|| defined(FEATURE_VERSION_W027)
+	                        #if defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_W516)|| defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_C310)
     						#else
 	                        if(pMe->m_nCtlID == coeffNum3)
 	                        {
