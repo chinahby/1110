@@ -4585,7 +4585,7 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
                                                         CALL_NAME_DX,
                                                         CALL_LINE_HIGHT);
                 IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, CALLAPP_TEXT_COLOR);
-            #if defined(FEATURE_VERSION_C01) ||defined(FEATURE_VERSION_C11) ||defined(FEATURE_VERSION_C180)||defined(FEATURE_VERSION_W027V3)|| defined(FEATURE_VERSION_H1201)
+#if defined(FEATURE_VERSION_C01) ||defined(FEATURE_VERSION_C11) ||defined(FEATURE_VERSION_C180)||defined(FEATURE_VERSION_W027V3)|| defined(FEATURE_VERSION_H1201)
              SETAEERECT(&rect,
                                                         CALL_NAME_X-20,
                                                         CALL_THIRD_LINE_Y+30,
@@ -4600,6 +4600,7 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
                                                         &rect,
                                                         IDF_ALIGN_LEFT|IDF_TEXT_TRANSPARENT);
             #else
+#ifndef FEATURE_VERSION_C316								
              (void)IDISPLAY_DrawText(pMe->m_pDisplay,
                                                         AEE_FONT_NORMAL,
                                                         mui_call,
@@ -4608,7 +4609,8 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
                                                         CALL_THIRD_LINE_Y,
                                                         &rect,
                                                         IDF_ALIGN_LEFT|IDF_TEXT_TRANSPARENT);
-            #endif
+#endif
+#endif
             
                 IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, CALLAPP_TEXT_COLOR);
             }
@@ -9994,7 +9996,7 @@ static void CallApp_Draw_Connect_Number_and_Name(CCallApp *pMe)
                                                 CALL_NAME_DX,
                                                 CALL_LINE_HIGHT);
                                                 
-            #if defined(FEATURE_VERSION_C01) ||defined(FEATURE_VERSION_C11)||defined(FEATURE_VERSION_C180)||defined(FEATURE_VERSION_W027V3)|| defined(FEATURE_VERSION_H1201)
+#if defined(FEATURE_VERSION_C01) ||defined(FEATURE_VERSION_C11)||defined(FEATURE_VERSION_C180)||defined(FEATURE_VERSION_W027V3)|| defined(FEATURE_VERSION_H1201)
             SETAEERECT(&rect,
                                                 CALL_NAME_X-20,
                                                 CALL_SECOND_LINE_Y+30,
@@ -10008,7 +10010,8 @@ static void CallApp_Draw_Connect_Number_and_Name(CCallApp *pMe)
                                                 rect.y,
                                                 &rect,
                                                 IDF_TEXT_TRANSPARENT);
-            #else
+#else
+#ifndef FEATURE_VERSION_C316						
             (void)IDISPLAY_DrawText(pMe->m_pDisplay,
                                                 AEE_FONT_NORMAL,
                                                 mui_call,
@@ -10017,7 +10020,8 @@ static void CallApp_Draw_Connect_Number_and_Name(CCallApp *pMe)
                                                 CALL_SECOND_LINE_Y,
                                                 &rect,
                                                 IDF_TEXT_TRANSPARENT);
-            #endif
+#endif
+#endif
         }
     }
     else//not 3Way
@@ -13453,7 +13457,7 @@ static void CallApp_Set_Cursor_Blink(void* pUser)
 
     CallApp_Calc_Cursor_Rect(pMe, &rect);
 
-	DBGPRINTF("***zzg CallApp_Set_Cursor_Blink rect:%d,%d,%d,%d***", rect.x, rect.y, rect.dx, rect.dy);
+//     DBGPRINTF	DBGPRINTF("***zzg CallApp_Set_Cursor_Blink rect:%d,%d,%d,%d***", rect.x, rect.y, rect.dx, rect.dy);
 
     if(bDrawCursor)
     {
@@ -13486,7 +13490,7 @@ static void CallApp_ProcessUIMMMIStr(CCallApp* pMe, AECHAR *pStr)
     MEMSET(wStr2, 0, sizeof(wStr2));
     MEMSET(wStr3, 0, sizeof(wStr3));
     
-    DBGPRINTF("ProcessUIMMMIStr %S %d",pStr,nStrlen);
+    //     DBGPRINTF("ProcessUIMMMIStr %S %d",pStr,nStrlen);
     if(WSTRNCMP(pStr, L"**04*", 5) == 0 && nStrlen >= 20) // LenMIN=5+OldPinMin(4+'*')+NewPinMin(4+'*')+NewPinMin(4+'#') change pin1
     {
         for(i=5,j=0;i<nStrlen;i++,j++)
