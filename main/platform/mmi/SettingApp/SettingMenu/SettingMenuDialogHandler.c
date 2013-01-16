@@ -2412,6 +2412,12 @@ static boolean  HandleCallForwardSelDialogEvent(CSettingMenu *pMe,
                     }
 
                     if(pMe->m_CFType == CALLFORWARD_WAIT
+#ifdef FEATURE_VERSION_C337
+                        ||pMe->m_CFType == CALLFORWARD_BUSY
+                        ||pMe->m_CFType == CALLFORWARD_NOANSWER
+                        ||pMe->m_CFType == CALLFORWARD_NOCONNECT
+                        ||pMe->m_CFType == CALLFORWARD_ANYWAY                        
+#endif
 #ifdef FEATURE_CARRIER_ISRAEL_PELEPHONE
                         ||pMe->m_CFType == CALLFORWARD_NOCONNECT
 #endif
