@@ -362,7 +362,7 @@ static int AEEBacklight_Enable(IBacklight *pme)
 
       case AEECLSID_BACKLIGHT_DISPLAY1:
          disp_on();
-		 #ifdef FEATURE_DISP_240X320
+		 #if defined(FEATURE_DISP_240X320)||defined(FEATURE_VERSION_C316)
          clk_busy_wait(150*1000);
 		 #endif
          // Update Screen
