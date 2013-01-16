@@ -6846,6 +6846,7 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
     int ret = 0;
     uint64 meid = 0;
     uint32 H32,L32;
+	int i = 0;
     
 	MSG_FATAL("CFieldDebug_DrawEsnScreen Start", 0, 0, 0);
     MEMSET (sTitle, 0, sizeof(sTitle));
@@ -6923,7 +6924,10 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
             fmt_str,
             L32
             );
-
+    for(i=0;i<100;i++)
+    {
+    	;
+    }
 	STRCPY(fmt_tstr, "%06X");
     SPRINTF((tstrbuf),
             fmt_tstr,
