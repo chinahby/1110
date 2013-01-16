@@ -8,7 +8,7 @@
 		<Text>مدير الملفات</Text>
 	</String>
 	<String Id="1012" Name="IDS_MAIN_MENU_CONTACTS">
-		<Text>جهات الاتصال</Text>
+		<Text>الاسماء</Text>
 	</String>
 	<String Id="1013" Name="IDS_MAIN_MENU_UTK">
 		<Text>خدمات البطاقة</Text>
@@ -23,7 +23,7 @@
 		<Text>الرسائل</Text>
 	</String>
 	<String Id="1017" Name="IDS_MAIN_MENU_MULTIMEDIA">
-		<Text>الوسائط المتعددة</Text>
+		<Text>الاستوديو</Text>
 	</String>
 	<String Id="1018" Name="IDS_MAIN_MENU_APPLICATION">
 		<Text>التطبيقات</Text>
@@ -32,7 +32,7 @@
 		<Text>المهام</Text>
 	</String>
 	<STRING Id="1020" Name="IDS_MAIN_MENU_SETTINGS">
-		<Text>الاعدادات</Text>
+		<Text>الضبط</Text>
 	</STRING>
 	<String Id="1021" Name="IDS_MAIN_MENU_USERPROFILE">
 		<Text>الاوضاع</Text>
@@ -68,7 +68,7 @@
 		<Text>التقويم</Text>
 	</String>
 	<String Id="1066" Name="IDS_MAIN_MENU_CONTACT">
-		<Text>دليل الهاتف</Text>
+		<Text>الاسماء</Text>
 	</String>
 	<String Id="1067" Name="IDS_MAIN_MENU_SMS">
 		<Text>الرسائل النصية</Text>
@@ -77,7 +77,7 @@
 		<Text>الألعاب</Text>
 	</String>
 	<String Id="1070" Name="IDS_MAIN_MENU_GALLERY">
-		<Text>الاستوديو</Text>
+		<Text>معرض</Text>
 	</String>
 	<String Id="1081" Name="IDS_MAIN_MENU_BLIVE">
 		<Text>b-live</Text>
@@ -88,15 +88,15 @@
 	<String Id="1086" Name="IDS_MAIN_WAPBROWSER">
 		<Text>المتصفح</Text>
 	</String>
-	<String Id="1110" Name="IDS_MAIN_MENU_TIMER">
-		<Text>الموقت</Text>
-	</String>
 	<STRING Id="1095" Name="IDS_MAIN_MENU_SERVICES_C316">
 		<Text>Services</Text>
 	</STRING>
 	<STRING Id="1096" Name="IDS_MAIN_MENU_INTEXZONE">
 		<Text>Intex Zone</Text>
 	</STRING>
+	<String Id="1110" Name="IDS_MAIN_MENU_TIMER">
+		<Text>الموقت</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="0">
