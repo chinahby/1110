@@ -11,7 +11,7 @@
 		<Text>قفل لوحة المفاتيح</Text>
 	</STRING>
 	<STRING Id="1004" Name="IDS_SCENEMODE_TITLE">
-		<Text>التشكيلات الجانبية</Text>
+		<Text>الاوضاع</Text>
 	</STRING>
 	<STRING Id="1005" Name="IDS_PHONE_NUMBER">
 		<Text>رقم الهاتف</Text>
