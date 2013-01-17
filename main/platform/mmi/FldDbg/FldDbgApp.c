@@ -6928,6 +6928,7 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
     {
     	;
     }
+	#if defined(FEATURE_VERSION_C337)
 	STRCPY(fmt_tstr, "%06X");
     SPRINTF((tstrbuf),
             fmt_tstr,
@@ -6942,8 +6943,8 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
    if (tn>13)
    {
    temp = CalcMEIDDSP(tstrbuf);
-   switch(temp)
-   {
+   	switch(temp)
+   	{
    	  case 0:
 	  	WSTRCAT(szBuf,(AECHAR*)L"0");
 		break;
@@ -6994,8 +6995,9 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
 		break;
 	  default:
 	  	break;
+   	}
    }
-   }
+   #endif
    p_dlg = ISHELL_GetActiveDialog(pme->a.m_pIShell);
    p_stk = (IStatic *) IDIALOG_GetControl(p_dlg, IDC_ESN_STATIC);
 
@@ -8114,11 +8116,11 @@ static byte CharToHex(char ch)
 	}
 	else if(ch >= 'A' && ch <= 'F')
 	{
-		Hex = 0xA + (ch - 'A');
+		Hex = 10 + (ch - 'A');
 	}
 	else if(ch >= 'a' && ch <= 'f')
 	{
-		Hex = 0xA + (ch - 'a');
+		Hex =  10 + (ch - 'a');
 	}
 	return Hex;
 }
@@ -8133,56 +8135,56 @@ static byte CalcMEIDDSP(char * Str)
 	SP  = 2*SP;
 	if(SP>0)
 	{
-		oH += SP/0x10;
-		oL += SP%0x10;
+		oH += SP/10;
+		oL += SP%10;
 	}
 
 	SP  = CharToHex(temp_str[3]);
 	SP  = 2*SP;
 	if(SP>0)
 	{
-		oH += SP/0x10;
-		oL += SP%0x10;
+		oH += SP/10;
+		oL += SP%10;
 	}
 
 	SP  = CharToHex(temp_str[5]);
 	SP  = 2*SP;
 	if(SP>0)
 	{
-		oH += SP/0x10;
-		oL += SP%0x10;
+		oH += SP/10;
+		oL += SP%10;
 	}
 
 	SP  = CharToHex(temp_str[7]);
 	SP  = 2*SP;
 	if(SP>0)
 	{
-		oH += SP/0x10;
-		oL += SP%0x10;
+		oH += SP/10;
+		oL += SP%10;
 	}
 
 	SP  = CharToHex(temp_str[9]);
 	SP  = 2*SP;
 	if(SP>0)
 	{
-		oH += SP/0x10;
-		oL += SP%0x10;
+		oH += SP/10;
+		oL += SP%10;
 	}
 
 	SP  = CharToHex(temp_str[11]);
 	SP  = 2*SP;
 	if(SP>0)
 	{
-		oH += SP/0x10;
-		oL += SP%0x10;
+		oH += SP/10;
+		oL += SP%10;
 	}
 
 	SP  = CharToHex(temp_str[13]);
 	SP  = 2*SP;
 	if(SP>0)
 	{
-		oH += SP/0x10;
-		oL += SP%0x10;
+		oH += SP/10;
+		oL += SP%10;
 	}
 
 
@@ -8195,13 +8197,14 @@ static byte CalcMEIDDSP(char * Str)
 	SP += CharToHex(temp_str[10]);
 	SP += CharToHex(temp_str[12]);
 	SP += oH + oL;
-	if(SP>0)
+
+	if(SP%10 == 0)
 	{
-		SP = SP%0x10;
+	  SP = 0;
 	}
-	if(SP>0)
+	else
 	{
-		SP = 0x10 - SP;
+	  SP = 10 - (SP%10);
 	}
 	return SP;
 }
