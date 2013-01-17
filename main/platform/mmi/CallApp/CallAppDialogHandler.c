@@ -9678,6 +9678,7 @@ static void CallApp_Draw_Connect_Time(void *pUser)
                                     CALL_SECOND_UP_LINE_Y,
                                     bWidth,
                                     CALL_LINE_HIGHT);   	
+		Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &rect, TRUE);     //add by pyuangui 2013-01-17
         IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, CALLAPP_TEXT_COLOR);
         
         (void)IDISPLAY_DrawText(pMe->m_pDisplay,
