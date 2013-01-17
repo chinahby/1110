@@ -848,6 +848,14 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 
                      case IDS_MUTE:
                      case IDS_UNMUTE:
+//Add by pyuangui 2013-01-17					
+#ifdef FEATURE_VERSION_C337
+                     if(wParam == IDS_MUTE) 
+					 	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL/*ANNUN_FIELD_MUTE*/, ANNUN_STATE_CALL_MUTE_ON/*ANNUN_STATE_ON*/);
+					 else
+					 	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL/*ANNUN_FIELD_MUTE*/, ANNUN_STATE_CALL_MUTE_OFF/*ANNUN_STATE_OFF*/);
+#endif
+//Add End    					 	
                          pMe->m_CallMuted = !pMe->m_CallMuted;
                          CallApp_SetupCallAudio(pMe);
                          CallApp_Draw_Connect_Softkey(pMe);
@@ -4235,7 +4243,14 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
 				case IDS_MUTE_ON:
                 case IDS_MUTE:
                 case IDS_UNMUTE:
-
+//Add by pyuangui 2013-01-17					
+#ifdef FEATURE_VERSION_C337
+                     if(wParam == IDS_MUTE) 
+					 	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL/*ANNUN_FIELD_MUTE*/, ANNUN_STATE_CALL_MUTE_ON/*ANNUN_STATE_ON*/);
+					 else
+					 	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL/*ANNUN_FIELD_MUTE*/, ANNUN_STATE_CALL_MUTE_OFF/*ANNUN_STATE_OFF*/);
+#endif
+//Add End                    
                     pMe->m_CallMuted = !pMe->m_CallMuted;
                     CallApp_SetupCallAudio(pMe);
                     //CallApp_Draw_Connect_Softkey(pMe);
@@ -4368,7 +4383,14 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
 			//Add End
 						
 			IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL/*ANNUN_FIELD_CALLFORWARD*/, ANNUN_STATE_CALL_INUSE_OFF/*ANNUN_STATE_OFF*/);
-            //CallApp_Set_Db_In_Idle(TRUE);
+
+			//Add By pyuangui 2013-01-17
+			#ifdef FEATURE_VERSION_C337
+			IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL/*ANNUN_FIELD_MUTE*/, ANNUN_STATE_CALL_MUTE_OFF/*ANNUN_STATE_OFF*/);
+            #endif
+			//Add End
+			
+			//CallApp_Set_Db_In_Idle(TRUE);
             (void) ISHELL_PostEvent(pMe->m_pShell,  AEECLSID_DIALER, EVT_USER_REDRAW, 0, 0);
             return TRUE;
 
