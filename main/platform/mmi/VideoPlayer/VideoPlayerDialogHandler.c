@@ -347,11 +347,11 @@ static  boolean VPDVideoPlayer_HandleEvent(CVideoPlayer *pMe,AEEEvent eCode,uint
             {
                 if(!pMe->UserStop)
                 {
- #if defined(FEATURE_VERSION_C337)
- 					DRAW_BOTTOMBAR(BTBAR_GALLERY_HELP_BACK);
- #else
+ //#if defined(FEATURE_VERSION_C337)
+ //					DRAW_BOTTOMBAR(BTBAR_GALLERY_HELP_BACK);
+// #else
                     DRAW_BOTTOMBAR(BTBAR_GALLERY_BACK);
- #endif
+// #endif
                 }
                 else
                 {
