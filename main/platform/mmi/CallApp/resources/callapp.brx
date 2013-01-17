@@ -239,11 +239,13 @@
 		<Controls/>
 		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</DIALOG>
-	<DIALOG Id="6003" Name="IDD_CONVERSATION" Focus="7004">
+	<DIALOG Id="6003" Name="IDD_CONVERSATION" Focus="0">
 		<Controls>
 			<Stopwatch Id="7004" Name="IDDC_CONVERSATION_TIMER">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 				<Items/></Stopwatch>
 		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</DIALOG>
 	<DIALOG Id="6004" Name="IDD_ENDCALL" Focus="7005">
 		<Controls>
