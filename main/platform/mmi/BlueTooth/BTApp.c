@@ -1245,6 +1245,9 @@ static boolean BTApp_CheckAudioDeviceList(CBTApp* pMe);
 //Add End
 
 
+static void BTApp_HandleEventDevRedial( CBTApp* pMe );
+
+
 //static void BTApp_DisableBT( CBTApp* pMe );
 
 
@@ -6461,6 +6464,12 @@ static void BTApp_HandleEventButtonPressed( CBTApp* pMe )
 #endif /* FEATURE_PHONE_VR */
   else
   {
+//Add By zzg 2013_01_17  
+#ifdef FEATURE_VERSION_C337     
+    BTApp_HandleEventDevRedial(pMe); 
+#endif    
+//Add End
+    
     //BTApp_Dial( pMe );
   }
 }
@@ -6618,6 +6627,8 @@ static void BTApp_HandleEventDevRedial( CBTApp* pMe )
   MSG_FATAL( "DevRedial - ac=%d as=%d", 
            pMe->mAG.bAudioConnected, pMe->mAG.bAudioSelected, 0 );
 
+  MSG_FATAL("***zzg BTApp_HandleEventDevRedial***", 0, 0, 0 );
+
 #ifdef FEATURE_BT_HFP_1_5
   pMe->mAG.bDevDialed = FALSE; 
 #endif
@@ -6626,15 +6637,27 @@ static void BTApp_HandleEventDevRedial( CBTApp* pMe )
   {
      MSG_FATAL( "DevRedial - Call history instance failed", 0, 0, 0 );
   }
+#ifdef FEATURE_VERSION_C337
+  else if(ICALLHISTORY_EnumInit(pCallHist) != SUCCESS)
+  {
+     MSG_FATAL( "DevRedial - EnumInitByCallType failed, "
+                "no entry in dialed list", 0, 0, 0 );
+  } 
+#else
   else if(ICALLHISTORY_EnumInitByCallType(pCallHist,
                                  AEECALLHISTORY_CALL_TYPE_TO ) != AEE_SUCCESS)
   {
      MSG_FATAL( "DevRedial - EnumInitByCallType failed, "
                 "no entry in dialed list", 0, 0, 0 );
   }
+#endif  
   else
   {
     pCallHistoryEntry = ICALLHISTORY_EnumNext( pCallHist, &Status );
+
+    MSG_FATAL("***zzg BTApp_HandleEventDevRedial Status=%x***", Status, 0, 0 );
+    MSG_FATAL("***zzg BTApp_HandleEventDevRedial pCallHistoryEntry=%x***", pCallHistoryEntry, 0, 0 );
+    
     if ( (Status == SUCCESS) && (pCallHistoryEntry != NULL) )
     {
       MEMSET( wString, 0, sizeof(wString) );
@@ -6644,14 +6667,22 @@ static void BTApp_HandleEventDevRedial( CBTApp* pMe )
         if ( pItems[i].wID == AEECALLHISTORY_FIELD_NUMBER_EX )
         {
           bFound = TRUE;
+
+          MSG_FATAL("***zzg BTApp_HandleEventDevRedial AEECALLHISTORY_FIELD_NUMBER_EX***", 0, 0, 0 );
+          
           MEMCPY( wString, pItems[i].pData, 
                   MIN(ARR_SIZE(wString)*sizeof(AECHAR), pItems[i].wDataLen) );
           break;
-        }
+        }        
       }
+      MSG_FATAL("***zzg BTApp_HandleEventDevRedial bFound=%x***", bFound, 0, 0 );
+      
       if ( bFound != FALSE )
       {
         WSTRTOSTR( wString, szString, sizeof( szString ) );
+
+        MSG_FATAL("***zzg BTApp_HandleEventDevRedial szString=%x***", szString, 0, 0 );
+        
         pMe->mAG.bDevDialed = BTApp_Originate( pMe, szString );
         if ( pMe->mAG.bDevDialed == FALSE )
         {
