@@ -5949,6 +5949,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
                    else
                    {
 						CallApp_AnswerCall(pMe,FALSE,EVT_KEY_RELEASE,AVK_SELECT,FALSE);
+						break;
                    }
 #endif										
 
@@ -5962,7 +5963,27 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
 						}
                     }
 #endif
-					  break;
+#if defined(NOFEATURE_VERSION_S1000T) || defined(NOFEATURE_VERSION_W515V3)
+					 if(pMe->Ispwpass && bValue)
+					 {
+						 CallApp_AnswerCall(pMe,FALSE,eCode,wParam,FALSE);
+					 }
+					 else
+					 {
+						 if(bValue)
+						 {
+							CLOSE_DIALOG(DLGRET_PW); 
+						 }
+						 else
+						 {
+							CallApp_AnswerCall(pMe,FALSE,eCode,wParam,FALSE);
+						 }						 
+					 }
+#else
+
+					 CallApp_AnswerCall(pMe,FALSE,eCode,wParam,FALSE);
+#endif
+					 break;
                 }
 								
                 case AVK_USER_HEADSET:
