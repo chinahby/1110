@@ -134,7 +134,7 @@
 		<Text>दैनिक शुरू करने का समय</Text>
 	</STRING>
 	<STRING Id="1073" Name="IDS_SETUP_TITLE_REMINDER_SNOOZE">
-		<Text>अनुस्मारक दिन में झपकी लेना</Text>
+		<Text>अनुस्मारक</Text>
 	</STRING>
 	<STRING Id="1080" Name="IDS_SETUP_AUTO_DELETE_OPTION_30_DAY">
 		<Text>30 दिन</Text>
