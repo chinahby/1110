@@ -275,10 +275,10 @@
 		<Text>Welcome to Breaking News. Herein, you will get latest news from all over the world. So keep yourself updated with latest happenings around you. \\Cost of request: Rs.3 per SMS.</Text>
 	</STRING>
 	<STRING Id="212" Name="IDS_FUNZONE_Flames">
-		<Text>Welcome to Flames. Ever wondered how compatible you are with your dream partner? We give you an easy way to find out if you are a perfect match.Check your Love Compatibility. \\To enter your name and your partner’s name press Ok.</Text>
+		<Text>Welcome to Flames. Ever wondered how compatible you are with your dream partner? We give you an easy way to find out if you are a perfect match.Check your Love Compatibility. \\To enter your name and your partners name press Ok.</Text>
 	</STRING>
 	<STRING Id="213" Name="IDS_FUNZONE_ENDPULLAstrology">
-		<Text>Welcome to the Astrology pack. Herein, subscribers would get his/her Astrology based predictions basis his/her sun sign/ moon sign, which will be based on his/her Date of Birth.  \\To enter your Date of Birth in DDMM format and know your prediction click OK.</Text>
+		<Text>Welcome to the Astrology pack. Herein, subscribers would get his/her Astrology based predictions basis his/her sun sign/moon sign, which will be based on his/her Date of Birth.  \\To enter your Date of Birth in DDMM format and know your prediction click OK.</Text>
 	</STRING>
 	<STRING Id="214" Name="IDS_FUNZONE_ENDPULL_5">
 		<Text>Welcome to Fascinating Facts. Herein, user gets interesting facts. Facts could be from different fields like, Science, History, Maths, Places, Funny Movies etc. \\Cost of request: Rs.3 per SMS.</Text>
@@ -290,7 +290,7 @@
 		<Text>Welcome to Personality Test. Do you want to know your inner self? Want to know more about you? This test will help you analyze the kind of persona you have. \\Cost of request: Rs.3 per SMS.</Text>
 	</STRING>
 	<String Id="217" Name="IDS_FUNZONE_ASTROLOGYSEND">
-		<Text>Please enter your Date of Birth in DDMM format and click OK. \\For e.g. if your DOB is 1st April, type 0104 and click OK. \\Cost of request: Rs.3 per SMS. \\Type your DOB in DDMM format:</Text>
+		<Text>Please enter your Date of Birth in DDMM format and click OK. \\For e.g. if your DOB is 1st April, type 0104 and click OK. \\Type your DOB in DDMM format:\\Cost of request: Rs.3 per SMS. </Text>
 	</String>
 	<String Id="218" Name="IDS_FLAMES_FIRSTNAME">
 		<Text>Type your first name:</Text>
