@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <BREWRes Name="hiservice" VERSION="1">
-<Strings Encoding="ISOLATIN1">
+<Strings Encoding="Unicode">
 	<String Id="1002" Name="IDS_SERVICE_TITLE">
 		<Text>सेवा</Text>
 	</String>
-	<String Id="1003" Name="IDS_SERVICE_UTK">
+	<String Id="1003" Name="IDS_SERVICE_UTK" Encoding="ISOLATIN1">
 		<Text>UTK</Text>
 	</String>
-	<String Id="1004" Name="IDS_SERVICE_BROWSER" Encoding="Unicode">
+	<String Id="1004" Name="IDS_SERVICE_BROWSER">
 		<Text>ब्राउज़र</Text>
 	</String>
 </Strings>
