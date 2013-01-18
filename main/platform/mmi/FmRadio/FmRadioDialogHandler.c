@@ -1194,11 +1194,16 @@ __handleKeyEvent_input_channel_done__:
 			if( pMe->opMode == FM_RADIO_OPMODE_PLAY)
 			{
 #if defined( FEATURE_FMRADIO_NO_MODE_SELECT) 
-				if( pMe->tuneVolumeByLeftRightArrowKey)
+                #if (defined( FEATURE_VERSION_1110W516) || defined( FEATURE_VERSION_W317A) || defined( FEATURE_VERSION_C337) || defined( FEATURE_VERSION_C316)|| defined( FEATURE_VERSION_C310)	)
+                if(1)
+				#else
+				if(pMe->tuneVolumeByLeftRightArrowKey)
+			    #endif
 				{
 					ISHELL_CancelTimer( pMe->m_pShell, (PFNNOTIFY)tuneVolumeByLeftRightArrowKeyCloseCb, pMe);
                     pMe->fmVolumeStop=TRUE;
 					changeVolume( pMe, key);
+					repaint( pMe, TRUE);
 					ISHELL_SetTimer( pMe->m_pShell, 3000, (PFNNOTIFY)tuneVolumeByLeftRightArrowKeyCloseCb, pMe);
 				}
 				else
@@ -1325,9 +1330,7 @@ else if( itemId == IDS_FMRADIO_OPTION_MENU_GLOBAL_SEARCH)
     else if(itemId == IDS_FMRADIO_SPEAKER)
     {
        pMe->fmSpeaker=TRUE;
-//#if defined(FEATURE_VERSION_C316)			 
-		pMe->fmVolumeStop	= TRUE;
-//#endif		
+	   pMe->fmVolumeStop=TRUE;
        hideMenu( pMe);
        moveOperationModeTo( pMe, FM_RADIO_OPMODE_PLAY);
            
@@ -1338,14 +1341,12 @@ else if( itemId == IDS_FMRADIO_OPTION_MENU_GLOBAL_SEARCH)
 						   &pMe->byVolumeLevel,
 						   sizeof(byte));
        fm_set_volume( pMe->byVolumeLevel,pMe->fmSpeaker);
-
+       repaint( pMe, TRUE);
     }
     else if(itemId == IDS_FMRADIO_HEADSET)
     {
        pMe->fmSpeaker=FALSE;
-//#if defined(FEATURE_VERSION_C316)			 
-	   pMe->fmVolumeStop	= TRUE;
-//#endif					 
+	   pMe->fmVolumeStop=TRUE;
        hideMenu( pMe);
        moveOperationModeTo( pMe, FM_RADIO_OPMODE_PLAY);
            
@@ -1356,6 +1357,7 @@ else if( itemId == IDS_FMRADIO_OPTION_MENU_GLOBAL_SEARCH)
 						   &pMe->byVolumeLevel,
 						   sizeof(byte));
        fm_set_volume( pMe->byVolumeLevel,pMe->fmSpeaker);
+	   repaint( pMe, TRUE);
 
     }
 	else if( itemId == IDS_FMRADIO_DELETE_ALL)
