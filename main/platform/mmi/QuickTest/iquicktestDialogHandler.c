@@ -3819,7 +3819,11 @@ static void quicktest_fm_power_up( void* pme)
 {
 
     CQuickTest* pMe                 = (CQuickTest*)pme;
+#if defined(FEATURE_VERSION_C316)
+    AECHAR      defaultChannel[]    = { '9', '7', '.', '1', 0};
+#else
     AECHAR      defaultChannel[]    = { '9', '8', '.', '5', 0};
+#endif
 #ifndef WIN32
 #ifdef FEATURE_ANALOG_TV
     if( !WarT_Fm_Is_Powerup())
