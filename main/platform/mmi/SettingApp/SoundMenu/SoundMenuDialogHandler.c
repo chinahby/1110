@@ -3911,11 +3911,14 @@ static void VolumePreview(void *pUser)
 	
 	if(ringerID[pMe->m_CurProfile].ringType == OEMNV_MID_RINGER)
     {
+#if defined( FEATURE_VERSION_C316) || defined( FEATURE_VERSION_C310)
+        pMe->m_RingerID[pMe->m_CurProfile].midID = 1;
+#else   
         if(pMe->m_RingerID[pMe->m_CurProfile].midID == 0)
         {
             pMe->m_RingerID[pMe->m_CurProfile].midID = OEMNV_DEFAULTRINGER;
         }
-
+#endif
 		MSG_FATAL("***zzg VolumePreview OEMNV_MID_RINGER m_RingerID=%x***", pMe->m_RingerID[pMe->m_CurProfile].midID, 0, 0);
 		
 		MSG_FATAL("***zzg VolumePreview IALERT_StartRingerPreview***", 0, 0, 0);
