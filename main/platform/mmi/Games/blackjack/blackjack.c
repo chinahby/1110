@@ -2553,7 +2553,7 @@ static void BlackJack_ShowBetweenHandsInfo(BlackJackApp *pMe)
    AECHAR        *szLargeBuf;
    AECHAR         sztitile[20];
    IShell        *pShell = pMe->a.m_pIShell;
-   AECHAR         szSmallBuf[16];
+   AECHAR         szSmallBuf[32];
    int            nNumBytesLoaded;
    // 128 characters should be plenty for the largest string we could build,
    // but use 160 characters to leave a little extra space to be sure
