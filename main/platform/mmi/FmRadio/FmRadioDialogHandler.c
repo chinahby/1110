@@ -1325,9 +1325,9 @@ else if( itemId == IDS_FMRADIO_OPTION_MENU_GLOBAL_SEARCH)
     else if(itemId == IDS_FMRADIO_SPEAKER)
     {
        pMe->fmSpeaker=TRUE;
-#if defined(FEATURE_VERSION_C316)			 
+//#if defined(FEATURE_VERSION_C316)			 
 		pMe->fmVolumeStop	= TRUE;
-#endif		
+//#endif		
        hideMenu( pMe);
        moveOperationModeTo( pMe, FM_RADIO_OPMODE_PLAY);
            
@@ -1343,9 +1343,9 @@ else if( itemId == IDS_FMRADIO_OPTION_MENU_GLOBAL_SEARCH)
     else if(itemId == IDS_FMRADIO_HEADSET)
     {
        pMe->fmSpeaker=FALSE;
-#if defined(FEATURE_VERSION_C316)			 
+//#if defined(FEATURE_VERSION_C316)			 
 	   pMe->fmVolumeStop	= TRUE;
-#endif					 
+//#endif					 
        hideMenu( pMe);
        moveOperationModeTo( pMe, FM_RADIO_OPMODE_PLAY);
            
