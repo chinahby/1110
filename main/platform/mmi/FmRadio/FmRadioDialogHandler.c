@@ -1308,6 +1308,7 @@ else if( itemId == IDS_FMRADIO_OPTION_MENU_SEARCH)
 else if( itemId == IDS_FMRADIO_OPTION_MENU_GLOBAL_SEARCH)
 #endif
     {
+        pMe->fmVolumeStop=TRUE;
         hideMenu( pMe);
         moveOperationModeTo( pMe, FM_RADIO_OPMODE_REFRESH_CHANNEL_LIST_CONFIRM);
     }
@@ -1529,7 +1530,7 @@ static boolean setChannelTo( CFmRadio *pMe, uint16 theNewChannel)
     }
 #endif//#if !defined( AEE_SIMULATOR)
 
-#ifndef FEATURE_VERSION_C316  //Modi by pyuangui 2013-01-19
+#if 0  //Modi by pyuangui 2013-01-19
     if (pMe->globalSearching == FALSE)	//Modify by zzg 2012_11_26
     {
 		drawOperationPrompt( pMe, IDS_FMRADIO_PROMPT_PLAYING, RGB_WHITE);
