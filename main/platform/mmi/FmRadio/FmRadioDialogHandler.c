@@ -1529,11 +1529,12 @@ static boolean setChannelTo( CFmRadio *pMe, uint16 theNewChannel)
     }
 #endif//#if !defined( AEE_SIMULATOR)
 
+#ifndef FEATURE_VERSION_C316  //Modi by pyuangui 2013-01-19
     if (pMe->globalSearching == FALSE)	//Modify by zzg 2012_11_26
     {
 		drawOperationPrompt( pMe, IDS_FMRADIO_PROMPT_PLAYING, RGB_WHITE);
 	}
-	
+#endif
     drawChannelIndicator( pMe);
     drawLedLight( pMe);
     return result;
