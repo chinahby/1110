@@ -6951,8 +6951,9 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
                 pContext->uModeInfo.mtap.nSubChar = 0;         
                 pContext->wSelStart = pContext->sT9awFieldInfo.G.nCursor;      
                 //MSG_FATAL("pContext->wSelStart=%d",pContext->wSelStart,0,0);
-                if (pContext->uModeInfo.mtap.kLast >= AVK_0 
-                     && pContext->uModeInfo.mtap.kLast <= AVK_9 
+                if (((pContext->uModeInfo.mtap.kLast >= AVK_0 
+                     && pContext->uModeInfo.mtap.kLast <= AVK_9 )||
+                     (pContext->uModeInfo.mtap.kLast == AVK_RIGHT||pContext->uModeInfo.mtap.kLast == AEE_AVK_BASE))
                      //&& TEXT_MODE_MULTITAP == OEM_TextGetCurrentMode(pContext)
                      && (TEXT_MODE_MULTITAP == OEM_TextGetCurrentMode(pContext)
 #ifdef FEATURE_T9_MT_SPANISH
