@@ -429,7 +429,11 @@ when       who     what, where, why
 /* If this is entered as the volume, then the database volume setting will
 ** be used.
 */
+#ifdef FEATURE_VERSION_C337
+#define SND_VOL_USE_DEFAULT 0x01
+#else
 #define SND_VOL_USE_DEFAULT 0xff
+#endif
 
 /* Mask of all-mute masks
 */
