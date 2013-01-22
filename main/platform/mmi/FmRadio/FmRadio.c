@@ -1108,6 +1108,9 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
      						   CFGI_FMRADIO_VOLUME,
      						   &pMe->byVolumeLevel,
      						   sizeof(byte));
+			#if defined(FEATURE_VERSION_C337)
+			pMe->byVolumeLevel = (pMe->byVolumeLevel*4)/5;
+			#endif
             fm_set_volume( pMe->byVolumeLevel,pMe->fmSpeaker);  
             #endif   
         	if ( wParam )
