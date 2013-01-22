@@ -2768,6 +2768,12 @@ static void TextCtl_TextChanged(TextCtlContext *pContext)
    if (pContext->nDisplayLines <= 0)
       return;
 
+   #ifdef FEATURE_VERSION_C316
+   if(pContext->nDisplayLines>=7)
+   	{
+   		pContext->nDisplayLines = 6;
+   	}
+   #endif
    // Calculate the number of extra pixels that don't fit a whole line
    // Only count the leading BETWEEN lines
    pContext->nExtraPixels = (int16) ( pContext->rectDisplay.dy +
