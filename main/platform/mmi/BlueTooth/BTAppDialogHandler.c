@@ -589,8 +589,10 @@ static boolean  HandleMainDialogEvent(CBTApp *pMe,
 			
   			IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, itemID, itemID, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_DEVICE_SEARCH, IDS_DEVICE_SEARCH, NULL, 0);
-            IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_DEVICES, IDS_DEVICES, NULL, 0);         
+            IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_DEVICES, IDS_DEVICES, NULL, 0);      
+#ifndef FEATURE_VERSION_C316            
             IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_MY_INFO, IDS_MY_INFO, NULL, 0);
+#endif
 #if	0			
 			IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_FTP, IDS_FTP, NULL, 0);
 
