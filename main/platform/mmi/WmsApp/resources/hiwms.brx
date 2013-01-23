@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="wms" VERSION="1">
+<BREWRes Name="hiwms" VERSION="1">
 <Strings Encoding="Unicode">
 	<STRING Id="1" Name="IDS_INBOX">
 		<Text>इनबॉक्स</Text>
@@ -179,7 +179,7 @@
 		<Text>पूर्व निर्धारित संदेश</Text>
 	</STRING>
 	<STRING Id="60" Name="IDS_SAVETODRAFT">
-		<Text>Save to draft</Text>
+		<Text>ड्राफ़्टसहेजें</Text>
 	</STRING>
 	<STRING Id="61" Name="IDS_INSERTCONTACT">
 		<Text>संपर्कों को सम्मिलित करें</Text>
@@ -664,22 +664,22 @@
 	<String Id="1041" Name="IDS_TIME_STAMP_ASRECEIVED">
 		<Text>As Received</Text>
 	</String>
-	<String Id="1042" Name="IDS_ADD_TO_RESTRICT_LIST" Encoding="Unicode">
+	<String Id="1042" Name="IDS_ADD_TO_RESTRICT_LIST">
 		<Text>Add to restrict list</Text>
 	</String>
-	<String Id="1043" Name="IDS_MMS_SERVER_ADDRESS" Encoding="Unicode">
+	<String Id="1043" Name="IDS_MMS_SERVER_ADDRESS">
 		<Text>MMS server address</Text>
 	</String>
-	<String Id="1044" Name="IDS_MMS_PROXY" Encoding="Unicode">
+	<String Id="1044" Name="IDS_MMS_PROXY">
 		<Text>Proxy Address</Text>
 	</String>
-	<String Id="1045" Name="IDS_MMS_PORT" Encoding="Unicode">
+	<String Id="1045" Name="IDS_MMS_PORT">
 		<Text>Port</Text>
 	</String>
-	<String Id="1046" Name="IDS_DELIVERY" Encoding="Unicode">
+	<String Id="1046" Name="IDS_DELIVERY">
 		<Text>message has been delivered to </Text>
 	</String>
-	<String Id="1047" Name="IDS_MMS_MENSTATUS" Encoding="Unicode">
+	<String Id="1047" Name="IDS_MMS_MENSTATUS">
 		<Text>MMS Memory status</Text>
 	</String>
 	<String Id="1101" Name="IDS_TEMPLATETATA1">
