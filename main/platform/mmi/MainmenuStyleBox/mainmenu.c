@@ -4681,11 +4681,11 @@ static int SetBrowserArr_Main(MainMenu *pMe,char *purl)
 	if(purl && STRLEN(purl)>1)
 	{
         SPRINTF(urlCan,"call_ucweb:setexternurl:%s\2\3",purl);
-		//STRCAT(urlCan,"useragent:BREW-Applet/0x20068888 (BREW/3.1.5.20; DeviceId: 8976509865757e; Lang: hi; Profile/MIDP-2.0_Configuration/CLDC-1.1) ucweb-squid\2\3");
+		STRCAT(urlCan,"useragent:BREW-Applet/0x20068888 (BREW/3.1.5.20; DeviceId: 8976509865757e; Lang: hi; Profile/MIDP-2.0_Configuration/CLDC-1.1) ucweb-squid\2\3");
 	}
 	else
 	{
-		//STRCPY(urlCan,"useragent:BREW-Applet/0x20068888 (BREW/3.1.5.20; DeviceId: 8976509865757e; Lang: hi; Profile/MIDP-2.0_Configuration/CLDC-1.1) ucweb-squid\2\3");
+		STRCPY(urlCan,"useragent:BREW-Applet/0x20068888 (BREW/3.1.5.20; DeviceId: 8976509865757e; Lang: hi; Profile/MIDP-2.0_Configuration/CLDC-1.1) ucweb-squid\2\3");
 	}
     
 	if(STRISTR (charsvc_p_name,"mts"))
