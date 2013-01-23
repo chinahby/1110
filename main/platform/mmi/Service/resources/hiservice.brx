@@ -2,7 +2,7 @@
 <BREWRes Name="hiservice" VERSION="1">
 <Strings Encoding="Unicode">
 	<String Id="1002" Name="IDS_SERVICE_TITLE">
-		<Text>सेवा</Text>
+		<Text>सेवाएं</Text>
 	</String>
 	<String Id="1003" Name="IDS_SERVICE_UTK" Encoding="ISOLATIN1">
 		<Text>UTK</Text>
