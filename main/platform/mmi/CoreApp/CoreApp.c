@@ -226,7 +226,7 @@ int CoreApp_DisplayADN(IShell *pShell, uint16 wRecID)
         return EBADPARM;
     }
     
-    DBGPRINTF("CoreApp_DisplayADN %d",wRecID);
+    //     DBGPRINTF("CoreApp_DisplayADN %d",wRecID);
     return ISHELL_PostEventEx(pShell, EVTFLG_ASYNC, AEECLSID_CORE_APP, EVT_DISPLAYADN, wRecID, 0);
 }
 
@@ -239,7 +239,7 @@ int CoreApp_ChangePIN(IShell *pShell, uint8 byPinID, AECHAR *pOldPIN, AECHAR *pN
     
     WSTRCPY(g_UIMPINSTR1, pOldPIN);
     WSTRCPY(g_UIMPINSTR2, pNewPIN);
-    DBGPRINTF("CoreApp_ChangePIN %S %S",pOldPIN,pNewPIN);
+    //     DBGPRINTF("CoreApp_ChangePIN %S %S",pOldPIN,pNewPIN);
     return ISHELL_PostEventEx(pShell, EVTFLG_ASYNC, AEECLSID_CORE_APP, EVT_CHANGEPIN, byPinID, 0);
 }
 
@@ -252,7 +252,7 @@ int CoreApp_UnblockPIN(IShell *pShell, uint8 byPinID, AECHAR *pPUK, AECHAR *pPIN
     
     WSTRCPY(g_UIMPINSTR1, pPUK);
     WSTRCPY(g_UIMPINSTR2, pPIN);
-    DBGPRINTF("CoreApp_UnblockPIN %S %S",pPUK,pPIN);
+    //     DBGPRINTF("CoreApp_UnblockPIN %S %S",pPUK,pPIN);
     return ISHELL_PostEventEx(pShell, EVTFLG_ASYNC, AEECLSID_CORE_APP, EVT_UNBLOCKPIN, byPinID, 0);
 }
 
@@ -819,7 +819,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             	byte bEnabled=OEMNV_PPP_AUTH_DISABLED;
 	            ICONFIG_GetItem(pMe->m_pConfig, CFGI_PPP_AUTH, &bEnabled, sizeof(byte));
 
-	            DBGPRINTF("***zzg CoreApp CFGI_PPP_AUTH bEnabled=%x***", bEnabled);
+	            //     DBGPRINTF("***zzg CoreApp CFGI_PPP_AUTH bEnabled=%x***", bEnabled);
 	            
 	            if (bEnabled == OEMNV_PPP_AUTH_ENABLED)
 	            {
@@ -1127,7 +1127,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                 		ICM_SetOperatingMode(pMe->m_pCM, AEECM_OPRT_MODE_OFFLINE);
                 		#endif
                         #endif
-                        DBGPRINTF("AVK_END to COREST_POWEROFF");
+                        //     DBGPRINTF("AVK_END to COREST_POWEROFF");
                         MOVE_TO_STATE(COREST_POWEROFF)
                         CLOSE_DIALOG(DLGRET_CREATE)
                     }
@@ -1663,7 +1663,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                 return TRUE;
                 
             case EVT_MC_PWR_DOWN:
-                DBGPRINTF("EVT_MC_PWR_DOWN");
+                //     DBGPRINTF("EVT_MC_PWR_DOWN");
                 CoreApp_Poweroff_Phone(pMe);
                 break;
             case EVT_MODE_CHANGE:
@@ -2121,7 +2121,7 @@ static boolean CoreApp_HandleCMNotify(CCoreApp * pMe, AEENotify *pNotify)
                         IDownload* pDownload = NULL;
                         IConfig*   pConfig   = NULL;
                         
-                        DBGPRINTF("CM EVENT %x", pEvtInfo->event);
+                        //     DBGPRINTF("CM EVENT %x", pEvtInfo->event);
                         
                         /* Create the objects which contain the information. */
                         ISHELL_CreateInstance(pMe->a.m_pIShell, AEECLSID_DOWNLOAD,
@@ -2153,7 +2153,7 @@ static boolean CoreApp_HandleCMNotify(CCoreApp * pMe, AEENotify *pNotify)
                                  }
                                  else
                                  {
-                                   DBGPRINTF("Could not get MOBILEINFO %d", nResult);
+                                   //     DBGPRINTF("Could not get MOBILEINFO %d", nResult);
                                  }
                               }
                               else
@@ -2173,30 +2173,30 @@ static boolean CoreApp_HandleCMNotify(CCoreApp * pMe, AEENotify *pNotify)
                                       }
                                       else
                                       {
-                                        DBGPRINTF("Could not get SUBSCRIBER ID %d", nResult);
+                                        //     DBGPRINTF("Could not get SUBSCRIBER ID %d", nResult);
                                       }
                                     }
                                     else
                                     {
-                                      DBGPRINTF("Could not get memory for SID %d", nSIDLen);
+                                      //     DBGPRINTF("Could not get memory for SID %d", nSIDLen);
                                     }
                                  }
                                  else
                                  {
-                                   DBGPRINTF("Could not get SUBSCRIBERID_LEN %d", nResult);
+                                   //     DBGPRINTF("Could not get SUBSCRIBERID_LEN %d", nResult);
                                  }
                               }
                            }
                            else
                            {
-                             DBGPRINTF("Could not get CFGI_DOWNLOAD");
+                             //     DBGPRINTF("Could not get CFGI_DOWNLOAD");
                            }
 
                            if(pSIDToSet)
                            {
                              int i;
                              nSIDLen = STRLEN(pSIDToSet);
-                             DBGPRINTF("Setting Subscriber ID len %d %s", nSIDLen,pSIDToSet);
+                             //     DBGPRINTF("Setting Subscriber ID len %d %s", nSIDLen,pSIDToSet);
                              IDOWNLOAD_SetSubscriberID(pDownload, pSIDToSet, nSIDLen+1);
                            }
                            FREEIF(pSIDToSet);
@@ -2204,7 +2204,7 @@ static boolean CoreApp_HandleCMNotify(CCoreApp * pMe, AEENotify *pNotify)
                         }
                         else
                         {
-                          DBGPRINTF("Could not create interfaces %x %x", pDownload, pConfig);
+                          //     DBGPRINTF("Could not create interfaces %x %x", pDownload, pConfig);
                         }
 
                         if(pDownload)
@@ -2427,7 +2427,7 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
                 ISHELL_CancelTimer(pMe->a.m_pIShell, CoreApp_Draw_Charger_image, pMe);
                 //CLOSE_DIALOG(DLGRET_OK)
                 CoreApp_Process_Batty_Msg(pMe, IDS_POWEROFF_1);
-                DBGPRINTF("NMASK_BATTERY_EXTPWR_CHANGE");
+                //     DBGPRINTF("NMASK_BATTERY_EXTPWR_CHANGE");
                 AEE_SetSysTimer(POWER_DOWN_TIME , CoreApp_Poweroff_Phone, pMe);
                 return TRUE;
             }
@@ -2512,7 +2512,7 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
                     {
                         ISHELL_SendEvent(pMe->a.m_pIShell,AEECLSID_DIALER, EVT_BATT_POWERDOWN, 0, 0);
                         CoreApp_Process_Batty_Msg(pMe, IDS_POWEROFF_1);
-                        DBGPRINTF("AEEBATTERY_STATUS_POWERDOWN");
+                        //     //     DBGPRINTF("AEEBATTERY_STATUS_POWERDOWN");
                         AEE_SetSysTimer(POWER_DOWN_TIME , CoreApp_Poweroff_Phone, pMe);
                         break;
                     }
@@ -2525,7 +2525,9 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
                             IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_BATT, ANNUN_STATE_BATT_LOW | ANNUN_STATE_BLINK);
                         }
                         (void) ISHELL_SetTimer(pMe->a.m_pIShell, 10000, CCharger_BlinkLowBattIcon, (void *) pMe);
+#ifndef FEATURE_VERSION_C316
                         CoreApp_Process_BattyLow_Msg(pMe, IDS_LOWBATTMSG_TEXT);
+#endif
                         break;
                     }
 
