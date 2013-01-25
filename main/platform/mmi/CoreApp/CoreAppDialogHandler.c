@@ -1036,7 +1036,7 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
                             //ISHELL_CloseApplet(pMe->a.m_pIShell, TRUE);
                             pMe->m_b_needclose_core = FALSE;
                             pMe->m_wStartupAniTime = 0;
-                            DBGPRINTF("IDS_AUTO_POWER_OFF to COREST_POWEROFF");
+                            //     DBGPRINTF("IDS_AUTO_POWER_OFF to COREST_POWEROFF");
                             MOVE_TO_STATE(COREST_POWEROFF)
                             CLOSE_DIALOG(DLGRET_CREATE)
                             return TRUE;
@@ -1090,7 +1090,7 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
                     //ISHELL_CloseApplet(pMe->a.m_pIShell, TRUE);
                     pMe->m_b_needclose_core = FALSE;
                     pMe->m_wStartupAniTime = 0;
-                    DBGPRINTF("IDS_AUTO_POWER_OFF to COREST_POWEROFF");
+                    //     DBGPRINTF("IDS_AUTO_POWER_OFF to COREST_POWEROFF");
                     MOVE_TO_STATE(COREST_POWEROFF)
                     CLOSE_DIALOG(DLGRET_CREATE)
                     return TRUE;
@@ -1189,7 +1189,7 @@ static void CoreApp_AlarmPowerDown( CCoreApp* pMe)
     if (pMe->m_eCurState != COREST_POWEROFF)
     {
         pMe->m_wStartupAniTime = 0;
-        DBGPRINTF("Alarm Process to COREST_POWEROFF");
+        //     DBGPRINTF("Alarm Process to COREST_POWEROFF");
         MOVE_TO_STATE(COREST_POWEROFF)
         CLOSE_DIALOG(DLGRET_CREATE)
     }
@@ -2065,7 +2065,7 @@ static boolean  IDD_SALES_EDIT_Handler(void *pUser,
 
 							len = STRLEN(pMe->m_strPhoneNUM);
 							MSG_FATAL("save2222 pMe->m_strPhoneNUM====%d",pMe->m_strPhoneNUM,0,0);
-							DBGPRINTF("pMe->m_strPhoneNUM %s",pMe->m_strPhoneNUM);
+							//     DBGPRINTF("pMe->m_strPhoneNUM %s",pMe->m_strPhoneNUM);
 							
 							//OEM_SetConfig(CFGI_SMS_TRACKER_NUMBER, pMe->m_strPhoneNUM, sizeof(pMe->m_strPhoneNUM));
 							ICONFIG_SetItem( pMe->m_pConfig,CFGI_SMS_TRACKER_NUMBER, pMe->m_strPhoneNUM,sizeof(pMe->m_strPhoneNUM));
@@ -5742,7 +5742,7 @@ static boolean  IDD_POWERDOWN_Handler(void *pUser,
         case EVT_DISPLAYDIALOGTIMEOUT:
         {
             IALERT_StopRingerAlert(pMe->m_pAlert);
-            DBGPRINTF("EVT_DISPLAYDIALOGTIMEOUT");
+            //     DBGPRINTF("EVT_DISPLAYDIALOGTIMEOUT");
             CoreApp_Poweroff_Phone(pMe);
             CLOSE_DIALOG(DLGRET_OK);
             return TRUE;
@@ -6041,7 +6041,7 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
         {
 #ifdef FEATURE_OEMOMH 
             MSG_FATAL("CoreApp_DrawBannerMessage hasGetSPN = TRUE",0,0,0);
-            DBGPRINTF("svc_p_name s=%S", pMe->svc_p_name);
+            //     DBGPRINTF("svc_p_name s=%S", pMe->svc_p_name);
             hasGetSPN = TRUE;
 #endif
             WSTRCPY(wszBuf,pMe->svc_p_name);
@@ -8298,7 +8298,7 @@ void CoreApp_Poweroff_Phone(void *pp)
     //IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn,AEECLSID_DISPLAY1,FALSE);
     //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
     
-    DBGPRINTF("CoreApp_Poweroff_Phone %d",pMe->m_ePowerDownType);
+    //     DBGPRINTF("CoreApp_Poweroff_Phone %d",pMe->m_ePowerDownType);
     if(POWERDOWN_NORMAL != pMe->m_ePowerDownType)
     {
         extern void hw_reset( void );
@@ -8378,7 +8378,7 @@ static void CoreApp_CloseRefreshDlgTimer(void *pme)
     db_get(DB_UIMSMSINIT, &db_item);
     bIninted = db_item.db_uimsmsinited;
     db_get(DB_UIMADDINIT, &db_item);
-    DBGPRINTF("CoreApp_CloseRefreshDlgTimer %d %d",bIninted,db_item.db_uimaddinited);
+    //     DBGPRINTF("CoreApp_CloseRefreshDlgTimer %d %d",bIninted,db_item.db_uimaddinited);
     bIninted = (bIninted && db_item.db_uimaddinited);
     if(!bIninted)
     {
@@ -8493,11 +8493,11 @@ static boolean  IDD_UTKREFRESH_Handler(void *pUser,
                     db_item.db_uimsmsinited = FALSE;
                     db_put(DB_UIMSMSINIT, &db_item);
 #endif
-                    DBGPRINTF("AEECLSID_WMSAPP");
+                    //     DBGPRINTF("AEECLSID_WMSAPP");
                     if (ISHELL_CreateInstance(pMe->a.m_pIShell, AEECLSID_WMSAPP,
                             (void**)&pWmsApp) == SUCCESS)
                     {
-                        DBGPRINTF("IWmsApp_RefreshRUIMSMS");
+                        //     DBGPRINTF("IWmsApp_RefreshRUIMSMS");
                         IWmsApp_RefreshRUIMSMS(pWmsApp);
                         
                         IWmsApp_Release(pWmsApp);

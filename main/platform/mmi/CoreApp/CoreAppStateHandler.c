@@ -1031,9 +1031,9 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
                     EFmodelBuf[0] = 0x01; //01
                     EFmodelBuf[1] = 0x00; //00   
                     len = STRLEN(modename);
-                    DBGPRINTF("modelBuf len =%d", len);
-                    DBGPRINTF("EFmodelBuf =%s", EFmodelBuf);
-                    DBGPRINTF("EFmodelBuf len =%s", STRLEN(EFmodelBuf));
+                    //     DBGPRINTF("modelBuf len =%d", len);
+                    //     DBGPRINTF("EFmodelBuf =%s", EFmodelBuf);
+                    //     DBGPRINTF("EFmodelBuf len =%s", STRLEN(EFmodelBuf));
                     //Write Model Information
                     for(i = 2; i < 35; ++i)
                     {
@@ -1047,10 +1047,10 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
                             EFmodelBuf[i] = 255;
                         }
                     }
-                    DBGPRINTF("EFmodelBuf =%s", EFmodelBuf);
+                    //     DBGPRINTF("EFmodelBuf =%s", EFmodelBuf);
                     len = STRLEN(mnBuf);
-                    DBGPRINTF("mnBuf len =%d", len);
-                    DBGPRINTF("EFmodelBuf len =%s", STRLEN(EFmodelBuf));
+                    //     DBGPRINTF("mnBuf len =%d", len);
+                    //     DBGPRINTF("EFmodelBuf len =%s", STRLEN(EFmodelBuf));
                     //Write Manufacturer Name
                     for(i = 34; i < 66; ++i)
                     {
@@ -1064,16 +1064,16 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
                             EFmodelBuf[i] = 255;
                         }
                     }      
-                    DBGPRINTF("EFmodelBuf =%s", EFmodelBuf);
+                    //     DBGPRINTF("EFmodelBuf =%s", EFmodelBuf);
                     len = STRLEN(EFmodelBuf);
-                    DBGPRINTF("EFmodelBuf len =%d", len);
+                    //     DBGPRINTF("EFmodelBuf len =%d", len);
                     (void) ICONFIG_GetItem(pMe->m_pConfig, CFGI_BUILD_VERSION, swBufTemp, sizeof(swBufTemp));
-                    DBGPRINTF("swBufTemp =%S", swBufTemp);
-                    DBGPRINTF("swBufTemp len =%d", WSTRLEN(swBufTemp));
+                    //     DBGPRINTF("swBufTemp =%S", swBufTemp);
+                    //     DBGPRINTF("swBufTemp len =%d", WSTRLEN(swBufTemp));
                     WSTRTOSTR(swBufTemp, swBuf, sizeof(swBuf) + 1);
-                    DBGPRINTF("swBuf =%s", swBuf);
+                    //     DBGPRINTF("swBuf =%s", swBuf);
                     len = STRLEN(swBuf);
-                    DBGPRINTF("swBuf len =%d", len);
+                    //     DBGPRINTF("swBuf len =%d", len);
                     for(i = 66; i < 126; ++i)
                     {
                         if(i < len + 66)
@@ -1087,10 +1087,10 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
                         }                            
                     }
                     len = STRLEN(EFmodelBuf);
-                    DBGPRINTF("EFmodelBuf len =%d", len);                        
+                    //     DBGPRINTF("EFmodelBuf len =%d", len);                        
                     EFmodelBuf[126] = '\0';
-                    DBGPRINTF("swBuf len =%d",STRLEN(swBuf));
-                    DBGPRINTF("EFmodelBuf =%s", EFmodelBuf);
+                    //     DBGPRINTF("swBuf len =%d",STRLEN(swBuf));
+                    //     DBGPRINTF("EFmodelBuf =%s", EFmodelBuf);
                     IRUIM_WriteModel(pMe->m_pIRUIM, (byte*)EFmodelBuf);  
                 }
             }
@@ -1141,10 +1141,12 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
 				MSG_FATAL("m_bsendsalessms======%d",m_bsendsalessms,0,0);
 			    if(!m_bsendsalessms)
 			    {
+			    	#ifndef  FEATURE_VERSION_C316
 			    	(void)ISHELL_SetTimer(pMe->a.m_pIShell, 
 		                              SMS_TIME,
 		                              CoreApp_SalesTrackerTimer, 
 		                              pMe);
+					#endif
 					
 			    }
 		        MSG_FATAL("IAlarm_SetAlarm CoreApp_MobileTrackerTimer",0,0,0);
@@ -2212,7 +2214,7 @@ int CCoreApp_ChangePIN(CCoreApp *pMe, uint8 byPinID, AECHAR *pOldPIN, AECHAR *pN
         return EBADPARM;
     }
 
-    DBGPRINTF("CoreApp_ChangePIN %S %S",pOldPIN,pNewPIN);
+    //     DBGPRINTF("CoreApp_ChangePIN %S %S",pOldPIN,pNewPIN);
   
     WSTRCPY(pMe->m_wPIN,pNewPIN);
     pMe->m_sPIN.code = pMe->m_wPIN;
@@ -2297,7 +2299,7 @@ int CCoreApp_UnblockPIN(CCoreApp *pMe, uint8 byPinID, AECHAR *pPUK, AECHAR *pPIN
         return EBADPARM;
     }
   
-    DBGPRINTF("CoreApp_UnblockPIN %S %S",pPUK,pPIN);
+    //     DBGPRINTF("CoreApp_UnblockPIN %S %S",pPUK,pPIN);
   
     WSTRCPY(pMe->m_wPIN,pPIN);
     pMe->m_sPIN.code = pMe->m_wPIN;

@@ -1017,6 +1017,7 @@ typedef struct _CCoreApp
    IMenuCtl       *m_pSmsTrackTime;           //IMenuCtlÖ¸Õë,"×´Ì¬"
    ITextCtl       *m_pSmsTrackNumber; 
 #endif
+   boolean         m_IsEanbleBatAlarm;
 
 } CCoreApp;
 

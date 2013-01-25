@@ -93,6 +93,7 @@ static void CoreApp_PoweronStartApps(CCoreApp *pMe);
 static int DBToLevel (int nDBVal);
 static void CCharger_EnableICONCB(void *pUser);
 static void CCharger_BlinkLowBattIcon(void *pUser);
+static void CCCharger_EnableAlarm(void *pUser);
 #ifdef FEATRUE_AUTO_POWER
 static void CoreApp_Process_AutoPower_Event(void *pUser);
 #endif
@@ -514,6 +515,7 @@ boolean CoreApp_InitAppData(IApplet* po)
     pMe->m_bSuspended = FALSE;
     pMe->m_bChargFull = FALSE;
     pMe->m_bBatteryActive=FALSE;
+	pMe->m_IsEanbleBatAlarm=TRUE;
 // Add by pyuangui	
 #if defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_SKY) || defined(FEATURE_VERSION_W317A)   
     pMe->m_keyinfoheld=FALSE;
@@ -1480,6 +1482,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 				}
 			}
 			return TRUE;
+#ifndef FEATURE_VERSION_C316
 		case EVT_SALES_TRACKER:
 			{
 				if (IRUIM_IsCardConnected(pMe->m_pIRUIM)) 
@@ -1511,7 +1514,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 					
 			}
 			return TRUE;
-			
+#endif
 		//Add By zzg 2012_11_16	
 		case EVT_WMS_DRAFT_SAVED:
 		{
@@ -2519,15 +2522,16 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
 
                     case AEEBATTERY_STATUS_LOW:        // Battery is low
                     {
-                        (void) ISHELL_CancelTimer(pMe->a.m_pIShell,CCharger_BlinkLowBattIcon, (void *) pMe);                        
+                        (void) ISHELL_CancelTimer(pMe->a.m_pIShell,CCharger_BlinkLowBattIcon, (void *) pMe);     
+						  (void) ISHELL_CancelTimer(pMe->a.m_pIShell,CCCharger_EnableAlarm, (void *) pMe);   
                         if(pMe->m_pIAnn != NULL)
                         {
                             IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_BATT, ANNUN_STATE_BATT_LOW | ANNUN_STATE_BLINK);
                         }
                         (void) ISHELL_SetTimer(pMe->a.m_pIShell, 10000, CCharger_BlinkLowBattIcon, (void *) pMe);
-#ifndef FEATURE_VERSION_C316
-                        CoreApp_Process_BattyLow_Msg(pMe, IDS_LOWBATTMSG_TEXT);
-#endif
+
+							CoreApp_Process_BattyLow_Msg(pMe, IDS_LOWBATTMSG_TEXT);
+
                         break;
                     }
 
@@ -3106,6 +3110,15 @@ static void CCharger_BlinkLowBattIcon(void *pUser)
 
     IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_BATT, ANNUN_STATE_BATT_LOW);
 }
+
+
+static void CCCharger_EnableAlarm(void *pUser)
+{
+			CCoreApp    *pMe = (CCoreApp *)pUser;
+			pMe->m_IsEanbleBatAlarm = TRUE;
+}
+
+
 #ifdef FEATURE_ICM
 /*=============================================================================
 FUNCTION: CoreApp_IsEmergencyMode
@@ -3300,7 +3313,18 @@ static void CoreApp_Process_BattyLow_Msg(CCoreApp   *pMe, uint16  msg_id)
        AEE_CancelTimer(CoreApp_Process_Batty_Msg_CB, (void*)pMe);
        if(msg_id == IDS_LOWBATTMSG_TEXT)
        {
-           IALERT_StartAlerting(pMe->m_pAlert, NULL, NULL, AEEALERT_ALERT_LOW_BATTERY);
+
+			#ifdef FEATURE_VERSION_C316
+ 			 if(pMe->m_IsEanbleBatAlarm)
+	         {
+                  		
+                  	IALERT_StartAlerting(pMe->m_pAlert, NULL, NULL, AEEALERT_ALERT_LOW_BATTERY);
+				    pMe->m_IsEanbleBatAlarm = FALSE;
+					(void) ISHELL_SetTimer(pMe->a.m_pIShell, 5*60*1000, CCCharger_EnableAlarm, (void *) pMe);	
+             }
+			 #else
+           		IALERT_StartAlerting(pMe->m_pAlert, NULL, NULL, AEEALERT_ALERT_LOW_BATTERY);
+			 #endif
        }
        else
        {
