@@ -5359,6 +5359,7 @@ void WmsApp_PrepareUserDataMOList(WmsApp *pMe)
 #endif
         if (nItems>1)
         {
+        	MSG_FATAL("nItems================%d",nItems,0,0);
             pUserdata->num_headers = 1;
             pUserdata->headers[0].header_id = WMS_UDH_CONCAT_8;
             
@@ -5424,6 +5425,10 @@ void WmsApp_PrepareUserDataMOList(WmsApp *pMe)
                                                         pUserdata->data,
                                                         &pUserdata->data_len,
                                                         &pUserdata->padding_bits);
+
+			
+
+			
             DBGPRINTF("DRAFT szText2=%s", szText);
             FREE(szText);
             if (SUCCESS != IVector_AddElement(pMe->m_pUserDataMOList, pUserdata))
@@ -5624,6 +5629,11 @@ wms_client_message_s_type *WmsApp_GetClientMsgMO(WmsApp *pMe, boolean bSend)
 
     // 消息用户数据部分
     nSize = sizeof(wms_cdma_user_data_s_type);
+
+	//MSG_FATAL("pUserdata->data_len==%d,number_of_digits==%d",pUserdata->data_len,pUserdata->number_of_digits,0);
+	//MSG_FATAL("pUserdata->encoding==%d,padding_bits==%d",pUserdata->encoding,pUserdata->padding_bits,0);
+	//MSG_FATAL("pUserdata->is91ep_type==%d,num_headers==%d",pUserdata->is91ep_type,pUserdata->num_headers,0);
+	
     MEMCPY(&pCltTsData->u.cdma.user_data, pUserdata, nSize);
     pCltTsData->u.cdma.mask |= WMS_MASK_BD_USER_DATA;
     
@@ -5787,6 +5797,7 @@ wms_client_message_s_type *WmsApp_GetClientMsgMO(WmsApp *pMe, boolean bSend)
     pCltMsg->u.cdma_message.is_service_present = FALSE;
 
     (void)IWMS_TsEncode(pMe->m_pwms, pCltTsData, &pCltMsg->u.cdma_message.raw_ts);
+	//MSG_FATAL("IWMS_TsEncode======%d",0,0,0);
     
     // 消息编码结束
     
@@ -6712,7 +6723,7 @@ void WmsApp_BuildSendClentMsgList(WmsApp * pMe)
     // 拷贝当前号码
     pMe->m_msSend.m_szNum[0] = 0;
 	WSTRTOSTR(pItem->m_szTo,temp,MAX_EMAILADD_LEN+1);
-	if(STRISTR (charsvc_p_name,"tata")||STRISTR(temp,"+91"))
+	if((STRISTR (charsvc_p_name,"tata"))&&(STRISTR(temp,"+91")))
 	{
 		WSTRCPY(TempToStr,L"0091");
 		WSTRCPY(TempTo,pItem->m_szTo+3);
