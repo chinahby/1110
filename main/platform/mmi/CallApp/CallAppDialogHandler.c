@@ -12547,7 +12547,7 @@ static boolean CallApp_Process_Send_Key_Release_Event(CCallApp *pMe)
     //}
     /*in emergency call mode ,can not allow to make the muti call*/
 	WSTRTOSTR(pMe->m_DialString,temp,MAX_SIZE_DIALER_TEXT+1);
-	if((STRISTR (charsvc_p_name,"reliance"))&&(STRISTR(temp,"+91")))
+	if((STRISTR(temp,"+91")))
 	{
 		WSTRCPY(TempToStr,L"0091");
 		WSTRCPY(TempTo,pMe->m_DialString+3);
