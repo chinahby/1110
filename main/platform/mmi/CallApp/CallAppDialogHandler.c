@@ -12528,11 +12528,14 @@ static boolean CallApp_DrawText_Ex(CCallApp *pMe, AEEFont fnt,
     IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, oldColor);
     return TRUE;
 }
-
+extern char charsvc_p_name[UIM_CDMA_HOME_SERVICE_SIZE+1];
 static boolean CallApp_Process_Send_Key_Release_Event(CCallApp *pMe)
 {
     uint16 wIndex;
     MAKE_CALL_VALUE ret;
+	AECHAR TempTo[MAX_SIZE_DIALER_TEXT+1] = {0};
+	AECHAR TempToStr[MAX_SIZE_DIALER_TEXT+1] = {0};
+	char temp[MAX_SIZE_DIALER_TEXT+1] = {0};
     // TBD - dial string format should be typedef'd
     // Can only make emergency calls while emgcall is TRUE
     //if ((CallApp_IsEmergencyMode(pMe->m_pICM)
@@ -12543,6 +12546,20 @@ static boolean CallApp_Process_Send_Key_Release_Event(CCallApp *pMe)
     //    return TRUE;
     //}
     /*in emergency call mode ,can not allow to make the muti call*/
+	WSTRTOSTR(pMe->m_DialString,temp,MAX_SIZE_DIALER_TEXT+1);
+	if((STRISTR (charsvc_p_name,"reliance"))&&(STRISTR(temp,"+91")))
+	{
+		WSTRCPY(TempToStr,L"0091");
+		WSTRCPY(TempTo,pMe->m_DialString+3);
+		WSTRCAT(TempToStr,TempTo);
+		DBGPRINTF("TempToStr=%S", TempTo);
+		DBGPRINTF("TempToStr=%S", TempToStr);
+		DBGPRINTF("ppMe->m_DialString=%S", pMe->m_DialString);
+		MEMSET(pMe->m_DialString,0,(sizeof(pMe->m_DialString))+1);
+		WSTRCPY(pMe->m_DialString,TempToStr);
+		DBGPRINTF("pMe->m_DialString=%S", pMe->m_DialString);
+		MSG_FATAL("pMe->m_DialString........111111111",0,0,0);
+	}
 #ifdef FEATURE_ICM
     if(pMe->m_b_incall && CallApp_IsEmergencyMode(pMe->m_pICM) )
 #else
