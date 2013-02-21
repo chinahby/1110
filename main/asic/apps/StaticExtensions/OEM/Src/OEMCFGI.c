@@ -3530,9 +3530,9 @@ void OEM_RestoreFactorySetting( void )
    nvi_cache.set_time_format = (byte)NV_SET_TIME_FORMAT_24_HOUR;
 #endif   
 #ifdef FEATURE_TIME_DATA_SETTING
-    nvi.set_date_format = NV_SET_DATE_FORMAT_DD_MM_YYYY;
+    nvi.set_date_format = NV_SET_DATE_FORMAT_MM_DD_YYYY;
     (void) OEMNV_Put( NV_SET_DATE_FORMAT_I, &nvi);
-    nvi_cache.set_date_format = (byte)NV_SET_DATE_FORMAT_DD_MM_YYYY;
+    nvi_cache.set_date_format = (byte)NV_SET_DATE_FORMAT_MM_DD_YYYY;
 #endif 
    //CFGI_PHONE_PASSWORD_CHECK
    nvi.lock = 0;
@@ -4150,7 +4150,11 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
 #ifdef FEATURE_UIM_RUN_TIME_ENABLE
       if (NV_DONE_S != OEMNV_Get(NV_RTRE_CONFIG_I, &nvi)) {
          // Default to R-UIM only.
+         #ifdef FEATURE_VERSION_S600S
+		 *(byte *) pBuff = RTRE_CONFIG_NVONLY;
+		 #else
          *(byte *) pBuff = RTRE_CONFIG_RUIMORDROPBACK;
+		 #endif
          return SUCCESS;
       }
       *(byte *) pBuff = (byte)nvi.rtre_config;
@@ -7783,7 +7787,12 @@ static int OEMPriv_GetItem_CFGI_RTRE_CONFIGURATION(void *pBuff)
 
    if (NV_DONE_S != OEMNV_Get(NV_RTRE_CONFIG_I, &nvi)) {
       // Default to R-UIM only.
-      *(nv_rtre_configuration_type *) pBuff = NV_RTRE_CONFIG_RUIM_ONLY;
+      #ifdef FEATURE_VERSION_S600S
+		 *(nv_rtre_configuration_type *) pBuff = NV_RTRE_CONFIG_NV_ONLY;
+	  #else
+         *(nv_rtre_configuration_type *) pBuff = NV_RTRE_CONFIG_RUIM_ONLY;
+	  #endif
+      
       return SUCCESS;
    }
 

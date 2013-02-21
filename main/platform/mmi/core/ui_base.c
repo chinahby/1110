@@ -2001,6 +2001,8 @@ void ui_init( void )
   int i;
   nv_item_type nvi;
 #endif
+ 
+
 
 #ifdef CUST_EDITION
 #ifdef FEATURE_UIM_TOOLKIT

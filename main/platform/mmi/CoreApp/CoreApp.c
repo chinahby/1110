@@ -784,7 +784,6 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             else
             {
                 AEEAppStart *as;
-
                 as = (AEEAppStart*)dwParam;
                 //if (NULL != pMe->m_pDisplay)
                 //{
@@ -794,6 +793,8 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                 //pMe->m_pDisplay = as->pDisplay;
                 //(void) IDISPLAY_AddRef(pMe->m_pDisplay);
                 pMe->m_rc = as->rc;
+
+				
 
                 // 获取大字体高度
                 pMe->m_nLargeFontHeight = IDISPLAY_GetFontMetrics(pMe->m_pDisplay,

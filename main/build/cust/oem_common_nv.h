@@ -159,8 +159,10 @@
 #define OEMNV_VOICEMAIL_NUMBER                      L"*9"                         //NV_SMS_VM_NUMBER_I  
 #elif defined FEATURE_VERSION_C316
 #define OEMNV_VOICEMAIL_NUMBER                      L""                           //NV_SMS_VM_NUMBER_I  
+#elif defined FEATURE_VERSION_S600S
+#define OEMNV_VOICEMAIL_NUMBER                      L"*86"                        //NV_SMS_VM_NUMBER_I   //add by yangdecai
 #else
-#define OEMNV_VOICEMAIL_NUMBER                      L"0"                         //NV_SMS_VM_NUMBER_I  
+#define OEMNV_VOICEMAIL_NUMBER                      L"0"                          //NV_SMS_VM_NUMBER_I  
 #endif
 #endif
 //Others

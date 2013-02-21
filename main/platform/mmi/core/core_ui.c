@@ -1236,8 +1236,17 @@ static void InitResources (void)
     "user/sound",
     "user/sound/ringer",
   };
-
   int nDirNum = ARR_SIZE(brew_dirs); //Number of 'other' brew directories.
+#ifdef FEATURE_VERSION_S600S  //add by yangdecai
+	int m_read_from_nv =1;
+	OEMNV_Get(NV_RTRE_CONFIG_I,&m_read_from_nv);
+  
+	if(m_read_from_nv != 1)
+	{
+	  m_read_from_nv = 1;
+	  OEMNV_Put(NV_RTRE_CONFIG_I,&m_read_from_nv);
+	}
+#endif	
 
   for(i=0; i < nDirNum; i++)
   {
@@ -1623,10 +1632,11 @@ void CoreTask_init( void )
 
 #if MIN_BREW_VERSION(4,0)
   IShell *piShell;
-#endif
+#endif 
+
 
   uisnd_snd_init();               /* packets for talking to sound task */
-  
+
   /* Set the watchdog report timer signal so that we'll
   ** reset the watchdog as soon as we start checking for events
   ** and start our first tick timer
@@ -1772,7 +1782,7 @@ boolean   IsRunAsFactoryTestMode(void)
 ==============================================================================*/
 boolean   IsRunAsUIMVersion(void)
 {
-#ifdef FEATURE_VERSION_W208S
+#if defined(FEATURE_VERSION_W208S)||defined(FEATURE_VERSION_S600S)
     return FALSE;
 #else
 #ifdef FEATURE_UIM

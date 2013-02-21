@@ -2868,7 +2868,7 @@ boolean mcc_powerup_load
   cdma.mob_model = 0;
 
   #if defined(FEATURE_OTASP) && !defined(FEATURE_NSOTASP)
-#ifdef FEATURE_VERSION_W208S
+#if defined(FEATURE_VERSION_W208S)||defined(FEATURE_VERSION_S600S)
   cdma.spc_change_enabled = TRUE;
 #else
   cdma.spc_change_enabled = FALSE;
@@ -3538,7 +3538,7 @@ boolean mcc_powerup_load
     {
       /* default to deny SPC change from default value to a non-default value
       ** as specified in IS-683A */
-#ifdef FEATURE_VERSION_W208S
+#if defined(FEATURE_VERSION_W208S)||defined(FEATURE_VERSION_S600S)
 	  cdma.spc_change_enabled = TRUE;
 #else
       cdma.spc_change_enabled = FALSE;

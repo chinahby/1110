@@ -2683,7 +2683,7 @@ nvio_write (
         break;
 
 	  //Add By zzg 2012_02_02
-#ifdef FEATURE_VERSION_W208S	
+#if defined(FEATURE_VERSION_W208S)
 	case NV_MIN2_I:
 	{		
 		// Encode the first three digits (IS-95A 6.3.1.1)

@@ -2974,7 +2974,7 @@ static boolean  IDD_UIMERR_Handler(void       *pUser,
                 uint16    nResID = 0;
                 AECHAR    *wTipsMsg = NULL;
 
-#ifdef FEATURE_VERSION_W208S                     	
+#if defined( FEATURE_VERSION_W208S)||defined(FEATURE_VERSION_S600S)                   	
                 // 设置静态控件文本                
                 (void)ISTATIC_SetText(pStatic,
 				                        NULL,
@@ -2986,7 +2986,10 @@ static boolean  IDD_UIMERR_Handler(void       *pUser,
                 {
                     // 没插入卡
                     case UIMERR_NOUIM:
+						#if defined( FEATURE_VERSION_W208S)||defined(FEATURE_VERSION_S600S)
+						#else
   	   					nResID = IDS_NORUIM;
+						#endif
                         break;
                     // UIM 卡无效(原因输PUK码超过规定次数导致卡失效)
                     case UIMERR_BLOCKED:
@@ -3365,7 +3368,7 @@ static boolean  IDD_LOADING_Handler(void       *pUser,
                                   DialogTimeoutCallback, 
                                   pMe);
 #ifdef FEATURE_RUIM_PHONEBOOK
-#ifdef FEATURE_VERSION_W208S
+#if defined(FEATURE_VERSION_W208S) || defined(FEATURE_VERSION_S600S)
 #ifdef FEATURE_UIM
 			if(TRUE)
 #else
@@ -3506,7 +3509,10 @@ static void CoreApp_ImageNotify(void *po, IImage *pIImage, AEEImageInfo *pii, in
         CoreApp_UpdateDateTime(pMe);
         
         // 绘制服务提供商名和待机问候语
+        #ifdef FEATURE_VERSION_S600S
+		#else
         CoreApp_DrawBannerMessage((void*)pMe);
+		#endif
     
         #ifndef FEATURE_USES_BLACKBERRY
 			#ifdef FEATURE_LCD_TOUCH_ENABLE
@@ -5937,17 +5943,17 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
     MSG_FATAL("CoreApp_DrawBannerMessage Start",0,0,0);
 	OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
 
-		(void) ISHELL_LoadResString(pMe->a.m_pIShell,
-                                        AEE_COREAPPRES_LANGFILE,
-                                        IDS_NO_USIM_CARDTWO,
-                                        wszBufncard2,
-                                        sizeof(wszBufncard2));
+	(void) ISHELL_LoadResString(pMe->a.m_pIShell,
+                                       AEE_COREAPPRES_LANGFILE,
+                                       IDS_NO_USIM_CARDTWO,
+                                       wszBufncard2,
+                                       sizeof(wszBufncard2));
 	
-		(void) ISHELL_LoadResString(pMe->a.m_pIShell,
-                                        AEE_COREAPPRES_LANGFILE,
-                                        IDS_NO_USIM_CARDONE,
-                                        wszBufncard1,
-                                        sizeof(wszBufncard1));
+	(void) ISHELL_LoadResString(pMe->a.m_pIShell,
+                                       AEE_COREAPPRES_LANGFILE,
+                                       IDS_NO_USIM_CARDONE,
+                                       wszBufncard1,
+                                       sizeof(wszBufncard1));
 
     
     // 先取消相关定时器
@@ -6021,7 +6027,7 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
             }
             else
             {
-#ifdef FEATURE_VERSION_W208S                     	
+#if defined( FEATURE_VERSION_W208S)||defined(FEATURE_VERSION_S600S)                    	
                 //Do nothing  				
 #else            
         		(void) ISHELL_LoadResString(pMe->a.m_pIShell,
@@ -9070,7 +9076,7 @@ static void CoreApp_GetSPN(CCoreApp *pMe)
     if(pMe->svc_p_name[0] == 0)
 #endif
     {
-#ifdef FEATURE_VERSION_W208S
+#if defined(FEATURE_VERSION_W208S)||defined(FEATURE_VERSION_S600S)
 #ifdef FEATURE_UIM
 		if (TRUE)
 #else

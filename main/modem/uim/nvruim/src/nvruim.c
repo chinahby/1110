@@ -2652,7 +2652,7 @@ static nv_ruim_support_status nvruim_write_spc_enable(
     #endif /*FEATURE_OTASP_OTAPA*/
     
       case NV_SPC_CHANGE_ENABLED_I:
-#ifdef FEATURE_VERSION_W208S
+#if defined(FEATURE_VERSION_W208S)||defined(FEATURE_VERSION_S600S)
 		if(nv_cmd_ptr->data_ptr->spc_change_enabled)
         {
 			nvruim_otapa_spc_enable_cache_buf &= NVRUIM_SPC_DISABLE;
@@ -6089,7 +6089,7 @@ static nv_ruim_support_status nvruim_read_spc_enabled(
     case NV_SPC_CHANGE_ENABLED_I:
       if(NV_DONE_S == *op_status)
       {
-#ifdef FEATURE_VERSION_W208S
+#if defined(FEATURE_VERSION_W208S)||defined(FEATURE_VERSION_S600S)
         nv_cmd_ptr->data_ptr->spc_change_enabled =
           !((nvruim_otapa_spc_enable_cache_buf & NVRUIM_SPC_DISABLE) == 0);
 #else

@@ -165,7 +165,7 @@ const nv_auto_set_type nv_auto_set_svc_list[] =
                                         }},
 	#endif
 #endif
-    {NV_RTRE_CONFIG_I,                  {0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}},
+    {NV_RTRE_CONFIG_I,                  {0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}},
     {NV_SIM_SELECT_I,                   {0x00}}
 };
 

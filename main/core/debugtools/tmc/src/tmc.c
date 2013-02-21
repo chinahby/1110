@@ -10969,6 +10969,7 @@ EXTERN  void                       tmc_task(
   rex_sigs_type requested_sigs;
   rex_sigs_type received_sigs;
 
+
   /* None protocol specific power up initialization, TMC timer and queue
   ** initialization, and define and start all other tasks.
   */

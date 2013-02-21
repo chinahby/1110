@@ -659,7 +659,7 @@ static NextFSMAction COREST_VERIFYUIM_Handler(CCoreApp *pMe)
             SendRTREConfig(pMe);
 #endif
 
-#ifdef FEATURE_VERSION_W208S
+#if defined(FEATURE_VERSION_W208S)||defined(FEATURE_VERSION_S600S)
 #ifdef FEATURE_UIM
 			if (FALSE)
 #else
@@ -771,7 +771,7 @@ static NextFSMAction COREST_VERIFYUIM_Handler(CCoreApp *pMe)
                 }
                 else
                 {
-#if defined(FEATURE_VERSION_N021) || defined(FEATURE_VERSION_W208S)
+#if defined(FEATURE_VERSION_N021) || defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_S600S)
                 	MOVE_TO_STATE(COREST_STARTUPANI);
 #else 
                     MOVE_TO_STATE(COREST_UIMERR)
@@ -1100,7 +1100,7 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
 #endif
 #ifdef FEATURE_UTK2
 
-#ifdef FEATURE_VERSION_W208S
+#if defined(FEATURE_VERSION_W208S)||defined(FEATURE_VERSION_S600S)
 #ifdef FEATURE_UIM
 			if (pMe->m_eUIMErrCode == UIMERR_NONE)
 #else
@@ -1251,7 +1251,7 @@ static NextFSMAction COREST_STARTUPANI_Handler(CCoreApp *pMe)
             
 #if defined( FEATURE_IDLE_LOCK_RUIM)&&defined(FEATURE_UIM)
 
-#ifdef FEATURE_VERSION_W208S
+#if defined(FEATURE_VERSION_W208S)||defined(FEATURE_VERSION_S600S)
 #ifdef FEATURE_UIM
 			if (!pMe->bunlockuim && IRUIM_IsCardConnected(pMe->m_pIRUIM))
 #else
@@ -1430,7 +1430,7 @@ static NextFSMAction COREST_POWERONAPPSDATAINIT_Handler(CCoreApp *pMe)
             }
 #ifdef FEATURE_RUIM_PHONEBOOK
 
-#ifdef FEATURE_VERSION_W208S
+#if defined(FEATURE_VERSION_W208S)||defined(FEATURE_VERSION_S600S)
 #ifdef FEATURE_UIM
 			if (TRUE)
 #else
