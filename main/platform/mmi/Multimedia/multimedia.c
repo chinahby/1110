@@ -1105,6 +1105,7 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
 #if !defined(FEATURE_PEKTEST)
 #ifndef FEATURE_VERSION_S600S
             IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_VIDEO_CAMERA, IDS_MULTIMEDIA_VIDEO_CAMERA, NULL, 0);
+#endif /*FEATURE_VERSION_S600S*/
 #endif
 #endif
 #endif
