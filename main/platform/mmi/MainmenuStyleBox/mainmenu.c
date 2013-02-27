@@ -4406,11 +4406,6 @@ static int StartApplet(MainMenu *pMe, int i)
     switch(i)
 	{
 #ifdef FEATURE_VERSION_W208S
-	case IDS_MAIN_MENU_CALL_LOGS:
-	{
-		Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_RECENTCALL);
-		break;
-	}
 	case IDS_MAIN_MENU_MAP:
 	{
 		char	buf[12];
@@ -4459,20 +4454,6 @@ static int StartApplet(MainMenu *pMe, int i)
         //Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_BRW_APP);
         MSG_FATAL("AEECLSID_BRW_APP...........Result=%d",Result,0,0);		
 		
-		break;
-	}
-	
-#ifdef FEATURE_BREW_CAMERA	
-	case IDS_MAIN_MENU_CAMERA:
-	{		
-		Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_CAMERA);
-		break;
-	}
-#endif
-	
-	case IDS_MAIN_MENU_FILEMGR:
-	{
-		Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MEDIAGALLERY);
 		break;
 	}
 #endif
