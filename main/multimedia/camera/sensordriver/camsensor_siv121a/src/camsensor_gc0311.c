@@ -477,18 +477,19 @@ SIDE EFFECTS
 boolean camsensor_GC0311_init(camsensor_function_table_type *camsensor_function_table_ptr, camctrl_tbl_type *camctrl_tbl_ptr)
 {
 	uint8 sensor_id = 0;
+    int j=3;
 	MSG_FATAL("camsensor_GC0311_init()\n",0,0,0);///yty 
 
 	camsensor_camclk_po_hz =12000000;
 
-	CAMERA_CONFIG_GPIO(CAMSENSOR_GC0311_RESET_PIN);
+	//CAMERA_CONFIG_GPIO(CAMSENSOR_GC0311_RESET_PIN);
     
-    gpio_out(CAMSENSOR_GC0311_RESET_PIN,1);
-    clk_busy_wait(2*1000);
-    gpio_out(CAMSENSOR_GC0311_RESET_PIN,0);
+    gpio_out(CAMSENSOR1_POWER_PIN,0);
+    clk_busy_wait(20*1000);
+    gpio_out(CAMSENSOR1_POWER_PIN,1);
     clk_busy_wait(50*1000);
-    gpio_out(CAMSENSOR_GC0311_RESET_PIN,1);
-    clk_busy_wait(2*1000);
+    gpio_out(CAMSENSOR1_POWER_PIN,0);
+    clk_busy_wait(20*1000);
 
 	camsensor_preview_resolution  = CAMSENSOR_FULL_SIZE;
 	camsensor_snapshot_resolution = CAMSENSOR_FULL_SIZE;
@@ -502,12 +503,29 @@ boolean camsensor_GC0311_init(camsensor_function_table_type *camsensor_function_
 	///camsensor_GC0311_ycbcr_i2c_write_byte(0xfc, 0x16);
 
 	clk_busy_wait(50*1000);
-	camsensor_GC0311_ycbcr_i2c_read_byte(0xf0,&sensor_id);
-	MSG_FATAL("Sensor ID = 0x%x",sensor_id,0,0);
-	if ( sensor_id != CAMSENSOR_GC0311_SENSOR_ID ) 
-	{
-		return FALSE;
-	}
+    // 3 times try
+    while(j>0)
+    {        
+    	camsensor_GC0311_ycbcr_i2c_read_byte(0xf0,&sensor_id);
+    	MSG_FATAL("Sensor ID = 0x%x",sensor_id,0,0);
+    	if ( sensor_id == CAMSENSOR_GC0311_SENSOR_ID ) 
+    	{
+    		break;
+    	}
+        j--;
+        i2c_init();
+        gpio_out(CAMSENSOR1_POWER_PIN,0);
+        clk_busy_wait(20*1000);
+        gpio_out(CAMSENSOR1_POWER_PIN,1);
+        clk_busy_wait(50*1000);
+        gpio_out(CAMSENSOR1_POWER_PIN,0);
+        clk_busy_wait(20*1000);
+        
+    }
+    if(j<=0)
+    {
+      return FALSE;  
+    }
 	/* Initialize the sensor_function_table */
 	camsensor_GC0311_ycbcr_register (camsensor_function_table_ptr);
 
