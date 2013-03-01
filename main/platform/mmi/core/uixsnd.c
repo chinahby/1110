@@ -2713,6 +2713,18 @@ void uisnd_vibrate(uint16 wDuration,
 	              0,
 	              FALSE );
 #else
+#ifdef FEATURE_VERSION_M74
+ snd_freq_tone_start(SND_DEVICE_CURRENT,
+				   SND_METHOD_RING,
+				   150,
+				   150,
+				   (uint16)(1000),
+				   (snd_apath_type)(SND_APATH_LOCAL),
+				   callback_ptr,
+				   client_data
+				  );
+
+#else
   snd_freq_tone_start(SND_DEVICE_CURRENT,
 				   SND_METHOD_RING,
 				   160,
@@ -2722,6 +2734,7 @@ void uisnd_vibrate(uint16 wDuration,
 				   callback_ptr,
 				   client_data
 				  );
+#endif
 #endif
 #else
   uisnd_vibrate_cmd(TRUE);
