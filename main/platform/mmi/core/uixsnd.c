@@ -2713,7 +2713,7 @@ void uisnd_vibrate(uint16 wDuration,
 	              0,
 	              FALSE );
 #else
-#ifdef FEATURE_VERSION_M74
+#if defined FEATURE_VERSION_M74 || defined FEATURE_VERSION_C337
  snd_freq_tone_start(SND_DEVICE_CURRENT,
 				   SND_METHOD_RING,
 				   150,
