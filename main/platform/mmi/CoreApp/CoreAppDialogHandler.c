@@ -439,7 +439,7 @@ static boolean  IDD_SALES_EDIT_Handler(void *pUser,
                                  uint32     dwParam);
 
 #endif
-#if defined(FEATURE_VERSION_W317A)
+//#if defined(FEATURE_VERSION_W317A)
 // 对话框 IDD_SALESSUCCESS 事件处理函数
 static boolean  IDD_SALESSUCCESS_Handler(void *pUser,
                                  AEEEvent   eCode,
@@ -447,7 +447,7 @@ static boolean  IDD_SALESSUCCESS_Handler(void *pUser,
                                  uint32     dwParam);
 
 
-#endif
+//#endif
 
 // 对话框 IDD_POWERDOWN 事件处理函数
 static boolean  IDD_POWERDOWN_Handler(void  *pMe,
@@ -658,11 +658,11 @@ void CoreApp_SetDialogHandler(CCoreApp *pMe)
 			pMe->m_pDialogHandler = IDD_SALES_EDIT_Handler;
 			break;
 #endif
-#if defined(FEATURE_VERSION_W317A)
+//#if defined(FEATURE_VERSION_W317A)
 		case IDD_SALESSUCCESS:
 			pMe->m_pDialogHandler = IDD_SALESSUCCESS_Handler;
 			break;
-#endif
+//#endif
         case IDD_POWERDOWN:
             pMe->m_pDialogHandler = IDD_POWERDOWN_Handler;
             break;
@@ -5281,7 +5281,7 @@ static boolean	IDD_SALESTRACKER_Handler(void *pUser,
 	
 }
 #endif
-#if defined(FEATURE_VERSION_W317A)
+//#if defined(FEATURE_VERSION_W317A)
 
 /*==============================================================================
 函数:
@@ -5351,11 +5351,19 @@ static boolean  IDD_SALESSUCCESS_Handler(void *pUser,
 				PromptMsg_Param_type  Msg_Param={0};
 
 				// 从资源文件取消息内容
+				#ifdef FEATURE_VERSION_W317A
 				(void)ISHELL_LoadResString(pMe->a.m_pIShell,
 								AEE_COREAPPRES_LANGFILE,								
 								IDS_SALES_SUCCESS,
 								wstrText,
 								sizeof(wstrText));
+				#else
+				(void)ISHELL_LoadResString(pMe->a.m_pIShell,
+								AEE_COREAPPRES_LANGFILE,								
+								IDS_MMX_SELES_TRACK,
+								wstrText,
+								sizeof(wstrText));
+				#endif
 
 				Msg_Param.ePMsgType = MESSAGE_INFORMATION;
 				Msg_Param.pwszMsg = wstrText;
@@ -5385,7 +5393,7 @@ static boolean  IDD_SALESSUCCESS_Handler(void *pUser,
 	return FALSE;
 }
 
-#endif
+//#endif
 #endif
 
 #if defined(FEATURE_WMS_APP)
@@ -9152,7 +9160,7 @@ void CoreApp_HandleAlarm(CCoreApp  *pme, uint16 wPermID)
 {
 	 CCoreApp	*pMe = (CCoreApp *)pme;
 
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)	 
+#if defined(FEATURE_VERSION_W317A) 
 	 if( ISHELL_ActiveApplet(pMe->a.m_pIShell) == AEECLSID_CORE_APP)
         {
         	MSG_FATAL("ISHELL_ActiveApplet..............",0,0,0);

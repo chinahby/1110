@@ -640,9 +640,9 @@ typedef enum DLGRetValue
 #endif
 #if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
 	,DLGRET_SALES_TRACKER
-	#ifdef FEATURE_VERSION_W317A
+	//#ifdef FEATURE_VERSION_W317A
 	,DLGRET_SALES_SUCESS
-	#endif 
+	//#endif 
 	,DLGRET_WMS_DRAFT_SAVED
 #endif
 } DLGRetValue;
@@ -716,9 +716,9 @@ typedef enum _CoreAppState
   COREST_SALES_TRAKER,
   COREST_SALES_EDIT,
 #endif
-#ifdef	FEATURE_VERSION_W317A
+//#ifdef	FEATURE_VERSION_W317A
   COREST_SALES_SUCCESS,
-#endif
+//#endif
 
 } CoreAppState;
 

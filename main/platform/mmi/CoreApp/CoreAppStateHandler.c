@@ -108,11 +108,11 @@ static NextFSMAction COREST_SALES_TRAKER_Handler(CCoreApp *pMe);
 static NextFSMAction COREST_SALES_EDIT_Handler(CCoreApp *pMe);
 #endif
 
-#if defined(FEATURE_VERSION_W317A)
+//#if defined(FEATURE_VERSION_W317A)
 // 状态 COREST_SALES_SUCCESS 处理函数
 static NextFSMAction COREST_SALES_SUCCESS_Handler(CCoreApp *pMe);
 
-#endif
+//#endif
 
 // 状态 COREST_NOTICE 处理函数
 static NextFSMAction COREST_NOTICE_Handler(CCoreApp *pMe);
@@ -294,12 +294,12 @@ NextFSMAction CoreApp_ProcessState(CCoreApp *pMe)
             retVal = COREST_UTKREFRESH_Handler(pMe);
             break;            
 #endif //FEATURE_UTK2
-#if defined(FEATURE_VERSION_W317A)
+//#if defined(FEATURE_VERSION_W317A)
 		case COREST_SALES_SUCCESS:
 					MSG_FATAL("CoreApp_ProcessState Start COREST_SALES_SUCCESS_Handler",0,0,0);
 					retVal = COREST_SALES_SUCCESS_Handler(pMe);
 					break;
-#endif
+//#endif
 
         default:
             break;
@@ -1545,12 +1545,12 @@ static NextFSMAction COREST_STANDBY_Handler(CCoreApp *pMe)
 			MSG_FATAL("COREST_STANDBY_Handler DLGRET_SALES_TRACKER",0,0,0);
             MOVE_TO_STATE(COREST_SALES_TRAKER)
             return NFSMACTION_CONTINUE;
-#if defined(FEATURE_VERSION_W317A)
+//#if defined(FEATURE_VERSION_W317A)
 
 		case DLGRET_SALES_SUCESS:
 			MSG_FATAL("DLGRET_SALES_SUCESS_Handler DLGRET_SALES_TRACKER",0,0,0);
             MOVE_TO_STATE(COREST_SALES_SUCCESS)
-#endif
+//#endif
             return NFSMACTION_CONTINUE;
 		case DLGRET_WMS_DRAFT_SAVED:
 			MSG_FATAL("DLGRET_SALES_SUCESS_Handler DLGRET_WMS_DRAFT_SAVED",0,0,0);
@@ -1619,7 +1619,7 @@ static NextFSMAction COREST_SALES_TRAKER_Handler(CCoreApp *pMe)
 	MSG_FATAL("COREST_SALES_TRAKER_Handler End",0,0,0);
     return NFSMACTION_WAIT;
 }
-#if defined(FEATURE_VERSION_W317A)
+//#if defined(FEATURE_VERSION_W317A)
 
 /*==============================================================================
 函数:
@@ -1660,7 +1660,7 @@ static NextFSMAction COREST_SALES_SUCCESS_Handler(CCoreApp *pMe)
     return NFSMACTION_WAIT;
 }
 #endif
-#endif
+//#endif
 #if defined(FEATURE_WMS_APP)
 /*==============================================================================
 函数:
