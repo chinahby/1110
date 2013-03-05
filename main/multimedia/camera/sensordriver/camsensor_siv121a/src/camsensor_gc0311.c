@@ -482,13 +482,13 @@ boolean camsensor_GC0311_init(camsensor_function_table_type *camsensor_function_
 
 	camsensor_camclk_po_hz =12000000;
 
-	//CAMERA_CONFIG_GPIO(CAMSENSOR_GC0311_RESET_PIN);
+	CAMERA_CONFIG_GPIO(CAMSENSOR_GC0311_RESET_PIN);
     
-    gpio_out(CAMSENSOR1_POWER_PIN,0);
+    gpio_out(CAMSENSOR_GC0311_RESET_PIN,0);
     clk_busy_wait(20*1000);
-    gpio_out(CAMSENSOR1_POWER_PIN,1);
+    gpio_out(CAMSENSOR_GC0311_RESET_PIN,1);
     clk_busy_wait(50*1000);
-    gpio_out(CAMSENSOR1_POWER_PIN,0);
+    gpio_out(CAMSENSOR_GC0311_RESET_PIN,0);
     clk_busy_wait(20*1000);
 
 	camsensor_preview_resolution  = CAMSENSOR_FULL_SIZE;
@@ -514,11 +514,11 @@ boolean camsensor_GC0311_init(camsensor_function_table_type *camsensor_function_
     	}
         j--;
         i2c_init();
-        gpio_out(CAMSENSOR1_POWER_PIN,0);
+        gpio_out(CAMSENSOR_GC0311_RESET_PIN,0);
         clk_busy_wait(20*1000);
-        gpio_out(CAMSENSOR1_POWER_PIN,1);
+        gpio_out(CAMSENSOR_GC0311_RESET_PIN,1);
         clk_busy_wait(50*1000);
-        gpio_out(CAMSENSOR1_POWER_PIN,0);
+        gpio_out(CAMSENSOR_GC0311_RESET_PIN,0);
         clk_busy_wait(20*1000);
         
     }
