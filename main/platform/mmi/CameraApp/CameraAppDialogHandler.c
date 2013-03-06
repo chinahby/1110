@@ -351,6 +351,9 @@ static const CCameraSize g_CameraSizeCFG_10[] =
     {128,160,L"128*160"}, // FULL Screen
     {176,220,L"176*220"}, // QCIF
 #if defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_C180)
+#ifdef FEATURE_VERSION_M74
+	{176,220,L"240*320"}, // QVGA
+#endif
 #else
     {240,320,L"240*320"}, // QVGA
 #endif    
@@ -4800,7 +4803,7 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
 #ifdef FEATURE_MOVIE_RECORD_SUPPORT
 		if ( pMe->m_isRecordMode )
 		{
-			if(g_VideoSizeCFG_10[pMe->m_nCameraSize].dx==0)
+			if(pMe->m_nCameraSize >= (sizeof(g_VideoSizeCFG_10)/sizeof(CCameraSize)))
 				pMe->m_nCameraSize=OEMNV_CAMERA_SIZE_INDEX_0;
 			captureSize.cx = g_VideoSizeCFG_10[pMe->m_nCameraSize].dx;
 	        captureSize.cy = g_VideoSizeCFG_10[pMe->m_nCameraSize].dy;
