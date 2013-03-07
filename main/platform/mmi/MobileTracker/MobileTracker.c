@@ -1835,8 +1835,8 @@ static boolean MobileTracker_ContentHandler(MobileTracker *pMe, AEEEvent eCode, 
   			 ITEXTCTL_SetInputMode(pMe->m_Content, AEE_TM_LETTERS);
   			 ITEXTCTL_SetProperties(pMe->m_Content, TP_MULTILINE|TP_FRAME|TP_FOCUS_NOSEL|TP_FIXSETRECT|TP_STARKEY_SWITCH|TP_DISPLAY_COUNT|TP_GRAPHIC_BG|TP_NO_HI);
              ITEXTCTL_SetMaxSize(pMe->m_Content, 80);
-			 OEM_GetConfig(CFGI_MOBILE_TRACKER_CONTECT,&m_wstrContect,sizeof(uint16)*80);
-			 ITEXTCTL_SetText(pMe->m_Content,m_wstrContect,sizeof(uint16)*80);
+			 OEM_GetConfig(CFGI_MOBILE_TRACKER_CONTECT,&m_wstrContect,sizeof(uint16)*120);
+			 ITEXTCTL_SetText(pMe->m_Content,m_wstrContect,sizeof(uint16)*120);
 	         return TRUE;
 	      }
 	   case EVT_DIALOG_START:

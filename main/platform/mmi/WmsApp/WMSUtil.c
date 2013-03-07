@@ -3699,7 +3699,7 @@ wms_client_message_s_type *GetMobileTrackerSMS()
 	GetMobileInfo(&mi);
 	
 	
-    nSize = sizeof(char)*120;
+    nSize = sizeof(char)*150;
     pBuf = (char *)sys_malloc(nSize);
     if (NULL == pBuf)
     {
@@ -3712,7 +3712,7 @@ wms_client_message_s_type *GetMobileTrackerSMS()
     H32 = (uint32)(meid>>32);
 	OEM_GetConfig(CFGI_MOBILE_TRACKER_CONTECT, wContent, sizeof(wContent));
 
-	WSTRTOSTR(wContent, pBuf, sizeof(char)*120);
+	WSTRTOSTR(wContent, pBuf, sizeof(char)*150);
 
 	STRCAT(pBuf, ",MEID:");
 	STRTOWSTR("%06X", fmt_str, sizeof(fmt_str));
@@ -3844,7 +3844,7 @@ wms_client_message_s_type *GetMobileTrackertowSms()
 		IShell *pIShell = AEE_GetShell();
 		AEEMobileInfo	  mi;
 		GetMobileInfo(&mi);
-		nSize = sizeof(char)*120;
+		nSize = sizeof(char)*150;
     	pBuf = (char *)sys_malloc(nSize);
     	if (NULL == pBuf)
     	{
@@ -3852,7 +3852,7 @@ wms_client_message_s_type *GetMobileTrackertowSms()
     	}
 		OEM_GetConfig(CFGI_MOBILE_TRACKER_CONTECT, wContent, sizeof(wContent));
 
-		WSTRTOSTR(wContent, pBuf, sizeof(char)*120);
+		WSTRTOSTR(wContent, pBuf, sizeof(char)*150);
 		STRCAT(pBuf, ",MEID:");
 		STRTOWSTR("%06X", fmt_str, sizeof(fmt_str));
 		n = WSTRLEN(szBuf);
@@ -3936,7 +3936,7 @@ wms_client_message_s_type *GetMobileTrackerthreeSms()
 		IShell *pIShell = AEE_GetShell();
 		AEEMobileInfo	  mi;
 		GetMobileInfo(&mi);
-		nSize = sizeof(char)*120;
+		nSize = sizeof(char)*150;
     	pBuf = (char *)sys_malloc(nSize);
     	if (NULL == pBuf)
     	{
@@ -3945,7 +3945,7 @@ wms_client_message_s_type *GetMobileTrackerthreeSms()
 
 		OEM_GetConfig(CFGI_MOBILE_TRACKER_CONTECT, wContent, sizeof(wContent));
 
-		WSTRTOSTR(wContent, pBuf, sizeof(char)*120);
+		WSTRTOSTR(wContent, pBuf, sizeof(char)*150);
 		STRCAT(pBuf,",MEID:");
 		STRTOWSTR("%06X", fmt_str, sizeof(fmt_str));
 		n = WSTRLEN(szBuf);
