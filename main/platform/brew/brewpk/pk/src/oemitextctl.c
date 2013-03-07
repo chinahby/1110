@@ -3150,6 +3150,13 @@ static AEETextInputMode CTextCtl_SetInputMode(ITextCtl * po, AEETextInputMode m)
 	MSG_FATAL("tmSetMode==%d",tmSetMode,0,0);
 	tempMode = OEM_TextGetCurrentMode(pme->m_pText);
 	MSG_FATAL("tempMode==%d",tempMode,0,0);
+#ifdef FEATURE_VERSION_C316
+		if((tmSetMode == TEXT_MODE_T9_MT_HINDI)&&( pme->m_dwProps & TP_NO_HI))
+		{
+		  tmSetMode = TEXT_MODE_MULTITAP;
+		}
+#endif
+	
     if (tmSetMode != OEM_TextGetCurrentMode(pme->m_pText))
     {
         AEETextInputMode  tmNext;
@@ -5184,7 +5191,12 @@ static void OEM_SetInputMode(CTextCtl * pme)
     {   //  只有在设置了 TP_STARKEY_SWITCH 属性且没使用软键的条件下切换输入法
         return;
     }
-
+	#ifdef FEATURE_VERSION_C316
+	if((pme->m_nCurrInputMode == OEM_MODE_T9_MT_HINDI)&&( pme->m_dwProps & TP_NO_HI))
+	{
+		  pme->m_nCurrInputMode = OEM_MODE_T9_MT_ENGLISH_LOW;
+	}
+#endif
     switch (pme->m_nCurrInputMode)
     {   //输入模式
         case OEM_MODE_NUMBERS:
