@@ -989,7 +989,7 @@ static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier)
         {
             if( pMe->opMode == FM_RADIO_OPMODE_PLAY)
             {
-                #if (defined( FEATURE_VERSION_1110W516) || defined( FEATURE_VERSION_W317A) || defined( FEATURE_VERSION_C337) || defined( FEATURE_VERSION_C316)|| defined( FEATURE_VERSION_C310)	)
+                #if (defined( FEATURE_VERSION_1110W516) || defined( FEATURE_VERSION_W317A) || defined( FEATURE_VERSION_C337) || defined( FEATURE_VERSION_C316)||defined( FEATURE_VERSION_M74)|| defined( FEATURE_VERSION_C310)	)
                  tuneVolumeStop(pMe);
                  repaint( pMe, TRUE);
                  return TRUE;
@@ -1196,7 +1196,7 @@ __handleKeyEvent_input_channel_done__:
 			if( pMe->opMode == FM_RADIO_OPMODE_PLAY)
 			{
 #if defined( FEATURE_FMRADIO_NO_MODE_SELECT) 
-                #if (defined( FEATURE_VERSION_1110W516) || defined( FEATURE_VERSION_W317A) || defined( FEATURE_VERSION_C337) || defined( FEATURE_VERSION_C316)|| defined( FEATURE_VERSION_C310)	)
+                #if (defined(FEATURE_VERSION_1110W516)||defined( FEATURE_VERSION_W317A)||defined( FEATURE_VERSION_C337) || defined(FEATURE_VERSION_C316)||defined( FEATURE_VERSION_M74)||defined( FEATURE_VERSION_C310))
                 if(1)
 				#else
 				if(pMe->tuneVolumeByLeftRightArrowKey)
