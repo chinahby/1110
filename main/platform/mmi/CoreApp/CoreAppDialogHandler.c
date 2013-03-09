@@ -5347,8 +5347,9 @@ static boolean  IDD_SALESSUCCESS_Handler(void *pUser,
 
 		case EVT_USER_REDRAW:
 			{
-				AECHAR	wstrText[64]={0};
+				AECHAR	wstrText[240]={0};
 				PromptMsg_Param_type  Msg_Param={0};
+				BottomBar_Param_type bottomParam;
 
 				// 从资源文件取消息内容
 				#ifdef FEATURE_VERSION_W317A
@@ -5364,11 +5365,29 @@ static boolean  IDD_SALESSUCCESS_Handler(void *pUser,
 								wstrText,
 								sizeof(wstrText));
 				#endif
-
+				/*
 				Msg_Param.ePMsgType = MESSAGE_INFORMATION;
 				Msg_Param.pwszMsg = wstrText;
 				Msg_Param.eBBarType = BTBAR_OK;
 				DrawPromptMessage(pMe->m_pDisplay, pStatic, &Msg_Param);
+				*/
+				//Draw static
+				IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
+				ISTATIC_SetProperties(pStatic, ST_CENTERTEXT|ST_MIDDLETEXT); 
+				ISTATIC_SetFontColor(pStatic, RGB_BLACK);		//Add By zzg 2011_12_07
+        		(void)ISTATIC_SetText(pStatic, 
+                              NULL, 
+                              wstrText, 
+                              AEE_FONT_NORMAL, 
+                              AEE_FONT_NORMAL);
+   
+       			 //Redraw
+        		(void)ISTATIC_Redraw(pStatic);
+				 
+                //Draw bottom
+   				MEMSET(&bottomParam,0,sizeof(BottomBar_Param_type));
+            	bottomParam.eBBarType = BTBAR_OK; //BTBAR_SELECT_BACK;            
+				DrawBottomBar(pMe->m_pDisplay, &bottomParam);  
 			}
 			//IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
 			
