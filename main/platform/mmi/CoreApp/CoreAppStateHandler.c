@@ -1025,7 +1025,7 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
                     AECHAR swBufTemp[61]; 
                     char swBuf[61];
                     char EFmodelBuf[127];
-                    static const char mnBuf[] = "WaterWorld";
+                    static const char mnBuf[] = "Micromac_c260";
                     int len = 0;
                     static const char modename[] = CUST_MODEL;
                     EFmodelBuf[0] = 0x01; //01
@@ -1115,6 +1115,7 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
                 UTK_SendTerminalProfile();
             }
 #endif //FEATURE_UTK2
+			MSG_FATAL("pMe->m_eUIMErrCode======%d",pMe->m_eUIMErrCode,0,0);
 
 #ifdef FEATURE_POWERUP_REGISTER_CHINAUNICOM
             // 设置发送注册短信的定时器函数
