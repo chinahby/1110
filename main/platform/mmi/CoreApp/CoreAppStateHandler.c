@@ -1025,7 +1025,11 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
                     AECHAR swBufTemp[61]; 
                     char swBuf[61];
                     char EFmodelBuf[127];
+                    #ifdef FEATURE_VERSION_C337
                     static const char mnBuf[] = "Micromac_c260";
+					#else
+					static const char mnBuf[] = "WaterWorld";
+					#endif
                     int len = 0;
                     static const char modename[] = CUST_MODEL;
                     EFmodelBuf[0] = 0x01; //01
