@@ -103,14 +103,17 @@ static NextFSMAction COREST_SMSTIP_Handler(CCoreApp *pMe);
 #ifndef FEATURE_VERSION_C316
 // 状态 COREST_SALES_TRAKER 处理函数
 static NextFSMAction COREST_SALES_TRAKER_Handler(CCoreApp *pMe);
+static NextFSMAction COREST_SALES_SUCCESS_Handler(CCoreApp *pMe);
+
 #endif
 // 状态 COREST_SALES_EDIT 处理函数
 static NextFSMAction COREST_SALES_EDIT_Handler(CCoreApp *pMe);
+
 #endif
 
 //#if defined(FEATURE_VERSION_W317A)
 // 状态 COREST_SALES_SUCCESS 处理函数
-static NextFSMAction COREST_SALES_SUCCESS_Handler(CCoreApp *pMe);
+
 
 //#endif
 
@@ -271,6 +274,10 @@ NextFSMAction CoreApp_ProcessState(CCoreApp *pMe)
 			MSG_FATAL("CoreApp_ProcessState Start COREST_SALES_TRAKER",0,0,0);
             retVal = COREST_SALES_TRAKER_Handler(pMe);
 			break;
+		case COREST_SALES_SUCCESS:
+			MSG_FATAL("CoreApp_ProcessState Start COREST_SALES_SUCCESS_Handler",0,0,0);
+			retVal = COREST_SALES_SUCCESS_Handler(pMe);
+			break;
 #endif
 		case COREST_SALES_EDIT:
 			retVal = COREST_SALES_EDIT_Handler(pMe);
@@ -295,10 +302,7 @@ NextFSMAction CoreApp_ProcessState(CCoreApp *pMe)
             break;            
 #endif //FEATURE_UTK2
 //#if defined(FEATURE_VERSION_W317A)
-		case COREST_SALES_SUCCESS:
-					MSG_FATAL("CoreApp_ProcessState Start COREST_SALES_SUCCESS_Handler",0,0,0);
-					retVal = COREST_SALES_SUCCESS_Handler(pMe);
-					break;
+
 //#endif
 
         default:
