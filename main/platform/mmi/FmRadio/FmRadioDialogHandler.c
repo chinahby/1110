@@ -635,7 +635,7 @@ static void tuneVolumeStop(CFmRadio* pMe)
 						   &pMe->byVolumeLevel,
 						   sizeof(byte));
         #if defined(FEATURE_VERSION_C337)
-		pMe->byVolumeLevel = (pMe->byVolumeLevel*4)/5;
+		pMe->byVolumeLevel = (pMe->byVolumeLevel*3)/5;
 		#endif
         newvolumeLevel = pMe->byVolumeLevel;
 #if !defined( AEE_SIMULATOR)
@@ -1345,7 +1345,7 @@ else if( itemId == IDS_FMRADIO_OPTION_MENU_GLOBAL_SEARCH)
 						   sizeof(byte));
 	   MSG_FATAL("pMe->byVolumeLevel====%d",pMe->byVolumeLevel,0,0);
 	   #if defined(FEATURE_VERSION_C337)
-	   pMe->byVolumeLevel = (pMe->byVolumeLevel*4)/5;
+	   pMe->byVolumeLevel = (pMe->byVolumeLevel*3)/5;
 	   #endif
        fm_set_volume( pMe->byVolumeLevel,pMe->fmSpeaker);
        repaint( pMe, TRUE);
@@ -1364,7 +1364,7 @@ else if( itemId == IDS_FMRADIO_OPTION_MENU_GLOBAL_SEARCH)
 						   &pMe->byVolumeLevel,
 						   sizeof(byte));
 	   #if defined(FEATURE_VERSION_C337)
-	   pMe->byVolumeLevel = (pMe->byVolumeLevel*4)/5;
+	   pMe->byVolumeLevel = (pMe->byVolumeLevel*3)/5;
 	   #endif
        fm_set_volume( pMe->byVolumeLevel,pMe->fmSpeaker);
 	   repaint( pMe, TRUE);
@@ -1798,7 +1798,9 @@ static void popOptionMenu( CFmRadio *pMe)
                         #endif						
                         #endif                        
 						IDS_SAVE,
+    #ifndef FEATURE_VERSION_C337						
                         IDS_FMRADIO_SPEAKER,
+    #endif                        
 	#endif
 	#if FEATURE_FMRADIO_SUPPORT_BACKGROUND
 						IDS_FMRADIO_OPTION_MENU_PLAY_ON_BACKGROUND
