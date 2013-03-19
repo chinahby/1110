@@ -452,7 +452,7 @@
 		<Text>Phone to UIM card</Text>
 	</STRING>
 	<STRING Id="157" Name="IDS_SAVEASPRESET">
-		<Text>Save as preset</Text>
+		<Text>save as templates</Text>
 	</STRING>
 	<STRING Id="158" Name="IDS_SETTING">
 		<Text>Settings</Text>
