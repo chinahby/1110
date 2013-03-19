@@ -1252,6 +1252,36 @@ static boolean IDD_MAIN_Handler(void        *pUser,
             //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);  
             //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
             return TRUE;
+			
+		case EVT_KEY_HELD:
+            
+        #if defined(FEATURE_VERSION_K202)
+           if((AVKType)wParam == AVK_SELECT)
+            {
+                boolean TorchOn = FALSE;
+                OEM_GetConfig(CFGI_FLSHLITHG_STATUS,&TorchOn, sizeof(TorchOn));
+                if (TorchOn == FALSE )
+                {
+                    TorchOn = TRUE;
+                    if (pMe->m_pBacklight)
+                    {
+                        IBACKLIGHT_TurnOnTorch(pMe->m_pBacklight);
+                    }
+                }
+                else
+                {
+                    TorchOn = FALSE;
+                    if (pMe->m_pBacklight)
+                    {                           
+                        IBACKLIGHT_TurnOffTorch(pMe->m_pBacklight);
+                    }
+                }
+                OEM_SetConfig(CFGI_FLSHLITHG_STATUS,&TorchOn, sizeof(TorchOn));
+                ISHELL_CloseApplet(pMe->m_pShell, TRUE); 
+                return TRUE;
+            }
+        #endif
+            return TRUE;
 
         case EVT_CTL_SEL_CHANGED:
             pMe->m_wMainMenuSel = wParam;

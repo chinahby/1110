@@ -4195,7 +4195,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					}
 #if defined(FEAUTRE_VERSION_N450)||defined(FEATURE_VERSION_W0216A)||defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W027) //add by pyuangui
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);  
-#elif defined(FEATURE_VERSION_C310) 
+#elif defined(FEATURE_VERSION_C310)|| defined(FEATURE_VERSION_K202) 
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CAMERA);  // add by pyuangui 20121226
 #else
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
