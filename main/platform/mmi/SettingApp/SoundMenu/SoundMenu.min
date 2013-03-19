@@ -559,8 +559,22 @@ else
             street_tale.mid|fs:/ringers/street_tale.mid \
             techno_meto.mid|fs:/ringers/techno_meto.mid \
             ring_tons.mp3|fs:/ringers/ring_tons.mp3 \
-            poweronoff.mp3|fs:/ringers/poweronoff.mp3 		
-    else                                            
+            poweronoff.mp3|fs:/ringers/poweronoff.mp3 	
+	else ifeq ($(USES_RESDIR),k202)                                           
+        CONSTFILE_FILES+=\
+            blues.mid|fs:/ringers/blues.mid \
+            blue_load.mid|fs:/ringers/blue_load.mid \
+            champagne.mid|fs:/ringers/champagne.mid \
+            clock.mid|fs:/ringers/clock.mid \
+            dance_craze.mid|fs:/ringers/dance_craze.mid \
+            green_line.mid|fs:/ringers/green_line.mid \
+            jumping.mid|fs:/ringers/jumping.mid \
+            lucky.mid|fs:/ringers/lucky.mid \
+            street_tale.mid|fs:/ringers/street_tale.mid \
+            techno_meto.mid|fs:/ringers/techno_meto.mid \
+            on.mp3|fs:/ringers/on.mp3 \
+            off.mp3|fs:/ringers/off.mp3 	
+    	else                                            
         CONSTFILE_FILES+=\
             blues.mid|fs:/ringers/blues.mid \
             blue_load.mid|fs:/ringers/blue_load.mid \
