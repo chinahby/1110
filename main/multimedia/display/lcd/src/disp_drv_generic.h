@@ -17,6 +17,7 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS
                            VARIABLE DECLARATION
 
 ============================================================================*/
+#include "tlmm.h" 
 
 static rex_crit_sect_type       disp_drv_crit_sect = {0};
 static disp_info_type           disp_drv_info = {0};
@@ -248,7 +249,10 @@ SIDE EFFECTS
 static void disp_drv_off(void)
 {
     rex_enter_crit_sect(&disp_drv_crit_sect);
-
+	#ifdef FEATURE_VERSION_K202
+    MSG_FATAL("disp_drv_off......................",0,0,0);
+	gpio_out(GPIO_10,(GPIO_ValueType)GPIO_LOW_VALUE);
+	#endif
     if(disp_drv_state.disp_powered_up && disp_drv_state.display_on)
     {
         disp_drv_set_backlight(DISP_DRV_MIN_BACKLIGHT);
@@ -281,7 +285,10 @@ SIDE EFFECTS
 static void disp_drv_on(void)
 {
     rex_enter_crit_sect(&disp_drv_crit_sect);
-
+	#ifdef FEATURE_VERSION_K202
+    MSG_FATAL("disp_drv_on......................",0,0,0);
+	gpio_out(GPIO_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
+	#endif
     if(disp_drv_state.disp_powered_up && !disp_drv_state.display_on)
     {
         disp_drv_ic.disp_ic_sleep(FALSE);
