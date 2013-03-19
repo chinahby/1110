@@ -62,8 +62,6 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_AUDIO_EQUALIZER 
 #define FEATURE_AUDIO_QCONCERT 
 #define FEATURE_AUDIO_SPECTRUM_ANALYZER 
-#define FEATURE_CALL_RECORDER
-
 #endif
 
 #ifndef TARGSBW2_H
