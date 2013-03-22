@@ -2409,7 +2409,7 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
     //AEEBattLevel *pBattLevel;
     AEEBatteryChargerStatus nChargerStatus;
     AEEBatteryStatus nBattStatus;   
-    
+    //MSG_FATAL("CoreApp_HandleBattNotify..............",0,0,0);
     if ((NULL == pMe) || (pNotify == NULL))
     {
         return FALSE;
@@ -2466,6 +2466,7 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
 #else
                     CoreApp_Process_Batty_Msg(pMe, IDS_FULLY_CHARGED);
 #endif
+					//MSG_FATAL("ISHELL_CancelTimer.............11111111111",0,0,0);
                     (void) ISHELL_CancelTimer(pMe->a.m_pIShell, CCharger_EnableICONCB, (void *) pMe);
                     if(pMe->m_pIAnn != NULL)
                     {
@@ -2495,6 +2496,7 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
                     {
                         break;
                     }
+					//MSG_FATAL("ISHELL_CancelTimer.............2222222222222",0,0,0);
 					pMe->m_bBatteryActive=FALSE;
                     (void) ISHELL_SetTimer(pMe->a.m_pIShell,1000, CCharger_EnableICONCB, (void *) pMe);
                     break;
@@ -3063,9 +3065,9 @@ static void CCharger_EnableICONCB(void *pUser)
 {
     CCoreApp    *pMe = (CCoreApp *)pUser;
     static int BattLevel = 0;
-    
+    //MSG_FATAL("CCharger_EnableICONCB..............",0,0,0);
     (void) ISHELL_CancelTimer(pMe->a.m_pIShell, CCharger_EnableICONCB, (void *) pMe);
-
+	//MSG_FATAL("ISHELL_CancelTimer.............3333333333333===%d",pMe->m_bExtPwrState,0,0);
     if (TRUE == pMe->m_bExtPwrState)
     {
         uint32 nBattState = 0;
@@ -3077,6 +3079,11 @@ static void CCharger_EnableICONCB(void *pUser)
         
         nBattState = CoreApp_ConvertBattLvToAnnunState(BattLevel);
         IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_BATT, nBattState);
+		#ifdef FEATURE_VERSION_N68
+		IANNUNCIATOR_Redraw(pMe->m_pIAnn);
+		CoreApp_UpdateAnnunciator(pMe);
+		ISHELL_PostEvent(pMe->a.m_pIShell,AEECLSID_CORE_APP,EVT_USER_REDRAW, 0,0); 
+		#endif
         (void) ISHELL_SetTimer(pMe->a.m_pIShell, 1000, CCharger_EnableICONCB, (void *) pMe);
     }
     else
@@ -3937,7 +3944,7 @@ int CoreApp_GetBatteryLevel(CCoreApp *pMe)
 static uint32 CoreApp_ConvertBattLvToAnnunState(int nBattLevel)
 {
     uint32 nState = 0;
-    
+    //MSG_FATAL("CoreApp_ConvertBattLvToAnnunState............==%d",nBattLevel,0,0);
     if(nBattLevel == 0)
     {
         nState = ANNUN_STATE_BATT_LOW;
