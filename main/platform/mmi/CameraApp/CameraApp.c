@@ -540,6 +540,7 @@ static int CameraApp_InitAppData(CCameraApp *pMe)
 #ifdef FEATURE_USES_MMS  
     pMe->m_isFormMMS = FALSE;
 #endif
+    pMe->m_bIsSnaping = FALSE;  //Add By zzg 2013_03_21
 
 #ifdef CAMERA_RECORD_DEBUG
     pMe->m_isStartFromFacebook = TRUE;

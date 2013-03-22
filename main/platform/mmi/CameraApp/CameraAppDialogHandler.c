@@ -210,7 +210,6 @@ static void CameraApp_PrevewTimeout(void *pme);
 // PICDialog的定时处理函数
 static void CameraApp_PicDialogTimeout(void *pme);
 
-
 // 存储空间的检测函数
 static boolean CameraApp_IsEnoughfMemorySpace(CCameraApp *pMe);
 
@@ -1188,6 +1187,29 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                 break;
 
             case AVK_INFO:
+                MSG_FATAL("***zzg Camera AVK_INFO m_bIsSnaping=%d***",pMe->m_bIsSnaping,0,0);
+                    
+                //Add By zzg 2013_03_21
+                if (pMe->m_isRecordMode == FALSE)   //防止拍照时快速按键造成卡死
+                {
+    				if (pMe->m_bIsSnaping == FALSE)
+                    {
+                        pMe->m_bIsSnaping = TRUE;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                else
+                {
+                    if (pMe->m_nCameraState == CAM_STARTINGRECORD)//防止录像时快速按键造成卡死
+                    {
+                        break;
+                    }                    
+                }
+                //Add End
+                
                 // 防止快速按键，导致hotkey Text存在于LCD上 
                 MSG_FATAL("AVK_INFO...................",0,0,0);
                 ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);
@@ -1197,7 +1219,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                               &pMe->n_nCameraFlash,
                               sizeof(pMe->n_nCameraFlash));
 #endif
-				
+                
 				MSG_FATAL("AVK_INFO...................end",0,0,0);
                 if ( pMe->m_isRecordMode == FALSE)
                 {
@@ -1207,7 +1229,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
 	                	if ( pMe->m_isStartFromFacebook == TRUE)
 	                	{
 #if defined(FEATURE_VERSION_C337)   	 
-				pMe->m_wMsgID = IDS_NOMEMORY;
+				            pMe->m_wMsgID = IDS_NOMEMORY;
 #else
 	                    	pMe->m_wMsgID = IDS_MSG_NOMEMORY;
 #endif
@@ -1217,18 +1239,18 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
 							if(pMe->m_bMemoryCardExist)
 		                    {
 #if defined(FEATURE_VERSION_C337)   	 
-				pMe->m_wMsgID = IDS_NOMEMORY;
+    				            pMe->m_wMsgID = IDS_NOMEMORY;
 #else
-	                    	pMe->m_wMsgID = IDS_MSG_NOMEMORY;
+    	                    	pMe->m_wMsgID = IDS_MSG_NOMEMORY;
 #endif
 		                    }
 		                    else
 		                    {
-		                    #ifdef FEATURE_VERSION_FLEXI203P
+#ifdef FEATURE_VERSION_FLEXI203P
 								pMe->m_wMsgID = IDS_MSG_PHONE_MEMERY_FULL_AND_NOSDCARD;
-	                       	#else
+#else
 	                        	pMe->m_wMsgID = IDS_MSG_NOSDCARD;
-	                       	#endif
+#endif
 		                    }
 	                    }
 
@@ -5611,6 +5633,10 @@ static void CameraApp_HandleSnapshotPic(CCameraApp *pMe)
             IImage_Release(pImage);
         }
     }
+
+    //Add By zzg 2013_03_22
+    pMe->m_bIsSnaping = FALSE;
+    //Add End
     
     CameraApp_DrawBottomBarText(pMe, BTBAR_SAVE_DELETE);
     
