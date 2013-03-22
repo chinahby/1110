@@ -3080,8 +3080,8 @@ static void CCharger_EnableICONCB(void *pUser)
         nBattState = CoreApp_ConvertBattLvToAnnunState(BattLevel);
         IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_BATT, nBattState);
 		#ifdef FEATURE_VERSION_N68
-		IANNUNCIATOR_Redraw(pMe->m_pIAnn);
-		CoreApp_UpdateAnnunciator(pMe);
+		//IANNUNCIATOR_Redraw(pMe->m_pIAnn);
+		//CoreApp_UpdateAnnunciator(pMe);
 		ISHELL_PostEvent(pMe->a.m_pIShell,AEECLSID_CORE_APP,EVT_USER_REDRAW, 0,0); 
 		#endif
         (void) ISHELL_SetTimer(pMe->a.m_pIShell, 1000, CCharger_EnableICONCB, (void *) pMe);
