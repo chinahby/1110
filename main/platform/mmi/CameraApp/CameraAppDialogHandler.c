@@ -904,12 +904,12 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
         case EVT_DIALOG_INIT:
             pMe->m_bCapturePic = FALSE;
              // 如下代码限制在此界面的快速按键
-            #if defined (FEATURE_VERSION_C310) || defined (FEATURE_VERSION_C337)
+            //#if defined (FEATURE_VERSION_C310) || defined (FEATURE_VERSION_C337)
             (void)ISHELL_SetTimer( pMe->m_pShell,
                                                 1200,
                                                 CameraApp_PrevewTimeout,
                                                 pMe );
-            #endif
+            //#endif
             IDISPLAY_SetClipRect(pMe->m_pDisplay, NULL); 
 
 
@@ -974,9 +974,9 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
 		                         TRUE);
 		    }
  #endif
-            #if defined (FEATURE_VERSION_C310) || defined (FEATURE_VERSION_C337)
+            //#if defined (FEATURE_VERSION_C310) || defined (FEATURE_VERSION_C337)
                 pMe->m_bCanPress = FALSE;
-            #endif
+            //#endif
             (void)ISHELL_CancelTimer(pMe->m_pShell,
                                      CameraApp_PrevewTimeout,
                                      pMe);
@@ -1095,12 +1095,12 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
             return TRUE;
 
         case EVT_KEY:
-            #if defined (FEATURE_VERSION_C310) || defined (FEATURE_VERSION_C337)
+            //#if defined (FEATURE_VERSION_C310) || defined (FEATURE_VERSION_C337)
                 if(!pMe->m_bCanPress)
                 {
                     return TRUE;
                 }
-            #endif
+            //#endif
             MSG_FATAL("CameraApp_PreviewHandleEvent EVT_KEY wParam=0x%x", wParam,0,0);
             switch(wParam)
             {
@@ -1122,12 +1122,12 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
 
         case EVT_KEY_PRESS:    
 			MSG_FATAL("***zzg CameraApp_PreviewHandleEvent EVT_KEY_PRESS wParam=%x, m_bCapturePic=%x", wParam,pMe->m_bCapturePic,0);
-            #if defined (FEATURE_VERSION_C310) || defined (FEATURE_VERSION_C337)
+            //#if defined (FEATURE_VERSION_C310) || defined (FEATURE_VERSION_C337)
                 if(!pMe->m_bCanPress)
                 {
                     return TRUE;
                 }
-            #endif
+            //#endif
             // 如果当前在拍照，不处理AVK_END按键以外的按键事件
             if((wParam != AVK_END) && (pMe->m_bCapturePic == TRUE))
             {
@@ -5164,9 +5164,9 @@ static void CameraApp_PrevewTimeout(void *pme)
         
     if(NULL == pMe)
         return;
-#if defined (FEATURE_VERSION_C310) || defined (FEATURE_VERSION_C337)
+//#if defined (FEATURE_VERSION_C310) || defined (FEATURE_VERSION_C337)
     pMe->m_bCanPress = TRUE;
-#endif
+//#endif
 }
 
 static boolean CameraApp_FindMemoryCardExist(CCameraApp *pMe)
