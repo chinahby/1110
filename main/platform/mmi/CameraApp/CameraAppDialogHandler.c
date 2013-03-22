@@ -904,7 +904,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
         case EVT_DIALOG_INIT:
             pMe->m_bCapturePic = FALSE;
              // 如下代码限制在此界面的快速按键
-            #ifdef FEATURE_VERSION_C310
+            #if defined (FEATURE_VERSION_C310) || defined (FEATURE_VERSION_C337)
             (void)ISHELL_SetTimer( pMe->m_pShell,
                                                 1200,
                                                 CameraApp_PrevewTimeout,
@@ -974,7 +974,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
 		                         TRUE);
 		    }
  #endif
-            #ifdef FEATURE_VERSION_C310
+            #if defined (FEATURE_VERSION_C310) || defined (FEATURE_VERSION_C337)
                 pMe->m_bCanPress = FALSE;
             #endif
             (void)ISHELL_CancelTimer(pMe->m_pShell,
@@ -1095,7 +1095,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
             return TRUE;
 
         case EVT_KEY:
-            #ifdef FEATURE_VERSION_C310
+            #if defined (FEATURE_VERSION_C310) || defined (FEATURE_VERSION_C337)
                 if(!pMe->m_bCanPress)
                 {
                     return TRUE;
@@ -1122,7 +1122,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
 
         case EVT_KEY_PRESS:    
 			MSG_FATAL("***zzg CameraApp_PreviewHandleEvent EVT_KEY_PRESS wParam=%x, m_bCapturePic=%x", wParam,pMe->m_bCapturePic,0);
-            #ifdef FEATURE_VERSION_C310
+            #if defined (FEATURE_VERSION_C310) || defined (FEATURE_VERSION_C337)
                 if(!pMe->m_bCanPress)
                 {
                     return TRUE;
@@ -5164,7 +5164,7 @@ static void CameraApp_PrevewTimeout(void *pme)
         
     if(NULL == pMe)
         return;
-#ifdef FEATURE_VERSION_C310
+#if defined (FEATURE_VERSION_C310) || defined (FEATURE_VERSION_C337)
     pMe->m_bCanPress = TRUE;
 #endif
 }
