@@ -3142,7 +3142,7 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_IconTitle[8]     = IDS_MAIN_MENU_CALENDAR;	
     pMe->m_IconTitle[9]     = IDS_MAIN_MENU_APPLICATION;
     pMe->m_IconTitle[10]    = IDS_MAIN_MENU_GAMES;
-    pMe->m_IconTitle[11]    = IDS_MAIN_MENU_UTK;
+    pMe->m_IconTitle[11]    = IDS_MAIN_WAPBROWSER;
 #elif defined(FEATURE_VERSION_W317A)
     pMe->m_IconTitle[0]     = IDS_MAIN_MENU_CONTACTS;
     pMe->m_IconTitle[1]     = IDS_MAIN_MENU_RECENTCALLS_C337;	//IDS_MAIN_MENU_RECENTCALLS;

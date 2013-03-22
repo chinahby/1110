@@ -176,6 +176,7 @@ include $(TVAPP)/TVApp.min
 endif
 
 ifeq ($(USES_RESDIR),C310) 
+include $(UCWEB)/UCWEB.min
 else
 include $(UCWEB)/UCWEB.min
 endif

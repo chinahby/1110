@@ -1161,7 +1161,14 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
 #endif		
 
 #if  defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W027)
+#if defined(FEATURE_VERSION_C310)
+		if((wParam == AVK_CLR)||(wParam == AVK_INFO)||(wParam == AVK_SEND)||(wParam == AVK_1)||
+		   (wParam == AVK_2)||(wParam == AVK_3)||(wParam == AVK_4)||(wParam == AVK_5)||(wParam == AVK_6)||(wParam == AVK_7)||
+		   (wParam == AVK_8)||(wParam == AVK_9)||(wParam == AVK_0)||(wParam == AVK_STAR)||(wParam == AVK_POUND)||
+		   (wParam == AVK_RIGHT)||(wParam == AVK_DOWN)||(wParam == AVK_UP)||(wParam == AVK_LEFT))
+#else
         if(wParam == AVK_CLR)			
+#endif
 #else
         if(wParam == AVK_SELECT)		
 #endif            
@@ -1170,8 +1177,16 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
 #if (defined( FEATURE_VERSION_C337) || defined( FEATURE_VERSION_C316) )
 				;
 #else
+#if defined(FEATURE_VERSION_C310)
+				if (cls == AEECLSID_CORE_APP)		//For Emergency Call
+				{
+					OEMPriv_ResumeBREW();
+					return FALSE; 
+				}
+#else
 				OEMPriv_ResumeBREW();
 				return FALSE; 
+#endif
 #endif				
 #else				
 				if (cls == AEECLSID_CORE_APP)		//For Emergency Call
@@ -1204,6 +1219,7 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
         }
 
 #if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W027)
+
         if(wParam== AVK_CLR||wParam == AVK_END || wParam == AVK_POWER || wParam == AVK_HEADSET_CONNECT || wParam == AVK_HEADSET_DISCONNECT)
 #else
         if(wParam== AVK_SELECT||wParam == AVK_END || wParam == AVK_POWER || wParam == AVK_HEADSET_CONNECT || wParam == AVK_HEADSET_DISCONNECT)			

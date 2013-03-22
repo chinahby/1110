@@ -41,13 +41,16 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 
 #define FEATURE_ARPHIC_LAYOUT_ENGINE
 #define FEATURE_CAMERA_MULTI_NEW_AUTO_DETECT
+#define FEATURE_AMR_FIXED
 
-//#define FEATURE_CALL_RECORDER
+#define FEATURE_AUDIO_EQUALIZER 
+#define FEATURE_AUDIO_QCONCERT 
+#define FEATURE_AUDIO_SPECTRUM_ANALYZER 
 
 #endif
 
 #ifndef TARGSBW2_H
-   #include "targsb12832.h"
+   #include "targsb12864.h"
 #endif
 
 
@@ -55,7 +58,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_STD_MIDI 
 //#define FEATURE_GSTK 
 #define FEATURE_DIAG_LOWMEM 
-//#define FEATURE_AMR_VOCODER 
+#define FEATURE_AMR_VOCODER
 #define T_QSC1110
 #define CUST_MOB_MODEL 25
 #define FEATURE_PLL_192 
@@ -71,9 +74,11 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //#define FEATURE_AUDIO_SPECTRUM_ANALYZER 
 #define CLKRGM_INCLUDE_TD 
 #define FEATURE_MMODE_LOW_MEM_TARGET 
-#define FEATURE_LOWTIER_LOWMEM 
+//#define FEATURE_LOWTIER_LOWMEM 
 #define FEATURE_REX_IPC 
 #define FEATURE_ASYNC_DATA_NOOP 
+#define HS_USB_SCSI_BUFFER_SIZE (512 * 2)
+#define FEATURE_HFAT
 #define FEATURE_HS_USB_PMIC_PHY 
 #define FEATURE_HS_USB_USER_EVENT_POST 
 #define FEATURE_RRC_SIB_HEAP 
@@ -85,10 +90,13 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_DIAG_SMALL_BUFFER 
 #define FEATURE_IPC_SMALL_MEMORY_POOL 
 #define FEATURE_APP_DIALER 
+#define FEATURE_MM_REC 
 //#define FEATURE_VOC_ADPCM 
 #define FEATURE_QVGANOTSUPPORTED 
+#define FEATURE_AUDFMT_AMR 
 #define FEATURE_MDP_LAYER1_PRIMARY 
 #define FEATURE_DISP_TASK 
+#define FEATURE_BUILD_MMC
 #define FEATURE_RUIM 
 #define FEATURE_UIM1 
 #define FEATURE_UIM_PMIC_ON_UIM1 
@@ -249,6 +257,9 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_SDCC_CLK_CONFIG
 #define FEATURE_HS_USB_MS_FD
 #define FEATURE_AUDIO_CAMERA_CONCURRENCY // FOR MP3
+#define FEATURE_AAC
+#define FEATURE_AAC_PLUS
+#define FEATURE_ENHANCED_AAC_PLUS
 #endif
 
 #include "custdisplay.h"
@@ -284,6 +295,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #include "custui.h"
 #include "custmcs.h"
 #include "custpmic3.h"
+#include "custmp4.h"
 #include "custefs.h"
 //#include "custfmrds.h"
 #include "custnvm.h"
