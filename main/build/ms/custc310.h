@@ -39,6 +39,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //#define FEATURE_SPN_FROM_BSMCCMNC
 //#define FEATURE_LONG_NETLOCK   //add by yangdecai
 
+#define FEATURE_MOVIE_RECORD_SUPPORT
 #define FEATURE_ARPHIC_LAYOUT_ENGINE
 #define FEATURE_CAMERA_MULTI_NEW_AUTO_DETECT
 #define FEATURE_AMR_FIXED
@@ -266,6 +267,9 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 
 
 #ifdef USES_CAMERA
+#ifdef FEATURE_MOVIE_RECORD_SUPPORT
+#include "custcamcorder.h"
+#endif
 #include "custcamera.h"
 #undef USE_CAMSENSOR_SIV121A
 #undef USE_CAMSENSOR_SIV120A
