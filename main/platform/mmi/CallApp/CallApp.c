@@ -6110,6 +6110,7 @@ static void CallApp_Add_OneCall_To_History(CCallApp       *pMe,
 
     if ((NULL != number) && (WSTRLEN(number)>0))
     {
+/*    
 #if defined(FEATURE_VERSION_C337) 
         {
         	if((WSTRLEN(number)>=4) && WSTRNCMP(number,L"+91",3)==0)
@@ -6132,6 +6133,7 @@ static void CallApp_Add_OneCall_To_History(CCallApp       *pMe,
         	}								
         }												
 #endif
+*/
 		
         nSize = (WSTRLEN(number)+1)*sizeof(char);
         pInNumber = (char *)MALLOC(nSize);
