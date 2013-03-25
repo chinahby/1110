@@ -905,8 +905,9 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
             pMe->m_bCapturePic = FALSE;
              // 如下代码限制在此界面的快速按键
             //#if defined (FEATURE_VERSION_C310) || defined (FEATURE_VERSION_C337)
+            //1200
             (void)ISHELL_SetTimer( pMe->m_pShell,
-                                                1200,
+                                                300,
                                                 CameraApp_PrevewTimeout,
                                                 pMe );
             //#endif
@@ -2058,6 +2059,11 @@ static boolean CameraApp_VideoHandleEvent(CCameraApp *pMe, AEEEvent eCode, uint1
 				DrawBottomBar(pMe->m_pDisplay, &BarParam);					
 			}            
 
+            //Add By zzg 2013_03_25
+            pMe->m_bIsSnaping = FALSE;
+            pMe->m_bCanPress = TRUE;
+            //Add End            
+    
 			IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
             return TRUE;
         }
@@ -2190,8 +2196,7 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
 			{
 				pMe->m_bIsPreview = FALSE;
 	            pMe->m_nCameraState = CAM_START;
-	            
-	            pMe->m_wMsgID = IDS_MSG_WAITING;
+                pMe->m_wMsgID = IDS_MSG_WAITING;            
 	            pMe->m_nMsgTimeout = TIMEOUT_MS_MSGBOX;
 	            
 				(void)ISHELL_LoadResString(pMe->m_pShell,
@@ -2209,6 +2214,9 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
 	            IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn,AEECLSID_DISPLAY1,TRUE);            
 			
 			}
+            
+            pMe->m_bIsSnaping = FALSE;  //Add By zzg 2013_03_22
+           
             return TRUE;
         
         case EVT_DIALOG_START:
@@ -5634,8 +5642,9 @@ static void CameraApp_HandleSnapshotPic(CCameraApp *pMe)
         }
     }
 
-    //Add By zzg 2013_03_22
+    //Add By zzg 2013_03_22   
     pMe->m_bIsSnaping = FALSE;
+    pMe->m_bCanPress = TRUE;        
     //Add End
     
     CameraApp_DrawBottomBarText(pMe, BTBAR_SAVE_DELETE);
