@@ -444,6 +444,7 @@ SIDE EFFECTS
 boolean camsensor_sp0a18_init(camsensor_function_table_type *camsensor_function_table_ptr, camctrl_tbl_type *camctrl_tbl_ptr)
 {
     uint8  manufacturer_id_msb;
+    int j = 3;
 
 	MSG_FATAL("camsensor_SP0A18_ycbcr_init()\n",0,0,0);///yty 
 
@@ -462,12 +463,38 @@ boolean camsensor_sp0a18_init(camsensor_function_table_type *camsensor_function_
 
 	/* 3. Read sensor manufacturer ID MSB:       */
 	camsensor_SP0A18_ycbcr_i2c_write_byte(0xFD,0x00);
-
+   
+    /*
 	if (camsensor_SP0A18_ycbcr_i2c_read_byte(0x02, &manufacturer_id_msb) == FALSE) ///0x92
 	{
 		MSG_FATAL("camsensor_SP0A18_read REG0x1 fail %x ",manufacturer_id_msb,0,0);///yty 
 		return FALSE;
 	}
+    */
+
+    //Add By zzg 2013_03_25
+    // 3 times try
+    while(j>0)
+    {
+        if (camsensor_SP0A18_ycbcr_i2c_read_byte(0x02, &manufacturer_id_msb) == TRUE) ///0x92
+    	{
+    	    break;
+    	}
+        else
+        {
+    		MSG_FATAL("camsensor_SP0A18_read REG0x1 fail %x ",manufacturer_id_msb,0,0);///yty     		
+        }
+        
+        j--;
+        i2c_init();
+    }
+
+    
+    if (j<=0)
+    {
+      return FALSE;  
+    }
+    //Add End
 
 	if ( manufacturer_id_msb != 0x0A )
 	{
