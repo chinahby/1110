@@ -2008,7 +2008,21 @@ static boolean CameraApp_VideoHandleEvent(CCameraApp *pMe, AEEEvent eCode, uint1
            
 			if (WSTRLEN(wfileName)>0)
 			{      
-			    DrawTextWithProfile(pMe->m_pShell, 
+#ifdef FEATURE_VERSION_C337
+            pMe->m_rc.y += 20;    
+            DrawTextWithProfile(pMe->m_pShell, 
+			                        pMe->m_pDisplay, 
+			                        RGB_BLACK, 
+			                        AEE_FONT_NORMAL, 
+			                        wfileName, 
+			                        -1, 
+			                        0, 
+			                        0, 
+			                        &pMe->m_rc, 
+			                        IDF_ALIGN_TOP|IDF_ALIGN_LEFT|IDF_TEXT_TRANSPARENT);
+            pMe->m_rc.y -= 20; 
+#else
+            DrawTextWithProfile(pMe->m_pShell, 
 			                        pMe->m_pDisplay, 
 			                        RGB_BLACK, 
 			                        AEE_FONT_NORMAL, 
@@ -2018,6 +2032,8 @@ static boolean CameraApp_VideoHandleEvent(CCameraApp *pMe, AEEEvent eCode, uint1
 			                        0, 
 			                        &pMe->m_rc, 
 			                        IDF_ALIGN_TOP|IDF_ALIGN_RIGHT|IDF_TEXT_TRANSPARENT);
+#endif
+			    
 			}
             #ifdef FEATURE_VERSION_W317A
             StringBgMsgImg = ISHELL_LoadResImage(pMe->m_pShell,
