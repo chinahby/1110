@@ -203,7 +203,7 @@ Added comment      When reading only one byte, LAST_BYTE is set in
 #endif
 
 LOCAL uint32 clk_i2c_freq_khz = 0;
-#ifdef FEATURE_VERSION_C316
+#if defined (FEATURE_VERSION_C316) || defined (FEATURE_VERSION_C337)
 #define FEATURE_I2C_STUCK_RECOVERY
 #endif
 /* <EJECT> */
