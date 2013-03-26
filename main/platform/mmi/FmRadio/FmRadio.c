@@ -830,6 +830,8 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
             }
 
             pMe->m_bSuspending  = FALSE;
+
+            pMe->fmVolumeStop  = TRUE;
             
             if(APP_MEDIA_IMPACT_BY_MP3 == app_media_scheduler())
             {
