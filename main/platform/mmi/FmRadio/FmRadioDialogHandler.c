@@ -730,7 +730,7 @@ static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier)
         }
         else if( key == AVK_POUND)
         {
-            return TRUE;
+           return TRUE;
         }
         else
         {
@@ -1204,9 +1204,21 @@ __handleKeyEvent_input_channel_done__:
 				{
 					ISHELL_CancelTimer( pMe->m_pShell, (PFNNOTIFY)tuneVolumeByLeftRightArrowKeyCloseCb, pMe);
                     pMe->fmVolumeStop=TRUE;
+#ifdef FEATURE_VERSION_C337
+					if (key == AVK_STAR)
+					{
+						key = AVK_DOWN;
+					}
+                    else if (key == AVK_POUND)
+					{
+						key = AVK_UP;
+					}	
+                    
+#endif                       
 					changeVolume( pMe, key);
 					repaint( pMe, TRUE);
 					ISHELL_SetTimer( pMe->m_pShell, 3000, (PFNNOTIFY)tuneVolumeByLeftRightArrowKeyCloseCb, pMe);
+
 				}
 				else
 #endif                   
@@ -1557,6 +1569,9 @@ static void changeVolume( CFmRadio *pMe, uint16 keyCode)
     static const int limitValue[] = { 15, 0};
     static const int increment[]  = { 3, -3};
 	int theKey;
+
+    MSG_FATAL("***zzg changeVolume***",0,0,0);
+    
 	if(keyCode == AVK_I || keyCode == AVK_O)
 	{
 		if(keyCode == AVK_O)
@@ -1797,10 +1812,8 @@ static void popOptionMenu( CFmRadio *pMe)
                         IDS_FMRADIO_OPTION_MENU_GLOBAL_SEARCH,
                         #endif						
                         #endif                        
-						IDS_SAVE,
-    #ifndef FEATURE_VERSION_C337						
-                        IDS_FMRADIO_SPEAKER,
-    #endif                        
+						IDS_SAVE,    					
+                        IDS_FMRADIO_SPEAKER,                      
 	#endif
 	#if FEATURE_FMRADIO_SUPPORT_BACKGROUND
 						IDS_FMRADIO_OPTION_MENU_PLAY_ON_BACKGROUND
@@ -1821,10 +1834,18 @@ static void popOptionMenu( CFmRadio *pMe)
 			continue;
 		}
 #endif
+
+#ifdef FEATURE_VERSION_C337
+        if(resId[i]==IDS_FMRADIO_SPEAKER)
+        {
+          continue;
+        }
+#else
         if(pMe->fmSpeaker && resId[i]==IDS_FMRADIO_SPEAKER)
         {
           resId[i]=IDS_FMRADIO_HEADSET;
         }
+#endif        
 		IMENUCTL_AddItem( pMe->m_pMenu, resFile[i], resId[i], resId[i], 0, 0);
 	}
 #else
