@@ -3109,6 +3109,10 @@ static void CameraApp_SetCFGMenuIcon(IMenuCtl *pm, uint16 listId, boolean bSel)
     MEMSET(&cai, 0, sizeof(cai));
     cai.pszResImage = AEE_APPSCOMMONRES_IMAGESFILE;
     cai.wImage = bSel ? IDB_RADIO_FILLED : IDB_RADIO_UNFILLED;
+
+    MSG_FATAL("***zzg CameraApp_SetCFGMenuIcon listId=%d, bSel=%d***", listId, bSel, 0);
+
+    
     (void)IMENUCTL_SetItem(pm, listId, MSIF_IMAGE, &cai);
     if (bSel)
     {
@@ -3811,6 +3815,21 @@ static void CameraApp_PopMenu_SizeInit(CCameraApp *pMe, IMenuCtl *popMenu)
                           CFGI_CAMERA_SIZE,
                           &pMe->m_nCameraSize,
                           sizeof(pMe->m_nCameraSize));
+
+    MSG_FATAL("***zzg CameraApp PopMenu SizeInit m_nCameraSize=%d***", pMe->m_nCameraSize, 0, 0);
+
+    //Add By zzg 2013_03_27
+    if(pMe->m_sensor_model == 10)
+    {
+#ifdef FEATURE_MOVIE_RECORD_SUPPORT
+        if ( pMe->m_isRecordMode )
+        {
+            if(pMe->m_nCameraSize >= (sizeof(g_VideoSizeCFG_10)/sizeof(CCameraSize)-1))
+                pMe->m_nCameraSize=OEMNV_CAMERA_SIZE_INDEX_0;
+        }
+#endif        
+    }
+    //Add End
 
     CameraApp_SetCFGMenuIcon(popMenu, pMe->m_nCameraSize, TRUE);
 }
@@ -4841,7 +4860,6 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
 		}
     }
 #else
-	MSG_FATAL("***zzg CPreviewStart ***", 0, 0, 0);
 
     if(pMe->m_sensor_model == 30)
     {
@@ -4857,10 +4875,11 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
 #ifdef FEATURE_MOVIE_RECORD_SUPPORT
 		if ( pMe->m_isRecordMode )
 		{
-			if(pMe->m_nCameraSize >= (sizeof(g_VideoSizeCFG_10)/sizeof(CCameraSize)))
+			if(pMe->m_nCameraSize >= (sizeof(g_VideoSizeCFG_10)/sizeof(CCameraSize)-1))
 				pMe->m_nCameraSize=OEMNV_CAMERA_SIZE_INDEX_0;
 			captureSize.cx = g_VideoSizeCFG_10[pMe->m_nCameraSize].dx;
-	        captureSize.cy = g_VideoSizeCFG_10[pMe->m_nCameraSize].dy;
+	        captureSize.cy = g_VideoSizeCFG_10[pMe->m_nCameraSize].dy;            
+            
 #ifndef FEATURE_CAMERA_NOFULLSCREEN	        
 			displaySize.cx = SCREEN_WIDTH;
 	        displaySize.cy = SCREEN_HEIGHT;
@@ -4885,6 +4904,8 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
 #endif
         
     }
+
+    MSG_FATAL("***zzg CameraApp CPreview m_nCameraSize=%d***", pMe->m_nCameraSize, 0, 0);
 
 	MSG_FATAL("***zzg CPreviewStart captureSize:%d,%d***", captureSize.cx, captureSize.cy, 0);
 	MSG_FATAL("***zzg CPreviewStart displaySize:%d,%d***", displaySize.cx, displaySize.cy , 0);
