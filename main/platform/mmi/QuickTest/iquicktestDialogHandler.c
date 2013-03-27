@@ -3488,14 +3488,69 @@ static void QuickTest_Ringer(CQuickTest *pMe)
 
 ±¸×¢£º:
 ==============================================================================*/
+#define INCREMENT_ESCALATING_RINGER_T(vol) \
+							   ( (vol) = (OEMSound_Volume_Type)((int)(vol) + 2))
+static void OEMALERT_SetRingerVol_t(CQuickTest *pMe, boolean bEscalate)
+{
+	AEESoundInfo         si; 
+    OEMSound_Volume_Type vol;
+    
+    MEMSET(&si, 0, sizeof(si));
+    vol = 5;
+    if (OEMSOUND_ESCALATING_VOL == vol) 
+    {
+        vol = OEMSOUND_AVG_VOL;
+    }
+    
+    si.eDevice = AEE_SOUND_DEVICE_HANDSET;
+    si.eMethod = AEE_SOUND_METHOD_MIDI; 
+    (void) ISOUND_Set(pMe->m_pISound, &si);
+    ISOUND_SetVolume(pMe->m_pISound,
+                    GET_ISOUND_VOL_LEVEL((uint8) vol));
+    
+    si.eDevice = AEE_SOUND_DEVICE_STEREO_HEADSET; //AEE_SOUND_DEVICE_HEADSET;
+    si.eMethod = AEE_SOUND_METHOD_MIDI;
+    (void) ISOUND_Set(pMe->m_pISound, &si);
+    ISOUND_SetVolume(pMe->m_pISound,
+                    GET_ISOUND_VOL_LEVEL((uint8) vol));
+    
+    si.eDevice = AEE_SOUND_DEVICE_HANDSET;
+    si.eMethod = AEE_SOUND_METHOD_RING;
+    (void) ISOUND_Set(pMe->m_pISound, &si);
+    ISOUND_SetVolume(pMe->m_pISound,
+                    GET_ISOUND_VOL_LEVEL((uint8) vol));
+    
+    si.eDevice = AEE_SOUND_DEVICE_HANDSET;
+    si.eMethod = AEE_SOUND_METHOD_VOICE;
+    (void) ISOUND_Set(pMe->m_pISound, &si);
+    ISOUND_SetVolume(pMe->m_pISound,
+                    GET_ISOUND_VOL_LEVEL((uint8) vol));
+    
+    si.eDevice = AEE_SOUND_DEVICE_STEREO_HEADSET; //AEE_SOUND_DEVICE_HEADSET;
+    si.eMethod = AEE_SOUND_METHOD_VOICE;
+    (void) ISOUND_Set(pMe->m_pISound, &si);
+    ISOUND_SetVolume(pMe->m_pISound,
+                    GET_ISOUND_VOL_LEVEL((uint8) vol));
+    
+    si.eDevice = AEE_SOUND_DEVICE_STEREO_HEADSET; //AEE_SOUND_DEVICE_HEADSET;
+    si.eMethod = AEE_SOUND_METHOD_RING;
+    (void) ISOUND_Set(pMe->m_pISound, &si);
+    ISOUND_SetVolume(pMe->m_pISound,
+                    GET_ISOUND_VOL_LEVEL((uint8) vol));                    
+}
+
+
 static void QuickTest_Vibrate(CQuickTest *pMe)
 {
     static boolean vib = FALSE;
+	int vol = 5;
 
     // Alternate between vibrating and not
     vib = !vib;
     if( vib )
     {
+    	INCREMENT_ESCALATING_RINGER_T(vol);
+        OEMALERT_SetRingerVol_t(pMe, TRUE);
         ISOUND_Vibrate(pMe->m_pISound, 3000);
         (void)ISHELL_SetTimer(pMe->m_pShell,
                              3000,
