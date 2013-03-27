@@ -908,7 +908,7 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
                         DRAW_BOTTOMBAR(BTBAR_FULLSCREEN_PAUSE_STOP);
 
                         IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
-
+						
                         if(pMe->IsPause)// 当前状态为暂停时
                         {                             
                             IMEDIA_Resume((IMedia*)pMe->m_pMedia);
@@ -924,7 +924,11 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
                             VideoPlayer_RefreshPlayerFileName(pMe); //刷新文件名
                             VideoPlayer_PlayVideo(pMe);
                             //ISHELL_SetTimer(pMe->m_pShell,50,(PFNNOTIFY)VideoPlayer_PlayVideo,pMe);
-                        }                        
+                        } 
+						//add by yangdecai 
+						//lai dianhua 声音设备变小
+					    (void)IMEDIA_SetAudioDevice((IMedia *)pMe->m_pMedia, HS_HEADSET_ON()?AEE_SOUND_DEVICE_STEREO_HEADSET:AEE_SOUND_DEVICE_SPEAKER);
+        				(void)IMEDIA_SetVolume((IMedia*)pMe->m_pMedia, 80/*pMe->totalvolume*/); //设置当前音量大小
                         
                         pMe->IsPlay=TRUE;
                         pMe->IsPause=FALSE;
