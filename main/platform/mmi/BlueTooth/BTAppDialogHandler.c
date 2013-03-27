@@ -1111,6 +1111,7 @@ static boolean HandleSearchResultDialogEvent(CBTApp *pMe,
 							pMe->mRM.uGetNameDevIdx = i;
 						}
 
+                        /*
 						//Print the log Start						
 						{
 							char btname[AEEBT_MAX_DEVICENAME_LEN+1];
@@ -1122,7 +1123,8 @@ static boolean HandleSearchResultDialogEvent(CBTApp *pMe,
 							DBGPRINTF("***zzg SrhRltDlgEvt 2 btname=%s***", btname);
 							DBGPRINTF("***zzg SrhRltDlgEvt 2 btnickname=%s***", btnickname);
 						}						
-						//Print the log End						
+						//Print the log End		
+						*/
 					}
 				}
 				else if ((result == SUCCESS) && (len > 0))
@@ -1197,6 +1199,24 @@ static boolean HandleSearchResultDialogEvent(CBTApp *pMe,
 						MSG_MED( "BldDevRespMenu - short name for DevIndex=%d", pMe->mRM.uDevToDspIdxMap[MapIndex], 0, 0 );
 						WSTRLCAT( pwName, wBuf, AEEBT_MAX_DEVICENAME_LEN );
 					}
+
+                    /*
+                    //Print the log Start						
+					{
+					    char bt_name[AEEBT_MAX_DEVICENAME_LEN+1];
+						char btname[AEEBT_MAX_DEVICENAME_LEN+1];
+	  					char btnickname[AEEBT_MAX_NICKNAME_LEN+1];
+
+                        WSTRTOSTR (pwName, bt_name, sizeof(char)*(AEEBT_MAX_DEVICENAME_LEN+1));	
+						WSTRTOSTR (pDev->wName, btname, sizeof(char)*(AEEBT_MAX_DEVICENAME_LEN+1));	
+						WSTRTOSTR (pDev->wNickName, btnickname, sizeof(char)*(AEEBT_MAX_NICKNAME_LEN+1));	
+
+                        DBGPRINTF("***zzg SrhRltDlgEvt 3 bt_name=%s***", bt_name);
+						DBGPRINTF("***zzg SrhRltDlgEvt 3 btname=%s***", btname);
+						DBGPRINTF("***zzg SrhRltDlgEvt 3 btnickname=%s***", btnickname);
+					}						
+					//Print the log End		
+					*/
 					
 				}
 				
@@ -1327,10 +1347,36 @@ static boolean HandleSearchResultDialogEvent(CBTApp *pMe,
 					{
 						if (IMENUCTL_GetItemCount(pMenu) > 0)
 						{	
+						    /*
 							pMe->mRM.uCurDevIdx = IMENUCTL_GetSel(pMenu);
 							MENU_SET_SEL(pMe->mRM.uCurDevIdx);
 							
 							pDev = &pMe->mRM.device[ pMe->mRM.uCurDevIdx];
+                            */
+
+                            MENU_SET_SEL(IMENUCTL_GetSel(pMenu));
+#ifdef FEATURE_BT_2_1
+    						pMe->mRM.uCurDevIdx = pMe->mRM.uDevToDspIdxMap[MENU_SEL];
+    						pDev = &pMe->mRM.device[pMe->mRM.uCurDevIdx];
+#else
+    						pMe->mRM.uCurDevIdx = pMe->mSD.uCurRecIdx = MENU_SEL;
+    						pDev = &pMe->mRM.device[MENU_SEL];
+#endif /* FEATURE_BT_2_1 */
+
+                            /*
+                            //Print the log Start						
+        					{
+        						char btname[AEEBT_MAX_DEVICENAME_LEN+1];
+        	  					char btnickname[AEEBT_MAX_NICKNAME_LEN+1];
+                                
+        						WSTRTOSTR (pDev->wName, btname, sizeof(char)*(AEEBT_MAX_DEVICENAME_LEN+1));	
+        						WSTRTOSTR (pDev->wNickName, btnickname, sizeof(char)*(AEEBT_MAX_NICKNAME_LEN+1));	
+                                
+        						DBGPRINTF("***zzg SrhRltDlgEvt 4 btname=%s***", btname);
+        						DBGPRINTF("***zzg SrhRltDlgEvt 4 btnickname=%s***", btnickname);
+        					}						
+        					//Print the log End	
+        					*/
 							
 							//Bond start
 							MSG_FATAL("***zzg IBTEXTRM_GetLocalInfo bBonded=%x, bBonding=%x***", pDev->bBonded, pMe->mRM.bBonding, 0);	
