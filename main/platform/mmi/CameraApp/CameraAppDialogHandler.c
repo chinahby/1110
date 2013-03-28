@@ -2212,7 +2212,17 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
 			{
 				pMe->m_bIsPreview = FALSE;
 	            pMe->m_nCameraState = CAM_START;
-                pMe->m_wMsgID = IDS_MSG_WAITING;            
+                //Add By zzg 2013_03_28
+#ifdef FEATURE_VERSION_C337                
+                if (pMe->m_wMsgID  != IDS_MSG_NOSDCARD)             
+                {
+                    pMe->m_wMsgID = IDS_MSG_WAITING; 
+                }  
+#else
+                pMe->m_wMsgID = IDS_MSG_WAITING; 
+#endif
+                //Add End
+                
 	            pMe->m_nMsgTimeout = TIMEOUT_MS_MSGBOX;
 	            
 				(void)ISHELL_LoadResString(pMe->m_pShell,
@@ -2412,8 +2422,15 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
                                        0,
                                        0);
             }
+#else                 
+            
+             //Add By zzg 2013_03_28
+#ifdef FEATURE_VERSION_C337  
+            if(((pMe->m_wMsgID == IDS_MSG_WAITING) || pMe->m_wMsgID == IDS_MSG_NOSDCARD) &&(!pMe->m_pCamera))
 #else
             if((pMe->m_wMsgID == IDS_MSG_WAITING) &&(!pMe->m_pCamera))
+#endif      
+            //Add End
             {
                 CALLBACK_Init(&pMe->m_CallBack,
                               CameraApp_InitCameraCheck,
