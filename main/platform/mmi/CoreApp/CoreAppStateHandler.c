@@ -42,8 +42,6 @@
                                  
 ==============================================================================*/
 
-
-
 /*==============================================================================
 
                                  类型定义
@@ -675,6 +673,7 @@ static NextFSMAction COREST_VERIFYUIM_Handler(CCoreApp *pMe)
             
             {
                 pMe->m_eUIMErrCode = UIMERR_NOUIM;
+                MSG_FATAL("***zzg CoreApp COREST_STARTUPANI 111***",0,0,0);
                 MOVE_TO_STATE(COREST_STARTUPANI);
                 return eRet;
             }  
@@ -712,7 +711,20 @@ static NextFSMAction COREST_VERIFYUIM_Handler(CCoreApp *pMe)
                     case AEECARD_PIN_DISABLED:
                         pMe->m_eUIMErrCode = UIMERR_NONE;
                         //MOVE_TO_STATE(COREST_POWERONSYSINIT)
+
+                        MSG_FATAL("***zzg CoreApp COREST_STARTUPANI 222***",0,0,0);
+                        
                         MOVE_TO_STATE(COREST_STARTUPANI);
+                        {
+                            //extern void OEMRUIMAddr_Refresh(void);
+/*                            
+#ifdef FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
+                            db_item.db_uimaddinited = FALSE;
+                            db_put(DB_UIMADDINIT, &db_item);
+#endif
+*/
+                            //OEMRUIMAddr_Refresh();
+                        }
                         break;
 
                     case AEECARD_PIN_PERM_DISABLED:

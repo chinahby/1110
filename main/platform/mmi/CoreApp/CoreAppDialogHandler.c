@@ -67,6 +67,11 @@ extern boolean   IsRunAsFactoryTestMode(void);
                                宏定义和常数
                                  
 ==============================================================================*/
+
+boolean bIsPowerUp = FALSE;     //Add By zzg 2013_03_29
+
+
+
 #define CoreDrawBottomBar(x)                        \
 {                                                   \
     BottomBar_Param_type BarParam;                  \
@@ -3226,6 +3231,8 @@ static boolean  IDD_STARTUPANI_Handler(void       *pUser,
                         IALERT_StartRingerAlert_Ex( pMe->m_pAlert, (uint32)aRing_type[Ring_Cur_Music] );
                     }
                 }
+
+                bIsPowerUp = TRUE;     //Add By zzg 2013_03_29
 
                 // 播放开机动画
                 //pMe->m_wStartupAniTime = 0;

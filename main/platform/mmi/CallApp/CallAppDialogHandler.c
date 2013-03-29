@@ -56,6 +56,9 @@
 /*==============================================================================
                                  宏定义和常数
 ==============================================================================*/
+
+extern boolean	bIsPowerUp; //Add By zzg 2012_03_07
+
 #if FEATURE_DIALER_ANIMAION_SUPPORT
 // 来电动画图片文件定义
 #define CALLAPP_CALLIN_ANI      "fs:/image/notice/callin.png"  
@@ -2717,7 +2720,7 @@ static boolean  CallApp_Dialer_Calling_DlgHandler(CCallApp *pMe,
             AECHAR    name[MAX_SIZE_NAME_TEXT] = {0};
 
             Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
-
+           
             if(pMe->m_CallsTable == NULL)
             {
                 pMe->m_CallsTable = (Dialer_call_table*) CALLAPP_MALLOC(sizeof(Dialer_call_table));
@@ -8375,6 +8378,15 @@ boolean CallApp_NumberLookup(CCallApp     *pMe,
     {
         return FALSE;
     }
+    
+    MSG_FATAL("***zzg CallApp_NumberLookup bIsPowerUp=%d***", bIsPowerUp, 0, 0);
+
+    //Add By zzg 2013_03_29
+    if (!bIsPowerUp)
+    {
+        return TRUE;
+    }
+    //Add End
 
     if((pMe->m_cont_cache.call_number[0] != 0) && (0 == WSTRCMP(pMe->m_cont_cache.call_number,Number)))
     {
