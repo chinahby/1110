@@ -50,16 +50,17 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #endif
 
 #ifndef TARGSB2_H
-   #include "targsbw2.h"
+   #include "targsb12832.h"
 #endif
 
 //#define FEATURE_DATA_STRIP_ATCOP 
 #define FEATURE_STD_MIDI 
 #define FEATURE_DIAG_LOWMEM 
 //#define FEATURE_AMR_VOCODER 
-#define CUST_MOB_MODEL 22
+#define T_QSC1110
+#define CUST_MOB_MODEL 25
 #define FEATURE_PLL_192 
-#define FEATURE_CLKREGIM_1X_MODE 
+#define FEATURE_CLKREGIM_2X_MODE 
 #define FEATURE_AUDIO_CONFIGURATION_MINIMAL 
 //Gemsea Remove #define FEATURE_AUDIO_CONFIGURATION_LO_TIER 
 //#define FEATURE_IPL_NO_CAMERA
