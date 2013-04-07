@@ -155,7 +155,8 @@ CONSTFILE_FILES+=\
 	poweronoff.gif|fs:/image/pwronoffani/poweronoff.gif	
 else ifeq ($(USES_RESDIR), M74)
 CONSTFILE_FILES+=\
-	poweronoff.gif|fs:/image/pwronoffani/poweronoff.gif
+	poweronoff.gif|fs:/image/pwronoffani/poweronoff.gif	
+
 else ifeq ($(USES_RESDIR), W027)
 CONSTFILE_FILES+=\
 	poweronoff.gif|fs:/image/pwronoffani/poweronoff.gif		
@@ -177,7 +178,11 @@ CONSTFILE_FILES+=\
 	poweronoff.gif|fs:/image/pwronoffani/poweronoff.gif	
 else ifeq ($(USES_RESDIR), C210)
 CONSTFILE_FILES+=\
-	poweronoff.gif|fs:/image/pwronoffani/poweronoff.gif		
+	poweronoff.gif|fs:/image/pwronoffani/poweronoff.gif	
+else ifeq ($(USES_RESDIR), C117_M74)
+CONSTFILE_FILES+=\
+	poweron.gif|fs:/image/pwronoffani/poweron.gif \
+	poweroff.gif|fs:/image/pwronoffani/poweroff.gif
 else
 CONSTFILE_FILES+=\
 	poweron.gif|fs:/image/pwronoffani/poweron.gif \
