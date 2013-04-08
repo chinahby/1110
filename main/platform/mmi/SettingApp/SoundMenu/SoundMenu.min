@@ -236,6 +236,20 @@ else
             ring10.mp3|fs:/ringers/ring10.mp3 \
             ring11.mp3|fs:/ringers/ring11.mp3 \
             ring12.mp3|fs:/ringers/ring12.mp3 
+  else ifeq ($(USES_RESDIR), W021_6A_T18)
+        CONSTFILE_FILES+=\
+            ring01.mid|fs:/ringers/ring01.mid \
+            ring02.mid|fs:/ringers/ring02.mid \
+            ring03.mid|fs:/ringers/ring03.mid \
+            ring04.mid|fs:/ringers/ring04.mid \
+            ring05.mid|fs:/ringers/ring05.mid \
+            ring06.mid|fs:/ringers/ring06.mid \
+            ring07.mid|fs:/ringers/ring07.mid \
+            ring08.mid|fs:/ringers/ring08.mid \
+            ring09.mid|fs:/ringers/ring09.mid \
+            ring10.mp3|fs:/ringers/ring10.mp3 \
+            feeling_on.mp3|fs:/ringers/feeling_on.mp3 \
+            feeling_off.mp3|fs:/ringers/feeling_off.mp3 
     	else ifeq ($(USES_RESDIR), telyesmtm)
         CONSTFILE_FILES+=\
         	ring08.mp3|fs:/ringers/ring08.mp3 \

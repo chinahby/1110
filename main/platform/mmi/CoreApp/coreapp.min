@@ -144,6 +144,10 @@ CONSTFILE_FILES+=\
 else ifeq ($(USES_RESDIR), W021_6A)
 CONSTFILE_FILES+=\
 	poweronoffani.gif|fs:/image/pwronoffani/poweronoffani.gif
+else ifeq ($(USES_RESDIR), W021_6A_T18)
+CONSTFILE_FILES+=\
+	poweron.gif|fs:/image/pwronoffani/poweron.gif \
+	poweroff.gif|fs:/image/pwronoffani/poweroff.gif
 else ifeq ($(USES_RESDIR), N68TH)
 CONSTFILE_FILES+=\
 	poweronoffani.gif|fs:/image/pwronoffani/poweronoffani.gif
