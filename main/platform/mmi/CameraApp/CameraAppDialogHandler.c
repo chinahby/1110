@@ -354,9 +354,9 @@ static const CCameraSize g_CameraSizeCFG_10[] =
     {128,160,L"128*160"}, // FULL Screen
     {176,220,L"176*220"}, // QCIF
 #if defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_C180)
-#ifdef FEATURE_VERSION_M74
+//#ifdef FEATURE_VERSION_M74
 	{176,220,L"240*320"}, // QVGA
-#endif
+//#endif
 #else
     {240,320,L"240*320"}, // QVGA
 #endif    
@@ -1109,6 +1109,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                     if(pMe->m_bCapturePic == FALSE)
                     {
                         CLOSE_DIALOG(DLGRET_CAMERACFG);
+						pMe->m_bIsSnaping = FALSE;
                     }
                     break;
 
@@ -1188,8 +1189,9 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                 break;
 
             case AVK_INFO:
-                MSG_FATAL("***zzg Camera AVK_INFO m_bIsSnaping=%d***",pMe->m_bIsSnaping,0,0);
-                    
+                MSG_FATAL("***zzg Camera AVK_INFO m_bIsSnaping=%d***pMe->m_isRecordMode=%d",pMe->m_bIsSnaping,pMe->m_isRecordMode,0);
+				
+                MSG_FATAL("***zzg Camera AVK_INFO pMe->m_nCameraState=%d***",pMe->m_nCameraState,0,0);    
                 //Add By zzg 2013_03_21
                 if (pMe->m_isRecordMode == FALSE)   //防止拍照时快速按键造成卡死
                 {
@@ -4512,13 +4514,15 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
             nResID[CAMERACFGSIZE] = IDI_SIZE_176_220;
             break;
         #if defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_C180)
+		case OEMNV_CAMERA_SIZE_INDEX_2:
+            nResID[CAMERACFGSIZE] = IDI_SIZE_240_320;
         #else
         case OEMNV_CAMERA_SIZE_INDEX_2:
             nResID[CAMERACFGSIZE] = IDI_SIZE_240_320;
             break;   
         #endif
         default:
-            nResID[CAMERACFGSIZE] = IDI_SIZE_128_160;
+            nResID[CAMERACFGSIZE] = IDI_SIZE_240_320;
             break;
 }
 #endif
