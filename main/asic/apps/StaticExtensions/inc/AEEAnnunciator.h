@@ -111,6 +111,13 @@ typedef struct IAnnunciator IAnnunciator;
 #define ANNUN_NINTH_STATE_OFF   0xFFFFFBFE
 #endif
 
+#ifdef FEATURE_VERSION_LM126C   //add by yangdecai
+// Mask to get the eight highest priority state
+#define ANNUN_EIGHTH_STATE   0x00000200
+#define ANNUN_EIGHTH_STATE_OFF   0xFFFFFDFE
+
+#endif
+
 // Mask to know if the state is going to turn a state off
 #define ANNUN_TURN_OFF_STATE    0x00000002
 
@@ -152,6 +159,11 @@ typedef struct IAnnunciator IAnnunciator;
 #define ANNUN_STATE_RSSI_5                ANNUN_EIGHTH_STATE
 #define ANNUN_STATE_RSSI_6                ANNUN_NINTH_STATE
 #endif
+
+#ifdef FEATURE_VERSION_LM126C
+#define ANNUN_STATE_RSSI_5                ANNUN_EIGHTH_STATE
+#endif
+
 
 //Add By zzg 2012_10_29
 #define ANNUN_STATE_TCARD_ON    ANNUN_FIRST_STATE
@@ -270,8 +282,12 @@ typedef struct IAnnunciator IAnnunciator;
 #define ANNUN_STATE_BATT_1       ANNUN_SECOND_STATE
 #define ANNUN_STATE_BATT_2       ANNUN_THIRD_STATE
 #define ANNUN_STATE_BATT_3       ANNUN_FORTH_STATE
-#define ANNUN_STATE_BATT_FULL  ANNUN_FIFTH_STATE
-
+#ifdef FEATURE_VERSION_LM126C 
+#define ANNUN_STATE_BATT_4       ANNUN_FIFTH_STATE
+#define ANNUN_STATE_BATT_FULL    ANNUN_SIXTH_STATE
+#else
+#define ANNUN_STATE_BATT_FULL    ANNUN_FIFTH_STATE
+#endif
 // QQ field
 //#define ANNUN_STATE_QQ_MSG      ANNUN_FIRST_STATE
 //#define ANNUN_STATE_QQ_ONLINE   ANNUN_SECOND_STATE

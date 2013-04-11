@@ -213,6 +213,9 @@ typedef struct {
   {ANNUN_STATE_RSSI_5, IDB_RSSI5, NULL},
   {ANNUN_STATE_RSSI_6, IDB_RSSI6, NULL}
 #endif
+#ifdef FEATURE_VERSION_LM126C
+  {ANNUN_STATE_RSSI_5, IDB_RSSI5, NULL},
+#endif
 };
 
 //Add By zzg 2012_10_29
@@ -318,6 +321,9 @@ static OEMState_data batt_image_data[]=
   {ANNUN_STATE_BATT_1, IDB_BATT1, NULL},
   {ANNUN_STATE_BATT_2, IDB_BATT2, NULL},
   {ANNUN_STATE_BATT_3, IDB_BATT3, NULL},
+  #ifdef FEATURE_VERSION_LM126C 
+  {ANNUN_STATE_BATT_4, IDB_BATT4, NULL},
+  #endif
   {ANNUN_STATE_BATT_FULL, IDB_BATT_FULL, NULL}
 };
 
@@ -341,7 +347,11 @@ OEMAnnun_content rssi_content =
 #ifdef FEATURE_VERSION_VG68
      {ANNUN_TYPE_IMAGE, 9, ANNUN_STATE_RSSI_NO_SERV, (void *)rssi_image_data};
 #else
+#ifdef FEATURE_VERSION_LM126C
+	 {ANNUN_TYPE_IMAGE, 8, ANNUN_STATE_RSSI_NO_SERV, (void *)rssi_image_data};
+#else
      {ANNUN_TYPE_IMAGE, 7, ANNUN_STATE_RSSI_NO_SERV, (void *)rssi_image_data};
+#endif
 #endif
 #else
     {ANNUN_TYPE_IMAGE, 6, ANNUN_STATE_RSSI_NO_SERV, (void *)rssi_image_data};
@@ -414,9 +424,13 @@ OEMAnnun_content ringtone_content =
      {ANNUN_TYPE_IMAGE, 4, ANNUN_STATE_OFF, (void *)ringtone_image_data};
 //#endif
 /*ANNUN_FIELD_BATT*/
+#ifdef FEATURE_VERSION_LM126C
+OEMAnnun_content batt_content =
+     {ANNUN_TYPE_IMAGE, 6, ANNUN_STATE_OFF, (void *)batt_image_data};
+#else
 OEMAnnun_content batt_content =
      {ANNUN_TYPE_IMAGE, 5, ANNUN_STATE_OFF, (void *)batt_image_data};
-
+#endif
 #ifdef FEATURE_DISP_176X220
     #define IMG_WIDTH      16//12
     #define IMG_HEIGHT     18//13
@@ -618,7 +632,11 @@ static OEMAnnun_data Annunciators[] =
 #ifdef FEATURE_VERSION_VG68
 #define ANNUN_MAX_STATES     (9)//(7)
 #else
+#ifdef FEATURE_VERSION_LM126C
+#define ANNUN_MAX_STATES     (8)
+#else
 #define ANNUN_MAX_STATES     (7)
+#endif
 #endif
 /* Status of bitmap cache */
 static IANNUNCore *IAnnunCoreObj = NULL;

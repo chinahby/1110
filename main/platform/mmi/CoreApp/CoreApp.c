@@ -3029,12 +3029,23 @@ static int DBToLevel (int nDBVal)
     else if (nDBVal < 106)
         return ANNUN_STATE_RSSI_2;
 	#else
+	#ifdef FEATURE_VERSION_LM126C
+	if (nDBVal < 81)
+        return ANNUN_STATE_RSSI_5;
+	else if (nDBVal < 90)
+        return ANNUN_STATE_RSSI_4;
+    else if (nDBVal < 99)
+        return ANNUN_STATE_RSSI_3;
+    else if (nDBVal < 100)
+        return ANNUN_STATE_RSSI_2;
+	#else
 	if (nDBVal < 92)
         return ANNUN_STATE_RSSI_4;
     else if (nDBVal < 97)
         return ANNUN_STATE_RSSI_3;
     else if (nDBVal < 102)
         return ANNUN_STATE_RSSI_2;
+	#endif
 	#endif
     else if (nDBVal < 108)
         return ANNUN_STATE_RSSI_1;
@@ -3079,7 +3090,7 @@ static void CCharger_EnableICONCB(void *pUser)
         
         nBattState = CoreApp_ConvertBattLvToAnnunState(BattLevel);
         IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_BATT, nBattState);
-		#ifdef FEATURE_VERSION_N68
+		#if defined(FEATURE_VERSION_N68)||defined(FEATURE_VERSION_K202)
 		//IANNUNCIATOR_Redraw(pMe->m_pIAnn);
 		//CoreApp_UpdateAnnunciator(pMe);
 		ISHELL_PostEvent(pMe->a.m_pIShell,AEECLSID_CORE_APP,EVT_USER_REDRAW, 0,0); 
@@ -3900,6 +3911,32 @@ int CoreApp_GetBatteryLevel(CCoreApp *pMe)
     }
     ERR("miaoxiaoming: ATBattLevel =%d",ATBattLevel ,0,0);
     /* convert to 0-4 levels */
+	#ifdef FEATURE_VERSION_LM126C
+	if ( ATBattLevel <= 40 )
+    {
+        uLevel = 0;
+    }
+    else if ( ATBattLevel <= 50 )
+    {
+        uLevel = 1;
+    }
+    else if ( ATBattLevel <= 65 )
+    {
+        uLevel = 2;
+    }
+	else if ( ATBattLevel <= 75 )
+    {
+        uLevel = 3;
+    }
+    else if ( ATBattLevel <= 80 )
+    {
+        uLevel = 4;
+    }
+    else
+    {
+        uLevel = 5;
+    }
+	#else
     if ( ATBattLevel <= 40 )
     {
         uLevel = 0;
@@ -3920,7 +3957,7 @@ int CoreApp_GetBatteryLevel(CCoreApp *pMe)
     {
         uLevel = 4;
     }
-    
+    #endif
     return uLevel;
 }
 
@@ -3961,6 +3998,12 @@ static uint32 CoreApp_ConvertBattLvToAnnunState(int nBattLevel)
     {
         nState = ANNUN_STATE_BATT_3;
     }
+	#ifdef FEATURE_VERSION_LM126C 
+	else if(nBattLevel == 4)
+	{
+        nState = ANNUN_STATE_BATT_4;
+    }
+	#endif
     else
     {
         nState = ANNUN_STATE_BATT_FULL;

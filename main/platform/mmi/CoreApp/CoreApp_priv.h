@@ -124,8 +124,11 @@
 #define    CHARGING_ANIFILE             "fs:/image/charge/"
 #define    CHARGING_FRAME_COUNT         (5)
 #define    CHARGING_ANIMATE_RATE        (1000) //(500)
-
+#ifdef FEATURE_VERSION_LM126C
+#define    CHARGE_FULL_STATE                (5)
+#else
 #define    CHARGE_FULL_STATE                (4)
+#endif
 #if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)
 #define AVK_SEND_TWO     2
 #elif defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021) || defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_W516)||defined(FEATURE_VERSION_W208S) || defined(FEATURE_VERSION_W027)
