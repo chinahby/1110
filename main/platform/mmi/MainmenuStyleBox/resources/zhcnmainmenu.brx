@@ -88,6 +88,9 @@
 	<String Id="1029" Name="IDS_MAIN_MENU_VIDEOPLAYER">
 		<Text>视屏播放</Text>
 	</String>
+	<String Id="1030" Name="IDS_MAIN_MENU_FILEMGR">
+		<Text>文件夹</Text>
+	</String>
 	<STRING Id="1034" Name="IDS_MENU_LIST">
 		<Text>菜单</Text>
 	</STRING>
@@ -126,6 +129,9 @@
 	</String>
 	<String Id="1085" Name="IDS_MAIN_MENU_FRENDUO">
 		<Text>Frenduo</Text>
+	</String>
+	<String Id="1086" Name="IDS_MAIN_WAPBROWSER">
+		<Text>浏览器</Text>
 	</String>
 </Strings>
 <Dialogs>

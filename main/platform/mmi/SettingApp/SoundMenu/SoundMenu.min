@@ -588,7 +588,7 @@ else
             techno_meto.mid|fs:/ringers/techno_meto.mid \
             ring_tons.mp3|fs:/ringers/ring_tons.mp3 \
            poweronoff.mp3|fs:/ringers/poweronoff.mp3 	
-	else ifeq ($(USES_RESDIR),k202)                                           
+    else ifeq ($(USES_RESDIR),k202)                                           
         CONSTFILE_FILES+=\
             blues.mid|fs:/ringers/blues.mid \
             blue_load.mid|fs:/ringers/blue_load.mid \
@@ -600,6 +600,20 @@ else
             lucky.mid|fs:/ringers/lucky.mid \
             street_tale.mid|fs:/ringers/street_tale.mid \
             techno_meto.mid|fs:/ringers/techno_meto.mid \
+            on.mp3|fs:/ringers/on.mp3 \
+            off.mp3|fs:/ringers/off.mp3 
+	else ifeq ($(USES_RESDIR),K202_LM129C)                                           
+        CONSTFILE_FILES+=\
+            blues.mid|fs:/ringers/blues.mid \
+            clock.mid|fs:/ringers/clock.mid \
+            01.mid|fs:/ringers/01.mid \
+            02.mid|fs:/ringers/02.mid \
+            03.mid|fs:/ringers/03.mid \
+            04.mid|fs:/ringers/04.mid \
+            05.mid|fs:/ringers/05.mid \
+            06.mid|fs:/ringers/06.mid \
+            alarm1.mp3|fs:/ringers/alarm1.mp3 \
+            ring1.mp3|fs:/ringers/ring1.mp3 \
             on.mp3|fs:/ringers/on.mp3 \
             off.mp3|fs:/ringers/off.mp3 	
     	else                                            

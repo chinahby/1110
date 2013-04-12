@@ -4297,7 +4297,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 						//AEE_CancelTimer(CoreApp_keypadtimer,pMe);
 						//ISHELL_CancelTimer(pMe->a.m_pIShell,CoreApp_keypadtimer,pMe);
 					}
-#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_C337)   //add by yangdecai
+#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202_LM129C)   //add by yangdecai
             	    return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
 #elif defined (FEATURE_VERSION_W208S)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
@@ -4344,8 +4344,11 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT); 
 	#elif defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO); 
-	#elif defined(FEATURE_VERSION_W208S)
-					return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
+	#elif defined(FEATURE_VERSION_W208S)||defined(FEATURE_VERSION_K202_LM129C)//xxzhen
+	                 if(SUCCESS==ISHELL_StartAppletArgs(pMe->a.m_pIShell, AEECLSID_WMSAPP, "WMSST_INBOXES"))
+	                   return TRUE;
+					 else
+					    return FALSE;
     #elif defined (FEATURE_VERSION_C11)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
     #elif defined(FEATURE_VERSION_VG68)
@@ -4425,6 +4428,12 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     return CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 
 					return TRUE;
+#elif defined(FEATURE_VERSION_K202_LM129C) //xxzhen
+	            if(SUCCESS==ISHELL_StartAppletArgs(pMe->a.m_pIShell, AEECLSID_WMSAPP, "WMSST_WRITEMSG"))
+					return TRUE;
+				else 
+					return FALSE;
+
 #else
 					
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_SETTINGMENU);
@@ -4480,6 +4489,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                                 return FALSE;
                             }
 				    	}
+						#elif defined(FEATURE_VERSION_K202_LM129C)//xxzhen
+                            return CoreApp_LaunchApplet(pMe, AEECLSID_APP_SOUNDMENU);
                         #elif defined(FEATURE_VERSION_VG68)||defined(FEATURE_VERSION_C337)
                             return CoreApp_LaunchApplet(pMe, AEECLSID_ALARMCLOCK);
                         #elif defined(FEATURE_VERSION_C11)||defined(FEATURE_VERSION_W027V3)

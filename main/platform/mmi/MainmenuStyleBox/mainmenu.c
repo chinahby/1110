@@ -2527,7 +2527,7 @@ static char* ICON_ANI[] =
     ICON12_ANI,
 #endif    
 #elif defined (FEATURE_DISP_176X220)
-#ifndef FEATURE_VERSION_VG68
+#if !defined( FEATURE_VERSION_VG68) && !defined(FEATURE_VERSION_K202_LM129C)
     ICON10_ANI,
     ICON11_ANI,
     ICON12_ANI,
@@ -2572,13 +2572,11 @@ static char* ICON_ANI_1[] =
 #endif    
 #endif    
 #elif defined (FEATURE_DISP_176X220)
-#ifndef FEATURE_VERSION_VG68
-#ifndef FEATURE_VERSION_SKY
+#if !defined( FEATURE_VERSION_VG68)&&!defined(FEATURE_VERSION_SKY)&&!defined(FEATURE_VERSION_K202_LM129C)
     ICON10_ANI_1,
     ICON11_ANI_1,
     ICON12_ANI_1,
 #endif    
-#endif
 #elif defined (FEATURE_DISP_240X320)
     ICON10_ANI_1,
     ICON11_ANI_1,
@@ -3130,6 +3128,16 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_IconTitle[6]     = IDS_MAIN_MENU_SETTINGS;
     pMe->m_IconTitle[7]     = IDS_MAIN_MENU_GAMES;
     pMe->m_IconTitle[8]     = IDS_MAIN_MENU_UTK;
+#elif defined(FEATURE_VERSION_K202_LM129C) //xxzhen
+    pMe->m_IconTitle[0]     = IDS_MAIN_MENU_RECENTCALLS;
+    pMe->m_IconTitle[1]     = IDS_MAIN_MENU_CONTACTS;
+    pMe->m_IconTitle[2]     = IDS_MAIN_MENU_FILEMGR;
+    pMe->m_IconTitle[3]     = IDS_MAIN_MENU_TOOLS;
+    pMe->m_IconTitle[4]     = IDS_MAIN_MENU_MESSAGES;
+    pMe->m_IconTitle[5]     = IDS_MAIN_MENU_MUSICPLAYER;
+    pMe->m_IconTitle[6]     = IDS_MAIN_WAPBROWSER;
+    pMe->m_IconTitle[7]     = IDS_MAIN_MENU_MULTIMEDIA;
+    pMe->m_IconTitle[8]     = IDS_MAIN_MENU_SETTINGS;
 #elif defined (FEATURE_VERSION_C310) // add by pyuangui 20121224
     pMe->m_IconTitle[0]     = IDS_MAIN_MENU_CONTACTS;
     pMe->m_IconTitle[1]     = IDS_MAIN_MENU_CALL_LOGS;	
@@ -3505,6 +3513,7 @@ static boolean MainMenu_HandleEvent( IMainMenu *pi,
             return MainMenu_RouteDialogEvt(pMe,eCode,wParam,dwParam);
 
         case EVT_DIALOG_END:
+
             (void) MainMenu_RouteDialogEvt(pMe,eCode,wParam,dwParam);
             pMe->m_pActiveIDlg = NULL;
             pMe->m_pActivedlgID = 0;
@@ -3714,7 +3723,7 @@ void MainMenu_ShowDialog(MainMenu  *pMe,  uint16 dlgResId)
         }
 #endif
         ISHELL_GetDeviceInfo(pMe->m_pShell, &di);
-#if defined (FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_VG68)|| defined (FEATURE_VERSION_SKY)
+#if defined (FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_VG68)|| defined (FEATURE_VERSION_SKY)||defined(FEATURE_VERSION_K202_LM129C)
         pMe->m_rc.x = 0;
         pMe->m_rc.y = 0;
         
@@ -4403,6 +4412,13 @@ static int StartApplet(MainMenu *pMe, int i)
         IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
     }
 #endif
+		#ifdef FEATURE_VERSION_K202_LM129C //xxzhen
+		  if(pMe->m_pIAnn != NULL)
+          {
+              IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
+          }
+		#endif
+
     switch(i)
 	{
 #ifdef FEATURE_VERSION_W208S
@@ -4585,6 +4601,11 @@ static int StartApplet(MainMenu *pMe, int i)
 	#endif	
 	
     case IDS_MAIN_WAPBROWSER:
+		#ifdef FEATURE_VERSION_K202_LM129C
+		  IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn,FALSE); //xxzhen
+		   IANNUNCIATOR_Redraw(pMe->m_pIAnn);
+		#endif
+
 #if  (defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C316))	
 		MSG_FATAL("IDS_MAIN_MENU_SERVICES...........22222222222222",0,0,0);
 

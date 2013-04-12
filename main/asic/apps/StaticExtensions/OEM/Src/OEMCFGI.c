@@ -1862,7 +1862,7 @@ static OEMConfigListType oemi_cache = {
    {L"Mobile Tracker Alert!:The sender of this SMS is using your phone."},
    FALSE,
 #endif
-#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_K202_LM129C)
    1,											//CFGI_KEY_LOCK_CHECK			
 #else
    0,
@@ -2886,7 +2886,7 @@ void OEM_RestoreFactorySetting( void )
 
 #ifdef FEATURE_PEKTEST
     oemi_cache.b_key_lock       =  0;
-#elif defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM) ||defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+#elif defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM) ||defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_K202_LM129C)
 	oemi_cache.b_key_lock       =  1; 
 #elif defined(FEATURE_VERSION_W208S)
     oemi_cache.b_key_lock       =  4; 
@@ -3530,9 +3530,15 @@ void OEM_RestoreFactorySetting( void )
    nvi_cache.set_time_format = (byte)NV_SET_TIME_FORMAT_24_HOUR;
 #endif   
 #ifdef FEATURE_TIME_DATA_SETTING
+#ifdef FEATURE_VERSION_K202_LM129C //xxzhen
+    nvi.set_date_format = NV_SET_DATE_FORMAT_YYYY_MM_DD_1;
+    (void) OEMNV_Put( NV_SET_DATE_FORMAT_I, &nvi);
+    nvi_cache.set_date_format = (byte)NV_SET_DATE_FORMAT_YYYY_MM_DD_1;
+#else
     nvi.set_date_format = NV_SET_DATE_FORMAT_MM_DD_YYYY;
     (void) OEMNV_Put( NV_SET_DATE_FORMAT_I, &nvi);
     nvi_cache.set_date_format = (byte)NV_SET_DATE_FORMAT_MM_DD_YYYY;
+#endif
 #endif 
    //CFGI_PHONE_PASSWORD_CHECK
    nvi.lock = 0;

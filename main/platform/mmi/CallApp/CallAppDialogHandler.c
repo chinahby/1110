@@ -1192,7 +1192,11 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                         if ((WSTRCMP(pMe->m_DialString, L"*#*#8378#0#") == 0)||
                         	(WSTRCMP(pMe->m_DialString, L"*#4224876#") == 0)||
                         	(WSTRCMP(pMe->m_DialString, L"*#18375#") == 0)||
-                        	(WSTRCMP(pMe->m_DialString, L"*#8375#") == 0))
+                        	(WSTRCMP(pMe->m_DialString, L"*#8375#") == 0)
+                        	#ifdef FEATURE_VERSION_K202_LM129C //xxzhen
+							||(WSTRCMP(pMe->m_DialString, L"*#6688432#") == 0)
+							#endif
+							)
                         {
                             //return CallApp_LaunchApplet(pMe,  AEECLSID_FIELDDEBUGAPP);
                             ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_FIELDDEBUGAPP, "*#*#8378#0#");
@@ -1251,7 +1255,12 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                         		 (WSTRCMP(pMe->m_DialString, L"*#7548*#") == 0)||
                         		 (WSTRCMP(pMe->m_DialString, L"*#629#") == 0)||
                         		 (WSTRCMP(pMe->m_DialString, L"*85241#") == 0)||
-                        		 (WSTRCMP(pMe->m_DialString, L"*#7548135*#") == 0))
+                        		 (WSTRCMP(pMe->m_DialString, L"*#7548135*#") == 0)
+                        	#ifdef FEATURE_VERSION_K202_LM129C //xxzhen
+							||(WSTRCMP(pMe->m_DialString, L"*#37#") == 0)
+							||(WSTRCMP(pMe->m_DialString, L"*#38#") == 0)
+							#endif
+						)
                         {
                             return CallApp_LaunchApplet(pMe, AEECLSID_QUICKTEST);
                         }

@@ -999,6 +999,16 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
                 pMe->m_currState = WMSST_INBOX_MMS;
             }
             #endif
+			#ifdef FEATURE_VERSION_K202_LM129C //xxzhen
+			else if(as && STRCMP(as->pszArgs,"WMSST_INBOXES") == 0)
+            {
+                pMe->m_currState = WMSST_INBOXES;
+            }
+			else if(as && STRCMP(as->pszArgs,"WMSST_WRITEMSG") == 0)
+            {
+                pMe->m_currState = WMSST_WRITEMSG;
+            }
+			#endif
 #if defined(FEATURE_VERSION_C316)	
             else if(as && STRCMP(as->pszArgs,"CallApp") == 0)
             {
