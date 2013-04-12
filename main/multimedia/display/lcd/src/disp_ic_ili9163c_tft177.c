@@ -73,6 +73,76 @@ static void disp_ic_mdp_scrupdate(uint32 *scr, uint32 start_row, uint32 start_co
 
 static void disp_ic_init(void)
 {
+
+#if 0    //add for W516 GC9101_TFT177
+	LCD_WRITE_CMD(0x3a);
+	LCD_WRITE_DATA(0x05);
+	LCD_WRITE_CMD(0x36);
+	LCD_WRITE_DATA(0xC8);
+
+	LCD_WRITE_CMD(0xfe);
+	LCD_WRITE_CMD(0xef);
+
+	LCD_WRITE_CMD(0xfd);	 //vcm
+	LCD_WRITE_DATA(0x20);   //2D
+
+	LCD_WRITE_CMD(0xff);	 //vdv
+	LCD_WRITE_DATA(0x16);
+
+	LCD_WRITE_CMD(0xb4);//line inversion
+	LCD_WRITE_DATA(0x00);	
+
+	LCD_WRITE_CMD(0xa3);
+	LCD_WRITE_DATA(0x09);	//10
+	LCD_WRITE_CMD(0xa4);	 
+	LCD_WRITE_DATA (0x96);
+
+	LCD_WRITE_CMD(0xe7);    
+	LCD_WRITE_DATA(0x94);	
+	LCD_WRITE_DATA(0x88);
+	LCD_WRITE_CMD(0xed);	 
+	LCD_WRITE_DATA(0x11);
+	LCD_WRITE_CMD(0xe4);	 
+	LCD_WRITE_DATA(0xc5);
+	LCD_WRITE_CMD(0xe2);
+	LCD_WRITE_DATA(0x80);//80	  
+	LCD_WRITE_CMD(0xe3);
+	LCD_WRITE_DATA(0x07);	 
+	LCD_WRITE_CMD(0xe5);	 
+	LCD_WRITE_DATA(0x10);	
+	//*****************GAMMA***************************//
+	LCD_WRITE_CMD(0xF0);
+	LCD_WRITE_DATA(0x00);
+	LCD_WRITE_CMD(0xF1);
+	LCD_WRITE_DATA(0x55);
+	LCD_WRITE_CMD(0xF2);
+	LCD_WRITE_DATA(0x07);
+	LCD_WRITE_CMD(0xF3);
+	LCD_WRITE_DATA(0x52);
+	LCD_WRITE_CMD(0xF4);
+	LCD_WRITE_DATA(0x00);
+	LCD_WRITE_CMD(0xF5);
+	LCD_WRITE_DATA(0x00);
+	LCD_WRITE_CMD(0xF7);
+	LCD_WRITE_DATA(0x07);
+	LCD_WRITE_CMD(0xF8);
+	LCD_WRITE_DATA(0x22);
+	LCD_WRITE_CMD(0xF9);
+	LCD_WRITE_DATA(0x77);
+	LCD_WRITE_CMD(0xFA);
+	LCD_WRITE_DATA(0x25);
+	LCD_WRITE_CMD(0xFB);
+	LCD_WRITE_DATA(0x00);
+	LCD_WRITE_CMD(0xFC);
+	LCD_WRITE_DATA(0x00);
+	//********************************************//
+	LCD_WRITE_CMD(0x11);//Exit sleep
+	LCD_DELAY(120);	
+	LCD_WRITE_CMD(0x29);//display on
+
+
+#endif
+
 #if 1
 	#if defined( FEATURE_VERSION_C316)||defined(FEATURE_VERSION_15E)
 	//CPT  TXDT180CA-68v4
@@ -443,9 +513,10 @@ static void disp_ic_init(void)
 	LCD_WRITE_DATA(0x3d);//p14
 	LCD_WRITE_DATA(0x3F);//p15
 #endif
-    
+  
 	LCD_WRITE_CMD(0x29); // Display On  
   LCD_WRITE_CMD(0x2C);//Memory Write
+
 }
 
 static void disp_ic_setwindow(uint32 start_row, uint32 start_col, uint32 end_row, uint32 end_col)
