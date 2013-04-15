@@ -9120,7 +9120,7 @@ boolean CallApp_AnswerCall(CCallApp  *pMe, boolean bAnswerHold,AEEEvent eCode,ui
         	   (AVK_A <= wParam && wParam <= AVK_Z) ||(AVK_CLR < wParam && wParam <AVK_SOFT1 ))
                  && !bKeyguardEnabled)
                  ||(wParam == AVK_SEND 
-                  #if defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W027)
+                  #if defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W027)||defined(FEATURE_VERSION_K202_LM129C)//xxzhen
                  || wParam == AVK_CAMERA || wParam == AVK_MUSIC
                  #endif
                  ))
