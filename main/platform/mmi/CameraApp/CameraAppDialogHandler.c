@@ -311,7 +311,7 @@ static const CCameraSize g_CameraSizeCFG[] =
 #elif defined(FEATURE_DISP_176X220)
     {176,220,L"176*220"}, // QCIF
     {240,320,L"240*320"}, // QVGA
-#ifndef FEATURE_VERSION_VG68
+#if !defined(FEATURE_VERSION_VG68)&&!defined(FEATURE_VERSION_K202_LM129C)
 #ifdef FEATURE_VERSION_C337
     {352,464,L"352*464"}, // VGA    
 #else
@@ -376,7 +376,7 @@ static const CCameraSize g_CameraSizeCFG_10[] =
 #else
     {176,220,L"176*220"}, // QCIF
     {240,320,L"240*320"}, // QVGA
-#ifndef FEATURE_VERSION_VG68
+#if !defined (FEATURE_VERSION_VG68)&&!defined(FEATURE_VERSION_K202_LM129C)
 #ifdef FEATURE_VERSION_C337
     {352,464,L"352*464"}, // VGA    
 #else
@@ -4457,7 +4457,7 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
 #endif	
 //Add End
 
-#ifdef FEATURE_VERSION_VG68
+#if defined (FEATURE_VERSION_VG68)||defined(FEATURE_VERSION_K202_LM129C)
     // size cfgID
     (void)ICONFIG_GetItem(pMe->m_pConfig,
                           CFGI_CAMERA_SIZE,
@@ -4485,7 +4485,7 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
                           CFGI_CAMERA_SIZE,
                          &pMe->m_nCameraSize,
                           sizeof(pMe->m_nCameraSize));
-#ifdef FEATURE_VERSION_C310
+#if defined(FEATURE_VERSION_C310)
  switch(pMe->m_nCameraSize)
     {
 
