@@ -879,9 +879,11 @@ static boolean  HandleCallSettingDialogEvent(CSettingMenu *pMe,
 			#else
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_MINUTE_ALERT, IDS_MINUTE_ALERT, NULL, 0);
 			#endif
-#if 1   //删除自动重拨功能
+#if 1  
 //Add By zzg 2010_09_16 : smart\m8  del the auto retry..
-#if defined(FEATURE_VERSION_SMART) || defined(FEATURE_VERSION_M8) || defined(FEATURE_VERSION_M8P) || defined(FEATURE_VERSION_M8021)||defined(FEATURE_VERSION_W516)||defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_W208S) || defined(FEATURE_VERSION_W027)
+#if defined(FEATURE_VERSION_SMART) || defined(FEATURE_VERSION_M8) || defined(FEATURE_VERSION_M8P) || defined(FEATURE_VERSION_M8021)||defined(FEATURE_VERSION_W516)||defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_W208S) || defined(FEATURE_VERSION_W027)\
+	||defined(FEATURE_VERSION_K202_LM129C) //xxzhen
+
 #else
 			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_AUTO_REDIAL, IDS_AUTO_REDIAL, NULL, 0);
 #endif
@@ -909,7 +911,9 @@ static boolean  HandleCallSettingDialogEvent(CSettingMenu *pMe,
 			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_CALLSETTING_CALLRECORD, IDS_CALLSETTING_CALLRECORD, NULL, 0);
 			//Add End
 			#endif
+			#ifndef FEATURE_VERSION_K202_LM129C //xxzhen
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_VOICE_PRIVACY, IDS_VOICE_PRIVACY, NULL, 0);
+			#endif
 #ifndef FEATURE_VERSION_W208S            
             //IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_FMRADIO_OPTION_MENU_PLAY_MODLE, IDS_FMRADIO_OPTION_MENU_PLAY_MODLE, NULL, 0);
 #endif
