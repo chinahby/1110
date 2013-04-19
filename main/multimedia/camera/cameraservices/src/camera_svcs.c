@@ -1858,8 +1858,13 @@ static uint16 camera_model_information_count = 0;
 static VFE_SkipBitMaskType runningOutput2SkipPattern = 0;
 
 /* New preview buffer scheme */
+#ifdef FEATURE_VERSION_K202 //yangdecai modify 
+#define CAMERA_NUM_OF_PREVIEW_BUFFERS_WITH_VFE     2
+#define CAMERA_NUM_OF_PREVIEW_BUFFERS_WITH_DISPLAY    1
+#else
 #define CAMERA_NUM_OF_PREVIEW_BUFFERS_WITH_VFE     3
 #define CAMERA_NUM_OF_PREVIEW_BUFFERS_WITH_DISPLAY     2
+#endif
 #define CAMERA_NUM_OF_PREVIEW_BUFFERS \
    (CAMERA_NUM_OF_PREVIEW_BUFFERS_WITH_VFE + \
     CAMERA_NUM_OF_PREVIEW_BUFFERS_WITH_DISPLAY)
