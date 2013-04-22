@@ -662,6 +662,7 @@ static boolean  SecurityApplicationLockDlgHandler(CSecurityMenu *pMe,
             #ifdef FEATURE_VERSION_C316
 			IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_FILEMANGERLOCK, IDS_FILEMANGERLOCK, NULL, 0);
 			IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_MULTIMEDIALOCK, IDS_MULTIMEDIALOCK, NULL, 0);
+			#elif defined(FEATURE_VERSION_K202_LM129C)//xxzhen 
 			#else
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_CALENDARLOCK, IDS_CALENDARLOCK, NULL, 0);
 			#endif
@@ -1250,7 +1251,10 @@ static boolean   SecurityKeyLockDlgHandler(CSecurityMenu *pMe,
 			IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_AKG_10SEC, IDS_AKG_10SEC, NULL, 0);
 			#endif
 			//Add End
-			
+		    #ifdef FEATURE_5SEC_AUTOLOCK_KEYPAD //xxzhen
+			IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_AKG_5SEC, IDS_AKG_5SEC, NULL, 0);
+			#endif
+
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_AKG_30SEC, IDS_AKG_30SEC, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_AKG_2MIN, IDS_AKG_2MIN, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_AKG_5MIN, IDS_AKG_5MIN, NULL, 0);
@@ -1273,6 +1277,23 @@ static boolean   SecurityKeyLockDlgHandler(CSecurityMenu *pMe,
                 	#ifdef FEATURE_VERSION_W317A
 						case 1:   //10秒
 							ui16_return = IDS_AKG_10SEC;
+							break;
+						case 2:    // 30秒
+							ui16_return = IDS_AKG_30SEC;
+							break;
+						case 3:    // 两分钟
+							ui16_return = IDS_AKG_2MIN;
+							break;
+						case 4:    // 五分钟
+							ui16_return = IDS_AKG_5MIN;
+							break;
+						default:
+						case 0: //关
+							ui16_return = IDS_OFF;
+						break;
+					#elif defined (FEATURE_5SEC_AUTOLOCK_KEYPAD)//xxzhen
+						case 1:   //10秒
+							ui16_return = IDS_AKG_5SEC;
 							break;
 						case 2:    // 30秒
 							ui16_return = IDS_AKG_30SEC;
@@ -1349,6 +1370,28 @@ static boolean   SecurityKeyLockDlgHandler(CSecurityMenu *pMe,
 					switch (wParam)
 	                {
 	                	case IDS_AKG_10SEC:     //10miao
+	                        AKG = 1;
+	                        break;
+	                    case IDS_AKG_30SEC:     //30miao
+	                        AKG = 2;
+	                        break;
+	                    case IDS_AKG_2MIN:     // 2minute
+	                        AKG = 3;
+	                        break;
+	                    case IDS_AKG_5MIN:     //5minute
+	                        AKG = 4;
+	                        break;
+	                    case IDS_OFF:     //关
+	                        AKG = 0;
+	                        break;
+
+	                    default:
+	                        ASSERT_NOT_REACHABLE;
+	                }
+				 #elif defined(FEATURE_5SEC_AUTOLOCK_KEYPAD) //xxzhen
+					switch (wParam)
+	                {
+	                	case IDS_AKG_5SEC:     //10miao
 	                        AKG = 1;
 	                        break;
 	                    case IDS_AKG_30SEC:     //30miao

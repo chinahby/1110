@@ -223,6 +223,9 @@
 	<String Id="1078" Name="IDS_MOBILE_TRACKER">
 		<Text>Mobile tracker</Text>
 	</String>
+	<String Id="1079" Name="IDS_AKG_5SEC">
+		<Text>5 sec</Text>
+	</String>
 	<STRING Id="1178" Name="IDS_MG_MEDIAGALLERY">
 		<Text>File Manager</Text>
 	</STRING>

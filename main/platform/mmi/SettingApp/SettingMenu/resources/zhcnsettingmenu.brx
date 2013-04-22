@@ -448,6 +448,9 @@
 	<String Id="1149" Name="IDS_AKG_10SEC" Encoding="Unicode">
 		<Text>10 秒</Text>
 	</String>
+	<String Id="1171" Name="IDS_AKG_5SEC" Encoding="Unicode">
+		<Text>5 秒</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="7001">

@@ -487,6 +487,9 @@
 	<String Id="1170" Name="IDS_CALLSETTING__NO">
 		<Text>OFF</Text>
 	</String>
+	<String Id="1171" Name="IDS_AKG_5SEC" Encoding="Unicode">
+		<Text>5 Sec</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="7001">

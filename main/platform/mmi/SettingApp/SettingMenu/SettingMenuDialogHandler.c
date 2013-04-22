@@ -689,7 +689,7 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
 
 #endif
 #ifdef FEATURE_SET_SOUND_TITLE
-#ifndef FEATURE_VERSION_C316
+#if !defined (FEATURE_VERSION_C316)&&!defined(FEATURE_VERSION_K202_LM129C)
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SOUND_TITLE, IDS_SOUND_TITLE, NULL, 0);
 #endif
 #endif
@@ -2960,7 +2960,10 @@ static boolean  HandleAKGDialogEvent(CSettingMenu *pMe,
 			#ifdef FEATURE_VERSION_W317A
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_AKG_10SEC, IDS_AKG_10SEC, NULL, 0);
             #endif
-			
+		    #ifdef FEATURE_5SEC_AUTOLOCK_KEYPAD //xxzhen
+			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_AKG_5SEC, IDS_AKG_5SEC, NULL, 0);
+			#endif
+
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_AKG_30SEC, IDS_AKG_30SEC, NULL, 0);
             #ifdef FEATURE_VERSION_W208S
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_AKG_1MIN, IDS_AKG_1MIN, NULL, 0);
@@ -3003,6 +3006,29 @@ static boolean  HandleAKGDialogEvent(CSettingMenu *pMe,
 	                      ui16_return = IDS_OFF;
 	                      break;
 	                }
+				#elif defined (FEATURE_5SEC_AUTOLOCK_KEYPAD)//xxzhen
+					switch (AKG)
+	                {
+	                	case 1:   //10秒
+	                      ui16_return = IDS_AKG_5SEC;
+	                      break;
+	                    case 2:   //30秒
+	                      ui16_return = IDS_AKG_30SEC;
+	                      break;
+	                    case 3:    // 两分钟
+	                      ui16_return = IDS_AKG_2MIN;
+	                      break;
+	                    case 4:    // 五分钟
+	                      ui16_return = IDS_AKG_5MIN;
+	                      break;
+	                    case 5:
+	                      ui16_return = IDS_AKG_1MIN;
+	                      break;   //一分钟
+	                   default:
+	                    case 0: //关
+	                      ui16_return = IDS_OFF;
+	                      break;
+						}
 				#else
 					switch (AKG)
 	                {
@@ -3085,6 +3111,31 @@ static boolean  HandleAKGDialogEvent(CSettingMenu *pMe,
 	                        AKG = 4;
 	                        break;
 	                    case IDS_AKG_1MIN:     //1minute
+	                        AKG = 5;
+	                        break;
+	                    case IDS_OFF:     //关
+	                        AKG = 0;
+	                        break;
+
+	                    default:
+	                        ASSERT_NOT_REACHABLE;
+	                }
+				#elif defined(FEATURE_5SEC_AUTOLOCK_KEYPAD) //xxzhen
+					switch (wParam)
+	                {
+	                	case IDS_AKG_5SEC:     //10miao
+	                        AKG = 1;
+	                        break;
+	                    case IDS_AKG_30SEC:     //30miao
+	                        AKG = 2;
+	                        break;
+	                    case IDS_AKG_2MIN:     // 2minute
+	                        AKG = 3;
+	                        break;
+	                    case IDS_AKG_5MIN:     //5minute
+	                        AKG = 4;
+	                        break;
+						case IDS_AKG_1MIN:
 	                        AKG = 5;
 	                        break;
 	                    case IDS_OFF:     //关
