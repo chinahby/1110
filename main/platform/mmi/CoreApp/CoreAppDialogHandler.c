@@ -3739,6 +3739,48 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 	                            default:
 	                        	break;
 	                    	}
+						#elif defined(FEATURE_5SEC_AUTOLOCK_KEYPAD) //xxzhen
+						switch(bData)
+	                		{
+	                			case 1:
+	                			{
+	                    			(void)ISHELL_SetTimer(pMe->a.m_pIShell,
+	                                    5*1000,
+	                                    CoreApp_TimeKeyguard,
+	                                    pMe);
+	                        	}
+	                        	break;
+								
+	                			case 2:
+	                			{
+	                    			(void)ISHELL_SetTimer(pMe->a.m_pIShell,
+	                                    30*1000,
+	                                    CoreApp_TimeKeyguard,
+	                                    pMe);
+	                        	}
+	                        	break;
+								
+	                        	case 3:
+	                			{
+	                    			(void)ISHELL_SetTimer(pMe->a.m_pIShell,
+	                                    120*1000,
+	                                    CoreApp_TimeKeyguard,
+	                                    pMe);
+	                        	}
+	                        	break;
+								
+	                        	case 4:
+	                			{
+	                    			(void)ISHELL_SetTimer(pMe->a.m_pIShell,
+	                                    300*1000,
+	                                    CoreApp_TimeKeyguard,
+	                                    pMe);
+	                        	}
+								break;
+								
+	                            default:
+	                        	break;
+	                    	}
 						#else
 							switch(bData)
 	                		{
@@ -7376,7 +7418,7 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 		#else
     		#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_S1000T)
     			eBBarType = BTBAR_UNLOCK_SOS;
-			#elif defined(FEATURE_VERSION_C316)	
+			#elif defined(FEATURE_VERSION_C316)||defined(FEATURE_LEFT_SOFTKEY_AND_STAR_UNLOCK)//xxzhen	
 			    eBBarType = BTBAR_UNLOCK_L;
         	#elif defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_1110W516) 
         		eBBarType = BTBAR_LUNLOCK;

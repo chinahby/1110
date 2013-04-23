@@ -18,6 +18,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 
 //#define FEATURE_CANCEL_CONVERT_COEFFICIENT3 //xxzhen
 #define FEATURE_5SEC_AUTOLOCK_KEYPAD //xxzhen
+#define FEATURE_LEFT_SOFTKEY_AND_STAR_UNLOCK//xxzhen
 
 
 #ifdef CUST_EDITION
