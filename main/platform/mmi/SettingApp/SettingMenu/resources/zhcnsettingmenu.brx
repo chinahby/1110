@@ -448,6 +448,9 @@
 	<String Id="1149" Name="IDS_AKG_10SEC" Encoding="Unicode">
 		<Text>10 秒</Text>
 	</String>
+	<STRING Id="1150" Name="IDS_CALL_TIME_REMINDER">
+		<Text>通话提示音</Text>
+	</STRING>
 	<String Id="1171" Name="IDS_AKG_5SEC" Encoding="Unicode">
 		<Text>5 秒</Text>
 	</String>

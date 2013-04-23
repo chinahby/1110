@@ -874,7 +874,7 @@ static boolean  HandleCallSettingDialogEvent(CSettingMenu *pMe,
 				IANNUNCIATOR_SetFieldText(pMe->m_pAnn,WTitle);
             }
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_ANSWER_MODE, IDS_ANSWER_MODE, NULL, 0);
-			#ifdef FEATURE_VERSION_W317A
+			#if defined( FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_K202_LM129C)
 			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_CALL_TIME_REMINDER, IDS_CALL_TIME_REMINDER, NULL, 0);
 			#else
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_MINUTE_ALERT, IDS_MINUTE_ALERT, NULL, 0);
@@ -987,11 +987,11 @@ static boolean  HandleCallSettingDialogEvent(CSettingMenu *pMe,
                     break;
 #endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH  
 
-				#ifdef FEATURE_VERSION_W317A
+			    #if defined( FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_K202_LM129C)
 				case IDS_CALL_TIME_REMINDER:
 				#endif
                 case IDS_MINUTE_ALERT:     //50ÃëÌáÐÑ
-                	#ifdef FEATURE_VERSION_W317A
+			        #if defined( FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_K202_LM129C)
 					pMe->m_CallSettingSel = IDS_CALL_TIME_REMINDER;
 					#else
                     pMe->m_CallSettingSel = IDS_MINUTE_ALERT;
@@ -1465,7 +1465,7 @@ static boolean  HandleCallSettingSelDialogEvent(CSettingMenu *pMe,
                         break;
 
 
-					#ifdef FEATURE_VERSION_W317A
+			        #if defined( FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_K202_LM129C)
 					case IDS_CALL_TIME_REMINDER:
 					#endif
                     case IDS_MINUTE_ALERT:      //50ÃëÌáÐÑ
@@ -1695,7 +1695,7 @@ static boolean  HandleCallSettingSelDialogEvent(CSettingMenu *pMe,
                             CLOSE_DIALOG(DLGRET_CANCELED)
                             return TRUE;
 
-						#ifdef FEATURE_VERSION_W317A
+			            #if defined( FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_K202_LM129C)
 						case IDS_CALL_TIME_REMINDER:
 						#endif
                         case IDS_MINUTE_ALERT:      //50ÃëÌáÐÑ
@@ -1773,7 +1773,7 @@ static boolean  HandleCallSettingSelDialogEvent(CSettingMenu *pMe,
                             CLOSE_DIALOG(DLGRET_CANCELED)
                             return TRUE;
 
-						#ifdef FEATURE_VERSION_W317A
+			             #if defined( FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_K202_LM129C)
 						case IDS_CALL_TIME_REMINDER:
 						#endif
                         case IDS_MINUTE_ALERT:      //50ÃëÌáÐÑ
