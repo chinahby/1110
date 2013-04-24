@@ -4561,7 +4561,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                         #if defined(FEATURE_VERSION_MYANMAR) || defined( FEATURE_VERSION_C11) || defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W0271)
                            WMSDialog_KeypadLock(TRUE);
                         #endif
-    				    #ifdef FEATURE_USES_BLACKBERRY
+    				    #if defined(FEATURE_USES_BLACKBERRY)||defined(FEATURE_VERSION_K202_LM129C)
     				        ret = CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
     				    #else
 #if defined( FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)//|| //defined(FEATURE_VERSION_MYANMAR) //||defined( FEATURE_VERSION_W515V3)
@@ -7476,7 +7476,8 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 			eBBarType = BTBAR_MENU_CONTACTS; //add by yangdecai
 		}			
 	#else
-        #if defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_W317A)
+        #if defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_W317A)\
+			||defined(FEATURE_VERSION_K202_LM129C)//xxzhen
            eBBarType = BTBAR_MENU_CONTACTS;
 	#elif defined(FEATURE_VERSION_C316)
 	    eBBarType = BTBAR_SHORTCUT_CONTACTS;
