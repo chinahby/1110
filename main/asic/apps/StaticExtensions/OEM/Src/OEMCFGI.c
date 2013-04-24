@@ -1777,7 +1777,11 @@ static OEMConfigListType oemi_cache = {
 #else
    FALSE,                                          // CFGI_ANYKEY_ANSWER
 #endif
+#ifdef FEATURE_VERSION_K202_LM129C //xxzhen
+   OEMNV_HEADSET_AUTOANSWER_5SEC,                   // CFGI_HEADSET_AUTOANSWER
+#else
    OEMNV_HEADSET_AUTOANSWER_OFF,                   // CFGI_HEADSET_AUTOANSWER
+#endif
    OEMNV_TIMEFORM_AMPM,
    0,                                              // CFGI_DEVICE
    {0,},                                           // CFGI_CUG
@@ -2975,7 +2979,11 @@ void OEM_RestoreFactorySetting( void )
 #else
    oemi_cache.any_key_answer           = FALSE;
 #endif
+#ifdef FEATURE_VERSION_K202_LM129C //xxzhen
+   oemi_cache.headset_autoanswer       = OEMNV_HEADSET_AUTOANSWER_5SEC;
+#else
    oemi_cache.headset_autoanswer       = OEMNV_HEADSET_AUTOANSWER_OFF;
+#endif
    oemi_cache.phone_password         = OEMNV_PHONE_PASSWORD;
    //oemi_cache.phone_password_check   = OEMNV_PHONE_PASSWORD_CHECK;  //恢复出厂设置不恢复为不检测手机密码
    //短信铃声(0-表示无)
