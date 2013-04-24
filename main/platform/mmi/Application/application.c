@@ -1110,7 +1110,8 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
 			#if 0
             IMENUCTL_SetTitle(pMenu, APPLICATION_RES_FILE_LANG, IDS_APPLICATION_LIST, NULL);
 			#else
-#if defined	(FEATURE_VERSION_FLEXI203)||defined(FEATURE_VERSION_IVIO203) ||defined(FEATURE_VERSION_C500BE)||defined	(FEATURE_VERSION_FLEXI203P)||defined (FEATURE_VERSION_VG68)
+#if defined	(FEATURE_VERSION_FLEXI203)||defined(FEATURE_VERSION_IVIO203) ||defined(FEATURE_VERSION_C500BE)||defined	(FEATURE_VERSION_FLEXI203P)||defined (FEATURE_VERSION_VG68)\
+	||defined(FEATURE_VERSION_K202_LM129C)//xxzhen
 			(void)ISHELL_LoadResString(pMe->m_pShell,
                                     APPLICATION_RES_FILE_LANG,                                
                                     IDS_TOOLS_LIST,

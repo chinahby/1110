@@ -8,16 +8,16 @@
 		<Text>应用管理</Text>
 	</STRING>
 	<STRING Id="1012" Name="IDS_APPLICATION_TIMER">
-		<Text>定时器</Text>
+		<Text>倒计时器</Text>
 	</STRING>
 	<STRING Id="1013" Name="IDS_APPLICATION_STOPWATCH">
-		<Text>跑表</Text>
+		<Text>秒表</Text>
 	</STRING>
 	<STRING Id="1014" Name="IDS_APPLICATION_ALARM">
 		<Text>闹钟</Text>
 	</STRING>
 	<String Id="1015" Name="IDS_APPLICATION_CONVERTER">
-		<Text>转换器</Text>
+		<Text>单位换算</Text>
 	</String>
 	<String Id="1016" Name="IDS_APPLICATION_WORLDTIME">
 		<Text>世界时间</Text>
