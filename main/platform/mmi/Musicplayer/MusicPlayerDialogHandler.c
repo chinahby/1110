@@ -3079,6 +3079,9 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
 	#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
 	case AVK_POUND:
 	#else
+	#ifdef FEATURE_ADD_VOLUP_VOLDN //xxzhen
+	case AVK_VOLUME_UP:
+	#endif
 	case AVK_UP:
 	#endif         
 	case AVK_O:   //add by yangdecai
@@ -3115,6 +3118,9 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
 	#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
 	case AVK_STAR:
 	#else
+	#ifdef FEATURE_ADD_VOLUP_VOLDN //xxzhen
+	case AVK_VOLUME_DOWN:
+	#endif
 	case AVK_DOWN:
 	#endif    
 	case AVK_I:   //add by yangdecai

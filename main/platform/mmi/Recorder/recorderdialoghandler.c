@@ -1839,6 +1839,19 @@ __dialog_handler_of_state_record_pause_resume__:
 					}
 				}
 				break;
+				#ifdef FEATURE_ADD_VOLUP_VOLDN //xxzhen
+				case AVK_VOLUME_DOWN:
+				case AVK_VOLUME_UP:
+					{
+					if( pme->m_Media.m_eState == MEDIA_STATE_PLAYING || pme->m_Media.m_eState == MEDIA_STATE_RECORDING)
+					{
+						recorder_set_media_volume( &pme->m_Media, pme->m_Media.m_nVolume + ( wParam == AVK_VOLUME_DOWN ? -20 : 20));
+						repaint( TRUE);
+					}
+				    }
+				break;
+				#endif
+
 				case AVK_I:
 				case AVK_O:
 				{

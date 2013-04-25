@@ -1191,12 +1191,17 @@ __handleKeyEvent_input_channel_done__:
 		case AVK_STAR:
 		case AVK_POUND:
 	#endif
+	#ifdef FEATURE_ADD_VOLUP_VOLDN //xxzhen
+	    case AVK_VOLUME_DOWN:
+		case AVK_VOLUME_UP:
+	#endif
 	#endif
 		{
 			if( pMe->opMode == FM_RADIO_OPMODE_PLAY)
 			{
 #if defined( FEATURE_FMRADIO_NO_MODE_SELECT) 
-                #if (defined(FEATURE_VERSION_1110W516)||defined( FEATURE_VERSION_W317A)||defined( FEATURE_VERSION_C337) || defined(FEATURE_VERSION_C316)||defined( FEATURE_VERSION_M74)||defined( FEATURE_VERSION_C310))
+                #if (defined(FEATURE_VERSION_1110W516)||defined( FEATURE_VERSION_W317A)||defined( FEATURE_VERSION_C337) || defined(FEATURE_VERSION_C316)||defined( FEATURE_VERSION_M74)||defined( FEATURE_VERSION_C310))\
+					 ||defined(FEATURE_ADD_VOLUP_VOLDN)
                 if(1)
 				#else
 				if(pMe->tuneVolumeByLeftRightArrowKey)
@@ -1214,7 +1219,17 @@ __handleKeyEvent_input_channel_done__:
 						key = AVK_UP;
 					}	
                     
-#endif                       
+#endif        
+#ifdef FEATURE_ADD_VOLUP_VOLDN //xxzhen
+		            if (key == AVK_VOLUME_DOWN)
+					{
+						key = AVK_DOWN;
+					}
+                    else if (key == AVK_VOLUME_UP)
+					{
+						key = AVK_UP;
+					}	
+#endif
 					changeVolume( pMe, key);
 					repaint( pMe, TRUE);
 					ISHELL_SetTimer( pMe->m_pShell, 3000, (PFNNOTIFY)tuneVolumeByLeftRightArrowKeyCloseCb, pMe);
