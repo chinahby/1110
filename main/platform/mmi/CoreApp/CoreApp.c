@@ -3911,7 +3911,7 @@ int CoreApp_GetBatteryLevel(CCoreApp *pMe)
     }
     ERR("miaoxiaoming: ATBattLevel =%d",ATBattLevel ,0,0);
     /* convert to 0-4 levels */
-	#ifdef FEATURE_VERSION_LM126C
+	#if defined(FEATURE_VERSION_LM126C)||defined(FEATURE_5_LEVEL_BATTERY)//xxzhen
 	if ( ATBattLevel <= 40 )
     {
         uLevel = 0;

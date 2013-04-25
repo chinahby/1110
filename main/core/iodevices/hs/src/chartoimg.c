@@ -327,7 +327,7 @@ static void UpdateAnnunciators(AnnunciatorData *pAnnunData)
    */
   switch ( pAnnunData->batt )
   {
-  #ifdef FEATURE_VERSION_LM126C 
+  #if defined(FEATURE_VERSION_LM126C)||defined(FEATURE_5_LEVEL_BATTERY)//xxzhen
   	 case 6:
       /* This value means 4-bars battery */
       IANNUNCIATOR_SetField (pAnn, ANNUN_FIELD_BATT, ANNUN_STATE_BATT_FULL);

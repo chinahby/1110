@@ -505,5 +505,21 @@
 	<Object Id="7106" Name="IDI_MENU_ITEM_PROFILE_OUTDOOR" MimeType="image/png">
 		<File>..\images\176x220\common\Appscommon\Menu\menu\vibring.png</File>
 	</Object>
+	<Object Id="7107" Name="IDB_BATT5_FULL">
+		<File>..\images\176x220\common\Annunciator\batt5.bmp</File>
+	</Object>
+	<Object Id="7108" Name="IDB_BATT5_1">
+		<File>..\images\176x220\common\Annunciator\batt5_1.bmp</File>
+	</Object>
+	<Object Id="7109" Name="IDB_BATT5_2">
+		<File>..\images\176x220\common\Annunciator\batt5_2.bmp</File>
+	</Object>
+	<Object Id="7110" Name="IDB_BATT5_3">
+		<File>..\images\176x220\common\Annunciator\batt5_3.bmp</File>
+	</Object>
+	<Object Id="7111" Name="IDB_BATT5_4">
+		<File>..\images\176x220\common\Annunciator\batt5_4.bmp</File>
+	</Object>
+	
 </Objects>
 </BREWRes>

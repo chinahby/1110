@@ -315,18 +315,26 @@ static OEMState_data ringtone_image_data[]=
 */
 };
 /*Battery*/
+#if defined(FEATURE_VERSION_LM126C)||defined(FEATURE_5_LEVEL_BATTERY)//xxzhen
+static OEMState_data batt5_image_data[]=
+{
+  {ANNUN_STATE_BATT_LOW,IDB_BATT_LOW, NULL},
+  {ANNUN_STATE_BATT_1, IDB_BATT5_1, NULL},
+  {ANNUN_STATE_BATT_2, IDB_BATT5_2, NULL},
+  {ANNUN_STATE_BATT_3, IDB_BATT5_3, NULL},
+  {ANNUN_STATE_BATT_4, IDB_BATT5_4, NULL},
+  {ANNUN_STATE_BATT_FULL, IDB_BATT5_FULL, NULL}
+};
+#else
 static OEMState_data batt_image_data[]=
 {
   {ANNUN_STATE_BATT_LOW, IDB_BATT_LOW, NULL},
   {ANNUN_STATE_BATT_1, IDB_BATT1, NULL},
   {ANNUN_STATE_BATT_2, IDB_BATT2, NULL},
   {ANNUN_STATE_BATT_3, IDB_BATT3, NULL},
-  #ifdef FEATURE_VERSION_LM126C 
-  {ANNUN_STATE_BATT_4, IDB_BATT4, NULL},
-  #endif
   {ANNUN_STATE_BATT_FULL, IDB_BATT_FULL, NULL}
 };
-
+#endif
 /*QQ
 static OEMState_data qq_image_data[]=
 {
@@ -424,9 +432,9 @@ OEMAnnun_content ringtone_content =
      {ANNUN_TYPE_IMAGE, 4, ANNUN_STATE_OFF, (void *)ringtone_image_data};
 //#endif
 /*ANNUN_FIELD_BATT*/
-#ifdef FEATURE_VERSION_LM126C
+#if defined(FEATURE_VERSION_LM126C)||defined(FEATURE_5_LEVEL_BATTERY)//xxzhen
 OEMAnnun_content batt_content =
-     {ANNUN_TYPE_IMAGE, 6, ANNUN_STATE_OFF, (void *)batt_image_data};
+     {ANNUN_TYPE_IMAGE, 6, ANNUN_STATE_OFF, (void *)batt5_image_data};
 #else
 OEMAnnun_content batt_content =
      {ANNUN_TYPE_IMAGE, 5, ANNUN_STATE_OFF, (void *)batt_image_data};
