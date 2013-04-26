@@ -518,7 +518,11 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 			{
 
 					IImage* image	= NULL;
+                    #if defined (FEATURE_VERSION_C180)||defined(FEATURE_KEYTEST_NO_CAMERA_MUSIC)//xxzhen for 128x160 resource
+					image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_KEY_TEST12);
+					#else
 					image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_KEY_TEST);
+					#endif
 				
 					if( image != NULL)
 					{
@@ -653,7 +657,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 #if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
                         if(pMe->m_testkeycount >=22)
 #elif defined(FEATURE_DISP_128X160) ||defined(FEATURE_DISP_176X220)
-                        #ifdef FEATURE_VERSION_C180
+                        #if defined (FEATURE_VERSION_C180)||defined(FEATURE_KEYTEST_NO_CAMERA_MUSIC)
                         if(pMe->m_testkeycount >=20)
                         #else
 						if(pMe->m_testkeycount >=22)
@@ -1172,7 +1176,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 						IIMAGE_Release( image);
 			    	}
 			    	break;
-#ifndef FEATURE_VERSION_C180
+#if !defined(FEATURE_VERSION_C180)&&!defined(FEATURE_KEYTEST_NO_CAMERA_MUSIC)//xxzhen
 			    case AVK_MUSIC:
 			    	{
 			    		IImage* image	= NULL;
@@ -1326,6 +1330,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
 #if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128) || defined(FEATURE_DISP_176X220)
+           #ifndef FEATURE_KEYTEST_NO_CAMERA_MUSIC //xxzhen
                 case AVK_CAMERA:
                     {
                         IImage* image   = NULL;
@@ -1346,8 +1351,9 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     }
                     IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break; 
+			#endif
 #elif defined(FEATURE_DISP_128X160)
-#ifndef FEATURE_VERSION_C180
+#if !defined(FEATURE_VERSION_C180)&&!defined(FEATURE_KEYTEST_NO_CAMERA_MUSIC)//xxzhen
 case AVK_CAMERA:
                     {
                         IImage* image   = NULL;

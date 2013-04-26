@@ -14,6 +14,9 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_VERSION_C180
 #define FEATURE_VERSION_M74
 #define FEATURE_VERSION_C117_M74 //xxzhen
+#define FEATURE_KEYTEST_NO_CAMERA_MUSIC //xxzhen
+
+
 //Add by zzg 2010_10_13
 //#define FEATURE_TORCH_KEY_CAMERA			//手电筒功能按键
 //#define FEATURE_IDLE_TORCH_DOWNKEY			//idle界面的向下键对应手电筒功能
@@ -235,7 +238,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_XO 
 
 #ifdef CUST_EDITION
-#define FEATURE_DUAL_UIMCARD
+//#define FEATURE_DUAL_UIMCARD  //xxzhen closed it
 #define FEATRUE_AUTO_SET_NEED_NV_VALUE
 #define FEATURE_FM_RADIO
 #define FEATURE_FM_OEM

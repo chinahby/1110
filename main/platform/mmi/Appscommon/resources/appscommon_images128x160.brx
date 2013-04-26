@@ -487,5 +487,8 @@
 	<Object Id="7103" Name="IDB_PROFILE_BLUETOOTH">
 		<File>..\images\128x160\common\Annunciator\bt.bmp</File>
 	</Object>
+	<Object Id="7104" Name="IDI_KEY_TEST12" MimeType="image/png">
+		<File>..\images\128x160\common\QuickTest\keytest12.png</File>
+	</Object>
 </Objects>
 </BREWRes>
