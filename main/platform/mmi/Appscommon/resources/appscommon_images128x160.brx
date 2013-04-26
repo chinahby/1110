@@ -490,5 +490,11 @@
 	<Object Id="7104" Name="IDI_KEY_TEST12" MimeType="image/png">
 		<File>..\images\128x160\common\QuickTest\keytest12.png</File>
 	</Object>
+	<Object Id="7105" Name="IDB_RSSI5">
+		<File>..\images\128x160\common\Annunciator\rssi5.bmp</File>
+	</Object>
+	<Object Id="7106" Name="IDB_RSSI6">
+		<File>..\images\128x160\common\Annunciator\rssi6.bmp</File>
+	</Object>
 </Objects>
 </BREWRes>
