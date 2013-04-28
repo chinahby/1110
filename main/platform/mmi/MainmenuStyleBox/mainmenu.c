@@ -3910,6 +3910,33 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
                 return TRUE;
             }
         #endif
+	 #if defined(FEATURE_TORCH_KEY_SELECT) //xxzhen
+           if((AVKType)wParam == AVK_SELECT)
+            {
+                boolean TorchOn = FALSE;
+                OEM_GetConfig(CFGI_FLSHLITHG_STATUS,&TorchOn, sizeof(TorchOn));
+                if (TorchOn == FALSE )
+                {
+                    TorchOn = TRUE;
+                    if (pMe->m_pBacklight)
+                    {
+                        IBACKLIGHT_TurnOnTorch(pMe->m_pBacklight);
+                    }
+                }
+                else
+                {
+                    TorchOn = FALSE;
+                    if (pMe->m_pBacklight)
+                    {                           
+                        IBACKLIGHT_TurnOffTorch(pMe->m_pBacklight);
+                    }
+                }
+                OEM_SetConfig(CFGI_FLSHLITHG_STATUS,&TorchOn, sizeof(TorchOn));
+                ISHELL_CloseApplet(pMe->m_pShell, TRUE); 
+                return TRUE;
+            }
+        #endif
+
             return TRUE;
         case EVT_KEY:
             //ISHELL_CancelTimer(pMe->m_pShell, NULL, (void**)pMe);

@@ -14,7 +14,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 
 #define FEATURE_VERSION_K202
 #define FEATURE_VERSION_K202_LM129C //xxzhen
-
+#define FEATURE_TORCH_KEY_SELECT//xxzhen 修改长按左键为手电筒 
 
 //#define FEATURE_CANCEL_CONVERT_COEFFICIENT3 //xxzhen
 #define FEATURE_5SEC_AUTOLOCK_KEYPAD //xxzhen
