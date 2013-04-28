@@ -3135,7 +3135,7 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_IconTitle[3]     = IDS_MAIN_MENU_TOOLS;
     pMe->m_IconTitle[4]     = IDS_MAIN_MENU_MESSAGES;
     pMe->m_IconTitle[5]     = IDS_MAIN_MENU_MUSICPLAYER;
-    pMe->m_IconTitle[6]     = IDS_MAIN_WAPBROWSER;
+    pMe->m_IconTitle[6]     = IDS_MAIN_MENU_UTK; //xxzhen browser for utk
     pMe->m_IconTitle[7]     = IDS_MAIN_MENU_MULTIMEDIA;
     pMe->m_IconTitle[8]     = IDS_MAIN_MENU_SETTINGS;
 #elif defined (FEATURE_VERSION_C310) // add by pyuangui 20121224
