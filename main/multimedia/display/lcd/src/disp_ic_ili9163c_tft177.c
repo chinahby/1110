@@ -326,7 +326,93 @@ static void disp_ic_init(void)
 	LCD_WRITE_DATA(0x3F);//p14
 	LCD_WRITE_DATA(0x3D);//p15
 	*/
-		
+	#elif defined(FEATURE_VERSION_W450_E200) //xxzehn for w450
+	
+    // VCI=2.6V
+    //************* Reset LCD Driver ****************//
+    #if 0
+    LCD_nRESET = 1;
+    LCD_DELAY(1); // Delay 1ms
+    LCD_nRESET = 0;
+    LCD_DELAY(10); // Delay 10ms // This delay time is necessary
+    LCD_nRESET = 1;
+	#endif
+    LCD_DELAY(120); // Delay 50 ms
+    //************* Start Initial Sequence **********//
+    LCD_WRITE_CMD(0xEC);   
+    LCD_WRITE_DATA(0x0C); 
+    
+    LCD_WRITE_CMD(0xc0);  
+    LCD_WRITE_DATA(0x16); 
+    LCD_WRITE_DATA(0x05); 
+    
+    LCD_WRITE_CMD(0xc1);  
+    LCD_WRITE_DATA(0x02); 
+    
+    LCD_WRITE_CMD(0xc5);  
+    LCD_WRITE_DATA(0x46); 
+    LCD_WRITE_DATA(0x40); 
+    
+    LCD_WRITE_CMD(0xc7);  
+    LCD_WRITE_DATA(0xa4); 
+    
+    LCD_WRITE_CMD(0x36);  
+    LCD_WRITE_DATA(0xc0); //0xc0
+     
+    LCD_WRITE_CMD(0x3A);   //Set Pixel Format
+    LCD_WRITE_DATA(0x55); 
+    
+    LCD_WRITE_CMD(0xF2);  
+    LCD_WRITE_DATA(0x01); 
+    
+    LCD_WRITE_CMD(0xE0);    //Set Gamma 
+    LCD_WRITE_DATA(0x3f); 
+    LCD_WRITE_DATA(0x28); 
+    LCD_WRITE_DATA(0x24); 
+    LCD_WRITE_DATA(0x2d); 
+    LCD_WRITE_DATA(0x26); 
+    LCD_WRITE_DATA(0x0b); 
+    LCD_WRITE_DATA(0x4f); 
+    LCD_WRITE_DATA(0xc4); 
+    LCD_WRITE_DATA(0x3a); 
+    LCD_WRITE_DATA(0x18); 
+    LCD_WRITE_DATA(0x19); 
+    LCD_WRITE_DATA(0x08); 
+    LCD_WRITE_DATA(0x05); 
+    LCD_WRITE_DATA(0x04); 
+    LCD_WRITE_DATA(0x01); 
+     
+    LCD_WRITE_CMD(0xE1);    //Set Gamma 
+    LCD_WRITE_DATA(0x00); 
+    LCD_WRITE_DATA(0x17); 
+    LCD_WRITE_DATA(0x1b); 
+    LCD_WRITE_DATA(0x12); 
+    LCD_WRITE_DATA(0x19); 
+    LCD_WRITE_DATA(0x14); 
+    LCD_WRITE_DATA(0x30); 
+    LCD_WRITE_DATA(0x3b); 
+    LCD_WRITE_DATA(0x45); 
+    LCD_WRITE_DATA(0x07); 
+    LCD_WRITE_DATA(0x26); 
+    LCD_WRITE_DATA(0x2e); 
+    LCD_WRITE_DATA(0x3a); 
+    LCD_WRITE_DATA(0x3b); 
+    LCD_WRITE_DATA(0x3e); 
+     
+    
+    
+    LCD_WRITE_CMD(0xB4);   
+    LCD_WRITE_DATA(0x06); 
+    
+    LCD_WRITE_CMD(0xB1);    //Set Frame Rate
+    LCD_WRITE_DATA(0x08); 
+    LCD_WRITE_DATA(0x12); 
+    
+    LCD_WRITE_CMD(0x11);    //Exit Sleep 
+    LCD_DELAY(120);
+    LCD_WRITE_CMD(0x29);    //Display on 
+    LCD_WRITE_CMD(0x2C);     
+
 	#else
 
 	LCD_WRITE_CMD(0x11); //Exit Sleep
