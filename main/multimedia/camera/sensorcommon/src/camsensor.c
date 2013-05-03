@@ -413,6 +413,11 @@
 #include "camsensor_sp0a18.h"
 #endif
 
+#ifdef USE_CAMSENSOR_SP0A19
+#include "camsensor_sp0a19.h"
+#endif
+
+
 #ifdef USE_CAMSENSOR_OV7675
 #include "camsensor_ov7675.h"
 #endif
@@ -747,6 +752,11 @@ LOCAL camsensor_unactive_fn_type camsensor_unactive_value_table[CAMSENSOR_ID_MAX
 	camsensor_sp0828_ycbcr_unactive,
 #endif
 
+#ifdef USE_CAMSENSOR_SP0A19
+   camsensor_sp0a19_ycbcr_unactive,
+#endif
+
+
 #ifdef USE_CAMSENSOR_OMNI_VISION_9650
   NULL,
 #endif /* USE_CAMSENSOR_OMNI_VISION_9650 */
@@ -883,6 +893,7 @@ LOCAL camsensor_active_fn_type camsensor_active_value_table[CAMSENSOR_ID_MAX] =
    camsensor_sp0a18_ycbcr_active,
 #endif
 
+
 #ifdef USE_CAMSENSOR_SIV120A
    camsensor_SIV120A_ycbcr_active,
 #endif
@@ -898,6 +909,11 @@ LOCAL camsensor_active_fn_type camsensor_active_value_table[CAMSENSOR_ID_MAX] =
 #ifdef USE_CAMSENSOR_SP0828
 	camsensor_sp0828_ycbcr_active,
 #endif
+
+#ifdef USE_CAMSENSOR_SP0A19
+   camsensor_sp0a19_ycbcr_active,
+#endif
+
 
 #ifdef USE_CAMSENSOR_OMNI_VISION_9650
   NULL,
@@ -1069,6 +1085,11 @@ LOCAL boolean (*camsensor_detect_table[])(camsensor_function_table_type *, camct
 #ifdef USE_CAMSENSOR_SP0828
 	camsensor_sp0828_init,
 #endif
+
+#ifdef USE_CAMSENSOR_SP0A19
+  camsensor_sp0a19_init,
+#endif
+
 
 #ifdef USE_CAMSENSOR_OMNI_VISION_9650
   camsensor_ov9650_init,
@@ -2747,6 +2768,7 @@ else {
 #else
 	camera_timed_wait(13);
 	CAMERA_CONFIG_GPIO(CAMIF_EN_N);
+	
     MSG_FATAL("current_camsensor_id================%d %d",current_camsensor_id,CAMSENSOR_ID_MAX,0);
 	if ( current_camsensor_id < CAMSENSOR_ID_MAX)
 	{
@@ -4763,6 +4785,7 @@ SIDE EFFECTS
 ===========================================================================*/
 boolean camsensor_init (void)
 {
+	
 	if (camsensor_initialized)
 	{
 		return TRUE;

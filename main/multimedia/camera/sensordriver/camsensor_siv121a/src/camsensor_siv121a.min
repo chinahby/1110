@@ -18,7 +18,8 @@ CAMSENSOR_SIV121A_SOURCES = \
 	camsensor_siv120a_yuv.c \
 	camsensor_gc0329.c \
 	camsensor_sp0828_yuv.c \
-	camsensor_gc0311.c
+	camsensor_gc0311.c \
+	camsensor_sp0a19.c
 else
 CAMSENSOR_SIV121A_SOURCES = \
 	camsensor_siv121a.c \
