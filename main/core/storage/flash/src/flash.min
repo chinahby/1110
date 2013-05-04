@@ -66,6 +66,7 @@ FLASH_NOR_SOURCES= \
         flash_nor_spansion.c \
         flash_nor_samsung.c \
         flash_nor_intel.c \
+        flash_nor_toshiba.c \
         flash_nor_utils.c
 
 FLASH_NAND_PARTITION_SOURCES= \

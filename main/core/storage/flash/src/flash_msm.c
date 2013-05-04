@@ -68,6 +68,13 @@ const flashi_nor_device *(spansion_parts[]) = {
   NULL
 };
 
+
+const flashi_nor_device *(toshiba_parts[]) = {
+  &TC58FYM7T8C_TOP,
+  &TC58FYM7T8C_BOT,
+  NULL
+};
+
 /* List only Samsung parts tested by this target */
 const flashi_nor_device *(samsung_parts[]) = {
   &K5N5629ABM,  /* 256 Mbit Samsung NOR */
@@ -100,6 +107,7 @@ const flashi_nor_device **(global_parts[]) = {
 #ifndef FEATURE_USES_LOWMEM
   samsung_parts,
   spansion_parts,
+  toshiba_parts,   //add by yangdecai
 #endif
   NULL
 };
@@ -118,6 +126,7 @@ ProbeTbl flash_nor_probe_table[] = {
   { (volatile word *)       0x0, intel_probe    },
   { (volatile word *)       0x0, samsung_nor_probe },
   { (volatile word *)       0x0, spansion_probe },
+  { (volatile word *)       0x0, toshiba_nor_probe },
   { (volatile word *) FLASH_PROBE_END, 0 }
 };
 
@@ -344,6 +353,9 @@ flash_nor_geometry_init (flashi_nor_device *nor_device, flash_ptr_type baseaddr)
         break;
       case 0x00EC:
         flash_geometry_data.family_type = FLASH_SAMSUNG_FAMILY;
+        break;
+      case 0x0098:
+        flash_geometry_data.family_type = FLASH_TOSHIBA_FAMILY;
         break;
       default:  
         flash_geometry_data.family_type = FLASH_UNKNOWN_FAMILY;

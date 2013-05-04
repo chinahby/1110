@@ -108,7 +108,7 @@ data.set 0x00000AAA %word 0x90
 ; if not valid manufacturer ID
 ; then read device ID at address 0x38000000
 if (&ManufacturerID!=0x1)&&(&ManufacturerID!=0x89)&&\
-(&ManufacturerID!=0xEC)&&(&ManufacturerID!=0x20)
+(&ManufacturerID!=0xEC)&&(&ManufacturerID!=0x20)&&(&ManufacturerID!=0x98)
 (
 	&norBaseAddr=0x38000000
 	data.set &norBaseAddr %word 0xF0
@@ -140,6 +140,11 @@ else if (&ManufacturerID==0x89)||(&ManufacturerID==0x20)
 (
 	print "Nor Numonyx " &ManufacturerID
 	data.set &norBaseAddr %word 0xFF
+)
+else if (&ManufacturerID==0x98)
+(
+	print "Nor Toshiba " &ManufacturerID
+	data.set &norBaseAddr %word 0xF0
 )
 else
 (

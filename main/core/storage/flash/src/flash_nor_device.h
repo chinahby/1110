@@ -139,6 +139,10 @@ typedef ProbeTbl *ProbeTbl_t;
 extern ProbeTbl probe_info[];
 extern int probe_info_size;
 
+/* Toshiba Parts */
+extern flashi_nor_device TC58FYM7T8C_TOP;
+extern flashi_nor_device TC58FYM7T8C_BOT;
+
 /* Spansion Parts */
 extern flashi_nor_device S29WS512P;
 extern flashi_nor_device S29WS256N0SB;
@@ -174,6 +178,7 @@ extern flashi_nor_device Intel_256M18_ADMux;
 extern flashi_nor_device Intel_512M18_ADMux;
 extern flashi_nor_device Intel_1024M18_ADMux;
 
+extern const flashi_nor_device *(toshiba_parts[]);
 extern const flashi_nor_device *(spansion_parts[]);
 extern const flashi_nor_device *(samsung_parts[]);
 extern const flashi_nor_device *(intel_parts[]);
@@ -199,5 +204,6 @@ extern void flash_read_cfi(volatile word *baseaddr,
 extern flashi_nor_device *spansion_probe (volatile word *baseaddr);
 extern flashi_nor_device *intel_probe (volatile word *baseaddr);
 extern flashi_nor_device *samsung_nor_probe (volatile word *baseaddr);
+extern flashi_nor_device *toshiba_nor_probe (volatile word *baseaddr);
 
 #endif /* End of __FLASH_NOR_DEVICE_H__ */

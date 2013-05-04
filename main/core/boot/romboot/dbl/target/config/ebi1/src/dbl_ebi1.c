@@ -75,9 +75,26 @@ typedef struct {
 dbl_nor_device *dbl_intel_probe (volatile word *baseaddr);
 dbl_nor_device *dbl_spansion_probe (volatile word *baseaddr);
 dbl_nor_device *dbl_samsung_probe (volatile word *baseaddr);
+dbl_nor_device *dbl_toshiba_probe(volatile word *baseaddr); //add by yangdecai
 
 /* For Probe table */
 #define DBL_FLASH_PROBE_END 0xDEADBEEF
+
+
+dbl_nor_device TC58FYM7T8C_TOP = 
+{
+  "TOSHIBA TC58FYM7T8C_TOP",
+  2,                                              /* # of codes to match */
+  {0x0098, 0x009E}                                /* Manufacture codes. */
+};
+
+dbl_nor_device TC58FYM7T8C_BOT = 
+{
+  "TOSHIBA TC58FYM7T8C_BOT",
+  2,                                              /* # of codes to match */
+  {0x0098, 0x009F}                                /* Manufacture codes. */
+};
+
 
 dbl_nor_device S29WS256N0SB = 
 {
@@ -251,6 +268,14 @@ const dbl_nor_device *(spansion_parts[]) = {
 };
 
 
+/* List only flash parts tested by this target */   //add by yangdecai
+const dbl_nor_device *(toshiba_parts[])={
+ &TC58FYM7T8C_TOP,
+ &TC58FYM7T8C_BOT,
+ NULL
+};
+
+
 /* List of all Intel parts that are probed similarly. */
 const dbl_nor_device *(intel_parts[]) = {
 #ifndef FEATURE_USES_LOWMEM
@@ -286,6 +311,7 @@ DBLProbeTbl dbl_probe_info_flash[] = {
   { (volatile word *)FLASH_BASE_ADDRESS, dbl_samsung_probe },
   { (volatile word *)FLASH_BASE_ADDRESS, dbl_intel_probe },
   { (volatile word *)FLASH_BASE_ADDRESS, dbl_spansion_probe },
+  { (volatile word *)FLASH_BASE_ADDRESS, dbl_toshiba_probe},
 #else
   { (volatile word *)FLASH_BASE_ADDRESS, dbl_intel_probe },
 #endif
@@ -575,6 +601,58 @@ const static dbl_parser_cfg_data_item_type ebi1_cfg_data_S71VSR_96MHZ[] =
                             End of Configuration
   -----------------------------------------------------------------------*/   
   {END_OF_CFG_DATA,  0x00000000,                    0x00000000            }
+};
+
+
+const static dbl_parser_cfg_data_item_type ebi1_cfg_data_TC58FYM7T8C_48MHZ[] =
+{
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000000),  0xF0    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000AAA),  0xAA    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000554),  0x55    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00024AAA),  0xC0    },
+
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, FLASH_ON_CS),  0x025400             },
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, FLASH_ON_CS),  0x01010034           },
+  {HWIO_OPERATION,   HWIO_ADDR(EBI1_BUFC_CFG),                EBI1_BUFC_CFG_VALUE  },
+
+  /*-----------------------------------------------------------------------
+                            End of Configuration
+  -----------------------------------------------------------------------*/   
+  {END_OF_CFG_DATA,  0x00000000,                    0x00000000    },
+};
+
+const static dbl_parser_cfg_data_item_type ebi1_cfg_data_TC58FYM7T8C_64MHZ[] =
+{
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000000),  0xF0    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000AAA),  0xAA    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000554),  0x55    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00026AAA),  0xC0    },
+
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, FLASH_ON_CS),  0x013400             },
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, FLASH_ON_CS),  0x01011034           },
+  {HWIO_OPERATION,   HWIO_ADDR(EBI1_BUFC_CFG),                EBI1_BUFC_CFG_VALUE  },
+
+  /*-----------------------------------------------------------------------
+                            End of Configuration
+  -----------------------------------------------------------------------*/   
+  {END_OF_CFG_DATA,  0x00000000,                    0x00000000    },
+};
+
+const static dbl_parser_cfg_data_item_type ebi1_cfg_data_TC58FYM7T8C_96MHZ[] =
+{
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000000),  0xF0    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000AAA),  0xAA    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000554),  0x55    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x0002CAAA),  0xC0    },
+
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, FLASH_ON_CS),  0x025400             },
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, FLASH_ON_CS),  0x01010034           },
+  {HWIO_OPERATION,   HWIO_ADDR(EBI1_BUFC_CFG),                EBI1_BUFC_CFG_VALUE  },
+
+  /*-----------------------------------------------------------------------
+                            End of Configuration
+  -----------------------------------------------------------------------*/   
+  {END_OF_CFG_DATA,  0x00000000,                    0x00000000    },
 };
 
 const static dbl_parser_cfg_data_item_type ebi1_cfg_data_common[] =
@@ -1264,6 +1342,35 @@ dbl_spansion_get_id_codes(volatile word *baseaddr, word *dest)
 }
 
 /***********************************************************************
+FUNCTION      FLASH_TOSHIBA_GET_ID_CODES
+
+DESCRIPTION   This function puts the SPANSION flash into Autoselect mode and
+              reads the MFG ID code from the flash.
+
+RETURN VALUE   NONE
+**********************************************************************/
+void
+dbl_toshiba_get_id_codes(volatile word *baseaddr, word *dest)   //add by yangdecai
+{
+  /* Reset the device to normal ROM mode */
+  *(baseaddr) = 0x00F0 ;
+  
+  /* Write the command sequence to place the device into Autoselect mode */
+  *(baseaddr + 0x555L) = 0x00AA;
+  *(baseaddr + 0x2AAL) = 0x0055;
+  *(baseaddr + 0x555L) = 0x0090;
+  
+  /* Get three words of the IID */
+  dest[0] = *(baseaddr + 0x0000L);
+  dest[1] = *(baseaddr + 0x0001L);
+
+  /* Reset device to read array mode */
+  *(baseaddr + 0x555L) = 0x00AA;
+  *(baseaddr + 0x2AAL) = 0x0055;
+  *(baseaddr + 0x555L) = 0x00F0;
+}
+
+/***********************************************************************
 FUNCTION      FLASH_SAMSUNG_GET_ID_CODES
 
 DESCRIPTION   This function puts the SAMSUNG flash into Autoselect mode and
@@ -1422,6 +1529,42 @@ dbl_spansion_probe (volatile word *baseaddr)
   return (dbl_nor_device *) *dev;
 
 }/* dbl_spansion_probe */
+
+dbl_nor_device *dbl_toshiba_probe(volatile word *baseaddr)  //add by yangdecai
+{
+  dbl_nor_device const **dev;
+
+  word  codes[4];
+  int ids, ids_found;
+
+  /* Call function to go get the codes from the device */
+  dbl_toshiba_get_id_codes(baseaddr, codes);
+  
+  /* Scan for the codes.  Check indicated number of ids for
+     each component in the list.  Stop when we find a match.
+     our indicator of no match. */
+  for (dev = toshiba_parts; *dev != NULL; dev++) {
+    ids_found = 0;
+    for (ids = 0; ids < (*dev)->num_ids; ids++)
+    {
+      if (codes[ids] == (*dev)->codes[ids])
+      {
+        /* Every time we find a match, increment ids_found.
+         * When we exit the loop, if ids_found equals the number
+         * of IDs we had to match we found the part
+         */
+        ids_found++;
+      }
+    }
+    if (ids_found == (*dev)->num_ids)
+    {
+      break;
+    }
+  }
+
+  return (dbl_nor_device *) *dev;
+}
+
 
 /*===========================================================================
 
@@ -1751,6 +1894,25 @@ void dbl_ebi1_nor_configure
   else if(dev == &K5N2833ATB || dev == &K5N2833ABB)
   {
     dbl_parse_cfg_data(ebi1_cfg_data_K5N6433ABM_48MHZ);
+  }
+  else if((dev == &TC58FYM7T8C_TOP) || (dev == &TC58FYM7T8C_BOT))
+  {
+    if( configured_clk_speed->ebi1 == 48 )
+    {
+      dbl_parse_cfg_data(ebi1_cfg_data_TC58FYM7T8C_48MHZ);
+    }
+	else if(configured_clk_speed->ebi1 == 64 )
+	{
+	  dbl_parse_cfg_data(ebi1_cfg_data_TC58FYM7T8C_64MHZ);
+	}
+    else if( configured_clk_speed->ebi1 == 96 )
+    {
+      dbl_parse_cfg_data(ebi1_cfg_data_TC58FYM7T8C_96MHZ);
+    }
+    else
+    {
+      DBL_ERR_FATAL(DBL_ERR_EBI1_CFG_FAILED);
+    }
   }
   else
   {

@@ -58,6 +58,8 @@ when         who     what, where, why
 void flash_spansion_copy_cfi_data(volatile word *baseaddr, word *dest, word count);
 void flash_samsung_copy_cfi_data(volatile word *baseaddr, word *dest, word count);
 void flash_intel_copy_cfi_data(volatile word *baseaddr, word *dest, word count);
+void flash_toshiba_copy_cfi_data(volatile word *baseaddr, word *dest, word count);
+
 void flash_peek_twice (volatile word *wptr, word *prior, word *current);
 void flash_spansion_get_id_codes(volatile word *baseaddr, word *dest);
 void flash_samsung_get_id_codes(volatile word *baseaddr, word *dest);
@@ -88,6 +90,7 @@ LOCAL flash_copy_cfi_data_func cfi_copy_functions[FLASH_MAX_FAMILIES] =
       flash_spansion_copy_cfi_data,    /* FLASH_SPANSION_FAMILY */
       flash_intel_copy_cfi_data,       /* FLASH_INTEL_FAMILY */
       flash_samsung_copy_cfi_data,     /* FLASH_SAMSUNG_FAMILY */
+      flash_toshiba_copy_cfi_data,     /* FLASH_SAMSUNG_FAMILY *///Gemsea Add
     };
 
 /****************************************************************
@@ -148,6 +151,34 @@ flash_spansion_get_id_codes(volatile word *baseaddr, word *dest)
 
     /* Write the command to reset the device to normal ROM mode */
    *(baseaddr) = 0x00F0 ;
+}
+
+/***********************************************************************
+FUNCTION      FLASH_TOSHIBA_GET_ID_CODES
+
+DESCRIPTION   This function puts the SPANSION flash into Autoselect mode and
+              reads the MFG ID code from the flash.
+
+RETURN VALUE   NONE
+**********************************************************************/
+void flash_toshiba_get_id_codes(volatile word *baseaddr, word *dest)
+{
+  /* Reset the device to normal ROM mode */
+  *(baseaddr) = 0x00F0 ;
+  
+  /* Write the command sequence to place the device into Autoselect mode */
+  *(baseaddr + 0x555L) = 0x00AA;
+  *(baseaddr + 0x2AAL) = 0x0055;
+  *(baseaddr + 0x555L) = 0x0090;
+  
+  /* Get three words of the IID */
+  dest[0] = *(baseaddr + 0x0000L);
+  dest[1] = *(baseaddr + 0x0001L);
+
+  /* Reset device to read array mode */
+  *(baseaddr + 0x555L) = 0x00AA;
+  *(baseaddr + 0x2AAL) = 0x0055;
+  *(baseaddr + 0x555L) = 0x00F0;
 }
 
 /***********************************************************************
@@ -294,6 +325,29 @@ RETURN VALUE   NONE
 **********************************************************************/
 void
 flash_samsung_copy_cfi_data(volatile word *baseaddr, word *dest, word count)
+{
+  word tmp = 0;
+  
+  /* Set the Read CFI Query command */
+  *(baseaddr+0x0555L) = 0x98;
+
+  for (tmp = 0; tmp < count; tmp ++)
+    *(dest++) = *(baseaddr+tmp);
+
+  /* Set the Flash back to Read mode */
+  *(baseaddr + 0x0) = 0x00F0;
+}
+
+/***********************************************************************
+FUNCTION      FLASH_TOSHIBA_COPY_CFI_DATA
+
+DESCRIPTION   This function puts the Samsung flash into CFI read mode and
+              copies count bytes from the CFI data into the dest
+
+RETURN VALUE   NONE
+**********************************************************************/
+void
+flash_toshiba_copy_cfi_data(volatile word *baseaddr, word *dest, word count)
 {
   word tmp = 0;
   
