@@ -2990,7 +2990,7 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
         pMe->m_rtype = TYPE_PLAYER;//wlh 20090415 mod 为了区别播放区域，加音量，减音量的刷新，加了个参数
         ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_DrawImageWithOffset,pMe);
 
-		#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+		#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_K202_LM129C)
 		#else
         ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_DrawForwardImage, pMe);
         ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_DrawRewindImage, pMe);
@@ -3078,6 +3078,9 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
 
 	#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
 	case AVK_POUND:
+	#elif defined(FEATURE_VERSION_K202_LM129C) //compatiable with lm126c
+	case AVK_POUND:
+	case AVK_VOLUME_UP:
 	#else
 	#ifdef FEATURE_ADD_VOLUP_VOLDN //xxzhen
 	case AVK_VOLUME_UP:
@@ -3117,6 +3120,9 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
 
 	#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
 	case AVK_STAR:
+	#elif defined(FEATURE_VERSION_K202_LM129C) //compatiable with lm126c
+	case AVK_STAR:
+	case AVK_VOLUME_DOWN:
 	#else
 	#ifdef FEATURE_ADD_VOLUP_VOLDN //xxzhen
 	case AVK_VOLUME_DOWN:
@@ -3351,7 +3357,7 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
 #endif
 	   
 
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_K202_LM129C)//xxzhen
 #else
     case AVK_POUND:
         if(pMe->m_bPlaying && pMe->m_pMedia)
@@ -5962,7 +5968,7 @@ static void MP3_DrawPlayerWindows(CMusicPlayer *pMe)
         MSG_FATAL("PLAY_X=%d----PLAY_Y=%d",PLAY_X,PLAY_Y,0);  
 	}
 
-	#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+	#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_K202_LM129C)
 	#else
 	MP3_DrawRewindImage(pMe);
     MP3_DrawForwardImage(pMe);

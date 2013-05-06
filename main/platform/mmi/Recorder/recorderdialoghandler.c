@@ -1851,6 +1851,18 @@ __dialog_handler_of_state_record_pause_resume__:
 				    }
 				break;
 				#endif
+				#ifdef FEATURE_VERSION_K202_LM129C//xxzhen compatible with lm126c
+				case AVK_STAR:
+				case AVK_POUND:
+					{
+					if( pme->m_Media.m_eState == MEDIA_STATE_PLAYING || pme->m_Media.m_eState == MEDIA_STATE_RECORDING)
+					{
+						recorder_set_media_volume( &pme->m_Media, pme->m_Media.m_nVolume + ( wParam == AVK_STAR ? -20 : 20));
+						repaint( TRUE);
+					}
+				    }
+				break;
+				#endif
 
 				case AVK_I:
 				case AVK_O:
