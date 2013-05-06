@@ -208,6 +208,12 @@
 	<String Id="1123" Name="IDS_SAR_C337">
 		<Text>SAR: 0.212W/kg@1g(Head)0.169W/kg@1g(Body)</Text>
 	</String>
+	<String Id="1124" Name="IDS_REGULATE_SUCCEED">
+		<Text>Regulate Succeed!</Text>
+	</String>
+	<String Id="1125" Name="IDS_REGULATE_FAIL">
+		<Text>Regulate Fail!</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_NUMEDIT" Focus="0">
