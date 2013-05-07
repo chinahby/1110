@@ -79,6 +79,34 @@
 //#include "AEECallList.h"
 #include "AEECallHistory.h"
 
+
+#include "OEMDisp.h"       // TBD - hack until available somewhere else
+#include "OEMSound.h"      // TBD - hack until available somewhere else
+#include "AEE_OEM.h"
+#include "ContApp.h"
+#include "AEESoundPlayer.h"
+#include "AEEMedia.h"  // for voice recording
+#include "AEEBacklight.h"
+#include "OEMFS.h"
+
+#ifdef FEATURE_LED
+#include "led.h"
+#endif//FEATURE_LED
+//#include "OEMFS.h"
+#ifndef WIN32
+#include "db.h"
+#endif
+#ifdef FEATURE_UTK2
+#include "UTKUtils.h"
+#endif
+#ifdef FEATURE_OEMOMH 
+#include "AEERUIM.h"
+#endif
+
+#include "AEECallHistoryExt.h"
+
+
+
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
 #define SECURITYMENU_PT_IN_RECT(a,b,rct)      (boolean)( ((a) >= (rct).x && (a) <= ((rct).x + (rct).dx)) && ((b) >= (rct).y && (b) <= ((rct).y + (rct).dy)) )
 #define DWPARMA_OTHER 10000

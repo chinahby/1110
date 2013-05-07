@@ -11,7 +11,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 
 //LM129C
 #define FEATURE_VERSION_LM126C    //FOR LM126C
-
+#define FEATURE_IMAGE_DIALING_DIGITS
 #define FEATURE_VERSION_K202
 #define FEATURE_VERSION_K202_LM129C //xxzhen
 #define FEATURE_TORCH_KEY_SELECT//xxzhen 修改长按左键为手电筒 

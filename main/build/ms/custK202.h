@@ -11,7 +11,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 
 //LM129C
 #define FEATURE_VERSION_LM126C    //FOR LM126C
-
+#define FEATURE_IMAGE_DIALING_DIGITS
 #define FEATURE_VERSION_K202
 #ifdef CUST_EDITION
 #define FEATURE_GPIO_LAMP_EN_OUTPUT_31		//GPIO_OUTPUT_31
@@ -256,6 +256,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 
 #ifdef USES_CAMERA
 #include "custcamera.h"
+
 #include "custjpeg.h"
 #endif
 #include "custuim.h"

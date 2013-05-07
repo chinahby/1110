@@ -27,7 +27,9 @@ GENERAL DESCRIPTION:
 #include "BREWVersion.h"
 #include "mmidispsize.h"
 //#define FEATURE_PEKTEST
+#ifndef FEATURE_VERSION_K202
 #define FEATURE_GREYBIT
+#endif
 #define FEATURE_BREW_3_0
 
 //
@@ -312,7 +314,7 @@ GENERAL DESCRIPTION:
 //#define FEATURE_BREW_WEB
 #ifndef FEATURE_GREYBIT
 #ifndef FEATURE_MANGO_BREW
-#define FEATURE_BREW_FONTS
+//#define FEATURE_BREW_FONTS
 #endif
 #endif
 #define FEATURE_BREW_TELEPHONE

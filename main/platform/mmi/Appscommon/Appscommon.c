@@ -2020,7 +2020,9 @@ void DrawGreyBitTextWithProfile(IShell* pShell,
 	}
 	
 	rc = ClipRc;
-	
+#ifdef FEATURE_VERSION_K202
+	Font = 16;
+#endif
 	// 绘制文本的边
 	if (dwFlags & IDF_ALIGN_RIGHT)
 	{

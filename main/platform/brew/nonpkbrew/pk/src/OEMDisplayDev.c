@@ -807,7 +807,7 @@ Error:
 extern int OEMFont_GetSystemFont(AEEFont nFont, IFont **ppif);
 static int OEMSysFont_New(IShell * piShell, AEECLSID cls, void **ppif)
 {
-#ifndef FEATURE_BREW_FONTS
+    MSG_FATAL("OEMSysFont_New.........",0,0,0);
     switch (cls) {
     case AEECLSID_FONTSYSNORMAL:
         return OEMFont_GetSystemFont( AEE_FONT_NORMAL, (IFont **)ppif);
@@ -821,21 +821,6 @@ static int OEMSysFont_New(IShell * piShell, AEECLSID cls, void **ppif)
     default:
         return ECLASSNOTSUPPORT;
     }
-#else
-   switch (cls) {
-   case AEECLSID_FONTSYSNORMAL:
-      return ISHELL_CreateInstance(piShell, AEECLSID_FONT_BASIC11,
-                                   (void **)ppif);
-   case AEECLSID_FONTSYSBOLD:
-      return ISHELL_CreateInstance(piShell, AEECLSID_FONT_BASIC11B,
-                                   (void **)ppif);
-   case AEECLSID_FONTSYSLARGE:
-      return ISHELL_CreateInstance(piShell, AEECLSID_FONT_BASIC14,
-                                   (void **)ppif);
-   default:
-      return ECLASSNOTSUPPORT;
-   }
-#endif
 }
 #endif
 

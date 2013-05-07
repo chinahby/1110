@@ -19,7 +19,6 @@
   
 when          who   what, where, why
 -----------   ---   ---------------------------------------------------------
-03 Dec 2007   bw    Initial Version
                     
 ============================================================================*/
 
@@ -29,16 +28,48 @@ when          who   what, where, why
 #include "AEEStdLib.h"
 #include "OEMFontData.h"                    // Font image definition
 
+#include "err.h"                            // ERR debug
+#include "NV_items.h"
+#include "OEMCFGI.h"
+
 //
 //---------------------   OEM Font define   -----------------------
 //
-#define  CH_NORMAL_HEIGHT       16          // Normal font height in pixel unit
-#define  CH_NORMAL_WIDTH_PIXEL  16          // Normal font width in pixel unit
+// ykmilan add for large font 10.01.13
 
-//bw: #define  CH_USER1_HEIGHT        12          // User1 font height in pixel unit
-#define  CH_USER1_HEIGHT        15//bw:20080506 14          // User1 font height in pixel unit
+#ifdef FEATURE_LANG_CHINESE
+
+#ifdef FEATURE_FONT_16
+
+#define  CH_NORMAL_HEIGHT       16         // Normal font height in pixel unit
+#define  CH_NORMAL_WIDTH_PIXEL  16          // Normal font width in pixel unit
+#define  CH_USER1_HEIGHT        16          // User1 font height in pixel unit
 #define  CH_USER1_WIDTH_PIXEL   12          // User1 font width in pixel unit
 
+#else // FEATURE_FONT_16
+
+#define  CH_NORMAL_HEIGHT       16          // Normal font height in pixel unit
+#define  CH_NORMAL_WIDTH_PIXEL  16          // Normal font width in pixel unit
+#define  CH_USER1_HEIGHT        16          // User1 font height in pixel unit
+#define  CH_USER1_WIDTH_PIXEL   12          // User1 font width in pixel unit
+
+#endif // FEATURE_FONT_16
+
+#elif defined FEATURE_ARABIA_SANMU_LAYOUT // FEATURE_LANG_CHINESE
+
+#define  CH_NORMAL_HEIGHT       16         // Normal font height in pixel unit
+#define  CH_NORMAL_WIDTH_PIXEL  14          // Normal font width in pixel unit
+#define  CH_USER1_HEIGHT        16          // User1 font height in pixel unit
+#define  CH_USER1_WIDTH_PIXEL   12          // User1 font width in pixel unit
+
+#else
+
+#define  CH_NORMAL_HEIGHT       14         // Normal font height in pixel unit
+#define  CH_NORMAL_WIDTH_PIXEL  14          // Normal font width in pixel unit
+#define  CH_USER1_HEIGHT        14          // User1 font height in pixel unit
+#define  CH_USER1_WIDTH_PIXEL   12          // User1 font width in pixel unit
+
+#endif // FEATURE_LANG_CHINESE
 
 #ifdef FEATURE_LANG_THAI
 //#define TONE_UP_START 0xE000
@@ -48,7 +79,7 @@ when          who   what, where, why
 #define BOTTOM_VOWEL_WIDTH      5
 #define TONE_WIDTH              6
 
-#define AROUND_VOWEL_OFFSET     4
+#define AROUND_VOWEL_OFFSET     4//  modify for 0xe33
 #define CHAR_NORMAL             0
 //#define CHAR_TONE_VOWEL         1
 #define CHAR_TOP_VOWEL          1
@@ -161,6 +192,10 @@ static int    OEMFont_MeasureText(IFont *pMe, const AECHAR *pcText, int nChars,
                                int nMaxWidth, int * pnFits, int *pnPixels);
 static int    OEMFont_GetInfo(IFont *pMe, AEEFontInfo *pInfo, int nSize);
 
+#ifdef FEATURE_ARABIA_SANMU_LAYOUT
+static int OEMFont_ChangeToArabia(const AECHAR *pcText, AECHAR *arText, int nChars);
+#endif
+
 //
 //---------------------   OEM Font structure  -----------------------
 //
@@ -187,8 +222,97 @@ struct IFont
    int         nHeight;             // Height of the font
 };
 
+#ifdef FEATURE_ARABIA_SANMU_LAYOUT
+
+#define MAX_ARABIA_STRING_LENGTH   1024
+
+typedef enum _ArabiaLayout
+{
+    ARABIA_LAST,
+    ARABIA_FIRST,
+    ARABIA_MIDDLE,
+    ARABIA_ALONE,
+    ARABIA_NONE
+}ArabiaLayout;
+
+typedef struct _pszAr
+{
+    
+    AECHAR        sz;
+    ArabiaLayout  type;
+    
+}pszAr;
+
+const static uint16 Arbic_Position[][5]=/*last，first，midile，alone*/
+{
+       { 0xfe80, 0xfe80, 0xfe80, 0xfe80, 0x0621},/*0x0621*/
+       { 0xfe82, 0xfe81, 0xfe82, 0xfe81, 0x0622},
+       { 0xfe84, 0xfe83, 0xfe84, 0xfe83, 0x0623},
+       { 0xfe86, 0xfe85, 0xfe86, 0xfe85, 0x0624},
+       { 0xfe88, 0xfe87, 0xfe88, 0xfe87, 0x0625},
+       { 0xfe8a, 0xfe8b, 0xfe8c, 0xfe89, 0x0626},/*26*/
+       { 0xfe8e, 0xfe8d, 0xfe8e, 0xfe8d, 0x0627},
+       { 0xfe90, 0xfe91, 0xfe92, 0xfe8f, 0x0628},
+       { 0xfe94, 0xfe93, 0xfe93, 0xfe93, 0x0629},
+       { 0xfe96, 0xfe97, 0xfe98, 0xfe95, 0x062a},
+       { 0xfe9a, 0xfe9b, 0xfe9c, 0xfe99, 0x062b},
+       { 0xfe9e, 0xfe9f, 0xfea0, 0xfe9d, 0x062c},
+       { 0xfea2, 0xfea3, 0xfea4, 0xfea1, 0x062d},
+       { 0xfea6, 0xfea7, 0xfea8, 0xfea5, 0x062e},
+       { 0xfeaa, 0xfea9, 0xfeaa, 0xfea9, 0x062f},
+       { 0xfeac, 0xfeab, 0xfeac, 0xfeab, 0x0630},
+       { 0xfeae, 0xfead, 0xfeae, 0xfead, 0x0631},
+       { 0xfeb0, 0xfeaf, 0xfeb0, 0xfeaf, 0x0632},
+       { 0xfeb2, 0xfeb3, 0xfeb4, 0xfeb1, 0x0633},
+       { 0xfeb6, 0xfeb7, 0xfeb8, 0xfeb5, 0x0634},
+       { 0xfeba, 0xfebb, 0xfebc, 0xfeb9, 0xfeba},
+       { 0xfebe, 0xfebf, 0xfec0, 0xfebd, 0xfebe},/*36*/
+       { 0xfec2, 0xfec3, 0xfec4, 0xfec1, 0x0637},/*37*/
+       { 0xfec6, 0xfec7, 0xfec8, 0xfec5, 0x0638},
+       { 0xfeca, 0xfecb, 0xfecc, 0xfec9, 0x0639},
+       { 0xfece, 0xfecf, 0xfed0, 0xfecd, 0x063a},
+       { 0x63b, 0x63b, 0x63b, 0x63b, 0x063b},
+       { 0x63c, 0x63c, 0x63c, 0x63c, 0x063c},
+       { 0x63d, 0x63d, 0x63d, 0x63d, 0x063d},
+       { 0x63e, 0x63e, 0x63e, 0x63e, 0x063e},
+       { 0x63f, 0x63f, 0x63f, 0x63f, 0x063f},
+       { 0x640, 0x640, 0x640, 0x640, 0x0640},/*'-'*/
+       { 0xfed2, 0xfed3, 0xfed4, 0xfed1, 0x0641},
+       { 0xfed6, 0xfed7, 0xfed8, 0xfed5, 0x0642},
+       { 0xfeda, 0xfedb, 0xfedc, 0xfed9, 0x0643},
+       { 0xfede, 0xfedf, 0xfee0, 0xfedd, 0x0644},
+       { 0xfee2, 0xfee3, 0xfee4, 0xfee1, 0x0645},
+       { 0xfee6, 0xfee7, 0xfee8, 0xfee5, 0x0646},
+       { 0xfeea, 0xfeeb, 0xfeec, 0xfee9, 0x0647},
+       { 0xfeee, 0xfeed, 0xfeee, 0xfeed, 0x0648},
+       { 0xfef0, 0xfeef, 0xfef0, 0xfeef, 0x0649},
+       {0xfef2, 0xfef3, 0xfef4, 0xfef1, 0x064a},/*0x64a*/
+};
+
+#define MAX_SET1_NUM  23
+#define MAX_SET2_NUM  43
+
+const static uint16 theSet1[MAX_SET1_NUM]={
+    0x62c, 0x62d, 0x62e, 0x647, 0x639, 0x63a, 0x641, 0x642,
+    0x62b, 0x635, 0x636, 0x637, 0x643, 0x645, 0x646, 0x62a,
+    0x644, 0x628, 0x64a, 0x633, 0x634, 0x638, 0x626};
+
+
+const static uint16 theSet2[MAX_SET2_NUM]={
+    0x62c, 0x62d, 0x62e, 0x647, 0x639, 0x63a, 0x641, 0x642,
+    0x62b, 0x635, 0x636, 0x637, 0x643, 0x645, 0x646, 0x62a,
+    0x644, 0x628, 0x64a, 0x633, 0x634, 0x638, 0x626,
+    0x627, 0x623, 0x625, 0x622, 0x62f, 0x630, 0x631, 0x632,
+    0x648, 0x624, 0x629, 0x649, 0xfef5, 0xfef6, 0xfef7, 0xfef8,
+    0xfef9, 0xfefa, 0xfefb, 0xfefc};
+
+#endif // FEATURE_ARABIA_SANMU_LAYOUT
+
+
 // Three static singleton IFont's to represent the BREW-enumerated fonts:
 //
+IFont gFontNormal = {&gOEMFontFuncs, AEE_FONT_NORMAL, CH_NORMAL_HEIGHT};
+IFont gFontBold   = {&gOEMFontFuncs, AEE_FONT_BOLD, CH_NORMAL_HEIGHT};
 IFont gFontLarge  = {&gOEMFontFuncs, AEE_FONT_LARGE, CH_NORMAL_HEIGHT};
 
 // User-defined font
@@ -198,45 +322,30 @@ IFont gFont12Normal = {&gOEMFontFuncs, AEE_FONT_USER_1, CH_USER1_HEIGHT};
 // User2 is large number font. Only support the dial number
 IFont gFontLargeNum = {&gOEMFontFuncs, AEE_FONT_USER_2, BIG_NUM_HEIGHT};
 
-
-IFont gFontSmall = {&gOEMFontFuncs, AEE_FONT_SMALL, CH_NORMAL_HEIGHT};
-
 //
 //---------------------   OEM Font implement  -----------------------
 //
 
 int OEMFont_GetSystemFont(AEEFont nFont, IFont **ppif)
 {
-    switch (nFont)
-    {
-        case AEE_FONT_NORMAL:
-            *ppif = &gFont12Normal;//gFontNormal; 
-            break;
-            
-        case AEE_FONT_BOLD:
-            *ppif = &gFont12Normal;//gFontBold;
-            break;
-            
-        case AEE_FONT_LARGE:
-            *ppif = &gFontLarge;
-            break;
-            
-        case AEE_FONT_USER_1:
-            *ppif = &gFont12Normal;
-            break;
-            
-        case AEE_FONT_USER_2:
-            *ppif = &gFontLargeNum;
-            break;
-        case AEE_FONT_SMALL:
-        	*ppif = &gFontSmall;
-            break;
-            
-        default:
-            return EUNSUPPORTED;            
-    }
+	MSG_FATAL("OEMFont_GetSystemFont.................",0,0,0);
+   if (nFont == AEE_FONT_NORMAL)
+      *ppif = &gFontNormal;
+   else if (nFont == AEE_FONT_BOLD)
+      *ppif = &gFontBold;
+   else if (nFont == AEE_FONT_LARGE)
+      *ppif = &gFontLarge;
+   
+   else if (nFont == AEE_FONT_USER_1) 
+      *ppif = &gFont12Normal;
 
-    return SUCCESS;
+   else if (nFont == AEE_FONT_USER_2)
+      *ppif = &gFontLargeNum;
+      
+   else
+      return EUNSUPPORTED;
+
+   return SUCCESS;
 }
 
 
@@ -250,6 +359,24 @@ static uint32 OEMFont_Release(IFont *pme)
 {
    return 0;
 }
+
+int GreyBitBrewFont_DrawText(IDisplay *p, int nSize, const AECHAR *psz, int nl, int x, int y, const AEERect *prcb, uint32 flags)
+{
+    int nErr;
+    IFont *pOldFont;
+    IFont *pNewFont = NULL;
+	AEEFont temp = AEE_FONT_NORMAL;
+	MSG_FATAL("GreyBitBrewFont_DrawText.................=%d",psz[1],0,0);
+
+    OEMFont_GetSystemFont(temp, &pNewFont);
+    pOldFont = IDISPLAY_SetFont(p, AEE_FONT_NORMAL, pNewFont);
+    IDISPLAY_DrawText(p, AEE_FONT_NORMAL, psz, nl, x, y, prcb, flags);
+    IDISPLAY_SetFont(p, AEE_FONT_NORMAL, pOldFont);
+    //GreyBitBrewFont_Destory(pNewFont);
+	
+    return nErr;
+}
+
 
 
 static int OEMFont_QueryInterface(IFont *pMe, AEECLSID id, void **pvtbl)
@@ -265,13 +392,278 @@ static int OEMFont_QueryInterface(IFont *pMe, AEECLSID id, void **pvtbl)
    return (po != 0 ? SUCCESS : ECLASSNOTSUPPORT);
 }
 
+#ifdef FEATURE_ARABIA_SANMU_LAYOUT
+/*===========================================================================
+Function: OEMFont_ChangeToArabia
+
+Description:
+        _DrawText Interface
+===========================================================================*/
+static int OEMFont_ChangeToArabia(const AECHAR *pcText, AECHAR *arText, int nChars)
+{
+    pszAr   pszText[MAX_ARABIA_STRING_LENGTH] = {0};
+    AECHAR  szTemp[MAX_ARABIA_STRING_LENGTH]  = {0};
+    int     i = 0, j = 0;
+    boolean bPrev = FALSE, bNext = FALSE;
+    ArabiaLayout PreChar = ARABIA_NONE;
+    ArabiaLayout CurChar = ARABIA_NONE;
+    int     nLen = 0;
+    int     nRelLen = 0;
+    int     nStrLen = nChars;
+    
+    if(!pszText || !arText)
+    {
+        return EFAILED;
+    }
+    
+    for(i = 0, j = 0; i < nChars; i++)
+    {
+        if(pcText[i] == 0x0644 &&
+            (pcText[i+1] == 0x0622 || pcText[i+1] == 0x0623 || pcText[i+1] == 0x0625 || pcText[i+1] == 0x0627))
+        {
+            boolean blast = FALSE;
+            int     nPrev = 0;
+            
+            if(i > 0)
+            {
+                for(nPrev = 0; nPrev < MAX_SET1_NUM; nPrev++)
+                {
+                    if(pcText[i - 1] == theSet1[nPrev])
+                    {
+                        blast = TRUE;
+                    }
+
+                }                
+            }
+            
+            if(pcText[i + 1] == 0x0622)
+            {
+                if(blast)
+                {
+                    pszText[j].sz = 0xfef6;
+                }
+                else
+                {
+                    pszText[j].sz = 0xfef5;
+                }
+                
+            }
+            else if(pcText[i + 1] == 0x0623)
+            {
+                if(blast)
+                {
+                    pszText[j].sz = 0xfef8;
+                }
+                else
+                {
+                    pszText[j].sz = 0xfef7;
+                }                
+            }
+            else if(pcText[i + 1] == 0x0625)
+            {
+                if(blast)
+                {
+                    pszText[j].sz = 0xfefa;
+                }
+                else
+                {
+                    pszText[j].sz = 0xfef9;
+                }                
+            }
+            else if(pcText[i + 1] == 0x0627)
+            {
+                if(blast)
+                {
+                    pszText[j].sz = 0xfefc;
+                }
+                else
+                {
+                    pszText[j].sz = 0xfefb;
+                }                
+            }
+            
+            pszText[j].type  = ARABIA_NONE;
+            i++;
+        }
+        else
+        {
+            pszText[j].sz    = pcText[i];
+            pszText[j].type  = ARABIA_NONE;
+        }
+        j++;
+        nRelLen = j;
+    }
+
+    i = 0;
+    j = 0;
+    nStrLen = nRelLen - 1;
+
+    for(i = 0; i < nRelLen; i++)
+    {
+        PreChar = CurChar;
+        
+        // non arabia char
+        if(((uint16)(pszText[i].sz) < 0x0621 || (uint16)(pszText[i].sz) > 0x064a) &&
+            !((uint16)(pszText[i].sz) >= 0xfef5 && (uint16)(pszText[i].sz) <= 0xfefc))
+        {
+            CurChar = ARABIA_NONE;
+        }
+        else
+        {
+            CurChar = ARABIA_ALONE;
+        }
+
+        if(i == 0)
+        {
+            PreChar = CurChar;
+        }
+
+        if(CurChar != PreChar)  
+        {
+            // add pre char here
+            int nTempLen= 0;
+            int n       = 0;
+                        
+            nTempLen= WSTRLEN(szTemp);
+
+            if(PreChar == ARABIA_ALONE)
+            {
+                // need reverse
+                for(n = 0; n < nTempLen && nStrLen > 0; n++)
+                {
+                    arText[nStrLen--] = szTemp[n];
+                }
+            }
+            else
+            {
+                // no need reverse
+                for(n = 0; n < nTempLen && nStrLen > 0; n++)
+                {
+                    arText[nStrLen--] = szTemp[nTempLen - 1 - n];
+                }
+            }
+            
+            MEMSET(szTemp, 0, sizeof(szTemp));
+            
+            PreChar = CurChar;
+        }
+
+        {
+            if(CurChar == ARABIA_ALONE)
+            {
+                for(j = 0; j < MAX_SET2_NUM; j++)
+                {
+                    if(pszText[i + 1].sz == theSet2[j])
+                    {
+                        bNext = TRUE;
+                    }
+                }
+
+                for(j = 0; j < MAX_SET1_NUM; j++)
+                {
+                    if(pszText[i - 1].sz == theSet1[j])
+                    {
+                        bPrev = TRUE;
+                    }
+
+                }
+
+                if(bNext && bPrev)
+                {
+                    pszText[i].type = ARABIA_MIDDLE;
+                }
+                else if(bNext)
+                {
+                    pszText[i].type = ARABIA_FIRST;
+                }
+                else if(bPrev)
+                {
+                    pszText[i].type = ARABIA_LAST;
+                }
+
+                bNext = FALSE;
+                bPrev = FALSE;  
+
+                nLen         = WSTRLEN(szTemp);
+
+                if(pszText[i].sz >= 0xfef5 && pszText[i].sz <= 0xfefc)
+                {
+                    szTemp[nLen] = pszText[i].sz;
+                }
+                else
+                {
+                    szTemp[nLen] = Arbic_Position[(uint16)pszText[i].sz - 0x0621][pszText[i].type];
+                }
+            }
+            else
+            {
+                nLen         = WSTRLEN(szTemp);
+                szTemp[nLen] = pszText[i].sz;
+            }
+        }
+
+        if(i == (nRelLen -1))
+        {
+            // add pre char here
+            int nTempLen= 0;
+            int n       = 0;
+            
+            
+            nTempLen= WSTRLEN(szTemp);
+
+            if(CurChar == ARABIA_ALONE)
+            {
+                // need reverse
+                for(n = 0; n < nTempLen && nStrLen >= 0; n++)
+                {
+                    arText[nStrLen--] = szTemp[n];
+                }
+            }
+            else
+            {
+                // no need reverse
+                for(n = 0; n < nTempLen && nStrLen >= 0; n++)
+                {
+                    arText[nStrLen--] = szTemp[nTempLen - 1 - n];
+                }
+            }
+            
+            MEMSET(szTemp, 0, sizeof(szTemp));
+            
+            PreChar = CurChar;
+        }
+    }
+
+    if(arText[0] == 0)
+    {
+        int t = 0;
+        int s = 0;
+        
+        for(t = 0; t < nRelLen;t++)
+        {
+            if(arText[t])
+            {
+                arText[s] = arText[t];
+                s++;
+            }            
+        }
+        arText[s] = 0;
+    }
+    arText[WSTRLEN(arText)] = 0;
+
+    //FREEIF(pszText);
+
+    return SUCCESS;
+}
+#endif // FEATURE_ARABIC_SANMU_LAYOUT
+
 /*===========================================================================
 Function: OEMFont_DrawText
 
 Description:
         _DrawText Interface
 ===========================================================================*/
-static int
+int
 OEMFont_DrawText(IFont *pMe, IBitmap *pDst, int x, int y, const AECHAR *pcText, int nChars,
                  NativeColor foreground, NativeColor background, const AEERect *prcClip, uint32 dwFlags)
 {
@@ -281,6 +673,11 @@ OEMFont_DrawText(IFont *pMe, IBitmap *pDst, int x, int y, const AECHAR *pcText, 
     AEERect * prcBackRect = (AEERect *) prcClip;
     int nWidth,nHeight;
     AEERect dirty_rc;
+    int nRet = SUCCESS;
+#ifdef FEATURE_ARABIA_SANMU_LAYOUT
+    AECHAR arText[MAX_ARABIA_STRING_LENGTH]={0};
+    int    arnChars = 0;
+#endif
     
 #ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
     if ( 0 != HebrewArabicLangInit() )
@@ -289,13 +686,28 @@ OEMFont_DrawText(IFont *pMe, IBitmap *pDst, int x, int y, const AECHAR *pcText, 
     }
 #endif
 
+#ifdef FEATURE_ARABIA_SANMU_LAYOUT
+    {
+        OEMFont_ChangeToArabia(pcText, arText, nChars);
+        arnChars = WSTRLEN(arText);
+    }   
+#endif
+
     if (pMe->nFont == AEE_FONT_USER_2) // big number
     {
+#ifdef FEATURE_ARABIA_SANMU_LAYOUT
+        return OEMFont_DrawTextLargeBold(pMe, pDst, x, y, arText, arnChars, foreground, background, prcClip, dwFlags);
+#else
    	    return OEMFont_DrawTextLargeBold(pMe, pDst, x, y, pcText, nChars, foreground, background, prcClip, dwFlags);
+#endif // FEATURE_ARABIA_SANMU_LAYOUT
     }
     
     // If no text, return immediately
+#ifdef FEATURE_ARABIA_SANMU_LAYOUT
+    if(!pcText || !arText)
+#else
     if (!pcText)
+#endif        
     {
         return SUCCESS;
     }
@@ -303,8 +715,13 @@ OEMFont_DrawText(IFont *pMe, IBitmap *pDst, int x, int y, const AECHAR *pcText, 
     // Calculate the string length
     if (nChars < 0) 
     {
+#ifdef FEATURE_ARABIA_SANMU_LAYOUT
+        arnChars = WSTRLEN(arText);
+#else
         nChars = WSTRLEN(pcText);
+#endif
     }
+	MSG_FATAL("nChars====%d,%d",nChars,pcText[0],0);
 
     // If no background rect, the full rectangle is used
     if (!prcClip)
@@ -322,7 +739,11 @@ OEMFont_DrawText(IFont *pMe, IBitmap *pDst, int x, int y, const AECHAR *pcText, 
     }
     
     // Get the text width and height
+#ifdef FEATURE_ARABIA_SANMU_LAYOUT
+    //OEMFont_MeasureText(pMe, arText, arnChars, 0, NULL, &nWidth);
+#else
     OEMFont_MeasureText(pMe, pcText, nChars, 0, NULL, &nWidth);
+#endif
 
     nHeight = pMe->nHeight;
     
@@ -413,7 +834,14 @@ OEMFont_DrawText(IFont *pMe, IBitmap *pDst, int x, int y, const AECHAR *pcText, 
        	}
     }
 
-    return DrawTextEx(pMe, pDst, pcText, nChars, x, y, prcBackRect, dwFlags, clrText, clrBack, clrFrame);
+#ifdef FEATURE_ARABIA_SANMU_LAYOUT
+    nRet =  DrawTextEx(pMe, pDst, arText, arnChars, x, y, prcBackRect, dwFlags, clrText, clrBack, clrFrame);
+    //FREEIF(arText);
+#else
+    nRet =  DrawTextEx(pMe, pDst, pcText, nChars, x, y, prcBackRect, dwFlags, clrText, clrBack, clrFrame);
+#endif
+
+    return nRet;
 
 }
 
@@ -453,9 +881,8 @@ static int OEMFont_GetInfo(IFont *pMe, AEEFontInfo *pInfo, int nSize)
             break;
 
         case AEE_FONT_USER_1:
-            pInfo->nAscent  = 12;
-            //pInfo->nDescent = 0;//bw
-            pInfo->nDescent = 3;//bw:20080506 making height as 15
+            pInfo->nAscent  = CH_USER1_HEIGHT;
+            pInfo->nDescent = 0;
             break;
 
         case AEE_FONT_USER_2:
@@ -786,7 +1213,7 @@ Function: OEMFont_MeasureText
 static int
 OEMFont_MeasureText(IFont *pMe, const AECHAR *pcText, int nChars, int nMaxWidth, int *pnCharFits, int *pnPixels)
 {
-#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
+#if defined (FEATURE_ARPHIC_LAYOUT_ENGINE) && !defined (FEATURE_ARABIA_SANMU_LAYOUT)
    int nRealStrLen, nTotalWidth = 0;
    int nCharFitsTemp = 0;
    int nPixelsTemp = 0;
@@ -910,19 +1337,40 @@ OEMFont_MeasureText(IFont *pMe, const AECHAR *pcText, int nChars, int nMaxWidth,
     int nFits;
     word gbindex;
     AECHAR ch;
+#ifdef FEATURE_ARABIA_SANMU_LAYOUT
+    AECHAR ArText[MAX_ARABIA_STRING_LENGTH]={0};
+#endif
+
+#ifdef FEATURE_ARABIA_SANMU_LAYOUT
+    {
+        OEMFont_ChangeToArabia(pcText, ArText, nChars);
+    }   
+#endif    
 
     if (pMe->nFont == AEE_FONT_USER_2)
     {
+#ifdef FEATURE_ARABIA_SANMU_LAYOUT
+       return (OEMFont_MeasureTextLargeBold(pMe, ArText, nChars, nMaxWidth, pnCharFits, pnPixels));
+#else
        return (OEMFont_MeasureTextLargeBold(pMe, pcText, nChars, nMaxWidth, pnCharFits, pnPixels));
+#endif
     }
 
     // Let's perform some sanity checks first
+#ifdef FEATURE_ARABIA_SANMU_LAYOUT
+    if(!ArText)
+#else
     if (!pcText)
+#endif        
     {
         return SUCCESS;
     }
-    
+
+#ifdef FEATURE_ARABIA_SANMU_LAYOUT
+    nRealStrLen = WSTRLEN(ArText);
+#else
     nRealStrLen = WSTRLEN(pcText);
+#endif
  
     if (nChars < 0 || nRealStrLen < nChars)
     {
@@ -936,13 +1384,31 @@ OEMFont_MeasureText(IFont *pMe, const AECHAR *pcText, int nChars, int nMaxWidth,
     
     for (nFits = 0; nFits < nChars; nFits++)
     {
+#ifdef FEATURE_ARABIA_SANMU_LAYOUT
+        ch= ArText[nFits];
+#else
         ch = *pcText++;
+#endif
 
         // from 0x0000 ~ 0x02C9 - variable size font
         // for others, fixed 16 pixels width
         {
             gbindex = gbIndex12[ch];
-            nTotalWidth += gbWidth12[gbindex]+1; // left 1 pixel when display
+
+#ifdef FEATURE_ARABIA_SANMU_LAYOUT
+            // fe80 - feff 是阿拉伯字母变形的范围 变形的字母不加 1 个像素
+            if((uint16)ch < 65152 || (uint16)ch > 65279)
+            {
+                nTotalWidth += gbWidth12[gbindex]+1;
+            }
+            else
+            {
+                nTotalWidth += gbWidth12[gbindex];
+            }
+#else            
+            nTotalWidth += gbWidth12[gbindex]+1;
+#endif              
+            //nTotalWidth += gbWidth12[gbindex]+1; // left 1 pixel when display
         }
         
 #ifdef FEATURE_LANG_THAI
@@ -960,7 +1426,8 @@ OEMFont_MeasureText(IFont *pMe, const AECHAR *pcText, int nChars, int nMaxWidth,
    
         if (nTotalWidth > nMaxWidth)
         {
-            nTotalWidth = nMaxWidth;
+            nTotalWidth = nTotalWidth - gbWidth12[gbindex];
+            nFits--;
             break;
         }
     }
@@ -973,7 +1440,21 @@ OEMFont_MeasureText(IFont *pMe, const AECHAR *pcText, int nChars, int nMaxWidth,
     {
         *pnCharFits = nFits;
     }
-    
+
+#ifdef FEATURE_ARABIA_SANMU_LAYOUT     // 这里把由于组合减少掉的补回来
+    {
+        int nAdd = 0;
+        
+        for(nAdd = 0; nAdd < nFits; nAdd++)
+        {
+            if(ArText[nAdd] >= 0xfef5 && ArText[nAdd] <= 0xfefc)
+            {
+                (*pnCharFits)++;
+            }
+        }
+    }
+#endif
+
     *pnPixels = nTotalWidth;
     
     return SUCCESS;
@@ -995,7 +1476,7 @@ static int DrawTextEx(IFont *pMe, IBitmap *pDst, const AECHAR * pcText, int nCha
     int sy, dy, oy;
     int dispWidth;
     int result = SUCCESS;
-    
+    MSG_FATAL("DrawTextEx.................%d",pcText[0],0,0);
     xMin = prcBackground->x;
     xMax = prcBackground->x + prcBackground->dx - 1;
     yMin = prcBackground->y;
@@ -1058,8 +1539,7 @@ static int DrawTextEx(IFont *pMe, IBitmap *pDst, const AECHAR * pcText, int nCha
  	    dy = yMax - sy + 1;
         bUnderline = FALSE;
     }
-
-	/*
+    
     if(pMe->nFont == AEE_FONT_BOLD)
     {
         bBold =TRUE;
@@ -1068,22 +1548,21 @@ static int DrawTextEx(IFont *pMe, IBitmap *pDst, const AECHAR * pcText, int nCha
     {
        bBold=FALSE;
     }
-    */
-    bBold = FALSE;		//Add By zzg 2010_07_10
-    
     
     if (dy > 0)
     {
-         IDIB *pDIB;
-         if ((result = IBITMAP_QueryInterface(pDst, AEECLSID_DIB, (void**)&pDIB)) != SUCCESS)
-         {
-             DBGPRINTF("IBITMAP_QueryInterface FAIL");
-             return result;
-         }
- 
+        IDIB    *pDIB;
+
+        if ((result = IBITMAP_QueryInterface(pDst, AEECLSID_DIB, (void**)&pDIB)) != SUCCESS)
+        {
+            DBGPRINTF("IBITMAP_QueryInterface FAIL");
+            return result;
+        }        
+
          DrawChar(pMe, pDIB->pBmp, pDIB->nPitch, pcText, nChars,
-    	             x, xMin, xMax, sy, oy, dy, clrText, clrBack, bTransparent, &dispWidth, bBold);
- 
+                     x, xMin, xMax, sy, oy, dy, clrText, clrBack, bTransparent, &dispWidth, bBold);
+        
+  
          IDIB_Release(pDIB);
     }
     else if (bUnderline)
@@ -1108,7 +1587,7 @@ static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, i
 	int x, int xMin, int xMax, int sy, int oy, int dy, NativeColor clrText, NativeColor clrBack,
 	boolean bTransparency, int *pOutWidth, boolean bBold)
 {
-#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
+#if defined (FEATURE_ARPHIC_LAYOUT_ENGINE) && !defined (FEATURE_ARABIA_SANMU_LAYOUT)
    AleFontMetrics fm;   //metics of the entrie string
    int kmask, j, yend, sx, xend, i, xloop;
    byte m,n;
@@ -1150,7 +1629,7 @@ static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, i
 #ifdef FEATURE_ARPHIC_ARABIC_M16X16P_FONT        
     yend = (dy > 16)?(16):(dy);
 #else        
-    yend = (dy > 14)?(14):(dy);
+    yend = (dy > CH_USER1_HEIGHT)?(CH_USER1_HEIGHT):(dy);
 #endif        
     pfont = gFontDataBuffer;
 
@@ -1230,7 +1709,7 @@ static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, i
 #else // FEATURE_ARPHIC_LAYOUT_ENGINE
 
     int xSrc, i;
-    byte xWidth=0, xWidthOrig=0, xxDisp, bit_mask, *sp, *pFontData;
+    byte xWidth, xWidthOrig, xxDisp, bit_mask, *sp, *pFontData;
     int bytes_per_row, dispWidth = 0;
     word *dp, *dpBase, cText, cBack, index;
     unsigned int y1;
@@ -1250,6 +1729,7 @@ static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, i
     
     cText = (word)(clrText & 0xFFFF);
     cBack = (word)(clrBack & 0xFFFF);
+	MSG_FATAL("DrawChar.....................nChars=%d",nChars,0,0);
  
     nPitch >>= 1;
  
@@ -1260,6 +1740,7 @@ static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, i
             break;
         }
         ch = pcText[i];
+		MSG_FATAL("DrawChar.....................ch=%d",ch,0,0);
         bBoldFontBuf = FALSE;
              
 #ifdef FEATURE_LANG_THAI
@@ -1306,8 +1787,28 @@ static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, i
 #endif  // FEATURE_LANG_THAI   
  
         {
+        	MSG_FATAL("ch==========%d",ch,0,0);
             index = gbIndex12[ch];
+			MSG_FATAL("index==========%x",index,0,0);
+            if ( 0x5537 == index  )
+            {
+                ERR("missing char array(%d)",ch,0,0);
+            }
+
+#ifdef FEATURE_ARABIA_SANMU_LAYOUT
+            // fe80 - feff 是阿拉伯字母变形的范围 变形的字母不加 1 个像素
+            if((uint16)ch < 65152 || (uint16)ch > 65279)
+            {
+                xWidth = gbWidth12[index]+1; // left 1 pixel when display
+            }
+            else
+            {
+                xWidth = gbWidth12[index];
+            }
+#else            
+            
             xWidth = gbWidth12[index]+1; // left 1 pixel when display
+#endif            
             bytes_per_row=2; 
         }
         
@@ -1337,8 +1838,9 @@ static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, i
         {
             //pFontData = (byte*)ChineseNormalFontBuf12 + (index*24) + oy * bytes_per_row;
             //if(dy>12) dy=12;
-            pFontData = (byte*)ChineseNormalFontBuf12 + (index*28) + oy * bytes_per_row;
-            if(dy>14) dy=14;
+            MSG_FATAL("DrawChar...........ChineseNormalFontBuf12..........",0,0,0);
+            pFontData = (byte*)ChineseNormalFontBuf12 + (index*CH_NORMAL_HEIGHT*2) + oy * bytes_per_row;
+            if(dy>CH_NORMAL_HEIGHT) dy=CH_NORMAL_HEIGHT;
         }
         
         dp = dpBase = (word*)(pBmp + bmp_offset + (x<<1));
@@ -1424,6 +1926,7 @@ static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, i
         dispWidth += xWidth;
         x += xWidth;
     }
+	MSG_FATAL("dispWidth=======%d",dispWidth,0,0);
  
     *pOutWidth = dispWidth;
 #endif //    FEATURE_ARPHIC_LAYOUT_ENGINE

@@ -221,11 +221,16 @@ OEM_LIB_SOURCES=\
 	OEMAuth.c \
 	OEMAddrBookRUIM.c \
 	OEMServingNetworks.c \
-        OEMKeysMapping.c \
+    	OEMKeysMapping.c \
 	OEMFMRadio.c \
 	OEMFMRDS.c \
 	OEMOMH.c
+
 endif
+endif
+ifeq ($(NOGREYBIT),yes) 
+OEM_LIB_SOURCES +=OEMFont.c \
+		  OEMFontData.c
 endif
 ifeq ($(USES_ZI),yes)
   OEM_LIB_SOURCES+=OEMZIText.c

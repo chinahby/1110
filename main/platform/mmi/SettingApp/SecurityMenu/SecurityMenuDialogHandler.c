@@ -6451,7 +6451,175 @@ static void SecurityMenu_RestoryFactorySet(CSecurityMenu *pMe)
     }
 	#endif
 //Add End   
-    OEM_RestoreFactorySetting();
+    //删除通话记录
+	{
+		ICallHistory    *m_pCallHistory;
+		 if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
+                     AEECLSID_CALLHISTORY,
+                     (void **)&m_pCallHistory))
+		{
+			;
+		}
+		else
+		{
+			if(SUCCESS == ICALLHISTORY_Clear(m_pCallHistory))
+          	{
+			  	uint32 value = 0;	
+              	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL,ANNUN_STATE_CALL_MISSEDCALL_OFF);
+              	{
+                  	boolean missed_call_icon;
+                  	missed_call_icon = FALSE;
+                  	(void) ICONFIG_SetItem(pMe->m_pConfig,
+                                     CFGI_MISSED_CALL_ICON,
+                                     &missed_call_icon,
+                                     sizeof(missed_call_icon));  
+              	}
+
+              	(void) ICONFIG_SetItem(pMe->m_pConfig,
+                                    CFGI_ALL_CALL_TIMER,
+                                    &value,
+                                    sizeof(uint32));
+              	(void) ICONFIG_SetItem(pMe->m_pConfig,
+                                    CFGI_RECENT_MO_CALL_TIMER,
+                                    &value,
+                                    sizeof(uint32));
+              	(void) ICONFIG_SetItem(pMe->m_pConfig,
+                                    CFGI_RECENT_MT_CALL_TIMER,
+                                    &value,
+                                     sizeof(uint32));
+          	}
+          	if(m_pCallHistory)
+			{
+					ICALLHISTORY_Release(m_pCallHistory);
+					m_pCallHistory = NULL;
+			}
+          }
+	}
+	//删除短信息
+	
+	{
+		IWmsApp *pIWmsApp = NULL;
+
+        if (SUCCESS == ISHELL_CreateInstance(pMe->m_pShell,
+                                                AEECLSID_WMSAPP,
+                                                (void**)&pIWmsApp))
+        {
+            if(SUCCESS != IWmsApp_DeleteAllNvCdmaSms(pIWmsApp))
+            {
+                return ;
+            }
+        }
+        
+        if(NULL != pIWmsApp)
+        {
+            (void)IWmsApp_Release(pIWmsApp);
+            pIWmsApp = NULL;
+        }
+	}
+	//删除电话本信息
+	{
+		IContApp * pIContApp = NULL;
+
+        if (SUCCESS == ISHELL_CreateInstance(pMe->m_pShell,
+                                                AEECLSID_APP_CONTACT,
+                                                (void**)&pIContApp))
+        {
+            if(SUCCESS != ICONTAPP_DeleteAll(pIContApp))
+            {
+                return ;
+            }
+        }
+        
+        if(NULL != pIContApp)
+        {
+            (void)ICONTAPP_Release(pIContApp);
+            pIContApp = NULL;
+        }
+	}
+	#ifdef FEATURE_APP_MEDIAGALLERY
+	// 删除文件夹内的文件 (存储在手机上的)
+	{
+		CMediaGallery_ClearMediaFiles(pMe);
+	}
+	#endif
+//Add By zzg 2010_10_22
+#ifdef FEATURE_APP_BLUETOOTH
+	ISHELL_StartBackgroundApplet(pMe->m_pShell, AEECLSID_BLUETOOTH_APP, "ResetBT");
+	//ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_BLUETOOTH_APP, "ResetBT");	
+#endif
+//Add End   
+	OEM_RestoreFactorySetting();
+	{
+/*                                
+        //Add By zzg 2013_01_10
+        uisnd_notify_data_s_type sndInfo;       
+        boolean bBTHeadSetConnected=FALSE;
+        //Add End
+*/                                
+        
+		byte alertType;  
+        (void) ICONFIG_GetItem(pMe->m_pConfig,
+                               CFGI_ALERT_TYPE,
+                               &alertType,
+                               sizeof(alertType));
+        
+/*
+        uisnd_get_device(&sndInfo);
+    	MSG_FATAL("***zzg UseBTDevice - dev=%d sMute=%d mMute=%d***", 
+    	  			sndInfo.out_device, sndInfo.speaker_mute, sndInfo.microphone_mute);
+#ifdef FEATURE_SUPPORT_BT_AUDIO
+    	if ((SND_DEVICE_BT_HEADSET == sndInfo.out_device) || (SND_DEVICE_BT_A2DP_HEADSET == sndInfo.out_device))
+    	{
+    	    bBTHeadSetConnected = TRUE;     
+    	}
+    	else
+    	{
+    		bBTHeadSetConnected = FALSE; 
+    	}
+    	//Add End
+#endif
+*/
+        switch(alertType)
+        {
+            case OEMNV_ALERTTYPE_OFF :
+                //IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_SILENT, ANNUN_STATE_ON);
+                IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_SILENT);
+                break;
+
+            case OEMNV_ALERTTYPE_RINGER :
+                //IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RING, ANNUN_STATE_ON);
+/*			                            
+#ifdef FEATURE_VERSION_C316			                            
+                if (bBTHeadSetConnected == TRUE)
+                {
+                    IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_BLUETOOTH);
+                }   
+                else
+#endif        
+*/
+                IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_ALERT);
+                break;
+
+            case OEMNV_ALERTTYPE_VIB :
+                //IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_VIBRATE, ANNUN_STATE_ON);
+                IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_VIBRATOR);
+                break;
+
+            case OEMNV_ALERTTYPE_VIBRINGER :
+                //IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_ALERT, ANNUN_STATE_ON);
+                IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_VIBRING);
+                break;
+                
+            case OEMNV_ALERTTYPE_VIBANDRINGER :
+                //IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_ALERT, ANNUN_STATE_ON);
+                IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_VIBRING);
+                break;
+
+            default :
+                break;
+        }
+    }
+    IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_ALARM, ANNUN_STATE_ALARM_OFF/*ANNUN_STATE_OFF*/);
     //AEEOEM_RestoreFactorySetting(pMe->m_pOEM_TSGBridge);     
     value = 0;
 

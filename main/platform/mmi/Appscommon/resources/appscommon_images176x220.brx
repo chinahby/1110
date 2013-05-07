@@ -55,6 +55,9 @@
 	<Object Id="5018" Name="IDB_MAINMENU_YPJBG" MimeType="image/png">
 		<File>..\images\176x220\common\Appscommon\Menu\background\ypjbackground.png</File>
 	</Object>
+	<Object Id="5019" Name="IDB_BATT4">
+		<File>..\images\176x220\common\Annunciator\batt4.bmp</File>
+	</Object>
 	<Object Id="5021" Name="IDB_CHECK_ON" MimeType="image/png">
 		<File>..\images\176x220\common\Appscommon\Icon\check_yes.png</File>
 	</Object>
@@ -333,6 +336,54 @@
 	</Object>
 	<Object Id="6026" Name="IDI_REFUI_LOUDSPEAKER" MimeType="image/png">
 		<File>..\images\176x220\common\CallApp\Call\loudspeaker.png</File>
+	</Object>
+	<Object Id="6041" Name="IDI_NUMBER_0" MimeType="image/png">
+		<File>..\images\176x220\common\CallApp\DialedNumber\0.png</File>
+	</Object>
+	<Object Id="6042" Name="IDI_NUMBER_1" MimeType="image/png">
+		<File>..\images\176x220\common\CallApp\DialedNumber\1.png</File>
+	</Object>
+	<Object Id="6043" Name="IDI_NUMBER_2" MimeType="image/png">
+		<File>..\images\176x220\common\CallApp\DialedNumber\2.png</File>
+	</Object>
+	<Object Id="6044" Name="IDI_NUMBER_3" MimeType="image/png">
+		<File>..\images\176x220\common\CallApp\DialedNumber\3.png</File>
+	</Object>
+	<Object Id="6045" Name="IDI_NUMBER_4" MimeType="image/png">
+		<File>..\images\176x220\common\CallApp\DialedNumber\4.png</File>
+	</Object>
+	<Object Id="6046" Name="IDI_NUMBER_5" MimeType="image/png">
+		<File>..\images\176x220\common\CallApp\DialedNumber\5.png</File>
+	</Object>
+	<Object Id="6047" Name="IDI_NUMBER_6" MimeType="image/png">
+		<File>..\images\176x220\common\CallApp\DialedNumber\6.png</File>
+	</Object>
+	<Object Id="6048" Name="IDI_NUMBER_7" MimeType="image/png">
+		<File>..\images\176x220\common\CallApp\DialedNumber\7.png</File>
+	</Object>
+	<Object Id="6049" Name="IDI_NUMBER_8" MimeType="image/png">
+		<File>..\images\176x220\common\CallApp\DialedNumber\8.png</File>
+	</Object>
+	<Object Id="6050" Name="IDI_NUMBER_9" MimeType="image/png">
+		<File>..\images\176x220\common\CallApp\DialedNumber\9.png</File>
+	</Object>
+	<Object Id="6051" Name="IDI_NUMBER_STAR" MimeType="image/png">
+		<File>..\images\176x220\common\CallApp\DialedNumber\Star.png</File>
+	</Object>
+	<Object Id="6052" Name="IDI_NUMBER_POUND" MimeType="image/png">
+		<File>..\images\176x220\common\CallApp\DialedNumber\Pound.png</File>
+	</Object>
+	<Object Id="6053" Name="IDI_NUMBER_P" MimeType="image/png">
+		<File>..\images\176x220\common\CallApp\DialedNumber\P.png</File>
+	</Object>
+	<Object Id="6054" Name="IDI_NUMBER_T" MimeType="image/png">
+		<File>..\images\176x220\common\CallApp\DialedNumber\T.png</File>
+	</Object>
+	<Object Id="6055" Name="IDI_NUMBER_PLUS" MimeType="image/png">
+		<File>..\images\176x220\common\CallApp\DialedNumber\+.png</File>
+	</Object>
+	<Object Id="6056" Name="IDI_NUMBER_SUB" MimeType="image/png">
+		<File>..\images\176x220\common\CallApp\DialedNumber\-.png</File>
 	</Object>
 	<Object Id="6201" Name="IDB_UTKMENU">
 		<File>..\images\176x220\common\UTK\utkmenu.bmp</File>
