@@ -490,6 +490,9 @@
 	<String Id="1171" Name="IDS_AKG_5SEC" Encoding="Unicode">
 		<Text>5 Sec</Text>
 	</String>
+	<STRING Id="1172" Name="IDS_CALLFORWARD_NOCONNECT_UNCONDITIONAL">
+		<Text>Unconditional</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="7001">

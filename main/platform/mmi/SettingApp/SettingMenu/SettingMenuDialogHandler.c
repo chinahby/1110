@@ -2101,8 +2101,12 @@ static boolean  HandleDivertDialogEvent(CSettingMenu *pMe,
             }
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_CALLFORWARD_BUSY, IDS_CALLFORWARD_BUSY, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_CALLFORWARD_NOANSWER, IDS_CALLFORWARD_NOANSWER, NULL, 0);
-#ifndef FEATURE_CARRIER_VENEZUELA_MOVILNET            
+#ifndef FEATURE_CARRIER_VENEZUELA_MOVILNET   
+#ifdef FEATURE_VERSION_K202_LM129C //xxzhen
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_CALLFORWARD_NOCONNECT_UNCONDITIONAL, IDS_CALLFORWARD_NOCONNECT_UNCONDITIONAL, NULL, 0);
+#else
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_CALLFORWARD_NOCONNECT, IDS_CALLFORWARD_NOCONNECT, NULL, 0);
+#endif
 #endif
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_CALLFORWARD_ANYWAY, IDS_CALLFORWARD_ANYWAY, NULL, 0);
 #if (!defined FEATURE_CARRIER_VENEZUELA_MOVILNET) && (!defined FEATURE_CARRIER_THAILAND_HUTCH)    
@@ -2163,7 +2167,9 @@ static boolean  HandleDivertDialogEvent(CSettingMenu *pMe,
                     pMe->m_CFType = CALLFORWARD_NOANSWER;
                     CLOSE_DIALOG(DLGRET_CALLFORWARDSEL)
                     return TRUE;
-
+				#ifdef FEATURE_VERSION_K202_LM129C //xxzhen
+                case IDS_CALLFORWARD_NOCONNECT_UNCONDITIONAL:
+				#endif
                 case IDS_CALLFORWARD_NOCONNECT: //未接通转移
                     pMe->m_CFType = CALLFORWARD_NOCONNECT;
                     CLOSE_DIALOG(DLGRET_CALLFORWARDSEL)
@@ -2315,7 +2321,11 @@ static boolean  HandleCallForwardSelDialogEvent(CSettingMenu *pMe,
                     break;
 
                 case CALLFORWARD_NOCONNECT: //未接通转移
+                	#ifdef FEATURE_VERSION_K202_LM129C //xxzhen
+					 pMe->m_nResID = IDS_CALLFORWARD_NOCONNECT_UNCONDITIONAL;
+                    #else
                     pMe->m_nResID = IDS_CALLFORWARD_NOCONNECT;
+					#endif
                     selete_item = CFGI_CALLFORWARD_UNCONDITIONAL_ENABLE;
                     //SettingMenu_Process_Feature_Code(pMe,CFGI_CALLFORWARD_UNCONDITIONAL_ENABLE);
                     break;
