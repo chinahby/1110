@@ -236,13 +236,13 @@
 		<Text>ปุ่ม P </Text>
 	</String>
 	<String Id="1024" Name="IDS_REGULATE_SUCCEED">
-		<Text>Regulate Succeed!</Text>
+		<Text>Calibration Pass!</Text>
 	</String>
 	<String Id="1025" Name="IDS_REGULATE_FAIL">
-		<Text>Regulate Fail!</Text>
+		<Text>Calibration Fail!</Text>
 	</String>
 	<String Id="1026" Name="IDS_REGULATE_NONE">
-		<Text>Can not read the Regulate Item!</Text>
+		<Text>No qcn!</Text>
 	</String>
 </Strings>
 <Dialogs>
