@@ -45,7 +45,11 @@
 #define TYPE_FIELD_MATCH    (0x2)
 
 //#define MATCH_DIGITS_MIN    7
+#ifdef FEATURE_VERSION_LM126C
+#define MATCH_DIGITS_MIN    11
+#else
 #define MATCH_DIGITS_MIN    5
+#endif
 
 #define PARAM_SPEED_DIAL				 999		//Add By zzg 2012_10_31
 
