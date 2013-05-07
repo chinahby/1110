@@ -1859,8 +1859,8 @@ static VFE_SkipBitMaskType runningOutput2SkipPattern = 0;
 
 /* New preview buffer scheme */
 #ifdef FEATURE_VERSION_K202 //yangdecai modify 
-#define CAMERA_NUM_OF_PREVIEW_BUFFERS_WITH_VFE     2
-#define CAMERA_NUM_OF_PREVIEW_BUFFERS_WITH_DISPLAY    1
+#define CAMERA_NUM_OF_PREVIEW_BUFFERS_WITH_VFE     3
+#define CAMERA_NUM_OF_PREVIEW_BUFFERS_WITH_DISPLAY    2
 #else
 #define CAMERA_NUM_OF_PREVIEW_BUFFERS_WITH_VFE     3
 #define CAMERA_NUM_OF_PREVIEW_BUFFERS_WITH_DISPLAY     2
