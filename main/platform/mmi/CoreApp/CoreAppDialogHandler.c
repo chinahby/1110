@@ -3853,7 +3853,6 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 		    }			
 			#endif
 			//Add End
-				
             CoreApp_DrawWallPaper(pMe); // debug for wallpaper update issue
             if(pWallPaper)
             {
@@ -6014,6 +6013,7 @@ static void CoreApp_SearchingTimer(void *pUser)
 static void CoreApp_DrawBannerMessage(void    *pUser)
 {
     AEERect   rc;
+	uint32    Wstrlen = 0;
     AECHAR    wszBuf[UIM_CDMA_HOME_SERVICE_SIZE+1] = {0};
     int32     nSize = sizeof(wszBuf);
     //AEECMSSInfo  *pssinfo = NULL;
@@ -6133,8 +6133,17 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
     else
     {// 最后是正常情况下的提示
         // 获取待机问候语 
+        MEMSET(pMe->svc_p_name,0,(UIM_CDMA_HOME_SERVICE_SIZE+1)*sizeof(AECHAR));
+#if defined(FEATURE_VERSION_K202)||defined(FEATURE_LANG_CHINESE)
+		 (void) ISHELL_LoadResString(pMe->a.m_pIShell,
+                       AEE_COREAPPRES_LANGFILE,
+                       IDS_CHINA_TELECOM,
+                       wszBuf,
+                       sizeof(wszBuf)); 
+		 Wstrlen = WSTRLEN(wszBuf);
+		 wszBuf[Wstrlen] = L'\0';
+#else
         CoreApp_GetSPN(pMe);
-        
         if(pMe->svc_p_name[0] != 0)
         {
 #ifdef FEATURE_OEMOMH 
@@ -6162,6 +6171,7 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
 #endif
 #endif
         }
+#endif
     }
 #ifdef FEATURE_DISP_128X128    
     {
@@ -9098,7 +9108,7 @@ static void CoreApp_GetSPN(CCoreApp *pMe)
     {
        curr_mnc -= 100;
     } 
-
+	//MSG_FATAL("return..curr_mcc=%d....curr_mnc=%d",curr_mcc,curr_mnc,0);
     //Load name string of service provider
     if ( 460 == curr_mcc && 3 == curr_mnc ) 
     {
@@ -9106,7 +9116,8 @@ static void CoreApp_GetSPN(CCoreApp *pMe)
                        AEE_COREAPPRES_LANGFILE,
                        IDS_CHINA_TELECOM,
                        pMe->svc_p_name,
-                       sizeof(pMe->svc_p_name));   
+                       sizeof(pMe->svc_p_name));  
+
     }
     else
     {
