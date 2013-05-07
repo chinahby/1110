@@ -1242,8 +1242,30 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 							pMe->m_msg_text_id = IDS_SAR_C337;	
         					CLOSE_DIALOG(DLGRET_MSGBOX);
 							return TRUE;
-                        } 
+                        }                         
 #endif
+                        /*
+                        if (WSTRCMP(pMe->m_DialString, L"*#01#") == 0)                   	
+                        { 
+                            nv_item_type	nv;
+                            
+        					if (NV_DONE_S == OEMNV_Get(NV_TIME_SHOW_I, &nv))
+                            {                                
+                                if (nv.time_show == TRUE)
+                                {
+                                    pMe->m_msg_text_id = IDS_REGULATE_SUCCEED;
+                                }
+                                else
+                                {
+                                    pMe->m_msg_text_id = IDS_REGULATE_FAIL;
+                                }
+    
+                                CLOSE_DIALOG(DLGRET_MSGBOX);
+                            }      
+        					
+                            return TRUE;
+                        } 
+                        */
 						//Add End
 						
                         if (WSTRCMP(pMe->m_DialString, L"*#123456#") == 0)
@@ -4927,7 +4949,8 @@ static boolean  CallApp_MsgBox_DlgHandler(CCallApp  *pMe,
             return TRUE;
 
         case EVT_DIALOG_START:
-            if(pMe->m_msg_text_id != IDS_INVALIDEMGNUM && pMe->m_msg_text_id != IDS_NOOMH_CARD && pMe->m_msg_text_id != IDS_SAR && pMe->m_msg_text_id != IDS_SAR_C337)
+            if(pMe->m_msg_text_id != IDS_INVALIDEMGNUM && pMe->m_msg_text_id != IDS_NOOMH_CARD && pMe->m_msg_text_id != IDS_SAR && pMe->m_msg_text_id != IDS_SAR_C337
+                || (pMe->m_msg_text_id == IDS_REGULATE_SUCCEED)|| (pMe->m_msg_text_id == IDS_REGULATE_FAIL))
             {
                 ISHELL_SetTimer(pMe->m_pShell, TIMEOUT_MS_INVALIDEMGNUMDIALOG_TIMER,
                                        CallApp_HandleDialogTimer, pMe);
@@ -4962,7 +4985,15 @@ static boolean  CallApp_MsgBox_DlgHandler(CCallApp  *pMe,
                 case IDS_EMGNUMBER_CALL_ONLY:
                     m_PromptMsg.ePMsgType = MESSAGE_INFORMATION;
                     break;
-				
+
+                case IDS_REGULATE_FAIL:
+                    m_PromptMsg.ePMsgType = MESSAGE_WARNNING;
+                    break;
+                    
+				case IDS_REGULATE_SUCCEED:
+                    m_PromptMsg.ePMsgType = MESSAGE_INFORMATION;
+                    break;
+                    
                 default:
                     m_PromptMsg.ePMsgType = MESSAGE_NONE;
                     break;
@@ -5051,7 +5082,8 @@ static boolean  CallApp_MsgBox_DlgHandler(CCallApp  *pMe,
 
                 }
             }
-            else if((pMe->m_msg_text_id == IDS_NOOMH_CARD) || (pMe->m_msg_text_id == IDS_SAR) || (pMe->m_msg_text_id == IDS_SAR_C337))
+            else if((pMe->m_msg_text_id == IDS_NOOMH_CARD) || (pMe->m_msg_text_id == IDS_SAR) || (pMe->m_msg_text_id == IDS_SAR_C337)
+                || (pMe->m_msg_text_id == IDS_REGULATE_SUCCEED)|| (pMe->m_msg_text_id == IDS_REGULATE_FAIL))
             {
                 switch (wParam)
                 {

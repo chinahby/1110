@@ -275,6 +275,7 @@ typedef struct _CRecentCalls
 #define STARTARG_MISSEDCALL  ((char) 'B')  //错过来电进入错过列表时候的标志字符
 #define STARTARG_ALLCALL     ((char) 'C')  //所有的通话记录，发短信的时候可能要选择所有的号码
 #define STARTARG_ONECALL     ((char) 'D') //获取一个通话记录
+#define SATRTARG_REDIAL      "Redial"       //Add By zzg 2013_01_17
 #define MAX_STRING_LEN       (38)
 #define BETWEEN_LINE_PIXELS (3)
 #define PIXELS_TO_EDGE          (6)

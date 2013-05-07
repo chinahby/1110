@@ -80,8 +80,13 @@ static NextFSMAction QUICKTESTSTTouchScreenTestHandler(CQuickTest *pMe);
 // 状态 QUICKTESTST_CALLTEST 处理函数
 static NextFSMAction QUICKTESTSTCallTestHandler(CQuickTest *pMe);
 
+// 状态 QUICKTESTST_REGULATEST 处理函数
+static NextFSMAction QUICKTESTSTRegulateHandler(CQuickTest *pMe);
+
+
 // 状态 QUICKTESTST_RESTOREFACTORY 处理函数
 static NextFSMAction QUICKTESTSTRestoreFactoryHandler(CQuickTest *pMe);
+
 
 // 状态 QUICKTESTST_EXIT 处理函数
 static NextFSMAction QUICKTESTSTExitHandler(CQuickTest *pMe);
@@ -196,9 +201,13 @@ NextFSMAction QuickTest_ProcessState(CQuickTest *pMe)
             retVal = QUICKTESTSTCallTestHandler(pMe);
             break;
 
+        case QUICKTESTST_REGULATE:
+            retVal = QUICKTESTSTRegulateHandler(pMe);
+            break;      
+
         case QUICKTESTST_RESTOREFACTORY:
             retVal = QUICKTESTSTRestoreFactoryHandler(pMe);
-            break;
+            break;          
 
         case QUICKTESTST_EXIT:
             retVal = QUICKTESTSTExitHandler(pMe);
@@ -336,9 +345,14 @@ static NextFSMAction QUICKTESTSTMainHandler(CQuickTest *pMe)
             MOVE_TO_STATE(QUICKTESTST_CALLTEST)
             return NFSMACTION_CONTINUE;
 
+        case DLGRET_REGULATE:
+            MOVE_TO_STATE(QUICKTESTST_REGULATE)
+            return NFSMACTION_CONTINUE;     
+
         case DLGRET_RESTOREFACTORY:
             MOVE_TO_STATE(QUICKTESTST_RESTOREFACTORY)
             return NFSMACTION_CONTINUE;
+           
 
         case DLGRET_CANCELED:
             MOVE_TO_STATE(QUICKTESTST_EXIT)
@@ -426,7 +440,11 @@ static NextFSMAction QUICKTESTSTYAMAHATestHandler(CQuickTest *pMe)
             return NFSMACTION_WAIT;
 
         case DLGRET_CANCELED:
+#ifdef FEATURE_VERSION_C337
+            MOVE_TO_STATE(QUICKTESTST_VIBRATETEST)
+#else
             MOVE_TO_STATE(QUICKTESTST_KEYTEST)
+#endif            
             return NFSMACTION_CONTINUE;
 
         default:
@@ -466,7 +484,11 @@ static NextFSMAction QUICKTESTSTVibrateTestHandler(CQuickTest *pMe)
             return NFSMACTION_WAIT;
 
         case DLGRET_CANCELED:
+#ifdef FEATURE_VERSION_C337
+            MOVE_TO_STATE(QUICKTESTST_KEYTEST)
+#else
             MOVE_TO_STATE(QUICKTESTST_YAMAHATEST)
+#endif            
             return NFSMACTION_CONTINUE;
 
         default:
@@ -510,7 +532,11 @@ static NextFSMAction QUICKTESTSTBackLightTestHandler(CQuickTest *pMe)
             MOVE_TO_STATE(QUICKTESTST_FLIPTEST)
 #else //FEATRUE_DEVICETYPE_FLIP  
 #if 1 //ndef FEATURE_VERSION_C180 //xxzhen
+#ifdef FEATURE_VERSION_C337
+            MOVE_TO_STATE(QUICKTESTST_YAMAHATEST)
+#else
             MOVE_TO_STATE(QUICKTESTST_VIBRATETEST)
+#endif            
 #else
             MOVE_TO_STATE(QUICKTESTST_YAMAHATEST)
 #endif
@@ -663,7 +689,8 @@ static NextFSMAction QUICKTESTSTSDTestHandler(CQuickTest *pMe)
             return NFSMACTION_WAIT;
 
         case DLGRET_CANCELED:
-            MOVE_TO_STATE(QUICKTESTST_RESTOREFACTORY)
+            //MOVE_TO_STATE(QUICKTESTST_RESTOREFACTORY)
+            MOVE_TO_STATE(QUICKTESTST_REGULATE)
             return NFSMACTION_CONTINUE;
 
         default:
@@ -882,7 +909,7 @@ static NextFSMAction QUICKTESTSTRestoreFactoryHandler(CQuickTest *pMe)
             return NFSMACTION_WAIT;
 
         case DLGRET_CANCELED:
-            MOVE_TO_STATE(QUICKTESTST_EXIT)
+            MOVE_TO_STATE(QUICKTESTST_EXIT)            
             return NFSMACTION_CONTINUE;
 
         default:
@@ -891,6 +918,33 @@ static NextFSMAction QUICKTESTSTRestoreFactoryHandler(CQuickTest *pMe)
 
     return NFSMACTION_WAIT;
 }// QUICKTESTSTRestoreFactoryHandler
+
+
+static NextFSMAction QUICKTESTSTRegulateHandler(CQuickTest * pMe)
+{
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+
+    switch (pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            QuickTest_ShowDialog(pMe, IDD_REGULATE);
+            return NFSMACTION_WAIT;
+
+        case DLGRET_CANCELED:
+            MOVE_TO_STATE(QUICKTESTST_RESTOREFACTORY)
+            return NFSMACTION_CONTINUE;
+
+        default:
+            break;
+    }
+
+    return NFSMACTION_WAIT;
+}// QUICKTESTSTRestoreFactoryHandler
+
 
 /*==============================================================================
 函数：QUICKTESTSTExitHandler

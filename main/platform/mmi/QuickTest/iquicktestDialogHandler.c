@@ -137,6 +137,15 @@ static boolean  QuickTest_CallHandler(CQuickTest *pMe,
                                       uint32 dwParam
 );
 
+
+//对话框IDD_REGULATE事件处理函数
+static boolean  QuickTest_Regulate_Handler(CQuickTest *pMe,
+                                      AEEEvent eCode,
+                                      uint16 wParam,
+                                      uint32 dwParam
+);
+
+
 //对话框IDD_RESTORE_FACTORY事件处理函数
 static boolean  QuickTest_RestoreFactory_Handler(CQuickTest *pMe,
                                       AEEEvent eCode,
@@ -231,8 +240,8 @@ void QuickTest_UpdateActiveDialogInfo
         case IDD_TOUCHSCREENTEST:
 #endif
         case IDD_CALLTEST:
+        case IDD_REGULATE:     
         case IDD_RESTORE_FACTORY:
-
             pMe->m_pActiveDlg = (IDialog*)dwParam;
             pMe->m_pActiveDlgID = wParam;
             return;
@@ -348,6 +357,9 @@ boolean QuickTest_RouteDialogEvent(CQuickTest *pMe,
 
         case IDD_CALLTEST:
             return QuickTest_CallHandler(pMe,eCode,wParam,dwParam);
+            
+        case IDD_REGULATE:
+            return QuickTest_Regulate_Handler(pMe,eCode,wParam,dwParam);     
 
         case IDD_RESTORE_FACTORY:
             return QuickTest_RestoreFactory_Handler(pMe,eCode,wParam,dwParam);
@@ -3453,6 +3465,90 @@ static boolean  QuickTest_RestoreFactory_Handler(CQuickTest *pMe,
     }
     return FALSE;
 } // QuickTest_RestoreFactory_Handler
+
+
+static boolean  QuickTest_Regulate_Handler(CQuickTest *pMe,
+                                      AEEEvent eCode,
+                                      uint16 wParam,
+                                      uint32 dwParam)
+{
+
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT:
+            return TRUE;
+
+        case EVT_DIALOG_START:
+            (void)ISHELL_PostEvent( pMe->m_pShell,
+                                    AEECLSID_QUICKTEST,
+                                    EVT_USER_REDRAW,
+                                    0,
+                                    0);
+            return TRUE;
+
+        case EVT_USER_REDRAW:
+            {
+                AECHAR   string[MAX_STRING_LENGTH+1];
+                
+                nv_item_type nvi;          
+
+                uint16 resid = IDS_REGULATE_NONE;
+                
+				if (NV_DONE_S == OEMNV_Get(NV_TIME_SHOW_I, &nvi))
+                {                                
+                    if (nvi.time_show == TRUE)
+                    {
+                        resid  = IDS_REGULATE_SUCCEED;
+                    }
+                    else
+                    {
+                        resid  = IDS_REGULATE_FAIL;
+                    }
+                }   
+                
+				                        
+                (void)ISHELL_LoadResString(pMe->m_pShell,
+                                           AEE_QUICKTEST_RES_FILE,
+                                           resid,
+                                           string,
+                                           MAX_STRING_LENGTH);
+
+                (void)IDISPLAY_DrawText(pMe->m_pDisplay,
+                                        AEE_FONT_BOLD,
+                                        string,
+                                        -1,
+                                        0,
+                                        0,
+                                        NULL,
+                                        IDF_ALIGN_CENTER);
+
+
+                IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+
+            }
+            return TRUE;
+
+        case EVT_DIALOG_END:
+            return TRUE;
+
+        case EVT_KEY:
+            switch(wParam)
+            {
+                case AVK_CLR:
+                    CLOSE_DIALOG(DLGRET_CANCELED)
+                    break;
+
+                default:
+                    break;
+            }
+            return TRUE;
+
+        default:
+            break;
+    }
+    return FALSE;
+} // QuickTest_RestoreFactory_Handler
+
 
 /*==============================================================================
 函数：

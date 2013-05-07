@@ -140,7 +140,8 @@ typedef enum DLGRetValue
    DLGRET_VERTEST,            //VER测试
    DLGRET_LCDTEST,            //LCD测试
    DLGRET_CALLTEST,           //mic测试
-   DLGRET_RESTOREFACTORY      //恢复出厂设置
+   DLGRET_REGULATE,           //检查是否已经校准
+   DLGRET_RESTOREFACTORY      //恢复出厂设置   
 } DLGRet_Value_e_Type;
 
 /*----------------------状态机相关数据类型声明---------------------*/
@@ -162,7 +163,8 @@ typedef enum _QuickTestState
    QUICKTESTST_VERTEST,
    QUICKTESTST_LCDTEST,
    QUICKTESTST_CALLTEST,
-   QUICKTESTST_RESTOREFACTORY,
+   QUICKTESTST_REGULATE,
+   QUICKTESTST_RESTOREFACTORY,   
    QUICKTESTST_EXIT
 } QuickTestState;
 

@@ -875,6 +875,8 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
     {   
         //²¥·Å»òÔÝÍ£	
 		case AVK_INFO:
+            VideoPlayer_RefreshVolBar(pMe);    //Add By zzg 2013_03_26
+            
             // add by pyuangui 20121203
 			#ifdef FEATURE_VERSION_W317A
 			if(pMe->m_keybusy)
@@ -1298,6 +1300,7 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
 #ifdef FEATURE_ALL_KEY_PAD                     
         case AVK_O:
 #endif                
+            MSG_FATAL("***zzg VideoPlayer AVK_POUND m_bVolumeLevel=%d, totalvolume=%d***", pMe->m_bVolumeLevel, pMe->totalvolume, 0);
             if(pMe->m_bVolumeLevel < VOLUME_FIVE)
             {
                 pMe->m_bVolumeLevel++;
@@ -1336,6 +1339,7 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
 #ifdef FEATURE_ALL_KEY_PAD                     
         case AVK_I:
 #endif                
+            MSG_FATAL("***zzg VideoPlayer AVK_STAR m_bVolumeLevel=%d, totalvolume=%d***", pMe->m_bVolumeLevel, pMe->totalvolume, 0);
             if(pMe->m_bVolumeLevel > VOLUME_OFF)
             {
                 pMe->m_bVolumeLevel--;
