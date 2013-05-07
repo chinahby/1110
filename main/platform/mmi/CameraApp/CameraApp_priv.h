@@ -225,7 +225,11 @@
 
 //Add By zzg 2010_07_24
 #define CFGBAR_TEXT_X		   2
+#if defined( FEATURE_VERSION_K202)&&defined(FEATURE_LANG_CHINESE)
+#define CFGBAR_TEXT_Y		   24
+#else
 #define CFGBAR_TEXT_Y		   21
+#endif
 
 #if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A)
 #define CFGBAR_TEXT_WIDTH	   130

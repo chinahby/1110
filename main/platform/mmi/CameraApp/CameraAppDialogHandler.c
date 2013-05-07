@@ -892,8 +892,8 @@ static boolean CameraApp_CameraPhotoModeHandleEvent(CCameraApp *pMe, AEEEvent eC
 static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
 {
     int   nCameraSelfTime = 0;
+
     MSG_FATAL("CameraApp_PreviewHandleEvent eCode=0x%x, wParam=0x%x",eCode, wParam, 0);
-    
     if(pMe->m_isPicCamera)
     {
         if(eCode==EVT_KEY)
@@ -4148,16 +4148,27 @@ static void CameraApp_SetPopMenuRect(CCameraApp *pMe, IMenuCtl* popMenu, int men
     #ifdef FEATURE_DISP_240X320
 	pMe->m_nItemH = 28;
 	#endif
+	#if defined( FEATURE_VERSION_K202)&&defined(FEATURE_LANG_CHINESE)
+	pMe->m_nItemH = 16;
+	#endif
     // the number of popMenu Item is no more than 4
     if(menuItemSum < 4)
     {
         //dy = menuItemSum*(pMe->m_nItemH+7);
-        dy = menuItemSum*(pMe->m_nItemH+2);
+        #ifdef FEATURE_VERSION_K202
+        dy = menuItemSum*(pMe->m_nItemH+6);
+		#else
+		dy = menuItemSum*(pMe->m_nItemH+2);
+		#endif
     }
     else
     {
         //dy = 4*(pMe->m_nItemH+7);
-        dy = 4*(pMe->m_nItemH+2);
+        #ifdef FEATURE_VERSION_K202
+        dy = 4*(pMe->m_nItemH+6);
+		#else
+		dy = 4*(pMe->m_nItemH+2);
+		#endif
     }
 
     x = CFGBAR_TEXT_X;
