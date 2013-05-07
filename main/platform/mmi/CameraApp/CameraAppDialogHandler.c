@@ -305,7 +305,7 @@ static const CCameraSize g_CameraSizeCFG[] =
     {128,160,L"128*160"}, // FULL Screen
     {176,220,L"176*220"}, // QCIF
     {240,320,L"240*320"}, // QVGA   
- #if defined( FEATURE_VERSION_C316)||defined(FEATURE_VERSION_C117_M74)
+ #if defined( FEATURE_VERSION_C316)//||defined(FEATURE_VERSION_C117_M74)
     {300,400,L"480*640"}, // VGA
  #endif
 #elif defined(FEATURE_DISP_176X220)
@@ -360,7 +360,7 @@ static const CCameraSize g_CameraSizeCFG_10[] =
 #else
     {240,320,L"240*320"}, // QVGA
 #endif    
- #if defined( FEATURE_VERSION_C316)||defined(FEATURE_VERSION_C117_M74)
+ #if defined( FEATURE_VERSION_C316)//||defined(FEATURE_VERSION_C117_M74)
     {300,400,L"480*640"}, // VGA
 #endif
 
@@ -4406,7 +4406,7 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
 //Add End
 
 //Add by pyuangui 20121229
- #if defined( FEATURE_VERSION_C316)||defined(FEATURE_VERSION_C117_M74)
+ #if defined( FEATURE_VERSION_C316)//||defined(FEATURE_VERSION_C117_M74)
     // size cfgID
     (void)ICONFIG_GetItem(pMe->m_pConfig,
                           CFGI_CAMERA_SIZE,
