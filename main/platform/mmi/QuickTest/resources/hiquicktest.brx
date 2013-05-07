@@ -241,6 +241,15 @@
 	<String Id="1023" Name="IDS_AVK_P">
 		<Text>P key</Text>
 	</String>
+	<String Id="1024" Name="IDS_REGULATE_SUCCEED">
+		<Text>Regulate Succeed!</Text>
+	</String>
+	<String Id="1025" Name="IDS_REGULATE_FAIL">
+		<Text>Regulate Fail!</Text>
+	</String>
+	<String Id="1026" Name="IDS_REGULATE_NONE">
+		<Text>Can not read the Regulate Item!</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="1" Name="IDD_MAINMENU" Focus="7001">
@@ -286,6 +295,9 @@
 	<Dialog Id="12" Name="IDD_FLIPTEST" Focus="0">
 		<Controls/>
 	</Dialog>
+	<DIALOG Id="13" Name="IDD_REGULATE" Focus="0">
+		<Controls/>
+	</DIALOG>
 	<Dialog Id="6001" Name="IDD_TOUCHSCREENTEST" Focus="0">
 		<Controls/>
 	</Dialog>
