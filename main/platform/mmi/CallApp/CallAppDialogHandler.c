@@ -12795,7 +12795,7 @@ static void CallApp_Load_Numer_Img(CCallApp *pMe)
     int i;
     for(i = 0; i<REFUI_CALL_MAX_IMAGSIZE ;i++)
     {
-        //pMe->num_image[i]  = ISHELL_LoadResImage( pMe->m_pShell,AEE_APPSCOMMONRES_IMAGESFILE,IDI_NUMBER_0 + i);
+        pMe->num_image[i]  = ISHELL_LoadResImage( pMe->m_pShell,AEE_APPSCOMMONRES_IMAGESFILE,IDI_NUMBER_0 + i);
     }
 #else
     pMe->num_image[0]  = ISHELL_LoadResImage( pMe->m_pShell,AEE_APPSCOMMONRES_IMAGESFILE,IDI_NUMBER_0);
