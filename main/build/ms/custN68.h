@@ -12,7 +12,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #ifdef CUST_EDITION
 #define FEATURE_VERSION_N68
 #define FEATURE_VERSION_MYANMAR
-//#define FEATURE_DISABLE_UIMPRL
+#define FEATURE_DISABLE_UIMPRL
 #define FEATURE_IS683A_450M_SUPPORT
 //Add by zzg 2010_10_13
 //#define FEATURE_TORCH_KEY_CAMERA			//手电筒功能按键
@@ -22,6 +22,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_GPIO_31_SIGNAL_OUPUT_31		//GPIO_31_SIGNAL == GPIO_OUTPUT_31
 #define FEATURE_LANG_MYANMAR   //add by yangdecai 2010-1224
 //Add End
+#define T_QSC1110
 
 //#define FEATURE_SMS_UDH
 //#define FEATURE_SUPPORT_ID
@@ -43,21 +44,24 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #endif
 
 #ifndef TARGSB2_H
-   #include "targsbw2.h"
+   #include "targsb12832.h"
 #endif
 
 //#define FEATURE_DATA_STRIP_ATCOP 
 #define FEATURE_STD_MIDI 
 #define FEATURE_DIAG_LOWMEM 
 //#define FEATURE_AMR_VOCODER 
-#define CUST_MOB_MODEL 22
+#define T_QSC1110
+#define CUST_MOB_MODEL 25
 #define FEATURE_PLL_192 
-#define FEATURE_CLKREGIM_1X_MODE 
+#define FEATURE_CLKREGIM_2X_MODE 
 #define FEATURE_AUDIO_CONFIGURATION_MINIMAL 
 //Gemsea Remove #define FEATURE_AUDIO_CONFIGURATION_LO_TIER 
 #define FEATURE_IPL_NO_CAMERA
+#define FEATURE_IIPL
 #define FEATURE_UIM_QSC1100_LOW_MEMORY 
 #define CM_FEATURE_HSBASED_PLUS_DIAL_DISPLAY 
+#define CLKRGM_INCLUDE_TD 
 #define FEATURE_MMODE_LOW_MEM_TARGET 
 #define FEATURE_LOWTIER_LOWMEM 
 #define FEATURE_REX_IPC 
@@ -73,6 +77,9 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_DIAG_SMALL_BUFFER 
 #define FEATURE_IPC_SMALL_MEMORY_POOL 
 #define FEATURE_APP_DIALER 
+#define FEATURE_QVGANOTSUPPORTED 
+#define FEATURE_MDP_LAYER1_PRIMARY 
+#define FEATURE_DISP_TASK 
 #define FEATURE_RUIM 
 #define FEATURE_UIM1 
 #define FEATURE_UIM_PMIC_ON_UIM1 
@@ -237,9 +244,20 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //#define FEATURE_ENHANCED_AAC_PLUS
 #endif
 
+#include "custdisplay.h"
+
 #ifdef USES_CAMERA
 #include "custcamera.h"
-#define FEATURE_PNG_ENCODER
+#undef USE_CAMSENSOR_SIV121A
+#undef USE_CAMSENSOR_SIV120A
+#undef USE_CAMSENSOR_DB8B63A
+#undef USE_CAMSENSOR_SID130B
+#undef USE_CAMSENSOR_SP0838
+#undef USE_CAMSENSOR_SP0A18
+#undef USE_CAMSENSOR_MICRON_SIV121D_0M3
+#undef USE_CAMSENSOR_GC0329
+
+#include "custjpeg.h"
 #endif
 
 #include "custuim.h"
@@ -269,47 +287,21 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #include "Custsdcc.h"
 #endif
 
-#ifndef USES_DS_1536
-#ifdef FEATURE_DS_MOBILE_IP
-   #undef FEATURE_DS_MOBILE_IP
-#endif
-#ifdef FEATURE_DS_MOBILE_IP_PERF
-   #undef FEATURE_DS_MOBILE_IP_PERF
-#endif
-#endif
 #ifdef FEATURE_MEDIAPLAYER_TEST_AUTOMATION
    #undef FEATURE_MEDIAPLAYER_TEST_AUTOMATION
 #endif
 //Gemsea Remove #ifdef FEATURE_MP3
 //Gemsea Remove   #undef FEATURE_MP3
 //Gemsea Remove #endif
-#ifdef FEATURE_MDP_LAYER1_PRIMARY
-   #undef FEATURE_MDP_LAYER1_PRIMARY
-#endif
+
 #ifdef FEATURE_OVERLAY2
    #undef FEATURE_OVERLAY2
-#endif
-#ifndef USES_DS_1536
-#ifdef FEATURE_SCH_TRIAGE
-   #undef FEATURE_SCH_TRIAGE
-#endif
-#ifdef FEATURE_IS2000_R_SCH
-   #undef FEATURE_IS2000_R_SCH
-#endif
 #endif
 //Gemsea Remove #ifdef FEATURE_PNG_ENCODER
 //Gemsea Remove    #undef FEATURE_PNG_ENCODER
 //Gemsea Remove #endif
-#ifndef USES_DS_1536
-#ifdef FEATURE_IS2000_SCH_STATS
-   #undef FEATURE_IS2000_SCH_STATS
-#endif
-#endif
 #ifdef FEATURE_AUDFMT_EVB
    #undef FEATURE_AUDFMT_EVB
-#endif
-#ifdef FEATURE_MMOVERLAY
-   #undef FEATURE_MMOVERLAY
 #endif
 #ifdef FEATURE_SAF
    #undef FEATURE_SAF
@@ -317,24 +309,13 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //Gemsea Remove #ifdef FEATURE_QTUNES
 //Gemsea Remove   #undef FEATURE_QTUNES
 //Gemsea Remove #endif
-#ifndef USES_DS_1536
-#ifdef FEATURE_IS2000_F_SCH
-   #undef FEATURE_IS2000_F_SCH
+
+#ifdef FEATURE_JPEG_ENCODER
+   #undef FEATURE_PNG_ENCODER
 #endif
-#endif
-#ifdef FEATURE_DISP_TASK
-   #undef FEATURE_DISP_TASK
-#endif
-#ifdef FEATURE_MDP
-   #undef FEATURE_MDP
-#endif
+
 #ifdef FEATURE_PNG_DECODER
    #undef FEATURE_PNG_DECODER
-#endif
-#ifndef USES_DS_1536
-#ifdef FEATURE_IS2000_SCH
-   #undef FEATURE_IS2000_SCH
-#endif
 #endif
 //Gemsea Remove #ifdef FEATURE_AAC
 //Gemsea Remove    #undef FEATURE_AAC
@@ -389,7 +370,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #endif
 //#ifndef USES_DS_1536 //注释掉是为了解决1900M搜不到网的问题
 #ifdef FEATURE_UNIFORM_SCAN_OOS_HDR_ENH
-//Gemsea Modify For CDMA450   #undef FEATURE_UNIFORM_SCAN_OOS_HDR_ENH
+   #undef FEATURE_UNIFORM_SCAN_OOS_HDR_ENH
 #endif
 //#endif
 #ifdef FEATURE_SC2X_HAS_UART1
@@ -400,7 +381,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #endif
 //#ifndef USES_DS_1536//注释掉是为了解决1900M搜不到网的问题
 #ifdef FEATURE_UNIFORM_SCAN_OOS
-//Gemsea Modify For CDMA450   #undef FEATURE_UNIFORM_SCAN_OOS
+   #undef FEATURE_UNIFORM_SCAN_OOS
 #endif
 //#endif
 
