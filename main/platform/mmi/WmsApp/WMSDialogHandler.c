@@ -730,7 +730,8 @@ void WmsApp_SetDialogHandler(WmsApp *pMe)
             pMe->m_pDialogHandler = IDD_AUTOREPLACE_Handler;
             break;
 #endif            
-#ifndef FEATURE_VERSION_C316            
+#if !defined(FEATURE_VERSION_C316)&&!defined(FEATURE_VERSION_K202_LM129C)
+           
         case IDD_CALLBACKNUMSWITCH:
             pMe->m_pDialogHandler = IDD_CALLBACKNUMSWITCH_Handler;
             break;
@@ -3625,7 +3626,7 @@ static boolean IDD_SETTING_Handler(void   *pUser,
 #endif                   
 #if 1//def FEATURE_CARRIER_TAIWAN_APBW        //add by yangdecai   2010-08-23 
             MSG_FATAL("IDD_SETTING_Handler EVT_DIALOG_INIT IDS_CALLBACKNUM", 0, 0, 0);
-#ifndef FEATURE_VERSION_C316
+#if !defined(FEATURE_VERSION_C316)&&!defined(FEATURE_VERSION_K202_LM129C)
             MENU_ADDITEM(pMenu, IDS_CALLBACKNUM);
 #endif
 #endif 
@@ -3708,7 +3709,7 @@ static boolean IDD_SETTING_Handler(void   *pUser,
 #if 1//def FEATURE_CARRIER_TAIWAN_APBW        //add by yangdecai   2010-08-23 
                 // 发出短信是否带回叫号码
                 MSG_FATAL("IDD_SETTING_Handler EVT_COMMAND IDS_CALLBACKNUM", 0, 0, 0);
-#ifndef FEATURE_VERSION_C316
+#if !defined(FEATURE_VERSION_C316)&&!defined(FEATURE_VERSION_K202_LM129C)
                 case IDS_CALLBACKNUM:
                     CLOSE_DIALOG(DLGRET_CALLBACKNUM)
                     return TRUE;
@@ -6333,7 +6334,8 @@ static boolean IDD_CALLBACKNUMSWITCH_Handler(void *pUser,
         case EVT_COMMAND:
             switch (wParam)
             {
-#ifndef FEATURE_VERSION_C316            
+#if !defined(FEATURE_VERSION_C316)&&!defined(FEATURE_VERSION_K202_LM129C)
+
                 // 发短信要求带 Callback number
                 case IDS_ENABLE:
                     /*{
@@ -9861,19 +9863,20 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                     ISHELL_LoadResString(pMe->m_pShell, AEE_WMSAPPRES_LANGFILE, IDS_DELIVERYREPORTS, wstrText[nControls], sizeof(wstrText));
                     nControls++;
                 }
-#ifndef FEATURE_VERSION_C316
+#if !defined(FEATURE_VERSION_C316)&&!defined(FEATURE_VERSION_K202_LM129C) //xxzhen
                 if (mask & 0x10)
                 {
                     wControls[nControls] = IDC_MENU_CBNUM;
                     ISHELL_LoadResString(pMe->m_pShell, AEE_WMSAPPRES_LANGFILE, IDS_CALLBACKNUM, wstrText[nControls], sizeof(wstrText));
                     nControls++;
                 }
-#endif                
+               
                 if (mask & 0x01)
                 {
                     wControls[nControls] = IDC_TEXT_CBNUM;
                     nControls++;
                 }
+#endif 
             }			
 				
             // 解决闪屏问题，从start移动到此处 
