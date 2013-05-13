@@ -41,6 +41,7 @@ when       who     what, where, why
 #define USE_CAMSENSOR_MICRON_SIV121D_0M3
 #define USE_CAMSENSOR_GC0329
 #define USE_CAMSENSOR_GC0311
+#define USE_CAMSENSOR_SP0A19
 #endif
 #define USE_CAMSENSOR_SIC110A
 #define USE_CAMSENSOR_SP0828
