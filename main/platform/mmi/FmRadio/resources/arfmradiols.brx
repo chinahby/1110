@@ -47,7 +47,7 @@
 		<Text>الوضع التلقائي</Text>
 	</STRING>
 	<STRING Id="1016" Name="IDS_FMRADIO_CHANNEL_LIST_OPTION_MENU_PLAY">
-		<Text>تشغيل</Text>
+		<Text>حدد</Text>
 	</STRING>
 	<STRING Id="1017" Name="IDS_FMRADIO_CHANNEL_LIST_OPTION_MENU_NEW">
 		<Text>إضافة</Text>

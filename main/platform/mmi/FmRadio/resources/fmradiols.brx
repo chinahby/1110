@@ -47,7 +47,7 @@
 		<Text>Auto mode</Text>
 	</STRING>
 	<STRING Id="1016" Name="IDS_FMRADIO_CHANNEL_LIST_OPTION_MENU_PLAY">
-		<Text>Play</Text>
+		<Text>Select</Text>
 	</STRING>
 	<STRING Id="1017" Name="IDS_FMRADIO_CHANNEL_LIST_OPTION_MENU_NEW">
 		<Text>Add</Text>
