@@ -6221,7 +6221,7 @@ static boolean Setting_Process_Auto_Power(Auto_Power_Cfg *other_set, Auto_Power_
             time = cur->dwWATime - other_set->dwWATime;
         }
         MSG_FATAL("%d %d %d ",time ,other_set->dwWATime, cur->dwWATime);
-        if(time >= 180000/*3 min*/)
+        if(time >= 60000/*180000 3 min*/) //xxzhen modify power on time and poewr off time ,only 1min
         {
             return TRUE;
         }
