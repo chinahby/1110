@@ -893,7 +893,14 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
 {
     int   nCameraSelfTime = 0;
 
+	//uint32  dwTotal = 0;
+	//uint32 free = 0;
+	//GETFSFREE(&dwTotal);
+	//free = GETRAMFREE(NULL,NULL);
+	//MSG_FATAL("ydc CameraApp dwTotal======%d,free====%d",dwTotal,free,0);
+
     MSG_FATAL("CameraApp_PreviewHandleEvent eCode=0x%x, wParam=0x%x",eCode, wParam, 0);
+	
     if(pMe->m_isPicCamera)
     {
         if(eCode==EVT_KEY)
@@ -1093,6 +1100,10 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
 #else
             IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
 #endif
+
+			//GETFSFREE(&dwTotal);
+			//free = GETRAMFREE(NULL,NULL);
+			//MSG_FATAL("preview CameraApp dwTotal======%d,free===%d",dwTotal,free,0);
             return TRUE;
 
         case EVT_KEY:

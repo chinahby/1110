@@ -3424,11 +3424,17 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
                if(eDlgStat == MG_DLGSTAT_NORMAL &&
                   (pMe->m_bImgLoadDone == TRUE))
                {
-                #ifdef FEATURE_VERSION_W317A
+                #if defined(FEATURE_VERSION_W317A)
                   MenuInsItem ImgViewOptions[]={
                      {IDS_MG_ZOOM, TRUE}, {IDS_MG_SETWALLPAPER, TRUE},
                      {IDS_MG_DELETE, TRUE}, {IDS_MG_DETAILS, TRUE}
                   };
+				#elif defined(FEATURE_VERSION_LM126C)
+				  MenuInsItem ImgViewOptions[] =
+				  {
+					 {IDS_MG_ZOOM, TRUE}, {IDS_MG_DELETE, TRUE}, 
+					 {IDS_MG_DETAIL, TRUE}
+				  };
                 #else
                   MenuInsItem ImgViewOptions[]={
                      {IDS_MG_ZOOM, TRUE}, {IDS_MG_SETWALLPAPER, TRUE},
@@ -6672,12 +6678,18 @@ static boolean MediaGalleryApp_ImageSettingDlg_HandleEvent(
             {
                if(eDlgStat == MG_DLGSTAT_NORMAL)
                {
-                #ifdef FEATURE_VERSION_W317A
+                #if defined( FEATURE_VERSION_W317A)
                   MenuInsItem OptItems[] =
                   {
                      {IDS_MG_VIEW, TRUE}, {IDS_MG_SETWALLPAPER, TRUE},
                      {IDS_MG_SORT, TRUE}, {IDS_MG_DETAILS, TRUE}
                   };
+				#elif defined(FEATURE_VERSION_LM126C)
+				  MenuInsItem OptItems[] =
+				  {
+					 {IDS_MG_VIEW, TRUE}, {IDS_MG_SORT, TRUE}, 
+					 {IDS_MG_DETAILS, TRUE}
+				  };
                 #else
                   MenuInsItem OptItems[] =
                   {
@@ -7436,7 +7448,10 @@ static int MGAppUtil_BuildPopupMenuItems(CMediaGalleryApp* pMe,
          /*Check whether can slide*/
          //if(TRUE  == MGAppUtil_ImageSlideCheck(pMe, pItemData))
          //MGMENU_ADDITEM(*ppPopupMenu, IDS_MG_SLIDE);
+         #if defined(FEATURE_VERSION_LM126C)
+		 #else
          MGMENU_ADDITEM(*ppPopupMenu, IDS_MG_SETWALLPAPER);
+		 #endif
       }
       else if(MG_BETWEEN(eMimeBase, MG_MIME_SNDBASE, MG_MIME_SNDMAX) ||
             (eMimeBase == MG_MIME_VOICEREC) || (eMimeBase == MG_MIME_CALLREC))

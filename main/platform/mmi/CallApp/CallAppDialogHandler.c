@@ -770,10 +770,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                                                     (PFNNOTIFY)CallApp_HandleDialogTimer_Redraw,
                                                     pMe);
 #ifdef FEATURE_IMAGE_DIALING_DIGITS
-            //if(!pMe->m_b_incall)
-            {
-                CallApp_Release_Numer_Img(pMe);
-            }
+               CallApp_Release_Numer_Img(pMe);
 #endif//#ifdef FEATURE_IMAGE_DIALING_DIGITS
             if (!pMe->m_b_incall)
             {// 此时可能有来电，但未接通，需进一步判断是否有来电以确认是否备份用户拨号
@@ -1286,6 +1283,11 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                         {
                             return CallApp_LaunchApplet(pMe, AEECLSID_QUICKTEST);
                         }
+
+						if(WSTRCMP(pMe->m_DialString,L"*#39#")==0)
+						{
+							ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_QUICKTEST, "*#39#");
+						}
                         if(WSTRCMP(pMe->m_DialString, L"*#0000#") == 0)   //add by yangdecai 2010-11-16
                         {
                         	#if defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_W515V3)
@@ -1939,7 +1941,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 					MSG_FATAL("CALLAPP_DIAler_numedit_dlg......evt key",0,0,0);
                     if ((dwParam & KB_AUTOREPEAT) != 0 && (AVKType)wParam != AVK_0&& (AVKType)wParam != AVK_STAR&& (AVKType)wParam != AVK_POUND)
                     {
-                        CALL_ERR("OK,it is repeat,don't process it ",0,0,0);
+                        MSG_FATAL("OK,it is repeat,don't process it ",0,0,0);
                         return TRUE;
                     }
 
@@ -1950,6 +1952,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 					}
                     szStr[1] = '\0';
                     STR_TO_WSTR(szStr, wStr, sizeof(wStr));
+					MSG_FATAL("1111111111111111111111",0,0,0);
 				#ifndef FEATURE_LCD_TOUCH_ENABLE
                     if((AVKType)wParam == AVK_POUND||(AVKType)wParam == AVK_STAR|| (AVKType)wParam == AVK_0)
                     {
@@ -1973,11 +1976,13 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                     }
                     else
 				#else
+					#ifndef  FEATURE_VERSION_K202
 					if((AVKType)wParam == AVK_STAR)
                     {
                         CallApp_Process_Spec_Key_Event(pMe,wParam);
                     }
                     else
+					#endif
 				#endif
                     {
                         int    len;
@@ -1998,6 +2003,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                         len = WSTRLEN(pMe->m_DialString);
                         //modify for 32 digits dial string
                         //if (pMe->m_lastCallState == AEECM_CALL_STATE_IDLE)
+                        MSG_FATAL("22222222222222==%d",pMe->m_b_incall,0,0);
                         if(pMe->m_b_incall == FALSE)
                         {
                         	MSG_FATAL("***zzg CallApp_Dialer_NumEdit len=%d***", len, 0, 0);
@@ -3155,12 +3161,22 @@ static void CallApp_Dialer_Show_Animation(void *pUser)
         RGBVAL     oldColor = 0;
         //calling.....
         SETAEERECT(&rect,CALL_TEXT_X,CALL_FIRST_LINE_Y,CALL_TEXT_DX,CALL_LINE_HIGHT);
-
-        (void) ISHELL_LoadResString(pMe->m_pShell,
+		if(pMe->m_isIncoming)
+		{
+			(void) ISHELL_LoadResString(pMe->m_pShell,
+                                                AEE_APPSCALLAPP_RES_FILE,
+                                                IDS_INCOMINGCALL_TEXT,
+                                                wBuf,
+                                                sizeof(wBuf));
+		}
+		else
+		{
+        	(void) ISHELL_LoadResString(pMe->m_pShell,
                                                 AEE_APPSCALLAPP_RES_FILE,
                                                 IDS_CALLING_DIALOG_TEXT,
                                                 wBuf,
                                                 sizeof(wBuf));
+		}
         //WSTRLCPY(wBuf, L"calling", 20*sizeof(AECHAR));
 
         /*if(calling_coute == 4)
@@ -4401,7 +4417,7 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
             CallApp_Dialer_Connect_Turn_Off_Recorder( pMe);
 #endif
 
-#if defined(FEATURE_VERSION_C337)   	
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202)   	
             pMe->m_isIncoming = FALSE;
 #endif
             return TRUE;
@@ -7272,7 +7288,7 @@ MAKE_CALL_VALUE CallApp_MakeCall(CCallApp *pMe)
 #ifndef FEATURE_ICM
 	AEETCalls po;
 #endif
-#if defined(FEATURE_VERSION_C337)   	
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202) 	
     pMe->m_isIncoming 	= FALSE;
 #endif
 	MSG_FATAL("***zzg CallApp_MakeCall cls=%x***", cls, 0, 0);
@@ -12328,7 +12344,7 @@ if(wp == AVK_POUND)
 
 if(wp == AVK_STAR)
     {
-    #if 1//ndef FEATURE_ALL_KEY_PAD
+    #ifdef FEATURE_ALL_KEY_PAD
        {
        		AECHAR szStr;
        		int len=0;
@@ -12421,8 +12437,10 @@ if(wp == AVK_STAR)
         	{
         		pMe->m_curpros = 0;
         	}
+			#ifndef FEATURE_VERSION_K202 
         	pMe->b_multenter = TRUE;
         	AEE_SetTimer(1000,CallApp_keypadtimer,pMe);
+			#endif
         }
         #else
         if((pMe->m_btime_out % MAX_COUNT_TO_CHANGE ) == 0)//need change
@@ -12792,11 +12810,21 @@ static void CallApp_Play_Incoming_Tone(CCallApp *pMe)
 static void CallApp_Load_Numer_Img(CCallApp *pMe)
 {
 #if 1
+	//uint32	dwTotal = 0;
+	//uint32 free = 0;
     int i;
     for(i = 0; i<REFUI_CALL_MAX_IMAGSIZE ;i++)
     {
-        pMe->num_image[i]  = ISHELL_LoadResImage( pMe->m_pShell,AEE_APPSCOMMONRES_IMAGESFILE,IDI_NUMBER_0 + i);
+    	if(pMe->num_image[i]==NULL)
+    	{
+        	pMe->num_image[i]  = ISHELL_LoadResImage( pMe->m_pShell,AEE_APPSCOMMONRES_IMAGESFILE,IDI_NUMBER_0 + i);
+    	}
     }
+	
+	//GETFSFREE(&dwTotal);
+	//free = GETRAMFREE(NULL,NULL);
+	//MSG_FATAL("dwTotal======%d,free===%d",dwTotal,free,0);
+	//MSG_FATAL("CallApp_Load_Numer_Img...........................",0,0,0);
 #else
     pMe->num_image[0]  = ISHELL_LoadResImage( pMe->m_pShell,AEE_APPSCOMMONRES_IMAGESFILE,IDI_NUMBER_0);
     pMe->num_image[1]  = ISHELL_LoadResImage( pMe->m_pShell,AEE_APPSCOMMONRES_IMAGESFILE,IDI_NUMBER_1);
@@ -12819,14 +12847,21 @@ static void CallApp_Load_Numer_Img(CCallApp *pMe)
 static void CallApp_Release_Numer_Img(CCallApp *pMe)
 {
     int i = 0;
+	//uint32  dwTotal = 0;
+	//uint32 free = 0;
     for(i = 0; i<REFUI_CALL_MAX_IMAGSIZE ;i++)
     {
         if(pMe->num_image[i])
         {
+        	
             IIMAGE_Release(pMe->num_image[i]);
             pMe->num_image[i] = NULL;
         }
     }
+	//GETFSFREE(&dwTotal);
+	//free = GETRAMFREE(NULL,NULL);
+	//MSG_FATAL("dwTotal======%d,free===%d",dwTotal,free,0);
+    //MSG_FATAL("CallApp_Release_Numer_Img...........................",0,0,0);
 }
 
 static void CallApp_Draw_Numer_Img(CCallApp   *pMe,  AECHAR const *dialStr)
@@ -13019,6 +13054,7 @@ static void CallApp_Draw_Numer_Img(CCallApp   *pMe,  AECHAR const *dialStr)
 #endif //FEATURE_IMAGE_DIALING_DIGITS
 static void CallApp_Display_Number(CCallApp *pMe)
 {
+	int templen = 0;
 
 #ifdef FEATURE_VERSION_W208S
 	int len,i;
@@ -13214,6 +13250,8 @@ static void CallApp_Display_Number(CCallApp *pMe)
      }
 #endif
 //////////////////////////////////////////////////////////////////
+	templen = WSTRLEN(pMe->m_DialString);
+    MSG_FATAL("templen==========%d",templen,0,0);
 #ifdef FEATURE_IMAGE_DIALING_DIGITS
     {
         #if defined(FEATURE_CARRIER_VENEZUELA_MOVILNET)||defined(FEATURE_CARRIER_ISRAEL_PELEPHONE)

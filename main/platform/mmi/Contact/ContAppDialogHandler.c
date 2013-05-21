@@ -2550,7 +2550,8 @@ static boolean CContApp_SmartMenuHandle( CContApp *pMe,
     
     // Check parameter
     ASSERT(pMe != NULL);
-    (void) ISHELL_CancelTimer( pMe->m_pShell, CContApp_SmartMenuSetFocus, (void *)pMe);                           
+    (void) ISHELL_CancelTimer( pMe->m_pShell, CContApp_SmartMenuSetFocus, (void *)pMe);   
+
   
     if(pMenuCtl == NULL || pTextCtl == NULL)
     {
@@ -3752,7 +3753,12 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
             {
                 byte inputMode=0;
                 
-                ITEXTCTL_SetProperties(pTextCtl, TP_FIXOEM |TP_STARKEY_SWITCH|TP_FOCUS_NOSEL | TP_GRAPHIC_BG);
+				#ifdef FEATURE_VERSION_K202
+				ITEXTCTL_SetProperties(pTextCtl, TP_NOUPDATE|TP_FOCUS_NOSEL);
+				#else
+				ITEXTCTL_SetProperties(pTextCtl, TP_FIXOEM |TP_STARKEY_SWITCH|TP_FOCUS_NOSEL | TP_GRAPHIC_BG);
+				#endif
+                
                 CContApp_GetConfig(pMe, CONTTCFG_QUICKSEARCH_INPUT_MODE, &inputMode, sizeof(byte));
                 pMe->m_nCurrentInputMode = inputMode;
                 //ITEXTCTL_SetActive(pTextCtl, TRUE);
@@ -4999,6 +5005,9 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
         return ITEXTCTL_HandleEvent( pTextCtl, eCode, wParam, dwParam);
     }
     pMe->m_nSmartStateType = SMART_STATE_IDD_LIST;
+	#ifdef FEATURE_VERSION_K202
+	ITEXTCTL_SetProperties(pTextCtl, TP_FIXSETRECT|TP_FIXOEM|TP_USELESS_UPDOWN|TP_FOCUS_NOSEL);
+	#endif
     if(CContApp_SmartMenuHandle(pMe, pMenuCtl, pTextCtl, eCode,wParam))
     {
         return TRUE;
@@ -5032,6 +5041,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
                 pMe->m_bDelOk = FALSE;
                 pMe->m_wSelectCont = pMe->m_wDelReturnSelId;
             }
+			
             #ifdef FEATURE_MYANMAR_INPUT_MOD
 			ITEXTCTL_SetInputMode( pTextCtl,AEE_TM_LETTERS);
 			ITEXTCTL_SetActive(pTextCtl, FALSE);

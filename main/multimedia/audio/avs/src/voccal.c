@@ -10498,11 +10498,18 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_0_cal = {
   VOC_NS_ON,                     /* Noise suppressor enable */
 #if defined(CUST_EDITION) && !defined(FEATURE_OEMOMH)
 //#ifdef FEATURE_VERSION_1110W516
+#if defined(FEATURE_VERSION_K202)
+  0x4000,                        /* Tx Voice Volume         */
+  0x1000,                        /* Tx DTMF gain            */
+  0xCB00,                        /* CODEC Tx gain           */
+  0x4000,                        /* CODEC Rx gain           */
+#else
   0x956F,                        /* Tx Voice Volume          */
   0x2000,                        /* Tx DTMF gain            */
   0xCB00,                        /* CODEC Tx gain           */
   0x6000,                        /* CODEC Rx gain           */
-                       /* CODEC Rx gain           */
+#endif
+                      			 /* CODEC Rx gain           */
 //  #endif
 #elif defined(FEATURE_VERSION_W317A)
   0x956F, 					     /* Tx Voice Volume		  */
@@ -10513,12 +10520,7 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_0_cal = {
   0xa56F, 					   /* Tx Voice Volume		 */
   0x3000, 					   /* Tx DTMF gain		 */
   0xCB00, 					   /* CODEC Tx gain 		 */
-  0x8000, 					   /* CODEC Rx gain 		 */
-#elif defined(FEATURE_VERSION_K202)
-  0x956F, 					     /* Tx Voice Volume		  */
-  0x2000, 					     /* Tx DTMF gain			  */
-  0xCB00, 					     /* CODEC Tx gain 		  */
-  0x6000, 					     /* CODEC Rx gain 		  */
+  0x8000, 					   /* CODEC Rx gain 		 */                     /* CODEC Rx gain           */
 #else
   0x4000,                        /* Tx Voice Volume         */
   0x1000,                        /* Tx DTMF gain            */
@@ -15101,7 +15103,7 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_speaker_cal = {
   0x5000,						   /* CODEC Tx gain			*/
   0x5000,						   /* CODEC Rx gain			*/
 #elif defined(FEATURE_VERSION_K202)
-  0x9000,						   /* Tx Voice Volume 		*/
+  0x7000,						   /* Tx Voice Volume 		*/
   0x1000,						   /* Tx DTMF gain			*/
   0x5000,						   /* CODEC Tx gain			*/
   0x5000,						   /* CODEC Rx gain			*/

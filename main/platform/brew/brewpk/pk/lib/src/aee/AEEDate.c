@@ -1751,7 +1751,11 @@ static void DateCtl_GetGridRect(DateCtl * pme, AEERect * prc, int nGridIndex)
    x = pme->m_rcGrid.x + ((nGridIndex % DAYS_PER_WEEK) * pme->m_rcGrid.dx);
    y = pme->m_rcGrid.y + ((nGridIndex / DAYS_PER_WEEK) * pme->m_rcGrid.dy);
 #if defined (FEATURE_CALENDAR_USE_STYLE) && defined (CUST_EDITION)
+#ifdef FEATURE_VERSION_K202
+   SETAEERECT(prc, x+1, y+5, pme->m_rcGrid.dx-2, pme->m_rcGrid.dy-4);
+#else
    SETAEERECT(prc, x+1, y+1, pme->m_rcGrid.dx-2, pme->m_rcGrid.dy-4);
+#endif
 #else
    SETAEERECT(prc, x, y, pme->m_rcGrid.dx, pme->m_rcGrid.dy);
 #endif

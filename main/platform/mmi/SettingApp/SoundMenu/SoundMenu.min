@@ -606,16 +606,16 @@ else
         CONSTFILE_FILES+=\
             01.mid|fs:/ringers/01.mid \
             02.mid|fs:/ringers/02.mid \
-            03.mid|fs:/ringers/03.mid \
-            04.mid|fs:/ringers/04.mid \
-            05.mid|fs:/ringers/05.mid \
-            06.mid|fs:/ringers/06.mid \
-            07.mid|fs:/ringers/07.mid \
-            08.mid|fs:/ringers/08.mid \
+            03.mp3|fs:/ringers/03.mp3 \
+            04.mp3|fs:/ringers/04.mp3 \
+            05.mp3|fs:/ringers/05.mp3 \
+            06.mp3|fs:/ringers/06.mp3 \
+            07.mp3|fs:/ringers/07.mp3 \
+            08.mp3|fs:/ringers/08.mp3 \
             09.mp3|fs:/ringers/09.mp3 \
             10.mp3|fs:/ringers/10.mp3 \
             11.mp3|fs:/ringers/11.mp3 \
-            12.mp3|fs:/ringers/12.mp3 	
+            12.mp3|fs:/ringers/12.mp3
     	else                                            
         CONSTFILE_FILES+=\
             blues.mid|fs:/ringers/blues.mid \

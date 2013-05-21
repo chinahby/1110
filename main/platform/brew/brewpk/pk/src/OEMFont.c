@@ -328,7 +328,7 @@ IFont gFontLargeNum = {&gOEMFontFuncs, AEE_FONT_USER_2, BIG_NUM_HEIGHT};
 
 int OEMFont_GetSystemFont(AEEFont nFont, IFont **ppif)
 {
-	MSG_FATAL("OEMFont_GetSystemFont.................",0,0,0);
+	//MSG_FATAL("OEMFont_GetSystemFont.................",0,0,0);
    if (nFont == AEE_FONT_NORMAL)
       *ppif = &gFontNormal;
    else if (nFont == AEE_FONT_BOLD)
@@ -366,7 +366,7 @@ int GreyBitBrewFont_DrawText(IDisplay *p, int nSize, const AECHAR *psz, int nl, 
     IFont *pOldFont;
     IFont *pNewFont = NULL;
 	AEEFont temp = AEE_FONT_NORMAL;
-	MSG_FATAL("GreyBitBrewFont_DrawText.................=%d",psz[1],0,0);
+	//MSG_FATAL("GreyBitBrewFont_DrawText.................=%d",psz[1],0,0);
 
     OEMFont_GetSystemFont(temp, &pNewFont);
     pOldFont = IDISPLAY_SetFont(p, AEE_FONT_NORMAL, pNewFont);
@@ -721,7 +721,7 @@ OEMFont_DrawText(IFont *pMe, IBitmap *pDst, int x, int y, const AECHAR *pcText, 
         nChars = WSTRLEN(pcText);
 #endif
     }
-	MSG_FATAL("nChars====%d,%d",nChars,pcText[0],0);
+	//MSG_FATAL("nChars====%d,%d",nChars,pcText[0],0);
 
     // If no background rect, the full rectangle is used
     if (!prcClip)
@@ -1476,7 +1476,7 @@ static int DrawTextEx(IFont *pMe, IBitmap *pDst, const AECHAR * pcText, int nCha
     int sy, dy, oy;
     int dispWidth;
     int result = SUCCESS;
-    MSG_FATAL("DrawTextEx.................%d",pcText[0],0,0);
+    //MSG_FATAL("DrawTextEx.................%d",pcText[0],0,0);
     xMin = prcBackground->x;
     xMax = prcBackground->x + prcBackground->dx - 1;
     yMin = prcBackground->y;
@@ -1729,7 +1729,7 @@ static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, i
     
     cText = (word)(clrText & 0xFFFF);
     cBack = (word)(clrBack & 0xFFFF);
-	MSG_FATAL("DrawChar.....................nChars=%d",nChars,0,0);
+	//MSG_FATAL("DrawChar.....................nChars=%d",nChars,0,0);
  
     nPitch >>= 1;
  
@@ -1740,7 +1740,7 @@ static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, i
             break;
         }
         ch = pcText[i];
-		MSG_FATAL("DrawChar.....................ch=%d",ch,0,0);
+		//MSG_FATAL("DrawChar.....................ch=%d",ch,0,0);
         bBoldFontBuf = FALSE;
              
 #ifdef FEATURE_LANG_THAI
@@ -1787,9 +1787,9 @@ static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, i
 #endif  // FEATURE_LANG_THAI   
  
         {
-        	MSG_FATAL("ch==========%d",ch,0,0);
+        	//MSG_FATAL("ch==========%d",ch,0,0);
             index = gbIndex12[ch];
-			MSG_FATAL("index==========%x",index,0,0);
+			//MSG_FATAL("index==========%x",index,0,0);
             if ( 0x5537 == index  )
             {
                 ERR("missing char array(%d)",ch,0,0);
@@ -1838,7 +1838,7 @@ static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, i
         {
             //pFontData = (byte*)ChineseNormalFontBuf12 + (index*24) + oy * bytes_per_row;
             //if(dy>12) dy=12;
-            MSG_FATAL("DrawChar...........ChineseNormalFontBuf12..........",0,0,0);
+            //MSG_FATAL("DrawChar...........ChineseNormalFontBuf12..........",0,0,0);
             pFontData = (byte*)ChineseNormalFontBuf12 + (index*CH_NORMAL_HEIGHT*2) + oy * bytes_per_row;
             if(dy>CH_NORMAL_HEIGHT) dy=CH_NORMAL_HEIGHT;
         }
@@ -1926,7 +1926,7 @@ static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, i
         dispWidth += xWidth;
         x += xWidth;
     }
-	MSG_FATAL("dispWidth=======%d",dispWidth,0,0);
+	//MSG_FATAL("dispWidth=======%d",dispWidth,0,0);
  
     *pOutWidth = dispWidth;
 #endif //    FEATURE_ARPHIC_LAYOUT_ENGINE

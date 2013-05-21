@@ -318,6 +318,7 @@ static int CQuickTest_InitData(CQuickTest *pMe)
 #ifdef FEATURE_BREW_CAMERA    
    pMe->m_isFormCamera = FALSE;
 #endif
+   pMe->m_quicktestmic = FALSE;
    pMe->m_testkeycount = 0;
    if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
                                             AEECLSID_RINGERMGR,
@@ -534,6 +535,11 @@ static boolean CQuickTest_HandleEvent(IQuickTest *pi,
             pMe->m_pDisplay = as->pDisplay;
             (void) IDISPLAY_AddRef(pMe->m_pDisplay);
             pMe->m_rc = as->rc;
+			if(STRCMP(as->pszArgs,"*#39#") == 0)
+            {
+            	 pMe->m_quicktestmic  = TRUE;
+                 MOVE_TO_STATE(QUICKTESTST_CALLTEST)
+            }
             pMe->m_lineheight = IDISPLAY_GetFontMetrics(pMe->m_pDisplay, AEE_FONT_BOLD, NULL, NULL);
 
             pMe->m_bSuspending = FALSE;

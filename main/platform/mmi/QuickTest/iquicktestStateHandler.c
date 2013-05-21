@@ -864,11 +864,18 @@ static NextFSMAction QUICKTESTSTCallTestHandler(CQuickTest *pMe)
             return NFSMACTION_WAIT;
 
         case DLGRET_CANCELED:
+			if(pMe->m_quicktestmic )
+			{
+				 MOVE_TO_STATE(QUICKTESTST_EXIT)
+			}
+			else
+			{
 #if defined( FEATURE_FM_RADIO)
             MOVE_TO_STATE(QUICKTESTST_FMTEST)
 #else
             MOVE_TO_STATE(QUICKTESTST_SDTEST)
 #endif
+			}
             return NFSMACTION_CONTINUE;
 
         default:

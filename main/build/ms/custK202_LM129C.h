@@ -19,7 +19,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //#define FEATURE_CANCEL_CONVERT_COEFFICIENT3 //xxzhen
 #define FEATURE_5SEC_AUTOLOCK_KEYPAD //xxzhen
 #define FEATURE_LEFT_SOFTKEY_AND_STAR_UNLOCK//xxzhen
-#define FEATURE_5_LEVEL_BATTERY //xxzhen 状态栏充电图标5节显示 176x220 resource
+//#define FEATURE_5_LEVEL_BATTERY //xxzhen 状态栏充电图标5节显示 176x220 resource
 #define FEATURE_ADD_VOLUP_VOLDN //xxzhen
 
 #ifdef CUST_EDITION

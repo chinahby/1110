@@ -124,7 +124,7 @@
 #define    CHARGING_ANIFILE             "fs:/image/charge/"
 #define    CHARGING_FRAME_COUNT         (5)
 #define    CHARGING_ANIMATE_RATE        (1000) //(500)
-#if defined(FEATURE_VERSION_LM126C)||defined(FEATURE_5_LEVEL_BATTERY)//xxzhen
+#if /*defined(FEATURE_VERSION_LM126C)||*/defined(FEATURE_5_LEVEL_BATTERY)//xxzhen
 #define    CHARGE_FULL_STATE                (5)
 #else
 #define    CHARGE_FULL_STATE                (4)

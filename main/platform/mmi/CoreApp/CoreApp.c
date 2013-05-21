@@ -3029,6 +3029,7 @@ static int DBToLevel (int nDBVal)
     else if (nDBVal < 106)
         return ANNUN_STATE_RSSI_2;
 	#else
+	/*
 	#ifdef FEATURE_VERSION_LM126C
 	if (nDBVal < 81)
         return ANNUN_STATE_RSSI_5;
@@ -3039,13 +3040,14 @@ static int DBToLevel (int nDBVal)
     else if (nDBVal < 100)
         return ANNUN_STATE_RSSI_2;
 	#else
+	*/
 	if (nDBVal < 92)
         return ANNUN_STATE_RSSI_4;
     else if (nDBVal < 97)
         return ANNUN_STATE_RSSI_3;
     else if (nDBVal < 102)
         return ANNUN_STATE_RSSI_2;
-	#endif
+	//#endif
 	#endif
     else if (nDBVal < 108)
         return ANNUN_STATE_RSSI_1;
@@ -3404,6 +3406,8 @@ static void CoreApp_Process_Charger_Msg(CCoreApp   *pMe)
        {
           #if (defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_W317A)|| defined(FEATURE_VERSION_C316))
           pMe->m_nMsgID = IDS_CHARGER_REMOVED;
+		  #elif defined(FEATURE_VERSION_K202)
+		  pMe->m_nMsgID = IDS_CHARGER_FINISH;
           #else
           pMe->m_nMsgID = IDS_CHARGER_OFF;
           #endif
@@ -3911,7 +3915,7 @@ int CoreApp_GetBatteryLevel(CCoreApp *pMe)
     }
     ERR("miaoxiaoming: ATBattLevel =%d",ATBattLevel ,0,0);
     /* convert to 0-4 levels */
-	#if defined(FEATURE_VERSION_LM126C)||defined(FEATURE_5_LEVEL_BATTERY)//xxzhen
+	#if /*defined(FEATURE_VERSION_LM126C)||*/defined(FEATURE_5_LEVEL_BATTERY)//xxzhen
 	if ( ATBattLevel <= 40 )
     {
         uLevel = 0;
@@ -3998,12 +4002,14 @@ static uint32 CoreApp_ConvertBattLvToAnnunState(int nBattLevel)
     {
         nState = ANNUN_STATE_BATT_3;
     }
-	#ifdef FEATURE_VERSION_LM126C 
+	/*
+	#ifdef FEATURE_VERSION_LM126C
 	else if(nBattLevel == 4)
 	{
         nState = ANNUN_STATE_BATT_4;
     }
 	#endif
+	*/
     else
     {
         nState = ANNUN_STATE_BATT_FULL;

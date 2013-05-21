@@ -248,6 +248,7 @@ typedef struct _CQuickTest {
     boolean m_isFormCamera;
 #endif
     uint32  m_testkeycount;
+    boolean m_quicktestmic;
 } CQuickTest;
 /*==============================================================================
                                  宏定义和常数

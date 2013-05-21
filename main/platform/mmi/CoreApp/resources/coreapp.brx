@@ -223,6 +223,9 @@
 	<String Id="1074" Name="IDS_MMX_SELES_SUCESS">
 		<Text>micromax registration success</Text>
 	</String>
+	<String Id="1075" Name="IDS_CHARGER_FINISH">
+		<Text>Chargering fnish!</Text>
+	</String>
 	<String Id="1080" Name="IDS_MAIN_MENU_TORCHON">
 		<Text>Torch On</Text>
 	</String>

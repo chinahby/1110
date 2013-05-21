@@ -1504,6 +1504,8 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
             rc.dy -= GetBottomBarHeight( pme->m_pDisplay);
 #endif
 			#endif
+			//MSG_FATAL("rc.y ======%d,rc.dy=====%d",rc.y,rc.dy,0);
+			
             IDATECTL_SetRect(pDatePick,&rc);
 
             if( IDATECTL_SetDate( pDatePick,1899,1,1))

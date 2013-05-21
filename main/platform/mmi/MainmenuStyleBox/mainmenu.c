@@ -1424,6 +1424,7 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
                     return TRUE;
                     
                 case AVK_STAR:
+					MSG_FATAL("gbMainmenuLock======%d",gbMainmenuLock,0,0);
                     if(gbMainmenuLock)
                     {
                         OEMKeyguard_SetState(TRUE);
@@ -4370,6 +4371,11 @@ static void MoveCursorTo(MainMenu *pMe, int row, int column)
 #ifndef FEATURE_VERSION_SKY
     int theFocus = pMe->m_nRow * MAX_MATRIX_COLS + pMe->m_nColumn;
     AEERect rect;
+	//uint32  dwTotal = 0;
+	//uint32 free = 0;
+	//GETFSFREE(&dwTotal);
+	//free = GETRAMFREE(NULL,NULL);
+	//MSG_FATAL("MoveCursorTodwTotal======%d,free===%d",dwTotal,free,0);
     
     // 绘制聚焦后矩阵初始界面
     SETAEERECT(&rect, pMe->m_IconFocus_Pt[theFocus].x, 
@@ -4432,6 +4438,12 @@ PARAMETERS:  如果APPLET 有变动，只需改动次函数
 static int StartApplet(MainMenu *pMe, int i)
 {
     int Result = EUNSUPPORTED;
+	//uint32  dwTotal = 0;
+	//uint32 free = 0;
+	//GETFSFREE(&dwTotal);
+	//free = GETRAMFREE(NULL,NULL);
+	//MSG_FATAL("dwTotal======%d,free===%d",dwTotal,free,0);
+
     
 #ifdef FEATURE_VERSION_H19C  
     if(pMe->m_pIAnn != NULL)

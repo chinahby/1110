@@ -244,6 +244,7 @@ struct IALERT
 #endif
   ALERT_SND_TYPE   m_snd_type;
   boolean                  m_mp3Ring;
+  boolean                  m_iAlert;
 };
 
 /* The following structure is for the notifier object when
@@ -770,6 +771,7 @@ int OEMALERT_New(IShell *pIShell, AEECLSID cls, void **ppif)
   pNew->m_pSound = NULL;
   pNew->m_pRingerMgr = NULL;
   pNew->m_snd_type = ALERT_NORMAL_SND;
+  pNew->m_iAlert = FALSE;
 #ifdef FEATURE_PHONE_VR
 /* IVR object should be available*/
   if(ISHELL_CreateInstance(pNew->m_pIShell, AEECLSID_VR,
@@ -2818,7 +2820,20 @@ static void OEMALERT_HandleRingerAlertTimer(void *pUser)
 			 	INCREMENT_ESCALATING_RINGER(pMe->m_ringCurVol);
              	OEMALERT_SetRingerVol(pMe, TRUE);
              	#endif
+				#ifdef FEATURE_VERSION_K202
+				if(!pMe->m_iAlert)
+				{
+					ISOUND_Vibrate(pMe->m_pSound,TIME_MS_RINGERVIBRATE_DURATION);
+					pMe->m_iAlert = TRUE;
+				}
+				else
+				{
+					ISound_StopVibrate(pMe->m_pSound);
+					pMe->m_iAlert = FALSE;
+				}
+				#else
 				ISOUND_Vibrate(pMe->m_pSound,TIME_MS_RINGERVIBRATE_DURATION);
+				#endif
 				#endif
             }
             break;
@@ -2835,7 +2850,22 @@ static void OEMALERT_HandleRingerAlertTimer(void *pUser)
 			 		INCREMENT_ESCALATING_RINGER(pMe->m_ringCurVol);
              		OEMALERT_SetRingerVol(pMe, TRUE);
              		#endif
+					
+#ifdef FEATURE_VERSION_K202
+					if(!pMe->m_iAlert)
+					{
+						ISOUND_Vibrate(pMe->m_pSound,TIME_MS_RINGERVIBRATE_DURATION);
+						pMe->m_iAlert = TRUE;
+					}
+					else
+					{
+						ISound_StopVibrate(pMe->m_pSound);
+						pMe->m_iAlert = FALSE;
+					}
+#else
 					ISOUND_Vibrate(pMe->m_pSound,TIME_MS_RINGERVIBRATE_DURATION);
+#endif
+					
                 }
                 break;
             } 
