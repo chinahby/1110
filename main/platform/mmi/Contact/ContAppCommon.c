@@ -896,6 +896,10 @@ AEETextInputMode CContApp_GetFldInputMode(AEEAddrFieldID wFldID)
 	         		return AEE_TM_LETTERS;
 	         	}
 	         	}
+				#elif defined(FEATURE_VERSION_K202)
+				{
+					return AEE_TM_PINYIN;
+				}
         	    #else
 	            	#ifdef FEATURE_ALL_KEY_PAD
 		    		return AEE_TM_CAPLOWER;

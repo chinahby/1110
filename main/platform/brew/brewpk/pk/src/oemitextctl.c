@@ -3308,6 +3308,12 @@ static AEETextInputMode CTextCtl_SetInputMode(ITextCtl * po, AEETextInputMode m)
                 pme->m_wResID = IDI_MODE_RAPID_RUSSIAN;
                 break;
 #endif
+#ifdef FEATURE_T9_PINYIN
+			case TEXT_MODE_T9_PINYIN:
+				 pme->m_wResID = IDB_MODE_T9_PINYIN;
+				 break;
+#endif
+
 
 
             default:

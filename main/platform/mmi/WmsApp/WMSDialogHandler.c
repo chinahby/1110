@@ -11622,6 +11622,8 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 	        	    		return AEE_TM_LETTERS;
 	        	    	}
         	    	}
+					#elif defined(FEATURE_LANG_CHINESE)
+					(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_PINYIN);
 		         	#else
 					(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_RAPID);
 					#endif
