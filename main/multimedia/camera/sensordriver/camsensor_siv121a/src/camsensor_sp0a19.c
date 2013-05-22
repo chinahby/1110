@@ -142,7 +142,7 @@ LOCAL boolean camsensor_sp0a19_sensor_init(void)
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0x27,0xab);
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0x28,0xfd);
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0x30,0x00);
-  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xfb,0x31);
+  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xfb,0x33); //0x31 PZT 2013-5-22
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0x1f,0x08);     
   	//Blacklevel
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xfd,0x00);
@@ -152,8 +152,9 @@ LOCAL boolean camsensor_sp0a19_sensor_init(void)
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0x68,0x00);//06
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0x45,0x00);
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0x46,0x0f);
-#if 0  	  
-  	  //ae setting//8-20fps
+
+#if 1	
+         /*//ae setting  24M 50hz 20-8FPS maxgain:0x70 
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xfd,0x00);
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0x03,0x01);
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0x04,0x32);
@@ -175,7 +176,31 @@ LOCAL boolean camsensor_sp0a19_sensor_init(void)
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xce,0xc8);
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xcf,0x04);
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xd0,0xc8);
-  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xd1,0x04); 
+  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xd1,0x04);  */
+  	  
+  //ae setting  24M 50hz 18-6FPS maxgain:0x70 
+  camsensor_SP0A19_ycbcr_i2c_write_byte(0xfd,0x00);
+  camsensor_SP0A19_ycbcr_i2c_write_byte(0x03,0x01);
+  camsensor_SP0A19_ycbcr_i2c_write_byte(0x04,0x14);
+  camsensor_SP0A19_ycbcr_i2c_write_byte(0x06,0x00);
+  camsensor_SP0A19_ycbcr_i2c_write_byte(0x09,0x01);
+  camsensor_SP0A19_ycbcr_i2c_write_byte(0x0a,0xc6);
+  camsensor_SP0A19_ycbcr_i2c_write_byte(0xf0,0x5c);
+  camsensor_SP0A19_ycbcr_i2c_write_byte(0xf1,0x00);
+  camsensor_SP0A19_ycbcr_i2c_write_byte(0xfd,0x01);
+  camsensor_SP0A19_ycbcr_i2c_write_byte(0x90,0x10);
+  camsensor_SP0A19_ycbcr_i2c_write_byte(0x92,0x01);
+  camsensor_SP0A19_ycbcr_i2c_write_byte(0x98,0x5c);
+  camsensor_SP0A19_ycbcr_i2c_write_byte(0x99,0x00);
+  camsensor_SP0A19_ycbcr_i2c_write_byte(0x9a,0x01);
+  camsensor_SP0A19_ycbcr_i2c_write_byte(0x9b,0x00);
+  //Status                                      
+  camsensor_SP0A19_ycbcr_i2c_write_byte(0xfd,0x01);
+  camsensor_SP0A19_ycbcr_i2c_write_byte(0xce,0xc0);
+  camsensor_SP0A19_ycbcr_i2c_write_byte(0xcf,0x05);
+  camsensor_SP0A19_ycbcr_i2c_write_byte(0xd0,0xc0);
+  camsensor_SP0A19_ycbcr_i2c_write_byte(0xd1,0x05);
+  camsensor_SP0A19_ycbcr_i2c_write_byte(0xfd,0x00);
 #else
 //;ae setting      SI13_SP0A19 24M 1分频 50Hz 20-20fps AE_Parameters_20130503155954                 
   camsensor_SP0A19_ycbcr_i2c_write_byte(0xfd , 0x00);                                               
@@ -296,29 +321,29 @@ LOCAL boolean camsensor_sp0a19_sensor_init(void)
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xfd,0x00);
   		//单通道间平滑阈值	
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0x57,0x06);	//raw_dif_thr_outdoor
-  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0x58,0x0d); //raw_dif_thr_normal
-  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0x56,0x10); //raw_dif_thr_dummy
-  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0x59,0x10); //raw_dif_thr_lowlight
+  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0x58,0x16); //raw_dif_thr_normal //0x0d
+  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0x56,0x20); //raw_dif_thr_dummy //0x10
+  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0x59,0x20); //raw_dif_thr_lowlight //0x10
   		//GrGb平滑阈值
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0x89,0x06);	//raw_grgb_thr_outdoor 
-  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0x8a,0x0d); //raw_grgb_thr_normal  
-  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0x9c,0x10); //raw_grgb_thr_dummy   
-  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0x9d,0x10); //raw_grgb_thr_lowlight
+  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0x8a,0x16); //raw_grgb_thr_normal   //0x0d
+  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0x9c,0x20); //raw_grgb_thr_dummy    //0x10
+  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0x9d,0x20); //raw_grgb_thr_lowlight //0x10
   
   		//Gr\Gb之间平滑强度
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0x81,0xe0);    //raw_gflt_fac_outdoor
-  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0x82,0xe0); //80//raw_gflt_fac_normal
-  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0x83,0x80);    //raw_gflt_fac_dummy
-  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0x84,0x40);    //raw_gflt_fac_lowlight
+  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0x82,0xd2); //80//raw_gflt_fac_normal //0xe0
+  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0x83,0x70);    //raw_gflt_fac_dummy //0x80 
+  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0x84,0x28);    //raw_gflt_fac_lowlight //0x40
   		//Gr、Gb单通道内平滑强度  
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0x85,0xe0); //raw_gf_fac_outdoor  
-  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0x86,0xc0); //raw_gf_fac_normal  
-  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0x87,0x80); //raw_gf_fac_dummy   
-  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0x88,0x40); //raw_gf_fac_lowlight
+  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0x86,0xb2); //raw_gf_fac_normal  //0xc0
+  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0x87,0x70); //raw_gf_fac_dummy    //0x80 
+  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0x88,0x28); //raw_gf_fac_lowlight //0x40
   		//R、B平滑强度  
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0x5a,0xff);		 //raw_rb_fac_outdoor
-  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0x5b,0xe0); //40//raw_rb_fac_normal
-  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0x5c,0x80); 	 //raw_rb_fac_dummy
+  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0x5b,0xd2); //40//raw_rb_fac_normal //0xe0
+  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0x5c,0x70); 	 //raw_rb_fac_dummy //0x80
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0x5d,0x00); 	 //raw_rb_fac_lowlight
   	  
   	//sharpen 
@@ -326,20 +351,22 @@ LOCAL boolean camsensor_sp0a19_sensor_init(void)
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xe2,0x30);	//sharpen_y_base
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xe4,0xa0);	//sharpen_y_max
   	  
-  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xe5,0x04); //rangek_neg_outdoor
-  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xd3,0x04); //rangek_pos_outdoor   
-  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xd7,0x04); //range_base_outdoor   
+  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xe5,0x04); //rangek_neg_outdoor //0x04
+  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xd3,0x04); //rangek_pos_outdoor   //0x04 
+  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xd7,0x04); //range_base_outdoor    //0x04
   	  
-  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xe6,0x04); //rangek_neg_normal
-  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xd4,0x04); //rangek_pos_normal 
-  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xd8,0x04); //range_base_normal  
+  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xe6,0x04); //rangek_neg_normal //0x04
+  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xd4,0x04); //rangek_pos_normal  //0x04
+  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xd8,0x04); //range_base_normal   //0x04
   	    
-  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xe7,0x08); //rangek_neg_dummy
-  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xd5,0x08); //rangek_pos_dummy
-  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xd9,0x08); //range_base_dummy  	    
+  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xe7,0x0a); //rangek_neg_dummy //0x07
+  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xd5,0x0a); //rangek_pos_dummy //0x08
+  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xd9,0x0a); //range_base_dummy  	    //0x08
+  	  
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xd2,0x10); //rangek_neg_lowlight
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xd6,0x10); //rangek_pos_lowlight
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xda,0x10); //range_base_lowlight
+  	  
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xe8,0x20);//sharp_fac_pos_outdoor
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xec,0x35);//sharp_fac_neg_outdoor
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xe9,0x20);//sharp_fac_pos_nr
@@ -348,7 +375,7 @@ LOCAL boolean camsensor_sp0a19_sensor_init(void)
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xef,0x30);//sharp_fac_neg_dummy
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xeb,0x10);//sharp_fac_pos_low
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xf0,0x20);//sharp_fac_neg_low 
-  	  
+  	  #if 0 //default PZT 2013-5-22
   	//CCM
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xfd,0x01);
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xa0,0x80);//80(红色接近，肤色不理想)
@@ -364,7 +391,23 @@ LOCAL boolean camsensor_sp0a19_sensor_init(void)
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xaa,0x3 );//33
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xab,0xc );//c 
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xfd,0x00);
-  	  
+  	  #else
+	    	//CCM
+  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xfd,0x01);
+  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xa0,0x80);//80(红色接近，肤色不理想)
+  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xa1,0x0 );//0 
+  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xa2,0x0 );//0 
+  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xa3,0xf4);//f0
+  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xa4,0xa6);//a6
+  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xa5,0xe7);//ea
+  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xa6,0xf4);//0 
+  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xa7,0xe7);//e6
+  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xa8,0xa6);//9a
+  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xa9,0x0 );//0 
+  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xaa,0x33);//33
+  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xab,0x0f);//c 
+  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xfd,0x00);
+         #endif
   	//gamma  
   	  
   	 camsensor_SP0A19_ycbcr_i2c_write_byte(0xfd,0x00);
@@ -446,7 +489,7 @@ LOCAL boolean camsensor_sp0a19_sensor_init(void)
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0x4f,0x16);//13      
   	  //lowlight lum
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xfd,0x00); 
-  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xb2,0x20);//lum_limit
+  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xb2,0x40);//lum_limit //0x20 PZT 2013-5-22
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xb3,0x1f);//lum_set
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xb4,0x30);//black_vt
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xb5,0x45);//white_vt
@@ -456,15 +499,15 @@ LOCAL boolean camsensor_sp0a19_sensor_init(void)
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xbf,0x01); 
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xc0,0xff);
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xc1,0xd8);
-  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xd3,0x88);//0x78
-  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xd4,0x80);//0x78
-  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xd6,0x78);//0x78      
-  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xd7,0x60);//0x78
+  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xd3,0x80);//0x78 //0x88
+  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xd4,0x78);//0x78 //0x80 
+  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xd6,0x70);//0x78 //0x78
+  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xd7,0x60);//0x78 //0x60
   	//HEQ
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xfd,0x00);
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xdc,0x00);
-  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xdd,0x80);
-  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xde,0xa0);//80
+  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xdd,0x78); //0x80 
+  	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xde,0xa4);//80
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xdf,0x80);    
   	//func enable
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0xfd,0x00);
