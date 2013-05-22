@@ -1159,9 +1159,24 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
               IBACKLIGHT_Release(Backlight);
           }
 #endif		
+#if defined(FEATURE_LEFT_SOFTKEY_AND_STAR_UNLOCK)
+	if((wParam == AVK_CLR)||(wParam == AVK_INFO)||(wParam == AVK_SEND)||(wParam == AVK_1)||
+		   (wParam == AVK_2)||(wParam == AVK_3)||(wParam == AVK_4)||(wParam == AVK_5)||(wParam == AVK_6)||(wParam == AVK_7)||
+		   (wParam == AVK_8)||(wParam == AVK_9)||(wParam == AVK_0)||(wParam == AVK_STAR)||(wParam == AVK_POUND)||
+		   (wParam == AVK_RIGHT)||(wParam == AVK_DOWN)||(wParam == AVK_UP)||(wParam == AVK_LEFT)||(wParam == AVK_CAMERA)||(wParam == AVK_MUSIC))
+	{
+		IBacklight  *Backlight;
+        (void)ISHELL_CreateInstance(sgpShell,AEECLSID_BACKLIGHT,(void **)&Backlight);
+        if(!IBACKLIGHT_IsEnabled(Backlight))
+        {
+  			IBACKLIGHT_Enable(Backlight);
+        } 
+        IBACKLIGHT_Release(Backlight);
+	}
+#endif
 
 #if  defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W027)||defined(FEATURE_LEFT_SOFTKEY_AND_STAR_UNLOCK)
-#if defined(FEATURE_VERSION_C310)||defined(FEATURE_LEFT_SOFTKEY_AND_STAR_UNLOCK)
+#if defined(FEATURE_VERSION_C310)//||defined(FEATURE_LEFT_SOFTKEY_AND_STAR_UNLOCK)
 		if((wParam == AVK_CLR)||(wParam == AVK_INFO)||(wParam == AVK_SEND)||(wParam == AVK_1)||
 		   (wParam == AVK_2)||(wParam == AVK_3)||(wParam == AVK_4)||(wParam == AVK_5)||(wParam == AVK_6)||(wParam == AVK_7)||
 		   (wParam == AVK_8)||(wParam == AVK_9)||(wParam == AVK_0)||(wParam == AVK_STAR)||(wParam == AVK_POUND)||
