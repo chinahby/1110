@@ -3634,6 +3634,16 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
     {
         case EVT_DIALOG_INIT:
 #if defined( FEATURE_RECORDER)
+			#ifdef FEATURE_VERSION_K202
+			{
+			    byte                 CallVolume; // current volume for active call
+				//ISOUND_GetVolume(pMe->m_pSound,CallVolume);
+				(void) ICONFIG_GetItem(pMe->m_pConfig,CFGI_EAR_VOL,
+                                            &CallVolume,sizeof(CallVolume));
+				ISOUND_SetVolume(pMe->m_pSound,CallVolume*3/5);
+			}
+			#endif
+
         	CallApp_SetupCallAudio(pMe);
 #endif
 			
@@ -7092,8 +7102,14 @@ void CallApp_SetupCallAudio(CCallApp *pMe)
     {
         pMe->m_CallVolume = OEMSOUND_1ST_VOL;
     }
+	
+    #ifdef FEATURE_VERSION_K202
+	ISOUND_SetVolume(pMe->m_pSound,
+                                            GET_ISOUND_VOL_LEVEL(pMe->m_CallVolume)*3/5);
+	#else
     ISOUND_SetVolume(pMe->m_pSound,
-                     GET_ISOUND_VOL_LEVEL(pMe->m_CallVolume));
+                                            GET_ISOUND_VOL_LEVEL(pMe->m_CallVolume));
+	#endif
 }
 
 /*=============================================================================
@@ -8768,8 +8784,13 @@ void CallApp_ChangeCallVolume(CCallApp  *pMe,
         {
             pMe->m_CallVolume = OEMSOUND_1ST_VOL;
         }
+		#ifdef FEATURE_VERSION_K202
+		ISOUND_SetVolume(pMe->m_pSound,
+                                                GET_ISOUND_VOL_LEVEL(pMe->m_CallVolume)*3/5);
+		#else
         ISOUND_SetVolume(pMe->m_pSound,
                                                 GET_ISOUND_VOL_LEVEL(pMe->m_CallVolume));
+		#endif
 
     }
 }
@@ -8905,8 +8926,13 @@ void CallApp_ChangeCallVolume_AVK_RWD(CCallApp  *pMe)
         {
             pMe->m_CallVolume = OEMSOUND_1ST_VOL;
         }
+        #ifdef FEATURE_VERSION_K202
+		ISOUND_SetVolume(pMe->m_pSound,
+                                                GET_ISOUND_VOL_LEVEL(pMe->m_CallVolume)*3/5);
+		#else
         ISOUND_SetVolume(pMe->m_pSound,
                                                 GET_ISOUND_VOL_LEVEL(pMe->m_CallVolume));
+		#endif
 
     }
 }
@@ -12768,11 +12794,13 @@ static void CallApp_Play_Incoming_Tone(CCallApp *pMe)
         if(AEE_RINGER_ID_NONE != ringerId)
         {
             // ringType is mid
+            MSG_FATAL("IALERT_StartRingerAlert........00000",0,0,0);
             IALERT_StartRingerAlert(pMe->m_pAlert,ringerId);
         }
         else
         {
             // ringType is mp3
+            MSG_FATAL("IALERT_StartRingerAlert........111111",0,0,0);
             if ((IALERT_StartMp3Alert(pMe->m_pAlert, filename,ALERT_NORMAL_SND) != SUCCESS))
             {
                 IALERT_StartRingerAlert(pMe->m_pAlert, OEMNV_DEFAULTRINGER);
@@ -12790,10 +12818,12 @@ static void CallApp_Play_Incoming_Tone(CCallApp *pMe)
         midID = ringid[profilenum].midID;
         if(ringid[profilenum].ringType == OEMNV_MID_RINGER)
         {
+        	MSG_FATAL("IALERT_StartRingerAlert........222222",0,0,0);
             IALERT_StartRingerAlert(pMe->m_pAlert,(uint32)midID);
         }
         else if(ringid[profilenum].ringType == OEMNV_MP3_RINGER)
         {
+        	MSG_FATAL("IALERT_StartRingerAlert........333333",0,0,0);
             if ((IALERT_StartMp3Alert(pMe->m_pAlert, ringid[profilenum].szMusicname,ALERT_NORMAL_SND) != SUCCESS))
             {
                 IALERT_StartRingerAlert(pMe->m_pAlert, OEMNV_DEFAULTRINGER);
@@ -12871,7 +12901,8 @@ static void CallApp_Draw_Numer_Img(CCallApp   *pMe,  AECHAR const *dialStr)
     AEERect   rect;
     AECHAR wbf[MAX_SIZE_DIALER_TEXT] = {0}; 
     AECHAR *p_str = NULL;
-
+	int linefor = 0; 
+    int k = 0;
     WSTRLCPY(wbf,dialStr,sizeof(wbf)/sizeof(AECHAR)); //Gemsea:Size In AECHAR
     p_str = wbf;
 
@@ -12961,7 +12992,12 @@ static void CallApp_Draw_Numer_Img(CCallApp   *pMe,  AECHAR const *dialStr)
         x = rect.x;
         y += nLineHeight;
     }
-
+	for(k=0;k<nLineCount;k++)
+	{
+		pMe->m_nCurrLineFits[linefor] = 8;
+		linefor ++;
+	}
+	
     for (count = 0;count < len ; count ++)
     {
         boolean b_found = TRUE;
@@ -14328,8 +14364,13 @@ void CallApp_SwitchCallAudio(CCallApp *pMe, boolean bIsBtAudio)
     {
         pMe->m_CallVolume = OEMSOUND_1ST_VOL;
     }
+    #ifdef FEATURE_VERSION_K202
+	ISOUND_SetVolume(pMe->m_pSound,
+                                            GET_ISOUND_VOL_LEVEL(pMe->m_CallVolume)*3/5);
+	#else
     ISOUND_SetVolume(pMe->m_pSound,
-                     GET_ISOUND_VOL_LEVEL(pMe->m_CallVolume));
+                                            GET_ISOUND_VOL_LEVEL(pMe->m_CallVolume));
+	#endif
 }
 #endif
 
