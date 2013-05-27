@@ -4795,6 +4795,12 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 			
 				    break;
 #endif
+				case AVK_VOLUME_UP:
+					
+					break;
+				case AVK_VOLUME_DOWN:
+					
+					break;
                 default:
                     break;
             }
@@ -8366,7 +8372,8 @@ void CoreApp_Poweroff_Phone(void *pp)
     CCoreApp *pMe = (CCoreApp *)pp;
     IBacklight   *pBacklight = NULL;
     boolean b_FMBackground = FALSE;
-    
+    boolean bData = FALSE;
+	 
     EnableUIKeys(FALSE);
     uisnd_snd_stop();
     uisnd_multi_stop();
@@ -8380,6 +8387,8 @@ void CoreApp_Poweroff_Phone(void *pp)
         IBACKLIGHT_TurnOff(pBacklight);
         IBACKLIGHT_Release(pBacklight);
     }
+	
+	OEM_SetConfig(CFGI_FLSHLITHG_STATUS,&bData, sizeof(bData));
     // 不再关心 IBatt 通知消息
     (void) ISHELL_RegisterNotify(pMe->a.m_pIShell,
                                  AEECLSID_CORE_APP,

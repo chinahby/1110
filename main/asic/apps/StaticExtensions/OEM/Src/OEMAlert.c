@@ -2367,6 +2367,21 @@ static void OEMALERT_StartRingerAlert(IALERT *pMe,uint32 id,ALERT_SND_TYPE type)
                 gCurStatus.m_pCurRingerMgr = pMe->m_pRingerMgr;
                 gCurStatus.m_bplaying = TRUE;
             }		
+			#ifdef FEATURE_VERSION_K202
+			MSG_FATAL("pMe->m_iAlert..................00000000",0,0,0);
+				if(!pMe->m_iAlert)
+				{
+					ISOUND_Vibrate(pMe->m_pSound,TIME_MS_RINGERVIBRATE_DURATION);
+					pMe->m_iAlert = TRUE;
+				}
+				else
+				{
+					ISound_StopVibrate(pMe->m_pSound);
+					pMe->m_iAlert = FALSE;
+				}
+#else
+				ISOUND_Vibrate(pMe->m_pSound,TIME_MS_RINGERVIBRATE_DURATION);
+#endif
             break;
     
         case OEMNV_ALERTTYPE_OFF:    
@@ -2541,7 +2556,22 @@ static int OEMALERT_StartMp3Alert(IALERT * pMe, char *id, ALERT_SND_TYPE type)
 #endif
                     (void) IMEDIA_Play(pMe->m_pMedia);
                     (void)IMEDIA_RegisterNotify(pMe->m_pMedia, OEMALERT_MediaNotify, pMe);
-                }       
+                }      
+				#ifdef FEATURE_VERSION_K202
+				MSG_FATAL("pMe->m_iAlert..................111111",0,0,0);
+				if(!pMe->m_iAlert)
+				{
+					ISOUND_Vibrate(pMe->m_pSound,TIME_MS_RINGERVIBRATE_DURATION);
+					pMe->m_iAlert = TRUE;
+				}
+				else
+				{
+					ISound_StopVibrate(pMe->m_pSound);
+					pMe->m_iAlert = FALSE;
+				}
+#else
+				ISOUND_Vibrate(pMe->m_pSound,TIME_MS_RINGERVIBRATE_DURATION);
+#endif
                 break;
 
             case OEMNV_ALERTTYPE_OFF:    
@@ -2930,10 +2960,22 @@ static void OEMALERT_HandleRingerAlertTimer(void *pUser)
 			 		INCREMENT_ESCALATING_RINGER(pMe->m_ringCurVol);
              		OEMALERT_SetRingerVol(pMe, TRUE);
              		#endif
-                    ISOUND_Vibrate(pMe->m_pSound,TIME_MS_RINGERVIBRATE_DURATION);
-                    
-                   
-                }                        
+                }      
+#ifdef FEATURE_VERSION_K202
+				MSG_FATAL("pMe->m_iAlert..................2222222",0,0,0);
+				if(!pMe->m_iAlert)
+				{
+					ISOUND_Vibrate(pMe->m_pSound,TIME_MS_RINGERVIBRATE_DURATION);
+					pMe->m_iAlert = TRUE;
+				}
+				else
+				{
+					ISound_StopVibrate(pMe->m_pSound);
+					pMe->m_iAlert = FALSE;
+				}
+#else
+				ISOUND_Vibrate(pMe->m_pSound,TIME_MS_RINGERVIBRATE_DURATION);
+#endif
                 break;     
         
         case OEMNV_ALERTTYPE_RINGER:

@@ -599,6 +599,8 @@ static boolean CameraApp_MainMenuHandleEvent(CCameraApp *pMe, AEEEvent eCode, ui
     {
         case EVT_DIALOG_INIT:
             pMe->m_bIsPreview = FALSE;
+			pMe->m_bCanPress = TRUE;
+			pMe->m_bCapturePic = FALSE;
             pMe->m_nCameraState = CAM_START;
             
             pMe->m_wMsgID = IDS_MSG_WAITING;
@@ -910,6 +912,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
     {
         case EVT_DIALOG_INIT:
             pMe->m_bCapturePic = FALSE;
+			pMe->m_bIsSnaping = FALSE;
              // 如下代码限制在此界面的快速按键
             //#if defined (FEATURE_VERSION_C310) || defined (FEATURE_VERSION_C337)
             //1200
@@ -983,7 +986,8 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
 		    }
  #endif
             //#if defined (FEATURE_VERSION_C310) || defined (FEATURE_VERSION_C337)
-                pMe->m_bCanPress = FALSE;
+            pMe->m_bCanPress = FALSE;
+ 			pMe->m_bIsSnaping = FALSE;
             //#endif
             (void)ISHELL_CancelTimer(pMe->m_pShell,
                                      CameraApp_PrevewTimeout,

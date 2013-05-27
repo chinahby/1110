@@ -3714,6 +3714,7 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
         {
             AEERect   textrc;
             AEERect   menurc;
+			AEERect       m_drawline;
             int       nBarHeight = GetBottomBarHeight(pMe->m_pDisplay);
             uint32    dwMask = IMENUCTL_GetProperties(pMenuCtl);
             byte      inputHeight = IDISPLAY_GetFontMetrics(pMe->m_pDisplay, AEE_FONT_BOLD, NULL, NULL); 	//AEE_FONT_NORMAL
@@ -3755,6 +3756,13 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                 
 				#ifdef FEATURE_VERSION_K202
 				ITEXTCTL_SetProperties(pTextCtl, TP_NOUPDATE|TP_FOCUS_NOSEL);
+				m_drawline.y = textrc.y;
+				m_drawline.x = 0;
+				m_drawline.dy = 1;
+				m_drawline.dx = 176;
+				textrc.y = textrc.y+1;
+				textrc.dy = textrc.dy-1;
+				IDISPLAY_FillRect(pMe->m_pDisplay, &m_drawline, RGB_BLACK);
 				#else
 				ITEXTCTL_SetProperties(pTextCtl, TP_FIXOEM |TP_STARKEY_SWITCH|TP_FOCUS_NOSEL | TP_GRAPHIC_BG);
 				#endif

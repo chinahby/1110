@@ -1731,7 +1731,11 @@ static OEMConfigListType oemi_cache = {
 #ifdef  FEATURE_CARRIER_THAILAND_CAT     
    OEMNV_ALERTTYPE_VIBANDRINGER,               // CFGI_ALERT_TYPE
 #else
+#ifdef FEATURE_VERSION_K202
+    OEMNV_ALERTTYPE_VIBANDRINGER,               // CFGI_ALERT_TYPE
+#else
    OEMNV_ALERTTYPE_RINGER,                          // CFGI_ALERT_TYPE
+#endif
 #endif
    OEMNV_SA_NORMAL,                                 // CFGI_SILENCEALL
    OEMNV_HEADSET_RNG_ON,                            // CFGI_HEADSET_RNG
@@ -1778,7 +1782,7 @@ static OEMConfigListType oemi_cache = {
    FALSE,                                          // CFGI_ANYKEY_ANSWER
 #endif
 #ifdef FEATURE_VERSION_K202_LM129C //xxzhen
-   OEMNV_HEADSET_AUTOANSWER_5SEC,                   // CFGI_HEADSET_AUTOANSWER
+   OEMNV_HEADSET_AUTOANSWER_OFF,                   // CFGI_HEADSET_AUTOANSWER
 #else
    OEMNV_HEADSET_AUTOANSWER_OFF,                   // CFGI_HEADSET_AUTOANSWER
 #endif
@@ -1869,7 +1873,7 @@ static OEMConfigListType oemi_cache = {
 #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
    1,											//CFGI_KEY_LOCK_CHECK			
 #elif defined(FEATURE_VERSION_K202_LM129C)//xxzhen
-   2,
+   0,
 #else
    0,
 #endif   
@@ -2812,7 +2816,13 @@ void OEM_RestoreFactorySetting( void )
 #ifdef  FEATURE_CARRIER_THAILAND_CAT     
    oemi_cache.alert_type          = OEMNV_ALERTTYPE_VIBANDRINGER;
 #else 
-   oemi_cache.alert_type          = OEMNV_ALERTTYPE_RINGER;
+#ifdef FEATURE_VERSION_K202
+	  oemi_cache.alert_type          =  OEMNV_ALERTTYPE_VIBANDRINGER,			   // CFGI_ALERT_TYPE
+#else
+	  oemi_cache.alert_type          =  OEMNV_ALERTTYPE_RINGER;
+#endif
+
+   
 #endif
    oemi_cache.silence_all         = OEMNV_SA_NORMAL;
    oemi_cache.headset_ringer      = OEMNV_HEADSET_RNG_ON;
@@ -2980,7 +2990,7 @@ void OEM_RestoreFactorySetting( void )
    oemi_cache.any_key_answer           = FALSE;
 #endif
 #ifdef FEATURE_VERSION_K202_LM129C //xxzhen
-   oemi_cache.headset_autoanswer       = OEMNV_HEADSET_AUTOANSWER_5SEC;
+   oemi_cache.headset_autoanswer       = OEMNV_HEADSET_AUTOANSWER_OFF;
 #else
    oemi_cache.headset_autoanswer       = OEMNV_HEADSET_AUTOANSWER_OFF;
 #endif
@@ -6352,9 +6362,11 @@ static void OEMPriv_ReadOEMConfigList(void)
    //
    // Verify the config file data is valid
    //
+   #ifndef FEATURE_VERSION_K202
    if (oemi_cache.alert_type > OEMNV_ALERTTYPE_VIBRINGER) {
       oemi_cache.alert_type = OEMNV_ALERTTYPE_RINGER;
    }
+   #endif
 
    if (oemi_cache.silence_all > OEMNV_SA_LITONLY) {
       oemi_cache.silence_all = OEMNV_SA_NORMAL;

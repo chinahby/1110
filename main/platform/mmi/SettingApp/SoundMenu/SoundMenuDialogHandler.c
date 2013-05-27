@@ -4271,6 +4271,7 @@ static boolean  HandleVolumeSubDialogEvent(CSoundMenu *pMe,
 
                     case AVK_LEFT:
                     case AVK_DOWN:
+					case AVK_VOLUME_DOWN:
                         switch(pMe->m_VolType)
                         {
                             case SET_RINGER_VOL:
@@ -4295,7 +4296,7 @@ static boolean  HandleVolumeSubDialogEvent(CSoundMenu *pMe,
 
                     case AVK_UP:
                     case AVK_RIGHT:
-
+					case AVK_VOLUME_UP:
                         switch(pMe->m_VolType)
                         {
                             case SET_RINGER_VOL:

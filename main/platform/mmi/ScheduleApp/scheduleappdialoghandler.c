@@ -3113,7 +3113,7 @@ static boolean  dialog_handler_of_state_event_edit( CScheduleApp* pme,
     static uint16   ringtoneValue             = 0;
     static boolean  exitByUser                = 0;
     static byte     timeFormatType            = 0;
-
+	MSG_FATAL("dialog_handler_of_state_event_edit....eCode==%d,wParam===%d",eCode,wParam,0);
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
 
 		if ((eCode == EVT_PEN_UP) || (eCode == EVT_PEN_DOWN))
@@ -4217,6 +4217,55 @@ _scheduleapp_event_edit_save_:
                 case AVK_7:
                 case AVK_8:
                 case AVK_9:
+				#ifdef FEATURE_VERSION_K202
+				if( (wParam == AVK_0 ||wParam == AVK_1 ||wParam == AVK_2
+                	||wParam == AVK_3 || wParam == AVK_4 ||wParam == AVK_5 ||wParam == AVK_6 ||wParam == AVK_7 
+                	||wParam == AVK_8 || wParam == AVK_9) && (currentItem == 0 || currentItem == 1))
+                {
+                    if(pme->m_sports)
+                    {
+                        repaint(pme,TRUE);
+                    }
+                    else
+                    {
+                        copyTextContentToVariables( pme, pSubject, pNote);
+                        MSG_FATAL("currentItem===============================%d",currentItem,0,0);
+                        pme->m_pszEventEditText = currentItem == 0 ? pme->m_CalMgr.m_szEventDes : pme->m_CalMgr.m_szNote;
+                        pme->m_eventEditItem    = currentItem;
+                        exitByUser = TRUE;
+                        CLOSE_DIALOG( DLGRET_EVENT_EDIT_SUBJECT)
+                    }
+                    return TRUE;
+                }
+				else
+				{
+					if(pme->m_sports)
+	                {
+	                    if(currentItem == 2 && wParam == AVK_INFO)
+	                    {
+	                        repaint(pme, TRUE);
+	                    }
+	                    else if(wParam == AVK_SELECT)
+	                    {
+	                        repaint(pme, TRUE);
+	                        goto _scheduleapp_event_edit_save_;
+	                    }
+	                }
+	                else
+	                {
+	                    if(currentItem == 2 && wParam == AVK_INFO)
+	                    {
+	                        repaint(pme, TRUE);
+	                    }
+	                    else if(wParam == AVK_SELECT /*|| currentItem ==3 || currentItem == 4 || currentItem == 5*/)
+	                    {
+	                        repaint(pme, TRUE);
+	                        goto _scheduleapp_event_edit_save_;
+	                    }
+
+	                }
+				}
+				#else
                 if(pme->m_sports)
                 {
                     if(currentItem == 2 && wParam == AVK_INFO)
@@ -4242,7 +4291,9 @@ _scheduleapp_event_edit_save_:
                     }
 
                 }
+				#endif
                 break;
+				
                 
             }
         }
@@ -4264,7 +4315,7 @@ static boolean  dialog_handler_of_state_inputtext( CScheduleApp* pme,
 
     static AECHAR   theText[MAXTEXT+1]    = {0};
     static boolean  exitByUser          = 0;
-
+	MSG_FATAL("dialog_handler_of_state_inputtext..eCode=%d,wParam==%d",eCode,wParam,0);
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
@@ -4388,6 +4439,56 @@ static boolean  dialog_handler_of_state_inputtext( CScheduleApp* pme,
             }
         }
         break;
+		case EVT_KEY_PRESS:
+		{
+			switch (wParam)
+            {
+            	case AVK_0:
+				case AVK_1:
+				case AVK_3:
+				case AVK_4:
+				case AVK_5:
+				case AVK_6:
+				case AVK_7:
+				case AVK_8:
+				case AVK_9:
+				case AVK_T:
+                case AVK_Q:
+                case AVK_W:
+                case AVK_E:
+                case AVK_R:
+                case AVK_A:
+                case AVK_S:
+                case AVK_D:
+                case AVK_F:
+                case AVK_Z:
+                case AVK_X:
+                case AVK_C:
+                case AVK_Y:
+                case AVK_U:
+                case AVK_I:
+                case AVK_O:
+                case AVK_P:
+                case AVK_G:
+                case AVK_H:
+                case AVK_J:
+                case AVK_K:
+                case AVK_L:
+                case AVK_V:
+                case AVK_B:
+                case AVK_N:
+                case AVK_M:
+                case AVK_STAR:
+                case AVK_POUND:
+				{
+					MSG_FATAL("input.........................",0,0,0);
+				}
+				break;
+				default:
+                    break;
+			}
+		}
+		break;
 
     }
 
@@ -4603,7 +4704,7 @@ static boolean  dialog_handler_of_state_setup( CScheduleApp* pme,
 
         case EVT_USER_REDRAW:
         {
-			
+			AECHAR  text[32] = {0};
             int     i               = 0;
             int     y               = 0;
             int     x               = 3;
@@ -4616,6 +4717,11 @@ static boolean  dialog_handler_of_state_setup( CScheduleApp* pme,
 
             TitleBar_Param_type     titleBarParms   = {0};
             BottomBar_Param_type    bottomBarParms  = {0};
+			(void)ISHELL_LoadResString(pme->m_pShell, 
+	                                        AEE_SCHEDULEAPP_RES_FILE,
+	                                        IDS_SETUP_TITLE, 
+	                                        text,
+	                                        sizeof(text));  
 
 
             if( itemNumberPerPage < itemNumber)
@@ -4645,7 +4751,7 @@ static boolean  dialog_handler_of_state_setup( CScheduleApp* pme,
 			#if 0
             DrawTitleBar( pme->m_pDisplay, &titleBarParms);
 			#else
-			IANNUNCIATOR_SetFieldText(pme->m_pIAnn,(uint16*)titleBarParms.strTitleResFile);
+			IANNUNCIATOR_SetFieldText(pme->m_pIAnn,text);
 			#endif
 
             if( currentItem == 2 && timeFormatType == OEMNV_TIMEFORM_AMPM)

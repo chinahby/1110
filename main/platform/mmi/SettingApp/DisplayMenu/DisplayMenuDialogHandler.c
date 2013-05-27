@@ -761,8 +761,11 @@ static boolean  HandlePictureDialogEvent(CDisplayMenu *pMe,
             SETAEERECT( &clip, pMe->m_rc.x, (pMe->m_rc.dy/2)-10, pMe->m_rc.dx, pMe->m_rc.dy/2);
             DrawTextWithProfile(pMe->m_pShell, pMe->m_pDisplay, RGB_WHITE_NO_TRANS, AEE_FONT_LARGE, lBuf,-1,clip.x,clip.y,&clip, IDF_ALIGN_LEFT|IDF_TEXT_TRANSPARENT);
             DrawTextWithProfile(pMe->m_pShell, pMe->m_pDisplay, RGB_WHITE_NO_TRANS, AEE_FONT_LARGE, rBuf,-1,clip.x,clip.y,&clip,IDF_ALIGN_RIGHT|IDF_TEXT_TRANSPARENT);          
-
+			#ifdef FEATURE_VERSION_K202_LM129C
+			DrawBottomBar_Ex(pMe->m_pShell,pMe->m_pDisplay, BTBAR_SELECT_BACK);	
+			#else
             DrawBottomBar_Ex(pMe->m_pShell,pMe->m_pDisplay, BTBAR_VIEWMORE_BACK);	//Add By zzg 2010_07_23	
+            #endif
             // 统一更新界面
             IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
 
@@ -943,9 +946,50 @@ static boolean  HandlePictureDialogEvent(CDisplayMenu *pMe,
 
                 case AVK_SELECT:		//Add By zzg 2010_07_23
 				{
+					#ifdef FEATURE_VERSION_K202_LM129C
+					switch(pMe->m_PICType)
+                    {
+                        case WALLPAPER_MAIN:    /*//桌面墙纸*/
+                            (void) ICONFIG_SetItem(pMe->m_pConfig,
+                                                    CFGI_WALLPAPER,
+                                                    pMe->m_CurPaper->imange_name,
+                                                    sizeof(pMe->m_CurPaper->imange_name));
+                            break;
+
+#ifdef FEATURE_ANIMATION_POWERUPDOWN
+                        case ANIMATION_POWERUP: /*//开机动画*/
+                            (void) ICONFIG_SetItem(pMe->m_pConfig,
+                                                    CFGI_STARTUP_ANIMATION,
+                                                    pMe->m_CurPaper->imange_name,
+                                                    sizeof(pMe->m_CurPaper->imange_name));
+                            break;
+
+                        case ANIMATION_POWERDOWN:/*//关机动画*/
+                            (void) ICONFIG_SetItem(pMe->m_pConfig,
+                                                    CFGI_POWEROFF_ANIMATION,
+                                                    pMe->m_CurPaper->imange_name,
+                                                    sizeof(pMe->m_CurPaper->imange_name));
+                            break;
+#endif// FEATURE_ANIMATION_POWERUPDOWN
+
+#ifdef FEATURE_SCREEN_SAVE
+                        case SCREENSAVE_TYPE:
+                            (void) ICONFIG_SetItem(pMe->m_pConfig,
+                                                    CFGI_SCREENSAVE_TYPE,
+                                                    pMe->m_CurPaper->imange_name,
+                                                    sizeof(pMe->m_CurPaper->imange_name));
+                            break;
+#endif
+
+                        default:
+                            break;
+                    }
+                    CLOSE_DIALOG(DLGRET_CANCELED)
+					#else
 #ifdef FEATURE_APP_MEDIAGALLERY					
 					CMediaGallery_FileExplorer(GALLERY_IMAGE_SETTING, NULL);
 #endif
+					#endif
 					break;
 				}						//Add End
 				

@@ -1251,8 +1251,10 @@ static boolean MP3_SetRingtone_HandleEvent(CMusicPlayer *pMe,
     {
         case EVT_DIALOG_INIT:
             MP3MENU_ADDITEM(pMenuCtl,IDS_SET_CALL_RINGTONE);
+			#ifndef FEATURE_VERSION_K202
             MP3MENU_ADDITEM(pMenuCtl,IDS_SET_SMS_RINGTONE);
             MP3MENU_ADDITEM(pMenuCtl,IDS_SET_ALARM_RINGTONE);
+			#endif
 			#if 0
             IMENUCTL_SetTitle(pMenuCtl, MUSICPLAYER_RES_FILE_LANG, IDS_SET_AS_RINGTONE, NULL);
 			#else
@@ -3593,6 +3595,7 @@ static boolean MP3_SimplePlayer_HandleEvent(CMusicPlayer *pMe,
                 }        
                case AVK_UP:
                case AVK_RIGHT:
+			   case AVK_VOLUME_UP:
                     if(pMe->m_MusicPlayerCfg.eMusicVolume < VOLUME_FIVE)
                     {
                         pMe->m_MusicPlayerCfg.eMusicVolume++;
@@ -3652,6 +3655,7 @@ static boolean MP3_SimplePlayer_HandleEvent(CMusicPlayer *pMe,
                     return TRUE;
                     
                case AVK_DOWN:
+			   case	AVK_VOLUME_DOWN:
                case AVK_LEFT:
                     if(pMe->m_MusicPlayerCfg.eMusicVolume > VOLUME_OFF)
                     {
