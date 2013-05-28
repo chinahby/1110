@@ -3161,6 +3161,7 @@ static void CallApp_Dialer_Show_Animation(void *pUser)
         RGBVAL     oldColor = 0;
         //calling.....
         SETAEERECT(&rect,CALL_TEXT_X,CALL_FIRST_LINE_Y,CALL_TEXT_DX,CALL_LINE_HIGHT);
+		#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202)  
 		if(pMe->m_isIncoming)
 		{
 			(void) ISHELL_LoadResString(pMe->m_pShell,
@@ -3170,6 +3171,7 @@ static void CallApp_Dialer_Show_Animation(void *pUser)
                                                 sizeof(wBuf));
 		}
 		else
+		#endif
 		{
         	(void) ISHELL_LoadResString(pMe->m_pShell,
                                                 AEE_APPSCALLAPP_RES_FILE,
