@@ -4746,7 +4746,7 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
 #ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
         if(bTitleRightAligned){
             SETAEERECT( &rect, prc->x+prc->dx-pme->m_cyFont,prc->y + ps->yOffset, pme->m_cyFont+1, prc->dy);
-			
+		
 			STRTOWSTR(".%d", wszFmt, sizeof(wszFmt));
             
             WSPRINTF(wszIndex,sizeof(wszIndex),wszFmt,pme->theDrawnItem);
@@ -4790,7 +4790,7 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
 #else
         //下面的20 和12可能要改成公式计算
 
-		#ifdef FEATURE_VERSION_C337		
+		#if defined( FEATURE_VERSION_C337)||defined( FEATURE_VERSION_K202)	
 		SETAEERECT( &rect, ps->xOffset/*prc->x*/,prc->y + ps->yOffset, 3*pme->m_cyFont/2, prc->dy);
 		#else
 		SETAEERECT( &rect, ps->xOffset/*prc->x*/,prc->y + ps->yOffset, pme->m_cyFont, prc->dy);
@@ -5035,8 +5035,10 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
       }       
         // draw the entire text.  Align it unless it's scrolling or a softkey.
 #if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+	
     if(Menu_ItemScrolls(pme, p, 0) || (pme->m_cls == AEECLSID_SOFTKEYCTL))
     {
+    	
          IDISPLAY_DrawText( pd, 
                  p->nFont, 
                  pText, 
@@ -5066,7 +5068,7 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
             dwItemTextAlignment = IDF_TEXT_TRANSPARENT;
 #endif            
         }
-
+		 
         IDISPLAY_DrawText(pd,
                 p->nFont,
                 pText,
@@ -8081,8 +8083,10 @@ static void Cal_DrawItem(CMenuCtl * pme, CMenuItem * pi, int nIdx, boolean bClea
   if( bActive && !pme->userSetStyle)
   {
       
+
       rc.x  += IMAGE_WIDTH * 6;
       rc.dx -= IMAGE_WIDTH * 6;
+ 
       Menu_DrawSelectBar( pme, &rc, pme->m_style[1].ft, pi->cyImage);
       rc.x  -= IMAGE_WIDTH * 6;
       rc.dx = cx;  
@@ -8129,8 +8133,10 @@ static void Cal_DrawItem(CMenuCtl * pme, CMenuItem * pi, int nIdx, boolean bClea
    }
    
    // Adjust for tims string
+
    rc.x  += IMAGE_WIDTH * 6;
    rc.dx -= IMAGE_WIDTH * 6;
+
 
    // If not active, ensure that text doesn't touch frame
    if(!bActive){
@@ -8193,8 +8199,10 @@ static void Cal_DrawItem(CMenuCtl * pme, CMenuItem * pi, int nIdx, boolean bClea
    }
 
    // Adjust for tims string
-   rc.x += IMAGE_WIDTH * 6;
+
+   rc.x  += IMAGE_WIDTH * 6;
    rc.dx -= IMAGE_WIDTH * 6;
+
 
    // If not active, ensure that text doesn't touch frame
    if(!bActive){

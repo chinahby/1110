@@ -3922,7 +3922,11 @@ static void VolumePreview(void *pUser)
 		MSG_FATAL("***zzg VolumePreview OEMNV_MID_RINGER m_RingerID=%x***", pMe->m_RingerID[pMe->m_CurProfile].midID, 0, 0);
 		
 		MSG_FATAL("***zzg VolumePreview IALERT_StartRingerPreview***", 0, 0, 0);
+		#ifdef FEATURE_VERSION_K202_LM129C
+		IALERT_StartRingerAlert(pMe->m_pAlert, OEMNV_DEFAULTRINGER);
+		#else
         IALERT_StartRingerPreview(pMe->m_pAlert,pMe->m_RingerID[pMe->m_CurProfile].midID);
+		#endif
     }
     else
     {

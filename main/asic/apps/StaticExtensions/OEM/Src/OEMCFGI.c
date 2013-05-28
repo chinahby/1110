@@ -6362,6 +6362,10 @@ static void OEMPriv_ReadOEMConfigList(void)
    //
    // Verify the config file data is valid
    //
+   //add by yangdecai
+   if (oemi_cache.flashlight_status > 0) {
+      oemi_cache.flashlight_status = 0;
+   }
    #ifndef FEATURE_VERSION_K202
    if (oemi_cache.alert_type > OEMNV_ALERTTYPE_VIBRINGER) {
       oemi_cache.alert_type = OEMNV_ALERTTYPE_RINGER;

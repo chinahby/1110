@@ -10560,8 +10560,11 @@ static void CallApp_RefreshVolBar(CCallApp *pMe)
         IIMAGE_SetParm(pImage, IPARM_NFRAMES, REFUI_VOLUME_LEVELS, 0);
         IIMAGE_GetInfo(pImage, &imageInfo);
         SETAEERECT(&rect, (pMe->m_rc.dx - imageInfo.cxFrame)/2, CALL_ANIM_IMG_Y - CALL_LINE_HIGHT, imageInfo.cxFrame, imageInfo.cy);
-        
+        #ifdef  FEATURE_DISP_176X220
+		rect.y = rect.y+50;
+		#endif
         Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &rect, TRUE);
+		
         
         IIMAGE_DrawFrame(pImage, 
                                         imageIndex, 

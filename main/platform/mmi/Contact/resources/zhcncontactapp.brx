@@ -185,7 +185,7 @@
 		<Text>记录已经存在</Text>
 	</STRING>
 	<STRING Id="116" Name="IDS_ONEDIAL_SET">
-		<Text>设置号码</Text>
+		<Text>添加联系人</Text>
 	</STRING>
 	<STRING Id="117" Name="IDS_ONEDIAL_CLR">
 		<Text>清除设置</Text>
