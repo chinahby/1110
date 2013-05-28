@@ -6857,41 +6857,54 @@ static boolean  HandleChangeCodeDialogEvent(CSecurityMenu *pMe,
 
 static int SecurityMenu_DeleteAllEntries(CSecurityMenu * pMe)
 {
-    // 清除近期通话记录
     {
-        ICallHistory *pCallHistory = NULL;
-        uint32        value = 0;
-        
-        if (AEE_SUCCESS == ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_CALLHISTORY, (void **)&pCallHistory))
-        {
-            ICALLHISTORY_Clear(pCallHistory);
-            IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL,ANNUN_STATE_CALL_MISSEDCALL_OFF);
+		ICallHistory    *m_pCallHistory;
+		 if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
+                     AEECLSID_CALLHISTORY,
+                     (void **)&m_pCallHistory))
+		{
+			;
+		}
+		else
+		{
+			if(SUCCESS == ICALLHISTORY_Clear(m_pCallHistory))
+          	{
+			  	uint32 value = 0;	
+              	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL,ANNUN_STATE_CALL_MISSEDCALL_OFF);
+              	{
+                  	boolean missed_call_icon;
+                  	missed_call_icon = FALSE;
+                  	(void) ICONFIG_SetItem(pMe->m_pConfig,
+                                     CFGI_MISSED_CALL_ICON,
+                                     &missed_call_icon,
+                                     sizeof(missed_call_icon));  
+              	}
 
-            (void) ICONFIG_SetItem(pMe->m_pConfig,
-                                     CFGI_RECENT_MO_CALL_TIMER,
-                                     &value,
+              	(void) ICONFIG_SetItem(pMe->m_pConfig,
+                                    CFGI_ALL_CALL_TIMER,
+                                    &value,
+                                    sizeof(uint32));
+              	(void) ICONFIG_SetItem(pMe->m_pConfig,
+                                    CFGI_RECENT_MO_CALL_TIMER,
+                                    &value,
+                                    sizeof(uint32));
+              	(void) ICONFIG_SetItem(pMe->m_pConfig,
+                                    CFGI_RECENT_MT_CALL_TIMER,
+                                    &value,
                                      sizeof(uint32));
-            (void) ICONFIG_SetItem(pMe->m_pConfig,
-                                     CFGI_RECENT_MT_CALL_TIMER,
-                                     &value,
-                                     sizeof(uint32));
-            (void) ICONFIG_SetItem(pMe->m_pConfig,
-                                     CFGI_ALL_CALL_TIMER,
-                                     &value,
-                                     sizeof(uint32));
-            ICALLHISTORY_Release(pCallHistory);
-            pCallHistory = NULL;
-        }
-        else
-        {
-            return EFAILED;
-        } 
-    }
+          	}
+          	if(m_pCallHistory)
+			{
+					ICALLHISTORY_Release(m_pCallHistory);
+					m_pCallHistory = NULL;
+			}
+          }
+	}
+	//删除短信息
+	
+	{
+		IWmsApp *pIWmsApp = NULL;
 
-    // 删除 SMS (仅限存在手机上的)
-    {
-        IWmsApp *pIWmsApp = NULL;
-        
         if (SUCCESS == ISHELL_CreateInstance(pMe->m_pShell,
                                                 AEECLSID_WMSAPP,
                                                 (void**)&pIWmsApp))
@@ -6907,17 +6920,11 @@ static int SecurityMenu_DeleteAllEntries(CSecurityMenu * pMe)
             (void)IWmsApp_Release(pIWmsApp);
             pIWmsApp = NULL;
         }
-    }
-#ifdef FEATURE_APP_MEDIAGALLERY
-    // 删除文件夹内的文件 (存储在手机上的)
-    {
-        CMediaGallery_ClearMediaFiles(pMe);
-    }
-#endif
-    // 删除contacts
-    {
-        IContApp * pIContApp = NULL;
-        
+	}
+	//删除电话本信息
+	{
+		IContApp * pIContApp = NULL;
+
         if (SUCCESS == ISHELL_CreateInstance(pMe->m_pShell,
                                                 AEECLSID_APP_CONTACT,
                                                 (void**)&pIContApp))
@@ -6933,30 +6940,14 @@ static int SecurityMenu_DeleteAllEntries(CSecurityMenu * pMe)
             (void)ICONTAPP_Release(pIContApp);
             pIContApp = NULL;
         }
-    }
-#if 0
-    // 删除 schedule
-    {
-        IScheduleApp * pIScheduleApp = NULL;
-        
-        if (SUCCESS == ISHELL_CreateInstance(pMe->m_pShell,
-                                                AEECLSID_SCHEDULEAPP,
-                                                (void**)&pIScheduleApp))
-        {
-            if(SUCCESS != ISCHEDULEAPP_DeleleAllEntry(pIScheduleApp))
-            {
-                return EFAILED;
-            }
-        }
-        
-        if(NULL != pIScheduleApp)
-        {
-            (void)ISCHEDULEAPP_Release(pIScheduleApp);
-            pIScheduleApp = NULL;
-        }
-
-    }
-#endif
+	}
+	#ifdef FEATURE_APP_MEDIAGALLERY
+	// 删除文件夹内的文件 (存储在手机上的)
+	{
+		CMediaGallery_ClearMediaFiles(pMe);
+	}
+	#endif
+  
     return SUCCESS;
 }
 

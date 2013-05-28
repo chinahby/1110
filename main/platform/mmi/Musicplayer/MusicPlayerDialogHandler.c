@@ -417,6 +417,7 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
 			//Add End
 			
 			MP3_DrawImage(pMe, IDI_MUSICPLAYER, 0, 0);	//Add By zzg 2010_08_19
+			(void)IMEDIA_SetVolume(pMe->m_pMedia,pMe->m_nCurrentVolume); 
 			
             if(pMe->m_pIAnn != NULL)
             {
