@@ -417,7 +417,30 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
 			//Add End
 			
 			MP3_DrawImage(pMe, IDI_MUSICPLAYER, 0, 0);	//Add By zzg 2010_08_19
-			(void)IMEDIA_SetVolume(pMe->m_pMedia,pMe->m_nCurrentVolume); 
+			 if(pMe->m_pMedia )
+             { 
+             	if(pMe->m_bPlaying)
+             	{
+             	  (void)IMEDIA_SetVolume(pMe->m_pMedia,pMe->m_nCurrentVolume);
+                  (void)IMEDIA_Play(pMe->m_pMedia);//播放
+             	}
+			 }
+			 else
+			 {
+   				 //因为底层使用的是事件传递机制，需要给底层stop并释放音乐的时间，否则会出错，此处等0.5秒钟后初始化下一首
+    			(void) ISHELL_SetTimer(pMe->m_pShell,500,(PFNNOTIFY)MP3_InitMusicCB,pMe);
+    			if(pMe->m_bPlaying)
+    			{
+       				 //因为底层使用的是事件传递机制，需要给底层初始化并传递notify的时间，否则会出错，此处等0.5秒钟后播放下一首      
+        			(void) ISHELL_SetTimer(pMe->m_pShell,1000,(PFNNOTIFY) CMusicPlayer_PlayMusic,pMe);
+    			}
+    			else
+    			{
+        			pMe->m_bPaused = FALSE;
+        			pMe->m_bPlaying = FALSE;
+       	
+    			}
+			 }
 			
             if(pMe->m_pIAnn != NULL)
             {
