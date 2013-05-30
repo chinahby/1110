@@ -671,7 +671,7 @@ boolean disp_ili9163c_tft177(disp_drv_ic_type *pdispic)
     id3 = LCD_READ_DATA();
     id3 = LCD_READ_DATA();
     
-    //if(id1 == 0x54 && id2 == 0x80 && id3 == 0x66)
+    if(id1 == 0x54 && id2 == 0x80 && id3 == 0x66)
     {
         DISP_IC_INIT_TBL(pdispic);
         return TRUE;
