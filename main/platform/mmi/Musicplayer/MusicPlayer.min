@@ -51,7 +51,6 @@ endif
 endif	
 endif
 endif
-endif
 ifeq ($(RESOURCEDIR),W516)
     CONSTFILE_FILES+=\
     music1.mp3|fs:/hsmm/music/music1.mp3\
