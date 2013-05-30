@@ -36,6 +36,7 @@ ifneq ($(RESOURCEDIR),C210)
 ifneq ($(RESOURCEDIR),SKY)
 ifneq ($(RESOURCEDIR),common)
 ifneq ($(RESOURCEDIR),C337)
+ifneq ($(RESOURCEDIR),w516S)
 	CONSTFILE_FILES+=\
 		Away.mp3|fs:/hsmm/music/Away.mp3
 endif
@@ -48,6 +49,8 @@ endif
 endif
 endif
 endif	
+endif
+endif
 endif
 ifeq ($(RESOURCEDIR),W516)
     CONSTFILE_FILES+=\

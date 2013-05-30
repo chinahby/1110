@@ -346,5 +346,8 @@
 	<STRING Id="2017" Name="IDS_COMMON_HELP">
 		<Text>Help</Text>
 	</STRING>
+	<STRING Id="2018" Name="IDS_RECENTCALLS">
+		<Text>Recentcalls</Text>
+	</STRING>
 </Strings>
 </BREWRes>

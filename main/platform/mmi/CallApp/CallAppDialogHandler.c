@@ -12633,7 +12633,10 @@ static boolean CallApp_DrawText_Ex(CCallApp *pMe, AEEFont fnt,
     IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, oldColor);
     return TRUE;
 }
+
+#ifdef FEATURE_OEMOMH 
 extern char charsvc_p_name[UIM_CDMA_HOME_SERVICE_SIZE+1];
+#endif
 static boolean CallApp_Process_Send_Key_Release_Event(CCallApp *pMe)
 {
     uint16 wIndex;
@@ -12651,6 +12654,7 @@ static boolean CallApp_Process_Send_Key_Release_Event(CCallApp *pMe)
     //    return TRUE;
     //}
     /*in emergency call mode ,can not allow to make the muti call*/
+#ifdef FEATURE_OEMOMH     
 	WSTRTOSTR(pMe->m_DialString,temp,MAX_SIZE_DIALER_TEXT+1);
 	if((STRISTR(temp,"+91")))
 	{
@@ -12665,6 +12669,7 @@ static boolean CallApp_Process_Send_Key_Release_Event(CCallApp *pMe)
 		DBGPRINTF("pMe->m_DialString=%S", pMe->m_DialString);
 		MSG_FATAL("pMe->m_DialString........111111111",0,0,0);
 	}
+#endif    
 #ifdef FEATURE_ICM
     if(pMe->m_b_incall && CallApp_IsEmergencyMode(pMe->m_pICM) )
 #else

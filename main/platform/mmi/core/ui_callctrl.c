@@ -199,7 +199,48 @@ variables and other items needed by this module.
       { (byte *) "*22864",    CM_CALL_TYPE_STD_OTASP,       CM_ACTIVATE_CODE_BC16_ABAND    },
       { (byte *) "*22865",    CM_CALL_TYPE_STD_OTASP,       CM_ACTIVATE_CODE_BC16_BBAND    },
       { (byte *) "*22866",    CM_CALL_TYPE_STD_OTASP,       CM_ACTIVATE_CODE_BC16_CBAND    },
-      { (byte *) "*22867",    CM_CALL_TYPE_STD_OTASP,       CM_ACTIVATE_CODE_BC16_DBAND    }
+      { (byte *) "*22867",    CM_CALL_TYPE_STD_OTASP,       CM_ACTIVATE_CODE_BC16_DBAND    },
+        { (byte *) "*22880", CM_CALL_TYPE_STD_OTASP, CM_ACTIVATE_CODE_BC0_ABAND },
+
+        { (byte *) "*22881", CM_CALL_TYPE_STD_OTASP, CM_ACTIVATE_CODE_BC0_BBAND },
+
+        { (byte *) "*22882", CM_CALL_TYPE_STD_OTASP, CM_ACTIVATE_CODE_BC1_ABLOCK },
+
+        { (byte *) "*22883", CM_CALL_TYPE_STD_OTASP, CM_ACTIVATE_CODE_BC1_BBLOCK },
+
+        { (byte *) "*22884", CM_CALL_TYPE_STD_OTASP, CM_ACTIVATE_CODE_BC1_CBLOCK },
+
+        { (byte *) "*22885", CM_CALL_TYPE_STD_OTASP, CM_ACTIVATE_CODE_BC1_DBLOCK },
+
+        { (byte *) "*22886", CM_CALL_TYPE_STD_OTASP, CM_ACTIVATE_CODE_BC1_EBLOCK },
+
+        { (byte *) "*22887", CM_CALL_TYPE_STD_OTASP, CM_ACTIVATE_CODE_BC1_FBLOCK },
+
+         /* *22888 - *22899 Shall match *228 exactly - use preferred roaming list */
+
+        { (byte *) "*22888",    CM_CALL_TYPE_NON_STD_OTASP,   CM_PREFERRED   },
+
+        { (byte *) "*22889",    CM_CALL_TYPE_NON_STD_OTASP,   CM_PREFERRED   },
+
+        { (byte *) "*22890",    CM_CALL_TYPE_NON_STD_OTASP,   CM_PREFERRED   },
+
+        { (byte *) "*22891",    CM_CALL_TYPE_NON_STD_OTASP,   CM_PREFERRED   },
+
+        { (byte *) "*22892",    CM_CALL_TYPE_NON_STD_OTASP,   CM_PREFERRED   },
+
+        { (byte *) "*22893",    CM_CALL_TYPE_NON_STD_OTASP,   CM_PREFERRED   },
+
+        { (byte *) "*22894",    CM_CALL_TYPE_NON_STD_OTASP,   CM_PREFERRED   },
+
+        { (byte *) "*22895",    CM_CALL_TYPE_NON_STD_OTASP,   CM_PREFERRED   },
+
+        { (byte *) "*22896",    CM_CALL_TYPE_NON_STD_OTASP,   CM_PREFERRED   },
+
+        { (byte *) "*22897",    CM_CALL_TYPE_NON_STD_OTASP,   CM_PREFERRED   },
+
+        { (byte *) "*22898",    CM_CALL_TYPE_NON_STD_OTASP,   CM_PREFERRED   },
+
+        { (byte *) "*22899",    CM_CALL_TYPE_NON_STD_OTASP,   CM_PREFERRED   },
 
 #else /*CM_API_OTASP_ACTIVATE_CODE*/
 

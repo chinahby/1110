@@ -2809,10 +2809,10 @@ boolean uim_process_generic_command
           uim_generic_state_ptr = uim_generic_states;
         }
 #endif /* FEATURE_UIM_GSM || defined FEATURE_UIM_RUIM */
-#ifdef FEATURE_UIM_UICC
 #if defined (FEATURE_UIM_GSM) || defined (FEATURE_UIM_RUIM)
         else
 #endif /* FEATURE_UIM_GSM || defined FEATURE_UIM_RUIM */
+#ifdef FEATURE_UIM_UICC
         if ((cmd_ptr->verify_chv.chv > UIM_CHV2) &&
             (cmd_ptr->verify_chv.chv < UIM_CHV_MAX) &&
             (cmd_ptr->hdr.protocol == UIM_UICC))
@@ -2828,8 +2828,8 @@ boolean uim_process_generic_command
           uim_generic_states[1] = UIM_DONE_ST;
           uim_generic_state_ptr = uim_generic_states;
         }
-#endif /* FEATURE_UIM_UICC */
         else
+#endif /* FEATURE_UIM_UICC */            
         {
           MSG_HIGH(" Wrong CHV/PIN %d recd for %d protocol",
                    cmd_ptr->verify_chv.chv,cmd_ptr->hdr.protocol,0);
@@ -2865,10 +2865,10 @@ boolean uim_process_generic_command
           uim_generic_state_ptr = uim_generic_states;
         }
 #endif /* FEATURE_UIM_GSM || defined FEATURE_UIM_RUIM */
-#ifdef FEATURE_UIM_UICC
 #if defined (FEATURE_UIM_GSM) || defined (FEATURE_UIM_RUIM)
         else
 #endif /* FEATURE_UIM_GSM || defined FEATURE_UIM_RUIM */
+#ifdef FEATURE_UIM_UICC
         if ((cmd_ptr->change_chv.chv > UIM_CHV2) &&
             (cmd_ptr->change_chv.chv < UIM_CHV_MAX) &&
             (cmd_ptr->hdr.protocol == UIM_UICC))
@@ -2878,8 +2878,8 @@ boolean uim_process_generic_command
           uim_generic_states[1] = UIM_DONE_ST;
           uim_generic_state_ptr = uim_generic_states;
         }
-#endif /* FEATURE_UIM_UICC */
         else
+#endif /* FEATURE_UIM_UICC */            
         {
           MSG_HIGH(" Wrong CHV/PIN %d recd for %d protocol",
                    cmd_ptr->verify_chv.chv,cmd_ptr->hdr.protocol,0);
@@ -2928,8 +2928,8 @@ boolean uim_process_generic_command
           uim_generic_states[1] = UIM_DONE_ST;
           uim_generic_state_ptr = uim_generic_states;
         }
-#endif /* UIM_FEATURE_ALLOW_CHV2_DISABLE */
         else
+#endif /* UIM_FEATURE_ALLOW_CHV2_DISABLE */            
         {
           MSG_HIGH(" Wrong CHV/PIN %d recd for %d protocol",
                    cmd_ptr->verify_chv.chv,cmd_ptr->hdr.protocol,0);
@@ -2980,8 +2980,8 @@ boolean uim_process_generic_command
           uim_generic_states[1] = UIM_DONE_ST;
           uim_generic_state_ptr = uim_generic_states;
         }
-#endif /* UIM_FEATURE_ALLOW_CHV2_DISABLE */
         else
+#endif /* UIM_FEATURE_ALLOW_CHV2_DISABLE */            
         {
           MSG_HIGH(" Wrong CHV/PIN %d recd for %d protocol",
                    cmd_ptr->verify_chv.chv,cmd_ptr->hdr.protocol,0);
@@ -3014,10 +3014,10 @@ boolean uim_process_generic_command
           uim_generic_state_ptr = uim_generic_states;
         }
 #endif /* FEATURE_UIM_GSM || defined FEATURE_UIM_RUIM */
-#ifdef FEATURE_UIM_UICC
 #if defined (FEATURE_UIM_GSM) || defined (FEATURE_UIM_RUIM)
         else
 #endif /* FEATURE_UIM_GSM || defined FEATURE_UIM_RUIM */
+#ifdef FEATURE_UIM_UICC
         if ((cmd_ptr->unblk_chv.chv > UIM_CHV_NONE) &&
             (cmd_ptr->unblk_chv.chv < UIM_CHV_MAX) &&
             (cmd_ptr->hdr.protocol == UIM_UICC))
@@ -3027,8 +3027,8 @@ boolean uim_process_generic_command
           uim_generic_states[1] = UIM_DONE_ST;
           uim_generic_state_ptr = uim_generic_states;
         }
-#endif /* FEATURE_UIM_UICC */
         else
+#endif /* FEATURE_UIM_UICC */            
         {
           MSG_HIGH(" Wrong CHV/PIN %d recd for %d protocol",
                    cmd_ptr->verify_chv.chv,cmd_ptr->hdr.protocol,0);
@@ -3480,6 +3480,11 @@ boolean uim_process_generic_command
               !((class_byte == UIM_UICC_INSTRUCTION_CLASS1)
                 && (instrn == MANAGE_CHANNEL)) )
           {
+          
+#ifndef UIM_INSTRUCTION_CLASS
+#define UIM_INSTRUCTION_CLASS 0xA0
+#endif
+          
             if (class_byte == UIM_INSTRUCTION_CLASS)
             {
               uim_dfs_1.protocol = UIM_GSM;

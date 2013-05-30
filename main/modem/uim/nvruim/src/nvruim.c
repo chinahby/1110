@@ -4455,7 +4455,9 @@ static nv_ruim_support_status nvruim_read_esn(
 
   /* If the usage indicator is NV_RUIM_USE_MEID then the pESN from 
      the handset should be returned not the pUIMID value from the card */
+#ifdef FEATURE_UIM_RUIM     
   MSG_FATAL("nvruim_read_esn %d 0x%x", nvruim_esn_usage,tmc_get_stored_esn_me(),0);
+#endif
 #ifdef FEATURE_OEMOMH
   if(nvruim_esn_usage == NV_RUIM_USE_MEID || 
      nvruim_esn_usage == NV_RUIM_USE_SF_EUIMID_ESN)

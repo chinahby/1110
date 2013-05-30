@@ -12670,7 +12670,11 @@ gsdi_returns_T gsdi_icc_cdma_post_pin1_init (
     {
 #ifndef FEATURE_VIRTUAL_SIM
       /* Need to get ESN Using TMC Interface */
+#ifdef FEATURE_UIM_RUIM
       store_esn_req.esn = tmc_get_stored_esn_me();
+#else
+      store_esn_req.esn = 0;        
+#endif
 #else
       store_esn_req.esn = 1111;
 #endif /* FEATURE_VIRTUAL_SIM */

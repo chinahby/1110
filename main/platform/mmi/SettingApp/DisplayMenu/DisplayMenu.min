@@ -267,6 +267,13 @@ else ifeq ($(USES_RESDIR),C210)
 CONSTFILE_FILES+=\
     wallpaper1.png|fs:/image/wallpaper/wallpaper1.png \
     wallpaper2.png|fs:/image/wallpaper/wallpaper2.png      
+else ifeq ($(USES_RESDIR),w516S)
+CONSTFILE_FILES+=\
+    wallpaper1.png|fs:/image/wallpaper/wallpaper1.png \
+    wallpaper2.png|fs:/image/wallpaper/wallpaper2.png \
+    wallpaper3.png|fs:/image/wallpaper/wallpaper3.png \
+    wallpaper4.png|fs:/image/wallpaper/wallpaper4.png \
+    wallpaper5.png|fs:/image/wallpaper/wallpaper5.png     
 else
 CONSTFILE_FILES+=\
     wallpaper1.png|fs:/image/wallpaper/wallpaper1.png \
@@ -277,6 +284,7 @@ CONSTFILE_FILES+=\
     wallpaper6.png|fs:/image/wallpaper/wallpaper6.png \
     wallpaper7.png|fs:/image/wallpaper/wallpaper7.png \
     wallpaper8.png|fs:/image/wallpaper/wallpaper8.png
+
 endif
 
 endif #ifeq ($(USES_LOWMEM), yes)

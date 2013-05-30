@@ -25647,7 +25647,7 @@ uint8 phone_charging_data[] =
 
 };
 
-#elif defined  (FEATURE_VERSION_C316)
+#elif defined  (FEATURE_VERSION_C316)||defined(FEATURE_VERSION_S600S)
 
 uint32 phone_charging_data[] = 
 {

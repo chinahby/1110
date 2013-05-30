@@ -97,7 +97,9 @@ when       who     what, where, why
 
 /* R-UIM Support from the UIM server
 */
+#ifndef FEATURE_VERSION_S600S
 #define FEATURE_UIM_RUIM
+#endif
 
 /* R-UIM run time enable support by other modules.
  * Enables runtime support for R-UIM card or GSM SIM.

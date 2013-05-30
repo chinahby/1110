@@ -3070,7 +3070,9 @@ void is707_get_ppp_auth_info_from_nv
 #ifdef FEATURE_DS_MULTIPLE_PROFILES
   is_omh_enabled = TRUE;
 #endif /* FEATURE_DS_OMH */
+#ifdef FEATURE_DS_MOBILE_IP
   MSG_FATAL( "is707_get_ppp_auth_info_from_nv %d %d %d",is_omh_enabled , dsat707_qcmip_val, num_valid_profiles );
+#endif
   if ( (is_omh_enabled == TRUE)
 #ifdef FEATURE_DS_MOBILE_IP
        &&(dsat707_qcmip_val == 0)

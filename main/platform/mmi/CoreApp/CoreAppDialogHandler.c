@@ -4217,6 +4217,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             {
                 return TRUE;
             }
+            
             MSG_FATAL("EVT_KEY_PRESS...........wParam=%d.....",wParam,0,0);
             //if set jpeg as wallpaper, it needs more time to finish decode. in this case
             // press other key in idle quickly while exitting from setting wallpaper, topline
@@ -4245,6 +4246,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);  
 #elif defined(FEATURE_VERSION_C310)|| defined(FEATURE_VERSION_K202) 
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CAMERA);  // add by pyuangui 20121226
+#elif defined(FEATURE_VERSION_S600S) 
+                    return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);  // add by pyuangui 20121226
 #else
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
 #endif    
@@ -4263,6 +4266,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 	{
                 	#ifdef FEATURE_VERSION_C316
                     return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
+                    #elif defined(FEATURE_VERSION_S600S) 
+					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
                     #else
                 	
 					nv_item_type	SimChoice;
@@ -4641,6 +4646,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #endif	/*FEATURE_SMARTFREN_STATIC_BREW_APP*/
 #elif defined (FEATURE_VERSION_HITZ181) || defined (FEATURE_VERSION_W515V3)|| defined (FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_K202_LM129C)
     				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
+#elif defined (FEATURE_VERSION_S600S)
+    				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_APP_RECENTCALL);
 #else
                         ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif				    
@@ -7491,12 +7498,14 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 		{
 			eBBarType = BTBAR_MENU_CONTACTS; //add by yangdecai
 		}			
-	#else
+	#else 
         #if defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_W317A)\
 			||defined(FEATURE_VERSION_K202_LM129C)//xxzhen
            eBBarType = BTBAR_MENU_CONTACTS;
 	#elif defined(FEATURE_VERSION_C316)
 	    eBBarType = BTBAR_SHORTCUT_CONTACTS;
+	#elif defined(FEATURE_VERSION_S600S)
+	    eBBarType = BTBAR_RECENTCALLS_CONTACTS;    
         #else
 		   eBBarType = BTBAR_MESSAGES_CONTACTS; //add by yangdecai  BTBAR_MESSAGES_CONTACTS
 		#endif

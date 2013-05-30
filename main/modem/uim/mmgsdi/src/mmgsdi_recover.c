@@ -229,8 +229,12 @@ static mmgsdi_return_enum_type mmgsdi_store_esn_synch(
     uim_cmd_ptr->store_esn.len_and_usage =
         GSDI_RUIM_STORE_ESN_LENGTH | GSDI_RUIM_STORE_ESN_USE_UIM_ID;
 #ifndef FEATURE_VIRTUAL_SIM
-    /* Need to get ESN Using TMC Interface */
-    uim_cmd_ptr->store_esn.esn = tmc_get_stored_esn_me();
+#ifdef FEATURE_UIM_RUIM
+        uim_cmd_ptr->store_esn.esn = tmc_get_stored_esn_me();
+#else
+        uim_cmd_ptr->store_esn.esn = 0;        
+#endif
+
 #else
     uim_cmd_ptr->store_esn.esn = 1111;
 #endif /* FEATURE_VIRTUAL_SIM */

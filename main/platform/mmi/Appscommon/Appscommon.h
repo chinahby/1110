@@ -372,6 +372,7 @@ typedef enum BottomBar_e_Type
    BTBAR_SELECT_STOP_BACK,
    BTBAR_GALLERY_HELP_BACK,		//Add By zzg 2012_12_10 for C337
    BTBAR_SHORTCUT_CONTACTS,
+   BTBAR_RECENTCALLS_CONTACTS,
    BTBAR_CONTINUE,     //add by yangdecai 2012
    BTBAR_MAX = 0xFFFF, /*For ADS compiler allocate one byte to enumerate type
                      variable by default if the max value not exceed 256*/

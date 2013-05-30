@@ -26,6 +26,7 @@ CONSTFILE_FILES+=\
     soundmenu.mif|fs:/mif/soundmenu.mif \
     soundmenu.bar|fs:/mod/soundmenu/en/soundmenu.bar
     
+
 ifeq ($(USES_LOWMEM), yes)
     CONSTFILE_FILES+=\
         blue_load.mid|fs:/ringers/blue_load.mid \
@@ -535,9 +536,11 @@ else
             lucky.mid|fs:/ringers/lucky.mid \
             street_tale.mid|fs:/ringers/street_tale.mid \
             techno_meto.mid|fs:/ringers/techno_meto.mid \
+
             feeling_on.mp3|fs:/ringers/feeling_on.mp3 \
             feeling_off.mp3|fs:/ringers/feeling_off.mp3 \
 	    ring1.mp3|fs:/ringers/ring1.mp3 \
+
             ring2.mp3|fs:/ringers/ring2.mp3
 	else ifeq ($(USES_RESDIR),SKY)                                           
         CONSTFILE_FILES+=\
@@ -573,8 +576,36 @@ else
             street_tale.mid|fs:/ringers/street_tale.mid \
             techno_meto.mid|fs:/ringers/techno_meto.mid \
             ring_tons.mp3|fs:/ringers/ring_tons.mp3 \
-            poweronoff.mp3|fs:/ringers/poweronoff.mp3 	
+            poweronoff.mp3|fs:/ringers/poweronoff.mp3 		
+	else ifeq ($(USES_RESDIR),w516S)                                          
+        CONSTFILE_FILES+=\
+            blues.mid|fs:/ringers/blues.mid \
+            blue_load.mid|fs:/ringers/blue_load.mid \
+            champagne.mid|fs:/ringers/champagne.mid \
+            clock.mid|fs:/ringers/clock.mid \
+            dance_craze.mid|fs:/ringers/dance_craze.mid \
+            green_line.mid|fs:/ringers/green_line.mid \
+            jumping.mid|fs:/ringers/jumping.mid \
+            lucky.mid|fs:/ringers/lucky.mid \
+            street_tale.mid|fs:/ringers/street_tale.mid \
+            techno_meto.mid|fs:/ringers/techno_meto.mid \
+            feeling_on.mp3|fs:/ringers/feeling_on.mp3 \
+            magic_tone.mp3|fs:/ringers/magic_tone.mp3 \
+            Old_Phone.mp3|fs:/ringers/Old_Phone.mp3 \
+            titanium.mp3|fs:/ringers/titanium.mp3 \
+            Tube_bells_on.mp3|fs:/ringers/Tube_bells_on.mp3 \
+            Bells.mp3|fs:/ringers/Bells.mp3  \
+            diamonds.mp3|fs:/ringers/diamonds.mp3  \
+            spanish_guitar.mp3|fs:/ringers/spanish_guitar.mp3  \
+            nokia_lumia_800.mp3|fs:/ringers/nokia_lumia_800.mp3 \
+            Very_Romantic_Piano.mp3|fs:/ringers/Very_Romantic_Piano.mp3   
+#Bells.mp3|fs:/ringers/Bells.mp3 
+#diamonds.mp3|fs:/ringers/diamonds.mp3  
+#spanish_guitar.mp3|fs:/ringers/spanish_guitar.mp3   
+#nokia_lumia_800.mp3|fs:/ringers/nokia_lumia_800.mp3 
+#Very_Romantic_Piano.mp3|fs:/ringers/Very_Romantic_Piano.mp3       
     else ifeq ($(USES_RESDIR),C117_M74)  
+
         CONSTFILE_FILES+=\
             blues.mid|fs:/ringers/blues.mid \
             blue_load.mid|fs:/ringers/blue_load.mid \
