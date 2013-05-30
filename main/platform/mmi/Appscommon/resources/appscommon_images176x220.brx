@@ -385,6 +385,9 @@
 	<Object Id="6056" Name="IDI_NUMBER_SUB" MimeType="image/png">
 		<File>..\images\176x220\common\CallApp\DialedNumber\-.png</File>
 	</Object>
+	<Object Id="6057" Name="IDI_NUMBER_W" MimeType="image/png">
+		<File>..\images\176x220\common\CallApp\DialedNumber\W.png</File>
+	</Object>
 	<Object Id="6201" Name="IDB_UTKMENU">
 		<File>..\images\176x220\common\UTK\utkmenu.bmp</File>
 	</Object>
@@ -571,6 +574,5 @@
 	<Object Id="7111" Name="IDB_BATT5_4">
 		<File>..\images\176x220\common\Annunciator\batt5_4.bmp</File>
 	</Object>
-	
 </Objects>
 </BREWRes>

@@ -323,16 +323,16 @@
 		<Text>载入中...</Text>
 	</String>
 	<String Id="1107" Name="IDS_MSG_SAVEPLAYLIST">
-		<Text>Add to playlist</Text>
+		<Text>添加到播放列表</Text>
 	</String>
 	<String Id="1108" Name="IDS_DEFAULTPLAYLISTNAME">
-		<Text>Default playlist</Text>
+		<Text>默认播放列表</Text>
 	</String>
 	<String Id="1109" Name="IDS_PLAYLIST_FULL">
-		<Text>Playlist full!</Text>
+		<Text>播放列表已满！</Text>
 	</String>
 	<String Id="1110" Name="IDS_ADD_SUCCESS">
-		<Text>Add music success</Text>
+		<Text>添加成功</Text>
 	</String>
 	<String Id="1111" Name="IDS_USB_CONNECTED">
 		<Text>v3 data card connected</Text>
@@ -344,10 +344,10 @@
 		<Text>v3 data card stopped</Text>
 	</STRING>
 	<STRING Id="1114" Name="IDS_MG_COPYING">
-		<Text>Copying</Text>
+		<Text>拷贝中</Text>
 	</STRING>
 	<STRING Id="1115" Name="IDS_MG_MOVEING">
-		<Text>Moveing</Text>
+		<Text>移动中</Text>
 	</STRING>
 	<String Id="1116" Name="IDS_MG_ANIMATE_CANNOTSET_WALLPAPER">
 		<Text>不能将动画设置为墙纸！</Text>

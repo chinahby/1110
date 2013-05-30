@@ -238,35 +238,35 @@
 #if defined(FEATURE_DISP_176X220)
     #define NUM_IMAGE_HIGHT               (30)
     #define NUM_IMAGE_WIDTH               (20)
-    #define REFUI_CALL_MAX_IMAGSIZE       (16)
+    #define REFUI_CALL_MAX_IMAGSIZE       (17)
 #elif defined(FEATURE_DISP_128X128)
 	#define NUM_IMAGE_HIGHT               (25)
     #define NUM_IMAGE_WIDTH               (20)
-    #define REFUI_CALL_MAX_IMAGSIZE       (16)
+    #define REFUI_CALL_MAX_IMAGSIZE       (17)
 #elif defined(FEATURE_DISP_160X128)
 	#define NUM_IMAGE_HIGHT               (25)
     #define NUM_IMAGE_WIDTH               (20)
-    #define REFUI_CALL_MAX_IMAGSIZE       (16)
+    #define REFUI_CALL_MAX_IMAGSIZE       (17)
 #elif defined(FEATURE_DISP_220X176)
 	#define NUM_IMAGE_HIGHT               (25)
     #define NUM_IMAGE_WIDTH               (20)
-    #define REFUI_CALL_MAX_IMAGSIZE       (16)	
+    #define REFUI_CALL_MAX_IMAGSIZE       (17)	
 #elif defined(FEATURE_DISP_128X160)
 	#define NUM_IMAGE_HIGHT               (25)
     #define NUM_IMAGE_WIDTH               (20)
-    #define REFUI_CALL_MAX_IMAGSIZE       (16)
+    #define REFUI_CALL_MAX_IMAGSIZE       (17)
 #elif defined(FEATURE_DISP_240X320)
 	#define NUM_IMAGE_HIGHT               (25)
     #define NUM_IMAGE_WIDTH               (20)
-    #define REFUI_CALL_MAX_IMAGSIZE       (16)	
+    #define REFUI_CALL_MAX_IMAGSIZE       (17)	
 #elif defined(FEATURE_DISP_320X240)
 	#define NUM_IMAGE_HIGHT               (25)
     #define NUM_IMAGE_WIDTH               (20)
-    #define REFUI_CALL_MAX_IMAGSIZE       (16)		
+    #define REFUI_CALL_MAX_IMAGSIZE       (17)		
 #else
     #define NUM_IMAGE_HIGHT               (25)
     #define NUM_IMAGE_WIDTH               (20)
-    #define REFUI_CALL_MAX_IMAGSIZE       (16)
+    #define REFUI_CALL_MAX_IMAGSIZE       (17)
 #endif
 #endif
 
@@ -750,6 +750,7 @@ typedef struct _CCallApp
 #if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202)  
        boolean                    m_isIncoming;
 #endif
+//   boolean            m_short_hit;
 } CCallApp;
 
 /*==============================================================================

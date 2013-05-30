@@ -568,6 +568,7 @@ boolean CallApp_RouteDialogEvent(CCallApp *pMe,
             return FALSE;
     }
 }
+
 /*==============================================================================
 函数：
        CallAppDialerDlgHandler
@@ -765,6 +766,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
             // 防止有来电时，POP menu还是active
             MSG_FATAL("EVT_DIALOG_END.....222....",0,0,0);
             pMe->m_bShowPopMenu = FALSE;
+			
             IMENUCTL_SetActive ( pMe->m_pMenu, FALSE );
             ISHELL_CancelTimer(pMe->m_pShell,
                                                     (PFNNOTIFY)CallApp_HandleDialogTimer_Redraw,
@@ -1945,6 +1947,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                         return TRUE;
                     }
 
+					
                     szStr[0] = CallApp_AVKType2ASCII((AVKType)wParam);
 					if(pMe->m_bShift && (wParam == AVK_1))
 					{
@@ -1976,13 +1979,11 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                     }
                     else
 				#else
-					#ifndef  FEATURE_VERSION_K202
 					if((AVKType)wParam == AVK_STAR)
                     {
                         CallApp_Process_Spec_Key_Event(pMe,wParam);
                     }
                     else
-					#endif
 				#endif
                     {
                         int    len;
@@ -4120,6 +4121,8 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
                     {
                         return TRUE;
                     }
+
+					
 
                     digit[0] = CallApp_AVKType2ASCII((AVKType) wParam);
                     digit[1] = '\0';
@@ -12133,7 +12136,18 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
 			
 			{
 				AECHAR wstrTemp[MAX_SIZE_DIALER_TEXT] = {0};
-
+				#ifdef FEATURE_VERSION_K202
+				if (pMe->m_nCursorPos == 0)
+				{
+	                (void)WSTRCPY(&pMe->m_DialString[len-pMe->m_nCursorPos-1], L"0");	               
+				}
+				else
+				{
+					(void)WSTRCPY(wstrTemp, &pMe->m_DialString[len-pMe->m_nCursorPos]);
+	                (void)WSTRCPY(&pMe->m_DialString[len-pMe->m_nCursorPos-1], L"0");
+	                (void)WSTRCPY(&pMe->m_DialString[len-pMe->m_nCursorPos], wstrTemp);
+				}
+				#else
 				if (pMe->m_nCursorPos == 0)
 				{
 	                (void)WSTRCPY(&pMe->m_DialString[len-pMe->m_nCursorPos-1], L"+");	               
@@ -12143,7 +12157,8 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
 					(void)WSTRCPY(wstrTemp, &pMe->m_DialString[len-pMe->m_nCursorPos]);
 	                (void)WSTRCPY(&pMe->m_DialString[len-pMe->m_nCursorPos-1], L"+");
 	                (void)WSTRCPY(&pMe->m_DialString[len-pMe->m_nCursorPos], wstrTemp);
-				}								
+				}		
+				#endif
 
 				(void) ISHELL_PostEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_USER_REDRAW,0,0);				
 
@@ -12375,7 +12390,7 @@ if(wp == AVK_POUND)
 
 if(wp == AVK_STAR)
     {
-    #ifdef FEATURE_ALL_KEY_PAD
+    #if 1  //def FEATURE_ALL_KEY_PAD
        {
        		AECHAR szStr;
        		int len=0;
@@ -12398,12 +12413,12 @@ if(wp == AVK_STAR)
 					if(pMe->m_curpros == 1)
 					{
 						//return L'p';
-						WSTRCPY(&pMe->m_DialString[len-1], L"p");
+						WSTRCPY(&pMe->m_DialString[len-1], L"P");
 					}
 					if(pMe->m_curpros == 2)
 					{
 						//return L'W';
-						WSTRCPY(&pMe->m_DialString[len-1], L"w");
+						WSTRCPY(&pMe->m_DialString[len-1], L"W");
 					}
 					if(pMe->m_curpros == 3)
 					{
@@ -12426,13 +12441,13 @@ if(wp == AVK_STAR)
 					{
 						//return L'p';
 						//WSTRCPY(&pMe->m_DialString[len-1], L"p");
-						pMe->m_DialString[len-pMe->m_nCursorPos-1] = L'p';
+						pMe->m_DialString[len-pMe->m_nCursorPos-1] = L'P';
 					}
 					if(pMe->m_curpros == 2)
 					{
 						//return L'W';
 						//WSTRCPY(&pMe->m_DialString[len-1], L"w");
-						pMe->m_DialString[len-pMe->m_nCursorPos-1] = L'w';
+						pMe->m_DialString[len-pMe->m_nCursorPos-1] = L'W';
 					}
 					if(pMe->m_curpros == 3)
 					{
@@ -12468,10 +12483,8 @@ if(wp == AVK_STAR)
         	{
         		pMe->m_curpros = 0;
         	}
-			#ifndef FEATURE_VERSION_K202 
         	pMe->b_multenter = TRUE;
         	AEE_SetTimer(1000,CallApp_keypadtimer,pMe);
-			#endif
         }
         #else
         if((pMe->m_btime_out % MAX_COUNT_TO_CHANGE ) == 0)//need change
@@ -13073,10 +13086,14 @@ static void CallApp_Draw_Numer_Img(CCallApp   *pMe,  AECHAR const *dialStr)
             case '+':
                 mm = 14;
                 break;
+				
             case '-':
                 mm = 15;
                 break;
-
+				
+			case 'W':
+				mm = 16;
+                break;
             default:
                 b_found = FALSE;
                 break;

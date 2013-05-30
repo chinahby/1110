@@ -771,6 +771,94 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
+
+				case AVK_VOLUME_UP:
+					{
+						IImage* image	= NULL;
+						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+						MSG_FATAL("AVK_ENDCALL..............19............",0,0,0);
+						if( image != NULL)
+						{
+#if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
+                            IIMAGE_SetDrawSize(image,14, 16);
+                            IIMAGE_Draw(image, 57, 0);
+#elif defined(FEATURE_DISP_176X220)
+                            IIMAGE_SetDrawSize(image,20, 26);
+                            IIMAGE_Draw(image, 97, 0);       
+#elif defined(FEATURE_DISP_128X160)
+							IIMAGE_SetDrawSize(image,14, 20);
+                            IIMAGE_Draw(image, 57, 0);
+#elif defined(FEATURE_DISP_240X320)
+							IIMAGE_Draw(image, 120, 118);
+							IIMAGE_Draw(image, 80, 118);
+
+#else
+#ifndef FEATURE_VERSION_HITZ181
+							if((uint32)dwParam == 1)
+							{
+#ifdef FEATURE_NUM_KEY_MID
+                                IIMAGE_Draw(image, TITLEBAR_HEIGHT*2, FIVE_LINE);
+#else
+								IIMAGE_Draw(image, TITLEBAR_HEIGHT*3, FIVE_LINE);
+#endif
+							}
+							else
+#endif
+							{
+								IIMAGE_Draw(image, THRID_LINE, 0);
+								IIMAGE_Draw(image, FOUR_LINE, 0);
+							}
+#endif						
+                            pMe->m_testkeycount ++;
+						}
+						IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+						IIMAGE_Release( image);
+					}
+					break;
+					
+				case AVK_VOLUME_DOWN:
+					{
+						IImage* image	= NULL;
+						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+						MSG_FATAL("AVK_ENDCALL..............19............",0,0,0);
+						if( image != NULL)
+						{
+#if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
+                            IIMAGE_SetDrawSize(image,14, 16);
+                            IIMAGE_Draw(image, 57, 0);
+#elif defined(FEATURE_DISP_176X220)
+                            IIMAGE_SetDrawSize(image,20, 26);
+                            IIMAGE_Draw(image, 97, 57);       
+#elif defined(FEATURE_DISP_128X160)
+							IIMAGE_SetDrawSize(image,14, 20);
+                            IIMAGE_Draw(image, 57, 0);
+#elif defined(FEATURE_DISP_240X320)
+							IIMAGE_Draw(image, 120, 118);
+							IIMAGE_Draw(image, 80, 118);
+
+#else
+#ifndef FEATURE_VERSION_HITZ181
+							if((uint32)dwParam == 1)
+							{
+#ifdef FEATURE_NUM_KEY_MID
+                                IIMAGE_Draw(image, TITLEBAR_HEIGHT*2, FIVE_LINE);
+#else
+								IIMAGE_Draw(image, TITLEBAR_HEIGHT*3, FIVE_LINE);
+#endif
+							}
+							else
+#endif
+							{
+								IIMAGE_Draw(image, THRID_LINE, 0);
+								IIMAGE_Draw(image, FOUR_LINE, 0);
+							}
+#endif						
+                            pMe->m_testkeycount ++;
+						}
+						IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+						IIMAGE_Release( image);
+					}
+					break;
 #ifdef FEATURE_NUM_KEY_MID
                 case AVK_1:
 #else

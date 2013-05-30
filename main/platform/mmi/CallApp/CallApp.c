@@ -843,6 +843,7 @@ static int CallApp_InitAppData(CCallApp *pMe)
     pMe->m_nToneCount = 0;
     pMe->m_bShowPopMenu = FALSE;
     pMe->m_toneData = NULL;
+	//pMe->m_short_hit = FALSE;
     pMe->Ispwpass=FALSE;
 #ifdef FEATURE_EDITABLE_NUMBER
     pMe->m_nCursorPos = 0;
