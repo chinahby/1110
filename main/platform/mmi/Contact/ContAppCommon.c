@@ -93,6 +93,9 @@ int CContApp_LoadSingleStoreCont(CContApp           *pMe,
     }
     
     IVector_RemoveAllElements(pMe->m_pAddList);
+
+    MSG_FATAL("***zzg CContApp_LoadSingleStoreCont***", 0, 0, 0);
+    
 #ifdef FEATURE_RUIM_PHONEBOOK
     if (store == ADDR_STORE_RUIM)
     {
@@ -175,6 +178,8 @@ int CContApp_EnumContInit(CContApp *pMe, uint32 nContIdx)
     ASSERT(pMe != NULL); 
     
     FARF(ADDR, ("Enum Cont info init"));
+
+    MSG_FATAL("***zzg CContApp_EnumContInit size=%d***", IVector_Size(pMe->m_pAddList), 0, 0);
     
     if (IVector_Size(pMe->m_pAddList) <= MAX_NUM_MENUPOP)
     {
@@ -2952,6 +2957,9 @@ int CContApp_FilterSmartItems(CContApp *pMe, AECHAR *pStr)
     FREEIF(pMe->m_pSmartFindBuf);
     pMe->m_pSmartBufLen = 0;
     nListItems = IVector_Size(pMe->m_pAddList);
+
+    MSG_FATAL("***zzg CContApp_FilterSmartItems nListItems=%d***", nListItems, 0, 0);
+    
     pMe->m_pSmartFindBuf = MALLOC(nListItems*sizeof(uint32));
     if(pMe->m_pSmartFindBuf == NULL)
     {
@@ -6043,6 +6051,135 @@ int CContApp_GetPrimaryNumFld(CContApp *pMe)
 ==============================================================================*/
 Numbermatch_e_Type ContApp_NumberMatch(const AECHAR * wstrNum1, const AECHAR * wstrNum2, int *pMatchChars)
 {
+
+#ifdef FEATURE_VERSION_C337
+    int nLen1, nLen2;
+    AECHAR wstrNum1cmpbuff[MAX_INPUT_NUM + 1] = {(AECHAR)'\0'};
+    AECHAR wstrNum2cmpbuff[MAX_INPUT_NUM + 1] = {(AECHAR)'\0'};
+
+    AECHAR wstrNum1cmpbuffex[MATCH_DIGITS_MAX + 1] = {(AECHAR)'\0'};
+    AECHAR wstrNum2cmpbuffex[MATCH_DIGITS_MAX + 1] = {(AECHAR)'\0'};
+    
+    AECHAR *pwstr1 = NULL;
+    AECHAR *pwstr2 = NULL;
+    Numbermatch_e_Type eRet = NUMBERMATCH_IRRELEVANCE;
+    
+    if (((NULL == wstrNum1)||(WSTRLEN(wstrNum1) > MAX_INPUT_NUM))\
+        || ((NULL == wstrNum2)||(WSTRLEN(wstrNum2) > MAX_INPUT_NUM)))
+    {
+        return eRet;
+    }
+
+    (void)WSTRCPY(wstrNum1cmpbuff, wstrNum1);
+    (void)WSTRCPY(wstrNum2cmpbuff, wstrNum2);
+    (void)ContApp_ChangePhoneNumberForNameCompare(wstrNum1cmpbuff);
+    (void)ContApp_ChangePhoneNumberForNameCompare(wstrNum2cmpbuff);
+    
+    nLen1 = WSTRLEN(wstrNum1cmpbuff);
+    nLen2 = WSTRLEN(wstrNum2cmpbuff);
+	//add by miaoxiaoming
+	if (nLen1 == 0||nLen2==0)
+	{
+		return eRet;
+	}
+      
+    if (((nLen1 < MATCH_DIGITS_MIN) || (nLen2 < MATCH_DIGITS_MIN)) &&
+        (nLen1 != nLen2))
+    {// 比较号码长度不等，要求两者长度均不低于设定比较门限长度
+        return eRet;
+    }
+
+    if ((nLen1 > MATCH_DIGITS_MAX) && (nLen2 > MATCH_DIGITS_MAX))
+    {
+        (void)WSTRCPY(wstrNum1cmpbuffex, wstrNum1+(nLen1-(MATCH_DIGITS_MAX+1)));
+        (void)WSTRCPY(wstrNum2cmpbuffex, wstrNum2+(nLen2-(MATCH_DIGITS_MAX+1)));
+        
+        if (0 == WSTRCMP(wstrNum1cmpbuffex, wstrNum2cmpbuffex))
+        {// 号码匹配成功
+            if (NULL != pMatchChars)
+            {
+                *pMatchChars = MATCH_DIGITS_MAX;
+            }
+            eRet = NUMBERMATCH_EQUAL;
+        }
+    } 
+    else
+    {
+        if (nLen1 == nLen2)
+        {// 比较号码长度相等，要求数字全匹配
+            if (0 == WSTRCMP(wstrNum1cmpbuff, wstrNum2cmpbuff))
+            {// 号码匹配成功
+                if (NULL != pMatchChars)
+                {
+                    *pMatchChars = nLen1;
+                }
+                eRet = NUMBERMATCH_EQUAL;
+            }
+        }
+        else if (nLen1>nLen2)
+        {
+            pwstr1 = (AECHAR *)wstrNum2cmpbuff;
+            pwstr2 = (AECHAR *)&(wstrNum1cmpbuff[nLen1-nLen2]);
+#if defined FEATURE_CARRIER_MAROC_WANA
+            if ((WSTRNCMP(wstrNum1cmpbuff, L"00212", 5) == 0)&&(WSTRNCMP(wstrNum2cmpbuff, L"0", 1) == 0))
+            {
+                pwstr1 = (AECHAR *)&wstrNum2cmpbuff[1];
+                pwstr2 = (AECHAR *)&(wstrNum1cmpbuff[nLen1-nLen2+1]);
+            }
+#elif defined FEATURE_CARRIER_TAIWAN_APBW
+            if ((WSTRNCMP(wstrNum1cmpbuff, L"886", 3) == 0)&&(WSTRNCMP(wstrNum2cmpbuff, L"0", 1) == 0))
+            {
+                pwstr1 = (AECHAR *)&wstrNum2cmpbuff[1];
+                pwstr2 = (AECHAR *)&(wstrNum1cmpbuff[nLen1-nLen2+1]);
+            }
+#else
+#endif
+            if (0 == WSTRCMP(pwstr1, pwstr2))
+            {// 号码匹配成功
+                if (NULL != pMatchChars)
+                {
+                    *pMatchChars = nLen2;
+                }
+                
+                eRet = NUMBERMATCH_WSTR2_ISTAIL_OF_WSTR1;
+            }
+        }
+        else
+        {
+            pwstr1 = (AECHAR *)wstrNum1cmpbuff;
+            pwstr2 = (AECHAR *)&wstrNum2cmpbuff[nLen2-nLen1];
+#if defined FEATURE_CARRIER_MAROC_WANA
+             if ((WSTRNCMP(wstrNum2cmpbuff, L"00212", 5) == 0)&&(WSTRNCMP(wstrNum1cmpbuff, L"0", 1) == 0))
+             {
+                 pwstr1 = (AECHAR *)&wstrNum1cmpbuff[1];
+                 pwstr2 = (AECHAR *)&(wstrNum2cmpbuff[nLen2-nLen1+1]);
+             }
+#elif defined FEATURE_CARRIER_CHINA_TELCOM
+             if ((WSTRNCMP(wstrNum2cmpbuff, L"00", 2) == 0)&&(WSTRNCMP(wstrNum1cmpbuff, L"+", 1) == 0))
+             {
+                 pwstr1 = (AECHAR *)&wstrNum1cmpbuff[1];
+                 pwstr2 = (AECHAR *)&(wstrNum2cmpbuff[nLen2-nLen1+1]);
+             }
+#elif ((defined(FEATURE_CARRIER_THAILAND_HUTCH))&&(!(defined(FEATURE_CARRIER_THAILAND_CAT_FACE))))
+             if ((WSTRNCMP(wstrNum2cmpbuff, L"001", 3) == 0)&&(WSTRNCMP(wstrNum1cmpbuff, L"+", 1) == 0))
+             {
+                 pwstr1 = (AECHAR *)&wstrNum1cmpbuff[1];
+                 pwstr2 = (AECHAR *)&(wstrNum2cmpbuff[nLen2-nLen1+1]);
+             }
+#else
+#endif
+            if (0 == WSTRCMP(pwstr1, pwstr2))
+            {// 号码匹配成功
+                if (NULL != pMatchChars)
+                {
+                    *pMatchChars = nLen1;
+                }
+                
+                eRet = NUMBERMATCH_WSTR1_ISTAIL_OF_WSTR2;
+            }
+        }
+    }
+#else
     int nLen1, nLen2;
     AECHAR wstrNum1cmpbuff[MAX_INPUT_NUM + 1] = {(AECHAR)'\0'};
     AECHAR wstrNum2cmpbuff[MAX_INPUT_NUM + 1] = {(AECHAR)'\0'};
@@ -6148,6 +6285,7 @@ Numbermatch_e_Type ContApp_NumberMatch(const AECHAR * wstrNum1, const AECHAR * w
             eRet = NUMBERMATCH_WSTR1_ISTAIL_OF_WSTR2;
         }
     }
+#endif    
     
     return eRet;
 } // ContApp_NumberMatch
@@ -7000,6 +7138,8 @@ void CContApp_DrawScrollBar(CContApp * pMe, IMenuCtl   *pMenuCtl)
 {
     if(pMe == NULL || pMenuCtl == NULL)
         return ;
+
+    MSG_FATAL("***zzg CContApp_DrawScrollBar size=%d***", IVector_Size(pMe->m_pAddList), 0, 0);
     
     if((IVector_Size(pMe->m_pAddList) > MAX_NUM_MENUPOP && NULL == pMe->m_szAlpha) || (pMe->m_pSmartBufLen > MAX_NUM_MENUPOP && NULL != pMe->m_szAlpha) )
     {

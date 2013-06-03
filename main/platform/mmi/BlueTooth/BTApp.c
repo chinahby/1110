@@ -6675,6 +6675,24 @@ static void BTApp_HandleEventDevRedial( CBTApp* pMe )
           break;
         }        
       }
+
+      if (bFound == FALSE)
+      {
+          for ( i = 0; i < pCallHistoryEntry->wNumFields; i++ )
+          {
+            if ( pItems[i].wID == AEECALLHISTORY_FIELD_NUMBER )
+            {
+              bFound = TRUE;
+
+              MSG_FATAL("***zzg BTApp_HandleEventDevRedial AEECALLHISTORY_FIELD_NUMBER***", 0, 0, 0 );
+              
+              MEMCPY( wString, pItems[i].pData, 
+                      MIN(ARR_SIZE(wString)*sizeof(AECHAR), pItems[i].wDataLen) );
+              break;
+            }        
+           }
+       }
+      
       MSG_FATAL("***zzg BTApp_HandleEventDevRedial bFound=%x***", bFound, 0, 0 );
       
       if ( bFound != FALSE )

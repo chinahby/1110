@@ -51,6 +51,8 @@
 #define MATCH_DIGITS_MIN    5
 #endif
 
+#define MATCH_DIGITS_MAX    8   //Add By zzg 2013_02_22  ∫Û8Œª∆•≈‰
+
 #define PARAM_SPEED_DIAL				 999		//Add By zzg 2012_10_31
 
 

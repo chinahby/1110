@@ -2073,7 +2073,7 @@ static boolean  HandleAlarmTimeReachDialogEvent(CClockApps *pMe,
         }
         
         case EVT_KEY:
-        {
+        {       
             alarm_shake_close();       
             //打开翻盖不关闭闹钟,因为要显示提示信息;充电器插拔也不关闭闹钟
             switch(wParam)
@@ -2085,6 +2085,25 @@ static boolean  HandleAlarmTimeReachDialogEvent(CClockApps *pMe,
                     ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)CClockApps_Snooze, pMe);
                     CClockApps_DeActivate( pMe);
 #endif
+
+#ifdef FEATURE_VERSION_C337
+#ifdef FEATURE_ONCE_ALARM  
+                    if (pMe->m_ClockCfg.RepMode[pMe->m_eCurAlarmType] == WEEK_ALARM_REP11)
+                    {
+                        pMe->m_ClockCfg.bStateOn[pMe->m_eCurAlarmType] = FALSE; 
+        
+                            //存储闹钟首选项的数据结构
+                        (void) ISHELL_SetPrefs(pMe->m_pShell,
+                                               AEECLSID_ALARMCLOCK,
+                                               CLOCK_CFG_VERSION,
+                                               &pMe->m_ClockCfg,
+                                               sizeof(ClockAppCfg));
+                        MSG_FATAL("CClockApps_UpdateAlarmTimer----pMe->m_eCurAlarmType=%d",pMe->m_eCurAlarmType,0,0);
+                        CClockApps_UpdateAlarmTimer(pMe, pMe->m_eCurAlarmType);
+                    }
+#endif 
+#endif
+
                     return TRUE;
                 }
                 default:
@@ -2095,7 +2114,7 @@ static boolean  HandleAlarmTimeReachDialogEvent(CClockApps *pMe,
                     return TRUE;
                 }
                 
-            }
+            }           
             return TRUE;
         }
 

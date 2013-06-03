@@ -170,6 +170,12 @@ when       who     what, where, why
 #include "ui_base.h"
 #include "uiutils.h"
 
+#include "AEEConfig.h"
+//#include "OEMTSGBridge.h"
+//#include "uiutils.h"
+#include "OEMNV.h"
+
+
 //lint -save -e785
 //lint -save -e528
 /* <EJECT> */
@@ -2694,6 +2700,7 @@ void uisnd_vibrate(uint16 wDuration,
        snd_cb_func_ptr_type callback_ptr,
        const void *client_data)
 {
+	  nv_item_type	SimChoice;
  /* #ifndef FEATURE_VERSION_C306   //add by yangdecai 20110312
   uisnd_vibrate_cmd(TRUE);
   clk_reg( &uisnd_vibrator_clk,
@@ -2715,15 +2722,40 @@ void uisnd_vibrate(uint16 wDuration,
 #else
 #if  defined FEATURE_VERSION_C337
 MSG_FATAL("***zzg uisnd_vibrate FEATURE_VERSION_C337***",0,0,0);
+/*
+				//NV_REPEATED_ACCH_I
+				//NV_EDGE_1900_LINEAR_TX_GAIN_PARAM_I
+				//NV_SIM_SELECT_I
+				OEMNV_Get(NV_REPEATED_ACCH_I,&SimChoice);
+				//edge_1900_linear_tx_gain_param
+				//sim_select
+				//repeated_acch
+				if(SimChoice.repeated_acch>100)
+				{
 snd_freq_tone_start(SND_DEVICE_CURRENT,
 				   SND_METHOD_RING,
-				   180,
-				   180,
+				   SimChoice.repeated_acch,
+				   SimChoice.repeated_acch,
 				   (uint16)(1000),
 				   (snd_apath_type)(SND_APATH_LOCAL),
 				   callback_ptr,
 				   client_data
 				  );
+				}
+				else
+					*/
+				{
+snd_freq_tone_start(SND_DEVICE_CURRENT,
+				   SND_METHOD_RING,
+				   188,
+				   188,
+				   (uint16)(1000),
+				   (snd_apath_type)(SND_APATH_LOCAL),
+				   callback_ptr,
+				   client_data
+				  );
+
+				}
 
 #else
   snd_freq_tone_start(SND_DEVICE_CURRENT,
