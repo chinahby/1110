@@ -136,6 +136,8 @@ static boolean              gbNameSearch;     // Flag to indicate if its a name-
 #if !defined(FEATURE_PEKTEST)
 #if defined(FEATURE_VERSION_1110W516)||defined(FEATURE_VERSION_C337)
 #define OEMPHONEBOOK_CAPACITY  1000 
+#elif defined(FEATURE_VERSION_K202)
+#define OEMPHONEBOOK_CAPACITY  300 
 #else
 #define OEMPHONEBOOK_CAPACITY  500 
 #endif

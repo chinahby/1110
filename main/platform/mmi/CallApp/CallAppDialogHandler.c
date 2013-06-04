@@ -9116,7 +9116,7 @@ boolean CallApp_AnswerCall(CCallApp  *pMe, boolean bAnswerHold,AEEEvent eCode,ui
 		 if((((wParam == AVK_SEND|| wParam == AVK_CAMERA) && (pMe->m_anykey_answer & 0x4))
         ||(eCode == EVT_FLIP && ((boolean)wParam == TRUE)  && (pMe->m_anykey_answer & 0x2))
         ||(((wParam == AVK_USER_HEADSET) || (wParam == AVK_SEND )|| (wParam == AVK_CAMERA) || (wParam == AVK_MUSIC)) && (pMe->m_anykey_answer & 0x8))
-        ||(((((AVK_FIRST < wParam && wParam <AVK_POWER ) ||(wParam == AVK_INFO)||(wParam == AVK_SHIFT)||
+        ||(((((AVK_FIRST < wParam && wParam <AVK_POWER ) ||(wParam == AVK_INFO)||(wParam == AVK_SHIFT)||(wParam == AVK_VOLUME_UP)||(wParam == AVK_VOLUME_DOWN)||
         	   (wParam == AVK_ENTER)||(wParam == AVK_CAPLK)||(wParam == AVK_SYMBOL)||
         	   (wParam == AVK_RWD)||(wParam == AVK_LCTRL)||(wParam == AVK_SPACE)||
         	   (AVK_A <= wParam && wParam <= AVK_Z) ||(AVK_CLR < wParam && wParam <AVK_SOFT1 ))
@@ -9193,7 +9193,7 @@ boolean CallApp_AnswerCall(CCallApp  *pMe, boolean bAnswerHold,AEEEvent eCode,ui
     if((((wParam == AVK_SEND/*|| wParam == AVK_CAMERA*/) && (pMe->m_anykey_answer & 0x4))
         ||(eCode == EVT_FLIP && ((boolean)wParam == TRUE)  && (pMe->m_anykey_answer & 0x2))
         ||(((wParam == AVK_USER_HEADSET) || (wParam == AVK_SEND )/*|| (wParam == AVK_CAMERA) || (wParam == AVK_MUSIC)*/) && (pMe->m_anykey_answer & 0x8))
-        ||(((((AVK_FIRST < wParam && wParam <AVK_POWER ) ||(wParam == AVK_INFO)||(wParam == AVK_SHIFT)||
+        ||(((((AVK_FIRST < wParam && wParam <AVK_POWER ) ||(wParam == AVK_INFO)||(wParam == AVK_SHIFT)||(wParam == AVK_VOLUME_UP)||(wParam == AVK_VOLUME_DOWN)||
         	   (wParam == AVK_ENTER)||(wParam == AVK_CAPLK)||(wParam == AVK_SYMBOL)||
         	   (wParam == AVK_RWD)||(wParam == AVK_LCTRL)||(wParam == AVK_SPACE)||
         	   (AVK_A <= wParam && wParam <= AVK_Z) ||(AVK_CLR < wParam && wParam <AVK_SOFT1 ))
@@ -12413,12 +12413,12 @@ if(wp == AVK_STAR)
 					if(pMe->m_curpros == 1)
 					{
 						//return L'p';
-						WSTRCPY(&pMe->m_DialString[len-1], L"P");
+						WSTRCPY(&pMe->m_DialString[len-1], L"p");
 					}
 					if(pMe->m_curpros == 2)
 					{
 						//return L'W';
-						WSTRCPY(&pMe->m_DialString[len-1], L"W");
+						WSTRCPY(&pMe->m_DialString[len-1], L"w");
 					}
 					if(pMe->m_curpros == 3)
 					{
@@ -12441,13 +12441,13 @@ if(wp == AVK_STAR)
 					{
 						//return L'p';
 						//WSTRCPY(&pMe->m_DialString[len-1], L"p");
-						pMe->m_DialString[len-pMe->m_nCursorPos-1] = L'P';
+						pMe->m_DialString[len-pMe->m_nCursorPos-1] = L'p';
 					}
 					if(pMe->m_curpros == 2)
 					{
 						//return L'W';
 						//WSTRCPY(&pMe->m_DialString[len-1], L"w");
-						pMe->m_DialString[len-pMe->m_nCursorPos-1] = L'W';
+						pMe->m_DialString[len-pMe->m_nCursorPos-1] = L'w';
 					}
 					if(pMe->m_curpros == 3)
 					{
@@ -13075,7 +13075,7 @@ static void CallApp_Draw_Numer_Img(CCallApp   *pMe,  AECHAR const *dialStr)
                 mm = 11;
                 break;
 
-            case 'P':
+            case 'p':
                 mm = 12;
                 break;
 
@@ -13091,7 +13091,7 @@ static void CallApp_Draw_Numer_Img(CCallApp   *pMe,  AECHAR const *dialStr)
                 mm = 15;
                 break;
 				
-			case 'W':
+			case 'w':
 				mm = 16;
                 break;
             default:
