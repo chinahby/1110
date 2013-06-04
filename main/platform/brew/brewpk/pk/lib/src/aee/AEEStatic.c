@@ -1538,6 +1538,11 @@ static void AStatic_RedrawText(AStatic * pme)
 			AEEBitmapInfo  bi;
 
 			pFrame = ISHELL_LoadResBitmap(pme->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_PROMPT_MSG_STATIC_BG);
+            
+#ifdef FEATURE_VERSION_C260_IC18
+            rc.x += 5;
+            rc.y += 6;
+#endif
 
 			if (pFrame != NULL) 
 			{
@@ -1550,6 +1555,10 @@ static void AStatic_RedrawText(AStatic * pme)
 				IBITMAP_Release(pFrame);
 				pFrame = NULL;
 		 	}
+#ifdef FEATURE_VERSION_C260_IC18
+            rc.x -= 5;
+            rc.y -= 6;
+#endif            
 			IDISPLAY_Update(pd);
 		 }
 		 //Add End

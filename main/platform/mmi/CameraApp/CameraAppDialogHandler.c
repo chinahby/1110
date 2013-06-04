@@ -4173,7 +4173,11 @@ static void CameraApp_SetPopMenuRect(CCameraApp *pMe, IMenuCtl* popMenu, int men
         #ifdef FEATURE_VERSION_K202
         dy = menuItemSum*(pMe->m_nItemH+6);
 		#else
+        #ifdef FEATURE_VERSION_C260_IC18
+        dy = menuItemSum*(pMe->m_nItemH);
+        #else
 		dy = menuItemSum*(pMe->m_nItemH+2);
+        #endif
 		#endif
     }
     else
@@ -4182,7 +4186,11 @@ static void CameraApp_SetPopMenuRect(CCameraApp *pMe, IMenuCtl* popMenu, int men
         #ifdef FEATURE_VERSION_K202
         dy = 4*(pMe->m_nItemH+6);
 		#else
+        #ifdef FEATURE_VERSION_C260_IC18
+        dy = 4*(pMe->m_nItemH);
+        #else
 		dy = 4*(pMe->m_nItemH+2);
+        #endif
 		#endif
     }
 

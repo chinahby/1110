@@ -4807,7 +4807,7 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
             if (IS_PROP_SET( pme->m_dwProps, MP_ICON_ANIMATED))
             {
             
-#if defined (FEATURE_DISP_176X220)
+#if defined (FEATURE_DISP_176X220) || defined (FEATURE_DISP_128X160)
                 switch(pme->theDrawnItem)
                 {
                     case 1:
