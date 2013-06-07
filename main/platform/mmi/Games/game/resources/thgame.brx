@@ -10,8 +10,8 @@
 	<STRING Id="1012" Name="IDS_GAME_TITLE_2">
 		<Text>อิฐโจมตี</Text>
 	</STRING>
-	<STRING Id="1013" Name="IDS_GAME_TITLE_3">
-		<Text>Tetris</Text>
+	<STRING Id="1016" Name="IDS_GAME_TITLE_TETRIS">
+		<Text>เททริส</Text>
 	</STRING>
 </Strings>
 <Dialogs>

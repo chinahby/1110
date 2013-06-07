@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="game" VERSION="1">
+<BREWRes Name="myagame" VERSION="1">
 <Strings Encoding="UNICODE">
 	<String Id="1001" Name="IDS_GAME_LIST">
 		<Text></Text>
@@ -13,6 +13,9 @@
 	<STRING Id="1013" Name="IDS_GAME_TITLE_3">
 		<Text></Text>
 	</STRING>
+	<String Id="1016" Name="IDS_GAME_TITLE_TETRIS" Encoding="ISOLATIN1">
+		<Text>Tetris</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<Dialog Id="6003" Name="IDD_LIST_GAME" Focus="7001">
