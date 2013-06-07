@@ -41,7 +41,11 @@ AUTHOR: whewei
 #define MAX_LEVEL        3              // Max number of levels supported
 #define NEXT_MAX_YNUM    2              // Max number of blocks in vertical direction 
 #define NEXT_MAX_XNUM    4              // Max number of blocks in horizontal direction 
+#if defined(FEATURE_DISP_128X160)
+#define NEXT_BLOCK_SIZE  9              // Size of the next block 
+#else
 #define NEXT_BLOCK_SIZE  11              // Size of the next block 
+#endif
 #define MAX_REM_LINES    4              // Max number of lines deleted once
 #define MAX_FLASH_TIMES  3              // Max flash times when delete a full line
 #define MAX_BLOCK_KIND   7              // Max number of types supported

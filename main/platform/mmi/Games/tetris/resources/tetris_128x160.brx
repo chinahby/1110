@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="tetris" VERSION="1">
+<Strings Encoding="ISOLATIN1">
+	<STRING Id="1" Name="IDS_TETRIS_TITLE">
+		<Text>Tetris</Text>
+	</STRING>
+	<STRING Id="2" Name="IDS_TETRIS_START">
+		<Text>play</Text>
+	</STRING>
+	<STRING Id="3" Name="IDS_TETRIS_CONTINUE">
+		<Text>Continue</Text>
+	</STRING>
+	<STRING Id="4" Name="IDS_TETRIS_LEVEL">
+		<Text>Level</Text>
+	</STRING>
+	<STRING Id="5" Name="IDS_TETRIS_SCORE">
+		<Text>Score</Text>
+	</STRING>
+	<STRING Id="6" Name="IDS_TETRIS_HELP">
+		<Text>Help</Text>
+	</STRING>
+	<STRING Id="7" Name="IDS_TETRIS_SPEED">
+		<Text>Speed ​​selection</Text>
+	</STRING>
+	<STRING Id="8" Name="IDS_TETRIS_SOUND">
+		<Text>Sound Settings</Text>
+	</STRING>
+	<STRING Id="9" Name="IDS_TETRIS_GRID">
+		<Text>Net Settings</Text>
+	</STRING>
+	<STRING Id="21" Name="IDS_TETRIS_LEVEL_1">
+		<Text>Easy</Text>
+	</STRING>
+	<STRING Id="22" Name="IDS_TETRIS_LEVEL_2">
+		<Text>More difficult</Text>
+	</STRING>
+	<STRING Id="23" Name="IDS_TETRIS_LEVEL_3">
+		<Text>Difficult</Text>
+	</STRING>
+	<STRING Id="24" Name="IDS_YES">
+		<Text>Yes</Text>
+	</STRING>
+	<STRING Id="25" Name="IDS_NO">
+		<Text>No</Text>
+	</STRING>
+	<STRING Id="26" Name="IDS_GRID_ON">
+		<Text>On</Text>
+	</STRING>
+	<STRING Id="27" Name="IDS_GRID_OFF">
+		<Text>Off</Text>
+	</STRING>
+	<STRING Id="31" Name="IDS_TETRIS_OK">
+		<Text>OK</Text>
+	</STRING>
+	<STRING Id="32" Name="IDS_CLEAR">
+		<Text>Del</Text>
+	</STRING>
+	<STRING Id="33" Name="IDS_CHOOSE">
+		<Text>Option</Text>
+	</STRING>
+	<STRING Id="34" Name="IDS_RETURN">
+		<Text>Back</Text>
+	</STRING>
+	<STRING Id="35" Name="IDS_GAME_PAUSE">
+		<Text>Pause</Text>
+	</STRING>
+	<STRING Id="36" Name="IDS_GAME_CONTINUE">
+		<Text>Continue</Text>
+	</STRING>
+	<STRING Id="37" Name="IDS_GAME_EXIT">
+		<Text>Exits</Text>
+	</STRING>
+	<STRING Id="41" Name="IDS_THELP_CONTENT">
+		<Text>   1, the rules of the game: A total of seven different box shapes, different colors were used to represent. Easy to set up the game more difficult, very difficult three difficulty, each corresponding to a different degree of difficulty falling speed; easy to level the initial velocity is zero; score of 500 each, speed, plus 1; speed of 8 or 16, you can choose into the next difficulty. \ 2, instructions: via button or use the stylus to move or rotate the box. \ Key, press the "*" key to pause or continue the game, press the up arrow key or the middle to rotate the box, press the left and right arrow keys, respectively, to achieve the left, move to the right, under the direction keys to achieve acceleration, the box directly in the end. \ Use the stylus, the points achieved in the current box at the top spin, just below the box directly in the end, left to achieve the left, the right to achieve the right. \ 3, the sound settings: add sound support the game, will play in a particular case corresponding to the sound. Can choose to turn sound on or off. \ 4, grid settings: in the main game display area in the grid, you can clear the location box. You can choose to show or hide the grid. \ 5, Heroes: display all corresponding to the highest degree of difficulty score. You can reset these scores.</Text>
+	</STRING>
+	<STRING Id="42" Name="IDS_REPORT_SCORE">
+		<Text>Your score is this: %d, the highest score: %d. Continue to work hard!</Text>
+	</STRING>
+	<STRING Id="43" Name="IDS_REPORT_RECORD">
+		<Text>Congratulations! Your score is this:% d. Which becomes the first level of your master! ! !</Text>
+	</STRING>
+	<STRING Id="44" Name="IDS_PASS">
+		<Text>Amazing! You have successfully passed this difficulty, current score:% d, continue to the next degree of difficulty?</Text>
+	</STRING>
+	<STRING Id="45" Name="IDS_PASS_LAST">
+		<Text>Great! You have successfully passed the highest degree of difficulty of the game, your score is:% d. There is nothing wrong!</Text>
+	</STRING>
+	<STRING Id="46" Name="IDS_GAME_SCORE">
+		<Text>Score</Text>
+	</STRING>
+	<STRING Id="47" Name="IDS_GAME_SPEED">
+		<Text>Speed</Text>
+	</STRING>
+	<STRING Id="48" Name="IDS_HERO_TITLE">
+		<Text>Level score</Text>
+	</STRING>
+</Strings>
+<Objects MimeType="image/bmp">
+	<Object Id="5001" Name="IDB_TETRIS_SPLASH" MimeType="image/png">
+		<File>..\..\..\Appscommon\images\128x160\common\Tetris\TetrisSplash.png</File>
+	</Object>
+	<Object Id="5002" Name="IDB_TETRIS_START">
+		<File>..\..\..\Appscommon\images\128x160\common\Tetris\TetrisStart.bmp</File>
+	</Object>
+	<Object Id="5003" Name="IDB_TETRIS_LEVEL">
+		<File>..\..\..\Appscommon\images\128x160\common\Tetris\TetrisLevel.bmp</File>
+	</Object>
+	<Object Id="5004" Name="IDB_TETRIS_SCORE">
+		<File>..\..\..\Appscommon\images\128x160\common\Tetris\TetrisScore.bmp</File>
+	</Object>
+	<Object Id="5005" Name="IDB_TETRIS_HELP">
+		<File>..\..\..\Appscommon\images\128x160\common\Tetris\TetrisHelp.bmp</File>
+	</Object>
+	<Object Id="5006" Name="IDB_TETRIS_CONTINUE">
+		<File>..\..\..\Appscommon\images\128x160\common\Tetris\TetrisContinue.bmp</File>
+	</Object>
+	<Object Id="5007" Name="IDB_TETRIS_SOUND">
+		<File>..\..\..\Appscommon\images\128x160\common\Tetris\TetrisSound.bmp</File>
+	</Object>
+	<Object Id="5009" Name="IDB_TETRIS_GRID">
+		<File>..\..\..\Appscommon\images\128x160\common\Tetris\TetrisGrid.bmp</File>
+	</Object>
+	<Object Id="5021" Name="IDB_GAME_LEVEL_SEL">
+		<File>..\..\..\Appscommon\images\128x160\common\Tetris\RadioSelIcon.bmp</File>
+	</Object>
+	<Object Id="5022" Name="IDB_GAME_LEVEL_UNSEL">
+		<File>..\..\..\Appscommon\images\128x160\common\Tetris\RadioUnselIcon.bmp</File>
+	</Object>
+	<Object Id="5023" Name="IDB_SOFTKEY_BOTTOM">
+		<File>..\..\..\Appscommon\images\128x160\common\Tetris\softkeybottom.bmp</File>
+	</Object>
+	<Object Id="5024" Name="IDB_RECTBG">
+		<File>..\..\..\Appscommon\images\128x160\common\Tetris\BGbottom.bmp</File>
+	</Object>
+</Objects>
+</BREWRes>

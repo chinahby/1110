@@ -944,9 +944,13 @@ static void SetGameScreen(CTetrisApp * pMe)
 
     HMargin = VMargin = 0;
     HNum = VNum =0;
-
+#if defined(FEATURE_DISP_128X160)
+    HMargin = (pMe->m_rScreenWidth - (NEXT_MAX_XNUM) * NEXT_BLOCK_SIZE) % BLOCK_SIZE;
+    HNum    = (pMe->m_rScreenWidth - (NEXT_MAX_XNUM ) * NEXT_BLOCK_SIZE) / BLOCK_SIZE;
+#else
     HMargin = (pMe->m_rScreenWidth - (NEXT_MAX_XNUM + 1) * NEXT_BLOCK_SIZE) % BLOCK_SIZE;
     HNum    = (pMe->m_rScreenWidth - (NEXT_MAX_XNUM + 1) * NEXT_BLOCK_SIZE) / BLOCK_SIZE;
+#endif	
     if(HMargin < NEXT_BLOCK_SIZE / 2)
     {
         HMargin = BLOCK_SIZE;
@@ -965,8 +969,11 @@ static void SetGameScreen(CTetrisApp * pMe)
 
     pMe->m_rHNum = HNum;
     pMe->m_rVNum = VNum;
-
-    pMe->m_rNextStartX = pMe->m_MainRect.x + pMe->m_MainRect.dx + 2 * NEXT_BLOCK_SIZE;
+#if defined(FEATURE_DISP_128X160)
+    pMe->m_rNextStartX = pMe->m_MainRect.x + pMe->m_MainRect.dx + 1 * NEXT_BLOCK_SIZE+6;
+#else
+	pMe->m_rNextStartX = pMe->m_MainRect.x + pMe->m_MainRect.dx + 2 * NEXT_BLOCK_SIZE;
+#endif	
 
 #ifdef FEATURE_LCD_TOUCH_ENABLE    
     pMe->m_rNextStartY = pMe->m_MainRect.y + pMe->m_MainRect.dy / 2 - BUTTON_DY
