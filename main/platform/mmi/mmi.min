@@ -90,6 +90,10 @@ endif
 
 #include $(NOTEBOOK)/notebook.min
 
+ifeq ($(BUILD),Esia021)
+include $(TETRIS)/Tetris.min
+endif
+
 #Games
 ifeq ($(MMI_ADD_GAME),yes)
 include $(BRICKATTACK)/brickattack.min

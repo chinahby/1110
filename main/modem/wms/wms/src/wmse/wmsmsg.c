@@ -2206,13 +2206,18 @@ wms_cmd_err_e_type wms_msg_cdma_send_MO
             (!dc_s_ptr->bInTC) && 
             (g_mochannel == WMS_MO_ONLY_TRAFFIC))
         {
-           MSG_HIGH("WMS initiating DC... ", 0,0,0);
-
+           MSG_HIGH("WMS initiating DC... %d", dc_s_ptr->default_so_from_nv,0,0);
+#ifdef FEATURE_VERSION_ESIA
+           st = wms_dc_connect(WMS_CLIENT_TYPE_INTERNAL,
+                    NULL,
+                    NULL,
+                    WMS_DC_SO_6/*dc_s_ptr->default_so_from_nv*/);
+#else
            st = wms_dc_connect(WMS_CLIENT_TYPE_INTERNAL,
                     NULL,
                     NULL,
                     dc_s_ptr->default_so_from_nv);
-
+#endif
            if (st == WMS_OK_S)
            {
                dc_s_ptr->wms_initiated_call = TRUE;
@@ -6032,12 +6037,17 @@ void wms_msg_mc_mo_status_proc
 #endif
           {
               MSG_HIGH("WMS initiating DC... ", 0,0,0);
-
+#ifdef FEATURE_VERSION_ESIA
+              st = wms_dc_connect( WMS_CLIENT_TYPE_INTERNAL,
+                      NULL,
+                      NULL,
+                      /*dc_s_ptr->default_so_from_nv*/WMS_DC_SO_6  );
+#else
               st = wms_dc_connect( WMS_CLIENT_TYPE_INTERNAL,
                       NULL,
                       NULL,
                       dc_s_ptr->default_so_from_nv );
-
+#endif
               if( st == WMS_OK_S )
               {
                   dc_s_ptr->wms_initiated_call = TRUE;

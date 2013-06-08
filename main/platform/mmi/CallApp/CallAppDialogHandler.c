@@ -12682,7 +12682,36 @@ static boolean CallApp_Process_Send_Key_Release_Event(CCallApp *pMe)
 		DBGPRINTF("pMe->m_DialString=%S", pMe->m_DialString);
 		MSG_FATAL("pMe->m_DialString........111111111",0,0,0);
 	}
-#endif    
+#endif
+#ifdef FEATURE_VERSION_ESIA
+	WSTRTOSTR(pMe->m_DialString,temp,MAX_SIZE_DIALER_TEXT+1);
+    if((STRISTR(temp,"+62")))
+	{
+		WSTRCPY(TempToStr,L"0");
+		WSTRCPY(TempTo,pMe->m_DialString+3);
+		WSTRCAT(TempToStr,TempTo);
+		DBGPRINTF("TempToStr+86=%S", TempTo);
+		DBGPRINTF("TempToStr+86=%S", TempToStr);
+		DBGPRINTF("ppMe->m_DialString=%S", pMe->m_DialString);
+		MEMSET(pMe->m_DialString,0,(sizeof(pMe->m_DialString))+1);
+		WSTRCPY(pMe->m_DialString,TempToStr);
+		DBGPRINTF("pMe->m_DialString=%S", pMe->m_DialString);
+		MSG_FATAL("pMe->m_DialString........111111111",0,0,0);
+	}
+    else if(STRISTR(temp,"+"))
+    {
+        WSTRCPY(TempToStr,L"009");
+		WSTRCPY(TempTo,pMe->m_DialString+1);
+		WSTRCAT(TempToStr,TempTo);
+		DBGPRINTF("TempToStr+=%S", TempTo);
+		DBGPRINTF("TempToStr+=%S", TempToStr);
+		DBGPRINTF("ppMe->m_DialString=%S", pMe->m_DialString);
+		MEMSET(pMe->m_DialString,0,(sizeof(pMe->m_DialString))+1);
+		WSTRCPY(pMe->m_DialString,TempToStr);
+		DBGPRINTF("pMe->m_DialString=%S", pMe->m_DialString);
+		MSG_FATAL("pMe->m_DialString........111111111",0,0,0);
+    }
+#endif
 #ifdef FEATURE_ICM
     if(pMe->m_b_incall && CallApp_IsEmergencyMode(pMe->m_pICM) )
 #else

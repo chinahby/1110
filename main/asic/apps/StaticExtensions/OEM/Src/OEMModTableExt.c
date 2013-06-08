@@ -642,6 +642,11 @@ extern int BlackJack_Load(IShell *ps, void *pHelpers, IModule **pMod);
 extern int PinTu_Load(IShell *ps, void *pHelpers, IModule **pMod);
 extern int TetrisMod_Load(IShell *ps, void *pHelpers, IModule **pMod);
 #endif
+
+#if defined (FEATURE_VERSION_ESIA)
+extern int TetrisMod_Load(IShell *ps, void *pHelpers, IModule **pMod);
+#endif
+
 #if defined(FEATURE_VERSION_C316)
 //extern int GmFive_Load(IShell *ps, void *pHelpers, IModule **pMod);
 extern int TetrisMod_Load(IShell *ps, void *pHelpers, IModule **pMod);
@@ -1105,6 +1110,11 @@ static const AEEStaticMod gOEMStaticModList[] =
       {AEEFS_MIF_DIR"pintu.mif", PinTu_Load},
       {AEEFS_MIF_DIR"tetris.mif", TetrisMod_Load},
 #endif
+
+#if defined (FEATURE_VERSION_ESIA)
+    {AEEFS_MIF_DIR"tetris.mif", TetrisMod_Load},
+#endif
+
 //    {AEEFS_MIF_DIR"gmfive.mif", GmFive_Load},
 #if defined(FEATURE_VERSION_C316)
       //{AEEFS_MIF_DIR"gmfive.mif", GmFive_Load},

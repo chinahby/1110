@@ -74,7 +74,7 @@ static void disp_ic_mdp_scrupdate(uint32 *scr, uint32 start_row, uint32 start_co
 static void disp_ic_init(void)
 {
 
-#if defined( FEATURE_VERSION_S600S)
+//#if defined( FEATURE_VERSION_S600S)
 
 	LCD_WRITE_CMD(0x3a);
 	LCD_WRITE_DATA(0x05);
@@ -141,7 +141,7 @@ static void disp_ic_init(void)
 	LCD_DELAY(120);	
     
 		
-	#endif
+	//#endif
 
 	
 	LCD_WRITE_CMD(0x29); // Display On  
