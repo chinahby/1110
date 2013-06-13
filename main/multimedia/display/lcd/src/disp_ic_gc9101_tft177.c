@@ -73,9 +73,73 @@ static void disp_ic_mdp_scrupdate(uint32 *scr, uint32 start_row, uint32 start_co
 
 static void disp_ic_init(void)
 {
+   
 
-//#if defined( FEATURE_VERSION_S600S)
+#if defined(FEATURE_VERSION_W021_CT100_)
+//FEATURE_VERSION_W021_CT100
+    LCD_WRITE_CMD(0x3a);
+    LCD_WRITE_DATA(0x05);
+    LCD_WRITE_CMD(0x36);
+    LCD_WRITE_DATA(0xC0);
 
+    LCD_WRITE_CMD(0xB4);
+    LCD_WRITE_DATA(0x00);
+
+//  LCD_WRITE_CMD(0x21);
+
+    LCD_WRITE_CMD(0xfe);
+    LCD_WRITE_CMD(0xef);
+
+    LCD_WRITE_CMD(0xff);
+    LCD_WRITE_DATA (0x13);
+
+    LCD_WRITE_CMD(0xfd);    
+    LCD_WRITE_DATA (0x12);//1e
+
+    LCD_WRITE_CMD(0xa3);    
+    LCD_WRITE_DATA (0x11);
+
+
+    LCD_WRITE_CMD(0xE2);    
+    LCD_WRITE_DATA (0x90);
+
+    LCD_WRITE_CMD(0xe7);    
+    LCD_WRITE_DATA(0x94); 
+    LCD_WRITE_DATA(0x88);
+
+    LCD_WRITE_CMD(0xed);     
+    LCD_WRITE_DATA(0x42);    
+    //*****************GAMMA***************************//
+    LCD_WRITE_CMD(0xF0);
+    LCD_WRITE_DATA(0x00);
+    LCD_WRITE_CMD(0xF1);
+    LCD_WRITE_DATA(0x55);
+    LCD_WRITE_CMD(0xF2);
+    LCD_WRITE_DATA(0x07);
+    LCD_WRITE_CMD(0xF3);
+    LCD_WRITE_DATA(0x52);
+    LCD_WRITE_CMD(0xF4);
+    LCD_WRITE_DATA(0x00);
+    LCD_WRITE_CMD(0xF5);
+    LCD_WRITE_DATA(0x00);
+    LCD_WRITE_CMD(0xF7);
+    LCD_WRITE_DATA(0x07);
+    LCD_WRITE_CMD(0xF8);
+    LCD_WRITE_DATA(0x22);
+    LCD_WRITE_CMD(0xF9);
+    LCD_WRITE_DATA(0x77);
+    LCD_WRITE_CMD(0xFA);
+    LCD_WRITE_DATA(0x25);
+    LCD_WRITE_CMD(0xFB);
+    LCD_WRITE_DATA(0x00);
+    LCD_WRITE_CMD(0xFC);
+    LCD_WRITE_DATA(0x00);
+    //********************************************//
+
+
+    LCD_WRITE_CMD(0x11);
+    LCD_DELAY(200);
+#else
 	LCD_WRITE_CMD(0x3a);
 	LCD_WRITE_DATA(0x05);
 	LCD_WRITE_CMD(0x36);
@@ -139,9 +203,8 @@ static void disp_ic_init(void)
 	//********************************************//
 	LCD_WRITE_CMD(0x11);//Exit sleep
 	LCD_DELAY(120);	
-    
-		
-	//#endif
+
+#endif
 
 	
 	LCD_WRITE_CMD(0x29); // Display On  

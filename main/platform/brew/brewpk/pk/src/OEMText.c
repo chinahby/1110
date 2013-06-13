@@ -7066,7 +7066,11 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
             }
             #elif defined(FEATURE_LANG_HINDI)
             //#ifdef FEATURE_LANG_HINDI
+#ifdef FEATURE_VERSION_W021_CT100
+            if(pContext->byMode == 3)
+#else
             if(pContext->byMode == 4)
+#endif			
             {
                 MSG_FATAL("FEATURE_LANG_HINDI----1",0,0,0);
             	pContext->uModeInfo.mtap.kLast = key; 
