@@ -517,7 +517,7 @@ boolean CoreApp_InitAppData(IApplet* po)
     pMe->m_bBatteryActive=FALSE;
 	pMe->m_IsEanbleBatAlarm=TRUE;
 // Add by pyuangui	
-#if defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_SKY) || defined(FEATURE_VERSION_W317A)   
+#if defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_SKY) || defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_W021_CT100)   
     pMe->m_keyinfoheld=FALSE;
 #endif    
 //Add End
@@ -1282,7 +1282,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                 break;
             }
 			//Add by pyuangui 20121220
-            #if defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_SKY)
+            #if defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_SKY)||defined(FEATURE_VERSION_W021_CT100)
              if(wParam == AVK_INFO)
              {
                return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);

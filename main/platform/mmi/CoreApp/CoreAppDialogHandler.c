@@ -513,7 +513,7 @@ static void CoreApp_Issametimer(void *pUser);
 
 static void CoreApp_UpdateBottomBar(CCoreApp    *pMe); 
 //Add by pyuangui 20121220
-#if defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_W317A)
+#if defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_W021_CT100)
 static void CCoreApp_TorchTipTimeOut(CCoreApp *pMe);
 #endif
 //Add End
@@ -3587,7 +3587,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
     byte  bData;
 #endif
 //Add by pyuangui 20121220
-#if defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_W317A)    
+#if defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_W021_CT100)    
     static IStatic * pStatic = NULL;
 #endif
 //Add End
@@ -3613,7 +3613,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 #endif
 	       }
           //Add by pyuangui 20121220
-          #if defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_W317A)
+          #if defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_W021_CT100)
            if (NULL == pStatic)
             {
                 AEERect rect = {0};
@@ -3861,7 +3861,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             }
             return TRUE;            
         } 
-#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM) ||defined(FEATURE_VERSION_S1000T)||defined(FEATURE_LCD_TOUCH_ENABLE)||defined(FEATURE_VERSION_C11)||defined(FEATURE_VERSION_W317A)
+#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM) ||defined(FEATURE_VERSION_S1000T)||defined(FEATURE_LCD_TOUCH_ENABLE)||defined(FEATURE_VERSION_C11)||defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_W021_CT100)
 		case EVT_KEY_HELD:
 			 MSG_FATAL("***zzg EVT_KEY_HELD wParam=%x, dwParam=%x", wParam, dwParam, 0);
 			
@@ -3886,7 +3886,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 			}
 #else
 // Add by pyuangui 20121220
-#ifdef FEATURE_VERSION_C11
+#if defined (FEATURE_VERSION_C11)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_W021_CT100)
             if(wParam == AVK_INFO)
             {
                 boolean TorchOn = FALSE;
@@ -4115,7 +4115,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
              IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
              #endif
 //Add by pyuangui 20121220			 
-#if defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_W317A)
+#if defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_W021_CT100)
              ISTATIC_Release(pStatic);
              pStatic = NULL;
              pMe->m_keyinfoheld=FALSE;
@@ -4157,7 +4157,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #endif		
 		//Add End
 //Add by pyuangui 20121220		
-#if defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_C316)	
+#if defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_C316)	||defined(FEATURE_VERSION_W021_CT100)
 		case EVT_KEY_RELEASE:
 #ifdef FEATURE_VERSION_C316			
 #ifdef FEATURE_KEYGUARD
@@ -4183,7 +4183,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #endif					
 #endif		 
 			
-		#ifdef FEATURE_VERSION_C11
+		#if defined (FEATURE_VERSION_C11)||defined(FEATURE_VERSION_W021_CT100)
         if((AVKType)wParam == AVK_INFO)
         {
             if(pMe->m_keyinfoheld)
@@ -4196,6 +4196,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             }
         }
         #endif
+        
         #ifdef FEATURE_VERSION_W317A
 		if((AVKType)wParam == AVK_CLR)
         {
@@ -4351,6 +4352,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CAMERA);
 #elif defined(FEATURE_VERSION_W027V3)
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);
+#elif defined(FEATURE_VERSION_W021_CT100)
+                    return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CAMERA);
 #else
                 	return CoreApp_LaunchApplet(pMe, AEECLSID_MEDIAGALLERY);
 #endif
@@ -4388,7 +4391,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
 	#elif defined (FEATURE_VERSION_M8P) || defined(FEATURE_VERSION_W027V3)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT); 
-	#elif defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
+	#elif defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_W021_CT100)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO); 
 	#elif defined(FEATURE_VERSION_W208S)||defined(FEATURE_VERSION_K202_LM129C)//xxzhen
 	                 if(SUCCESS==ISHELL_StartAppletArgs(pMe->a.m_pIShell, AEECLSID_WMSAPP, "WMSST_INBOXES"))
@@ -4541,7 +4544,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                             return CoreApp_LaunchApplet(pMe, AEECLSID_ALARMCLOCK);
                         #elif defined(FEATURE_VERSION_C11)||defined(FEATURE_VERSION_W027V3)
                             return CoreApp_LaunchApplet(pMe, AEECLSID_APP_SETTINGMENU);
-						#elif defined(FEATURE_VERSION_C316)
+						#elif defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_W021_CT100)
 							return CoreApp_LaunchApplet(pMe, AEECLSID_SCHEDULEAPP);
 						#else
 							return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);//
@@ -4705,7 +4708,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
         			   }
                     
 						return TRUE;
-#elif defined (FEATURE_VERSION_C11) 
+#elif defined (FEATURE_VERSION_C11) ||defined(FEATURE_VERSION_W021_CT100)
                         pMe->m_keyinfoheld=FALSE;
                         return TRUE;
 #else
@@ -7443,8 +7446,11 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
     			eBBarType = BTBAR_UNLOCK_SOS;
 			#elif defined(FEATURE_VERSION_C316)||defined(FEATURE_LEFT_SOFTKEY_AND_STAR_UNLOCK)//xxzhen	
 			    eBBarType = BTBAR_UNLOCK_L;
+            #elif defined(FEATURE_VERSION_W021_CT100)
+                eBBarType = BTBAR_UNLOCK_L;
         	#elif defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_1110W516) 
         		eBBarType = BTBAR_LUNLOCK;
+            
             #elif defined(FEATURE_VERSION_W027)
             #ifdef FEATURE_VERSION_W317A
                 eBBarType = BTBAR_UNLOCK_L;
@@ -9051,7 +9057,7 @@ static const ServiceProviderList List_SP[] =
 };
 #endif
 //Add by pyuangui 20121220
-#if defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_W317A)
+#if defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_W021_CT100)
 static void CCoreApp_TorchTipTimeOut(CCoreApp *pMe)
 {
     if (NULL == pMe)

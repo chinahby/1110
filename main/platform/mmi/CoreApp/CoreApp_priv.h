@@ -279,6 +279,13 @@
 #define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweronoff.gif"
 #define    PWROFF_ANI_FRAME_COUNT                (1)
 #define    PWROFF_ANI_RATE                       (4000)
+#elif defined FEATURE_VERSION_ESIA
+#define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweron.gif"
+#define    PWRON_ANI_FRAME_COUNT                 (1)
+#define    PWRON_ANI_RATE                        (5000)
+#define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweroff.gif"
+#define    PWROFF_ANI_FRAME_COUNT                PWRON_ANI_FRAME_COUNT
+#define    PWROFF_ANI_RATE                       (5000)
 #else
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronoff.gif"
 #define    PWRON_ANI_FRAME_COUNT                 (1)
@@ -459,6 +466,14 @@
 #define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweroff.gif"
 #define    PWROFF_ANI_FRAME_COUNT                PWRON_ANI_FRAME_COUNT
 #define    PWROFF_ANI_RATE                       (7000)
+#elif defined FEATURE_VERSION_W021_CT100
+#define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronoff.gif"
+#define    PWRON_ANI_FRAME_COUNT                 (1)
+#define    PWRON_ANI_RATE                        (5000)
+#define    PWROFF_ANI_FILE                       PWRON_ANI_FILE
+#define    PWROFF_ANI_FRAME_COUNT                PWRON_ANI_FRAME_COUNT
+#define    PWROFF_ANI_RATE                       PWRON_ANI_RATE
+
 #else
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronoff.gif"
 #define    PWRON_ANI_FRAME_COUNT                 (1)
@@ -1037,7 +1052,7 @@ typedef struct _CCoreApp
 	#ifdef FEATURE_KEYGUARD
 	boolean             m_iskeypadtime;
 	#endif
-    #if defined(FEATURE_VERSION_C11)||defined(FEATURE_VERSION_W317A)
+    #if defined(FEATURE_VERSION_C11)||defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_W021_CT100)   
 	boolean             m_keyinfoheld;
 	#endif
 	boolean             m_IsSametime;

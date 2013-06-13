@@ -605,7 +605,6 @@ else
 #nokia_lumia_800.mp3|fs:/ringers/nokia_lumia_800.mp3 
 #Very_Romantic_Piano.mp3|fs:/ringers/Very_Romantic_Piano.mp3       
     else ifeq ($(USES_RESDIR),C117_M74)  
-
         CONSTFILE_FILES+=\
             blues.mid|fs:/ringers/blues.mid \
             blue_load.mid|fs:/ringers/blue_load.mid \
@@ -647,6 +646,34 @@ else
             10.mp3|fs:/ringers/10.mp3 \
             11.mp3|fs:/ringers/11.mp3 \
             12.mp3|fs:/ringers/12.mp3
+	else ifeq ($(USES_RESDIR),CT100)    
+	CONSTFILE_FILES+=\
+	    blues.mid|fs:/ringers/blues.mid \
+            blue_load.mid|fs:/ringers/blue_load.mid \
+            champagne.mid|fs:/ringers/champagne.mid \
+            clock.mid|fs:/ringers/clock.mid \
+            dance_craze.mid|fs:/ringers/dance_craze.mid \
+            green_line.mid|fs:/ringers/green_line.mid \
+            jumping.mid|fs:/ringers/jumping.mid \
+            lucky.mid|fs:/ringers/lucky.mid \
+            street_tale.mid|fs:/ringers/street_tale.mid \
+            techno_meto.mid|fs:/ringers/techno_meto.mid \
+            feeling_on.mp3|fs:/ringers/feeling_on.mp3 \
+            feeling_off.mp3|fs:/ringers/feeling_off.mp3
+	else ifeq ($(USES_RESDIR),Esia021)    
+	CONSTFILE_FILES+=\
+	    	blue_load.mid|fs:/ringers/blue_load.mid \
+	    	blues.mid|fs:/ringers/blues.mid \
+            blue_load.mid|fs:/ringers/blue_load.mid \
+            champagne.mid|fs:/ringers/champagne.mid \
+            clock.mid|fs:/ringers/clock.mid \
+            dance_craze.mid|fs:/ringers/dance_craze.mid \
+            green_line.mid|fs:/ringers/green_line.mid \
+            jumping.mid|fs:/ringers/jumping.mid \
+            lucky.mid|fs:/ringers/lucky.mid \
+            street_tale.mid|fs:/ringers/street_tale.mid \
+            techno_meto.mid|fs:/ringers/techno_meto.mid \
+            feeling_on.mid|fs:/ringers/feeling_on.mid 
     	else                                            
         CONSTFILE_FILES+=\
             blues.mid|fs:/ringers/blues.mid \
