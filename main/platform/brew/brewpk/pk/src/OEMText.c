@@ -6259,7 +6259,7 @@ static void T9TextCtl_MultitapRestart(TextCtlContext *pContext)
                         break;
     }   
 
-    MSG_FATAL("T9TextCtl_MultitapRestart %d",sT9Status,0,0);
+    MSG_FATAL("T9TextCtl_MultitapRestart %d %d",sT9Status,pContext->nMultitapCaps,0);
     //set to Ambiguous mode
     if ( T9STATNONE == sT9Status )
     {
@@ -9414,7 +9414,7 @@ static boolean T9_AW_DisplayText(TextCtlContext *pContext, AVKType key)
 #endif
              )&&(key >= AVK_0 && key <= AVK_9))
         {
-           if(pContext->dwProperties & TP_STARKEY_SWITCH)  // 字母输入法下按*键进行切换
+            //if(pContext->dwProperties & TP_STARKEY_SWITCH)  // 字母输入法下按*键进行切换
             {
          #ifndef FEATURE_LANG_PORTUGUESE
                 if(AVK_0 == key)    
@@ -9456,16 +9456,6 @@ static boolean T9_AW_DisplayText(TextCtlContext *pContext, AVKType key)
                     pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart] = kInsert[0];                
                 }
           #endif
-            }
-            else
-            {             
-                pContext->uModeInfo.mtap.nMax = WSTRLEN((AECHAR*)saMultitapStrings[(int)key-(int)AVK_0]);               
-                kInsert[0] = saMultitapStrings[(int)key - (int)AVK_0][pContext->uModeInfo.mtap.nSubChar];  
-                pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart] = kInsert[0];
-                if (++pContext->uModeInfo.mtap.nSubChar >= pContext->uModeInfo.mtap.nMax) 
-                {
-                    pContext->uModeInfo.mtap.nSubChar = 0;
-                }            
             }
         }        
         // 智能输入法

@@ -715,15 +715,15 @@ static const AECHAR englishTitle[NUM_OF_MODES][MAX_MODE_STR+1] =
    {'1','2','3',0}
    
 #ifdef FEATURE_T9_MT_ENGLISH   
-   ,{'A','B','C',0}
+   ,{'A','b',0}
 #endif //FEATURE_T9_MT_ENGLISH
 
 #ifdef FEATURE_T9_RAPID_ENGLISH
-   ,{'a', 'b','c',0}
+   ,{'E','n',0}
 #endif //FEATURE_T9_RAPID_ENGLISH
 
 #ifdef FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai
-   ,{'A','b','c',0}
+   ,{'A','B',0}
 #endif
 #ifdef FEATURE_MYANMAR_INPUT_MOD      //add by yangdecai 2010-1223
    ,{'M','Y','A','N','M','A','R',0}
@@ -769,7 +769,7 @@ static const AECHAR englishTitle[NUM_OF_MODES][MAX_MODE_STR+1] =
 #endif //FEATURE_T9_RAPID_HEBREW
 
 #ifdef FEATURE_T9_MT_HINDI
-   ,{'T', '9','M', 'T', 'H', 'I', 'N', 'D', 'I', 0}
+   ,{'H', 'I', 'N', 'D', 'I', 0}
 #endif //FEATURE_T9_MT_HINDI
 
 #ifdef FEATURE_T9_RAPID_HINDI
@@ -844,15 +844,15 @@ static const AECHAR englishTitle[NUM_OF_MODES][MAX_MODE_STR+1] =
    {'1','2','3',0}
    
 #ifdef FEATURE_T9_MT_ENGLISH   
-   ,{'A','B','C',0}
+   ,{'A','b',0}
 #endif //FEATURE_T9_MT_ENGLISH
-   
+
 #ifdef FEATURE_T9_RAPID_ENGLISH
-   ,{'a', 'b','c', 0}
+   ,{'E','n',0}
 #endif //FEATURE_T9_RAPID_ENGLISH
 
 #ifdef FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai
-   ,{'A','b','c',0}
+   ,{'A','B',0}
 #endif
 #ifdef FEATURE_MYANMAR_INPUT_MOD      //add by yangdecai 2010-1223
    ,{'M','Y','A','N','M','A','R',0}
@@ -899,7 +899,7 @@ static const AECHAR englishTitle[NUM_OF_MODES][MAX_MODE_STR+1] =
 #endif //FEATURE_T9_RAPID_HEBREW
 
 #ifdef FEATURE_T9_MT_HINDI
-   ,{'T', '9','M', 'T', 'H', 'I', 'N', 'D', 'I', 0}
+   ,{'H', 'I', 'N', 'D', 'I', 0}
 #endif //FEATURE_T9_MT_HINDI
 
 #ifdef FEATURE_T9_RAPID_HINDI

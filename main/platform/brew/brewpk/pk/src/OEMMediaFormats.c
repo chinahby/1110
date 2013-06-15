@@ -111,8 +111,10 @@ const AEEStaticClass gAEEMediaClasses[] =
    {AEECLSID_MEDIAMIDIOUTQCP, ASCF_UPGRADE, 0, IMediaMIDIOutQCP_Init,  IMediaMIDIOutQCP_New},
 #endif // defined(FEATURE_MIDI_OUT_QCP)
 #endif // defined(FEATURE_MIDI_OUT)
+#endif // FEATURE_PEKTEST
 
 #if defined(FEATURE_BREW_CMX_V3) 
+#if !defined(FEATURE_PEKTEST)
 #if defined(FEATURE_MIDI_OUT_QCP) || defined(FEATURE_ADPCM)
    {AEECLSID_MEDIAADPCM,      ASCF_UPGRADE, 0, IMediaMain_Init,  IMediaMain_New},
 #endif // defined(FEATURE_ADPCM)
@@ -128,11 +130,11 @@ const AEEStaticClass gAEEMediaClasses[] =
 #if defined(FEATURE_DLS)
    {AEECLSID_MEDIADLS,        ASCF_UPGRADE, 0, NULL,  DLS_New},
 #endif // defined(FEATURE_DLS)
+#endif // FEATURE_PEKTEST
 #if defined(FEATURE_APP_MPEG4)
       {AEECLSID_MEDIAMPEG4,   ASCF_UPGRADE, 0, IMediaMPEG4_Init, IMediaMPEG4_New}, 
 #endif // defined(FEATURE_APP_MPEG4)
 #endif // defined(FEATURE_BREW_CMX_V3)
-#endif // FEATURE_PEKTEST
 
    {0,0,0,NULL,NULL}
 };
