@@ -9305,6 +9305,7 @@ static void T9TextCtl_Cap_Lower_Rapid_Exit(TextCtlContext *pContext)
                                        TextCtl_MultitapTimer, pContext);
     TextCtl_NoSelection(pContext);
 	pContext->m_bCaplk = FALSE;
+    pContext->nMultitapCaps = MULTITAP_FIRST_CAP;
 }
 
 //add by yangdecai end
