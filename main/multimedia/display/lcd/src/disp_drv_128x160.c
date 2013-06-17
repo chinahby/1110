@@ -52,10 +52,12 @@ static disp_ic_install_type     disp_ic_install[] =
 #ifdef FEATURE_VERSION_W021_CT100 //xxzhen
     disp_rm68110_tft177,
 #endif
+#ifdef FEATURE_VERSION_S600S //xxzhen
+    disp_gc9101_tft177,
+#endif
     disp_st7735s_tft177,
     disp_st7735r_tft177,//默认驱动，需放到最后，并且不检查IC的ID    
     disp_ili9163c_tft177,
-    disp_gc9101_tft177,
     NULL
 };
 
