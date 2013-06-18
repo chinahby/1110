@@ -22,6 +22,8 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_BT_SEND_FILE_ONLY		//Add By zzg 2010_11_03
 #define FEATURE_SUPPORT_BT_AUDIO
 
+#define FEATURE_TORCH_KEY_INFO			//Add By zzg 2013_06_15
+
 #define FEATURE_LANG_DEFAULT_ENGLISH
 #define FEATURE_ENABLE_OTKSL
 #define BT_QSC1110//FEATURE_BT_QSC1100
