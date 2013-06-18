@@ -988,6 +988,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
             //#if defined (FEATURE_VERSION_C310) || defined (FEATURE_VERSION_C337)
             pMe->m_bCanPress = FALSE;
  			pMe->m_bIsSnaping = FALSE;
+			pMe->m_isPicCamera = FALSE;
             //#endif
             (void)ISHELL_CancelTimer(pMe->m_pShell,
                                      CameraApp_PrevewTimeout,
