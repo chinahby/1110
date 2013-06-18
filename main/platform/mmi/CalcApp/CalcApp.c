@@ -2536,7 +2536,11 @@ static int16 Calc_NumText(CCalcApp *pme,
        }
        else
        {
+#ifdef FEATURE_VERSION_K202       
            AECHAR tmp[] = {'¡Â'}; //because '+' is wider than any other operator, so used its width as standard
+#else
+           AECHAR tmp[] = {'+'}; //because '+' is wider than any other operator, so used its width as standard
+#endif
            nWidth = CALC_BETWEEN_NUM_PIXEL + (int16) IDISPLAY_MeasureTextEx(pd,
                                        fnt,
                                        tmp,//(const AECHAR *)pch, 
