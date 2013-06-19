@@ -116,7 +116,7 @@
 		<Text>Minute beep</Text>
 	</STRING>
 	<STRING Id="1039" Name="IDS_AUTOANSWER_TITLE">
-		<Text>auto</Text>
+		<Text>Headset auto</Text>
 	</STRING>
 	<STRING Id="1040" Name="IDS_ANYKEY_ANSWER_TITLE">
 		<Text>Any key</Text>
