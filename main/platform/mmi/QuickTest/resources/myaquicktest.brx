@@ -243,6 +243,7 @@
 	</String>
 	<String Id="1026" Name="IDS_REGULATE_NONE">
 		<Text>No qcn!</Text>
+		</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="1" Name="IDD_MAINMENU" Focus="7001">
