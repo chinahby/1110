@@ -396,6 +396,15 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *,AEEEvent,AVKType);
 static void T9TextCtl_Latin_Rapid_Exit(TextCtlContext *pContext);
 
 // T9 Latin Multitap
+#if defined(FEATURE_MT_ENGLISH_UP)
+static void T9TextCtl_MultitapRestart_Up(TextCtlContext *pContext);
+#endif
+#if defined(FEATURE_MT_ENGLISH_LOW)
+static void T9TextCtl_MultitapRestart_Low(TextCtlContext *pContext);
+#endif
+#if defined(FEATURE_MT_ENGLISH_CAPLOW)
+static void T9TextCtl_MultitapRestart_CapLow(TextCtlContext *pContext);
+#endif
 static void T9TextCtl_MultitapRestart(TextCtlContext *pContext);
 static boolean T9TextCtl_MultitapKey(TextCtlContext *,AEEEvent,AVKType);
 static void T9TextCtl_MultitapExit(TextCtlContext *pContext);
@@ -721,7 +730,27 @@ static ModeInfo sTextModes[NUM_OF_MODES] =
       NULL, /* Use default name for Numbers mode */
       TextCtl_NumbersExit,
       {TEXT_MODE_NUMBERS, {0}}}
-
+#if defined(FEATURE_MT_ENGLISH_UP)
+      ,{T9TextCtl_MultitapRestart_Up,
+      T9TextCtl_MultitapKey,
+      NULL,
+      T9TextCtl_MultitapExit,
+      {TEXT_MODE_MULTITAP_UP, {0}}}
+#endif
+#if defined(FEATURE_MT_ENGLISH_LOW)
+    ,{T9TextCtl_MultitapRestart_Low,
+      T9TextCtl_MultitapKey,
+      NULL,
+      T9TextCtl_MultitapExit,
+      {TEXT_MODE_MULTITAP_LOW, {0}}}
+#endif
+#if defined(FEATURE_MT_ENGLISH_CAPLOW)
+    ,{T9TextCtl_MultitapRestart_CapLow,
+      T9TextCtl_MultitapKey,
+      NULL,
+      T9TextCtl_MultitapExit,
+      {TEXT_MODE_MULTITAP, {0}}}
+#endif
 #ifdef FEATURE_T9_MT_ENGLISH
     ,{T9TextCtl_MultitapRestart,
       T9TextCtl_MultitapKey,
@@ -3975,6 +4004,12 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
                
                // if (sTextModes[pContext->byMode].info.wID == TEXT_MODE_MULTITAP)
               if ((sTextModes[pContext->byMode].info.wID == TEXT_MODE_MULTITAP)
+#ifdef FEATURE_MT_ENGLISH_UP
+                ||(sTextModes[pContext->byMode].info.wID == TEXT_MODE_MULTITAP_UP)
+#endif
+#ifdef FEATURE_MT_ENGLISH_LOW
+                ||(sTextModes[pContext->byMode].info.wID == TEXT_MODE_MULTITAP_LOW)
+#endif
 #ifdef FEATURE_T9_MT_SPANISH
 			  	||(sTextModes[pContext->byMode].info.wID == TEXT_MODE_T9_MT_SPANISH)
 #endif
@@ -4284,7 +4319,14 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
                }
                
 #ifdef TEXT_MODE_MULTITAP
-               if((TEXT_MODE_MULTITAP == cur_text_mode) 
+               if((TEXT_MODE_MULTITAP == cur_text_mode
+#ifdef FEATURE_MT_ENGLISH_UP
+                  || TEXT_MODE_MULTITAP_UP == cur_text_mode
+#endif
+#ifdef FEATURE_MT_ENGLISH_LOW
+                  || TEXT_MODE_MULTITAP_LOW == cur_text_mode
+#endif
+                ) 
                     && (IDF_ALIGN_RIGHT == pContext->dwAlignFlags) 
                     && (startX == rectText.x))
                {
@@ -4316,7 +4358,14 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
                invertRect.dy = dy;
                if(0
 #ifdef TEXT_MODE_MULTITAP               
-               || ((TEXT_MODE_MULTITAP == cur_text_mode) && ((int16)cursorx1 > (int16)cursorx2) && (wSelEndLine == wSelStartLine))
+               || ((TEXT_MODE_MULTITAP == cur_text_mode
+#ifdef FEATURE_MT_ENGLISH_UP
+                  || TEXT_MODE_MULTITAP_UP == cur_text_mode
+#endif
+#ifdef FEATURE_MT_ENGLISH_LOW
+                  || TEXT_MODE_MULTITAP_LOW == cur_text_mode
+#endif
+               ) && ((int16)cursorx1 > (int16)cursorx2) && (wSelEndLine == wSelStartLine))
 #endif
 #ifdef TEXT_MODE_T9_MT_HEBREW               
                || ((TEXT_MODE_T9_MT_HEBREW == cur_text_mode) && ((int16)cursorx1 < (int16)cursorx2) && (wSelEndLine == wSelStartLine))
@@ -6165,6 +6214,28 @@ static void T9TextCtl_Latin_Rapid_Exit(TextCtlContext *pContext)
 	pContext->m_bCaplk = FALSE;
 }
 
+#if defined(FEATURE_MT_ENGLISH_UP)
+static void T9TextCtl_MultitapRestart_Up(TextCtlContext *pContext)
+{
+    pContext->nMultitapCaps = MULTITAP_ALL_CAPS;
+    T9TextCtl_MultitapRestart(pContext);
+}
+#endif
+#if defined(FEATURE_MT_ENGLISH_LOW)
+static void T9TextCtl_MultitapRestart_Low(TextCtlContext *pContext)
+{
+    pContext->nMultitapCaps = MULTITAP_ALL_SMALL;
+    T9TextCtl_MultitapRestart(pContext);
+}
+#endif
+#if defined(FEATURE_MT_ENGLISH_CAPLOW)
+static void T9TextCtl_MultitapRestart_CapLow(TextCtlContext *pContext)
+{
+    pContext->nMultitapCaps = MULTITAP_FIRST_CAP;
+    T9TextCtl_MultitapRestart(pContext);
+}
+#endif
+
 /*------------------------------------------------------------------------
  *
  *  Function name   : T9TextCtl_MultitapRestart
@@ -6957,6 +7028,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
                 pContext->uModeInfo.mtap.nSubChar = 0;         
                 pContext->wSelStart = pContext->sT9awFieldInfo.G.nCursor;      
                 //MSG_FATAL("pContext->wSelStart=%d",pContext->wSelStart,0,0);
+#ifndef FEATURE_MT_ENGLISH_NEW
                 if (((pContext->uModeInfo.mtap.kLast >= AVK_0 
                      && pContext->uModeInfo.mtap.kLast <= AVK_9 )||
                      (pContext->uModeInfo.mtap.kLast == AVK_RIGHT||pContext->uModeInfo.mtap.kLast == AEE_AVK_BASE))
@@ -6977,12 +7049,15 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
                    #else
                    pContext->nMultitapCaps = MULTITAP_ALL_SMALL;
                    #endif
-                }                                        
+                }
+#endif //FEATURE_MT_ENGLISH_NEW
             } 
 
+#ifndef FEATURE_MT_ENGLISH_NEW
 #if  defined(FEATURE_VERSION_W516) ||defined(FEATURE_VERSION_VG68) ||defined(FEATURE_VERSION_C01) || defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)||defined(FEATURE_VERSION_W027V3)
             pContext->nMultitapCaps = MULTITAP_ALL_SMALL;
 #endif
+#endif //FEATURE_MT_ENGLISH_NEW
             MSG_FATAL("pContext->nMultitapCaps=========%d",pContext->nMultitapCaps,0,0);
             sT9Status = T9HandleKey ( &pContext->sT9awFieldInfo.G, t9Key ); 
             MSG_FATAL("pContext->sT9awFieldInfo.G.psTxtBuf=%0x,=%d.....",pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart],pContext->wSelStart,0);
@@ -9410,6 +9485,12 @@ static boolean T9_AW_DisplayText(TextCtlContext *pContext, AVKType key)
         MSG_FATAL("T9_AW_DisplayText........11122key==%d",key,0,0);
         MSG_FATAL("***zzg OEM_TextGetCurrentMode==%d",OEM_TextGetCurrentMode((OEMCONTEXT)pContext),0,0);
         if((TEXT_MODE_MULTITAP == OEM_TextGetCurrentMode((OEMCONTEXT)pContext) 
+#ifdef FEATURE_MT_ENGLISH_UP
+          ||TEXT_MODE_MULTITAP_UP == OEM_TextGetCurrentMode((OEMCONTEXT)pContext)
+#endif
+#ifdef FEATURE_MT_ENGLISH_LOW
+          ||TEXT_MODE_MULTITAP_LOW == OEM_TextGetCurrentMode((OEMCONTEXT)pContext)
+#endif
 #ifdef FEATURE_T9_CAP_LOWER_ENGLISH
         ||TEXT_MODE_T9_CAP_LOWER_ENGLISH == OEM_TextGetCurrentMode((OEMCONTEXT)pContext)
 #endif
@@ -9811,7 +9892,13 @@ static T9KEY T9_BrewKeyToT9AlphabeticKey(TextCtlContext *pContext,AEEEvent eCode
 #endif
 
 #ifdef FEATURE_T9_MULTITAP    
-        case TEXT_MODE_MULTITAP:    
+        case TEXT_MODE_MULTITAP:
+#ifdef FEATURE_MT_ENGLISH_UP
+        case TEXT_MODE_MULTITAP_UP:
+#endif
+#ifdef FEATURE_MT_ENGLISH_LOW
+        case TEXT_MODE_MULTITAP_LOW:
+#endif
 #ifdef FEATURE_T9_MT_SPANISH
 	 case TEXT_MODE_T9_MT_SPANISH:
 #endif

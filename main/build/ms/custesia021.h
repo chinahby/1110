@@ -9,12 +9,13 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define CUST_EDITION
 #endif
 
+
+#ifdef CUST_EDITION
+#define T_QSC1110
+#define FEATURE_OEMOMH
+#define FEATURE_NOOMHPROMPT
 #define FEATURE_VERSION_C11
 #define FEATURE_VERSION_ESIA
-//#define FEATURE_VERSION_S106
-//#define FEATURE_VERSION_W516
-//#define FEATURE_VERSION_1110W516
-#ifdef CUST_EDITION
 //#define FEATURE_APP_BLUETOOTH
 //#define FEATURE_BT
 //#define FEATURE_IBT
@@ -36,7 +37,8 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //Add End
 
 #define FEATURE_SMS_UDH
-//#define FEATURE_SUPPORT_ID
+//#define FEATURE_USES_ZI
+#define FEATURE_SUPPORT_ID                 //长短信
 #define FEATURE_WMS_APP
 #define FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
 #undef  FEATRUE_SUPPORT_G_SENSOR
@@ -44,7 +46,12 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_ICARD_NO_UI_BASE
 #define FEATURE_LANG_ENGLISH
 //#define FEATURE_LANG_ARABIC
-//#define FEATURE_LANG_INDONESIAN
+#define FEATURE_LANG_INDONESIAN
+#define FEATURE_MT_ENGLISH_NEW
+#define FEATURE_MT_ENGLISH_UP
+#define FEATURE_MT_ENGLISH_LOW
+#define FEATURE_MT_ENGLISH_CAPLOW
+#define FEATURE_MT_ENGLISH_EN
 //#define FEATURE_NUM_KEY_MID
 //#define FEATURE_INPUTMODE_INDONESIAN //Add By zzg 2010_09_06
 //#define FEATURE_T9_TEXT
@@ -59,22 +66,21 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //#define FEATURE_SPN_FROM_BSMCCMNC
 #define FEATURE_LONG_NETLOCK   //add by yangdecai
 
-#define FEATURE_MOVIE_RECORD_SUPPORT
-#define FEATURE_ARPHIC_LAYOUT_ENGINE
+//#define FEATURE_MOVIE_RECORD_SUPPORT
+//#define FEATURE_ARPHIC_LAYOUT_ENGINE
 #define FEATURE_CAMERA_MULTI_NEW_AUTO_DETECT
-#define FEATURE_AMR_FIXED
+//#define FEATURE_AMR_FIXED
 #endif
 
-#ifndef TARGSBW2_H
-   #include "targsb12864.h"
+#ifndef TARGSB2_H
+   #include "targsb12832.h"
 #endif
-
 
 //#define FEATURE_DATA_STRIP_ATCOP 
 #define FEATURE_STD_MIDI 
 //#define FEATURE_GSTK 
 #define FEATURE_DIAG_LOWMEM 
-#define FEATURE_AMR_VOCODER
+//#define FEATURE_AMR_VOCODER 
 #define T_QSC1110
 #define CUST_MOB_MODEL 25
 #define FEATURE_PLL_192 
@@ -82,19 +88,16 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_AUDIO_CONFIGURATION_MINIMAL 
 //Gemsea Remove #define FEATURE_AUDIO_CONFIGURATION_LO_TIER 
 //#define FEATURE_IPL_NO_CAMERA
+#ifdef USES_CAMERA
 #define FEATURE_IIPL
+#endif
 #define FEATURE_UIM_QSC1100_LOW_MEMORY 
 #define CM_FEATURE_HSBASED_PLUS_DIAL_DISPLAY 
-//#define FEATURE_AUDIO_EQUALIZER 
-//#define FEATURE_AUDIO_QCONCERT 
-//#define FEATURE_AUDIO_SPECTRUM_ANALYZER 
 #define CLKRGM_INCLUDE_TD 
 #define FEATURE_MMODE_LOW_MEM_TARGET 
-//#define FEATURE_LOWTIER_LOWMEM 
+#define FEATURE_LOWTIER_LOWMEM 
 #define FEATURE_REX_IPC 
 #define FEATURE_ASYNC_DATA_NOOP 
-#define HS_USB_SCSI_BUFFER_SIZE (512 * 2)
-#define FEATURE_HFAT
 #define FEATURE_HS_USB_PMIC_PHY 
 #define FEATURE_HS_USB_USER_EVENT_POST 
 #define FEATURE_RRC_SIB_HEAP 
@@ -106,13 +109,9 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_DIAG_SMALL_BUFFER 
 #define FEATURE_IPC_SMALL_MEMORY_POOL 
 #define FEATURE_APP_DIALER 
-#define FEATURE_MM_REC 
-//#define FEATURE_VOC_ADPCM 
 #define FEATURE_QVGANOTSUPPORTED 
-#define FEATURE_AUDFMT_AMR 
 #define FEATURE_MDP_LAYER1_PRIMARY 
 #define FEATURE_DISP_TASK 
-#define FEATURE_BUILD_MMC
 #define FEATURE_RUIM 
 #define FEATURE_UIM1 
 #define FEATURE_UIM_PMIC_ON_UIM1 
@@ -264,29 +263,34 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATRUE_AUTO_SET_NEED_NV_VALUE
 #define FEATURE_FM_RADIO
 #define FEATURE_FM_OEM
-//#define FEATURE_ALL_KEY_PAD
 #define FEATURE_TORCH_SUPPORT		//手电筒
 #define FEATURE_COMBINED_PWR_END_KEYS
-//#define FEATURE_FLEXI_STATIC_BREW_APP
 #define FEATURE_DRV_SDCC
+#define FEATURE_HFAT
 #define FEATURE_SDCC_CLK_CONFIG
 #define FEATURE_HS_USB_MS_FD
 #define FEATURE_AUDIO_CAMERA_CONCURRENCY // FOR MP3
-#define FEATURE_AAC
-#define FEATURE_AAC_PLUS
-#define FEATURE_ENHANCED_AAC_PLUS
+//#define FEATURE_AAC
+//#define FEATURE_AAC_PLUS
+//#define FEATURE_ENHANCED_AAC_PLUS
 #endif
 
 #include "custdisplay.h"
 
-
 #ifdef USES_CAMERA
-#ifdef FEATURE_MOVIE_RECORD_SUPPORT
-#include "custcamcorder.h"
-#endif
 #include "custcamera.h"
+#undef USE_CAMSENSOR_SIV121A
+#undef USE_CAMSENSOR_SIV120A
+#undef USE_CAMSENSOR_DB8B63A
+#undef USE_CAMSENSOR_SID130B
+#undef USE_CAMSENSOR_SP0838
+#undef USE_CAMSENSOR_SP0A18
+#undef USE_CAMSENSOR_MICRON_SIV121D_0M3
+#undef USE_CAMSENSOR_GC0329
+
 #include "custjpeg.h"
 #endif
+
 #include "custuim.h"
 #include "custcmx.h"
 #include "custavs.h"
@@ -294,11 +298,6 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #include "custmmode.h"
 #include "custcdma.h"
 #include "custrf.h"
-#ifdef FEATURE_BT
-#include "custqbt.h"
-#include "custbt.h"
-#endif
-#include "custsec.h"
 #include "custcdma2000.h"
 #include "custdebug.h"
 #include "custdmss.h"
@@ -309,7 +308,6 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #include "custui.h"
 #include "custmcs.h"
 #include "custpmic3.h"
-#include "custmp4.h"
 #include "custefs.h"
 //#include "custfmrds.h"
 #include "custnvm.h"
@@ -319,7 +317,6 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #ifdef FEATURE_DRV_SDCC
 #include "Custsdcc.h"
 #endif
-
 
 #ifdef FEATURE_MEDIAPLAYER_TEST_AUTOMATION
    #undef FEATURE_MEDIAPLAYER_TEST_AUTOMATION

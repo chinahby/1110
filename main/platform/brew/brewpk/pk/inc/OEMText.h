@@ -96,13 +96,18 @@ when       who     what, where, why
 //#define FEATURE_LANG_HINDI     //add  by yangdecai
 //#define FEATURE_LANG_ARABIC
 #ifdef FEATURE_LANG_ENGLISH
+#ifdef FEATURE_MT_ENGLISH_NEW
+#if defined(FEATURE_MT_ENGLISH_EN)
+#define FEATURE_T9_RAPID_ENGLISH
+#endif
+#else
 #define FEATURE_T9_MT_ENGLISH
 #define FEATURE_T9_RAPID_ENGLISH
 
 #if defined (FEATURE_ALL_KEY_PAD)|| defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)||defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_W516)||defined(FEATURE_VERSION_W0216A)||defined (FEATURE_VERSION_VG68) || defined(FEATURE_VERSION_W027)
 #define FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai 2010-09-09
 #endif
-
+#endif
 #endif //FEATURE_LANG_ENGLISH
 
 #ifdef FEATURE_LANG_ARABIC
@@ -200,6 +205,16 @@ when       who     what, where, why
 #ifdef FEATURE_T9_MULTITAP
 #define TEXT_MODE_MULTITAP         AEE_TM_LETTERS
 #endif //FEATURE_T9_MULTITAP
+
+#if defined(FEATURE_MT_ENGLISH_UP)
+#define TEXT_MODE_MULTITAP_UP      (AEE_TM_FIRST_OEM+0x100)
+#endif
+#if defined(FEATURE_MT_ENGLISH_LOW)
+#define TEXT_MODE_MULTITAP_LOW     (AEE_TM_FIRST_OEM+0x101)
+#endif
+#if defined(FEATURE_MT_ENGLISH_CAPLOW)
+#define TEXT_MODE_MULTITAP          AEE_TM_LETTERS
+#endif
 
 #ifdef FEATURE_T9_RAPID_ENGLISH
 #define TEXT_MODE_T9_RAPID_ENGLISH AEE_TM_RAPID 
@@ -337,26 +352,15 @@ void             OEM_TextDrawIMEDlg(OEMCONTEXT hTextField);
 //===============================================================================  
 enum 
 {
-    OEM_MODE_NUMBERS = 0,   // 数字 
-
-#ifdef FEATURE_T9_MT_ENGLISH
-    OEM_MODE_T9_MT_ENGLISH 
+    OEM_MODE_NUMBERS = 0
+    ,OEM_MODE_T9_MT_ENGLISH 
     ,OEM_MODE_T9_MT_ENGLISH_LOW
     ,OEM_MODE_T9_MT_ENGLISH_UP
-    #ifdef FEATURE_VERSION_C01
-    //,OEM_MODE_T9_MT_CAP_LOWER
-    #endif
-#endif //FEATURE_T9_MT_ENGLISH
-
-#ifdef FEATURE_T9_RAPID_ENGLISH
+    ,OEM_MODE_T9_MT_CAP_LOWER
     ,OEM_MODE_T9_RAPID_ENGLISH
     ,OEM_MODE_T9_RAPID_ENGLISH_LOW
-    ,OEM_MODE_T9_RAPID_ENGLISH_UP    
-#endif //FEATURE_T9_RAPID_ENGLISH
-
-#ifdef FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai
+    ,OEM_MODE_T9_RAPID_ENGLISH_UP   
 	,OEM_MODE_T9_CAP_LOWER_ENGLISH
-#endif
 #ifdef FEATURE_MYANMAR_INPUT_MOD
 	,OEM_MODE_MYANMAR
 #endif
@@ -475,6 +479,15 @@ enum
 #ifdef FEATURE_T9_ITALIAN
     ,OEM_MODE_T9_ITALIAN
 #endif //FEATURE_T9_ITALIAN
+#ifdef FEATURE_MT_ENGLISH_UP
+    ,OEM_MODE_ENGLISH_UP
+#endif
+#ifdef FEATURE_MT_ENGLISH_LOW
+    ,OEM_MODE_ENGLISH_LOW
+#endif
+#ifdef FEATURE_MT_ENGLISH_CAPLOW
+    ,OEM_MODE_ENGLISH_CAPLOW
+#endif
 };
 
 //===============================================================================
@@ -484,13 +497,30 @@ enum
 #define MAX_MODE_STR                (16)
 
 #define _T9_NUMBER_MODES             (1)
-
+#if defined(FEATURE_MT_ENGLISH_UP)
+#define MULTITAP_MODES_UP              (1)
+#else
+#define MULTITAP_MODES_UP              (0)
+#endif
+#if defined(FEATURE_MT_ENGLISH_LOW)
+#define MULTITAP_MODES_LOW             (1)
+#else
+#define MULTITAP_MODES_LOW             (0)
+#endif
+#if defined(FEATURE_MT_ENGLISH_CAPLOW)
+#define MULTITAP_MODES_CAPLOW          (1)
+#else
+#define MULTITAP_MODES_CAPLOW          (0)
+#endif
+#if defined(FEATURE_MT_ENGLISH_NEW)
+#define _T9_MULTITAP_MODES             (MULTITAP_MODES_UP+MULTITAP_MODES_LOW+MULTITAP_MODES_CAPLOW)
+#else
 #ifdef FEATURE_T9_MT_ENGLISH
 #define _T9_MULTITAP_MODES             (1)
 #else // #ifdef FEATURE_T9_MT_ENGLISH
 #define _T9_MULTITAP_MODES             (0)
 #endif //#ifdef FEATURE_T9_MT_ENGLISH
-
+#endif
 #ifdef	FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai 2010-09-09
 #define _T9_CAPLOWER_MODES             (1)
 #else
@@ -713,7 +743,15 @@ static const AECHAR englishTitle[NUM_OF_MODES][MAX_MODE_STR+1] =
    // Lint complains because all the fields aren't explicitly initialized
    //lint -save -e785
    {'1','2','3',0}
-   
+#if defined(FEATURE_MT_ENGLISH_UP)
+   ,{'A','B',0}
+#endif
+#if defined(FEATURE_MT_ENGLISH_LOW)
+   ,{'a','b',0}
+#endif
+#if defined(FEATURE_MT_ENGLISH_CAPLOW)
+   ,{'A','b',0}
+#endif
 #ifdef FEATURE_T9_MT_ENGLISH   
    ,{'A','b',0}
 #endif //FEATURE_T9_MT_ENGLISH
@@ -842,7 +880,15 @@ static const AECHAR englishTitle[NUM_OF_MODES][MAX_MODE_STR+1] =
    // Lint complains because all the fields aren't explicitly initialized
    //lint -save -e785
    {'1','2','3',0}
-   
+#if defined(FEATURE_MT_ENGLISH_UP)
+   ,{'A','B',0}
+#endif
+#if defined(FEATURE_MT_ENGLISH_LOW)
+   ,{'a','b',0}
+#endif
+#if defined(FEATURE_MT_ENGLISH_CAPLOW)
+   ,{'A','b',0}
+#endif
 #ifdef FEATURE_T9_MT_ENGLISH   
    ,{'A','b',0}
 #endif //FEATURE_T9_MT_ENGLISH
@@ -1696,7 +1742,7 @@ static const AECHAR *const sszNetSymbolList[MAX_NET_SYMBOL] =
 
 #endif
 
-#ifdef FEATURE_T9_MT_ENGLISH
+//#ifdef FEATURE_T9_MT_ENGLISH
 //===============================================================================
 // Show multitap english list
 //===============================================================================
@@ -1855,7 +1901,7 @@ static const AECHAR *const saMultitapStrings[10] =
    sszMultitap5, sszMultitap6, sszMultitap7, sszMultitap8, sszMultitap9
 };
 
-#endif //FEATURE_T9_MT_ENGLISH
+//#endif //FEATURE_T9_MT_ENGLISH
 
 
 #ifdef FEATURE_T9_MT_SPANISH

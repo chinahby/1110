@@ -3167,7 +3167,9 @@ static AEETextInputMode CTextCtl_SetInputMode(ITextCtl * po, AEETextInputMode m)
 #ifdef FEATURE_PREPAID_ISRAEL_HEBREW
 	         pme->m_wResID = IDB_MODE_T9_MT_HEBREW_ENGLISH;
 #else
-
+#ifdef FEATURE_MT_ENGLISH_NEW
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
+#else
 #if defined (FEATURE_ALL_KEY_PAD)
 			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
 #else
@@ -3177,7 +3179,7 @@ static AEETextInputMode CTextCtl_SetInputMode(ITextCtl * po, AEETextInputMode m)
 			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
 			#endif
 #endif	         
-
+#endif//FEATURE_MT_ENGLISH_NEW
 #endif  // FEATURE_PREPAID_ISRAEL_HEBREW            
                 break;
 #ifdef FEATURE_USES_ZI
@@ -5212,6 +5214,33 @@ static void OEM_SetInputMode(CTextCtl * pme)
 	                          (void*)&is_Taimod,
 	                          sizeof(boolean));
             break; 
+#ifdef FEATURE_MT_ENGLISH_UP
+        case OEM_MODE_ENGLISH_UP:
+            wMode = TEXT_MODE_MULTITAP_UP;
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
+            (void)OEM_SetConfig(CFGI_LANGUAGE_MOD,
+	                          (void*)&is_Taimod,
+	                          sizeof(boolean));
+            break;
+#endif
+#ifdef FEATURE_MT_ENGLISH_LOW
+        case OEM_MODE_ENGLISH_LOW:
+            wMode = TEXT_MODE_MULTITAP_LOW;
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
+            (void)OEM_SetConfig(CFGI_LANGUAGE_MOD,
+	                          (void*)&is_Taimod,
+	                          sizeof(boolean));
+            break;
+#endif
+#ifdef FEATURE_MT_ENGLISH_CAPLOW
+        case OEM_MODE_ENGLISH_CAPLOW:
+            wMode = TEXT_MODE_MULTITAP;
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
+            (void)OEM_SetConfig(CFGI_LANGUAGE_MOD,
+	                          (void*)&is_Taimod,
+	                          sizeof(boolean));
+            break;
+#endif
 #ifdef FEATURE_USES_ZI
 #ifdef FEATURE_ZI_MT_ENGLISH
         case OEM_MODE_ZI_MT_ENGLISH:
@@ -6053,6 +6082,15 @@ See Also: none
 static void TextCtl_SetInputList(CTextCtl *pme)
 {
     int i=0;
+#ifdef FEATURE_MT_ENGLISH_LOW
+    pme->m_nCurrInputModeList[i++] = OEM_MODE_ENGLISH_LOW;
+#endif
+#ifdef FEATURE_MT_ENGLISH_UP
+    pme->m_nCurrInputModeList[i++] = OEM_MODE_ENGLISH_UP;
+#endif
+#ifdef FEATURE_MT_ENGLISH_CAPLOW
+    pme->m_nCurrInputModeList[i++] = OEM_MODE_ENGLISH_CAPLOW;
+#endif
 #ifdef FEATURE_USES_ZI
 #ifdef FEATURE_ZI_RAPID_SPANISH
     pme->m_nCurrInputModeList[i++] = OEM_MODE_ZI_RAPID_SPANISH;
@@ -6556,7 +6594,7 @@ static boolean TextCtl_SetNextInputMode(CTextCtl *pme)
 #endif
     for (i=0; i<pme->m_nCurrInputModeCount; i++)
     {
-        MSG_FATAL("setnextinputmode------i=%d",i,0,0);
+        MSG_FATAL("setnextinputmode------i=%d Mode=%d Curr=%d",i,pme->m_nCurrInputModeList[i],pme->m_nCurrInputMode);
 		
         if ( pme->m_nCurrInputMode == pme->m_nCurrInputModeList[i] )
         {
@@ -6669,6 +6707,7 @@ static boolean TextCtl_SetNextInputMode(CTextCtl *pme)
             break;
         }
     }
+    
     #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
     ret = TRUE;
     #endif
@@ -7095,6 +7134,21 @@ static int TextCtl_Oemmode_Textmode(byte oeminputmode)
         case OEM_MODE_NUMBERS:
             wMode = TEXT_MODE_NUMBERS;//数字输入模式
             break; 
+#ifdef FEATURE_MT_ENGLISH_UP
+        case OEM_MODE_ENGLISH_UP:
+            wMode = TEXT_MODE_MULTITAP_UP;
+            break; 
+#endif
+#ifdef FEATURE_MT_ENGLISH_LOW
+        case OEM_MODE_ENGLISH_LOW:
+            wMode = TEXT_MODE_MULTITAP_LOW;
+            break; 
+#endif
+#ifdef FEATURE_MT_ENGLISH_CAPLOW
+        case OEM_MODE_ENGLISH_CAPLOW:
+            wMode = TEXT_MODE_MULTITAP;
+            break; 
+#endif
 #ifdef FEATURE_USES_ZI
 #ifdef FEATURE_ZI_MT_ENGLISH
         case OEM_MODE_ZI_MT_ENGLISH:
