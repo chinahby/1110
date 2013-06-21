@@ -4314,14 +4314,19 @@ boolean OEM_IsNetLock(void)
     {
        final_mnc -= 100;
     } 
+    
+    MSG_FATAL("final_mcc = %d final_mnc=%d sid=%d",final_mcc,final_mnc,sid);	  
 
     for(i=0;i<nvilock.enabled_net_lock.b_lock;i++)
-    {
-        if( (final_mcc == nvilock.enabled_net_lock.mcc[i] || nvilock.enabled_net_lock.mcc[i] == -1)
-          &&(final_mnc == nvilock.enabled_net_lock.mnc[i] || nvilock.enabled_net_lock.mnc[i] == -1)
-          &&(sid ==0 || sid == nvilock.enabled_net_lock.sid[i] || nvilock.enabled_net_lock.sid[i] == -1)
+    {    
+        MSG_FATAL("phone mcc = %d mnc=%d sid=%d",nvilock.enabled_net_lock.mcc[i],nvilock.enabled_net_lock.mnc[i],nvilock.enabled_net_lock.sid[i]);	
+        if( (final_mcc == nvilock.enabled_net_lock.mcc[i] || nvilock.enabled_net_lock.mcc[i] == 65535)
+          &&(final_mnc == nvilock.enabled_net_lock.mnc[i] || nvilock.enabled_net_lock.mnc[i] == 65535)
+          &&(sid ==0 || sid == nvilock.enabled_net_lock.sid[i] || nvilock.enabled_net_lock.sid[i] == 65535)
           )
         {
+        
+            MSG_FATAL("return false",0,0,0); 
             return FALSE;
         }
     }
