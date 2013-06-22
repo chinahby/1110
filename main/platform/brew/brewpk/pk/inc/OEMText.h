@@ -209,11 +209,16 @@ when       who     what, where, why
 #if defined(FEATURE_MT_ENGLISH_UP)
 #define TEXT_MODE_MULTITAP_UP      (AEE_TM_FIRST_OEM+0x100)
 #endif
+#if defined(FEATURE_MT_ENGLISH_CAPLOW)
+#define TEXT_MODE_MULTITAP          AEE_TM_LETTERS
 #if defined(FEATURE_MT_ENGLISH_LOW)
 #define TEXT_MODE_MULTITAP_LOW     (AEE_TM_FIRST_OEM+0x101)
 #endif
-#if defined(FEATURE_MT_ENGLISH_CAPLOW)
+#else
 #define TEXT_MODE_MULTITAP          AEE_TM_LETTERS
+#if defined(FEATURE_MT_ENGLISH_LOW)
+#define TEXT_MODE_MULTITAP_LOW      AEE_TM_LETTERS
+#endif
 #endif
 
 #ifdef FEATURE_T9_RAPID_ENGLISH

@@ -1371,7 +1371,7 @@ void OEM_TextSetEdit(OEMCONTEXT hTextCtl,
    if (pContext) {
       unsigned char byModeIndex = FindModeIndex(pContext, wmode);
       boolean bRedraw=FALSE, bRestartEdit=FALSE, bExitEdit=FALSE;
-		MSG_FATAL("OEM_TextSetEdit pContext......byModeIndex=%d",byModeIndex,0,0);
+		MSG_FATAL("MIAOXIAOMING OEM_TextSetEdit pContext......byModeIndex=%d",byModeIndex,0,0);
       if (pContext->bEditable != bIsEditable) {
          // We must redraw here after changing mode
          bRedraw=TRUE;
@@ -2692,8 +2692,8 @@ static unsigned char FindModeIndex(TextCtlContext   *pContext,
    if (wMode == AEE_TM_CURRENT && pContext) {
       // Special case
       return pContext->byMode;
-   }
-   
+   }  
+
    sTextModesSize = ARRAY_SIZE(sTextModes);
    MSG_FATAL("C01 textCtrl Error sTextModesSize=%d",sTextModesSize,0,0);
    for (i=0; i<sTextModesSize; ++i) {
@@ -2702,6 +2702,7 @@ static unsigned char FindModeIndex(TextCtlContext   *pContext,
          return i;
       }
    }
+   
    return 0;
 }
 
@@ -7141,11 +7142,9 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
             }
             #elif defined(FEATURE_LANG_HINDI)
             //#ifdef FEATURE_LANG_HINDI
-#ifdef FEATURE_VERSION_W021_CT100
-            if(pContext->byMode == 3)
-#else
+
             if(pContext->byMode == 4)
-#endif			
+		
             {
                 MSG_FATAL("FEATURE_LANG_HINDI----1",0,0,0);
             	pContext->uModeInfo.mtap.kLast = key; 
@@ -9896,9 +9895,13 @@ static T9KEY T9_BrewKeyToT9AlphabeticKey(TextCtlContext *pContext,AEEEvent eCode
 #ifdef FEATURE_MT_ENGLISH_UP
         case TEXT_MODE_MULTITAP_UP:
 #endif
+
+#ifdef FEATURE_MT_ENGLISH_CAPLOW
 #ifdef FEATURE_MT_ENGLISH_LOW
         case TEXT_MODE_MULTITAP_LOW:
 #endif
+#endif//if FEATURE_MT_ENGLISH_CAPLOW not defined, TEXT_MODE_MULTITAP_LOW==FEATURE_T9_MULTITAP,so compile error
+
 #ifdef FEATURE_T9_MT_SPANISH
 	 case TEXT_MODE_T9_MT_SPANISH:
 #endif

@@ -3156,7 +3156,10 @@ static AEETextInputMode CTextCtl_SetInputMode(ITextCtl * po, AEETextInputMode m)
 		  tmSetMode = TEXT_MODE_MULTITAP;
 		}
 #endif
+
+//because
 	
+	MSG_FATAL("MIAOXIAOMING tmSetMode==%d",tmSetMode,0,0);
     if (tmSetMode != OEM_TextGetCurrentMode(pme->m_pText))
     {
         AEETextInputMode  tmNext;
@@ -3168,7 +3171,11 @@ static AEETextInputMode CTextCtl_SetInputMode(ITextCtl * po, AEETextInputMode m)
 	         pme->m_wResID = IDB_MODE_T9_MT_HEBREW_ENGLISH;
 #else
 #ifdef FEATURE_MT_ENGLISH_NEW
+#ifdef FEATURE_MT_ENGLISH_CAPLOW //if FEATURE_MT_ENGLISH_CAPLOW is not defined, TEXT_MODE_MULTITAP==TEXT_MODE_MULTITAP_LOW
             pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
+#else
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
+#endif//FEATURE_MT_ENGLISH_CAPLOW  
 #else
 #if defined (FEATURE_ALL_KEY_PAD)
 			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
