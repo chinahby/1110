@@ -1066,7 +1066,7 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
 #endif
 
 #ifdef FEATURE_BREW_CAMERA
-#if defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_W317A)|| defined(FEATURE_VERSION_S600S)
+#if defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_W317A)|| defined(FEATURE_VERSION_S600S)||defined(FEATURE_VERSION_ESIA)
 #else
             IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_CAMERA, IDS_MULTIMEDIA_CAMERA, NULL, 0);
 #endif
@@ -1100,6 +1100,8 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
             IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_MEDIAGALLERY,IDS_MULTIMEDIA_MEDIAGALLERY, NULL, 0);
 #endif
 #ifdef FEATURE_BREW_CAMERA
+
+#ifndef FEATURE_VERSION_ESIA
 #if defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W208S) || defined(FEATURE_VERSION_W027)||defined(FEATURE_VERSION_C11)
 #if !defined(FEATURE_PEKTEST)
 #ifndef FEATURE_VERSION_S600S
@@ -1107,6 +1109,7 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
 #endif /*FEATURE_VERSION_S600S*/
 #endif
 #endif
+#endif/*FEATURE_VERSION_ESIA*/
 #endif
             return TRUE;
             

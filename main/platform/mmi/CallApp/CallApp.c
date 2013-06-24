@@ -1767,9 +1767,11 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
                     ICALLMGR_EndAllCalls(pMe->m_pICallMgr);
 #endif
 #endif
+#ifndef FEATURE_NOOMHPROMPT
                     pMe->m_nStartCallType = START_NONOMH;
                     pMe->m_clsOMHApplet   = dwParam;
                     ISHELL_StartApplet(pMe->m_pShell, AEECLSID_DIALER/*AEECLSID_CALL*/);
+#endif
                     return TRUE;
                 }
             }

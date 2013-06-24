@@ -3615,7 +3615,7 @@ static boolean IDD_SETTING_Handler(void   *pUser,
             // 菜单项初始化
             MENU_ADDITEM(pMenu, IDS_MSGVALIDITY);
 			//MENU_ADDITEM(pMenu, IDS_TIME_STAMP);	//Add By zzg 2012_02_04
-#if (!defined FEATURE_CARRIER_TAIWAN_APBW) && (!defined FEATURE_CARRIER_THAILAND_HUTCH)
+#if (!defined FEATURE_CARRIER_TAIWAN_APBW) && (!defined FEATURE_CARRIER_THAILAND_HUTCH)&&!defined(FEATURE_VERSION_W021_CT100)
             MENU_ADDITEM(pMenu, IDS_REPORTTITLE); //IDS_DELIVERYREPORTS);
 #endif            
 #ifndef FEATURE_CARRIER_THAILAND_HUTCH              
@@ -3626,7 +3626,7 @@ static boolean IDD_SETTING_Handler(void   *pUser,
 #endif                   
 #if 1//def FEATURE_CARRIER_TAIWAN_APBW        //add by yangdecai   2010-08-23 
             MSG_FATAL("IDD_SETTING_Handler EVT_DIALOG_INIT IDS_CALLBACKNUM", 0, 0, 0);
-#if !defined(FEATURE_VERSION_C316)&&!defined(FEATURE_VERSION_K202_LM129C)
+#if !defined(FEATURE_VERSION_C316)&&!defined(FEATURE_VERSION_K202_LM129C)&&!defined(FEATURE_VERSION_W021_CT100)
             MENU_ADDITEM(pMenu, IDS_CALLBACKNUM);
 #endif
 #endif 
@@ -10030,7 +10030,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                 {
                     AEERect rect;
                     int ry=0;
-                    #if defined(FEATURE_VERSION_C01) || defined(FEATURE_VERSION_1110W516) ||defined(FEATURE_VERSION_C11)||defined(FEATURE_VERSION_C180)||defined(FEATURE_VERSION_C100)|| defined(FEATURE_VERSION_W027)
+                    #if defined(FEATURE_VERSION_C01) || defined(FEATURE_VERSION_1110W516)||defined(FEATURE_VERSION_C11)||defined(FEATURE_VERSION_C180)||defined(FEATURE_VERSION_C100)|| defined(FEATURE_VERSION_W027)||defined(FEATURE_VERSION_W021_CT100)
                     if(i<4 && i != 2)
                     #else
                     if(i<4)
@@ -11462,6 +11462,8 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 		         	}		         	
 		         	#elif defined(FEATURE_VERSION_K202_LM129C)//xxzhen
 					(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_PINYIN);
+                    #elif defined(FEATURE_VERSION_W021_CT100)//xxzhen
+					(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_HINDI);
 		         	#else
 					#ifdef FEATURE_ALL_KEY_PAD
         	    	(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_RAPID);

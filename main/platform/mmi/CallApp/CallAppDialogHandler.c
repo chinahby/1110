@@ -1941,13 +1941,13 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                     char   szStr[2];
                     AECHAR wStr[2];
 					MSG_FATAL("CALLAPP_DIAler_numedit_dlg......evt key",0,0,0);
+                                        
                     if ((dwParam & KB_AUTOREPEAT) != 0 && (AVKType)wParam != AVK_0&& (AVKType)wParam != AVK_STAR&& (AVKType)wParam != AVK_POUND)
                     {
                         MSG_FATAL("OK,it is repeat,don't process it ",0,0,0);
                         return TRUE;
                     }
-
-					
+                 					
                     szStr[0] = CallApp_AVKType2ASCII((AVKType)wParam);
 					if(pMe->m_bShift && (wParam == AVK_1))
 					{
@@ -9198,10 +9198,8 @@ boolean CallApp_AnswerCall(CCallApp  *pMe, boolean bAnswerHold,AEEEvent eCode,ui
         	   (wParam == AVK_RWD)||(wParam == AVK_LCTRL)||(wParam == AVK_SPACE)||
         	   (AVK_A <= wParam && wParam <= AVK_Z) ||(AVK_CLR < wParam && wParam <AVK_SOFT1 ))
                  && !bKeyguardEnabled)
-                 ||(wParam == AVK_SEND 
-                  #if defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W027)||defined(FEATURE_VERSION_K202_LM129C)//xxzhen
+                 ||(wParam == AVK_SEND                   
                  || wParam == AVK_CAMERA || wParam == AVK_MUSIC
-                 #endif
                  ))
                  && (pMe->m_anykey_answer & 0x1))
         ) ||auto_answer ||wParam == AVK_SELECT)
@@ -12136,7 +12134,7 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
 			
 			{
 				AECHAR wstrTemp[MAX_SIZE_DIALER_TEXT] = {0};
-				#ifdef FEATURE_VERSION_K202
+				#if defined (FEATURE_VERSION_K202)||defined(FEATURE_VERSION_W021_CT100)
 				if (pMe->m_nCursorPos == 0)
 				{
 	                (void)WSTRCPY(&pMe->m_DialString[len-pMe->m_nCursorPos-1], L"0");	               
@@ -12235,7 +12233,7 @@ static void CallApp_Process_Spec_Key_Event(CCallApp *pMe,uint16 wp)
     int len = 0;
 
     CALL_FUN_START("CallApp_Process_Spec_Key_Event",0, 0, 0);
-	MSG_FATAL("***zzg CallApp_Process_Spec_Key_Event***",0, 0, 0);
+	MSG_FATAL("***zzg CallApp_Process_Spec_Key_Event*** wp=%d",wp, 0, 0);
 
     len = WSTRLEN(pMe->m_DialString);
 
@@ -12317,7 +12315,7 @@ if(wp == AVK_0)
 }
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-if(wp == AVK_POUND)
+    if(wp == AVK_POUND)
     {
         if((pMe->m_btime_out % MAX_COUNT_TO_CHANGE ) == 0)//need change
         {
@@ -12388,7 +12386,7 @@ if(wp == AVK_POUND)
 //////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-if(wp == AVK_STAR)
+    if(wp == AVK_STAR)
     {
     #if 1  //def FEATURE_ALL_KEY_PAD
        {
@@ -12471,7 +12469,7 @@ if(wp == AVK_STAR)
         			(void)WSTRCPY(&pMe->m_DialString[len-pMe->m_nCursorPos+1], wstrTemp);
 				}
         	}
-            #if defined(FEATURE_VERSION_X3)
+            #if defined(FEATURE_VERSION_X3)||defined(FEATURE_VERSION_W021_CT100)
             if(pMe->m_curpros<3)
             #else
         	if(pMe->m_curpros<2)
@@ -12667,7 +12665,7 @@ static boolean CallApp_Process_Send_Key_Release_Event(CCallApp *pMe)
     //    return TRUE;
     //}
     /*in emergency call mode ,can not allow to make the muti call*/
-#ifdef FEATURE_OEMOMH     
+#if defined(FEATURE_OEMOMH)||defined(FEATURE_LANG_HINDI)
 	WSTRTOSTR(pMe->m_DialString,temp,MAX_SIZE_DIALER_TEXT+1);
 	if((STRISTR(temp,"+91")))
 	{

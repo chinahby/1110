@@ -75,7 +75,7 @@ static void disp_ic_init(void)
 {
    
 
-#if defined(FEATURE_VERSION_W021_CT100_)
+#if defined(FEATURE_VERSION_W021_CT100)
 //FEATURE_VERSION_W021_CT100
     LCD_WRITE_CMD(0x3a);
     LCD_WRITE_DATA(0x05);

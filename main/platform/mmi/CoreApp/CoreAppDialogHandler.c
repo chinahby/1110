@@ -68,6 +68,8 @@ extern boolean   IsRunAsFactoryTestMode(void);
                                  
 ==============================================================================*/
 
+
+
 boolean bIsPowerUp = FALSE;     //Add By zzg 2013_03_29
 
 
@@ -3606,11 +3608,11 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 			
             if(pMe->m_pIAnn != NULL)
             {
-                #if defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_1110W516)|| defined(FEATURE_VERSION_W027)||defined(FEATURE_VERSION_W027V3)||defined(FEATURE_VERSION_C316)
+               // #if defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_1110W516)|| defined(FEATURE_VERSION_W027)||defined(FEATURE_VERSION_W027V3)||defined(FEATURE_VERSION_C316)
                 IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, FALSE);
-                #else
-                IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);//返回待机界面时，要把显示titlebar标志还原成TRUE
-                #endif
+              //  #else
+              //  IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);//返回待机界面时，要把显示titlebar标志还原成TRUE
+              //  #endif
 	       }
           //Add by pyuangui 20121220
           #if defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_W021_CT100)
@@ -7446,8 +7448,6 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
     			eBBarType = BTBAR_UNLOCK_SOS;
 			#elif defined(FEATURE_VERSION_C316)||defined(FEATURE_LEFT_SOFTKEY_AND_STAR_UNLOCK)//xxzhen	
 			    eBBarType = BTBAR_UNLOCK_L;
-            #elif defined(FEATURE_VERSION_W021_CT100)
-                eBBarType = BTBAR_UNLOCK_L;
         	#elif defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_1110W516) 
         		eBBarType = BTBAR_LUNLOCK;
             

@@ -1880,7 +1880,7 @@ static OEMConfigListType oemi_cache = {
    {L"Mobile Tracker Alert!:The sender of this SMS is using your phone."},
    FALSE,
 #endif
-#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_W021_CT100)
    1,											//CFGI_KEY_LOCK_CHECK			
 #elif defined(FEATURE_VERSION_K202_LM129C)//xxzhen
    0,
@@ -1934,8 +1934,11 @@ static OEMConfigListType oemi_cache = {
    ,{TRUE,KEY_PDA_CTL_FROM_TIME,KEY_PDA_CTL_TO_TIME}
 #endif
    
-
+#ifdef FEATURE_VERSION_W021_CT100	
+   , MAX_FMRADIO_VOLUME/5 *5                   //CFGI_FMRADIO_VOLUME
+#else
    , MAX_FMRADIO_VOLUME/5 *3                   //CFGI_FMRADIO_VOLUME
+#endif
 #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
    ,{{L"88", 5}, {L"88.5", 10}, {L"89.5", 20}, {L"91", 35}, {L"91.5", 40},
     {L"93", 55}, {L"94",   65}, {L"94.5", 70}, {L"95", 75}, {L"95.5", 80},
@@ -2912,7 +2915,7 @@ void OEM_RestoreFactorySetting( void )
 
 #ifdef FEATURE_PEKTEST
     oemi_cache.b_key_lock       =  0;
-#elif defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM) ||defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+#elif defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM) ||defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_KEY_LOCK_DEFAULT_30S)
 	oemi_cache.b_key_lock       =  1; 
 #elif defined(FEATURE_VERSION_K202_LM129C)//xxzhen
 	oemi_cache.b_key_lock       =  2; 
@@ -3220,7 +3223,11 @@ void OEM_RestoreFactorySetting( void )
    oemi_cache.restrict_incoming = 0;
    oemi_cache.restrict_outgoing = 0;
 
+#ifdef FEATURE_VERSION_W021_CT100	
+   oemi_cache.fmRadio_volume = MAX_FMRADIO_VOLUME/5*5;     
+#else
    oemi_cache.fmRadio_volume = MAX_FMRADIO_VOLUME/5*3;     
+#endif
 #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM) 
    {
        oemi_cache.fmRadio_chan_total = 20;
@@ -3370,22 +3377,32 @@ void OEM_RestoreFactorySetting( void )
    nvi.back_light_hfk = OEMNV_EXTPWR_BL_ON;
    (void) OEMNV_Put( NV_BACK_LIGHT_HFK_I, &nvi );
    nvi_cache.backlight_hfk = OEMNV_EXTPWR_BL_ON;
-   
+
+
    // CFGI_RINGER_VOL:
    nvi.ringer_level = OEMNV_VOLUME_MAX;
    (void) OEMNV_Put( NV_RINGER_LVL_I, &nvi );
    nvi_cache.ringer_level = OEMNV_VOLUME_MAX;
 
-   // CFGI_EAR_VOL:
-   nvi.ear_level = OEMNV_VOLUME_HIGH;
+#ifdef FEATURE_VERSION_W021_CT100
+   // CFGI_EAR_VOL:  
+   nvi.ear_level = OEMNV_VOLUME_MAX;
    (void) OEMNV_Put( NV_EAR_LVL_I, &nvi );
-   nvi_cache.handset_ear_level = OEMNV_VOLUME_HIGH;
-
+   nvi_cache.handset_ear_level = OEMNV_VOLUME_MAX;
+#else
+    nvi.ear_level = OEMNV_VOLUME_HIGH;
+    (void) OEMNV_Put( NV_EAR_LVL_I, &nvi );
+    nvi_cache.handset_ear_level = OEMNV_VOLUME_HIGH;
+#endif
    // CFGI_BEEP_VOL:
 #ifdef FEATURE_VERSION_W317A
 	nvi.beep_level = OEMNV_VOLUME_OFF;
    (void) OEMNV_Put( NV_BEEP_LVL_I, &nvi );
    nvi_cache.beep_level = OEMNV_VOLUME_OFF;
+#elif defined (FEATURE_VERSION_W021_CT100)
+	nvi.beep_level = OEMNV_VOLUME_MAX;
+   (void) OEMNV_Put( NV_BEEP_LVL_I, &nvi );
+   nvi_cache.beep_level = OEMNV_VOLUME_MAX;
 #else
    nvi.beep_level = OEMNV_VOLUME_LOW;
    (void) OEMNV_Put( NV_BEEP_LVL_I, &nvi );

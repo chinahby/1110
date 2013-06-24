@@ -440,7 +440,7 @@ static int CMusicPlayer_InitAppData(CMusicPlayer *pMe)
     pMe->m_MusicPlayerCfg.eMusicPlayMode =PLAYMODE_ORDER;
 #ifdef FEATURE_VERSION_C11
     pMe->m_MusicPlayerCfg.eMusicVolume=VOLUME_FIVE;
-#elif defined (FEATURE_VERSION_C316)
+#elif defined (FEATURE_VERSION_C316)||defined(FEATURE_VERSION_W021_CT100)
     pMe->m_MusicPlayerCfg.eMusicVolume=VOLUME_FIVE;
 #else
     pMe->m_MusicPlayerCfg.eMusicVolume=VOLUME_THREE;

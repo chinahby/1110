@@ -52,7 +52,7 @@ static disp_ic_install_type     disp_ic_install[] =
 #ifdef FEATURE_VERSION_W021_CT100 //xxzhen
     disp_rm68110_tft177,
 #endif
-#ifdef FEATURE_VERSION_S600S //xxzhen
+#if defined (FEATURE_VERSION_S600S)//||defined(FEATURE_VERSION_W021_CT100) //xxzhen
     disp_gc9101_tft177,
 #endif
     disp_st7735s_tft177,

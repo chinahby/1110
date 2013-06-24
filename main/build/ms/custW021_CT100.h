@@ -15,6 +15,12 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //#define FEATURE_VERSION_M74
 //#define FEATURE_VERSION_W0216A_T18 //xxzhen
 #define FEATURE_VERSION_W021_CT100
+#define FEATURE_LEFT_SOFTKEY_AND_STAR_UNLOCK
+#define FEATURE_CAMERA_MULTI_NEW_AUTO_DETECT
+#define FEATURE_CAMERA_8W
+#define FEATURE_FM_PAUSE
+#define FEATURE_OEMOMH
+#define FEATURE_NO_VIBRATE
 
 //Add by zzg 2010_10_13
 //#define FEATURE_TORCH_KEY_CAMERA			//手电筒功能按键
@@ -22,6 +28,13 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_GPIO_LAMP_EN_OUTPUT_31		//GPIO_OUTPUT_31
 #define FEATURE_SIM_SEL_GPIO_34_PULL_DOWN	//SIM_SEL== GPIO_OUP(34,GROUP_GPIO_1,GPIO_PULL_DOWN)
 #define FEATURE_GPIO_31_SIGNAL_OUPUT_31		//GPIO_31_SIGNAL == GPIO_OUTPUT_31
+
+#define FEATURE_MT_ENGLISH_NEW
+#define FEATURE_MT_ENGLISH_UP
+#define FEATURE_MT_ENGLISH_LOW
+//#define FEATURE_MT_ENGLISH_CAPLOW
+#define FEATURE_MT_ENGLISH_EN
+
 //Add End
 #endif
 
@@ -388,9 +401,9 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #endif
 //#endif
 
-#ifdef CAMERA_USES_SOFTDSP
-#define FEATURE_CAMERA_NOFULLSCREEN
-#endif
+//#ifdef CAMERA_USES_SOFTDSP
+//#define FEATURE_CAMERA_NOFULLSCREEN
+//#endif
 
 
 #endif /* CUSTSB2_H */

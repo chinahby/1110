@@ -71,6 +71,85 @@ static void disp_ic_mdp_scrupdate(uint32 *scr, uint32 start_row, uint32 start_co
 }
 #endif
 
+void disp_ic_init_w021_ct100_9163C_cpt177_2013_06_20(void)
+{
+    //2013-06-20,力拓9163C+CMO更新为9163C+CPT
+    LCD_WRITE_CMD(0x11); //Exit Sleep
+    LCD_DELAY(120);
+    LCD_WRITE_CMD(0x26); //Set Default Gamma
+    LCD_WRITE_DATA(0x04);
+    LCD_WRITE_CMD(0xB1);//Set Frame Rate
+    LCD_WRITE_DATA(0x07);
+    LCD_WRITE_DATA(0x10);
+    LCD_WRITE_CMD(0xC0); //Set VRH1[4:0] & VC[2:0] for VCI1 & GVDD
+    LCD_WRITE_DATA(0x08);
+    LCD_WRITE_DATA(0x00);
+    LCD_WRITE_CMD(0xC1); //Set BT[2:0] for AVDD & VCL & VGH & VGL
+    LCD_WRITE_DATA(0x05);
+    LCD_WRITE_CMD(0xC5); //Set VMH[6:0] & VML[6:0] for VOMH & VCOML
+    LCD_WRITE_DATA(0x46);
+    LCD_WRITE_DATA(0x40);
+    LCD_WRITE_CMD(0xC7);// Set VMF
+    LCD_WRITE_DATA(0xC2);
+    LCD_WRITE_CMD(0x3a); //Set Color Format
+    LCD_WRITE_DATA(0x05);
+    LCD_WRITE_CMD(0x2A); //Set Column Address
+    LCD_WRITE_DATA(0x00);
+    LCD_WRITE_DATA(0x00);
+    LCD_WRITE_DATA(0x00);
+    LCD_WRITE_DATA(0x7F);
+    LCD_WRITE_CMD(0x2B); //Set Page Address
+    LCD_WRITE_DATA(0x00);
+    LCD_WRITE_DATA(0x00);
+    LCD_WRITE_DATA(0x00);
+    LCD_WRITE_DATA(0x9F);
+    LCD_WRITE_CMD(0xB4);
+    LCD_WRITE_DATA(0x00);
+
+    LCD_WRITE_CMD(0xEC); //Set pumping clock frequence
+    LCD_WRITE_DATA(0x0C);
+    LCD_WRITE_CMD(0xf2); //Enable Gamma bit
+    LCD_WRITE_DATA(0x01);
+    LCD_WRITE_CMD(0x36);
+    LCD_WRITE_DATA(0xC8);	   //08
+
+    LCD_WRITE_CMD(0xE0);
+    LCD_WRITE_DATA(0x3F);//p1
+    LCD_WRITE_DATA(0x26);//p2
+    LCD_WRITE_DATA(0x23);//p3
+    LCD_WRITE_DATA(0x30);//p4
+    LCD_WRITE_DATA(0x28);//p5
+    LCD_WRITE_DATA(0x10);//p6
+    LCD_WRITE_DATA(0x55);//p7
+    LCD_WRITE_DATA(0xB7);//p8
+    LCD_WRITE_DATA(0x40);//p9
+    LCD_WRITE_DATA(0x19);//p10
+    LCD_WRITE_DATA(0x10);//p11
+    LCD_WRITE_DATA(0x1E);//p12
+    LCD_WRITE_DATA(0x02);//p13
+    LCD_WRITE_DATA(0x01);//p14
+    LCD_WRITE_DATA(0x00);//p15
+
+    LCD_WRITE_CMD(0xE1);
+    LCD_WRITE_DATA(0x00);//p1
+    LCD_WRITE_DATA(0x19);//p2
+    LCD_WRITE_DATA(0x1C);//p3
+    LCD_WRITE_DATA(0x0F);//p4
+    LCD_WRITE_DATA(0x14);//p5
+    LCD_WRITE_DATA(0x0F);//p6
+    LCD_WRITE_DATA(0x2A);//p7
+    LCD_WRITE_DATA(0x48);//p8
+    LCD_WRITE_DATA(0x3F);//p9
+    LCD_WRITE_DATA(0x06);//p10
+    LCD_WRITE_DATA(0x1D);//p11
+    LCD_WRITE_DATA(0x21);//p12
+    LCD_WRITE_DATA(0x3d);//p13
+    LCD_WRITE_DATA(0x3e);//p14
+    LCD_WRITE_DATA(0x3f);//p15
+
+    LCD_WRITE_CMD(0x29); // Display On
+}
+
 static void disp_ic_init(void)
 {
 
@@ -412,9 +491,10 @@ static void disp_ic_init(void)
     LCD_DELAY(120);
     LCD_WRITE_CMD(0x29);    //Display on 
     LCD_WRITE_CMD(0x2C);     
-
+    
+    #elif defined(FEATURE_VERSION_W021_CT100)
+    disp_ic_init_w021_ct100_9163C_cpt177_2013_06_20();
 	#else
-
 	LCD_WRITE_CMD(0x11); //Exit Sleep
 	LCD_DELAY(50);	 
 

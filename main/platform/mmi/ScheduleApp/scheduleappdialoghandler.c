@@ -3623,6 +3623,11 @@ static boolean  dialog_handler_of_state_event_edit( CScheduleApp* pme,
 					(void)ITEXTCTL_SetInputMode( pNote, AEE_TM_PINYIN);
                 	(void)ITEXTCTL_SetInputMode( pSubject, AEE_TM_PINYIN);
 				}
+                #elif defined(FEATURE_VERSION_W021_CT100)
+                {   
+                    (void)ITEXTCTL_SetInputMode( pNote, AEE_TM_HINDI);
+                	(void)ITEXTCTL_SetInputMode( pSubject, AEE_TM_HINDI);
+                }
                 #else
                 (void)ITEXTCTL_SetInputMode( pNote, AEE_TM_LETTERS);
                 (void)ITEXTCTL_SetInputMode( pSubject, AEE_TM_LETTERS);

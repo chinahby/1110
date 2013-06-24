@@ -31,6 +31,8 @@
 #include "Hs_mb6550.h"
 #include "snddev.h"
 
+
+
 /*==============================================================================
                                  宏定义和常数
 ==============================================================================*/
@@ -989,7 +991,7 @@ static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier)
         {
             if( pMe->opMode == FM_RADIO_OPMODE_PLAY)
             {
-                #if (defined( FEATURE_VERSION_1110W516) || defined( FEATURE_VERSION_W317A) || defined( FEATURE_VERSION_C337) || defined( FEATURE_VERSION_C316)||defined( FEATURE_VERSION_M74)|| defined( FEATURE_VERSION_C310)|| defined( FEATURE_VERSION_K202_LM129C)	)
+                #if (defined( FEATURE_VERSION_1110W516) || defined( FEATURE_VERSION_W317A) || defined( FEATURE_VERSION_C337) || defined( FEATURE_VERSION_C316)||defined( FEATURE_VERSION_M74)|| defined( FEATURE_VERSION_C310)|| defined( FEATURE_VERSION_K202_LM129C)||defined(FEATURE_FM_PAUSE))
                  tuneVolumeStop(pMe);
                  repaint( pMe, TRUE);
                  return TRUE;
@@ -1201,7 +1203,7 @@ __handleKeyEvent_input_channel_done__:
 			{
 #if defined( FEATURE_FMRADIO_NO_MODE_SELECT) 
                 #if (defined(FEATURE_VERSION_1110W516)||defined( FEATURE_VERSION_W317A)||defined( FEATURE_VERSION_C337) || defined(FEATURE_VERSION_C316)||defined( FEATURE_VERSION_M74)||defined( FEATURE_VERSION_C310))\
-					 ||defined(FEATURE_ADD_VOLUP_VOLDN)||defined(FEATURE_VERSION_LM126C)
+					 ||defined(FEATURE_ADD_VOLUP_VOLDN)||defined(FEATURE_VERSION_LM126C)||defined(FEATURE_FM_PAUSE)
                 if(1)
 				#else
 				if(pMe->tuneVolumeByLeftRightArrowKey)
@@ -1600,7 +1602,7 @@ static void changeVolume( CFmRadio *pMe, uint16 keyCode)
 	}
 	else
 	{
-    	theKey       = keyCode - AVK_UP;
+    	theKey = keyCode - AVK_UP;
 	}
 #if 0
 #if defined( FEATURE_FMRADIO_NO_MODE_SELECT)

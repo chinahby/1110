@@ -1406,8 +1406,9 @@ static boolean  HandleHintDialogEvent(CSoundMenu *pMe,
             }
             Sound_App_Add_Menu(pMenu,IDS_ITEM_OFF);
             Sound_App_Add_Menu(pMenu,IDS_ALERTTYPE_RINGER);
+            #if !defined(FEATURE_NO_VIBRATE)
             Sound_App_Add_Menu(pMenu,IDS_ALERTTYPE_VIB);
-            #ifndef FEATURE_VERSION_C306
+            #if !defined (FEATURE_VERSION_C306)
             Sound_App_Add_Menu(pMenu,IDS_ITEM_VIBRING);
 #ifdef FEATURE_CARRIER_THAILAND_CAT
             if(SET_CALLHINT == pMe->m_HintType)
@@ -1420,8 +1421,8 @@ static boolean  HandleHintDialogEvent(CSoundMenu *pMe,
             Sound_App_Add_Menu(pMenu,IDS_ALERTTYPE_VIBANDRING); 
            #endif
 #endif
-			#endif
-
+			#endif //FEATURE_VERSION_C306
+            #endif//FEATURE_VERSION_W021_CT100
             return TRUE;
 
         case EVT_DIALOG_START:
