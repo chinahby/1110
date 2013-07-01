@@ -271,6 +271,9 @@
 	<String Id="1112" Name="IDS_TIME">
 		<Text>Time</Text>
 	</String>
+	<String Id="1113" Name="IDS_20_MIN">
+		<Text>20 MIN</Text>
+	</String>		
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_UIMERR" Focus="7001">

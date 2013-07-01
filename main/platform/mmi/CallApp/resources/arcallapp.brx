@@ -220,6 +220,9 @@
 	<String Id="1125" Name="IDS_REGULATE_FAIL">
 		<Text>Regulate Fail!</Text>
 	</String>
+	<String Id="1126" Name="IDS_SAR_CT100">
+		<Text>SAR: CDMA800 Head:0.565W/Kg  Body:1.080W/Kg</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_NUMEDIT" Focus="0">

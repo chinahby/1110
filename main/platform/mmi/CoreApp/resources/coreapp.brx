@@ -286,6 +286,9 @@
 	<String Id="1115" Name="IDS_CHARGING_REMOVED">
 		<Text>Charging removed</Text>
 	</String>
+	<String Id="1116" Name="IDS_20_MIN">
+		<Text>20 MIN</Text>
+	</String>		
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_UIMERR" Focus="7001">
