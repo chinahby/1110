@@ -6908,7 +6908,7 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
         #endif
     	
         L32 = (uint32)meid;
-        H32 = (uint32)(meid>>32);
+        H32 = (((uint32)(meid>>32))&(0xffffff));
     }
     
     STRTOWSTR("%06X", fmt_str, sizeof(fmt_str));
