@@ -3757,7 +3757,7 @@ void CoreApp_SalesTrackerTimer(void *pme)
 	}
 	else
 	{
-		m_alarm_time = 10;//m_alarm_time*60;
+		m_alarm_time = m_alarm_time*60;
 	}
 	
     MSG_FATAL("CoreApp_SalesTrackerTimer...m_alarm_time===%d",m_alarm_time,0,0);

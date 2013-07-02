@@ -1172,7 +1172,7 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
 			    {
 			    	#ifndef  FEATURE_VERSION_C316
 			    	(void)ISHELL_SetTimer(pMe->a.m_pIShell, 
-		                              20,//SMS_TIME,
+		                              SMS_TIME,
 		                              CoreApp_SalesTrackerTimer, 
 		                              pMe);
 					#endif
