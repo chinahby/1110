@@ -5206,12 +5206,13 @@ static void OEM_SetInputMode(CTextCtl * pme)
     {   //  只有在设置了 TP_STARKEY_SWITCH 属性且没使用软键的条件下切换输入法
         return;
     }
-	#ifdef FEATURE_VERSION_C316
+#ifdef FEATURE_VERSION_C316
 	if((pme->m_nCurrInputMode == OEM_MODE_T9_MT_HINDI)&&( pme->m_dwProps & TP_NO_HI))
 	{
 		  pme->m_nCurrInputMode = OEM_MODE_T9_MT_ENGLISH_LOW;
 	}
 #endif
+    MSG_FATAL("OEM_SetInputMode m_nCurrInputMode=%d",pme->m_nCurrInputMode,0,0);
     switch (pme->m_nCurrInputMode)
     {   //输入模式
         case OEM_MODE_NUMBERS:
@@ -5714,6 +5715,33 @@ static void OEM_SetInputMode(CTextCtl * pme)
 	        
 			break;
 #endif
+
+
+
+        case OEM_MODE_T9_MT_ENGLISH_UP:
+            wMode = AEE_TM_LETTERS;//大写字母输入模式
+#ifdef FEATURE_PREPAID_ISRAEL_HEBREW 
+	        pme->m_wResID = IDB_MODE_T9_MT_HEBREW_ENGLISH_UP;
+#else
+
+#if defined(FEATURE_ALL_KEY_PAD)
+			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
+#else
+			#if  defined(FEATURE_VERSION_W516) ||defined(FEATURE_VERSION_VG68) || defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_C180)
+			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
+			#else
+			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
+			#endif
+#endif
+
+#endif  // FEATURE_PREPAID_ISRAEL_HEBREW         
+            OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_ALL_CAPS); 
+            (void)OEM_SetConfig(CFGI_LANGUAGE_MOD,
+	                          (void*)&is_Taimod,
+	                          sizeof(boolean));
+            break;            
+#endif //FEATURE_T9_MT_ENGLISH
+
 #ifdef FEATURE_MYANMAR_INPUT_MOD
 		case OEM_MODE_MYANMAR:
 			wMode = AEE_TM_MYANMAR;   //add by yangdecai   2010-12-23
@@ -5742,6 +5770,7 @@ static void OEM_SetInputMode(CTextCtl * pme)
                               sizeof(boolean));
             break;
 #endif
+
 #ifdef FEATURE_T9_RAPID_RUSSIAN
         case OEM_MODE_T9_RAPID_RUSSIAN:
             wMode = AEE_TM_RUSSIAN_R;   
@@ -5751,31 +5780,6 @@ static void OEM_SetInputMode(CTextCtl * pme)
                               sizeof(boolean));
             break;
 #endif
-
-
-        case OEM_MODE_T9_MT_ENGLISH_UP:
-            wMode = AEE_TM_LETTERS;//大写字母输入模式
-#ifdef FEATURE_PREPAID_ISRAEL_HEBREW 
-	        pme->m_wResID = IDB_MODE_T9_MT_HEBREW_ENGLISH_UP;
-#else
-
-#if defined(FEATURE_ALL_KEY_PAD)
-			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
-#else
-			#if  defined(FEATURE_VERSION_W516) ||defined(FEATURE_VERSION_VG68) || defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_C180)
-			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
-			#else
-			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
-			#endif
-#endif
-
-#endif  // FEATURE_PREPAID_ISRAEL_HEBREW         
-            OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_ALL_CAPS); 
-            (void)OEM_SetConfig(CFGI_LANGUAGE_MOD,
-	                          (void*)&is_Taimod,
-	                          sizeof(boolean));
-            break;            
-#endif //FEATURE_T9_MT_ENGLISH
 
 #ifdef FEATURE_T9_RAPID_ENGLISH
         case OEM_MODE_T9_RAPID_ENGLISH:
@@ -6156,12 +6160,10 @@ static void TextCtl_SetInputList(CTextCtl *pme)
 
 #endif // FEATURE_CARRIER_VENEZUELA_MOVILNET
 #ifdef FEATURE_MYANMAR_INPUT_MOD    //add by yangdecai 20101223
-		
 		pme->m_nCurrInputModeList[i++] = OEM_MODE_MYANMAR;
 
 #endif
 #ifdef FEATURE_MT_MYANMRA  //add by yangdecai 20101223
-		
 		pme->m_nCurrInputModeList[i++] = OEM_MT_MODE_MYANMAR;
 
 #endif
@@ -6315,12 +6317,10 @@ static void TextCtl_SetInputList(CTextCtl *pme)
 
 #endif // FEATURE_CARRIER_VENEZUELA_MOVILNET
 #ifdef FEATURE_MYANMAR_INPUT_MOD    //add by yangdecai 20101223
-		
 		pme->m_nCurrInputModeList[i++] = OEM_MODE_MYANMAR;
 
 #endif
 #ifdef FEATURE_MT_MYANMRA  //add by yangdecai 20101223
-		
 		pme->m_nCurrInputModeList[i++] = OEM_MT_MODE_MYANMAR;
 
 #endif
