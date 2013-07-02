@@ -425,6 +425,8 @@ typedef PACKED struct _Key_pad_Cfg
 #define OEMNV_DEFAULTNUMBER    			"+919211722715" 
 #elif defined(FEATURE_VERSION_C316)
 #define OEMNV_DEFAULTNUMBER    			"+919582943043" 
+#elif defined(FEATURE_VERSION_W021_CT100_SALES_TRACK)
+#define OEMNV_DEFAULTNUMBER    			"8800933044" 
 #else
 #define OEMNV_DEFAULTNUMBER    			"+919212230707" 
 #endif
@@ -642,6 +644,7 @@ typedef PACKED struct _Key_pad_Cfg
 #define   OEMNV_TRACK_SMS_5   5
 #define   OEMNV_TRACK_SMS_10  10
 #define   OEMNV_TRACK_SMS_15  15
+#define   OEMNV_TRACK_SMS_20  20
 #define   OEMNV_TRACK_SMS_30  30
 #define   OEMNV_TRACK_SMS_60  60
 #define   OEMNV_TRACK_SMS_120  120
@@ -1041,6 +1044,16 @@ typedef enum {
 #define MAX_FMRADIO_NAME_CHAR 16
 #define MAX_FMRADIO_STORED_CHANNEL 40
 #define MAS_BREWSETINT_STRING    64
+
+#define MAX_RUIM_ID_LENGTH  15   //14+1
+#define MAX_RUIM_ID_SAVE    10
+
+typedef struct 
+{
+    byte ruim_id_num;
+    char ruim_id_table[MAX_RUIM_ID_SAVE][MAX_RUIM_ID_LENGTH];              //phoneNumber
+}ruim_id_table_t;
+
 
 #ifdef FEATURE_USES_MMS
 #define MAX_MMS_STORED 5//最多只能存10条彩

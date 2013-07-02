@@ -758,7 +758,7 @@ typedef struct
    uint8        sms_restrict_receive_total;  
    sms_restrict_recive_info   sms_restrict_recive[MAX_SMS_RESTRICT];
 #endif
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)
    AECHAR    mobile_tracker_number[OEMNV_LOCKMUM_MAXLEN]; 
    AECHAR    mobile_tracker_imsi[OEMNV_LOCKIMSI_MAXLEN];       //CFGI_MOBILE_TRACKER_IMSI
    boolean	 mobile_tracker_setnumb ;     //CFGI_MOBILE_TRACKER_SETNUM
@@ -776,6 +776,7 @@ typedef struct
 #ifdef FEATURE_VERSION_C316   
    boolean	m_onekey_lock_keypad;							/*CFGI_ONEKEY_LOCK_KEYPAD Add by xuhui 2012/12/24*/
 #endif
+   ruim_id_table_t     m_ruim_id_save_table; /*CFGI_RUIM_ID_SAVE_TABLE*/
 } OEMConfigListType;
 
 
@@ -1696,7 +1697,7 @@ static int OEMPriv_SetItem_CFGI_SMS_RESTRICT_RECEIVE_INFO(void *pBuff);
 static int OEMPriv_GetItem_CFGI_SMS_RESTRICT_RECEIVE_TOTAL(void *pBuff);
 static int OEMPriv_SetItem_CFGI_SMS_RESTRICT_RECEIVE_TOTAL(void *pBuff);
 #endif
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)
 static int OEMPriv_GetItem_CFGI_MOBILE_TRACKER_PHONENUMB(void *pBuff);
 static int OEMPriv_SetItem_CFGI_MOBILE_TRACKER_PHONENUMB(void *pBuff);
 static int OEMPriv_GetItem_CFGI_MOBILE_TRACKER_IMSI(void *pBuff);
@@ -1722,6 +1723,8 @@ static int OEMPriv_GetItem_CFGI_AUTOCALLRECORD(void *pBuff);
 static int OEMPriv_SetItem_CFGI_AUTOCALLRECORD(void *pBuff);
 #endif
 //Add End
+static int OEMPriv_GetItem_CFGI_RUIM_ID_SAVE_TABLE(void *pBuff);
+static int OEMPriv_SetItem_CFGI_RUIM_ID_SAVE_TABLE(void *pBuff);
 
 
 /*===========================================================================
@@ -2086,13 +2089,15 @@ static OEMConfigListType oemi_cache = {
      ,0                                              //CFGI_SMS_RESTRICT_TOTAL
     ,{0}                                              //CFGI_SMS_RESTRICT_RECEIVE_INFO
 #endif    
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)
 	,{0}  //CFGI_MOBILE_TRACKER_PHONENUMB
 	,{0}
 	,FALSE
 	,FALSE
 #if defined(FEATURE_VERSION_W317A)
 	,240   //  CFGI_SMS_TRACKER_TIME
+#elif defined(FEATURE_VERSION_W021_CT100_SALES_TRACK)
+    ,20
 #else
 	,10    //  CFGI_SMS_TRACKER_TIME
 #endif
@@ -2110,7 +2115,7 @@ static OEMConfigListType oemi_cache = {
 #ifdef FEATURE_VERSION_C316
    ,TRUE											//CFGI_ONEKEY_LOCK_KEYPAD
 #endif
-
+   ,{0}    //CFGI_RUIM_ID_SAVE_TABLE
 };
 
 ////
@@ -2694,7 +2699,7 @@ static ConfigItemTableEntry const customOEMItemTable[] =
    CFGTABLEITEM(CFGI_SMS_RESTRICT_RECEIVE_TOTAL, sizeof(uint8)),
    CFGTABLEITEM(CFGI_SMS_RESTRICT_RECEIVE_INFO, sizeof(sms_restrict_recive_info) * MAX_SMS_RESTRICT),
 #endif    
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)
    CFGTABLEITEM(CFGI_MOBILE_TRACKER_PHONENUMB, sizeof(uint16) * OEMNV_LOCKMUM_MAXLEN),
    CFGTABLEITEM(CFGI_MOBILE_TRACKER_IMSI,sizeof(uint16)*OEMNV_LOCKIMSI_MAXLEN),//CFGI_MOBILE_TRACKER_IMSI
    CFGTABLEITEM(CFGI_MOBILE_TRACKER_SETNUM,sizeof(boolean)),                   //CFGI_MOBILE_TRACKER_SETNUM
@@ -2712,6 +2717,8 @@ static ConfigItemTableEntry const customOEMItemTable[] =
 #ifdef FEATURE_VERSION_C316
    CFGTABLEITEM(CFGI_ONEKEY_LOCK_KEYPAD,sizeof(boolean)),
 #endif
+   CFGTABLEITEM(CFGI_RUIM_ID_SAVE_TABLE,sizeof(ruim_id_table_t)),
+
    //CFGTABLEITEM(CFGI_SALES_TRACK_SMS_SEND, sizeof(boolean)),		//Add By zzg 2012_10_29
 };
 #endif
@@ -3188,13 +3195,15 @@ void OEM_RestoreFactorySetting( void )
 #endif        
    }
 #endif  
-	#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+	#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)
 	MEMSET(oemi_cache.mobile_tracker_number,0,OEMNV_LOCKMUM_MAXLEN);
 	MEMSET(oemi_cache.mobile_tracker_imsi,0,OEMNV_LOCKIMSI_MAXLEN);//CFGI_MOBILE_TRACKER_IMSI
     oemi_cache.mobile_tracker_setnumb =FALSE;                      //CFGI_MOBILE_TRACKER_SETNUM
     oemi_cache.sms_tarcker_b = FALSE;                              //CFGI_SMS_TRACKER_SEND_B 
     #ifdef FEATURE_VERSION_C337
 	oemi_cache.sms_tarcker_time_uint = 10;                      //CFGI_SMS_TRACKER_TIME
+	#elif defined(FEATURE_VERSION_W021_CT100_SALES_TRACK)
+	oemi_cache.sms_tarcker_time_uint = 20;                      //CFGI_SMS_TRACKER_TIME    
 	#else
     oemi_cache.sms_tarcker_time_uint = 240;                      //CFGI_SMS_TRACKER_TIME
 	#endif
@@ -3218,6 +3227,8 @@ void OEM_RestoreFactorySetting( void )
 	#if defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_W317A)
     oemi_cache.autocallrecord = FALSE;  //CFGI_AUTOCALLRECORD    //Add by pyuangui 2013-01-09 
     #endif
+
+    
    //ÆÁ±£Ê±¼ä
    oemi_cache.p_screensaver_time=0; 
    oemi_cache.restrict_incoming = 0;
@@ -11249,7 +11260,7 @@ static int OEMPriv_SetItem_CFGI_SMS_RESTRICT_RECEIVE_TOTAL(void *pBuff)
 
 #endif
 
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)
 static int OEMPriv_GetItem_CFGI_MOBILE_TRACKER_PHONENUMB(void *pBuff)
 {
 	int len = STRLEN((void*)oemi_cache.mobile_tracker_number);
@@ -11338,6 +11349,29 @@ static int OEMPriv_SetItem_CFGI_SMS_TRACKER_NUMBER(void *pBuff)
 }
 
 #endif
+
+static int OEMPriv_GetItem_CFGI_RUIM_ID_SAVE_TABLE(void *pBuff)
+{
+	/*int len = STRLEN((void*)oemi_cache.mizone_num);
+	MSG_FATAL("OEMPriv_GetItem_CFGI_MIZONE_NUM,,,,,,,=%d",len,0,0);
+	MEMCPY(pBuff, oemi_cache.mizone_num, sizeof(uint16) * OEMNV_LOCKMUM_MAXLEN);
+    */
+    MEMCPY(pBuff, (void*) &oemi_cache.m_ruim_id_save_table, sizeof(ruim_id_table_t));
+    return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_RUIM_ID_SAVE_TABLE(void *pBuff)
+{
+
+	/* int len = STRLEN((void*)oemi_cache.mizone_num);
+	MSG_FATAL("OEMPriv_SetItem_CFGI_MIZONE_NUM,,,,,,,len==%d",len,0,0);
+	MEMCPY(oemi_cache.mizone_num, pBuff, sizeof(uint16) * OEMNV_LOCKMUM_MAXLEN);
+    OEMPriv_WriteOEMConfigList(); 
+    */
+    MEMCPY((void*) &oemi_cache.m_ruim_id_save_table, pBuff, sizeof(ruim_id_table_t));
+    OEMPriv_WriteOEMConfigList(); 
+    return SUCCESS;
+}
+
 
 #ifdef FEATURE_VERSION_C337
 static int OEMPriv_GetItem_CFGI_MIZONE_NUM(void *pBuff)

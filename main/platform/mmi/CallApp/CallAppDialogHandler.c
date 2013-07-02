@@ -1241,7 +1241,15 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 							pMe->m_msg_text_id = IDS_SAR_C337;	
         					CLOSE_DIALOG(DLGRET_MSGBOX);
 							return TRUE;
-                        }                         
+                        }        
+#elif defined(FEATURE_VERSION_W021_CT100_SALES_TRACK)                        
+                        if (WSTRCMP(pMe->m_DialString, L"*#07#") == 0)       	//SAR                 	
+                        { 
+							pMe->m_msg_text_id = IDS_SAR_CT100;	
+        					CLOSE_DIALOG(DLGRET_MSGBOX);
+							return TRUE;
+                        }  
+
 #endif
                         /*
                         if (WSTRCMP(pMe->m_DialString, L"*#01#") == 0)                   	
@@ -1603,8 +1611,12 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                         }
 #endif
 
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
-						else if (WSTRCMP(pMe->m_DialString, L"*#5374#") == 0)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)
+						else if (WSTRCMP(pMe->m_DialString, L"*#5374#") == 0
+#if defined(FEATURE_VERSION_W021_CT100_SALES_TRACK)                            
+                            ||WSTRCMP(pMe->m_DialString, L"*#4695#") == 0
+#endif                            
+                            )
 						{
 							// 显示销售统计
                             (void) ISHELL_PostEvent( pMe->m_pShell,
@@ -4980,7 +4992,8 @@ static boolean  CallApp_MsgBox_DlgHandler(CCallApp  *pMe,
             return TRUE;
 
         case EVT_DIALOG_START:
-            if(pMe->m_msg_text_id != IDS_INVALIDEMGNUM && pMe->m_msg_text_id != IDS_NOOMH_CARD && pMe->m_msg_text_id != IDS_SAR && pMe->m_msg_text_id != IDS_SAR_C337
+            if(pMe->m_msg_text_id != IDS_INVALIDEMGNUM && pMe->m_msg_text_id != IDS_NOOMH_CARD 
+                && pMe->m_msg_text_id != IDS_SAR && pMe->m_msg_text_id != IDS_SAR_C337&&pMe->m_msg_text_id != IDS_SAR_CT100
                 || (pMe->m_msg_text_id == IDS_REGULATE_SUCCEED)|| (pMe->m_msg_text_id == IDS_REGULATE_FAIL))
             {
                 ISHELL_SetTimer(pMe->m_pShell, TIMEOUT_MS_INVALIDEMGNUMDIALOG_TIMER,
@@ -5113,7 +5126,8 @@ static boolean  CallApp_MsgBox_DlgHandler(CCallApp  *pMe,
 
                 }
             }
-            else if((pMe->m_msg_text_id == IDS_NOOMH_CARD) || (pMe->m_msg_text_id == IDS_SAR) || (pMe->m_msg_text_id == IDS_SAR_C337)
+            else if((pMe->m_msg_text_id == IDS_NOOMH_CARD) || (pMe->m_msg_text_id == IDS_SAR)
+                || (pMe->m_msg_text_id == IDS_SAR_C337)||(pMe->m_msg_text_id == IDS_SAR_CT100)
                 || (pMe->m_msg_text_id == IDS_REGULATE_SUCCEED)|| (pMe->m_msg_text_id == IDS_REGULATE_FAIL))
             {
                 switch (wParam)

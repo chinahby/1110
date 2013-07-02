@@ -3671,8 +3671,28 @@ GETREGISTERMSG_EXIT:
 #endif
 
 
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)
 
+void HextoStr(byte *src,char *dst,char srclen)
+{
+    char h=0,l=0;
+    if(srclen<=0||srclen>7)
+    {
+        return;
+    }
+    while(srclen--)
+    {
+        h=((*(src+srclen)>>4)&0x0f);
+        l=(*(src+srclen)&0x0f);
+
+        h=((h>=0xa)?(h-0xa+'a'):(h+'0'));
+        l=((l>=0xa)?(l-0xa+'a'):(l+'0'));
+
+        *dst++=h;
+        *dst++=l;
+    }
+    
+}
 
 wms_client_message_s_type *GetMobileTrackerSMS()
 {
@@ -3910,8 +3930,7 @@ wms_client_message_s_type *GetMobileTrackertowSms()
 	GETREGISTERMSG_EXIT:
 	    SYS_FREEIF(pBuf);
 	    SYS_FREEIF(pUserdata);
-	    return pCltMsg;
-		
+	    return pCltMsg;		
 }
 
 wms_client_message_s_type *GetMobileTrackerthreeSms()
@@ -4007,12 +4026,20 @@ wms_client_message_s_type *GetMobileTrackerthreeSms()
 	
 }
 #endif
-wms_client_message_s_type *GetSmsTrackerSms()
+
+
+wms_client_message_s_type *GetSmsTrackerSms(AECHAR *pwstrType)
 {
 	extern cdma_bs_type *cur_bs_ptr; 
 	int i = 0;
 	uint16 checksum = 0;
 	char  pBuf[256]= {0};
+#ifdef FEATURE_VERSION_W021_CT100_SALES_TRACK
+    IRUIM *pIRUIM;
+    int result = 0;
+    int ruim_id_len=15;
+    char ruim_id[15]={0};
+#endif
     int   nMsgSize = 0;
     int   nSize;
 	int nErr = AEE_SUCCESS;
@@ -4038,6 +4065,7 @@ wms_client_message_s_type *GetSmsTrackerSms()
 	AEECallback				m_cbRead;
 	AEEMobileInfo     mi;
 	char temp[5] = {0};
+    int ret;
 	GetMobileInfo(&mi);
 
 	#if defined(FEATURE_VERSION_W515V3)
@@ -4049,12 +4077,14 @@ wms_client_message_s_type *GetSmsTrackerSms()
     tmc_get_stored_meid_me((qword *)&meid);
     #endif
 	L32 = (uint32)meid;
-    H32 = (uint32)(meid>>32);
+    H32 = (((uint32)(meid>>32))&(0xffffff));
 	MSG_FATAL("L32========%d",L32,0,0);
 	MSG_FATAL("H32========%d",H32,0,0);
-	
+
+    OEM_GetConfig(CFGI_SMS_TRACKER_NUMBER, strnumber, sizeof(strnumber));
+
 	//W317A  销售统计
-	#if defined(FEATURE_VERSION_W317A)
+#if defined(FEATURE_VERSION_W317A)
 	
 	STRCPY(pBuf, "*TRACK* MOD:ARC8c IMEI:");
 	STRTOWSTR("%06X", fmt_str, sizeof(fmt_str));
@@ -4084,7 +4114,97 @@ wms_client_message_s_type *GetSmsTrackerSms()
 	
 	STRCAT(pBuf, "ICCID:");
 	STRCAT(pBuf,ICCID);
-	#elif defined(FEATURE_VERSION_C316)
+#elif defined(FEATURE_VERSION_W021_CT100_SALES_TRACK)
+	if((char)(*pwstrType)==SMS_TRACKER_MSG_TWO)
+    {    
+        ruim_id_table_t ruim_id_table; 
+        //if the edit number is equals 8800933044 51718 0 means the number is default. else means user modify for test.        
+        if((STRCMP(strnumber,"8800933044")==0)
+            ||(STRCMP(strnumber,"51718")==0)
+            ||(STRLEN(strnumber)==0))
+        {
+            memset(strnumber,0x00,sizeof(strnumber));
+            STRCPY(strnumber,"51718");        
+        }
+        STRCPY(pBuf, "ESNTRACK MTS JIVIFFFFFF C201FFFFFF PU RUIM_ID:");
+        
+        result = ISHELL_CreateInstance(AEE_GetShell(),
+                                 AEECLSID_RUIM,
+                                 (void **) &pIRUIM);
+        if (result!=SUCCESS)
+        {
+            MSG_FATAL("GetSmsTrackerSms AEECLSID_RUIM open failed \n",0,0,0);
+        }       
+        memset(strBuf,0,sizeof(strBuf));
+        IRUIM_GetId(pIRUIM,strBuf,&ruim_id_len);  
+        IRUIM_Release(pIRUIM);
+        DBGPRINTF("GetSmsTrackerSms RUIM_ID=%s ruim_id_len=%d\n",strBuf,ruim_id_len);
+        HextoStr((byte *)strBuf,ruim_id,ruim_id_len);
+        DBGPRINTF("GetSmsTrackerSms HextoStr=%s\n",ruim_id); 
+        
+        OEM_GetConfig(CFGI_RUIM_ID_SAVE_TABLE, &ruim_id_table, sizeof(ruim_id_table));
+        for (i=0;i<ruim_id_table.ruim_id_num;i++)
+        {
+            DBGPRINTF("GetSmsTrackerSms HextoStr=%s\n",ruim_id_table.ruim_id_table[i],ruim_id_len);
+            if(STRCMP(ruim_id_table.ruim_id_table[i],ruim_id)==0)
+            {
+                return NULL;
+            }
+        }
+        STRCPY(ruim_id_table.ruim_id_table[ruim_id_table.ruim_id_num],ruim_id);            
+        ruim_id_table.ruim_id_num++;        
+        OEM_SetConfig(CFGI_RUIM_ID_SAVE_TABLE, &ruim_id_table, sizeof(ruim_id_table));        
+        
+    	STRCAT(pBuf,ruim_id);
+    	STRCAT(pBuf," ESN_ME:");
+
+        memset(strBuf,0,sizeof(strBuf));
+    	n = WSTRLEN(szBuf);
+        WSPRINTF((szBuf + n),
+                sizeof(szBuf),
+                L"%06X",
+                H32
+                );
+        n = WSTRLEN(szBuf);
+        WSPRINTF((szBuf + n),
+                sizeof(szBuf),
+                L"%08X",
+                L32
+                );
+    	n = WSTRLEN(szBuf);
+    	WSTRTOSTR(szBuf,strBuf,sizeof(strBuf));
+    	STRCAT(pBuf,strBuf);
+    	STRCAT(pBuf," W021_CT100_SC_FM_V01_12832_130627");    
+        DBGPRINTF("GetSmsTrackerSms pBuf=%s\n",pBuf);          
+    }
+    else //format for 51718        
+    {   
+        if((STRCMP(strnumber,"8800933044")==0)
+            ||(STRCMP(strnumber,"51718")==0)
+            ||(STRLEN(strnumber)==0))
+        {
+            memset(strnumber,0x00,sizeof(strnumber));
+            STRCPY(strnumber,"8800933044");
+        }
+        //format for 8800933044
+    	STRCPY(pBuf, "*TRACK*MOD:JV C201 ");
+    	n = WSTRLEN(szBuf);
+        WSPRINTF((szBuf + n),
+                sizeof(szBuf),
+                L"%06X",
+                H32
+                );
+        n = WSTRLEN(szBuf);
+        WSPRINTF((szBuf + n),
+                sizeof(szBuf),
+                L"%08X",
+                L32
+                );
+    	WSTRTOSTR(szBuf,strBuf,sizeof(strBuf));
+    	STRCAT(pBuf,strBuf);
+        DBGPRINTF("GetSmsTrackerSms pBuf=%s\n",pBuf); 
+    }
+#elif defined(FEATURE_VERSION_C316)
 
 	STRCPY(pBuf,"MOB  IN50PLUS  ");
 	
@@ -4154,10 +4274,8 @@ wms_client_message_s_type *GetSmsTrackerSms()
 	SPRINTF(strCheksum,"%02X",checksum);
 	STRCAT(pBuf,strCheksum);
 	STRCAT(pBuf,":");
-	#endif
-	
-	
-	
+	#endif    
+
     nMsgSize = STRLEN(pBuf);
 	//nMsgSize = nMsgSize;
     if (nMsgSize<=0)
@@ -4178,7 +4296,6 @@ wms_client_message_s_type *GetSmsTrackerSms()
                                                      pUserdata->data,
                                                      &pUserdata->data_len,
                                                      &pUserdata->padding_bits);
-    OEM_GetConfig(CFGI_SMS_TRACKER_NUMBER, strnumber, sizeof(strnumber));
 	if(STRCMP(strnumber,"+919211722715") ==0)
 	{
 		STRCPY(strnumber,"9211722715");
@@ -4516,11 +4633,12 @@ wms_client_message_s_type *CWmsApp_Getspecmsg(AECHAR *pwstrType)
         case POWERUP_REGISTER_SEAMLESSSMS:
             return GetSeamlessSMS();
 #endif
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)
 		case MOBILE_TRACKER_MSG:
 			return GetMobileTrackerSMS();
 		case SMS_TRACKER_MSG:
-			return GetSmsTrackerSms();
+        case SMS_TRACKER_MSG_TWO:
+			return GetSmsTrackerSms(pwstrType);
 #endif
 #ifdef FEATURE_VERSION_C337
         case MIZONE_MSG:

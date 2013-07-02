@@ -97,7 +97,7 @@ static NextFSMAction COREST_STANDBY_Handler(CCoreApp *pMe);
 static NextFSMAction COREST_SMSTIP_Handler(CCoreApp *pMe);
 #endif
 
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)
 #ifndef FEATURE_VERSION_C316
 // 状态 COREST_SALES_TRAKER 处理函数
 static NextFSMAction COREST_SALES_TRAKER_Handler(CCoreApp *pMe);
@@ -266,7 +266,7 @@ NextFSMAction CoreApp_ProcessState(CCoreApp *pMe)
             break;
 #endif     
 
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)
 #ifndef FEATURE_VERSION_C316
 		case COREST_SALES_TRAKER:
 			MSG_FATAL("CoreApp_ProcessState Start COREST_SALES_TRAKER",0,0,0);
@@ -1147,30 +1147,38 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
             MSG_FATAL("ISHELL_SetTimer CoreApp_SendReginfoTimer",0,0,0);
 
 #endif
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)
 			// 
 			if (IRUIM_IsCardConnected(pMe->m_pIRUIM)) 
 			{
+
+#if !defined(FEATURE_VERSION_W021_CT100)			
 		        (void)ISHELL_SetTimer(pMe->a.m_pIShell, 
 		                              MOBILETRACKERREGINFOR_TIME,
 		                              CoreApp_MobileTrackerTimer, 
 		                              pMe);
+#endif                
 				(void) ICONFIG_GetItem(pMe->m_pConfig,	
 										   CFGI_SMS_TRACKER_SEND_B,
 										   &m_bsendsalessms, 
 										   sizeof(m_bsendsalessms));
+
 				MSG_FATAL("m_bsendsalessms======%d",m_bsendsalessms,0,0);
+#if !defined(FEATURE_VERSION_W021_CT100)	                
 			    if(!m_bsendsalessms)
+#else
+                if(TRUE)
+#endif
 			    {
 			    	#ifndef  FEATURE_VERSION_C316
 			    	(void)ISHELL_SetTimer(pMe->a.m_pIShell, 
-		                              SMS_TIME,
+		                              20,//SMS_TIME,
 		                              CoreApp_SalesTrackerTimer, 
 		                              pMe);
 					#endif
 					
 			    }
-		        MSG_FATAL("IAlarm_SetAlarm CoreApp_MobileTrackerTimer",0,0,0);
+		        //MSG_FATAL("IAlarm_SetAlarm CoreApp_MobileTrackerTimer",0,0,0);
 			}
 			else
 			{
@@ -1561,7 +1569,7 @@ static NextFSMAction COREST_STANDBY_Handler(CCoreApp *pMe)
             MOVE_TO_STATE(COREST_SMSTIP)
             return NFSMACTION_CONTINUE;
 #endif      
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_SALESTRACKER)
 		case DLGRET_SALES_TRACKER:
 			MSG_FATAL("COREST_STANDBY_Handler DLGRET_SALES_TRACKER",0,0,0);
             MOVE_TO_STATE(COREST_SALES_TRAKER)
@@ -1600,7 +1608,7 @@ static NextFSMAction COREST_STANDBY_Handler(CCoreApp *pMe)
     MSG_FATAL("COREST_STANDBY_Handler End",0,0,0);
     return NFSMACTION_WAIT;
 } // COREST_STANDBY_Handler
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_SALESTRACKER)
 /*==============================================================================
 函数:
     COREST_SALES_TRAKER_Handler
@@ -1935,7 +1943,7 @@ static boolean CoreApp_Start_Alarm(CCoreApp *pMe)
 #endif
 }
 
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)
 /*==============================================================================
 函数：
     COREST_SALES_EDIT_Handler

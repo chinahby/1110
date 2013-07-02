@@ -355,7 +355,7 @@ void CoreApp_FreeAppData(IApplet* po)
         pMe->m_pIPhoneCtl = NULL;
     }
 #endif
-	#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+	#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)
 	if(pMe->m_pSmsTrackTime != NULL)
 	   {
 		   (void)IMENUCTL_Release(pMe->m_pSmsTrackTime);
@@ -453,7 +453,7 @@ void CoreApp_FreeAppData(IApplet* po)
 #else
 #endif
 #endif
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)
 #ifdef FEATURE_UIALARM
 	IAlarm_CancelAlarm(pMe->m_pIAlarm,
                        		AEECLSID_CORE_APP,
@@ -573,7 +573,7 @@ boolean CoreApp_InitAppData(IApplet* po)
         return FALSE;
     }
 
-	#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+	#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)
 	  //闹钟开或关LIST 控件
     if(AEE_SUCCESS != ISHELL_CreateInstance(pMe->a.m_pIShell,
                          AEECLSID_LISTCTL,
@@ -605,7 +605,7 @@ boolean CoreApp_InitAppData(IApplet* po)
     pMe->m_b_needclose_core = FALSE;
 #endif
     MEMSET(pMe->m_strPhonePWD, 0, PINCODE_LENGTH + 1);
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)
     MEMSET(pMe->m_strPhoneNUM, 0, PHONENUMBER);
 #endif
 
@@ -693,7 +693,7 @@ boolean CoreApp_InitAppData(IApplet* po)
     CoreApp_InitdataTouch(pMe);
 #endif
 
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)
 #if defined( FEATURE_UIALARM)
 		if (ISHELL_CreateInstance(pMe->a.m_pIShell,
 								  AEECLSID_UIALARM,
@@ -1470,7 +1470,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             return TRUE;
 #endif
 
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)
 
 		case EVT_MOBILE_TRACKER:
 			{
@@ -1504,7 +1504,9 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 									   &m_bsendsalessms, 
 									   sizeof(m_bsendsalessms));
 						//#if defined(FEATURE_VERSION_W317A)
+						#if defined(FEATURE_SALESTRACK_CONFIRM_DIALOG)
 						CLOSE_DIALOG(DLGRET_SALES_SUCESS)
+						#endif
 						//#endif
 					}
 				}
@@ -1563,7 +1565,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             return TRUE;
 #endif
 
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)
 		case EVT_SMS_TRACKER:
 			// 先改变当前状态
             MOVE_TO_STATE(COREST_SALES_EDIT)
@@ -3579,7 +3581,7 @@ int CoreApp_SendReginfo(CCoreApp   *pMe)
 #endif
 
 
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)
 /*==============================================================================
 函数：
     CoreApp_MobileTracker
@@ -3755,7 +3757,7 @@ void CoreApp_SalesTrackerTimer(void *pme)
 	}
 	else
 	{
-		m_alarm_time=m_alarm_time*60;
+		m_alarm_time = 10;//m_alarm_time*60;
 	}
 	
     MSG_FATAL("CoreApp_SalesTrackerTimer...m_alarm_time===%d",m_alarm_time,0,0);
@@ -3782,29 +3784,95 @@ void CoreApp_SalesTrackerTimer(void *pme)
 备注:
 
 ==============================================================================*/
+#ifdef FEATURE_VERSION_W021_CT100
+int CoreApp_SMSTracker(CCoreApp *pme)
+{
+	int  result = SUCCESS,i=0;
+	IWmsApp *pIWmsApp = NULL;
+	AECHAR  wstrType[2] = {(AECHAR)SMS_TRACKER_MSG, 0};      
+    ruim_id_table_t ruim_id_table;     
+	char strBuf[16]={0};
+    IRUIM *pIRUIM;
+    int ruim_id_len=15;
+    char ruim_id[15]={0};
+	boolean m_bsendsalessms = FALSE;    
+	boolean m_bsendsalessmstwo = FALSE;
+    // Get RUIM_ID and check whether the sim card already send SMS tracker message.
+	result = ISHELL_CreateInstance(AEE_GetShell(),
+                                 AEECLSID_RUIM,
+                                 (void **) &pIRUIM);
+    if (result!=SUCCESS||pIRUIM==NULL)
+    {
+        MSG_FATAL("GetSmsTrackerSms AEECLSID_RUIM open failed \n",0,0,0);
+        return EFAILED;
+    }       
+    memset(strBuf,0,sizeof(strBuf));
+    IRUIM_GetId(pIRUIM,strBuf,&ruim_id_len);  
+    IRUIM_Release(pIRUIM);
+    DBGPRINTF("GetSmsTrackerSms RUIM_ID=%s ruim_id_len=%d\n",strBuf,ruim_id_len);
+    HextoStr((byte *)strBuf,ruim_id,ruim_id_len);
+    DBGPRINTF("GetSmsTrackerSms HextoStr=%s\n",ruim_id); 
+    
+    OEM_GetConfig(CFGI_RUIM_ID_SAVE_TABLE, &ruim_id_table, sizeof(ruim_id_table));
+    for (i=0;i<ruim_id_table.ruim_id_num;i++)
+    {
+        DBGPRINTF("GetSmsTrackerSms HextoStr=%s\n",ruim_id_table.ruim_id_table[i],ruim_id_len);
+        if(STRCMP(ruim_id_table.ruim_id_table[i],ruim_id)==0)
+        {
+            m_bsendsalessmstwo=TRUE;
+            //return NULL;
+        }
+    }
+
+	OEM_GetConfig(CFGI_SMS_TRACKER_SEND_B,
+							   &m_bsendsalessms, 
+							   sizeof(m_bsendsalessms));  
+    
+	
+	result = ISHELL_CreateInstance(pme->a.m_pIShell,
+                                 AEECLSID_WMSAPP,
+                                 (void **) &pIWmsApp);
+    if(result!=SUCCESS||pIWmsApp==NULL)
+    {            
+        MSG_FATAL("GetSmsTrackerSms AEECLSID_WMSAPP open failed \n",0,0,0);
+        return EFAILED;
+    }
+    
+    if(!m_bsendsalessms)
+        result = IWmsApp_SendSpecMessage(pIWmsApp, wstrType);
+        
+    if (!m_bsendsalessmstwo&&result==SUCCESS)
+    {
+        AECHAR  wstrType[2] = {(AECHAR)SMS_TRACKER_MSG_TWO, 0};
+        result = IWmsApp_SendSpecMessage(pIWmsApp, wstrType);
+    }
+    
+    IWmsApp_Release(pIWmsApp);
+    MSG_FATAL("END CoreApp_SMSTracker==%d",result,0,0);
+    return result;   
+}
+
+#else
 int CoreApp_SMSTracker(CCoreApp *pme)
 {
 	int  result = SUCCESS;
 	IWmsApp *pIWmsApp = NULL;
-	AECHAR  wstrType[2] = {(AECHAR)SMS_TRACKER_MSG, 0};
+	AECHAR  wstrType[2] = {(AECHAR)SMS_TRACKER_MSG, 0};    
+	
 	
 	result = ISHELL_CreateInstance(pme->a.m_pIShell,
                                  AEECLSID_WMSAPP,
                                  (void **) &pIWmsApp);
     if ((result == SUCCESS) && (NULL != pIWmsApp))
     {
-        //result = IWmsApp_SendTextMessageExt(pIWmsApp,wstrNumber,wstr);
-        //IWmsApp_Release(pIWmsApp);
         result = IWmsApp_SendSpecMessage(pIWmsApp, wstrType);
         IWmsApp_Release(pIWmsApp);
     }
     
-    MSG_FATAL("END CoreApp_MobileTracker==%d",result,0,0);
-    return result;
-   
-
+    MSG_FATAL("END CoreApp_SMSTracker==%d",result,0,0);
+    return result;   
 }
-
+#endif
 
 
 void CoreApp_SmsTrackerTimer(void *pme)

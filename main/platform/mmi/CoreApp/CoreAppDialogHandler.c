@@ -431,7 +431,7 @@ static boolean  IDD_WMSTIPS_Handler(void *pUser,
                                  uint16     wParam,
                                  uint32     dwParam);
 #endif
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)
 #ifndef FEATURE_VERSION_C316
 // 对话框 IDD_SALESTRACKER 事件处理函数
 static boolean  IDD_SALESTRACKER_Handler(void *pUser,
@@ -657,7 +657,7 @@ void CoreApp_SetDialogHandler(CCoreApp *pMe)
             pMe->m_pDialogHandler = IDD_WMSTIPS_Handler;
             break;
 #endif    
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)
 #ifndef FEATURE_VERSION_C316
 		case IDD_SALESTRACKER:
 			pMe->m_pDialogHandler = IDD_SALESTRACKER_Handler;
@@ -1815,7 +1815,7 @@ static boolean  IDD_EMERGENCYNUMLIST_Handler(void  *pUser,
 } // IDD_EMERGENCYNUMLIST_Handler
 
 
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)
 
 /*==============================================================================
 函数:
@@ -1851,10 +1851,11 @@ static boolean  IDD_SALES_EDIT_Handler(void *pUser,
 	uint16 time = 0;
     uint16 wItemID;
 	AECHAR      wszNumber[8];    // 号码编辑
-    AECHAR      wszTime[8];     //时间
+    AECHAR      wszTime[12];     //时间
     AECHAR      wszENumber[20];
 	int len = 0;
-	
+    
+    AEEMenuColors color  = {0};
     if (NULL == pMe)
     {
         return FALSE;
@@ -1870,9 +1871,7 @@ static boolean  IDD_SALES_EDIT_Handler(void *pUser,
 
 	switch (eCode)
     {
-        case EVT_DIALOG_INIT:
-
-  		   
+        case EVT_DIALOG_INIT:		   
             MEMSET(pMe->m_strPhoneNUM, 0, sizeof(pMe->m_strPhoneNUM));
 			ICONFIG_GetItem( pMe->m_pConfig,CFGI_SMS_TRACKER_NUMBER, pMe->m_strPhoneNUM, sizeof(pMe->m_strPhoneNUM));
 			//OEM_GetConfig(CFGI_SMS_TRACKER_NUMBER, pMe->m_strPhoneNUM, sizeof(pMe->m_strPhoneNUM));
@@ -1886,14 +1885,18 @@ static boolean  IDD_SALES_EDIT_Handler(void *pUser,
 			#ifdef FEATURE_VERSION_C316
 			SETAEERECT(&p_UnitMenu,50,90,100,30);
 			#else
-			SETAEERECT(&p_UnitMenu,60,100,100,40);
+			SETAEERECT(&p_UnitMenu,50,100,100,40);
 			#endif
     		IMENUCTL_SetRect(pMe->m_pSmsTrackTime, &p_UnitMenu);
+            color.wMask = MC_BACK | MC_SEL_BACK;
+            color.cBack = RGB_GRAY_BACK;
+            color.cSelBack = RGB_GRAY_BACK;              
+            IMENUCTL_SetColors( pMe->m_pSmsTrackTime, &color);
 
 			#ifdef FEATURE_VERSION_C316
 			SETAEERECT(&p_UnitMenu,50,30,100,30);
 			#else
-			SETAEERECT(&p_UnitMenu,60,30,100,40);
+			SETAEERECT(&p_UnitMenu,50,30,100,40);
 			#endif
 
 			ITEXTCTL_SetRect(pMe->m_pSmsTrackNumber, &p_UnitMenu);
@@ -1934,6 +1937,9 @@ static boolean  IDD_SALES_EDIT_Handler(void *pUser,
                 case OEMNV_TRACK_SMS_15:      //ALWAYS_ON
                     wItemID = IDS_15_MIN;
                     break;
+                case OEMNV_TRACK_SMS_20:      //ALWAYS_ON
+                    wItemID = IDS_20_MIN;
+                    break;                    
 				case OEMNV_TRACK_SMS_30:      //30s
                     wItemID = IDS_30_MIN;
                     break;
@@ -1983,7 +1989,7 @@ static boolean  IDD_SALES_EDIT_Handler(void *pUser,
 				 IDISPLAY_SetColor( pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
 				 
             	
-
+                 WSTRCAT(wszTime,L"   <-");
 				 IDISPLAY_DrawText(pMe->m_pDisplay, AEE_FONT_NORMAL, wszNumber,-1, 0, 40, 0, IDF_TEXT_TRANSPARENT);
 				 #ifdef FEATURE_VERSION_C316
 				 IDISPLAY_DrawText(pMe->m_pDisplay, AEE_FONT_NORMAL, wszTime,-1, 0, 100, 0, IDF_TEXT_TRANSPARENT);
@@ -2016,12 +2022,22 @@ static boolean  IDD_SALES_EDIT_Handler(void *pUser,
                 	case AVK_UP:
 					case AVK_DOWN:
 						if(!IMENUCTL_IsActive(pMe->m_pSmsTrackTime))
-						{
+						{									
+                            AEEMenuColors color  = {0};
+						    color.wMask = MC_BACK | MC_SEL_BACK;
+                            color.cBack = RGB_WHITE;
+                            color.cSelBack = RGB_WHITE;                              
+                            IMENUCTL_SetColors( pMe->m_pSmsTrackTime, &color);
 							IMENUCTL_SetActive(pMe->m_pSmsTrackTime,TRUE);
 							ITEXTCTL_SetActive(pMe->m_pSmsTrackNumber,FALSE);
 						}
 						else
-						{
+						{						
+                            AEEMenuColors color  = {0};
+						    color.wMask = MC_BACK | MC_SEL_BACK;
+                            color.cBack = RGB_GRAY_BACK;
+                            color.cSelBack = RGB_GRAY_BACK;                              
+                            IMENUCTL_SetColors( pMe->m_pSmsTrackTime, &color);
 							IMENUCTL_SetActive(pMe->m_pSmsTrackTime,FALSE);
 							ITEXTCTL_SetActive(pMe->m_pSmsTrackNumber,TRUE);
 						}
@@ -2032,6 +2048,9 @@ static boolean  IDD_SALES_EDIT_Handler(void *pUser,
 						{
 							AECHAR *pwsText  = ITEXTCTL_GetTextPtr(pMe->m_pSmsTrackNumber);
 							boolean m_bsendsalessms = FALSE;
+                            #ifdef FEATURE_VERSION_W021_CT100_SALES_TRACK
+                            ruim_id_table_t ruim_id_table; 
+                            #endif
 						 	IAlarm_CancelAlarm(pMe->m_pIAlarm,
                        		AEECLSID_CORE_APP,
                        		PERMID);
@@ -2050,6 +2069,10 @@ static boolean  IDD_SALES_EDIT_Handler(void *pUser,
 				                case IDS_15_MIN:          //10秒
 				                    time = OEMNV_TRACK_SMS_15;
 				                    break;
+                                    
+				                case IDS_20_MIN:          //10秒
+				                    time = OEMNV_TRACK_SMS_20;
+				                    break;                                    
 
 				                case IDS_30_MIN:          //30秒
 				                    time = OEMNV_TRACK_SMS_30;
@@ -2085,7 +2108,10 @@ static boolean  IDD_SALES_EDIT_Handler(void *pUser,
 									   CFGI_SMS_TRACKER_SEND_B,
 									   &m_bsendsalessms, 
 									   sizeof(m_bsendsalessms));
-
+                            #ifdef FEATURE_VERSION_W021_CT100_SALES_TRACK                            
+                            memset(&ruim_id_table,0x0,sizeof(ruim_id_table));
+                            OEM_SetConfig(CFGI_RUIM_ID_SAVE_TABLE, &ruim_id_table, sizeof(ruim_id_table)); 
+                            #endif
 							IAlarm_SetAlarm(pMe->m_pIAlarm,
 	                       		AEECLSID_CORE_APP,
 	                       		PERMID,
@@ -5227,7 +5253,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
     }
     return FALSE;
 } // IDD_IDLE_Handler
-#if defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+#if defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)
 /*==============================================================================
 函数:
     IDD_SALESTRACKER_Handler
@@ -5297,7 +5323,7 @@ static boolean	IDD_SALESTRACKER_Handler(void *pUser,
 				PromptMsg_Param_type  Msg_Param={0};
 				BottomBar_Param_type bottomParam;
                 // 从资源文件取消息内容
-                #if defined(FEATURE_VERSION_W317A)
+                #if defined(FEATURE_VERSION_W317A)||defined(FEATURE_SALESTRACKER)
                 (void)ISHELL_LoadResString(pMe->a.m_pIShell,
                                 AEE_COREAPPRES_LANGFILE,                                
                                 IDS_SALES_TRACKER,
@@ -5431,7 +5457,7 @@ static boolean  IDD_SALESSUCCESS_Handler(void *pUser,
 				BottomBar_Param_type bottomParam;
 
 				// 从资源文件取消息内容
-				#ifdef FEATURE_VERSION_W317A
+				#if defined (FEATURE_VERSION_W317A)||defined(FEATURE_SALESTRACKER)
 				(void)ISHELL_LoadResString(pMe->a.m_pIShell,
 								AEE_COREAPPRES_LANGFILE,								
 								IDS_SALES_SUCCESS,
@@ -9279,8 +9305,8 @@ static void CoreApp_Issametimer(void *pUser)
 void CoreApp_HandleAlarm(CCoreApp  *pme, uint16 wPermID)
 {
 	 CCoreApp	*pMe = (CCoreApp *)pme;
-
-#if defined(FEATURE_VERSION_W317A) 
+//if you need to popup a confirm diag
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_SALESTRACK_CONFIRM_DIALOG)
 	 if( ISHELL_ActiveApplet(pMe->a.m_pIShell) == AEECLSID_CORE_APP)
         {
         	MSG_FATAL("ISHELL_ActiveApplet..............",0,0,0);
