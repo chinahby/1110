@@ -9932,6 +9932,19 @@ static T9KEY T9_BrewKeyToT9AlphabeticKey(TextCtlContext *pContext,AEEEvent eCode
             break;
         }
 #endif    
+
+#ifdef FEATURE_MT_MYANMRA
+        case TEXT_MODE_MT_MYANMAR:
+            for (i = 0; Alphabetic2T9MapEx[i].cKey != 0; i++) 
+            {
+                if (Alphabetic2T9MapEx[i].cKey == cKey)
+                {
+                    return Alphabetic2T9MapEx[i].mKey;
+                }
+            }        
+            break;
+#endif
+
         default:  
             for (i = 0; Alphabetic2T9Map[i].cKey != 0; i++) 
             {
