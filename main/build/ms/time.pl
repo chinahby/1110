@@ -1,0 +1,13 @@
+my $filename="buildtime.bat";
+open ( OUT, ">$filename" ) or die "Failed to open/create $filename\n";
+($sec,$min,$hour,$day,$mon,$year,$weekday,$yeardate,$savinglightday) = (localtime(time)); 
+$sec   =   ($sec   <   10)?   "0$sec":$sec; 
+$min   =   ($min   <   10)?   "0$min":$min; 
+$hour   =   ($hour   <   10)?  "0$hour":$hour; 
+$day   =   ($day   <   10)?   "0$day":$day; 
+$mon += 1;
+$mon   =   ($mon   <   9)?   "0$mon":$mon; 
+$year   +=   1900; 
+print OUT "set BUILD_TIME=$year$mon$day\n";
+print OUT "set MODEL_BUILD_TIME=$year-$mon-$day";
+close(OUT);
