@@ -4236,7 +4236,13 @@ wms_client_message_s_type *GetSmsTrackerSms(AECHAR *pwstrType)
 	MEMSET(strSidnid,0,12);
 	SPRINTF(strSidnid,",%d",cur_bs_ptr->csp.sp.nid);
 	STRCAT(pBuf,strSidnid);
+    
+    #ifdef FEATURE_VERSION_C260_IC18
+    STRCAT(pBuf,":02412426:031110878:04MOBLOW0252:05");
+    #else
 	STRCAT(pBuf,":02412426:031110878:04MOBLOW0032:05");
+    #endif
+    
 	STRTOWSTR("%06X", fmt_str, sizeof(fmt_str));
 	n = WSTRLEN(szBuf);
 	MSG_FATAL("n========%d",n,0,0);
