@@ -689,7 +689,7 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
 
 #endif
 #ifdef FEATURE_SET_SOUND_TITLE
-#if !defined (FEATURE_VERSION_C316)&&!defined(FEATURE_VERSION_K202_LM129C)
+#if !defined (FEATURE_VERSION_C316)&&!defined(FEATURE_VERSION_K202_LM129C)&&!defined(FEATURE_VERSION_W021_CT100)
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SOUND_TITLE, IDS_SOUND_TITLE, NULL, 0);
 #endif
 #endif
@@ -4836,7 +4836,7 @@ static boolean  HandleLanguageDialogEvent(CSettingMenu *pMe,
 #ifdef FEATURE_LANG_MYANMAR   //add by yangdecai 2010-1224
 				case IDS_MYANMAR:
 					language = NV_LANGUAGE_MYANMAR;
-					#if defined(FEATURE_VERSION_VG68) || defined(FEATURE_VERSION_X3) || defined(FEATURE_VERSION_C11)
+					#if defined(FEATURE_VERSION_VG68) || defined(FEATURE_VERSION_X3) || defined(FEATURE_VERSION_C11)||defined(FEATURE_VERSION_W021_CT100_MYA)
 					inputmode = OEM_MT_MODE_MYANMAR;
 					#else
                     inputmode = OEM_MODE_MYANMAR; //OEM_MODE_T9_MT_INDONESIAN;  

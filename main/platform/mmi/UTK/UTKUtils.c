@@ -739,7 +739,7 @@ void UTK_SendTerminalProfile (void)
                         UIM_TK_TERMINAL_PROFILE_DATA_LENGTH);
                     
                     /* Fill bit fields for command data */
-					#if defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_S1000T)||defined(FEATURE_VERSION_W027)||defined(FEATURE_VERSION_C316)
+					#if defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_S1000T)||defined(FEATURE_VERSION_W027)||defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_W021_CT100_HINDI)
 					 uim_cmd_ptr->terminal_profile.data[0]  |=
                         ( UIM_TK_B1_PROFILE_DOWNLOAD | UIM_TK_B1_CDMA_SMS_PP_DOWNLOAD|UIM_TK_B1_MENU_SELECTION|UIM_TK_B1_CDMA_SMS_PP_DOWNLOAD2);
 					uim_cmd_ptr->terminal_profile.data[1]  |= 

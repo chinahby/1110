@@ -12029,8 +12029,12 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
             }
             else
             {
+            #ifdef FEATURE_NO_VIBRATE            
                 //ISOUND_Vibrate(pMe->m_pSound, 2000);   //客户未要求不加振动提示  
+                pMe->m_msg_text_id = IDS_MSG_CURPROFILE_MEETING_NO_VIBRATE;
+            #else
                 pMe->m_msg_text_id = IDS_MSG_CURPROFILE_MEETING;
+            #endif
             }
             CLOSE_DIALOG(DLGRET_MSGBOX);
             // clk_busy_wait(1000*10000);

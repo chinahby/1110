@@ -1165,8 +1165,7 @@ typedef PACKED struct _ringID
 #define OEMNV_INPUTMODE_DEFAULT              OEM_MODE_T9_RAPID_FRENCH
 #elif defined FEATURE_LANG_CHINESE //xxzhen
 #define OEMNV_INPUTMODE_DEFAULT              OEM_MODE_T9_PINYIN
-#elif defined (FEATURE_VERSION_W021_CT100)
-#define OEMNV_INPUTMODE_DEFAULT              OEM_MODE_T9_MT_HINDI
+
 #else
 
 //#ifdef FEATURE_DISP_160X128

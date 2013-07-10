@@ -613,7 +613,7 @@
 #endif
 #endif
 
-#ifdef FEATURE_SPN_FROM_BSMCCMNC
+//#ifdef FEATURE_SPN_FROM_BSMCCMNC
 #define OPERATOR_NAME_MAX_SIZE   32
 
 typedef struct _ServiceProviderList
@@ -622,7 +622,7 @@ typedef struct _ServiceProviderList
     byte   mnc;
     char  ids_name[OPERATOR_NAME_MAX_SIZE];
 } ServiceProviderList;
-#endif //FEATURE_SPN_FROM_BSMCCMNC
+//#endif //FEATURE_SPN_FROM_BSMCCMNC
 
 #define CORE_PT_IN_RECT(a,b,rct)      (boolean)( ((a) >= (rct).x && (a) <= ((rct).x + (rct).dx)) && ((b) >= (rct).y && (b) <= ((rct).y + (rct).dy)) )
 

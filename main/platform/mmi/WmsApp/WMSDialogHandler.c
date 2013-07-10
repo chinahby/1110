@@ -11462,8 +11462,6 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 		         	}		         	
 		         	#elif defined(FEATURE_VERSION_K202_LM129C)//xxzhen
 					(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_PINYIN);
-                    #elif defined(FEATURE_VERSION_W021_CT100)//xxzhen
-					(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_HINDI);
 		         	#else
 					#ifdef FEATURE_ALL_KEY_PAD
         	    	(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_RAPID);

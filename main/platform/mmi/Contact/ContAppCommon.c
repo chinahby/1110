@@ -905,10 +905,6 @@ AEETextInputMode CContApp_GetFldInputMode(AEEAddrFieldID wFldID)
 				{
 					return AEE_TM_PINYIN;
 				}
-                #elif defined(FEATURE_VERSION_W021_CT100)
-                {                    
-					return AEE_TM_HINDI;
-                }
         	    #else
 	            	#ifdef FEATURE_ALL_KEY_PAD
 		    		return AEE_TM_CAPLOWER;

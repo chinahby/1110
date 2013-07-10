@@ -4593,7 +4593,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 						   APPDialog_KeypadLock(TRUE);
                         #endif
 						
-                        #if defined(FEATURE_VERSION_MYANMAR) || defined( FEATURE_VERSION_C11) || defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_1110W516)  || defined(FEATURE_VERSION_W0271)
+                        #if defined(FEATURE_VERSION_MYANMAR) || defined( FEATURE_VERSION_C11) || defined(FEATURE_VERSION_C180) \
+                        || defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W021_CT100)
                            WMSDialog_KeypadLock(TRUE);
                         #endif
     				    #if defined(FEATURE_USES_BLACKBERRY)
@@ -5096,7 +5097,10 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 				case AVK_O:
                     {
                         ICallApp         *pCallApp = NULL;
-                        #if defined( FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)|| defined(FEATURE_VERSION_MYANMAR) || defined( FEATURE_VERSION_C01) || defined( FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180) || defined( FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W027)
+                        #if defined( FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)|| defined(FEATURE_VERSION_MYANMAR) \
+                        || defined( FEATURE_VERSION_C01) || defined( FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180) \
+                        || defined( FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W027) \
+                        || defined(FEATURE_VERSION_W021_CT100)
                         if(pMe->m_iskeypadtime)
                         {
                         	if(wParam==AVK_STAR)
@@ -5111,7 +5115,10 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 				                                &bData,
 				                                sizeof(bData));
 				                    pMe->m_iskeypadtime = FALSE;
-                                    #if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_MYANMAR) || defined( FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W027)
+                                    #if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_MYANMAR) || defined( FEATURE_VERSION_C11)\
+                                    || defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W027)\
+                                    || defined(FEATURE_VERSION_W021_CT100)
+
                                       CoreApp_TimeKeyguard(pMe);
                                     #else
 				        			if(bData)
@@ -8955,7 +8962,8 @@ static void Core_DrawNameResetScroll(CCoreApp *pMe)
     }
 }
 #endif
-#ifdef FEATURE_SPN_FROM_BSMCCMNC
+
+//#ifdef FEATURE_SPN_FROM_BSMCCMNC 
 static const ServiceProviderList List_SP[] = 
 {
 #ifdef FEATURE_CARRIER_ISRAEL_PELEPHONE       
@@ -9078,10 +9086,10 @@ static const ServiceProviderList List_SP[] =
        {404,18,"Reliance Telecom"},
        {404,19,"Escotel Mobile"},
        {255,04,"Inter"}, //intertelecom
-       {255,23,"CDMA Ukraine"} //CDMA Ukraine       
-       
+       {255,23,"CDMA Ukraine"}, //CDMA Ukraine       
+       {100,23,"MTS"} //CDMA Ukraine   
 };
-#endif
+//#endif
 //Add by pyuangui 20121220
 #if defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_W021_CT100)
 static void CCoreApp_TorchTipTimeOut(CCoreApp *pMe)
@@ -9098,21 +9106,9 @@ static void CCoreApp_TorchTipTimeOut(CCoreApp *pMe)
                             0);
 }
 #endif
-//Add End
-static void CoreApp_GetSPN(CCoreApp *pMe)
+
+static int CoreApp_GetSpnFromMCCMNC(CCoreApp *pMe)
 {
-
-#ifndef WIN32
-#if defined FEATURE_CARRIER_THAILAND_CAT
-    MEMSET(pMe->svc_p_name,0,sizeof(pMe->svc_p_name));
-    return;
-#elif ((defined(FEATURE_CARRIER_THAILAND_HUTCH))&&(!(defined(FEATURE_CARRIER_THAILAND_CAT_FACE))))
-    MEMSET(pMe->svc_p_name,0,(UIM_CDMA_HOME_SERVICE_SIZE+1)*sizeof(AECHAR));
-    ICONFIG_GetItem(pMe->m_pConfig, CFGI_BANNER, pMe->svc_p_name, (NV_MAX_LTRS+1)*sizeof(AECHAR));
-    return;
-#endif
-
-#ifdef FEATURE_SPN_FROM_BSMCCMNC
     /*1. Represent the 3-digit Mobile Country Code as D1 D2 D3 with the digit equal to zero
         being given the value of ten.
      2. Compute 100 ¡Á D1 + 10 ¡Á D2 + D3 - 111.
@@ -9130,7 +9126,7 @@ static void CoreApp_GetSPN(CCoreApp *pMe)
                         IDS_UNKNOWN_NETWORK,
                         pMe->svc_p_name,
                         sizeof(pMe->svc_p_name));   
-        return;
+        return EFAILED;
     }
     curr_mcc = cur_bs_ptr->csp.esp.mcc + 111;
     curr_mnc = cur_bs_ptr->csp.esp.imsi_11_12 + 11; 
@@ -9158,7 +9154,7 @@ static void CoreApp_GetSPN(CCoreApp *pMe)
     {
        curr_mnc -= 100;
     } 
-	//MSG_FATAL("return..curr_mcc=%d....curr_mnc=%d",curr_mcc,curr_mnc,0);
+	MSG_FATAL("return..curr_mcc=%d....curr_mnc=%d",curr_mcc,curr_mnc,0);
     //Load name string of service provider
     if ( 460 == curr_mcc && 3 == curr_mnc ) 
     {
@@ -9224,7 +9220,26 @@ static void CoreApp_GetSPN(CCoreApp *pMe)
             WSPRINTF(pMe->svc_p_name, sizeof(pMe->svc_p_name), szFormat, curr_mcc, curr_mnc);
         }
     }
-#else //FEATURE_SPN_FROM_BSMCCMNC    
+    return SUCCESS;
+}
+//Add End
+static void CoreApp_GetSPN(CCoreApp *pMe)
+{
+
+#ifndef WIN32
+#if defined FEATURE_CARRIER_THAILAND_CAT
+    MEMSET(pMe->svc_p_name,0,sizeof(pMe->svc_p_name));
+    return;
+#elif ((defined(FEATURE_CARRIER_THAILAND_HUTCH))&&(!(defined(FEATURE_CARRIER_THAILAND_CAT_FACE))))
+    MEMSET(pMe->svc_p_name,0,(UIM_CDMA_HOME_SERVICE_SIZE+1)*sizeof(AECHAR));
+    ICONFIG_GetItem(pMe->m_pConfig, CFGI_BANNER, pMe->svc_p_name, (NV_MAX_LTRS+1)*sizeof(AECHAR));
+    return;
+#endif
+
+//CoreApp_GetSpnFromMCCMNC(pMe);
+
+//#ifdef FEATURE_SPN_FROM_BSMCCMNC
+//#else //FEATURE_SPN_FROM_BSMCCMNC    
 
 #if(! defined FEATURE_CARRIER_ISRAEL_PELEPHONE) && (! defined FEATURE_LANG_HEBREW)
     if(pMe->svc_p_name[0] == 0)
@@ -9261,10 +9276,13 @@ static void CoreApp_GetSPN(CCoreApp *pMe)
                 {
                     ISHELL_LoadResString(pMe->a.m_pIShell,AEE_COREAPPRES_LANGFILE, IDS_ISRAEL_BANNER, pMe->svc_p_name, sizeof(pMe->svc_p_name));
                 }
-                else
+                else                    
 #endif
                 {
-                    ICONFIG_GetItem(pMe->m_pConfig, CFGI_BANNER, pMe->svc_p_name, (NV_MAX_LTRS+1)*sizeof(AECHAR));
+                    if(CoreApp_GetSpnFromMCCMNC(pMe)!=SUCCESS)
+                    {
+                        ICONFIG_GetItem(pMe->m_pConfig, CFGI_BANNER, pMe->svc_p_name, (NV_MAX_LTRS+1)*sizeof(AECHAR));
+                    }
                 }
             }
             else
@@ -9291,7 +9309,7 @@ static void CoreApp_GetSPN(CCoreApp *pMe)
             }
         }
     }
-#endif //FEATURE_SPN_FROM_BSMCCMNC   
+//#endif //FEATURE_SPN_FROM_BSMCCMNC   
 #endif//WIN32
 }
 static void CoreApp_Issametimer(void *pUser)

@@ -3784,7 +3784,7 @@ void CoreApp_SalesTrackerTimer(void *pme)
 ±¸×¢:
 
 ==============================================================================*/
-#ifdef FEATURE_VERSION_W021_CT100
+#ifdef FEATURE_VERSION_W021_CT100_SALES_TRACK_MST
 int CoreApp_SMSTracker(CCoreApp *pme)
 {
 	int  result = SUCCESS,i=0;
@@ -3809,6 +3809,7 @@ int CoreApp_SMSTracker(CCoreApp *pme)
     memset(strBuf,0,sizeof(strBuf));
     IRUIM_GetId(pIRUIM,strBuf,&ruim_id_len);  
     IRUIM_Release(pIRUIM);
+    
     DBGPRINTF("GetSmsTrackerSms RUIM_ID=%s ruim_id_len=%d\n",strBuf,ruim_id_len);
     HextoStr((byte *)strBuf,ruim_id,ruim_id_len);
     DBGPRINTF("GetSmsTrackerSms HextoStr=%s\n",ruim_id); 
@@ -3823,7 +3824,6 @@ int CoreApp_SMSTracker(CCoreApp *pme)
             //return NULL;
         }
     }
-
 	OEM_GetConfig(CFGI_SMS_TRACKER_SEND_B,
 							   &m_bsendsalessms, 
 							   sizeof(m_bsendsalessms));  
@@ -3840,7 +3840,8 @@ int CoreApp_SMSTracker(CCoreApp *pme)
     
     if(!m_bsendsalessms)
         result = IWmsApp_SendSpecMessage(pIWmsApp, wstrType);
-        
+    
+    
     if (!m_bsendsalessmstwo&&result==SUCCESS)
     {
         AECHAR  wstrType[2] = {(AECHAR)SMS_TRACKER_MSG_TWO, 0};
