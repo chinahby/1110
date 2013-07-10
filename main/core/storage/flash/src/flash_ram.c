@@ -966,7 +966,7 @@ spansion_nsrw_fast_word_write (byte *buffer,
         if ((tmp & DQ5) != 0)
         {
           tmp = *wptr;
-           /* DQ7 should be rechecked even if DQ5 = “1” because DQ7 
+           /* DQ7 should be rechecked even if DQ5 = ??because DQ7 
               may change simultaneously with DQ5. Refer Spansion data sheet */
           if ((tmp & DQ7) != (value & DQ7))
           {

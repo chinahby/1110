@@ -37,24 +37,26 @@ when         who     what, where, why
 #include "clk.h"
 #include "flash_msg.h"
 
-/*lint -e613 -e668 upper layers already check for null pointers */
-/*lint -e526 Don't warn about undefined extern symbols*/
-/*lint -emacro(746, FSI_PEEK)*/
-/*lint -emacro(611, FSI_PEEK) function call pointer reference */
-/*lint -esym(551, erase_verify_buf) Variable used only in tools */
-
 /* Checks every write and erase operation and make sures the flash contains the 
  * correct data after each operation is finished. Slows down performance of the
  * flash driver but good to check it up especially when testing a new device
  */
 #undef FLASH_CHECK   
 
+/* This should always be defined as the AMD part is broken with regards
+ * to both fast write and suspend
+ */
+#define FEATURE_EFS_AMD_SUSPEND_FETCH_BUG
+
+#define TOSHIBA_MAX_TIMEOUT_CNT   20
+
 /* Low level status bits for Samsung */
-#define FLASH_STATUS_DQ7      0x80
-#define FLASH_STATUS_DQ6      0x40
-#define FLASH_STATUS_DQ5      0x20
-#define FLASH_STATUS_DQ3      0x08
-#define FLASH_STATUS_DQ2      0x04
+/* Low level status bits for AMD. */
+#define FS_AMD_DQ7      0x80
+#define FS_AMD_DQ6      0x40
+#define FS_AMD_DQ5      0x20
+#define FS_AMD_DQ3      0x08
+#define FS_AMD_DQ2      0x04
 
 /* This function is located in flash_ram.c. */
 extern void flash_toshiba_get_id_codes(volatile word *baseaddr, word *dest);
@@ -286,7 +288,7 @@ fsi_toshiba_erase_start (flash_ptr_type baseaddr,
   wptr[0x555] = 0x30;
 
   /* Do not wait for DQ3 based on Samsung recommendation */
-  while((*wptr & FLASH_STATUS_DQ3) == 0);    //lint !e722  no stmts in while loop
+  while((*wptr & FS_AMD_DQ3) == 0);    //lint !e722  no stmts in while loop
 
   return FLASH_SUCCESS;
 }
@@ -323,7 +325,7 @@ fsi_toshiba_erase_status (flashi_nor_device *nor_device,
 
  reread:
   /*
-   * The Erase Status bits are sensitive to read access from
+   * The SPANSION Erase Status bits are sensitive to read access from
    * ANY area of the flash, not just the EFS area (contrary to the data sheet).
    *
    * For this reason, it's critical that we mask interrupts, to prevent
@@ -337,10 +339,10 @@ fsi_toshiba_erase_status (flashi_nor_device *nor_device,
   flash_peek_twice(eraseaddr, &prior, &current);
 
   /* Check the "toggling bit". */
-  if (((prior ^ current) & FLASH_STATUS_DQ6) != 0)
+  if (((prior ^ current) & FS_AMD_DQ6) != 0)
   {
     /* It is toggling, check bit 5 to see if we hit an Erase Error */
-    if ((current & FLASH_STATUS_DQ5) != 0)
+    if ((current & FS_AMD_DQ5) != 0)
     {
       if (failure_bit_seen) 
       {
@@ -370,7 +372,10 @@ fsi_toshiba_erase_status (flashi_nor_device *nor_device,
   {
     /*
      * Here the DQ6 bit isn't toggling any more, indicating that Erase is
-     * complete.
+     * complete. (p49)
+     *
+     * There have been problems with the SPANSION part accidentally
+     * indicating Erase Complete when it was not, in fact, complete.
      *
      * Rather than let the erase finish and corrupt the subsequent write
      * operation in chaotic ways, we trap any such failures here by
@@ -378,7 +383,7 @@ fsi_toshiba_erase_status (flashi_nor_device *nor_device,
      */
     current = *eraseaddr;           /* Read from erased block */
     if (current != 0xFFFF) {
-       FLASH_ERR_FATAL ("TOSHIBA Erase completed prematurely! %x",
+       FLASH_ERR_FATAL ("SPANSION Erase completed prematurely! %x",
                          current, 0, 0);
     }
 
@@ -413,18 +418,35 @@ fsi_toshiba_erase_status (flashi_nor_device *nor_device,
 }
 
 /*======================================================================
- * FUNCTION FSI_PEEK
+ * FUNCTION FSI_AMD_PEEK
  *
- * Read a single word from a given address.  The read itself is performed
- * by code executing out of ram.
+ * Read a single word from a given address.  The read itself is performe
+ * by code executing out of ram.  This works around a problem with
+ * consecutive read cycles messing up the bit toggle in the AMD.
  */
-static word fsi_peek_code[] = {
+static word amd_peek_code[] = {
   0x8800,                               /* ldrh  r0, [r0]    */
   0x46F7,                               /* mov   pc, lr      */
 };
 
-#define FSI_PEEK(addr) \
-  (((word (*)()) ((unsigned char *) fsi_peek_code + 1)) (addr))
+#define FSI_AMD_PEEK(addr) \
+  (((word (*)()) ((unsigned char *) amd_peek_code + 1)) (addr))
+
+/*===========================================================================
+ * FUNCTION FSI_AMD_POKE
+ *
+ * Write a single word to a given address.  The write itself is performed
+ * by code executing out of RAM.  This works around a ??? problem.
+ */
+#ifdef FEATURE_EFS_AMD_SUSPEND_FETCH_BUG
+static word amd_poke_code[] = {
+  0x8001,                               /* strh  r1, [r0]    */
+  0x46F7,                               /* mov   pc, lr      */
+};
+
+#define FSI_AMD_POKE(addr, value) \
+  (((word (*)()) ((unsigned char *) amd_poke_code + 1)) (addr, value))
+#endif
 
 /*===========================================================================
 FUNCTION FSI_TOSHIBA_SUSPEND
@@ -445,7 +467,7 @@ SIDE EFFECTS
   None
 ===========================================================================*/
 static int retry_count = 0;
-static dword wait_count = 30;
+static dword wait_amd_count = 20;
 
 LOCAL flash_status
 fsi_toshiba_suspend (flash_ptr_type eraseaddr)
@@ -457,26 +479,34 @@ fsi_toshiba_suspend (flash_ptr_type eraseaddr)
   retry_count = 0;
 
   /* Issue the suspend erase command. */
+  // *wptr = 0xB0;
+#ifdef FEATURE_EFS_AMD_SUSPEND_FETCH_BUG
+  INTLOCK ();
+  (void)amd_poke_code[0];
+  FSI_AMD_POKE (eraseaddr, 0xB0);
+  INTFREE ();
+#else
   *eraseaddr = 0xB0;
+#endif
 
-  /* Wait 30 micro sec for status to be valid. This is erase_suspend_latency
+  /* Wait 20 micro sec for status to be valid. This is erase_suspend_latency
    * which is minimum time needed for suspend to take effect. If an active
    * erase operation was in progress, status information is not available
-   * during the transition from sector erase operation to erase suspend state.
+   * during the trasition from sector erase operation to erase suspend state.
    */
-  clk_busy_wait(wait_count);
+  clk_busy_wait(wait_amd_count);
 
   /* Read the status register. */
  retry:
-  (void)fsi_peek_code[0];
-  tmp = FSI_PEEK (eraseaddr);
+  (void)amd_peek_code[0];
+  tmp = FSI_AMD_PEEK (eraseaddr);
 
   /* Now look checking for status indicating that the suspend either
      happened, or that the part was already done erasing. */
   while (!done)
   {
     tmp2 = tmp;
-    tmp = FSI_PEEK (eraseaddr);
+    tmp = FSI_AMD_PEEK (eraseaddr);
 
     /* Possible conditions. */
     switch ((tmp ^ tmp2) & 0x44)
@@ -516,7 +546,7 @@ fsi_toshiba_suspend (flash_ptr_type eraseaddr)
          * and the erase doesn't ever finish, the dog will eventually ha
          * to kick in. */
         do {
-          tmp = FSI_PEEK (eraseaddr);
+          tmp = FSI_AMD_PEEK (eraseaddr);
         } while (tmp != 0xFFFF);
 
         result = FLASH_SUCCESS;
@@ -527,8 +557,6 @@ fsi_toshiba_suspend (flash_ptr_type eraseaddr)
       *eraseaddr = 0xF0;
       result = FLASH_SUCCESS;
       done = 1;
-      break;
-    default:
       break;
     }
   }
@@ -555,10 +583,15 @@ LOCAL flash_status
 fsi_toshiba_resume (flash_ptr_type eraseaddr)
 {
   /* Issue the resume command. */
+#ifdef FEATURE_EFS_AMD_SUSPEND_FETCH_BUG
+  INTLOCK ();
+  FSI_AMD_POKE (eraseaddr, 0x30);
+  INTFREE ();
+#else
   *eraseaddr = 0x30;
-  
-  clk_busy_wait(30);
+#endif
 
+  clk_busy_wait(4);
   return FLASH_SUCCESS;
 
 }/* fsi_and_resume */
@@ -625,7 +658,7 @@ fsi_toshiba_configure (fsi_device_t self, flash_ptr_type baseaddr)
       KICK_DOG_AND_CHECK_DATA();
 
       flash_peek_twice(sector_addr, &prior , &current);
-      if( ((prior ^ current) & FLASH_STATUS_DQ2) != 0x0)
+      if( ((prior ^ current) & FS_AMD_DQ2) != 0x0)
       {
         nor_device->ops->resume_erase( sector_addr );
         while (TRUE)
@@ -651,7 +684,7 @@ fsi_toshiba_configure (fsi_device_t self, flash_ptr_type baseaddr)
       sector_addr = (flash_ptr_type)flash_nor_find_block_start_addr(nor_device, 
                                                                     sector);
       flash_peek_twice(sector_addr, &prior , &current);
-      if( ((prior ^ current) & FLASH_STATUS_DQ2) != 0x0)
+      if( ((prior ^ current) & FS_AMD_DQ2) != 0x0)
       {
         nor_device->ops->resume_erase( sector_addr );
         while (TRUE)
@@ -698,11 +731,11 @@ fsi_toshiba_fast_byte_write (byte *buffer,
                               dword offset,
                               dword count)
 {
-
   volatile byte *part_base, *bptr;
   volatile word *wptr, *check_ptr;
   word value;
   word tmp;
+  byte timeout_cnt=0;
   flash_status status = FLASH_SUCCESS;
   volatile word *unlock_base;
 
@@ -732,11 +765,17 @@ fsi_toshiba_fast_byte_write (byte *buffer,
        1 will be needed for future optimizations. */
     while (count > 1)
     {
+
       KICK_DOG_AND_CHECK_DATA();
       value = *((word *) buffer);
 
       unlock_base[0x555] = 0xA0;
       *wptr = value;
+
+      /* Wait 4 micro second before check for status.
+         Per Spansion recommendation */
+      clk_busy_wait(4);
+  
   
       /* Wait for the write. */
       while (1)    //lint !e716 while(1) has break and return..
@@ -744,33 +783,40 @@ fsi_toshiba_fast_byte_write (byte *buffer,
         tmp = *wptr;
  
         /* Exit when finished. */
-        if ((tmp & FLASH_STATUS_DQ7) != (value & FLASH_STATUS_DQ7))
+        if ((tmp & FS_AMD_DQ7) != (value & FS_AMD_DQ7))
         {  
-          if ((tmp & FLASH_STATUS_DQ5) != 0)
+          if ((tmp & FS_AMD_DQ5) != 0)
           {
             tmp = *wptr;
-            /* DQ7 should be rechecked even if DQ5 = ??because DQ7 
-               may change simultaneously with DQ5. Refer flowchart on page 26 of 
-               Samsung data sheet (K5N5629ABM-AD11, Rev 0.0)*/
-            if ((tmp & FLASH_STATUS_DQ7) != (value & FLASH_STATUS_DQ7))
+            /* DQ7 should be rechecked even if DQ5 = “1” because DQ7 
+               may change simultaneously with DQ5. Refer flowchart on page 76 of 
+               Spansion data sheet (S71PL254/127/064/032J_00 Revision A)*/
+            if ((tmp & FS_AMD_DQ7) != (value & FS_AMD_DQ7))
             {
-              status = FLASH_FAILURE;
-              /* Issue Reset command when write failure occurs to bring
-               *  the flash to Read mode
-               */
-              *wptr = 0xF0;
+              status = FLASH_TIMEOUT;
             }          
             break;
+          }
+          else
+          {
+            clk_busy_wait(1);
+            timeout_cnt++;            
+            if(timeout_cnt >= TOSHIBA_MAX_TIMEOUT_CNT)
+            {
+              status = FLASH_TIMEOUT;
+              break;
+            }
           }
         }
         else
         {
-          break; /* pass */
+          break;
         }
       }
 
-      if(status != FLASH_SUCCESS)
+      if(status == FLASH_TIMEOUT)
         break;
+      timeout_cnt = 0;
       buffer += 2;
       wptr   += 1;
       count  -= 2;
@@ -803,6 +849,10 @@ fsi_toshiba_fast_byte_write (byte *buffer,
       else
         value = tmp & ((value << 8) | 0x00FF);
       *wptr = value;
+ 
+      /* Wait 4 micro second before check for status.
+         Per Spansion recommendation */
+      clk_busy_wait(4);
 
       /* Wait for the write. */
       while (1)    //lint !e716 while(1) has break and return..
@@ -810,30 +860,40 @@ fsi_toshiba_fast_byte_write (byte *buffer,
         tmp = *wptr;
   
         /* Exit when finished. */
-        if ((tmp & FLASH_STATUS_DQ7) != (value & FLASH_STATUS_DQ7))
+        if ((tmp & FS_AMD_DQ7) != (value & FS_AMD_DQ7))
         {  
-          if ((tmp & FLASH_STATUS_DQ5) != 0)
+          if ((tmp & FS_AMD_DQ5) != 0)
           {
             tmp = *wptr;
-            if ((tmp & FLASH_STATUS_DQ7) != (value & FLASH_STATUS_DQ7))
+            /* DQ7 should be rechecked even if DQ5 = “1” because DQ7 
+               may change simultaneously with DQ5. Refer flowchart on page 76 of 
+               Spansion data sheet (S71PL254/127/064/032J_00 Revision A)*/
+            if ((tmp & FS_AMD_DQ7) != (value & FS_AMD_DQ7))
             {
-              status = FLASH_FAILURE;
-              /* Issue Reset command when write failure occurs to bring
-               *  the flash to Read mode
-               */
-              *wptr = 0xF0;
+              status = FLASH_TIMEOUT;
             }          
             break;
+          }
+          else
+          {
+            clk_busy_wait(1);
+            timeout_cnt++;            
+            if(timeout_cnt >= TOSHIBA_MAX_TIMEOUT_CNT)
+            {
+              status = FLASH_TIMEOUT;
+              break;
+            }
           }
         }
         else
         {
-          break; /* pass */
+          break;
         }
       }
 
-      if(status != FLASH_SUCCESS)
+      if(status == FLASH_TIMEOUT)
         break;
+      timeout_cnt = 0;
       buffer += 1;
       bptr   += 1;
       count  -= 1;

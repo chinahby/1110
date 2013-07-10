@@ -175,12 +175,12 @@ flash_geometry_info S29WS256N0SB_geometry =
   262,
   16,
   {
-    { 0,    19,  18,  0},
-    { 19,   16,  34,  0},
-    { 35,   16,  50,  0},
-    { 51,   16,  66,  0},
-    { 67,   16,  82,  0},
-    { 83,   16,  98,  0},
+    { 0,    19,  18,   0},
+    { 19,   16,  34,   0},
+    { 35,   16,  50,   0},
+    { 51,   16,  66,   0},
+    { 67,   16,  82,   0},
+    { 83,   16,  98,   0},
     { 99,   16,  114,  0},
     { 115,  16,  130,  0},
     { 131,  16,  146,  0},
@@ -882,7 +882,7 @@ SIDE EFFECTS
   None
 ===========================================================================*/
 static int retry_count = 0;
-dword wait_amd_count = 20;
+static dword wait_amd_count = 20;
 
 LOCAL flash_status
 fsi_spansion_suspend (flash_ptr_type eraseaddr)
@@ -1597,7 +1597,6 @@ fsi_spansion_fast_byte_write (byte *buffer,
                               dword offset,
                               dword count)
 {
-
   volatile byte *part_base, *bptr;
   volatile word *wptr, *check_ptr;
   word value;
