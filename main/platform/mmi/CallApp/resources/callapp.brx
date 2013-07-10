@@ -238,6 +238,9 @@
 	<String Id="1126" Name="IDS_SAR_CT100">
 		<Text>SAR: CDMA800 Head:0.565W/Kg  Body:1.080W/Kg</Text>
 	</String>	
+	<STRING Id="1127" Name="IDS_MSG_CURPROFILE_MEETING_NO_VIBRATE">
+		<Text>Meeting mode activated</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_NUMEDIT" Focus="0">
