@@ -603,16 +603,15 @@ const static dbl_parser_cfg_data_item_type ebi1_cfg_data_S71VSR_96MHZ[] =
   {END_OF_CFG_DATA,  0x00000000,                    0x00000000            }
 };
 
-
 const static dbl_parser_cfg_data_item_type ebi1_cfg_data_TC58FYM7T8C_48MHZ[] =
 {
   {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000000),  0xF0    },
-  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000AAA),  0xAA    },
-  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000554),  0x55    },
-  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00024AAA),  0xC0    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | (0x00000555<<1)),  0xAA    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | (0x000002AA<<1)),  0x55    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | (0x00023555<<1)),  0xC0    },
 
-  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, FLASH_ON_CS),  0x025400             },
-  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, FLASH_ON_CS),  0x01010034           },
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, FLASH_ON_CS),  0x035400             },
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, FLASH_ON_CS),  0x02010024           },
   {HWIO_OPERATION,   HWIO_ADDR(EBI1_BUFC_CFG),                EBI1_BUFC_CFG_VALUE  },
 
   /*-----------------------------------------------------------------------
@@ -624,12 +623,12 @@ const static dbl_parser_cfg_data_item_type ebi1_cfg_data_TC58FYM7T8C_48MHZ[] =
 const static dbl_parser_cfg_data_item_type ebi1_cfg_data_TC58FYM7T8C_64MHZ[] =
 {
   {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000000),  0xF0    },
-  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000AAA),  0xAA    },
-  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000554),  0x55    },
-  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00026AAA),  0xC0    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | (0x00000555<<1)),  0xAA    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | (0x000002AA<<1)),  0x55    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | (0x00023555<<1)),  0xC0    },
 
-  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, FLASH_ON_CS),  0x013400             },
-  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, FLASH_ON_CS),  0x01011034           },
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, FLASH_ON_CS),  0x035400             },
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, FLASH_ON_CS),  0x02010024           },
   {HWIO_OPERATION,   HWIO_ADDR(EBI1_BUFC_CFG),                EBI1_BUFC_CFG_VALUE  },
 
   /*-----------------------------------------------------------------------
@@ -641,12 +640,12 @@ const static dbl_parser_cfg_data_item_type ebi1_cfg_data_TC58FYM7T8C_64MHZ[] =
 const static dbl_parser_cfg_data_item_type ebi1_cfg_data_TC58FYM7T8C_96MHZ[] =
 {
   {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000000),  0xF0    },
-  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000AAA),  0xAA    },
-  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000554),  0x55    },
-  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x0002CAAA),  0xC0    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | (0x00000555<<1)),  0xAA    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | (0x000002AA<<1)),  0x55    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | (0x00027555<<1)),  0xC0    },
 
-  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, FLASH_ON_CS),  0x025400             },
-  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, FLASH_ON_CS),  0x01010034           },
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, FLASH_ON_CS),  0x048700             },
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, FLASH_ON_CS),  0x02010024           },
   {HWIO_OPERATION,   HWIO_ADDR(EBI1_BUFC_CFG),                EBI1_BUFC_CFG_VALUE  },
 
   /*-----------------------------------------------------------------------
@@ -654,6 +653,7 @@ const static dbl_parser_cfg_data_item_type ebi1_cfg_data_TC58FYM7T8C_96MHZ[] =
   -----------------------------------------------------------------------*/   
   {END_OF_CFG_DATA,  0x00000000,                    0x00000000    },
 };
+
 
 const static dbl_parser_cfg_data_item_type ebi1_cfg_data_common[] =
 {
@@ -1260,6 +1260,114 @@ const static dbl_parser_cfg_data_item_type ebi1_cfg_data_PSRAM_CS0_96MHZ[] =
 };
 #endif
 
+const static dbl_parser_cfg_data_item_type ebi1_toshiba_cfg_data_PSRAM_CS1_48MHZ[] =
+{
+
+  {READ_16_BIT,      0x9FFFFFE,               0x0       },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {READ_16_BIT,      0x9FFFFFE,               0x0        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {WRITE_16_BIT,     0x9FFFFFE,               0x1        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {WRITE_16_BIT,     0x9FFFFFE,               0x8110B    },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+  
+  {READ_16_BIT,      0x9FFFFFE,               0x0        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {READ_16_BIT,      0x9FFFFFE,               0x0        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {WRITE_16_BIT,     0x9FFFFFE,               0x1        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {READ_16_BIT,      0x9FFFFFE,               0x0        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, 1),    0x002200    },
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, 1),    0x0001002C  },
+
+  /*-----------------------------------------------------------------------
+                            End of Configuration
+  -----------------------------------------------------------------------*/   
+  {END_OF_CFG_DATA,  0x00000000,                    0x00000000  }
+};
+
+const static dbl_parser_cfg_data_item_type ebi1_toshiba_cfg_data_PSRAM_CS1_64MHZ[] =
+{
+
+  {READ_16_BIT,      0x9FFFFFE,               0x0       },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {READ_16_BIT,      0x9FFFFFE,               0x0        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {WRITE_16_BIT,     0x9FFFFFE,               0x1        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {WRITE_16_BIT,     0x9FFFFFE,               0x8190B    },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+  
+  {READ_16_BIT,      0x9FFFFFE,               0x0        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {READ_16_BIT,      0x9FFFFFE,               0x0        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {WRITE_16_BIT,     0x9FFFFFE,               0x1        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {READ_16_BIT,      0x9FFFFFE,               0x0        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, 1),    0x002200    },
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, 1),    0x0001002C  },
+
+  /*-----------------------------------------------------------------------
+                            End of Configuration
+  -----------------------------------------------------------------------*/   
+  {END_OF_CFG_DATA,  0x00000000,                    0x00000000  }
+};
+
+const static dbl_parser_cfg_data_item_type ebi1_toshiba_cfg_data_PSRAM_CS1_96MHZ[] =
+{
+
+  {READ_16_BIT,      0x9FFFFFE,               0x0       },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {READ_16_BIT,      0x9FFFFFE,               0x0        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {WRITE_16_BIT,     0x9FFFFFE,               0x1        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {WRITE_16_BIT,     0x9FFFFFE,               0x8190B    },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+  
+  {READ_16_BIT,      0x9FFFFFE,               0x0        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {READ_16_BIT,      0x9FFFFFE,               0x0        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {WRITE_16_BIT,     0x9FFFFFE,               0x1        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {READ_16_BIT,      0x9FFFFFE,               0x0        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, 1),    0x002200    },
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, 1),    0x0001002C  },
+
+  /*-----------------------------------------------------------------------
+                            End of Configuration
+  -----------------------------------------------------------------------*/   
+  {END_OF_CFG_DATA,  0x00000000,                    0x00000000  }
+};
+
 /***********************************************************************
 FUNCTION      dbl_nor_device_probe
 
@@ -1714,6 +1822,27 @@ void dbl_ebi1_data_psram_configure
             DBL_ERR_FATAL(DBL_ERR_EBI1_CFG_FAILED);
         }
 	}
+#if 1
+    else if((dev == &TC58FYM7T8C_TOP) || (dev == &TC58FYM7T8C_BOT))
+	{
+        if( configured_clk_speed->ebi1 == 48 )
+        {
+            dbl_parse_cfg_data(ebi1_toshiba_cfg_data_PSRAM_CS1_48MHZ);
+        }
+        else if( configured_clk_speed->ebi1 == 64 )
+        {
+            dbl_parse_cfg_data(ebi1_toshiba_cfg_data_PSRAM_CS1_64MHZ);
+        }
+        else if( configured_clk_speed->ebi1 == 96 )
+        {
+            dbl_parse_cfg_data(ebi1_toshiba_cfg_data_PSRAM_CS1_96MHZ);
+        }
+        else
+        {
+            DBL_ERR_FATAL(DBL_ERR_EBI1_CFG_FAILED);
+        }
+	}
+#endif
   	else
 #endif
 	{
