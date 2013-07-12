@@ -219,7 +219,10 @@
 	</String>	
 	<STRING Id="1127" Name="IDS_MSG_CURPROFILE_MEETING_NO_VIBRATE">
 		<Text>Meeting mode activated</Text>
-	</STRING>	
+	</STRING>
+	<String Id="1128" Name="IDS_SAR_C260_IC18">
+		<Text>SAR: 0.21W/kg@1g(Head)   0.16W/kg@1g(Body).</Text>
+	</String>	
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_NUMEDIT" Focus="0">
