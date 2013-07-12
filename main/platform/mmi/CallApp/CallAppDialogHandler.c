@@ -349,6 +349,9 @@ static boolean CallApp_CheckBtHeadSetInUsing(CCallApp* pMe);
 #endif
 //Add End
 
+static int SetBrowserArr_Main_CallApp(CCallApp *pMe, char *purl);
+
+
 
 
 #ifdef FEATURE_LCD_TOUCH_ENABLE
@@ -1236,12 +1239,21 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 							return TRUE;
                         }   
 #elif defined (FEATURE_VERSION_C337)
+#if  defined(FEATURE_VERSION_C260_IC18)
+                        if (WSTRCMP(pMe->m_DialString, L"*#07#") == 0)       	//SAR                 	
+                        { 
+							pMe->m_msg_text_id = IDS_SAR_C260_IC18;	
+        					CLOSE_DIALOG(DLGRET_MSGBOX);
+							return TRUE;
+                        } 
+#else
                         if (WSTRCMP(pMe->m_DialString, L"*#07#") == 0)       	//SAR                 	
                         { 
 							pMe->m_msg_text_id = IDS_SAR_C337;	
         					CLOSE_DIALOG(DLGRET_MSGBOX);
 							return TRUE;
-                        }        
+                        }     
+#endif   
 #elif defined(FEATURE_VERSION_W021_CT100_SALES_TRACK)                        
                         if (WSTRCMP(pMe->m_DialString, L"*#07#") == 0)       	//SAR                 	
                         { 
@@ -4991,9 +5003,9 @@ static boolean  CallApp_MsgBox_DlgHandler(CCallApp  *pMe,
         }
             return TRUE;
 
-        case EVT_DIALOG_START:
+        case EVT_DIALOG_START:     
             if(pMe->m_msg_text_id != IDS_INVALIDEMGNUM && pMe->m_msg_text_id != IDS_NOOMH_CARD 
-                && pMe->m_msg_text_id != IDS_SAR && pMe->m_msg_text_id != IDS_SAR_C337&&pMe->m_msg_text_id != IDS_SAR_CT100
+                && pMe->m_msg_text_id != IDS_SAR && pMe->m_msg_text_id != IDS_SAR_C337&& pMe->m_msg_text_id != IDS_SAR_C260_IC18&&pMe->m_msg_text_id != IDS_SAR_CT100
                 || (pMe->m_msg_text_id == IDS_REGULATE_SUCCEED)|| (pMe->m_msg_text_id == IDS_REGULATE_FAIL))
             {
                 ISHELL_SetTimer(pMe->m_pShell, TIMEOUT_MS_INVALIDEMGNUMDIALOG_TIMER,
@@ -5125,9 +5137,9 @@ static boolean  CallApp_MsgBox_DlgHandler(CCallApp  *pMe,
                         return TRUE;
 
                 }
-            }
+            }            
             else if((pMe->m_msg_text_id == IDS_NOOMH_CARD) || (pMe->m_msg_text_id == IDS_SAR)
-                || (pMe->m_msg_text_id == IDS_SAR_C337)||(pMe->m_msg_text_id == IDS_SAR_CT100)
+                || (pMe->m_msg_text_id == IDS_SAR_C337)|| (pMe->m_msg_text_id == IDS_SAR_C260_IC18)||(pMe->m_msg_text_id == IDS_SAR_CT100)
                 || (pMe->m_msg_text_id == IDS_REGULATE_SUCCEED)|| (pMe->m_msg_text_id == IDS_REGULATE_FAIL))
             {
                 switch (wParam)
@@ -12129,6 +12141,14 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
 			}
 			#endif
     	}
+        #else
+        else if (((AVKType)wParam == AVK_0) && (WSTRLEN(pMe->m_DialString) == 1))
+		{	
+#ifdef FEATURE_VERSION_C260_IC18		    
+            OEM_SetUCBROWSER_ADSAccount();		
+            SetBrowserArr_Main_CallApp(pMe,(char*)"http://mimicromax.com");    
+#endif		    
+    	}    
         #endif
     	#else
     	else if ((AVKType)wParam == AVK_0) 
@@ -12233,6 +12253,62 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
 	}
     return TRUE;
 }
+
+
+//Add By zzg 2013_06_15
+extern char charsvc_p_name[UIM_CDMA_HOME_SERVICE_SIZE+1];
+static int SetBrowserArr_Main_CallApp(CCallApp *pMe,char *purl)
+{
+	int Result = EUNSUPPORTED;
+	char urlCan[1024] = {0};
+    
+	DBGPRINTF("svc_p_name %s %d",charsvc_p_name,charsvc_p_name[0],0);
+	
+	if(purl && STRLEN(purl)>1)
+	{
+        SPRINTF(urlCan,"call_ucweb:setexternurl:%s\2\3",purl);
+		STRCAT(urlCan,"useragent:BREW-Applet/0x20068888 (BREW/3.1.5.20; DeviceId: 8976509865757e; Lang: hi; Profile/MIDP-2.0_Configuration/CLDC-1.1) ucweb-squid\2\3");
+	}
+	else
+	{
+		STRCPY(urlCan,"useragent:BREW-Applet/0x20068888 (BREW/3.1.5.20; DeviceId: 8976509865757e; Lang: hi; Profile/MIDP-2.0_Configuration/CLDC-1.1) ucweb-squid\2\3");
+	}
+    
+	if(STRISTR (charsvc_p_name,"mts"))
+	{
+		MSG_FATAL("mst................",0,0,0);
+        STRCAT(urlCan,"access_point:proxy_is:10.50.5.140:8080");
+	}
+	else if(STRISTR (charsvc_p_name,"tata"))
+	{
+        MSG_FATAL("tata................",0,0,0);
+        STRCAT(urlCan,"access_point:proxy_is:172.23.252.15:9401");
+	}
+	else if(STRISTR (charsvc_p_name,"reliance"))
+	{
+        MSG_FATAL("reliance................",0,0,0);
+        STRCAT(urlCan,"access_point:proxy_is:http://wapgw.ricinfo.com:8080");
+	}
+	else if(STRISTR (charsvc_p_name,"vmi"))
+	{
+        MSG_FATAL("vmi................",0,0,0);
+        STRCAT(urlCan,"access_point:proxy_is:172.23.142.15:9401");
+	}
+	
+	DBGPRINTF("urlCan==%s", urlCan);
+    if(urlCan[0])
+    {
+	    Result = ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)urlCan);
+    }
+    else
+    {
+        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_UCWEB);
+    }
+
+	return Result;	
+}
+
+//Add End
 
 #if defined(FEATURE_VERSION_W027V3) || defined(FEATURE_VERSION_W317A)|| defined(FEATURE_VERSION_M74)
 
