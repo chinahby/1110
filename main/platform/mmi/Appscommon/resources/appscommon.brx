@@ -295,6 +295,9 @@
 	<String Id="1045" Name="IDS_CONTINUE">
 		<Text>Continue</Text>
 	</String>
+	<String Id="1046" Name="IDS_CONTANT_K212">
+		<Text>Contacts</Text>
+	</String>
 	<STRING Id="2001" Name="IDS_SNOOZE">
 		<Text>Snooze</Text>
 	</STRING>

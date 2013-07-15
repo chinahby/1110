@@ -179,7 +179,19 @@ boolean bIsPowerUp = FALSE;     //Add By zzg 2013_03_29
 #define WEEK_Y              (DATA_Y + 25) 
 
 #elif defined(FEATURE_DISP_240X320)
+#if defined(FEATURE_VERSION_K212)
+#define IDLE_D_CLOCK_X 		15
+#define IDLE_D_CLOCK_Y 		25
 
+#define RPLMN_X				IDLE_D_CLOCK_X
+#define RPLMN_Y				232
+
+#define DATA_X				IDLE_D_CLOCK_X
+#define DATA_Y				108
+
+#define WEEK_X              IDLE_D_CLOCK_X
+#define WEEK_Y              108
+#else
 #define IDLE_D_CLOCK_X 		15
 #define IDLE_D_CLOCK_Y 		25
 
@@ -191,6 +203,7 @@ boolean bIsPowerUp = FALSE;     //Add By zzg 2013_03_29
 
 #define WEEK_X              IDLE_D_CLOCK_X
 #define WEEK_Y              (DATA_Y + 30) 
+#endif
 
 #elif defined(FEATURE_DISP_320X240)
 
@@ -4676,7 +4689,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #else
     				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif	/*FEATURE_SMARTFREN_STATIC_BREW_APP*/
-#elif defined (FEATURE_VERSION_HITZ181) || defined (FEATURE_VERSION_W515V3)|| defined (FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_K202_LM129C)
+#elif defined (FEATURE_VERSION_HITZ181) || defined (FEATURE_VERSION_W515V3)|| defined (FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_K202_LM129C)||defined(FEATURE_VERSION_K212)
     				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 #elif defined (FEATURE_VERSION_S600S)
     				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_APP_RECENTCALL);
@@ -6185,7 +6198,7 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
     {// 最后是正常情况下的提示
         // 获取待机问候语 
         MEMSET(pMe->svc_p_name,0,(UIM_CDMA_HOME_SERVICE_SIZE+1)*sizeof(AECHAR));
-#if defined(FEATURE_VERSION_K202)||defined(FEATURE_LANG_CHINESE)
+#if defined(FEATURE_VERSION_K202)||defined(FEATURE_LANG_CHINESE)||defined(FEATURE_VERSION_K212)
 		 (void) ISHELL_LoadResString(pMe->a.m_pIShell,
                        AEE_COREAPPRES_LANGFILE,
                        IDS_CHINA_TELECOM,
@@ -6273,7 +6286,7 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
         MSG_FATAL("str_lenth=%d, rc.x=%d", str_lenth, rc.x, 0);
      }
 #elif defined (FEATURE_DISP_240X320) 
-	#ifdef FEATURE_LCD_TOUCH_ENABLE
+#if defined( FEATURE_LCD_TOUCH_ENABLE)||defined(FEATURE_VERSION_K212)
 	str_lenth = IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL, (const AECHAR *)wszBuf);
 #ifdef FEATURE_OEMOMH    
         if(hasGetSPN && (str_lenth > 176))
@@ -6283,16 +6296,22 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
         }
         else
 #endif     
+#ifdef FEATURE_VERSION_K212
+		rc.y = 232;
+        rc.x = 15;
+        rc.dx = 210;
+#else
 		rc.y = 135;
         rc.x = 15;
         rc.dx = str_lenth;
+#endif
         (void)DrawTextWithProfile(pMe->a.m_pIShell,
                                   pMe->m_pDisplay,
                                   RGB_WHITE_NO_TRANS,
                                   AEE_FONT_NORMAL,
                                   wszBuf, -1,
                                   0, 0, &rc, 
-                                  IDF_ALIGN_LEFT
+                                  IDF_ALIGN_CENTER
                                   | IDF_ALIGN_MIDDLE
                                   | IDF_TEXT_TRANSPARENT);       
 	#endif
@@ -6801,6 +6820,119 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 		}
 	
 	}
+	#elif defined(FEATURE_VERSION_K212)
+	{
+			int         nLineWidth = 4, nNumberWidth = 30, nNumberHeight = 61, nOffset = 5,
+	                xStartPos = 0, yStartPos = 0, nTextLen = 0;
+	        AEERect rect = {0};
+	        uint16    wHour,len; 
+	        byte Timefontmode = 0;
+	        boolean bMode = TRUE;
+	        yStartPos = (SCREEN_HEIGHT*2/5)+10;
+			// draw hour
+			(void) ICONFIG_GetItem(pMe->m_pConfig,
+                                       CFGI_IDLE_DATETIME_MODE,
+                                       &Timefontmode,
+                                       sizeof(Timefontmode));
+			MSG_FATAL("Timefontmode=============%d",Timefontmode,0,0);
+            switch(Timefontmode)
+            {
+            	case 1:
+            		nLineWidth = 4;
+            		nNumberWidth = 30;
+            		nNumberHeight = 61;
+            		nOffset = 5;
+            		if (bTFmt != OEMNV_TIMEFORM_AMPM)
+					{
+		       			wHour = jDate.wHour;
+						xStartPos = 10;
+					}
+					else
+					{
+						xStartPos = 5;
+						wHour = jDate.wHour > 12 ? (jDate.wHour - 12) : jDate.wHour;
+		       			if(jDate.wHour == 0)
+		        			{
+		            			wHour = 12;
+		       			}
+					}
+            		break;
+            	case 2:
+            		xStartPos = 50;
+            		yStartPos = (SCREEN_HEIGHT*2/5)+20;
+            		nLineWidth = 4;
+            		nNumberWidth = 15;
+            		nNumberHeight = 30;
+            		nOffset = 5;
+            		if (bTFmt != OEMNV_TIMEFORM_AMPM)
+					{
+		       			wHour = jDate.wHour;
+						xStartPos = 25;
+					}
+					else
+					{
+						xStartPos = 20;
+						wHour = jDate.wHour > 12 ? (jDate.wHour - 12) : jDate.wHour;
+		       			if(jDate.wHour == 0)
+		        			{
+		            			wHour = 12;
+		       			}
+					}
+            		break;
+            	case 3:
+            		bMode = FALSE;
+            		break;
+            	default:
+            		break;
+            }
+            if(bMode)
+            {
+				xStartPos = 15;
+				yStartPos = 45;
+		    	SETAEERECT(&rect, xStartPos, yStartPos, nNumberWidth, nNumberHeight);
+		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (wHour/10), nLineWidth, &rect, RGB_WHITE);
+		    	rect.x += nNumberWidth + nOffset;
+		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (wHour%10), nLineWidth, &rect, RGB_WHITE);
+
+		   		 // draw colon
+		    	SETAEERECT(&rect, xStartPos + 2*(nNumberWidth + nOffset), yStartPos + nNumberHeight/2 - nLineWidth, nLineWidth, nLineWidth);
+		    	IDISPLAY_FillRect(pMe->m_pDisplay, &rect, RGB_WHITE);
+		    	rect.y = yStartPos + nNumberHeight*3/5 +10 - nLineWidth;
+		    	IDISPLAY_FillRect(pMe->m_pDisplay, &rect, RGB_WHITE);
+		    
+		   		// draw minute
+		    	SETAEERECT(&rect, xStartPos + 2*(nNumberWidth + nOffset) + nLineWidth + nOffset, yStartPos, nNumberWidth, nNumberHeight);
+		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (jDate.wMinute/10), nLineWidth, &rect, RGB_WHITE);
+		    	rect.x += nNumberWidth + nOffset;
+		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (jDate.wMinute%10), nLineWidth, &rect, RGB_WHITE);
+		    	rect.x += nNumberWidth;
+		     	rect.y = rect.y +12;
+		    	DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
+		                              pMe->m_pDisplay,
+		                              RGB_WHITE_NO_TRANS,
+		                              32, 
+		                              wszDatemat, -1,
+		                              0, 0, &rect, 
+		                              IDF_ALIGN_MIDDLE
+		                              | IDF_ALIGN_LEFT
+		                              | IDF_TEXT_TRANSPARENT);
+	        }
+	        else
+	        {
+	        	rc.y = rc.y+60;
+	        	DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
+	                              pMe->m_pDisplay,
+	                              RGB_WHITE_NO_TRANS,
+	                              32, 
+	                              wszDate, -1,
+	                              0, 0, &rc, 
+	                              IDF_ALIGN_MIDDLE
+	                              | IDF_ALIGN_CENTER
+	                              | IDF_TEXT_TRANSPARENT);
+	           rc.y = rc.y-60;
+	        }
+	    	IDISPLAY_Update(pMe->m_pDisplay);
+	}
 	#endif
 }
 #elif defined FEATURE_DISP_320X240
@@ -6853,7 +6985,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 
 #else	
 		//rc.y = 20;
-		#ifdef FEATURE_VERSION_MYANMAR
+		#if defined(FEATURE_VERSION_MYANMAR)
 		{
 			int         nLineWidth = 4, nNumberWidth = 20, nNumberHeight = 40, nOffset = 5,
 	                xStartPos = 0, yStartPos = 0, nTextLen = 0;
@@ -7023,7 +7155,11 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 #elif defined(FEATURE_DISP_128X160)
 				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
 #elif defined(FEATURE_DISP_240X320)
-				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);	
+#if defined(FEATURE_VERSION_K212)
+				WSTRLCPY(wFormat,L"%02d.%02d.%04d",63); 
+#else
+				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
+#endif
 #elif defined(FEATURE_DISP_320X240)
 				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);	
 #else
@@ -7044,7 +7180,11 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 #elif defined(FEATURE_DISP_128X160)
 				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
 #elif defined(FEATURE_DISP_240X320)
+#if defined(FEATURE_VERSION_K212)
+				WSTRLCPY(wFormat,L"%02d.%02d.%04d",63);
+#else
 				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
+#endif
 #elif defined(FEATURE_DISP_320X240)
 				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
 #else
@@ -7066,7 +7206,11 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 #elif defined(FEATURE_DISP_128X160)
 				WSTRLCPY(wFormat,L"%04d/%02d/%02d",63);
 #elif defined(FEATURE_DISP_240X320)
+#if defined(FEATURE_VERSION_K212)
+				WSTRLCPY(wFormat,L"%04d.%02d.%02d",63);
+#else
 				WSTRLCPY(wFormat,L"%04d/%02d/%02d",63);
+#endif
 #elif defined(FEATURE_DISP_320X240)
 				WSTRLCPY(wFormat,L"%04d/%02d/%02d",63);
 #else
@@ -7172,6 +7316,17 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                                   | IDF_TEXT_TRANSPARENT); 
 		
 #else
+#if defined(FEATURE_VERSION_K212)
+		DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
+                                  pMe->m_pDisplay,
+                                  RGB_WHITE_NO_TRANS,
+                                  28,
+                                  &wszDate[0], -1,
+                                  0, 0, &rc_date, 
+                                  IDF_ALIGN_MIDDLE
+                                  | IDF_ALIGN_LEFT
+                                  | IDF_TEXT_TRANSPARENT); 
+#else
         DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
                                   pMe->m_pDisplay,
                                   RGB_WHITE_NO_TRANS,
@@ -7181,6 +7336,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                                   IDF_ALIGN_MIDDLE
                                   | IDF_ALIGN_RIGHT
                                   | IDF_TEXT_TRANSPARENT); 
+#endif
 #endif
 #elif defined(FEATURE_DISP_320X240)
         DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
@@ -7284,7 +7440,11 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 	(void)DrawTextWithProfile(pMe->a.m_pIShell,
                               pMe->m_pDisplay,
                               RGB_WHITE_NO_TRANS,
+                              #if defined(FEATURE_VERSION_K212)
+							  28,
+							  #else
                               AEE_FONT_NORMAL,
+                              #endif
                               &wszDate[5], -1,
                               0, 0, &rc_date, 
                               IDF_ALIGN_MIDDLE
@@ -7390,7 +7550,11 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 	(void)DrawTextWithProfile(pMe->a.m_pIShell,
                               pMe->m_pDisplay,
                               RGB_WHITE_NO_TRANS,
-                              AEE_FONT_NORMAL,
+#if defined(FEATURE_VERSION_K212)
+							  28,
+#else
+							  AEE_FONT_NORMAL,
+#endif
                               wszDate, -1,
                               0, 0, &rc_week, 
                               IDF_ALIGN_MIDDLE
@@ -7402,7 +7566,11 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
     (void)DrawTextWithProfile(pMe->a.m_pIShell,
                               pMe->m_pDisplay,
                               RGB_WHITE_NO_TRANS,
+#if defined(FEATURE_VERSION_K212)
+							  28,
+#else
                               AEE_FONT_NORMAL,
+#endif
                               wszDate, -1,
                               0, 0, &rc_week, 
                               IDF_ALIGN_MIDDLE
@@ -7538,8 +7706,8 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 			eBBarType = BTBAR_MENU_CONTACTS; //add by yangdecai
 		}			
 	#else 
-        #if defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_W317A)\
-			||defined(FEATURE_VERSION_K202_LM129C)//xxzhen
+    #if defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_W317A)\
+			||defined(FEATURE_VERSION_K202_LM129C)||defined(FEATURE_VERSION_K212)//xxzhen
            eBBarType = BTBAR_MENU_CONTACTS;
 	#elif defined(FEATURE_VERSION_C316)
 	    eBBarType = BTBAR_SHORTCUT_CONTACTS;

@@ -3239,9 +3239,9 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_IconTitle[0]     = IDS_MAIN_MENU_MEDIAGALLERY;
     pMe->m_IconTitle[1]     = IDS_MAIN_MENU_CONTACTS;
     pMe->m_IconTitle[2]     = IDS_MAIN_MENU_UTK;
-    pMe->m_IconTitle[3]     = IDS_MAIN_MENU_MULTIMEDIA;
+    pMe->m_IconTitle[3]     = IDS_MAIN_MENU_RECENTCALLS;
     pMe->m_IconTitle[4]     = IDS_MAIN_MENU_MESSAGES;
-    pMe->m_IconTitle[5]     = IDS_MAIN_MENU_RECENTCALLS;
+    pMe->m_IconTitle[5]     = IDS_MAIN_MENU_MULTIMEDIA;
     pMe->m_IconTitle[6]     = IDS_MAIN_MENU_MUSICPLAYER;
     pMe->m_IconTitle[7]     = IDS_MAIN_MENU_SETTINGS;
     pMe->m_IconTitle[8]     = IDS_MAIN_MENU_APPLICATION;

@@ -37,6 +37,13 @@
 #define LCD_READ_DATA16()   (uint16)((in_byte(LCD_DATA_WH)<<8)|in_byte(LCD_DATA_WH))
 #define LCD_DELAY(v)        clk_busy_wait(v*1000)
 
+
+#define LCD_WRITD_CMDW(v)     out_word(LCD_CMD_WH,(v))
+#define LCD_WRITE_DATAW(v)    out_word(LCD_DATA_WH,(v))
+#define LCD_READ_DATAW()      in_word(LCD_DATA_WH)
+
+
+
 /*============================================================================
 
                         STRUCTURE TYPES FOR MODULE

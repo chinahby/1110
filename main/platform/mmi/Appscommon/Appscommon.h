@@ -99,6 +99,17 @@
     #define SCROLLBAR_WIDTH         5
     #define STATUSBAR_HEIGHT        16
 #elif defined(FEATURE_DISP_240X320)	
+#ifdef FEATURE_VERSION_K212
+	#define SCREEN_WIDTH            240
+    #define SCREEN_HEIGHT           320
+    #define STATEBAR_HEIGHT         32
+    #define BOTTOMBAR_HEIGHT        32
+    #define TITLEBAR_HEIGHT         32
+    #define MENUITEM_HEIGHT         40
+    #define SCROLLBAR_WIDTH         10
+    #define STATUSBAR_HEIGHT        32	
+
+#else
 	#define SCREEN_WIDTH            240
     #define SCREEN_HEIGHT           320
     #define STATEBAR_HEIGHT         25
@@ -107,6 +118,7 @@
     #define MENUITEM_HEIGHT         30
     #define SCROLLBAR_WIDTH         10
     #define STATUSBAR_HEIGHT        26	
+#endif
 #elif defined(FEATURE_DISP_320X240)			//240 = statebar(32)+bottombar(32)  +5*menuitem(32)
 	#define SCREEN_WIDTH            320
     #define SCREEN_HEIGHT           240

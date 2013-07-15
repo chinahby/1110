@@ -63,9 +63,9 @@ static int OEMFont_MeasureTextCursorPos(IFont *pMe, int x, const AECHAR *pcText,
 
 #if defined(FEATURE_DISP_320X240) || defined(FEATURE_DISP_240X320)
 #define BIGNUMBER_FONT_SIZE 48 
-#define NORMAL_FONT_SIZE    24 
-#define LARGE_FONT_SIZE     28 
-#define SMALL_FONT_SIZE     4
+#define NORMAL_FONT_SIZE    32 
+#define LARGE_FONT_SIZE     36 
+#define SMALL_FONT_SIZE     8
 
 #elif defined(FEATURE_DISP_220X176) || defined(FEATURE_DISP_176X220)
 #if defined(FEATURE_VERSION_1110W516)
@@ -89,7 +89,11 @@ static int OEMFont_MeasureTextCursorPos(IFont *pMe, int x, const AECHAR *pcText,
 #if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)
 #define BIGNUMBER_FONT_SIZE 42
 #else
+#ifdef FEATURE_VERSION_K212
+#define BIGNUMBER_FONT_SIZE 42
+#else
 #define BIGNUMBER_FONT_SIZE 32
+#endif
 #endif
 
 #if defined(FEATURE_LANG_THAI)||defined(FEATURE_LANG_MYANMAR)||defined(FEATURE_LANG_HINDI)

@@ -530,7 +530,11 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
 			//#ifdef FEATURE_VERSION_C337
 			//nResID_R = IDS_PHONE_BOOK;
 			//#else
+			#if defined(FEATURE_VERSION_K212)
+			nResID_R = IDS_CONTANT_K212;
+			#else
             nResID_R = IDS_STRING_CONTACTS;
+			#endif
 			//#endif
             break;
 			
@@ -3443,7 +3447,11 @@ void DrawBottomBar_Ex(IShell    *m_pIShell, IDisplay  * pIDisplay, BottomBar_e_T
 			//#ifdef FEATURE_VERSION_C337
 			//nResID_R = IDS_PHONE_BOOK;
 			//#else
+            #if defined(FEATURE_VERSION_K212)
+			nResID_R = IDS_CONTANT_K212;
+			#else
             nResID_R = IDS_STRING_CONTACTS;
+			#endif
 			//#endif
             break;
             

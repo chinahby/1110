@@ -253,6 +253,9 @@
 	<String Id="1035" Name="IDS_CAP">
 		<Text>Cap</Text>
 	</String>
+	<String Id="1046" Name="IDS_CONTANT_K212">
+		<Text>通讯录</Text>
+	</String>
 	<STRING Id="2001" Name="IDS_SNOOZE">
 		<Text>延时</Text>
 	</STRING>

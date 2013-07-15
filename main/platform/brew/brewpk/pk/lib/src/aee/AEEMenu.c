@@ -104,7 +104,11 @@ static int IMAGE_WIDTH           = 5;                           // Frame Width f
 #elif defined(FEATURE_DISP_220X176)
 #define MAX_NUM_MENUPOP                 (6) //(6)
 #elif defined(FEATURE_DISP_240X320)
+#ifdef FEATURE_VERSION_K212
+#define MAX_NUM_MENUPOP                 (6) //(6)
+#else
 #define MAX_NUM_MENUPOP                 (9) //(6)
+#endif
 #elif defined(FEATURE_DISP_320X240)
 #define MAX_NUM_MENUPOP                 (8) //(6)
 #else
