@@ -132,7 +132,7 @@ when      who    what, where, why
 #define MDP_EP_OP_QCIFP_PRI_SCR_LEN 32
 #define MDP_EP_OP_QCIFP_SEC_SCR_LEN 32
 #ifdef CUST_EDITION
-#define MDP_LCD_SCR_LEN 32
+#define MDP_LCD_SCR_LEN 36
 #endif
 
 #define MDP_GFX_SCR_LEN 64

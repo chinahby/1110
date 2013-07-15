@@ -1500,7 +1500,7 @@ void mdp_wait_script_done()
     return;
 
   mdp_scr_started = FALSE;
-
+  MDP_MSG_ERROR("mdp_wait_script_done start ****",0,0,0);
   if (!mdp_disp_fatal_err_flag)
   {
     int dog_autokick;
@@ -1544,12 +1544,15 @@ void mdp_wait_script_done()
       }
     }
 
+	MDP_MSG_ERROR("mdp_wait_script_done mid ==%d ****",inpdw(MDP_SCRIPT_STATUS)&0x1,0,0);
+
     // if MDP is still in processing after time-out...
     if (inpdw(MDP_SCRIPT_STATUS)&0x1)
     {
       MDP_MSG_ERROR("ERROR!!! MDP Freeze() from mdp_wait_script_done() ****",0,0,0);
       resetFlag = 1;
     }
+	MDP_MSG_ERROR("mdp_wait_script_done end ==%d ****",resetFlag,0,0);
 
    if(mdp_debug_vsync || mdp_debug_calcFps)
     {
