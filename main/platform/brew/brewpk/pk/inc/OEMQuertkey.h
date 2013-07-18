@@ -69,6 +69,21 @@ struct _Mya_character_type
 
 #ifdef FEATURE_MT_MYANMRA
 
+#ifdef FEATURE_VERSION_W021_CT100_MYA
+const Mya_character_type default_mynamar_multitap_strings[10] = 
+{
+    {AVK_0,{' ', '.', 0x104A, 0x104B, 0x104C, 0x104D, 0x104E, 0x104F, 0X1040,  '0'},10},  /* key 0 */
+    {AVK_1,{0x1000, 0x1001, 0x1002, 0x1003, 0x1004, 0x1041, '1'},7},        /* key 1 */
+    {AVK_2,{0x1005, 0x1006, 0x1007, 0x1008, 0x1009, 0x100A, 0x1042, '2'},8},        /* key 2 */
+    {AVK_3,{0x100B, 0x100C, 0x100D, 0x100E, 0x100F, 0x1043, '3'},7},  /* key 3 */
+    {AVK_4,{0x1010, 0x1011, 0x1012, 0x1013, 0x1014, 0x1044, '4'}, 7},        /* key 4 */
+    {AVK_5,{0x1015, 0x1016, 0x1017, 0x1018, 0x1019, 0x1045, '5'}, 7},        /* key 5 */
+    {AVK_6,{0x101A, 0x101B, 0x101C, 0x101D, 0x101E, 0x1046,  '6'}, 7},       /* key 6 */
+    {AVK_7,{0x101F, 0x1020, 0x103F, 0x1047, '7'}, 5}, /* key 7 */
+    {AVK_8,{0x1021, 0x1022, 0x1023, 0x1024, 0x1025, 0x1026, 0x1027, 0x1028, 0x1029, 0x102A, 0x1048, '8'},  12},        /* key 8 */
+    {AVK_9,{0x1049, '9'},2},                        /* key 9 */
+};
+#else
 typedef enum
 {   
 	  /* DEVANAGARI SIGNS */
@@ -277,7 +292,7 @@ const Mya_character_type default_mynamar_multitap_strings[10] =
     {AVK_8,{MYNAMMAR_IV_A, MYNAMMAR_IV_SA, MYNAMMAR_IV_I, MYNAMMAR_IV_II, MYNAMMAR_IV_U, MYNAMMAR_IV_UU, MYNAMMAR_IV_E, MYNAMMAR_IV_ME, MYNAMMAR_IV_O, MYNAMMAR_IV_AU, MYNAMMAR_D_EIGHT, '8'},  12},        /* key 8 */
     {AVK_9,{MYNAMMAR_DV_TAA, MYNAMMAR_DV_AA, MYNAMMAR_DV_I, MYNAMMAR_DV_II, MYNAMMAR_DV_U, MYNAMMAR_DV_UU, MYNAMMAR_DV_E, MYNAMMAR_DV_AI, MYNAMMAR_DV_MON_II, MYNAMMAR_DV_MON_O, MYNAMMAR_DV_E_ABOVE, MYNAMMAR_D_NINE, '9'},13},                        /* key 9 */
 };
-
+#endif
 #endif
 
 

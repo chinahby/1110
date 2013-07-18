@@ -921,6 +921,10 @@ static NextFSMAction SettingMenu_StateDivertHandler(CSettingMenu *pMe)
             MOVE_TO_STATE(SETTINGMENUST_CALLSETTING)
             return NFSMACTION_CONTINUE;
 
+        case DLGRET_CALLFORWARDINPUT:
+              MOVE_TO_STATE(SETTINGMENUST_CALLFORWARDINPUT)
+              return NFSMACTION_CONTINUE;
+
         case DLGRET_WARNING:
             pMe->m_msg_id = IDS_NOT_GET_FEATURE_CODE;
             SettingMenu_ShowDialog(pMe, IDD_WARNING_MESSEGE);
@@ -1046,7 +1050,15 @@ static NextFSMAction SettingMenu_StateCallForwardInputHandler(CSettingMenu *pMe)
             else
 #endif
             {
-                MOVE_TO_STATE(SETTINGMENUST_DIVERT)
+                //miaoxiaoming modify here 2013-07-13
+                if(pMe->m_CFType==CALLFORWARD_WAIT)    
+                {
+                    MOVE_TO_STATE(SETTINGMENUST_CALLSETTING)
+                }
+                else                     
+                {
+                    MOVE_TO_STATE(SETTINGMENUST_DIVERT)
+                }
             }
             return NFSMACTION_CONTINUE;
 

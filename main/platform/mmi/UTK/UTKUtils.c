@@ -117,7 +117,7 @@ byte UTK_parse_proactive_command(byte *cmd_data, word cmd_len)
 {
     /* Offset for the different TLVs */
     byte offset = 0;  /* offset to raw data */
-    //MSG_FATAL("UTK_parse_proactive_command............................",0,0,0);
+    MSG_FATAL("UTK_parse_proactive_command............................",0,0,0);
     if (cmd_data[0] == UIM_TK_END_PROACTIVE_SESSION)
     {
         return cmd_data[0];
@@ -693,9 +693,12 @@ void UTK_SendTerminalProfile (void)
         /* Wait for the command to be done */
         (void) rex_wait( UI_UIM_STATUS_SIG );
 
+        MSG_FATAL("UTK_SendTerminalProfile = %x %x",ui_uim_rpt_buf.rpt_status,ui_uim_rpt_buf.rpt_type,0);
+
         for(i=0; i<UIM_CDMA_SVC_TABLE_SIZE; i++)
         {
 			MSG_FATAL("uim_cdma_svc_table_buffer[%d] = 0x%x",i,uim_cdma_svc_table_buffer[i],0);
+            
         }
         if ((ui_uim_rpt_buf.rpt_type == UIM_ACCESS_R) &&
             (ui_uim_rpt_buf.rpt_status == UIM_PASS))
@@ -791,6 +794,10 @@ void UTK_SendTerminalProfile (void)
                     
                     /* Wait for the command to be done */
                     (void) rex_wait( UI_UIM_STATUS_SIG );
+                    
+                    MSG_FATAL("UTK_SendTerminalProfile = %x %x",ui_uim_rpt_buf.rpt_status,ui_uim_rpt_buf.rpt_type,0);
+                    
+                    MSG_HIGH ("miaoxiaoming UI_UIM_STATUS_SIG",0,0,0);
                 } /* buffer available */
             } /* svc allocated and activated */
         } /* UIM_PASS */
@@ -1106,7 +1113,7 @@ int CUTK_SetUTKMenu(CUTK *pMe, IMenuCtl *pMenu,
     if (utk_ptr != NULL)
     {
         // 跳过主动式RUIM 命令标签
-        //MSG_FATAL("utk_ptr is  not NULL............................",0,0,0);
+        MSG_FATAL("utk_ptr is  not NULL............................",0,0,0);
         pos++;
         
         // 获取命令数据长度

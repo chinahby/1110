@@ -1371,7 +1371,7 @@ void OEM_TextSetEdit(OEMCONTEXT hTextCtl,
    if (pContext) {
       unsigned char byModeIndex = FindModeIndex(pContext, wmode);
       boolean bRedraw=FALSE, bRestartEdit=FALSE, bExitEdit=FALSE;
-		MSG_FATAL("MIAOXIAOMING OEM_TextSetEdit pContext......byModeIndex=%d",byModeIndex,0,0);
+		MSG_FATAL("MIAOXIAOMING OEM_TextSetEdit pContext......byModeIndex=%d mode=%d",byModeIndex,wmode,0);
       if (pContext->bEditable != bIsEditable) {
          // We must redraw here after changing mode
          bRedraw=TRUE;

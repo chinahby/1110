@@ -10909,7 +10909,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
 ±¸×¢:
 
 ==============================================================================*/
-
+extern char charsvc_p_name [UIM_CDMA_HOME_SERVICE_SIZE+1];
 static boolean IDD_WRITEMSG_Handler(void *pUser, 
     AEEEvent eCode,
     uint16 wParam, 
@@ -10927,6 +10927,18 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
     boolean m_Issetmod = FALSE;
     IMenuCtl *pMenuCtl = NULL;
     uint32 dwMask;
+    int m_WmsMaxSize = WMS_MSG_MAXCHARS;
+    
+    DBGPRINTF("IDD_WRITEMSG_Handler charsvc_p_name=%s\n",charsvc_p_name);
+
+#ifdef FEATURE_VERSION_W021_CT100_RELIANCE
+  //  if(STRISTR (charsvc_p_name,"Reliance"))
+  //  {        
+  //     DBGPRINTF("IDD_WRITEMSG_Handler m_WmsMaxSize=%d\n",m_WmsMaxSize);
+  //      m_WmsMaxSize = 160;
+  //  }
+#endif    
+    
     MSG_FATAL("IDD_WRITEMSG_Handler Start eCode=0x%x, wParam=0x%x",eCode,wParam,0);
     if (NULL == pMe)
     {
@@ -11273,7 +11285,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 				if(NULL != pMe->m_msSend.m_szMessage)
 				{
 				    MSG_FATAL("IDD_WRITEMSG_Handler NULL != pMe->m_msSend.m_szMessage",0,0,0);
-					ITEXTCTL_SetMaxSize ( pIText, WMS_MSG_MAXCHARS);
+					ITEXTCTL_SetMaxSize ( pIText, m_WmsMaxSize);
                 	(void)ITEXTCTL_SetText(pIText,pMe->m_msSend.m_szMessage,-1);
 				}
 				else
@@ -11375,7 +11387,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     	MSG_FATAL("pnode is null",0,0,0);
                     	if (NULL != pMe->m_msSend.m_szMessage)
 	            		{
-	                		ITEXTCTL_SetMaxSize ( pIText, WMS_MSG_MAXCHARS);
+	                		ITEXTCTL_SetMaxSize ( pIText, m_WmsMaxSize);
 	                		(void)ITEXTCTL_SetText(pIText,pMe->m_msSend.m_szMessage,-1);
 	            		}
                     }
@@ -11385,7 +11397,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     if(NULL != pMe->m_msCur.m_szMessage)
 	            	{
 	            		MSG_FATAL("Is_notend...............................VIEW",0,0,0);
-	            		ITEXTCTL_SetMaxSize ( pIText, WMS_MSG_MAXCHARS);
+	            		ITEXTCTL_SetMaxSize ( pIText, m_WmsMaxSize);
 	                	(void)ITEXTCTL_SetText(pIText,pMe->m_msCur.m_szMessage,-1);
 	            	}
 	            	Is_notend = TRUE;
@@ -11395,7 +11407,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 	            {
 	            	if (NULL != pMe->m_msSend.m_szMessage)
 	            	{
-	                	ITEXTCTL_SetMaxSize ( pIText, WMS_MSG_MAXCHARS);
+	                	ITEXTCTL_SetMaxSize ( pIText, m_WmsMaxSize);
 	                	(void)ITEXTCTL_SetText(pIText,pMe->m_msSend.m_szMessage,-1);
                         DBGPRINTF("pMe->m_msSend.m_szMessage=%S", pMe->m_msSend.m_szMessage);
 	            	}
@@ -11574,7 +11586,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 						 if(NULL != pMe->m_msCur.m_szMessage)
 	            		{
 	            			MSG_FATAL("Is_notend...............................VIEW",0,0,0);
-	            			ITEXTCTL_SetMaxSize ( pIText, WMS_MSG_MAXCHARS);
+	            			ITEXTCTL_SetMaxSize ( pIText, m_WmsMaxSize);
 	                		(void)ITEXTCTL_SetText(pIText,pMe->m_msCur.m_szMessage,-1);
 	            		}
 	            	Is_notend = TRUE;
@@ -11624,8 +11636,8 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
         	    	}
 					#elif defined(FEATURE_LANG_CHINESE)
 					(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_PINYIN);
-		         	#else
-					(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_RAPID);
+                    #else
+                    (void)ITEXTCTL_SetInputMode(pIText, AEE_TM_LETTERS);
 					#endif
 				 }
 				 

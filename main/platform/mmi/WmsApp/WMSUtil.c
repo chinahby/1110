@@ -2768,6 +2768,8 @@ ChkUpdate_Exit:
 }
 #endif
 
+extern char charsvc_p_name [UIM_CDMA_HOME_SERVICE_SIZE+1];
+
 /*==============================================================================
 º¯Êý:
     WmsApp_SetMaxSize
@@ -2786,7 +2788,16 @@ ChkUpdate_Exit:
 int WmsApp_SetMaxSize(ITextCtl *pIText)
 {
     int nMaxchars = WMS_MSG_MAXCHARS;
-    
+#ifdef FEATURE_VERSION_W021_CT100_RELIANCE
+    DBGPRINTF("WmsApp_SetMaxSize charsvc_p_name=%s\n",charsvc_p_name);
+
+ //   if(STRISTR (charsvc_p_name,"Reliance"))
+ //   {
+ //       nMaxchars = 160;
+        
+  //      DBGPRINTF("WmsApp_SetMaxSize nMaxchars=%d\n",nMaxchars);
+  //  }
+#endif    
     if (!pIText)
     {
         return 0;

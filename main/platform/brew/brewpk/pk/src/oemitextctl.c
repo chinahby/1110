@@ -511,6 +511,9 @@ static uint32 CTextCtl_Release(ITextCtl *pITextCtl)
     }
     if (pme->m_dwProps & TP_STARKEY_SWITCH)
     {   // 保存最近使用的输入法
+#ifdef FEATURE_DEFAULT_INPUT_MODE_ENG    
+        pme->m_nCurrInputMode=OEM_MODE_ENGLISH_LOW;
+#endif
         (void)OEM_SetConfig(CFGI_INPUTMODE, &pme->m_nCurrInputMode, sizeof(byte));
     }
     
@@ -929,6 +932,8 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
        
         case EVT_KEY:
         MSG_FATAL("EVT_KEY................1",0,0,0);
+        
+        MSG_FATAL("2pme->m_nCurrInputMode===%d %d",pme->m_nCurrInputMode,pme->m_dwProps,0);
 		if((pme->m_dwProps & TP_MB_PROPERTY) && (wParam == AVK_UP || wParam == AVK_DOWN))
 		{
 			return FALSE;
@@ -1347,6 +1352,8 @@ if ((!pme->m_pSoftKey) &&
                 // and requires no special handling
     
 NormalKeyEvent:
+                MSG_FATAL("3pme->m_nCurrInputMode===%d",pme->m_nCurrInputMode,0,0);
+
 				#ifdef FEATURE_USES_ZI
 				if ( OEM_MODE_ZI_MT_ENGLISH_LOW == pme->m_nCurrInputMode
                      ||OEM_MODE_ZI_MT_ENGLISH_UP == pme->m_nCurrInputMode 
@@ -2101,6 +2108,8 @@ static boolean CTextCtl_Redraw(ITextCtl * pITextCtl)
                     AEEImageInfo m_Imageinfo = {0};
                     RightTopImg = NULL;   
 					MSG_FATAL("1pme->m_wResID:::::::::::::::::::%d,m_Mode=%d",pme->m_wResID,m_Mode,0);
+                    
+					MSG_FATAL("1pme->m_wResID:::::::::::::::::::m_nCurrInputMode=%d,m_Mode=%d",pme->m_nCurrInputMode,m_Mode,0);
                     RightTopImg = ISHELL_LoadResImage(pme->m_pIShell,
                                         AEE_APPSCOMMONRES_IMAGESFILE,
                                         pme->m_wResID);
@@ -2474,9 +2483,9 @@ static void CTextCtl_SetProperties(ITextCtl * pITextCtl, uint32 nProperties)
     
     // press * key to change input mode
     if ((!pme->m_pSoftKey) && (pme->m_dwProps & TP_STARKEY_SWITCH))
-    {
+    {    
         (void)OEM_GetConfig(CFGI_INPUTMODE, &pme->m_nCurrInputMode, sizeof(byte));         
-
+        MSG_FATAL("MIAOXIAOMING CFGI_INPUTMODE",0,0,0);
 #ifdef FEATURE_CARRIER_BENGAL_CITYCELL
 // xiaoguo.xie modify the code on 080802
 #if defined FEATURE_CARRIER_VENEZUELA_MOVILNET 

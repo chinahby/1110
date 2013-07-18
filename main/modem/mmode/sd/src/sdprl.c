@@ -8637,7 +8637,9 @@ static  void                      sdprl_parser_app_geo(
       sr.sys.mode = prl_map_acq_rec_to_sd_mode( prl_ar.acq_type );
       prl_sys_rec_get_sid( &prl_sr, &sr.sid );
       sr.roam = prl_sr.roam_ind;
-
+      MSG_FATAL("sdprl_parser_app_geo roam=%d %d",sr.roam,
+                sdprl_is_home_sid_nid(&sr, sdprl_ptr->curr_nam),
+                sdprl_roam_ind_map_custom_home_to_home(sr.roam));
       if( sdprl_is_home_sid_nid(&sr, sdprl_ptr->curr_nam) &&
           sdprl_roam_ind_map_custom_home_to_home(sr.roam) !=
                                                   SYS_ROAM_STATUS_OFF && 
