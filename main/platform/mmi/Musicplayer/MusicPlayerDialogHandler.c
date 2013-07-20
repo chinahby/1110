@@ -406,6 +406,7 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
 				                        IDS_MUSIC_PLAYER,
 				                        Title,
 				                        sizeof(Title));	
+			#ifdef FEATURE_VERSION_K212										
 			MSG_FATAL("gpio_tlmm_config Start....GPIO_OUTPUT_10",0,0,0);
 
 			snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	
@@ -429,7 +430,7 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
 			gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
 			clk_busy_wait(1);
 			gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
-
+			#endif
 			if(pMe->m_pIAnn != NULL)
             {
                 IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
