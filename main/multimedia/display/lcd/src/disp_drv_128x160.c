@@ -49,9 +49,9 @@ extern boolean disp_gc9101_tft177(disp_drv_ic_type *pdispic);
 
 static disp_ic_install_type     disp_ic_install[] = 
 {
-#ifdef FEATURE_VERSION_W021_CT100 //xxzhen
+//#ifdef FEATURE_VERSION_W021_CT100 //xxzhen
     disp_rm68110_tft177,
-#endif
+//#endif
 #if defined (FEATURE_VERSION_S600S)//||defined(FEATURE_VERSION_W021_CT100) //xxzhen
     disp_gc9101_tft177,
 #endif

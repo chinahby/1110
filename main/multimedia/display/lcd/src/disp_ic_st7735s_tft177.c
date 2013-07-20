@@ -73,7 +73,7 @@ static void disp_ic_mdp_scrupdate(uint32 *scr, uint32 start_row, uint32 start_co
 
 static void disp_ic_init(void)
 {
-#if defined(FEATURE_VERSION_ESIA)
+#if defined(FEATURE_VERSION_ESIA)||defined(FEATURE_VERSION_W021_GPLUS)
 	// 这是力合3月份的玻璃参数
 
     LCD_WRITE_CMD(0x11); //Sleep out
