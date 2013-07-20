@@ -9481,7 +9481,7 @@ static boolean T9_AW_DisplayText(TextCtlContext *pContext, AVKType key)
            return FALSE;
         }
         pContext->pszContents = pNewContents;
-        MSG_FATAL("T9_AW_DisplayText........11122key==%d",key,0,0);
+        MSG_FATAL("T9_AW_DisplayText........key==%d",key,0,0);
         MSG_FATAL("***zzg OEM_TextGetCurrentMode==%d",OEM_TextGetCurrentMode((OEMCONTEXT)pContext),0,0);
         if((TEXT_MODE_MULTITAP == OEM_TextGetCurrentMode((OEMCONTEXT)pContext) 
 #ifdef FEATURE_MT_ENGLISH_UP
@@ -9495,6 +9495,8 @@ static boolean T9_AW_DisplayText(TextCtlContext *pContext, AVKType key)
 #endif
              )&&(key >= AVK_0 && key <= AVK_9))
         {
+            
+            MSG_FATAL("T9_AW_DisplayText........key==%d",key,0,0);
             //if(pContext->dwProperties & TP_STARKEY_SWITCH)  // 字母输入法下按*键进行切换
             {
          #ifndef FEATURE_LANG_PORTUGUESE
@@ -9521,14 +9523,39 @@ static boolean T9_AW_DisplayText(TextCtlContext *pContext, AVKType key)
                    }
                 }
 #endif // FEATURE_CARRIER_CHINA_TELCOM
-                if(MULTITAP_ALL_SMALL != pContext->nMultitapCaps)
-                {
+
                     
+            #ifndef FEATURE_MT_ENGLISH_NEW
+                if(MULTITAP_ALL_SMALL != pContext->nMultitapCaps)
+                {                    
+                    kInsert[0] = pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart];
+                    WSTRUPPER(kInsert);
+                    pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart] = kInsert[0];  
+                                               
+                }
+            #else
+            #if defined(FEATURE_MT_ENGLISH_CAPLOW)            
+                MSG_FATAL("T9_AW_DisplayText........MODE==%d",OEM_TextGetCurrentMode((OEMCONTEXT)pContext),0,0);
+                if (OEM_TextGetCurrentMode((OEMCONTEXT)pContext)==TEXT_MODE_MULTITAP)
+                {
+                    if(OEM_isFirstCap(pContext))
+                    {
                         kInsert[0] = pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart];
                         WSTRUPPER(kInsert);
                         pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart] = kInsert[0];  
-                                               
+                    }
                 }
+            #endif
+                if (OEM_TextGetCurrentMode((OEMCONTEXT)pContext)==TEXT_MODE_MULTITAP_UP)
+                {                    
+                    kInsert[0] = pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart];
+                    WSTRUPPER(kInsert);
+                    pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart] = kInsert[0];  
+                }
+            
+            
+            #endif/*FEATURE_MT_ENGLISH_NEW*/
+            
           #ifdef FEATURE_LANG_PORTUGUESE  
                 else if(MULTITAP_ALL_SMALL == pContext->nMultitapCaps)
                 {
@@ -12984,14 +13011,16 @@ boolean OEM_isFirstCap (OEMCONTEXT hTextField)
     register TextCtlContext *pContext = (TextCtlContext *) hTextField;
     boolean bRet = FALSE;
     int maxsymbolcount;
-    int i,j;
+    int i,j;    
 
-	#if  defined(FEATURE_VERSION_W516) ||defined(FEATURE_VERSION_VG68) || defined(FEATURE_VERSION_C01) || defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)||defined(FEATURE_VERSION_W027V3)
+    #if !defined (FEATURE_MT_ENGLISH_CAPLOW)        
+	#if defined(FEATURE_VERSION_W516)||defined(FEATURE_VERSION_VG68)||defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_W208S)||defined(FEATURE_VERSION_C180)||defined(FEATURE_VERSION_W027V3)||defined(FEATURE_VERSION_C11)
 	return FALSE;
 	#endif
+    #endif
     
     maxsymbolcount = WSTRLEN(saMultitapStrings_3sdtyle_endsymbol);
-
+    MSG_FATAL("2pContext->wSelStart=%d pContext->wSelEnd=%d",pContext->wSelStart,pContext->wSelEnd,0);
     if ( pContext->wSelStart == pContext->wSelEnd )
     {
         if ( pContext->wSelStart == 0 )
@@ -12999,13 +13028,15 @@ boolean OEM_isFirstCap (OEMCONTEXT hTextField)
 
         if ( pContext->wSelStart > 1 )
         {
+            
+            MSG_FATAL("pContext->pszContents[pContext->wSelStart-1]=%c",pContext->pszContents[pContext->wSelStart-1],0,0);
             if(' ' == pContext->pszContents[pContext->wSelStart-1])
             { 
                 for(j=0; j<(pContext->wSelStart-2); j++)
                 {
                     if(' ' != pContext->pszContents[pContext->wSelStart-2-j])
                     {
-                    	 bRet = TRUE;
+                    	 //bRet = TRUE;
                          break;
                     }
                 }
@@ -13034,15 +13065,16 @@ boolean OEM_isFirstCap (OEMCONTEXT hTextField)
     }
     else if ( pContext->wSelStart == pContext->wSelEnd-1 )
     {
-        if ( pContext->wSelStart > 1 )
+        if ( pContext->wSelStart >= 1 )
         {
+            MSG_FATAL("pContext->pszContents[pContext->wSelStart]=%c",pContext->pszContents[pContext->wSelStart],0,0);
             if(' ' == pContext->pszContents[pContext->wSelStart])
             {
                 for(j=0; j<(pContext->wSelStart-1); j++)
                 {
                     if(' ' != pContext->pszContents[pContext->wSelStart-1-j])
                     {
-                    	 bRet = TRUE;
+                    	 //bRet = TRUE;
                          break;
                     }
                 }
@@ -13060,13 +13092,18 @@ boolean OEM_isFirstCap (OEMCONTEXT hTextField)
             {
                 for(i=0; i<maxsymbolcount; i++)
                 {
-                    if(saMultitapStrings_3sdtyle_endsymbol[i] ==pContext->pszContents[pContext->wSelStart])
+                    if(saMultitapStrings_3sdtyle_endsymbol[i] ==pContext->pszContents[pContext->wSelStart-1])
                     {
                         bRet = TRUE;
                         break;
                     }
+                   
                 }          
              }
+         }
+         else
+         {            
+            bRet = TRUE;
          }
     }
     return bRet;

@@ -511,8 +511,12 @@ static uint32 CTextCtl_Release(ITextCtl *pITextCtl)
     }
     if (pme->m_dwProps & TP_STARKEY_SWITCH)
     {   // 保存最近使用的输入法
-#ifdef FEATURE_DEFAULT_INPUT_MODE_ENG    
-        pme->m_nCurrInputMode=OEM_MODE_ENGLISH_LOW;
+#ifdef FEATURE_DEFAULT_INPUT_MODE_ENG   
+#ifdef FEATURE_MT_ENGLISH_CAPLOW
+        pme->m_nCurrInputMode=OEM_MODE_ENGLISH_CAPLOW;
+#else
+        pme->m_nCurrInputMode=OEM_MODE_ENGLISH_LOW
+#endif
 #endif
         (void)OEM_SetConfig(CFGI_INPUTMODE, &pme->m_nCurrInputMode, sizeof(byte));
     }
