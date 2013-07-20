@@ -481,6 +481,8 @@ typedef PACKED struct _Key_pad_Cfg
 #define   OEMNV_DEFAULTRINGER       13
 #elif defined (FEATURE_VERSION_ESIA)
 #define   OEMNV_DEFAULTRINGER       2
+#elif defined (FEATURE_VERSION_W021_GPLUS)
+#define   OEMNV_DEFAULTRINGER       9
 #else
 #define   OEMNV_DEFAULTRINGER       11
 #endif
@@ -1166,7 +1168,11 @@ typedef PACKED struct _ringID
 #elif defined FEATURE_LANG_CHINESE //xxzhen
 #define OEMNV_INPUTMODE_DEFAULT              OEM_MODE_T9_PINYIN
 #elif defined FEATURE_DEFAULT_INPUT_MODE_ENG
+#ifdef FEATURE_MT_ENGLISH_CAPLOW
+#define OEMNV_INPUTMODE_DEFAULT              OEM_MODE_ENGLISH_CAPLOW
+#else
 #define OEMNV_INPUTMODE_DEFAULT              OEM_MODE_ENGLISH_LOW
+#endif
 #else
 
 //#ifdef FEATURE_DISP_160X128

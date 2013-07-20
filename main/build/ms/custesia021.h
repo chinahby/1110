@@ -20,17 +20,11 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_LEFT_SOFTKEY_AND_STAR_UNLOCK
 #define FEATURE_CAMERA_8W
 #define FEATURE_FM_PAUSE
-//#define FEATURE_APP_BLUETOOTH
-//#define FEATURE_BT
-//#define FEATURE_IBT
-//#define FEATURE_BT_QSOC_INBAND_SLEEP  
-//#define FEATURE_DRM_NO_BREW 
-//#define FEATURE_BT_SEND_FILE_ONLY		//Add By zzg 2010_11_03
-//#define FEATURE_SUPPORT_BT_AUDIO
+#define FEATURE_SHOW_RSSI_INFO
+#define FEATURE_SHOW_PHONE_INFO
+#define FEATURE_DEFAULT_INPUT_MODE_ENG
+#define FEATURE_VERSION_INDONESIAN
 
- //#define FEATURE_ENABLE_OTKSL
-//#define BT_QSC1110//FEATURE_BT_QSC1100
-//#define FEATURE_BT_QSOC_BTS4025_B2   //this is now we used  bluetooth  型号
 //Add by zzg 2010_10_13
 //#define FEATURE_TORCH_KEY_CAMERA			//手电筒功能按键
 //#define FEATURE_IDLE_TORCH_DOWNKEY			//idle界面的向下键对应手电筒功能
