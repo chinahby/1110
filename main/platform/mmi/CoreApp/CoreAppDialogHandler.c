@@ -471,6 +471,14 @@ static boolean  IDD_SALES_EDIT_Handler(void *pUser,
 
 //#endif
 
+#ifdef FEATURE_SHOW_RSSI_INFO
+// 对话框 IDD_RSSI_INFO 事件处理函?
+static boolean  IDD_RSSI_INFO_Handler(void *pUser,
+								 AEEEvent   eCode,
+                                 uint16     wParam,
+                                 uint32     dwParam);
+#endif
+
 // 对话框 IDD_POWERDOWN 事件处理函数
 static boolean  IDD_POWERDOWN_Handler(void  *pMe,
                                       AEEEvent    eCode,
@@ -687,6 +695,11 @@ void CoreApp_SetDialogHandler(CCoreApp *pMe)
 //#if defined(FEATURE_VERSION_W317A)
 		
 //#endif
+#ifdef FEATURE_SHOW_RSSI_INFO
+        case IDD_RSSI_INFO:
+            pMe->m_pDialogHandler = IDD_RSSI_INFO_Handler;
+			break;
+#endif            
         case IDD_POWERDOWN:
             pMe->m_pDialogHandler = IDD_POWERDOWN_Handler;
             break;
@@ -2163,6 +2176,93 @@ static boolean  IDD_SALES_EDIT_Handler(void *pUser,
 }
 #endif
 
+#ifdef FEATURE_SHOW_RSSI_INFO
+/*==============================================================================
+函数:
+    IDD_RSSI_INFO_Handler
+    
+说明:
+    IDD_RSSI_INFO 对话框事件处理函数
+       
+参数:
+    pUser [in]: 这里必须是指向 Core Applet 对象结构的指针。
+    eCode [in]: 事件代码。
+    wParam: 事件相关数据。
+    dwParam: 事件相关数据。
+       
+返回值:
+    TRUE:  传入事件被处理。
+    FALSE: 传入事件被忽略。
+       
+备注:
+    函数作卡的 PIN 码、 PUK 码的输入界面处理。
+       
+==============================================================================*/
+
+static boolean  IDD_RSSI_INFO_Handler(void *pUser,
+								 AEEEvent   eCode,
+                                 uint16     wParam,
+                                 uint32     dwParam)
+{
+    
+    CCoreApp *pMe = (CCoreApp *)pUser;	
+    BottomBar_Param_type  BBarParam ={0};
+    //char m_str[20]="RSSI: ";
+    AECHAR m_wstr[32]=L"signal strength: ";
+    
+	switch (eCode)
+    {
+        case EVT_DIALOG_INIT:		   
+            
+            return TRUE;
+            
+        case EVT_DIALOG_START:
+            (void) ISHELL_PostEvent(pMe->a.m_pIShell,
+                                    AEECLSID_CORE_APP,
+                                    EVT_USER_REDRAW,
+                                    0,
+                                    0);
+            return TRUE;
+            
+        case EVT_USER_REDRAW:
+            // 绘制相关信息                  
+            BBarParam.eBBarType = BTBAR_BACK;
+            Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
+            IDISPLAY_SetColor( pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
+			WSPRINTF(m_wstr+WSTRLEN(m_wstr),sizeof(m_wstr),L"-%d dbm",pMe->m_rssi);	 
+            IDISPLAY_DrawText(pMe->m_pDisplay, AEE_FONT_NORMAL, m_wstr,-1, 0, 30, 0, IDF_TEXT_TRANSPARENT);
+            DrawBottomBar(pMe->m_pDisplay, &BBarParam);                 
+            IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);  
+            return TRUE;
+            
+        case EVT_DIALOG_END:
+            CLOSE_DIALOG(DLGRET_MSGOK)
+  
+            return TRUE;
+
+        case EVT_KEY:
+            {				
+				switch (wParam)
+                {
+                	case AVK_CLR:
+                    case AVK_SELECT:
+						CLOSE_DIALOG(DLGRET_MSGOK)
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+            return TRUE;
+            
+        default:
+            break;
+    }
+    
+    return FALSE;
+	
+}
+#endif
 
 /*==============================================================================
 函数:

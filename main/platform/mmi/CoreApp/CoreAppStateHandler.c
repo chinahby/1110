@@ -109,6 +109,11 @@ static NextFSMAction COREST_SALES_EDIT_Handler(CCoreApp *pMe);
 
 #endif
 
+#if defined(FEATURE_SHOW_RSSI_INFO)
+// 状态 COREST_RSSI_INFO 处理函数
+static NextFSMAction COREST_RSSI_INFO_Handler(CCoreApp *pMe);
+#endif
+
 //#if defined(FEATURE_VERSION_W317A)
 // 状态 COREST_SALES_SUCCESS 处理函数
 
@@ -281,7 +286,11 @@ NextFSMAction CoreApp_ProcessState(CCoreApp *pMe)
 			retVal = COREST_SALES_EDIT_Handler(pMe);
 			break;
 #endif
-
+#ifdef FEATURE_SHOW_RSSI_INFO
+        case COREST_RSSI_INFO:
+            retVal = COREST_RSSI_INFO_Handler(pMe);
+            break;
+#endif
         
         case COREST_DEEPSLEEP:
             MSG_FATAL("CoreApp_ProcessState Start COREST_DEEPSLEEP",0,0,0);
@@ -2032,6 +2041,29 @@ static NextFSMAction COREST_UTKREFRESH_Handler(CCoreApp *pMe)
     MSG_FATAL("COREST_UTKREFRESH_Handler End",0,0,0);
     return NFSMACTION_CONTINUE;
 } // IDLEST_UTKREFRESH_Handler
+#endif
+
+#ifdef FEATURE_SHOW_RSSI_INFO
+static NextFSMAction COREST_RSSI_INFO_Handler(CCoreApp *pMe)
+{
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+    MSG_FATAL("COREST_SALES_EDIT_Handler Start",0,0,0);
+    switch (pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            CoreApp_ShowDialog(pMe, IDD_RSSI_INFO);
+            return NFSMACTION_WAIT;
+            
+        case DLGRET_MSGOK:
+        default:
+            MOVE_TO_STATE(COREST_STANDBY)
+    }
+    MSG_FATAL("COREST_SALES_EDIT_Handler End",0,0,0);
+    return NFSMACTION_CONTINUE;
+}
 #endif
 
 #if defined( FEATURE_IDLE_LOCK_RUIM)&&defined(FEATURE_UIM)

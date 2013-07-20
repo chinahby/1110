@@ -279,7 +279,7 @@
 #define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweronoff.gif"
 #define    PWROFF_ANI_FRAME_COUNT                (1)
 #define    PWROFF_ANI_RATE                       (4000)
-#elif defined FEATURE_VERSION_ESIA
+#elif defined (FEATURE_VERSION_ESIA)||defined(FEATURE_VERSION_W021_GPLUS)
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweron.gif"
 #define    PWRON_ANI_FRAME_COUNT                 (1)
 #define    PWRON_ANI_RATE                        (5000)
@@ -785,6 +785,9 @@ typedef enum _CoreAppState
   COREST_SALES_TRAKER,
   COREST_SALES_EDIT,
 #endif
+#if defined(FEATURE_SHOW_RSSI_INFO)
+  COREST_RSSI_INFO,
+#endif
 //#ifdef	FEATURE_VERSION_W317A
   COREST_SALES_SUCCESS,
 //#endif
@@ -1087,6 +1090,10 @@ typedef struct _CCoreApp
    ITextCtl       *m_pSmsTrackNumber; 
 #endif
    boolean         m_IsEanbleBatAlarm;
+
+#ifdef FEATURE_SHOW_RSSI_INFO
+   int             m_rssi;
+#endif/*FEATURE_SHOW_RSSI_INFO*/
 
 } CCoreApp;
 

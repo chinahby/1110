@@ -326,6 +326,9 @@ enum
 #if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)
 	EVT_SMS_TRACKER,
 #endif
+#if defined(FEATURE_SHOW_RSSI_INFO)
+    EVT_RSSI_INFO,
+#endif
     EVT_CUST_MAX
 };
 #endif /*CUST_EDITION*/

@@ -1641,7 +1641,20 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                             (void)ISHELL_CloseApplet(pMe->m_pShell, TRUE);
 						}
 #endif
-
+#ifdef FEATURE_SHOW_RSSI_INFO
+                        else if (WSTRCMP(pMe->m_DialString, L"*#101#") == 0)
+                        {
+							// 显示销售统计
+                            (void) ISHELL_PostEvent( pMe->m_pShell,
+                                                     AEECLSID_CORE_APP,
+                                                     EVT_RSSI_INFO,
+                                                     0,
+                                                     0);
+                            
+                            // 必须关闭全部 Applet, 以便于释放对卡电话本接口                         
+                            (void)ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+						}
+#endif
                         else if (WSTRCMP(pMe->m_DialString, L"*#*#8378#01#") == 0)
                         {
                             // 更新工作放在 Ilde 去进行
@@ -12775,7 +12788,7 @@ static boolean CallApp_Process_Send_Key_Release_Event(CCallApp *pMe)
 		MSG_FATAL("pMe->m_DialString........111111111",0,0,0);
 	}
 #endif
-#ifdef FEATURE_VERSION_ESIA
+#if defined (FEATURE_VERSION_INDONESIAN)
 	WSTRTOSTR(pMe->m_DialString,temp,MAX_SIZE_DIALER_TEXT+1);
     if((STRISTR(temp,"+62")))
 	{

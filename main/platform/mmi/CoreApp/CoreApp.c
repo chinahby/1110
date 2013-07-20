@@ -1574,6 +1574,14 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             CLOSE_DIALOG(DLGRET_CREATE)  
 			return TRUE;
 #endif
+
+#ifdef FEATURE_SHOW_RSSI_INFO
+        case EVT_RSSI_INFO:
+            MOVE_TO_STATE(COREST_RSSI_INFO)
+            CLOSE_DIALOG(DLGRET_CREATE)  
+            return TRUE;
+#endif
+            
         case EVT_RTC:
         {
             if( pMe->m_eCurState == COREST_LPM)
@@ -2038,6 +2046,9 @@ static boolean CoreApp_HandleCMNotify(CCoreApp * pMe, AEENotify *pNotify)
                         {
                             if(pMe->m_pIAnn != NULL)
                             {
+                                #ifdef FEATURE_SHOW_RSSI_INFO
+                                pMe->m_rssi = pEvtInfo->event_data.ss.ss_info.rssi;
+                                #endif
                                 IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RSSI, DBToLevel(pEvtInfo->event_data.ss.ss_info.rssi));
                             }
                         }
@@ -3009,7 +3020,7 @@ SIDE EFFECTS
 ===========================================================================*/
 static int DBToLevel (int nDBVal)
 {
-    MSG_FATAL("DBToLevel",0,0,0);
+    MSG_FATAL("DBToLevel=%d",nDBVal,0,0);
 	//add by pyuangui 20121220
 	#ifdef FEATURE_VERSION_W317A
 	if (nDBVal < 92)
