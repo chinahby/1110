@@ -46,7 +46,19 @@ static NextFSMAction SettingMenu_StateMainHandler(CSettingMenu *pMe);
 
 // 状态 SETTINGMENUST_CALLSETTING 处理函数
 static NextFSMAction SettingMenu_StateCallSettingHandler(CSettingMenu *pMe);
+#ifdef FEATURE_SHOW_PHONE_INFO
+// 状态 SETTINGMENUST_PHONE_INFO 处理函数
+static NextFSMAction SettingMenu_StatePhoneInfoHandler(CSettingMenu *pMe);
 
+// 状态 SETTINGMENUST_PHONE_INFO_SW 处理函数
+static NextFSMAction SettingMenu_StatePhoneInfoSWHandler(CSettingMenu *pMe);
+
+// 状态 SETTINGMENUST_PHONE_INFO_HW 处理函数
+static NextFSMAction SettingMenu_StatePhoneInfoHWHandler(CSettingMenu *pMe);
+
+// 状态 SETTINGMENUST_PHONE_INFO_PRL 处理函数
+static NextFSMAction SettingMenu_StatePhoneInfoPRLHandler(CSettingMenu *pMe);
+#endif
 #ifdef FEATURE_VERSION_W317A
 // 状态 SETTINGMENUST_AUTOCALLRECORD 处理函数
 static NextFSMAction SettingMenu_AutoCallRecordHandler(CSettingMenu *pMe); // Add by pyuangui 20130104
@@ -207,7 +219,25 @@ NextFSMAction SettingMenu_ProcessState(CSettingMenu *pMe)
         case SETTINGMENUST_CALLSETTING:
             retVal = SettingMenu_StateCallSettingHandler(pMe);
             break;
+
+#ifdef FEATURE_SHOW_PHONE_INFO
+        case SETTINGMENUST_PHONE_INFO:
+            retVal = SettingMenu_StatePhoneInfoHandler(pMe);
+            break;
+            
+        case SETTINGMENUST_PHONE_INFO_SW:
+            retVal = SettingMenu_StatePhoneInfoSWHandler(pMe);
+            break;
 			
+        case SETTINGMENUST_PHONE_INFO_HW:
+            retVal = SettingMenu_StatePhoneInfoHWHandler(pMe);
+            break;
+			
+        case SETTINGMENUST_PHONE_INFO_PRL:
+            retVal = SettingMenu_StatePhoneInfoPRLHandler(pMe);
+            break;
+#endif	
+											
         //Add by pyuangui 20130104
         #ifdef FEATURE_VERSION_W317A
 	    case SETTING_AUTOCALLRECORD:
@@ -469,6 +499,11 @@ static NextFSMAction SettingMenu_StateMainHandler(CSettingMenu *pMe)
         case DLGRET_CALLSETTING:
             MOVE_TO_STATE(SETTINGMENUST_CALLSETTING)
             return NFSMACTION_CONTINUE;
+#ifdef FEATURE_SHOW_PHONE_INFO
+        case DLGRET_PHONE_INFO:
+            MOVE_TO_STATE(SETTINGMENUST_PHONE_INFO)
+            return NFSMACTION_CONTINUE;  			        								   
+#endif            
 //Add by pyuangui 20130104
 #ifdef FEATURE_VERSION_W317A
 		case DLGRET_AUTOCALLRECORD:
@@ -603,6 +638,201 @@ static NextFSMAction SettingMenu_StateCallSettingHandler(CSettingMenu *pMe)
 
     return NFSMACTION_WAIT;
 } // StateCallSettingHandler
+
+
+#ifdef FEATURE_SHOW_PHONE_INFO
+
+/*==============================================================================
+函数：
+       StateCallSettingHandler
+说明：
+       SETTINGMENUST_CALLSETTING 状态处理函数
+
+参数：
+       pMe [in]：指向SettingMenu Applet对象结构的指针。该结构包含小程序的特定信息。
+
+返回值：
+       NFSMACTION_CONTINUE：指示后有子状态，状态机不能停止。
+       NFSMACTION_WAIT：指示因要显示对话框界面给用户，应挂起状态机。
+
+备注：
+
+==============================================================================*/
+static NextFSMAction SettingMenu_StatePhoneInfoHandler(CSettingMenu *pMe)
+{
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+
+    switch(pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            SettingMenu_ShowDialog(pMe, IDD_PHONE_INFO_MENU);
+            return NFSMACTION_WAIT;
+
+        case DLGRET_PHONE_INFO_SW:
+            MOVE_TO_STATE(SETTINGMENUST_PHONE_INFO_SW)
+            return NFSMACTION_CONTINUE;
+            
+        case DLGRET_PHONE_INFO_HW:
+            MOVE_TO_STATE(SETTINGMENUST_PHONE_INFO_HW)
+            return NFSMACTION_CONTINUE;
+            
+        case DLGRET_PHONE_INFO_PRL:
+            MOVE_TO_STATE(SETTINGMENUST_PHONE_INFO_PRL)
+            return NFSMACTION_CONTINUE;            
+            
+        case DLGRET_CANCELED:
+            MOVE_TO_STATE(SETTINGMENUST_MAIN)
+            return NFSMACTION_CONTINUE;
+                    
+        default:
+            ASSERT_NOT_REACHABLE;
+    }
+
+    return NFSMACTION_WAIT;
+} // StateCallSettingHandler
+
+
+
+
+/*==============================================================================
+函数：
+       StateCallSettingHandler
+说明：
+       SETTINGMENUST_CALLSETTING 状态处理函数
+
+参数：
+       pMe [in]：指向SettingMenu Applet对象结构的指针。该结构包含小程序的特定信息。
+
+返回值：
+       NFSMACTION_CONTINUE：指示后有子状态，状态机不能停止。
+       NFSMACTION_WAIT：指示因要显示对话框界面给用户，应挂起状态机。
+
+备注：
+
+==============================================================================*/
+static NextFSMAction SettingMenu_StatePhoneInfoSWHandler(CSettingMenu *pMe)
+{
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+
+    MSG_FATAL("SettingMenu_StatePhoneInfoSWHandler",0,0,0);
+    switch(pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            SettingMenu_ShowDialog(pMe, IDD_PHONE_INFO_MENU_SW);
+            return NFSMACTION_WAIT;
+        
+        case DLGRET_CANCELED:
+            MOVE_TO_STATE(SETTINGMENUST_PHONE_INFO)
+            return NFSMACTION_CONTINUE;
+                    
+        default:
+            ASSERT_NOT_REACHABLE;
+    }
+
+    return NFSMACTION_WAIT;
+} // StateCallSettingHandler
+
+
+
+
+/*==============================================================================
+函数：
+       StateCallSettingHandler
+说明：
+       SETTINGMENUST_CALLSETTING 状态处理函数
+
+参数：
+       pMe [in]：指向SettingMenu Applet对象结构的指针。该结构包含小程序的特定信息。
+
+返回值：
+       NFSMACTION_CONTINUE：指示后有子状态，状态机不能停止。
+       NFSMACTION_WAIT：指示因要显示对话框界面给用户，应挂起状态机。
+
+备注：
+
+==============================================================================*/
+static NextFSMAction SettingMenu_StatePhoneInfoHWHandler(CSettingMenu *pMe)
+{
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+    MSG_FATAL("SettingMenu_StatePhoneInfoHWHandler",0,0,0);
+
+    switch(pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            SettingMenu_ShowDialog(pMe, IDD_PHONE_INFO_MENU_HW);
+            return NFSMACTION_WAIT;
+        
+
+        case DLGRET_CANCELED:
+            MOVE_TO_STATE(SETTINGMENUST_PHONE_INFO)
+            return NFSMACTION_CONTINUE;
+                    
+        default:
+            ASSERT_NOT_REACHABLE;
+    }
+
+    return NFSMACTION_WAIT;
+} // StateCallSettingHandler
+
+
+
+
+/*==============================================================================
+函数：
+       StateCallSettingHandler
+说明：
+       SETTINGMENUST_CALLSETTING 状态处理函数
+
+参数：
+       pMe [in]：指向SettingMenu Applet对象结构的指针。该结构包含小程序的特定信息。
+
+返回值：
+       NFSMACTION_CONTINUE：指示后有子状态，状态机不能停止。
+       NFSMACTION_WAIT：指示因要显示对话框界面给用户，应挂起状态机。
+
+备注：
+
+==============================================================================*/
+static NextFSMAction SettingMenu_StatePhoneInfoPRLHandler(CSettingMenu *pMe)
+{
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+    MSG_FATAL("SettingMenu_StatePhoneInfoPRLHandler",0,0,0);
+
+    switch(pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            SettingMenu_ShowDialog(pMe, IDD_PHONE_INFO_MENU_PRL);
+            return NFSMACTION_WAIT;
+        
+
+        case DLGRET_CANCELED:
+            MOVE_TO_STATE(SETTINGMENUST_PHONE_INFO)
+            return NFSMACTION_CONTINUE;
+                    
+        default:
+            ASSERT_NOT_REACHABLE;
+    }
+
+    return NFSMACTION_WAIT;
+} // StateCallSettingHandler
+#endif
+
 
 //Add by pyuangui 20130104
 #ifdef FEATURE_VERSION_W317A

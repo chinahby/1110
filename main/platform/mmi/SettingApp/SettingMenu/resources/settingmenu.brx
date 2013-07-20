@@ -493,6 +493,18 @@
 	<STRING Id="1172" Name="IDS_CALLFORWARD_NOCONNECT_UNCONDITIONAL">
 		<Text>Unconditional</Text>
 	</STRING>
+	<STRING Id="1173" Name="IDS_PHONE_INFO_TITLE">
+		<Text>Phone Info</Text>
+	</STRING>
+	<STRING Id="1174" Name="IDS_SOFTWARE_VERSION_TITLE">
+		<Text>SW Version</Text>
+	</STRING>
+	<STRING Id="1175" Name="IDS_HARDWARE_VERSION_TITLE">
+		<Text>HW Version</Text>
+	</STRING>
+	<STRING Id="1176" Name="IDS_PRL_VERSION_TITLE">
+		<Text>PRL Version</Text>
+	</STRING>	
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="7001">
@@ -754,5 +766,32 @@
 			</Menu>
 		</Controls>
 	</Dialog>
-</Dialogs>
+	<DIALOG Id="6041" Name="IDD_PHONE_INFO_MENU" Focus="7036">
+		<Controls>
+			<Menu Id="7036" Name="IDC_PHONE_INFO_MENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6042" Name="IDD_PHONE_INFO_MENU_SW" Focus="0">		
+		<Controls>
+			<Static Id="7037" Name="IDC_SW_STAT" Flags="40000">
+			<Items/></Static>
+		</Controls>
+	</DIALOG>
+	
+	<DIALOG Id="6043" Name="IDD_PHONE_INFO_MENU_HW" Focus="0">
+		<Controls>
+			<Static Id="7038" Name="IDC_HW_STAT" Flags="40000">
+			<Items/></Static>
+		</Controls>		
+	</DIALOG>
+	
+	<DIALOG Id="6044" Name="IDD_PHONE_INFO_MENU_PRL" Focus="0">
+		<Controls>
+			<Static Id="7039" Name="IDC_PRL_STAT" Flags="40000">
+			<Items/></Static>
+		</Controls>			
+	</DIALOG>			
+</Dialogs> 
 </BREWRes>

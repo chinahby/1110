@@ -46,6 +46,8 @@
 #ifdef FEATURE_VERSION_MYANMAR
 
 #endif
+#include "cm.h"
+
 boolean start_security_setting_by_user;
 #ifdef FEATURE_VERSION_FLEXI203
 #elif defined FEATURE_VERSION_SMART
@@ -102,6 +104,24 @@ static boolean  HandleCallSettingDialogEvent(CSettingMenu *pMe,
     uint16 wParam,
     uint32 dwParam
 );
+
+#ifdef FEATURE_SHOW_PHONE_INFO
+// 对话框 IDD_PHONE_INFO_MENU 事件处理函数
+static boolean  HandlePhoneInfoDialogEvent(CSettingMenu *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+);
+
+// 对话框 IDD_PHONE_INFO_MENU_SW 事件处理函数
+// 对话框 IDD_PHONE_INFO_MENU_HW 事件处理函数
+// 对话框 IDD_PHONE_INFO_MENU_PRL 事件处理函数
+static boolean  HandlePhoneInfo_SW_HW_PRL_DialogEvent(CSettingMenu *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+);
+#endif
 
 #if defined(FEATURE_VERSION_W317A)
 // 对话框 IDD_SETTING_CALLRECORD 事件处理函数
@@ -477,7 +497,19 @@ boolean SettingMenu_RouteDialogEvent(CSettingMenu *pMe,
 
         case IDD_CALLSETTING_MENU:
             return HandleCallSettingDialogEvent(pMe,eCode,wParam,dwParam);
-
+#ifdef FEATURE_SHOW_PHONE_INFO
+        case IDD_PHONE_INFO_MENU:
+            return HandlePhoneInfoDialogEvent(pMe,eCode,wParam,dwParam);       
+			     
+        case IDD_PHONE_INFO_MENU_SW:
+            return HandlePhoneInfo_SW_HW_PRL_DialogEvent(pMe,eCode,wParam,dwParam); 
+			
+        case IDD_PHONE_INFO_MENU_HW:
+            return HandlePhoneInfo_SW_HW_PRL_DialogEvent(pMe,eCode,wParam,dwParam); 
+			
+        case IDD_PHONE_INFO_MENU_PRL:
+            return HandlePhoneInfo_SW_HW_PRL_DialogEvent(pMe,eCode,wParam,dwParam); 
+#endif									
         case IDD_PHONESETTING_MENU:
             return HandlePhoneSettingDialogEvent(pMe,eCode,wParam,dwParam);
 
@@ -693,6 +725,11 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SOUND_TITLE, IDS_SOUND_TITLE, NULL, 0);
 #endif
 #endif
+
+#ifdef FEATURE_SHOW_PHONE_INFO
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_PHONE_INFO_TITLE, IDS_PHONE_INFO_TITLE, NULL, 0);
+#endif
+
 #ifdef FEATURE_PERU_VERSION
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_PHONE_NUMBER, IDS_PHONE_NUMBER, NULL, 0);
 #endif
@@ -790,7 +827,11 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
                 case IDS_CALLSETTING_TITLE:   //通话设置
                     CLOSE_DIALOG(DLGRET_CALLSETTING)
                     break;
-
+#ifdef FEATURE_SHOW_PHONE_INFO
+                case IDS_PHONE_INFO_TITLE:                    
+                    CLOSE_DIALOG(DLGRET_PHONE_INFO)
+                    break;
+#endif                    
 #ifdef FEATURE_VERSION_W208S
                 case IDS_SMS_RESTRICT:   //短信黑名单
                     CLOSE_DIALOG(DLGRET_SMSRESTRICT)
@@ -1042,6 +1083,294 @@ static boolean  HandleCallSettingDialogEvent(CSettingMenu *pMe,
     }
     return FALSE;
 } // HandleCallSettingDialogEvent
+#ifdef FEATURE_SHOW_PHONE_INFO
+
+
+
+/*==============================================================================
+函数：
+       HandleCallSettingDialogEvent
+说明：
+       IDD_PHONE_INFO_MENU对话框事件处理函数
+
+参数：
+       pMe [in]：指向SettingMenu Applet对象结构的指针。该结构包含小程序的特定信息。
+       eCode [in]：事件代码。
+       wParam：事件相关数据。
+       dwParam：事件相关数据。
+
+返回值：
+       TRUE：传入事件被处理。
+       FALSE：传入事件被忽略。
+
+备注：
+
+==============================================================================*/
+static boolean  HandlePhoneInfoDialogEvent(CSettingMenu *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+)
+{
+    PARAM_NOT_REF(dwParam)
+    IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,
+                                                    IDC_PHONE_INFO_MENU);
+    if (pMenu == NULL)
+    {
+        return FALSE;
+    }
+    MSG_FATAL("%x, %x ,%x,HandleCallSettingDialogEvent",eCode,wParam,dwParam);
+    //实现菜单循环滚动功能
+    //SettingMenu_AutoScroll(pMenu,eCode,wParam);
+
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT:
+			//add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_APPSSETTINGMENU_RES_FILE,                                
+                        IDS_PHONE_INFO_TITLE,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pAnn,WTitle);
+            }            
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SOFTWARE_VERSION_TITLE, IDS_SOFTWARE_VERSION_TITLE, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_HARDWARE_VERSION_TITLE, IDS_HARDWARE_VERSION_TITLE, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_PRL_VERSION_TITLE, IDS_PRL_VERSION_TITLE, NULL, 0);
+			
+            return TRUE;
+
+        case EVT_DIALOG_START:
+            // 给菜单各菜单项加数字编号图标
+            pMe->m_input_mode = 0;
+            SettingMenu_SetItemNumIcon(pMenu);
+
+            IMENUCTL_SetSel(pMenu, pMe->m_nSubDlgId);
+
+            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY|MP_ACTIVE_NO_REDRAW);
+            IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
+
+            IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
+
+            (void) ISHELL_PostEvent( pMe->m_pShell,
+                                     AEECLSID_APP_SETTINGMENU,
+                                     EVT_USER_REDRAW,
+                                     0,
+                                     0);
+            return TRUE;
+
+        case EVT_USER_REDRAW:
+            //(void)IMENUCTL_Redraw(pMenu);
+            return TRUE;
+
+        case EVT_DIALOG_END:
+            return TRUE;
+
+        case EVT_KEY:
+            switch(wParam)
+            {
+                case AVK_CLR:
+                    CLOSE_DIALOG(DLGRET_CANCELED)
+                    return TRUE;
+
+                default:
+                    break;
+            }
+            return TRUE;
+
+        case EVT_COMMAND:
+            pMe->m_nSubDlgId = wParam;
+            switch (wParam)
+            {
+                case IDS_SOFTWARE_VERSION_TITLE:                    
+                    CLOSE_DIALOG(DLGRET_PHONE_INFO_SW)
+                    break;
+                    
+                case IDS_HARDWARE_VERSION_TITLE:
+                    CLOSE_DIALOG(DLGRET_PHONE_INFO_HW)
+                    break;
+
+                case IDS_PRL_VERSION_TITLE:
+                    CLOSE_DIALOG(DLGRET_PHONE_INFO_PRL)
+                    break;					
+
+                default:
+                    ASSERT_NOT_REACHABLE;
+            }
+            return TRUE;
+
+        default:
+            break;
+    }
+    return FALSE;
+} // HandlePhoneInfoDialogEvent
+
+
+
+
+/*==============================================================================
+函数：
+       HandleCallSettingDialogEvent
+说明：
+       IDD_PHONE_INFO_MENU对话框事件处理函数
+
+参数：
+       pMe [in]：指向SettingMenu Applet对象结构的指针。该结构包含小程序的特定信息。
+       eCode [in]：事件代码。
+       wParam：事件相关数据。
+       dwParam：事件相关数据。
+
+返回值：
+       TRUE：传入事件被处理。
+       FALSE：传入事件被忽略。
+
+备注：
+
+==============================================================================*/
+static boolean  HandlePhoneInfo_SW_HW_PRL_DialogEvent(CSettingMenu *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+)
+{
+    BottomBar_Param_type  BBarParam ={0};
+    AECHAR m_wstr[128]={0};    
+    AECHAR WTitle[40] ={0};
+    int n=0;
+    IDialog *p_dlg = NULL;
+    IStatic *p_stk = NULL;
+    MSG_FATAL("%x, %x ,%x,HandlePhoneInfo_SW_HW_PRL_DialogEvent",eCode,wParam,dwParam);
+    //实现菜单循环滚动功能
+    //SettingMenu_AutoScroll(pMenu,eCode,wParam);
+    p_dlg = ISHELL_GetActiveDialog(pMe->m_pShell); 
+    if(p_dlg==NULL)
+    {
+        return FALSE;
+    }
+
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT:                        
+          
+         //currentLine = ISTATIC_GoToLine(p_stk, currentLine);
+          return TRUE;
+
+        case EVT_DIALOG_START:
+
+            //IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY|MP_ACTIVE_NO_REDRAW);
+            //IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
+
+            //IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
+
+            (void) ISHELL_PostEvent( pMe->m_pShell,
+                                     AEECLSID_APP_SETTINGMENU,
+                                     EVT_USER_REDRAW,
+                                     0,
+                                     0);
+                                     
+            return TRUE;
+
+        case EVT_USER_REDRAW:
+           if(pMe->m_pActiveDlgID==IDD_PHONE_INFO_MENU_SW)
+           {    
+                  p_stk = (IStatic *) IDIALOG_GetControl(p_dlg, IDC_SW_STAT);
+                 (void) ISHELL_LoadResString(pMe->m_pShell,
+                                            AEE_APPSSETTINGMENU_RES_FILE,
+                                            IDS_SOFTWARE_VERSION_TITLE,
+                                            WTitle,
+                                            sizeof(WTitle));
+                 
+ 				IANNUNCIATOR_SetFieldText(pMe->m_pAnn,WTitle);
+ 
+                 (void) ICONFIG_GetItem(pMe->m_pConfig,
+                                       CFGI_BUILD_VERSION,
+                                       (m_wstr + n),
+                                       sizeof(m_wstr));
+           }                
+           else if(IDD_PHONE_INFO_MENU_HW==pMe->m_pActiveDlgID)
+           {              
+                 p_stk = (IStatic *) IDIALOG_GetControl(p_dlg, IDC_HW_STAT);
+                 (void) ISHELL_LoadResString(pMe->m_pShell,
+                                            AEE_APPSSETTINGMENU_RES_FILE,
+                                            IDS_HARDWARE_VERSION_TITLE,
+                                            WTitle,
+                                            sizeof(WTitle));
+ 
+ 				IANNUNCIATOR_SetFieldText(pMe->m_pAnn,WTitle);
+ 
+                #ifndef HWVERSION
+                #define HWVERSION L"W203_WB_V0.1"
+                #endif
+                 STRTOWSTR(HWVERSION, m_wstr, sizeof(m_wstr)); 
+         
+           }
+           else//IDD_PHONE_INFO_MENU_PRL
+           {
+                 p_stk = (IStatic *) IDIALOG_GetControl(p_dlg, IDC_PRL_STAT);          
+     
+                 (void) ISHELL_LoadResString(pMe->m_pShell,
+                                            AEE_APPSSETTINGMENU_RES_FILE,
+                                            IDS_PRL_VERSION_TITLE,
+                                            WTitle,
+                                            sizeof(WTitle));
+                 
+ 				IANNUNCIATOR_SetFieldText(pMe->m_pAnn,WTitle);
+ 
+                 WSTRCPY(m_wstr,WTitle);
+                 n = WSTRLEN(m_wstr);
+                 WSPRINTF((m_wstr + n),
+                 sizeof(m_wstr),
+                 L": %d ",
+                 nv_prl_version(CM_NAM_1));
+           }
+    
+          
+            BBarParam.eBBarType = BTBAR_BACK;            
+            Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
+            //IDISPLAY_SetColor( pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
+			//WSPRINTF(m_wstr+WSTRLEN(m_wstr),sizeof(m_wstr),L"-%d dbm",pMe->m_rssi);	 
+            //IDISPLAY_DrawText(pMe->m_pDisplay, AEE_FONT_NORMAL, m_wstr,-1, 0, 10, 0, IDF_TEXT_TRANSPARENT);  
+            if(p_stk!=NULL)
+            {
+                 ISTATIC_SetProperties(p_stk, ST_UNDERLINE|ST_NOSCROLL|ST_CENTERTITLE);
+                 (void) ISTATIC_SetText(p_stk,
+                                   NULL,
+                                   m_wstr,
+                                   AEE_FONT_NORMAL,
+                                   AEE_FONT_NORMAL);
+                 
+                 (void) ISTATIC_Redraw(p_stk);
+            } 
+            DrawBottomBar(pMe->m_pDisplay, &BBarParam); 
+            IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);  
+            //(void)IMENUCTL_Redraw(pMenu);
+            return TRUE;
+
+        case EVT_DIALOG_END:
+            return TRUE;
+
+        case EVT_KEY:
+            switch(wParam)
+            {
+                case AVK_CLR:
+                    CLOSE_DIALOG(DLGRET_CANCELED)
+                    return TRUE;
+
+                default:
+                    break;
+            }
+            return TRUE;
+
+        
+
+        default:
+            break;
+    }
+    return FALSE;
+} // HandlePhoneInfo_SW_HW_PRL_DialogEvent
+#endif
 
 #if  defined(FEATURE_VERSION_W317A)
 //Add by pyuangui 2013-01-04
