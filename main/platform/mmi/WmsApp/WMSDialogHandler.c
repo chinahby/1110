@@ -7887,6 +7887,7 @@ static boolean IDD_SENDING_Handler(void *pUser,
             return TRUE;
 
         case EVT_DIALOG_START:
+            MSG_FATAL("pMe->m_eCreateWMSType=%d m_ContinueSendType=%d",pMe->m_eCreateWMSType,pMe->m_ContinueSendType,0);
 #ifdef FEATURE_USES_MMS   
             if(!pMe->m_isMMS)
 #endif
@@ -8090,7 +8091,7 @@ static boolean IDD_SENDING_Handler(void *pUser,
             
         // 发送结果提示
         case EVT_UPDATE:
-            MSG_FATAL("EVT_UPDATE",0,0,0);
+            MSG_FATAL("EVT_UPDATE pMe->m_SendStatus=%d",pMe->m_SendStatus,0,0);
             if (!WmsApp_CurmessageIsFullSendout(pMe))
             {// 发送完毕才提示
                 PFNNOTIFY pfn = WmsApp_MultSendMsgTimer;
@@ -8515,7 +8516,7 @@ static boolean IDD_SENDING_Handler(void *pUser,
         case EVT_WMS_CMD_STATUS:
             {
                 wmsapp_cmd_status_type  *pStatus = (wmsapp_cmd_status_type *)dwParam;
-                MSG_FATAL("IDD_SENDING_Handler EVT_WMS_CMD_STATUS",0,0,0);
+                MSG_FATAL("IDD_SENDING_Handler EVT_WMS_CMD_STATUS %d",pStatus->cmd,0,0);
                 if (NULL == pStatus)
                 {
                     return TRUE;
