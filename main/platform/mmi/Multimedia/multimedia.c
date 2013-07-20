@@ -1101,15 +1101,13 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
 #endif
 #ifdef FEATURE_BREW_CAMERA
 
-#ifndef FEATURE_VERSION_ESIA
+#ifdef FEATURE_APP_MPEG4
 #if defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W208S) || defined(FEATURE_VERSION_W027)||defined(FEATURE_VERSION_C11)
 #if !defined(FEATURE_PEKTEST)
-#ifndef FEATURE_VERSION_S600S
             IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_VIDEO_CAMERA, IDS_MULTIMEDIA_VIDEO_CAMERA, NULL, 0);
-#endif /*FEATURE_VERSION_S600S*/
 #endif
 #endif
-#endif/*FEATURE_VERSION_ESIA*/
+#endif/*FEATURE_APP_MPEG4*/
 #endif
             return TRUE;
             

@@ -22,6 +22,7 @@ vpath %.mid $(SOUNDMENU_RES)/$(USES_RESDIR)
 vpath %.mp3 $(SOUNDMENU_RES)/common
 vpath %.mid $(SOUNDMENU_RES)/common
 
+
 CONSTFILE_FILES+=\
     soundmenu.mif|fs:/mif/soundmenu.mif \
     soundmenu.bar|fs:/mod/soundmenu/en/soundmenu.bar
@@ -688,7 +689,21 @@ else
             street_tale.mid|fs:/ringers/street_tale.mid \
             techno_meto.mid|fs:/ringers/techno_meto.mid \
             feeling_on.mid|fs:/ringers/feeling_on.mid 
-    	else                                            
+	else ifeq ($(USES_RESDIR),GPLUS)    
+	CONSTFILE_FILES+=\
+	    	blue_load.mid|fs:/ringers/blue_load.mid \
+	    	blues.mid|fs:/ringers/blues.mid \
+            blue_load.mid|fs:/ringers/blue_load.mid \
+            champagne.mid|fs:/ringers/champagne.mid \
+            clock.mid|fs:/ringers/clock.mid \
+            dance_craze.mid|fs:/ringers/dance_craze.mid \
+            green_line.mid|fs:/ringers/green_line.mid \
+            jumping.mid|fs:/ringers/jumping.mid \
+            lucky.mid|fs:/ringers/lucky.mid \
+            street_tale.mid|fs:/ringers/street_tale.mid \
+            techno_meto.mid|fs:/ringers/techno_meto.mid \
+            feeling_on.mp3|fs:/ringers/feeling_on.mp3   
+    else                                            
         CONSTFILE_FILES+=\
             blues.mid|fs:/ringers/blues.mid \
             blue_load.mid|fs:/ringers/blue_load.mid \
