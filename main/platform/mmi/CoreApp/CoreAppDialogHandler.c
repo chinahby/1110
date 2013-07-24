@@ -6941,7 +6941,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
             		nLineWidth = 4;
             		nNumberWidth = 30;
             		nNumberHeight = 61;
-            		nOffset = 5;
+            		nOffset = 10;
             		if (bTFmt != OEMNV_TIMEFORM_AMPM)
 					{
 		       			wHour = jDate.wHour;
@@ -6961,9 +6961,9 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
             		xStartPos = 50;
             		yStartPos = (SCREEN_HEIGHT*2/5)+20;
             		nLineWidth = 4;
-            		nNumberWidth = 15;
+            		nNumberWidth = 20;
             		nNumberHeight = 30;
-            		nOffset = 5;
+            		nOffset = 10;
             		if (bTFmt != OEMNV_TIMEFORM_AMPM)
 					{
 		       			wHour = jDate.wHour;
@@ -7007,6 +7007,8 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (jDate.wMinute%10), nLineWidth, &rect, RGB_WHITE);
 		    	rect.x += nNumberWidth;
 		     	rect.y = rect.y +12;
+				rc.x = rc.x+30;
+				rc.dx = rc.dx +10;
 		    	DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
 		                              pMe->m_pDisplay,
 		                              RGB_WHITE_NO_TRANS,
@@ -7014,12 +7016,14 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 		                              wszDatemat, -1,
 		                              0, 0, &rect, 
 		                              IDF_ALIGN_MIDDLE
-		                              | IDF_ALIGN_LEFT
+		                              | IDF_ALIGN_CENTER
 		                              | IDF_TEXT_TRANSPARENT);
+				rc.dx = rc.dx - 10;
+			    rc.x = rc.x - 30;
 	        }
 	        else
 	        {
-	        	rc.y = rc.y+60;
+	        	
 	        	DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
 	                              pMe->m_pDisplay,
 	                              RGB_WHITE_NO_TRANS,
@@ -7029,7 +7033,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 	                              IDF_ALIGN_MIDDLE
 	                              | IDF_ALIGN_CENTER
 	                              | IDF_TEXT_TRANSPARENT);
-	           rc.y = rc.y-60;
+			   
 	        }
 	    	IDISPLAY_Update(pMe->m_pDisplay);
 	}

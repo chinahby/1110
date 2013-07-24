@@ -131,13 +131,13 @@ static uint16 StrokeMap[]=
 #define MAX_STROKES             (9) // (10) // the max count which display in the screen
 
 #elif defined(FEATURE_DISP_240X320)
-#define SELECTION_BUFFER_SIZE   (8)
+#define SELECTION_BUFFER_SIZE   (7)
 #define CAUDB_SIZE              (200)
 #define T9KEYTYPE_NORMAL        (0)
 #define T9KEYTYPE_SELECT        (1)
 #define T9KEYTYPE_CONTROL       (2)
 #define T9KEYTYPE_UNKNOWN       (6)
-#define T9_FONT_WIDTH           (30)
+#define T9_FONT_WIDTH           (32)
 #define T9_STROKE_FONT_WIDTH    (16) // (10) 
 #define T9_STROKE_LEFT_ARROW    (10) 
 #define MAX_STROKES             (9) // (10) // the max count which display in the screen
@@ -158,6 +158,16 @@ static uint16 StrokeMap[]=
 
 #ifndef AEE_SIMULATOR
 #ifdef FEATURE_DISP_240X320
+#ifdef FEATURE_VERSION_K212
+#define SYLLABLEWIDTH  32
+#define SEPARATORWIDTH 16
+#define PSYLLABLEWIDTH  6   
+#define PSEPARATORWIDTH 3   // 4
+#define SPELLMAX  10
+#define SPACESIZE  5  //6
+#define CHINESE_FONT_HEIGHT 32
+#define CHINESE_FONT_WIDTH 32 
+#else
 #define SYLLABLEWIDTH  24
 #define SEPARATORWIDTH 16
 #define PSYLLABLEWIDTH  8   
@@ -166,6 +176,7 @@ static uint16 StrokeMap[]=
 #define SPACESIZE  5  //6
 #define CHINESE_FONT_HEIGHT 26
 #define CHINESE_FONT_WIDTH 26 
+#endif
 #elif defined(FEATURE_DISP_176X220)
 #define SYLLABLEWIDTH  15
 #define SEPARATORWIDTH 6

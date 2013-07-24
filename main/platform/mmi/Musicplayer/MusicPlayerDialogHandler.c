@@ -6017,8 +6017,8 @@ static void MP3_DrawSimplePlayerFace(CMusicPlayer *pMe)
  #endif
     MP3_DrawImage(pMe, IDI_SIMPLEPLAYER, 0, 0);
  #ifdef FEATURE_DISP_240X320
-    MP3_DrawIndexAndTotalTime(pMe);
- #endif
+   MP3_DrawIndexAndTotalTime(pMe);
+#endif
     MP3_ResetScroll(pMe);//ok
     MP3_RefreshVolBar(pMe);//ok
     MP3_RefreshPlayingTick(pMe);//ok

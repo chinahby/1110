@@ -56,6 +56,9 @@
 #define  MAX_MATRIX_COLS 3
 #endif
 #elif defined (FEATURE_DISP_240X320)
+#if defined(FEATURE_VERSION_K212)
+#define  MAX_MATRIX_ITEMS 12
+#else
 #define  MAX_MATRIX_ITEMS 12
 #define  MAX_MATRIX_ROWS  4
 #define  MAX_MATRIX_COLS  3
@@ -73,6 +76,7 @@
 #define  BASE_BOTTOM_ICON_W 45
 #define  BASE_BOTTOM_ICON_H 45
 #define  BASE_BOTTOM_SPC    12
+#endif
 #elif defined (FEATURE_DISP_320X240)
 #define  MAX_MATRIX_ITEMS 12
 #define  MAX_MATRIX_ROWS 3
@@ -189,6 +193,10 @@ typedef struct _MainMenu
 	Point           m_Pdown_Pt;
 	uint16          m_PenPos;
 	boolean         m_bmove;
+#endif
+#ifdef FEATURE_VERSION_K212
+	IImage          *m_pImageSelectk212[9];
+	IImage          *m_pImageSelectkbar;
 #endif
 } MainMenu;
 
@@ -307,6 +315,18 @@ typedef struct _MainMenu
     #define ICON8_ANI      "fs:/image/mainmenu/Intex_zone.png"
 	#define ICON9_ANI      "fs:/image/mainmenu/Browser.png"
 // add end	
+#elif defined(FEATURE_VERSION_K212)
+	#define ICON_ANI_BG    "fs:/image/mainmenu/BG.png"
+	#define ICON_ANI_BAR   "fs:/image/mainmenu/BAR.png"
+	#define ICON1_ANI      "fs:/image/mainmenu/ICON_Camera.png"
+    #define ICON2_ANI      "fs:/image/mainmenu/ICON_Contacts.png"
+    #define ICON3_ANI      "fs:/image/mainmenu/ICON_Management.png"
+    #define ICON4_ANI      "fs:/image/mainmenu/ICON_Messages.png"
+    #define ICON5_ANI      "fs:/image/mainmenu/ICON_Multimedia.png"
+    #define ICON6_ANI      "fs:/image/mainmenu/ICON_Profile.png"
+    #define ICON7_ANI      "fs:/image/mainmenu/ICON_Recentcalls.png"
+    #define ICON8_ANI      "fs:/image/mainmenu/ICON_Settings.png"
+	#define ICON9_ANI      "fs:/image/mainmenu/ICON_Surface.png"
 #else
 	
 	#ifdef FEATURE_LCD_TOUCH_ENABLE
@@ -399,6 +419,19 @@ typedef struct _MainMenu
     #define ICON7_ANI_1    "fs:/image/mainmenu/Game.gif"         
     #define ICON8_ANI_1    "fs:/image/mainmenu/User_Profile.gif"
     #define ICON9_ANI_1    "fs:/image/mainmenu/Setting.gif"
+#elif defined(FEATURE_VERSION_K212)
+	#define ICON1_ANI_1    "fs:/image/mainmenu/ICON_Camera_1.png"
+    #define ICON2_ANI_1    "fs:/image/mainmenu/ICON_Contacts_1.png"
+    #define ICON3_ANI_1    "fs:/image/mainmenu/ICON_Management_1.png"
+    #define ICON4_ANI_1    "fs:/image/mainmenu/ICON_Messages_1.png"
+    #define ICON5_ANI_1    "fs:/image/mainmenu/ICON_Multimedia_1.png"
+    #define ICON6_ANI_1    "fs:/image/mainmenu/ICON_Profile_1.png"
+    #define ICON7_ANI_1    "fs:/image/mainmenu/ICON_Recentcalls_1.png"
+    #define ICON8_ANI_1    "fs:/image/mainmenu/ICON_Settings_1.png"
+	#define ICON9_ANI_1    "fs:/image/mainmenu/ICON_Surface_1.png"
+	#define ICON10_ANI_1   "fs:/image/mainmenu/ARROW_LEFT.png"
+    #define ICON11_ANI_1   "fs:/image/mainmenu/ARROW_RIGHT.png"
+    #define ICON12_ANI_1   "fs:/image/mainmenu/SEL.png"	
 #else
 	#ifdef FEATURE_LCD_TOUCH_ENABLE
 
@@ -442,11 +475,36 @@ typedef struct _MainMenu
 #endif
 #endif
 
+#if defined(FEATURE_VERSION_K212)
+	#define ICON1_ANI_2    "fs:/image/mainmenu/ICON_Camera_2.png"
+    #define ICON2_ANI_2    "fs:/image/mainmenu/ICON_Contacts_2.png"
+    #define ICON3_ANI_2    "fs:/image/mainmenu/ICON_Management_2.png"
+    #define ICON4_ANI_2    "fs:/image/mainmenu/ICON_Messages_2.png"
+    #define ICON5_ANI_2    "fs:/image/mainmenu/ICON_Multimedia_2.png"
+    #define ICON6_ANI_2    "fs:/image/mainmenu/ICON_Profile_2.png"
+    #define ICON7_ANI_2    "fs:/image/mainmenu/ICON_Recentcalls_2.png"
+    #define ICON8_ANI_2    "fs:/image/mainmenu/ICON_Settings_2.png"
+	#define ICON9_ANI_2    "fs:/image/mainmenu/ICON_Surface_2.png"
+#endif
+
 #ifdef FEATURE_LCD_TOUCH_ENABLE
 	#define ICON_SELECT          "fs:/image/mainmenu/select.png"
 	#define ICON_SELECT_FOCUS    "fs:/image/mainmenu/select_focus.png"
 	//#define ICON13_ANI           "fs:/image/mainmenu/qsc1100_13.png"
 	//#define ICON13_ANI_1         "fs:/image/mainmenu/qsc1100_13_focus.png"
+#endif
+
+
+#ifdef FEATURE_VERSION_K212
+#define MUSIC_PATH1 "1fs:/hsmm/music/calc.mp3"
+#define MUSIC_PATH2 "1fs:/hsmm/music/camera.mp3"
+#define MUSIC_PATH3 "1fs:/hsmm/music/fm.mp3"
+#define MUSIC_PATH4 "1fs:/hsmm/music/manager.mp3"
+#define MUSIC_PATH5 "1fs:/hsmm/music/mesage.mp3"
+#define MUSIC_PATH6 "1fs:/hsmm/music/profile.mp3"
+#define MUSIC_PATH7 "1fs:/hsmm/music/settings.mp3"
+#define MUSIC_PATH8 "1fs:/hsmm/music/calc.mp3"
+#define MUSIC_PATH9 "1fs:/hsmm/music/suafer.mp3"
 #endif
 
 // 此宏用当前状态更新先前状态，再用nextState状态更新当前状态

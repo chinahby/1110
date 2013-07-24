@@ -12,7 +12,7 @@ PUBLIC CLASSES:  Not Applicable
 
 INITIALIZATION AND SEQUENCING REQUIREMENTS:  Not Applicable
 
-        Copyright © 1999-2007 QUALCOMM Incorporated.
+        Copyright ?1999-2007 QUALCOMM Incorporated.
                All Rights Reserved.
             QUALCOMM Proprietary/GTDR
 ===========================================================================*/
@@ -35,7 +35,12 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS:  Not Applicable
 #include "AEEFile.h"
 #include "AEEMimeTypes.h"
 #include "AEESource.h"
-
+#ifdef FEATURE_VERSION_K212
+#include "snddev.h"
+#include "snd.h"
+#include "gpio_1100.h"
+#include "clk.h"
+#endif
 #if defined (FEATURE_ACM)
 #include "msg.h"
 #include "OEMACM.h"
@@ -178,7 +183,29 @@ int AEEMedia_New(IMedia * po, IShell * ps, AEECLSID cls)
    }
 #endif // FEATURE_ODM_UI
 #endif // FEATURE_ACM
-
+#ifdef FEATURE_VERSION_K212
+	snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	
+    snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);	
+			
+	gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
+	
+    clk_busy_wait(30*1000);
+	
+	gpio_tlmm_config(GPIO_OUTPUT_10);
+	gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
+	clk_busy_wait(1);
+	gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
+	clk_busy_wait(5);
+	gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
+	clk_busy_wait(1);
+	gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
+	clk_busy_wait(1);
+	gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
+	clk_busy_wait(1);
+	gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
+	clk_busy_wait(1);
+	gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
+#endif
    return SUCCESS;
 }
 
@@ -236,7 +263,7 @@ uint32 AEEMedia_AddRef(IMedia * po)
 uint32 AEEMedia_Release(IMedia * po)
 {
    AEEMedia * pme = (AEEMedia *) po;
-   
+
    if(pme->m_nRefs <= 0)
       return 0;
 
@@ -244,6 +271,12 @@ uint32 AEEMedia_Release(IMedia * po)
       return pme->m_nRefs;      
 
    return(0);
+#ifdef FEATURE_VERSION_K212
+   gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
+   snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);   
+   snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);
+#endif
+
 }
 
 /*==================================================================

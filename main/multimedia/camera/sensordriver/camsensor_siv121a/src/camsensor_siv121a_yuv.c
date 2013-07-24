@@ -47,9 +47,9 @@ $Header: //depot/asic/msm6550/drivers/camsensor/camsensor_ SIV121A_ycbcr.c#3 $ $
 ============================================================================*/
 
 #define CAMSENSOR_SIV121A_I2C_SLAVE_ID              0x66 ///SIV121A
-
-#define CAMSENSOR_SIV121A_RESET_PIN         GPIO_OUTPUT_10
-
+#ifndef FEATURE_VERSION_K212
+#define CAMSENSOR_SIV121A_RESET_PIN        GPIO_OUTPUT_10
+#endif
 /* 
  * Maximum number of trials before aborting a register write operation
  *
@@ -489,7 +489,7 @@ boolean camsensor_siv121a_init(camsensor_function_table_type *camsensor_function
 
 
 	camsensor_camclk_po_hz =24000000;
-
+#ifndef FEATURE_VERSION_K212
 	CAMERA_CONFIG_GPIO(CAMSENSOR_SIV121A_RESET_PIN);
     
     gpio_out(CAMSENSOR_SIV121A_RESET_PIN,1);
@@ -498,7 +498,7 @@ boolean camsensor_siv121a_init(camsensor_function_table_type *camsensor_function
     clk_busy_wait(100*1000);
     gpio_out(CAMSENSOR_SIV121A_RESET_PIN,1);
     clk_busy_wait(2*1000);
-
+#endif
 	camsensor_preview_resolution  = CAMSENSOR_QTR_SIZE;
 	camsensor_snapshot_resolution = CAMSENSOR_FULL_SIZE;
 

@@ -16,6 +16,7 @@ vpath %.brx $(MAINMENU_RES)
 vpath %.png $(APPSCOMMON)/images/$(USES_LCD_SIZE)/$(USES_RESDIR)/Mainmenu/focus
 vpath %.gif $(APPSCOMMON)/images/$(USES_LCD_SIZE)/$(USES_RESDIR)/Mainmenu/focus
 vpath %.bmp $(APPSCOMMON)/images/$(USES_LCD_SIZE)/$(USES_RESDIR)/Mainmenu/focus
+vpath %.mp3 $(MAINMENU_RES)
 
 CONSTFILE_FILES+=\
 	mainmenu.mif|fs:/mif/mainmenu.mif \
@@ -101,11 +102,12 @@ ifeq ($(USES_RESDIR),SKY)
 	Setting.gif|fs:/image/mainmenu/Setting.gif \
 	Tools.gif|fs:/image/mainmenu/Tools.gif \
 	User_Profile.gif|fs:/image/mainmenu/User_Profile.gif
+
 else
 
 ifeq ($(USES_RESDIR),C316)
 	CONSTFILE_FILES+=\
-    phonebook.png|fs:/image/mainmenu/phonebook.png \
+    	phonebook.png|fs:/image/mainmenu/phonebook.png \
 	phonebook_focus.png|fs:/image/mainmenu/phonebook_focus.png \
 	message.png|fs:/image/mainmenu/message.png \
 	message_focus.png|fs:/image/mainmenu/message_focus.png \
@@ -123,6 +125,52 @@ ifeq ($(USES_RESDIR),C316)
 	Intex_zone_focus.png|fs:/image/mainmenu/Intex_zone_focus.png \
 	Browser.png|fs:/image/mainmenu/Browser.png \
 	Browser_focus.png|fs:/image/mainmenu/Browser_focus.png
+else
+ifeq ($(USES_RESDIR),K212)
+CONSTFILE_FILES+=\
+	ARROW_LEFT.png|fs:/image/mainmenu/ARROW_LEFT.png \
+	ARROW_RIGHT.png|fs:/image/mainmenu/ARROW_RIGHT.png \
+	BAR.png|fs:/image/mainmenu/BAR.png \
+	BG.png|fs:/image/mainmenu/BG.png \
+	ICON_Camera.png|fs:/image/mainmenu/ICON_Camera.png \
+	ICON_Camera_1.png|fs:/image/mainmenu/ICON_Camera_1.png \
+	ICON_Camera_2.png|fs:/image/mainmenu/ICON_Camera_2.png \
+	ICON_Contacts.png|fs:/image/mainmenu/ICON_Contacts.png \
+	ICON_Contacts_1.png|fs:/image/mainmenu/ICON_Contacts_1.png \
+	ICON_Contacts_2.png|fs:/image/mainmenu/ICON_Contacts_2.png \
+	ICON_Management.png|fs:/image/mainmenu/ICON_Management.png \
+	ICON_Management_1.png|fs:/image/mainmenu/ICON_Management_1.png \
+	ICON_Management_2.png|fs:/image/mainmenu/ICON_Management_2.png \
+	ICON_Messages.png|fs:/image/mainmenu/ICON_Messages.png \
+	ICON_Messages_1.png|fs:/image/mainmenu/ICON_Messages_1.png \
+	ICON_Messages_2.png|fs:/image/mainmenu/ICON_Messages_2.png \
+	ICON_Multimedia.png|fs:/image/mainmenu/ICON_Multimedia.png \
+	ICON_Multimedia_1.png|fs:/image/mainmenu/ICON_Multimedia_1.png \
+	ICON_Multimedia_2.png|fs:/image/mainmenu/ICON_Multimedia_2.png \
+	ICON_Profile.png|fs:/image/mainmenu/ICON_Profile.png \
+	ICON_Profile_1.png|fs:/image/mainmenu/ICON_Profile_1.png \
+	ICON_Profile_2.png|fs:/image/mainmenu/ICON_Profile_2.png \
+	ICON_Recentcalls.png|fs:/image/mainmenu/ICON_Recentcalls.png \
+	ICON_Recentcalls_1.png|fs:/image/mainmenu/ICON_Recentcalls_1.png \
+	ICON_Recentcalls_2.png|fs:/image/mainmenu/ICON_Recentcalls_2.png \
+	ICON_Settings.png|fs:/image/mainmenu/ICON_Settings.png \
+	ICON_Settings_1.png|fs:/image/mainmenu/ICON_Settings_1.png \
+	ICON_Settings_2.png|fs:/image/mainmenu/ICON_Settings_2.png \
+	ICON_Surface.png|fs:/image/mainmenu/ICON_Surface.png \
+	ICON_Surface_1.png|fs:/image/mainmenu/ICON_Surface_1.png \
+	ICON_Surface_2.png|fs:/image/mainmenu/ICON_Surface_2.png \
+	SEL.png|fs:/image/mainmenu/SEL.png
+	
+	CONSTFILE_FILES+=\
+		calc.mp3|fs:/hsmm/mainmenu/calc.mp3 \
+		camera.mp3|fs:/hsmm/mainmenu/camera.mp3 \
+		fm.mp3|fs:/hsmm/mainmenu/fm.mp3 \
+		manager.mp3|fs:/hsmm/mainmenu/manager.mp3 \
+		mesage.mp3|fs:/hsmm/mainmenu/mesage.mp3 \
+		profile.mp3|fs:/hsmm/mainmenu/profile.mp3 \
+		settings.mp3|fs:/hsmm/mainmenu/settings.mp3 \
+		calc.mp3|fs:/hsmm/mainmenu/calc.mp3 \
+		suafer.mp3|fs:/hsmm/mainmenu/suafer.mp3
 else
 CONSTFILE_FILES+=\
 	qsc1100_01.png|fs:/image/mainmenu/qsc1100_01.png \
@@ -154,7 +202,7 @@ endif
 endif	
 endif
 endif
-
+endif
 
 INC  += $(MAINMENU_INC) $(MAINMENU_RES)
 #SRC  += $(MAINMENU_SOURCES)

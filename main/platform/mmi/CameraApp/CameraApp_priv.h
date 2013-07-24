@@ -296,18 +296,18 @@
 #define TOPBAR_ICON_SPACE     3
 
 #define TOPBAR_TITLE_TEXT_Y   6
-#define CFGBAR_Y              160
-#define CFGBAR_EFFECT_TEXT_Y  180
+#define CFGBAR_Y              180
+#define CFGBAR_EFFECT_TEXT_Y  200
 #define SCROLLBAR_X           60
-#define SCROLLBAR_Y           160
+#define SCROLLBAR_Y           180
 #define POPMENU_BOTTOM_X      60
 #define POPMENU_BOTTOM_Y      60
-#define POPMENU_WIDTH         160 //117
+#define POPMENU_WIDTH         180 //117
 
 //Add By zzg 2010_07_24
 #define CFGBAR_TEXT_X		   2
 #define CFGBAR_TEXT_Y		   25
-#define CFGBAR_TEXT_WIDTH	   120
+#define CFGBAR_TEXT_WIDTH	   140
 #define CFGBAR_TEXT_HEIGHT	   24		//NormalFont Height
 
 #define CFGBAR_ARROW_WIDTH		8

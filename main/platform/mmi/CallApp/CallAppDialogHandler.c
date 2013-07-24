@@ -53,6 +53,8 @@
 #endif
 #define EVT_MODE_CHANGE             1299
 #include "AEERUIM.h"
+#include "OEMDeviceNotifier.h"
+
 /*==============================================================================
                                  宏定义和常数
 ==============================================================================*/
@@ -810,6 +812,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                     case IDS_NONHANDFREE:
                         pMe->m_bHandFree = !pMe->m_bHandFree;
                         CallApp_SetupCallAudio(pMe);
+						
                         return TRUE;
 #ifdef FEATURE_SUPPORT_BT_APP
                     case IDS_USE_BT_AG:
@@ -7136,10 +7139,12 @@ void CallApp_SetupCallAudio(CCallApp *pMe)
         soundStuff.eEarMuteCtl = AEE_SOUND_MUTECTL_MUTED;
         soundStuff.eMicMuteCtl = AEE_SOUND_MUTECTL_MUTED;
     }
-
-	MSG_FATAL("***zzg CallApp_SetupCallAudio 2 eDevice=%d***", soundStuff.eDevice, 0, 0);
-
+	
+	
+	MSG_FATAL("CallApp_SetupCallAudio 2 eDevice=%d,eEarMuteCtl=%d,eMicMuteCtl=%d", soundStuff.eDevice, soundStuff.eEarMuteCtl , soundStuff.eMicMuteCtl);
+	MSG_FATAL("CallApp_SetupCallAudio 2 eMethod=%d,eAPath=%d,m_bHandFree==%d", soundStuff.eMethod, soundStuff.eAPath , pMe->m_bHandFree);
     (void) ISOUND_Set(pMe->m_pSound,  &soundStuff);
+	
 
     ISOUND_SetDevice(pMe->m_pSound);
     if(pMe->m_CallVolume == OEMSOUND_MUTE_VOL)
@@ -7154,6 +7159,30 @@ void CallApp_SetupCallAudio(CCallApp *pMe)
     ISOUND_SetVolume(pMe->m_pSound,
                                             GET_ISOUND_VOL_LEVEL(pMe->m_CallVolume));
 	#endif
+#ifdef FEATURE_VERSION_K212
+	if(pMe->m_bHandFree)
+	{
+		snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	
+    	snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);	
+		gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
+    	clk_busy_wait(30*1000);
+		gpio_tlmm_config(GPIO_OUTPUT_10);
+		gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
+		clk_busy_wait(1);
+		gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
+		clk_busy_wait(5);
+		gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
+		clk_busy_wait(1);
+		gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
+		clk_busy_wait(1);
+		gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
+		clk_busy_wait(1);
+		gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
+		clk_busy_wait(1);
+		gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
+		
+	}
+#endif
 }
 
 /*=============================================================================

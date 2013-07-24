@@ -21,7 +21,9 @@
 #if defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_C11)
 #define CAMSENSOR_SP0828_RESET_PIN         GPIO_OUTPUT_62
 #else
+#ifndef FEATURE_VERSION_K212
 #define CAMSENSOR_SP0828_RESET_PIN         GPIO_OUTPUT_10
+#endif
 #endif
 
 

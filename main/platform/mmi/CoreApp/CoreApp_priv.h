@@ -615,8 +615,13 @@
 #define MUSIC_WIDTH            (SCREEN_HEIGHT-137) //78
 #define MUSIC_START_WIDTH      (SCREEN_HEIGHT-135) //80
 #else
+#ifdef FEATURE_VERSION_K212
+#define MUSIC_WIDTH            178 //78
+#define MUSIC_START_WIDTH      180 //80
+#else
 #define MUSIC_WIDTH            (SCREEN_HEIGHT-52) //78
 #define MUSIC_START_WIDTH      (SCREEN_HEIGHT-50) //80
+#endif
 #endif
 #endif
 #endif

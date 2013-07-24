@@ -78,7 +78,9 @@ $Header: //depot/asic/msm6550/drivers/camsensor/camsensor_ DB8V63A_ycbcr.c#3 $ $
 #define OV_DB8V63A_YCBCR_EPOCH_LINES_DELAY       4
 
 #define CAMSENSOR_DB8V63A_ENABLE_PIN GPIO_OUTP_27
-#define CAMSENSOR_DB8V63A_RESET_PIN GPIO_OUTPUT_10
+#ifndef FEATURE_VERSION_K212
+#define CAMSENSOR_DB8V63A_RESET_PIN  GPIO_OUTPUT_10
+#endif
 /*===========================================================================
                           MACRO DEFINITIONS
 ============================================================================*/
@@ -464,6 +466,7 @@ boolean camsensor_DB8V63A_ycbcr_init (camsensor_function_table_type *camsensor_f
     camsensor_camclk_po_hz =24000000;
  
     camsensor_camclk_po_hz = camsensor_config_camclk_po(camsensor_camclk_po_hz);
+#ifndef FEATURE_VERSION_K212
   	CAMERA_CONFIG_GPIO(CAMSENSOR_DB8V63A_RESET_PIN);
   	gpio_out(CAMSENSOR_DB8V63A_RESET_PIN,1);
   	clk_busy_wait(2*100);
@@ -471,7 +474,7 @@ boolean camsensor_DB8V63A_ycbcr_init (camsensor_function_table_type *camsensor_f
   	clk_busy_wait(100*100);
   	gpio_out(CAMSENSOR_DB8V63A_RESET_PIN,1);
   	clk_busy_wait(2*100);
-  
+#endif
     camsensor_preview_resolution  = CAMSENSOR_FULL_SIZE;
     camsensor_snapshot_resolution = CAMSENSOR_FULL_SIZE;
     //camsensor_current_resolution  = CAMSENSOR_INVALID_SIZE;

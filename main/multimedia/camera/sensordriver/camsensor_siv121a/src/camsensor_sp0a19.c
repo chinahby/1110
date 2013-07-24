@@ -47,9 +47,9 @@ $Header: //depot/asic/msm6550/drivers/camsensor/camsensor_ SP0A18_ycbcr.c#3 $ $D
 ============================================================================*/
 
 #define CAMSENSOR_SP0A19_I2C_SLAVE_ID              0x42 ///SP0A18
-
+#ifndef FEATURE_VERSION_K212
 #define CAMSENSOR_SP0A19_RESET_PIN         GPIO_OUTPUT_10
-
+#endif
 /* 
  * Maximum number of trials before aborting a register write operation
  *

@@ -74,8 +74,9 @@ INCLUDE FILES
 #define CAMERA_DEF_BRIGHTNESS 5
 #define CAMERA_MAX_BRIGHTNESS 10
 
-
-#define CAMSENSOR_SIV130B_RESET_PIN         GPIO_OUTPUT_10
+#ifndef FEATURE_VERSION_K212
+#define CAMSENSOR_SIV130B_RESET_PIN        GPIO_OUTPUT_10
+#endif
 /*============================================================================
        TYPE DEFINITIONS 
 ============================================================================*/
@@ -751,7 +752,7 @@ boolean camsensor_SID130B_init(camsensor_function_table_type *camsensor_function
   	/* Input MCLK = 24MHz */
 
   	camsensor_camclk_po_hz = 24000000;
-
+#ifndef FEATURE_VERSION_K212
   	gpio_tlmm_config(CAMSENSOR_SIV130B_RESET_PIN);
   	gpio_out(CAMSENSOR_SIV130B_RESET_PIN, GPIO_HIGH_VALUE);
   	clk_busy_wait(1000);
@@ -759,7 +760,7 @@ boolean camsensor_SID130B_init(camsensor_function_table_type *camsensor_function
   	clk_busy_wait(20*1000);
   	gpio_out(CAMSENSOR_SIV130B_RESET_PIN, GPIO_HIGH_VALUE);
   	clk_busy_wait(1000);
-
+#endif
   	camsensor_preview_resolution  = CAMSENSOR_QTR_SIZE;
   	camsensor_snapshot_resolution = CAMSENSOR_FULL_SIZE;
 

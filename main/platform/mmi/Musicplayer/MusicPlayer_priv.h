@@ -639,7 +639,7 @@ if(!(x))         \
 #define SIMMUSICNAME_X 5
 #define SIMMUSICNAME_Y 15
 #define SIMMUSICNAME_W 210
-#define SIMMUSICNAME_H 20
+#define SIMMUSICNAME_H 36
 
 
 //播放按钮
@@ -684,11 +684,11 @@ if(!(x))         \
 #define MUSICNAME_H 30
 
 //当前序号/总数量
-#define LISTINDEX_X 90 //5
+#define LISTINDEX_X 80 //5
 #define LISTINDEX_Y 138 //95
 
 //当前歌曲的总时间
-#define TOTALTIME_X 180
+#define TOTALTIME_X 160
 #define TOTALTIME_Y 138 
 
 //当前播放时间
@@ -696,8 +696,8 @@ if(!(x))         \
 #define PLAYINGTICK_Y 138 //47
 
 //播放时间和总时间的宽度高度
-#define TIME_WIDTH	50
-#define TIME_HEIGHT 18
+#define TIME_WIDTH	64
+#define TIME_HEIGHT 32
 
 //当前播放时间（简单播放）
 #define SIMPLAYINGTICK_X PLAYINGTICK_X

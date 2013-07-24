@@ -24,8 +24,9 @@ INCLUDE FILES
 #include "i2c.h"
 #include "clk.h"
 #include "chromatix_6550.h"
-
-#define CAMSENSOR_SIV121D_RESET_PIN         GPIO_OUTPUT_10
+#ifndef FEATURE_VERSION_K212
+#define CAMSENSOR_SIV121D_RESET_PIN          GPIO_OUTPUT_10
+#endif
 /*============================================================================
 	TYPE DEFINITIONS 
 ============================================================================*/

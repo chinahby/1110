@@ -143,8 +143,11 @@
 #define CALL_PICTURE_NAME_LENTH      64
 //#define DIALOG_SOFTKEY_HIGH        (pMe->m_LineHeight + 2)
 #define DIALERAPP_NUM_CALLHISTORY_FIELDS 5
-
+#ifdef FEATURE_VERSION_K212
+#define CALL_ANIMATION_WIDTH           64
+#else
 #define CALL_ANIMATION_WIDTH           36
+#endif
 #define CALL_ANNU_HEIGHT                   5//16
 #define CALL_SOFT_KEY_HIGHT              16//15//  (pMe->m_LargeLineHeight)
 //#define CALL_TITLE_BAR_HEIGHT   14 
@@ -201,9 +204,13 @@
 #ifdef FEATURE_VERSION_C310
 #define CALL_LINE_HIGHT                      (22) //18为NORMAL字体高度，目前只需要这个高度就够了
 #else
+#ifdef FEATURE_VERSION_K212
+#define CALL_LINE_HIGHT                      (36)
+#else
 #define CALL_LINE_HIGHT                      (20) //18为NORMAL字体高度，目前只需要这个高度就够了
 #endif
 #endif
+#endif 
 #define CALL_FIRST_LINE_Y                   (CALL_ANNU_HEIGHT)
 
 #if defined(FEATURE_VERSION_C337) 

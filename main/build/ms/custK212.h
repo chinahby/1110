@@ -14,13 +14,13 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //#define FEATURE_IMAGE_DIALING_DIGITS
 #define FEATURE_VERSION_K212
 #ifdef CUST_EDITION
-#define FEATURE_APP_BLUETOOTH
-#define FEATURE_BT
-#define FEATURE_IBT
-#define FEATURE_BT_QSOC_INBAND_SLEEP  
-#define FEATURE_DRM_NO_BREW 
-#define FEATURE_BT_SEND_FILE_ONLY		//Add By zzg 2010_11_03
-#define FEATURE_SUPPORT_BT_AUDIO
+//#define FEATURE_APP_BLUETOOTH
+//#define FEATURE_BT
+//#define FEATURE_IBT
+//#define FEATURE_BT_QSOC_INBAND_SLEEP  
+//#define FEATURE_DRM_NO_BREW 
+//#define FEATURE_BT_SEND_FILE_ONLY		//Add By zzg 2010_11_03
+//#define FEATURE_SUPPORT_BT_AUDIO
 #define BT_QSC1110//FEATURE_BT_QSC1100
 #define FEATURE_BT_QSOC_BTS4025_B2   //this is now we used  bluetooth  ÐÍºÅ
 #define FEATURE_GPIO_LAMP_EN_OUTPUT_31		//GPIO_OUTPUT_31
@@ -275,10 +275,10 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #include "custmmode.h"
 #include "custcdma.h"
 #include "custrf.h"
-#ifdef FEATURE_BT
-#include "custqbt.h"
-#include "custbt.h"
-#endif
+//#ifdef FEATURE_BT
+//#include "custqbt.h"
+//#include "custbt.h"
+//#endif
 #include "custsec.h"
 #include "custcdma2000.h"
 #include "custdebug.h"

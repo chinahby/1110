@@ -3489,6 +3489,10 @@ void DrawBottomBar_Ex(IShell    *m_pIShell, IDisplay  * pIDisplay, BottomBar_e_T
 			nResID_M = IDS_OK;   ////add by yangdecai 2010-08-04
 			nResID_R = IDS_BACK;
 			break;
+		case BTBAR_OK_BACK:
+            nResID_L = IDS_OK;
+			nResID_R = IDS_BACK;
+			break;
         case BTBAR_UNLOCK_SOS:
             nResID_R = IDS_STRING_UNLOCK;
             nResID_L = IDS_SOS;
