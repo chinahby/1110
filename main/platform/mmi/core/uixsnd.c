@@ -2743,8 +2743,16 @@ snd_freq_tone_start(SND_DEVICE_CURRENT,
 				  );
 				}
 				else
-					*/
-				{
+					*/				
+#ifdef FEATURE_VERSION_C260_IC18
+uisnd_vibrate_cmd(TRUE);
+    clk_reg( &uisnd_vibrator_clk,
+              uisnd_vibrator_cb,
+              wDuration,
+              0,
+              FALSE );    
+#else
+                {
 snd_freq_tone_start(SND_DEVICE_CURRENT,
 				   SND_METHOD_RING,
 				   188,
@@ -2756,7 +2764,7 @@ snd_freq_tone_start(SND_DEVICE_CURRENT,
 				  );
 
 				}
-
+#endif
 #else
   snd_freq_tone_start(SND_DEVICE_CURRENT,
 				   SND_METHOD_RING,
