@@ -307,6 +307,8 @@ static const CCameraSize g_CameraSizeCFG[] =
     {240,320,L"240*320"}, // QVGA   
  #if defined( FEATURE_VERSION_C316)//||defined(FEATURE_VERSION_C117_M74)
     {300,400,L"480*640"}, // VGA
+ #elif defined (FEATURE_VERSION_C260_IC18)
+    {352,464,L"352*464"}, // VGA 
  #endif
 #elif defined(FEATURE_DISP_176X220)
     {176,220,L"176*220"}, // QCIF
@@ -360,8 +362,10 @@ static const CCameraSize g_CameraSizeCFG_10[] =
 #else
     {240,320,L"240*320"}, // QVGA
 #endif    
- #if defined( FEATURE_VERSION_C316)//||defined(FEATURE_VERSION_C117_M74)
+#if defined( FEATURE_VERSION_C316)//||defined(FEATURE_VERSION_C117_M74)
     {300,400,L"480*640"}, // VGA
+#elif defined (FEATURE_VERSION_C260_IC18)
+    {352,464,L"352*464"}, // VGA    
 #endif
 
 #elif defined(FEATURE_DISP_176X220)
@@ -4175,7 +4179,7 @@ static void CameraApp_SetPopMenuRect(CCameraApp *pMe, IMenuCtl* popMenu, int men
         dy = menuItemSum*(pMe->m_nItemH+6);
 		#else
         #ifdef FEATURE_VERSION_C260_IC18
-        dy = menuItemSum*(pMe->m_nItemH);
+        dy = menuItemSum*(pMe->m_nItemH+2);
         #else
 		dy = menuItemSum*(pMe->m_nItemH+2);
         #endif
@@ -4188,7 +4192,7 @@ static void CameraApp_SetPopMenuRect(CCameraApp *pMe, IMenuCtl* popMenu, int men
         dy = 4*(pMe->m_nItemH+6);
 		#else
         #ifdef FEATURE_VERSION_C260_IC18
-        dy = 4*(pMe->m_nItemH);
+        dy = 4*(pMe->m_nItemH+2);
         #else
 		dy = 4*(pMe->m_nItemH+2);
         #endif
@@ -4396,6 +4400,52 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
 
 //Add By zzg 2012_10_30
 #if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+#ifdef FEATURE_VERSION_C260_IC18
+    // size cfgID
+    (void)ICONFIG_GetItem(pMe->m_pConfig,
+                          CFGI_CAMERA_SIZE,
+                         &pMe->m_nCameraSize,
+                          sizeof(pMe->m_nCameraSize));
+
+	if(pMe->m_isRecordMode == FALSE)
+	{
+	    switch(pMe->m_nCameraSize)
+	    {
+	        case OEMNV_CAMERA_SIZE_INDEX_0:
+		        nResID[CAMERACFGSIZE] = IDI_SIZE_128_160;
+		        break;
+		    case OEMNV_CAMERA_SIZE_INDEX_1:
+		        nResID[CAMERACFGSIZE] = IDI_SIZE_176_220;
+		        break;
+
+		    case OEMNV_CAMERA_SIZE_INDEX_2:
+		        nResID[CAMERACFGSIZE] = IDI_SIZE_240_320;
+		        break;
+			case OEMNV_CAMERA_SIZE_INDEX_3:
+		        nResID[CAMERACFGSIZE] = IDI_SIZE_480_640;
+		        break;	
+		    default:
+		        nResID[CAMERACFGSIZE] = IDI_SIZE_128_160;
+		        break;
+	    }
+	}
+	else
+	{
+		switch(pMe->m_nCameraSize)
+	    {
+		    case OEMNV_CAMERA_SIZE_INDEX_0:
+		        nResID[CAMERACFGSIZE] = IDI_SIZE_128_160;
+		        break;
+
+		    case OEMNV_CAMERA_SIZE_INDEX_1:
+		        nResID[CAMERACFGSIZE] = IDI_SIZE_144_176;
+		        break;
+		    default:
+		        nResID[CAMERACFGSIZE] = IDI_SIZE_128_160;
+		        break;
+	    }
+	}
+#else
     // size cfgID
     (void)ICONFIG_GetItem(pMe->m_pConfig,
                           CFGI_CAMERA_SIZE,
@@ -4437,6 +4487,7 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
 		        break;
 	    }
 	}
+#endif
 #endif	
 //Add End
 
