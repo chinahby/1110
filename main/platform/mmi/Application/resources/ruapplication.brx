@@ -70,6 +70,9 @@
 	<String Id="1033" Name="IDS_STR_TRUNOFFFTORCH">
 		<Text>TurnOff Torch</Text>
 	</String>
+	<String Id="1037" Name="IDS_TORCH">
+		<Text>Torch</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<Dialog Id="6001" Name="IDD_FLASHLIGHT_SETTING" Focus="7002">

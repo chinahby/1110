@@ -61,6 +61,9 @@
  	<STRING Id="1031" Name="IDS_TOOLS_LIST">
  		<Text>الأدوات</Text>
  	</STRING>
+ 	<String Id="1037" Name="IDS_TORCH">
+		<Text>Torch</Text>
+	</String>
  </Strings>
  <Dialogs>
  	<Dialog Id="6001" Name="IDD_FLASHLIGHT_SETTING" Focus="7002">

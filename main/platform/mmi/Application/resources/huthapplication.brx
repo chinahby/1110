@@ -49,6 +49,9 @@
 	<String Id="1031" Name="IDS_TOOLS_LIST">
 		<Text>Tools</Text>
 	</String>
+	<String Id="1037" Name="IDS_TORCH">
+		<Text>Torch</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<Dialog Id="6003" Name="IDD_LIST_APPLICATION" Focus="7001">

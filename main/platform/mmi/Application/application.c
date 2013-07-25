@@ -1177,7 +1177,12 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
 			else
 			#endif
 			{
-			
+
+#if defined (FEATURE_VERSION_C260_IC18)
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_UTK, IDS_APPLICATION_UTK, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CALCULATOR, IDS_APPLICATION_CALCULATOR, NULL, 0);
+#endif
+                
 #ifdef FEATURE_VERSION_C337
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CALENDAR, IDS_APPLICATION_CALENDAR, NULL, 0);
 #endif
@@ -1276,7 +1281,11 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CONVERTER, IDS_APPLICATION_CONVERTER, NULL, 0);
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_WORLDTIME, IDS_APPLICATION_WORLDTIME, NULL, 0);
             #ifndef FEATURE_VERSION_C01
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_FLASHLIGHT, IDS_APPLICATION_FLASHLIGHT, NULL, 0);
+                #if defined (FEATURE_VERSION_C260_IC18)
+                IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_TORCH, IDS_TORCH, NULL, 0);
+                #else
+                IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_FLASHLIGHT, IDS_APPLICATION_FLASHLIGHT, NULL, 0);
+                #endif
             #else
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_SCHEDULER, IDS_APPLICATION_SCHEDULER, NULL, 0);	
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CALCULATOR, IDS_APPLICATION_CALCULATOR, NULL, 0);
@@ -1485,12 +1494,19 @@ static boolean  Application_FlashlightMenuHandler(Application *pMe, AEEEvent eCo
      switch (eCode)
     {
         case EVT_DIALOG_INIT:
-
+#ifdef FEATURE_VERSION_C260_IC18
+            (void)ISHELL_LoadResString(pMe->m_pShell,
+                                    APPLICATION_RES_FILE_LANG,                                
+                                    IDS_TORCH,
+                                    WTitle,
+                                    sizeof(WTitle));
+#else
 			(void)ISHELL_LoadResString(pMe->m_pShell,
                                     APPLICATION_RES_FILE_LANG,                                
                                     IDS_APPLICATION_FLASHLIGHT,
                                     WTitle,
                                     sizeof(WTitle));
+#endif
 
             if(pMe->m_pIAnn != NULL)
             {
@@ -1839,6 +1855,7 @@ static int StartApplet(Application *pMe, int i)
         break;
 #endif
 #if defined(FEATURE_VERSION_HITZ181) || defined(FEATURE_DISP_128X160) || defined(FEAUTRE_VERSION_N450)
+    case IDS_TORCH:
 	case IDS_APPLICATION_FLASHLIGHT:		
         CLOSE_DIALOG(DLGRET_FLASHLITHT)
         break;
