@@ -418,7 +418,11 @@ typedef PACKED struct _Key_pad_Cfg
 #endif
 
 #ifdef FEATURE_VERSION_C337
+#ifdef FEATURE_VERSION_C260_IC18
+#define  OEMNV_MIZONENUM  "58558"
+#else
 #define  OEMNV_MIZONENUM  "57272"
+#endif
 #endif
 
 #if defined(FEATURE_VERSION_W317A)

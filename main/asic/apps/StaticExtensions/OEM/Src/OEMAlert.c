@@ -127,7 +127,11 @@ when       who     what, where, why
                            ( (vol) = (OEMSound_Volume_Type)((int)(vol) + 2) )
                            
 // How long the phone vibrates for each "ring"
+#ifdef FEATURE_VERSION_C260_IC18
+#define TIME_MS_RINGERVIBRATE_DURATION          1000
+#else
 #define TIME_MS_RINGERVIBRATE_DURATION          2000
+#endif
 
 // How long the phone vibrates for an incoming call, if using the Ring Then
 // Vibrate setting (must be divisible evenly by TIME_MS_RINGERVIBRATE_DURATION)
@@ -135,7 +139,11 @@ when       who     what, where, why
 #ifdef FEATURE_VERSION_W317A
 #define TIME_MS_RINGERVIBRATE_ALERT_DURATION    4000
 #else
+#ifdef FEATURE_VERSION_C260_IC18
+#define TIME_MS_RINGERVIBRATE_ALERT_DURATION    6000
+#else
 #define TIME_MS_RINGERVIBRATE_ALERT_DURATION    12000
+#endif
 #endif
 
 // Twice the number of times the phone should vibrate before starting to ring
@@ -154,7 +162,11 @@ when       who     what, where, why
 #define TIME_MS_SMSVIBRATE_DURATION             8000
 #define COUNT_SMSVIBRATE_ALERTS_THEN_RING       2
 #else
+#ifdef FEATURE_VERSION_C260_IC18
+#define TIME_MS_SMSVIBRATE_DURATION             1000
+#else
 #define TIME_MS_SMSVIBRATE_DURATION             2000
+#endif
 #endif //#ifdef FEATURE_SMSTONETYPE_MID  
 
 //The time of Key beep tone play
@@ -3023,11 +3035,19 @@ static void OEMALERT_HandleRingerAlertTimer(void *pUser)
                 OEMALERT_SetRingerVol(pMe, TRUE);
             }            
             break;
-    }       
+    }   
+
+    #ifdef FEATURE_VERSION_C260_IC18
+    (void) ISHELL_SetTimer(pMe->m_pIShell,
+                            (TIMEOUT_MS_RINGERVIB_TIMER*2),
+                            OEMALERT_HandleRingerAlertTimer,
+                            pMe);
+    #else
     (void) ISHELL_SetTimer(pMe->m_pIShell,
                             TIMEOUT_MS_RINGERVIB_TIMER,
                             OEMALERT_HandleRingerAlertTimer,
                             pMe);
+    #endif
 }
 
 #ifdef FEATURE_SMSTONETYPE_MID       
