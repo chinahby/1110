@@ -2972,9 +2972,16 @@ void DrawPromptMessage (IDisplay *pIDisplay,
 */
 
 #if defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_W317A)
+#ifdef FEATURE_VERSION_C260_IC18
+        strrect.x += 5;
+        strrect.y += 15;
+        strrect.dx -= 10;        
+        strrect.dy -= 35;
+#else
         strrect.x += 5;
         strrect.dx -= 10;        
         strrect.dy -= 20;
+#endif        
 #endif
 
     MSG_FATAL("***zzg DrawPromptMessage strrect.x=%d, strrect.y=%d***",strrect.x,strrect.y,0);
