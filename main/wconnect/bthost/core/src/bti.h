@@ -1414,7 +1414,13 @@ typedef struct bt_event_q_info_struct
 #elif defined(FEATURE_VERSION_W317A)
   #define DEFAULT_BT_NAME         "ARC8c"  
 #elif defined(FEATURE_VERSION_C337)
-  #define DEFAULT_BT_NAME         "Micromax C260"     
+
+#if defined(FEATURE_VERSION_C260_IC18)
+  #define DEFAULT_BT_NAME         "Micromax C210"    
+#else
+  #define DEFAULT_BT_NAME         "Micromax C260"   
+#endif
+
 #else
   #define DEFAULT_BT_NAME         "Hitz 233C"
 #endif
