@@ -1528,7 +1528,7 @@ static void AStatic_RedrawText(AStatic * pme)
             {
                 IDISPLAY_EraseRect(pd,&rc);
             }
-    	}			 
+    	}		
 		 //Add By zzg 2011_12_08
 		 //Ë¢ÐÂSTATICµÄ±³¾°ÇøÓò (·ÀÖ¹Auto_scrollµÄË¢ÐÂ»ìÂÒ)
 		 else  if(pme->m_dwProps & ST_SPECIAL_BG)
@@ -1540,8 +1540,8 @@ static void AStatic_RedrawText(AStatic * pme)
 			pFrame = ISHELL_LoadResBitmap(pme->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_PROMPT_MSG_STATIC_BG);
             
 #ifdef FEATURE_VERSION_C260_IC18
-            rc.x += 5;
-            rc.y += 6;
+            //rc.x += 5;
+            //rc.y += 6;
 #endif
 
 			if (pFrame != NULL) 
@@ -1556,12 +1556,12 @@ static void AStatic_RedrawText(AStatic * pme)
 				pFrame = NULL;
 		 	}
 #ifdef FEATURE_VERSION_C260_IC18
-            rc.x -= 5;
-            rc.y -= 6;
+            //rc.x -= 5;
+            //rc.y -= 6;
 #endif            
 			IDISPLAY_Update(pd);
 		 }
-		 //Add End
+		 //Add End		 
     }
    // Now back... the ys are  already adjusted below
    rc.x--;

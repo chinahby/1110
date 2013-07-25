@@ -2439,12 +2439,21 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
                     }
                     if(pContext->dwProperties & TP_DISPLAY_SMSCOUNT)
                 	{
+                	#if defined (FEATURE_DISP_128X160)                	
+                        SETAEERECT(&bgrc,
+                                    rect.x,
+                                    rect.y-nBarH,
+                                    40,
+                                    nBarH); 
+                    #else
                 		SETAEERECT(&bgrc,
                                     rect.x,
                                     rect.y-nBarH,
                                     50,
                                     nBarH); 
+                    #endif  
 						IDISPLAY_DrawRect(pContext->pIDisplay,&bgrc,RGB_BLACK,RGB_BLACK,IDF_RECT_FILL);
+                      
 					}
 					else
 					{

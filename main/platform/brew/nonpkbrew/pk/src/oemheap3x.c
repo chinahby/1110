@@ -677,14 +677,14 @@ static void  HeapFreeInternal(MemHeap *heap, void * ptr)
 #endif//FEATURE_ASSERT_ON_DOUBLE_FREE
       return;
    }
-// #ifdef HEAP_DEBUGGING
+ #ifdef HEAP_DEBUGGING
    else if (QuickValidateNode(heap, pb) == FALSE)
    {
       MSG_ERROR("HeapFreeInternal free block %p: FREEING GARBAGE!", ptr, 0, 0);
       ASSERT(FALSE);
       return;
    }
-// #endif
+ #endif
 
    // Make sure nExtra is reasonable
 
