@@ -417,6 +417,8 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
 			//Add End
 			
 			MP3_DrawImage(pMe, IDI_MUSICPLAYER, 0, 0);	//Add By zzg 2010_08_19
+
+            #ifdef FEATURE_VERSION_K202
 			 if(pMe->m_pMedia )
              { 
              	if(pMe->m_bPlaying)
@@ -441,6 +443,7 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
        	
     			}
 			 }
+             #endif
 			
             if(pMe->m_pIAnn != NULL)
             {
