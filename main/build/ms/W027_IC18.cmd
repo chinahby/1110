@@ -9,6 +9,7 @@
 @set MODELBUILDTIME=07/23/2013
 @set SVNVERSION=5121
 
+
 IF "%*"=="" goto DO_COPY
 goto DO_WORK
 :DO_COPY
