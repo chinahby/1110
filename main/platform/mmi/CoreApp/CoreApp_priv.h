@@ -467,10 +467,10 @@
 #define    PWROFF_ANI_FRAME_COUNT                PWRON_ANI_FRAME_COUNT
 #define    PWROFF_ANI_RATE                       (5000)
 #elif defined FEATURE_VERSION_C260_IC18
-#define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweron.gif"
+#define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronoff.gif"
 #define    PWRON_ANI_FRAME_COUNT                 (1)
 #define    PWRON_ANI_RATE                        (7000)
-#define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweroff.gif"
+#define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweronoff.gif"
 #define    PWROFF_ANI_FRAME_COUNT                PWRON_ANI_FRAME_COUNT
 #define    PWROFF_ANI_RATE                       (7000)
 #elif defined FEATURE_VERSION_W021_CT100
