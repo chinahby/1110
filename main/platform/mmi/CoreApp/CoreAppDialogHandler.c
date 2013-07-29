@@ -1165,7 +1165,7 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
                 }
                 else if(pMe->m_sPinActionStatus.sStatus.sw1 == 0x98 && pMe->m_sPinActionStatus.sStatus.sw2 == 0x04)
                 {
-                	#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202_LM129C)//xxzhen
+                	#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202_LM129C)||defined(FEATURE_VERSION_K212)//xxzhen
 					pMe->m_nMsgID = IDS_INVALIDPIN;
 					#else
                     pMe->m_nMsgID = IDS_MSG_SECISSUE;
@@ -3330,9 +3330,26 @@ static boolean  IDD_STARTUPANI_Handler(void       *pUser,
 
         case EVT_DIALOG_START: 		
 			//Add By zzg 2012_02_17
-
-
-
+#ifdef FEATURE_VERSION_K212
+			  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
+				
+			  clk_busy_wait(30*1000);
+				
+			  gpio_tlmm_config(GPIO_OUTPUT_10);
+			  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
+			  clk_busy_wait(1);
+			  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
+			  clk_busy_wait(5);
+			  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
+			  clk_busy_wait(1);
+			  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
+			  clk_busy_wait(1);
+			  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
+			  clk_busy_wait(1);
+			  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
+			  clk_busy_wait(1);
+			  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
+#endif
 			//Add End
 			
             if(pMe->m_wStartupAniTime == 0)
@@ -4687,6 +4704,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                             return CoreApp_LaunchApplet(pMe, AEECLSID_APP_SETTINGMENU);
 						#elif defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_W021_CT100)
 							return CoreApp_LaunchApplet(pMe, AEECLSID_SCHEDULEAPP);
+						#elif defined(FEATURE_VERSION_K212)
+							return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
 						#else
 							return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);//
 						#endif
@@ -4698,7 +4717,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 				    int ret = 0;
 				    if(!OEMKeyguard_IsEnabled())
                     {
-                        #if defined( FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_K202)
+                        #if defined( FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_K202)|| defined(FEATURE_VERSION_K212)
                            Mainmenu_KeypadLock(TRUE);
 			            #elif defined ( FEATURE_VERSION_C337)
 						   WMSDialog_KeypadLock(TRUE);
@@ -7008,7 +7027,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 		    	rect.x += nNumberWidth;
 		     	rect.y = rect.y +12;
 				rc.x = rc.x+30;
-				rc.dx = rc.dx +10;
+				rc.dx = rc.dx +20;
 		    	DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
 		                              pMe->m_pDisplay,
 		                              RGB_WHITE_NO_TRANS,

@@ -1073,7 +1073,9 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
 #endif
 //#ifndef FEATURE_VERSION_C180
 #ifndef FEATURE_VERSION_W208S
+#ifndef FEATURE_VERSION_K212
             IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_FMRADIO, IDS_MULTIMEDIA_FMRADIO, NULL, 0);
+#endif
 #endif
 //#endif
 #if defined	(FEATURE_VERSION_FLEXI203) || defined (FEATURE_VERSION_IVIO203) ||defined (FEATURE_VERSION_FLEXI203P)|| defined (FEATURE_VERSION_C500BE)||defined (FEATURE_VERSION_VG68)||defined (FEATURE_VERSION_K212)

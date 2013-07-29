@@ -211,6 +211,12 @@
 	<String Id="1075" Name="IDS_CHARGER_FINISH">
 		<Text>充电完成！</Text>
 	</String>
+	<String Id="1076" Name="IDS_STR_AM">
+		<Text>上午</Text>
+	</String>
+	<String Id="1077" Name="IDS_STR_PM">
+		<Text>下午</Text>
+	</String>
 	<String Id="1080" Name="IDS_MAIN_MENU_TORCHON">
 		<Text>电筒已打开</Text>
 	</String>

@@ -870,10 +870,14 @@ static NextFSMAction QUICKTESTSTCallTestHandler(CQuickTest *pMe)
 			}
 			else
 			{
+#ifdef FEATURE_VERSION_K212
+			MOVE_TO_STATE(QUICKTESTST_SDTEST)
+#else
 #if defined( FEATURE_FM_RADIO)
             MOVE_TO_STATE(QUICKTESTST_FMTEST)
 #else
             MOVE_TO_STATE(QUICKTESTST_SDTEST)
+#endif
 #endif
 			}
             return NFSMACTION_CONTINUE;

@@ -7055,7 +7055,7 @@ void CallApp_SetupCallAudio(CCallApp *pMe)
     else if(pMe->m_bHandFree)
     {
 #ifdef FEATURE_SPEAKER_PHONE
-        soundStuff.eDevice = AEE_SOUND_DEVICE_SPEAKER;
+        soundStuff.eDevice = AEE_SOUND_DEVICE_SPEAKER;//AEE_SOUND_DEVICE_SPEAKER;
 #else
         soundStuff.eDevice = AEE_SOUND_DEVICE_HFK;
 #endif
@@ -7083,16 +7083,6 @@ void CallApp_SetupCallAudio(CCallApp *pMe)
 		//bt_ui_process_vol_change(pMe->m_CallVolume);
 	}	
 #endif
-//Add End
-
-
-
-	/*
-    else if (headsetPresent)
-    {
-         soundStuff.eDevice = AEE_SOUND_DEVICE_STEREO_HEADSET; //AEE_SOUND_DEVICE_HEADSET;            
-    }
-    */
     else
     {
         soundStuff.eDevice = AEE_SOUND_DEVICE_HANDSET;
@@ -7122,6 +7112,7 @@ void CallApp_SetupCallAudio(CCallApp *pMe)
     if(po.dwCount>0)
 #endif
     {
+    	MSG_FATAL("***pMe->m_CallMuted==%d***", pMe->m_CallMuted, 0, 0);
         soundStuff.eEarMuteCtl = AEE_SOUND_MUTECTL_UNMUTED;
         if (pMe->m_CallMuted)
         {
@@ -7139,7 +7130,7 @@ void CallApp_SetupCallAudio(CCallApp *pMe)
         soundStuff.eEarMuteCtl = AEE_SOUND_MUTECTL_MUTED;
         soundStuff.eMicMuteCtl = AEE_SOUND_MUTECTL_MUTED;
     }
-	
+
 	
 	MSG_FATAL("CallApp_SetupCallAudio 2 eDevice=%d,eEarMuteCtl=%d,eMicMuteCtl=%d", soundStuff.eDevice, soundStuff.eEarMuteCtl , soundStuff.eMicMuteCtl);
 	MSG_FATAL("CallApp_SetupCallAudio 2 eMethod=%d,eAPath=%d,m_bHandFree==%d", soundStuff.eMethod, soundStuff.eAPath , pMe->m_bHandFree);
@@ -7163,24 +7154,7 @@ void CallApp_SetupCallAudio(CCallApp *pMe)
 	if(pMe->m_bHandFree)
 	{
 		snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	
-    	snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);	
-		gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
-    	clk_busy_wait(30*1000);
-		gpio_tlmm_config(GPIO_OUTPUT_10);
-		gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
-		clk_busy_wait(1);
-		gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
-		clk_busy_wait(5);
-		gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
-		clk_busy_wait(1);
-		gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
-		clk_busy_wait(1);
-		gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
-		clk_busy_wait(1);
-		gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
-		clk_busy_wait(1);
-		gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
-		
+	    snd_set_device(SND_DEVICE_HEADSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);	
 	}
 #endif
 }
@@ -9488,7 +9462,7 @@ static void CallApp_Build_NumEdit_Option_Menu(CCallApp *pMe,IMenuCtl   *pMenuCtl
             else
 #endif //FEATURE_APP_PAUSE_TIMER
             {
-#if defined(FEATURE_VERSION_W208S)||defined(FEATURE_VERSION_1110W516) ||defined(FEATURE_VERSION_C180) ||defined(FEATURE_VERSION_W027V3)|| defined(FEATURE_VERSION_H1201)|| defined(FEATURE_VERSION_W027)
+#if defined(FEATURE_VERSION_W208S)||defined(FEATURE_VERSION_1110W516) ||defined(FEATURE_VERSION_C180) ||defined(FEATURE_VERSION_W027V3)|| defined(FEATURE_VERSION_H1201)|| defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_K212)
 #else
                 if(!pMe->m_call_info.b_emerg)
                 {

@@ -38,12 +38,20 @@
 #define SP0828_ID_REG                      (0x02)
 #define SP0828_INFO_REG                    (0x02)
 
+#ifdef FEATURE_VERSION_K212
+#define CAMSENSOR_SP0828_FULL_SIZE_WIDTH   240
+#define CAMSENSOR_SP0828_FULL_SIZE_HEIGHT  320
 
+#define CAMSENSOR_SP0828_QTR_SIZE_WIDTH   240
+#define CAMSENSOR_SP0828_QTR_SIZE_HEIGHT  320
+
+#else
 #define CAMSENSOR_SP0828_FULL_SIZE_WIDTH   240 //640
 #define CAMSENSOR_SP0828_FULL_SIZE_HEIGHT  320 //480
 
 #define CAMSENSOR_SP0828_QTR_SIZE_WIDTH   240 //640
 #define CAMSENSOR_SP0828_QTR_SIZE_HEIGHT  320 //480
+#endif
 
 #define MAX_EV_COMP                          25
 
@@ -473,7 +481,7 @@ static boolean camsensor_sp0828_start( camsensor_static_params_type *camsensor_p
     camsensor_params->full_size_height = CAMSENSOR_SP0828_FULL_SIZE_HEIGHT;
     
     camsensor_params->qtr_size_width  =   CAMSENSOR_SP0828_QTR_SIZE_WIDTH;
-    camsensor_params->qtr_size_height =  CAMSENSOR_SP0828_QTR_SIZE_HEIGHT;
+    camsensor_params->qtr_size_height =   CAMSENSOR_SP0828_QTR_SIZE_HEIGHT;
     camsensor_params->pclk_invert     =  FALSE;//camsensor_info.pclk_invert;
     
 #if defined FEATURE_WHITE_LED_FLASH || defined FEATURE_STROBE_FLASH
@@ -560,6 +568,8 @@ SIDE EFFECTS
 
 static boolean camsensor_sp0828_snapshot_config( camsensor_static_params_type  *camsensor_params)
 {
+
+	//SIV120A_config_window(140,0,OV_SIV120A_YCBCR_FULL_SIZE_WIDTH,OV_SIV120A_YCBCR_FULL_SIZE_HEIGHT);
 	/* Sensor output data format */
 	camsensor_params->format = CAMIF_YCbCr_Cr_Y_Cb_Y;
 
@@ -574,7 +584,7 @@ static boolean camsensor_sp0828_snapshot_config( camsensor_static_params_type  *
 	camsensor_params->camif_window_width_config.firstPixel = 0;
 	camsensor_params->camif_window_width_config.lastPixel  = camsensor_params->camsensor_width*2 - 1;
 	camsensor_params->camif_window_height_config.firstLine = 0;
-	camsensor_params->camif_window_height_config.lastLine = camsensor_params->camsensor_height - 1;
+	camsensor_params->camif_window_height_config.lastLine  = camsensor_params->camsensor_height - 1;
 
     return TRUE;
 }

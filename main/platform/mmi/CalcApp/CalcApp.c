@@ -880,7 +880,7 @@ static void CALC_DrawImageWithOffset( CCalcApp *pMe)//wlh 20090417 add ÎªÁËÇø±ðµ
 		SETAEERECT( &clip, CALC_EQUAL_X, CALC_EQUAL_Y,CALC_EQUAL_W,CALC_EQUAL_H);
 	else 
 		return;
-#if defined(FEATURE_DISP_220X176)||defined(FEATURE_DISP_128X160)||defined(FEATURE_DISP_160X128) || defined(FEATURE_DISP_176X220)
+#if defined(FEATURE_DISP_220X176)||defined(FEATURE_DISP_128X160)||defined(FEATURE_DISP_160X128) || defined(FEATURE_DISP_176X220)|| defined(FEATURE_DISP_240X320)
 	CALC_drawClipRectWithOffset(pMe,IDB_CALCAPP_GROUND,&clip);
 #else
 #ifndef FEATURE_USES_LOWMEM
@@ -1119,7 +1119,7 @@ static void Calc_Overflow( CCalcApp *pme)
         RGBVAL nOldFontColor;
 
         rc = pme->m_valRect;
-#if defined(FEATURE_DISP_220X176)||defined(FEATURE_DISP_128X160)||defined(FEATURE_DISP_160X128)|| defined(FEATURE_DISP_176X220)
+#if defined(FEATURE_DISP_220X176)||defined(FEATURE_DISP_128X160)||defined(FEATURE_DISP_160X128)|| defined(FEATURE_DISP_176X220)|| defined(FEATURE_DISP_240X320)
 		drawImageWithOffset(pme, AEE_APPSCOMMONRES_IMAGESFILE, IDB_CALCAPP_GROUND, rc.x, rc.y, &rc);
 #else
 #ifndef FEATURE_USES_LOWMEM
@@ -1329,7 +1329,7 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
                     break;
 				case AVK_I:
                 case AVK_LEFT:
-					#if defined(FEATURE_DISP_220X176)||defined(FEATURE_DISP_128X160)||defined(FEATURE_DISP_160X128)|| defined(FEATURE_DISP_176X220)
+					#if defined(FEATURE_DISP_220X176)||defined(FEATURE_DISP_128X160)||defined(FEATURE_DISP_160X128)|| defined(FEATURE_DISP_176X220)|| defined(FEATURE_DISP_240X320)
 					//wlh 20090417 add start
 					//modi ydc 20090408
 					//drawImage( pme,AEE_APPSCOMMONRES_IMAGESFILE,IDB_CALCAPP_MULTI, CALC_MULTI_X, CALC_MULTI_Y);
@@ -1349,11 +1349,11 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
                     Calc_PushVal(pme, OP_SUB);
 					#endif
                     break;
-#if defined(FEATURE_DISP_128X160) || defined(FEATURE_DISP_176X220)
+#if defined(FEATURE_DISP_128X160) || defined(FEATURE_DISP_176X220)|| defined(FEATURE_DISP_240X320)
 #else
 #endif         
                 case AVK_DOWN:
-					#if defined(FEATURE_DISP_220X176)||defined(FEATURE_DISP_128X160)||defined(FEATURE_DISP_160X128)|| defined(FEATURE_DISP_176X220)
+					#if defined(FEATURE_DISP_220X176)||defined(FEATURE_DISP_128X160)||defined(FEATURE_DISP_160X128)|| defined(FEATURE_DISP_176X220)|| defined(FEATURE_DISP_240X320)
 					//wlh 20090417 add start
 					//modi ydc 20090408
 					//drawImage( pme,AEE_APPSCOMMONRES_IMAGESFILE,IDB_CALCAPP_SUBTRACT, CALC_SUBTRACT_X, CALC_SUBTRACT_Y);
@@ -1406,7 +1406,7 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
 #if defined( AEE_SIMULATOR)
                 case AVK_SOFT1:
 #else
-#if defined(FEATURE_DISP_220X176)||defined(FEATURE_DISP_128X160)||defined(FEATURE_DISP_160X128) || defined(FEATURE_DISP_176X220)
+#if defined(FEATURE_DISP_220X176)||defined(FEATURE_DISP_128X160)||defined(FEATURE_DISP_160X128) || defined(FEATURE_DISP_176X220)|| defined(FEATURE_DISP_240X320)
 #ifdef FEATURE_VERSION_SKY
 				case AVK_POUND:
 #else
@@ -1453,7 +1453,7 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
                     break;
 //#if defined(FEATURE_DISP_176X220)
 //				case AVK_STAR:
-#if defined(FEATURE_DISP_220X176)||defined(FEATURE_DISP_128X160)||defined(FEATURE_DISP_160X128) || defined(FEATURE_DISP_176X220)
+#if defined(FEATURE_DISP_220X176)||defined(FEATURE_DISP_128X160)||defined(FEATURE_DISP_160X128) || defined(FEATURE_DISP_176X220)|| defined(FEATURE_DISP_240X320)
 #ifdef FEATURE_VERSION_SKY
                 case AVK_STAR:
 #else
@@ -1463,7 +1463,7 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
                 case AVK_M:
                     Calc_AddChar(pme, (AECHAR)'.', TRUE);
                     break;
-#if !(defined(FEATURE_DISP_220X176)||defined(FEATURE_DISP_128X160)||defined(FEATURE_DISP_160X128) || defined(FEATURE_DISP_176X220))
+#if !(defined(FEATURE_DISP_220X176)||defined(FEATURE_DISP_128X160)||defined(FEATURE_DISP_160X128) || defined(FEATURE_DISP_176X220)|| defined(FEATURE_DISP_240X320))
                 case AVK_POUND:
                     Calc_Reset( pme);
                     break;
@@ -1827,6 +1827,10 @@ static void Calc_DrawScreen(CCalcApp *pme)
 	drawImage( pme, AEE_APPSCOMMONRES_IMAGESFILE, IDB_CALCAPP_GROUND, 0, 0);
 	drawImage( pme, AEE_APPSCOMMONRES_IMAGESFILE, IDB_CALCAPP, 0, 72);
 	drawImage( pme, AEE_APPSCOMMONRES_IMAGESFILE, IDB_CALCAPP_LINE, 0, 48);
+#elif defined(FEATURE_DISP_240X320)
+	drawImage( pme, AEE_APPSCOMMONRES_IMAGESFILE, IDB_CALCAPP_GROUND, 0, 0);
+	drawImage( pme, AEE_APPSCOMMONRES_IMAGESFILE, IDB_CALCAPP, 0, 136);
+	drawImage( pme, AEE_APPSCOMMONRES_IMAGESFILE, IDB_CALCAPP_LINE, 0, 72);
 #elif defined(FEATURE_DISP_176X220)
     drawImage( pme, AEE_APPSCOMMONRES_IMAGESFILE, IDB_CALCAPP_GROUND, 0, 0);
     drawImage( pme, AEE_APPSCOMMONRES_IMAGESFILE, IDB_CALCAPP, 0, 104);
@@ -1901,7 +1905,7 @@ static boolean Calc_operate( CCalcApp* pme, int i)
 
                 //ÏÔÊ¾¡®³ýÊýÎª0¡¯
                 rc = pme->m_valRect;
-#if defined(FEATURE_DISP_220X176)||defined(FEATURE_DISP_128X160)||defined(FEATURE_DISP_160X128)|| defined(FEATURE_DISP_176X220)
+#if defined(FEATURE_DISP_220X176)||defined(FEATURE_DISP_128X160)||defined(FEATURE_DISP_160X128)|| defined(FEATURE_DISP_176X220)|| defined(FEATURE_DISP_240X320)
 				drawImageWithOffset( pme,
                              AEE_APPSCOMMONRES_IMAGESFILE,
                              IDB_CALCAPP_GROUND,
@@ -2366,7 +2370,7 @@ static void Calc_ShowAnnun( void* pMe)
         int           i            = 0;
         
         SETAEERECT(&rc, pme->m_valRect.x, pme->m_valRect.y - 2*pme->m_valRect.dy, pme->m_valRect.dx, 2*pme->m_valRect.dy);   
-#if defined(FEATURE_DISP_220X176)||defined(FEATURE_DISP_128X160)||defined(FEATURE_DISP_160X128)|| defined(FEATURE_DISP_176X220)
+#if defined(FEATURE_DISP_220X176)||defined(FEATURE_DISP_128X160)||defined(FEATURE_DISP_160X128)|| defined(FEATURE_DISP_176X220)|| defined(FEATURE_DISP_240X320)
 		drawImageWithOffset( pme, AEE_APPSCOMMONRES_IMAGESFILE, IDB_CALCAPP_GROUND, rc.x, rc.y, &rc);
 #else
 #ifndef FEATURE_USES_LOWMEM
@@ -2606,7 +2610,7 @@ static void Calc_DrawNum( CCalcApp *pme)
     BottomBar_Param_type BarParam;                 
 	MEMSET(&BarParam, 0, sizeof(BarParam));
     
-#if defined(FEATURE_DISP_220X176)||defined(FEATURE_DISP_128X160)||defined(FEATURE_DISP_160X128)|| defined(FEATURE_DISP_176X220)
+#if defined(FEATURE_DISP_220X176)||defined(FEATURE_DISP_128X160)||defined(FEATURE_DISP_160X128)|| defined(FEATURE_DISP_176X220)|| defined(FEATURE_DISP_240X320)
 	drawImageWithOffset( pme,
                  AEE_APPSCOMMONRES_IMAGESFILE,
                  IDB_CALCAPP_GROUND,

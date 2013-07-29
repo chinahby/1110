@@ -608,7 +608,11 @@ const snd_gen_voc_cal_type snd_cal_handset_ring_gains = {
   SND_GEN_VOC,
   7,
   1,
+#ifdef FEATURE_VERSION_K212
+  VOC_CODEC_STEREO_HEADSET,
+#else
   VOC_CODEC_SPEAKER,
+#endif
   100,
   0xff,
   snd_cal_handset_ring_vol
@@ -638,7 +642,11 @@ const snd_gen_voc_cal_type snd_cal_handset_midi_gains = {
   SND_GEN_MIDI,
   7,
   1,
+#ifdef FEATURE_VERSION_K212
+  VOC_CODEC_STEREO_HEADSET,
+#else
   VOC_CODEC_SPEAKER,
+#endif
   100,
   0xff,
   snd_cal_handset_midi_vol
@@ -648,7 +656,11 @@ const snd_gen_voc_cal_type snd_cal_handset_midi_gains = {
   SND_GEN_MIDI,
   7,
   1,
-  VOC_CODEC_ON_CHIP_0,
+#ifdef FEATURE_VERSION_K212
+  VOC_CODEC_STEREO_HEADSET,
+#else
+    VOC_CODEC_ON_CHIP_0,
+#endif
   21,
   0xff,
   snd_cal_handset_midi_vol
@@ -2283,7 +2295,11 @@ const snd_gen_voc_cal_type snd_cal_sp_voice_gains = {
   SND_GEN_VOC,
   7,
   1,
+#ifdef FEATURE_VERSION_K212
+  VOC_CODEC_STEREO_HEADSET,
+#else
   VOC_CODEC_SPEAKER,
+#endif
   100,
   0xff,
   snd_cal_sp_voice_vol
@@ -2343,7 +2359,11 @@ const snd_gen_voc_cal_type snd_cal_sp_ring_gains = {
   SND_GEN_VOC,
   7,
   1,
+#ifdef FEATURE_VERSION_K212
+  VOC_CODEC_STEREO_HEADSET,
+#else
   VOC_CODEC_SPEAKER,
+#endif
   100,
   0xff,
   snd_cal_handset_ring_vol
@@ -4511,7 +4531,7 @@ const snd_cal_control_type *snd_cal_control_data[SND_DEVICE_MAX]
   &snd_cal_aux_control,
   &snd_cal_aux_line_in_control
 
-    ,&snd_cal_speaker_fm_midi_control,
+  ,&snd_cal_speaker_fm_midi_control,
   &snd_cal_aux_line_in_control,
   &snd_cal_aux_line_in_control,
   &snd_cal_aux_line_in_control,

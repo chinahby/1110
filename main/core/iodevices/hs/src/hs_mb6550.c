@@ -1141,6 +1141,7 @@ boolean hs_poll_gpio( void )
     /* Check to see if the headset state has changed
     */
     headset_on = HS_HEADSET_ON();
+	
     if ( headset_on != hs_headset_on ) {
       headset_state_changed = TRUE;
     }

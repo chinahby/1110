@@ -4630,10 +4630,9 @@ static void StereoHeadsetOn(CCoreApp * pMe)
 #endif
 #endif   
 
-
-
 	devnotify.wParam = TRUE;
 	AEE_SEND_HEADSET_EVT(&devnotify);
+	
 } /* End HeadsetOn */
 
 
@@ -4734,6 +4733,7 @@ static void HeadsetOff(CCoreApp *pMe)
 
 	devnotify.wParam = FALSE;
 	AEE_SEND_HEADSET_EVT(&devnotify);
+
 } /*End HeadsetOff */
 
 

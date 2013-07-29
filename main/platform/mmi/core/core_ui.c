@@ -2123,6 +2123,38 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
     case AVK_HEADSET_DISCONNECT:
         if (EVT_KEY_PRESS == evt)
         {
+        	#ifdef FEATURE_VERSION_K212
+        	if(wParam == AVK_HEADSET_CONNECT)
+        	{	gpio_tlmm_config(GPIO_OUTPUT_10);
+				clk_busy_wait(30*1000);
+				gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
+				clk_busy_wait(30*1000);
+				snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	
+				snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);
+        	}
+			else if(wParam == AVK_HEADSET_DISCONNECT)
+			{
+				  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
+					
+				  clk_busy_wait(30*1000);
+					
+				  gpio_tlmm_config(GPIO_OUTPUT_10);
+				  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
+				  clk_busy_wait(1);
+				  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
+				  clk_busy_wait(5);
+				  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
+				  clk_busy_wait(1);
+				  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
+				  clk_busy_wait(1);
+				  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
+				  clk_busy_wait(1);
+				  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
+				  clk_busy_wait(1);
+				  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
+
+			}
+			#endif
             ISHELL_PostEventEx( AEE_GetShell(),
                                 EVTFLG_ASYNC,
                                 AEECLSID_CORE_APP,

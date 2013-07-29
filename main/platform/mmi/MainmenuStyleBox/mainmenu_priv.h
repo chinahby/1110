@@ -474,7 +474,7 @@ typedef struct _MainMenu
     #define ICON9_ANI_1    "fs:/image/mainmenu/application_focus.png"
 #endif
 #endif
-
+/*
 #if defined(FEATURE_VERSION_K212)
 	#define ICON1_ANI_2    "fs:/image/mainmenu/ICON_Camera_2.png"
     #define ICON2_ANI_2    "fs:/image/mainmenu/ICON_Contacts_2.png"
@@ -486,7 +486,7 @@ typedef struct _MainMenu
     #define ICON8_ANI_2    "fs:/image/mainmenu/ICON_Settings_2.png"
 	#define ICON9_ANI_2    "fs:/image/mainmenu/ICON_Surface_2.png"
 #endif
-
+*/
 #ifdef FEATURE_LCD_TOUCH_ENABLE
 	#define ICON_SELECT          "fs:/image/mainmenu/select.png"
 	#define ICON_SELECT_FOCUS    "fs:/image/mainmenu/select_focus.png"

@@ -730,11 +730,6 @@ static void OEMALERT_NOTIFIER_SetMask(IALERT_NOTIFIER *po,
        IANNUNCIATOR_Release(pMe->m_pIAnn);
        pMe->m_pIAnn= NULL;
    }
-#ifdef FEATURE_VERSION_K212
-   gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
-   snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	
-   snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);
-#endif
    FREE(pMe);
    pMe= NULL;
 }
@@ -855,29 +850,6 @@ int OEMALERT_New(IShell *pIShell, AEECLSID cls, void **ppif)
 
   CALLBACK_Init(&pNew->m_cbSysObj, OEM_FreeAlert, pNew);
   AEE_LinkSysObject(&pNew->m_cbSysObj);
-#ifdef FEATURE_VERSION_K212
-  snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	
-  snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);	
-			
-  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
-	
-  clk_busy_wait(30*1000);
-	
-  gpio_tlmm_config(GPIO_OUTPUT_10);
-  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
-  clk_busy_wait(1);
-  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
-  clk_busy_wait(5);
-  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
-  clk_busy_wait(1);
-  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
-  clk_busy_wait(1);
-  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
-  clk_busy_wait(1);
-  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
-  clk_busy_wait(1);
-  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
-#endif
   *ppif = pNew;
 
   return AEE_SUCCESS;

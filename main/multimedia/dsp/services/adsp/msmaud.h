@@ -1945,7 +1945,220 @@ Added Defines for Reset and Set DWA bit in Rx Filter Reg in ADIE.
 }
 
 #else /* Legacy mode */
+#ifdef FEATURE_VERSION_K212
+#if 1
+#define MSMAUD_ADIE_CODEC_MONO_HEADSET_CONFIG_SEQ                \
+{                                                                  \
+  /* Enable bandgap */                                                     \
+  /*0x83*/ADIE_REFERENCE_CONTROL1_R,           ADIE_REFERENCE_CONTROL1_INIT_M,          ADIE_REFERENCE_CONTROL1_INIT_V,                                                  0, \
+  /*0x84*/ADIE_REFERENCE_CONTROL2_R,           ADIE_REFERENCE_CONTROL2_INIT_M,          ADIE_REFERENCE_CONTROL2_INIT_V,                                               5000, \
+  /*0x9F*/ADIE_RX_PA_CONTROL_REGISTER7_R,      ADIE_RX_PA_CONTROL_REGISTER7_INIT_M,     ADIE_RX_PA_CONTROL7_HPH_LEFT_PA_GAIN_MINUS_58P5_LEGACY_MINUS_58P5_CAPLESS_DB_V,  0, \
+  /*0xA0*/ADIE_RX_PA_CONTROL_REGISTER8_R,      ADIE_RX_PA_CONTROL_REGISTER8_INIT_M,     ADIE_RX_PA_CONTROL8_HPH_RIGHT_PA_GAIN_MINUS_58P5_LEGACY_MINUS_58P5_CAPLESS_DB_V, 0, \
+  /* Configure Tx control registers */                                     \
+  /*0x88*/ADIE_CODEC_TX_CNTL_REGISTER1_R,      ADIE_CODEC_TX_CNTL_REGISTER1_INIT_M,     (ADIE_CODEC_TX_CNTL_REG1_TX_FE_ENA_V                                                \
+                                                                                 | ADIE_CODEC_TX_CNTL_REG1_TX_FE_GAIN_24_DB_V                                       \
+                                                                                 | ADIE_CODEC_TX_CNTL_REG1_TX_FE_MIC1_IN_SEL_ENA_V),                             0, \
+  /*0x89*/ADIE_CODEC_TX_CNTL_REGISTER2_R,      ADIE_CODEC_TX_CNTL_REGISTER2_INIT_M,     ADIE_CODEC_TX_CNTL_REGISTER2_INIT_V,                                             0, \
+  /*0x8B*/ADIE_CODEC_TX_ADC_REGISTER_R,        ADIE_CODEC_TX_ADC_REGISTER_INIT_M,       (ADIE_CODEC_TX_ADC_REF_ENA_V                                                        \
+                                                                                 | ADIE_CODEC_TX_ADC_DAC_REF_COMPENSATE_ENA_V                                       \
+                                                                                 | ADIE_CODEC_TX_ADC_OTA1_ENA_V                                                     \
+                                                                                 | ADIE_CODEC_TX_ADC_OTA2_ENA_V                                                     \
+                                                                                 | ADIE_CODEC_TX_ADC_COMPARATOR_ENA_V                                               \
+                                                                                 | ADIE_CODEC_TX_ADC_DEM_ENA_V                                                      \
+                                                                                 | ADIE_CODEC_TX_ADC_DEM_ERROR_DETECT_ENA_V),                                    0, \
+  /*0x8C*/ADIE_CODEC_TX_ADC_CNTL_REGISTER1_R,  ADIE_CODEC_TX_ADC_CNTL_REGISTER1_INIT_M, ADIE_CODEC_TX_ADC_CNTL_REG1_DAC_REF_1P6_VOLT_V,                                  0, \
+  /*0x8D*/ADIE_CODEC_TX_ADC_CNTL_REGISTER2_R,  ADIE_CODEC_TX_ADC_CNTL_REGISTER2_INIT_M, (ADIE_CODEC_TX_ADC_CNTL_REG2_COMPARATOR_THRESHOLD_356_MVOLT_V),                  0, \
+  /*0x8E*/ADIE_CODEC_TX_ADC_CNTL_REGISTER3_R,  ADIE_CODEC_TX_ADC_CNTL_REGISTER3_INIT_M, ADIE_CODEC_TX_ADC_CNTL_REG3_VOCM_REF_BUFFER_OUTPUT_0P90_VOLT_V,                  0, \
+  /* Configure AUX_PGA control registers */                                \
+  /*0x86*/ADIE_AUX_PGA_CONTROL1_R,             ADIE_AUX_PGA_CONTROL1_INIT_M,            ADIE_AUX_PGA_CONTROL1_INIT_V,                                                10000, \
+  /* TBD: Wakeup DSP and send PCM offset for XYZ mV then wait 10ms*/       \
+  /* Configure Rx filter control registers */                              \
+  /*0x91*/ADIE_RX_FILTER_CONTROL_REGISTER1_R,  ADIE_RX_FILTER_CONTROL_REGISTER1_INIT_M, (ADIE_RX_FILTER_CONTROL1_FILTER_ENA_V                                               \
+                                                                                 | ADIE_RX_FILTER_CONTROL1_FILTER_LEFT_CHAN_ENA_V                                   \
+                                                                                 | ADIE_RX_FILTER_CONTROL1_FILTER_CONFIG_1ST_ORDER_V                                \
+                                                                                 | ADIE_RX_FILTER_CONTROL1_DWA_TO_RX_FILTER_FALLING_EDGE_SYNC_CLK_V                 \
+                                                                                 | ADIE_RX_FILTER_CONTROL1_RX_DAC_REF_BUFFER_DECOUP_ENA_V),                      0, \
+  /*0x91*/ADIE_RX_FILTER_CONTROL_REGISTER1_R,  ADIE_RX_FILTER_CONTROL_REGISTER1_INIT_M, (ADIE_RX_FILTER_CONTROL1_FILTER_ENA_V                                               \
+                                                                                 | ADIE_RX_FILTER_CONTROL1_FILTER_LEFT_CHAN_ENA_V                                   \
+                                                                                 | ADIE_RX_FILTER_CONTROL1_FILTER_CONFIG_1ST_ORDER_V                                \
+                                                                                 | ADIE_RX_FILTER_CONTROL1_DWA_TO_RX_FILTER_FALLING_EDGE_SYNC_CLK_V                 \
+                                                                                 | ADIE_RX_FILTER_CONTROL1_BIT0_V                                                   \
+                                                                                 | ADIE_RX_FILTER_CONTROL1_RX_DAC_REF_BUFFER_DECOUP_ENA_V),                      0, \
+  /*0x91*/ADIE_RX_FILTER_CONTROL_REGISTER1_R,  ADIE_RX_FILTER_CONTROL_REGISTER1_INIT_M, (ADIE_RX_FILTER_CONTROL1_FILTER_ENA_V                                               \
+                                                                                 | ADIE_RX_FILTER_CONTROL1_FILTER_LEFT_CHAN_ENA_V                                   \
+                                                                                 | ADIE_RX_FILTER_CONTROL1_FILTER_CONFIG_1ST_ORDER_V                                \
+                                                                                 | ADIE_RX_FILTER_CONTROL1_DWA_TO_RX_FILTER_FALLING_EDGE_SYNC_CLK_V                 \
+                                                                                 | ADIE_RX_FILTER_CONTROL1_RX_DAC_REF_BUFFER_DECOUP_ENA_V),                      0, \
+  /*0x91*/ADIE_RX_FILTER_CONTROL_REGISTER1_R,  ADIE_RX_FILTER_CONTROL_REGISTER1_INIT_M, (ADIE_RX_FILTER_CONTROL1_FILTER_ENA_V                                               \
+                                                                                 | ADIE_RX_FILTER_CONTROL1_FILTER_LEFT_CHAN_ENA_V                                   \
+                                                                                 | ADIE_RX_FILTER_CONTROL1_FILTER_CONFIG_1ST_ORDER_V                                \
+                                                                                 | ADIE_RX_FILTER_CONTROL1_DWA_TO_RX_FILTER_FALLING_EDGE_SYNC_CLK_V                 \
+                                                                                 | ADIE_RX_FILTER_CONTROL1_BIT0_V                                                   \
+                                                                                 | ADIE_RX_FILTER_CONTROL1_RX_DAC_REF_BUFFER_DECOUP_ENA_V),                      0, \
+  /*0x92*/ADIE_RX_FILTER_CONTROL_REGISTER2_R,  ADIE_RX_FILTER_CONTROL_REGISTER2_INIT_M, ADIE_RX_FILTER_CONTROL_REGISTER2_INIT_V,                                         0, \
+  /*0x93*/ADIE_RX_FILTER_CONTROL_REGISTER3_R,  ADIE_RX_FILTER_CONTROL_REGISTER3_INIT_M, (ADIE_RX_FILTER_CONTROL3_CMFB_REF_BUFFER_BIAS_15_UA_V                               \
+                                                                                 | ADIE_RX_FILTER_CONTROL3_VICM_REF_BUFFER_BIAS_075_UA_V                            \
+                                                                                 | ADIE_RX_FILTER_CONTROL3_VOCM_REF_BUFFER_BIAS_075_UA_V),                       0, \
+  /*0x94*/ADIE_RX_FILTER_CONTROL_REGISTER4_R,  ADIE_RX_FILTER_CONTROL_REGISTER4_INIT_M, (ADIE_RX_FILTER_CONTROL4_DAC_REF_BUFFER_BIAS_105_UA_V                               \
+                                                                                 | ADIE_RX_FILTER_CONTROL4_OTA1_BIAS_005_UA_V                                       \
+                                                                                 | ADIE_RX_FILTER_CONTROL4_OTA2_BIAS_05_UA_V),                                   0, \
+  /* Configure Rx PA control registers */                                  \
+  /*0x98*/ADIE_RX_PA_ENABLE_REGISTER2_R,       ADIE_RX_PA_ENABLE_REGISTER2_INIT_M,      ADIE_RX_PA_ENABLE_REGISTER2_INIT_V,                                              0, \
+  /*0x9A*/ADIE_RX_PA_CONTROL_REGISTER2_R,      ADIE_RX_PA_CONTROL_REGISTER2_INIT_M,     ADIE_RX_PA_CONTROL_REGISTER2_INIT_V,                                             0, \
+  /*0x9C*/ADIE_RX_PA_CONTROL_REGISTER4_R,      ADIE_RX_PA_CONTROL_REGISTER4_INIT_M,     ADIE_RX_PA_CONTROL4_HPH_PA_OUTPUT_STAGE_BIAS_180_UA_LEGACY_0830_UA_CAPLESS_V,    0, \
+  /*0x9D*/ADIE_RX_PA_CONTROL_REGISTER5_R,      ADIE_RX_PA_CONTROL_REGISTER5_INIT_M,     ADIE_RX_PA_CONTROL5_HPH_PA_INPUT_BIAS_10P0_UA_V,                                 0, \
+  /*0x9E*/ADIE_RX_PA_CONTROL_REGISTER6_R,      ADIE_RX_PA_CONTROL_REGISTER6_INIT_M,     ADIE_RX_PA_CONTROL_REGISTER6_INIT_V,                                             0, \
+  /*0x9B*/ADIE_RX_PA_CONTROL_REGISTER3_R,      0xFF,                                    0x18,                                                                             0, \
+  /*0x97*/ADIE_RX_PA_ENABLE_REGISTER1_R,       0xFF,                                    ADIE_RX_PA_ENABLE_REGISTER1_INIT_V,                                               0, \
+  /*0x9B*/ADIE_RX_PA_CONTROL_REGISTER3_R,      0xFF,                                    0x38,                                                                            0, \
+  /*0x9B*/ADIE_RX_PA_CONTROL_REGISTER3_R,      0xFF,                                    0x18,                                                                             0, \
+  /*0x97*/ADIE_RX_PA_ENABLE_REGISTER1_R,       0xFF,                                    (ADIE_RX_PA_ENA_REG1_PA_BIAS_DISTRIBUTE_ENA_V                                       \
+                                                                                 | ADIE_RX_PA_ENA_REG1_HPH_LEFT_REF_BUFFER_ENA_V                                            \
+                                                                                 | ADIE_RX_PA_ENA_REG1_HPH_RIGHT_REF_BUFFER_ENA_V),                                      0, \
+  /*0x97*/ADIE_RX_PA_ENABLE_REGISTER1_R,       0xFF,                                    (ADIE_RX_PA_ENA_REG1_PA_BIAS_DISTRIBUTE_ENA_V                                       \
+                                                                                 | ADIE_RX_PA_ENA_REG1_HPH_LEFT_REF_BUFFER_ENA_V                                            \
+                                                                                 | ADIE_RX_PA_ENA_REG1_HPH_RIGHT_REF_BUFFER_ENA_V | 0x1),                                0, \
+  /* Turn on HPH L/R PA's */                                               \
+  /*0x97*/ADIE_RX_PA_ENABLE_REGISTER1_R,       0xFF,                                    (ADIE_RX_PA_ENA_REG1_PA_BIAS_DISTRIBUTE_ENA_V                                       \
+                                                                                 | ADIE_RX_PA_ENA_REG1_HPH_LEFT_REF_BUFFER_ENA_V                                            \
+                                                                                 | ADIE_RX_PA_ENA_REG1_HPH_LEFT_ENA_V                                                       \
+                                                                                 | ADIE_RX_PA_ENA_REG1_HPH_RIGHT_REF_BUFFER_ENA_V                                           \
+                                                                                 | ADIE_RX_PA_ENA_REG1_HPH_RIGHT_ENA_V | 0x1),                                           0, \
+  /*0x97*/ADIE_RX_PA_ENABLE_REGISTER1_R,       0xFF,                                    (ADIE_RX_PA_ENA_REG1_PA_BIAS_DISTRIBUTE_ENA_V                                       \
+                                                                                 | ADIE_RX_PA_ENA_REG1_HPH_LEFT_REF_BUFFER_ENA_V                                    \
+                                                                                 | ADIE_RX_PA_ENA_REG1_HPH_LEFT_ENA_V                                               \
+                                                                                 | ADIE_RX_PA_ENA_REG1_HPH_RIGHT_REF_BUFFER_ENA_V                                   \
+                                                                                 | ADIE_RX_PA_ENA_REG1_HPH_RIGHT_ENA_V),                                         0, \
+  /*0x9B*/ADIE_RX_PA_CONTROL_REGISTER3_R,      0xFF,                                    0x38,                                                                            0, \
+  /*0x99*/ADIE_RX_PA_CONTROL_REGISTER1_R,      ADIE_RX_PA_CONTROL_REGISTER1_INIT_M,     (ADIE_RX_PA_CONTROL1_RX_FILTER_TO_HPH_CONNECT_MONO_V                                \
+                                                                                 | ADIE_RX_PA_CONTROL1_HPH_PA_CONFIG_LEGACY_V),                                  0, \
+  /*0x9F*/ADIE_RX_PA_CONTROL_REGISTER7_R,      ADIE_RX_PA_CONTROL_REGISTER7_INIT_M,     ADIE_RX_PA_CONTROL7_HPH_LEFT_PA_GAIN_MINUS_34P5_LEGACY_MINUS_34P5_CAPLESS_DB_V,  0, \
+  /*0xA0*/ADIE_RX_PA_CONTROL_REGISTER8_R,      ADIE_RX_PA_CONTROL_REGISTER8_INIT_M,     ADIE_RX_PA_CONTROL8_HPH_RIGHT_PA_GAIN_MINUS_34P5_LEGACY_MINUS_34P5_CAPLESS_DB_V, 0, \
+  /*0x9F*/ADIE_RX_PA_CONTROL_REGISTER7_R,      ADIE_RX_PA_CONTROL_REGISTER7_INIT_M,     ADIE_RX_PA_CONTROL7_HPH_LEFT_PA_GAIN_MINUS_22P5_LEGACY_MINUS_22P5_CAPLESS_DB_V,  0, \
+  /*0xA0*/ADIE_RX_PA_CONTROL_REGISTER8_R,      ADIE_RX_PA_CONTROL_REGISTER8_INIT_M,     ADIE_RX_PA_CONTROL8_HPH_RIGHT_PA_GAIN_MINUS_22P5_LEGACY_MINUS_22P5_CAPLESS_DB_V, 0, \
+  /*0x9F*/ADIE_RX_PA_CONTROL_REGISTER7_R,      ADIE_RX_PA_CONTROL_REGISTER7_INIT_M,     ADIE_RX_PA_CONTROL7_HPH_LEFT_PA_GAIN_MINUS_16P5_LEGACY_MINUS_16P5_CAPLESS_DB_V,  0, \
+  /*0xA0*/ADIE_RX_PA_CONTROL_REGISTER8_R,      ADIE_RX_PA_CONTROL_REGISTER8_INIT_M,     ADIE_RX_PA_CONTROL8_HPH_RIGHT_PA_GAIN_MINUS_16P5_LEGACY_MINUS_16P5_CAPLESS_DB_V, 0, \
+  /*0x9F*/ADIE_RX_PA_CONTROL_REGISTER7_R,      ADIE_RX_PA_CONTROL_REGISTER7_INIT_M,     ADIE_RX_PA_CONTROL7_HPH_LEFT_PA_GAIN_MINUS_10P5_LEGACY_MINUS_10P5_CAPLESS_DB_V,  0, \
+  /*0xA0*/ADIE_RX_PA_CONTROL_REGISTER8_R,      ADIE_RX_PA_CONTROL_REGISTER8_INIT_M,     ADIE_RX_PA_CONTROL8_HPH_RIGHT_PA_GAIN_MINUS_10P5_LEGACY_MINUS_10P5_CAPLESS_DB_V, 0, \
+  /*0x9F*/ADIE_RX_PA_CONTROL_REGISTER7_R,      ADIE_RX_PA_CONTROL_REGISTER7_INIT_M,     ADIE_RX_PA_CONTROL7_HPH_LEFT_PA_GAIN_MINUS_04P5_LEGACY_MINUS_04P5_CAPLESS_DB_V,  0, \
+  /*0xA0*/ADIE_RX_PA_CONTROL_REGISTER8_R,      ADIE_RX_PA_CONTROL_REGISTER8_INIT_M,     ADIE_RX_PA_CONTROL8_HPH_RIGHT_PA_GAIN_MINUS_04P5_LEGACY_MINUS_04P5_CAPLESS_DB_V, 0, \
+  /*0x9F*/ADIE_RX_PA_CONTROL_REGISTER7_R,      ADIE_RX_PA_CONTROL_REGISTER7_INIT_M,     ADIE_RX_PA_CONTROL7_HPH_LEFT_PA_GAIN_NONE_LEGACY_PLUS_0P0_CAPLESS_DB_V,  0, \
+  /*0xA0*/ADIE_RX_PA_CONTROL_REGISTER8_R,      ADIE_RX_PA_CONTROL_REGISTER8_INIT_M,     ADIE_RX_PA_CONTROL8_HPH_RIGHT_PA_GAIN_NONE_LEGACY_PLUS_0P0_CAPLESS_DB_V, 0, \
+  /*0x83,     0xFF,   0x18,   0,*/ \
+  /*0x84,     0xFF,   0x00,   5000,*/ \
+  /*0x97,     0xFF,   0xD0,   0,*/ \
+  /*0x88,     0xFF,   0xC4,   0,*/ \
+  /*0x89,     0xFF,   0x34,   0,*/ \
+  /*0x8B,     0xFF,   0xFE,   0,*/ \
+  /*0x8C,     0xFF,   0x08,   0,*/ \
+  /*0x8D,     0xFF,   0x40,   0,*/ \
+  /*0x8E,     0xFF,   0x40,   0,*/ \
+  /*0x86,     0xFF,   0x08,   10000,*/ \
+  /*0x91,     0xFF,   0xD6,   0,*/ \
+  /*0x92,     0xFF,   0x00,   0,*/ \
+  /*0x93,     0xFF,   0xFC,   0,*/ \
+  /*0x94,     0xFF,   0xFC,   0,*/ \
+  /*0x98,     0xFF,   0x00,   0,*/ \
+  /*0x99,     0xFF,   0xC0,   0,*/ \
+  /*0x9A,     0xFF,   0x00,   0,*/ \
+  /*0x9B,     0xFF,   0x00,   0,*/ \
+  /*0x9C,     0xFF,   0xA0,   0,*/ \
+  /*0x9D,     0xFF,   0x40,   0,*/ \
+  /*0x9E,     0xFF,   0x00,   0,*/ \
+  /*0x9F,     0xFF,   0x0C,   0,*/ \
+  /*0xA0,     0xFF,   0x0C,   0,*/ \
+  /*0x97,     0xFF,   0xF8,   0,*/ \
+}
 
+#else
+#define MSMAUD_ADIE_CODEC_MONO_HEADSET_CONFIG_SEQ                  \
+{                                                                  \
+  /* Enable bandgap */                                                     \
+  /*0x83*/ADIE_REFERENCE_CONTROL1_R,           ADIE_REFERENCE_CONTROL1_INIT_M,          ADIE_REFERENCE_CONTROL1_INIT_V,                                                  0, \
+  /*0x84*/ADIE_REFERENCE_CONTROL2_R,           ADIE_REFERENCE_CONTROL2_INIT_M,          ADIE_REFERENCE_CONTROL2_INIT_V,                                               5000, \
+  /* Turn on bias current and reference buffer for hph L */                \
+  /*0x97*/ADIE_RX_PA_ENABLE_REGISTER1_R,       ADIE_RX_PA_ENABLE_REGISTER1_INIT_M,      (ADIE_RX_PA_ENA_REG1_PA_BIAS_DISTRIBUTE_ENA_V                                       \
+                                                                                 | ADIE_RX_PA_ENA_REG1_HPH_LEFT_REF_BUFFER_ENA_V),                                       0, \
+  /* Configure Tx control registers */                                     \
+  /*0x88*/ADIE_CODEC_TX_CNTL_REGISTER1_R,      ADIE_CODEC_TX_CNTL_REGISTER1_INIT_M,     (ADIE_CODEC_TX_CNTL_REG1_TX_FE_ENA_V                                                \
+                                                                                 | ADIE_CODEC_TX_CNTL_REG1_TX_FE_GAIN_24_DB_V                                       \
+                                                                                 | ADIE_CODEC_TX_CNTL_REG1_TX_FE_MIC1_IN_SEL_ENA_V),                             0, \
+  /*0x89*/ADIE_CODEC_TX_CNTL_REGISTER2_R,      ADIE_CODEC_TX_CNTL_REGISTER2_INIT_M,     ADIE_CODEC_TX_CNTL_REGISTER2_INIT_V,                                             0, \
+  /*0x8B*/ADIE_CODEC_TX_ADC_REGISTER_R,        ADIE_CODEC_TX_ADC_REGISTER_INIT_M,       (ADIE_CODEC_TX_ADC_REF_ENA_V                                                        \
+                                                                                 | ADIE_CODEC_TX_ADC_DAC_REF_COMPENSATE_ENA_V                                       \
+                                                                                 | ADIE_CODEC_TX_ADC_OTA1_ENA_V                                                     \
+                                                                                 | ADIE_CODEC_TX_ADC_OTA2_ENA_V                                                     \
+                                                                                 | ADIE_CODEC_TX_ADC_COMPARATOR_ENA_V                                               \
+                                                                                 | ADIE_CODEC_TX_ADC_DEM_ENA_V                                                      \
+                                                                                 | ADIE_CODEC_TX_ADC_DEM_ERROR_DETECT_ENA_V),                                    0, \
+  /*0x8C*/ADIE_CODEC_TX_ADC_CNTL_REGISTER1_R,  ADIE_CODEC_TX_ADC_CNTL_REGISTER1_INIT_M, ADIE_CODEC_TX_ADC_CNTL_REG1_DAC_REF_1P6_VOLT_V,                                  0, \
+  /*0x8D*/ADIE_CODEC_TX_ADC_CNTL_REGISTER2_R,  ADIE_CODEC_TX_ADC_CNTL_REGISTER2_INIT_M, (ADIE_CODEC_TX_ADC_CNTL_REG2_COMPARATOR_THRESHOLD_356_MVOLT_V),                  0, \
+  /*0x8E*/ADIE_CODEC_TX_ADC_CNTL_REGISTER3_R,  ADIE_CODEC_TX_ADC_CNTL_REGISTER3_INIT_M, ADIE_CODEC_TX_ADC_CNTL_REG3_VOCM_REF_BUFFER_OUTPUT_0P90_VOLT_V,                  0, \
+  /* Configure AUX_PGA control registers */                                \
+  /*0x86*/ADIE_AUX_PGA_CONTROL1_R,             ADIE_AUX_PGA_CONTROL1_INIT_M,            ADIE_AUX_PGA_CONTROL1_INIT_V,                                                10000, \
+  /* TBD: Wakeup DSP and send PCM offset for XYZ mV then wait 10ms*/       \
+  /* Configure Rx filter control registers */                              \
+  /*0x91*/ADIE_RX_FILTER_CONTROL_REGISTER1_R,  ADIE_RX_FILTER_CONTROL_REGISTER1_INIT_M, (ADIE_RX_FILTER_CONTROL1_FILTER_ENA_V                                               \
+                                                                                 | ADIE_RX_FILTER_CONTROL1_FILTER_LEFT_CHAN_ENA_V                                   \
+                                                                                 | ADIE_RX_FILTER_CONTROL1_FILTER_CONFIG_1ST_ORDER_V                                \
+                                                                                 | ADIE_RX_FILTER_CONTROL1_DWA_TO_RX_FILTER_FALLING_EDGE_SYNC_CLK_V                 \
+                                                                                 | ADIE_RX_FILTER_CONTROL1_BIT0_V                                                   \
+                                                                                 | ADIE_RX_FILTER_CONTROL1_RX_DAC_REF_BUFFER_DECOUP_ENA_V),                      0, \
+  /*0x92*/ADIE_RX_FILTER_CONTROL_REGISTER2_R,  ADIE_RX_FILTER_CONTROL_REGISTER2_INIT_M, ADIE_RX_FILTER_CONTROL_REGISTER2_INIT_V,                                         0, \
+  /*0x93*/ADIE_RX_FILTER_CONTROL_REGISTER3_R,  ADIE_RX_FILTER_CONTROL_REGISTER3_INIT_M, (ADIE_RX_FILTER_CONTROL3_CMFB_REF_BUFFER_BIAS_15_UA_V                               \
+                                                                                 | ADIE_RX_FILTER_CONTROL3_VICM_REF_BUFFER_BIAS_075_UA_V                            \
+                                                                                 | ADIE_RX_FILTER_CONTROL3_VOCM_REF_BUFFER_BIAS_075_UA_V),                       0, \
+  /*0x94*/ADIE_RX_FILTER_CONTROL_REGISTER4_R,  ADIE_RX_FILTER_CONTROL_REGISTER4_INIT_M, (ADIE_RX_FILTER_CONTROL4_DAC_REF_BUFFER_BIAS_105_UA_V                               \
+                                                                                 | ADIE_RX_FILTER_CONTROL4_OTA1_BIAS_005_UA_V                                       \
+                                                                                 | ADIE_RX_FILTER_CONTROL4_OTA2_BIAS_05_UA_V),                                   0, \
+  /* Configure Rx PA control registers */                                  \
+  /*0x98*/ADIE_RX_PA_ENABLE_REGISTER2_R,       ADIE_RX_PA_ENABLE_REGISTER2_INIT_M,      ADIE_RX_PA_ENABLE_REGISTER2_INIT_V,                                              0, \
+  /*0x9A*/ADIE_RX_PA_CONTROL_REGISTER2_R,      ADIE_RX_PA_CONTROL_REGISTER2_INIT_M,     ADIE_RX_PA_CONTROL_REGISTER2_INIT_V,                                             0, \
+  /*0x9B*/ADIE_RX_PA_CONTROL_REGISTER3_R,      ADIE_RX_PA_CONTROL_REGISTER3_INIT_M,     ADIE_RX_PA_CONTROL_REGISTER3_INIT_V,                                             0, \
+  /*0x9C*/ADIE_RX_PA_CONTROL_REGISTER4_R,      ADIE_RX_PA_CONTROL_REGISTER4_INIT_M,     ADIE_RX_PA_CONTROL4_HPH_PA_OUTPUT_STAGE_BIAS_180_UA_LEGACY_0830_UA_CAPLESS_V,    0, \
+  /*0x9D*/ADIE_RX_PA_CONTROL_REGISTER5_R,      ADIE_RX_PA_CONTROL_REGISTER5_INIT_M,     ADIE_RX_PA_CONTROL5_HPH_PA_INPUT_BIAS_10P0_UA_V,                                 0, \
+  /*0x9E*/ADIE_RX_PA_CONTROL_REGISTER6_R,      ADIE_RX_PA_CONTROL_REGISTER6_INIT_M,     ADIE_RX_PA_CONTROL_REGISTER6_INIT_V,                                             0, \
+  /*0x9F*/ADIE_RX_PA_CONTROL_REGISTER7_R,      ADIE_RX_PA_CONTROL_REGISTER7_INIT_M,     ADIE_RX_PA_CONTROL_REGISTER7_INIT_V,                                             0, \
+  /*0xA0*/ADIE_RX_PA_CONTROL_REGISTER8_R,      ADIE_RX_PA_CONTROL_REGISTER8_INIT_M,     ADIE_RX_PA_CONTROL_REGISTER8_INIT_V,                                             0, \
+  /* Turn on HPH L PA */                                                   \
+  /*0x97*/ADIE_RX_PA_ENABLE_REGISTER1_R,       ADIE_RX_PA_ENABLE_REGISTER1_INIT_M,      (ADIE_RX_PA_ENA_REG1_PA_BIAS_DISTRIBUTE_ENA_V                                       \
+                                                                                 | ADIE_RX_PA_ENA_REG1_HPH_LEFT_REF_BUFFER_ENA_V                                    \
+                                                                                 | ADIE_RX_PA_ENA_REG1_HPH_LEFT_ENA_V),                                          0, \
+  /*0x99*/ADIE_RX_PA_CONTROL_REGISTER1_R,      ADIE_RX_PA_CONTROL_REGISTER1_INIT_M,     (ADIE_RX_PA_CONTROL1_RX_FILTER_TO_HPH_CONNECT_MONO_V                                \
+                                                                                 | ADIE_RX_PA_CONTROL1_HPH_PA_CONFIG_LEGACY_V),                                  0, \
+  /*0x9F*/ADIE_RX_PA_CONTROL_REGISTER7_R,      ADIE_RX_PA_CONTROL_REGISTER7_INIT_M,     ADIE_RX_PA_CONTROL7_HPH_LEFT_PA_GAIN_MINUS_34P5_LEGACY_MINUS_34P5_CAPLESS_DB_V,  0, \
+  /*0x9F*/ADIE_RX_PA_CONTROL_REGISTER7_R,      ADIE_RX_PA_CONTROL_REGISTER7_INIT_M,     ADIE_RX_PA_CONTROL7_HPH_LEFT_PA_GAIN_MINUS_22P5_LEGACY_MINUS_22P5_CAPLESS_DB_V,  0, \
+  /*0x9F*/ADIE_RX_PA_CONTROL_REGISTER7_R,      ADIE_RX_PA_CONTROL_REGISTER7_INIT_M,     ADIE_RX_PA_CONTROL7_HPH_LEFT_PA_GAIN_MINUS_16P5_LEGACY_MINUS_16P5_CAPLESS_DB_V,  0, \
+  /*0x9F*/ADIE_RX_PA_CONTROL_REGISTER7_R,      ADIE_RX_PA_CONTROL_REGISTER7_INIT_M,     ADIE_RX_PA_CONTROL7_HPH_LEFT_PA_GAIN_MINUS_10P5_LEGACY_MINUS_10P5_CAPLESS_DB_V,  0, \
+  /*0x9F*/ADIE_RX_PA_CONTROL_REGISTER7_R,      ADIE_RX_PA_CONTROL_REGISTER7_INIT_M,     ADIE_RX_PA_CONTROL7_HPH_LEFT_PA_GAIN_MINUS_04P5_LEGACY_MINUS_04P5_CAPLESS_DB_V,  0, \
+  /*0x9F*/ADIE_RX_PA_CONTROL_REGISTER7_R,      ADIE_RX_PA_CONTROL_REGISTER7_INIT_M,     ADIE_RX_PA_CONTROL7_HPH_LEFT_PA_GAIN_NONE_LEGACY_PLUS_0P0_CAPLESS_DB_V,  0, \
+  /*0x83,     0xFF,   0x18,   0,*/ \
+  /*0x84,     0xFF,   0x00,   5000,*/ \
+  /*0x97,     0xFF,   0xC0,   0,*/ \
+  /*0x88,     0xFF,   0xC4,   0,*/ \
+  /*0x89,     0xFF,   0x34,   0,*/ \
+  /*0x8B,     0xFF,   0xFE,   0,*/ \
+  /*0x8C,     0xFF,   0x08,   0,*/ \
+  /*0x8D,     0xFF,   0x40,   0,*/ \
+  /*0x8E,     0xFF,   0x40,   0,*/ \
+  /*0x86,     0xFF,   0x08,   10000,*/ \
+  /*0x91,     0xFF,   0xD6,   0,*/ \
+  /*0x92,     0xFF,   0x00,   0,*/ \
+  /*0x93,     0xFF,   0xFC,   0,*/ \
+  /*0x94,     0xFF,   0xFC,   0,*/ \
+  /*0x98,     0xFF,   0x00,   0,*/ \
+  /*0x99,     0xFF,   0xC0,   0,*/ \
+  /*0x9A,     0xFF,   0x00,   0,*/ \
+  /*0x9B,     0xFF,   0x00,   0,*/ \
+  /*0x9C,     0xFF,   0xA0,   0,*/ \
+  /*0x9D,     0xFF,   0x40,   0,*/ \
+  /*0x9E,     0xFF,   0x00,   0,*/ \
+  /*0x9F,     0xFF,   0x0C,   0,*/ \
+  /*0xA0,     0xFF,   0x0C,   0,*/ \
+  /*0x97,     0xFF,   0xE0,   0,*/ \
+}
+#endif
+#else
 #define MSMAUD_ADIE_CODEC_MONO_HEADSET_CONFIG_SEQ                  \
 {                                                                  \
   /* Enable bandgap */                                                     \
@@ -2032,6 +2245,7 @@ Added Defines for Reset and Set DWA bit in Rx Filter Reg in ADIE.
   /*0xA0,     0xFF,   0x0C,   0,*/ \
   /*0x97,     0xFF,   0xE0,   0,*/ \
 }
+#endif
 
 #endif /* MSMAUD_GRND_REFERENCED_CAPLESS_MODE */
 
@@ -2136,7 +2350,94 @@ Added Defines for Reset and Set DWA bit in Rx Filter Reg in ADIE.
 }
 
 #else /* Legacy mode */
-
+#ifdef FEATURE_VERSION_K212
+#define MSMAUD_ADIE_CODEC_MONO_HEADSET_TTY_CONFIG_SEQ              \
+{                                                                  \
+  /* Enable bandgap */                                                     \
+  /*0x83*/ADIE_REFERENCE_CONTROL1_R,           ADIE_REFERENCE_CONTROL1_INIT_M,          ADIE_REFERENCE_CONTROL1_INIT_V,                                                  0, \
+  /*0x84*/ADIE_REFERENCE_CONTROL2_R,           ADIE_REFERENCE_CONTROL2_INIT_M,          ADIE_REFERENCE_CONTROL2_INIT_V,                                               5000, \
+  /* Turn on bias current and reference buffer for hph L */                \
+  /*0x97*/ADIE_RX_PA_ENABLE_REGISTER1_R,       ADIE_RX_PA_ENABLE_REGISTER1_INIT_M,      (ADIE_RX_PA_ENA_REG1_PA_BIAS_DISTRIBUTE_ENA_V                                       \
+                                                                                 | ADIE_RX_PA_ENA_REG1_HPH_LEFT_REF_BUFFER_ENA_V),                                       0, \
+  /* Configure Tx control registers */                                     \
+  /*0x88*/ADIE_CODEC_TX_CNTL_REGISTER1_R,      ADIE_CODEC_TX_CNTL_REGISTER1_INIT_M,     (ADIE_CODEC_TX_CNTL_REG1_TX_FE_ENA_V                                                \
+                                                                                 | ADIE_CODEC_TX_CNTL_REG1_TX_FE_GAIN_24_DB_V                                       \
+                                                                                 | ADIE_CODEC_TX_CNTL_REG1_TX_FE_MIC1_IN_SEL_ENA_V),                             0, \
+  /*0x89*/ADIE_CODEC_TX_CNTL_REGISTER2_R,      ADIE_CODEC_TX_CNTL_REGISTER2_INIT_M,     ADIE_CODEC_TX_CNTL_REGISTER2_INIT_V,                                             0, \
+  /*0x8B*/ADIE_CODEC_TX_ADC_REGISTER_R,        ADIE_CODEC_TX_ADC_REGISTER_INIT_M,       (ADIE_CODEC_TX_ADC_REF_ENA_V                                                        \
+                                                                                 | ADIE_CODEC_TX_ADC_DAC_REF_COMPENSATE_ENA_V                                       \
+                                                                                 | ADIE_CODEC_TX_ADC_OTA1_ENA_V                                                     \
+                                                                                 | ADIE_CODEC_TX_ADC_OTA2_ENA_V                                                     \
+                                                                                 | ADIE_CODEC_TX_ADC_COMPARATOR_ENA_V                                               \
+                                                                                 | ADIE_CODEC_TX_ADC_DEM_ENA_V                                                      \
+                                                                                 | ADIE_CODEC_TX_ADC_DEM_ERROR_DETECT_ENA_V),                                    0, \
+  /*0x8C*/ADIE_CODEC_TX_ADC_CNTL_REGISTER1_R,  ADIE_CODEC_TX_ADC_CNTL_REGISTER1_INIT_M, ADIE_CODEC_TX_ADC_CNTL_REG1_DAC_REF_1P6_VOLT_V,                                  0, \
+  /*0x8D*/ADIE_CODEC_TX_ADC_CNTL_REGISTER2_R,  ADIE_CODEC_TX_ADC_CNTL_REGISTER2_INIT_M, (ADIE_CODEC_TX_ADC_CNTL_REG2_COMPARATOR_THRESHOLD_356_MVOLT_V),                  0, \
+  /*0x8E*/ADIE_CODEC_TX_ADC_CNTL_REGISTER3_R,  ADIE_CODEC_TX_ADC_CNTL_REGISTER3_INIT_M, ADIE_CODEC_TX_ADC_CNTL_REG3_VOCM_REF_BUFFER_OUTPUT_0P90_VOLT_V,                  0, \
+  /* Configure AUX_PGA control registers */                                \
+  /*0x86*/ADIE_AUX_PGA_CONTROL1_R,             ADIE_AUX_PGA_CONTROL1_INIT_M,            ADIE_AUX_PGA_CONTROL1_INIT_V,                                                10000, \
+  /* TBD: Wakeup DSP and send PCM offset for XYZ mV then wait 10ms*/       \
+  /* Configure Rx filter control registers */                              \
+  /*0x91*/ADIE_RX_FILTER_CONTROL_REGISTER1_R,  ADIE_RX_FILTER_CONTROL_REGISTER1_INIT_M, (ADIE_RX_FILTER_CONTROL1_FILTER_ENA_V                                               \
+                                                                                 | ADIE_RX_FILTER_CONTROL1_FILTER_LEFT_CHAN_ENA_V                                   \
+                                                                                 | ADIE_RX_FILTER_CONTROL1_FILTER_CONFIG_1ST_ORDER_V                                \
+                                                                                 | ADIE_RX_FILTER_CONTROL1_DWA_TO_RX_FILTER_FALLING_EDGE_SYNC_CLK_V                 \
+                                                                                 | ADIE_RX_FILTER_CONTROL1_BIT0_V                                                   \
+                                                                                 | ADIE_RX_FILTER_CONTROL1_RX_DAC_REF_BUFFER_DECOUP_ENA_V),                      0, \
+  /*0x92*/ADIE_RX_FILTER_CONTROL_REGISTER2_R,  ADIE_RX_FILTER_CONTROL_REGISTER2_INIT_M, ADIE_RX_FILTER_CONTROL_REGISTER2_INIT_V,                                         0, \
+  /*0x93*/ADIE_RX_FILTER_CONTROL_REGISTER3_R,  ADIE_RX_FILTER_CONTROL_REGISTER3_INIT_M, (ADIE_RX_FILTER_CONTROL3_CMFB_REF_BUFFER_BIAS_15_UA_V                               \
+                                                                                 | ADIE_RX_FILTER_CONTROL3_VICM_REF_BUFFER_BIAS_075_UA_V                            \
+                                                                                 | ADIE_RX_FILTER_CONTROL3_VOCM_REF_BUFFER_BIAS_075_UA_V),                       0, \
+  /*0x94*/ADIE_RX_FILTER_CONTROL_REGISTER4_R,  ADIE_RX_FILTER_CONTROL_REGISTER4_INIT_M, (ADIE_RX_FILTER_CONTROL4_DAC_REF_BUFFER_BIAS_105_UA_V                               \
+                                                                                 | ADIE_RX_FILTER_CONTROL4_OTA1_BIAS_005_UA_V                                       \
+                                                                                 | ADIE_RX_FILTER_CONTROL4_OTA2_BIAS_05_UA_V),                                   0, \
+  /* Configure Rx PA control registers */                                  \
+  /*0x98*/ADIE_RX_PA_ENABLE_REGISTER2_R,       ADIE_RX_PA_ENABLE_REGISTER2_INIT_M,      ADIE_RX_PA_ENABLE_REGISTER2_INIT_V,                                              0, \
+  /*0x9A*/ADIE_RX_PA_CONTROL_REGISTER2_R,      ADIE_RX_PA_CONTROL_REGISTER2_INIT_M,     ADIE_RX_PA_CONTROL_REGISTER2_INIT_V,                                             0, \
+  /*0x9B*/ADIE_RX_PA_CONTROL_REGISTER3_R,      ADIE_RX_PA_CONTROL_REGISTER3_INIT_M,     ADIE_RX_PA_CONTROL_REGISTER3_INIT_V,                                             0, \
+  /*0x9C*/ADIE_RX_PA_CONTROL_REGISTER4_R,      ADIE_RX_PA_CONTROL_REGISTER4_INIT_M,     ADIE_RX_PA_CONTROL4_HPH_PA_OUTPUT_STAGE_BIAS_180_UA_LEGACY_0830_UA_CAPLESS_V,    0, \
+  /*0x9D*/ADIE_RX_PA_CONTROL_REGISTER5_R,      ADIE_RX_PA_CONTROL_REGISTER5_INIT_M,     ADIE_RX_PA_CONTROL5_HPH_PA_INPUT_BIAS_10P0_UA_V,                                 0, \
+  /*0x9E*/ADIE_RX_PA_CONTROL_REGISTER6_R,      ADIE_RX_PA_CONTROL_REGISTER6_INIT_M,     ADIE_RX_PA_CONTROL_REGISTER6_INIT_V,                                             0, \
+  /*0x9F*/ADIE_RX_PA_CONTROL_REGISTER7_R,      ADIE_RX_PA_CONTROL_REGISTER7_INIT_M,     ADIE_RX_PA_CONTROL_REGISTER7_INIT_V,                                             0, \
+  /*0xA0*/ADIE_RX_PA_CONTROL_REGISTER8_R,      ADIE_RX_PA_CONTROL_REGISTER8_INIT_M,     ADIE_RX_PA_CONTROL_REGISTER8_INIT_V,                                             0, \
+  /* Turn on HPH L PA */                                                   \
+  /*0x97*/ADIE_RX_PA_ENABLE_REGISTER1_R,       ADIE_RX_PA_ENABLE_REGISTER1_INIT_M,      (ADIE_RX_PA_ENA_REG1_PA_BIAS_DISTRIBUTE_ENA_V                                       \
+                                                                                 | ADIE_RX_PA_ENA_REG1_HPH_LEFT_REF_BUFFER_ENA_V                                    \
+                                                                                 | ADIE_RX_PA_ENA_REG1_HPH_LEFT_ENA_V),                                          0, \
+  /*0x99*/ADIE_RX_PA_CONTROL_REGISTER1_R,      ADIE_RX_PA_CONTROL_REGISTER1_INIT_M,     (ADIE_RX_PA_CONTROL1_RX_FILTER_TO_HPH_CONNECT_MONO_V                                \
+                                                                                 | ADIE_RX_PA_CONTROL1_HPH_PA_CONFIG_LEGACY_V),                                  0, \
+  /*0x9F*/ADIE_RX_PA_CONTROL_REGISTER7_R,      ADIE_RX_PA_CONTROL_REGISTER7_INIT_M,     ADIE_RX_PA_CONTROL7_HPH_LEFT_PA_GAIN_MINUS_34P5_LEGACY_MINUS_34P5_CAPLESS_DB_V,  0, \
+  /*0x9F*/ADIE_RX_PA_CONTROL_REGISTER7_R,      ADIE_RX_PA_CONTROL_REGISTER7_INIT_M,     ADIE_RX_PA_CONTROL7_HPH_LEFT_PA_GAIN_MINUS_22P5_LEGACY_MINUS_22P5_CAPLESS_DB_V,  0, \
+  /*0x9F*/ADIE_RX_PA_CONTROL_REGISTER7_R,      ADIE_RX_PA_CONTROL_REGISTER7_INIT_M,     ADIE_RX_PA_CONTROL7_HPH_LEFT_PA_GAIN_MINUS_16P5_LEGACY_MINUS_16P5_CAPLESS_DB_V,  0, \
+  /*0x9F*/ADIE_RX_PA_CONTROL_REGISTER7_R,      ADIE_RX_PA_CONTROL_REGISTER7_INIT_M,     ADIE_RX_PA_CONTROL7_HPH_LEFT_PA_GAIN_MINUS_10P5_LEGACY_MINUS_10P5_CAPLESS_DB_V,  0, \
+  /*0x9F*/ADIE_RX_PA_CONTROL_REGISTER7_R,      ADIE_RX_PA_CONTROL_REGISTER7_INIT_M,     ADIE_RX_PA_CONTROL7_HPH_LEFT_PA_GAIN_MINUS_04P5_LEGACY_MINUS_04P5_CAPLESS_DB_V,  0, \
+  /*0x9F*/ADIE_RX_PA_CONTROL_REGISTER7_R,      ADIE_RX_PA_CONTROL_REGISTER7_INIT_M,     ADIE_RX_PA_CONTROL7_HPH_LEFT_PA_GAIN_NONE_LEGACY_PLUS_0P0_CAPLESS_DB_V,  0, \
+  /*0x83,     0xFF,   0x18,   0,*/ \
+  /*0x84,     0xFF,   0x00,   5000,*/ \
+  /*0x97,     0xFF,   0xC0,   0,*/ \
+  /*0x88,     0xFF,   0xC4,   0,*/ \
+  /*0x89,     0xFF,   0x34,   0,*/ \
+  /*0x8B,     0xFF,   0xFE,   0,*/ \
+  /*0x8C,     0xFF,   0x08,   0,*/ \
+  /*0x8D,     0xFF,   0x40,   0,*/ \
+  /*0x8E,     0xFF,   0x40,   0,*/ \
+  /*0x86,     0xFF,   0x08,   10000,*/ \
+  /*0x91,     0xFF,   0xD6,   0,*/ \
+  /*0x92,     0xFF,   0x00,   0,*/ \
+  /*0x93,     0xFF,   0xFC,   0,*/ \
+  /*0x94,     0xFF,   0xFC,   0,*/ \
+  /*0x98,     0xFF,   0x00,   0,*/ \
+  /*0x99,     0xFF,   0xC0,   0,*/ \
+  /*0x9A,     0xFF,   0x00,   0,*/ \
+  /*0x9B,     0xFF,   0x00,   0,*/ \
+  /*0x9C,     0xFF,   0xA0,   0,*/ \
+  /*0x9D,     0xFF,   0x40,   0,*/ \
+  /*0x9E,     0xFF,   0x00,   0,*/ \
+  /*0x9F,     0xFF,   0x0C,   0,*/ \
+  /*0xA0,     0xFF,   0x0C,   0,*/ \
+  /*0x97,     0xFF,   0xE0,   0,*/ \
+}
+#else
 #define MSMAUD_ADIE_CODEC_MONO_HEADSET_TTY_CONFIG_SEQ              \
 {                                                                  \
   /* Enable bandgap */                                                     \
@@ -2223,6 +2524,7 @@ Added Defines for Reset and Set DWA bit in Rx Filter Reg in ADIE.
   /*0xA0,     0xFF,   0x0C,   0,*/ \
   /*0x97,     0xFF,   0xE0,   0,*/ \
 }
+#endif
 
 #endif /* MSMAUD_GRND_REFERENCED_CAPLESS_MODE */
 

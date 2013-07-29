@@ -403,7 +403,8 @@ typedef struct _CSettingMenu
 #define CONTROL_RECT_START_X    45  //闹钟设置界面的控件开始位置
 #elif defined(FEATURE_VERSION_X3)
 #define CONTROL_RECT_START_X    55  //闹钟设置界面的控件开始位置
-
+#elif defined(FEATURE_VERSION_K212)
+#define CONTROL_RECT_START_X    65  //闹钟设置界面的控件开始位置
 #else
 #define CONTROL_RECT_START_X    40  //闹钟设置界面的控件开始位置
 #endif

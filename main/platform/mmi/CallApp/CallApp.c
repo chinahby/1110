@@ -1098,7 +1098,6 @@ static void CallApp_FreeAppData(CCallApp *pMe)
 	}
 #endif
 #ifdef FEATURE_VERSION_K212
-	gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
 	snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	
 	snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);
 #endif

@@ -110,11 +110,10 @@ when         who            what, where, why
 #elif defined(FEATURE_DISP_240X320)
 #define TIMER_SCREEN_HEIGHT    38
 #define TIMER_SCREEN_WIDTH     62
-#define TIMER_IMAGE_WIDTH      138
-#define TIMER_SCREEN_XOFFSET   38
-#define TIMER_SCREEN_YOFFSET   36
+#define TIMER_IMAGE_WIDTH      180
+#define TIMER_SCREEN_XOFFSET   62
+#define TIMER_SCREEN_YOFFSET   56
 #define TIMER_HEIGHT_N         3
-
 #else
 #define TIMER_SCREEN_HEIGHT    38
 #define TIMER_SCREEN_WIDTH     60
@@ -405,11 +404,19 @@ static boolean InitAppTimer(CAppTimer *pme)
                             TIMER_SCREEN_WIDTH,
                             0);
 #else
+#ifdef FEATURE_VERSION_K212
         SETAEERECT( &rect, 
+                            (pme->cxScreen - TIMER_IMAGE_WIDTH)/2 + TIMER_SCREEN_XOFFSET+2,
+                            MENUITEM_HEIGHT*TIMER_HEIGHT_N +  TIMER_SCREEN_YOFFSET - 32,
+                            TIMER_SCREEN_WIDTH,
+                            0);
+#else
+		SETAEERECT( &rect, 
                             (pme->cxScreen - TIMER_IMAGE_WIDTH)/2 + TIMER_SCREEN_XOFFSET+2,
                             MENUITEM_HEIGHT*TIMER_HEIGHT_N +  TIMER_SCREEN_YOFFSET - 16,
                             TIMER_SCREEN_WIDTH,
                             0);
+#endif
 #endif
 
         //SETAEERECT( &rect, 0, (pme->cyScreen - pme->titleBarHeight) / 2 , pme->cxScreen, pme->titleBarHeight*2);

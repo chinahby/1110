@@ -183,29 +183,7 @@ int AEEMedia_New(IMedia * po, IShell * ps, AEECLSID cls)
    }
 #endif // FEATURE_ODM_UI
 #endif // FEATURE_ACM
-#ifdef FEATURE_VERSION_K212
-	snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	
-    snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);	
-			
-	gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
-	
-    clk_busy_wait(30*1000);
-	
-	gpio_tlmm_config(GPIO_OUTPUT_10);
-	gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
-	clk_busy_wait(1);
-	gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
-	clk_busy_wait(5);
-	gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
-	clk_busy_wait(1);
-	gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
-	clk_busy_wait(1);
-	gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
-	clk_busy_wait(1);
-	gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
-	clk_busy_wait(1);
-	gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
-#endif
+
    return SUCCESS;
 }
 
@@ -271,11 +249,7 @@ uint32 AEEMedia_Release(IMedia * po)
       return pme->m_nRefs;      
 
    return(0);
-#ifdef FEATURE_VERSION_K212
-   gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
-   snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);   
-   snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);
-#endif
+
 
 }
 

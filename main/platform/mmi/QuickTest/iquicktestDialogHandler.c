@@ -3294,32 +3294,7 @@ static boolean  QuickTest_CallHandler(CQuickTest *pMe,
 #endif
             quicktest_mic_receiver_Loopback(pMe);
             
-#ifdef FEATURE_VERSION_K212
-   //if(!HS_HEADSET_ON())
-   	{
-	    snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	
-	    snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);	
-				
-		gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
-		
-	    clk_busy_wait(30*1000);
-		
-		gpio_tlmm_config(GPIO_OUTPUT_10);
-		gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
-		clk_busy_wait(1);
-		gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
-		clk_busy_wait(5);
-		gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
-		clk_busy_wait(1);
-		gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
-		clk_busy_wait(1);
-		gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
-		clk_busy_wait(1);
-		gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
-		clk_busy_wait(1);
-		gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
-   	}
-#endif
+
             (void)ISHELL_PostEvent( pMe->m_pShell,
                                     AEECLSID_QUICKTEST,
                                     EVT_USER_REDRAW,
@@ -3340,6 +3315,10 @@ static boolean  QuickTest_CallHandler(CQuickTest *pMe,
 #endif
             {
                 STRTOWSTR("ECHO LOOP",string,sizeof(string));
+				#ifdef FEATURE_VERSION_K212
+				snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	
+	    		snd_set_device(SND_DEVICE_HEADSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);	
+				#endif
             }
             (void)IDISPLAY_DrawText(pMe->m_pDisplay,
                                     AEE_FONT_BOLD,

@@ -226,6 +226,12 @@
 	<String Id="1075" Name="IDS_CHARGER_FINISH">
 		<Text>Chargering fnish!</Text>
 	</String>
+	<String Id="1076" Name="IDS_STR_AM">
+		<Text>AM</Text>
+	</String>
+	<String Id="1077" Name="IDS_STR_PM">
+		<Text>PM</Text>
+	</String>
 	<String Id="1080" Name="IDS_MAIN_MENU_TORCHON">
 		<Text>Torch On</Text>
 	</String>
@@ -288,7 +294,7 @@
 	</String>
 	<String Id="1116" Name="IDS_20_MIN">
 		<Text>20 MIN</Text>
-	</String>		
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_UIMERR" Focus="7001">
@@ -365,7 +371,6 @@
 				<Items/></Text>
 		</Controls>
 	</Dialog>
-	
 	<Dialog Id="6018" Name="IDD_RSSI_INFO" Focus="0">
 		<Controls/>
 		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>

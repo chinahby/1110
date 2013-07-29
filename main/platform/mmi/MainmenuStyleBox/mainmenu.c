@@ -2404,6 +2404,7 @@ static int StartApplet(MainMenu *pMe, int i)
 
 #else
 #ifdef	FEATURE_VERSION_K212
+static boolean Main_loadover = FALSE;
 #define PARAM_NOT_REF(x)
 /*==============================================================================
 
@@ -2466,7 +2467,7 @@ static int SetBrowserArr_Main(MainMenu *pMe, char *purl);
 
 static void DrawMatrix(MainMenu *pMe);
 
-static void DrawFocusIcon(MainMenu *pMe);
+//static void DrawFocusIcon(MainMenu *pMe);
 
 static void MoveCursorTo(MainMenu *pMe, int row, int column);
 
@@ -2487,6 +2488,7 @@ void MainMenu_ShowDialog(MainMenu  *pMe,  uint16 dlgResId);
 static boolean  gbMainmenuLock = FALSE;
 
 static void Main_keypadtimer(void *pUser);
+static void Main_loadtimer(void *pUser);
 
 
 // MAINST_MAIN 状态处理函数
@@ -2529,6 +2531,7 @@ static char* ICON_ANI_1[] =
     ICON12_ANI_1,
 };
 
+/*
 static char* ICON_ANI_2[] =
 {
 	ICON1_ANI_2,
@@ -2541,6 +2544,7 @@ static char* ICON_ANI_2[] =
 	ICON8_ANI_2,
 	ICON9_ANI_2,
 };
+*/
 
 
 static char* MUSIC_PATH[] =
@@ -2796,13 +2800,16 @@ static int MainMenu_New( IShell *ps, IModule *pIModule, IMainMenu **ppObj)
 ==============================================================================*/
 static int CMainMenu_InitAppData(MainMenu *pMe)
 {
+	int i = 0;
+	int j = 0;
     if (NULL == pMe)
     {
         return EFAILED;
     }
-	
+	MSG_FATAL("CMainMenu_InitAppData.............",0,0,0);
 	pMe->m_nRow        = 1;
     pMe->m_nColumn     = 1;		
+	Main_loadover = FALSE;
     
     // 接口创建及相关初始化
     if (ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_CONFIG,
@@ -2831,7 +2838,7 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
 
 	pMe->m_IconTitle[0]     = IDS_MAIN_MENU_CAMERA;
     pMe->m_IconTitle[1]     = IDS_MAIN_MENU_CONTACTS;
-    pMe->m_IconTitle[2]     = IDS_MAIN_MENU_MEDIAGALLERY; 
+    pMe->m_IconTitle[2]     = IDS_MAIN_MENU_TOOLS; 
     pMe->m_IconTitle[3]     = IDS_MAIN_MENU_MESSAGES;
     pMe->m_IconTitle[4]     = IDS_MAIN_MENU_MULTIMEDIA;
     pMe->m_IconTitle[5]     = IDS_MAIN_MENU_USER_PROFILE;
@@ -2841,7 +2848,30 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_IconTitle[9]     = IDS_MAIN_MENU_GAMES;
     pMe->m_IconTitle[10]    = IDS_MAIN_MENU_SCHEDULER;
     pMe->m_IconTitle[11]    = IDS_MAIN_MENU_CALCULATOR;
+	
+	pMe->m_pImageBg = ISHELL_LoadImage(pMe->m_pShell,ICON_ANI_BG);
+	
+	pMe->m_pImageIcon[0] = ISHELL_LoadImage(pMe->m_pShell,
+                                                    ICON_ANI_1[0]);
+	pMe->m_pImageIcon[1] = ISHELL_LoadImage(pMe->m_pShell,
+                                                    ICON_ANI_1[1]);
+	pMe->m_pImageIcon[2] = ISHELL_LoadImage(pMe->m_pShell,
+                                                    ICON_ANI_1[2]);
+	pMe->m_pImageIcon[3] = ISHELL_LoadImage(pMe->m_pShell,
+                                                    ICON_ANI_1[3]);
+	pMe->m_pImageIcon[9] = ISHELL_LoadImage(pMe->m_pShell,
+                                                    ICON_ANI_1[9]);
+	pMe->m_pImageIcon[10] = ISHELL_LoadImage(pMe->m_pShell,
+                                                    ICON_ANI_1[10]);
+	
+	pMe->m_pImageSelectk212[pMe->m_nRow] = ISHELL_LoadImage(pMe->m_pShell,
+                                                    ICON_ANI[pMe->m_nRow]);
+	//pMe->m_pImageSelectk212 = ISHELL_LoadImage(pMe->m_pShell, ICON_ANI[pMe->m_nRow]);
 
+	pMe->m_pImageSelectkbar = ISHELL_LoadImage(pMe->m_pShell, ICON_ANI_BAR);
+
+	pMe->m_pAnimate = ISHELL_LoadImage(pMe->m_pShell, ICON12_ANI_1);
+	MSG_FATAL("CMainMenu_InitAppData.............over.....",0,0,0);
     return SUCCESS;
 }
 
@@ -2892,45 +2922,45 @@ static void CMainMenu_FreeAppData(MainMenu *pMe)
         pMe->m_pBacklight=NULL;
     }
     //释放图片资源
+    Main_loadover = FALSE;
     {
-        int i;
-        int j;
-        if (pMe->m_pImageBg !=NULL)
-        {
-            (void) IIMAGE_Release(pMe->m_pImageBg);
-            pMe->m_pImageBg = NULL;
-        }
-        
-        for(i=0;i<MAX_MATRIX_ITEMS;i++)
-        {
-            if(pMe->m_pImageIcon[i] != NULL)
-            {
-                (void)IIMAGE_Release(pMe->m_pImageIcon[i]);
-                pMe->m_pImageIcon[i] = NULL;
-            }
-        } 
-		
-
-        if(pMe->m_pAnimate != NULL)
-        {
-            (void)IIMAGE_Release(pMe->m_pAnimate);
-            pMe->m_pAnimate = NULL;
-        }
-		#ifdef FEATURE_VERSION_K212
-		for(j=0;j<9;j++)
-        {
-			if(pMe->m_pImageSelectk212[j] != NULL)
-			{
-				(void)IIMAGE_Release(pMe->m_pImageSelectk212[j]);
-				pMe->m_pImageSelectk212[j] = NULL;
-			}
-		}
-		if(pMe->m_pImageSelectkbar != NULL)
-		{
-			(void)IIMAGE_Release(pMe->m_pImageSelectkbar);
-			pMe->m_pImageSelectkbar = NULL;
-		}
-		#endif
+         int i;
+         int j;
+         if (pMe->m_pImageBg !=NULL)
+         {
+             (void) IIMAGE_Release(pMe->m_pImageBg);
+             pMe->m_pImageBg = NULL;
+         }
+ 
+         for(i=0;i<MAX_MATRIX_ITEMS;i++)
+         {
+             if(pMe->m_pImageIcon[i] != NULL)
+             {
+                 (void)IIMAGE_Release(pMe->m_pImageIcon[i]);
+                 pMe->m_pImageIcon[i] = NULL;
+             }
+         } 
+ 
+ 		for(j=0;j<9;j++)
+         {
+             if(pMe->m_pImageSelectk212[j] != NULL)
+             {
+                 (void)IIMAGE_Release(pMe->m_pImageSelectk212[j]);
+                 pMe->m_pImageSelectk212[j] = NULL;
+             }
+         } 
+ 
+ 		if(pMe->m_pImageSelectkbar!=NULL)
+ 		{
+ 			(void)IIMAGE_Release(pMe->m_pImageSelectkbar);
+             pMe->m_pImageSelectkbar = NULL;
+ 		}
+         
+         if(pMe->m_pAnimate != NULL)
+         {
+             (void)IIMAGE_Release(pMe->m_pAnimate);
+             pMe->m_pAnimate = NULL;
+         }
     }  
 }
 
@@ -3419,10 +3449,10 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
     {
         case EVT_DIALOG_INIT:			
             IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
+			MSG_FATAL("MainMenu_IconMenuHandler.........init....",0,0,0);
             return TRUE;
 
         case EVT_DIALOG_START:			
-            pMe->m_pImageBg = ISHELL_LoadImage(pMe->m_pShell,ICON_ANI_BG);
 			AEE_CancelTimer(Main_keypadtimer,pMe);
 			AEE_SetTimer(5*1000,Main_keypadtimer,pMe);
             (void) ISHELL_PostEvent( pMe->m_pShell,
@@ -3430,56 +3460,23 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
                                      EVT_USER_REDRAW,
                                      0,
                                      0);
+			MSG_FATAL("MainMenu_IconMenuHandler.........EVT_DIALOG_START....",0,0,0);
             return TRUE;
-
 
         case EVT_USER_REDRAW:
             // 初始整个背景及全部初始图标
             {
-            DrawMatrix(pMe);
-            
-            return TRUE;
+            	
+            	MSG_FATAL("MainMenu_IconMenuHandler.........EVT_USER_REDRAW....",0,0,0);
+            	DrawMatrix(pMe);
+				MSG_FATAL("MainMenu_IconMenuHandler.........EVT_USER_REDRAW..over..",0,0,0);
+				//AEE_CancelTimer(Main_loadtimer,pMe);
+				//AEE_SetTimer(100,Main_loadtimer,pMe);
+            	return TRUE;
             }
             
         case EVT_DIALOG_END:
             {
-                int i;
-                int j;
-                if (pMe->m_pImageBg !=NULL)
-                {
-                    (void) IIMAGE_Release(pMe->m_pImageBg);
-                    pMe->m_pImageBg = NULL;
-                }
-
-                for(i=0;i<MAX_MATRIX_ITEMS;i++)
-                {
-                    if(pMe->m_pImageIcon[i] != NULL)
-                    {
-                        (void)IIMAGE_Release(pMe->m_pImageIcon[i]);
-                        pMe->m_pImageIcon[i] = NULL;
-                    }
-                } 
-
-				for(j=0;j<9;j++)
-                {
-                    if(pMe->m_pImageSelectk212[j] != NULL)
-                    {
-                        (void)IIMAGE_Release(pMe->m_pImageSelectk212[j]);
-                        pMe->m_pImageSelectk212[j] = NULL;
-                    }
-                } 
-
-				if(pMe->m_pImageSelectkbar!=NULL)
-				{
-					(void)IIMAGE_Release(pMe->m_pImageSelectkbar);
-                    pMe->m_pImageSelectkbar = NULL;
-				}
-                
-                if(pMe->m_pAnimate != NULL)
-                {
-                    (void)IIMAGE_Release(pMe->m_pAnimate);
-                    pMe->m_pAnimate = NULL;
-                }
                 ISHELL_CancelTimer(pMe->m_pShell, NULL, (void**)pMe);
             }
             return TRUE;
@@ -3541,6 +3538,7 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 
             return TRUE;
         case EVT_KEY:
+			
             //ISHELL_CancelTimer(pMe->m_pShell, NULL, (void**)pMe);
             switch( wParam)
             {
@@ -3597,19 +3595,6 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
                        StartApplet(pMe, pMe->m_IconTitle[pMe->m_nRow]);
                     }
                     return TRUE;
-                    
-                case AVK_1:
-                case AVK_2:
-                case AVK_3:
-                case AVK_4:
-                case AVK_5:
-                case AVK_6:
-                case AVK_7:
-                case AVK_8:
-                case AVK_9:
-                    StartApplet(pMe, pMe->m_IconTitle[pMe->m_nRow]);
-                    return TRUE;
-                    
                 case AVK_STAR:
                     if(gbMainmenuLock)
                     {
@@ -3621,15 +3606,6 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
                      StartApplet(pMe, pMe->m_IconTitle[9]);
                     }
                     return TRUE;
-
-                case AVK_0:
-                    StartApplet(pMe, pMe->m_IconTitle[10]);
-                    return TRUE;
-                    
-                case AVK_POUND:
-                    StartApplet(pMe, pMe->m_IconTitle[11]);
-                    return TRUE;
-
                 default:
                     break;
             }
@@ -3646,6 +3622,30 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 static void Main_keypadtimer(void *pUser)
 {
     gbMainmenuLock =FALSE;
+}
+static void Main_loadtimer(void *pUser)
+{
+	MainMenu	*pMe = (MainMenu *)pUser;
+	int i = 0;
+	int j = 0;
+	for (i = 0; i < MAX_MATRIX_ITEMS; i ++)
+    {
+        if (pMe->m_pImageIcon[i] == NULL)
+        {
+            pMe->m_pImageIcon[i] = ISHELL_LoadImage(pMe->m_pShell,
+                                                    ICON_ANI_1[i]);
+        }
+    }  
+	for(j=0;j<9;j++)
+	{
+		if (pMe->m_pImageSelectk212[j] == NULL)
+        {
+            pMe->m_pImageSelectk212[j] = ISHELL_LoadImage(pMe->m_pShell,
+                                                    ICON_ANI[j]);
+        }
+	}
+	Main_loadover = TRUE;
+	
 }
 
 /*=============================================================================
@@ -3707,8 +3707,7 @@ DESCRIPTION: // 初始整个背景及全部初始图标
 =============================================================================*/
 static void DrawMatrix(MainMenu *pMe)
 {
-    int i = 0;
-	int j = 0;
+    
 	BottomBar_e_Type    eBBarType = BTBAR_NONE;
     
     if (NULL == pMe)
@@ -3720,28 +3719,7 @@ static void DrawMatrix(MainMenu *pMe)
     //draw bg image
     MainMenu_DrawBackGround(pMe, &pMe->m_rc);
 
-    for (i = 0; i < MAX_MATRIX_ITEMS; i ++)
-    {
-        if (pMe->m_pImageIcon[i] == NULL)
-        {
-            pMe->m_pImageIcon[i] = ISHELL_LoadImage(pMe->m_pShell,
-                                                    ICON_ANI_1[i]);
-        }
-    }  
-	for(j=0;j<9;j++)
-	{
-		if (pMe->m_pImageSelectk212[j] == NULL)
-        {
-            pMe->m_pImageSelectk212[j] = ISHELL_LoadImage(pMe->m_pShell,
-                                                    ICON_ANI[j]);
-        }
-	}
-	
-	//pMe->m_pImageSelectk212 = ISHELL_LoadImage(pMe->m_pShell, ICON_ANI[pMe->m_nRow]);
-
-	pMe->m_pImageSelectkbar = ISHELL_LoadImage(pMe->m_pShell, ICON_ANI_BAR);
-
-	pMe->m_pAnimate = ISHELL_LoadImage(pMe->m_pShell, ICON12_ANI_1);
+    
 
 
 	if(pMe->m_pAnimate != NULL)
@@ -3838,11 +3816,11 @@ COMMENTS:
 
 
 =============================================================================*/
-static void DrawFocusIcon(MainMenu *pMe)
-{
+//static void DrawFocusIcon(MainMenu *pMe)
+//{
         
-	    IDISPLAY_UpdateEx(pMe->m_pDisplay, TRUE);
-}
+//	    IDISPLAY_UpdateEx(pMe->m_pDisplay, TRUE);
+//}
 
 /*=============================================================================
 FUNCTION:  MoveCursorTo
@@ -3902,6 +3880,26 @@ static void MoveCursorTo(MainMenu *pMe, int row, int column)
 	}
 	else if((pMe->m_nRow>=4) && (pMe->m_nRow<8))
 	{
+		if (pMe->m_pImageIcon[4] == NULL)
+        {
+            pMe->m_pImageIcon[4] = ISHELL_LoadImage(pMe->m_pShell,
+                                                    ICON_ANI_1[4]);
+        }
+		if (pMe->m_pImageIcon[5] == NULL)
+        {
+            pMe->m_pImageIcon[5] = ISHELL_LoadImage(pMe->m_pShell,
+                                                    ICON_ANI_1[5]);
+        }
+		if (pMe->m_pImageIcon[6] == NULL)
+        {
+            pMe->m_pImageIcon[6] = ISHELL_LoadImage(pMe->m_pShell,
+                                                    ICON_ANI_1[6]);
+        }
+		if (pMe->m_pImageIcon[7] == NULL)
+        {
+            pMe->m_pImageIcon[7] = ISHELL_LoadImage(pMe->m_pShell,
+                                                    ICON_ANI_1[7]);
+        }
 		IIMAGE_Draw(pMe->m_pImageIcon[4],
                         pMe->m_Icondefault_Pt[3].x,
                         pMe->m_Icondefault_Pt[3].y);
@@ -3917,6 +3915,27 @@ static void MoveCursorTo(MainMenu *pMe, int row, int column)
 	}
 	else
 	{
+		
+		if (pMe->m_pImageIcon[5] == NULL)
+        {
+            pMe->m_pImageIcon[5] = ISHELL_LoadImage(pMe->m_pShell,
+                                                    ICON_ANI_1[5]);
+        }
+		if (pMe->m_pImageIcon[6] == NULL)
+        {
+            pMe->m_pImageIcon[6] = ISHELL_LoadImage(pMe->m_pShell,
+                                                    ICON_ANI_1[6]);
+        }
+		if (pMe->m_pImageIcon[7] == NULL)
+        {
+            pMe->m_pImageIcon[7] = ISHELL_LoadImage(pMe->m_pShell,
+                                                    ICON_ANI_1[7]);
+        }
+		if (pMe->m_pImageIcon[8] == NULL)
+        {
+            pMe->m_pImageIcon[8] = ISHELL_LoadImage(pMe->m_pShell,
+                                                    ICON_ANI_1[8]);
+        }
 		IIMAGE_Draw(pMe->m_pImageIcon[5],
                         pMe->m_Icondefault_Pt[3].x,
                         pMe->m_Icondefault_Pt[3].y);
@@ -3939,8 +3958,14 @@ static void MoveCursorTo(MainMenu *pMe, int row, int column)
                         pMe->m_Icondefault_Pt[2].x,
                         pMe->m_Icondefault_Pt[2].y);
 	
+	if(pMe->m_pImageSelectk212[pMe->m_nRow] ==NULL)
+	{
+			pMe->m_pImageSelectk212[pMe->m_nRow] = ISHELL_LoadImage(pMe->m_pShell,
+                                                    ICON_ANI[pMe->m_nRow]);
+	}
 	if(pMe->m_pImageSelectk212[pMe->m_nRow] != NULL)
 	{
+		
 		IIMAGE_Draw(pMe->m_pImageSelectk212[pMe->m_nRow],
                         pMe->m_Icondefault_Pt[0].x,
                         pMe->m_Icondefault_Pt[0].y);
@@ -5808,10 +5833,10 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
             // 初始整个背景及全部初始图标
            // ERR("EVT_USER_REDRAW:::::::::::1111111111",0,0,0);
             {
-            DrawMatrix(pMe);
-            // 绘制聚焦过程动画
-            MoveCursorTo(pMe, pMe->m_nRow, pMe->m_nColumn);
-            return TRUE;
+            	DrawMatrix(pMe);
+            	// 绘制聚焦过程动画
+            	MoveCursorTo(pMe, pMe->m_nRow, pMe->m_nColumn);
+            	return TRUE;
             }
             
         case EVT_DIALOG_END:
@@ -6064,6 +6089,8 @@ static void Main_keypadtimer(void *pUser)
 {
     gbMainmenuLock =FALSE;
 }
+
+
 
 /*=============================================================================
 FUNCTION:  CalculateScreenParameters

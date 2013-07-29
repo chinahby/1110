@@ -40,6 +40,9 @@
 	<String Id="1022" Name="IDS_APPLICATION_FMRADIO">
 		<Text>收音机</Text>
 	</String>
+	<String Id="1023" Name="IDS_APPLICATION_MUTIMED">
+		<Text>文件管理器</Text>
+	</String>
 	<String Id="1024" Name="IDS_APPLICATION_BROWSER">
 		<Text>浏览器</Text>
 	</String>

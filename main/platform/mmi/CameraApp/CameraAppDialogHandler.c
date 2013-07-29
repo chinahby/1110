@@ -265,7 +265,7 @@ typedef struct
 #ifdef FEATURE_CAMERA_MULTI_SENSOR
 static const CCameraSize g_CameraFrontSizeCFG[] = 
 {
-#ifdef FEATURE_VERSION_X3
+#if defined(FEATURE_VERSION_X3)||defined(FEATURE_VERSION_K212)
     {240,320,L"240*320"}, // VGA
     {324,432,L"480*640"}, // VGA
     {0,0,NULL}
@@ -278,7 +278,7 @@ static const CCameraSize g_CameraFrontSizeCFG[] =
 
 static const CCameraSize g_CameraBackSizeCFG[] = 
 {
-#ifdef FEATURE_VERSION_X3
+#if defined(FEATURE_VERSION_X3)||defined(FEATURE_VERSION_K212)
     {240,320,L"240*320"}, // VGA
     {324,432,L"480*640"}, // VGA
     {0,0,NULL}
@@ -321,10 +321,15 @@ static const CCameraSize g_CameraSizeCFG[] =
 #endif    
 #endif
 #elif defined(FEATURE_DISP_240X320)
+#if defined(FEATURE_VERSION_K212)
+		{240,320,L"240*320"}, // VGA
+		{324,432,L"480*640"}, // VGA
+#else
     //{128,160,L"128*160"}, // FULL Screen
     //{176,220,L"176*220"}, // QCIF
     {480,640,L"480*640"}, // VGA 
     {600,800,L"600*800"}, // VGA
+#endif
 #elif defined(FEATURE_DISP_320X240)
     //{128,160,L"128*160"}, // FULL Screen
     //{176,220,L"176*220"}, // QCIF
@@ -389,10 +394,15 @@ static const CCameraSize g_CameraSizeCFG_10[] =
 #endif
 #endif     
 #elif defined(FEATURE_DISP_240X320)
+#if defined(FEATURE_VERSION_K212)
+			{240,320,L"240*320"}, // VGA
+			{324,432,L"480*640"}, // VGA
+#else
     //{128,160,L"128*160"}, // FULL Screen
     //{176,220,L"176*220"}, // QCIF
     {480,640,L"480*640"}, // VGA 
     {600,800,L"600*800"}, // VGA  
+#endif
 #elif defined(FEATURE_DISP_320X240)
     //{128,160,L"128*160"}, // FULL Screen
     //{176,220,L"176*220"}, // QCIF
@@ -4303,7 +4313,7 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
 	        break;
 	}
 
-#ifdef FEATURE_VERSION_X3 
+#if defined(FEATURE_VERSION_X3)||defined(FEATURE_VERSION_K212) 
 	// size cfgID
 	(void)ICONFIG_GetItem(pMe->m_pConfig,
                           CFGI_CAMERA_SIZE,

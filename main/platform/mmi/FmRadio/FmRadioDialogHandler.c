@@ -1189,7 +1189,7 @@ __handleKeyEvent_input_channel_done__:
 		case AVK_DOWN:
 		case AVK_I:
 		case AVK_O:
-	#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_LM126C)
+	#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_LM126C)||defined(FEATURE_VERSION_K212)
 		case AVK_STAR:
 		case AVK_POUND:
 	#endif
@@ -1203,7 +1203,7 @@ __handleKeyEvent_input_channel_done__:
 			{
 #if defined( FEATURE_FMRADIO_NO_MODE_SELECT) 
                 #if (defined(FEATURE_VERSION_1110W516)||defined( FEATURE_VERSION_W317A)||defined( FEATURE_VERSION_C337) || defined(FEATURE_VERSION_C316)||defined( FEATURE_VERSION_M74)||defined( FEATURE_VERSION_C310))\
-					 ||defined(FEATURE_ADD_VOLUP_VOLDN)||defined(FEATURE_VERSION_LM126C)||defined(FEATURE_FM_PAUSE)
+					 ||defined(FEATURE_ADD_VOLUP_VOLDN)||defined(FEATURE_VERSION_LM126C)||defined(FEATURE_FM_PAUSE)||defined(FEATURE_VERSION_K212)
                 if(1)
 				#else
 				if(pMe->tuneVolumeByLeftRightArrowKey)
@@ -1211,7 +1211,7 @@ __handleKeyEvent_input_channel_done__:
 				{
 					ISHELL_CancelTimer( pMe->m_pShell, (PFNNOTIFY)tuneVolumeByLeftRightArrowKeyCloseCb, pMe);
                     pMe->fmVolumeStop=TRUE;
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_LM126C)
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_LM126C)||defined(FEATURE_VERSION_K212)
 					if (key == AVK_STAR)
 					{
 						key = AVK_DOWN;
