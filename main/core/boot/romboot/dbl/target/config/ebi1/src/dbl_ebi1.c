@@ -878,6 +878,41 @@ const static dbl_parser_cfg_data_item_type ebi1_samsung_cfg_data_PSRAM_CS1_48MHZ
 };
 
 
+const static dbl_parser_cfg_data_item_type ebi1_toshiba_cfg_data_PSRAM_CS1_48MHZ[] =
+{
+
+  {READ_16_BIT,      0x9FFFFFE,               0x0       },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {READ_16_BIT,      0x9FFFFFE,               0x0        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {WRITE_16_BIT,     0x9FFFFFE,               0x1        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {WRITE_16_BIT,     0x9FFFFFE,               0x8110B    },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+  
+  {READ_16_BIT,      0x9FFFFFE,               0x0        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {READ_16_BIT,      0x9FFFFFE,               0x0        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {WRITE_16_BIT,     0x9FFFFFE,               0x1        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {READ_16_BIT,      0x9FFFFFE,               0x0        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, 1),    0x002200    },
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, 1),    0x0001002C  },
+
+  /*-----------------------------------------------------------------------
+                            End of Configuration
+  -----------------------------------------------------------------------*/   
+  {END_OF_CFG_DATA,  0x00000000,                    0x00000000  }
+};
 
 
 const static dbl_parser_cfg_data_item_type ebi1_cfg_data_PSRAM_CS1_48MHZ[] =
@@ -986,6 +1021,41 @@ const static dbl_parser_cfg_data_item_type ebi1_samsung_cfg_data_PSRAM_CS1_64MHZ
   {END_OF_CFG_DATA,  0x00000000,                    0x00000000  }
 };
 
+const static dbl_parser_cfg_data_item_type ebi1_toshiba_cfg_data_PSRAM_CS1_64MHZ[] =
+{
+
+  {READ_16_BIT,      0x9FFFFFE,               0x0       },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {READ_16_BIT,      0x9FFFFFE,               0x0        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {WRITE_16_BIT,     0x9FFFFFE,               0x1        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {WRITE_16_BIT,     0x9FFFFFE,               0x8190B    },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+  
+  {READ_16_BIT,      0x9FFFFFE,               0x0        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {READ_16_BIT,      0x9FFFFFE,               0x0        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {WRITE_16_BIT,     0x9FFFFFE,               0x1        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {READ_16_BIT,      0x9FFFFFE,               0x0        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, 1),    0x002200    },
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, 1),    0x0001002C  },
+
+  /*-----------------------------------------------------------------------
+                            End of Configuration
+  -----------------------------------------------------------------------*/   
+  {END_OF_CFG_DATA,  0x00000000,                    0x00000000  }
+};
 
 
 const static dbl_parser_cfg_data_item_type ebi1_cfg_data_PSRAM_CS1_64MHZ[] =
@@ -1085,6 +1155,42 @@ const static dbl_parser_cfg_data_item_type ebi1_samsung_cfg_data_PSRAM_CS1_96MHZ
 
   {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, 1),    0x003300    },
   {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, 1),    0x0031003C  },
+
+  /*-----------------------------------------------------------------------
+                            End of Configuration
+  -----------------------------------------------------------------------*/   
+  {END_OF_CFG_DATA,  0x00000000,                    0x00000000  }
+};
+
+const static dbl_parser_cfg_data_item_type ebi1_toshiba_cfg_data_PSRAM_CS1_96MHZ[] =
+{
+
+  {READ_16_BIT,      0x9FFFFFE,               0x0       },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {READ_16_BIT,      0x9FFFFFE,               0x0        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {WRITE_16_BIT,     0x9FFFFFE,               0x1        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {WRITE_16_BIT,     0x9FFFFFE,               0x8190B    },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+  
+  {READ_16_BIT,      0x9FFFFFE,               0x0        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {READ_16_BIT,      0x9FFFFFE,               0x0        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {WRITE_16_BIT,     0x9FFFFFE,               0x1        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {READ_16_BIT,      0x9FFFFFE,               0x0        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, 1),    0x002200    },
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, 1),    0x0001002C  },
 
   /*-----------------------------------------------------------------------
                             End of Configuration
@@ -1260,113 +1366,10 @@ const static dbl_parser_cfg_data_item_type ebi1_cfg_data_PSRAM_CS0_96MHZ[] =
 };
 #endif
 
-const static dbl_parser_cfg_data_item_type ebi1_toshiba_cfg_data_PSRAM_CS1_48MHZ[] =
-{
 
-  {READ_16_BIT,      0x9FFFFFE,               0x0       },
-  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
 
-  {READ_16_BIT,      0x9FFFFFE,               0x0        },
-  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
 
-  {WRITE_16_BIT,     0x9FFFFFE,               0x1        },
-  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
 
-  {WRITE_16_BIT,     0x9FFFFFE,               0x8110B    },
-  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
-  
-  {READ_16_BIT,      0x9FFFFFE,               0x0        },
-  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
-
-  {READ_16_BIT,      0x9FFFFFE,               0x0        },
-  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
-
-  {WRITE_16_BIT,     0x9FFFFFE,               0x1        },
-  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
-
-  {READ_16_BIT,      0x9FFFFFE,               0x0        },
-  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
-
-  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, 1),    0x002200    },
-  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, 1),    0x0001002C  },
-
-  /*-----------------------------------------------------------------------
-                            End of Configuration
-  -----------------------------------------------------------------------*/   
-  {END_OF_CFG_DATA,  0x00000000,                    0x00000000  }
-};
-
-const static dbl_parser_cfg_data_item_type ebi1_toshiba_cfg_data_PSRAM_CS1_64MHZ[] =
-{
-
-  {READ_16_BIT,      0x9FFFFFE,               0x0       },
-  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
-
-  {READ_16_BIT,      0x9FFFFFE,               0x0        },
-  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
-
-  {WRITE_16_BIT,     0x9FFFFFE,               0x1        },
-  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
-
-  {WRITE_16_BIT,     0x9FFFFFE,               0x8190B    },
-  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
-  
-  {READ_16_BIT,      0x9FFFFFE,               0x0        },
-  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
-
-  {READ_16_BIT,      0x9FFFFFE,               0x0        },
-  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
-
-  {WRITE_16_BIT,     0x9FFFFFE,               0x1        },
-  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
-
-  {READ_16_BIT,      0x9FFFFFE,               0x0        },
-  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
-
-  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, 1),    0x002200    },
-  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, 1),    0x0001002C  },
-
-  /*-----------------------------------------------------------------------
-                            End of Configuration
-  -----------------------------------------------------------------------*/   
-  {END_OF_CFG_DATA,  0x00000000,                    0x00000000  }
-};
-
-const static dbl_parser_cfg_data_item_type ebi1_toshiba_cfg_data_PSRAM_CS1_96MHZ[] =
-{
-
-  {READ_16_BIT,      0x9FFFFFE,               0x0       },
-  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
-
-  {READ_16_BIT,      0x9FFFFFE,               0x0        },
-  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
-
-  {WRITE_16_BIT,     0x9FFFFFE,               0x1        },
-  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
-
-  {WRITE_16_BIT,     0x9FFFFFE,               0x8190B    },
-  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
-  
-  {READ_16_BIT,      0x9FFFFFE,               0x0        },
-  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
-
-  {READ_16_BIT,      0x9FFFFFE,               0x0        },
-  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
-
-  {WRITE_16_BIT,     0x9FFFFFE,               0x1        },
-  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
-
-  {READ_16_BIT,      0x9FFFFFE,               0x0        },
-  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
-
-  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, 1),    0x002200    },
-  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, 1),    0x0001002C  },
-
-  /*-----------------------------------------------------------------------
-                            End of Configuration
-  -----------------------------------------------------------------------*/   
-  {END_OF_CFG_DATA,  0x00000000,                    0x00000000  }
-};
 
 /***********************************************************************
 FUNCTION      dbl_nor_device_probe
@@ -1642,9 +1645,9 @@ dbl_nor_device *dbl_toshiba_probe(volatile word *baseaddr)  //add by yangdecai
 {
   dbl_nor_device const **dev;
 
-  word  codes[4];
+  word  codes[4]={0};
   int ids, ids_found;
-
+  
   /* Call function to go get the codes from the device */
   dbl_toshiba_get_id_codes(baseaddr, codes);
   
@@ -1803,7 +1806,8 @@ void dbl_ebi1_data_psram_configure
         dbl_parse_cfg_data(ebi1_cfg_data_ebi1_default);
         dbl_parse_cfg_data(ebi1_samsung_cfg_data_PSRAM_CS1_ASYC);
     }
-	else if((dev == &K5N5629ATC) || (dev == &K5N5629ABC) || (dev == &K5N5629AUC))
+ #if 0    //sansung flash is remove by miaoxiaoming
+ 	else if((dev == &K5N5629ATC) || (dev == &K5N5629ABC) || (dev == &K5N5629AUC))
 	{
         if( configured_clk_speed->ebi1 == 48 )
         {
@@ -1822,9 +1826,9 @@ void dbl_ebi1_data_psram_configure
             DBL_ERR_FATAL(DBL_ERR_EBI1_CFG_FAILED);
         }
 	}
-#if 1
-    else if((dev == &TC58FYM7T8C_TOP) || (dev == &TC58FYM7T8C_BOT))
-	{
+#endif  
+     else if((dev == &TC58FYM7T8C_TOP) || (dev == &TC58FYM7T8C_BOT))
+	 {
         if( configured_clk_speed->ebi1 == 48 )
         {
             dbl_parse_cfg_data(ebi1_toshiba_cfg_data_PSRAM_CS1_48MHZ);
@@ -1842,7 +1846,7 @@ void dbl_ebi1_data_psram_configure
             DBL_ERR_FATAL(DBL_ERR_EBI1_CFG_FAILED);
         }
 	}
-#endif
+
   	else
 #endif
 	{
@@ -1966,7 +1970,7 @@ void dbl_ebi1_nor_configure
       DBL_ERR_FATAL(DBL_ERR_EBI1_CFG_FAILED);
     }
   } 
-  else if ((dev == &K5N5629ABM))
+   else if ((dev == &K5N5629ABM))
   {
     if( configured_clk_speed->ebi1 == 48 )
     {
@@ -1985,6 +1989,7 @@ void dbl_ebi1_nor_configure
       DBL_ERR_FATAL(DBL_ERR_EBI1_CFG_FAILED);
     }
   }
+  
   else if ((dev == &K5N5629ATC) || (dev == &K5N5629ABC) || (dev == &K5N5629AUC))
   {
     if( configured_clk_speed->ebi1 == 48 )
@@ -2004,7 +2009,7 @@ void dbl_ebi1_nor_configure
       DBL_ERR_FATAL(DBL_ERR_EBI1_CFG_FAILED);
     }
   }
-  else if (dev == &Intel_64W18_ADMux)
+   else if (dev == &Intel_64W18_ADMux)
   {
      dbl_parse_cfg_data(ebi1_cfg_data_Intel_W18_48MHZ);
   }
