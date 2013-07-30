@@ -322,8 +322,8 @@ static const CCameraSize g_CameraSizeCFG[] =
 #endif
 #elif defined(FEATURE_DISP_240X320)
 #if defined(FEATURE_VERSION_K212)
-		{240,320,L"240*320"}, // VGA
-		{324,432,L"480*640"}, // VGA
+	{240,304,L"240*320"}, // VGA
+	{324,432,L"480*640"}, // VGA
 #else
     //{128,160,L"128*160"}, // FULL Screen
     //{176,220,L"176*220"}, // QCIF
@@ -395,8 +395,8 @@ static const CCameraSize g_CameraSizeCFG_10[] =
 #endif     
 #elif defined(FEATURE_DISP_240X320)
 #if defined(FEATURE_VERSION_K212)
-			{240,320,L"240*320"}, // VGA
-			{324,432,L"480*640"}, // VGA
+	{128,160,L"240*320"}, // VGA
+	{176,220,L"480*640"}, // VGA
 #else
     //{128,160,L"128*160"}, // FULL Screen
     //{176,220,L"176*220"}, // QCIF
@@ -5030,16 +5030,27 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
 			captureSize.cx = g_CameraSizeCFG_10[pMe->m_nCameraSize].dx;
 	        captureSize.cy = g_CameraSizeCFG_10[pMe->m_nCameraSize].dy;
 #ifndef FEATURE_CAMERA_NOFULLSCREEN
+#ifdef FEATURE_VERSION_K212
+			displaySize.cx = 240;
+	        displaySize.cy = 320;
+#else
 	        displaySize.cx = g_CameraSizeCFG_10[0].dx;
 	        displaySize.cy = g_CameraSizeCFG_10[0].dy;
+#endif
 #endif
 		}
 #else
 		captureSize.cx = g_CameraSizeCFG_10[pMe->m_nCameraSize].dx;
         captureSize.cy = g_CameraSizeCFG_10[pMe->m_nCameraSize].dy;
 #ifndef FEATURE_CAMERA_NOFULLSCREEN
+#ifdef FEATURE_VERSION_K212
+					displaySize.cx = 240;
+					displaySize.cy = 320;
+#else
+
         displaySize.cx = g_CameraSizeCFG_10[0].dx;
         displaySize.cy = g_CameraSizeCFG_10[0].dy;
+#endif
 #endif
 #endif
         
@@ -5110,6 +5121,7 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
     }
 
     MSG_FATAL("displaySize.cx=%d,displaySize.cy=%d",displaySize.cx,displaySize.cy,0);
+	MSG_FATAL("captureSize.cx=%d,captureSize.cy=%d",captureSize.cx,captureSize.cy,0);
 #ifndef FEATURE_DSP
 	if ( pMe->m_isRecordMode )
 	{
@@ -5708,8 +5720,13 @@ static void CameraApp_SetCameraCaptureSize(CCameraApp *pMe, uint16 wParam)
 	        displaySize.cx = g_CameraSizeCFG_10[1].dx;
 	        displaySize.cy = g_CameraSizeCFG_10[1].dy;
 	        #else
+			#ifdef FEATURE_VERSION_K212
+			displaySize.cx = 240;
+	        displaySize.cy = 320;
+			#else
 	        displaySize.cx = g_CameraSizeCFG_10[0].dx;
 	        displaySize.cy = g_CameraSizeCFG_10[0].dy;
+			#endif
 	        #endif
 #else
 	        displaySize.cx = g_CameraSizeCFG_10[0].dx;
@@ -5724,8 +5741,13 @@ static void CameraApp_SetCameraCaptureSize(CCameraApp *pMe, uint16 wParam)
         displaySize.cx = g_CameraSizeCFG_10[1].dx;
         displaySize.cy = g_CameraSizeCFG_10[1].dy;
         #else
+		#ifdef FEATURE_VERSION_K212
+		displaySize.cx = 240;
+	    displaySize.cy = 320;
+		#else
         displaySize.cx = g_CameraSizeCFG_10[0].dx;
         displaySize.cy = g_CameraSizeCFG_10[0].dy;
+		#endif
         #endif
         #else
         displaySize.cx = g_CameraSizeCFG_10[0].dx;
