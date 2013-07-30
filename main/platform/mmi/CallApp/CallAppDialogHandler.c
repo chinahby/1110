@@ -1260,7 +1260,13 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 #elif defined(FEATURE_VERSION_W021_CT100_SALES_TRACK)                        
                         if (WSTRCMP(pMe->m_DialString, L"*#07#") == 0)       	//SAR                 	
                         { 
+                            #ifdef FEATURE_VERSION_W021_CT100_X2
+                            pMe->m_msg_text_id = IDS_SAR_CT100_X2;	
+                            #elif defined(FEATURE_VERSION_W021_CT100_VERSION_02)
+                            pMe->m_msg_text_id = IDS_SAR_CT100_VERSION_02;
+                            #else
 							pMe->m_msg_text_id = IDS_SAR_CT100;	
+                            #endif
         					CLOSE_DIALOG(DLGRET_MSGBOX);
 							return TRUE;
                         }  
@@ -5021,7 +5027,9 @@ static boolean  CallApp_MsgBox_DlgHandler(CCallApp  *pMe,
 
         case EVT_DIALOG_START:     
             if(pMe->m_msg_text_id != IDS_INVALIDEMGNUM && pMe->m_msg_text_id != IDS_NOOMH_CARD 
-                && pMe->m_msg_text_id != IDS_SAR && pMe->m_msg_text_id != IDS_SAR_C337&& pMe->m_msg_text_id != IDS_SAR_C260_IC18&&pMe->m_msg_text_id != IDS_SAR_CT100
+                && pMe->m_msg_text_id != IDS_SAR && pMe->m_msg_text_id != IDS_SAR_C337&&
+                pMe->m_msg_text_id != IDS_SAR_C260_IC18&&pMe->m_msg_text_id != IDS_SAR_CT100
+                &&pMe->m_msg_text_id != IDS_SAR_CT100_X2&&pMe->m_msg_text_id != IDS_SAR_CT100_VERSION_02
                 || (pMe->m_msg_text_id == IDS_REGULATE_SUCCEED)|| (pMe->m_msg_text_id == IDS_REGULATE_FAIL))
             {
                 ISHELL_SetTimer(pMe->m_pShell, TIMEOUT_MS_INVALIDEMGNUMDIALOG_TIMER,
@@ -5155,7 +5163,9 @@ static boolean  CallApp_MsgBox_DlgHandler(CCallApp  *pMe,
                 }
             }            
             else if((pMe->m_msg_text_id == IDS_NOOMH_CARD) || (pMe->m_msg_text_id == IDS_SAR)
-                || (pMe->m_msg_text_id == IDS_SAR_C337)|| (pMe->m_msg_text_id == IDS_SAR_C260_IC18)||(pMe->m_msg_text_id == IDS_SAR_CT100)
+                || (pMe->m_msg_text_id == IDS_SAR_C337)|| (pMe->m_msg_text_id == IDS_SAR_C260_IC18)
+                ||(pMe->m_msg_text_id == IDS_SAR_CT100)||(pMe->m_msg_text_id == IDS_SAR_CT100_X2)
+                ||(pMe->m_msg_text_id == IDS_SAR_CT100_VERSION_02)
                 || (pMe->m_msg_text_id == IDS_REGULATE_SUCCEED)|| (pMe->m_msg_text_id == IDS_REGULATE_FAIL))
             {
                 switch (wParam)

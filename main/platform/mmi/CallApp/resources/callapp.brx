@@ -244,6 +244,12 @@
 	<String Id="1128" Name="IDS_SAR_C260_IC18">
 		<Text>SAR: 0.21W/kg@1g(Head)   0.16W/kg@1g(Body).</Text>
 	</String>
+	<String Id="1129" Name="IDS_SAR_CT100_X2">
+		<Text>SAR:CDMA800  Head: 0.636 W/kg    Body: 0.942 W/kg</Text>
+	</String>	
+	<String Id="1130" Name="IDS_SAR_CT100_VERSION_02">
+		<Text>SAR:CDMA800 Head:0.506W/Kg; Body:0.565W/Kg</Text>
+	</String>	
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_NUMEDIT" Focus="0">

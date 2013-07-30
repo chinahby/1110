@@ -1177,10 +1177,10 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
 										   sizeof(m_bsendsalessms));
 
 				MSG_FATAL("m_bsendsalessms======%d",m_bsendsalessms,0,0);
-#if !defined(FEATURE_VERSION_W021_CT100_SALES_TRACK_MST)	                
-			    if(!m_bsendsalessms)
+#if defined(FEATURE_VERSION_W021_CT100_SALES_TRACK_MST)	                
+                if(TRUE)	
 #else
-                if(TRUE)
+                if(!m_bsendsalessms)
 #endif
 			    {
 			    	#ifndef  FEATURE_VERSION_C316

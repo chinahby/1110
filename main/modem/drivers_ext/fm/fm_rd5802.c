@@ -214,7 +214,7 @@ uint8 RDA5802N_initialization_reg[]={
 	0xC4,0x05, //02h 
 	0x00,0x00,
 	0x04,0x00,
-#ifdef FEATURE_VERSION_W021_CT100_HINDI	
+#ifdef FEATURE_VERSION_REGION_INDIA	
 	0x86,0xED, //05h //87 88 89 83
 #else
     0xC6,0xED, //05h //87 88 89 83

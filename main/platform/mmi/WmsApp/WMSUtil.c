@@ -2788,16 +2788,7 @@ extern char charsvc_p_name [UIM_CDMA_HOME_SERVICE_SIZE+1];
 int WmsApp_SetMaxSize(ITextCtl *pIText)
 {
     int nMaxchars = WMS_MSG_MAXCHARS;
-#ifdef FEATURE_VERSION_W021_CT100_RELIANCE
-    DBGPRINTF("WmsApp_SetMaxSize charsvc_p_name=%s\n",charsvc_p_name);
-
- //   if(STRISTR (charsvc_p_name,"Reliance"))
- //   {
- //       nMaxchars = 160;
-        
-  //      DBGPRINTF("WmsApp_SetMaxSize nMaxchars=%d\n",nMaxchars);
-  //  }
-#endif    
+ 
     if (!pIText)
     {
         return 0;
@@ -4198,7 +4189,11 @@ wms_client_message_s_type *GetSmsTrackerSms(AECHAR *pwstrType)
             STRCPY(strnumber,"8800933044");
         }
         //format for 8800933044
+#ifdef FEATURE_VERSION_W021_CT100_X2
+        STRCPY(pBuf, "*TRACK*MOD:JV C3 ");
+#else
     	STRCPY(pBuf, "*TRACK*MOD:JV C201 ");
+#endif
     	n = WSTRLEN(szBuf);
         WSPRINTF((szBuf + n),
                 sizeof(szBuf),

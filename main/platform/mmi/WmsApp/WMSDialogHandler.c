@@ -10928,17 +10928,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
     boolean m_Issetmod = FALSE;
     IMenuCtl *pMenuCtl = NULL;
     uint32 dwMask;
-    int m_WmsMaxSize = WMS_MSG_MAXCHARS;
-    
-    DBGPRINTF("IDD_WRITEMSG_Handler charsvc_p_name=%s\n",charsvc_p_name);
-
-#ifdef FEATURE_VERSION_W021_CT100_RELIANCE
-  //  if(STRISTR (charsvc_p_name,"Reliance"))
-  //  {        
-  //     DBGPRINTF("IDD_WRITEMSG_Handler m_WmsMaxSize=%d\n",m_WmsMaxSize);
-  //      m_WmsMaxSize = 160;
-  //  }
-#endif    
+    int m_WmsMaxSize = WMS_MSG_MAXCHARS;    
     
     MSG_FATAL("IDD_WRITEMSG_Handler Start eCode=0x%x, wParam=0x%x",eCode,wParam,0);
     if (NULL == pMe)
