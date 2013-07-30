@@ -531,14 +531,18 @@ void disp_clear_torch(void)
 #else
 //#if defined(FEATURE_PROJECT_W021) || defined(FEATURE_PROJECT_W022) || defined(FEATURE_PROJECT_W021_128x160)|| defined (FEATURE_PROJECT_W021_176X220) || defined (FEATURE_PROJECT_W021_240X320)|| defined (FEATURE_PROJECT_W021_220X176) || defined (FEATURE_PROJECT_W021_320X240)
 //#if defined(FEATURE_PROJECT_W021) || defined(FEATURE_PROJECT_W022) || defined(FEATURE_PROJECT_W021_128x160)
+
 #if defined (FEATURE_GPIO_LAMP_EN_OUTPUT_31)
 #define GPIO_LAMP_EN GPIO_OUTPUT_31
 //#elif defined(FEATURE_PROJECT_W203) || defined(FEATURE_PROJECT_W204) 
 #elif defined(FEATURE_GPIO_LAMP_EN_OUTPUT_32)
 #define GPIO_LAMP_EN GPIO_OUTPUT_32
+#elif defined(FEATURE_GPIO_LAMP_EN_OUTPUT_33)
+#define GPIO_LAMP_EN GPIO_OUTPUT_33
 #else
 #define GPIO_LAMP_EN GPIO_GENERIC_DEFAULT
 #endif
+
 void disp_set_torch(void)
 {
 	gpio_tlmm_config(GPIO_LAMP_EN);
