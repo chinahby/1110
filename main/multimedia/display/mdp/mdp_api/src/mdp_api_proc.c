@@ -1521,8 +1521,8 @@ uint32 mdp_verify_img(MDPIMG *mdpImg)
   // Get the dimensions of the CWIN, inclusive so add 1.
   cwinWidth  = mdpImg->cwin.x2 - mdpImg->cwin.x1 + 1;
   cwinHeight = mdpImg->cwin.y2 - mdpImg->cwin.y1 + 1;
-  MDP_MSG_ERROR("source imagecwinWidth==%d,cwinHeight===%d,mdpImg->cwin.x2==%d", cwinWidth,cwinHeight,mdpImg->cwin.x2);
-  MDP_MSG_ERROR("source image ==%d,,,===%d,=====%d", mdpImg->cwin.x1,mdpImg->cwin.y2,mdpImg->cwin.y1);
+  //MDP_MSG_ERROR("source imagecwinWidth==%d,cwinHeight===%d,mdpImg->cwin.x2==%d", cwinWidth,cwinHeight,mdpImg->cwin.x2);
+  //MDP_MSG_ERROR("source image ==%d,,,===%d,=====%d", mdpImg->cwin.x1,mdpImg->cwin.y2,mdpImg->cwin.y1);
   if ((mdpImg->cwin.x2<0) || (mdpImg->cwin.x1<0) || (mdpImg->cwin.y2<0) || (mdpImg->cwin.y1<0))
   {
     MDP_MSG_ERROR("ERROR: Cwin specified outside of source image!", 0,0,0);

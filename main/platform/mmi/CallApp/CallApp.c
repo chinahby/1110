@@ -644,6 +644,26 @@ static int CallApp_InitAppData(CCallApp *pMe)
     //uint32 dwMask = 0;
     CALL_FUN_START("CallApp_InitAppData",0,0,0);
 
+	 #if 0//def FEATURE_VERSION_K212
+    MSG_FATAL("disp_drv_on......................",0,0,0);
+	gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
+    clk_busy_wait(30*1000);
+    gpio_tlmm_config(GPIO_OUTPUT_10);
+    gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
+    clk_busy_wait(1);
+    gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
+    clk_busy_wait(5);
+    gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
+    clk_busy_wait(1);
+    gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
+    clk_busy_wait(1);
+    gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
+    clk_busy_wait(1);
+    gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
+    clk_busy_wait(1);
+    gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
+	#endif
+
     if (NULL  == pMe)
     {
         return EFAILED;
@@ -983,6 +1003,11 @@ static void CallApp_FreeAppData(CCallApp *pMe)
     {
         return ;
     }
+#if 0//def FEATURE_VERSION_K212
+     gpio_tlmm_config(GPIO_OUTPUT_10);
+	clk_busy_wait(30*1000);
+	gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
+	#endif
 
    FREEIF(pMe->m_strPhonePWD);
   
@@ -1583,6 +1608,13 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
                 // ¿ªÊ¼CallApp×´Ì¬»ú
                 CallApp_RunFSM(pMe);
             }
+#ifdef FEATURE_VERSION_K212
+			{
+				nv_item_type	SimChoice;
+				SimChoice.sim_select =2;
+				(void)OEMNV_Put(NV_SIM_SELECT_I,&SimChoice);
+			}
+#endif
 
             return TRUE;
 #ifdef FEATRUE_AUTO_POWER

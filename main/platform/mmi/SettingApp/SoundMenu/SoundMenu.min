@@ -654,8 +654,7 @@ else
             lucky.mid|fs:/ringers/lucky.mid \
             street_tale.mid|fs:/ringers/street_tale.mid \
             techno_meto.mid|fs:/ringers/techno_meto.mid \
-            on.mp3|fs:/ringers/on.mp3 \
-            off.mp3|fs:/ringers/off.mp3 
+            poweronoff.mp3|fs:/ringers/poweronoff.mp3
 	else ifeq ($(USES_RESDIR),K202_LM129C)                                           
         CONSTFILE_FILES+=\
             01.mid|fs:/ringers/01.mid \

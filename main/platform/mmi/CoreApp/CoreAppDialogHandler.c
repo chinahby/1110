@@ -3331,24 +3331,30 @@ static boolean  IDD_STARTUPANI_Handler(void       *pUser,
         case EVT_DIALOG_START: 		
 			//Add By zzg 2012_02_17
 #ifdef FEATURE_VERSION_K212
+{
+			  nv_item_type	SimChoice;
+			  SimChoice.sim_select = 2;
+				//OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+			 (void)OEMNV_Put(NV_SIM_SELECT_I,&SimChoice);
 			  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
 				
-			  clk_busy_wait(30*1000);
+			  clk_busy_wait(2*1000);
 				
 			  gpio_tlmm_config(GPIO_OUTPUT_10);
 			  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
 			  clk_busy_wait(1);
 			  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
-			  clk_busy_wait(5);
-			  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
-			  clk_busy_wait(1);
-			  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
 			  clk_busy_wait(1);
 			  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
 			  clk_busy_wait(1);
 			  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
 			  clk_busy_wait(1);
 			  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
+			  clk_busy_wait(1);
+			  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
+			  clk_busy_wait(1);
+			  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
+}
 #endif
 			//Add End
 			
@@ -7006,7 +7012,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
             }
             if(bMode)
             {
-				xStartPos = 15;
+				xStartPos = 30;
 				yStartPos = 45;
 		    	SETAEERECT(&rect, xStartPos, yStartPos, nNumberWidth, nNumberHeight);
 		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (wHour/10), nLineWidth, &rect, RGB_WHITE);
@@ -7026,8 +7032,8 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (jDate.wMinute%10), nLineWidth, &rect, RGB_WHITE);
 		    	rect.x += nNumberWidth;
 		     	rect.y = rect.y +12;
-				rc.x = rc.x+30;
-				rc.dx = rc.dx +20;
+				rect.x = rect.x+2;
+				rect.dx = rect.dx +5;
 		    	DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
 		                              pMe->m_pDisplay,
 		                              RGB_WHITE_NO_TRANS,
@@ -7037,8 +7043,8 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 		                              IDF_ALIGN_MIDDLE
 		                              | IDF_ALIGN_CENTER
 		                              | IDF_TEXT_TRANSPARENT);
-				rc.dx = rc.dx - 10;
-			    rc.x = rc.x - 30;
+				rect.dx = rect.dx - 2;
+			    rect.x = rect.x - 5;
 	        }
 	        else
 	        {
@@ -7770,7 +7776,7 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 		#else
     		#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_S1000T)
     			eBBarType = BTBAR_UNLOCK_SOS;
-			#elif defined(FEATURE_VERSION_C316)||defined(FEATURE_LEFT_SOFTKEY_AND_STAR_UNLOCK)//xxzhen	
+			#elif defined(FEATURE_VERSION_C316)||defined(FEATURE_LEFT_SOFTKEY_AND_STAR_UNLOCK)|| defined(FEATURE_VERSION_K212)//xxzhen	
 			    eBBarType = BTBAR_UNLOCK_L;
         	#elif defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_1110W516) 
         		eBBarType = BTBAR_LUNLOCK;

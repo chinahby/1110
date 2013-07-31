@@ -1110,7 +1110,7 @@ boolean hs_poll_gpio( void )
   hs_key_type new_clamshell_state     = HS_RELEASE_K;
 #endif /* T_MSM6550 && T_SURF */
 
-	MSG_FATAL("hs_poll_gpio....................",0,0,0);
+	//MSG_FATAL("hs_poll_gpio....................",0,0,0);
 
 /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

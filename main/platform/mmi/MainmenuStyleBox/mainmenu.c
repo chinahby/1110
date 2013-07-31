@@ -157,6 +157,7 @@ typedef struct {
 		StartupInfoJava				java_info;
     	} fInfo;
 } StartInfo;
+static int m_row = 0;
 static StartInfo start_info;		
 #ifdef FEATURE_LCD_TOUCH_ENABLE
 #define PARAM_NOT_REF(x)

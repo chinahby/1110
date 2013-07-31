@@ -18,6 +18,7 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS
 
 ============================================================================*/
 #include "tlmm.h" 
+#include "nv.h"
 
 static rex_crit_sect_type       disp_drv_crit_sect = {0};
 static disp_info_type           disp_drv_info = {0};
@@ -250,10 +251,17 @@ static void disp_drv_off(void)
 {
     rex_enter_crit_sect(&disp_drv_crit_sect);
 	#ifdef FEATURE_VERSION_K212
-    MSG_FATAL("disp_drv_off......................",0,0,0);
-	gpio_tlmm_config(GPIO_OUTPUT_10);
-	clk_busy_wait(30*1000);
-	gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
+	{
+		nv_item_type	SimChoice;
+		(void)OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+		if(SimChoice.sim_select == 2)
+		{
+    		MSG_FATAL("disp_drv_off......................",0,0,0);
+			gpio_tlmm_config(GPIO_OUTPUT_10);
+			clk_busy_wait(30*1000);
+			gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
+		}
+	}
 	#endif
     if(disp_drv_state.disp_powered_up && disp_drv_state.display_on)
     {
@@ -288,23 +296,25 @@ static void disp_drv_on(void)
 {
     rex_enter_crit_sect(&disp_drv_crit_sect);
 	#ifdef FEATURE_VERSION_K212
-    MSG_FATAL("disp_drv_on......................",0,0,0);
-	gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
-    clk_busy_wait(30*1000);
-    gpio_tlmm_config(GPIO_OUTPUT_10);
-    gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
-    clk_busy_wait(1);
-    gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
-    clk_busy_wait(5);
-    gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
-    clk_busy_wait(1);
-    gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
-    clk_busy_wait(1);
-    gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
-    clk_busy_wait(1);
-    gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
-    clk_busy_wait(1);
-    gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
+	{
+	    MSG_FATAL("disp_drv_on......................",0,0,0);
+		gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
+	    clk_busy_wait(2*1000);
+	    gpio_tlmm_config(GPIO_OUTPUT_10);
+	    gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
+	    clk_busy_wait(1);
+	    gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
+	    clk_busy_wait(1);
+	    gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
+	    clk_busy_wait(1);
+	    gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
+	    clk_busy_wait(1);
+	    gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
+	    clk_busy_wait(1);
+	    gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
+	    clk_busy_wait(1);
+	    gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
+	}
 	#endif
     if(disp_drv_state.disp_powered_up && !disp_drv_state.display_on)
     {

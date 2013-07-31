@@ -57,6 +57,7 @@
 #ifdef FEATURE_UTK2
 #include "UTKUtils.h"
 #endif
+#include "nv.h"
 
 #if defined(AEE_STATIC)
 #include "OEMClassIDs.h"
@@ -484,10 +485,10 @@
 #elif defined FEATURE_VERSION_K212
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweron.gif"
 #define    PWRON_ANI_FRAME_COUNT                 (1)
-#define    PWRON_ANI_RATE                        (6000)
+#define    PWRON_ANI_RATE                        (8000)
 #define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweroff.gif"
 #define    PWROFF_ANI_FRAME_COUNT                PWRON_ANI_FRAME_COUNT
-#define    PWROFF_ANI_RATE                       (5000)
+#define    PWROFF_ANI_RATE                       (8000)
 
 #else
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronoff.gif"

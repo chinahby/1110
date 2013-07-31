@@ -4019,7 +4019,11 @@ static void CameraApp_PopMenu_BandingInit(CCameraApp *pMe, IMenuCtl *popMenu)
 static void CameraApp_PopMenu_ResetCFGInit(CCameraApp *pMe, IMenuCtl *popMenu)
 {
     IMENUCTL_DeleteAll(popMenu);   
-    CameraApp_SetPopMenuRect(pMe, popMenu, 1);
+	#ifdef FEATURE_VERSION_K212
+    CameraApp_SetPopMenuRect(pMe, popMenu, 2);
+	#else
+	CameraApp_SetPopMenuRect(pMe, popMenu, 1);
+	#endif
     IMENUCTL_AddItem(popMenu, 
                      AEE_APPSCAMERAAPP_RES_FILE, 
                      IDS_CFG_RESET, 

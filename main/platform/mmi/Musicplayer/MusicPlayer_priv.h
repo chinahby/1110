@@ -145,8 +145,11 @@
 
 #define TIMEOUT_MS_QUICK               (500)
 #define MP3APPISREADY_TIME             (200)
+#ifdef FEATURE_VERSION_K212
+#define MS_FASTFORWARDREWIND_TIME      (10000)  // 毫秒
+#else
 #define MS_FASTFORWARDREWIND_TIME      (5000)  // 毫秒
-
+#endif
 #define MP3NAME_COLOR                  MAKE_RGB(66,156,255)
 
 
@@ -684,11 +687,11 @@ if(!(x))         \
 #define MUSICNAME_H 30
 
 //当前序号/总数量
-#define LISTINDEX_X 80 //5
+#define LISTINDEX_X 95 //5
 #define LISTINDEX_Y 138 //95
 
 //当前歌曲的总时间
-#define TOTALTIME_X 160
+#define TOTALTIME_X 170
 #define TOTALTIME_Y 138 
 
 //当前播放时间

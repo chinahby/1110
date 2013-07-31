@@ -7163,6 +7163,27 @@ void CallApp_SetupCallAudio(CCallApp *pMe)
 #ifdef FEATURE_VERSION_K212
 	if(pMe->m_bHandFree)
 	{
+		 
+#if 0//def FEATURE_VERSION_K212
+		 
+    MSG_FATAL("disp_drv_on......................",0,0,0);
+	gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
+    clk_busy_wait(30*1000);
+    gpio_tlmm_config(GPIO_OUTPUT_10);
+    gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
+    clk_busy_wait(1);
+    gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
+    clk_busy_wait(5);
+    gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
+    clk_busy_wait(1);
+    gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
+    clk_busy_wait(1);
+    gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
+    clk_busy_wait(1);
+    gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
+    clk_busy_wait(1);
+    gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
+	#endif
 		snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	
 	    snd_set_device(SND_DEVICE_HEADSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);	
 	}
@@ -9731,6 +9752,15 @@ static void CallApp_Draw_Connect_Time(void *pUser)
         //CALL_ERR("CallApp_Draw_Connect_Time pMe == NULL",0,0,0);
         return;
     }
+
+#ifdef FEATURE_VERSION_K212
+	{
+		  nv_item_type	SimChoice;
+		  SimChoice.sim_select =1;
+		  (void)OEMNV_Put(NV_SIM_SELECT_I,&SimChoice);
+	}
+#endif
+
 
     (void) ISHELL_CancelTimer(pMe->m_pShell, CallApp_Draw_Connect_Time, pMe);
 
