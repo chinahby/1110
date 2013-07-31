@@ -2463,7 +2463,7 @@ static void MainMenu_DrawBackGround(MainMenu *pMe, AEERect *pRect);
 
 // 初始整个背景及全部初始图标
 
-static int SetBrowserArr_Main(MainMenu *pMe, char *purl);
+int SetBrowserArr_Main(IShell *pShell ,char *purl);
 
 static void DrawMatrix(MainMenu *pMe);
 
@@ -4172,32 +4172,18 @@ static int StartApplet(MainMenu *pMe, int i)
         break;
 
 	//Add By zzg 2012_11_08 for C337 
-	case IDS_MAIN_MENU_SERVICES:
-#if defined(FEATURE_OEMOMH)
-#if  (defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_W317A))||defined(FEATURE_VERSION_C316)		
-			MSG_FATAL("IDS_MAIN_MENU_SERVICES...........000000",0,0,0);
-		
-            OEM_SetUCBROWSER_ADSAccount();
-#endif		
-#endif			
+	case IDS_MAIN_MENU_SERVICES:		
 	    #ifdef FEATURE_VERSION_C337
-        Result = SetBrowserArr_Main(pMe,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
+        Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
         #else
-        Result = SetBrowserArr_Main(pMe,NULL);//ISHELL_StartApplet(pMe->m_pShell, AEECLSID_UCWEB);
+        Result = SetBrowserArr_Main(pMe->m_pShell,NULL);//ISHELL_StartApplet(pMe->m_pShell, AEECLSID_UCWEB);
         #endif
 		break;
 	case IDS_MAIN_MENU_MSTORE:
-#if defined(FEATURE_OEMOMH)
-#if  (defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C316))	
-		MSG_FATAL("IDS_MAIN_MENU_SERVICES...........11111111",0,0,0);
-	
-        OEM_SetUCBROWSER_ADSAccount();
-#endif		
-#endif			
 #ifdef FEATURE_VERSION_C337
-        Result = SetBrowserArr_Main(pMe,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");      
+        Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");      
 #else
-        Result = Result = SetBrowserArr_Main(pMe,NULL);//ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
+        Result = Result = SetBrowserArr_Main(pMe->m_pShell,NULL);//ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
 #endif
 		break;
 	case IDS_MAIN_MENU_MZONE:
@@ -4226,20 +4212,10 @@ static int StartApplet(MainMenu *pMe, int i)
 		   IANNUNCIATOR_Redraw(pMe->m_pIAnn);
 		#endif
 
-#if  (defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C316))	
-		MSG_FATAL("IDS_MAIN_MENU_SERVICES...........22222222222222",0,0,0);
-#if defined (FEATURE_OEMOMH)
-        OEM_SetUCBROWSER_ADSAccount();
-#endif        
-#endif
-
-#ifdef FEATURE_VERSION_C310
-        OEM_SetBROWSER_ADSAccount();
-#endif
         #ifdef FEATURE_VERSION_C337
-        Result = SetBrowserArr_Main(pMe,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
+        Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
         #else
-        Result = SetBrowserArr_Main(pMe,(char*)""); //ISHELL_StartApplet(pMe->m_pShell, AEECLSID_UCWEB);
+        Result = SetBrowserArr_Main(pMe->m_pShell,(char*)""); //ISHELL_StartApplet(pMe->m_pShell, AEECLSID_UCWEB);
         #endif
         break;
     
@@ -4294,13 +4270,14 @@ static int StartApplet(MainMenu *pMe, int i)
 }
 
 extern char charsvc_p_name[UIM_CDMA_HOME_SERVICE_SIZE+1];
-static int SetBrowserArr_Main(MainMenu *pMe,char *purl)
+int SetBrowserArr_Main(IShell *pShell ,char *purl)
 {
 	int Result = EUNSUPPORTED;
 	char urlCan[1024] = {0};
     
 	DBGPRINTF("svc_p_name %s %d",charsvc_p_name,charsvc_p_name[0],0);
-	
+	OEM_SetUCBROWSER_ADSAccount();
+    
 	if(purl && STRLEN(purl)>1)
 	{
         SPRINTF(urlCan,"call_ucweb:setexternurl:%s\2\3",purl);
@@ -4335,11 +4312,11 @@ static int SetBrowserArr_Main(MainMenu *pMe,char *purl)
 	DBGPRINTF("urlCan==%s", urlCan);
     if(urlCan[0])
     {
-	    Result = ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)urlCan);
+	    Result = ISHELL_StartAppletArgs(pShell, AEECLSID_UCWEB, (char*)urlCan);
     }
     else
     {
-        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_UCWEB);
+        Result = ISHELL_StartApplet(pShell, AEECLSID_UCWEB);
     }
 
 	return Result;	
@@ -4403,7 +4380,7 @@ static void MainMenu_DrawBackGround(MainMenu *pMe, AEERect *pRect);
 
 // 初始整个背景及全部初始图标
 
-static int SetBrowserArr_Main(MainMenu *pMe, char *purl);
+int SetBrowserArr_Main(IShell *pShell, char *purl);
 
 static void DrawMatrix(MainMenu *pMe);
 
@@ -6578,31 +6555,17 @@ static int StartApplet(MainMenu *pMe, int i)
 
 	//Add By zzg 2012_11_08 for C337 
 	case IDS_MAIN_MENU_SERVICES:
-#if defined(FEATURE_OEMOMH)
-#if  (defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_W317A))||defined(FEATURE_VERSION_C316)		
-			MSG_FATAL("IDS_MAIN_MENU_SERVICES...........000000",0,0,0);
-		
-            OEM_SetUCBROWSER_ADSAccount();
-#endif		
-#endif			
 	    #ifdef FEATURE_VERSION_C337
-        Result = SetBrowserArr_Main(pMe,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
+        Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
         #else
-        Result = SetBrowserArr_Main(pMe,NULL);//ISHELL_StartApplet(pMe->m_pShell, AEECLSID_UCWEB);
+        Result = SetBrowserArr_Main(pMe->m_pShell,NULL);//ISHELL_StartApplet(pMe->m_pShell, AEECLSID_UCWEB);
         #endif
 		break;
 	case IDS_MAIN_MENU_MSTORE:
-#if defined(FEATURE_OEMOMH)
-#if  (defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C316))	
-		MSG_FATAL("IDS_MAIN_MENU_SERVICES...........11111111",0,0,0);
-	
-        OEM_SetUCBROWSER_ADSAccount();
-#endif		
-#endif			
 #ifdef FEATURE_VERSION_C337
-        Result = SetBrowserArr_Main(pMe,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");      
+        Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");      
 #else
-        Result = Result = SetBrowserArr_Main(pMe,NULL);//ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
+        Result = SetBrowserArr_Main(pMe->m_pShell,NULL);//ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
 #endif
 		break;
 	case IDS_MAIN_MENU_MZONE:
@@ -6627,24 +6590,13 @@ static int StartApplet(MainMenu *pMe, int i)
 	
     case IDS_MAIN_WAPBROWSER:
 		#ifdef FEATURE_VERSION_K202_LM129C
-		  IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn,FALSE); //xxzhen
-		   IANNUNCIATOR_Redraw(pMe->m_pIAnn);
+		IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn,FALSE); //xxzhen
+		IANNUNCIATOR_Redraw(pMe->m_pIAnn);
 		#endif
-
-#if  (defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C316))	
-		MSG_FATAL("IDS_MAIN_MENU_SERVICES...........22222222222222",0,0,0);
-#if defined (FEATURE_OEMOMH)
-        OEM_SetUCBROWSER_ADSAccount();
-#endif        
-#endif
-
-#ifdef FEATURE_VERSION_C310
-        OEM_SetBROWSER_ADSAccount();
-#endif
         #ifdef FEATURE_VERSION_C337
-        Result = SetBrowserArr_Main(pMe,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
+        Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
         #else
-        Result = SetBrowserArr_Main(pMe,(char*)""); //ISHELL_StartApplet(pMe->m_pShell, AEECLSID_UCWEB);
+        Result = SetBrowserArr_Main(pMe->m_pShell,(char*)""); //ISHELL_StartApplet(pMe->m_pShell, AEECLSID_UCWEB);
         #endif
         break;
     
@@ -6699,10 +6651,12 @@ static int StartApplet(MainMenu *pMe, int i)
 }
 
 extern char charsvc_p_name[UIM_CDMA_HOME_SERVICE_SIZE+1];
-static int SetBrowserArr_Main(MainMenu *pMe,char *purl)
+int SetBrowserArr_Main(IShell *pShell ,char *purl)
 {
 	int Result = EUNSUPPORTED;
 	char urlCan[1024] = {0};
+
+    OEM_SetUCBROWSER_ADSAccount();
     
 	DBGPRINTF("svc_p_name %s %d",charsvc_p_name,charsvc_p_name[0],0);
 	
@@ -6740,11 +6694,11 @@ static int SetBrowserArr_Main(MainMenu *pMe,char *purl)
 	DBGPRINTF("urlCan==%s", urlCan);
     if(urlCan[0])
     {
-	    Result = ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)urlCan);
+	    Result = ISHELL_StartAppletArgs(pShell, AEECLSID_UCWEB, (char*)urlCan);
     }
     else
     {
-        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_UCWEB);
+        Result = ISHELL_StartApplet(pShell, AEECLSID_UCWEB);
     }
 
 	return Result;	

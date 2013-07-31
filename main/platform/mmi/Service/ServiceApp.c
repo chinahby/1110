@@ -103,7 +103,8 @@ void ServiceApp_ShowDialog(ServiceApp  *pMe,  uint16 dlgResId);
 
 static boolean  ServiceApp_ListMenuHandler(ServiceApp *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam);
 
-static int SetBrowserArr_MainEx(ServiceApp *pMe, char *purl);
+extern int SetBrowserArr_Main(IShell *pShell ,char *purl);
+
 
 
 /*==============================================================================
@@ -721,8 +722,7 @@ static boolean ServiceApp_ListMenuHandler(ServiceApp *pMe, AEEEvent eCode, uint1
                 case AVK_2:
 				{
 					MSG_FATAL("IDS_MAIN_MENU_SERVICES...........22222222222222",0,0,0);
-					OEM_SetUCBROWSER_ADSAccount();
-					SetBrowserArr_MainEx(pMe,(char*)""); //ISHELL_StartApplet(pMe->m_pShell, AEECLSID_UCWEB);   
+                    SetBrowserArr_Main(pMe->m_pShell ,(char*)"");
 					break;
 				}	
                 //case AVK_3:               
@@ -749,8 +749,7 @@ static boolean ServiceApp_ListMenuHandler(ServiceApp *pMe, AEEEvent eCode, uint1
 				case IDS_SERVICE_BROWSER:
 				{
 					MSG_FATAL("IDS_MAIN_MENU_SERVICES...........22222222222222",0,0,0);
-					OEM_SetUCBROWSER_ADSAccount();
-					SetBrowserArr_MainEx(pMe,(char*)""); //ISHELL_StartApplet(pMe->m_pShell, AEECLSID_UCWEB);
+                    SetBrowserArr_Main(pMe->m_pShell ,(char*)"");
                     return TRUE;
                 }	
 				default:

@@ -704,6 +704,10 @@ boolean CoreApp_InitAppData(IApplet* po)
 		}
 #endif
 #endif
+
+    ISHELL_RegisterHandler(pMe->a.m_pIShell, HTYPE_BROWSE, "http*", 0);
+	ISHELL_RegisterHandler(pMe->a.m_pIShell, HTYPE_BROWSE, "http*", AEECLSID_CORE_APP);
+    
     g_pCoreApp = pMe;
     return TRUE;
 } /* End CoreApp_InitAppData */
@@ -1793,6 +1797,13 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             IPHONECTL_SetOperatingMode(pMe->m_pIPhoneCtl, (AEETOprtMode)wParam);
 #endif
             break;
+
+        case EVT_APP_POST_URL:
+        {
+            extern int SetBrowserArr_Main(IShell *pShell ,char *purl);
+            SetBrowserArr_Main(pMe->a.m_pIShell, (char *)dwParam);
+			break;
+        }
             
         default:
             break;
@@ -2979,6 +2990,7 @@ static void CoreApp_PoweronStartApps(CCoreApp *pMe)
 #if 0
     PushMod_StartPush(pMe->a.m_pIShell);
 #endif
+    
 #endif
 
 #ifdef FEATURE_KEYGUARD

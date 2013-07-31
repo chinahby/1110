@@ -179,11 +179,7 @@ ifeq ($(USES_ATV),yes)
 include $(TVAPP)/TVApp.min
 endif
 
-ifeq ($(USES_RESDIR),C310) 
 include $(UCWEB)/UCWEB.min
-else
-include $(UCWEB)/UCWEB.min
-endif
 
 ifeq ($(USES_ZI),yes)
 include $(ZI_PATH)/ZI.min
