@@ -37,6 +37,12 @@ when         who     what, where, why
 #include "clk.h"
 #include "flash_msg.h"
 
+/*lint -e613 -e668 upper layers already check for null pointers */
+/*lint -e526 Don't warn about undefined extern symbols*/
+/*lint -emacro(746, FSI_PEEK)*/
+/*lint -emacro(611, FSI_PEEK) function call pointer reference */
+/*lint -esym(551, erase_verify_buf) Variable used only in tools */
+
 /* Checks every write and erase operation and make sures the flash contains the 
  * correct data after each operation is finished. Slows down performance of the
  * flash driver but good to check it up especially when testing a new device
@@ -48,9 +54,7 @@ when         who     what, where, why
  */
 #define FEATURE_EFS_AMD_SUSPEND_FETCH_BUG
 
-#define TOSHIBA_MAX_TIMEOUT_CNT   20
-
-/* Low level status bits for Samsung */
+#define TOSHIBA_MAX_TIMEOUT_CNT   100
 /* Low level status bits for AMD. */
 #define FS_AMD_DQ7      0x80
 #define FS_AMD_DQ6      0x40
@@ -179,12 +183,6 @@ flashi_nor_device TC58FYM7T8C_BOT =
   &TC58FYM7T8C_BOT_geometry,
   &flash_toshiba_op_word_write_functions
 };
-
-
-#if defined(BUILD_JFLASH) || defined(BUILD_ARMPRG)
-  /* Buffer initialized to value of erased data to use with memcmp() */
-  static uint8 erase_verify_buf[ERASE_VERIFY_BLK];
-#endif
 
 
 /*===========================================================================
@@ -618,17 +616,6 @@ fsi_toshiba_configure (fsi_device_t self, flash_ptr_type baseaddr)
   flash_status status = FLASH_SUCCESS;
   flashi_nor_device *nor_device = &(self->nor_dev_info);
   status = flash_nor_geometry_init(nor_device, baseaddr);
-
-#if defined(BUILD_JFLASH) || defined(BUILD_ARMPRG)
-  {
-    word i;
-    /* Initialize the erased value array for quick erase compares. */
-    for (i = 0; i < ERASE_VERIFY_BLK; i++)
-    {
-      erase_verify_buf[i] = (uint8)0xFF;
-    }
-  }
-#endif
   
   if(status != FLASH_SUCCESS)
   {
@@ -765,7 +752,6 @@ fsi_toshiba_fast_byte_write (byte *buffer,
        1 will be needed for future optimizations. */
     while (count > 1)
     {
-
       KICK_DOG_AND_CHECK_DATA();
       value = *((word *) buffer);
 
@@ -810,7 +796,7 @@ fsi_toshiba_fast_byte_write (byte *buffer,
         }
         else
         {
-          break;
+          break; /* pass */
         }
       }
 
@@ -887,7 +873,7 @@ fsi_toshiba_fast_byte_write (byte *buffer,
         }
         else
         {
-          break;
+          break; /* pass */
         }
       }
 
