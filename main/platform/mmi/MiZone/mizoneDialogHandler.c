@@ -616,7 +616,10 @@ static boolean  MiZone_ENDACTIVATEHandler(CMiZone *pMe,
         {
            AEERect  Rect;                      
            AECHAR * pTemp;                
-           AECHAR   ActivateTEXT[1200];    
+           AECHAR   ActivateTEXT[1200];
+           AECHAR   text[1200];
+           char     strDate[64];
+           AECHAR	fmt_str[128];
            uint16   ActivateId;
            int      i;
            
@@ -637,13 +640,20 @@ static boolean  MiZone_ENDACTIVATEHandler(CMiZone *pMe,
                                       AEE_MIZONE_RES_FILE, 
                                       ActivateId, 
                                       ActivateTEXT, 
-                                      sizeof(ActivateTEXT));                            
+                                      sizeof(ActivateTEXT));     
+
+           OEM_GetConfig(CFGI_MIZONE_NUM, strDate, sizeof(strDate));           
+           STRTOWSTR(strDate, fmt_str, sizeof(fmt_str));            
+           WSPRINTF(text, sizeof(text), ActivateTEXT,  fmt_str);
                                        
-           pTemp = WSTRCHR(ActivateTEXT,(AECHAR)'\\');
+           //pTemp = WSTRCHR(ActivateTEXT,(AECHAR)'\\');
+           pTemp = WSTRCHR(text,(AECHAR)'\\');
+           
            while (pTemp)
            {
                *pTemp = (AECHAR)'\n';
-               pTemp  = WSTRCHR(ActivateTEXT, (AECHAR)'\\');
+               //pTemp  = WSTRCHR(ActivateTEXT, (AECHAR)'\\');
+               pTemp  = WSTRCHR(text, (AECHAR)'\\');
            }                                   // replace '\' in the string to '\n'.
            
            ISTATIC_SetRect(pMe->m_pStatic, &Rect);
@@ -651,7 +661,8 @@ static boolean  MiZone_ENDACTIVATEHandler(CMiZone *pMe,
            ISTATIC_SetBackGround(pMe->m_pStatic, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);
            (void)ISTATIC_SetText(pMe->m_pStatic, 
                                  NULL, 
-                                 ActivateTEXT,
+                                 //ActivateTEXT,
+                                 text,
                                  AEE_FONT_NORMAL,
                                  AEE_FONT_NORMAL);
            ISTATIC_SetActive(pMe->m_pStatic, TRUE);
@@ -1001,7 +1012,7 @@ static boolean  MiZone_ENDPULLHandler(CMiZone *pMe,
         {
            AEERect  Rect;                      
            AECHAR * pTemp;                
-           AECHAR   ActivateTEXT[1200];    
+           AECHAR   ActivateTEXT[1200];   
            uint16   ActivateId;
            int      i;
            
@@ -1026,7 +1037,7 @@ static boolean  MiZone_ENDPULLHandler(CMiZone *pMe,
                                       AEE_MIZONE_RES_FILE, 
                                       ActivateId, 
                                       ActivateTEXT, 
-                                      sizeof(ActivateTEXT));                            
+                                      sizeof(ActivateTEXT));                   
                                        
            pTemp = WSTRCHR(ActivateTEXT,(AECHAR)'\\');
            while (pTemp)
@@ -1529,6 +1540,11 @@ static void Mizone_POPTimeOut(CMiZone *pMe)
                             0,
                             0);
 }
+
+
+
+
+
 
 #if 0
 void CoreApp_MobileTrackerTimer(void *pme)

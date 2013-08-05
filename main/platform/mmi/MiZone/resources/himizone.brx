@@ -209,37 +209,37 @@
 		<Text>1</Text>
 	</STRING>
 	<STRING Id="151" Name="IDS_FUNZONE_ENDACTIVATE1_1">
-		<Text>Thanks for subscribing to Cricket alerts. \\You will be charged Rs.30 for 30 days. To unsubscribe SMS STOPCRI to 57272. \\Cost of SMS: Rs.3 per SMS.</Text>
+		<Text>Thanks for subscribing to Cricket alerts. \\You will be charged Rs.30 for 30 days. To unsubscribe SMS STOPCRI to %s. \\Cost of SMS: Rs.3 per SMS.</Text>
 	</STRING>
 	<STRING Id="152" Name="IDS_FUNZONE_ENDACTIVATE1_2">
-		<Text>Thanks for subscribing to Love Guru pack. \\You will be charged Rs.30 for 30 days. To unsubscribe SMS STOPLG to 57272. \\Cost of SMS: Rs.3 per SMS.</Text>
+		<Text>Thanks for subscribing to Love Guru pack. \\You will be charged Rs.30 for 30 days. To unsubscribe SMS STOPLG to %s. \\Cost of SMS: Rs.3 per SMS.</Text>
 	</STRING>
 	<STRING Id="153" Name="IDS_FUNZONE_ENDACTIVATE1_3">
-		<Text>Thanks for subscribing to Naughty Jokes pack. \\You will be charged Rs.30 for 30 days. To unsubscribe SMS STOPNJ to 57272. \\Cost of SMS: Rs.3 per SMS.</Text>
+		<Text>Thanks for subscribing to Naughty Jokes pack. \\You will be charged Rs.30 for 30 days. To unsubscribe SMS STOPNJ to %s. \\Cost of SMS: Rs.3 per SMS.</Text>
 	</STRING>
 	<STRING Id="154" Name="IDS_FUNZONE_ENDACTIVATE1_4">
-		<Text>Thanks for subscribing to Mehfil-E-Timpass pack. \\You will be charged Rs.30 for 30 days. To unsubscribe SMS STOPMET to 57272. \\Cost of SMS: Rs.3 per SMS.</Text>
+		<Text>Thanks for subscribing to Mehfil-E-Timpass pack. \\You will be charged Rs.30 for 30 days. To unsubscribe SMS STOPMET to %s. \\Cost of SMS: Rs.3 per SMS.</Text>
 	</STRING>
 	<STRING Id="155" Name="IDS_FUNZONE_ENDACTIVATE1_5">
-		<Text>Thanks for subscribing to Astrology pack. \\You will be charged Rs.30 for 30 days. \\To unsubscribe SMS STOPAST to 57272.  Cost of SMS: Rs.3 per SMS.</Text>
+		<Text>Thanks for subscribing to Astrology pack. \\You will be charged Rs.30 for 30 days. \\To unsubscribe SMS STOPAST to %s.  Cost of SMS: Rs.3 per SMS.</Text>
 	</STRING>
 	<STRING Id="156" Name="IDS_FUNZONE_ENDACTIVATE1_6">
-		<Text>Thanks for subscribing to Art of Living pack. \\You will be charged Rs.30 for 30 days. To unsubscribe SMS STOPAOL to 57272. \\Cost of SMS: Rs.3 per SMS</Text>
+		<Text>Thanks for subscribing to Art of Living pack. \\You will be charged Rs.30 for 30 days. To unsubscribe SMS STOPAOL to %s. \\Cost of SMS: Rs.3 per SMS</Text>
 	</STRING>
 	<STRING Id="157" Name="IDS_FUNZONE_ENDACTIVATE1_7">
-		<Text>Thanks for subscribing to Daal Mein Kala pack. \\You will be charged Rs.30 for 30 days. To unsubscribe SMS STOPDMK to 57272. \\Cost of SMS: Rs.3 per SMS</Text>
+		<Text>Thanks for subscribing to Daal Mein Kala pack. \\You will be charged Rs.30 for 30 days. To unsubscribe SMS STOPDMK to %s. \\Cost of SMS: Rs.3 per SMS</Text>
 	</STRING>
 	<STRING Id="158" Name="IDS_FUNZONE_ENDACTIVATE1_8">
-		<Text>Thanks for subscribing to Friends Chat pack. \\You will be charged Rs.30 for 30 days. \\To unsubscribe SMS STOPVCHAT to 57272. \\Cost of SMS: Rs.3 per SMS.</Text>
+		<Text>Thanks for subscribing to Friends Chat pack. \\You will be charged Rs.30 for 30 days. \\To unsubscribe SMS STOPVCHAT to %s. \\Cost of SMS: Rs.3 per SMS.</Text>
 	</STRING>
 	<STRING Id="159" Name="IDS_FUNZONE_ENDACTIVATE1_9">
-		<Text>Thanks for subscribing to Devotional pack. \\You will be charged Rs.30 for 30 days. \\To unsubscribe SMS STOPDEVO to 57272. \\Cost of SMS: Rs.3 per SMS.</Text>
+		<Text>Thanks for subscribing to Devotional pack. \\You will be charged Rs.30 for 30 days. \\To unsubscribe SMS STOPDEVO to %s. \\Cost of SMS: Rs.3 per SMS.</Text>
 	</STRING>
 	<STRING Id="160" Name="IDS_FUNZONE_ENDACTIVATE1_10">
-		<Text>Thanks for subscribing to Wellness pack. \\You will be charged Rs.30 for 30 days. \\To unsubscribe SMS STOPWELL to 57272. \\Cost of SMS: Rs.3 per SMS.</Text>
+		<Text>Thanks for subscribing to Wellness pack. \\You will be charged Rs.30 for 30 days. \\To unsubscribe SMS STOPWELL to %s. \\Cost of SMS: Rs.3 per SMS.</Text>
 	</STRING>
 	<STRING Id="161" Name="IDS_FUNZONE_ENDACTIVATE1_11">
-		<Text>Thanks for subscribing to News pack. \\You will be charged Rs.30 for 30 days. \\To unsubscribe SMS STOPNEWS to 57272. \\Cost of SMS: Rs.3 per SMS.</Text>
+		<Text>Thanks for subscribing to News pack. \\You will be charged Rs.30 for 30 days. \\To unsubscribe SMS STOPNEWS to %s. \\Cost of SMS: Rs.3 per SMS.</Text>
 	</STRING>
 	<STRING Id="162" Name="IDS_FUNZONE_ENDACTIVATE1_12">
 		<Text>2</Text>
