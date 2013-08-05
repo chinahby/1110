@@ -644,7 +644,7 @@ const static dbl_parser_cfg_data_item_type ebi1_cfg_data_TC58FYM7T8C_96MHZ[] =
   {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | (0x000002AA<<1)),  0x55    },
   {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | (0x00027555<<1)),  0xC0    },
 
-  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, FLASH_ON_CS),  0x048700             },
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, FLASH_ON_CS),  0x035400             },
   {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, FLASH_ON_CS),  0x02010024           },
   {HWIO_OPERATION,   HWIO_ADDR(EBI1_BUFC_CFG),                EBI1_BUFC_CFG_VALUE  },
 
@@ -906,7 +906,7 @@ const static dbl_parser_cfg_data_item_type ebi1_toshiba_cfg_data_PSRAM_CS1_48MHZ
   {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
 
   {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, 1),    0x002200    },
-  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, 1),    0x0001002C  },
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, 1),    0x0031002C  },
 
   /*-----------------------------------------------------------------------
                             End of Configuration
@@ -1049,7 +1049,7 @@ const static dbl_parser_cfg_data_item_type ebi1_toshiba_cfg_data_PSRAM_CS1_64MHZ
   {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
 
   {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, 1),    0x002200    },
-  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, 1),    0x0001002C  },
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, 1),    0x0031002C  },
 
   /*-----------------------------------------------------------------------
                             End of Configuration
@@ -1190,7 +1190,7 @@ const static dbl_parser_cfg_data_item_type ebi1_toshiba_cfg_data_PSRAM_CS1_96MHZ
   {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
 
   {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, 1),    0x002200    },
-  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, 1),    0x0001002C  },
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, 1),    0x0031002C  },
 
   /*-----------------------------------------------------------------------
                             End of Configuration
@@ -1826,9 +1826,9 @@ void dbl_ebi1_data_psram_configure
             DBL_ERR_FATAL(DBL_ERR_EBI1_CFG_FAILED);
         }
 	}
-#endif  
-     else if((dev == &TC58FYM7T8C_TOP) || (dev == &TC58FYM7T8C_BOT))
-	 {
+#endif
+    else if((dev == &TC58FYM7T8C_TOP) || (dev == &TC58FYM7T8C_BOT))
+	{
         if( configured_clk_speed->ebi1 == 48 )
         {
             dbl_parse_cfg_data(ebi1_toshiba_cfg_data_PSRAM_CS1_48MHZ);
@@ -1846,7 +1846,6 @@ void dbl_ebi1_data_psram_configure
             DBL_ERR_FATAL(DBL_ERR_EBI1_CFG_FAILED);
         }
 	}
-
   	else
 #endif
 	{
