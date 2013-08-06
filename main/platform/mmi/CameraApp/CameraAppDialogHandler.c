@@ -927,13 +927,21 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
         case EVT_DIALOG_INIT:
             pMe->m_bCapturePic = FALSE;
 			pMe->m_bIsSnaping = FALSE;
+			pMe->m_bCanPress = FALSE;
              // 如下代码限制在此界面的快速按键
             //#if defined (FEATURE_VERSION_C310) || defined (FEATURE_VERSION_C337)
             //1200
+			#ifdef FEATURE_VERSION_K212
             (void)ISHELL_SetTimer( pMe->m_pShell,
+                                                1200,
+                                                CameraApp_PrevewTimeout,
+                                                pMe );
+            #else
+			(void)ISHELL_SetTimer( pMe->m_pShell,
                                                 300,
                                                 CameraApp_PrevewTimeout,
                                                 pMe );
+			#endif
             //#endif
             IDISPLAY_SetClipRect(pMe->m_pDisplay, NULL); 
 
@@ -3757,7 +3765,11 @@ static void CameraApp_PopMenu_SizeInit(CCameraApp *pMe, IMenuCtl *popMenu)
         #endif
         }
          MSG_FATAL("CameraApp_SetPopMenuRect",0,0,0);
+		#ifdef FEATURE_VERSION_K212
+		CameraApp_SetPopMenuRect(pMe, popMenu, i+1);
+		#else
         CameraApp_SetPopMenuRect(pMe, popMenu, i);
+		#endif
     }
     else
     {
@@ -3886,7 +3898,11 @@ static void CameraApp_PopMenu_SizeInit(CCameraApp *pMe, IMenuCtl *popMenu)
 static void CameraApp_PopMenu_ShutterToneInit(CCameraApp *pMe, IMenuCtl *popMenu)  
 {
     IMENUCTL_DeleteAll(popMenu);   
+	#ifdef FEATURE_VERSION_K212
+	CameraApp_SetPopMenuRect(pMe, popMenu, 3);
+	#else
     CameraApp_SetPopMenuRect(pMe, popMenu, 2);
+	#endif
 #ifdef FEATURE_CARRIER_CHINA_TELCOM
     IMENUCTL_AddItem(popMenu,
                      AEE_APPSCAMERAAPP_RES_FILE, 

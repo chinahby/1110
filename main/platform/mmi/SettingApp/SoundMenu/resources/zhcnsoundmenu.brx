@@ -107,7 +107,7 @@
 		<Text>静音模式</Text>
 	</STRING>
 	<STRING Id="1039" Name="IDS_MEETING">
-		<Text>会议模式</Text>
+		<Text>振动模式</Text>
 	</STRING>
 	<STRING Id="1040" Name="IDS_NOISEMODE">
 		<Text>户外模式</Text>

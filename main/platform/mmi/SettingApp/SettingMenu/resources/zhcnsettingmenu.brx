@@ -116,7 +116,7 @@
 		<Text>分钟提示音</Text>
 	</STRING>
 	<STRING Id="1039" Name="IDS_AUTOANSWER_TITLE">
-		<Text>自动接听</Text>
+		<Text>耳机自动接听</Text>
 	</STRING>
 	<STRING Id="1040" Name="IDS_ANYKEY_ANSWER_TITLE">
 		<Text>任意键应答</Text>
@@ -385,7 +385,7 @@
 	<String Id="1128" Name="IDS_YES">
 		<Text>确定</Text>
 	</String>
-	<String Id="1129" Name="IDS_MYANMAR" Encoding="Unicode">
+	<String Id="1129" Name="IDS_MYANMAR">
 		<Text></Text>
 	</String>
 	<String Id="1130" Name="IDS_SEARCHNET_MODE">
@@ -430,28 +430,28 @@
 	<String Id="1143" Name="IDS_AKG_1MIN">
 		<Text>1 Min</Text>
 	</String>
-	<String Id="1144" Name="IDS_SMS_RESTRICT" Encoding="Unicode">
+	<String Id="1144" Name="IDS_SMS_RESTRICT">
 		<Text>短信黑名单</Text>
 	</String>
-	<String Id="1145" Name="IDS_SMS_RESTRICT_SEND" Encoding="Unicode">
+	<String Id="1145" Name="IDS_SMS_RESTRICT_SEND">
 		<Text>发送限制</Text>
 	</String>
-	<String Id="1146" Name="IDS_SMS_RESTRICT_RECEIVE" Encoding="Unicode">
+	<String Id="1146" Name="IDS_SMS_RESTRICT_RECEIVE">
 		<Text>接收限制</Text>
 	</String>
-	<String Id="1147" Name="IDS_ADD" Encoding="Unicode">
+	<String Id="1147" Name="IDS_ADD">
 		<Text>添加</Text>
 	</String>
-	<String Id="1148" Name="IDS_DELETE" Encoding="Unicode">
+	<String Id="1148" Name="IDS_DELETE">
 		<Text>删除</Text>
 	</String>
-	<String Id="1149" Name="IDS_AKG_10SEC" Encoding="Unicode">
+	<String Id="1149" Name="IDS_AKG_10SEC">
 		<Text>10 秒</Text>
 	</String>
 	<STRING Id="1150" Name="IDS_CALL_TIME_REMINDER">
 		<Text>通话提示音</Text>
 	</STRING>
-	<String Id="1171" Name="IDS_AKG_5SEC" Encoding="Unicode">
+	<String Id="1171" Name="IDS_AKG_5SEC">
 		<Text>5 秒</Text>
 	</String>
 	<STRING Id="1172" Name="IDS_CALLFORWARD_NOCONNECT_UNCONDITIONAL">

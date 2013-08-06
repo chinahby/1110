@@ -23,6 +23,13 @@
 ==============================================================================*/
 #include "iquicktest_priv.h"
 #include "mobile.h"
+#include "wmsapp.h"
+#ifdef FEATURE_APP_MEDIAGALLERY
+#include "MediaGallery.h" 
+#endif
+#include "ContApp.h"
+#include "AEETelephone.h"
+#include "AEETelDef.h"
 
 #ifndef WIN32
 #if defined( FEATURE_FM_RADIO)
@@ -3315,7 +3322,7 @@ static boolean  QuickTest_CallHandler(CQuickTest *pMe,
 #endif
             {
                 STRTOWSTR("ECHO LOOP",string,sizeof(string));
-				#ifdef FEATURE_VERSION_K212
+				#ifdef FEATURE_K_AMPLIFIER
 				snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	
 	    		snd_set_device(SND_DEVICE_HEADSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);	
 				#endif
@@ -3495,6 +3502,48 @@ static boolean  QuickTest_RestoreFactory_Handler(CQuickTest *pMe,
                   //m_pCallList = NULL;
                   return TRUE;
                 }
+
+				//删除短信息
+	
+				{
+					IWmsApp *pIWmsApp = NULL;
+
+			        if (SUCCESS == ISHELL_CreateInstance(pMe->m_pShell,
+			                                                AEECLSID_WMSAPP,
+			                                                (void**)&pIWmsApp))
+			        {
+			            if(SUCCESS != IWmsApp_DeleteAllNvCdmaSms(pIWmsApp))
+			            {
+			                return ;
+			            }
+			        }
+			        
+			        if(NULL != pIWmsApp)
+			        {
+			            (void)IWmsApp_Release(pIWmsApp);
+			            pIWmsApp = NULL;
+			        }
+				}
+				//删除电话本信息
+				{
+					IContApp * pIContApp = NULL;
+
+			        if (SUCCESS == ISHELL_CreateInstance(pMe->m_pShell,
+			                                                AEECLSID_APP_CONTACT,
+			                                                (void**)&pIContApp))
+			        {
+			            if(SUCCESS != ICONTAPP_DeleteAll(pIContApp))
+			            {
+			                return ;
+			            }
+			        }
+			        
+			        if(NULL != pIContApp)
+			        {
+			            (void)ICONTAPP_Release(pIContApp);
+			            pIContApp = NULL;
+			        }
+				}
           
                 // Update ALERT indicator
                 {

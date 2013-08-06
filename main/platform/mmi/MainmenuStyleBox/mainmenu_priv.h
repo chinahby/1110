@@ -21,6 +21,8 @@
 #include "AEEConfig.h"
 #include "AEEAnnunciator.h"
 #include "AEEBacklight.h"
+#include "OEMSound.h"      // TBD - hack until available somewhere else
+#include "AEEMedia.h"
 
 
 #if defined (FEATURE_DISP_160X128)
@@ -197,6 +199,8 @@ typedef struct _MainMenu
 #ifdef FEATURE_VERSION_K212
 	IImage          *m_pImageSelectk212[9];
 	IImage          *m_pImageSelectkbar;
+	nv_language_enum_type language;
+	IMedia *              m_pMedia;
 #endif
 } MainMenu;
 
@@ -327,6 +331,17 @@ typedef struct _MainMenu
     #define ICON7_ANI      "fs:/image/mainmenu/ICON_Recentcalls.png"
     #define ICON8_ANI      "fs:/image/mainmenu/ICON_Settings.png"
 	#define ICON9_ANI      "fs:/image/mainmenu/ICON_Surface.png"
+
+	#define ICON1_ANI_EN      "fs:/image/mainmenu/ICON_Camera_en.png"
+    #define ICON2_ANI_EN      "fs:/image/mainmenu/ICON_Contacts_en.png"
+    #define ICON3_ANI_EN      "fs:/image/mainmenu/ICON_Management_en.png"
+    #define ICON4_ANI_EN      "fs:/image/mainmenu/ICON_Messages_en.png"
+    #define ICON5_ANI_EN      "fs:/image/mainmenu/ICON_Multimedia_en.png"
+    #define ICON6_ANI_EN      "fs:/image/mainmenu/ICON_Profile_en.png"
+    #define ICON7_ANI_EN      "fs:/image/mainmenu/ICON_Recentcalls_en.png"
+    #define ICON8_ANI_EN      "fs:/image/mainmenu/ICON_Settings_en.png"
+	#define ICON9_ANI_EN      "fs:/image/mainmenu/ICON_Surface_en.png"
+	
 #else
 	
 	#ifdef FEATURE_LCD_TOUCH_ENABLE
@@ -496,15 +511,15 @@ typedef struct _MainMenu
 
 
 #ifdef FEATURE_VERSION_K212
-#define MUSIC_PATH1 "1fs:/hsmm/music/calc.mp3"
-#define MUSIC_PATH2 "1fs:/hsmm/music/camera.mp3"
-#define MUSIC_PATH3 "1fs:/hsmm/music/fm.mp3"
-#define MUSIC_PATH4 "1fs:/hsmm/music/manager.mp3"
-#define MUSIC_PATH5 "1fs:/hsmm/music/mesage.mp3"
-#define MUSIC_PATH6 "1fs:/hsmm/music/profile.mp3"
-#define MUSIC_PATH7 "1fs:/hsmm/music/settings.mp3"
-#define MUSIC_PATH8 "1fs:/hsmm/music/calc.mp3"
-#define MUSIC_PATH9 "1fs:/hsmm/music/suafer.mp3"
+#define MUSIC_PATH1 "fs:/hsmm/mainmenu/mesage.mp3"
+#define MUSIC_PATH2 "fs:/hsmm/mainmenu/profile.mp3"
+#define MUSIC_PATH3 "fs:/hsmm/mainmenu/calc.mp3"
+#define MUSIC_PATH4 "fs:/hsmm/mainmenu/profile.mp3"
+#define MUSIC_PATH5 "fs:/hsmm/mainmenu/mutimed.mp3"
+#define MUSIC_PATH6 "fs:/hsmm/mainmenu/camera.mp3"
+#define MUSIC_PATH7 "fs:/hsmm/mainmenu/manager.mp3"
+#define MUSIC_PATH8 "fs:/hsmm/mainmenu/settings.mp3"
+#define MUSIC_PATH9 "fs:/hsmm/mainmenu/suafer.mp3"
 #endif
 
 // 此宏用当前状态更新先前状态，再用nextState状态更新当前状态

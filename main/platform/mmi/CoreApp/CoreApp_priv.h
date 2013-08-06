@@ -84,6 +84,8 @@
 #include "core_ui.h"
 #include "AEECard.h"
 #include "AEEDeviceNotifier.h"
+#include "OEMSound.h"      // TBD - hack until available somewhere else
+#include "AEEMedia.h"
 
 /*==============================================================================
                                  
@@ -136,6 +138,44 @@
 #define AVK_SEND_TWO     2
 #else
 #define AVK_SEND_TWO     1
+#endif
+#ifdef FEATURE_SOUND_BO
+#define CORE_NUM_0  "fs:/hsmm/callapp/0.mp3"
+#define CORE_NUM_1  "fs:/hsmm/callapp/1.mp3"
+#define CORE_NUM_2  "fs:/hsmm/callapp/2.mp3"
+#define CORE_NUM_3  "fs:/hsmm/callapp/3.mp3"
+#define CORE_NUM_4  "fs:/hsmm/callapp/4.mp3"
+#define CORE_NUM_5  "fs:/hsmm/callapp/5.mp3"
+#define CORE_NUM_6  "fs:/hsmm/callapp/6.mp3"
+#define CORE_NUM_7  "fs:/hsmm/callapp/7.mp3"
+#define CORE_NUM_8  "fs:/hsmm/callapp/8.mp3"
+#define CORE_NUM_9  "fs:/hsmm/callapp/9.mp3"
+#define CORE_NUM_P  "fs:/hsmm/callapp/P.mp3"
+#define CORE_NUM_W  "fs:/hsmm/callapp/W.mp3"
+#define CORE_NUM_PUND  "fs:/hsmm/callapp/pund.mp3"
+#define CORE_NUM_STAR  "fs:/hsmm/callapp/star.mp3"
+
+
+#define CORE_ONE_1	"fs:/hsmm/coreapp/one_1.mp3"
+#define CORE_TWO_2	"fs:/hsmm/coreapp/tow_2.mp3"
+#define CORE_THR_31	"fs:/hsmm/coreapp/morning.mp3"
+#define CORE_THR_32	"fs:/hsmm/coreapp/afternoon.mp3"
+#define CORE_FOR_41	"fs:/hsmm/coreapp/Ten.mp3"
+#define CORE_FIVE_5	"fs:/hsmm/coreapp/five_5.mp3"
+
+
+
+
+typedef enum
+{
+    TIME_ONE,       
+    TIME_TWO,        
+    TIME_THR,       
+    TIME_FOUR1,
+    TIME_FOUR2,
+    TIME_FIVE,       
+} TIME_STATUE;
+
 #endif
 
 #ifdef FEATURE_APP_MUSICPLAYER
@@ -1100,6 +1140,9 @@ typedef struct _CCoreApp
 #ifdef FEATURE_SHOW_RSSI_INFO
    int             m_rssi;
 #endif/*FEATURE_SHOW_RSSI_INFO*/
+#ifdef FEATURE_SOUND_BO
+   IMedia *              m_pMedia;
+#endif
 
 } CCoreApp;
 

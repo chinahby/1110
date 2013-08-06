@@ -232,6 +232,27 @@ boolean bIsPowerUp = FALSE;     //Add By zzg 2013_03_29
 #define DATA_Y				(RPLMN_Y + 30) 
 
 #endif
+#ifdef FEATURE_SOUND_BO
+static char* CORE_SOUND_NAME[] =
+{
+    CORE_NUM_0,
+    CORE_NUM_1,
+    CORE_NUM_2,
+    CORE_NUM_3,
+    CORE_NUM_4,
+    CORE_NUM_5,
+    CORE_NUM_6,
+    CORE_NUM_7,
+    CORE_NUM_8, 
+    CORE_NUM_9,
+    CORE_NUM_P,
+    CORE_NUM_W,
+    CORE_NUM_PUND,
+    CORE_NUM_STAR,
+};
+
+static TIME_STATUE  m_TimeStarus = TIME_ONE;
+#endif
 // add pandy 2011-11-04
 enum {
 #if 1 /*APP_CONFIG_USE_EVENTLISTENER*/
@@ -493,7 +514,10 @@ static boolean  IDD_UTKREFRESH_Handler(void *pUser,
 #endif //FEATURE_UTK2
 
 // 更新待机界面的定时器函数。程序运行稳定后，每分钟执行一次
-static void CoreApp_UpdateIdleTimer(void *pUser);                          
+static void CoreApp_UpdateIdleTimer(void *pUser);   
+#ifdef FEATURE_SOUND_BO  
+static void CoreApp_UpdateidleBaoshiTimer(void *pUser);
+#endif
 static void CoreApp_DrawBannerMessage(void    *pMe);
 
 #ifdef FEATURE_APP_MUSICPLAYER
@@ -548,6 +572,12 @@ static void CCoreApp_TorchTipTimeOut(CCoreApp *pMe);
 static void CoreApp_GetSPN(CCoreApp *pMe);
 
 static void CoreApp_ImageNotify(void *po, IImage *pIImage, AEEImageInfo *pii, int nErr);
+#ifdef FEATURE_SOUND_BO
+static void CoreApp_MediaNotify(void *pUser, AEEMediaCmdNotify *pCmdNotify);
+static void CoreApp_PlayShutterSound(CCoreApp *pMe,uint16 key);
+static void CoreApp_PlayTimeSound(CCoreApp *pMe,uint16 Status);
+static void CoreApp_Media_time_Notify(void *pUser, AEEMediaCmdNotify *pCmdNotify);
+#endif
 
 /*==============================================================================
 
@@ -3843,8 +3873,10 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 } 
             }
 #endif      
-            CoreApp_UpdateIdleTimer(pMe);			
-			
+            CoreApp_UpdateIdleTimer(pMe);		
+#ifdef FEATURE_SOUND_BO	
+			CoreApp_UpdateidleBaoshiTimer(pMe);
+#endif
 #ifdef FEATURE_KEYGUARD
             if(!OEMKeyguard_IsEnabled())
             {
@@ -4272,6 +4304,11 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             (void) ISHELL_CancelTimer(pMe->a.m_pIShell,
                                       CoreApp_UpdateIdleTimer,
                                       pMe);
+#ifdef FEATURE_SOUND_BO
+			(void) ISHELL_CancelTimer(pMe->a.m_pIShell,
+                                      CoreApp_UpdateidleBaoshiTimer,
+                                      pMe);
+#endif
             (void) ISHELL_CancelTimer(pMe->a.m_pIShell,
                                       CoreApp_SearchingTimer,
                                       pMe);
@@ -4518,6 +4555,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);
 #elif defined(FEATURE_VERSION_W021_CT100)
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CAMERA);
+#elif defined(FEATURE_VERSION_K212)
+					return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #else
                 	return CoreApp_LaunchApplet(pMe, AEECLSID_MEDIAGALLERY);
 #endif
@@ -4572,6 +4611,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 	#elif defined(FEATURE_VERSION_C316)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_VIDEOPLAYER);
+	#elif defined(FEATURE_VERSION_K212)
+					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_SOUNDMENU);
 	#else
 					return CoreApp_LaunchApplet(pMe, AEECLSID_ALARMCLOCK); 
 	#endif
@@ -4646,10 +4687,10 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					return TRUE;
 				else 
 					return FALSE;
-
+#elif defined(FEATURE_VERSION_K212) 
+				return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CAMERA);
 #else
-					
-					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_SETTINGMENU);
+			    return CoreApp_LaunchApplet(pMe, AEECLSID_APP_SETTINGMENU);
 #endif					                    
 #endif
                 }
@@ -4815,6 +4856,12 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
     				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif	/*FEATURE_SMARTFREN_STATIC_BREW_APP*/
 #elif defined (FEATURE_VERSION_HITZ181) || defined (FEATURE_VERSION_W515V3)|| defined (FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_K202_LM129C)||defined(FEATURE_VERSION_K212)
+#ifdef FEATURE_VERSION_K212
+						{
+							int8 count_main = 1;
+					   		OEM_SetConfig(CFGI_COUNT_OF_MAIN, &count_main, sizeof(int8));
+						}
+#endif
     				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 #elif defined (FEATURE_VERSION_S600S)
     				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_APP_RECENTCALL);
@@ -4895,6 +4942,12 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #ifdef FEATURE_VERSION_W317A
                         return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
 #else
+#ifdef FEATURE_VERSION_K212
+						{
+							int8 count_main = 1;
+							OEM_SetConfig(CFGI_COUNT_OF_MAIN, &count_main, sizeof(int8));
+						}
+#endif
 						return CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 #endif
 #endif	
@@ -5277,6 +5330,9 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                         }
                         
                         #endif
+#ifdef FEATURE_SOUND_BO
+						CoreApp_PlayShutterSound(pMe,wParam);
+#endif
                         if ( SUCCESS != ISHELL_CreateInstance( pMe->a.m_pIShell,
                                                         AEECLSID_DIALER,
                                                         (void **)&pCallApp))
@@ -6040,7 +6096,25 @@ static boolean  IDD_POWERDOWN_Handler(void *pUser,
     
     return FALSE;
 } // IDD_POWERDOWN_Handler
-
+#ifdef FEATURE_SOUND_BO
+static void CoreApp_UpdateidleBaoshiTimer(void *pUser)
+{
+	CCoreApp    *pMe = (CCoreApp *)pUser;
+    uint32         dwSeconds;
+	int temp = 0;
+	JulianType  julian;
+	GetJulianDate(GETTIMESECONDS(), &julian);
+	if((julian.wMinute == 0)&&(julian.wSecond== 0))
+	{
+		CoreApp_PlayTimeSound(pMe,TIME_ONE);
+	}
+	// 重设分钟定时器
+    (void) ISHELL_SetTimer(pMe->a.m_pIShell,
+                           (int32)(30 * 1000),
+                           CoreApp_UpdateidleBaoshiTimer,
+                           pMe);
+}
+#endif
 /*==============================================================================
 函数:
     CoreApp_UpdateIdleTimer
@@ -9644,9 +9718,244 @@ void CoreApp_HandleAlarm(CCoreApp  *pme, uint16 wPermID)
                           0);	
 #endif
 }
+#ifdef FEATURE_SOUND_BO
+static void CoreApp_PlayShutterSound(CCoreApp *pMe,uint16 key)
+{
+    AEEMediaCmdNotify cmd;
+	int temp = 0;
+	char music_name[256] = {0};
+	if(pMe->m_pMedia)
+	{
+		IMEDIA_Stop(pMe->m_pMedia);
+		IMEDIA_Release(pMe->m_pMedia);
+		pMe->m_pMedia = NULL;
+	}
+    
+    // 如果pMe->m_pMedia接口为空，创建接口
+    if(!pMe->m_pMedia)
+    {
+        AEEMediaData      md;
+       
+        if(!pMe)
+           return;
+        md.clsData = MMD_FILE_NAME;  	
+		temp = key - AVK_0;
+		if((key>=AVK_0) && (key<=AVK_9))
+		{
+			
+			md.pData = (void *)CORE_SOUND_NAME[temp];
+		}
+		if(key == AVK_POUND)
+		{
+			MSG_FATAL("AVK_POUND====%d",0,0,0);
+			md.pData = (void *)CORE_SOUND_NAME[12];
+		}
+		if(key == AVK_STAR)
+		{
+			MSG_FATAL("AVK_POUND====%d",0,0,0);
+			md.pData = (void *)CORE_SOUND_NAME[13];
+		}
+
+		
+        md.dwSize = 0;
+       
+        (void)AEEMediaUtil_CreateMedia(pMe->a.m_pIShell, &md, &pMe->m_pMedia);
+    }
+   
+    if(pMe->m_pMedia)
+    {        
+        IMEDIA_SetVolume(pMe->m_pMedia, AEE_MAX_VOLUME*3/5); //max volum is 100
+     
+        if(IMEDIA_RegisterNotify(pMe->m_pMedia, CoreApp_MediaNotify, pMe) != SUCCESS)
+        {
+            cmd.nCmd    = MM_CMD_PLAY;
+            cmd.nStatus = MM_STATUS_DONE;
+            CoreApp_MediaNotify((void *)pMe, &cmd);
+            return;
+        }
+
+        if(IMEDIA_Play(pMe->m_pMedia) != SUCCESS)
+        {
+            cmd.nCmd    = MM_CMD_PLAY;
+            cmd.nStatus = MM_STATUS_DONE;
+            CoreApp_MediaNotify((void *)pMe, &cmd);
+            return;
+        }
+    }
+    else
+    {
+        cmd.nCmd    = MM_CMD_PLAY;
+        cmd.nStatus = MM_STATUS_DONE;
+        CoreApp_MediaNotify((void *)pMe, &cmd);
+    }
+}
+
+static void CoreApp_MediaNotify(void *pUser, AEEMediaCmdNotify *pCmdNotify)
+{
+    CCoreApp *pMe = (CCoreApp *)pUser;
+
+    if(!pMe || !pCmdNotify)
+        return;
+
+    if(pCmdNotify->nCmd == MM_CMD_PLAY)  // IMEDIA_Play events
+    {
+        switch (pCmdNotify->nStatus)
+        {
+            case MM_STATUS_ABORT:            
+                break;
+
+            case MM_STATUS_DONE:    // playback done
+				if(pMe->m_pMedia)
+				{
+					IMEDIA_Release(pMe->m_pMedia);
+					pMe->m_pMedia = NULL;
+				}
+                break;
+            default:
+                break;
+        }
+    }
+}
 
 
+static void CoreApp_PlayTimeSound(CCoreApp *pMe,uint16 Status)
+{
+    AEEMediaCmdNotify cmd;
+	int temp = 0;
+	char music_name[256] = {0};
+	JulianType  jDate;
+	uint16 wHour = 0;
+	uint16 i = 0;
+	if(pMe->m_pMedia)
+	{
+		IMEDIA_Stop(pMe->m_pMedia);
+		IMEDIA_Release(pMe->m_pMedia);
+		pMe->m_pMedia = NULL;
+	}
+	
+    GetJulianDate(GETTIMESECONDS(), &jDate);
+    // 如果pMe->m_pMedia接口为空，创建接口
+    if(!pMe->m_pMedia)
+    {
+        AEEMediaData      md;
+       
+        if(!pMe)
+           return;
+        md.clsData = MMD_FILE_NAME;  
+		switch(Status)
+		{
+			case TIME_ONE:
+				md.pData = (void *)CORE_ONE_1;
+				m_TimeStarus = TIME_TWO;
+				break;
+    	    case TIME_TWO: 
+				md.pData = (void *)CORE_TWO_2;
+				m_TimeStarus = TIME_THR;
+				break;
+    		case TIME_THR:   
+				wHour = jDate.wHour > 12 ? (jDate.wHour - 12) : jDate.wHour;
+				if(jDate.wHour > 12)
+				{
+					md.pData = (void *)CORE_THR_32;
+				}
+				else
+				{
+					md.pData = (void *)CORE_THR_31;
+				}
+				if(wHour>9)
+				{
+					m_TimeStarus = TIME_FOUR1;
+				}
+				else
+				{
+					m_TimeStarus = TIME_FOUR2;
+				}
+				break;
+    		case TIME_FOUR1: 
+				md.pData = (void *)CORE_FOR_41;
+				m_TimeStarus = TIME_FOUR2;
+				break;
+			case TIME_FOUR2: 
+				wHour = jDate.wHour > 12 ? (jDate.wHour - 12) : jDate.wHour;
+				i = wHour%10;
+				md.pData = (void *)CORE_SOUND_NAME[i];
+				m_TimeStarus = TIME_FIVE;
+				break;
+    		case TIME_FIVE: 
+				md.pData = (void *)CORE_FIVE_5;
+				m_TimeStarus = TIME_ONE;
+				break;
+			default:
+				break;
+			
+		}
 
+        md.dwSize = 0;
+       
+        (void)AEEMediaUtil_CreateMedia(pMe->a.m_pIShell, &md, &pMe->m_pMedia);
+    }
+   
+    if(pMe->m_pMedia)
+    {        
+        IMEDIA_SetVolume(pMe->m_pMedia, AEE_MAX_VOLUME*3/5); //max volum is 100
+     
+        if(IMEDIA_RegisterNotify(pMe->m_pMedia, CoreApp_Media_time_Notify, pMe) != SUCCESS)
+        {
+            cmd.nCmd    = MM_CMD_PLAY;
+            cmd.nStatus = MM_STATUS_DONE;
+            CoreApp_Media_time_Notify((void *)pMe, &cmd);
+            return;
+        }
+
+        if(IMEDIA_Play(pMe->m_pMedia) != SUCCESS)
+        {
+            cmd.nCmd    = MM_CMD_PLAY;
+            cmd.nStatus = MM_STATUS_DONE;
+            CoreApp_Media_time_Notify((void *)pMe, &cmd);
+            return;
+        }
+    }
+    else
+    {
+        cmd.nCmd    = MM_CMD_PLAY;
+        cmd.nStatus = MM_STATUS_DONE;
+        CoreApp_Media_time_Notify((void *)pMe, &cmd);
+    }
+}
+
+static void CoreApp_Media_time_Notify(void *pUser, AEEMediaCmdNotify *pCmdNotify)
+{
+    CCoreApp *pMe = (CCoreApp *)pUser;
+
+    if(!pMe || !pCmdNotify)
+        return;
+
+    if(pCmdNotify->nCmd == MM_CMD_PLAY)  // IMEDIA_Play events
+    {
+        switch (pCmdNotify->nStatus)
+        {
+            case MM_STATUS_ABORT:            
+                break;
+
+            case MM_STATUS_DONE:    // playback done
+				if(pMe->m_pMedia)
+				{
+					IMEDIA_Release(pMe->m_pMedia);
+					pMe->m_pMedia = NULL;
+				}
+				MSG_FATAL("CoreApp_Media_time_Notify.........",0,0,0);
+				if(m_TimeStarus != TIME_ONE )
+				{
+					CoreApp_PlayTimeSound(pMe,m_TimeStarus);
+				}
+                break;
+            default:
+                break;
+        }
+    }
+}
+
+#endif
 #ifdef FEATURE_KEYGUARD
 static void CoreApp_keypadtimer(void *pUser)
 {

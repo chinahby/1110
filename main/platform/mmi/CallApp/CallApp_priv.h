@@ -303,6 +303,22 @@
 #define FEATURE_EDITABLE_NUMBER
 
 
+#ifdef FEATURE_SOUND_BO
+#define NUM_0  "fs:/hsmm/callapp/0.mp3"
+#define NUM_1  "fs:/hsmm/callapp/1.mp3"
+#define NUM_2  "fs:/hsmm/callapp/2.mp3"
+#define NUM_3  "fs:/hsmm/callapp/3.mp3"
+#define NUM_4  "fs:/hsmm/callapp/4.mp3"
+#define NUM_5  "fs:/hsmm/callapp/5.mp3"
+#define NUM_6  "fs:/hsmm/callapp/6.mp3"
+#define NUM_7  "fs:/hsmm/callapp/7.mp3"
+#define NUM_8  "fs:/hsmm/callapp/8.mp3"
+#define NUM_9  "fs:/hsmm/callapp/9.mp3"
+#define NUM_P  "fs:/hsmm/callapp/P.mp3"
+#define NUM_W  "fs:/hsmm/callapp/W.mp3"
+#define NUM_PUND  "fs:/hsmm/callapp/pund.mp3"
+#define NUM_STAR  "fs:/hsmm/callapp/star.mp3"
+#endif
 
 /*==============================================================================
                                  类型定义

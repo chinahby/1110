@@ -113,7 +113,28 @@ static const RGBVAL gColorFont[11] =
     MAKE_RGB(1, 255, 11) // 青
 };
 #endif //#ifdef LCD_COLOR
+#ifdef FEATURE_SOUND_BO
+static char* SOUND_NAME[] =
+{
+    NUM_0,
+    NUM_1,
+    NUM_2,
+    NUM_3,
+    NUM_4,
+    NUM_5,
+    NUM_6,
+    NUM_7,
+    NUM_8, 
+    NUM_9,
+    NUM_P,
+    NUM_W,
+    NUM_PUND,
+    NUM_STAR,
+};
 
+static void CALLApp_PlayShutterSound(CCallApp *pMe,uint16 key);
+static void CALLApp_MediaNotify(void *pUser, AEEMediaCmdNotify *pCmdNotify);
+#endif
 /*==============================================================================
                                  函数声明
 ==============================================================================*/
@@ -493,7 +514,115 @@ void CallApp_ShowDialog(CCallApp *pMe,uint16  dlgResId)
         CALL_ERR("Failed to create the dialog in the CallApp applet",0,0,0);
     }
 }
+#ifdef FEATURE_SOUND_BO
+static void CALLApp_Mp3Stop(CCallApp *pMe)
+{
+	IALERT_StopRingerAlert(pMe->m_pAlert);
+    IALERT_StopMp3Alert(pMe->m_pAlert);
 
+}
+static void CALLApp_PlayShutterSound(CCallApp *pMe,uint16 key)
+{
+    AEEMediaCmdNotify cmd;
+	int temp = 0;
+	char music_name[256] = {0};
+	if(pMe->m_pMedia)
+	{
+		IMEDIA_Stop(pMe->m_pMedia);
+		IMEDIA_Release(pMe->m_pMedia);
+		pMe->m_pMedia = NULL;
+	}
+    
+    // 如果pMe->m_pMedia接口为空，创建接口
+    if(!pMe->m_pMedia)
+    {
+        AEEMediaData      md;
+       
+        if(!pMe)
+           return;
+        md.clsData = MMD_FILE_NAME;
+		temp = key - AVK_0;
+		MSG_FATAL("temp====%d",temp,0,0);
+        if((key>=AVK_0) && (key<=AVK_9))
+		{
+			
+			md.pData = (void *)SOUND_NAME[temp];
+		}
+		if(key == AVK_POUND)
+		{
+			MSG_FATAL("AVK_POUND====%d",0,0,0);
+			md.pData = (void *)SOUND_NAME[12];
+		}
+		if(key == AVK_STAR)
+		{
+			MSG_FATAL("AVK_POUND====%d",0,0,0);
+			md.pData = (void *)SOUND_NAME[13];
+		}
+        md.dwSize = 0;
+       
+        (void)AEEMediaUtil_CreateMedia(pMe->m_pShell, &md, &pMe->m_pMedia);
+    }
+	
+    MSG_FATAL("temp====%d",temp,0,0);
+    if(pMe->m_pMedia)
+    {        
+        IMEDIA_SetVolume(pMe->m_pMedia, AEE_MAX_VOLUME*3/5); //max volum is 100
+     
+        if(IMEDIA_RegisterNotify(pMe->m_pMedia, CALLApp_MediaNotify, pMe) != SUCCESS)
+        {
+            cmd.nCmd    = MM_CMD_PLAY;
+            cmd.nStatus = MM_STATUS_DONE;
+            CALLApp_MediaNotify((void *)pMe, &cmd);
+            return;
+        }
+
+        if(IMEDIA_Play(pMe->m_pMedia) != SUCCESS)
+        {
+            cmd.nCmd    = MM_CMD_PLAY;
+            cmd.nStatus = MM_STATUS_DONE;
+            CALLApp_MediaNotify((void *)pMe, &cmd);
+            return;
+        }
+    }
+    else
+    {
+        cmd.nCmd    = MM_CMD_PLAY;
+        cmd.nStatus = MM_STATUS_DONE;
+        CALLApp_MediaNotify((void *)pMe, &cmd);
+    }
+}
+
+static void CALLApp_MediaNotify(void *pUser, AEEMediaCmdNotify *pCmdNotify)
+{
+    CCallApp *pMe = (CCallApp *)pUser;
+
+    if(!pMe || !pCmdNotify)
+        return;
+
+    if(pCmdNotify->nCmd == MM_CMD_PLAY)  // IMEDIA_Play events
+    {
+    	MSG_FATAL("pCmdNotify->nStatus===%d",pCmdNotify->nStatus,0,0);
+        switch (pCmdNotify->nStatus)
+        {
+            case MM_STATUS_ABORT:            
+                break;
+
+            case MM_STATUS_DONE:    // playback done                 
+                    if(pMe->m_pMedia)
+				    {
+				        IMEDIA_Release(pMe->m_pMedia);
+				        pMe->m_pMedia = NULL;
+				    }
+                break;
+            default:
+                break;
+        }
+    }
+}
+
+
+
+#endif
 /*===============================================================================
 函数:
        CallApp_RouteDialogEvent
@@ -1022,8 +1151,8 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 				case AVK_7:
 				case AVK_8:
 				case AVK_9:
-				case AVK_STAR:
 				case AVK_POUND:
+				case AVK_STAR:
 				case AVK_CLR:
 				case AVK_SELECT:
 				case AVK_INFO:
@@ -1785,7 +1914,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                     }
                     return TRUE;
 
-#ifdef KEYSND_ZY
+#ifdef FEATURE_SOUND_BO
                 case AVK_0:
                 case AVK_1:
                 case AVK_2:
@@ -1798,7 +1927,10 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                 case AVK_9:
                 case AVK_STAR:
                 case AVK_POUND:
-                   CallApp_SpecialKeySnd(pMe,wParam);//多彩按键音
+					MSG_FATAL("CALLAPP_DIAler_numedit_dlg......evt key",0,0,0);
+						
+                    CALLApp_PlayShutterSound(pMe,wParam);
+                   //CallApp_SpecialKeySnd(pMe,wParam);//多彩按键音
                    return TRUE;
 #endif /* KEYSND_ZY */
                 default:
@@ -1986,8 +2118,8 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                 {
                     char   szStr[2];
                     AECHAR wStr[2];
-					MSG_FATAL("CALLAPP_DIAler_numedit_dlg......evt key",0,0,0);
-                                        
+					
+					
                     if ((dwParam & KB_AUTOREPEAT) != 0 && (AVKType)wParam != AVK_0&& (AVKType)wParam != AVK_STAR&& (AVKType)wParam != AVK_POUND)
                     {
                         MSG_FATAL("OK,it is repeat,don't process it ",0,0,0);
@@ -7157,35 +7289,25 @@ void CallApp_SetupCallAudio(CCallApp *pMe)
 	ISOUND_SetVolume(pMe->m_pSound,
                                             GET_ISOUND_VOL_LEVEL(pMe->m_CallVolume)*3/5);
 	#else
-    ISOUND_SetVolume(pMe->m_pSound,
-                                            GET_ISOUND_VOL_LEVEL(pMe->m_CallVolume));
-	#endif
-#ifdef FEATURE_VERSION_K212
+	#ifdef FEATURE_VERSION_K212
 	if(pMe->m_bHandFree)
 	{
-		 
-#if 0//def FEATURE_VERSION_K212
-		 
-    MSG_FATAL("disp_drv_on......................",0,0,0);
-	gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
-    clk_busy_wait(30*1000);
-    gpio_tlmm_config(GPIO_OUTPUT_10);
-    gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
-    clk_busy_wait(1);
-    gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
-    clk_busy_wait(5);
-    gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
-    clk_busy_wait(1);
-    gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
-    clk_busy_wait(1);
-    gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
-    clk_busy_wait(1);
-    gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
-    clk_busy_wait(1);
-    gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
+    	//fm_set_volume( 3,TRUE);
+    	ISOUND_SetVolume(pMe->m_pSound, GET_ISOUND_VOL_LEVEL(pMe->m_CallVolume)*3/5);
+	}
+	else
+	{
+		ISOUND_SetVolume(pMe->m_pSound, GET_ISOUND_VOL_LEVEL(pMe->m_CallVolume));
+	}
+	#else
+		ISOUND_SetVolume(pMe->m_pSound, GET_ISOUND_VOL_LEVEL(pMe->m_CallVolume));
 	#endif
+	#endif
+#ifdef FEATURE_K_AMPLIFIER
+	if(pMe->m_bHandFree)
+	{
 		snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	
-	    snd_set_device(SND_DEVICE_HEADSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);	
+	    snd_set_device(SND_DEVICE_SPEAKER_PHONE/*SND_DEVICE_HEADSET*/, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);	
 	}
 #endif
 }
@@ -8862,12 +8984,20 @@ void CallApp_ChangeCallVolume(CCallApp  *pMe,
         {
             pMe->m_CallVolume = OEMSOUND_1ST_VOL;
         }
-		#ifdef FEATURE_VERSION_K202
-		ISOUND_SetVolume(pMe->m_pSound,
-                                                GET_ISOUND_VOL_LEVEL(pMe->m_CallVolume)*3/5);
+		MSG_FATAL("pMe->m_CallVolume=====%d",pMe->m_CallVolume,0,0);
+		#if defined(FEATURE_VERSION_K202)
+		ISOUND_SetVolume(pMe->m_pSound, GET_ISOUND_VOL_LEVEL(pMe->m_CallVolume)*3/5);
+		#elif defined(FEATURE_VERSION_K212)
+	    if(pMe->m_bHandFree)
+	    {
+	    	ISOUND_SetVolume(pMe->m_pSound,GET_ISOUND_VOL_LEVEL((pMe->m_CallVolume)*pMe->m_CallVolume)/5);
+	    }
+		else
+		{
+			ISOUND_SetVolume(pMe->m_pSound,GET_ISOUND_VOL_LEVEL(pMe->m_CallVolume));
+		}
 		#else
-        ISOUND_SetVolume(pMe->m_pSound,
-                                                GET_ISOUND_VOL_LEVEL(pMe->m_CallVolume));
+        ISOUND_SetVolume(pMe->m_pSound, GET_ISOUND_VOL_LEVEL(pMe->m_CallVolume));
 		#endif
 
     }

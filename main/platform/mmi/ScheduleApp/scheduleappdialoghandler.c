@@ -4217,7 +4217,7 @@ _scheduleapp_event_edit_save_:
                 case AVK_7:
                 case AVK_8:
                 case AVK_9:
-				#ifdef FEATURE_VERSION_K202
+				#if defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)
 				if( (wParam == AVK_0 ||wParam == AVK_1 ||wParam == AVK_2
                 	||wParam == AVK_3 || wParam == AVK_4 ||wParam == AVK_5 ||wParam == AVK_6 ||wParam == AVK_7 
                 	||wParam == AVK_8 || wParam == AVK_9) && (currentItem == 0 || currentItem == 1))
@@ -5019,6 +5019,7 @@ static void initMenuItemWhenViewDay( CCalApp* pme, IMenuCtl* pMenu, int type)
     AECHAR          subject[MAXTEXT+1]    = {0};
     AECHAR          location[MAXTEXT+1]   = {0};
     AECHAR          text[160]           = {0};
+	JulianType  jDate;
 #if FEATURE_ONE_DB
     if( !openDatabaseIf( pme))
 #else
@@ -5027,7 +5028,7 @@ static void initMenuItemWhenViewDay( CCalApp* pme, IMenuCtl* pMenu, int type)
     {
         return;
     }
-
+	 GetJulianDate(GETTIMESECONDS(), &jDate);
     // no current event
     pme->m_pceCurrent = NULL;
 
@@ -5119,7 +5120,7 @@ static void initMenuItemWhenViewDay( CCalApp* pme, IMenuCtl* pMenu, int type)
         IMENUCTL_SetBottomBarType( pMenu, BTBAR_ADD_BACK);
     }
 
-    IMENUCTL_SetSel( pMenu, nFirstSel);
+    IMENUCTL_SetSel( pMenu, (jDate.wHour+1));
 }
 
 static void initDataForEditEventAtViewDayState( CCalApp *pme, IMenuCtl* pMenu)

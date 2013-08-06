@@ -715,7 +715,9 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
 
 #ifndef FEATURE_VERSION_H19C 
 #ifndef FEATURE_VERSION_C337
+#ifndef FEATURE_VERSION_K212
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SCENEMODE_TITLE, IDS_SCENEMODE_TITLE, NULL, 0);
+#endif
 #endif
 #endif
 

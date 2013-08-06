@@ -159,10 +159,19 @@ CONSTFILE_FILES+=\
 	ICON_Surface.png|fs:/image/mainmenu/ICON_Surface.png \
 	ICON_Surface_1.png|fs:/image/mainmenu/ICON_Surface_1.png \
 	ICON_Surface_2.png|fs:/image/mainmenu/ICON_Surface_2.png \
-	SEL.png|fs:/image/mainmenu/SEL.png
+	SEL.png|fs:/image/mainmenu/SEL.png \
+	ICON_Camera_en.png|fs:/image/mainmenu/ICON_Camera_en.png \
+	ICON_Contacts_en.png|fs:/image/mainmenu/ICON_Contacts_en.png \
+	ICON_Management_en.png|fs:/image/mainmenu/ICON_Management_en.png \
+	ICON_Messages_en.png|fs:/image/mainmenu/ICON_Messages_en.png \
+	ICON_Multimedia_en.png|fs:/image/mainmenu/ICON_Multimedia_en.png \
+	ICON_Profile_en.png|fs:/image/mainmenu/ICON_Profile_en.png \
+	ICON_Recentcalls_en.png|fs:/image/mainmenu/ICON_Recentcalls_en.png \
+	ICON_Settings_en.png|fs:/image/mainmenu/ICON_Settings_en.png \
+	ICON_Surface_en.png|fs:/image/mainmenu/ICON_Surface_en.png
 	
 	CONSTFILE_FILES+=\
-		calc.mp3|fs:/hsmm/mainmenu/calc.mp3 \
+		mutimed.mp3|fs:/hsmm/mainmenu/mutimed.mp3 \
 		camera.mp3|fs:/hsmm/mainmenu/camera.mp3 \
 		fm.mp3|fs:/hsmm/mainmenu/fm.mp3 \
 		manager.mp3|fs:/hsmm/mainmenu/manager.mp3 \

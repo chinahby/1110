@@ -58,7 +58,7 @@
 
 
 #define debug(...)
-#if defined(FEATURE_VERSION_X3)||defined(FEATURE_VERSION_K202)
+#if defined(FEATURE_VERSION_X3)||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)
 #ifdef FEATURE_LANG_CHINESE
 #define     FEATURE_DRAW_LUNAR_CALENDAR     0
 #else 

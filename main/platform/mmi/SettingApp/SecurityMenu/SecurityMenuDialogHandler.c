@@ -552,7 +552,10 @@ static boolean  SecurityMainDlgHandler(CSecurityMenu *pMe,
                     break;
 
                 case IDS_PIN_SET:              //PINÉèÖÃ
-                    CLOSE_DIALOG(DLG_PINCHECK)
+                	if (IRUIM_IsCardConnected(pMe->m_pIRUIM))
+                	{
+                    	CLOSE_DIALOG(DLG_PINCHECK)
+                	}
                     break;
 
                 case IDS_PHONE_PASSWORD_CHANGE:

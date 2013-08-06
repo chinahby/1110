@@ -777,6 +777,7 @@ typedef struct
    boolean	m_onekey_lock_keypad;							/*CFGI_ONEKEY_LOCK_KEYPAD Add by xuhui 2012/12/24*/
 #endif
    ruim_id_table_t     m_ruim_id_save_table; /*CFGI_RUIM_ID_SAVE_TABLE*/
+   int8                m_count_num_main;  //CFGI_COUNT_OF_MAIN
 } OEMConfigListType;
 
 
@@ -1727,6 +1728,9 @@ static int OEMPriv_GetItem_CFGI_RUIM_ID_SAVE_TABLE(void *pBuff);
 static int OEMPriv_SetItem_CFGI_RUIM_ID_SAVE_TABLE(void *pBuff);
 
 
+static int OEMPriv_GetItem_CFGI_COUNT_OF_MAIN(void *pBuff);
+static int OEMPriv_SetItem_CFGI_COUNT_OF_MAIN(void *pBuff);
+
 /*===========================================================================
 
                      STATIC/LOCAL DATA
@@ -2116,6 +2120,7 @@ static OEMConfigListType oemi_cache = {
    ,TRUE											//CFGI_ONEKEY_LOCK_KEYPAD
 #endif
    ,{0}    //CFGI_RUIM_ID_SAVE_TABLE
+   ,{1}    //CFGI_COUNT_OF_MAIN
 };
 
 ////
@@ -2718,7 +2723,7 @@ static ConfigItemTableEntry const customOEMItemTable[] =
    CFGTABLEITEM(CFGI_ONEKEY_LOCK_KEYPAD,sizeof(boolean)),
 #endif
    CFGTABLEITEM(CFGI_RUIM_ID_SAVE_TABLE,sizeof(ruim_id_table_t)),
-
+   CFGTABLEITEM(CFGI_COUNT_OF_MAIN, sizeof(uint8)),
    //CFGTABLEITEM(CFGI_SALES_TRACK_SMS_SEND, sizeof(boolean)),		//Add By zzg 2012_10_29
 };
 #endif
@@ -2877,6 +2882,7 @@ void OEM_RestoreFactorySetting( void )
    oemi_cache.sms_retry_period          = OEMNV_SMS_RETRY_PERIOD;
    oemi_cache.sms_retry_interval        = OEMNV_SMS_RETRY_INTERVAL;
    oemi_cache.sms_gcf_flag              = FALSE;
+   oemi_cache.m_count_num_main          = 1;
 #ifdef CUST_EDITION
    WSTRCPY(oemi_cache.voicemail_number,OEMNV_VOICEMAIL_NUMBER);
    nvi.sms_vm_number.num_digits = WSTRLEN(oemi_cache.voicemail_number);
@@ -11371,6 +11377,24 @@ static int OEMPriv_SetItem_CFGI_RUIM_ID_SAVE_TABLE(void *pBuff)
     OEMPriv_WriteOEMConfigList(); 
     return SUCCESS;
 }
+
+
+
+static int OEMPriv_GetItem_CFGI_COUNT_OF_MAIN(void *pBuff)
+{
+	//MEMCPY(pBuff, (void*) &oemi_cache.m_count_num_main, sizeof(int8));
+	*(int8 *) pBuff = oemi_cache.m_count_num_main;
+    return SUCCESS;
+	
+}
+static int OEMPriv_SetItem_CFGI_COUNT_OF_MAIN(void *pBuff)
+{
+	//MEMCPY((void*) &oemi_cache.m_count_num_main, pBuff, sizeof(int8));
+    oemi_cache.m_count_num_main = *(int8 *)pBuff;
+    OEMPriv_WriteOEMConfigList(); 
+    return SUCCESS;
+}
+
 
 
 #ifdef FEATURE_VERSION_C337

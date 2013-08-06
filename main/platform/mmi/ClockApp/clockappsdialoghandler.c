@@ -516,7 +516,11 @@ static boolean  HandleAlarmMainDialogEvent(CClockApps *pMe,
             }
             else
             {
+				#ifdef FEATURE_VERSION_K212
+				IMENUCTL_SetBottomBarType( pMenuAlarmList, BTBAR_EDIT_BACK);
+				#else
                 IMENUCTL_SetBottomBarType( pMenuAlarmList, BTBAR_ADD_BACK);
+				#endif
             }
             IMENUCTL_SetSel(pMenuAlarmList, pMe->m_currDlgId);
             (void)IMENUCTL_Redraw(pMenuAlarmList);
@@ -540,7 +544,11 @@ static boolean  HandleAlarmMainDialogEvent(CClockApps *pMe,
                 }
                 else
                 {
+					#ifdef FEATURE_VERSION_K212
+                    IMENUCTL_SetBottomBarType( pMenuAlarmList, BTBAR_EDIT_BACK);
+					#else
                     IMENUCTL_SetBottomBarType( pMenuAlarmList, BTBAR_ADD_BACK);
+					#endif
                 } 
             }
             (void)IMENUCTL_Redraw(pMenuAlarmList);

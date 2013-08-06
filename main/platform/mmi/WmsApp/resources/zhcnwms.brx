@@ -5,7 +5,7 @@
 		<Text>收件箱</Text>
 	</STRING>
 	<STRING Id="2" Name="IDS_WRITEMESSAGE">
-		<Text>新建短信息</Text>
+		<Text>写信息</Text>
 	</STRING>
 	<STRING Id="3" Name="IDS_OUTBOX">
 		<Text>发件箱</Text>

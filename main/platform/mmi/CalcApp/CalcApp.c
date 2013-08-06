@@ -1822,6 +1822,16 @@ static void Calc_DrawScreen(CCalcApp *pme)
 	MEMSET(&BarParam, 0, sizeof(BarParam));//wlh 20090417 add   
 	BarParam.eBBarType = BTBAR_BACK;      //wlh 20090417 add
 
+	{
+		AECHAR WTitle[40] = {0};
+		(void)ISHELL_LoadResString(pme->a.m_pIShell,
+                AEE_CALCAPP_RES_FILE,                                
+                IDS_CALCTITLE,
+                WTitle,
+                sizeof(WTitle));
+		IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
+    }
+
 	Calc_SetupValRect(pme);
 #if defined(FEATURE_DISP_220X176)
 	drawImage( pme, AEE_APPSCOMMONRES_IMAGESFILE, IDB_CALCAPP_GROUND, 0, 0);

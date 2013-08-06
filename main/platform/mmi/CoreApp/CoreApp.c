@@ -363,6 +363,13 @@ void CoreApp_FreeAppData(IApplet* po)
 	   }
 
     #endif
+#ifdef FEATURE_SOUND_BO
+	if(pMe->m_pMedia)
+	{
+		IMEDIA_Release(pMe->m_pMedia);
+		pMe->m_pMedia = NULL;
+	}
+#endif
     if (pMe->m_pConfig) 
     {
         (void)ICONFIG_Release(pMe->m_pConfig);
@@ -511,7 +518,9 @@ boolean CoreApp_InitAppData(IApplet* po)
 #else
     pMe->m_nCardStatus = AEECARD_NO_CARD;
 #endif
-
+#ifdef FEATURE_SOUND_BO
+	pMe->m_pMedia = NULL;
+#endif
     pMe->m_bSuspended = FALSE;
     pMe->m_bChargFull = FALSE;
     pMe->m_bBatteryActive=FALSE;

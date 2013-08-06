@@ -250,7 +250,7 @@ SIDE EFFECTS
 static void disp_drv_off(void)
 {
     rex_enter_crit_sect(&disp_drv_crit_sect);
-	#ifdef FEATURE_VERSION_K212
+	#ifdef FEATURE_K_AMPLIFIER
 	{
 		nv_item_type	SimChoice;
 		(void)OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
@@ -295,7 +295,7 @@ SIDE EFFECTS
 static void disp_drv_on(void)
 {
     rex_enter_crit_sect(&disp_drv_crit_sect);
-	#ifdef FEATURE_VERSION_K212
+	#ifdef FEATURE_K_AMPLIFIER
 	{
 	    MSG_FATAL("disp_drv_on......................",0,0,0);
 		gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);

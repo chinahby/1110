@@ -1092,7 +1092,11 @@ static void CallApp_FreeAppData(CCallApp *pMe)
         pMe->m_pIAnn= NULL;
     }
     
-    
+    if(pMe->m_pMedia)
+    {
+        IMEDIA_Release(pMe->m_pMedia);
+        pMe->m_pMedia = NULL;
+    }
     if ( pMe->m_pMenu )
     {
         IMENUCTL_Release ( pMe->m_pMenu );

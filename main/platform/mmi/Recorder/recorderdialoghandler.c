@@ -1570,6 +1570,22 @@ __dialog_handler_of_state_record_stop__:
 
 		case EVT_USER_REDRAW:
 		{
+			#if 0
+			IMENUCTL_SetTitle( pMenu, AEE_RECORDER_RES_FILE, IDS_RECORD_LIST_TITLE, 0);
+			#else
+		    {
+		  		AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pme->m_pShell,
+                        AEE_RECORDER_RES_FILE,                                
+                        IDS_RECORD_LIST_TITLE,
+                        WTitle,
+                        sizeof(WTitle));
+                if(pme->m_pIAnn != NULL)
+                {
+				    IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
+                }
+		    }
+			#endif
 #if defined( AEE_SIMULATOR)
 			drawImage( pme, pme->m_Media.m_bRecorder ? IDI_RECORDER_BG_RECORD : IDI_RECORDER_BG_PLAY);
 #else
@@ -2586,22 +2602,7 @@ static boolean  dialog_handler_of_state_record_list( Recorder* pme, AEEEvent evt
 			ITEXTCTL_SetActive( pTextCtl, FALSE);
 
 			recorder_list_create_menu( pme, pMenu, 0);
-			#if 0
-			IMENUCTL_SetTitle( pMenu, AEE_RECORDER_RES_FILE, IDS_RECORD_LIST_TITLE, 0);
-			#else
-		    {
-		  		AECHAR WTitle[40] = {0};
-				(void)ISHELL_LoadResString(pme->m_pShell,
-                        AEE_RECORDER_RES_FILE,                                
-                        IDS_RECORD_LIST_TITLE,
-                        WTitle,
-                        sizeof(WTitle));
-                if(pme->m_pIAnn != NULL)
-                {
-				    IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
-                }
-		    }
-			#endif
+			
 			IMENUCTL_SetOemProperties( pMenu, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY | OEMMP_USE_MENU_STYLE|MP_ACTIVE_NO_REDRAW);
 			IMENUCTL_SetBottomBarType( pMenu, BTBAR_BACK);
             IMENUCTL_SetProperties( pOption, IMENUCTL_GetProperties( pMenu) | MP_BIND_ITEM_TO_NUMBER_KEY|MP_ACTIVE_NO_REDRAW);
@@ -2661,6 +2662,22 @@ static boolean  dialog_handler_of_state_record_list( Recorder* pme, AEEEvent evt
 
 		case EVT_USER_REDRAW:
 		{
+			#if 0
+			IMENUCTL_SetTitle( pMenu, AEE_RECORDER_RES_FILE, IDS_RECORD_LIST_TITLE, 0);
+			#else
+		    {
+		  		AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pme->m_pShell,
+                        AEE_RECORDER_RES_FILE,                                
+                        IDS_RECORD_LIST_TITLE,
+                        WTitle,
+                        sizeof(WTitle));
+                if(pme->m_pIAnn != NULL)
+                {
+				    IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
+                }
+		    }
+			#endif
 			if( IMENUCTL_GetItemCount( pMenu) == 0)
 			{
 				IMENUCTL_SetBottomBarType( pMenu, BTBAR_BACK);

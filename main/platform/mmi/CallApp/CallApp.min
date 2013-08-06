@@ -17,6 +17,7 @@ $(CALLAPP_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
 vpath %.c $(CALLAPP_SRC)	
 vpath %.bar $(CALLAPP_RES)
 vpath %.brx $(CALLAPP_RES)
+vpath %.mp3 $(CALLAPP_RES)
 
 ifeq ($(EXTLANG1),huth)
 CONSTFILE_FILES+=\
@@ -26,6 +27,25 @@ else
 CONSTFILE_FILES+=\
 	callapp.mif|fs:/mif/callapp.mif \
 	callapp.bar|fs:/mod/callapp/en/callapp.bar
+endif
+	
+ifeq ($(USES_RESDIR),K212)
+CONSTFILE_FILES+=\
+		0.mp3|fs:/hsmm/callapp/0.mp3 \
+		1.mp3|fs:/hsmm/callapp/1.mp3 \
+		2.mp3|fs:/hsmm/callapp/2.mp3 \
+		3.mp3|fs:/hsmm/callapp/3.mp3 \
+		4.mp3|fs:/hsmm/callapp/4.mp3 \
+		5.mp3|fs:/hsmm/callapp/5.mp3 \
+		6.mp3|fs:/hsmm/callapp/6.mp3 \
+		7.mp3|fs:/hsmm/callapp/7.mp3 \
+		8.mp3|fs:/hsmm/callapp/8.mp3 \
+		9.mp3|fs:/hsmm/callapp/9.mp3 \
+		P.mp3|fs:/hsmm/callapp/P.mp3 \
+		W.mp3|fs:/hsmm/callapp/W.mp3 \
+		pund.mp3|fs:/hsmm/callapp/pund.mp3 \
+		star.mp3|fs:/hsmm/callapp/star.mp3 \
+		Away.mp3|fs:/hsmm/callapp/Away.mp3
 endif
 	
 # 加入另外一种语言资源文件
