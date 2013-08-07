@@ -1910,6 +1910,7 @@ static int IAnnunciator_SetFieldIsActiveEx(IAnnunciator * pMe,boolean bActive)
     }
 	
 	IAnnunCoreObj->m_bActive = bActive;
+
 	return SUCCESS;
 }
 
@@ -1919,7 +1920,9 @@ static int IAnnunciator_SetHasTitleText(IAnnunciator *pMe, boolean bHasTitleText
     {
       return EFAILED;
     }
+   
 	IAnnunCoreObj->m_hasTitleText = bHasTitleText;
+
 	return SUCCESS;
 
 }
@@ -2284,9 +2287,10 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
                         0,
                         0,
                         AEE_RO_COPY);
-#endif
-        
-        
+#endif        
+
+        //MSG_FATAL("***zzg OEMAnnunciator m_bActive=%d, m_hasTitleText=%d***", IAnnunCoreObj->m_bActive, IAnnunCoreObj->m_hasTitleText, 0);
+
 	    if(!IAnnunCoreObj->m_bActive)
 		{			
 			/*
@@ -2395,7 +2399,8 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
                     }	
 #elif defined(FEATURE_DISP_240X320)
 					bgRect.x = 40;
-                    if(titleLen >=150)
+                    //if(titleLen >=150)
+                    if(1)
                     {
                         bgRect.x = 0;
                         bgRect.dx = 240;
@@ -2429,7 +2434,7 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
 					//DBGPRINTF("***zzg bgRect:%d,%d,%d,%d***", bgRect.x, bgRect.y, bgRect.dx, bgRect.dy);
 
 					
-					#ifdef FEATURE_VERSION_C337
+					#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_K212)
 					{
 						IImage      *pBarImg = NULL;
 
@@ -2459,7 +2464,7 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
 	                rc.dx = SCREEN_WIDTH;
 	                rc.dy = STATEBAR_HEIGHT;
 
-					#ifdef FEATURE_VERSION_C337
+					#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_K212)
 					IDISPLAY_SetColor(pMe->m_coreObj->m_piDisplay, CLR_USER_TEXT, RGB_BLACK);
 					#else
 					IDISPLAY_SetColor(pMe->m_coreObj->m_piDisplay, CLR_USER_TEXT, RGB_WHITE);

@@ -4322,7 +4322,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             (void) ISHELL_CancelTimer(pMe->a.m_pIShell,
                                       CoreApp_SearchingTimer,
                                       pMe);
-              #if defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_1110W516)|| defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_C316)
+             #if defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_1110W516)|| defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_C316)|| defined(FEATURE_VERSION_K212)
              IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
              #endif
 //Add by pyuangui 20121220			 

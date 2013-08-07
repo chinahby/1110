@@ -5570,10 +5570,12 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
 				*/
 
 	            CallApp_IncomingCall_Dlg_Init(pMe);
-#ifndef FEATURE_VERSION_C337								
+#ifndef FEATURE_VERSION_C337	
+#ifndef FEATURE_VERSION_K212
 				IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
 				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,StrBuf);
 				IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, FALSE);
+#endif                
 #endif
 			    if(pMe->m_pBacklight)
 	            {
