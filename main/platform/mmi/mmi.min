@@ -95,6 +95,7 @@ include $(TETRIS)/Tetris.min
 endif
 
 #Games
+ifneq ($(USES_RESDIR),K212)
 ifeq ($(MMI_ADD_GAME),yes)
 include $(BRICKATTACK)/brickattack.min
 include $(BLACKJACK)/blackjack.min
@@ -107,6 +108,11 @@ include $(GMFIVE)/GmFive.min
 include $(TETRIS)/Tetris.min
 endif
 endif
+endif
+
+ifeq ($(USES_RESDIR),K212)
+include $(TETRIS)/Tetris.min
+endif 
 
 #Apps
 #include $(EXTRAMENU)/extramenu.min

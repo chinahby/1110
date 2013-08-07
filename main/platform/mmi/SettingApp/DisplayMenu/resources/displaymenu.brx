@@ -220,6 +220,9 @@
 	<String Id="1081" Name="IDS_REND_EFFECT_BLINDS_INTER">
 		<Text>Intersect Blind</Text>
 	</String>
+	<String Id="1082" Name="IDS_REND_EFFECT_3D">
+		<Text>3D Blind</Text>
+	</String>
 	<String Id="1083" Name="IDS_REND_EFFECT_ONEBYONE">
 		<Text>OneByOne</Text>
 	</String>

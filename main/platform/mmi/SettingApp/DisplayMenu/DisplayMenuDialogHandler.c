@@ -4601,7 +4601,11 @@ static boolean  HandleRENDMenuDialogEvent(CDisplayMenu *pMe,
 
         case EVT_DIALOG_START:
         {
+			
             (void)OEM_GetConfig(CFGI_REND_STATE, (void*)&nOldRendState, sizeof(nOldRendState));
+			#ifdef FEATURE_VERSION_K212
+			IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_EFFECT_3D, IDS_REND_EFFECT_3D, NULL, 0);
+			#else
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_EFFECT_FADE, IDS_REND_EFFECT_FADE, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_EFFECT_SHOW_HORZ, IDS_REND_EFFECT_SHOW_HORZ, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_EFFECT_SHOW_VERT, IDS_REND_EFFECT_SHOW_VERT, NULL, 0);
@@ -4617,6 +4621,7 @@ static boolean  HandleRENDMenuDialogEvent(CDisplayMenu *pMe,
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_EFFECT_BLINDS_INTER, IDS_REND_EFFECT_BLINDS_INTER, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_STRING_RANDOM, IDS_STRING_RANDOM, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_REND_EFFECT_ONEBYONE, IDS_REND_EFFECT_ONEBYONE, NULL, 0);
+			#endif
 			IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_ALWAYS_OFF, IDS_ALWAYS_OFF, NULL, 0);
 
             InitMenuIcons(pMenu);
@@ -4645,7 +4650,11 @@ static boolean  HandleRENDMenuDialogEvent(CDisplayMenu *pMe,
                 break;
             #endif    
             case DISPLAYREND_TYPE_ROTAT_HORZ:
+				#ifdef FEATURE_VERSION_K212
+				SetMenuIcon(pMenu, IDS_REND_EFFECT_3D, TRUE);
+				#else
                 SetMenuIcon(pMenu, IDS_REND_EFFECT_ROTAT_HORZ, TRUE);
+				#endif
                 break;
             case DISPLAYREND_TYPE_ROTAT_VERT:
                 SetMenuIcon(pMenu, IDS_REND_EFFECT_ROTAT_VERT, TRUE);
@@ -4728,6 +4737,7 @@ static boolean  HandleRENDMenuDialogEvent(CDisplayMenu *pMe,
                 nOldRendState = DISPLAYREND_TYPE_FLY_VERT;
                 break;
             #endif    
+			case IDS_REND_EFFECT_3D:
             case IDS_REND_EFFECT_ROTAT_HORZ:
                 nOldRendState = DISPLAYREND_TYPE_ROTAT_HORZ;
                 break;

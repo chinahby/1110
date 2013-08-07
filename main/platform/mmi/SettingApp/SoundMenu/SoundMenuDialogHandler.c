@@ -756,7 +756,14 @@ static boolean  HandleSceneModeSubDialogEvent(CSoundMenu *pMe,
     {
         case EVT_DIALOG_INIT:
             Sound_App_Add_Menu(pMenu,IDS_ACTIVATE);
-            Sound_App_Add_Menu(pMenu,IDS_PERSONALISE);
+			#ifdef FEATURE_VERSION_K212
+			if((pMe->m_CurProfile!=OEMNV_PROFILE_MEETING) && (pMe->m_CurProfile!=OEMNV_PROFILE_QUIETMODE))
+			{
+				Sound_App_Add_Menu(pMenu,IDS_PERSONALISE);
+			}
+			#else
+			Sound_App_Add_Menu(pMenu,IDS_PERSONALISE);
+			#endif
             Sound_App_Add_Menu(pMenu,IDS_PROFILE_RESTORE);
             return TRUE;
 

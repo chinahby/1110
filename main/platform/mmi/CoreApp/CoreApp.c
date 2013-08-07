@@ -169,6 +169,23 @@ static void CoreApp_InitdataTouch(CCoreApp *pMe)
 	pMe->m_pImageTimeIcon[11] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TIME_IDLE_TIME_BG);
 	pMe->m_pImageTimeIcon[12] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TIME_NIGHT);
 }
+#else
+#ifdef FEATURE_VERSION_K212
+static void CoreApp_InitdataTouch(CCoreApp *pMe)
+{
+	pMe->m_pImageTimeIcon[0] = ISHELL_LoadResImage(pMe->a.m_pIShell,AEE_APPSCOMMONRES_IMAGESFILE,IDI_TIME_0);
+	pMe->m_pImageTimeIcon[1] = ISHELL_LoadResImage(pMe->a.m_pIShell,AEE_APPSCOMMONRES_IMAGESFILE,IDI_TIME_1);
+	pMe->m_pImageTimeIcon[2] = ISHELL_LoadResImage(pMe->a.m_pIShell,AEE_APPSCOMMONRES_IMAGESFILE,IDI_TIME_2);
+	pMe->m_pImageTimeIcon[3] = ISHELL_LoadResImage(pMe->a.m_pIShell,AEE_APPSCOMMONRES_IMAGESFILE,IDI_TIME_3);
+	pMe->m_pImageTimeIcon[4] = ISHELL_LoadResImage(pMe->a.m_pIShell,AEE_APPSCOMMONRES_IMAGESFILE,IDI_TIME_4);
+	pMe->m_pImageTimeIcon[5] = ISHELL_LoadResImage(pMe->a.m_pIShell,AEE_APPSCOMMONRES_IMAGESFILE,IDI_TIME_5);
+	pMe->m_pImageTimeIcon[6] = ISHELL_LoadResImage(pMe->a.m_pIShell,AEE_APPSCOMMONRES_IMAGESFILE,IDI_TIME_6);
+	pMe->m_pImageTimeIcon[7] = ISHELL_LoadResImage(pMe->a.m_pIShell,AEE_APPSCOMMONRES_IMAGESFILE,IDI_TIME_7);
+	pMe->m_pImageTimeIcon[8] = ISHELL_LoadResImage(pMe->a.m_pIShell,AEE_APPSCOMMONRES_IMAGESFILE,IDI_TIME_8);
+	pMe->m_pImageTimeIcon[9] = ISHELL_LoadResImage(pMe->a.m_pIShell,AEE_APPSCOMMONRES_IMAGESFILE,IDI_TIME_9);
+	pMe->m_pImageTimeIcon[10] = ISHELL_LoadResImage(pMe->a.m_pIShell,AEE_APPSCOMMONRES_IMAGESFILE,IDI_TIME_POINT);
+}
+#endif
 #endif
 
 #ifdef FEATURE_USES_BLACKBERRY
@@ -458,6 +475,14 @@ void CoreApp_FreeAppData(IApplet* po)
 		}
 	}
 #else
+	for(k=0;k<IDLE_TIME_COUNT;k++)
+	{
+		if(pMe->m_pImageTimeIcon[k]!=NULL)
+		{
+			(void)IIMAGE_Release(pMe->m_pImageTimeIcon[k]);
+            pMe->m_pImageTimeIcon[k] = NULL;
+		}
+	}
 #endif
 #endif
 #if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)
@@ -679,6 +704,10 @@ boolean CoreApp_InitAppData(IApplet* po)
 	}
 
 #else
+	for(i=0;i<IDLE_TIME_COUNT;i++)
+	{
+		pMe->m_pImageTimeIcon[i] = NULL;
+	}
 #endif
 #endif
 	pMe->m_IsSametime = FALSE;
@@ -698,7 +727,8 @@ boolean CoreApp_InitAppData(IApplet* po)
 #ifdef FEATURE_USES_BLACKBERRY
      CoreApp_InitdataBlackBerry(pMe);
 #endif
-#ifdef FEATURE_LCD_TOUCH_ENABLE
+
+#if defined(FEATURE_LCD_TOUCH_ENABLE)||defined(FEATURE_VERSION_K212)
     CoreApp_InitdataTouch(pMe);
 #endif
 
@@ -3063,25 +3093,22 @@ static int DBToLevel (int nDBVal)
     else if (nDBVal < 106)
         return ANNUN_STATE_RSSI_2;
 	#else
-	/*
-	#ifdef FEATURE_VERSION_LM126C
-	if (nDBVal < 81)
-        return ANNUN_STATE_RSSI_5;
-	else if (nDBVal < 90)
+	
+	#ifdef FEATURE_VERSION_K212
+	if (nDBVal < 92)
         return ANNUN_STATE_RSSI_4;
-    else if (nDBVal < 99)
-        return ANNUN_STATE_RSSI_3;
-    else if (nDBVal < 100)
-        return ANNUN_STATE_RSSI_2;
+    else if (nDBVal < 97)
+        return ANNUN_STATE_RSSI_4;
+    else if (nDBVal < 102)
+        return ANNUN_STATE_RSSI_4;
 	#else
-	*/
 	if (nDBVal < 92)
         return ANNUN_STATE_RSSI_4;
     else if (nDBVal < 97)
         return ANNUN_STATE_RSSI_3;
     else if (nDBVal < 102)
         return ANNUN_STATE_RSSI_2;
-	//#endif
+	#endif
 	#endif
     else if (nDBVal < 108)
         return ANNUN_STATE_RSSI_1;

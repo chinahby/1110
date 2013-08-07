@@ -947,6 +947,9 @@ static void SetGameScreen(CTetrisApp * pMe)
 #if defined(FEATURE_DISP_128X160)
     HMargin = (pMe->m_rScreenWidth - (NEXT_MAX_XNUM) * NEXT_BLOCK_SIZE) % BLOCK_SIZE;
     HNum    = (pMe->m_rScreenWidth - (NEXT_MAX_XNUM ) * NEXT_BLOCK_SIZE) / BLOCK_SIZE;
+#elif defined(FEATURE_VERSION_K212)
+	HMargin = (pMe->m_rScreenWidth - (NEXT_MAX_XNUM + 2) * NEXT_BLOCK_SIZE) % BLOCK_SIZE;
+    HNum    = (pMe->m_rScreenWidth - (NEXT_MAX_XNUM + 2) * NEXT_BLOCK_SIZE) / BLOCK_SIZE;
 #else
     HMargin = (pMe->m_rScreenWidth - (NEXT_MAX_XNUM + 1) * NEXT_BLOCK_SIZE) % BLOCK_SIZE;
     HNum    = (pMe->m_rScreenWidth - (NEXT_MAX_XNUM + 1) * NEXT_BLOCK_SIZE) / BLOCK_SIZE;

@@ -294,6 +294,7 @@ static OEMState_data alarm_image_data[]=
 #endif
 };
 #ifndef FEATURE_USES_LOWMEM
+#ifndef FEATURE_VERSION_K212
 /*MMS Full/MMS Unread/MMS Unreceive/Push*/
 static OEMState_data mms_image_data[]=
 {
@@ -302,6 +303,7 @@ static OEMState_data mms_image_data[]=
     {ANNUN_MMS_UNRECEIVE_ON, IDB_MMS_UNRECEIVED, NULL},
     {ANNUN_STATE_PUSH_ON, IDB_PUSH_MSG, NULL}
 };
+#endif
 #endif
 /*Ringtone*/
 static OEMState_data ringtone_image_data[]=
@@ -420,8 +422,10 @@ OEMAnnun_content alarm_content =
 #endif
 /*ANNUN_FIELD_MMS*/
 #ifndef FEATURE_USES_LOWMEM
+#ifndef FEATURE_VERSION_K212
 OEMAnnun_content mms_content =
      {ANNUN_TYPE_IMAGE, 4, ANNUN_STATE_OFF, (void *)mms_image_data};
+#endif
 #endif
 /*ANNUN_FIELD_RINGTONE*/
 /*
@@ -593,7 +597,7 @@ static OEMAnnun_data Annunciators[] =
   {ANNUN_FIELD_WAP,                ANNUN_ICON_POSITION_2,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &wap_content},     
  // {ANNUN_FIELD_QQ,               ANNUN_ICON_POSITION_3,      ROW1_Y,  IMG_WIDTH,       IMG_HEIGHT,  &qq_content},  
 
-#if (defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_C337))
+#if (defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_K212))
   {ANNUN_FIELD_TCARD, 			  ANNUN_ICON_POSITION_3,	 ROW1_Y,  IMG_WIDTH,	  IMG_HEIGHT,  &tcard_content}, 
 #else  
   {ANNUN_FIELD_LOCKSTATUS,     ANNUN_ICON_POSITION_3,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &lockstatus_content},
@@ -619,7 +623,7 @@ static OEMAnnun_data Annunciators[] =
     {ANNUN_FIELD_BATT,             ANNUN_ICON_POSITION_END, ROW1_Y,  LG_IMG_WIDTH, IMG_HEIGHT,  &batt_content}
 #else
   {ANNUN_FIELD_ALARM,               ANNUN_ICON_POSITION_8,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &alarm_content},
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_VERSION_K212)
   {ANNUN_FIELD_MMS,                ANNUN_ICON_POSITION_9,    ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &mms_content},
 #else
   {ANNUN_FIELD_MMS,                ANNUN_ICON_POSITION_9,    ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  NULL},

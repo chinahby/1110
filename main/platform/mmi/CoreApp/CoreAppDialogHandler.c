@@ -4042,7 +4042,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
         case EVT_UPDATEIDLE:
         {        
 			//Add By zzg 2012_10_29
-			#if (defined (FEATURE_VERSION_W317A)||defined (FEATURE_VERSION_C337))
+			#if (defined (FEATURE_VERSION_W317A)||defined (FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_K212))
 			IFileMgr *pFileMgr = NULL;
 		    ISHELL_CreateInstance(pMe->a.m_pIShell, AEECLSID_FILEMGR, (void **)&pFileMgr);
 			
@@ -7040,6 +7040,140 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 	
 	}
 	#elif defined(FEATURE_VERSION_K212)
+	#if 1
+	{
+		 AEERect rect = {0};
+		 int16    wHour,len,wMinute;
+         uint16    Ten = 0;
+		 uint16    Num = 0;
+		 Num = jDate.wMinute%10;
+		 Ten = jDate.wMinute/10;
+		 rect.x = 196;
+		 rect.y = 80;
+		 rect.dx = 42;
+		 rect.dy = 32;
+		 MSG_FATAL("Num========%d,Ten========%d",Num,Ten,0);
+		 if (bTFmt == OEMNV_TIMEFORM_AMPM)
+    	 {
+         	wHour = jDate.wHour > 12 ? (jDate.wHour - 12) : jDate.wHour;
+			if(jDate.wHour >= 12)
+    		{
+    	   		wszDatemat[0] = (AECHAR)'P';
+    	   		wszDatemat[1] = (AECHAR)'M';
+    	   		wszDatemat[2] = 0;
+    		}
+    		else
+    		{
+    	   		wszDatemat[0] = (AECHAR)'A';
+    	   		wszDatemat[1] = (AECHAR)'M';
+    	   		wszDatemat[2] = 0;
+    		}
+		}
+		else
+		{
+		 	wHour = jDate.wHour;
+		}
+		if (bTFmt == OEMNV_TIMEFORM_AMPM)
+    	{
+			IIMAGE_Draw(pMe->m_pImageTimeIcon[10],
+	                    IDLE_TIME_X3+14, 
+	                    IDLE_TIME_Y);
+		}
+		else
+		{
+			IIMAGE_Draw(pMe->m_pImageTimeIcon[10],
+	                    IDLE_TIME_X3, 
+	                    IDLE_TIME_Y);
+		}
+		switch(wHour)
+		{
+			case 0:
+			case 1:
+			case 2:
+			case 3:
+			case 4:
+			case 5:
+			case 6:
+			case 7:
+			case 8:
+			case 9:
+			case 10:
+			case 11:
+			case 12:
+			case 13:
+			case 14:
+			case 15:
+			case 16:
+			case 17:
+			case 18:
+			case 19:
+			case 20:
+			case 21:
+			case 22:
+			case 23:
+			{
+				int Hour_Ten = wHour/10;
+				int Hour_Num = wHour%10;
+				if (bTFmt == OEMNV_TIMEFORM_AMPM)
+    	 		{
+					IIMAGE_Draw(pMe->m_pImageTimeIcon[Hour_Ten],
+								IDLE_TIME_X1,
+								IDLE_TIME_Y
+								);
+					IIMAGE_Draw(pMe->m_pImageTimeIcon[Hour_Num],
+								IDLE_TIME_X2,
+								IDLE_TIME_Y
+								);
+				}
+				else
+				{
+					IIMAGE_Draw(pMe->m_pImageTimeIcon[Hour_Ten],
+								IDLE_TIME_X1+14,
+								IDLE_TIME_Y
+								);
+					IIMAGE_Draw(pMe->m_pImageTimeIcon[Hour_Num],
+								IDLE_TIME_X2+14,
+								IDLE_TIME_Y
+								);
+				}
+			}
+			break;
+			default:
+			break;
+		}
+		if (bTFmt == OEMNV_TIMEFORM_AMPM)
+    	{
+			IIMAGE_Draw(pMe->m_pImageTimeIcon[Ten],
+								IDLE_TIME_X4,
+								IDLE_TIME_Y
+								);
+			IIMAGE_Draw(pMe->m_pImageTimeIcon[Num],
+								IDLE_TIME_X5,
+								IDLE_TIME_Y
+								);
+			DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
+		                              pMe->m_pDisplay,
+		                              RGB_WHITE_NO_TRANS,
+		                              32, 
+		                              wszDatemat, -1,
+		                              0, 0, &rect, 
+		                              IDF_ALIGN_MIDDLE
+		                              | IDF_ALIGN_CENTER
+		                              | IDF_TEXT_TRANSPARENT);
+		}
+		else
+		{
+			IIMAGE_Draw(pMe->m_pImageTimeIcon[Ten],
+								IDLE_TIME_X4+14,
+								IDLE_TIME_Y
+								);
+			IIMAGE_Draw(pMe->m_pImageTimeIcon[Num],
+								IDLE_TIME_X5+14,
+								IDLE_TIME_Y
+								);
+		}
+	}
+	#else
 	{
 			int         nLineWidth = 4, nNumberWidth = 30, nNumberHeight = 61, nOffset = 5,
 	                xStartPos = 0, yStartPos = 0, nTextLen = 0;
@@ -7156,6 +7290,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 	        }
 	    	IDISPLAY_Update(pMe->m_pDisplay);
 	}
+	#endif
 	#endif
 }
 #elif defined FEATURE_DISP_320X240
@@ -8510,7 +8645,7 @@ void CoreApp_UpdateAnnunciator(CCoreApp *pMe)
 	//Add End
 
 	//Add By zzg 2012_10_29
-	#if (defined (FEATURE_VERSION_W317A)||defined (FEATURE_VERSION_C337))
+	#if (defined (FEATURE_VERSION_W317A)||defined (FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_K212))
 	IFileMgr *pFileMgr = NULL;
     ISHELL_CreateInstance(pMe->a.m_pIShell, AEECLSID_FILEMGR, (void **)&pFileMgr);
 	

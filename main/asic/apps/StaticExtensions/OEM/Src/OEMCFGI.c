@@ -2050,11 +2050,15 @@ static OEMConfigListType oemi_cache = {
 #endif
    ,FALSE
 #ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for rend
+#ifdef FEATURE_VERSION_K212
+	,DISPLAYREND_TYPE_ROTAT_HORZ
+#else
 #if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_C316)
    ,DISPLAYREND_TYPE_MAX
 #else
    ,DISPLAYREND_TYPE_ONEBYONE
 #endif   
+#endif
 #endif
 #ifdef FEATURE_LCD_TOUCH_ENABLE
    ,{-1,-1,-1,-1}
@@ -3397,13 +3401,16 @@ void OEM_RestoreFactorySetting( void )
 
    
 #ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for rend
+#ifdef FEATURE_VERSION_K212
+	oemi_cache.m_nrendstate = DISPLAYREND_TYPE_ROTAT_HORZ;
+#else
 #if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_C316)
      oemi_cache.m_nrendstate = DISPLAYREND_TYPE_MAX;
 #else
      oemi_cache.m_nrendstate = DISPLAYREND_TYPE_ONEBYONE;
 #endif 
 #endif
-
+#endif
    //Add By zzg 2010_10_22
 #ifdef FEATURE_APP_BLUETOOTH
     oemi_cache.bt_status = 0; 

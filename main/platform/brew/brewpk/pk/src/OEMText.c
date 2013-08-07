@@ -2279,8 +2279,8 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
             if (pContext->dwProperties & TP_DISPLAY_COUNT) 
             {
                 // calculate the count and display it
-                AECHAR          szFormat[16];
-                AECHAR          szRemainingCount[16];
+                AECHAR          szFormat[16] = {0};
+                AECHAR          szRemainingCount[16] = {0};
                 uint16          szsmscount;
                 uint16          wRemainingChars = pContext->wMaxChars;
 				uint16          IntexnItems;
@@ -2324,10 +2324,11 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
 				}
 				#endif
 				//Add End
-				
+
 #if defined(FEATURE_WMS_APP)
                 if(pContext->dwProperties & TP_DISPLAY_SMSCOUNT)
                 {
+#ifndef FEATURE_VERSION_K212
                     AECHAR   * pszText;
                     pszText = OEM_TextGet(pContext);
                     szsmscount = 1;
@@ -2362,6 +2363,7 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
                                     wRemainingChars,
                                     szsmscount);
                     */
+#endif
                 }
                 else
 #endif

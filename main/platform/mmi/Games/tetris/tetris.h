@@ -98,6 +98,17 @@ AUTHOR: whewei
 #define SMALL_POP_WIN_Y    50
 #define SMALL_POP_WIN_DX   100
 #define SMALL_POP_WIN_DY   100
+#elif defined(FEATURE_DISP_240X320)
+#define LARGE_POP_WIN_X    16
+#define LARGE_POP_WIN_Y    40
+#define LARGE_POP_WIN_DX   180
+#define LARGE_POP_WIN_DY   200
+
+#define SMALL_POP_WIN_X    28
+#define SMALL_POP_WIN_Y    50
+#define SMALL_POP_WIN_DX   160
+#define SMALL_POP_WIN_DY   160
+
 #else
 #define LARGE_POP_WIN_X    25
 #define LARGE_POP_WIN_Y    45

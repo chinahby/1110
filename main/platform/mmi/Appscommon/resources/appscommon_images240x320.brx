@@ -22,9 +22,6 @@
 	<Object Id="5007" Name="IDI_OBJECT_5007" MimeType="image/png">
 		<File>..\images\240x320\common\Appscommon\Icon\music.png</File>
 	</Object>
-	<Object Id="5008" Name="IDI_VIDEO" MimeType="image/png">
-		<File>..\images\240x320\common\Appscommon\Icon\video.png</File>
-	</Object>
 	<Object Id="5009" Name="IDI_PLAYLISTMG">
 		<File>..\images\240x320\common\mediagallery\playlistplaying.bmp</File>
 	</Object>
@@ -165,24 +162,6 @@
 	</Object>
 	<Object Id="5409" Name="IDB_MODE_T9_RAPID_INDONESIAN" MimeType="image/png">
 		<File>..\images\240x320\common\IME\T9In.png</File>
-	</Object>
-	<Object Id="5411" Name="IDB_MODE_T9_RAPID_ENGLISH_LOW" MimeType="image/png">
-		<File>..\images\240x320\common\IME\lowezenglish.png</File>
-	</Object>
-	<Object Id="5412" Name="IDB_MODE_T9_RAPID_ENGLISH_UP" MimeType="image/png">
-		<File>..\images\240x320\common\IME\upezenglish.png</File>
-	</Object>
-	<Object Id="5413" Name="IDB_MODE_T9_MT_ARABIC" MimeType="image/png">
-		<File>..\images\240x320\common\IME\Ar.png</File>
-	</Object>
-	<Object Id="5414" Name="IDB_MODE_T9_RAPID_ARABIC" MimeType="image/png">
-		<File>..\images\240x320\common\IME\T9Ar.png</File>
-	</Object>
-	<Object Id="5415" Name="IDB_MODE_T9_MT_THAI" MimeType="image/png">
-		<File>..\images\240x320\common\IME\thai.png</File>
-	</Object>
-	<Object Id="5416" Name="IDB_MODE_T9_RAPID_THAI" MimeType="image/png">
-		<File>..\images\240x320\common\IME\T9th.png</File>
 	</Object>
 	<Object Id="5417" Name="IDB_MODE_T9_MT_HINDI" MimeType="image/png">
 		<File>..\images\128x160\common\IME\hi.png</File>
@@ -421,23 +400,11 @@
 	<Object Id="7037" Name="IDB_PUSH_MSG">
 		<File>..\images\240x320\common\Annunciator\push_msg.bmp</File>
 	</Object>
-	<Object Id="7038" Name="IDB_SPORTS">
-		<File>..\images\240x320\common\Annunciator\sports.bmp</File>
-	</Object>
 	<Object Id="7039" Name="IDB_SD_CARD">
 		<File>..\images\240x320\common\Annunciator\sd_card.bmp</File>
 	</Object>
 	<Object Id="7040" Name="IDB_NO_SERVICE">
 		<File>..\images\240x320\common\Annunciator\no_service.bmp</File>
-	</Object>
-	<Object Id="7041" Name="IDB_MMS_UNREAD">
-		<File>..\images\240x320\common\Annunciator\mms_unread.bmp</File>
-	</Object>
-	<Object Id="7042" Name="IDB_MMS_UNRECEIVED">
-		<File>..\images\240x320\common\Annunciator\mms_unreceived.bmp</File>
-	</Object>
-	<Object Id="7043" Name="IDB_MMS_FULL">
-		<File>..\images\240x320\common\Annunciator\mms_full.bmp</File>
 	</Object>
 	<Object Id="7044" Name="IDB_QQ">
 		<File>..\images\128x160\common\Annunciator\qq.bmp</File>
@@ -456,6 +423,39 @@
 	</Object>
 	<Object Id="7102" Name="IDB_MMS_SPACE" MimeType="image/png">
 		<File>..\images\240x320\common\Appscommon\Icon\space.png</File>
+	</Object>
+	<Object Id="8001" Name="IDI_TIME_0" MimeType="image/png">
+		<File>..\images\240x320\common\core\TIME_0.png</File>
+	</Object>
+	<Object Id="8002" Name="IDI_TIME_1" MimeType="image/png">
+		<File>..\images\240x320\common\core\TIME_1.png</File>
+	</Object>
+	<Object Id="8003" Name="IDI_TIME_2" MimeType="image/png">
+		<File>..\images\240x320\common\core\TIME_2.png</File>
+	</Object>
+	<Object Id="8004" Name="IDI_TIME_3" MimeType="image/png">
+		<File>..\images\240x320\common\core\TIME_3.png</File>
+	</Object>
+	<Object Id="8005" Name="IDI_TIME_4" MimeType="image/png">
+		<File>..\images\240x320\common\core\TIME_4.png</File>
+	</Object>
+	<Object Id="8006" Name="IDI_TIME_5" MimeType="image/png">
+		<File>..\images\240x320\common\core\TIME_5.png</File>
+	</Object>
+	<Object Id="8007" Name="IDI_TIME_6" MimeType="image/png">
+		<File>..\images\240x320\common\core\TIME_6.png</File>
+	</Object>
+	<Object Id="8008" Name="IDI_TIME_7" MimeType="image/png">
+		<File>..\images\240x320\common\core\TIME_7.png</File>
+	</Object>
+	<Object Id="8009" Name="IDI_TIME_8" MimeType="image/png">
+		<File>..\images\240x320\common\core\TIME_8.png</File>
+	</Object>
+	<Object Id="8010" Name="IDI_TIME_9" MimeType="image/png">
+		<File>..\images\240x320\common\core\TIME_9.png</File>
+	</Object>
+	<Object Id="8011" Name="IDI_TIME_POINT" MimeType="image/png">
+		<File>..\images\240x320\common\core\TIME_POINT.png</File>
 	</Object>
 </Objects>
 </BREWRes>

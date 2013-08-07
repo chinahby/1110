@@ -541,8 +541,20 @@ typedef enum
 #endif //#ifdef FEATURE_USES_LOWMEM
 
 #define IDS_CORE_DISPADN        0xFFFE
+
+#ifdef FEATURE_VERSION_K212
+#define    IDLE_TIME_COUNT                    13
+#define    IDLE_TIME_X1                       15
+#define    IDLE_TIME_X2                       56
+#define    IDLE_TIME_X3                       97
+#define    IDLE_TIME_X4                       115
+#define    IDLE_TIME_X5                       156
+#define    IDLE_TIME_Y                        45
+#endif
+
 #ifdef FEATURE_LCD_TOUCH_ENABLE
 #ifdef FEATURE_DISP_240X320
+
 #define    IDLE_TOUCH_ITEMMAX                 4
 #define    IDLE_TOUCH_IDLE_BOTTOM_SPC         12
 #define    IDLE_TOUCH_DRAWDX                  45
@@ -573,7 +585,6 @@ typedef enum
 #define    IDLE_TIME_DAY                      "fs:/image/core/day.png"
 #define    IDLE_TIME_IDLE_TIME_BG             "fs:/image/core/idle_time_bg.png"
 #define    IDLE_TIME_NIGHT                    "fs:/image/core/night.png"
-
 #else
 #define    IDLE_TOUCH_ITEMMAX                 4
 #define    IDLE_TOUCH_IDLE_BOTTOM_SPC         12
@@ -1103,11 +1114,14 @@ typedef struct _CCoreApp
 	IImage              *m_pImageSelIcon[IDLE_BLACKBERRY_ITEMMAX];
 	#endif
 	
-#ifdef FEATURE_LCD_TOUCH_ENABLE
+
 #ifdef FEATURE_DISP_240X320
+#ifdef FEATURE_LCD_TOUCH_ENABLE
 	IImage              *m_pImageTouchIcon[IDLE_TOUCH_ITEMMAX];
 	IImage              *m_pImageTimeIcon[IDLE_TIME_COUNT];
-#else
+#endif
+#ifdef FEATURE_VERSION_K212
+	IImage              *m_pImageTimeIcon[IDLE_TIME_COUNT];
 #endif
 #endif
 	//wangliang add!

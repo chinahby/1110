@@ -555,19 +555,27 @@ static void CALLApp_PlayShutterSound(CCallApp *pMe,uint16 key)
 		}
 		if(key == AVK_STAR)
 		{
-			MSG_FATAL("AVK_POUND====%d",0,0,0);
+			MSG_FATAL("AVK_STAR====%d",0,0,0);
 			md.pData = (void *)SOUND_NAME[13];
+		}
+		if(key == AVK_P)
+		{
+			md.pData = (void *)SOUND_NAME[10];
+		}
+		if(key == AVK_W)
+		{
+			md.pData = (void *)SOUND_NAME[11];
 		}
         md.dwSize = 0;
        
         (void)AEEMediaUtil_CreateMedia(pMe->m_pShell, &md, &pMe->m_pMedia);
     }
 	
-    MSG_FATAL("temp====%d",temp,0,0);
+   
     if(pMe->m_pMedia)
     {        
         IMEDIA_SetVolume(pMe->m_pMedia, AEE_MAX_VOLUME*3/5); //max volum is 100
-     
+         MSG_FATAL("temp====%d",temp,0,0);
         if(IMEDIA_RegisterNotify(pMe->m_pMedia, CALLApp_MediaNotify, pMe) != SUCCESS)
         {
             cmd.nCmd    = MM_CMD_PLAY;
@@ -1927,11 +1935,19 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                 case AVK_9:
                 case AVK_STAR:
                 case AVK_POUND:
-					MSG_FATAL("CALLAPP_DIAler_numedit_dlg......evt key",0,0,0);
-						
-                    CALLApp_PlayShutterSound(pMe,wParam);
+				{	
+					boolean m_sound_bo_dia = FALSE;
+   					(void) ICONFIG_GetItem(pMe->m_pConfig,
+                                                 CFGI_SOUND_BO_DIA,
+                                                 &m_sound_bo_dia,
+                                                 sizeof(boolean));
+					if(m_sound_bo_dia)
+					{
+                    	CALLApp_PlayShutterSound(pMe,wParam);
+					}
                    //CallApp_SpecialKeySnd(pMe,wParam);//¶à²Ê°´¼üÒô
                    return TRUE;
+                }
 #endif /* KEYSND_ZY */
                 default:
                     break;
@@ -4264,7 +4280,7 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
                     //modify for Three-Way Calling : Hold Key not supported by MS
                     CallApp_Flash_Call(pMe);
                     return TRUE;
-
+#ifndef FEATURE_VERSION_K212    //add by yangdecai
                 case AVK_0:
                 case AVK_1:
                 case AVK_2:
@@ -4324,7 +4340,7 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
                     CallApp_Send_DTMF(pMe , w_str);
                     return TRUE;
                 }
-
+#endif
                 case AVK_SELECT:
                 {
                     if ( !pMe->m_bShowPopMenu )
@@ -4365,6 +4381,7 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
             break;
         case EVT_KEY_RELEASE:
             switch(wParam){
+#ifndef FEATURE_VERSION_K212
             case AVK_0:
             case AVK_1:
             case AVK_2:
@@ -4406,6 +4423,7 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
                 CLOSE_DIALOG(DLGRET_CONV_DIAL)
                 return TRUE;
             }
+#endif
             default:
                 break;
             }
@@ -12674,6 +12692,7 @@ if(wp == AVK_0)
        {
        		AECHAR szStr;
        		int len=0;
+			uint16 Temp_wp = 0;
        		len = WSTRLEN(pMe->m_DialString);
         	AEE_CancelTimer(CallApp_keypadtimer,pMe);
         	szStr = CallApp_AVKSTAR_2ASCII(pMe);
@@ -12689,16 +12708,19 @@ if(wp == AVK_0)
 					{
 						//return L'*';
 						WSTRCPY(&pMe->m_DialString[len-1], L"*");
+						Temp_wp = AVK_STAR;
 					}
 					if(pMe->m_curpros == 1)
 					{
 						//return L'p';
 						WSTRCPY(&pMe->m_DialString[len-1], L"p");
+						Temp_wp = AVK_P;
 					}
 					if(pMe->m_curpros == 2)
 					{
 						//return L'W';
 						WSTRCPY(&pMe->m_DialString[len-1], L"w");
+						Temp_wp = AVK_W;
 					}
 					if(pMe->m_curpros == 3)
 					{
@@ -12716,18 +12738,21 @@ if(wp == AVK_0)
 						//return L'*';
 						//WSTRCPY(&pMe->m_DialString[len-1], L"*");
 						pMe->m_DialString[len-pMe->m_nCursorPos-1] = L'*';
+						Temp_wp = AVK_STAR;
 					}
 					if(pMe->m_curpros == 1)
 					{
 						//return L'p';
 						//WSTRCPY(&pMe->m_DialString[len-1], L"p");
 						pMe->m_DialString[len-pMe->m_nCursorPos-1] = L'p';
+						Temp_wp = AVK_P;
 					}
 					if(pMe->m_curpros == 2)
 					{
 						//return L'W';
 						//WSTRCPY(&pMe->m_DialString[len-1], L"w");
 						pMe->m_DialString[len-pMe->m_nCursorPos-1] = L'w';
+						Temp_wp = AVK_W;
 					}
 					if(pMe->m_curpros == 3)
 					{
@@ -12764,6 +12789,19 @@ if(wp == AVK_0)
         		pMe->m_curpros = 0;
         	}
         	pMe->b_multenter = TRUE;
+			#ifdef FEATURE_SOUND_BO
+			{
+				boolean m_sound_bo_dia = FALSE;
+   				(void) ICONFIG_GetItem(pMe->m_pConfig,
+                                                 CFGI_SOUND_BO_DIA,
+                                                 &m_sound_bo_dia,
+                                                 sizeof(boolean));
+				if(m_sound_bo_dia)
+				{
+					CALLApp_PlayShutterSound(pMe,Temp_wp);
+				}
+        	}
+			#endif
         	AEE_SetTimer(1000,CallApp_keypadtimer,pMe);
         }
         #else

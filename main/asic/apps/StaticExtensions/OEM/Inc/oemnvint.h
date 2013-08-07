@@ -500,6 +500,8 @@ typedef PACKED struct _Key_pad_Cfg
 #define   OEMNV_DEFAULTRINGER       5
 #elif defined(FEATURE_VERSION_K202_LM129C)//xxzhen
 #define   OEMNV_DEFAULTRINGER       10
+#elif defined(FEATURE_VERSION_K212)
+#define   OEMNV_DEFAULTRINGER       10
 #else
 #define   OEMNV_DEFAULTRINGER       4
 #endif
