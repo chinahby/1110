@@ -778,6 +778,11 @@ typedef struct
 #endif
    ruim_id_table_t     m_ruim_id_save_table; /*CFGI_RUIM_ID_SAVE_TABLE*/
    int8                m_count_num_main;  //CFGI_COUNT_OF_MAIN
+#ifdef FEATURE_SOUND_BO
+   boolean m_sound_bo_dia;		//CFGI_SOUND_BO_DIA,
+   boolean m_sound_bo_main;		//CFGI_SOUND_BO_MAIN,
+   boolean m_sound_bo_core;		//CFGI_SOUND_BO_CORE,
+#endif 
 } OEMConfigListType;
 
 
@@ -1731,6 +1736,17 @@ static int OEMPriv_SetItem_CFGI_RUIM_ID_SAVE_TABLE(void *pBuff);
 static int OEMPriv_GetItem_CFGI_COUNT_OF_MAIN(void *pBuff);
 static int OEMPriv_SetItem_CFGI_COUNT_OF_MAIN(void *pBuff);
 
+
+#ifdef FEATURE_SOUND_BO
+static int OEMPriv_GetItem_CFGI_SOUND_BO_DIA(void *pBuff);
+static int OEMPriv_SetItem_CFGI_SOUND_BO_DIA(void *pBuff);
+static int OEMPriv_GetItem_CFGI_SOUND_BO_MAIN(void *pBuff);
+static int OEMPriv_SetItem_CFGI_SOUND_BO_MAIN(void *pBuff);
+static int OEMPriv_GetItem_CFGI_SOUND_BO_CORE(void *pBuff);
+ static int OEMPriv_SetItem_CFGI_SOUND_BO_CORE(void *pBuff);
+#endif 
+
+
 /*===========================================================================
 
                      STATIC/LOCAL DATA
@@ -2121,6 +2137,11 @@ static OEMConfigListType oemi_cache = {
 #endif
    ,{0}    //CFGI_RUIM_ID_SAVE_TABLE
    ,{1}    //CFGI_COUNT_OF_MAIN
+#ifdef FEATURE_SOUND_BO
+   ,TRUE		//CFGI_SOUND_BO_DIA,
+   ,TRUE		//CFGI_SOUND_BO_MAIN,
+   ,TRUE		//CFGI_SOUND_BO_CORE,
+#endif 
 };
 
 ////
@@ -2724,6 +2745,11 @@ static ConfigItemTableEntry const customOEMItemTable[] =
 #endif
    CFGTABLEITEM(CFGI_RUIM_ID_SAVE_TABLE,sizeof(ruim_id_table_t)),
    CFGTABLEITEM(CFGI_COUNT_OF_MAIN, sizeof(uint8)),
+#ifdef FEATURE_SOUND_BO
+   CFGTABLEITEM(CFGI_SOUND_BO_DIA,sizeof(boolean)),		    //CFGI_SOUND_BO_DIA,
+   CFGTABLEITEM(CFGI_SOUND_BO_MAIN,sizeof(boolean)),		//CFGI_SOUND_BO_MAIN,
+   CFGTABLEITEM(CFGI_SOUND_BO_CORE,sizeof(boolean)),		//CFGI_SOUND_BO_CORE,
+#endif 
    //CFGTABLEITEM(CFGI_SALES_TRACK_SMS_SEND, sizeof(boolean)),		//Add By zzg 2012_10_29
 };
 #endif
@@ -2846,6 +2872,12 @@ void OEM_RestoreFactorySetting( void )
 #else
 	  oemi_cache.alert_type          =  OEMNV_ALERTTYPE_RINGER;
 #endif
+
+#ifdef FEATURE_SOUND_BO
+   oemi_cache.m_sound_bo_dia = TRUE;		//CFGI_SOUND_BO_DIA,
+   oemi_cache.m_sound_bo_main = TRUE;		//CFGI_SOUND_BO_MAIN,
+   oemi_cache.m_sound_bo_core = TRUE;		//CFGI_SOUND_BO_CORE,
+#endif 
 
    
 #endif
@@ -11395,6 +11427,41 @@ static int OEMPriv_SetItem_CFGI_COUNT_OF_MAIN(void *pBuff)
     return SUCCESS;
 }
 
+#ifdef FEATURE_SOUND_BO
+static int OEMPriv_GetItem_CFGI_SOUND_BO_DIA(void *pBuff)
+{
+	 MEMCPY(pBuff, (void*) &oemi_cache.m_sound_bo_dia, sizeof(boolean));
+	 return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_SOUND_BO_DIA(void *pBuff)
+{
+	 MEMCPY((void*) &oemi_cache.m_sound_bo_dia, pBuff, sizeof(boolean));
+	 OEMPriv_WriteOEMConfigList(); 
+	 return SUCCESS;
+}
+static int OEMPriv_GetItem_CFGI_SOUND_BO_MAIN(void *pBuff)
+{
+	MEMCPY(pBuff, (void*) &oemi_cache.m_sound_bo_main, sizeof(boolean));
+	 return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_SOUND_BO_MAIN(void *pBuff)
+{
+	MEMCPY((void*) &oemi_cache.m_sound_bo_main, pBuff, sizeof(boolean));
+	 OEMPriv_WriteOEMConfigList(); 
+	 return SUCCESS;
+}
+static int OEMPriv_GetItem_CFGI_SOUND_BO_CORE(void *pBuff)
+{
+	MEMCPY(pBuff, (void*) &oemi_cache.m_sound_bo_core, sizeof(boolean));
+	 return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_SOUND_BO_CORE(void *pBuff)
+{
+	MEMCPY((void*) &oemi_cache.m_sound_bo_core, pBuff, sizeof(boolean));
+	 OEMPriv_WriteOEMConfigList(); 
+	 return SUCCESS;
+}
+#endif 
 
 
 #ifdef FEATURE_VERSION_C337

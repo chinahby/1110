@@ -512,8 +512,8 @@ typedef struct _MainMenu
 
 #ifdef FEATURE_VERSION_K212
 #define MUSIC_PATH1 "fs:/hsmm/mainmenu/mesage.mp3"
-#define MUSIC_PATH2 "fs:/hsmm/mainmenu/profile.mp3"
-#define MUSIC_PATH3 "fs:/hsmm/mainmenu/calc.mp3"
+#define MUSIC_PATH2 "fs:/hsmm/mainmenu/contont.mp3"
+#define MUSIC_PATH3 "fs:/hsmm/mainmenu/recentcall.mp3"
 #define MUSIC_PATH4 "fs:/hsmm/mainmenu/profile.mp3"
 #define MUSIC_PATH5 "fs:/hsmm/mainmenu/mutimed.mp3"
 #define MUSIC_PATH6 "fs:/hsmm/mainmenu/camera.mp3"

@@ -131,7 +131,7 @@
 		<Text>静音</Text>
 	</STRING>
 	<STRING Id="1047" Name="IDS_POWERONOFF_ALERT">
-		<Text>开关机提示</Text>
+		<Text>开关机铃声开关</Text>
 	</STRING>
 	<STRING Id="1048" Name="IDS_ALERTTYPE_VIBANDRING">
 		<Text>震动和铃声</Text>

@@ -3875,7 +3875,17 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #endif      
             CoreApp_UpdateIdleTimer(pMe);		
 #ifdef FEATURE_SOUND_BO	
-			CoreApp_UpdateidleBaoshiTimer(pMe);
+{
+			boolean m_sound_bo_core = FALSE;
+			(void) ICONFIG_GetItem(pMe->m_pConfig,
+									 CFGI_SOUND_BO_CORE,
+									 &m_sound_bo_core,
+									 sizeof(boolean));
+			if(m_sound_bo_core)
+			{
+				CoreApp_UpdateidleBaoshiTimer(pMe);
+			}
+}
 #endif
 #ifdef FEATURE_KEYGUARD
             if(!OEMKeyguard_IsEnabled())
@@ -5331,7 +5341,17 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                         
                         #endif
 #ifdef FEATURE_SOUND_BO
-						CoreApp_PlayShutterSound(pMe,wParam);
+{
+						boolean m_sound_bo_dia = FALSE;
+   					    (void) ICONFIG_GetItem(pMe->m_pConfig,
+                                                 CFGI_SOUND_BO_DIA,
+                                                 &m_sound_bo_dia,
+                                                 sizeof(boolean));
+						if(m_sound_bo_dia)
+						{
+							CoreApp_PlayShutterSound(pMe,wParam);
+						}
+}
 #endif
                         if ( SUCCESS != ISHELL_CreateInstance( pMe->a.m_pIShell,
                                                         AEECLSID_DIALER,
@@ -6104,7 +6124,7 @@ static void CoreApp_UpdateidleBaoshiTimer(void *pUser)
 	int temp = 0;
 	JulianType  julian;
 	GetJulianDate(GETTIMESECONDS(), &julian);
-	if((julian.wMinute == 0)&&(julian.wSecond== 0))
+	if((julian.wMinute == 0)&&(julian.wSecond<=30))
 	{
 		CoreApp_PlayTimeSound(pMe,TIME_ONE);
 	}

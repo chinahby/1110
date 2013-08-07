@@ -246,6 +246,16 @@ static boolean  HandleLanguageDialogEvent(CSettingMenu *pMe,
 );
 #endif
 
+#ifdef FEATURE_SOUND_BO
+// 对话框 IDD_LANGUAGE_MENU 事件处理函数
+static boolean  HandleSpeechDialogEvent(CSettingMenu *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+);
+#endif
+
+
 #ifdef FEATURE_PLANEMODE
 // 对话框 IDD_LANGUAGE_MENU 事件处理函数
 static boolean  HandlePlaneModeDialogEvent(CSettingMenu *pMe,
@@ -635,6 +645,10 @@ boolean SettingMenu_RouteDialogEvent(CSettingMenu *pMe,
         case IDD_SMS_RESTRICT_RECEIVE_ADD:
             return Setting_Handle_SMSRestrict_RECEIVE_ADD(pMe,eCode,wParam,dwParam);               
 #endif
+#ifdef FEATURE_SOUND_BO
+	   case IDD_SPEECH_MENU:
+	   		return HandleSpeechDialogEvent(pMe,eCode,wParam,dwParam);
+#endif
         default:
             return FALSE;
     }
@@ -723,7 +737,7 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
 
 #endif
 #ifdef FEATURE_SET_SOUND_TITLE
-#if !defined (FEATURE_VERSION_C316)&&!defined(FEATURE_VERSION_K202_LM129C)&&!defined(FEATURE_VERSION_W021_CT100)
+#if !defined (FEATURE_VERSION_C316)&&!defined(FEATURE_VERSION_K202_LM129C)&&!defined(FEATURE_VERSION_W021_CT100)&&!defined(FEATURE_VERSION_K212)
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SOUND_TITLE, IDS_SOUND_TITLE, NULL, 0);
 #endif
 #endif
@@ -1588,6 +1602,11 @@ static boolean  HandlePhoneSettingDialogEvent(CSettingMenu *pMe,
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh 200904007 add 触摸校准
             //IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_ADJUSTSETTING, IDS_ADJUSTSETTING, NULL, 0);
 #endif //FEATURE_LCD_TOUCH_ENABLE
+			
+#ifdef FEATURE_SOUND_BO
+			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_YUYIIN_PACKGE, IDS_YUYIIN_PACKGE, NULL, 0);
+#endif
+
             return TRUE;
 
         case EVT_DIALOG_START:
@@ -1695,6 +1714,11 @@ static boolean  HandlePhoneSettingDialogEvent(CSettingMenu *pMe,
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh 20090407 add
 				case IDS_ADJUSTSETTING:      //触摸校准设置
 					ISHELL_StartApplet(pMe->m_pShell, AEECLSID_ADJUSTPENAPP); 
+					break;
+#endif
+#ifdef FEATURE_SOUND_BO
+				case IDS_YUYIIN_PACKGE:
+    				CLOSE_DIALOG(DLGRET_SPEECH_SETTINGS)
 					break;
 #endif
                 default:
@@ -4765,6 +4789,117 @@ static boolean HandleSimChoiceEvent(CSettingMenu *pMe,
     
 }
 
+#endif
+#ifdef FEATURE_SOUND_BO
+static boolean  HandleSpeechDialogEvent(CSettingMenu *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+)
+{
+	 PARAM_NOT_REF(dwParam)
+
+    static boolean bData = 0;
+    IMenuCtl  *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,IDC_SPEECH);
+    MSG_FATAL("%x, %x ,%x,HandleSpeechDialogEvent",eCode,wParam,dwParam);
+    if (pMenu == NULL)
+    {
+        return FALSE;
+    }
+    MSG_FATAL("pMenu is not null.................",0,0,0);
+    //实现菜单循环滚动功能
+    //SettingMenu_AutoScroll(pMenu,eCode,wParam);
+
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT:   
+			//add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_APPSSETTINGMENU_RES_FILE,                                
+                        IDS_YUYIIN_PACKGE,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pAnn,WTitle);
+            }
+
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_DIA_SPEECH, IDS_DIA_SPEECH, NULL, 0);
+			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_MAIN_SPEECH, IDS_MAIN_SPEECH, NULL, 0);
+			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_TIME_SPEECH, IDS_TIME_SPEECH, NULL, 0);
+			
+            return TRUE;
+
+        case EVT_DIALOG_START:
+  
+            //设定标题格式
+            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_MULTI_SEL|MP_ACTIVE_NO_REDRAW);
+            IMENUCTL_SetOemProperties(pMenu, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY | OEMMP_USE_MENU_STYLE);
+            IMENUCTL_SetBottomBarType(pMenu,BTBAR_SAVE_BACK);
+			
+			(void) ICONFIG_GetItem(pMe->m_pConfig,CFGI_SOUND_BO_DIA,&bData,sizeof(bData));
+                SetCheckBoxItem(pMenu, IDS_DIA_SPEECH, bData);
+
+			(void) ICONFIG_GetItem(pMe->m_pConfig,CFGI_SOUND_BO_MAIN,&bData,sizeof(bData));
+                SetCheckBoxItem(pMenu, IDS_MAIN_SPEECH, bData);
+
+			(void) ICONFIG_GetItem(pMe->m_pConfig,CFGI_SOUND_BO_CORE,&bData,sizeof(bData));
+                SetCheckBoxItem(pMenu, IDS_TIME_SPEECH, bData);
+		    IMENUCTL_SetSel(pMenu, IDS_DIA_SPEECH);
+
+            (void) ISHELL_PostEvent( pMe->m_pShell,
+                                     AEECLSID_APP_SETTINGMENU,
+                                     EVT_USER_REDRAW,
+                                     0,
+                                     0);
+            return TRUE;
+
+        case EVT_USER_REDRAW:
+            (void)IMENUCTL_Redraw(pMenu);  //dele by yangdecai
+            return TRUE;
+
+        case EVT_DIALOG_END:
+            return TRUE;
+			
+		case EVT_KEY:
+            switch(wParam)
+            {
+                case AVK_CLR:
+                    CLOSE_DIALOG(DLGRET_CANCELED)
+                    return TRUE;
+                    
+                default:
+                    break;
+            }
+
+            return TRUE;
+
+        case EVT_KEY_RELEASE:
+            switch(wParam)
+            {
+                case AVK_SELECT:
+                    {
+					   bData = GetCheckBoxVal(pMenu, IDS_DIA_SPEECH);
+					   (void) ICONFIG_SetItem(pMe->m_pConfig,CFGI_SOUND_BO_DIA,&bData,sizeof(bData));
+					    bData = GetCheckBoxVal(pMenu, IDS_MAIN_SPEECH);
+					   (void) ICONFIG_SetItem(pMe->m_pConfig,CFGI_SOUND_BO_MAIN,&bData,sizeof(bData));
+					    bData = GetCheckBoxVal(pMenu, IDS_TIME_SPEECH);
+					   (void) ICONFIG_SetItem(pMe->m_pConfig,CFGI_SOUND_BO_CORE,&bData,sizeof(bData));
+					    CLOSE_DIALOG(DLGRET_WARNING)
+					}
+                    return TRUE;
+
+                default:
+                    break;
+            }
+            return TRUE;
+
+        case EVT_COMMAND:
+        default:
+            break;
+    }
+    return FALSE;
+}
 #endif
 /*==============================================================================
 函数：

@@ -3792,7 +3792,7 @@ static void DrawMatrix(MainMenu *pMe)
 {
     
 	BottomBar_e_Type    eBBarType = BTBAR_NONE;
-    
+    boolean m_sound_bo_main = FALSE;
     if (NULL == pMe)
     {
         return;
@@ -3921,7 +3921,15 @@ static void DrawMatrix(MainMenu *pMe)
 	{
 		IIMAGE_Draw(pMe->m_pImageSelectkbar,0,285);
 	}
-	MainMenu_PlayShutterSound(pMe,pMe->m_nRow);
+	
+   	(void) ICONFIG_GetItem(pMe->m_pConfig,
+                                 CFGI_SOUND_BO_MAIN,
+                                 &m_sound_bo_main,
+                                 sizeof(boolean));
+	if(m_sound_bo_main)
+	{
+		MainMenu_PlayShutterSound(pMe,pMe->m_nRow);
+	}
 	eBBarType = BTBAR_OK_BACK;
 	DrawBottomBar_Ex(pMe->m_pShell, pMe->m_pDisplay,eBBarType);
 	IDISPLAY_UpdateEx(pMe->m_pDisplay, TRUE);
@@ -3967,13 +3975,21 @@ SEE ALSO:
 static void MoveCursorTo(MainMenu *pMe, int row, int column)
 {
 	BottomBar_e_Type    eBBarType = BTBAR_NONE;
+	boolean m_sound_bo_main = FALSE;
 	//draw bg image
 	 if (NULL == pMe)
     {
         return;
     }
 	MSG_FATAL("row=======%d",row,0,0);
-	MainMenu_PlayShutterSound(pMe,row);
+	(void) ICONFIG_GetItem(pMe->m_pConfig,
+                                 CFGI_SOUND_BO_MAIN,
+                                 &m_sound_bo_main,
+                                 sizeof(boolean));
+	if(m_sound_bo_main)
+	{
+		MainMenu_PlayShutterSound(pMe,row);
+	}
     MainMenu_DrawBackGround(pMe, &pMe->m_rc);
     if(row == 8)
     {

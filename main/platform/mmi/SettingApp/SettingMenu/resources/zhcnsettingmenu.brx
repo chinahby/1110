@@ -451,6 +451,18 @@
 	<STRING Id="1150" Name="IDS_CALL_TIME_REMINDER">
 		<Text>通话提示音</Text>
 	</STRING>
+	<String Id="1152" Name="IDS_YUYIIN_PACKGE">
+		<Text>语音设置</Text>
+	</String>
+	<String Id="1153" Name="IDS_DIA_SPEECH">
+		<Text>拨号语音</Text>
+	</String>
+	<String Id="1154" Name="IDS_MAIN_SPEECH">
+		<Text>主菜单语音</Text>
+	</String>
+	<String Id="1155" Name="IDS_TIME_SPEECH">
+		<Text>整点报时语音</Text>
+	</String>
 	<String Id="1171" Name="IDS_AKG_5SEC">
 		<Text>5 秒</Text>
 	</String>
@@ -681,6 +693,13 @@
 		<Controls>
 			<Text Id="7030" Name="IDC_TEXT_SMS_RESTRICT_RECEIVE">
 				<Items/></Text>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6045" Name="IDD_SPEECH_MENU" Focus="7040">
+		<Controls>
+			<Menu Id="7040" Name="IDC_SPEECH">
+				<Items/>
+			</Menu>
 		</Controls>
 	</Dialog>
 </Dialogs>

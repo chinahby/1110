@@ -40,6 +40,9 @@
 	<STRING Id="1018" Name="IDS_MULTIMEDIA_AUDIORECORDER">
 		<Text>Audio recorder</Text>
 	</STRING>
+	<String Id="1020" Name="IDS_MULTIMEDIA_GAME">
+		<Text>Game</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<Dialog Id="6001" Name="IDD_PWD" Focus="0">

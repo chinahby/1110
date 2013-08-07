@@ -2606,7 +2606,11 @@ static boolean  dialog_handler_of_state_gotodate( CScheduleApp* pme,
                 RGBVAL  clrFill = RGB_WHITE;
                 RGBVAL  clrNosel = BK_COLOR;
                 uint16 dateFormatType = 0;
+				#ifdef FEATURE_VERSION_K212
+				dateFormatType = OEMNV_DATEFORM_YMD;
+				#else
 				OEM_GetConfig( CFGI_DATE_FORMAT, &dateFormatType, sizeof( byte));
+				#endif
 				switch(dateFormatType)
 				{
 					case OEMNV_DATEFORM_DMY:

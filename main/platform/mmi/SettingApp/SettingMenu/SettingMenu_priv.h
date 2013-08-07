@@ -162,6 +162,9 @@ typedef enum DLGRetValue
     ,DLGRET_PHONE_INFO_HW
     ,DLGRET_PHONE_INFO_PRL
 #endif	
+#ifdef FEATURE_SOUND_BO
+    ,DLGRET_SPEECH_SETTINGS   //IDD_SPEECH_MENU
+#endif 
 
 } DLGRet_Value_e_Type;
 
@@ -240,6 +243,9 @@ typedef enum _SettingMenuState
    ,SETTINGMENUST_PHONE_INFO_HW
    ,SETTINGMENUST_PHONE_INFO_PRL
 #endif   
+#ifdef FEATURE_SOUND_BO
+   ,SETTINGMENUST_SPEECH
+#endif
 } SettingMenuState;
 
 // 状态处理函数返回给状态处理主函数的值类型

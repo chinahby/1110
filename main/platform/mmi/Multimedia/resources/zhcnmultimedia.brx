@@ -22,6 +22,9 @@
 	<STRING Id="1016" Name="IDS_MULTIMEDIA_TV">
 		<Text>电视</Text>
 	</STRING>
+	<String Id="1020" Name="IDS_MULTIMEDIA_GAME">
+		<Text>游戏</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<Dialog Id="6003" Name="IDD_LIST_MULTIMEDIA_DIALOGS" Focus="7001">

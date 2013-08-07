@@ -1111,6 +1111,9 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
 #endif
 #endif/*FEATURE_APP_MPEG4*/
 #endif
+#ifdef FEATURE_VERSION_K212
+			IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_GAME, IDS_MULTIMEDIA_GAME, NULL, 0);
+#endif
             return TRUE;
             
         case EVT_DIALOG_START:
@@ -1667,6 +1670,9 @@ static int StartApplet(Multimed *pMe, int i)
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MEDIAGALLERY);
             break;
 #endif
+		case IDS_MULTIMEDIA_GAME:
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_GAME);
+            break;
 		default:
 			break;
         

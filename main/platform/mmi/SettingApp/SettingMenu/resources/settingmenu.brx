@@ -454,6 +454,18 @@
 	<String Id="1151" Name="IDS_ONEKEYLOCKKEYPAD_TITLE" Encoding="Unicode">
 		<Text>Red key locks keypad</Text>
 	</String>
+	<String Id="1152" Name="IDS_YUYIIN_PACKGE">
+		<Text>Speech settings</Text>
+	</String>
+	<String Id="1153" Name="IDS_DIA_SPEECH">
+		<Text>Dialing speech</Text>
+	</String>
+	<String Id="1154" Name="IDS_MAIN_SPEECH">
+		<Text>Main menu speech</Text>
+	</String>
+	<String Id="1155" Name="IDS_TIME_SPEECH">
+		<Text>Time speech</Text>
+	</String>
 	<String Id="1160" Name="IDS_CALLFORWARD_DEACTIVATE">
 		<Text>Deactivate</Text>
 	</String>
@@ -504,7 +516,7 @@
 	</STRING>
 	<STRING Id="1176" Name="IDS_PRL_VERSION_TITLE">
 		<Text>PRL Version</Text>
-	</STRING>	
+	</STRING>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="7001">
@@ -773,25 +785,30 @@
 			</Menu>
 		</Controls>
 	</DIALOG>
-	<DIALOG Id="6042" Name="IDD_PHONE_INFO_MENU_SW" Focus="0">		
+	<DIALOG Id="6042" Name="IDD_PHONE_INFO_MENU_SW" Focus="0">
 		<Controls>
 			<Static Id="7037" Name="IDC_SW_STAT" Flags="40000">
-			<Items/></Static>
+				<Items/></Static>
 		</Controls>
 	</DIALOG>
-	
 	<DIALOG Id="6043" Name="IDD_PHONE_INFO_MENU_HW" Focus="0">
 		<Controls>
 			<Static Id="7038" Name="IDC_HW_STAT" Flags="40000">
-			<Items/></Static>
-		</Controls>		
+				<Items/></Static>
+		</Controls>
 	</DIALOG>
-	
 	<DIALOG Id="6044" Name="IDD_PHONE_INFO_MENU_PRL" Focus="0">
 		<Controls>
 			<Static Id="7039" Name="IDC_PRL_STAT" Flags="40000">
-			<Items/></Static>
-		</Controls>			
-	</DIALOG>			
-</Dialogs> 
+				<Items/></Static>
+		</Controls>
+	</DIALOG>
+	<Dialog Id="6045" Name="IDD_SPEECH_MENU" Focus="7040">
+		<Controls>
+			<Menu Id="7040" Name="IDC_SPEECH">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+</Dialogs>
 </BREWRes>
