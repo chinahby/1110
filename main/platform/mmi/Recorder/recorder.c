@@ -111,7 +111,11 @@ static boolean Recorder_Init( Recorder* pme)
 	{
 		Theme_Param_type themeParms  = {0};
 		Appscom_GetThemeParameters( &themeParms);
+		#ifdef FEATURE_VERSION_K212
+		pme->m_ThemeTextColor = RGB_BLACK;
+		#else
 		pme->m_ThemeTextColor = themeParms.textColor;
+		#endif
 	}
 	pme->m_pFileManager = pme->m_Media.m_pFileManager;
 	pme->m_bLockkey		= FALSE;
