@@ -194,9 +194,9 @@ static boolean initialize_sp0828_registers(uint16 dx, uint16 dy)
 	sp0828_i2c_write_byte(0xfd,0x00);
 	sp0828_i2c_write_byte(0x31,0x10);   //Upside/mirr/Pclk inv/sub
 	sp0828_i2c_write_byte(0xd8,0x58);
-	sp0828_i2c_write_byte(0xd9,0x58);
-	sp0828_i2c_write_byte(0xda,0x58);
-	sp0828_i2c_write_byte(0xdb,0x58);
+	sp0828_i2c_write_byte(0xd9,0x50);
+	sp0828_i2c_write_byte(0xda,0x48);
+	sp0828_i2c_write_byte(0xdb,0x40);
     sp0828_i2c_write_byte(0x36,0x00);
     
 	sp0828_i2c_write_byte(0x5f,0x11);
@@ -256,24 +256,24 @@ static boolean initialize_sp0828_registers(uint16 dx, uint16 dy)
 	sp0828_i2c_write_byte(0x58,0x10);
 	sp0828_i2c_write_byte(0x59,0x10);
 	sp0828_i2c_write_byte(0x5a,0x02);
-	sp0828_i2c_write_byte(0x5b,0x02);
-	sp0828_i2c_write_byte(0x5c,0x20);
+	sp0828_i2c_write_byte(0x5b,0x06);
+	sp0828_i2c_write_byte(0x5c,0x28);
 	sp0828_i2c_write_byte(0x65,0x03);//sharpness
 	sp0828_i2c_write_byte(0x66,0x01);
 	sp0828_i2c_write_byte(0x67,0x03);
-	sp0828_i2c_write_byte(0x68,0x46);
+	sp0828_i2c_write_byte(0x68,0x43);
 	sp0828_i2c_write_byte(0x69,0x7f);
 	sp0828_i2c_write_byte(0x6a,0x01);
 	sp0828_i2c_write_byte(0x6b,0x04);
 	sp0828_i2c_write_byte(0x6c,0x01);
 	sp0828_i2c_write_byte(0x6d,0x03);
-	sp0828_i2c_write_byte(0x6e,0x46);
+	sp0828_i2c_write_byte(0x6e,0x43);
 	sp0828_i2c_write_byte(0x6f,0x7f);
 	sp0828_i2c_write_byte(0x70,0x01);
 	sp0828_i2c_write_byte(0x71,0x05);
 	sp0828_i2c_write_byte(0x72,0x01);
 	sp0828_i2c_write_byte(0x73,0x03);//3
-	sp0828_i2c_write_byte(0x74,0x46);
+	sp0828_i2c_write_byte(0x74,0x43);
 	sp0828_i2c_write_byte(0x75,0x7f);
 	sp0828_i2c_write_byte(0x76,0x01);
 	sp0828_i2c_write_byte(0x7f,0xa0);//;colorcorrection
@@ -322,7 +322,7 @@ static boolean initialize_sp0828_registers(uint16 dx, uint16 dy)
 	sp0828_i2c_write_byte(0xd6,0x1c);
 	sp0828_i2c_write_byte(0xd7,0x16);
 	sp0828_i2c_write_byte(0xdd,0x70);// ;heq
-	sp0828_i2c_write_byte(0xde,0xa0);
+	sp0828_i2c_write_byte(0xde,0x90);
 	sp0828_i2c_write_byte(0xb9,0x00);//;Ygamma 
 	sp0828_i2c_write_byte(0xba,0x04); 
 	sp0828_i2c_write_byte(0xbb,0x08); 
@@ -353,10 +353,10 @@ static boolean initialize_sp0828_registers(uint16 dx, uint16 dy)
 	sp0828_i2c_write_byte(0xed,0x78);
 	sp0828_i2c_write_byte(0xee,0x47);
 	sp0828_i2c_write_byte(0xef,0x6c);
-	sp0828_i2c_write_byte(0xf7,0x70);//AEtarget
-	sp0828_i2c_write_byte(0xf8,0x5b);//AEtarget
-	sp0828_i2c_write_byte(0xf9,0x64);//AEtarget
-	sp0828_i2c_write_byte(0xfa,0x4f);//AEtarget
+	sp0828_i2c_write_byte(0xf7,0x88);//AEtarget
+	sp0828_i2c_write_byte(0xf8,0x73);//AEtarget
+	sp0828_i2c_write_byte(0xf9,0x74);//AEtarget
+	sp0828_i2c_write_byte(0xfa,0x5f);//AEtarget
 	sp0828_i2c_write_byte(0xfd,0x01);
 	sp0828_i2c_write_byte(0x09,0x31);	
 	sp0828_i2c_write_byte(0x0a,0x85);
