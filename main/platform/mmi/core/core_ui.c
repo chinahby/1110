@@ -2241,11 +2241,13 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
 				//ISHELL_PostEvent(AEE_GetShell(),AEE_Active(),EVT_USER_REDRAW,0,0L);
 				m_isBacklight = FALSE;
             	IBACKLIGHT_Enable(gpBacklight);
-
+				#ifndef FEATURE_VERSION_K212
 				if (wParam == AVK_ENDCALL)
 				{
+					
 					break;	//继续传给callapp to End call.
 				}
+				#endif
 				
 				return TRUE;
 
@@ -2302,7 +2304,10 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
             }
         }
         if (gpAlert) {
-            IALERT_KeyBeep(gpAlert, (AVKType) wParam, FALSE);
+			if((cls != AEECLSID_CALL) &&(cls != AEECLSID_MAIN_MENU))
+			{
+            	IALERT_KeyBeep(gpAlert, (AVKType) wParam, FALSE);
+			}
         }
 		
 		
@@ -2315,10 +2320,12 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
 			return FALSE;
 		}
 #endif
+#ifndef FEATURE_VERSION_K212
 		if (wParam == AVK_ENDCALL)
 		{
 			break;	//继续传给callapp to End call.
 		}
+#endif
 #ifdef FEATURE_OEMOMH
         if (wParam == AVK_RIGHT)
 		{

@@ -7076,13 +7076,13 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 		if (bTFmt == OEMNV_TIMEFORM_AMPM)
     	{
 			IIMAGE_Draw(pMe->m_pImageTimeIcon[10],
-	                    IDLE_TIME_X3+14, 
+	                    IDLE_TIME_X3, 
 	                    IDLE_TIME_Y);
 		}
 		else
 		{
 			IIMAGE_Draw(pMe->m_pImageTimeIcon[10],
-	                    IDLE_TIME_X3, 
+	                    IDLE_TIME_X3+14, 
 	                    IDLE_TIME_Y);
 		}
 		switch(wHour)

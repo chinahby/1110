@@ -9844,8 +9844,10 @@ static void CallApp_Build_Connect_Option_Menu(CCallApp *pMe)
 	(void) IMENUCTL_AddItem(pSKMenu,AEE_APPSCALLAPP_RES_FILE,IDS_PHONE_BOOKS,IDS_PHONE_BOOKS,
                                             (AECHAR*)NULL,(uint32)NULL);
 	#else
+	#ifndef FEATURE_VERSION_K212
     (void) IMENUCTL_AddItem(pSKMenu,AEE_APPSCALLAPP_RES_FILE,IDS_CONTACT,IDS_CONTACT,
                                             (AECHAR*)NULL,(uint32)NULL);
+	#endif
     #endif
     (void) IMENUCTL_AddItem(pSKMenu,AEE_APPSCALLAPP_RES_FILE,IDS_SMS,IDS_SMS,
                                             (AECHAR*)NULL,(uint32)NULL);

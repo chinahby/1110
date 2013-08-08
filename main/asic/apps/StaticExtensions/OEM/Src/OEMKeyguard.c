@@ -133,6 +133,7 @@ static void    OEMPriv_DrawTouchBackground(uint16 x,uint16 y);
 
 // TRUE while the keyguard message is being displayed
 boolean m_bEnabled = FALSE;
+static boolean m_bBlackEnagled = FALSE;
 
 static boolean sbMessageActive = FALSE;
 #ifdef FEATURE_LCD_TOUCH_ENABLE
@@ -677,12 +678,36 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
                         {
                         	#if defined( FEATURE_VERSION_S1000T)||defined( FEATURE_VERSION_W515V3)
                         	#else
+							#ifdef FEATURE_VERSION_K212
+							if(m_bBlackEnagled)
+							{
+								OEMPriv_DrawKeyguardMessage(FALSE);
+								m_bBlackEnagled  = FALSE;
+							}
+							else
+							{
+								OEMPriv_DrawKeyguardTime();
+							}
+							#else
                             OEMPriv_DrawKeyguardTime();
+							#endif
                             #endif
                         }
                         else
                         {
+                        	#ifdef FEATURE_VERSION_K212
+							if(m_bBlackEnagled)
+							{
+								OEMPriv_DrawKeyguardTime();
+								m_bBlackEnagled  = FALSE;
+							}
+							else
+							{
+								OEMPriv_DrawKeyguardMessage(FALSE);
+							}
+							#else
                             OEMPriv_DrawKeyguardMessage(FALSE);
+							#endif
                         }
                         sUnlockState = UNLOCKSTATE_RESET;
                     }
@@ -706,7 +731,19 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
                     {
                     	#if defined( FEATURE_VERSION_S1000T)||defined( FEATURE_VERSION_W515V3)
                     	#else
+						#ifdef FEATURE_VERSION_K212
+						if(m_bBlackEnagled)
+						{
+							m_bBlackEnagled  = FALSE;
+							OEMPriv_DrawKeyguardMessage(FALSE);
+						}
+						else
+						{
+							OEMPriv_DrawKeyguardTime();
+						}
+						#else
                         OEMPriv_DrawKeyguardTime();
+						#endif
                         #endif
                     }
                     else
@@ -723,8 +760,20 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
 							        return ;
 								}
 					      }
-#endif		                    
+#endif		                   
+						#ifdef FEATURE_VERSION_K212
+						if(m_bBlackEnagled)
+						{
+							m_bBlackEnagled  = FALSE;
+							OEMPriv_DrawKeyguardTime();
+						}
+						else
+						{
+							OEMPriv_DrawKeyguardMessage(FALSE);
+						}
+						#else
                         OEMPriv_DrawKeyguardMessage(FALSE);
+						#endif
                     }
                     sUnlockState = UNLOCKSTATE_RESET;
                     bDrawMessage = !bDrawMessage;
@@ -745,12 +794,36 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
                     {
                     	#if defined( FEATURE_VERSION_S1000T)||defined( FEATURE_VERSION_W515V3)
                     	#else
+						#ifdef FEATURE_VERSION_K212
+						if(m_bBlackEnagled)
+						{
+							m_bBlackEnagled  = FALSE;
+							OEMPriv_DrawKeyguardMessage(FALSE);
+						}
+						else
+						{
+							OEMPriv_DrawKeyguardTime();
+						}
+						#else
                         OEMPriv_DrawKeyguardTime();
+						#endif
                         #endif
                     }
                     else
                     {
+                    	#ifdef FEATURE_VERSION_K212
+						if(m_bBlackEnagled)
+						{
+							m_bBlackEnagled  = FALSE;
+							OEMPriv_DrawKeyguardTime();
+						}
+						else
+						{
+							OEMPriv_DrawKeyguardMessage(FALSE);
+						}
+						#else
                         OEMPriv_DrawKeyguardMessage(FALSE);
+						#endif
                     }
 					
                     sUnlockState = UNLOCKSTATE_RESET;
@@ -1169,6 +1242,7 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
         (void)ISHELL_CreateInstance(sgpShell,AEECLSID_BACKLIGHT,(void **)&Backlight);
         if(!IBACKLIGHT_IsEnabled(Backlight))
         {
+        	m_bBlackEnagled = TRUE;
   			IBACKLIGHT_Enable(Backlight);
         } 
         IBACKLIGHT_Release(Backlight);
