@@ -1,0 +1,17 @@
+#-------------------------------------------------------------------------------
+# QQ
+#-------------------------------------------------------------------------------
+
+vpath %.mod $(QQ)
+vpath %.mif $(QQ)
+vpath %.bar $(QQ)
+vpath %.mid $(QQ)
+
+CONSTFILE_BIN_FILES+=\
+    qq.mif|fs:/mif/qq.mif \
+    qq.bar|fs:/mod/qq/qq.bar \
+    qq.mod|fs:/mod/qq/qq.mod \
+    msg.mid|fs:/mod/qq/msg.mid
+
+
+
