@@ -1082,6 +1082,10 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
             IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_MUSICPLAYER, IDS_MULTIMEDIA_MUSICPLAYER, NULL, 0);
 #endif
 
+#ifdef FEATURE_VERSION_K212
+            IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_QQ, IDS_MULTIMEDIA_QQ, NULL, 0);
+#endif
+
 #ifdef FEATURE_VERSION_C337
 			IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_SOUND_RECORDER, IDS_MULTIMEDIA_SOUND_RECORDER, NULL, 0);
 #elif defined(FEATURE_VERSION_W317A)
@@ -1646,6 +1650,11 @@ static int StartApplet(Multimed *pMe, int i)
         case IDS_MULTIMEDIA_MUSICPLAYER:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_MUSICPLAYER);
             break;
+		case IDS_MULTIMEDIA_QQ:
+			OEM_SetUCBROWSER_ADSAccount();
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_QQ);		
+            break; 
+		
 		#ifdef FEATURE_VERSION_C337
 		case IDS_MULTIMEDIA_SOUND_RECORDER:
 		#endif

@@ -2030,21 +2030,21 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
 //Add by pyuangui 20121220
 //#ifdef FEATURE_VERSION_W317A
      case AVK_CLR:			
-		if (cls == AEECLSID_UCWEB)		
+		if (cls == AEECLSID_UCWEB || cls == AEECLSID_QQ)		
 		{
 			wParam = AVK_SOFT2;
 			bHandle = TRUE;
 		}
         break;
      case AVK_SELECT:			
-		if (cls == AEECLSID_UCWEB)		
+		if (cls == AEECLSID_UCWEB || cls == AEECLSID_QQ)		
 		{
 			wParam = AVK_SOFT1;
 			bHandle = TRUE;
 		}
         break; 
     case AVK_INFO:			
-		if (cls == AEECLSID_UCWEB)		
+		if (cls == AEECLSID_UCWEB || cls == AEECLSID_QQ)		
 		{
 			wParam = AVK_SELECT;
 			bHandle = TRUE;

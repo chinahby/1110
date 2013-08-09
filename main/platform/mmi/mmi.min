@@ -204,6 +204,10 @@ ifeq ($(USES_MIZONE),yes)
 include $(MIZONE)/mizone.min
 endif
 
+ifeq ($(USES_QQ),yes)
+include $(QQ)/qq.min
+endif
+
 ifeq ($(USES_MOBILETRACKER),yes)
 include $(MOBILETRACKER)/mobileTracker.min
 endif
