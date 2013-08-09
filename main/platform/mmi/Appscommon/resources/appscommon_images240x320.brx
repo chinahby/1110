@@ -457,5 +457,64 @@
 	<Object Id="8011" Name="IDI_TIME_POINT" MimeType="image/png">
 		<File>..\images\240x320\common\core\TIME_POINT.png</File>
 	</Object>
+	
+	<Object Id="8050" Name="IDB_BATT5">
+		<File>..\images\240x320\common\Annunciator\batt5.bmp</File>
+	</Object>
+	
+	
+	<Object Id="9001" Name="IDB_RSSI0_3G">
+		<File>..\images\240x320\common\Annunciator\rssi0_3g.bmp</File>
+	</Object>
+	<Object Id="9002" Name="IDB_RSSI1_3G">
+		<File>..\images\240x320\common\Annunciator\rssi1_3g.bmp</File>
+	</Object>
+	<Object Id="9003" Name="IDB_RSSI2_3G">
+		<File>..\images\240x320\common\Annunciator\rssi2_3g.bmp</File>
+	</Object>
+	<Object Id="9004" Name="IDB_RSSI3_3G">
+		<File>..\images\240x320\common\Annunciator\rssi3_3g.bmp</File>
+	</Object>
+	<Object Id="9005" Name="IDB_RSSI4_3G">
+		<File>..\images\240x320\common\Annunciator\rssi4_3g.bmp</File>
+	</Object>
+	<Object Id="9006" Name="IDB_NO_SERVICE_3G">
+		<File>..\images\240x320\common\Annunciator\no_service_3g.bmp</File>
+	</Object>
+	
+	<Object Id="9100" Name="IDB_MODE_NUMBERS_BLACK" MimeType="image/png">
+		<File>..\images\240x320\common\IME\123_black.png</File>
+	</Object>
+	<Object Id="9101" Name="IDB_MODE_T9_MT_ENGLISH_BLACK" MimeType="image/png">
+		<File>..\images\240x320\common\IME\Abc_black.png</File>
+	</Object>
+	<Object Id="9102" Name="IDB_MODE_T9_MT_ENGLISH_LOW_BLACK" MimeType="image/png">
+		<File>..\images\240x320\common\IME\lowabc_black.png</File>
+	</Object>
+	<Object Id="9103" Name="IDB_MODE_T9_PINYIN_BLACK" MimeType="image/png">
+		<File>..\images\240x320\common\IME\T9pin_black.png</File>
+	</Object>
+	<Object Id="9104" Name="IDB_MODE_T9_STROKE_BLACK" MimeType="image/png">
+		<File>..\images\240x320\common\IME\T9str_black.png</File>
+	</Object>
+	<Object Id="9105" Name="IDB_MODE_T9_ZHUYIN_BLACK">
+		<File>..\images\240x320\common\IME\T9zhu_black.png</File>
+	</Object>
+	<Object Id="9106" Name="IDB_MODE_T9_RAPID_ENGLISH_BLACK" MimeType="image/png">
+		<File>..\images\240x320\common\IME\ezenglish_black.png</File>
+	</Object>
+	<Object Id="9107" Name="IDB_MODE_T9_MT_INDONESIAN_BLACK" MimeType="image/png">
+		<File>..\images\240x320\common\IME\Indo_black.png</File>
+	</Object>
+	<Object Id="9108" Name="IDB_MODE_T9_RAPID_INDONESIAN_BLACK" MimeType="image/png">
+		<File>..\images\240x320\common\IME\T9In_black.png</File>
+	</Object>
+	<Object Id="9109" Name="IDB_MODE_T9_MT_ENGLISH_UP_BLACK" MimeType="image/png">
+		<File>..\images\240x320\common\IME\upabc_black.png</File>
+	</Object>
+	<Object Id="9110" Name="IDB_EDIT_UP_DOWN_BMP_BLACK" MimeType="image/png">
+		<File>..\images\240x320\common\IME\arrow_black.png</File>
+	</Object>
+	
 </Objects>
 </BREWRes>

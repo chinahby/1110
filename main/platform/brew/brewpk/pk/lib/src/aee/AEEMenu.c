@@ -2488,7 +2488,7 @@ static void IMenuCtl_SetColors(IMenuCtl * po, AEEMenuColors * pc)
 			pme->m_c.cTitleText     = themeParms.textColor;
 #else //#if defined( FEATURE_FUNCS_THEME)
             pme->m_c.cBack          = RGB_BLACK;
-#ifdef FEATURE_VERSION_K212
+#ifdef FEATURE_WHITE_BG
             pme->m_c.cText          = RGB_BLACK;//MAKE_RGB( 0xde, 0xde, 0xde);
             pme->m_c.cSelText       = RGB_WHITE;//RGB_BLACK; //RGB_YELLOW_EX;//RGB_BLACK;//wlh mod 更改选中条的文字颜色
 #else
@@ -4883,7 +4883,7 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
 #if !defined( FEATURE_CONTROL_BG_USE_IMAGE)
         if(bSel){			
             IDISPLAY_SetColor(pd,CLR_USER_BACKGROUND,RGB_WHITE);
-#ifdef FEATURE_VERSION_K212
+#ifdef FEATURE_WHITE_BG
             IDISPLAY_SetColor(pd,CLR_USER_TEXT,RGB_WHITE);  //RGB_BLACK);//wlh mod 更改选中条的序号颜色
 #else
             IDISPLAY_SetColor(pd,CLR_USER_TEXT,RGB_BLACK);//wlh mod 更改选中条的序号颜色
@@ -4891,7 +4891,7 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
         }
         else{			
             IDISPLAY_SetColor(pd,CLR_USER_BACKGROUND,RGB_BLACK);
-#ifdef FEATURE_VERSION_K212
+#ifdef FEATURE_WHITE_BG
             IDISPLAY_SetColor(pd,CLR_USER_TEXT,RGB_BLACK);  //RGB_WHITE);
 #else
             IDISPLAY_SetColor(pd,CLR_USER_TEXT,RGB_WHITE);

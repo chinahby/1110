@@ -2063,7 +2063,7 @@ static boolean CTextCtl_Redraw(ITextCtl * pITextCtl)
         else
         {
             IDISPLAY_FillRect(pme->m_pIDisplay, &pme->m_rc, RGB_WHITE);//CLR_SYS_WIN);
-            (void)IDISPLAY_SetColor(pme->m_pIDisplay, CLR_USER_BACKGROUND, MAKE_RGB(255,255,255));
+            (void)IDISPLAY_SetColor(pme->m_pIDisplay, CLR_USER_BACKGROUND, MAKE_RGB(255,255,255));          
         }
         
         // draw the title text
@@ -2101,6 +2101,7 @@ static boolean CTextCtl_Redraw(ITextCtl * pITextCtl)
                 AEE_FONT_BOLD,pme->m_pTitle, -1,
                 qrc.x, qrc.y,&qrc,IDF_TEXT_TRANSPARENT | IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER);
             IDISPLAY_SetColor(pme->m_pIDisplay, CLR_USER_TEXT, RGB_BLACK);//恢复文本显示颜色     
+
             //MSG_FATAL("0pme->m_wResID:::::::::::::::::::%d,m_Mode=%d",pme->m_wResID,m_Mode,0);
             if ((!pme->m_pSoftKey)&&(pme->m_dwProps&TP_STARKEY_SWITCH))
             {
@@ -2143,7 +2144,9 @@ static boolean CTextCtl_Redraw(ITextCtl * pITextCtl)
                                         Shiftbuf,
                                         sizeof(Shiftbuf));                
             	MSG_FATAL("qrc.x===%d,qrc.y====%d",qrc.x,qrc.y,0);
+
             	IDISPLAY_SetColor(pme->m_pIDisplay, CLR_USER_TEXT, RGB_WHITE);//临时改变文本颜色
+    	
             	IDISPLAY_DrawText(pme->m_pIDisplay,
 #ifdef FEATURE_VERSION_W208S
 				AEE_FONT_NORMAL,
@@ -2169,7 +2172,9 @@ static boolean CTextCtl_Redraw(ITextCtl * pITextCtl)
                                         Altbuf,
                                         sizeof(Altbuf));                 
             	MSG_FATAL("qrc.x===%d,qrc.y====%d",qrc.x,qrc.y,0);
+
             	IDISPLAY_SetColor(pme->m_pIDisplay, CLR_USER_TEXT, RGB_WHITE);//临时改变文本颜色
+           	
             	IDISPLAY_DrawText(pme->m_pIDisplay,
 #ifdef FEATURE_VERSION_W208S
 				AEE_FONT_NORMAL,
@@ -2195,7 +2200,9 @@ static boolean CTextCtl_Redraw(ITextCtl * pITextCtl)
                                         Altbuf,
                                         sizeof(Altbuf));                  
             	MSG_FATAL("qrc.x===%d,qrc.y====%d",qrc.x,qrc.y,0);
+
             	IDISPLAY_SetColor(pme->m_pIDisplay, CLR_USER_TEXT, RGB_WHITE);//临时改变文本颜色
+       	
             	IDISPLAY_DrawText(pme->m_pIDisplay,
 #ifdef FEATURE_VERSION_W208S
 				AEE_FONT_NORMAL,
@@ -3185,18 +3192,38 @@ static AEETextInputMode CTextCtl_SetInputMode(ITextCtl * po, AEETextInputMode m)
 #else
 #ifdef FEATURE_MT_ENGLISH_NEW
 #ifdef FEATURE_MT_ENGLISH_CAPLOW //if FEATURE_MT_ENGLISH_CAPLOW is not defined, TEXT_MODE_MULTITAP==TEXT_MODE_MULTITAP_LOW
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_BLACK;    
+#else
             pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
+#endif
+#else
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW_BLACK;
 #else
             pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
+#endif
 #endif//FEATURE_MT_ENGLISH_CAPLOW  
 #else
 #if defined (FEATURE_ALL_KEY_PAD)
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP_BLACK;
+#else
 			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
+#endif
 #else
 			#if  defined(FEATURE_VERSION_W516) ||defined(FEATURE_VERSION_VG68) || defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)
-			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW_BLACK;
+#else
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
+#endif
 			#else
-			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_BLACK;    
+#else
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
+#endif
 			#endif
 #endif	         
 #endif//FEATURE_MT_ENGLISH_NEW
@@ -3207,10 +3234,18 @@ static AEETextInputMode CTextCtl_SetInputMode(ITextCtl * po, AEETextInputMode m)
 			case TEXT_MODE_ZI_CAP_LOWER_ENGLISH:
 				{
 					#ifdef FEATURE_ALL_KEY_PAD
-					pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
+#ifdef FEATURE_WHITE_BG
+                    pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_BLACK;    
+#else
+                    pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
+#endif
 					#else
                     MSG_FATAL("IDB_MODE_T9_MT_ENGLISH_UP",0,0,0);
-					pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
+#ifdef FEATURE_WHITE_BG
+                    pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP_BLACK;
+#else
+                    pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
+#endif
 					#endif
 				}
 				break;
@@ -3221,10 +3256,18 @@ static AEETextInputMode CTextCtl_SetInputMode(ITextCtl * po, AEETextInputMode m)
 			case TEXT_MODE_T9_CAP_LOWER_ENGLISH:
 				{
 					#ifdef FEATURE_ALL_KEY_PAD
-					pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
+#ifdef FEATURE_WHITE_BG
+                    pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_BLACK;    
+#else
+                    pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
+#endif
 					#else
                     MSG_FATAL("IDB_MODE_T9_MT_ENGLISH_UP",0,0,0);
-					pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
+#ifdef FEATURE_WHITE_BG
+                    pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP_BLACK;
+#else
+                    pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
+#endif
 					#endif
 				}
 				break;
@@ -3240,9 +3283,17 @@ static AEETextInputMode CTextCtl_SetInputMode(ITextCtl * po, AEETextInputMode m)
 #else
 
 #if defined (FEATURE_ALL_KEY_PAD)
-			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW_BLACK;
+#else
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
+#endif
+#else
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_RAPID_ENGLISH_BLACK;
 #else
 			pme->m_wResID = IDB_MODE_T9_RAPID_ENGLISH;
+#endif
 #endif
 
 #endif  // FEATURE_PREPAID_ISRAEL_HEBREW				
@@ -3260,7 +3311,11 @@ static AEETextInputMode CTextCtl_SetInputMode(ITextCtl * po, AEETextInputMode m)
 		 break;
 #endif
             case TEXT_MODE_NUMBERS:
+#ifdef FEATURE_WHITE_BG
+                pme->m_wResID = IDB_MODE_NUMBERS_BLACK;
+#else
                 pme->m_wResID = IDB_MODE_NUMBERS;
+#endif
                 break;
 				
 #ifdef FEATURE_ZI_MT_ARABIC
@@ -3288,7 +3343,11 @@ static AEETextInputMode CTextCtl_SetInputMode(ITextCtl * po, AEETextInputMode m)
 		 break;
 #endif
             case TEXT_MODE_NUMBERS:
+#ifdef FEATURE_WHITE_BG
+                pme->m_wResID = IDB_MODE_NUMBERS_BLACK;
+#else                
                 pme->m_wResID = IDB_MODE_NUMBERS;
+#endif
                 break;
 				
 #ifdef FEATURE_T9_MT_ARABIC
@@ -3332,7 +3391,11 @@ static AEETextInputMode CTextCtl_SetInputMode(ITextCtl * po, AEETextInputMode m)
 #endif
 #ifdef FEATURE_T9_PINYIN
 			case TEXT_MODE_T9_PINYIN:
-				 pme->m_wResID = IDB_MODE_T9_PINYIN;
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_PINYIN_BLACK;
+#else
+            pme->m_wResID = IDB_MODE_T9_PINYIN;
+#endif
 				 break;
 #endif
 
@@ -4506,7 +4569,11 @@ static void TextCtl_ClearScreen(CTextCtl * pme)
    }
    else
    {
+//#ifdef FEATURE_WHITE_BG
+       //IDISPLAY_FillRect(pme->m_pIDisplay,&rc, RGB_BLACK);     
+//#else
        IDISPLAY_FillRect(pme->m_pIDisplay,&rc, RGB_WHITE);
+//#endif
    }
 }
 
@@ -5230,7 +5297,11 @@ static void OEM_SetInputMode(CTextCtl * pme)
     {   //输入模式
         case OEM_MODE_NUMBERS:
             wMode = TEXT_MODE_NUMBERS;//数字输入模式
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_NUMBERS_BLACK;
+#else              
             pme->m_wResID = IDB_MODE_NUMBERS;
+#endif
             (void)OEM_SetConfig(CFGI_LANGUAGE_MOD,
 	                          (void*)&is_Taimod,
 	                          sizeof(boolean));
@@ -5238,7 +5309,11 @@ static void OEM_SetInputMode(CTextCtl * pme)
 #ifdef FEATURE_MT_ENGLISH_UP
         case OEM_MODE_ENGLISH_UP:
             wMode = TEXT_MODE_MULTITAP_UP;
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP_BLACK;
+#else
             pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
+#endif
             (void)OEM_SetConfig(CFGI_LANGUAGE_MOD,
 	                          (void*)&is_Taimod,
 	                          sizeof(boolean));
@@ -5247,7 +5322,11 @@ static void OEM_SetInputMode(CTextCtl * pme)
 #ifdef FEATURE_MT_ENGLISH_LOW
         case OEM_MODE_ENGLISH_LOW:
             wMode = TEXT_MODE_MULTITAP_LOW;
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW_BLACK;
+#else
             pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
+#endif
             (void)OEM_SetConfig(CFGI_LANGUAGE_MOD,
 	                          (void*)&is_Taimod,
 	                          sizeof(boolean));
@@ -5256,7 +5335,11 @@ static void OEM_SetInputMode(CTextCtl * pme)
 #ifdef FEATURE_MT_ENGLISH_CAPLOW
         case OEM_MODE_ENGLISH_CAPLOW:
             wMode = TEXT_MODE_MULTITAP;
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_BLACK;    
+#else
             pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
+#endif
             (void)OEM_SetConfig(CFGI_LANGUAGE_MOD,
 	                          (void*)&is_Taimod,
 	                          sizeof(boolean));
@@ -5271,12 +5354,24 @@ static void OEM_SetInputMode(CTextCtl * pme)
 #else
 
 #if defined(FEATURE_ALL_KEY_PAD)
-			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP_BLACK;
+#else
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
+#endif
 #else
 			#if  defined(FEATURE_VERSION_W516) ||defined(FEATURE_VERSION_VG68) || defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)
-			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW_BLACK;
+#else
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
+#endif
 			#else
-			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_BLACK;    
+#else
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
+#endif
 			#endif
 #endif
 
@@ -5296,7 +5391,11 @@ static void OEM_SetInputMode(CTextCtl * pme)
 #ifdef FEATURE_PREPAID_ISRAEL_HEBREW 
 	        pme->m_wResID = IDB_MODE_T9_MT_HEBREW_ENGLISH_LOW;
 #else
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW_BLACK;
+#else
             pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
+#endif
 #endif  // FEATURE_PREPAID_ISRAEL_HEBREW
             OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_ALL_SMALL);  
             (void)OEM_SetConfig(CFGI_LANGUAGE_MOD,
@@ -5310,13 +5409,25 @@ static void OEM_SetInputMode(CTextCtl * pme)
 			#ifndef  FEATURE_ALL_KEY_PAD
 			wMode = AEE_TM_CAPLOWER;//小写字母输入模式
 			OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_ALL_CAPS); 
-			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP_BLACK;
+#else
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
+#endif
 	        #else
 			wMode = AEE_TM_CAPLOWER;//大小写字母输入模?
             #if  defined(FEATURE_VERSION_W516) ||defined(FEATURE_VERSION_VG68) || defined(FEATURE_VERSION_C01) || defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW_BLACK;
+#else
             pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
+#endif
 			#else
-			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_BLACK;    
+#else
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
+#endif
 			#endif
 			#endif
 			
@@ -5363,12 +5474,24 @@ static void OEM_SetInputMode(CTextCtl * pme)
 #else
 
 #if defined(FEATURE_ALL_KEY_PAD)
-			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP_BLACK;
+#else
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
+#endif
 #else
 			#if  defined(FEATURE_VERSION_W516)
-			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW_BLACK;
+#else
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
+#endif
             #else
-			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_BLACK;    
+#else
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
+#endif
 			#endif
 #endif
 
@@ -5388,9 +5511,17 @@ static void OEM_SetInputMode(CTextCtl * pme)
 #else
 
 #if defined(FEATURE_ALL_KEY_PAD)
-			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW_BLACK;
 #else
-			pme->m_wResID = IDB_MODE_T9_RAPID_ENGLISH;
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
+#endif
+#else
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_RAPID_ENGLISH_BLACK;
+#else
+            pme->m_wResID = IDB_MODE_T9_RAPID_ENGLISH;
+#endif
 #endif
 
 #endif  // FEATURE_PREPAID_ISRAEL_HEBREW
@@ -5410,9 +5541,17 @@ static void OEM_SetInputMode(CTextCtl * pme)
 #else
 
 #if defined(FEATURE_ALL_KEY_PAD)
-			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW_BLACK;
 #else
-			pme->m_wResID = IDB_MODE_T9_RAPID_ENGLISH;
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
+#endif
+#else
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_RAPID_ENGLISH_BLACK;
+#else
+            pme->m_wResID = IDB_MODE_T9_RAPID_ENGLISH;
+#endif
 #endif
 
 #endif  // FEATURE_PREPAID_ISRAEL_HEBREW			
@@ -5431,7 +5570,11 @@ static void OEM_SetInputMode(CTextCtl * pme)
 #if defined(FEATURE_ALL_KEY_PAD)
 			 pme->m_wResID = IDB_MODE_T9_RAPID_ENGLISH_UP;
 #else
-			pme->m_wResID = IDB_MODE_T9_RAPID_ENGLISH;
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_RAPID_ENGLISH_BLACK;
+#else
+            pme->m_wResID = IDB_MODE_T9_RAPID_ENGLISH;
+#endif
 #endif
 
 #endif  // FEATURE_PREPAID_ISRAEL_HEBREW
@@ -5445,21 +5588,33 @@ static void OEM_SetInputMode(CTextCtl * pme)
 #ifdef FEATURE_ZI_PINYIN
         case OEM_MODE_ZI_PINYIN:
             wMode = TEXT_MODE_ZI_PINYIN;
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_PINYIN_BLACK;
+#else
             pme->m_wResID = IDB_MODE_T9_PINYIN;
+#endif
             break;
 #endif //FEATURE_ZI_PINYIN
 
 #ifdef FEATURE_ZI_STROKE
         case OEM_MODE_ZI_STROKE:
             wMode = TEXT_MODE_ZI_STROKE;
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_STROKE_BLACK;
+#else
             pme->m_wResID = IDB_MODE_T9_STROKE;
+#endif
             break;
 #endif //FEATURE_ZI_STROKE
 
 #ifdef FEATURE_ZI_ZHUYIN
         case OEM_MODE_ZI_ZHUYIN:
             wMode = TEXT_MODE_ZI_ZHUYIN;
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_ZHUYIN_BLACK;    
+#else
             pme->m_wResID = IDB_MODE_T9_ZHUYIN;
+#endif
             break;
 #endif //FEATURE_ZI_ZHUYIN
 
@@ -5576,14 +5731,22 @@ static void OEM_SetInputMode(CTextCtl * pme)
 #ifdef FEATURE_ZI_MT_INDONESIAN
         case OEM_MODE_ZI_MT_INDONESIAN:
             wMode = TEXT_MODE_ZI_MT_INDONESIAN;
-            pme->m_wResID = IDB_MODE_T9_MT_INDONESIAN;  
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_MT_INDONESIAN_BLACK;
+#else
+            pme->m_wResID = IDB_MODE_T9_MT_INDONESIAN; 
+#endif
             break;
 #endif //FEATURE_ZI_MT_INDONESIAN
 
 #ifdef FEATURE_ZI_RAPID_INDONESIAN
         case OEM_MODE_ZI_RAPID_INDONESIAN:
             wMode = TEXT_MODE_ZI_RAPID_INDONESIAN;
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID= IDB_MODE_T9_RAPID_INDONESIAN_BLACK;
+#else
             pme->m_wResID= IDB_MODE_T9_RAPID_INDONESIAN;//IDB_MODE_T9_TEZ_INDONESIAN;  
+#endif            
             break;
 #endif //FEATURE_ZI_RAPID_INDONESIAN
 
@@ -5667,14 +5830,30 @@ static void OEM_SetInputMode(CTextCtl * pme)
 #else
 
 #if defined(FEATURE_ALL_KEY_PAD)
-			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP_BLACK;
+#else
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
+#endif
 #else
 			#if  defined(FEATURE_VERSION_W516)
-			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW_BLACK;
+#else
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
+#endif
             #elif defined(FEATURE_VERSION_VG68) || defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)
-            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP; 
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP_BLACK;
+#else
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
+#endif
 			#else
-			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_BLACK;    
+#else
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
+#endif
 			#endif
 #endif
 
@@ -5696,7 +5875,11 @@ static void OEM_SetInputMode(CTextCtl * pme)
 #ifdef FEATURE_PREPAID_ISRAEL_HEBREW 
 	        pme->m_wResID = IDB_MODE_T9_MT_HEBREW_ENGLISH_LOW;
 #else
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW_BLACK;
+#else
             pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
+#endif
 #endif  // FEATURE_PREPAID_ISRAEL_HEBREW
             OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_ALL_SMALL);  
             (void)OEM_SetConfig(CFGI_LANGUAGE_MOD,
@@ -5710,14 +5893,26 @@ static void OEM_SetInputMode(CTextCtl * pme)
 			#ifndef  FEATURE_ALL_KEY_PAD
 			wMode = AEE_TM_CAPLOWER;//小写字母输入模式
 			OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_ALL_CAPS); 
-			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP_BLACK;
+#else
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
+#endif
             MSG_FATAL("IDB_MODE_T9_MT_ENGLISH_UP",0,0,0);
 	        #else
 			wMode = AEE_TM_CAPLOWER;//大小写字母输入模?
 			#if  defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W208S)
-			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW_BLACK;
+#else
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
+#endif
 			#else
-			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_BLACK;    
+#else
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
+#endif
 			#endif
 			#endif
 			
@@ -5738,12 +5933,24 @@ static void OEM_SetInputMode(CTextCtl * pme)
 #else
 
 #if defined(FEATURE_ALL_KEY_PAD)
-			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP_BLACK;
+#else
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
+#endif
 #else
 			#if  defined(FEATURE_VERSION_W516) ||defined(FEATURE_VERSION_VG68) || defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_C180)
-			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW_BLACK;
+#else
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
+#endif
 			#else
-			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_BLACK;    
+#else
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
+#endif
 			#endif
 #endif
 
@@ -5802,9 +6009,17 @@ static void OEM_SetInputMode(CTextCtl * pme)
 #else
 
 #if defined(FEATURE_ALL_KEY_PAD)
-			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW_BLACK;
 #else
-			pme->m_wResID = IDB_MODE_T9_RAPID_ENGLISH;
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
+#endif
+#else
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_RAPID_ENGLISH_BLACK;
+#else
+            pme->m_wResID = IDB_MODE_T9_RAPID_ENGLISH;
+#endif
 #endif
 
 #endif  // FEATURE_PREPAID_ISRAEL_HEBREW
@@ -5824,9 +6039,17 @@ static void OEM_SetInputMode(CTextCtl * pme)
 #else
 
 #if defined(FEATURE_ALL_KEY_PAD)
-			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW_BLACK;
 #else
-			pme->m_wResID = IDB_MODE_T9_RAPID_ENGLISH;
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
+#endif
+#else
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_RAPID_ENGLISH_BLACK;
+#else
+            pme->m_wResID = IDB_MODE_T9_RAPID_ENGLISH;
+#endif
 #endif
 
 #endif  // FEATURE_PREPAID_ISRAEL_HEBREW			
@@ -5845,7 +6068,11 @@ static void OEM_SetInputMode(CTextCtl * pme)
 #if defined(FEATURE_ALL_KEY_PAD)
 			 pme->m_wResID = IDB_MODE_T9_RAPID_ENGLISH_UP;
 #else
-			pme->m_wResID = IDB_MODE_T9_RAPID_ENGLISH;
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_RAPID_ENGLISH_BLACK;
+#else
+            pme->m_wResID = IDB_MODE_T9_RAPID_ENGLISH;
+#endif
 #endif
 
 #endif  // FEATURE_PREPAID_ISRAEL_HEBREW
@@ -5859,21 +6086,33 @@ static void OEM_SetInputMode(CTextCtl * pme)
 #ifdef FEATURE_T9_PINYIN
         case OEM_MODE_T9_PINYIN:
             wMode = TEXT_MODE_T9_PINYIN;
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_PINYIN_BLACK;
+#else
             pme->m_wResID = IDB_MODE_T9_PINYIN;
+#endif
             break;
 #endif //FEATURE_T9_PINYIN
 
 #ifdef FEATURE_T9_STROKE
         case OEM_MODE_T9_STROKE:
             wMode = TEXT_MODE_T9_STROKE;
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_STROKE_BLACK;
+#else
             pme->m_wResID = IDB_MODE_T9_STROKE;
+#endif
             break;
 #endif //FEATURE_T9_STROKE
 
 #ifdef FEATURE_T9_ZHUYIN
         case OEM_MODE_T9_ZHUYIN:
             wMode = TEXT_MODE_T9_ZHUYIN;
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_ZHUYIN_BLACK;    
+#else
             pme->m_wResID = IDB_MODE_T9_ZHUYIN;
+#endif
             break;
 #endif //FEATURE_T9_ZHUYIN
 
@@ -5990,14 +6229,22 @@ static void OEM_SetInputMode(CTextCtl * pme)
 #ifdef FEATURE_T9_MT_INDONESIAN
         case OEM_MODE_T9_MT_INDONESIAN:
             wMode = TEXT_MODE_T9_MT_INDONESIAN;
-            pme->m_wResID = IDB_MODE_T9_MT_INDONESIAN;  
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_T9_MT_INDONESIAN_BLACK;
+#else
+            pme->m_wResID = IDB_MODE_T9_MT_INDONESIAN; 
+#endif
             break;
 #endif //FEATURE_T9_MT_INDONESIAN
 
 #ifdef FEATURE_T9_RAPID_INDONESIAN
         case OEM_MODE_T9_RAPID_INDONESIAN:
             wMode = TEXT_MODE_T9_RAPID_INDONESIAN;
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID= IDB_MODE_T9_RAPID_INDONESIAN_BLACK;
+#else
             pme->m_wResID= IDB_MODE_T9_RAPID_INDONESIAN;//IDB_MODE_T9_TEZ_INDONESIAN;  
+#endif  
             break;
 #endif //FEATURE_T9_RAPID_INDONESIAN
 
@@ -6075,7 +6322,11 @@ static void OEM_SetInputMode(CTextCtl * pme)
 
         default:
             wMode = TEXT_MODE_NUMBERS;//数字输入模式
+#ifdef FEATURE_WHITE_BG
+            pme->m_wResID = IDB_MODE_NUMBERS_BLACK;
+#else              
             pme->m_wResID = IDB_MODE_NUMBERS;
+#endif
             break;
         }
 	MSG_FATAL("2pme->m_wResID=%d,wMode=%d",pme->m_wResID,wMode,0);

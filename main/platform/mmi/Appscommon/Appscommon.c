@@ -1431,9 +1431,15 @@ void DrawBottomBar(IDisplay  * pIDisplay, BottomBar_Param_type *BParam)
     {
 #ifdef FEATURE_ARPHIC_LAYOUT_ENGINE 
         // 主题参数次之
+#ifdef FEATURE_WHITE_BG
+        pBarImg = ISHELL_LoadResImage(pShell, 
+                                      AEE_APPSCOMMONRES_IMAGESFILE,
+                                      IDB_EDIT_UP_DOWN_BMP_BLACK);
+#else
         pBarImg = ISHELL_LoadResImage(pShell, 
                                       AEE_APPSCOMMONRES_IMAGESFILE,
                                       IDB_EDIT_UP_DOWN_BMP);
+#endif
 
         // 绘制底部提示条的上下箭头
         if (NULL != pBarImg)
@@ -2560,11 +2566,18 @@ void Appscom_GetThemeParameters(Theme_Param_type *TParam)
 
 #else//部分代码中会取字体以及背景色，在这里关闭feature后做一些处理
 
+#ifdef FEATURE_WHITE_BG
+    TParam->textColor = RGB_BLACK;  //MAKE_RGB( 0xde, 0xde, 0xde);
+    TParam->seltextColor = RGB_WHITE; //RGB_BLACK;
+    TParam->bkcolor = RGB_WHITE; //RGB_BLACK;
+    TParam->themeColor = RGB_WHITE; //RGB_BLACK;
+#else
     TParam->textColor = MAKE_RGB( 0xde, 0xde, 0xde);
     TParam->seltextColor = RGB_BLACK;
     TParam->bkcolor = RGB_BLACK;
     TParam->themeColor = RGB_BLACK;
-    
+#endif
+
 #endif /* FEATURE_FUNCS_THEME */    
 #endif //#if defined( AEE_SIMULATOR)
 }

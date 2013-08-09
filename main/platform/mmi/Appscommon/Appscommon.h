@@ -139,14 +139,15 @@
     #define STATUSBAR_HEIGHT        16
 #endif
 
-#define APPSCOMMON_BG_COLOR       (RGB_BLACK)
+#define APPSCOMMON_BG_COLOR       (RGB_WHITE) //(RGB_BLACK)
 #define APPSCOMMON_TEXT_BG_COLOR  MAKE_RGB(60,60,60)
 #define APPSCOMMON_DEFAULT_REND 0 //wlh 20090405 add for rend Ëæ»úÐ§¹û  REND_RANDOM = 0
-#define TEXT_GRAPHIC_FONT_COLOR  (RGB_WHITE)
-#define TEXT_GRAPHIC_BG_COLOR      (RGB_BLACK)
 
-#define TEXT_FONT_COLOR                 (RGB_BLACK)
-#define TEXT_BG_COLOR                     (RGB_WHITE)
+#define TEXT_GRAPHIC_FONT_COLOR     (RGB_BLACK) //(RGB_WHITE)
+#define TEXT_GRAPHIC_BG_COLOR       (RGB_WHITE) //(RGB_BLACK)
+
+#define TEXT_FONT_COLOR             (RGB_WHITE) //(RGB_BLACK)
+#define TEXT_BG_COLOR               (RGB_BLACK) //(RGB_WHITE)
 
 #define APPSCOMMON_MENUBG_XPOS  60
 #define APPSCOMMON_MENUBG_YPOS  47
