@@ -28,8 +28,11 @@ Qualcomm Confidential and Proprietary
 /*-------------------------------------------------------------------
             Defines
 -------------------------------------------------------------------*/
-
+#ifdef FEATURE_VERSION_K212
+#define AEE_MAX_VOLUME            80   // Volume from 0 (silence) to AEE_MAX_VOLUME
+#else
 #define AEE_MAX_VOLUME            100  // Volume from 0 (silence) to AEE_MAX_VOLUME
+#endif
 
 /*-------------------------------------------------------------------
       Type Declarations
