@@ -3881,8 +3881,9 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 									 CFGI_SOUND_BO_CORE,
 									 &m_sound_bo_core,
 									 sizeof(boolean));
-			if(m_sound_bo_core)
+			if(m_sound_bo_core && !m_bStart_speech_timer)
 			{
+				m_bStart_speech_timer =TRUE;
 				CoreApp_UpdateidleBaoshiTimer(pMe);
 			}
 }
@@ -4314,11 +4315,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             (void) ISHELL_CancelTimer(pMe->a.m_pIShell,
                                       CoreApp_UpdateIdleTimer,
                                       pMe);
-#ifdef FEATURE_SOUND_BO
-			(void) ISHELL_CancelTimer(pMe->a.m_pIShell,
-                                      CoreApp_UpdateidleBaoshiTimer,
-                                      pMe);
-#endif
+
             (void) ISHELL_CancelTimer(pMe->a.m_pIShell,
                                       CoreApp_SearchingTimer,
                                       pMe);
@@ -6129,8 +6126,7 @@ static void CoreApp_UpdateidleBaoshiTimer(void *pUser)
 		CoreApp_PlayTimeSound(pMe,TIME_ONE);
 	}
 	// 重设分钟定时器
-    (void) ISHELL_SetTimer(pMe->a.m_pIShell,
-                           (int32)(30 * 1000),
+	AEE_SetSysTimer((int32)(30 * 1000),
                            CoreApp_UpdateidleBaoshiTimer,
                            pMe);
 }

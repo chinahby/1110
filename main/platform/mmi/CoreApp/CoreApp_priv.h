@@ -163,7 +163,7 @@
 #define CORE_FOR_41	"fs:/hsmm/coreapp/Ten.mp3"
 #define CORE_FIVE_5	"fs:/hsmm/coreapp/five_5.mp3"
 
-
+static boolean m_bStart_speech_timer = FALSE;
 
 
 typedef enum
