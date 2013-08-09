@@ -1770,6 +1770,38 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 */
 #ifdef FEATURE_QQ_APP                 
             case EVT_QQ_ANNU_UPDATE:
+#ifdef FEATURE_VERSION_K212
+                 IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_QQ, ANNUN_STATE_QQ_OFFLINE);
+                 IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_QQ, ANNUN_STATE_QQ_MSG_OFF);
+                 IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_QQ, ANNUN_STATE_QQ_LEAVE_OFF); 
+                 IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_QQ, ANNUN_STATE_QQ_HIDING_OFF);
+
+                 switch(dwParam)
+                        {
+                        case 0:
+                             pMe->m_qqstate=QQSTATE_ONLINE;
+                             IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_QQ, ANNUN_STATE_QQ_ONLINE);
+                             break;
+                         case 1:
+                             pMe->m_qqstate=QQSTATE_AWAYLINE;
+                             IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_QQ, ANNUN_STATE_QQ_LEAVE_ON); 
+                             break;
+                         case 2:
+                             pMe->m_qqstate=QQSTATE_OFFLINE;
+                             break;
+                         case 3:
+                             pMe->m_qqstate=QQSTATE_INVISIBLE;
+                             IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_QQ, ANNUN_STATE_QQ_HIDING_ON); 
+                             break;
+                         case 4:
+                              pMe->m_qqstate=QQSTATE_HAVEMSG;
+                              IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_QQ, ANNUN_STATE_QQ_MSG_ON); 
+                             break;
+                         case 5:
+                             pMe->m_qqstate=QQSTATE_QUIT;
+                             break;
+                        }
+#else
                  IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_QQ*/, ANNUN_STATE_QQ_OFFLINE);
                  IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_QQ*/, ANNUN_STATE_QQ_MSG_OFF);
                  IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_QQ*/, ANNUN_STATE_QQ_LEAVE_OFF); 
@@ -1800,6 +1832,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                              pMe->m_qqstate=QQSTATE_QUIT;
                              break;
                         }
+#endif                 
                 break;
 #endif                
             default:
@@ -4138,11 +4171,21 @@ static uint32 CoreApp_ConvertBattLvToAnnunState(int nBattLevel)
     }
 	#endif
 	*/
+#ifdef FEATURE_VERSION_K212
+    else if(nBattLevel == 4)
+    {
+        nState = ANNUN_STATE_BATT_4;
+    }
     else
     {
         nState = ANNUN_STATE_BATT_FULL;
     }
-
+#else
+    else
+    {
+        nState = ANNUN_STATE_BATT_FULL;
+    }
+#endif
     return nState;
 }
 //end added

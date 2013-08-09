@@ -4319,7 +4319,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             (void) ISHELL_CancelTimer(pMe->a.m_pIShell,
                                       CoreApp_SearchingTimer,
                                       pMe);
-             #if defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_1110W516)|| defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_C316)|| defined(FEATURE_VERSION_K212)
+             #if defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_1110W516)|| defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_C316)//|| defined(FEATURE_VERSION_K212)
              IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
              #endif
 //Add by pyuangui 20121220			 
@@ -8627,18 +8627,6 @@ void CoreApp_UpdateAnnunciator(CCoreApp *pMe)
 #endif
 	//Add End
 	
-	//Add for test
-	//IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_TCARD, ANNUN_STATE_TCARD_ON);
-	//IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_LOCKSTATUS, ANNUN_STATE_LOCKSTATUS_ON);
-	//IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL, ANNUN_STATE_CALL_MISSEDCALL_ON);
-	//IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_SMS, ANNUN_STATE_SMS_SMAIL_ON);
-	//IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO, ANNUN_STATE_HEADSET_ON);
-	//IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_BLUETOOTH, ANNUN_STATE_BT_ON);
-	//IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_ALARM, ANNUN_STATE_ALARM_ON);
-	//IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_MMS, ANNUN_MMS_FULL_ON);
-	//IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_ALERT);
-	//return;
-	//Add End
 
 	//Add By zzg 2012_10_29
 	#if (defined (FEATURE_VERSION_W317A)||defined (FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_K212))
@@ -8658,6 +8646,21 @@ void CoreApp_UpdateAnnunciator(CCoreApp *pMe)
     }
 	#endif
 	//Add End
+
+    /*
+    //Add for test
+	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RSSI, ANNUN_STATE_RSSI_4);
+	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_WAP, ANNUN_STATE_WAP_ON);
+	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_TCARD, ANNUN_STATE_TCARD_ON);
+	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL, ANNUN_STATE_CALL_MISSEDCALL_ON);
+	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_SMS, ANNUN_STATE_SMS_SMAIL_ON);
+    IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_QQ, ANNUN_STATE_QQ_ONLINE);
+	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_ALARM, ANNUN_STATE_ALARM_ON);
+	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_VIBRING);
+	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_BATT, ANNUN_STATE_BATT_FULL);   
+	return;
+	//Add End
+	*/
 	
 
     ICONFIG_GetItem(pMe->m_pConfig, CFGI_HEADSET_PRESENT, &b_headset, sizeof(b_headset));
@@ -8686,6 +8689,32 @@ void CoreApp_UpdateAnnunciator(CCoreApp *pMe)
 	        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_HEADSET*/, ANNUN_STATE_HEADSET_OFF/*ANNUN_STATE_OFF*/);
 	    }
 #ifdef FEATURE_QQ_APP 
+#ifdef FEATURE_VERSION_K212
+     IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_QQ, ANNUN_STATE_QQ_OFFLINE);
+     IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_QQ, ANNUN_STATE_QQ_MSG_OFF);
+     IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_QQ, ANNUN_STATE_QQ_LEAVE_OFF); 
+     IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_QQ, ANNUN_STATE_QQ_HIDING_OFF);
+
+        switch(pMe->m_qqstate)
+               {               
+                 case QQSTATE_ONLINE:
+                      IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_QQ, ANNUN_STATE_QQ_ONLINE);
+                      break;  
+                 case QQSTATE_AWAYLINE:
+                      IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_QQ, ANNUN_STATE_QQ_LEAVE_ON);
+                      break;
+                 case QQSTATE_OFFLINE:
+                      break;
+                 case QQSTATE_INVISIBLE:                   
+                      IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_QQ, ANNUN_STATE_QQ_HIDING_ON);
+                      break;  
+                 case QQSTATE_HAVEMSG:
+                      IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_QQ, ANNUN_STATE_QQ_MSG_ON);
+                      break;
+                 case QQSTATE_QUIT:
+                     break;          
+               }
+#else
      IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_QQ*/, ANNUN_STATE_QQ_OFFLINE);
      IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_QQ*/, ANNUN_STATE_QQ_MSG_OFF);
      IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_QQ*/, ANNUN_STATE_QQ_LEAVE_OFF); 
@@ -8710,6 +8739,7 @@ void CoreApp_UpdateAnnunciator(CCoreApp *pMe)
                  case QQSTATE_QUIT:
                      break;          
                }
+#endif        
 #endif        
     }
     MSG_FATAL("alertType=%d",alertType,0,0);
