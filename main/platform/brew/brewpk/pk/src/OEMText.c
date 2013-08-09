@@ -1063,7 +1063,7 @@ OEMCONTEXT OEM_TextCreate(const IShell* pIShell,
       }
       // Default mode is Multitap
       #ifdef FEATURE_VERSION_K212
-	  pNewContext->byMode = AEE_TM_PINYIN;
+	  pNewContext->byMode = 0;
 	  #else
       pNewContext->byMode = 0;
 	  #endif

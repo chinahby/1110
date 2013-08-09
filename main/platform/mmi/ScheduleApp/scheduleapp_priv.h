@@ -81,7 +81,11 @@
 #ifdef FEATURE_VERSION_X3
 #define     LUNAR_RECT_HEIGHT              24
 #else
+#ifdef FEATURE_VERSION_K212
+#define     LUNAR_RECT_HEIGHT              32
+#else
 #define     LUNAR_RECT_HEIGHT              14
+#endif
 #endif
 #endif
 #if defined(FEATURE_DISP_128X160) || defined(FEATURE_DISP_128X128)

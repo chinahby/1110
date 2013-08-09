@@ -1050,7 +1050,11 @@ static boolean  dialog_handler_of_state_msgbox(CScheduleApp* pme,
             return TRUE;
 
         case EVT_DIALOG_START:
+			#ifdef FEATURE_VERSION_K212
+			ISHELL_SetTimer(pme->m_pShell,2000,Schedule_DialogTimeout,pme);
+			#else
             ISHELL_SetTimer(pme->m_pShell,1000,Schedule_DialogTimeout,pme);
+			#endif
             (void) ISHELL_PostEventEx(pme->m_pShell, 
                                     EVTFLG_ASYNC,
                                     AEECLSID_SCHEDULEAPP,
@@ -1495,7 +1499,7 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
             int32 startdate, enddate;
 
             rc = pme->m_rc;
-			#ifdef FEATURE_VERSION_X3
+			#if defined(FEATURE_VERSION_X3)||defined(FEATURE_VERSION_K212)
 			rc.dy -= (HEIGHT_PROMPT_BAR);
 			#else
 #if FEATURE_DRAW_LUNAR_CALENDAR
