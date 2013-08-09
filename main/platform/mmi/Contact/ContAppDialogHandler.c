@@ -10218,7 +10218,11 @@ static boolean  CContApp_HandleCapacityDlgEvent( CContApp  *pMe,
                 Appscom_GetThemeParameters( &themeParms);
                 scrollbarFillColor  =   themeParms.themeColor;
                 scrollbarFillColor = IDISPLAY_SetColor( pMe->m_pDisplay, CLR_USER_BACKGROUND, scrollbarFillColor);
+#ifdef FEATURE_WHITE_BG
+                IDISPLAY_SetColor( pMe->m_pDisplay, CLR_USER_TEXT, RGB_BLACK);
+#else
                 IDISPLAY_SetColor( pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
+#endif
                 ISTATIC_Redraw( pStatic);
             }
             //draw titlebar
