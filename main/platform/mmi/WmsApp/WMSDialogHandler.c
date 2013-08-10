@@ -3626,7 +3626,7 @@ static boolean IDD_SETTING_Handler(void   *pUser,
 #endif                   
 #if 1//def FEATURE_CARRIER_TAIWAN_APBW        //add by yangdecai   2010-08-23 
             MSG_FATAL("IDD_SETTING_Handler EVT_DIALOG_INIT IDS_CALLBACKNUM", 0, 0, 0);
-#if !defined(FEATURE_VERSION_C316)&&!defined(FEATURE_VERSION_K202_LM129C)&&!defined(FEATURE_VERSION_W021_CT100)
+#if !defined(FEATURE_VERSION_C316)&&!defined(FEATURE_VERSION_K202_LM129C)&&!defined(FEATURE_VERSION_W021_CT100)&&!defined(FEATURE_VERSION_K212)
             MENU_ADDITEM(pMenu, IDS_CALLBACKNUM);
 #endif
 #endif 
@@ -5518,7 +5518,9 @@ static boolean IDD_SENDMODE_Handler(void *pUser,
             // 菜单项初始化
             MENU_ADDITEM(pMenu, IDS_SENDANDSAVE);
             MENU_ADDITEM(pMenu, IDS_SENDONLY);
+#ifndef FEATURE_VERSION_K212
             MENU_ADDITEM(pMenu, IDS_SAVEONLY);
+#endif
             {
                 AECHAR WTitle[40] = {0};
                 (void)ISHELL_LoadResString(pMe->m_pShell,
@@ -11465,6 +11467,11 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 		         	}		         	
 		         	#elif defined(FEATURE_VERSION_K202_LM129C)//xxzhen
 					(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_PINYIN);
+					#elif defined(FEATURE_VERSION_K212)//xxzhen
+					{
+						//nInputMode = ITEXTCTL_GetInputMode (pIText, NULL);
+						(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_PINYIN);
+					}
 		         	#else
 					#ifdef FEATURE_ALL_KEY_PAD
         	    	(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_RAPID);
