@@ -2052,7 +2052,9 @@ boolean OEM_TextKeyPress(OEMCONTEXT hTextCtl,
                         }
                     }
                     goto OEM_TextKeyPress_COMM;
-                
+				#ifdef FEATURE_QQ_APP	
+                case AVK_SOFT2:
+				#endif	
                 case AVK_CLR:
                     if (eCode == EVT_KEY_HELD) 
                     {
@@ -5491,8 +5493,9 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 		                return TRUE;
 		            }            
 		            break;    
-
-		            
+                #ifdef FEATURE_QQ_APP	
+		        case AVK_SOFT2: 
+				#endif	
 		        case AVK_CLR:
 		        	T9HandleKey ( &pContext->sT9awFieldInfo.G, T9KEYCLEAR);
 		            if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
@@ -5903,8 +5906,9 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 								return TRUE;
 							}			 
 							break;	  
-		
-							
+		                #ifdef FEATURE_QQ_APP	
+						case AVK_SOFT2:	
+						#endif	
 						case AVK_CLR:
 							if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
 							{
@@ -6898,8 +6902,9 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
 	                return TRUE;
 	            }            
 	            break;    
-
-	            
+            #ifdef FEATURE_QQ_APP	
+	        case AVK_SOFT2:   
+			#endif	
 	        case AVK_CLR:
 	        	T9HandleKey ( &pContext->sT9awFieldInfo.G, T9KEYCLEAR);
 	            if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
@@ -8070,8 +8075,9 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	                return TRUE;
 	            }            
 	            break;    
-
-	            
+            #ifdef FEATURE_QQ_APP	
+	        case AVK_SOFT2:     
+			#endif	
 	        case AVK_CLR:
 	        	T9HandleKey ( &pContext->sT9awFieldInfo.G, T9KEYCLEAR);
 	            if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
@@ -8499,8 +8505,9 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	                return TRUE;
 	            }            
 	            break;    
-
-	            
+            #ifdef FEATURE_QQ_APP
+	        case AVK_SOFT2:
+		    #endif
 	        case AVK_CLR:
 	            if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
 	            {
@@ -8924,8 +8931,9 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	                return TRUE;
 	            }            
 	            break;    
-
-	            
+            #ifdef FEATURE_QQ_APP
+	        case AVK_SOFT2:   
+			#endif	
 	        case AVK_CLR:
 	            if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
 	            {
@@ -10881,6 +10889,7 @@ if(AEE_Active()==AEECLSID_WMSAPP)
          (( mKey >= T9KEYAMBIG1 && mKey <= T9KEYAMBIGC) 
          || T9KEYSPACE == mKey
          || AVK_SELECT == key 
+         || AVK_SOFT1== key
          || AVK_INFO == key ) )
     { 
         // meet the max count of the text.
@@ -10912,8 +10921,10 @@ if(AEE_Active()==AEECLSID_WMSAPP)
             {
                 wT9KeyType = T9KEYTYPE_NORMAL;
             }
-            break;       
-        
+            break;     
+		#ifdef FEATURE_QQ_APP	
+        case AVK_SOFT2:
+		#endif	
         case AVK_CLR:
             if ( FOCUS_SELECTION == pContext->sFocus )
             {
@@ -10962,7 +10973,9 @@ if(AEE_Active()==AEECLSID_WMSAPP)
             }
             #endif
             break;
-        
+		#ifdef FEATURE_QQ_APP	
+        case AVK_SOFT1:
+		#endif	
         case AVK_SELECT:   
         case AVK_INFO: 	  
             if ( FOCUS_SYLLABLE == pContext->sFocus )
@@ -12874,6 +12887,9 @@ static boolean TextCtl_NumbersKey(TextCtlContext *pContext, AEEEvent eCode,AVKTy
 	                return TRUE;
 	            }            
 	            break;    
+			#ifdef FEATURE_QQ_APP	
+            case AVK_SOFT2:
+			#endif	
 	        case AVK_CLR:
 	            if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
 	            {
