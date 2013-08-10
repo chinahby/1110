@@ -586,6 +586,13 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
         wParam =AVK_CLR;
         dwParam = 1;
     }
+    #ifdef FEATURE_QQ_APP
+	if(wParam ==AVK_SOFT2)
+    {
+        wParam =AVK_CLR;
+        dwParam = 1;
+    }
+	#endif
     MSG_FATAL("CTextCtl_HandleEvent-----eCode=%d",eCode,0,0);
 #ifdef FEATURE_LCD_TOUCH_ENABLE   //add by ydc
    //if( eCode >= EVT_PEN_UP  && eCode <= EVT_PEN_STALE_MOVE ){   modi by ydc  090520
@@ -1127,7 +1134,7 @@ if ((!pme->m_pSoftKey) &&
                 {
                     return TRUE;
                 } 
-                else if (AVK_CLR == wParam) 
+                else if (AVK_CLR == wParam || AVK_SOFT2== wParam) 
                 {
                     TextCtl_KillModeMenu(pme);
                     
