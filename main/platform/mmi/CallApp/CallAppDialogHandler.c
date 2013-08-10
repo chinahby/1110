@@ -7327,7 +7327,7 @@ void CallApp_SetupCallAudio(CCallApp *pMe)
 	if(pMe->m_bHandFree)
 	{
 		snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	
-	    snd_set_device(SND_DEVICE_SPEAKER_PHONE/*SND_DEVICE_HEADSET*/, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);	
+	    snd_set_device(SND_DEVICE_HEADSET/*SND_DEVICE_HEADSET*/, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);	
 	}
 #endif
 }
