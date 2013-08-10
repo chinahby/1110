@@ -29,7 +29,7 @@
 #ifdef FEATURE_CARRIER_CHINA_VERTU
 #define LUNAR_BG_COLOR  (MAKE_RGB(0x40, 0x30, 0x20)) 
 #else
-#define LUNAR_BG_COLOR  (MAKE_RGB(0x05, 0x0A, 0x12)) 
+#define LUNAR_BG_COLOR  (MAKE_RGB(0x00, 0x00, 0x00)) 
 #endif
 
 #define LUNAR_FONT_COLOR (RGB_WHITE)
@@ -1499,8 +1499,10 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
             int32 startdate, enddate;
 
             rc = pme->m_rc;
-			#if defined(FEATURE_VERSION_X3)||defined(FEATURE_VERSION_K212)
+			#if defined(FEATURE_VERSION_X3)
 			rc.dy -= (HEIGHT_PROMPT_BAR);
+			#elif defined(FEATURE_VERSION_K212)
+			rc.dy -= (HEIGHT_PROMPT_BAR+32);
 			#else
 #if FEATURE_DRAW_LUNAR_CALENDAR
             rc.dy -= (HEIGHT_PROMPT_BAR+14);
@@ -7247,9 +7249,10 @@ boolean Calendar_InitAppData(CCalendarApp * pme, IShell* pIShell)
    //存放0-11个月总天数
    uint32 monthdaytemp[]={0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
                         //0,  1,  2,  3,   4,   5,   6,   7,   8,   9,  10,  11
-
+   
    if(pme == NULL)
    {
+//   	 MSG_FATAL("Calendar_InitAppData is null",0,0,0);
      return FALSE;
    }
 
@@ -7307,6 +7310,7 @@ boolean Calendar_InitAppData(CCalendarApp * pme, IShell* pIShell)
                                IDS_DATE_ALL,
                                pme->mLunDay_String,
                                sizeof(pme->mLunDay_String));
+//   MSG_FATAL("pme->mLunDay_String===%d,===%d",WSTRLEN(pme->mLunDay_String),WSTRLEN(pme->mGz_String),0);
 
    return TRUE;
 }
@@ -7405,6 +7409,7 @@ void CScheduleApp_GetChineseLunar(CCalendarApp * pme)
    else
       GzYear = 60;
    pme->m_pResGz = pme->mGz_String;
+//   MSG_FATAL("pme->mGz_String-----%d",WSTRLEN(pme->mGz_String),0,0);
    pme->m_pResGz += (GzYear - 1)* 2;
 
 
@@ -7431,6 +7436,8 @@ void CScheduleApp_GetChineseLunar(CCalendarApp * pme)
 
    pme->m_pResLunD = pme->mLunDay_String;
    pme->m_pResLunD += (pme->m_yDay - 1)* 2;
+   MSG_FATAL("pme->m_pResGz-----%d",WSTRLEN(pme->m_pResGz),WSTRLEN(pme->m_pResSx),0);
+   MSG_FATAL("pme->m_pResLunM-----%d",WSTRLEN(pme->m_pResLunM),WSTRLEN(pme->m_pResLunD),0);
 }
 
 
@@ -7568,19 +7575,22 @@ void CScheduleApp_GetLunarStr(CScheduleApp *pme)
    pme->m_LunarString[0]=(AECHAR)'\0';
    strTep = pme->m_LunarString;
    nCount = sizeof(pme->m_LunarString) / sizeof(AECHAR);
-
+  // MSG_FATAL("pme->m_calendar.m_pResGz==%d,--%d",WSTRLEN(pme->m_calendar.m_pResGz),WSTRLEN(pme->m_calendar.m_pResSx),0);
    //天支地干
    nLen = WSTRNCOPYN(strTep,nCount, pme->m_calendar.m_pResGz,2);
    nCount -= nLen;
    strTep += nLen;
-
+#ifndef FEATURE_VERSION_K212
    //加入生肖字符
    nLen = WSTRNCOPYN(strTep,nCount, pme->m_calendar.m_pResSx,2);
    nCount -= nLen;
    strTep += nLen;
-
+#endif
    //suspect 润月字符?允静徽?
    //加入月份字符
+
+  // MSG_FATAL("pme->m_calendar.m_pResLunM==%d,--%d",WSTRLEN(pme->m_calendar.m_pResLunM),WSTRLEN(pme->m_calendar.m_pResLunD),0);
+   //天支地干
    if(pme->m_calendar.m_LeapMonth)
    {
        nLen = WSTRNCOPYN(strTep,nCount, pme->m_calendar.m_pResLunM,3);
@@ -7591,6 +7601,7 @@ void CScheduleApp_GetLunarStr(CScheduleApp *pme)
    }
    nCount -= nLen;
    strTep += nLen;
+  // MSG_FATAL("nLen====================%d",nLen,0,0);
 
    //加入日子字符
    (void)WSTRNCOPYN(strTep,nCount, pme->m_calendar.m_pResLunD,2);
@@ -7599,16 +7610,28 @@ void CScheduleApp_GetLunarStr(CScheduleApp *pme)
 static void CScheduleApp_DrawLunarStr(CScheduleApp *pme)
 {
     AEERect rc;
-    SETAEERECT(&rc, 0, pme->m_rc.dy - (HEIGHT_PROMPT_BAR + LUNAR_RECT_HEIGHT), pme->m_rc.dx, LUNAR_RECT_HEIGHT);
-    
+    SETAEERECT(&rc, 0, pme->m_rc.dy - (HEIGHT_PROMPT_BAR+LUNAR_RECT_HEIGHT), pme->m_rc.dx, LUNAR_RECT_HEIGHT);
+    //MSG_FATAL("CScheduleApp_DrawLunarStr,rc.x==%d,rc.y==%d",rc.x,rc.y,0);
+	//MSG_FATAL("CScheduleApp_DrawLunarStr,rc.dx==%d,rc.dy==%d,,=%d",rc.dx,rc.dy,WSTRLEN(pme->m_LunarString));
     IDISPLAY_FillRect(pme->m_pDisplay, &rc, LUNAR_BG_COLOR);
     if (WSTRLEN(pme->m_LunarString) > 4)
     {
         RGBVAL nOldFontColor = IDISPLAY_SetColor(pme->m_pDisplay, CLR_USER_TEXT, LUNAR_FONT_COLOR);
         // 绘制农历日期
-        (void)IDISPLAY_DrawText(pme->m_pDisplay, AEE_FONT_BOLD,
+        (void)IDISPLAY_DrawText(pme->m_pDisplay, AEE_FONT_NORMAL,
                     pme->m_LunarString, -1, 0, 0, &rc,
                     IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE | IDF_TEXT_TRANSPARENT);
+        #if 0
+        DrawGreyBitTextWithProfile(pme->m_pShell,
+	                              pme->m_pDisplay,
+	                              RGB_WHITE_NO_TRANS,
+	                              28,
+	                              pme->m_LunarString, -1,
+	                              0, 0, &rc, 
+	                              IDF_ALIGN_MIDDLE
+	                              | IDF_ALIGN_CENTER
+	                              | IDF_TEXT_TRANSPARENT); 
+		#endif
         (void)IDISPLAY_SetColor(pme->m_pDisplay, CLR_USER_TEXT, nOldFontColor);
     }
 }

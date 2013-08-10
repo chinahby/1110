@@ -533,10 +533,13 @@ static boolean IDateCtl_HandleEvent(IDateCtl * po, AEEEvent eCode, uint16 wParam
                return(TRUE);
 
             case AVK_UP:
-               if (pme->m_bMonthView)
-                  IDateCtl_SetJulianDay(po, pme->m_lJulianDay-7);
-               else 
-                  DateCtl_IncDateFld(pme, 1);
+				if(pme->m_nYear>=1980)
+				{
+               		if (pme->m_bMonthView)
+                  	IDateCtl_SetJulianDay(po, pme->m_lJulianDay-7);
+              		 else 
+                  	DateCtl_IncDateFld(pme, 1);
+				}
                IDateCtl_Redraw(po);
                return(TRUE);
 
