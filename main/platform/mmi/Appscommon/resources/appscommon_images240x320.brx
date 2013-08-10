@@ -407,16 +407,16 @@
 		<File>..\images\240x320\common\Annunciator\no_service.bmp</File>
 	</Object>
 	<Object Id="7044" Name="IDB_QQ">
-		<File>..\images\128x160\common\Annunciator\qq.bmp</File>
+		<File>..\images\240x320\common\Annunciator\qq.bmp</File>
 	</Object>
 	<Object Id="7045" Name="IDB_QQMSG">
-		<File>..\images\128x160\common\Annunciator\qqmsg.bmp</File>
+		<File>..\images\240x320\common\Annunciator\qqmsg.bmp</File>
 	</Object>
 	<Object Id="7046" Name="IDB_QQHIDING">
-		<File>..\images\128x160\common\Annunciator\qqhiding.bmp</File>
+		<File>..\images\240x320\common\Annunciator\qqhiding.bmp</File>
 	</Object>
 	<Object Id="7047" Name="IDB_QQLEAVE">
-		<File>..\images\128x160\common\Annunciator\qqleave.bmp</File>
+		<File>..\images\240x320\common\Annunciator\qqleave.bmp</File>
 	</Object>
 	<Object Id="7101" Name="IDB_MMS_ENTER" MimeType="image/png">
 		<File>..\images\240x320\common\Appscommon\Icon\enter.png</File>

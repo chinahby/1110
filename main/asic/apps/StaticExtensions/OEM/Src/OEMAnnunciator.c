@@ -360,9 +360,11 @@ static OEMState_data batt_image_data[]=
 
 #ifdef FEATURE_VERSION_K212
 static OEMState_data qq_image_data[]=
-{
-  {ANNUN_STATE_QQ_MSG_ON, IDB_QQMSG, NULL},
-  {ANNUN_STATE_QQ_ONLINE, IDB_QQ, NULL}
+{  
+    {ANNUN_STATE_QQ_MSG_ON, IDB_QQMSG, NULL},
+    {ANNUN_STATE_QQ_ONLINE, IDB_QQ, NULL},
+    {ANNUN_STATE_QQ_HIDING_ON, IDB_QQHIDING,NULL},
+    {ANNUN_STATE_QQ_LEAVE_ON, IDB_QQLEAVE,NULL}  
 };
 
 #else
@@ -433,7 +435,7 @@ OEMAnnun_content fmradio_content =
 
 #ifdef FEATURE_VERSION_K212
 OEMAnnun_content qq_content =
-     {ANNUN_TYPE_IMAGE, 1, ANNUN_STATE_OFF, (void *)qq_image_data};
+     {ANNUN_TYPE_IMAGE, 4, ANNUN_STATE_OFF, (void *)qq_image_data};
 #else
 /*ANNUN_FIELD_QQ
 OEMAnnun_content qq_content =
