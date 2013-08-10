@@ -14590,8 +14590,13 @@ static boolean IDD_MEMSTATUS_Handler(void *pUser,
                 oldColor = IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, Theme_Param.textColor);
 #else
 
+#ifdef FEATURE_WHITE_BG
+                IDISPLAY_FillRect(pMe->m_pDisplay, &rc, RGB_WHITE);
+                IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_BLACK);
+#else
                 IDISPLAY_FillRect(pMe->m_pDisplay, &rc, RGB_BLACK);
                 IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
+#endif                
 
 #endif /* FEATURE_FUNCS_THEME */
                 
@@ -21985,8 +21990,13 @@ static boolean IDD_MMS_MEMSTATUS_Handler(void *pUser,
                 oldColor = IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, Theme_Param.textColor);
 #else
 
+#ifdef FEATURE_WHITE_BG
+                IDISPLAY_FillRect(pMe->m_pDisplay, &rc, RGB_WHITE);
+                IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_BLACK);
+#else
                 IDISPLAY_FillRect(pMe->m_pDisplay, &rc, RGB_BLACK);
                 IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
+#endif                
 
 #endif /* FEATURE_FUNCS_THEME */
                 

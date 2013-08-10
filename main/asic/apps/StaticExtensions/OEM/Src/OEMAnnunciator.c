@@ -322,12 +322,21 @@ static OEMState_data ringtone_image_data[]=
 #if /*defined(FEATURE_VERSION_LM126C)||*/defined(FEATURE_5_LEVEL_BATTERY)//xxzhen
 static OEMState_data batt5_image_data[]=
 {
+#ifdef FEATURE_VERSION_K212
+  {ANNUN_STATE_BATT_LOW, IDB_BATT_LOW, NULL},
+  {ANNUN_STATE_BATT_1, IDB_BATT1, NULL},
+  {ANNUN_STATE_BATT_2, IDB_BATT2, NULL},
+  {ANNUN_STATE_BATT_3, IDB_BATT3, NULL},
+  {ANNUN_STATE_BATT_4, IDB_BATT_FULL, NULL},
+  {ANNUN_STATE_BATT_FULL, IDB_BATT5, NULL}
+#else
   {ANNUN_STATE_BATT_LOW,IDB_BATT_LOW, NULL},
   {ANNUN_STATE_BATT_1, IDB_BATT5_1, NULL},
   {ANNUN_STATE_BATT_2, IDB_BATT5_2, NULL},
   {ANNUN_STATE_BATT_3, IDB_BATT5_3, NULL},
   {ANNUN_STATE_BATT_4, IDB_BATT5_4, NULL},
   {ANNUN_STATE_BATT_FULL, IDB_BATT5_FULL, NULL}
+#endif
 };
 #else
 static OEMState_data batt_image_data[]=
@@ -339,6 +348,15 @@ static OEMState_data batt_image_data[]=
   {ANNUN_STATE_BATT_FULL, IDB_BATT_FULL, NULL}
 };
 #endif
+
+#ifdef FEATURE_VERSION_K212
+static OEMState_data qq_image_data[]=
+{
+  {ANNUN_STATE_QQ_MSG_ON, IDB_QQMSG, NULL},
+  {ANNUN_STATE_QQ_ONLINE, IDB_QQ, NULL}
+};
+
+#else
 /*QQ
 static OEMState_data qq_image_data[]=
 {
@@ -346,6 +364,7 @@ static OEMState_data qq_image_data[]=
   {ANNUN_STATE_QQ_ONLINE, IDB_QQ, NULL}
 };
 */
+#endif
 
 /********************************************************************
  *
@@ -368,7 +387,6 @@ OEMAnnun_content rssi_content =
 #else
     {ANNUN_TYPE_IMAGE, 6, ANNUN_STATE_RSSI_NO_SERV, (void *)rssi_image_data};
 #endif
-
 
 //Add By zzg 2012_10_29
 /*ANNUN_TCARD_WAP*/
@@ -403,10 +421,16 @@ OEMAnnun_content fmradio_content =
 #else
      {ANNUN_TYPE_IMAGE, 1, ANNUN_STATE_OFF, (void *)fmradio_image_data};
 #endif
+
+#ifdef FEATURE_VERSION_K212
+OEMAnnun_content qq_content =
+     {ANNUN_TYPE_IMAGE, 1, ANNUN_STATE_OFF, (void *)qq_image_data};
+#else
 /*ANNUN_FIELD_QQ
 OEMAnnun_content qq_content =
      {ANNUN_TYPE_IMAGE, 1, ANNUN_STATE_OFF, (void *)qq_image_data};
 */
+#endif
 
 /*ANNUN_FIELD_BLUETOOTH*/
 #ifndef FEATURE_USES_LOWMEM
@@ -488,12 +512,12 @@ OEMAnnun_content batt_content =
     #define ROW1_Y           0
     #define BETWEEN_ICON_PIXEL 1 	
 #elif defined(FEATURE_DISP_240X320)
-    #define IMG_WIDTH        18
-    #define IMG_HEIGHT       18
-    #define LG_IMG_WIDTH     29
+    #define IMG_WIDTH        25 //18
+    #define IMG_HEIGHT       25 //18
+    #define LG_IMG_WIDTH     32 //29
     #define TEXT_HEIGHT      11
     #define ROW1_Y           0
-    #define BETWEEN_ICON_PIXEL 1 	
+    #define BETWEEN_ICON_PIXEL 0 // 1 	
 #elif defined(FEATURE_DISP_320X240)
     #define IMG_WIDTH      19
     #define IMG_HEIGHT     21
@@ -593,6 +617,18 @@ OEMAnnun_content batt_content =
  */
 static OEMAnnun_data Annunciators[] =
 {
+#ifdef FEATURE_VERSION_K212
+    {ANNUN_FIELD_RSSI,                ANNUN_ICON_POSITION_1,     ROW1_Y,  LG_IMG_WIDTH, IMG_HEIGHT,  &rssi_content}, 	   
+    {ANNUN_FIELD_WAP,                ANNUN_ICON_POSITION_2,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &wap_content},     
+    {ANNUN_FIELD_TCARD,               ANNUN_ICON_POSITION_3,      ROW1_Y,  IMG_WIDTH,       IMG_HEIGHT,  &tcard_content},  
+    {ANNUN_FIELD_CALL,                ANNUN_ICON_POSITION_4,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &call_content}, 
+    {ANNUN_FIELD_SMS,                ANNUN_ICON_POSITION_5,      ROW1_Y,  IMG_WIDTH,       IMG_HEIGHT,  &sms_content}, 
+    {ANNUN_FIELD_QQ, 			  ANNUN_ICON_POSITION_6,	 ROW1_Y,  IMG_WIDTH,	  IMG_HEIGHT,  &qq_content},      
+    {ANNUN_FIELD_ALARM,              ANNUN_ICON_POSITION_7,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &alarm_content},    
+    {ANNUN_FIELD_RINGTONE,         ANNUN_ICON_POSITION_8,    ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &ringtone_content},
+    {ANNUN_FIELD_BATT,             ANNUN_ICON_POSITION_END, ROW1_Y,  LG_IMG_WIDTH, IMG_HEIGHT,  &batt_content}
+#else
+
   {ANNUN_FIELD_RSSI,                ANNUN_ICON_POSITION_1,     ROW1_Y,  LG_IMG_WIDTH, IMG_HEIGHT,  &rssi_content}, 		
   {ANNUN_FIELD_WAP,                ANNUN_ICON_POSITION_2,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &wap_content},     
  // {ANNUN_FIELD_QQ,               ANNUN_ICON_POSITION_3,      ROW1_Y,  IMG_WIDTH,       IMG_HEIGHT,  &qq_content},  
@@ -639,7 +675,7 @@ static OEMAnnun_data Annunciators[] =
   {ANNUN_FIELD_RINGTONE,         ANNUN_ICON_POSITION_8,    ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &ringtone_content},
   {ANNUN_FIELD_BATT,             ANNUN_ICON_POSITION_END, ROW1_Y,  LG_IMG_WIDTH, IMG_HEIGHT,  &batt_content}
 #endif
-
+#endif
 };
 //lint +e545
 #define ANNUN_BUFFER_BITS    (10)
@@ -649,7 +685,11 @@ static OEMAnnun_data Annunciators[] =
 #if  0//def FEATURE_VERSION_LM126C
 #define ANNUN_MAX_STATES     (8)
 #else
+#ifdef FEATURE_VERSION_K212
+#define ANNUN_MAX_STATES     (9)
+#else
 #define ANNUN_MAX_STATES     (7)
+#endif
 #endif
 #endif
 /* Status of bitmap cache */
@@ -932,6 +972,8 @@ static int DrawImageField (IAnnunciator *pMe, uint32 nAnnunID, uint32 nState)
     {
         return EFAILED;
     }
+
+    MSG_FATAL("***zzg DrawImageField nAnnunID=%x, nState=%x***", nAnnunID, nState, 0);
 
     //Add By zzg 2010_07_23
     if(IAnnunCoreObj->m_hasTitleText && IAnnunCoreObj->m_Title[0] != 0)
@@ -1980,7 +2022,10 @@ static int IAnnunciator_SetField(IAnnunciator * pMe, uint32 nAnnunID,
   PACONTEXT pac;
   uint32 nStateRank = GetAnnunStateRank(nState);
   //MSG_FATAL("IAnnunciator_SetField %d 0x%x",nAnnunID,nState,0);
+
   
+
+  MSG_FATAL("***zzg IAnnunciator_SetField %d 0x%x***",nAnnunID,nState,0);
   
   if (nAnnunID >= ARR_SIZE(Annunciators))
   {
@@ -2438,7 +2483,7 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
 					//DBGPRINTF("***zzg bgRect:%d,%d,%d,%d***", bgRect.x, bgRect.y, bgRect.dx, bgRect.dy);
 
 					
-					#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_K212)
+					#if defined(FEATURE_VERSION_C337) //|| defined(FEATURE_VERSION_K212)
 					{
 						IImage      *pBarImg = NULL;
 
@@ -2468,7 +2513,7 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
 	                rc.dx = SCREEN_WIDTH;
 	                rc.dy = STATEBAR_HEIGHT;
 
-					#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_K212)
+					#if defined(FEATURE_VERSION_C337) || defined(FEATURE_WHITE_BG)
 					IDISPLAY_SetColor(pMe->m_coreObj->m_piDisplay, CLR_USER_TEXT, RGB_BLACK);
 					#else
 					IDISPLAY_SetColor(pMe->m_coreObj->m_piDisplay, CLR_USER_TEXT, RGB_WHITE);

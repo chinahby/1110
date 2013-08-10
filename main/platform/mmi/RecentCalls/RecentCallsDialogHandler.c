@@ -620,7 +620,11 @@ static boolean  RecentCalls_VerifyPasswordEvent(CRecentCalls *pMe,
                                                 IDS_PASSWORD, 
                                                 text,
                                                 sizeof(text));
+#ifdef FEATURE_WHITE_BG
+                nOldFontColor = IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_BLACK);
+#else
                 nOldFontColor = IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
+#endif
                 IDISPLAY_DrawText(pMe->m_pDisplay, 
                                     AEE_FONT_BOLD, 
                                     text,
@@ -2695,8 +2699,13 @@ static boolean RecentCalls_TimeEvent(CRecentCalls *pMe,
 #else
             Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
 #endif
+
             //IDISPLAY_FillRect(pMe->m_pDisplay, &pMe->m_rc, RGB_BLACK);
+#ifdef FEATURE_WHITE_BG            
+            IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_BLACK);
+#else
             IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
+#endif
 
             (void)IDISPLAY_DrawText(pMe->m_pDisplay,
                               AEE_FONT_NORMAL,
@@ -3882,9 +3891,13 @@ else
         AECHAR  sec_str[8]  = { 0};
         AECHAR  format[]    = { '%', '0', '2', 'd', 0};
         RGBVAL  nOldFontColor = RGB_WHITE;
+        
         int         len         = 0;
         int         nLineHeight = BETWEEN_LINE_PIXELS + IDISPLAY_GetFontMetrics(pMe->m_pDisplay, AEE_FONT_BOLD, NULL, NULL);
-        
+
+#ifdef FEATURE_WHITE_BG
+        nOldFontColor = RGB_BLACK;
+#endif
         (void) ISHELL_LoadResString(pMe->m_pShell,
                                   AEE_RECENTCALLSRES_LANGFILE,
                                   IDS_HOUR,
@@ -4705,7 +4718,11 @@ static boolean	Recentcalls_AskpasswordEvent(CRecentCalls *pMe,
                                                 IDS_SECURITY, 
                                                 text,
                                                 sizeof(text));
+#ifdef FEATURE_WHITE_BG
+                nOldFontColor = IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_BLACK);
+#else
                 nOldFontColor = IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
+#endif
                 IDISPLAY_DrawText(pMe->m_pDisplay, 
                                     AEE_FONT_BOLD, 
                                     text,

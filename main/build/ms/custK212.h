@@ -9,6 +9,11 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define CUST_EDITION
 #endif
 
+//#define FEATURE_WHITE_BG        //Add By zzg 2013_08_07
+#define FEATURE_5_LEVEL_BATTERY
+
+
+
 //LM129C
 //#define FEATURE_VERSION_LM126C    //FOR LM126C
 //#define FEATURE_IMAGE_DIALING_DIGITS

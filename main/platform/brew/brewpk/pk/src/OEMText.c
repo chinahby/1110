@@ -2272,6 +2272,8 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
     {
         return;
     }	
+
+    MSG_FATAL("***zzg OEM_TextDraw***", 0,0,0);
     
     if (pContext->bValid)
     {

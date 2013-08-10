@@ -45,6 +45,23 @@ typedef struct IAnnunciator IAnnunciator;
 //---------------------------------------------------------------------
 // Annunciator Fields
 /*fields that locate at the same place are merged, and use the states ID to dicide which icon to display*/
+
+#ifdef FEATURE_VERSION_K212
+#define ANNUN_FIELD_RSSI                       0   /*Airplane Mode/RSSI*/
+#define ANNUN_FIELD_WAP                       1   /*Wap/1x/Roam*/
+#define ANNUN_FIELD_TCARD						2		//Add By zzg 2012_10_30
+#define ANNUN_FIELD_CALL                      3   /*Loudspeaker/Mute/Emergency/Inuse/Missed Call*/
+#define ANNUN_FIELD_SMS                       4   /*VMail/SMS/SMS Memory Full*/
+#define ANNUN_FIELD_QQ                     5   /*QQ*/
+#define ANNUN_FIELD_ALARM                    6   /*Timer/Alarm/Schedule*/
+#define ANNUN_FIELD_RINGTONE              7   /*Ringtone*/
+#define ANNUN_FIELD_BATT                     8   /*Battery*/
+
+#define ANNUN_FIELD_FMRADIO                9   /*FMRadio/Headset*/
+#define ANNUN_FIELD_BLUETOOTH            10   /*BT Trans/BT Headset/BT On*/
+#define ANNUN_FIELD_LOCKSTATUS           11  /*Voice Privacy/Lockstatus*/
+#define ANNUN_FIELD_MMS                       12   /*MMS Full/MMS Unread/MMS Unreceive/Push*/
+#else
 #define ANNUN_FIELD_RSSI                       0   /*Airplane Mode/RSSI*/
 #define ANNUN_FIELD_WAP                       1   /*Wap/1x/Roam*/
 #define ANNUN_FIELD_LOCKSTATUS           2   /*Voice Privacy/Lockstatus*/
@@ -57,9 +74,8 @@ typedef struct IAnnunciator IAnnunciator;
 #define ANNUN_FIELD_MMS                       8   /*MMS Full/MMS Unread/MMS Unreceive/Push*/
 #define ANNUN_FIELD_RINGTONE              9   /*Ringtone*/
 #define ANNUN_FIELD_BATT                     10   /*Battery*/
-
 #define ANNUN_FIELD_TCARD						2		//Add By zzg 2012_10_30
-
+#endif
 
 
 // Possible State of each annunciator field
@@ -282,7 +298,7 @@ typedef struct IAnnunciator IAnnunciator;
 #define ANNUN_STATE_BATT_1       ANNUN_SECOND_STATE
 #define ANNUN_STATE_BATT_2       ANNUN_THIRD_STATE
 #define ANNUN_STATE_BATT_3       ANNUN_FORTH_STATE
-#if /*defined(FEATURE_VERSION_LM126C)||*/defined(FEATURE_5_LEVEL_BATTERY)//xxzhen
+#if /*defined(FEATURE_VERSION_LM126C)||*/defined(FEATURE_5_LEVEL_BATTERY) //xxzhen
 #define ANNUN_STATE_BATT_4       ANNUN_FIFTH_STATE
 #define ANNUN_STATE_BATT_FULL    ANNUN_SIXTH_STATE
 #else

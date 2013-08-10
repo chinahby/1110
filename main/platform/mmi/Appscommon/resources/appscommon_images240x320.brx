@@ -461,26 +461,7 @@
 	<Object Id="8050" Name="IDB_BATT5">
 		<File>..\images\240x320\common\Annunciator\batt5.bmp</File>
 	</Object>
-	
-	
-	<Object Id="9001" Name="IDB_RSSI0_3G">
-		<File>..\images\240x320\common\Annunciator\rssi0_3g.bmp</File>
-	</Object>
-	<Object Id="9002" Name="IDB_RSSI1_3G">
-		<File>..\images\240x320\common\Annunciator\rssi1_3g.bmp</File>
-	</Object>
-	<Object Id="9003" Name="IDB_RSSI2_3G">
-		<File>..\images\240x320\common\Annunciator\rssi2_3g.bmp</File>
-	</Object>
-	<Object Id="9004" Name="IDB_RSSI3_3G">
-		<File>..\images\240x320\common\Annunciator\rssi3_3g.bmp</File>
-	</Object>
-	<Object Id="9005" Name="IDB_RSSI4_3G">
-		<File>..\images\240x320\common\Annunciator\rssi4_3g.bmp</File>
-	</Object>
-	<Object Id="9006" Name="IDB_NO_SERVICE_3G">
-		<File>..\images\240x320\common\Annunciator\no_service_3g.bmp</File>
-	</Object>
+		
 	
 	<Object Id="9100" Name="IDB_MODE_NUMBERS_BLACK" MimeType="image/png">
 		<File>..\images\240x320\common\IME\123_black.png</File>

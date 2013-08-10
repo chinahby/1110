@@ -274,15 +274,15 @@ static void UpdateAnnunciators(AnnunciatorData *pAnnunData)
   {
     case 5:
       /* Value 5 is actually RSSI with 4 bars - go figure :) */
-      IANNUNCIATOR_SetField (pAnn, ANNUN_FIELD_RSSI, ANNUN_STATE_RSSI_4);
+      IANNUNCIATOR_SetField (pAnn, ANNUN_FIELD_RSSI, ANNUN_STATE_RSSI_4);      
       break;
     case 4:
       /* Value 4 is RSSI with 3 bars */
-      IANNUNCIATOR_SetField (pAnn, ANNUN_FIELD_RSSI, ANNUN_STATE_RSSI_3);
+      IANNUNCIATOR_SetField (pAnn, ANNUN_FIELD_RSSI, ANNUN_STATE_RSSI_3);      
       break;
     case 3:
       /* Value 3 is RSSI with 2 bars */
-      IANNUNCIATOR_SetField (pAnn, ANNUN_FIELD_RSSI, ANNUN_STATE_RSSI_2);
+      IANNUNCIATOR_SetField (pAnn, ANNUN_FIELD_RSSI, ANNUN_STATE_RSSI_2);     
       break;
     case 2:
        /* Value 2 means RSSI with 1 bar */
@@ -290,11 +290,11 @@ static void UpdateAnnunciators(AnnunciatorData *pAnnunData)
       break;
     case 1:
       /* Value 1 means just RSSI icon with no bars */
-      IANNUNCIATOR_SetField (pAnn, ANNUN_FIELD_RSSI, ANNUN_STATE_RSSI_0);
+      IANNUNCIATOR_SetField (pAnn, ANNUN_FIELD_RSSI, ANNUN_STATE_RSSI_0);    
       break;
     case 0:
       IANNUNCIATOR_SetField (pAnn, ANNUN_FIELD_RSSI, ANNUN_STATE_OFF);
-      break;
+      break;   
     default:
       MSG_ERROR( "Illegal RSSI Value (%d)", pAnnunData->rssi, 0, 0 );
       break;
@@ -325,6 +325,9 @@ static void UpdateAnnunciators(AnnunciatorData *pAnnunData)
   /* Check Battery level */
   /* Battery level
    */
+
+  MSG_ERROR("***zzg pAnnunData->batt=%d***", pAnnunData->batt, 0, 0 );
+  
   switch ( pAnnunData->batt )
   {
   #if /*defined(FEATURE_VERSION_LM126C)||*/defined(FEATURE_5_LEVEL_BATTERY)//xxzhen
@@ -336,11 +339,11 @@ static void UpdateAnnunciators(AnnunciatorData *pAnnunData)
       /* This value means 4-bars battery */
       IANNUNCIATOR_SetField (pAnn, ANNUN_FIELD_BATT, ANNUN_STATE_BATT_4);
       break;
-  #else
+  #else    
     case 5:
       /* This value means 4-bars battery */
       IANNUNCIATOR_SetField (pAnn, ANNUN_FIELD_BATT, ANNUN_STATE_BATT_FULL);
-      break;
+      break;    
   #endif
     case 4:
       /* This means 3 bars */
