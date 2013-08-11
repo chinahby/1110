@@ -1525,7 +1525,8 @@ static boolean  dialog_handler_of_state_record( Recorder* pme, AEEEvent evt, uin
 					db_items_value_type dbItemValue      = {0};
 					db_get( DB_IN_USE, &dbItemValue);
 
-					recorder_stop_if( &pme->m_Media);		//Add By zzg 2012_03_01
+					//recorder_stop_if( &pme->m_Media);		//Add By zzg 2012_03_01
+					recorder_pause( &pme->m_Media);
 					if( dbItemValue.in_use)
 					{
 						MOVE_TO_STATE( STATE_RECORD_LIST);
@@ -1848,6 +1849,7 @@ __dialog_handler_of_state_record_pause_resume__:
 				case AVK_UP:
 				case AVK_DOWN:
 				{
+					MSG_FATAL("pme->m_Media.m_eState====%d",pme->m_Media.m_eState,0,0);
 					if( pme->m_Media.m_eState == MEDIA_STATE_PLAYING || pme->m_Media.m_eState == MEDIA_STATE_RECORDING)
 					{
 						recorder_set_media_volume( &pme->m_Media, pme->m_Media.m_nVolume + ( wParam == AVK_DOWN ? -20 : 20));
