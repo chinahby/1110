@@ -4691,6 +4691,15 @@ static boolean  HandleRENDMenuDialogEvent(CDisplayMenu *pMe,
         }
 
         case EVT_USER_REDRAW:
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_APPSDISPLAYMENU_RES_FILE,                                
+                        IDS_REND_MENU_TITLE,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
 			//(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
             return TRUE;
 

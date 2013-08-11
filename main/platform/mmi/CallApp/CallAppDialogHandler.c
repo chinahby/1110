@@ -4280,7 +4280,6 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
                     //modify for Three-Way Calling : Hold Key not supported by MS
                     CallApp_Flash_Call(pMe);
                     return TRUE;
-#ifndef FEATURE_VERSION_K212    //add by yangdecai
                 case AVK_0:
                 case AVK_1:
                 case AVK_2:
@@ -4340,7 +4339,6 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
                     CallApp_Send_DTMF(pMe , w_str);
                     return TRUE;
                 }
-#endif
                 case AVK_SELECT:
                 {
                     if ( !pMe->m_bShowPopMenu )
@@ -4381,7 +4379,6 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
             break;
         case EVT_KEY_RELEASE:
             switch(wParam){
-#ifndef FEATURE_VERSION_K212
             case AVK_0:
             case AVK_1:
             case AVK_2:
@@ -4423,7 +4420,6 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
                 CLOSE_DIALOG(DLGRET_CONV_DIAL)
                 return TRUE;
             }
-#endif
             default:
                 break;
             }
@@ -4843,7 +4839,11 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
                 //CALL_ERR("Draw call end  image",0,0,0);
             }
 #endif
+#if	defined(FEATURE_VERSION_K212)
+			if(FALSE)
+#else
             if(pMe->m_Is3Way)
+#endif
             {
                 //  Position NAME
                 // Display on secend line
@@ -4882,7 +4882,7 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
                                                         rect.y,
                                                         &rect,
                                                         IDF_ALIGN_LEFT|IDF_TEXT_TRANSPARENT);
-            #else
+#else
 #ifndef FEATURE_VERSION_C316								
              (void)IDISPLAY_DrawText(pMe->m_pDisplay,
                                                         AEE_FONT_NORMAL,
@@ -10387,7 +10387,7 @@ static void CallApp_Draw_Connect_Number_and_Name(CCallApp *pMe)
                                                 &rect,
                                                 IDF_TEXT_TRANSPARENT);
 #else
-#ifndef FEATURE_VERSION_C316						
+#if !(defined( FEATURE_VERSION_C316))&&!(defined(FEATURE_VERSION_K212))
             (void)IDISPLAY_DrawText(pMe->m_pDisplay,
                                                 AEE_FONT_NORMAL,
                                                 mui_call,

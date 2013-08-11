@@ -283,7 +283,7 @@ static boolean Tetris_HandleEvent(CTetrisApp * pMe, AEEEvent eCode, uint16 wPara
                 IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);				
 				MSG_FATAL("***zzg Application EVT_APP_START EnableAnnunciatorBar TRUE",0,0,0);				   
             }
-            #if 0
+            #if 1
 			{
                 AECHAR WTitle[20] = {0};
 
@@ -320,6 +320,19 @@ static boolean Tetris_HandleEvent(CTetrisApp * pMe, AEEEvent eCode, uint16 wPara
             return TRUE;
 
         case EVT_APP_RESUME:            // Resume the former status
+           {
+                AECHAR WTitle[20] = {0};
+
+				(void)ISHELL_LoadResString(pMe->a.m_pIShell,
+										TETRIS_RES_FILE_LANG,								  
+										IDS_TETRIS_TITLE,
+										WTitle,
+										sizeof(WTitle));
+                if(pMe->m_pIAnn != NULL)
+                {
+    			    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            	}
+            }
             switch(pMe->m_AppState)
             {
             case APP_STATE_SPLASH:

@@ -3928,7 +3928,13 @@ static void DrawMatrix(MainMenu *pMe)
                                  sizeof(boolean));
 	if(m_sound_bo_main)
 	{
-		MainMenu_PlayShutterSound(pMe,pMe->m_nRow);
+
+		nv_item_type	SimChoice;
+		(void)OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+		if(SimChoice.sim_select != 1)
+		{
+			MainMenu_PlayShutterSound(pMe,pMe->m_nRow);
+		}
 	}
 	eBBarType = BTBAR_OK_BACK;
 	DrawBottomBar_Ex(pMe->m_pShell, pMe->m_pDisplay,eBBarType);
@@ -3988,7 +3994,12 @@ static void MoveCursorTo(MainMenu *pMe, int row, int column)
                                  sizeof(boolean));
 	if(m_sound_bo_main)
 	{
-		MainMenu_PlayShutterSound(pMe,row);
+		nv_item_type	SimChoice;
+		(void)OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+		if(SimChoice.sim_select != 1)
+		{
+			MainMenu_PlayShutterSound(pMe,row);
+		}
 	}
     MainMenu_DrawBackGround(pMe, &pMe->m_rc);
     if(row == 8)
@@ -4528,7 +4539,7 @@ static void MainMenu_PlayShutterSound(MainMenu *pMe,int key)
             MainMenu_MediaNotify((void *)pMe, &cmd);
             return;
         }
-
+        MSG_FATAL("MainMenu_PlayShutterSound,IMEDIA_Play....",0,0,0);
         if(IMEDIA_Play(pMe->m_pMedia) != SUCCESS)
         {
             cmd.nCmd    = MM_CMD_PLAY;
