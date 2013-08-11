@@ -303,30 +303,30 @@ static void disp_ic_setwindow(uint32 start_row, uint32 start_col, uint32 end_row
 
 	LCD_WRITE_CMD(0x00);
     LCD_WRITE_CMD(0x50);
-    //LCD_WRITE_DATA16((uint16)start_col);
-    LCD_WRITE_DATA16(0x0000);
+    LCD_WRITE_DATA16((uint16)start_col);
+    //LCD_WRITE_DATA16(0x0000);
 	LCD_WRITE_CMD(0x00);
     LCD_WRITE_CMD(0x51);
-    //LCD_WRITE_DATA16((uint16)end_col);
-    LCD_WRITE_DATA16(0x00F0);
+    LCD_WRITE_DATA16((uint16)end_col);
+   // LCD_WRITE_DATA16(0x00F0);
     
 	LCD_WRITE_CMD(0x00);
     LCD_WRITE_CMD(0x52); 
-    //LCD_WRITE_DATA16((uint16)start_row);
-    LCD_WRITE_DATA16(0x0000);
+    LCD_WRITE_DATA16((uint16)start_row);
+    //LCD_WRITE_DATA16(0x0000);
 	LCD_WRITE_CMD(0x00);
     LCD_WRITE_CMD(0x53);
-    //LCD_WRITE_DATA16((uint16)end_row);
-    LCD_WRITE_DATA16(0x0140);
+    LCD_WRITE_DATA16((uint16)end_row);
+    //LCD_WRITE_DATA16(0x0140);
 
 	LCD_WRITE_CMD(0x00);
     LCD_WRITE_CMD(0x20);
-    //LCD_WRITE_DATA16((uint16)start_col);
-    LCD_WRITE_DATA16(0x0000);
+    LCD_WRITE_DATA16((uint16)start_col);
+    //LCD_WRITE_DATA16(0x0000);
 	LCD_WRITE_CMD(0x00);
     LCD_WRITE_CMD(0x21);
-    //LCD_WRITE_DATA16((uint16)start_row);
-    LCD_WRITE_DATA16(0x0000);
+    LCD_WRITE_DATA16((uint16)start_row);
+    //LCD_WRITE_DATA16(0x0000);
 
 	LCD_WRITE_CMD(0x00);
 	LCD_WRITE_CMD(0x22);
