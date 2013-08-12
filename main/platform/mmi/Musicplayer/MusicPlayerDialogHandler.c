@@ -5949,7 +5949,9 @@ static void MP3_DrawMusicName(CMusicPlayer *pMe ,int index)
 		clip.dy = SIMMUSICNAME_H;
 		
         oldColor = IDISPLAY_SetColor(pMe->m_pDisplay,CLR_USER_TEXT,RGB_WHITE);
-		#ifndef FEATURE_VERSION_K212
+		#ifdef FEATURE_VERSION_K212
+		MP3_drawClipRectWithOffset(pMe, IDI_BACKGROUND,&clip);
+		#else
         MP3_drawClipRectWithOffset(pMe, IDI_SIMPLEPLAYER,&clip);
 		#endif
     }
@@ -5980,9 +5982,7 @@ static void MP3_DrawMusicName(CMusicPlayer *pMe ,int index)
     else
     {
         oldColor = IDISPLAY_SetColor(pMe->m_pDisplay,CLR_USER_TEXT,RGB_WHITE);
-		#ifndef FEATURE_VERSION_K212
         MP3_drawClipRectWithOffset(pMe, IDI_SIMPLEPLAYER,&pMe->m_pMP3FaceRect[1]);
-		#endif
     }
     #ifdef FEATURE_VERSION_MYANMAR
   	{
