@@ -15422,7 +15422,7 @@ static void CContApp_ShowEditItem(CContApp  *pMe, IMenuCtl  *pMenuCtl, ITextCtl 
     rect.dx = pMe->m_rc.dx - 44;//five pixels for right edge, 
     #elif defined(FEATURE_DISP_240X320)
 	rect.x  = 23;//大概的一个数字
-    rect.dx = pMe->m_rc.dx - 31;//five pixels for right edge, 
+    rect.dx = pMe->m_rc.dx - 27;//five pixels for right edge, 
     #else
     rect.x  = 23;//大概的一个数字
     rect.dx = pMe->m_rc.dx - 27;//five pixels for right edge, 

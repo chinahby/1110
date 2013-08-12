@@ -395,8 +395,8 @@ static const CCameraSize g_CameraSizeCFG_10[] =
 #endif     
 #elif defined(FEATURE_DISP_240X320)
 #if defined(FEATURE_VERSION_K212)
-	{128,160,L"240*320"}, // VGA
-	{176,220,L"480*640"}, // VGA
+	{120,160,L"240*320"}, // VGA
+	{180,240,L"480*640"}, // VGA
 #else
     //{128,160,L"128*160"}, // FULL Screen
     //{176,220,L"176*220"}, // QCIF
