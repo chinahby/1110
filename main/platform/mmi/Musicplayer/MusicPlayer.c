@@ -686,14 +686,6 @@ static boolean IMusicPlayer_HandleEvent( IMusicPlayer *pi,
     MSG_FATAL("IMusicPlayer_HandleEvent,eCode = %x",eCode,0,0);
 	
 	MSG_FATAL("***zzg IMusicPlayer_HandleEvent,eCode = %x,dwParam=%d***",eCode,dwParam,0);
-
-#ifdef FEATURE_VERSION_K212
-	{
-		  nv_item_type	SimChoice;
-		  SimChoice.sim_select =1;
-		  (void)OEMNV_Put(NV_SIM_SELECT_I,&SimChoice);
-	}
-#endif
 	
     switch (eCode)
     {

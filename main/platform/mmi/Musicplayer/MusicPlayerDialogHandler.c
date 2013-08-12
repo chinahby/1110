@@ -3306,6 +3306,13 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
 #else
 	case AVK_CLR:	
 #endif	
+#ifdef FEATURE_VERSION_K212
+		{
+			nv_item_type	SimChoice;
+			SimChoice.sim_select =2;
+			(void)OEMNV_Put(NV_SIM_SELECT_I,&SimChoice);
+		}
+#endif
 		MSG_FATAL("***zzg MP3_MusicPlayerHanleKeyEvt  AVK_CLR m_bPlaying=%x, m_bPaused=%x**", pMe->m_bPlaying, pMe->m_bPaused, 0);
        if(pMe->m_bPlaying||pMe->m_bPaused)
        {
@@ -5087,6 +5094,13 @@ void CMusicPlayer_MediaNotify(void * pUser, AEEMediaCmdNotify * pCmdNotify)
             }          
             //播放的时候每秒会发上来一次
             case MM_STATUS_TICK_UPDATE:
+#ifdef FEATURE_VERSION_K212
+				{
+					  nv_item_type	SimChoice;
+					  SimChoice.sim_select =1;
+					  (void)OEMNV_Put(NV_SIM_SELECT_I,&SimChoice);
+				}
+#endif
                 //if(pMe->m_eStartMethod == STARTMETHOD_NORMAL)
                 {
                     pMe->m_nCurrentTime++;//当前播放的时间加1
