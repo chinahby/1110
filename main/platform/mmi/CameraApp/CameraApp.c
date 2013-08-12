@@ -861,8 +861,9 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
       
         case EVT_APP_SUSPEND:
             ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);// 取消所有定时器
-            
+            pMe->m_bCapturePic = TRUE;
             pMe->m_bSuspending = TRUE;
+			pMe->m_bCanPress = TRUE;
             if(pMe->m_bIsPreview == TRUE && pMe->m_pCamera)
             {
 #ifndef FEATURE_DSP
