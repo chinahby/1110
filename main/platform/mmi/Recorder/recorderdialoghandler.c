@@ -1525,8 +1525,8 @@ static boolean  dialog_handler_of_state_record( Recorder* pme, AEEEvent evt, uin
 					db_items_value_type dbItemValue      = {0};
 					db_get( DB_IN_USE, &dbItemValue);
 
-					//recorder_stop_if( &pme->m_Media);		//Add By zzg 2012_03_01
-					recorder_pause( &pme->m_Media);
+					recorder_stop_if( &pme->m_Media);		//Add By zzg 2012_03_01
+					//recorder_pause( &pme->m_Media);
 					if( dbItemValue.in_use)
 					{
 						MOVE_TO_STATE( STATE_RECORD_LIST);
@@ -1761,6 +1761,10 @@ __dialog_handler_of_state_record_discard__:
 						reserve = TRUE;
 						CLOSE_DIALOG( DLGRET_CANCELED);
 					}
+					else
+					{
+						CLOSE_DIALOG( DLGRET_CANCELED);
+					}
 				}
 				break;
 
@@ -1836,6 +1840,10 @@ __dialog_handler_of_state_record_pause_resume__:
 							}
 #endif
 						}
+					}
+					else
+					{
+						CLOSE_DIALOG( DLGRET_CANCELED);
 					}
 					#ifdef FEATURE_VERSION_C316
                     pme->m_bFristStart = FALSE;

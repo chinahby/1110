@@ -273,13 +273,11 @@ static OEMState_data fmradio_image_data[]=
 {
 #ifndef FEATURE_USES_LOWMEM
     {ANNUN_STATE_FMRADIO_ON, IDB_FM_RADIO, NULL},
-#ifdef FEATURE_QQ_APP  
-#ifndef FEATURE_VERSION_K212
+#if 0//def FEATURE_QQ_APP         
     {ANNUN_STATE_QQ_MSG_ON, IDB_QQMSG, NULL},
     {ANNUN_STATE_QQ_ONLINE, IDB_QQ, NULL},
     {ANNUN_STATE_QQ_HIDING_ON, IDB_QQHIDING,NULL},
     {ANNUN_STATE_QQ_LEAVE_ON, IDB_QQLEAVE,NULL},    
-#endif
 #endif        
 #endif
     {ANNUN_STATE_HEADSET_ON, IDB_HEADSET, NULL}    
@@ -426,7 +424,7 @@ OEMAnnun_content sms_content =
 /*ANNUN_FIELD_FMRADIO*/
 OEMAnnun_content fmradio_content =
 #ifndef FEATURE_USES_LOWMEM
-#ifdef FEATURE_QQ_APP 
+#if 0//def FEATURE_QQ_APP 
      {ANNUN_TYPE_IMAGE, 6, ANNUN_STATE_OFF, (void *)fmradio_image_data};
 #else
      {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)fmradio_image_data};
@@ -632,7 +630,7 @@ static OEMAnnun_data Annunciators[] =
 {
 #ifdef FEATURE_VERSION_K212
     {ANNUN_FIELD_RSSI,                ANNUN_ICON_POSITION_1,     ROW1_Y,  LG_IMG_WIDTH, IMG_HEIGHT,  &rssi_content}, 	   
-    {ANNUN_FIELD_WAP,                ANNUN_ICON_POSITION_2,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &wap_content},     
+    {ANNUN_FIELD_FMRADIO,                ANNUN_ICON_POSITION_2,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &fmradio_content},     
     {ANNUN_FIELD_TCARD,               ANNUN_ICON_POSITION_3,      ROW1_Y,  IMG_WIDTH,       IMG_HEIGHT,  &tcard_content},  
     {ANNUN_FIELD_CALL,                ANNUN_ICON_POSITION_4,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &call_content}, 
     {ANNUN_FIELD_SMS,                ANNUN_ICON_POSITION_5,      ROW1_Y,  IMG_WIDTH,       IMG_HEIGHT,  &sms_content}, 
@@ -646,7 +644,7 @@ static OEMAnnun_data Annunciators[] =
   {ANNUN_FIELD_WAP,                ANNUN_ICON_POSITION_2,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &wap_content},     
  // {ANNUN_FIELD_QQ,               ANNUN_ICON_POSITION_3,      ROW1_Y,  IMG_WIDTH,       IMG_HEIGHT,  &qq_content},  
 
-#if (defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_K212))
+#if (defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_C337))
   {ANNUN_FIELD_TCARD, 			  ANNUN_ICON_POSITION_3,	 ROW1_Y,  IMG_WIDTH,	  IMG_HEIGHT,  &tcard_content}, 
 #else  
   {ANNUN_FIELD_LOCKSTATUS,     ANNUN_ICON_POSITION_3,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &lockstatus_content},

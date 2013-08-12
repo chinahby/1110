@@ -6825,7 +6825,10 @@ static boolean  HandleChangeCodeDialogEvent(CSecurityMenu *pMe,
                 if(IsRunAsUIMVersion())
                 {
                     case IDS_PIN_CODE:
-                        CLOSE_DIALOG(DLG_ASKPIN)//(DLG_PINCHANGE)
+						if (IRUIM_IsCardConnected(pMe->m_pIRUIM))
+                		{
+                        	CLOSE_DIALOG(DLG_ASKPIN)//(DLG_PINCHANGE)
+						}
                         break;
                 }
 
