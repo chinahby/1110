@@ -658,6 +658,7 @@ static void OEMALERT_NOTIFIER_SetMask(IALERT_NOTIFIER *po,
  ===========================================================================*/
  static void OEM_FreeAlert(IALERT *pMe)
 {
+
    if(pMe == NULL)
      return;
 
@@ -2377,7 +2378,7 @@ static void OEMALERT_StartRingerAlert(IALERT *pMe,uint32 id,ALERT_SND_TYPE type)
                 gCurStatus.m_pCurRingerMgr = pMe->m_pRingerMgr;
                 gCurStatus.m_bplaying = TRUE;
             }		
-#ifdef FEATURE_VERSION_K202
+#if defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)
 			MSG_FATAL("pMe->m_iAlert..................00000000",0,0,0);
 				if(!pMe->m_iAlert)
 				{
@@ -2474,7 +2475,7 @@ static int OEMALERT_StartMp3Alert(IALERT * pMe, char *id, ALERT_SND_TYPE type)
         (void) IMEDIA_Release(pMe->m_pMedia);
         pMe->m_pMedia = NULL;
     }
-    
+ 
     mediaData.clsData = MMD_FILE_NAME;
     mediaData.pData = (void *)id;
     mediaData.dwSize = 0;
@@ -2491,7 +2492,7 @@ static int OEMALERT_StartMp3Alert(IALERT * pMe, char *id, ALERT_SND_TYPE type)
         (void) ICONFIG_GetItem(pMe->m_pConfig, CFGI_ALERT_TYPE,  &alertType, sizeof(alertType)); 
     }
 	
-	MSG_FATAL("***zzg OEMALERT_StartMp3Alert alertType=%x***", alertType, 0, 0);
+	MSG_FATAL("***zzg OEMALERT_StartMp3Alert alertType=%x***,nRet=%d", alertType, nRet, 0);
 	
     OEMALERT_GetRingerVol(pMe);
     if(nRet == SUCCESS)         
@@ -2511,13 +2512,14 @@ static int OEMALERT_StartMp3Alert(IALERT * pMe, char *id, ALERT_SND_TYPE type)
             case OEMNV_ALERTTYPE_RINGER:
                 if(pMe->m_ringCurVol != OEMSOUND_MUTE_VOL)
                 {
+
  #ifdef FEATURE_APP_MUSICPLAYER
                     if(type == ALERT_SMS_SND)
                     {
                        OEMALERT_NotifyMP3Player(pMe,TRUE);
                     }
 #endif
-                    (void) IMEDIA_Play(pMe->m_pMedia);
+					(void) IMEDIA_Play(pMe->m_pMedia);
                     (void)IMEDIA_RegisterNotify(pMe->m_pMedia, OEMALERT_MediaNotify, pMe);
                 }
                 break;
@@ -2571,7 +2573,8 @@ static int OEMALERT_StartMp3Alert(IALERT * pMe, char *id, ALERT_SND_TYPE type)
                     (void) IMEDIA_Play(pMe->m_pMedia);
                     (void)IMEDIA_RegisterNotify(pMe->m_pMedia, OEMALERT_MediaNotify, pMe);
                 }      
-				#ifdef FEATURE_VERSION_K202
+#if defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)
+
 				MSG_FATAL("pMe->m_iAlert..................111111",0,0,0);
 				if(!pMe->m_iAlert)
 				{
@@ -2866,7 +2869,7 @@ static void OEMALERT_HandleRingerAlertTimer(void *pUser)
              	OEMALERT_SetRingerVol(pMe, TRUE);
                 #endif
              	#endif
-				#ifdef FEATURE_VERSION_K202
+#if defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)
 				if(!pMe->m_iAlert)
 				{
 					ISOUND_Vibrate(pMe->m_pSound,TIME_MS_RINGERVIBRATE_DURATION);
@@ -2899,7 +2902,7 @@ static void OEMALERT_HandleRingerAlertTimer(void *pUser)
                     #endif
              		#endif
 					
-#ifdef FEATURE_VERSION_K202
+#if defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)
 					if(!pMe->m_iAlert)
 					{
 						ISOUND_Vibrate(pMe->m_pSound,TIME_MS_RINGERVIBRATE_DURATION);
@@ -2981,7 +2984,7 @@ static void OEMALERT_HandleRingerAlertTimer(void *pUser)
                     #endif
              		#endif
                 }      
-#ifdef FEATURE_VERSION_K202
+#if defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)
 				MSG_FATAL("pMe->m_iAlert..................2222222",0,0,0);
 				if(!pMe->m_iAlert)
 				{
