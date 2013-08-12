@@ -1776,6 +1776,13 @@ static boolean  HandleRingerDialogEvent(CSoundMenu *pMe,
 
         case EVT_DIALOG_START:
         {
+			#ifdef FEATURE_VERSION_K212
+			{
+				nv_item_type	SimChoice;
+				SimChoice.sim_select =1;
+				(void)OEMNV_Put(NV_SIM_SELECT_I,&SimChoice);
+			}
+            #endif
             if (pMe->m_RingerType == SET_RINGER||pMe->m_RingerType == SET_ANOTHER)
             {
                 pMe->m_wResID = IDS_CALLRING;  //来电铃声title
@@ -1877,6 +1884,13 @@ static boolean  HandleRingerDialogEvent(CSoundMenu *pMe,
             return TRUE;
 
         case EVT_DIALOG_END:
+			#ifdef FEATURE_VERSION_K212
+			{
+				nv_item_type	SimChoice;
+				SimChoice.sim_select =2;
+				(void)OEMNV_Put(NV_SIM_SELECT_I,&SimChoice);
+			}
+            #endif
             if((!pMe->m_bSuspending) || (APP_MEDIA_IMPACT_BY_MP3 == app_media_scheduler()))
             {
                 IALERT_StopRingerAlert(pMe->m_pAlert);
@@ -2199,6 +2213,13 @@ static boolean  HandleSmsRingDialogEvent(CSoundMenu *pMe,
                                         "06"};
             ICONFIG_GetItem(pMe->m_pConfig,  CFGI_PROFILE_SMS_RINGER_ID, (void*)smsID, sizeof(smsID));
             //若NV没有取出,此处重新设置
+            #ifdef FEATURE_VERSION_K212
+			{
+				nv_item_type	SimChoice;
+				SimChoice.sim_select =1;
+				(void)OEMNV_Put(NV_SIM_SELECT_I,&SimChoice);
+			}
+           #endif
             switch(smsID[pMe->m_CurProfile].midID)
             {
                 case SND_HFK_CALL_ORIG:
@@ -2287,6 +2308,13 @@ static boolean  HandleSmsRingDialogEvent(CSoundMenu *pMe,
 
         case EVT_DIALOG_END:
             //IALERT_StopSMSAlert(pMe->m_pAlert);
+            #ifdef FEATURE_VERSION_K212
+			{
+				nv_item_type	SimChoice;
+				SimChoice.sim_select =2;
+				(void)OEMNV_Put(NV_SIM_SELECT_I,&SimChoice);
+			}
+           #endif
             IALERT_StopAlerting(pMe->m_pAlert);
             notifyFMRadioAlertEvent( pMe, FALSE);
             ProfileNotifyMP3PlayerAlertEvent(pMe, FALSE);
@@ -2431,6 +2459,13 @@ static boolean  HandleVolumeDialogEvent(CSoundMenu *pMe,
             return TRUE;
 
         case EVT_DIALOG_START:
+			#ifdef FEATURE_VERSION_K212
+			{
+				nv_item_type	SimChoice;
+				SimChoice.sim_select =1;
+				(void)OEMNV_Put(NV_SIM_SELECT_I,&SimChoice);
+			}
+            #endif
             // 给菜单各菜单项加数字编号图标
             SoundMenu_SetItemNumIcon(pMenu);
 
@@ -2456,6 +2491,13 @@ static boolean  HandleVolumeDialogEvent(CSoundMenu *pMe,
             return TRUE;
 
         case EVT_DIALOG_END:
+		#ifdef FEATURE_VERSION_K212
+			{
+				nv_item_type	SimChoice;
+				SimChoice.sim_select =2;
+				(void)OEMNV_Put(NV_SIM_SELECT_I,&SimChoice);
+			}
+        #endif
             return TRUE;
 
         case EVT_KEY:
