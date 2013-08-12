@@ -627,10 +627,10 @@ if(!(x))         \
 #define ANI_NUM 5
 
 //进度条
-#define SCHEDULEBAR_X 12
-#define SCHEDULEBAR_Y 123
-#define SCHEDULEBAR_W 210 //94
-#define SCHEDULEBAR_H 4
+#define SCHEDULEBAR_X 9 //12
+#define SCHEDULEBAR_Y 108 //123
+#define SCHEDULEBAR_W 222 //210 //94
+#define SCHEDULEBAR_H 5 //4
 
 //进度条(简单播放)
 #define SIMSCHEDULEBAR_X 17
@@ -646,57 +646,65 @@ if(!(x))         \
 
 
 //播放按钮
-#define PLAY_X 108 //66
-#define PLAY_Y 170 //55
-#define PLAY_W 44 //45
-#define PLAY_H 39 //44
+#define PLAY_X 95 //66
+#define PLAY_Y 199 //170 //55
+#define PLAY_W 52 //45
+#define PLAY_H 34 //44
 
 //前一个曲目
-#define PREVIOUSPRESS_X 43 //37
-#define PREVIOUSPRESS_Y 170 //60
-#define PREVIOUSPRESS_W 44 //31
-#define PREVIOUSPRESS_H 39 //32
+#define PREVIOUSPRESS_X 40 //37
+#define PREVIOUSPRESS_Y 199 //60
+#define PREVIOUSPRESS_W 52 //31
+#define PREVIOUSPRESS_H 34 //32
 
 //后一个曲目
-#define NEXTPRESS_X 170 //107
-#define NEXTPRESS_Y 170 //60
-#define NEXTPRESS_W 44 //31
-#define NEXTPRESS_H 39 //32
+#define NEXTPRESS_X 145 //107
+#define NEXTPRESS_Y 199 //60
+#define NEXTPRESS_W 52 //31
+#define NEXTPRESS_H 34 //32
+
+//倒退
+#define REWIND_X    2
+#define REWIND_Y    199
+
+//快进
+#define FORWARD_X   199
+#define FORWARD_Y   199
 
 //降低音量
-#define DECREASEVOLUMEPRESS_X 8
-#define DECREASEVOLUMEPRESS_Y VOLUME_Y+VOLUME_H
-#define DECREASEVOLUMEPRESS_W 20
-#define DECREASEVOLUMEPRESS_H 20
+#define DECREASEVOLUMEPRESS_X 70
+#define DECREASEVOLUMEPRESS_Y 155
+#define DECREASEVOLUMEPRESS_W 24
+#define DECREASEVOLUMEPRESS_H 23
 
 //增加音量
-#define ADDVOLUMEPRESS_X 8
-#define ADDVOLUMEPRESS_Y 156
-#define ADDVOLUMEPRESS_W 20
-#define ADDVOLUMEPRESS_H 20
+#define ADDVOLUMEPRESS_X 140
+#define ADDVOLUMEPRESS_Y 155
+#define ADDVOLUMEPRESS_W 24
+#define ADDVOLUMEPRESS_H 23
 
 //音量
-#define VOLUME_X 8
-#define VOLUME_Y 176
-#define VOLUME_W 20
-#define VOLUME_H 48
+#define VOLUME_X 100
+#define VOLUME_Y 155
+#define VOLUME_W 32
+#define VOLUME_H 23
 
 #define MUSICNAME_X 5
-#define MUSICNAME_Y 40
+#define MUSICNAME_Y 20 //40
 #define MUSICNAME_W 230
 #define MUSICNAME_H 30
 
 //当前序号/总数量
-#define LISTINDEX_X 95 //5
-#define LISTINDEX_Y 138 //95
+#define LISTINDEX_X 75 //95 //5
+#define LISTINDEX_Y 60 //138 //95
 
 //当前歌曲的总时间
 #define TOTALTIME_X 170
-#define TOTALTIME_Y 138 
+#define TOTALTIME_Y 116 
 
 //当前播放时间
-#define PLAYINGTICK_X 25 //117
-#define PLAYINGTICK_Y 138 //47
+#define PLAYINGTICK_X 15 //25 //117
+#define PLAYINGTICK_Y 116 //47
 
 //播放时间和总时间的宽度高度
 #define TIME_WIDTH	64
@@ -798,11 +806,13 @@ if(!(x))         \
 #define OLDPLAY_H 45
 #endif
 
+#ifndef FEATURE_VERSION_K212
 #define RFIMG_WIDTH 16
 #define REWIND_X    (((SCREEN_WIDTH-4)-(RFIMG_WIDTH*2))/2)
 #define REWIND_Y    (SCHEDULEBAR_Y-9)
 #define FORWARD_X   (REWIND_X+RFIMG_WIDTH+4)
 #define FORWARD_Y   REWIND_Y
+#endif
 
 typedef enum MP3Recttype
 {

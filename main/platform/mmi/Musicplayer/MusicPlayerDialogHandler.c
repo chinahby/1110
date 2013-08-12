@@ -3140,8 +3140,16 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
                 	(void)IMEDIA_SetVolume(pMe->m_pMedia,pMe->m_nCurrentVolume); 
                  }
             } 
+			   #ifdef FEATURE_VERSION_K212
+			     (void)ISHELL_PostEvent(pMe->m_pShell,
+                                               AEECLSID_APP_MUSICPLAYER,
+                                               EVT_USER_REDRAW,
+                                               0,
+                                               0);
+			   #else
                 //重新刷新音量bar  
                 MP3_RefreshVolBar(pMe);
+			   #endif
                 MSG_FATAL("MP3_DrawImage ----eMusicVolume%d",pMe->m_MusicPlayerCfg.eMusicVolume,0,0);
          }
          IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);//wlh 20090415 mod true -> false
@@ -3181,8 +3189,16 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
 					(void)IMEDIA_SetVolume(pMe->m_pMedia,pMe->m_nCurrentVolume); 
 				 }
             } 
+               #ifdef FEATURE_VERSION_K212
+			   (void)ISHELL_PostEvent(pMe->m_pShell,
+                                               AEECLSID_APP_MUSICPLAYER,
+                                               EVT_USER_REDRAW,
+                                               0,
+                                               0);
+			   #else
                 //重新刷新音量bar  
                 MP3_RefreshVolBar(pMe);
+			   #endif
                 
          }
         IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);//wlh 20090415 mod true -> false
@@ -3400,7 +3416,9 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
         {
             MP3_DrawImage(pMe, IDI_FORWARD_PRESS, FORWARD_X,FORWARD_Y);
             IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
+			#ifndef FEATURE_VERSION_K212
             ISHELL_SetTimer(pMe->m_pShell,50,(PFNNOTIFY)MP3_DrawForwardImage, pMe);
+			#endif
             if((pMe->m_nTotalTime - pMe->m_nCurrentTime) < MS_FASTFORWARDREWIND_TIME/1000)
             {
                 IMEDIA_FastForward(pMe->m_pMedia,1000*(pMe->m_nTotalTime - pMe->m_nCurrentTime));
@@ -3411,6 +3429,13 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
                 IMEDIA_FastForward(pMe->m_pMedia,MS_FASTFORWARDREWIND_TIME); 
                 pMe->m_nCurrentTime = pMe->m_nCurrentTime + MS_FASTFORWARDREWIND_TIME/1000;
             }
+			#ifdef FEATURE_VERSION_K212
+            (void) ISHELL_PostEvent(pMe->m_pShell, 
+	                        AEECLSID_APP_MUSICPLAYER,
+	                        EVT_USER_REDRAW,
+	                        0,
+	                        0);  
+            #endif
         }
         return TRUE;
 
@@ -3419,7 +3444,9 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
         {
             MP3_DrawImage(pMe, IDI_REWIND_PRESS, REWIND_X,REWIND_Y);
             IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
+			#ifndef FEATURE_VERSION_K212
             ISHELL_SetTimer(pMe->m_pShell,50,(PFNNOTIFY)MP3_DrawRewindImage, pMe);
+			#endif
             if(pMe->m_nCurrentTime < MS_FASTFORWARDREWIND_TIME/1000)
             {
                 IMEDIA_Rewind(pMe->m_pMedia,pMe->m_nCurrentTime * 1000);
@@ -3430,6 +3457,13 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
                 IMEDIA_Rewind(pMe->m_pMedia,MS_FASTFORWARDREWIND_TIME);
                 pMe->m_nCurrentTime = pMe->m_nCurrentTime - MS_FASTFORWARDREWIND_TIME/1000;
             }
+			#ifdef FEATURE_VERSION_K212
+            (void) ISHELL_PostEvent(pMe->m_pShell, 
+	                        AEECLSID_APP_MUSICPLAYER,
+	                        EVT_USER_REDRAW,
+	                        0,
+	                        0);  
+            #endif
             
         }
         return TRUE;
@@ -5743,7 +5777,7 @@ static void MP3_RefreshVolBar(CMusicPlayer *pMe)
         #ifdef FEATURE_DISP_240X320
         MP3_DrawImage( pMe, IDI_DECREASEVOLUME_PRESS, DECREASEVOLUMEPRESS_X, DECREASEVOLUMEPRESS_Y);
         MP3_DrawImage( pMe, IDI_ADDVOLUME_PRESS, ADDVOLUMEPRESS_X, ADDVOLUMEPRESS_Y);
-        #endif
+		#endif
         //MP3_DrawImage( pMe, ResID, 131, 168);//wlh 20090415 mod
     }
     else
@@ -5915,7 +5949,9 @@ static void MP3_DrawMusicName(CMusicPlayer *pMe ,int index)
 		clip.dy = SIMMUSICNAME_H;
 		
         oldColor = IDISPLAY_SetColor(pMe->m_pDisplay,CLR_USER_TEXT,RGB_WHITE);
+		#ifndef FEATURE_VERSION_K212
         MP3_drawClipRectWithOffset(pMe, IDI_SIMPLEPLAYER,&clip);
+		#endif
     }
     IDISPLAY_DrawText(pMe->m_pDisplay, 
                        AEE_FONT_BOLD,
@@ -5944,7 +5980,9 @@ static void MP3_DrawMusicName(CMusicPlayer *pMe ,int index)
     else
     {
         oldColor = IDISPLAY_SetColor(pMe->m_pDisplay,CLR_USER_TEXT,RGB_WHITE);
+		#ifndef FEATURE_VERSION_K212
         MP3_drawClipRectWithOffset(pMe, IDI_SIMPLEPLAYER,&pMe->m_pMP3FaceRect[1]);
+		#endif
     }
     #ifdef FEATURE_VERSION_MYANMAR
   	{
@@ -6032,7 +6070,9 @@ static void MP3_DrawSimplePlayerFace(CMusicPlayer *pMe)
  #ifdef FEATURE_DISP_240X320
     MP3_DrawImage(pMe, IDI_BACKGROUND, 0, 0);//画背景	
  #endif
+ #ifndef FEATURE_VERSION_K212
     MP3_DrawImage(pMe, IDI_SIMPLEPLAYER, 0, 0);
+ #endif
  #ifdef FEATURE_DISP_240X320
    MP3_DrawIndexAndTotalTime(pMe);
 #endif
@@ -6373,14 +6413,14 @@ static void MP3_ResetScroll(CMusicPlayer *pMe)
 static void MP3_DrawRewindImage(CMusicPlayer *pMe)
 {
    MP3_DrawImage(pMe, IDI_REWIND, REWIND_X,REWIND_Y);
-   //IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
+   IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
 }
 
 /*画快进的图标*/
 static void MP3_DrawForwardImage(CMusicPlayer *pMe)
 {
    MP3_DrawImage(pMe, IDI_FORWARD, FORWARD_X,FORWARD_Y);
-   //IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
+   IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
 }
 
 /*回调*/
