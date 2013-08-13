@@ -3709,7 +3709,7 @@ static boolean IDD_SETTING_Handler(void   *pUser,
 #if 1//def FEATURE_CARRIER_TAIWAN_APBW        //add by yangdecai   2010-08-23 
                 // 发出短信是否带回叫号码
                 MSG_FATAL("IDD_SETTING_Handler EVT_COMMAND IDS_CALLBACKNUM", 0, 0, 0);
-#if !defined(FEATURE_VERSION_C316)&&!defined(FEATURE_VERSION_K202_LM129C)
+#if !defined(FEATURE_VERSION_C316)&&!defined(FEATURE_VERSION_K202_LM129C)&&!defined(FEATURE_VERSION_K212)
                 case IDS_CALLBACKNUM:
                     CLOSE_DIALOG(DLGRET_CALLBACKNUM)
                     return TRUE;
@@ -9866,7 +9866,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                     ISHELL_LoadResString(pMe->m_pShell, AEE_WMSAPPRES_LANGFILE, IDS_DELIVERYREPORTS, wstrText[nControls], sizeof(wstrText));
                     nControls++;
                 }
-#if !defined(FEATURE_VERSION_C316)&&!defined(FEATURE_VERSION_K202_LM129C) //xxzhen
+#if !defined(FEATURE_VERSION_C316)&&!defined(FEATURE_VERSION_K202_LM129C)&&!defined(FEATURE_VERSION_K212) //xxzhen
                 if (mask & 0x10)
                 {
                     wControls[nControls] = IDC_MENU_CBNUM;
@@ -11465,7 +11465,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 		         		(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_LETTERS);
 		         	}
 		         	}		         	
-		         	#elif defined(FEATURE_VERSION_K202_LM129C)//xxzhen
+		         	#elif defined(FEATURE_VERSION_K202_LM129C)
 					(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_PINYIN);
 					#elif defined(FEATURE_VERSION_K212)//xxzhen
 					{
@@ -18663,6 +18663,7 @@ static boolean	IDD_WMSNEWMSG_Handler(void *pUser,
 			break;
 		case EVT_KEY_PRESS:
 			{
+				
 				switch(wParam)
             	{
 					case AVK_CLR:

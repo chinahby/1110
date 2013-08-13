@@ -760,11 +760,12 @@ static boolean  HandleSceneModeSubDialogEvent(CSoundMenu *pMe,
 			if((pMe->m_CurProfile!=OEMNV_PROFILE_MEETING) && (pMe->m_CurProfile!=OEMNV_PROFILE_QUIETMODE))
 			{
 				Sound_App_Add_Menu(pMenu,IDS_PERSONALISE);
+				Sound_App_Add_Menu(pMenu,IDS_PROFILE_RESTORE);
 			}
 			#else
 			Sound_App_Add_Menu(pMenu,IDS_PERSONALISE);
+			Sound_App_Add_Menu(pMenu,IDS_PROFILE_RESTORE);
 			#endif
-            Sound_App_Add_Menu(pMenu,IDS_PROFILE_RESTORE);
             return TRUE;
 
         case EVT_DIALOG_START:
