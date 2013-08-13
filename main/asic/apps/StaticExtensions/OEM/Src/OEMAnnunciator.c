@@ -282,6 +282,15 @@ static OEMState_data fmradio_image_data[]=
 #endif
     {ANNUN_STATE_HEADSET_ON, IDB_HEADSET, NULL}    
 };
+
+
+//Add By zzg 2013_08_13
+static OEMState_data headset_image_data[]=
+{
+    {ANNUN_STATE_HEADSET_ON, IDB_HEADSET, NULL} 
+};
+//Add End
+
 #ifndef FEATURE_USES_LOWMEM
 /*BT Trans/BT Headset/BT On*/
 static OEMState_data bluetooth_image_data[]=
@@ -403,6 +412,11 @@ OEMAnnun_content rssi_content =
 /*ANNUN_TCARD_WAP*/
 OEMAnnun_content tcard_content =
 	{ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)tcard_image_data};
+//Add End
+
+//Add By zzg 2013_08_13
+OEMAnnun_content headset_content =
+	{ANNUN_TYPE_IMAGE, 1, ANNUN_STATE_OFF, (void *)headset_image_data};
 //Add End
 
 /*ANNUN_FIELD_WAP*/
@@ -630,7 +644,9 @@ static OEMAnnun_data Annunciators[] =
 {
 #ifdef FEATURE_VERSION_K212
     {ANNUN_FIELD_RSSI,                ANNUN_ICON_POSITION_1,     ROW1_Y,  LG_IMG_WIDTH, IMG_HEIGHT,  &rssi_content}, 	   
-    {ANNUN_FIELD_FMRADIO,                ANNUN_ICON_POSITION_2,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &fmradio_content},     
+    //{ANNUN_FIELD_WAP,                ANNUN_ICON_POSITION_2,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &wap_content},     
+    {ANNUN_FIELD_HEADSET,                ANNUN_ICON_POSITION_2,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &headset_content},     
+
     {ANNUN_FIELD_TCARD,               ANNUN_ICON_POSITION_3,      ROW1_Y,  IMG_WIDTH,       IMG_HEIGHT,  &tcard_content},  
     {ANNUN_FIELD_CALL,                ANNUN_ICON_POSITION_4,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &call_content}, 
     {ANNUN_FIELD_SMS,                ANNUN_ICON_POSITION_5,      ROW1_Y,  IMG_WIDTH,       IMG_HEIGHT,  &sms_content}, 
