@@ -67,7 +67,7 @@ static int IMAGE_WIDTH           = 5;                           // Frame Width f
 #define SOFT_PAGE_ITEMS       (3)                           // Initializes # of soft key items visible at once
 #define MAX_SOFT_PAGE_ITEMS   (12)                          // Max SK items/screen
 #ifdef FEATURE_DISP_240X320
-#define CXARROW               (8)                           // Arrow Width
+#define CXARROW               (5)                           // Arrow Width
 #define CYARROW               (10)                           // Arrow Height
 #define ARROWMARGIN           (10)                           // Spacing for arrow (margins and pad)
 #else
