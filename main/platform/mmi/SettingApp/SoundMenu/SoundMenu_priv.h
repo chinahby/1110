@@ -63,7 +63,7 @@
 
 #include "AEEAnnunciator.h"         // for ANNUN_ALERT
 #include "OEMCFGI.h"
-
+#include "OEMNV.h"
 #if defined( FEATURE_RECORDER)
 #include "recorder.h"
 #include "recorder.brh"
