@@ -8650,7 +8650,7 @@ void CoreApp_UpdateAnnunciator(CCoreApp *pMe)
     /*
     //Add for test
 	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RSSI, ANNUN_STATE_RSSI_4);
-	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_WAP, ANNUN_STATE_WAP_ON);
+	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_HEADSET, ANNUN_STATE_HEADSET_ON);
 	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_TCARD, ANNUN_STATE_TCARD_ON);
 	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL, ANNUN_STATE_CALL_MISSEDCALL_ON);
 	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_SMS, ANNUN_STATE_SMS_SMAIL_ON);
@@ -8677,7 +8677,11 @@ void CoreApp_UpdateAnnunciator(CCoreApp *pMe)
     {
 	    if (b_headset)
 	    {
+#ifdef FEATURE_VERSION_K212
+            IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_HEADSET, ANNUN_STATE_HEADSET_ON);
+#else
 	        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_HEADSET*/, ANNUN_STATE_HEADSET_ON/*ANNUN_STATE_ON*/);
+#endif
 		    if (b_FMBackground)
 		    {
 		        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO, ANNUN_STATE_FMRADIO_ON/*ANNUN_STATE_ON*/);
@@ -8686,7 +8690,11 @@ void CoreApp_UpdateAnnunciator(CCoreApp *pMe)
 	    else
 	    {
 	        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO, ANNUN_STATE_FMRADIO_OFF/*ANNUN_STATE_OFF*/);
+#ifdef FEATURE_VERSION_K212
+            IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_HEADSET, ANNUN_STATE_HEADSET_OFF);
+#else            
 	        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_HEADSET*/, ANNUN_STATE_HEADSET_OFF/*ANNUN_STATE_OFF*/);
+#endif
 	    }
 #ifdef FEATURE_QQ_APP 
 #ifdef FEATURE_VERSION_K212

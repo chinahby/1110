@@ -4672,7 +4672,11 @@ static void StereoHeadsetOn(CCoreApp * pMe)
 	}
 	if(pMe->m_pIAnn)
 	{
+#ifdef FEATURE_VERSION_K212
+        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_HEADSET, ANNUN_STATE_HEADSET_ON);
+#else
 		IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_HEADSET*/, ANNUN_STATE_HEADSET_ON/*ANNUN_STATE_ON*/);
+#endif
 	}
 
 	ICONFIG_SetItem(pMe->m_pConfig, CFGI_HEADSET_PRESENT, &stereoHeadSetOn, 1);
@@ -4759,7 +4763,11 @@ static void HeadsetOff(CCoreApp *pMe)
 
 	if(pMe->m_pIAnn)
 	{
+#ifdef FEATURE_VERSION_K212
+        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_HEADSET, ANNUN_STATE_HEADSET_OFF);
+#else
 		IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_HEADSET*/, ANNUN_STATE_HEADSET_OFF/*ANNUN_STATE_ON*/);
+#endif
 	}
 
 	ICONFIG_SetItem(pMe->m_pConfig, CFGI_HEADSET_PRESENT, &headSetOn, 1);
