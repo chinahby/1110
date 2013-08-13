@@ -6267,7 +6267,7 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
                     }
                     
                     CContApp_SetGroupItemText(pMe, pMenuCtl);
-
+					#ifndef FEATURE_VERSION_K212
                     if (pMe->m_nRingToneID && pMe->m_nRingToneID[0] != (AECHAR)'\0')
                     {
                         AECHAR name[128]={0};
@@ -6297,6 +6297,7 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
                     {
                         IMENUCTL_SetItemText(pMenuCtl, IDI_ADDNEW_MENU_SELECTRINGTONE, CONTAPP_RES_FILE_LANG, IDS_RING, NULL);
                     }
+					#endif
                 }
             }
 
@@ -10504,7 +10505,7 @@ static boolean  CContApp_HandleEditDlgEvent( CContApp  *pMe,
                     }
                         
                     CContApp_SetGroupItemText(pMe, pMenuCtl);
-    
+    				#ifndef FEATURE_VERSION_K212
                     if (pMe->m_nRingToneID && pMe->m_nRingToneID[0] != (AECHAR)'\0')
                     {
                         AECHAR name[128]={0};
@@ -10530,6 +10531,7 @@ static boolean  CContApp_HandleEditDlgEvent( CContApp  *pMe,
                     {
                         IMENUCTL_SetItemText(pMenuCtl, IDI_EDIT_MENU_RINGTONE, CONTAPP_RES_FILE_LANG, IDS_RING, NULL);
                     }
+					#endif
                 }
             }
             
