@@ -2410,47 +2410,27 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 #ifndef FEATURE_ALL_KEY_PAD
                        if(len == 0)
                        {
+                       		#ifndef FEATURE_VERSION_K212
                        		CallApp_Draw_NumEdit_SoftKey(pMe);
                     		CallApp_Display_Number(pMe);
                     		// Draw it now!
                     		IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    		#endif
                            CLOSE_DIALOG(DLGRET_OK)
                            return TRUE;
                        }
 #else
-						//Del by zzg 2012_03_01
-						/*
-                       if(dwParam == 0)
-                       {
-                       		CLOSE_DIALOG(DLGRET_OK)
-                            return TRUE;
-                       }
-                       else					   	
-                       {
-                       	  if(len == 0)
-                       	  {
-                       	  	  CallApp_Draw_NumEdit_SoftKey(pMe);
-                    		  CallApp_Display_Number(pMe);
-                    			// Draw it now!
-                    		  IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-                              CLOSE_DIALOG(DLGRET_OK)
-                              return TRUE;
-                          }
-                       }
-                       */
-					   	//Del End
-
-						//Add By zzg 2012_03_02
 						if (len <= 1)
 						{
 							// Clearing the last digit exits the dialog
 							pMe->m_DialString[0] = 0;
+							#ifndef FEATURE_VERSION_K212
 							CallApp_Draw_NumEdit_SoftKey(pMe);
 							CallApp_Display_Number(pMe);
 							
 							// Draw it now!
 							IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-							
+							#endif
 							if(pMe->m_msg_text_id == IDS_NUM_TOO_LONG)
 							{
 								pMe->m_msg_text_id=0;
@@ -2469,10 +2449,12 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                     {
                        // Clearing the last digit exits the dialog
                        pMe->m_DialString[0] = 0;
+					   #ifndef FEATURE_VERSION_K212
 					   CallApp_Draw_NumEdit_SoftKey(pMe);
               		   CallApp_Display_Number(pMe);
               		   // Draw it now!
               		   IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+              		   #endif
                        if(pMe->m_msg_text_id == IDS_NUM_TOO_LONG)
                        {
                           pMe->m_msg_text_id=0;
@@ -3864,6 +3846,7 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
             {
                 IDIALOG_SetProperties(pMe->m_pActiveDlg,DLG_NOT_SET_FOCUS_AUTO);
             }
+			
             return TRUE;
 
         case EVT_DIALOG_START:
