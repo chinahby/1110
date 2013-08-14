@@ -1719,6 +1719,7 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
             return TRUE;
 		case EVT_KEY:
         {
+			
             if( subState == 1)
             {
                 return TRUE;
@@ -2975,6 +2976,10 @@ static boolean  dialog_handler_of_state_gotodate( CScheduleApp* pme,
                             }
                             else
                             {
+                            	if ((wParam == AVK_0) && (pme->wstrMonth[0] != (AECHAR)'1'))
+                                {
+                                    return TRUE;
+                                }
                                 if ((pme->wstrMonth[0] != (AECHAR)'1') ||
                                     (wParam>AVK_2))
                                 {
@@ -2983,6 +2988,7 @@ static boolean  dialog_handler_of_state_gotodate( CScheduleApp* pme,
                             }
                             pme->wstrMonth[nLen] = (AECHAR)('0'+wParam-AVK_0);
                             pme->wstrMonth[nLen+1] = 0;
+							
                         }
                         break;
 

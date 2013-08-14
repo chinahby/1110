@@ -3682,12 +3682,6 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
                         OEMKeyguard_SetState(TRUE);
                         ISHELL_CloseApplet(pMe->m_pShell, TRUE); 
                     }
-                    else
-                    {
-                       int8 count_main = pMe->m_nRow;
-					   OEM_SetConfig(CFGI_COUNT_OF_MAIN, &count_main, sizeof(int8));
-                       StartApplet(pMe, pMe->m_IconTitle[9]);
-                    }
                     return TRUE;
                 default:
                     break;

@@ -1943,7 +1943,12 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                                                  sizeof(boolean));
 					if(m_sound_bo_dia)
 					{
-                    	CALLApp_PlayShutterSound(pMe,wParam);
+						nv_item_type	SimChoice;
+						(void)OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+						if(SimChoice.sim_select != 1)
+						{
+                    		CALLApp_PlayShutterSound(pMe,wParam);
+						}
 					}
                    //CallApp_SpecialKeySnd(pMe,wParam);//¶à²Ê°´¼üÒô
                    return TRUE;
@@ -3356,7 +3361,7 @@ static void CallApp_Dialer_Show_Animation(void *pUser)
         RGBVAL     oldColor = 0;
         //calling.....
         SETAEERECT(&rect,CALL_TEXT_X,CALL_FIRST_LINE_Y,CALL_TEXT_DX,CALL_LINE_HIGHT);
-		#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202)  
+		#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)    
 		if(pMe->m_isIncoming)
 		{
 			(void) ISHELL_LoadResString(pMe->m_pShell,
@@ -4623,7 +4628,7 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
             CallApp_Dialer_Connect_Turn_Off_Recorder( pMe);
 #endif
 
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202)   	
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)    	
             pMe->m_isIncoming = FALSE;
 #endif
             return TRUE;
@@ -7523,7 +7528,7 @@ MAKE_CALL_VALUE CallApp_MakeCall(CCallApp *pMe)
 #ifndef FEATURE_ICM
 	AEETCalls po;
 #endif
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202) 	
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)  	
     pMe->m_isIncoming 	= FALSE;
 #endif
 	MSG_FATAL("***zzg CallApp_MakeCall cls=%x***", cls, 0, 0);
@@ -12799,7 +12804,12 @@ if(wp == AVK_0)
                                                  sizeof(boolean));
 				if(m_sound_bo_dia)
 				{
-					CALLApp_PlayShutterSound(pMe,Temp_wp);
+					nv_item_type	SimChoice;
+					(void)OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+					if(SimChoice.sim_select != 1)
+					{
+						CALLApp_PlayShutterSound(pMe,Temp_wp);
+					}
 				}
         	}
 			#endif

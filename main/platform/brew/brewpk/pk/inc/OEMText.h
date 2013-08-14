@@ -929,11 +929,11 @@ static const AECHAR englishTitle[NUM_OF_MODES][MAX_MODE_STR+1] =
 #endif
 
 #ifdef FEATURE_T9_PINYIN
-   ,{'T', '9','P', 'I', 'N', 'Y', 'I', 'N', 0}
+   ,{0x62FC,0x97F3, 0}
 #endif //FEATURE_T9_PINYIN
 
 #ifdef FEATURE_T9_STROKE
-   ,{'T', '9','S', 'T', 'R', 'O', 'K', 'E', 0}
+   ,{0x7B14, 0x753B, 0}
 #endif //FEATURE_T9_STROKE
 
 #ifdef FEATURE_T9_ZHUYIN

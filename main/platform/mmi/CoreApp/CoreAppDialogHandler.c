@@ -4436,6 +4436,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             	MSG_FATAL("bImageDecoded=%d",bImageDecoded,0,0);
                 return TRUE;
             }
+			Mainmenu_KeypadLock(FALSE);
             switch (wParam)
             {
 #ifdef	FEATURE_APP_BLUETOOTH  
@@ -5346,7 +5347,12 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                                                  sizeof(boolean));
 						if(m_sound_bo_dia)
 						{
-							CoreApp_PlayShutterSound(pMe,wParam);
+							nv_item_type	SimChoice;
+							(void)OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+							if(SimChoice.sim_select != 1)
+							{
+								CoreApp_PlayShutterSound(pMe,wParam);
+							}
 						}
 }
 #endif
