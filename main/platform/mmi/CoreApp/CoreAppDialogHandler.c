@@ -43,6 +43,7 @@
 #include "oemcfgi.h"
 #include "nv.h"
 #include "OEMCFGI.h"
+#include "hs_mb6550.h"
 
 #include "clockapps.brh"
 #define  CLOCK_RES_PATH ("fs:/mod/clockapps/" AEE_RES_LANGDIR CLOCKAPPS_RES_FILE)
@@ -3360,12 +3361,10 @@ static boolean  IDD_STARTUPANI_Handler(void       *pUser,
 
         case EVT_DIALOG_START: 		
 			//Add By zzg 2012_02_17
-#ifdef FEATURE_VERSION_K212
+#ifdef FEATURE_K_AMPLIFIER
 {
-			  nv_item_type	SimChoice;
-			  SimChoice.sim_select = 2;
-				//OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
-			 (void)OEMNV_Put(NV_SIM_SELECT_I,&SimChoice);
+		 if(!HS_HEADSET_ON())
+		 {
 			  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
 				
 			  clk_busy_wait(2*1000);
@@ -3384,6 +3383,7 @@ static boolean  IDD_STARTUPANI_Handler(void       *pUser,
 			  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
 			  clk_busy_wait(1);
 			  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
+		}
 }
 #endif
 			//Add End

@@ -608,7 +608,7 @@ const snd_gen_voc_cal_type snd_cal_handset_ring_gains = {
   SND_GEN_VOC,
   7,
   1,
-#ifdef FEATURE_VERSION_K212
+#ifdef FEATURE_K_AMPLIFIER
   VOC_CODEC_STEREO_HEADSET,
 #else
   VOC_CODEC_SPEAKER,
@@ -642,7 +642,7 @@ const snd_gen_voc_cal_type snd_cal_handset_midi_gains = {
   SND_GEN_MIDI,
   7,
   1,
-#ifdef FEATURE_VERSION_K212
+#ifdef FEATURE_K_AMPLIFIER
   VOC_CODEC_STEREO_HEADSET,
 #else
   VOC_CODEC_SPEAKER,
@@ -656,7 +656,7 @@ const snd_gen_voc_cal_type snd_cal_handset_midi_gains = {
   SND_GEN_MIDI,
   7,
   1,
-#ifdef FEATURE_VERSION_K212
+#ifdef FEATURE_K_AMPLIFIER
   VOC_CODEC_STEREO_HEADSET,
 #else
     VOC_CODEC_ON_CHIP_0,
@@ -1049,6 +1049,17 @@ VOL_MEMORY snd_gen_level_voc_type snd_cal_headset_voice_vol[] = {
   /* Internal CODEC - no pad values    */
 #if defined(CUST_EDITION) && !defined(FEATURE_OEMOMH)
 #ifndef FEATURE_VERSION_S1000T
+#ifdef FEATURE_VERSION_K212
+/*	rx				  dtmf			  pad		 */
+{ VOC_VOL_SILENCE , VOC_VOL_SILENCE ,  0 },
+{		   -2200  , 		  -3000 ,  0 },
+{		   -1900  , 		  -2800 ,  0 },
+{		   -1600  , 		  -2600 ,  0 },
+{		   -1300  , 		  -2400 ,  0 },
+{		   -1000  , 		  -2200 ,  0 },
+{			-700  , 		  -2000 ,  0 },
+{			-400  , 		  -1800 ,  0 }
+#else
   /*  rx                dtmf            pad        */
   { VOC_VOL_SILENCE , VOC_VOL_SILENCE ,  0 },
   {          -1400  ,           -3000 ,  0 },
@@ -1058,6 +1069,7 @@ VOL_MEMORY snd_gen_level_voc_type snd_cal_headset_voice_vol[] = {
   {           -200  ,           -2200 ,  0 },
   {            100  ,           -2000 ,  0 },
   {            400  ,           -1800 ,  0 }
+#endif
 #else
 /*  rx                dtmf            pad        */
   { VOC_VOL_SILENCE , VOC_VOL_SILENCE ,  0 },
@@ -2174,6 +2186,8 @@ VOL_MEMORY snd_gen_level_voc_type snd_cal_sp_voice_vol[] = {
   {		       400  , 		     -400 ,  0 },
   {		       600  , 		     -200 ,  0 }
   #else
+  #ifdef FEATURE_VERSION_K212
+  /*  rx                dtmf            pad        */
   { VOC_VOL_SILENCE , VOC_VOL_SILENCE ,  0 },
   {		      -800  , 		    -1400 ,  0 },
   {		      -600  , 		    -1200 ,  0 },
@@ -2182,6 +2196,16 @@ VOL_MEMORY snd_gen_level_voc_type snd_cal_sp_voice_vol[] = {
   {		         0  , 		     -600 ,  0 },
   {		       200  , 		     -400 ,  0 },
   {		       400  , 		     -200 ,  0 }
+  #else
+  { VOC_VOL_SILENCE , VOC_VOL_SILENCE ,  0 },
+  {		      -800  , 		    -1400 ,  0 },
+  {		      -600  , 		    -1200 ,  0 },
+  {		      -400  , 		    -1000 ,  0 },
+  {			  -200  , 		     -800 ,  0 },
+  {		         0  , 		     -600 ,  0 },
+  {		       200  , 		     -400 ,  0 },
+  {		       400  , 		     -200 ,  0 }
+  #endif
   #endif
 #else
   /*  rx                dtmf            pad        */
@@ -2295,7 +2319,7 @@ const snd_gen_voc_cal_type snd_cal_sp_voice_gains = {
   SND_GEN_VOC,
   7,
   1,
-#ifdef FEATURE_VERSION_K212
+#ifdef FEATURE_K_AMPLIFIER
   VOC_CODEC_STEREO_HEADSET,
 #else
   VOC_CODEC_SPEAKER,
@@ -2359,7 +2383,7 @@ const snd_gen_voc_cal_type snd_cal_sp_ring_gains = {
   SND_GEN_VOC,
   7,
   1,
-#ifdef FEATURE_VERSION_K212
+#ifdef FEATURE_K_AMPLIFIER
   VOC_CODEC_STEREO_HEADSET,
 #else
   VOC_CODEC_SPEAKER,

@@ -19,6 +19,7 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS
 ============================================================================*/
 #include "tlmm.h" 
 #include "nv.h"
+#include "hs_mb6550.h"
 
 static rex_crit_sect_type       disp_drv_crit_sect = {0};
 static disp_info_type           disp_drv_info = {0};
@@ -297,23 +298,27 @@ static void disp_drv_on(void)
     rex_enter_crit_sect(&disp_drv_crit_sect);
 	#ifdef FEATURE_K_AMPLIFIER
 	{
-	    MSG_FATAL("disp_drv_on......................",0,0,0);
-		gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
-	    clk_busy_wait(2*1000);
-	    gpio_tlmm_config(GPIO_OUTPUT_10);
-	    gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
-	    clk_busy_wait(1);
-	    gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
-	    clk_busy_wait(1);
-	    gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
-	    clk_busy_wait(1);
-	    gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
-	    clk_busy_wait(1);
-	    gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
-	    clk_busy_wait(1);
-	    gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
-	    clk_busy_wait(1);
-	    gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
+		 if(!HS_HEADSET_ON())
+		 {
+	    	MSG_FATAL("disp_drv_on......................",0,0,0);
+			gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
+	    	clk_busy_wait(2*1000);
+	    	gpio_tlmm_config(GPIO_OUTPUT_10);
+	    	gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
+	    	clk_busy_wait(1);
+	    	gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
+	    	clk_busy_wait(1);
+	    	gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
+	    	clk_busy_wait(1);
+	    	gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
+	    	clk_busy_wait(1);
+	    	gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
+	    	clk_busy_wait(1);
+	    	gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
+	    	clk_busy_wait(1);
+	    	gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
+		 }
+		
 	}
 	#endif
     if(disp_drv_state.disp_powered_up && !disp_drv_state.display_on)

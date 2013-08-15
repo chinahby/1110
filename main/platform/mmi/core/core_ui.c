@@ -2123,7 +2123,7 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
     case AVK_HEADSET_DISCONNECT:
         if (EVT_KEY_PRESS == evt)
         {
-        	#ifdef FEATURE_VERSION_K212
+        	#ifdef FEATURE_K_AMPLIFIER
         	if(wParam == AVK_HEADSET_CONNECT)
         	{	gpio_tlmm_config(GPIO_OUTPUT_10);
 				clk_busy_wait(30*1000);
