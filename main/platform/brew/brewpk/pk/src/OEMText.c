@@ -5933,7 +5933,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 #else
 	//handle key
     t9Key     = T9_BrewKeyToT9AlphabeticKey (pContext,eCode, key );
-    if(key == AVK_SELECT|| key == AVK_INFO)
+    if(key == AVK_SELECT|| key == AVK_INFO|| key == AVK_SOFT1)
     {
         if(FOCUS_SELECTION == pContext->sFocus)
         {       
