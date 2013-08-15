@@ -1216,13 +1216,36 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                 }
                 else
                 {
-	                if(SUCCESS == ICAMERA_Stop(pMe->m_pCamera))
-	                {
-	                    pMe->m_bIsPreview = FALSE;
-	                    pMe->m_nLeftTime  = 0;
-	                    pMe->m_nCameraState = CAM_STOP;
-	                    CLOSE_DIALOG(DLGRET_CANCELED);
-	                }        
+                		#ifdef FEATURE_VERSION_K212
+                	     nv_item_type	SimChoice;
+						(void)OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+						if(SimChoice.sim_select != 1)
+						{
+							if(SUCCESS == ICAMERA_Stop(pMe->m_pCamera))
+	                		{
+	                    		pMe->m_bIsPreview = FALSE;
+	                    		pMe->m_nLeftTime  = 0;
+	                    		pMe->m_nCameraState = CAM_STOP;
+	                    		CLOSE_DIALOG(DLGRET_CANCELED);
+	                		}  
+						}
+						else
+						{
+							   pMe->m_bIsPreview = FALSE;
+	                    		pMe->m_nLeftTime  = 0;
+	                    		pMe->m_nCameraState = CAM_STOP;
+	                    		CLOSE_DIALOG(DLGRET_CANCELED);
+						}
+						#else
+						if(SUCCESS == ICAMERA_Stop(pMe->m_pCamera))
+	                	{
+	                    		pMe->m_bIsPreview = FALSE;
+	                    		pMe->m_nLeftTime  = 0;
+	                    		pMe->m_nCameraState = CAM_STOP;
+	                    		CLOSE_DIALOG(DLGRET_CANCELED);
+	                	}  
+						#endif
+	                      
                 }
                 break;
 
@@ -1345,7 +1368,6 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
 	                    CameraApp_RecordSnapShot(pMe);
 	                    ICAMERA_Stop(pMe->m_pCamera);
 	                    CameraApp_SavePhoto(pMe);
-
 	                    CameraApp_PlayShutterSound(pMe);
 	                    CLOSE_DIALOG(DLGRET_PICMENU);
 #else
@@ -6240,11 +6262,22 @@ void CameraApp_AppEventNotify(CCameraApp *pMe, int16 nCmd, int16 nStatus)
                       sizeof(pMe->m_nCameraTone));
 
 #ifdef FEATURE_CARRIER_CHINA_TELCOM
-            CameraApp_PlayShutterSound(pMe);
+{
+            	CameraApp_PlayShutterSound(pMe);
+}
 #else
             if(pMe->m_nCameraTone == OEMNV_CAMERA_SHUTTER_TONE_ENABLE)
             {
-                CameraApp_PlayShutterSound(pMe);
+            		#ifdef FEATURE_VERSION_K212
+					nv_item_type	SimChoice;
+            		(void)OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+					if(SimChoice.sim_select != 1)
+					{
+                		CameraApp_PlayShutterSound(pMe);
+					}
+					#else
+					CameraApp_PlayShutterSound(pMe);
+					#endif
             }
 #endif
             CLOSE_DIALOG(DLGRET_PICMENU);
