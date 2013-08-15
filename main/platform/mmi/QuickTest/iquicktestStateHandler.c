@@ -870,7 +870,7 @@ static NextFSMAction QUICKTESTSTCallTestHandler(CQuickTest *pMe)
 			}
 			else
 			{
-#ifdef FEATURE_VERSION_K212
+#if defined( FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_12832)
 			MOVE_TO_STATE(QUICKTESTST_CAMERATEST)
 #else
 #if defined( FEATURE_FM_RADIO)

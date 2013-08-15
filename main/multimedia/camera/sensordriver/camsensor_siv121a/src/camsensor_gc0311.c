@@ -46,7 +46,10 @@ $Header: //depot/asic/msm6550/drivers/camsensor/camsensor_ SIV121A_ycbcr.c#3 $ $
 
 #define CAMSENSOR_GC0311_SENSOR_ID              0xbb ///SIV121A
 #ifndef FEATURE_VERSION_K212
+#ifndef FEATURE_VERSION_K212_12832
+
 #define CAMSENSOR_GC0311_RESET_PIN         GPIO_OUTPUT_10
+#endif
 #endif
 /* 
  * Maximum number of trials before aborting a register write operation
@@ -482,6 +485,8 @@ boolean camsensor_GC0311_init(camsensor_function_table_type *camsensor_function_
 
 	camsensor_camclk_po_hz =12000000;
 #ifndef FEATURE_VERSION_K212
+#ifndef FEATURE_VERSION_K212_12832
+
 	CAMERA_CONFIG_GPIO(CAMSENSOR_GC0311_RESET_PIN);
     
     gpio_out(CAMSENSOR_GC0311_RESET_PIN,0);
@@ -490,6 +495,7 @@ boolean camsensor_GC0311_init(camsensor_function_table_type *camsensor_function_
     clk_busy_wait(50*1000);
     gpio_out(CAMSENSOR_GC0311_RESET_PIN,0);
     clk_busy_wait(20*1000);
+#endif
 #endif
 
 	camsensor_preview_resolution  = CAMSENSOR_FULL_SIZE;
@@ -516,12 +522,15 @@ boolean camsensor_GC0311_init(camsensor_function_table_type *camsensor_function_
         j--;
         i2c_init();
 #ifndef FEATURE_VERSION_K212
+#ifndef FEATURE_VERSION_K212_12832
+
         gpio_out(CAMSENSOR_GC0311_RESET_PIN,0);
         clk_busy_wait(20*1000);
         gpio_out(CAMSENSOR_GC0311_RESET_PIN,1);
         clk_busy_wait(50*1000);
         gpio_out(CAMSENSOR_GC0311_RESET_PIN,0);
         clk_busy_wait(20*1000);
+#endif
 #endif
         
     }

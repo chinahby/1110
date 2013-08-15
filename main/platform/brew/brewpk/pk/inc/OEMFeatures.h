@@ -28,7 +28,9 @@ GENERAL DESCRIPTION:
 #include "mmidispsize.h"
 //#define FEATURE_PEKTEST
 #ifndef FEATURE_VERSION_K202
+#ifndef FEATURE_VERSION_K212_12832
 #define FEATURE_GREYBIT
+#endif
 #endif
 #define FEATURE_BREW_3_0
 

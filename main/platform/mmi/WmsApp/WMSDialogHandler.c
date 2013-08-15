@@ -1256,7 +1256,7 @@ static boolean IDD_MAIN_Handler(void        *pUser,
 			
 		case EVT_KEY_HELD:
             
-        #if defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)
+        #if defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_12832)
            if((AVKType)wParam == AVK_SELECT)
             {
                 boolean TorchOn = FALSE;

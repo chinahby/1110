@@ -22,7 +22,10 @@
 #define CAMSENSOR_SP0828_RESET_PIN         GPIO_OUTPUT_62
 #else
 #ifndef FEATURE_VERSION_K212
+#ifndef FEATURE_VERSION_K212_12832
+
 #define CAMSENSOR_SP0828_RESET_PIN         GPIO_OUTPUT_10
+#endif
 #endif
 #endif
 

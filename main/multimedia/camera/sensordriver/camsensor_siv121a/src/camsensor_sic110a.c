@@ -21,7 +21,10 @@
 #if defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W208S)
 #ifdef T_QSC1110
 #ifndef FEATURE_VERSION_K212
+#ifndef FEATURE_VERSION_K212_12832
+
 #define CAMSENSOR_SIC110A_RESET_PIN         GPIO_OUTPUT_10
+#endif
 #endif
 #else
 #define CAMSENSOR_SIC110A_RESET_PIN         GPIO_OUTPUT_53
@@ -29,7 +32,10 @@
 #else
 #ifdef T_QSC1110
 #ifndef FEATURE_VERSION_K212
+#ifndef FEATURE_VERSION_K212_12832
+
 #define CAMSENSOR_SIC110A_RESET_PIN         GPIO_OUTPUT_10
+#endif
 #endif
 #else
 #define CAMSENSOR_SIC110A_RESET_PIN         GPIO_OUTPUT_62
@@ -127,10 +133,13 @@ boolean camsensor_sic110a_init(camsensor_function_table_type *camsensor_function
     /*lint -save -e655 */
     camsensor_i2c_command.options    = (i2c_options_type) (I2C_REG_DEV | I2C_START_BEFORE_READ); 
 #ifndef FEATURE_VERSION_K212
+#ifndef FEATURE_VERSION_K212_12832
+
     CAMERA_CONFIG_GPIO(CAMSENSOR_SIC110A_RESET_PIN);
     gpio_out(CAMSENSOR_SIC110A_RESET_PIN,0);
     camera_timed_wait(10);
     gpio_out(CAMSENSOR_SIC110A_RESET_PIN,1);
+#endif
 #endif
     // Reset Sensor
     camera_timed_wait(10);  //ovt

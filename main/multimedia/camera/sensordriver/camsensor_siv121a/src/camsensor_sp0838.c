@@ -53,7 +53,10 @@ typedef struct register_address_value_pair_struct {
 
 #define CAMSENSOR_SP0838_I2C_SLAVE_ID              0x30 ///SP0838
 #ifndef FEATURE_VERSION_K212
+#ifndef FEATURE_VERSION_K212_12832
+
 #define CAMSENSOR_SP0838_RESET_PIN         GPIO_OUTPUT_10
+#endif
 #endif
 #define CAMSENSOR_SP0838_ID      0x27
 /* 
@@ -417,6 +420,8 @@ boolean camsensor_sp0838_init(camsensor_function_table_type *camsensor_function_
 
 	camsensor_camclk_po_hz =24000000;
 #ifndef FEATURE_VERSION_K212
+#ifndef FEATURE_VERSION_K212_12832
+
 	CAMERA_CONFIG_GPIO(CAMSENSOR_SP0838_RESET_PIN);
     
     gpio_out(CAMSENSOR_SP0838_RESET_PIN,1);
@@ -425,6 +430,7 @@ boolean camsensor_sp0838_init(camsensor_function_table_type *camsensor_function_
     clk_busy_wait(5*1000);
     gpio_out(CAMSENSOR_SP0838_RESET_PIN,1);
     clk_busy_wait(1*1000);
+#endif
 #endif
 	camsensor_preview_resolution  = CAMSENSOR_QTR_SIZE;
 	camsensor_snapshot_resolution = CAMSENSOR_FULL_SIZE;

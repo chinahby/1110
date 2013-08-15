@@ -25,7 +25,10 @@ INCLUDE FILES
 #include "clk.h"
 #include "chromatix_6550.h"
 #ifndef FEATURE_VERSION_K212
+#ifndef FEATURE_VERSION_K212_12832
+
 #define CAMSENSOR_SIV121D_RESET_PIN          GPIO_OUTPUT_10
+#endif
 #endif
 /*============================================================================
 	TYPE DEFINITIONS 
