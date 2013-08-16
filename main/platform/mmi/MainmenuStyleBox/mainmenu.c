@@ -2888,7 +2888,6 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_IconTitle[9]     = IDS_MAIN_MENU_GAMES;
     pMe->m_IconTitle[10]    = IDS_MAIN_MENU_SCHEDULER;
     pMe->m_IconTitle[11]    = IDS_MAIN_MENU_CALCULATOR;
-	
 	pMe->m_pImageBg = ISHELL_LoadImage(pMe->m_pShell,ICON_ANI_BG);
 	if((pMe->m_nRow>=0) && (pMe->m_nRow<4))
 	{
@@ -2936,11 +2935,13 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
 	{
 		pMe->m_pImageSelectk212[pMe->m_nRow] = ISHELL_LoadImage(pMe->m_pShell,
                                                     ICON_ANI_EN[pMe->m_nRow]);
+		pMe->m_bChangeL =TRUE;
 	}
 	else
 	{
 		pMe->m_pImageSelectk212[pMe->m_nRow] = ISHELL_LoadImage(pMe->m_pShell,
                                                     ICON_ANI[pMe->m_nRow]);
+		pMe->m_bChangeL =FALSE;
 	}
 	//pMe->m_pImageSelectk212 = ISHELL_LoadImage(pMe->m_pShell, ICON_ANI[pMe->m_nRow]);
 
@@ -3793,7 +3794,10 @@ static void DrawMatrix(MainMenu *pMe)
     }
     //draw bg image
     MainMenu_DrawBackGround(pMe, &pMe->m_rc);
-
+	(void) ICONFIG_GetItem(pMe->m_pConfig,
+									   CFGI_LANGUAGE_SELECTION,
+									   &pMe->language,
+									   sizeof(pMe->language));
 	if(pMe->m_pAnimate != NULL)
 	{
 		int row = pMe->m_nRow;
@@ -3905,6 +3909,41 @@ static void DrawMatrix(MainMenu *pMe)
                         pMe->m_Icondefault_Pt[2].x,
                         pMe->m_Icondefault_Pt[2].y);
 	}
+	
+	if(pMe->m_pImageSelectk212[pMe->m_nRow] !=NULL)
+	{
+		if(pMe->language == NV_LANGUAGE_ENGLISH)
+		{
+			if(pMe->m_bChangeL != TRUE)
+			{
+				(void)IIMAGE_Release(pMe->m_pImageSelectk212[pMe->m_nRow]);
+            	 pMe->m_pImageSelectk212[pMe->m_nRow] = NULL;
+			}
+		}
+		else
+		{
+			if(pMe->m_bChangeL != FALSE)
+			{
+				(void)IIMAGE_Release(pMe->m_pImageSelectk212[pMe->m_nRow]);
+            	pMe->m_pImageSelectk212[pMe->m_nRow] = NULL;
+			}
+		}
+	}
+
+	if(pMe->m_pImageSelectk212[pMe->m_nRow] ==NULL)
+	{
+		if(pMe->language == NV_LANGUAGE_ENGLISH)
+		{
+			pMe->m_pImageSelectk212[pMe->m_nRow] = ISHELL_LoadImage(pMe->m_pShell,
+	                                                    ICON_ANI_EN[pMe->m_nRow]);
+		}
+		else
+		{
+			pMe->m_pImageSelectk212[pMe->m_nRow] = ISHELL_LoadImage(pMe->m_pShell,
+                                                    ICON_ANI[pMe->m_nRow]);
+		}
+	}
+	
 	if(pMe->m_pImageSelectk212[pMe->m_nRow] != NULL)
 	{
 		IIMAGE_Draw(pMe->m_pImageSelectk212[pMe->m_nRow],
@@ -3981,6 +4020,10 @@ static void MoveCursorTo(MainMenu *pMe, int row, int column)
     {
         return;
     }
+	(void) ICONFIG_GetItem(pMe->m_pConfig,
+									   CFGI_LANGUAGE_SELECTION,
+									   &pMe->language,
+									   sizeof(pMe->language));
 	MSG_FATAL("row=======%d",row,0,0);
 	(void) ICONFIG_GetItem(pMe->m_pConfig,
                                  CFGI_SOUND_BO_MAIN,
@@ -4125,6 +4168,26 @@ static void MoveCursorTo(MainMenu *pMe, int row, int column)
 	IIMAGE_Draw(pMe->m_pImageIcon[10],
                         pMe->m_Icondefault_Pt[2].x,
                         pMe->m_Icondefault_Pt[2].y);
+	
+	if(pMe->m_pImageSelectk212[pMe->m_nRow] !=NULL)
+	{
+		if(pMe->language == NV_LANGUAGE_ENGLISH)
+		{
+			if(pMe->m_bChangeL != TRUE)
+			{
+				(void)IIMAGE_Release(pMe->m_pImageSelectk212[pMe->m_nRow]);
+            	 pMe->m_pImageSelectk212[pMe->m_nRow] = NULL;
+			}
+		}
+		else
+		{
+			if(pMe->m_bChangeL != FALSE)
+			{
+				(void)IIMAGE_Release(pMe->m_pImageSelectk212[pMe->m_nRow]);
+            	pMe->m_pImageSelectk212[pMe->m_nRow] = NULL;
+			}
+		}
+	}
 	
 	if(pMe->m_pImageSelectk212[pMe->m_nRow] ==NULL)
 	{
