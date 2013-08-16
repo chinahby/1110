@@ -12778,7 +12778,7 @@ if(wp == AVK_0)
         		pMe->m_curpros = 0;
         	}
         	pMe->b_multenter = TRUE;
-			#ifdef FEATURE_SOUND_BO
+			#if 0//def FEATURE_SOUND_BO
 			{
 				boolean m_sound_bo_dia = FALSE;
    				(void) ICONFIG_GetItem(pMe->m_pConfig,

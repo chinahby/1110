@@ -2143,7 +2143,7 @@ static OEMConfigListType oemi_cache = {
    ,{1}    //CFGI_COUNT_OF_MAIN
 #ifdef FEATURE_SOUND_BO
    ,TRUE		//CFGI_SOUND_BO_DIA,
-   ,TRUE		//CFGI_SOUND_BO_MAIN,
+   ,FALSE		//CFGI_SOUND_BO_MAIN,
    ,TRUE		//CFGI_SOUND_BO_CORE,
 #endif 
 };
@@ -2879,7 +2879,7 @@ void OEM_RestoreFactorySetting( void )
 
 #ifdef FEATURE_SOUND_BO
    oemi_cache.m_sound_bo_dia = TRUE;		//CFGI_SOUND_BO_DIA,
-   oemi_cache.m_sound_bo_main = TRUE;		//CFGI_SOUND_BO_MAIN,
+   oemi_cache.m_sound_bo_main = FALSE;		//CFGI_SOUND_BO_MAIN,
    oemi_cache.m_sound_bo_core = TRUE;		//CFGI_SOUND_BO_CORE,
 #endif 
 
