@@ -71,7 +71,7 @@ CCoreApp *g_pCoreApp = NULL;
 
 #endif
 
-
+static boolean b_low = FALSE;
 boolean	bIsPPPAuthEnabled = FALSE;	//Add By zzg 2012_03_07
 /*==============================================================================
 
@@ -2531,7 +2531,9 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
                 AEE_SetSysTimer(POWER_DOWN_TIME , CoreApp_Poweroff_Phone, pMe);
                 return TRUE;
             }
-            
+            #ifdef FEATURE_VERSION_V3CM301
+			b_low = FALSE;
+			#endif
             CoreApp_Process_Charger_Msg(pMe);
             pMe->m_battery_time= 0;
             pMe->m_battery_state = TRUE ;
@@ -2621,6 +2623,7 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
 
                     case AEEBATTERY_STATUS_LOW:        // Battery is low
                     {
+							
                         (void) ISHELL_CancelTimer(pMe->a.m_pIShell,CCharger_BlinkLowBattIcon, (void *) pMe);     
 						  (void) ISHELL_CancelTimer(pMe->a.m_pIShell,CCCharger_EnableAlarm, (void *) pMe);   
                         if(pMe->m_pIAnn != NULL)
@@ -2628,8 +2631,15 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
                             IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_BATT, ANNUN_STATE_BATT_LOW | ANNUN_STATE_BLINK);
                         }
                         (void) ISHELL_SetTimer(pMe->a.m_pIShell, 10000, CCharger_BlinkLowBattIcon, (void *) pMe);
-
+					#if defined(FEATURE_VERSION_V3CM301)
+						if (b_low==FALSE)
+						{
+							b_low=TRUE;
 							CoreApp_Process_BattyLow_Msg(pMe, IDS_LOWBATTMSG_TEXT);
+						}
+					#endif
+							CoreApp_Process_BattyLow_Msg(pMe, IDS_LOWBATTMSG_TEXT);
+						
 
                         break;
                     }
@@ -3432,7 +3442,6 @@ static void CoreApp_Process_BattyLow_Msg(CCoreApp   *pMe, uint16  msg_id)
 			#ifdef FEATURE_VERSION_C316
  			 if(pMe->m_IsEanbleBatAlarm)
 	         {
-                  		
                   	IALERT_StartAlerting(pMe->m_pAlert, NULL, NULL, AEEALERT_ALERT_LOW_BATTERY);
 				    pMe->m_IsEanbleBatAlarm = FALSE;
 					(void) ISHELL_SetTimer(pMe->a.m_pIShell, 5*60*1000, CCCharger_EnableAlarm, (void *) pMe);	
@@ -3444,6 +3453,7 @@ static void CoreApp_Process_BattyLow_Msg(CCoreApp   *pMe, uint16  msg_id)
        else
        {
            IALERT_StartAlerting(pMe->m_pAlert, NULL, NULL, AEEALERT_ALERT_ROAMING);
+		
        }
        if((pMe->m_wActiveDlgID == IDD_PWDIMSIMCC ||
                   pMe->m_wActiveDlgID == IDD_PWDINPUT ||
@@ -3452,6 +3462,7 @@ static void CoreApp_Process_BattyLow_Msg(CCoreApp   *pMe, uint16  msg_id)
                   pMe->m_wActiveDlgID == IDD_IDLE
                   ) && (pMe->m_bSuspended == FALSE))
        {
+       			
            pMe->m_nMsgID = msg_id;
            MSG_FATAL("CoreApp_Process_Batty_Msg 1",0,0,0); 
            pMe->m_battery_state = FALSE ;

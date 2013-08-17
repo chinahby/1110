@@ -108,8 +108,12 @@ when       who     what, where, why
 */
 #define PROFILENUMBER                     5                          // Çé¾°Ä£Ê½ÖÖÀà
 //#endif
-//Ä¬ÈÏµÄ¶ÌÐÅÁåÉù
-#define OEMNV_SMS_RINGER_ID 78 
+//Ä¬ÈÏµÄ¶ÌÐÅÁåÉ
+#ifdef FEATURE_VERSION_V3CM301
+#define OEMNV_SMS_RINGER_ID 77
+#else
+#define OEMNV_SMS_RINGER_ID 78
+#endif
 /////////////////////////////////////////////////////////////////////////
 // Çé¾°Ä£Ê½³ö³§ÉèÖÃ
 /////////////////////////////////////////////////////////////////////////                     

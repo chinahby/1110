@@ -152,7 +152,7 @@ static void disp_ic_init(void)
 	LCD_WRITE_DATA(0x05);
 	LCD_WRITE_CMD (0x29); //Display on
 	LCD_WRITE_CMD(0x2c);
-#elif defined(FEATURE_VERSION_M74)
+#elif defined(FEATURE_VERSION_V3CM301)
 //财富十二部，换新屏
 	LCD_WRITE_CMD(0x11); //Sleep out
     LCD_DELAY(120); 	            // Must Delay At Least 100 ms

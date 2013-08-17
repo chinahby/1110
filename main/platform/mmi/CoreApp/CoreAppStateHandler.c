@@ -1037,14 +1037,17 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
     {
         case DLGRET_CREATE:
 #ifdef FEATURE_OEMOMH
+          
             if(!gsdi_uim_omh_cap.omh_enabled && IRUIM_IsCardConnected(pMe->m_pIRUIM))
             {
                 ISHELL_SendEvent(pMe->a.m_pIShell,AEECLSID_DIALER,EVT_OMH_PROMPT,0,0);
             }
             else
             {
+            	
                 if((pMe->m_pIRUIM != NULL) && (pMe->m_pConfig != NULL))
-                {
+                {	
+                	
                     int i = 0;
                     int j = 0;
                     AECHAR swBufTemp[61]; 
@@ -1056,7 +1059,9 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
                     #else
                     static const char mnBuf[] = "MMX C260";
                     #endif
-					#else
+					#elif defined (FEATURE_VERSION_V3CM301)					
+					static const char mnBuf[] = "V3MOBILE";
+					#else				
 					static const char mnBuf[] = "WaterWorld";
 					#endif
                     int len = 0;

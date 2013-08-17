@@ -2711,7 +2711,7 @@ void uisnd_vibrate(uint16 wDuration,
            
             
   #else  */
-#if defined(FEATURE_VERSION_C306) || defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_M74)
+#if defined(FEATURE_VERSION_C306)|| defined(FEATURE_VERSION_V3CM301) || defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_M74)
 #if defined( FEATURE_VERSION_C316)|| defined(FEATURE_VERSION_M74) // xxzhen 2 in 1 motor
   uisnd_vibrate_cmd(TRUE);
 	 clk_reg( &uisnd_vibrator_clk,

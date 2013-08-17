@@ -1420,16 +1420,17 @@ static boolean  HandleHintDialogEvent(CSoundMenu *pMe,
             Sound_App_Add_Menu(pMenu,IDS_ITEM_VIBRING);
 #ifdef FEATURE_CARRIER_THAILAND_CAT
             if(SET_CALLHINT == pMe->m_HintType)
-            {
-                Sound_App_Add_Menu(pMenu,IDS_ALERTTYPE_VIBANDRING); 
+            {            	
+				Sound_App_Add_Menu(pMenu,IDS_ALERTTYPE_VIBANDRING);
             }
 #else
            #if defined(FEATURE_VERSION_W027)||defined(FEATURE_VERSION_C117)||defined(FEATURE_VERSION_M74)
            #ifdef FEATURE_VERSION_C260_IC18
-           Sound_App_Add_Menu(pMenu,IDS_ALERTTYPE_VIBANDRING); 
+          	Sound_App_Add_Menu(pMenu,IDS_ALERTTYPE_VIBANDRING); 
            #endif
-           #else
-            Sound_App_Add_Menu(pMenu,IDS_ALERTTYPE_VIBANDRING); 
+           #elif defined(FEATURE_VERSION_V3CM301)
+		   #else
+           	Sound_App_Add_Menu(pMenu,IDS_ALERTTYPE_VIBANDRING); 
            #endif
 #endif
 			#endif //FEATURE_VERSION_C306
@@ -1486,7 +1487,7 @@ static boolean  HandleHintDialogEvent(CSoundMenu *pMe,
                         ui16_return = IDS_ITEM_VIBRING;
                         break;
                         
-                    case OEMNV_ALERTTYPE_VIBANDRINGER:        //œÏ¡Â’∂Ø
+                   case OEMNV_ALERTTYPE_VIBANDRINGER:        //œÏ¡Â’∂Ø
                         ui16_return = IDS_ALERTTYPE_VIBANDRING;
                         break;  
                 }

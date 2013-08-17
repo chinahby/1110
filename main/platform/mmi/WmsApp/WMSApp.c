@@ -1901,7 +1901,7 @@ Exit:
 #ifndef FEATURE_ICM
 					AEETCalls po;
 #endif
-					#if defined(FEATURE_VERSION_S1000T)||defined(FEATURE_VERSION_W515V3)
+					#if defined(FEATURE_VERSION_S1000T)||(defined(FEATURE_VERSION_W515V3)&&(!defined(FEATURE_VERSION_V3CM301)))
 					#else
                     WmsApp_PlaySMSAlert(pMe, TRUE);
                     #endif
