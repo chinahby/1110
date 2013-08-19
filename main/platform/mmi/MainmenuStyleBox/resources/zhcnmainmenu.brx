@@ -133,6 +133,9 @@
 	<String Id="1086" Name="IDS_MAIN_WAPBROWSER">
 		<Text>浏览器</Text>
 	</String>
+	<STRING Id="1097" Name="IDS_MAIN_MENU_TORCH">
+		<Text>手电筒</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="0">

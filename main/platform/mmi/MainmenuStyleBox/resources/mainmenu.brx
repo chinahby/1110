@@ -178,6 +178,9 @@
 	<STRING Id="1096" Name="IDS_MAIN_MENU_INTEXZONE">
 		<Text>Intex Zone</Text>
 	</STRING>
+	<STRING Id="1097" Name="IDS_MAIN_MENU_TORCH">
+		<Text>Torch</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="0">
