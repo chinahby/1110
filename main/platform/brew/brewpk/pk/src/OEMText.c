@@ -2924,8 +2924,8 @@ static boolean TextCtl_CalText2(TextCtlContext *pContext, boolean bScroll)
       textRect = pContext->rectDisplay;
       textRect.x += 2;
       textRect.y += 2;
-      textRect.dx -= 4;
-      textRect.dy -= 4;
+      textRect.dx -= 2;
+      textRect.dy -= 2;
       if (bScroll) {
          // Subtract scroll bar width, but it shares 2 pixels with the frame
          textRect.dx -= (int16) (pContext->wScrollBarWidth - 2);
@@ -11903,7 +11903,7 @@ static void T9_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext )
     SETAEERECT ( &pRect,
                   iWindX+2,   //+T9_FONT_WIDTH,   
                   iWindY+1,
-                  iWindDx -6,  
+                  iWindDx -12,     
                   iWindDy); 
     }
     //#endif
@@ -12028,8 +12028,18 @@ static void T9_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext )
             RGB_WHITE,
             IDF_RECT_FRAME);
 #endif //FEATURE_FUNCS_THEME  
-
+#if defined(FEATURE_DISP_240X320)	
+	pRect.dx = 236;
     (void) IDISPLAY_DrawText ((IDisplay *)pContext->pIDisplay,
+                               AEE_FONT_NORMAL,
+                               wszSpellBufDisp,  
+                               -1,  
+                               pRect.x+1,
+                               pRect.y+1,
+                               &pRect,
+                               format );
+#else
+	(void) IDISPLAY_DrawText ((IDisplay *)pContext->pIDisplay,
                                AEE_FONT_NORMAL,
                                wszSpellBufDisp,  
                                -1,  
@@ -12037,6 +12047,7 @@ static void T9_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext )
                                pRect.y+1,
                                NULL,
                                format );
+#endif
     // Add the character width
     for ( nSelectedCodeTemp=0; nSelectedCodeTemp < SPELLMAX; nSelectedCodeTemp++)
     {
@@ -12084,6 +12095,12 @@ static void T9_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext )
         MSG_FATAL("****pRect.y=%d",pRect.y,0,0);
         invertRect.y  = pRect.y+1;
         invertRect.dy = CHINESE_FONT_HEIGHT+10;
+#if defined(FEATURE_DISP_240X320)	
+		if((invertRect.x+invertRect.dx) >=238)
+		{
+			invertRect.dx = 238- invertRect.x;
+		}
+#endif
         IDISPLAY_InvertRect ( pContext->pIDisplay, &invertRect );
     
     }                              
