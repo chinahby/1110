@@ -386,6 +386,11 @@ static NextFSMAction Display_StatePictureHandler(CDisplayMenu *pMe)
         case DLGRET_IMGDELMSG:
             MOVE_TO_STATE(DISPLAYMENUST_IMGDELMSG)
             return NFSMACTION_CONTINUE;
+			
+		case DLGRET_MSG_POP:
+			pMe->m_bNotOverwriteDlgRet = FALSE;
+            DisplayMenu_ShowDialog(pMe, IDD_IMGDELMSG_DLG);
+            return NFSMACTION_WAIT;
 
         case DLGRET_CANCELED:
             MOVE_TO_STATE(DISPLAYMENUST_MAIN)

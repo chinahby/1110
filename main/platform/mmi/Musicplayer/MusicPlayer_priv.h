@@ -635,7 +635,7 @@ if(!(x))         \
 //进度条(简单播放)
 #define SIMSCHEDULEBAR_X 17
 #define SIMSCHEDULEBAR_Y 147
-#define SIMSCHEDULEBAR_W 94
+#define SIMSCHEDULEBAR_W 222
 #define SIMSCHEDULEBAR_H 7
 
 //当前播放名称（简单播放）

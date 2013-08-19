@@ -2844,7 +2844,7 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     {
         return EFAILED;
     }
-	
+	pMe->m_bChangeL =FALSE;
 	OEM_GetConfig(CFGI_COUNT_OF_MAIN, &count_main, sizeof(int8));
 	MSG_FATAL("CMainMenu_InitAppData.............=%d",count_main,0,0);
 	pMe->m_nRow        = count_main;

@@ -144,7 +144,7 @@
 //#define DIALOG_SOFTKEY_HIGH        (pMe->m_LineHeight + 2)
 #define DIALERAPP_NUM_CALLHISTORY_FIELDS 5
 #ifdef FEATURE_VERSION_K212
-#define CALL_ANIMATION_WIDTH           64
+#define CALL_ANIMATION_WIDTH           88
 #else
 #define CALL_ANIMATION_WIDTH           36
 #endif

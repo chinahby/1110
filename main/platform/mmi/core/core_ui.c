@@ -2247,10 +2247,16 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
 				#ifndef FEATURE_VERSION_K212
 				if (wParam == AVK_ENDCALL)
 				{
-					
 					break;	//¼ÌÐø´«¸øcallapp to End call.
 				}
 				#endif
+				if((cls == AEECLSID_CORE_APP))
+				{
+					ISHELL_PostEvent(AEE_GetShell(), 
+                     AEECLSID_CORE_APP,
+                     EVT_UPDATEIDLE,
+                     0,0L);
+				}
 				
 				return TRUE;
 

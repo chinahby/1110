@@ -201,6 +201,7 @@ typedef struct _MainMenu
 	IImage          *m_pImageSelectkbar;
 	nv_language_enum_type language;
 	IMedia *              m_pMedia;
+	boolean   	    m_bChangeL;
 #endif
 } MainMenu;
 

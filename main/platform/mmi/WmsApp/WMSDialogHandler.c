@@ -12915,6 +12915,9 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                         {
                             // 释放用户数据列表
                             WmsApp_FreeUserDataMOList(pMe->m_pUserDataMOList);
+							CLOSE_DIALOG(DLGRET_POP_DRFULL)
+							return TRUE;
+							
                         }
 	                
 	            	}

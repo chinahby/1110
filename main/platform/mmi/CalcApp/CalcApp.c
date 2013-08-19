@@ -515,14 +515,14 @@ when         who            what, where, why
 //显示数字线条宽度
 #define CALC_NUMBER_LINE_WIDTH        2
 //显示数字宽度
-#define CALC_NUMBER_WIDTH             9
+#define CALC_NUMBER_WIDTH             16
 //显示数字高度
 #ifdef FEATURE_VERSION_K212
-#define CALC_NUMBER_HEIGHT            26
+#define CALC_NUMBER_HEIGHT            24
 //显示计算区域X坐标原点
 #define CALC_VAL_RECT_X              10
 //显示计算区域最底行Y坐标原点
-#define CALC_VAL_RECT_Y              40
+#define CALC_VAL_RECT_Y              50
 //显示计算区域宽度
 #define CALC_VAL_RECT_WIDTH          212
 //显示单行计算区域高度

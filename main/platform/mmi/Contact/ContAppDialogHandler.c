@@ -7352,7 +7352,9 @@ static boolean  CContApp_HandleMainMenuDlgEvent( CContApp  *pMe,
     {
         return FALSE;
     }
+#ifndef FEATURE_VERSION_K212
     MENU_AUTO_SCROLL(pMenuCtl, eCode, wParam);
+#endif
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
@@ -7367,8 +7369,9 @@ static boolean  CContApp_HandleMainMenuDlgEvent( CContApp  *pMe,
             rc = pMe->m_rc;
             rc.dy = devinfo.cyScreen;
             rc.dy -= GetBottomBarHeight(pMe->m_pDisplay);
-            
+#ifndef FEATURE_VERSION_K212
             IMENUCTL_SetRect(pMenuCtl, &rc);
+#endif
             MSG_FATAL("EVT_DIALOG_START",0,0,0);
             
             //IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL);

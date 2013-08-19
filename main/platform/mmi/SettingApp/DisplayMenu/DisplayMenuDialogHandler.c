@@ -1031,7 +1031,8 @@ static boolean  HandlePictureDialogEvent(CDisplayMenu *pMe,
                         default:
                             break;
                     }
-                    CLOSE_DIALOG(DLGRET_CANCELED)
+					pMe->m_msg_id = IDS_DONE;
+                    CLOSE_DIALOG(DLGRET_MSG_POP)
                     break;
                 default:
                     break;
@@ -1142,8 +1143,12 @@ static boolean  HandleImgDelMsgDialogEvent(CDisplayMenu *pMe,
             }
             else
             {
-                ISHELL_SetTimer(pMe->m_pShell, 2000, DisplayMenu_DialogTimeout, pMe);
-            }
+#ifdef FEATURE_VERSION_K212
+                ISHELL_SetTimer(pMe->m_pShell, 500, DisplayMenu_DialogTimeout, pMe);
+#else
+				ISHELL_SetTimer(pMe->m_pShell, 2000, DisplayMenu_DialogTimeout, pMe);
+#endif           
+			}
             ISHELL_PostEvent( pMe->m_pShell,AEECLSID_APP_DISPLAYMENU,EVT_USER_REDRAW,0,0);
             return TRUE;
 

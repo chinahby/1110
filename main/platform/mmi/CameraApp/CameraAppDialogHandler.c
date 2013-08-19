@@ -395,7 +395,7 @@ static const CCameraSize g_CameraSizeCFG_10[] =
 #endif     
 #elif defined(FEATURE_DISP_240X320)
 #if defined(FEATURE_VERSION_K212)
-	{120,160,L"240*320"}, // VGA
+	//{120,160,L"240*320"}, // VGA
 	{180,240,L"480*640"}, // VGA
 #else
     //{128,160,L"128*160"}, // FULL Screen
@@ -2665,10 +2665,10 @@ static boolean CameraApp_RoutePopMenuCommandEvent(CCameraApp *pMe, uint16 wParam
             case CAMERACFGQUALITY:
                 return CameraApp_PopMenu_QualityCommandHandleEvent(pMe, wParam);
 
-            //#ifndef FEATURE_VERSION_X3
+            #ifndef FEATURE_VERSION_K212
             case CAMERACFGSIZE:
                 return CameraApp_PopMenu_SizeCommandHandleEvent(pMe, wParam);
-            //#endif
+            #endif
             
             case CAMERACFGTONE:
                 return CameraApp_PopMenu_ShutterToneCommandHandleEvent(pMe, wParam);
@@ -3239,12 +3239,12 @@ static boolean CameraApp_InitpopMenu(CCameraApp *pMe, IMenuCtl *popMenu)
             	MSG_FATAL("CAMERACFGQUALITY",0,0,0);
                 CameraApp_PopMenu_QualityInit(pMe, popMenu);
                 break;
-//#ifndef FEATURE_VERSION_X3
+#ifndef FEATURE_VERSION_K212
             case CAMERACFGSIZE:
                 MSG_FATAL("CAMERACFGSIZE",0,0,0);
                 CameraApp_PopMenu_SizeInit(pMe, popMenu);
                 break;
-//#endif
+#endif
             case CAMERACFGTONE:
             	MSG_FATAL("CAMERACFGQUALITY",0,0,0);
                 CameraApp_PopMenu_ShutterToneInit(pMe, popMenu);
@@ -4355,7 +4355,7 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
 	        break;
 	}
 
-#if defined(FEATURE_VERSION_X3)||defined(FEATURE_VERSION_K212) 
+#if defined(FEATURE_VERSION_X3)
 	// size cfgID
 	(void)ICONFIG_GetItem(pMe->m_pConfig,
                           CFGI_CAMERA_SIZE,
@@ -4906,7 +4906,7 @@ static void CameraApp_DrawCFGPromptText(CCameraApp *pMe)
                 #endif
                 break;
 
-            //#ifndef FEATURE_VERSION_X3      
+            #ifndef FEATURE_VERSION_K212      
             case CAMERACFGSIZE:
                 #ifdef FEATURE_VERSION_W317A
                 nResID = IDS_CFG_IMAGESIZE;
@@ -4914,7 +4914,7 @@ static void CameraApp_DrawCFGPromptText(CCameraApp *pMe)
                 nResID = IDS_CFG_SIZE;
                 #endif
                 break;
-            //#endif    
+            #endif    
                 
             case CAMERACFGTONE:
                 #ifdef FEATURE_VERSION_W317A

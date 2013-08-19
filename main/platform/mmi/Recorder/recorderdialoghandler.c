@@ -86,6 +86,8 @@ static void recorder_scroll_title( Recorder* pme);
 static void recorder_Sleep( Recorder* pme);  //add by pyuangui 2013-01-07
 #endif
 extern void OEMOS_Sleep(uint32 nMSecs);
+static void recorder_out( Recorder* pme);  //add by pyuangui 2013-01-07
+
 //-------------------------------------------------------------------------------------------------
 int Recorder_ShowDialog( Recorder* pme, uint16 dlgResId)
 {
@@ -716,7 +718,11 @@ static void recorder_show_media_spec( Media* pme)
 				IDS_MM_STATUS_DONE
 			};
 
+#ifdef FEATURE_VERSION_K212
+	int 			i 			= pme->m_nVolume / 16;
+#else
 	int 			i 			= pme->m_nVolume / 20;
+#endif
 	AEEImageInfo	info 		= {0};
 	IImage*			image   	= pRecorder->m_pImage[RECORDER_IMAGE_PROGRESSBAR1];
 	int				x			= 0;
@@ -1314,6 +1320,10 @@ static void recorder_Sleep( Recorder* pme)
 }
 #endif
 //Add end
+static void recorder_out( Recorder* pme)
+{
+	CLOSE_DIALOG( DLGRET_CANCELED);
+}
 
 static void recorder_scroll_title( Recorder* pme)
 {
@@ -1615,7 +1625,13 @@ __dialog_handler_of_state_record_stop__:
 				#endif
 				int						state	  	= ( pme->m_Media.m_eState == MEDIA_STATE_PAUSED ? 0 : 1);
 				Media*					pmedia    	= &pme->m_Media;
-
+#ifdef FEATURE_VERSION_K212
+				{
+					  nv_item_type	SimChoice;
+					  SimChoice.sim_select =1;
+					  (void)OEMNV_Put(NV_SIM_SELECT_I,&SimChoice);
+				}
+#endif
 				recorder_show_media_spec( pmedia);
 				recorder_draw_softkey( pme, button[pmedia->m_bRecorder][0], button[pmedia->m_bRecorder][1]);
 #if defined( FEATURE_RECODER_REPLAY)
@@ -1685,6 +1701,15 @@ __dialog_handler_of_state_record_stop__:
 					{
 						wParam = AVK_CLR;
 						goto __dialog_handler_of_state_record_discard__;
+					}
+					else if((pme->m_Media.m_bRecorder)&&( subState == 0))
+					{
+						MSG_FATAL("recorder_stop_if.................",0,0,0);
+						recorder_stop_if( &pme->m_Media);
+						drawModalDialog( pme->m_pDisplay, pStatic, IDS_RECORDER_DONE, FALSE);
+						ISHELL_SetTimer( pme->m_pShell, 1000, (PFNNOTIFY)recorder_out, pme);
+						reserve = TRUE;
+						return TRUE;
 					}
 					else if( !pme->m_Media.m_bRecorder)
 					{
@@ -1763,6 +1788,13 @@ __dialog_handler_of_state_record_discard__:
 					}
 					else
 					{
+#ifdef FEATURE_VERSION_K212
+						{
+					  		nv_item_type	SimChoice;
+					  		SimChoice.sim_select =2;
+					  		(void)OEMNV_Put(NV_SIM_SELECT_I,&SimChoice);
+						}
+#endif
 						CLOSE_DIALOG( DLGRET_CANCELED);
 					}
 				}

@@ -427,7 +427,8 @@ static NextFSMAction state_handler_of_state_showalert(CScheduleApp *pme)
             else
             {
                 //debug( ";back to %d", pme->m_stateToBackShowAlert);
-                MOVE_TO_STATE( pme->m_stateToBackShowAlert);
+                //MOVE_TO_STATE( pme->m_stateToBackShowAlert);
+                MOVE_TO_STATE( STATE_EXIT)
             }
             return NFSMACTION_CONTINUE;
 

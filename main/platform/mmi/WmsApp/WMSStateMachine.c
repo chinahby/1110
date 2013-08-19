@@ -3415,6 +3415,10 @@ static NextFSMAction WMSST_WRITEMSG_Handler(WmsApp *pMe)
             return NFSMACTION_WAIT;
 		//Add End
 
+		case DLGRET_POP_DRFULL:
+			WmsApp_ShowMsgBox(pMe, IDS_DRAFTFULL);
+            return NFSMACTION_WAIT;
+
         case DLGRET_SAVE:
             {
                 uint16    nNew = 0;
@@ -3483,6 +3487,7 @@ static NextFSMAction WMSST_WRITEMSG_Handler(WmsApp *pMe)
             pMe->m_ePMsgType = MESSAGE_CONFIRM;
             WmsApp_ShowMsgBox(pMe, IDS_SAVE);
             return NFSMACTION_WAIT;
+
 
         case DLGRET_SAVEDRAFT:
             // 用户选择保存，保存输入到草稿箱

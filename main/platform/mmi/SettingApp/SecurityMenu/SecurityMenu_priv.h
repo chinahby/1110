@@ -378,7 +378,11 @@ typedef struct _CSecurityMenu
 #define ID_MSG_EVENT            (EVT_USER)
 
 #define xOffset                 (5)
+#ifdef FEATURE_VERSION_K212
+#define SECURITY_PROMPTMSG_TIMER (500)
+#else
 #define SECURITY_PROMPTMSG_TIMER (1500)
+#endif
 /*==============================================================================
                                  全局数据
 ==============================================================================*/

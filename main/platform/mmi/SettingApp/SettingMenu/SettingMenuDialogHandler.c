@@ -3227,7 +3227,11 @@ static boolean  HandleWarningMessegeDialogEvent(CSettingMenu *pMe,
             return TRUE;
 
         case EVT_DIALOG_START:
-            ISHELL_SetTimer(pMe->m_pShell,1000,SettingMenu_DialogTimeout,pMe);
+#ifdef FEATURE_VERSION_K212
+            ISHELL_SetTimer(pMe->m_pShell,500,SettingMenu_DialogTimeout,pMe);
+#else
+			ISHELL_SetTimer(pMe->m_pShell,1000,SettingMenu_DialogTimeout,pMe);
+#endif
             ISHELL_PostEvent( pMe->m_pShell,AEECLSID_APP_SETTINGMENU,EVT_USER_REDRAW,0,0);
             return TRUE;
 

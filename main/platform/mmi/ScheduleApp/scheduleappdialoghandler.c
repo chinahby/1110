@@ -6403,6 +6403,7 @@ static boolean  dialog_handler_of_state_showalert( CScheduleApp* pme,
                        
                         ISHELL_StartAppletArgs(pme->m_pShell, AEECLSID_SPORTSAPP,args);
 #endif                         
+						CLOSE_DIALOG( DLGRET_OK)
                         //FREEIF(args);
                     }
 

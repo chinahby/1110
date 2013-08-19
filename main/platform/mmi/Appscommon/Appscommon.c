@@ -2671,8 +2671,11 @@ void ReDrawPromptMessage(void *pShell)
         IIMAGE_Release(StringBgMsgImg);
         StringBgMsgImg = NULL;       
     }
-
+#ifdef FEATURE_VERSION_K212
+	ISHELL_SetTimer(pShell, 500, (PFNNOTIFY)(ReDrawPromptMessage),pShell);
+#else
 	ISHELL_SetTimer(pShell, 1000, (PFNNOTIFY)(ReDrawPromptMessage),pShell);
+#endif
 }
 
 

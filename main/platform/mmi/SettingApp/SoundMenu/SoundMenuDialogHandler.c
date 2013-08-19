@@ -3121,7 +3121,11 @@ static boolean  HandleWarningMessegeDialogEvent(CSoundMenu *pMe,
             return TRUE;
 
         case EVT_DIALOG_START:
-            ISHELL_SetTimer(pMe->m_pShell,1000,SoundMenu_DialogTimeout,pMe);
+#ifdef FEATURE_VERSION_K212
+            ISHELL_SetTimer(pMe->m_pShell,500,SoundMenu_DialogTimeout,pMe);
+#else
+			ISHELL_SetTimer(pMe->m_pShell,1000,SoundMenu_DialogTimeout,pMe);
+#endif
             ISHELL_PostEvent( pMe->m_pShell,AEECLSID_APP_SOUNDMENU,EVT_USER_REDRAW,0,0);
             return TRUE;
 

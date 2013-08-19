@@ -404,8 +404,9 @@ int CContApp_BuildMainMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
 #endif
   //}
 //#endif /* FEATURE_RUIM_PHONEBOOK */    
-      
-    //(void)IMENUCTL_Redraw(pMenuCtl);
+#ifdef FEATURE_VERSION_K212
+    (void)IMENUCTL_Redraw(pMenuCtl);
+#endif
     return SUCCESS;
 }// CContApp_BuildOptsMenu
 

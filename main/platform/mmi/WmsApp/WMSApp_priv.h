@@ -733,6 +733,7 @@ typedef enum DLGRetValue
    ,DLGRET_MMS_MEMSTATUS
 #endif
    ,DLGRET_SAVE_TO_DRAFT		//Add By zzg 2012_11_16
+   ,DLGRET_POP_DRFULL          //add by yangdecai  
 /*   
    ,DLGRET_INSERTPICTURE //add by xuhui 2011/08/01
    ,DLGRET_INSERTPICTURE_PRESET //add by xuhui 2011/08/01
