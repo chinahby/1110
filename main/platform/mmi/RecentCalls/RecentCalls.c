@@ -588,7 +588,7 @@ static void  recentcalls_MissedList (IRecentCalls *pi)
    args = MALLOC(4);
    *args = STARTARG_MISSEDCALL;
    pMe->m_callsCategory = AEECALLHISTORY_CALL_TYPE_MISSED;//CALLHISTORY_MISSED_CATEGORY;
-   pMe->m_eCurState = STATE_RECORD_LIST;
+   pMe->m_eCurState = STATE_VERIFY_PASSWORD;
    pMe->record_selected = 0;
    (void)ISHELL_StartAppletArgs(pMe->m_pShell,
                           AEECLSID_APP_RECENTCALL,
