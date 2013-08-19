@@ -2295,8 +2295,16 @@ void keypad_clear_headset_key(void)
 #define DLOAD_KEY_ROW  0
 #define DLOAD_KEY_COL  0
 #else
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_12832)
+#define DLOAD_KEY_ROW  4
+#define DLOAD_KEY_COL  3
+#elif defined(FEATURE_VERSION_K202)
+#define DLOAD_KEY_ROW  4
+#define DLOAD_KEY_COL  1
+#else
 #define DLOAD_KEY_ROW  3
 #define DLOAD_KEY_COL  0
+#endif
 #endif
 
 boolean keypad_is_dload_key_pressed(void)
