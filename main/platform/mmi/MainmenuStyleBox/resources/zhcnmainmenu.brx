@@ -136,11 +136,24 @@
 	<STRING Id="1097" Name="IDS_MAIN_MENU_TORCH">
 		<Text>手电筒</Text>
 	</STRING>
+	<STRING Id="1098" Name="IDS_MAIN_MENU_TORCH_ON">
+		<Text>开</Text>
+	</STRING>
+	<STRING Id="1099" Name="IDS_MAIN_MENU_TORCH_OFF">
+		<Text>关</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="0">
 		<Controls/>
 		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</DIALOG>
+	<Dialog Id="6002" Name="IDD_FLASHLIGHT_SETTING" Focus="7002">
+		<Controls>
+			<Menu Id="7002" Name="IDC_FLASHLIGHT_SET">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
 </Dialogs>
 </BREWRes>

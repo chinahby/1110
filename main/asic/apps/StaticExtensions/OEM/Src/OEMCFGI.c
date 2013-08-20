@@ -2140,7 +2140,11 @@ static OEMConfigListType oemi_cache = {
    ,TRUE											//CFGI_ONEKEY_LOCK_KEYPAD
 #endif
    ,{0}    //CFGI_RUIM_ID_SAVE_TABLE
-   ,{1}    //CFGI_COUNT_OF_MAIN
+#ifdef FEATURE_VERSION_EC99
+  ,{0}    //CFGI_COUNT_OF_MAIN
+#else
+  ,{1}    //CFGI_COUNT_OF_MAIN
+#endif   
 #ifdef FEATURE_SOUND_BO
    ,TRUE		//CFGI_SOUND_BO_DIA,
    ,FALSE		//CFGI_SOUND_BO_MAIN,
@@ -2918,7 +2922,11 @@ void OEM_RestoreFactorySetting( void )
    oemi_cache.sms_retry_period          = OEMNV_SMS_RETRY_PERIOD;
    oemi_cache.sms_retry_interval        = OEMNV_SMS_RETRY_INTERVAL;
    oemi_cache.sms_gcf_flag              = FALSE;
+#ifdef FEATURE_VERSION_EC99
+   oemi_cache.m_count_num_main          = 0;
+#else
    oemi_cache.m_count_num_main          = 1;
+#endif
 #ifdef CUST_EDITION
    WSTRCPY(oemi_cache.voicemail_number,OEMNV_VOICEMAIL_NUMBER);
    nvi.sms_vm_number.num_digits = WSTRLEN(oemi_cache.voicemail_number);

@@ -199,6 +199,15 @@
 	<String Id="1112" Name="IDS_MAIN_MENU_TITLE_32">
 		<Text></Text>
 	</String>
+	<STRING Id="1097" Name="IDS_MAIN_MENU_TORCH">
+		<Text>Torch</Text>
+	</STRING>
+	<STRING Id="1098" Name="IDS_MAIN_MENU_TORCH_ON">
+		<Text>On</Text>
+	</STRING>
+	<STRING Id="1099" Name="IDS_MAIN_MENU_TORCH_OFF">
+		<Text>Off</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="0">
@@ -233,6 +242,13 @@
 	<Dialog Id="6006" Name="IDD_DATA_MENU" Focus="7004">
 		<Controls>
 			<Menu Id="7004" Name="IDC_DATA_MENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6008" Name="IDD_FLASHLIGHT_SETTING" Focus="7005">
+		<Controls>
+			<Menu Id="7005" Name="IDC_FLASHLIGHT_SET">
 				<Items/>
 			</Menu>
 		</Controls>

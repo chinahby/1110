@@ -30,9 +30,13 @@
 #define  MAX_MATRIX_ROWS 3
 #define  MAX_MATRIX_COLS 4
 #elif defined (FEATURE_DISP_220X176)
+#ifdef FEATURE_VERSION_EC99
+#define  MAX_MATRIX_ITEMS 8
+#else
 #define  MAX_MATRIX_ITEMS 12
 #define  MAX_MATRIX_ROWS 3
 #define  MAX_MATRIX_COLS 4
+#endif
 #elif defined (FEATURE_DISP_128X128)
 #define  MAX_MATRIX_ITEMS 9
 #define  MAX_MATRIX_ROWS 3
@@ -104,6 +108,7 @@ typedef struct _MainMenuMod
 typedef enum MainmenuState
 {
     MAINST_MAIN,
+    MAINST_FLASHLIGHT,    
     MAINST_EXIT
 } MainmenuState;
 
@@ -117,6 +122,7 @@ typedef enum
 typedef enum DLGRetValue
 {
     DLGRET_CREATE,
+    DLGRET_FLASHLITHT,      //Add By zzg 2013_08_30 for Torch
     DLGRET_CANCELED
 }DLGRetValue;
 
@@ -150,6 +156,10 @@ typedef struct _MainMenu
     
     int             m_nRow;
     int             m_nColumn;
+
+#ifdef FEATURE_VERSION_EC99
+    int             m_index;
+#endif
     
     MAINMENU_STATUS_e_type  m_eAppStatus;   // Applet 当前运行状态
     
@@ -199,6 +209,14 @@ typedef struct _MainMenu
 #ifdef FEATURE_VERSION_K212
 	IImage          *m_pImageSelectk212[9];
 	IImage          *m_pImageSelectkbar;
+	nv_language_enum_type language;
+	IMedia *              m_pMedia;
+	boolean   	    m_bChangeL;
+#endif
+
+#ifdef FEATURE_VERSION_EC99   
+    //IImage          *m_pImageSelectEC99[8];
+    IImage          *m_pImageSelectEC99;
 	nv_language_enum_type language;
 	IMedia *              m_pMedia;
 	boolean   	    m_bChangeL;
@@ -344,6 +362,17 @@ typedef struct _MainMenu
 	#define ICON9_ANI_EN      "fs:/image/mainmenu/ICON_Surface_en.png"
 	
 #else
+
+#ifdef FEATURE_VERSION_EC99      
+	#define ICON1_ANI      "fs:/image/mainmenu/Icon_calllog.png"
+    #define ICON2_ANI      "fs:/image/mainmenu/Icon_flashlight.png"
+    #define ICON3_ANI      "fs:/image/mainmenu/Icon_multimedia.png"
+    #define ICON4_ANI      "fs:/image/mainmenu/Icon_phonebook.png"
+    #define ICON5_ANI      "fs:/image/mainmenu/Icon_settings.png"
+    #define ICON6_ANI      "fs:/image/mainmenu/Icon_tianyi.png"
+    #define ICON7_ANI      "fs:/image/mainmenu/Icon_tools.png"
+    #define ICON8_ANI      "fs:/image/mainmenu/Icon_wms.png"		
+#else  
 	
 	#ifdef FEATURE_LCD_TOUCH_ENABLE
     #define ICONFOUCS_ANI      "fs:/image/mainmenu/foucs.png"
@@ -362,6 +391,7 @@ typedef struct _MainMenu
     #define ICON11_ANI     "fs:/image/mainmenu/qsc1100_11.png"
     #define ICON12_ANI     "fs:/image/mainmenu/qsc1100_12.png"	
 	#endif
+#endif    
 #endif    
 #endif
 #if defined (FEATURE_DISP_128X128)
@@ -522,6 +552,18 @@ typedef struct _MainMenu
 #define MUSIC_PATH8 "fs:/hsmm/mainmenu/settings.mp3"
 #define MUSIC_PATH9 "fs:/hsmm/mainmenu/suafer.mp3"
 #endif
+
+#ifdef FEATURE_VERSION_EC99
+#define MUSIC_PATH1 "fs:/hsmm/mainmenu/recentcall.mp3"
+#define MUSIC_PATH2 "fs:/hsmm/mainmenu/mutimed.mp3"     //TORCH
+#define MUSIC_PATH3 "fs:/hsmm/mainmenu/mutimed.mp3"      
+#define MUSIC_PATH4 "fs:/hsmm/mainmenu/contont.mp3"
+#define MUSIC_PATH5 "fs:/hsmm/mainmenu/settings.mp3"       
+#define MUSIC_PATH6 "fs:/hsmm/mainmenu/suafer.mp3"
+#define MUSIC_PATH7 "fs:/hsmm/mainmenu/recentcall.mp3"  //TOOLS
+#define MUSIC_PATH8 "fs:/hsmm/mainmenu/mesage.mp3"
+#endif
+
 
 // 此宏用当前状态更新先前状态，再用nextState状态更新当前状态
 #define MOVE_TO_STATE(nextState)            \

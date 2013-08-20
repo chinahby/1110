@@ -81,6 +81,16 @@
     #define SCROLLBAR_WIDTH         5
     #define STATUSBAR_HEIGHT        16
 #elif defined(FEATURE_DISP_220X176)		   //176 = statebar(22)+bottombar(22)  +6*menuitem(22)
+#ifdef FEATURE_VERSION_EC99
+    #define SCREEN_WIDTH            220
+    #define SCREEN_HEIGHT           176
+    #define STATEBAR_HEIGHT         26
+    #define BOTTOMBAR_HEIGHT        30
+    #define TITLEBAR_HEIGHT         26
+    #define MENUITEM_HEIGHT         30
+    #define SCROLLBAR_WIDTH         5
+    #define STATUSBAR_HEIGHT        26	
+#else
     #define SCREEN_WIDTH            220
     #define SCREEN_HEIGHT           176
     #define STATEBAR_HEIGHT         22
@@ -89,6 +99,7 @@
     #define MENUITEM_HEIGHT         22
     #define SCROLLBAR_WIDTH         5
     #define STATUSBAR_HEIGHT        22	
+#endif    
 #elif defined(FEATURE_DISP_128X160)			//160 = statebar(16)+bottombar(16) +8*menuitem(16)
 	#define SCREEN_WIDTH            128
     #define SCREEN_HEIGHT           160

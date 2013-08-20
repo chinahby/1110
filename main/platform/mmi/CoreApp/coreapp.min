@@ -216,6 +216,9 @@ else ifeq ($(USES_RESDIR), K212)
 CONSTFILE_FILES+=\
 	poweron.gif|fs:/image/pwronoffani/poweron.gif \
 	poweroff.gif|fs:/image/pwronoffani/poweroff.gif	
+else ifeq ($(USES_RESDIR), EC99)
+CONSTFILE_FILES+=\
+	poweron.gif|fs:/image/pwronoffani/poweron.gif	
 else
 CONSTFILE_FILES+=\
 	poweron.gif|fs:/image/pwronoffani/poweron.gif \
@@ -279,6 +282,15 @@ CONSTFILE_FILES+=\
 	five_5.mp3|fs:/hsmm/coreapp/five_5.mp3 \
 	Ten.mp3|fs:/hsmm/coreapp/Ten.mp3
 	
+endif
+
+ifeq ($(USES_RESDIR),EC99)
+CONSTFILE_FILES+=\
+	tow_2.mp3|fs:/hsmm/coreapp/tow_2.mp3 \
+	morning.mp3|fs:/hsmm/coreapp/morning.mp3 \
+	afternoon.mp3|fs:/hsmm/coreapp/afternoon.mp3 \
+	five_5.mp3|fs:/hsmm/coreapp/five_5.mp3 \
+	Ten.mp3|fs:/hsmm/coreapp/Ten.mp3
 endif
 # 加入另外一种语言资源文件
 ifneq ($(EXTLANG1),NO)

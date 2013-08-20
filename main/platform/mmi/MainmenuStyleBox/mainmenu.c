@@ -4639,6 +4639,2014 @@ static void MainMenu_MediaNotify(void *pUser, AEEMediaCmdNotify *pCmdNotify)
         }
     }
 }
+#elif defined (FEATURE_VERSION_EC99)
+static boolean Main_loadover = FALSE;
+#ifdef FEATURE_SOUND_BO
+static char* MAIN_SOUND_NAME[] =
+{
+	MUSIC_PATH1,
+	MUSIC_PATH2,
+	MUSIC_PATH3,
+	MUSIC_PATH4,
+	MUSIC_PATH5,
+	MUSIC_PATH6,
+	MUSIC_PATH7,
+	MUSIC_PATH8,
+};
+#endif
+#define PARAM_NOT_REF(x)
+/*==============================================================================
+
+                              本地函数声明
+
+==============================================================================*/
+static MainMenuMod gMainMenuMod;
+static const VTBL( IModule) gModFuncs =
+{
+    MainMenuMod_AddRef,
+    MainMenuMod_Release,
+    MainMenuMod_CreateInstance,
+    MainMenuMod_FreeResources
+};
+#ifdef FEATURE_SOUND_BO
+static void MainMenu_PlayShutterSound(MainMenu *pMe,int key);
+static void MainMenu_MediaNotify(void *pUser, AEEMediaCmdNotify *pCmdNotify);
+#endif
+static uint32  MainMenu_AddRef( IMainMenu *pi);
+
+static uint32  MainMenu_Release ( IMainMenu *pi);
+
+static boolean MainMenu_HandleEvent( IMainMenu *pi,
+    AEEEvent eCode,
+    uint16  wParam,
+    uint32 dwParam
+);
+
+static MainMenu gMainMenu={0};
+
+static const VTBL( IMainMenu) gMainMenuMethods =
+{
+    MainMenu_AddRef,
+    MainMenu_Release,
+    MainMenu_HandleEvent
+};
+
+int MainMenuMod_Load( IShell *pIShell, void *ph, IModule **ppMod);
+
+int MainMenuMod_New( int16 nSize,
+    IShell              *pIShell,
+    void                *ph,
+    IModule             **ppMod,
+    PFNMODCREATEINST    pfnMC,
+    PFNFREEMODDATA      pfnMF
+);
+
+static int MainMenu_New( IShell *ps, IModule *pIModule, IMainMenu **ppObj);
+
+static int CMainMenu_InitAppData(MainMenu *pMe);
+
+static void CMainMenu_FreeAppData(MainMenu *pMe);
+
+static void MainMenu_RunFSM(MainMenu *pMe);
+
+static void MainMenu_DrawBackGround(MainMenu *pMe, AEERect *pRect);
+
+// 初始整个背景及全部初始图标
+
+int SetBrowserArr_Main(IShell *pShell ,char *purl);
+
+static void DrawMatrix(MainMenu *pMe);
+
+static void MoveCursorTo(MainMenu *pMe, int index);
+
+static void SetCursor(MainMenu *pMe, int index);
+
+static int StartApplet(MainMenu *pMe, int i);
+
+boolean MainMenu_RouteDialogEvt(MainMenu *pMe,
+    AEEEvent    eCode,
+    uint16  wParam,
+    uint32 dwParam
+);
+
+NextFSMAction MainMenu_ProcessState(MainMenu *pMe);
+
+void MainMenu_ShowDialog(MainMenu  *pMe,  uint16 dlgResId);
+
+static boolean  gbMainmenuLock = FALSE;
+
+static void Main_keypadtimer(void *pUser);
+static void Main_loadtimer(void *pUser);
+
+
+// MAINST_MAIN 状态处理函数
+static NextFSMAction MAINST_MAIN_Handler(MainMenu *pMe);
+static NextFSMAction MAINST_FLASHLIGHT_Handler(MainMenu *pMe);        //Add By zzg 2013_08_20
+//MAINST_EXIT  状态处理函数
+static NextFSMAction MAINST_EXIT_Handler(MainMenu *pMe);
+static boolean  MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam);
+static boolean  MainMenu_FlashlightMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam); //Add By zzg 2013_08_20
+
+/*==============================================================================
+                              
+                              本地（静态）数据
+                              
+==============================================================================*/
+static char* ICON_ANI[] =
+{
+    ICON1_ANI,
+    ICON2_ANI,
+    ICON3_ANI,
+    ICON4_ANI,
+    ICON5_ANI,
+    ICON6_ANI,
+    ICON7_ANI,
+    ICON8_ANI,
+};
+
+static char* MUSIC_PATH[] =
+{
+	MUSIC_PATH1,
+	MUSIC_PATH2,
+	MUSIC_PATH3,
+	MUSIC_PATH4,
+	MUSIC_PATH5,
+	MUSIC_PATH6,
+	MUSIC_PATH7,
+	MUSIC_PATH8,
+};
+
+/*=============================================================================
+FUNCTION:  MainMenuMod_Load
+
+DESCRIPTION: 
+
+PARAMETERS:
+
+RETURN VALUE:
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+int MainMenuMod_Load( IShell *pIShell, void *ph, IModule **ppMod)
+{	
+    return MainMenuMod_New( sizeof( MainMenuMod),
+                    pIShell,
+                    ph,
+                    ppMod,
+                    NULL,
+                    NULL);
+}
+
+/*=============================================================================
+FUNCTION:  MainMenuMod_New
+
+DESCRIPTION: 
+
+PARAMETERS:
+
+RETURN VALUE:
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+int  MainMenuMod_New( int16 nSize,
+    IShell   *pIShell,
+    void     *ph,
+    IModule  **ppMod,
+    PFNMODCREATEINST pfnMC,
+    PFNFREEMODDATA pfnMF
+)
+{
+#if !defined( AEE_SIMULATOR)
+    PARAM_NOT_REF( nSize)
+    PARAM_NOT_REF( pfnMC)
+    PARAM_NOT_REF( pfnMF)
+    PARAM_NOT_REF( ph)
+#endif
+
+    if( NULL == ppMod)
+    {
+        return EFAILED;
+    }
+
+    MEMSET( &gMainMenuMod, 0, sizeof( MainMenuMod));
+
+    INIT_VTBL( &gMainMenuMod, IModule, gModFuncs);
+    gMainMenuMod.referenceCounter = 1;
+    *ppMod = ( IModule *)&gMainMenuMod;
+    return AEE_SUCCESS;
+}
+
+/*=============================================================================
+FUNCTION:  MainMenuMod_AddRef
+
+DESCRIPTION: 
+
+PARAMETERS:
+
+RETURN VALUE:
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+static uint32 MainMenuMod_AddRef( IModule *po)
+{
+    return( ++( ( MainMenuMod *)po)->referenceCounter);
+}
+
+/*=============================================================================
+FUNCTION:  MainMenuMod_Release
+
+DESCRIPTION: 
+
+PARAMETERS:
+
+RETURN VALUE:
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+static uint32 MainMenuMod_Release( IModule *po)
+{
+    if ( ( ( MainMenuMod *) po)->referenceCounter == 0)
+    {
+        return 0;
+    }
+
+    return( --( ( MainMenuMod *)po)->referenceCounter);
+}
+
+/*=============================================================================
+FUNCTION:  MainMenuMod_CreateInstance
+
+DESCRIPTION: 
+
+PARAMETERS:
+
+RETURN VALUE:
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+static int  MainMenuMod_CreateInstance( IModule *po,
+    IShell *pIShell,
+    AEECLSID ClsId,
+    void **ppObj
+)
+{
+    *ppObj = NULL;
+
+    if( ClsId != AEECLSID_MAIN_MENU || MainMenu_New( pIShell, po, ( IMainMenu**)ppObj) != SUCCESS)
+    {
+        return EFAILED;
+    }
+
+    return SUCCESS;
+}
+
+/*=============================================================================
+FUNCTION:  MainMenuMod_FreeResources
+
+DESCRIPTION: 
+
+PARAMETERS:
+
+RETURN VALUE:
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+static void MainMenuMod_FreeResources( IModule *po, IHeap *ph, IFileMgr *pfm)
+{
+}
+
+/*=============================================================================
+FUNCTION:  MainMenu_New
+
+DESCRIPTION: 
+
+PARAMETERS:
+
+RETURN VALUE:
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+static int MainMenu_New( IShell *ps, IModule *pIModule, IMainMenu **ppObj)
+{
+    int retVal = SUCCESS;
+    if( 0 == gMainMenu.referenceCounter)
+    {
+
+        if( pIModule == NULL || ps == NULL)
+        {
+            return EFAILED;
+        }
+
+        MEMSET(&gMainMenu, 0, sizeof(gMainMenu));
+        INIT_VTBL(&gMainMenu, IMainMenu, gMainMenuMethods);
+
+       
+        gMainMenu.m_pShell     = ps;
+        gMainMenu.m_pModule    = pIModule;
+        retVal = CMainMenu_InitAppData(&gMainMenu);
+        if(retVal != SUCCESS)
+        {
+            CMainMenu_FreeAppData((MainMenu*)&gMainMenu);
+            return retVal;
+        }
+        (void) ISHELL_AddRef( ps);
+        (void) IMODULE_AddRef( pIModule);
+        gMainMenu.referenceCounter  = 0;
+
+        
+    }
+
+    ++ gMainMenu.referenceCounter;
+    *ppObj = ( IMainMenu*)&gMainMenu;
+    
+    return retVal;
+}
+
+/*==============================================================================
+函数:
+    CMainMenuApp_InitAppData
+
+说明:
+    初始化 MainMenu Applet 结构数据缺省值。
+
+参数:
+    pMe [in]: 指向 MainMenu Applet 对象结构的指针。该结构包含小程序的特定信息。
+
+返回值:
+    EFAILED: 初始化失败。
+    SUCCESS: 初始化成功。
+
+备注:
+
+==============================================================================*/
+static int CMainMenu_InitAppData(MainMenu *pMe)
+{	
+	int8 count_main = 1;
+    int i = 0;
+	pMe->language = 0;
+
+    pMe->m_pMedia = NULL;
+    
+    if (NULL == pMe)
+    {
+        return EFAILED;
+    }
+	pMe->m_bChangeL =FALSE;
+	OEM_GetConfig(CFGI_COUNT_OF_MAIN, &count_main, sizeof(int8));
+	MSG_FATAL("CMainMenu_InitAppData.............=%d",count_main,0,0);
+	 
+    pMe->m_index = count_main;
+    
+	Main_loadover = FALSE;
+
+    // 初始化菜单Title
+	pMe->m_IconTitle[0]     = IDS_MAIN_MENU_RECENTCALLS;    
+    pMe->m_IconTitle[1]     = IDS_MAIN_MENU_TORCH;           
+    pMe->m_IconTitle[2]     = IDS_MAIN_MENU_MULTIMEDIA;
+    pMe->m_IconTitle[3]     = IDS_MAIN_MENU_CONTACTS;      
+    pMe->m_IconTitle[4]     = IDS_MAIN_MENU_SETTINGS;      
+    pMe->m_IconTitle[5]     = IDS_MAIN_MENU_UTK;       
+    pMe->m_IconTitle[6]     = IDS_MAIN_MENU_TOOLS;
+    pMe->m_IconTitle[7]     = IDS_MAIN_MENU_MESSAGES;     
+    
+    //pMe->m_pImageBg = ISHELL_LoadImage(pMe->m_pShell, ICON_ANI_BG);
+    
+    // 接口创建及相关初始化
+    if (ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_CONFIG,
+            (void **)&pMe->m_pConfig) != SUCCESS)
+    {    	
+        return EFAILED;
+    }
+
+    if( ISHELL_CreateInstance( pMe->m_pShell, AEECLSID_BACKLIGHT, (void **)&pMe->m_pBacklight)!=AEE_SUCCESS)
+    {
+        return FALSE;
+    }
+     
+    if (ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_DISPLAY, 
+            (void **) &pMe->m_pDisplay) != SUCCESS)
+    {    	
+        return EFAILED;
+    }
+	if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
+                                            AEECLSID_ANNUNCIATOR,
+                                            (void **)&pMe->m_pIAnn))
+    {    	
+        return EFAILED;
+    }
+  
+	(void) ICONFIG_GetItem(pMe->m_pConfig,
+									   CFGI_LANGUAGE_SELECTION,
+									   &pMe->language,
+									   sizeof(pMe->language));
+
+    /*
+	if(pMe->language == NV_LANGUAGE_ENGLISH)
+	{
+	    for (i=0; i<MAX_MATRIX_ITEMS; i++)
+		{
+		    pMe->m_pImageSelectEC99[i] = ISHELL_LoadImage(pMe->m_pShell, ICON_ANI[i]);                
+        }
+		pMe->m_bChangeL =TRUE;
+	}
+	else
+	{
+	    for (i=0; i<MAX_MATRIX_ITEMS; i++)
+		{
+		    pMe->m_pImageSelectEC99[i] = ISHELL_LoadImage(pMe->m_pShell, ICON_ANI[i]);    
+        }
+		pMe->m_bChangeL =FALSE;
+	}	
+    */
+	
+	MSG_FATAL("CMainMenu_InitAppData.............over.....",0,0,0);
+    return SUCCESS;
+}
+
+/*==============================================================================
+函数:
+    CMainMenu_FreeAppData
+
+说明:
+    释放 MainMenu Applet 相关资源。
+
+参数:
+    pMe [in]: 指向MainMenu Applet 对象结构的指针。该结构包含小程序的特定信息。
+
+返回值:
+    none
+
+备注:
+
+==============================================================================*/
+static void CMainMenu_FreeAppData(MainMenu *pMe)
+{
+    if (NULL == pMe)
+    {
+        return;
+    }
+
+    pMe->m_eAppStatus = MAINMENU_STOP;
+    if (NULL != pMe->m_pConfig)
+    {
+        ICONFIG_Release(pMe->m_pConfig);
+        pMe->m_pConfig = NULL;
+    }    
+    
+    if (pMe->m_pDisplay != NULL)
+    {
+        (void) IDISPLAY_Release(pMe->m_pDisplay);
+        pMe->m_pDisplay = NULL;
+    }
+	if (pMe->m_pIAnn)
+    {
+        IANNUNCIATOR_Release(pMe->m_pIAnn);
+		pMe->m_pIAnn = NULL;
+    }
+
+    if(pMe->m_pBacklight)
+    {
+        IBACKLIGHT_Release(pMe->m_pBacklight);
+        pMe->m_pBacklight=NULL;
+    }
+	if(pMe->m_pMedia)
+    {
+        IMEDIA_Release(pMe->m_pMedia);
+        pMe->m_pMedia = NULL;
+    }
+    //释放图片资源
+    Main_loadover = FALSE;
+    {
+         int i;
+         int j;
+         if (pMe->m_pImageBg !=NULL)
+         {
+             (void) IIMAGE_Release(pMe->m_pImageBg);
+             pMe->m_pImageBg = NULL;
+         }
+ 
+         for(i=0;i<MAX_MATRIX_ITEMS;i++)
+         {
+             if(pMe->m_pImageIcon[i] != NULL)
+             {
+                 (void)IIMAGE_Release(pMe->m_pImageIcon[i]);
+                 pMe->m_pImageIcon[i] = NULL;
+             }
+         } 
+
+        /*
+ 		for(j=0;j<MAX_MATRIX_ITEMS;j++)
+         {
+             if(pMe->m_pImageSelectEC99[j] != NULL)
+             {   
+                 (void)IIMAGE_Release(pMe->m_pImageSelectEC99[j]);
+                 pMe->m_pImageSelectEC99[j] = NULL;
+             }
+         } 
+        */
+         if(pMe->m_pImageSelectEC99 != NULL)
+             {   
+                 (void)IIMAGE_Release(pMe->m_pImageSelectEC99);
+                 pMe->m_pImageSelectEC99 = NULL;
+             }
+    }  
+}
+
+/*=============================================================================
+FUNCTION:  MainMenu_AddRef
+
+DESCRIPTION: 
+
+PARAMETERS:
+
+RETURN VALUE:
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+static uint32  MainMenu_AddRef( IMainMenu *pi)
+{
+    return ( ++gMainMenu.referenceCounter);
+}
+
+/*=============================================================================
+FUNCTION:  MainMenu_Release
+
+DESCRIPTION: 
+
+PARAMETERS:
+
+RETURN VALUE:
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+static uint32  MainMenu_Release( IMainMenu *pi)
+{
+    register MainMenu *pMe = (MainMenu*)pi;
+    if (pMe->referenceCounter == 0)
+    {
+        return 0;
+    }
+    
+    if( --pMe->referenceCounter)
+    {
+        return pMe->referenceCounter;
+    }
+
+
+    CMainMenu_FreeAppData(pMe);
+
+    (void) ISHELL_Release(pMe->m_pShell);
+    (void) IMODULE_Release(pMe->m_pModule);
+    return 0;
+}
+
+/*==============================================================================
+函数:
+    MainMenu_RunFSM
+
+说明:
+    运行有限状态机引擎。
+
+参数:
+    pMe [in]: 指向MainMenu Applet对象结构的指针。该结构包含小程序的特定信息。
+       
+返回值:
+    无。
+
+备注:
+
+==============================================================================*/
+static void MainMenu_RunFSM(MainMenu *pMe)
+{
+    NextFSMAction nextFSMAction = NFSMACTION_WAIT;
+    for ( ; ; )
+    {
+        nextFSMAction = MainMenu_ProcessState(pMe);
+
+        // 这里不需要复杂的状态机，因此为简化状态机设计这里仅用一个布尔变量来
+        // 指示dlgResult是否应该被改写。在某些特殊场合（见状态机设计），这种作
+        // 法，避免了不必要的复杂性，简化了设计。
+        if (pMe->m_bDoNotOverwriteDlgResult)
+        {
+            // We allow only one iteration without touching this variable. So,
+            // let's reset it back to indicate that we are going to overwrite the
+            // result for all subsequent iterations.
+            pMe->m_bDoNotOverwriteDlgResult = FALSE;
+        }
+        else
+        {
+            // Overwrite the dlgResult to its default value. The next dialog that
+            // we are going to display will set and return the dlgResult based on
+            // the users action.
+            pMe->m_eDlgReturn = DLGRET_CREATE;
+        }
+
+        // If the state machine processing engine indicates that it created a
+        // dialog and requesting us to exit this loop, then we quit.
+        if (nextFSMAction == NFSMACTION_WAIT)
+        {
+            break;
+        }
+    }
+}
+
+/*=============================================================================
+FUNCTION:  MainMenu_HandleEvent
+
+DESCRIPTION: 
+
+PARAMETERS:
+
+RETURN VALUE:
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+static boolean MainMenu_HandleEvent( IMainMenu *pi,
+    AEEEvent eCode,
+    uint16  wParam,
+    uint32 dwParam
+)
+{
+    MainMenu *pMe = (MainMenu*)pi;
+    AEEAppStart* as = NULL;
+    switch ( eCode)
+    {
+        case EVT_APP_START:
+#ifdef FEATURE_RANDOM_MENU_REND
+            DisplayRend_Enable(TRUE);
+#endif
+            // 此事件dwParam为指针，不应为0
+            if (dwParam == 0) 
+            {
+                return FALSE;
+            }            
+            as = (AEEAppStart*)dwParam;
+   
+            pMe->m_rc = as->rc;
+
+            pMe->m_currState = MAINST_MAIN;
+            pMe->m_eDlgReturn = DLGRET_CREATE;
+            pMe->m_eAppStatus = MAINMENU_RUNNING;
+            IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,TRUE); 
+            MainMenu_RunFSM(pMe);
+            return TRUE;
+
+        case EVT_APP_STOP:
+            {
+                int theFocus = 0;
+                SetCursor( pMe, theFocus);
+                (void)ISHELL_CancelTimer( pMe->m_pShell, NULL, pMe);
+                pMe->m_eAppStatus = MAINMENU_STOP;
+#ifdef FEATURE_RANDOM_MENU_REND
+                DisplayRend_Enable(FALSE);
+#endif
+                return TRUE;
+            }
+
+        case EVT_APP_SUSPEND:
+            (void)ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);
+            pMe->m_eAppStatus = MAINMENU_SUSPEND;
+#ifdef FEATURE_RANDOM_MENU_REND
+            DisplayRend_Push();
+            DisplayRend_Start(FALSE);
+#endif
+            return TRUE;
+        
+
+        case EVT_APP_RESUME:
+            {
+                AEEAppStart* as = ( AEEAppStart*)dwParam;
+                pMe->m_rc    = as->rc;
+                pMe->m_eAppStatus = MAINMENU_RUNNING;
+#ifdef FEATURE_RANDOM_MENU_REND
+                DisplayRend_Push();
+                DisplayRend_Start(TRUE);
+#endif
+                // 开始跑WMS状态机
+                MainMenu_RunFSM(pMe); 
+                return TRUE;
+            }
+
+        case EVT_DIALOG_INIT:
+            pMe->m_pActiveIDlg = (IDialog*)dwParam;
+            pMe->m_pActivedlgID = wParam;
+            return MainMenu_RouteDialogEvt(pMe,eCode,wParam,dwParam);
+
+        case EVT_DIALOG_START:
+            return MainMenu_RouteDialogEvt(pMe,eCode,wParam,dwParam);
+
+        case EVT_USER_REDRAW:
+            return MainMenu_RouteDialogEvt(pMe,eCode,wParam,dwParam);
+
+        case EVT_DIALOG_END:
+
+            (void) MainMenu_RouteDialogEvt(pMe,eCode,wParam,dwParam);
+            pMe->m_pActiveIDlg = NULL;
+            pMe->m_pActivedlgID = 0;
+            if(pMe->m_eAppStatus == MAINMENU_RUNNING)
+            {
+                MainMenu_RunFSM(pMe);
+            }
+            return TRUE;
+        case EVT_KEY:
+#if MIN_BREW_VERSION(3,0)
+            // do not want to handle au
+            if (((dwParam & KB_AUTOREPEAT) != 0) &&
+                (wParam != AVK_UP) &&
+                (wParam != AVK_DOWN) &&
+                (wParam != AVK_LEFT) &&
+                (wParam != AVK_RIGHT))
+            {
+                return TRUE;
+            }
+#endif
+            return MainMenu_RouteDialogEvt(pMe,eCode,wParam,dwParam);  
+#if defined (FEATURE_VERSION_N021)||defined(FEATURE_VERSION_W0216A)
+		case EVT_KEY_HELD:
+			{
+				if(wParam == AVK_INFO)
+				{
+					(void) ISHELL_PostEvent(pMe->m_pShell,
+                                        AEECLSID_CORE_APP,
+                                        EVT_USER,
+                                        1,
+                                        0);
+                    ISHELL_CloseApplet(pMe->m_pShell,TRUE);
+				}
+			}
+			break;
+#endif
+        case EVT_KEY_PRESS:
+        case EVT_KEY_RELEASE:
+        case EVT_COMMAND:
+            return MainMenu_RouteDialogEvt(pMe,eCode,wParam,dwParam); 
+
+        default:
+            return MainMenu_RouteDialogEvt(pMe,eCode,wParam,dwParam);
+    }
+}
+
+void Mainmenu_KeypadLock(boolean block)
+{
+   gbMainmenuLock = block;
+}
+
+/*==============================================================================
+函数:
+    MainMenu_ProcessState
+
+说明:
+    根据 pMe->m_currState, 调用相应的状态处理函数。
+
+参数:
+    pMe [in]: 指向MainMenu Applet对象结构的指针。该结构包含小程序的特定信息。
+
+返回值:
+    NFSMACTION_CONTINUE: 指示不停状态机。
+    NFSMACTION_WAIT: 指示停止状态机。
+
+备注:
+
+==============================================================================*/
+NextFSMAction MainMenu_ProcessState(MainMenu *pMe)
+{
+    NextFSMAction retVal = NFSMACTION_WAIT;
+    if (NULL == pMe)
+    {
+        return retVal;
+    }
+    switch(pMe->m_currState)
+    {
+        case MAINST_MAIN:
+            return MAINST_MAIN_Handler(pMe);
+        case MAINST_FLASHLIGHT:
+        	return MAINST_FLASHLIGHT_Handler(pMe);    
+        case MAINST_EXIT:
+            return MAINST_EXIT_Handler(pMe);  
+        default:
+            break;
+
+    }
+    return retVal;
+}
+
+/*==============================================================================
+函数:
+    MAINST_MAIN_Handler
+
+说明:
+    MAINST_MAIN 状态处理函数。
+
+参数:
+    pMe [in]: 指向MAINMENU Applet对象结构的指针。该结构包含小程序的特定信息。
+
+返回值:
+    NFSMACTION_CONTINUE: 指示不停状态机。
+    NFSMACTION_WAIT: 指示停止状态机。
+
+备注:
+
+==============================================================================*/
+static NextFSMAction MAINST_MAIN_Handler(MainMenu *pMe)
+{
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+    switch (pMe->m_eDlgReturn)
+    {
+        // 进入主界面
+        case DLGRET_CREATE:
+            {
+                MainMenu_ShowDialog(pMe, IDD_MAIN_MENU);
+            }
+            return NFSMACTION_WAIT;
+            
+        case DLGRET_FLASHLITHT:
+        	{
+        		MOVE_TO_STATE(MAINST_FLASHLIGHT)
+            	return NFSMACTION_CONTINUE;
+        	}    
+        case DLGRET_CANCELED:
+            MOVE_TO_STATE(MAINST_EXIT)
+            return NFSMACTION_CONTINUE;
+
+        default:
+            MOVE_TO_STATE(MAINST_EXIT)
+            return NFSMACTION_CONTINUE;
+    }
+}
+
+
+static NextFSMAction MAINST_FLASHLIGHT_Handler(MainMenu *pMe)
+{
+	if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+    switch (pMe->m_eDlgReturn)
+    {
+        // 进入主界面
+        case DLGRET_CREATE:
+            {
+                MainMenu_ShowDialog(pMe, IDD_FLASHLIGHT_SETTING);
+            }
+            return NFSMACTION_WAIT;
+         case DLGRET_CANCELED:         
+            MOVE_TO_STATE(MAINST_MAIN)
+            return NFSMACTION_CONTINUE;
+        default:
+            MOVE_TO_STATE(MAINST_EXIT)
+            return NFSMACTION_CONTINUE;
+    }
+}
+
+
+/*==============================================================================
+函数:
+    MAINST_EXIT_Handler
+
+说明:
+    MAINST_EXIT 状态处理函数。
+
+参数:
+    pMe [in]: 指向MAINMENU  Applet对象结构的指针。该结构包含小程序的特定信息。
+
+返回值:
+    NFSMACTION_CONTINUE: 指示不停状态机。
+    NFSMACTION_WAIT: 指示停止状态机。
+
+备注:
+
+==============================================================================*/
+static NextFSMAction MAINST_EXIT_Handler(MainMenu *pMe)
+{
+    (void) ISHELL_CloseApplet(pMe->m_pShell, FALSE);
+    return NFSMACTION_WAIT;
+} 
+
+/*==============================================================================
+函数:
+       MainMenu_ShowDialog
+
+说明:
+    函数由状态处理函数用来唤起相应对话框资源ID的对话框。
+
+参数:
+    pMe [in]: 指向 MAINMENU Applet 对象结构的指针。该结构包含小程序的特定信息。
+    dlgResId [in]: 对话框资源ID，函数根据该ID创建对话框。
+
+返回值:
+    none
+
+备注:
+
+==============================================================================*/
+void MainMenu_ShowDialog(MainMenu  *pMe,  uint16 dlgResId)
+{
+    int nRet;
+
+    // 每次最多打开一个对话框
+    if (ISHELL_GetActiveDialog(pMe->m_pShell) != NULL)
+    {
+        // 如果当前已经有对话框被打开，直接返回
+        return;
+    }
+   
+    if (NULL != pMe->m_pDisplay)
+    {
+        AEEDeviceInfo di={0,};
+#if defined (FEATURE_VERSION_H19C)
+        if(pMe->m_pIAnn != NULL)
+        {
+            if (dlgResId == IDD_MAIN_MENU)
+            {
+                IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, FALSE);
+            }
+            else
+            {
+                IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
+            }
+            IANNUNCIATOR_Redraw(pMe->m_pIAnn);
+        }
+        (void)IDISPLAY_SetPrefs(pMe->m_pDisplay, "a:1", STRLEN("a:1"));
+#else
+        if (dlgResId == IDD_MAIN_MENU)
+        {
+            (void)IDISPLAY_SetPrefs(pMe->m_pDisplay, "a:0", STRLEN("a:0"));
+        }
+        else
+        {
+            (void)IDISPLAY_SetPrefs(pMe->m_pDisplay, "a:1", STRLEN("a:1"));
+        }
+#endif
+        ISHELL_GetDeviceInfo(pMe->m_pShell, &di);
+        pMe->m_rc.dx = di.cxScreen;
+        pMe->m_rc.dy = di.cyScreen;       
+        IDISPLAY_SetClipRect(pMe->m_pDisplay, &pMe->m_rc);        
+    }
+    
+    nRet = ISHELL_CreateDialog(pMe->m_pShell,MAINMENU_RES_FILE_LANG,dlgResId,NULL);
+    if (nRet != SUCCESS)
+    {
+    }
+}
+
+
+/*==============================================================================
+函数:
+       MainMenu_RouteDialogEvt
+说明:
+       函数将BREW事件路由给当前活动对话框的事件处理函数。
+
+参数:
+       pMe [In]: 指向SettingMenu Applet对象结构的指针,该结构包含小程序的特定信息.
+       eCode [in]：事件代码。
+       wParam [in]：与事件eCode关联的数据。
+       dwParam [in]：与事件eCode关联的数据。
+
+返回值:
+       TRUE：传入事件被处理。
+       FALSE：传入事件没被处理。
+
+备注:
+
+==============================================================================*/
+boolean MainMenu_RouteDialogEvt(MainMenu *pMe,
+    AEEEvent    eCode,
+    uint16  wParam,
+    uint32 dwParam
+)
+
+{
+    if (NULL == pMe)
+    {
+        return FALSE;
+    }
+
+    if (NULL == pMe->m_pActiveIDlg)
+    {
+        return FALSE;
+    }    
+    switch( pMe->m_pActivedlgID)
+    {
+        case IDD_MAIN_MENU:
+            return MainMenu_IconMenuHandler(pMe, eCode, wParam, dwParam);
+
+        case IDD_FLASHLIGHT_SETTING:
+            return MainMenu_FlashlightMenuHandler(pMe, eCode, wParam,dwParam);
+        default:
+            return FALSE;
+    }
+}
+
+/*=============================================================================
+FUNCTION:  MainMenu_IconMenuHandler
+
+DESCRIPTION: 12宫格菜单
+
+PARAMETERS:
+
+=============================================================================*/
+static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
+{
+    PARAM_NOT_REF( dwParam)
+    switch ( eCode)
+    {
+        case EVT_DIALOG_INIT:			
+            IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
+			MSG_FATAL("MainMenu_IconMenuHandler.........init....",0,0,0);
+            return TRUE;
+
+        case EVT_DIALOG_START:			
+			AEE_CancelTimer(Main_keypadtimer,pMe);
+			AEE_SetTimer(5*1000,Main_keypadtimer,pMe);
+            (void) ISHELL_PostEvent( pMe->m_pShell,
+                                     AEECLSID_MAIN_MENU,
+                                     EVT_USER_REDRAW,
+                                     0,
+                                     0);
+			MSG_FATAL("MainMenu_IconMenuHandler.........EVT_DIALOG_START....",0,0,0);
+            return TRUE;
+
+        case EVT_USER_REDRAW:
+            // 初始整个背景及全部初始图标
+            {
+            	
+            	MSG_FATAL("MainMenu_IconMenuHandler.........EVT_USER_REDRAW....",0,0,0);
+            	DrawMatrix(pMe);
+				MSG_FATAL("MainMenu_IconMenuHandler.........EVT_USER_REDRAW..over..",0,0,0);
+				//AEE_CancelTimer(Main_loadtimer,pMe);
+				//AEE_SetTimer(100,Main_loadtimer,pMe);
+            	return TRUE;
+            }
+            
+        case EVT_DIALOG_END:
+            {
+                ISHELL_CancelTimer(pMe->m_pShell, NULL, (void**)pMe);
+            }
+            return TRUE;
+
+        case EVT_KEY_HELD:
+
+#if defined(FEATURE_VERSION_EC99)
+            if((AVKType)wParam == AVK_5)
+            {
+                boolean TorchOn = FALSE;
+                OEM_GetConfig(CFGI_FLSHLITHG_STATUS,&TorchOn, sizeof(TorchOn));
+                if (TorchOn == FALSE )
+                {
+                TorchOn = TRUE;
+                if (pMe->m_pBacklight)
+                {
+                    IBACKLIGHT_TurnOnTorch(pMe->m_pBacklight);
+                }
+                }
+                else
+                {
+                TorchOn = FALSE;
+                if (pMe->m_pBacklight)
+                {                           
+                    IBACKLIGHT_TurnOffTorch(pMe->m_pBacklight);
+                }
+                }
+                OEM_SetConfig(CFGI_FLSHLITHG_STATUS,&TorchOn, sizeof(TorchOn));
+                ISHELL_CloseApplet(pMe->m_pShell, TRUE); 
+                return TRUE;
+            }
+#endif
+            
+        #if defined(FEATURE_TORCH_KEY_INFO)
+           if((AVKType)wParam == AVK_INFO)
+            {
+                boolean TorchOn = FALSE;
+                OEM_GetConfig(CFGI_FLSHLITHG_STATUS,&TorchOn, sizeof(TorchOn));
+                if (TorchOn == FALSE )
+                {
+                    TorchOn = TRUE;
+                    if (pMe->m_pBacklight)
+                    {
+                        IBACKLIGHT_TurnOnTorch(pMe->m_pBacklight);
+                    }
+                }
+                else
+                {
+                    TorchOn = FALSE;
+                    if (pMe->m_pBacklight)
+                    {                           
+                        IBACKLIGHT_TurnOffTorch(pMe->m_pBacklight);
+                    }
+                }
+                OEM_SetConfig(CFGI_FLSHLITHG_STATUS,&TorchOn, sizeof(TorchOn));
+                ISHELL_CloseApplet(pMe->m_pShell, TRUE); 
+                return TRUE;
+            }
+        #endif
+	 #if defined(FEATURE_TORCH_KEY_SELECT) //xxzhen
+           if((AVKType)wParam == AVK_SELECT)
+            {
+                boolean TorchOn = FALSE;
+                OEM_GetConfig(CFGI_FLSHLITHG_STATUS,&TorchOn, sizeof(TorchOn));
+                if (TorchOn == FALSE )
+                {
+                    TorchOn = TRUE;
+                    if (pMe->m_pBacklight)
+                    {
+                        IBACKLIGHT_TurnOnTorch(pMe->m_pBacklight);
+                    }
+                }
+                else
+                {
+                    TorchOn = FALSE;
+                    if (pMe->m_pBacklight)
+                    {                           
+                        IBACKLIGHT_TurnOffTorch(pMe->m_pBacklight);
+                    }
+                }
+                OEM_SetConfig(CFGI_FLSHLITHG_STATUS,&TorchOn, sizeof(TorchOn));
+                ISHELL_CloseApplet(pMe->m_pShell, TRUE); 
+                return TRUE;
+            }
+        #endif
+
+            return TRUE;
+        case EVT_KEY:
+            switch( wParam)
+            {
+                case AVK_CLR:
+                     CLOSE_DIALOG(DLGRET_CANCELED)
+                    return TRUE;
+                    
+                case AVK_UP:   
+                case AVK_DOWN:                  	
+                    return TRUE;
+                    
+                case AVK_LEFT:
+                   if(pMe->m_index>0)
+                   {
+                   	   pMe->m_index = pMe->m_index-1;
+                   }
+				   else if(pMe->m_index == 0)
+				   {
+				   		pMe->m_index = (MAX_MATRIX_ITEMS-1);
+				   }
+				   MoveCursorTo(pMe, pMe->m_index);
+                   return TRUE;
+                    
+                case AVK_RIGHT:
+
+                   if(pMe->m_index<(MAX_MATRIX_ITEMS-1))
+                   {
+                   	   pMe->m_index = pMe->m_index+1;
+					  
+                   }
+				   else if(pMe->m_index == (MAX_MATRIX_ITEMS-1))
+				   {
+				   		pMe->m_index = 0;
+				   }
+				   MoveCursorTo(pMe, pMe->m_index);
+                   return TRUE;
+                    
+                case AVK_SELECT:
+                case AVK_INFO:
+                    {
+					   int8 count_main = pMe->m_index;
+					   MSG_FATAL("count_main=======%d",count_main,0,0);
+					   OEM_SetConfig(CFGI_COUNT_OF_MAIN, &count_main, sizeof(int8));
+                       StartApplet(pMe, pMe->m_IconTitle[pMe->m_index]);
+                    }
+                    return TRUE;
+                case AVK_STAR:
+                    if(gbMainmenuLock)
+                    {
+                        OEMKeyguard_SetState(TRUE);
+                        ISHELL_CloseApplet(pMe->m_pShell, TRUE); 
+                    }
+                    return TRUE;
+                default:
+                    break;
+            }
+
+            return TRUE;
+            
+        default:
+            break;
+    }
+
+    return FALSE;
+}
+
+//Add By zzg 2013_08_20
+static boolean MainMenu_FlashlightMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
+{
+    PARAM_NOT_REF(dwParam)
+    IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveIDlg,IDC_FLASHLIGHT_SET);
+    AECHAR WTitle[40] = {0};
+    if (pMenu == NULL)
+    {
+        return FALSE;
+    }
+    if(pMe->m_pIAnn != NULL)
+    {
+	    IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+    }
+     switch (eCode)
+    {
+        case EVT_DIALOG_INIT:
+			(void)ISHELL_LoadResString(pMe->m_pShell,
+                                        MAINMENU_RES_FILE_LANG,                                
+                                        IDS_MAIN_MENU_TORCH,
+                                        WTitle,
+                                        sizeof(WTitle));
+
+            if(pMe->m_pIAnn != NULL)
+            {
+			    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
+            IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG, IDS_MAIN_MENU_TORCH_ON, IDS_MAIN_MENU_TORCH_ON, NULL, 0);
+            IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG, IDS_MAIN_MENU_TORCH_OFF, IDS_MAIN_MENU_TORCH_OFF, NULL, 0);
+            return TRUE;
+            
+        case EVT_DIALOG_START:
+            {
+            	uint16 wItemID;
+                boolean Is_on = FALSE;
+                IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
+                IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
+
+                IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
+                OEM_GetConfig(CFGI_FLSHLITHG_STATUS,&Is_on, sizeof(Is_on));
+                if(Is_on)
+                {
+                	wItemID = IDS_MAIN_MENU_TORCH_ON;
+                }
+                else
+                {
+                	wItemID = IDS_MAIN_MENU_TORCH_OFF;
+                }
+
+                InitMenuIcons(pMenu);
+                SetMenuIcon(pMenu, wItemID, TRUE);
+                IMENUCTL_SetSel(pMenu, wItemID);
+                (void) ISHELL_PostEvent( pMe->m_pShell,
+                                         AEECLSID_MAIN_MENU,
+                                         EVT_USER_REDRAW,
+                                         0,
+                                         0);
+            }
+            return TRUE;
+
+        case EVT_USER_REDRAW:
+            //(void)IMENUCTL_Redraw(pMenu);
+            return TRUE;
+
+        case EVT_DIALOG_END:
+            return TRUE;
+
+        case EVT_KEY:
+            switch(wParam)
+            {
+                case AVK_CLR:
+                    CLOSE_DIALOG(DLGRET_CANCELED)
+                    return TRUE;
+
+                  default:
+                    break;
+            }
+            return TRUE;
+#ifdef FEATURE_LCD_TOUCH_ENABLE//andrew add for LCD touch
+		case EVT_PEN_UP:
+			{
+				AEEDeviceInfo devinfo;
+				int nBarH ;
+				AEERect rc;
+				int16 wXPos = (int16)AEE_GET_X(dwParam);
+				int16 wYPos = (int16)AEE_GET_Y(dwParam);
+
+				nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+        
+				MEMSET(&devinfo, 0, sizeof(devinfo));
+				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+
+				if(TOUCH_PT_IN_RECT(wXPos,wYPos,rc))
+				{
+					if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//左
+					{
+						boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APPLICATION,EVT_KEY,AVK_SELECT,0);
+						return rt;
+					}
+					else if(wXPos >= rc.x + (rc.dx/3)   && wXPos < rc.x + (rc.dx/3)*2 )//左
+					{
+						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APPLICATION,EVT_KEY,AVK_INFO,0);
+						 return rt;
+					}
+					else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//左
+					{						
+						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APPLICATION,EVT_KEY,AVK_CLR,0);
+						 return rt;
+					}
+				}
+
+			}
+			break;
+#endif 
+        case EVT_COMMAND:
+            {
+                boolean bytNewData = 0;
+
+                switch (wParam)
+                {
+                    case  IDS_MAIN_MENU_TORCH_ON:
+                       bytNewData = TRUE;
+                       IBACKLIGHT_TurnOnTorch(pMe->m_pBacklight);
+                       break;
+
+                    case IDS_MAIN_MENU_TORCH_OFF:
+                       bytNewData = FALSE;
+                       IBACKLIGHT_TurnOffTorch(pMe->m_pBacklight);
+                       break;
+
+                    default:
+                       break;
+
+                }
+                OEM_SetConfig(CFGI_FLSHLITHG_STATUS,&bytNewData, sizeof(bytNewData));
+                InitMenuIcons(pMenu);
+                SetMenuIcon(pMenu, wParam, TRUE);
+                (void) ISHELL_PostEvent( pMe->m_pShell,
+                                         AEECLSID_MAIN_MENU,
+                                         EVT_USER_REDRAW,
+                                         0,
+                                         0);
+            }
+        default:
+        	break;
+	}
+}
+//Add End
+
+
+static void Main_keypadtimer(void *pUser)
+{
+    gbMainmenuLock =FALSE;
+}
+static void Main_loadtimer(void *pUser)
+{
+	MainMenu	*pMe = (MainMenu *)pUser;
+	int i = 0;
+	int j = 0;
+	for (i = 0; i < MAX_MATRIX_ITEMS; i ++)
+    {
+        if (pMe->m_pImageIcon[i] == NULL)
+        {
+            pMe->m_pImageIcon[i] = ISHELL_LoadImage(pMe->m_pShell,
+                                                    ICON_ANI[i]);
+        }
+    }  
+    /*
+	for(j=0;j<MAX_MATRIX_ITEMS;j++)
+	{
+		if (pMe->m_pImageSelectEC99[j] == NULL)
+        {           
+            pMe->m_pImageSelectEC99[j] = ISHELL_LoadImage(pMe->m_pShell, ICON_ANI[j]);
+        }
+	}
+    */
+	Main_loadover = TRUE;
+	
+}
+
+static void MainMenu_DrawBackGround(MainMenu *pMe, AEERect *pRect)
+{
+
+    Appscommon_ResetBackground(pMe->m_pDisplay, 
+                              pMe->m_pImageBg, 
+                              APPSCOMMON_BG_COLOR, 
+                              pRect, 
+                              0, 
+                              0);
+
+}
+
+/*=============================================================================
+FUNCTION:  DrawMatrix
+
+DESCRIPTION: // 初始整个背景及全部初始图标
+
+=============================================================================*/
+static void DrawMatrix(MainMenu *pMe)
+{
+    
+	BottomBar_e_Type    eBBarType = BTBAR_NONE;
+    boolean m_sound_bo_main = FALSE;
+    if (NULL == pMe)
+    {
+        return;
+    }
+    //draw bg image
+    MainMenu_DrawBackGround(pMe, &pMe->m_rc);
+	(void) ICONFIG_GetItem(pMe->m_pConfig,
+									   CFGI_LANGUAGE_SELECTION,
+									   &pMe->language,
+									   sizeof(pMe->language));
+
+   /*
+    if(pMe->m_pImageSelectEC99[pMe->m_index]!=NULL)
+	{
+		IIMAGE_Draw(pMe->m_pImageSelectEC99[pMe->m_index], 0, 0);
+	}
+    */
+
+   
+    if (pMe->m_pImageSelectEC99 != NULL)
+    {   
+         (void)IIMAGE_Release(pMe->m_pImageSelectEC99);
+         pMe->m_pImageSelectEC99 = NULL;
+    }
+    
+    pMe->m_pImageSelectEC99 = ISHELL_LoadImage(pMe->m_pShell, ICON_ANI[pMe->m_index]);      
+    if(pMe->m_pImageSelectEC99 != NULL)
+    {
+        IIMAGE_Draw(pMe->m_pImageSelectEC99, 0, 0);
+    }
+	
+		
+   	(void) ICONFIG_GetItem(pMe->m_pConfig,
+                                 CFGI_SOUND_BO_MAIN,
+                                 &m_sound_bo_main,
+                                 sizeof(boolean));
+	if(m_sound_bo_main)
+	{
+
+		nv_item_type	SimChoice;
+		(void)OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+		if(SimChoice.sim_select != 1)
+		{
+			MainMenu_PlayShutterSound(pMe,pMe->m_index);
+		}
+	}
+	
+	IDISPLAY_UpdateEx(pMe->m_pDisplay, TRUE);   
+}
+
+
+/*=============================================================================
+FUNCTION:  MoveCursorTo
+
+DESCRIPTION: 
+
+PARAMETERS:
+
+RETURN VALUE:
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+static void MoveCursorTo(MainMenu *pMe, int index)
+{
+	
+	boolean m_sound_bo_main = FALSE;
+	//draw bg image
+	if (NULL == pMe)
+    {
+        return;
+    }
+	(void) ICONFIG_GetItem(pMe->m_pConfig,
+									   CFGI_LANGUAGE_SELECTION,
+									   &pMe->language,
+									   sizeof(pMe->language));
+	(void) ICONFIG_GetItem(pMe->m_pConfig,
+                                 CFGI_SOUND_BO_MAIN,
+                                 &m_sound_bo_main,
+                                 sizeof(boolean));
+	if(m_sound_bo_main)
+	{
+		nv_item_type	SimChoice;
+		(void)OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+		if(SimChoice.sim_select != 1)
+		{
+			MainMenu_PlayShutterSound(pMe,pMe->m_index);
+		}
+	}
+
+    MainMenu_DrawBackGround(pMe, &pMe->m_rc);
+
+    
+    /*
+    if (pMe->m_pImageSelectEC99[pMe->m_index] != NULL)
+    {   
+         (void)IIMAGE_Release(pMe->m_pImageSelectEC99[pMe->m_index]);
+         pMe->m_pImageSelectEC99[pMe->m_index] = NULL;
+    }
+
+    pMe->m_pImageSelectEC99[pMe->m_index] = ISHELL_LoadImage(pMe->m_pShell, ICON_ANI[pMe->m_index]);
+    
+   
+    MSG_FATAL("***zzg MoveCursorTo m_index=%d***",pMe->m_index,0,0);
+    
+    if(pMe->m_pImageSelectEC99[pMe->m_index]!=NULL)
+    {
+        IIMAGE_Draw(pMe->m_pImageSelectEC99[pMe->m_index], 0, 0);
+    }
+    */
+
+    if (pMe->m_pImageSelectEC99 != NULL)
+    {   
+         (void)IIMAGE_Release(pMe->m_pImageSelectEC99);
+         pMe->m_pImageSelectEC99 = NULL;
+    }
+
+    pMe->m_pImageSelectEC99 = ISHELL_LoadImage(pMe->m_pShell, ICON_ANI[pMe->m_index]);      
+    if(pMe->m_pImageSelectEC99 != NULL)
+    {
+        IIMAGE_Draw(pMe->m_pImageSelectEC99, 0, 0);
+    }
+    
+	IDISPLAY_UpdateEx(pMe->m_pDisplay, TRUE);
+}
+/*=============================================================================
+FUNCTION:  SetCursor
+
+DESCRIPTION: 
+
+PARAMETERS:
+
+RETURN VALUE:
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+static void SetCursor(MainMenu *pMe, int index)
+{
+    pMe->m_index        = index;   
+    
+    if(pMe->m_pAnimate != NULL)
+    {
+        IImage_Release(pMe->m_pAnimate);
+        pMe->m_pAnimate  = NULL;
+    }
+}
+
+/*=============================================================================
+FUNCTION:  StartApplet
+
+DESCRIPTION:  启动applet
+
+PARAMETERS:  如果APPLET 有变动，只需改动次函数
+
+=============================================================================*/
+static int StartApplet(MainMenu *pMe, int i)
+{
+    int Result = EUNSUPPORTED;
+	//uint32  dwTotal = 0;
+	//uint32 free = 0;
+	//GETFSFREE(&dwTotal);
+	//free = GETRAMFREE(NULL,NULL);
+	//MSG_FATAL("dwTotal======%d,free===%d",dwTotal,free,0);
+
+    
+#ifdef FEATURE_VERSION_H19C  
+    if(pMe->m_pIAnn != NULL)
+    {
+        IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
+    }
+#endif
+		#ifdef FEATURE_VERSION_K202_LM129C //xxzhen
+		  if(pMe->m_pIAnn != NULL)
+          {
+              IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
+          }
+		#endif
+
+    switch(i)
+	{
+#ifdef FEATURE_VERSION_W208S
+	case IDS_MAIN_MENU_MAP:
+	{
+		char	buf[12];
+		
+		OEM_SetBROWSER_ADSAccount();	//Add By zzg 2011_07_08
+		
+    	MSG_FATAL("AEECLSID_BRW_APP...........START",0,0,0);
+    	start_info.appid_fx = APP_ORIGINATOR_BROWSER;
+        start_info.subtype_keycode = APP_BROWSER_START_URL;
+        start_info.par_keychar = 0;
+
+		start_info.fInfo.url_info.title = "map";
+		start_info.fInfo.url_info.url = "http://wap.movidamovil.com/venezuela/?debug=true";		
+		
+        //start_info.fInfo.url_info.title = "163";
+        //start_info.fInfo.url_info.url = "http://wap.163.com";
+
+		
+        SPRINTF(buf, "%p", &start_info);
+		Result = ISHELL_StartAppletArgs(pMe->m_pShell,AEECLSID_NF3,buf);
+        //Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_BRW_APP);
+        MSG_FATAL("AEECLSID_BRW_APP...........Result=%d",Result,0,0);		
+		
+		
+		break;
+	}
+	case IDS_MAIN_MENU_NEO_APP:
+	{
+        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPMANAGER);
+		break;
+	}
+	case IDS_MAIN_MENU_NEO_NAV:
+	{
+		char	buf[12];
+		
+		OEM_SetBROWSER_ADSAccount();	//Add By zzg 2011_07_08
+		
+    	MSG_FATAL("AEECLSID_BRW_APP...........START",0,0,0);
+    	start_info.appid_fx = APP_ORIGINATOR_BROWSER;
+        start_info.subtype_keycode = APP_BROWSER_START_MAINMENU;
+        start_info.par_keychar = 0;
+        //start_info.fInfo.url_info.title = "163";
+        //start_info.fInfo.url_info.url = "http://www.163.com";
+        SPRINTF(buf, "%p", &start_info);
+		Result = ISHELL_StartAppletArgs(pMe->m_pShell,AEECLSID_NF3,buf);
+        //Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_BRW_APP);
+        MSG_FATAL("AEECLSID_BRW_APP...........Result=%d",Result,0,0);		
+		
+		break;
+	}
+#endif
+
+    case IDS_MAIN_MENU_FILEMGR:
+    case IDS_MAIN_MENU_GALLERY:
+	case IDS_MAIN_MENU_MEDIAGALLERY_C337:	
+    case IDS_MAIN_MENU_MEDIAGALLERY:
+        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MEDIAGALLERY);
+        break;
+        
+    case IDS_MAIN_MENU_CONTACT:
+	#ifdef FEATURE_VERSION_C337
+	case IDS_PHONEBOOK:
+	#endif
+    case IDS_MAIN_MENU_CONTACTS:
+        {
+            IContactApp *ca = NULL;
+            Result = ISHELL_CreateInstance(pMe->m_pShell,AEECLSID_APP_CONTACT, (void**)&ca);
+            if(SUCCESS == Result)
+            {
+                ICONTAPP_MainMenu(ca);
+                IContactApp_Release(ca);
+            }
+        }
+        break;
+    case IDS_MAIN_MENU_INTEXZONE: 
+#ifdef FEATURE_VERSION_C316
+		Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_INDEX_ZONE);
+		break;
+#endif
+    case IDS_MAIN_MENU_SMARTFRENACCESS:
+    case IDS_MAIN_MENU_UTK:
+        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_UTK);
+        break;
+        
+    case IDS_MAIN_MENU_TOOLS:
+	case IDS_MAIN_MENU_ORGANIZER:	
+    case IDS_MAIN_MENU_APPLICATION:
+        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPLICATION);
+        break;
+		
+    case IDS_MAIN_MENU_CALL_LOGS:
+	case IDS_MAIN_MENU_RECENTCALLS_C337:	
+    case IDS_MAIN_MENU_RECENTCALLS:
+        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_RECENTCALL);
+        break;
+        
+    case IDS_MAIN_MENU_SMS:
+    case IDS_MAIN_MENU_MESSAGES:
+        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WMSAPP);
+        break;
+        
+    case IDS_MAIN_MENU_MULTIMEDIA:
+        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MULTIMEDIA_LIST);
+        break;
+        
+    case IDS_MAIN_MENU_STATIC_APPLICATION:
+#if defined(FEATURE_APP_MANAGER)
+#ifdef FEATURE_OEMOMH
+        if(ISHELL_SendEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_OMH_PROMPT,0,0))
+        {
+            break;
+        }
+#endif
+
+        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPMANAGER);
+#else
+        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_STATIC_APP);
+#endif
+    break;
+        
+    case IDS_MAIN_MENU_CALENDAR:
+    case IDS_MAIN_MENU_SCHEDULER:
+        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SCHEDULEAPP);
+        break;
+        
+    case IDS_MAIN_MENU_SETTINGS:
+        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_SETTINGMENU);
+        break;
+
+	//Add By zzg 2012_11_08 for C337 
+	case IDS_MAIN_MENU_SERVICES:		
+	    #ifdef FEATURE_VERSION_C337
+        Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
+        #else
+        Result = SetBrowserArr_Main(pMe->m_pShell,NULL);//ISHELL_StartApplet(pMe->m_pShell, AEECLSID_UCWEB);
+        #endif
+		break;
+	case IDS_MAIN_MENU_MSTORE:
+#ifdef FEATURE_VERSION_C337
+        Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");      
+#else
+        Result = SetBrowserArr_Main(pMe->m_pShell,NULL);//ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
+#endif
+		break;
+	case IDS_MAIN_MENU_MZONE:
+		Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MiZone);
+		break;
+	//Add End
+	
+	case IDS_MAIN_MENU_USER_PROFILE:	
+    case IDS_MAIN_MENU_USERPROFILE:
+        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_SOUNDMENU);
+        break;
+        
+    case IDS_MAIN_MENU_GAMES:
+        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_GAME);
+        break;
+		
+	#ifdef FEATURE_VERSION_C316
+    case IDS_MAIN_MENU_SERVICES_C316:  
+		Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SERVICE);
+        break;
+	#endif	
+	
+    case IDS_MAIN_WAPBROWSER:
+		#ifdef FEATURE_VERSION_K202_LM129C
+		  IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn,FALSE); //xxzhen
+		   IANNUNCIATOR_Redraw(pMe->m_pIAnn);
+		#endif
+
+        #ifdef FEATURE_VERSION_C337
+        Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
+        #else
+        Result = SetBrowserArr_Main(pMe->m_pShell,(char*)""); //ISHELL_StartApplet(pMe->m_pShell, AEECLSID_UCWEB);
+        #endif
+        break;
+    
+    case IDS_MAIN_MENU_CALCULATOR: 
+		 Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CALCAPP);
+        break;
+        
+    case IDS_MAIN_MENU_FMRADIO:
+        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_FMRADIO);
+        break;
+        
+    case IDS_MAIN_MENU_MUSICPLAYER:
+        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_MUSICPLAYER);
+        break;
+        
+    case IDS_MAIN_MENU_SMARTWORLD:
+    case IDS_MAIN_MENU_BLIVE:
+#ifdef FEATURE_SMARTFREN_STATIC_BREW_APP
+		Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_STATIC_APP);
+#else
+#ifdef FEATURE_OEMOMH
+        if(ISHELL_SendEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_OMH_PROMPT,0,0))
+        {
+            break;
+        }
+#endif
+        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPMANAGER);
+#endif  
+        break;
+    
+    case IDS_MAIN_MENU_FRENDUO:
+#if defined(FEATURE_VERSION_M8) || defined(FEATURE_VERSION_M8P) || defined (FEATURE_VERSION_M8021)
+		Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FRENDUO);
+#endif
+        break;
+    
+    case IDS_MAIN_MENU_TIMER:
+        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPTIMER);
+        break;
+        
+    case IDS_MAIN_MENU_CAMERA:
+	{		
+		Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_CAMERA);
+		break;
+	}  
+    
+    case IDS_MAIN_MENU_TORCH:
+    {		
+		//Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_TORCH);
+		CLOSE_DIALOG(DLGRET_FLASHLITHT)
+		break;
+	}    
+    
+    default:
+        break;
+
+    }
+    return Result;
+}
+
+extern char charsvc_p_name[UIM_CDMA_HOME_SERVICE_SIZE+1];
+int SetBrowserArr_Main(IShell *pShell ,char *purl)
+{
+	int Result = EUNSUPPORTED;
+	char urlCan[1024] = {0};
+    
+	DBGPRINTF("svc_p_name %s %d",charsvc_p_name,charsvc_p_name[0],0);
+	OEM_SetUCBROWSER_ADSAccount();
+    
+	if(purl && STRLEN(purl)>1)
+	{
+        SPRINTF(urlCan,"call_ucweb:setexternurl:%s\2\3",purl);
+		STRCAT(urlCan,"useragent:BREW-Applet/0x20068888 (BREW/3.1.5.20; DeviceId: 8976509865757e; Lang: hi; Profile/MIDP-2.0_Configuration/CLDC-1.1) ucweb-squid\2\3");
+	}
+	else
+	{
+		STRCPY(urlCan,"useragent:BREW-Applet/0x20068888 (BREW/3.1.5.20; DeviceId: 8976509865757e; Lang: hi; Profile/MIDP-2.0_Configuration/CLDC-1.1) ucweb-squid\2\3");
+	}
+    
+	if(STRISTR (charsvc_p_name,"mts"))
+	{
+		MSG_FATAL("mst................",0,0,0);
+        STRCAT(urlCan,"access_point:proxy_is:10.50.5.140:8080");
+	}
+	else if(STRISTR (charsvc_p_name,"tata"))
+	{
+        MSG_FATAL("tata................",0,0,0);
+        STRCAT(urlCan,"access_point:proxy_is:172.23.252.15:9401");
+	}
+	else if(STRISTR (charsvc_p_name,"reliance"))
+	{
+        MSG_FATAL("reliance................",0,0,0);
+        STRCAT(urlCan,"access_point:proxy_is:http://wapgw.ricinfo.com:8080");
+	}
+	else if(STRISTR (charsvc_p_name,"vmi"))
+	{
+        MSG_FATAL("vmi................",0,0,0);
+        STRCAT(urlCan,"access_point:proxy_is:172.23.142.15:9401");
+	}
+	
+	DBGPRINTF("urlCan==%s", urlCan);
+    if(urlCan[0])
+    {
+	    Result = ISHELL_StartAppletArgs(pShell, AEECLSID_UCWEB, (char*)urlCan);
+    }
+    else
+    {
+        Result = ISHELL_StartApplet(pShell, AEECLSID_UCWEB);
+    }
+
+	return Result;	
+}
+static void MainMenu_PlayShutterSound(MainMenu *pMe,int key)
+{
+/*
+    AEEMediaCmdNotify cmd;
+	int temp = 0;
+	char music_name[256] = {0};
+    if(pMe->m_pMedia)
+	{
+		IMEDIA_Stop(pMe->m_pMedia);
+		IMEDIA_Release(pMe->m_pMedia);
+		pMe->m_pMedia = NULL;
+	}
+    // 如果pMe->m_pMedia接口为空，创建接口
+    if(!pMe->m_pMedia)
+    {
+        AEEMediaData      md;
+       
+        if(!pMe)
+           return;
+        md.clsData = MMD_FILE_NAME;  		   
+		md.pData = (void *)MAIN_SOUND_NAME[key];
+        md.dwSize = 0;
+       
+        (void)AEEMediaUtil_CreateMedia(pMe->m_pShell, &md, &pMe->m_pMedia);
+    }
+   
+    if(pMe->m_pMedia)
+    {        
+        IMEDIA_SetVolume(pMe->m_pMedia, AEE_MAX_VOLUME*3/5); //max volum is 100
+     
+        if(IMEDIA_RegisterNotify(pMe->m_pMedia, MainMenu_MediaNotify, pMe) != SUCCESS)
+        {
+            cmd.nCmd    = MM_CMD_PLAY;
+            cmd.nStatus = MM_STATUS_DONE;
+            MainMenu_MediaNotify((void *)pMe, &cmd);
+            return;
+        }
+        MSG_FATAL("MainMenu_PlayShutterSound,IMEDIA_Play....",0,0,0);
+        if(IMEDIA_Play(pMe->m_pMedia) != SUCCESS)
+        {
+            cmd.nCmd    = MM_CMD_PLAY;
+            cmd.nStatus = MM_STATUS_DONE;
+            MainMenu_MediaNotify((void *)pMe, &cmd);
+            return;
+        }
+    }
+    else
+    {
+        cmd.nCmd    = MM_CMD_PLAY;
+        cmd.nStatus = MM_STATUS_DONE;
+        MainMenu_MediaNotify((void *)pMe, &cmd);
+    }
+*/    
+}
+
+static void MainMenu_MediaNotify(void *pUser, AEEMediaCmdNotify *pCmdNotify)
+{
+    MainMenu *pMe = (MainMenu *)pUser;
+
+    if(!pMe || !pCmdNotify)
+        return;
+
+    if(pCmdNotify->nCmd == MM_CMD_PLAY)  // IMEDIA_Play events
+    {
+        switch (pCmdNotify->nStatus)
+        {
+            case MM_STATUS_ABORT:            
+                break;
+
+            case MM_STATUS_DONE:    // playback done
+				if(pMe->m_pMedia)
+				{
+					IMEDIA_Release(pMe->m_pMedia);
+					pMe->m_pMedia = NULL;
+				}
+                break;
+            default:
+                break;
+        }
+    }
+}
 
 #else
 #define PARAM_NOT_REF(x)

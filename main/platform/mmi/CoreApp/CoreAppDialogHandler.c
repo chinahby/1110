@@ -252,7 +252,13 @@ static char* CORE_SOUND_NAME[] =
     CORE_NUM_STAR,
 };
 
+
+#ifdef FEATURE_VERSION_EC99
+static TIME_STATUE  m_TimeStarus = TIME_TWO;
+#else
 static TIME_STATUE  m_TimeStarus = TIME_ONE;
+#endif
+
 #endif
 // add pandy 2011-11-04
 enum {
@@ -6129,7 +6135,11 @@ static void CoreApp_UpdateidleBaoshiTimer(void *pUser)
 	GetJulianDate(GETTIMESECONDS(), &julian);
 	if((julian.wMinute == 0)&&(julian.wSecond<=30))
 	{
+#ifdef FEATURE_VERSION_EC99
+        CoreApp_PlayTimeSound(pMe,TIME_TWO);
+#else
 		CoreApp_PlayTimeSound(pMe,TIME_ONE);
+#endif
 	}
 	// 重设分钟定时器
 	AEE_SetSysTimer((int32)(30 * 1000),
@@ -10078,7 +10088,11 @@ static void CoreApp_PlayTimeSound(CCoreApp *pMe,uint16 Status)
 				break;
     		case TIME_FIVE: 
 				md.pData = (void *)CORE_FIVE_5;
+#ifdef FEATURE_VERSION_EC99
+                m_TimeStarus = TIME_TWO;
+#else
 				m_TimeStarus = TIME_ONE;
+#endif
 				break;
 			default:
 				break;
@@ -10139,7 +10153,11 @@ static void CoreApp_Media_time_Notify(void *pUser, AEEMediaCmdNotify *pCmdNotify
 					pMe->m_pMedia = NULL;
 				}
 				MSG_FATAL("CoreApp_Media_time_Notify.........",0,0,0);
+#ifdef FEATURE_VERSION_EC99
+                if(m_TimeStarus != TIME_TWO )
+#else
 				if(m_TimeStarus != TIME_ONE )
+#endif                    
 				{
 					CoreApp_PlayTimeSound(pMe,m_TimeStarus);
 				}

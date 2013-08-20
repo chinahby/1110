@@ -8,6 +8,7 @@ vpath %.mif $(BREW_STATIC_MIFS)
 
 include $(APPSCOMMON)/appscommon.min
 
+
 #Core App
 include $(COREAPP)/coreapp.min
 include $(MAINMENU)/mainmenu.min
@@ -211,6 +212,5 @@ endif
 ifeq ($(USES_MOBILETRACKER),yes)
 include $(MOBILETRACKER)/mobileTracker.min
 endif
-
 
 #include $(MMIDIR)/Extend/Extend.min

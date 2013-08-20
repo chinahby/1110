@@ -984,6 +984,7 @@ extern int  VideoPlayerMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 #if defined(FEATURE_APP_TIMERAPP)
 extern int AppTimerMod_Load(IShell *ps, void *pHelpers, IModule **pMod);
 #endif
+
 #if defined(FEATURE_SUPPORT_WAP_APP)
 extern int CNetFront3_Load(IShell *ps, void *pHelpers, IModule **pMod);
 #endif
@@ -1392,6 +1393,7 @@ static const AEEStaticMod gOEMStaticModList[] =
 #if defined(FEATURE_APP_TIMERAPP)
       {AEEFS_MIF_DIR"apptimer.mif", AppTimerMod_Load},//wu raojin add
 #endif
+
 #ifndef WIN32
 #ifndef CUST_EDITION
 #if defined FEATURE_SUPPORT_BT_APP
