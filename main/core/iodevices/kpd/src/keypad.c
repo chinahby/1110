@@ -394,6 +394,20 @@ static const hs_key_type keys[ KEYPAD_ROWS ][ KEYPAD_COLUMNS ] = {
 #define INFO_KEY_COLUMN 1
 #endif
 
+#if defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_K212_12832)
+/* '1' Key */
+#define ONE_KEY_ROW      2
+#define ONE_KEY_COLUMN   0
+
+/* '*' Key */
+#define STAR_KEY_ROW     3
+#define STAR_KEY_COLUMN  1
+
+/* '#' Key */
+#define POUND_KEY_ROW    0
+#define POUND_KEY_COLUMN 2
+
+#else
 /* '1' Key */
 #define ONE_KEY_ROW      1
 #define ONE_KEY_COLUMN   1
@@ -405,6 +419,7 @@ static const hs_key_type keys[ KEYPAD_ROWS ][ KEYPAD_COLUMNS ] = {
 /* '#' Key */
 #define POUND_KEY_ROW    3
 #define POUND_KEY_COLUMN 3
+#endif
 /* 
  * Table positions of navigation keys 
  */
