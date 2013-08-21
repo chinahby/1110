@@ -1625,7 +1625,7 @@ __dialog_handler_of_state_record_stop__:
 				#endif
 				int						state	  	= ( pme->m_Media.m_eState == MEDIA_STATE_PAUSED ? 0 : 1);
 				Media*					pmedia    	= &pme->m_Media;
-#ifdef FEATURE_VERSION_K212
+#ifdef FEATURE_K_AMPLIFIER
 				{
 					  nv_item_type	SimChoice;
 					  SimChoice.sim_select =1;
@@ -1788,7 +1788,7 @@ __dialog_handler_of_state_record_discard__:
 					}
 					else
 					{
-#ifdef FEATURE_VERSION_K212
+#ifdef FEATURE_K_AMPLIFIER
 						{
 					  		nv_item_type	SimChoice;
 					  		SimChoice.sim_select =2;

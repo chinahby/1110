@@ -15,7 +15,7 @@ PUBLIC CLASSES:  Not Applicable
 
 INITIALIZATION AND SEQUENCING REQUIREMENTS:  Not Applicable
 
-Copyright © 1999-2002,2006-2008 QUALCOMM Incorporated.
+Copyright ?1999-2002,2006-2008 QUALCOMM Incorporated.
 All Rights Reserved.
 Qualcomm Confidential and Proprietary
 ============================================================================*/
@@ -29,7 +29,7 @@ Qualcomm Confidential and Proprietary
             Defines
 -------------------------------------------------------------------*/
 #ifdef FEATURE_VERSION_K212
-#define AEE_MAX_VOLUME            80   // Volume from 0 (silence) to AEE_MAX_VOLUME
+#define AEE_MAX_VOLUME            100   // Volume from 0 (silence) to AEE_MAX_VOLUME
 #else
 #define AEE_MAX_VOLUME            100  // Volume from 0 (silence) to AEE_MAX_VOLUME
 #endif

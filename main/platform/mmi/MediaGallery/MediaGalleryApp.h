@@ -61,6 +61,9 @@
 #include "MediaGalleryExplorer.h"
 #include "Mediagallery.brh"
 #include "mediagallery_image.brh"
+#include "OEMCFGI.h"
+#include "OEMNV.h"
+
 
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
 #define MEDIAGALLERYAPP_PT_IN_RECT(a,b,rct)      (boolean)( ((a) >= (rct).x && (a) <= ((rct).x + (rct).dx)) && ((b) >= (rct).y && (b) <= ((rct).y + (rct).dy)) )

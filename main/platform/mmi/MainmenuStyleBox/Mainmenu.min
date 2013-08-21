@@ -169,7 +169,7 @@ CONSTFILE_FILES+=\
 	ICON_Recentcalls_en.png|fs:/image/mainmenu/ICON_Recentcalls_en.png \
 	ICON_Settings_en.png|fs:/image/mainmenu/ICON_Settings_en.png \
 	ICON_Surface_en.png|fs:/image/mainmenu/ICON_Surface_en.png
-	
+ifeq ($(USES_BOHAO),yes)
 	CONSTFILE_FILES+=\
 		mutimed.mp3|fs:/hsmm/mainmenu/mutimed.mp3 \
 		camera.mp3|fs:/hsmm/mainmenu/camera.mp3 \
@@ -180,6 +180,7 @@ CONSTFILE_FILES+=\
 		settings.mp3|fs:/hsmm/mainmenu/settings.mp3 \
 		recentcall.mp3|fs:/hsmm/mainmenu/recentcall.mp3 \
 		suafer.mp3|fs:/hsmm/mainmenu/suafer.mp3	
+endif
 else
 ifeq ($(USES_RESDIR),EC99)	
 CONSTFILE_FILES+=\

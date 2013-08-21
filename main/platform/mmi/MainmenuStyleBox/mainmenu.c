@@ -3954,11 +3954,11 @@ static void DrawMatrix(MainMenu *pMe)
 	{
 		IIMAGE_Draw(pMe->m_pImageSelectkbar,0,285);
 	}
-	
+    #ifdef FEATURE_SOUND_BO
    	(void) ICONFIG_GetItem(pMe->m_pConfig,
                                  CFGI_SOUND_BO_MAIN,
                                  &m_sound_bo_main,
-                                 sizeof(boolean));
+                                sizeof(boolean));
 	if(m_sound_bo_main)
 	{
 
@@ -3969,6 +3969,7 @@ static void DrawMatrix(MainMenu *pMe)
 			MainMenu_PlayShutterSound(pMe,pMe->m_nRow);
 		}
 	}
+	#endif
 	eBBarType = BTBAR_OK_BACK;
 	DrawBottomBar_Ex(pMe->m_pShell, pMe->m_pDisplay,eBBarType);
 	IDISPLAY_UpdateEx(pMe->m_pDisplay, TRUE);
@@ -4025,6 +4026,8 @@ static void MoveCursorTo(MainMenu *pMe, int row, int column)
 									   &pMe->language,
 									   sizeof(pMe->language));
 	MSG_FATAL("row=======%d",row,0,0);
+#ifdef FEATURE_SOUND_BO
+
 	(void) ICONFIG_GetItem(pMe->m_pConfig,
                                  CFGI_SOUND_BO_MAIN,
                                  &m_sound_bo_main,
@@ -4038,6 +4041,7 @@ static void MoveCursorTo(MainMenu *pMe, int row, int column)
 			MainMenu_PlayShutterSound(pMe,row);
 		}
 	}
+#endif
     MainMenu_DrawBackGround(pMe, &pMe->m_rc);
     if(row == 8)
     {
@@ -4560,6 +4564,8 @@ int SetBrowserArr_Main(IShell *pShell ,char *purl)
 
 	return Result;	
 }
+#ifdef FEATURE_SOUND_BO
+
 static void MainMenu_PlayShutterSound(MainMenu *pMe,int key)
 {
     AEEMediaCmdNotify cmd;
@@ -4613,6 +4619,7 @@ static void MainMenu_PlayShutterSound(MainMenu *pMe,int key)
     }
 }
 
+
 static void MainMenu_MediaNotify(void *pUser, AEEMediaCmdNotify *pCmdNotify)
 {
     MainMenu *pMe = (MainMenu *)pUser;
@@ -4639,6 +4646,8 @@ static void MainMenu_MediaNotify(void *pUser, AEEMediaCmdNotify *pCmdNotify)
         }
     }
 }
+#endif
+
 #elif defined (FEATURE_VERSION_EC99)
 static boolean Main_loadover = FALSE;
 #ifdef FEATURE_SOUND_BO
@@ -6126,6 +6135,8 @@ static void DrawMatrix(MainMenu *pMe)
                                  CFGI_SOUND_BO_MAIN,
                                  &m_sound_bo_main,
                                  sizeof(boolean));
+#ifdef FEATURE_SOUND_BO
+
 	if(m_sound_bo_main)
 	{
 
@@ -6136,7 +6147,7 @@ static void DrawMatrix(MainMenu *pMe)
 			MainMenu_PlayShutterSound(pMe,pMe->m_index);
 		}
 	}
-	
+#endif
 	IDISPLAY_UpdateEx(pMe->m_pDisplay, TRUE);   
 }
 
@@ -6174,6 +6185,8 @@ static void MoveCursorTo(MainMenu *pMe, int index)
                                  CFGI_SOUND_BO_MAIN,
                                  &m_sound_bo_main,
                                  sizeof(boolean));
+#ifdef FEATURE_SOUND_BO
+
 	if(m_sound_bo_main)
 	{
 		nv_item_type	SimChoice;
@@ -6183,7 +6196,7 @@ static void MoveCursorTo(MainMenu *pMe, int index)
 			MainMenu_PlayShutterSound(pMe,pMe->m_index);
 		}
 	}
-
+#endif
     MainMenu_DrawBackGround(pMe, &pMe->m_rc);
 
     

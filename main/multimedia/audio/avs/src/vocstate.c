@@ -910,6 +910,7 @@ when       who     what, where, why
 #ifdef MSMAUD_SCMM
 #error code not present
 #endif
+#include "hs_mb6550.h"
 
 /* CB Function pointer, when PAs are turned on, initialized at the time of
    sndhw_init()*/
@@ -970,6 +971,7 @@ typedef enum {
   VOC_STATE_NES_OVERRIDE_ON
 } voc_state_nes_override_type;
 
+boolean  voc_amrm_on = FALSE;
 /*-------------------------------------------------------------------------
 ** Vocoder driver State Control Data
 **-----------------------------------------------------------------------*/
@@ -5351,6 +5353,12 @@ SIDE EFFECTS
 #ifndef MSMAUD_SCMM
 void voc_state_adie_sleep() {
   voc_adie_codec_config_type *adie_codec;
+#if 0//def FEATURE_K_AMPLIFIER
+   voc_amrm_on = FALSE;
+  gpio_tlmm_config(GPIO_OUTPUT_10);
+  clk_busy_wait(30*1000);
+  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
+#endif
 
   if(voc_check_aux_line_in() != TRUE )
   {
@@ -5524,6 +5532,32 @@ void voc_state_adie_set_final (
   voc_state_adie_set_final_reg = FALSE;
 /*setting PA status to true*/
   voc_set_pa_state(TRUE);
+#ifdef FEATURE_K_AMPLIFIER
+{
+	if(!HS_HEADSET_ON() && !voc_amrm_on)
+    {
+    	  voc_amrm_on = TRUE;
+		  //MSG_FATAL("disp_drv_on......................",0,0,0);
+		  //gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
+		  //clk_busy_wait(1);
+		  gpio_tlmm_config(GPIO_OUTPUT_10);
+		  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
+		  clk_busy_wait(1);
+		  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
+		  clk_busy_wait(1);
+		  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
+		  clk_busy_wait(1);
+		  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
+		  clk_busy_wait(1);
+		  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
+		  clk_busy_wait(1);
+		  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
+		  clk_busy_wait(1);
+		  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
+	}
+ }
+#endif
+
 }
 #else
 #error code not present

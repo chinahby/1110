@@ -35,6 +35,8 @@
 #include "Btapp.brh"
 #endif
 //Add End
+#include "tlmm.h" 
+#include "clk.h"
 
 /*===========================================================================
  *                      MACRO DECLARATIONs
@@ -4227,6 +4229,10 @@ static boolean MGAppPopupMenu_OnSetAs(CMediaGalleryApp *pMe,
 
    return FALSE;
 }//MGAppPopupMenu_OnSetAs
+ void MGAppPopupMenuTimer(CMediaGalleryApp *pMe)
+ {
+ 	MGCLOSE_DIALOG(MGDLGRET_CANCELED);
+ }
 
 static boolean MGAppPopupMenu_OnSavetoplaylist(CMediaGalleryApp* pMe,
                                       			AEEEvent eCode,
@@ -4325,6 +4331,10 @@ static boolean MGAppPopupMenu_OnSavetoplaylist(CMediaGalleryApp* pMe,
 			                                       MESSAGE_INFORMATION,
 			                                       BTBAR_BACK);
   	  		  }
+			  (void)ISHELL_SetTimer(pMe->m_pShell,
+                                300,
+                                (PFNNOTIFY)MGAppPopupMenuTimer,
+                                pMe);
 			 
       	   }
       case EVT_KEY:
@@ -4337,6 +4347,7 @@ static boolean MGAppPopupMenu_OnSavetoplaylist(CMediaGalleryApp* pMe,
       		default:
       			break;
       	}
+		return TRUE;
       	break;
       default:
       	break;
@@ -6884,6 +6895,13 @@ static boolean MediaGalleryApp_SoundSettingDlg_HandleEvent(CMediaGalleryApp *pMe
 
       case EVT_DIALOG_START:
          {
+#ifdef FEATURE_K_AMPLIFIER
+		{
+			nv_item_type	SimChoice;
+		    SimChoice.sim_select =1;
+			(void)OEMNV_Put(NV_SIM_SELECT_I,&SimChoice);
+		}
+#endif
             if(pMe->m_bKeepMediaMenu == FALSE)
             {
                MGAppUtil_SetMenuCtlRectProp(pMe,
@@ -6911,6 +6929,13 @@ static boolean MediaGalleryApp_SoundSettingDlg_HandleEvent(CMediaGalleryApp *pMe
             //if we are suspending (EVT_APP_SUSPEND is sent before
             //EVT_DIALOG_END). Handle suspend for current status.
             //if(pMe->m_bSuspending)
+#ifdef FEATURE_K_AMPLIFIER
+			{
+				nv_item_type	SimChoice;
+		    	SimChoice.sim_select =2;
+				(void)OEMNV_Put(NV_SIM_SELECT_I,&SimChoice);
+			}
+#endif
             {
                if(FALSE == MGAppUtil_UpdateSelItemCheck(pMe))
                {

@@ -3776,10 +3776,11 @@ static boolean  dialog_handler_of_state_event_edit( CScheduleApp* pme,
             else
             {
             	AECHAR *pwsText;
-                    
+                AECHAR *pwsNoteText;    
                 pwsText = ITEXTCTL_GetTextPtr(pSubject);
+				pwsNoteText = ITEXTCTL_GetTextPtr(pNote);
                 #ifndef FEATURE_ALL_KEY_PAD    //add by yangdecai 
-                if( WSTRLEN(pwsText) > 0)
+                if(((WSTRLEN(pwsText) > 0) &&(currentItem == 0))||((WSTRLEN(pwsNoteText) > 0)&&(currentItem == 1)))
                 {
                     bottomBarParms.eBBarType = BTBAR_SAVE_DELETE;
                 }

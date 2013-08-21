@@ -1778,7 +1778,7 @@ static boolean  HandleRingerDialogEvent(CSoundMenu *pMe,
 
         case EVT_DIALOG_START:
         {
-			#ifdef FEATURE_VERSION_K212
+			#ifdef FEATURE_K_AMPLIFIER
 			{
 				nv_item_type	SimChoice;
 				SimChoice.sim_select =1;
@@ -1886,7 +1886,7 @@ static boolean  HandleRingerDialogEvent(CSoundMenu *pMe,
             return TRUE;
 
         case EVT_DIALOG_END:
-			#ifdef FEATURE_VERSION_K212
+			#ifdef FEATURE_K_AMPLIFIER
 			{
 				nv_item_type	SimChoice;
 				SimChoice.sim_select =2;
@@ -2215,7 +2215,7 @@ static boolean  HandleSmsRingDialogEvent(CSoundMenu *pMe,
                                         "06"};
             ICONFIG_GetItem(pMe->m_pConfig,  CFGI_PROFILE_SMS_RINGER_ID, (void*)smsID, sizeof(smsID));
             //若NV没有取出,此处重新设置
-            #ifdef FEATURE_VERSION_K212
+            #ifdef FEATURE_K_AMPLIFIER
 			{
 				nv_item_type	SimChoice;
 				SimChoice.sim_select =1;
@@ -2310,7 +2310,7 @@ static boolean  HandleSmsRingDialogEvent(CSoundMenu *pMe,
 
         case EVT_DIALOG_END:
             //IALERT_StopSMSAlert(pMe->m_pAlert);
-            #ifdef FEATURE_VERSION_K212
+            #ifdef FEATURE_K_AMPLIFIER
 			{
 				nv_item_type	SimChoice;
 				SimChoice.sim_select =2;
@@ -2461,7 +2461,7 @@ static boolean  HandleVolumeDialogEvent(CSoundMenu *pMe,
             return TRUE;
 
         case EVT_DIALOG_START:
-			#ifdef FEATURE_VERSION_K212
+			#ifdef FEATURE_K_AMPLIFIER
 			{
 				nv_item_type	SimChoice;
 				SimChoice.sim_select =1;
@@ -2493,7 +2493,7 @@ static boolean  HandleVolumeDialogEvent(CSoundMenu *pMe,
             return TRUE;
 
         case EVT_DIALOG_END:
-		#ifdef FEATURE_VERSION_K212
+		#ifdef FEATURE_K_AMPLIFIER
 			{
 				nv_item_type	SimChoice;
 				SimChoice.sim_select =2;

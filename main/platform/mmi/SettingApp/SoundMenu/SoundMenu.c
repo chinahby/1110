@@ -879,6 +879,13 @@ static boolean SoundMenu_HandleEvent(ISoundMenu *pi,
             {
                 IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
             }
+#ifdef FEATURE_K_AMPLIFIER
+				{
+					  nv_item_type	SimChoice;
+					  SimChoice.sim_select =1;
+					  (void)OEMNV_Put(NV_SIM_SELECT_I,&SimChoice);
+				}
+#endif
             pMe->m_bAppIsReady = FALSE;
             ASSERT(dwParam != 0);
             as = (AEEAppStart*)dwParam;
@@ -1074,6 +1081,13 @@ static boolean SoundMenu_HandleEvent(ISoundMenu *pi,
             {
                 return TRUE;
             }
+#ifdef FEATURE_K_AMPLIFIER
+				{
+					  nv_item_type	SimChoice;
+					  SimChoice.sim_select =2;
+					  (void)OEMNV_Put(NV_SIM_SELECT_I,&SimChoice);
+				}
+#endif
             pMe->m_bAppIsReady = FALSE;
             (void) SoundMenu_RouteDialogEvent(pMe,eCode,wParam,dwParam);
             pMe->m_pActiveDlg = NULL;

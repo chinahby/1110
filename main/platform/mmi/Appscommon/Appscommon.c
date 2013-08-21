@@ -2965,6 +2965,12 @@ void DrawPromptMessage (IDisplay *pIDisplay,
     }
     
     //Draw bottom
+#ifdef FEATURE_VERSION_K212
+ if(PParam->eBBarType == BTBAR_NONE)	
+ 	{}
+ else
+#endif
+ {
     MEMSET(&bottomParam,0,sizeof(BottomBar_Param_type));
     if(NULL != PParam->eBBarType)
     {
@@ -2979,6 +2985,7 @@ void DrawPromptMessage (IDisplay *pIDisplay,
         }  
     }
     DrawBottomBar(pIDisplay, &bottomParam);  
+ }
 	
 /*
 #ifdef FEATURE_VERSION_W208S

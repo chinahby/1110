@@ -1903,7 +1903,7 @@ static OEMConfigListType oemi_cache = {
    {L"Mobile Tracker Alert!:The sender of this SMS is using your phone."},
    FALSE,
 #endif
-#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_W021_CT100)
+#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_K212)
    1,											//CFGI_KEY_LOCK_CHECK			
 #elif defined(FEATURE_VERSION_K202_LM129C)//xxzhen
    0,
@@ -2051,7 +2051,7 @@ static OEMConfigListType oemi_cache = {
    ,FALSE
 #ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for rend
 #ifdef FEATURE_VERSION_K212
-	,DISPLAYREND_TYPE_ROTAT_HORZ
+	,DISPLAYREND_TYPE_MAX
 #else
 #if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_C316)
    ,DISPLAYREND_TYPE_MAX
@@ -2972,7 +2972,7 @@ void OEM_RestoreFactorySetting( void )
 
 #ifdef FEATURE_PEKTEST
     oemi_cache.b_key_lock       =  0;
-#elif defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM) ||defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_KEY_LOCK_DEFAULT_30S)
+#elif defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM) ||defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_KEY_LOCK_DEFAULT_30S)||defined(FEATURE_VERSION_K212)
 	oemi_cache.b_key_lock       =  1; 
 #elif defined(FEATURE_VERSION_K202_LM129C)//xxzhen
 	oemi_cache.b_key_lock       =  2; 
@@ -3410,7 +3410,7 @@ void OEM_RestoreFactorySetting( void )
    
 #ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for rend
 #ifdef FEATURE_VERSION_K212
-	oemi_cache.m_nrendstate = DISPLAYREND_TYPE_ROTAT_HORZ;
+	oemi_cache.m_nrendstate = DISPLAYREND_TYPE_MAX;
 #else
 #if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_C316)
      oemi_cache.m_nrendstate = DISPLAYREND_TYPE_MAX;
@@ -3520,7 +3520,7 @@ void OEM_RestoreFactorySetting( void )
    nvi.back_light = OEMNV_BL_7S;
    (void) OEMNV_Put( NV_BACK_LIGHT_I, &nvi );
    nvi_cache.backlight = OEMNV_BL_7S;
-   #elif defined (FEATURE_VERSION_C337)
+   #elif defined (FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K212)
    nvi.back_light = OEMNV_BL_30S;
    (void) OEMNV_Put( NV_BACK_LIGHT_I, &nvi );
    nvi_cache.backlight = OEMNV_BL_30S;

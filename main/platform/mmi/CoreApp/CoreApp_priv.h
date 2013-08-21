@@ -162,6 +162,7 @@
 #define CORE_THR_32	"fs:/hsmm/coreapp/afternoon.mp3"
 #define CORE_FOR_41	"fs:/hsmm/coreapp/Ten.mp3"
 #define CORE_FIVE_5	"fs:/hsmm/coreapp/five_5.mp3"
+#define CORE_LIANG  "fs:/hsmm/coreapp/liang.mp3"
 
 static boolean m_bStart_speech_timer = FALSE;
 

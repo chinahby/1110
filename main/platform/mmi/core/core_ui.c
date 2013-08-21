@@ -2268,12 +2268,7 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
         }
         
         if (gpAlert){
-			#ifdef FEATURE_VERSION_K212
-			if((cls != AEECLSID_DIALER) &&(cls != AEECLSID_MAIN_MENU))
-			#endif
-			{
             	IALERT_KeyBeep(gpAlert, (AVKType) wParam, TRUE);
-			}
         }
         break;
         

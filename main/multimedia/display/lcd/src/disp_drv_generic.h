@@ -254,10 +254,12 @@ static void disp_drv_off(void)
 	#ifdef FEATURE_K_AMPLIFIER
 	{
 		nv_item_type	SimChoice;
+		extern boolean  voc_amrm_on ;
 		(void)OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
 		if(SimChoice.sim_select == 2)
 		{
     		MSG_FATAL("disp_drv_off......................",0,0,0);
+			voc_amrm_on = FALSE;
 			gpio_tlmm_config(GPIO_OUTPUT_10);
 			clk_busy_wait(30*1000);
 			gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
@@ -296,7 +298,7 @@ SIDE EFFECTS
 static void disp_drv_on(void)
 {
     rex_enter_crit_sect(&disp_drv_crit_sect);
-	#ifdef FEATURE_K_AMPLIFIER
+	#if 0//def FEATURE_K_AMPLIFIER
 	{
 		 if(!HS_HEADSET_ON())
 		 {

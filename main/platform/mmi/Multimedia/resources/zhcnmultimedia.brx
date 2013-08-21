@@ -23,7 +23,7 @@
 		<Text>电视</Text>
 	</STRING>
 	<STRING Id="1019" Name="IDS_MULTIMEDIA_QQ">
-		<Text>移动QQ</Text>
+		<Text>手机QQ</Text>
 	</STRING>
 	<String Id="1020" Name="IDS_MULTIMEDIA_GAME">
 		<Text>游戏</Text>

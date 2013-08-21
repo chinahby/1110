@@ -7407,6 +7407,7 @@ static boolean  CContApp_HandleMainMenuDlgEvent( CContApp  *pMe,
                     IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
                 }
             }            
+			(void)IMENUCTL_Redraw(pMenuCtl);
             // For redraw the dialog
             (void)ISHELL_PostEvent( pMe->m_pShell,
                                     AEECLSID_APP_CONTACT,
@@ -7444,7 +7445,6 @@ static boolean  CContApp_HandleMainMenuDlgEvent( CContApp  *pMe,
             #endif
             // Draw prompt bar here
             CONTAPP_DRAW_BOTTOMBAR(BTBAR_SELECT_BACK);
-            (void)IMENUCTL_Redraw(pMenuCtl);
             IDISPLAY_Update(pMe->m_pDisplay);  
             return TRUE;
             

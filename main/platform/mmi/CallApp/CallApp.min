@@ -29,7 +29,7 @@ CONSTFILE_FILES+=\
 	callapp.bar|fs:/mod/callapp/en/callapp.bar
 endif
 	
-ifeq ($(USES_RESDIR),K212)
+ifeq ($(USES_BOHAO),yes)
 CONSTFILE_FILES+=\
 		0.mp3|fs:/hsmm/callapp/0.mp3 \
 		1.mp3|fs:/hsmm/callapp/1.mp3 \

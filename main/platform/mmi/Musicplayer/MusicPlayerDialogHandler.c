@@ -3322,7 +3322,7 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
 #else
 	case AVK_CLR:	
 #endif	
-#ifdef FEATURE_VERSION_K212
+#ifdef FEATURE_K_AMPLIFIER
 		{
 			nv_item_type	SimChoice;
 			SimChoice.sim_select =2;
@@ -3618,6 +3618,13 @@ static boolean MP3_SimplePlayer_HandleEvent(CMusicPlayer *pMe,
         }
         case EVT_DIALOG_START:
         {			
+#ifdef FEATURE_K_AMPLIFIER
+				{
+					  nv_item_type	SimChoice;
+					  SimChoice.sim_select =1;
+					  (void)OEMNV_Put(NV_SIM_SELECT_I,&SimChoice);
+				}
+#endif
            (void) ISHELL_PostEvent(pMe->m_pShell, 
                                     AEECLSID_APP_MUSICPLAYER,
                                     EVT_USER_REDRAW,
@@ -5128,7 +5135,7 @@ void CMusicPlayer_MediaNotify(void * pUser, AEEMediaCmdNotify * pCmdNotify)
             }          
             //播放的时候每秒会发上来一次
             case MM_STATUS_TICK_UPDATE:
-#ifdef FEATURE_VERSION_K212
+#ifdef FEATURE_K_AMPLIFIER
 				{
 					  nv_item_type	SimChoice;
 					  SimChoice.sim_select =1;

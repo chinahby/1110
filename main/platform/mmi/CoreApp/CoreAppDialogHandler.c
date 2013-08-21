@@ -3367,10 +3367,14 @@ static boolean  IDD_STARTUPANI_Handler(void       *pUser,
 
         case EVT_DIALOG_START: 		
 			//Add By zzg 2012_02_17
-#ifdef FEATURE_K_AMPLIFIER
+#if 0//def FEATURE_K_AMPLIFIER
 {
 		 if(!HS_HEADSET_ON())
 		 {
+			  nv_item_type	SimChoice;
+			  SimChoice.sim_select = 2;
+				//OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+			 (void)OEMNV_Put(NV_SIM_SELECT_I,&SimChoice);
 			  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
 				
 			  clk_busy_wait(2*1000);
@@ -6134,6 +6138,14 @@ static void CoreApp_UpdateidleBaoshiTimer(void *pUser)
 	JulianType  julian;
 	GetJulianDate(GETTIMESECONDS(), &julian);
 	if((julian.wMinute == 0)&&(julian.wSecond<=30))
+	{	nv_item_type	SimChoice;
+		boolean m_sound_bo_core = FALSE;
+		(void) ICONFIG_GetItem(pMe->m_pConfig,
+									 CFGI_SOUND_BO_CORE,
+									 &m_sound_bo_core,
+									 sizeof(boolean));
+		(void)OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+		if(SimChoice.sim_select != 1 && m_sound_bo_core)
 	{
 #ifdef FEATURE_VERSION_EC99
         CoreApp_PlayTimeSound(pMe,TIME_TWO);
@@ -10077,13 +10089,28 @@ static void CoreApp_PlayTimeSound(CCoreApp *pMe,uint16 Status)
 				}
 				break;
     		case TIME_FOUR1: 
+				wHour = jDate.wHour > 12 ? (jDate.wHour - 12) : jDate.wHour;
 				md.pData = (void *)CORE_FOR_41;
-				m_TimeStarus = TIME_FOUR2;
+				if(wHour==10)
+				{
+					m_TimeStarus = TIME_FIVE;
+				}
+				else
+				{
+					m_TimeStarus = TIME_FOUR2;
+				}
 				break;
 			case TIME_FOUR2: 
 				wHour = jDate.wHour > 12 ? (jDate.wHour - 12) : jDate.wHour;
 				i = wHour%10;
-				md.pData = (void *)CORE_SOUND_NAME[i];
+				if(wHour == 2)
+				{
+					md.pData =(void *)CORE_LIANG;
+				}
+				else
+				{
+					md.pData = (void *)CORE_SOUND_NAME[i];
+				}
 				m_TimeStarus = TIME_FIVE;
 				break;
     		case TIME_FIVE: 

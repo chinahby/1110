@@ -273,7 +273,7 @@ ifeq ($(USES_LCD_TOUCH),yes)
 		idle_time_bg.png|fs:/image/core/idle_time_bg.png \
 		night.png|fs:/image/core/night.png
 endif
-ifeq ($(USES_RESDIR),K212)
+ifeq ($(USES_BOHAO),yes)
 CONSTFILE_FILES+=\
 	one_1.mp3|fs:/hsmm/coreapp/one_1.mp3 \
 	tow_2.mp3|fs:/hsmm/coreapp/tow_2.mp3 \

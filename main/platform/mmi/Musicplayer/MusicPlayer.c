@@ -857,7 +857,7 @@ static boolean IMusicPlayer_HandleEvent( IMusicPlayer *pi,
                 CMusicPlayer_RunFSM(pMe);
             }
 			
-#ifdef FEATURE_VERSION_K212
+#ifdef FEATURE_K_AMPLIFIER
 			{
 				nv_item_type	SimChoice;
 				SimChoice.sim_select =2;
