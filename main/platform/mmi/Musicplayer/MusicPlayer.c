@@ -1437,8 +1437,9 @@ static void MP3_ResumeHandle(CMusicPlayer *pMe)
     }
 #endif
     CMusicPlayer_ReleaseMedia(pMe);
-    MSG_FATAL("pMe->m_bPlaying = %d,pMe->m_bPaused = %d",pMe->m_bPlaying,pMe->m_bPaused,0);
+ 
     ISHELL_SetTimer(pMe->m_pShell,300,(PFNNOTIFY)CMusicPlayer_InitMusic,pMe);
+
     if(pMe->m_bPlaying || pMe->m_bPaused)
     {
       ISHELL_SetTimer(pMe->m_pShell,800,(PFNNOTIFY) CMusicPlayer_PlayMusic,pMe);
@@ -1446,8 +1447,8 @@ static void MP3_ResumeHandle(CMusicPlayer *pMe)
     }
     if(pMe->m_bPaused)
      {
-        ISHELL_SetTimer(pMe->m_pShell,1100, (PFNNOTIFY)CMusicPlayer_PauseMusic,pMe);
-     }
+        ISHELL_SetTimer(pMe->m_pShell,2100, (PFNNOTIFY)CMusicPlayer_PauseMusic,pMe);
+     }   
 }
 /*πÿ±’º¸≈Ã“Ù*/
 static void MP3_CloseKeyBeepVol(CMusicPlayer *pMe)
