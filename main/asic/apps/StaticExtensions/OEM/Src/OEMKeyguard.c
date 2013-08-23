@@ -70,7 +70,11 @@ when       who     what, where, why
 
 ////
 // Time in milliseconds before the keyguard message will close
+#ifdef FEATURE_VERSION_K212
+#define TIMEOUT_MS_KEYGUARD_TIMER              (5*1000)
+#else
 #define TIMEOUT_MS_KEYGUARD_TIMER              (1*1000)
+#endif
 
 #define KEYGUARD_ERR( str, a, b, c )         ERR( str,a,b,c )
 

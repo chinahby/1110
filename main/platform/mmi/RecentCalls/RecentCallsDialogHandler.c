@@ -3305,7 +3305,25 @@ static void RecentCalls_RecordDetail(CRecentCalls   *pMe)
                      NULL,
                      IDF_TEXT_TRANSPARENT);
 #else
+#ifdef FEATURE_VERSION_K212
    (void)IDISPLAY_DrawText(pMe->m_pDisplay,
+                     AEE_FONT_BOLD,
+                     wszText, 
+                     -1, 
+                     PIXELS_TO_EDGE,
+                     PIXELS_TO_EDGE  + ((6 + nSinkingLines)*nLineHeight),	//+ TITLEBAR_HEIGHT	 	6
+                     NULL,
+                     IDF_TEXT_TRANSPARENT);
+   (void)IDISPLAY_DrawText(pMe->m_pDisplay,
+                     AEE_FONT_BOLD,
+                     wszCount, 
+                     -1, 
+                     nTextWidth + 3 * nNumberWidth,
+                     PIXELS_TO_EDGE  + ((6 + nSinkingLines)*nLineHeight),	//+ TITLEBAR_HEIGHT	 	6
+                     NULL,
+                     IDF_TEXT_TRANSPARENT);
+#else
+ (void)IDISPLAY_DrawText(pMe->m_pDisplay,
                      AEE_FONT_BOLD,
                      wszText, 
                      -1, 
@@ -3321,6 +3339,7 @@ static void RecentCalls_RecordDetail(CRecentCalls   *pMe)
                      PIXELS_TO_EDGE  + ((5 + nSinkingLines)*nLineHeight),	//+ TITLEBAR_HEIGHT	 	5
                      NULL,
                      IDF_TEXT_TRANSPARENT);
+#endif
 #endif   
 #endif   
    IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_BLACK);
@@ -3462,7 +3481,7 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines)
                       AEE_FONT_BOLD,
                       buffer,
                       -1,
-                      nCallTimeTextWidth + nNumberWidth, //ELS_TO_EDGE,
+                      PIXELS_TO_EDGE, //ELS_TO_EDGE,
                       PIXELS_TO_EDGE  + ((3 + nSinkingLines)*nLineHeight),	//+ TITLEBAR_HEIGHT	 	3
                       NULL,
                       IDF_TEXT_TRANSPARENT
@@ -3511,8 +3530,8 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines)
                   AEE_FONT_BOLD,
                   buffer,
                   -1,
-                  nTextWidth + nNumberWidth,
-                  PIXELS_TO_EDGE  + ((3 + nSinkingLines)*nLineHeight),	//+ TITLEBAR_HEIGHT
+                  PIXELS_TO_EDGE,
+                  PIXELS_TO_EDGE  + ((4 + nSinkingLines)*nLineHeight),	//+ TITLEBAR_HEIGHT
                   NULL,
                   IDF_TEXT_TRANSPARENT
               );
@@ -3687,8 +3706,8 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines)
                   AEE_FONT_BOLD,
                   buffer,
                   -1,
-                  nTextWidth + nNumberWidth,
-                  PIXELS_TO_EDGE  + ((4+ nSinkingLines)*nLineHeight),	//+ TITLEBAR_HEIGHT	 	 
+                  PIXELS_TO_EDGE,
+                  PIXELS_TO_EDGE  + ((5+ nSinkingLines)*nLineHeight),	//+ TITLEBAR_HEIGHT	 	 
                   NULL,
                   IDF_TEXT_TRANSPARENT
               );

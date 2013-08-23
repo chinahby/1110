@@ -40,6 +40,9 @@
 	<STRING Id="1013" Name="IDS_OPTION_SETUP">
 		<Text>设置</Text>
 	</STRING>
+	<STRING Id="1014" Name="IDS_VALID_DATE">
+	<Text>日期已过</Text>
+	</STRING>
 	<STRING Id="1016" Name="IDS_OPTION_VIEWDAY_DELETE_CONFIRM">
 		<Text>是否删除这个计划</Text>
 	</STRING>

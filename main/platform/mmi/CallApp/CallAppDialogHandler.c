@@ -60,7 +60,7 @@
 ==============================================================================*/
 
 extern boolean	bIsPowerUp; //Add By zzg 2012_03_07
-
+static boolean  volflag=FALSE;//add by wenyu
 #if FEATURE_DIALER_ANIMAION_SUPPORT
 // 来电动画图片文件定义
 #define CALLAPP_CALLIN_ANI      "fs:/image/notice/callin.png"  
@@ -1902,6 +1902,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                     {
                         break;
                     }
+					
                     vol_add = TRUE;
 
                 case AVK_DOWN:
@@ -4049,16 +4050,35 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
                 case AVK_VOLUME_UP:
 #ifdef FEATURE_ALL_KEY_PAD                     
                 case AVK_O:
-#endif                    
-                    vol_add = TRUE;
-
+#endif               
+//add by wenyu,通话中调节音量，按上、下导航键直接调节，要求第一次按键先显示当前音量状态，再按为调节。 
+					if(volflag==FALSE)
+						{
+							volflag=TRUE;
+						}
+						else if(volflag==TRUE)
+                    	{
+                    		vol_add = TRUE;
+							CallApp_ChangeCallVolume(pMe, vol_add);
+							}
+							#if !defined( FEATURE_CALL_RECORDER)
+						CallApp_RefreshVolBar(pMe);
+						IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+						#endif
+						return TRUE;
                 case AVK_DOWN:
                 case AVK_VOLUME_DOWN:
 #ifdef FEATURE_ALL_KEY_PAD                     
                 case AVK_I:
-#endif                         
-                    CallApp_ChangeCallVolume(pMe, vol_add);
-
+#endif                    
+					if(volflag==FALSE)
+					{
+						volflag=TRUE;
+					}
+					else if(volflag==TRUE)
+					{
+                   CallApp_ChangeCallVolume(pMe, vol_add);
+					}					
 #if !defined( FEATURE_CALL_RECORDER)
 					CallApp_RefreshVolBar(pMe);
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
@@ -13317,7 +13337,7 @@ static void CallApp_HandleDialogTimer_Redraw(void *pUser)
 #if defined( FEATURE_CALL_RECORDER)
 	pMe->m_bSettingVolume = FALSE;
 #endif
-
+	 volflag=FALSE;
     (void) ISHELL_PostEvent(pMe->m_pShell,AEECLSID_DIALER,  EVT_USER_REDRAW,  0, 0);
 }
 
