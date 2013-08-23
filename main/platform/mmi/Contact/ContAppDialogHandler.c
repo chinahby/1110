@@ -7357,7 +7357,12 @@ static boolean  CContApp_HandleMainMenuDlgEvent( CContApp  *pMe,
 #endif
     switch (eCode)
     {
-        case EVT_DIALOG_INIT:
+        case EVT_DIALOG_INIT:            
+            IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY|MP_ACTIVE_NO_REDRAW);
+            IMENUCTL_SetOemProperties(pMenuCtl,OEMMP_USE_MENU_STYLE);
+#ifdef FEATURE_CARRIER_CHINA_VERTU
+            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND);
+#endif            
             return TRUE;
             
         case EVT_DIALOG_START:
@@ -7374,17 +7379,13 @@ static boolean  CContApp_HandleMainMenuDlgEvent( CContApp  *pMe,
 #endif
             MSG_FATAL("EVT_DIALOG_START",0,0,0);
             
-            //IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL);
-            IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY|MP_ACTIVE_NO_REDRAW);
-            IMENUCTL_SetOemProperties(pMenuCtl,OEMMP_USE_MENU_STYLE);
-#ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND);
-#endif
+            
             // build options menu
             (void)CContApp_BuildMainMenuMenu(pMe, pMenuCtl);
             
             // restore the menu select
             POP_OPTSMENU_SEL(pMe->m_wOptsStatSel);
+            
             {
                 AECHAR WTitle[40] = {0};
                 //IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
@@ -7407,7 +7408,20 @@ static boolean  CContApp_HandleMainMenuDlgEvent( CContApp  *pMe,
                     IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
                 }
             }            
-			(void)IMENUCTL_Redraw(pMenuCtl);
+
+            //(void)IMENUCTL_Redraw(pMenuCtl);
+
+           
+            if(pMe->m_wSelectStore != MENU_SELECT_NULL)
+            {
+                IMENUCTL_SetSel(pMenuCtl, pMe->m_wSelectStore);
+            }
+            else
+            {
+                // Set menu select
+                IMENUCTL_SetSel(pMenuCtl, pMe->m_wMainMenuSel);
+            }
+            
             // For redraw the dialog
             (void)ISHELL_PostEvent( pMe->m_pShell,
                                     AEECLSID_APP_CONTACT,
@@ -7422,6 +7436,7 @@ static boolean  CContApp_HandleMainMenuDlgEvent( CContApp  *pMe,
         
         case EVT_USER_REDRAW:
             // Restore the menu select from suspend
+            /*
             if(pMe->m_wSelectStore != MENU_SELECT_NULL)
             {
                 IMENUCTL_SetSel(pMenuCtl, pMe->m_wSelectStore);
@@ -7431,6 +7446,7 @@ static boolean  CContApp_HandleMainMenuDlgEvent( CContApp  *pMe,
                 // Set menu select
                 IMENUCTL_SetSel(pMenuCtl, pMe->m_wMainMenuSel);
             }
+            */
             #ifdef FEATURE_VERSION_SKY
             {
             IImage *image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);
@@ -7443,6 +7459,7 @@ static boolean  CContApp_HandleMainMenuDlgEvent( CContApp  *pMe,
              }
             }
             #endif
+            
             // Draw prompt bar here
             CONTAPP_DRAW_BOTTOMBAR(BTBAR_SELECT_BACK);
             IDISPLAY_Update(pMe->m_pDisplay);  
