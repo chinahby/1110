@@ -6157,6 +6157,7 @@ static void CoreApp_UpdateidleBaoshiTimer(void *pUser)
 	AEE_SetSysTimer((int32)(30 * 1000),
                            CoreApp_UpdateidleBaoshiTimer,
                            pMe);
+    }
 }
 #endif
 /*==============================================================================
