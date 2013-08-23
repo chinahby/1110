@@ -635,7 +635,7 @@ static boolean Multimed_HandleEvent( IMultimed *pi,
     Multimed *pMe = (Multimed*)pi;
     AEEAppStart* as = NULL;
     AEEDeviceInfo di; 
-    ISHELL_GetDeviceInfo(pMe->m_pShell,&di); 
+    
     switch ( eCode)
     {
         case EVT_APP_START:
@@ -680,7 +680,8 @@ static boolean Multimed_HandleEvent( IMultimed *pi,
         case EVT_APP_RESUME:
             {
                 AEEAppStart* as = ( AEEAppStart*)dwParam;
-            
+                
+                ISHELL_GetDeviceInfo(pMe->m_pShell,&di); 
                 pMe->m_rc    = as->rc;
                 pMe->m_rc.dy = di.cyScreen;
                 pMe->m_eAppStatus = MULTIMEDIA_RUNNING;
