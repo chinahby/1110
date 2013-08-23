@@ -1000,7 +1000,7 @@ static int DrawImageField (IAnnunciator *pMe, uint32 nAnnunID, uint32 nState)
         return EFAILED;
     }
 
-    MSG_FATAL("***zzg DrawImageField nAnnunID=%x, nState=%x***", nAnnunID, nState, 0);
+    //MSG_FATAL("***zzg DrawImageField nAnnunID=%x, nState=%x***", nAnnunID, nState, 0);
 
     //Add By zzg 2010_07_23
     if(IAnnunCoreObj->m_hasTitleText && IAnnunCoreObj->m_Title[0] != 0)
@@ -2052,7 +2052,7 @@ static int IAnnunciator_SetField(IAnnunciator * pMe, uint32 nAnnunID,
 
   
 
-  MSG_FATAL("***zzg IAnnunciator_SetField %d 0x%x***",nAnnunID,nState,0);
+  //MSG_FATAL("***zzg IAnnunciator_SetField %d 0x%x***",nAnnunID,nState,0);
   
   if (nAnnunID >= ARR_SIZE(Annunciators))
   {
