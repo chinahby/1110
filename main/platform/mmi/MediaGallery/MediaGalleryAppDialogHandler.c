@@ -6895,13 +6895,6 @@ static boolean MediaGalleryApp_SoundSettingDlg_HandleEvent(CMediaGalleryApp *pMe
 
       case EVT_DIALOG_START:
          {
-#ifdef FEATURE_K_AMPLIFIER
-		{
-			nv_item_type	SimChoice;
-		    SimChoice.sim_select =1;
-			(void)OEMNV_Put(NV_SIM_SELECT_I,&SimChoice);
-		}
-#endif
             if(pMe->m_bKeepMediaMenu == FALSE)
             {
                MGAppUtil_SetMenuCtlRectProp(pMe,
@@ -6929,13 +6922,6 @@ static boolean MediaGalleryApp_SoundSettingDlg_HandleEvent(CMediaGalleryApp *pMe
             //if we are suspending (EVT_APP_SUSPEND is sent before
             //EVT_DIALOG_END). Handle suspend for current status.
             //if(pMe->m_bSuspending)
-#ifdef FEATURE_K_AMPLIFIER
-			{
-				nv_item_type	SimChoice;
-		    	SimChoice.sim_select =2;
-				(void)OEMNV_Put(NV_SIM_SELECT_I,&SimChoice);
-			}
-#endif
             {
                if(FALSE == MGAppUtil_UpdateSelItemCheck(pMe))
                {

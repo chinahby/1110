@@ -1625,13 +1625,7 @@ __dialog_handler_of_state_record_stop__:
 				#endif
 				int						state	  	= ( pme->m_Media.m_eState == MEDIA_STATE_PAUSED ? 0 : 1);
 				Media*					pmedia    	= &pme->m_Media;
-#ifdef FEATURE_K_AMPLIFIER
-				{
-					  nv_item_type	SimChoice;
-					  SimChoice.sim_select =1;
-					  (void)OEMNV_Put(NV_SIM_SELECT_I,&SimChoice);
-				}
-#endif
+                
 				recorder_show_media_spec( pmedia);
 				recorder_draw_softkey( pme, button[pmedia->m_bRecorder][0], button[pmedia->m_bRecorder][1]);
 #if defined( FEATURE_RECODER_REPLAY)
@@ -1788,13 +1782,6 @@ __dialog_handler_of_state_record_discard__:
 					}
 					else
 					{
-#ifdef FEATURE_K_AMPLIFIER
-						{
-					  		nv_item_type	SimChoice;
-					  		SimChoice.sim_select =2;
-					  		(void)OEMNV_Put(NV_SIM_SELECT_I,&SimChoice);
-						}
-#endif
 						CLOSE_DIALOG( DLGRET_CANCELED);
 					}
 				}

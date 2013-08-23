@@ -3000,12 +3000,21 @@ const voc_adie_codec_config_type voc_adie_codec_headset_fm_config =
 //	MSMAUD_ADIE_CODEC_MONO_SPEAKER_FM_CONFIG_SEQ;
 
 //wangliang add!
+#ifdef FEATURE_K_AMPLIFIER
+const voc_adie_codec_config_type voc_adie_codec_speaker_fm_config =
+{
+  sizeof(voc_adie_headset_fm_config)/sizeof(adie_codec_reg_type),
+  MSMAUD_ADIE_CODEC_HEADSET_FM_DELAY_CONFIG_SIZE,
+  voc_adie_headset_fm_config
+};
+#else
 const voc_adie_codec_config_type voc_adie_codec_speaker_fm_config =
 {
   sizeof(voc_adie_speaker_fm_config)/sizeof(adie_codec_reg_type),
   MSMAUD_ADIE_CODEC_SPEAKER_FM_DELAY_CONFIG_SIZE,
   voc_adie_speaker_fm_config
 };
+#endif
 #endif
 
 #ifdef MSMAUD_SCMM
@@ -3277,9 +3286,21 @@ const voc_cal_audio_path_config_type
 
     #ifdef FEATURE_SPEAKER_PHONE
     /* VOC_CODEC_SPEAKER_PHONE         */
+#ifdef FEATURE_K_AMPLIFIER
+    #ifdef MSMAUD_GRND_REFERENCED_CAPLESS_MODE
+   ,{ AUDIO_PATH_CONFIG(&voc_cal_codec_int1,
+                        &voc_adie_codec_speaker_config,
+                        &voc_cal_pmic_config_capless_mic)}
+    #else
+   ,{ AUDIO_PATH_CONFIG(&voc_cal_codec_int1,
+                        &voc_adie_codec_speaker_config,
+                        &voc_cal_pmic_config_legacy_mic)}
+    #endif  /* MSMAUD_GRND_REFERENCED_CAPLESS_MODE */
+#else
    ,{ AUDIO_PATH_CONFIG(&voc_cal_codec_speaker,
                         &voc_adie_codec_speaker_config,
                         &voc_cal_pmic_config_legacy_mic) }
+#endif
     #endif /* FEATURE_SPEAKER_PHONE */
 
     #ifdef FEATURE_BT
@@ -3505,9 +3526,21 @@ const voc_cal_audio_path_config_type
 
     #ifdef FEATURE_SPEAKER_PHONE
     /* VOC_CODEC_SPEAKER_PHONE         */
+#ifdef FEATURE_K_AMPLIFIER
+    #ifdef MSMAUD_GRND_REFERENCED_CAPLESS_MODE
+   ,{ AUDIO_PATH_CONFIG(&voc_cal_codec_int1_mixer,
+                        &voc_adie_codec_speaker_config,
+                        &voc_cal_pmic_config_capless_mic)}
+    #else
+   ,{ AUDIO_PATH_CONFIG(&voc_cal_codec_int1_mixer,
+                        &voc_adie_codec_speaker_config,
+                        &voc_cal_pmic_config_legacy_mic)}
+    #endif  /* MSMAUD_GRND_REFERENCED_CAPLESS_MODE */
+#else
    ,{ AUDIO_PATH_CONFIG(&voc_cal_codec_speaker,
                         &voc_adie_codec_speaker_config,
                         &voc_cal_pmic_config_legacy_mic) }
+#endif
     #endif /* FEATURE_SPEAKER_PHONE */
 
 
@@ -3739,9 +3772,21 @@ const voc_cal_audio_path_config_type
 
 
     #ifdef FEATURE_SPEAKER_PHONE
+#ifdef FEATURE_K_AMPLIFIER
+    #ifdef MSMAUD_GRND_REFERENCED_CAPLESS_MODE
+   ,{ AUDIO_PATH_CONFIG(&voc_cal_codec_sdac,
+                        &voc_adie_codec_speaker_no_mic_config,
+                        &voc_cal_pmic_config_capless_nomic)}
+    #else
+   ,{ AUDIO_PATH_CONFIG(&voc_cal_codec_sdac,
+                        &voc_adie_codec_speaker_no_mic_config,
+                        &voc_cal_pmic_config_legacy_nomic)}
+    #endif  /* MSMAUD_GRND_REFERENCED_CAPLESS_MODE */
+#else
     /* VOC_CODEC_SPEAKER_PHONE         */
    ,{ AUDIO_PATH_CONFIG(&voc_cal_codec_16k_speaker,
                         &voc_adie_codec_speaker_no_mic_config, NULL) }
+#endif
     #endif /* FEATURE_SPEAKER_PHONE */
 
     #ifdef FEATURE_BT
@@ -3960,9 +4005,21 @@ const voc_cal_audio_path_config_type
 
     #ifdef FEATURE_SPEAKER_PHONE
     /* VOC_CODEC_SPEAKER_PHONE         */
+#ifdef FEATURE_K_AMPLIFIER
+    #ifdef MSMAUD_GRND_REFERENCED_CAPLESS_MODE
+   ,{ AUDIO_PATH_CONFIG(&voc_cal_codec_int1_mm_stereo_rec,
+                        &voc_adie_codec_speaker_config,
+                        &voc_cal_pmic_config_capless_mic)}
+    #else
+   ,{ AUDIO_PATH_CONFIG(&voc_cal_codec_int1_mm_stereo_rec,
+                        &voc_adie_codec_speaker_config,
+                        &voc_cal_pmic_config_legacy_mic)}
+    #endif  /* MSMAUD_GRND_REFERENCED_CAPLESS_MODE */
+#else
    ,{ AUDIO_PATH_CONFIG(&voc_cal_codec_16k_speaker_mm_rec,
                         &voc_adie_codec_speaker_config,
                         &voc_cal_pmic_config_legacy_mic) }
+#endif
     #endif /* FEATURE_SPEAKER_PHONE */
 
     #ifdef FEATURE_BT
@@ -4219,9 +4276,21 @@ const voc_cal_audio_path_config_type
 
 
     #ifdef FEATURE_SPEAKER_PHONE
+#ifdef FEATURE_K_AMPLIFIER
+    #ifdef MSMAUD_GRND_REFERENCED_CAPLESS_MODE
+   ,{ AUDIO_PATH_CONFIG(&voc_cal_codec_sdac,
+                        &voc_adie_codec_speaker_no_mic_config,
+                        &voc_cal_pmic_config_capless_nomic)}
+    #else
+   ,{ AUDIO_PATH_CONFIG(&voc_cal_codec_sdac,
+                        &voc_adie_codec_speaker_no_mic_config,
+                        &voc_cal_pmic_config_legacy_nomic)}
+    #endif  /* MSMAUD_GRND_REFERENCED_CAPLESS_MODE */
+#else
     /* VOC_CODEC_SPEAKER_PHONE         */
    ,{ AUDIO_PATH_CONFIG(&voc_cal_codec_16k_speaker,
                         &voc_adie_codec_speaker_no_mic_config, NULL) }
+#endif
     #endif /* FEATURE_SPEAKER_PHONE */
 
 
@@ -4441,9 +4510,21 @@ const voc_cal_audio_path_config_type
 
     #ifdef FEATURE_SPEAKER_PHONE
     /* VOC_CODEC_SPEAKER_PHONE         */
+#ifdef FEATURE_K_AMPLIFIER
+    #ifdef MSMAUD_GRND_REFERENCED_CAPLESS_MODE
+   ,{ AUDIO_PATH_CONFIG(&voc_cal_codec_int1,
+                        &voc_adie_codec_speaker_config,
+                        &voc_cal_pmic_config_capless_mic)}
+    #else
+   ,{ AUDIO_PATH_CONFIG(&voc_cal_codec_int1,
+                        &voc_adie_codec_speaker_config,
+                        &voc_cal_pmic_config_legacy_mic)}
+    #endif  /* MSMAUD_GRND_REFERENCED_CAPLESS_MODE */
+#else
    ,{ AUDIO_PATH_CONFIG(&voc_cal_codec_speaker_wb,
                         &voc_adie_codec_speaker_config,
                         &voc_cal_pmic_config_legacy_mic) }
+#endif
     #endif /* FEATURE_SPEAKER_PHONE */
 
     #ifdef FEATURE_BT
@@ -10410,19 +10491,11 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_0_cal = {
   {                              /* Rx PCM IIR filter       */
     QDSP_CMD_IIR_FILTER_ENABLE,
     5,
-    #ifdef FEATURE_K_AMPLIFIER
-	{ 0x4a06ad89,0x1a14bed7,0x40000000,0x8c9f5423,0x33d6015e},
-	{ 0xf203f5f1,0x257bb24c,0x409c3adb,0x47818c42,0x183a6240},
-	{ 0xd10a6e41,0x26d9fea0,0x409c3adb,0xf9744966,0x22dcd584},
-	{ 0x4cb424ad,0x31a699e3,0x409c3adb,0x504592eb,0x33daa6a3},
-	{ 0x8f4e33b1,0x31ec2df7,0x409c3adb,0xcc81fd16,0x25e84026}
-	#else
     { 0xDC6077C4,  0xFE561A4A, 0x40000000,  0xF5287D7A,  0xD247655A},
     { 0x4694EAA5,  0x1465059A, 0x416AC95A,  0x0A9EDA33,  0x095B1589},
     { 0xAB7680F9,  0x251ECE97, 0x416AC95A,  0xA94A9866,  0x34100E74},
     { 0xD6CC0B77,  0x2F4D1380, 0x416AC95A,  0xF85DE5E3,  0x1E04F34C},
     { 0x4E749379,  0x2F946D53, 0x416AC95A,  0x4BE3D224,  0x2E129412}
-	#endif
   },
 #endif /* FEATURE_IIR_FILTER_5S */
 #endif /* FEATURE_IIR_FILTER */
@@ -10491,19 +10564,11 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_0_cal = {
   {                              /* Rx PCM IIR filter       */
     QDSP_CMD_IIR_FILTER_ENABLE,
     5,
-    #ifdef FEATURE_K_AMPLIFIER
-	{ 0x4a06ad89,0x1a14bed7,0x40000000,0x8c9f5423,0x33d6015e},
-	{ 0xf203f5f1,0x257bb24c,0x409c3adb,0x47818c42,0x183a6240},
-	{ 0xd10a6e41,0x26d9fea0,0x409c3adb,0xf9744966,0x22dcd584},
-	{ 0x4cb424ad,0x31a699e3,0x409c3adb,0x504592eb,0x33daa6a3},
-	{ 0x8f4e33b1,0x31ec2df7,0x409c3adb,0xcc81fd16,0x25e84026}
-	#else
     { 0xDC6077C4,  0xFE561A4A, 0x40000000,  0xF5287D7A,  0xD247655A},
     { 0x4694EAA5,  0x1465059A, 0x416AC95A,  0x0A9EDA33,  0x095B1589},
     { 0xAB7680F9,  0x251ECE97, 0x416AC95A,  0xA94A9866,  0x34100E74},
     { 0xD6CC0B77,  0x2F4D1380, 0x416AC95A,  0xF85DE5E3,  0x1E04F34C},
     { 0x4E749379,  0x2F946D53, 0x416AC95A,  0x4BE3D224,  0x2E129412}
-	#endif
   },
 #endif /* FEATURE_IIR_FILTER_5S */
 #endif /* FEATURE_IIR_FILTER */
@@ -10679,19 +10744,11 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_0_cal = {
   {                              /* Rx PCM IIR filter       */
     QDSP_CMD_IIR_FILTER_ENABLE,
     5,
-    #ifdef FEATURE_K_AMPLIFIER
-	{ 0x4a06ad89,0x1a14bed7,0x40000000,0x8c9f5423,0x33d6015e},
-	{ 0xf203f5f1,0x257bb24c,0x409c3adb,0x47818c42,0x183a6240},
-	{ 0xd10a6e41,0x26d9fea0,0x409c3adb,0xf9744966,0x22dcd584},
-	{ 0x4cb424ad,0x31a699e3,0x409c3adb,0x504592eb,0x33daa6a3},
-	{ 0x8f4e33b1,0x31ec2df7,0x409c3adb,0xcc81fd16,0x25e84026}
-	#else
     { 0xDC6077C4,  0xFE561A4A, 0x40000000,  0xF5287D7A,  0xD247655A},
     { 0x4694EAA5,  0x1465059A, 0x416AC95A,  0x0A9EDA33,  0x095B1589},
     { 0xAB7680F9,  0x251ECE97, 0x416AC95A,  0xA94A9866,  0x34100E74},
     { 0xD6CC0B77,  0x2F4D1380, 0x416AC95A,  0xF85DE5E3,  0x1E04F34C},
     { 0x4E749379,  0x2F946D53, 0x416AC95A,  0x4BE3D224,  0x2E129412}
-	#endif
   },
 #endif /* FEATURE_IIR_FILTER_5S */
 #endif /* FEATURE_IIR_FILTER */
@@ -10759,19 +10816,11 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_0_cal = {
   {                              /* Rx PCM IIR filter       */
     QDSP_CMD_IIR_FILTER_ENABLE,
     5,
-    #ifdef FEATURE_K_AMPLIFIER
-	{ 0x4a06ad89,0x1a14bed7,0x40000000,0x8c9f5423,0x33d6015e},
-	{ 0xf203f5f1,0x257bb24c,0x409c3adb,0x47818c42,0x183a6240},
-	{ 0xd10a6e41,0x26d9fea0,0x409c3adb,0xf9744966,0x22dcd584},
-	{ 0x4cb424ad,0x31a699e3,0x409c3adb,0x504592eb,0x33daa6a3},
-	{ 0x8f4e33b1,0x31ec2df7,0x409c3adb,0xcc81fd16,0x25e84026}
-	#else
    { 0xC7BD982A,  0x20F6C2EA,  0x40000000,  0xB8F814B6,  0x219A8827 },
    { 0x1932BD72,  0x257CB928,  0x3EE09449,  0x1B3E6D5C,  0x2305883C },
    { 0x94191681,  0x2EC8C2C7,  0x3EE09449,  0x91E3F7C1,  0x33338FF4 },
    { 0x3F1ADDB2,  0x3139A3B6,  0x3EE09449,  0x3E6C5F84,  0x30716FF7 },
    { 0xC7626980,  0x367571CC,  0x3EE09449,  0xC87A0CE9,  0x354E88A9 }
-	#endif
   },
 #endif /* FEATURE_IIR_FILTER_5S */
 #endif /* FEATURE_IIR_FILTER */
@@ -10840,19 +10889,11 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_0_cal = {
   {                              /* Rx PCM IIR filter       */
     QDSP_CMD_IIR_FILTER_ENABLE,
     5,
-    #ifdef FEATURE_K_AMPLIFIER
-	{ 0x4a06ad89,0x1a14bed7,0x40000000,0x8c9f5423,0x33d6015e},
-	{ 0xf203f5f1,0x257bb24c,0x409c3adb,0x47818c42,0x183a6240},
-	{ 0xd10a6e41,0x26d9fea0,0x409c3adb,0xf9744966,0x22dcd584},
-	{ 0x4cb424ad,0x31a699e3,0x409c3adb,0x504592eb,0x33daa6a3},
-	{ 0x8f4e33b1,0x31ec2df7,0x409c3adb,0xcc81fd16,0x25e84026}
-	#else
     { 0xDC6077C4,  0xFE561A4A, 0x40000000,  0xF5287D7A,  0xD247655A},
     { 0x4694EAA5,  0x1465059A, 0x416AC95A,  0x0A9EDA33,  0x095B1589},
     { 0xAB7680F9,  0x251ECE97, 0x416AC95A,  0xA94A9866,  0x34100E74},
     { 0xD6CC0B77,  0x2F4D1380, 0x416AC95A,  0xF85DE5E3,  0x1E04F34C},
     { 0x4E749379,  0x2F946D53, 0x416AC95A,  0x4BE3D224,  0x2E129412}
-	#endif
   },
 #endif /* FEATURE_IIR_FILTER_5S */
 #endif /* FEATURE_IIR_FILTER */
@@ -10972,19 +11013,11 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_0_surf_cal = {
   {                              /* Rx PCM IIR filter       */
     QDSP_CMD_IIR_FILTER_ENABLE,
     5,
-    #ifdef FEATURE_K_AMPLIFIER
-	{ 0x4a06ad89,0x1a14bed7,0x40000000,0x8c9f5423,0x33d6015e},
-	{ 0xf203f5f1,0x257bb24c,0x409c3adb,0x47818c42,0x183a6240},
-	{ 0xd10a6e41,0x26d9fea0,0x409c3adb,0xf9744966,0x22dcd584},
-	{ 0x4cb424ad,0x31a699e3,0x409c3adb,0x504592eb,0x33daa6a3},
-	{ 0x8f4e33b1,0x31ec2df7,0x409c3adb,0xcc81fd16,0x25e84026}
-	#else
     { 0xDC6077C4,  0xFE561A4A, 0x40000000,  0xF5287D7A,  0xD247655A},
     { 0x4694EAA5,  0x1465059A, 0x416AC95A,  0x0A9EDA33,  0x095B1589},
     { 0xAB7680F9,  0x251ECE97, 0x416AC95A,  0xA94A9866,  0x34100E74},
     { 0xD6CC0B77,  0x2F4D1380, 0x416AC95A,  0xF85DE5E3,  0x1E04F34C},
     { 0x4E749379,  0x2F946D53, 0x416AC95A,  0x4BE3D224,  0x2E129412}
-	#endif
   },
 #endif /* FEATURE_IIR_FILTER_5S */
 #endif /* FEATURE_IIR_FILTER */
@@ -11103,19 +11136,11 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_0_cal_wb = {
   {                              /* Rx PCM IIR filter       */
     QDSP_CMD_IIR_FILTER_ENABLE,
     5,
-    #ifdef FEATURE_K_AMPLIFIER
-	{ 0x4a06ad89,0x1a14bed7,0x40000000,0x8c9f5423,0x33d6015e},
-	{ 0xf203f5f1,0x257bb24c,0x409c3adb,0x47818c42,0x183a6240},
-	{ 0xd10a6e41,0x26d9fea0,0x409c3adb,0xf9744966,0x22dcd584},
-	{ 0x4cb424ad,0x31a699e3,0x409c3adb,0x504592eb,0x33daa6a3},
-	{ 0x8f4e33b1,0x31ec2df7,0x409c3adb,0xcc81fd16,0x25e84026}
-	#else
     { 0xDC6077C4,  0xFE561A4A, 0x40000000,  0xF5287D7A,  0xD247655A},
     { 0x4694EAA5,  0x1465059A, 0x416AC95A,  0x0A9EDA33,  0x095B1589},
     { 0xAB7680F9,  0x251ECE97, 0x416AC95A,  0xA94A9866,  0x34100E74},
     { 0xD6CC0B77,  0x2F4D1380, 0x416AC95A,  0xF85DE5E3,  0x1E04F34C},
     { 0x4E749379,  0x2F946D53, 0x416AC95A,  0x4BE3D224,  0x2E129412}
-	#endif
   },
 #endif /* FEATURE_IIR_FILTER_5S */
 #endif /* FEATURE_IIR_FILTER */
@@ -11184,19 +11209,11 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_0_cal_wb = {
   {                              /* Rx PCM IIR filter       */
     QDSP_CMD_IIR_FILTER_ENABLE,
     5,
-    #ifdef FEATURE_K_AMPLIFIER
-	{ 0x4a06ad89,0x1a14bed7,0x40000000,0x8c9f5423,0x33d6015e},
-	{ 0xf203f5f1,0x257bb24c,0x409c3adb,0x47818c42,0x183a6240},
-	{ 0xd10a6e41,0x26d9fea0,0x409c3adb,0xf9744966,0x22dcd584},
-	{ 0x4cb424ad,0x31a699e3,0x409c3adb,0x504592eb,0x33daa6a3},
-	{ 0x8f4e33b1,0x31ec2df7,0x409c3adb,0xcc81fd16,0x25e84026}
-	#else
     { 0xDC6077C4,  0xFE561A4A, 0x40000000,  0xF5287D7A,  0xD247655A},
     { 0x4694EAA5,  0x1465059A, 0x416AC95A,  0x0A9EDA33,  0x095B1589},
     { 0xAB7680F9,  0x251ECE97, 0x416AC95A,  0xA94A9866,  0x34100E74},
     { 0xD6CC0B77,  0x2F4D1380, 0x416AC95A,  0xF85DE5E3,  0x1E04F34C},
     { 0x4E749379,  0x2F946D53, 0x416AC95A,  0x4BE3D224,  0x2E129412}
-	#endif
   },
 #endif /* FEATURE_IIR_FILTER_5S */
 #endif /* FEATURE_IIR_FILTER */
@@ -11280,19 +11297,11 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_0_cal_wb = {
   {                              /* Rx PCM IIR filter       */
     QDSP_CMD_IIR_FILTER_ENABLE,
     5,
-    #ifdef FEATURE_K_AMPLIFIER
-	{ 0x4a06ad89,0x1a14bed7,0x40000000,0x8c9f5423,0x33d6015e},
-	{ 0xf203f5f1,0x257bb24c,0x409c3adb,0x47818c42,0x183a6240},
-	{ 0xd10a6e41,0x26d9fea0,0x409c3adb,0xf9744966,0x22dcd584},
-	{ 0x4cb424ad,0x31a699e3,0x409c3adb,0x504592eb,0x33daa6a3},
-	{ 0x8f4e33b1,0x31ec2df7,0x409c3adb,0xcc81fd16,0x25e84026}
-	#else
     { 0xDC6077C4,  0xFE561A4A, 0x40000000,  0xF5287D7A,  0xD247655A},
     { 0x4694EAA5,  0x1465059A, 0x416AC95A,  0x0A9EDA33,  0x095B1589},
     { 0xAB7680F9,  0x251ECE97, 0x416AC95A,  0xA94A9866,  0x34100E74},
     { 0xD6CC0B77,  0x2F4D1380, 0x416AC95A,  0xF85DE5E3,  0x1E04F34C},
     { 0x4E749379,  0x2F946D53, 0x416AC95A,  0x4BE3D224,  0x2E129412}
-	#endif
   },
 #endif /* FEATURE_IIR_FILTER_5S */
 #endif /* FEATURE_IIR_FILTER */
@@ -11360,19 +11369,11 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_0_cal_wb = {
   { /* Rx PCM IIR filter */
  	QDSP_CMD_IIR_FILTER_ENABLE,
 	5,
-	#ifdef FEATURE_K_AMPLIFIER
-	{ 0x4a06ad89,0x1a14bed7,0x40000000,0x8c9f5423,0x33d6015e},
-	{ 0xf203f5f1,0x257bb24c,0x409c3adb,0x47818c42,0x183a6240},
-	{ 0xd10a6e41,0x26d9fea0,0x409c3adb,0xf9744966,0x22dcd584},
-	{ 0x4cb424ad,0x31a699e3,0x409c3adb,0x504592eb,0x33daa6a3},
-	{ 0x8f4e33b1,0x31ec2df7,0x409c3adb,0xcc81fd16,0x25e84026}
-	#else
 	{ 0xCDC1DDC2, 0x18EB2158, 0x40000000, 0xBF3E9E65, 0xFC564A0},
 	{ 0xF27D7427, 0x1A188F47, 0x40000000, 0xF597B731, 0x2E9C434E},
 	{ 0x326D06DE, 0x2CF6A326, 0x40000000, 0x30B54E3F, 0x2BFE5E9F},
 	{ 0x9611817E, 0x2D9C0846, 0x40000000, 0x96F11BCE, 0x2F8E3BBE},
 	{ 0xDCD53EBE, 0x330E6234, 0x40000000, 0xDC289C07, 0x3438A28F}
-	#endif
   },
 #endif /* FEATURE_IIR_FILTER_5S */
 #endif /* FEATURE_IIR_FILTER */
@@ -11440,19 +11441,11 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_0_cal_wb = {
   { /* Rx PCM IIR filter */
  	QDSP_CMD_IIR_FILTER_ENABLE,
 	5,
-	#ifdef FEATURE_K_AMPLIFIER
-	{ 0x4a06ad89,0x1a14bed7,0x40000000,0x8c9f5423,0x33d6015e},
-	{ 0xf203f5f1,0x257bb24c,0x409c3adb,0x47818c42,0x183a6240},
-	{ 0xd10a6e41,0x26d9fea0,0x409c3adb,0xf9744966,0x22dcd584},
-	{ 0x4cb424ad,0x31a699e3,0x409c3adb,0x504592eb,0x33daa6a3},
-	{ 0x8f4e33b1,0x31ec2df7,0x409c3adb,0xcc81fd16,0x25e84026}
-	#else
 	{ 0xCDC1DDC2, 0x18EB2158, 0x40000000, 0xBF3E9E65, 0xFC564A0},
 	{ 0xF27D7427, 0x1A188F47, 0x40000000, 0xF597B731, 0x2E9C434E},
 	{ 0x326D06DE, 0x2CF6A326, 0x40000000, 0x30B54E3F, 0x2BFE5E9F},
 	{ 0x9611817E, 0x2D9C0846, 0x40000000, 0x96F11BCE, 0x2F8E3BBE},
 	{ 0xDCD53EBE, 0x330E6234, 0x40000000, 0xDC289C07, 0x3438A28F}
-	#endif
   },
 #endif /* FEATURE_IIR_FILTER_5S */
 #endif /* FEATURE_IIR_FILTER */
@@ -11521,19 +11514,11 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_0_cal_wb = {
   {                              /* Rx PCM IIR filter       */
     QDSP_CMD_IIR_FILTER_ENABLE,
     5,
-    #ifdef FEATURE_K_AMPLIFIER
-	{ 0x4a06ad89,0x1a14bed7,0x40000000,0x8c9f5423,0x33d6015e},
-	{ 0xf203f5f1,0x257bb24c,0x409c3adb,0x47818c42,0x183a6240},
-	{ 0xd10a6e41,0x26d9fea0,0x409c3adb,0xf9744966,0x22dcd584},
-	{ 0x4cb424ad,0x31a699e3,0x409c3adb,0x504592eb,0x33daa6a3},
-	{ 0x8f4e33b1,0x31ec2df7,0x409c3adb,0xcc81fd16,0x25e84026}
-	#else
     { 0xDC6077C4,  0xFE561A4A, 0x40000000,  0xF5287D7A,  0xD247655A},
     { 0x4694EAA5,  0x1465059A, 0x416AC95A,  0x0A9EDA33,  0x095B1589},
     { 0xAB7680F9,  0x251ECE97, 0x416AC95A,  0xA94A9866,  0x34100E74},
     { 0xD6CC0B77,  0x2F4D1380, 0x416AC95A,  0xF85DE5E3,  0x1E04F34C},
     { 0x4E749379,  0x2F946D53, 0x416AC95A,  0x4BE3D224,  0x2E129412}
-	#endif
   },
 #endif /* FEATURE_IIR_FILTER_5S */
 #endif /* FEATURE_IIR_FILTER */
@@ -11653,19 +11638,11 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_0_surf_cal_wb = {
   {                              /* Rx PCM IIR filter       */
     QDSP_CMD_IIR_FILTER_ENABLE,
     5,
-    #ifdef FEATURE_K_AMPLIFIER
-	{ 0x4a06ad89,0x1a14bed7,0x40000000,0x8c9f5423,0x33d6015e},
-	{ 0xf203f5f1,0x257bb24c,0x409c3adb,0x47818c42,0x183a6240},
-	{ 0xd10a6e41,0x26d9fea0,0x409c3adb,0xf9744966,0x22dcd584},
-	{ 0x4cb424ad,0x31a699e3,0x409c3adb,0x504592eb,0x33daa6a3},
-	{ 0x8f4e33b1,0x31ec2df7,0x409c3adb,0xcc81fd16,0x25e84026}
-	#else
     { 0xDC6077C4,  0xFE561A4A, 0x40000000,  0xF5287D7A,  0xD247655A},
     { 0x4694EAA5,  0x1465059A, 0x416AC95A,  0x0A9EDA33,  0x095B1589},
     { 0xAB7680F9,  0x251ECE97, 0x416AC95A,  0xA94A9866,  0x34100E74},
     { 0xD6CC0B77,  0x2F4D1380, 0x416AC95A,  0xF85DE5E3,  0x1E04F34C},
     { 0x4E749379,  0x2F946D53, 0x416AC95A,  0x4BE3D224,  0x2E129412}
-	#endif
   },
 #endif /* FEATURE_IIR_FILTER_5S */
 #endif /* FEATURE_IIR_FILTER */
@@ -11785,19 +11762,11 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_off_chip_dual_mic_cal = {
   {                              /* Rx PCM IIR filter       */
     QDSP_CMD_IIR_FILTER_ENABLE,
     5,
-    #ifdef FEATURE_K_AMPLIFIER
-	{ 0x4a06ad89,0x1a14bed7,0x40000000,0x8c9f5423,0x33d6015e},
-	{ 0xf203f5f1,0x257bb24c,0x409c3adb,0x47818c42,0x183a6240},
-	{ 0xd10a6e41,0x26d9fea0,0x409c3adb,0xf9744966,0x22dcd584},
-	{ 0x4cb424ad,0x31a699e3,0x409c3adb,0x504592eb,0x33daa6a3},
-	{ 0x8f4e33b1,0x31ec2df7,0x409c3adb,0xcc81fd16,0x25e84026}
-	#else
     { 0xDC6077C4,  0xFE561A4A, 0x40000000,  0xF5287D7A,  0xD247655A},
     { 0x4694EAA5,  0x1465059A, 0x416AC95A,  0x0A9EDA33,  0x095B1589},
     { 0xAB7680F9,  0x251ECE97, 0x416AC95A,  0xA94A9866,  0x34100E74},
     { 0xD6CC0B77,  0x2F4D1380, 0x416AC95A,  0xF85DE5E3,  0x1E04F34C},
     { 0x4E749379,  0x2F946D53, 0x416AC95A,  0x4BE3D224,  0x2E129412}
-	#endif
   },
 #endif /* FEATURE_IIR_FILTER_5S */
 #endif /* FEATURE_IIR_FILTER */
@@ -11866,19 +11835,11 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_off_chip_dual_mic_cal = {
   {                              /* Rx PCM IIR filter       */
     QDSP_CMD_IIR_FILTER_ENABLE,
     5,
-    #ifdef FEATURE_K_AMPLIFIER
-	{ 0x4a06ad89,0x1a14bed7,0x40000000,0x8c9f5423,0x33d6015e},
-	{ 0xf203f5f1,0x257bb24c,0x409c3adb,0x47818c42,0x183a6240},
-	{ 0xd10a6e41,0x26d9fea0,0x409c3adb,0xf9744966,0x22dcd584},
-	{ 0x4cb424ad,0x31a699e3,0x409c3adb,0x504592eb,0x33daa6a3},
-	{ 0x8f4e33b1,0x31ec2df7,0x409c3adb,0xcc81fd16,0x25e84026}
-	#else
     { 0xDC6077C4,  0xFE561A4A, 0x40000000,  0xF5287D7A,  0xD247655A},
     { 0x4694EAA5,  0x1465059A, 0x416AC95A,  0x0A9EDA33,  0x095B1589},
     { 0xAB7680F9,  0x251ECE97, 0x416AC95A,  0xA94A9866,  0x34100E74},
     { 0xD6CC0B77,  0x2F4D1380, 0x416AC95A,  0xF85DE5E3,  0x1E04F34C},
     { 0x4E749379,  0x2F946D53, 0x416AC95A,  0x4BE3D224,  0x2E129412}
-	#endif
   },
 #endif /* FEATURE_IIR_FILTER_5S */
 #endif /* FEATURE_IIR_FILTER */
@@ -11948,19 +11909,11 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_off_chip_dual_mic_cal = {
   {                              /* Rx PCM IIR filter       */
     QDSP_CMD_IIR_FILTER_ENABLE,
     5,
-     #ifdef FEATURE_K_AMPLIFIER
-	{ 0x4a06ad89,0x1a14bed7,0x40000000,0x8c9f5423,0x33d6015e},
-	{ 0xf203f5f1,0x257bb24c,0x409c3adb,0x47818c42,0x183a6240},
-	{ 0xd10a6e41,0x26d9fea0,0x409c3adb,0xf9744966,0x22dcd584},
-	{ 0x4cb424ad,0x31a699e3,0x409c3adb,0x504592eb,0x33daa6a3},
-	{ 0x8f4e33b1,0x31ec2df7,0x409c3adb,0xcc81fd16,0x25e84026}
-	#else
     { 0xDC6077C4,  0xFE561A4A, 0x40000000,  0xF5287D7A,  0xD247655A},
     { 0x4694EAA5,  0x1465059A, 0x416AC95A,  0x0A9EDA33,  0x095B1589},
     { 0xAB7680F9,  0x251ECE97, 0x416AC95A,  0xA94A9866,  0x34100E74},
     { 0xD6CC0B77,  0x2F4D1380, 0x416AC95A,  0xF85DE5E3,  0x1E04F34C},
     { 0x4E749379,  0x2F946D53, 0x416AC95A,  0x4BE3D224,  0x2E129412}
-	#endif
   },
 #endif /* FEATURE_IIR_FILTER_5S */
 #endif /* FEATURE_IIR_FILTER */
@@ -12028,19 +11981,11 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_off_chip_dual_mic_cal = {
   {                              /* Rx PCM IIR filter       */
     QDSP_CMD_IIR_FILTER_ENABLE,
     5,
-     #ifdef FEATURE_K_AMPLIFIER
-	{ 0x4a06ad89,0x1a14bed7,0x40000000,0x8c9f5423,0x33d6015e},
-	{ 0xf203f5f1,0x257bb24c,0x409c3adb,0x47818c42,0x183a6240},
-	{ 0xd10a6e41,0x26d9fea0,0x409c3adb,0xf9744966,0x22dcd584},
-	{ 0x4cb424ad,0x31a699e3,0x409c3adb,0x504592eb,0x33daa6a3},
-	{ 0x8f4e33b1,0x31ec2df7,0x409c3adb,0xcc81fd16,0x25e84026}
-	#else
     { 0xDC6077C4,  0xFE561A4A, 0x40000000,  0xF5287D7A,  0xD247655A},
     { 0x4694EAA5,  0x1465059A, 0x416AC95A,  0x0A9EDA33,  0x095B1589},
     { 0xAB7680F9,  0x251ECE97, 0x416AC95A,  0xA94A9866,  0x34100E74},
     { 0xD6CC0B77,  0x2F4D1380, 0x416AC95A,  0xF85DE5E3,  0x1E04F34C},
     { 0x4E749379,  0x2F946D53, 0x416AC95A,  0x4BE3D224,  0x2E129412}
-	#endif
   },
 #endif /* FEATURE_IIR_FILTER_5S */
 #endif /* FEATURE_IIR_FILTER */
@@ -12108,19 +12053,11 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_off_chip_dual_mic_cal = {
   {                              /* Rx PCM IIR filter       */
     QDSP_CMD_IIR_FILTER_ENABLE,
     5,
-     #ifdef FEATURE_K_AMPLIFIER
-	{ 0x4a06ad89,0x1a14bed7,0x40000000,0x8c9f5423,0x33d6015e},
-	{ 0xf203f5f1,0x257bb24c,0x409c3adb,0x47818c42,0x183a6240},
-	{ 0xd10a6e41,0x26d9fea0,0x409c3adb,0xf9744966,0x22dcd584},
-	{ 0x4cb424ad,0x31a699e3,0x409c3adb,0x504592eb,0x33daa6a3},
-	{ 0x8f4e33b1,0x31ec2df7,0x409c3adb,0xcc81fd16,0x25e84026}
-	#else
     { 0xDC6077C4,  0xFE561A4A, 0x40000000,  0xF5287D7A,  0xD247655A},
     { 0x4694EAA5,  0x1465059A, 0x416AC95A,  0x0A9EDA33,  0x095B1589},
     { 0xAB7680F9,  0x251ECE97, 0x416AC95A,  0xA94A9866,  0x34100E74},
     { 0xD6CC0B77,  0x2F4D1380, 0x416AC95A,  0xF85DE5E3,  0x1E04F34C},
     { 0x4E749379,  0x2F946D53, 0x416AC95A,  0x4BE3D224,  0x2E129412}
-	#endif
   },
 #endif /* FEATURE_IIR_FILTER_5S */
 #endif /* FEATURE_IIR_FILTER */
@@ -12189,19 +12126,11 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_off_chip_dual_mic_cal = {
   {                              /* Rx PCM IIR filter       */
     QDSP_CMD_IIR_FILTER_ENABLE,
     5,
-     #ifdef FEATURE_K_AMPLIFIER
-	{ 0x4a06ad89,0x1a14bed7,0x40000000,0x8c9f5423,0x33d6015e},
-	{ 0xf203f5f1,0x257bb24c,0x409c3adb,0x47818c42,0x183a6240},
-	{ 0xd10a6e41,0x26d9fea0,0x409c3adb,0xf9744966,0x22dcd584},
-	{ 0x4cb424ad,0x31a699e3,0x409c3adb,0x504592eb,0x33daa6a3},
-	{ 0x8f4e33b1,0x31ec2df7,0x409c3adb,0xcc81fd16,0x25e84026}
-	#else
     { 0xDC6077C4,  0xFE561A4A, 0x40000000,  0xF5287D7A,  0xD247655A},
     { 0x4694EAA5,  0x1465059A, 0x416AC95A,  0x0A9EDA33,  0x095B1589},
     { 0xAB7680F9,  0x251ECE97, 0x416AC95A,  0xA94A9866,  0x34100E74},
     { 0xD6CC0B77,  0x2F4D1380, 0x416AC95A,  0xF85DE5E3,  0x1E04F34C},
     { 0x4E749379,  0x2F946D53, 0x416AC95A,  0x4BE3D224,  0x2E129412}
-	#endif
   },
 #endif /* FEATURE_IIR_FILTER_5S */
 #endif /* FEATURE_IIR_FILTER */
@@ -12321,19 +12250,11 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_off_chip_dual_mic_cal_wb = {
   {                              /* Rx PCM IIR filter       */
     QDSP_CMD_IIR_FILTER_ENABLE,
     5,
-     #ifdef FEATURE_K_AMPLIFIER
-	{ 0x4a06ad89,0x1a14bed7,0x40000000,0x8c9f5423,0x33d6015e},
-	{ 0xf203f5f1,0x257bb24c,0x409c3adb,0x47818c42,0x183a6240},
-	{ 0xd10a6e41,0x26d9fea0,0x409c3adb,0xf9744966,0x22dcd584},
-	{ 0x4cb424ad,0x31a699e3,0x409c3adb,0x504592eb,0x33daa6a3},
-	{ 0x8f4e33b1,0x31ec2df7,0x409c3adb,0xcc81fd16,0x25e84026}
-	#else
     { 0xDC6077C4,  0xFE561A4A, 0x40000000,  0xF5287D7A,  0xD247655A},
     { 0x4694EAA5,  0x1465059A, 0x416AC95A,  0x0A9EDA33,  0x095B1589},
     { 0xAB7680F9,  0x251ECE97, 0x416AC95A,  0xA94A9866,  0x34100E74},
     { 0xD6CC0B77,  0x2F4D1380, 0x416AC95A,  0xF85DE5E3,  0x1E04F34C},
     { 0x4E749379,  0x2F946D53, 0x416AC95A,  0x4BE3D224,  0x2E129412}
-	#endif
   },
 #endif /* FEATURE_IIR_FILTER_5S */
 #endif /* FEATURE_IIR_FILTER */
@@ -12402,19 +12323,11 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_off_chip_dual_mic_cal_wb = {
   {                              /* Rx PCM IIR filter       */
     QDSP_CMD_IIR_FILTER_ENABLE,
     5,
-     #ifdef FEATURE_K_AMPLIFIER
-	{ 0x4a06ad89,0x1a14bed7,0x40000000,0x8c9f5423,0x33d6015e},
-	{ 0xf203f5f1,0x257bb24c,0x409c3adb,0x47818c42,0x183a6240},
-	{ 0xd10a6e41,0x26d9fea0,0x409c3adb,0xf9744966,0x22dcd584},
-	{ 0x4cb424ad,0x31a699e3,0x409c3adb,0x504592eb,0x33daa6a3},
-	{ 0x8f4e33b1,0x31ec2df7,0x409c3adb,0xcc81fd16,0x25e84026}
-	#else
     { 0xDC6077C4,  0xFE561A4A, 0x40000000,  0xF5287D7A,  0xD247655A},
     { 0x4694EAA5,  0x1465059A, 0x416AC95A,  0x0A9EDA33,  0x095B1589},
     { 0xAB7680F9,  0x251ECE97, 0x416AC95A,  0xA94A9866,  0x34100E74},
     { 0xD6CC0B77,  0x2F4D1380, 0x416AC95A,  0xF85DE5E3,  0x1E04F34C},
     { 0x4E749379,  0x2F946D53, 0x416AC95A,  0x4BE3D224,  0x2E129412}
-	#endif
   },
 #endif /* FEATURE_IIR_FILTER_5S */
 #endif /* FEATURE_IIR_FILTER */
@@ -12484,19 +12397,11 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_off_chip_dual_mic_cal_wb = {
   {                              /* Rx PCM IIR filter       */
     QDSP_CMD_IIR_FILTER_ENABLE,
     5,
-     #ifdef FEATURE_K_AMPLIFIER
-	{ 0x4a06ad89,0x1a14bed7,0x40000000,0x8c9f5423,0x33d6015e},
-	{ 0xf203f5f1,0x257bb24c,0x409c3adb,0x47818c42,0x183a6240},
-	{ 0xd10a6e41,0x26d9fea0,0x409c3adb,0xf9744966,0x22dcd584},
-	{ 0x4cb424ad,0x31a699e3,0x409c3adb,0x504592eb,0x33daa6a3},
-	{ 0x8f4e33b1,0x31ec2df7,0x409c3adb,0xcc81fd16,0x25e84026}
-	#else
     { 0xDC6077C4,  0xFE561A4A, 0x40000000,  0xF5287D7A,  0xD247655A},
     { 0x4694EAA5,  0x1465059A, 0x416AC95A,  0x0A9EDA33,  0x095B1589},
     { 0xAB7680F9,  0x251ECE97, 0x416AC95A,  0xA94A9866,  0x34100E74},
     { 0xD6CC0B77,  0x2F4D1380, 0x416AC95A,  0xF85DE5E3,  0x1E04F34C},
     { 0x4E749379,  0x2F946D53, 0x416AC95A,  0x4BE3D224,  0x2E129412}
-	#endif
   },
 #endif /* FEATURE_IIR_FILTER_5S */
 #endif /* FEATURE_IIR_FILTER */
@@ -12564,19 +12469,11 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_off_chip_dual_mic_cal_wb = {
   {                              /* Rx PCM IIR filter       */
     QDSP_CMD_IIR_FILTER_ENABLE,
     5,
-     #ifdef FEATURE_K_AMPLIFIER
-	{ 0x4a06ad89,0x1a14bed7,0x40000000,0x8c9f5423,0x33d6015e},
-	{ 0xf203f5f1,0x257bb24c,0x409c3adb,0x47818c42,0x183a6240},
-	{ 0xd10a6e41,0x26d9fea0,0x409c3adb,0xf9744966,0x22dcd584},
-	{ 0x4cb424ad,0x31a699e3,0x409c3adb,0x504592eb,0x33daa6a3},
-	{ 0x8f4e33b1,0x31ec2df7,0x409c3adb,0xcc81fd16,0x25e84026}
-	#else
     { 0xDC6077C4,  0xFE561A4A, 0x40000000,  0xF5287D7A,  0xD247655A},
     { 0x4694EAA5,  0x1465059A, 0x416AC95A,  0x0A9EDA33,  0x095B1589},
     { 0xAB7680F9,  0x251ECE97, 0x416AC95A,  0xA94A9866,  0x34100E74},
     { 0xD6CC0B77,  0x2F4D1380, 0x416AC95A,  0xF85DE5E3,  0x1E04F34C},
     { 0x4E749379,  0x2F946D53, 0x416AC95A,  0x4BE3D224,  0x2E129412}
-	#endif
   },
 #endif /* FEATURE_IIR_FILTER_5S */
 #endif /* FEATURE_IIR_FILTER */
@@ -12644,19 +12541,11 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_off_chip_dual_mic_cal_wb = {
   {                              /* Rx PCM IIR filter       */
     QDSP_CMD_IIR_FILTER_ENABLE,
     5,
-     #ifdef FEATURE_K_AMPLIFIER
-	{ 0x4a06ad89,0x1a14bed7,0x40000000,0x8c9f5423,0x33d6015e},
-	{ 0xf203f5f1,0x257bb24c,0x409c3adb,0x47818c42,0x183a6240},
-	{ 0xd10a6e41,0x26d9fea0,0x409c3adb,0xf9744966,0x22dcd584},
-	{ 0x4cb424ad,0x31a699e3,0x409c3adb,0x504592eb,0x33daa6a3},
-	{ 0x8f4e33b1,0x31ec2df7,0x409c3adb,0xcc81fd16,0x25e84026}
-	#else
     { 0xDC6077C4,  0xFE561A4A, 0x40000000,  0xF5287D7A,  0xD247655A},
     { 0x4694EAA5,  0x1465059A, 0x416AC95A,  0x0A9EDA33,  0x095B1589},
     { 0xAB7680F9,  0x251ECE97, 0x416AC95A,  0xA94A9866,  0x34100E74},
     { 0xD6CC0B77,  0x2F4D1380, 0x416AC95A,  0xF85DE5E3,  0x1E04F34C},
     { 0x4E749379,  0x2F946D53, 0x416AC95A,  0x4BE3D224,  0x2E129412}
-	#endif
   },
 #endif /* FEATURE_IIR_FILTER_5S */
 #endif /* FEATURE_IIR_FILTER */
@@ -12725,19 +12614,11 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_off_chip_dual_mic_cal_wb = {
   {                              /* Rx PCM IIR filter       */
     QDSP_CMD_IIR_FILTER_ENABLE,
     5,
-     #ifdef FEATURE_K_AMPLIFIER
-	{ 0x4a06ad89,0x1a14bed7,0x40000000,0x8c9f5423,0x33d6015e},
-	{ 0xf203f5f1,0x257bb24c,0x409c3adb,0x47818c42,0x183a6240},
-	{ 0xd10a6e41,0x26d9fea0,0x409c3adb,0xf9744966,0x22dcd584},
-	{ 0x4cb424ad,0x31a699e3,0x409c3adb,0x504592eb,0x33daa6a3},
-	{ 0x8f4e33b1,0x31ec2df7,0x409c3adb,0xcc81fd16,0x25e84026}
-	#else
     { 0xDC6077C4,  0xFE561A4A, 0x40000000,  0xF5287D7A,  0xD247655A},
     { 0x4694EAA5,  0x1465059A, 0x416AC95A,  0x0A9EDA33,  0x095B1589},
     { 0xAB7680F9,  0x251ECE97, 0x416AC95A,  0xA94A9866,  0x34100E74},
     { 0xD6CC0B77,  0x2F4D1380, 0x416AC95A,  0xF85DE5E3,  0x1E04F34C},
     { 0x4E749379,  0x2F946D53, 0x416AC95A,  0x4BE3D224,  0x2E129412}
-	#endif
   },
 #endif /* FEATURE_IIR_FILTER_5S */
 #endif /* FEATURE_IIR_FILTER */
@@ -12861,19 +12742,11 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_0_dual_mic_cal = {
   {                              /* Rx PCM IIR filter       */
     QDSP_CMD_IIR_FILTER_ENABLE,
     5,
-     #ifdef FEATURE_K_AMPLIFIER
-	{ 0x4a06ad89,0x1a14bed7,0x40000000,0x8c9f5423,0x33d6015e},
-	{ 0xf203f5f1,0x257bb24c,0x409c3adb,0x47818c42,0x183a6240},
-	{ 0xd10a6e41,0x26d9fea0,0x409c3adb,0xf9744966,0x22dcd584},
-	{ 0x4cb424ad,0x31a699e3,0x409c3adb,0x504592eb,0x33daa6a3},
-	{ 0x8f4e33b1,0x31ec2df7,0x409c3adb,0xcc81fd16,0x25e84026}
-	#else
     { 0xDC6077C4,  0xFE561A4A, 0x40000000,  0xF5287D7A,  0xD247655A},
     { 0x4694EAA5,  0x1465059A, 0x416AC95A,  0x0A9EDA33,  0x095B1589},
     { 0xAB7680F9,  0x251ECE97, 0x416AC95A,  0xA94A9866,  0x34100E74},
     { 0xD6CC0B77,  0x2F4D1380, 0x416AC95A,  0xF85DE5E3,  0x1E04F34C},
     { 0x4E749379,  0x2F946D53, 0x416AC95A,  0x4BE3D224,  0x2E129412}
-	#endif
   },
 #endif /* FEATURE_IIR_FILTER_5S */
 #endif /* FEATURE_IIR_FILTER */
@@ -12942,19 +12815,11 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_0_dual_mic_cal = {
   {                              /* Rx PCM IIR filter       */
     QDSP_CMD_IIR_FILTER_ENABLE,
     5,
-     #ifdef FEATURE_K_AMPLIFIER
-	{ 0x4a06ad89,0x1a14bed7,0x40000000,0x8c9f5423,0x33d6015e},
-	{ 0xf203f5f1,0x257bb24c,0x409c3adb,0x47818c42,0x183a6240},
-	{ 0xd10a6e41,0x26d9fea0,0x409c3adb,0xf9744966,0x22dcd584},
-	{ 0x4cb424ad,0x31a699e3,0x409c3adb,0x504592eb,0x33daa6a3},
-	{ 0x8f4e33b1,0x31ec2df7,0x409c3adb,0xcc81fd16,0x25e84026}
-	#else
     { 0xDC6077C4,  0xFE561A4A, 0x40000000,  0xF5287D7A,  0xD247655A},
     { 0x4694EAA5,  0x1465059A, 0x416AC95A,  0x0A9EDA33,  0x095B1589},
     { 0xAB7680F9,  0x251ECE97, 0x416AC95A,  0xA94A9866,  0x34100E74},
     { 0xD6CC0B77,  0x2F4D1380, 0x416AC95A,  0xF85DE5E3,  0x1E04F34C},
     { 0x4E749379,  0x2F946D53, 0x416AC95A,  0x4BE3D224,  0x2E129412}
-	#endif
   },
 #endif /* FEATURE_IIR_FILTER_5S */
 #endif /* FEATURE_IIR_FILTER */
@@ -13024,19 +12889,11 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_0_dual_mic_cal = {
   {                              /* Rx PCM IIR filter       */
     QDSP_CMD_IIR_FILTER_ENABLE,
     5,
-     #ifdef FEATURE_K_AMPLIFIER
-	{ 0x4a06ad89,0x1a14bed7,0x40000000,0x8c9f5423,0x33d6015e},
-	{ 0xf203f5f1,0x257bb24c,0x409c3adb,0x47818c42,0x183a6240},
-	{ 0xd10a6e41,0x26d9fea0,0x409c3adb,0xf9744966,0x22dcd584},
-	{ 0x4cb424ad,0x31a699e3,0x409c3adb,0x504592eb,0x33daa6a3},
-	{ 0x8f4e33b1,0x31ec2df7,0x409c3adb,0xcc81fd16,0x25e84026}
-	#else
     { 0xDC6077C4,  0xFE561A4A, 0x40000000,  0xF5287D7A,  0xD247655A},
     { 0x4694EAA5,  0x1465059A, 0x416AC95A,  0x0A9EDA33,  0x095B1589},
     { 0xAB7680F9,  0x251ECE97, 0x416AC95A,  0xA94A9866,  0x34100E74},
     { 0xD6CC0B77,  0x2F4D1380, 0x416AC95A,  0xF85DE5E3,  0x1E04F34C},
     { 0x4E749379,  0x2F946D53, 0x416AC95A,  0x4BE3D224,  0x2E129412}
-	#endif
   },
 #endif /* FEATURE_IIR_FILTER_5S */
 #endif /* FEATURE_IIR_FILTER */
@@ -13104,19 +12961,11 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_0_dual_mic_cal = {
   {                              /* Rx PCM IIR filter       */
     QDSP_CMD_IIR_FILTER_ENABLE,
     5,
-     #ifdef FEATURE_K_AMPLIFIER
-	{ 0x4a06ad89,0x1a14bed7,0x40000000,0x8c9f5423,0x33d6015e},
-	{ 0xf203f5f1,0x257bb24c,0x409c3adb,0x47818c42,0x183a6240},
-	{ 0xd10a6e41,0x26d9fea0,0x409c3adb,0xf9744966,0x22dcd584},
-	{ 0x4cb424ad,0x31a699e3,0x409c3adb,0x504592eb,0x33daa6a3},
-	{ 0x8f4e33b1,0x31ec2df7,0x409c3adb,0xcc81fd16,0x25e84026}
-	#else
     { 0xDC6077C4,  0xFE561A4A, 0x40000000,  0xF5287D7A,  0xD247655A},
     { 0x4694EAA5,  0x1465059A, 0x416AC95A,  0x0A9EDA33,  0x095B1589},
     { 0xAB7680F9,  0x251ECE97, 0x416AC95A,  0xA94A9866,  0x34100E74},
     { 0xD6CC0B77,  0x2F4D1380, 0x416AC95A,  0xF85DE5E3,  0x1E04F34C},
     { 0x4E749379,  0x2F946D53, 0x416AC95A,  0x4BE3D224,  0x2E129412}
-	#endif
   },
 #endif /* FEATURE_IIR_FILTER_5S */
 #endif /* FEATURE_IIR_FILTER */
@@ -13184,19 +13033,11 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_0_dual_mic_cal = {
   {                              /* Rx PCM IIR filter       */
     QDSP_CMD_IIR_FILTER_ENABLE,
     5,
-     #ifdef FEATURE_K_AMPLIFIER
-	{ 0x4a06ad89,0x1a14bed7,0x40000000,0x8c9f5423,0x33d6015e},
-	{ 0xf203f5f1,0x257bb24c,0x409c3adb,0x47818c42,0x183a6240},
-	{ 0xd10a6e41,0x26d9fea0,0x409c3adb,0xf9744966,0x22dcd584},
-	{ 0x4cb424ad,0x31a699e3,0x409c3adb,0x504592eb,0x33daa6a3},
-	{ 0x8f4e33b1,0x31ec2df7,0x409c3adb,0xcc81fd16,0x25e84026}
-	#else
     { 0xDC6077C4,  0xFE561A4A, 0x40000000,  0xF5287D7A,  0xD247655A},
     { 0x4694EAA5,  0x1465059A, 0x416AC95A,  0x0A9EDA33,  0x095B1589},
     { 0xAB7680F9,  0x251ECE97, 0x416AC95A,  0xA94A9866,  0x34100E74},
     { 0xD6CC0B77,  0x2F4D1380, 0x416AC95A,  0xF85DE5E3,  0x1E04F34C},
     { 0x4E749379,  0x2F946D53, 0x416AC95A,  0x4BE3D224,  0x2E129412}
-	#endif
   },
 #endif /* FEATURE_IIR_FILTER_5S */
 #endif /* FEATURE_IIR_FILTER */
@@ -13265,19 +13106,11 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_0_dual_mic_cal = {
   {                              /* Rx PCM IIR filter       */
     QDSP_CMD_IIR_FILTER_ENABLE,
     5,
-     #ifdef FEATURE_K_AMPLIFIER
-	{ 0x4a06ad89,0x1a14bed7,0x40000000,0x8c9f5423,0x33d6015e},
-	{ 0xf203f5f1,0x257bb24c,0x409c3adb,0x47818c42,0x183a6240},
-	{ 0xd10a6e41,0x26d9fea0,0x409c3adb,0xf9744966,0x22dcd584},
-	{ 0x4cb424ad,0x31a699e3,0x409c3adb,0x504592eb,0x33daa6a3},
-	{ 0x8f4e33b1,0x31ec2df7,0x409c3adb,0xcc81fd16,0x25e84026}
-	#else
     { 0xDC6077C4,  0xFE561A4A, 0x40000000,  0xF5287D7A,  0xD247655A},
     { 0x4694EAA5,  0x1465059A, 0x416AC95A,  0x0A9EDA33,  0x095B1589},
     { 0xAB7680F9,  0x251ECE97, 0x416AC95A,  0xA94A9866,  0x34100E74},
     { 0xD6CC0B77,  0x2F4D1380, 0x416AC95A,  0xF85DE5E3,  0x1E04F34C},
     { 0x4E749379,  0x2F946D53, 0x416AC95A,  0x4BE3D224,  0x2E129412}
-	#endif
   },
 #endif /* FEATURE_IIR_FILTER_5S */
 #endif /* FEATURE_IIR_FILTER */
@@ -13397,19 +13230,11 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_0_dual_mic_cal_wb = {
   {                              /* Rx PCM IIR filter       */
     QDSP_CMD_IIR_FILTER_ENABLE,
     5,
-     #ifdef FEATURE_K_AMPLIFIER
-	{ 0x4a06ad89,0x1a14bed7,0x40000000,0x8c9f5423,0x33d6015e},
-	{ 0xf203f5f1,0x257bb24c,0x409c3adb,0x47818c42,0x183a6240},
-	{ 0xd10a6e41,0x26d9fea0,0x409c3adb,0xf9744966,0x22dcd584},
-	{ 0x4cb424ad,0x31a699e3,0x409c3adb,0x504592eb,0x33daa6a3},
-	{ 0x8f4e33b1,0x31ec2df7,0x409c3adb,0xcc81fd16,0x25e84026}
-	#else
     { 0xDC6077C4,  0xFE561A4A, 0x40000000,  0xF5287D7A,  0xD247655A},
     { 0x4694EAA5,  0x1465059A, 0x416AC95A,  0x0A9EDA33,  0x095B1589},
     { 0xAB7680F9,  0x251ECE97, 0x416AC95A,  0xA94A9866,  0x34100E74},
     { 0xD6CC0B77,  0x2F4D1380, 0x416AC95A,  0xF85DE5E3,  0x1E04F34C},
     { 0x4E749379,  0x2F946D53, 0x416AC95A,  0x4BE3D224,  0x2E129412}
-	#endif
   },
 #endif /* FEATURE_IIR_FILTER_5S */
 #endif /* FEATURE_IIR_FILTER */
@@ -13478,19 +13303,11 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_0_dual_mic_cal_wb = {
   {                              /* Rx PCM IIR filter       */
     QDSP_CMD_IIR_FILTER_ENABLE,
     5,
-     #ifdef FEATURE_K_AMPLIFIER
-	{ 0x4a06ad89,0x1a14bed7,0x40000000,0x8c9f5423,0x33d6015e},
-	{ 0xf203f5f1,0x257bb24c,0x409c3adb,0x47818c42,0x183a6240},
-	{ 0xd10a6e41,0x26d9fea0,0x409c3adb,0xf9744966,0x22dcd584},
-	{ 0x4cb424ad,0x31a699e3,0x409c3adb,0x504592eb,0x33daa6a3},
-	{ 0x8f4e33b1,0x31ec2df7,0x409c3adb,0xcc81fd16,0x25e84026}
-	#else
     { 0xDC6077C4,  0xFE561A4A, 0x40000000,  0xF5287D7A,  0xD247655A},
     { 0x4694EAA5,  0x1465059A, 0x416AC95A,  0x0A9EDA33,  0x095B1589},
     { 0xAB7680F9,  0x251ECE97, 0x416AC95A,  0xA94A9866,  0x34100E74},
     { 0xD6CC0B77,  0x2F4D1380, 0x416AC95A,  0xF85DE5E3,  0x1E04F34C},
     { 0x4E749379,  0x2F946D53, 0x416AC95A,  0x4BE3D224,  0x2E129412}
-	#endif
   },
 #endif /* FEATURE_IIR_FILTER_5S */
 #endif /* FEATURE_IIR_FILTER */
@@ -13560,19 +13377,11 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_0_dual_mic_cal_wb = {
   {                              /* Rx PCM IIR filter       */
     QDSP_CMD_IIR_FILTER_ENABLE,
     5,
-     #ifdef FEATURE_K_AMPLIFIER
-	{ 0x4a06ad89,0x1a14bed7,0x40000000,0x8c9f5423,0x33d6015e},
-	{ 0xf203f5f1,0x257bb24c,0x409c3adb,0x47818c42,0x183a6240},
-	{ 0xd10a6e41,0x26d9fea0,0x409c3adb,0xf9744966,0x22dcd584},
-	{ 0x4cb424ad,0x31a699e3,0x409c3adb,0x504592eb,0x33daa6a3},
-	{ 0x8f4e33b1,0x31ec2df7,0x409c3adb,0xcc81fd16,0x25e84026}
-	#else
     { 0xDC6077C4,  0xFE561A4A, 0x40000000,  0xF5287D7A,  0xD247655A},
     { 0x4694EAA5,  0x1465059A, 0x416AC95A,  0x0A9EDA33,  0x095B1589},
     { 0xAB7680F9,  0x251ECE97, 0x416AC95A,  0xA94A9866,  0x34100E74},
     { 0xD6CC0B77,  0x2F4D1380, 0x416AC95A,  0xF85DE5E3,  0x1E04F34C},
     { 0x4E749379,  0x2F946D53, 0x416AC95A,  0x4BE3D224,  0x2E129412}
-	#endif
   },
 #endif /* FEATURE_IIR_FILTER_5S */
 #endif /* FEATURE_IIR_FILTER */
@@ -13640,19 +13449,11 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_0_dual_mic_cal_wb = {
   {                              /* Rx PCM IIR filter       */
     QDSP_CMD_IIR_FILTER_ENABLE,
     5,
-     #ifdef FEATURE_K_AMPLIFIER
-	{ 0x4a06ad89,0x1a14bed7,0x40000000,0x8c9f5423,0x33d6015e},
-	{ 0xf203f5f1,0x257bb24c,0x409c3adb,0x47818c42,0x183a6240},
-	{ 0xd10a6e41,0x26d9fea0,0x409c3adb,0xf9744966,0x22dcd584},
-	{ 0x4cb424ad,0x31a699e3,0x409c3adb,0x504592eb,0x33daa6a3},
-	{ 0x8f4e33b1,0x31ec2df7,0x409c3adb,0xcc81fd16,0x25e84026}
-	#else
 	{ 0xCDC1DDC2, 0x18EB2158, 0x40000000, 0xBF3E9E65, 0xFC564A0},
 	{ 0xF27D7427, 0x1A188F47, 0x40000000, 0xF597B731, 0x2E9C434E},
 	{ 0x326D06DE, 0x2CF6A326, 0x40000000, 0x30B54E3F, 0x2BFE5E9F},
 	{ 0x9611817E, 0x2D9C0846, 0x40000000, 0x96F11BCE, 0x2F8E3BBE},
 	{ 0xDCD53EBE, 0x330E6234, 0x40000000, 0xDC289C07, 0x3438A28F}
-	#endif
   },
 #endif /* FEATURE_IIR_FILTER_5S */
 #endif /* FEATURE_IIR_FILTER */
@@ -13720,19 +13521,11 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_0_dual_mic_cal_wb = {
   {                              /* Rx PCM IIR filter       */
     QDSP_CMD_IIR_FILTER_ENABLE,
     5,
-     #ifdef FEATURE_K_AMPLIFIER
-	{ 0x4a06ad89,0x1a14bed7,0x40000000,0x8c9f5423,0x33d6015e},
-	{ 0xf203f5f1,0x257bb24c,0x409c3adb,0x47818c42,0x183a6240},
-	{ 0xd10a6e41,0x26d9fea0,0x409c3adb,0xf9744966,0x22dcd584},
-	{ 0x4cb424ad,0x31a699e3,0x409c3adb,0x504592eb,0x33daa6a3},
-	{ 0x8f4e33b1,0x31ec2df7,0x409c3adb,0xcc81fd16,0x25e84026}
-	#else
 	{ 0xCDC1DDC2, 0x18EB2158, 0x40000000, 0xBF3E9E65, 0xFC564A0},
 	{ 0xF27D7427, 0x1A188F47, 0x40000000, 0xF597B731, 0x2E9C434E},
 	{ 0x326D06DE, 0x2CF6A326, 0x40000000, 0x30B54E3F, 0x2BFE5E9F},
 	{ 0x9611817E, 0x2D9C0846, 0x40000000, 0x96F11BCE, 0x2F8E3BBE},
 	{ 0xDCD53EBE, 0x330E6234, 0x40000000, 0xDC289C07, 0x3438A28F}
-	#endif
   },
 #endif /* FEATURE_IIR_FILTER_5S */
 #endif /* FEATURE_IIR_FILTER */
@@ -13801,19 +13594,11 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_0_dual_mic_cal_wb = {
   {                              /* Rx PCM IIR filter       */
     QDSP_CMD_IIR_FILTER_ENABLE,
     5,
-     #ifdef FEATURE_K_AMPLIFIER
-	{ 0x4a06ad89,0x1a14bed7,0x40000000,0x8c9f5423,0x33d6015e},
-	{ 0xf203f5f1,0x257bb24c,0x409c3adb,0x47818c42,0x183a6240},
-	{ 0xd10a6e41,0x26d9fea0,0x409c3adb,0xf9744966,0x22dcd584},
-	{ 0x4cb424ad,0x31a699e3,0x409c3adb,0x504592eb,0x33daa6a3},
-	{ 0x8f4e33b1,0x31ec2df7,0x409c3adb,0xcc81fd16,0x25e84026}
-	#else
     { 0xDC6077C4,  0xFE561A4A, 0x40000000,  0xF5287D7A,  0xD247655A},
     { 0x4694EAA5,  0x1465059A, 0x416AC95A,  0x0A9EDA33,  0x095B1589},
     { 0xAB7680F9,  0x251ECE97, 0x416AC95A,  0xA94A9866,  0x34100E74},
     { 0xD6CC0B77,  0x2F4D1380, 0x416AC95A,  0xF85DE5E3,  0x1E04F34C},
     { 0x4E749379,  0x2F946D53, 0x416AC95A,  0x4BE3D224,  0x2E129412}
-	#endif
   },
 #endif /* FEATURE_IIR_FILTER_5S */
 #endif /* FEATURE_IIR_FILTER */
@@ -15060,19 +14845,11 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_1_surf_cal_wb  = {
   {                              /* Rx PCM IIR filter       */
     QDSP_CMD_IIR_FILTER_ENABLE,
     5,
-     #ifdef FEATURE_K_AMPLIFIER
-	{ 0x4a06ad89,0x1a14bed7,0x40000000,0x8c9f5423,0x33d6015e},
-	{ 0xf203f5f1,0x257bb24c,0x409c3adb,0x47818c42,0x183a6240},
-	{ 0xd10a6e41,0x26d9fea0,0x409c3adb,0xf9744966,0x22dcd584},
-	{ 0x4cb424ad,0x31a699e3,0x409c3adb,0x504592eb,0x33daa6a3},
-	{ 0x8f4e33b1,0x31ec2df7,0x409c3adb,0xcc81fd16,0x25e84026}
-	#else
     { 0x4A06AD89,  0x1A14BED7, 0x40000000,  0x8C9F5423,  0x33D6015E},
     { 0xF203F5F1,  0x257BB24C, 0x409C3ADB,  0x47818C42,  0x183A6240},
     { 0xD10A6E41,  0x26D9FEA0, 0x409C3ADB,  0xF9744966,  0x22DCD584},
     { 0x4CB424AD,  0x31A699E3, 0x409C3ADB,  0x504592EB,  0x33DAA6A3},
     { 0x8F4E33B1,  0x31EC2DF7, 0x409C3ADB,  0xCC81FD16,  0x25E84026}
-	#endif
   },
 #endif /* FEATURE_IIR_FILTER_5S */
 #endif /* FEATURE_IIR_FILTER */

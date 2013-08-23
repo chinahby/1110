@@ -208,7 +208,7 @@ extern rex_timer_type voc_dtmf_detect_delay_timer;
 #define VOC_CLK_CTRL_TIMER_SIG    0x0080   /* Clock control timer    */
 #endif
 
-#ifdef FEATURE_PMIC_SPEAKER_ON_OFF_DELAY
+#if defined(FEATURE_PMIC_SPEAKER_ON_OFF_DELAY)||defined(FEATURE_KAMP_ON_OFF_DELAY)
 #define VOC_PMIC_SPKR_DELAY_SIG   0x0040   /* PMIC speaker timer     */
 #endif /* FEATURE_PMIC_SPEAKER_ON_OFF_DELAY */
 

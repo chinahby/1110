@@ -1101,10 +1101,6 @@ static void CallApp_FreeAppData(CCallApp *pMe)
 		}
 	}
 #endif
-#ifdef FEATURE_VERSION_K212
-	snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	
-	snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);
-#endif
 }
 
 /*==============================================================================
@@ -1587,14 +1583,6 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
                 // ¿ªÊ¼CallApp×´Ì¬»ú
                 CallApp_RunFSM(pMe);
             }
-#ifdef FEATURE_K_AMPLIFIER
-			{
-				nv_item_type	SimChoice;
-				SimChoice.sim_select =2;
-				(void)OEMNV_Put(NV_SIM_SELECT_I,&SimChoice);
-			}
-#endif
-
             return TRUE;
 #ifdef FEATRUE_AUTO_POWER
         case EVT_AUTO_POWERDOWN:

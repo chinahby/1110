@@ -7330,13 +7330,6 @@ void CallApp_SetupCallAudio(CCallApp *pMe)
 		ISOUND_SetVolume(pMe->m_pSound, GET_ISOUND_VOL_LEVEL(pMe->m_CallVolume));
 	#endif
 	#endif
-#ifdef FEATURE_K_AMPLIFIER
-	if(pMe->m_bHandFree)
-	{
-		snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	
-	    snd_set_device(SND_DEVICE_HEADSET/*SND_DEVICE_HEADSET*/, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);	
-	}
-#endif
 }
 
 /*=============================================================================

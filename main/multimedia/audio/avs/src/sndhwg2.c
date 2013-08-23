@@ -1012,6 +1012,120 @@ boolean sndhw_bt_playback_dtmf_started       = FALSE;
 #endif /*AVS_BT_SCO_REWORK*/
 
 /* <EJECT> */
+#ifdef FEATURE_K_AMPLIFIER
+#ifdef FEATURE_KAMP_ON_OFF_DELAY
+boolean sndhw_kamp_delay = FALSE;
+boolean sndhw_kamp_start = FALSE;
+
+#define SNDHW_KAMP_COOLDOWN_TIME 45        /* 45 millisecond cooldown */
+
+#endif /* FEATURE_KAMP_ON_OFF_DELAY */
+
+void sndhw_kamp_cmd(boolean on)
+{
+    gpio_tlmm_config(GPIO_OUTPUT_10);
+    if(on)
+    {
+        gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
+        clk_busy_wait(1);
+        gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
+        clk_busy_wait(1);
+        gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
+        clk_busy_wait(1);
+        gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
+        clk_busy_wait(1);
+        gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
+        //clk_busy_wait(1);
+        //gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
+        //clk_busy_wait(1);
+        //gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
+    }
+    else
+    {
+        gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
+    }
+}
+
+#ifdef FEATURE_KAMP_ON_OFF_DELAY
+/*===========================================================================
+
+FUNCTION sndhw_restore_pmic_speaker
+
+DESCRIPTION
+  This function restores the PMIC speakerphone state.
+
+DEPENDENCIES
+  It is executed in the vocoder's task context, so it is dependent on VOC_TASK.
+
+RETURN VALUE
+  None.
+
+SIDE EFFECTS
+  None.
+
+===========================================================================*/
+void sndhw_restore_kamp()
+{
+  sndhw_kamp_delay = FALSE;
+  if(sndhw_kamp_start == TRUE) {
+    sndhw_kamp_start = FALSE;
+    sndhw_kamp_cmd(TRUE);
+  }
+}
+#endif /* FEATURE_KAMP_ON_OFF_DELAY */
+/*===========================================================================
+
+FUNCTION sndhw_pmic_speaker_ctl
+
+DESCRIPTION
+  This function commands the PMIC speakerphone on or off.
+
+DEPENDENCIES
+  It is executed in the vocoder's task context, so it is dependent on VOC_TASK.
+
+RETURN VALUE
+  None.
+
+SIDE EFFECTS
+  None.
+
+===========================================================================*/
+/*lint -esym(715,codec) codec parameter is not used*/
+void sndhw_kamp_ctl(
+  voc_codec_type       codec,
+  voc_codec_mode_type  mode,
+  boolean              on
+)
+{
+  if(on) {
+#ifdef FEATURE_KAMP_ON_OFF_DELAY
+    if(sndhw_kamp_delay == TRUE) {
+      sndhw_kamp_start = TRUE;
+    } else
+#endif /* FEATURE_KAMP_ON_OFF_DELAY */
+    {
+       sndhw_kamp_cmd(TRUE);
+    }
+  } else {
+#ifdef FEATURE_KAMP_ON_OFF_DELAY
+    if(sndhw_kamp_delay == TRUE) {
+      sndhw_kamp_start = FALSE;
+    } else {
+      sndhw_kamp_cmd(FALSE);
+
+      /* Wait before allowing to turn on again */
+      sndhw_kamp_delay = TRUE;
+      voc_pmic_speaker_delay(SNDHW_KAMP_COOLDOWN_TIME,
+                             sndhw_restore_kamp);
+    }
+#else
+    sndhw_kamp_cmd(FALSE);
+#endif /* FEATURE_KAMP_ON_OFF_DELAY */
+  }
+}
+/*lint +esym(715,codec)*/
+#endif /* FEATURE_PMIC_SPEAKER */
+
 #ifdef FEATURE_PMIC_SPEAKER
 #ifdef FEATURE_PMIC_SPEAKER_ON_OFF_DELAY
 /*===========================================================================
@@ -5782,14 +5896,23 @@ void sndhw_init( void )
      and wakes up the sound task */
   voc_register_pa_on(snd_pa_on_cb);
 #ifdef FEATURE_PMIC_SPEAKER
+#ifdef FEATURE_K_AMPLIFIER
+  (void) voc_register_codec_func( VOC_CODEC_ON_CHIP_AUX,
+                                  sndhw_kamp_ctl);
+#ifdef FEATURE_SPEAKER_PHONE
+  (void) voc_register_codec_func( VOC_CODEC_SPEAKER, sndhw_kamp_ctl);
+#endif /* FEATURE_SPEAKER_PHONE */
+#ifdef FEATURE_FM_OEM
+  (void) voc_register_codec_func( VOC_CODEC_SPEAKER_FM, sndhw_kamp_ctl);
+#endif
+#else
   (void) voc_register_codec_func( VOC_CODEC_ON_CHIP_AUX,
                                   sndhw_pmic_speaker_ctl);
 #ifdef FEATURE_SPEAKER_PHONE
   (void) voc_register_codec_func( VOC_CODEC_SPEAKER, sndhw_pmic_speaker_ctl);
 #endif /* FEATURE_SPEAKER_PHONE */
-#ifdef CUST_EDITION  
 #ifdef FEATURE_FM_OEM
-(void) voc_register_codec_func( VOC_CODEC_SPEAKER_FM, sndhw_pmic_speaker_ctl);
+  (void) voc_register_codec_func( VOC_CODEC_SPEAKER_FM, sndhw_pmic_speaker_ctl);
 #endif
 #endif
 #if defined(FEATURE_AUDIO_CAL_MED_HIGH_FFA)

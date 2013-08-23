@@ -3322,10 +3322,6 @@ static boolean  QuickTest_CallHandler(CQuickTest *pMe,
 #endif
             {
                 STRTOWSTR("ECHO LOOP",string,sizeof(string));
-				#ifdef FEATURE_K_AMPLIFIER
-				snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	
-	    		snd_set_device(SND_DEVICE_HEADSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);	
-				#endif
             }
             (void)IDISPLAY_DrawText(pMe->m_pDisplay,
                                     AEE_FONT_BOLD,

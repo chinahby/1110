@@ -284,7 +284,7 @@ rex_timer_type voc_clk_ctrl_timer;            /* Clock Disable Timer    */
 uint32         voc_clk_ctrl_mask_values = 0;  /* Clocks to disable      */
 #endif /* FEATURE_EXTERNAL_SDAC || MSMAUD_CODEC_CLOCK_CTRL */
 
-#ifdef FEATURE_PMIC_SPEAKER_ON_OFF_DELAY
+#if defined(FEATURE_PMIC_SPEAKER_ON_OFF_DELAY)||defined(FEATURE_KAMP_ON_OFF_DELAY)
 voc_pmic_delay_cb_func_type voc_pmic_delay_cb = NULL;
 
 rex_timer_type voc_pmic_delay_timer;
@@ -2426,7 +2426,7 @@ void voc_task_init (void)
   rex_def_timer( &voc_clk_ctrl_timer, &voc_tcb, VOC_CLK_CTRL_TIMER_SIG );
 #endif
 
-#ifdef FEATURE_PMIC_SPEAKER_ON_OFF_DELAY
+#if defined(FEATURE_PMIC_SPEAKER_ON_OFF_DELAY)||defined(FEATURE_KAMP_ON_OFF_DELAY)
   rex_def_timer(&voc_pmic_delay_timer, &voc_tcb, VOC_PMIC_SPKR_DELAY_SIG);
 #endif /* FEATURE_PMIC_SPEAKER_ON_OFF_DELAY */
 
@@ -2488,7 +2488,7 @@ void voc_task_init (void)
 
 } /* voc_task_init */
 
-#ifdef FEATURE_PMIC_SPEAKER_ON_OFF_DELAY
+#if defined(FEATURE_PMIC_SPEAKER_ON_OFF_DELAY)||defined(FEATURE_KAMP_ON_OFF_DELAY)
 /* <EJECT> */
 /*===========================================================================
 
@@ -2662,7 +2662,7 @@ void voc_task
      /* Wait for something to happen
       */
      sigs = rex_wait( VOC_CHECK_STATE_SIG          | /* Do state control      */
-#ifdef FEATURE_PMIC_SPEAKER_ON_OFF_DELAY
+#if defined(FEATURE_PMIC_SPEAKER_ON_OFF_DELAY)||defined(FEATURE_KAMP_ON_OFF_DELAY)
                       VOC_PMIC_SPKR_DELAY_SIG      | /* PMIC delay signal     */
 #endif /* FEATURE_PMIC_SPEAKER_ON_OFF_DELAY */
 #ifdef FEATURE_VOC_DTMF_DETECT
@@ -2718,7 +2718,7 @@ void voc_task
         (void) rex_set_timer( &voc_rpt_timer, DOG_VOC_RPT_TIME );
      }
 
-#ifdef FEATURE_PMIC_SPEAKER_ON_OFF_DELAY
+#if defined(FEATURE_PMIC_SPEAKER_ON_OFF_DELAY)||defined(FEATURE_KAMP_ON_OFF_DELAY)
      /* PMIC cooldown timeout, restore PMIC setting if changed
      */
      if ( (sigs & VOC_PMIC_SPKR_DELAY_SIG) != 0 ) {

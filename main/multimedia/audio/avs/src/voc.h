@@ -336,7 +336,7 @@ when       who     what, where, why
 #include "qw.h"
 #endif /* FEATURE_AUDIO_FORMAT */
 
-#ifdef FEATURE_PMIC_SPEAKER_ON_OFF_DELAY
+#if defined(FEATURE_PMIC_SPEAKER_ON_OFF_DELAY)||defined(FEATURE_KAMP_ON_OFF_DELAY)
 #include "rex.h"                /* Definition of REX data types           */
 #endif /* FEATURE_PMIC_SPEAKER_ON_OFF_DELAY */
 #include "snd.h"
@@ -5298,7 +5298,7 @@ voc_status_type voc_register_pcm_output_client(
 );
 #endif /* FEATURE_VOC_PCM_INTERFACE */
 
-#ifdef FEATURE_PMIC_SPEAKER_ON_OFF_DELAY
+#if defined(FEATURE_PMIC_SPEAKER_ON_OFF_DELAY)||defined(FEATURE_KAMP_ON_OFF_DELAY)
 /* Callback function after PMIC has shutdown */
 typedef void (* voc_pmic_delay_cb_func_type)(void) ;
 

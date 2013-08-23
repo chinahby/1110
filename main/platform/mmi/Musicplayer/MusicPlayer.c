@@ -856,14 +856,6 @@ static boolean IMusicPlayer_HandleEvent( IMusicPlayer *pi,
                 // ¿ªÊ¼MusicPlayer×´Ì¬»ú
                 CMusicPlayer_RunFSM(pMe);
             }
-			
-#ifdef FEATURE_K_AMPLIFIER
-			{
-				nv_item_type	SimChoice;
-				SimChoice.sim_select =2;
-				(void)OEMNV_Put(NV_SIM_SELECT_I,&SimChoice);
-			}
-#endif
             return TRUE;
         case EVT_USER_REDRAW:
            (void) CMusicPlayer_RouteDialogEvent(pMe,eCode,wParam,dwParam);

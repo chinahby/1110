@@ -3365,39 +3365,7 @@ static boolean  IDD_STARTUPANI_Handler(void       *pUser,
             IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
             return TRUE;
 
-        case EVT_DIALOG_START: 		
-			//Add By zzg 2012_02_17
-#if 0//def FEATURE_K_AMPLIFIER
-{
-		 if(!HS_HEADSET_ON())
-		 {
-			  nv_item_type	SimChoice;
-			  SimChoice.sim_select = 2;
-				//OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
-			 (void)OEMNV_Put(NV_SIM_SELECT_I,&SimChoice);
-			  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
-				
-			  clk_busy_wait(2*1000);
-				
-			  gpio_tlmm_config(GPIO_OUTPUT_10);
-			  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
-			  clk_busy_wait(1);
-			  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
-			  clk_busy_wait(1);
-			  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
-			  clk_busy_wait(1);
-			  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
-			  clk_busy_wait(1);
-			  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
-			  clk_busy_wait(1);
-			  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
-			  clk_busy_wait(1);
-			  gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);
-		}
-}
-#endif
-			//Add End
-			
+        case EVT_DIALOG_START:			
             if(pMe->m_wStartupAniTime == 0)
             {
 #ifndef FEATURE_USES_LOWMEM
