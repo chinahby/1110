@@ -1017,7 +1017,7 @@ boolean sndhw_bt_playback_dtmf_started       = FALSE;
 boolean sndhw_kamp_delay = FALSE;
 boolean sndhw_kamp_start = FALSE;
 
-#define SNDHW_KAMP_COOLDOWN_TIME 45        /* 45 millisecond cooldown */
+#define SNDHW_KAMP_COOLDOWN_TIME 120        /* 45 millisecond cooldown */
 
 #endif /* FEATURE_KAMP_ON_OFF_DELAY */
 
