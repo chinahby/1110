@@ -134,6 +134,14 @@ int FormUtil_ISHELL_CreateFont(IShell *piShell, AEECLSID fontClass, IFont **ppo)
          piFont = FormUtil_IDISPLAY_GetFont(piDisplay, AEE_FONT_LARGE);
          result = 0;
          break;
+	  case AEECLSID_FONTSYSITALIC:
+	  	 piFont = FormUtil_IDISPLAY_GetFont(piDisplay, AEE_FONT_SMALL);
+         result = 0;
+         break;		 
+	  case AEECLAID_FONTSMALL:
+         piFont = FormUtil_IDISPLAY_GetFont(piDisplay, AEE_FONT_SMALL);
+         result = 0;
+         break;	 
 
       default:
          break;

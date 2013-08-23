@@ -51,6 +51,15 @@ void    UnionRect(AEERect *prcResult, const AEERect *prcSrc1, const AEERect *prc
 #define AEECLSID_FONTSYSBOLD     0x01012788  // bold system font
 #endif
 
+#ifndef AEECLAID_FONTSMALL
+#define AEECLAID_FONTSMALL       0x0101402f
+#endif
+
+#ifndef AEECLSID_FONTSYSITALIC
+#define AEECLSID_FONTSYSITALIC      0x0101402c
+#endif
+
+
 #ifndef AEEIID_DIB
 #define AEEIID_DIB               0x01001045 // dib
 #endif

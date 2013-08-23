@@ -73,6 +73,15 @@ static __inline void RELEASEPPIF(IBase **p) {
 #define AEECLSID_FONTSYSBOLD     0x01012788  // bold system font
 #endif
 
+#ifndef AEECLAID_FONTSMALL
+#define AEECLAID_FONTSMALL       0x0101402f
+#endif
+
+#ifndef AEECLSID_FONTSYSITALIC
+#define AEECLSID_FONTSYSITALIC      0x0101402c
+#endif
+
+
 
 void Form_SetPrefRect(IForm *po, int nPctWidth, int nPctHeight, int xOffset, int yOffset, 
                       boolean bRefRight, boolean bRefBottom, AEERect *prc);

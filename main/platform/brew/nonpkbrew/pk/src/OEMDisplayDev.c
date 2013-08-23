@@ -308,10 +308,14 @@ extern const AEEStaticClass gOEMDisplayDevClasses[] = {
    {AEECLSID_FONTSYSLARGE,    ASCF_UPGRADE, 0,          0, GreyBitBrewFont_New},
    {AEECLSID_FONTSYSBOLD,     ASCF_UPGRADE, 0,          0, GreyBitBrewFont_New},
    {AEECLSID_FONTSYSBIGNUMBER,ASCF_UPGRADE, 0,          0, GreyBitBrewFont_New},
+   {AEECLAID_FONTSMALL,       ASCF_UPGRADE, 0,          0, GreyBitBrewFont_New},
+   {AEECLSID_FONTSYSITALIC,   ASCF_UPGRADE, 0,          0, GreyBitBrewFont_New},
 #else
    {AEECLSID_FONTSYSNORMAL,   ASCF_UPGRADE, 0,          0, OEMSysFont_New},
    {AEECLSID_FONTSYSLARGE,    ASCF_UPGRADE, 0,          0, OEMSysFont_New},
    {AEECLSID_FONTSYSBOLD,     ASCF_UPGRADE, 0,          0, OEMSysFont_New},
+   {AEECLAID_FONTSMALL,       ASCF_UPGRADE, 0,          0, OEMSysFont_New},
+   {AEECLSID_FONTSYSITALIC,   ASCF_UPGRADE, 0,          0, OEMSysFont_New},
 #endif
    NULL
 };
@@ -817,7 +821,11 @@ static int OEMSysFont_New(IShell * piShell, AEECLSID cls, void **ppif)
 
     case AEECLSID_FONTSYSLARGE:
         return OEMFont_GetSystemFont( AEE_FONT_LARGE, (IFont **)ppif);
-        
+
+	case AEECLSID_FONTSYSITALIC:
+	case AEECLAID_FONTSMALL:
+        return OEMFont_GetSystemFont( AEE_FONT_SMALL, (IFont **)ppif);
+	  
     default:
         return ECLASSNOTSUPPORT;
     }

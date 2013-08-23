@@ -69,7 +69,7 @@ static int OEMFont_MeasureTextCursorPos(IFont *pMe, int x, const AECHAR *pcText,
 #endif
 #define NORMAL_FONT_SIZE    32 
 #define LARGE_FONT_SIZE     36 
-#define SMALL_FONT_SIZE     8
+#define SMALL_FONT_SIZE     25
 
 #elif defined(FEATURE_DISP_220X176) || defined(FEATURE_DISP_176X220)
 #if defined(FEATURE_VERSION_1110W516)
@@ -1184,6 +1184,9 @@ int GreyBitBrewFont_New(IShell *piShell, AEECLSID cls, void **ppif)
         break;
     case AEECLAID_FONTSMALL:
     	pMe = &gFontSmall;
+        break;
+    case AEECLSID_FONTSYSITALIC:
+		pMe = &gFontSmall;
         break;
     default:
         return AEE_ECLASSNOTSUPPORT;

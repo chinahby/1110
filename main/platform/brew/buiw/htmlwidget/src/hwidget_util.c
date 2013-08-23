@@ -1641,6 +1641,10 @@ int ISHELL_CreateFont(IShell *piShell, AEECLSID fontClass, IFont **ppo)
       case AEECLSID_FONTSYSLARGE:
          piFont = IDISPLAY_GetFont(piDisplay, AEE_FONT_LARGE);
          result = 0;
+      case AEECLSID_FONTSYSITALIC:
+	  case AEECLAID_FONTSMALL:
+         piFont = IDISPLAY_GetFont(piDisplay, AEE_FONT_SMALL);
+         result = 0;	 
          break;
       }
    }

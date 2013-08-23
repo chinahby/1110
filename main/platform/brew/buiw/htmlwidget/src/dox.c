@@ -2429,7 +2429,7 @@ void xDox_SetCharset(Dox *me, const char *pszCharset, int cbCharset)
 //
 
 
-static const AEECLSID gfnts[4] = {
+static const AEECLSID gfnts[5] = {
    AEECLSID_FONTSYSNORMAL,   // normal font
 
 #ifdef AEECLSID_FONTSYSBOLD
@@ -2440,6 +2440,12 @@ static const AEECLSID gfnts[4] = {
 
 #ifdef AEECLSID_FONTSYSLARGE
    AEECLSID_FONTSYSLARGE,    // large font
+#else
+   AEECLSID_FONTSYSNORMAL,   // normal font
+#endif
+
+#ifdef AEECLAID_FONTSMALL
+   AEECLAID_FONTSMALL,    // SMALL font
 #else
    AEECLSID_FONTSYSNORMAL,   // normal font
 #endif

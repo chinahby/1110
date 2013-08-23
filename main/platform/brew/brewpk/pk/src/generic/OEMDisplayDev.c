@@ -58,6 +58,8 @@ extern const AEEStaticClass gOEMDisplayDevClasses[] = {
    {AEECLSID_FONTSYSNORMAL,   ASCF_UPGRADE, 0,          0, OEMSysFont_New},
    {AEECLSID_FONTSYSLARGE,    ASCF_UPGRADE, 0,          0, OEMSysFont_New},
    {AEECLSID_FONTSYSBOLD,     ASCF_UPGRADE, 0,          0, OEMSysFont_New},
+   {AEECLAID_FONTSMALL,       ASCF_UPGRADE, 0,          0, OEMSysFont_New},
+   {AEECLSID_FONTSYSITALIC,   ASCF_UPGRADE, 0,          0, OEMSysFont_New},
    NULL
 };
 
@@ -195,6 +197,8 @@ static int OEMSysFont_New(IShell * piShell, AEECLSID cls, void **ppif)
       return ISHELL_CreateInstance(piShell, AEECLSID_FONT_BASIC11B, (void **)ppif);
    case AEECLSID_FONTSYSLARGE:
       return ISHELL_CreateInstance(piShell, AEECLSID_FONT_BASIC14, (void **)ppif);
+   case AEECLAID_FONTSMALL:
+      return ISHELL_CreateInstance(piShell, AEECLSID_FONT_BASIC9, (void **)ppif);	  
    default:
       return ECLASSNOTSUPPORT;
    }

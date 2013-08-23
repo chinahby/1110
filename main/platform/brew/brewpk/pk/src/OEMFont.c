@@ -49,6 +49,7 @@ when          who   what, where, why
 #else // FEATURE_FONT_16
 
 #define  CH_NORMAL_HEIGHT       16          // Normal font height in pixel unit
+#define  CH_SMALL_HEIGHT        8
 #define  CH_NORMAL_WIDTH_PIXEL  16          // Normal font width in pixel unit
 #define  CH_USER1_HEIGHT        16          // User1 font height in pixel unit
 #define  CH_USER1_WIDTH_PIXEL   12          // User1 font width in pixel unit
@@ -314,6 +315,7 @@ const static uint16 theSet2[MAX_SET2_NUM]={
 IFont gFontNormal = {&gOEMFontFuncs, AEE_FONT_NORMAL, CH_NORMAL_HEIGHT};
 IFont gFontBold   = {&gOEMFontFuncs, AEE_FONT_BOLD, CH_NORMAL_HEIGHT};
 IFont gFontLarge  = {&gOEMFontFuncs, AEE_FONT_LARGE, CH_NORMAL_HEIGHT};
+IFont gFontSmall  = {&gOEMFontFuncs, AEE_FONT_SMALL, CH_SMALL_HEIGHT};
 
 // User-defined font
 //
@@ -335,7 +337,8 @@ int OEMFont_GetSystemFont(AEEFont nFont, IFont **ppif)
       *ppif = &gFontBold;
    else if (nFont == AEE_FONT_LARGE)
       *ppif = &gFontLarge;
-   
+   else if (nFont == AEE_FONT_SMALL)
+      *ppif = &gFontSmall;   
    else if (nFont == AEE_FONT_USER_1) 
       *ppif = &gFont12Normal;
 
@@ -869,7 +872,12 @@ static int OEMFont_GetInfo(IFont *pMe, AEEFontInfo *pInfo, int nSize)
             pInfo->nAscent  = CH_NORMAL_HEIGHT;
             pInfo->nDescent = 0;
             break;
-            
+
+		case AEE_FONT_SMALL:	
+            pInfo->nAscent  = CH_SMALL_HEIGHT;
+            pInfo->nDescent = 0;
+            break;
+			
         case AEE_FONT_BOLD:
             pInfo->nAscent  = CH_NORMAL_HEIGHT;
             pInfo->nDescent = 0;
