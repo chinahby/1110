@@ -4,8 +4,8 @@
 	<Object Id="5001" Name="IDB_MODE_T9_PINYIN" MimeType="image/png">
 		<File>..\images\240x320\common\IME\T9pin.png</File>
 	</Object>
-	<Object Id="5002" Name="IDB_BACKGROUND" MimeType="image/png">
-		<File>..\images\240x320\common\Appscommon\Menu\background\background.png</File>
+	<Object Id="5002" Name="IDB_BACKGROUND">
+		<File>..\images\240x320\common\Appscommon\Menu\background\background.bmp</File>
 	</Object>
 	<Object Id="5003" Name="IDB_CALCAPP" MimeType="image/png">
 		<File>..\images\240x320\common\Calculator\Calculator.png</File>
@@ -88,17 +88,17 @@
 	<Object Id="5061" Name="IDB_CALCAPP_LINE" MimeType="image/png">
 		<File>..\images\240x320\common\Calculator\line.png</File>
 	</Object>
-	<Object Id="5081" Name="IDI_BOTTOMBAR" MimeType="image/png">
-		<File>..\images\240x320\common\Appscommon\Menu\bottombar\bottombar.png</File>
+	<Object Id="5081" Name="IDI_BOTTOMBAR">
+		<File>..\images\240x320\common\Appscommon\Menu\bottombar\bottombar.bmp</File>
 	</Object>
-	<Object Id="5101" Name="IDI_TITLEBAR" MimeType="image/png">
-		<File>..\images\240x320\common\Appscommon\Menu\titlebar\titlebar.png</File>
+	<Object Id="5101" Name="IDI_TITLEBAR">
+		<File>..\images\240x320\common\Appscommon\Menu\titlebar\titlebar.bmp</File>
 	</Object>
-	<Object Id="5121" Name="IDB_SELECT_BAR" MimeType="image/png">
-		<File>..\images\240x320\common\Appscommon\Menu\selectbar\selectbar.png</File>
+	<Object Id="5121" Name="IDB_SELECT_BAR">
+		<File>..\images\240x320\common\Appscommon\Menu\selectbar\selectbar.bmp</File>
 	</Object>
-	<Object Id="5122" Name="IDB_SELECT_BAR_SHORT" MimeType="image/png">
-		<File>..\images\240x320\common\Appscommon\Menu\selectbar\selectbarshort.png</File>
+	<Object Id="5122" Name="IDB_SELECT_BAR_SHORT">
+		<File>..\images\240x320\common\Appscommon\Menu\selectbar\selectbarshort.bmp</File>
 	</Object>
 	<Object Id="5141" Name="IDI_UNDERLINE" MimeType="image/png">
 		<File>..\images\240x320\common\Appscommon\Menu\underline\underline.png</File>
@@ -457,12 +457,9 @@
 	<Object Id="8011" Name="IDI_TIME_POINT" MimeType="image/png">
 		<File>..\images\240x320\common\core\TIME_POINT.png</File>
 	</Object>
-	
 	<Object Id="8050" Name="IDB_BATT5">
 		<File>..\images\240x320\common\Annunciator\batt5.bmp</File>
 	</Object>
-		
-	
 	<Object Id="9100" Name="IDB_MODE_NUMBERS_BLACK" MimeType="image/png">
 		<File>..\images\240x320\common\IME\123_black.png</File>
 	</Object>
@@ -496,6 +493,5 @@
 	<Object Id="9110" Name="IDB_EDIT_UP_DOWN_BMP_BLACK" MimeType="image/png">
 		<File>..\images\240x320\common\IME\arrow_black.png</File>
 	</Object>
-	
 </Objects>
 </BREWRes>
