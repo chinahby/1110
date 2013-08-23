@@ -2673,12 +2673,14 @@ static boolean  HandleCallForwardSelDialogEvent(CSettingMenu *pMe,
                     #else
                     pMe->m_nResID = IDS_CALLFORWARD_NOCONNECT;
 					#endif
-                    selete_item = CFGI_CALLFORWARD_UNCONDITIONAL_ENABLE;
+                    //selete_item = CFGI_CALLFORWARD_UNCONDITIONAL_ENABLE;
+                    selete_item = CFGI_CALLFORWARD_UNREACHABLE_ENABLE;
                     break;
 
                 case CALLFORWARD_ANYWAY:    //无条件转移
                     pMe->m_nResID = IDS_CALLFORWARD_ANYWAY;
-                    selete_item = CFGI_CALLFORWARD_UNREACHABLE_ENABLE;
+                    //selete_item = CFGI_CALLFORWARD_UNREACHABLE_ENABLE;
+                    selete_item = CFGI_CALLFORWARD_UNCONDITIONAL_ENABLE;
                     break;
 
                 case CALLFORWARD_WAIT:      //呼叫等待
@@ -2818,11 +2820,13 @@ static boolean  HandleCallForwardSelDialogEvent(CSettingMenu *pMe,
                                 break;
 
                             case CALLFORWARD_NOCONNECT: //未接通转移
-                                selete_item = CFGI_CALLFORWARD_UNCONDITIONAL_DISABLE;
+                                //selete_item = CFGI_CALLFORWARD_UNCONDITIONAL_DISABLE;
+                                selete_item = CFGI_CALLFORWARD_UNREACHABLE_DISABLE;
                                 break;
 
                             case CALLFORWARD_ANYWAY:    //无条件转移
-                                selete_item = CFGI_CALLFORWARD_UNREACHABLE_DISABLE;
+                                //selete_item = CFGI_CALLFORWARD_UNREACHABLE_DISABLE;
+                                selete_item = CFGI_CALLFORWARD_UNCONDITIONAL_DISABLE;
                                 break;
 
                             case CALLFORWARD_WAIT:      //呼叫等待
