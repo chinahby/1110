@@ -1733,7 +1733,7 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
             ISHELL_SendEvent(pMe->m_pShell, AEECLSID_APP_CAMERA, EVT_USER_REDRAW, NULL, NULL);
 #endif
             return TRUE;//ISHELL_SendEvent(pMe->m_pShell, AEECLSID_APP_CAMERA, EVT_USER_REDRAW, NULL, NULL);
-#ifdef FEATURE_VERSION_W317A
+#if defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_K212)
         case EVT_APP_RESUME:    
             CLOSE_DIALOG(DLGRET_CANCELED);
             return TRUE;
