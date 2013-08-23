@@ -354,6 +354,7 @@ static void   OEMALERT_keeybeep_stop(void *pUser);
 static AEESoundTone OEMALERT_MapKeyToTone(AVKType key);
 static void   OEMALERT_GetRingerVol(IALERT *po);
 static void   OEMALERT_SetRingerVol(IALERT *po, boolean bEscalate);
+static void   OEMALERT_SetRingerVolEx(IALERT *po, int volume);      //Add By zzg 2013_08_22
 static boolean OEMALERT_InCall(IALERT *po);  
 static boolean OEMALERT_RingInHeadset(IALERT *po);
 
@@ -3485,9 +3486,16 @@ static void OEMALERT_StartMissedCallAlert(IALERT *pMe)
    if (OEMNV_ALERT_ENABLE == missedCallAlert) 
    {
       OEMALERT_GetRingerVol(pMe);
+#ifdef FEATURE_VERSION_EC99
+      OEMALERT_SetRingerVolEx(pMe, OEMSOUND_1ST_VOL);
+#else
       OEMALERT_SetRingerVol(pMe, FALSE);
+#endif
       pMe->alert_count = 0; 
       OEMALERT_HandleMissedCallTimer(pMe);
+#ifdef FEATURE_VERSION_EC99
+      OEMALERT_SetRingerVol(pMe, FALSE);
+#endif
    }
 }
 
@@ -4010,6 +4018,56 @@ static void OEMALERT_SetRingerVol(IALERT *pMe, boolean bEscalate)
     ISOUND_SetVolume(pMe->m_pSound,
                     GET_ISOUND_VOL_LEVEL((uint8) vol));                    
 }
+
+
+//Add By zzg 2013_08_22
+static void OEMALERT_SetRingerVolEx(IALERT *pMe, int volume)
+{
+    AEESoundInfo         si; 
+    OEMSound_Volume_Type vol;
+    
+    MEMSET(&si, 0, sizeof(si));
+    
+    vol = volume;    
+    
+    si.eDevice = AEE_SOUND_DEVICE_HANDSET;
+    si.eMethod = AEE_SOUND_METHOD_MIDI; 
+    (void) ISOUND_Set(pMe->m_pSound, &si);
+    ISOUND_SetVolume(pMe->m_pSound,
+                    GET_ISOUND_VOL_LEVEL((uint8) vol));
+    
+    si.eDevice = AEE_SOUND_DEVICE_STEREO_HEADSET; //AEE_SOUND_DEVICE_HEADSET;
+    si.eMethod = AEE_SOUND_METHOD_MIDI;
+    (void) ISOUND_Set(pMe->m_pSound, &si);
+    ISOUND_SetVolume(pMe->m_pSound,
+                    GET_ISOUND_VOL_LEVEL((uint8) vol));
+    
+    si.eDevice = AEE_SOUND_DEVICE_HANDSET;
+    si.eMethod = AEE_SOUND_METHOD_RING;
+    (void) ISOUND_Set(pMe->m_pSound, &si);
+    ISOUND_SetVolume(pMe->m_pSound,
+                    GET_ISOUND_VOL_LEVEL((uint8) vol));
+    
+    si.eDevice = AEE_SOUND_DEVICE_HANDSET;
+    si.eMethod = AEE_SOUND_METHOD_VOICE;
+    (void) ISOUND_Set(pMe->m_pSound, &si);
+    ISOUND_SetVolume(pMe->m_pSound,
+                    GET_ISOUND_VOL_LEVEL((uint8) vol));
+    
+    si.eDevice = AEE_SOUND_DEVICE_STEREO_HEADSET; //AEE_SOUND_DEVICE_HEADSET;
+    si.eMethod = AEE_SOUND_METHOD_VOICE;
+    (void) ISOUND_Set(pMe->m_pSound, &si);
+    ISOUND_SetVolume(pMe->m_pSound,
+                    GET_ISOUND_VOL_LEVEL((uint8) vol));
+    
+    si.eDevice = AEE_SOUND_DEVICE_STEREO_HEADSET; //AEE_SOUND_DEVICE_HEADSET;
+    si.eMethod = AEE_SOUND_METHOD_RING;
+    (void) ISOUND_Set(pMe->m_pSound, &si);
+    ISOUND_SetVolume(pMe->m_pSound,
+                    GET_ISOUND_VOL_LEVEL((uint8) vol));                    
+}
+
+//Add End
 
 /*=============================================================================
 FUNCTION: OEMALERT_InCall
