@@ -1124,7 +1124,7 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
         case EVT_DIALOG_START:
             {  
                 int i;
-
+/*
 #ifndef FEATURE_VERSION_C337
                 for (i=1;i<=IMENUCTL_GetItemCount(pMenu);i++)
                 {
@@ -1148,18 +1148,21 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
                 
                 IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
 #else
+*/
 				IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY|MP_ACTIVE_NO_REDRAW);
-#endif
+//#endif
 				
                 IMENUCTL_SetOemProperties( pMenu, OEMMP_USE_MENU_STYLE);
                 IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
-                IMENUCTL_SetSel(pMenu, pMe->m_MainSel);
+                
                 (void) ISHELL_PostEvent(pMe->m_pShell, AEECLSID_MULTIMEDIA_LIST, EVT_USER_REDRAW,0,0);
             }
             return TRUE;
             
         case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
+            IMENUCTL_SetSel(pMenu, pMe->m_MainSel);
+            IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
+            (void)IMENUCTL_Redraw(pMenu);            
             return TRUE;
             
         case EVT_DIALOG_END:
