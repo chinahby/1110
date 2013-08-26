@@ -320,6 +320,10 @@ static void CallApp_Process_Spec_Key_Event(CCallApp *pMe,uint16 wp);
 static boolean CallApp_DrawText_Ex(CCallApp *pMe, AEEFont fnt,
                   AECHAR *wStr, AEERect  *rect,  uint32 mask);
 
+//Add By zzg 2013_08_23
+static boolean CallApp_DrawNameText(CCallApp *pMe, AEEFont fnt,
+                  AECHAR *wStr, AEERect  *rect,  uint32 mask);
+//Add End
 //static void CallApp_NotifyDisp_CB(CCallApp *pMe);
 
 static boolean CallApp_Process_Send_Key_Release_Event(CCallApp *pMe);
@@ -3080,8 +3084,9 @@ static boolean  CallApp_Dialer_Calling_DlgHandler(CCallApp *pMe,
                                                         CALL_SECOND_LINE_Y,
                                                         CALL_NAME_DX,
                                                         CALL_LINE_HIGHT);
-                CallApp_DrawText_Ex(pMe, AEE_FONT_NORMAL,
-                    name, &rect, IDF_ALIGN_LEFT | IDF_TEXT_TRANSPARENT);
+                
+                //CallApp_DrawText_Ex(pMe, AEE_FONT_NORMAL, name, &rect, IDF_ALIGN_LEFT | IDF_TEXT_TRANSPARENT);
+                CallApp_DrawNameText(pMe, AEE_FONT_NORMAL, name, &rect, IDF_ALIGN_LEFT | IDF_TEXT_TRANSPARENT);
             }
             //DRAW NUMBER
 #ifdef FEATURE_ICM
@@ -3200,6 +3205,14 @@ static boolean  CallApp_Dialer_Calling_DlgHandler(CCallApp *pMe,
                 pMe->m_pConvImage = NULL;
             }
 #endif
+            //Add By zzg 2013_08_23
+            if (pMe->pStatic)
+            {
+                ISTATIC_Release(pMe->pStatic);            
+                pMe->pStatic = NULL;    
+            }
+            //Add End
+    
             ICONFIG_SetItem( pMe->m_pConfig, CFGI_BEEP_VOL, &keyBeepVolumeSetting, sizeof(byte));
             return TRUE;
 
@@ -4005,6 +4018,14 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
                 pMe->m_pConvImage = NULL;
             }
 #endif
+            //Add By zzg 2013_08_23
+            if (pMe->pStatic)
+            {
+                ISTATIC_Release(pMe->pStatic);            
+                pMe->pStatic = NULL;    
+            }
+            //Add End
+    
             return TRUE;
 
         case EVT_FLIP:// wParam = TRUE if open, FALSE if closed.
@@ -4926,7 +4947,8 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
                                                         CALL_NAME_DX,
                                                         CALL_LINE_HIGHT);
 
-                    CallApp_DrawText_Ex(pMe, AEE_FONT_NORMAL, p_temp->call_name, &rect, IDF_TEXT_TRANSPARENT);
+                    //CallApp_DrawText_Ex(pMe, AEE_FONT_NORMAL, p_temp->call_name, &rect, IDF_TEXT_TRANSPARENT);
+                    CallApp_DrawNameText(pMe, AEE_FONT_NORMAL, p_temp->call_name, &rect, IDF_TEXT_TRANSPARENT);
 
                 }
                 //  Position NUMBER
@@ -5048,6 +5070,14 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
 #else
             pMe->m_lastCallState = AEET_CALL_STATE_IDLE;
 #endif
+            //Add By zzg 2013_08_23
+            if (pMe->pStatic)
+            {
+                ISTATIC_Release(pMe->pStatic);            
+                pMe->pStatic = NULL;    
+            }
+            //Add End
+    
             return TRUE;
         //case EVT_INCOMISREADY:
         //    pMe->IncomIsready = TRUE;
@@ -5842,8 +5872,8 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
                                                     CALL_SECOND_LINE_Y,
                                                     CALL_NAME_DX,
                                                     CALL_LINE_HIGHT);
-                CallApp_DrawText_Ex(pMe, AEE_FONT_NORMAL,
-                            pMe->m_CallsTable->call_name, &rect, IDF_TEXT_TRANSPARENT);
+                //CallApp_DrawText_Ex(pMe, AEE_FONT_NORMAL, pMe->m_CallsTable->call_name, &rect, IDF_TEXT_TRANSPARENT);
+                CallApp_DrawNameText(pMe, AEE_FONT_NORMAL, pMe->m_CallsTable->call_name, &rect, IDF_TEXT_TRANSPARENT);
             }
             
             CallApp_Dialer_Show_Animation(pMe); 
@@ -5939,6 +5969,15 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
             //(void) ISHELL_CancelTimer(pMe->m_pShell,
             //                                        (PFNNOTIFY)CallApp_NotifyDisp_CB,
             //                                        pMe);
+
+            //Add By zzg 2013_08_23
+            if (pMe->pStatic)
+            {
+                ISTATIC_Release(pMe->pStatic);            
+                pMe->pStatic = NULL;    
+            }
+            //Add End
+    
             (void) ISHELL_CancelTimer(pMe->m_pShell,
                                                     (PFNNOTIFY)CallApp_HandleAutoAnswerTimer,
                                                     pMe);
@@ -10413,8 +10452,8 @@ static void CallApp_Draw_Connect_Number_and_Name(CCallApp *pMe)
                                             CALL_SECOND_LINE_Y,
                                             CALL_NAME_DX,
                                             CALL_LINE_HIGHT);
-                CallApp_DrawText_Ex(pMe, AEE_FONT_NORMAL,
-                            temp->call_name, &rect, IDF_TEXT_TRANSPARENT);
+                //CallApp_DrawText_Ex(pMe, AEE_FONT_NORMAL, temp->call_name, &rect, IDF_TEXT_TRANSPARENT);
+                CallApp_DrawNameText(pMe, AEE_FONT_NORMAL, temp->call_name, &rect, IDF_TEXT_TRANSPARENT);
 
             }
 #ifdef FEATURE_ICM
@@ -12996,7 +13035,7 @@ if(wp == AVK_0)
         		pMe->m_curpros = 0;
         	}
         	pMe->b_multenter = TRUE;
-			#if 0//def FEATURE_SOUND_BO
+			#ifdef FEATURE_SOUND_BO        //0
 			{
 				boolean m_sound_bo_dia = FALSE;
    				(void) ICONFIG_GetItem(pMe->m_pConfig,
@@ -13086,6 +13125,71 @@ if(wp == AVK_0)
     }
 }
 
+
+//Add By zzg 2013_08_23
+static boolean CallApp_DrawNameText(CCallApp *pMe, AEEFont fnt,
+                  AECHAR *wStr, AEERect  *rect,  uint32 mask)
+{
+    int           len       = 0;
+    int           fits       = 0;
+    int           pixLen = 0;
+    int           line      = 0;
+    int           hight    = 0;
+    AECHAR  wBuf[64] = {0};   
+    char   str[65] = {0};
+
+    ASSERT(wStr != NULL);
+    ASSERT(pMe->m_pDisplay != NULL);
+
+    hight = IDISPLAY_GetFontMetrics(pMe->m_pDisplay,  fnt, NULL, NULL);
+    line = rect->dy / hight;
+    len = WSTRLEN(wStr);
+    WSTRLCPY(wBuf, wStr, 64);
+
+    MSG_FATAL("***zzg CallApp_DrawNameText***", 0, 0, 0);
+
+    MSG_FATAL("line======%d,hight=%d,rect->dy=%d",line,hight,rect->dy);
+    
+
+    if (NULL == pMe->pStatic)
+    {
+         MSG_FATAL("***zzg CallApp_DrawNameText NULL == pMe->pStatic***", 0, 0, 0);
+         if(AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
+                                                 AEECLSID_STATIC,
+                                                 (void **)&pMe->pStatic))  
+         {
+            MSG_FATAL("***zzg CallApp_DrawNameText ISHELL_CreateInstance AEECLSID_STATIC Failed!***", 0, 0, 0);
+            return FALSE;
+         }
+        
+    }
+
+    {
+        WSTRTOSTR(wBuf,  str,  65);
+	    DBGPRINTF("***zzg str=%s***", str);
+    }
+
+    if (NULL != pMe->pStatic)
+    {
+        MSG_FATAL("***zzg CallApp_DrawNameText rect x,y:%d,%d***", rect->x, rect->y, 0);
+        MSG_FATAL("***zzg CallApp_DrawNameText rect dx,dy:%d,%d***", rect->dx, rect->dy, 0);
+        
+        ISTATIC_SetRect(pMe->pStatic, rect);  
+        ISTATIC_SetProperties(pMe->pStatic, ST_MIDDLETEXT|ST_GRAPHIC_BG);
+        ISTATIC_SetBackGround(pMe->pStatic, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND); //modified by yangdecai
+        
+        ISTATIC_SetText(pMe->pStatic, NULL, wBuf, AEE_FONT_BOLD, AEE_FONT_BOLD);
+        ISTATIC_Redraw(pMe->pStatic);
+        ISTATIC_SetActive(pMe->pStatic, TRUE);
+    }
+    else
+    {
+        MSG_FATAL("***zzg CallApp_DrawNameText Error return!***", 0, 0, 0);
+    }   
+     return TRUE;
+}
+//Add End
+
 /*=============================================================================
 FUNCTION:  CallApp_DrawText_Ex
 
@@ -13106,8 +13210,8 @@ static boolean CallApp_DrawText_Ex(CCallApp *pMe, AEEFont fnt,
                   AECHAR *wStr, AEERect  *rect,  uint32 mask)
 {
     int           len       = 0;
-    int           fits       = 0;/*指定的给定像素宽度的字符数*/
-    int           pixLen = 0;/*字符串的实际像素宽度*/
+    int           fits       = 0;
+    int           pixLen = 0;
     int           line      = 0;
     int           hight    = 0;
     AECHAR  wBuf[64] = {0};
@@ -13169,13 +13273,15 @@ static boolean CallApp_DrawText_Ex(CCallApp *pMe, AEEFont fnt,
 				MSG_FATAL("IDISPLAY_DrawText........44444444",0,0,0);
                 IDISPLAY_DrawText(pMe->m_pDisplay,  fnt, wBuf,-1, rect->x, rect->y, rect, mask);
                 WSTRLCPY(wBuf, temp,64);
-                rect->y = rect->y + hight/*CALL_LINE_HIGHT*/;/*y向下增加一行*/
+                rect->y = rect->y + hight;
             }
         }
     }
     IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, oldColor);
+   
     return TRUE;
 }
+
 
 #ifdef FEATURE_OEMOMH 
 extern char charsvc_p_name[UIM_CDMA_HOME_SERVICE_SIZE+1];

@@ -773,6 +773,7 @@ typedef struct _CCallApp
 #if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)    
        boolean                    m_isIncoming;
 #endif
+    IStatic *pStatic;           //Add By zzg 2013_08_23
 //   boolean            m_short_hit;
 } CCallApp;
 

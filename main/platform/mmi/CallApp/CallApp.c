@@ -735,6 +735,19 @@ static int CallApp_InitAppData(CCallApp *pMe)
     }
 #endif
 
+    //Add By zzg 2013_08_23
+    //if (NULL == pMe->pStatic)
+    {
+         if(AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
+                                                 AEECLSID_STATIC,
+                                                 (void **)&pMe->pStatic))  
+         {
+             MSG_FATAL("***zzg CallApp ISHELL_CreateInstance AEECLSID_STATIC Failed!***", 0, 0, 0);
+             //return FALSE;
+         }
+    }
+    //Add End
+
 
     // Create IAlert instance
     if (ISHELL_CreateInstance(pMe->m_pShell,
@@ -1054,6 +1067,14 @@ static void CallApp_FreeAppData(CCallApp *pMe)
         pMe->m_SndPlayer = NULL;
     }
 #endif /* KEYSND_ZY */
+
+    //Add By zzg 2013_08_23
+    if (pMe->pStatic)
+    {
+        ISTATIC_Release(pMe->pStatic);            
+        pMe->pStatic = NULL;    
+    }
+    //Add End
 
     if(pMe->m_pBacklight)
     {
