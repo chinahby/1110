@@ -200,7 +200,7 @@
 		<Text>Horizontal Move</Text>
 	</String>
 	<String Id="1075" Name="IDS_REND_EFFECT_MOVE_VERT">
-		<Text>Vertical Show</Text>
+		<Text>Vertical Move</Text>
 	</String>
 	<String Id="1076" Name="IDS_REND_EFFECT_FLY_HORZ">
 		<Text>Horizontal Fly</Text>

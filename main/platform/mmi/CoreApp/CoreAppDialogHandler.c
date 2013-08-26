@@ -567,7 +567,7 @@ static void CoreApp_Issametimer(void *pUser);
 
 static void CoreApp_UpdateBottomBar(CCoreApp    *pMe); 
 //Add by pyuangui 20121220
-#if defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_W021_CT100)
+#if defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_V3CM301)
 static void CCoreApp_TorchTipTimeOut(CCoreApp *pMe);
 #endif
 //Add End
@@ -3759,7 +3759,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
     byte  bData;
 #endif
 //Add by pyuangui 20121220
-#if defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_W021_CT100)    
+#if defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_V3CM301)   
     static IStatic * pStatic = NULL;
 #endif
 //Add End
@@ -3785,7 +3785,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
               //  #endif
 	       }
           //Add by pyuangui 20121220
-          #if defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_W021_CT100)
+          #if defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_V3CM301)
            if (NULL == pStatic)
             {
                 AEERect rect = {0};
@@ -4071,7 +4071,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 			}
 #else
 // Add by pyuangui 20121220
-#if defined (FEATURE_VERSION_C11)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_W021_CT100)
+#if defined (FEATURE_VERSION_C11)||defined(FEATURE_VERSION_W021_CT100)
             if(wParam == AVK_INFO)
             {
                 boolean TorchOn = FALSE;
@@ -4301,7 +4301,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
              IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
              #endif
 //Add by pyuangui 20121220			 
-#if defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_W021_CT100)
+#if defined(FEATURE_VERSION_C11)||defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_V3CM301)
              ISTATIC_Release(pStatic);
              pStatic = NULL;
              pMe->m_keyinfoheld=FALSE;
@@ -9648,7 +9648,7 @@ static const ServiceProviderList List_SP[] =
 };
 //#endif
 //Add by pyuangui 20121220
-#if defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_W021_CT100)
+#if defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_V3CM301)
 static void CCoreApp_TorchTipTimeOut(CCoreApp *pMe)
 {
     if (NULL == pMe)

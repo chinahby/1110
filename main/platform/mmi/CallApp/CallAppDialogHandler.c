@@ -9293,10 +9293,19 @@ void CallApp_HandleConversationTimer(void *pUser)
     //    (void) ITIMECTL_SetTime(pTimerCtl, (int32)elapsedCallTime);
     //}
 
-    // Check if we need to make the minute alert
-    sec    = (elapsedCallTime / 1000L) % 60L;
+    // Check if we need to make the minute alert 
+	#ifdef FEATURE_VERSION_V3CM301
+ 	minute = elapsedCallTime / (1000L * 60L);
+	if(minute == 1&&pMe->m_LastMinuteAlert==0)
+	{ 
+	    notifyFMRadioAlertEvent( pMe, TRUE);
+        IALERT_MinuteAlert(pMe->m_pAlert);
+        notifyFMRadioAlertEvent( pMe, FALSE);
+		 pMe->m_LastMinuteAlert = minute;
+	}
+	#else
+	sec    = (elapsedCallTime / 1000L) % 60L;
     minute = elapsedCallTime / (1000L * 60L);
-
     if ( (minute >= pMe->m_LastMinuteAlert) &&  (sec >= MINUTE_REMINDER_SECOND) )
     {
 
@@ -9313,15 +9322,16 @@ void CallApp_HandleConversationTimer(void *pUser)
         //                                        NULL, AEEALERT_ALERT_BUSY);
         //}
         notifyFMRadioAlertEvent( pMe, TRUE);
-        IALERT_MinuteAlert(pMe->m_pAlert);
+		IALERT_MinuteAlert(pMe->m_pAlert);
         notifyFMRadioAlertEvent( pMe, FALSE);
         pMe->m_LastMinuteAlert = minute + 1;
     }
-
-    (void) ISHELL_SetTimer(pMe->m_pShell,
+	#endif
+	(void) ISHELL_SetTimer(pMe->m_pShell,
                                                 TIMEOUT_MS_CONV_TIMER,
                                                 CallApp_HandleConversationTimer,
                                                 pMe);
+	  
 }
 
 /*=============================================================================

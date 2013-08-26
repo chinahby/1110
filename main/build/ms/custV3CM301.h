@@ -10,11 +10,24 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #endif
 
 #ifdef CUST_EDITION
+#define T_QSC1110
 #define FEATURE_OEMOMH
 #define FEATURE_VERSION_W515
 #define FEATURE_VERSION_W515V3
 #define FEATURE_VERSION_V3CM301
+#define FEATURE_CAMERA_MULTI_NEW_AUTO_DETECT
+#define FEATURE_CAMERA_8W
 #define FEATRUE_MG_COPYMOVE
+//#define FEATURE_OEMOMH
+
+
+//#define FEATURE_SALESTRACKER
+//#define FEATURE_VERSION_W021_CT100_SALES_TRACK
+//#undef FEATURE_VERSION_W021_CT100_SALES_TRACK_MST
+//#undef FEATURE_SALESTRACK_CONFIRM_DIALOG
+
+
+
 //Add by zzg 2010_10_13
 //#define FEATURE_TORCH_KEY_CAMERA			//手电筒功能按键
 //#define FEATURE_TORCH_KEY_INFO	            //idle界面的向OK对应手电筒功能
@@ -31,6 +44,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #undef  FEATRUE_SUPPORT_G_SENSOR
 #define FEATURE_RUIM_PHONEBOOK
 #define FEATURE_ICARD_NO_UI_BASE
+#define FEATURE_LANG_DEFAULT_ENGLISH
 #define FEATURE_LANG_ENGLISH
 #define FEATURE_LANG_HINDI
 //#define FEATURE_INPUTMODE_INDONESIAN //Add By zzg 2010_09_06
@@ -41,7 +55,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_OMH_SMS
 #define FEATURE_ONEMSG_USE_ONEFILE
 #define FEATURE_CDSMS_CACHE_USELIST
-#define FEATURE_CAMERA_MULTI_NEW_AUTO_DETECT
+
 //#define FEATURE_SPN_FROM_BSMCCMNC
 //#define FEATURE_LONG_NETLOCK   //add by yangdecai
 #endif
@@ -52,10 +66,11 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //#define FEATURE_USES_MMS //add by xuhui
 
 //#define FEATURE_DATA_STRIP_ATCOP 
-#define T_QSC1110
+
 #define FEATURE_STD_MIDI 
 #define FEATURE_DIAG_LOWMEM 
 //#define FEATURE_AMR_VOCODER 
+#define T_QSC1110
 #define CUST_MOB_MODEL 25
 #define FEATURE_PLL_192 
 #define FEATURE_CLKREGIM_2X_MODE 
@@ -71,7 +86,8 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_REX_IPC 
 #define FEATURE_ASYNC_DATA_NOOP 
 #define FEATURE_HS_USB_PMIC_PHY 
-#define FEATURE_HS_USB_USER_EVENT_POST 
+#define FEATURE_HS_USB_USER_EVENT_POST
+
 #define FEATURE_RRC_SIB_HEAP 
 #define FEATURE_LOW_MEMORY_USAGE 
 #define FEATURE_FS_LOW_MEMORY_USAGE 
@@ -92,6 +108,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_UIM_BLOCK_MODE_BITS_IN_SIM_CONFIG_REG 
 //#define FEATURE_ICARD_IMODEL 
 #define FEATURE_RUIM_CDMA_REFRESH 
+
 //#define FEATURE_RTRE_DEFAULT_IS_NV 
 #define FEATURE_AUTH 
 #define FEATURE_AUTH_DIGITS 
@@ -371,8 +388,8 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #endif
 //#endif
 
-#ifdef CAMERA_USES_SOFTDSP
-#define FEATURE_CAMERA_NOFULLSCREEN
-#endif
+//#ifdef CAMERA_USES_SOFTDSP
+//#define FEATURE_CAMERA_NOFULLSCREEN
+//#endif
 
 #endif /* CUSTSB2_H */
