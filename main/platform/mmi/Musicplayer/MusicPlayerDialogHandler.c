@@ -415,14 +415,16 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
 			IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn,TRUE);
 			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,Title);			
 			//Add End
-			
+
+            MSG_FATAL("***zzg MP3_PlayMusic_Windows_HandleEvent m_bPlaying=%x, m_bPaused=%x",pMe->m_bPlaying,pMe->m_bPaused,0);
+            
 			MP3_DrawImage(pMe, IDI_MUSICPLAYER, 0, 0);	//Add By zzg 2010_08_19
 
             #ifdef FEATURE_VERSION_K202
 			 if(pMe->m_pMedia )
              { 
              	if(pMe->m_bPlaying)
-             	{
+             	{                    
              	  (void)IMEDIA_SetVolume(pMe->m_pMedia,pMe->m_nCurrentVolume);
                   (void)IMEDIA_Play(pMe->m_pMedia);//播放
              	}
@@ -439,8 +441,7 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
     			else
     			{
         			pMe->m_bPaused = FALSE;
-        			pMe->m_bPlaying = FALSE;
-       	
+        			pMe->m_bPlaying = FALSE;       	
     			}
 			 }
              #endif
@@ -3185,7 +3186,7 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
 					(void)IMEDIA_SetVolume(pMe->m_pMedia,0); 
 				 }
 				 else
-				 {
+				 {				    
 					(void)IMEDIA_SetVolume(pMe->m_pMedia,pMe->m_nCurrentVolume); 
 				 }
             } 
@@ -3546,7 +3547,7 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
    			else
    			{
    				if(pMe->m_pMedia) 
-            	{  
+            	{ 
                 	(void)IMEDIA_SetVolume(pMe->m_pMedia,0); 
             	} 
             	pMe->m_isshift = TRUE;
@@ -3646,7 +3647,7 @@ static boolean MP3_SimplePlayer_HandleEvent(CMusicPlayer *pMe,
              switch(wParam)
              {
                 case AVK_CLR:
-				{
+				{                    
 					CMusicPlayer_ReleaseMedia(pMe);
                     pMe->m_bPlaying = TRUE;
                     pMe->m_bPaused = FALSE;
@@ -4968,6 +4969,7 @@ boolean CMusicPlayer_InitMusic(CMusicPlayer *pMe)
 #endif
 //Add End
 
+    MSG_FATAL("***zzg CMusicPlayer_InitMusic***", 0, 0, 0);
 
     // 如果是QCP格式的歌曲，必须设置一次声音通道否则声音会自动从RECIVE出来
     if(pMe->m_eStartMethod == STARTMETHOD_SIMPLEPLAYER)
@@ -4981,7 +4983,7 @@ boolean CMusicPlayer_InitMusic(CMusicPlayer *pMe)
     
     pf++;
     if((0 == STRICMP(pf,QCP_TYPE))||(0 == STRICMP(pf,AMR_TYPE)))
-    {
+    {    
     	MSG_FATAL("***zzg CMusicPlayer_InitMusic SetAudioDevice HS_HEADSET_ON=%x******", HS_HEADSET_ON(), 0, 0);
         (void)IMEDIA_SetAudioDevice((IMedia *)pMe->m_pMedia, HS_HEADSET_ON()?AEE_SOUND_DEVICE_STEREO_HEADSET:AEE_SOUND_DEVICE_SPEAKER);
     }
@@ -5003,6 +5005,7 @@ boolean CMusicPlayer_InitMusic(CMusicPlayer *pMe)
     pMe->m_nCurrentVolume= pMe->m_MusicPlayerCfg.eMusicVolume * AEE_MAX_VOLUME/5;
     if(pMe->m_pMedia)
     {
+        MSG_FATAL("***zzg IMEDIA_SetVolume ccc m_nCurrentVolume=%d",pMe->m_nCurrentVolume,0,0);
         (void)IMEDIA_SetVolume(pMe->m_pMedia,pMe->m_nCurrentVolume); 
     }
     if(pMe->m_eCurState == STATE_PLAYMUSIC_WINDOWS)
@@ -5041,7 +5044,7 @@ void CMusicPlayer_MediaNotify(void * pUser, AEEMediaCmdNotify * pCmdNotify)
             break;
     }
 	
-	MSG_FATAL("***zzg CMusicPlayer_MediaNotify nStatus=%x***", pCmdNotify->nStatus, 0, 0);
+	MSG_FATAL("***zzg CMusicPlayer_MediaNotify nStatus=%x, nCmd=%x, m_eStartMethod=%x***", pCmdNotify->nStatus, pCmdNotify->nCmd, pMe->m_eStartMethod);
       
     if (pCmdNotify->nCmd == MM_CMD_PLAY&&pMe->m_eStartMethod !=STARTMETHOD_SIMPLEPLAYER) //播放音乐
     {
@@ -5070,12 +5073,13 @@ void CMusicPlayer_MediaNotify(void * pUser, AEEMediaCmdNotify * pCmdNotify)
                 }
              }
             case MM_STATUS_DONE:    // playback done
-            {   
+            {                   
                if(TRUE == pMe->m_bUserStopped)
                {
                  pMe->m_bUserStopped = FALSE;
                  break;
                }
+              
                  //如果是用户停止播放或者设置为播放单首时，不再继续播放下一首
                 if(pMe->m_MusicPlayerCfg.eMusicPlayMode!=PLAYMODE_SINGLE && 
                     pMe->m_MusicPlayerCfg.eMusicPlayMode != PLAYMODE_REPEAT_ONE) 
@@ -5206,6 +5210,7 @@ void CMusicPlayer_PlayMusic(CMusicPlayer *pMe)
     {
         (void)IMEDIA_SetVolume(pMe->m_pMedia,0);
     }
+    
    if(pMe->m_pMedia)
    {
       (void)IMEDIA_Play(pMe->m_pMedia);//播放		
@@ -5250,7 +5255,7 @@ void CMusicPlayer_PauseMusic(CMusicPlayer *pMe)
 {
     if(pMe->m_pMedia)
     {
-       IMEDIA_Pause(pMe->m_pMedia);
+       IMEDIA_Pause(pMe->m_pMedia);     
        (void)IMEDIA_SetVolume(pMe->m_pMedia,pMe->m_nCurrentVolume); 
     }
 }
@@ -5441,13 +5446,18 @@ void CMusicPlayer_PlayNext(CMusicPlayer *pMe, boolean bDirection)
 ==============================================================================*/
 void CMusicPlayer_ReleaseMedia(CMusicPlayer *pMe)
 {
-   if(pMe->m_pMedia)
-   {
-      (void)IMEDIA_RegisterNotify(pMe->m_pMedia, NULL, pMe);
-      //(void)IMEDIA_Stop(pMe->m_pMedia);//因为IMEDIA_Release会stop
-      IMEDIA_Release(pMe->m_pMedia);
-      pMe->m_pMedia = NULL;
-   }
+    if(pMe->m_pMedia)
+    {
+        //Add By zzg 2013_08_23
+        (void)IMEDIA_SetAudioDevice((IMedia *)pMe->m_pMedia, HS_HEADSET_ON()?AEE_SOUND_DEVICE_STEREO_HEADSET:AEE_SOUND_DEVICE_HANDSET);            
+        MSLEEP(100);
+        //Add End
+
+        (void)IMEDIA_RegisterNotify(pMe->m_pMedia, NULL, pMe);
+        //(void)IMEDIA_Stop(pMe->m_pMedia);//因为IMEDIA_Release会stop
+        IMEDIA_Release(pMe->m_pMedia);
+        pMe->m_pMedia = NULL;
+    }
 }  
 /*================================================================================
 函数:CMusicPlayer_MusiclistSortBy
