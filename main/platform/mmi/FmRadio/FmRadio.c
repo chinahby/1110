@@ -1476,15 +1476,49 @@ boolean FmRadio_AddChanListNode( sChanInfo* pChInfo)
 	    gFmRadio.byChannelMax < MAX_FMRADIO_STORED_CHANNEL &&
 	    FmRadio_IsChannelValid( pChInfo->wChannel)
 	)
-	{
-
+	
+	{           
 		gFmRadio.chanInfoList[gFmRadio.byChannelMax] = *pChInfo;
 		gFmRadio.byChannelMax ++;
+
+        FmRadio_SequenceChanList();
+        
 		return TRUE;
 	}
 
+    FmRadio_SequenceChanList();
+
     return FALSE;
 }
+
+
+//Add By zzg 2013_08_26
+boolean FmRadio_SequenceChanList(void)
+{
+    int i, max;
+    sChanInfo  tmp;
+
+    if (gFmRadio.byChannelMax < 2)
+    {
+        return FALSE;
+    }
+    
+    for (max = gFmRadio.byChannelMax-1; max>0; max--)
+    {
+        for (i=0; i<max; i++)
+        {       
+            if (gFmRadio.chanInfoList[i].wChannel > gFmRadio.chanInfoList[i+1].wChannel)
+            {
+                tmp = gFmRadio.chanInfoList[i];
+                gFmRadio.chanInfoList[i] = gFmRadio.chanInfoList[i+1];
+                gFmRadio.chanInfoList[i+1] = tmp;
+            }               
+        }
+    }
+    
+    return TRUE;
+}
+//Add End
 
 int FmRadio_GetChannelTotal(void)
 {

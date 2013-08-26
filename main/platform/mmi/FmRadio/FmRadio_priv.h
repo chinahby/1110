@@ -654,6 +654,11 @@ NextFSMAction FmRadio_ProcessState(CFmRadio *pMe);
 ==============================================================================*/
 boolean FmRadio_AddChanListNode( sChanInfo* pChInfo);
 
+
+//Add By zzg 2013_08_26
+boolean FmRadio_SequenceChanList(void);
+//Add End
+
 /*==============================================================================
 º¯Êý:
        FmRadio_DeleteChanListNode
