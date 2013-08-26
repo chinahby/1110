@@ -2044,6 +2044,25 @@ static void refreshChannelListCB( void *pme)
     }
 
 #if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A)
+#ifdef FEATURE_VERSION_C260_IC18
+    if( !FmRadio_FindChanListNode(60))        //94.3
+    {
+        sChanInfo info = { 0};
+        info.wChannel = 60;
+        WSTRCPY(info.szName, L"93.5");        
+        FmRadio_AddChanListNode( &info);
+        FmRadio_SaveChannelList( pMe);
+    }
+
+    if( !FmRadio_FindChanListNode(165))       //105.6
+    {
+        sChanInfo info = { 0};
+        info.wChannel = 165;
+        WSTRCPY(info.szName, L"104.0");  
+        FmRadio_AddChanListNode( &info);
+        FmRadio_SaveChannelList( pMe);
+    } 
+#else
     if( !FmRadio_FindChanListNode(68))        //94.3
     {
         sChanInfo info = { 0};
@@ -2061,6 +2080,7 @@ static void refreshChannelListCB( void *pme)
         FmRadio_AddChanListNode( &info);
         FmRadio_SaveChannelList( pMe);
     }  
+#endif    
 #endif
 
     if(ready)
