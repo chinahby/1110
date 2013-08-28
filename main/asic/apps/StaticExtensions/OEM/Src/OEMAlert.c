@@ -3576,7 +3576,11 @@ static void OEMALERT_HandleMissedCallTimer(void *pUser)
                                 OEMALERT_RingInHeadset(pMe) ?
                                 SND_METHOD_VOICE :
                                 SND_METHOD_RING,
-                                (int) SND_MESSAGE_ALERT,
+								#if defined(FEATURE_VERSION_K212)
+                                (int) SND_PIP_TONE,
+                                #else
+								(int) SND_MESSAGE_ALERT,
+								#endif
                                 SND_PRIO_MED,
                                 SND_APATH_LOCAL,
                                 NULL);    
