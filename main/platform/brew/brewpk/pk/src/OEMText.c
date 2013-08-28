@@ -11864,6 +11864,7 @@ static void T9_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext )
     unsigned int     iWindDy = pContext->rectChineseSyllableInput.dy ;
     int     nWordCount      = 0;
     int     nWordCountDisp  = 0;
+	int     nWordCountDisptemp  = 0;
     int     nSelectedCode   = 0;            // the number of selected in displayed spell code list(base-0)
     int     nSpellBufLen    = 0;
     char   *pbSpellBuffer   = NULL;
@@ -11883,6 +11884,7 @@ static void T9_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext )
     int     nSelectedCodeTemp = 0;  // ×ÖÄ¸×éºÏÐòºÅ
     static int nSpellCodeStart = 0;         // the start index in the Zhuyin Code list (base-0)
     static int nKeyBufLenOrig  = 0;         // the original len of Key buffer
+    boolean change = FALSE;
 
     T9_CJK_CHINESE_AdjustInputInfoLocation(pContext, (unsigned int *)&iWindX, (unsigned int *)&iWindY, &iWindDx, &iWindDy);
     
@@ -11903,7 +11905,7 @@ static void T9_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext )
     SETAEERECT ( &pRect,
                   iWindX+2,   //+T9_FONT_WIDTH,   
                   iWindY+1,
-                  iWindDx -12,     
+                  iWindDx -6,     
                   iWindDy); 
     }
     //#endif
@@ -11958,6 +11960,8 @@ static void T9_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext )
     // base-0
     nSelectedCode = bSpellCode - 1;
     wszTmp = wszSpellBuf;
+
+	MSG_FATAL("nSelectedCode=====%d,bSpellCode==%d,nWordCount===%d",nSelectedCode,bSpellCode,nWordCount);
     
     // Copy syllables
     while ( *pbSpellBuffer )
@@ -11988,6 +11992,7 @@ static void T9_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext )
 
     
     // the Len changed
+    MSG_FATAL("nKeyBufLenOrig==%d,,nKeyBufLen==%d",nKeyBufLenOrig,nKeyBufLen,0);
     if ( nKeyBufLenOrig != nKeyBufLen )
     {
         nSpellCodeStart = 0;
@@ -12012,9 +12017,43 @@ static void T9_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext )
     }
 
     // copy the displaying part from wszSpellBuf
+    MSG_FATAL("nKeyBufLen==%d,,nSpellCodeStart==%d,nWordCountDisp==%d",nKeyBufLen,nSpellCodeStart,nWordCountDisp);
+	if(nWordCountDisp>5)
+	{
+		IImage          *m_pImage;
+		
+		nWordCountDisp =5;
+		if(nSelectedCode ==5)
+		{
+			m_pImage = ISHELL_LoadResImage(pContext->pIShell,AEE_APPSCOMMONRES_IMAGESFILE, IDB_LEFTARROW);
+		}
+		else
+		{
+			m_pImage = ISHELL_LoadResImage(pContext->pIShell,AEE_APPSCOMMONRES_IMAGESFILE, IDB_RIGHTARROW);
+		}
+		if(m_pImage!=NULL)
+		{
+			IIMAGE_Draw(m_pImage, (iWindX+iWindDx)-20, iWindY+16);
+		}
+		
+		if(m_pImage != NULL)
+        {   
+            (void)IIMAGE_Release(m_pImage);
+            m_pImage = NULL;
+        }
+	}
+	
+	if(nSelectedCode ==5)
+	{
+		nSpellCodeStart = 5;
+		nSelectedCode = 0;
+		change = TRUE;
+	}
+	
     SymbToAECHARNCopy ( wszSpellBufDisp, 
                         wszSpellBuf + nSpellCodeStart * (nKeyBufLen+1) ,
                         nWordCountDisp * (nKeyBufLen+1) - 1 );
+
 #ifdef FEATURE_FUNCS_THEME                       
     IDISPLAY_DrawRect(pContext->pIDisplay,
             &pRect,
@@ -12106,6 +12145,11 @@ static void T9_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext )
     }                              
 
     nKeyBufLenOrig = nKeyBufLen;
+	if(change)
+	{
+		nSelectedCode = 5;
+		nSpellCodeStart = 0;
+	}
     
     if ( wszSpellBuf )
     {
