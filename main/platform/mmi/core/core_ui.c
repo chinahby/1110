@@ -887,6 +887,7 @@ static void KeyHoldCB(void *pUser)
 				if(!IBACKLIGHT_IsEnabled(gpBacklight))
 				{
 					m_isBacklight = FALSE;
+					MSG_FATAL("IBACKLIGHT_Enable........000",0,0,0);
 	            	IBACKLIGHT_Enable(gpBacklight);
 				}
 				else
@@ -1985,12 +1986,13 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
 #endif
     
 #ifdef FEATURE_KEYGUARD	
+    
     if (OEMKeyguard_HandleEvent(evt, wParam,dwParam))
     {	
         return TRUE;
     }	
 #endif
-    
+    MSG_FATAL("evt====%0x,,wParam====%0x",evt,wParam,0);
     // AVK_HEADSET_SWITCH means headset key press
     if (wParam == AVK_HEADSET_SWITCH && bSendHeadsetKeyAllowed) {
 #ifdef FEATURE_ICM
@@ -2150,6 +2152,7 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
             }
 #endif
             if (gpBacklight){
+				MSG_FATAL("IBACKLIGHT_Enable........0010",0,0,0);
                 IBACKLIGHT_Enable(gpBacklight);
             }
         }
@@ -2162,6 +2165,7 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
             }
 #endif
             if (gpBacklight){
+				MSG_FATAL("IBACKLIGHT_Enable........0011",0,0,0);
                 IBACKLIGHT_Enable(gpBacklight);
             }
             // ºÏ¸Ç´ò¿ª
@@ -2211,6 +2215,7 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
 			{
 				//ISHELL_PostEvent(AEE_GetShell(),AEE_Active(),EVT_USER_REDRAW,0,0L);
 				m_isBacklight = FALSE;
+				MSG_FATAL("IBACKLIGHT_Enable........0012",0,0,0);
             	IBACKLIGHT_Enable(gpBacklight);
 				#ifndef FEATURE_VERSION_K212
 				if (wParam == AVK_ENDCALL)
@@ -2244,6 +2249,7 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
 #if defined(FEATURE_BACKLIGHT_KEYPAD)
         if (gpKeyBacklight)
 		{
+			MSG_FATAL("IBACKLIGHT_Enable........001",0,0,0);
             IBACKLIGHT_Enable(gpKeyBacklight);
         }   
 #endif
@@ -2271,12 +2277,19 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
                 }
 				else
                 {
-                    IBACKLIGHT_Enable(gpBacklight);
+                	MSG_FATAL("IBACKLIGHT_Enable........002",0,0,0);
+					#ifdef FEATURE_VERSION_K212
+					if(AVK_STAR != wParam)
+					#endif
+					{
+                    	IBACKLIGHT_Enable(gpBacklight);
+					}
                 }
 				return TRUE;
             }
 			else
             {
+            	MSG_FATAL("IBACKLIGHT_Enable........003",0,0,0);
                 IBACKLIGHT_Enable(gpBacklight);
             }
         }

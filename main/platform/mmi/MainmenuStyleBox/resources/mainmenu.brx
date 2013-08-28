@@ -201,5 +201,9 @@
 			</Menu>
 		</Controls>
 	</Dialog>
+	<Dialog Id="6003" Name="IDD_VIEW_TIME" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
 </Dialogs>
 </BREWRes>

@@ -116,7 +116,7 @@
 		<Text>无效密码</Text>
 	</STRING>
 	<STRING Id="1048" Name="IDS_PHONEBOOK_LOCK">
-		<Text>电话本</Text>
+		<Text>通讯录</Text>
 	</STRING>
 	<STRING Id="1049" Name="IDS_RECENT_CALL_LOCK">
 		<Text>通话记录</Text>

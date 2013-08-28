@@ -3935,6 +3935,10 @@ static boolean MGAppPopupMenu_OnSetWallpaper(CMediaGalleryApp *pMe,
 		  	pMe->m_Gif = FALSE;
 		  }
       IIMAGE_Notify(pMe->m_pImage, MGAppUtil_LoadImageNotify, pMe);
+	  MediaGalleryApp_ShowPromptMsgBox(pMe,
+                                       IDS_MG_LOADING,
+                                       MESSAGE_WAITING,
+                                       BTBAR_BACK);
    }
    else
    {

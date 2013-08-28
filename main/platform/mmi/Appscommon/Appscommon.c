@@ -2925,7 +2925,12 @@ void DrawPromptMessage (IDisplay *pIDisplay,
             strrect.dx = StringBgImgInfo.cx;
 			#endif
             strrect.x = totalrect.x - StringBgImgInfo.cx/2;            
-			strrect.y = totalrect.y - 15;		
+			strrect.y = totalrect.y - 15;	
+			#elif defined(FEATURE_VERSION_K212)
+			strrect.dy = StringBgImgInfo.cy*3/4;
+            strrect.dx = StringBgImgInfo.cx;
+            strrect.x = totalrect.x - StringBgImgInfo.cx/2;
+            strrect.y = totalrect.y-80;    
             #else
             strrect.dy = StringBgImgInfo.cy/2;
             strrect.dx = StringBgImgInfo.cx;
@@ -3269,7 +3274,13 @@ void Appscommon_Draw_Keyguard_Time(IDisplay *pIDisplay)
     byte      bTFmt = 0;
     uint16    nWeekResID = 0, nHour = 0;
     RGBVAL  nOldFontColor = RGB_WHITE;
-
+	BottomBar_e_Type    eBBarType = BTBAR_NONE; 
+	#ifdef FEATURE_VERSION_K212
+	nNumberWidth = 41;
+	nNumberHeight = 61;
+	nOffset = 5;
+	#endif
+    MSG_FATAL("Appscommon_Draw_Keyguard_Time......",0,0,0);
     if (NULL == pIDisplay)
     {
         return;
@@ -3355,9 +3366,14 @@ void Appscommon_Draw_Keyguard_Time(IDisplay *pIDisplay)
     nOldFontColor = IDISPLAY_SetColor(pIDisplay, CLR_USER_TEXT, nOldFontColor);
     
     IDISPLAY_DrawText(pIDisplay, AEE_FONT_NORMAL, wstrDisp, -1, xStartPos, yStartPos, NULL, IDF_TEXT_TRANSPARENT);
-
-    nTextLen = (nNumberWidth + nOffset)*4 + nLineWidth;
+#ifdef FEATURE_VERSION_K212
+    nTextLen = (nNumberWidth + nOffset)*4 + nLineWidth*3;
+#else
+	nTextLen = (nNumberWidth + nOffset)*4 + nLineWidth;
+#endif
     xStartPos = (devinfo.cxScreen - nTextLen)/2;
+	
+	MSG_FATAL("xStartPos=======%d",xStartPos,0,0);
     yStartPos = (devinfo.cyScreen*2/5);
 
     // get time format
@@ -3371,13 +3387,19 @@ void Appscommon_Draw_Keyguard_Time(IDisplay *pIDisplay)
             xStartPos -= (nNumberWidth - nLineWidth)/2;
         }
         MEMSET(wstrDisp, 0, sizeof(wstrDisp));
-        wstrDisp[0] = (jDate.wHour > 12)?(L'P'):(L'A');
+        wstrDisp[0] = (jDate.wHour >= 12)?(L'P'):(L'A');
         wstrDisp[1] = L'M';
         wstrDisp[2] = L'\0';
         nTextLen = IDISPLAY_MeasureText(pIDisplay, AEE_FONT_NORMAL, wstrDisp);
         xStartPos -= (nTextLen + nOffset)/2;
+	#ifdef FEATURE_VERSION_K212
+		if(xStartPos<0)
+		{
+			xStartPos = 5;
+		}
+	#endif
         IDISPLAY_DrawText(pIDisplay, AEE_FONT_NORMAL, wstrDisp, -1, 
-                       xStartPos + (nNumberWidth + nOffset)*4 + nLineWidth + nOffset, 
+                       xStartPos + (nNumberWidth + nOffset)*4 + nLineWidth*3 + nOffset, 
                        yStartPos + nNumberHeight - nFontHeight, 
                        NULL, IDF_TEXT_TRANSPARENT);
     }
@@ -3386,10 +3408,32 @@ void Appscommon_Draw_Keyguard_Time(IDisplay *pIDisplay)
         nHour = jDate.wHour;
         if(nHour/10 == 1)
         {
+        	#ifndef FEATURE_VERSION_K212
             xStartPos -= (nNumberWidth - nLineWidth)/2;
+			#endif
         }
     }
+	#ifdef FEATURE_VERSION_K212
+	
+	 // draw hour
+    SETAEERECT(&rect, xStartPos, yStartPos, nNumberWidth, nNumberHeight);
+	Appscommon_DrawDigitalNumberImage(pIDisplay, (nHour/10), nLineWidth, &rect);
+	
+	rect.x += nNumberWidth + nOffset;
+    Appscommon_DrawDigitalNumberImage(pIDisplay, (nHour%10), nLineWidth, &rect);
 
+	// draw colon
+    SETAEERECT(&rect, xStartPos + 2*(nNumberWidth) + nOffset, yStartPos, nLineWidth*3, nLineWidth);
+    Appscommon_DrawDigitalNumberImage(pIDisplay, 10, nLineWidth, &rect);
+
+    
+    // draw minute
+    SETAEERECT(&rect, xStartPos + 2*(nNumberWidth + nOffset) + nLineWidth*3 + nOffset, yStartPos, nNumberWidth, nNumberHeight);
+    Appscommon_DrawDigitalNumberImage(pIDisplay, (jDate.wMinute/10), nLineWidth, &rect);
+    rect.x += nNumberWidth + nOffset;
+    Appscommon_DrawDigitalNumberImage(pIDisplay, (jDate.wMinute%10), nLineWidth, &rect);
+	
+	#else
     // draw hour
     SETAEERECT(&rect, xStartPos, yStartPos, nNumberWidth, nNumberHeight);
     Appscommon_DrawDigitalNumber(pIDisplay, (nHour/10), nLineWidth, &rect, RGB_WHITE);
@@ -3409,7 +3453,11 @@ void Appscommon_Draw_Keyguard_Time(IDisplay *pIDisplay)
     Appscommon_DrawDigitalNumber(pIDisplay, (jDate.wMinute%10), nLineWidth, &rect, RGB_WHITE);
     
     (void)IDISPLAY_SetColor(pIDisplay, CLR_USER_TEXT, nOldFontColor);
-
+	#endif
+    #ifdef FEATURE_VERSION_K212
+	eBBarType = BTBAR_UNLOCK_L;
+    DrawBottomBar_Ex(pShell, pIDisplay,eBBarType);
+	#endif
     IDISPLAY_Update(pIDisplay);
 }
 #endif
@@ -3961,7 +4009,22 @@ boolean Appscommon_DrawPopUpDialogBox(IDisplay *pIDisplay, int x, int y, AECHAR 
     
     return TRUE;
 }
+#ifdef FEATURE_VERSION_K212
+boolean Appscommon_DrawDigitalNumberImage(IDisplay *pDisplay, int number, int nLineWidth, AEERect *fontRect)
+{
+	IImage              *m_pImageTimeIcon;
+    IShell      *pShell = AEE_GetShell();
+	m_pImageTimeIcon = ISHELL_LoadResImage(pShell,AEE_APPSCOMMONRES_IMAGESFILE,IDI_TIME_0+number);
+	if(m_pImageTimeIcon!=NULL)
+	{
+	    MSG_FATAL("m_pImageTimeIcon is not null........",0,0,0);
+		IIMAGE_Draw(m_pImageTimeIcon,fontRect->x,fontRect->y);
+		(void)IIMAGE_Release(m_pImageTimeIcon);
+        m_pImageTimeIcon = NULL;
+	}
+}
 
+#endif
 /*==============================================================================
 º¯Êý: 
     Appscommon_DrawDigitalNumber

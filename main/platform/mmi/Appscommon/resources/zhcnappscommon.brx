@@ -107,7 +107,7 @@
 		<Text>数字</Text>
 	</STRING>
 	<STRING Id="36" Name="IDS_MSG_KEYGUARD">
-		<Text>先按“解锁”键，再按“*”键解锁 </Text>
+		<Text>先按“解锁”键 再按 * 键解锁 </Text>
 	</STRING>
 	<STRING Id="37" Name="IDS_INPUT_RAPIDTH">
 		<Text>RapidTH</Text>
@@ -263,7 +263,7 @@
 		<Text>返回</Text>
 	</STRING>
 	<STRING Id="2003" Name="IDS_MSG_KEYGUARD_UNLOCKKEY">
-		<Text>按“*”键解锁</Text>
+		<Text>按 * 键解锁</Text>
 	</STRING>
 	<STRING Id="2004" Name="IDS_MODIFY">
 		<Text>修改</Text>

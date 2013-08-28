@@ -947,6 +947,9 @@ boolean Appscommon_DrawDialogBoxFrame(AEERect *pBoxRect, boolean bUpward, RGBVAL
        
 ==============================================================================*/
 boolean Appscommon_DrawPopUpDialogBox(IDisplay *pIDisplay, int x, int y, AECHAR *strDisplay);
+#ifdef FEATURE_VERSION_K212
+boolean Appscommon_DrawDigitalNumberImage(IDisplay *pDisplay, int number, int nLineWidth, AEERect *fontRect);
+#endif
 
 /*==============================================================================
 º¯Êý: 

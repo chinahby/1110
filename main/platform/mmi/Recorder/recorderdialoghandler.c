@@ -717,12 +717,7 @@ static void recorder_show_media_spec( Media* pme)
 				IDS_MM_STATUS_DATA_IO_DELAY,
 				IDS_MM_STATUS_DONE
 			};
-
-#ifdef FEATURE_VERSION_K212
-	int 			i 			= pme->m_nVolume / 16;
-#else
 	int 			i 			= pme->m_nVolume / 20;
-#endif
 	AEEImageInfo	info 		= {0};
 	IImage*			image   	= pRecorder->m_pImage[RECORDER_IMAGE_PROGRESSBAR1];
 	int				x			= 0;

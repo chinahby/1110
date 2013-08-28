@@ -158,7 +158,8 @@ typedef struct {
     	} fInfo;
 } StartInfo;
 static int m_row = 0;
-static StartInfo start_info;		
+static StartInfo start_info;	
+boolean m_main_avk_star = FALSE;
 #ifdef FEATURE_LCD_TOUCH_ENABLE
 #define PARAM_NOT_REF(x)
 /*==============================================================================
@@ -2511,9 +2512,12 @@ static void Main_loadtimer(void *pUser);
 
 // MAINST_MAIN 状态处理函数
 static NextFSMAction MAINST_MAIN_Handler(MainMenu *pMe);
+static NextFSMAction MAINST_VIEW_TIME_Handler(MainMenu *pMe);
+
 //MAINST_EXIT  状态处理函数
 static NextFSMAction MAINST_EXIT_Handler(MainMenu *pMe);
 static boolean  MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam);
+static boolean  MainMenu_ViewTimeHandler(MainMenu *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam);
 
 /*==============================================================================
                               
@@ -3328,6 +3332,8 @@ NextFSMAction MainMenu_ProcessState(MainMenu *pMe)
     {
         case MAINST_MAIN:
             return MAINST_MAIN_Handler(pMe);
+		case MAINST_VIEW_TIME:
+			return MAINST_VIEW_TIME_Handler(pMe);
         case MAINST_EXIT:
             return MAINST_EXIT_Handler(pMe);  
         default:
@@ -3372,12 +3378,42 @@ static NextFSMAction MAINST_MAIN_Handler(MainMenu *pMe)
         case DLGRET_CANCELED:
             MOVE_TO_STATE(MAINST_EXIT)
             return NFSMACTION_CONTINUE;
+		case DLGRET_VIEW_TIEM:
+			MOVE_TO_STATE(MAINST_VIEW_TIME)
+            return NFSMACTION_CONTINUE;
 
         default:
             MOVE_TO_STATE(MAINST_EXIT)
             return NFSMACTION_CONTINUE;
     }
 }
+
+
+static NextFSMAction MAINST_VIEW_TIME_Handler(MainMenu *pMe)
+{
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+    switch (pMe->m_eDlgReturn)
+    {
+        // 进入主界面
+        case DLGRET_CREATE:
+            {
+                MainMenu_ShowDialog(pMe, IDD_VIEW_TIME);
+            }
+            return NFSMACTION_WAIT;
+            
+        case DLGRET_CANCELED:
+            MOVE_TO_STATE(MAINST_EXIT)
+            return NFSMACTION_CONTINUE;
+
+        default:
+            MOVE_TO_STATE(MAINST_EXIT)
+            return NFSMACTION_CONTINUE;
+    }
+}
+
 
 /*==============================================================================
 函数:
@@ -3510,9 +3546,57 @@ boolean MainMenu_RouteDialogEvt(MainMenu *pMe,
     {
         case IDD_MAIN_MENU:
             return MainMenu_IconMenuHandler(pMe, eCode, wParam, dwParam);
-            
+        case IDD_VIEW_TIME:
+			return MainMenu_ViewTimeHandler(pMe, eCode, wParam, dwParam);
         default:
             return FALSE;
+    }
+}
+static boolean  MainMenu_ViewTimeHandler(MainMenu *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
+{
+	 PARAM_NOT_REF( dwParam)
+    switch ( eCode)
+    {
+        case EVT_DIALOG_INIT:			
+
+            return TRUE;
+
+        case EVT_DIALOG_START:			
+
+            (void) ISHELL_PostEvent( pMe->m_pShell,
+                                     AEECLSID_MAIN_MENU,
+                                     EVT_USER_REDRAW,
+                                     0,
+                                     0);
+			MSG_FATAL("MainMenu_IconMenuHandler.........EVT_DIALOG_START....",0,0,0);
+            return TRUE;
+
+        case EVT_USER_REDRAW:
+            // 初始整个背景及全部初始图标
+            {
+            	
+				IDisplay      *pd = NULL;
+    
+    			(void) ISHELL_CreateInstance(pMe->m_pShell,AEECLSID_DISPLAY,(void**) &pd);
+    			if(pd)
+    			{
+        			Appscommon_Draw_Keyguard_Time(pd);
+        			IDISPLAY_Release(pd);
+    			}
+				OEMKeyguard_SetState(TRUE);
+				ISHELL_CloseApplet(pMe->m_pShell, TRUE); 		
+            	return TRUE;
+            }
+        case EVT_KEY:
+            switch( wParam)
+            {
+                case AVK_CLR:
+                     CLOSE_DIALOG(DLGRET_CANCELED)
+                    return TRUE;
+            }
+        case EVT_DIALOG_END:
+
+            return TRUE;
     }
 }
 
@@ -3680,8 +3764,12 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
                 case AVK_STAR:
                     if(gbMainmenuLock)
                     {
-                        OEMKeyguard_SetState(TRUE);
+                    	m_main_avk_star = TRUE;
+						OEMKeyguard_SetState(TRUE);
                         ISHELL_CloseApplet(pMe->m_pShell, TRUE); 
+						
+						//CLOSE_DIALOG(DLGRET_VIEW_TIEM)
+                    	return TRUE;
                     }
                     return TRUE;
                 default:
@@ -3787,6 +3875,7 @@ static void DrawMatrix(MainMenu *pMe)
 {
     
 	BottomBar_e_Type    eBBarType = BTBAR_NONE;
+	BottomBar_Param_type BarParam; 
     boolean m_sound_bo_main = FALSE;
     if (NULL == pMe)
     {
@@ -3952,7 +4041,7 @@ static void DrawMatrix(MainMenu *pMe)
 	}
 	if(pMe->m_pImageSelectkbar!=NULL)
 	{
-		IIMAGE_Draw(pMe->m_pImageSelectkbar,0,285);
+		//IIMAGE_Draw(pMe->m_pImageSelectkbar,0,285);
 	}
     #ifdef FEATURE_SOUND_BO
    	(void) ICONFIG_GetItem(pMe->m_pConfig,
@@ -3970,8 +4059,11 @@ static void DrawMatrix(MainMenu *pMe)
 		}
 	}
 	#endif
-	eBBarType = BTBAR_OK_BACK;
-	DrawBottomBar_Ex(pMe->m_pShell, pMe->m_pDisplay,eBBarType);
+	//eBBarType = BTBAR_OK_BACK;
+	//DrawBottomBar_Ex(pMe->m_pShell, pMe->m_pDisplay,eBBarType);
+    MEMSET(&BarParam, 0, sizeof(BarParam));         
+    BarParam.eBBarType = BTBAR_OK_BACK;                         
+    DrawBottomBar(pMe->m_pDisplay, &BarParam);   
 	IDISPLAY_UpdateEx(pMe->m_pDisplay, TRUE);
     //BarParam.eBBarType = BTBAR_SELECT_BACK;
     //DrawBottomBar(pMe->m_pDisplay, &BarParam);//wlh 20090412 add
@@ -4015,6 +4107,7 @@ SEE ALSO:
 static void MoveCursorTo(MainMenu *pMe, int row, int column)
 {
 	BottomBar_e_Type    eBBarType = BTBAR_NONE;
+	BottomBar_Param_type BarParam; 
 	boolean m_sound_bo_main = FALSE;
 	//draw bg image
 	 if (NULL == pMe)
@@ -4216,11 +4309,14 @@ static void MoveCursorTo(MainMenu *pMe, int row, int column)
 
 	if(pMe->m_pImageSelectkbar!=NULL)
 	{
-		IIMAGE_Draw(pMe->m_pImageSelectkbar,0,285);
+		//IIMAGE_Draw(pMe->m_pImageSelectkbar,0,285);
 	}
 	
-	eBBarType = BTBAR_OK_BACK;
-	DrawBottomBar_Ex(pMe->m_pShell, pMe->m_pDisplay,eBBarType);
+	//eBBarType = BTBAR_OK_BACK;
+	//DrawBottomBar_Ex(pMe->m_pShell, pMe->m_pDisplay,eBBarType);
+	MEMSET(&BarParam, 0, sizeof(BarParam));         
+    BarParam.eBBarType = BTBAR_OK_BACK;                         
+    DrawBottomBar(pMe->m_pDisplay, &BarParam);   
 	IDISPLAY_UpdateEx(pMe->m_pDisplay, TRUE);
 }
 /*=============================================================================

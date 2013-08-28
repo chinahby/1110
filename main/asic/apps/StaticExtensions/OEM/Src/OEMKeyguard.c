@@ -71,7 +71,7 @@ when       who     what, where, why
 ////
 // Time in milliseconds before the keyguard message will close
 #ifdef FEATURE_VERSION_K212
-#define TIMEOUT_MS_KEYGUARD_TIMER              (5*1000)
+#define TIMEOUT_MS_KEYGUARD_TIMER              (3*1000)
 #else
 #define TIMEOUT_MS_KEYGUARD_TIMER              (1*1000)
 #endif
@@ -204,6 +204,9 @@ static boolean OEMPriv_IsPhoneIdle(void)
 #if 1
 #ifdef FEATURE_ICM
     AEECMPhInfo phoneInfo;
+	#if defined(FEATURE_VERSION_K212)
+	return TRUE;
+	#endif
     if(AEECM_IS_ANYCALL_PRESENT(spPhone))
     {
         return FALSE;
@@ -314,7 +317,6 @@ static void OEMPriv_ResumeBREW(void)
 
     bDrawMessage = TRUE;
 }
-
 
 /*=============================================================================
 FUNCTION: OEMPriv_MessageTimerCB
@@ -604,6 +606,7 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
 #ifndef FEATURE_UNLOCK_KEY_SPACE	
 #if  defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_1110W516)|| defined(FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_C316)||defined(FEATURE_LEFT_SOFTKEY_AND_STAR_UNLOCK)|| defined(FEATURE_VERSION_K212)
                 case AVK_SELECT:
+				case AVK_SOFT1:
 #elif  defined(FEATURE_VERSION_W027)
 #ifdef FEATURE_VERSION_W317A
                 case AVK_SELECT:
@@ -632,7 +635,7 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
 						#ifdef FEATURE_VERSION_K212
                     	if(m_bBlackEnagled)
                     	{
-                        	
+                        	MSG_FATAL("OEMPriv_DrawKeyguardTime....1",0,0,0);
 							OEMPriv_DrawKeyguardTime();
 							m_bBlackEnagled  = FALSE;
                     	}
@@ -703,6 +706,7 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
 							}
 							else
 							{
+								MSG_FATAL("OEMPriv_DrawKeyguardTime....2",0,0,0);
 								OEMPriv_DrawKeyguardTime();
 							}
 							#else
@@ -715,6 +719,7 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
                         	#ifdef FEATURE_VERSION_K212
 							if(m_bBlackEnagled)
 							{
+								MSG_FATAL("OEMPriv_DrawKeyguardTime....2",0,0,0);
 								OEMPriv_DrawKeyguardTime();
 								m_bBlackEnagled  = FALSE;
 							}
@@ -743,7 +748,7 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
 //Add End
 
 
-                default:
+           default:
                     if(!bDrawMessage)
                     {
                     	#if defined( FEATURE_VERSION_S1000T)||defined( FEATURE_VERSION_W515V3)
@@ -756,6 +761,8 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
 						}
 						else
 						{
+						
+							MSG_FATAL("OEMPriv_DrawKeyguardTime....4",0,0,0);
 							OEMPriv_DrawKeyguardTime();
 						}
 						#else
@@ -782,7 +789,6 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
 						if(m_bBlackEnagled)
 						{
 							m_bBlackEnagled  = FALSE;
-							OEMPriv_DrawKeyguardTime();
 						}
 						else
 						{
@@ -819,6 +825,7 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
 						}
 						else
 						{
+							MSG_FATAL("OEMPriv_DrawKeyguardTime....6",0,0,0);
 							OEMPriv_DrawKeyguardTime();
 						}
 						#else
@@ -832,6 +839,7 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
 						if(m_bBlackEnagled)
 						{
 							m_bBlackEnagled  = FALSE;
+							MSG_FATAL("OEMPriv_DrawKeyguardTime....7",0,0,0);
 							OEMPriv_DrawKeyguardTime();
 						}
 						else
@@ -983,7 +991,7 @@ static void OEMPriv_DrawKeyguardMessage(boolean unlockkey)
 {
     IDisplay      *pd;
     IStatic       *pStatic;
-    KEYGUARD_ERR("OEMPriv_DrawKeyguardMessage %x",sgpShell,0,0);
+    MSG_FATAL("OEMPriv_DrawKeyguardMessage %x",sgpShell,0,0);
     (void) ISHELL_CreateInstance(sgpShell,AEECLSID_STATIC,(void**) &pStatic);
     (void) ISHELL_CreateInstance(sgpShell,AEECLSID_DISPLAY,(void**) &pd);
 
@@ -1132,7 +1140,7 @@ static void OEMPriv_DrawMessageCB(void *pUnused)
     //PARAM_NOT_REF(pUnused)
 
     // Keyguard should be enabled at this point
-    ASSERT(sbKeyguardEnabled);
+    //ASSERT(sbKeyguardEnabled);
     KEYGUARD_ERR("OEMPriv_DrawMessageCB %d",sbKeyguardEnabled,0,0);
     // Pretend that the keyguard message is already displayed on the
     // screen by setting sbMessageActive to TRUE.
@@ -1217,7 +1225,9 @@ SEE ALSO:
 boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dwParam)
 {
     boolean bRet = FALSE;
-    
+	#ifdef FEATURE_VERSION_K212
+	extern boolean m_main_avk_star;
+    #endif
 	boolean b = OEMKeyguard_IsEnabled() ;
 	boolean b2 = OEMPriv_IsPhoneIdle();
 	MSG_FATAL("OEMKeyguard_HandleEvent........000000",0,0,0);
@@ -1253,16 +1263,35 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
 	if((wParam == AVK_CLR)||(wParam == AVK_END)||(wParam == AVK_INFO)||(wParam == AVK_SEND)||(wParam == AVK_1)||
 		   (wParam == AVK_2)||(wParam == AVK_3)||(wParam == AVK_4)||(wParam == AVK_5)||(wParam == AVK_6)||(wParam == AVK_7)||
 		   (wParam == AVK_8)||(wParam == AVK_9)||(wParam == AVK_0)||(wParam == AVK_STAR)||(wParam == AVK_POUND)||
-		   (wParam == AVK_RIGHT)||(wParam == AVK_DOWN)||(wParam == AVK_UP)||(wParam == AVK_LEFT)||(wParam == AVK_CAMERA)||(wParam == AVK_MUSIC)||(wParam == AVK_SELECT))
+		   (wParam == AVK_RIGHT)||(wParam == AVK_DOWN)||(wParam == AVK_UP)||(wParam == AVK_LEFT)||(wParam == AVK_CAMERA)||(wParam == AVK_MUSIC)||(wParam == AVK_SELECT)||(wParam == AVK_SOFT1))
 	{
 		IBacklight  *Backlight;
         (void)ISHELL_CreateInstance(sgpShell,AEECLSID_BACKLIGHT,(void **)&Backlight);
-        if(!IBACKLIGHT_IsEnabled(Backlight))
-        {
-        	m_bBlackEnagled = TRUE;
-  			IBACKLIGHT_Enable(Backlight);
-        } 
-        IBACKLIGHT_Release(Backlight);
+		#ifdef FEATURE_VERSION_K212
+		if(m_main_avk_star)
+		{
+			m_main_avk_star =FALSE;
+		}
+		else
+		#endif
+		{
+	        if(!IBACKLIGHT_IsEnabled(Backlight))
+	        {
+	        	#ifdef FEATURE_VERSION_K212
+				MSG_FATAL("OEMPriv_DrawKeyguardTime....9",0,0,0);
+				OEMPriv_DrawKeyguardTime();
+				m_bBlackEnagled = TRUE;
+				IBACKLIGHT_Enable(Backlight);
+				#else
+				m_bBlackEnagled = TRUE;
+				IBACKLIGHT_Enable(Backlight);
+				#endif
+				
+	        	
+	        } 
+		}
+		IBACKLIGHT_Release(Backlight);
+		
 	}
 #endif
 
@@ -1498,7 +1527,7 @@ void OEMKeyguard_SetState(boolean bEnabled)
 #if ((defined FEATURE_VERSION_C337) || (defined FEATURE_VERSION_C316))
 	OEMPriv_DrawKeyguardInformation(!bEnabled);
 #endif
-
+	
 	//Add By zzg 2012_10_30
 	#ifndef FEATURE_VERSION_W317A
     IANNUNCIATOR_SetField (sgpIAnn, ANNUN_FIELD_LOCKSTATUS, sbKeyguardEnabled ? ANNUN_STATE_LOCKSTATUS_ON : ANNUN_STATE_LOCKSTATUS_OFF);
@@ -1508,6 +1537,12 @@ void OEMKeyguard_SetState(boolean bEnabled)
 	
     if (sbKeyguardEnabled)
     {
+    	#ifdef FEATURE_VERSION_K212
+		IBacklight  *Backlight;
+        (void)ISHELL_CreateInstance(sgpShell,AEECLSID_BACKLIGHT,(void **)&Backlight);
+  		IBACKLIGHT_Disable(Backlight);
+        IBACKLIGHT_Release(Backlight);
+   		#endif
         bDrawMessage = TRUE;
         
         // Register the DrawMessage callback so the keyguard enabled message

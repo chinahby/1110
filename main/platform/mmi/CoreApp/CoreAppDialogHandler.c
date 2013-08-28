@@ -3610,6 +3610,16 @@ static void CoreApp_ImageNotify(void *po, IImage *pIImage, AEEImageInfo *pii, in
     //MSG_ERROR("CoreApp_ImageNotify, nErr:%d",nErr, 0, 0);
     if(SUCCESS == nErr) 
     {
+    	 #ifdef FEATURE_VERSION_K212
+    	 if(OEMKeyguard_IsEnabled())
+    	 {
+    	 	//Appscommon_Draw_Keyguard_Time(pMe->m_pDisplay);
+			//CoreApp_UpdateBottomBar(pMe);
+			IBACKLIGHT_Disable(pMe->m_pBacklight);
+    	 }
+		 else
+		 #endif
+		 {
 #ifdef FEATRUE_SET_ANN_FULL_SCREEN
         if (pMe->m_capture == DB_CAPTURE_NEED)
         {
@@ -3716,6 +3726,7 @@ static void CoreApp_ImageNotify(void *po, IImage *pIImage, AEEImageInfo *pii, in
         #endif
         CoreApp_UpdateAnnunciator(pMe);  //解决背景播放换歌或按AVK_END键状态栏图标闪烁问题
                                          // 故把该句提到IDISPLAY_UpdateEx之前
+	  }
     }   
     bImageDecoded = TRUE;
     IDISPLAY_UpdateEx(pMe->m_pDisplay,TRUE);

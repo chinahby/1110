@@ -6548,7 +6548,9 @@ static void MP3_Build_MainOpts_Menu(CMusicPlayer *pMe,IMenuCtl *pMenuCtl)
     }
     MP3MENU_ADDITEM(pMenuCtl,IDS_PLAYLIST);
     MP3MENU_ADDITEM(pMenuCtl,IDS_PLAYLIST_ADDMUSIC);
+	#ifndef FEATURE_VERSION_K212
     MP3MENU_ADDITEM(pMenuCtl,IDS_SET_AS_RINGTONE);
+	#endif
     MP3MENU_ADDITEM(pMenuCtl,IDS_SETTINGS);
     if(pMe->m_bPlaying==TRUE)
     {

@@ -5770,7 +5770,7 @@ static boolean  CContApp_HandleInputFldDlgEvent( CContApp  *pMe,
             if(pMe->m_pIAnn != NULL)
             {
                 IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, FALSE);
-                IANNUNCIATOR_Redraw(pMe->m_pIAnn);
+                //IANNUNCIATOR_Redraw(pMe->m_pIAnn);
             }
 
             (void)ITEXTCTL_SetTitle( pTextCtl,
@@ -12329,7 +12329,7 @@ static boolean  CContApp_HandleSearchNameDlgEvent( CContApp  *pMe,
             if(pMe->m_pIAnn != NULL)
             {
                 IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, FALSE);
-                IANNUNCIATOR_Redraw(pMe->m_pIAnn);
+                //IANNUNCIATOR_Redraw(pMe->m_pIAnn);
             }
             
             ITEXTCTL_SetMaxSize( pTextCtl, MAX_INPUT_NAME_EN);
@@ -14630,7 +14630,7 @@ static boolean  CContApp_HandleGroupOptEditDlgEvent( CContApp  *pMe,
                 if(pMe->m_pIAnn != NULL)
                 {
                     IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, FALSE);
-                    IANNUNCIATOR_Redraw(pMe->m_pIAnn);                    
+                    //IANNUNCIATOR_Redraw(pMe->m_pIAnn);                    
                   //  IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
                 }
             }                                     

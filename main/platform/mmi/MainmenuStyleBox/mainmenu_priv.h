@@ -108,7 +108,8 @@ typedef struct _MainMenuMod
 typedef enum MainmenuState
 {
     MAINST_MAIN,
-    MAINST_FLASHLIGHT,    
+    MAINST_FLASHLIGHT,  
+    MAINST_VIEW_TIME,
     MAINST_EXIT
 } MainmenuState;
 
@@ -123,6 +124,7 @@ typedef enum DLGRetValue
 {
     DLGRET_CREATE,
     DLGRET_FLASHLITHT,      //Add By zzg 2013_08_30 for Torch
+    DLGRET_VIEW_TIEM,
     DLGRET_CANCELED
 }DLGRetValue;
 
