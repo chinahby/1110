@@ -2435,7 +2435,11 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
 #elif defined(FEATURE_DISP_220X176)
 					bgRect.x = 28;
                     //if(titleLen > 180)
+#ifdef FEATURE_VERSION_EC99
+                    if(1)
+#else
                     if(titleLen > 164)
+#endif                        
                     {
                         bgRect.x = 0;
                         bgRect.dx = 220;

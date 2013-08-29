@@ -87,7 +87,7 @@
     #define STATEBAR_HEIGHT         26
     #define BOTTOMBAR_HEIGHT        30
     #define TITLEBAR_HEIGHT         26
-    #define MENUITEM_HEIGHT         30
+    #define MENUITEM_HEIGHT         30  //40
     #define SCROLLBAR_WIDTH         5
     #define STATUSBAR_HEIGHT        26	
 #else

@@ -2146,9 +2146,9 @@ static OEMConfigListType oemi_cache = {
   ,{1}    //CFGI_COUNT_OF_MAIN
 #endif   
 #ifdef FEATURE_SOUND_BO
-   ,TRUE		//CFGI_SOUND_BO_DIA,
+   ,TRUE    		//CFGI_SOUND_BO_DIA,
    ,FALSE		//CFGI_SOUND_BO_MAIN,
-   ,TRUE		//CFGI_SOUND_BO_CORE,
+   ,FALSE   //TRUE		//CFGI_SOUND_BO_CORE,
 #endif 
 };
 
@@ -2868,6 +2868,8 @@ void OEM_RestoreFactorySetting( void )
 #ifndef CUST_EDITION
    disp_info_type di = disp_get_info();
 #endif
+
+    MSG_FATAL("***zzg OEM_RestoreFactorySetting***", 0, 0, 0);
    // Reset the OEM Configuration list
    //
    // NOTE: Any changes to these values should be mirrored in the
@@ -2882,9 +2884,9 @@ void OEM_RestoreFactorySetting( void )
 #endif
 
 #ifdef FEATURE_SOUND_BO
-   oemi_cache.m_sound_bo_dia = TRUE;		//CFGI_SOUND_BO_DIA,
+   oemi_cache.m_sound_bo_dia =  TRUE;		//CFGI_SOUND_BO_DIA,
    oemi_cache.m_sound_bo_main = FALSE;		//CFGI_SOUND_BO_MAIN,
-   oemi_cache.m_sound_bo_core = TRUE;		//CFGI_SOUND_BO_CORE,
+   oemi_cache.m_sound_bo_core = FALSE;  //TRUE;		//CFGI_SOUND_BO_CORE,
 #endif 
 
    
