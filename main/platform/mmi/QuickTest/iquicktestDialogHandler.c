@@ -40,6 +40,13 @@
 #endif
 #endif
 #endif
+
+#ifndef WIN32
+#include "Snd.h"
+#include "uixsnd.h"	
+#endif
+
+
 #define RGBA_BLACK             MAKE_RGBA(0,0,0,255)
 
 /*==============================================================================
@@ -575,6 +582,15 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, 85, 42);
 #elif defined(FEATURE_DISP_240X320)
 							//IIMAGE_Draw(image, 160, 236);
+#elif defined(FEATURE_DISP_220X176)                            
+                            IIMAGE_Draw(image, 146, 32);
+                            IIMAGE_Draw(image, 168, 32);
+                            IIMAGE_Draw(image, 190, 32);
+                            IIMAGE_Draw(image, 200, 32);
+                            IIMAGE_Draw(image, 146, 42);
+                            IIMAGE_Draw(image, 168, 42);
+                            IIMAGE_Draw(image, 190, 42);
+                            IIMAGE_Draw(image, 200, 42);  							
 #else
 							IIMAGE_Draw(image, ENDCALL_START, 0);
 							IIMAGE_Draw(image, ENDCALL_END, 0);
@@ -618,6 +634,15 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 #elif defined(FEATURE_DISP_240X320)
 							IIMAGE_Draw(image, 160, 236);
 							IIMAGE_Draw(image, 200, 236);
+#elif defined(FEATURE_DISP_220X176)                            
+                            IIMAGE_Draw(image, 146, 32);
+                            IIMAGE_Draw(image, 168, 32);
+                            IIMAGE_Draw(image, 190, 32);
+                            IIMAGE_Draw(image, 200, 32);
+                            IIMAGE_Draw(image, 146, 42);
+                            IIMAGE_Draw(image, 168, 42);
+                            IIMAGE_Draw(image, 190, 42);
+                            IIMAGE_Draw(image, 200, 42);                              
 
 #else						
 							IIMAGE_Draw(image, ENDCALL_START, 0);
@@ -651,8 +676,15 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 #elif defined(FEATURE_DISP_240X320)
 							IIMAGE_Draw(image, 160, 118);
 							IIMAGE_Draw(image, 200, 118);
-
-
+#elif defined(FEATURE_DISP_220X176)
+                            IIMAGE_Draw(image, 146, 0);
+                            IIMAGE_Draw(image, 168, 0);
+                            IIMAGE_Draw(image, 190, 0);
+                            IIMAGE_Draw(image, 200, 0);
+                            IIMAGE_Draw(image, 146, 10);
+                            IIMAGE_Draw(image, 168, 10);
+                            IIMAGE_Draw(image, 190, 10);
+                            IIMAGE_Draw(image, 200, 10);  
 #else                        
 						if((uint32)dwParam == 1)
 						{
@@ -683,6 +715,8 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                         #endif
 #elif defined(FEATURE_DISP_240X320) 
 						if(pMe->m_testkeycount >=22)
+#elif defined(FEATURE_DISP_220X176) 
+						if(pMe->m_testkeycount >=25)                            
 #else
 						if(pMe->m_testkeycount >=45)
 #endif                            
@@ -709,7 +743,10 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, 43, 123);
 #elif defined(FEATURE_DISP_240X320)
 							IIMAGE_Draw(image, 160, 59);
-
+#elif defined(FEATURE_DISP_220X176)
+							IIMAGE_Draw(image, 110, 129);
+                            IIMAGE_Draw(image, 132, 129);
+                            IIMAGE_Draw(image, 142, 129);
 #else
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*2, FIVE_LINE);
 #endif							
@@ -740,6 +777,10 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, 0, 62);
 #elif defined(FEATURE_DISP_240X320)
 							IIMAGE_Draw(image, 0, 0);
+#elif defined(FEATURE_DISP_220X176)
+							IIMAGE_Draw(image, 55, 64);
+                            IIMAGE_Draw(image, 77, 64);
+                            IIMAGE_Draw(image, 87, 64);
 #else						
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT, SECONDE_LINE);
 #endif
@@ -768,7 +809,10 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, 43, 62);
 #elif defined(FEATURE_DISP_240X320)
 							IIMAGE_Draw(image, 40, 0);
-
+#elif defined(FEATURE_DISP_220X176)
+							IIMAGE_Draw(image, 110, 64);
+                            IIMAGE_Draw(image, 132, 64);
+                            IIMAGE_Draw(image, 142, 64);
 #else						
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*2, SECONDE_LINE);
 #endif
@@ -885,7 +929,10 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, 86, 62);
 #elif defined(FEATURE_DISP_240X320)
 							IIMAGE_Draw(image, 80, 0);
-
+#elif defined(FEATURE_DISP_220X176)
+							IIMAGE_Draw(image, 165, 64);
+                            IIMAGE_Draw(image, 187, 64);
+                            IIMAGE_Draw(image, 198, 64);
 #else								
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*3, SECONDE_LINE);
 #endif
@@ -914,7 +961,10 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, 0, 83);
 #elif defined(FEATURE_DISP_240X320)
 							IIMAGE_Draw(image, 120, 0);
-
+#elif defined(FEATURE_DISP_220X176)
+							IIMAGE_Draw(image, 55, 85);
+                            IIMAGE_Draw(image, 77, 85);
+                            IIMAGE_Draw(image, 87, 85);
 #else								
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT, THRID_LINE);
 #endif
@@ -943,7 +993,10 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, 43, 83);
 #elif defined(FEATURE_DISP_240X320)
 							IIMAGE_Draw(image, 160, 0);
-
+#elif defined(FEATURE_DISP_220X176)
+							IIMAGE_Draw(image, 110, 85);
+                            IIMAGE_Draw(image, 132, 85);
+                            IIMAGE_Draw(image, 142, 85);
 #else							
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*2, THRID_LINE);
 #endif
@@ -972,7 +1025,10 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, 86, 83);
 #elif defined(FEATURE_DISP_240X320)
 							IIMAGE_Draw(image, 0, 59);
-
+#elif defined(FEATURE_DISP_220X176)
+							IIMAGE_Draw(image, 165, 85);
+                            IIMAGE_Draw(image, 187, 85);
+                            IIMAGE_Draw(image, 198, 85);
 #else							
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*3, THRID_LINE);
 #endif
@@ -1001,7 +1057,10 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, 0, 103);
 #elif defined(FEATURE_DISP_240X320)
 							IIMAGE_Draw(image, 40, 59);
-
+#elif defined(FEATURE_DISP_220X176)
+							IIMAGE_Draw(image, 55, 107);
+                            IIMAGE_Draw(image, 77, 107);
+                            IIMAGE_Draw(image, 87, 107);
 #else						
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT, FOUR_LINE);
 #endif
@@ -1031,7 +1090,10 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, 43, 103);
 #elif defined(FEATURE_DISP_240X320)
 							IIMAGE_Draw(image, 80, 59);
-
+#elif defined(FEATURE_DISP_220X176)
+							IIMAGE_Draw(image, 110, 107);
+                            IIMAGE_Draw(image, 132, 107);
+                            IIMAGE_Draw(image, 142, 107);
 #else						
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*2, FOUR_LINE);
 #endif
@@ -1060,7 +1122,10 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, 86, 103);
 #elif defined(FEATURE_DISP_240X320)
 							IIMAGE_Draw(image, 120, 59);
-
+#elif defined(FEATURE_DISP_220X176)
+							IIMAGE_Draw(image, 165, 107);
+                            IIMAGE_Draw(image, 187, 107);
+                            IIMAGE_Draw(image, 198, 107);
 #else							
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*3, FOUR_LINE);
 #endif
@@ -1089,7 +1154,10 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, 0, 123);
 #elif defined(FEATURE_DISP_240X320)
 							IIMAGE_Draw(image, 200, 0);
-
+#elif defined(FEATURE_DISP_220X176)
+							IIMAGE_Draw(image, 55, 129);
+                            IIMAGE_Draw(image, 77, 129);
+                            IIMAGE_Draw(image, 87, 129);
 #else							
 							IIMAGE_Draw(image, 0, THRID_LINE);
 #endif
@@ -1118,7 +1186,10 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 							IIMAGE_Draw(image, 86, 123);
 #elif defined(FEATURE_DISP_240X320)
 							IIMAGE_Draw(image, 200, 59);
-
+#elif defined(FEATURE_DISP_220X176)
+							IIMAGE_Draw(image, 165, 129);
+                            IIMAGE_Draw(image, 187, 129);
+                            IIMAGE_Draw(image, 198, 129);
 #else						
 							IIMAGE_Draw(image, 0, SECONDE_LINE);
 #endif
@@ -1128,7 +1199,59 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
-
+#ifdef FEATURE_VERSION_EC99
+                case AVK_FM:
+                {
+					IImage* image	= NULL;
+					image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+				    MSG_FATAL("AVK_FM............15..............",0,0,0);
+					if( image != NULL)
+					{
+						IIMAGE_Draw(image, 0, 129);
+                        IIMAGE_Draw(image, 22, 129);
+                        IIMAGE_Draw(image, 32, 129);
+						IIMAGE_Release( image);
+					}
+					pMe->m_testkeycount ++;
+                 
+					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    break;  
+                }
+                case AVK_PAUSE:
+                {
+					IImage* image	= NULL;
+					image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+				    MSG_FATAL("AVK_PAUSE............15..............",0,0,0);
+					if( image != NULL)
+					{
+						IIMAGE_Draw(image, 0, 85);
+                        IIMAGE_Draw(image, 22, 85);
+                        IIMAGE_Draw(image, 32, 85);
+						IIMAGE_Release( image);
+					}
+						pMe->m_testkeycount ++;
+                 
+					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    break;  
+                }   
+                case AVK_FFWD:
+                {
+					IImage* image	= NULL;
+					image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+				    MSG_FATAL("AVK_FFWD............15..............",0,0,0);
+					if( image != NULL)
+					{
+						IIMAGE_Draw(image, 0, 64);
+                        IIMAGE_Draw(image, 22, 64);
+                        IIMAGE_Draw(image, 32, 64);
+						IIMAGE_Release( image);
+					}
+						pMe->m_testkeycount ++;
+                 
+					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                    break;  
+                } 
+#endif                
                 case AVK_SELECT:
                     {
 						IImage* image	= NULL;
@@ -1143,7 +1266,15 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 #elif defined(FEATURE_DISP_240X320)
 							IIMAGE_Draw(image, 0, 118);
 							IIMAGE_Draw(image, 40, 118);
-
+#elif defined(FEATURE_DISP_220X176)
+                            IIMAGE_Draw(image, 0, 0);
+                            IIMAGE_Draw(image, 22, 0);
+                            IIMAGE_Draw(image, 44, 0);
+                            IIMAGE_Draw(image, 50, 0);
+                            IIMAGE_Draw(image, 0, 10);
+                            IIMAGE_Draw(image, 22, 10);
+                            IIMAGE_Draw(image, 44, 10);
+                            IIMAGE_Draw(image, 50, 10);                           
 #else						
 							IIMAGE_Draw(image, 22, 0);
 							IIMAGE_Draw(image, 26, 0);
@@ -1177,7 +1308,15 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 #elif defined(FEATURE_DISP_240X320)
 							IIMAGE_Draw(image, 0, 236);
 							IIMAGE_Draw(image, 40, 236);
-
+#elif defined(FEATURE_DISP_220X176)
+                            IIMAGE_Draw(image, 0, 32);
+                            IIMAGE_Draw(image, 22, 32);
+                            IIMAGE_Draw(image, 44, 32);
+                            IIMAGE_Draw(image, 50, 32);
+                            IIMAGE_Draw(image, 0, 42);
+                            IIMAGE_Draw(image, 22, 42);
+                            IIMAGE_Draw(image, 44, 42);
+                            IIMAGE_Draw(image, 50, 42);   
 #else
 							IIMAGE_Draw(image, 0, 0);
 							IIMAGE_Draw(image, 4, 0);
@@ -1214,6 +1353,9 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 #elif defined(FEATURE_DISP_240X320)
 							IIMAGE_Draw(image, 120, 177);
 							IIMAGE_Draw(image, 80, 177);
+#elif defined(FEATURE_DISP_220X176)				
+                            IIMAGE_Draw(image, 99, 21);  
+                            IIMAGE_Draw(image, 102, 21);                            
 #else						
 							IIMAGE_Draw(image, THRID_LINE, TITLEBAR_HEIGHT);
 							IIMAGE_Draw(image, FOUR_LINE, TITLEBAR_HEIGHT);
@@ -1246,7 +1388,9 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 #elif defined(FEATURE_DISP_240X320)
 							IIMAGE_Draw(image, 120, 118);
 							IIMAGE_Draw(image, 80, 118);
-
+#elif defined(FEATURE_DISP_220X176)				
+                            IIMAGE_Draw(image, 99, 0);  
+                            IIMAGE_Draw(image, 102, 0);       
 #else
 #ifndef FEATURE_VERSION_HITZ181
 							if((uint32)dwParam == 1)
@@ -1349,7 +1493,9 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 #elif defined(FEATURE_DISP_240X320)
 							IIMAGE_Draw(image, 120, 236);
 							IIMAGE_Draw(image, 80, 236);
-
+#elif defined(FEATURE_DISP_220X176)				
+                            IIMAGE_Draw(image, 99, 42);  
+                            IIMAGE_Draw(image, 102, 42);   
 #else						
 							#ifndef FEATURE_VERSION_HITZ181
 							if((uint32)dwParam == 1)
@@ -1390,6 +1536,8 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 #elif defined(FEATURE_DISP_240X320)
 	 						IIMAGE_Draw(image, 0, 177);
 	 						IIMAGE_Draw(image, 40,177);
+#elif defined(FEATURE_DISP_220X176)				
+                            IIMAGE_Draw(image, 75, 20);    
 
 #else						
 							IIMAGE_Draw(image, LEFT_START, TITLEBAR_HEIGHT);
@@ -1424,6 +1572,8 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 #elif defined(FEATURE_DISP_240X320)
 							IIMAGE_Draw(image, 200, 177);
 							IIMAGE_Draw(image, 160, 177);
+#elif defined(FEATURE_DISP_220X176)				
+                            IIMAGE_Draw(image, 125, 20);							                          
 #else							
 							IIMAGE_Draw(image, RITHT_START, TITLEBAR_HEIGHT);
 							IIMAGE_Draw(image, RITHT_START, TITLEBAR_HEIGHT+2);
@@ -1751,7 +1901,13 @@ case AVK_CAMERA:
 					    MSG_FATAL("AVK_ENDCALL..........42................",0,0,0);
 						if( image != NULL)
 						{
+#ifdef FEATURE_VERSION_EC99
+    						IIMAGE_Draw(image, 0, 107);
+                            IIMAGE_Draw(image, 22, 107);
+                            IIMAGE_Draw(image, 32, 107);       
+#else
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*8, FOUR_LINE);
+#endif
 							IIMAGE_Release( image);
 						}
 						pMe->m_testkeycount ++;
@@ -2555,7 +2711,19 @@ static boolean  QuickTest_FMTestHandler(CQuickTest *pMe,
             }
             else
             {
-            	if (HS_HEADSET_ON())
+#ifdef FEATURE_VERSION_EC99  
+                if (HS_HEADSET_ON())   
+            	{
+                	fm_mute(TRUE, FALSE);
+                    fm_radio_power_down();
+                }
+                else
+                {
+                    fm_mute(TRUE, TRUE);
+                    fm_radio_power_down();
+                }
+#else
+            	if (HS_HEADSET_ON())                    
             	{
 #ifdef FEATURE_ANALOG_TV
                     WarT_Fm_Mute(TRUE);
@@ -2567,6 +2735,7 @@ static boolean  QuickTest_FMTestHandler(CQuickTest *pMe,
                 WarT_Fm_PowerDown();
 #else
                 fm_radio_power_down();
+#endif
 #endif
             }
 #endif
@@ -3314,11 +3483,13 @@ static boolean  QuickTest_CallHandler(CQuickTest *pMe,
             AECHAR   string[MAX_STRING_LENGTH+1];
             IDISPLAY_ClearScreen(pMe->m_pDisplay);
 #ifndef WIN32
-            if(HS_HEADSET_ON())
+#ifndef FEATURE_VERSION_EC99 
+            if(HS_HEADSET_ON())                
             {
                 STRTOWSTR("echo loop",string,sizeof(string));
             }
             else
+#endif                 
 #endif
             {
                 STRTOWSTR("ECHO LOOP",string,sizeof(string));
@@ -3399,6 +3570,8 @@ static boolean  QuickTest_RestoreFactory_Handler(CQuickTest *pMe,
     uint32        value;
     byte alertType;  
 
+    MSG_FATAL("***zzg RestoreFactory eCode=%x***", eCode, 0, 0);
+
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
@@ -3436,19 +3609,23 @@ static boolean  QuickTest_RestoreFactory_Handler(CQuickTest *pMe,
 
 
                 IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+
+               
 //Add By zzg 2010_10_22
-#ifdef FEATURE_APP_BLUETOOTH
+#ifdef FEATURE_APP_BLUETOOTH               
 				ISHELL_StartBackgroundApplet(pMe->m_pShell, AEECLSID_BLUETOOTH_APP, "ResetBT");				
 				//ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_BLUETOOTH_APP, "ResetBT");
 #endif
 //Add End   
-                OEM_RestoreFactorySetting();     
-                #ifdef FEATURE_DUAL_UIMCARD
+                OEM_RestoreFactorySetting();   
+                
+#ifdef FEATURE_DUAL_UIMCARD
    				nvi.sim_select = 0;
    				(void) OEMNV_Put( NV_SIM_SELECT_I, &nvi);
-				#endif
+#endif
                 value = 0;
 
+                 
                 //add by pyuangui  重置LCD屏背光
                 {
                   IBacklight   *pBacklight = NULL;
@@ -3499,8 +3676,8 @@ static boolean  QuickTest_RestoreFactory_Handler(CQuickTest *pMe,
                   return TRUE;
                 }
 
-				//删除短信息
-	
+                /*
+				//删除短信息	
 				{
 					IWmsApp *pIWmsApp = NULL;
 
@@ -3508,18 +3685,30 @@ static boolean  QuickTest_RestoreFactory_Handler(CQuickTest *pMe,
 			                                                AEECLSID_WMSAPP,
 			                                                (void**)&pIWmsApp))
 			        {
-			            if(SUCCESS != IWmsApp_DeleteAllNvCdmaSms(pIWmsApp))
-			            {
-			                return ;
-			            }
+			            
+                        MSG_FATAL("***zzg RestoreFactory AEECLSID_WMSAPP SUCCESS pIWmsApp=%x***", pIWmsApp, 0, 0);
+
+			            if (SUCCESS != IWmsApp_DeleteAllNvCdmaSms(pIWmsApp))
+                        {         
+                            MSG_FATAL("***zzg RestoreFactory IWmsApp_DeleteAllNvCdmaSms Failed! pIWmsApp=%x***", pIWmsApp, 0, 0);
+                            
+    		                if(pIWmsApp)
+        			        {
+        			            (void)IWmsApp_Release(pIWmsApp);
+        			            pIWmsApp = NULL;
+        			        }      
+                            return TRUE;
+                        }			            
 			        }
-			        
-			        if(NULL != pIWmsApp)
+
+                    if(pIWmsApp)
 			        {
 			            (void)IWmsApp_Release(pIWmsApp);
 			            pIWmsApp = NULL;
-			        }
+			        } 
+                    
 				}
+              
 				//删除电话本信息
 				{
 					IContApp * pIContApp = NULL;
@@ -3528,23 +3717,29 @@ static boolean  QuickTest_RestoreFactory_Handler(CQuickTest *pMe,
 			                                                AEECLSID_APP_CONTACT,
 			                                                (void**)&pIContApp))
 			        {
-			            if(SUCCESS != ICONTAPP_DeleteAll(pIContApp))
-			            {
-			                return ;
-			            }
-			        }
-			        
-			        if(NULL != pIContApp)
+			            MSG_FATAL("***zzg RestoreFactory AEECLSID_APP_CONTACT SUCCESS pIContApp=%x***", pIContApp, 0, 0);
+			            if (SUCCESS != ICONTAPP_DeleteAll(pIContApp))
+                        {         
+                            MSG_FATAL("***zzg RestoreFactory ICONTAPP_DeleteAll Failed! pIContApp=%x***", pIContApp, 0, 0);
+                            
+    		                if(pIContApp)
+        			        {
+        			            (void)ICONTAPP_Release(pIContApp);
+        			            pIContApp = NULL;
+        			        }   
+                            return TRUE;
+                        }
+			        }	
+                    if(pIContApp)
 			        {
 			            (void)ICONTAPP_Release(pIContApp);
 			            pIContApp = NULL;
-			        }
+			        }  
 				}
-          
+                */
+   
                 // Update ALERT indicator
                 {
-                    
-
                     (void) ICONFIG_GetItem(pMe->m_pConfig,
                                            CFGI_ALERT_TYPE,
                                            &alertType,
@@ -3579,8 +3774,10 @@ static boolean  QuickTest_RestoreFactory_Handler(CQuickTest *pMe,
                         default :
                             break;
                     }
-                }
-            }
+                }     
+                
+            }           
+        
             IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_ALARM, ANNUN_STATE_ALARM_OFF/*ANNUN_STATE_OFF*/);
             return TRUE;
 
@@ -4068,12 +4265,12 @@ static int convertChannelValueFromText( AECHAR *textBuffer)
     AECHAR* fractionStr = WSTRCHR( textBuffer, (AECHAR)'.');
 
     WSTRLCPY( text, textBuffer, fractionStr == NULL ? length + 1 : fractionStr - textBuffer + 1);
-    integral = WSTRTOFLOAT( text);
+    integral = WSTRTOFLOAT( text);       
     fraction = fractionStr == NULL ? 0 : WSTRTOFLOAT( ++ fractionStr);
 
     result = ( integral * 1000 + fraction * 100 - LOWEST_BAND_FREQ) / CHANNEL_SPACE;
 
-    ERR("result = %d",result,0,0);
+    ERR("result = %d",result,0,0);     
     return result;
 }
 
@@ -4115,6 +4312,9 @@ static void quicktest_fm_power_up( void* pme)
 {
 
     CQuickTest* pMe                 = (CQuickTest*)pme;
+    uisnd_notify_data_s_type sndInfo;
+    uint16    tmpchannel = 0;
+    
 #if defined(FEATURE_VERSION_C316)
     AECHAR      defaultChannel[]    = { '9', '7', '.', '1', 0};
 #else
@@ -4126,26 +4326,63 @@ static void quicktest_fm_power_up( void* pme)
     {
         WarT_Fm_PowerUp();
     }
-	if (HS_HEADSET_ON())
+#ifdef FEATURE_VERSION_EC99  
+    WarT_Fm_Mute(FALSE);
+    WarT_Fm_Set_Volume(7);
+#else
+	if (HS_HEADSET_ON())        
 	{
 		WarT_Fm_Mute(FALSE);
         WarT_Fm_Set_Volume(7);
-	}		    
-    
+	}	
+#endif    
 #else
     if( !fm_radio_is_power_up())
     {
         fm_radio_power_up();
     }
-	if (HS_HEADSET_ON())
+#ifdef FEATURE_VERSION_EC99   
+    if (HS_HEADSET_ON())  
+    {
+        fm_set_volume(7,FALSE);
+    	fm_mute(FALSE, FALSE);	
+    }
+    else
+    {
+        fm_set_volume( 7,TRUE);
+    	fm_mute(FALSE, TRUE);	
+    }
+#else
+	if (HS_HEADSET_ON())        
 	{
         fm_set_volume( 7,FALSE);
 		fm_mute(FALSE,FALSE);
-	}		    
+	}		
+#endif    
  //   fm_set_volume(7,FALSE);
 #endif
+#endif   
+
+#ifndef WIN32 
+#ifdef FEATURE_ANALOG_TV
+    tmpchannel = WarT_Fm_Get_Current_Channel();
+#else
+    tmpchannel = fm_radio_get_playing_channel();
 #endif
-    quicktest_fm_set_channel_to( pMe, convertChannelValueFromText( defaultChannel));
+#else
+    tmpchannel = 0;
+#endif
+	if( tmpchannel * CHANNEL_SPACE > UPPEST_BAND_FREQ)
+    {
+        tmpchannel = 0;
+    }
+    else if( tmpchannel < 0)
+    {
+        tmpchannel = ( UPPEST_BAND_FREQ - LOWEST_BAND_FREQ) / CHANNEL_SPACE;
+    }
+    
+    //quicktest_fm_set_channel_to( pMe, convertChannelValueFromText( defaultChannel));    
+    quicktest_fm_set_channel_to(pMe, tmpchannel);
 
     pMe->m_bAppIsReady = TRUE;
 }

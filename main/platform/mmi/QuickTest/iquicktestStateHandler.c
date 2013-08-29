@@ -619,12 +619,16 @@ static NextFSMAction QUICKTESTSTFMTestHandler(CQuickTest *pMe)
             return NFSMACTION_WAIT;
 
         case DLGRET_CANCELED:
+#ifdef FEATURE_VERSION_EC99
+            MOVE_TO_STATE(QUICKTESTST_SDTEST)
+#else
             //MOVE_TO_STATE(QUICKTESTST_SDTEST)
 #ifdef FEATURE_BREW_CAMERA            
             MOVE_TO_STATE(QUICKTESTST_CAMERATEST)
 #else       
             MOVE_TO_STATE(QUICKTESTST_SDTEST)
-#endif            
+#endif      
+#endif
             return NFSMACTION_CONTINUE;
 
         default:
@@ -728,11 +732,12 @@ static NextFSMAction QUICKTESTSTVERTestHandler(CQuickTest *pMe)
             QuickTest_ShowDialog(pMe, IDD_VERTEST);
             return NFSMACTION_WAIT;
 
-        case DLGRET_CANCELED:
+        case DLGRET_CANCELED:            
 #ifdef FEATURE_SUPPORT_BT_APP
             pMe->m_dilag_type = LCD_TEST;
 #endif
-            MOVE_TO_STATE(QUICKTESTST_LCDTEST)
+            MOVE_TO_STATE(QUICKTESTST_LCDTEST)           
+            //MOVE_TO_STATE(QUICKTESTST_RESTOREFACTORY)       //QUICKTESTST_EXIT
             return NFSMACTION_CONTINUE;
 
         default:
@@ -855,7 +860,7 @@ static NextFSMAction QUICKTESTSTCallTestHandler(CQuickTest *pMe)
     {
         return NFSMACTION_WAIT;
     }
-
+    
     switch (pMe->m_eDlgRet)
     {
         case DLGRET_CREATE:
@@ -871,7 +876,15 @@ static NextFSMAction QUICKTESTSTCallTestHandler(CQuickTest *pMe)
 			else
 			{
 #if defined( FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_12832)
-			MOVE_TO_STATE(QUICKTESTST_CAMERATEST)
+#ifdef FEATURE_VERSION_EC99
+#if defined( FEATURE_FM_RADIO)
+            MOVE_TO_STATE(QUICKTESTST_FMTEST)
+#else
+            MOVE_TO_STATE(QUICKTESTST_SDTEST)
+#endif
+#else
+            MOVE_TO_STATE(QUICKTESTST_CAMERATEST)
+#endif			
 #else
 #if defined( FEATURE_FM_RADIO)
             MOVE_TO_STATE(QUICKTESTST_FMTEST)

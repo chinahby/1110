@@ -521,6 +521,9 @@ static boolean CQuickTest_HandleEvent(IQuickTest *pi,
 {
     CQuickTest *pMe = (CQuickTest*)pi;
     AEEAppStart *as;
+
+    //MSG_FATAL("***zzg CQuickTest_HandleEvent eCode=%x***", eCode, 0, 0);
+    
     switch (eCode)
     {
         case EVT_APP_START:
