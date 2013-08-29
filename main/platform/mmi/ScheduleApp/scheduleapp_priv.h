@@ -67,7 +67,11 @@
 
 #else
 #ifdef FEATURE_LANG_CHINESE
+#ifdef FEATURE_VERSION_EC99
 #define     FEATURE_DRAW_LUNAR_CALENDAR     1
+#else
+#define     FEATURE_DRAW_LUNAR_CALENDAR     1
+#endif
 #else 
 #define     FEATURE_DRAW_LUNAR_CALENDAR     0
 #endif

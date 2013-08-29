@@ -6521,6 +6521,11 @@ static void SecurityMenu_RestoryFactorySet(CSecurityMenu *pMe)
         {
             if(SUCCESS != IWmsApp_DeleteAllNvCdmaSms(pIWmsApp))
             {
+                if(NULL != pIWmsApp)
+                {
+                    (void)IWmsApp_Release(pIWmsApp);
+                    pIWmsApp = NULL;
+                }
                 return ;
             }
         }
@@ -6541,6 +6546,11 @@ static void SecurityMenu_RestoryFactorySet(CSecurityMenu *pMe)
         {
             if(SUCCESS != ICONTAPP_DeleteAll(pIContApp))
             {
+                if(NULL != pIContApp)
+                {
+                    (void)ICONTAPP_Release(pIContApp);
+                    pIContApp = NULL;
+                }
                 return ;
             }
         }

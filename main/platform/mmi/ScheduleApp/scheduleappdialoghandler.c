@@ -1499,18 +1499,33 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
             int32 startdate, enddate;
 
             rc = pme->m_rc;
+
+            //MSG_FATAL("***zzg sche viewmonth 111 rc.x=%d,rc.y=%d***",rc.x,rc.y,0);
+            //MSG_FATAL("***zzg sche viewmonth 111 rc.dx=%d,rc.dy=%d***",rc.dx,rc.dy,0);
+            
 			#if defined(FEATURE_VERSION_X3)
 			rc.dy -= (HEIGHT_PROMPT_BAR);
 			#elif defined(FEATURE_VERSION_K212)
 			rc.dy -= (HEIGHT_PROMPT_BAR+32);
 			#else
+            
 #if FEATURE_DRAW_LUNAR_CALENDAR
-            rc.dy -= (HEIGHT_PROMPT_BAR+14);
+            rc.dy -= (HEIGHT_PROMPT_BAR+14); 
 #else
             rc.dy -= GetBottomBarHeight( pme->m_pDisplay);
 #endif
 			#endif
+
+#ifdef FEATURE_VERSION_EC99
+            rc.x  = 0;
+            rc.y  = 0;
+            rc.dy = SCREEN_HEIGHT - 15;
+#endif
+            
 			//MSG_FATAL("rc.y ======%d,rc.dy=====%d",rc.y,rc.dy,0);
+
+            //MSG_FATAL("***zzg sche viewmonth 222 rc.x=%d,rc.y=%d***",rc.x,rc.y,0);
+            //MSG_FATAL("***zzg sche viewmonth 222 rc.dx=%d,rc.dy=%d***",rc.dx,rc.dy,0);
 			
             IDATECTL_SetRect(pDatePick,&rc);
 
@@ -1615,6 +1630,9 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
         {
             AECHAR WTitle[20] = {0};
 
+#ifdef FEATURE_VERSION_EC99
+            CScheduleApp_DrawLunarStr(pme);
+#else
 			#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A)
 			(void)ISHELL_LoadResString(pme->m_pShell,
 							            AEE_SCHEDULEAPP_RES_FILE,                                
@@ -1629,6 +1647,7 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
 							            sizeof(WTitle));
 			#endif
             IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
+#endif            
         }   
         return TRUE;
 
@@ -1653,7 +1672,9 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
             
             IDATECTL_SetActiveDayMask( pDatePick, pme->m_CalMgr.m_dwMask);
             (void)IDATECTL_Redraw(pDatePick);
+#ifndef FEATURE_VERSION_EC99
             drawBottomBar(BTBAR_OPTION_TODAY_BACK);
+#endif
 		
 #if FEATURE_DRAW_LUNAR_CALENDAR
 #if 1
@@ -2593,7 +2614,11 @@ static boolean  dialog_handler_of_state_gotodate( CScheduleApp* pme,
                                         AEE_SCHEDULEAPP_RES_FILE, 
                                         IDS_DATE, 
                                         dwsz, sizeof(dwsz));
+#ifdef FEATURE_VERSION_EC99
+                nOldFontColor = IDISPLAY_SetColor(pme->m_pDisplay, CLR_USER_TEXT, RGB_BLACK);
+#else
                  nOldFontColor = IDISPLAY_SetColor(pme->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
+#endif
                 IDISPLAY_DrawText(pme->m_pDisplay, 
                                     AEE_FONT_NORMAL, 
                                     dwsz, 
@@ -2613,6 +2638,10 @@ static boolean  dialog_handler_of_state_gotodate( CScheduleApp* pme,
                 RGBVAL  clrFill = RGB_WHITE;
                 RGBVAL  clrNosel = BK_COLOR;
                 uint16 dateFormatType = 0;
+
+#ifdef FEATURE_VERSION_EC99
+                y = TITLEBAR_HEIGHT * 2;
+#endif
 				#ifdef FEATURE_VERSION_K212
 				dateFormatType = OEMNV_DATEFORM_YMD;
 				#else
@@ -7618,6 +7647,25 @@ void CScheduleApp_GetLunarStr(CScheduleApp *pme)
 static void CScheduleApp_DrawLunarStr(CScheduleApp *pme)
 {
     AEERect rc;
+    
+#ifdef FEATURE_VERSION_EC99
+    if (WSTRLEN(pme->m_LunarString) > 4)
+    {
+        IANNUNCIATOR_SetFieldText(pme->m_pIAnn, pme->m_LunarString);
+    }
+    else
+    {        
+        AECHAR WTitle[20] = {0};
+        
+        (void)ISHELL_LoadResString(pme->m_pShell,
+						            AEE_SCHEDULEAPP_RES_FILE,                                
+						            IDS_APP,
+						            WTitle,
+						            sizeof(WTitle));
+		
+        IANNUNCIATOR_SetFieldText(pme->m_pIAnn, WTitle);
+    }    
+#else    
     SETAEERECT(&rc, 0, pme->m_rc.dy - (HEIGHT_PROMPT_BAR+LUNAR_RECT_HEIGHT), pme->m_rc.dx, LUNAR_RECT_HEIGHT);
     //MSG_FATAL("CScheduleApp_DrawLunarStr,rc.x==%d,rc.y==%d",rc.x,rc.y,0);
 	//MSG_FATAL("CScheduleApp_DrawLunarStr,rc.dx==%d,rc.dy==%d,,=%d",rc.dx,rc.dy,WSTRLEN(pme->m_LunarString));
@@ -7626,9 +7674,15 @@ static void CScheduleApp_DrawLunarStr(CScheduleApp *pme)
     {
         RGBVAL nOldFontColor = IDISPLAY_SetColor(pme->m_pDisplay, CLR_USER_TEXT, LUNAR_FONT_COLOR);
         // 绘制农历日期
+#ifdef FEATURE_VERSION_EC99
+        (void)IDISPLAY_DrawText(pme->m_pDisplay, AEE_FONT_SMALL,
+                    pme->m_LunarString, -1, 0, 0, &rc,
+                    IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE | IDF_TEXT_TRANSPARENT);
+#else
         (void)IDISPLAY_DrawText(pme->m_pDisplay, AEE_FONT_NORMAL,
                     pme->m_LunarString, -1, 0, 0, &rc,
                     IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE | IDF_TEXT_TRANSPARENT);
+#endif
         #if 0
         DrawGreyBitTextWithProfile(pme->m_pShell,
 	                              pme->m_pDisplay,
@@ -7642,6 +7696,7 @@ static void CScheduleApp_DrawLunarStr(CScheduleApp *pme)
 		#endif
         (void)IDISPLAY_SetColor(pme->m_pDisplay, CLR_USER_TEXT, nOldFontColor);
     }
+#endif    
 }
 /*************************************************************************
 ===>处理阴历的程序结束
