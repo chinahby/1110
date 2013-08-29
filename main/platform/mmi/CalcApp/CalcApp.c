@@ -1843,11 +1843,23 @@ static void Calc_DrawScreen(CCalcApp *pme)
                 sizeof(WTitle));
 		IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
     }
+    
+#ifdef FEATURE_VERSION_EC99
+{
+    AEERect rt;
+    rt.x = 0;rt.y=0;rt.dx=SCREEN_WIDTH,rt.dy=SCREEN_HEIGHT;
+	IDISPLAY_DrawRect(pme->a.m_pIDisplay,&rt,RGB_BLACK,RGB_BLACK,IDF_RECT_FILL);
+}
+#endif    
 
 	Calc_SetupValRect(pme);
 #if defined(FEATURE_DISP_220X176)
 	drawImage( pme, AEE_APPSCOMMONRES_IMAGESFILE, IDB_CALCAPP_GROUND, 0, 0);
+#ifdef FEATURE_VERSION_EC99
+    drawImage( pme, AEE_APPSCOMMONRES_IMAGESFILE, IDB_CALCAPP, 0, 52);
+#else
 	drawImage( pme, AEE_APPSCOMMONRES_IMAGESFILE, IDB_CALCAPP, 0, 72);
+#endif
 	drawImage( pme, AEE_APPSCOMMONRES_IMAGESFILE, IDB_CALCAPP_LINE, 0, 48);
 #elif defined(FEATURE_DISP_240X320)
     #ifdef FEATURE_VERSION_K212

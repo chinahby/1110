@@ -323,6 +323,61 @@
 #define NUM_W  "fs:/hsmm/callapp/W.mp3"
 #define NUM_PUND  "fs:/hsmm/callapp/pund.mp3"
 #define NUM_STAR  "fs:/hsmm/callapp/star.mp3"
+
+
+
+#define BJTIME  "fs:/hsmm/callapp/bjtime.mp3"
+#define AM_TIME  "fs:/hsmm/callapp/am.mp3"
+#define PM_TIME  "fs:/hsmm/callapp/pm.mp3"
+
+
+//HOUR_SOUND_NAME
+#define HOUR_0  "fs:/hsmm/callapp/0.mp3"    // 1
+#define HOUR_1  "fs:/hsmm/callapp/1.mp3"    // 1
+#define HOUR_2  "fs:/hsmm/callapp/2.mp3"    // 2
+#define HOUR_3  "fs:/hsmm/callapp/3.mp3"    // 3
+#define HOUR_4  "fs:/hsmm/callapp/4.mp3"    // 4
+#define HOUR_5  "fs:/hsmm/callapp/5.mp3"    // 5
+#define HOUR_6  "fs:/hsmm/callapp/6.mp3"    // 6
+#define HOUR_7  "fs:/hsmm/callapp/7.mp3"    // 7
+#define HOUR_8  "fs:/hsmm/callapp/8.mp3"    // 8
+#define HOUR_9  "fs:/hsmm/callapp/9.mp3"    // 9
+#define HOUR_10  "fs:/hsmm/callapp/10.mp3"  //10
+#define HOUR_20  "fs:/hsmm/callapp/20.mp3"  //20
+#define HOUR_DIAN  "fs:/hsmm/callapp/dian.mp3"  /*µã*/
+
+
+//MINUTE_SOUND_NAME
+#define MINUTE_0  "fs:/hsmm/callapp/0.mp3"   // 0
+#define MINUTE_1  "fs:/hsmm/callapp/1.mp3"   // 1
+#define MINUTE_2  "fs:/hsmm/callapp/2.mp3"   // 2
+#define MINUTE_3  "fs:/hsmm/callapp/3.mp3"   // 3
+#define MINUTE_4  "fs:/hsmm/callapp/4.mp3"   // 4
+#define MINUTE_5  "fs:/hsmm/callapp/5.mp3"   // 5
+#define MINUTE_6  "fs:/hsmm/callapp/6.mp3"   // 6
+#define MINUTE_7  "fs:/hsmm/callapp/7.mp3"   // 7
+#define MINUTE_8  "fs:/hsmm/callapp/8.mp3"   // 8
+#define MINUTE_9  "fs:/hsmm/callapp/9.mp3"   // 9
+#define MINUTE_10  "fs:/hsmm/callapp/10.mp3"   // 10
+#define MINUTE_20  "fs:/hsmm/callapp/20.mp3"   // 20
+#define MINUTE_30  "fs:/hsmm/callapp/30.mp3"   // 30
+#define MINUTE_40  "fs:/hsmm/callapp/40.mp3"   // 40
+#define MINUTE_50  "fs:/hsmm/callapp/50.mp3"   // 50
+#define MINUTE_FEN  "fs:/hsmm/callapp/fen.mp3"   /*·Ö*/
+
+
+typedef enum
+{
+    TIME_BJ,       
+    TIME_AMPM,        
+    TIME_HOUR1,       
+    TIME_HOUR2,
+    TIME_HOUR_DIAN,
+    TIME_MINUTE1,
+    TIME_MINUTE2,  
+    TIME_MINUTE_FEN
+} TIME_STATUE_EX;
+
 #endif
 
 /*==============================================================================

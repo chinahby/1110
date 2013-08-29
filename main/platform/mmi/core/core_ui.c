@@ -2058,6 +2058,88 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
 //#endif
 //Add End
 
+#ifdef FEATURE_VERSION_EC99   
+    case AVK_FM:	
+    {
+        MSG_FATAL("***zzg core_ui AVK_FM cls=%x***", cls, 0, 0);
+
+        if (cls == AEECLSID_QUICKTEST)
+        {
+            return FALSE;
+        }
+		if ((cls != AEECLSID_APP_FMRADIO) && (cls != AEECLSID_DIALER) && (!brewui_isincall()) )	//0x100611f	
+		{
+            ISHELL_StartApplet(AEE_GetShell(), AEECLSID_APP_FMRADIO);				
+		}
+        else
+        {
+            //ISHELL_CloseApplet(AEE_GetShell(), TRUE);
+        }
+        return TRUE; 
+    }
+        
+    case AVK_PAUSE:
+    {
+        MSG_FATAL("***zzg core_ui AVK_PAUSE cls=%x***", cls, 0, 0);   
+
+        if (cls == AEECLSID_QUICKTEST)
+        {
+            return FALSE;
+        }
+        
+        if (cls != AEECLSID_APP_MUSICPLAYER)	//0x1006126	
+		{
+            ISHELL_StartApplet(AEE_GetShell(), AEECLSID_APP_MUSICPLAYER);				
+		}
+        else 
+        {
+            ISHELL_PostEvent( AEE_GetShell(),
+                              AEECLSID_APP_MUSICPLAYER,
+                              EVT_USER,
+                              AVK_PAUSE,
+                              0);
+        }
+        return TRUE;
+    }
+    case AVK_FFWD:  
+    {
+        if (cls == AEECLSID_QUICKTEST)
+        {
+            return FALSE;
+        }
+        
+        if (cls == AEECLSID_APP_MUSICPLAYER)	//pre
+		{
+            ISHELL_PostEvent( AEE_GetShell(),
+                              AEECLSID_APP_MUSICPLAYER,
+                              EVT_USER,
+                              AVK_FFWD,
+                              0);	
+            return TRUE;
+		}
+        break;
+    }
+    case AVK_RWD:    
+    {
+        if (cls == AEECLSID_QUICKTEST)
+        {
+            return FALSE;
+        }
+        
+        if (cls == AEECLSID_APP_MUSICPLAYER)    //next
+		{
+            ISHELL_PostEvent( AEE_GetShell(),
+                              AEECLSID_APP_MUSICPLAYER,
+                              EVT_USER,
+                              AVK_RWD,
+                              0);
+            return TRUE;
+		}
+        break;   
+    }
+#endif
+
+
 #ifdef FEATURE_SMARTFREN_STATIC_BREW_APP 
 	case AVK_CLR:			
 		if ((cls == AEECLSID_SMARTFREN_MNEWS)

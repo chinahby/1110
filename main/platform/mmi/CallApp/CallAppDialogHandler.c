@@ -132,6 +132,49 @@ static char* SOUND_NAME[] =
     NUM_STAR,
 };
 
+static char* TIME_HOUR1_SOUND_NAME[] =
+{
+    HOUR_10,          /*10*/
+    HOUR_20,          /*20*/
+};
+
+static char* TIME_HOUR2_SOUND_NAME[] =
+{
+    HOUR_0,           /*0*/
+    HOUR_1,           /*1*/
+    HOUR_2,           /*2*/
+    HOUR_3,           /*3*/
+    HOUR_4,           /*4*/
+    HOUR_5,           /*5*/
+    HOUR_6,           /*6*/
+    HOUR_7,           /*7*/
+    HOUR_8,           /*8*/
+    HOUR_9            /*9*/    
+};
+
+static char* TIME_MINUTE1_SOUND_NAME[] =
+{
+    MINUTE_10,          /*10*/
+    MINUTE_20,          /*20*/
+    MINUTE_30,          /*30*/
+    MINUTE_40,          /*40*/    
+    MINUTE_50           /*50*/
+};
+
+static char* TIME_MINUTE2_SOUND_NAME[] =
+{ 
+    MINUTE_0,           /*0*/
+    MINUTE_1,           /*1*/
+    MINUTE_2,           /*2*/
+    MINUTE_3,           /*3*/
+    MINUTE_4,           /*4*/
+    MINUTE_5,           /*5*/
+    MINUTE_6,           /*6*/
+    MINUTE_7,           /*7*/
+    MINUTE_8,           /*8*/
+    MINUTE_9            /*9*/
+};
+
 static void CALLApp_PlayShutterSound(CCallApp *pMe,uint16 key);
 static void CALLApp_MediaNotify(void *pUser, AEEMediaCmdNotify *pCmdNotify);
 #endif
@@ -388,6 +431,12 @@ static void callApp_draw_pendown(CCallApp* pMe,int16 x,int16 y);
 static void callApp_draw_penmove(CCallApp* pMe,int16 x,int16 y);
 #endif
 
+#ifdef FEATURE_SOUND_BO
+static void CallApp_PlayTimeSound(CCallApp *pMe,uint16 Status);
+static void CallApp_Media_time_Notify(void *pUser, AEEMediaCmdNotify *pCmdNotify);
+#endif
+
+
 /*==============================================================================
                                  全局数据
 ==============================================================================*/
@@ -401,6 +450,7 @@ static void callApp_draw_penmove(CCallApp* pMe,int16 x,int16 y);
 static boolean bDrawCursor = TRUE;
 #endif
 
+static TIME_STATUE_EX  m_TimeStarusEx = TIME_BJ;
 
 /*==============================================================================
                                  函数定义
@@ -530,6 +580,7 @@ static void CALLApp_PlayShutterSound(CCallApp *pMe,uint16 key)
     AEEMediaCmdNotify cmd;
 	int temp = 0;
 	char music_name[256] = {0};
+    
 	if(pMe->m_pMedia)
 	{
 		IMEDIA_Stop(pMe->m_pMedia);
@@ -809,6 +860,53 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                 IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, FALSE);
                 IANNUNCIATOR_Redraw(pMe->m_pIAnn);
             }
+
+            //Add By zzg 2013_08_28
+#ifdef FEATURE_SOUND_BO 
+            if (WSTRLEN(pMe->m_DialString) == 1)
+            {
+      
+                char tempstr[5];
+                uint16 keyvalue=0;
+                boolean m_sound_bo_dia = FALSE;
+    			(void) ICONFIG_GetItem(pMe->m_pConfig,
+                                         CFGI_SOUND_BO_DIA,
+                                         &m_sound_bo_dia,
+                                         sizeof(boolean));   
+                
+				WSTRTOSTR(pMe->m_DialString, tempstr, 5);						
+				
+				DBGPRINTF("***zzg CallApp_NumEdit EVT_DIALOG_START tempstr=%s***", tempstr);	
+
+                if (strcmp(tempstr, "0") == 0)      keyvalue = AVK_0;
+                if (strcmp(tempstr, "1") == 0)      keyvalue = AVK_1;
+                if (strcmp(tempstr, "2") == 0)      keyvalue = AVK_2;
+                if (strcmp(tempstr, "3") == 0)      keyvalue = AVK_3;
+                if (strcmp(tempstr, "4") == 0)      keyvalue = AVK_4;
+                if (strcmp(tempstr, "5") == 0)      keyvalue = AVK_5;
+                if (strcmp(tempstr, "6") == 0)      keyvalue = AVK_6;
+                if (strcmp(tempstr, "7") == 0)      keyvalue = AVK_7;
+                if (strcmp(tempstr, "8") == 0)      keyvalue = AVK_8;
+                if (strcmp(tempstr, "9") == 0)      keyvalue = AVK_9;
+                if (strcmp(tempstr, "*") == 0)      keyvalue = AVK_STAR;
+                if (strcmp(tempstr, "#") == 0)      keyvalue = AVK_POUND;
+                                    
+        		if(m_sound_bo_dia)
+        		{
+        			nv_item_type	SimChoice;
+        			(void)OEMNV_Get(NV_SIM_SELECT_I, &SimChoice);                        
+        			if(SimChoice.sim_select != 1)
+        			{
+        			    if (keyvalue != 0)
+                		{
+                		    CALLApp_PlayShutterSound(pMe, keyvalue);
+                        }
+        			}
+        		}
+            }
+#endif
+            //Add End
+                    
 			MSG_FATAL("EVT_DIALOG_START.........................",0,0,0);
 			#ifndef FEATURE_LCD_TOUCH_ENABLE
             if (WSTRLEN(pMe->m_DialString) > 0) //copy from the start info
@@ -1946,11 +2044,11 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
    					(void) ICONFIG_GetItem(pMe->m_pConfig,
                                                  CFGI_SOUND_BO_DIA,
                                                  &m_sound_bo_dia,
-                                                 sizeof(boolean));
+                                                 sizeof(boolean));                    
 					if(m_sound_bo_dia)
 					{
 						nv_item_type	SimChoice;
-						(void)OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+						(void)OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);                        
 						if(SimChoice.sim_select != 1)
 						{
                     		CALLApp_PlayShutterSound(pMe,wParam);
@@ -5270,9 +5368,20 @@ static boolean  CallApp_MsgBox_DlgHandler(CCallApp  *pMe,
                 &&pMe->m_msg_text_id != IDS_SAR_CT100_X2&&pMe->m_msg_text_id != IDS_SAR_CT100_VERSION_02
                 || (pMe->m_msg_text_id == IDS_REGULATE_SUCCEED)|| (pMe->m_msg_text_id == IDS_REGULATE_FAIL))
             {
-                ISHELL_SetTimer(pMe->m_pShell, TIMEOUT_MS_INVALIDEMGNUMDIALOG_TIMER,
-                                       CallApp_HandleDialogTimer, pMe);
+                if (pMe->m_msg_text_id == IDS_MSG_TIME_DETAIL)
+                {
+                    ISHELL_SetTimer(pMe->m_pShell, 8000,
+                                           CallApp_HandleDialogTimer, pMe);
+                    CallApp_PlayTimeSound(pMe, m_TimeStarusEx);
+                }
+                else
+                {
+                    ISHELL_SetTimer(pMe->m_pShell, TIMEOUT_MS_INVALIDEMGNUMDIALOG_TIMER,
+                                           CallApp_HandleDialogTimer, pMe);
+                    
+                }
             }
+            
             ISHELL_PostEvent(pMe->m_pShell, AEECLSID_DIALER, EVT_USER_REDRAW, 0,0);
             return TRUE;
 
@@ -5340,7 +5449,75 @@ static boolean  CallApp_MsgBox_DlgHandler(CCallApp  *pMe,
             {
                 m_PromptMsg.eBBarType = BTBAR_BACK;
             }
-            DrawPromptMessage(pMe->m_pDisplay,m_pIStatic,&m_PromptMsg);
+
+            //DrawPromptMessage(pMe->m_pDisplay,m_pIStatic,&m_PromptMsg);
+            
+            //Add By zzg 2013_08_27
+            if (pMe->m_msg_text_id == IDS_MSG_TIME_DETAIL)
+            {
+                //IDS_MSG_TIME_AM
+                //IDS_MSG_TIME_PM    
+                //IDS_MSG_TIME_DETAIL
+
+                AECHAR  wstrText[64]={0};
+                AECHAR  wstrFMT[64]={0};
+                uint16  nHour=0, nMinute=0;
+
+                uint16  mTextID = IDS_MSG_TIME_DETAIL;
+                byte      bTFmt;
+               
+              
+            	JulianType  jDate;
+            	GetJulianDate(GETTIMESECONDS(), &jDate);
+
+                (void) ICONFIG_GetItem( pMe->m_pConfig,
+                                        CFGI_TIME_FORMAT,
+                                        &bTFmt,
+                                        sizeof(bTFmt));
+                             
+                if (bTFmt == OEMNV_TIMEFORM_AMPM)
+                {                                                       
+                    nHour = jDate.wHour > 12 ? (jDate.wHour - 12) : jDate.wHour;
+       
+
+                    if (jDate.wHour >= 12)
+                    {
+                        mTextID = IDS_MSG_TIME_PM;
+                    }
+                    else
+                    {
+                        mTextID = IDS_MSG_TIME_AM;
+                    }                     
+                }
+                else
+                {
+                    nHour = jDate.wHour;                    
+                }
+
+                nMinute = jDate.wMinute;
+                                
+                
+                (void)ISHELL_LoadResString(pMe->m_pShell,
+                                            AEE_APPSCALLAPP_RES_FILE,                                
+                                            mTextID,
+                                            wstrFMT,
+                                            sizeof(wstrFMT));
+                                
+                WSPRINTF(wstrText, sizeof(wstrText), wstrFMT, nHour, nMinute);
+                  
+                m_PromptMsg.ePMsgType = MESSAGE_INFORMATION;
+                m_PromptMsg.pwszMsg = wstrText;
+                m_PromptMsg.eBBarType = BTBAR_BACK;
+                
+                DrawPromptMessage(pMe->m_pDisplay,m_pIStatic,&m_PromptMsg);
+            }
+            else
+            {
+                DrawPromptMessage(pMe->m_pDisplay,m_pIStatic,&m_PromptMsg);
+            }
+            //Add End
+
+            
             IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
         }
             return TRUE;
@@ -5351,6 +5528,17 @@ static boolean  CallApp_MsgBox_DlgHandler(CCallApp  *pMe,
                 ISHELL_CancelTimer(pMe->m_pShell,
                                   CallApp_HandleDialogTimer, pMe);
             }
+
+            //Add By zzg 2013_08_28
+            if(pMe->m_pMedia)
+        	{
+        		IMEDIA_Stop(pMe->m_pMedia);
+        		IMEDIA_Release(pMe->m_pMedia);
+        		pMe->m_pMedia = NULL;
+        	}
+
+            m_TimeStarusEx = TIME_BJ;   
+            //Add End
 
             ISTATIC_Release(m_pIStatic); 
             m_pIStatic = NULL;
@@ -7506,7 +7694,7 @@ static void CallApp_MakeSpeedDialCall(CCallApp  *pMe)
             return;
         }
         //load the speed dial empty resource string
-        #ifdef FEATURE_VERSION_C337
+        #if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99)
 		pMe->m_prompt_id = IDS_SPEED_DIAL_QUERY;
 		CLOSE_DIALOG(DLGRET_PROMPT)
 		#else
@@ -8412,6 +8600,7 @@ static void CallApp_DrawDialerString(CCallApp   *pMe,  AECHAR const *dialStr)
             nLine++;
         }
         MSG_FATAL("CallApp_DrawDialerString....................2",0,0,0);
+#ifndef FEATURE_VERSION_EC99
         if(nLine <= nLineMax)
         {
             
@@ -8420,6 +8609,7 @@ static void CallApp_DrawDialerString(CCallApp   *pMe,  AECHAR const *dialStr)
         {
             pMe->m_pCurrNumFont = NULL;
         }
+#endif        
     }
 	MSG_FATAL("CallApp_DrawDialerString....................3",0,0,0);
     dstStr = revStr;
@@ -8428,7 +8618,7 @@ static void CallApp_DrawDialerString(CCallApp   *pMe,  AECHAR const *dialStr)
     {
     	MSG_FATAL("nLineMax===========%d",nLineMax,0,0);
         pMe->m_pCurrNumFont = pMe->m_pNormalNumFont;
-        pMe->m_nCurrNumHeight = pMe->m_Normal_Num_Height;
+        pMe->m_nCurrNumHeight = pMe->m_Normal_Num_Height;        
         nLineMax    = dialerRect.dy/pMe->m_nCurrNumHeight;
 		#ifndef FEATURE_LCD_TOUCH_ENABLE
         pMe->m_nCurrLineSpace  = (dialerRect.dy - pMe->m_nCurrNumHeight*nLineMax)/(nLineMax-1);
@@ -12635,7 +12825,8 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
         }
 
         //long key "1" to call voice mail
-#ifndef FEATURE_VERSION_C337        
+#ifndef FEATURE_VERSION_C337  
+#ifndef FEATURE_VERSION_EC99
         else if ((AVKType)wParam == AVK_1)
         {
             if((pMe->m_DialString[0] == '1')&&(pMe->m_DialString[1] == '\0'))
@@ -12644,7 +12835,13 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
             }
         }
 #endif        
+#endif              
+        
+#ifdef FEATURE_VERSION_EC99
+        else if ( ((AVKType)wParam >= AVK_1) &&((AVKType)wParam <= AVK_9))
+#else
         else if ( ((AVKType)wParam >= AVK_2) &&((AVKType)wParam <= AVK_9))
+#endif  
         {
             uint16 wIndex;
             MSG_FATAL("CallApp_Process_HeldKey_Event1111111111111",0,0,0);
@@ -12652,6 +12849,52 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
             //if more than 2 digits then bail out because
             // we only support from to 1 to 99
             wIndex = (uint16)WSTRTOFLOAT(pMe->m_DialString);
+
+#if defined(FEATURE_VERSION_EC99)
+            if (((AVKType)wParam == AVK_5) && (((uint16)WSTRLEN(pMe->m_DialString) <= MAX_SPEEDDIAL_CHARS) &&(wIndex!=0)))
+            {
+                boolean TorchOn = FALSE;
+                OEM_GetConfig(CFGI_FLSHLITHG_STATUS,&TorchOn, sizeof(TorchOn));
+                if (TorchOn == FALSE )
+                {
+                    TorchOn = TRUE;
+                    if (pMe->m_pBacklight)
+                    {
+                        IBACKLIGHT_TurnOnTorch(pMe->m_pBacklight);
+                    }
+                }
+                else
+                {
+                    TorchOn = FALSE;
+                    if (pMe->m_pBacklight)
+                    {                           
+                        IBACKLIGHT_TurnOffTorch(pMe->m_pBacklight);
+                    }
+                }
+                OEM_SetConfig(CFGI_FLSHLITHG_STATUS,&TorchOn, sizeof(TorchOn));
+                ISHELL_CloseApplet(pMe->m_pShell, TRUE); 
+                return TRUE;
+            }
+
+            if (((AVKType)wParam == AVK_6) && (((uint16)WSTRLEN(pMe->m_DialString) <= MAX_SPEEDDIAL_CHARS) &&(wIndex!=0)) && (!pMe->m_b_incall))
+            {
+                MSG_FATAL("***zzg CallApp Press AVK_6***", 0, 0, 0);
+
+                /*
+                (void) ISHELL_PostEvent( pMe->m_pShell,
+                                          AEECLSID_CORE_APP,
+                                          EVT_USER,
+                                          2,
+                                          0);
+                              
+                (void)ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+                return TRUE;
+                */
+                pMe->m_msg_text_id = IDS_MSG_TIME_DETAIL;            
+                CLOSE_DIALOG(DLGRET_MSGBOX);
+                return TRUE;
+            }
+#endif
 
             if(((uint16)WSTRLEN(pMe->m_DialString) <= MAX_SPEEDDIAL_CHARS) &&(wIndex!=0))
             {
@@ -13171,10 +13414,12 @@ if(wp == AVK_0)
                                                  CFGI_SOUND_BO_DIA,
                                                  &m_sound_bo_dia,
                                                  sizeof(boolean));
+                
 				if(m_sound_bo_dia)
 				{
 					nv_item_type	SimChoice;
 					(void)OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+                    
 					if(SimChoice.sim_select != 1)
 					{
 						CALLApp_PlayShutterSound(pMe,Temp_wp);
@@ -14271,9 +14516,9 @@ static void CallApp_Calc_Cursor_Rect(CCallApp* pMe, AEERect *pRect)
 		}
 	}
 
-	MSG_FATAL("***zzg CallApp_Calc_Cursor_Rect index1=%d, index2=%d***", index1, index2, 0);
+	//MSG_FATAL("***zzg CallApp_Calc_Cursor_Rect index1=%d, index2=%d***", index1, index2, 0);
 
-	MSG_FATAL("***zzg CallApp_Calc_Cursor_Rect nLen=%d, length=%d***", nLen, length, 0);
+	//MSG_FATAL("***zzg CallApp_Calc_Cursor_Rect nLen=%d, length=%d***", nLen, length, 0);
 
 	IFONT_MeasureText(pMe->m_pCurrNumFont, L"-", 1, pMe->m_rc.dx, NULL, &tmplen);	
 
@@ -14285,7 +14530,7 @@ static void CallApp_Calc_Cursor_Rect(CCallApp* pMe, AEERect *pRect)
 		
 		int nCurrPos    	= nLen-pMe->m_nCursorPos;;	
    		
-		MSG_FATAL("***zzg CallApp_Calc_Cursor_Rect pMe->m_nCursorPos=%d, nCurrPos=%d***", pMe->m_nCursorPos, nCurrPos, 0);		
+		//MSG_FATAL("***zzg CallApp_Calc_Cursor_Rect pMe->m_nCursorPos=%d, nCurrPos=%d***", pMe->m_nCursorPos, nCurrPos, 0);		
 		
 #ifdef FEATURE_LCD_TOUCH_ENABLE
 		y = pMe->m_rc.dy-BOTTOMBAR_HEIGHT - 220;
@@ -14312,7 +14557,7 @@ static void CallApp_Calc_Cursor_Rect(CCallApp* pMe, AEERect *pRect)
 			}
 		}		
 
-		MSG_FATAL("***zzg CallApp_Calc_Cursor_Rect nCurrPos=%d***", nCurrPos, 0, 0);
+		//MSG_FATAL("***zzg CallApp_Calc_Cursor_Rect nCurrPos=%d***", nCurrPos, 0, 0);
         
         for(i=0; i<pMe->m_nCurrLine; i++)
         {
@@ -14321,7 +14566,7 @@ static void CallApp_Calc_Cursor_Rect(CCallApp* pMe, AEERect *pRect)
             pSrcStr -= pMe->m_nCurrLineFits[i];
             nCurrLineMinPos = nCurrLineMaxPos-pMe->m_nCurrLineFits[i];	
             
-			MSG_FATAL("***zzg CallApp_Calc_Cursor_Rect nCurrPos =%d, nCurrLineMinPos=%d, nCurrLineMaxPos=%d***", nCurrPos, nCurrLineMinPos, nCurrLineMaxPos);
+			//MSG_FATAL("***zzg CallApp_Calc_Cursor_Rect nCurrPos =%d, nCurrLineMinPos=%d, nCurrLineMaxPos=%d***", nCurrPos, nCurrLineMinPos, nCurrLineMaxPos);
 			
             // 在此行
             if(nCurrPos > nCurrLineMinPos && nCurrPos < nCurrLineMaxPos)
@@ -14366,7 +14611,7 @@ static void CallApp_Calc_Cursor_Rect(CCallApp* pMe, AEERect *pRect)
     int i;
     int nLen = WSTRLEN(pMe->m_DialString);
 
-	MSG_FATAL("***zzg CallApp_Calc_Cursor_Rect nLen=%d***", nLen, 0, 0);
+	//MSG_FATAL("***zzg CallApp_Calc_Cursor_Rect nLen=%d***", nLen, 0, 0);
 
     if(nLen > 0)
     {
@@ -14386,7 +14631,7 @@ static void CallApp_Calc_Cursor_Rect(CCallApp* pMe, AEERect *pRect)
             pSrcStr -= pMe->m_nCurrLineFits[i];
             nCurrLineMinPos = nCurrLineMaxPos-pMe->m_nCurrLineFits[i];	
             
-			MSG_FATAL("***zzg CallApp_Calc_Cursor_Rect nCurrLineMinPos=%d, nCurrLineMaxPos=%d***", nCurrLineMinPos, nCurrLineMaxPos, 0);
+			//MSG_FATAL("***zzg CallApp_Calc_Cursor_Rect nCurrLineMinPos=%d, nCurrLineMaxPos=%d***", nCurrLineMinPos, nCurrLineMaxPos, 0);
 			
             // 在此行
             if(nCurrPos > nCurrLineMinPos && nCurrPos < nCurrLineMaxPos)
@@ -15200,5 +15445,273 @@ void CallApp_SwitchCallAudio(CCallApp *pMe, boolean bIsBtAudio)
 #endif
 
 //Add End
+
+
+#ifdef FEATURE_SOUND_BO
+static void CallApp_PlayTimeSound(CCallApp *pMe,uint16 Status)
+{   
+    AEEMediaCmdNotify cmd;
+	int temp = 0;
+	char music_name[256] = {0};
+	JulianType  jDate;
+	uint16 wHour = 0;
+	uint16 i = 0;
+    byte      bTFmt;
+    
+	if(pMe->m_pMedia)
+	{
+		IMEDIA_Stop(pMe->m_pMedia);
+		IMEDIA_Release(pMe->m_pMedia);
+		pMe->m_pMedia = NULL;
+	}
+	                
+	
+	GetJulianDate(GETTIMESECONDS(), &jDate);
+
+    (void) ICONFIG_GetItem( pMe->m_pConfig,
+                            CFGI_TIME_FORMAT,
+                            &bTFmt,
+                            sizeof(bTFmt));
+                 
+    
+    // 如果pMe->m_pMedia接口为空，创建接口
+    if(!pMe->m_pMedia)
+    {
+        AEEMediaData      md;
+       
+        if(!pMe)
+           return;
+        md.clsData = MMD_FILE_NAME;  
+        
+		switch(Status)
+		{
+			case TIME_BJ:
+            {         
+                md.pData = (void *)BJTIME;
+                m_TimeStarusEx = TIME_AMPM;
+                
+                if (bTFmt == OEMNV_TIMEFORM_24HR)
+                {
+                    if (jDate.wHour < 10)
+                    {
+                        m_TimeStarusEx = TIME_HOUR2;
+                    }
+                    else
+                    {
+                        m_TimeStarusEx = TIME_HOUR1;
+                    }
+                }               
+				break;
+            }   
+            
+    	    case TIME_AMPM: 
+            {
+                if (jDate.wHour >= 12)
+                {
+                    md.pData = (void *)PM_TIME;				            
+                }
+                else
+                {
+                    md.pData = (void *)AM_TIME;				        
+                }                      	
+                m_TimeStarusEx = TIME_HOUR1; 
+
+                if  ((bTFmt == OEMNV_TIMEFORM_AMPM) 
+                      && (((jDate.wHour > 12) && (jDate.wHour < 21)) 
+                              || (jDate.wHour < 10)))                    
+                   
+                {
+                    m_TimeStarusEx = TIME_HOUR2;
+                }
+                
+                break;
+            }
+    		case TIME_HOUR1:                  
+                md.pData = (void *)TIME_HOUR1_SOUND_NAME[0];            //10 
+                
+                if ((bTFmt == OEMNV_TIMEFORM_24HR) && (jDate.wHour>19))
+                {
+                    md.pData = (void *)TIME_HOUR1_SOUND_NAME[1];        //20 
+                }
+                
+			    m_TimeStarusEx = TIME_HOUR2; 
+                break;               
+                
+    		case TIME_HOUR2: 
+				if (bTFmt == OEMNV_TIMEFORM_24HR) 
+                {
+                    if ((jDate.wHour >= 0) && (jDate.wHour < 10))
+                    {
+                        md.pData = (void *)TIME_HOUR2_SOUND_NAME[jDate.wHour];      //0~ 9
+                        m_TimeStarusEx = TIME_HOUR_DIAN;
+                        break;
+                    }
+
+                    if ((jDate.wHour > 10) && (jDate.wHour < 20))
+                    {
+                        md.pData = (void *)TIME_HOUR2_SOUND_NAME[jDate.wHour-10];   //10+  1~ 9
+                        m_TimeStarusEx = TIME_HOUR_DIAN;
+                        break;
+                    }   
+
+                    if ((jDate.wHour > 20) && (jDate.wHour < 24))                   //20+ 1~ 3
+                    {
+                        md.pData = (void *)TIME_HOUR2_SOUND_NAME[jDate.wHour-20]; 
+                        m_TimeStarusEx = TIME_HOUR_DIAN;
+                        break;
+                    } 
+                    
+                    if ((jDate.wHour == 10) || (jDate.wHour == 20))             //10/20 + 点
+                    {
+                        md.pData = (void *)HOUR_DIAN;   
+                        m_TimeStarusEx = TIME_MINUTE1;
+                        break;
+                    }   
+                }    
+
+                if (bTFmt == OEMNV_TIMEFORM_AMPM) 
+                {
+                    if ((jDate.wHour >= 0) && (jDate.wHour < 10))
+                    {
+                        md.pData = (void *)TIME_HOUR2_SOUND_NAME[jDate.wHour];    //AM+0~ 9
+                        m_TimeStarusEx = TIME_HOUR_DIAN;
+                        break;
+                    }
+                    
+                    if ((jDate.wHour > 10) && (jDate.wHour <= 12))         //AM+10+1~ 2
+                    {
+                        md.pData = (void *)TIME_HOUR2_SOUND_NAME[jDate.wHour-10]; 
+                        m_TimeStarusEx = TIME_HOUR_DIAN;
+                        break;
+                    }
+
+                    if ((jDate.wHour > 12) && (jDate.wHour < 22))          //PM+1~ 9
+                    {
+                        md.pData = (void *)TIME_HOUR2_SOUND_NAME[jDate.wHour-12]; 
+                        m_TimeStarusEx = TIME_HOUR_DIAN;
+                        break;
+                    }   
+
+                    if ((jDate.wHour > 22) && (jDate.wHour < 24))         //PM+10+1
+                    {
+                        md.pData = (void *)TIME_HOUR2_SOUND_NAME[jDate.wHour-22]; 
+                        m_TimeStarusEx = TIME_HOUR_DIAN;
+                        break;
+                    } 
+
+                    if ((jDate.wHour == 10) || (jDate.wHour == 22))      //AM+10+点/PM+10+点
+                    {
+                        md.pData = (void *)HOUR_DIAN;  
+                        m_TimeStarusEx = TIME_MINUTE1;
+                        break;
+                    }  
+                } 
+
+                m_TimeStarusEx = TIME_HOUR_DIAN;
+                break;
+                
+            case TIME_HOUR_DIAN:
+                md.pData = (void *)HOUR_DIAN;
+                m_TimeStarusEx = TIME_MINUTE1;
+
+                if (jDate.wMinute/10 == 0) 
+                {
+                    m_TimeStarusEx = TIME_MINUTE2;
+                }
+                
+                break;
+                
+			case TIME_MINUTE1: 	                
+                md.pData = (void *)TIME_MINUTE1_SOUND_NAME[jDate.wMinute/10 -1];       // 10 ~ 50	
+                m_TimeStarusEx = TIME_MINUTE2; 
+
+                if ((jDate.wMinute%10 == 0) && (jDate.wMinute != 0))
+                {
+                    m_TimeStarusEx = TIME_MINUTE_FEN;  
+                }
+                
+                break;                
+    		case TIME_MINUTE2: 
+                md.pData = (void *)TIME_MINUTE2_SOUND_NAME[jDate.wMinute%10];       //0, 1~9
+                m_TimeStarusEx = TIME_MINUTE_FEN;                
+				break;
+            case TIME_MINUTE_FEN: 
+                md.pData = (void *)MINUTE_FEN;                                      //分
+                m_TimeStarusEx = TIME_BJ;                
+				break;    
+			default:
+				break;
+			
+		}
+
+        md.dwSize = 0;
+       
+        (void)AEEMediaUtil_CreateMedia(pMe->m_pShell, &md, &pMe->m_pMedia);
+    }
+   
+    if(pMe->m_pMedia)
+    {        
+        IMEDIA_SetVolume(pMe->m_pMedia, AEE_MAX_VOLUME*3/5); //max volum is 100
+     
+        if(IMEDIA_RegisterNotify(pMe->m_pMedia, CallApp_Media_time_Notify, pMe) != SUCCESS)
+        {
+            cmd.nCmd    = MM_CMD_PLAY;
+            cmd.nStatus = MM_STATUS_DONE;
+            CallApp_Media_time_Notify((void *)pMe, &cmd);
+            return;
+        }
+
+        if(IMEDIA_Play(pMe->m_pMedia) != SUCCESS)
+        {
+            cmd.nCmd    = MM_CMD_PLAY;
+            cmd.nStatus = MM_STATUS_DONE;
+            CallApp_Media_time_Notify((void *)pMe, &cmd);
+            return;
+        }
+    }
+    else
+    {
+        cmd.nCmd    = MM_CMD_PLAY;
+        cmd.nStatus = MM_STATUS_DONE;
+        CallApp_Media_time_Notify((void *)pMe, &cmd);
+    }    
+}
+
+static void CallApp_Media_time_Notify(void *pUser, AEEMediaCmdNotify *pCmdNotify)
+{    
+    CCallApp *pMe = (CCallApp *)pUser;
+
+    if(!pMe || !pCmdNotify)
+        return;
+
+    if(pCmdNotify->nCmd == MM_CMD_PLAY)  // IMEDIA_Play events
+    {
+        switch (pCmdNotify->nStatus)
+        {
+            case MM_STATUS_ABORT:            
+                break;
+
+            case MM_STATUS_DONE:    // playback done
+				if(pMe->m_pMedia)
+				{
+					IMEDIA_Release(pMe->m_pMedia);
+					pMe->m_pMedia = NULL;
+				}
+				MSG_FATAL("CallApp_Media_time_Notify.........",0,0,0);
+
+                MSLEEP(50);
+
+                if(m_TimeStarusEx != TIME_BJ)                   
+				{
+					CallApp_PlayTimeSound(pMe,m_TimeStarusEx);
+				}
+                break;
+            default:
+                break;
+        }
+    }
+   
+}
+#endif
 
 

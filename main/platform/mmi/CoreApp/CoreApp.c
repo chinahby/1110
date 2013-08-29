@@ -840,10 +840,14 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 				
 
                 // 获取大字体高度
+ #ifdef FEATURE_VERSION_EC99
+                pMe->m_nLargeFontHeight = 70;
+ #else
                 pMe->m_nLargeFontHeight = IDISPLAY_GetFontMetrics(pMe->m_pDisplay,
                                                                   AEE_FONT_LARGE,
                                                                   NULL,
                                                                   NULL);
+ #endif
 
                 // 获取AEE_FONT_NORMAL字体高度
                 pMe->m_nNormalFontHeight = IDISPLAY_GetFontMetrics(pMe->m_pDisplay,
@@ -1713,6 +1717,16 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 				return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);				
 			}
 #endif
+/*
+#ifdef FEATURE_VERSION_EC99
+            case 2:
+            {
+                MSG_FATAL("***zzg CoreApp EVT_USER FEATURE_VERSION_EC99***",0,0,0);
+                return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);              
+            }
+#endif
+*/
+
 			//Add End
             case EVT_UI_EXIT:
                 /* AEE is about to exit, set the exit flag to TRUE */

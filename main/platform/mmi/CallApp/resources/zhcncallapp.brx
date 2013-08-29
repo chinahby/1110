@@ -166,6 +166,9 @@
 	<String Id="1055" Name="IDS_PWDERR">
 		<Text>无效密码</Text>
 	</String>
+	<String Id="1056" Name="IDS_SPEED_DIAL_QUERY">
+		<Text>快速拨号%s无号码,设置?</Text>
+	</String>
 	<String Id="1057" Name="IDS_PWDTIPS">
 		<Text>输入密码</Text>
 	</String>
@@ -196,9 +199,7 @@
 	<STRING Id="1117" Name="IDS_INVALID">
 		<Text>无效密码</Text>
 	</STRING>
-	<String Id="1118" Name="IDS_SPEED_DIAL_QUERY">
-		<Text>Speed Dial %s is Off,Set it On?</Text>
-	</String>
+	
 	<String Id="1122" Name="IDS_SAR">
 		<Text>SAR: 0.280W/kg</Text>
 	</String>
@@ -226,6 +227,15 @@
 	<String Id="1130" Name="IDS_SAR_CT100_VERSION_02">
 		<Text>SAR:CDMA800 Head:0.506W/Kg; Body:0.565W/Kg</Text>
 	</String>	
+	<String Id="1131" Name="IDS_MSG_TIME_AM">
+		<Text>现在是北京时间上午%02d:%02d分！</Text>
+	</String>	
+	<String Id="1132" Name="IDS_MSG_TIME_PM">
+		<Text>现在是北京时间下午%02d:%02d分！</Text>
+	</String>	
+	<String Id="1133" Name="IDS_MSG_TIME_DETAIL">
+		<Text>现在是北京时间%02d:%02d分！</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_NUMEDIT" Focus="0">

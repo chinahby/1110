@@ -250,6 +250,15 @@
 	<String Id="1130" Name="IDS_SAR_CT100_VERSION_02">
 		<Text>SAR:CDMA800 Head:0.506W/Kg; Body:0.565W/Kg</Text>
 	</String>	
+	<String Id="1131" Name="IDS_MSG_TIME_AM">
+		<Text>The time is %02d:%02d am now!</Text>
+	</String>	
+	<String Id="1132" Name="IDS_MSG_TIME_PM">
+		<Text>The time is %02d:%02d pm now!</Text>
+	</String>	
+	<String Id="1133" Name="IDS_MSG_TIME_DETAIL">
+		<Text>The time is %02d:%02d  now!</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_NUMEDIT" Focus="0">
