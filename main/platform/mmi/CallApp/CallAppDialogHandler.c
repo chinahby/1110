@@ -449,8 +449,10 @@ static void CallApp_Media_time_Notify(void *pUser, AEEMediaCmdNotify *pCmdNotify
 #ifdef FEATURE_EDITABLE_NUMBER
 static boolean bDrawCursor = TRUE;
 #endif
+#ifdef FEATURE_SOUND_BO
 
 static TIME_STATUE_EX  m_TimeStarusEx = TIME_BJ;
+#endif
 
 /*==============================================================================
                                  º¯Êý¶¨Òå
@@ -5536,8 +5538,10 @@ static boolean  CallApp_MsgBox_DlgHandler(CCallApp  *pMe,
         		IMEDIA_Release(pMe->m_pMedia);
         		pMe->m_pMedia = NULL;
         	}
+#ifdef FEATURE_SOUND_BO
 
-            m_TimeStarusEx = TIME_BJ;   
+            m_TimeStarusEx = TIME_BJ;  
+#endif
             //Add End
 
             ISTATIC_Release(m_pIStatic); 
