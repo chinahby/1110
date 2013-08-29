@@ -1642,6 +1642,11 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 						        {
 						            if(SUCCESS != IWmsApp_DeleteAllNvCdmaSms(pIWmsApp))
 						            {
+						                if(NULL != pIWmsApp)
+        						        {
+        						            (void)IWmsApp_Release(pIWmsApp);
+        						            pIWmsApp = NULL;
+        						        }
 						                return EFAILED;
 						            }
 						        }
@@ -1662,6 +1667,11 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 						        {
 						            if(SUCCESS != ICONTAPP_DeleteAll(pIContApp))
 						            {
+						                if(NULL != pIContApp)
+        						        {
+        						            (void)ICONTAPP_Release(pIContApp);
+        						            pIContApp = NULL;
+        						        }
 						                return EFAILED;
 						            }
 						        }
