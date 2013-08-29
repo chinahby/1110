@@ -399,6 +399,16 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
         }
         case EVT_DIALOG_START:
         {  			
+			 
+           (void) ISHELL_PostEvent(pMe->m_pShell, 
+                                    AEECLSID_APP_MUSICPLAYER,
+                                    EVT_USER_REDRAW,
+                                    0,
+                                    0);          
+            return TRUE;
+        }
+        case EVT_USER_REDRAW:
+       {   
 			//Add By zzg 2010_08_19
 			AECHAR Title[40] = {0}; 
 			(void)ISHELL_LoadResString(pMe->m_pShell,
@@ -455,15 +465,6 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
 				//IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,pMe->m_pMp3FileToPlay+nIdx);
                 //IANNUNCIATOR_Redraw(pMe->m_pIAnn);
             }
-           (void) ISHELL_PostEvent(pMe->m_pShell, 
-                                    AEECLSID_APP_MUSICPLAYER,
-                                    EVT_USER_REDRAW,
-                                    0,
-                                    0);          
-            return TRUE;
-        }
-        case EVT_USER_REDRAW:
-        {   
 			MP3_DrawPlayerWindows(pMe);
 
 			if(pMe->m_bPaused || pMe->m_bPlaying)
@@ -3865,17 +3866,7 @@ static boolean  CMusicPlayer_HandleMsgBoxDlgEvent( CMusicPlayer  *pMe,
             return TRUE;
 
         case EVT_DIALOG_START:
-            (void) ISHELL_PostEventEx(pMe->m_pShell, 
-                                    EVTFLG_ASYNC,
-                                    AEECLSID_APP_MUSICPLAYER,
-                                    EVT_USER_REDRAW,
-                                    0, 
-                                    0);
-
-            return TRUE;
-
-        case EVT_USER_REDRAW:
-            {
+			{
                 PromptMsg_Param_type  Msg_Param={0};
                 AECHAR  wstrText[MSGBOX_MAXTEXTLEN] = {(AECHAR)'\0'};
                 
@@ -3894,6 +3885,17 @@ static boolean  CMusicPlayer_HandleMsgBoxDlgEvent( CMusicPlayer  *pMe,
             }
             // 更新界面
             IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+            (void) ISHELL_PostEventEx(pMe->m_pShell, 
+                                    EVTFLG_ASYNC,
+                                    AEECLSID_APP_MUSICPLAYER,
+                                    EVT_USER_REDRAW,
+                                    0, 
+                                    0);
+
+            return TRUE;
+
+        case EVT_USER_REDRAW:
+            
             
             // 启动发送关闭对话框事件的定时器
             (void) ISHELL_SetTimer(pMe->m_pShell,
@@ -6052,7 +6054,7 @@ static void MP3_DrawPlayerWindows(CMusicPlayer *pMe)
 	MP3_DrawRewindImage(pMe);
     MP3_DrawForwardImage(pMe);
 	#endif   
-	// IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);//wlh test
+	 IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);//wlh test
 }
 
 /*画简单播放器界面*/

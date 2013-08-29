@@ -4684,17 +4684,7 @@ static boolean  CContApp_HandleMsgBoxDlgEvent( CContApp  *pMe,
             return TRUE;
 
         case EVT_DIALOG_START:
-            (void) ISHELL_PostEventEx(pMe->m_pShell, 
-                                    EVTFLG_ASYNC,
-                                    AEECLSID_APP_CONTACT,
-                                    EVT_USER_REDRAW,
-                                    0, 
-                                    0);
-
-            return TRUE;
-
-        case EVT_USER_REDRAW:
-            {
+			 {
                 PromptMsg_Param_type  Msg_Param={0};
                 AECHAR  wstrText[MSGBOX_MAXTEXTLEN] = {(AECHAR)'\0'};
                 AECHAR temp[MAX_LEN_COMMBUF];
@@ -4783,6 +4773,17 @@ static boolean  CContApp_HandleMsgBoxDlgEvent( CContApp  *pMe,
             }
             // 更新界面
             IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+            (void) ISHELL_PostEventEx(pMe->m_pShell, 
+                                    EVTFLG_ASYNC,
+                                    AEECLSID_APP_CONTACT,
+                                    EVT_USER_REDRAW,
+                                    0, 
+                                    0);
+
+            return TRUE;
+
+        case EVT_USER_REDRAW:
+           
             
             // 启动发送关闭对话框事件的定时器
             (void) ISHELL_SetTimer(pMe->m_pShell,
@@ -11505,6 +11506,113 @@ static boolean  CContApp_HandleInputDlgEvent( CContApp  *pMe,
             return TRUE;
             
         case EVT_DIALOG_START:
+			 // 绘制相关信息
+            {
+                AECHAR  wstrDisplay[OEMNV_LOCKCODE_MAXLEN+1] = {0};
+                char    strDisplay[OEMNV_LOCKCODE_MAXLEN+1] = {0};
+                AECHAR  text[32] = {0};
+                int xOffset = 5;
+                RGBVAL nOldFontColor;
+                TitleBar_Param_type  TitleBar_Param = {0};
+                
+                // 先清屏
+#ifdef FEATURE_CARRIER_CHINA_VERTU
+                {
+                    IImage *pImageBg = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SECURITY_BACKGROUND);
+                    
+                    Appscommon_ResetBackground(pMe->m_pDisplay, pImageBg, APPSCOMMON_BG_COLOR, &pMe->m_rc, 0, 0);
+                    if(pImageBg != NULL)
+                    {
+                        IImage_Release(pImageBg);
+                    }
+                }
+#else
+                Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
+#endif
+                IDISPLAY_FillRect  (pMe->m_pDisplay,&pMe->m_rc, RGB_BLACK);
+                    
+                // 画标题条
+                #ifdef FEATURE_VERSION_C337
+				(void)ISHELL_LoadResString(pMe->m_pShell, 
+                                            CONTAPP_RES_FILE_LANG,
+                                            IDS_PHONEBOOK, 
+                                            text,
+                                            sizeof(text));
+				#else
+                (void)ISHELL_LoadResString(pMe->m_pShell, 
+                                            CONTAPP_RES_FILE_LANG,
+                                            IDS_APPLET, 
+                                            text,
+                                            sizeof(text));
+				#endif
+				
+                TitleBar_Param.pwszTitle = text;
+                TitleBar_Param.dwAlignFlags = IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
+				#if 0
+                DrawTitleBar(pMe->m_pDisplay, &TitleBar_Param);
+				//#else
+                if(pMe->m_pIAnn != NULL)
+                {
+				    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,text);
+                }
+				#endif
+                    
+                (void)ISHELL_LoadResString(pMe->m_pShell, 
+                                                CONTAPP_RES_FILE_LANG,
+                                                IDS_PASSWORD, 
+                                                text,
+                                                sizeof(text));
+                nOldFontColor = IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
+                IDISPLAY_DrawText(pMe->m_pDisplay, 
+                                    AEE_FONT_NORMAL, //AEE_FONT_BOLD, 
+                                    text,
+                                    -1, 
+                                    xOffset, 
+                                    TITLEBAR_HEIGHT + MENUITEM_HEIGHT*1/2,
+                                    NULL, 
+                                    IDF_TEXT_TRANSPARENT);
+                
+                // 绘制输入
+                nLen = (pMe->m_strPhonePWD == NULL)?(0):(STRLEN(pMe->m_strPhonePWD));
+                MEMSET(strDisplay, '*', nLen);
+                strDisplay[nLen] = '|';
+                strDisplay[nLen + 1] = '\0';
+                (void) STRTOWSTR(strDisplay, wstrDisplay, sizeof(wstrDisplay));
+                IDISPLAY_DrawText(pMe->m_pDisplay, 
+                                AEE_FONT_NORMAL, //AEE_FONT_BOLD, 
+                                wstrDisplay,
+                                -1, 
+                                2*xOffset, 
+                                TITLEBAR_HEIGHT + MENUITEM_HEIGHT*3/2,
+                                NULL, 
+                                IDF_TEXT_TRANSPARENT);
+                (void)IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, nOldFontColor);
+            
+                // 绘制底条提示
+                if (nLen > 3)
+                {// 确定-----删除
+                	#ifdef FEATURE_ALL_KEY_PAD
+                    CONTAPP_DRAW_BOTTOMBAR(BTBAR_OK_DELETE)
+                    #else
+                    CONTAPP_DRAW_BOTTOMBAR(BTBAR_OK_BACK)
+                    #endif
+                }
+                else if(nLen > 0)
+                {// 删除
+                	#ifdef FEATURE_ALL_KEY_PAD
+                    CONTAPP_DRAW_BOTTOMBAR(BTBAR_DELETE)
+                    #else
+                    CONTAPP_DRAW_BOTTOMBAR(BTBAR_CANCEL)
+                    #endif
+                }
+                else
+                {// 取消
+                    CONTAPP_DRAW_BOTTOMBAR(BTBAR_CANCEL)
+                }
+            }
+            
+            // 更新显示
+            IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);  
             (void) ISHELL_PostEvent(pMe->m_pShell,
                                     AEECLSID_APP_CONTACT,
                                     EVT_USER_REDRAW,

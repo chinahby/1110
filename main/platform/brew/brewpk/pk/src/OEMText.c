@@ -12055,7 +12055,7 @@ static void T9_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext )
 		}
 		if(m_pImage!=NULL)
 		{
-			IIMAGE_Draw(m_pImage, (iWindX+iWindDx)-20, iWindY+16);
+			IIMAGE_Draw(m_pImage, (iWindX+iWindDx)-20, iWindY+14);
 		}
 		
 		if(m_pImage != NULL)

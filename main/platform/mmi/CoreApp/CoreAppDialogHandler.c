@@ -1377,15 +1377,7 @@ static boolean  IDD_ALARM_Handler(void       *pUser,
             {
                 IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
             }
-            ISHELL_PostEvent(pMe->a.m_pIShell,AEECLSID_CORE_APP,EVT_USER_REDRAW,0,0);
-            ICONFIG_GetItem( pMe->m_pConfig, CFGI_BEEP_VOL, &keyBeepVolumeSetting, sizeof(byte));
-            ICONFIG_SetItem( pMe->m_pConfig, CFGI_BEEP_VOL, &mute, sizeof(byte));
-			
-            return TRUE;
-        }
-
-        case EVT_USER_REDRAW:
-        {
+			{
             uint32  dwAlarmTime;
             AECHAR  wszTime[16];
             IImage* pResImg = NULL;
@@ -1463,9 +1455,16 @@ static boolean  IDD_ALARM_Handler(void       *pUser,
                 CoreDrawBottomBar( BTBAR_SNOOZE_CONTINUE_STOP);
             }
             IDISPLAY_Update( pMe->a.m_pIDisplay);
+           }
+            ISHELL_PostEvent(pMe->a.m_pIShell,AEECLSID_CORE_APP,EVT_USER_REDRAW,0,0);
+            ICONFIG_GetItem( pMe->m_pConfig, CFGI_BEEP_VOL, &keyBeepVolumeSetting, sizeof(byte));
+            ICONFIG_SetItem( pMe->m_pConfig, CFGI_BEEP_VOL, &mute, sizeof(byte));
+			
             return TRUE;
         }
 
+        case EVT_USER_REDRAW:
+			return TRUE;
         case EVT_DIALOG_END:
             IBACKLIGHT_Enable(pMe->m_pBacklight);
 #ifdef FEATURE_LED_CONTROL

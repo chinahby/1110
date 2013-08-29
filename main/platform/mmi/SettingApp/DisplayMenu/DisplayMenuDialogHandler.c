@@ -463,6 +463,11 @@ static boolean  HandleMainDialogEvent(CDisplayMenu *pMe,
             IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
 #endif
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
+			// 统一更新界面
+			IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn, AEECLSID_DISPLAY1, TRUE);
+			IDISPLAY_Update(pMe->m_pDisplay);
+			(void)IMENUCTL_Redraw(pMenu);
+
             (void) ISHELL_PostEvent( pMe->m_pShell,
                                              AEECLSID_APP_DISPLAYMENU,
                                              EVT_USER_REDRAW,
@@ -477,10 +482,7 @@ static boolean  HandleMainDialogEvent(CDisplayMenu *pMe,
             //                                &pMe->m_rc,
             //                                BTBAR_SELECT_BACK);
 
-            // 统一更新界面
-            IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn, AEECLSID_DISPLAY1, TRUE);
-            IDISPLAY_Update(pMe->m_pDisplay);
-            (void)IMENUCTL_Redraw(pMenu);
+            
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -1138,6 +1140,8 @@ static boolean  HandleImgDelMsgDialogEvent(CDisplayMenu *pMe,
             return TRUE;
 
         case EVT_DIALOG_START:
+			{
+			PromptMsg_Param_type m_PromptMsg;
             //IDISPLAY_SetClipRect(pMe->m_pDisplay, NULL);
             if(IDS_DEL_ITEM_YESNO == pMe->m_msg_id)
             {
@@ -1151,12 +1155,7 @@ static boolean  HandleImgDelMsgDialogEvent(CDisplayMenu *pMe,
 				ISHELL_SetTimer(pMe->m_pShell, 2000, DisplayMenu_DialogTimeout, pMe);
 #endif           
 			}
-            ISHELL_PostEvent( pMe->m_pShell,AEECLSID_APP_DISPLAYMENU,EVT_USER_REDRAW,0,0);
-            return TRUE;
-
-        case EVT_USER_REDRAW:
-        {
-            PromptMsg_Param_type m_PromptMsg;
+			
             MEMSET(&m_PromptMsg,0,sizeof(PromptMsg_Param_type));
             m_PromptMsg.nMsgResID= pMe->m_msg_id;
             if(IDS_DEL_ITEM_YESNO == pMe->m_msg_id)
@@ -1175,6 +1174,12 @@ static boolean  HandleImgDelMsgDialogEvent(CDisplayMenu *pMe,
             m_PromptMsg.eBBarType = BTBAR_BACK;
             DrawPromptMessage(pMe->m_pDisplay,pStatic,&m_PromptMsg);
             IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+            ISHELL_PostEvent( pMe->m_pShell,AEECLSID_APP_DISPLAYMENU,EVT_USER_REDRAW,0,0);
+            return TRUE;
+        	}
+
+        case EVT_USER_REDRAW:
+        {
             return TRUE;
         }
 

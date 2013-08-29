@@ -921,25 +921,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                     //                                        (PFNNOTIFY)CallApp_Process_Spec_Key_Event_CB,
                     //                                        (void *)pMe);
                 }
-                (void) ISHELL_PostEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_USER_REDRAW,0,0);
-
-            }
-
-#if defined( FEATURE_CALL_RECORDER)
-        	pMe->m_bSettingVolume = FALSE;
-#endif
-            return TRUE;
-
-        case EVT_FLIP:
-            //CALL_ERR("Connect EVT_FLIP %d", wParam, 0, 0);
-            if(pMe->m_b_incall)
-            {
-                CallApp_Process_EVT_FLIP_Event(pMe,wParam);
-            }
-            return TRUE;
-
-        case EVT_USER_REDRAW:          
-#if defined( FEATURE_CALL_RECORDER)
+				#if defined( FEATURE_CALL_RECORDER)
         	if( pMe->m_bShowPopMenu)
         	{
         		return TRUE;
@@ -960,40 +942,58 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 #endif
 			IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
 #if defined( FEATURE_CALL_RECORDER)
-        //modi by pyuangui 20121231  为防止在输入界面重叠 不画录音提示和时间
+						//modi by pyuangui 20121231  为防止在输入界面重叠 不画录音提示和时间
         #if defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_C316)  
         #else
-		if( pMe->m_bRecorderOn && !pMe->m_bShowPopMenu)
-        {
-        	recorder_show_media_spec( pMe, RGB_WHITE);
-        }
+						if( pMe->m_bRecorderOn && !pMe->m_bShowPopMenu)
+						{
+							recorder_show_media_spec( pMe, RGB_WHITE);
+						}
         #endif
-		
-        if( pMe->m_bSettingVolume && pMe->m_b_incall)
-        {
-			CallApp_RefreshVolBar( pMe);
-        }
+						
+						if( pMe->m_bSettingVolume && pMe->m_b_incall)
+						{
+							CallApp_RefreshVolBar( pMe);
+						}
 #endif
-
-            if(pMe->m_b_incall)
-            {
-                IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL/*ANNUN_FIELD_CALLFORWARD*/, ANNUN_STATE_CALL_INUSE_ON/*ANNUN_STATE_ON*/);
-            }
-            else
-            {
-                pMe->m_bHandFree  = FALSE;//IDLE default handfree is false
-                pMe->m_CallMuted  = FALSE;
-                IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL/*ANNUN_FIELD_CALLFORWARD*/, ANNUN_STATE_CALL_INUSE_OFF/*ANNUN_STATE_OFF*/);
-            }
+				
+							if(pMe->m_b_incall)
+							{
+								IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL/*ANNUN_FIELD_CALLFORWARD*/, ANNUN_STATE_CALL_INUSE_ON/*ANNUN_STATE_ON*/);
+							}
+							else
+							{
+								pMe->m_bHandFree  = FALSE;//IDLE default handfree is false
+								pMe->m_CallMuted  = FALSE;
+								IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL/*ANNUN_FIELD_CALLFORWARD*/, ANNUN_STATE_CALL_INUSE_OFF/*ANNUN_STATE_OFF*/);
+							}
 #ifdef FEATURE_EDITABLE_NUMBER
 #if defined( FEATURE_CALL_RECORDER)
-            if(!(pMe->m_bSettingVolume && pMe->m_b_incall))
+							if(!(pMe->m_bSettingVolume && pMe->m_b_incall))
 #endif
-            CallApp_Set_Cursor_Blink (pMe);
+							CallApp_Set_Cursor_Blink (pMe);
 #endif
+				IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+				//IANNUNCIATOR_Redraw(pMe->m_pIAnn);
 
-            IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-			IANNUNCIATOR_Redraw(pMe->m_pIAnn);
+                (void) ISHELL_PostEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_USER_REDRAW,0,0);
+
+            }
+
+#if defined( FEATURE_CALL_RECORDER)
+        	pMe->m_bSettingVolume = FALSE;
+#endif
+            return TRUE;
+
+        case EVT_FLIP:
+            //CALL_ERR("Connect EVT_FLIP %d", wParam, 0, 0);
+            if(pMe->m_b_incall)
+            {
+                CallApp_Process_EVT_FLIP_Event(pMe,wParam);
+            }
+            return TRUE;
+
+        case EVT_USER_REDRAW:          
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -6770,16 +6770,7 @@ static boolean CallApp_pwd_dialog_handler(CCallApp *pMe,
             return TRUE;
             
         case EVT_DIALOG_START:  
-            (void) ISHELL_PostEvent(pMe->m_pShell,
-                                    AEECLSID_DIALER,
-                                    EVT_USER_REDRAW,
-                                    NULL,
-                                    NULL);
-
-            return TRUE;
-            
-        case EVT_USER_REDRAW:
-            // 绘制相关信息
+			 // 绘制相关信息
             {
                 AECHAR  text[32] = {0};
                 RGBVAL nOldFontColor;
@@ -6862,9 +6853,19 @@ static boolean CallApp_pwd_dialog_handler(CCallApp *pMe,
                 // 更新显示
                 IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE); 
         
-                return TRUE;
+                
             }
+            (void) ISHELL_PostEvent(pMe->m_pShell,
+                                    AEECLSID_DIALER,
+                                    EVT_USER_REDRAW,
+                                    NULL,
+                                    NULL);
+
+            return TRUE;
             
+        case EVT_USER_REDRAW:
+           
+            return TRUE;
         case EVT_DIALOG_END:
            // if(!pme->m_bSuspended)
             {
