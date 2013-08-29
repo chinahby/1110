@@ -797,7 +797,7 @@ static NextFSMAction COREST_VERIFYUIM_Handler(CCoreApp *pMe)
                 }
                 else
                 {
-#if defined(FEATURE_VERSION_N021) || defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_S600S)
+#if defined(FEATURE_VERSION_N021) || defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_S600S)|| defined(FEATURE_VERSION_EC99)
                 	MOVE_TO_STATE(COREST_STARTUPANI);
 #else 
                     MOVE_TO_STATE(COREST_UIMERR)

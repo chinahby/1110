@@ -133,6 +133,18 @@ boolean bIsPowerUp = FALSE;     //Add By zzg 2013_03_29
 
 #define WEEK_X              DATA_X
 #define WEEK_Y              DATA_Y
+#elif defined (FEATURE_VERSION_EC99)
+#define IDLE_D_CLOCK_X 		5
+#define IDLE_D_CLOCK_Y 		20
+
+#define RPLMN_X				IDLE_D_CLOCK_X
+#define RPLMN_Y				(IDLE_D_CLOCK_Y+40)
+
+#define DATA_X				IDLE_D_CLOCK_X
+#define DATA_Y				(RPLMN_Y+20)
+
+#define WEEK_X              IDLE_D_CLOCK_X
+#define WEEK_Y              (DATA_Y + 20)
 #else
 #define IDLE_D_CLOCK_X 		5
 #define IDLE_D_CLOCK_Y 		25
@@ -930,6 +942,9 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
                 case IDS_WAITING:
                     set_time = 0;
                     break;
+                case IDS_TIME_DETAIL:
+                    set_time = 8000;
+                    break;
                 default:
                     break;
             }
@@ -969,7 +984,7 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
                     m_PromptMsg.nMsgResID = 0;
                     m_PromptMsg.ePMsgType = MESSAGE_WARNNING;
                     m_PromptMsg.pwszMsg = pMe->m_cdg_msgptr;
-                }
+                }               
                 else
                 {
                     m_PromptMsg.ePMsgType = MESSAGE_WARNNING;
@@ -991,7 +1006,37 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
                        m_PromptMsg.eBBarType = BTBAR_OK_BACK;
                     }
                 }
-                DrawPromptMessage(pMe->m_pDisplay,pStatic,&m_PromptMsg);
+
+                if (pMe->m_nMsgID == IDS_TIME_DETAIL)
+                {
+                    //IDS_TIME_AM
+                    //IDS_TIME_PM    
+                    //IDS_TIME_DETAIL
+
+                    AECHAR  wstrText[64]={0};
+                    AECHAR  wstrFMT[64]={0};
+                    uint16  nHour=0, nMinute=0;
+                    
+                    PromptMsg_Param_type  Msg_Param={0};                                        
+                    
+                    (void)ISHELL_LoadResString(pMe->a.m_pIShell,
+                                    AEE_COREAPPRES_LANGFILE,                                
+                                    IDS_TIME_DETAIL,
+                                    wstrFMT,
+                                    sizeof(wstrFMT));
+                                    
+                    WSPRINTF(wstrText, sizeof(wstrText), wstrFMT, nHour, nMinute);
+                      
+                    m_PromptMsg.ePMsgType = MESSAGE_INFORMATION;
+                    m_PromptMsg.pwszMsg = wstrText;
+                    m_PromptMsg.eBBarType = BTBAR_BACK;
+                    
+                    DrawPromptMessage(pMe->m_pDisplay, pStatic, &m_PromptMsg);
+                }
+                else
+                {
+                    DrawPromptMessage(pMe->m_pDisplay,pStatic,&m_PromptMsg);
+                }
             }
             else
             {
@@ -4308,7 +4353,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             (void) ISHELL_CancelTimer(pMe->a.m_pIShell,
                                       CoreApp_SearchingTimer,
                                       pMe);
-             #if defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_1110W516)|| defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_C316)//|| defined(FEATURE_VERSION_K212)
+             #if defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_1110W516)|| defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_C316)|| defined(FEATURE_VERSION_EC99)//|| defined(FEATURE_VERSION_K212)
              IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
              #endif
 //Add by pyuangui 20121220			 
@@ -4351,6 +4396,21 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 
 			return TRUE;
 		}
+/*        
+#elif defined (FEATURE_VERSION_EC99) 
+        case EVT_USER:
+		{
+			MSG_FATAL("***zzg IDD_IDLE_Handle EVT_USER wParam=%x***",wParam,0,0);		
+
+            if (wParam == 2)
+			{
+				pMe->m_nMsgID = IDS_TIME_DETAIL;
+                CLOSE_DIALOG(DLGRET_BATT_INFO)
+			}
+			
+			return TRUE;
+		}
+*/        
 #endif		
 		//Add End
 //Add by pyuangui 20121220		
@@ -4750,6 +4810,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 							return CoreApp_LaunchApplet(pMe, AEECLSID_SCHEDULEAPP);
 						#elif defined(FEATURE_VERSION_K212)
 							return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
+                        #elif defined(FEATURE_VERSION_EC99)
+							return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
 						#else
 							return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);//
 						#endif
@@ -4862,6 +4924,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
     				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 #elif defined (FEATURE_VERSION_S600S)
     				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_APP_RECENTCALL);
+#elif defined (FEATURE_VERSION_EC99)
+    				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 #else
                         ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif				    
@@ -5327,6 +5391,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                         }
                         
                         #endif
+/*                        
 #ifdef FEATURE_SOUND_BO
 {
 						boolean m_sound_bo_dia = FALSE;
@@ -5345,6 +5410,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 						}
 }
 #endif
+*/
                         if ( SUCCESS != ISHELL_CreateInstance( pMe->a.m_pIShell,
                                                         AEECLSID_DIALER,
                                                         (void **)&pCallApp))
@@ -6576,7 +6642,7 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
                           #ifdef FEATURE_OEMOMH
                                       IDF_ALIGN_LEFT 
                           #elif defined(FEATURE_VERSION_MYANMAR)
-                                      IDF_ALIGN_CENTER
+                                      IDF_ALIGN_CENTER                         
                           #else
                                       IDF_ALIGN_RIGHT 
                           #endif
@@ -6595,7 +6661,7 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
                           #ifdef FEATURE_OEMOMH
                                       IDF_ALIGN_LEFT 
                           #elif defined(FEATURE_VERSION_MYANMAR)
-                                      IDF_ALIGN_CENTER
+                                      IDF_ALIGN_CENTER                                        
                           #else
                                       IDF_ALIGN_RIGHT 
                           #endif
@@ -6658,6 +6724,8 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
                                   IDF_ALIGN_LEFT 
                                   #elif defined(FEATURE_VERSION_MYANMAR)
                                   IDF_ALIGN_CENTER
+                                  #elif defined(FEATURE_VERSION_EC99)
+                                  IDF_ALIGN_LEFT     
         						  #else
                                   IDF_ALIGN_RIGHT 
                                   #endif
@@ -6697,6 +6765,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
     AECHAR      wszDate[64]= {0};
     AECHAR      wFormat[64]= {0};
     AECHAR      wszDatemat[4] = {0};
+    AECHAR      wszAmPm[10] = {0};
     JulianType  jDate;
     AEERect     rc;
     AEERect     rc_date;
@@ -6813,6 +6882,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 			   DATA_Y,
 			   (pMe->m_rc.dx-2*DATA_X), 
 			   pMe->m_nNormalFontHeight);
+
 #if defined(FEATURE_DISP_160X128)
 	SETAEERECT(&rc_week, 
 		   WEEK_X,
@@ -6896,18 +6966,34 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
         	   wszDatemat[0] = (AECHAR)'P';
         	   wszDatemat[1] = (AECHAR)'M';
         	   wszDatemat[2] = 0;
+#ifdef FEATURE_VERSION_EC99
+            (void) ISHELL_LoadResString(pMe->a.m_pIShell,
+                                        AEE_COREAPPRES_LANGFILE,
+                                           IDS_STR_PM,
+                                           wszAmPm,
+                                           sizeof(wszAmPm));
+#else
             wszDate[len] = (AECHAR)'P';
             wszDate[len+1] = (AECHAR)'M';
             wszDate[len+2] = 0;
+#endif            
         }
         else
         {
         	   wszDatemat[0] = (AECHAR)'A';
         	   wszDatemat[1] = (AECHAR)'M';
         	   wszDatemat[2] = 0;
+#ifdef FEATURE_VERSION_EC99   
+            (void) ISHELL_LoadResString(pMe->a.m_pIShell,
+                                        AEE_COREAPPRES_LANGFILE,
+                                           IDS_STR_AM,
+                                           wszAmPm,
+                                           sizeof(wszAmPm));
+#else
             wszDate[len] = (AECHAR)'A';
             wszDate[len+1] = (AECHAR)'M';
-            wszDate[len+2] = 0;
+            wszDate[len+2] = 0;          
+#endif             
         }
     }
     else
@@ -6934,6 +7020,32 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 	                              | IDF_TEXT_TRANSPARENT); 
     }
 #elif defined FEATURE_DISP_220X176
+#ifdef FEATURE_VERSION_EC99
+    DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
+	                              pMe->m_pDisplay,
+	                              RGB_WHITE_NO_TRANS,
+	                              70, 
+	                              wszDate, -1,
+	                              0, 0, &rc, 
+	                              IDF_ALIGN_MIDDLE
+	                              | IDF_ALIGN_CENTER
+	                              | IDF_TEXT_TRANSPARENT);
+    if (bTFmt == OEMNV_TIMEFORM_AMPM)
+    {
+        AEERect tmprt = rc;
+        tmprt.y -= 10;
+        DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
+    	                              pMe->m_pDisplay,
+    	                              RGB_WHITE_NO_TRANS,
+    	                              20, 
+    	                              wszAmPm, -1,
+    	                              0, 0, &tmprt, 
+    	                              IDF_ALIGN_BOTTOM
+    	                              | IDF_ALIGN_RIGHT
+    	                              | IDF_TEXT_TRANSPARENT);
+     }
+
+#else
 	DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
 	                              pMe->m_pDisplay,
 	                              RGB_WHITE_NO_TRANS,
@@ -6943,6 +7055,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 	                              IDF_ALIGN_MIDDLE
 	                              | IDF_ALIGN_LEFT
 	                              | IDF_TEXT_TRANSPARENT);
+#endif
 #elif defined FEATURE_DISP_240X320
 {
 	#ifdef FEATURE_LCD_TOUCH_ENABLE
@@ -8031,6 +8144,7 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
     }
 	else
 #endif
+
 	if(pMe->m_bemergencymode)
     {
         eBBarType = BTBAR_BACK;
@@ -8074,7 +8188,9 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 	#elif defined(FEATURE_VERSION_C316)
 	    eBBarType = BTBAR_SHORTCUT_CONTACTS;
 	#elif defined(FEATURE_VERSION_S600S)
-	    eBBarType = BTBAR_RECENTCALLS_CONTACTS;    
+	    eBBarType = BTBAR_RECENTCALLS_CONTACTS; 
+    #elif defined(FEATURE_VERSION_EC99)
+	    eBBarType = BTBAR_MENU_CONTACTS;      
         #else
 		   eBBarType = BTBAR_MESSAGES_CONTACTS; //add by yangdecai  BTBAR_MESSAGES_CONTACTS
 		#endif

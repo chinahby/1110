@@ -223,6 +223,15 @@
 	<String Id="1081" Name="IDS_MAIN_MENU_TORCHOFF">
 		<Text>电筒已关闭</Text>
 	</String>
+	<String Id="1117" Name="IDS_TIME_AM">
+		<Text>现在是北京时间上午%02d:%02d分！</Text>
+	</String>	
+	<String Id="1118" Name="IDS_TIME_PM">
+		<Text>现在是北京时间下午%02d:%02d分！</Text>
+	</String>	
+	<String Id="1119" Name="IDS_TIME_DETAIL">
+		<Text>现在是北京时间%02d:%02d分！</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_UIMERR" Focus="7001">
