@@ -685,8 +685,13 @@ typedef enum
 #define MUSIC_WIDTH            178 //78
 #define MUSIC_START_WIDTH      180 //80
 #else
+#ifdef FEATURE_VERSION_EC99
+#define MUSIC_WIDTH            (SCREEN_HEIGHT-75) //78
+#define MUSIC_START_WIDTH      (SCREEN_HEIGHT-73) //80
+#else
 #define MUSIC_WIDTH            (SCREEN_HEIGHT-52) //78
 #define MUSIC_START_WIDTH      (SCREEN_HEIGHT-50) //80
+#endif
 #endif
 #endif
 #endif

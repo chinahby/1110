@@ -852,7 +852,7 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
 #if FEATURE_FMRADIO_SUPPORT_BACKGROUND 			
 			if (!pMe->runOnBackground )
 #endif      
-            #ifdef FEATURE_VERSION_SKY  
+            #if defined (FEATURE_VERSION_SKY) || defined (FEATURE_VERSION_EC99)
 			if (HS_HEADSET_ON())
 			{
                pMe->fmSpeaker=FALSE;
@@ -865,7 +865,9 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
 #if !defined( AEE_SIMULATOR)
             FmRadio_PowerUp( pMe);
             #ifndef FEATURE_VERSION_SKY
+            #ifndef FEATURE_VERSION_EC99
 			if (HS_HEADSET_ON())
+            #endif
             #endif    
 			{
 #ifdef FEATURE_ANALOG_TV
@@ -941,7 +943,9 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
 #endif                
 			{
                 #ifndef FEATURE_VERSION_SKY
+                #ifndef FEATURE_VERSION_EC99
 				if (HS_HEADSET_ON())
+                #endif
                 #endif    
 				{
 #ifdef FEATURE_ANALOG_TV
@@ -1095,7 +1099,7 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
         
         case EVT_HEADSET:
         {
-            #ifdef FEATURE_VERSION_SKY
+            #if defined (FEATURE_VERSION_SKY) || defined (FEATURE_VERSION_EC99)
             if (HS_HEADSET_ON())
 			{
                pMe->fmSpeaker=FALSE;
@@ -1367,7 +1371,9 @@ static void FmRadio_PowerUp(void *pme)
 
     pMe->newSmsIncoming = FALSE;
     #ifndef FEATURE_VERSION_SKY
+    #ifndef FEATURE_VERSION_EC99    
     FmRadio_CheckRefuse( pMe);
+    #endif
 	#endif
     if( pMe->refuseReason == FM_RADIO_REFUSE_REASON_VOICE_CALL_CONNECTED)
     {
@@ -1433,7 +1439,9 @@ static void FmRadio_PowerUp(void *pme)
             pMe->ledLightType = FM_RADIO_LED_LIGHT_IDLE;
         }
         #ifndef FEATURE_VERSION_SKY
+        #ifndef FEATURE_VERSION_EC99
         if (HS_HEADSET_ON())
+        #endif
         #endif    
         {
 #ifdef FEATURE_ANALOG_TV

@@ -71,7 +71,11 @@ static boolean  HandleFmRadioMainDialogEvent(CFmRadio *pMe,
 #define CONTINUE_TO_REFRESH_CHANNEL_LIST    FALSE
 #define FM_VOLUME_X                         5
 #if defined(FEATURE_DISP_220X176)
+#ifdef FEATURE_VERSION_EC99
+#define FM_VOLUME_Y                         (SCREEN_HEIGHT - 110)
+#else
 #define FM_VOLUME_Y                         (SCREEN_HEIGHT - 90)
+#endif
 #elif defined(FEATURE_DISP_320X240)
 #define FM_VOLUME_Y                         (SCREEN_HEIGHT - 128)
 #elif defined(FEATURE_DISP_176X220)
@@ -491,7 +495,7 @@ static boolean  HandleFmRadioMainDialogEvent(CFmRadio *pMe,
         #ifdef FEATURE_LCD_TOUCH_ENABLE
             TSIM_NumberKeypad(FALSE);
         #endif
-            #ifdef FEATURE_VERSION_SKY
+            #if defined (FEATURE_VERSION_SKY) || defined (FEATURE_VERSION_EC99)
             if (HS_HEADSET_ON())
             {
              //ISHELL_PostEvent( pMe->m_pShell,AEECLSID_CORE_APP,
@@ -618,6 +622,7 @@ static void tuneVolumeStop(CFmRadio* pMe)
        //pMe->byVolumeLevel = 0;
 #if !defined( AEE_SIMULATOR)
         #ifndef FEATURE_VERSION_SKY
+        #ifndef FEATURE_VERSION_EC99
         if (HS_HEADSET_ON())  
         {
             fm_set_volume( newvolumeLevel,pMe->fmSpeaker);
@@ -627,6 +632,7 @@ static void tuneVolumeStop(CFmRadio* pMe)
             fm_set_volume( newvolumeLevel,pMe->fmSpeaker); 
             fm_set_volume( newvolumeLevel,pMe->fmSpeaker); 
             pMe->fmVolumeStop=FALSE;
+        #endif    
         #endif
 #endif
     }
@@ -642,6 +648,7 @@ static void tuneVolumeStop(CFmRadio* pMe)
         newvolumeLevel = pMe->byVolumeLevel;
 #if !defined( AEE_SIMULATOR)
         #ifndef FEATURE_VERSION_SKY
+        #ifndef FEATURE_VERSION_EC99
         if (HS_HEADSET_ON())   
         {
             fm_set_volume(newvolumeLevel,pMe->fmSpeaker);
@@ -652,6 +659,7 @@ static void tuneVolumeStop(CFmRadio* pMe)
             fm_set_volume( newvolumeLevel,pMe->fmSpeaker);
             fm_set_volume( pMe->byVolumeLevel,pMe->fmSpeaker); 
             pMe->fmVolumeStop=TRUE;
+        #endif            
         #endif
 #endif
 
@@ -942,7 +950,9 @@ static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier)
 			else if (pMe->opMode == FM_RADIO_OPMODE_REFRESH_CHANNEL_LIST)
 			{
                 #ifndef FEATURE_VERSION_SKY
+                #ifndef FEATURE_VERSION_EC99
 				if (HS_HEADSET_ON())
+                #endif
                 #endif    
 			    {
 #ifdef FEATURE_ANALOG_TV
@@ -1083,7 +1093,9 @@ __handleKeyEvent_input_channel_done__:
 			else if (pMe->opMode == FM_RADIO_OPMODE_REFRESH_CHANNEL_LIST)
 			{
                 #ifndef FEATURE_VERSION_SKY
+                #ifndef FEATURE_VERSION_EC99
 				if (HS_HEADSET_ON())
+                #endif    
                 #endif    
 			    {
 #ifdef FEATURE_ANALOG_TV
@@ -1645,7 +1657,9 @@ static void changeVolume( CFmRadio *pMe, uint16 keyCode)
 #if !defined( AEE_SIMULATOR)
     //Call driver to set Volume
     #ifndef FEATURE_VERSION_SKY
+    #ifndef FEATURE_VERSION_EC99
     if (HS_HEADSET_ON())
+    #endif
     #endif    
     {
 #ifdef FEATURE_ANALOG_TV
@@ -1948,7 +1962,9 @@ static void popChannelListOptionMenu( CFmRadio *pMe)
 static void refreshChannelList( CFmRadio *pMe, boolean begin)
 {
     #ifndef FEATURE_VERSION_SKY
+    #ifndef FEATURE_VERSION_EC99
     if (HS_HEADSET_ON())
+    #endif    
     #endif    
     {
 #ifdef FEATURE_ANALOG_TV
@@ -2115,7 +2131,9 @@ static void refreshChannelListCB( void *pme)
     else
     {
         #ifndef FEATURE_VERSION_SKY
+        #ifndef FEATURE_VERSION_EC99
         if (HS_HEADSET_ON())
+        #endif
         #endif    
         {
 #ifdef FEATURE_ANALOG_TV
@@ -3200,11 +3218,21 @@ static void drawChannelIndicator( CFmRadio *pMe)
                 pMe->m_rc.y + FMRADIO_CHANNEL_FREQ_YOFFSET, 
                 pMe->m_rc.dx,
                 nFontHeight);*/
+
+#ifdef FEATURE_VERSION_EC99
+    SETAEERECT(&rect, 
+                pMe->m_rc.x, 
+                pMe->m_rc.y+1, 
+                pMe->m_rc.dx,
+                nFontHeight); 
+#else
     SETAEERECT(&rect, 
                 pMe->m_rc.x, 
                 pMe->m_rc.y + FMRADIO_CHANNEL_FREQ_YOFFSET, 
                 pMe->m_rc.dx,
-                nFontHeight);                
+                nFontHeight);  
+#endif
+
     drawImageWithOffset( pMe, FMRADIOLN_RES_FILE, IDI_BG, rect.x, rect.y, &rect);
     drawText2( pMe->m_pDisplay,
             szBuf,
