@@ -5374,7 +5374,9 @@ static boolean  CallApp_MsgBox_DlgHandler(CCallApp  *pMe,
                 {
                     ISHELL_SetTimer(pMe->m_pShell, 8000,
                                            CallApp_HandleDialogTimer, pMe);
+					#ifdef FEATURE_SOUND_BO
                     CallApp_PlayTimeSound(pMe, m_TimeStarusEx);
+					#endif
                 }
                 else
                 {
