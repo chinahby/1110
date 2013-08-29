@@ -933,7 +933,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
             //1200
 			#ifdef FEATURE_VERSION_K212
             (void)ISHELL_SetTimer( pMe->m_pShell,
-                                                1200,
+                                                500,
                                                 CameraApp_PrevewTimeout,
                                                 pMe );
             #else
@@ -6268,7 +6268,7 @@ void CameraApp_AppEventNotify(CCameraApp *pMe, int16 nCmd, int16 nStatus)
 #else
             if(pMe->m_nCameraTone == OEMNV_CAMERA_SHUTTER_TONE_ENABLE)
             {
-            		#ifdef FEATURE_VERSION_K212
+            		#ifdef FEATURE_SOUND_BO
 					nv_item_type	SimChoice;
             		(void)OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
 					if(SimChoice.sim_select != 1)
