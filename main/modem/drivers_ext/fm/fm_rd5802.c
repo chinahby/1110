@@ -887,7 +887,7 @@ int fm_set_volume(word wVolume,boolean speaker)
 #include "Hs_mb6550.h"
 
 void fm_mute(boolean on,boolean speaker)
-{	
+{	  
 	if ( ( on == TRUE) && (fm_playing_mute == FALSE) )
 	{
 		fm_playing_mute = TRUE;
@@ -903,11 +903,11 @@ void fm_mute(boolean on,boolean speaker)
         snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	
         if(speaker)
         {
-        	snd_set_device(SND_DEVICE_SPEAKER_FM, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);
+           snd_set_device(SND_DEVICE_SPEAKER_FM, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);
         }
         else
         {
-			snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);
+           snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);
 		}
 		
 	}

@@ -76,7 +76,12 @@ DEFINITIONS
 
 #define DATECTL_SPECIALDAY_COLOR        (MAKE_RGB(0xD4, 0x7C, 0x0A))
 #define DATECTL_TODAY_FRAME_COLOR     (MAKE_RGB(0x78, 0xF0, 0x78))
+
+#define DATECTL_FONT_HEIGHT       10    //12
 #endif /*CUST_EDITION*/
+
+extern int GreyBitBrewFont_DrawText(IDisplay *p, int nSize, const AECHAR *psz, int nl, int x, int y, const AEERect *prcb, uint32 flags);
+
 /*===========================================================================
 
 
@@ -334,8 +339,13 @@ int DateCtl_New(IShell * pIShell, AEECLSID cls, void ** ppobj)
 
    // initialize default fonts
 
-   pme->m_fntTitle = AEE_FONT_BOLD;
-   pme->m_fntText  = AEE_FONT_NORMAL;
+#ifdef FEATURE_VERSION_EC99
+    pme->m_fntTitle = AEE_FONT_SMALL;
+    pme->m_fntText  = AEE_FONT_SMALL;
+#else
+    pme->m_fntTitle = AEE_FONT_BOLD;
+    pme->m_fntText  = AEE_FONT_NORMAL;
+#endif
 
    pme->m_nHitData = -1;
    // Set default date string
@@ -1339,7 +1349,7 @@ static boolean DateCtl_DrawDate(DateCtl * pme)
    // Only show the title IF the number of lines allows...
 
    if (pme->m_rc.dy >= TITLEHEIGHT + LINEHEIGHT && pme->m_pTitle) {
-      IDISPLAY_DrawText(pme->m_pIDisplay, pme->m_fntTitle, pme->m_pTitle, -1, x, y+2,NULL,IDF_RECT_NONE);
+      IDISPLAY_DrawText(pme->m_pIDisplay, pme->m_fntTitle, pme->m_pTitle, -1, x, y+2,NULL,IDF_RECT_NONE);    
       y += TITLEHEIGHT;
       nLines = (pme->m_rc.dy - TITLEHEIGHT) / LINEHEIGHT;
    }
@@ -1361,8 +1371,8 @@ static boolean DateCtl_DrawDate(DateCtl * pme)
 
    if(nLines > 1){
       DateCtl_GetDayString(pme, pme->m_nDayOfWeek, sz, sizeof(sz));
-      SETAEERECT(&rc, x, y, pme->m_rc.dx, LINEHEIGHT);
-      IDISPLAY_DrawText(pme->m_pIDisplay, pme->m_fntText, sz, -1, x, y+1, &rc,IDF_RECT_FILL|(bCentered ? IDF_ALIGN_CENTER : 0));
+      SETAEERECT(&rc, x, y, pme->m_rc.dx, LINEHEIGHT);      
+      IDISPLAY_DrawText(pme->m_pIDisplay, pme->m_fntText, sz, -1, x, y+1, &rc,IDF_RECT_FILL|(bCentered ? IDF_ALIGN_CENTER : 0));     
       y += LINEHEIGHT;
    }
 
@@ -1407,9 +1417,11 @@ static boolean DateCtl_DrawDate(DateCtl * pme)
             WWRITELONG(sz, pme->m_nMonth);
          }
          // Get Width of this field and draw
-         nPad = (FLDPAD/2);
+         nPad = (FLDPAD/2);         
          nMonWidth = IDISPLAY_MeasureText(pme->m_pIDisplay,pme->m_fntText, (const AECHAR *)sz) + nPad;
+                
          SETAEERECT(&rc, x, y, nMonWidth, LINEHEIGHT);
+         
          IDISPLAY_DrawText(pme->m_pIDisplay, pme->m_fntText, sz, -1,x+nPad, y+2, &rc,(bHighlight ? IDF_RECT_FILL|IDF_TEXT_INVERTED : IDF_RECT_FILL));
          xCpy = x;
          // Offset and draw field separator if needed
@@ -1417,27 +1429,28 @@ static boolean DateCtl_DrawDate(DateCtl * pme)
             *szSep = (AECHAR)'/';
             *(szSep+1) = (AECHAR)0;
             x += nMonWidth;
-            nSep = IDISPLAY_MeasureText(pme->m_pIDisplay, pme->m_fntText, (const AECHAR *)szSep);
-            SETAEERECT(&rc, x, y, nSep, LINEHEIGHT);
-            IDISPLAY_DrawText(pme->m_pIDisplay, pme->m_fntText, szSep, -1,x, y+2, &rc,IDF_RECT_FILL);
+            
+            nSep = IDISPLAY_MeasureText(pme->m_pIDisplay, pme->m_fntText, (const AECHAR *)szSep);            
+            SETAEERECT(&rc, x, y, nSep, LINEHEIGHT);           
+            IDISPLAY_DrawText(pme->m_pIDisplay, pme->m_fntText, szSep, -1,x, y+2, &rc,IDF_RECT_FILL);            
          }
          x = xCpy + pme->m_nMonFldWidth;
          // display the day field
 
          bHighlight = (pme->m_nCurrentField == 1);
-         psz = WWRITELONG(sz, pme->m_nDay);
-         nDayWidth = IDISPLAY_MeasureText(pme->m_pIDisplay,pme->m_fntText, (const AECHAR *)sz) + nPad;
-         SETAEERECT(&rc, x, y, nDayWidth, LINEHEIGHT);
+         psz = WWRITELONG(sz, pme->m_nDay);         
+         nDayWidth = IDISPLAY_MeasureText(pme->m_pIDisplay,pme->m_fntText, (const AECHAR *)sz) + nPad;        
+         SETAEERECT(&rc, x, y, nDayWidth, LINEHEIGHT);        
          IDISPLAY_DrawText(pme->m_pIDisplay, pme->m_fntText, sz, -1, x+nPad, y+2, &rc, (bHighlight ? IDF_RECT_FILL|IDF_TEXT_INVERTED : IDF_RECT_FILL));
          xCpy = x;
          x += nDayWidth;
          if(dwFormat != DFMT_MM_DD_YYYY){
             *szSep = (AECHAR)',';
-            *(szSep+1) = (AECHAR)0;
-            nSep = IDISPLAY_MeasureText(pme->m_pIDisplay, pme->m_fntText, (const AECHAR *)szSep);
+            *(szSep+1) = (AECHAR)0;            
+            nSep = IDISPLAY_MeasureText(pme->m_pIDisplay, pme->m_fntText, (const AECHAR *)szSep);           
          }
-         SETAEERECT(&rc, x, y, nSep, LINEHEIGHT);
-         IDISPLAY_DrawText(pme->m_pIDisplay, pme->m_fntText, szSep, -1,x, y+2, &rc,IDF_RECT_FILL);
+         SETAEERECT(&rc, x, y, nSep, LINEHEIGHT);        
+         IDISPLAY_DrawText(pme->m_pIDisplay, pme->m_fntText, szSep, -1,x, y+2, &rc,IDF_RECT_FILL);         
          x = xCpy + pme->m_nDayFldWidth;
          // display the year field
 
@@ -1447,18 +1460,19 @@ static boolean DateCtl_DrawDate(DateCtl * pme)
             psz = sz;
          }else{
             *szSep = (AECHAR)'\'';
-            *(szSep+1) = (AECHAR)0;
-            nSep = IDISPLAY_MeasureText(pme->m_pIDisplay, pme->m_fntText, (const AECHAR *)szSep);
-            SETAEERECT(&rc, x, y, nSep+(FLDPAD/2), LINEHEIGHT);
+            *(szSep+1) = (AECHAR)0;            
+            nSep = IDISPLAY_MeasureText(pme->m_pIDisplay, pme->m_fntText, (const AECHAR *)szSep);           
+            SETAEERECT(&rc, x, y, nSep+(FLDPAD/2), LINEHEIGHT);           
             IDISPLAY_DrawText(pme->m_pIDisplay, pme->m_fntText, szSep, -1,x+nPad, y+2, &rc,IDF_RECT_FILL);
             nPad = 0;
             x+= nSep + nPad + 1;
             psz -=2;
          }
-         nYearWidth = IDISPLAY_MeasureText(pme->m_pIDisplay, pme->m_fntText, (const AECHAR *)psz) + FLDPAD;
-         SETAEERECT(&rc, x, y, nYearWidth, LINEHEIGHT);
+         
+         nYearWidth = IDISPLAY_MeasureText(pme->m_pIDisplay, pme->m_fntText, (const AECHAR *)psz) + FLDPAD;         
+         SETAEERECT(&rc, x, y, nYearWidth, LINEHEIGHT);         
          IDISPLAY_DrawText(pme->m_pIDisplay, pme->m_fntText, psz, -1, x+nPad, y+2, &rc,(bHighlight ? IDF_RECT_FILL|IDF_TEXT_INVERTED : IDF_RECT_FILL));
-      }
+     }
       break;
    case DFMT_DD_MONTH_YYYY:
    case DFMT_DD_MON_YYYY:
@@ -1559,7 +1573,8 @@ static int DateCtl_CalcCurrentField(DateCtl * pme, AEERect* prc, int16 wXPos, in
          }
          // Get Width of this field and draw
          nPad = (FLDPAD/2);
-         nMonWidth = IDISPLAY_MeasureText(pme->m_pIDisplay,pme->m_fntText, (const AECHAR *)sz) + nPad;
+         
+         nMonWidth = IDISPLAY_MeasureText(pme->m_pIDisplay,pme->m_fntText, (const AECHAR *)sz) + nPad;        
          SETAEERECT(prc, x, y, nMonWidth, LINEHEIGHT);
          if( PT_IN_RECT(wXPos, wYPos, *prc) ){
             return 0;
@@ -1569,15 +1584,15 @@ static int DateCtl_CalcCurrentField(DateCtl * pme, AEERect* prc, int16 wXPos, in
          if(dwFormat == DFMT_MM_DD_YYYY){
             *szSep = (AECHAR)'/';
             *(szSep+1) = (AECHAR)0;
-            x += nMonWidth;
-            nSep = IDISPLAY_MeasureText(pme->m_pIDisplay, pme->m_fntText, (const AECHAR *)szSep);
+            x += nMonWidth;            
+            nSep = IDISPLAY_MeasureText(pme->m_pIDisplay, pme->m_fntText, (const AECHAR *)szSep);            
             SETAEERECT(prc, x, y, nSep, LINEHEIGHT);
          }
          x = xCpy + pme->m_nMonFldWidth;
          // display the day field
 
          psz = WWRITELONG(sz, pme->m_nDay);
-         nDayWidth = IDISPLAY_MeasureText(pme->m_pIDisplay,pme->m_fntText, (const AECHAR *)sz) + nPad;
+         nDayWidth = IDISPLAY_MeasureText(pme->m_pIDisplay,pme->m_fntText, (const AECHAR *)sz) + nPad;         
          SETAEERECT(prc, x, y, nDayWidth, LINEHEIGHT);
          if( PT_IN_RECT(wXPos, wYPos, *prc) ){
             return 1;
@@ -1586,8 +1601,8 @@ static int DateCtl_CalcCurrentField(DateCtl * pme, AEERect* prc, int16 wXPos, in
          x += nDayWidth;
          if(dwFormat != DFMT_MM_DD_YYYY){
             *szSep = (AECHAR)',';
-            *(szSep+1) = (AECHAR)0;
-            nSep = IDISPLAY_MeasureText(pme->m_pIDisplay, pme->m_fntText, (const AECHAR *)szSep);
+            *(szSep+1) = (AECHAR)0;            
+            nSep = IDISPLAY_MeasureText(pme->m_pIDisplay, pme->m_fntText, (const AECHAR *)szSep);           
          }
          SETAEERECT(prc, x, y, nSep, LINEHEIGHT);
          x = xCpy + pme->m_nDayFldWidth;
@@ -1599,13 +1614,13 @@ static int DateCtl_CalcCurrentField(DateCtl * pme, AEERect* prc, int16 wXPos, in
          }else{
             *szSep = (AECHAR)'\'';
             *(szSep+1) = (AECHAR)0;
-            nSep = IDISPLAY_MeasureText(pme->m_pIDisplay, pme->m_fntText, (const AECHAR *)szSep);
+            nSep = IDISPLAY_MeasureText(pme->m_pIDisplay, pme->m_fntText, (const AECHAR *)szSep);          
             SETAEERECT(prc, x, y, nSep+(FLDPAD/2), LINEHEIGHT);
             nPad = 0;
             x+= nSep + nPad + 1;
             psz -=2;
-         }
-         nYearWidth = IDISPLAY_MeasureText(pme->m_pIDisplay, pme->m_fntText, (const AECHAR *)psz) + FLDPAD;
+         }         
+         nYearWidth = IDISPLAY_MeasureText(pme->m_pIDisplay, pme->m_fntText, (const AECHAR *)psz) + FLDPAD;        
          SETAEERECT(prc, x, y, nYearWidth, LINEHEIGHT);
          if( PT_IN_RECT(wXPos, wYPos, *prc) ){
             return 2;
@@ -1665,17 +1680,19 @@ static void DateCtl_DisplayDateText(DateCtl * pme)
    
 #ifdef FEATURE_CALENDAR_USE_STYLE
    SETAEERECT(&rectTitle, pme->m_rc.x+4, pme->m_rc.y+3, pme->m_rc.dx-7, pme->m_nFontLineHeight);
+#ifndef FEATURE_VERSION_EC99
    drawImage(pme, AEE_APPSCOMMONRES_IMAGESFILE, IDI_DATE_BAR, pme->m_rc.x, pme->m_rc.y);
+#endif   
 #endif
     nOldFontColor = IDISPLAY_SetColor( pme->m_pIDisplay, CLR_USER_TEXT, RGB_WHITE);
    
    // display the day-of-week string in the top left of screen
 
    if (DateCtl_GetDayString(pme, pme->m_nDayOfWeek, sz, sizeof(sz)))
-#ifdef FEATURE_CALENDAR_USE_STYLE
-      IDISPLAY_DrawText(pme->m_pIDisplay, pme->m_fntText, sz,ABBREV_LEN,0, rectTitle.y, &rectTitle,IDF_TEXT_TRANSPARENT|IDF_ALIGN_LEFT);
-#else
-      IDISPLAY_DrawText(pme->m_pIDisplay, pme->m_fntText, sz,ABBREV_LEN,pme->m_rc.x, pme->m_rc.y+1, NULL,IDF_TEXT_TRANSPARENT);
+#ifdef FEATURE_CALENDAR_USE_STYLE     
+      IDISPLAY_DrawText(pme->m_pIDisplay, pme->m_fntText, sz,ABBREV_LEN,0, rectTitle.y, &rectTitle,IDF_TEXT_TRANSPARENT|IDF_ALIGN_LEFT);      
+#else      
+      IDISPLAY_DrawText(pme->m_pIDisplay, pme->m_fntText, sz,ABBREV_LEN,pme->m_rc.x, pme->m_rc.y+1, NULL,IDF_TEXT_TRANSPARENT);      
 #endif
    // display the date string in the top right of screen
    // DateCtl_FormatDate(pme, pme->m_nYear, pme->m_nMonth, pme->m_nDay, sz, 3);
@@ -1683,9 +1700,9 @@ static void DateCtl_DisplayDateText(DateCtl * pme)
 
 {
     int nChars,nWidth;
-    IDateCtl_GetDateString((IDateCtl*)pme, sz, sizeof(sz), &nChars, pme->m_dwProps);
-    nWidth = IDISPLAY_MeasureTextEx(pme->m_pIDisplay, pme->m_fntText, sz, nChars, 70, NULL);
-#ifdef FEATURE_CALENDAR_USE_STYLE
+    IDateCtl_GetDateString((IDateCtl*)pme, sz, sizeof(sz), &nChars, pme->m_dwProps);    
+    nWidth = IDISPLAY_MeasureTextEx(pme->m_pIDisplay, pme->m_fntText, sz, nChars, 70, NULL);   
+#ifdef FEATURE_CALENDAR_USE_STYLE   
     IDISPLAY_DrawText(pme->m_pIDisplay, 
                      pme->m_fntText, 
                      sz, 
@@ -1693,7 +1710,7 @@ static void DateCtl_DisplayDateText(DateCtl * pme)
                      0, 
                      rectTitle.y, 
                      &rectTitle,
-                     IDF_ALIGN_RIGHT | IDF_TEXT_TRANSPARENT);
+                     IDF_ALIGN_RIGHT | IDF_TEXT_TRANSPARENT);   
 #else
     IDISPLAY_DrawText(pme->m_pIDisplay, 
                      pme->m_fntText, 
@@ -1702,7 +1719,7 @@ static void DateCtl_DisplayDateText(DateCtl * pme)
                      0, 
                      pme->m_rc.y+1, 
                      NULL,
-                     IDF_ALIGN_RIGHT | IDF_TEXT_TRANSPARENT);
+                     IDF_ALIGN_RIGHT | IDF_TEXT_TRANSPARENT);    
 #endif
 }
 
@@ -1730,14 +1747,16 @@ static void DateCtl_DisplayDateText(DateCtl * pme)
    // display the day-of-week string in the top left of screen
 
    if (DateCtl_GetDayString(pme, pme->m_nDayOfWeek, sz, sizeof(sz)))
-      IDISPLAY_DrawText(pme->m_pIDisplay, pme->m_fntText, sz,ABBREV_LEN,pme->m_rc.x, pme->m_rc.y+1, NULL,0);
+   {
+    IDISPLAY_DrawText(pme->m_pIDisplay, pme->m_fntText, sz,ABBREV_LEN,pme->m_rc.x, pme->m_rc.y+1, NULL,0);   
+   }
    
    // display the date string in the top right of screen
    // DateCtl_FormatDate(pme, pme->m_nYear, pme->m_nMonth, pme->m_nDay, sz, 3);
 
-   IDateCtl_GetDateString((IDateCtl*)pme, sz, sizeof(sz), &nChars, pme->m_dwProps);
+   IDateCtl_GetDateString((IDateCtl*)pme, sz, sizeof(sz), &nChars, pme->m_dwProps);  
    nWidth = IDISPLAY_MeasureTextEx(pme->m_pIDisplay, pme->m_fntText, sz, nChars, 70, NULL);
-   IDISPLAY_DrawText(pme->m_pIDisplay, pme->m_fntText, sz, -1,pme->m_rc.dx-1-nWidth, pme->m_rc.y+1, NULL,0);
+   IDISPLAY_DrawText(pme->m_pIDisplay, pme->m_fntText, sz, -1,pme->m_rc.dx-1-nWidth, pme->m_rc.y+1, NULL,0);  
 }
 #endif /*CUST_EDITION*/
 /*==================================================================
@@ -2188,12 +2207,12 @@ static void SetTextSizeCache(DateCtl * pme)
 
    // Set title height
    pme->m_nFontTitleHeight =
-      IDISPLAY_GetFontMetrics(pme->m_pIDisplay, pme->m_fntTitle, NULL, NULL);
-
-   // Set line height
+      IDISPLAY_GetFontMetrics(pme->m_pIDisplay, pme->m_fntTitle, NULL, NULL);  
+   
+   // Set line height  
    pme->m_nFontLineHeight =
       IDISPLAY_GetFontMetrics(pme->m_pIDisplay, pme->m_fntText, NULL, NULL);
-      
+         
    if (!pme->m_bMonthView) {
       // get width of widest month string
       pme->m_nMonFldWidth = 0;
@@ -2203,8 +2222,9 @@ static void SetTextSizeCache(DateCtl * pme)
             DateCtl_GetMonthString(pme, i, sz, sizeof(sz));
             if(dwFormat != DFMT_DD_MONTH_YYYY && dwFormat != DFMT_MONTH_DD_YYYY)
                sz[ABBREV_LEN] = 0;
+
             width = IDISPLAY_MeasureText(pme->m_pIDisplay,
-                                         pme->m_fntText, (const AECHAR *)sz);
+                                         pme->m_fntText, (const AECHAR *)sz);           
             if (pme->m_nMonFldWidth < width)
                pme->m_nMonFldWidth = width;
          }
@@ -2213,22 +2233,24 @@ static void SetTextSizeCache(DateCtl * pme)
          *sz = '1';
          *(sz+1) = '0';
          *(sz+2) = (AECHAR)0;
+
          pme->m_nMonFldWidth = IDISPLAY_MeasureText(pme->m_pIDisplay,
-                                         pme->m_fntText, (const AECHAR *)sz);
+                                         pme->m_fntText, (const AECHAR *)sz);       
       }
       pme->m_nMonFldWidth += FLDPAD;
       if(dwFormat == DFMT_MM_DD_YYYY || dwFormat == DFMT_DD_MM_YYYY
          || dwFormat == DFMT_YYYY_MM_DD || dwFormat == DFMT_INT_YYYY_MM_DD){
          *szExtra = (AECHAR)(dwFormat == DFMT_INT_YYYY_MM_DD ? '.' : '/');
          *(szExtra+1) = (AECHAR)0;
-         pme->m_nMonFldWidth += IDISPLAY_MeasureText(pme->m_pIDisplay, pme->m_fntText, szExtra);
+
+         pme->m_nMonFldWidth += IDISPLAY_MeasureText(pme->m_pIDisplay, pme->m_fntText, szExtra);       
       }
 
       // get width of "30" which should be the widest date
       STRTOWSTR("30,",sz, sizeof(sz));
       pme->m_nDayFldWidth = IDISPLAY_MeasureText(pme->m_pIDisplay,
                                                  pme->m_fntText,
-                                                 (const AECHAR *)sz) + FLDPAD;
+                                                 (const AECHAR *)sz) + FLDPAD;      
       if(dwFormat == DFMT_MONTH_DD_YYYY || dwFormat == DFMT_MON_DD_YYYY
          || dwFormat == DFMT_MON_DD_YY || dwFormat == DFMT_MM_DD_YYYY
          || dwFormat == DFMT_DD_MM_YYYY){
@@ -2238,7 +2260,6 @@ static void SetTextSizeCache(DateCtl * pme)
             *szExtra = (AECHAR)',';
          *(szExtra+1) = (AECHAR)0;
          pme->m_nDayFldWidth += IDISPLAY_MeasureText(pme->m_pIDisplay, pme->m_fntText, szExtra);
-
       }
 
       // get width of "2000" which should be the widest year
@@ -2247,7 +2268,7 @@ static void SetTextSizeCache(DateCtl * pme)
          sz[2] = (AECHAR)0;
       pme->m_nYearFldWidth = IDISPLAY_MeasureText(pme->m_pIDisplay,
                                                   pme->m_fntText,
-                                                  (const AECHAR *)sz) + FLDPAD;
+                                                  (const AECHAR *)sz) + FLDPAD;     
       if(dwFormat == DFMT_DD_MON_YY || dwFormat == DFMT_MON_DD_YY 
          || dwFormat == DFMT_YYYY_MM_DD || dwFormat == DFMT_INT_YYYY_MM_DD){
             if(dwFormat == DFMT_YYYY_MM_DD)
@@ -2257,7 +2278,7 @@ static void SetTextSizeCache(DateCtl * pme)
             else
                *szExtra = (AECHAR)'\'';
             *(szExtra+1) = (AECHAR)0;
-            pme->m_nYearFldWidth += IDISPLAY_MeasureText(pme->m_pIDisplay, pme->m_fntText, szExtra);
+            pme->m_nYearFldWidth += IDISPLAY_MeasureText(pme->m_pIDisplay, pme->m_fntText, szExtra);          
       }
    }
 }
@@ -2362,7 +2383,7 @@ static void DateCtl_DrawDayEx(DateCtl * pme, int nDay, AEERect * prc)
                 SETAEERECT(&rectText, prc->x-1, prc->y-1, prc->dx+2,prc->dy+2);
                 oldFrameColor = IDISPLAY_SetColor(pme->m_pIDisplay, CLR_USER_FRAME, DATECTL_TODAY_FRAME_COLOR);
                 properties |= IDF_RECT_FRAME;
-                (void)IDISPLAY_DrawText(pme->m_pIDisplay, pme->m_fntText, sz, -1, 0, 0, &rectText, properties);
+                (void)IDISPLAY_DrawText(pme->m_pIDisplay, pme->m_fntText, sz, -1, 0, 0, &rectText, properties);               
 #else
                 oldFrameColor = IDISPLAY_SetColor(pme->m_pIDisplay, CLR_USER_FRAME, 0xff00);
                 (void)IDISPLAY_DrawText(pme->m_pIDisplay, pme->m_fntText, sz, -1, 0, 0, prc, properties);
@@ -2373,7 +2394,7 @@ static void DateCtl_DrawDayEx(DateCtl * pme, int nDay, AEERect * prc)
             }
             else
             {
-                (void)IDISPLAY_DrawText(pme->m_pIDisplay, pme->m_fntText, sz, -1, 0, 0, prc, properties);
+                (void)IDISPLAY_DrawText(pme->m_pIDisplay, pme->m_fntText, sz, -1, 0, 0, prc, properties);               
             }
 
             if (nDay == pme->m_nDay)

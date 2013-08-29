@@ -141,6 +141,17 @@ static uint16 StrokeMap[]=
 #define T9_STROKE_FONT_WIDTH    (16) // (10) 
 #define T9_STROKE_LEFT_ARROW    (10) 
 #define MAX_STROKES             (9) // (10) // the max count which display in the screen
+#elif defined(FEATURE_DISP_220X176)
+#define SELECTION_BUFFER_SIZE   (7)
+#define CAUDB_SIZE              (200)
+#define T9KEYTYPE_NORMAL        (0)
+#define T9KEYTYPE_SELECT        (1)
+#define T9KEYTYPE_CONTROL       (2)
+#define T9KEYTYPE_UNKNOWN       (6)
+#define T9_FONT_WIDTH           (25)
+#define T9_STROKE_FONT_WIDTH    (16) // (10) 
+#define T9_STROKE_LEFT_ARROW    (10) 
+#define MAX_STROKES             (9) // (10) // the max count which display in the screen
 
 #else
 #define SELECTION_BUFFER_SIZE   (8)
@@ -186,6 +197,15 @@ static uint16 StrokeMap[]=
 #define SPACESIZE  5  //6
 #define CHINESE_FONT_HEIGHT 20
 #define CHINESE_FONT_WIDTH 20 
+#elif defined(FEATURE_DISP_220X176)
+#define SYLLABLEWIDTH  25
+#define SEPARATORWIDTH 16
+#define PSYLLABLEWIDTH  6   
+#define PSEPARATORWIDTH 3   // 4
+#define SPELLMAX  10
+#define SPACESIZE  5  //6
+#define CHINESE_FONT_HEIGHT 25
+#define CHINESE_FONT_WIDTH 25 
 #else
 #define SYLLABLEWIDTH  15
 #define SEPARATORWIDTH 6
@@ -2337,6 +2357,7 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
                 if(pContext->dwProperties & TP_DISPLAY_SMSCOUNT)
                 {
 #ifndef FEATURE_VERSION_K212
+#ifndef FEATURE_VERSION_EC99
                     AECHAR   * pszText;
                     pszText = OEM_TextGet(pContext);
                     szsmscount = 1;
@@ -2371,6 +2392,7 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
                                     wRemainingChars,
                                     szsmscount);
                     */
+#endif
 #endif
                 }
                 else
