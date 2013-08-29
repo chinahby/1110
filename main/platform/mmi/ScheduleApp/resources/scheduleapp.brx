@@ -20,7 +20,7 @@
 		<Text>Sports! Go Go Go!</Text>
 	</STRING>
 	<STRING Id="1007" Name="IDS_DATE">
-		<Text>YYYY : MM : DD</Text>
+		<Text>MM : DD : YYYY</Text>
 	</STRING>
 	<STRING Id="1008" Name="IDS_INVALID_YEAR">
 		<Text>Enter year from 1980 to 2050</Text>

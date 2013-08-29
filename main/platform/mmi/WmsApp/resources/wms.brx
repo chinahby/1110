@@ -834,8 +834,14 @@
 			</Menu>
 		</Controls>
 	</DIALOG>
-	<DIALOG Id="6018" Name="IDD_MEMSTATUS" Focus="0">
-		<Controls/>
+	<DIALOG Id="6018" Name="IDD_MEMSTATUS" Focus="7050">
+		<Controls>
+			<Menu Id="7049" Name="IDC_WMS_MENU">
+				<Items/>
+			</Menu>
+			<Static Id="7050" Name="IDC_WMS_STATIC">
+				<Items/></Static>
+		</Controls>
 	</DIALOG>
 	<Dialog Id="6019" Name="IDD_RSVDMSGALERTTIMEOUT_SETTING" Focus="0">
 		<Controls>
