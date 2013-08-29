@@ -610,7 +610,24 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
 			    //MP3_ResetScroll(pMe);	
 			    IDISPLAY_Update(pMe->m_pDisplay); //к╒фа			    
 			}
-			return;
+#ifdef FEATURE_VERSION_EC99
+            else if (wParam == AVK_PAUSE) //pause/start
+            {
+                wParam = AVK_INFO;                
+                return MP3_MusicPlayerHandleKeyEvent(pMe,eCode,wParam,dwParam);
+            }
+            else if (wParam == AVK_FFWD)   //pre
+            {
+                wParam = AVK_LEFT;                
+                return MP3_MusicPlayerHandleKeyEvent(pMe,eCode,wParam,dwParam);
+            }
+            else if (wParam == AVK_RWD)   //next
+            {
+                wParam = AVK_RIGHT;                
+                return MP3_MusicPlayerHandleKeyEvent(pMe,eCode,wParam,dwParam);
+            }
+#endif            
+			return TRUE;
 		}
 		//Add End
         case EVT_DIALOG_END:
@@ -5907,6 +5924,7 @@ static void MP3_RefreshPlayingTick(CMusicPlayer *pMe)
         SPRINTF(tick_time,"%02d:%02d",pMe->m_nSimPlayCurTime /60,pMe->m_nSimPlayCurTime %60);
 	}
 	STRTOWSTR(tick_time, Wtick_time, sizeof(Wtick_time));
+
 	DrawTextWithProfile(pMe->m_pShell, 
                            pMe->m_pDisplay, 
                            RGB_WHITE_NO_TRANS, 
