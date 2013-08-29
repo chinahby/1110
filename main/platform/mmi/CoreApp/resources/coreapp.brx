@@ -294,6 +294,15 @@
 	</String>
 	<String Id="1116" Name="IDS_20_MIN">
 		<Text>20 MIN</Text>
+	</String>	
+	<String Id="1117" Name="IDS_TIME_AM">
+		<Text>The time is %02d:%02d am now!</Text>
+	</String>	
+	<String Id="1118" Name="IDS_TIME_PM">
+		<Text>The time is %02d:%02d pm now!</Text>
+	</String>	
+	<String Id="1119" Name="IDS_TIME_DETAIL">
+		<Text>The time is %02d:%02d  now!</Text>
 	</String>
 </Strings>
 <Dialogs>
