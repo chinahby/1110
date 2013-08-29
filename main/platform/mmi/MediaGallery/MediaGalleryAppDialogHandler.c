@@ -3039,7 +3039,34 @@ static boolean MediaGalleryApp_OnPopupMenuCommand(CMediaGalleryApp* pMe,
          bRet = MediaGalleryApp_OnDefaultOperate(pMe,
                                                  pMenuCtl,
                                                  wParam,
-                                                 dwParam);
+                                                 dwParam); 
+		 // add by pyuangui 2013-08-29  K212ÐèÇó·ÀÉÁÆÁ
+#ifdef FEATURE_VERSION_K212
+         {
+		 static IStatic * torch_pStatic = NULL;
+         PromptMsg_Param_type m_PromptMsg;
+         MEMSET(&m_PromptMsg,0,sizeof(PromptMsg_Param_type));
+         m_PromptMsg.nMsgResID= IDS_MG_LOADING;
+		 
+         m_PromptMsg.ePMsgType = MESSAGE_WARNNING;
+         STRLCPY(m_PromptMsg.strMsgResFile, MGRES_LANGFILE,MAX_FILE_NAME);
+         m_PromptMsg.eBBarType = BTBAR_NONE;
+         if (NULL == torch_pStatic)
+         {
+             AEERect rect = {0};
+             if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,AEECLSID_STATIC,(void **)&torch_pStatic))
+             {
+                 return FALSE;
+             }
+             ISTATIC_SetRect(torch_pStatic, &rect);
+         }
+         DrawPromptMessage(pMe->m_pDisplay,torch_pStatic,&m_PromptMsg);
+         IDISPLAY_UpdateEx(pMe->m_pDisplay,TRUE);
+         ISTATIC_Release(torch_pStatic);
+         torch_pStatic=NULL;
+         }
+#endif
+		 //add end
       }
       break;
 
