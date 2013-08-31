@@ -210,7 +210,7 @@
 #define CALL_LINE_HIGHT                      (22) //18为NORMAL字体高度，目前只需要这个高度就够了
 #else
 #ifdef FEATURE_VERSION_K212
-#define CALL_LINE_HIGHT                      (36)
+#define CALL_LINE_HIGHT                      (38)
 #else
 #ifdef FEATURE_VERSION_EC99
 #define CALL_LINE_HIGHT                      (25)

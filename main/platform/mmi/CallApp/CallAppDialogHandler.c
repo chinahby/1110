@@ -3269,7 +3269,7 @@ static boolean  CallApp_Dialer_Calling_DlgHandler(CCallApp *pMe,
 					#if defined(FEATURE_VERSION_K212)
                     SETAEERECT(&rect,
                                 5,
-                                CALL_FOURTH_LINE_Y,
+                                CALL_THIRD_LINE_Y,
                                 230,
                                 dy);
 					#else
@@ -3497,7 +3497,18 @@ static void CallApp_Dialer_Show_Animation(void *pUser)
     {
         RGBVAL     oldColor = 0;
         //calling.....
+        #if defined(FEATURE_VERSION_K212)
+		if(pMe->m_isIncoming)
+		{
+			SETAEERECT(&rect,CALL_TEXT_X,CALL_FIRST_LINE_Y,230,CALL_LINE_HIGHT);
+		}
+		else
+		{
+			SETAEERECT(&rect,CALL_TEXT_X,CALL_FIRST_LINE_Y,CALL_TEXT_DX,CALL_LINE_HIGHT);
+		}
+		#else
         SETAEERECT(&rect,CALL_TEXT_X,CALL_FIRST_LINE_Y,CALL_TEXT_DX,CALL_LINE_HIGHT);
+		#endif
 		#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)    
 		if(pMe->m_isIncoming)
 		{
@@ -3539,7 +3550,21 @@ static void CallApp_Dialer_Show_Animation(void *pUser)
         Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &rect, TRUE);
 
         oldColor = IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, CALLAPP_TEXT_COLOR);
-        (void)IDISPLAY_DrawText(pMe->m_pDisplay,
+		#if defined(FEATURE_VERSION_K212)
+		if(pMe->m_isIncoming)
+		{
+			(void)IDISPLAY_DrawText(pMe->m_pDisplay,
+                                                AEE_FONT_LARGE,
+                                                wBuf,
+                                                -1,
+                                                rect.x,
+                                                rect.y,
+                                                &rect,
+                                                IDF_ALIGN_CENTER|IDF_TEXT_TRANSPARENT);
+		}
+		else
+		{
+        	(void)IDISPLAY_DrawText(pMe->m_pDisplay,
                                                 AEE_FONT_NORMAL,
                                                 wBuf,
                                                 -1,
@@ -3547,6 +3572,17 @@ static void CallApp_Dialer_Show_Animation(void *pUser)
                                                 rect.y,
                                                 &rect,
                                                 IDF_ALIGN_LEFT|IDF_TEXT_TRANSPARENT);
+		}
+		#else
+			(void)IDISPLAY_DrawText(pMe->m_pDisplay,
+                                                AEE_FONT_NORMAL,
+                                                wBuf,
+                                                -1,
+                                                rect.x,
+                                                rect.y,
+                                                &rect,
+                                                IDF_ALIGN_LEFT|IDF_TEXT_TRANSPARENT);
+		#endif
         IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, oldColor);
     }
 
@@ -5131,11 +5167,19 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
                 }
                 else
                 {
+                	#if defined(FEATURE_VERSION_K212)
+					SETAEERECT(&rect,
+                                                        0,
+                                                        CALL_THIRD_LINE_Y,
+                                                        230,
+                                                        2 *CALL_LINE_HIGHT);
+					#else
                     SETAEERECT(&rect,
                                                         CALL_NAME_X,
                                                         CALL_THIRD_LINE_Y,
                                                         CALL_NAME_DX,
                                                         2 *CALL_LINE_HIGHT);
+					#endif
                 }
 
                 if(WSTRNCMP(p_temp->call_number, L"PRIVATE"/*pMe->wszPrivateString*/,7) == 0)
@@ -6042,7 +6086,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
 					#if defined(FEATURE_VERSION_K212)
                     SETAEERECT(&rect,
                                                         5,
-                                                        CALL_FOURTH_LINE_Y,
+                                                        CALL_SECOND_LINE_Y,
                                                         230,
                                                         dy);
 					#else
@@ -6075,43 +6119,53 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
                 }
                 else
                 {
-                	#if defined(FEATURE_VERSION_MTM)
-                	MSG_FATAL("FEATURE_VERSION_MTM.........INCOMEING",0,0,0);
-                	if(WSTRNCMP(pMe->m_CallsTable->call_number,L"+",1)==0)
+                	#if defined(FEATURE_VERSION_K212)
+					if(!pMe->m_CallsTable->in_phonebook)
+					#endif
                 	{
-                		AECHAR   call_Numberbuf[AEECM_MAX_DIGITS_LENGTH] = {0};
-                        WSTRLCPY(call_Numberbuf,&pMe->m_CallsTable->call_number[1],AEECM_MAX_DIGITS_LENGTH);
-                        CallApp_DrawText_Ex(pMe, AEE_FONT_NORMAL,
-                                call_Numberbuf, &rect, IDF_TEXT_TRANSPARENT);
-                	}
-                	else
-                	{
-                		CallApp_DrawText_Ex(pMe, AEE_FONT_NORMAL,
-                                pMe->m_CallsTable->call_number, &rect, IDF_TEXT_TRANSPARENT);
-                    }
-                	#else
-                    {
-                       #if defined (FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_S1000T)
-                        AECHAR Temp_Number[AEECM_MAX_DIGITS_LENGTH] = {0};
-                        if(WSTRNICMP(pMe->m_CallsTable->call_number,L"+00",3)==0)
-                        {
-                            Temp_Number[0]=L'+';
-                            WSTRLCPY(Temp_Number+1,pMe->m_CallsTable->call_number+3,AEECM_MAX_DIGITS_LENGTH);
-                            //WSTRCAT(Temp_Number, L"+");
-                        }
-                        else
-                        {
-                            WSTRLCPY(Temp_Number,pMe->m_CallsTable->call_number,AEECM_MAX_DIGITS_LENGTH);
-                        }
-                        // MSG_FATAL("pMe->m_CallsTable->call_number---=%d",pMe->m_CallsTable->call_number,0,0);
-                       CallApp_DrawText_Ex(pMe, AEE_FONT_NORMAL,Temp_Number, &rect, IDF_TEXT_TRANSPARENT);
-                      #else
-                       CallApp_DrawText_Ex(pMe, AEE_FONT_NORMAL,
-                                          pMe->m_CallsTable->call_number, &rect, IDF_TEXT_TRANSPARENT);
-                      #endif
+	                	#if defined(FEATURE_VERSION_MTM)
+	                	MSG_FATAL("FEATURE_VERSION_MTM.........INCOMEING",0,0,0);
+	                	if(WSTRNCMP(pMe->m_CallsTable->call_number,L"+",1)==0)
+	                	{
+	                		AECHAR   call_Numberbuf[AEECM_MAX_DIGITS_LENGTH] = {0};
+	                        WSTRLCPY(call_Numberbuf,&pMe->m_CallsTable->call_number[1],AEECM_MAX_DIGITS_LENGTH);
+	                        CallApp_DrawText_Ex(pMe, AEE_FONT_NORMAL,
+	                                call_Numberbuf, &rect, IDF_TEXT_TRANSPARENT);
+	                	}
+	                	else
+	                	{
+	                		CallApp_DrawText_Ex(pMe, AEE_FONT_NORMAL,
+	                                pMe->m_CallsTable->call_number, &rect, IDF_TEXT_TRANSPARENT);
+	                    }
+	                	#else
+	                    {
+	                       #if defined (FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_S1000T)
+	                        AECHAR Temp_Number[AEECM_MAX_DIGITS_LENGTH] = {0};
+	                        if(WSTRNICMP(pMe->m_CallsTable->call_number,L"+00",3)==0)
+	                        {
+	                            Temp_Number[0]=L'+';
+	                            WSTRLCPY(Temp_Number+1,pMe->m_CallsTable->call_number+3,AEECM_MAX_DIGITS_LENGTH);
+	                            //WSTRCAT(Temp_Number, L"+");
+	                        }
+	                        else
+	                        {
+	                            WSTRLCPY(Temp_Number,pMe->m_CallsTable->call_number,AEECM_MAX_DIGITS_LENGTH);
+	                        }
+	                        // MSG_FATAL("pMe->m_CallsTable->call_number---=%d",pMe->m_CallsTable->call_number,0,0);
+	                       CallApp_DrawText_Ex(pMe, AEE_FONT_NORMAL,Temp_Number, &rect, IDF_TEXT_TRANSPARENT);
+	                      #else
+						  #if defined(FEATURE_VERSION_K212)
+						  CallApp_DrawText_Ex(pMe, AEE_FONT_LARGE,
+	                                          pMe->m_CallsTable->call_number, &rect, IDF_ALIGN_CENTER|IDF_TEXT_TRANSPARENT);
+						  #else
+	                       CallApp_DrawText_Ex(pMe, AEE_FONT_NORMAL,
+	                                          pMe->m_CallsTable->call_number, &rect, IDF_TEXT_TRANSPARENT);
+						  #endif
+	                      #endif
 
-                    }
-                    #endif
+	                    }
+	                    #endif
+                	}
                 }
             }
 #ifndef FEATURE_USES_LOWMEM
@@ -6130,7 +6184,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
             {
                 //IIMAGE_SetParm(pMe->m_pConvImage, IPARM_ROP, AEE_RO_TRANSPARENT, 0);
 				#if defined(FEATURE_VERSION_K212)
-                IIMAGE_Draw(pMe->m_pConvImage, CALL_TEXT_X, CALL_SECOND_UP_LINE_Y);
+                //IIMAGE_Draw(pMe->m_pConvImage, CALL_TEXT_X, CALL_SECOND_UP_LINE_Y);
 				#else
 				IIMAGE_Draw(pMe->m_pConvImage, CALL_TEXT_X, CALL_SECOND_LINE_Y);
 				#endif
@@ -6156,7 +6210,11 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
                                                     CALL_NAME_DX,
                                                     CALL_LINE_HIGHT);
 				#endif
+				#if defined(FEATURE_VERSION_K212)
+				CallApp_DrawText_Ex(pMe, AEE_FONT_LARGE, pMe->m_CallsTable->call_name, &rect, IDF_ALIGN_CENTER|IDF_TEXT_TRANSPARENT);
+				#else
                 CallApp_DrawText_Ex(pMe, AEE_FONT_NORMAL, pMe->m_CallsTable->call_name, &rect, IDF_TEXT_TRANSPARENT);
+				#endif
                 //CallApp_DrawNameText(pMe, AEE_FONT_NORMAL, pMe->m_CallsTable->call_name, &rect, IDF_TEXT_TRANSPARENT);
             }
             
@@ -10827,7 +10885,7 @@ static void CallApp_Draw_Connect_Number_and_Name(CCallApp *pMe)
 					#if defined(FEATURE_VERSION_K212)
                     SETAEERECT(&rect,
                                                 5,
-                                                CALL_FOURTH_LINE_Y,
+                                                CALL_THIRD_LINE_Y,
                                                 230,
                                                 dy);
 					#else

@@ -765,7 +765,7 @@ static boolean  HandlePictureDialogEvent(CDisplayMenu *pMe,
             SETAEERECT( &clip, pMe->m_rc.x, (pMe->m_rc.dy/2)-10, pMe->m_rc.dx, pMe->m_rc.dy/2);
             DrawTextWithProfile(pMe->m_pShell, pMe->m_pDisplay, RGB_WHITE_NO_TRANS, AEE_FONT_LARGE, lBuf,-1,clip.x,clip.y,&clip, IDF_ALIGN_LEFT|IDF_TEXT_TRANSPARENT);
             DrawTextWithProfile(pMe->m_pShell, pMe->m_pDisplay, RGB_WHITE_NO_TRANS, AEE_FONT_LARGE, rBuf,-1,clip.x,clip.y,&clip,IDF_ALIGN_RIGHT|IDF_TEXT_TRANSPARENT);          
-			#ifdef FEATURE_VERSION_K202_LM129C
+			#if defined(FEATURE_VERSION_K202_LM129C)||defined(FEATURE_VERSION_K212)
 			DrawBottomBar_Ex(pMe->m_pShell,pMe->m_pDisplay, BTBAR_SELECT_BACK);	
 			#else
             DrawBottomBar_Ex(pMe->m_pShell,pMe->m_pDisplay, BTBAR_VIEWMORE_BACK);	//Add By zzg 2010_07_23	
@@ -950,7 +950,7 @@ static boolean  HandlePictureDialogEvent(CDisplayMenu *pMe,
 
                 case AVK_SELECT:		//Add By zzg 2010_07_23
 				{
-					#ifdef FEATURE_VERSION_K202_LM129C
+					#if defined(FEATURE_VERSION_K202_LM129C)||defined(FEATURE_VERSION_K212)
 					switch(pMe->m_PICType)
                     {
                         case WALLPAPER_MAIN:    /*//×ÀÃæÇ½Ö½*/

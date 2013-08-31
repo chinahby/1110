@@ -5761,6 +5761,31 @@ static boolean  CContApp_HandleInputFldDlgEvent( CContApp  *pMe,
                      
             (void)ITEXTCTL_SetInputMode(pTextCtl,
                      CContApp_GetFldInputMode(pMe->m_nFldInputID));
+			#if defined(FEATURE_LANG_ARABIC) ||defined(FEATURE_LANG_THAI)||defined(FEATURE_LANG_CHINESE)  //add by yangdecai
+            {
+				nv_language_enum_type language;
+				OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
+				if(NV_LANGUAGE_ARABIC == language)
+				{
+					MSG_FATAL("seting........................AEE_TM_ARABIC",0,0,0);
+					(void)ITEXTCTL_SetInputMode( pTextCtl, AEE_TM_ARABIC);
+				}
+				else if(NV_LANGUAGE_THAI == language)
+				{
+					(void)ITEXTCTL_SetInputMode(pTextCtl, AEE_TM_THAI);
+				}
+				else if(NV_LANGUAGE_CHINESE== language)
+    	    	{
+    	    		(void)ITEXTCTL_SetInputMode(pTextCtl, AEE_TM_PINYIN);
+    	    	}
+				else
+				{
+					(void)ITEXTCTL_SetInputMode( pTextCtl, AEE_TM_LETTERS);
+				}
+         	}
+         	#else
+         	(void)ITEXTCTL_SetInputMode( pTextCtl, AEE_TM_LETTERS);
+			#endif
 /*                     
 #ifdef FEATURE_LANG_ARABIC  // 有鉴于部分外语文字过长，作为标题显示效果不好，干脆就都不显示，以免用户误会
             (void)ITEXTCTL_SetTitle( pTextCtl,

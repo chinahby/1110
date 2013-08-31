@@ -3320,6 +3320,32 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
          MSG_FATAL("MGAppPopupMenu_OnImageViewer EVT_DIALOG_START",0,0,0);
          pCurNode = MediaGalleryApp_GetCurrentNode(pMe);
 
+#ifdef FEATURE_VERSION_K212
+         {
+		 static IStatic * torch_pStatic = NULL;
+         PromptMsg_Param_type m_PromptMsg;
+         MEMSET(&m_PromptMsg,0,sizeof(PromptMsg_Param_type));
+         m_PromptMsg.nMsgResID= IDS_MG_LOADING;
+		 
+         m_PromptMsg.ePMsgType = MESSAGE_WARNNING;
+         STRLCPY(m_PromptMsg.strMsgResFile, MGRES_LANGFILE,MAX_FILE_NAME);
+         m_PromptMsg.eBBarType = BTBAR_NONE;
+         if (NULL == torch_pStatic)
+         {
+             AEERect rect = {0};
+             if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,AEECLSID_STATIC,(void **)&torch_pStatic))
+             {
+                 return FALSE;
+             }
+             ISTATIC_SetRect(torch_pStatic, &rect);
+         }
+         DrawPromptMessage(pMe->m_pDisplay,torch_pStatic,&m_PromptMsg);
+         IDISPLAY_UpdateEx(pMe->m_pDisplay,TRUE);
+         ISTATIC_Release(torch_pStatic);
+         torch_pStatic=NULL;
+         }
+#endif
+
          if(!pCurNode || AEE_FA_DIR == pCurNode->attrib){
             MSG_FATAL("OnImageViewer encounter NULL pointor",0,0,0);
             return FALSE;
@@ -3458,7 +3484,7 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
                      {IDS_MG_ZOOM, TRUE}, {IDS_MG_SETWALLPAPER, TRUE},
                      {IDS_MG_DELETE, TRUE}, {IDS_MG_DETAILS, TRUE}
                   };
-				#elif defined(FEATURE_VERSION_LM126C)
+				#elif defined(FEATURE_VERSION_LM126C)||defined(FEATURE_VERSION_K212)
 				  MenuInsItem ImgViewOptions[] =
 				  {
 					 {IDS_MG_ZOOM, TRUE}, {IDS_MG_DELETE, TRUE}, 
@@ -6726,7 +6752,7 @@ static boolean MediaGalleryApp_ImageSettingDlg_HandleEvent(
                      {IDS_MG_VIEW, TRUE}, {IDS_MG_SETWALLPAPER, TRUE},
                      {IDS_MG_SORT, TRUE}, {IDS_MG_DETAILS, TRUE}
                   };
-				#elif defined(FEATURE_VERSION_LM126C)
+				#elif defined(FEATURE_VERSION_LM126C)||defined(FEATURE_VERSION_K212)
 				  MenuInsItem OptItems[] =
 				  {
 					 {IDS_MG_VIEW, TRUE}, {IDS_MG_SORT, TRUE}, 
@@ -7490,7 +7516,7 @@ static int MGAppUtil_BuildPopupMenuItems(CMediaGalleryApp* pMe,
          /*Check whether can slide*/
          //if(TRUE  == MGAppUtil_ImageSlideCheck(pMe, pItemData))
          //MGMENU_ADDITEM(*ppPopupMenu, IDS_MG_SLIDE);
-         #if defined(FEATURE_VERSION_LM126C)
+         #if defined(FEATURE_VERSION_LM126C)||defined(FEATURE_VERSION_K212)
 		 #else
          MGMENU_ADDITEM(*ppPopupMenu, IDS_MG_SETWALLPAPER);
 		 #endif

@@ -3436,9 +3436,9 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
         {
             MP3_DrawImage(pMe, IDI_FORWARD_PRESS, FORWARD_X,FORWARD_Y);
             IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
-			#ifndef FEATURE_VERSION_K212
+			//#ifndef FEATURE_VERSION_K212
             ISHELL_SetTimer(pMe->m_pShell,50,(PFNNOTIFY)MP3_DrawForwardImage, pMe);
-			#endif
+			//#endif
             if((pMe->m_nTotalTime - pMe->m_nCurrentTime) < MS_FASTFORWARDREWIND_TIME/1000)
             {
                 IMEDIA_FastForward(pMe->m_pMedia,1000*(pMe->m_nTotalTime - pMe->m_nCurrentTime));
@@ -3449,13 +3449,10 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
                 IMEDIA_FastForward(pMe->m_pMedia,MS_FASTFORWARDREWIND_TIME); 
                 pMe->m_nCurrentTime = pMe->m_nCurrentTime + MS_FASTFORWARDREWIND_TIME/1000;
             }
-			#ifdef FEATURE_VERSION_K212
-            (void) ISHELL_PostEvent(pMe->m_pShell, 
-	                        AEECLSID_APP_MUSICPLAYER,
-	                        EVT_USER_REDRAW,
-	                        0,
-	                        0);  
-            #endif
+			//#ifdef FEATURE_VERSION_K212
+            //MP3_DrawPlayerWindows(pMe);
+    		//MP3_DrawForwardImage(pMe);
+            //#endif
         }
         return TRUE;
 
@@ -3464,9 +3461,9 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
         {
             MP3_DrawImage(pMe, IDI_REWIND_PRESS, REWIND_X,REWIND_Y);
             IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
-			#ifndef FEATURE_VERSION_K212
+			//#ifndef FEATURE_VERSION_K212
             ISHELL_SetTimer(pMe->m_pShell,50,(PFNNOTIFY)MP3_DrawRewindImage, pMe);
-			#endif
+			//#endif
             if(pMe->m_nCurrentTime < MS_FASTFORWARDREWIND_TIME/1000)
             {
                 IMEDIA_Rewind(pMe->m_pMedia,pMe->m_nCurrentTime * 1000);
@@ -3477,13 +3474,10 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
                 IMEDIA_Rewind(pMe->m_pMedia,MS_FASTFORWARDREWIND_TIME);
                 pMe->m_nCurrentTime = pMe->m_nCurrentTime - MS_FASTFORWARDREWIND_TIME/1000;
             }
-			#ifdef FEATURE_VERSION_K212
-            (void) ISHELL_PostEvent(pMe->m_pShell, 
-	                        AEECLSID_APP_MUSICPLAYER,
-	                        EVT_USER_REDRAW,
-	                        0,
-	                        0);  
-            #endif
+			//#ifdef FEATURE_VERSION_K212
+            //MP3_DrawPlayerWindows(pMe); 
+			//MP3_DrawRewindImage(pMe);
+            //#endif
             
         }
         return TRUE;

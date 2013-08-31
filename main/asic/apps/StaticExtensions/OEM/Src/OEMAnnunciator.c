@@ -2366,7 +2366,7 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
 #endif        
 
         //MSG_FATAL("***zzg OEMAnnunciator m_bActive=%d, m_hasTitleText=%d***", IAnnunCoreObj->m_bActive, IAnnunCoreObj->m_hasTitleText, 0);
-
+#ifndef FEATURE_VERSION_K212
 	    if(!IAnnunCoreObj->m_bActive)
 		{			
 			/*
@@ -2568,6 +2568,7 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
            
 		  // IIMAGE_Release( pBackBmp);
 		}
+#endif
 		
       // 待机界面下不必跟新显示，待机界面绘制完显示信息后再统一更新显示，如此可避免进入待机界面的闪屏
       if (need_capture.b_capture != DB_CAPTURE_INIDLE)
