@@ -3047,6 +3047,9 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
 		ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_EnableKey, pMe);		//Add By zzg 2010_08_18
         CLOSE_DIALOG(DLGRET_OK);
         return TRUE;
+#ifdef FEATURE_VERSION_K212_20D
+     case AVK_PAUSE:
+#endif
      case AVK_INFO://²¥·Å 
      {
 		if (TRUE == m_bKeyEnable)
@@ -3264,7 +3267,9 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
         }
 		 return TRUE;
 #endif
-		
+#ifdef FEATURE_VERSION_K212_20D
+    case AVK_FFWD:
+#endif		
     case AVK_LEFT:
 #ifdef FEATURE_VERSION_C337
         if(pMe->m_bPlaying && pMe->m_pMedia)
@@ -3301,6 +3306,9 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
         return TRUE;
         
     //case AVK_GSENSOR_BACKWARD:   
+#ifdef FEATURE_VERSION_K212_20D
+    case AVK_RWD:
+#endif		    
     case AVK_RIGHT:
 #ifdef FEATURE_VERSION_C337	
         if(pMe->m_bPlaying && pMe->m_pMedia)

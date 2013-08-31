@@ -338,8 +338,8 @@ if(!(x))         \
 #define OLDPLAY_H 45
 
 #elif defined (FEATURE_DISP_220X176)
+#if defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)
 
-#ifdef FEATURE_VERSION_EC99
 //wlh 20090415 add 设置ICON 坐标 
 //进度条(简单播放)
 #define SIMSCHEDULEBAR_X 5
