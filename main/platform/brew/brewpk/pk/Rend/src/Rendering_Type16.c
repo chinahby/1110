@@ -265,7 +265,14 @@ static INLINE void Fun_BMPCopy(uint16 *pBitsDst16, uint16* pBitsSrc16, int16 wCp
 {
     if(wCpyWidth == nPitch)
     {
-        REND_MEMCPY16(pBitsDst16, pBitsSrc16, wCpyHeight*nPitch*sizeof(uint16));
+        if(((((uint32)pBitsDst16)%4) == 0)&&((((uint32)pBitsSrc16%4)) == 0)&&((nPitch%4) == 0))
+        {
+            REND_MEMCPY32(pBitsDst16, pBitsSrc16, wCpyHeight*nPitch*sizeof(uint16));
+        }
+        else
+        {
+            REND_MEMCPY16(pBitsDst16, pBitsSrc16, wCpyHeight*nPitch*sizeof(uint16));
+        }
     }
     else
     {

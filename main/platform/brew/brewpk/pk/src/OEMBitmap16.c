@@ -222,22 +222,178 @@ static const uint8 a6to8[] = {0x00, 0x04, 0x08, 0x0C, 0x10, 0x14, 0x18, 0x1C,
 // preformance for important cases.
 #ifndef BITMAP_DISABLE_OPT_STEP4
 
-#if 0
+#if 1
 #define FILLRECT_COPY FillRect_Copy
+static __inline void *OEMBitmap_Memset32(void *buffer, uint32 c, int size)
+{
+    uint32 *p = (uint32 *)buffer;
+    int sizemod;
+    size = size>>2;
+    sizemod = size&0x7;
+    size = size>>3;
+    while(size--)
+    {
+        *p++ = c;
+        *p++ = c;
+        *p++ = c;
+        *p++ = c;
+        *p++ = c;
+        *p++ = c;
+        *p++ = c;
+        *p++ = c;
+    }
+    
+    while(sizemod--)
+    {
+        *p++ = c;
+    }
+	return buffer;
+}
+
+static __inline void *OEMBitmap_Memset16(void *buffer, uint16 c, int size)
+{
+    if(size <= 0)
+    {
+        return buffer;
+    }
+    
+    if((((uint32)buffer)%4)==0)
+    {
+        if((size%4) == 0)
+        {
+            OEMBitmap_Memset32(buffer,(c<<16)|c,size);
+        }
+        else
+        {
+            uint16 *p = OEMBitmap_Memset32(buffer,(c<<16)|c,size-2);
+            *(p+((size>>1)-1)) = c;
+        }
+    }
+    else
+    {
+        uint16 *pb = buffer;
+        *pb++ = c;
+        size-=2;
+        if(size >0)
+        {
+            if((size%4) == 0)
+            {
+                OEMBitmap_Memset32(pb,(c<<16)|c,size);
+            }
+            else
+            {
+                uint16 *p = OEMBitmap_Memset32(pb,(c<<16)|c,size-2);
+                *(p+((size>>1)-1)) = c;
+            }
+        }
+    }
+	return buffer;
+}
 
 // Assume all parameters are valid and in bounds.
 static __inline void FillRect_Copy(OEMBitmap *pbmDst, int x, int y, int dx, int dy, NativeColor color)
 {
+    PIXELITER_SETUP(pbmDst, x, y, color, 0, FALSE);
+    if(dx == pitch_)
+    {
+        OEMBitmap_Memset16(pw_,color,dx*dy*sizeof(uint16));
+    }
+    else
+    {
+        while (dy-- > 0) {
+            OEMBitmap_Memset16(pw_,color,dx*sizeof(uint16));
+            PIXELITER_NEXTY();
+        }
+    }
 }
 #endif
 
 
-#if 0
+#if 1
 #define FILLRECT_XOR FillRect_XOR
+static __inline void *OEMBitmap_MemXOR32(void *buffer, uint32 c, int size)
+{
+    uint32 *p = (uint32 *)buffer;
+    int sizemod;
+    size = size>>2;
+    sizemod = size&0x7;
+    size = size>>3;
+    while(size--)
+    {
+        *p = *p^c; p++;
+        *p = *p^c; p++;
+        *p = *p^c; p++;
+        *p = *p^c; p++;
+        *p = *p^c; p++;
+        *p = *p^c; p++;
+        *p = *p^c; p++;
+        *p = *p^c; p++;
+    }
+    
+    while(sizemod--)
+    {
+        *p = *p^c; p++;
+    }
+	return buffer;
+}
+
+static __inline void *OEMBitmap_MemXOR16(void *buffer, uint16 c, int size)
+{
+    if(size <= 0)
+    {
+        return buffer;
+    }
+    
+    if((((uint32)buffer)%4)==0)
+    {
+        if((size%4) == 0)
+        {
+            OEMBitmap_MemXOR32(buffer,(c<<16)|c,size);
+        }
+        else
+        {
+            uint16 *p = OEMBitmap_MemXOR32(buffer,(c<<16)|c,size-2);
+            p += ((size>>1)-1);
+            *p = *p^c;
+        }
+    }
+    else
+    {
+        uint16 *pb = buffer;
+        *pb = *pb^c; pb++;
+        size-=2;
+        if(size >0)
+        {
+            if((size%4) == 0)
+            {
+                OEMBitmap_MemXOR32(pb,(c<<16)|c,size);
+            }
+            else
+            {
+                uint16 *p = OEMBitmap_MemXOR32(pb,(c<<16)|c,size-2);
+                p += ((size>>1)-1);
+                *p = *p^c;
+            }
+        }
+    }
+	return buffer;
+}
 
 // Assume all parameters are valid and in bounds.
 static __inline void FillRect_XOR(OEMBitmap *pbmDst, int x, int y, int dx, int dy, NativeColor color)
 {
+    PIXELITER_SETUP(pbmDst, x, y, color, 0, FALSE);
+    if(dx == pitch_)
+    {
+        OEMBitmap_MemXOR16(pw_,color,dx*dy*sizeof(uint16));
+    }
+    else
+    {
+        while (dy-- > 0) {
+            OEMBitmap_MemXOR16(pw_,color,dx*sizeof(uint16));
+            PIXELITER_NEXTY();
+        }
+    }
 }
 #endif
 
