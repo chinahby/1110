@@ -929,7 +929,10 @@ static void ADialog_Redraw(IDialog * po)
 
    rc = pme->m_rc;
    pd = pme->m_pDisplay;
-   IDISPLAY_FillRect(pd, &rc, CLR_SYS_WIN);
+   if(!(pme->m_dwProps & DLG_NOT_CLEARSCREEN_ONREDRAW))
+   {
+    IDISPLAY_FillRect(pd, &rc, CLR_SYS_WIN);
+   }
 
    if(pme->m_bCopyright)
       ADialog_ShowCopyright(pme);
@@ -969,7 +972,10 @@ static void ADialog_Redraw(IDialog * po)
 		 return;
       }
 	  #endif
-      IDISPLAY_Update(pd);
+      if(!(pme->m_dwProps & DLG_NOT_UPDATE_ONREDRAW))
+      {
+          IDISPLAY_Update(pd);
+      }
    }
 }
 
