@@ -355,6 +355,7 @@ AEEINTERFACE(IAnnunciator)
    int     (*SetFieldIsActiveEx) (IAnnunciator * pMe,boolean bActive);   //add by yangdecai 2010-07-13
    int     (*SetFieldText)     (IAnnunciator * pMe,uint16 * cText);    //add by yangdecai 2010-07-13
    int     (*SetHasTitleText)     (IAnnunciator * pMe, boolean hasTitleText);
+   int     (*SetNotUpdate)     (IAnnunciator * pMe);
 };
 
 //---------------------------------------------------------------------
@@ -374,6 +375,8 @@ AEEINTERFACE(IAnnunciator)
 #define IANNUNCIATOR_SetFieldIsActiveEx(p,b)       AEEGETPVTBL((p),IAnnunciator)->SetFieldIsActiveEx((p),(b))
 #define IANNUNCIATOR_SetFieldText(p,c)           AEEGETPVTBL((p),IAnnunciator)->SetFieldText((p),(c))
 #define IANNUNCIATOR_SetHasTitleText(p,c)           AEEGETPVTBL((p),IAnnunciator)->SetHasTitleText((p),(c))
+#define IANNUNCIATOR_SetNotUpdate(p)           AEEGETPVTBL((p),IAnnunciator)->SetNotUpdate((p))
+
 
 /*============================================================================
    DATA STRUCTURE DOCUMENTATION

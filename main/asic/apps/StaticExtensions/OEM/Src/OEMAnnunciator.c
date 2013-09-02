@@ -107,6 +107,7 @@ struct IAnnunciator
    unsigned short      m_usRef;
    uint32              nAnnunID;
    uint32              nState;  
+   boolean             m_bNotUpdate;
 };
 
 typedef struct AnnunTimerInfo
@@ -142,6 +143,7 @@ static int IAnnunciator_SetFieldIsActiveEx(IAnnunciator *pMe, boolean bActive);
 static int IAnnunciator_SetHasTitleText(IAnnunciator *pMe, boolean bHasTitleText);
 static int IAnnunciator_SetFieldText(IAnnunciator * pMe ,uint16 *cText);
 static void SetFieldUnblink(IAnnunciator * pMe);
+static int  IAnnunciator_SetNotUpdate(IAnnunciator * pMe);
 
 IAnnunciatorVtbl gvtIAnnunciator = {
    IAnnunciator_AddRef,
@@ -157,6 +159,7 @@ IAnnunciatorVtbl gvtIAnnunciator = {
    ,IAnnunciator_SetFieldIsActiveEx
    ,IAnnunciator_SetFieldText,
    IAnnunciator_SetHasTitleText
+   ,IAnnunciator_SetNotUpdate
 };
 
 /* OEMAnnun_content defines the text or image that will be displayed
@@ -1828,6 +1831,7 @@ int OEMAnnunciator_New(IShell *piShell, AEECLSID clsid, void **pp)
       CALLBACK_Init(&pMe->m_cbSysObj, OEM_FreeAnnunciator, pMe);
       AEE_LinkSysObject(&pMe->m_cbSysObj);
    }
+   pMe->m_bNotUpdate = FALSE;
    *pp = pMe;
    return SUCCESS;
 }
@@ -2571,7 +2575,7 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
 #endif
 		
       // 待机界面下不必跟新显示，待机界面绘制完显示信息后再统一更新显示，如此可避免进入待机界面的闪屏
-      if (need_capture.b_capture != DB_CAPTURE_INIDLE)
+      if ((need_capture.b_capture != DB_CAPTURE_INIDLE) && (pMe->m_bNotUpdate == FALSE))
       {
           IDISPLAY_Update(pMe->m_coreObj->m_piDisplay);
       }
@@ -2750,5 +2754,15 @@ static void SetFieldUnblink(IAnnunciator * pMe)
 {
     //AnnunTimerInfo *pAnnTimerInfo = (AnnunTimerInfo *)pAnnunTimerInfo;
     IAnnunciator_SetField(pMe, pMe->nAnnunID, pMe->nState);
+}
+
+static int  IAnnunciator_SetNotUpdate(IAnnunciator * pMe)
+{
+    if(NULL == pMe)
+    {
+        return EFAILED;
+    }
+    pMe->m_bNotUpdate = TRUE;
+    return SUCCESS;
 }
 
