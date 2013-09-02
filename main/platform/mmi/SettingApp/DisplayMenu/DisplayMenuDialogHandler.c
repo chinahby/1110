@@ -414,7 +414,7 @@ static boolean  HandleMainDialogEvent(CDisplayMenu *pMe,
                         IDS_DISPLAY_TITLE,
                         WTitle,
                         sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
 #ifdef FEATURE_MENU_STYLE
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_MENU_STYLE, IDS_MENU_STYLE, NULL, 0);
@@ -465,24 +465,7 @@ static boolean  HandleMainDialogEvent(CDisplayMenu *pMe,
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
 			// 统一更新界面
 			IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn, AEECLSID_DISPLAY1, TRUE);
-			IDISPLAY_Update(pMe->m_pDisplay);
 			(void)IMENUCTL_Redraw(pMenu);
-
-            (void) ISHELL_PostEvent( pMe->m_pShell,
-                                             AEECLSID_APP_DISPLAYMENU,
-                                             EVT_USER_REDRAW,
-                                             0,
-                                             0);
-            return TRUE;
-
-        case EVT_USER_REDRAW:
-            // 绘制底部操作提示条
-            //DrawBottomBar(pMe->m_pShell,
-            //                                pMe->m_pDisplay,
-            //                                &pMe->m_rc,
-            //                                BTBAR_SELECT_BACK);
-
-            
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -1316,7 +1299,7 @@ static boolean  HandleBacklightingDialogEvent(CDisplayMenu *pMe,
                         IDS_BACKLIGHTING_TITLE,
                         WTitle,
                         sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
 #ifdef FEATRUE_SET_LCD_ALWAYS_OFF
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_ALWAYS_OFF, IDS_ALWAYS_OFF, NULL, 0);
@@ -1383,27 +1366,8 @@ static boolean  HandleBacklightingDialogEvent(CDisplayMenu *pMe,
             IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
 #endif
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
-            // 设定菜单控件的矩形位置及尺寸
-
-            (void) ISHELL_PostEvent( pMe->m_pShell,
-                                             AEECLSID_APP_DISPLAYMENU,
-                                             EVT_USER_REDRAW,
-                                             0,
-                                             0);
             return TRUE;
         }
-
-        case EVT_USER_REDRAW:
-            // 绘制底部操作提示条
-            //DrawBottomBar(pMe->m_pShell,
-            //                                pMe->m_pDisplay,
-            //                                &pMe->m_rc,
-            //                                BTBAR_SELECT_BACK);
-
-            // 统一更新界面
-            //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
-            return TRUE;
 
         case EVT_DIALOG_END:
             return TRUE;
@@ -1519,20 +1483,9 @@ static boolean  HandleContrastDialogEvent(CDisplayMenu *pMe,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
-			//add by yangdecai
-			{
-				AECHAR WTitle[40] = {0};
-				(void)ISHELL_LoadResString(pMe->m_pShell,
-                        AEE_APPSDISPLAYMENU_RES_FILE,                                
-                        IDS_CONTRAST_TITLE,
-                        WTitle,
-                        sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
-            }
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_CONTRAST_LEVEL_DARK, IDS_CONTRAST_LEVEL_DARK, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_CONTRAST_LEVEL_NORMAL, IDS_CONTRAST_LEVEL_NORMAL, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_CONTRAST_LEVEL_BRIGHT, IDS_CONTRAST_LEVEL_BRIGHT, NULL, 0);
-
             return TRUE;
             
         case EVT_DIALOG_START:
@@ -1549,10 +1502,10 @@ static boolean  HandleContrastDialogEvent(CDisplayMenu *pMe,
 				AECHAR WTitle[40] = {0};
 				(void)ISHELL_LoadResString(pMe->m_pShell,
 			            AEE_APPSDISPLAYMENU_RES_FILE,                                
-			            IDS_BACKLIGHT_TITLE,
+			            IDS_CONTRAST_TITLE,
 			            WTitle,
 			            sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
 			}
 			#endif
             (void) ICONFIG_GetItem(pMe->m_pConfig,
@@ -1593,27 +1546,8 @@ static boolean  HandleContrastDialogEvent(CDisplayMenu *pMe,
             IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
 #endif
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
-
-            (void) ISHELL_PostEvent( pMe->m_pShell,
-                                    AEECLSID_APP_DISPLAYMENU,
-                                    EVT_USER_REDRAW,
-                                    0,
-                                    0);
             return TRUE;
         }
-
-
-        case EVT_USER_REDRAW:
-            // 绘制底部操作提示条
-            //DrawBottomBar(pMe->m_pShell,
-            //                        pMe->m_pDisplay,
-            //                        &pMe->m_rc,
-            //                        BTBAR_SELECT_BACK);
-
-            // 统一更新界面
-            //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
-            return TRUE;
 
         case EVT_DIALOG_END:
             (void) ICONFIG_SetItem(pMe->m_pConfig,
@@ -1742,7 +1676,7 @@ static boolean  HandleScreensaverTimeoutDialogEvent(CDisplayMenu *pMe,
                         IDS_SCREENSAVETIMEOUT,
                         WTitle,
                         sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_SCREENSAVETIMEOUT_30S, IDS_SCREENSAVETIMEOUT_30S, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_SCREENSAVETIMEOUT_2MIN, IDS_SCREENSAVETIMEOUT_2MIN, NULL, 0);
@@ -1789,26 +1723,8 @@ static boolean  HandleScreensaverTimeoutDialogEvent(CDisplayMenu *pMe,
             IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
 #endif
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
-
-            (void) ISHELL_PostEvent( pMe->m_pShell,
-                                             AEECLSID_APP_DISPLAYMENU,
-                                             EVT_USER_REDRAW,
-                                             0,
-                                             0);
-             return TRUE;
-        }
-
-        case EVT_USER_REDRAW:
-            // 绘制底部操作提示条
-            //DrawBottomBar(pMe->m_pShell,
-            //                                pMe->m_pDisplay,
-            //                                &pMe->m_rc,
-            //                                BTBAR_SELECT_BACK);
-
-            // 统一更新界面
-            //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
             return TRUE;
+        }
 
         case EVT_DIALOG_END:
             return TRUE;
@@ -1912,7 +1828,7 @@ static boolean  HandleDesktop_Theme_DialogEvent(CDisplayMenu *pMe,
                         IDS_DESKTOP_THEME,
                         WTitle,
                         sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_STRING_BLUE, IDS_STRING_BLUE, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_STRING_GREEN, IDS_STRING_GREEN, NULL, 0);
@@ -1975,18 +1891,8 @@ static boolean  HandleDesktop_Theme_DialogEvent(CDisplayMenu *pMe,
             IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
 #endif
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
-            // 设定菜单控件的矩形位置及尺寸
-            (void) ISHELL_PostEvent( pMe->m_pShell,
-                                             AEECLSID_APP_DISPLAYMENU,
-                                             EVT_USER_REDRAW,
-                                             0,
-                                             0);
             return TRUE;
         }
-
-        case EVT_USER_REDRAW:
-            //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
-            return TRUE;
 
         case EVT_DIALOG_END:
             {
@@ -2740,7 +2646,7 @@ static boolean Handle_LED_Control_DialogEvent(CDisplayMenu *pMe,
                         IDS_LED_CONTROL,
                         WTitle,
                         sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
 #if defined(FEATURE_WMS_APP) && !defined(FEATURE_WMSAPP_ONLYSUPPORTVMAIL)
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_LED_SMS, IDS_LED_SMS, NULL, 0);
@@ -3906,7 +3812,7 @@ static boolean HandleMenuStyleDialogEvent(CDisplayMenu *pMe,
                         IDS_MENU_STYLE,
                         WTitle,
                         sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_MENU_ICON, IDS_MENU_ICON, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_MENU_LIST, IDS_MENU_LIST, NULL, 0);
@@ -3947,18 +3853,8 @@ static boolean HandleMenuStyleDialogEvent(CDisplayMenu *pMe,
 #endif
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
             IMENUCTL_SetSel(pMenu,ui16_return);
-
-            (void) ISHELL_PostEvent( pMe->m_pShell,
-                                         AEECLSID_APP_DISPLAYMENU,
-                                         EVT_USER_REDRAW,
-                                         0,
-                                         0);
             return TRUE;
         }
-
-        case EVT_USER_REDRAW:
-            //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
-            return TRUE;
 
         case EVT_DIALOG_END:
             return TRUE;
@@ -4613,6 +4509,15 @@ static boolean  HandleRENDMenuDialogEvent(CDisplayMenu *pMe,
 
         case EVT_DIALOG_START:
         {
+            {
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_APPSDISPLAYMENU_RES_FILE,                                
+                        IDS_REND_MENU_TITLE,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
+            }
 			
             (void)OEM_GetConfig(CFGI_REND_STATE, (void*)&nOldRendState, sizeof(nOldRendState));
 			#ifdef FEATURE_VERSION_K212
@@ -4693,27 +4598,8 @@ static boolean  HandleRENDMenuDialogEvent(CDisplayMenu *pMe,
             IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
             IMENUCTL_SetSel(pMenu, pMe->m_nExSubDlgId);
-
-            (void) ISHELL_PostEvent( pMe->m_pShell,
-                                             AEECLSID_APP_DISPLAYMENU,
-                                             EVT_USER_REDRAW,
-                                             0,
-                                             0);
             return TRUE;
         }
-
-        case EVT_USER_REDRAW:
-			{
-				AECHAR WTitle[40] = {0};
-				(void)ISHELL_LoadResString(pMe->m_pShell,
-                        AEE_APPSDISPLAYMENU_RES_FILE,                                
-                        IDS_REND_MENU_TITLE,
-                        WTitle,
-                        sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
-            }
-			//(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
-            return TRUE;
 
         case EVT_DIALOG_END:
             return TRUE;

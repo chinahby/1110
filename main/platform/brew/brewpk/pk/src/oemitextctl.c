@@ -3980,7 +3980,6 @@ static void TextCtl_ShowSymbolPage(CTextCtl * pme, int nDir)
         {
             IANNUNCIATOR_SetFieldIsActiveEx(pIAnn,FALSE);
             IANNUNCIATOR_SetFieldText(pIAnn,szText);
-            IANNUNCIATOR_Redraw(pIAnn);
             IANNUNCIATOR_Release(pIAnn);
             pIAnn = NULL;            
         }  	        
@@ -4168,7 +4167,6 @@ static void TextCtl_ShowFaceSymbolPage(CTextCtl * pme, int nDir)
         {
             IANNUNCIATOR_SetFieldIsActiveEx(pIAnn,FALSE);
             IANNUNCIATOR_SetFieldText(pIAnn,szText);
-            IANNUNCIATOR_Redraw(pIAnn);
             IANNUNCIATOR_Release(pIAnn);
             pIAnn = NULL;            
         }  	        

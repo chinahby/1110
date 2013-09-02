@@ -5243,7 +5243,7 @@ static boolean dialog_handler_of_state_viewday(CScheduleApp *pme, AEEEvent eCode
             (void)IMENUCTL_SetTitle(pMenu, 0, 0, pme->m_pVDTitle);
 			#else
 		    {
-				IANNUNCIATOR_SetFieldText(pme->m_pIAnn,pme->m_pVDTitle);
+				IANNUNCIATOR_SetFieldTextEx(pme->m_pIAnn,pme->m_pVDTitle,FALSE);
 		    }
 			#endif
 
@@ -7651,7 +7651,7 @@ static void CScheduleApp_DrawLunarStr(CScheduleApp *pme)
 #if defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_20D)
     if (WSTRLEN(pme->m_LunarString) > 4)
     {
-        IANNUNCIATOR_SetFieldText(pme->m_pIAnn, pme->m_LunarString);
+        IANNUNCIATOR_SetFieldTextEx(pme->m_pIAnn, pme->m_LunarString,FALSE);
     }
     else
     {        
@@ -7663,7 +7663,7 @@ static void CScheduleApp_DrawLunarStr(CScheduleApp *pme)
 						            WTitle,
 						            sizeof(WTitle));
 		
-        IANNUNCIATOR_SetFieldText(pme->m_pIAnn, WTitle);
+        IANNUNCIATOR_SetFieldTextEx(pme->m_pIAnn, WTitle,FALSE);
     }    
 #else    
     SETAEERECT(&rc, 0, pme->m_rc.dy - (HEIGHT_PROMPT_BAR+LUNAR_RECT_HEIGHT), pme->m_rc.dx, LUNAR_RECT_HEIGHT);

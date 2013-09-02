@@ -553,7 +553,7 @@ static boolean  RecentCalls_VerifyPasswordEvent(CRecentCalls *pMe,
                                             text,
                                             sizeof(text));
 				#endif
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,text);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,text,FALSE);
             }
             return TRUE;
             
@@ -906,7 +906,7 @@ static boolean RecentCalls_MainMenuEvent(CRecentCalls *pMe,
 					                        sizeof(WTitle));
 				#endif
 				
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
         IMENUCTL_AddItem(pMe->pMenu, AEE_RECENTCALLSRES_LANGFILE, IDS_MISSED_CALLS, IDS_MISSED_CALLS, NULL, 0);
         IMENUCTL_AddItem(pMe->pMenu, AEE_RECENTCALLSRES_LANGFILE, IDS_RECEIVED_CALLS, IDS_RECEIVED_CALLS, NULL, 0);
@@ -928,11 +928,7 @@ static boolean RecentCalls_MainMenuEvent(CRecentCalls *pMe,
         IMENUCTL_SetBackGround(pMe->pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_RECENTCALLS_BACKGROUND);
 #endif
         IMENUCTL_SetBottomBarType(pMe->pMenu,BTBAR_SELECT_BACK);
-        (void)ISHELL_PostEvent(pMe->m_pShell, 
-                      AEECLSID_APP_RECENTCALL, 
-                      EVT_USER_REDRAW, 
-                      NULL, 
-                      NULL); 
+        IMENUCTL_SetSel(pMe->pMenu,pMe->m_selectedItem[0]); 
         return TRUE;
       
       case EVT_KEY:
@@ -983,14 +979,6 @@ static boolean RecentCalls_MainMenuEvent(CRecentCalls *pMe,
         return TRUE;
          
       case EVT_DIALOG_END:
-        return TRUE;
-      
-      case EVT_USER_REDRAW:       
-        IMENUCTL_SetSel(pMe->pMenu,pMe->m_selectedItem[0]); 
-        // 统一更新界面
-        IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
-
-        (void)IMENUCTL_Redraw(pMe->pMenu);
         return TRUE;
       
       default:
@@ -1063,7 +1051,7 @@ static boolean RecentCalls_ListRecordEvent(CRecentCalls *pMe,
                 {
                 	WSTRCAT(WTitle,WTemprigt);
                 }
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
             if(pMe->m_eStartMethod == STARTMETHOD_NORMAL)
             {
@@ -1299,7 +1287,7 @@ static boolean RecentCalls_ListRecordEvent(CRecentCalls *pMe,
                 	WSTRCAT(WTitle,WTemprigt);
                 }
                 
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
 		    }
 			#endif
 
@@ -1617,7 +1605,7 @@ static boolean RecentCalls_TimeMenuEvent(CRecentCalls *pMe,
 					                        WTitle,
 					                        sizeof(WTitle));
 				#endif
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
          IMENUCTL_AddItem(pMe->pMenu, AEE_RECENTCALLSRES_LANGFILE, IDS_LAST_CALL, IDS_LAST_CALL, NULL, 0);
          IMENUCTL_AddItem(pMe->pMenu, AEE_RECENTCALLSRES_LANGFILE, IDS_RECEIVED_CALLS, IDS_RECEIVED_CALLS, NULL, 0);
@@ -1636,11 +1624,7 @@ static boolean RecentCalls_TimeMenuEvent(CRecentCalls *pMe,
         IMENUCTL_SetBackGround(pMe->pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_RECENTCALLS_BACKGROUND);
 #endif
          IMENUCTL_SetBottomBarType(pMe->pMenu,BTBAR_SELECT_BACK);
-         (void)ISHELL_PostEvent(pMe->m_pShell, 
-                          AEECLSID_APP_RECENTCALL, 
-                          EVT_USER_REDRAW, 
-                          NULL, 
-                          NULL); 
+         IMENUCTL_SetSel(pMe->pMenu,pMe->m_selectedItem[1]);
          return TRUE;
       
       case EVT_KEY:
@@ -1678,13 +1662,6 @@ static boolean RecentCalls_TimeMenuEvent(CRecentCalls *pMe,
          return TRUE;
          
       case EVT_DIALOG_END:
-         return TRUE;
-      
-      case EVT_USER_REDRAW:
-         IMENUCTL_SetSel(pMe->pMenu,pMe->m_selectedItem[1]); 
-         // 统一更新界面
-         IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
-         (void)IMENUCTL_Redraw(pMe->pMenu);
          return TRUE;
          
       default:
@@ -1745,7 +1722,7 @@ static boolean RecentCalls_DelMenuEvent(CRecentCalls *pMe,
 					                        WTitle,
 					                        sizeof(WTitle));
 				#endif
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
          IMENUCTL_AddItem(pMe->pMenu, AEE_RECENTCALLSRES_LANGFILE, IDS_MISSED_CALLS, IDS_MISSED_CALLS, NULL, 0);
          IMENUCTL_AddItem(pMe->pMenu, AEE_RECENTCALLSRES_LANGFILE, IDS_RECEIVED_CALLS, IDS_RECEIVED_CALLS, NULL, 0);
@@ -1761,11 +1738,7 @@ static boolean RecentCalls_DelMenuEvent(CRecentCalls *pMe,
         IMENUCTL_SetBackGround(pMe->pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_RECENTCALLS_BACKGROUND);
 #endif
          IMENUCTL_SetBottomBarType(pMe->pMenu,BTBAR_SELECT_BACK);
-         (void)ISHELL_PostEvent(pMe->m_pShell, 
-                          AEECLSID_APP_RECENTCALL, 
-                          EVT_USER_REDRAW, 
-                          NULL, 
-                          NULL); 
+         IMENUCTL_SetSel(pMe->pMenu,pMe->m_selectedItem[1]); 
          return TRUE;
       
       case EVT_KEY:
@@ -1784,13 +1757,6 @@ static boolean RecentCalls_DelMenuEvent(CRecentCalls *pMe,
          return TRUE;
          
       case EVT_DIALOG_END:
-         return TRUE;
-      
-      case EVT_USER_REDRAW:          
-         IMENUCTL_SetSel(pMe->pMenu,pMe->m_selectedItem[1]); 
-         // 统一更新界面
-         IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
-         (void)IMENUCTL_Redraw(pMe->pMenu);
          return TRUE;
       
       default:

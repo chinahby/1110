@@ -771,7 +771,7 @@ static boolean  MediaGalleryApp_PwdDlg_HandleEvent(CMediaGalleryApp* pMe,
 	                                        text,
 	                                        sizeof(text));    
 				 
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,text);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,text,FALSE);
             }
             return TRUE;
             
@@ -1303,7 +1303,7 @@ static boolean MediaGalleryApp_MainMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
 					                        sizeof(WTitle));
 				#endif
 				
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
          MGMENU_ADDITEM(pMenuCtl, IDS_MG_PHONEMEMORY);
          MGMENU_ADDITEM(pMenuCtl, IDS_MG_CARDMEMORY);
@@ -1583,7 +1583,7 @@ static boolean MediaGalleryApp_PhoneMemDlg_HandleEvent(CMediaGalleryApp* pMe,
                         IDS_MG_PHONEMEMORY,
                         WTitle,
                         sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
          MSG_FATAL("MediaGalleryApp_PhoneMemDlg_HandleEvent init",0,0,0);
          MGMENU_ADDITEM(pMenuCtl, IDS_MG_PICTURES);
@@ -1786,7 +1786,7 @@ static boolean MediaGalleryApp_CardMemDlg_HandleEvent(CMediaGalleryApp* pMe,
                         IDS_MG_CARDMEMORY,
                         WTitle,
                         sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
          MGMENU_ADDITEM(pMenuCtl, IDS_MG_PICTURES);
          MGMENU_ADDITEM(pMenuCtl, IDS_MG_MUSIC);
@@ -1995,7 +1995,7 @@ static boolean MediaGalleryApp_MemStatDlg_HandleEvent(CMediaGalleryApp* pMe,
                     IDS_MG_MEMORYSTATUS,
                     WTitle,
                     sizeof(WTitle));
-			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+			IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
 		}
 		 
          IMENUCTL_SetRect(pMenuCtl, &rc);
@@ -2268,7 +2268,7 @@ static boolean MediaGalleryApp_UDiskDlg_HandleEvent(CMediaGalleryApp* pMe,
                         WTitle,
                         sizeof(WTitle));
                 #endif
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
 
          ISHELL_GetDeviceInfo(pMe->m_pShell, &DevInfo);
@@ -4065,7 +4065,7 @@ static boolean MGAppPopupMenu_OnSetAs(CMediaGalleryApp *pMe,
                         IDS_MG_SETAS,
                         WTitle,
                         sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
 
             //IMENUCTL_SetTitle(pMenuCtl, MGRES_LANGFILE, IDS_MG_SETAS, NULL);
@@ -4112,10 +4112,6 @@ static boolean MGAppPopupMenu_OnSetAs(CMediaGalleryApp *pMe,
                }
             }
 
-            ISHELL_PostEvent(pMe->m_pShell,
-                             AEECLSID_MEDIAGALLERY,
-                             EVT_USER_REDRAW, 0, 0);
-
             RELEASEIF(pConfig);
 
             return TRUE;
@@ -4133,12 +4129,6 @@ static boolean MGAppPopupMenu_OnSetAs(CMediaGalleryApp *pMe,
 
          return TRUE;
       }
-
-      case EVT_USER_REDRAW:
-         {
-            IDISPLAY_Update(pMe->m_pDisplay);
-            return TRUE;
-         }
 #ifdef FEATURE_LCD_TOUCH_ENABLE//WLH ADD FOR LCD TOUCH
 	  case EVT_USER:
 #endif
@@ -4331,17 +4321,12 @@ static boolean MGAppPopupMenu_OnSavetoplaylist(CMediaGalleryApp* pMe,
                         IDS_MSG_SAVEPLAYLIST,
                         WTitle,
                         sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
             pMe->m_nSelNum = 0;
             
             MGAppUtil_BuildPlaylist(pMe,pMenuCtl);
             IMENUCTL_SetBottomBarType(pMenuCtl, BTBAR_SAVE_BACK);
-            //MGAppUtil_DrawSoftkey(pMe,BTBAR_SAVE_BACK);
-            IDISPLAY_Update(pMe->m_pDisplay);
-            ISHELL_PostEvent(pMe->m_pShell,
-                             AEECLSID_MEDIAGALLERY,
-                             EVT_USER_REDRAW, 0, 0);
             return TRUE;
          }
 
@@ -4352,12 +4337,6 @@ static boolean MGAppPopupMenu_OnSavetoplaylist(CMediaGalleryApp* pMe,
          }
          return TRUE;
       }
-      case EVT_USER_REDRAW:
-         {
-         	//IMENUCTL_Redraw(pMenuCtl);
-         	IDISPLAY_Update(pMe->m_pDisplay);
-            return TRUE;
-         }
       case EVT_KEY_PRESS:
       case EVT_KEY_RELEASE:
       	   return TRUE;
@@ -5228,7 +5207,6 @@ static boolean MGAppPopupMenu_OnSelectPath(CMediaGalleryApp *pMe,
 
          IMENUCTL_SetActive(pMenuCtl, TRUE);
          IMENUCTL_Redraw(pMenuCtl);
-
          return TRUE;
       }
 
@@ -5599,10 +5577,6 @@ static boolean MGAppPopupMenu_OnSort(CMediaGalleryApp* pMe,
 
          //IMENUCTL_SetTitle(pMenuCtl, MGRES_LANGFILE, IDS_MG_SORT, NULL);
          IMENUCTL_SetBottomBarType(pMenuCtl, BTBAR_SAVE_BACK);
-
-         ISHELL_PostEvent(pMe->m_pShell, AEECLSID_MEDIAGALLERY,
-                          EVT_USER_REDRAW, 0, 0);
-
          return TRUE;
       }
 
@@ -5620,11 +5594,6 @@ static boolean MGAppPopupMenu_OnSort(CMediaGalleryApp* pMe,
          return TRUE;
       }
 
-   case EVT_USER_REDRAW:
-      {
-         IDISPLAY_Update(pMe->m_pDisplay);
-         return TRUE;
-      }
 #ifdef FEATURE_LCD_TOUCH_ENABLE//WLH ADD FOR LCD TOUCH
 	  case EVT_USER:
 #endif

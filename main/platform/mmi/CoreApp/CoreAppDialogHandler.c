@@ -1449,7 +1449,7 @@ static boolean  IDD_ALARM_Handler(void       *pUser,
 				#else
                 if(pMe->m_pIAnn != NULL)
                 {
-				    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wszTitle);
+				    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,wszTitle,FALSE);
                 }
 				#endif
                 CoreDrawBottomBar( BTBAR_SNOOZE_CONTINUE_STOP);
@@ -2109,10 +2109,9 @@ static boolean  IDD_SALES_EDIT_Handler(void *pUser,
 				 DrawBottomBar(pMe->m_pDisplay, &BBarParam);
 				 ITEXTCTL_SetActive(pMe->m_pSmsTrackNumber,TRUE);
                	
-            	 // 更新显示
-            	 IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);  
-
 			     (void)IMENUCTL_Redraw(pMe->m_pSmsTrackTime);
+                 // 更新显示
+            	 IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);  
             }
             return TRUE;
             

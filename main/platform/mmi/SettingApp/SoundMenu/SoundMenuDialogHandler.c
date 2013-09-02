@@ -421,7 +421,7 @@ static boolean  HandleMainDialogEvent(CSoundMenu *pMe,
                         IDS_SCENEMODE_TITLE,
                         WTitle,
                         sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
             Sound_App_Add_Menu(pMenu,IDS_NORMALMODE);
             Sound_App_Add_Menu(pMenu,IDS_QUIETMODE);
@@ -484,16 +484,6 @@ static boolean  HandleMainDialogEvent(CSoundMenu *pMe,
 #endif
 
             IMENUCTL_SetSel(pMenu, pMe->m_currDlgId);
-
-            (void) ISHELL_PostEvent( pMe->m_pShell,
-                                     AEECLSID_APP_SOUNDMENU,
-                                     EVT_USER_REDRAW,
-                                     0,
-                                     0);
-            return TRUE;
-
-        case EVT_USER_REDRAW:
-            //(void)IMENUCTL_Redraw(pMenu);  //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -957,127 +947,127 @@ static boolean  HandleSoundMenuProfilesDialogEvent(CSoundMenu *pMe,
     SOUND_ERR("%x,%x,%x,HandleSoundMenuProfilesDialogEvent",eCode,wParam,dwParam);
     //实现菜单循环滚动功能
     //SoundMenu_AutoScroll(pMenu,eCode,wParam);
-    switch(pMe->m_CurProfile)
-    {
-        case OEMNV_PROFILE_NORMALMODE:
-			#if 0
-            (void)IMENUCTL_SetTitle(pMenu,
-                                    AEE_APPSSOUNDMENU_RES_FILE,
-                                    IDS_NORMALMODE,
-                                    NULL);
-			#else
-		    {
-		  		AECHAR WTitle[40] = {0};
-				(void)ISHELL_LoadResString(pMe->m_pShell,
-                        AEE_APPSSOUNDMENU_RES_FILE,                                
-                        IDS_NORMALMODE,
-                        WTitle,
-                        sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
-		    }
-		    #endif
-            break;
-        
-        case OEMNV_PROFILE_QUIETMODE:
-			#if 0
-            (void)IMENUCTL_SetTitle(pMenu,
-                                    AEE_APPSSOUNDMENU_RES_FILE,
-                                    IDS_QUIETMODE,
-                                    NULL); 
-			#else
-		    {
-		  		AECHAR WTitle[40] = {0};
-				(void)ISHELL_LoadResString(pMe->m_pShell,
-                        AEE_APPSSOUNDMENU_RES_FILE,                                
-                        IDS_QUIETMODE,
-                        WTitle,
-                        sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
-		    }
-		    #endif
-            break;
-        case OEMNV_PROFILE_MEETING:
-			#if 0
-            (void)IMENUCTL_SetTitle(pMenu,
-                                    AEE_APPSSOUNDMENU_RES_FILE,
-                                    IDS_MEETING,
-                                    NULL); 
-			#else
-		    {
-		  		AECHAR WTitle[40] = {0};
-				(void)ISHELL_LoadResString(pMe->m_pShell,
-                        AEE_APPSSOUNDMENU_RES_FILE,                                
-                        IDS_MEETING,
-                        WTitle,
-                        sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
-		    }
-		    #endif
-            break;
-        case OEMNV_PROFILE_NOISEMODE:
-			#if 0
-            (void)IMENUCTL_SetTitle(pMenu,
-                                    AEE_APPSSOUNDMENU_RES_FILE,
-                                    IDS_NOISEMODE,
-                                    NULL);  
-			#else
-		    {
-		  		AECHAR WTitle[40] = {0};
-				(void)ISHELL_LoadResString(pMe->m_pShell,
-                        AEE_APPSSOUNDMENU_RES_FILE,                                
-                        IDS_NOISEMODE,
-                        WTitle,
-                        sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
-		    }
-		    #endif
-            break;
-        case OEMNV_PROFILE_CARMODE:
-			#if 0
-            (void)IMENUCTL_SetTitle(pMenu,
-                                    AEE_APPSSOUNDMENU_RES_FILE,
-                                    IDS_CARMODE,
-                                    NULL);
-			#else
-		    {
-		  		AECHAR WTitle[40] = {0};
-				(void)ISHELL_LoadResString(pMe->m_pShell,
-                        AEE_APPSSOUNDMENU_RES_FILE,                                
-                        IDS_CARMODE,
-                        WTitle,
-                        sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
-		    }
-		    #endif
-            break;
-/*            
-#ifdef FEATURE_VERSION_C316
-        case OEMNV_PROFILE_BLUETOOTH:
-			#if 0
-            (void)IMENUCTL_SetTitle(pMenu,
-                                    AEE_APPSSOUNDMENU_RES_FILE,
-                                    IDS_PROFILE_BLUETOOTH,
-                                    NULL);
-			#else
-		    {
-		  		AECHAR WTitle[40] = {0};
-				(void)ISHELL_LoadResString(pMe->m_pShell,
-                                        AEE_APPSSOUNDMENU_RES_FILE,                                
-                                        IDS_PROFILE_BLUETOOTH,
-                                        WTitle,
-                                        sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
-		    }
-		    #endif
-            break;
-#endif
-*/
-        default:
-            break;
-    }
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
+            switch(pMe->m_CurProfile)
+            {
+                case OEMNV_PROFILE_NORMALMODE:
+        			#if 0
+                    (void)IMENUCTL_SetTitle(pMenu,
+                                            AEE_APPSSOUNDMENU_RES_FILE,
+                                            IDS_NORMALMODE,
+                                            NULL);
+        			#else
+        		    {
+        		  		AECHAR WTitle[40] = {0};
+        				(void)ISHELL_LoadResString(pMe->m_pShell,
+                                AEE_APPSSOUNDMENU_RES_FILE,                                
+                                IDS_NORMALMODE,
+                                WTitle,
+                                sizeof(WTitle));
+        				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
+        		    }
+        		    #endif
+                    break;
+                
+                case OEMNV_PROFILE_QUIETMODE:
+        			#if 0
+                    (void)IMENUCTL_SetTitle(pMenu,
+                                            AEE_APPSSOUNDMENU_RES_FILE,
+                                            IDS_QUIETMODE,
+                                            NULL); 
+        			#else
+        		    {
+        		  		AECHAR WTitle[40] = {0};
+        				(void)ISHELL_LoadResString(pMe->m_pShell,
+                                AEE_APPSSOUNDMENU_RES_FILE,                                
+                                IDS_QUIETMODE,
+                                WTitle,
+                                sizeof(WTitle));
+        				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
+        		    }
+        		    #endif
+                    break;
+                case OEMNV_PROFILE_MEETING:
+        			#if 0
+                    (void)IMENUCTL_SetTitle(pMenu,
+                                            AEE_APPSSOUNDMENU_RES_FILE,
+                                            IDS_MEETING,
+                                            NULL); 
+        			#else
+        		    {
+        		  		AECHAR WTitle[40] = {0};
+        				(void)ISHELL_LoadResString(pMe->m_pShell,
+                                AEE_APPSSOUNDMENU_RES_FILE,                                
+                                IDS_MEETING,
+                                WTitle,
+                                sizeof(WTitle));
+        				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
+        		    }
+        		    #endif
+                    break;
+                case OEMNV_PROFILE_NOISEMODE:
+        			#if 0
+                    (void)IMENUCTL_SetTitle(pMenu,
+                                            AEE_APPSSOUNDMENU_RES_FILE,
+                                            IDS_NOISEMODE,
+                                            NULL);  
+        			#else
+        		    {
+        		  		AECHAR WTitle[40] = {0};
+        				(void)ISHELL_LoadResString(pMe->m_pShell,
+                                AEE_APPSSOUNDMENU_RES_FILE,                                
+                                IDS_NOISEMODE,
+                                WTitle,
+                                sizeof(WTitle));
+        				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
+        		    }
+        		    #endif
+                    break;
+                case OEMNV_PROFILE_CARMODE:
+        			#if 0
+                    (void)IMENUCTL_SetTitle(pMenu,
+                                            AEE_APPSSOUNDMENU_RES_FILE,
+                                            IDS_CARMODE,
+                                            NULL);
+        			#else
+        		    {
+        		  		AECHAR WTitle[40] = {0};
+        				(void)ISHELL_LoadResString(pMe->m_pShell,
+                                AEE_APPSSOUNDMENU_RES_FILE,                                
+                                IDS_CARMODE,
+                                WTitle,
+                                sizeof(WTitle));
+        				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
+        		    }
+        		    #endif
+                    break;
+        /*            
+#ifdef FEATURE_VERSION_C316
+                case OEMNV_PROFILE_BLUETOOTH:
+        			#if 0
+                    (void)IMENUCTL_SetTitle(pMenu,
+                                            AEE_APPSSOUNDMENU_RES_FILE,
+                                            IDS_PROFILE_BLUETOOTH,
+                                            NULL);
+        			#else
+        		    {
+        		  		AECHAR WTitle[40] = {0};
+        				(void)ISHELL_LoadResString(pMe->m_pShell,
+                                                AEE_APPSSOUNDMENU_RES_FILE,                                
+                                                IDS_PROFILE_BLUETOOTH,
+                                                WTitle,
+                                                sizeof(WTitle));
+        				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+        		    }
+        		    #endif
+                    break;
+#endif
+        */
+                default:
+                    break;
+            }
             Sound_App_Add_Menu(pMenu,IDS_VOLUME_TITLE);
             Sound_App_Add_Menu(pMenu,IDS_CALLRING);
 #if defined(FEATURE_WMS_APP) && !defined(FEATURE_WMSAPP_ONLYSUPPORTVMAIL)
@@ -1143,16 +1133,6 @@ static boolean  HandleSoundMenuProfilesDialogEvent(CSoundMenu *pMe,
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
 
             IMENUCTL_SetSel(pMenu, pMe->m_sSubDlgId);
-
-            (void) ISHELL_PostEvent( pMe->m_pShell,
-                                     AEECLSID_APP_SOUNDMENU,
-                                     EVT_USER_REDRAW,
-                                     0,
-                                     0);
-            return TRUE;
-
-        case EVT_USER_REDRAW:
-            //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:        	
@@ -1410,7 +1390,7 @@ static boolean  HandleHintDialogEvent(CSoundMenu *pMe,
 					                        WTitle,
 					                        sizeof(WTitle));
 				#endif
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
             Sound_App_Add_Menu(pMenu,IDS_ITEM_OFF);
             Sound_App_Add_Menu(pMenu,IDS_ALERTTYPE_RINGER);
@@ -1513,19 +1493,10 @@ static boolean  HandleHintDialogEvent(CSoundMenu *pMe,
 	                        pMe->m_wResID,
 	                        WTitle,
 	                        sizeof(WTitle));
-					IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+					IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
 			    }
 			    #endif
-                (void) ISHELL_PostEvent( pMe->m_pShell,
-                                         AEECLSID_APP_SOUNDMENU,
-                                         EVT_USER_REDRAW,
-                                         0,
-                                         0);
             }
-            return TRUE;
-
-        case EVT_USER_REDRAW:
-            //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -1824,7 +1795,7 @@ static boolean  HandleRingerDialogEvent(CSoundMenu *pMe,
                         pMe->m_wResID,
                         WTitle,
                         sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
 		    }
 		    #endif
             IRINGERMGR_RegisterNotify(pMe->m_pRingerMgr, NULL, NULL);
@@ -2241,7 +2212,7 @@ static boolean  HandleSmsRingDialogEvent(CSoundMenu *pMe,
                         WTitle,
                         sizeof(WTitle));
 #endif
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
             IMENUCTL_AddItem(pMenu, AEE_APPSSOUNDMENU_RES_FILE, IDS_GALLERY_PROFILE, IDS_GALLERY_PROFILE, NULL, 0);
             // 添加铃声选项
@@ -2426,7 +2397,7 @@ static boolean  HandleVolumeDialogEvent(CSoundMenu *pMe,
                         IDS_VOLUME_TITLE,
                         WTitle,
                         sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
             Sound_App_Add_Menu(pMenu,IDS_RINGER_VOLUME_TITLE);
             Sound_App_Add_Menu(pMenu,IDS_KEYBEEP_VOLUME_TITLE);
@@ -2445,16 +2416,6 @@ static boolean  HandleVolumeDialogEvent(CSoundMenu *pMe,
             IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
 #endif
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
-
-            (void) ISHELL_PostEvent( pMe->m_pShell,
-                                     AEECLSID_APP_SOUNDMENU,
-                                     EVT_USER_REDRAW,
-                                     0,
-                                     0);
-            return TRUE;
-
-        case EVT_USER_REDRAW:
-            //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -2574,19 +2535,10 @@ static boolean  HandleFMModeDialogEvent(CSoundMenu *pMe,
 	                        pMe->m_wResID,
 	                        WTitle,
 	                        sizeof(WTitle));
-					IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+					IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
 			    }
 			    #endif
-                (void) ISHELL_PostEvent( pMe->m_pShell,
-                                         AEECLSID_APP_SOUNDMENU,
-                                         EVT_USER_REDRAW,
-                                         0,
-                                         0);
             }
-            return TRUE;
-
-        case EVT_USER_REDRAW:
-            //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -2754,19 +2706,10 @@ static boolean  HandleOtherSelDialogEvent(CSoundMenu *pMe,
 	                        pMe->m_wResID,
 	                        WTitle,
 	                        sizeof(WTitle));
-					IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+					IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
 			    }
 			    #endif
-                (void) ISHELL_PostEvent( pMe->m_pShell,
-                                         AEECLSID_APP_SOUNDMENU,
-                                         EVT_USER_REDRAW,
-                                         0,
-                                         0);
             }
-            return TRUE;
-
-        case EVT_USER_REDRAW:
-            //(void)IMENUCTL_Redraw(pMenu);    //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -2923,7 +2866,7 @@ static boolean  HandleKeySndMenuDialogEvent(CSoundMenu *pMe,
                         IDS_COLORKEYSND,
                         WTitle,
                         sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
             Sound_App_Add_Menu(pMenu,IDS_ITEM_TONE);
             Sound_App_Add_Menu(pMenu,IDS_ITEM_CLICK);
@@ -2963,16 +2906,7 @@ static boolean  HandleKeySndMenuDialogEvent(CSoundMenu *pMe,
                 IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
 #endif
                 IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
-                (void) ISHELL_PostEvent( pMe->m_pShell,
-                                         AEECLSID_APP_SOUNDMENU,
-                                         EVT_USER_REDRAW,
-                                         0,
-                                         0);
             }
-            return TRUE;
-
-        case EVT_USER_REDRAW:
-            //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:

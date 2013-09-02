@@ -1363,7 +1363,7 @@ boolean WMSAPPMN_InitIdleMenuDlg
                         IDS_SMS_APP_CDMA,
                         WTitle,
                         sizeof(WTitle));
-		IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+		IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
 	   }
 	   #endif
       /*VOICEMAIL*/
@@ -1443,7 +1443,7 @@ boolean WMSAPPMN_InitIdleMenuDlg
                             IDS_SMS_APP_GW,
                             WTitle,
                             sizeof(WTitle));
-			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+			IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
  		   }
 		   #endif
 
@@ -5577,7 +5577,7 @@ boolean WMSAPPMN_CreateMenuSelectedItemDlg(CWMSAPP *pMe)
                             IDS_ROUTES,
                             WTitle,
                             sizeof(WTitle));
-			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+			IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
  		   }
 		   #endif
           (void)IMENUCTL_Redraw(pICurrentMenu);
@@ -6091,7 +6091,7 @@ static boolean WMSAPPMN_SetMsgListDisplay
                             IDS_TEMP_MEMORY_INBOX,
                             WTitle,
                             sizeof(WTitle));
-			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+			IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
  		}
 		#endif
       }
@@ -6107,7 +6107,7 @@ static boolean WMSAPPMN_SetMsgListDisplay
                             IDS_TEMP_MEMORY_OUTBOX,
                             WTitle,
                             sizeof(WTitle));
-			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+			IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
  		}
 		 #endif
       }
@@ -6127,7 +6127,7 @@ static boolean WMSAPPMN_SetMsgListDisplay
                             IDS_CARD_MEMORY_INBOX,
                             WTitle,
                             sizeof(WTitle));
-			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+			IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
  		}
 		 #endif
       }
@@ -6143,7 +6143,7 @@ static boolean WMSAPPMN_SetMsgListDisplay
                             IDS_CARD_MEMORY_OUTBOX,
                             WTitle,
                             sizeof(WTitle));
-			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+			IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
  		}
 		 #endif
       }
@@ -6167,7 +6167,7 @@ static boolean WMSAPPMN_SetMsgListDisplay
                             IDS_PHONE_MEMORY_INBOX,
                             WTitle,
                             sizeof(WTitle));
-			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+			IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
  		}
 		#endif
       }
@@ -6183,7 +6183,7 @@ static boolean WMSAPPMN_SetMsgListDisplay
                             IDS_PHONE_MEMORY_OUTBOX,
                             WTitle,
                             sizeof(WTitle));
-			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+			IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
  		}
 		#endif
       }
@@ -7961,7 +7961,7 @@ IDialog *pIDialog
                             title,
                             WTitle,
                             sizeof(WTitle));
-			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+			IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
  }
   #endif
   return TRUE;

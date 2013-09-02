@@ -228,7 +228,7 @@ static boolean Recorder_HandleEvent( Recorder* pme, AEEEvent evt, uint16 wParam,
                                       sizeof(wszTitle));
 			#endif
 			
-		    IANNUNCIATOR_SetFieldText(pme->m_pIAnn,wszTitle);
+		    IANNUNCIATOR_SetFieldTextEx(pme->m_pIAnn,wszTitle,FALSE);
 			Recorder_RunFSM( pme);
 		}
 		return TRUE;

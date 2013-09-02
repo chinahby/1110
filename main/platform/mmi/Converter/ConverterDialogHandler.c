@@ -407,7 +407,7 @@ static boolean  Converter_MainEvent(CConverter *pMe, AEEEvent eCode, uint16 wPar
                         IDS_CONVERTER_TITLE,
                         WTitle,
                         sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
             IMENUCTL_AddItem(pMenu, AEE_CONVERTER_LANGFILE, IDS_CURRENCY_TITLE, IDS_CURRENCY_TITLE, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_CONVERTER_LANGFILE, IDS_LENGTH_TITLE, IDS_LENGTH_TITLE, NULL, 0);
@@ -421,16 +421,7 @@ static boolean  Converter_MainEvent(CConverter *pMe, AEEEvent eCode, uint16 wPar
             IMENUCTL_SetProperties(pMenu, MP_BIND_ITEM_TO_NUMBER_KEY |MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_ACTIVE_NO_REDRAW);
             IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
-            (void)ISHELL_PostEvent(pMe->m_pShell, 
-                                            AEECLSID_CONVERTER, 
-                                            EVT_USER_REDRAW, 
-                                            NULL, 
-                                            NULL); 
-            return TRUE;
-       
-        case EVT_USER_REDRAW:
-            IMENUCTL_SetSel(pMenu,pMe->m_selectedItem); 
-            IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
+            IMENUCTL_SetSel(pMenu,pMe->m_selectedItem);
             (void)IMENUCTL_Redraw(pMenu);
             return TRUE;
          
@@ -813,7 +804,7 @@ static boolean  Converter_ConvertEvent(CConverter *pMe, AEEEvent eCode, uint16 w
 			#if 0
             DrawTitleBar(pMe->m_pDisplay, &TBarParam);
 			#else
-			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,text);
+			IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,text,FALSE);
 			#endif
             #ifdef FEATURE_LCD_TOUCH_ENABLE
             if (pMe->PENUPbRedraw)
@@ -1844,7 +1835,7 @@ static boolean  Converter_ChangeCurrencyEvent(CConverter *pMe, AEEEvent eCode, u
 			#if 0
             DrawTitleBar(pMe->m_pDisplay, &TBarParam);
 			#else
-			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,text);
+			IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,text,FALSE);
 			#endif
             //»­¼ýÍ·
             Image = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_LEFTARROW);

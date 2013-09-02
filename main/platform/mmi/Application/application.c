@@ -694,7 +694,7 @@ static boolean Application_HandleEvent( IApplication *pi,
 #endif
                 if(pMe->m_pIAnn != NULL)
                 {
-    			    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+    			    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
                 }
             }
             Application_RunFSM(pMe);
@@ -1152,7 +1152,7 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
 #endif
             if(pMe->m_pIAnn != NULL)
             {
-			    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+			    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
 			#endif
 			
@@ -1532,7 +1532,7 @@ static boolean  Application_FlashlightMenuHandler(Application *pMe, AEEEvent eCo
 
             if(pMe->m_pIAnn != NULL)
             {
-			    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+			    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG, IDS_DIAG_AND_DATA, IDS_DIAG_AND_DATA, NULL, 0);
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG, IDS_MASS_STORAGE, IDS_MASS_STORAGE, NULL, 0);
@@ -1680,7 +1680,7 @@ static boolean  Application_PcModemHandler(Application *pMe, AEEEvent eCode, uin
 			
             if(pMe->m_pIAnn != NULL)
             {
-			   IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+			   IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
  
             return TRUE;

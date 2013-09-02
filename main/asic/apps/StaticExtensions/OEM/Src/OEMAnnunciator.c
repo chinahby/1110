@@ -2017,13 +2017,13 @@ static int IAnnunciator_SetHasTitleText(IAnnunciator *pMe, boolean bHasTitleText
 FUNCTION:IAnnunciator_SetFieldText
 
 =============================================================================*/
-static int IAnnunciator_SetFieldText(IAnnunciator * pMe ,uint16 *cText, boolean bRedraw)
+static int IAnnunciator_SetFieldText(IAnnunciator * pMe ,uint16 *cText, boolean bUpdate)
 {
 	if (pMe == NULL) 
 	{
       return EFAILED;
     }
-
+#ifndef FEATURE_VERSION_K212
     if(cText)
     {
 	    WSTRLCPY(IAnnunCoreObj->m_Title, cText, ANN_TEXT_MAX_LEN);
@@ -2033,10 +2033,18 @@ static int IAnnunciator_SetFieldText(IAnnunciator * pMe ,uint16 *cText, boolean 
         IAnnunCoreObj->m_Title[0] = 0;
     }
 
-    if(bRedraw)
+    if(!bUpdate)
     {
-	    IAnnunciator_Redraw(pMe);	
+        bUpdate = IAnnunCoreObj->m_bNotUpdate;
+        IAnnunCoreObj->m_bNotUpdate = TRUE;	
+        IAnnunciator_Redraw(pMe);
+        IAnnunCoreObj->m_bNotUpdate = bUpdate;
     }
+    else
+    {
+        IAnnunciator_Redraw(pMe);
+    }
+#endif
 	return SUCCESS;
 }
 

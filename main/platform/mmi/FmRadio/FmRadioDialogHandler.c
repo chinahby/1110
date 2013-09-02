@@ -1786,7 +1786,7 @@ static void popTuningModeSelectMenu( CFmRadio *pMe)
                 IDS_FMRADIO_SOFTKEY_MODE,
                 WTitle,
                 sizeof(WTitle));
-		IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+		IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
     }
 	#endif
     IMENUCTL_SetSel( pMe->m_pMenu, pMe->cfg.tuningMode);
@@ -2340,7 +2340,7 @@ static void showChannelList( void* pme)
                 IDS_FMRADIO_OPTION_MENU_LIST,
                 WTitle,
                 sizeof(WTitle));
-		IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+		IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
     }
 	#endif
     IMENUCTL_SetProperties( pMe->m_pMenu, MP_WRAPSCROLL);

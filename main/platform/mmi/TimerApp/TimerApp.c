@@ -1202,7 +1202,7 @@ static void AppTimer_Redraw(CAppTimer *pme)
     TBarParam.dwAlignFlags = IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER;
     DrawTitleBar(pme->a.m_pIDisplay, &TBarParam);
     #else
-	IANNUNCIATOR_SetFieldText(pme->m_pIAnn,wszTitle);
+	IANNUNCIATOR_SetFieldTextEx(pme->m_pIAnn,wszTitle,FALSE);
 	#endif
     //draw static text info
     MEMSET(wszTitle, 0, sizeof(wszTitle));

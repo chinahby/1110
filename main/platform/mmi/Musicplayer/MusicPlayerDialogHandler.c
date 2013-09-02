@@ -394,7 +394,8 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
     {
 	
         case EVT_DIALOG_INIT:   
-        {   			
+        {
+            IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
             return TRUE;
         }
         case EVT_DIALOG_START:
@@ -455,16 +456,7 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
     			}
 			 }
              #endif
-			
-            if(pMe->m_pIAnn != NULL)
-            {
-            	int nIdx;
-            	nIdx  = pMe->m_nAutoScrollIdx;
-                MSG_FATAL("IANNUNCIATOR_SetHasTitleText",0,0,0);
-                //IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, FALSE);
-				//IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,pMe->m_pMp3FileToPlay+nIdx);
-                //IANNUNCIATOR_Redraw(pMe->m_pIAnn);
-            }
+             
 			MP3_DrawPlayerWindows(pMe);
 
 			if(pMe->m_bPaused || pMe->m_bPlaying)
@@ -1084,7 +1076,7 @@ static boolean MP3_Playlist_HandleEvent(CMusicPlayer *pMe,
                         WTitle,
                         sizeof(WTitle));
                 IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
 		    }
 			#endif
    
@@ -1312,7 +1304,7 @@ static boolean MP3_SetRingtone_HandleEvent(CMusicPlayer *pMe,
                         WTitle,
                         sizeof(WTitle));
                 IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
 		    }
 			#endif
             IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY);
@@ -2310,7 +2302,7 @@ static boolean MP3_PlaylistOpts_HandleEvent(CMusicPlayer *pMe,
                         WTitle,
                         sizeof(WTitle));
                 IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
 		    }
 			#endif
    
@@ -6089,8 +6081,7 @@ static void MP3_DrawPlayerWindows(CMusicPlayer *pMe)
 	#else
 	MP3_DrawRewindImage(pMe);
     MP3_DrawForwardImage(pMe);
-	#endif   
-	 IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);//wlh test
+	#endif
 }
 
 /*画简单播放器界面*/

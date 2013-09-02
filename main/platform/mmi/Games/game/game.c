@@ -934,7 +934,7 @@ static boolean Game_ListMenuHandler(Game *pMe, AEEEvent eCode, uint16 wParam, ui
                         sizeof(WTitle));
                 if(pMe->m_pIAnn != NULL)
                 {
-				    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
                 }
 		    }
 			#endif     
@@ -1005,12 +1005,7 @@ static boolean Game_ListMenuHandler(Game *pMe, AEEEvent eCode, uint16 wParam, ui
                 IMENUCTL_SetOemProperties( pMenu, OEMMP_USE_MENU_STYLE);
                 IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
                 IMENUCTL_SetSel(pMenu, pMe->m_MainSel);
-                (void) ISHELL_PostEvent(pMe->m_pShell, AEECLSID_MAIN_MENU, EVT_USER_REDRAW,0,0);
             }
-            return TRUE;
-            
-        case EVT_USER_REDRAW:
-            //(void)IMENUCTL_Redraw(pMenu);    //dele by yangdecai
             return TRUE;
             
         case EVT_DIALOG_END:

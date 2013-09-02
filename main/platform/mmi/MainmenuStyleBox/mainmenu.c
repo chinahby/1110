@@ -6016,7 +6016,7 @@ static boolean MainMenu_FlashlightMenuHandler(MainMenu *pMe, AEEEvent eCode, uin
 
             if(pMe->m_pIAnn != NULL)
             {
-			    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+			    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
             IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG, IDS_MAIN_MENU_TORCH_ON, IDS_MAIN_MENU_TORCH_ON, NULL, 0);
             IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG, IDS_MAIN_MENU_TORCH_OFF, IDS_MAIN_MENU_TORCH_OFF, NULL, 0);
@@ -6043,16 +6043,7 @@ static boolean MainMenu_FlashlightMenuHandler(MainMenu *pMe, AEEEvent eCode, uin
                 InitMenuIcons(pMenu);
                 SetMenuIcon(pMenu, wItemID, TRUE);
                 IMENUCTL_SetSel(pMenu, wItemID);
-                (void) ISHELL_PostEvent( pMe->m_pShell,
-                                         AEECLSID_MAIN_MENU,
-                                         EVT_USER_REDRAW,
-                                         0,
-                                         0);
             }
-            return TRUE;
-
-        case EVT_USER_REDRAW:
-            //(void)IMENUCTL_Redraw(pMenu);
             return TRUE;
 
         case EVT_DIALOG_END:

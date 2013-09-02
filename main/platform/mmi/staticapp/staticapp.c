@@ -605,7 +605,7 @@ static boolean Staticapp_HandleEvent( IStaticapp *pi,
 #endif
                 if(pMe->m_pIAnn != NULL)
                 {
-    			    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+    			    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
                 }
             }
             Staticapp_RunFSM(pMe);
@@ -1008,7 +1008,7 @@ static boolean Staticapp_ListMenuHandler(Staticapp *pMe, AEEEvent eCode, uint16 
 		
             if(pMe->m_pIAnn != NULL)
             {
-			    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+			    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
 			
 #if defined(FEATURE_VERSION_FLEXI203P)
@@ -1103,12 +1103,7 @@ static boolean Staticapp_ListMenuHandler(Staticapp *pMe, AEEEvent eCode, uint16 
                 IMENUCTL_SetOemProperties( pMenu, OEMMP_USE_MENU_STYLE);
                 IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
                 IMENUCTL_SetSel(pMenu, pMe->m_MainSel);
-                (void) ISHELL_PostEvent(pMe->m_pShell, AEECLSID_MAIN_MENU, EVT_USER_REDRAW,0,0);
             }
-            return TRUE;
-            
-        case EVT_USER_REDRAW:
-            //(void)IMENUCTL_Redraw(pMenu);    //dele by yangdecai
             return TRUE;
             
         case EVT_DIALOG_END:
@@ -1167,7 +1162,7 @@ static boolean Staticapp_ListFGualHandler(Staticapp *pMe, AEEEvent eCode, uint16
 		
             if(pMe->m_pIAnn != NULL)
             {
-			    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+			    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
 		//	IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_GAUL, IDS_STATICAPP_TITLE_GAUL, NULL, 0);
 		//	IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_MYSCHOOL, IDS_STATICAPP_TITLE_MYSCHOOL, NULL, 0);
@@ -1202,14 +1197,8 @@ static boolean Staticapp_ListFGualHandler(Staticapp *pMe, AEEEvent eCode, uint16
             IMENUCTL_SetOemProperties( pMenu, OEMMP_USE_MENU_STYLE);
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
             IMENUCTL_SetSel(pMenu, pMe->m_MainSel);
-            (void) ISHELL_PostEvent(pMe->m_pShell, AEECLSID_MAIN_MENU, EVT_USER_REDRAW,0,0);
         }
 		 return TRUE;
-
-
-		case EVT_USER_REDRAW:
-            //(void)IMENUCTL_Redraw(pMenu);     //dele by yangdecai
-            return TRUE;
             
         case EVT_DIALOG_END:
             return TRUE;
@@ -1267,7 +1256,7 @@ static boolean Staticapp_ListAplikasiHandler(Staticapp *pMe, AEEEvent eCode, uin
 #endif	
             if(pMe->m_pIAnn != NULL)
             {
-			    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+			    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
 			
 	//		IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_FLEXI_FACEBOOK, IDS_STATICAPP_TITLE_FLEXI_FACEBOOK, NULL, 0);
@@ -1304,14 +1293,8 @@ static boolean Staticapp_ListAplikasiHandler(Staticapp *pMe, AEEEvent eCode, uin
             IMENUCTL_SetOemProperties( pMenu, OEMMP_USE_MENU_STYLE);
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
             IMENUCTL_SetSel(pMenu, pMe->m_MainSel);
-            (void) ISHELL_PostEvent(pMe->m_pShell, AEECLSID_MAIN_MENU, EVT_USER_REDRAW,0,0);
         }
 		 return TRUE;
-
-
-		case EVT_USER_REDRAW:
-            //(void)IMENUCTL_Redraw(pMenu);    //dele by yangdecai
-            return TRUE;
             
         case EVT_DIALOG_END:
             return TRUE;

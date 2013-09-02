@@ -521,7 +521,7 @@ static boolean dialog_handler_of_state_main( Recorder* pme, AEEEvent evt, uint16
 				#endif
                 if(pme->m_pIAnn != NULL)
                 {
-				    IANNUNCIATOR_SetFieldText(pme->m_pIAnn,wszTitle);
+				    IANNUNCIATOR_SetFieldTextEx(pme->m_pIAnn,wszTitle,FALSE);
                 }
 			}
 			#endif
@@ -549,13 +549,6 @@ static boolean dialog_handler_of_state_main( Recorder* pme, AEEEvent evt, uint16
 			{
 				selected = 0;
 			}
-		}
-		return TRUE;
-
-		case EVT_USER_REDRAW:
-		{
-			MSG_FATAL("pme->m_prefs.storage===%d",pme->m_prefs.storage,0,0);
-			IMENUCTL_Redraw( pMenu);
 		}
 		return TRUE;
 
@@ -3392,7 +3385,7 @@ static boolean  dialog_handler_of_state_set_as( Recorder* pme, AEEEvent evt, uin
                         sizeof(WTitle));
                 if(pme->m_pIAnn != NULL)
                 {
-				    IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
+				    IANNUNCIATOR_SetFieldTextEx(pme->m_pIAnn,WTitle,FALSE);
                 }
 		    }
 			#endif			
@@ -4731,7 +4724,7 @@ static boolean dialog_handler_of_state_storage_setup( Recorder* pme, AEEEvent ev
                                           sizeof(wszTitle));
 					#endif
 					
-    				IANNUNCIATOR_SetFieldText(pme->m_pIAnn,wszTitle);            
+    				IANNUNCIATOR_SetFieldTextEx(pme->m_pIAnn,wszTitle,FALSE);            
     			}
     			#endif
             }

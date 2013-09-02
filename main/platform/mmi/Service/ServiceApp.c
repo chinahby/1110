@@ -645,7 +645,7 @@ static boolean ServiceApp_ListMenuHandler(ServiceApp *pMe, AEEEvent eCode, uint1
                         sizeof(WTitle));
                 if(pMe->m_pIAnn != NULL)
                 {                								
-				    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
                 }
 		    }
             IMENUCTL_AddItem(pMenu, SERVICE_RES_FILE_LANG,IDS_SERVICE_UTK, IDS_SERVICE_UTK, NULL, 0); 
@@ -685,26 +685,7 @@ static boolean ServiceApp_ListMenuHandler(ServiceApp *pMe, AEEEvent eCode, uint1
                 IMENUCTL_SetOemProperties( pMenu, OEMMP_USE_MENU_STYLE);
                 IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
                 IMENUCTL_SetSel(pMenu, pMe->m_MainSel);
-                (void) ISHELL_PostEvent(pMe->m_pShell, AEECLSID_SERVICE, EVT_USER_REDRAW,0,0);
             }
-            return TRUE;
-            
-        case EVT_USER_REDRAW:			
-	/*		{				
-		  		AECHAR WTitle[40] = {0};
-				
-				(void)ISHELL_LoadResString(pMe->m_pShell,
-                        SERVICE_RES_FILE_LANG,                                
-                        IDS_SERVICE_TITLE,
-                        WTitle,
-                        sizeof(WTitle));
-                if(pMe->m_pIAnn != NULL)
-                {                								
-				    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
-                }
-		    }*/
-		
-            (void)IMENUCTL_Redraw(pMenu);
             return TRUE;
 
         case EVT_DIALOG_END:			

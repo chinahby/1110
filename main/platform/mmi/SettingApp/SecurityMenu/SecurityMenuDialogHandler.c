@@ -426,7 +426,7 @@ static boolean  SecurityMainDlgHandler(CSecurityMenu *pMe,
                         IDS_SECURITY_TITLE,
                         WTitle,
                         sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_PHONE_LOCK, IDS_PHONE_LOCK, NULL, 0);
             if(IsRunAsUIMVersion())
@@ -470,15 +470,6 @@ static boolean  SecurityMainDlgHandler(CSecurityMenu *pMe,
             SecurityMenu_SetItemNumIcon(pMenu);
 
             IMENUCTL_SetSel(pMenu, pMe->m_currDlgId);
-            (void) ISHELL_PostEvent(pMe->m_pShell,
-                                            AEECLSID_APP_SECURITYMENU,
-                                            EVT_USER_REDRAW,
-                                            0,
-                                            0);
-            return TRUE;
-
-        case EVT_USER_REDRAW:
-            //(void)IMENUCTL_Redraw(pMenu);  //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -653,7 +644,7 @@ static boolean  SecurityApplicationLockDlgHandler(CSecurityMenu *pMe,
                         WTitle,
                         sizeof(WTitle));
 #endif
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
             
 #if defined(FEATURE_WMS_APP) && !defined(FEATURE_WMSAPP_ONLYSUPPORTVMAIL)
@@ -733,15 +724,6 @@ static boolean  SecurityApplicationLockDlgHandler(CSecurityMenu *pMe,
 #endif
 
             IMENUCTL_SetSel(pMenu, IDS_SMS_LOCK);
-            (void) ISHELL_PostEvent(pMe->m_pShell,
-                                            AEECLSID_APP_SECURITYMENU,
-                                            EVT_USER_REDRAW,
-                                            0,
-                                            0);
-            return TRUE;
-
-        case EVT_USER_REDRAW:
-            //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -875,7 +857,7 @@ static boolean  SecurityOneKeyLockKeypadDlgHandler(CSecurityMenu *pMe,
                         string_id,
                         WTitle,
                         sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
 		    }
             OEM_GetConfig(CFGI_ONEKEY_LOCK_KEYPAD,&bData, sizeof(bData));
             SetMenu_SetRadioIconAsOff(pMenu);
@@ -890,21 +872,8 @@ static boolean  SecurityOneKeyLockKeypadDlgHandler(CSecurityMenu *pMe,
             }
 
             SetMenuIcon(pMenu, wItemID, TRUE);
-            //SetControlRect(pMe,pMenu);
-
-
-            (void) ISHELL_PostEvent(pMe->m_pShell,
-                                            AEECLSID_APP_SECURITYMENU,
-                                            EVT_USER_REDRAW,
-                                            0,
-                                            0);
-
             return TRUE;
         }
-        case EVT_USER_REDRAW:
-            //(void)IMENUCTL_Redraw(pMenu);   
-            return TRUE;
-
         case EVT_DIALOG_END:
             return TRUE;
 
@@ -1079,7 +1048,7 @@ static boolean  SecurityPassWordDlgHandler(CSecurityMenu *pMe,
                         string_id,
                         WTitle,
                         sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
 		    }
 			#endif
             (void) ICONFIG_GetItem(pMe->m_pConfig,
@@ -1098,21 +1067,8 @@ static boolean  SecurityPassWordDlgHandler(CSecurityMenu *pMe,
             }
 
             SetMenuIcon(pMenu, wItemID, TRUE);
-            //SetControlRect(pMe,pMenu);
-
-
-            (void) ISHELL_PostEvent(pMe->m_pShell,
-                                            AEECLSID_APP_SECURITYMENU,
-                                            EVT_USER_REDRAW,
-                                            0,
-                                            0);
-
             return TRUE;
         }
-        case EVT_USER_REDRAW:
-            //(void)IMENUCTL_Redraw(pMenu);    //dele by yangdecai
-            return TRUE;
-
         case EVT_DIALOG_END:
             return TRUE;
 
@@ -1259,7 +1215,7 @@ static boolean   SecurityKeyLockDlgHandler(CSecurityMenu *pMe,
                         IDS_AUTOKEYGUARD_TITLE,
                         WTitle,
                         sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
 
 			//Add By zzg 2012_10_29
@@ -1349,17 +1305,7 @@ static boolean   SecurityKeyLockDlgHandler(CSecurityMenu *pMe,
                 IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT|MP_ACTIVE_NO_REDRAW);
                 IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
                 IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
-
-                (void) ISHELL_PostEvent( pMe->m_pShell,
-                                         AEECLSID_APP_SECURITYMENU,
-                                         EVT_USER_REDRAW,
-                                         0,
-                                         0);
             }
-            return TRUE;
-
-        case EVT_USER_REDRAW:
-            //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -1903,7 +1849,7 @@ static boolean  SecurityPinCheckDlgHandler(CSecurityMenu *pMe,
                         IDS_PIN_CHECK,
                         WTitle,
                         sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_ON, IDS_ON, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_OFF, IDS_OFF, NULL, 0);
@@ -1928,18 +1874,8 @@ static boolean  SecurityPinCheckDlgHandler(CSecurityMenu *pMe,
             IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SECURITY_BACKGROUND);
 #endif
                 IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
-                //SetControlRect(pMe,pMenu);
-                (void) ISHELL_PostEvent( pMe->m_pShell,
-                                            AEECLSID_APP_SECURITYMENU,
-                                            EVT_USER_REDRAW,
-                                            0,
-                                            0);
             }
             return TRUE;
-
-        case EVT_USER_REDRAW:
-           //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
-           return TRUE;
 
         case EVT_DIALOG_END:
            return TRUE;
@@ -6206,7 +6142,7 @@ static boolean  SecurityEmergencyCallHandler(CSecurityMenu *pMe,
                         IDS_EMERGENCY_NUMBER,
                         WTitle,
                         sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SECURITY_BACKGROUND);
@@ -6219,15 +6155,6 @@ static boolean  SecurityEmergencyCallHandler(CSecurityMenu *pMe,
                 }
                 IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
             }
-            ISHELL_PostEvent(pMe->m_pShell,
-                                        AEECLSID_APP_SECURITYMENU,
-                                        EVT_USER_REDRAW, 
-                                        0,
-                                        0);
-            return TRUE;
-
-        case EVT_USER_REDRAW:
-            //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -6357,7 +6284,7 @@ static boolean  HandleRestoreDialogEvent(CSecurityMenu *pMe,
                         IDS_RESTORE,
                         WTitle,
                         sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_RESTORE_OK, IDS_RESTORE_OK, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_RESTORE_CANCEL, IDS_RESTORE_CANCEL, NULL, 0);
@@ -6371,18 +6298,6 @@ static boolean  HandleRestoreDialogEvent(CSecurityMenu *pMe,
 
             // 给菜单各菜单项加数字编号图标
             SecurityMenu_SetItemNumIcon(pMenu);
-
-            (void) ISHELL_PostEvent(pMe->m_pShell,
-                                   AEECLSID_APP_SECURITYMENU,
-                                   EVT_USER_REDRAW,
-                                   0,
-                                   0);
-            return TRUE;
-
-        case EVT_USER_REDRAW:
-            // 统一更新界面
-            //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -6805,7 +6720,7 @@ static boolean  HandleChangeCodeDialogEvent(CSecurityMenu *pMe,
                         IDS_PHONE_PASSWORD_CHANGE,
                         WTitle,
                         sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_PHONE_CODE, IDS_PHONE_CODE, NULL, 0);
             if(IsRunAsUIMVersion())
@@ -6822,17 +6737,6 @@ static boolean  HandleChangeCodeDialogEvent(CSecurityMenu *pMe,
             IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SECURITY_BACKGROUND);
 #endif
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
-
-
-            (void) ISHELL_PostEvent(pMe->m_pShell,
-                                            AEECLSID_APP_SECURITYMENU,
-                                            EVT_USER_REDRAW,
-                                            0,
-                                            0);
-            return TRUE;
-
-        case EVT_USER_REDRAW:
-            //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:

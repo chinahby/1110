@@ -1493,7 +1493,7 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
 
             ASSERT(pMe->m_pDisplay != NULL);
             
-            IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, NULL);
+            IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn, NULL, FALSE);
             (void) IDISPLAY_AddRef(pMe->m_pDisplay);
             //pMe->m_rc = as->rc;
             CallApp_SetupCallAudio(pMe);

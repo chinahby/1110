@@ -1054,7 +1054,7 @@ static boolean IDD_MAIN_Handler(void        *pUser,
                 MSG_FATAL("IDD_MAIN_Handler EVT_DIALOG_INIT result=%d",result,0,0);
                 if(pMe->m_pIAnn != NULL)
                 {
-				    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
                 }
             }
             MSG_FATAL("IDD_MAIN_Handler EVT_DIALOG_INIT 3",0,0,0);
@@ -1702,7 +1702,7 @@ static boolean  IDD_PWD_Handler(void       *pUser,
                                                   text,
                                                   sizeof(text));                  
                   // 画标题条
-    			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,text);
+    			IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,text,FALSE);
                 return TRUE;
         	}
             
@@ -2257,7 +2257,7 @@ static boolean IDD_MESSAGELIST_Handler(void        *pUser,
 					#else
 					{
 					
-						IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wszTitle);
+						IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,wszTitle,FALSE);
 					}
 					#endif
                 }
@@ -2500,7 +2500,7 @@ static boolean IDD_MESSAGELIST_Handler(void        *pUser,
                     (void)IMENUCTL_SetTitle(pMenu, NULL, 0, wszTitle);
 					#else
 					{
-						IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wszTitle);
+						IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,wszTitle,FALSE);
 					}
 					#endif
                 }
@@ -2949,7 +2949,7 @@ static boolean IDD_VIEWMSG_Handler(void         *pUser,
                 TBarParam.dwAlignFlags = IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
                 DrawTitleBar(pMe->m_pDisplay, &TBarParam);
 				#else
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wszTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,wszTitle,FALSE);
 				#endif
 
                 MEMSET(wszTitle, 0, sizeof(wszTitle));
@@ -3402,7 +3402,7 @@ static boolean IDD_DELETEMSGS_Handler(void *pUser,
                         IDS_DELETEMSGS,
                         WTitle,
                         sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
             MENU_SETBOTTOMBAR(pMenu, BTBAR_SELECT_BACK);
             //SetControlRect(pMe,pMenu);
@@ -3431,23 +3431,6 @@ static boolean IDD_DELETEMSGS_Handler(void *pUser,
 #endif
             MENU_ADDITEM(pMenu, IDS_ALL); 
             IMENUCTL_SetSel(pMenu, pMe->m_wPrevMenuSel);
-            (void) ISHELL_PostEventEx(pMe->m_pShell, 
-                                    EVTFLG_ASYNC,
-                                    AEECLSID_WMSAPP,
-                                    EVT_USER_REDRAW,
-                                    0, 
-                                    0);
-
-            return TRUE;
-  
-        case EVT_USER_REDRAW:
-            // 绘制底条提示
-            // Select       Back
-            //DRAW_BOTTOMBAR(BTBAR_SELECT_BACK)
-
-            // 更新界面
-            //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            //(void)IMENUCTL_Redraw(pMenu);  //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -3607,7 +3590,7 @@ static boolean IDD_SETTING_Handler(void   *pUser,
                         IDS_MSGSETTING,
                         WTitle,
                         sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
             MENU_SETBOTTOMBAR(pMenu, BTBAR_SELECT_BACK);
                      
@@ -3644,23 +3627,6 @@ static boolean IDD_SETTING_Handler(void   *pUser,
             return TRUE;
 
         case EVT_DIALOG_START:
-            (void) ISHELL_PostEventEx(pMe->m_pShell, 
-                                    EVTFLG_ASYNC,
-                                    AEECLSID_WMSAPP,
-                                    EVT_USER_REDRAW,
-                                    0, 
-                                    0);
-
-            return TRUE;
-
-        case EVT_USER_REDRAW:
-            // 绘制底条提示
-            // Select       Back
-            //DRAW_BOTTOMBAR(BTBAR_SELECT_BACK)
-            
-            // 更新界面
-            //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
             return TRUE;
 
         case EVT_CTL_SEL_CHANGED:
@@ -3842,7 +3808,7 @@ static boolean IDD_RESERVEDMSG_Handler(void   *pUser,
                         IDS_RESERVEDMSG,
                         WTitle,
                         sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
             MENU_SETBOTTOMBAR(pMenu, BTBAR_SELECT_BACK);
             
@@ -3854,12 +3820,6 @@ static boolean IDD_RESERVEDMSG_Handler(void   *pUser,
             return TRUE;
 
         case EVT_DIALOG_START:
-            (void) ISHELL_PostEventEx(pMe->m_pShell, 
-                                    EVTFLG_ASYNC,
-                                    AEECLSID_WMSAPP,
-                                    EVT_USER_REDRAW,
-                                    0, 
-                                    0);
             {
                 AECHAR *pwsz = NULL;
                 uint32 dwSize;
@@ -3903,12 +3863,6 @@ static boolean IDD_RESERVEDMSG_Handler(void   *pUser,
                 FREE(pwsz);
             }
 
-            return TRUE;
-
-        case EVT_USER_REDRAW:
-            // 更新界面
-            //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
             return TRUE;
 
         case EVT_CTL_SEL_CHANGED:
@@ -4182,7 +4136,7 @@ static boolean IDD_GETDT_Handler(void   *pUser,
                     // 画标题条
                     DrawTitleBar(pMe->m_pDisplay, &TitleBar_Param);
 					#else
-					IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wstrTitle);
+					IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,wstrTitle,FALSE);
 					#endif
                     
                     // 填充大背景色
@@ -5009,7 +4963,7 @@ static boolean IDD_RESERVEDMSGALERT_Handler(void        *pUser,
 		                MEMSET(wstrText, 0, sizeof(wstrText));
 		            }
 					#else
-					IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wstrText);
+					IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,wstrText,FALSE);
 					#endif
                 }
                 
@@ -5214,15 +5168,9 @@ static boolean IDD_OUTMSGSAVEOPT_Handler(void *pUser,
                         IDS_AUTOSAVE,
                         WTitle,
                         sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
             MENU_SETBOTTOMBAR(pMenu, BTBAR_SELECT_BACK);
-            (void) ISHELL_PostEventEx(pMe->m_pShell, 
-                                    EVTFLG_ASYNC,
-                                    AEECLSID_WMSAPP,
-                                    EVT_USER_REDRAW,
-                                    0, 
-                                    0);
 
             {
                 uint16 nSelID;
@@ -5240,16 +5188,6 @@ static boolean IDD_OUTMSGSAVEOPT_Handler(void *pUser,
                 SetMenuIcon(pMenu, nSelID, TRUE);
                 IMENUCTL_SetSel(pMenu, nSelID);
             }
-            return TRUE;
-
-        case EVT_USER_REDRAW:
-            // 绘制底条提示
-            // Select       Back
-            //DRAW_BOTTOMBAR(BTBAR_SELECT_BACK)
-            
-            // 更新界面
-            //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            //(void)IMENUCTL_Redraw(pMenu);     //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -5351,7 +5289,7 @@ static boolean IDD_PRIORITY_Handler(void *pUser,
                         IDS_PRIORITY,
                         WTitle,
                         sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
             MENU_SETBOTTOMBAR(pMenu, BTBAR_SELECT_BACK);
             
@@ -5362,12 +5300,6 @@ static boolean IDD_PRIORITY_Handler(void *pUser,
             return TRUE;
 
         case EVT_DIALOG_START:
-            (void) ISHELL_PostEventEx(pMe->m_pShell, 
-                                    EVTFLG_ASYNC,
-                                    AEECLSID_WMSAPP,
-                                    EVT_USER_REDRAW,
-                                    0, 
-                                    0);
             {// 需根据具体配置选择相应菜单项
                 uint16 nSelID = IDS_NORMAL;
                 byte   btPriority;
@@ -5394,16 +5326,6 @@ static boolean IDD_PRIORITY_Handler(void *pUser,
                 SetMenuIcon(pMenu, nSelID, TRUE);
                 IMENUCTL_SetSel(pMenu, nSelID);
             }
-            return TRUE;
-
-        case EVT_USER_REDRAW:
-            // 绘制底条提示
-            // Select       Back
-            //DRAW_BOTTOMBAR(BTBAR_SELECT_BACK)
-
-            // 更新界面
-            //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            //(void)IMENUCTL_Redraw(pMenu);    //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -5530,18 +5452,12 @@ static boolean IDD_SENDMODE_Handler(void *pUser,
                 sizeof(WTitle));
                 if(pMe->m_pIAnn != NULL)
                 {
-                    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+                    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
                 }
             }               
             return TRUE;
 
         case EVT_DIALOG_START:
-            (void) ISHELL_PostEventEx(pMe->m_pShell, 
-                                    EVTFLG_ASYNC,
-                                    AEECLSID_WMSAPP,
-                                    EVT_USER_REDRAW,
-                                    0, 
-                                    0);
             {// 需根据具体配置选择相应菜单项
                 uint16 nSelID = IDS_SENDANDSAVE;
                 byte   btSendmode;
@@ -5571,11 +5487,6 @@ static boolean IDD_SENDMODE_Handler(void *pUser,
                 SetMenuIcon(pMenu, nSelID, TRUE);
                 IMENUCTL_SetSel(pMenu, nSelID);
             }
-            return TRUE;
-
-        case EVT_USER_REDRAW:
-
-            //(void)IMENUCTL_Redraw(pMenu);    //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -5691,7 +5602,7 @@ static boolean IDD_REPORTS_Handler(void *pUser,
                         IDS_REPORTTITLE, //IDS_DELIVERYREPORTS,
                         WTitle,
                         sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
             MENU_SETBOTTOMBAR(pMenu, BTBAR_SELECT_BACK);
             
@@ -5701,13 +5612,6 @@ static boolean IDD_REPORTS_Handler(void *pUser,
             return TRUE;
 
         case EVT_DIALOG_START:
-            (void) ISHELL_PostEventEx(pMe->m_pShell, 
-                                    EVTFLG_ASYNC,
-                                    AEECLSID_WMSAPP,
-                                    EVT_USER_REDRAW,
-                                    0, 
-                                    0);
-
             {// 需根据具体配置选择相应菜单项
                 uint16 nSelID;
                 boolean bDeliveryReports;
@@ -5730,16 +5634,6 @@ static boolean IDD_REPORTS_Handler(void *pUser,
                 SetMenuIcon(pMenu, nSelID, TRUE);
                 IMENUCTL_SetSel(pMenu, nSelID);
             }
-            return TRUE;
-
-        case EVT_USER_REDRAW:
-            // 绘制底条提示
-            // Select       Back
-            //DRAW_BOTTOMBAR(BTBAR_SELECT_BACK)
-            
-            // 更新界面
-            //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            //(void)IMENUCTL_Redraw(pMenu);    //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -5854,7 +5748,7 @@ static boolean IDD_OPTION_YESNO_Handle(void *pUser,
                         nTitleTextId, //IDS_DELIVERYREPORTS,
                         WTitle,
                         sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
             MENU_SETBOTTOMBAR(pMenu, BTBAR_SELECT_BACK);
             
@@ -5865,13 +5759,6 @@ static boolean IDD_OPTION_YESNO_Handle(void *pUser,
             return TRUE;
 
         case EVT_DIALOG_START:
-            (void) ISHELL_PostEventEx(pMe->m_pShell, 
-                                    EVTFLG_ASYNC,
-                                    AEECLSID_WMSAPP,
-                                    EVT_USER_REDRAW,
-                                    0, 
-                                    0);
-
             {// 需根据具体配置选择相应菜单项
                 uint16 nSelID;
                 
@@ -5896,16 +5783,6 @@ static boolean IDD_OPTION_YESNO_Handle(void *pUser,
                 SetMenuIcon(pMenu, nSelID, TRUE);
                 IMENUCTL_SetSel(pMenu, nSelID);
             }
-            return TRUE;
-
-        case EVT_USER_REDRAW:
-            // 绘制底条提示
-            // Select       Back
-            //DRAW_BOTTOMBAR(BTBAR_SELECT_BACK)
-            
-            // 更新界面
-            //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -6111,19 +5988,12 @@ static boolean IDD_AUTOREPLACE_Handler(void *pUser,
                 sizeof(WTitle));
                 if(pMe->m_pIAnn != NULL)
                 {
-                    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+                    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
                 }
             }               
             return TRUE;
 
         case EVT_DIALOG_START:
-            (void) ISHELL_PostEventEx(pMe->m_pShell, 
-                                    EVTFLG_ASYNC,
-                                    AEECLSID_WMSAPP,
-                                    EVT_USER_REDRAW,
-                                    0, 
-                                    0);
-
             {// 需根据具体配置选择相应菜单项
                 uint16 nSelID;
                 boolean bAutoreplace;
@@ -6146,11 +6016,6 @@ static boolean IDD_AUTOREPLACE_Handler(void *pUser,
                 SetMenuIcon(pMenu, nSelID, TRUE);
                 IMENUCTL_SetSel(pMenu, nSelID);
             }
-            return TRUE;
-
-        case EVT_USER_REDRAW:
-            // 更新界面
-            //(void)IMENUCTL_Redraw(pMenu);    //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -6267,7 +6132,7 @@ static boolean IDD_CALLBACKNUMSWITCH_Handler(void *pUser,
                         IDS_CALLBACKNUM,
                         WTitle,
                         sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
             MENU_SETBOTTOMBAR(pMenu, BTBAR_SELECT_BACK);
             
@@ -6277,13 +6142,6 @@ static boolean IDD_CALLBACKNUMSWITCH_Handler(void *pUser,
             return TRUE;
 
         case EVT_DIALOG_START:
-            (void) ISHELL_PostEventEx(pMe->m_pShell, 
-                                    EVTFLG_ASYNC,
-                                    AEECLSID_WMSAPP,
-                                    EVT_USER_REDRAW,
-                                    0, 
-                                    0);
-
             {// 需根据具体配置选择相应菜单项
                 uint16 nSelID;
                 boolean bVal;
@@ -6306,16 +6164,6 @@ static boolean IDD_CALLBACKNUMSWITCH_Handler(void *pUser,
                 SetMenuIcon(pMenu, nSelID, TRUE);
                 IMENUCTL_SetSel(pMenu, nSelID);
             }
-            return TRUE;
-
-        case EVT_USER_REDRAW:
-            // 绘制底条提示
-            // Select       Back
-            //DRAW_BOTTOMBAR(BTBAR_SELECT_BACK)
-            
-            // 更新界面
-            //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            //(void)IMENUCTL_Redraw(pMenu);    //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -6512,7 +6360,7 @@ static boolean IDD_CALLBACKNUM_Handler(void   *pUser,
                 sizeof(WTitle));
                 if(pMe->m_pIAnn != NULL)
                 {
-                    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+                    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
                 }
               }               
             (void) ISHELL_PostEventEx(pMe->m_pShell, 
@@ -6714,13 +6562,6 @@ static boolean IDD_AUTODELETE_Handler(void *pUser,
             return TRUE;
 
         case EVT_DIALOG_START:
-            (void) ISHELL_PostEventEx(pMe->m_pShell, 
-                                    EVTFLG_ASYNC,
-                                    AEECLSID_WMSAPP,
-                                    EVT_USER_REDRAW,
-                                    0, 
-                                    0);
-
             //SetControlRect(pMe,pMenu);
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
 			//add by yangdecai
@@ -6731,7 +6572,7 @@ static boolean IDD_AUTODELETE_Handler(void *pUser,
                         IDS_AUTODELETE,
                         WTitle,
                         sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
             MENU_SETBOTTOMBAR(pMenu, BTBAR_SELECT_BACK);
             {// 需根据具体配置选择相应菜单项
@@ -6750,16 +6591,6 @@ static boolean IDD_AUTODELETE_Handler(void *pUser,
                 SetMenuIcon(pMenu, nSelID, TRUE);
                 IMENUCTL_SetSel(pMenu, nSelID);
             }
-            return TRUE;
-
-        case EVT_USER_REDRAW:
-            // 绘制底条提示
-            // Select       Back
-            //DRAW_BOTTOMBAR(BTBAR_SELECT_BACK)
-            
-            // 更新界面
-            //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            //(void)IMENUCTL_Redraw(pMenu);    //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -6857,7 +6688,7 @@ static boolean IDD_RSVDMSGALERTTIMEOUT_SETTING_Handler(void *pUser,
                         IDS_RESERVEDMSGS,
                         WTitle,
                         sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
             MENU_SETBOTTOMBAR(pMenu, BTBAR_SELECT_BACK);
             
@@ -6866,13 +6697,6 @@ static boolean IDD_RSVDMSGALERTTIMEOUT_SETTING_Handler(void *pUser,
             return TRUE;
 
         case EVT_DIALOG_START:
-            (void) ISHELL_PostEventEx(pMe->m_pShell, 
-                                    EVTFLG_ASYNC,
-                                    AEECLSID_WMSAPP,
-                                    EVT_USER_REDRAW,
-                                    0, 
-                                    0);
-
             {// 需根据具体配置选择相应菜单项
                 boolean bVal = FALSE;
                 
@@ -6890,16 +6714,6 @@ static boolean IDD_RSVDMSGALERTTIMEOUT_SETTING_Handler(void *pUser,
                     SetMenuIcon(pMenu, IDS_ALERTTIMEOUT, FALSE);
                 }
             }
-            return TRUE;
-
-        case EVT_USER_REDRAW:
-            // 绘制底条提示
-            // Select       Back
-            //DRAW_BOTTOMBAR(BTBAR_SELECT_BACK)
-            
-            // 更新界面
-            //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            //(void)IMENUCTL_Redraw(pMenu);    //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -7010,7 +6824,7 @@ static boolean IDD_STORAGE_Handler(void   *pUser,
                         IDS_STORAGE,
                         WTitle,
                         sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
             MENU_SETBOTTOMBAR(pMenu, BTBAR_SELECT_BACK);
             
@@ -7021,13 +6835,6 @@ static boolean IDD_STORAGE_Handler(void   *pUser,
             return TRUE;
 
         case EVT_DIALOG_START:
-            (void) ISHELL_PostEventEx(pMe->m_pShell, 
-                                    EVTFLG_ASYNC,
-                                    AEECLSID_WMSAPP,
-                                    EVT_USER_REDRAW,
-                                    0, 
-                                    0);
-                                    
             InitMenuIcons(pMenu);
             {
                 uint16 nSelID = IDS_RUIM;
@@ -7050,16 +6857,6 @@ static boolean IDD_STORAGE_Handler(void   *pUser,
                 IMENUCTL_SetSel(pMenu, nSelID);
             }
             
-            return TRUE;
-
-        case EVT_USER_REDRAW:
-            // 绘制底条提示
-            // Select       Back
-            //DRAW_BOTTOMBAR(BTBAR_SELECT_BACK)
-            
-            // 更新界面
-            //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            //(void)IMENUCTL_Redraw(pMenu);    //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -7170,7 +6967,7 @@ static boolean IDD_MESSAGEVALIDITY_Handler(void   *pUser,
                         IDS_MSGVALIDITY,
                         WTitle,
                         sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
             MENU_SETBOTTOMBAR(pMenu, BTBAR_SELECT_BACK);
             
@@ -7187,13 +6984,6 @@ static boolean IDD_MESSAGEVALIDITY_Handler(void   *pUser,
             return TRUE;
 
         case EVT_DIALOG_START:
-            (void) ISHELL_PostEventEx(pMe->m_pShell, 
-                                    EVTFLG_ASYNC,
-                                    AEECLSID_WMSAPP,
-                                    EVT_USER_REDRAW,
-                                    0, 
-                                    0);
-                                    
             InitMenuIcons(pMenu);
             {// 需根据具体配置选择相应菜单项
                 uint16 nSelID = IDS_NORMAL;
@@ -7247,16 +7037,6 @@ static boolean IDD_MESSAGEVALIDITY_Handler(void   *pUser,
                 SetMenuIcon(pMenu, nSelID, TRUE);
                 IMENUCTL_SetSel(pMenu, nSelID);
             }
-            return TRUE;
-
-        case EVT_USER_REDRAW:
-            // 绘制底条提示
-            // Select       Back
-            //DRAW_BOTTOMBAR(BTBAR_SELECT_BACK)
-            
-            // 更新界面
-            //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            //(void)IMENUCTL_Redraw(pMenu);    //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -7383,7 +7163,7 @@ static boolean IDD_TIME_STAMP_Handler(void   *pUser,
                         IDS_TIME_STAMP,
                         WTitle,
                         sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
             MENU_SETBOTTOMBAR(pMenu, BTBAR_SELECT_BACK);
             
@@ -7394,13 +7174,6 @@ static boolean IDD_TIME_STAMP_Handler(void   *pUser,
             return TRUE;
 
         case EVT_DIALOG_START:
-            (void) ISHELL_PostEventEx(pMe->m_pShell, 
-                                    EVTFLG_ASYNC,
-                                    AEECLSID_WMSAPP,
-                                    EVT_USER_REDRAW,
-                                    0, 
-                                    0);
-                                    
             InitMenuIcons(pMenu);
             {// 需根据具体配置选择相应菜单项
                 uint16 nSelID = IDS_TIME_STAMP_ADJUST;
@@ -7433,16 +7206,6 @@ static boolean IDD_TIME_STAMP_Handler(void   *pUser,
                 SetMenuIcon(pMenu, nSelID, TRUE);
                 IMENUCTL_SetSel(pMenu, nSelID);
             }
-            return TRUE;
-
-        case EVT_USER_REDRAW:
-            // 绘制底条提示
-            // Select       Back
-            //DRAW_BOTTOMBAR(BTBAR_SELECT_BACK)
-            
-            // 更新界面
-            //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            //(void)IMENUCTL_Redraw(pMenu);    //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -8012,7 +7775,7 @@ static boolean IDD_SENDING_Handler(void *pUser,
 					#else
 					{
 					
-					IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wstrTitle);
+					IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,wstrTitle,FALSE);
 					}
 					#endif
             	}	
@@ -8907,7 +8670,7 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                         IDS_RECEIVER,
                         WTitle,
                         sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
             ITEXTCTL_SetProperties(pIText, TP_NOUPDATE|TP_FOCUS_NOSEL);
             return TRUE;
@@ -8975,7 +8738,7 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
 					#else
 					{
 					
-					IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wstrTitle);
+					IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,wstrTitle,FALSE);
 					}
 					#endif
                     
@@ -10004,7 +9767,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                     DrawTitleBar(pMe->m_pDisplay, &TitleBar_Param);
                 }
 				#else
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wstrTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,wstrTitle,FALSE);
 				#endif
 				}
                 
@@ -11749,7 +11512,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                         Annstr,
                         sizeof(Annstr));
 #endif
-			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,Annstr);
+			IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,Annstr,FALSE);
             if (pMe->m_dwInsertPos == 0)
             {
                 ITEXTCTL_SetCursorPos(pIText, TC_CURSOREND);
@@ -13085,7 +12848,7 @@ static boolean IDD_TEMPLATES_Handler(void   *pUser,
                         IDS_TEMPLATES,
                         WTitle,
                         sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
             MENU_SETBOTTOMBAR(pMenu, BTBAR_SELECT_BACK);
             {// 添加模板项
@@ -14581,7 +14344,7 @@ static boolean IDD_MEMSTATUS_Handler(void *pUser,
 	                    MEMSET(wstrDevice, 0, sizeof(wstrDevice));
 	                }
 					#else
-					IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wstrDevice);
+					IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,wstrDevice,FALSE);
 					#endif
 				}
                 //获得系统字体高度
@@ -15447,7 +15210,7 @@ static boolean IDD_EXTARCTDETAILS_Handler(void *pUser,
                                     IDS_EXTRACTDETAIL,
                                     WTitle,
                                     sizeof(WTitle));
-					IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+					IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
 			}
 			#endif
             MENU_SETBOTTOMBAR(pMenu, BTBAR_SELECT_BACK);
@@ -15455,16 +15218,6 @@ static boolean IDD_EXTARCTDETAILS_Handler(void *pUser,
             MENU_ADDITEM(pMenu, IDS_SAVEEMAIL);
             MENU_ADDITEM(pMenu, IDS_SAVEURL);
             IMENUCTL_SetSel(pMenu, pMe->m_wPrevMenuSel);
-            (void) ISHELL_PostEventEx(pMe->m_pShell, 
-                                    EVTFLG_ASYNC,
-                                    AEECLSID_WMSAPP,
-                                    EVT_USER_REDRAW,
-                                    0, 
-                                    0);
-            return TRUE;
-            
-        case EVT_USER_REDRAW:
-            //(void)IMENUCTL_Redraw(pMenu);    //dele by yangdecai
             return TRUE;
             
         case EVT_DIALOG_END:
@@ -15574,7 +15327,7 @@ static boolean IDD_EXTARCTEDITEMLIST_Handler(void *pUser,
                         IDS_SAVENUM,
                         WTitle,
                         sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
             MENU_SETBOTTOMBAR(pMenu, BTBAR_OPTION_BACK);
             // 此对话框菜单项需动态建立
@@ -15605,7 +15358,7 @@ static boolean IDD_EXTARCTEDITEMLIST_Handler(void *pUser,
                                     IDS_SAVEEMAIL,
                                     WTitle,
                                     sizeof(WTitle));
-					IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+					IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
 				}
 				
 				#endif
@@ -15622,26 +15375,11 @@ static boolean IDD_EXTARCTEDITEMLIST_Handler(void *pUser,
                                     IDS_SAVEURL,
                                     WTitle,
                                     sizeof(WTitle));
-					IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+					IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
 				}
 				#endif
             }
             IMENUCTL_SetSel(pMenu, pMe->m_wPrevMenuSel);
-            (void) ISHELL_PostEventEx(pMe->m_pShell, 
-                                    EVTFLG_ASYNC,
-                                    AEECLSID_WMSAPP,
-                                    EVT_USER_REDRAW,
-                                    0, 
-                                    0);
-            return TRUE;
-            
-        case EVT_USER_REDRAW:
-            // 绘制底条提示
-            // Select       Back
-            //DRAW_BOTTOMBAR(BTBAR_SELECT_BACK)
-            
-            //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            //(void)IMENUCTL_Redraw(pMenu);    //dele by yangdecai
             return TRUE;
             
         case EVT_DIALOG_END:
@@ -16678,7 +16416,7 @@ static boolean IDD_VOICEMAIL_Handler(void   *pUser,
                         IDS_VOICEMAIL,
                         WTitle,
                         sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             }
             MENU_SETBOTTOMBAR(pMenu, BTBAR_SELECT_BACK);
             
@@ -16946,14 +16684,14 @@ static boolean IDD_VMNUM_Handler(void   *pUser,
             (void) ITEXTCTL_SetInputMode(pTextCtl, AEE_TM_NUMBERS);       
             {
               AECHAR WTitle[40] = {0};
-              (void)ISHELL_LoadResString(pMe->m_pShell,
-              AEE_WMSAPPRES_LANGFILE,                                
-              IDS_VOICEMAIL,
-              WTitle,
-              sizeof(WTitle));
+              (void)ISHELL_LoadResString( pMe->m_pShell,
+                                          AEE_WMSAPPRES_LANGFILE,                                
+                                          IDS_VOICEMAIL,
+                                          WTitle,
+                                          sizeof(WTitle));
               if(pMe->m_pIAnn != NULL)
               {
-                  IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+                  IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
               }
             }    
             
@@ -17913,30 +17651,19 @@ static boolean IDD_MANAGEMENT_Handler(void   *pUser,
             IMENUCTL_SetSel(pMenu, pMe->m_wPrevMenuSel);
             {
                 AECHAR WTitle[40] = {0};
-                (void)ISHELL_LoadResString(pMe->m_pShell,
-                AEE_WMSAPPRES_LANGFILE,                                
-                IDS_MSGMANAGEMENT,
-                WTitle,
-                sizeof(WTitle));
+                (void)ISHELL_LoadResString( pMe->m_pShell,
+                                            AEE_WMSAPPRES_LANGFILE,                                
+                                            IDS_MSGMANAGEMENT,
+                                            WTitle,
+                                            sizeof(WTitle));
                 if(pMe->m_pIAnn != NULL)
                 {
-                    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+                    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
                 }
             }              
             return TRUE;
 
         case EVT_DIALOG_START:
-            (void) ISHELL_PostEventEx(pMe->m_pShell, 
-                                    EVTFLG_ASYNC,
-                                    AEECLSID_WMSAPP,
-                                    EVT_USER_REDRAW,
-                                    0, 
-                                    0);
-
-            return TRUE;
-
-        case EVT_USER_REDRAW:
-            //(void)IMENUCTL_Redraw(pMenu);    //dele by yangdecai
             return TRUE;
 
         case EVT_CTL_SEL_CHANGED:
@@ -18065,31 +17792,20 @@ static boolean IDD_COPYINBOX_Handler(void   *pUser,
             IMENUCTL_SetSel(pMenu, pMe->m_wPrevMenuSel);
             {
                 AECHAR WTitle[40] = {0};
-                (void)ISHELL_LoadResString(pMe->m_pShell,
-                AEE_WMSAPPRES_LANGFILE,                                
-                IDS_COPYINBOX,
-                WTitle,
-                sizeof(WTitle));
+                (void)ISHELL_LoadResString( pMe->m_pShell,
+                                            AEE_WMSAPPRES_LANGFILE,                                
+                                            IDS_COPYINBOX,
+                                            WTitle,
+                                            sizeof(WTitle));
                 if(pMe->m_pIAnn != NULL)
                 {
-                    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+                    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
                 }
             }       
             
             return TRUE;
 
         case EVT_DIALOG_START:
-            (void) ISHELL_PostEventEx(pMe->m_pShell, 
-                                    EVTFLG_ASYNC,
-                                    AEECLSID_WMSAPP,
-                                    EVT_USER_REDRAW,
-                                    0, 
-                                    0);
-
-            return TRUE;
-
-        case EVT_USER_REDRAW:
-            //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -18197,30 +17913,19 @@ static boolean IDD_MOVEINBOX_Handler(void   *pUser,
             IMENUCTL_SetSel(pMenu, pMe->m_wPrevMenuSel);
             {
                 AECHAR WTitle[40] = {0};
-                (void)ISHELL_LoadResString(pMe->m_pShell,
-                AEE_WMSAPPRES_LANGFILE,                                
-                IDS_MOVEINBOX,
-                WTitle,
-                sizeof(WTitle));
+                (void)ISHELL_LoadResString( pMe->m_pShell,
+                                            AEE_WMSAPPRES_LANGFILE,                                
+                                            IDS_MOVEINBOX,
+                                            WTitle,
+                                            sizeof(WTitle));
                 if(pMe->m_pIAnn != NULL)
                 {
-                    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+                    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
                 }
             }               
             return TRUE;
 
         case EVT_DIALOG_START:
-            (void) ISHELL_PostEventEx(pMe->m_pShell, 
-                                    EVTFLG_ASYNC,
-                                    AEECLSID_WMSAPP,
-                                    EVT_USER_REDRAW,
-                                    0, 
-                                    0);
-
-            return TRUE;
-
-        case EVT_USER_REDRAW:
-            //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -18570,7 +18275,7 @@ static boolean	IDD_WMSNEWMSG_Handler(void *pUser,
         case EVT_DIALOG_INIT:
             if(pMe->m_pIAnn != NULL)
             {
-                IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,NULL);
+                IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,NULL,FALSE);
             }
             return TRUE;
 
@@ -18937,7 +18642,7 @@ static boolean IDD_FLASHSMS_Handler(void *pUser,
                 TBarParam.dwAlignFlags = IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
                 DrawTitleBar(pMe->m_pDisplay, &TBarParam);
 				#else
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wszTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,wszTitle,FALSE);
 				#endif
 
                 MEMSET(wszTitle, 0, sizeof(wszTitle));
@@ -19464,7 +19169,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                         nTitleName,
                         wszTitle,
                         sizeof(wszTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wszTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,wszTitle,FALSE);
                 MEMSET(wszTitle, 0, sizeof(wszTitle));
                 
                 (void) ICONFIG_GetItem(pMe->m_pConfig,
@@ -21187,7 +20892,7 @@ static boolean IDD_EDIT_ALBUMOREMAIN_Handler(void *pUser,
                             Annstr,
                             sizeof(Annstr));
                 
-    			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,Annstr);
+    			IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,Annstr,FALSE);
                 InsertPos = ITEXTCTL_GetCursorPos(pIText);
                 DBGPRINTF("EVT_USER_REDRAW InsertPos=%d",InsertPos);
                 if (InsertPos == 0)
@@ -21411,7 +21116,7 @@ static boolean IDD_MMS_SERVER_ADDRESS_Handler(void *pUser,
                             Annstr,
                             sizeof(Annstr));
                 
-    			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,Annstr);
+    			IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,Annstr,FALSE);
                 InsertPos = ITEXTCTL_GetCursorPos(pIText);
                 DBGPRINTF("EVT_USER_REDRAW InsertPos=%d",InsertPos);
                 if (InsertPos == 0)
@@ -21609,7 +21314,7 @@ static boolean IDD_MMS_PROXY_Handler(void *pUser,
                             Annstr,
                             sizeof(Annstr));
                 
-    			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,Annstr);
+    			IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,Annstr,FALSE);
                 InsertPos = ITEXTCTL_GetCursorPos(pIText);
                 DBGPRINTF("EVT_USER_REDRAW InsertPos=%d",InsertPos);
                 if (InsertPos == 0)
@@ -21806,7 +21511,7 @@ static boolean IDD_MMS_PORT_Handler(void *pUser,
                             Annstr,
                             sizeof(Annstr));
                 
-    			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,Annstr);
+    			IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,Annstr,FALSE);
                 InsertPos = ITEXTCTL_GetCursorPos(pIText);
                 DBGPRINTF("EVT_USER_REDRAW InsertPos=%d",InsertPos);
                 if (InsertPos == 0)
@@ -21982,7 +21687,7 @@ static boolean IDD_MMS_MEMSTATUS_Handler(void *pUser,
 	                    MEMSET(wstrDevice, 0, sizeof(wstrDevice));
 	                }
 					#else
-					IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wstrDevice);
+					IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,wstrDevice,FALSE);
 					#endif
 				}
                 //获得系统字体高度

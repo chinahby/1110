@@ -5120,7 +5120,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
                 
                 if(pMe->m_pIAnn != NULL)
                 {
-                    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+                    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
                 }
             }
             #ifdef FEATURE_VERSION_SKY
@@ -6188,7 +6188,7 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
 						sizeof(WTitle));
                 if(pMe->m_pIAnn != NULL)
                 {
-				    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
                 }
 			}
 			#endif
@@ -7383,19 +7383,26 @@ static boolean  CContApp_HandleMainMenuDlgEvent( CContApp  *pMe,
 #endif
     switch (eCode)
     {
-        case EVT_DIALOG_INIT:            
-            IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY|MP_ACTIVE_NO_REDRAW);
-            IMENUCTL_SetOemProperties(pMenuCtl,OEMMP_USE_MENU_STYLE);
-#ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND);
-#endif            
+        case EVT_DIALOG_INIT:                       
             return TRUE;
             
         case EVT_DIALOG_START:
         {
             AEERect rc={0};
             AEEDeviceInfo devinfo={0};
+
+            // For redraw the dialog
+            (void)ISHELL_PostEvent( pMe->m_pShell,
+                                    AEECLSID_APP_CONTACT,
+                                    EVT_USER_REDRAW,
+                                    0,
+                                    0);
             
+            IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY|MP_ACTIVE_NO_REDRAW);
+            IMENUCTL_SetOemProperties(pMenuCtl,OEMMP_USE_MENU_STYLE);
+#ifdef FEATURE_CARRIER_CHINA_VERTU
+            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND);
+#endif 
             ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
             rc = pMe->m_rc;
             rc.dy = devinfo.cyScreen;
@@ -7431,7 +7438,7 @@ static boolean  CContApp_HandleMainMenuDlgEvent( CContApp  *pMe,
 				#endif
                 if(pMe->m_pIAnn != NULL)
                 {
-                    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+                    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
                 }
             }            
 
@@ -7447,13 +7454,6 @@ static boolean  CContApp_HandleMainMenuDlgEvent( CContApp  *pMe,
                 // Set menu select
                 IMENUCTL_SetSel(pMenuCtl, pMe->m_wMainMenuSel);
             }
-            
-            // For redraw the dialog
-            (void)ISHELL_PostEvent( pMe->m_pShell,
-                                    AEECLSID_APP_CONTACT,
-                                    EVT_USER_REDRAW,
-                                    0,
-                                    0);
             return TRUE;                        
         }
         
@@ -7701,7 +7701,7 @@ static boolean  CContApp_HandleViewDlgEvent( CContApp  *pMe,
 			{
 			    if(pMe->m_pIAnn != NULL)
                 {         
-				    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,(AECHAR *)CContApp_GetFldBuf(pMe, 0));
+				    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,(AECHAR *)CContApp_GetFldBuf(pMe, 0),FALSE);
                 }
 			}
 			#endif
@@ -8061,7 +8061,7 @@ static boolean  CContApp_HandleFldOptsDlgEvent( CContApp  *pMe,
 				#endif
                 if(pMe->m_pIAnn != NULL)
                 {
-                    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+                    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
                 }
             }
 
@@ -8490,7 +8490,7 @@ static boolean  CContApp_HandleGroupDlgEvent( CContApp  *pMe,
                 
                 if(pMe->m_pIAnn != NULL)
                 {
-                    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+                    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
                 }
             }
 
@@ -8705,7 +8705,7 @@ static boolean  CContApp_HandlePositionDlgEvent( CContApp  *pMe,
                 sizeof(WTitle));
                 if(pMe->m_pIAnn != NULL)
                 {
-                    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+                    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
                 }
             }
 
@@ -8915,7 +8915,7 @@ static boolean  CContApp_HandleCopyMoveDlgEvent( CContApp  *pMe,
 							sizeof(WTitle));
                     if(pMe->m_pIAnn != NULL)
                     {
-					    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+					    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
                     }
 				}
 				#endif
@@ -8934,7 +8934,7 @@ static boolean  CContApp_HandleCopyMoveDlgEvent( CContApp  *pMe,
 							sizeof(WTitle));
                     if(pMe->m_pIAnn != NULL)
                     {
-					    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+					    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
                     }
 				}
 				#endif
@@ -9209,7 +9209,7 @@ static boolean  CContApp_HandleCopyDlgEvent( CContApp  *pMe,
 							sizeof(WTitle));
                     if(pMe->m_pIAnn != NULL)
                     {
-					    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+					    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
                     }
 				}
 				#endif
@@ -9228,7 +9228,7 @@ static boolean  CContApp_HandleCopyDlgEvent( CContApp  *pMe,
 							sizeof(WTitle));
                     if(pMe->m_pIAnn != NULL)
                     {
-					    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+					    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
                     }
 				}
 				#endif
@@ -9652,7 +9652,7 @@ static boolean  CContApp_HandleOneDialDlgEvent( CContApp  *pMe,
                 sizeof(WTitle));
                 if(pMe->m_pIAnn != NULL)
                 {
-                    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+                    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
                 }
             }
 
@@ -10285,7 +10285,7 @@ static boolean  CContApp_HandleCapacityDlgEvent( CContApp  *pMe,
 				#else
                 if(pMe->m_pIAnn != NULL)
                 {
-				    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,title);
+				    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,title,FALSE);
                 }
 				#endif
             }
@@ -10441,7 +10441,7 @@ static boolean  CContApp_HandleEditDlgEvent( CContApp  *pMe,
 			{
 				if(pMe->m_pIAnn != NULL)
                 {            
-				    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,(AECHAR *)CContApp_GetFldBuf(pMe, 0));
+				    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,(AECHAR *)CContApp_GetFldBuf(pMe, 0),FALSE);
                 }
 			}
 			#endif
@@ -11343,7 +11343,7 @@ static boolean  CContApp_HandleSettingDlgEvent( CContApp  *pMe,
                 sizeof(WTitle));
                 if(pMe->m_pIAnn != NULL)
                 {
-                    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+                    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
                 }
             }
 
@@ -11525,7 +11525,7 @@ static boolean  CContApp_HandleInputDlgEvent( CContApp  *pMe,
 				
                 if(pMe->m_pIAnn != NULL)
                 {
-				    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,text);
+				    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,text,FALSE);
                 }
             }
             return TRUE;
@@ -12007,7 +12007,7 @@ static boolean  CContApp_HandleSearchDlgEvent( CContApp  *pMe,
 				#endif
                 if(pMe->m_pIAnn != NULL)
                 {
-                    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+                    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
                 }
             }
 
@@ -12205,7 +12205,7 @@ static boolean  CContApp_HandleManagementDlgEvent( CContApp  *pMe,
 				
                 if(pMe->m_pIAnn != NULL)
                 {
-				    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
                 }
 			}
 			#endif
@@ -12740,7 +12740,7 @@ static boolean  CContApp_HandleDeleteDlgEvent( CContApp  *pMe,
                 sizeof(WTitle));
                 if(pMe->m_pIAnn != NULL)
                 {
-                    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+                    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
                 }
             }
             
@@ -13008,7 +13008,7 @@ static boolean  CContApp_HandleSelectRecordDlgEvent( CContApp  *pMe,
 			            sizeof(WTitle));
                 if(pMe->m_pIAnn != NULL)
                 {
-				    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
                 }
 			}
 			#endif
@@ -13268,7 +13268,7 @@ static boolean  CContApp_HandleSelectDlgEvent( CContApp  *pMe,
 				
                 if(pMe->m_pIAnn != NULL)
                 {
-                    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+                    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
                 }
             }            
             //    IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL);
@@ -13681,7 +13681,7 @@ static boolean  CContApp_HandleDetailDlgEvent( CContApp  *pMe,
 			{
 			    if(pMe->m_pIAnn != NULL)
                 {         
-				    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,(AECHAR *)CContApp_GetFldBuf(pMe, 0));
+				    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,(AECHAR *)CContApp_GetFldBuf(pMe, 0),FALSE);
                 }
 			}
 			#endif
@@ -14142,7 +14142,7 @@ static boolean  CContApp_HandleDetailMultiDlgEvent( CContApp  *pMe,
 			{
 				if(pMe->m_pIAnn != NULL)
                 {            
-				    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,(AECHAR *)CContApp_GetFldBuf(pMe, 0));
+				    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,(AECHAR *)CContApp_GetFldBuf(pMe, 0),FALSE);
                 }
 			}
 			#endif
@@ -15014,7 +15014,7 @@ static boolean  CContApp_HandleDeleteSelectDlgEvent( CContApp  *pMe,
 						sizeof(WTitle));
                 if(pMe->m_pIAnn != NULL)
                 {
-				    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
                 }
 			}
 			#endif
@@ -15937,7 +15937,7 @@ static boolean  CContApp_HandleNunFldDlgEvent( CContApp  *pMe,
 			{
 			    if(pMe->m_pIAnn != NULL)
                 {         
-				    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,(AECHAR *)CContApp_GetFldBuf(pMe, 0));
+				    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,(AECHAR *)CContApp_GetFldBuf(pMe, 0),FALSE);
                 }
 			}
 			#endif
@@ -16629,7 +16629,7 @@ static boolean  CContApp_HandleNunFldViewDlgEvent( CContApp  *pMe,
 			{
 				if(pMe->m_pIAnn != NULL)
                 {            
-				    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,(AECHAR *)CContApp_GetFldBuf(pMe, 0));
+				    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,(AECHAR *)CContApp_GetFldBuf(pMe, 0),FALSE);
                 }
 			}
 			#endif

@@ -1958,7 +1958,7 @@ __inline int MGExplorer_UpdateMediaMenuTitle(CMediaGalleryApp *pMe,
 
    }
    WSTRNCOPY(m_Annstr,40,wpszTitle);	//20
-   IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,m_Annstr);
+   IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,m_Annstr,FALSE);
    //IMENUCTL_SetTitle(pMenuCtl, NULL, 0, wpszTitle);
 
 UPDATETITLEEXIT:

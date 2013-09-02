@@ -2850,16 +2850,10 @@ static boolean CallApp_Show_Ip_Number_DlgHandler(CCallApp *pMe,
 			            IDS_IP_NUMBER_SELECT,
 			            WTitle,
 			            sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
 			}
 			#endif
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
-            ISHELL_PostEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_USER_REDRAW,0,0);
-            return TRUE;
-
-        case EVT_USER_REDRAW:
-            //IMENUCTL_Redraw(pMenu);
-            //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
             return TRUE;
 
         case EVT_DIALOG_END:
@@ -5916,7 +5910,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
 #ifndef FEATURE_VERSION_C337	
 //#ifndef FEATURE_VERSION_K212
 				IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,StrBuf);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,StrBuf,FALSE);
 				IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, FALSE);
 //#endif                
 #endif
@@ -6865,7 +6859,7 @@ static boolean CallApp_pwd_dialog_handler(CCallApp *pMe,
                 #if 0
                 DrawTitleBar(pme->m_pDisplay, &TitleBar_Param);
 				#else
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,text);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,text,FALSE);
 				#endif
 
                (void)ISHELL_LoadResString(pMe->m_pShell, 
@@ -6918,17 +6912,8 @@ static boolean CallApp_pwd_dialog_handler(CCallApp *pMe,
         
                 
             }
-            (void) ISHELL_PostEvent(pMe->m_pShell,
-                                    AEECLSID_DIALER,
-                                    EVT_USER_REDRAW,
-                                    NULL,
-                                    NULL);
-
             return TRUE;
             
-        case EVT_USER_REDRAW:
-           
-            return TRUE;
         case EVT_DIALOG_END:
            // if(!pme->m_bSuspended)
             {
@@ -8367,7 +8352,7 @@ static void CallApp_DrawDialerString(CCallApp   *pMe,  AECHAR const *dialStr)
     int                   j;
 #endif
     static AECHAR  clrChar[2];
-    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, NULL);
+    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn, NULL, FALSE);
 
 
     clrChar[0] = '\0';

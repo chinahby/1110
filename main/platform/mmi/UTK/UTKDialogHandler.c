@@ -379,7 +379,7 @@ static boolean  IDD_MAIN_Handler(CUTK *pMe,
             IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
             if (IMENUCTL_GetItemCount(pMenu)==0)
             {
-                IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,NULL);
+                IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,NULL,FALSE);
                 CLOSE_DIALOG(DLGRET_POPMSG)   
             }
             return TRUE;

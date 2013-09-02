@@ -507,7 +507,7 @@ static boolean  HandleAlarmMainDialogEvent(CClockApps *pMe,
                         sizeof(WTitle));
                 if(pMe->m_pIAnn != NULL)
                 {
-				    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
                 }
             }
             if(pMe->m_ClockCfg.RepMode[MenuSel - IDC_MENU_ALARMCLOCK_LIST_ITEM_1])
@@ -1181,7 +1181,7 @@ static boolean  HandleAlarmSubDialogEvent(CClockApps *pMe,
 				#else
                 if(pMe->m_pIAnn != NULL)
                 {
-				    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wszTitle);
+				    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,wszTitle,FALSE);
                 }
 				#endif
             }
@@ -2799,7 +2799,7 @@ static void CClockApps_AniClockImg(CClockApps *pMe)
 		#else
         if(pMe->m_pIAnn != NULL)
         {
-		    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wszTitle);
+		    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,wszTitle,FALSE);
         }
 		#endif
         (void) ISHELL_GetPrefs(pMe->m_pShell,

@@ -1056,7 +1056,7 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
                         sizeof(WTitle));
                 if(pMe->m_pIAnn != NULL)
                 {
-				    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
                 }
 		    }
 			#endif
@@ -1154,15 +1154,8 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
 				
                 IMENUCTL_SetOemProperties( pMenu, OEMMP_USE_MENU_STYLE);
                 IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
-                
-                (void) ISHELL_PostEvent(pMe->m_pShell, AEECLSID_MULTIMEDIA_LIST, EVT_USER_REDRAW,0,0);
+                IMENUCTL_SetSel(pMenu, pMe->m_MainSel);
             }
-            return TRUE;
-            
-        case EVT_USER_REDRAW:
-            IMENUCTL_SetSel(pMenu, pMe->m_MainSel);
-            IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
-            (void)IMENUCTL_Redraw(pMenu);            
             return TRUE;
             
         case EVT_DIALOG_END:
@@ -1376,8 +1369,6 @@ static boolean Multimed_PopMsgHandler(Multimed *pMe, AEEEvent eCode, uint16 wPar
 
 static boolean Multimed_PassWordHandler(Multimed *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
 {
-	PARAM_NOT_REF(dwParam)
-    //static char   *m_strPhonePWD = NULL;
     AECHAR      wstrDisplay[OEMNV_LOCKCODE_MAXLEN+2] = {0};
     int             nLen = 0;
     char        strDisplay[OEMNV_LOCKCODE_MAXLEN+2] = {0};
@@ -1394,15 +1385,7 @@ static boolean Multimed_PassWordHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
             {
                 pMe->m_strPhonePWD = (char *)MALLOC((OEMNV_LOCKCODE_MAXLEN + 1)* sizeof(char));
             }
-			 {
-			 	AECHAR  text[32] = {0};
-				(void)ISHELL_LoadResString(pMe->m_pShell, 
-	                                        MULTIMEDIA_RES_FILE_LANG,
-	                                        IDS_MULTIMEDIA_TITLE, 
-	                                        text,
-	                                        sizeof(text));    
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,text);
-            }
+            IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
             return TRUE;
             
         case EVT_DIALOG_START:  

@@ -627,7 +627,7 @@ static boolean CameraApp_MainMenuHandleEvent(CCameraApp *pMe, AEEEvent eCode, ui
                                 sizeof(WTitle));
 			if(pMe->m_pIAnn != NULL)
         	{
-		    	IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+		    	IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
 			}
                 
             IDISPLAY_SetClipRect(pMe->m_pDisplay, NULL); 
@@ -667,16 +667,10 @@ static boolean CameraApp_MainMenuHandleEvent(CCameraApp *pMe, AEEEvent eCode, ui
             {
                 ICAMERA_Release(pMe->m_pCamera);
                 pMe->m_pCamera = NULL;
-            }
-            (void)ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_CAMERA, EVT_USER_REDRAW, NULL, NULL);            
+            }       
             return TRUE;
 
         case EVT_DIALOG_END:
-            return TRUE;
-
-        case EVT_USER_REDRAW:
-            //(void)IMENUCTL_Redraw(pMenu);
-      
             return TRUE;
             
         case EVT_COMMAND:          
@@ -804,7 +798,7 @@ static boolean CameraApp_CameraPhotoModeHandleEvent(CCameraApp *pMe, AEEEvent eC
                                 sizeof(WTitle));
 			if(pMe->m_pIAnn != NULL)
         	{
-		    	IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+		    	IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
 			}
                 
             IDISPLAY_SetClipRect(pMe->m_pDisplay, NULL); 
@@ -837,17 +831,11 @@ static boolean CameraApp_CameraPhotoModeHandleEvent(CCameraApp *pMe, AEEEvent eC
               SetMenuIcon(pMenu, ui16_return, TRUE);
               IMENUCTL_SetSel(pMenu, ui16_return);
               IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
-              IMENUCTL_SetOemProperties( pMenu , OEMMP_USE_MENU_STYLE);
-              (void)ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_CAMERA, EVT_USER_REDRAW, NULL, NULL);            
+              IMENUCTL_SetOemProperties( pMenu , OEMMP_USE_MENU_STYLE);    
            }
             return TRUE;
 
         case EVT_DIALOG_END:
-            return TRUE;
-
-        case EVT_USER_REDRAW:
-            //(void)IMENUCTL_Redraw(pMenu);
-      
             return TRUE;
             
         case EVT_COMMAND: 
@@ -2294,7 +2282,7 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
 	                                sizeof(WTitle));
 				if(pMe->m_pIAnn != NULL)
 	        	{
-			    	IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+			    	IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
 				}
 	                
 	            IDISPLAY_SetClipRect(pMe->m_pDisplay, NULL); 

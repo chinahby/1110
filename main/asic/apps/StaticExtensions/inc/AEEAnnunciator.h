@@ -353,7 +353,7 @@ AEEINTERFACE(IAnnunciator)
    int     (*GetAnnunciatorBarSize)  (IAnnunciator * pMe, AEECLSID clsid, AEERect *pRec);
    int     (*SetUnblinkTimer) (IAnnunciator * pMe, uint32 nAnnunID, uint32 nState, uint32 nTimeMs);
    int     (*SetFieldIsActiveEx) (IAnnunciator * pMe,boolean bActive);   //add by yangdecai 2010-07-13
-   int     (*SetFieldText)     (IAnnunciator * pMe,uint16 * cText, boolean bRedraw);    //add by yangdecai 2010-07-13
+   int     (*SetFieldText)     (IAnnunciator * pMe,uint16 * cText, boolean bUpdate);    //add by yangdecai 2010-07-13
    int     (*SetHasTitleText)     (IAnnunciator * pMe, boolean hasTitleText);
    int     (*SetNotUpdate)     (IAnnunciator * pMe, boolean bNotUpdate);
 };

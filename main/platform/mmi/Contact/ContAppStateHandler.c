@@ -5621,7 +5621,7 @@ static NextFSMAction Handler_STATE_SAVETO(CContApp *pMe)
 								            sizeof(WTitle));
 				#endif
 				
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
 			}
 			#endif
                                      
@@ -5773,7 +5773,7 @@ static NextFSMAction Handler_STATE_VIEWTYPE(CContApp *pMe)
 								            sizeof(WTitle));
 				#endif
 				
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
 			}
 			#endif
             CContApp_BuildViewTypeMenu(pMe, pMenuCtl);

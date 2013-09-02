@@ -276,7 +276,7 @@ static boolean GmFive_HandleEvent(IApplet * pi, AEEEvent eCode, uint16 wParam, u
                 {
                 	int i = WSTRLEN(WTitle);
                 	MSG_FATAL("===============%d",i,0,0);
-    			    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+    			    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
             	}
          }
 	  	  MSG_FATAL("GmFive_HandleEvent..................",0,0,0);

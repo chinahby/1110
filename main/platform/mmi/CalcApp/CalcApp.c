@@ -1218,7 +1218,7 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
                         IDS_CALCTITLE,
                         WTitle,
                         sizeof(WTitle));
-				IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
+				IANNUNCIATOR_SetFieldTextEx(pme->m_pIAnn,WTitle,FALSE);
             }
 			MEMSET(&BarParam, 0, sizeof(BarParam));//wlh 20090417 add 
 			BarParam.eBBarType = BTBAR_BACK;      //wlh 20090417 add
@@ -1841,7 +1841,7 @@ static void Calc_DrawScreen(CCalcApp *pme)
                 IDS_CALCTITLE,
                 WTitle,
                 sizeof(WTitle));
-		IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
+		IANNUNCIATOR_SetFieldTextEx(pme->m_pIAnn,WTitle,FALSE);
     }
     
 #ifdef FEATURE_VERSION_EC99

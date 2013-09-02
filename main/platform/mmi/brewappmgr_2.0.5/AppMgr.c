@@ -575,7 +575,7 @@ static boolean AppMgr_HandleEvent(AppMgr * pme, AEEEvent eCode, uint16 wParam, u
             MSG_FATAL("EVT_APP_START",0,0,0);
    		    IANNUNCIATOR_SetFieldIsActiveEx(pme->m_pIAnn,FALSE);   
 			IANNUNCIATOR_SetHasTitleText(pme->m_pIAnn,FALSE);
-			IANNUNCIATOR_SetFieldText(pme->m_pIAnn,NULL);
+			IANNUNCIATOR_SetFieldTextEx(pme->m_pIAnn,NULL,FALSE);
             if (AEE_SUCCESS != nErr) {
                AEEAppStart *st = (AEEAppStart *)dwParam;
                st->error = nErr;

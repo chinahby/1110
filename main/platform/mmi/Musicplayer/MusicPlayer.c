@@ -831,7 +831,7 @@ static boolean IMusicPlayer_HandleEvent( IMusicPlayer *pi,
             {
                 IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn, FALSE);
                 IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
-                IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, NULL);
+                IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn, NULL,FALSE);
         	}
             //Add End
             

@@ -1095,7 +1095,7 @@ static void Draw_WorldTimeContent(CWorldTime *pme)
         DrawTitleBar(pme->a.m_pIDisplay, &tBarParam);
 		
 		#else
-		IANNUNCIATOR_SetFieldText(pme->m_pIAnn,title);
+		IANNUNCIATOR_SetFieldTextEx(pme->m_pIAnn,title,FALSE);
 		#endif
         }//end added
         // draw bottom bar

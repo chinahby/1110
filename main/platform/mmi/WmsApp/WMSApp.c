@@ -3096,7 +3096,7 @@ void WmsApp_UpdateMenuList(WmsApp *pMe, IMenuCtl *pMenu)
 			#if 0
             (void)IMENUCTL_SetTitle(pMenu, NULL, 0, wszTitle);
 			#else
-			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wszTitle);
+			IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,wszTitle,FALSE);
 			#endif
         }
 
@@ -8090,7 +8090,7 @@ void WmsApp_UpdateMenuList_MMS(WmsApp *pMe, IMenuCtl *pMenu)
             WSPRINTF(&wszTitle[nLen], (sizeof(wszTitle) - nLen*sizeof(AECHAR)), wszFmt, wSelectItemID, wItemCount);
             DBGPRINTF("wszTitle=%S, wSelectItemID=%d, wItemCount=%d",wszTitle, wSelectItemID, wItemCount);
             //这里的标题显示有问题
-			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wszTitle);
+			IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,wszTitle,FALSE);
         }
         if(wItemCount > MAXITEMS_ONEPAGE)
         {

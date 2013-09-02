@@ -703,7 +703,7 @@ static boolean FrenDuoApp_ListMenuHandler(FrenDuoApp *pMe, AEEEvent eCode, uint1
                         sizeof(WTitle));
                 if(pMe->m_pIAnn != NULL)
                 {                								
-				    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
                 }
 		    }
 		

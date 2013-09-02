@@ -1153,7 +1153,7 @@ static boolean MobileTracker_ListMenuHandler(MobileTracker *pMe, AEEEvent eCode,
                         sizeof(WTitle));
                 if(pMe->m_pIAnn != NULL)
                 {
-				    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
                 }
 				IMENUCTL_AddItem(pMenu, MOBILETRACKER_RES_FILE_LANG,IDS_MOBILETRAXKER_ONOFF, IDS_MOBILETRAXKER_ONOFF, NULL, 0);
 				IMENUCTL_AddItem(pMenu, MOBILETRACKER_RES_FILE_LANG,IDS_MOBILETRACKER_DESIGNATENUMBER, IDS_MOBILETRACKER_DESIGNATENUMBER, NULL, 0);
@@ -1193,13 +1193,9 @@ static boolean MobileTracker_ListMenuHandler(MobileTracker *pMe, AEEEvent eCode,
                 IMENUCTL_SetOemProperties( pMenu, OEMMP_USE_MENU_STYLE);
                 IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
                 IMENUCTL_SetSel(pMenu, pMe->m_MainSel);
-                (void) ISHELL_PostEvent(pMe->m_pShell, AEECLSID_MOBILETRACKER, EVT_USER_REDRAW,0,0);
             }
             return TRUE;
             
-        case EVT_USER_REDRAW:
-            (void)IMENUCTL_Redraw(pMenu);
-            return TRUE;
             
         case EVT_DIALOG_END:
             return TRUE;
@@ -1306,7 +1302,7 @@ static boolean MobileTracker_EanbleHandler(MobileTracker *pMe, AEEEvent eCode, u
                         sizeof(WTitle));
              if(pMe->m_pIAnn != NULL)
              {
-			    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+			    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
              }
 
           
@@ -1337,16 +1333,8 @@ static boolean MobileTracker_EanbleHandler(MobileTracker *pMe, AEEEvent eCode, u
 			 IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
              IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
              IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
-
-
-	         ISHELL_PostEvent(pMe->m_pShell, AEECLSID_MOBILETRACKER,
-	                          EVT_USER_REDRAW, 0, 0);
 	         return TRUE;
 	      }
-	   case EVT_USER_REDRAW:
-	      {
-		  	return TRUE;
-	   	  }
 	   case EVT_DIALOG_END:
 		 {
 		  	return TRUE;
@@ -1441,7 +1429,7 @@ static boolean MobileTracker_ViewimsiHandler(MobileTracker *pMe, AEEEvent eCode,
                         sizeof(WTitle));
              if(pMe->m_pIAnn != NULL)
              {
-			    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+			    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
              }
 	         return TRUE;
 	      }
@@ -1537,7 +1525,7 @@ static boolean MobileTracker_DnumberHandler(MobileTracker *pMe, AEEEvent eCode, 
                         sizeof(WTitle));
              if(pMe->m_pIAnn != NULL)
              {
-			    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+			    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
              }
 
 			 pMe->m_Number_one = (ITextCtl*)IDIALOG_GetControl(pMe->m_pActiveIDlg,
@@ -1767,7 +1755,7 @@ static boolean MobileTracker_OwernameHandler(MobileTracker *pMe, AEEEvent eCode,
                         sizeof(WTitle));
              if(pMe->m_pIAnn != NULL)
              {
-			    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+			    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
              }
 	         return TRUE;
 	      }
@@ -1825,7 +1813,7 @@ static boolean MobileTracker_ContentHandler(MobileTracker *pMe, AEEEvent eCode, 
                         sizeof(WTitle));
              if(pMe->m_pIAnn != NULL)
              {
-			    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+			    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
              }
 			 //IMENUCTL_SetProperties(pMenuCtl,MP_NO_UPDOWN);
 			 //Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
@@ -1942,7 +1930,7 @@ static boolean MobileTracker_ChangPassWordHandler(MobileTracker *pMe, AEEEvent e
                         sizeof(WTitle));
              if(pMe->m_pIAnn != NULL)
              {
-			    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+			    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
              }
 
 			 SETAEERECT(&p_PassWordMenu,2,40,124,20);
