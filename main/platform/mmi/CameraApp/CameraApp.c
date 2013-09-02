@@ -944,11 +944,12 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
 #ifdef FEATURE_LCD_TOUCH_ENABLE
 		case EVT_PEN_UP:
 #endif          
+			#if !defined(FEATURE_VERSION_K212)
             if(!pMe->m_bAppIsReady)
             {
                 return TRUE;
             }
-
+			#endif
             return CameraApp_RouteDialogEvent(pMe, eCode, wParam, dwParam);
       
         case EVT_DIALOG_END:

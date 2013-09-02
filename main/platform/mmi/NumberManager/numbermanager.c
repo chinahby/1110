@@ -967,38 +967,48 @@ static boolean NumberManager_HandleEvent(INumberManager *pi,
             return TRUE;
 
         case EVT_KEY_PRESS:
+			#if !defined(FEATURE_VERSION_K212)
             if (!pMe->m_bAppIsReady)
             {
                 return TRUE;
             }
+			#endif
             return NumberManager_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_KEY_RELEASE:
+			#if !defined(FEATURE_VERSION_K212)
             if (!pMe->m_bAppIsReady)
             {
                 return TRUE;
             }
+			#endif
             return NumberManager_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_KEY_HELD:
+			#if !defined(FEATURE_VERSION_K212)
             if (!pMe->m_bAppIsReady)
             {
                 return TRUE;
             }
+			#endif
             return NumberManager_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_KEY:
+			#if !defined(FEATURE_VERSION_K212)
             if (!pMe->m_bAppIsReady)
             {
                 return TRUE;
             }
+			#endif
             return NumberManager_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_COMMAND:
+			#if !defined(FEATURE_VERSION_K212)
             if (!pMe->m_bAppIsReady)
             {
                 return TRUE;
             }
+			#endif
             return NumberManager_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_DIALOG_END:

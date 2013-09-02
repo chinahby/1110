@@ -429,10 +429,12 @@ static  boolean VPDVideoPlayer_HandleEvent(CVideoPlayer *pMe,AEEEvent eCode,uint
     			            {
     			                return TRUE;
     			            }
+							#if !defined(FEATURE_VERSION_K212)
     			            if(!pMe->m_bAppIsReady)
     			            {
     			                 return TRUE;  
     			            }
+							#endif
     			            if(!pMe->IsFullScreen)
     			            {
     #if defined (FEATURE_DISP_240X320)||defined(FEATURE_DISP_220X176)|| defined(FEATURE_DISP_176X220)
@@ -1211,10 +1213,12 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
             {
                 return TRUE;
             }
+			#if !defined(FEATURE_VERSION_K212)
             if(!pMe->m_bAppIsReady)
             {
                  return TRUE;  
             }
+			#endif
 			#ifdef FEATURE_VERSION_W317A
 			{
     		   pMe->m_keybusy = TRUE;			
@@ -1256,10 +1260,12 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
             {
                 return TRUE;
             }
+			#if !defined(FEATURE_VERSION_K212)
             if(!pMe->m_bAppIsReady)
             {
                  return TRUE;  
             }
+			#endif
 			#ifdef FEATURE_VERSION_W317A
 			{
     		   pMe->m_keybusy = TRUE;			

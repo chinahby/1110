@@ -2710,10 +2710,12 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
         case EVT_KEY:
         case EVT_COMMAND:
         {
+			#if !defined(FEATURE_VERSION_K212)
 			if (!pMe->m_bAppIsReady)
             {
                 return TRUE;
             }
+			#endif
 
 			MSG_FATAL( "HndlEv - EVT_KEY wP=0x%x dw=0x%x", wParam, dwParam, 0 );
 			

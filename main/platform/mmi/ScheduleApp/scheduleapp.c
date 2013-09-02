@@ -745,10 +745,12 @@ static boolean  IScheduleApp_HandleEvent( IScheduleApp   *pi,
         case EVT_KEY:
         case EVT_KEY_PRESS:
             //debug( ";---------------EVT_KEY");
+            #if !defined(FEATURE_VERSION_K212)
             if (!pme->m_bAppIsReady)
             {
                 return TRUE;
             }
+			#endif
             if( eCode == EVT_KEY_PRESS && wParam == AVK_END)
             {
                 pme->m_closeByPowerKey = TRUE;
@@ -759,10 +761,12 @@ static boolean  IScheduleApp_HandleEvent( IScheduleApp   *pi,
 
 
         case EVT_COMMAND:
+			#if !defined(FEATURE_VERSION_K212)
             if (!pme->m_bAppIsReady)
             {
                 return TRUE;
             }
+			#endif
             return CScheduleApp_RouteDialogEvent(pme,eCode,wParam,dwParam);
 
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch

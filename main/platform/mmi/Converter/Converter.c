@@ -536,10 +536,12 @@ static boolean Converter_HandleEvent(IConverter *pi, AEEEvent eCode, uint16  wPa
         case EVT_KEY_RELEASE:
         case EVT_KEY:
         case EVT_COMMAND:
+			#if !defined(FEATURE_VERSION_K212)
             if (!pMe->m_bAppIsReady)
             {
                 return TRUE;
             }
+			#endif
             return Converter_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 			
         case EVT_USER:

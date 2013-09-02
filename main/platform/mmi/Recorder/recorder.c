@@ -340,11 +340,18 @@ static boolean Recorder_HandleEvent( Recorder* pme, AEEEvent evt, uint16 wParam,
 
 		case EVT_KEY:
 		case EVT_COMMAND:
-		{   
+		{  
+			#if !defined(FEATURE_VERSION_K212)
 			if( !pme->m_bAppIsReady || pme->m_bLockkey)
 			{
 				return TRUE;
 			}
+			#else
+			if(pme->m_bLockkey)
+			{
+				return TRUE;
+			}
+			#endif
 			return Recorder_RouteDialogEvent( pme, evt, wParam, dwParam);
 		}
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch

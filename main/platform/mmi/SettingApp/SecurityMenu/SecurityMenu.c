@@ -844,10 +844,12 @@ static boolean SecurityMenu_HandleEvent(ISecurityMenu  *pi,
         case EVT_KEY_RELEASE:
         case EVT_KEY:
         case EVT_COMMAND:
+			#if !defined(FEATURE_VERSION_K212)
             if (!pMe->m_bAppIsReady)
             {
                 return TRUE;
             }
+			#endif
             return SecurityMenu_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_DIALOG_END:

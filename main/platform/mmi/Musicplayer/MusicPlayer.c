@@ -950,10 +950,12 @@ static boolean IMusicPlayer_HandleEvent( IMusicPlayer *pi,
         case EVT_KEY:
         case EVT_KEY_RELEASE:
         case EVT_COMMAND:
+			#if !defined(FEATURE_VERSION_K212)
             if(!pMe->m_bAppReady)
             {
                 return TRUE;
             }
+			#endif
             return CMusicPlayer_RouteDialogEvent(pMe,eCode,wParam,dwParam);
         case EVT_CLOSEAPP:
             SetMp3PlayerStatus(pMe,MP3STATUS_NONE);

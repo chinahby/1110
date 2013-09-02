@@ -763,33 +763,40 @@ static boolean ClockApps_HandleEvent(IClockApps *pi,
 		case EVT_PEN_UP:
 		//case EVT_PEN_DOWN: 
 #endif
-
+			#if !defined(FEATURE_VERSION_K212)
             if (!pMe->m_bAppIsReady)
             {
                 return TRUE;
             }
+			#endif
             return ClockApps_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_KEY_RELEASE:
+			#if !defined(FEATURE_VERSION_K212)
             if (!pMe->m_bAppIsReady)
             {
                 return TRUE;
             }
+			#endif
             return ClockApps_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_KEY_HELD:
+			#if !defined(FEATURE_VERSION_K212)
             if (!pMe->m_bAppIsReady)
             {
                 return TRUE;
             }
+			#endif
             return ClockApps_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_GSENSOR_SHAKE:
         case EVT_KEY:
+			#if !defined(FEATURE_VERSION_K212)
             if (!pMe->m_bAppIsReady)
             {
                 return TRUE;
             }
+			#endif
             return ClockApps_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
 /*        case EVT_PEN_DOWN_1:
@@ -804,10 +811,12 @@ static boolean ClockApps_HandleEvent(IClockApps *pi,
             return ClockApps_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 */
         case EVT_COMMAND:
+			#if !defined(FEATURE_VERSION_K212)
             if (!pMe->m_bAppIsReady)
             {
                 return TRUE;
             }
+			#endif
             return ClockApps_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_DIALOG_END:

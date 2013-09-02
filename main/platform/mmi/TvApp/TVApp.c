@@ -1015,11 +1015,13 @@ static boolean TVApp_HandleEvent(ITVApp  *pi,
         case EVT_KEY_PRESS:
         case EVT_KEY_RELEASE:
         case EVT_KEY:
-        case EVT_COMMAND:         
+        case EVT_COMMAND:     
+			#if !defined(FEATURE_VERSION_K212)
             if(!pMe->m_bAppIsReady)
             {
                 return TRUE;
             }
+			#endif
 			MSG_FATAL("case EVT_COMMAND:  ----------------------",0,0,0);
             return TVApp_RouteDialogEvent(pMe, eCode, wParam, dwParam);
       
