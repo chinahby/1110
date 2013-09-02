@@ -815,6 +815,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 				return FALSE;
 			}
 #endif
+			IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_CLEARSCREEN_ONREDRAW|DLG_NOT_UPDATE_ONREDRAW);
             pMe->m_btime_out     = 0;
             pMe->m_return_value  = RETURN_ZERO;
             pMe->m_bShowPopMenu  = FALSE;
@@ -923,7 +924,28 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                     //                                        (PFNNOTIFY)CallApp_Process_Spec_Key_Event_CB,
                     //                                        (void *)pMe);
                 }
-				#if defined( FEATURE_CALL_RECORDER)
+				
+				//IANNUNCIATOR_Redraw(pMe->m_pIAnn);
+
+                (void) ISHELL_PostEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_USER_REDRAW,0,0);
+
+            }
+
+#if defined( FEATURE_CALL_RECORDER)
+        	pMe->m_bSettingVolume = FALSE;
+#endif
+            return TRUE;
+
+        case EVT_FLIP:
+            //CALL_ERR("Connect EVT_FLIP %d", wParam, 0, 0);
+            if(pMe->m_b_incall)
+            {
+                CallApp_Process_EVT_FLIP_Event(pMe,wParam);
+            }
+            return TRUE;
+
+        case EVT_USER_REDRAW:  
+#if defined( FEATURE_CALL_RECORDER)
         	if( pMe->m_bShowPopMenu)
         	{
         		return TRUE;
@@ -976,26 +998,6 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 							CallApp_Set_Cursor_Blink (pMe);
 #endif
 				IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-				//IANNUNCIATOR_Redraw(pMe->m_pIAnn);
-
-                (void) ISHELL_PostEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_USER_REDRAW,0,0);
-
-            }
-
-#if defined( FEATURE_CALL_RECORDER)
-        	pMe->m_bSettingVolume = FALSE;
-#endif
-            return TRUE;
-
-        case EVT_FLIP:
-            //CALL_ERR("Connect EVT_FLIP %d", wParam, 0, 0);
-            if(pMe->m_b_incall)
-            {
-                CallApp_Process_EVT_FLIP_Event(pMe,wParam);
-            }
-            return TRUE;
-
-        case EVT_USER_REDRAW:          
             return TRUE;
 
         case EVT_DIALOG_END:
