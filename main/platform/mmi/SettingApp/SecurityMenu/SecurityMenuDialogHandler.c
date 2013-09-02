@@ -29,6 +29,7 @@
 #include "ContApp.h"
 #include "AEETelephone.h"
 #include "AEETelDef.h"
+#define FILE_CONTAPP_CFG                (AEE_ADDRBOOK_DIR"\\contapp.cfg")
 
 //#include "Scheduleapp.h"
 /*==============================================================================
@@ -6567,6 +6568,20 @@ static void SecurityMenu_RestoryFactorySet(CSecurityMenu *pMe)
 		CMediaGallery_ClearMediaFiles(pMe);
 	}
 	#endif
+
+	{
+		 IFileMgr           *m_pFileMgr;       // IFileMgr interface
+		 IFile  *pFile;
+		 ISHELL_CreateInstance( pMe->m_pShell,AEECLSID_FILEMGR,(void **)&m_pFileMgr);
+		 IFILEMGR_Remove(m_pFileMgr, FILE_CONTAPP_CFG);
+
+		 if (m_pFileMgr != NULL)
+    	 {
+        	(void) IFILEMGR_Release(m_pFileMgr);
+        	m_pFileMgr = NULL;
+    	 }
+	}
+	
 //Add By zzg 2010_10_22
 #ifdef FEATURE_APP_BLUETOOTH
 	ISHELL_StartBackgroundApplet(pMe->m_pShell, AEECLSID_BLUETOOTH_APP, "ResetBT");
