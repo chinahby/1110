@@ -70,6 +70,7 @@ extern rex_tcb_type wms_tcb;
 #include "AEEStdLib.h"
 #include "AEEPhone.h"
 #include "AEEFile.h"
+#include "AEERUIM.h"
 
 #ifdef FEATURE_UI_CORE
 #ifndef USES_MMI
@@ -78,9 +79,7 @@ extern rex_tcb_type wms_tcb;
 #include "uixsnd.h"
 #endif /* FEATURE_UI_CORE */
 #include "OEMCFGI.h"
-
 #include "AEEDownload.h"
-
 #include "nv.h"
 #include "nvi.h"
 #ifndef USES_MMI
@@ -4237,11 +4236,24 @@ int GetDeviceState(DeviceType dt)
 }
 
 #endif /*CUST_EDITION*/
-
 #ifdef FEATURE_NET_LOCK
 boolean OEM_IsNetLock(void)
-{
-    nv_item_type nvi;  // buffer to read NV
+{		
+//add by wenyu ,增加V3137 读取SPN号是否是"mts"的判断
+	#ifdef FEATURE_VERSION_V3C137
+	extern char charsvc_p_name[UIM_CDMA_HOME_SERVICE_SIZE+1];
+	int i;
+	for(i=0;i<STRLEN(charsvc_p_name);i++)
+		{
+			DBGPRINTF("charsvc_p_name=%0x",charsvc_p_name[i]);
+	}
+	if(STRISTR(charsvc_p_name,"mts"))
+	{	
+		return FALSE;
+	}	
+	return TRUE;
+	#else
+	nv_item_type nvi;  // buffer to read NV
     uint8 curr_nam;    // current NAM
     dword mcc;       // to store value read from nv
     dword mnc;
@@ -4331,6 +4343,7 @@ boolean OEM_IsNetLock(void)
         }
     }
     return TRUE;
+	#endif
 }
 #endif
 

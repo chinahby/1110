@@ -1331,9 +1331,21 @@ static NextFSMAction COREST_STARTUPANI_Handler(CCoreApp *pMe)
 			(void)OEM_GetConfig( CFGI_NET_LOCK_FLAGS,
 									 &Is_NetLockclose,
 									 sizeof(boolean));
+			//add by wenyu,¶ÁÈ¡V3C137µÄSPNºÅ
+			#ifdef FEATURE_VERSION_V3C137
+			CoreApp_GetSPN(pMe);
+			if(pMe->svc_p_name[0] != 0)
+        { 
+        #ifdef FEATURE_OEMOMH
+            MSG_FATAL("CoreApp_DrawBannerMessage hasGetSPN = TRUE",0,0,0);
+		#endif
+
+        }
+			#endif
 			MSG_FATAL("Is_NetLockclose:::::::::::::::::::::%d",Is_NetLockclose,0,0);
 			if(!Is_NetLockclose)
 			{
+				MSG_FATAL("pMe->bunlockuim=%d,IRUIM_IsCardConnected(pMe->m_pIRUIM)=%d,OEM_IsNetLock=%d",pMe->bunlockuim,IRUIM_IsCardConnected(pMe->m_pIRUIM),OEM_IsNetLock());
 				if(!pMe->bunlockuim && IRUIM_IsCardConnected(pMe->m_pIRUIM) && OEM_IsNetLock())
 	            {
 	            	

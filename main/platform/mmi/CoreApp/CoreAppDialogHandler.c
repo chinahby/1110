@@ -588,7 +588,7 @@ static void CCoreApp_TorchTipTimeOut(CCoreApp *pMe);
 //static boolean CoreApp_PowerAlarm_Event(CCoreApp *pMe);
 //static void CoreApp_DrawStartAlarm(CCoreApp *pMe);
 //boolean CoreApp_Start_Alarm(CCoreApp *pMe);
-static void CoreApp_GetSPN(CCoreApp *pMe);
+ void CoreApp_GetSPN(CCoreApp *pMe);
 
 static void CoreApp_ImageNotify(void *po, IImage *pIImage, AEEImageInfo *pii, int nErr);
 #ifdef FEATURE_SOUND_BO
@@ -9906,7 +9906,7 @@ static int CoreApp_GetSpnFromMCCMNC(CCoreApp *pMe)
     return SUCCESS;
 }
 //Add End
-static void CoreApp_GetSPN(CCoreApp *pMe)
+ void CoreApp_GetSPN(CCoreApp *pMe)
 {
 
 #ifndef WIN32
