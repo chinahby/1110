@@ -94,6 +94,7 @@ typedef struct IANNUNCore
    boolean         m_hasTitleText;
    uint16          m_Title[ANN_TEXT_MAX_LEN+1];
    boolean         m_btoolen;
+   boolean         m_bNotUpdate;
 }IANNUNCore;
 
 struct IAnnunciator
@@ -107,7 +108,6 @@ struct IAnnunciator
    unsigned short      m_usRef;
    uint32              nAnnunID;
    uint32              nState;  
-   boolean             m_bNotUpdate;
 };
 
 typedef struct AnnunTimerInfo
@@ -141,9 +141,9 @@ static int IAnnunciator_SetUnblinkTimer(IAnnunciator * pMe, uint32 nAnnunID, uin
 //static int IAnnunciator_SetFieldIsActive(IAnnunciator * pMe , boolean bActive);
 static int IAnnunciator_SetFieldIsActiveEx(IAnnunciator *pMe, boolean bActive);
 static int IAnnunciator_SetHasTitleText(IAnnunciator *pMe, boolean bHasTitleText);
-static int IAnnunciator_SetFieldText(IAnnunciator * pMe ,uint16 *cText);
+static int IAnnunciator_SetFieldText(IAnnunciator * pMe ,uint16 *cText, boolean bRedraw);
 static void SetFieldUnblink(IAnnunciator * pMe);
-static int  IAnnunciator_SetNotUpdate(IAnnunciator * pMe);
+static int  IAnnunciator_SetNotUpdate(IAnnunciator * pMe, boolean bNotUpdate);
 
 IAnnunciatorVtbl gvtIAnnunciator = {
    IAnnunciator_AddRef,
@@ -729,6 +729,9 @@ static IANNUNCore *IAnnunCoreObj = NULL;
 // 用于保存待机界面墙纸顶层图标栏覆盖部分墙纸的图片数据
 static IDIB *pgWallpaperBarDDB=NULL;
 #endif
+
+extern boolean gbUpdateAnuu;
+
 /*
   ||
   ||              Helper functions
@@ -808,6 +811,7 @@ static void annun_disp_update(
                        Annunciators[nAnnunID].y_pos,
                        AEE_RO_COPY);
 #endif
+       //DBGPRINTF("annun_disp_update");
        IDISPLAY_Update(pMe->m_coreObj->m_piDisplay);
     }
 #endif
@@ -886,6 +890,7 @@ static int ClearField (IAnnunciator *pMe, uint32 nAnnunID)
                                         Annunciators[nAnnunID].x_pos, Annunciators[nAnnunID].y_pos, AEE_RO_COPY);
                                         
                     IBITMAP_Release(pDevBmp);
+                    //DBGPRINTF("IAnnunciator_ClearField");
                     IDISPLAY_Update(pMe->m_coreObj->m_piDisplay);
                 }
             }
@@ -904,6 +909,7 @@ static int ClearField (IAnnunciator *pMe, uint32 nAnnunID)
 #endif
             // 此时应用填充色，而非背景色, 且填充的是显示设备
             IDISPLAY_FillRect(pMe->m_coreObj->m_piDisplay, &Rect, nBgColor);
+            //DBGPRINTF("IAnnunciator_ClearField");
             IDISPLAY_Update(pMe->m_coreObj->m_piDisplay);
         }
     }
@@ -960,6 +966,7 @@ static int ClearField (IAnnunciator *pMe, uint32 nAnnunID)
         pIBitmap = IDIB_TO_IBITMAP(pMe->m_coreObj->m_pDDB);
 
         IBITMAP_FillRect (pIBitmap, &Rect, pMe->m_coreObj->m_bg, AEE_RO_COPY);
+        //DBGPRINTF("IAnnunciator_ClearField");
         annun_disp_update (pMe, pMe->m_coreObj->m_pDDB, nAnnunID);
     }
     //annun_disp_update (pMe, pMe->m_coreObj->m_pDDB, nAnnunID);
@@ -1097,6 +1104,7 @@ static int DrawImageField (IAnnunciator *pMe, uint32 nAnnunID, uint32 nState)
 
     if(bUpdate)
     {
+        //DBGPRINTF("IAnnunciator_DrawImageField");
 	    annun_disp_update (pMe, pMe->m_coreObj->m_pDDB, nAnnunID);
     }
   	return SUCCESS;
@@ -1591,6 +1599,7 @@ static IANNUNCore* OEMAnnunCore_New(IShell* piShell)
     IAnnunCoreObj->m_pDDB = NULL;
     IAnnunCoreObj->m_piDisplay2 = NULL;
     IAnnunCoreObj->m_btoolen    = FALSE;
+    IAnnunCoreObj->m_bNotUpdate = FALSE;
 
 //
 // configuring primary LCD width
@@ -1831,7 +1840,7 @@ int OEMAnnunciator_New(IShell *piShell, AEECLSID clsid, void **pp)
       CALLBACK_Init(&pMe->m_cbSysObj, OEM_FreeAnnunciator, pMe);
       AEE_LinkSysObject(&pMe->m_cbSysObj);
    }
-   pMe->m_bNotUpdate = FALSE;
+   
    *pp = pMe;
    return SUCCESS;
 }
@@ -2008,7 +2017,7 @@ static int IAnnunciator_SetHasTitleText(IAnnunciator *pMe, boolean bHasTitleText
 FUNCTION:IAnnunciator_SetFieldText
 
 =============================================================================*/
-static int IAnnunciator_SetFieldText(IAnnunciator * pMe ,uint16 *cText)
+static int IAnnunciator_SetFieldText(IAnnunciator * pMe ,uint16 *cText, boolean bRedraw)
 {
 	if (pMe == NULL) 
 	{
@@ -2023,9 +2032,11 @@ static int IAnnunciator_SetFieldText(IAnnunciator * pMe ,uint16 *cText)
     {
         IAnnunCoreObj->m_Title[0] = 0;
     }
-	
-	IAnnunciator_Redraw(pMe);	
-	
+
+    if(bRedraw)
+    {
+	    IAnnunciator_Redraw(pMe);	
+    }
 	return SUCCESS;
 }
 
@@ -2219,6 +2230,7 @@ static int IAnnunciator_SetFieldEx(IAnnunciator * pMe, uint32 nAnnunID,
                        &Rect, IDF_ALIGN_TOP|IDF_ALIGN_LEFT|IDF_ALIGN_FILL);
   }
   IDISPLAY_SetDestination(pMe->m_coreObj->m_piDisplay, NULL); /* restore the destination */
+  //DBGPRINTF("IAnnunciator_SetFieldEx");
   annun_disp_update ( pMe, pMe->m_coreObj->m_pDDB, nAnnunID);
 
   /* Change back to App context */
@@ -2293,7 +2305,7 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
 #if 0//def FEATURE_MDP
 #error code not present
 #else
-
+      //DBGPRINTF("IAnnunciator_Redraw START");
       /* Invalidate the entire annunciator bitmap, to ensure that the
        * whole thing redraws.
        */
@@ -2565,17 +2577,21 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
 	                &rc, 
 	                dwFlags);					
 	                (void)IDISPLAY_SetColor(pMe->m_coreObj->m_piDisplay, CLR_USER_TEXT, RGB_BLACK);					
-					
-	                IDISPLAY_UpdateEx(pMe->m_coreObj->m_piDisplay, TRUE);
+
+                    if(pMe->m_coreObj->m_bNotUpdate == FALSE)
+                    {
+	                    IDISPLAY_UpdateEx(pMe->m_coreObj->m_piDisplay, TRUE);
+                    }
             	}
             }
            
 		  // IIMAGE_Release( pBackBmp);
 		}
 #endif
-		
+      gbUpdateAnuu = TRUE;
+      //DBGPRINTF("IAnnunciator_Redraw %d",pMe->m_coreObj->m_bNotUpdate);		
       // 待机界面下不必跟新显示，待机界面绘制完显示信息后再统一更新显示，如此可避免进入待机界面的闪屏
-      if ((need_capture.b_capture != DB_CAPTURE_INIDLE) && (pMe->m_bNotUpdate == FALSE))
+      if ((need_capture.b_capture != DB_CAPTURE_INIDLE) && (pMe->m_coreObj->m_bNotUpdate == FALSE))
       {
           IDISPLAY_Update(pMe->m_coreObj->m_piDisplay);
       }
@@ -2665,6 +2681,10 @@ static int IAnnunciator_EnableAnnunciatorBar(IAnnunciator * pMe, AEECLSID clsid,
      {
         (void) IANNUNCIATOR_Redraw(pMe);
      }
+  }
+  else
+  {
+    return EBADSTATE;
   }
 
   return SUCCESS;
@@ -2756,13 +2776,13 @@ static void SetFieldUnblink(IAnnunciator * pMe)
     IAnnunciator_SetField(pMe, pMe->nAnnunID, pMe->nState);
 }
 
-static int  IAnnunciator_SetNotUpdate(IAnnunciator * pMe)
+static int  IAnnunciator_SetNotUpdate(IAnnunciator * pMe, boolean bNotUpdate)
 {
     if(NULL == pMe)
     {
         return EFAILED;
     }
-    pMe->m_bNotUpdate = TRUE;
+    pMe->m_coreObj->m_bNotUpdate = bNotUpdate;
     return SUCCESS;
 }
 

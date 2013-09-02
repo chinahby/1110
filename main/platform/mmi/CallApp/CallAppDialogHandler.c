@@ -857,13 +857,6 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
             return TRUE;
         }
         case EVT_DIALOG_START:
-            if(pMe->m_pIAnn != NULL)
-            {
-                //²¦ºÅÅÌ²»ÄÜÏÔÊ¾titlebar
-                IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, FALSE);
-                IANNUNCIATOR_Redraw(pMe->m_pIAnn);
-            }
-
             //Add By zzg 2013_08_28
 #ifdef FEATURE_SOUND_BO 
             if (WSTRLEN(pMe->m_DialString) == 1)
@@ -1001,12 +994,6 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
             return TRUE;
 
         case EVT_DIALOG_END:
-			MSG_FATAL("EVT_DIALOG_END.....123....",0,0,0);
-            if(pMe->m_pIAnn != NULL)
-            {
-                //ÍË³ö²¦ºÅÅÌÊ±£¬»Ö¸´titlebar
-                IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
-            }
             // TBD - dial string format should be typedef'd
 #ifdef KEYSND_ZY
             ISOUNDPLAYER_Stop(pMe->m_SndPlayer);

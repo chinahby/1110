@@ -239,12 +239,16 @@ void OEMAnnunciatorControl_Enable(IAnnunciatorControl *pme, boolean bEnable)
    }
 
    if(0 != clsDisp) {
-      (void) IANNUNCIATOR_EnableAnnunciatorBar(pme->pAnnun,
+      int nRet;
+      IANNUNCIATOR_SetNotUpdate(pme->pAnnun,TRUE);
+      nRet = IANNUNCIATOR_EnableAnnunciatorBar(pme->pAnnun,
                                                clsDisp,
                                                bEnable);
-      if(bEnable) {
+      if(bEnable && nRet == EBADSTATE) {
+         
          (void) IANNUNCIATOR_Redraw(pme->pAnnun);
       }
+      IANNUNCIATOR_SetNotUpdate(pme->pAnnun,FALSE);
    }
 #endif
    return;

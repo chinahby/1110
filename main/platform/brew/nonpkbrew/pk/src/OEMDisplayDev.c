@@ -875,6 +875,7 @@ static int OEMDisplayDev_QueryInterface(IDisplayDev *pMe, AEECLSID clsid, void *
    return ECLASSNOTSUPPORT;
 }
 
+boolean gbUpdateAnuu = FALSE;
 static int OEMDisplayDev_Update(IDisplayDev *pMe, IBitmap *pbmSrc, AEERect *prc)
 {
    IDIB *pDib;
@@ -885,6 +886,16 @@ static int OEMDisplayDev_Update(IDisplayDev *pMe, IBitmap *pbmSrc, AEERect *prc)
       return nErr;
    }
 
+   //MSG_FATAL("OEMDisplayDev_Update %d %d %d",prc->dx,prc->y,prc->dy);
+   if(gbUpdateAnuu)
+   {
+        prc->dy = prc->dy+prc->y;
+        prc->y  = 0;
+        prc->x  = 0;
+        prc->dx = DISP_WIDTH;
+        gbUpdateAnuu = FALSE;
+   }
+   
 #ifdef FEATURE_MMOVERLAY
 
    if((0 != pMe->displayClsID) && (NULL != pMe->pSysMMOverlayRegistry))
@@ -999,7 +1010,7 @@ static int OEMDisplayDev_Update(IDisplayDev *pMe, IBitmap *pbmSrc, AEERect *prc)
    }
 
    (void)IDIB_Release(pDib);
-
+   //MSG_FATAL("OEMDisplayDev_Update END %d %d %d",prc->dx,prc->y,prc->dy);
    return nErr;
 
 }

@@ -1237,7 +1237,7 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
 #ifdef FEATRUE_SET_IP_NUMBER
             pMe->m_b_ip_call[0] = 0;
 #endif
-            IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, NULL);
+            IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn, NULL, FALSE);
 
 			//Add By zzg 2011_10_25
 			{
