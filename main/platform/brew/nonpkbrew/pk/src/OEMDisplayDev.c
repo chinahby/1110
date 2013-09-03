@@ -875,7 +875,7 @@ static int OEMDisplayDev_QueryInterface(IDisplayDev *pMe, AEECLSID clsid, void *
    return ECLASSNOTSUPPORT;
 }
 
-static boolean gbUpdateAnuu = FALSE;
+boolean gbUpdateAnuu = FALSE;
 void OEM_EnableAnuuUpdate(void)
 {
     gbUpdateAnuu = TRUE;
