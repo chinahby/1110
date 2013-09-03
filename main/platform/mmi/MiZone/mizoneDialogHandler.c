@@ -823,10 +823,15 @@ static boolean  MiZone_ASTROLOGYHandler(CMiZone *pMe,
                        char strBuf[MAS_BREWSETINT_STRING] = {0};
                        AECHAR *pwsText = ITEXTCTL_GetTextPtr(pIText);
                        WSTRTOSTR(pwsText,strBuf,sizeof(strBuf));
+
+                       if (WSTRLEN(pwsText) == 0){
+                            return  FALSE;
+                       }
                        
                        STRCPY(SMSINFO,"MMDOB");
                        STRCAT(SMSINFO, strBuf);
                        ICONFIG_SetItem(pMe->m_pConfig, CFGI_MIZONE_SMSINFO,SMSINFO, sizeof(SMSINFO)); 
+                      
                       if(Mizone_SendSms(pMe)==SUCCESS)
                       {
                         CLOSE_DIALOG(DLGRET_ENDACTIVATE)
@@ -1261,10 +1266,15 @@ static boolean  MiZone_INPUTSENDHandler(CMiZone *pMe,
                       char strBuf[MAS_BREWSETINT_STRING] = {0};
                       AECHAR *pwsText = ITEXTCTL_GetTextPtr(pIText);
                       WSTRTOSTR(pwsText,strBuf,sizeof(strBuf));
+
+                      if (WSTRLEN(pwsText) == 0){
+                            return  FALSE;
+                      }
                       
                       STRCPY(SMSINFO,"MMP2AAST");
                       STRCAT(SMSINFO, strBuf);
                       ICONFIG_SetItem(pMe->m_pConfig, CFGI_MIZONE_SMSINFO,SMSINFO, sizeof(SMSINFO)); 
+                      
                       if(Mizone_SendSms(pMe)==SUCCESS)
                       {
                         CLOSE_DIALOG(DLGRET_CANCELED)
@@ -1456,6 +1466,11 @@ static boolean  MiZone_SENDNAMEHandler(CMiZone *pMe,
                       char strpartnerName[MAS_BREWSETINT_STRING]={0};
                       AECHAR *pwsTextFirstName = ITEXTCTL_GetTextPtr(pITextFirstName);
                       AECHAR *pwsTextpartnerName = ITEXTCTL_GetTextPtr(pITextpartnerName);
+
+                      if ((WSTRLEN(pwsTextFirstName) == 0) || (WSTRLEN(pwsTextpartnerName) == 0)){
+                            return FALSE;
+                      }
+                      
                       WSTRTOSTR(pwsTextFirstName,strFirstName,sizeof(strFirstName));
                       WSTRTOSTR(pwsTextpartnerName,strpartnerName,sizeof(strpartnerName));
                       STRCPY(SMSINFO,"MMP2AFLAME");

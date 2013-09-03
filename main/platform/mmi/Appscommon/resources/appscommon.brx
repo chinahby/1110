@@ -149,7 +149,7 @@
 		<Text>Activate</Text>
 	</STRING>
 	<STRING Id="50" Name="IDS_FUNZONE">
-		<Text>M!Zone+</Text>
+		<Text>M!Zone</Text>
 	</STRING>
 	<STRING Id="51" Name="IDS_SENDREQUEST">
 		<Text>Send request</Text>
