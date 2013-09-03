@@ -1990,19 +1990,24 @@ static int OEMALERT_PlayRinger
 
   case AEEALERT_ALERT_LOW_BATTERY: 
     IBACKLIGHT_Enable(pMe->m_pBacklight);
+	#ifndef FEATURE_VERSION_K212
     OEMALERT_GetRingerVol(pMe);
+	#endif
     #ifdef FEATURE_VERSION_C337
     pMe->m_ringCurVol = OEMSOUND_1ST_VOL;
     pMe->m_ringEndVol = OEMSOUND_1ST_VOL;
     #endif
+	#ifndef FEATURE_VERSION_K212
     OEMALERT_SetRingerVol(pMe, FALSE);
+	#endif
     OEMSOUND_Sound_Id_Start(SND_DEVICE_CURRENT,
                            (OEMALERT_InCall(pMe) || OEMALERT_RingInHeadset(pMe)) ?
                                       SND_METHOD_VOICE : SND_METHOD_RING,
                            (int) SND_MESSAGE_ALERT,
                            SND_PRIO_MED,
                            SND_APATH_LOCAL,
-                           NULL);  
+                           NULL);
+	
     break;      
     
   case AEEALERT_ALERT_CHARGER_OVERVOLTAGE: 

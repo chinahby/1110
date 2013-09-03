@@ -13061,6 +13061,7 @@ static boolean IDD_EDITTEMPLATE_Handler(void *pUser,
                 {
                     (void)ITEXTCTL_SetText(pIText, pMe->m_msSend.m_szMessage, -1);
                 }
+				
             }
             // add end
             return TRUE;
@@ -13373,7 +13374,9 @@ static boolean IDD_MSGOPTS_Handler(void *pUser,
 #endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH
                     MENU_ADDITEM(pMenu, IDS_SEND);
                     //MENU_ADDITEM(pMenu, IDS_EDIT);
+                    #ifndef FEATURE_VERSION_K212
                     MENU_ADDITEM(pMenu, IDS_ADDNEW);
+					#endif
                     
                     if (pMe->m_wCurTemplate>=MSG_CMD_BASE)
                     {
@@ -13724,11 +13727,11 @@ static boolean IDD_MSGOPTS_Handler(void *pUser,
                 case IDS_EDIT:
                     CLOSE_DIALOG(DLGRET_EDIT)
                     return TRUE;
-                    
+#ifndef FEATURE_VERSION_K212
                 case IDS_ADDNEW:
                     CLOSE_DIALOG(DLGRET_ADDNEW)
                     return TRUE;
-                    
+#endif
                 default:
                     break;
             }

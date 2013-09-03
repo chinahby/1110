@@ -674,9 +674,9 @@ GENERAL DESCRIPTION:
 #ifdef FEATURE_CDG2_TEST
     #define FEATURE_OEM_DEBUG /*this feature only for output oem message from QXDM*/
 #endif
-
+#ifndef FEATURE_VERSION_K212
 #define FEATURE_POWERDOWN_ALARM
-
+#endif
 #define FEATURE_SCROLLBAR_USE_STYLE
 
 

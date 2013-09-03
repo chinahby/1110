@@ -978,6 +978,20 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
                 if(pMe->m_nMsgID == IDS_AUTO_POWER_OFF)
                 {
                     m_PromptMsg.ePMsgType = MESSAGE_CONFIRM;
+					#ifdef FEATURE_VERSION_K212
+					ISHELL_CancelTimer(pMe->a.m_pIShell,DialogTimeoutCallback,pMe);                        
+                    pMe->m_ePowerDownType = POWERDOWN_NORMAL;
+                    if (pMe->m_eCurState != COREST_POWEROFF)
+                    {
+                        //ISHELL_CloseApplet(pMe->a.m_pIShell, TRUE);
+                        pMe->m_b_needclose_core = FALSE;
+                        pMe->m_wStartupAniTime = 0;
+                        //     DBGPRINTF("IDS_AUTO_POWER_OFF to COREST_POWEROFF");
+                        MOVE_TO_STATE(COREST_POWEROFF)
+                        CLOSE_DIALOG(DLGRET_CREATE)
+                        return TRUE;
+                    }
+					#endif
                 }
                 else if(pMe->m_nMsgID == 0xFFFF)
                 {
@@ -1378,18 +1392,14 @@ static boolean  IDD_ALARM_Handler(void       *pUser,
                 IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
             }
 			{
-            uint32  dwAlarmTime;
-            AECHAR  wszTime[16];
+            
             IImage* pResImg = NULL;
             uint16  ring_id = 1;
             byte    profilenum;
             ringID  ringid[PROFILENUMBER];
-            AEERect rc = {0};
-            RGBVAL nOldFontColor;
             
-            MEMSET(wszTime,0,sizeof(wszTime));
-            dwAlarmTime = time.dwWATime;
-            Appscommon_FormatTimeString(dwAlarmTime, wszTime, sizeof(wszTime));
+            
+            
 			pResImg = ISHELL_LoadResImage( pMe->a.m_pIShell, "fs:/mod/clockapps/clockapps_images.bar", IDI_ALARMCLOCK);
             Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
             if( pResImg != NULL)
@@ -1402,11 +1412,7 @@ static boolean  IDD_ALARM_Handler(void       *pUser,
                 pResImg = NULL;
             }
 
-            SETAEERECT(&rc, 0, TITLEBAR_HEIGHT, pMe->m_rc.dx, TITLEBAR_HEIGHT);
-            nOldFontColor = IDISPLAY_SetColor( pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
-            (void)IDISPLAY_DrawText(pMe->m_pDisplay, AEE_FONT_BOLD, wszTime, -1, 0, 0, &rc,
-                                  IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER | IDF_TEXT_TRANSPARENT);
-            (void)IDISPLAY_SetColor( pMe->m_pDisplay, CLR_USER_TEXT, nOldFontColor);
+            
 #if 1
             OEM_GetConfig( CFGI_ALARM_RINGER, &ring_id, sizeof(ring_id));
 
@@ -1427,11 +1433,34 @@ static boolean  IDD_ALARM_Handler(void       *pUser,
             ICONFIG_GetItem( pMe->m_pConfig,CFGI_ALARM_RINGER,&ring_id,sizeof(ring_id));
             IALERT_StartRingerAlert(pMe->m_pAlert, ring_id);
 #endif
-            {
+            
+            IDISPLAY_Update( pMe->a.m_pIDisplay);
+           }
+            ISHELL_PostEvent(pMe->a.m_pIShell,AEECLSID_CORE_APP,EVT_USER_REDRAW,0,0);
+            ICONFIG_GetItem( pMe->m_pConfig, CFGI_BEEP_VOL, &keyBeepVolumeSetting, sizeof(byte));
+            ICONFIG_SetItem( pMe->m_pConfig, CFGI_BEEP_VOL, &mute, sizeof(byte));
+			
+            return TRUE;
+        }
+
+        case EVT_USER_REDRAW:
+			{
+				uint32  dwAlarmTime;
+            	AECHAR  wszTime[16];
                 TitleBar_Param_type title = {0};
                 AECHAR wszTitle[16] = {0};
                 int len = 0;
+				AEERect rc = {0};
+            	RGBVAL nOldFontColor;
 
+				MEMSET(wszTime,0,sizeof(wszTime));
+            	dwAlarmTime = time.dwWATime;
+            	Appscommon_FormatTimeString(dwAlarmTime, wszTime, sizeof(wszTime));
+				SETAEERECT(&rc, 0, TITLEBAR_HEIGHT, pMe->m_rc.dx, TITLEBAR_HEIGHT);
+            	nOldFontColor = IDISPLAY_SetColor( pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
+           		 (void)IDISPLAY_DrawText(pMe->m_pDisplay, AEE_FONT_BOLD, wszTime, -1, 0, 0, &rc,
+                                  IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER | IDF_TEXT_TRANSPARENT);
+            	(void)IDISPLAY_SetColor( pMe->m_pDisplay, CLR_USER_TEXT, nOldFontColor);
                 ISHELL_LoadResString( pMe->a.m_pIShell,
                                       CLOCK_RES_PATH,
                                       IDS_ALARMCLOCK_TITLE,
@@ -1447,23 +1476,17 @@ static boolean  IDD_ALARM_Handler(void       *pUser,
 				#if 0
                 DrawTitleBar(pMe->a.m_pIDisplay,&title);
 				#else
+				#ifndef FEATURE_VERSION_K212
                 if(pMe->m_pIAnn != NULL)
                 {
-				    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,wszTitle,FALSE);
+				    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wszTitle);
                 }
 				#endif
-                CoreDrawBottomBar( BTBAR_SNOOZE_CONTINUE_STOP);
+				#endif
+                
             }
-            IDISPLAY_Update( pMe->a.m_pIDisplay);
-           }
-            ISHELL_PostEvent(pMe->a.m_pIShell,AEECLSID_CORE_APP,EVT_USER_REDRAW,0,0);
-            ICONFIG_GetItem( pMe->m_pConfig, CFGI_BEEP_VOL, &keyBeepVolumeSetting, sizeof(byte));
-            ICONFIG_SetItem( pMe->m_pConfig, CFGI_BEEP_VOL, &mute, sizeof(byte));
-			
-            return TRUE;
-        }
-
-        case EVT_USER_REDRAW:
+			CoreDrawBottomBar( BTBAR_SNOOZE_CONTINUE_STOP);
+			IDISPLAY_Update( pMe->a.m_pIDisplay);
 			return TRUE;
         case EVT_DIALOG_END:
             IBACKLIGHT_Enable(pMe->m_pBacklight);
@@ -3669,6 +3692,9 @@ static void CoreApp_ImageNotify(void *po, IImage *pIImage, AEEImageInfo *pii, in
 		 else
 		 #endif
 		 {
+		 	#ifdef FEATURE_VERSION_K212
+		 	(void) AEE_CancelTimer(CoreApp_MessageTimerCB,pMe);
+			#endif
 #ifdef FEATRUE_SET_ANN_FULL_SCREEN
         if (pMe->m_capture == DB_CAPTURE_NEED)
         {
@@ -7796,15 +7822,17 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 		
 #else
 #if defined(FEATURE_VERSION_K212)
-		DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
+        MSG_FATAL("DrawGreyBitTextWithProfile FEATURE_VERSION_K212",0,0,0);
+		rc_date.x = rc_date.x - 9; 
+		DrawTextWithProfile(pMe->a.m_pIShell,
                                   pMe->m_pDisplay,
                                   RGB_WHITE_NO_TRANS,
-                                  28,
+                                  AEE_FONT_NORMAL,
                                   &wszDate[0], -1,
                                   0, 0, &rc_date, 
                                   IDF_ALIGN_MIDDLE
                                   | IDF_ALIGN_LEFT
-                                  | IDF_TEXT_TRANSPARENT); 
+                                  | IDF_TEXT_TRANSPARENT);
 #else
         DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
                                   pMe->m_pDisplay,
