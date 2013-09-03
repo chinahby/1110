@@ -1543,7 +1543,7 @@ void OEMKeyguard_SetState(boolean bEnabled)
     	#ifdef FEATURE_VERSION_K212
 		IBacklight  *Backlight;
         (void)ISHELL_CreateInstance(sgpShell,AEECLSID_BACKLIGHT,(void **)&Backlight);
-  		IBACKLIGHT_Disable(Backlight);
+  		//IBACKLIGHT_Disable(Backlight);
         IBACKLIGHT_Release(Backlight);
    		#endif
         bDrawMessage = TRUE;

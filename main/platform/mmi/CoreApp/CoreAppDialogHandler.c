@@ -3642,6 +3642,11 @@ static boolean  IDD_LOADING_Handler(void       *pUser,
     return FALSE;
 }
 
+static void CoreApp_MessageTimerCB(void *pUser)
+{
+    CCoreApp *pMe = (CCoreApp *)pUser;
+    IBACKLIGHT_Disable(pMe->m_pBacklight);
+}
 static void CoreApp_ImageNotify(void *po, IImage *pIImage, AEEImageInfo *pii, int nErr)
 {   
     CCoreApp *pMe = (CCoreApp *)po;
@@ -3656,9 +3661,10 @@ static void CoreApp_ImageNotify(void *po, IImage *pIImage, AEEImageInfo *pii, in
     	 #ifdef FEATURE_VERSION_K212
     	 if(OEMKeyguard_IsEnabled())
     	 {
-    	 	//Appscommon_Draw_Keyguard_Time(pMe->m_pDisplay);
-			//CoreApp_UpdateBottomBar(pMe);
-			IBACKLIGHT_Disable(pMe->m_pBacklight);
+    	 	Appscommon_Draw_Keyguard_Time(pMe->m_pDisplay);
+			CoreApp_UpdateBottomBar(pMe);
+			IDISPLAY_UpdateEx(pMe->m_pDisplay,TRUE);
+			(void) AEE_SetSysTimer(3000, CoreApp_MessageTimerCB, pMe);
     	 }
 		 else
 		 #endif
@@ -5528,7 +5534,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
         default:
             break;
     }
-    return FALSE;
+    return TRUE;
 } // IDD_IDLE_Handler
 #if defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)
 /*==============================================================================
