@@ -5014,9 +5014,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
         return ITEXTCTL_HandleEvent( pTextCtl, eCode, wParam, dwParam);
     }
     pMe->m_nSmartStateType = SMART_STATE_IDD_LIST;
-	#ifdef FEATURE_VERSION_K202
-	ITEXTCTL_SetProperties(pTextCtl, TP_FIXSETRECT|TP_FIXOEM|TP_USELESS_UPDOWN|TP_FOCUS_NOSEL);
-	#endif
+	
     if(CContApp_SmartMenuHandle(pMe, pMenuCtl, pTextCtl, eCode,wParam))
     {
         return TRUE;
@@ -5035,6 +5033,11 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
             
         case EVT_DIALOG_START:
         {
+            OEM_SetNotUpdateScreen(TRUE);
+            IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
+#ifdef FEATURE_VERSION_K202
+            ITEXTCTL_SetProperties(pTextCtl, TP_FIXSETRECT|TP_FIXOEM|TP_USELESS_UPDOWN|TP_FOCUS_NOSEL);
+#endif
             // Build the list Menu
             if(NULL == pMe->m_szAlpha)
             {
@@ -5096,7 +5099,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
             uint32    dwMask = IMENUCTL_GetProperties(pMenuCtl);
             IMENUCTL_SetProperties(pMenuCtl, dwMask & (~MP_NO_REDRAW));
             MSG_FATAL("--pMenuCtl=%x",IMENUCTL_GetSel(pMenuCtl),0,0);
-
+            OEM_SetNotUpdateScreen(FALSE);
 			MSG_FATAL("***zzg contack list EVT_USER_REDRAW***", 0,0,0);
             
 			{
@@ -5145,7 +5148,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
             {
                 // 智能查找到一个记录，并且把这一条删除掉。
                  pMe->m_bDelOk = FALSE;
-                ITEXTCTL_SetActive(pTextCtl, TRUE);
+                 ITEXTCTL_SetActive(pTextCtl, TRUE);
                  CContApp_DisplayRightTopStr(pMe,pMenuCtl,0);
                  #ifndef FEATURE_ALL_KEY_PAD
                  CONTAPP_DRAW_BOTTOMBAR(BTBAR_DELETE);
@@ -5184,7 +5187,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
                 }
             }
 
-
+#if 0
 			//Add By zzg  2010_08_14..
 			// 在调用了其他界面(如Symbol)返回后要重新加载CONTACT
 			{
@@ -5273,7 +5276,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
 	            }
 			}
 			//Add End
-
+#endif
 			#ifdef FEATURE_VERSION_C337
 			if (pMe->m_bSpeedDialParam == TRUE)
 			{
@@ -5286,8 +5289,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
 			ITEXTCTL_Redraw(pTextCtl);
             CContApp_DrawScrollBar(pMe, pMenuCtl);
             IDISPLAY_Update(pMe->m_pDisplay); 
-
-			return TRUE;			
+			return TRUE;
         }            
 
         case EVT_DISPLAYDIALOGTIMEOUT:
@@ -16769,7 +16771,7 @@ static void CContApp_DrawNorecord(CContApp *pMe, IMenuCtl *pMenuCtl)
     AEERect rc={0};
     AECHAR wStrBuf[64] = {(AECHAR)'\0'};//use but find other err :key seem no active when second press
     RGBVAL  oldColor=0; 
-    
+    int nRet;
     //CContApp_DisplayRightTopStr(pMe,pMenuCtl, wParam);
     if(pMenuCtl)
     {
@@ -16798,16 +16800,16 @@ static void CContApp_DrawNorecord(CContApp *pMe, IMenuCtl *pMenuCtl)
         }
     }
 #else
-    Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &rc, TRUE);
+    Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &rc, FALSE);
 #endif
     
     (void)ISHELL_LoadResString(pMe->m_pShell,
                                 CONTAPP_RES_FILE_LANG,
                                 IDS_MSG_FINDNULL,
                                 wStrBuf,sizeof(wStrBuf));
-                                
+    MSG_FATAL("CContApp_DrawNorecord %d %d %d",WSTRLEN(wStrBuf),rc.x,rc.y);
     oldColor = IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
-    (void)IDISPLAY_DrawText( pMe->m_pDisplay,
+    nRet = IDISPLAY_DrawText( pMe->m_pDisplay,
                             AEE_FONT_NORMAL, //AEE_FONT_BOLD,
                             wStrBuf,
                             -1,
@@ -16815,7 +16817,7 @@ static void CContApp_DrawNorecord(CContApp *pMe, IMenuCtl *pMenuCtl)
                             rc.y,
                             &rc,
                             IDF_TEXT_TRANSPARENT);
-    
+    MSG_FATAL("CContApp_DrawNorecord %d %d %d",nRet,rc.dx,rc.dy);
     IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, oldColor);
 }
 static void CContApp_SetGroupItemText(CContApp *pMe, IMenuCtl *pMenuCtl)

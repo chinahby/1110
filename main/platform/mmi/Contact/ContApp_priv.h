@@ -1966,5 +1966,6 @@ SEE ALSO:
 =============================================================================*/
 
 int CContApp_CopyMultipe(CContApp *pMe);
+extern void OEM_SetNotUpdateScreen(boolean bOn);
 #endif// CONTAPP_PRIV_H
 

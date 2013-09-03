@@ -875,12 +875,28 @@ static int OEMDisplayDev_QueryInterface(IDisplayDev *pMe, AEECLSID clsid, void *
    return ECLASSNOTSUPPORT;
 }
 
-boolean gbUpdateAnuu = FALSE;
+static boolean gbUpdateAnuu = FALSE;
+void OEM_EnableAnuuUpdate(void)
+{
+    gbUpdateAnuu = TRUE;
+}
+static boolean gbNotUpdateScreen = FALSE;
+void OEM_SetNotUpdateScreen(boolean bOn)
+{
+    gbNotUpdateScreen = bOn;
+}
+
 static int OEMDisplayDev_Update(IDisplayDev *pMe, IBitmap *pbmSrc, AEERect *prc)
 {
    IDIB *pDib;
    int nErr = SUCCESS;
-
+   
+   if(gbNotUpdateScreen)
+   {
+      MSG_FATAL("OEM_SetNotUpdateScreen TRUE",0,0,0);
+      return nErr;
+   }
+   
    nErr = IBITMAP_QueryInterface(pbmSrc, AEECLSID_DIB, (void**)&pDib);
    if (SUCCESS != nErr) {
       return nErr;
