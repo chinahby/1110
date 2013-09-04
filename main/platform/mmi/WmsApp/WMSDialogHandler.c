@@ -14118,16 +14118,19 @@ static boolean IDD_MSGCOPY_HandlerExt(void *pUser,
                 
                 if (Info->message_list.mem_store != mem_store)
                 {
+                    WMSAPPU_SYSFREE(dwParam);
                     break;
                 }
                 
                 pSrcList = (wms_message_list_s_type *)MALLOC(sizeof(wms_message_list_s_type));
                 if (NULL == pSrcList)
                 {
+                    WMSAPPU_SYSFREE(dwParam);
                     CLOSE_DIALOG(DLGRET_OK)
                     break;
                 }
                 MEMCPY(pSrcList, &Info->message_list, sizeof(wms_message_list_s_type));
+                WMSAPPU_SYSFREE(dwParam);
                 
                 // 这里利用 pSrcList->voice_mail_index 变量来做索引变量
                 pSrcList->voice_mail_index = 0;

@@ -4143,7 +4143,6 @@ void WmsApp_CfgCb(wms_cfg_event_e_type event, wms_cfg_event_info_s_type *pInfo)
 //            break;
             
         default:
-            WMSAPPU_SYSFREE(pInfobuf)
             break;
     }
     
@@ -4159,6 +4158,10 @@ void WmsApp_CfgCb(wms_cfg_event_e_type event, wms_cfg_event_info_s_type *pInfo)
         {
             WMSAPPU_SYSFREE(pInfobuf)
         }
+    }
+    else
+    {
+        WMSAPPU_SYSFREE(pInfobuf);
     }
 } // WmsApp_CfgCb
 
@@ -4274,7 +4277,7 @@ void WmsApp_MsgCb(wms_msg_event_e_type       event,
             if (pInfobuf->submit_report_info.client_id == WMS_CLIENT_TYPE_WMS_APP)
             {
                 evt = EVT_WMS_MSG_SUBMIT_REPORT;
-            }           
+            }
             //Add End
 
             //evt = EVT_WMS_MSG_SUBMIT_REPORT;
@@ -4310,7 +4313,6 @@ void WmsApp_MsgCb(wms_msg_event_e_type       event,
 //            break;
             
         default:
-            WMSAPPU_SYSFREE(pInfobuf)
             break;
     } // switch
     
@@ -4327,6 +4329,10 @@ void WmsApp_MsgCb(wms_msg_event_e_type       event,
         {
             WMSAPPU_SYSFREE(pInfobuf)
         }
+    }
+    else
+    {
+        WMSAPPU_SYSFREE(pInfobuf);
     }
 } // WmsApp_MsgCb() 
 
@@ -4492,7 +4498,6 @@ void WmsApp_DcCb(wms_dc_event_e_type  event,wms_dc_event_info_s_type  *info_ptr)
         case WMS_DC_EVENT_INCOMING:
         case WMS_DC_EVENT_CONNECTING:
         default:
-            WMSAPPU_SYSFREE(pInfobuf)
             break;
     }
     
@@ -4509,6 +4514,10 @@ void WmsApp_DcCb(wms_dc_event_e_type  event,wms_dc_event_info_s_type  *info_ptr)
         {
             MSG_HIGH("Event  %x could not be posted!", evt,0,0);
         }
+    }
+    else
+    {
+        WMSAPPU_SYSFREE(pInfobuf);
     }
 
 } /* WmsApp_DcCb */
