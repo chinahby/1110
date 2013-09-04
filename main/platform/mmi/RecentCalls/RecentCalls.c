@@ -953,14 +953,20 @@ static boolean recentcalls_HandleEvent(IRecentCalls *pi,
             return recentcalls_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_DIALOG_START:
-            return recentcalls_RouteDialogEvent(pMe,eCode,wParam,dwParam);
-
-        case EVT_USER_REDRAW:
-            (void)recentcalls_RouteDialogEvent(pMe,eCode,wParam,dwParam);
             (void)ISHELL_SetTimer ( pMe->m_pShell,
                                     APPISREADY_TIMER,
                                     recentcalls_APPIsReadyTimer,
                                     pMe);
+            return recentcalls_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+
+        case EVT_USER_REDRAW:
+            (void)recentcalls_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+            /*
+            (void)ISHELL_SetTimer ( pMe->m_pShell,
+                                    APPISREADY_TIMER,
+                                    recentcalls_APPIsReadyTimer,
+                                    pMe);
+            */
             return TRUE;
         
         case EVT_APPISREADY:

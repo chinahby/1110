@@ -83,7 +83,7 @@
 		<Text>%02d/%02d %02d:%02d</Text>
 	</STRING>
 	<String Id="1001" Name="IDS_TIME_ZONE">
-		<Text>0时区</Text>
+		<Text>时区:</Text>
 	</String>
 </Strings>
 </BREWRes>

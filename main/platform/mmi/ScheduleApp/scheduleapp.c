@@ -644,6 +644,12 @@ static boolean  IScheduleApp_HandleEvent( IScheduleApp   *pi,
             {
                 return TRUE;
             }
+            
+            (void)ISHELL_SetTimer (pme->m_pShell,
+                                   APPISREADY_TIMER,
+                                   Schedule_APPIsReadyTimer,
+                                   pme);
+            
             //debug( ";*************EVT_DIALOG_START");
             return CScheduleApp_RouteDialogEvent(pme,eCode,wParam,dwParam);
 
@@ -729,10 +735,12 @@ static boolean  IScheduleApp_HandleEvent( IScheduleApp   *pi,
                 return TRUE;
             }
             (void) CScheduleApp_RouteDialogEvent(pme,eCode,wParam,dwParam);
+            /*
             (void)ISHELL_SetTimer (pme->m_pShell,
                                    APPISREADY_TIMER,
                                    Schedule_APPIsReadyTimer,
                                    pme);
+            */
             return TRUE;
 
         case EVT_APPISREADY:

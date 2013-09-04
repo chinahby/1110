@@ -971,8 +971,17 @@ static void CWorldTime_DrawCityTime(CWorldTime *pme,boolean left)
                         pme->m_dyMenu);
 	#endif
 
+
+#ifdef FEATURE_VERSION_EC99
+    SETAEERECT(&rc, 
+                2, 
+                pme->m_yMenu + SPACE_BETWEEN_MENU + pme->m_dyMenu,
+                pme->m_dxMenu-30, 
+                pme->m_dyMenu);
+
     drawImageWithOffset(pme, pme->m_backGround, rc.x, rc.y, &rc);
     IDISPLAY_SetColor(pme->a.m_pIDisplay, CLR_USER_TEXT, RGB_WHITE);
+    
     IDISPLAY_DrawText(pme->a.m_pIDisplay, 
                                 AEE_FONT_NORMAL, 
                                 text, 
@@ -980,7 +989,20 @@ static void CWorldTime_DrawCityTime(CWorldTime *pme,boolean left)
                                 rc.x, 
                                 rc.y, 
                                 &rc, 
+                                IDF_ALIGN_LEFT| IDF_TEXT_TRANSPARENT);
+#else
+    drawImageWithOffset(pme, pme->m_backGround, rc.x, rc.y, &rc);
+    IDISPLAY_SetColor(pme->a.m_pIDisplay, CLR_USER_TEXT, RGB_WHITE);
+    
+	IDISPLAY_DrawText(pme->a.m_pIDisplay, 
+                                AEE_FONT_NORMAL, 
+                                text, 
+                                -1, 
+                                rc.x, 
+                                rc.y, 
+                                &rc, 
                                 IDF_ALIGN_CENTER | IDF_TEXT_TRANSPARENT);
+#endif       
 
     IMENUCTL_Redraw( pme->m_pMenuCity);
     IDISPLAY_UpdateEx(pme->a.m_pIDisplay, FALSE);

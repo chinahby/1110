@@ -826,14 +826,23 @@ static boolean SecurityMenu_HandleEvent(ISecurityMenu  *pi,
 			{
 				return TRUE;
 			}
+             (void)ISHELL_SetTimer ( pMe->m_pShell,
+                                                APPISREADY_TIMER,
+                                                SecurityMenu_APPIsReadyTimer,
+                                                pMe);
+             
             return SecurityMenu_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_USER_REDRAW:
             (void) SecurityMenu_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+
+            /*
             (void)ISHELL_SetTimer ( pMe->m_pShell,
                                                 APPISREADY_TIMER,
                                                 SecurityMenu_APPIsReadyTimer,
                                                 pMe);
+            */
+                
             return TRUE;
 
         case EVT_APPISREADY:

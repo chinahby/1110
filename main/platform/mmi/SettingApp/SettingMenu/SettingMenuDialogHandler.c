@@ -730,7 +730,9 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
 #ifndef FEATURE_VERSION_H19C 
 #ifndef FEATURE_VERSION_C337
 #ifndef FEATURE_VERSION_K212
+#ifndef FEATURE_VERSION_EC99
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SCENEMODE_TITLE, IDS_SCENEMODE_TITLE, NULL, 0);
+#endif
 #endif
 #endif
 #endif
@@ -3229,7 +3231,7 @@ static boolean  HandleAKGDialogEvent(CSettingMenu *pMe,
                         sizeof(WTitle));
 				IANNUNCIATOR_SetFieldTextEx(pMe->m_pAnn,WTitle,FALSE);
             }
-			#ifdef FEATURE_VERSION_W317A
+			#if defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_EC99)
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_AKG_10SEC, IDS_AKG_10SEC, NULL, 0);
             #endif
 		    #ifdef FEATURE_5SEC_AUTOLOCK_KEYPAD //xxzhen
@@ -3255,7 +3257,7 @@ static boolean  HandleAKGDialogEvent(CSettingMenu *pMe,
                                       &AKG,
                                       sizeof(AKG));
 				//Add By zzg 2012_10_29
-                #ifdef FEATURE_VERSION_W317A
+                #if defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_EC99)
 					switch (AKG)
 	                {
 	                	case 1:   //10Ãë
@@ -3357,7 +3359,7 @@ static boolean  HandleAKGDialogEvent(CSettingMenu *pMe,
                 byte AKG = 0;
 
                	//Add By zzg 2012_10_29
-                #ifdef FEATURE_VERSION_W317A
+                #if defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_EC99)
 					switch (wParam)
 	                {
 	                	case IDS_AKG_10SEC:     //10miao
@@ -4660,8 +4662,9 @@ static boolean  HandleSpeechDialogEvent(CSettingMenu *pMe,
 
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_DIA_SPEECH, IDS_DIA_SPEECH, NULL, 0);
 			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_MAIN_SPEECH, IDS_MAIN_SPEECH, NULL, 0);
+#ifndef FEATURE_VERSION_EC99            
 			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_TIME_SPEECH, IDS_TIME_SPEECH, NULL, 0);
-			
+#endif			
             return TRUE;
 
         case EVT_DIALOG_START:
@@ -4677,8 +4680,11 @@ static boolean  HandleSpeechDialogEvent(CSettingMenu *pMe,
 			(void) ICONFIG_GetItem(pMe->m_pConfig,CFGI_SOUND_BO_MAIN,&bData,sizeof(bData));
                 SetCheckBoxItem(pMenu, IDS_MAIN_SPEECH, bData);
 
+#ifndef FEATURE_VERSION_EC99 
 			(void) ICONFIG_GetItem(pMe->m_pConfig,CFGI_SOUND_BO_CORE,&bData,sizeof(bData));
                 SetCheckBoxItem(pMenu, IDS_TIME_SPEECH, bData);
+#endif                
+
 		    IMENUCTL_SetSel(pMenu, IDS_DIA_SPEECH);
             return TRUE;
 
@@ -4707,8 +4713,10 @@ static boolean  HandleSpeechDialogEvent(CSettingMenu *pMe,
 					   (void) ICONFIG_SetItem(pMe->m_pConfig,CFGI_SOUND_BO_DIA,&bData,sizeof(bData));
 					    bData = GetCheckBoxVal(pMenu, IDS_MAIN_SPEECH);
 					   (void) ICONFIG_SetItem(pMe->m_pConfig,CFGI_SOUND_BO_MAIN,&bData,sizeof(bData));
+#ifndef FEATURE_VERSION_EC99                        
 					    bData = GetCheckBoxVal(pMenu, IDS_TIME_SPEECH);
 					   (void) ICONFIG_SetItem(pMe->m_pConfig,CFGI_SOUND_BO_CORE,&bData,sizeof(bData));
+#endif                       
 					    CLOSE_DIALOG(DLGRET_WARNING)
 					}
                     return TRUE;

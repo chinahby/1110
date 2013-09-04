@@ -7674,15 +7674,11 @@ static void CScheduleApp_DrawLunarStr(CScheduleApp *pme)
     {
         RGBVAL nOldFontColor = IDISPLAY_SetColor(pme->m_pDisplay, CLR_USER_TEXT, LUNAR_FONT_COLOR);
         // 绘制农历日期
-#if defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_20D)
-        (void)IDISPLAY_DrawText(pme->m_pDisplay, AEE_FONT_SMALL,
-                    pme->m_LunarString, -1, 0, 0, &rc,
-                    IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE | IDF_TEXT_TRANSPARENT);
-#else
+
         (void)IDISPLAY_DrawText(pme->m_pDisplay, AEE_FONT_NORMAL,
                     pme->m_LunarString, -1, 0, 0, &rc,
                     IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE | IDF_TEXT_TRANSPARENT);
-#endif
+
         #if 0
         DrawGreyBitTextWithProfile(pme->m_pShell,
 	                              pme->m_pDisplay,

@@ -596,15 +596,22 @@ static boolean CQuickTest_HandleEvent(IQuickTest *pi,
             return QuickTest_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_DIALOG_START:
+             (void)ISHELL_SetTimer ( pMe->m_pShell,
+                            APPISREADY_TIMER,
+                            QuickTest_APPIsReadyTimer,
+                            pMe);
+             
             return QuickTest_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_USER_REDRAW:
             MSG_FATAL("CQuickTest_HandleEvent EVT_USER_REDRAW",0,0,0);
             (void) QuickTest_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+            /*
             (void)ISHELL_SetTimer ( pMe->m_pShell,
                             APPISREADY_TIMER,
                             QuickTest_APPIsReadyTimer,
                             pMe);
+            */
             return TRUE;
 
         case EVT_APPISREADY:

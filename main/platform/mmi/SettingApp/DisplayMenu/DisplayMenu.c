@@ -775,14 +775,23 @@ static boolean DisplayMenu_HandleEvent(IDisplayMenu *pi,
             return DisplayMenu_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_DIALOG_START:
+             (void)ISHELL_SetTimer ( pMe->m_pShell,
+                            APPISREADY_TIMER,
+                            DisplayMenu_APPIsReadyTimer,
+                            pMe);
+             
             return DisplayMenu_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_USER_REDRAW:
             (void) DisplayMenu_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+
+            /*
             (void)ISHELL_SetTimer ( pMe->m_pShell,
                             APPISREADY_TIMER,
                             DisplayMenu_APPIsReadyTimer,
                             pMe);
+            */
+                
             return TRUE;
 
         case EVT_APPISREADY:

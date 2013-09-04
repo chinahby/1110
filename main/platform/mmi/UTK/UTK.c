@@ -640,14 +640,20 @@ static boolean UTK_HandleEvent(IUTK *pi,
             {
                 return TRUE;
             }
-            return UTK_RouteDialogEvent(pMe,eCode,wParam,dwParam);
-
-        case EVT_USER_REDRAW:
-            (void) UTK_RouteDialogEvent(pMe,eCode,wParam,dwParam);
             (void) ISHELL_SetTimer(pMe->m_pShell,
                      APPISREADY_TIMER,
                      UTK_APPIsReadyTimer,
                      pMe);
+            return UTK_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+
+        case EVT_USER_REDRAW:
+            (void) UTK_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+            /*
+            (void) ISHELL_SetTimer(pMe->m_pShell,
+                     APPISREADY_TIMER,
+                     UTK_APPIsReadyTimer,
+                     pMe);
+            */
             return TRUE;
 
         case EVT_APPISREADY:

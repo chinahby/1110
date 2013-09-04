@@ -951,14 +951,22 @@ static boolean NumberManager_HandleEvent(INumberManager *pi,
             return NumberManager_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_DIALOG_START:
-            return NumberManager_RouteDialogEvent(pMe,eCode,wParam,dwParam);
-
-        case EVT_USER_REDRAW:
-            (void) NumberManager_RouteDialogEvent(pMe,eCode,wParam,dwParam);
             (void)ISHELL_SetTimer ( pMe->m_pShell,
                             APPISREADY_TIMER,
                             NumberManager_APPIsReadyTimer,
                             pMe);
+            
+            return NumberManager_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+
+        case EVT_USER_REDRAW:
+            (void) NumberManager_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+            
+            /*
+            (void)ISHELL_SetTimer ( pMe->m_pShell,
+                            APPISREADY_TIMER,
+                            NumberManager_APPIsReadyTimer,
+                            pMe);
+            */
             return TRUE;
 
         case EVT_APPISREADY:

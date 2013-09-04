@@ -714,6 +714,11 @@ static boolean  HandlePictureDialogEvent(CDisplayMenu *pMe,
                     break;
             }
 
+            (void)ISHELL_SetTimer ( pMe->m_pShell,
+                                            APPISREADY_TIMER,
+                                            DisplayMenu_NextImgIsReadyTimer,
+                                            pMe);
+
             (void) ISHELL_PostEvent( pMe->m_pShell,
                                             AEECLSID_APP_DISPLAYMENU,
                                             EVT_USER_REDRAW,
@@ -756,10 +761,12 @@ static boolean  HandlePictureDialogEvent(CDisplayMenu *pMe,
             // 统一更新界面
             IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
 
+            /*
             (void)ISHELL_SetTimer ( pMe->m_pShell,
                                             APPISREADY_TIMER,
                                             DisplayMenu_NextImgIsReadyTimer,
                                             pMe);
+            */
             	}
             return TRUE;
         }

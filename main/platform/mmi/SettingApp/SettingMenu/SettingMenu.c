@@ -773,14 +773,20 @@ static boolean SettingMenu_HandleEvent(ISettingMenu *pi,
 			{
 				return TRUE;
 			}
-            return SettingMenu_RouteDialogEvent(pMe,eCode,wParam,dwParam);
-
-        case EVT_USER_REDRAW:
-            (void) SettingMenu_RouteDialogEvent(pMe,eCode,wParam,dwParam);
             (void)ISHELL_SetTimer ( pMe->m_pShell,
                             APPISREADY_TIMER,
                             SettingMenu_APPIsReadyTimer,
                             pMe);
+            return SettingMenu_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+
+        case EVT_USER_REDRAW:
+            (void) SettingMenu_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+            /*
+            (void)ISHELL_SetTimer ( pMe->m_pShell,
+                            APPISREADY_TIMER,
+                            SettingMenu_APPIsReadyTimer,
+                            pMe);
+            */
             return TRUE;
 
         case EVT_APPISREADY:

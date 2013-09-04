@@ -105,6 +105,9 @@
 
 #include "AEECallHistoryExt.h"
 
+#include "appscommonimages.brh"
+
+
 
 
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch

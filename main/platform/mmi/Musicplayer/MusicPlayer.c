@@ -725,6 +725,13 @@ static boolean IMusicPlayer_HandleEvent( IMusicPlayer *pi,
 
         case EVT_APP_STOP:
 			MSG_FATAL("***zzg MusicPlayer EVT_APP_STOP***", 0, 0, 0);
+#ifdef FEATURE_SOUND_BO
+           {
+               nv_item_type    SimChoice;
+               SimChoice.sim_select =2;
+               (void)OEMNV_Put(NV_SIM_SELECT_I,&SimChoice);
+           }
+#endif
            if(GetMp3PlayerStatus()!=MP3STATUS_RUNONBACKGROUND)
            {
                 pMe->m_bActive = FALSE;
@@ -1095,6 +1102,31 @@ static boolean IMusicPlayer_HandleEvent( IMusicPlayer *pi,
                 
 			}
 			return CMusicPlayer_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+#else          
+#ifdef FEATURE_VERSION_EC99
+        case EVT_USER:
+            {
+                if(GetMp3PlayerStatus() == MP3STATUS_RUNONBACKGROUND)
+                {
+                    if (wParam == AVK_FFWD)     //pre
+                    {
+                        CMusicPlayer_PlayNext(pMe,FALSE );//播放上一首         
+                    }
+
+                    else if (wParam == AVK_RWD)      //next
+                    {
+                       CMusicPlayer_PlayNext(pMe,TRUE);//播放下一首
+                    }
+
+                    return TRUE;
+                }
+                else
+                {
+                    return CMusicPlayer_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+                }
+                
+            }
+#endif        
 #endif//FEATURE_LCD_TOUCH_ENABLE
 
         default:

@@ -1045,14 +1045,20 @@ static boolean SoundMenu_HandleEvent(ISoundMenu *pi,
             return SoundMenu_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_DIALOG_START:
-            return SoundMenu_RouteDialogEvent(pMe,eCode,wParam,dwParam);
-
-        case EVT_USER_REDRAW:
-            (void) SoundMenu_RouteDialogEvent(pMe,eCode,wParam,dwParam);
             (void)ISHELL_SetTimer ( pMe->m_pShell,
                             APPISREADY_TIMER,
                             SoundMenu_APPIsReadyTimer,
                             pMe);
+            return SoundMenu_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+
+        case EVT_USER_REDRAW:
+            (void) SoundMenu_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+            /*
+            (void)ISHELL_SetTimer ( pMe->m_pShell,
+                            APPISREADY_TIMER,
+                            SoundMenu_APPIsReadyTimer,
+                            pMe);
+            */
             return TRUE;
 
         case EVT_APPISREADY:
