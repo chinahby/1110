@@ -3968,7 +3968,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                                     (pMe->m_wActiveDlgID == IDD_IDLE))
                 	{
                 		//Add By zzg 2012_10_29
-                		#ifdef FEATURE_VERSION_W317A
+                		#if defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_EC99)
 							switch(bData)
 	                		{
 	                			case 1:
@@ -4841,7 +4841,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 						#elif defined(FEATURE_VERSION_K212)
 							return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
                         #elif defined(FEATURE_VERSION_EC99)
-							return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
+							return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 						#else
 							return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);//
 						#endif
@@ -8154,7 +8154,7 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 		#else
     		#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_S1000T)
     			eBBarType = BTBAR_UNLOCK_SOS;
-			#elif defined(FEATURE_VERSION_C316)||defined(FEATURE_LEFT_SOFTKEY_AND_STAR_UNLOCK)|| defined(FEATURE_VERSION_K212)//xxzhen	
+			#elif defined(FEATURE_VERSION_C316)||defined(FEATURE_LEFT_SOFTKEY_AND_STAR_UNLOCK)|| defined(FEATURE_VERSION_K212)|| defined(FEATURE_VERSION_EC99)
 			    eBBarType = BTBAR_UNLOCK_L;
         	#elif defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_1110W516) 
         		eBBarType = BTBAR_LUNLOCK;
@@ -9517,7 +9517,11 @@ static void CoreApp_DrawMusicName(CCoreApp    *pMe,uint16 nIdx)
     	AEEImageInfo m_ImageInfo;
 		IImage_GetInfo(pWallPaper,&m_ImageInfo);
 		MSG_FATAL("m_ImageInfo.cx=%d, m_ImageInfo.cy=%d", m_ImageInfo.cx, m_ImageInfo.cy, 0);
+#ifdef FEATURE_VERSION_EC99
+        SETAEERECT(&clip, 0, MUSIC_WIDTH, pMe->m_rc.dx, pMe->m_nNormalFontHeight + 4); 
+#else
         SETAEERECT(&clip, 0, MUSIC_WIDTH, pMe->m_rc.dx, pMe->m_nLargeFontHeight + 4); 
+#endif
         IDISPLAY_GetClipRect( pMe->m_pDisplay, &oldClip);
         IDISPLAY_SetClipRect( pMe->m_pDisplay, &clip);
         MSG_FATAL("clip.x=%d, clip.y=%d,pMe->m_rc.dx=%d", clip.x, clip.y, pMe->m_rc.dx);
@@ -9534,8 +9538,13 @@ static void CoreApp_DrawMusicName(CCoreApp    *pMe,uint16 nIdx)
         
 		
     }
+#ifdef FEATURE_VERSION_EC99
+    MSG_FATAL("rect.x=%d,w=%d", pMe->m_rc.dx/6, pMe->m_nNormalFontHeight, 0);
+    SETAEERECT(&rect, pMe->m_rc.dx/6, MUSIC_START_WIDTH, pMe->m_nNormalFontHeight, pMe->m_nNormalFontHeight);
+#else    
     MSG_FATAL("rect.x=%d,w=%d", pMe->m_rc.dx/6, pMe->m_nLargeFontHeight, 0);
     SETAEERECT(&rect, pMe->m_rc.dx/6, MUSIC_START_WIDTH, pMe->m_nLargeFontHeight, pMe->m_nLargeFontHeight);
+#endif    
     IDISPLAY_SetColor(pMe->m_pDisplay,CLR_USER_TEXT,MAKE_RGB(60, 128, 196));
      // Display the string
      //dele by yangdecai 
@@ -9549,8 +9558,14 @@ static void CoreApp_DrawMusicName(CCoreApp    *pMe,uint16 nIdx)
                               | IDF_ALIGN_MIDDLE 
                               | IDF_TEXT_TRANSPARENT);*/
    //bracket[0]=(AECHAR)']';
+
+#ifdef FEATURE_VERSION_EC99
+   MSG_FATAL("rect.x=%d,w=%d", pMe->m_rc.dx*5/6, pMe->m_nNormalFontHeight, 0);
+   SETAEERECT(&rect, pMe->m_rc.dx*5/6, MUSIC_START_WIDTH, pMe->m_nNormalFontHeight, pMe->m_nNormalFontHeight);
+#else
    MSG_FATAL("rect.x=%d,w=%d", pMe->m_rc.dx*5/6, pMe->m_nLargeFontHeight, 0);
    SETAEERECT(&rect, pMe->m_rc.dx*5/6, MUSIC_START_WIDTH, pMe->m_nLargeFontHeight, pMe->m_nLargeFontHeight);
+#endif   
     // Display the string
     //dele by yangdecai
    /*(void)DrawTextWithProfile(pMe->a.m_pIShell,
@@ -9567,8 +9582,14 @@ static void CoreApp_DrawMusicName(CCoreApp    *pMe,uint16 nIdx)
   {
   	m_musicstl=(pMe->m_rc.dx*2/3-2*DISP_BLANK_WIDTH);
   }
+
+#ifdef FEATURE_VERSION_EC99
+  SETAEERECT(&rect, (pMe->m_rc.dx/6 /*((pMe->m_rc.dx*3/4)-m_musicstl)/2*/), MUSIC_START_WIDTH,(pMe->m_rc.dx*2/3), pMe->m_nNormalFontHeight);
+  MSG_FATAL("rect.x=%d,w=%d,rect.dy=%d", (pMe->m_rc.dx/6 + pMe->m_nNormalFontHeight), (pMe->m_rc.dx*2/3 - 2*DISP_BLANK_WIDTH), rect.dy);
+#else
   SETAEERECT(&rect, (pMe->m_rc.dx/6 /*((pMe->m_rc.dx*3/4)-m_musicstl)/2*/), MUSIC_START_WIDTH,(pMe->m_rc.dx*2/3), pMe->m_nLargeFontHeight);
   MSG_FATAL("rect.x=%d,w=%d,rect.dy=%d", (pMe->m_rc.dx/6 + pMe->m_nLargeFontHeight), (pMe->m_rc.dx*2/3 - 2*DISP_BLANK_WIDTH), rect.dy);
+#endif
   #ifdef FEATURE_VERSION_MYANMAR
   {
 	  AECHAR M_usicname[128] = {0};

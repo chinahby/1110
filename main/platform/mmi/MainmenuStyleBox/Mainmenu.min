@@ -185,7 +185,7 @@ else
 ifeq ($(USES_RESDIR),EC99)	
 CONSTFILE_FILES+=\
 	Icon_calllog.png|fs:/image/mainmenu/Icon_calllog.png \
-	Icon_flashlight.png|fs:/image/mainmenu/Icon_flashlight.png \
+	Icon_profile.png|fs:/image/mainmenu/Icon_profile.png \
 	Icon_multimedia.png|fs:/image/mainmenu/Icon_multimedia.png \
 	Icon_phonebook.png|fs:/image/mainmenu/Icon_phonebook.png \
 	Icon_settings.png|fs:/image/mainmenu/Icon_settings.png \

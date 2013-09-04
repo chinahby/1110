@@ -4747,6 +4747,20 @@ static void MainMenu_MediaNotify(void *pUser, AEEMediaCmdNotify *pCmdNotify)
 #elif defined (FEATURE_VERSION_EC99)
 static boolean Main_loadover = FALSE;
 #ifdef FEATURE_SOUND_BO
+
+#if 0   //FEATURE_CTA
+static char* MAIN_SOUND_NAME[] =
+{
+	MUSIC_PATH1,
+	MUSIC_PATH2,
+	MUSIC_PATH3,
+	MUSIC_PATH4,
+	MUSIC_PATH5,
+	/*MUSIC_PATH6,*/
+	MUSIC_PATH7,
+	MUSIC_PATH8,
+};
+#else
 static char* MAIN_SOUND_NAME[] =
 {
 	MUSIC_PATH1,
@@ -4758,6 +4772,7 @@ static char* MAIN_SOUND_NAME[] =
 	MUSIC_PATH7,
 	MUSIC_PATH8,
 };
+#endif
 #endif
 #define PARAM_NOT_REF(x)
 /*==============================================================================
@@ -4857,6 +4872,32 @@ static boolean  MainMenu_FlashlightMenuHandler(MainMenu *pMe, AEEEvent eCode, ui
                               本地（静态）数据
                               
 ==============================================================================*/
+
+#if 0   //FEATURE_CTA
+static char* ICON_ANI[] =
+{
+    ICON1_ANI,
+    ICON2_ANI,
+    ICON3_ANI,
+    ICON4_ANI,
+    ICON5_ANI,
+    /*ICON6_ANI,*/
+    ICON7_ANI,
+    ICON8_ANI,
+};
+
+static char* MUSIC_PATH[] =
+{
+	MUSIC_PATH1,
+	MUSIC_PATH2,
+	MUSIC_PATH3,
+	MUSIC_PATH4,
+	MUSIC_PATH5,
+	/*MUSIC_PATH6,*/
+	MUSIC_PATH7,
+	MUSIC_PATH8,
+};
+#else
 static char* ICON_ANI[] =
 {
     ICON1_ANI,
@@ -4880,6 +4921,7 @@ static char* MUSIC_PATH[] =
 	MUSIC_PATH7,
 	MUSIC_PATH8,
 };
+#endif
 
 /*=============================================================================
 FUNCTION:  MainMenuMod_Load
@@ -5141,13 +5183,20 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
 
     // 初始化菜单Title
 	pMe->m_IconTitle[0]     = IDS_MAIN_MENU_RECENTCALLS;    
-    pMe->m_IconTitle[1]     = IDS_MAIN_MENU_TORCH;           
+    pMe->m_IconTitle[1]     = IDS_MAIN_MENU_USERPROFILE;           
     pMe->m_IconTitle[2]     = IDS_MAIN_MENU_MULTIMEDIA;
     pMe->m_IconTitle[3]     = IDS_MAIN_MENU_CONTACTS;      
-    pMe->m_IconTitle[4]     = IDS_MAIN_MENU_SETTINGS;      
+    pMe->m_IconTitle[4]     = IDS_MAIN_MENU_SETTINGS;   
+
+#if 0   //FEATURE_CTA
+    pMe->m_IconTitle[5]     = IDS_MAIN_MENU_TOOLS;       
+    pMe->m_IconTitle[6]     = IDS_MAIN_MENU_MESSAGES;
+#else    
     pMe->m_IconTitle[5]     = IDS_MAIN_MENU_UTK;       
     pMe->m_IconTitle[6]     = IDS_MAIN_MENU_TOOLS;
-    pMe->m_IconTitle[7]     = IDS_MAIN_MENU_MESSAGES;     
+    pMe->m_IconTitle[7]     = IDS_MAIN_MENU_MESSAGES;    
+#endif    
+    
     
     //pMe->m_pImageBg = ISHELL_LoadImage(pMe->m_pShell, ICON_ANI_BG);
     
@@ -5842,35 +5891,7 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
             }
             return TRUE;
 
-        case EVT_KEY_HELD:
-
-#if defined(FEATURE_VERSION_EC99)
-            if((AVKType)wParam == AVK_5)
-            {
-                boolean TorchOn = FALSE;
-                OEM_GetConfig(CFGI_FLSHLITHG_STATUS,&TorchOn, sizeof(TorchOn));
-                if (TorchOn == FALSE )
-                {
-                TorchOn = TRUE;
-                if (pMe->m_pBacklight)
-                {
-                    IBACKLIGHT_TurnOnTorch(pMe->m_pBacklight);
-                }
-                }
-                else
-                {
-                TorchOn = FALSE;
-                if (pMe->m_pBacklight)
-                {                           
-                    IBACKLIGHT_TurnOffTorch(pMe->m_pBacklight);
-                }
-                }
-                OEM_SetConfig(CFGI_FLSHLITHG_STATUS,&TorchOn, sizeof(TorchOn));
-                ISHELL_CloseApplet(pMe->m_pShell, TRUE); 
-                return TRUE;
-            }
-#endif
-            
+        case EVT_KEY_HELD:            
         #if defined(FEATURE_TORCH_KEY_INFO)
            if((AVKType)wParam == AVK_INFO)
             {
@@ -5931,11 +5952,8 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
                 case AVK_CLR:
                      CLOSE_DIALOG(DLGRET_CANCELED)
                     return TRUE;
-                    
-                case AVK_UP:   
-                case AVK_DOWN:                  	
-                    return TRUE;
-                    
+                     
+                case AVK_UP:       
                 case AVK_LEFT:
                    if(pMe->m_index>0)
                    {
@@ -5947,7 +5965,8 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 				   }
 				   MoveCursorTo(pMe, pMe->m_index);
                    return TRUE;
-                    
+
+                case AVK_DOWN:     
                 case AVK_RIGHT:
 
                    if(pMe->m_index<(MAX_MATRIX_ITEMS-1))
@@ -6217,12 +6236,11 @@ static void DrawMatrix(MainMenu *pMe)
         IIMAGE_Draw(pMe->m_pImageSelectEC99, 0, 0);
     }
 	
-		
+#ifdef FEATURE_SOUND_BO		
    	(void) ICONFIG_GetItem(pMe->m_pConfig,
                                  CFGI_SOUND_BO_MAIN,
                                  &m_sound_bo_main,
                                  sizeof(boolean));
-#ifdef FEATURE_SOUND_BO
 
 	if(m_sound_bo_main)
 	{
@@ -6268,16 +6286,17 @@ static void MoveCursorTo(MainMenu *pMe, int index)
 									   CFGI_LANGUAGE_SELECTION,
 									   &pMe->language,
 									   sizeof(pMe->language));
+
+#ifdef FEATURE_SOUND_BO    
 	(void) ICONFIG_GetItem(pMe->m_pConfig,
                                  CFGI_SOUND_BO_MAIN,
                                  &m_sound_bo_main,
                                  sizeof(boolean));
-#ifdef FEATURE_SOUND_BO
-
 	if(m_sound_bo_main)
 	{
 		nv_item_type	SimChoice;
 		(void)OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+        
 		if(SimChoice.sim_select != 1)
 		{
 			MainMenu_PlayShutterSound(pMe,pMe->m_index);
@@ -6286,24 +6305,6 @@ static void MoveCursorTo(MainMenu *pMe, int index)
 #endif
     MainMenu_DrawBackGround(pMe, &pMe->m_rc);
 
-    
-    /*
-    if (pMe->m_pImageSelectEC99[pMe->m_index] != NULL)
-    {   
-         (void)IIMAGE_Release(pMe->m_pImageSelectEC99[pMe->m_index]);
-         pMe->m_pImageSelectEC99[pMe->m_index] = NULL;
-    }
-
-    pMe->m_pImageSelectEC99[pMe->m_index] = ISHELL_LoadImage(pMe->m_pShell, ICON_ANI[pMe->m_index]);
-    
-   
-    MSG_FATAL("***zzg MoveCursorTo m_index=%d***",pMe->m_index,0,0);
-    
-    if(pMe->m_pImageSelectEC99[pMe->m_index]!=NULL)
-    {
-        IIMAGE_Draw(pMe->m_pImageSelectEC99[pMe->m_index], 0, 0);
-    }
-    */
 
     if (pMe->m_pImageSelectEC99 != NULL)
     {   
@@ -6668,7 +6669,7 @@ int SetBrowserArr_Main(IShell *pShell ,char *purl)
 }
 static void MainMenu_PlayShutterSound(MainMenu *pMe,int key)
 {
-/*
+
     AEEMediaCmdNotify cmd;
 	int temp = 0;
 	char music_name[256] = {0};
@@ -6717,8 +6718,7 @@ static void MainMenu_PlayShutterSound(MainMenu *pMe,int key)
         cmd.nCmd    = MM_CMD_PLAY;
         cmd.nStatus = MM_STATUS_DONE;
         MainMenu_MediaNotify((void *)pMe, &cmd);
-    }
-*/    
+    }  
 }
 
 static void MainMenu_MediaNotify(void *pUser, AEEMediaCmdNotify *pCmdNotify)

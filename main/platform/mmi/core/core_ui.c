@@ -2108,7 +2108,7 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
             return FALSE;
         }
         
-        if (cls == AEECLSID_APP_MUSICPLAYER)	//pre
+        //if (cls == AEECLSID_APP_MUSICPLAYER)	//pre
 		{
             ISHELL_PostEvent( AEE_GetShell(),
                               AEECLSID_APP_MUSICPLAYER,
@@ -2126,7 +2126,7 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
             return FALSE;
         }
         
-        if (cls == AEECLSID_APP_MUSICPLAYER)    //next
+        //if (cls == AEECLSID_APP_MUSICPLAYER)    //next
 		{
             ISHELL_PostEvent( AEE_GetShell(),
                               AEECLSID_APP_MUSICPLAYER,

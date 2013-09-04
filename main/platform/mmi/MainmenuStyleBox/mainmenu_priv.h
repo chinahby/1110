@@ -24,14 +24,17 @@
 #include "OEMSound.h"      // TBD - hack until available somewhere else
 #include "AEEMedia.h"
 
-
 #if defined (FEATURE_DISP_160X128)
 #define  MAX_MATRIX_ITEMS 12
 #define  MAX_MATRIX_ROWS 3
 #define  MAX_MATRIX_COLS 4
 #elif defined (FEATURE_DISP_220X176)
 #ifdef FEATURE_VERSION_EC99
+#if  0     //FEATURE_CTA
+#define  MAX_MATRIX_ITEMS 7 
+#else
 #define  MAX_MATRIX_ITEMS 8
+#endif
 #else
 #define  MAX_MATRIX_ITEMS 12
 #define  MAX_MATRIX_ROWS 3
@@ -367,7 +370,7 @@ typedef struct _MainMenu
 
 #ifdef FEATURE_VERSION_EC99      
 	#define ICON1_ANI      "fs:/image/mainmenu/Icon_calllog.png"
-    #define ICON2_ANI      "fs:/image/mainmenu/Icon_flashlight.png"
+    #define ICON2_ANI      "fs:/image/mainmenu/Icon_profile.png"
     #define ICON3_ANI      "fs:/image/mainmenu/Icon_multimedia.png"
     #define ICON4_ANI      "fs:/image/mainmenu/Icon_phonebook.png"
     #define ICON5_ANI      "fs:/image/mainmenu/Icon_settings.png"
@@ -557,15 +560,14 @@ typedef struct _MainMenu
 
 #ifdef FEATURE_VERSION_EC99
 #define MUSIC_PATH1 "fs:/hsmm/mainmenu/recentcall.mp3"
-#define MUSIC_PATH2 "fs:/hsmm/mainmenu/mutimed.mp3"     //TORCH
+#define MUSIC_PATH2 "fs:/hsmm/mainmenu/profile.mp3"     //TORCH
 #define MUSIC_PATH3 "fs:/hsmm/mainmenu/mutimed.mp3"      
 #define MUSIC_PATH4 "fs:/hsmm/mainmenu/contont.mp3"
 #define MUSIC_PATH5 "fs:/hsmm/mainmenu/settings.mp3"       
 #define MUSIC_PATH6 "fs:/hsmm/mainmenu/suafer.mp3"
-#define MUSIC_PATH7 "fs:/hsmm/mainmenu/recentcall.mp3"  //TOOLS
+#define MUSIC_PATH7 "fs:/hsmm/mainmenu/manager.mp3"  //TOOLS
 #define MUSIC_PATH8 "fs:/hsmm/mainmenu/mesage.mp3"
 #endif
-
 
 // 此宏用当前状态更新先前状态，再用nextState状态更新当前状态
 #define MOVE_TO_STATE(nextState)            \

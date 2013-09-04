@@ -517,14 +517,24 @@ static boolean Converter_HandleEvent(IConverter *pi, AEEEvent eCode, uint16  wPa
 			{
 				return TRUE;
 			}
-            return Converter_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
-        case EVT_USER_REDRAW:
-            (void)Converter_RouteDialogEvent(pMe,eCode,wParam,dwParam);
             (void)ISHELL_SetTimer ( pMe->m_pShell,
                             APPISREADY_TIMER,
                             Converter_APPIsReadyTimer,
                             pMe);
+            
+            return Converter_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+
+        case EVT_USER_REDRAW:
+            (void)Converter_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+            
+            /*
+            (void)ISHELL_SetTimer ( pMe->m_pShell,
+                            APPISREADY_TIMER,
+                            Converter_APPIsReadyTimer,
+                            pMe);
+            */
+            
             return TRUE;
             
         case EVT_APPISREADY:

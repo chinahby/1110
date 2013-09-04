@@ -155,17 +155,17 @@ when         who            what, where, why
 /*显示数字线条宽度*/
 #define CALC_NUMBER_LINE_WIDTH     2
 /*显示数字宽度*/
-#define CALC_NUMBER_WIDTH             9
+#define CALC_NUMBER_WIDTH             19    //9
 /*显示数字高度*/
-#define CALC_NUMBER_HEIGHT            19
+#define CALC_NUMBER_HEIGHT            29    //19
 /*显示计算区域X坐标原点*/
-#define CALC_VAL_RECT_X                  10
+#define CALC_VAL_RECT_X                5 //  10
 /*显示计算区域最底行Y坐标原点*/
-#define CALC_VAL_RECT_Y                  22
+#define CALC_VAL_RECT_Y                  32 //22
 /*显示计算区域宽度*/
-#define CALC_VAL_RECT_WIDTH          200
+#define CALC_VAL_RECT_WIDTH          210    //200
 /*显示单行计算区域高度*/
-#define CALC_VAL_RECT_HEIGHT         26
+#define CALC_VAL_RECT_HEIGHT         36 //26
 /*显示数字间间隔*/
 #define CALC_BETWEEN_NUM_PIXEL     1
     
@@ -1856,11 +1856,13 @@ static void Calc_DrawScreen(CCalcApp *pme)
 #if defined(FEATURE_DISP_220X176)
 	drawImage( pme, AEE_APPSCOMMONRES_IMAGESFILE, IDB_CALCAPP_GROUND, 0, 0);
 #ifdef FEATURE_VERSION_EC99
-    drawImage( pme, AEE_APPSCOMMONRES_IMAGESFILE, IDB_CALCAPP, 0, 52);
+    drawImage( pme, AEE_APPSCOMMONRES_IMAGESFILE, IDB_CALCAPP, 0, 72);  //52
+	drawImage( pme, AEE_APPSCOMMONRES_IMAGESFILE, IDB_CALCAPP_LINE, 0, 68); //48
 #else
 	drawImage( pme, AEE_APPSCOMMONRES_IMAGESFILE, IDB_CALCAPP, 0, 72);
+	drawImage( pme, AEE_APPSCOMMONRES_IMAGESFILE, IDB_CALCAPP_LINE, 0, 48); 
 #endif
-	drawImage( pme, AEE_APPSCOMMONRES_IMAGESFILE, IDB_CALCAPP_LINE, 0, 48);
+	
 #elif defined(FEATURE_DISP_240X320)
     #ifdef FEATURE_VERSION_K212
 	drawImage( pme, AEE_APPSCOMMONRES_IMAGESFILE, IDB_CALCAPP_GROUND, 0, 0);

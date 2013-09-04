@@ -1591,6 +1591,13 @@ int CContApp_BuildOneDialMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
             MSG_FATAL("Failed to get %d onedial", i,0,0);
             continue;
         }
+
+#ifdef FEATURE_VERSION_EC99
+        if ((i == CONTCFG_ONEDIAL5) || (i == CONTCFG_ONEDIAL6))
+        {
+            continue;
+        }
+#endif
         
         // set menu item id
         ai.wItemID = (uint16)i;

@@ -813,6 +813,9 @@ static boolean  HandleAlarmSubDialogEvent(CClockApps *pMe,
     static byte timeFormatType = 0;
     debug("%x, %x ,%x,HandleAlarmSubDialogEvent",eCode,wParam,dwParam);
 
+
+    MSG_FATAL("***zzg HandleAlarmSubDialogEvent %x, %x ,%x***",eCode,wParam,dwParam);
+    
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
 
 		if (eCode == EVT_PEN_UP)
@@ -1284,7 +1287,11 @@ static boolean  HandleAlarmSubDialogEvent(CClockApps *pMe,
                     }
     #endif
 
+#ifdef FEATURE_VERSION_EC99
                     SETAEERECT( &pMe->rectLine[i], x, pMe->rectLine[i].y - 2, width, pMe->rectLine[i].dy + 4);
+#else
+                    SETAEERECT( &pMe->rectLine[i], x, pMe->rectLine[i].y - 2, width, pMe->rectLine[i].dy);  // + 4);
+#endif                    
                     IDISPLAY_FillRect( pMe->m_pDisplay, &pMe->rectLine[i], RGB_WHITE);
                     if( i == 0 || i == 2 || i == 3)
                     {
@@ -1354,14 +1361,16 @@ static boolean  HandleAlarmSubDialogEvent(CClockApps *pMe,
             
             //STATE为真时,状态选中"开"
             IMENUCTL_SetSel(pMe->m_pState, pMe->m_ClockCfg.bStateOn[pMe->m_eCurAlarmType] ? ITEM_STATE_ON : ITEM_STATE_OFF);
-            // 统一更新界面
-            IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+            
 
             CClockApps_Set_CTL(pMe);
             (void)IMENUCTL_Redraw(pMe->m_pState);
             (void)IMENUCTL_Redraw(pMe->m_pRepMode);
             (void)ITIMECTL_Redraw(pMe->m_pTime);
             (void)IMENUCTL_Redraw(pMe->m_pSnooze);
+
+            // 统一更新界面
+            IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
 
         }
         return TRUE;
@@ -2822,10 +2831,10 @@ static void CClockApps_AniClockImg(CClockApps *pMe)
         
         if( pResImg != NULL)
         {
-            AEEImageInfo ImageInfo;
-            
+            AEEImageInfo ImageInfo;            
             IIMAGE_GetInfo(pResImg, &ImageInfo);
             IIMAGE_Draw( pResImg, (pMe->m_rc.dx - ImageInfo.cx)/2, TITLEBAR_HEIGHT + (pMe->m_rc.dy - BOTTOMBAR_HEIGHT - ImageInfo.cy)/2);
+
             //IIMAGE_Draw( pResImg, 0, GetTitleBarHeight( pMe->m_pDisplay));
             IIMAGE_Release( pResImg);
             pResImg = NULL;

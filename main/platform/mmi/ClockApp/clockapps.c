@@ -743,14 +743,24 @@ static boolean ClockApps_HandleEvent(IClockApps *pi,
             {
                 return TRUE;
             }
-            return ClockApps_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
-        case EVT_USER_REDRAW:
-            (void) ClockApps_RouteDialogEvent(pMe,eCode,wParam,dwParam);
             (void)ISHELL_SetTimer ( pMe->m_pShell,
                             APPISREADY_TIMER,
                             ClockApps_APPIsReadyTimer,
                             pMe);
+            
+            return ClockApps_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+
+        case EVT_USER_REDRAW:
+            (void) ClockApps_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+
+            /*
+            (void)ISHELL_SetTimer ( pMe->m_pShell,
+                            APPISREADY_TIMER,
+                            ClockApps_APPIsReadyTimer,
+                            pMe);
+            */
+                
             return TRUE;
 
         case EVT_APPISREADY:

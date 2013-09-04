@@ -2684,17 +2684,26 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 			{
 				return TRUE;
 			}
+
+            (void)ISHELL_SetTimer ( pMe->m_pShell,
+                            		APPISREADY_TIMER,
+                            		BTApp_APPIsReadyTimer,
+                            		pMe);
+            
 			return BTApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+            
         }
 		
         case EVT_USER_REDRAW:
         {	
 			(void) BTApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
-			 
+
+             /*
 			(void)ISHELL_SetTimer ( pMe->m_pShell,
                             		APPISREADY_TIMER,
                             		BTApp_APPIsReadyTimer,
                             		pMe);
+            */
                            
             return TRUE;
         }

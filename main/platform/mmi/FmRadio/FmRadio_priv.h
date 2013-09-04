@@ -328,6 +328,9 @@ typedef struct _CFmRadio
     uint16  CurrentItemId;
     boolean edit_chann_interrupt;
     IImage     *m_pVolumeImage;
+
+    boolean bMsgBoxExist;   //Add By zzg 2013_09_03
+    boolean bCurrect;       //Add By zzg 2013_09_03
 } CFmRadio;
 
 /*==============================================================================

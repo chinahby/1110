@@ -120,6 +120,8 @@ sChanInfo* FmRadio_ChanList_GetCurrent_WithLoop( CFmRadio* pMe);
 sChanInfo* FmRadio_ChanList_GetByIndex( CFmRadio* pMe, int index);
 boolean FmRadio_ChanList_DeleteByIndex( CFmRadio* pMe, int index);
 boolean FmRadio_IsChannelValid( uint16 channel);
+
+word FmRadio_GetPlayingChannel(CFmRadio* pMe);      //Add By zzg 2013_09_02
 #endif
 void Fm_Shake_Open(void);
 /*==============================================================================
@@ -523,6 +525,10 @@ static int FmRadio_InitAppData(CFmRadio *pMe)
     pMe->fmVolumeStop = TRUE;
     pMe->fmSpeaker=FALSE;
     pMe->m_pVolumeImage = NULL;
+
+    pMe->bMsgBoxExist = FALSE;  //Add By zzg 2013_09_03
+    pMe->bCurrect = FALSE;      //Add By zzg 2013_09_03
+    
     //初始化必要的数据
     FmRadio_InitFmRadioResource( pMe);
     return SUCCESS;
@@ -831,7 +837,7 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
 
             pMe->m_bSuspending  = FALSE;
 
-            pMe->fmVolumeStop  = TRUE;
+            //pMe->fmVolumeStop  = TRUE;
             
             if(APP_MEDIA_IMPACT_BY_MP3 == app_media_scheduler())
             {
@@ -872,8 +878,14 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
 			{
 #ifdef FEATURE_ANALOG_TV
                 WarT_Fm_Mute(FALSE);
-#else
-				fm_mute(FALSE,pMe->fmSpeaker);
+#else             
+                fm_mute(FALSE,pMe->fmSpeaker);
+
+                if ((eCode == EVT_APP_RESUME) && (!pMe->fmVolumeStop))
+                {
+                    fm_set_volume(0, pMe->fmSpeaker); 
+                    pMe->fmVolumeStop=FALSE;
+                }	
 #endif
 			}	
 			//Add End
@@ -974,16 +986,24 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
 			{
 				return TRUE;
 			}
+
+            (void)ISHELL_SetTimer( pMe->m_pShell,                                       
+                                       APPISREADY_TIMER,
+                                       FmRadio_AppIsReadyCB,
+                                       pMe);
+            
             (void) FmRadio_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
             return TRUE;
         case EVT_USER_REDRAW:			
             if( eCode == EVT_USER_REDRAW)
             {
+                /*
                 (void)ISHELL_SetTimer( pMe->m_pShell,                                       
                                        APPISREADY_TIMER,
                                        FmRadio_AppIsReadyCB,
                                        pMe);
+                */
             		//pMe->m_bAppIsReady = TRUE;                         
             }
             (void) FmRadio_RouteDialogEvent(pMe,eCode,wParam,dwParam);
@@ -1764,6 +1784,19 @@ sChanInfo* FmRadio_ChanList_GetCurrent( CFmRadio* pMe)
 
 	return FmRadio_ChanList_GetByIndex( pMe, pMe->enumCursor);
 }
+
+//Add By zzg 2013_09_02
+word FmRadio_GetPlayingChannel(CFmRadio* pMe)
+{
+    word channel1=0, channel2=0;
+    channel1 =  fm_radio_get_playing_channel();
+    channel2 = (channel1*100 - LOWEST_BAND_FREQ)/CHANNEL_SPACE;  
+
+    MSG_FATAL("***zzg FmRadio_GetPlayingChannel channel1=%d, channel2=%d***", channel1, channel1, 0);
+    
+    return channel2;
+}
+//Add End
 
 sChanInfo* FmRadio_ChanList_GetCurrent_WithLoop( CFmRadio* pMe)
 {

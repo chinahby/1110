@@ -890,10 +890,11 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
         		if(m_sound_bo_dia)
         		{
         			nv_item_type	SimChoice;
-        			(void)OEMNV_Get(NV_SIM_SELECT_I, &SimChoice);                        
+        			(void)OEMNV_Get(NV_SIM_SELECT_I, &SimChoice);    
+                    
         			if(SimChoice.sim_select != 1)
         			{
-        			    if (keyvalue != 0)
+        			    if ((keyvalue != 0) && (!pMe->m_b_incall))
                 		{
                 		    CALLApp_PlayShutterSound(pMe, keyvalue);
                         }
@@ -992,7 +993,31 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 #endif
 				IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
             return TRUE;
+/*
+        case EVT_USER_REDRAW:         
+//Add By zzg 2013_09_02 for "+" User Redraw            
+#ifdef FEATURE_IMAGE_DIALING_DIGITS
+            CallApp_Load_Numer_Img(pMe);
+#endif          
 
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+            CallApp_Draw_BackGround(pMe,&pMe->m_rc);
+#else
+            Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
+#endif
+            CallApp_Draw_NumEdit_SoftKey(pMe);
+            CallApp_Display_Number(pMe);
+
+#ifdef WIN32//wlh for virtualkey
+            IVKEYCTL_SetKeyPad(pMe->m_pIVkeyCtl, &pMe->m_rc, AEE_VKEY_DIALNUMBER);
+            IVKEYCTL_SetActive(pMe->m_pIVkeyCtl, TRUE);         
+#endif
+            IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+//Add End
+
+
+            return TRUE;
+*/			
         case EVT_DIALOG_END:
             // TBD - dial string format should be typedef'd
 #ifdef KEYSND_ZY
@@ -2050,7 +2075,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 					{
 						nv_item_type	SimChoice;
 						(void)OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);                        
-						if(SimChoice.sim_select != 1)
+						if((SimChoice.sim_select != 1) && (!pMe->m_b_incall))
 						{
                     		CALLApp_PlayShutterSound(pMe,wParam);
 						}
@@ -3193,7 +3218,7 @@ static boolean  CallApp_Dialer_Calling_DlgHandler(CCallApp *pMe,
                                                         CALL_NAME_DX,
                                                         CALL_LINE_HIGHT);
                 
-                //CallApp_DrawText_Ex(pMe, AEE_FONT_NORMAL, name, &rect, IDF_ALIGN_LEFT | IDF_TEXT_TRANSPARENT);
+                CallApp_DrawText_Ex(pMe, AEE_FONT_NORMAL, name, &rect, IDF_ALIGN_LEFT | IDF_TEXT_TRANSPARENT);
 				#endif
             }
             //DRAW NUMBER
@@ -5412,7 +5437,16 @@ static boolean  CallApp_MsgBox_DlgHandler(CCallApp  *pMe,
                     ISHELL_SetTimer(pMe->m_pShell, 8000,
                                            CallApp_HandleDialogTimer, pMe);
 					#ifdef FEATURE_SOUND_BO
-                    CallApp_PlayTimeSound(pMe, m_TimeStarusEx);
+                    {          
+    					nv_item_type	SimChoice;
+    					(void)OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);   
+                        MSG_FATAL("***zzg NV_SIM_SELECT_I sim_select=%x***", SimChoice.sim_select, 0, 0);
+                        
+    					if(SimChoice.sim_select != 1)
+    					{
+                    		CallApp_PlayTimeSound(pMe, m_TimeStarusEx);
+    					}					
+                    }
 					#endif
                 }
                 else
@@ -13469,14 +13503,18 @@ if(wp == AVK_0)
 					nv_item_type	SimChoice;
 					(void)OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
                     
-					if(SimChoice.sim_select != 1)
+					if ((SimChoice.sim_select != 1) && (!pMe->m_b_incall))
 					{
 						CALLApp_PlayShutterSound(pMe,Temp_wp);
 					}
 				}
         	}
 			#endif
+#ifdef FEATURE_VERSION_EC99
+            AEE_SetTimer(1500,CallApp_keypadtimer,pMe);
+#else
         	AEE_SetTimer(1000,CallApp_keypadtimer,pMe);
+#endif
         }
         #else
         if((pMe->m_btime_out % MAX_COUNT_TO_CHANGE ) == 0)//need change

@@ -158,7 +158,7 @@
 		<Text>无效链接号码</Text>
 	</STRING>
 	<STRING Id="1053" Name="IDS_MSG_CURPROFILE_MEETING">
-		<Text>震动模式</Text>
+		<Text>振动模式</Text>
 	</STRING>
 	<STRING Id="1054" Name="IDS_MSG_CURPROFILE_NORMALMODE">
 		<Text>正常模式</Text>

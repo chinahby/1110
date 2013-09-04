@@ -571,8 +571,6 @@ static boolean  HandleFmRadioMainDialogEvent(CFmRadio *pMe,
         case EVT_GSENSOR_SHAKE:
         case EVT_KEY:
         {
-			
-			
             if( handleKeyEvent( pMe, wParam, dwParam))
             {
             	MSG_FATAL("handleKeyEvent.......TRUE",0,0,0);
@@ -675,18 +673,26 @@ static void tuneVolumeByLeftRightArrowKeyCloseCb( CFmRadio* pMe)
 #endif
 static void MsgTimeOutSetchannel( CFmRadio* pMe)
 {
+    MSG_FATAL("***zzg MsgTimeOutSetchannel***", 0, 0, 0);
+    pMe->bMsgBoxExist = FALSE;      //Add By zzg 2013_09_03
+    pMe->bCurrect = FALSE;           //Add By zzg 2013_09_03
     setChannelTo( pMe, convertChannelValueFromText( pMe->directInputChannel));
     ITEXTCTL_SetActive( pMe->pText, FALSE);
     moveOperationModeTo( pMe, FM_RADIO_OPMODE_PLAY);
 }
 static void MsgTimeOut( CFmRadio* pMe)
 {
+    MSG_FATAL("***zzg MsgTimeOut******", 0, 0, 0);
+    pMe->bMsgBoxExist = FALSE;      //Add By zzg 2013_09_03
+    pMe->bCurrect = FALSE;           //Add By zzg 2013_09_03
     ITEXTCTL_SetActive( pMe->pText, FALSE);
     moveOperationModeTo( pMe, FM_RADIO_OPMODE_PLAY);
 }
 
 static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier)
 {
+    MSG_FATAL("***zzg handleKeyEvent opMode=%x, key=%x***", pMe->opMode, key, 0);
+    
     if( ( ( pMe->opMode  == FM_RADIO_OPMODE_MODE_SELECTION   ||
             pMe->opMode  == FM_RADIO_OPMODE_OPTION_SELECTION ||
          #if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
@@ -744,11 +750,27 @@ static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier)
         }
         else
         {
+            //Add By zzg 2013_09_03
+            if (pMe->bMsgBoxExist)
+            {   
+                if (pMe->bCurrect)
+                {
+                    MsgTimeOutSetchannel(pMe);
+                }
+                else
+                {
+                    MsgTimeOut(pMe);
+                }                
+                return TRUE;
+            }
+            //Add End
+            
 			if( ITEXTCTL_HandleEvent( pMe->pText, EVT_KEY, key, keyModifier))
 			{
 #if FEATURE_DIRECT_INPUT_CHANNEL_NUMBER
 			  if( pMe->opMode == FM_RADIO_OPMODE_DIRECT_INPUT_CHANNEL)
 			  {
+			      MSG_FATAL("***zzg handleKeyEvent return 2***", 0, 0, 0);
 				  return TRUE;
 			  }
 #endif
@@ -769,7 +791,6 @@ static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier)
                        // IMENUCTL_SetBottomBarType( pMe->m_pMenu, BTBAR_SAVE_BACK);
                        DRAW_BOTTOMBAR(BTBAR_SAVE_BACK)
                    }
-
                    return TRUE;
                }
                else if (ITEXTCTL_GetCursorPos(pMe->pText) == 0 && (WSTRLEN(ITEXTCTL_GetTextPtr(pMe->pText)) > 0 ))
@@ -793,11 +814,12 @@ static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier)
             pMe->opMode = FM_RADIO_OPMODE_PLAY;
             
             ISHELL_StartApplet(pMe->m_pShell,AEECLSID_APP_FMRADIO);
-
+           
             return TRUE;              
         }
         else if(AVK_CLR == key)
         {
+            
             ISHELL_CloseApplet(pMe->m_pShell, FALSE);
             return TRUE;   
         }
@@ -821,6 +843,7 @@ static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier)
             pMe->opMode = FM_RADIO_OPMODE_EDIT_CHANNEL_LIST;
             showChannelList( pMe);            
         }  
+        
         return TRUE;
     }
     else if(FM_RADIO_OPMODE_CHANNEL_LIST_DELETE_ALL == pMe->opMode)
@@ -842,6 +865,7 @@ static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier)
             pMe->opMode = FM_RADIO_OPMODE_EDIT_CHANNEL_LIST;
     		showChannelList( pMe);              
         }
+       
         return TRUE;
     }
 #endif
@@ -863,8 +887,13 @@ static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier)
 			width = 40;
             SETAEERECT( &rect, ( 160 - width) / 2, ( 128 - fontHeight) / 2, width, fontHeight);
 		#elif defined(FEATURE_DISP_220X176)
+#ifdef FEATURE_VERSION_EC99
+            width = 80;
+            SETAEERECT( &rect, ( 220 - width) / 2, ( 176 - fontHeight) / 2, width, fontHeight);	
+#else
 			width = 40;
             SETAEERECT( &rect, ( 220 - width) / 2, ( 176 - fontHeight) / 2, width, fontHeight);	
+#endif            
 		#elif defined(FEATURE_DISP_128X160)
 			width = 40;
             SETAEERECT( &rect, ( 128 - width) / 2, ( 160 - fontHeight) / 2, width, fontHeight);	
@@ -900,11 +929,11 @@ static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier)
             ITEXTCTL_SetText( pMe->pText, pMe->directInputChannel, WSTRLEN( pMe->directInputChannel));
             ITEXTCTL_SetCursorPos( pMe->pText, TC_CURSOREND);
             moveOperationModeTo( pMe, FM_RADIO_OPMODE_DIRECT_INPUT_CHANNEL);
+            
             return TRUE;
     }
     #endif
 
-	MSG_FATAL("***zzg RMRadio handleKeyEvent key=%x***", key, 0, 0);
 	
     switch( key)
     {
@@ -1101,7 +1130,8 @@ __handleKeyEvent_input_channel_done__:
 #ifdef FEATURE_ANALOG_TV
                     WarT_Fm_Mute(FALSE);
 #else
-			     fm_mute(FALSE,pMe->fmSpeaker);
+			        fm_mute(FALSE,  pMe->fmSpeaker);
+                    fm_set_volume( pMe->byVolumeLevel,pMe->fmSpeaker);      //Add By zzg 2013_09_03
 #endif
 			    }
 				ISHELL_CancelTimer( pMe->m_pShell, refreshChannelListCB, (void*)pMe);
@@ -1161,6 +1191,82 @@ __handleKeyEvent_input_channel_done__:
 			}
 		}*/
 		return TRUE;
+
+#ifdef FEATURE_VERSION_EC99
+        case AVK_FFWD:  //pre
+        {
+			if( pMe->opMode == FM_RADIO_OPMODE_PLAY)
+			{
+			    int i = 0;
+                uint16 current = 0;
+                
+				//pMe->cfg.tuningMode = FM_RADIO_TUNNING_MODE_MANUAL;
+
+                MSG_FATAL("***zzg byChannelMax pre = %d***", pMe->byChannelMax, 0, 0);
+                
+                if (pMe->byChannelMax > 0)
+            	{
+            	    current = FmRadio_GetPlayingChannel(pMe);
+                    
+                    MSG_FATAL("***zzg current pre = %d***", current, 0, 0);
+                    
+            	    for (i=0; i<(pMe->byChannelMax-1); i++)
+                    {                       
+                        MSG_FATAL("***zzg Channel pre = %d,%d***", pMe->chanInfoList[i].wChannel, pMe->chanInfoList[i+1].wChannel, 0);
+
+                        if ((current > pMe->chanInfoList[i].wChannel) && (current <= pMe->chanInfoList[i+1].wChannel))
+                        {
+                            setChannelTo(pMe, pMe->chanInfoList[i].wChannel);
+                            return TRUE;
+                        }
+                        else if (current > pMe->chanInfoList[pMe->byChannelMax-1].wChannel)
+                        {
+                            setChannelTo(pMe, pMe->chanInfoList[pMe->byChannelMax-1].wChannel);
+                            return TRUE;
+                        }
+                    }    
+                }				
+			}
+            return TRUE;
+		}
+		        
+        case AVK_RWD: //next
+        {
+			if( pMe->opMode == FM_RADIO_OPMODE_PLAY)
+			{
+			    int i = 0;
+                uint16 current = 0;
+                
+				//pMe->cfg.tuningMode = FM_RADIO_TUNNING_MODE_MANUAL;
+
+                MSG_FATAL("***zzg byChannelMax next = %d***", pMe->byChannelMax, 0, 0);
+                
+                if (pMe->byChannelMax > 0)
+            	{
+            	    current = FmRadio_GetPlayingChannel(pMe);
+                    
+                    MSG_FATAL("***zzg current next = %d***", current, 0, 0);
+                    
+            	    for (i=0; i<(pMe->byChannelMax-1); i++)
+                    {                       
+                        MSG_FATAL("***zzg Channel next = %d,%d***", pMe->chanInfoList[i].wChannel, pMe->chanInfoList[i+1].wChannel, 0);
+
+                        if ((current >= pMe->chanInfoList[i].wChannel) && (current < pMe->chanInfoList[i+1].wChannel))
+                        {
+                            setChannelTo(pMe, pMe->chanInfoList[i+1].wChannel);
+                            return TRUE;
+                        }
+                        else if (current < pMe->chanInfoList[i].wChannel)
+                        {
+                            setChannelTo(pMe, pMe->chanInfoList[i].wChannel);
+                            return TRUE;
+                        }
+                    }    
+                }				
+			}
+            return TRUE;
+		}		
+#endif
         
 		case AVK_LEFT:
 		case AVK_RIGHT:
@@ -1215,7 +1321,7 @@ __handleKeyEvent_input_channel_done__:
 			{
 #if defined( FEATURE_FMRADIO_NO_MODE_SELECT) 
                 #if (defined(FEATURE_VERSION_1110W516)||defined( FEATURE_VERSION_W317A)||defined( FEATURE_VERSION_C337) || defined(FEATURE_VERSION_C316)||defined( FEATURE_VERSION_M74)||defined( FEATURE_VERSION_C310))\
-					 ||defined(FEATURE_ADD_VOLUP_VOLDN)||defined(FEATURE_VERSION_LM126C)||defined(FEATURE_FM_PAUSE)||defined(FEATURE_VERSION_K212)
+					 ||defined(FEATURE_ADD_VOLUP_VOLDN)||defined(FEATURE_VERSION_LM126C)||defined(FEATURE_FM_PAUSE)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_EC99)
                 if(1)
 				#else
 				if(pMe->tuneVolumeByLeftRightArrowKey)
@@ -1587,7 +1693,7 @@ static boolean setChannelTo( CFmRadio *pMe, uint16 theNewChannel)
 	}
 #endif
     drawChannelIndicator( pMe);
-    drawLedLight( pMe);
+    drawLedLight( pMe);    
     return result;
 //    IDISPLAY_UpdateEx( pMe->m_pDisplay, TRUE);
 }
@@ -1654,6 +1760,7 @@ static void changeVolume( CFmRadio *pMe, uint16 keyCode)
     {
         pMe->byVolumeLevel = 0;
     }
+    
 #if !defined( AEE_SIMULATOR)
     //Call driver to set Volume
     #ifndef FEATURE_VERSION_SKY
@@ -1970,7 +2077,7 @@ static void refreshChannelList( CFmRadio *pMe, boolean begin)
 #ifdef FEATURE_ANALOG_TV
         WarT_Fm_Mute(TRUE);//add by xuhui
 #else
-        fm_mute(TRUE,pMe->fmSpeaker);//add by xuhui
+        fm_mute(TRUE,pMe->fmSpeaker);//add by xuhui            
 #endif
     }
     pMe->ledLightType = FM_RADIO_LED_LIGHT_SEARCHING;
@@ -2934,17 +3041,35 @@ static void paint( CFmRadio *pMe)
                         IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE
                     );
 		#elif defined(FEATURE_DISP_220X176)
-            int         width       = 70;
-		
-            SETAEERECT( &rect, ( 220 - width) / 2, (( 176 - fontHeight) / 2) - fontHeight, width, fontHeight);
-            drawText( pMe,
-                        FMRADIOLS_RES_FILE_LANG,
-                        IDS_FMRADIO_FREQ_INPUT,
-                        &rect,
-                        MAKE_RGB(255,105,0),
-                        AEE_FONT_NORMAL,
-                        IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE
-                    );	
+#ifdef FEATURE_VERSION_EC99
+            {
+               int         width       = 120;
+    		
+                SETAEERECT( &rect, ( 220 - width) / 2, (( 176 - fontHeight) / 2) - fontHeight, width, fontHeight);
+                drawText( pMe,
+                            FMRADIOLS_RES_FILE_LANG,
+                            IDS_FMRADIO_FREQ_INPUT,
+                            &rect,
+                            MAKE_RGB(255,105,0),
+                            AEE_FONT_NORMAL,
+                            IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE
+                        );	
+            }
+#else
+           {
+               int         width       = 70;
+    		
+                SETAEERECT( &rect, ( 220 - width) / 2, (( 176 - fontHeight) / 2) - fontHeight, width, fontHeight);
+                drawText( pMe,
+                            FMRADIOLS_RES_FILE_LANG,
+                            IDS_FMRADIO_FREQ_INPUT,
+                            &rect,
+                            MAKE_RGB(255,105,0),
+                            AEE_FONT_NORMAL,
+                            IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE
+                        );	
+            }
+#endif            
 		#elif defined(FEATURE_DISP_128X160)
             int         width       = 128;
 		
@@ -3043,7 +3168,10 @@ static void repaint( CFmRadio *pMe, boolean immediately)
 }
 
 static void drawBg( CFmRadio *pMe)
-{	if(pMe->fmVolumeStop)
+{	
+    MSG_FATAL("***zzg drawBg fmVolumeStop=%x***", pMe->fmVolumeStop, 0, 0);
+    
+    if(pMe->fmVolumeStop)
      {
          drawImage( pMe, FMRADIOLN_RES_FILE, IDI_BG, 0, 0);
      }

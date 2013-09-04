@@ -102,6 +102,26 @@ int  FmRadio_ShowMsgBoxDialog( CFmRadio *pMe,
      MsgParam.ePMsgType = MESSAGE_CONFIRM;
      MsgParam.pwszMsg = szText;
      MsgParam.eBBarType = BTBAR_OK_CANCEL;
+
+    //Add By zzg 2013_09_03
+     if ((msgResId == IDS_FMRADIO_CHANNEL_EDIT_TURE) || (msgResId == IDS_FMRADIO_CHANNEL_EDIT_ERROR))
+     {
+        MsgParam.ePMsgType = MESSAGE_INFORMATION;
+        MsgParam.eBBarType = BTBAR_BACK;
+
+        if (msgResId == IDS_FMRADIO_CHANNEL_EDIT_TURE)
+        {
+            pMe->bCurrect = TRUE;           
+        }
+        else
+        {
+            pMe->bCurrect = FALSE; 
+        }
+     }
+
+     pMe->bMsgBoxExist = TRUE;     
+     //Add End
+     
      /*we do not special ISTATIC control, because of DIALOG will redraw
       * ISTATIC control, and the text color is the default, it may be the
       * same as background, but DrawPromptMessage function will change the
