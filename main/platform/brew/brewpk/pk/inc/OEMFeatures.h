@@ -32,6 +32,11 @@ GENERAL DESCRIPTION:
 #define FEATURE_GREYBIT
 #endif
 #endif
+
+#ifdef FEATURE_VERSION_EC99
+#define FEATURE_GREYBIT
+#endif
+
 #define FEATURE_BREW_3_0
 
 //

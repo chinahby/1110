@@ -340,8 +340,8 @@ int DateCtl_New(IShell * pIShell, AEECLSID cls, void ** ppobj)
    // initialize default fonts
 
 #ifdef FEATURE_VERSION_EC99
-    pme->m_fntTitle = AEE_FONT_SMALL;
-    pme->m_fntText  = AEE_FONT_SMALL;
+    pme->m_fntTitle = AEE_FONT_ITALIC;  //AEE_FONT_SMALL;
+    pme->m_fntText  = AEE_FONT_ITALIC;  //AEE_FONT_SMALL;
 #else
     pme->m_fntTitle = AEE_FONT_BOLD;
     pme->m_fntText  = AEE_FONT_NORMAL;
@@ -1659,6 +1659,11 @@ static void DateCtl_SetGridRect(DateCtl * pme)
    pme->m_rcGrid.dy = (pme->m_rcGrid.dy + 5) / 10;   // rounding
    pme->m_rcGrid.dx = (pme->m_rc.dx * 10 / DAYS_PER_WEEK); // multiply by 10 for rounding
    pme->m_rcGrid.dx = (pme->m_rcGrid.dx + 5) / 10;   // rounding
+
+#ifdef FEATURE_VERSION_EC99
+   pme->m_rcGrid.y -= 5;
+   pme->m_rcGrid.dy -= 3;
+#endif
 }
 
 /*==================================================================
@@ -1772,6 +1777,7 @@ static void DateCtl_GetGridRect(DateCtl * pme, AEERect * prc, int nGridIndex)
 
    x = pme->m_rcGrid.x + ((nGridIndex % DAYS_PER_WEEK) * pme->m_rcGrid.dx);
    y = pme->m_rcGrid.y + ((nGridIndex / DAYS_PER_WEEK) * pme->m_rcGrid.dy);
+      
 #if defined (FEATURE_CALENDAR_USE_STYLE) && defined (CUST_EDITION)
 #ifdef FEATURE_VERSION_K202
    SETAEERECT(prc, x+1, y+5, pme->m_rcGrid.dx-2, pme->m_rcGrid.dy-4);

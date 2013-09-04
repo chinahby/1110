@@ -5540,7 +5540,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 		            break;  
 		    }   
 		}
-#elif defined(FEATURE_DISP_220X176)
+#elif (defined(FEATURE_DISP_220X176) && defined(FEATURE_ALL_KEY_PAD))
 				if(eCode == EVT_KEY_HELD)
 				{
 					int i;

@@ -8,8 +8,10 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 
 #define T_QSC1100
 
-#if defined (FEATURE_VERSION_ESIA) || defined (FEATURE_VERSION_EC99)
+#if defined (FEATURE_VERSION_ESIA) //|| defined (FEATURE_VERSION_EC99)
 #define FLASH_NOR_EFS2_START_BYTE_OFFSET 0x00C00000
+#elif defined (FEATURE_VERSION_EC99)
+#define FLASH_NOR_EFS2_START_BYTE_OFFSET 0x00A80000
 #else
 #define FLASH_NOR_EFS2_START_BYTE_OFFSET 0x00A00000
 #endif

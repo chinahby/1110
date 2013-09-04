@@ -227,6 +227,8 @@ when       who     what, where, why
 #ifdef FEATURE_VERSION_W021_CT100
 // ¡Â…˘“Ù¡ø     
 #define OEMNV_RINGER_VOL_INIT {5,0,0,4,4}  
+#elif defined (FEATURE_VERSION_EC99)
+#define OEMNV_RINGER_VOL_INIT {4,0,0,4,4} 
 #else
 #define OEMNV_RINGER_VOL_INIT {3,0,0,4,4}  
 #endif
@@ -296,7 +298,11 @@ when       who     what, where, why
 #endif
 #endif
 
+#ifdef FEATURE_VERSION_EC99
+#define OEMNV_BACKLIGHT_LEVEL       (OEMNV_BACKLIGHT_LEVEL_BRIGHT) 
+#else
 #define OEMNV_BACKLIGHT_LEVEL       (OEMNV_BACKLIGHT_LEVEL_NORMAL) 
+#endif
 //endif
 
 
@@ -408,7 +414,12 @@ typedef PACKED struct _Key_pad_Cfg
 
 #define OEMNV_DEFAULT_BANNER  PROJECTNAME
 
+#ifdef FEATURE_VERSION_EC99
+#define  OEMNV_WALLPAPER    "fs:/image/wallpaper/wallpaper5.png"
+#else
 #define  OEMNV_WALLPAPER    "fs:/image/wallpaper/wallpaper1.png"
+#endif
+
 #ifdef FEATURE_SCREEN_SAVE
 #define  OEMNV_SCREENSAVE_TYPE "\\image\\wallpaper\\w1.bmp"
 #endif
@@ -1018,6 +1029,13 @@ typedef struct _OEMErrLogType {
 #define OEMNV_EMERG_NUM_TWO                    "110"
 #define OEMNV_EMERG_NUM_TRE                    "120"
 #define OEMNV_EMERG_NUM_FOR                    "999"
+#elif defined(FEATURE_VERSION_EC99)
+#define OEMNV_EMERT_SEZE                       3
+#define OEMNV_EMERG_NUM_LEN                    3
+#define OEMNV_EMERG_NUM_ONE                    "119"
+#define OEMNV_EMERG_NUM_TWO                    "110"
+#define OEMNV_EMERG_NUM_TRE                    "120"
+#define OEMNV_EMERG_NUM_FOR                    "999"
 #else
 #define OEMNV_EMERT_SEZE                       4
 #define OEMNV_EMERG_NUM_LEN                    3
@@ -1199,7 +1217,11 @@ typedef PACKED struct _ringID
 #elif defined FEATURE_CARRIER_MAROC_WANA
 #define OEMNV_INPUTMODE_DEFAULT              OEM_MODE_T9_RAPID_FRENCH
 #elif defined FEATURE_LANG_CHINESE //xxzhen
+#ifdef FEATURE_VERSION_EC99
+#define OEMNV_INPUTMODE_DEFAULT              OEM_MODE_T9_STROKE
+#else
 #define OEMNV_INPUTMODE_DEFAULT              OEM_MODE_T9_PINYIN
+#endif
 #elif defined FEATURE_DEFAULT_INPUT_MODE_ENG
 #ifdef FEATURE_MT_ENGLISH_CAPLOW
 #define OEMNV_INPUTMODE_DEFAULT              OEM_MODE_ENGLISH_CAPLOW

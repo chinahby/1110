@@ -101,7 +101,7 @@ static int OEMFont_MeasureTextCursorPos(IFont *pMe, int x, const AECHAR *pcText,
 #endif
 
 #ifdef FEATURE_VERSION_EC99
-#define SMALL_FONT_SIZE     15
+#define SMALL_FONT_SIZE     20
 #else
 #define SMALL_FONT_SIZE     4
 #endif

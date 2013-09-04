@@ -859,6 +859,7 @@ int fm_get_seek_status(boolean* pIsFinish, boolean* pIsBandLimit, word* pChannel
 int fm_set_volume(word wVolume,boolean speaker)
 {
 	uint8 level = (uint8)wVolume;
+
 	if((wVolume == 0) && (fm_playing_mute == FALSE))
     {
         fm_mute(TRUE,speaker);
@@ -887,12 +888,14 @@ int fm_set_volume(word wVolume,boolean speaker)
 #include "Hs_mb6550.h"
 
 void fm_mute(boolean on,boolean speaker)
-{	  
+{	 
+    //MSG_FATAL("***zzg fm_mute on=%d, fm_playing_mute=%d***", on,fm_playing_mute,0);
 	if ( ( on == TRUE) && (fm_playing_mute == FALSE) )
 	{
 		fm_playing_mute = TRUE;
-        
-		if (HS_HEADSET_ON())
+#ifndef FEATURE_VERSION_EC99
+        if (HS_HEADSET_ON())
+#endif		
 		{
             uisnd_set_device_auto(NULL,NULL);
 		}
