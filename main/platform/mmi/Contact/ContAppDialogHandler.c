@@ -5034,7 +5034,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
         case EVT_DIALOG_START:
         {
             OEM_SetNotUpdateScreen(TRUE);
-            IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
+            //IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
 #ifdef FEATURE_VERSION_K202
             ITEXTCTL_SetProperties(pTextCtl, TP_FIXSETRECT|TP_FIXOEM|TP_USELESS_UPDOWN|TP_FOCUS_NOSEL);
 #endif
@@ -5080,6 +5080,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
          	(void)ITEXTCTL_SetInputMode( pTextCtl, AEE_TM_LETTERS);
 			#endif
 			#endif
+
             //IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY);   
             // For redraw the dialog
             (void)ISHELL_PostEvent( pMe->m_pShell,
@@ -5290,6 +5291,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
             CContApp_DrawIMEIcon(pTextCtl, pMe->m_pDisplay);
 			ITEXTCTL_Redraw(pTextCtl);
             CContApp_DrawScrollBar(pMe, pMenuCtl);
+            IMENUCTL_Redraw(pMenuCtl);          //Add By zzg 2013_09_04
             IDISPLAY_Update(pMe->m_pDisplay); 
 			return TRUE;
         }            
