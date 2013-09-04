@@ -5178,6 +5178,7 @@ static NextFSMAction WMSST_RESERVEDMSGOPT_Handler(WmsApp *pMe)
             MEMCPY(&pMe->m_msSend, &pMe->m_msCur, sizeof(pMe->m_msSend));
             if (NULL != pMe->m_msCur.m_szMessage)
             {
+                FREE(pMe->m_msCur.m_szMessage);
                 pMe->m_msSend.m_szMessage = WSTRDUP(pMe->m_msCur.m_szMessage);
             }
             

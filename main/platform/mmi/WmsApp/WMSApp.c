@@ -869,6 +869,7 @@ static void CWmsApp_FreeAppData(WmsApp *pMe)
     // 释放用户数据列表
     WmsApp_FreeUserDataMOList(pMe->m_pUserDataMOList);
     WmsApp_FreeMultiSendList(pMe->m_pSendList);
+    WmsApp_MemberReset(pMe);
     if(pMe->m_pBacklight)
     {
         IBACKLIGHT_Release(pMe->m_pBacklight);
@@ -879,7 +880,7 @@ static void CWmsApp_FreeAppData(WmsApp *pMe)
 	    IRUIM_Release(pMe->m_pIRUIM);
 	    pMe->m_pIRUIM = NULL;
 	}
-    WMSAPPU_SYSFREE(pMe->m_msSend.m_szMessage);
+    WMSMessageStruct_Reset(&pMe->m_msSend);
     MSG_FATAL("CWmsApp_FreeAppData End",0,0,0);
 }
 #ifdef FEATURE_CDSMS
@@ -4869,6 +4870,7 @@ void WmsApp_FreeMsgNodeMs(WmsApp *pMe)
     {
         if (pMe->m_CurMsgNodesMS[i] != NULL)
         {
+            WMSMessageStruct_Reset(pMe->m_CurMsgNodesMS[i]);
             FREE(pMe->m_CurMsgNodesMS[i]);
             pMe->m_CurMsgNodesMS[i] = NULL;
         }

@@ -11287,6 +11287,10 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     {
                     	MSG_FATAL("...................................200 1",0,0,0);
                         WmsApp_ConvertClientMsgToMS(&(Info->status_info.message), pTms);
+                        if(pMe->m_CurMsgNodesMS[pMe->m_idxCur])
+                        {
+                            FREE(pMe->m_CurMsgNodesMS[pMe->m_idxCur]);
+                        }
                         pMe->m_CurMsgNodesMS[pMe->m_idxCur] = pTms;
                     }
                     
@@ -12616,7 +12620,8 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     	// 程序被中断退出，保存输入到草稿箱
                         int32  nItems = 0;
                         uint16 nMsgs = 0;
-
+                        
+                        FREEIF(pMe->m_msSend.m_szMessage);
 						pMe->m_msSend.m_szMessage = WSTRDUP(ITEXTCTL_GetTextPtr(pIText));
                         
                         // 释放用户数据列表
@@ -17305,7 +17310,6 @@ static boolean IDD_LOADINGMSG_Handler(void   *pUser,
                     }
                     pMe->m_msSend.m_szMessage = wstrTemplate;
                 }
-                
                 CLOSE_DIALOG(DLGRET_LOADOK)
             }
             else
@@ -17334,6 +17338,10 @@ static boolean IDD_LOADINGMSG_Handler(void   *pUser,
                     {
                     	
                         WmsApp_ConvertClientMsgToMS(&(Info->status_info.message), pTms);
+                        if(pMe->m_CurMsgNodesMS[pMe->m_idxCur])
+                        {
+                            FREE(pMe->m_CurMsgNodesMS[pMe->m_idxCur]);
+                        }
                         pMe->m_CurMsgNodesMS[pMe->m_idxCur] = pTms;
                     }
                     
@@ -18503,6 +18511,10 @@ static boolean IDD_FLASHSMS_Handler(void *pUser,
                 if (NULL != pTms)
                 {
                     WmsApp_ConvertClientMsgToMS(&(Info->status_info.message), pTms);
+                    if(pMe->m_CurMsgNodesMS[pMe->m_idxCur])
+                    {
+                        FREE(pMe->m_CurMsgNodesMS[pMe->m_idxCur]);
+                    }
                     pMe->m_CurMsgNodesMS[pMe->m_idxCur] = pTms;
                 }
                 

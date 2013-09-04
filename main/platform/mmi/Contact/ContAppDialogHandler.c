@@ -5187,7 +5187,6 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
                 }
             }
 
-#if 0
 			//Add By zzg  2010_08_14..
 			// 在调用了其他界面(如Symbol)返回后要重新加载CONTACT
 			{
@@ -5276,7 +5275,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
 	            }
 			}
 			//Add End
-#endif
+			
 			#ifdef FEATURE_VERSION_C337
 			if (pMe->m_bSpeedDialParam == TRUE)
 			{
