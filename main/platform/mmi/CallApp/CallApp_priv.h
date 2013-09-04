@@ -850,7 +850,7 @@ typedef struct _CCallApp
                                  宏定义和常数
 ==============================================================================*/
 // 为防止用户快速按键而添加事件EVT_APPISREADY，事件由定时器
-#define APPISREADY_TIMER        200
+#define APPISREADY_TIMER        100
 #define EVT_APPISREADY          (EVT_USER+10)
 
 //关闭程序事件(启动最近通话后Post给Call)

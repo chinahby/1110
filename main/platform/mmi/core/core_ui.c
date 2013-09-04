@@ -431,8 +431,8 @@ static hs_to_aee_key_type hs_to_aee_tbl[] =
     {HS_TV_K,                       AVK_TV,                         AVK_METHED_HOLD, FALSE, 0},
     {HS_FM_K,                       AVK_FM,                         AVK_METHED_HOLD, FALSE, 0},
     {HS_MUSIC_K,                    AVK_MUSIC,                      AVK_METHED_HOLD, FALSE, 0},
-    {HS_FFWD_K,                     AVK_FFWD,                      AVK_METHED_HOLD, FALSE, 0},
-    {HS_RWD_K,                      AVK_RWD,                      AVK_METHED_HOLD, FALSE, 0},
+    {HS_FFWD_K,                     AVK_FFWD,                      	AVK_METHED_HOLD, FALSE, 0},
+    {HS_RWD_K,                      AVK_RWD,                      	AVK_METHED_HOLD, FALSE, 0},
     {HS_PAUSE_K,                    AVK_PAUSE,                      AVK_METHED_HOLD, FALSE, 0},
     
     {HS_FLIP_OPEN_K,                AVK_FLIP_OPEN,                  AVK_METHED_NONE, FALSE, 0},

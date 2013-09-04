@@ -10588,8 +10588,8 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_0_cal = {
 #ifdef FEATURE_VERSION_K212
   0x656F,                        /* Tx Voice Volume          */
   0x2000,                        /* Tx DTMF gain            */
-  0x1000,                        /* CODEC Tx gain           */
-  0x4000,                        /* CODEC Rx gain           */
+  0x4000,                        /* CODEC Tx gain           */
+  0x8000,                        /* CODEC Rx gain           */
 #else
   0x956F,                        /* Tx Voice Volume          */
   0x2000,                        /* Tx DTMF gain            */
@@ -11226,8 +11226,8 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_0_cal_wb = {
 #ifdef FEATURE_VERSION_K212
   0x4000,                        /* Tx Voice Volume         */
   0x1000,                        /* Tx DTMF gain            */
-  0x1B00,                        /* CODEC Tx gain           */
-  0x4000,                        /* CODEC Rx gain           */
+  0x4B00,                        /* CODEC Tx gain           */
+  0x5000,                        /* CODEC Rx gain           */
 #else
   0x5000,						 /* Tx Voice Volume 		*/
   0x1000,						 /* Tx DTMF gain			*/
@@ -13811,8 +13811,8 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_1_cal  = {
 #ifdef FEATURE_VERSION_K212
   0x5A67,                        /* Tx Voice Volume         */
   0x1000,                        /* Tx DTMF gain            */
-  0x1F8B,                        /* CODEC Tx gain           */
-  0x4000,                        /* CODEC Rx gain           */
+  0x4F8B,                        /* CODEC Tx gain           */
+  0x5000,                        /* CODEC Rx gain           */
 #else
   0x5000,						 /* Tx Voice Volume 		*/
   0x1000,						 /* Tx DTMF gain			*/
@@ -14432,8 +14432,8 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_1_cal_wb  = {
 #ifdef FEATURE_VERSION_K212
   0x4000,                        /* Tx Voice Volume         */
   0x1000,                        /* Tx DTMF gain            */
-  0x1CFC,                        /* CODEC Tx gain           */
-  0x4000,                        /* CODEC Rx gain           */
+  0x4CFC,                        /* CODEC Tx gain           */
+  0x5000,                        /* CODEC Rx gain           */
 #else
   0x5000,						 /* Tx Voice Volume 		*/
   0x1000,						 /* Tx DTMF gain			*/
@@ -15219,7 +15219,7 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_speaker_cal = {
 #elif defined(FEATURE_VERSION_K212)
   0x5000,						   /* Tx Voice Volume 		*/
   0x1000,						   /* Tx DTMF gain			*/
-  0x1000,						   /* CODEC Tx gain			*/
+  0x4000,						   /* CODEC Tx gain			*/
   0x5000,						   /* CODEC Rx gain			*/
 #else
   0x5000,						   /* Tx Voice Volume 		*/
@@ -15801,8 +15801,8 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_speaker_cal_wb = {
 #ifdef FEATURE_VERSION_K212
   0x4000,                          /* Tx Voice Volume         */
   0x1000,                          /* Tx DTMF gain            */
-  0x1000,                          /* CODEC Tx gain           */
-  0x4000,                          /* CODEC Rx gain           */
+  0x4000,                          /* CODEC Tx gain           */
+  0x5000,                          /* CODEC Rx gain           */
 #else
   0x5000,						   /* Tx Voice Volume 		*/
   0x1000,						   /* Tx DTMF gain			*/

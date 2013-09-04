@@ -820,6 +820,7 @@ static boolean IMusicPlayer_HandleEvent( IMusicPlayer *pi,
 			{
 				return TRUE;
 			}
+			
             (void) CMusicPlayer_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
             return TRUE;  

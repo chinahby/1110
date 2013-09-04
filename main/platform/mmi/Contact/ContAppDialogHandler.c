@@ -5785,7 +5785,7 @@ static boolean  CContApp_HandleInputFldDlgEvent( CContApp  *pMe,
     	    	}
 				else
 				{
-					(void)ITEXTCTL_SetInputMode( pTextCtl, AEE_TM_LETTERS);
+					(void)ITEXTCTL_SetInputMode( pTextCtl, AEE_TM_RAPID);
 				}
          	}
          	#else

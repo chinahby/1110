@@ -208,7 +208,7 @@ typedef struct _CConverter
 // 为防止用户快速按键而添加事件EVT_APPISREADY，事件由定时器
 // Converter_APPIsReadyTimer发出
 
-#define APPISREADY_TIMER       200            
+#define APPISREADY_TIMER       100            
 #define EVT_APPISREADY   (EVT_USER+1)         
 #define EVT_USER_CLOSEAPP (EVT_USER+13)
 

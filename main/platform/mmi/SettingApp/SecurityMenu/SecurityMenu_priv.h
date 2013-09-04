@@ -324,7 +324,7 @@ typedef struct _CSecurityMenu
 ==============================================================================*/
 // 为防止用户快速按键而添加事件EVT_APPISREADY，事件由定时器
 // SecurityMenu_APPIsReadyTimer发出
-#define APPISREADY_TIMER       400             
+#define APPISREADY_TIMER       100             
 #define EVT_APPISREADY    (EVT_USER + 1)       
 
 // 用户重新更新界面事件

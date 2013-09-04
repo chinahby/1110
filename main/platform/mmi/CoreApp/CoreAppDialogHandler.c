@@ -4500,7 +4500,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
         return TRUE;
 #endif
 // Add End 
-        case EVT_KEY_PRESS: 
+        case EVT_KEY: 
             if(pMe->m_bemergencymode)
             {
                 return TRUE;
@@ -5197,7 +5197,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #endif
 
         case EVT_GSENSOR_SHAKE:
-        case EVT_KEY:
+        case EVT_KEY_PRESS:
             {
 #ifdef FEATRUE_SUPPORT_G_SENSOR
                 boolean b_FMBackground = FALSE;

@@ -143,7 +143,7 @@
 #define EVT_APPISREADY              (EVT_USER+5)       
 #define EVT_LOAD_DATA               (EVT_USER + 6)
  
-#define APPISREADY_TIMER            200         
+#define APPISREADY_TIMER            100         
 #define FILECFG                     1       //在该程序用了两种保存参数的方法
                                             //一是用BREW提供的CONFIG 二是写进
                                             //一个文件里。当这开关为1时为后者

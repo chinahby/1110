@@ -144,7 +144,7 @@
 #define MAX_LEN_MSGBOX                 (256)
 
 #define TIMEOUT_MS_QUICK               (500)
-#define MP3APPISREADY_TIME             (200)
+#define MP3APPISREADY_TIME             (50)
 #ifdef FEATURE_VERSION_K212
 #define MS_FASTFORWARDREWIND_TIME      (10000)  // ∫¡√Î
 #else

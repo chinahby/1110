@@ -4803,15 +4803,16 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
                                            uint32      dwParam)
 {
     //IImage * pImage = NULL;
-    PARAM_NOT_REF(dwParam)
-    PARAM_NOT_REF(wParam)
+    //PARAM_NOT_REF(dwParam)
+    //PARAM_NOT_REF(wParam)
     CALL_ERR("eCode= %x,w=%x,dw=%x CallApp_Dialer_Callend_DlgHandler ",eCode,wParam,dwParam);
-
+	
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
         {
             Dialer_call_table* p_temp = NULL;
+			IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_CLEARSCREEN_ONREDRAW|DLG_NOT_UPDATE_ONREDRAW|DLG_NOT_REDRAW_AFTER_START);
             p_temp = CallApp_Get_First_Entry_In_Call_Table(pMe);
 
             if(p_temp)
@@ -10806,6 +10807,151 @@ static void CallApp_Draw_Connect_Number_and_Name(CCallApp *pMe)
                                                 CALL_SECOND_LINE_Y,
                                                 &rect,
                                                 IDF_TEXT_TRANSPARENT);
+#endif
+#if defined(FEATURE_VERSION_K212)
+{
+	Dialer_call_table * temp = NULL;
+	temp = CallApp_Get_First_Entry_In_Call_Table(pMe);
+	if(pMe->m_CallsTable->in_phonebook && !b_cdg)
+      {
+                //draw call name
+                /*预留出动画的宽度*/
+                #if defined(FEATURE_VERSION_K212)
+				SETAEERECT(&rect,
+                                            0,
+                                            CALL_SECOND_LINE_Y,
+                                            230,
+                                            CALL_LINE_HIGHT*2);
+				#else
+				SETAEERECT(&rect,
+
+                                            CALL_NAME_X,
+                                            CALL_SECOND_LINE_Y,
+                                            CALL_NAME_DX,
+                                            CALL_LINE_HIGHT);
+				#endif
+                CallApp_DrawText_Ex(pMe, AEE_FONT_NORMAL, pMe->m_CallsTable->call_name, &rect, IDF_TEXT_TRANSPARENT);
+                //CallApp_DrawNameText(pMe, AEE_FONT_NORMAL, temp->call_name, &rect, IDF_TEXT_TRANSPARENT);
+
+      }
+#ifdef FEATURE_ICM
+            if(pMe->m_cdg_dsp_info.pi== AEECM_PI_ALLOW)
+#else
+            if(pMe->m_cdg_dsp_info.pi== AEET_PI_ALLOW)
+#endif
+            {
+                // display Call Number
+                if(temp->in_phonebook || b_cdg)
+                {
+                    int16 dy = 0;
+                    if(pMe->m_cdg_row == 0)//No CDG info
+                    {
+                        dy = 2* CALL_LINE_HIGHT;
+                    }
+                    else if (pMe->m_cdg_row == 1)
+                    {
+                        dy = CALL_LINE_HIGHT;
+                    }
+                    else
+                    {
+                        dy = 0;
+                    }
+					#if defined(FEATURE_VERSION_K212)
+                    SETAEERECT(&rect,
+                                                5, //CALL_TEXT_X,
+                                                CALL_FOURTH_LINE_Y,
+                                                230, //CALL_TEXT_DX,
+                                                dy);
+					#else
+					SETAEERECT(&rect,
+                                                CALL_NUM_X, //CALL_TEXT_X,
+                                                CALL_THIRD_LINE_Y +pMe->m_cdg_row * CALL_LINE_HIGHT,
+                                                CALL_NUM_DX, //CALL_TEXT_DX,
+                                                dy);
+					#endif
+                }
+                else
+                {
+                    /*预留出动画的宽度*/
+                    int16 dy = 0;
+                    if(pMe->m_cdg_row == 0)//No CDG info
+                    {
+                        dy = 3* CALL_LINE_HIGHT;
+                    }
+                    else if (pMe->m_cdg_row == 1)
+                    {
+                        dy =CALL_LINE_HIGHT;
+                    }
+                    else
+                    {
+                        dy = CALL_LINE_HIGHT;
+                    }
+					#if defined(FEATURE_VERSION_K212)
+                    SETAEERECT(&rect,
+                                                5,
+                                                CALL_THIRD_LINE_Y,
+                                                230,
+                                                dy);
+					#else
+					SETAEERECT(&rect,
+                                                CALL_NAME_X,
+                                                CALL_SECOND_LINE_Y +pMe->m_cdg_row * CALL_LINE_HIGHT,
+                                                CALL_NAME_DX,
+                                                dy);
+					#endif
+                }
+
+                if(WSTRNCMP(temp->call_number, L"PRIVATE",7) == 0)
+                {
+               ( void) ISHELL_LoadResString(pMe->m_pShell,
+                                            AEE_APPSCALLAPP_RES_FILE,
+                                            IDS_NO_NUMBER,
+                                            pMe->wszPrivateString_tw,
+                                            sizeof(pMe->wszPrivateString_tw));
+                ////////////////////////////////////////////////////////////////////
+                    (void)IDISPLAY_DrawText(pMe->m_pDisplay,
+                                                AEE_FONT_NORMAL,
+                                                pMe->wszPrivateString_tw,//User unknow
+                                                -1,
+                                                rect.x,//pMe->m_rc.dx - bOffset,
+                                                rect.y,
+                                                &rect,
+                                                IDF_TEXT_TRANSPARENT);
+                }
+                else if(pMe->m_bIsPrivacy)
+                {
+                    nv_language_enum_type lang  = 0;
+                    ICONFIG_GetItem(pMe->m_pConfig,CFGI_LANGUAGE_SELECTION,&lang,sizeof(lang));
+                    if(NV_LANGUAGE_SPANISH == lang)
+                    {
+                        (void)IDISPLAY_DrawText(pMe->m_pDisplay,
+                                            AEE_FONT_NORMAL,
+                                            L"Privacidad"/*strPriv*/,
+                                            -1,
+                                            rect.x,//pMe->m_rc.dx - bOffset,
+                                            rect.y,
+                                            &rect,
+                                            IDF_TEXT_TRANSPARENT);
+                    }
+                    else
+                    {
+                        (void)IDISPLAY_DrawText(pMe->m_pDisplay,
+                                                    AEE_FONT_NORMAL,
+                                                    L"Privacy"/*strPriv*/,
+                                                    -1,
+                                                    rect.x,//pMe->m_rc.dx - bOffset,
+                                                    rect.y,
+                                                    &rect,
+                                                    IDF_TEXT_TRANSPARENT);
+                    }
+                }
+                else
+                {
+                    CallApp_DrawText_Ex(pMe, AEE_FONT_NORMAL,
+                                pMe->m_CallsTable->call_number, &rect, IDF_TEXT_TRANSPARENT);
+                }
+            }
+}
 #endif
 #endif
         }

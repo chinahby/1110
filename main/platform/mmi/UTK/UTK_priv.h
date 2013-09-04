@@ -252,7 +252,7 @@ typedef struct _CUTK
 
 // 为防止用户快速按键而添加事件EVT_APPISREADY，事件由定时器
 // UTK_APPIsReadyTimer发出
-#define APPISREADY_TIMER       200           
+#define APPISREADY_TIMER       100           
 #define EVT_APPISREADY   (EVT_USER+1)         
 
 #define EVT_DIALOGTIMEOUT (EVT_USER+3)

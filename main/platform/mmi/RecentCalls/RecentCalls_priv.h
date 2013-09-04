@@ -249,7 +249,7 @@ typedef struct _CRecentCalls
 #define AVK_SEND_TWO     1
 #endif
 
-#define APPISREADY_TIMER       200
+#define APPISREADY_TIMER       100
 #define EVT_APPISREADY   (EVT_USER+1)         
 
 #define EVT_USER_CLOSEAPP (EVT_USER+13)

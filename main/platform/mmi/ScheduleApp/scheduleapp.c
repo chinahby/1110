@@ -651,6 +651,7 @@ static boolean  IScheduleApp_HandleEvent( IScheduleApp   *pi,
                                    pme);
             
             //debug( ";*************EVT_DIALOG_START");
+            
             return CScheduleApp_RouteDialogEvent(pme,eCode,wParam,dwParam);
 
         case EVT_DIALOG_END:

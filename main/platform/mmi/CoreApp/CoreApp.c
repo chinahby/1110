@@ -1351,7 +1351,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             break;
             
         case EVT_GSENSOR_SHAKE:
-        case EVT_KEY:
+        case EVT_KEY_PRESS:
 #if MIN_BREW_VERSION(3,0)
             // do not want to handle au
             if ((dwParam & KB_AUTOREPEAT) != 0)
@@ -1374,7 +1374,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 		case EVT_PEN_MOVE:
 		case EVT_PEN_DOWN:
 #endif
-        case EVT_KEY_PRESS:
+        case EVT_KEY:
         case EVT_KEY_RELEASE:
         case EVT_COMMAND:
         {
