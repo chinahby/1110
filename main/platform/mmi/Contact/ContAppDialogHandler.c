@@ -5141,8 +5141,11 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
             #endif
             if(IS_ZERO_REC())
             {
+                IMENUCTL_SetActive(pMenuCtl, FALSE);
+                ITEXTCTL_SetActive(pTextCtl, FALSE);
                 CContApp_DrawNorecord(pMe, pMenuCtl);
-                CONTAPP_DRAW_BOTTOMBAR(BTBAR_ADD_BACK);                
+                CONTAPP_DRAW_BOTTOMBAR(BTBAR_ADD_BACK);
+                return TRUE;
             }
             else if(TRUE == pMe->m_bDelOk && TRUE == pMe->m_bInsmartnofind)
             {
@@ -5297,6 +5300,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
                 CLOSE_DIALOG(DLGRET_OK);
                 return TRUE;
             }
+            return TRUE;
             
         case EVT_DIALOG_END:
             // Store the menu select if applet is suspended.
@@ -16776,7 +16780,7 @@ static void CContApp_DrawNorecord(CContApp *pMe, IMenuCtl *pMenuCtl)
     {
         IMENUCTL_GetRect(pMenuCtl, &rc);
     }
-    
+    rc.dy += rc.y;
     rc.y = 0;//pMe->m_nLineHeight * 2;
     /*
     if (SMART_STATE_IDD_SELECT != pMe->m_nSmartStateType)
