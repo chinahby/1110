@@ -3840,11 +3840,7 @@ static void VolumePreview(void *pUser)
 {	
     CSoundMenu *pMe = (CSoundMenu*)pUser;
     ringID        ringerID[PROFILENUMBER];
-
-	MSG_FATAL("***zzg VolumePreview***", 0, 0, 0);
-
-	MSG_FATAL("***zzg VolumePreview ringType=%x***", ringerID[pMe->m_CurProfile].ringType, 0, 0);
-
+	
 #ifdef FEATURE_VERSION_W317A
 	if(AEE_SUCCESS != ICONFIG_GetItem(pMe->m_pConfig,  CFGI_PROFILE_CALL_RINGER, (void*)ringerID, sizeof(ringerID)))
     {
@@ -3870,19 +3866,16 @@ static void VolumePreview(void *pUser)
             pMe->m_RingerID[pMe->m_CurProfile].midID = OEMNV_DEFAULTRINGER;
         }
 #endif
-		MSG_FATAL("***zzg VolumePreview OEMNV_MID_RINGER m_RingerID=%x***", pMe->m_RingerID[pMe->m_CurProfile].midID, 0, 0);
-		
-		MSG_FATAL("***zzg VolumePreview IALERT_StartRingerPreview***", 0, 0, 0);
-		#if defined( FEATURE_VERSION_K202_LM129C)||defined(FEATURE_VERSION_K212)
-		IALERT_StartRingerAlert(pMe->m_pAlert, OEMNV_DEFAULTRINGER);
+		#if defined( FEATURE_VERSION_K202_LM129C)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_EC99)
+		//IALERT_StartRingerAlert(pMe->m_pAlert, OEMNV_DEFAULTRINGER);
+		IALERT_StartRingerAlert(pMe->m_pAlert, pMe->m_RingerID[pMe->m_CurProfile].midID);
 		#else
         IALERT_StartRingerPreview(pMe->m_pAlert,pMe->m_RingerID[pMe->m_CurProfile].midID);
 		#endif
     }
     else
     {
-    	MSG_FATAL("***zzg VolumePreview IALERT_StartMp3Preview***", 0, 0, 0);
-        IALERT_StartMp3Preview(pMe->m_pAlert, pMe->m_RingerID[pMe->m_CurProfile].szMusicname);
+    	IALERT_StartMp3Preview(pMe->m_pAlert, pMe->m_RingerID[pMe->m_CurProfile].szMusicname);
     }
 #endif   
 }

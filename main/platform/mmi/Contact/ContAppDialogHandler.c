@@ -2563,6 +2563,21 @@ static boolean CContApp_SmartMenuHandle( CContApp *pMe,
     {
         return ITEXTCTL_HandleEvent( pTextCtl, eCode, wParam, 0);;
     }        
+
+    //Add By zzg 2013_09_04
+#ifdef FEATURE_LANG_CHINESE    
+    if (ITEXTCTL_GetInputMode(pTextCtl,NULL) == AEE_TM_LETTERS)
+    {
+        pMe->m_nCurrentInputMode = 0;
+    }
+    else if (ITEXTCTL_GetInputMode(pTextCtl,NULL) == AEE_TM_NUMBERS)
+    {
+        pMe->m_nCurrentInputMode = 1;
+    }
+#endif    
+    //Add End
+
+
 #ifdef FEATURE_LANG_TCHINESE
 //因为现在中文版本的快速查找没有中文输入了, 但是台湾版本的ZHU音还存在。
     if(KEYEVENT(eCode))
