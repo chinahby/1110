@@ -56,7 +56,11 @@ when         who            what, where, why
 #define CALC_MAX_NUMBER_DISP  999999999
 #define MAX_CALC_TEXT         9
 /*小数部分最大个数*/
+#if defined(FEATURE_VERSION_K212)
+#define MAX_CALC_DECIMAL_NUMBER 3
+#else
 #define MAX_CALC_DECIMAL_NUMBER 4
+#endif
 /*===========================================================================
 
                     MACRO DEFINITIONS

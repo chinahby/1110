@@ -3365,7 +3365,27 @@ static void CoreApp_Process_AutoPower_Event(void *pUser)
     {
         if(IDIALOG_GetID(ISHELL_GetActiveDialog(pMe->a.m_pIShell)) == IDD_IDLE)
         {
-            CLOSE_DIALOG(DLGRET_MSG);
+            #if defined(FEATURE_VERSION_K212)
+            {
+            Auto_Power_Cfg m_ClockCfg;
+				//ISHELL_CancelTimer(pMe->a.m_pIShell,DialogTimeoutCallback,pMe);  
+				//ISHELL_CancelTimer(pMe->a.m_pIShell,DialogaoutPoweroffCallback,pMe);  
+			#ifdef FEATURE_KEYGUARD
+			if(OEMKeyguard_IsEnabled())
+            {
+                     OEMKeyguard_SetState(FALSE);						
+            }
+			#endif
+            IBACKLIGHT_Enable(pMe->m_pBacklight);
+            MOVE_TO_STATE(COREST_POWEROFF)
+	        CLOSE_DIALOG(DLGRET_CREATE)
+	        ICONFIG_GetItem(pMe->m_pConfig, CFGI_AUTO_POWER_OFF, (void*)&m_ClockCfg, sizeof(Auto_Power_Cfg));
+			m_ClockCfg.bStateOn = FALSE;
+			ICONFIG_SetItem(pMe->m_pConfig, CFGI_AUTO_POWER_OFF, (void*)&m_ClockCfg, sizeof(Auto_Power_Cfg));
+            }
+			#else
+			CLOSE_DIALOG(DLGRET_MSG);
+			#endif
         }
     }
 }
