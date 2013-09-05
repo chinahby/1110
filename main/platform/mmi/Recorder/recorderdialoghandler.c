@@ -752,7 +752,7 @@ static void recorder_show_media_spec( Media* pme)
 		            		max( info.cx, IDISPLAY_MeasureText( pRecorder->m_pDisplay, AEE_FONT_NORMAL, time)),
 		            GetTitleBarHeight( pRecorder->m_pDisplay)
 				);
-#ifdef FEATURE_VERSION_EC99
+#if defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_20D)
         drawText1( pRecorder, time, &rect, IDF_ALIGN_LEFT | IDF_ALIGN_MIDDLE);
 #else
 		drawText1( pRecorder, time, &rect, IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE);
