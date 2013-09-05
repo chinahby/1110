@@ -2107,8 +2107,13 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
         {
             return FALSE;
         }
+
+        if (cls == AEECLSID_APP_FMRADIO)
+        {
+            break;
+        }
         
-        //if (cls == AEECLSID_APP_MUSICPLAYER)	//pre
+        //if (cls == AEECLSID_APP_MUSICPLAYER)	//pre //maybe background
 		{
             ISHELL_PostEvent( AEE_GetShell(),
                               AEECLSID_APP_MUSICPLAYER,
@@ -2124,6 +2129,11 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
         if (cls == AEECLSID_QUICKTEST)
         {
             return FALSE;
+        }
+
+        if (cls == AEECLSID_APP_FMRADIO)
+        {
+            break;
         }
         
         //if (cls == AEECLSID_APP_MUSICPLAYER)    //next
