@@ -5235,6 +5235,8 @@ void CMusicPlayer_HeadsetSwitch(CMusicPlayer *pMe)
 ===========================================================================*/      
 void CMusicPlayer_PlayMusic(CMusicPlayer *pMe)
 {  
+    //MSG_FATAL("***zzg CMusicPlayer_PlayMusic m_bPaused=%x***", pMe->m_bPaused, 0, 0);
+    
     if(pMe->m_bPaused)
     {
         (void)IMEDIA_SetVolume(pMe->m_pMedia,0);
@@ -5250,6 +5252,7 @@ void CMusicPlayer_PlayMusic(CMusicPlayer *pMe)
 ===========================================================================*/      
 void CMusicPlayer_ResumeMusic(CMusicPlayer *pMe)
 {  
+    //MSG_FATAL("***zzg CMusicPlayer_ResumeMusic***", 0, 0, 0);
    if(pMe->m_pMedia)
    {
      IMEDIA_Resume(pMe->m_pMedia);//²¥·Å
@@ -5282,6 +5285,7 @@ void CMusicPlayer_SeekMusic(CMusicPlayer *pMe)
 
 void CMusicPlayer_PauseMusic(CMusicPlayer *pMe)
 {
+    //MSG_FATAL("***zzg CMusicPlayer_PauseMusic***", 0, 0, 0);
     if(pMe->m_pMedia)
     {
        IMEDIA_Pause(pMe->m_pMedia);     

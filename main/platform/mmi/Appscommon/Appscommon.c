@@ -435,6 +435,10 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
             nResID_R = IDS_MUTE;
             break;
 #endif
+         case BTBAR_NEXT_DEL:
+            nResID_L = IDS_NEXT;
+            nResID_R = IDS_DEL;
+            break;
 
          case BTBAR_ANSWER_UNMUTE:
             nResID_L = IDS_ANSWER;

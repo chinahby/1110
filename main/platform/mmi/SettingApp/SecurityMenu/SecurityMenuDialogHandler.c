@@ -41,7 +41,6 @@
                                    (void) ISHELL_EndDialog(pMe->m_pShell);  \
                                }
 
-
 /*==============================================================================
                                  类型定义
 ==============================================================================*/
@@ -1219,7 +1218,7 @@ static boolean   SecurityKeyLockDlgHandler(CSecurityMenu *pMe,
             }
 
 			//Add By zzg 2012_10_29
-			#ifdef FEATURE_VERSION_W317A
+			#if defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_EC99)
 			IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_AKG_10SEC, IDS_AKG_10SEC, NULL, 0);
 			#endif
 			//Add End
@@ -1246,7 +1245,7 @@ static boolean   SecurityKeyLockDlgHandler(CSecurityMenu *pMe,
                 switch (AKG)
                 {
                 	//Add By zzg 2012_10_29
-                	#ifdef FEATURE_VERSION_W317A
+                	#if defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_EC99)
 						case 1:   //10秒
 							ui16_return = IDS_AKG_10SEC;
 							break;
@@ -1328,7 +1327,7 @@ static boolean   SecurityKeyLockDlgHandler(CSecurityMenu *pMe,
                 byte AKG = 0;
 
 				//Add By zzg 2012_10_29
-                #ifdef FEATURE_VERSION_W317A
+                #if defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_EC99)
 					switch (wParam)
 	                {
 	                	case IDS_AKG_10SEC:     //10miao
@@ -1453,6 +1452,7 @@ static boolean  SecurityCallPassWordInputDlgHandler(CSecurityMenu *pMe,
             {
                 pMe->m_strPhonePWD = (char *)MALLOC((OEMNV_LOCKCODE_MAXLEN + 1)* sizeof(char));
             }
+
             return TRUE;
             
         case EVT_DIALOG_START:
@@ -1470,7 +1470,7 @@ static boolean  SecurityCallPassWordInputDlgHandler(CSecurityMenu *pMe,
                 AECHAR  text[32] = {0};
                 RGBVAL nOldFontColor;
                 TitleBar_Param_type  TitleBar_Param = {0};
-                
+    
                 // 先清屏
 #ifdef FEATURE_CARRIER_CHINA_VERTU
                 {
@@ -1499,44 +1499,61 @@ static boolean  SecurityCallPassWordInputDlgHandler(CSecurityMenu *pMe,
 				#else
 				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,text);
 				#endif
+                
                (void)ISHELL_LoadResString(pMe->m_pShell, 
                                                 AEE_APPSSECURITYMENU_RES_FILE,
                                                 IDS_OLD_CODE, 
                                                 text,
                                                 sizeof(text));
+               
                 nOldFontColor = IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
+              
                 IDISPLAY_DrawText(pMe->m_pDisplay, 
                                 AEE_FONT_BOLD, 
                                 text,
                                 -1, 
                                 xOffset, 
+#ifdef FEATURE_VERSION_EC99
+                                0,
+#else
                                 MENUITEM_HEIGHT*1/2,
+#endif                                
                                 NULL, 
                                 IDF_TEXT_TRANSPARENT);
-                
+                         
                 MEMSET(strDisplay, '*', pMe->nOldPSWLength);
                 strDisplay[pMe->nOldPSWLength] = '\0';
                 (void) STRTOWSTR(strDisplay, wstrDisplay, sizeof(wstrDisplay));
+
                 IDISPLAY_DrawText(pMe->m_pDisplay, 
                                 AEE_FONT_BOLD, 
                                 wstrDisplay,
                                 -1, 
                                 2*xOffset, 
+#ifdef FEATURE_VERSION_EC99
+                                MENUITEM_HEIGHT,
+#else
                                 MENUITEM_HEIGHT*3/2,
+#endif                               
                                 NULL, 
                                 IDF_TEXT_TRANSPARENT);
-            
+
                 (void)ISHELL_LoadResString(pMe->m_pShell, 
                                                     AEE_APPSSECURITYMENU_RES_FILE,
                                                     IDS_NEW_CODE, 
                                                     text,
                                                     sizeof(text));
+
                 IDISPLAY_DrawText(pMe->m_pDisplay, 
                                 AEE_FONT_BOLD, 
                                 text,
                                 -1, 
                                 xOffset, 
+#ifdef FEATURE_VERSION_EC99
+                                MENUITEM_HEIGHT*2,
+#else
                                 MENUITEM_HEIGHT*5/2,
+#endif                                 
                                 NULL, 
                                 IDF_TEXT_TRANSPARENT);
                 
@@ -1545,12 +1562,17 @@ static boolean  SecurityCallPassWordInputDlgHandler(CSecurityMenu *pMe,
                 strDisplay[nLen] = '|';
                 strDisplay[nLen + 1] = '\0';
                 (void) STRTOWSTR(strDisplay, wstrDisplay, sizeof(wstrDisplay));
+
                 IDISPLAY_DrawText(pMe->m_pDisplay, 
                                 AEE_FONT_BOLD, 
                                 wstrDisplay,
                                 -1, 
                                 2*xOffset, 
+#ifdef FEATURE_VERSION_EC99
+                                MENUITEM_HEIGHT*3,
+#else
                                 MENUITEM_HEIGHT*7/2,
+#endif                                 
                                 NULL, 
                                 IDF_TEXT_TRANSPARENT);
             
@@ -1558,7 +1580,9 @@ static boolean  SecurityCallPassWordInputDlgHandler(CSecurityMenu *pMe,
                                                     AEE_APPSSECURITYMENU_RES_FILE,
                                                     IDS_CONFIRM, 
                                                     text,
-                                                    sizeof(text));
+                                                   sizeof(text));
+
+#ifndef FEATURE_VERSION_EC99
                 IDISPLAY_DrawText(pMe->m_pDisplay, 
                                 AEE_FONT_BOLD, 
                                 text,
@@ -1567,12 +1591,20 @@ static boolean  SecurityCallPassWordInputDlgHandler(CSecurityMenu *pMe,
                                 MENUITEM_HEIGHT*9/2,
                                 NULL, 
                                 IDF_TEXT_TRANSPARENT);
+#endif
+            
+
                 (void)IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, nOldFontColor);
+                
             	#ifndef FEATURE_ALL_KEY_PAD
                 // 绘制底条提示
                 if (nLen > 3)
                 {// 确定-----删除
+#ifdef FEATURE_VERSION_EC99
+                    SEC_MENU_DRAW_BOTTOMBAR(BTBAR_NEXT_DEL)
+#else
                     SEC_MENU_DRAW_BOTTOMBAR(BTBAR_OK_DELETE)
+#endif                    
                 }
                 else if(nLen > 0)
                 {// 删除
@@ -1606,6 +1638,7 @@ static boolean  SecurityCallPassWordInputDlgHandler(CSecurityMenu *pMe,
             {
                 FREEIF(pMe->m_strPhonePWD);
             }
+         
             return TRUE;
 
         case EVT_KEY:
@@ -1674,9 +1707,11 @@ static boolean  SecurityCallPassWordInputDlgHandler(CSecurityMenu *pMe,
                     break;
 
                     case AVK_DOWN:
-                    //case AVK_SELECT:
-                    //case AVK_INFO:
-                    {
+#ifdef FEATURE_VERSION_EC99
+                    case AVK_SELECT:
+                    case AVK_INFO:
+#endif                        
+                    {                        
                         nLen = (pMe->m_strPhonePWD == NULL)?(0):(STRLEN(pMe->m_strPhonePWD)); 
                         if (nLen < 4)
                         {
@@ -2287,6 +2322,7 @@ static boolean  SecurityPinChangeDlgHandler(CSecurityMenu *pMe,
             {
                 pMe->m_strPhonePWD = (char *)MALLOC((OEMNV_LOCKPIN_MAXLEN + 1)* sizeof(char));
             }
+          
             return TRUE;
             
         case EVT_DIALOG_START:
@@ -2319,6 +2355,7 @@ static boolean  SecurityPinChangeDlgHandler(CSecurityMenu *pMe,
 #else
                 Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
 #endif
+
                 //IDISPLAY_FillRect  (pMe->m_pDisplay,&pMe->m_rc,RGB_BLACK);                  
                 (void)ISHELL_LoadResString(pMe->m_pShell, 
                                                     AEE_APPSSECURITYMENU_RES_FILE,
@@ -2339,24 +2376,34 @@ static boolean  SecurityPinChangeDlgHandler(CSecurityMenu *pMe,
                                                 text,
                                                 sizeof(text));
                 nOldFontColor = IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
+                
                 IDISPLAY_DrawText(pMe->m_pDisplay, 
                                 AEE_FONT_BOLD, 
                                 text,
                                 -1, 
                                 xOffset, 
-                                MENUITEM_HEIGHT*1/2, 
+#ifdef FEATURE_VERSION_EC99
+                                0,
+#else
+                                MENUITEM_HEIGHT*1/2,
+#endif                          
                                 NULL, 
                                 IDF_TEXT_TRANSPARENT);
             
                 MEMSET(strDisplay, '*', pMe->nOldPSWLength);
                 strDisplay[pMe->nOldPSWLength] = '\0';
                 (void) STRTOWSTR(strDisplay, wstrDisplay, sizeof(wstrDisplay));
+
                 IDISPLAY_DrawText(pMe->m_pDisplay, 
                                 AEE_FONT_BOLD, 
                                 wstrDisplay,
                                 -1, 
                                 2*xOffset, 
+#ifdef FEATURE_VERSION_EC99
+                                MENUITEM_HEIGHT,
+#else
                                 MENUITEM_HEIGHT*3/2,
+#endif                                 
                                 NULL, 
                                 IDF_TEXT_TRANSPARENT);
             
@@ -2365,34 +2412,48 @@ static boolean  SecurityPinChangeDlgHandler(CSecurityMenu *pMe,
                                                 IDS_NEW_PIN, 
                                                 text,
                                                 sizeof(text));
+
                 IDISPLAY_DrawText(pMe->m_pDisplay, 
                                     AEE_FONT_BOLD, 
                                     text,
                                     -1, 
                                     xOffset, 
-                                    MENUITEM_HEIGHT*5/2, 
+#ifdef FEATURE_VERSION_EC99
+                                    MENUITEM_HEIGHT*2,
+#else
+                                    MENUITEM_HEIGHT*5/2,
+#endif                                     
                                     NULL, 
                                     IDF_TEXT_TRANSPARENT);
+
             
                 nLen = (pMe->m_strPhonePWD == NULL)?(0):(STRLEN(pMe->m_strPhonePWD));
                 MEMSET(strDisplay, '*', nLen);
                 strDisplay[nLen] = '|';
                 strDisplay[nLen + 1] = '\0';
                 (void) STRTOWSTR(strDisplay, wstrDisplay, sizeof(wstrDisplay));
+                
+
                 IDISPLAY_DrawText(pMe->m_pDisplay, 
                                 AEE_FONT_BOLD, 
                                 wstrDisplay,
                                 -1, 
                                 2*xOffset, 
+#ifdef FEATURE_VERSION_EC99
+                                MENUITEM_HEIGHT*3,
+#else
                                 MENUITEM_HEIGHT*7/2,
+#endif                                 
                                 NULL, 
                                 IDF_TEXT_TRANSPARENT);
+
                 
                 (void)ISHELL_LoadResString(pMe->m_pShell, 
                                                 AEE_APPSSECURITYMENU_RES_FILE,
                                                 IDS_CONFIRM, 
                                                 text,
-                                                sizeof(text));
+												sizeof(text));
+#ifndef FEATURE_VERSION_EC99
                 IDISPLAY_DrawText(pMe->m_pDisplay, 
                                     AEE_FONT_BOLD, 
                                     text,
@@ -2401,12 +2462,20 @@ static boolean  SecurityPinChangeDlgHandler(CSecurityMenu *pMe,
                                     MENUITEM_HEIGHT*9/2,
                                     NULL, 
                                     IDF_TEXT_TRANSPARENT);
+#endif
+
                 IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, nOldFontColor);
+
+
             	#ifndef FEATURE_ALL_KEY_PAD
                 // 绘制底条提示
                 if (nLen > 3)
                 {// 确定-----删除
+#ifdef FEATURE_VERSION_EC99
+                    SEC_MENU_DRAW_BOTTOMBAR(BTBAR_NEXT_DEL)
+#else                
                     SEC_MENU_DRAW_BOTTOMBAR(BTBAR_OK_DELETE)
+#endif                    
                 }
                 else if(nLen > 0)
                 {// 删除
@@ -2440,13 +2509,14 @@ static boolean  SecurityPinChangeDlgHandler(CSecurityMenu *pMe,
             {
                 FREEIF(pMe->m_strPhonePWD);
             }
+           
             return TRUE;
 
         case EVT_KEY:
             {
                 char  chEnter = 0;
                 int   nLen = 0;
-                boolean bRedraw = FALSE;
+                boolean bRedraw = FALSE;                
                 
                 switch (wParam)
                 {
@@ -2508,6 +2578,10 @@ static boolean  SecurityPinChangeDlgHandler(CSecurityMenu *pMe,
                     break;
 
                     case AVK_DOWN:
+#ifdef FEATURE_VERSION_EC99
+                    case AVK_SELECT:
+                    case AVK_INFO:
+#endif                        
                         {
                             nLen = (pMe->m_strPhonePWD == NULL)?(0):(STRLEN(pMe->m_strPhonePWD));
                             if (nLen< 4)
@@ -3939,6 +4013,7 @@ static boolean  SecurityAskPinDlgHandler(CSecurityMenu *pMe,
             {
                 pMe->m_strPhonePWD = (char *)MALLOC((OEMNV_LOCKPIN_MAXLEN + 1)* sizeof(char));
             }
+            
             return TRUE;
             
         case EVT_DIALOG_START:
@@ -3956,6 +4031,7 @@ static boolean  SecurityAskPinDlgHandler(CSecurityMenu *pMe,
                 AECHAR  text[32] = {0};
                 RGBVAL nOldFontColor;
                 TitleBar_Param_type  TitleBar_Param = {0};
+
                 
                 // 先清屏
 #ifdef FEATURE_CARRIER_CHINA_VERTU
@@ -3971,6 +4047,8 @@ static boolean  SecurityAskPinDlgHandler(CSecurityMenu *pMe,
 #else
                 Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
 #endif
+
+
                 //IDISPLAY_FillRect  (pMe->m_pDisplay,&pMe->m_rc,RGB_BLACK);
                 if(pMe->m_bIsConfirmPassword)
                 {
@@ -4003,28 +4081,41 @@ static boolean  SecurityAskPinDlgHandler(CSecurityMenu *pMe,
                                                 text,
                                                 sizeof(text));
                 nOldFontColor = IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
+
                 IDISPLAY_DrawText(pMe->m_pDisplay, 
                             AEE_FONT_BOLD, 
                             text,
                             -1, 
                             xOffset, 
+#ifdef FEATURE_VERSION_EC99
+                            0,
+#else
                             MENUITEM_HEIGHT*1/2,
+#endif                             
                             NULL, 
                             IDF_TEXT_TRANSPARENT);
+
 
                 nLen = (pMe->m_strPhonePWD == NULL)?(0):(STRLEN(pMe->m_strPhonePWD));
                 MEMSET(strDisplay, '*', nLen);
                 strDisplay[nLen] = '|';
                 strDisplay[nLen + 1] = '\0';
                 (void) STRTOWSTR(strDisplay, wstrDisplay, sizeof(wstrDisplay));
+
                 IDISPLAY_DrawText(pMe->m_pDisplay, 
                                 AEE_FONT_BOLD, 
                                 wstrDisplay,
                                 -1, 
                                 2*xOffset, 
+#ifdef FEATURE_VERSION_EC99
+                                MENUITEM_HEIGHT,
+#else
                                 MENUITEM_HEIGHT*3/2,
+#endif                                 
                                 NULL, 
                                 IDF_TEXT_TRANSPARENT);
+
+                    
                if(!pMe->m_bIsConfirmPassword)
                {
                     (void)ISHELL_LoadResString(pMe->m_pShell, 
@@ -4032,35 +4123,53 @@ static boolean  SecurityAskPinDlgHandler(CSecurityMenu *pMe,
                                                     IDS_NEW_PIN, 
                                                     text,
                                                     sizeof(text));
+
                     IDISPLAY_DrawText(pMe->m_pDisplay, 
                                         AEE_FONT_BOLD, 
                                         text,
                                         -1, 
                                         xOffset, 
+#ifdef FEATURE_VERSION_EC99
+                                        MENUITEM_HEIGHT*2,
+#else
                                         MENUITEM_HEIGHT*5/2,
+#endif                                         
                                         NULL, 
                                         IDF_TEXT_TRANSPARENT);
+
 
                    (void)ISHELL_LoadResString(pMe->m_pShell, 
                                                     AEE_APPSSECURITYMENU_RES_FILE,
                                                     IDS_CONFIRM, 
                                                     text,
                                                     sizeof(text));
+
                     IDISPLAY_DrawText(pMe->m_pDisplay, 
                                         AEE_FONT_BOLD, 
                                         text,
                                         -1, 
                                         xOffset, 
-                                        MENUITEM_HEIGHT*9/2,
+#ifdef FEATURE_VERSION_EC99
+                                        MENUITEM_HEIGHT*3,
+#else
+                                        MENUITEM_HEIGHT*7/2,
+#endif                                       
                                         NULL, 
                                         IDF_TEXT_TRANSPARENT);
-               }
+
+               }               
+
                 (void)IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, nOldFontColor); 
+                
                 #ifndef FEATURE_ALL_KEY_PAD
                 // 绘制底条提示
                 if (nLen > 3)
                 {// 确定-----删除
+//#ifdef FEATURE_VERSION_EC99
+                    //SEC_MENU_DRAW_BOTTOMBAR(BTBAR_NEXT_DEL)
+//#else                
                     SEC_MENU_DRAW_BOTTOMBAR(BTBAR_OK_DELETE)
+//#endif                    
                 }
                 else if(nLen > 0)
                 {// 删除
@@ -4094,13 +4203,14 @@ static boolean  SecurityAskPinDlgHandler(CSecurityMenu *pMe,
             {
                 FREEIF(pMe->m_strPhonePWD);
             }
+            
             return TRUE;
 
         case EVT_KEY:
             {
                 char  chEnter = 0;
                 int   nLen = 0;
-                boolean bRedraw = FALSE;
+                boolean bRedraw = FALSE;                
                 
                 switch (wParam)
                 {
@@ -4161,7 +4271,7 @@ static boolean  SecurityAskPinDlgHandler(CSecurityMenu *pMe,
 #endif
                     break;
                         
-                    case AVK_DOWN:
+                    case AVK_DOWN:                        
                         if(pMe->m_bIsConfirmPassword)
                         {
                             return TRUE;                       
@@ -4390,11 +4500,13 @@ static boolean  SecurityAskCallPasswordDlgHandler(CSecurityMenu *pMe,
     AECHAR         wstrDisplay[OEMNV_LOCKCODE_MAXLEN+2] = {0};
     int            nLen = 0;
     char           strDisplay[OEMNV_LOCKCODE_MAXLEN+2] = {0};
-    
+
     if (NULL == pMe)
     {
         return FALSE;
     }
+
+    MSG_FATAL("***zzg SecurityAskCallPasswordDlgHandler eCode=%x***", eCode, 0, 0);
     
     switch (eCode)
     {
@@ -4403,6 +4515,7 @@ static boolean  SecurityAskCallPasswordDlgHandler(CSecurityMenu *pMe,
             {
                 pMe->m_strPhonePWD = (char *)MALLOC((OEMNV_LOCKCODE_MAXLEN + 1)* sizeof(char));
             }
+            
             return TRUE;
             
         case EVT_DIALOG_START:  
@@ -4421,6 +4534,7 @@ static boolean  SecurityAskCallPasswordDlgHandler(CSecurityMenu *pMe,
                 RGBVAL nOldFontColor;
                 TitleBar_Param_type  TitleBar_Param = {0};
 
+
                 // 先清屏
 #ifdef FEATURE_CARRIER_CHINA_VERTU
                 {
@@ -4435,6 +4549,7 @@ static boolean  SecurityAskCallPasswordDlgHandler(CSecurityMenu *pMe,
 #else
                 Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
 #endif
+
                 //IDISPLAY_FillRect  (pMe->m_pDisplay,&pMe->m_rc,RGB_BLACK);                  
                 (void)ISHELL_LoadResString(pMe->m_pShell, 
                                             AEE_APPSSECURITYMENU_RES_FILE,
@@ -4455,12 +4570,17 @@ static boolean  SecurityAskCallPasswordDlgHandler(CSecurityMenu *pMe,
                                             text,
                                             sizeof(text));
                 nOldFontColor = IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
+
                 IDISPLAY_DrawText(pMe->m_pDisplay, 
                                     AEE_FONT_BOLD, 
                                     text,
                                     -1, 
                                     xOffset, 
+#ifdef FEATURE_VERSION_EC99
+                                    0,
+#else
                                     MENUITEM_HEIGHT*1/2,
+#endif                                     
                                     NULL, 
                                     IDF_TEXT_TRANSPARENT);
 
@@ -4469,26 +4589,38 @@ static boolean  SecurityAskCallPasswordDlgHandler(CSecurityMenu *pMe,
                 strDisplay[nLen] = '|';
                 strDisplay[nLen + 1] = '\0';
                 (void) STRTOWSTR(strDisplay, wstrDisplay, sizeof(wstrDisplay));
+
+
                 IDISPLAY_DrawText(pMe->m_pDisplay, 
                                 AEE_FONT_BOLD, 
                                 wstrDisplay,
                                 -1, 
                                 2*xOffset, 
+#ifdef FEATURE_VERSION_EC99
+                                MENUITEM_HEIGHT,
+#else
                                 MENUITEM_HEIGHT*3/2,
+#endif                                 
                                 NULL, 
                                 IDF_TEXT_TRANSPARENT);
+
 
                 (void)ISHELL_LoadResString(pMe->m_pShell, 
                                             AEE_APPSSECURITYMENU_RES_FILE,
                                             IDS_NEW_CODE, 
                                             text,
                                             sizeof(text));
+
                 IDISPLAY_DrawText(pMe->m_pDisplay, 
                                     AEE_FONT_BOLD, 
                                     text,
                                     -1, 
                                     xOffset, 
+#ifdef FEATURE_VERSION_EC99
+                                    MENUITEM_HEIGHT*2,
+#else
                                     MENUITEM_HEIGHT*5/2,
+#endif                                     
                                     NULL, 
                                     IDF_TEXT_TRANSPARENT);
 
@@ -4497,20 +4629,32 @@ static boolean  SecurityAskCallPasswordDlgHandler(CSecurityMenu *pMe,
                                             IDS_CONFIRM, 
                                             text,
                                             sizeof(text));
+
                 IDISPLAY_DrawText(pMe->m_pDisplay, 
                                     AEE_FONT_BOLD, 
                                     text,
                                     -1, 
                                     xOffset, 
-                                    MENUITEM_HEIGHT*9/2,
+#ifdef FEATURE_VERSION_EC99
+                                    MENUITEM_HEIGHT*3,
+#else
+                                    MENUITEM_HEIGHT*7/2,
+#endif                                    
                                     NULL, 
                                     IDF_TEXT_TRANSPARENT);
+
+
                 (void)IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, nOldFontColor);
+
 				#ifndef FEATURE_ALL_KEY_PAD
                 // 绘制底条提示
                 if (nLen > 3)
                 {// 确定-----删除
+#ifdef FEATURE_VERSION_EC99
+                    SEC_MENU_DRAW_BOTTOMBAR(BTBAR_NEXT_DEL)
+#else                
                     SEC_MENU_DRAW_BOTTOMBAR(BTBAR_OK_DELETE)
+#endif                    
                 }
                 else if(nLen > 0)
                 {// 删除
@@ -4544,6 +4688,7 @@ static boolean  SecurityAskCallPasswordDlgHandler(CSecurityMenu *pMe,
             {
                 FREEIF(pMe->m_strPhonePWD);
             }
+           
             return TRUE;
 
         case EVT_KEY:
@@ -4551,7 +4696,7 @@ static boolean  SecurityAskCallPasswordDlgHandler(CSecurityMenu *pMe,
                 char        chEnter = 0;
                 int         nLen = 0;
                 boolean     bRedraw = FALSE;
-                
+                               
                 switch (wParam)
                 {
                     case AVK_0:
@@ -4612,6 +4757,10 @@ static boolean  SecurityAskCallPasswordDlgHandler(CSecurityMenu *pMe,
                    break;
 
                    case AVK_DOWN:
+#ifdef FEATURE_VERSION_EC99
+                    case AVK_SELECT:
+                    case AVK_INFO:
+#endif                     
                          {
                             uint16 wPWD=0;
                             char superpass[6] = {"*#09#"};
@@ -5020,7 +5169,7 @@ static boolean  SecurityAffirmPassWordHandler(CSecurityMenu *pMe,
     AECHAR      wstrDisplay[OEMNV_LOCKPIN_MAXLEN+2] = {0};
     int             nLen = 0;
     char        strDisplay[OEMNV_LOCKPIN_MAXLEN+2] = {0};
-    
+
     if (NULL == pMe)
     {
         return FALSE;
@@ -5040,6 +5189,7 @@ static boolean  SecurityAffirmPassWordHandler(CSecurityMenu *pMe,
                     pMe->m_strPhonePWD = (char *)MALLOC((OEMNV_LOCKCODE_MAXLEN + 1)* sizeof(char));
                 }
             }
+ 
             return TRUE;
             
         case EVT_DIALOG_START:
@@ -5058,6 +5208,7 @@ static boolean  SecurityAffirmPassWordHandler(CSecurityMenu *pMe,
                 RGBVAL nOldFontColor;
                 TitleBar_Param_type  TitleBar_Param = {0};
 
+
                 // 先清屏
 #ifdef FEATURE_CARRIER_CHINA_VERTU
                 {
@@ -5072,6 +5223,7 @@ static boolean  SecurityAffirmPassWordHandler(CSecurityMenu *pMe,
 #else
                 Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
 #endif
+
                 //IDISPLAY_FillRect  (pMe->m_pDisplay,&pMe->m_rc,RGB_BLACK);  
                 if(pMe->m_IsPin)
                 {
@@ -5114,6 +5266,8 @@ static boolean  SecurityAffirmPassWordHandler(CSecurityMenu *pMe,
                                                 sizeof(text));  
                 }
                 nOldFontColor = IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
+
+#ifndef FEATURE_VERSION_EC99
                 IDISPLAY_DrawText(pMe->m_pDisplay, 
                                     AEE_FONT_BOLD, 
                                     text,
@@ -5122,10 +5276,14 @@ static boolean  SecurityAffirmPassWordHandler(CSecurityMenu *pMe,
                                     MENUITEM_HEIGHT*1/2,
                                     NULL, 
                                     IDF_TEXT_TRANSPARENT);
+#endif
+
 
                 MEMSET(strDisplay, '*', pMe->nOldPSWLength);
                 strDisplay[pMe->nOldPSWLength] = '\0';
                 (void) STRTOWSTR(strDisplay, wstrDisplay, sizeof(wstrDisplay));
+
+#ifndef FEATURE_VERSION_EC99
                 IDISPLAY_DrawText(pMe->m_pDisplay, 
                                 AEE_FONT_BOLD, 
                                 wstrDisplay,
@@ -5134,6 +5292,8 @@ static boolean  SecurityAffirmPassWordHandler(CSecurityMenu *pMe,
                                 MENUITEM_HEIGHT*3/2,
                                 NULL, 
                                 IDF_TEXT_TRANSPARENT);
+#endif
+
 
                 if(pMe->m_IsPin)
                 {
@@ -5151,54 +5311,82 @@ static boolean  SecurityAffirmPassWordHandler(CSecurityMenu *pMe,
                                                             text,
                                                             sizeof(text));  
                 }
+
+
                 IDISPLAY_DrawText(pMe->m_pDisplay, 
                                     AEE_FONT_BOLD, 
                                     text,
                                     -1, 
                                     xOffset, 
+#ifdef FEATURE_VERSION_EC99
+                                    0,
+#else
                                     MENUITEM_HEIGHT*5/2,
+#endif                                    
                                     NULL, 
                                     IDF_TEXT_TRANSPARENT);
+
 
                 MEMSET(strDisplay, '*', pMe->nNewPSWLength);
                 strDisplay[pMe->nNewPSWLength] = '\0';
                 (void) STRTOWSTR(strDisplay, wstrDisplay, sizeof(wstrDisplay));
+
                 IDISPLAY_DrawText(pMe->m_pDisplay, 
                                 AEE_FONT_BOLD, 
                                 wstrDisplay,
                                 -1, 
                                 2*xOffset, 
+#ifdef FEATURE_VERSION_EC99
+                                MENUITEM_HEIGHT,
+#else
                                 MENUITEM_HEIGHT*7/2,
+#endif                        
                                 NULL, 
                                 IDF_TEXT_TRANSPARENT);
+
 
                 (void)ISHELL_LoadResString(pMe->m_pShell, 
                                             AEE_APPSSECURITYMENU_RES_FILE,
                                             IDS_CONFIRM, 
                                             text,
                                             sizeof(text));
+
                 IDISPLAY_DrawText(pMe->m_pDisplay, 
                                     AEE_FONT_BOLD, 
                                     text,
                                     -1, 
                                     xOffset, 
+#ifdef FEATURE_VERSION_EC99
+                                    MENUITEM_HEIGHT*2,
+#else
                                     MENUITEM_HEIGHT*9/2,
+#endif                                     
                                     NULL, 
                                     IDF_TEXT_TRANSPARENT);
+
                 
                 nLen = (pMe->m_strPhonePWD == NULL)?(0):(STRLEN(pMe->m_strPhonePWD));
                 MEMSET(strDisplay, '*', nLen);
                 strDisplay[nLen] = '|';
                 strDisplay[nLen + 1] = '\0';
                 (void) STRTOWSTR(strDisplay, wstrDisplay, sizeof(wstrDisplay));
+
+
                 IDISPLAY_DrawText(pMe->m_pDisplay, 
                                 AEE_FONT_BOLD, 
                                 wstrDisplay,
                                 -1, 
                                 2*xOffset, 
+#ifdef FEATURE_VERSION_EC99
+                                MENUITEM_HEIGHT*3,
+#else
                                 MENUITEM_HEIGHT*11/2,
+#endif                          
                                 NULL, 
                                 IDF_TEXT_TRANSPARENT);
+
+            
+
                 (void)IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, nOldFontColor);
 
                 // 绘制底条提示
@@ -5238,6 +5426,7 @@ static boolean  SecurityAffirmPassWordHandler(CSecurityMenu *pMe,
             {
                 FREEIF(pMe->m_strPhonePWD);
             }
+        
             return TRUE;
 
         case EVT_KEY:
@@ -5250,7 +5439,7 @@ static boolean  SecurityAffirmPassWordHandler(CSecurityMenu *pMe,
                 if(pMe->m_IsPin)
                 {
                     pass_len =  OEMNV_LOCKPIN_MAXLEN;
-                }
+                }              
                 
                 switch (wParam)
                 {
@@ -5498,7 +5687,7 @@ static boolean  SecurityAskPUKPassWordHandler(CSecurityMenu *pMe,
             if(NULL == pMe->m_strPhonePWD)
             {
                 pMe->m_strPhonePWD = (char *)MALLOC((UIM_MAX_CHV_DIGITS + 1)* sizeof(char));
-            }
+            }         
             return TRUE;
             
         case EVT_DIALOG_START:
@@ -5517,6 +5706,7 @@ static boolean  SecurityAskPUKPassWordHandler(CSecurityMenu *pMe,
                 RGBVAL nOldFontColor;
                 TitleBar_Param_type  TitleBar_Param = {0};
 
+
                 // 先清屏
 #ifdef FEATURE_CARRIER_CHINA_VERTU
                 {
@@ -5531,6 +5721,7 @@ static boolean  SecurityAskPUKPassWordHandler(CSecurityMenu *pMe,
 #else
                 Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
 #endif
+
                 //IDISPLAY_FillRect  (pMe->m_pDisplay,&pMe->m_rc,RGB_BLACK);  
                 (void)ISHELL_LoadResString(pMe->m_pShell, 
                                             AEE_APPSSECURITYMENU_RES_FILE,
@@ -5551,6 +5742,8 @@ static boolean  SecurityAskPUKPassWordHandler(CSecurityMenu *pMe,
                                                 text,
                                                 sizeof(text));
                 nOldFontColor = IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
+
+#ifndef FEATURE_VERSION_EC99
                 IDISPLAY_DrawText(pMe->m_pDisplay, 
                                     AEE_FONT_BOLD, 
                                     text,
@@ -5559,12 +5752,15 @@ static boolean  SecurityAskPUKPassWordHandler(CSecurityMenu *pMe,
                                     MENUITEM_HEIGHT*1/2, 
                                     NULL, 
                                     IDF_TEXT_TRANSPARENT);
+#endif
 
                 if(pMe->m_eRUIMSCode == ENTERPUK_STEP1 || pMe->m_eRUIMSCode == ENTERPUK_STEP2)
                 {
                     MEMSET(strDisplay, '*', pMe->nOldPSWLength);
                     strDisplay[pMe->nOldPSWLength] = '\0';
                     (void) STRTOWSTR(strDisplay, wstrDisplay, sizeof(wstrDisplay));
+
+#ifndef FEATURE_VERSION_EC99
                     IDISPLAY_DrawText(pMe->m_pDisplay, 
                                     AEE_FONT_BOLD, 
                                     wstrDisplay,
@@ -5573,6 +5769,8 @@ static boolean  SecurityAskPUKPassWordHandler(CSecurityMenu *pMe,
                                     MENUITEM_HEIGHT*3/2,
                                     NULL, 
                                     IDF_TEXT_TRANSPARENT);
+#endif
+
                 }
                 
                 if(pMe->m_eRUIMSCode == ENTERPUK_STEP0)
@@ -5582,6 +5780,8 @@ static boolean  SecurityAskPUKPassWordHandler(CSecurityMenu *pMe,
                     strDisplay[nLen] = '|';
                     strDisplay[nLen + 1] = '\0';
                     (void) STRTOWSTR(strDisplay, wstrDisplay, sizeof(wstrDisplay));
+
+#ifndef FEATURE_VERSION_EC99
                     IDISPLAY_DrawText(pMe->m_pDisplay, 
                                     AEE_FONT_BOLD, 
                                     wstrDisplay,
@@ -5590,6 +5790,7 @@ static boolean  SecurityAskPUKPassWordHandler(CSecurityMenu *pMe,
                                     MENUITEM_HEIGHT*3/2,
                                     NULL, 
                                     IDF_TEXT_TRANSPARENT);
+#endif
                 }
 
                 (void)ISHELL_LoadResString(pMe->m_pShell, 
@@ -5597,26 +5798,37 @@ static boolean  SecurityAskPUKPassWordHandler(CSecurityMenu *pMe,
                                                             IDS_NEWPIN, 
                                                             text,
                                                             sizeof(text));
+
                 IDISPLAY_DrawText(pMe->m_pDisplay, 
                                     AEE_FONT_BOLD, 
                                     text,
                                     -1, 
                                     xOffset, 
+#ifdef FEATURE_VERSION_EC99
+                                    0,
+#else
                                     MENUITEM_HEIGHT*5/2,
+#endif                             
                                     NULL, 
                                     IDF_TEXT_TRANSPARENT);
+
 
                 if(pMe->m_eRUIMSCode == ENTERPUK_STEP2)
                 {
                     MEMSET(strDisplay, '*', pMe->nNewPSWLength);
                     strDisplay[pMe->nNewPSWLength] = '\0';
                     (void) STRTOWSTR(strDisplay, wstrDisplay, sizeof(wstrDisplay));
+
                     IDISPLAY_DrawText(pMe->m_pDisplay, 
                                     AEE_FONT_BOLD, 
                                     wstrDisplay,
                                     -1, 
                                     2*xOffset, 
+#ifdef FEATURE_VERSION_EC99
+                                    MENUITEM_HEIGHT,
+#else
                                     MENUITEM_HEIGHT*7/2,
+#endif                                  
                                     NULL, 
                                     IDF_TEXT_TRANSPARENT);
                 }
@@ -5628,12 +5840,17 @@ static boolean  SecurityAskPUKPassWordHandler(CSecurityMenu *pMe,
                     strDisplay[nLen] = '|';
                     strDisplay[nLen + 1] = '\0';
                     (void) STRTOWSTR(strDisplay, wstrDisplay, sizeof(wstrDisplay));
+
                     IDISPLAY_DrawText(pMe->m_pDisplay, 
                                     AEE_FONT_BOLD, 
                                     wstrDisplay,
                                     -1, 
                                     2*xOffset, 
+#ifdef FEATURE_VERSION_EC99
+                                    MENUITEM_HEIGHT,
+#else
                                     MENUITEM_HEIGHT*7/2,
+#endif                                      
                                     NULL, 
                                     IDF_TEXT_TRANSPARENT);
                 }
@@ -5643,15 +5860,22 @@ static boolean  SecurityAskPUKPassWordHandler(CSecurityMenu *pMe,
                                             IDS_CONFIRM, 
                                             text,
                                             sizeof(text));
+
+
                 IDISPLAY_DrawText(pMe->m_pDisplay, 
                                     AEE_FONT_BOLD, 
                                     text,
                                     -1, 
-                                    xOffset, 
+                                    xOffset,                                     
+#ifdef FEATURE_VERSION_EC99
+                                    MENUITEM_HEIGHT*2,
+#else
                                     MENUITEM_HEIGHT*9/2,
+#endif                              
                                     NULL, 
                                     IDF_TEXT_TRANSPARENT);
-                
+
+         
                 if(pMe->m_eRUIMSCode == ENTERPUK_STEP2)
                 {
                     nLen = (pMe->m_strPhonePWD == NULL)?(0):(STRLEN(pMe->m_strPhonePWD));
@@ -5659,16 +5883,23 @@ static boolean  SecurityAskPUKPassWordHandler(CSecurityMenu *pMe,
                     strDisplay[nLen] = '|';
                     strDisplay[nLen + 1] = '\0';
                     (void) STRTOWSTR(strDisplay, wstrDisplay, sizeof(wstrDisplay));
+
                     IDISPLAY_DrawText(pMe->m_pDisplay, 
                                     AEE_FONT_BOLD, 
                                     wstrDisplay,
                                     -1, 
                                     2*xOffset, 
+#ifdef FEATURE_VERSION_EC99
+                                    MENUITEM_HEIGHT*3,
+#else
                                     MENUITEM_HEIGHT*11/2,
+#endif                                     
                                     NULL, 
                                     IDF_TEXT_TRANSPARENT);
-                }
+                }        
+
                 (void)IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, nOldFontColor);
+                
 				#ifndef FEATURE_ALL_KEY_PAD    //add by yangdecai 
                 // 绘制底条提示
                 if (nLen > 3)
@@ -5707,6 +5938,7 @@ static boolean  SecurityAskPUKPassWordHandler(CSecurityMenu *pMe,
             {
                 FREEIF(pMe->m_strPhonePWD);
             }
+         
             return TRUE;
 
         case EVT_KEY:
@@ -5714,6 +5946,7 @@ static boolean  SecurityAskPUKPassWordHandler(CSecurityMenu *pMe,
                 char  chEnter = 0;
                 int   nLen = 0;
                 boolean bRedraw = FALSE;
+                
                 
                 switch (wParam)
                 {

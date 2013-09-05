@@ -145,8 +145,20 @@
 	<STRING Id="48" Name="IDS_CALL">
 		<Text>普通拨号</Text>
 	</STRING>
+	<STRING Id="49" Name="IDS_MIZONEACTIVATE">
+		<Text>Activate</Text>
+	</STRING>
+	<STRING Id="50" Name="IDS_FUNZONE">
+		<Text>M!Zone</Text>
+	</STRING>
+	<STRING Id="51" Name="IDS_SENDREQUEST">
+		<Text>Send request</Text>
+	</STRING>
 	<STRING Id="114" Name="IDS_OPTION_FM">
 		<Text>选项</Text>
+	</STRING>
+	<STRING Id="115" Name="IDS_BAROPTIONS">
+		<Text>Options</Text>
 	</STRING>
 	<STRING Id="1001" Name="IDS_RECORD">
 		<Text>记录</Text>
@@ -253,6 +265,36 @@
 	<String Id="1035" Name="IDS_CAP">
 		<Text>Cap</Text>
 	</String>
+	<String Id="1036" Name="IDS_END_CALL">
+		<Text>End Call</Text>
+	</String>
+	<String Id="1037" Name="IDS_HANDS_FREE">
+		<Text>H-Free</Text>
+	</String>
+	<String Id="1038" Name="IDS_HANDS_HELD">
+		<Text>H-Held</Text>
+	</String>
+	<String Id="1039" Name="IDS_SILENT">
+		<Text>Silent</Text>
+	</String>
+	<String Id="1040" Name="IDS_MULTICALL" Encoding="Unicode">
+		<Text>Multi call</Text>
+	</String>
+	<String Id="1041" Name="IDS_CLEAR_EX" Encoding="Unicode">
+		<Text>Clear</Text>
+	</String>
+	<String Id="1042" Name="IDS_MSG_KEYGUARD_C337" Encoding="Unicode">
+		<Text>Press Unlock &amp; then  *  key</Text>
+	</String>
+	<String Id="1043" Name="IDS_UNLOCK" Encoding="Unicode">
+		<Text>Keypad unlocked</Text>
+	</String>
+	<String Id="1044" Name="IDS_SHORTCUT" Encoding="Unicode">
+		<Text>Shortcut</Text>
+	</String>
+	<String Id="1045" Name="IDS_CONTINUE">
+		<Text>Continue</Text>
+	</String>
 	<String Id="1046" Name="IDS_CONTANT_K212">
 		<Text>通讯录</Text>
 	</String>
@@ -286,5 +328,29 @@
 	<String Id="2010" Name="IDS_FMENU">
 		<Text>MyFlexi</Text>
 	</String>
+	<STRING Id="2011" Name="IDS_PHONE_BOOK">
+		<Text>Phonebook</Text>
+	</STRING>
+	<STRING Id="2012" Name="IDS_FILE_MANAGER">
+		<Text>File manager</Text>
+	</STRING>
+	<STRING Id="2013" Name="IDS_SEARCH">
+		<Text>Search</Text>
+	</STRING>
+	<STRING Id="2014" Name="IDS_NAMES">
+		<Text>Names</Text>
+	</STRING>
+	<STRING Id="2015" Name="IDS_KEYPAD_LOCKED">
+		<Text>Keypad locked</Text>
+	</STRING>
+	<STRING Id="2016" Name="IDS_KEYPAD_UNLOCKED">
+		<Text>Keypad unlocked</Text>
+	</STRING>
+	<STRING Id="2017" Name="IDS_COMMON_HELP">
+		<Text>Help</Text>
+	</STRING>
+	<STRING Id="2018" Name="IDS_RECENTCALLS">
+		<Text>Recentcalls</Text>
+	</STRING>
 </Strings>
 </BREWRes>

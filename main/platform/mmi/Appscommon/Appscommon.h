@@ -359,6 +359,7 @@ typedef enum BottomBar_e_Type
 #ifdef FEATURE_VERSION_C316
    BTBAR_OPTION_SILENT,
 #endif
+   BTBAR_NEXT_DEL,           // -----ÏÂÒ»²½
 
    /*******************start BTBAR_TRI_MASK*****************************/
    BTBAR_CANCEL_RESUME_NULL = 0x4000 + 1,
