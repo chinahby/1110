@@ -3913,6 +3913,8 @@ static boolean  HandleDateDialogEvent(CSettingMenu *pMe,
 #endif
 
 #if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A)
+
+
 static boolean   HandleTrackSmsDialogEvent(CSettingMenu *pMe,
     AEEEvent eCode,
     uint16 wParam,
@@ -3998,7 +4000,7 @@ static boolean   HandleTrackSmsDialogEvent(CSettingMenu *pMe,
             SetMenuIcon(pMenu, wItemID, TRUE);
             IMENUCTL_SetSel(pMenu, wItemID);
             return TRUE;
-
+		}
         case EVT_DIALOG_END:
             return TRUE;
 
@@ -4068,7 +4070,9 @@ static boolean   HandleTrackSmsDialogEvent(CSettingMenu *pMe,
     }
     return FALSE;
 }
+
 #endif
+
 
 /*==============================================================================
 º¯Êý£º
@@ -4235,6 +4239,9 @@ static boolean HandleSearchModeDialogEvent(CSettingMenu *pMe,
     }
     return FALSE;
 }
+
+
+
 static boolean HandleTimeFontModeDialogEvent(CSettingMenu *pMe,
     											AEEEvent eCode,
     											uint16 wParam,
@@ -4358,7 +4365,9 @@ static boolean HandleTimeFontModeDialogEvent(CSettingMenu *pMe,
     return FALSE;
 }
 
+
 #endif
+
 /*==============================================================================
 º¯Êý£º
        HandleSimDialogEvent
@@ -4379,6 +4388,7 @@ static boolean HandleTimeFontModeDialogEvent(CSettingMenu *pMe,
 
 ==============================================================================*/
 #ifdef  FEATURE_DOUBLE_SIM_CARD
+
 static boolean HandleSimDialogEvent(CSettingMenu *pMe,
     AEEEvent eCode,
     uint16 wParam,
