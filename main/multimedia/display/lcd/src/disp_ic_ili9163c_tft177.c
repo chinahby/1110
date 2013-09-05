@@ -584,6 +584,8 @@ static void disp_ic_init(void)
     LCD_DELAY(120);
     LCD_WRITE_CMD(0x29);    //Display on 
     LCD_WRITE_CMD(0x2C);     
+    #elif defined(FEATURE_VERSION_W022_CT100)    
+    disp_ic_init_w021_ct100_9163C_F1N9_AGA22_2013_07_22();
     #elif defined(FEATURE_VERSION_W021_CT100_X2)||defined(FEATURE_VERSION_W021_CT100_VERSION_02)
     disp_ic_init_w021_ct100_9163C_F1N9_AGA22_2013_07_22();
     #elif defined(FEATURE_VERSION_W021_CT100)&&!defined(FEATURE_VERSION_W021_CT100_VERSION_02)
