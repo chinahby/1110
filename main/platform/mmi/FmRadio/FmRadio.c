@@ -858,7 +858,7 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
 #if FEATURE_FMRADIO_SUPPORT_BACKGROUND 			
 			if (!pMe->runOnBackground )
 #endif      
-            #if defined (FEATURE_VERSION_SKY) || defined (FEATURE_VERSION_EC99)
+            #if defined (FEATURE_VERSION_SKY) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
 			if (HS_HEADSET_ON())
 			{
                pMe->fmSpeaker=FALSE;
@@ -872,8 +872,10 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
             FmRadio_PowerUp( pMe);
             #ifndef FEATURE_VERSION_SKY
             #ifndef FEATURE_VERSION_EC99
+			#ifndef FEATURE_VERSION_K212_20D
 			if (HS_HEADSET_ON())
             #endif
+			#endif
             #endif    
 			{
 #ifdef FEATURE_ANALOG_TV
@@ -956,8 +958,10 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
 			{
                 #ifndef FEATURE_VERSION_SKY
                 #ifndef FEATURE_VERSION_EC99
+				#ifndef FEATURE_VERSION_K212_20D
 				if (HS_HEADSET_ON())
                 #endif
+				#endif
                 #endif    
 				{
 #ifdef FEATURE_ANALOG_TV
@@ -1119,7 +1123,7 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
         
         case EVT_HEADSET:
         {
-            #if defined (FEATURE_VERSION_SKY) || defined (FEATURE_VERSION_EC99)
+            #if defined (FEATURE_VERSION_SKY) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
             if (HS_HEADSET_ON())
 			{
                pMe->fmSpeaker=FALSE;
@@ -1391,9 +1395,11 @@ static void FmRadio_PowerUp(void *pme)
 
     pMe->newSmsIncoming = FALSE;
     #ifndef FEATURE_VERSION_SKY
-    #ifndef FEATURE_VERSION_EC99    
+    #ifndef FEATURE_VERSION_EC99  
+	#ifndef FEATURE_VERSION_K212_20D
     FmRadio_CheckRefuse( pMe);
     #endif
+	#endif
 	#endif
     if( pMe->refuseReason == FM_RADIO_REFUSE_REASON_VOICE_CALL_CONNECTED)
     {
@@ -1460,8 +1466,10 @@ static void FmRadio_PowerUp(void *pme)
         }
         #ifndef FEATURE_VERSION_SKY
         #ifndef FEATURE_VERSION_EC99
+		#ifndef FEATURE_VERSION_K212_20D
         if (HS_HEADSET_ON())
         #endif
+		#endif
         #endif    
         {
 #ifdef FEATURE_ANALOG_TV

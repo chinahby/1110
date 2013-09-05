@@ -71,7 +71,7 @@ static boolean  HandleFmRadioMainDialogEvent(CFmRadio *pMe,
 #define CONTINUE_TO_REFRESH_CHANNEL_LIST    FALSE
 #define FM_VOLUME_X                         5
 #if defined(FEATURE_DISP_220X176)
-#ifdef FEATURE_VERSION_EC99
+#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
 #define FM_VOLUME_Y                         (SCREEN_HEIGHT - 110)
 #else
 #define FM_VOLUME_Y                         (SCREEN_HEIGHT - 90)
@@ -496,7 +496,7 @@ static boolean  HandleFmRadioMainDialogEvent(CFmRadio *pMe,
         #ifdef FEATURE_LCD_TOUCH_ENABLE
             TSIM_NumberKeypad(FALSE);
         #endif
-            #if defined (FEATURE_VERSION_SKY) || defined (FEATURE_VERSION_EC99)
+            #if defined (FEATURE_VERSION_SKY) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
             if (HS_HEADSET_ON())
             {
              //ISHELL_PostEvent( pMe->m_pShell,AEECLSID_CORE_APP,
@@ -622,6 +622,7 @@ static void tuneVolumeStop(CFmRadio* pMe)
 #if !defined( AEE_SIMULATOR)
         #ifndef FEATURE_VERSION_SKY
         #ifndef FEATURE_VERSION_EC99
+		#ifndef FEATURE_VERSION_K212_20D
         if (HS_HEADSET_ON())  
         {
             fm_set_volume( newvolumeLevel,pMe->fmSpeaker);
@@ -632,6 +633,7 @@ static void tuneVolumeStop(CFmRadio* pMe)
             fm_set_volume( newvolumeLevel,pMe->fmSpeaker); 
             pMe->fmVolumeStop=FALSE;
         #endif    
+		#endif
         #endif
 #endif
     }
@@ -648,6 +650,7 @@ static void tuneVolumeStop(CFmRadio* pMe)
 #if !defined( AEE_SIMULATOR)
         #ifndef FEATURE_VERSION_SKY
         #ifndef FEATURE_VERSION_EC99
+		#ifndef FEATURE_VERSION_K212_20D
         if (HS_HEADSET_ON())   
         {
             fm_set_volume(newvolumeLevel,pMe->fmSpeaker);
@@ -658,7 +661,8 @@ static void tuneVolumeStop(CFmRadio* pMe)
             fm_set_volume( newvolumeLevel,pMe->fmSpeaker);
             fm_set_volume( pMe->byVolumeLevel,pMe->fmSpeaker); 
             pMe->fmVolumeStop=TRUE;
-        #endif            
+        #endif 
+		#endif
         #endif
 #endif
 
@@ -888,7 +892,7 @@ static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier)
 			width = 40;
             SETAEERECT( &rect, ( 160 - width) / 2, ( 128 - fontHeight) / 2, width, fontHeight);
 		#elif defined(FEATURE_DISP_220X176)
-#ifdef FEATURE_VERSION_EC99
+#if defined(FEATURE_VERSION_EC99)  || defined (FEATURE_VERSION_K212_20D)
             width = 80;
             SETAEERECT( &rect, ( 220 - width) / 2, ( 176 - fontHeight) / 2, width, fontHeight);	
 #else
@@ -981,8 +985,10 @@ static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier)
 			{
                 #ifndef FEATURE_VERSION_SKY
                 #ifndef FEATURE_VERSION_EC99
+				#ifndef FEATURE_VERSION_K212_20D
 				if (HS_HEADSET_ON())
                 #endif
+				#endif
                 #endif    
 			    {
 #ifdef FEATURE_ANALOG_TV
@@ -1124,8 +1130,10 @@ __handleKeyEvent_input_channel_done__:
 			{
                 #ifndef FEATURE_VERSION_SKY
                 #ifndef FEATURE_VERSION_EC99
+				#ifndef FEATURE_VERSION_K212_20D
 				if (HS_HEADSET_ON())
                 #endif    
+				#endif
                 #endif    
 			    {
 #ifdef FEATURE_ANALOG_TV
@@ -1193,7 +1201,7 @@ __handleKeyEvent_input_channel_done__:
 		}*/
 		return TRUE;
 
-#ifdef FEATURE_VERSION_EC99
+#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
         case AVK_FFWD:  //pre
         {
 			if( pMe->opMode == FM_RADIO_OPMODE_PLAY)
@@ -1322,7 +1330,7 @@ __handleKeyEvent_input_channel_done__:
 			{
 #if defined( FEATURE_FMRADIO_NO_MODE_SELECT) 
                 #if (defined(FEATURE_VERSION_1110W516)||defined( FEATURE_VERSION_W317A)||defined( FEATURE_VERSION_C337) || defined(FEATURE_VERSION_C316)||defined( FEATURE_VERSION_M74)||defined( FEATURE_VERSION_C310))\
-					 ||defined(FEATURE_ADD_VOLUP_VOLDN)||defined(FEATURE_VERSION_LM126C)||defined(FEATURE_FM_PAUSE)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_EC99)
+					 ||defined(FEATURE_ADD_VOLUP_VOLDN)||defined(FEATURE_VERSION_LM126C)||defined(FEATURE_FM_PAUSE)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
                 if(1)
 				#else
 				if(pMe->tuneVolumeByLeftRightArrowKey)
@@ -1766,8 +1774,10 @@ static void changeVolume( CFmRadio *pMe, uint16 keyCode)
     //Call driver to set Volume
     #ifndef FEATURE_VERSION_SKY
     #ifndef FEATURE_VERSION_EC99
+	#ifndef FEATURE_VERSION_K212_20D
     if (HS_HEADSET_ON())
     #endif
+	#endif
     #endif    
     {
 #ifdef FEATURE_ANALOG_TV
@@ -2071,8 +2081,10 @@ static void refreshChannelList( CFmRadio *pMe, boolean begin)
 {
     #ifndef FEATURE_VERSION_SKY
     #ifndef FEATURE_VERSION_EC99
+	#ifndef FEATURE_VERSION_K212_20D
     if (HS_HEADSET_ON())
     #endif    
+	#endif
     #endif    
     {
 #ifdef FEATURE_ANALOG_TV
@@ -2240,8 +2252,10 @@ static void refreshChannelListCB( void *pme)
     {
         #ifndef FEATURE_VERSION_SKY
         #ifndef FEATURE_VERSION_EC99
+		#ifndef FEATURE_VERSION_K212_20D
         if (HS_HEADSET_ON())
         #endif
+		#endif
         #endif    
         {
 #ifdef FEATURE_ANALOG_TV
@@ -3042,7 +3056,7 @@ static void paint( CFmRadio *pMe)
                         IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE
                     );
 		#elif defined(FEATURE_DISP_220X176)
-#ifdef FEATURE_VERSION_EC99
+#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
             {
                int         width       = 120;
     		
@@ -3348,7 +3362,7 @@ static void drawChannelIndicator( CFmRadio *pMe)
                 pMe->m_rc.dx,
                 nFontHeight);*/
 
-#ifdef FEATURE_VERSION_EC99
+#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
     SETAEERECT(&rect, 
                 pMe->m_rc.x, 
                 pMe->m_rc.y+1, 
