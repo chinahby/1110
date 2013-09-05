@@ -5295,7 +5295,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
 			}
 			//Add End
 			
-			#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99)
+			#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
 			if (pMe->m_bSpeedDialParam == TRUE)
 			{
 				CONTAPP_DRAW_BOTTOMBAR(BTBAR_OK_BACK);
@@ -5452,7 +5452,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
 
 					MSG_FATAL("***zzg pMe->m_eCurState=%x", pMe->m_eCurState, 0, 0);
 					
-                    #if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99)
+                    #if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
 					MSG_FATAL("***zzg pMe->m_bSpeedDialParam=%x", pMe->m_bSpeedDialParam, 0, 0);
 					if (pMe->m_bSpeedDialParam == TRUE)
 					{						
@@ -13762,7 +13762,7 @@ static boolean  CContApp_HandleDetailDlgEvent( CContApp  *pMe,
             
             // Draw prompt bar here
             CONTAPP_DRAW_BOTTOMBAR(BTBAR_BACK);	
-#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99)
+#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
             if (pMe->m_bSpeedDialParam == TRUE)
             {
             	CONTAPP_DRAW_BOTTOMBAR(BTBAR_OK_CANCEL);	
@@ -13778,7 +13778,7 @@ static boolean  CContApp_HandleDetailDlgEvent( CContApp  *pMe,
         {
         	 switch (wParam)
              {
-             	#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99)
+             	#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
 				case AVK_SELECT:					
 					if ((pMe->m_bSpeedDialParam == TRUE) && (pMe->m_nSpeedDialNumber != 0))
 					{
@@ -13865,7 +13865,7 @@ static boolean  CContApp_HandleDetailDlgEvent( CContApp  *pMe,
                     CLOSE_DIALOG(DLGRET_CANCELED);
                     return TRUE;		
 
-				#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99)
+				#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
 				case AVK_INFO:
 				case AVK_SELECT:
                     MSG_FATAL("***zzg Detail m_bSpeedDialParam=%x",pMe->m_bSpeedDialParam,0,0);

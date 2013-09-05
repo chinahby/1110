@@ -948,7 +948,7 @@ static NextFSMAction Handler_STATE_MAINLIST(CContApp *pMe)
             // store the menu index
             PUSH_LISTMENU_IDX(pMe->m_wMainListIdx);
 
-			#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99)
+			#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
 			MSG_FATAL("***zzg m_bSpeedDialParam=%x",pMe->m_bSpeedDialParam,0,0);
 			if ((pMe->m_bSpeedDialParam == TRUE) && (pMe->m_nSpeedDialNumber != 0))
 			{
@@ -7942,7 +7942,7 @@ static NextFSMAction Handler_STATE_DETAIL(CContApp *pMe)
         //Proccess yourself dialog retrn value here
         case DLGRET_OK:
 			
-			#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99)
+			#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
 			if ((pMe->m_bSpeedDialParam == TRUE) && (pMe->m_nSpeedDialNumber != 0))
 			{
 				//pMe->m_bSpeedDialParam = FALSE;					

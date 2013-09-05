@@ -1577,7 +1577,7 @@ int CContApp_BuildOneDialMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
 
     ISHELL_LoadResString(pMe->m_pShell, CONTAPP_RES_FILE_LANG, IDS_ONEDIAL_NULL, wszNull, sizeof(wszNull));
 
-#ifdef FEATURE_VERSION_EC99
+#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
     for( i = CONTCFG_ONEDIAL1; i <= CONTCFG_ONEDIAL9; i++)	
 #else
     for( i = CONTCFG_ONEDIAL2; i <= CONTCFG_ONEDIAL9; i++)	//CONTCFG_ONEDIAL1
@@ -1592,7 +1592,7 @@ int CContApp_BuildOneDialMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
             continue;
         }
 
-#ifdef FEATURE_VERSION_EC99
+#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
         if ((i == CONTCFG_ONEDIAL5) || (i == CONTCFG_ONEDIAL6))
         {
             continue;
