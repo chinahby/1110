@@ -8221,7 +8221,7 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 	    eBBarType = BTBAR_SHORTCUT_CONTACTS;
 	#elif defined(FEATURE_VERSION_S600S)
 	    eBBarType = BTBAR_RECENTCALLS_CONTACTS; 
-    #elif defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
+    #elif defined(FEATURE_VERSION_EC99)
 	    eBBarType = BTBAR_MENU_CONTACTS;      
         #else
 		   eBBarType = BTBAR_MESSAGES_CONTACTS; //add by yangdecai  BTBAR_MESSAGES_CONTACTS

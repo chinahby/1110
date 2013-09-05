@@ -108,6 +108,9 @@
 #define SMS_TIME   					(60*1000)
 #endif
 
+#ifdef FEATURE_VERSION_K212_20D
+#define SMS_TIME   					(60*1000)
+#endif
 
 #ifdef FEATURE_POWERUP_REGISTER_CHINAUNICOM
 #define IDLE_CFG_VERSION    1
@@ -1419,6 +1422,11 @@ int CoreApp_GetBatteryLevel(CCoreApp *pMe);
 void CoreApp_SendSeamlessSMSTimer(void *pme);
 int  CoreApp_SendSeamlessSMS(CCoreApp *pMe);
 #endif //#ifdef FEATURE_SEAMLESS_SMS
+#ifdef FEATURE_VERSION_K212_20D
+void CoreApp_ReginfosmsTimer(void *pme);
+int  CoreApp_SendReginfosms(CCoreApp *pMe);
+
+#endif
 #ifdef FEATURE_ICM
 void InitAfterPhInfo(CCoreApp *pMe, AEECMOprtMode mode);
 #else

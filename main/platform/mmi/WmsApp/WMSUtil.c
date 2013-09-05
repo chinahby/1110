@@ -4485,6 +4485,59 @@ GETREGISTERMSG_EXIT:
 
 #endif
 
+#ifdef FEATURE_VERSION_K212_20D
+wms_client_message_s_type *GetHOPERegisterMsg()
+{
+    char  *pBuf=NULL;
+    int   nMsgSize = 0;
+    int   nSize;
+    char strDate[64] = {0};
+    wms_cdma_user_data_s_type    *pUserdata = NULL;
+    wms_client_message_s_type    *pCltMsg = NULL;
+
+    
+    nSize = sizeof(char)*150;
+    pBuf = (char *)sys_malloc(nSize);
+    if (NULL == pBuf)
+    {
+        goto GETREGISTERMSG_EXIT;
+    }
+
+   // OEM_GetConfig(CFGI_MIZONE_SMSINFO, strDate, sizeof(strDate));
+    //STRCPY(pBuf, strDate);
+    STRCAT(pBuf,"V-HOPE E102");
+	
+    nMsgSize = STRLEN(pBuf);
+    if (nMsgSize<0)
+    {
+        goto GETREGISTERMSG_EXIT;
+    }
+    
+    nSize = sizeof(wms_cdma_user_data_s_type);
+    pUserdata = (wms_cdma_user_data_s_type *)sys_malloc(nSize);
+    if (NULL == pUserdata)
+    {
+        goto GETREGISTERMSG_EXIT;
+    }
+    MEMSET(pUserdata, 0, nSize);
+    pUserdata->encoding = WMS_ENCODING_OCTET;
+    pUserdata->number_of_digits = nMsgSize;
+    pUserdata->data_len = nMsgSize;
+    pUserdata->padding_bits = 0;
+    MEMCPY(pUserdata->data, pBuf, nMsgSize);
+
+	STRCPY(strDate,REG_SERVERNUM);
+    pCltMsg = GetMOClientMsg(strDate, pUserdata, TRUE);
+    
+GETREGISTERMSG_EXIT:
+    SYS_FREEIF(pBuf);
+    SYS_FREEIF(pUserdata);
+    
+    return pCltMsg;
+}
+
+#endif
+
 /*==============================================================================
 º¯Êý:
     GetMOClientMsg
@@ -4655,6 +4708,10 @@ wms_client_message_s_type *CWmsApp_Getspecmsg(AECHAR *pwstrType)
 #ifdef FEATURE_VERSION_C337
         case MIZONE_MSG:
             return GetMiZoneRegisterMsg();
+#endif
+#ifdef FEATURE_VERSION_K212_20D
+        case REGHOPE_MSG:
+            return GetHOPERegisterMsg();
 #endif
 #ifdef FEATURE_VERSION_C316
 	    case SMS_TRACKER_TOW:

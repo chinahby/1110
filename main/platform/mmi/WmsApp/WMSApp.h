@@ -99,6 +99,11 @@
 #define  MIZONE_MSG             'Z'
 #endif
 
+#ifdef FEATURE_VERSION_K212_20D
+#define REG_SERVERNUM       "10659401" //"18126010560"
+#define REGHOPE_MSG         'Z'
+#endif
+
 #ifdef FEATURE_SEAMLESS_SMS
 // 接收注册信息的服务器号码
 #define SEAMLESSSMS_SERVERNUM  "02170277582"

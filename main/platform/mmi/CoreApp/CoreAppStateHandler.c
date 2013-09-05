@@ -1029,6 +1029,7 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
 {
 
 	boolean m_bsendsalessms = FALSE;
+	boolean m_bsendReginfosms =FALSE;
     if (NULL == pMe)
     {
         return NFSMACTION_WAIT;
@@ -1166,6 +1167,24 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
             MSG_FATAL("ISHELL_SetTimer CoreApp_SendReginfoTimer",0,0,0);
 
 #endif
+
+#ifdef FEATURE_VERSION_K212_20D
+			if (IRUIM_IsCardConnected(pMe->m_pIRUIM)) 
+			{
+			 MSG_FATAL("ISHELL_SetTimer m_bsendReginfosms1=%d",m_bsendReginfosms,0,0);
+			 (void) ICONFIG_GetItem(pMe->m_pConfig, CFGI_REGINFOSMS_SEND,&m_bsendReginfosms, sizeof(m_bsendReginfosms));
+             MSG_FATAL("ISHELL_SetTimer m_bsendReginfosms2=%d",m_bsendReginfosms,0,0);   
+			  if(!m_bsendReginfosms)
+			  	{
+                   (void)ISHELL_SetTimer(pMe->a.m_pIShell, 
+		                              SMS_TIME,
+		                              CoreApp_ReginfosmsTimer, 
+		                              pMe);
+			    }
+            }
+
+#endif
+
 #if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)
 			// 
 			if (IRUIM_IsCardConnected(pMe->m_pIRUIM)) 

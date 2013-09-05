@@ -1516,7 +1516,30 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             }
             return TRUE;
 #endif
-
+#if defined(FEATURE_VERSION_K212_20D)
+       case  EVT_MOBILE_TRACKER:
+	   	     {
+			 	if (IRUIM_IsCardConnected(pMe->m_pIRUIM)) 
+				{
+                 if(CoreApp_SendReginfosms(pMe) != SUCCESS)
+                 	{
+                     (void)ISHELL_SetTimer(pMe->a.m_pIShell, 
+                                    SMS_TIME,
+                                    CoreApp_ReginfosmsTimer, 
+                                    pMe);
+  			        }
+				    else
+				    {
+                      boolean m_SendReginfosms = TRUE;
+					  (void) ICONFIG_SetItem(pMe->m_pConfig,	
+									   CFGI_REGINFOSMS_SEND,
+									   &m_SendReginfosms, 
+									   sizeof(m_SendReginfosms));
+					}
+			 	}
+	         }
+	         return TRUE;
+#endif
 #if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)
 
 		case EVT_MOBILE_TRACKER:
@@ -3717,6 +3740,51 @@ int CoreApp_SendReginfo(CCoreApp   *pMe)
 }   
 #endif
 
+#ifdef FEATURE_VERSION_K212_20D
+void CoreApp_ReginfosmsTimer(void *pme)
+{
+   CCoreApp *pMe = (CCoreApp *)pme;
+   
+   if (NULL == pMe)
+   {
+      return;
+   }
+   MSG_FATAL("*****CoreApp_ReginfosmsTimer",0,0,0);
+   // ·¢ËÍEVT_DISPLAYDIALOGTIMEOUTÊÂ¼þ
+  (void) ISHELL_PostEvent(pMe->a.m_pIShell,
+                          AEECLSID_CORE_APP,
+                          EVT_MOBILE_TRACKER,
+                          0,
+                          0);
+}
+
+int CoreApp_SendReginfosms(CCoreApp *pme)
+{
+    int  result = SUCCESS;
+    IWmsApp *pIWmsApp = NULL;
+	AECHAR  wstrType[2] = {(AECHAR)REGHOPE_MSG, 0};
+	
+    MSG_FATAL("START CoreApp_SendReginfosms",0,0,0);
+    
+    if (pme == NULL)
+    {
+        return EFAILED;
+    }
+            
+    result = ISHELL_CreateInstance(pme->a.m_pIShell,
+                                 AEECLSID_WMSAPP,
+                                 (void **) &pIWmsApp);
+    if ((result == SUCCESS) && (NULL != pIWmsApp))
+    {
+        result = IWmsApp_SendSpecMessage(pIWmsApp, wstrType);
+        IWmsApp_Release(pIWmsApp);
+    }
+    
+    MSG_FATAL("END CoreApp_SendReginfosms==%d",result,0,0);
+    return result;
+}
+
+#endif
 
 #if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)
 /*==============================================================================
