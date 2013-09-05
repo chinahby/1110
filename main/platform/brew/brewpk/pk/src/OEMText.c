@@ -2358,6 +2358,7 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
                 {
 #ifndef FEATURE_VERSION_K212
 #ifndef FEATURE_VERSION_EC99
+#ifndef FEATURE_VERSION_K212_20D
                     AECHAR   * pszText;
                     pszText = OEM_TextGet(pContext);
                     szsmscount = 1;
@@ -2392,6 +2393,7 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
                                     wRemainingChars,
                                     szsmscount);
                     */
+#endif
 #endif
 #endif
                 }

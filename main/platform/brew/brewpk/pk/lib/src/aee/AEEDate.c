@@ -339,7 +339,7 @@ int DateCtl_New(IShell * pIShell, AEECLSID cls, void ** ppobj)
 
    // initialize default fonts
 
-#ifdef FEATURE_VERSION_EC99
+#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
     pme->m_fntTitle = AEE_FONT_ITALIC;  //AEE_FONT_SMALL;
     pme->m_fntText  = AEE_FONT_ITALIC;  //AEE_FONT_SMALL;
 #else
@@ -1660,7 +1660,7 @@ static void DateCtl_SetGridRect(DateCtl * pme)
    pme->m_rcGrid.dx = (pme->m_rc.dx * 10 / DAYS_PER_WEEK); // multiply by 10 for rounding
    pme->m_rcGrid.dx = (pme->m_rcGrid.dx + 5) / 10;   // rounding
 
-#ifdef FEATURE_VERSION_EC99
+#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
    pme->m_rcGrid.y -= 5;
    pme->m_rcGrid.dy -= 3;
 #endif
@@ -1686,8 +1686,10 @@ static void DateCtl_DisplayDateText(DateCtl * pme)
 #ifdef FEATURE_CALENDAR_USE_STYLE
    SETAEERECT(&rectTitle, pme->m_rc.x+4, pme->m_rc.y+3, pme->m_rc.dx-7, pme->m_nFontLineHeight);
 #ifndef FEATURE_VERSION_EC99
+#ifndef FEATURE_VERSION_K212_20D
    drawImage(pme, AEE_APPSCOMMONRES_IMAGESFILE, IDI_DATE_BAR, pme->m_rc.x, pme->m_rc.y);
 #endif   
+#endif
 #endif
     nOldFontColor = IDISPLAY_SetColor( pme->m_pIDisplay, CLR_USER_TEXT, RGB_WHITE);
    

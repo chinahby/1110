@@ -33,7 +33,7 @@ GENERAL DESCRIPTION:
 #endif
 #endif
 
-#ifdef FEATURE_VERSION_EC99
+#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
 #define FEATURE_GREYBIT
 #endif
 
