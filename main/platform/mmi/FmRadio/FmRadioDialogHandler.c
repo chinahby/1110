@@ -457,6 +457,7 @@ static boolean  HandleFmRadioMainDialogEvent(CFmRadio *pMe,
 		
         case EVT_DIALOG_INIT:
         {
+            IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
             pMe->drawRefreshListPrompt  = FALSE;
             pMe->globalSearching        = FALSE;
            return TRUE;
