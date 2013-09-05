@@ -840,7 +840,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 				
 
                 // 获取大字体高度
- #ifdef FEATURE_VERSION_EC99
+ #if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
                 pMe->m_nLargeFontHeight = 70;
  #else
                 pMe->m_nLargeFontHeight = IDISPLAY_GetFontMetrics(pMe->m_pDisplay,

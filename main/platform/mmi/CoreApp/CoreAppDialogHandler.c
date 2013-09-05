@@ -133,7 +133,7 @@ boolean bIsPowerUp = FALSE;     //Add By zzg 2013_03_29
 
 #define WEEK_X              DATA_X
 #define WEEK_Y              DATA_Y
-#elif defined (FEATURE_VERSION_EC99)
+#elif defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
 #define IDLE_D_CLOCK_X 		5
 #define IDLE_D_CLOCK_Y 		20
 
@@ -3968,7 +3968,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                                     (pMe->m_wActiveDlgID == IDD_IDLE))
                 	{
                 		//Add By zzg 2012_10_29
-                		#if defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_EC99)
+                		#if defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
 							switch(bData)
 	                		{
 	                			case 1:
@@ -4383,7 +4383,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             (void) ISHELL_CancelTimer(pMe->a.m_pIShell,
                                       CoreApp_SearchingTimer,
                                       pMe);
-             #if defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_1110W516)|| defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_C316)|| defined(FEATURE_VERSION_EC99)//|| defined(FEATURE_VERSION_K212)
+             #if defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_1110W516)|| defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_C316)|| defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)//|| defined(FEATURE_VERSION_K212)
              IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
              #endif
 //Add by pyuangui 20121220			 
@@ -6754,7 +6754,7 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
                                   IDF_ALIGN_LEFT 
                                   #elif defined(FEATURE_VERSION_MYANMAR)
                                   IDF_ALIGN_CENTER
-                                  #elif defined(FEATURE_VERSION_EC99)
+                                  #elif defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
                                   IDF_ALIGN_LEFT     
         						  #else
                                   IDF_ALIGN_RIGHT 
@@ -6996,7 +6996,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
         	   wszDatemat[0] = (AECHAR)'P';
         	   wszDatemat[1] = (AECHAR)'M';
         	   wszDatemat[2] = 0;
-#ifdef FEATURE_VERSION_EC99
+#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
             (void) ISHELL_LoadResString(pMe->a.m_pIShell,
                                         AEE_COREAPPRES_LANGFILE,
                                            IDS_STR_PM,
@@ -7013,7 +7013,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
         	   wszDatemat[0] = (AECHAR)'A';
         	   wszDatemat[1] = (AECHAR)'M';
         	   wszDatemat[2] = 0;
-#ifdef FEATURE_VERSION_EC99   
+#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)   
             (void) ISHELL_LoadResString(pMe->a.m_pIShell,
                                         AEE_COREAPPRES_LANGFILE,
                                            IDS_STR_AM,
@@ -7050,7 +7050,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 	                              | IDF_TEXT_TRANSPARENT); 
     }
 #elif defined FEATURE_DISP_220X176
-#ifdef FEATURE_VERSION_EC99
+#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
     DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
 	                              pMe->m_pDisplay,
 	                              RGB_WHITE_NO_TRANS,
@@ -8154,7 +8154,7 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 		#else
     		#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_S1000T)
     			eBBarType = BTBAR_UNLOCK_SOS;
-			#elif defined(FEATURE_VERSION_C316)||defined(FEATURE_LEFT_SOFTKEY_AND_STAR_UNLOCK)|| defined(FEATURE_VERSION_K212)|| defined(FEATURE_VERSION_EC99)
+			#elif defined(FEATURE_VERSION_C316)||defined(FEATURE_LEFT_SOFTKEY_AND_STAR_UNLOCK)|| defined(FEATURE_VERSION_K212)|| defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
 			    eBBarType = BTBAR_UNLOCK_L;
         	#elif defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_1110W516) 
         		eBBarType = BTBAR_LUNLOCK;
@@ -8221,7 +8221,7 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 	    eBBarType = BTBAR_SHORTCUT_CONTACTS;
 	#elif defined(FEATURE_VERSION_S600S)
 	    eBBarType = BTBAR_RECENTCALLS_CONTACTS; 
-    #elif defined(FEATURE_VERSION_EC99)
+    #elif defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
 	    eBBarType = BTBAR_MENU_CONTACTS;      
         #else
 		   eBBarType = BTBAR_MESSAGES_CONTACTS; //add by yangdecai  BTBAR_MESSAGES_CONTACTS
@@ -9517,7 +9517,7 @@ static void CoreApp_DrawMusicName(CCoreApp    *pMe,uint16 nIdx)
     	AEEImageInfo m_ImageInfo;
 		IImage_GetInfo(pWallPaper,&m_ImageInfo);
 		MSG_FATAL("m_ImageInfo.cx=%d, m_ImageInfo.cy=%d", m_ImageInfo.cx, m_ImageInfo.cy, 0);
-#ifdef FEATURE_VERSION_EC99
+#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
         SETAEERECT(&clip, 0, MUSIC_WIDTH, pMe->m_rc.dx, pMe->m_nNormalFontHeight + 4); 
 #else
         SETAEERECT(&clip, 0, MUSIC_WIDTH, pMe->m_rc.dx, pMe->m_nLargeFontHeight + 4); 
@@ -9538,7 +9538,7 @@ static void CoreApp_DrawMusicName(CCoreApp    *pMe,uint16 nIdx)
         
 		
     }
-#ifdef FEATURE_VERSION_EC99
+#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
     MSG_FATAL("rect.x=%d,w=%d", pMe->m_rc.dx/6, pMe->m_nNormalFontHeight, 0);
     SETAEERECT(&rect, pMe->m_rc.dx/6, MUSIC_START_WIDTH, pMe->m_nNormalFontHeight, pMe->m_nNormalFontHeight);
 #else    
@@ -9559,7 +9559,7 @@ static void CoreApp_DrawMusicName(CCoreApp    *pMe,uint16 nIdx)
                               | IDF_TEXT_TRANSPARENT);*/
    //bracket[0]=(AECHAR)']';
 
-#ifdef FEATURE_VERSION_EC99
+#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
    MSG_FATAL("rect.x=%d,w=%d", pMe->m_rc.dx*5/6, pMe->m_nNormalFontHeight, 0);
    SETAEERECT(&rect, pMe->m_rc.dx*5/6, MUSIC_START_WIDTH, pMe->m_nNormalFontHeight, pMe->m_nNormalFontHeight);
 #else
@@ -9583,7 +9583,7 @@ static void CoreApp_DrawMusicName(CCoreApp    *pMe,uint16 nIdx)
   	m_musicstl=(pMe->m_rc.dx*2/3-2*DISP_BLANK_WIDTH);
   }
 
-#ifdef FEATURE_VERSION_EC99
+#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
   SETAEERECT(&rect, (pMe->m_rc.dx/6 /*((pMe->m_rc.dx*3/4)-m_musicstl)/2*/), MUSIC_START_WIDTH,(pMe->m_rc.dx*2/3), pMe->m_nNormalFontHeight);
   MSG_FATAL("rect.x=%d,w=%d,rect.dy=%d", (pMe->m_rc.dx/6 + pMe->m_nNormalFontHeight), (pMe->m_rc.dx*2/3 - 2*DISP_BLANK_WIDTH), rect.dy);
 #else
