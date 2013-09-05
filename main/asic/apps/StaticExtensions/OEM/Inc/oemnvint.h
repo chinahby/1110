@@ -227,7 +227,7 @@ when       who     what, where, why
 #ifdef FEATURE_VERSION_W021_CT100
 // ¡Â…˘“Ù¡ø     
 #define OEMNV_RINGER_VOL_INIT {5,0,0,4,4}  
-#elif defined (FEATURE_VERSION_EC99)
+#elif defined (FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)
 #define OEMNV_RINGER_VOL_INIT {4,0,0,4,4} 
 #else
 #define OEMNV_RINGER_VOL_INIT {3,0,0,4,4}  
@@ -519,6 +519,8 @@ typedef PACKED struct _Key_pad_Cfg
 #define   OEMNV_DEFAULTRINGER       10
 #elif defined(FEATURE_VERSION_EC99)
 #define   OEMNV_DEFAULTRINGER       11
+#elif defined(FEATURE_VERSION_K212_20D)
+#define   OEMNV_DEFAULTRINGER       10
 #else
 #define   OEMNV_DEFAULTRINGER       4
 #endif
@@ -599,6 +601,9 @@ typedef PACKED struct _Key_pad_Cfg
 #define   OEMNV_SHUTDOWN_MUSIC 11
 #elif defined(FEATURE_VERSION_EC99)
 #define   OEMNV_STARTUP_MUSIC 12
+#define   OEMNV_SHUTDOWN_MUSIC 12
+#elif defined(FEATURE_VERSION_K212_20D)
+#define   OEMNV_STARTUP_MUSIC 11
 #define   OEMNV_SHUTDOWN_MUSIC 12
 #elif defined(FEATURE_VERSION_W027) 
 #ifdef FEATURE_VERSION_W317A
@@ -1029,7 +1034,7 @@ typedef struct _OEMErrLogType {
 #define OEMNV_EMERG_NUM_TWO                    "110"
 #define OEMNV_EMERG_NUM_TRE                    "120"
 #define OEMNV_EMERG_NUM_FOR                    "999"
-#elif defined(FEATURE_VERSION_EC99)
+#elif defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)
 #define OEMNV_EMERT_SEZE                       3
 #define OEMNV_EMERG_NUM_LEN                    3
 #define OEMNV_EMERG_NUM_ONE                    "119"

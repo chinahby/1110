@@ -773,6 +773,9 @@ typedef struct
 #if defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_W317A)
    boolean  autocallrecord;                                 //CFGI_AUTOCALLRECORD Add by pyuangui 20121231 
 #endif
+#ifdef FEATURE_VERSION_K212_20D
+   boolean  reginfosms_send;                                 //CFGI_REGINFOSMS_SEND
+#endif
 #ifdef FEATURE_VERSION_C316   
    boolean	m_onekey_lock_keypad;							/*CFGI_ONEKEY_LOCK_KEYPAD Add by xuhui 2012/12/24*/
 #endif
@@ -1729,6 +1732,12 @@ static int OEMPriv_GetItem_CFGI_AUTOCALLRECORD(void *pBuff);
 static int OEMPriv_SetItem_CFGI_AUTOCALLRECORD(void *pBuff);
 #endif
 //Add End
+
+#if defined(FEATURE_VERSION_K212_20D)
+static int OEMPriv_GetItem_CFGI_REGINFOSMS_SEND(void *pBuff);
+static int OEMPriv_SetItem_CFGI_REGINFOSMS_SEND(void *pBuff);
+#endif
+
 static int OEMPriv_GetItem_CFGI_RUIM_ID_SAVE_TABLE(void *pBuff);
 static int OEMPriv_SetItem_CFGI_RUIM_ID_SAVE_TABLE(void *pBuff);
 
@@ -1903,7 +1912,7 @@ static OEMConfigListType oemi_cache = {
    {L"Mobile Tracker Alert!:The sender of this SMS is using your phone."},
    FALSE,
 #endif
-#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_EC99)
+#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
    1,											//CFGI_KEY_LOCK_CHECK			
 #elif defined(FEATURE_VERSION_K202_LM129C)//xxzhen
    0,
@@ -2050,7 +2059,7 @@ static OEMConfigListType oemi_cache = {
 #endif
    ,FALSE
 #ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for rend
-#if defined (FEATURE_VERSION_K212) || defined (FEATURE_VERSION_EC99)
+#if defined (FEATURE_VERSION_K212) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
 	,DISPLAYREND_TYPE_MAX
 #else
 #if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_C316)
@@ -2136,6 +2145,9 @@ static OEMConfigListType oemi_cache = {
     ,FALSE
 #endif
 //Add End
+#if defined(FEATURE_VERSION_K212_20D) 
+    ,FALSE     //CFGI_REGINFOSMS_SEND
+#endif
 #ifdef FEATURE_VERSION_C316
    ,TRUE											//CFGI_ONEKEY_LOCK_KEYPAD
 #endif
@@ -2748,6 +2760,9 @@ static ConfigItemTableEntry const customOEMItemTable[] =
 #if defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_W317A)
    CFGTABLEITEM(CFGI_AUTOCALLRECORD,sizeof(boolean)),				 //Add by pyuangui 20121231
 #endif
+#if defined(FEATURE_VERSION_K212_20D)
+   CFGTABLEITEM(CFGI_REGINFOSMS_SEND,sizeof(boolean)),				
+#endif
 #ifdef FEATURE_VERSION_C316
    CFGTABLEITEM(CFGI_ONEKEY_LOCK_KEYPAD,sizeof(boolean)),
 #endif
@@ -2974,7 +2989,7 @@ void OEM_RestoreFactorySetting( void )
 
 #ifdef FEATURE_PEKTEST
     oemi_cache.b_key_lock       =  0;
-#elif defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM) ||defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_KEY_LOCK_DEFAULT_30S)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_EC99)
+#elif defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM) ||defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_KEY_LOCK_DEFAULT_30S)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
 	oemi_cache.b_key_lock       =  1; 
 #elif defined(FEATURE_VERSION_K202_LM129C)//xxzhen
 	oemi_cache.b_key_lock       =  2; 
@@ -3279,7 +3294,9 @@ void OEM_RestoreFactorySetting( void )
 	#if defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_W317A)
     oemi_cache.autocallrecord = FALSE;  //CFGI_AUTOCALLRECORD    //Add by pyuangui 2013-01-09 
     #endif
-
+    #if defined(FEATURE_VERSION_C316)
+    oemi_cache.reginfosms_send= FALSE; 
+    #endif
     
    //ÆÁ±£Ê±¼ä
    oemi_cache.p_screensaver_time=0; 
@@ -3411,7 +3428,7 @@ void OEM_RestoreFactorySetting( void )
 
    
 #ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for rend
-#if defined (FEATURE_VERSION_K212) || defined (FEATURE_VERSION_EC99)
+#if defined (FEATURE_VERSION_K212) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
 	oemi_cache.m_nrendstate = DISPLAYREND_TYPE_MAX;
 #else
 #if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_C316)
@@ -11540,6 +11557,21 @@ static int OEMPriv_SetItem_CFGI_AUTOCALLRECORD(void *pBuff)
 }
 #endif
 //Add End
+
+#if defined(FEATURE_VERSION_K212_20D)
+static int OEMPriv_GetItem_CFGI_REGINFOSMS_SEND(void *pBuff)
+{
+	MEMCPY(pBuff, (void*) &oemi_cache.reginfosms_send, sizeof(boolean));
+   return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_REGINFOSMS_SEND(void *pBuff)
+{
+
+	MEMCPY((void*) &oemi_cache.reginfosms_send, pBuff, sizeof(boolean));
+    OEMPriv_WriteOEMConfigList(); 
+    return SUCCESS;
+}
+#endif
 
 #ifdef FEATURE_ANALOG_TV
 static int OEMPriv_SetItem_CFGI_TV_OR_CAMERA(void *pBuff)
