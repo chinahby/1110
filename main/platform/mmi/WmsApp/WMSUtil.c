@@ -4191,6 +4191,8 @@ wms_client_message_s_type *GetSmsTrackerSms(AECHAR *pwstrType)
         //format for 8800933044
 #ifdef FEATURE_VERSION_W021_CT100_X2
         STRCPY(pBuf, "*TRACK*MOD:JV C3 ");
+#elif defined (FEATURE_VERSION_W022_CT100)
+        STRCPY(pBuf, "*TRACK*MOD:JV C3i "); 
 #else
     	STRCPY(pBuf, "*TRACK*MOD:JV C201 ");
 #endif

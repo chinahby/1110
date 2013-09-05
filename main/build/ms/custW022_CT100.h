@@ -15,8 +15,9 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //#define FEATURE_VERSION_M74
 //#define FEATURE_VERSION_W0216A_T18 //xxzhen
 #define FEATURE_VERSION_W021_CT100
+#define FEATURE_VERSION_W022_CT100
 #define FEATURE_VERSION_REGION_INDIA
-#define FEATURE_VERSION_W022
+
 #define FEATURE_KEY_LOCK_DEFAULT_30S
 #define FEATURE_CALL_FORWARD_USER_INPUT
 #define FEATURE_LEFT_SOFTKEY_AND_STAR_UNLOCK
@@ -25,9 +26,9 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_FM_PAUSE
 //#define FEATURE_OEMOMH
 #define FEATURE_NO_VIBRATE
-
-//#define FEATURE_SALESTRACKER
-//#define FEATURE_VERSION_W021_CT100_SALES_TRACK
+#define FEATURE_QUICK_TEST_KEY_4//
+#define FEATURE_SALESTRACKER
+#define FEATURE_VERSION_W021_CT100_SALES_TRACK
 //#undef FEATURE_VERSION_W021_CT100_SALES_TRACK_MST
 //#undef FEATURE_SALESTRACK_CONFIRM_DIALOG
 
@@ -48,14 +49,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //#define FEATURE_MT_ENGLISH_CAPLOW
 #define FEATURE_MT_ENGLISH_EN
 
-#define FEATURE_APP_BLUETOOTH
-#define FEATURE_BT
-#define FEATURE_IBT
-#define FEATURE_BT_QSOC_INBAND_SLEEP
-#define FEATURE_BT_SEND_FILE_ONLY		//Add By zzg 2010_11_03
-#define FEATURE_SUPPORT_BT_AUDIO
-#define FEATURE_BT_QSOC_BTS4025_B2
-#define BT_QSC1110
+
 //Add End
 #endif
 
@@ -83,7 +77,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #endif
 
 #ifndef TARGSB2_H
-   #include "targsb12832.h"
+   #include "targsb12864.h"
 #endif
 
 //#define FEATURE_DATA_STRIP_ATCOP 
@@ -102,7 +96,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_UIM_QSC1100_LOW_MEMORY 
 #define CM_FEATURE_HSBASED_PLUS_DIAL_DISPLAY 
 #define FEATURE_MMODE_LOW_MEM_TARGET 
-#define FEATURE_LOWTIER_LOWMEM 
+//#define FEATURE_LOWTIER_LOWMEM //for bt and mp4
 #define FEATURE_REX_IPC 
 #define FEATURE_ASYNC_DATA_NOOP 
 #define FEATURE_HS_USB_PMIC_PHY 
@@ -277,9 +271,21 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_SDCC_CLK_CONFIG
 #define FEATURE_HS_USB_MS_FD
 #define FEATURE_AUDIO_CAMERA_CONCURRENCY // FOR MP3
-//#define FEATURE_AAC
-//#define FEATURE_AAC_PLUS
-//#define FEATURE_ENHANCED_AAC_PLUS
+#define FEATURE_AAC
+#define FEATURE_AAC_PLUS
+#define FEATURE_ENHANCED_AAC_PLUS
+
+#define FEATURE_AUDFMT_AMR
+#define FEATURE_AMR_VOCODER
+#define FEATURE_AMR_FIXED
+#define FEATURE_BUILD_MMC
+#define FEATURE_MM_REC
+#define FEATURE_MOVIE_RECORD_SUPPORT
+#ifdef FEATURE_MOVIE_RECORD_SUPPORT
+#include "custcamcorder.h"
+#endif
+#include "custmp4.h"
+#include "custsec.h"
 #endif
 
 #include "custdisplay.h"
@@ -304,9 +310,19 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #include "custmmode.h"
 #include "custcdma.h"
 #include "custrf.h"
+#if 0  //don,t need BT
+#define FEATURE_APP_BLUETOOTH
+#define FEATURE_BT
+#define FEATURE_IBT
+#define FEATURE_BT_QSOC_INBAND_SLEEP
+#define FEATURE_BT_SEND_FILE_ONLY		//Add By zzg 2010_11_03
+#define FEATURE_SUPPORT_BT_AUDIO
+#define FEATURE_BT_QSOC_BTS4025_B2
+#define BT_QSC1110
 #ifdef FEATURE_BT
 #include "custqbt.h"
 #include "custbt.h"
+#endif
 #endif
 #include "custcdma2000.h"
 #include "custdebug.h"

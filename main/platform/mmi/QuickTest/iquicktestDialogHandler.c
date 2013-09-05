@@ -547,7 +547,11 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     #if defined (FEATURE_VERSION_C180)||defined(FEATURE_KEYTEST_NO_CAMERA_MUSIC)//xxzhen for 128x160 resource
 					image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_KEY_TEST12);
 					#else
+                    #ifdef FEATURE_QUICK_TEST_KEY_4
+                    image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_KEY_TEST_4);
+                    #else                    
 					image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_KEY_TEST);
+                    #endif
 					#endif
 				
 					if( image != NULL)

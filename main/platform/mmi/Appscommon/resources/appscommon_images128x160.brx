@@ -30,7 +30,7 @@
 	</Object>
 	<Object Id="5010" Name="IDI_KEY_TEST" MimeType="image/png">
 		<File>..\images\128x160\common\QuickTest\keytest.png</File>
-	</Object>
+	</Object>	
 	<Object Id="5011" Name="IDI_TEST_DOWN" MimeType="image/png">
 		<File>..\images\128x160\common\QuickTest\down.png</File>
 	</Object>
@@ -496,7 +496,12 @@
 	<Object Id="7106" Name="IDB_RSSI6">
 		<File>..\images\128x160\common\Annunciator\rssi6.bmp</File>
 	</Object>
-	
+	<Object Id="7107" Name="IDI_KEY_TEST_4" MimeType="image/png">
+		<File>..\images\128x160\common\QuickTest\keytest_4.png</File>
+	</Object>	
+	<Object Id="7108" Name="IDI_KEY_TEST_6" MimeType="image/png">
+		<File>..\images\128x160\common\QuickTest\keytest_6.png</File>
+	</Object>	
 
 </Objects>
 </BREWRes>
