@@ -616,24 +616,27 @@ static void tuneVolumeByLeftRightArrowKey( CFmRadio* pMe)
 static void tuneVolumeStop(CFmRadio* pMe)
 {
     byte newvolumeLevel=0; 
+
+    //MSG_FATAL("***zzg tuneVolumeStop fmVolumeStop=%x***", pMe->fmVolumeStop, 0, 0);
+    
     if(pMe->fmVolumeStop)
     {
        //pMe->byVolumeLevel = 0;
 #if !defined( AEE_SIMULATOR)
-        #ifndef FEATURE_VERSION_SKY
-        #ifndef FEATURE_VERSION_EC99
-		#ifndef FEATURE_VERSION_K212_20D
-        if (HS_HEADSET_ON())  
+        #if defined (FEATURE_VERSION_SKY) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
         {
-            fm_set_volume( newvolumeLevel,pMe->fmSpeaker);
+            fm_set_volume( newvolumeLevel,pMe->fmSpeaker); 
+            fm_set_volume( newvolumeLevel,pMe->fmSpeaker); 
             pMe->fmVolumeStop=FALSE;
         }
         #else
-            fm_set_volume( newvolumeLevel,pMe->fmSpeaker); 
-            fm_set_volume( newvolumeLevel,pMe->fmSpeaker); 
-            pMe->fmVolumeStop=FALSE;
-        #endif    
-		#endif
+        {
+            if (HS_HEADSET_ON())  
+            {
+                fm_set_volume( newvolumeLevel,pMe->fmSpeaker);
+                pMe->fmVolumeStop=FALSE;
+            }
+        }
         #endif
 #endif
     }
@@ -647,22 +650,22 @@ static void tuneVolumeStop(CFmRadio* pMe)
 		pMe->byVolumeLevel = (pMe->byVolumeLevel*3)/5;
 		#endif
         newvolumeLevel = pMe->byVolumeLevel;
-#if !defined( AEE_SIMULATOR)
-        #ifndef FEATURE_VERSION_SKY
-        #ifndef FEATURE_VERSION_EC99
-		#ifndef FEATURE_VERSION_K212_20D
-        if (HS_HEADSET_ON())   
+#if !defined( AEE_SIMULATOR)        
+        #if defined (FEATURE_VERSION_SKY) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
         {
-            fm_set_volume(newvolumeLevel,pMe->fmSpeaker);
-            pMe->fmVolumeStop=TRUE;
-        }
-        #else
             newvolumeLevel=0;
             fm_set_volume( newvolumeLevel,pMe->fmSpeaker);
             fm_set_volume( pMe->byVolumeLevel,pMe->fmSpeaker); 
             pMe->fmVolumeStop=TRUE;
-        #endif 
-		#endif
+        }
+        #else
+        {
+            if (HS_HEADSET_ON())   
+            {
+                fm_set_volume(newvolumeLevel,pMe->fmSpeaker);
+                pMe->fmVolumeStop=TRUE;
+            }
+        }
         #endif
 #endif
 
@@ -1034,7 +1037,7 @@ static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier)
         case AVK_INFO:
     #endif
 #endif
-        {
+        {            
             if( pMe->opMode == FM_RADIO_OPMODE_PLAY)
             {
                 #if (defined( FEATURE_VERSION_1110W516) || defined( FEATURE_VERSION_W317A) || defined( FEATURE_VERSION_C337) || defined( FEATURE_VERSION_C316)||defined( FEATURE_VERSION_M74)|| defined( FEATURE_VERSION_C310)|| defined( FEATURE_VERSION_K202_LM129C)||defined(FEATURE_FM_PAUSE))
