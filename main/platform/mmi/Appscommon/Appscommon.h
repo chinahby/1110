@@ -81,7 +81,7 @@
     #define SCROLLBAR_WIDTH         5
     #define STATUSBAR_HEIGHT        16
 #elif defined(FEATURE_DISP_220X176)		   //176 = statebar(22)+bottombar(22)  +6*menuitem(22)
-#ifdef FEATURE_VERSION_EC99
+#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
     #define SCREEN_WIDTH            220
     #define SCREEN_HEIGHT           176
     #define STATEBAR_HEIGHT         26
