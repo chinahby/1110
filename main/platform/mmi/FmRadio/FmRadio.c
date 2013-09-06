@@ -1133,15 +1133,30 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
                pMe->fmSpeaker=TRUE;
             }
             pMe->byVolumeLevel=0;
-            fm_set_volume( pMe->byVolumeLevel,pMe->fmSpeaker);
+
+            fm_set_volume( pMe->byVolumeLevel,pMe->fmSpeaker);           
+                        
             (void) ICONFIG_GetItem(pMe->m_pConfig,
      						   CFGI_FMRADIO_VOLUME,
      						   &pMe->byVolumeLevel,
      						   sizeof(byte));
+            
 			#if defined(FEATURE_VERSION_C337)
 			pMe->byVolumeLevel = (pMe->byVolumeLevel*3)/5;
-			#endif
+			#endif            
+            
             fm_set_volume( pMe->byVolumeLevel,pMe->fmSpeaker);  
+
+            //Add By zzg 2013_09_06
+            if (!pMe->fmVolumeStop)
+            {
+                fm_set_volume(0, pMe->fmSpeaker);                 
+            }	
+            else
+            {
+                fm_set_volume( pMe->byVolumeLevel,pMe->fmSpeaker);
+            }
+            //Add End
             #endif   
         	if ( wParam )
         	{
