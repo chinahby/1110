@@ -200,6 +200,12 @@
 		<Text>无效密码</Text>
 	</STRING>
 	
+	<String Id="1120" Name="IDS_MAIN_MENU_TORCHON">
+		<Text>手电筒开启</Text>
+	</String>
+	<String Id="1121" Name="IDS_MAIN_MENU_TORCHOFF">
+		<Text>手电筒关闭</Text>
+	</String>
 	<String Id="1122" Name="IDS_SAR">
 		<Text>SAR: 0.280W/kg</Text>
 	</String>

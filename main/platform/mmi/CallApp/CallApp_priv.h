@@ -187,7 +187,7 @@
 #else
 #define CALL_TEXT_X                             (3)
 #endif
-#ifdef FEATURE_VERSION_EC99
+#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
 #define CALL_NAME_X                            (10*CALL_TEXT_X + CALL_ANIMATION_WIDTH)
 #define CALL_NUM_X                              (10*CALL_TEXT_X + CALL_ANIMATION_WIDTH)
 #else
@@ -212,7 +212,7 @@
 #ifdef FEATURE_VERSION_K212
 #define CALL_LINE_HIGHT                      (38)
 #else
-#ifdef FEATURE_VERSION_EC99
+#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
 #define CALL_LINE_HIGHT                      (25)
 #else
 #define CALL_LINE_HIGHT                      (20) //18为NORMAL字体高度，目前只需要这个高度就够了

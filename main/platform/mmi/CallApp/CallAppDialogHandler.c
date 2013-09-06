@@ -351,7 +351,7 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
                                            uint16      wParam,
                                            uint32      dwParam);
 
-#if defined(FEATURE_VERSION_W027V3) || defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_M74)
+#if defined(FEATURE_VERSION_W027V3) || defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_M74)||defined(FEATURE_VERSION_K212_20D)
 
 static void CallApp_TorchTipTimeOut(CCallApp *pMe);
 #endif
@@ -1986,7 +1986,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                         else
                         {
 
-                            #if defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_W027V3)|| defined(FEATURE_VERSION_H1201) || defined(FEATURE_VERSION_W317A)|| defined(FEATURE_VERSION_M74)
+                            #if defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_W027V3)|| defined(FEATURE_VERSION_H1201) || defined(FEATURE_VERSION_W317A)|| defined(FEATURE_VERSION_M74)|| defined (FEATURE_VERSION_K212_20D)
 
                             #else
                             CallApp_ProcessUIMMMIStr(pMe, pMe->m_DialString);
@@ -7781,7 +7781,7 @@ static void CallApp_MakeSpeedDialCall(CCallApp  *pMe)
             return;
         }
         //load the speed dial empty resource string
-        #if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99)
+        #if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
 		pMe->m_prompt_id = IDS_SPEED_DIAL_QUERY;
 		CLOSE_DIALOG(DLGRET_PROMPT)
 		#else
@@ -8688,6 +8688,7 @@ static void CallApp_DrawDialerString(CCallApp   *pMe,  AECHAR const *dialStr)
         }
         MSG_FATAL("CallApp_DrawDialerString....................2",0,0,0);
 #ifndef FEATURE_VERSION_EC99
+#ifndef FEATURE_VERSION_K212_20D
         if(nLine <= nLineMax)
         {
             
@@ -8697,6 +8698,7 @@ static void CallApp_DrawDialerString(CCallApp   *pMe,  AECHAR const *dialStr)
             pMe->m_pCurrNumFont = NULL;
         }
 #endif        
+#endif
     }
 	MSG_FATAL("CallApp_DrawDialerString....................3",0,0,0);
     dstStr = revStr;
@@ -13139,7 +13141,7 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
             }
         }
 		//Add By zzg 2010_09_10
-		#if defined(FEATURE_VERSION_C316)||defined(FEAUTRE_VERSION_N450)||defined(FEATURE_VERSION_W0216A)|| defined(FEATURE_VERSION_C306) || defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_N68)||defined(FEATURE_LCD_TOUCH_ENABLE)||defined(FEATURE_VERSION_W516)||defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_H1201)|| defined(FEATURE_VERSION_W027)\
+		#if defined(FEATURE_VERSION_C316)||defined(FEAUTRE_VERSION_N450)||defined(FEATURE_VERSION_W0216A)|| defined(FEATURE_VERSION_C306)|| defined (FEATURE_VERSION_K212_20D) || defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_N68)||defined(FEATURE_LCD_TOUCH_ENABLE)||defined(FEATURE_VERSION_W516)||defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_H1201)|| defined(FEATURE_VERSION_W027)\
 			||defined(FEATURE_VERSION_W0216A_T18) //xxzhen
         #ifndef FEATURE_TORCH_KEY_INFO
 		else if (((AVKType)wParam == AVK_0) && (WSTRLEN(pMe->m_DialString) == 1))
@@ -13168,7 +13170,7 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
 			}
 			OEM_SetConfig(CFGI_FLSHLITHG_STATUS,&TorchOn, sizeof(TorchOn));
 
-            #if defined(FEATURE_VERSION_W027V3) || defined(FEATURE_VERSION_W317A)|| defined(FEATURE_VERSION_M74)
+            #if defined(FEATURE_VERSION_W027V3) || defined(FEATURE_VERSION_W317A)|| defined(FEATURE_VERSION_M74)|| defined (FEATURE_VERSION_K212_20D)
 
             {
                 static IStatic * torch_pStatic = NULL;
@@ -13371,7 +13373,7 @@ static int SetBrowserArr_Main_CallApp(CCallApp *pMe,char *purl)
 
 //Add End
 
-#if defined(FEATURE_VERSION_W027V3) || defined(FEATURE_VERSION_W317A)|| defined(FEATURE_VERSION_M74)
+#if defined(FEATURE_VERSION_W027V3) || defined(FEATURE_VERSION_W317A)|| defined(FEATURE_VERSION_M74)|| defined (FEATURE_VERSION_K212_20D)
 
 static void CallApp_TorchTipTimeOut(CCallApp *pMe)
 {
@@ -13664,7 +13666,7 @@ if(wp == AVK_0)
 				}
         	}
 			#endif
-#ifdef FEATURE_VERSION_EC99
+#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
             AEE_SetTimer(1500,CallApp_keypadtimer,pMe);
 #else
         	AEE_SetTimer(1000,CallApp_keypadtimer,pMe);
