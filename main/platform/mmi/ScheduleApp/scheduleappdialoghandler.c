@@ -1737,6 +1737,9 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
             {
                 bRedrawDone = TRUE;
             }
+#if defined(FEATURE_VERSION_K212)
+			drawBottomBar(BTBAR_OPTION_BACK);
+#endif
 
             IDISPLAY_UpdateEx( pme->m_pDisplay, FALSE);
             return TRUE;
@@ -6124,7 +6127,80 @@ void Cal_HandleAlarm(CScheduleApp* pme, uint16 permId)
 
 }
 
+#ifdef FEATURE_VERSION_K212
+static boolean ScheduleApp_DrawText_Ex(CScheduleApp *pMe, AEEFont fnt,
+                  AECHAR *wStr, AEERect  *rect,  uint32 mask)
+{
+    int           len       = 0;
+    int           fits       = 0;
+    int           pixLen = 0;
+    int           line      = 0;
+    int           hight    = 0;
+    AECHAR  wBuf[64] = {0};
+    RGBVAL oldColor = IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
 
+
+    ASSERT(wStr != NULL);
+    ASSERT(pMe->m_pDisplay != NULL);
+
+    hight = IDISPLAY_GetFontMetrics(pMe->m_pDisplay,  fnt, NULL, NULL);
+    line = rect->dy / hight;
+    len = WSTRLEN(wStr);
+    WSTRLCPY(wBuf, wStr, 64);
+
+    MSG_FATAL("line======%d,hight=%d,rect->dy=%d",line,hight,rect->dy);
+    while(line)
+    {
+        line--;
+        len = WSTRLEN(wBuf);
+        pixLen = IDISPLAY_MeasureTextEx(pMe->m_pDisplay, fnt,  wBuf,  -1, rect->dx, &fits);
+		MSG_FATAL("CallApp_DrawText_Ex....len==%d,pixLen=%d",len,pixLen,0);
+        if (0 == pixLen)
+        {
+            line = 0;
+            return IDISPLAY_DrawText(pMe->m_pDisplay,  fnt, wBuf,-1, rect->x, rect->y, rect, mask);
+        }
+
+        if (fits >= len)
+        {
+            // Entire string fits on the line, all is good
+            line = 0;
+            //CALL_ERR("Entire string fits on the line, all is good",0,0,0);
+            MSG_FATAL("IDISPLAY_DrawText........222222",0,0,0);
+            return IDISPLAY_DrawText(pMe->m_pDisplay,  fnt, wBuf,-1, rect->x, rect->y, rect, mask);
+        }
+
+        if(fits < len)
+        {
+            if(line == 0)//the last line ,need add ...
+            {
+                wBuf[fits-3] = 0;
+                //CALL_ERR("the last line ,need add ...",0,0,0);
+                WSTRCAT(wBuf, (AECHAR*)".\0.\0.\0");
+				MSG_FATAL("IDISPLAY_DrawText........33333333",0,0,0);
+                IDISPLAY_DrawText(pMe->m_pDisplay,  fnt, wBuf,-1, rect->x, rect->y, rect, mask);
+            }
+            else
+            {
+                AECHAR temp[64] = {0};
+                //CALL_ERR("draw %d line",line,0,0);
+                WSTRLCPY(temp, wBuf + fits , 64);
+                wBuf[fits] = 0;
+				MSG_FATAL("IDISPLAY_DrawText........44444444",0,0,0);
+                IDISPLAY_DrawText(pMe->m_pDisplay,  fnt, wBuf,-1, rect->x, rect->y, rect, mask);
+                WSTRLCPY(wBuf, temp,64);
+                rect->y = rect->y + hight;
+            }
+        }
+    }
+    IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, oldColor);
+   
+    return TRUE;
+}
+
+
+
+#endif
 #ifdef FEATURE_SPORTS_APP
 boolean g_sport_snooze_back_flag = FALSE;//训练弹出框时间到了之后处理表示
 #endif
@@ -6265,7 +6341,11 @@ static boolean  dialog_handler_of_state_showalert( CScheduleApp* pme,
                     
                     IIMAGE_GetInfo(AlertImage, &ImageInfo);
                     //IIMAGE_Draw(AlertImage, 0, TITLEBAR_HEIGHT);
-                    IIMAGE_Draw(AlertImage, (pme->m_rc.dx - ImageInfo.cx)/2, TITLEBAR_HEIGHT/2 + BOTTOMBAR_HEIGHT/2 + (pme->m_rc.dy - ImageInfo.cy)/2);
+#if defined(FEATURE_VERSION_K212)
+                    IIMAGE_Draw(AlertImage, (pme->m_rc.dx - ImageInfo.cx)/2,(pme->m_rc.dy - ImageInfo.cy)-BOTTOMBAR_HEIGHT);
+#else
+					IIMAGE_Draw(AlertImage, (pme->m_rc.dx - ImageInfo.cx)/2, TITLEBAR_HEIGHT/2 + BOTTOMBAR_HEIGHT/2 + (pme->m_rc.dy - ImageInfo.cy)/2);
+#endif
                     IIMAGE_Release(AlertImage);
                     AlertImage = NULL;
                 }
@@ -6278,8 +6358,11 @@ static boolean  dialog_handler_of_state_showalert( CScheduleApp* pme,
 					
                     AEERect rc;
                     int length;
-                    
-                    SETAEERECT(&rc, 0, TITLEBAR_HEIGHT, pme->m_rc.dx, BOTTOMBAR_HEIGHT);
+                    #if defined(FEATURE_VERSION_K212)
+                    SETAEERECT(&rc, 0, TITLEBAR_HEIGHT, pme->m_rc.dx, BOTTOMBAR_HEIGHT*2);
+					#else
+					SETAEERECT(&rc, 0, TITLEBAR_HEIGHT, pme->m_rc.dx, BOTTOMBAR_HEIGHT);
+					#endif
                     IDISPLAY_SetColor(pme->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
                     // schedule alert
                     {
@@ -6310,20 +6393,30 @@ static boolean  dialog_handler_of_state_showalert( CScheduleApp* pme,
                         //AlertText[length++] = '\n';
                         //WSTRNCOPY(d,dlen,s)
                         WSTRCPY(AlertText + length, theLast->subject);
-																							
+						#if defined(FEATURE_VERSION_K212)
+						rc.dy = MENUITEM_HEIGHT*2;
+						ScheduleApp_DrawText_Ex(pme,AEE_FONT_NORMAL,AlertText,&rc,IDF_TEXT_TRANSPARENT);
+						#else																
                         IDISPLAY_DrawText(pme->m_pDisplay, AEE_FONT_NORMAL,
                                                             AlertText,
                                                             -1,
                                                             rc.x, rc.y, &rc,
                                                             IDF_TEXT_TRANSPARENT | IDF_ALIGN_LEFT | IDF_ALIGN_MIDDLE);
-					
+						
+					    #endif
 						//rc.y = rc.y + TITLEBAR_HEIGHT;	
-						rc.y = rc.y + MENUITEM_HEIGHT;  //Add By zzg 2012_03_08;	
+						#if defined(FEATURE_VERSION_K212)
+						rc.y = rc.y + MENUITEM_HEIGHT*2;  //Add By zzg 2012_03_08;	
+						rc.dy = MENUITEM_HEIGHT*3;
+						ScheduleApp_DrawText_Ex(pme,AEE_FONT_NORMAL,theLast->location,&rc,IDF_TEXT_TRANSPARENT);
+						#else
+						rc.y = rc.y + MENUITEM_HEIGHT
 						IDISPLAY_DrawText(pme->m_pDisplay, AEE_FONT_NORMAL,
 						                                   theLast->location,
 						                                   -1,
 						                                   rc.x, rc.y, &rc,
-						                                   IDF_TEXT_TRANSPARENT | IDF_ALIGN_LEFT | IDF_ALIGN_MIDDLE);			
+						                                   IDF_TEXT_TRANSPARENT | IDF_ALIGN_LEFT | IDF_ALIGN_MIDDLE);		
+						#endif
                        
                     }
                 }				
