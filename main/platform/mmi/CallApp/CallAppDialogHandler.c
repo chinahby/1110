@@ -13095,6 +13095,9 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
                         IBACKLIGHT_TurnOnTorch(pMe->m_pBacklight);
                     }
                 }
+                
+
+                /*
                 else
                 {
                     TorchOn = FALSE;
@@ -13103,6 +13106,8 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
                         IBACKLIGHT_TurnOffTorch(pMe->m_pBacklight);
                     }
                 }
+                */
+                
                 OEM_SetConfig(CFGI_FLSHLITHG_STATUS,&TorchOn, sizeof(TorchOn));
                 ISHELL_CloseApplet(pMe->m_pShell, TRUE); 
                 return TRUE;

@@ -5482,6 +5482,29 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                                 	(48 + ((AVKType)wParam - AVK_0));/*lint !e656*/
 							}
                         }
+
+                        //MSG_FATAL("***zzg CoreApp IDD_IDLE wParam=%x***", wParam, 0, 0);
+
+                        
+#if defined(FEATURE_VERSION_EC99)
+                        if (wParam == AVK_5)
+                        {
+                            boolean TorchOn = FALSE;
+                            OEM_GetConfig(CFGI_FLSHLITHG_STATUS,&TorchOn, sizeof(TorchOn));
+                            
+                            if (TorchOn == TRUE )
+                            {
+                                TorchOn = FALSE;
+                                if (pMe->m_pBacklight)
+                                {                           
+                                    IBACKLIGHT_TurnOffTorch(pMe->m_pBacklight);
+                                }
+                            }
+                            OEM_SetConfig(CFGI_FLSHLITHG_STATUS,&TorchOn, sizeof(TorchOn));                            
+                        }
+#endif
+                        
+                        
                         ICallApp_VoiceCallDial_F(pCallApp,pMe->m_wstrEnterNum);
                         if (pCallApp) 
                         {
