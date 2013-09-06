@@ -54,6 +54,7 @@ when         who            what, where, why
 
 #define CALC_CFG_VERSION      0x1000
 #define CALC_MAX_NUMBER_DISP  999999999
+
 #define MAX_CALC_TEXT         9
 /*小数部分最大个数*/
 #if defined(FEATURE_VERSION_K212)
@@ -159,9 +160,9 @@ when         who            what, where, why
 /*显示数字线条宽度*/
 #define CALC_NUMBER_LINE_WIDTH     2
 /*显示数字宽度*/
-#define CALC_NUMBER_WIDTH             19    //9
+#define CALC_NUMBER_WIDTH             15   //9
 /*显示数字高度*/
-#define CALC_NUMBER_HEIGHT            29    //19
+#define CALC_NUMBER_HEIGHT            35    //19
 /*显示计算区域X坐标原点*/
 #define CALC_VAL_RECT_X                5 //  10
 /*显示计算区域最底行Y坐标原点*/
@@ -2608,9 +2609,14 @@ static int16 Calc_NumText(CCalcApp *pme,
                //int      nHeight = CALC_NUMBER_HEIGHT;//11;
 
                y = y + pme->m_valRect.dy - CALC_NUMBER_HEIGHT;
-               SETAEERECT( &rect, x, y, CALC_NUMBER_WIDTH, CALC_NUMBER_HEIGHT);
+               SETAEERECT( &rect, x, y, CALC_NUMBER_WIDTH, CALC_NUMBER_HEIGHT);            
+
+#ifdef FEATURE_VERSION_EC99               
+               IDISPLAY_DrawText(pme->a.m_pIDisplay, AEE_FONT_LARGE, pch, 1, rect.x, rect.y, &rect, IDF_ALIGN_RIGHT|IDF_TEXT_TRANSPARENT);
+#else
                //drawImageWithOffset( pme, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CALCAPP_DIGITS, x, y, &rect);
-               Appscommon_DrawDigitalNumber(pme->a.m_pIDisplay, (ch - '0'), CALC_NUMBER_LINE_WIDTH, &rect, nFontColor/*RGB_WHITE*/);
+               Appscommon_DrawDigitalNumber(pme->a.m_pIDisplay, (ch - '0'), CALC_NUMBER_LINE_WIDTH, &rect, nFontColor/*RGB_WHITE*/);  
+#endif
            }
            else
            {
