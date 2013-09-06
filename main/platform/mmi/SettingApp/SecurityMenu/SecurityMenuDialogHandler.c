@@ -30,6 +30,8 @@
 #include "AEETelephone.h"
 #include "AEETelDef.h"
 #define FILE_CONTAPP_CFG                (AEE_ADDRBOOK_DIR"\\contapp.cfg")
+#define CAL_DATABASE_PATH           	"fs:/mod/scheduleapp"     //数据库的路径名
+#define FILE_SCHEDULE_CFG           	"schedulecfg"  //日程表的配置文件?
 
 //#include "Scheduleapp.h"
 /*==============================================================================
@@ -6723,6 +6725,33 @@ static void SecurityMenu_RestoryFactorySet(CSecurityMenu *pMe)
 		 ISHELL_CreateInstance( pMe->m_pShell,AEECLSID_FILEMGR,(void **)&m_pFileMgr);
 		 IFILEMGR_Remove(m_pFileMgr, FILE_CONTAPP_CFG);
 
+		 if(IFILEMGR_EnumInit( m_pFileMgr, CAL_DATABASE_PATH, FALSE)  == SUCCESS)
+   	     {
+   	        FileInfo info = {0};
+   	        //int i=0;
+   	        
+   	        while(IFILEMGR_EnumNext( m_pFileMgr, &info))
+   	        {
+   	            if(STRENDS( ".db", info.szName))
+   	            {
+   	                if( IFILEMGR_Remove( m_pFileMgr, info.szName) == SUCCESS)
+   	                {
+   	                }
+   	                else
+   	                {
+   	                }
+   	            }
+   	        }
+   	     }
+   	     else
+   	     {
+   	        MSG_FATAL(";deleteAllEventsFromDB, enumInit failed",0,0,0);
+   	     }
+		 if(IFILEMGR_EnumInit( m_pFileMgr, FILE_SCHEDULE_CFG, FALSE)  == SUCCESS)
+   	     {
+		 	IFILEMGR_Remove(m_pFileMgr, FILE_SCHEDULE_CFG);
+		 }
+		
 		 if (m_pFileMgr != NULL)
     	 {
         	(void) IFILEMGR_Release(m_pFileMgr);

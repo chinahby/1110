@@ -882,6 +882,7 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
     {
         case EVT_DIALOG_INIT:
         {
+			IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_CLEARSCREEN_ONREDRAW|DLG_NOT_UPDATE_ONREDRAW|DLG_NOT_REDRAW_AFTER_START);
             if (NULL == pStatic)
             {
                 AEERect rect = {0};
@@ -3684,10 +3685,11 @@ static void CoreApp_ImageNotify(void *po, IImage *pIImage, AEEImageInfo *pii, in
     	 #ifdef FEATURE_VERSION_K212
     	 if(OEMKeyguard_IsEnabled())
     	 {
+    	 	//AEE_CancelTimer(CoreApp_MessageTimerCB,pMe);
     	 	Appscommon_Draw_Keyguard_Time(pMe->m_pDisplay);
 			CoreApp_UpdateBottomBar(pMe);
 			IDISPLAY_UpdateEx(pMe->m_pDisplay,TRUE);
-			(void) AEE_SetSysTimer(3000, CoreApp_MessageTimerCB, pMe);
+			//(void) AEE_SetSysTimer(3000, CoreApp_MessageTimerCB, pMe);
     	 }
 		 else
 		 #endif
@@ -7298,10 +7300,10 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 								IDLE_TIME_X5,
 								IDLE_TIME_Y
 								);
-			DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
+			DrawTextWithProfile(pMe->a.m_pIShell,
 		                              pMe->m_pDisplay,
 		                              RGB_WHITE_NO_TRANS,
-		                              32, 
+		                              AEE_FONT_NORMAL, 
 		                              wszDatemat, -1,
 		                              0, 0, &rect, 
 		                              IDF_ALIGN_MIDDLE

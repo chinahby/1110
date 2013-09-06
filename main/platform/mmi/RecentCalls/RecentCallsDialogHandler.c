@@ -1030,29 +1030,7 @@ static boolean RecentCalls_ListRecordEvent(CRecentCalls *pMe,
 
         case EVT_DIALOG_START:
             RecentCalls_GetRecord(pMe);//获取相应的记录
-            //add by yangdecai
-			{
-				AECHAR WTitle[40] = {0};
-				AECHAR WTemp[20]  = {0};
-				AECHAR WTempleft[10] = {L"<< "};
-				AECHAR WTemprigt[10] = {L" >>"};
-				(void)ISHELL_LoadResString(pMe->m_pShell,
-                        AEE_RECENTCALLSRES_LANGFILE,                                
-                        IDS_MISSED_CALLS,
-                        WTemp,
-                        sizeof(WTemp));
-                MSG_FATAL("RecentCalls_ListRecordEvent..................",0,0,0);
-                if (pMe->m_eStartMethod == STARTMETHOD_NORMAL)
-                {
-                	WSTRCAT(WTitle,WTempleft);
-                }
-                WSTRCAT(WTitle,WTemp);
-                if (pMe->m_eStartMethod == STARTMETHOD_NORMAL)
-                {
-                	WSTRCAT(WTitle,WTemprigt);
-                }
-				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
-            }
+           
             if(pMe->m_eStartMethod == STARTMETHOD_NORMAL)
             {
                 IMENUCTL_SetOemProperties(pMe->pMenu, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY | OEMMP_USE_MENU_STYLE |OEMMP_ARROW_TITLE);
@@ -1216,80 +1194,8 @@ static boolean RecentCalls_ListRecordEvent(CRecentCalls *pMe,
                 IMENUCTL_SetSel(pMe->pMenu,pMe->record_selected);
             }    
 
-            switch(pMe->m_callsCategory) //分列的类写TITLE
-            {
-                case AEECALLHISTORY_CALL_TYPE_MISSED://CALLHISTORY_MISSED_CATEGORY:
-                    pMe->selectState = IDS_MISSED_CALLS;
-                    IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL/*ANNUN_FIELD_MISSEDCALL*/,ANNUN_STATE_CALL_MISSEDCALL_OFF/*ANNUN_STATE_OFF*/);
-                    {
-                        boolean missed_call_icon;
-                        missed_call_icon = FALSE;
-                        (void) ICONFIG_SetItem(pMe->m_pConfig,
-                                           CFGI_MISSED_CALL_ICON,
-                                           &missed_call_icon,
-                                           sizeof(missed_call_icon));  
-                    }
-
-#ifdef FEATURE_LED_CONTROL                
-                    IBACKLIGHT_SigLedDisable(pMe->m_pBacklight);
-#endif
-                    break;
-                    
-                case AEECALLHISTORY_CALL_TYPE_FROM://CALLHISTORY_INCOMING_CATEGORY:
-                    pMe->selectState = IDS_RECEIVED_CALLS;
-                    break;
-                 
-                case AEECALLHISTORY_CALL_TYPE_TO://CALLHISTORY_OUTGOING_CATEGORY:
-                    pMe->selectState = IDS_OUTGOING_CALLS;
-                    break;
-                    
-                case AEECALLHISTORY_CALL_TYPE_ALL://CALLHISTORY_ALL_CATEGORY:
-                	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL/*ANNUN_FIELD_MISSEDCALL*/,ANNUN_STATE_CALL_MISSEDCALL_OFF/*ANNUN_STATE_OFF*/);
-					{
-                        boolean missed_call_icon;
-                        missed_call_icon = FALSE;
-                        (void) ICONFIG_SetItem(pMe->m_pConfig,
-                                           CFGI_MISSED_CALL_ICON,
-                                           &missed_call_icon,
-                                           sizeof(missed_call_icon));  
-                    }
-					#if defined(FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A)
-					pMe->selectState = IDS_RECENT_CALLS_C337;
-					#else
-                    pMe->selectState = IDS_RECENT_CALLS;
-					#endif
-                    break;
-            }
-			#if 0
-            (void)IMENUCTL_SetTitle(pMe->pMenu,
-                                  AEE_RECENTCALLSRES_LANGFILE,
-                                  pMe->selectState,
-                                  NULL);
-			#else
-		    {
-		  		AECHAR WTitle[40] = {0};
-				AECHAR WTemp[20]  = {0};
-				AECHAR WTempleft[10] = {L"<< "};
-				AECHAR WTemprigt[10] = {L" >>"};
-				(void)ISHELL_LoadResString(pMe->m_pShell,
-                        AEE_RECENTCALLSRES_LANGFILE,                                
-                        pMe->selectState,
-                        WTemp,
-                        sizeof(WTemp));
-                MSG_FATAL("RecentCalls_ListRecordEvent..................",0,0,0);
-                if (pMe->m_eStartMethod == STARTMETHOD_NORMAL)
-                {
-                	WSTRCAT(WTitle,WTempleft);
-                }
-                WSTRCAT(WTitle,WTemp);
-                if (pMe->m_eStartMethod == STARTMETHOD_NORMAL)
-                {
-                	WSTRCAT(WTitle,WTemprigt);
-                }
-                
-				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
-		    }
-			#endif
+           
+			
 
             pMe->key_enable = TRUE;
             (void)ISHELL_PostEvent(pMe->m_pShell, 
@@ -1508,6 +1414,103 @@ static boolean RecentCalls_ListRecordEvent(CRecentCalls *pMe,
           
         case EVT_USER_REDRAW:
             {
+				 //add by yangdecai
+				{
+					AECHAR WTitle[40] = {0};
+					AECHAR WTemp[20]  = {0};
+					AECHAR WTempleft[10] = {L"<< "};
+					AECHAR WTemprigt[10] = {L" >>"};
+					(void)ISHELL_LoadResString(pMe->m_pShell,
+	                        AEE_RECENTCALLSRES_LANGFILE,                                
+	                        IDS_MISSED_CALLS,
+	                        WTemp,
+	                        sizeof(WTemp));
+	                MSG_FATAL("RecentCalls_ListRecordEvent..................",0,0,0);
+	                if (pMe->m_eStartMethod == STARTMETHOD_NORMAL)
+	                {
+	                	WSTRCAT(WTitle,WTempleft);
+	                }
+	                WSTRCAT(WTitle,WTemp);
+	                if (pMe->m_eStartMethod == STARTMETHOD_NORMAL)
+	                {
+	                	WSTRCAT(WTitle,WTemprigt);
+	                }
+					IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
+	            }
+				  switch(pMe->m_callsCategory) //分列的类写TITLE
+            {
+                case AEECALLHISTORY_CALL_TYPE_MISSED://CALLHISTORY_MISSED_CATEGORY:
+                    pMe->selectState = IDS_MISSED_CALLS;
+                    IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL/*ANNUN_FIELD_MISSEDCALL*/,ANNUN_STATE_CALL_MISSEDCALL_OFF/*ANNUN_STATE_OFF*/);
+                    {
+                        boolean missed_call_icon;
+                        missed_call_icon = FALSE;
+                        (void) ICONFIG_SetItem(pMe->m_pConfig,
+                                           CFGI_MISSED_CALL_ICON,
+                                           &missed_call_icon,
+                                           sizeof(missed_call_icon));  
+                    }
+
+#ifdef FEATURE_LED_CONTROL                
+                    IBACKLIGHT_SigLedDisable(pMe->m_pBacklight);
+#endif
+                    break;
+                    
+                case AEECALLHISTORY_CALL_TYPE_FROM://CALLHISTORY_INCOMING_CATEGORY:
+                    pMe->selectState = IDS_RECEIVED_CALLS;
+                    break;
+                 
+                case AEECALLHISTORY_CALL_TYPE_TO://CALLHISTORY_OUTGOING_CATEGORY:
+                    pMe->selectState = IDS_OUTGOING_CALLS;
+                    break;
+                    
+                case AEECALLHISTORY_CALL_TYPE_ALL://CALLHISTORY_ALL_CATEGORY:
+                	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL/*ANNUN_FIELD_MISSEDCALL*/,ANNUN_STATE_CALL_MISSEDCALL_OFF/*ANNUN_STATE_OFF*/);
+					{
+                        boolean missed_call_icon;
+                        missed_call_icon = FALSE;
+                        (void) ICONFIG_SetItem(pMe->m_pConfig,
+                                           CFGI_MISSED_CALL_ICON,
+                                           &missed_call_icon,
+                                           sizeof(missed_call_icon));  
+                    }
+					#if defined(FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A)
+					pMe->selectState = IDS_RECENT_CALLS_C337;
+					#else
+                    pMe->selectState = IDS_RECENT_CALLS;
+					#endif
+                    break;
+            }
+				 #if 0
+            (void)IMENUCTL_SetTitle(pMe->pMenu,
+                                  AEE_RECENTCALLSRES_LANGFILE,
+                                  pMe->selectState,
+                                  NULL);
+			#else
+		    {
+		  		AECHAR WTitle[40] = {0};
+				AECHAR WTemp[20]  = {0};
+				AECHAR WTempleft[10] = {L"<< "};
+				AECHAR WTemprigt[10] = {L" >>"};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_RECENTCALLSRES_LANGFILE,                                
+                        pMe->selectState,
+                        WTemp,
+                        sizeof(WTemp));
+                MSG_FATAL("RecentCalls_ListRecordEvent..................",0,0,0);
+                if (pMe->m_eStartMethod == STARTMETHOD_NORMAL)
+                {
+                	WSTRCAT(WTitle,WTempleft);
+                }
+                WSTRCAT(WTitle,WTemp);
+                if (pMe->m_eStartMethod == STARTMETHOD_NORMAL)
+                {
+                	WSTRCAT(WTitle,WTemprigt);
+                }
+                
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
+		    }
+			#endif
                 //此处修改用来解决测试反馈的界面难看问题
 #ifdef FEATURE_THAILAND 
                 if ((pMe->m_eStartMethod ==  STARTMETHOD_MAINMENU)&&(0 == pMe->record_count))

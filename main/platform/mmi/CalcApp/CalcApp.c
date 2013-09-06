@@ -1901,7 +1901,7 @@ static void Calc_DrawScreen(CCalcApp *pme)
 }
 #endif
 #endif
-	Calc_SetVal(pme, 0.0, FALSE);
+	//Calc_SetVal(pme, 0.0, FALSE);
 	Calc_ShowAnnun(pme);
 	DrawBottomBar(pme->a.m_pIDisplay,&BarParam);    //wlh 20090417 add
 	IDISPLAY_Update(pme->a.m_pIDisplay);

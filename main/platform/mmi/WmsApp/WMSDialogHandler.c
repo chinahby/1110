@@ -13381,14 +13381,13 @@ static boolean IDD_MSGOPTS_Handler(void *pUser,
                     //MENU_ADDITEM(pMenu, IDS_EDIT);
                     #ifndef FEATURE_VERSION_K212
                     MENU_ADDITEM(pMenu, IDS_ADDNEW);
-					#endif
-                    
                     if (pMe->m_wCurTemplate>=MSG_CMD_BASE)
                     {
                         // 用户常用语才允许删除
                         MENU_ADDITEM(pMenu, IDS_EDIT);
                         MENU_ADDITEM(pMenu, IDS_DELETE);
                     }
+					#endif
                 }
             }
             else

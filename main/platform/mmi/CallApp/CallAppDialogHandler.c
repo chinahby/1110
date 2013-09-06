@@ -1059,9 +1059,12 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
             MSG_FATAL("EVT_COMMANDpMe->m_bShowPopMenu==%d",pMe->m_bShowPopMenu,0,0);
             if (TRUE == pMe->m_bShowPopMenu) //(pMe->m_b_incall )
             {
-                pMe->m_bShowPopMenu = FALSE;
-                IMENUCTL_SetActive ( pMe->m_pMenu, FALSE );
-                (void)ISHELL_SendEvent( pMe->m_pShell, AEECLSID_DIALER, EVT_USER_REDRAW,0, 0 );
+            	if((wParam!=IDS_SAVE_NEW) &&(wParam!=IDS_SAVE_TO_CONT)&&(wParam!=IDS_SEND_MESSAGE)&&(wParam!=IDS_CALL))
+            	{
+                	pMe->m_bShowPopMenu = FALSE;
+                	IMENUCTL_SetActive ( pMe->m_pMenu, FALSE );
+                	(void)ISHELL_SendEvent( pMe->m_pShell, AEECLSID_DIALER, EVT_USER_REDRAW,0, 0 );
+            	}
                 switch (wParam)
                 {
                     case IDS_HANDFREE:
