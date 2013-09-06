@@ -1203,7 +1203,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
-#ifdef FEATURE_VERSION_EC99
+#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
                 case AVK_FM:
                 {
 					IImage* image	= NULL;
@@ -1905,7 +1905,7 @@ case AVK_CAMERA:
 					    MSG_FATAL("AVK_ENDCALL..........42................",0,0,0);
 						if( image != NULL)
 						{
-#ifdef FEATURE_VERSION_EC99
+#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
     						IIMAGE_Draw(image, 0, 107);
                             IIMAGE_Draw(image, 22, 107);
                             IIMAGE_Draw(image, 32, 107);       
@@ -2715,7 +2715,7 @@ static boolean  QuickTest_FMTestHandler(CQuickTest *pMe,
             }
             else
             {
-#ifdef FEATURE_VERSION_EC99  
+#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)  
                 if (HS_HEADSET_ON())   
             	{
                 	fm_mute(TRUE, FALSE);
@@ -3487,7 +3487,7 @@ static boolean  QuickTest_CallHandler(CQuickTest *pMe,
             AECHAR   string[MAX_STRING_LENGTH+1];
             IDISPLAY_ClearScreen(pMe->m_pDisplay);
 #ifndef WIN32
-#ifndef FEATURE_VERSION_EC99 
+#if defined(FEATURE_VERSION_EC99)  || defined (FEATURE_VERSION_K212_20D) 
             if(HS_HEADSET_ON())                
             {
                 STRTOWSTR("echo loop",string,sizeof(string));
@@ -4330,7 +4330,7 @@ static void quicktest_fm_power_up( void* pme)
     {
         WarT_Fm_PowerUp();
     }
-#ifdef FEATURE_VERSION_EC99  
+#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)  
     WarT_Fm_Mute(FALSE);
     WarT_Fm_Set_Volume(7);
 #else
@@ -4345,7 +4345,7 @@ static void quicktest_fm_power_up( void* pme)
     {
         fm_radio_power_up();
     }
-#ifdef FEATURE_VERSION_EC99   
+#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)   
     if (HS_HEADSET_ON())  
     {
         fm_set_volume(7,FALSE);
