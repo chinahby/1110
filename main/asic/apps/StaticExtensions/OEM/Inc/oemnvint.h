@@ -414,11 +414,7 @@ typedef PACKED struct _Key_pad_Cfg
 
 #define OEMNV_DEFAULT_BANNER  PROJECTNAME
 
-#ifdef FEATURE_VERSION_EC99
-#define  OEMNV_WALLPAPER    "fs:/image/wallpaper/wallpaper5.png"
-#else
 #define  OEMNV_WALLPAPER    "fs:/image/wallpaper/wallpaper1.png"
-#endif
 
 #ifdef FEATURE_SCREEN_SAVE
 #define  OEMNV_SCREENSAVE_TYPE "\\image\\wallpaper\\w1.bmp"
