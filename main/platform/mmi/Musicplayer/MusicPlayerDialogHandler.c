@@ -6874,7 +6874,11 @@ static void CMusicPlayer_PlayPlaylistCB(CMusicPlayer *pMe)
            (void)ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_MUSICPLAYER, EVT_POPMSGDIALOG, IDS_MSG_ERR_FORMAT, 0); 
         }
         pMe->m_MusicPlayerCfg.lastPlayPlaylist[0]='\0';
+#ifdef FEATURE_VERSION_EC99
+        (void)STRCPY(pMe->m_PlayingMusiclist[0].pMusicName,"1fs:/hsmm/music/Aishiniwo.mp3");
+#else
         (void)STRCPY(pMe->m_PlayingMusiclist[0].pMusicName,"1fs:/hsmm/music/Away.mp3");
+#endif
         pMe->m_MusicPlayerCfg.lastPlayMusicID=0;
         pMe->m_nPlayinglistMusicNum = 1;
         (void) ISHELL_SetTimer(pMe->m_pShell,300,(PFNNOTIFY)CMusicPlayer_InitMusic,pMe);

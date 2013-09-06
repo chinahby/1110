@@ -1566,7 +1566,11 @@ void MP3_InitMusicCB(CMusicPlayer *pMe)
             //初试化默认音乐的操作
             CMusicPlayer_ReleaseMedia(pMe);
             pMe->m_MusicPlayerCfg.lastPlayPlaylist[0]='\0';
+#ifdef FEATURE_VERSION_EC99
+            (void)STRCPY(pMe->m_PlayingMusiclist[0].pMusicName,"1fs:/hsmm/music/Aishiniwo.mp3");
+#else
             (void)STRCPY(pMe->m_PlayingMusiclist[0].pMusicName,"1fs:/hsmm/music/Away.mp3");
+#endif
             pMe->m_MusicPlayerCfg.lastPlayMusicID=0;
             pMe->m_nPlayinglistMusicNum = 1;
         (void)CMusicPlayer_InitMusic(pMe);

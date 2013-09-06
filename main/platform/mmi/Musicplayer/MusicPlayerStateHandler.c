@@ -782,7 +782,11 @@ static NextFSMAction Handler_STATE_PLAYLIST_OPTS(CMusicPlayer *pMe)
                 pMe->m_bPlaying = FALSE;
                 pMe->m_bPaused = FALSE;
                 pMe->m_MusicPlayerCfg.lastPlayPlaylist[0]='\0';
+#ifdef FEATURE_VERSION_EC99
+                (void)STRCPY(pMe->m_PlayingMusiclist[0].pMusicName,"1fs:/hsmm/music/Aishiniwo.mp3");
+#else
                 (void)STRCPY(pMe->m_PlayingMusiclist[0].pMusicName,"1fs:/hsmm/music/Away.mp3");
+#endif
                 pMe->m_MusicPlayerCfg.lastPlayMusicID=0;
                 pMe->m_nPlayinglistMusicNum = 1;
                 (void) ISHELL_SetTimer(pMe->m_pShell,300,(PFNNOTIFY)CMusicPlayer_InitMusic,pMe);
@@ -1113,7 +1117,11 @@ static NextFSMAction Handler_STATE_VIEW_OPTS(CMusicPlayer *pMe)
                     if(0 == pMe->m_nPlayinglistMusicNum)
                     {
                         pMe->m_MusicPlayerCfg.lastPlayPlaylist[0]='\0';
+#ifdef FEATURE_VERSION_EC99
+                        (void)STRCPY(pMe->m_PlayingMusiclist[0].pMusicName,"1fs:/hsmm/music/Aishiniwo.mp3");
+#else
                         (void)STRCPY(pMe->m_PlayingMusiclist[0].pMusicName,"1fs:/hsmm/music/Away.mp3");
+#endif
                         pMe->m_MusicPlayerCfg.lastPlayMusicID=0;
                         pMe->m_nPlayinglistMusicNum = 1;
                     }
@@ -1235,7 +1243,11 @@ static NextFSMAction Handler_STATE_VIEW_DELETEALL(CMusicPlayer *pMe)
           {
             CMusicPlayer_ReleaseMedia(pMe);
             pMe->m_MusicPlayerCfg.lastPlayPlaylist[0]='\0';
+#ifdef FEATURE_VERSION_EC99
+            (void)STRCPY(pMe->m_PlayingMusiclist[0].pMusicName,"1fs:/hsmm/music/Aishiniwo.mp3");
+#else
             (void)STRCPY(pMe->m_PlayingMusiclist[0].pMusicName,"1fs:/hsmm/music/Away.mp3");
+#endif
             pMe->m_MusicPlayerCfg.lastPlayMusicID=0;
             pMe->m_nPlayinglistMusicNum = 1;
             (void) ISHELL_SetTimer(pMe->m_pShell,300,(PFNNOTIFY)CMusicPlayer_InitMusic,pMe);
