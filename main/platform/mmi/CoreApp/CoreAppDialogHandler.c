@@ -4525,7 +4525,9 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					return CoreApp_LaunchApplet(pMe, AEECLSID_BLUETOOTH_APP);
 #endif
 #ifndef FEATURE_VERSION_C180
-	
+#ifdef  FEATURE_VERSION_K212_20D
+                case AVK_PAUSE:
+#endif			
                 case AVK_MUSIC:
                 	if(pMe->m_iskeypadtime)
 					{
