@@ -104,7 +104,10 @@ typedef enum {
                     STATIC/LOCAL FUNCTION PROTOTYPES
 
 ===========================================================================*/
-
+#ifdef FEATURE_VERSION_K212
+static void OEMPriv_ResetUpdateTimeTimer(void);
+static void OEMPriv_UpdateTimeCB(void *pUser);
+#endif
 static boolean OEMPriv_IsPhoneIdle(void);
 static void    OEMPriv_ResumeBREW(void);
 static void    OEMPriv_MessageTimerCB(void *pUser);
@@ -381,6 +384,7 @@ SEE ALSO:
 =============================================================================*/
 static void OEMPriv_ResetMessageTimer(void)
 {
+	AEE_CancelTimer(OEMPriv_MessageTimerCB,NULL);
    (void) AEE_SetSysTimer(TIMEOUT_MS_KEYGUARD_TIMER,
                           OEMPriv_MessageTimerCB,
                           NULL);
@@ -544,66 +548,16 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
 #endif	
 		//Add End	
         case EVT_KEY:			
+			#ifdef FEATURE_VERSION_K212
+			{
+				IBacklight  *Backlight;
+        		(void)ISHELL_CreateInstance(sgpShell,AEECLSID_BACKLIGHT,(void **)&Backlight);
+  				IBACKLIGHT_Enable(Backlight);
+        		IBACKLIGHT_Release(Backlight);
+			}
+			#endif
             switch ((AVKType)wParam)
             {           
-#if 0            
-                case AVK_1:
-                    if (UNLOCKSTATE_RESET == sUnlockState)
-                    {
-                        sUnlockState = UNLOCKSTATE_1PRESSED;
-                        // Correct key, make a beep...
-                        if (spAlert)
-                        {
-                            IALERT_KeyBeep(spAlert, (AVKType) wParam, TRUE);
-                        }
-                    }
-                    else
-                    {
-                        sUnlockState = UNLOCKSTATE_RESET;
-                    }
-                    break;
-
-                case AVK_2:
-                    if (UNLOCKSTATE_1PRESSED == sUnlockState)
-                    {
-                        sUnlockState = UNLOCKSTATE_1AND2PRESSED;
-                        // Correct key, make a beep...
-                        if (spAlert)
-                        {
-                            IALERT_KeyBeep(spAlert, (AVKType) wParam, TRUE);
-                        }
-                    }
-                    else
-                    {
-                        sUnlockState = UNLOCKSTATE_RESET;
-                    }
-                    break;
-
-                case AVK_3:
-                    if (UNLOCKSTATE_1AND2PRESSED == sUnlockState)
-                    {
-                        sUnlockState = UNLOCKSTATE_RESET;
-
-                        // Correct key, make a beep...
-                        if (spAlert)
-                        {
-                            IALERT_KeyBeep(spAlert, (AVKType) wParam, TRUE);
-                        }
-
-                        // Unlock the keyguard
-                        OEMKeyguard_SetState(FALSE);
-
-                        OEMPriv_ResumeBREW();
-                        return TRUE;
-
-                    }
-                    else
-                    {
-                        sUnlockState = UNLOCKSTATE_RESET;
-                    }
-                    break;
-#endif
-
 
 //Add By zzg 2010_11_23
 #ifndef FEATURE_UNLOCK_KEY_SPACE	
@@ -664,6 +618,17 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
 						return TRUE;
 					}
 					#endif
+					#if 0//def FEATURE_VERSION_K212
+					{
+						IBacklight  *Backlight;
+	        			(void)ISHELL_CreateInstance(sgpShell,AEECLSID_BACKLIGHT,(void **)&Backlight);
+						if(!IBACKLIGHT_IsEnabled(Backlight))
+						{
+							OEMPriv_DrawKeyguardTime();
+						}
+						IBACKLIGHT_Release(Backlight);
+					}
+					#endif
 					MSG_FATAL("***zzg OEMKeyguard AVK_STAR sUnlockState=%d***", sUnlockState, 0, 0);
 					
                     if (UNLOCKSTATE_1PRESSED == sUnlockState)
@@ -710,7 +675,8 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
 							else
 							{
 								MSG_FATAL("OEMPriv_DrawKeyguardTime....2",0,0,0);
-								OEMPriv_DrawKeyguardTime();
+								//OEMPriv_DrawKeyguardTime();
+								OEMPriv_DrawKeyguardMessage(FALSE);
 							}
 							#else
                             OEMPriv_DrawKeyguardTime();
@@ -766,7 +732,8 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
 						{
 						
 							MSG_FATAL("OEMPriv_DrawKeyguardTime....4",0,0,0);
-							OEMPriv_DrawKeyguardTime();
+							//OEMPriv_DrawKeyguardTime();
+							OEMPriv_DrawKeyguardMessage(FALSE);
 						}
 						#else
                         OEMPriv_DrawKeyguardTime();
@@ -775,27 +742,16 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
                     }
                     else
                     {
-#if 0//defined(FEATURE_VERSION_C316)	 
-						   if(wParam == AVK_END)
-					      {
-							    boolean bData = FALSE;
-							    OEM_GetConfig(CFGI_ONEKEY_LOCK_KEYPAD,&bData, sizeof(bData));
-								if(OEMKeyguard_IsEnabled() && bData)
-							    {
-    			                    sUnlockState = UNLOCKSTATE_RESET;
-    			                    bDrawMessage = !bDrawMessage;							    
-							        return ;
-								}
-					      }
-#endif		                   
 						#if defined (FEATURE_VERSION_K212) 
 						if(m_bBlackEnagled)
 						{
 							m_bBlackEnagled  = FALSE;
+							OEMPriv_DrawKeyguardTime();
 						}
 						else
 						{
 							OEMPriv_DrawKeyguardMessage(FALSE);
+							//OEMPriv_DrawKeyguardTime();
 						}
 						#else
                         OEMPriv_DrawKeyguardMessage(FALSE);
@@ -1111,13 +1067,19 @@ static void    OEMPriv_DrawTouchBackground(uint16 x,uint16 y)
 static void    OEMPriv_DrawKeyguardTime(void)
 {
     IDisplay      *pd = NULL;
-    
+#ifdef FEATURE_VERSION_K212
+     BottomBar_e_Type    eBBarType = BTBAR_NONE;
+#endif
     (void) ISHELL_CreateInstance(sgpShell,AEECLSID_DISPLAY,(void**) &pd);
     if(pd)
     {
         Appscommon_Draw_Keyguard_Time(pd);
         IDISPLAY_Release(pd);
     }
+#ifdef FEATURE_VERSION_K212
+	eBBarType = BTBAR_UNLOCK_L;
+	DrawBottomBar_Ex(sgpShell, pd,eBBarType);
+#endif
 }
 /*=============================================================================
 FUNCTION: OEMPriv_DrawMessageCB
@@ -1460,10 +1422,12 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
             }
         }
         MSG_FATAL("sbMessageActive 2===========%d",sbMessageActive,0,0);
+		#ifdef FEATURE_VERSION_K212
+		OEMPriv_ResetMessageTimer();
+		OEMPriv_ResetUpdateTimeTimer();
+		#endif
         if (sbMessageActive)
         {
-            OEMPriv_ResetMessageTimer();
-            
             // Pass the event to the keyguard event handler
             bRet = OEMPriv_KeyguardEventHandler(evt, wParam, dwParam);
         }
@@ -1502,7 +1466,27 @@ boolean OEMKeyguard_IsEnabled(void)
 {
    return sbKeyguardEnabled;
 }
+#ifdef FEATURE_VERSION_K212
+static void OEMPriv_UpdateTimeCB(void *pUser)
+{
+    IBacklight  *Backlight;
+    (void)ISHELL_CreateInstance(sgpShell,AEECLSID_BACKLIGHT,(void **)&Backlight);
+		IBACKLIGHT_Disable(Backlight);
+    IBACKLIGHT_Release(Backlight);
+}
 
+static void OEMPriv_ResetUpdateTimeTimer(void)
+{
+	IBacklight  *Backlight;
+	AEE_CancelTimer(OEMPriv_UpdateTimeCB,NULL);
+    (void)ISHELL_CreateInstance(sgpShell,AEECLSID_BACKLIGHT,(void **)&Backlight);
+	//IBACKLIGHT_Enable(Backlight);
+    IBACKLIGHT_Release(Backlight);
+   (void) AEE_SetSysTimer(TIMEOUT_MS_KEYGUARD_TIMER,
+                          OEMPriv_UpdateTimeCB,
+                          NULL);
+}
+#endif
 /*=============================================================================
 FUNCTION: OEMKeyguard_SetState
 
@@ -1541,10 +1525,7 @@ void OEMKeyguard_SetState(boolean bEnabled)
     if (sbKeyguardEnabled)
     {
     	#if defined (FEATURE_VERSION_K212)
-		IBacklight  *Backlight;
-        (void)ISHELL_CreateInstance(sgpShell,AEECLSID_BACKLIGHT,(void **)&Backlight);
-  		//IBACKLIGHT_Disable(Backlight);
-        IBACKLIGHT_Release(Backlight);
+		OEMPriv_ResetUpdateTimeTimer();
    		#endif
         bDrawMessage = TRUE;
         
@@ -1565,6 +1546,9 @@ void OEMKeyguard_SetState(boolean bEnabled)
     }
     else
     {
+    	#ifdef FEATURE_VERSION_K212
+    	AEE_CancelTimer(OEMPriv_UpdateTimeCB,NULL);
+		#endif
         OEMKeyguard_Set_Annunciator_Enable(TRUE);
 #ifdef FEATURE_SET_AUTOKEYGUARD
         OEMPriv_ResetAutoguardTimer();
