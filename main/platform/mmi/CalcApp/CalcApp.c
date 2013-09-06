@@ -1848,7 +1848,7 @@ static void Calc_DrawScreen(CCalcApp *pme)
 		IANNUNCIATOR_SetFieldTextEx(pme->m_pIAnn,WTitle,FALSE);
     }
     
-#ifdef FEATURE_VERSION_EC99
+#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
 {
     AEERect rt;
     rt.x = 0;rt.y=0;rt.dx=SCREEN_WIDTH,rt.dy=SCREEN_HEIGHT;
@@ -1859,7 +1859,7 @@ static void Calc_DrawScreen(CCalcApp *pme)
 	Calc_SetupValRect(pme);
 #if defined(FEATURE_DISP_220X176)
 	drawImage( pme, AEE_APPSCOMMONRES_IMAGESFILE, IDB_CALCAPP_GROUND, 0, 0);
-#ifdef FEATURE_VERSION_EC99
+#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
     drawImage( pme, AEE_APPSCOMMONRES_IMAGESFILE, IDB_CALCAPP, 0, 72);  //52
 	drawImage( pme, AEE_APPSCOMMONRES_IMAGESFILE, IDB_CALCAPP_LINE, 0, 68); //48
 #else
