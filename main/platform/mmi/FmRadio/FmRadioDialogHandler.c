@@ -452,6 +452,16 @@ static boolean  HandleFmRadioMainDialogEvent(CFmRadio *pMe,
                 }
 			}
 #endif
+#ifdef FEATURE_VERSION_K212_20D
+			if (eCode ==EVT_KEY && wParam == AVK_FFWD)
+			{
+				wParam = AVK_LEFT;//AVK_UP;
+			}
+			else if (eCode ==EVT_KEY && wParam == AVK_RWD)
+			{
+				wParam = AVK_RIGHT;//AVK_DOWN;
+			}	
+#endif
     switch (eCode)
     {
 		
@@ -1033,6 +1043,9 @@ static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier)
 #if defined( AEE_SIMULATOR)
         case AVK_SELECT:
 #else
+#ifdef FEATURE_VERSION_K212_20D
+        case AVK_PAUSE:
+#endif
 	#if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
         case AVK_INFO:
     #endif
