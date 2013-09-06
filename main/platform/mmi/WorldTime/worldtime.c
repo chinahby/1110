@@ -972,7 +972,7 @@ static void CWorldTime_DrawCityTime(CWorldTime *pme,boolean left)
 	#endif
 
 
-#ifdef FEATURE_VERSION_EC99
+#if defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_20D)
     SETAEERECT(&rc, 
                 2, 
                 pme->m_yMenu + SPACE_BETWEEN_MENU + pme->m_dyMenu,
