@@ -184,12 +184,23 @@ static void disp_ic_sleep(boolean bin)
 {
     if(bin)
     {
-        LCD_WRITE_CMD(0x10); //Sleep in
+       // LCD_WRITE_CMD(0x10); //Sleep in
+        LCD_WRITE_CMD(0x00ff); LCD_WRITE_DATA16(0x0000); 
+	    LCD_WRITE_CMD(0x0007); LCD_WRITE_DATA16(0x0000); 
+		LCD_DELAY(50);
+	    LCD_WRITE_CMD(0x0010); LCD_WRITE_DATA16(0x0003); 
+		LCD_DELAY(200);
     }
     else
     {
-        LCD_WRITE_CMD(0x11); //Exit Sleep
-        LCD_DELAY(120);
+        //LCD_WRITE_CMD(0x11); //Exit Sleep
+        //LCD_DELAY(120);
+        LCD_DELAY(200);
+		LCD_WRITE_CMD(0x00ff); LCD_WRITE_DATA16(0x0000); 
+	    LCD_WRITE_CMD(0x0010); LCD_WRITE_DATA16(0x0000); 
+		LCD_DELAY(50);
+	    LCD_WRITE_CMD(0x0007); LCD_WRITE_DATA16(0x1017); 
+		LCD_DELAY(200);
     }
 }
 
