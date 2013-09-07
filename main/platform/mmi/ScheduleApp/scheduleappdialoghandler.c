@@ -6410,7 +6410,7 @@ static boolean  dialog_handler_of_state_showalert( CScheduleApp* pme,
 						rc.dy = MENUITEM_HEIGHT*3;
 						ScheduleApp_DrawText_Ex(pme,AEE_FONT_NORMAL,theLast->location,&rc,IDF_TEXT_TRANSPARENT);
 						#else
-						rc.y = rc.y + MENUITEM_HEIGHT
+						rc.y = rc.y + MENUITEM_HEIGHT;
 						IDISPLAY_DrawText(pme->m_pDisplay, AEE_FONT_NORMAL,
 						                                   theLast->location,
 						                                   -1,
