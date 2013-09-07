@@ -4081,7 +4081,7 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
             }
             pMe->m_bShowPopMenu = FALSE;
 
-            IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL/*ANNUN_FIELD_CALLFORWARD*/, ANNUN_STATE_CALL_INUSE_ON/*ANNUN_STATE_ON*/);
+            
             pMe->m_bRefreshVol = REFRESHVOL_OFF; //don't display Vol
             // put db item DB_IN_IDLE true
             //CallApp_Set_Db_In_Idle(TRUE);
@@ -4108,7 +4108,7 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
         		return TRUE;
         	}
             Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
-
+			IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL/*ANNUN_FIELD_CALLFORWARD*/, ANNUN_STATE_CALL_INUSE_ON/*ANNUN_STATE_ON*/);
             //for CDG test, CNAP with Forwarding
             
             CallApp_Draw_Connect_Softkey(pMe);
@@ -5947,9 +5947,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
 	            CallApp_IncomingCall_Dlg_Init(pMe);
 #ifndef FEATURE_VERSION_C337	
 //#ifndef FEATURE_VERSION_K212
-				IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
-				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,StrBuf,FALSE);
-				IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, FALSE);
+
 //#endif                
 #endif
 			    if(pMe->m_pBacklight)
@@ -5989,7 +5987,10 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
             boolean b_cdg = FALSE;
             
             Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
-
+			IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
+			//IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,StrBuf,FALSE);
+			IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, FALSE);
+			IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL/*ANNUN_FIELD_CALLFORWARD*/, ANNUN_STATE_CALL_INUSE_ON/*ANNUN_STATE_ON*/);
             //  BANNER
             SETAEERECT(&rect,
                         CALL_TEXT_X,
@@ -9414,7 +9415,7 @@ void CallApp_ChangeCallVolume(CCallApp  *pMe,
 		#elif defined(FEATURE_VERSION_K212)
 	    if(pMe->m_bHandFree)
 	    {
-	    	ISOUND_SetVolume(pMe->m_pSound,GET_ISOUND_VOL_LEVEL((pMe->m_CallVolume)*pMe->m_CallVolume)/5);
+	    	ISOUND_SetVolume(pMe->m_pSound,GET_ISOUND_VOL_LEVEL(pMe->m_CallVolume));
 	    }
 		else
 		{

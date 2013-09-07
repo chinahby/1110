@@ -2970,7 +2970,7 @@ static void CallApp_ProcessCallStateVoiceOrig(CCallApp               *pMe,
 #endif
     if(pMe->m_pIAnn)
     {
-        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL/*ANNUN_FIELD_CALLFORWARD*/, ANNUN_STATE_CALL_INUSE_ON/*ANNUN_STATE_ON*/);
+        //IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL/*ANNUN_FIELD_CALLFORWARD*/, ANNUN_STATE_CALL_INUSE_ON/*ANNUN_STATE_ON*/);
     }
     ISHELL_CancelTimer(pMe->m_pShell,
                                                         CallApp_HandleEndCallBlinkTimer, pMe);
@@ -3499,7 +3499,7 @@ static void CallApp_ProcessCallStateVoiceCallerID(CCallApp          *pMe,
     {
         if(pMe->m_pIAnn)
         {
-            IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL/*ANNUN_FIELD_CALLFORWARD*/, ANNUN_STATE_CALL_INUSE_ON/*ANNUN_STATE_ON*/);
+            //IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL/*ANNUN_FIELD_CALLFORWARD*/, ANNUN_STATE_CALL_INUSE_ON/*ANNUN_STATE_ON*/);
         }
         
         if(pMe->m_b_incoming)
@@ -3729,7 +3729,7 @@ static void CallApp_ProcessCallStateVoiceConnect(CCallApp                 *pMe,
     *newState = STATE_CONVERSATION;
     // 如果不置零，会造成在正常通话中也出现pMe->m_Is3Way==TRUE的情况。
     pMe->m_Is3Way = FALSE;
-    IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL/*ANNUN_FIELD_CALLFORWARD*/, ANNUN_STATE_CALL_INUSE_ON/*ANNUN_STATE_ON*/);
+    //IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL/*ANNUN_FIELD_CALLFORWARD*/, ANNUN_STATE_CALL_INUSE_ON/*ANNUN_STATE_ON*/);
     pMe->m_bIsPrivacy |= call_table->call_info.is_privacy;
 	
 	//Add By zzg 2012_10_30
