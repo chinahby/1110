@@ -79,6 +79,8 @@ extern uint8  g_mmsDataInfoMax;
 #elif defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM) || defined(FEATURE_VERSION_C500BE)
 // 动画起点 Y 坐标
 #define SENDINGSMS_ANI_Y    10
+#elif defined(FEATURE_VERSION_EC99)
+#define SENDINGSMS_ANI_Y    1
 #else
 // 动画起点 Y 坐标
 #define SENDINGSMS_ANI_Y    20

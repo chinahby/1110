@@ -1005,7 +1005,7 @@ static NextFSMAction Handler_STATE_MAINLIST(CContApp *pMe)
 	                                          (AECHAR *)pFld->pBuffer,
 	                                          sizeof((AECHAR *)pFld->pBuffer));
 
-					
+#ifndef FEATURE_VERSION_EC99
 					//After save the Speed dial number, call it .    
 				    if ( SUCCESS != ISHELL_CreateInstance( pMe->m_pShell,
 				                                           AEECLSID_DIALER,
@@ -1021,12 +1021,19 @@ static NextFSMAction Handler_STATE_MAINLIST(CContApp *pMe)
 				    {
 				        ICallApp_Release(pMe->m_pCallApp);
 				        pMe->m_pCallApp = NULL;
-				    }			
+				    }	
+#endif                    
 
 					pMe->m_bSpeedDialParam = FALSE;
 					pMe->m_nSpeedDialNumber = 0;
 
+#ifdef FEATURE_VERSION_EC99
+                    pMe->m_wMsgResID = IDS_SUCCESS;
+                    pMe->m_eMsgRetState = STATE_EXIT;
+                    MOVE_TO_STATE(STATE_MSG);
+#else
 					MOVE_TO_STATE(STATE_EXIT);
+#endif
 					return NFSMACTION_CONTINUE;
 	            }
 	            else

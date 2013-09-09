@@ -4934,10 +4934,25 @@ boolean CMusicPlayer_InitMusic(CMusicPlayer *pMe)
       pf = STRRCHR(pMe->m_PlayingMusiclist[pMe->m_MusicPlayerCfg.lastPlayMusicID].pMusicName, '/');
    }
    pf++;
+  
    (void)UTF8TOWSTR((byte *)pf,
                      STRLEN(pf),
                      pMe->m_pMp3FileToPlay,
                      MP3NAME_MAX_LEN*sizeof(AECHAR));
+   
+/*
+#ifdef FEATURE_VERSION_EC99   
+    if (STRCMP(pf, "Aishiniwo.mp3") == 0)
+    {   
+        (void)ISHELL_LoadResString(pMe->m_pShell,
+                                MUSICPLAYER_RES_FILE_LANG,                                
+                                IDS_MUSIC_AISHINIWO,
+                                pMe->m_pMp3FileToPlay,
+                                PLAYLISTNAME_MAX_LEN * sizeof(AECHAR));
+    }    
+#endif
+*/
+   
 #ifdef FEATURE_SUPPORT_BT_APP
     pf = STRRCHR(pMe->m_PlayingMusiclist[pMe->m_MusicPlayerCfg.lastPlayMusicID].pMusicName, '.');
     pf++;
