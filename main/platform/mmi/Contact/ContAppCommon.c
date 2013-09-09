@@ -901,7 +901,7 @@ AEETextInputMode CContApp_GetFldInputMode(AEEAddrFieldID wFldID)
 	         		return AEE_TM_LETTERS;
 	         	}
 	         	}
-				#elif defined(FEATURE_VERSION_K202)
+				#elif defined(FEATURE_VERSION_K202) || defined(FEATURE_VERSION_K212_20D)
 				{
 					return AEE_TM_PINYIN;
 				}
