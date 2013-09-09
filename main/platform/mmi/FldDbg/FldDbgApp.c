@@ -5142,6 +5142,9 @@ static void CFieldDebug_DrawVersionScreen(CFieldDebug * pme)
 #ifndef HWVERSION
     #define HWVERSION "V1.0"
 #endif
+#ifdef FEATURE_VERSION_K212
+	#define HWVERSION "K212_MB_V0.1"
+#endif
     n = WSTRLEN(szBuf);// update current Info. len
 
     (void) ISHELL_LoadResString(pme->a.m_pIShell,
@@ -5285,13 +5288,19 @@ static void CFieldDebug_DrawVersionScreen(CFieldDebug * pme)
 
    n = WSTRLEN(szBuf);
    szBuf[n++] = (AECHAR) '\n'; 
-
+	#ifdef CUST_EDITION
+	(void) ISHELL_LoadResString(pme->a.m_pIShell,
+                               FLDDBG_RES_FILE,
+                               IDS_RFCAL_STATUS,
+                               (szBuf + n),
+                               sizeof(szBuf));
+	#else
    (void) ISHELL_LoadResString(pme->a.m_pIShell,
                                FLDDBG_RES_FILE,
                                IDS_RFCAL_DATE,
                                (szBuf + n),
                                sizeof(szBuf));
-
+   #endif
    n = WSTRLEN(szBuf);
    szBuf[n++] = (AECHAR) '\n';
    date = 0;
@@ -5300,6 +5309,31 @@ static void CFieldDebug_DrawVersionScreen(CFieldDebug * pme)
                           &date,
                           sizeof(date));
    #if 1
+   #ifdef CUST_EDITION
+   {
+   		nv_item_type nvi;    
+		uint16 resid = IDS_REGULATE_NONE;
+		n = WSTRLEN(szBuf);
+		if (NV_DONE_S == OEMNV_Get(NV_TIME_SHOW_I, &nvi))
+        {                                
+            if (nvi.time_show == TRUE)
+            {
+                resid  = IDS_REGULATE_SUCCEED;
+            }
+            else
+            {
+                resid  = IDS_REGULATE_FAIL;
+            }
+        }   
+		(void) ISHELL_LoadResString(pme->a.m_pIShell,
+                               FLDDBG_RES_FILE,
+                               resid,
+                               (szBuf + n),
+                               sizeof(szBuf));
+		n = WSTRLEN(szBuf);
+   		szBuf[n++] = (AECHAR) '\n';
+   }
+   #else
    STRTOWSTR("%08x", fmt_str, sizeof(fmt_str));
    WSPRINTF((szBuf + n),
             sizeof(szBuf),
@@ -5324,6 +5358,7 @@ static void CFieldDebug_DrawVersionScreen(CFieldDebug * pme)
    
    n = WSTRLEN(szBuf);
    szBuf[n++] = (AECHAR) '\n';
+   #endif
    #else
    dwSeconds = GETTIMESECONDS();
    MSG_FATAL("date===========%d,dwSeconds=%d",date,dwSeconds,0);

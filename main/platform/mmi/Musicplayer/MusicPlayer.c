@@ -430,6 +430,7 @@ static int CMusicPlayer_InitAppData(CMusicPlayer *pMe)
 #ifdef FEATURE_SUPPORT_BT_AUDIO
 	pMe->m_bBtHSConnected = FALSE;	  //Add By zzg 2011_10_27
 #endif
+	pMe->m_Next = TRUE;
 
   if(SUCCESS != ISHELL_GetPrefs(pMe->m_pShell,
                                AEECLSID_APP_MUSICPLAYER,

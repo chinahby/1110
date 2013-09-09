@@ -145,6 +145,7 @@ static void CMusicPlayer_Set_CTL(CMusicPlayer *pMe);
 static void MP3_RefreshscheduleBar(CMusicPlayer *pMe);
 
 static void MP3_DrawImageWithOffset( CMusicPlayer *pMe);
+static void MP3_Next_Space( CMusicPlayer *pMe);
 
 /*设置是否需要滚动*/
 static void MP3_ResetScroll(CMusicPlayer *pMe);
@@ -3029,6 +3030,7 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
         ISHELL_CancelTimer(pMe->m_pShell,(PFNNOTIFY)MP3_MusicNameAutoScroll,pMe);
         pMe->m_rtype = TYPE_PLAYER;//wlh 20090415 mod 为了区别播放区域，加音量，减音量的刷新，加了个参数
         ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_DrawImageWithOffset,pMe);
+		ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_Next_Space,pMe);
 
 		#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_K202_LM129C)
 		#else
@@ -3283,18 +3285,23 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
         }
 //xuhui
 #else		
-        MP3_DrawImage( pMe,IDI_PREVIOUS_PRESS, PREVIOUSPRESS_X, PREVIOUSPRESS_Y);
-        IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
-		pMe->m_rtype = TYPE_PREVIOUS;//wlh 20090415 mod 为了区别播放区域，加音量，减音量的刷新，加了个参数
+		if(pMe->m_Next)
+		{
+			pMe->m_Next =FALSE;
+	        MP3_DrawImage( pMe,IDI_PREVIOUS_PRESS, PREVIOUSPRESS_X, PREVIOUSPRESS_Y);
+	        IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
+			ISHELL_SetTimer(pMe->m_pShell,250,(PFNNOTIFY)MP3_Next_Space,pMe);
+			pMe->m_rtype = TYPE_PREVIOUS;//wlh 20090415 mod 为了区别播放区域，加音量，减音量的刷新，加了个参数
 #if defined( FEATURE_DISP_220X176) 
-		ISHELL_SetTimer(pMe->m_pShell,1500,(PFNNOTIFY)MP3_DrawImageWithOffset, pMe);
+			ISHELL_SetTimer(pMe->m_pShell,1500,(PFNNOTIFY)MP3_DrawImageWithOffset, pMe);
 #elif defined(FEATURE_DISP_128X160) || defined(FEATURE_DISP_160X128)
-        ISHELL_SetTimer(pMe->m_pShell,1500,(PFNNOTIFY)MP3_DrawImageWithOffset, pMe);
+	        ISHELL_SetTimer(pMe->m_pShell,1500,(PFNNOTIFY)MP3_DrawImageWithOffset, pMe);
 #else			
-        ISHELL_SetTimer(pMe->m_pShell,50,(PFNNOTIFY)MP3_DrawImageWithOffset, pMe);
+	        ISHELL_SetTimer(pMe->m_pShell,50,(PFNNOTIFY)MP3_DrawImageWithOffset, pMe);
 #endif		
-        CMusicPlayer_PlayNext(pMe,FALSE );//播放上一首
+	        CMusicPlayer_PlayNext(pMe,FALSE );//播放上一首
 #endif        
+		}
         return TRUE;
         
     //case AVK_GSENSOR_BACKWARD:   
@@ -3320,20 +3327,25 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
             }
         }
 #else
-        MP3_DrawImage( pMe,IDI_NEXT_PRESS,NEXTPRESS_X, NEXTPRESS_Y);
-        IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
-		pMe->m_rtype = TYPE_NEXT;//wlh 20090415 mod 为了区别播放区域，加音量，减音量的刷新，加了个参数
+		if(pMe->m_Next)
+		{
+			pMe->m_Next =FALSE;
+		    MP3_DrawImage( pMe,IDI_NEXT_PRESS,NEXTPRESS_X, NEXTPRESS_Y);
+		    IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
+			ISHELL_SetTimer(pMe->m_pShell,250,(PFNNOTIFY)MP3_Next_Space,pMe);
+			pMe->m_rtype = TYPE_NEXT;//wlh 20090415 mod 为了区别播放区域，加音量，减音量的刷新，加了个参数
 #if defined(FEATURE_DISP_220X176)		
-        ISHELL_SetTimer(pMe->m_pShell,1500,(PFNNOTIFY)MP3_DrawImageWithOffset, pMe);
+		    ISHELL_SetTimer(pMe->m_pShell,1500,(PFNNOTIFY)MP3_DrawImageWithOffset, pMe);
 #elif defined(FEATURE_DISP_128X160)	|| defined(FEATURE_DISP_160X128)
-		ISHELL_SetTimer(pMe->m_pShell,1500,(PFNNOTIFY)MP3_DrawImageWithOffset, pMe);
+			ISHELL_SetTimer(pMe->m_pShell,1500,(PFNNOTIFY)MP3_DrawImageWithOffset, pMe);
 #else
-		ISHELL_SetTimer(pMe->m_pShell,50,(PFNNOTIFY)MP3_DrawImageWithOffset, pMe);
+			ISHELL_SetTimer(pMe->m_pShell,50,(PFNNOTIFY)MP3_DrawImageWithOffset, pMe);
 #endif		
-        pMe->m_bUserPressNext = TRUE;
-        CMusicPlayer_PlayNext(pMe,TRUE);//播放下一首
-        pMe->m_bUserPressNext = FALSE;
+		    pMe->m_bUserPressNext = TRUE;
+		    CMusicPlayer_PlayNext(pMe,TRUE);//播放下一首
+		    pMe->m_bUserPressNext = FALSE;
 #endif		
+		}
         return TRUE;
 
 #ifdef FEATURE_VERSION_C337
@@ -5888,6 +5900,10 @@ static void MP3_DrawImageWithOffset( CMusicPlayer *pMe)//wlh 20090415 mod 为了区
         MP3_DrawImage(pMe, IDI_PAUSE, PLAY_X, PLAY_Y);
     }
     IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+}
+static void MP3_Next_Space( CMusicPlayer *pMe)
+{
+	pMe->m_Next = TRUE;
 }
 
 /*===========================================================================

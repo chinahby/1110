@@ -316,6 +316,18 @@
 	<String Id="1001" Name="IDS_COMPILE_TIME">
 		<Text>Compile Date:</Text>
 	</String>
+	<String Id="1002" Name="IDS_REGULATE_SUCCEED">
+		<Text>Calibration Pass!</Text>
+	</String>
+	<String Id="1003" Name="IDS_REGULATE_FAIL">
+		<Text>Calibration Fail!</Text>
+	</String>
+	<String Id="1004" Name="IDS_RFCAL_STATUS">
+		<Text>RF CAL Status:</Text>
+	</String>
+	<String Id="1005" Name="IDS_REGULATE_NONE">
+		<Text>No qcn!</Text>
+	</String>
 	<String Id="1011" Name="IDS_STRING_NET_LOCK" Encoding="Unicode">
 		<Text>UIM lock</Text>
 	</String>

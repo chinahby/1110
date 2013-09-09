@@ -3682,7 +3682,7 @@ static void CoreApp_ImageNotify(void *po, IImage *pIImage, AEEImageInfo *pii, in
     //MSG_ERROR("CoreApp_ImageNotify, nErr:%d",nErr, 0, 0);
     if(SUCCESS == nErr) 
     {
-    	 #ifdef FEATURE_VERSION_K212
+    	 #if 0//def FEATURE_VERSION_K212
     	 if(OEMKeyguard_IsEnabled())
     	 {
     	 	//AEE_CancelTimer(CoreApp_MessageTimerCB,pMe);
@@ -3694,7 +3694,7 @@ static void CoreApp_ImageNotify(void *po, IImage *pIImage, AEEImageInfo *pii, in
 		 else
 		 #endif
 		 {
-		 	#ifdef FEATURE_VERSION_K212
+		 	#if 0//def FEATURE_VERSION_K212
 		 	(void) AEE_CancelTimer(CoreApp_MessageTimerCB,pMe);
 			#endif
 #ifdef FEATRUE_SET_ANN_FULL_SCREEN

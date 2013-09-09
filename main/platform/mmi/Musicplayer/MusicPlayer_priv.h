@@ -1224,6 +1224,7 @@ typedef struct _CMusicPlayer
 	uint32 keystart_time;	
     uint32 keyend_time;	
 #endif
+	boolean      m_Next;
 } CMusicPlayer;
 
 /*==============================================================================
