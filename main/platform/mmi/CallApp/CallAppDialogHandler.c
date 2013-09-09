@@ -13062,6 +13062,7 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
         //long key "1" to call voice mail
 #ifndef FEATURE_VERSION_C337  
 #ifndef FEATURE_VERSION_EC99
+#ifndef FEATURE_VERSION_K212_20D
         else if ((AVKType)wParam == AVK_1)
         {
             if((pMe->m_DialString[0] == '1')&&(pMe->m_DialString[1] == '\0'))
@@ -13070,9 +13071,10 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
             }
         }
 #endif        
+#endif
 #endif              
         
-#ifdef FEATURE_VERSION_EC99
+#if defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)
         else if ( ((AVKType)wParam >= AVK_1) &&((AVKType)wParam <= AVK_9))
 #else
         else if ( ((AVKType)wParam >= AVK_2) &&((AVKType)wParam <= AVK_9))
