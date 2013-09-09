@@ -204,6 +204,25 @@ CONSTFILE_FILES+=\
 		recentcall.mp3|fs:/hsmm/mainmenu/recentcall.mp3 \
 		suafer.mp3|fs:/hsmm/mainmenu/suafer.mp3	
 else
+ifeq ($(USES_RESDIR),K212_20D)	
+CONSTFILE_FILES+=\
+	Icon_calllog.png|fs:/image/mainmenu/Icon_calllog.png \
+	Icon_multimedia.png|fs:/image/mainmenu/Icon_multimedia.png \
+	Icon_phonebook.png|fs:/image/mainmenu/Icon_phonebook.png \
+	Icon_settings.png|fs:/image/mainmenu/Icon_settings.png \
+	Icon_tianyi.png|fs:/image/mainmenu/Icon_tianyi.png \
+	Icon_tools.png|fs:/image/mainmenu/Icon_tools.png \
+	Icon_wms.png|fs:/image/mainmenu/Icon_wms.png  
+	
+	CONSTFILE_FILES+=\
+		mutimed.mp3|fs:/hsmm/mainmenu/mutimed.mp3 \
+		contont.mp3|fs:/hsmm/mainmenu/contont.mp3 \
+		manager.mp3|fs:/hsmm/mainmenu/manager.mp3 \
+		mesage.mp3|fs:/hsmm/mainmenu/mesage.mp3 \
+		settings.mp3|fs:/hsmm/mainmenu/settings.mp3 \
+		recentcall.mp3|fs:/hsmm/mainmenu/recentcall.mp3 \
+		suafer.mp3|fs:/hsmm/mainmenu/suafer.mp3	
+else		
 CONSTFILE_FILES+=\
 	qsc1100_01.png|fs:/image/mainmenu/qsc1100_01.png \
 	qsc1100_02.png|fs:/image/mainmenu/qsc1100_02.png \
@@ -230,6 +249,7 @@ CONSTFILE_FILES+=\
 	qsc1100_11_focus.png|fs:/image/mainmenu/qsc1100_11_focus.png \
 	qsc1100_12_focus.png|fs:/image/mainmenu/qsc1100_12_focus.png
 endif	
+endif
 endif
 endif
 endif	
