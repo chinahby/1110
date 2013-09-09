@@ -227,8 +227,10 @@ when       who     what, where, why
 #ifdef FEATURE_VERSION_W021_CT100
 // ¡Â…˘“Ù¡ø     
 #define OEMNV_RINGER_VOL_INIT {5,0,0,4,4}  
-#elif defined (FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)
+#elif defined (FEATURE_VERSION_EC99) 
 #define OEMNV_RINGER_VOL_INIT {4,0,0,4,4} 
+#elif defined(FEATURE_VERSION_K212_20D)
+#define OEMNV_RINGER_VOL_INIT {5,0,0,4,4} 
 #else
 #define OEMNV_RINGER_VOL_INIT {3,0,0,4,4}  
 #endif
