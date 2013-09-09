@@ -233,6 +233,7 @@ typedef struct {
 };
 
 //Add By zzg 2013_09_06
+#ifdef FEATURE_VERSION_EC99
 static OEMState_data rssi_3g_image_data[]=
 {
 #ifndef FEATURE_USES_LOWMEM
@@ -245,6 +246,7 @@ static OEMState_data rssi_3g_image_data[]=
   {ANNUN_STATE_RSSI_3, IDB_3G_RSSI3, NULL},
   {ANNUN_STATE_RSSI_4, IDB_3G_RSSI4, NULL},
 };
+#endif
 
 //Add End
 
@@ -428,8 +430,10 @@ OEMAnnun_content rssi_content =
 #endif
 
 //Add By zzg 2013_09_06
+#ifdef FEATURE_VERSION_EC99
 OEMAnnun_content rssi_3g_content =
      {ANNUN_TYPE_IMAGE, 7, ANNUN_STATE_RSSI_NO_SERV, (void *)rssi_3g_image_data};
+#endif
 //Add End
 
 
@@ -1508,8 +1512,14 @@ static int SwitchAnnunState(IAnnunciator * pMe, uint32 nAnnunID, uint32 *nState)
         }
         
         /*deal with signal changes*/
+#ifdef FEATURE_VERSION_EC99
         if(((nAnnunID == ANNUN_FIELD_RSSI) || (nAnnunID == ANNUN_FIELD_3G_RSSI)) &&
             (*nState != ANNUN_STATE_AIR_MODE_ON))
+#else
+        if((nAnnunID == ANNUN_FIELD_RSSI)  &&
+            (*nState != ANNUN_STATE_AIR_MODE_ON))
+#endif
+        
         {/*if current state airplane mode on, merge it*/
             if(tempState & ANNUN_STATE_AIR_MODE_ON)
             {
