@@ -1053,7 +1053,7 @@ static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier)
         {            
             if( pMe->opMode == FM_RADIO_OPMODE_PLAY)
             {
-                #if (defined( FEATURE_VERSION_1110W516) || defined( FEATURE_VERSION_W317A) || defined( FEATURE_VERSION_C337) || defined( FEATURE_VERSION_C316)||defined( FEATURE_VERSION_M74)|| defined( FEATURE_VERSION_C310)|| defined( FEATURE_VERSION_K202_LM129C)||defined(FEATURE_FM_PAUSE))
+                #if (defined( FEATURE_VERSION_1110W516) || defined( FEATURE_VERSION_W317A) || defined( FEATURE_VERSION_C337) || defined( FEATURE_VERSION_C316)||defined( FEATURE_VERSION_M74)|| defined( FEATURE_VERSION_C310)|| defined( FEATURE_VERSION_K202_LM129C) || defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_FM_PAUSE))
                  tuneVolumeStop(pMe);
                  repaint( pMe, TRUE);
                  return TRUE;
