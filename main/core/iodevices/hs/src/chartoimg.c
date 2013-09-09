@@ -275,25 +275,43 @@ static void UpdateAnnunciators(AnnunciatorData *pAnnunData)
     case 5:
       /* Value 5 is actually RSSI with 4 bars - go figure :) */
       IANNUNCIATOR_SetField (pAnn, ANNUN_FIELD_RSSI, ANNUN_STATE_RSSI_4);      
+#ifdef FEATURE_VERSION_EC99
+      IANNUNCIATOR_SetField (pAnn, ANNUN_FIELD_3G_RSSI, ANNUN_STATE_RSSI_4); 
+#endif
       break;
     case 4:
       /* Value 4 is RSSI with 3 bars */
-      IANNUNCIATOR_SetField (pAnn, ANNUN_FIELD_RSSI, ANNUN_STATE_RSSI_3);      
+      IANNUNCIATOR_SetField (pAnn, ANNUN_FIELD_RSSI, ANNUN_STATE_RSSI_3);    
+#ifdef FEATURE_VERSION_EC99
+      IANNUNCIATOR_SetField (pAnn, ANNUN_FIELD_3G_RSSI, ANNUN_STATE_RSSI_3); 
+#endif      
       break;
     case 3:
       /* Value 3 is RSSI with 2 bars */
-      IANNUNCIATOR_SetField (pAnn, ANNUN_FIELD_RSSI, ANNUN_STATE_RSSI_2);     
+      IANNUNCIATOR_SetField (pAnn, ANNUN_FIELD_RSSI, ANNUN_STATE_RSSI_2); 
+#ifdef FEATURE_VERSION_EC99
+      IANNUNCIATOR_SetField (pAnn, ANNUN_FIELD_3G_RSSI, ANNUN_STATE_RSSI_2); 
+#endif      
       break;
     case 2:
        /* Value 2 means RSSI with 1 bar */
       IANNUNCIATOR_SetField (pAnn, ANNUN_FIELD_RSSI, ANNUN_STATE_RSSI_1);
+#ifdef FEATURE_VERSION_EC99
+      IANNUNCIATOR_SetField (pAnn, ANNUN_FIELD_3G_RSSI, ANNUN_STATE_RSSI_1); 
+#endif       
       break;
     case 1:
       /* Value 1 means just RSSI icon with no bars */
       IANNUNCIATOR_SetField (pAnn, ANNUN_FIELD_RSSI, ANNUN_STATE_RSSI_0);    
+#ifdef FEATURE_VERSION_EC99
+      IANNUNCIATOR_SetField (pAnn, ANNUN_FIELD_3G_RSSI, ANNUN_STATE_RSSI_0); 
+#endif      
       break;
     case 0:
       IANNUNCIATOR_SetField (pAnn, ANNUN_FIELD_RSSI, ANNUN_STATE_OFF);
+#ifdef FEATURE_VERSION_EC99
+      IANNUNCIATOR_SetField (pAnn, ANNUN_FIELD_3G_RSSI, ANNUN_STATE_OFF); 
+#endif      
       break;   
     default:
       MSG_ERROR( "Illegal RSSI Value (%d)", pAnnunData->rssi, 0, 0 );

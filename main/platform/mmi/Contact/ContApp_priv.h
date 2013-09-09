@@ -180,6 +180,8 @@ extern sSelectFieldListNode* pCurSelectFieldNode;
 #define MAX_PHONEBOOK_CAPACITY          (1000)
 #elif defined (FEATURE_VERSION_C337)
 #define MAX_PHONEBOOK_CAPACITY          (1000)
+#elif defined (FEATURE_VERSION_EC99)
+#define MAX_PHONEBOOK_CAPACITY          (300)
 #else
 #define MAX_PHONEBOOK_CAPACITY          (500)
 #endif

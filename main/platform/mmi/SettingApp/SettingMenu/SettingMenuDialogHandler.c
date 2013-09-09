@@ -9130,6 +9130,9 @@ static boolean  HandlePlaneModeDialogEvent(CSettingMenu *pMe,
                        if(SYS_OPRT_MODE_LPM != phInfo.oprt_mode)
                        {
                            IANNUNCIATOR_SetField(pMe->m_pAnn, ANNUN_FIELD_RSSI, ANNUN_STATE_AIR_MODE_ON );
+#ifdef FEATURE_VERSION_EC99
+                           IANNUNCIATOR_SetField(pMe->m_pAnn, ANNUN_FIELD_3G_RSSI, ANNUN_STATE_AIR_MODE_ON );
+#endif                           
                            cm_ph_cmd_oprt_mode(NULL, NULL, CM_CLIENT_ID_ANONYMOUS, SYS_OPRT_MODE_LPM);
                        }
                        newCfg = OEMNV_DATEFORM_DMY ;
@@ -9139,6 +9142,9 @@ static boolean  HandlePlaneModeDialogEvent(CSettingMenu *pMe,
                        if(SYS_OPRT_MODE_ONLINE != phInfo.oprt_mode)
                        {
                            IANNUNCIATOR_SetField(pMe->m_pAnn, ANNUN_FIELD_RSSI, ANNUN_STATE_AIR_MODE_OFF );
+#ifdef FEATURE_VERSION_EC99
+                           IANNUNCIATOR_SetField(pMe->m_pAnn, ANNUN_FIELD_3G_RSSI, ANNUN_STATE_AIR_MODE_OFF );
+#endif                            
                            cm_ph_cmd_oprt_mode(NULL, NULL, CM_CLIENT_ID_ANONYMOUS, SYS_OPRT_MODE_ONLINE);
                        }
                        newCfg = OEMNV_DATEFORM_MDY ;

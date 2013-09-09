@@ -196,6 +196,9 @@
 	<String Id="1065" Name="IDS_MUSIC_PLAYER">
 		<Text>音乐播放器</Text>
 	</String>
+	<STRING Id="1066" Name="IDS_MUSIC_AISHINIWO">
+		<Text>爱是你我.mp3</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<Dialog Id="6001" Name="IDD_WINDOWS" Focus="0">

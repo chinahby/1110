@@ -7747,6 +7747,7 @@ static void CScheduleApp_DrawLunarStr(CScheduleApp *pme)
     if (WSTRLEN(pme->m_LunarString) > 4)
     {
         IANNUNCIATOR_SetFieldTextEx(pme->m_pIAnn, pme->m_LunarString,FALSE);
+        IANNUNCIATOR_Redraw(pme->m_pIAnn);    
     }
     else
     {        
@@ -7759,6 +7760,8 @@ static void CScheduleApp_DrawLunarStr(CScheduleApp *pme)
 						            sizeof(WTitle));
 		
         IANNUNCIATOR_SetFieldTextEx(pme->m_pIAnn, WTitle,FALSE);
+
+        IANNUNCIATOR_Redraw(pme->m_pIAnn);
     }    
 #else    
     SETAEERECT(&rc, 0, pme->m_rc.dy - (HEIGHT_PROMPT_BAR+LUNAR_RECT_HEIGHT), pme->m_rc.dx, LUNAR_RECT_HEIGHT);

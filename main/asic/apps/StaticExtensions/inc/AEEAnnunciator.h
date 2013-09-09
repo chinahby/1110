@@ -75,6 +75,7 @@ typedef struct IAnnunciator IAnnunciator;
 #define ANNUN_FIELD_MMS                       8   /*MMS Full/MMS Unread/MMS Unreceive/Push*/
 #define ANNUN_FIELD_RINGTONE              9   /*Ringtone*/
 #define ANNUN_FIELD_BATT                     10   /*Battery*/
+#define ANNUN_FIELD_3G_RSSI                    11    //Add By zzg 2013_09_06
 #define ANNUN_FIELD_TCARD						2		//Add By zzg 2012_10_30
 #endif
 

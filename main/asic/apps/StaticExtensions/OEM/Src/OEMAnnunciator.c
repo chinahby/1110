@@ -232,6 +232,22 @@ typedef struct {
 */
 };
 
+//Add By zzg 2013_09_06
+static OEMState_data rssi_3g_image_data[]=
+{
+#ifndef FEATURE_USES_LOWMEM
+  {ANNUN_STATE_AIR_MODE_ON, IDB_AIR_MODE, NULL},
+#endif
+  {ANNUN_STATE_RSSI_NO_SERV, IDB_3G_NO_SERVICE, NULL},
+  {ANNUN_STATE_RSSI_0, IDB_3G_RSSI0, NULL},
+  {ANNUN_STATE_RSSI_1, IDB_3G_RSSI1, NULL},
+  {ANNUN_STATE_RSSI_2, IDB_3G_RSSI2, NULL},
+  {ANNUN_STATE_RSSI_3, IDB_3G_RSSI3, NULL},
+  {ANNUN_STATE_RSSI_4, IDB_3G_RSSI4, NULL},
+};
+
+//Add End
+
 //Add By zzg 2012_10_29
 static OEMState_data tcard_image_data[]=
 {
@@ -410,6 +426,12 @@ OEMAnnun_content rssi_content =
 #else
     {ANNUN_TYPE_IMAGE, 6, ANNUN_STATE_RSSI_NO_SERV, (void *)rssi_image_data};
 #endif
+
+//Add By zzg 2013_09_06
+OEMAnnun_content rssi_3g_content =
+     {ANNUN_TYPE_IMAGE, 7, ANNUN_STATE_RSSI_NO_SERV, (void *)rssi_3g_image_data};
+//Add End
+
 
 //Add By zzg 2012_10_29
 /*ANNUN_TCARD_WAP*/
@@ -659,7 +681,11 @@ static OEMAnnun_data Annunciators[] =
     {ANNUN_FIELD_BATT,             ANNUN_ICON_POSITION_END, ROW1_Y,  LG_IMG_WIDTH, IMG_HEIGHT,  &batt_content}
 #else
 
-  {ANNUN_FIELD_RSSI,                ANNUN_ICON_POSITION_1,     ROW1_Y,  LG_IMG_WIDTH, IMG_HEIGHT,  &rssi_content}, 		
+#ifdef FEATURE_VERSION_EC99
+  {ANNUN_FIELD_RSSI,                ANNUN_ICON_POSITION_1,     ROW1_Y+(IMG_HEIGHT/2),  LG_IMG_WIDTH, (IMG_HEIGHT/2),  &rssi_content},  
+#else
+  {ANNUN_FIELD_RSSI,                ANNUN_ICON_POSITION_1,     ROW1_Y,  LG_IMG_WIDTH, IMG_HEIGHT,  &rssi_content},
+#endif
   {ANNUN_FIELD_WAP,                ANNUN_ICON_POSITION_2,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &wap_content},     
  // {ANNUN_FIELD_QQ,               ANNUN_ICON_POSITION_3,      ROW1_Y,  IMG_WIDTH,       IMG_HEIGHT,  &qq_content},  
 
@@ -696,6 +722,9 @@ static OEMAnnun_data Annunciators[] =
 #endif
   {ANNUN_FIELD_RINGTONE,            ANNUN_ICON_POSITION_10,    ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &ringtone_content},
   {ANNUN_FIELD_BATT,                ANNUN_ICON_POSITION_END, ROW1_Y,  LG_IMG_WIDTH, IMG_HEIGHT,  &batt_content}
+#ifdef FEATURE_VERSION_EC99 
+  , {ANNUN_FIELD_3G_RSSI,                ANNUN_ICON_POSITION_1,     ROW1_Y,  LG_IMG_WIDTH, (IMG_HEIGHT/2),  &rssi_3g_content} 
+#endif
 
 #endif
 #else
@@ -1002,6 +1031,7 @@ static int DrawImageField (IAnnunciator *pMe, uint32 nAnnunID, uint32 nState)
 	int j;
     boolean bUpdate = TRUE;
     uint32 nFirstState = GetAnnunFirstState(nState);
+    
     if ((pMe == NULL))
         return EFAILED;	
 
@@ -1044,6 +1074,8 @@ static int DrawImageField (IAnnunciator *pMe, uint32 nAnnunID, uint32 nState)
   
     nWidth = (int)Annunciators[nAnnunID].width;
     nHeight = (int)Annunciators[nAnnunID].height;
+
+    //MSG_FATAL("***zzg DrawImageField nWidth=%x, nHeight=%x***", nWidth, nHeight, 0);
  
     if (!pMe->m_coreObj->cached) 
     {
@@ -1476,13 +1508,13 @@ static int SwitchAnnunState(IAnnunciator * pMe, uint32 nAnnunID, uint32 *nState)
         }
         
         /*deal with signal changes*/
-        if((nAnnunID == ANNUN_FIELD_RSSI) &&
+        if(((nAnnunID == ANNUN_FIELD_RSSI) || (nAnnunID == ANNUN_FIELD_3G_RSSI)) &&
             (*nState != ANNUN_STATE_AIR_MODE_ON))
         {/*if current state airplane mode on, merge it*/
             if(tempState & ANNUN_STATE_AIR_MODE_ON)
             {
                 *nState |= ANNUN_STATE_AIR_MODE_ON;
-            }
+            }           
             return SUCCESS;
         }
         /*deal with mute and loudspeaker change at non-emergency mode*/
@@ -2146,7 +2178,7 @@ static int IAnnunciator_SetField(IAnnunciator * pMe, uint32 nAnnunID,
     else {
       CancelBlinkTimer (pMe, nAnnunID);
     }
-
+    
     /* Image field */
     if (DrawImageField(pMe, nAnnunID, (nState & ANNUN_STATE_BLINK_UNMASK)) !=
         SUCCESS)

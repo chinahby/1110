@@ -5706,6 +5706,11 @@ static boolean MGAppPopupMenu_OnDetail(CMediaGalleryApp* pMe,
 
          if(!pMenuCtl)
             return FALSE;
+         
+#ifdef FEATURE_VERSION_EC99
+         IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
+#endif
+
          #ifdef FEATURE_VERSION_W317A
          ISHELL_LoadResString(pMe->m_pShell,
                               MGRES_LANGFILE,
@@ -5738,16 +5743,31 @@ static boolean MGAppPopupMenu_OnDetail(CMediaGalleryApp* pMe,
          WSTRLOWER(szDetail);
          WSTRCAT(pszTitle, szDetail);
 
+         
          rc = pMe->m_rc;
-         rc.dy =  GetTitleBarHeight(pMe->m_pDisplay);
+         rc.dy =  GetTitleBarHeight(pMe->m_pDisplay); 
+
+#ifdef FEATURE_VERSION_EC99      		
+		 IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn, pszTitle, FALSE);	
+
+         IMENUCTL_SetRect(pMenuCtl, &rc);
+         IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE | MP_WRAPSCROLL);
+#else
          IMENUCTL_SetTitle(pMenuCtl, NULL, 0, pszTitle);
          IMENUCTL_SetRect(pMenuCtl, &rc);
          IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE | MP_WRAPSCROLL);
          IMENUCTL_SetActive(pMenuCtl, TRUE);
+#endif                 
 
+         
+#ifdef FEATURE_VERSION_EC99         
+         rc.dy = pMe->m_rc.dy - GetBottomBarHeight(pMe->m_pDisplay) - GetTitleBarHeight(pMe->m_pDisplay);
+#else         
          rc.y += rc.dy;
          rc.dy = pMe->m_rc.dy - rc.y - GetBottomBarHeight(pMe->m_pDisplay);
+#endif         
 
+         
          ISTATIC_SetRect(pDetailText, &rc);
          ISTATIC_SetProperties(pDetailText, ST_MIDDLETEXT|ST_GRAPHIC_BG);
          ISTATIC_SetBackGround(pDetailText, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);//modified by yangdecai
@@ -5755,6 +5775,10 @@ static boolean MGAppPopupMenu_OnDetail(CMediaGalleryApp* pMe,
          RELEASEIF(pMe->m_pDetailText);
          pMe->m_pDetailText = pDetailText;
          ISTATIC_AddRef(pMe->m_pDetailText);
+
+#ifdef FEATURE_VERSION_EC99
+         MGAppUtil_DrawSoftkey(pMe, BTBAR_BACK);
+#endif
 
          FREEIF(pszTitle);
          return TRUE;
@@ -5975,14 +5999,20 @@ static boolean MGAppPopupMenu_OnDetail(CMediaGalleryApp* pMe,
          {
             // MGAppPopupMenu_OperationDone(pMe, 0);
          }
-
          return TRUE;
       }
 
    case EVT_USER_REDRAW:
       {
+#ifdef FEATURE_VERSION_EC99
+         ISTATIC_Redraw(pDetailText);
+         IANNUNCIATOR_Redraw(pMe->m_pIAnn);
+         IDISPLAY_Update(pMe->m_pDisplay);
+#else
          MGAppUtil_DrawSoftkey(pMe, BTBAR_BACK);
          IDISPLAY_Update(pMe->m_pDisplay);
+#endif         
+         
          return TRUE;
       }
 

@@ -6280,9 +6280,12 @@ void CameraApp_AppEventNotify(CCameraApp *pMe, int16 nCmd, int16 nStatus)
             if(pMe->m_nCameraTone == OEMNV_CAMERA_SHUTTER_TONE_ENABLE)
             {
             		#ifdef FEATURE_SOUND_BO
+                    /*
 					nv_item_type	SimChoice;
             		(void)OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
 					if(SimChoice.sim_select != 1)
+                    */    
+                    if (GetMp3PlayerStatus() == MP3STATUS_NONE)
 					{
                 		CameraApp_PlayShutterSound(pMe);
 					}

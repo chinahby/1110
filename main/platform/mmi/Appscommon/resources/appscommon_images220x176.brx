@@ -505,5 +505,24 @@
 	<Object Id="7102" Name="IDB_MMS_SPACE" MimeType="image/png">
 		<File>..\images\220x176\common\Appscommon\Icon\space.png</File>
 	</Object>
+	
+	<Object Id="7103" Name="IDB_3G_NO_SERVICE">
+		<File>..\images\220x176\common\Annunciator\no_service_3g.bmp</File>
+	</Object>
+	<Object Id="7104" Name="IDB_3G_RSSI0">
+		<File>..\images\220x176\common\Annunciator\rssi0_3g.bmp</File>
+	</Object>
+	<Object Id="7105" Name="IDB_3G_RSSI1">
+		<File>..\images\220x176\common\Annunciator\rssi1_3g.bmp</File>
+	</Object>
+	<Object Id="7106" Name="IDB_3G_RSSI2">
+		<File>..\images\220x176\common\Annunciator\rssi2_3g.bmp</File>
+	</Object>
+	<Object Id="7107" Name="IDB_3G_RSSI3">
+		<File>..\images\220x176\common\Annunciator\rssi3_3g.bmp</File>
+	</Object>
+	<Object Id="7108" Name="IDB_3G_RSSI4">
+		<File>..\images\220x176\common\Annunciator\rssi4_3g.bmp</File>
+	</Object>
 </Objects>
 </BREWRes>

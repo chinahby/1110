@@ -889,10 +889,13 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                                     
         		if(m_sound_bo_dia)
         		{
+        		    /*
         			nv_item_type	SimChoice;
         			(void)OEMNV_Get(NV_SIM_SELECT_I, &SimChoice);    
                     
         			if(SimChoice.sim_select != 1)
+                    */    
+                    if (GetMp3PlayerStatus() == MP3STATUS_NONE)
         			{
         			    if ((keyvalue != 0) && (!pMe->m_b_incall))
                 		{
@@ -2076,9 +2079,12 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                                                  sizeof(boolean));                    
 					if(m_sound_bo_dia)
 					{
+					    /*
 						nv_item_type	SimChoice;
 						(void)OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);                        
 						if((SimChoice.sim_select != 1) && (!pMe->m_b_incall))
+                        */    
+                        if ((GetMp3PlayerStatus() == MP3STATUS_NONE) &&  (!pMe->m_b_incall))
 						{
                     		CALLApp_PlayShutterSound(pMe,wParam);
 						}
@@ -5442,11 +5448,14 @@ static boolean  CallApp_MsgBox_DlgHandler(CCallApp  *pMe,
                                            CallApp_HandleDialogTimer, pMe);
 					#ifdef FEATURE_SOUND_BO
                     {          
+                        /*    
     					nv_item_type	SimChoice;
     					(void)OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);   
                         MSG_FATAL("***zzg NV_SIM_SELECT_I sim_select=%x***", SimChoice.sim_select, 0, 0);
                         
     					if(SimChoice.sim_select != 1)
+                        */    
+                        if (GetMp3PlayerStatus() == MP3STATUS_NONE)
     					{
                     		CallApp_PlayTimeSound(pMe, m_TimeStarusEx);
     					}					
@@ -13659,10 +13668,13 @@ if(wp == AVK_0)
                 
 				if(m_sound_bo_dia)
 				{
+				    /*
 					nv_item_type	SimChoice;
 					(void)OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
                     
 					if ((SimChoice.sim_select != 1) && (!pMe->m_b_incall))
+                    */    
+                    if ((GetMp3PlayerStatus() == MP3STATUS_NONE) && (!pMe->m_b_incall))
 					{
 						CALLApp_PlayShutterSound(pMe,Temp_wp);
 					}

@@ -699,8 +699,6 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
 			}
 #endif
 //Add End
-
-
                 default:
                     if(!bDrawMessage)
                     {
@@ -1265,6 +1263,13 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
         }
 #endif
 //Add End
+
+#ifdef FEATURE_VERSION_EC99 //When lock  pre/next can make sense to musicplayer.
+        if ((wParam == AVK_FFWD) || (wParam == AVK_RWD))        
+        {
+            return FALSE;
+        }
+#endif
 
        
 //Add By zzg 2010_11_23

@@ -295,8 +295,7 @@ static boolean Recorder_HandleEvent( Recorder* pme, AEEEvent evt, uint16 wParam,
 			if( wParam == OEM_IME_DIALOG)
 			{
 				return TRUE;
-			}
-            ISHELL_SetTimer( pme->m_pShell, APPISREADY_TIMER, Recorder_APPIsReadyTimer, pme);
+			}            
 			return Recorder_RouteDialogEvent( pme, evt, wParam, dwParam);
 		}
 
@@ -326,7 +325,7 @@ static boolean Recorder_HandleEvent( Recorder* pme, AEEEvent evt, uint16 wParam,
 		case EVT_USER_REDRAW:
 		{
 			Recorder_RouteDialogEvent( pme, evt, wParam, dwParam);
-			//ISHELL_SetTimer( pme->m_pShell, APPISREADY_TIMER, Recorder_APPIsReadyTimer, pme);
+			ISHELL_SetTimer( pme->m_pShell, APPISREADY_TIMER, Recorder_APPIsReadyTimer, pme);
 		}
 		return TRUE;
 

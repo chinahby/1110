@@ -36,6 +36,12 @@
 #include "OEMSVC.h"
 #include "OEMCFGI.h"
 
+//Add By zzg 2013_09_09
+#ifdef FEATURE_APP_MUSICPLAYER
+#include "MusicPlayer.h"
+#endif 
+//Add End
+
 #include "Appscommon.h"
 #include "appscommon.brh"
 #include "appscommonimages.brh"
@@ -4050,10 +4056,12 @@ static void DrawMatrix(MainMenu *pMe)
                                 sizeof(boolean));
 	if(m_sound_bo_main)
 	{
-
+        /*
 		nv_item_type	SimChoice;
 		(void)OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
 		if(SimChoice.sim_select != 1)
+        */   
+        if (GetMp3PlayerStatus() == MP3STATUS_NONE)
 		{
 			MainMenu_PlayShutterSound(pMe,pMe->m_nRow);
 		}
@@ -4127,9 +4135,12 @@ static void MoveCursorTo(MainMenu *pMe, int row, int column)
                                  sizeof(boolean));
 	if(m_sound_bo_main)
 	{
+	    /*
 		nv_item_type	SimChoice;
 		(void)OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
 		if(SimChoice.sim_select != 1)
+        */    
+        if (GetMp3PlayerStatus() == MP3STATUS_NONE)
 		{
 			MainMenu_PlayShutterSound(pMe,row);
 		}
@@ -6244,10 +6255,12 @@ static void DrawMatrix(MainMenu *pMe)
 
 	if(m_sound_bo_main)
 	{
-
+        /*
 		nv_item_type	SimChoice;
 		(void)OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
 		if(SimChoice.sim_select != 1)
+        */    
+        if (GetMp3PlayerStatus() == MP3STATUS_NONE)
 		{
 			MainMenu_PlayShutterSound(pMe,pMe->m_index);
 		}
@@ -6294,10 +6307,12 @@ static void MoveCursorTo(MainMenu *pMe, int index)
                                  sizeof(boolean));
 	if(m_sound_bo_main)
 	{
+	    /*
 		nv_item_type	SimChoice;
-		(void)OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
-        
+		(void)OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);        
 		if(SimChoice.sim_select != 1)
+        */    
+        if (GetMp3PlayerStatus() == MP3STATUS_NONE)
 		{
 			MainMenu_PlayShutterSound(pMe,pMe->m_index);
 		}

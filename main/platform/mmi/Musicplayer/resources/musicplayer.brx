@@ -196,6 +196,9 @@
 	<STRING Id="1065" Name="IDS_MUSIC_PLAYER">
 		<Text>Music Player</Text>
 	</STRING>
+	<STRING Id="1066" Name="IDS_MUSIC_AISHINIWO">
+		<Text>Aishiniwo.mp3</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<Dialog Id="6001" Name="IDD_WINDOWS" Focus="0">

@@ -2404,6 +2404,8 @@ void DrawTextWithProfile(IShell* pShell,
                 dwFlags);
 	// 恢复初始文本颜色
     (void)IDISPLAY_SetColor(pDisplay, CLR_USER_TEXT, oldTextClr);
+
+    IDisplay_Update(pDisplay);      //Add By zzg 2013_09_09
 }
 
 /*==============================================================================
@@ -3709,6 +3711,8 @@ void DrawBottomBar_Ex(IShell    *m_pIShell, IDisplay  * pIDisplay, BottomBar_e_T
 		ISHELL_LoadResString(m_pIShell,AEE_APPSCOMMONRES_LANGFILE,nResID_M,wszBuf, sizeof(wszBuf));
         DrawTextWithProfile(m_pIShell, pIDisplay,RGB_WHITE_NO_TRANS,AEE_FONT_NORMAL, wszBuf, -1,0, 0, &rc,  IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER | IDF_TEXT_TRANSPARENT);
 	}	
+
+    IDisplay_Update(pIDisplay);
 }
 
 /*==============================================================================
