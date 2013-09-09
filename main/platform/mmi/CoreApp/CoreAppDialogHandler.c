@@ -4948,13 +4948,21 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #else
     				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif	/*FEATURE_SMARTFREN_STATIC_BREW_APP*/
-#elif defined (FEATURE_VERSION_HITZ181) || defined (FEATURE_VERSION_W515V3)|| defined (FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_K202_LM129C)||defined(FEATURE_VERSION_K212)
+#elif defined (FEATURE_VERSION_HITZ181) || defined (FEATURE_VERSION_W515V3)|| defined (FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_K202_LM129C)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_EC99)
 #ifdef FEATURE_VERSION_K212
 						{
 							int8 count_main = 1;
 					   		OEM_SetConfig(CFGI_COUNT_OF_MAIN, &count_main, sizeof(int8));
 						}
 #endif
+
+#ifdef FEATURE_VERSION_EC99
+                        {
+                            int8 count_main = 0;
+                            OEM_SetConfig(CFGI_COUNT_OF_MAIN, &count_main, sizeof(int8));
+                        }
+#endif
+
     				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 #elif defined (FEATURE_VERSION_S600S)
     				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_APP_RECENTCALL);
@@ -5043,6 +5051,13 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 							OEM_SetConfig(CFGI_COUNT_OF_MAIN, &count_main, sizeof(int8));
 						}
 #endif
+#ifdef FEATURE_VERSION_EC99
+                        {
+                            int8 count_main = 0;
+                            OEM_SetConfig(CFGI_COUNT_OF_MAIN, &count_main, sizeof(int8));
+                        }
+#endif
+
 						return CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 #endif
 #endif	
@@ -6246,8 +6261,11 @@ static void CoreApp_UpdateidleBaoshiTimer(void *pUser)
 									 CFGI_SOUND_BO_CORE,
 									 &m_sound_bo_core,
 									 sizeof(boolean));
+        /*
 		(void)OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
 		if(SimChoice.sim_select != 1 && m_sound_bo_core)
+        */    
+    if ((GetMp3PlayerStatus() == MP3STATUS_NONE) && m_sound_bo_core)
 	{
 #ifdef FEATURE_VERSION_EC99
         CoreApp_PlayTimeSound(pMe,TIME_TWO);
@@ -8145,6 +8163,49 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 {
     BottomBar_e_Type    eBBarType = BTBAR_NONE;  
 
+    //Add By zzg 2013_09_09    
+    AEERect rt = {0, SCREEN_HEIGHT-BOTTOMBAR_HEIGHT, SCREEN_WIDTH, BOTTOMBAR_HEIGHT};    
+
+    IFileMgr *pMgr = NULL;
+    
+    IImage *pTmpWallPaper = NULL;
+
+    char    Name[AEE_MAX_FILE_NAME];
+
+    MEMSET(Name, 0x00, sizeof(Name));
+
+//#ifdef FEATURE_VERSION_EC99
+    // 取设定的墙纸文件名
+    (void) ICONFIG_GetItem(pMe->m_pConfig,
+                            CFGI_WALLPAPER,
+                            Name,
+                            sizeof(Name));    
+    
+    ISHELL_CreateInstance(pMe->a.m_pIShell, AEECLSID_FILEMGR, (void **)&pMgr);
+    
+    if(pMgr)
+    {
+        if(IFILEMGR_Test(pMgr, Name) == SUCCESS)
+        {
+            pTmpWallPaper = ISHELL_LoadImage(pMe->a.m_pIShell, Name);
+        }
+        else 
+        {
+            pTmpWallPaper = ISHELL_LoadImage(pMe->a.m_pIShell, OEMNV_WALLPAPER);
+        }
+        IFILEMGR_Release(pMgr);
+        pMgr = NULL;
+    }
+    
+
+    if(NULL != pTmpWallPaper)
+    {
+        IImage_SetOffset(pTmpWallPaper, 0, (SCREEN_HEIGHT-BOTTOMBAR_HEIGHT));
+        IImage_Draw(pTmpWallPaper, 0, (SCREEN_HEIGHT-BOTTOMBAR_HEIGHT));
+    }
+//#endif
+    //Add End
+    
 	MSG_FATAL("***zzg CoreApp_UpdateBottomBar m_bemergencymode=%d, OEMKeyguard_IsEnabled=%d***", pMe->m_bemergencymode, OEMKeyguard_IsEnabled(), 0);
 
 /*	
@@ -8171,7 +8232,6 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
     }
 #endif
 */
-
 	
 #ifdef FEATURE_KEYGUARD
     if(OEMKeyguard_IsEnabled())
@@ -8263,8 +8323,17 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 	#ifdef FEATURE_LCD_TOUCH_ENABLE
 	
 	#else
-    DrawBottomBar_Ex(pMe->a.m_pIShell, pMe->m_pDisplay,eBBarType);
-	#endif
+    
+    DrawBottomBar_Ex(pMe->a.m_pIShell, pMe->m_pDisplay,eBBarType);    
+   
+	#endif    
+
+    //Add By zzg 2013_09_09
+//#ifdef FEATURE_VERSION_EC99
+    IImage_Release(pTmpWallPaper);    
+    pTmpWallPaper = NULL;
+//#endif    
+    //Add End
 }
 
 /*==============================================================================
@@ -8841,11 +8910,11 @@ void CoreApp_UpdateAnnunciator(CCoreApp *pMe)
 	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_ALARM, ANNUN_STATE_ALARM_ON);
 	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_VIBRING);
 	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_BATT, ANNUN_STATE_BATT_FULL);   
+    
 	return;
 	//Add End
 	*/
-	
-
+  
     ICONFIG_GetItem(pMe->m_pConfig, CFGI_HEADSET_PRESENT, &b_headset, sizeof(b_headset));
     ICONFIG_GetItem(pMe->m_pConfig, CFGI_FM_BACKGROUND, &b_FMBackground, sizeof(b_FMBackground));
     ICONFIG_GetItem(pMe->m_pConfig, CFGI_PROFILE_CUR_NUMBER,&alertType, sizeof(alertType));//CFGI_ALERT_TYPE
@@ -9032,7 +9101,12 @@ void CoreApp_UpdateAnnunciator(CCoreApp *pMe)
         }
         */
         // 此处已经设置了全部field的状态，不需要再单独为某个field进行设置
+
+#ifdef FEATURE_VERSION_EC99
         for (i = ANNUN_FIELD_RSSI; i <=ANNUN_FIELD_BATT; i++) 
+#else
+        for (i = ANNUN_FIELD_RSSI; i <=ANNUN_FIELD_3G_RSSI; i++) 
+#endif            
         {
             state = ANNUN_STATE_OFF;
             if(pMe->m_pIAnn != NULL)
@@ -9202,6 +9276,9 @@ void CoreApp_Poweroff_Phone(void *pp)
     if(pMe->m_pIAnn != NULL)
     {
         IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RSSI, ANNUN_STATE_OFF);
+#ifdef FEATURE_VERSION_EC99
+        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_3G_RSSI, ANNUN_STATE_OFF);
+#endif         
         IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_BATT, ANNUN_STATE_OFF);
     }
     //IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn,AEECLSID_DISPLAY1,FALSE);

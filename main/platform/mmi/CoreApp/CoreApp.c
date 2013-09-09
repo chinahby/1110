@@ -2031,6 +2031,9 @@ static void CoreApp_Process_SS_info(CCoreApp * pMe ,AEETSSEventData *ss)
                 return ;
             }
             IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RSSI,ANNUN_STATE_RSSI_NO_SERV/*ANNUN_STATE_RSSI_0*/);
+#ifdef FEATURE_VERSION_EC99
+            IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_3G_RSSI,ANNUN_STATE_RSSI_NO_SERV/*ANNUN_STATE_RSSI_0*/);
+#endif
             IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_WAP/*ANNUN_FIELD_ROAM*/, ANNUN_STATE_ROAM_OFF/*ANNUN_STATE_OFF*/);
             break;
 
@@ -2141,6 +2144,9 @@ static boolean CoreApp_HandleCMNotify(CCoreApp * pMe, AEENotify *pNotify)
                         if(pMe->m_pIAnn != NULL)
                         {
                             IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RSSI, ANNUN_STATE_RSSI_NO_SERV);
+#ifdef FEATURE_VERSION_EC99
+                            IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_3G_RSSI,ANNUN_STATE_RSSI_NO_SERV);
+#endif                            
                         }
 #ifdef FEATURE_LED_CONTROL
                         IBACKLIGHT_SigLedDisable(pMe->m_pBacklight);
@@ -2170,6 +2176,9 @@ static boolean CoreApp_HandleCMNotify(CCoreApp * pMe, AEENotify *pNotify)
                                 pMe->m_rssi = pEvtInfo->event_data.ss.ss_info.rssi;
                                 #endif
                                 IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RSSI, DBToLevel(pEvtInfo->event_data.ss.ss_info.rssi));
+#ifdef FEATURE_VERSION_EC99
+                                IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_3G_RSSI, DBToLevel(pEvtInfo->event_data.ss.ss_info.rssi));
+#endif                                  
                             }
                         }
                         //IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RSSI, DBToLevel(pEvtInfo->event_data.ss.ss_info.rssi));

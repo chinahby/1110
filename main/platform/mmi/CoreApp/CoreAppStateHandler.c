@@ -1250,6 +1250,9 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
                 {
                     pMe->bPlaneModeOn = TRUE;
                     IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_RSSI, ANNUN_STATE_AIR_MODE_ON );
+#ifdef FEATURE_VERSION_EC99
+                    IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_3G_RSSI, ANNUN_STATE_AIR_MODE_ON );
+#endif                     
                     cm_ph_cmd_oprt_mode(NULL, NULL, CM_CLIENT_ID_ANONYMOUS, SYS_OPRT_MODE_LPM);
                     MOVE_TO_STATE(COREST_STANDBY);
                     return NFSMACTION_CONTINUE;
@@ -1271,6 +1274,9 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
         case DLGRET_YES:
             pMe->bPlaneModeOn = TRUE;
             IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_RSSI, ANNUN_STATE_AIR_MODE_ON );
+#ifdef FEATURE_VERSION_EC99
+            IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_3G_RSSI, ANNUN_STATE_AIR_MODE_ON );
+#endif            
             cm_ph_cmd_oprt_mode(NULL, NULL, CM_CLIENT_ID_ANONYMOUS, SYS_OPRT_MODE_LPM);
             MOVE_TO_STATE(COREST_STANDBY);
             return NFSMACTION_CONTINUE;
