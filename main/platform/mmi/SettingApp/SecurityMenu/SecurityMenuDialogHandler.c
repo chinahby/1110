@@ -4154,7 +4154,7 @@ static boolean  SecurityAskPinDlgHandler(CSecurityMenu *pMe,
 #ifdef FEATURE_VERSION_EC99
                                         MENUITEM_HEIGHT*3,
 #else
-                                        MENUITEM_HEIGHT*7/2,
+                                        MENUITEM_HEIGHT*9/2,
 #endif                                       
                                         NULL, 
                                         IDF_TEXT_TRANSPARENT);
@@ -4640,7 +4640,7 @@ static boolean  SecurityAskCallPasswordDlgHandler(CSecurityMenu *pMe,
 #ifdef FEATURE_VERSION_EC99
                                     MENUITEM_HEIGHT*3,
 #else
-                                    MENUITEM_HEIGHT*7/2,
+                                    MENUITEM_HEIGHT*9/2,
 #endif                                    
                                     NULL, 
                                     IDF_TEXT_TRANSPARENT);
