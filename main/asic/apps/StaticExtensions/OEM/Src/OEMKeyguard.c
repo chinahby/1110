@@ -203,12 +203,7 @@ static boolean OEMPriv_IsPhoneIdle(void)
 #if 1
 #ifdef FEATURE_ICM
     AEECMPhInfo phoneInfo;
-	#if defined(FEATURE_VERSION_EC99)
-	if(AEECLSID_DIALER != AEE_Active())
-	{
-		return TRUE;
-	}
-	#endif
+
     if(AEECM_IS_ANYCALL_PRESENT(spPhone))
     {
         return FALSE;
