@@ -746,7 +746,8 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
 						if(m_bBlackEnagled)
 						{
 							m_bBlackEnagled  = FALSE;
-							OEMPriv_DrawKeyguardTime();
+							return TRUE;
+							//OEMPriv_DrawKeyguardTime();
 						}
 						else
 						{
@@ -1074,12 +1075,16 @@ static void    OEMPriv_DrawKeyguardTime(void)
     if(pd)
     {
         Appscommon_Draw_Keyguard_Time(pd);
-        IDISPLAY_Release(pd);
     }
 #ifdef FEATURE_VERSION_K212
 	eBBarType = BTBAR_UNLOCK_L;
 	DrawBottomBar_Ex(sgpShell, pd,eBBarType);
 #endif
+	if(pd)
+	{
+		IDISPLAY_Update(pd);
+		IDISPLAY_Release(pd);
+	}
 }
 /*=============================================================================
 FUNCTION: OEMPriv_DrawMessageCB
@@ -1240,7 +1245,11 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
 		else
 		#endif
 		{
-	        if(!IBACKLIGHT_IsEnabled(Backlight))
+			#if defined(FEATURE_VERSION_K212)
+	        if(!IBACKLIGHT_IsEnabled(Backlight)&&!m_bBlackEnagled)
+			#else
+			if(!IBACKLIGHT_IsEnabled(Backlight))
+			#endif
 	        {
 	        	#if defined (FEATURE_VERSION_K212) 
 				MSG_FATAL("OEMPriv_DrawKeyguardTime....9",0,0,0);
@@ -1251,8 +1260,6 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
 				m_bBlackEnagled = TRUE;
 				IBACKLIGHT_Enable(Backlight);
 				#endif
-				
-	        	
 	        } 
 		}
 		IBACKLIGHT_Release(Backlight);
