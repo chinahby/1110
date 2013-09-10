@@ -7730,6 +7730,15 @@ void CallApp_SetupCallAudio(CCallApp *pMe)
 	{
 		ISOUND_SetVolume(pMe->m_pSound, GET_ISOUND_VOL_LEVEL(pMe->m_CallVolume)*4/5);
 	}
+    #elif defined FEATURE_VERSION_EC99
+	if(pMe->m_bHandFree)
+	{
+    	ISOUND_SetVolume(pMe->m_pSound, GET_ISOUND_VOL_LEVEL(pMe->m_CallVolume)*3/5);
+	}
+	else
+	{
+		ISOUND_SetVolume(pMe->m_pSound, GET_ISOUND_VOL_LEVEL(pMe->m_CallVolume)*4/5);
+	}
 	#else
 		ISOUND_SetVolume(pMe->m_pSound, GET_ISOUND_VOL_LEVEL(pMe->m_CallVolume));
 	#endif

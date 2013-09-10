@@ -2071,9 +2071,13 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
 		{
             ISHELL_StartApplet(AEE_GetShell(), AEECLSID_APP_FMRADIO);				
 		}
-        else
+        else if (cls == AEECLSID_APP_FMRADIO)
         {
-            //ISHELL_CloseApplet(AEE_GetShell(), TRUE);
+           ISHELL_PostEvent( AEE_GetShell(),
+                              AEECLSID_APP_FMRADIO,
+                              EVT_USER,
+                              AVK_INFO,
+                              0);
         }
         return TRUE; 
     }

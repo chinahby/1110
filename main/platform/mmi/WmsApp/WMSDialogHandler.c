@@ -3679,7 +3679,7 @@ static boolean IDD_SETTING_Handler(void   *pUser,
 #if 1//def FEATURE_CARRIER_TAIWAN_APBW        //add by yangdecai   2010-08-23 
                 // 发出短信是否带回叫号码
                 MSG_FATAL("IDD_SETTING_Handler EVT_COMMAND IDS_CALLBACKNUM", 0, 0, 0);
-#if !defined(FEATURE_VERSION_C316)&&!defined(FEATURE_VERSION_K202_LM129C)&&!defined(FEATURE_VERSION_K212)
+#if !defined(FEATURE_VERSION_C316)&&!defined(FEATURE_VERSION_K202_LM129C)&&!defined(FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_EC99)
                 case IDS_CALLBACKNUM:
                     CLOSE_DIALOG(DLGRET_CALLBACKNUM)
                     return TRUE;

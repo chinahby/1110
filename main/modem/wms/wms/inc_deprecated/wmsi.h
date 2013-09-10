@@ -207,21 +207,46 @@ enum { WMS_MAX_RAM_STATUS_REPORTS = 10 };
 #ifdef CUST_EDITION
 //  以前是提前5条提示，现在是提前10条提示 
 #ifdef FEATURE_ONEMSG_USE_ONEFILE
-enum 
-{ 
-    IN_WATERMARK = 190,
-    IN_MAX = 200
-};
-enum 
-{ 
-    OUT_WATERMARK = 90,
-    OUT_MAX = 100
-};
-enum { MAX_OEMTEMPLATES = 10};// OEM 消息常用语条数
-enum { PHRASE_MAX = 20 };
-enum { DRAFT_MAX = 50 };
-enum { BC_MAX = 50 };
-enum { RESERVE_MAX = 30 };
+
+#ifdef FEATURE_VERSION_EC99
+    enum 
+    { 
+        IN_WATERMARK = 90,
+        IN_MAX = 100  
+    };
+    enum 
+    { 
+        OUT_WATERMARK = 70,
+        OUT_MAX = 80
+    };
+
+    enum { MAX_OEMTEMPLATES = 10};// OEM 消息常用语条数
+    enum { PHRASE_MAX = 20 };
+    enum { DRAFT_MAX = 50 };
+    enum { BC_MAX = 50 };
+    enum { RESERVE_MAX = 30 };
+#else
+    enum 
+    { 
+        IN_WATERMARK = 190,
+        IN_MAX = 200  
+    };
+    enum 
+    { 
+        OUT_WATERMARK = 90,
+        OUT_MAX = 100
+    };
+
+    enum { MAX_OEMTEMPLATES = 10};// OEM 消息常用语条数
+    enum { PHRASE_MAX = 20 };
+    enum { DRAFT_MAX = 50 };
+    enum { BC_MAX = 50 };
+    enum { RESERVE_MAX = 30 };
+#endif
+
+
+
+
 enum { WMS_MAX_NV_CDMA_MESSAGES     = (1+IN_MAX+OUT_MAX+PHRASE_MAX+DRAFT_MAX+BC_MAX+RESERVE_MAX) };
 enum 
 { 
