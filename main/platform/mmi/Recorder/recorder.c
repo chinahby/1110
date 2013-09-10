@@ -182,7 +182,7 @@ static boolean Recorder_HandleEvent( Recorder* pme, AEEEvent evt, uint16 wParam,
 	MSG_FATAL("***zzg Recorder_HandleEvent evt=%x, wParam=%x, dwParam=%x***", evt, wParam, dwParam);
 	
 	switch( evt)
-	{
+	{	   
 		case EVT_APP_START:
 		{
             AEEDeviceInfo di = {0};
@@ -232,9 +232,9 @@ static boolean Recorder_HandleEvent( Recorder* pme, AEEEvent evt, uint16 wParam,
 			Recorder_RunFSM( pme);
 		}
 		return TRUE;
-
+        
 		case EVT_APP_STOP:
-		{
+		{            
 			pme->m_bInactive = TRUE;
 			ISHELL_CancelTimer( pme->m_pShell, 0, pme);	
 
@@ -246,23 +246,23 @@ static boolean Recorder_HandleEvent( Recorder* pme, AEEEvent evt, uint16 wParam,
 		}
 		return TRUE;
 
+       
 		case EVT_APP_SUSPEND:
 		{
 			pme->m_bInactive 	= TRUE;
 			pme->m_bSuspended	= TRUE;
-
-			/*
+			
 			//Add By zzg 2012_03_13
 			OEM_SetConfig( CFGI_BEEP_VOL, &keyBeepVolumeSetting, sizeof(byte));
             OEM_SetConfig( CFGI_ALERT_TYPE, &alertTypeCall, sizeof( alertTypeCall));
             OEM_SetConfig( CFGI_SMS_RINGER, &alertTypeSms, sizeof( alertTypeSms));
-			//Add End
-			*/
+			//Add End						
 			
 			ISHELL_CancelTimer( pme->m_pShell, 0, pme);
 		}
 		return TRUE;
-
+        
+        
 		case EVT_APP_RESUME:
 		{
 			//Add By zzg 2012_03_13
@@ -275,6 +275,7 @@ static boolean Recorder_HandleEvent( Recorder* pme, AEEEvent evt, uint16 wParam,
 			
 			Recorder_RunFSM( pme);
 		}
+       
 		return TRUE;
 
 		case EVT_DIALOG_INIT:
