@@ -904,6 +904,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                 #if defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)
 			    if(ISHELL_ActiveApplet(pMe->a.m_pIShell) == AEECLSID_CORE_APP)
 				#endif
+				if(!(ISHELL_ActiveApplet(pMe->a.m_pIShell) == AEECLSID_WMSAPP))
 				{
 	    			(void)ISHELL_PostEvent(pMe->a.m_pIShell,
 	                         AEECLSID_CORE_APP, 
@@ -1016,6 +1017,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                 #if defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_W515V3)
 			    if(ISHELL_ActiveApplet(pMe->a.m_pIShell) == AEECLSID_CORE_APP)
 				#endif
+				if(!(ISHELL_ActiveApplet(pMe->a.m_pIShell) == AEECLSID_WMSAPP))
 				{
     				(void)ISHELL_PostEvent(pMe->a.m_pIShell,
                          AEECLSID_CORE_APP, 

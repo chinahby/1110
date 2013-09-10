@@ -546,6 +546,7 @@ static boolean Core_bMusicNameRequiredScroll(CCoreApp *pMe, int nIdx);
 static void Core_DrawNameResetScroll(CCoreApp *pMe);
 #endif
 
+static void CoreApp_DrawUpdate(CCoreApp *pMe);
 static void CoreApp_SearchingTimer(void *pUser);
 
 static void CoreApp_UpdateDateTime(CCoreApp    *pMe);
@@ -3774,7 +3775,8 @@ static void CoreApp_ImageNotify(void *po, IImage *pIImage, AEEImageInfo *pii, in
         //CoreApp_DrawMusicName(pMe);
         Core_DrawNameResetScroll(pMe);
 #endif
-		
+		ISHELL_CancelTimer( pMe->a.m_pIShell, (PFNNOTIFY)CoreApp_DrawUpdate,pMe);
+		CoreApp_DrawUpdate(pMe);
         // 绘制当前日期、时间信息
         CoreApp_UpdateDateTime(pMe);
         
@@ -4107,7 +4109,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
         }
 		case EVT_USER_REDRAW:     
         case EVT_UPDATEIDLE:
-        {        
+        {   
+			
 			//Add By zzg 2012_10_29
 			#if (defined (FEATURE_VERSION_W317A)||defined (FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_K212))
 			IFileMgr *pFileMgr = NULL;
@@ -4385,6 +4388,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             (void) ISHELL_CancelTimer(pMe->a.m_pIShell,
                                       CoreApp_SearchingTimer,
                                       pMe);
+			 (void)ISHELL_CancelTimer( pMe->a.m_pIShell, (PFNNOTIFY)CoreApp_DrawUpdate,pMe);
              #if defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_1110W516)|| defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_C316)|| defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)//|| defined(FEATURE_VERSION_K212)
              IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
              #endif
@@ -9103,9 +9107,9 @@ void CoreApp_UpdateAnnunciator(CCoreApp *pMe)
         // 此处已经设置了全部field的状态，不需要再单独为某个field进行设置
 
 #ifdef FEATURE_VERSION_EC99
-        for (i = ANNUN_FIELD_RSSI; i <=ANNUN_FIELD_BATT; i++) 
-#else
         for (i = ANNUN_FIELD_RSSI; i <=ANNUN_FIELD_3G_RSSI; i++) 
+#else
+        for (i = ANNUN_FIELD_RSSI; i <=ANNUN_FIELD_BATT; i++) 
 #endif            
         {
             state = ANNUN_STATE_OFF;
@@ -9803,6 +9807,21 @@ static void Core_DrawNameResetScroll(CCoreApp *pMe)
     }
 }
 #endif
+static void CoreApp_DrawUpdate(CCoreApp *pMe)
+{
+	if ((ISHELL_ActiveApplet(pMe->a.m_pIShell) != AEECLSID_CORE_APP) ||
+                        (pMe->m_wActiveDlgID != IDD_IDLE))
+    {
+        ISHELL_CancelTimer(pMe->a.m_pIShell,(PFNNOTIFY)CoreApp_DrawUpdate,pMe);
+        return; 
+    }
+
+    IDISPLAY_Update(pMe->m_pDisplay);
+	ISHELL_SetTimer( pMe->a.m_pIShell,
+                     MUSICNAME_AUTO_SCROLL_TIME,
+                    (PFNNOTIFY)CoreApp_DrawUpdate, 
+                     pMe);
+}
 
 //#ifdef FEATURE_SPN_FROM_BSMCCMNC 
 static const ServiceProviderList List_SP[] = 

@@ -171,7 +171,6 @@ static boolean bDrawMessage = TRUE;
 
 static IBitmap *pDevBmp = NULL;
 
-
 /*===========================================================================
 
                     FUNCTION DEFINITIONS
@@ -203,7 +202,6 @@ static boolean OEMPriv_IsPhoneIdle(void)
 #if 1
 #ifdef FEATURE_ICM
     AEECMPhInfo phoneInfo;
-
     if(AEECM_IS_ANYCALL_PRESENT(spPhone))
     {
         return FALSE;
@@ -1046,7 +1044,7 @@ static void OEMPriv_DrawMessageCB(void *pUnused)
     //PARAM_NOT_REF(pUnused)
 
     // Keyguard should be enabled at this point
-    ASSERT(sbKeyguardEnabled);
+    //ASSERT(sbKeyguardEnabled);
     KEYGUARD_ERR("OEMPriv_DrawMessageCB %d",sbKeyguardEnabled,0,0);
     // Pretend that the keyguard message is already displayed on the
     // screen by setting sbMessageActive to TRUE.
@@ -1186,7 +1184,7 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
 		   (wParam == AVK_8)||(wParam == AVK_9)||(wParam == AVK_0)||(wParam == AVK_STAR)||(wParam == AVK_POUND)||
 		   (wParam == AVK_RIGHT)||(wParam == AVK_DOWN)||(wParam == AVK_UP)||(wParam == AVK_LEFT))
 #else
-#if defined (FEATURE_VERSION_EC99)
+#if defined (FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212)
 		if(0)
 #else
         if(wParam == AVK_CLR)	

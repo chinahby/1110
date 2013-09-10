@@ -544,7 +544,7 @@ typedef enum
 #define    PWRON_ANI_FRAME_COUNT                 (1)
 #define    PWRON_ANI_RATE                        (8000)
 #define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweroff.gif"
-#define    PWROFF_ANI_FRAME_COUNT                PWRON_ANI_FRAME_COUNT
+#define    PWROFF_ANI_FRAME_COUNT                (1)
 #define    PWROFF_ANI_RATE                       (8000)
 #elif defined FEATURE_VERSION_EC99
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweron.gif"
