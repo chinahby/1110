@@ -48,6 +48,7 @@
                                  函数声明
 ==============================================================================*/
 
+
 /*MP3播放主窗口处理函数*/
 static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
                                                  AEEEvent eCode,
@@ -626,6 +627,8 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
         case EVT_DIALOG_END:
         {        
 			//IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn,FALSE);	//Add By zzg  2010_08_20
+			(void) ISHELL_CancelTimer(pMe->m_pShell,(PFNNOTIFY) CMusicPlayer_GetTimeBack,pMe);
+			pMe->m_times =0;
             return TRUE;
         }
         //case EVT_GSENSOR_SHAKE:
@@ -728,6 +731,7 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
 			     }
              }
 #else
+			 pMe->m_times = 0;
              return MP3_MusicPlayerHandleKeyEvent(pMe,eCode,wParam,dwParam);
 #endif             
         default:
@@ -3285,12 +3289,12 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
         }
 //xuhui
 #else		
-		if(pMe->m_Next)
+		//if(pMe->m_Next)
 		{
 			pMe->m_Next =FALSE;
 	        MP3_DrawImage( pMe,IDI_PREVIOUS_PRESS, PREVIOUSPRESS_X, PREVIOUSPRESS_Y);
 	        IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
-			ISHELL_SetTimer(pMe->m_pShell,250,(PFNNOTIFY)MP3_Next_Space,pMe);
+			//ISHELL_SetTimer(pMe->m_pShell,250,(PFNNOTIFY)MP3_Next_Space,pMe);
 			pMe->m_rtype = TYPE_PREVIOUS;//wlh 20090415 mod 为了区别播放区域，加音量，减音量的刷新，加了个参数
 #if defined( FEATURE_DISP_220X176) 
 			ISHELL_SetTimer(pMe->m_pShell,1500,(PFNNOTIFY)MP3_DrawImageWithOffset, pMe);
@@ -3327,12 +3331,13 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
             }
         }
 #else
-		if(pMe->m_Next)
+		//if(pMe->m_Next)
 		{
 			pMe->m_Next =FALSE;
+			MSG_FATAL("AVK_RIGHT.......................",0,0,0);
 		    MP3_DrawImage( pMe,IDI_NEXT_PRESS,NEXTPRESS_X, NEXTPRESS_Y);
 		    IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
-			ISHELL_SetTimer(pMe->m_pShell,250,(PFNNOTIFY)MP3_Next_Space,pMe);
+			//ISHELL_SetTimer(pMe->m_pShell,250,(PFNNOTIFY)MP3_Next_Space,pMe);
 			pMe->m_rtype = TYPE_NEXT;//wlh 20090415 mod 为了区别播放区域，加音量，减音量的刷新，加了个参数
 #if defined(FEATURE_DISP_220X176)		
 		    ISHELL_SetTimer(pMe->m_pShell,1500,(PFNNOTIFY)MP3_DrawImageWithOffset, pMe);
@@ -5079,6 +5084,36 @@ boolean CMusicPlayer_InitMusic(CMusicPlayer *pMe)
     return TRUE; 
 }
 
+void CMusicPlayer_GetTimeBack(CMusicPlayer *pMe)
+{
+		pMe->m_times = pMe->m_times+1;
+		MSG_FATAL("pMe->m_nTotalTime=========pMe->m_times==%d",pMe->m_times,0,0);
+		if(pMe->m_times<3)
+		{
+			//(void)ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_MUSICPLAYER, EVT_USER_REDRAW, 0, 0);
+			CMusicPlayer_ReleaseMedia(pMe);//释放本m_pMedia指针
+		    //因为底层使用的是事件传递机制，需要给底层stop并释放音乐的时间，否则会出错，此处等0.5秒钟后初始化下一首
+		    (void) ISHELL_SetTimer(pMe->m_pShell,500,(PFNNOTIFY)MP3_InitMusicCB,pMe);
+		    if(pMe->m_bPlaying)
+		    {
+		        //因为底层使用的是事件传递机制，需要给底层初始化并传递notify的时间，否则会出错，此处等0.5秒钟后播放下一首      
+		        (void) ISHELL_SetTimer(pMe->m_pShell,1000,(PFNNOTIFY) CMusicPlayer_PlayMusic,pMe);
+		    }
+		    else
+		    {
+		        pMe->m_bPaused = FALSE;
+		        pMe->m_bPlaying = FALSE;
+		    }
+		    //非用户手动停止
+		    pMe->m_bUserStopped= FALSE;
+		}
+		else
+		{
+			pMe->m_times = 0;
+			(void)MP3_MusicPlayerHandleKeyEvent(pMe,EVT_KEY,AVK_RIGHT,0);
+		}
+}
+
 /*===========================================================================
    接受CMX底层回调
 ===========================================================================*/                       
@@ -5200,9 +5235,17 @@ void CMusicPlayer_MediaNotify(void * pUser, AEEMediaCmdNotify * pCmdNotify)
         //&&pMe->m_eStartMethod==STARTMETHOD_NORMAL) //return from IMEDIA_GetTotalTime
     {
         pMe->m_nTotalTime = ((uint32)pCmdNotify->pCmdData) / 1000;
-
-		//Add By zzg 2010_08_19
-		(void)ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_MUSICPLAYER, EVT_USER_REDRAW, 0, 0);
+        MSG_FATAL("pMe->m_nTotalTime=========%d",pMe->m_nTotalTime,0,0);
+		if(pMe->m_nTotalTime<=0)
+		{
+			(void) ISHELL_SetTimer(pMe->m_pShell,500,(PFNNOTIFY) CMusicPlayer_GetTimeBack,pMe);
+		}
+		else
+		{
+			//Add By zzg 2010_08_19
+			pMe->m_times = 0;
+			(void)ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_MUSICPLAYER, EVT_USER_REDRAW, 0, 0);
+		}
 		//Add End
     }
     else if (pCmdNotify->nCmd == MM_CMD_PLAY

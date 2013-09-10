@@ -1225,7 +1225,11 @@ typedef struct _CMusicPlayer
     uint32 keyend_time;	
 #endif
 	boolean      m_Next;
+    uint8        m_times;
 } CMusicPlayer;
+
+void CMusicPlayer_GetTimeBack(CMusicPlayer *pMe);
+
 
 /*==============================================================================
                                  宏定义和常数

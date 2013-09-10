@@ -1956,7 +1956,10 @@ Exit:
                                 info->mt_message_info.message.u.cdma_message.teleservice == WMS_TELESERVICE_IS91_VOICE_MAIL ||
                                 info->mt_message_info.message.u.cdma_message.teleservice == WMS_TELESERVICE_MWI)
                             {
-                                gbWmsVMailNtf = TRUE;
+                            	if(!(ISHELL_ActiveApplet(pMe->m_pShell) == AEECLSID_WMSAPP))
+	                			{
+                                	gbWmsVMailNtf = TRUE;
+                            	}
                                 gbWmsLastNtfIsSMS = FALSE;
                             }
                             else
@@ -1983,6 +1986,8 @@ Exit:
 	        				}
                             else if(pMe->m_currState == WMSST_WMSNEW)
                             {
+                            	gbWmsVMailNtf = FALSE;
+								gbWmsSMSNtf = FALSE;
                                 CLOSE_DIALOG(DLGRET_CREATE)
                             }
         				    else
@@ -1993,6 +1998,8 @@ Exit:
 							    {
 							    	CLOSE_DIALOG(DLGRET_INBOXES)
                                     gbWmsSMSNtf = FALSE;
+									gbWmsVMailNtf = FALSE;
+									gbWmsSMSNtf = FALSE;
 							    }
 								else
 								{
@@ -2000,6 +2007,7 @@ Exit:
 	                			    #if defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_W515V3)
 	                			    if(ISHELL_ActiveApplet(pMe->m_pShell) == AEECLSID_CORE_APP)
 									#endif
+									if(!(ISHELL_ActiveApplet(pMe->m_pShell) == AEECLSID_WMSAPP))
 	                			    {
 	                						(void)ISHELL_PostEvent(pMe->m_pShell,
 	                                         	AEECLSID_CORE_APP, 
@@ -2007,6 +2015,8 @@ Exit:
 	                                         	0, 
 	                                         	0);
 	                                }
+									gbWmsVMailNtf = FALSE;
+									gbWmsSMSNtf = FALSE;
 								}
 							}
         				}
@@ -2221,13 +2231,14 @@ Exit:
     							    {
                                         CLOSE_DIALOG(DLGRET_INBOXES);
                                         gbWmsSMSNtf = FALSE;
-                                     }
+                                    }
                                     else
     								{
     	                			    // 通知 CoreApp 需要进行短信提示
     	                			    #if defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_W515V3)
     	                			    if(ISHELL_ActiveApplet(pMe->m_pShell) == AEECLSID_CORE_APP)
     									#endif
+										if(!(ISHELL_ActiveApplet(pMe->m_pShell) == AEECLSID_WMSAPP))
     	                			    {
     	                						(void)ISHELL_PostEvent(pMe->m_pShell,
     	                                         	AEECLSID_CORE_APP, 

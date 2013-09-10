@@ -410,6 +410,7 @@ static int CMusicPlayer_InitAppData(CMusicPlayer *pMe)
     pMe->m_pMp3FileToPlay = NULL;
     pMe->m_bStartApp = FALSE;
     pMe->m_bSimPlayFailed = FALSE;
+	pMe->m_times = 0;
     g_nInterruptRef = 0;
     pMe->m_nRandNum = 0;
 #ifdef FEATURE_VERSION_C337		
@@ -847,11 +848,12 @@ static boolean IMusicPlayer_HandleEvent( IMusicPlayer *pi,
             return CMusicPlayer_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_DIALOG_END:
-				
+		    
             if (wParam == 0)
             {
                 return TRUE;
             }
+			(void) ISHELL_CancelTimer(pMe->m_pShell,(PFNNOTIFY) CMusicPlayer_GetTimeBack,pMe);
             if(OEM_IME_DIALOG == wParam)
 			{
 				return ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER_REDRAW,0,0);
