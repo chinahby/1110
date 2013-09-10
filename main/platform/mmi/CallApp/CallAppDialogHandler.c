@@ -12954,7 +12954,7 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
 
     //if ((AVKType)wParam == AVK_CLR)
     #ifdef FEATURE_VERSION_K212
-	if ((AVKType)wParam == AVK_DEL || (AVKType)wParam == AVK_CLR)   	//Modify by zzg 2012_02_22
+	if (!(AEECM_IS_VOICECALL_CONNECTED(pMe->m_pICM))&&((AVKType)wParam == AVK_DEL || (AVKType)wParam == AVK_CLR))   	//Modify by zzg 2012_02_22
 	#else
 	if ((AVKType)wParam == AVK_DEL)
 	#endif

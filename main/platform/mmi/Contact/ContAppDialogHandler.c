@@ -13843,6 +13843,7 @@ static boolean  CContApp_HandleDetailDlgEvent( CContApp  *pMe,
 					}
 					break;
 				#else
+				#ifndef FEATURE_VERSION_K212
              	case AVK_SELECT:
 					//CLOSE_DIALOG(DLGRET_OK);
               		MSG_FATAL("AVK_SELECT........",0,0,0);
@@ -13850,7 +13851,7 @@ static boolean  CContApp_HandleDetailDlgEvent( CContApp  *pMe,
                     CLOSE_DIALOG(DLGRET_SELECT);
                     return TRUE;
 				#endif	
-                    
+                #endif
                 default:
                     break; 
              }
@@ -13933,13 +13934,14 @@ static boolean  CContApp_HandleDetailDlgEvent( CContApp  *pMe,
 					CLOSE_DIALOG(DLGRET_CANCELED)
 					return TRUE;
 				#else
+				#ifndef FEATURE_VERSION_K212
 				case AVK_SELECT:
                     //CLOSE_DIALOG(DLGRET_OK);
               		MSG_FATAL("AVK_SELECT........",0,0,0);
                     CLOSE_DIALOG(DLGRET_SELECT);
                     return TRUE;
 				#endif
-                
+                #endif
                 case AVK_CAMERA:
 				#if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)|| defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)
 				{
