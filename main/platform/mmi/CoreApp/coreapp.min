@@ -281,7 +281,6 @@ ifeq ($(USES_LCD_TOUCH),yes)
 		night.png|fs:/image/core/night.png
 endif
 ifeq ($(USES_BOHAO),yes)
-ifneq ($(USES_RESDIR), EC99)
 CONSTFILE_FILES+=\
 	one_1.mp3|fs:/hsmm/coreapp/one_1.mp3 \
 	tow_2.mp3|fs:/hsmm/coreapp/tow_2.mp3 \
@@ -289,7 +288,6 @@ CONSTFILE_FILES+=\
 	afternoon.mp3|fs:/hsmm/coreapp/afternoon.mp3 \
 	five_5.mp3|fs:/hsmm/coreapp/five_5.mp3 \
 	Ten.mp3|fs:/hsmm/coreapp/Ten.mp3
-endif	
 endif
 
 # 加入另外一种语言资源文件

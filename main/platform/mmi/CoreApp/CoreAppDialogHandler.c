@@ -6266,6 +6266,7 @@ static boolean  IDD_POWERDOWN_Handler(void *pUser,
 static void CoreApp_UpdateidleBaoshiTimer(void *pUser)
 {
 	CCoreApp    *pMe = (CCoreApp *)pUser;
+    boolean     bIsInCall = FALSE;
     uint32         dwSeconds;
 	int temp = 0;
 	JulianType  julian;
@@ -6281,19 +6282,40 @@ static void CoreApp_UpdateidleBaoshiTimer(void *pUser)
 		(void)OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
 		if(SimChoice.sim_select != 1 && m_sound_bo_core)
         */    
-    if ((GetMp3PlayerStatus() == MP3STATUS_NONE) && m_sound_bo_core)
-	{
-#ifdef FEATURE_VERSION_EC99
-        CoreApp_PlayTimeSound(pMe,TIME_TWO);
+
+
+        //Add By zzg 2013_09_11
+#ifdef FEATURE_ICM
+        if (AEECM_IS_VOICECALL_CONNECTED(pMe->m_pCM))
 #else
-		CoreApp_PlayTimeSound(pMe,TIME_ONE);
+        AEETCalls po;
+        
+        if(SUCCESS != ITELEPHONE_GetCalls(pMe->m_pITelephone, &po,sizeof(AEETCalls)))
+        {
+            return;
+        }
+        
+        if (po.dwCount>0)
 #endif
-	}
-	// 重设分钟定时器
-	AEE_SetSysTimer((int32)(30 * 1000),
-                           CoreApp_UpdateidleBaoshiTimer,
-                           pMe);
-    }
+        {
+            bIsInCall = TRUE;
+        }
+        //Add End
+
+        
+        if ((GetMp3PlayerStatus() == MP3STATUS_NONE) && m_sound_bo_core && !bIsInCall)
+    	{
+#ifdef FEATURE_VERSION_EC99
+            CoreApp_PlayTimeSound(pMe,TIME_TWO);
+#else
+    		CoreApp_PlayTimeSound(pMe,TIME_ONE);
+#endif
+    	}
+    	// 重设分钟定时器
+    	AEE_SetSysTimer((int32)(30 * 1000),
+                               CoreApp_UpdateidleBaoshiTimer,
+                               pMe);
+        }
 }
 #endif
 /*==============================================================================
