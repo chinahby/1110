@@ -401,6 +401,9 @@ typedef struct {
 //   byte  num_len;
 //} EmergencyNumber;
 static IImage * pWallPaper = NULL;
+
+static IImage * pWallPaperEx = NULL;    
+
 //int charging_mark = 0;
 //int charging_mark2 = 0;
 
@@ -6135,6 +6138,15 @@ static boolean  IDD_POWERDOWN_Handler(void *pUser,
                 IIMAGE_Release(pWallPaper);
                 pWallPaper = NULL;
             }
+
+            //Add By zzg 2013_09_11
+            if(pWallPaperEx)
+            {
+                IIMAGE_Release(pWallPaperEx);
+                pWallPaperEx = NULL;
+            }
+            //Add End
+            
             (void) ISHELL_PostEvent(pMe->a.m_pIShell,
                               AEECLSID_CORE_APP,
                               EVT_USER_REDRAW,
@@ -8168,6 +8180,7 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
     BottomBar_e_Type    eBBarType = BTBAR_NONE;  
 
     //Add By zzg 2013_09_09    
+    /*
     AEERect rt = {0, SCREEN_HEIGHT-BOTTOMBAR_HEIGHT, SCREEN_WIDTH, BOTTOMBAR_HEIGHT};    
 
     IFileMgr *pMgr = NULL;
@@ -8203,9 +8216,17 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
     
 
     if(NULL != pTmpWallPaper)
+   
     {
         IImage_SetOffset(pTmpWallPaper, 0, (SCREEN_HEIGHT-BOTTOMBAR_HEIGHT));
         IImage_Draw(pTmpWallPaper, 0, (SCREEN_HEIGHT-BOTTOMBAR_HEIGHT));
+    }
+    */
+
+    if(NULL != pWallPaperEx)
+    {
+        IImage_SetOffset(pWallPaperEx, 0, (SCREEN_HEIGHT-BOTTOMBAR_HEIGHT));
+        IImage_Draw(pWallPaperEx, 0, (SCREEN_HEIGHT-BOTTOMBAR_HEIGHT));
     }
 //#endif
     //Add End
@@ -8334,8 +8355,16 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 
     //Add By zzg 2013_09_09
 //#ifdef FEATURE_VERSION_EC99
-    IImage_Release(pTmpWallPaper);    
-    pTmpWallPaper = NULL;
+    //IImage_Release(pTmpWallPaper);    
+    //pTmpWallPaper = NULL;
+
+    /*
+    if (pWallPaperEx)
+    {
+        IImage_Release(pWallPaperEx);    
+        pWallPaperEx = NULL;    
+    }
+    */
 //#endif    
     //Add End
 }
@@ -8697,6 +8726,12 @@ static void CoreApp_DrawWallPaper(CCoreApp *pMe)
     AEEImageInfo   ImgInfo;
     static char        szWallPaperName[AEE_MAX_FILE_NAME/*FILESPECLEN*/];
     char                 szNewWallPaperName[AEE_MAX_FILE_NAME/*FILESPECLEN*/];
+
+    //Add By zzg 2013_09_11
+    static char        szWallPaperNameEx[AEE_MAX_FILE_NAME/*FILESPECLEN*/];
+    char                 szNewWallPaperNameEx[AEE_MAX_FILE_NAME/*FILESPECLEN*/];
+    //Add End
+    
     //int                    nX = 0,  nY = 0;
     if ( (NULL == pMe) || (IDD_IDLE != pMe->m_wActiveDlgID) )
     {
@@ -8707,6 +8742,82 @@ static void CoreApp_DrawWallPaper(CCoreApp *pMe)
 #ifdef FEATRUE_SET_ANN_FULL_SCREEN
     pMe->m_capture = DB_CAPTURE_NONE;
 #endif
+
+    //Add By zzg 2013_09_11
+    if ( NULL == pWallPaperEx )
+    {  
+        // 初始化墙纸或上次取墙纸不成功
+        MEMSET(szWallPaperNameEx, 0x00, sizeof(szWallPaperNameEx));
+        
+        // 取设定的墙纸文件名
+        (void) ICONFIG_GetItem(pMe->m_pConfig,
+                                CFGI_WALLPAPER,
+                                szWallPaperNameEx,
+                                sizeof(szWallPaperNameEx));
+
+        // test the file existed or not, if not existed, load the default wallpaper.
+        {
+            IFileMgr *pFileMgr = NULL;
+            ISHELL_CreateInstance(pMe->a.m_pIShell, AEECLSID_FILEMGR, (void **)&pFileMgr);
+            if(pFileMgr)
+            {
+                if(IFILEMGR_Test(pFileMgr, szWallPaperNameEx) == SUCCESS)
+                {
+                    pWallPaperEx = ISHELL_LoadImage(pMe->a.m_pIShell, szWallPaperNameEx);
+                }
+                else // if specified wallpaper not existed, load the default wallpaper
+                {
+                    pWallPaperEx = ISHELL_LoadImage(pMe->a.m_pIShell, OEMNV_WALLPAPER);
+                }
+                IFILEMGR_Release(pFileMgr);
+                pFileMgr = NULL;
+            }
+        }        
+
+    }
+    else
+    {   
+        // 已经成功加载墙纸图片，但须检查墙纸图片设置是否被变更
+        MEMSET(szNewWallPaperNameEx, 0x00, sizeof(szNewWallPaperNameEx));
+        
+        // 取设定的墙纸文件名
+        (void) ICONFIG_GetItem(pMe->m_pConfig,
+                          CFGI_WALLPAPER,
+                          szNewWallPaperNameEx,
+                          sizeof(szNewWallPaperNameEx));
+                          
+        if ( 0 != STRCMP(szNewWallPaperNameEx, szWallPaperNameEx) )
+        {   
+            // 墙纸设置已变
+            MEMSET( szWallPaperNameEx, 0x00, sizeof(szWallPaperNameEx) );
+            (void)STRCPY( szWallPaperNameEx, szNewWallPaperNameEx );
+            
+            // 释放先前图片占用的资源
+            IIMAGE_Release(pWallPaperEx);
+            
+            // test the file existed or not, if not existed, load the default wallpaper.
+            {
+                IFileMgr *pFileMgr = NULL;
+                ISHELL_CreateInstance(pMe->a.m_pIShell, AEECLSID_FILEMGR, (void **)&pFileMgr);
+                if(pFileMgr)
+                {
+                    if(IFILEMGR_Test(pFileMgr, szWallPaperNameEx) == SUCCESS)
+                    {
+                        pWallPaperEx = ISHELL_LoadImage(pMe->a.m_pIShell, szWallPaperNameEx);
+                    }
+                    else // if specified wallpaper not existed, load the default wallpaper
+                    {
+                        pWallPaperEx = ISHELL_LoadImage(pMe->a.m_pIShell, OEMNV_WALLPAPER);
+                    }
+                    IFILEMGR_Release(pFileMgr);
+                    pFileMgr = NULL;
+                }
+            }
+        }
+    }
+    //Add End
+
+
     if ( NULL == pWallPaper )
     {  
         // 初始化墙纸或上次取墙纸不成功
