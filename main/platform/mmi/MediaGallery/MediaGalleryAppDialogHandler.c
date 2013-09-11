@@ -3484,11 +3484,16 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
                      {IDS_MG_ZOOM, TRUE}, {IDS_MG_SETWALLPAPER, TRUE},
                      {IDS_MG_DELETE, TRUE}, {IDS_MG_DETAILS, TRUE}
                   };
-				#elif defined(FEATURE_VERSION_LM126C)||defined(FEATURE_VERSION_K212)
+				#elif defined(FEATURE_VERSION_LM126C)
 				  MenuInsItem ImgViewOptions[] =
 				  {
 					 {IDS_MG_ZOOM, TRUE}, {IDS_MG_DELETE, TRUE}, 
 					 {IDS_MG_DETAIL, TRUE}
+				  };
+				#elif defined(FEATURE_VERSION_K212)
+				  MenuInsItem ImgViewOptions[] =
+				  {
+					 {IDS_MG_ZOOM, TRUE},{IDS_MG_DETAIL, TRUE}
 				  };
                 #else
                   MenuInsItem ImgViewOptions[]={
