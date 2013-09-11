@@ -28,6 +28,11 @@
 #ifdef FEATURE_DSP
 #include "cam_IF_ait_api.h"
 #endif
+
+#ifdef FEATURE_APP_MUSICPLAYER
+#include "MusicPlayer.h"
+#endif 
+
 /*==============================================================================                                 
                                  宏定义和常数                                
 ==============================================================================*/
