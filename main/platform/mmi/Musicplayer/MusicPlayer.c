@@ -1114,12 +1114,14 @@ static boolean IMusicPlayer_HandleEvent( IMusicPlayer *pi,
                 {
                     if (wParam == AVK_FFWD)     //pre
                     {
-                        CMusicPlayer_PlayNext(pMe,FALSE );//播放上一首         
+                        CMusicPlayer_PlayNext(pMe,TRUE);//播放下一首
+                        //CMusicPlayer_PlayNext(pMe,FALSE );//播放上一首         
                     }
 
                     else if (wParam == AVK_RWD)      //next
                     {
-                       CMusicPlayer_PlayNext(pMe,TRUE);//播放下一首
+                       //CMusicPlayer_PlayNext(pMe,TRUE);//播放下一首
+                       CMusicPlayer_PlayNext(pMe,FALSE );//播放上一首   
                     }
 
                     return TRUE;
