@@ -14307,7 +14307,7 @@ static boolean IDD_MEMSTATUS_Handler(void *pUser,
 )
 {
     WmsApp *pMe = (WmsApp *)pUser;
-
+	#ifdef FEATURE_VERSION_EC99
     //Add By zzg 2013_08_21
     IStatic* pStatic;
     IMenuCtl* pMenuCtl;
@@ -14320,7 +14320,7 @@ static boolean IDD_MEMSTATUS_Handler(void *pUser,
         return FALSE;
     }
     //Add End
-   
+    #endif
     if (NULL == pMe)
     {
         return FALSE;
@@ -14329,6 +14329,7 @@ static boolean IDD_MEMSTATUS_Handler(void *pUser,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
+			#ifdef FEATURE_VERSION_EC99
             //Add By zzg 2013_08_21
             {
                 AEERect rc;
@@ -14363,6 +14364,7 @@ static boolean IDD_MEMSTATUS_Handler(void *pUser,
                 ISTATIC_SetBackGround(pStatic, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND); //modified by yangdecai
             }
             //Add End
+            #endif
             return TRUE;
 
         case EVT_DIALOG_START:
@@ -14377,6 +14379,7 @@ static boolean IDD_MEMSTATUS_Handler(void *pUser,
         // 有新消息
         case EVT_WMS_MSG_RECEIVED_MESSAGE:
             {
+				#ifdef FEATURE_VERSION_EC99
                 AECHAR  wstrDevice[32]={0};
                 AECHAR  wstrVal[32]={0};
                 char    strVal[32]={0};                
@@ -14497,6 +14500,187 @@ static boolean IDD_MEMSTATUS_Handler(void *pUser,
             
             // 立即更新显示
             IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+			#else
+			AECHAR	wstrDevice[32]={0};
+			AECHAR	wstrVal[32]={0};
+			char	strVal[32]={0};
+			AEERect rc;
+			int 	nLineHeight,y;
+			uint16	nMsgs=0;
+			uint16	nOnUIMs=0;
+#ifdef FEATURE_FUNCS_THEME    
+			RGBVAL		oldColor;
+			Theme_Param_type  Theme_Param={0};
+			
+			Appscom_GetThemeParameters(&Theme_Param);
+#endif /* FEATURE_FUNCS_THEME */
+			{
+			// 画标题条
+			
+				TitleBar_Param_type  TitleBar_Param = {0};
+				
+				TitleBar_Param.pwszTitle = wstrDevice;
+				TitleBar_Param.dwAlignFlags = IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER;
+				(void)ISHELL_LoadResString(pMe->m_pShell, AEE_WMSAPPRES_LANGFILE,
+							IDS_MENSTATUS, wstrDevice,sizeof(wstrDevice));
+	#if 0
+				// 画标题条
+				{
+					TitleBar_Param_type  TitleBar_Param = {0};
+					
+					TitleBar_Param.pwszTitle = wstrDevice;
+					TitleBar_Param.dwAlignFlags = IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER;
+					(void)ISHELL_LoadResString(pMe->m_pShell, AEE_WMSAPPRES_LANGFILE,
+								IDS_MENSTATUS, wstrDevice,sizeof(wstrDevice));
+					
+					DrawTitleBar(pMe->m_pDisplay, &TitleBar_Param);
+					MEMSET(wstrDevice, 0, sizeof(wstrDevice));
+				}
+	#else
+				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,wstrDevice,FALSE);
+	#endif
+			}
+			//获得系统字体高度
+			nLineHeight = IDISPLAY_GetFontMetrics(pMe->m_pDisplay,
+							AEE_FONT_NORMAL,
+							NULL,
+							NULL);
+
+			// 先清屏
+			y = 0;//GetTitleBarHeight(pMe->m_pDisplay);
+			SETAEERECT(&rc,0, y,pMe->m_rc.dx, pMe->m_rc.dy - GetBottomBarHeight(pMe->m_pDisplay) - y);
+#ifdef FEATURE_FUNCS_THEME    
+			IDISPLAY_FillRect(pMe->m_pDisplay, &rc, Theme_Param.bkcolor);
+			
+			// 更改文本字体颜色
+			oldColor = IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, Theme_Param.textColor);
+#else
+
+#ifdef FEATURE_WHITE_BG
+			IDISPLAY_FillRect(pMe->m_pDisplay, &rc, RGB_WHITE);
+			IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_BLACK);
+#else
+			IDISPLAY_FillRect(pMe->m_pDisplay, &rc, RGB_BLACK);
+			IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
+#endif                
+
+#endif /* FEATURE_FUNCS_THEME */
+			
+			// 绘制话机收件箱使用情况
+			SETAEERECT(&rc,3, y,pMe->m_rc.dx - 6, pMe->m_rc.dy - GetBottomBarHeight(pMe->m_pDisplay) - y);
+			
+#ifdef FEATURE_CDSMS_RUIM
+			if (IsRunAsUIMVersion())
+			{
+				(void)ISHELL_LoadResString(pMe->m_pShell, AEE_WMSAPPRES_LANGFILE,
+							IDS_PHONE, wstrDevice,sizeof(wstrDevice));
+				IDISPLAY_DrawText( pMe->m_pDisplay, 
+							AEE_FONT_BOLD, wstrDevice,
+							-1, 1, y, &rc, 
+							IDF_TEXT_TRANSPARENT|IDF_ALIGN_LEFT);
+				y += nLineHeight + 1;
+			}
+			else
+			{
+				y += nLineHeight + 4;
+			}
+#endif /* FEATURE_CDSMS_RUIM */
+
+			// 收件箱
+			// 获取消息数
+			wms_cacheinfolist_getcounts(WMS_MB_INBOX, NULL, &nOnUIMs, &nMsgs);
+			(void)SPRINTF(strVal, "%d/%d", nMsgs-nOnUIMs, IN_MAX); 
+			(void)STRTOWSTR(strVal, wstrVal, sizeof(wstrVal));
+			(void)ISHELL_LoadResString(pMe->m_pShell, AEE_WMSAPPRES_LANGFILE,
+						IDS_INBOX, wstrDevice,sizeof(wstrDevice));
+			IDISPLAY_DrawText( pMe->m_pDisplay, 
+						AEE_FONT_NORMAL, wstrDevice,
+						-1, 1, y, &rc, 
+						IDF_TEXT_TRANSPARENT|IDF_ALIGN_LEFT);
+			IDISPLAY_DrawText( pMe->m_pDisplay, 
+						AEE_FONT_NORMAL, wstrVal,
+						-1, 1, y, &rc, 
+						IDF_TEXT_TRANSPARENT|IDF_ALIGN_RIGHT);
+						
+			// 发件箱
+			// 获取消息数
+			wms_cacheinfolist_getcounts(WMS_MB_OUTBOX, NULL, &nOnUIMs, &nMsgs);
+			y += nLineHeight + 1;
+			(void)SPRINTF(strVal, "%d/%d", (nMsgs-nOnUIMs), OUT_MAX); 
+			(void)STRTOWSTR(strVal, wstrVal, sizeof(wstrVal));
+			(void)ISHELL_LoadResString(pMe->m_pShell, AEE_WMSAPPRES_LANGFILE,
+						IDS_OUTBOX, wstrDevice,sizeof(wstrDevice));
+			IDISPLAY_DrawText( pMe->m_pDisplay, 
+						AEE_FONT_NORMAL, wstrDevice,
+						-1, 1, y, &rc, 
+						IDF_TEXT_TRANSPARENT|IDF_ALIGN_LEFT);
+			IDISPLAY_DrawText( pMe->m_pDisplay, 
+						AEE_FONT_NORMAL, wstrVal,
+						-1, 1, y, &rc, 
+						IDF_TEXT_TRANSPARENT|IDF_ALIGN_RIGHT);
+						
+			// 草稿箱
+			// 获取消息数
+			wms_cacheinfolist_getcounts(WMS_MB_DRAFT, NULL, NULL, &nMsgs);
+			y += nLineHeight + 1;
+			(void)SPRINTF(strVal, "%d/%d", nMsgs, DRAFT_MAX); 
+			(void)STRTOWSTR(strVal, wstrVal, sizeof(wstrVal));
+			(void)ISHELL_LoadResString(pMe->m_pShell, AEE_WMSAPPRES_LANGFILE,
+						IDS_DRAFT, wstrDevice,sizeof(wstrDevice));
+			IDISPLAY_DrawText( pMe->m_pDisplay, 
+						AEE_FONT_NORMAL, wstrDevice,
+						-1, 1, y, &rc, 
+						IDF_TEXT_TRANSPARENT|IDF_ALIGN_LEFT);
+			IDISPLAY_DrawText( pMe->m_pDisplay, 
+						AEE_FONT_NORMAL, wstrVal,
+						-1, 1, y, &rc, 
+						IDF_TEXT_TRANSPARENT|IDF_ALIGN_RIGHT);
+			
+#ifdef FEATURE_CDSMS_RUIM
+			if (IsRunAsUIMVersion())
+			{
+				y += nLineHeight;
+				(void)STRTOWSTR("----------------------------", wstrDevice, sizeof(wstrDevice));
+				IDISPLAY_DrawText( pMe->m_pDisplay, 
+							AEE_FONT_NORMAL, wstrDevice,
+							-1, 1, y, &rc, 
+							IDF_TEXT_TRANSPARENT|IDF_ALIGN_LEFT);
+				
+				// 绘制UIM使用情况
+				y += nLineHeight/2 + 1;
+				(void)SPRINTF(strVal, "%d/%d", 
+							  pMe->m_memruimStatuse.used_tag_slots, 
+							  pMe->m_memruimStatuse.max_slots); 
+				(void)STRTOWSTR(strVal, wstrVal, sizeof(wstrVal));
+				(void)ISHELL_LoadResString(pMe->m_pShell, AEE_WMSAPPRES_LANGFILE,
+							IDS_RUIM, wstrDevice,sizeof(wstrDevice));
+							
+				IDISPLAY_DrawText( pMe->m_pDisplay, 
+							AEE_FONT_BOLD, wstrDevice,
+							-1, 1, y, &rc, 
+							IDF_TEXT_TRANSPARENT|IDF_ALIGN_LEFT);
+				IDISPLAY_DrawText( pMe->m_pDisplay, 
+							AEE_FONT_BOLD, wstrVal,
+							-1, 1, y, &rc, 
+							IDF_TEXT_TRANSPARENT|IDF_ALIGN_RIGHT);
+			}
+#endif /* FEATURE_CDSMS_RUIM */
+
+#ifdef FEATURE_FUNCS_THEME    
+			// 恢复文本字体颜色
+			(void)IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, oldColor);
+#else
+			(void)IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
+#endif /* FEATURE_FUNCS_THEME */
+		}
+		
+		// 绘制底条提示
+		//			Back
+		DRAW_BOTTOMBAR(BTBAR_BACK)
+		
+		// 立即更新显示
+		IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+			#endif
             return TRUE;
             
         case EVT_DIALOG_END:
