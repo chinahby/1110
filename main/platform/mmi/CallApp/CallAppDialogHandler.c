@@ -130,6 +130,7 @@ static char* SOUND_NAME[] =
     NUM_W,
     NUM_PUND,
     NUM_STAR,
+    NUM_ADD,
 };
 
 static char* TIME_HOUR1_SOUND_NAME[] =
@@ -622,6 +623,10 @@ static void CALLApp_PlayShutterSound(CCallApp *pMe,uint16 key)
 		if(key == AVK_W)
 		{
 			md.pData = (void *)SOUND_NAME[11];
+		}
+		if(key == AVK_Z)
+	    {
+            md.pData = (void *)SOUND_NAME[14];
 		}
         md.dwSize = 0;
        
@@ -13613,6 +13618,9 @@ if(wp == AVK_0)
 					{
 						//return L'W';
 						WSTRCPY(&pMe->m_DialString[len-1], L"+");
+						#if defined(FEATURE_VERSION_K212_20D)
+						Temp_wp = AVK_Z;
+						#endif
 					}
 				}
 				else
@@ -13646,6 +13654,9 @@ if(wp == AVK_0)
 						//return L'W';
 						//WSTRCPY(&pMe->m_DialString[len-1], L"w");
 						pMe->m_DialString[len-pMe->m_nCursorPos-1] = L'+';
+						#if defined(FEATURE_VERSION_K212_20D)
+						Temp_wp = AVK_Z;
+						#endif
 					}
 				}	
         	}
@@ -13663,7 +13674,7 @@ if(wp == AVK_0)
         			(void)WSTRCPY(&pMe->m_DialString[len-pMe->m_nCursorPos+1], wstrTemp);
 				}
         	}
-            #if defined(FEATURE_VERSION_X3)||defined(FEATURE_VERSION_W021_CT100)
+            #if defined(FEATURE_VERSION_X3)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_K212_20D)
             if(pMe->m_curpros<3)
             #else
         	if(pMe->m_curpros<2)

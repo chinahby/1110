@@ -43,6 +43,7 @@ CONSTFILE_FILES+=\
 		9.mp3|fs:/hsmm/callapp/9.mp3 \
 		P.mp3|fs:/hsmm/callapp/P.mp3 \
 		W.mp3|fs:/hsmm/callapp/W.mp3 \
+		add.mp3|fs:/hsmm/callapp/add.mp3 \
 		pund.mp3|fs:/hsmm/callapp/pund.mp3 \
 		star.mp3|fs:/hsmm/callapp/star.mp3
 endif
