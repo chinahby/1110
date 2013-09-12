@@ -4089,13 +4089,10 @@ static boolean  HandleVolumeSubDialogEvent(CSoundMenu *pMe,
 #else
                 Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &rect, TRUE);
 #endif
-                MSG_FATAL("***zzg SoundMenuDlg VolumeSubDlg pRingLevel=%x***", pRingLevel, 0, 0); 
                 if(pRingLevel)
                 {
                     IIMAGE_SetParm(pRingLevel, IPARM_NFRAMES, SOUNDMENU_VOLUME_LEVELS, 0);
                     IIMAGE_GetInfo(pRingLevel, &ImageSize);
-					MSG_FATAL("***zzg SoundMenuDlg ImageSize cx=%d, cy=%d, nColors=%x***", ImageSize.cx, ImageSize.cy, ImageSize.nColors);
-                    MSG_FATAL("***zzg SoundMenuDlg ImageSize bAnimated=%d, cxFrame=%d***", ImageSize.bAnimated, ImageSize.cxFrame, 0);
                     IIMAGE_DrawFrame(pRingLevel, 
                                         imageIndex, 
                                         (rect.dx - ImageSize.cxFrame)/2, 
