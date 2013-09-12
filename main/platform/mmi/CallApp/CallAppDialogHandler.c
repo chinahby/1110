@@ -7730,7 +7730,7 @@ void CallApp_SetupCallAudio(CCallApp *pMe)
 	{
 		ISOUND_SetVolume(pMe->m_pSound, GET_ISOUND_VOL_LEVEL(pMe->m_CallVolume)*4/5);
 	}
-    #elif defined FEATURE_VERSION_EC99
+    #elif defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)
 	if(pMe->m_bHandFree)
 	{
     	ISOUND_SetVolume(pMe->m_pSound, GET_ISOUND_VOL_LEVEL(pMe->m_CallVolume)*3/5);
@@ -13155,6 +13155,15 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
                 return TRUE;
             }
 #endif
+
+#ifdef FEATURE_VERSION_K212_20D
+			if (((AVKType)wParam == AVK_6) && (((uint16)WSTRLEN(pMe->m_DialString) <= MAX_SPEEDDIAL_CHARS) &&(wIndex!=0)) && (!pMe->m_b_incall))
+				{
+					   pMe->m_msg_text_id = IDS_MSG_TIME_DETAIL;			
+					   CLOSE_DIALOG(DLGRET_MSGBOX);
+					   return TRUE;
+				}
+#endif					   
 
             if(((uint16)WSTRLEN(pMe->m_DialString) <= MAX_SPEEDDIAL_CHARS) &&(wIndex!=0))
             {
