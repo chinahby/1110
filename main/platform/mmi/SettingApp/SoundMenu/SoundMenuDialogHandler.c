@@ -3866,7 +3866,7 @@ static void VolumePreview(void *pUser)
             pMe->m_RingerID[pMe->m_CurProfile].midID = OEMNV_DEFAULTRINGER;
         }
 #endif
-		#if defined( FEATURE_VERSION_K202_LM129C)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_EC99)
+		#if defined( FEATURE_VERSION_K202_LM129C)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_20D)
 		//IALERT_StartRingerAlert(pMe->m_pAlert, OEMNV_DEFAULTRINGER);
 		IALERT_StartRingerAlert(pMe->m_pAlert, pMe->m_RingerID[pMe->m_CurProfile].midID);
 		#else
@@ -4089,11 +4089,13 @@ static boolean  HandleVolumeSubDialogEvent(CSoundMenu *pMe,
 #else
                 Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &rect, TRUE);
 #endif
-
+                MSG_FATAL("***zzg SoundMenuDlg VolumeSubDlg pRingLevel=%x***", pRingLevel, 0, 0); 
                 if(pRingLevel)
                 {
                     IIMAGE_SetParm(pRingLevel, IPARM_NFRAMES, SOUNDMENU_VOLUME_LEVELS, 0);
                     IIMAGE_GetInfo(pRingLevel, &ImageSize);
+					MSG_FATAL("***zzg SoundMenuDlg ImageSize cx=%d, cy=%d, nColors=%x***", ImageSize.cx, ImageSize.cy, ImageSize.nColors);
+                    MSG_FATAL("***zzg SoundMenuDlg ImageSize bAnimated=%d, cxFrame=%d***", ImageSize.bAnimated, ImageSize.cxFrame, 0);
                     IIMAGE_DrawFrame(pRingLevel, 
                                         imageIndex, 
                                         (rect.dx - ImageSize.cxFrame)/2, 
