@@ -79,7 +79,7 @@ extern uint8  g_mmsDataInfoMax;
 #elif defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM) || defined(FEATURE_VERSION_C500BE)
 // 动画起点 Y 坐标
 #define SENDINGSMS_ANI_Y    10
-#elif defined(FEATURE_VERSION_EC99)
+#elif defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)
 #define SENDINGSMS_ANI_Y    1
 #else
 // 动画起点 Y 坐标
@@ -3613,7 +3613,7 @@ static boolean IDD_SETTING_Handler(void   *pUser,
 #endif                   
 #if 1//def FEATURE_CARRIER_TAIWAN_APBW        //add by yangdecai   2010-08-23 
             MSG_FATAL("IDD_SETTING_Handler EVT_DIALOG_INIT IDS_CALLBACKNUM", 0, 0, 0);
-#if !defined(FEATURE_VERSION_C316)&&!defined(FEATURE_VERSION_K202_LM129C)&&!defined(FEATURE_VERSION_W021_CT100)&&!defined(FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_EC99)
+#if !defined(FEATURE_VERSION_C316)&&!defined(FEATURE_VERSION_K202_LM129C)&&!defined(FEATURE_VERSION_W021_CT100)&&!defined(FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_VERSION_K212_20D)
             MENU_ADDITEM(pMenu, IDS_CALLBACKNUM);
 #endif
 #endif 
@@ -3679,7 +3679,7 @@ static boolean IDD_SETTING_Handler(void   *pUser,
 #if 1//def FEATURE_CARRIER_TAIWAN_APBW        //add by yangdecai   2010-08-23 
                 // 发出短信是否带回叫号码
                 MSG_FATAL("IDD_SETTING_Handler EVT_COMMAND IDS_CALLBACKNUM", 0, 0, 0);
-#if !defined(FEATURE_VERSION_C316)&&!defined(FEATURE_VERSION_K202_LM129C)&&!defined(FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_EC99)
+#if !defined(FEATURE_VERSION_C316)&&!defined(FEATURE_VERSION_K202_LM129C)&&!defined(FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_VERSION_K212_20D)
                 case IDS_CALLBACKNUM:
                     CLOSE_DIALOG(DLGRET_CALLBACKNUM)
                     return TRUE;
@@ -9627,7 +9627,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                     ISHELL_LoadResString(pMe->m_pShell, AEE_WMSAPPRES_LANGFILE, IDS_PRIORITY, wstrText[nControls], sizeof(wstrText));
                     nControls++;
                 }
-#if !defined(FEATURE_VERSION_EC99)                
+#if !defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_VERSION_K212_20D)                
                 if (mask & 0x02)
                 {
                     wControls[nControls] = IDC_MENU_RPT;
@@ -9636,7 +9636,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                 }
 #endif
 
-#if !defined(FEATURE_VERSION_C316)&&!defined(FEATURE_VERSION_K202_LM129C)&&!defined(FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_EC99) //xxzhen
+#if !defined(FEATURE_VERSION_C316)&&!defined(FEATURE_VERSION_K202_LM129C)&&!defined(FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_VERSION_K212_20D) //xxzhen
                 if (mask & 0x10)
                 {
                     wControls[nControls] = IDC_MENU_CBNUM;
@@ -11237,7 +11237,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 		         	}		         	
 		         	#elif defined(FEATURE_VERSION_K202_LM129C)
 					(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_PINYIN);
-					#elif defined(FEATURE_VERSION_K212)//xxzhen
+					#elif defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_K212_20D)
 					{
 						//nInputMode = ITEXTCTL_GetInputMode (pIText, NULL);
 						(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_PINYIN);

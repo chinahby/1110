@@ -5712,7 +5712,7 @@ static boolean MGAppPopupMenu_OnDetail(CMediaGalleryApp* pMe,
          if(!pMenuCtl)
             return FALSE;
          
-#ifdef FEATURE_VERSION_EC99
+#if defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_20D)
          IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
 #endif
 
@@ -5752,7 +5752,7 @@ static boolean MGAppPopupMenu_OnDetail(CMediaGalleryApp* pMe,
          rc = pMe->m_rc;
          rc.dy =  GetTitleBarHeight(pMe->m_pDisplay); 
 
-#ifdef FEATURE_VERSION_EC99      		
+#if defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_20D)     		
 		 IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn, pszTitle, FALSE);	
 
          IMENUCTL_SetRect(pMenuCtl, &rc);
@@ -5765,7 +5765,7 @@ static boolean MGAppPopupMenu_OnDetail(CMediaGalleryApp* pMe,
 #endif                 
 
          
-#ifdef FEATURE_VERSION_EC99         
+#if defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_20D)         
          rc.dy = pMe->m_rc.dy - GetBottomBarHeight(pMe->m_pDisplay) - GetTitleBarHeight(pMe->m_pDisplay);
 #else         
          rc.y += rc.dy;
@@ -5781,7 +5781,7 @@ static boolean MGAppPopupMenu_OnDetail(CMediaGalleryApp* pMe,
          pMe->m_pDetailText = pDetailText;
          ISTATIC_AddRef(pMe->m_pDetailText);
 
-#ifdef FEATURE_VERSION_EC99
+#if defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_20D)
          MGAppUtil_DrawSoftkey(pMe, BTBAR_BACK);
 #endif
 
@@ -6009,7 +6009,7 @@ static boolean MGAppPopupMenu_OnDetail(CMediaGalleryApp* pMe,
 
    case EVT_USER_REDRAW:
       {
-#ifdef FEATURE_VERSION_EC99
+#if defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_20D)
          ISTATIC_Redraw(pDetailText);
          IANNUNCIATOR_Redraw(pMe->m_pIAnn);
          IDISPLAY_Update(pMe->m_pDisplay);
