@@ -893,7 +893,8 @@ void fm_mute(boolean on,boolean speaker)
 	if ( ( on == TRUE) && (fm_playing_mute == FALSE) )
 	{
 		fm_playing_mute = TRUE;
-#ifndef FEATURE_VERSION_EC99
+#if defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)
+#else
         if (HS_HEADSET_ON())
 #endif		
 		{
