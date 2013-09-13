@@ -816,9 +816,9 @@ void  CoreApp_SoundBoAlarm(CCoreApp *pme, uint16 wParam)
     {
         bIsInCall = TRUE;
     }
-
+	GetJulianDate(GETTIMESECONDS(), &julian);
     MSG_FATAL("m_sound_bo_core====%d,bIsInCall=====%d",m_sound_bo_core,bIsInCall,0);
-    if ((GetMp3PlayerStatus() == MP3STATUS_NONE) && m_sound_bo_core && !bIsInCall)
+    if ((GetMp3PlayerStatus() == MP3STATUS_NONE) && m_sound_bo_core && !bIsInCall&&(julian.wMinute == 0)&&(julian.wSecond <= 40))
 	{
 #if defined(FEATURE_VERSION_EC99)|| defined(FEATURE_VERSION_K212_20D)
         CoreApp_PlayTimeSound(pMe,TIME_TWO);
