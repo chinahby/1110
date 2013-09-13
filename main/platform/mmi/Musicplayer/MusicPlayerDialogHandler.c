@@ -3304,15 +3304,16 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
 	        ISHELL_SetTimer(pMe->m_pShell,50,(PFNNOTIFY)MP3_DrawImageWithOffset, pMe);
 #endif		
 	        CMusicPlayer_PlayNext(pMe,FALSE );//播放上一首
+	     }   
 #endif        
-		}
+		
         return TRUE;
         
     //case AVK_GSENSOR_BACKWARD:   
 #ifdef FEATURE_VERSION_K212_20D
     case AVK_RWD:
 #endif		    
-    case AVK_RIGHT:
+    case AVK_RIGHT:    
 #ifdef FEATURE_VERSION_C337	
         if(pMe->m_bPlaying && pMe->m_pMedia)
         {
@@ -3349,8 +3350,8 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
 		    pMe->m_bUserPressNext = TRUE;
 		    CMusicPlayer_PlayNext(pMe,TRUE);//播放下一首
 		    pMe->m_bUserPressNext = FALSE;
-#endif		
-		}
+         }   
+#endif				
         return TRUE;
 
 #ifdef FEATURE_VERSION_C337
