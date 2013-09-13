@@ -8182,9 +8182,12 @@ static void DrawMatrix(MainMenu *pMe)
 	if(m_sound_bo_main)
 	{
 
+		 /*
 		nv_item_type	SimChoice;
 		(void)OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
 		if(SimChoice.sim_select != 1)
+        */   
+        if (GetMp3PlayerStatus() == MP3STATUS_NONE)
 		{
 			MainMenu_PlayShutterSound(pMe,pMe->m_index);
 		}
@@ -8231,10 +8234,12 @@ static void MoveCursorTo(MainMenu *pMe, int index)
                                  sizeof(boolean));
 	if(m_sound_bo_main)
 	{
+		 /*
 		nv_item_type	SimChoice;
 		(void)OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
-        
 		if(SimChoice.sim_select != 1)
+        */   
+        if (GetMp3PlayerStatus() == MP3STATUS_NONE)
 		{
 			MainMenu_PlayShutterSound(pMe,pMe->m_index);
 		}
