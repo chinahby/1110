@@ -270,7 +270,7 @@ static char CallApp_AVKType2ASCII(AVKType key);
 static void CallApp_keypadtimer(void *pUser);
 static boolean CallApp_FindMemoryCardExist(CCallApp *pMe);  //Add by pyuangui 2013-01-10
 static AECHAR CallApp_AVKSTAR_2ASCII(CCallApp *pMe);
-
+static AECHAR CallApp_AVK0_2ASCII(CCallApp *pMe);
 //Determines the current DTMF tone length
 static const DTMFToneDuration *CallApp_GetDTMFDuration(CCallApp *pMe);
 //Invokes the Contacts applet to save a phone number
@@ -8828,6 +8828,15 @@ static AECHAR CallApp_AVKSTAR_2ASCII(CCallApp *pMe)
 		return L'W';
 	}
 }
+//add by wenyu ，给“0”键添加“+”
+static AECHAR CallApp_AVK0_2ASCII(CCallApp *pMe)
+{
+	if(pMe->m_curpros == 0)
+	{
+		return L'0';
+	}
+}
+
 
 //Add by pyuangui 2013-01-10
 #ifdef FEATURE_VERSION_C316
@@ -8872,8 +8881,8 @@ static char CallApp_AVKType2ASCII(AVKType key)
     }
 	//add by ydc 
 	if (AVK_O == key)
-    {
-        return '+';
+    { 
+		return '+';
     }
 
     if (AVK_P == key)
@@ -13002,8 +13011,13 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
 #ifdef FEATURE_KEYGUARD
             if(WSTRLEN(pMe->m_DialString) == 1)
             {
+            	//add by wenyu ，修改长按“*”键，播放FM
+				#ifdef FEATURE_VERSION_K212_ND 
+				CallApp_LaunchApplet(pMe,  AEECLSID_APP_FMRADIO);
+				#else
             	pMe->m_b_set_keyguard = TRUE;
             	ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+				#endif
             }
 #endif
 #else
@@ -13049,22 +13063,63 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
         }
 
         // # key for shortcut of quiet mode
-        else if ( ((AVKType)wParam == AVK_POUND ) && WSTRLEN(pMe->m_DialString) == 1)
+        else if ( ((AVKType)wParam == AVK_POUND) && WSTRLEN(pMe->m_DialString) == 1)
         {
         	MSG_FATAL("POSTEVETN..................................",0,0,0);
 			//ISHELL_PostEvent(pMe->m_pShell,AEECLSID_CORE_APP,EVT_USER,EVT_MODE_CHANGE,0);
-            CallApp_ShortcutQuiet( pMe );
-
-/*            
-#ifdef FEATURE_VERSION_C316
-            if (pMe->m_Profile  == OEMNV_PROFILE_BLUETOOTH)
-            {
-                //Do Nothing.............
-                return TRUE;
-            }
-#endif      
-*/
-            if(pMe->m_Profile == OEMNV_PROFILE_NORMALMODE)
+			//add by wenyu ，长按“#”键开关手电筒
+			#ifdef FEATURE_VERSION_K212_ND
+			{
+				boolean TorchOn = FALSE;
+				OEM_GetConfig(CFGI_FLSHLITHG_STATUS,&TorchOn, sizeof(TorchOn));
+				if (TorchOn == FALSE )
+					{
+						TorchOn = TRUE;
+						if (pMe->m_pBacklight)
+							{
+								IBACKLIGHT_TurnOnTorch(pMe->m_pBacklight); 
+							}
+					}
+				else
+					{
+						TorchOn = FALSE;
+						if (pMe->m_pBacklight)
+							{							
+								IBACKLIGHT_TurnOffTorch(pMe->m_pBacklight);					
+							}
+					}
+				OEM_SetConfig(CFGI_FLSHLITHG_STATUS,&TorchOn, sizeof(TorchOn));
+				{
+					static IStatic * torch_pStatic = NULL;
+					PromptMsg_Param_type m_PromptMsg;
+					MEMSET(&m_PromptMsg,0,sizeof(PromptMsg_Param_type));
+					if(TorchOn)
+					m_PromptMsg.nMsgResID= IDS_MAIN_MENU_TORCHON;
+					else
+					m_PromptMsg.nMsgResID= IDS_MAIN_MENU_TORCHOFF;   
+					m_PromptMsg.ePMsgType = MESSAGE_WARNNING;
+					STRLCPY(m_PromptMsg.strMsgResFile, AEE_APPSCALLAPP_RES_FILE,MAX_FILE_NAME);
+					m_PromptMsg.eBBarType = BTBAR_NONE;
+					if (NULL == torch_pStatic)
+						{
+							AEERect rect = {0};
+							if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,AEECLSID_STATIC,(void **)&torch_pStatic))
+							{
+								return FALSE;
+							}
+							ISTATIC_SetRect(torch_pStatic, &rect);
+						}
+					DrawPromptMessage(pMe->m_pDisplay,torch_pStatic,&m_PromptMsg);
+					IDISPLAY_UpdateEx(pMe->m_pDisplay,TRUE);
+					ISTATIC_Release(torch_pStatic);
+					torch_pStatic=NULL;
+					(void)ISHELL_SetTimer(pMe->m_pShell,1000, (PFNNOTIFY)CallApp_TorchTipTimeOut,pMe);
+				}
+		}
+			#else
+			CallApp_ShortcutQuiet( pMe );
+			//MSG_FATAL("User Profile is changing ..........................",0,0,0);
+			if(pMe->m_Profile == OEMNV_PROFILE_NORMALMODE)
             {
                 pMe->m_msg_text_id = IDS_MSG_CURPROFILE_NORMALMODE;
             }
@@ -13078,6 +13133,18 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
             #endif
             }
             CLOSE_DIALOG(DLGRET_MSGBOX);
+			#endif
+			
+
+/*            
+#ifdef FEATURE_VERSION_C316
+            if (pMe->m_Profile  == OEMNV_PROFILE_BLUETOOTH)
+            {
+                //Do Nothing.............
+                return TRUE;
+            }
+#endif      
+*/            
             // clk_busy_wait(1000*10000);
             //ISHELL_CloseApplet(pMe->m_pShell, TRUE);
         }
@@ -13183,6 +13250,24 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
 		{	
 		    #ifdef FEATURE_VERSION_W317A
             CallApp_LaunchApplet(pMe,  AEECLSID_APP_FMRADIO);  // add by pyuangui 20121220
+           //add by wenyu ，长按“0”键切换情景模式
+		    #elif defined(FEATURE_VERSION_K212_ND) 
+			CallApp_ShortcutQuiet( pMe );
+			MSG_FATAL("User Profile is changing ..........................",0,0,0);
+			if(pMe->m_Profile == OEMNV_PROFILE_NORMALMODE)
+            {
+                pMe->m_msg_text_id = IDS_MSG_CURPROFILE_NORMALMODE;
+            }
+            else
+            {
+            #ifdef FEATURE_NO_VIBRATE            
+                //ISOUND_Vibrate(pMe->m_pSound, 2000);   //客户未要求不加振动提示  
+                pMe->m_msg_text_id = IDS_MSG_CURPROFILE_MEETING_NO_VIBRATE;
+            #else
+                pMe->m_msg_text_id = IDS_MSG_CURPROFILE_MEETING;
+            #endif
+            }
+            CLOSE_DIALOG(DLGRET_MSGBOX);
 			#else
 		    {
 		    boolean TorchOn = FALSE;
@@ -13192,7 +13277,7 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
 				TorchOn = TRUE;
 				if (pMe->m_pBacklight)
 				{
-					IBACKLIGHT_TurnOnTorch(pMe->m_pBacklight);
+					IBACKLIGHT_TurnOnTorch(pMe->m_pBacklight); 
 				}
 			}
 			else
@@ -13200,7 +13285,7 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
 				TorchOn = FALSE;
 				if (pMe->m_pBacklight)
 				{							
-					IBACKLIGHT_TurnOffTorch(pMe->m_pBacklight);
+					IBACKLIGHT_TurnOffTorch(pMe->m_pBacklight);					
 				}
 			}
 			OEM_SetConfig(CFGI_FLSHLITHG_STATUS,&TorchOn, sizeof(TorchOn));
@@ -13232,11 +13317,11 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
                  ISTATIC_Release(torch_pStatic);
                  torch_pStatic=NULL;
                  (void)ISHELL_SetTimer(pMe->m_pShell,1000, (PFNNOTIFY)CallApp_TorchTipTimeOut,pMe);
-                }
+             }
             #else
 			  ISHELL_CloseApplet(pMe->m_pShell, TRUE);
             #endif
-			}
+		}
 			#endif
     	}
         #else
@@ -13451,7 +13536,82 @@ static void CallApp_Process_Spec_Key_Event(CCallApp *pMe,uint16 wp)
 	///////////////////////////////////////////////////////////////////////////////////////
 if(wp == AVK_0)
 {
-        if((pMe->m_btime_out % MAX_COUNT_TO_CHANGE ) == 0)//need change
+	//add by wenyu ，给“0”键添加“+”
+    #ifdef FEATURE_VERSION_K212_ND
+	{
+				AECHAR szStr;
+       			int len=0;
+				uint16 Temp_wp = 0;
+       			len = WSTRLEN(pMe->m_DialString);
+        		AEE_CancelTimer(CallApp_keypadtimer,pMe);
+        		szStr = CallApp_AVK0_2ASCII(pMe);
+				if(pMe->m_curpros>0 ||(pMe->m_curpros==0 && pMe->b_multenter))
+				{
+				
+        		AECHAR wstrTemp[MAX_SIZE_DIALER_TEXT] = {0};
+        		AECHAR tempwStr = 0;
+       		    if (pMe->m_nCursorPos == 0)
+				{
+        			//(void)WSTRCPY(&pMe->m_DialString[len-pMe->m_nCursorPoS], &szStr);	    
+        			if(pMe->m_curpros == 0)
+					{
+						//return L'*';
+						WSTRCPY(&pMe->m_DialString[len-1], L"0");
+						Temp_wp = AVK_0;
+					}
+					if(pMe->m_curpros == 1)
+					{
+						//return L'p';
+						WSTRCPY(&pMe->m_DialString[len-1], L"+");								
+					}
+				}
+					else
+						{
+							//(void)WSTRCPY(wstrTemp, &pMe->m_DialString[len-pMe->m_nCursorPos]);
+        					//(void)WSTRCPY(&pMe->m_DialString[len-pMe->m_nCursorPos-1], &szStr);
+        					//(void)WSTRCPY(&pMe->m_DialString[len-pMe->m_nCursorPos], wstrTemp);
+        					if(pMe->m_curpros == 0)
+								{
+									//return L'*';
+									//WSTRCPY(&pMe->m_DialString[len-1], L"*");
+									pMe->m_DialString[len-pMe->m_nCursorPos-1] = L'0';
+									Temp_wp = AVK_0;
+								}
+							if(pMe->m_curpros == 1)
+								{
+									//return L'p';
+									//WSTRCPY(&pMe->m_DialString[len-1], L"p");
+									pMe->m_DialString[len-pMe->m_nCursorPos-1] = L'+';
+								}
+						}	
+        	}
+        	else
+        	{
+        		AECHAR wstrTemp[MAX_SIZE_DIALER_TEXT] = {0};
+        		if (pMe->m_nCursorPos == 0)
+				{
+        			(void)WSTRCPY(&pMe->m_DialString[len-pMe->m_nCursorPos], L"0");	               
+				}
+				else
+				{
+					(void)WSTRCPY(wstrTemp, &pMe->m_DialString[len-pMe->m_nCursorPos]);
+        			(void)WSTRCPY(&pMe->m_DialString[len-pMe->m_nCursorPos], L"0");
+        			(void)WSTRCPY(&pMe->m_DialString[len-pMe->m_nCursorPos+1], wstrTemp);
+				}
+        	}	
+        	if(pMe->m_curpros<1)
+        	{
+        		pMe->m_curpros ++;
+        	}
+        	else
+        	{
+        		pMe->m_curpros = 0;
+        	}
+        	pMe->b_multenter = TRUE;		
+            AEE_SetTimer(1500,CallApp_keypadtimer,pMe);			
+	}
+        #else 
+		 if((pMe->m_btime_out % MAX_COUNT_TO_CHANGE ) == 0)//need change
         {
             if(pMe->m_return_value == RETURN_ZERO)
             {
@@ -13492,7 +13652,7 @@ if(wp == AVK_0)
 #endif
                 }
             }            
-            
+          
             else if(pMe->m_return_value == RETURN_PLUS)
             {
                 pMe->m_return_value = RETURN_ZERO;
@@ -13504,6 +13664,7 @@ if(wp == AVK_0)
             }
         }
         pMe->m_btime_out ++;
+        #endif
 }
 //////////////////////////////////////////////////////////////////////////////////////////////
 

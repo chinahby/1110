@@ -1784,8 +1784,13 @@ static void DateCtl_GetGridRect(DateCtl * pme, AEERect * prc, int nGridIndex)
 #ifdef FEATURE_VERSION_K202
    SETAEERECT(prc, x+1, y+5, pme->m_rcGrid.dx-2, pme->m_rcGrid.dy-4);
 #else
+   MSG_FATAL("x+1=%d,y+1=%d",x+1,y+3,0);
+   #ifdef FEATURE_VERSION_K212_ND
+   SETAEERECT(prc, x+1, y+7, pme->m_rcGrid.dx-2, pme->m_rcGrid.dy-4);
+   #else
    SETAEERECT(prc, x+1, y+1, pme->m_rcGrid.dx-2, pme->m_rcGrid.dy-4);
-#endif
+   #endif
+   #endif
 #else
    SETAEERECT(prc, x, y, pme->m_rcGrid.dx, pme->m_rcGrid.dy);
 #endif
@@ -1844,6 +1849,7 @@ static void DateCtl_Digit(DateCtl * pme, int nDigit, int x, int y)
 {
    if (pme->m_pFont && nDigit >= 0 && nDigit <= 9)
       IIMAGE_DrawFrame(pme->m_pFont,nDigit, x, y);
+   //	MSG_FATAL("x====%d,y=====%d",x,y,0);
 }
 
 /*==================================================================

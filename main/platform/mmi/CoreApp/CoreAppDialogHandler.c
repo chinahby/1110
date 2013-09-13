@@ -107,7 +107,11 @@ boolean bIsPowerUp = FALSE;     //Add By zzg 2013_03_29
 #endif
 
 #define RPLMN_X				5
+#ifdef FEATURE_VERSION_K212_ND //add by wenyu ,改变待机界面显示位置
+#define RPLMN_Y				8
+#else
 #define RPLMN_Y				20
+#endif
 
 #define DATA_X				5
 #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)

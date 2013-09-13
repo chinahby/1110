@@ -122,16 +122,23 @@ static int OEMFont_MeasureTextCursorPos(IFont *pMe, int x, const AECHAR *pcText,
 #define BIGNUMBER_FONT_SIZE 32
 #endif
 #endif
-
 #if defined(FEATURE_LANG_THAI)||defined(FEATURE_LANG_MYANMAR)||defined(FEATURE_LANG_HINDI)
 #define NORMAL_FONT_SIZE    16
 #else
+#ifdef FEATURE_VERSION_K212_ND
+#define NORMAL_FONT_SIZE    18
+#else
 #define NORMAL_FONT_SIZE    15
 #endif
-#define LARGE_FONT_SIZE     20
+#endif 
+#ifdef FEATURE_VERSION_K212_ND
+#define SMALL_FONT_SIZE     15
+#else
 #define SMALL_FONT_SIZE     4
-
 #endif
+#define LARGE_FONT_SIZE     20
+#endif
+
 
 
 /* IDIB_COLORSCHEME_565 */

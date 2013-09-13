@@ -74,12 +74,21 @@
 #elif defined(FEATURE_DISP_160X128)
     #define SCREEN_WIDTH            160
     #define SCREEN_HEIGHT           128
-    #define STATEBAR_HEIGHT         16
+	#ifdef FEATURE_VERSION_K212_ND
+    #define STATEBAR_HEIGHT         19
+    #define BOTTOMBAR_HEIGHT        19
+    #define TITLEBAR_HEIGHT         19
+    #define MENUITEM_HEIGHT         19
+    #define SCROLLBAR_WIDTH         5
+    #define STATUSBAR_HEIGHT        19
+	#else
+	#define STATEBAR_HEIGHT         16
     #define BOTTOMBAR_HEIGHT        16
     #define TITLEBAR_HEIGHT         16
     #define MENUITEM_HEIGHT         16
     #define SCROLLBAR_WIDTH         5
     #define STATUSBAR_HEIGHT        16
+	#endif
 #elif defined(FEATURE_DISP_220X176)		   //176 = statebar(22)+bottombar(22)  +6*menuitem(22)
 #if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
     #define SCREEN_WIDTH            220
