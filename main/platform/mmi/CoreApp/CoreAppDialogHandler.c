@@ -541,9 +541,6 @@ static boolean  IDD_UTKREFRESH_Handler(void *pUser,
 
 // 更新待机界面的定时器函数。程序运行稳定后，每分钟执行一次
 static void CoreApp_UpdateIdleTimer(void *pUser);   
-#ifdef FEATURE_SOUND_BO  
-static void CoreApp_UpdateidleBaoshiTimer(void *pUser);
-#endif
 static void CoreApp_DrawBannerMessage(void    *pMe);
 
 #ifdef FEATURE_APP_MUSICPLAYER
@@ -602,7 +599,6 @@ static void CoreApp_ImageNotify(void *po, IImage *pIImage, AEEImageInfo *pii, in
 #ifdef FEATURE_SOUND_BO
 static void CoreApp_MediaNotify(void *pUser, AEEMediaCmdNotify *pCmdNotify);
 static void CoreApp_PlayShutterSound(CCoreApp *pMe,uint16 key);
-static void CoreApp_PlayTimeSound(CCoreApp *pMe,uint16 Status);
 static void CoreApp_Media_time_Notify(void *pUser, AEEMediaCmdNotify *pCmdNotify);
 #endif
 
@@ -3950,20 +3946,6 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             }
 #endif      
             CoreApp_UpdateIdleTimer(pMe);		
-#ifdef FEATURE_SOUND_BO	
-{
-			boolean m_sound_bo_core = FALSE;
-			(void) ICONFIG_GetItem(pMe->m_pConfig,
-									 CFGI_SOUND_BO_CORE,
-									 &m_sound_bo_core,
-									 sizeof(boolean));
-			if(m_sound_bo_core && !m_bStart_speech_timer)
-			{
-				m_bStart_speech_timer =TRUE;
-				CoreApp_UpdateidleBaoshiTimer(pMe);
-			}
-}
-#endif
 #ifdef FEATURE_KEYGUARD
             if(!OEMKeyguard_IsEnabled())
             {
@@ -6279,62 +6261,6 @@ static boolean  IDD_POWERDOWN_Handler(void *pUser,
     
     return FALSE;
 } // IDD_POWERDOWN_Handler
-#ifdef FEATURE_SOUND_BO
-static void CoreApp_UpdateidleBaoshiTimer(void *pUser)
-{
-	CCoreApp    *pMe = (CCoreApp *)pUser;
-    boolean     bIsInCall = FALSE;
-    uint32         dwSeconds;
-	int temp = 0;
-	JulianType  julian;
-	GetJulianDate(GETTIMESECONDS(), &julian);
-	if((julian.wMinute == 0)&&(julian.wSecond<=30))
-	{	nv_item_type	SimChoice;
-		boolean m_sound_bo_core = FALSE;
-		(void) ICONFIG_GetItem(pMe->m_pConfig,
-									 CFGI_SOUND_BO_CORE,
-									 &m_sound_bo_core,
-									 sizeof(boolean));
-        /*
-		(void)OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
-		if(SimChoice.sim_select != 1 && m_sound_bo_core)
-        */    
-
-
-        //Add By zzg 2013_09_11
-#ifdef FEATURE_ICM
-        if (AEECM_IS_VOICECALL_CONNECTED(pMe->m_pCM))
-#else
-        AEETCalls po;
-        
-        if(SUCCESS != ITELEPHONE_GetCalls(pMe->m_pITelephone, &po,sizeof(AEETCalls)))
-        {
-            return;
-        }
-        
-        if (po.dwCount>0)
-#endif
-        {
-            bIsInCall = TRUE;
-        }
-        //Add End
-
-        
-        if ((GetMp3PlayerStatus() == MP3STATUS_NONE) && m_sound_bo_core && !bIsInCall)
-    	{
-#if defined(FEATURE_VERSION_EC99)|| defined(FEATURE_VERSION_K212_20D)
-            CoreApp_PlayTimeSound(pMe,TIME_TWO);
-#else
-    		CoreApp_PlayTimeSound(pMe,TIME_ONE);
-#endif
-    	}
-    	// 重设分钟定时器
-    	AEE_SetSysTimer((int32)(30 * 1000),
-                               CoreApp_UpdateidleBaoshiTimer,
-                               pMe);
-        }
-}
-#endif
 /*==============================================================================
 函数:
     CoreApp_UpdateIdleTimer
@@ -10459,7 +10385,7 @@ static void CoreApp_MediaNotify(void *pUser, AEEMediaCmdNotify *pCmdNotify)
 }
 
 
-static void CoreApp_PlayTimeSound(CCoreApp *pMe,uint16 Status)
+void CoreApp_PlayTimeSound(CCoreApp *pMe,uint16 Status)
 {
     AEEMediaCmdNotify cmd;
 	int temp = 0;

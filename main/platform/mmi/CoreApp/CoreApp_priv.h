@@ -108,6 +108,10 @@
 #define SMS_TIME   					(60*1000)
 #endif
 
+#ifdef FEATURE_SOUND_BO
+#define PERMID                       21
+#endif
+
 #ifdef FEATURE_VERSION_K212_20D
 #define SMS_TIME   					(60*1000)
 #endif
@@ -1170,7 +1174,7 @@ typedef struct _CCoreApp
 #ifdef FEATURE_OEMOMH 
     AEERect            timeRc;
 #endif
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)||defined(FEATURE_SOUND_BO)
 #ifdef FEATURE_UIALARM
    IAlarm      *m_pIAlarm;
 #endif
@@ -1353,6 +1357,12 @@ extern AEE_EXPORTS IShell    *AEE_GetShell(void);
 void CoreApp_Draw_Charger_image(void *pp);
 
 void CoreApp_Poweroff_Phone(void *pp);
+
+#ifdef FEATURE_SOUND_BO
+void  CoreApp_SoundBoAlarm(CCoreApp *pme, uint16 wParam);		
+void CoreApp_PlayTimeSound(CCoreApp *pMe,uint16 Status);
+#endif
+
 #ifdef FEATURE_POWERUP_REGISTER_CHINAUNICOM
 /*==============================================================================
 º¯Êý£º

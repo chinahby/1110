@@ -70,7 +70,7 @@
 CCoreApp *g_pCoreApp = NULL; 
 
 #endif
-
+static boolean bNotInitedAlarm = TRUE;
 static boolean b_low = FALSE;
 boolean	bIsPPPAuthEnabled = FALSE;	//Add By zzg 2012_03_07
 /*==============================================================================
@@ -485,7 +485,7 @@ void CoreApp_FreeAppData(IApplet* po)
 	}
 #endif
 #endif
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)||defined(FEATURE_SOUND_BO)
 #ifdef FEATURE_UIALARM
 	IAlarm_CancelAlarm(pMe->m_pIAlarm,
                        		AEECLSID_CORE_APP,
@@ -732,7 +732,7 @@ boolean CoreApp_InitAppData(IApplet* po)
     CoreApp_InitdataTouch(pMe);
 #endif
 
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)||defined(FEATURE_SOUND_BO)
 #if defined( FEATURE_UIALARM)
 		if (ISHELL_CreateInstance(pMe->a.m_pIShell,
 								  AEECLSID_UIALARM,
@@ -785,6 +785,62 @@ static boolean Coreapp_CanAlert(CCoreApp *pme)
         return TRUE;
     }
 }
+
+#ifdef FEATURE_SOUND_BO
+void  CoreApp_SoundBoAlarm(CCoreApp *pme, uint16 wParam)
+{
+	CCoreApp    *pMe = (CCoreApp *)pme;
+	boolean     bIsInCall = FALSE;
+    uint32      dwSeconds;
+	int         temp = 0;
+	JulianType  julian;
+	nv_item_type	SimChoice;
+	boolean     m_sound_bo_core = FALSE;
+	(void) ICONFIG_GetItem(pMe->m_pConfig,
+								 CFGI_SOUND_BO_CORE,
+								 &m_sound_bo_core,
+								 sizeof(boolean));
+  
+#ifdef FEATURE_ICM
+    if (AEECM_IS_VOICECALL_CONNECTED(pMe->m_pCM))
+#else
+    AEETCalls po;
+    
+    if(SUCCESS != ITELEPHONE_GetCalls(pMe->m_pITelephone, &po,sizeof(AEETCalls)))
+    {
+        return;
+    }
+    
+    if (po.dwCount>0)
+#endif
+    {
+        bIsInCall = TRUE;
+    }
+
+    MSG_FATAL("m_sound_bo_core====%d,bIsInCall=====%d",m_sound_bo_core,bIsInCall,0);
+    if ((GetMp3PlayerStatus() == MP3STATUS_NONE) && m_sound_bo_core && !bIsInCall)
+	{
+#if defined(FEATURE_VERSION_EC99)|| defined(FEATURE_VERSION_K212_20D)
+        CoreApp_PlayTimeSound(pMe,TIME_TWO);
+#else
+		CoreApp_PlayTimeSound(pMe,TIME_ONE);
+#endif
+		
+	}
+	// 重设分钟定时器
+	GetJulianDate(GETTIMESECONDS(), &julian);
+	temp = (59 - julian.wMinute)*60 + (59 - julian.wSecond); 
+	IAlarm_CancelAlarm(pMe->m_pIAlarm,
+                       		AEECLSID_CORE_APP,
+                       		PERMID);
+	IAlarm_SetAlarm(pMe->m_pIAlarm,
+                        AEECLSID_CORE_APP,
+                        PERMID,
+                        temp
+                    	);
+}
+#endif
+
 
 /*==============================================================================
 函数:
@@ -1419,17 +1475,47 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             }
             
             {   // 在此完成闹钟的开机初始化。初始化过程只需执行一次
-                static boolean bNotInitedAlarm = TRUE;
                 
+                MSG_FATAL("bNotInitedAlarm=======%d",bNotInitedAlarm,0,0);
                 if (bNotInitedAlarm)
                 {
 #ifdef FEATURE_UIALARM
                     // 直道取得有效时间才开始启动警报器
                     CoreApp_EnableShellAlarms(pMe, TRUE);
-#endif
+
                     bNotInitedAlarm = FALSE;
 
                 }
+#endif
+#ifdef FEATURE_SOUND_BO	
+				{
+					uint32		   dwSeconds;
+					int temp = 0;
+					JulianType	julian;
+					boolean m_sound_bo_core = FALSE;
+					(void) ICONFIG_GetItem(pMe->m_pConfig,
+								 CFGI_SOUND_BO_CORE,
+								 &m_sound_bo_core,
+								 sizeof(boolean));
+					if(m_sound_bo_core && !m_bStart_speech_timer)
+					{
+						m_bStart_speech_timer =TRUE;
+						GetJulianDate(GETTIMESECONDS(), &julian);
+						temp = (59 - julian.wMinute)*60 + (59 - julian.wSecond); 
+						MSG_FATAL("start .IAlarm_SetAlarm.........................",0,0,0);
+						IAlarm_CancelAlarm(pMe->m_pIAlarm,
+                       		AEECLSID_CORE_APP,
+                       		PERMID);
+						IAlarm_SetAlarm(pMe->m_pIAlarm,
+										AEECLSID_CORE_APP,
+										PERMID,
+										temp
+										);
+					}
+				}
+#endif
+
+				
             }      
             return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
             
@@ -1599,17 +1685,23 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 		}
 		//Add End
 		
-		case EVT_ALARM:
-			{
+		
+#endif
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)||defined(FEATURE_SOUND_BO)
+case EVT_ALARM:
+		{
+				MSG_FATAL("EVT_ALARM...................................",0,0,0);
+				#ifdef FEATURE_SOUND_BO
+				CoreApp_SoundBoAlarm(pMe, wParam);
+				#else
 				if(Coreapp_CanAlert(pMe))
 				{
 					CoreApp_HandleAlarm(pMe, wParam);
 				}
-				MSG_FATAL("EVT_ALARM...................................",0,0,0);
-			}
+				#endif
+		}
 		return TRUE;
 #endif
-
 #ifdef FEATURE_SEAMLESS_SMS
         case EVT_SEND_SEAMLESSSMS:
             // 发送注册短信
