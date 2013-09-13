@@ -536,13 +536,22 @@ typedef enum
 #define    PWROFF_ANI_FILE                       PWRON_ANI_FILE
 #define    PWROFF_ANI_FRAME_COUNT                PWRON_ANI_FRAME_COUNT
 #define    PWROFF_ANI_RATE                       PWRON_ANI_RATE
-#elif (defined(FEATURE_VERSION_K212_20D)&&(!defined(FEATURE_VERSION_K212_ND)))
+#elif defined(FEATURE_VERSION_K212_20D)
+#ifdef FEATURE_VERSION_K212_LD
+#define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweron.gif"
+#define    PWRON_ANI_FRAME_COUNT                 (1)
+#define    PWRON_ANI_RATE                        (5500)
+#define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweroff.gif"
+#define    PWROFF_ANI_FRAME_COUNT                PWRON_ANI_FRAME_COUNT
+#define    PWROFF_ANI_RATE                       (5500)
+#else
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweron.gif"
 #define    PWRON_ANI_FRAME_COUNT                 (1)
 #define    PWRON_ANI_RATE                        (6000)
 #define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweroff.gif"
 #define    PWROFF_ANI_FRAME_COUNT                PWRON_ANI_FRAME_COUNT
 #define    PWROFF_ANI_RATE                       (6000)
+#endif
 #elif defined FEATURE_VERSION_K212
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweron.gif"
 #define    PWRON_ANI_FRAME_COUNT                 (1)
