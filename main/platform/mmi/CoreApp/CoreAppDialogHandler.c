@@ -4488,6 +4488,12 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             }
             else
             {
+	        #ifdef FEATURE_VERSION_K212_20D
+			{
+				int8 count_main = 0;
+				OEM_SetConfig(CFGI_COUNT_OF_MAIN, &count_main, sizeof(int8));
+			}
+	        #endif
                return CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
             }
         }
@@ -4853,6 +4859,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 							return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
                         #elif defined(FEATURE_VERSION_EC99)
 							return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
+						 #elif defined(FEATURE_VERSION_K212_20D)
+							return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 						#else
 							return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);//
 						#endif
@@ -4955,7 +4963,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #else
     				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif	/*FEATURE_SMARTFREN_STATIC_BREW_APP*/
-#elif defined (FEATURE_VERSION_HITZ181) || defined (FEATURE_VERSION_W515V3)|| defined (FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_K202_LM129C)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_EC99)
+#elif defined (FEATURE_VERSION_HITZ181) || defined (FEATURE_VERSION_W515V3)|| defined (FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_K202_LM129C)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)
 #ifdef FEATURE_VERSION_K212
 						{
 							int8 count_main = 1;
@@ -4970,6 +4978,12 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                         }
 #endif
 
+#ifdef FEATURE_VERSION_K212_20D
+						{
+							int8 count_main = 0;
+							OEM_SetConfig(CFGI_COUNT_OF_MAIN, &count_main, sizeof(int8));
+						}
+#endif
     				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 #elif defined (FEATURE_VERSION_S600S)
     				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_APP_RECENTCALL);
@@ -5146,7 +5160,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					break;
 				case AVK_VOLUME_DOWN:
 					
-					break;
+					break;			
                 default:
                     break;
             }
