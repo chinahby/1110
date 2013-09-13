@@ -1592,12 +1592,19 @@ int CContApp_BuildOneDialMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
             continue;
         }
 
-#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_EC99) 
         if ((i == CONTCFG_ONEDIAL5) || (i == CONTCFG_ONEDIAL6))
         {
             continue;
         }
 #endif
+#if defined (FEATURE_VERSION_K212_20D)
+				if ((i == CONTCFG_ONEDIAL6))
+				{
+					continue;
+				}
+#endif
+
         
         // set menu item id
         ai.wItemID = (uint16)i;
