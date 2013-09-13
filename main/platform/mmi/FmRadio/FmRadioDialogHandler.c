@@ -455,11 +455,11 @@ static boolean  HandleFmRadioMainDialogEvent(CFmRadio *pMe,
 #ifdef FEATURE_VERSION_K212_20D
 			if (eCode ==EVT_KEY && wParam == AVK_FFWD)
 			{
-				wParam = AVK_LEFT;//AVK_UP;
+				wParam = AVK_RIGHT;//AVK_UP;
 			}
 			else if (eCode ==EVT_KEY && wParam == AVK_RWD)
 			{
-				wParam = AVK_RIGHT;//AVK_DOWN;
+				wParam = AVK_LEFT;//AVK_DOWN;
 			}	
 #endif
     switch (eCode)
@@ -1218,7 +1218,7 @@ __handleKeyEvent_input_channel_done__:
 		return TRUE;
 
 #if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
-        case AVK_FFWD:  //pre
+        case AVK_RWD:  //pre
         {
 			if( pMe->opMode == FM_RADIO_OPMODE_PLAY)
 			{
@@ -1255,7 +1255,7 @@ __handleKeyEvent_input_channel_done__:
             return TRUE;
 		}
 		        
-        case AVK_RWD: //next
+        case AVK_FFWD: //next
         {
 			if( pMe->opMode == FM_RADIO_OPMODE_PLAY)
 			{
