@@ -5553,6 +5553,13 @@ static boolean MainMenu_HandleEvent( IMainMenu *pi,
             return MainMenu_RouteDialogEvt(pMe,eCode,wParam,dwParam);
 
         case EVT_DIALOG_END:
+#ifdef FEATURE_VERSION_EC99
+            if (pMe->m_pImageSelectEC99 != NULL)
+            {   
+                 (void)IIMAGE_Release(pMe->m_pImageSelectEC99);
+                 pMe->m_pImageSelectEC99 = NULL;
+            }
+#endif            
 
             (void) MainMenu_RouteDialogEvt(pMe,eCode,wParam,dwParam);
             pMe->m_pActiveIDlg = NULL;
