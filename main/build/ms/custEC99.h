@@ -11,7 +11,6 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 
 #define FEATURE_VERSION_EC99
 
-
 //LM129C
 //#define FEATURE_VERSION_LM126C    //FOR LM126C
 #define FEATURE_SOUND_BO
@@ -68,7 +67,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_AUDIO_CONFIGURATION_MINIMAL 
 //Gemsea Remove #define FEATURE_AUDIO_CONFIGURATION_LO_TIER 
 //#define FEATURE_IPL_NO_CAMERA
-//#define FEATURE_IIPL
+#define FEATURE_IIPL
 #define FEATURE_UIM_QSC1100_LOW_MEMORY 
 #define CM_FEATURE_HSBASED_PLUS_DIAL_DISPLAY 
 //#define FEATURE_AUDIO_EQUALIZER 
