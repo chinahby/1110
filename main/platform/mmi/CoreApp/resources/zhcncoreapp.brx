@@ -149,16 +149,16 @@
 		<Text>确定</Text>
 	</String>
 	<String Id="1050" Name="IDS_MSG_TECHISSUE">
-		<Text>Technical problem</Text>
+		<Text>技术问题</Text>
 	</String>
 	<String Id="1051" Name="IDS_MSG_MEMISSUE">
 		<Text>内存问题</Text>
 	</String>
 	<String Id="1052" Name="IDS_MSG_SECISSUE">
-		<Text>Access security policy not fulfilled or secret code rejected</Text>
+		<Text>密码错误！</Text>
 	</String>
 	<String Id="1053" Name="IDS_MSG_ACCEPTED">
-		<Text>The new PIN is accepted</Text>
+		<Text>新的PIN码OK</Text>
 	</String>
 	<String Id="1054" Name="IDS_NO_USIM_CARDONE">
 		<Text>请插入卡</Text>
