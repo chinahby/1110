@@ -935,7 +935,7 @@ static boolean  HandlePictureDialogEvent(CDisplayMenu *pMe,
 
                 case AVK_SELECT:		//Add By zzg 2010_07_23
 				{
-					#if defined(FEATURE_VERSION_K202_LM129C)||defined(FEATURE_VERSION_K212)
+					#if defined(FEATURE_VERSION_K202_LM129C)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_20D)
 					switch(pMe->m_PICType)
                     {
                         case WALLPAPER_MAIN:    /*//×ÀÃæÇ½Ö½*/
