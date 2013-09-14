@@ -8158,56 +8158,33 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 {
     BottomBar_e_Type    eBBarType = BTBAR_NONE;  
 
-    //Add By zzg 2013_09_09    
+    //Add By zzg 2013_09_09     
     /*
-    AEERect rt = {0, SCREEN_HEIGHT-BOTTOMBAR_HEIGHT, SCREEN_WIDTH, BOTTOMBAR_HEIGHT};    
-
-    IFileMgr *pMgr = NULL;
-    
-    IImage *pTmpWallPaper = NULL;
-
-    char    Name[AEE_MAX_FILE_NAME];
-
-    MEMSET(Name, 0x00, sizeof(Name));
-
-//#ifdef FEATURE_VERSION_EC99
-    // 取设定的墙纸文件名
-    (void) ICONFIG_GetItem(pMe->m_pConfig,
-                            CFGI_WALLPAPER,
-                            Name,
-                            sizeof(Name));    
-    
-    ISHELL_CreateInstance(pMe->a.m_pIShell, AEECLSID_FILEMGR, (void **)&pMgr);
-    
-    if(pMgr)
-    {
-        if(IFILEMGR_Test(pMgr, Name) == SUCCESS)
-        {
-            pTmpWallPaper = ISHELL_LoadImage(pMe->a.m_pIShell, Name);
-        }
-        else 
-        {
-            pTmpWallPaper = ISHELL_LoadImage(pMe->a.m_pIShell, OEMNV_WALLPAPER);
-        }
-        IFILEMGR_Release(pMgr);
-        pMgr = NULL;
-    }
-    
-
-    if(NULL != pTmpWallPaper)
-   
-    {
-        IImage_SetOffset(pTmpWallPaper, 0, (SCREEN_HEIGHT-BOTTOMBAR_HEIGHT));
-        IImage_Draw(pTmpWallPaper, 0, (SCREEN_HEIGHT-BOTTOMBAR_HEIGHT));
-    }
-    */
-
     if(NULL != pWallPaperEx)
     {
         IImage_SetOffset(pWallPaperEx, 0, (SCREEN_HEIGHT-BOTTOMBAR_HEIGHT));
         IImage_Draw(pWallPaperEx, 0, (SCREEN_HEIGHT-BOTTOMBAR_HEIGHT));
     }
-//#endif
+    */
+    
+    if (pWallPaperEx != NULL)
+    {
+        AEERect oldrt;
+        AEERect newrt;
+    	AEEImageInfo m_ImageInfo;
+		IImage_GetInfo(pWallPaperEx,&m_ImageInfo);
+		SETAEERECT(&newrt, 0, (SCREEN_HEIGHT-BOTTOMBAR_HEIGHT), SCREEN_WIDTH, BOTTOMBAR_HEIGHT); 
+        IDISPLAY_GetClipRect( pMe->m_pDisplay, &oldrt);
+        IDISPLAY_SetClipRect( pMe->m_pDisplay, &newrt);
+        IIMAGE_SetOffset(pWallPaperEx, ( m_ImageInfo.cx -  pMe->m_rc.dx)/2, (SCREEN_HEIGHT-BOTTOMBAR_HEIGHT)-( pMe->m_rc.dy - m_ImageInfo.cy)/2);       
+        IIMAGE_SetDrawSize( pWallPaperEx, newrt.dx, newrt.dy);
+        IIMAGE_Draw( pWallPaperEx, 0, (SCREEN_HEIGHT-BOTTOMBAR_HEIGHT));
+
+        
+        IDISPLAY_SetClipRect( pMe->m_pDisplay,&oldrt);
+        IIMAGE_SetOffset( pWallPaperEx, 0,0);        
+        IIMAGE_SetDrawSize( pWallPaperEx, m_ImageInfo.cx,m_ImageInfo.cy);		
+    }
     //Add End
     
 	MSG_FATAL("***zzg CoreApp_UpdateBottomBar m_bemergencymode=%d, OEMKeyguard_IsEnabled=%d***", pMe->m_bemergencymode, OEMKeyguard_IsEnabled(), 0);
