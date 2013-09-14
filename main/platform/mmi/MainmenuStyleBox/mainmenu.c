@@ -5173,8 +5173,7 @@ static int MainMenu_New( IShell *ps, IModule *pIModule, IMainMenu **ppObj)
 
 ==============================================================================*/
 static int CMainMenu_InitAppData(MainMenu *pMe)
-{	
-	int8 count_main = 1;
+{		
     int i = 0;
 	pMe->language = 0;
 
@@ -5185,10 +5184,8 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
         return EFAILED;
     }
 	pMe->m_bChangeL =FALSE;
-	OEM_GetConfig(CFGI_COUNT_OF_MAIN, &count_main, sizeof(int8));
-	MSG_FATAL("CMainMenu_InitAppData.............=%d",count_main,0,0);
-	 
-    pMe->m_index = count_main;
+		 
+    pMe->m_index = 0;
     
 	Main_loadover = FALSE;
 
@@ -5496,6 +5493,8 @@ static boolean MainMenu_HandleEvent( IMainMenu *pi,
                 return FALSE;
             }            
             as = (AEEAppStart*)dwParam;
+
+            pMe->m_index = 0;
    
             pMe->m_rc = as->rc;
 
@@ -5995,9 +5994,6 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
                 case AVK_SELECT:
                 case AVK_INFO:
                     {
-					   int8 count_main = pMe->m_index;
-					   MSG_FATAL("count_main=======%d",count_main,0,0);
-					   OEM_SetConfig(CFGI_COUNT_OF_MAIN, &count_main, sizeof(int8));
                        StartApplet(pMe, pMe->m_IconTitle[pMe->m_index]);
                     }
                     return TRUE;
