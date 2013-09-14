@@ -6217,7 +6217,8 @@ static void DrawMatrix(MainMenu *pMe)
         return;
     }
     //draw bg image
-    MainMenu_DrawBackGround(pMe, &pMe->m_rc);
+    //MainMenu_DrawBackGround(pMe, &pMe->m_rc);
+    
 	(void) ICONFIG_GetItem(pMe->m_pConfig,
 									   CFGI_LANGUAGE_SELECTION,
 									   &pMe->language,
