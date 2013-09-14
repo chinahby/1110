@@ -3490,7 +3490,7 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
 					 {IDS_MG_ZOOM, TRUE}, {IDS_MG_DELETE, TRUE}, 
 					 {IDS_MG_DETAIL, TRUE}
 				  };
-				#elif defined(FEATURE_VERSION_K212)
+				#elif defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_20D)
 				  MenuInsItem ImgViewOptions[] =
 				  {
 					 {IDS_MG_ZOOM, TRUE},{IDS_MG_DETAIL, TRUE}
@@ -6756,7 +6756,7 @@ static boolean MediaGalleryApp_ImageSettingDlg_HandleEvent(
                      {IDS_MG_VIEW, TRUE}, {IDS_MG_SETWALLPAPER, TRUE},
                      {IDS_MG_SORT, TRUE}, {IDS_MG_DETAILS, TRUE}
                   };
-				#elif defined(FEATURE_VERSION_LM126C)||defined(FEATURE_VERSION_K212)
+				#elif defined(FEATURE_VERSION_LM126C)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_20D)
 				  MenuInsItem OptItems[] =
 				  {
 					 {IDS_MG_VIEW, TRUE}, {IDS_MG_SORT, TRUE}, 
@@ -7520,7 +7520,7 @@ static int MGAppUtil_BuildPopupMenuItems(CMediaGalleryApp* pMe,
          /*Check whether can slide*/
          //if(TRUE  == MGAppUtil_ImageSlideCheck(pMe, pItemData))
          //MGMENU_ADDITEM(*ppPopupMenu, IDS_MG_SLIDE);
-         #if defined(FEATURE_VERSION_LM126C)||defined(FEATURE_VERSION_K212)
+         #if defined(FEATURE_VERSION_LM126C)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_20D)
 		 #else
          MGMENU_ADDITEM(*ppPopupMenu, IDS_MG_SETWALLPAPER);
 		 #endif
