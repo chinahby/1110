@@ -1043,10 +1043,19 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
             }
         case EVT_KEY_RELEASE:
         case EVT_COMMAND:
+            
+            #if !defined(FEATURE_VERSION_EC99)
+            if (pMe->refuseReason != FM_RADIO_REFUSE_REASON_NOT_REFUSE || pMe->newSmsIncoming)
+            {
+                return TRUE;
+            }
+            #else
             if (!pMe->m_bAppIsReady || pMe->refuseReason != FM_RADIO_REFUSE_REASON_NOT_REFUSE || pMe->newSmsIncoming)
             {
                 return TRUE;
             }
+            #endif
+            
             return FmRadio_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_DIALOG_END:			

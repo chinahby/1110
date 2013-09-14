@@ -872,6 +872,9 @@ static boolean SoundMenu_HandleEvent(ISoundMenu *pi,
     CSoundMenu *pMe = (CSoundMenu*)pi;
     AEEAppStart *as;
     //SOUND_ERR("%x,%x,%x,SoundMenu_HandleEvent",eCode,wParam,dwParam);
+
+    MSG_FATAL("%x,%x,%x,SoundMenu_HandleEvent",eCode,wParam,dwParam);
+    
     switch (eCode)
     {
         case EVT_APP_START:
@@ -1045,7 +1048,7 @@ static boolean SoundMenu_HandleEvent(ISoundMenu *pi,
             return SoundMenu_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_DIALOG_START:
-            (void)ISHELL_SetTimer ( pMe->m_pShell,
+             (void)ISHELL_SetTimer ( pMe->m_pShell,
                             APPISREADY_TIMER,
                             SoundMenu_APPIsReadyTimer,
                             pMe);
@@ -1053,12 +1056,14 @@ static boolean SoundMenu_HandleEvent(ISoundMenu *pi,
 
         case EVT_USER_REDRAW:
             (void) SoundMenu_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+
             /*
             (void)ISHELL_SetTimer ( pMe->m_pShell,
                             APPISREADY_TIMER,
                             SoundMenu_APPIsReadyTimer,
                             pMe);
             */
+           
             return TRUE;
 
         case EVT_APPISREADY:
@@ -1069,7 +1074,7 @@ static boolean SoundMenu_HandleEvent(ISoundMenu *pi,
         case EVT_KEY_RELEASE:
         case EVT_KEY:
         case EVT_COMMAND:
-			#if !defined(FEATURE_VERSION_K212)
+			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)
             if (!pMe->m_bAppIsReady)
             {
                 return TRUE;

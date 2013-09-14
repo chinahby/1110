@@ -997,6 +997,7 @@ void handle_keys(void)
                 {                	
                     StopKeyHold(&hs_to_aee_tbl[hs2vcodeidx]);
                 }
+
                 AEE_Event(EVT_KEY_RELEASE, last_vcode, hs_to_aee_tbl[hs2vcodeidx].dwparam);
             }
         }
@@ -1016,6 +1017,7 @@ void handle_keys(void)
                 }	
 
                 hs_to_aee_tbl[hs2vcodeidx].bpressed = TRUE;
+               
                 (void) AEE_Event(EVT_KEY_PRESS, last_vcode, hs_to_aee_tbl[hs2vcodeidx].dwparam);
                 (void) AEE_Event(EVT_KEY,       last_vcode, hs_to_aee_tbl[hs2vcodeidx].dwparam);
 				
@@ -2041,11 +2043,11 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
 			bHandle = TRUE;
 		}
         break;
-     case AVK_SELECT:			
-		if (cls == AEECLSID_UCWEB || cls == AEECLSID_QQ)		
+     case AVK_SELECT:		
+        if (cls == AEECLSID_UCWEB || cls == AEECLSID_QQ)		
 		{
 			wParam = AVK_SOFT1;
-			bHandle = TRUE;
+            bHandle = TRUE;
 		}
         break; 
     case AVK_INFO:			
@@ -2061,8 +2063,6 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
 #ifdef FEATURE_VERSION_EC99   
     case AVK_FM:	
     {
-        MSG_FATAL("***zzg core_ui AVK_FM cls=%x***", cls, 0, 0);
-
         if (cls == AEECLSID_QUICKTEST)
         {
             return FALSE;
@@ -2084,8 +2084,6 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
         
     case AVK_PAUSE:
     {
-        MSG_FATAL("***zzg core_ui AVK_PAUSE cls=%x***", cls, 0, 0);   
-
         if (cls == AEECLSID_QUICKTEST)
         {
             return FALSE;

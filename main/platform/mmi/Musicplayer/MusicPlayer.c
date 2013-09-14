@@ -961,7 +961,7 @@ static boolean IMusicPlayer_HandleEvent( IMusicPlayer *pi,
         case EVT_KEY:
         case EVT_KEY_RELEASE:
         case EVT_COMMAND:
-			#if !defined(FEATURE_VERSION_K212)
+			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)
             if(!pMe->m_bAppReady)
             {
                 return TRUE;

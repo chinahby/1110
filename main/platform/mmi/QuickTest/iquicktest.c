@@ -620,7 +620,7 @@ static boolean CQuickTest_HandleEvent(IQuickTest *pi,
             return TRUE;
 
         case EVT_KEY_PRESS:
-			#if !defined(FEATURE_VERSION_K212)
+			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)
             if (!pMe->m_bAppIsReady)
             {
                 return TRUE;
@@ -630,7 +630,7 @@ static boolean CQuickTest_HandleEvent(IQuickTest *pi,
             return QuickTest_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_KEY_RELEASE:
-			#if !defined(FEATURE_VERSION_K212)
+			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)
             if (!pMe->m_bAppIsReady)
             {
                 return TRUE;
@@ -640,7 +640,7 @@ static boolean CQuickTest_HandleEvent(IQuickTest *pi,
             return QuickTest_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_KEY:
-			#if !defined(FEATURE_VERSION_K212)
+			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)
             if (!pMe->m_bAppIsReady)
             {
             	MSG_FATAL("CQuickTest_HandleEvent EVT_KEY",0,0,0);
@@ -651,7 +651,7 @@ static boolean CQuickTest_HandleEvent(IQuickTest *pi,
             return QuickTest_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_COMMAND:
-			#if !defined(FEATURE_VERSION_K212)
+			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)
             if (!pMe->m_bAppIsReady)
             {
                 return TRUE;

@@ -467,7 +467,8 @@ static boolean dialog_handler_of_state_main( Recorder* pme, AEEEvent evt, uint16
 	static IMenuCtl* 	pMenu 		= 0;
 	static uint16		selected	= 0;
 	static boolean		reserve		= 0;
-    MSG_FATAL("dialog_handler_of_state_main---evt=%d,--wParam=%d----%d",evt,wParam,dwParam);
+    MSG_FATAL("dialog_handler_of_state_main---evt=%x,--wParam=%x----%x",evt,wParam,dwParam);
+    
 	switch (evt)
 	{
         

@@ -966,7 +966,7 @@ static boolean  IContApp_HandleEvent( IContApp   *pi,
         case EVT_KEY:
         case EVT_KEY_RELEASE:
         case EVT_COMMAND:
-			#if !defined(FEATURE_VERSION_K212)
+			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)
             if(!pMe->m_bAppReady)
             {
               // 在编辑或者添加状态，因为一进去text控件处于激活状态，text控件可以接收到底层dialog
