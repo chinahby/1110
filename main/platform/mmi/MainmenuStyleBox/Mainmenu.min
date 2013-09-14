@@ -195,7 +195,6 @@ CONSTFILE_FILES+=\
 	
 	CONSTFILE_FILES+=\
 		mutimed.mp3|fs:/hsmm/mainmenu/mutimed.mp3 \
-		camera.mp3|fs:/hsmm/mainmenu/camera.mp3 \
 		contont.mp3|fs:/hsmm/mainmenu/contont.mp3 \
 		manager.mp3|fs:/hsmm/mainmenu/manager.mp3 \
 		mesage.mp3|fs:/hsmm/mainmenu/mesage.mp3 \
