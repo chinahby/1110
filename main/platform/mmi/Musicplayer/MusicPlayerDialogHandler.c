@@ -3043,6 +3043,8 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
 		#endif
 		
 		ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_EnableKey, pMe);		//Add By zzg 2010_08_18
+		m_bKeyEnable = TRUE;
+        
         CLOSE_DIALOG(DLGRET_OK);
         return TRUE;
 #ifdef FEATURE_VERSION_K212_20D
