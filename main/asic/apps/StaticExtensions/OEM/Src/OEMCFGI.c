@@ -2152,11 +2152,7 @@ static OEMConfigListType oemi_cache = {
    ,TRUE											//CFGI_ONEKEY_LOCK_KEYPAD
 #endif
    ,{0}    //CFGI_RUIM_ID_SAVE_TABLE
-#ifdef FEATURE_VERSION_EC99
-  ,{0}    //CFGI_COUNT_OF_MAIN
-#else
-  ,{1}    //CFGI_COUNT_OF_MAIN
-#endif   
+   ,{1}    //CFGI_COUNT_OF_MAIN  
 #ifdef FEATURE_SOUND_BO
    ,TRUE    		//CFGI_SOUND_BO_DIA,
    ,TRUE		    //CFGI_SOUND_BO_MAIN,

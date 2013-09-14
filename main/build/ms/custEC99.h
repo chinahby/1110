@@ -10,6 +10,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #endif
 
 #define FEATURE_VERSION_EC99
+#define FEATURE_VERSION_NO_BG
 
 //LM129C
 //#define FEATURE_VERSION_LM126C    //FOR LM126C
