@@ -155,6 +155,7 @@ static char* TIME_HOUR2_SOUND_NAME[] =
 
 static char* TIME_MINUTE1_SOUND_NAME[] =
 {
+    MINUTE_0,           /*0*/
     MINUTE_10,          /*10*/
     MINUTE_20,          /*20*/
     MINUTE_30,          /*30*/
@@ -16070,7 +16071,8 @@ static void CallApp_PlayTimeSound(CCallApp *pMe,uint16 Status)
                 break;
                 
 			case TIME_MINUTE1: 	                
-                md.pData = (void *)TIME_MINUTE1_SOUND_NAME[jDate.wMinute/10 -1];       // 10 ~ 50	
+                md.pData = (void *)TIME_MINUTE1_SOUND_NAME[jDate.wMinute/10];       // 10 ~ 50	
+                //md.pData = (void *)TIME_MINUTE1_SOUND_NAME[jDate.wMinute/10 -1];       // 10 ~ 50	
                 m_TimeStarusEx = TIME_MINUTE2; 
 
                 if ((jDate.wMinute%10 == 0) && (jDate.wMinute != 0))
