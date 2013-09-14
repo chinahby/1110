@@ -4962,7 +4962,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
     				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif	/*FEATURE_SMARTFREN_STATIC_BREW_APP*/
 
-#elif defined (FEATURE_VERSION_HITZ181) || defined (FEATURE_VERSION_W515V3)|| defined (FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_K202_LM129C)||defined(FEATURE_VERSION_K212)
+#elif defined (FEATURE_VERSION_HITZ181) || defined (FEATURE_VERSION_W515V3)|| defined (FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_K202_LM129C)||defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_K212_20D) ||defined(FEATURE_VERSION_EC99)
 
 #ifdef FEATURE_VERSION_K212
 						{
@@ -4970,7 +4970,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					   		OEM_SetConfig(CFGI_COUNT_OF_MAIN, &count_main, sizeof(int8));
 						}
 #endif
-#ifdef FEATURE_VERSION_K212_20D
+#if defined(FEATURE_VERSION_K212_20D) ||defined(FEATURE_VERSION_EC99)
 						{
 							int8 count_main = 0;
 							OEM_SetConfig(CFGI_COUNT_OF_MAIN, &count_main, sizeof(int8));
