@@ -3015,6 +3015,10 @@ void DrawPromptMessage (IDisplay *pIDisplay,
         strrect.y += 15;
         strrect.dx -= 10;        
         strrect.dy -= 35;
+#elif defined (FEATURE_VERSION_K212_20D) || defined(FEATURE_VERSION_EC99)    
+        strrect.x += 10;       
+        strrect.dx -= 20;        
+        strrect.dy -= 30;
 #else
         strrect.x += 5;
         strrect.dx -= 10;        
