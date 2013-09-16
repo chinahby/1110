@@ -1239,6 +1239,9 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
 #endif
             IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn, NULL, FALSE);
 
+            IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, FALSE);       //Add By zzg 2013_09_16
+
+
 			//Add By zzg 2011_10_25
 			{
 				uisnd_notify_data_s_type sndInfo;
@@ -1324,9 +1327,11 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
             }
             return TRUE;
         case EVT_APP_STOP:
-            {
+            {                    
                 boolean *pb = (boolean *)dwParam;
                 //CALL_ERR("EVT_APP_STOP", 0, 0, 0);
+
+                IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);       //Add By zzg 2013_09_16
 
                 if(pb) // brew magic var
                 {
