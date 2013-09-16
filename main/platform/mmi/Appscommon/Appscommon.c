@@ -2922,7 +2922,7 @@ void DrawPromptMessage (IDisplay *pIDisplay,
             titlerect.y = totalrect.y  - StringBgImgInfo.cy/2 + TitleBgImgInfo.cy/2;
             #if defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_W516)||defined(FEATURE_VERSION_W208S)|| \
             defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_W027)|| \
-            defined(FEATURE_VERSION_C316)|| defined(FEATURE_VERSION_W021_CT100)
+            defined(FEATURE_VERSION_C316)|| defined(FEATURE_VERSION_W021_CT100)|| defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_EC99) 
             strrect.dy = StringBgImgInfo.cy/2 + 30;
 			#ifdef FEATURE_VERSION_W317A   // add by pyuangui 20121225
 			strrect.dy = StringBgImgInfo.cy/2 + 40;
@@ -3005,7 +3005,7 @@ void DrawPromptMessage (IDisplay *pIDisplay,
 #endif
 */
 
-#if defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_W317A)
+#if defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_EC99) 
 #ifdef FEATURE_VERSION_C260_IC18
         strrect.x += 5;
         strrect.y += 15;
@@ -3052,7 +3052,7 @@ void DrawPromptMessage (IDisplay *pIDisplay,
         if (TRUE== drawbgimage)
         {
         	DBGPRINTF("***zzg Appscommon DrawPromptMessage***");                 
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A)            
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_EC99)            
             ISTATIC_SetProperties(pStatic, ST_CENTERTEXT|ST_MIDDLETEXT|ST_TRANSPARENTBACK|ST_SPECIAL_BG);   	//Modify by zzg 2011_12_31
 #else
             ISTATIC_SetProperties(pStatic, ST_CENTERTEXT|ST_MIDDLETEXT|ST_TRANSPARENTBACK);   
