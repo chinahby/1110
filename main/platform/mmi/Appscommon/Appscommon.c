@@ -2789,6 +2789,9 @@ void DrawPromptMessage (IDisplay *pIDisplay,
     }  
     
     //Draw shadow for screen
+#ifdef FEATURE_VERSION_NO_BG
+    IDisplay_FillRect(pIDisplay, PParam->prc, RGB_BLACK);        
+#else
     pMsgImg = ISHELL_LoadResImage(pShell,
                             AEE_APPSCOMMONRES_IMAGESFILE,
                             IDB_BACKGROUND);
@@ -2811,6 +2814,7 @@ void DrawPromptMessage (IDisplay *pIDisplay,
     {
         return;
     }
+#endif
 
     if (NULL != PParam->prc)
     {
@@ -4824,7 +4828,9 @@ void Appscommon_ResetBackgroundEx(IDisplay *pDisplay, AEERect * rect, boolean bD
 #endif
         {
             /* 由于透明通道会大大降低图像的显示速度，默认使用一张无透明色的图片*/
+#ifndef FEATURE_VERSION_NO_BG
             pImageBg = ISHELL_LoadResImage(pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);  //moci by yangdecai
+#endif            
         }
 
         Appscommon_ResetBackground(pDisplay, pImageBg, nBgColor, rect, xPos, yPos);

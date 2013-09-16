@@ -8453,6 +8453,17 @@ static void IMenuCtl_SetPopMenuRect( IMenuCtl *po)
     int                       cy,cyMax,cxMax,cys,cxs,nFrame;
 
     //Draw shadow for screen
+#ifdef FEATURE_VERSION_NO_BG 
+    {
+        AEERect rt;
+        rt.x = 0;
+        rt.y = 0;
+        rt.dx = SCREEN_WIDTH;
+        rt.dy = SCREEN_HEIGHT;
+
+        IDisplay_FillRect(pme->m_pIDisplay,  &rt, RGB_BLACK);
+    }    
+#else
     BgImg = ISHELL_LoadResImage(pme->m_pIShell,
                             AEE_APPSCOMMONRES_IMAGESFILE,
                             IDB_BACKGROUND);
@@ -8492,6 +8503,7 @@ static void IMenuCtl_SetPopMenuRect( IMenuCtl *po)
     {
         return;
     }    
+#endif    
 
     pme->SetPopMenu = TRUE;
     
