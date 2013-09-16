@@ -13338,6 +13338,7 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
     	else if ((AVKType)wParam == AVK_0) 
     	{
     		int len = 0;
+            uint16 tmpkey=0;
 		    len = WSTRLEN(pMe->m_DialString);
 		    if(pMe->m_b_incall == FALSE )
 		    {
@@ -13370,15 +13371,35 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
 				#else
 				if (pMe->m_nCursorPos == 0)
 				{
-	                (void)WSTRCPY(&pMe->m_DialString[len-pMe->m_nCursorPos-1], L"+");	               
+	                (void)WSTRCPY(&pMe->m_DialString[len-pMe->m_nCursorPos-1], L"+");	  
+                    tmpkey = AVK_Z;
 				}
 				else
 				{
 					(void)WSTRCPY(wstrTemp, &pMe->m_DialString[len-pMe->m_nCursorPos]);
 	                (void)WSTRCPY(&pMe->m_DialString[len-pMe->m_nCursorPos-1], L"+");
 	                (void)WSTRCPY(&pMe->m_DialString[len-pMe->m_nCursorPos], wstrTemp);
+                    tmpkey = AVK_Z;
 				}		
 				#endif
+
+#ifdef FEATURE_SOUND_BO       
+                {
+                    boolean m_sound_bo_dia = FALSE;
+                    (void) ICONFIG_GetItem(pMe->m_pConfig,
+                                             CFGI_SOUND_BO_DIA,
+                                             &m_sound_bo_dia,
+                                             sizeof(boolean));
+
+                    if(m_sound_bo_dia)
+                    {
+                        if ((GetMp3PlayerStatus() == MP3STATUS_NONE) && (!pMe->m_b_incall) && (tmpkey != 0))
+                        {
+                        	CALLApp_PlayShutterSound(pMe, tmpkey);
+                        }
+                    }
+                }
+#endif
 
 				(void) ISHELL_PostEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_USER_REDRAW,0,0);				
 
@@ -13536,7 +13557,7 @@ static void CallApp_Process_Spec_Key_Event(CCallApp *pMe,uint16 wp)
     }
 	///////////////////////////////////////////////////////////////////////////////////////
 if(wp == AVK_0)
-{
+{   
 	//add by wenyu £¬¸ø¡°0¡±¼üÌí¼Ó¡°+¡±
     #ifdef FEATURE_VERSION_K212_ND
 	{
@@ -13780,7 +13801,7 @@ if(wp == AVK_0)
 					{
 						//return L'W';
 						WSTRCPY(&pMe->m_DialString[len-1], L"+");
-						#if defined(FEATURE_VERSION_K212_20D)
+						#if defined(FEATURE_VERSION_K212_20D) 
 						Temp_wp = AVK_Z;
 						#endif
 					}
