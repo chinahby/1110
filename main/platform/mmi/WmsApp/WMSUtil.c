@@ -4509,7 +4509,11 @@ wms_client_message_s_type *GetHOPERegisterMsg()
 
    // OEM_GetConfig(CFGI_MIZONE_SMSINFO, strDate, sizeof(strDate));
     //STRCPY(pBuf, strDate);
+    #ifdef FEATURE_VERSION_K212_LD
+	STRCAT(pBuf,"JM-NAIDE XG308");
+	#else
     STRCAT(pBuf,"V-HOPE E102");
+	#endif
 	
     nMsgSize = STRLEN(pBuf);
     if (nMsgSize<0)
