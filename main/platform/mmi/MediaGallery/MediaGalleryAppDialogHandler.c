@@ -1460,8 +1460,16 @@ static boolean MediaGalleryApp_MainMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
          switch(wParam)
          {
             case AVK_CLR:
-               *pPrevSelItemID = MG_MAX_UINT16;
-               MGCLOSE_DIALOG(MGDLGRET_CANCELED);
+				if(pMe->m_StartMode == MGSM_NORMAL_EXPLORER)
+				{
+               		*pPrevSelItemID = MG_MAX_UINT16;
+               		MGCLOSE_DIALOG(MGDLGRET_CANCELED);
+				}
+			    else
+			   	{
+			   		 ISHELL_CloseApplet(pMe->m_pShell, FALSE);
+			   		 ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_APP_CAMERA,"BackMed");
+			   	}
                return TRUE;
 
             default:

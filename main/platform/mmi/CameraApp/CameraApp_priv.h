@@ -658,6 +658,7 @@ typedef struct _CCameraApp
     boolean 			 m_isPicCamera;
     boolean              m_bIsSnaping;          //Add By zzg 2013_03_21
     boolean              m_bCanPress;          //Add By zzg 2013_03_21     
+    boolean              m_bIsbackMed;
     int32                 m_sensor_model; //判断摄像头为多少像素的 add by xuhui
 #ifdef FEATURE_USES_MMS
     boolean              m_isFormMMS;

@@ -662,6 +662,10 @@ static boolean CameraApp_MainMenuHandleEvent(CCameraApp *pMe, AEEEvent eCode, ui
             #if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T)
             IMENUCTL_AddItem(pMenu, AEE_APPSCAMERAAPP_RES_FILE, IDS_CAMERA_PHOTO_MODE, IDS_CAMERA_PHOTO_MODE, NULL, NULL);
             #endif
+			if(pMe->m_bIsbackMed)
+			{
+				pMe->m_nMainMenuItemSel = IDS_ITEM_CAMERA_GALLERY;
+			}
             IMENUCTL_SetSel(pMenu, pMe->m_nMainMenuItemSel);
             IMENUCTL_SetBottomBarType(pMenu, BTBAR_SELECT_BACK);
             

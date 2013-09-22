@@ -1239,9 +1239,9 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
             }            
         }
 
-#if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W027)||defined(FEATURE_LEFT_SOFTKEY_AND_STAR_UNLOCK)|| defined(FEATURE_VERSION_K212)
+#if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W027)||defined(FEATURE_LEFT_SOFTKEY_AND_STAR_UNLOCK)
         if(wParam== AVK_CLR||wParam == AVK_END || wParam == AVK_POWER || wParam == AVK_HEADSET_CONNECT || wParam == AVK_HEADSET_DISCONNECT)
-#elif defined (FEATURE_VERSION_EC99)
+#elif defined (FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212)
         if(wParam == AVK_POWER || wParam == AVK_HEADSET_CONNECT || wParam == AVK_HEADSET_DISCONNECT)
 #else
         if(wParam== AVK_SELECT||wParam == AVK_END || wParam == AVK_POWER || wParam == AVK_HEADSET_CONNECT || wParam == AVK_HEADSET_DISCONNECT)			

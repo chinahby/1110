@@ -549,6 +549,7 @@ static int CameraApp_InitAppData(CCameraApp *pMe)
 	pMe->m_isStartFromFacebook = FALSE;
     pMe->m_isRecordMode = FALSE;
 #endif
+	pMe->m_bIsbackMed = FALSE;
     pMe->m_sensor_model = -1;
     MEMSET(&pMe->m_CallBack, 0, sizeof(AEECallback));
 
@@ -760,6 +761,10 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
                 {
 					pMe->m_isRecordMode = TRUE;
                 }
+				else if( STRCMP(as->pszArgs, "BackMed") == 0 )
+				{
+					pMe->m_bIsbackMed = TRUE;
+				}
 #ifdef FEATURE_USES_MMS                  
                 else if( STRCMP(as->pszArgs, "MMS") == 0 )
                 {
