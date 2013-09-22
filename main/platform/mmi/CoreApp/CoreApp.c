@@ -1604,7 +1604,8 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             }
             return TRUE;
 #endif
-#if defined(FEATURE_VERSION_K212_20D)
+
+#if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212)
        case  EVT_MOBILE_TRACKER:
 	   	     {
 			 	if (IRUIM_IsCardConnected(pMe->m_pIRUIM)) 
@@ -3725,7 +3726,7 @@ void CoreApp_SendReginfoTimer(void *pme)
    // ·¢ËÍEVT_DISPLAYDIALOGTIMEOUTÊÂ¼þ
   (void) ISHELL_PostEvent(pMe->a.m_pIShell,
                           AEECLSID_CORE_APP,
-                          EVT_MOBILE_TRACKER,
+                          EVT_SENDREGINFOR,
                           0,
                           0);
 }
@@ -3843,7 +3844,7 @@ int CoreApp_SendReginfo(CCoreApp   *pMe)
 }   
 #endif
 
-#ifdef FEATURE_VERSION_K212_20D
+#if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212)
 void CoreApp_ReginfosmsTimer(void *pme)
 {
    CCoreApp *pMe = (CCoreApp *)pme;

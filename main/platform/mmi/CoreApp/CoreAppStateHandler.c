@@ -1168,7 +1168,7 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
 
 #endif
 
-#ifdef FEATURE_VERSION_K212_20D
+#if defined(FEATURE_VERSION_K212_20D)
 			if (IRUIM_IsCardConnected(pMe->m_pIRUIM)) 
 			{
 			 MSG_FATAL("ISHELL_SetTimer m_bsendReginfosms1=%d",m_bsendReginfosms,0,0);

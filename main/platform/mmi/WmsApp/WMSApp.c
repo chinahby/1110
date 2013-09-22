@@ -1850,7 +1850,7 @@ Exit:
                     }       
                 }
 #endif
-#ifdef FEATURE_POWERUP_REGISTER_CHINAUNICOM                
+#if defined(FEATURE_POWERUP_REGISTER_CHINAUNICOM)||defined(FEATURE_VERSION_K212)               
                 if (info->mt_message_info.message.u.cdma_message.teleservice == 
                     WMS_TELESERVICE_CHINAUNICOMREG)
                 {

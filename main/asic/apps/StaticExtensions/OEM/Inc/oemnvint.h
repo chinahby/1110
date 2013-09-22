@@ -414,7 +414,11 @@ typedef PACKED struct _Key_pad_Cfg
 #define OEMNV_LOCKMUM_MAXLEN 20
 #define OEMNV_LOCKIMSI_MAXLEN 16
 
+#ifdef FEATURE_VERSION_K212
+#define OEMNV_DEFAULT_BANNER "ZBH-BIHEE C15"
+#else
 #define OEMNV_DEFAULT_BANNER  PROJECTNAME
+#endif
 
 #define  OEMNV_WALLPAPER    "fs:/image/wallpaper/wallpaper1.png"
 

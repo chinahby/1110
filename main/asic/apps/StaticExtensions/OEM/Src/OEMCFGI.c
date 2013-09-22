@@ -773,7 +773,7 @@ typedef struct
 #if defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_W317A)
    boolean  autocallrecord;                                 //CFGI_AUTOCALLRECORD Add by pyuangui 20121231 
 #endif
-#ifdef FEATURE_VERSION_K212_20D
+#if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212)
    boolean  reginfosms_send;                                 //CFGI_REGINFOSMS_SEND
 #endif
 #ifdef FEATURE_VERSION_C316   
@@ -1733,7 +1733,7 @@ static int OEMPriv_SetItem_CFGI_AUTOCALLRECORD(void *pBuff);
 #endif
 //Add End
 
-#if defined(FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212)
 static int OEMPriv_GetItem_CFGI_REGINFOSMS_SEND(void *pBuff);
 static int OEMPriv_SetItem_CFGI_REGINFOSMS_SEND(void *pBuff);
 #endif
@@ -2145,7 +2145,7 @@ static OEMConfigListType oemi_cache = {
     ,FALSE
 #endif
 //Add End
-#if defined(FEATURE_VERSION_K212_20D) 
+#if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212)
     ,FALSE     //CFGI_REGINFOSMS_SEND
 #endif
 #ifdef FEATURE_VERSION_C316
@@ -2756,7 +2756,7 @@ static ConfigItemTableEntry const customOEMItemTable[] =
 #if defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_W317A)
    CFGTABLEITEM(CFGI_AUTOCALLRECORD,sizeof(boolean)),				 //Add by pyuangui 20121231
 #endif
-#if defined(FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212)
    CFGTABLEITEM(CFGI_REGINFOSMS_SEND,sizeof(boolean)),				
 #endif
 #ifdef FEATURE_VERSION_C316
@@ -3290,7 +3290,7 @@ void OEM_RestoreFactorySetting( void )
 	#if defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_W317A)
     oemi_cache.autocallrecord = FALSE;  //CFGI_AUTOCALLRECORD    //Add by pyuangui 2013-01-09 
     #endif
-    #if defined(FEATURE_VERSION_C316)
+    #if defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212)
     oemi_cache.reginfosms_send= FALSE; 
     #endif
     
@@ -11554,7 +11554,7 @@ static int OEMPriv_SetItem_CFGI_AUTOCALLRECORD(void *pBuff)
 #endif
 //Add End
 
-#if defined(FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212)
 static int OEMPriv_GetItem_CFGI_REGINFOSMS_SEND(void *pBuff)
 {
 	MEMCPY(pBuff, (void*) &oemi_cache.reginfosms_send, sizeof(boolean));

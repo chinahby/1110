@@ -99,7 +99,7 @@
 #define  MIZONE_MSG             'Z'
 #endif
 
-#ifdef FEATURE_VERSION_K212_20D
+#if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212)
 #define REG_SERVERNUM       "10659401" //"18126010560"
 #define REGHOPE_MSG         'Z'
 #endif

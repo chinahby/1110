@@ -1404,7 +1404,7 @@ typedef enum
   WMS_TELESERVICE_ISRAEL_SILENT      = 49858,  /* silent sms      */
 #endif
   
-#ifdef FEATURE_POWERUP_REGISTER_CHINAUNICOM
+#if defined(FEATURE_POWERUP_REGISTER_CHINAUNICOM)||defined(FEATURE_VERSION_K212)
   WMS_TELESERVICE_CHINAUNICOMREG     = 65005, /* 联通开机注册 */
 #endif  
 

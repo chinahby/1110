@@ -4045,6 +4045,7 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
         	CallApp_SetupCallAudio(pMe);
 #endif
 			
+        	
             pMe->m_cdg_row = 0;
             //pMe->m_b_show_cdg = TRUE;
             pMe->m_dtmf_length = OEMNV_KEYTONE_NORMAL;
@@ -4118,6 +4119,13 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
             if( pMe->m_bShowPopMenu)
         	{
         		return TRUE;
+        	}
+			if(pMe->m_pAlert!=NULL)
+        	{
+        		IALERT_StopRingerAlert(pMe->m_pAlert);
+            	IALERT_StopMp3Alert(pMe->m_pAlert);
+				IALERT_StopAlerting(pMe->m_pAlert);
+				MSG_FATAL("IALERT_StopAlerting..............................",0,0,0);
         	}
             Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
 			IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL/*ANNUN_FIELD_CALLFORWARD*/, ANNUN_STATE_CALL_INUSE_ON/*ANNUN_STATE_ON*/);
@@ -9805,10 +9813,18 @@ boolean CallApp_AnswerCall(CCallApp  *pMe, boolean bAnswerHold,AEEEvent eCode,ui
         if(AEE_SUCCESS != ITELEPHONE_GetCallInfo(pMe->m_pITelephone, pMe->m_CallsTable->call_id, &ci, sizeof(AEETCallInfo)))
 #endif
         {
+        	if(pMe->m_pAlert!=NULL)
+        	{
+        		IALERT_StopRingerAlert(pMe->m_pAlert);
+            	IALERT_StopMp3Alert(pMe->m_pAlert);
+				IALERT_StopAlerting(pMe->m_pAlert);
+        	}
             return FALSE;
         }
 
-        IALERT_StopAlerting(pMe->m_pAlert);
+        IALERT_StopRingerAlert(pMe->m_pAlert);
+        IALERT_StopMp3Alert(pMe->m_pAlert);
+		IALERT_StopAlerting(pMe->m_pAlert);
         switch (ci.call_state)
         {
 #ifdef FEATURE_ICM
@@ -9881,10 +9897,18 @@ boolean CallApp_AnswerCall(CCallApp  *pMe, boolean bAnswerHold,AEEEvent eCode,ui
         if(AEE_SUCCESS != ITELEPHONE_GetCallInfo(pMe->m_pITelephone, pMe->m_CallsTable->call_id, &ci, sizeof(AEETCallInfo)))
 #endif
         {
+        	if(pMe->m_pAlert!=NULL)
+        	{
+        		IALERT_StopRingerAlert(pMe->m_pAlert);
+            	IALERT_StopMp3Alert(pMe->m_pAlert);
+				IALERT_StopAlerting(pMe->m_pAlert);
+        	}
             return FALSE;
         }
 
-        IALERT_StopAlerting(pMe->m_pAlert);
+        IALERT_StopRingerAlert(pMe->m_pAlert);
+        IALERT_StopMp3Alert(pMe->m_pAlert);
+		IALERT_StopAlerting(pMe->m_pAlert);
         switch (ci.call_state)
         {
 #ifdef FEATURE_ICM

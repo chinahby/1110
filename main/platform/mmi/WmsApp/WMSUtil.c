@@ -49,6 +49,7 @@
 #endif
 #include "uim.h"
 #include "mccdma.h"  //for use of cdma_bs_type
+#include "AEE.h"
 
 /*==============================================================================
                                  
@@ -3433,15 +3434,27 @@ int GetRegisterInfo(char *szRegInfo, int nSize)
     int  nlen;
     AEEMobileInfo     mi;
     uint32 dwCRC32;
+	uint64 meid = 0;
+	uint32 H32,L32;
     
     if (NULL == szRegInfo  || nSize<140)
     {
         return -1;
     }
-        
+	{
+		#ifdef FEATURE_VERSION_W515V3
+        extern int OEM_ReadMEID(uint64 *meid);
+    	OEM_ReadMEID(&meid);
+        #else
+        tmc_get_stored_meid_me((qword *)&meid);
+        #endif
+    	
+        L32 = (uint32)meid;
+        H32 = (((uint32)(meid>>32))&(0xffffff));
+    }
     MEMSET(szRegInfo, 0, nSize);
     // 协议版本--使用ESN
-    szRegInfo[0] = 1;
+    szRegInfo[0] = 2;
         
     //  命令类型--移动台自动注册消息
     szRegInfo[1] = 3;
@@ -3452,8 +3465,8 @@ int GetRegisterInfo(char *szRegInfo, int nSize)
     // 格式化数据：机型、手机ESN、IMSI号码、当前软件版本
     //OEM_GetConfig (CFGI_MOBILEINFO, &mi, sizeof(AEEMobileInfo));
     GetMobileInfo(&mi);
-    SPRINTF(&szRegInfo[4], "<a1><b1>%s</b1><b2>%08x</b2><b3>%s</b3><b4>%s</b4></a1>",
-            OEMNV_DEFAULT_BANNER, mi.dwESN, mi.szMobileID, ver_modelversion);
+    SPRINTF(&szRegInfo[4], "<a1><b1>%s</b1><b2>%06x%08x</b2><b3>%s</b3><b4>%s</b4></a1>",
+            OEMNV_DEFAULT_BANNER, H32,L32, mi.szMobileID, ver_modelversion);
     
     nlen = STRLEN(&szRegInfo[4]);
     
@@ -4489,7 +4502,7 @@ GETREGISTERMSG_EXIT:
 
 #endif
 
-#ifdef FEATURE_VERSION_K212_20D
+#if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212)
 wms_client_message_s_type *GetHOPERegisterMsg()
 {
     char  *pBuf=NULL;
@@ -4512,9 +4525,12 @@ wms_client_message_s_type *GetHOPERegisterMsg()
     #ifdef FEATURE_VERSION_K212_LD
 	STRCAT(pBuf,"JM-NAIDE XG308");
 	#else
+    #ifdef FEATURE_VERSION_K212
+	STRCAT(pBuf,"ZBH_BIHEE C15");
+	#else
     STRCAT(pBuf,"V-HOPE E102");
 	#endif
-	
+	#endif
     nMsgSize = STRLEN(pBuf);
     if (nMsgSize<0)
     {
@@ -4717,7 +4733,7 @@ wms_client_message_s_type *CWmsApp_Getspecmsg(AECHAR *pwstrType)
         case MIZONE_MSG:
             return GetMiZoneRegisterMsg();
 #endif
-#ifdef FEATURE_VERSION_K212_20D
+#if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212)
         case REGHOPE_MSG:
             return GetHOPERegisterMsg();
 #endif
