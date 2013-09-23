@@ -29,6 +29,7 @@
 #include "ContApp.h"
 #include "AEETelephone.h"
 #include "AEETelDef.h"
+#include "tetris.h"
 #define FILE_CONTAPP_CFG                (AEE_ADDRBOOK_DIR"\\contapp.cfg")
 #define CAL_DATABASE_PATH           	"fs:/mod/scheduleapp"     //数据库的路径名
 #define FILE_SCHEDULE_CFG           	"schedulecfg"  //日程表的配置文件?
@@ -6771,7 +6772,24 @@ static void SecurityMenu_RestoryFactorySet(CSecurityMenu *pMe)
         	m_pFileMgr = NULL;
     	 }
 	}
-	
+	#if defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_K212)
+	{
+		int i = 0;
+		CPrefData m_CfgData;
+		m_CfgData.m_nLevel = 1;
+        m_CfgData.m_bGrid  = FALSE;
+        m_CfgData.m_bSound = FALSE;
+        for(i = 0; i < 3; i++)
+        {
+            m_CfgData.Score[i] = 0;            // Initialize the highest scores.
+        }
+		(void)ISHELL_SetPrefs(pMe->m_pShell, 
+                              AEECLSID_TETRIS, 
+                              2, 
+                              &(m_CfgData),
+                              sizeof(CPrefData)); 
+	}
+	#endif
 //Add By zzg 2010_10_22
 #ifdef FEATURE_APP_BLUETOOTH
 	ISHELL_StartBackgroundApplet(pMe->m_pShell, AEECLSID_BLUETOOTH_APP, "ResetBT");

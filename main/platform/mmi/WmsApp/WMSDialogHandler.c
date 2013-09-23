@@ -12093,8 +12093,10 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 #endif                        
 #endif                       
                         MENU_ADDITEM(pMe->m_pMenu, IDS_INSERTTEMPLATES);
-						MENU_ADDITEM(pMe->m_pMenu, IDS_SAVETODRAFT);	//Add By zzg 2010_09_11						
+						MENU_ADDITEM(pMe->m_pMenu, IDS_SAVETODRAFT);	//Add By zzg 2010_09_11		
+						#ifndef FEATURE_VERSION_K212
                         MENU_ADDITEM(pMe->m_pMenu, IDS_SAVEASPRESET);
+						#endif
                         MENU_ADDITEM(pMe->m_pMenu, IDS_EXIT_EDITOR);
                         MENU_ADDITEM(pMe->m_pMenu, IDS_SETTING);
 #ifdef FEATURE_USES_MMS 
