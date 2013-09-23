@@ -175,7 +175,13 @@
 	<String Id="1026" Name="IDS_REGULATE_NONE">
 		<Text>No qcn!</Text>
 	</String>
-	</Strings>
+	<String Id="1027" Name="IDS_HEADSET_TEST">
+		<Text>Headset testing</Text>
+	</String>
+	<String Id="1028" Name="IDS_HEADSET_NOINSET">
+		<Text>Pls insert headset</Text>
+	</String>
+</Strings>
 	<Dialogs>
 		<DIALOG Id="1" Name="IDD_MAINMENU" Focus="7001">
 			<Controls>
@@ -225,4 +231,7 @@
 	<DIALOG Id="13" Name="IDD_REGULATE" Focus="0">
 		<Controls/>
 	</DIALOG>
+	<Dialog Id="14" Name="IDD_HEADSETTEST" Focus="0">
+		<Controls/>
+	</Dialog>
 </BREWRes>

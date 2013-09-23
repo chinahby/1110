@@ -96,6 +96,8 @@ static NextFSMAction QUICKTESTSTExitHandler(CQuickTest *pMe);
 static NextFSMAction QUICKTESTSTCAMERATestHandler(CQuickTest *pMe);
 #endif
 
+//状态QUICKTESTST_HEADSETTEST 处理函数
+static NextFSMAction QUICKTESTSTHEADSETTestHandler(CQuickTest *pMe);
 
 /*==============================================================================
                                  全局数据
@@ -164,7 +166,11 @@ NextFSMAction QuickTest_ProcessState(CQuickTest *pMe)
         case QUICKTESTST_YAMAHATEST:
             retVal = QUICKTESTSTYAMAHATestHandler(pMe);
             break;
-
+			
+		case QUICKTESTST_HEADSETTEST:
+			retVal = QUICKTESTSTHEADSETTestHandler(pMe);
+			break;
+			
         case QUICKTESTST_VIBRATETEST:
             retVal = QUICKTESTSTVibrateTestHandler(pMe);
             break;
@@ -353,7 +359,10 @@ static NextFSMAction QUICKTESTSTMainHandler(CQuickTest *pMe)
             MOVE_TO_STATE(QUICKTESTST_RESTOREFACTORY)
             return NFSMACTION_CONTINUE;
            
-
+		case DLGRET_HEADSETTEST:
+			MOVE_TO_STATE(QUICKTESTST_HEADSETTEST)
+            return NFSMACTION_CONTINUE;
+			
         case DLGRET_CANCELED:
             MOVE_TO_STATE(QUICKTESTST_EXIT)
             return NFSMACTION_CONTINUE;
@@ -443,6 +452,50 @@ static NextFSMAction QUICKTESTSTYAMAHATestHandler(CQuickTest *pMe)
 #ifdef FEATURE_VERSION_C337
             MOVE_TO_STATE(QUICKTESTST_VIBRATETEST)
 #else
+            MOVE_TO_STATE(QUICKTESTST_HEADSETTEST)
+#endif            
+            return NFSMACTION_CONTINUE;
+
+        default:
+            break;
+    }
+
+    return NFSMACTION_WAIT;
+}// QUICKTESTSTYAMAHATestHandler
+
+/*==============================================================================
+QUICKTESTSTHEADSETTestHandler
+
+说明：
+       设置状态QUICKTESTST_HEADSETTEST时函数被调用。函数处理状态QUICKTESTST_HEADSETTEST的相关操作。
+
+参数：
+       pMe [in]：指向CQuickTest Applet对象结构的指针。该结构包含小程序的特定信息。
+
+返回值：
+        无
+
+备注：:
+
+==============================================================================*/
+static NextFSMAction QUICKTESTSTHEADSETTestHandler(CQuickTest *pMe)
+{
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+
+    switch (pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            QuickTest_ShowDialog(pMe, IDD_HEADSETTEST);
+            return NFSMACTION_WAIT;
+
+        case DLGRET_CANCELED:
+#ifdef FEATURE_VERSION_C337
+            MOVE_TO_STATE(QUICKTESTST_VIBRATETEST)
+#else
             MOVE_TO_STATE(QUICKTESTST_KEYTEST)
 #endif            
             return NFSMACTION_CONTINUE;
@@ -453,6 +506,7 @@ static NextFSMAction QUICKTESTSTYAMAHATestHandler(CQuickTest *pMe)
 
     return NFSMACTION_WAIT;
 }// QUICKTESTSTYAMAHATestHandler
+
 
 /*==============================================================================
 QUICKTESTSTVibrateTestHandler

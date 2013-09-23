@@ -86,6 +86,13 @@ static boolean  QuickTest_YAMAHATestHandler(CQuickTest *pMe,
     uint32 dwParam
 );
 
+//对话框IDD_HEADSETTEST事件处理函数
+static boolean  QuickTest_HeadTestHandler(CQuickTest *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+);
+
 //对话框IDD_VIBRATETEST事件处理函数
 static boolean  QuickTest_VibrateTestHandler(CQuickTest *pMe,
     AEEEvent eCode,
@@ -256,6 +263,7 @@ void QuickTest_UpdateActiveDialogInfo
         case IDD_CALLTEST:
         case IDD_REGULATE:     
         case IDD_RESTORE_FACTORY:
+		case IDD_HEADSETTEST:
             pMe->m_pActiveDlg = (IDialog*)dwParam;
             pMe->m_pActiveDlgID = wParam;
             return;
@@ -343,7 +351,10 @@ boolean QuickTest_RouteDialogEvent(CQuickTest *pMe,
 
         case IDD_VIBRATETEST:
             return QuickTest_VibrateTestHandler(pMe,eCode,wParam,dwParam);
-
+			
+		case IDD_HEADSETTEST:
+			return QuickTest_HeadTestHandler(pMe,eCode,wParam,dwParam);
+			
         case IDD_BACKLIGHTTEST:
             return QuickTest_BackLightTestHandler(pMe,eCode,wParam,dwParam);
             
@@ -2080,6 +2091,140 @@ case AVK_CAMERA:
     }
     return FALSE;
 } // QuickTest_KeyTestHandler
+
+/*==============================================================================
+函数：
+       QuickTest_HeadTestHandler
+说明：
+       IDD_HEADSETTEST对话框事件处理函数
+
+参数：
+       pMe [in]：指向CQuickTest Applet对象结构的指针。该结构包含小程序的特定信息。
+       eCode [in]：事件代码。
+       wParam：事件相关数据。
+       dwParam：事件相关数据。
+
+返回值：
+       TRUE：传入事件被处理。
+       FALSE：传入事件被忽略。
+
+备注：
+
+==============================================================================*/
+boolean  m_testend = FALSE;
+
+static boolean  QuickTest_HeadTestHandler(CQuickTest *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+)
+{
+	AECHAR   string[MAX_STRING_LENGTH+1];
+    AEERect  dlgrc;
+
+
+    PARAM_NOT_REF(dwParam)
+
+    MEMSET(string, 0, sizeof(string));
+    SETAEERECT(&dlgrc,
+               0,
+               0,
+               pMe->m_rc.dx,
+               pMe->m_rc.dy);
+
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT:
+			m_testend = FALSE;
+            return TRUE;
+
+        case EVT_DIALOG_START:
+            (void) ISHELL_PostEvent( pMe->m_pShell,
+                                     AEECLSID_QUICKTEST,
+                                     EVT_USER_REDRAW,
+                                     0,
+                                     0);
+            return TRUE;
+
+		case EVT_HEADSET:
+			(void)IRINGERMGR_Stop(pMe->m_pRingerMgr);
+			(void) ISHELL_PostEvent( pMe->m_pShell,
+                                     AEECLSID_QUICKTEST,
+                                     EVT_USER_REDRAW,
+                                     0,
+                                     0);
+            return TRUE;
+
+        case EVT_USER_REDRAW:
+            //绘制测试提示语
+            if (HS_HEADSET_ON())
+            {
+            	(void)ISHELL_LoadResString(pMe->m_pShell,
+                                       AEE_QUICKTEST_RES_FILE,
+                                       IDS_HEADSET_TEST,
+                                       string,
+                                       MAX_STRING_LENGTH);
+            }
+			else
+			{
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                                       AEE_QUICKTEST_RES_FILE,
+                                       IDS_HEADSET_NOINSET,
+                                       string,
+                                       MAX_STRING_LENGTH);
+			}
+            if(string[0] == 0)
+            {
+                return TRUE;
+            }
+            (void)IDISPLAY_DrawText(pMe->m_pDisplay,
+                                    AEE_FONT_BOLD,
+                                    string,
+                                    -1,
+                                    0,
+                                    0,
+                                    &dlgrc,
+                                    IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE);
+
+            // 统一更新界面
+            IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+			if (HS_HEADSET_ON())
+            {
+            	IALERT_StartRingerPreview(pMe->m_pIAlert, 0);
+            	QuickTest_Ringer(pMe);
+				m_testend = TRUE;
+			}
+            return TRUE;
+
+        case EVT_DIALOG_END:
+           (void)IRINGERMGR_Stop(pMe->m_pRingerMgr);
+            return TRUE;
+
+        case EVT_KEY:
+            switch(wParam)
+            {
+                case AVK_CLR:
+					if(m_testend)
+					{
+                    	(void)IRINGERMGR_Stop(pMe->m_pRingerMgr);
+                    	(void)ISHELL_CancelTimer(pMe->m_pShell,
+                                 (PFNNOTIFY)(QuickTest_Ringer),
+                                  pMe);
+                    	CLOSE_DIALOG(DLGRET_CANCELED)
+					}
+                    break;
+
+                default:
+                    break;
+            }
+            return TRUE;
+
+        default:
+            break;
+    }
+    return FALSE;
+}
+
 
 /*==============================================================================
 函数：
