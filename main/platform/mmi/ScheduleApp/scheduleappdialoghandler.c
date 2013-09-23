@@ -1729,6 +1729,12 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
                     }
                 }
             }
+			else
+			{
+				#if defined(FEATURE_VERSION_K212)
+					drawBottomBar(BTBAR_OPTION_BACK);
+				#endif
+			}
 
             if( !inited)
             {
@@ -1738,9 +1744,7 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
             {
                 bRedrawDone = TRUE;
             }
-#if defined(FEATURE_VERSION_K212)
-			drawBottomBar(BTBAR_OPTION_BACK);
-#endif
+
 
             IDISPLAY_UpdateEx( pme->m_pDisplay, FALSE);
             return TRUE;

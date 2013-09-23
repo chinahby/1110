@@ -775,9 +775,19 @@ static boolean  IContApp_HandleEvent( IContApp   *pi,
             pMe->m_bSuspending = FALSE;
             
             pMe->m_bActive = TRUE;
-
+			
+			pMe->m_isCalling = FALSE;
+			
             pMe->m_bUnLock = FALSE;
-
+			#ifdef FEATURE_VERSION_K212
+			 if(as->pszArgs != NULL)
+            {
+                if(STRCMP(as->pszArgs, "Calling") == 0)
+                {
+                    pMe->m_isCalling = TRUE;
+                }
+			}
+			#endif
             (void)CContApp_Start(pMe);
             ERR("CCONTAPP_START END",0,0,0);
             // Decode the arguments

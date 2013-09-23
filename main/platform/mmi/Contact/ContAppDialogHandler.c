@@ -5399,6 +5399,8 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
                 	break;
                 }
                 case AVK_SEND:
+					if(!pMe->m_isCalling)
+					{
                     if(IS_ZERO_REC())
                     {
                         return TRUE;
@@ -5437,6 +5439,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
                     }
                     
                     CLOSE_DIALOG(DLGRET_CALL);
+					}
                     return TRUE;
 
                 case AVK_SELECT:

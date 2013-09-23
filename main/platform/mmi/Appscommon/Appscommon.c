@@ -2982,7 +2982,9 @@ void DrawPromptMessage (IDisplay *pIDisplay,
     //Draw bottom
 #ifdef FEATURE_VERSION_K212
  if(PParam->eBBarType == BTBAR_NONE)	
- 	{}
+ {
+ 	bottomParam.eBBarType = BTBAR_OK_BACK;
+ }
  else
 #endif
  {
@@ -2998,6 +3000,7 @@ void DrawPromptMessage (IDisplay *pIDisplay,
             bottomParam.eBBarType = BTBAR_BACK; //BTBAR_SELECT_BACK;            
 
         }  
+		
     }
     DrawBottomBar(pIDisplay, &bottomParam);  
  }

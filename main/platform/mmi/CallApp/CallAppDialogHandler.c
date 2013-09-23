@@ -4782,7 +4782,19 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
 
                 case IDS_CONTACT: 
 				case IDS_PHONE_BOOKS:
+					#ifdef FEATURE_VERSION_K212
+					if (!ISHELL_CanStartApplet(pMe->m_pShell, AEECLSID_APP_CONTACT))
+				    {
+				        // 当前不能启动 指定 Applet
+				        CALL_ERR("Can't start Applet 0x%X",AEECLSID_APP_CONTACT,0,0);
+				        return TRUE;
+				    }
+				    ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_APP_CONTACT,"Calling");
+				    
+					#else
                     CallApp_LaunchApplet(pMe,  AEECLSID_APP_CONTACT);
+					#endif
+					
                     return TRUE;
 
                 case IDS_SMS:
