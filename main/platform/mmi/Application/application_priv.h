@@ -58,6 +58,10 @@ typedef enum ApplicationState
 #if defined(FEATURE_VERSION_W317A)
     APPLICATIONST_PCMODEM,
 #endif
+#if defined(FEATURE_VERSION_K212_ND)
+		APPLICATIONST_KEY_TIME,
+#endif
+
     APPLICATIONST_EXIT
 } ApplicationState;
 
@@ -75,6 +79,9 @@ typedef enum DLGRetValue
     DLGRET_FLASHLITHT,
 #if defined(FEATURE_VERSION_W317A)
     DLGRET_PCMODEM,
+#endif
+#if defined(FEATURE_VERSION_K212_ND)
+	DLGRET_KEY_TIME,
 #endif
     DLGRET_CANCELED
 }DLGRetValue;
@@ -312,6 +319,9 @@ typedef struct _Application
 	#if defined(FEATURE_VERSION_W317A)
     IStatic    						*m_pIStatic;      // Static for displaying information
     #endif
+	#if defined(FEATURE_VERSION_K212_ND)
+	IConfig         *m_pConfig;
+	#endif
     IBacklight     *m_pBacklight;       //背光接口指针
     boolean        m_StartCore;
 #ifdef FEATURE_OEMOMH

@@ -106,6 +106,12 @@
 	<String Id="1037" Name="IDS_TORCH">
 		<Text>Torch</Text>
 	</String>
+	<String Id="1038" Name="IDS_KEY_TIME">
+		<Text>A key time</Text>
+	</String>
+	<String Id="1039" Name="IDS_SOS1">
+		<Text>The emergency setting</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<Dialog Id="6001" Name="IDD_FLASHLIGHT_SETTING" Focus="7002">
@@ -129,6 +135,13 @@
 	<Dialog Id="6004" Name="IDD_PC_MODEM" Focus="0">
 		<Controls/>
 		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<Dialog Id="6005" Name="IDD_KEY_TIME_SETTING" Focus="7005">
+		<Controls>
+			<Menu Id="7005" Name="IDC_KEY_TIME_SET">
+				<Items/>
+			</Menu>
+		</Controls>
 	</Dialog>
 </Dialogs>
 </BREWRes>

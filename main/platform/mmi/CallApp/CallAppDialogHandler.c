@@ -353,7 +353,7 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
                                            uint16      wParam,
                                            uint32      dwParam);
 
-#if defined(FEATURE_VERSION_W027V3) || defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_M74)||defined(FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_W027V3) || defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_M74)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
 
 static void CallApp_TorchTipTimeOut(CCallApp *pMe);
 #endif
@@ -7756,7 +7756,7 @@ void CallApp_SetupCallAudio(CCallApp *pMe)
 	{
 		ISOUND_SetVolume(pMe->m_pSound, GET_ISOUND_VOL_LEVEL(pMe->m_CallVolume)*4/5);
 	}
-    #elif defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)
+    #elif defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
 	if(pMe->m_bHandFree)
 	{
     	ISOUND_SetVolume(pMe->m_pSound, GET_ISOUND_VOL_LEVEL(pMe->m_CallVolume)*3/5);
@@ -7826,7 +7826,7 @@ static void CallApp_MakeSpeedDialCall(CCallApp  *pMe)
             return;
         }
         //load the speed dial empty resource string
-        #if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
+        #if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
 		pMe->m_prompt_id = IDS_SPEED_DIAL_QUERY;
 		CLOSE_DIALOG(DLGRET_PROMPT)
 		#else
@@ -8734,6 +8734,7 @@ static void CallApp_DrawDialerString(CCallApp   *pMe,  AECHAR const *dialStr)
         MSG_FATAL("CallApp_DrawDialerString....................2",0,0,0);
 #ifndef FEATURE_VERSION_EC99
 #ifndef FEATURE_VERSION_K212_20D
+#ifndef FEATURE_VERSION_K212_ND
         if(nLine <= nLineMax)
         {
             
@@ -8742,7 +8743,8 @@ static void CallApp_DrawDialerString(CCallApp   *pMe,  AECHAR const *dialStr)
         {
             pMe->m_pCurrNumFont = NULL;
         }
-#endif        
+#endif  
+#endif      
 #endif
     }
 	MSG_FATAL("CallApp_DrawDialerString....................3",0,0,0);
@@ -13190,6 +13192,7 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
 #ifndef FEATURE_VERSION_C337  
 #ifndef FEATURE_VERSION_EC99
 #ifndef FEATURE_VERSION_K212_20D
+#ifndef FEATURE_VERSION_K212_ND 
         else if ((AVKType)wParam == AVK_1)
         {
             if((pMe->m_DialString[0] == '1')&&(pMe->m_DialString[1] == '\0'))
@@ -13197,12 +13200,15 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
                 CallApp_MakeVoiceMailCall(pMe);
             }
         }
+#endif
 #endif        
 #endif
 #endif              
         
 #if defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)
         else if ( ((AVKType)wParam >= AVK_1) &&((AVKType)wParam <= AVK_9))
+#elif defined(FEATURE_VERSION_K212_ND)
+		else if	( ((AVKType)wParam >= AVK_0) &&((AVKType)wParam <= AVK_9))
 #else
         else if ( ((AVKType)wParam >= AVK_2) &&((AVKType)wParam <= AVK_9))
 #endif  
@@ -13264,8 +13270,16 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
                 return TRUE;
             }
 #endif
-
-#ifdef FEATURE_VERSION_K212_20D
+#if defined(FEATURE_VERSION_K212_ND)
+if (((AVKType)wParam == AVK_0) && (((uint16)WSTRLEN(pMe->m_DialString) <= MAX_SPEEDDIAL_CHARS) /*&&(wIndex!=0)*/) && (!pMe->m_b_incall))
+				{
+					   MSG_FATAL("time detail..................",0,0,0);
+					   pMe->m_msg_text_id = IDS_MSG_TIME_DETAIL;			
+					   CLOSE_DIALOG(DLGRET_MSGBOX);
+					   return TRUE;
+				}
+#endif					
+#if defined(FEATURE_VERSION_K212_20D)
 			if (((AVKType)wParam == AVK_6) && (((uint16)WSTRLEN(pMe->m_DialString) <= MAX_SPEEDDIAL_CHARS) &&(wIndex!=0)) && (!pMe->m_b_incall))
 				{
 					   pMe->m_msg_text_id = IDS_MSG_TIME_DETAIL;			
@@ -13279,34 +13293,17 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
                 CallApp_MakeSpeedDialCall(pMe);
             }
         }
+
 		//Add By zzg 2010_09_10
-		#if defined(FEATURE_VERSION_C316)||defined(FEAUTRE_VERSION_N450)||defined(FEATURE_VERSION_W0216A)|| defined(FEATURE_VERSION_C306)|| defined (FEATURE_VERSION_K212_20D) || defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_N68)||defined(FEATURE_LCD_TOUCH_ENABLE)||defined(FEATURE_VERSION_W516)||defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_H1201)|| defined(FEATURE_VERSION_W027)\
+		#if defined(FEATURE_VERSION_C316)||defined(FEAUTRE_VERSION_N450)||defined(FEATURE_VERSION_W0216A)|| defined(FEATURE_VERSION_C306)|| defined (FEATURE_VERSION_K212_20D)|| defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_N68)||defined(FEATURE_LCD_TOUCH_ENABLE)||defined(FEATURE_VERSION_W516)||defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_H1201)|| defined(FEATURE_VERSION_W027)\
 			||defined(FEATURE_VERSION_W0216A_T18) //xxzhen
         #ifndef FEATURE_TORCH_KEY_INFO
 		else if (((AVKType)wParam == AVK_0) && (WSTRLEN(pMe->m_DialString) == 1))
-		{	
+	{	
 		    #ifdef FEATURE_VERSION_W317A
             CallApp_LaunchApplet(pMe,  AEECLSID_APP_FMRADIO);  // add by pyuangui 20121220
-           //add by wenyu ，长按“0”键切换情景模式
-		    #elif defined(FEATURE_VERSION_K212_ND) 
-			CallApp_ShortcutQuiet( pMe );
-			MSG_FATAL("User Profile is changing ..........................",0,0,0);
-			if(pMe->m_Profile == OEMNV_PROFILE_NORMALMODE)
-            {
-                pMe->m_msg_text_id = IDS_MSG_CURPROFILE_NORMALMODE;
-            }
-            else
-            {
-            #ifdef FEATURE_NO_VIBRATE            
-                //ISOUND_Vibrate(pMe->m_pSound, 2000);   //客户未要求不加振动提示  
-                pMe->m_msg_text_id = IDS_MSG_CURPROFILE_MEETING_NO_VIBRATE;
-            #else
-                pMe->m_msg_text_id = IDS_MSG_CURPROFILE_MEETING;
-            #endif
-            }
-            CLOSE_DIALOG(DLGRET_MSGBOX);
 			#else
-		    {
+		{
 		    boolean TorchOn = FALSE;
 			OEM_GetConfig(CFGI_FLSHLITHG_STATUS,&TorchOn, sizeof(TorchOn));
 			if (TorchOn == FALSE )
@@ -13360,6 +13357,7 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
             #endif
 		}
 			#endif
+			
     	}
         #else
         else if (((AVKType)wParam == AVK_0) && (WSTRLEN(pMe->m_DialString) == 1))
@@ -13551,7 +13549,7 @@ static int SetBrowserArr_Main_CallApp(CCallApp *pMe,char *purl)
 
 //Add End
 
-#if defined(FEATURE_VERSION_W027V3) || defined(FEATURE_VERSION_W317A)|| defined(FEATURE_VERSION_M74)|| defined (FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_W027V3) || defined(FEATURE_VERSION_W317A)|| defined(FEATURE_VERSION_M74)|| defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
 
 static void CallApp_TorchTipTimeOut(CCallApp *pMe)
 {
@@ -13591,7 +13589,7 @@ static void CallApp_Process_Spec_Key_Event(CCallApp *pMe,uint16 wp)
             return;
         }
     }
-	///////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////
 if(wp == AVK_0)
 {   
 	//add by wenyu ，给“0”键添加“+”
@@ -13620,7 +13618,8 @@ if(wp == AVK_0)
 					if(pMe->m_curpros == 1)
 					{
 						//return L'p';
-						WSTRCPY(&pMe->m_DialString[len-1], L"+");								
+						WSTRCPY(&pMe->m_DialString[len-1], L"+");	
+					//	MSG_FATAL("+++++++++++++++++++++",0,0,0);
 					}
 				}
 					else
@@ -13640,7 +13639,9 @@ if(wp == AVK_0)
 									//return L'p';
 									//WSTRCPY(&pMe->m_DialString[len-1], L"p");
 									pMe->m_DialString[len-pMe->m_nCursorPos-1] = L'+';
+								//	MSG_FATAL("+++++++++++++++++++",0,0,0);
 								}
+							//MSG_FATAL("+++++++++++++++++++",0,0,0);
 						}	
         	}
         	else
@@ -13929,7 +13930,7 @@ if(wp == AVK_0)
 				}
         	}
 			#endif
-#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
             AEE_SetTimer(1500,CallApp_keypadtimer,pMe);
 #else
         	AEE_SetTimer(1000,CallApp_keypadtimer,pMe);
@@ -14473,13 +14474,13 @@ static void CallApp_Draw_Numer_Img(CCallApp   *pMe,  AECHAR const *dialStr)
     int k = 0;
     WSTRLCPY(wbf,dialStr,sizeof(wbf)/sizeof(AECHAR)); //Gemsea:Size In AECHAR
     p_str = wbf;
-
+	
     SETAEERECT(&rect,
                     CALL_SCREEN_X,
                     CALL_SCREEN_Y ,
                     CALL_SCREEN_DX,
-                    pMe->m_rc.dy - BOTTOMBAR_HEIGHT);
-
+                    pMe->m_rc.dy - BOTTOMBAR_HEIGHT);//
+	MSG_FATAL("CALL_SCREEN_DX======%d,pMe->m_rc.dy - BOTTOMBAR_HEIGHT========%d",CALL_SCREEN_DX,pMe->m_rc.dy - BOTTOMBAR_HEIGHT,0);
 #if defined( FEATURE_CALL_RECORDER)
     if( pMe->m_bRecorderOn)
     {
@@ -14505,7 +14506,7 @@ static void CallApp_Draw_Numer_Img(CCallApp   *pMe,  AECHAR const *dialStr)
                     pMe->m_rc.dy - BOTTOMBAR_HEIGHT - nLineHeight*dy,
                     NUM_IMAGE_WIDTH*dx,
                     nLineHeight*dy);
-
+     MSG_FATAL("pMe->m_rc.dy - BOTTOMBAR_HEIGHT - nLineHeight*dy===%d,NUM_IMAGE_WIDTH*dx==%d,nLineHeight*dy-20==%d",pMe->m_rc.dy - BOTTOMBAR_HEIGHT - nLineHeight*dy,NUM_IMAGE_WIDTH*dx,nLineHeight*dy-20);
 #if defined( FEATURE_CALL_RECORDER)
     if( pMe->m_bRecorderOn)
     {
@@ -14516,6 +14517,7 @@ static void CallApp_Draw_Numer_Img(CCallApp   *pMe,  AECHAR const *dialStr)
 
     len = WSTRLEN(p_str);
 #ifdef FEATURE_EDITABLE_NUMBER
+	MSG_FATAL("len===================%d,count========================%d",len,count,0);
     if(len > count)
     {
         if(pMe->m_nCursorPos >= count)
@@ -14552,9 +14554,12 @@ static void CallApp_Draw_Numer_Img(CCallApp   *pMe,  AECHAR const *dialStr)
 #endif
     
     nRowCount = len %dx;
+	MSG_FATAL("nRowCount================%d",nRowCount,0,0);
     x = rect.x + (dx - nRowCount) * NUM_IMAGE_WIDTH;
     nLineCount = len /dx;
+	MSG_FATAL("nLineCount===============%d",nLineCount,0,0);
     y = rect.y + (dy - nLineCount - 1) * nLineHeight;
+	MSG_FATAL("x=======%d,y========%d",x,y,0);
     if(nRowCount == 0)
     {
         x = rect.x;
@@ -14565,7 +14570,7 @@ static void CallApp_Draw_Numer_Img(CCallApp   *pMe,  AECHAR const *dialStr)
 		pMe->m_nCurrLineFits[linefor] = 8;
 		linefor ++;
 	}
-	
+	MSG_FATAL("len==================%d",len,0,0);
     for (count = 0;count < len ; count ++)
     {
         boolean b_found = TRUE;
@@ -14650,7 +14655,8 @@ static void CallApp_Draw_Numer_Img(CCallApp   *pMe,  AECHAR const *dialStr)
             {
                 IIMAGE_Draw(pMe->num_image[mm], x, y);
             }
-            x += NUM_IMAGE_WIDTH;
+            x += NUM_IMAGE_WIDTH;	
+			MSG_FATAL("===x=======%d,=====y=====%d",x,y,0);
             if(x  >=  rect.x + rect.dx)/*换行*/
             {
                 x = rect.x;

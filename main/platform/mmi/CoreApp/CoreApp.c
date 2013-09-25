@@ -551,7 +551,7 @@ boolean CoreApp_InitAppData(IApplet* po)
     pMe->m_bBatteryActive=FALSE;
 	pMe->m_IsEanbleBatAlarm=TRUE;
 // Add by pyuangui	
-#if defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_SKY) || defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_K212_20D)   
+#if defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_SKY) || defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)   
     pMe->m_keyinfoheld=FALSE;
 #endif    
 //Add End
@@ -820,7 +820,7 @@ void  CoreApp_SoundBoAlarm(CCoreApp *pme, uint16 wParam)
     MSG_FATAL("m_sound_bo_core====%d,bIsInCall=====%d",m_sound_bo_core,bIsInCall,0);
     if ((GetMp3PlayerStatus() == MP3STATUS_NONE) && m_sound_bo_core && !bIsInCall&&(julian.wMinute == 0)&&(julian.wSecond <= 40))
 	{
-#if defined(FEATURE_VERSION_EC99)|| defined(FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_EC99)|| defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
         CoreApp_PlayTimeSound(pMe,TIME_TWO);
 #else
 		CoreApp_PlayTimeSound(pMe,TIME_ONE);
@@ -896,7 +896,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 				
 
                 // 获取大字体高度
- #if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
+ #if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
                 pMe->m_nLargeFontHeight = 70;
  #else
                 pMe->m_nLargeFontHeight = IDISPLAY_GetFontMetrics(pMe->m_pDisplay,
@@ -1387,7 +1387,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                 break;
             }
 			//Add by pyuangui 20121220
-            #if defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_SKY)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_K212_20D)
+            #if defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_SKY)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
              if(wParam == AVK_INFO)
              {
                return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);

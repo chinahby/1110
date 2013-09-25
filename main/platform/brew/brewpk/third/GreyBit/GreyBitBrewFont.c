@@ -1,4 +1,5 @@
 
+
 #include "OEMFeatures.h"
 #include "AEEFont.h"
 #include "AEEStdLib.h"
@@ -113,7 +114,7 @@ static int OEMFont_MeasureTextCursorPos(IFont *pMe, int x, const AECHAR *pcText,
 #define SMALL_FONT_SIZE     4
 
 #else
-#if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)
+#if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)||defined(FEATURE_VERSION_K212_ND)
 #define BIGNUMBER_FONT_SIZE 42
 #else
 #ifdef FEATURE_VERSION_K212
@@ -126,17 +127,18 @@ static int OEMFont_MeasureTextCursorPos(IFont *pMe, int x, const AECHAR *pcText,
 #define NORMAL_FONT_SIZE    16
 #else
 #ifdef FEATURE_VERSION_K212_ND
-#define NORMAL_FONT_SIZE    18
+#define NORMAL_FONT_SIZE    19
 #else
 #define NORMAL_FONT_SIZE    15
 #endif
 #endif 
 #ifdef FEATURE_VERSION_K212_ND
-#define SMALL_FONT_SIZE     15
+#define SMALL_FONT_SIZE     18
+#define LARGE_FONT_SIZE     25
 #else
 #define SMALL_FONT_SIZE     4
-#endif
 #define LARGE_FONT_SIZE     20
+#endif
 #endif
 
 

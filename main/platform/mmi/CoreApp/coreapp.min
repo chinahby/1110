@@ -229,7 +229,10 @@ CONSTFILE_FILES+=\
 	poweroff.gif|fs:/image/pwronoffani/poweroff.gif	
 else ifeq ($(USES_RESDIR), EC99)
 CONSTFILE_FILES+=\
-	poweron.gif|fs:/image/pwronoffani/poweron.gif	
+	poweron.gif|fs:/image/pwronoffani/poweron.gif
+else ifeq ($(USES_RESDIR), K212_ND)
+CONSTFILE_FILES+=\
+	poweronoff.gif|fs:/image/pwronoffani/poweronoff.gif	
 else
 CONSTFILE_FILES+=\
 	poweron.gif|fs:/image/pwronoffani/poweron.gif \

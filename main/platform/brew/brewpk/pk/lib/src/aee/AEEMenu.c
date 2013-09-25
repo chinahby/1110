@@ -94,7 +94,11 @@ static int IMAGE_WIDTH           = 5;                           // Frame Width f
 #endif //FEATURE_MENUTITLE_AUTOSCROLL
 
 #if defined(FEATURE_DISP_160X128)
-#define MAX_NUM_MENUPOP                 (6) //(6)
+#ifdef FEATURE_VERSION_K212_ND
+#define MAX_NUM_MENUPOP                 (4) //(6)
+#else
+#define MAX_NUM_MENUPOP                 (6)
+#endif
 #elif defined(FEATURE_DISP_128X160)
 #define MAX_NUM_MENUPOP                 (8) //(6)
 #elif defined(FEATURE_DISP_128X128)
@@ -102,7 +106,7 @@ static int IMAGE_WIDTH           = 5;                           // Frame Width f
 #elif defined(FEATURE_DISP_176X220)
 #define MAX_NUM_MENUPOP                 (8) //(6)
 #elif defined(FEATURE_DISP_220X176)
-#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
 #define MAX_NUM_MENUPOP                 (4) //(6)
 #else
 #define MAX_NUM_MENUPOP                 (6) //(6)

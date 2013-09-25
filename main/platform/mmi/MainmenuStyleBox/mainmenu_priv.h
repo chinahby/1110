@@ -25,9 +25,17 @@
 #include "AEEMedia.h"
 
 #if defined (FEATURE_DISP_160X128)
+#ifdef FEATURE_VERSION_K212_ND
+#if 0
+#define  MAX_MATRIX_ITEMS 7 
+#else
+#define  MAX_MATRIX_ITEMS 8
+#endif
+#else
 #define  MAX_MATRIX_ITEMS 12
 #define  MAX_MATRIX_ROWS 3
 #define  MAX_MATRIX_COLS 4
+#endif
 #elif defined (FEATURE_DISP_220X176)
 #ifdef FEATURE_VERSION_EC99
 #if  0     //FEATURE_CTA
@@ -163,7 +171,9 @@ typedef struct _MainMenu
     
     int             m_nRow;
     int             m_nColumn;
-
+#ifdef FEATURE_VERSION_K212_ND
+    int             m_index;
+#endif
 #if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)
     int             m_index;
 #endif
@@ -220,7 +230,12 @@ typedef struct _MainMenu
 	IMedia *              m_pMedia;
 	boolean   	    m_bChangeL;
 #endif
-
+#ifdef FEATURE_VERSION_K212_ND
+	IImage          *m_pImageSelectK212ND;
+	nv_language_enum_type language;
+	IMedia *              m_pMedia;
+	boolean   	    m_bChangeL; 
+#endif
 #if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D) 
     //IImage          *m_pImageSelectEC99[8];
     IImage          *m_pImageSelectEC99;
@@ -379,6 +394,19 @@ typedef struct _MainMenu
     #define ICON6_ANI      "fs:/image/mainmenu/Icon_tianyi.png"
     #define ICON7_ANI      "fs:/image/mainmenu/Icon_tools.png"
     #define ICON8_ANI      "fs:/image/mainmenu/Icon_wms.png"		
+<<<<<<< .mine
+#elif defined(FEATURE_VERSION_K212_ND)
+
+	#define ICON1_ANI     "fs:/image/mainmenu/Icon_wms.png"// "fs:/image/mainmenu/Icon_calllog.png"
+    #define ICON2_ANI     "fs:/image/mainmenu/Icon_phonebook.png"// "fs:/image/mainmenu/Icon_profile.png"
+    #define ICON3_ANI     "fs:/image/mainmenu/Icon_calllog.png"// "fs:/image/mainmenu/Icon_multimedia.png"
+    #define ICON4_ANI     "fs:/image/mainmenu/Icon_settings.png"// "fs:/image/mainmenu/Icon_phonebook.png"
+    #define ICON5_ANI     "fs:/image/mainmenu/Icon_multimedia.png"// "fs:/image/mainmenu/Icon_settings.png"
+    #define ICON6_ANI     "fs:/image/mainmenu/Icon_tools.png"//"fs:/image/mainmenu/Icon_tianyi.png"
+    #define ICON7_ANI     "fs:/image/mainmenu/Icon_profile.png"//"fs:/image/mainmenu/Icon_tools.png"
+    #define ICON8_ANI     "fs:/image/mainmenu/Icon_tianyi.png"//"fs:/image/mainmenu/Icon_wms.png"
+#else  	
+=======
 #elif defined(FEATURE_VERSION_K212_20D)
     #define ICON1_ANI      "fs:/image/mainmenu/Icon_calllog.png"
     #define ICON2_ANI      "fs:/image/mainmenu/Icon_multimedia.png"
@@ -389,10 +417,12 @@ typedef struct _MainMenu
     #define ICON7_ANI      "fs:/image/mainmenu/Icon_wms.png"
 #else  
 	
+>>>>>>> .r6971
 	#ifdef FEATURE_LCD_TOUCH_ENABLE
-    #define ICONFOUCS_ANI      "fs:/image/mainmenu/foucs.png"
+    #define ICONFOUCS_ANI      "fs:/image/mainmenu/foucs.png" 
 	#define ICONBACK1_ANI      "fs:/image/mainmenu/backgroud.png"
 	#else
+	
 	#define ICON1_ANI      "fs:/image/mainmenu/qsc1100_01.png"
     #define ICON2_ANI      "fs:/image/mainmenu/qsc1100_02.png"
     #define ICON3_ANI      "fs:/image/mainmenu/qsc1100_03.png"
@@ -566,6 +596,17 @@ typedef struct _MainMenu
 #define MUSIC_PATH7 "fs:/hsmm/mainmenu/manager.mp3"
 #define MUSIC_PATH8 "fs:/hsmm/mainmenu/settings.mp3"
 #define MUSIC_PATH9 "fs:/hsmm/mainmenu/suafer.mp3"
+#endif
+
+#ifdef FEATURE_VERSION_K212_ND
+#define MUSIC_PATH1 	"fs:/hsmm/mainmenu/mesage.mp3"							//"fs:/hsmm/mainmenu/recentcall.mp3"
+#define MUSIC_PATH2 	"fs:/hsmm/mainmenu/contont.mp3"							//"fs:/hsmm/mainmenu/profile.mp3"     //TORCH
+#define MUSIC_PATH3 	"fs:/hsmm/mainmenu/recentcall.mp3"						//"fs:/hsmm/mainmenu/mutimed.mp3"      
+#define MUSIC_PATH4 	"fs:/hsmm/mainmenu/settings.mp3"						//"fs:/hsmm/mainmenu/contont.mp3"
+#define MUSIC_PATH5 	"fs:/hsmm/mainmenu/mutimed.mp3"							//"fs:/hsmm/mainmenu/settings.mp3"       
+#define MUSIC_PATH6 	"fs:/hsmm/mainmenu/manager.mp3"							//"fs:/hsmm/mainmenu/suafer.mp3"
+#define MUSIC_PATH7 	"fs:/hsmm/mainmenu/profile.mp3"							//"fs:/hsmm/mainmenu/manager.mp3"  //TOOLS
+#define MUSIC_PATH8 	"fs:/hsmm/mainmenu/suafer.mp3"							//"fs:/hsmm/mainmenu/mesage.mp3"
 #endif
 
 #ifdef FEATURE_VERSION_EC99

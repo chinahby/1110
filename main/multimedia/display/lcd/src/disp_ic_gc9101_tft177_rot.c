@@ -70,7 +70,7 @@ static void disp_ic_mdp_scrupdate(uint32 *scr, uint32 start_row, uint32 start_co
     scr[15] = SEND_LCD_DATA(DISP_LCD_18BPP(end_row));
 }
 #endif
-//static uint8  gc9102_f=0x10;
+//static uint8  gc9102_f=0x15;
 
 static void disp_ic_init(void)
 {
@@ -90,12 +90,10 @@ static void disp_ic_init(void)
 
 	LCD_WRITE_CMD(0xff);
 	LCD_WRITE_DATA(0x16);
-	
-	LCD_WRITE_CMD(0xfd);	 
-	LCD_WRITE_DATA(0X1e);//16
-		//gc9102_f+=2;
 
-	
+	LCD_WRITE_CMD(0xfd);	 
+	LCD_WRITE_DATA(0x19);//19
+	//gc9102_f+=0x02;
 	
 	LCD_WRITE_CMD(0xa4);	 
 	LCD_WRITE_DATA(0x96);
@@ -114,7 +112,7 @@ static void disp_ic_init(void)
 	LCD_WRITE_DATA(0x80);//80
 	
 	LCD_WRITE_CMD(0xa3);	 
-	LCD_WRITE_DATA(0x10);	
+	LCD_WRITE_DATA(0x12);	
 	
 	LCD_WRITE_CMD(0xe3);
 	LCD_WRITE_DATA(0x07);	//07
@@ -147,9 +145,12 @@ static void disp_ic_init(void)
 		LCD_WRITE_DATA(0x00);
 		LCD_WRITE_CMD(0xFC);
 		LCD_WRITE_DATA(0x00);
-	//*****************	
+	//*****************
+
+	
 	LCD_WRITE_CMD(0x11);
 	LCD_DELAY(200);	
+
 	LCD_WRITE_CMD(0x29);
 #endif	
     LCD_WRITE_CMD(0x2C);//Memory Write

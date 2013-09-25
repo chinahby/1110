@@ -3047,7 +3047,7 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
         
         CLOSE_DIALOG(DLGRET_OK);
         return TRUE;
-#ifdef FEATURE_VERSION_K212_20D
+#if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
      case AVK_PAUSE:
 #endif
      case AVK_INFO://²¥·Å 

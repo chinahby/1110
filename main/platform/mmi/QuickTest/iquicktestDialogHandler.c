@@ -2912,7 +2912,7 @@ static boolean  QuickTest_FMTestHandler(CQuickTest *pMe,
             }
             else
             {
-#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)  
+#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)  
                 if (HS_HEADSET_ON())   
             	{
                 	fm_mute(TRUE, FALSE);
@@ -3684,7 +3684,7 @@ static boolean  QuickTest_CallHandler(CQuickTest *pMe,
             AECHAR   string[MAX_STRING_LENGTH+1];
             IDISPLAY_ClearScreen(pMe->m_pDisplay);
 #ifndef WIN32
-#if defined(FEATURE_VERSION_EC99)  || defined (FEATURE_VERSION_K212_20D) 
+#if defined(FEATURE_VERSION_EC99)  || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND) 
             if(HS_HEADSET_ON())                
             {
                 STRTOWSTR("echo loop",string,sizeof(string));
@@ -4527,7 +4527,7 @@ static void quicktest_fm_power_up( void* pme)
     {
         WarT_Fm_PowerUp();
     }
-#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)  
+#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND) 
     WarT_Fm_Mute(FALSE);
     WarT_Fm_Set_Volume(7);
 #else
@@ -4542,7 +4542,7 @@ static void quicktest_fm_power_up( void* pme)
     {
         fm_radio_power_up();
     }
-#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)   
+#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)   
     if (HS_HEADSET_ON())  
     {
         fm_set_volume(7,FALSE);

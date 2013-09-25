@@ -536,6 +536,13 @@ typedef enum
 #define    PWROFF_ANI_FILE                       PWRON_ANI_FILE
 #define    PWROFF_ANI_FRAME_COUNT                PWRON_ANI_FRAME_COUNT
 #define    PWROFF_ANI_RATE                       PWRON_ANI_RATE
+#elif defined(FEATURE_VERSION_K212_ND)
+#define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronoff.gif"
+#define    PWRON_ANI_FRAME_COUNT                 (1)
+#define    PWRON_ANI_RATE                        (5000)
+#define    PWROFF_ANI_FILE                       PWRON_ANI_FILE
+#define    PWROFF_ANI_FRAME_COUNT                PWRON_ANI_FRAME_COUNT
+#define    PWROFF_ANI_RATE                       PWRON_ANI_RATE
 #elif defined(FEATURE_VERSION_K212_20D)
 #ifdef FEATURE_VERSION_K212_LD
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweron.gif"
@@ -1171,7 +1178,7 @@ typedef struct _CCoreApp
 	#ifdef FEATURE_KEYGUARD
 	boolean             m_iskeypadtime;
 	#endif
-    #if defined(FEATURE_VERSION_C11)||defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_V3CM301)   
+    #if defined(FEATURE_VERSION_C11)||defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_V3CM301)||defined(FEATURE_VERSION_K212_ND)   
 	boolean             m_keyinfoheld;
 	#endif
 	boolean             m_IsSametime;

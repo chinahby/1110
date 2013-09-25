@@ -544,7 +544,11 @@ static NextFSMAction SettingMenu_StateMainHandler(CSettingMenu *pMe)
         case DLGRET_CANCELED:
             MOVE_TO_STATE(SETTINGMENUST_EXIT)
             return NFSMACTION_CONTINUE;
-
+#ifdef FEATURE_SOUND_BO
+		case DLGRET_SPEECH_SETTINGS:
+			MOVE_TO_STATE(SETTINGMENUST_SPEECH)
+			return NFSMACTION_CONTINUE;
+#endif
         default:
             ASSERT_NOT_REACHABLE;
     }
@@ -1829,7 +1833,11 @@ static NextFSMAction SettingMenu_StateSpeechHandler(CSettingMenu *pMe)
 			case DLGRET_CANCELED:
 			case DLGRET_MSGBOX_OK:	  
 				MSG_FATAL("SettingMenu_StateSpeechHandler DLGRET_MSGBOX_OK",0,0,0);
+				#ifdef FEATURE_VERSION_K212_ND
+				MOVE_TO_STATE(SETTINGMENUST_MAIN)
+				#else
 				MOVE_TO_STATE(SETTINGMENUST_PHONESETTING)
+				#endif
 				return NFSMACTION_CONTINUE;
 	
 			case DLGRET_WARNING:

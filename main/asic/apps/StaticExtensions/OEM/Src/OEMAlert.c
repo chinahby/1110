@@ -3491,14 +3491,14 @@ static void OEMALERT_StartMissedCallAlert(IALERT *pMe)
    if (OEMNV_ALERT_ENABLE == missedCallAlert) 
    {
       OEMALERT_GetRingerVol(pMe);
-#if defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212) || defined (FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212) || defined (FEATURE_VERSION_K212_20D)|| defined (FEATURE_VERSION_K212_ND)
       OEMALERT_SetRingerVolEx(pMe, OEMSOUND_1ST_VOL);
 #else
       OEMALERT_SetRingerVol(pMe, FALSE);
 #endif
       pMe->alert_count = 0; 
       OEMALERT_HandleMissedCallTimer(pMe);
-#if defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212) || defined (FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212) || defined (FEATURE_VERSION_K212_20D)|| defined (FEATURE_VERSION_K212_ND)
       OEMALERT_SetRingerVol(pMe, FALSE);
 #endif
    }

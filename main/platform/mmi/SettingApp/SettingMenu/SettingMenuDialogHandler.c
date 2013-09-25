@@ -708,6 +708,21 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
                         sizeof(WTitle));
 				IANNUNCIATOR_SetFieldTextEx(pMe->m_pAnn,WTitle,FALSE);
             }
+#ifdef FEATURE_VERSION_K212_ND
+			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_PHONESETTING_TITLE, IDS_PHONESETTING_TITLE, NULL, 0);
+			#ifdef FEATURE_SOUND_BO
+			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_YUYIIN_PACKGE, IDS_YUYIIN_PACKGE, NULL, 0);
+			#endif
+			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_DISPLAY_TITLE, IDS_DISPLAY_TITLE, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_CALLSETTING_TITLE, IDS_CALLSETTING_TITLE, NULL, 0);
+			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SECURITY_TITLE, IDS_SECURITY_TITLE, NULL, 0);
+			#ifdef FEATURE_SET_SCENEMODE
+			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SCENEMODE_TITLE, IDS_SCENEMODE_TITLE, NULL, 0);
+			#endif
+			#ifdef FEATRUE_AUTO_POWER
+			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_AUTO_POWER_TITLE, IDS_AUTO_POWER_TITLE, NULL, 0);
+			#endif
+#else
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_DISPLAY_TITLE, IDS_DISPLAY_TITLE, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_CALLSETTING_TITLE, IDS_CALLSETTING_TITLE, NULL, 0);
 #ifdef FEATURE_VERSION_W208S
@@ -715,6 +730,7 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SMS_RESTRICT, IDS_SMS_RESTRICT, NULL, 0);
 #endif
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_PHONESETTING_TITLE, IDS_PHONESETTING_TITLE, NULL, 0);
+
 #ifdef FEATRUE_AUTO_POWER
 #ifndef FEATURE_VERSION_C310
 #ifndef FEATURE_VERSION_K212
@@ -723,6 +739,7 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
 #endif
 #endif
 #endif
+
 #ifdef FEATURE_SUPPORT_G_SENSOR
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SHAKE_TITLE, IDS_SHAKE_TITLE, NULL, 0);
 #endif
@@ -741,7 +758,7 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
 
 #endif
 #ifdef FEATURE_SET_SOUND_TITLE
-#if !defined (FEATURE_VERSION_C316)&&!defined(FEATURE_VERSION_K202_LM129C)&&!defined(FEATURE_VERSION_W021_CT100)&&!defined(FEATURE_VERSION_K212)
+#if !defined (FEATURE_VERSION_C316)&&!defined(FEATURE_VERSION_K202_LM129C)&&!defined(FEATURE_VERSION_W021_CT100)&&!defined(FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_K212_ND)
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SOUND_TITLE, IDS_SOUND_TITLE, NULL, 0);
 #endif
 #endif
@@ -752,6 +769,7 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
 
 #ifdef FEATURE_PERU_VERSION
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_PHONE_NUMBER, IDS_PHONE_NUMBER, NULL, 0);
+#endif
 #endif
             return TRUE;
 
@@ -844,6 +862,14 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
                 case IDS_SMS_RESTRICT:   //∂Ã–≈∫⁄√˚µ•
                     CLOSE_DIALOG(DLGRET_SMSRESTRICT)
                     break;
+#endif
+
+#ifdef FEATURE_VERSION_K212_ND
+#ifdef FEATURE_SOUND_BO
+				case IDS_YUYIIN_PACKGE:
+    				CLOSE_DIALOG(DLGRET_SPEECH_SETTINGS)
+					break;
+#endif
 #endif
 
 #ifdef FEATRUE_AUTO_POWER
@@ -1515,7 +1541,6 @@ static boolean  HandlePhoneSettingDialogEvent(CSettingMenu *pMe,
 )
 {
     PARAM_NOT_REF(dwParam)
-
     IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,
                                                     IDC_PHONESETTING);
     if (pMenu == NULL)
@@ -1577,9 +1602,10 @@ static boolean  HandlePhoneSettingDialogEvent(CSettingMenu *pMe,
 #endif //FEATURE_LCD_TOUCH_ENABLE
 			
 #ifdef FEATURE_SOUND_BO
+#ifndef FEATURE_VERSION_K212_ND
 			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_YUYIIN_PACKGE, IDS_YUYIIN_PACKGE, NULL, 0);
 #endif
-
+#endif
             return TRUE;
 
         case EVT_DIALOG_START:
@@ -3259,7 +3285,7 @@ static boolean  HandleAKGDialogEvent(CSettingMenu *pMe,
                                       &AKG,
                                       sizeof(AKG));
 				//Add By zzg 2012_10_29
-                #if defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)
+                #if defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
 					switch (AKG)
 	                {
 	                	case 1:   //10√Î
@@ -3361,7 +3387,7 @@ static boolean  HandleAKGDialogEvent(CSettingMenu *pMe,
                 byte AKG = 0;
 
                	//Add By zzg 2012_10_29
-                #if defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)
+                #if defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
 					switch (wParam)
 	                {
 	                	case IDS_AKG_10SEC:     //10miao

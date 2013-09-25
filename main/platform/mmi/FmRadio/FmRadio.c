@@ -858,7 +858,7 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
 #if FEATURE_FMRADIO_SUPPORT_BACKGROUND 			
 			if (!pMe->runOnBackground )
 #endif      
-            #if defined (FEATURE_VERSION_SKY) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
+            #if defined (FEATURE_VERSION_SKY) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
 			if (HS_HEADSET_ON())
 			{
                pMe->fmSpeaker=FALSE;
@@ -873,10 +873,12 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
             #ifndef FEATURE_VERSION_SKY
             #ifndef FEATURE_VERSION_EC99
 			#ifndef FEATURE_VERSION_K212_20D
+			#ifndef FEATURE_VERSION_K212_ND
 			if (HS_HEADSET_ON())
             #endif
 			#endif
-            #endif    
+            #endif 
+			#endif   
 			{
 #ifdef FEATURE_ANALOG_TV
                 WarT_Fm_Mute(FALSE);
@@ -959,10 +961,12 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
                 #ifndef FEATURE_VERSION_SKY
                 #ifndef FEATURE_VERSION_EC99
 				#ifndef FEATURE_VERSION_K212_20D
+				#ifndef FEATURE_VERSION_K212_ND
 				if (HS_HEADSET_ON())
                 #endif
 				#endif
-                #endif    
+                #endif  
+				#endif  
 				{
 #ifdef FEATURE_ANALOG_TV
                     WarT_Fm_Mute(TRUE);
@@ -1132,7 +1136,7 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
         
         case EVT_HEADSET:
         {
-            #if defined (FEATURE_VERSION_SKY) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
+            #if defined (FEATURE_VERSION_SKY) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
             if (HS_HEADSET_ON())
 			{
                pMe->fmSpeaker=FALSE;
@@ -1421,8 +1425,10 @@ static void FmRadio_PowerUp(void *pme)
     #ifndef FEATURE_VERSION_SKY
     #ifndef FEATURE_VERSION_EC99  
 	#ifndef FEATURE_VERSION_K212_20D
+	#ifndef FEATURE_VERSION_K212_ND
     FmRadio_CheckRefuse( pMe);
     #endif
+	#endif
 	#endif
 	#endif
     if( pMe->refuseReason == FM_RADIO_REFUSE_REASON_VOICE_CALL_CONNECTED)
@@ -1491,10 +1497,12 @@ static void FmRadio_PowerUp(void *pme)
         #ifndef FEATURE_VERSION_SKY
         #ifndef FEATURE_VERSION_EC99
 		#ifndef FEATURE_VERSION_K212_20D
+		#ifndef FEATURE_VERSION_K212_ND
         if (HS_HEADSET_ON())
         #endif
 		#endif
-        #endif    
+        #endif
+		#endif    
         {
 #ifdef FEATURE_ANALOG_TV
             WarT_Fm_Set_Volume( pMe->byVolumeLevel);

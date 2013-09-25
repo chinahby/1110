@@ -1517,7 +1517,7 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
 #endif
 			#endif
 
-#if defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
             rc.x  = 0;
             rc.y  = 0;
             rc.dy = SCREEN_HEIGHT - 15;
@@ -1631,7 +1631,7 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
         {
             AECHAR WTitle[20] = {0};
 
-#if defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
             CScheduleApp_DrawLunarStr(pme);
 #else
 			#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A)
@@ -1675,7 +1675,9 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
             (void)IDATECTL_Redraw(pDatePick);
 #ifndef  FEATURE_VERSION_EC99
 #ifndef  FEATURE_VERSION_K212_20D
+#ifndef  FEATURE_VERSION_K212_ND
            drawBottomBar(BTBAR_OPTION_TODAY_BACK);
+#endif
 #endif
 #endif
 		
@@ -2624,7 +2626,7 @@ static boolean  dialog_handler_of_state_gotodate( CScheduleApp* pme,
                                         AEE_SCHEDULEAPP_RES_FILE, 
                                         IDS_DATE, 
                                         dwsz, sizeof(dwsz));
-#if defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
                 nOldFontColor = IDISPLAY_SetColor(pme->m_pDisplay, CLR_USER_TEXT, RGB_BLACK);
 #else
                  nOldFontColor = IDISPLAY_SetColor(pme->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
@@ -2649,7 +2651,7 @@ static boolean  dialog_handler_of_state_gotodate( CScheduleApp* pme,
                 RGBVAL  clrNosel = BK_COLOR;
                 uint16 dateFormatType = 0;
 
-#if defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
                 y = TITLEBAR_HEIGHT * 2;
 #endif
 				#ifdef FEATURE_VERSION_K212
@@ -7748,7 +7750,7 @@ static void CScheduleApp_DrawLunarStr(CScheduleApp *pme)
 {
     AEERect rc;
     
-#if defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
     if (WSTRLEN(pme->m_LunarString) > 4)
     {
         IANNUNCIATOR_SetFieldTextEx(pme->m_pIAnn, pme->m_LunarString,FALSE);

@@ -70,7 +70,7 @@ when       who     what, where, why
 
 ////
 // Time in milliseconds before the keyguard message will close
-#if defined (FEATURE_VERSION_EC99)
+#if defined (FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_ND)
 #define TIMEOUT_MS_KEYGUARD_TIMER              (3*1000)
 #else
 #define TIMEOUT_MS_KEYGUARD_TIMER              (1*1000)
@@ -600,7 +600,7 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
 
 //Add By zzg 2010_11_23
 #ifndef FEATURE_UNLOCK_KEY_SPACE	
-#if  defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_1110W516)|| defined(FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_C316)||defined(FEATURE_LEFT_SOFTKEY_AND_STAR_UNLOCK)|| defined(FEATURE_VERSION_K212)|| defined(FEATURE_VERSION_EC99)
+#if  defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_1110W516)|| defined(FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_C316)||defined(FEATURE_LEFT_SOFTKEY_AND_STAR_UNLOCK)|| defined(FEATURE_VERSION_K212)|| defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_ND)
                 case AVK_SELECT:
 				case AVK_SOFT1:
 #elif  defined(FEATURE_VERSION_W027)
@@ -1177,7 +1177,7 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
 	}
 #endif
 
-#if  defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W027)||defined(FEATURE_LEFT_SOFTKEY_AND_STAR_UNLOCK)|| defined(FEATURE_VERSION_K212)|| defined(FEATURE_VERSION_EC99)
+#if  defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W027)||defined(FEATURE_LEFT_SOFTKEY_AND_STAR_UNLOCK)|| defined(FEATURE_VERSION_K212)|| defined(FEATURE_VERSION_EC99)|| defined (FEATURE_VERSION_K212_ND)
 #if defined(FEATURE_VERSION_C310)//||defined(FEATURE_LEFT_SOFTKEY_AND_STAR_UNLOCK)
 		if((wParam == AVK_CLR)||(wParam == AVK_INFO)||(wParam == AVK_SEND)||(wParam == AVK_1)||
 		   (wParam == AVK_2)||(wParam == AVK_3)||(wParam == AVK_4)||(wParam == AVK_5)||(wParam == AVK_6)||(wParam == AVK_7)||

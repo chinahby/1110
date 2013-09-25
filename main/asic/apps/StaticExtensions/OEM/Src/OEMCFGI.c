@@ -1912,7 +1912,7 @@ static OEMConfigListType oemi_cache = {
    {L"Mobile Tracker Alert!:The sender of this SMS is using your phone."},
    FALSE,
 #endif
-#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)|| defined (FEATURE_VERSION_K212_ND)
    1,											//CFGI_KEY_LOCK_CHECK			
 #elif defined(FEATURE_VERSION_K202_LM129C)//xxzhen
    0,
@@ -2059,7 +2059,7 @@ static OEMConfigListType oemi_cache = {
 #endif
    ,FALSE
 #ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for rend
-#if defined (FEATURE_VERSION_K212) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
+#if defined (FEATURE_VERSION_K212) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)|| defined (FEATURE_VERSION_K212_ND)
 	,DISPLAYREND_TYPE_MAX
 #else
 #if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_C316)
@@ -3424,7 +3424,7 @@ void OEM_RestoreFactorySetting( void )
 
    
 #ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for rend
-#if defined (FEATURE_VERSION_K212) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
+#if defined (FEATURE_VERSION_K212) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)|| defined (FEATURE_VERSION_K212_ND)
 	oemi_cache.m_nrendstate = DISPLAYREND_TYPE_MAX;
 #else
 #if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_C316)

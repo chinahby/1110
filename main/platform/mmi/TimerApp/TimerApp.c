@@ -405,7 +405,7 @@ static boolean InitAppTimer(CAppTimer *pme)
                             0);
 #else
 #if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_12832)
-#if defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
         SETAEERECT( &rect, 
                             (pme->cxScreen - TIMER_IMAGE_WIDTH)/2 + TIMER_SCREEN_XOFFSET+7,
                             MENUITEM_HEIGHT*TIMER_HEIGHT_N +  TIMER_SCREEN_YOFFSET - 17,

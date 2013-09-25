@@ -120,12 +120,18 @@ static NextFSMAction APPLICATIONST_FLASHLIGHT_Handler(Application *pMe);
 #if defined(FEATURE_VERSION_W317A)
 static NextFSMAction APPLICATIONST_PCMODEM_Handler(Application *pMe);
 #endif
+#if defined(FEATURE_VERSION_K212_ND)
+static NextFSMAction APPLICATIONST_KEY_TIME_Handler(Application * pMe);
+#endif
 
 
 //APPLICATIONST_EXIT  状态处理函数
 static NextFSMAction APPLICATIONST_EXIT_Handler(Application *pMe);
 static boolean  Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam);
 static boolean  Application_FlashlightMenuHandler(Application *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam);
+#if defined(FEATURE_VERSION_K212_ND)
+static boolean  Application_KeyTimeHandler(Application *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam);
+#endif
 #if defined(FEATURE_VERSION_W317A)
 static boolean  Application_PcModemHandler(Application *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam);
 #endif
@@ -843,6 +849,10 @@ NextFSMAction Application_ProcessState(Application *pMe)
 		case APPLICATIONST_PCMODEM:
 			return APPLICATIONST_PCMODEM_Handler(pMe);
 #endif
+#if defined(FEATURE_VERSION_K212_ND)
+				case APPLICATIONST_KEY_TIME:
+					return APPLICATIONST_KEY_TIME_Handler(pMe);
+#endif
 
         case APPLICATIONST_EXIT:
             return APPLICATIONST_EXIT_Handler(pMe);            
@@ -892,7 +902,13 @@ static NextFSMAction APPLICATIONST_MAIN_Handler(Application *pMe)
         		MOVE_TO_STATE(APPLICATIONST_FLASHLIGHT)
             	return NFSMACTION_CONTINUE;
         	}
-
+#if defined(FEATURE_VERSION_K212_ND)
+		case DLGRET_KEY_TIME:
+			{
+				MOVE_TO_STATE(APPLICATIONST_KEY_TIME)
+            	return NFSMACTION_CONTINUE;
+			}
+#endif
 #if defined(FEATURE_VERSION_W317A)
 		case DLGRET_PCMODEM:
 			{
@@ -906,7 +922,32 @@ static NextFSMAction APPLICATIONST_MAIN_Handler(Application *pMe)
             return NFSMACTION_CONTINUE;
     }
 }
+#ifdef FEATURE_VERSION_K212_ND
+static NextFSMAction APPLICATIONST_KEY_TIME_Handler(Application *pMe)
+{
+	if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+    switch (pMe->m_eDlgReturn)
+    {
+        // 进入主界面
+        case DLGRET_CREATE:
+            {
+            	  MSG_FATAL("APPLICATIONST_KEY_TIME_Handler DLGRET_CREATE",0,0,0);
+                  Application_ShowDialog(pMe, IDD_KEY_TIME_SETTING);
 
+            }
+            return NFSMACTION_WAIT;
+         case DLGRET_CANCELED:         
+            MOVE_TO_STATE(APPLICATIONST_MAIN)
+            return NFSMACTION_CONTINUE;
+        default:
+            MOVE_TO_STATE(APPLICATIONST_EXIT)
+            return NFSMACTION_CONTINUE;
+    }
+}
+#endif
 
 static NextFSMAction APPLICATIONST_FLASHLIGHT_Handler(Application *pMe)
 {
@@ -1075,7 +1116,10 @@ boolean Application_RouteDialogEvt(Application *pMe,
 		case IDD_PC_MODEM:
 			return Application_PcModemHandler(pMe, eCode, wParam,dwParam);
 #endif
-
+#if defined(FEATURE_VERSION_K212_ND)
+		case IDD_KEY_TIME_SETTING:
+			return Application_KeyTimeHandler(pMe, eCode, wParam,dwParam);
+#endif
         default:
             return FALSE;
     }
@@ -1257,6 +1301,17 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_RECORDER, IDS_APPLICATION_RECORDER, NULL, 0);
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_SCHEDULER, IDS_APPLICATION_SCHEDULER, NULL, 0);	
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CALCULATOR, IDS_APPLICATION_CALCULATOR, NULL, 0);
+#elif defined(FEATURE_VERSION_K212_ND)
+			//IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_SOS, IDS_SOS, NULL, 0);
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_KEY_TIME, IDS_KEY_TIME, NULL, 0);
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_TORCH, IDS_TORCH, NULL, 0);
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CALCULATOR, IDS_APPLICATION_CALCULATOR, NULL, 0);
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_SCHEDULER, IDS_APPLICATION_SCHEDULER, NULL, 0);
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TIMER, IDS_APPLICATION_TIMER, NULL, 0);
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_STOPWATCH, IDS_APPLICATION_STOPWATCH, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_ALARM, IDS_APPLICATION_ALARM, NULL, 0);
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_WORLDTIME, IDS_APPLICATION_WORLDTIME, NULL, 0);
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_MUTIMED, IDS_APPLICATION_MUTIMED, NULL, 0);
 #elif defined(FEATURE_VERSION_K212)
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_MUTIMED, IDS_APPLICATION_MUTIMED, NULL, 0); 
 			//IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_BROWSER, IDS_APPLICATION_BROWSER, NULL, 0); 
@@ -1518,8 +1573,8 @@ static boolean  Application_FlashlightMenuHandler(Application *pMe, AEEEvent eCo
     }
      switch (eCode)
     {
-        case EVT_DIALOG_INIT:
-#if defined (FEATURE_VERSION_C260_IC18) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
+        case EVT_DIALOG_INIT:	
+#if defined (FEATURE_VERSION_C260_IC18) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
             (void)ISHELL_LoadResString(pMe->m_pShell,
                                     APPLICATION_RES_FILE_LANG,                                
                                     IDS_TORCH,
@@ -1657,6 +1712,118 @@ static boolean  Application_FlashlightMenuHandler(Application *pMe, AEEEvent eCo
         	break;
 	}
 }
+#ifdef FEATURE_SOUND_BO
+#if defined(FEATURE_VERSION_K212_ND)
+static boolean  Application_KeyTimeHandler(Application *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
+	{
+		 PARAM_NOT_REF(dwParam)
+		AECHAR WTitle[40] = {0};
+		static boolean bData = 0;						
+		IMenuCtl  *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveIDlg,IDC_KEY_TIME_SET);
+		MSG_FATAL("%x, %x ,%x,HandleTimekeyDialogEvent",eCode,wParam,dwParam);
+		if (pMenu == NULL)
+		{
+			return FALSE;
+		}
+		MSG_FATAL("pMenu is not null.................",0,0,0);
+		//实现菜单循环滚动功能
+		//SettingMenu_AutoScroll(pMenu,eCode,wParam);
+		 if(pMe->m_pIAnn != NULL)
+    {
+	    IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+    }
+		switch (eCode)
+		{
+			case EVT_DIALOG_INIT:	
+				//add by yangdecai
+				
+					
+					(void)ISHELL_LoadResString(pMe->m_pShell,
+							APPLICATION_RES_FILE_LANG,								 
+							IDS_KEY_TIME,
+							WTitle,
+							sizeof(WTitle));
+					if(pMe->m_pIAnn != NULL)
+            		{
+			    	IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
+            		}
+				
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG, IDS_DIAG_AND_DATA, IDS_DIAG_AND_DATA, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG, IDS_MASS_STORAGE, IDS_MASS_STORAGE, NULL, 0);
+				return TRUE;
+	
+			case EVT_DIALOG_START:
+			{
+				uint16 wItemID;
+	  			boolean Is_on = FALSE;
+				//设定标题格式
+				IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_MULTI_SEL|MP_ACTIVE_NO_REDRAW);
+				IMENUCTL_SetOemProperties(pMenu, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY | OEMMP_USE_MENU_STYLE);
+				IMENUCTL_SetBottomBarType(pMenu,BTBAR_SAVE_BACK);
+				(void) ICONFIG_GetItem(pMe->m_pConfig,CFGI_SOUND_BO_CORE,&bData,sizeof(bData));
+                if(bData)
+                {
+                	wItemID = IDS_DIAG_AND_DATA;
+                }
+                else
+                {
+                	wItemID = IDS_MASS_STORAGE;
+                }
+
+                InitMenuIcons(pMenu);
+                SetMenuIcon(pMenu, wItemID, TRUE);
+                IMENUCTL_SetSel(pMenu, wItemID);
+                (void) ISHELL_PostEvent( pMe->m_pShell,
+                                         AEECLSID_MAIN_MENU,
+                                         EVT_USER_REDRAW,
+                                         0,
+                                         0);
+            }
+				return TRUE;
+			case EVT_DIALOG_END:
+				return TRUE;				
+			case EVT_KEY:
+				switch(wParam)
+				{
+					case AVK_CLR:
+						CLOSE_DIALOG(DLGRET_CANCELED)
+						return TRUE;					
+					default:
+						break;
+				}	
+				return TRUE;
+				case EVT_COMMAND:
+            {
+                boolean bytNewData = 0;
+
+                switch (wParam)
+                {
+                    case  IDS_DIAG_AND_DATA:
+                       bytNewData = TRUE;
+                       break;
+
+                    case IDS_MASS_STORAGE:
+                       bytNewData = FALSE;
+                       break;
+                    default:
+                       break;
+
+                }
+                OEM_SetConfig(CFGI_SOUND_BO_CORE,&bytNewData, sizeof(bytNewData));
+                InitMenuIcons(pMenu);
+                SetMenuIcon(pMenu, wParam, TRUE);
+                (void) ISHELL_PostEvent( pMe->m_pShell,
+                                         AEECLSID_MAIN_MENU,
+                                         EVT_USER_REDRAW,
+                                         0,
+                                         0);
+            }
+        default:
+        	break;						
+				}	
+}
+#endif
+#endif
 
 #if defined(FEATURE_VERSION_W317A)
 static boolean  Application_PcModemHandler(Application *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
@@ -1893,7 +2060,12 @@ static int StartApplet(Application *pMe, int i)
         Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_BLUETOOTH_APP);		
         break;
 #endif 
-#if defined(FEATURE_VERSION_HITZ181) || defined(FEATURE_DISP_128X160) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
+#ifdef FEATURE_VERSION_K212_ND
+    case IDS_KEY_TIME:
+	CLOSE_DIALOG(DLGRET_KEY_TIME)
+        break;	
+#endif
+#if defined(FEATURE_VERSION_HITZ181) || defined(FEATURE_DISP_128X160) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
     case IDS_TORCH:
 	case IDS_APPLICATION_FLASHLIGHT:		
         CLOSE_DIALOG(DLGRET_FLASHLITHT)
