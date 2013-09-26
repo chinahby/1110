@@ -312,6 +312,9 @@ static void CallApp_RefreshVolBar(CCallApp *pMe);
 static void  CallApp_SetTimerControl(void *pUser);
 #endif //FEATURE_APP_PAUSE_TIMER
 
+#ifdef FEATURE_VERSION_K212
+static void  CallApp_SetTimerTounoffBlackLight(void *pUser);
+#endif
 
 //Add By zzg 2010_08_03
 #ifdef FEATURE_FRENDUO
@@ -4127,6 +4130,11 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
 				IALERT_StopAlerting(pMe->m_pAlert);
 				MSG_FATAL("IALERT_StopAlerting..............................",0,0,0);
         	}
+#ifdef FEATURE_VERSION_K212
+			pMe->m_isCallConectBacklight = TRUE;
+			(void)ISHELL_CancelTimer(pMe->m_pShell,CallApp_SetTimerTounoffBlackLight,pMe);
+			(void)ISHELL_SetTimer(pMe->m_pShell,6000,CallApp_SetTimerTounoffBlackLight,pMe);
+#endif
             Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
 			IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL/*ANNUN_FIELD_CALLFORWARD*/, ANNUN_STATE_CALL_INUSE_ON/*ANNUN_STATE_ON*/);
             //for CDG test, CNAP with Forwarding
@@ -4203,6 +4211,10 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
             (void) ISHELL_CancelTimer(pMe->m_pShell, CallApp_SetTimerControl, pMe);
 #endif //FEATURE_APP_PAUSE_TIMER
             (void) ISHELL_CancelTimer(pMe->m_pShell, CallApp_Draw_Connect_Time, pMe);
+#ifdef FEATURE_VERSION_K212
+			pMe->m_isCallConectBacklight = FALSE;
+			(void)ISHELL_CancelTimer(pMe->m_pShell,CallApp_SetTimerTounoffBlackLight,pMe);
+#endif
 
             //add for CDG test, CNAP with Forwarding
             //(void) ISHELL_CancelTimer(pMe->m_pShell,
@@ -10396,7 +10408,14 @@ static void CallApp_Draw_Connect_Time(void *pUser)
 		  (void)OEMNV_Put(NV_SIM_SELECT_I,&SimChoice);
 	}
 #endif
-
+#ifdef FEATURE_VERSION_K212
+		if(!pMe->m_isCallConectBacklight)
+		{
+			pMe->m_isCallConectBacklight = TRUE;
+			(void)ISHELL_CancelTimer(pMe->m_pShell,CallApp_SetTimerTounoffBlackLight,pMe);
+			(void)ISHELL_SetTimer(pMe->m_pShell,6000,CallApp_SetTimerTounoffBlackLight,pMe);
+		}
+#endif
 
     (void) ISHELL_CancelTimer(pMe->m_pShell, CallApp_Draw_Connect_Time, pMe);
 
@@ -11636,6 +11655,20 @@ void CallApp_SpecialKeySnd(CCallApp *pMe, uint16 wParam)
 }
 
 #endif /* KEYSND_ZY */
+
+#ifdef FEATURE_VERSION_K212
+static void  CallApp_SetTimerTounoffBlackLight(void *pUser)
+{
+	CCallApp *pMe = (CCallApp *)pUser;
+	if(pMe->m_pBacklight)
+    {
+	    IBACKLIGHT_Disable(pMe->m_pBacklight);
+	}   
+	pMe->m_isCallConectBacklight = FALSE;
+
+}
+#endif
+
 
 #ifdef FEATURE_APP_PAUSE_TIMER
 static void  CallApp_SetTimerControl(void *pUser)

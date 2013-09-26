@@ -953,6 +953,10 @@ static int CallApp_InitAppData(CCallApp *pMe)
 	pMe->m_bup= TRUE;
     pMe->m_i  = -1;
 #endif
+#if defined(FEATURE_VERSION_K212)    
+	pMe->m_isCallConectBacklight = FALSE;
+#endif
+
 
     (void) ISHELL_LoadResString(pMe->m_pShell,
                                             AEE_APPSCALLAPP_RES_FILE,
