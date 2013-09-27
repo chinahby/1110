@@ -6228,6 +6228,7 @@ static boolean  dialog_handler_of_state_showalert( CScheduleApp* pme,
     {
         case EVT_DIALOG_INIT:
         {
+			IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
 /*
             pMenu = (IMenuCtl*)IDIALOG_GetControl(pme->m_pActiveDlg, IDC_SHOWALERT_MENU);
             IMENUCTL_SetOemProperties( pMenu, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY);
