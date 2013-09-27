@@ -6541,11 +6541,22 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
         // 获取待机问候语 
         MEMSET(pMe->svc_p_name,0,(UIM_CDMA_HOME_SERVICE_SIZE+1)*sizeof(AECHAR));
 #if defined(FEATURE_VERSION_K202)||defined(FEATURE_LANG_CHINESE)||defined(FEATURE_VERSION_K212)
-		 (void) ISHELL_LoadResString(pMe->a.m_pIShell,
+		 if (IRUIM_IsCardConnected(pMe->m_pIRUIM))
+         {
+		    (void) ISHELL_LoadResString(pMe->a.m_pIShell,
                        AEE_COREAPPRES_LANGFILE,
                        IDS_CHINA_TELECOM,
                        wszBuf,
                        sizeof(wszBuf)); 
+	     }
+		 else
+		 {
+		 	(void) ISHELL_LoadResString(pMe->a.m_pIShell,
+                       AEE_COREAPPRES_LANGFILE,
+                       IDS_NORUIM,
+                       wszBuf,
+                       sizeof(wszBuf)); 
+		 }
 		 Wstrlen = WSTRLEN(wszBuf);
 		 wszBuf[Wstrlen] = L'\0';
 #else
@@ -9994,11 +10005,22 @@ static int CoreApp_GetSpnFromMCCMNC(CCoreApp *pMe)
     //Load name string of service provider
     if ( 460 == curr_mcc && 3 == curr_mnc ) 
     {
-       (void) ISHELL_LoadResString(pMe->a.m_pIShell,
+       if (IRUIM_IsCardConnected(pMe->m_pIRUIM))
+       {
+       			(void) ISHELL_LoadResString(pMe->a.m_pIShell,
                        AEE_COREAPPRES_LANGFILE,
                        IDS_CHINA_TELECOM,
                        pMe->svc_p_name,
                        sizeof(pMe->svc_p_name));  
+       }
+	   else
+	   {
+	   			(void) ISHELL_LoadResString(pMe->a.m_pIShell,
+                       AEE_COREAPPRES_LANGFILE,
+                       IDS_NORUIM,
+                       pMe->svc_p_name,
+                       sizeof(pMe->svc_p_name)); 
+	   }
 
     }
     else
