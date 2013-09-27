@@ -72,6 +72,7 @@ CCoreApp *g_pCoreApp = NULL;
 #endif
 static boolean bNotInitedAlarm = TRUE;
 static boolean b_low = FALSE;
+static boolean b_lowTimes = 0;
 boolean	bIsPPPAuthEnabled = FALSE;	//Add By zzg 2012_03_07
 /*==============================================================================
 
@@ -2675,6 +2676,10 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
             #ifdef FEATURE_VERSION_V3CM301
 			b_low = FALSE;
 			#endif
+			#ifdef FEATURE_VERSION_K212
+			b_low = FALSE;
+			b_lowTimes = 0;
+			#endif
             CoreApp_Process_Charger_Msg(pMe);
             pMe->m_battery_time= 0;
             pMe->m_battery_state = TRUE ;
@@ -2778,9 +2783,23 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
 							b_low=TRUE;
 							CoreApp_Process_BattyLow_Msg(pMe, IDS_LOWBATTMSG_TEXT);
 						}
-					#endif
+					#elif defined(FEATURE_VERSION_K212)
+					if(b_lowTimes>=3)
+					{
+						b_low=TRUE;
+					}
+					else
+					{
+						b_lowTimes ++;
+					}
+					
+					if (b_low==FALSE)
+					{
+						CoreApp_Process_BattyLow_Msg(pMe, IDS_LOWBATTMSG_TEXT);
+					}
+					#else
 							CoreApp_Process_BattyLow_Msg(pMe, IDS_LOWBATTMSG_TEXT);
-						
+					#endif
 
                         break;
                     }
