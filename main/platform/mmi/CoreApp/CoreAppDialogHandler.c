@@ -6539,56 +6539,89 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
     else
     {// 最后是正常情况下的提示
         // 获取待机问候语 
+        word curr_mcc;
+		byte curr_mnc;
         MEMSET(pMe->svc_p_name,0,(UIM_CDMA_HOME_SERVICE_SIZE+1)*sizeof(AECHAR));
 #if defined(FEATURE_VERSION_K202)||defined(FEATURE_LANG_CHINESE)||defined(FEATURE_VERSION_K212)
-		 if (IRUIM_IsCardConnected(pMe->m_pIRUIM))
-         {
-		    (void) ISHELL_LoadResString(pMe->a.m_pIShell,
-                       AEE_COREAPPRES_LANGFILE,
-                       IDS_CHINA_TELECOM,
-                       wszBuf,
-                       sizeof(wszBuf)); 
-	     }
-		 else
-		 {
-		 	(void) ISHELL_LoadResString(pMe->a.m_pIShell,
-                       AEE_COREAPPRES_LANGFILE,
-                       IDS_NORUIM,
-                       wszBuf,
-                       sizeof(wszBuf)); 
-		 }
-		 Wstrlen = WSTRLEN(wszBuf);
-		 wszBuf[Wstrlen] = L'\0';
-#else
-        CoreApp_GetSPN(pMe);
-        if(pMe->svc_p_name[0] != 0)
-        {
-#ifdef FEATURE_OEMOMH 
-            MSG_FATAL("CoreApp_DrawBannerMessage hasGetSPN = TRUE",0,0,0);
-            //     DBGPRINTF("svc_p_name s=%S", pMe->svc_p_name);
-            hasGetSPN = TRUE;
+		curr_mcc = cur_bs_ptr->csp.esp.mcc + 111;
+		curr_mnc = cur_bs_ptr->csp.esp.imsi_11_12 + 11; 
+
+		//ERR("BS mcc(%d), BS mnc(%d)",cur_bs_ptr->esp.mcc,cur_bs_ptr->esp.imsi_11_12,0);
+
+		if ( curr_mcc % 10 == 0 )
+		{
+		   curr_mcc -= 10;
+		}
+		if ( (curr_mcc/10) % 10 == 0 )
+		{
+		   curr_mcc -= 100;
+		}
+		if ( curr_mcc >= 1000 )
+		{
+		   curr_mcc -= 1000; 
+		} 
+
+		if ( curr_mnc % 10 == 0 )
+		{
+		   curr_mnc -= 10;
+		}
+		if ( curr_mnc >= 100 )
+		{
+		   curr_mnc -= 100;
+		} 
+		if ( 460 == curr_mcc && 3 == curr_mnc &&(cur_bs_ptr != NULL)) 
+    	{
+			 if (IRUIM_IsCardConnected(pMe->m_pIRUIM))
+	         {
+			    (void) ISHELL_LoadResString(pMe->a.m_pIShell,
+	                       AEE_COREAPPRES_LANGFILE,
+	                       IDS_CHINA_TELECOM,
+	                       wszBuf,
+	                       sizeof(wszBuf)); 
+		     }
+			 else
+			 {
+			 	(void) ISHELL_LoadResString(pMe->a.m_pIShell,
+	                       AEE_COREAPPRES_LANGFILE,
+	                       IDS_NORUIM,
+	                       wszBuf,
+	                       sizeof(wszBuf)); 
+			 }
+			 Wstrlen = WSTRLEN(wszBuf);
+			 wszBuf[Wstrlen] = L'\0';
+		}
+		else
 #endif
-            WSTRCPY(wszBuf,pMe->svc_p_name);
-        }
-        else
-        {
-            bSetsearchingTimer = TRUE;
+		{
+	        CoreApp_GetSPN(pMe);
+	        if(pMe->svc_p_name[0] != 0)
+	        {
+#ifdef FEATURE_OEMOMH 
+	            MSG_FATAL("CoreApp_DrawBannerMessage hasGetSPN = TRUE",0,0,0);
+	            //     DBGPRINTF("svc_p_name s=%S", pMe->svc_p_name);
+	            hasGetSPN = TRUE;
+#endif
+	            WSTRCPY(wszBuf,pMe->svc_p_name);
+	        }
+	        else
+	        {
+	            bSetsearchingTimer = TRUE;
 #ifdef WIN32
-            STRTOWSTR("WIN32BUILD", wszBuf, nSize);
+	            STRTOWSTR("WIN32BUILD", wszBuf, nSize);
 #else
 #ifdef FEATURE_VERSION_W208S
-			//Do Nothing
+				//Do Nothing
 #else
 #ifdef FEATURE_VERSION_C337
-			//STRTOWSTR("C260", wszBuf, nSize);
-			STRTOWSTR("", wszBuf, nSize);
+				//STRTOWSTR("C260", wszBuf, nSize);
+				STRTOWSTR("", wszBuf, nSize);
 #else
-            STRTOWSTR(ver_modelname, wszBuf, nSize);
+	            STRTOWSTR(ver_modelname, wszBuf, nSize);
 #endif
 #endif
 #endif
-        }
-#endif
+	        }
+		}
     }
 #ifdef FEATURE_DISP_128X128    
     {
