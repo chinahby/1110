@@ -15,7 +15,9 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //#define FEATURE_VERSION_M74
 //#define FEATURE_VERSION_W0216A_T18 //xxzhen
 #define FEATURE_VERSION_W021_CT100
-#define FEATURE_VERSION_W022_CT100
+//for tata
+#define FEATURE_VERSION_W021_CT100_16A
+
 #define FEATURE_VERSION_REGION_INDIA
 
 #define FEATURE_KEY_LOCK_DEFAULT_30S
@@ -24,31 +26,30 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_CAMERA_MULTI_NEW_AUTO_DETECT
 #define FEATURE_CAMERA_8W
 #define FEATURE_FM_PAUSE
-//#define FEATURE_OEMOMH
+#define FEATURE_OEMOMH
 #define FEATURE_NO_VIBRATE
-#define FEATURE_QUICK_TEST_KEY_4//
+
 #define FEATURE_SALESTRACKER
+//one minute test time
+#define FEATURE_SALESTRACKER_QUICK_TEST  
 #define FEATURE_VERSION_W021_CT100_SALES_TRACK
-//#undef FEATURE_VERSION_W021_CT100_SALES_TRACK_MST
-//#undef FEATURE_SALESTRACK_CONFIRM_DIALOG
+#undef FEATURE_VERSION_W021_CT100_SALES_TRACK_MST
+#undef FEATURE_SALESTRACK_CONFIRM_DIALOG
 
 
 #define FEATURE_DEFAULT_INPUT_MODE_ENG
 //Add by zzg 2010_10_13
 //#define FEATURE_TORCH_KEY_CAMERA			//手电筒功能按键
 //#define FEATURE_IDLE_TORCH_DOWNKEY			//idle界面的向下键对应手电筒功能
-#define FEATURE_GPIO_LAMP_EN_OUTPUT_33		//GPIO_OUTPUT_31
-#define FEATURE_GPIO_31_SIGNAL_OUPUT_31		//GPIO_31_SIGNAL == GPIO_OUTPUT_31
-
+#define FEATURE_GPIO_LAMP_EN_OUTPUT_31		//GPIO_OUTPUT_31
 #define FEATURE_SIM_SEL_GPIO_34_PULL_DOWN	//SIM_SEL== GPIO_OUP(34,GROUP_GPIO_1,GPIO_PULL_DOWN)
-
+#define FEATURE_GPIO_31_SIGNAL_OUPUT_31		//GPIO_31_SIGNAL == GPIO_OUTPUT_31
 
 #define FEATURE_MT_ENGLISH_NEW
 #define FEATURE_MT_ENGLISH_UP
 #define FEATURE_MT_ENGLISH_LOW
 //#define FEATURE_MT_ENGLISH_CAPLOW
 #define FEATURE_MT_ENGLISH_EN
-
 
 //Add End
 #endif
@@ -76,8 +77,8 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //#define FEATURE_LONG_NETLOCK   //add by yangdecai
 #endif
 
-#ifndef TARGSBW2_H
-   #include "targsb12864.h"
+#ifndef TARGSB2_H
+   #include "targsb12832.h"
 #endif
 
 //#define FEATURE_DATA_STRIP_ATCOP 
@@ -96,7 +97,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_UIM_QSC1100_LOW_MEMORY 
 #define CM_FEATURE_HSBASED_PLUS_DIAL_DISPLAY 
 #define FEATURE_MMODE_LOW_MEM_TARGET 
-//#define FEATURE_LOWTIER_LOWMEM //for bt and mp4
+#define FEATURE_LOWTIER_LOWMEM 
 #define FEATURE_REX_IPC 
 #define FEATURE_ASYNC_DATA_NOOP 
 #define FEATURE_HS_USB_PMIC_PHY 
@@ -105,7 +106,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_LOW_MEMORY_USAGE 
 #define FEATURE_FS_LOW_MEMORY_USAGE 
 #define FEATURE_DSM_MINIMIZE 
-#define FEATURE_MSG_LOW_MEMORY_USAGE 
+#undef FEATURE_MSG_LOW_MEMORY_USAGE 
 #define FEATURE_SIO_NO_DEBUG_TRACE 
 #define FEATURE_DIAG_SMALL_BUFFER 
 #define FEATURE_IPC_SMALL_MEMORY_POOL 
@@ -271,21 +272,9 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_SDCC_CLK_CONFIG
 #define FEATURE_HS_USB_MS_FD
 #define FEATURE_AUDIO_CAMERA_CONCURRENCY // FOR MP3
-#define FEATURE_AAC
-#define FEATURE_AAC_PLUS
-#define FEATURE_ENHANCED_AAC_PLUS
-
-#define FEATURE_AUDFMT_AMR
-#define FEATURE_AMR_VOCODER
-#define FEATURE_AMR_FIXED
-#define FEATURE_BUILD_MMC
-#define FEATURE_MM_REC
-#define FEATURE_MOVIE_RECORD_SUPPORT
-#ifdef FEATURE_MOVIE_RECORD_SUPPORT
-#include "custcamcorder.h"
-#endif
-#include "custmp4.h"
-#include "custsec.h"
+//#define FEATURE_AAC
+//#define FEATURE_AAC_PLUS
+//#define FEATURE_ENHANCED_AAC_PLUS
 #endif
 
 #include "custdisplay.h"
@@ -310,20 +299,6 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #include "custmmode.h"
 #include "custcdma.h"
 #include "custrf.h"
-#if 0  //don,t need BT
-#define FEATURE_APP_BLUETOOTH
-#define FEATURE_BT
-#define FEATURE_IBT
-#define FEATURE_BT_QSOC_INBAND_SLEEP
-#define FEATURE_BT_SEND_FILE_ONLY		//Add By zzg 2010_11_03
-#define FEATURE_SUPPORT_BT_AUDIO
-#define FEATURE_BT_QSOC_BTS4025_B2
-#define BT_QSC1110
-#ifdef FEATURE_BT
-#include "custqbt.h"
-#include "custbt.h"
-#endif
-#endif
 #include "custcdma2000.h"
 #include "custdebug.h"
 #include "custdmss.h"
