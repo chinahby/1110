@@ -6953,6 +6953,8 @@ static void CMusicPlayer_PlayPlaylistCB(CMusicPlayer *pMe)
         pMe->m_MusicPlayerCfg.lastPlayPlaylist[0]='\0';
 #ifdef FEATURE_VERSION_EC99
         (void)STRCPY(pMe->m_PlayingMusiclist[0].pMusicName,"1fs:/hsmm/music/Aishiniwo.mp3");
+#elif defined(FEATURE_VERSION_K212_ND)
+		(void)STRCPY(pMe->m_PlayingMusiclist[0].pMusicName,"1fs:/hsmm/music/Wuxinghongqi.mp3");
 #else
         (void)STRCPY(pMe->m_PlayingMusiclist[0].pMusicName,"1fs:/hsmm/music/Away.mp3");
 #endif
