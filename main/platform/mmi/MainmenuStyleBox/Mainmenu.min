@@ -182,6 +182,27 @@ ifeq ($(USES_BOHAO),yes)
 		suafer.mp3|fs:/hsmm/mainmenu/suafer.mp3	
 endif
 else
+ifeq ($(USES_RESDIR),K212_ND)	
+CONSTFILE_FILES+=\
+	Icon_calllog.png|fs:/image/mainmenu/Icon_calllog.png \
+	Icon_profile.png|fs:/image/mainmenu/Icon_profile.png \
+	Icon_multimedia.png|fs:/image/mainmenu/Icon_multimedia.png \
+	Icon_phonebook.png|fs:/image/mainmenu/Icon_phonebook.png \
+	Icon_settings.png|fs:/image/mainmenu/Icon_settings.png \
+	Icon_tianyi.png|fs:/image/mainmenu/Icon_tianyi.png \
+	Icon_tools.png|fs:/image/mainmenu/Icon_tools.png \
+	Icon_wms.png|fs:/image/mainmenu/Icon_wms.png  
+	
+	CONSTFILE_FILES+=\
+		mutimed.mp3|fs:/hsmm/mainmenu/mutimed.mp3 \
+		contont.mp3|fs:/hsmm/mainmenu/contont.mp3 \
+		manager.mp3|fs:/hsmm/mainmenu/manager.mp3 \
+		mesage.mp3|fs:/hsmm/mainmenu/mesage.mp3 \
+		profile.mp3|fs:/hsmm/mainmenu/profile.mp3 \
+		settings.mp3|fs:/hsmm/mainmenu/settings.mp3 \
+		recentcall.mp3|fs:/hsmm/mainmenu/recentcall.mp3 \
+		suafer.mp3|fs:/hsmm/mainmenu/suafer.mp3	
+else
 ifeq ($(USES_RESDIR),EC99)	
 CONSTFILE_FILES+=\
 	Icon_calllog.png|fs:/image/mainmenu/Icon_calllog.png \
