@@ -187,7 +187,7 @@
 #else
 #define CALL_TEXT_X                             (3)
 #endif
-#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
+#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
 #define CALL_NAME_X                            (10*CALL_TEXT_X + CALL_ANIMATION_WIDTH)
 #define CALL_NUM_X                              (10*CALL_TEXT_X + CALL_ANIMATION_WIDTH)
 #else
@@ -212,7 +212,7 @@
 #ifdef FEATURE_VERSION_K212
 #define CALL_LINE_HIGHT                      (38)
 #else
-#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
+#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
 #define CALL_LINE_HIGHT                      (25)
 #else
 #define CALL_LINE_HIGHT                      (20) //18为NORMAL字体高度，目前只需要这个高度就够了
@@ -266,8 +266,8 @@
     #define REFUI_CALL_MAX_IMAGSIZE       (17)
 #elif defined(FEATURE_DISP_160X128)
 #ifdef FEATURE_VERSION_K212_ND
-	#define NUM_IMAGE_HIGHT               (36)
-    #define NUM_IMAGE_WIDTH               (25)
+	#define NUM_IMAGE_HIGHT               (33)
+    #define NUM_IMAGE_WIDTH               (22)
     #define REFUI_CALL_MAX_IMAGSIZE       (17)
 #else
 	#define NUM_IMAGE_HIGHT               (25)

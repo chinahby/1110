@@ -4138,7 +4138,7 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
             Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
 			IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL/*ANNUN_FIELD_CALLFORWARD*/, ANNUN_STATE_CALL_INUSE_ON/*ANNUN_STATE_ON*/);
             //for CDG test, CNAP with Forwarding
-            
+          
             CallApp_Draw_Connect_Softkey(pMe);
             CallApp_Draw_Connect_Number_and_Name(pMe);			
             CallApp_Draw_Connect_Time(pMe);
@@ -13238,10 +13238,10 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
 #endif
 #endif              
         
-#if defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
         else if ( ((AVKType)wParam >= AVK_1) &&((AVKType)wParam <= AVK_9))
-#elif defined(FEATURE_VERSION_K212_ND)
-		else if	( ((AVKType)wParam >= AVK_0) &&((AVKType)wParam <= AVK_9))
+//#elif defined(FEATURE_VERSION_K212_ND)
+		//else if	( ((AVKType)wParam >= AVK_0) &&((AVKType)wParam <= AVK_9))
 #else
         else if ( ((AVKType)wParam >= AVK_2) &&((AVKType)wParam <= AVK_9))
 #endif  
@@ -13303,15 +13303,15 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
                 return TRUE;
             }
 #endif
-#if defined(FEATURE_VERSION_K212_ND)
-if (((AVKType)wParam == AVK_0) && (((uint16)WSTRLEN(pMe->m_DialString) <= MAX_SPEEDDIAL_CHARS) /*&&(wIndex!=0)*/) && (!pMe->m_b_incall))
-				{
-					   MSG_FATAL("time detail..................",0,0,0);
-					   pMe->m_msg_text_id = IDS_MSG_TIME_DETAIL;			
-					   CLOSE_DIALOG(DLGRET_MSGBOX);
-					   return TRUE;
-				}
-#endif					
+//#if defined(FEATURE_VERSION_K212_ND)
+//if (((AVKType)wParam == AVK_0) && (((uint16)WSTRLEN(pMe->m_DialString) <= MAX_SPEEDDIAL_CHARS) /*&&(wIndex!=0)*/) && (!pMe->m_b_incall))
+				//{
+					//   MSG_FATAL("time detail..................",0,0,0);
+					//   pMe->m_msg_text_id = IDS_MSG_TIME_DETAIL;			
+					//   CLOSE_DIALOG(DLGRET_MSGBOX);
+					//   return TRUE;
+			//	}
+//#endif					
 #if defined(FEATURE_VERSION_K212_20D)
 			if (((AVKType)wParam == AVK_6) && (((uint16)WSTRLEN(pMe->m_DialString) <= MAX_SPEEDDIAL_CHARS) &&(wIndex!=0)) && (!pMe->m_b_incall))
 				{
@@ -13329,12 +13329,19 @@ if (((AVKType)wParam == AVK_0) && (((uint16)WSTRLEN(pMe->m_DialString) <= MAX_SP
 
 		//Add By zzg 2010_09_10
 		#if defined(FEATURE_VERSION_C316)||defined(FEAUTRE_VERSION_N450)||defined(FEATURE_VERSION_W0216A)|| defined(FEATURE_VERSION_C306)|| defined (FEATURE_VERSION_K212_20D)|| defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_N68)||defined(FEATURE_LCD_TOUCH_ENABLE)||defined(FEATURE_VERSION_W516)||defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_H1201)|| defined(FEATURE_VERSION_W027)\
-			||defined(FEATURE_VERSION_W0216A_T18) //xxzhen
+			||defined(FEATURE_VERSION_W0216A_T18)||defined(FEATURE_VERSION_K212_ND)//xxzhen
         #ifndef FEATURE_TORCH_KEY_INFO
 		else if (((AVKType)wParam == AVK_0) && (WSTRLEN(pMe->m_DialString) == 1))
 	{	
 		    #ifdef FEATURE_VERSION_W317A
             CallApp_LaunchApplet(pMe,  AEECLSID_APP_FMRADIO);  // add by pyuangui 20121220
+            #elif defined FEATURE_VERSION_K212_ND
+			{
+					   pMe->m_msg_text_id = IDS_MSG_TIME_DETAIL;			
+					   CLOSE_DIALOG(DLGRET_MSGBOX);
+					   MSG_FATAL("SOS........................",0,0,0);
+					   //return TRUE;
+			}
 			#else
 		{
 		    boolean TorchOn = FALSE;
@@ -13582,7 +13589,7 @@ static int SetBrowserArr_Main_CallApp(CCallApp *pMe,char *purl)
 
 //Add End
 
-#if defined(FEATURE_VERSION_W027V3) || defined(FEATURE_VERSION_W317A)|| defined(FEATURE_VERSION_M74)|| defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
+#if defined(FEATURE_VERSION_W027V3) || defined(FEATURE_VERSION_W317A)|| defined(FEATURE_VERSION_M74)|| defined (FEATURE_VERSION_K212_20D)|| defined (FEATURE_VERSION_K212_ND)
 
 static void CallApp_TorchTipTimeOut(CCallApp *pMe)
 {
@@ -13647,12 +13654,13 @@ if(wp == AVK_0)
 						//return L'*';
 						WSTRCPY(&pMe->m_DialString[len-1], L"0");
 						Temp_wp = AVK_0;
+						
 					}
 					if(pMe->m_curpros == 1)
 					{
 						//return L'p';
 						WSTRCPY(&pMe->m_DialString[len-1], L"+");	
-					//	MSG_FATAL("+++++++++++++++++++++",0,0,0);
+						MSG_FATAL("+++++++++++++++++++++",0,0,0);
 					}
 				}
 					else
@@ -13672,7 +13680,7 @@ if(wp == AVK_0)
 									//return L'p';
 									//WSTRCPY(&pMe->m_DialString[len-1], L"p");
 									pMe->m_DialString[len-pMe->m_nCursorPos-1] = L'+';
-								//	MSG_FATAL("+++++++++++++++++++",0,0,0);
+									MSG_FATAL("+++++++++++++++++++",0,0,0);
 								}
 							//MSG_FATAL("+++++++++++++++++++",0,0,0);
 						}	
@@ -13700,7 +13708,8 @@ if(wp == AVK_0)
         		pMe->m_curpros = 0;
         	}
         	pMe->b_multenter = TRUE;		
-            AEE_SetTimer(1500,CallApp_keypadtimer,pMe);			
+            AEE_SetTimer(1000,CallApp_keypadtimer,pMe);	
+			MSG_FATAL("CallApp_keypadtimer is uping uping uping ",0,0,0);
 	}
         #else 
 		 if((pMe->m_btime_out % MAX_COUNT_TO_CHANGE ) == 0)//need change
@@ -13849,23 +13858,28 @@ if(wp == AVK_0)
        		    if (pMe->m_nCursorPos == 0)
 				{
         			//(void)WSTRCPY(&pMe->m_DialString[len-pMe->m_nCursorPoS], &szStr);	    
-        			if(pMe->m_curpros == 0)
+					MSG_FATAL("pMe->m_nCursorPos=================%d",pMe->m_nCursorPos,0,0);
+					if(pMe->m_curpros == 0)
 					{
 						//return L'*';
 						WSTRCPY(&pMe->m_DialString[len-1], L"*");
 						Temp_wp = AVK_STAR;
+						//MSG_FATAL("");
+						MSG_FATAL("*********************",0,0,0);
 					}
 					if(pMe->m_curpros == 1)
 					{
 						//return L'p';
 						WSTRCPY(&pMe->m_DialString[len-1], L"p");
 						Temp_wp = AVK_P;
+						MSG_FATAL("PPPPPPPPPPPPPPPPPPPPPPPPP",0,0,0);
 					}
 					if(pMe->m_curpros == 2)
 					{
 						//return L'W';
 						WSTRCPY(&pMe->m_DialString[len-1], L"w");
 						Temp_wp = AVK_W;
+						MSG_FATAL("WWWWWWWWWWWWWWWWWWWWWWWWWW",0,0,0);
 					}
 					if(pMe->m_curpros == 3)
 					{
@@ -13887,6 +13901,7 @@ if(wp == AVK_0)
 						//WSTRCPY(&pMe->m_DialString[len-1], L"*");
 						pMe->m_DialString[len-pMe->m_nCursorPos-1] = L'*';
 						Temp_wp = AVK_STAR;
+						MSG_FATAL("**********************",0,0,0);
 					}
 					if(pMe->m_curpros == 1)
 					{
@@ -13894,6 +13909,7 @@ if(wp == AVK_0)
 						//WSTRCPY(&pMe->m_DialString[len-1], L"p");
 						pMe->m_DialString[len-pMe->m_nCursorPos-1] = L'p';
 						Temp_wp = AVK_P;
+						MSG_FATAL("PPPPPPPPPPPPPPPPPPPPPPPPPP",0,0,0);
 					}
 					if(pMe->m_curpros == 2)
 					{
@@ -13901,6 +13917,7 @@ if(wp == AVK_0)
 						//WSTRCPY(&pMe->m_DialString[len-1], L"w");
 						pMe->m_DialString[len-pMe->m_nCursorPos-1] = L'w';
 						Temp_wp = AVK_W;
+						MSG_FATAL("WWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",0,0,0);
 					}
 					if(pMe->m_curpros == 3)
 					{
@@ -13963,7 +13980,7 @@ if(wp == AVK_0)
 				}
         	}
 			#endif
-#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
+#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
             AEE_SetTimer(1500,CallApp_keypadtimer,pMe);
 #else
         	AEE_SetTimer(1000,CallApp_keypadtimer,pMe);
@@ -14166,6 +14183,7 @@ static boolean CallApp_DrawText_Ex(CCallApp *pMe, AEEFont fnt,
             //CALL_ERR("Entire string fits on the line, all is good",0,0,0);
             MSG_FATAL("IDISPLAY_DrawText........222222",0,0,0);
             return IDISPLAY_DrawText(pMe->m_pDisplay,  fnt, wBuf,-1, rect->x, rect->y, rect, mask);
+
         }
 
         if(fits < len)
