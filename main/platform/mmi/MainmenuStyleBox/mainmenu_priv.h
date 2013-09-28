@@ -394,7 +394,6 @@ typedef struct _MainMenu
     #define ICON6_ANI      "fs:/image/mainmenu/Icon_tianyi.png"
     #define ICON7_ANI      "fs:/image/mainmenu/Icon_tools.png"
     #define ICON8_ANI      "fs:/image/mainmenu/Icon_wms.png"		
-<<<<<<< .mine
 #elif defined(FEATURE_VERSION_K212_ND)
 
 	#define ICON1_ANI     "fs:/image/mainmenu/Icon_wms.png"// "fs:/image/mainmenu/Icon_calllog.png"
@@ -404,9 +403,7 @@ typedef struct _MainMenu
     #define ICON5_ANI     "fs:/image/mainmenu/Icon_multimedia.png"// "fs:/image/mainmenu/Icon_settings.png"
     #define ICON6_ANI     "fs:/image/mainmenu/Icon_tools.png"//"fs:/image/mainmenu/Icon_tianyi.png"
     #define ICON7_ANI     "fs:/image/mainmenu/Icon_profile.png"//"fs:/image/mainmenu/Icon_tools.png"
-    #define ICON8_ANI     "fs:/image/mainmenu/Icon_tianyi.png"//"fs:/image/mainmenu/Icon_wms.png"
-#else  	
-=======
+    #define ICON8_ANI     "fs:/image/mainmenu/Icon_tianyi.png"//"fs:/image/mainmenu/Icon_wms.png"	
 #elif defined(FEATURE_VERSION_K212_20D)
     #define ICON1_ANI      "fs:/image/mainmenu/Icon_calllog.png"
     #define ICON2_ANI      "fs:/image/mainmenu/Icon_multimedia.png"
@@ -417,7 +414,6 @@ typedef struct _MainMenu
     #define ICON7_ANI      "fs:/image/mainmenu/Icon_wms.png"
 #else  
 	
->>>>>>> .r6971
 	#ifdef FEATURE_LCD_TOUCH_ENABLE
     #define ICONFOUCS_ANI      "fs:/image/mainmenu/foucs.png" 
 	#define ICONBACK1_ANI      "fs:/image/mainmenu/backgroud.png"
