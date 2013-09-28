@@ -463,6 +463,12 @@
 	<String Id="1155" Name="IDS_TIME_SPEECH">
 		<Text>整点报时语音</Text>
 	</String>
+	<String Id="1156" Name="IDS_INDIAL_SPEECH">
+		<Text>来电报号语音</Text>
+	</String>
+	<String Id="1157" Name="IDS_PHONEBOOK_SPEECH">
+		<Text>电话簿号码朗读</Text>
+	</String>
 	<String Id="1171" Name="IDS_AKG_5SEC">
 		<Text>5 秒</Text>
 	</String>

@@ -466,6 +466,12 @@
 	<String Id="1155" Name="IDS_TIME_SPEECH">
 		<Text>Time speech</Text>
 	</String>
+	<String Id="1156" Name="IDS_INDIAL_SPEECH">
+		<Text>Incoming dialing speech</Text>
+	</String>
+	<String Id="1157" Name="IDS_PHONEBOOK_SPEECH">
+		<Text>Phone book speech</Text>
+	</String>
 	<String Id="1160" Name="IDS_CALLFORWARD_DEACTIVATE">
 		<Text>Deactivate</Text>
 	</String>

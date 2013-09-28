@@ -2,7 +2,7 @@
 <BREWRes Name="zhcncameraapp" VERSION="1">
 <Strings Encoding="Unicode">
 	<STRING Id="1001" Name="IDS_ITEM_CAMERA">
-		<Text>照相机</Text>
+		<Text>拍照</Text>
 	</STRING>
 	<String Id="1002" Name="IDS_MULTI_PRE">
 		<Text>前摄像头</Text>
@@ -138,6 +138,9 @@
 	</String>
 	<String Id="1078" Name="IDS_CAMERA_RECORD_STOP">
 		<Text>停止</Text>
+	</String>
+		<String Id="1081" Name="IDS_ITEM_CAMERA1">
+		<Text>照相机</Text>
 	</String>
 </Strings>
 <Dialogs>

@@ -188,7 +188,13 @@
 		<Controls/>
 	</DIALOG>
 	<DIALOG Id="8" Name="IDD_DETAIL" Focus="0">
-		<Controls/>
+			<Controls>
+			<Static Id="7007" Name="IDC_DETAIL_STATIC">
+				<Items/></Static>
+			<Menu Id="7006" Name="IDC_DETAIL_MENU">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+				<Items/></Menu>
+		</Controls>
 	</DIALOG>
 	<DIALOG Id="9" Name="IDD_VERIFY_PASSWORD" Focus="0">
 		<Controls/>
