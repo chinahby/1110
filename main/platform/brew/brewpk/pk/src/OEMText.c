@@ -12103,19 +12103,18 @@ static void T9_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext )
             RGB_WHITE,
             IDF_RECT_FRAME);
 #else //FEATURE_FUNCS_THEME 
-    IDISPLAY_DrawRect(pContext->pIDisplay,
+    IDISPLAY_DrawRect
+    (pContext->pIDisplay,
             &pRect,
             RGB_BLACK,
 			#ifdef FEATURE_VERSION_K212_ND
            	 RGB_LIGHT_GREY,
+           	 IDF_RECT_FILL
 			#else
 			 RGB_WHITE,
+			 IDF_RECT_FRAME
 			#endif
-			 #ifdef FEATURE_VERSION_K212_ND
-            IDF_RECT_FILL
-			#else
-			IDF_RECT_FRAME
-			#endif);
+			);
 #endif //FEATURE_FUNCS_THEME  
 #if defined(FEATURE_DISP_240X320)	
 	pRect.dx = 236;
@@ -12134,14 +12133,12 @@ static void T9_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext )
                                -1, 
 							   #ifdef FEATURE_VERSION_K212_ND 
                                pRect.x+2,
-							   #else
-							   pRect.x+1,
-							   #endif
-							   #ifdef FEATURE_VERSION_K212_ND 
                                pRect.y+2,
 							   #else
+							   pRect.x+1,
 							   pRect.y+1,
 							   #endif
+						
                                NULL,
                                format );
 #endif
