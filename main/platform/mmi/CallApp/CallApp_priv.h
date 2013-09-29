@@ -111,7 +111,6 @@
 // 图片资源文件
 #include "appscommonimages.brh"
 #include "uixsnd.h"
-
 #define FEATURE_DIALER_ANIMAION_SUPPORT	0
 
 
@@ -143,7 +142,7 @@
 #define CALL_PICTURE_NAME_LENTH      64
 //#define DIALOG_SOFTKEY_HIGH        (pMe->m_LineHeight + 2)
 #define DIALERAPP_NUM_CALLHISTORY_FIELDS 5
-#ifdef FEATURE_VERSION_K212
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
 #define CALL_ANIMATION_WIDTH           88
 #else
 #define CALL_ANIMATION_WIDTH           36
@@ -209,7 +208,7 @@
 #ifdef FEATURE_VERSION_C310
 #define CALL_LINE_HIGHT                      (22) //18为NORMAL字体高度，目前只需要这个高度就够了
 #else
-#ifdef FEATURE_VERSION_K212
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
 #define CALL_LINE_HIGHT                      (38)
 #else
 #if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
@@ -227,7 +226,7 @@
 #define CALL_SECOND_LINE_Y               (CALL_FIRST_LINE_Y +    2*CALL_LINE_HIGHT)
 #define CALL_THIRD_LINE_Y                  (CALL_FIRST_LINE_Y +3*CALL_LINE_HIGHT )
 #define CALL_FOURTH_LINE_Y               (CALL_FIRST_LINE_Y +4*CALL_LINE_HIGHT )
-#elif defined(FEATURE_VERSION_K212) 
+#elif defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212) 
 #define CALL_SECOND_UP_LINE_Y               (CALL_FIRST_LINE_Y +    CALL_LINE_HIGHT)
 #define CALL_SECOND_LINE_Y               (CALL_FIRST_LINE_Y +    2*CALL_LINE_HIGHT)
 #define CALL_THIRD_LINE_Y                  (CALL_FIRST_LINE_Y +3*CALL_LINE_HIGHT )
@@ -853,7 +852,7 @@ typedef struct _CCallApp
 	int16   m_i;
 #endif
 	boolean            m_penup;
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)    
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)    
        boolean                    m_isIncoming;
 #endif
 #if defined(FEATURE_VERSION_K212)    

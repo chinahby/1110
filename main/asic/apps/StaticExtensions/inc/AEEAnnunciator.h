@@ -46,7 +46,7 @@ typedef struct IAnnunciator IAnnunciator;
 // Annunciator Fields
 /*fields that locate at the same place are merged, and use the states ID to dicide which icon to display*/
 
-#ifdef FEATURE_VERSION_K212
+#if defined(FEATURE_VERSION_K212)
 #define ANNUN_FIELD_RSSI                       0   /*Airplane Mode/RSSI*/
 #define ANNUN_FIELD_HEADSET                       1   /*Wap/1x/Roam*/
 #define ANNUN_FIELD_TCARD						2		//Add By zzg 2012_10_30

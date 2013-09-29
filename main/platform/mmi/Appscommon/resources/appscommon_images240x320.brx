@@ -496,6 +496,14 @@
 	<Object Id="9110" Name="IDB_EDIT_UP_DOWN_BMP_BLACK" MimeType="image/png">
 		<File>..\images\240x320\common\IME\arrow_black.png</File>
 	</Object>
-	
+	<Object Id="9111" Name="IDB_MMS_FULL" >
+		<File>..\images\240x320\common\Annunciator\mms_full.bmp</File>
+	</Object>
+	<Object Id="9112" Name="IDB_MMS_UNREAD" >
+		<File>..\images\240x320\common\Annunciator\mms_unread.bmp</File>
+	</Object>
+	<Object Id="9113" Name="IDB_MMS_UNRECEIVED" >
+		<File>..\images\240x320\common\Annunciator\mms_unreceived.bmp</File>
+	</Object>	
 </Objects>
 </BREWRes>

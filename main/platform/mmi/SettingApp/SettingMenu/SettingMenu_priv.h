@@ -165,6 +165,11 @@ typedef enum DLGRetValue
 #ifdef FEATURE_SOUND_BO
     ,DLGRET_SPEECH_SETTINGS   //IDD_SPEECH_MENU
 #endif 
+#ifdef FEATURE_SHORTCUT_IN_SETTINGS
+    ,DLGRET_SHORTCUTS_MENU
+    ,DLGRET_SHORTCUTS_SELECT_MENU    
+
+#endif	
 
 } DLGRet_Value_e_Type;
 
@@ -246,6 +251,12 @@ typedef enum _SettingMenuState
 #ifdef FEATURE_SOUND_BO
    ,SETTINGMENUST_SPEECH
 #endif
+#ifdef FEATURE_SHORTCUT_IN_SETTINGS
+   ,SETTINGMENUST_SHORTCUTS_MENU
+   ,SETTINGMENUST_SHORTCUTS_SELECT_MENU
+
+#endif   
+
 } SettingMenuState;
 
 // 状态处理函数返回给状态处理主函数的值类型
@@ -409,7 +420,7 @@ typedef struct _CSettingMenu
 #define CONTROL_RECT_START_X    45  //闹钟设置界面的控件开始位置
 #elif defined(FEATURE_VERSION_X3)
 #define CONTROL_RECT_START_X    55  //闹钟设置界面的控件开始位置
-#elif defined(FEATURE_VERSION_K212)
+#elif defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
 #define CONTROL_RECT_START_X    65  //闹钟设置界面的控件开始位置
 #elif defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
 #define CONTROL_RECT_START_X    65  //闹钟设置界面的控件开始位置

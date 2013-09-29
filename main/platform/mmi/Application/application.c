@@ -1427,7 +1427,9 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_SCHEDULER, IDS_APPLICATION_SCHEDULER, NULL, 0);	
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_TORCH, IDS_TORCH, NULL, 0);
 #endif
-
+#if defined(FEATURE_VERSION_W021_CT100_QVGA)
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_FLASHLIGHT, IDS_APPLICATION_FLASHLIGHT, NULL, 0);
+#endif
 }
             return TRUE;
             
@@ -1941,6 +1943,8 @@ static int StartApplet(Application *pMe, int i)
 {
     int Result = EUNSUPPORTED;
 	
+    MSG_FATAL("StartApplet...........%d",i,0,0);
+    
     switch(i){
     case IDS_APPLICATION_BAM:
 #ifdef FEATURE_OEMOMH
@@ -2065,12 +2069,18 @@ static int StartApplet(Application *pMe, int i)
 	CLOSE_DIALOG(DLGRET_KEY_TIME)
         break;	
 #endif
-#if defined(FEATURE_VERSION_HITZ181) || defined(FEATURE_DISP_128X160) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
+
+#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_DISP_128X160) \
+   ||defined(FEAUTRE_VERSION_N450)||defined(FEATURE_VERSION_EC99) \
+   ||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND) \
+   ||defined(FEATURE_VERSION_W021_CT100_QVGA)
     case IDS_TORCH:
-	case IDS_APPLICATION_FLASHLIGHT:		
+	case IDS_APPLICATION_FLASHLIGHT:      
+    	MSG_FATAL("IDS_APPLICATION_FLASHLIGHT...........START",0,0,0);
         CLOSE_DIALOG(DLGRET_FLASHLITHT)
         break;
 #endif
+
 #if defined(FEATURE_VERSION_W317A)
 	case IDS_PC_MODEM_HELP:
 		 CLOSE_DIALOG(DLGRET_PCMODEM)

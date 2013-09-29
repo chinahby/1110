@@ -196,7 +196,7 @@ boolean bIsPowerUp = FALSE;     //Add By zzg 2013_03_29
 #define WEEK_Y              (DATA_Y + 25) 
 
 #elif defined(FEATURE_DISP_240X320)
-#if defined(FEATURE_VERSION_K212)
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
 #define IDLE_D_CLOCK_X 		15
 #define IDLE_D_CLOCK_Y 		25
 
@@ -3839,6 +3839,58 @@ static void CoreApp_ImageNotify(void *po, IImage *pIImage, AEEImageInfo *pii, in
 extern boolean is_g_sportsapp_pedometer_bground_flag();
 #endif
 
+#ifdef FEATURE_SHORTCUT_IN_SETTINGS
+static uint32 getShortCutsIndex(uint16 wParam)
+{
+    if(wParam == AVK_UP)
+        return KEYPAD_UP;
+    else if(wParam == AVK_DOWN)
+        return KEYPAD_DOWN;
+    else if(wParam == AVK_LEFT)        
+        return KEYPAD_LEFT;
+    else if(wParam== AVK_RIGHT)                
+        return KEYPAD_RIGHT;
+    return KEYPAD_UP;
+}
+
+static boolean fireShortcutsKeyEvent(void  *pUser,
+                                     AEEEvent   eCode,
+                                    uint16     wParam)
+                                    
+{
+    uint32 keyindex;
+    CCoreApp *pMe = (CCoreApp *)pUser;    
+    keypad_shortcuts_t m_shortcuts_table[MAX_SHORTCUTS_SIZE];
+    
+    if (eCode!=EVT_KEY||wParam<AVK_UP||wParam>AVK_RIGHT)
+    {
+        return FALSE;
+    }
+    keyindex = getShortCutsIndex(wParam);
+    (void) ICONFIG_GetItem(pMe->m_pConfig,
+                           CFGI_KEYPAD_SHORTCUTS_TABLE,
+                           &m_shortcuts_table,
+                           sizeof(m_shortcuts_table));
+        
+    if(strlen(m_shortcuts_table[keyindex].shortcuts_args)>0)
+    {        
+    
+        if(ISHELL_StartAppletArgs(AEE_GetShell(), 
+                                    m_shortcuts_table[keyindex].shortcuts_cls, 
+                                    m_shortcuts_table[keyindex].shortcuts_args)==SUCCESS)
+        {
+            return TRUE;
+        }
+    }
+    else        
+    {
+        return CoreApp_LaunchApplet(pMe, m_shortcuts_table[keyindex].shortcuts_cls);
+    }
+    
+    return FALSE;
+}
+#endif
+
 static boolean  IDD_IDLE_Handler(void       *pUser,
                                  AEEEvent   eCode,
                                  uint16     wParam,
@@ -4529,6 +4581,12 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 return TRUE;
             }
 			Mainmenu_KeypadLock(FALSE);
+#ifdef FEATURE_SHORTCUT_IN_SETTINGS            
+            if (fireShortcutsKeyEvent(pMe,eCode,wParam))
+            {
+                return TRUE;
+            }
+#endif  
             switch (wParam)
             {
 #ifdef	FEATURE_APP_BLUETOOTH  
@@ -6672,7 +6730,7 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
         MSG_FATAL("str_lenth=%d, rc.x=%d", str_lenth, rc.x, 0);
      }
 #elif defined (FEATURE_DISP_240X320) 
-#if defined( FEATURE_LCD_TOUCH_ENABLE)||defined(FEATURE_VERSION_K212)
+#if defined( FEATURE_LCD_TOUCH_ENABLE)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
 	str_lenth = IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL, (const AECHAR *)wszBuf);
 #ifdef FEATURE_OEMOMH    
         if(hasGetSPN && (str_lenth > 176))
@@ -6682,7 +6740,7 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
         }
         else
 #endif     
-#ifdef FEATURE_VERSION_K212
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
 		rc.y = 232;
         rc.x = 15;
         rc.dx = 210;
@@ -7253,7 +7311,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 		}
 	
 	}
-	#elif defined(FEATURE_VERSION_K212)
+    #elif defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
 	#if 1
 	{
 		 AEERect rect = {0};
@@ -7266,7 +7324,14 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 		 rect.y = 80;
 		 rect.dx = 42;
 		 rect.dy = 32;
-		 MSG_FATAL("Num========%d,Ten========%d",Num,Ten,0);
+		 MSG_FATAL("Num========%d,Ten========%d bTFmt = %d",Num,Ten,bTFmt);
+		 MSG_FATAL("Num========%d,Ten========%d bTFmt = %d",Num,Ten,bTFmt);
+		 MSG_FATAL("Num========%d,Ten========%d bTFmt = %d",Num,Ten,bTFmt);
+		 MSG_FATAL("Num========%d,Ten========%d bTFmt = %d",Num,Ten,bTFmt);
+		 MSG_FATAL("Num========%d,Ten========%d bTFmt = %d",Num,Ten,bTFmt);
+
+		 MSG_FATAL("Num========%x,Ten========%d bTFmt = %x",pMe->m_pImageTimeIcon,Ten,bTFmt);
+         
 		 if (bTFmt == OEMNV_TIMEFORM_AMPM)
     	 {
          	wHour = jDate.wHour > 12 ? (jDate.wHour - 12) : jDate.wHour;
@@ -7295,6 +7360,11 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 		}
 		else
 		{
+		MSG_FATAL("pMe->m_pImageTimeIcon[10]========%x,Ten========%d bTFmt = %x",pMe->m_pImageTimeIcon[10],Ten,bTFmt);
+        
+		MSG_FATAL("pMe->m_pImageTimeIcon[10]========%x,Ten========%d bTFmt = %x",pMe->m_pImageTimeIcon[10],Ten,bTFmt);
+
+            MSG_FATAL("pMe->m_pImageTimeIcon[10]========%x,Ten========%d bTFmt = %x",pMe->m_pImageTimeIcon[10],Ten,bTFmt);
 			IIMAGE_Draw(pMe->m_pImageTimeIcon[10],
 	                    IDLE_TIME_X3+14, 
 	                    IDLE_TIME_Y);
@@ -7328,6 +7398,15 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 			{
 				int Hour_Ten = wHour/10;
 				int Hour_Num = wHour%10;
+                
+                MSG_FATAL("Hour_Ten========%x,Hour_Num========%d bTFmt = %x",Hour_Ten,Hour_Num,bTFmt);
+                
+                MSG_FATAL("Hour_Ten========%x,Hour_Num========%d bTFmt = %x",Hour_Ten,Hour_Num,bTFmt);
+                MSG_FATAL("Hour_Ten========%x,Hour_Num========%d bTFmt = %x",Hour_Ten,Hour_Num,bTFmt);
+                MSG_FATAL("Hour_Ten========%x,Hour_Num========%d bTFmt = %x",Hour_Ten,Hour_Num,bTFmt);
+
+
+
 				if (bTFmt == OEMNV_TIMEFORM_AMPM)
     	 		{
 					IIMAGE_Draw(pMe->m_pImageTimeIcon[Hour_Ten],
@@ -7727,7 +7806,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 #elif defined(FEATURE_DISP_128X160)
 				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
 #elif defined(FEATURE_DISP_240X320)
-#if defined(FEATURE_VERSION_K212)
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
 				WSTRLCPY(wFormat,L"%02d.%02d.%04d",63); 
 #else
 				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
@@ -7752,7 +7831,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 #elif defined(FEATURE_DISP_128X160)
 				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
 #elif defined(FEATURE_DISP_240X320)
-#if defined(FEATURE_VERSION_K212)
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
 				WSTRLCPY(wFormat,L"%02d.%02d.%04d",63);
 #else
 				WSTRLCPY(wFormat,L"%02d/%02d/%04d",63);
@@ -7778,7 +7857,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 #elif defined(FEATURE_DISP_128X160)
 				WSTRLCPY(wFormat,L"%04d/%02d/%02d",63);
 #elif defined(FEATURE_DISP_240X320)
-#if defined(FEATURE_VERSION_K212)
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
 				WSTRLCPY(wFormat,L"%04d.%02d.%02d",63);
 #else
 				WSTRLCPY(wFormat,L"%04d/%02d/%02d",63);
@@ -7888,7 +7967,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                                   | IDF_TEXT_TRANSPARENT); 
 		
 #else
-#if defined(FEATURE_VERSION_K212)
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
         MSG_FATAL("DrawGreyBitTextWithProfile FEATURE_VERSION_K212",0,0,0);
 		rc_date.x = rc_date.x - 9; 
 		DrawTextWithProfile(pMe->a.m_pIShell,
@@ -8014,7 +8093,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 	(void)DrawTextWithProfile(pMe->a.m_pIShell,
                               pMe->m_pDisplay,
                               RGB_WHITE_NO_TRANS,
-                              #if defined(FEATURE_VERSION_K212)
+                              #if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
 							  28,
 							  #else
                               AEE_FONT_NORMAL,
@@ -8124,7 +8203,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 	(void)DrawTextWithProfile(pMe->a.m_pIShell,
                               pMe->m_pDisplay,
                               RGB_WHITE_NO_TRANS,
-#if defined(FEATURE_VERSION_K212)
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
 							  28,
 #else
 							  AEE_FONT_NORMAL,
@@ -8140,7 +8219,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
     (void)DrawTextWithProfile(pMe->a.m_pIShell,
                               pMe->m_pDisplay,
                               RGB_WHITE_NO_TRANS,
-#if defined(FEATURE_VERSION_K212)
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
 							  28,
 #else
                               AEE_FONT_NORMAL,

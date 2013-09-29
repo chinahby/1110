@@ -59,6 +59,15 @@ static NextFSMAction SettingMenu_StatePhoneInfoHWHandler(CSettingMenu *pMe);
 // 状态 SETTINGMENUST_PHONE_INFO_PRL 处理函数
 static NextFSMAction SettingMenu_StatePhoneInfoPRLHandler(CSettingMenu *pMe);
 #endif
+#ifdef FEATURE_SHORTCUT_IN_SETTINGS
+// 状态 SETTINGMENUST_PHONE_INFO 处理函数
+static NextFSMAction SettingMenu_StateShortcutsMenuHandler(CSettingMenu *pMe);
+
+// 状态 SETTINGMENUST_PHONE_INFO_SW 处理函数
+static NextFSMAction SettingMenu_StateShortcutsSelectMenuHandler(CSettingMenu *pMe);
+
+#endif
+
 #ifdef FEATURE_VERSION_W317A
 // 状态 SETTINGMENUST_AUTOCALLRECORD 处理函数
 static NextFSMAction SettingMenu_AutoCallRecordHandler(CSettingMenu *pMe); // Add by pyuangui 20130104
@@ -239,6 +248,18 @@ NextFSMAction SettingMenu_ProcessState(CSettingMenu *pMe)
         case SETTINGMENUST_PHONE_INFO_PRL:
             retVal = SettingMenu_StatePhoneInfoPRLHandler(pMe);
             break;
+#endif	
+#ifdef FEATURE_SHORTCUT_IN_SETTINGS
+        case SETTINGMENUST_SHORTCUTS_MENU:
+            
+            ERR("SettingMenu_StateShortcutsMenuHandler",0,0,0);
+            retVal = SettingMenu_StateShortcutsMenuHandler(pMe);
+            break;
+            
+        case SETTINGMENUST_SHORTCUTS_SELECT_MENU:            
+            ERR("SettingMenu_StateShortcutsSelectMenuHandler",0,0,0);           
+            retVal = SettingMenu_StateShortcutsSelectMenuHandler(pMe);
+            break;			        
 #endif	
 											
         //Add by pyuangui 20130104
@@ -511,7 +532,12 @@ static NextFSMAction SettingMenu_StateMainHandler(CSettingMenu *pMe)
         case DLGRET_PHONE_INFO:
             MOVE_TO_STATE(SETTINGMENUST_PHONE_INFO)
             return NFSMACTION_CONTINUE;  			        								   
-#endif            
+#endif          
+#ifdef FEATURE_SHORTCUT_IN_SETTINGS
+        case DLGRET_SHORTCUTS_MENU:
+            MOVE_TO_STATE(SETTINGMENUST_SHORTCUTS_MENU)
+            return NFSMACTION_CONTINUE;  			        								   
+#endif       
 //Add by pyuangui 20130104
 #ifdef FEATURE_VERSION_W317A
 		case DLGRET_AUTOCALLRECORD:
@@ -843,6 +869,107 @@ static NextFSMAction SettingMenu_StatePhoneInfoPRLHandler(CSettingMenu *pMe)
 
     return NFSMACTION_WAIT;
 } // StateCallSettingHandler
+#endif
+
+#ifdef FEATURE_SHORTCUT_IN_SETTINGS
+
+/*==============================================================================
+函数：
+       StateCallSettingHandler
+说明：
+       SETTINGMENUST_CALLSETTING 状态处理函数
+
+参数：
+       pMe [in]：指向SettingMenu Applet对象结构的指针。该结构包含小程序的特定信息。
+
+返回值：
+       NFSMACTION_CONTINUE：指示后有子状态，状态机不能停止。
+       NFSMACTION_WAIT：指示因要显示对话框界面给用户，应挂起状态机。
+
+备注：
+
+==============================================================================*/
+static NextFSMAction SettingMenu_StateShortcutsMenuHandler(CSettingMenu *pMe)
+{
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+
+    switch(pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            SettingMenu_ShowDialog(pMe, IDD_SHORTCUTS_MENU);
+            return NFSMACTION_WAIT;
+
+        case DLGRET_SHORTCUTS_SELECT_MENU:
+            MOVE_TO_STATE(SETTINGMENUST_SHORTCUTS_SELECT_MENU)
+            return NFSMACTION_CONTINUE;                            
+            
+        case DLGRET_CANCELED:
+            MOVE_TO_STATE(SETTINGMENUST_MAIN)
+            return NFSMACTION_CONTINUE;
+                    
+        default:
+            ASSERT_NOT_REACHABLE;
+    }
+
+    return NFSMACTION_WAIT;
+} // StateCallSettingHandler
+
+
+
+
+/*==============================================================================
+函数：
+       StateCallSettingHandler
+说明：
+       SETTINGMENUST_CALLSETTING 状态处理函数
+
+参数：
+       pMe [in]：指向SettingMenu Applet对象结构的指针。该结构包含小程序的特定信息。
+
+返回值：
+       NFSMACTION_CONTINUE：指示后有子状态，状态机不能停止。
+       NFSMACTION_WAIT：指示因要显示对话框界面给用户，应挂起状态机。
+
+备注：
+
+==============================================================================*/
+static NextFSMAction SettingMenu_StateShortcutsSelectMenuHandler(CSettingMenu *pMe)
+{
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+
+    MSG_FATAL("SettingMenu_StateShortcutsSelectMenuHandler",0,0,0);
+    switch(pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            SettingMenu_ShowDialog(pMe, IDD_SHORTCUTS_SELECT_MENU);
+            return NFSMACTION_WAIT;
+
+        case DLGRET_WARNING:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            pMe->m_msg_id = IDS_DONE;
+            SettingMenu_ShowDialog(pMe, IDD_WARNING_MESSEGE);
+            return NFSMACTION_WAIT;
+            
+        case DLGRET_MSGBOX_OK:
+        case DLGRET_CANCELED:
+            MOVE_TO_STATE(SETTINGMENUST_SHORTCUTS_MENU)
+            return NFSMACTION_CONTINUE;
+                    
+        default:
+            ASSERT_NOT_REACHABLE;
+    }
+
+    return NFSMACTION_WAIT;
+} // StateCallSettingHandler
+
 #endif
 
 

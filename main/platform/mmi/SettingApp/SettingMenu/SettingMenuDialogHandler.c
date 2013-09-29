@@ -123,6 +123,24 @@ static boolean  HandlePhoneInfo_SW_HW_PRL_DialogEvent(CSettingMenu *pMe,
 );
 #endif
 
+#ifdef FEATURE_SHORTCUT_IN_SETTINGS
+// 对话框 IDD_PHONE_INFO_MENU 事件处理函数
+static boolean  HandleShortcutsMenuDialogEvent(CSettingMenu *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+);
+
+// 对话框 IDD_PHONE_INFO_MENU_SW 事件处理函数
+// 对话框 IDD_PHONE_INFO_MENU_HW 事件处理函数
+// 对话框 IDD_PHONE_INFO_MENU_PRL 事件处理函数
+static boolean  HandleShortcutsSelectMenuDialogEvent(CSettingMenu *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+);
+#endif
+
 #if defined(FEATURE_VERSION_W317A)
 // 对话框 IDD_SETTING_CALLRECORD 事件处理函数
 static boolean HandleAutoCallRecordDialogEvent(CSettingMenu *pMe,
@@ -519,7 +537,17 @@ boolean SettingMenu_RouteDialogEvent(CSettingMenu *pMe,
 			
         case IDD_PHONE_INFO_MENU_PRL:
             return HandlePhoneInfo_SW_HW_PRL_DialogEvent(pMe,eCode,wParam,dwParam); 
-#endif									
+#endif	
+#ifdef FEATURE_SHORTCUT_IN_SETTINGS
+        case IDD_SHORTCUTS_MENU:
+            return HandleShortcutsMenuDialogEvent(pMe,eCode,wParam,dwParam);       
+			     
+        case IDD_SHORTCUTS_SELECT_MENU:
+            return HandleShortcutsSelectMenuDialogEvent(pMe,eCode,wParam,dwParam); 
+			
+ 
+#endif	
+								
         case IDD_PHONESETTING_MENU:
             return HandlePhoneSettingDialogEvent(pMe,eCode,wParam,dwParam);
 
@@ -766,7 +794,9 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
 #ifdef FEATURE_SHOW_PHONE_INFO
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_PHONE_INFO_TITLE, IDS_PHONE_INFO_TITLE, NULL, 0);
 #endif
-
+#ifdef FEATURE_SHORTCUT_IN_SETTINGS
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SHORTCUTS_MENU_TITLE, IDS_SHORTCUTS_MENU_TITLE, NULL, 0);
+#endif
 #ifdef FEATURE_PERU_VERSION
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_PHONE_NUMBER, IDS_PHONE_NUMBER, NULL, 0);
 #endif
@@ -858,6 +888,11 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
                     CLOSE_DIALOG(DLGRET_PHONE_INFO)
                     break;
 #endif                    
+#ifdef FEATURE_SHORTCUT_IN_SETTINGS
+                case IDS_SHORTCUTS_MENU_TITLE:                    
+                    CLOSE_DIALOG(DLGRET_SHORTCUTS_MENU)
+                    break;
+#endif  
 #ifdef FEATURE_VERSION_W208S
                 case IDS_SMS_RESTRICT:   //短信黑名单
                     CLOSE_DIALOG(DLGRET_SMSRESTRICT)
@@ -1380,6 +1415,336 @@ static boolean  HandlePhoneInfo_SW_HW_PRL_DialogEvent(CSettingMenu *pMe,
 
         
 
+        default:
+            break;
+    }
+    return FALSE;
+} // HandlePhoneInfo_SW_HW_PRL_DialogEvent
+#endif
+#ifdef FEATURE_SHORTCUT_IN_SETTINGS
+
+
+
+/*==============================================================================
+函数：
+       HandleCallSettingDialogEvent
+说明：
+       IDD_PHONE_INFO_MENU对话框事件处理函数
+
+参数：
+       pMe [in]：指向SettingMenu Applet对象结构的指针。该结构包含小程序的特定信息。
+       eCode [in]：事件代码。
+       wParam：事件相关数据。
+       dwParam：事件相关数据。
+
+返回值：
+       TRUE：传入事件被处理。
+       FALSE：传入事件被忽略。
+
+备注：
+
+==============================================================================*/
+static boolean  HandleShortcutsMenuDialogEvent(CSettingMenu *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+)
+{
+    PARAM_NOT_REF(dwParam)
+    IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,
+                                                    IDC_SHORTCUTS_MENU);
+    if (pMenu == NULL)
+    {
+        return FALSE;
+    }
+    MSG_FATAL("%x, %x ,%x,HandleShortcutsMenuDialogEvent",eCode,wParam,dwParam);
+    //实现菜单循环滚动功能
+    //SettingMenu_AutoScroll(pMenu,eCode,wParam);
+
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT:
+			//add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_APPSSETTINGMENU_RES_FILE,                                
+                        IDS_SHORTCUTS_MENU_TITLE,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pAnn,WTitle);
+            }            
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_KEYPAD_UP, IDS_KEYPAD_UP, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_KEYPAD_DOWN, IDS_KEYPAD_DOWN, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_KEYPAD_LEFT, IDS_KEYPAD_LEFT, NULL, 0);			
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_KEYPAD_RIGHT, IDS_KEYPAD_RIGHT, NULL, 0);
+            return TRUE;
+
+        case EVT_DIALOG_START:
+            // 给菜单各菜单项加数字编号图标
+            pMe->m_input_mode = 0;
+            SettingMenu_SetItemNumIcon(pMenu);
+
+            IMENUCTL_SetSel(pMenu, pMe->m_nSubDlgId);
+
+            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY|MP_ACTIVE_NO_REDRAW);
+            IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
+
+            IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
+
+            (void) ISHELL_PostEvent( pMe->m_pShell,
+                                     AEECLSID_APP_SETTINGMENU,
+                                     EVT_USER_REDRAW,
+                                     0,
+                                     0);
+            return TRUE;
+
+        case EVT_USER_REDRAW:
+            //(void)IMENUCTL_Redraw(pMenu);
+            return TRUE;
+
+        case EVT_DIALOG_END:
+            return TRUE;
+
+        case EVT_KEY:
+            switch(wParam)
+            {
+                case AVK_CLR:
+                    CLOSE_DIALOG(DLGRET_CANCELED)
+                    return TRUE;
+
+                default:
+                    break;
+            }
+            return TRUE;
+
+        case EVT_COMMAND:
+            pMe->m_nSubDlgId = wParam;
+            switch (wParam)
+            { 
+                case IDS_KEYPAD_UP:                                        
+                case IDS_KEYPAD_DOWN:
+                case IDS_KEYPAD_LEFT:    				                    
+                case IDS_KEYPAD_RIGHT:
+                    CLOSE_DIALOG(DLGRET_SHORTCUTS_SELECT_MENU)
+                    break;  
+
+                default:
+                    ASSERT_NOT_REACHABLE;               
+            }
+            return TRUE;
+
+        default:
+            break;
+    }
+    return FALSE;
+} // HandlePhoneInfoDialogEvent
+
+
+
+
+/*==============================================================================
+函数：
+       HandleCallSettingDialogEvent
+说明：
+       IDD_PHONE_INFO_MENU对话框事件处理函数
+
+参数：
+       pMe [in]：指向SettingMenu Applet对象结构的指针。该结构包含小程序的特定信息。
+       eCode [in]：事件代码。
+       wParam：事件相关数据。
+       dwParam：事件相关数据。
+
+返回值：
+       TRUE：传入事件被处理。
+       FALSE：传入事件被忽略。
+
+备注：
+
+==============================================================================*/
+static uint32 getShortCutsIndex(CSettingMenu *pMe)
+{
+    if(pMe->m_nSubDlgId == IDS_KEYPAD_UP)
+        return KEYPAD_UP;
+    else if(pMe->m_nSubDlgId == IDS_KEYPAD_DOWN)
+        return KEYPAD_DOWN;
+    else if(pMe->m_nSubDlgId == IDS_KEYPAD_LEFT)        
+        return KEYPAD_LEFT;
+    else if(pMe->m_nSubDlgId == IDS_KEYPAD_RIGHT)                
+        return KEYPAD_RIGHT;
+    return KEYPAD_UP;
+}
+
+static uint32 getShortCutsArrayIndexWithCls(keypad_shortcuts_type *shortcuts,uint32 size,uint32 cls,char *args)
+{
+    int i=0;
+    
+    for (i=0;i<size;i++)
+    {
+        if(shortcuts[i].cls==cls&&(strlen(args)==0||!strcmp(shortcuts[i].args,args)))
+        {
+            return i;
+        }
+    }
+    return 0;
+}
+
+static uint32 getShortCutsArrayIndexStr(keypad_shortcuts_type *shortcuts,uint32 size,uint32 Strid)
+{
+    int i=0;
+    
+    for (i=0;i<size;i++)
+    {
+        if(shortcuts[i].strid==Strid)
+        {
+            return i;
+        }
+    }
+    return 0;
+}
+
+
+static boolean  HandleShortcutsSelectMenuDialogEvent(CSettingMenu *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+)
+{
+    IMenuCtl *pMenu;
+    BottomBar_Param_type  BBarParam ={0};
+    AECHAR WTitle[40] ={0};
+    keypad_shortcuts_t m_shortcuts_table[MAX_SHORTCUTS_SIZE];
+    int n=0, keyindex = 0,arrayindex = 0;   //
+    
+    keypad_shortcuts_type m_shortcuts[] = {
+            {IDS_SHORTCUTS_MESSAGE,AEECLSID_WMSAPP,{0}},
+            {IDS_SHORTCUTS_MUSICPLAYER,AEECLSID_APP_MUSICPLAYER,{0}},
+            {IDS_SHORTCUTS_FM,AEECLSID_APP_FMRADIO,{0}},
+            {IDS_SHORTCUTS_ALARM,AEECLSID_ALARMCLOCK,{0}},            
+            {IDS_SHORTCUTS_CAMERA,AEECLSID_APP_CAMERA,{0}},
+            {IDS_SHORTCUTS_CALLLOG,AEECLSID_APP_RECENTCALL,{0}},
+            {IDS_SHORTCUTS_SETTINGS,AEECLSID_APP_SETTINGMENU,{0}},
+            {IDS_SHORTCUTS_APPS,AEECLSID_APPLICATION,{0}},
+            {IDS_SHORTCUTS_GAMES,AEECLSID_GAME,NULL},
+            {IDS_SHORTCUTS_SCHEDULER,AEECLSID_SCHEDULEAPP,{0}},
+            {IDS_SHORTCUTS_CALCULATOR,AEECLSID_CALCAPP,{0}},
+            {IDS_SHORTCUTS_CONTACTS,AEECLSID_APP_CONTACT,{0}},
+            {IDS_SHORTCUTS_EXPLORER,AEECLSID_MEDIAGALLERY,{0}},
+            {IDS_SHORTCUTS_VIDEOPLAYER,AEECLSID_VIDEOPLAYER,{0}},
+            {IDS_SHORTCUTS_VOICERECORDER,AEECLSID_RECORDER,{0}},
+            {IDS_SHORTCUTS_VIDEORECORDER,AEECLSID_APP_CAMERA,"record"},                
+    };
+
+        
+    MSG_FATAL("%x, %x ,%x,HandleShortcutsSelectMenuDialogEvent",eCode,wParam,pMe->m_nSubDlgId);
+
+
+    //实现菜单循环滚动功能
+    //SettingMenu_AutoScroll(pMenu,eCode,wParam);
+    pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,IDC_SHORTCUTS_SELECT);                                                     
+    if(pMenu==NULL)
+    {    
+        MSG_FATAL("HandleShortcutsSelectMenuDialogEvent IDC_SHORTCUTS_SELECT failed",0,0,0);
+        return FALSE;
+    }                                                    
+
+    keyindex = getShortCutsIndex(pMe);
+
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT:                        
+            {
+                AECHAR WTitle[40] = {0};
+                (void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_APPSSETTINGMENU_RES_FILE,                                
+                        pMe->m_nSubDlgId,
+                        WTitle,
+                        sizeof(WTitle));
+                IANNUNCIATOR_SetFieldText(pMe->m_pAnn,WTitle);
+            }   
+
+            for (n=0;n<sizeof(m_shortcuts)/sizeof(keypad_shortcuts_type);n++)
+            {
+                IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, m_shortcuts[n].strid, m_shortcuts[n].strid, NULL, 0);
+            }
+            return TRUE;
+
+        case EVT_DIALOG_START:
+            
+            (void) ICONFIG_GetItem(pMe->m_pConfig,
+                                       CFGI_KEYPAD_SHORTCUTS_TABLE,
+                                       &m_shortcuts_table,
+                                       sizeof(m_shortcuts_table));
+            
+            arrayindex = getShortCutsArrayIndexWithCls(m_shortcuts,
+                                                sizeof(m_shortcuts)/sizeof(keypad_shortcuts_type),
+                                                m_shortcuts_table[keyindex].shortcuts_cls,
+                                                m_shortcuts_table[keyindex].shortcuts_args);
+            
+            
+            MSG_FATAL("HandleShortcutsSelectMenuDialogEvent %d, %d,",arrayindex,keyindex,0);
+            InitMenuIcons(pMenu);
+            SetMenuIcon(pMenu, m_shortcuts[arrayindex].strid, TRUE);
+            IMENUCTL_SetSel(pMenu, m_shortcuts[arrayindex].strid);
+
+            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT|MP_ACTIVE_NO_REDRAW);
+            IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
+
+            IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
+
+            (void) ISHELL_PostEvent( pMe->m_pShell,
+                                     AEECLSID_APP_SETTINGMENU,
+                                     EVT_USER_REDRAW,
+                                     0,
+                                     0);
+
+                                     
+            return TRUE;
+
+        case EVT_USER_REDRAW:
+        
+            return TRUE;
+
+        case EVT_DIALOG_END:
+            return TRUE;
+
+        case EVT_KEY:
+            switch(wParam)
+            {                
+                case AVK_CLR:                    
+                    CLOSE_DIALOG(DLGRET_CANCELED)
+                    return TRUE;
+
+                default:
+                    break;
+            }
+            return TRUE;   
+            
+        case EVT_COMMAND:
+            //switch (wParam)
+            arrayindex = getShortCutsArrayIndexStr(m_shortcuts,
+                                      sizeof(m_shortcuts)/sizeof(keypad_shortcuts_type),
+                                      wParam);
+            MSG_FATAL("HandleShortcutsSelectMenuDialogEvent %d, %d,",arrayindex,wParam,0);
+            
+            (void) ICONFIG_GetItem(pMe->m_pConfig,
+                                                  CFGI_KEYPAD_SHORTCUTS_TABLE,
+                                                  &m_shortcuts_table,
+                                                  sizeof(m_shortcuts_table));
+            m_shortcuts_table[keyindex].shortcuts_cls = m_shortcuts[arrayindex].cls;
+            memset(m_shortcuts_table[keyindex].shortcuts_args,0x00,MAX_SHORTCUTS_ARGS_SIZE);
+            strcpy(m_shortcuts_table[keyindex].shortcuts_args, m_shortcuts[arrayindex].args);
+            
+            DBGPRINTF("m_shortcuts_table shortcuts_args=%d %s\n",keyindex,m_shortcuts_table[keyindex].shortcuts_args);
+            (void) ICONFIG_SetItem(pMe->m_pConfig,
+                                                        CFGI_KEYPAD_SHORTCUTS_TABLE,
+                                                        &m_shortcuts_table,
+                                                        sizeof(m_shortcuts_table));
+            InitMenuIcons(pMenu);
+            SetMenuIcon(pMenu, wParam, TRUE);
+            CLOSE_DIALOG(DLGRET_WARNING);
+            return TRUE;
+        
         default:
             break;
     }

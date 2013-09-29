@@ -487,6 +487,98 @@
 	<String Id="1170" Name="IDS_CALLSETTING__NO">
 		<Text>रवाना</Text>
 	</String>
+	<String Id="1171" Name="IDS_AKG_5SEC" Encoding="Unicode">
+		<Text>5 Sec</Text>
+	</String>
+	<STRING Id="1172" Name="IDS_CALLFORWARD_NOCONNECT_UNCONDITIONAL">
+		<Text>Unconditional</Text>
+	</STRING>
+	<STRING Id="1173" Name="IDS_PHONE_INFO_TITLE">
+		<Text>Phone Info</Text>
+	</STRING>
+	<STRING Id="1174" Name="IDS_SOFTWARE_VERSION_TITLE">
+		<Text>SW Version</Text>
+	</STRING>
+	<STRING Id="1175" Name="IDS_HARDWARE_VERSION_TITLE">
+		<Text>HW Version</Text>
+	</STRING>
+	<STRING Id="1176" Name="IDS_PRL_VERSION_TITLE">
+		<Text>PRL Version</Text>
+	</STRING>
+	
+	<STRING Id="1372" Name="IDS_SHORTCUTS_MENU_TITLE">
+		<Text>Shortcuts</Text>
+	</STRING>
+	<STRING Id="1373" Name="IDS_SHORTCUTS_SELECT_MENU_TITLE">
+		<Text>Shortcuts</Text>
+	</STRING>	
+
+	<STRING Id="1374" Name="IDS_SHORTCUTS_MESSAGE">
+		<Text>Message</Text>
+	</STRING>
+	
+	<STRING Id="1375" Name="IDS_SHORTCUTS_MUSICPLAYER">
+		<Text>Musicplayer</Text>
+	</STRING>	
+	<STRING Id="1376" Name="IDS_SHORTCUTS_FM">
+		<Text>FM Radio</Text>
+	</STRING>	
+
+	<STRING Id="1377" Name="IDS_SHORTCUTS_CAMERA">
+		<Text>Camera</Text>
+	</STRING>
+	
+	<STRING Id="1378" Name="IDS_SHORTCUTS_CALLLOG">
+		<Text>Recentcalls</Text>
+	</STRING>
+
+	<STRING Id="1379" Name="IDS_SHORTCUTS_SETTINGS">
+		<Text>Settings</Text>
+	</STRING>	
+	<STRING Id="1380" Name="IDS_SHORTCUTS_APPS">
+		<Text>Application</Text>
+	</STRING>
+	<STRING Id="1381" Name="IDS_SHORTCUTS_GAMES">
+		<Text>Games</Text>
+	</STRING>
+	<STRING Id="1382" Name="IDS_SHORTCUTS_SCHEDULER">
+		<Text>Scheduler</Text>
+	</STRING>
+	<STRING Id="1383" Name="IDS_SHORTCUTS_CALCULATOR">
+		<Text>Calculator</Text>
+	</STRING>
+	<STRING Id="1384" Name="IDS_SHORTCUTS_CONTACTS">
+		<Text>Contacts</Text>
+	</STRING>
+	<STRING Id="1385" Name="IDS_SHORTCUTS_EXPLORER">
+		<Text>File Management</Text>
+	</STRING>
+
+	<STRING Id="1386" Name="IDS_SHORTCUTS_VIDEOPLAYER">
+		<Text>Video player</Text>
+	</STRING>
+	<STRING Id="1387" Name="IDS_SHORTCUTS_VOICERECORDER">
+		<Text>Voice recorder</Text>
+	</STRING>
+	<STRING Id="1388" Name="IDS_SHORTCUTS_VIDEORECORDER">
+		<Text>Video recorder</Text>
+	</STRING>
+	<STRING Id="1389" Name="IDS_SHORTCUTS_ALARM">
+		<Text>Alarm</Text>
+	</STRING>
+	
+	<STRING Id="1400" Name="IDS_KEYPAD_UP">
+		<Text>Up key</Text>
+	</STRING>
+	<STRING Id="1401" Name="IDS_KEYPAD_DOWN">
+		<Text>Down key</Text>
+	</STRING>
+	<STRING Id="1402" Name="IDS_KEYPAD_LEFT">
+		<Text>Left key</Text>
+	</STRING>
+	<STRING Id="1403" Name="IDS_KEYPAD_RIGHT">
+		<Text>Right key</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="7001">
@@ -748,5 +840,51 @@
 			</Menu>
 		</Controls>
 	</Dialog>
+	<DIALOG Id="6041" Name="IDD_PHONE_INFO_MENU" Focus="7036">
+		<Controls>
+			<Menu Id="7036" Name="IDC_PHONE_INFO_MENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6042" Name="IDD_PHONE_INFO_MENU_SW" Focus="0">
+		<Controls>
+			<Static Id="7037" Name="IDC_SW_STAT" Flags="40000">
+				<Items/></Static>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6043" Name="IDD_PHONE_INFO_MENU_HW" Focus="0">
+		<Controls>
+			<Static Id="7038" Name="IDC_HW_STAT" Flags="40000">
+				<Items/></Static>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6044" Name="IDD_PHONE_INFO_MENU_PRL" Focus="0">
+		<Controls>
+			<Static Id="7039" Name="IDC_PRL_STAT" Flags="40000">
+				<Items/></Static>
+		</Controls>
+	</DIALOG>
+	<Dialog Id="6045" Name="IDD_SPEECH_MENU" Focus="7040">
+		<Controls>
+			<Menu Id="7040" Name="IDC_SPEECH">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<DIALOG Id="6046" Name="IDD_SHORTCUTS_MENU" Focus="7046">
+		<Controls>
+			<Menu Id="7046" Name="IDC_SHORTCUTS_MENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6047" Name="IDD_SHORTCUTS_SELECT_MENU" Focus="7047">		
+		<Controls>
+			<Menu Id="7047" Name="IDC_SHORTCUTS_SELECT">
+			<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>	
 </Dialogs>
 </BREWRes>

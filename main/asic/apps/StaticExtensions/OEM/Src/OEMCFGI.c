@@ -159,6 +159,7 @@ when       who     what, where, why
 #ifdef FEATURE_BREW_3_0
 #include "AEE_OEMDispatch.h"
 #endif
+#include "OEMClassIDs.h"
 
 #include "OEMCFGI.h"
 #include "OEMNV.h"
@@ -786,6 +787,9 @@ typedef struct
    boolean m_sound_bo_main;		//CFGI_SOUND_BO_MAIN,
    boolean m_sound_bo_core;		//CFGI_SOUND_BO_CORE,
 #endif 
+#ifdef FEATURE_SHORTCUT_IN_SETTINGS   
+   keypad_shortcuts_t m_keypad_shortcuts_table[MAX_SHORTCUTS_SIZE]; /*CFGI_KEYPAD_SHORTCUTS_TABLE*/
+#endif
 } OEMConfigListType;
 
 
@@ -1755,7 +1759,10 @@ static int OEMPriv_GetItem_CFGI_SOUND_BO_CORE(void *pBuff);
  static int OEMPriv_SetItem_CFGI_SOUND_BO_CORE(void *pBuff);
 #endif 
 
-
+#ifdef FEATURE_SHORTCUT_IN_SETTINGS
+static int OEMPriv_GetItem_CFGI_KEYPAD_SHORTCUTS_TABLE(void *pBuff);
+static int OEMPriv_SetItem_CFGI_KEYPAD_SHORTCUTS_TABLE(void *pBuff);
+#endif
 /*===========================================================================
 
                      STATIC/LOCAL DATA
@@ -2158,6 +2165,9 @@ static OEMConfigListType oemi_cache = {
    ,TRUE		    //CFGI_SOUND_BO_MAIN,
    ,TRUE   		   //CFGI_SOUND_BO_CORE,
 #endif 
+#ifdef FEATURE_SHORTCUT_IN_SETTINGS   
+   ,{{AEECLSID_APP_CAMERA,{0}},{AEECLSID_APP_FMRADIO,{0}},{AEECLSID_APP_SETTINGMENU,{0}},{AEECLSID_SCHEDULEAPP,{0}}}    //CFGI_KEYPAD_SHORTCUTS_TABLE
+#endif   
 };
 
 ////
@@ -2769,6 +2779,9 @@ static ConfigItemTableEntry const customOEMItemTable[] =
    CFGTABLEITEM(CFGI_SOUND_BO_MAIN,sizeof(boolean)),		//CFGI_SOUND_BO_MAIN,
    CFGTABLEITEM(CFGI_SOUND_BO_CORE,sizeof(boolean)),		//CFGI_SOUND_BO_CORE,
 #endif 
+#ifdef FEATURE_SHORTCUT_IN_SETTINGS   
+   CFGTABLEITEM(CFGI_KEYPAD_SHORTCUTS_TABLE,sizeof(keypad_shortcuts_t)*MAX_SHORTCUTS_SIZE),
+#endif
    //CFGTABLEITEM(CFGI_SALES_TRACK_SMS_SEND, sizeof(boolean)),		//Add By zzg 2012_10_29
 };
 #endif
@@ -11417,7 +11430,29 @@ static int OEMPriv_SetItem_CFGI_SMS_TRACKER_NUMBER(void *pBuff)
 }
 
 #endif
+#ifdef FEATURE_SHORTCUT_IN_SETTINGS
+static int OEMPriv_GetItem_CFGI_KEYPAD_SHORTCUTS_TABLE(void *pBuff)
+{
+	/*int len = STRLEN((void*)oemi_cache.mizone_num);
+	MSG_FATAL("OEMPriv_GetItem_CFGI_MIZONE_NUM,,,,,,,=%d",len,0,0);
+	MEMCPY(pBuff, oemi_cache.mizone_num, sizeof(uint16) * OEMNV_LOCKMUM_MAXLEN);
+    */
+    MEMCPY(pBuff, (void*) &oemi_cache.m_keypad_shortcuts_table, sizeof(keypad_shortcuts_t)*MAX_SHORTCUTS_SIZE);
+    return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_KEYPAD_SHORTCUTS_TABLE(void *pBuff)
+{
 
+	/* int len = STRLEN((void*)oemi_cache.mizone_num);
+	MSG_FATAL("OEMPriv_SetItem_CFGI_MIZONE_NUM,,,,,,,len==%d",len,0,0);
+	MEMCPY(oemi_cache.mizone_num, pBuff, sizeof(uint16) * OEMNV_LOCKMUM_MAXLEN);
+    OEMPriv_WriteOEMConfigList(); 
+    */
+    MEMCPY((void*) &oemi_cache.m_keypad_shortcuts_table, pBuff, sizeof(keypad_shortcuts_t)*MAX_SHORTCUTS_SIZE);
+    OEMPriv_WriteOEMConfigList(); 
+    return SUCCESS;
+}
+#endif
 static int OEMPriv_GetItem_CFGI_RUIM_ID_SAVE_TABLE(void *pBuff)
 {
 	/*int len = STRLEN((void*)oemi_cache.mizone_num);

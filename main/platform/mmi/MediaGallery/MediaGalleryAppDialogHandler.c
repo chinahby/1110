@@ -3049,7 +3049,7 @@ static boolean MediaGalleryApp_OnPopupMenuCommand(CMediaGalleryApp* pMe,
                                                  wParam,
                                                  dwParam); 
 		 // add by pyuangui 2013-08-29  K212–Ë«Û∑¿…¡∆¡
-#ifdef FEATURE_VERSION_K212
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
          {
 		 static IStatic * torch_pStatic = NULL;
          PromptMsg_Param_type m_PromptMsg;
@@ -3328,7 +3328,7 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
          MSG_FATAL("MGAppPopupMenu_OnImageViewer EVT_DIALOG_START",0,0,0);
          pCurNode = MediaGalleryApp_GetCurrentNode(pMe);
 
-#ifdef FEATURE_VERSION_K212
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
          {
 		 static IStatic * torch_pStatic = NULL;
          PromptMsg_Param_type m_PromptMsg;
@@ -3498,6 +3498,11 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
 					 {IDS_MG_ZOOM, TRUE}, {IDS_MG_DELETE, TRUE}, 
 					 {IDS_MG_DETAIL, TRUE}
 				  };
+			    #elif defined(FEATURE_VERSION_W022_CT100_C444)||defined(FEATURE_VERSION_W021_CT100_QVGA)
+                  MenuInsItem ImgViewOptions[]={
+                      {IDS_MG_SETWALLPAPER, TRUE},
+                     {IDS_MG_DELETE, TRUE}, {IDS_MG_DETAIL, TRUE}
+                  };
 				#elif defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_20D)|| defined(FEATURE_VERSION_EC99)
 				  MenuInsItem ImgViewOptions[] =
 				  {

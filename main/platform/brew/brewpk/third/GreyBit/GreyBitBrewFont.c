@@ -59,17 +59,17 @@ static int ArphicMeasureNChars(const AECHAR *pcText, int nChars);
 static int OEMFont_MeasureTextCursorPos(IFont *pMe, int x, const AECHAR *pcText, int nChars, 
                                                         const AEERect *prcClip, int* curx, int LineCursor, uint32 dwFlags);
 #endif
-
+#define FEATURE_VERSION_K212
 #define MMI_GREYBITTYPE_FONTS_PATH     AEEFS_SYS_DIR"systemfont.gvf"
 
 #if defined(FEATURE_DISP_320X240) || defined(FEATURE_DISP_240X320)
-#ifdef FEATURE_VERSION_K212
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
 #define BIGNUMBER_FONT_SIZE 84
 #else
 #define BIGNUMBER_FONT_SIZE 48 
 #endif
 #define NORMAL_FONT_SIZE    32 
-#ifdef FEATURE_VERSION_K212
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
 #define LARGE_FONT_SIZE     38
 #else
 #define LARGE_FONT_SIZE     36 
@@ -117,7 +117,7 @@ static int OEMFont_MeasureTextCursorPos(IFont *pMe, int x, const AECHAR *pcText,
 #if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)||defined(FEATURE_VERSION_K212_ND)
 #define BIGNUMBER_FONT_SIZE 42
 #else
-#ifdef FEATURE_VERSION_K212
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
 #define BIGNUMBER_FONT_SIZE 42
 #else
 #define BIGNUMBER_FONT_SIZE 32

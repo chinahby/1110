@@ -1299,6 +1299,22 @@ __handleKeyEvent_input_channel_done__:
         
 		case AVK_LEFT:
 		case AVK_RIGHT:
+#ifdef FEATURE_FMRADIO_TUNNING_MODE_LIST            
+		{
+			if( pMe->opMode == FM_RADIO_OPMODE_PLAY)
+			{
+				pMe->cfg.tuningMode = FM_RADIO_TUNNING_MODE_LIST;
+				if( key == AVK_LEFT)
+				{
+					changeChannelAnticlockwise( pMe);
+				}
+				else
+				{
+					changeChannelClockwise( pMe);
+				}
+			}
+		}
+#else		
 		{
 			if( pMe->opMode == FM_RADIO_OPMODE_PLAY)
 			{
@@ -1313,6 +1329,7 @@ __handleKeyEvent_input_channel_done__:
 				}
 			}
 		}
+#endif
 		return TRUE;
 
 #ifdef FEATURE_VERSION_C316

@@ -1125,6 +1125,24 @@ typedef struct
     char ruim_id_table[MAX_RUIM_ID_SAVE][MAX_RUIM_ID_LENGTH];              //phoneNumber
 }ruim_id_table_t;
 
+#ifdef FEATURE_SHORTCUT_IN_SETTINGS
+enum
+{
+    KEYPAD_UP,
+    KEYPAD_DOWN,
+    KEYPAD_LEFT,
+    KEYPAD_RIGHT
+};
+
+#define MAX_SHORTCUTS_SIZE     6  
+#define MAX_SHORTCUTS_ARGS_SIZE     16
+
+typedef struct 
+{
+    uint32 shortcuts_cls;
+    char shortcuts_args[MAX_SHORTCUTS_ARGS_SIZE];              //phoneNumber
+}keypad_shortcuts_t;
+#endif
 
 #ifdef FEATURE_USES_MMS
 #define MAX_MMS_STORED 5//最多只能存10条彩

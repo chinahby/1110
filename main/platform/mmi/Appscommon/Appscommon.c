@@ -2936,7 +2936,7 @@ void DrawPromptMessage (IDisplay *pIDisplay,
 			#endif
             strrect.x = totalrect.x - StringBgImgInfo.cx/2;            
 			strrect.y = totalrect.y - 15;	
-			#elif defined(FEATURE_VERSION_K212)
+            #elif defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
 			strrect.dy = StringBgImgInfo.cy*3/4;
             strrect.dx = StringBgImgInfo.cx;
             strrect.x = totalrect.x - StringBgImgInfo.cx/2;
@@ -2980,7 +2980,7 @@ void DrawPromptMessage (IDisplay *pIDisplay,
     }
     
     //Draw bottom
-#ifdef FEATURE_VERSION_K212
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
  if(PParam->eBBarType == BTBAR_NONE)	
  {
  	bottomParam.eBBarType = BTBAR_OK_BACK;
@@ -3292,7 +3292,7 @@ void Appscommon_Draw_Keyguard_Time(IDisplay *pIDisplay)
     uint16    nWeekResID = 0, nHour = 0;
     RGBVAL  nOldFontColor = RGB_WHITE;
 	BottomBar_e_Type    eBBarType = BTBAR_NONE; 
-	#ifdef FEATURE_VERSION_K212
+    #if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
 	nNumberWidth = 41;
 	nNumberHeight = 61;
 	nOffset = 5;
@@ -3383,7 +3383,7 @@ void Appscommon_Draw_Keyguard_Time(IDisplay *pIDisplay)
     nOldFontColor = IDISPLAY_SetColor(pIDisplay, CLR_USER_TEXT, nOldFontColor);
     
     IDISPLAY_DrawText(pIDisplay, AEE_FONT_NORMAL, wstrDisp, -1, xStartPos, yStartPos, NULL, IDF_TEXT_TRANSPARENT);
-#ifdef FEATURE_VERSION_K212
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
     nTextLen = (nNumberWidth + nOffset)*4 + nLineWidth*3;
 #else
 	nTextLen = (nNumberWidth + nOffset)*4 + nLineWidth;
@@ -3409,7 +3409,7 @@ void Appscommon_Draw_Keyguard_Time(IDisplay *pIDisplay)
         wstrDisp[2] = L'\0';
         nTextLen = IDISPLAY_MeasureText(pIDisplay, AEE_FONT_NORMAL, wstrDisp);
         xStartPos -= (nTextLen + nOffset)/2;
-	#ifdef FEATURE_VERSION_K212
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
 		if(xStartPos<0)
 		{
 			xStartPos = 5;
@@ -3425,12 +3425,12 @@ void Appscommon_Draw_Keyguard_Time(IDisplay *pIDisplay)
         nHour = jDate.wHour;
         if(nHour/10 == 1)
         {
-        	#ifndef FEATURE_VERSION_K212
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
             xStartPos -= (nNumberWidth - nLineWidth)/2;
 			#endif
         }
     }
-	#ifdef FEATURE_VERSION_K212
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
 	
 	 // draw hour
     SETAEERECT(&rect, xStartPos, yStartPos, nNumberWidth, nNumberHeight);
@@ -3471,7 +3471,7 @@ void Appscommon_Draw_Keyguard_Time(IDisplay *pIDisplay)
     
     (void)IDISPLAY_SetColor(pIDisplay, CLR_USER_TEXT, nOldFontColor);
 	#endif
-    #ifdef FEATURE_VERSION_K212
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
 	eBBarType = BTBAR_UNLOCK_L;
     DrawBottomBar_Ex(pShell, pIDisplay,eBBarType);
 	#endif
@@ -4028,7 +4028,7 @@ boolean Appscommon_DrawPopUpDialogBox(IDisplay *pIDisplay, int x, int y, AECHAR 
     
     return TRUE;
 }
-#ifdef FEATURE_VERSION_K212
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
 boolean Appscommon_DrawDigitalNumberImage(IDisplay *pDisplay, int number, int nLineWidth, AEERect *fontRect)
 {
 	IImage              *m_pImageTimeIcon;

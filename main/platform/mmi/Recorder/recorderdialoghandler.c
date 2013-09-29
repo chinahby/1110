@@ -1339,7 +1339,7 @@ uint16 recorder_get_res_id_from_error_code( Media* pme)
 	uint16 	resId   = 0;
 	int		error	= pme->m_nLastOperationError;
 
-
+    MSG_FATAL("recorder_get_res_id_from_error_code error=%d",error,0,0);
 	if( error >= FILE_ERROR && error <= ENOMEDIA)
 	{
 		resId = IDS_RECORD_OPEN_FILE_ERROR_1 + error - FILE_ERROR;

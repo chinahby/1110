@@ -242,6 +242,12 @@
 	<String Id="1133" Name="IDS_MSG_TIME_DETAIL">
 		<Text>现在是北京时间%02d:%02d分！</Text>
 	</String>
+	<String Id="1134" Name="IDS_SAR_CT100_VERSION_I225C">
+		<Text>SAR:CDMA800 Head:0.654W/Kg; Body:0.452W/Kg</Text>
+	</String>
+	<String Id="1135" Name="IDS_SAR_CT100_VERSION_C444">
+		<Text>SAR:CDMA800 Head:0.744W/Kg; Body:0.666W/Kg</Text>
+	</String>		
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_NUMEDIT" Focus="0">

@@ -975,7 +975,7 @@ static boolean NumberManager_HandleEvent(INumberManager *pi,
             return TRUE;
 
         case EVT_KEY_PRESS:
-			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)
+			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_QVGA_INHERIT_K212)
             if (!pMe->m_bAppIsReady)
             {
                 return TRUE;
@@ -984,7 +984,7 @@ static boolean NumberManager_HandleEvent(INumberManager *pi,
             return NumberManager_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_KEY_RELEASE:
-			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)
+			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_QVGA_INHERIT_K212)
             if (!pMe->m_bAppIsReady)
             {
                 return TRUE;
@@ -993,7 +993,7 @@ static boolean NumberManager_HandleEvent(INumberManager *pi,
             return NumberManager_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_KEY_HELD:
-			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)
+			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_QVGA_INHERIT_K212)
             if (!pMe->m_bAppIsReady)
             {
                 return TRUE;
@@ -1002,7 +1002,7 @@ static boolean NumberManager_HandleEvent(INumberManager *pi,
             return NumberManager_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_KEY:
-			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)
+			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_QVGA_INHERIT_K212)
             if (!pMe->m_bAppIsReady)
             {
                 return TRUE;
@@ -1011,7 +1011,7 @@ static boolean NumberManager_HandleEvent(INumberManager *pi,
             return NumberManager_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_COMMAND:
-			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)
+			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_QVGA_INHERIT_K212)
             if (!pMe->m_bAppIsReady)
             {
                 return TRUE;

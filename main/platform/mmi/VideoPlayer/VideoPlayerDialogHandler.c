@@ -429,7 +429,7 @@ static  boolean VPDVideoPlayer_HandleEvent(CVideoPlayer *pMe,AEEEvent eCode,uint
     			            {
     			                return TRUE;
     			            }
-							#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)
+							#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_QVGA_INHERIT_K212)
     			            if(!pMe->m_bAppIsReady)
     			            {
     			                 return TRUE;  
@@ -1217,7 +1217,7 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
             {
                 return TRUE;
             }
-			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)
+			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_QVGA_INHERIT_K212)
             if(!pMe->m_bAppIsReady)
             {
                  return TRUE;  
@@ -1264,7 +1264,7 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
             {
                 return TRUE;
             }
-			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)
+			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_QVGA_INHERIT_K212)
             if(!pMe->m_bAppIsReady)
             {
                  return TRUE;  

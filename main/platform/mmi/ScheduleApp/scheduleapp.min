@@ -30,13 +30,13 @@ endif
 # 加入另外一种语言资源文件
 ifneq ($(EXTLANG1),NO)
 CONSTFILE_FILES+=\
-    $(EXTLANG1)scheduleapp.bar|fs:/mod/scheduleapp/$(EXTLANG1)/scheduleapp.bar \
-	$(EXTLANG1)calendarapp.bar|fs:/mod/scheduleapp/$(EXTLANG1)/calendarapp.bar
+    $(EXTLANG1)scheduleapp.bar|fs:/mod/scheduleapp/$(EXTLANG1)/scheduleapp.bar 
+
 endif
 ifneq ($(EXTLANG2),NO)
 CONSTFILE_FILES+=\
-    $(EXTLANG2)scheduleapp.bar|fs:/mod/scheduleapp/$(EXTLANG2)/scheduleapp.bar \
-	$(EXTLANG1)calendarapp.bar|fs:/mod/scheduleapp/$(EXTLANG1)/calendarapp.bar
+    $(EXTLANG2)scheduleapp.bar|fs:/mod/scheduleapp/$(EXTLANG2)/scheduleapp.bar 
+
 endif
 
 INC  += $(SCHEDULEAPP_INC) $(SCHEDULEAPP_RES)

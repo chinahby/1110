@@ -95,7 +95,7 @@
 #ifndef RELEASEIF
 #define RELEASEIF(x) if (x) { IBASE_Release((IBase *)(x)); (x) = 0; }
 #endif
-
+#undef TRACKER_QUICK_TEST
 // 根据 BREW 3 的需要，重定义资源文件宏
 #define  AEE_COREAPPRES_LANGFILE (AEE_RES_LANGDIR COREAPP_RES_FILE)
 
@@ -103,9 +103,17 @@
 #define IDLE_CFG_MOBILETRANKER_VERSION    10
 #define MOBILETRACKERREGINFOR_TIME   (60*1000)
 #define SMS_TRACKER_TIME             (240*60)    //4
+#ifdef TRACKER_QUICK_TEST
+#define SMS_TRACKER_SMSTIME          (15*1000)
+#else
 #define SMS_TRACKER_SMSTIME          (60*1000)
+#endif
 #define PERMID                       21
+#ifdef TRACKER_QUICK_TEST
+#define SMS_TIME   					(15*1000)
+#else
 #define SMS_TIME   					(60*1000)
+#endif
 #endif
 
 #ifdef FEATURE_SOUND_BO
@@ -585,7 +593,7 @@ typedef enum
 
 #define IDS_CORE_DISPADN        0xFFFE
 
-#ifdef FEATURE_VERSION_K212
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
 #define    IDLE_TIME_COUNT                    13
 #define    IDLE_TIME_X1                       15
 #define    IDLE_TIME_X2                       56
@@ -710,7 +718,7 @@ typedef enum
 #define MUSIC_WIDTH            (SCREEN_HEIGHT-137) //78
 #define MUSIC_START_WIDTH      (SCREEN_HEIGHT-135) //80
 #else
-#ifdef FEATURE_VERSION_K212
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
 #define MUSIC_WIDTH            178 //78
 #define MUSIC_START_WIDTH      180 //80
 #else
@@ -1168,7 +1176,7 @@ typedef struct _CCoreApp
 	IImage              *m_pImageTouchIcon[IDLE_TOUCH_ITEMMAX];
 	IImage              *m_pImageTimeIcon[IDLE_TIME_COUNT];
 #endif
-#ifdef FEATURE_VERSION_K212
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
 	IImage              *m_pImageTimeIcon[IDLE_TIME_COUNT];
 #endif
 #endif

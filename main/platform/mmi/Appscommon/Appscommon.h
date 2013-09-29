@@ -119,7 +119,7 @@
     #define SCROLLBAR_WIDTH         5
     #define STATUSBAR_HEIGHT        16
 #elif defined(FEATURE_DISP_240X320)	
-#ifdef FEATURE_VERSION_K212
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
 	#define SCREEN_WIDTH            240
     #define SCREEN_HEIGHT           320
     #define STATEBAR_HEIGHT         32
@@ -128,7 +128,6 @@
     #define MENUITEM_HEIGHT         40
     #define SCROLLBAR_WIDTH         10
     #define STATUSBAR_HEIGHT        32	
-
 #else
 	#define SCREEN_WIDTH            240
     #define SCREEN_HEIGHT           320
@@ -493,6 +492,15 @@ typedef struct _BottomBar_Param_type
     uint16              nImgResID;          // 底条图片在资源文件中的 ID
     char                strImgResFile[MAX_FILE_NAME]; // 底条图片所在的资源文件
 } BottomBar_Param_type;
+
+#ifdef FEATURE_SHORTCUT_IN_SETTINGS
+typedef struct _keypad_shortcuts_type
+{
+    uint32 strid;
+    uint32 cls;
+    char args[MAX_SHORTCUTS_ARGS_SIZE];
+}keypad_shortcuts_type;
+#endif
 
 typedef struct _PromptMsg_Param_type
 {
@@ -957,7 +965,7 @@ boolean Appscommon_DrawDialogBoxFrame(AEERect *pBoxRect, boolean bUpward, RGBVAL
        
 ==============================================================================*/
 boolean Appscommon_DrawPopUpDialogBox(IDisplay *pIDisplay, int x, int y, AECHAR *strDisplay);
-#ifdef FEATURE_VERSION_K212
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
 boolean Appscommon_DrawDigitalNumberImage(IDisplay *pDisplay, int number, int nLineWidth, AEERect *fontRect);
 #endif
 

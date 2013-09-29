@@ -145,7 +145,7 @@
 
 #define TIMEOUT_MS_QUICK               (500)
 #define MP3APPISREADY_TIME             (50)
-#ifdef FEATURE_VERSION_K212
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
 #define MS_FASTFORWARDREWIND_TIME      (10000)  // ∫¡√Î
 #else
 #define MS_FASTFORWARDREWIND_TIME      (5000)  // ∫¡√Î
@@ -760,13 +760,7 @@ if(!(x))         \
 #define NEXTPRESS_W 52 //31
 #define NEXTPRESS_H 34 //32
 
-//µπÕÀ
-#define REWIND_X    2
-#define REWIND_Y    199
 
-//øÏΩ¯
-#define FORWARD_X   199
-#define FORWARD_Y   199
 
 //ΩµµÕ“Ù¡ø
 #define DECREASEVOLUMEPRESS_X 70
@@ -903,12 +897,21 @@ if(!(x))         \
 #define OLDPLAY_H 45
 #endif
 
-#ifndef FEATURE_VERSION_K212
+
+#if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_QVGA_INHERIT_K212)
 #define RFIMG_WIDTH 16
 #define REWIND_X    (((SCREEN_WIDTH-4)-(RFIMG_WIDTH*2))/2)
 #define REWIND_Y    (SCHEDULEBAR_Y-9)
 #define FORWARD_X   (REWIND_X+RFIMG_WIDTH+4)
 #define FORWARD_Y   REWIND_Y
+#else
+//µπÕÀ
+#define REWIND_X    2
+#define REWIND_Y    199
+
+//øÏΩ¯
+#define FORWARD_X   199
+#define FORWARD_Y   199
 #endif
 
 typedef enum MP3Recttype

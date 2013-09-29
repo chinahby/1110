@@ -3274,7 +3274,7 @@ static void RecentCalls_RecordDetail(CRecentCalls   *pMe)
                      NULL,
                      IDF_TEXT_TRANSPARENT);
 #else
-#ifdef FEATURE_VERSION_K212
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
    (void)IDISPLAY_DrawText(pMe->m_pDisplay,
                      AEE_FONT_BOLD,
                      wszText, 

@@ -5802,10 +5802,12 @@ wms_client_message_s_type *WmsApp_GetClientMsgMO(WmsApp *pMe, boolean bSend)
     }
 #endif    
 #ifdef FEATURE_OEMOMH
+#ifdef FEATURE_SMS_UDH
     if(udh_present)
     {
         pCltMsg->u.cdma_message.teleservice = WMS_TELESERVICE_WEMT;
     }
+#endif
 #endif
     // Ω” ’µÿ÷∑
     MEMSET(strNum, 0, sizeof(strNum));

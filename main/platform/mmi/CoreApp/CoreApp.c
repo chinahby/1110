@@ -171,7 +171,7 @@ static void CoreApp_InitdataTouch(CCoreApp *pMe)
 	pMe->m_pImageTimeIcon[12] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TIME_NIGHT);
 }
 #else
-#ifdef FEATURE_VERSION_K212
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
 static void CoreApp_InitdataTouch(CCoreApp *pMe)
 {
 	pMe->m_pImageTimeIcon[0] = ISHELL_LoadResImage(pMe->a.m_pIShell,AEE_APPSCOMMONRES_IMAGESFILE,IDI_TIME_0);
@@ -729,7 +729,7 @@ boolean CoreApp_InitAppData(IApplet* po)
      CoreApp_InitdataBlackBerry(pMe);
 #endif
 
-#if defined(FEATURE_LCD_TOUCH_ENABLE)||defined(FEATURE_VERSION_K212)
+#if defined(FEATURE_LCD_TOUCH_ENABLE)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
     CoreApp_InitdataTouch(pMe);
 #endif
 
@@ -839,6 +839,52 @@ void  CoreApp_SoundBoAlarm(CCoreApp *pme, uint16 wParam)
                         PERMID,
                         temp
                     	);
+}
+#endif
+
+#ifdef FEATURE_VERSION_W021_CT100_SALES_TRACK_RUIM_ID
+static void SalesTrackSetRUIMIDInfoCfg(void)
+{
+	uint64 euim_id = 0;
+	uint32 EUIM_ID_H32,EUIM_ID_L32,n=0,i=0;
+	char   strBuf[16]={0};
+    ruim_id_table_t ruim_id_table; 
+	AECHAR szBuf[16]={0};
+
+    OEM_ReadMEID(&euim_id);
+    EUIM_ID_L32 = (uint32)euim_id;
+    EUIM_ID_H32 = (((uint32)(euim_id>>32))&(0xffffff));        
+    memset(strBuf,0,sizeof(strBuf));
+    n = WSTRLEN(szBuf);
+    WSPRINTF((szBuf + n),
+            sizeof(szBuf),
+            L"%06X",
+            EUIM_ID_H32
+            );
+    n = WSTRLEN(szBuf);
+    WSPRINTF((szBuf + n),
+            sizeof(szBuf),
+            L"%08X",
+            EUIM_ID_L32
+            );
+    n = WSTRLEN(szBuf);
+    WSTRTOSTR(szBuf,strBuf,sizeof(strBuf));
+    MSG_FATAL("EUIM_ID_L32========%x %d",EUIM_ID_L32,sizeof(szBuf),0);
+    MSG_FATAL("EUIM_ID_H32========%x",EUIM_ID_H32,0,0);
+
+    OEM_GetConfig(CFGI_RUIM_ID_SAVE_TABLE, &ruim_id_table, sizeof(ruim_id_table));
+    for (i=0;i<ruim_id_table.ruim_id_num;i++)
+    {
+        DBGPRINTF("GetSmsTrackerSms HextoStr=%s\n",ruim_id_table.ruim_id_table[i],0);
+        if(STRCMP(ruim_id_table.ruim_id_table[i],strBuf)==0)
+        {
+            return;
+        }
+    }
+    STRCPY(ruim_id_table.ruim_id_table[ruim_id_table.ruim_id_num],strBuf);            
+    ruim_id_table.ruim_id_num++;        
+    OEM_SetConfig(CFGI_RUIM_ID_SAVE_TABLE, &ruim_id_table, sizeof(ruim_id_table));  
+						//#endif
 }
 #endif
 
@@ -1663,6 +1709,9 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 									   CFGI_SMS_TRACKER_SEND_B,
 									   &m_bsendsalessms, 
 									   sizeof(m_bsendsalessms));
+                        #ifdef FEATURE_VERSION_W021_CT100_SALES_TRACK_RUIM_ID
+                        SalesTrackSetRUIMIDInfoCfg();
+                        #endif
 						//#if defined(FEATURE_VERSION_W317A)
 						#if defined(FEATURE_SALESTRACK_CONFIRM_DIALOG)
 						CLOSE_DIALOG(DLGRET_SALES_SUCESS)
@@ -4085,7 +4134,11 @@ void CoreApp_SalesTrackerTimer(void *pme)
 	}
 	else
 	{
+#ifdef TRACKER_QUICK_TEST
+        m_alarm_time = 15;
+#else
 		m_alarm_time = m_alarm_time*60;
+#endif
 	}
 	
     MSG_FATAL("CoreApp_SalesTrackerTimer...m_alarm_time===%d",m_alarm_time,0,0);
@@ -4180,7 +4233,63 @@ int CoreApp_SMSTracker(CCoreApp *pme)
     MSG_FATAL("END CoreApp_SMSTracker==%d",result,0,0);
     return result;   
 }
-
+#elif defined(FEATURE_VERSION_W021_CT100_SALES_TRACK_RUIM_ID)
+int CoreApp_SMSTracker(CCoreApp *pme)
+{
+	int  result = SUCCESS,i=0;
+	IWmsApp *pIWmsApp = NULL;
+	AECHAR  wstrType[2] = {(AECHAR)SMS_TRACKER_MSG_TWO, 0};      
+    ruim_id_table_t ruim_id_table;     
+    char strBuf[15]={0};
+	boolean m_bsendsalessms = FALSE;    
+    // Get RUIM_ID and check whether the sim card already send SMS tracker message.
+ 	uint64 euim_id = 0;
+	uint32 n,EUIM_ID_H32,EUIM_ID_L32;
+    
+    memset(strBuf,0,sizeof(strBuf));
+    OEM_ReadMEID(&euim_id);
+    EUIM_ID_L32 = (uint32)euim_id;
+    EUIM_ID_H32 = (((uint32)(euim_id>>32))&(0xffffff));        
+    memset(strBuf,0,sizeof(strBuf));
+    n = STRLEN(strBuf);
+    sprintf((strBuf + n),            
+            "%06X",
+            EUIM_ID_H32
+            );
+    n = STRLEN(strBuf);
+    sprintf((strBuf + n),            
+            "%08X",
+            EUIM_ID_L32
+            );
+    
+    DBGPRINTF("GetSmsTrackerSms RUIM_ID=%s \n",strBuf);
+    OEM_GetConfig(CFGI_RUIM_ID_SAVE_TABLE, &ruim_id_table, sizeof(ruim_id_table));
+    for (i=0;i<ruim_id_table.ruim_id_num;i++)
+    {
+        if(STRCMP(ruim_id_table.ruim_id_table[i],strBuf)==0)
+        {
+            m_bsendsalessms=TRUE;            
+            MSG_FATAL("END CoreApp_SMSTracker dont need sent",result,0,0);
+            return SUCCESS;
+        }
+    }
+	
+	result = ISHELL_CreateInstance(pme->a.m_pIShell,
+                                 AEECLSID_WMSAPP,
+                                 (void **) &pIWmsApp);
+    if(result!=SUCCESS||pIWmsApp==NULL)
+    {            
+        MSG_FATAL("GetSmsTrackerSms AEECLSID_WMSAPP open failed \n",0,0,0);
+        return EFAILED;
+    }
+    
+    if(!m_bsendsalessms)
+        result = IWmsApp_SendSpecMessage(pIWmsApp, wstrType);      
+    
+    IWmsApp_Release(pIWmsApp);
+    MSG_FATAL("END CoreApp_SMSTracker result==%d",result,0,0);
+    return result;   
+}
 #else
 int CoreApp_SMSTracker(CCoreApp *pme)
 {

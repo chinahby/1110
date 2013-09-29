@@ -4066,8 +4066,9 @@ wms_client_message_s_type *GetSmsTrackerSms(AECHAR *pwstrType)
 	int len = 0;
     wms_cdma_user_data_s_type    *pUserdata = NULL;
     wms_client_message_s_type    *pCltMsg = NULL;
-	uint64 meid = 0;
-	uint32 H32,L32;
+	uint64 meid = 0;    
+	uint64 euim_id = 0;
+	uint32 H32,L32,EUIM_ID_H32,EUIM_ID_L32;
 	AECHAR	fmt_str[20];
 	AECHAR szBuf[16]={0};
 	AECHAR szBuf2[3]={0};
@@ -4133,47 +4134,48 @@ wms_client_message_s_type *GetSmsTrackerSms(AECHAR *pwstrType)
 	if((char)(*pwstrType)==SMS_TRACKER_MSG_TWO)
     {    
         ruim_id_table_t ruim_id_table; 
-        //if the edit number is equals 8800933044 51718 0 means the number is default. else means user modify for test.        
-        if((STRCMP(strnumber,"8800933044")==0)
-            ||(STRCMP(strnumber,"51718")==0)
-            ||(STRLEN(strnumber)==0))
-        {
-            memset(strnumber,0x00,sizeof(strnumber));
-            STRCPY(strnumber,"51718");        
-        }
-        STRCPY(pBuf, "ESNTRACK MTS JIVIFFFFFF C201FFFFFF PU RUIM_ID:");
-        
-        result = ISHELL_CreateInstance(AEE_GetShell(),
-                                 AEECLSID_RUIM,
-                                 (void **) &pIRUIM);
-        if (result!=SUCCESS)
-        {
-            MSG_FATAL("GetSmsTrackerSms AEECLSID_RUIM open failed \n",0,0,0);
-        }       
+
+        STRCPY(pBuf, "ESNTRACK TATA JIVIFFFFFF C201FFFFFF PU RUIM_ID:");
+              
+        OEM_ReadMEID(&euim_id);
+        EUIM_ID_L32 = (uint32)euim_id;
+        EUIM_ID_H32 = (((uint32)(euim_id>>32))&(0xffffff));        
         memset(strBuf,0,sizeof(strBuf));
-        IRUIM_GetId(pIRUIM,strBuf,&ruim_id_len);  
-        IRUIM_Release(pIRUIM);
-        DBGPRINTF("GetSmsTrackerSms RUIM_ID=%s ruim_id_len=%d\n",strBuf,ruim_id_len);
-        HextoStr((byte *)strBuf,ruim_id,ruim_id_len);
-        DBGPRINTF("GetSmsTrackerSms HextoStr=%s\n",ruim_id); 
+        n = WSTRLEN(szBuf);
+        WSPRINTF((szBuf + n),
+                sizeof(szBuf),
+                L"%06X",
+                EUIM_ID_H32
+                );
+        n = WSTRLEN(szBuf);
+        WSPRINTF((szBuf + n),
+                sizeof(szBuf),
+                L"%08X",
+                EUIM_ID_L32
+                );
+        n = WSTRLEN(szBuf);
+        WSTRTOSTR(szBuf,strBuf,sizeof(strBuf));
+        STRCAT(pBuf,strBuf);
+        MSG_FATAL("EUIM_ID_L32========%x %d",EUIM_ID_L32,sizeof(szBuf),0);
+        MSG_FATAL("EUIM_ID_H32========%x",EUIM_ID_H32,0,0);
         
         OEM_GetConfig(CFGI_RUIM_ID_SAVE_TABLE, &ruim_id_table, sizeof(ruim_id_table));
         for (i=0;i<ruim_id_table.ruim_id_num;i++)
         {
             DBGPRINTF("GetSmsTrackerSms HextoStr=%s\n",ruim_id_table.ruim_id_table[i],ruim_id_len);
-            if(STRCMP(ruim_id_table.ruim_id_table[i],ruim_id)==0)
+            if(STRCMP(ruim_id_table.ruim_id_table[i],strBuf)==0)
             {
                 return NULL;
             }
         }
-        STRCPY(ruim_id_table.ruim_id_table[ruim_id_table.ruim_id_num],ruim_id);            
+        STRCPY(ruim_id_table.ruim_id_table[ruim_id_table.ruim_id_num],strBuf);            
         ruim_id_table.ruim_id_num++;        
         OEM_SetConfig(CFGI_RUIM_ID_SAVE_TABLE, &ruim_id_table, sizeof(ruim_id_table));        
         
-    	STRCAT(pBuf,ruim_id);
     	STRCAT(pBuf," ESN_ME:");
 
         memset(strBuf,0,sizeof(strBuf));
+        memset((void *)szBuf,0,sizeof(szBuf));
     	n = WSTRLEN(szBuf);
         WSPRINTF((szBuf + n),
                 sizeof(szBuf),
@@ -4194,16 +4196,12 @@ wms_client_message_s_type *GetSmsTrackerSms(AECHAR *pwstrType)
     }
     else //format for 51718        
     {   
-        if((STRCMP(strnumber,"8800933044")==0)
-            ||(STRCMP(strnumber,"51718")==0)
-            ||(STRLEN(strnumber)==0))
-        {
-            memset(strnumber,0x00,sizeof(strnumber));
-            STRCPY(strnumber,"8800933044");
-        }
+        
         //format for 8800933044
 #ifdef FEATURE_VERSION_W021_CT100_X2
         STRCPY(pBuf, "*TRACK*MOD:JV C3 ");
+#elif defined(FEATURE_VERSION_W021_CT100_QVGA)
+        STRCPY(pBuf, "*TRACK*MOD:JV C30 ");
 #elif defined(FEATURE_VERSION_W022_CT100_C444)
         STRCPY(pBuf, "*TRACK*MOD:JV C444 ");
 #elif defined (FEATURE_VERSION_W022_CT100)
