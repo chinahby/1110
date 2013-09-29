@@ -2037,7 +2037,11 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 				}
             }
 #endif
-
+            if((AVKType)wParam != AVK_STAR)
+            {
+			   CallApp_keypadtimer(pMe);
+            }	
+			
             switch ((AVKType)wParam)
             {
                 case AVK_UP:
@@ -2288,7 +2292,6 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                     char   szStr[2];
                     AECHAR wStr[2];
 					
-					
                     if ((dwParam & KB_AUTOREPEAT) != 0 && (AVKType)wParam != AVK_0&& (AVKType)wParam != AVK_STAR&& (AVKType)wParam != AVK_POUND)
                     {
                         MSG_FATAL("OK,it is repeat,don't process it ",0,0,0);
@@ -2302,6 +2305,8 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 					}
                     szStr[1] = '\0';
                     STR_TO_WSTR(szStr, wStr, sizeof(wStr));
+					
+                    
 					MSG_FATAL("1111111111111111111111",0,0,0);
 				#ifndef FEATURE_LCD_TOUCH_ENABLE
                     if((AVKType)wParam == AVK_POUND||(AVKType)wParam == AVK_STAR|| (AVKType)wParam == AVK_0)
@@ -8847,6 +8852,8 @@ static void CallApp_keypadtimer(void *pUser)
 	CCallApp *pMe = (CCallApp *)pUser;
 	pMe->m_curpros = 0;
 	pMe->b_multenter = FALSE;
+	
+    MSG_FATAL("****CallApp_keypadtimer****",0,0,0);
 }
 static AECHAR CallApp_AVKSTAR_2ASCII(CCallApp *pMe)
 {
@@ -13850,7 +13857,9 @@ if(wp == AVK_0)
        		len = WSTRLEN(pMe->m_DialString);
         	AEE_CancelTimer(CallApp_keypadtimer,pMe);
         	szStr = CallApp_AVKSTAR_2ASCII(pMe);
-        	if(pMe->m_curpros>0 ||(pMe->m_curpros==0 && pMe->b_multenter))
+        	//if(pMe->m_curpros>0 ||(pMe->m_curpros==0 && pMe->b_multenter))
+        	MSG_FATAL("**** pMe->b_multenter =%d-----pMe->m_nCursorPos=%d",pMe->b_multenter,pMe->m_nCursorPos,0);
+        	if(pMe->b_multenter)
         	{
         		
         		AECHAR wstrTemp[MAX_SIZE_DIALER_TEXT] = {0};

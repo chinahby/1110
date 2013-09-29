@@ -275,9 +275,15 @@
     #define REFUI_CALL_MAX_IMAGSIZE       (17)
 #endif
 #elif defined(FEATURE_DISP_220X176)
+#ifdef FEATURE_VERSION_K212_20D
+    #define NUM_IMAGE_HIGHT               (50)
+    #define NUM_IMAGE_WIDTH               (34)
+    #define REFUI_CALL_MAX_IMAGSIZE       (17)
+#else
 	#define NUM_IMAGE_HIGHT               (25)
     #define NUM_IMAGE_WIDTH               (20)
     #define REFUI_CALL_MAX_IMAGSIZE       (17)	
+#endif	
 #elif defined(FEATURE_DISP_128X160)
 	#define NUM_IMAGE_HIGHT               (25)
     #define NUM_IMAGE_WIDTH               (20)

@@ -88,6 +88,34 @@ CONSTFILE_FILES+=\
 		dian.mp3|fs:/hsmm/callapp/dian.mp3 \
 		fen.mp3|fs:/hsmm/callapp/fen.mp3
 endif	
+
+ifeq ($(USES_RESDIR), K212_LD)
+CONSTFILE_FILES+=\
+		bjtime.mp3|fs:/hsmm/callapp/bjtime.mp3 \
+		am.mp3|fs:/hsmm/callapp/am.mp3 \
+		pm.mp3|fs:/hsmm/callapp/pm.mp3 \
+		10.mp3|fs:/hsmm/callapp/10.mp3 \
+		20.mp3|fs:/hsmm/callapp/20.mp3 \
+		30.mp3|fs:/hsmm/callapp/30.mp3 \
+		40.mp3|fs:/hsmm/callapp/40.mp3 \
+		50.mp3|fs:/hsmm/callapp/50.mp3 \
+		dian.mp3|fs:/hsmm/callapp/dian.mp3 \
+		fen.mp3|fs:/hsmm/callapp/fen.mp3
+endif
+
+ifeq ($(USES_RESDIR), K212_HL)
+CONSTFILE_FILES+=\
+		bjtime.mp3|fs:/hsmm/callapp/bjtime.mp3 \
+		am.mp3|fs:/hsmm/callapp/am.mp3 \
+		pm.mp3|fs:/hsmm/callapp/pm.mp3 \
+		10.mp3|fs:/hsmm/callapp/10.mp3 \
+		20.mp3|fs:/hsmm/callapp/20.mp3 \
+		30.mp3|fs:/hsmm/callapp/30.mp3 \
+		40.mp3|fs:/hsmm/callapp/40.mp3 \
+		50.mp3|fs:/hsmm/callapp/50.mp3 \
+		dian.mp3|fs:/hsmm/callapp/dian.mp3 \
+		fen.mp3|fs:/hsmm/callapp/fen.mp3
+endif
 # 加入另外一种语言资源文件
 ifneq ($(EXTLANG1),NO)
 CONSTFILE_FILES+=\
