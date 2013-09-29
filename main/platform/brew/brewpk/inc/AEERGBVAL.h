@@ -32,7 +32,10 @@ typedef uint32 RGBVAL;
 #define RGB_RED               (MAKE_RGB(255,0,0))
 #define RGB_WINTE_BACKDROP    (MAKE_RGB(56,98,107))           //add by ydc 090522
 #define RGB_WIRIE_SCRLLBAR    (MAKE_RGB(133,181,190))           //add by ydc 090522
-#define RGB_GRAY_BACK         (MAKE_RGB(181,181,181))           //add by ydc 090522 
+#define RGB_GRAY_BACK         (MAKE_RGB(181,181,181))//add by ydc 090522
+#define RGB_LIGHT_GREY		  (MAKE_RGB(0xC0, 0xC0, 0xC0))
+#define RGB_DARK_GREY   	  (MAKE_RGB(0x80, 0x80, 0x80))
+
 #endif /*CUST_EDITION*/
 //
 // AEE_RO_TRANSPARENT Mask Values: These describe the default transparent

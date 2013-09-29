@@ -2656,6 +2656,8 @@ static boolean  dialog_handler_of_state_gotodate( CScheduleApp* pme,
 #endif
 				#ifdef FEATURE_VERSION_K212
 				dateFormatType = OEMNV_DATEFORM_YMD;
+				#elif defined(FEATURE_VERSION_K212_ND)
+				dateFormatType = OEMNV_DATEFORM_YMD;
 				#else
 				OEM_GetConfig( CFGI_DATE_FORMAT, &dateFormatType, sizeof( byte));
 				#endif

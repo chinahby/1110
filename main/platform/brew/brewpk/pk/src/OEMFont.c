@@ -40,15 +40,21 @@ when          who   what, where, why
 #ifdef FEATURE_LANG_CHINESE
 
 #ifdef FEATURE_FONT_16
-
+#ifdef FEATURE_VERSION_K212_ND 
+#define  CH_NORMAL_HEIGHT       12          // Normal font height in pixel unit
+#else
 #define  CH_NORMAL_HEIGHT       16         // Normal font height in pixel unit
+#endif
 #define  CH_NORMAL_WIDTH_PIXEL  16          // Normal font width in pixel unit
 #define  CH_USER1_HEIGHT        16          // User1 font height in pixel unit
 #define  CH_USER1_WIDTH_PIXEL   12          // User1 font width in pixel unit
 
 #else // FEATURE_FONT_16
-
-#define  CH_NORMAL_HEIGHT       16          // Normal font height in pixel unit
+#ifdef FEATURE_VERSION_K212_ND 
+#define  CH_NORMAL_HEIGHT       12          // Normal font height in pixel unit
+#else
+#define  CH_NORMAL_HEIGHT       16 
+#endif
 #define  CH_SMALL_HEIGHT        8
 #define  CH_NORMAL_WIDTH_PIXEL  16          // Normal font width in pixel unit
 #define  CH_USER1_HEIGHT        16          // User1 font height in pixel unit
@@ -64,8 +70,11 @@ when          who   what, where, why
 #define  CH_USER1_WIDTH_PIXEL   12          // User1 font width in pixel unit
 
 #else
-
+#ifdef FEATURE_VERSION_K212_ND 
+#define  CH_NORMAL_HEIGHT       12          // Normal font height in pixel unit
+#else
 #define  CH_NORMAL_HEIGHT       14         // Normal font height in pixel unit
+#endif
 #define  CH_NORMAL_WIDTH_PIXEL  14          // Normal font width in pixel unit
 #define  CH_USER1_HEIGHT        14          // User1 font height in pixel unit
 #define  CH_USER1_WIDTH_PIXEL   12          // User1 font width in pixel unit

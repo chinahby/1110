@@ -624,12 +624,19 @@ static boolean CameraApp_MainMenuHandleEvent(CCameraApp *pMe, AEEEvent eCode, ui
             
             pMe->m_wMsgID = IDS_MSG_WAITING;
             pMe->m_nMsgTimeout = TIMEOUT_MS_MSGBOX;
-            
+            #ifdef FEATURE_VERSION_K212_ND
+			(void)ISHELL_LoadResString(pMe->m_pShell,
+                                AEE_APPSCAMERAAPP_RES_FILE,                                
+                                IDS_ITEM_CAMERA1,
+                                WTitle,
+                                sizeof(WTitle));
+			#else
 			(void)ISHELL_LoadResString(pMe->m_pShell,
                                 AEE_APPSCAMERAAPP_RES_FILE,                                
                                 IDS_ITEM_CAMERA,
                                 WTitle,
                                 sizeof(WTitle));
+			#endif
 			if(pMe->m_pIAnn != NULL)
         	{
 		    	IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);

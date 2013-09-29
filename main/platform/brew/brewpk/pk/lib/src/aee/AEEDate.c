@@ -1788,7 +1788,7 @@ static void DateCtl_GetGridRect(DateCtl * pme, AEERect * prc, int nGridIndex)
 #else
    MSG_FATAL("x+1=%d,y+1=%d",x+1,y+3,0);
    #ifdef FEATURE_VERSION_K212_ND
-   SETAEERECT(prc, x+1, y+7, pme->m_rcGrid.dx-2, pme->m_rcGrid.dy-4);
+   SETAEERECT(prc, x+1, y+9, pme->m_rcGrid.dx-2, pme->m_rcGrid.dy-1);
    #else
    SETAEERECT(prc, x+1, y+1, pme->m_rcGrid.dx-2, pme->m_rcGrid.dy-4);
    #endif
@@ -1865,7 +1865,7 @@ static void DateCtl_DrawDay(DateCtl * pme, int nDay, AEERect * prc)
   int x, y;
 
   y = prc->y + ((prc->dy - IMAGE_WIDTH) / 2);
-
+	
   if (nDay >= 1 && nDay <= 31) {
 
    // See if the day has been 'ticked'...
@@ -1874,6 +1874,7 @@ static void DateCtl_DrawDay(DateCtl * pme, int nDay, AEERect * prc)
       AEERect rc;
 
       SETAEERECT(&rc, prc->x, prc->y, 1, 1);
+	  MSG_FATAL("prc->x=====%d,prc->y======%d",prc->x,prc->y,0);
       IDISPLAY_FillRect(pme->m_pIDisplay, &rc, RGB_BLACK);
    }
 
@@ -1883,6 +1884,7 @@ static void DateCtl_DrawDay(DateCtl * pme, int nDay, AEERect * prc)
       int extra = (msd != 1 && lsd != 1);
       x = prc->x + 1;
       DateCtl_Digit(pme, msd, x, y);
+	  
       DateCtl_Digit(pme, lsd, x+4+extra, y);
     }
     else {

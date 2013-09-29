@@ -786,6 +786,10 @@ typedef struct
    boolean m_sound_bo_dia;		//CFGI_SOUND_BO_DIA,
    boolean m_sound_bo_main;		//CFGI_SOUND_BO_MAIN,
    boolean m_sound_bo_core;		//CFGI_SOUND_BO_CORE,
+   #ifdef FEATURE_VERSION_K212_ND
+   boolean m_sound_bo_indial;	//CFGI_SOUND_BO_INDIAL,
+   boolean m_sound_bo_phonebook;//CFGI_SOUND_BO_PHONEBOOK,
+   #endif
 #endif 
 #ifdef FEATURE_SHORTCUT_IN_SETTINGS   
    keypad_shortcuts_t m_keypad_shortcuts_table[MAX_SHORTCUTS_SIZE]; /*CFGI_KEYPAD_SHORTCUTS_TABLE*/
@@ -2164,6 +2168,10 @@ static OEMConfigListType oemi_cache = {
    ,TRUE    		//CFGI_SOUND_BO_DIA,
    ,TRUE		    //CFGI_SOUND_BO_MAIN,
    ,TRUE   		   //CFGI_SOUND_BO_CORE,
+  #ifdef FEATURE_VERSION_K212_ND
+   ,TRUE			//CFGI_SOUND_BO_INDIAL,
+   ,TRUE			//CFGI_SOUND_BO_PHONEBOOK,
+   #endif
 #endif 
 #ifdef FEATURE_SHORTCUT_IN_SETTINGS   
    ,{{AEECLSID_APP_CAMERA,{0}},{AEECLSID_APP_FMRADIO,{0}},{AEECLSID_APP_SETTINGMENU,{0}},{AEECLSID_SCHEDULEAPP,{0}}}    //CFGI_KEYPAD_SHORTCUTS_TABLE
@@ -2778,6 +2786,8 @@ static ConfigItemTableEntry const customOEMItemTable[] =
    CFGTABLEITEM(CFGI_SOUND_BO_DIA,sizeof(boolean)),		    //CFGI_SOUND_BO_DIA,
    CFGTABLEITEM(CFGI_SOUND_BO_MAIN,sizeof(boolean)),		//CFGI_SOUND_BO_MAIN,
    CFGTABLEITEM(CFGI_SOUND_BO_CORE,sizeof(boolean)),		//CFGI_SOUND_BO_CORE,
+   //CFGTABLEITEM(CFGI_SOUND_BO_INDIAL,sizeof(boolean)),		//CFGI_SOUND_BO_INDIAL,
+   //CFGTABLEITEM(CFGI_SOUND_BO_PHONEBOOK,sizeof(boolean)),	//CFGI_SOUND_BO_PHONEBOOK,
 #endif 
 #ifdef FEATURE_SHORTCUT_IN_SETTINGS   
    CFGTABLEITEM(CFGI_KEYPAD_SHORTCUTS_TABLE,sizeof(keypad_shortcuts_t)*MAX_SHORTCUTS_SIZE),
@@ -2911,6 +2921,10 @@ void OEM_RestoreFactorySetting( void )
    oemi_cache.m_sound_bo_dia =  TRUE;		//CFGI_SOUND_BO_DIA,
    oemi_cache.m_sound_bo_main = TRUE;		//CFGI_SOUND_BO_MAIN,
    oemi_cache.m_sound_bo_core = TRUE;  		//CFGI_SOUND_BO_CORE,
+   #ifdef FEATURE_VERSION_K212_ND
+   oemi_cache.m_sound_bo_indial= TRUE;		//CFGI_SOUND_BO_INDIAL, 
+   oemi_cache.m_sound_bo_phonebook=TRUE;	//CFGI_SOUND_BO_PHONEBOOK,
+   #endif
 #endif 
 
    

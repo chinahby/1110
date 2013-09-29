@@ -60,7 +60,7 @@ endif
 
 ifeq ($(RESOURCEDIR),K212_ND)
     CONSTFILE_FILES+=\
-		Aishiniwo.mp3|fs:/hsmm/music/Wuxinghongqi.mp3
+		Wuxinghongqi.mp3|fs:/hsmm/music/Wuxinghongqi.mp3
 endif
 
 ifeq ($(RESOURCEDIR),EC99)

@@ -147,7 +147,11 @@
 #else
 #define CALL_ANIMATION_WIDTH           36
 #endif
+#ifdef FEATURE_VERSION_K212_ND
+#define CALL_ANNU_HEIGHT                   1//16
+#else
 #define CALL_ANNU_HEIGHT                   5//16
+#endif
 #define CALL_SOFT_KEY_HIGHT              16//15//  (pMe->m_LargeLineHeight)
 //#define CALL_TITLE_BAR_HEIGHT   14 
 

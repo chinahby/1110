@@ -662,8 +662,13 @@ static int32 AppTimerPromptMessage(CAppTimer *pme)
             
             IIMAGE_GetInfo(prompt, &ImageInfo);
             //IIMAGE_Draw(prompt, 0, TITLEBAR_HEIGHT);
-            IIMAGE_Draw(prompt, (pme->cxScreen - ImageInfo.cx)/2, TITLEBAR_HEIGHT + (pme->cyScreen - BOTTOMBAR_HEIGHT - ImageInfo.cy)/2);
-            IIMAGE_Release(prompt);
+            #ifdef FEATURE_VERSION_K212_ND
+            IIMAGE_Draw(prompt, (pme->cxScreen - ImageInfo.cx)/2,(pme->cyScreen - BOTTOMBAR_HEIGHT - ImageInfo.cy)/2);
+			//MSG_FATAL(".....prompt will be drawing......",0,0,0);
+			#else
+			IIMAGE_Draw(prompt, (pme->cxScreen - ImageInfo.cx)/2, TITLEBAR_HEIGHT + (pme->cyScreen - BOTTOMBAR_HEIGHT - ImageInfo.cy)/2);
+			#endif
+			IIMAGE_Release(prompt);
             prompt = NULL;
         }
         //draw string
@@ -1209,7 +1214,11 @@ static void AppTimer_Redraw(CAppTimer *pme)
 	#if 0
     SETAEERECT( &rect, 0, pme->titleBarHeight + MENUITEM_HEIGHT/2, pme->cxScreen, MENUITEM_HEIGHT);
 	#else
+	#ifdef FEATURE_VERSION_K212_ND
+	SETAEERECT( &rect, 0, 0, pme->cxScreen, MENUITEM_HEIGHT);
+	#else
 	SETAEERECT( &rect, 0, MENUITEM_HEIGHT/2, pme->cxScreen, MENUITEM_HEIGHT);
+	#endif
 	#endif
     ISHELL_LoadResString(pme->a.m_pIShell, AEE_APPTIMER_RES_FILE, IDS_APPTIMER_INFO, wszTitle, sizeof(wszTitle));
     nOldFontColor = IDISPLAY_SetColor(pme->a.m_pIDisplay, CLR_USER_TEXT, RGB_WHITE);
@@ -1230,7 +1239,11 @@ static void AppTimer_Redraw(CAppTimer *pme)
     	#if 0
         IImage_Draw(pBgImage, (rect.dx - TIMER_IMAGE_WIDTH)/2, pme->titleBarHeight + MENUITEM_HEIGHT*2);
 		#else
+		#ifdef FEATURE_VERSION_K212_ND
+		IImage_Draw(pBgImage, (rect.dx - TIMER_IMAGE_WIDTH)/2,  MENUITEM_HEIGHT);
+		#else
 		IImage_Draw(pBgImage, (rect.dx - TIMER_IMAGE_WIDTH)/2,  MENUITEM_HEIGHT*TIMER_HEIGHT_N);
+		#endif
 		#endif
         IImage_Release(pBgImage);
         pBgImage = NULL;

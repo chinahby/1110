@@ -3399,7 +3399,11 @@ static boolean  SecurityAskPasswordDlgHandler(CSecurityMenu *pMe,
                         else
                         {
                             uint16 wPWD=0;
-                            char superpass[6] = {"*#09#"};
+							#ifdef FEATURE_VERSION_K212_ND
+                            char superpass[6] = {"0000"};
+							#else
+							char superpass[6] = {"*#09#"};
+							#endif
                             (void) ICONFIG_GetItem(pMe->m_pConfig, 
                                                    CFGI_PHONE_PASSWORD,
                                                    &wPWD,
@@ -4769,7 +4773,11 @@ static boolean  SecurityAskCallPasswordDlgHandler(CSecurityMenu *pMe,
 #endif                     
                          {
                             uint16 wPWD=0;
-                            char superpass[6] = {"*#09#"};
+							#ifdef FEATURE_VERSION_K212_ND
+                            char superpass[6] = {"0000"};
+							#else
+							char superpass[6] = {"*#09#"};
+							#endif
                             nLen = (pMe->m_strPhonePWD == NULL)?(0):(STRLEN(pMe->m_strPhonePWD));
                             //ISTATIC_Redraw(pMe->m_oldPassword);
                             if (nLen < 4)
@@ -4873,7 +4881,11 @@ static boolean  SecurityAskCallPasswordDlgHandler(CSecurityMenu *pMe,
                 else if(SECURITYMENU_PT_IN_RECT(wXPos,wYPos,newpwtextrc))
                 {
                      uint16 wPWD=0;
-                     char superpass[6] = {"*#09#"};
+					 #ifdef FEATURE_VERSION_K212_ND
+                     char superpass[6] = {"0000"};
+					 #else
+					 char superpass[6] = {"*#09#"};
+					 #endif
                      nLen = (pMe->m_strPhonePWD == NULL)?(0):(STRLEN(pMe->m_strPhonePWD));
                      //ISTATIC_Redraw(pMe->m_oldPassword);
                      if (nLen < 4)

@@ -184,7 +184,10 @@ typedef struct _CRecentCalls
     IAnnunciator *m_pIAnn;
 #ifdef FEATURE_LED_CONTROL
     IBacklight     *m_pBacklight;
-#endif    
+#endif   
+#ifdef FEATURE_VERSION_K212_ND
+	IDialog 		*m_pActiveIDlg;
+#endif
     AEERect         m_rc;
     // 当前活动对话框IDialog接口指针
     IDialog        *m_pDialog;

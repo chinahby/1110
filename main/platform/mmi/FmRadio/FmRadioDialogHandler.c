@@ -83,7 +83,11 @@ static boolean  HandleFmRadioMainDialogEvent(CFmRadio *pMe,
 #elif defined(FEATURE_DISP_240X320)
 #define FM_VOLUME_Y                         (SCREEN_HEIGHT - 140)
 #else
+#ifdef FEATURE_VERSION_K212_ND
+#define FM_VOLUME_Y                         (SCREEN_HEIGHT - 78)
+#else
 #define FM_VOLUME_Y                         (SCREEN_HEIGHT - 68)
+#endif
 #endif
 
 static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier);
@@ -3248,8 +3252,8 @@ static void drawOperationPrompt( CFmRadio *pMe, int16 resId, RGBVAL color)
     int nFontHeight = IDISPLAY_GetFontMetrics(pMe->m_pDisplay, AEE_FONT_BOLD, NULL, NULL);
 
     SETAEERECT(&rect,
-                        pMe->m_rc.x + FMRADIO_CHANNEL_XOFFSET + FMRADIO_LED_LIGHT_SIZE, 
-                        pMe->m_rc.y + FMRADIO_OPERATION_YOFFSET*2, 
+                        pMe->m_rc.x + FMRADIO_CHANNEL_XOFFSET + FMRADIO_LED_LIGHT_SIZE,
+						pMe->m_rc.y + FMRADIO_OPERATION_YOFFSET*2,
                         pMe->m_rc.dx - 2*(FMRADIO_CHANNEL_XOFFSET + FMRADIO_LED_LIGHT_SIZE), 
                         nFontHeight);
     drawImageWithOffset( pMe, FMRADIOLN_RES_FILE, IDI_BG, rect.x, rect.y, &rect);
@@ -3385,7 +3389,11 @@ static void drawChannelIndicator( CFmRadio *pMe)
     convertChannelValueToText( pMe->cfg.channel, szBuf, 40);
     SETAEERECT(&rect, 
                 pMe->m_rc.x, 
-                pMe->m_rc.y + FMRADIO_CHANNEL_FREQ_YOFFSET, 
+                #ifdef FEATURE_VERSION_K212_ND
+                pMe->m_rc.y, 
+                #else
+				pMe->m_rc.y + FMRADIO_CHANNEL_FREQ_YOFFSET, 
+                #endif
                 pMe->m_rc.dx,
                 nFontHeight);
     drawImageWithOffset( pMe, FMRADIOLN_RES_FILE, IDI_BG, rect.x, rect.y, &rect);

@@ -108,7 +108,7 @@ boolean bIsPowerUp = FALSE;     //Add By zzg 2013_03_29
 
 #define RPLMN_X				5
 #ifdef FEATURE_VERSION_K212_ND //add by wenyu ,改变待机界面显示位置
-#define RPLMN_Y				8
+#define RPLMN_Y				1
 #else
 #define RPLMN_Y				20
 #endif
@@ -117,11 +117,19 @@ boolean bIsPowerUp = FALSE;     //Add By zzg 2013_03_29
 #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
 #define DATA_Y				SCREEN_HEIGHT - BOTTOMBAR_HEIGHT - 15
 #else
+#ifdef FEATURE_VERSION_K212_ND
+#define DATA_Y				76
+#else
 #define DATA_Y				36
+#endif
 #endif
 
 #define WEEK_X              5
+#ifdef FEATURE_VERSION_K212_ND
+#define WEEK_Y              76
+#else
 #define WEEK_Y              52
+#endif
 #elif defined(FEATURE_DISP_220X176)
 
 
@@ -6877,9 +6885,9 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
                                   0, 0, &rc, 
                                   #ifdef FEATURE_OEMOMH
                                   IDF_ALIGN_LEFT 
-                                  #elif defined(FEATURE_VERSION_MYANMAR)
+                                  #elif defined(FEATURE_VERSION_MYANMAR)||defined(FEATURE_VERSION_K212_ND)
                                   IDF_ALIGN_CENTER
-                                  #elif defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
+                                  #elif defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
                                   IDF_ALIGN_LEFT     
         						  #else
                                   IDF_ALIGN_RIGHT 
@@ -7755,11 +7763,19 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 		DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
 	                              pMe->m_pDisplay,
 	                              RGB_WHITE_NO_TRANS,
-	                              18, 
+	                              #ifdef FEATURE_VERSION_K212_ND
+	                              40, 
+	                              #else
+								  18,
+								  #endif
 	                              wszDate, -1,
 	                              0, 0, &rc, 
 	                              IDF_ALIGN_MIDDLE
-	                              | IDF_ALIGN_LEFT
+	                              #ifdef FEATURE_VERSION_K212_ND
+	                              | IDF_ALIGN_CENTER
+	                              #else
+								  | IDF_ALIGN_LEFT
+								  #endif
 	                              | IDF_TEXT_TRANSPARENT);
 	    #if defined(FEATURE_VERSION_C01)
 	    rc.y = rc.y+14;
@@ -7913,7 +7929,11 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                                   #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
                                   18,
                                   #else
+								  #ifdef FEATURE_VERSION_K212_ND
+								  18,
+								  #else
                                   12,
+                                  #endif
                                   #endif
                                   &wszDate[0], -1,
                                   0, 0, &rc_date, 
@@ -8232,7 +8252,11 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 #elif defined(FEATURE_DISP_128X128)
                               | IDF_ALIGN_RIGHT
 #elif defined(FEATURE_DISP_160X128)
+#ifdef FEATURE_VERSION_K212_ND
+							  | IDF_ALIGN_LEFT
+#else
 							  | IDF_ALIGN_RIGHT
+#endif
 #elif defined(FEATURE_DISP_220X176)
 #ifdef FEATURE_VERSION_W208S
 							  | IDF_ALIGN_LEFT

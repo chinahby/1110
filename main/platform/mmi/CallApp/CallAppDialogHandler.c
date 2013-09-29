@@ -2045,7 +2045,6 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
             {
 			   CallApp_keypadtimer(pMe);
             }	
-			
             switch ((AVKType)wParam)
             {
                 case AVK_UP:
@@ -13659,7 +13658,7 @@ if(wp == AVK_0)
        			len = WSTRLEN(pMe->m_DialString);
         		AEE_CancelTimer(CallApp_keypadtimer,pMe);
         		szStr = CallApp_AVK0_2ASCII(pMe);
-				if(pMe->m_curpros>0 ||(pMe->m_curpros==0 && pMe->b_multenter))
+				if(pMe->b_multenter)
 				{
 				
         		AECHAR wstrTemp[MAX_SIZE_DIALER_TEXT] = {0};

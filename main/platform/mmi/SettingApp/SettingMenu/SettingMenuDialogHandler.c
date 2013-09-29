@@ -5066,6 +5066,10 @@ static boolean  HandleSpeechDialogEvent(CSettingMenu *pMe,
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_DIA_SPEECH, IDS_DIA_SPEECH, NULL, 0);
 			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_MAIN_SPEECH, IDS_MAIN_SPEECH, NULL, 0);
 			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_TIME_SPEECH, IDS_TIME_SPEECH, NULL, 0);
+ #ifdef FEATURE_VERSION_K212_ND			
+			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_INDIAL_SPEECH, IDS_INDIAL_SPEECH, NULL, 0);
+			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_PHONEBOOK_SPEECH, IDS_PHONEBOOK_SPEECH, NULL, 0);
+#endif			
             return TRUE;
 
         case EVT_DIALOG_START:
@@ -5082,7 +5086,12 @@ static boolean  HandleSpeechDialogEvent(CSettingMenu *pMe,
                 SetCheckBoxItem(pMenu, IDS_MAIN_SPEECH, bData);
 			(void) ICONFIG_GetItem(pMe->m_pConfig,CFGI_SOUND_BO_CORE,&bData,sizeof(bData));
                 SetCheckBoxItem(pMenu, IDS_TIME_SPEECH, bData);
-
+ #ifdef FEATURE_VERSION_K212_ND				
+			(void) ICONFIG_GetItem(pMe->m_pConfig,CFGI_SOUND_BO_INDIAL,&bData,sizeof(bData));
+                SetCheckBoxItem(pMenu, IDS_INDIAL_SPEECH, bData);
+			(void) ICONFIG_GetItem(pMe->m_pConfig,CFGI_SOUND_BO_PHONEBOOK,&bData,sizeof(bData));
+                SetCheckBoxItem(pMenu, IDS_PHONEBOOK_SPEECH, bData);
+#endif				
 		    IMENUCTL_SetSel(pMenu, IDS_DIA_SPEECH);
             return TRUE;
 
@@ -5113,7 +5122,13 @@ static boolean  HandleSpeechDialogEvent(CSettingMenu *pMe,
 					   (void) ICONFIG_SetItem(pMe->m_pConfig,CFGI_SOUND_BO_MAIN,&bData,sizeof(bData));
 					    bData = GetCheckBoxVal(pMenu, IDS_TIME_SPEECH);
 					   (void) ICONFIG_SetItem(pMe->m_pConfig,CFGI_SOUND_BO_CORE,&bData,sizeof(bData));
-					    CLOSE_DIALOG(DLGRET_WARNING)
+					    #ifdef FEATURE_VERSION_K212_ND
+						bData = GetCheckBoxVal(pMenu, IDS_INDIAL_SPEECH);
+					   (void) ICONFIG_SetItem(pMe->m_pConfig,CFGI_SOUND_BO_INDIAL,&bData,sizeof(bData));
+						bData = GetCheckBoxVal(pMenu, IDS_PHONEBOOK_SPEECH);
+					   (void) ICONFIG_SetItem(pMe->m_pConfig,CFGI_SOUND_BO_PHONEBOOK,&bData,sizeof(bData));
+					   #endif
+						CLOSE_DIALOG(DLGRET_WARNING)
 					}
                     return TRUE;
 
@@ -9178,7 +9193,11 @@ static boolean  Setting_Handle_Password(CSettingMenu *pMe,
                         else
                         {
                             uint16 wPWD=0;
+							#ifdef FEATURE_VERSION_K212_ND
+							char superpass[6] = {"0000"};
+							#else
 							char superpass[6] = {"*#09#"};
+							#endif
                             (void) ICONFIG_GetItem(pMe->m_pConfig, 
                                                    CFGI_PHONE_PASSWORD,
                                                    &wPWD,

@@ -95,7 +95,7 @@ static int IMAGE_WIDTH           = 5;                           // Frame Width f
 
 #if defined(FEATURE_DISP_160X128)
 #ifdef FEATURE_VERSION_K212_ND
-#define MAX_NUM_MENUPOP                 (4) //(6)
+#define MAX_NUM_MENUPOP                 (3) //(6)
 #else
 #define MAX_NUM_MENUPOP                 (6)
 #endif

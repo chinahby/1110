@@ -12106,8 +12106,16 @@ static void T9_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext )
     IDISPLAY_DrawRect(pContext->pIDisplay,
             &pRect,
             RGB_BLACK,
-            RGB_WHITE,
-            IDF_RECT_FRAME);
+			#ifdef FEATURE_VERSION_K212_ND
+           	 RGB_LIGHT_GREY,
+			#else
+			 RGB_WHITE,
+			#endif
+			 #ifdef FEATURE_VERSION_K212_ND
+            IDF_RECT_FILL
+			#else
+			IDF_RECT_FRAME
+			#endif);
 #endif //FEATURE_FUNCS_THEME  
 #if defined(FEATURE_DISP_240X320)	
 	pRect.dx = 236;
@@ -12123,9 +12131,17 @@ static void T9_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext )
 	(void) IDISPLAY_DrawText ((IDisplay *)pContext->pIDisplay,
                                AEE_FONT_NORMAL,
                                wszSpellBufDisp,  
-                               -1,  
-                               pRect.x+1,
-                               pRect.y+1,
+                               -1, 
+							   #ifdef FEATURE_VERSION_K212_ND 
+                               pRect.x+2,
+							   #else
+							   pRect.x+1,
+							   #endif
+							   #ifdef FEATURE_VERSION_K212_ND 
+                               pRect.y+2,
+							   #else
+							   pRect.y+1,
+							   #endif
                                NULL,
                                format );
 #endif
@@ -12144,7 +12160,11 @@ static void T9_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext )
         iSpellLenTemp[nSelectedCodeTemp] = cursTempX;   // 每个字母组合的长度
         if (nSelectedCodeTemp == 0)
         {   // 第一个字母组合的坐标位置
-            iSpellCursX[nSelectedCodeTemp] = pRect.x+1;
+			#ifdef FEATURE_VERSION_K212_ND 
+            iSpellCursX[nSelectedCodeTemp] = pRect.x+2;
+			#else
+			iSpellCursX[nSelectedCodeTemp] = pRect.x+1;
+			#endif
         }
         else
         {   // 后面的字母组合的大概坐标位置
@@ -12157,7 +12177,11 @@ static void T9_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext )
     if ( nSelectedCode >= 0 )
     {
         AEERect  invertRect;
-        invertRect.dx = iSpellLenTemp[nSelectedCode]+2;
+		#ifdef FEATURE_VERSION_K212_ND
+        invertRect.dx = iSpellLenTemp[nSelectedCode]+3;
+		#else
+		invertRect.dx = iSpellLenTemp[nSelectedCode]+2;
+		#endif
         if (pContext->sT9ccFieldInfo.G.nLdbNum == (T9PIDChinese | T9SIDChineseTraditional))
         {   // 繁体中文字母组合的位置
             invertRect.x = iSpellCursX[nSelectedCode];
@@ -12174,7 +12198,11 @@ static void T9_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext )
             }
         }
         MSG_FATAL("****pRect.y=%d",pRect.y,0,0);
-        invertRect.y  = pRect.y+1;
+		#ifdef FEATURE_VERSION_K212_ND
+        invertRect.y  = pRect.y+3;
+		#else
+		invertRect.y  = pRect.y+1;
+		#endif
         invertRect.dy = CHINESE_FONT_HEIGHT+10;
 #if defined(FEATURE_DISP_240X320)	
 		if((invertRect.x+invertRect.dx) >=238)
@@ -12182,8 +12210,23 @@ static void T9_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext )
 			invertRect.dx = 238- invertRect.x;
 		}
 #endif
-        IDISPLAY_InvertRect ( pContext->pIDisplay, &invertRect );
-    
+       // IDISPLAY_InvertRect ( pContext->pIDisplay, &invertRect );
+       #ifdef FEATURE_VERSION_K212_ND
+       IDISPLAY_DrawRect(pContext->pIDisplay,&invertRect,RGB_DARK_GREY,RGB_DARK_GREY,IDF_RECT_FILL);
+	   #else
+	   IDISPLAY_InvertRect ( pContext->pIDisplay, &invertRect );
+	   #endif
+	   #ifdef FEATURE_VERSION_K212_ND
+		(void) IDISPLAY_DrawText ((IDisplay *)pContext->pIDisplay,
+                               AEE_FONT_NORMAL,
+                               wszSpellBufDisp,  
+                               -1,  
+                               pRect.x+2,
+                               pRect.y+2,
+                               NULL,
+                               format );
+	   #endif
+		
     }                              
 
     nKeyBufLenOrig = nKeyBufLen;
@@ -12282,7 +12325,11 @@ static void T9_CJK_CHINESE_DisplaySelection(TextCtlContext *pContext)
         IDISPLAY_DrawRect(pContext->pIDisplay,   
                 &pRect,
                 RGB_BLACK,
-                RGB_WHITE,
+				#ifdef FEATURE_VERSION_K212_ND
+                RGB_LIGHT_GREY,
+				#else
+				RGB_WHITE,
+				#endif
                 /*IDF_RECT_FRAME|*/IDF_RECT_FILL);  
 #endif //FEATURE_FUNCS_THEME 
     
@@ -12297,7 +12344,11 @@ static void T9_CJK_CHINESE_DisplaySelection(TextCtlContext *pContext)
              
             ch[0] = *(psBuffer+k); // use GBcode for EVB board  
             cRect.x = pRect.x+1+(T9_FONT_WIDTH)*k;
+			#ifdef FEATURE_VERSION_K212_ND
+			cRect.y = pRect.y+1;
+			#else
 			cRect.y = pRect.y;
+			#endif
 			cRect.dx = CHINESE_FONT_WIDTH;
 			cRect.dy = CHINESE_FONT_HEIGHT-2+10;
 			MSG_FATAL("****pRect.y=%d",pRect.y,0,0);
@@ -12322,12 +12373,49 @@ static void T9_CJK_CHINESE_DisplaySelection(TextCtlContext *pContext)
             {
                 pContext->nSelectionSelectd = pContext->sT9ccFieldInfo.nSelectPageLen - 1;
             }
-            invertRect.x = pRect.x+1+(T9_FONT_WIDTH)*pContext->nSelectionSelectd;
+			#ifdef FEATURE_VERSION_K212_ND
+            invertRect.x = pRect.x+3+(T9_FONT_WIDTH)*pContext->nSelectionSelectd;
+            invertRect.y = pRect.y+2;
+			#else
+			invertRect.x = pRect.x+1+(T9_FONT_WIDTH)*pContext->nSelectionSelectd;
             invertRect.y = pRect.y;
+			#endif
             invertRect.dx = CHINESE_FONT_WIDTH;
             invertRect.dy = CHINESE_FONT_HEIGHT;
-            IDISPLAY_InvertRect(pContext->pIDisplay, &invertRect);
+			//MSG_FATAL("this selection is going down.........................",0,0,0);
+			//IDISPLAY_FillRect(pContext->pIDisplay, &invertRect, RGB_LIGHT_GREY);
+			
+		#ifdef FEATURE_VERSION_K212_ND
+			IDISPLAY_DrawRect(pContext->pIDisplay,&invertRect,RGB_DARK_GREY,RGB_DARK_GREY,IDF_RECT_FILL);
+		#else
+			IDISPLAY_InvertRect(pContext->pIDisplay, &invertRect);
+		#endif
         }
+		/* Draw each character */
+		#ifdef FEATURE_VERSION_K212_ND
+        for (k = 0; k < pContext->sT9ccFieldInfo.nSelectPageMax; k++) 
+        {
+            format = IDF_ALIGN_NONE;
+             
+            ch[0] = *(psBuffer+k); // use GBcode for EVB board  
+            cRect.x = pRect.x+1+(T9_FONT_WIDTH)*k;
+			cRect.y = pRect.y+1;
+			cRect.dx = CHINESE_FONT_WIDTH;
+			cRect.dy = CHINESE_FONT_HEIGHT-2+10;
+			MSG_FATAL("****pRect.y=%d",pRect.y,0,0);
+           (void) IDISPLAY_DrawText((IDisplay *)pContext->pIDisplay,
+                                   AEE_FONT_NORMAL,
+                                   ch,
+                                   -1,
+                                   pRect.x+1+(T9_FONT_WIDTH)*k,
+                                   pRect.y,//SCREEN_HEIGHT - pContext->nLineHeight,
+                                   &cRect,
+                                   format); 
+		   
+            /* If this character is a NULL terminator, then stop drawing */
+            if (*(psBuffer + k ) == 0)  break;
+        };
+        #endif
     }   
 }
 
