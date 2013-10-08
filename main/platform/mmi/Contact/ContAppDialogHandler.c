@@ -5121,6 +5121,13 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
             //MP_NO_REDRAW
             uint32    dwMask = IMENUCTL_GetProperties(pMenuCtl);
             IMENUCTL_SetProperties(pMenuCtl, dwMask & (~MP_NO_REDRAW));
+
+
+            dwMask = IMENUCTL_GetProperties(pMenuCtl);
+            IMENUCTL_SetProperties(pMenuCtl, dwMask | MP_UNDERLINE_TITLE |MP_WRAPSCROLL);
+            IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY | OEMMP_USE_MENU_STYLE);
+
+            
             MSG_FATAL("--pMenuCtl=%x",IMENUCTL_GetSel(pMenuCtl),0,0);
             OEM_SetNotUpdateScreen(FALSE);
 			MSG_FATAL("***zzg contack list EVT_USER_REDRAW***", 0,0,0);
