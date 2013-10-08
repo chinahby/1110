@@ -1409,8 +1409,6 @@ static boolean  IDD_ALARM_Handler(void       *pUser,
             byte    profilenum;
             ringID  ringid[PROFILENUMBER];
             
-            
-            
 			pResImg = ISHELL_LoadResImage( pMe->a.m_pIShell, "fs:/mod/clockapps/clockapps_images.bar", IDI_ALARMCLOCK);
             Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
             if( pResImg != NULL)
@@ -10346,8 +10344,17 @@ static void CoreApp_PlayShutterSound(CCoreApp *pMe,uint16 key)
 {
     AEEMediaCmdNotify cmd;
 	int temp = 0;
-	char music_name[256] = {0};
-	if(pMe->m_pMedia)
+	char music_name[256] = {0};	
+
+    byte        byte_return;  
+    ICONFIG_GetItem(pMe->m_pConfig,CFGI_RINGER_VOL,&byte_return,sizeof(byte_return));
+
+    if (OEMSOUND_MUTE_VOL == byte_return)
+    {
+        return;
+    }
+
+    if(pMe->m_pMedia)
 	{
 		IMEDIA_Stop(pMe->m_pMedia);
 		IMEDIA_Release(pMe->m_pMedia);

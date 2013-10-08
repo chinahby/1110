@@ -587,6 +587,14 @@ static void CALLApp_PlayShutterSound(CCallApp *pMe,uint16 key)
     AEEMediaCmdNotify cmd;
 	int temp = 0;
 	char music_name[256] = {0};
+
+    byte        byte_return;  
+    ICONFIG_GetItem(pMe->m_pConfig,CFGI_RINGER_VOL,&byte_return,sizeof(byte_return));
+
+    if (OEMSOUND_MUTE_VOL == byte_return)
+    {
+        return;
+    }
     
 	if(pMe->m_pMedia)
 	{
