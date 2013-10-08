@@ -3315,11 +3315,14 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                             IMENUCTL_SetProperties(pMenuCtl, dwMask & (~MP_NO_REDRAW));
                             
                             (void)CContApp_BuildSmartMenu(pMe, pMenuCtl);
-                            
+
+                            /*
                             (void) ISHELL_SetTimer( pMe->m_pShell,
                                                     200,
                                                     CContApp_SmartMenuSetFocus,
                                                     (void *)pMe);     
+                            */    
+                            
                             IMENUCTL_Redraw(pMenuCtl);
                             pMe->m_bInsmartnofind = FALSE;
 
@@ -3858,10 +3861,14 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                 {                    
                     (void)CContApp_BuildSmartMenu(pMe, pMenuCtl);            
                     /* MULTITAP_TIMEOUT */
+
+                    /*
                     (void) ISHELL_SetTimer( pMe->m_pShell,
                                             100, 
                                             CContApp_SmartMenuSetFocus,
                                             (void *)pMe);  
+
+                    */
                     
                     //IMENUCTL_Redraw(pMenuCtl);
                     pMe->m_bInsmartnofind = FALSE;
@@ -5258,11 +5265,14 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
 	                    IMENUCTL_SetProperties(pMenuCtl, dwMask & (~MP_NO_REDRAW));
 	                    
 	                    (void)CContApp_BuildSmartMenu(pMe, pMenuCtl);
-	                    
+
+                        /*
 	                    (void) ISHELL_SetTimer( pMe->m_pShell,
 	                                            200,
 	                                            CContApp_SmartMenuSetFocus,
-	                                            (void *)pMe);     
+	                                            (void *)pMe);  
+                        */
+                            
 	                    IMENUCTL_Redraw(pMenuCtl);
 	                    pMe->m_bInsmartnofind = FALSE;
 
