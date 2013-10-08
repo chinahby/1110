@@ -5506,7 +5506,9 @@ static boolean  CallApp_MsgBox_DlgHandler(CCallApp  *pMe,
                         
     					if(SimChoice.sim_select != 1)
                         */    
-                        if (GetMp3PlayerStatus() == MP3STATUS_NONE)
+                        byte        byte_return;                         
+                        ICONFIG_GetItem(pMe->m_pConfig,CFGI_RINGER_VOL,&byte_return,sizeof(byte_return));
+                        if ((OEMSOUND_MUTE_VOL != byte_return) && (GetMp3PlayerStatus() == MP3STATUS_NONE))                        
     					{
                     		CallApp_PlayTimeSound(pMe, m_TimeStarusEx);
     					}					
