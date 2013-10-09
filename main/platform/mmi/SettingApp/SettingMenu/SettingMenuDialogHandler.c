@@ -2090,7 +2090,7 @@ static boolean  HandlePhoneSettingDialogEvent(CSettingMenu *pMe,
 					break;
 #endif
 #if defined(FEATURE_VERSION_K212_ND)
-				case IDS_SET_SOS
+				case IDS_SET_SOS:
 					CLOSE_DIALOG(DLGRET_SOS_SETTINGS)
 					break;
 #endif
@@ -5058,8 +5058,8 @@ static boolean HandleSosDialogEvent(CSettingMenu *pMe,
 {
 	PARAM_NOT_REF(dwParam)
 	int            nLen = 0;	
-	char  wstrNum[MAX_EMERGENCY_NUM_LEN+1] = {"0"};
-	AECHAR  W_wstrNum[MAX_EMERGENCY_NUM_LEN+1] = {"0"};
+	char  wstrNum[MAX_EMERGENCY_NUM_LEN+1];
+	AECHAR  W_wstrNum[MAX_EMERGENCY_NUM_LEN+1] ;
 	switch (eCode)
     {
         case EVT_DIALOG_INIT:   
@@ -5095,7 +5095,7 @@ static boolean HandleSosDialogEvent(CSettingMenu *pMe,
 #endif
                 //IDISPLAY_FillRect  (pMe->m_pDisplay,&pMe->m_rc, RGB_BLACK);
                 (void)ISHELL_LoadResString(pMe->m_pShell, 
-                                                AEE_APPSSECURITYMENU_RES_FILE,
+                                                AEE_APPSSETTINGMENU_RES_FILE,
                                                 IDS_SET_SOS, 
                                                 text,
                                                 sizeof(text));
@@ -5105,10 +5105,10 @@ static boolean HandleSosDialogEvent(CSettingMenu *pMe,
                 #if 0
                 DrawTitleBar(pMe->m_pDisplay, &TitleBar_Param);
 				#else
-				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,text);
+				IANNUNCIATOR_SetFieldText(pMe->m_pAnn,text);
 				#endif
                (void)ISHELL_LoadResString(pMe->m_pShell, 
-                                                AEE_APPSSECURITYMENU_RES_FILE,
+                                                AEE_APPSSETTINGMENU_RES_FILE,
                                                 IDS_SOS, 
                                                 text,
                                                 sizeof(text));
@@ -5117,7 +5117,7 @@ static boolean HandleSosDialogEvent(CSettingMenu *pMe,
                                     AEE_FONT_BOLD, 
                                     text,
                                     -1, 
-                                    xOffset, 
+                                    5, 
                                     MENUITEM_HEIGHT*1/2, 
                                     NULL, 
                                     IDF_TEXT_TRANSPARENT);
@@ -5129,7 +5129,7 @@ static boolean HandleSosDialogEvent(CSettingMenu *pMe,
                                 AEE_FONT_BOLD, 
                                 W_wstrNum,
                                 -1, 
-                                2*xOffset, 
+                                2*5, 
                                 MENUITEM_HEIGHT*3/2,
                                 NULL, 
                                 IDF_TEXT_TRANSPARENT);
@@ -5138,21 +5138,30 @@ static boolean HandleSosDialogEvent(CSettingMenu *pMe,
                 // 绘制底条提示
                 if(nLen > 0)
                 {// 删除
-                    SEC_MENU_DRAW_BOTTOMBAR(BTBAR_OK_DELETE)
+                    
+					BottomBar_Param_type BarParam;                  
+				    MEMSET(&BarParam, 0, sizeof(BarParam));         
+				    BarParam.eBBarType = BTBAR_OK_DELETE;                         
+				    DrawBottomBar(pMe->m_pDisplay, &BarParam);  
                 }
                 else
                 #else
                  // 绘制底条提示
                 if(nLen > 0)
                 {// 删除
-                    SEC_MENU_DRAW_BOTTOMBAR(BTBAR_OK_BACK)
+                	BottomBar_Param_type BarParam;                  
+				    MEMSET(&BarParam, 0, sizeof(BarParam));         
+				    BarParam.eBBarType = BTBAR_OK_BACK;                         
+				    DrawBottomBar(pMe->m_pDisplay, &BarParam); 
                 }
                 else
                 #endif
                 {// 取消
-                    SEC_MENU_DRAW_BOTTOMBAR(BTBAR_CANCEL)
+                	BottomBar_Param_type BarParam;                  
+				    MEMSET(&BarParam, 0, sizeof(BarParam));         
+				    BarParam.eBBarType = BTBAR_CANCEL;                         
+				    DrawBottomBar(pMe->m_pDisplay, &BarParam); 
                 }
-
                 // 更新显示
                 IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE); 
         
@@ -5161,19 +5170,6 @@ static boolean HandleSosDialogEvent(CSettingMenu *pMe,
 			
 
         case EVT_DIALOG_END:
-            return TRUE;
-			
-		case EVT_KEY:
-            switch(wParam)
-            {
-                case AVK_CLR:
-                    CLOSE_DIALOG(DLGRET_CANCELED)
-                    return TRUE;
-                    
-                default:
-                    break;
-            }
-
             return TRUE;
 
        case EVT_KEY:
