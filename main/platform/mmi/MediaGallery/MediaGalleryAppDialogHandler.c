@@ -1460,7 +1460,7 @@ static boolean MediaGalleryApp_MainMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
          switch(wParam)
          {
             case AVK_CLR:
-				if(pMe->m_StartMode == MGSM_NORMAL_EXPLORER)
+				if(pMe->m_StartMode != MGSM_PHOTO_BROWSE)
 				{
                		*pPrevSelItemID = MG_MAX_UINT16;
                		MGCLOSE_DIALOG(MGDLGRET_CANCELED);
@@ -8278,6 +8278,7 @@ static __inline boolean MGAppUtil_CreateMediaMenu(CMediaGalleryApp *pMe,
             MGAppUtil_OnMediaMenuEmpty(pMe,
                                        /*MG_ONMENUEMPTY_MESSAGEBOX*/
                                        MG_ONMENUEMPTY_STAYEMPTY);
+			pMe->m_bKeepMediaMenu = FALSE;
          }
          break;
 
