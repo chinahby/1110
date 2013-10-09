@@ -472,6 +472,12 @@
 	<String Id="1157" Name="IDS_PHONEBOOK_SPEECH">
 		<Text>Phone book speech</Text>
 	</String>
+	<String Id="1158" Name="IDS_SET_SOS">
+		<Text>SOS Settings</Text>
+	</String>
+	<String Id="1159" Name="IDS_SOS">
+		<Text>Pls input SOS Num</Text>
+	</String>
 	<String Id="1160" Name="IDS_CALLFORWARD_DEACTIVATE">
 		<Text>Deactivate</Text>
 	</String>
@@ -523,36 +529,30 @@
 	<STRING Id="1176" Name="IDS_PRL_VERSION_TITLE">
 		<Text>PRL Version</Text>
 	</STRING>
-	
 	<STRING Id="1372" Name="IDS_SHORTCUTS_MENU_TITLE">
 		<Text>Shortcuts</Text>
 	</STRING>
 	<STRING Id="1373" Name="IDS_SHORTCUTS_SELECT_MENU_TITLE">
 		<Text>Shortcuts</Text>
-	</STRING>	
-
+	</STRING>
 	<STRING Id="1374" Name="IDS_SHORTCUTS_MESSAGE">
 		<Text>Message</Text>
 	</STRING>
-	
 	<STRING Id="1375" Name="IDS_SHORTCUTS_MUSICPLAYER">
 		<Text>Musicplayer</Text>
-	</STRING>	
+	</STRING>
 	<STRING Id="1376" Name="IDS_SHORTCUTS_FM">
 		<Text>FM Radio</Text>
-	</STRING>	
-
+	</STRING>
 	<STRING Id="1377" Name="IDS_SHORTCUTS_CAMERA">
 		<Text>Camera</Text>
 	</STRING>
-	
 	<STRING Id="1378" Name="IDS_SHORTCUTS_CALLLOG">
 		<Text>Recentcalls</Text>
 	</STRING>
-
 	<STRING Id="1379" Name="IDS_SHORTCUTS_SETTINGS">
 		<Text>Settings</Text>
-	</STRING>	
+	</STRING>
 	<STRING Id="1380" Name="IDS_SHORTCUTS_APPS">
 		<Text>Application</Text>
 	</STRING>
@@ -571,7 +571,6 @@
 	<STRING Id="1385" Name="IDS_SHORTCUTS_EXPLORER">
 		<Text>File Management</Text>
 	</STRING>
-
 	<STRING Id="1386" Name="IDS_SHORTCUTS_VIDEOPLAYER">
 		<Text>Video player</Text>
 	</STRING>
@@ -584,7 +583,6 @@
 	<STRING Id="1389" Name="IDS_SHORTCUTS_ALARM">
 		<Text>Alarm</Text>
 	</STRING>
-	
 	<STRING Id="1400" Name="IDS_KEYPAD_UP">
 		<Text>Up key</Text>
 	</STRING>
@@ -897,12 +895,15 @@
 			</Menu>
 		</Controls>
 	</DIALOG>
-	<DIALOG Id="6047" Name="IDD_SHORTCUTS_SELECT_MENU" Focus="7047">		
+	<DIALOG Id="6047" Name="IDD_SHORTCUTS_SELECT_MENU" Focus="7047">
 		<Controls>
 			<Menu Id="7047" Name="IDC_SHORTCUTS_SELECT">
-			<Items/>
+				<Items/>
 			</Menu>
 		</Controls>
-	</DIALOG>	
+	</DIALOG>
+	<Dialog Id="6048" Name="IDD_SOS" Focus="0">
+		<Controls/>
+	</Dialog>
 </Dialogs>
 </BREWRes>

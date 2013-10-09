@@ -172,6 +172,10 @@ static NextFSMAction SettingMenu_StateSMSRestrictReceiveADDHandler(CSettingMenu 
 #ifdef FEATURE_SOUND_BO
 static NextFSMAction SettingMenu_StateSpeechHandler(CSettingMenu *pMe);
 #endif
+#if defined(FEATURE_VERSION_K212_ND)
+static NextFSMAction SettingMenu_StateSosHandler(CSettingMenu *pMe);
+#endif
+
 /*==============================================================================
                                  全局数据
 ==============================================================================*/
@@ -423,6 +427,11 @@ NextFSMAction SettingMenu_ProcessState(CSettingMenu *pMe)
 #ifdef FEATURE_SOUND_BO
 		case SETTINGMENUST_SPEECH:
 			retVal = SettingMenu_StateSpeechHandler(pMe);
+			break;
+#endif
+#if defined(FEATURE_VERSION_K212_ND)
+		case SETTINGMENUST_SOS:
+			retVal = SettingMenu_StateSosHandler(pMe);
 			break;
 #endif
         default:
@@ -1106,6 +1115,12 @@ static NextFSMAction SettingMenu_StatePhoneSettingHandler(CSettingMenu *pMe)
         	MOVE_TO_STATE(SETTINGMENUST_SPEECH)
         	return NFSMACTION_CONTINUE;
 #endif
+#if defined(FEATURE_VERSION_K212_ND)
+	   case DLGRET_SOS_SETTINGS:
+			MOVE_TO_STATE(SETTINGMENUST_SOS)
+			return NFSMACTION_CONTINUE;
+#endif
+
         default:
             ASSERT_NOT_REACHABLE;
     }
@@ -1981,6 +1996,47 @@ static NextFSMAction SettingMenu_StateSpeechHandler(CSettingMenu *pMe)
 		return NFSMACTION_WAIT;
 	} // StateLanguageHandle
 
+#endif
+#if defined(FEATURE_VERSION_K212_ND)
+static NextFSMAction SettingMenu_StateSosHandler(CSettingMenu *pMe)
+{
+	MSG_FATAL("SettingMenu_StateSosHandler Start",0,0,0);
+		if (NULL == pMe)
+		{
+			return NFSMACTION_WAIT;
+		}
+	
+		switch(pMe->m_eDlgRet)
+		{
+			case DLGRET_CREATE:
+				MSG_FATAL("SettingMenu_StateSpeechHandler DLGRET_CREATE",0,0,0);
+				pMe->m_bNotOverwriteDlgRet = FALSE;
+				SettingMenu_ShowDialog(pMe, IDD_SOS);
+				return NFSMACTION_WAIT;
+	
+			case DLGRET_CANCELED:
+			case DLGRET_MSGBOX_OK:	  
+				MSG_FATAL("SettingMenu_StateSpeechHandler DLGRET_MSGBOX_OK",0,0,0);
+				#ifdef FEATURE_VERSION_K212_ND
+				MOVE_TO_STATE(SETTINGMENUST_MAIN)
+				#else
+				MOVE_TO_STATE(SETTINGMENUST_PHONESETTING)
+				#endif
+				return NFSMACTION_CONTINUE;
+	
+			case DLGRET_WARNING:
+				MSG_FATAL("SettingMenu_StateSpeechHandler DLGRET_WARNING",0,0,0);
+				pMe->m_bNotOverwriteDlgRet = FALSE;
+				pMe->m_msg_id = IDS_DONE;
+				SettingMenu_ShowDialog(pMe, IDD_WARNING_MESSEGE);
+				return NFSMACTION_WAIT;
+				
+			default:
+				ASSERT_NOT_REACHABLE;
+		}
+		MSG_FATAL("SettingMenu_StateSpeechHandler End",0,0,0);
+		return NFSMACTION_WAIT;
+}
 #endif
 
 /*==============================================================================

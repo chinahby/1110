@@ -272,7 +272,14 @@ static boolean  HandleSpeechDialogEvent(CSettingMenu *pMe,
     uint32 dwParam
 );
 #endif
-
+#if defined(FEATURE_VERSION_K212_ND)
+// 对话框 IDD_LANGUAGE_MENU 事件处理函数
+static boolean  HandleSosDialogEvent(CSettingMenu *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+);
+#endif
 
 #ifdef FEATURE_PLANEMODE
 // 对话框 IDD_LANGUAGE_MENU 事件处理函数
@@ -676,6 +683,10 @@ boolean SettingMenu_RouteDialogEvent(CSettingMenu *pMe,
 #ifdef FEATURE_SOUND_BO
 	   case IDD_SPEECH_MENU:
 	   		return HandleSpeechDialogEvent(pMe,eCode,wParam,dwParam);
+#endif
+#if defined(FEATURE_VERSION_K212_ND)
+	   case IDD_SOS:
+	   	    return HandleSosDialogEvent(pMe,eCode,wParam,dwParam);
 #endif
         default:
             return FALSE;
@@ -1971,6 +1982,10 @@ static boolean  HandlePhoneSettingDialogEvent(CSettingMenu *pMe,
 			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_YUYIIN_PACKGE, IDS_YUYIIN_PACKGE, NULL, 0);
 #endif
 #endif
+#ifndef FEATURE_VERSION_K212_ND
+			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SET_SOS, IDS_SET_SOS, NULL, 0);
+#endif
+
             return TRUE;
 
         case EVT_DIALOG_START:
@@ -2072,6 +2087,11 @@ static boolean  HandlePhoneSettingDialogEvent(CSettingMenu *pMe,
 #ifdef FEATURE_SOUND_BO
 				case IDS_YUYIIN_PACKGE:
     				CLOSE_DIALOG(DLGRET_SPEECH_SETTINGS)
+					break;
+#endif
+#if defined(FEATURE_VERSION_K212_ND)
+				case IDS_SET_SOS
+					CLOSE_DIALOG(DLGRET_SOS_SETTINGS)
 					break;
 #endif
                 default:
@@ -5029,6 +5049,259 @@ static boolean HandleSimChoiceEvent(CSettingMenu *pMe,
 }
 
 #endif
+#if defined(FEATURE_VERSION_K212_ND)
+static boolean HandleSosDialogEvent(CSettingMenu *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+)
+{
+	PARAM_NOT_REF(dwParam)
+	int            nLen = 0;	
+	char  wstrNum[MAX_EMERGENCY_NUM_LEN+1] = {"0"};
+	AECHAR  W_wstrNum[MAX_EMERGENCY_NUM_LEN+1] = {"0"};
+	switch (eCode)
+    {
+        case EVT_DIALOG_INIT:   
+			 return TRUE;
+        case EVT_DIALOG_START:
+   			(void) ISHELL_PostEvent(pMe->m_pShell,
+                                    AEECLSID_APP_SETTINGMENU,
+                                    EVT_USER_REDRAW,
+                                    NULL,
+                                    NULL);
+            return TRUE;
+
+		case EVT_USER_REDRAW:
+            // 绘制相关信息
+            {
+            	AECHAR      text[32] = {0};
+            	RGBVAL nOldFontColor;
+                TitleBar_Param_type  TitleBar_Param = {0};
+                
+                // 先清屏
+#ifdef FEATURE_CARRIER_CHINA_VERTU
+                {
+                    IImage *pImageBg = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SECURITY_BACKGROUND);
+                    
+                    Appscommon_ResetBackground(pMe->m_pDisplay, pImageBg, APPSCOMMON_BG_COLOR, &pMe->m_rc, 0, 0);
+                    if(pImageBg != NULL)
+                    {
+                        IImage_Release(pImageBg);
+                    }
+                }
+#else
+                Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
+#endif
+                //IDISPLAY_FillRect  (pMe->m_pDisplay,&pMe->m_rc, RGB_BLACK);
+                (void)ISHELL_LoadResString(pMe->m_pShell, 
+                                                AEE_APPSSECURITYMENU_RES_FILE,
+                                                IDS_SET_SOS, 
+                                                text,
+                                                sizeof(text));
+                // 画标题条
+                TitleBar_Param.pwszTitle = text;
+                TitleBar_Param.dwAlignFlags = IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
+                #if 0
+                DrawTitleBar(pMe->m_pDisplay, &TitleBar_Param);
+				#else
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,text);
+				#endif
+               (void)ISHELL_LoadResString(pMe->m_pShell, 
+                                                AEE_APPSSECURITYMENU_RES_FILE,
+                                                IDS_SOS, 
+                                                text,
+                                                sizeof(text));
+                nOldFontColor = IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
+                IDISPLAY_DrawText(pMe->m_pDisplay, 
+                                    AEE_FONT_BOLD, 
+                                    text,
+                                    -1, 
+                                    xOffset, 
+                                    MENUITEM_HEIGHT*1/2, 
+                                    NULL, 
+                                    IDF_TEXT_TRANSPARENT);
+                   
+                nLen = (wstrNum == NULL)?(0):(STRLEN(wstrNum)); 
+                
+                (void) STRTOWSTR(wstrNum, W_wstrNum, sizeof(W_wstrNum));
+                IDISPLAY_DrawText(pMe->m_pDisplay, 
+                                AEE_FONT_BOLD, 
+                                W_wstrNum,
+                                -1, 
+                                2*xOffset, 
+                                MENUITEM_HEIGHT*3/2,
+                                NULL, 
+                                IDF_TEXT_TRANSPARENT);
+                (void)IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, nOldFontColor);
+            	#ifndef FEATURE_ALL_KEY_PAD
+                // 绘制底条提示
+                if(nLen > 0)
+                {// 删除
+                    SEC_MENU_DRAW_BOTTOMBAR(BTBAR_OK_DELETE)
+                }
+                else
+                #else
+                 // 绘制底条提示
+                if(nLen > 0)
+                {// 删除
+                    SEC_MENU_DRAW_BOTTOMBAR(BTBAR_OK_BACK)
+                }
+                else
+                #endif
+                {// 取消
+                    SEC_MENU_DRAW_BOTTOMBAR(BTBAR_CANCEL)
+                }
+
+                // 更新显示
+                IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE); 
+        
+                return TRUE;
+            }
+			
+
+        case EVT_DIALOG_END:
+            return TRUE;
+			
+		case EVT_KEY:
+            switch(wParam)
+            {
+                case AVK_CLR:
+                    CLOSE_DIALOG(DLGRET_CANCELED)
+                    return TRUE;
+                    
+                default:
+                    break;
+            }
+
+            return TRUE;
+
+       case EVT_KEY:
+            {
+                char  chEnter = 0;
+                int   nLen = 0;
+                boolean bRedraw = FALSE;
+                
+                switch (wParam)
+                {
+                    case AVK_0:
+                    case AVK_1:
+                    case AVK_2:
+                    case AVK_3:
+                    case AVK_4:
+                    case AVK_5:
+                    case AVK_6:
+                    case AVK_7:
+                    case AVK_8:
+                    case AVK_9:
+                        chEnter = '0' + (wParam - AVK_0);
+                        break;
+
+                    case AVK_STAR:
+                        chEnter = '*';
+                        break;
+ 
+                    case AVK_POUND:
+                        chEnter = '#';
+                        break;
+                        
+                    case AVK_CLR:
+                        chEnter = 0;
+                        #ifndef FEATURE_ALL_KEY_PAD
+                        if (wstrNum == NULL || STRLEN(wstrNum) == 0)
+                        {
+                            CLOSE_DIALOG(DLGRET_CANCELED)
+                            return TRUE;
+                        }
+                        #else
+                        if(dwParam == 0)
+                        {
+                            CLOSE_DIALOG(DLGRET_CANCELED)
+                            return TRUE;
+                        }
+                        else
+                        {
+                        	if (wstrNum == NULL || STRLEN(wstrNum) == 0)
+                        	{
+                            	CLOSE_DIALOG(DLGRET_CANCELED)
+                            	return TRUE;
+                        	}
+                        }
+                        #endif
+                        break;
+
+                    case AVK_DEL:    
+                        chEnter = 0;
+#ifdef FEATURE_ALL_KEY_PAD 
+                        if (wstrNum == NULL || STRLEN(wstrNum) == 0)
+                        {
+                            CLOSE_DIALOG(DLGRET_CANCELED)
+                            return TRUE;
+                        }
+#endif
+                    break;
+
+                    case AVK_SELECT:
+                    case AVK_INFO:
+					{
+                        EmergencyNum_Table m_entable = {0};
+                        if (wstrNum == NULL || STRLEN(wstrNum) < 1)
+                        {
+                            return TRUE;
+                        }
+                        else
+                        {
+                            uint16 wPWD=0;
+				       	   	m_entable.emerg_num[0].num_len = nLen;
+				       	   	STRCPY(m_entable.emerg_num[0].num_buf,wstrNum);
+				       	   	(void)OEM_SetConfig(CFGI_EMERGENCYNUM_TABLE,
+					                          (void*)&m_entable,
+					                          sizeof(EmergencyNum_Table));
+                        }
+                    }
+             
+                    return TRUE;
+                        
+                default:
+                    return TRUE;
+                }
+                nLen = (wstrNum == NULL)?(0):(STRLEN(wstrNum));
+                if (chEnter == 0)
+                {
+                    // 删除字符
+                    if (nLen > 0)
+                    {
+                        bRedraw = TRUE;
+                        wstrNum[nLen-1] = chEnter;
+                    }
+                }
+                else if (nLen < MAX_EMERGENCY_NUM_LEN)
+                {
+                    wstrNum[nLen] = chEnter;
+                    nLen++;
+                    wstrNum[nLen] = 0;
+                    bRedraw = TRUE;
+                }
+                
+                if (bRedraw)
+                {
+                    (void) ISHELL_PostEvent(pMe->m_pShell,
+                                            AEECLSID_APP_SETTINGMENU,
+                                            EVT_USER_REDRAW,
+                                            NULL,
+                                            NULL);
+                }
+            }
+            return TRUE;
+
+        case EVT_COMMAND:
+        default:
+            break;
+    }
+    return FALSE;	
+}
+#endif
+
 #ifdef FEATURE_SOUND_BO
 static boolean  HandleSpeechDialogEvent(CSettingMenu *pMe,
     AEEEvent eCode,

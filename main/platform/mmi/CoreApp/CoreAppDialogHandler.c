@@ -4255,8 +4255,13 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 			                pMe->m_keyinfoheld=TRUE;
                          //if(!IRUIM_IsCardConnected(pMe->m_pIRUIM))
 						   {
-						 	AECHAR m_Numcall[5] = {L"110"};
-						 	(void)MakeVoiceCall(pMe->a.m_pIShell, FALSE, (AECHAR *)m_Numcall);
+						   	AECHAR  wstrNum[MAX_EMERGENCY_NUM_LEN+1];
+                			EmergencyNum_Table emerg_tab;
+						 	//AECHAR m_Numcall[5] = {L"110"};
+						 	ICONFIG_GetItem(pMe->m_pConfig, CFGI_EMERGENCYNUM_TABLE, (void*)&emerg_tab, sizeof(EmergencyNum_Table));
+							 wstrNum[0] = 0;
+                    		STRTOWSTR(emerg_tab.emerg_num[0].num_buf, wstrNum, sizeof(wstrNum));
+						 	(void)MakeVoiceCall(pMe->a.m_pIShell, FALSE, (AECHAR *)wstrNum);
 							return TRUE;
 						   }
                         }
