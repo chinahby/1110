@@ -1871,6 +1871,8 @@ static boolean  Application_SOSSetHandler(Application *pMe, AEEEvent eCode, uint
 	int            nLen = 0;	
 	char  wstrNum[MAX_EMERGENCY_NUM_LEN+1];
 	AECHAR  W_wstrNum[MAX_EMERGENCY_NUM_LEN+1] ;
+	MEMSET(wstrNum,0,sizeof(wstrNum));
+	MEMSET(W_wstrNum,0,sizeof(W_wstrNum));
 	switch (eCode)
     {
         case EVT_DIALOG_INIT:   
@@ -2046,7 +2048,6 @@ static boolean  Application_SOSSetHandler(Application *pMe, AEEEvent eCode, uint
                         }
                         else
                         {
-                            uint16 wPWD=0;
 				       	   	m_entable.emerg_num[0].num_len = nLen;
 				       	   	STRCPY(m_entable.emerg_num[0].num_buf,wstrNum);
 				       	   	(void)OEM_SetConfig(CFGI_EMERGENCYNUM_TABLE,
@@ -2054,7 +2055,7 @@ static boolean  Application_SOSSetHandler(Application *pMe, AEEEvent eCode, uint
 					                          sizeof(EmergencyNum_Table));
                         }
                     }
-             
+             		CLOSE_DIALOG(DLGRET_CANCELED)
                     return TRUE;
                         
                 default:
