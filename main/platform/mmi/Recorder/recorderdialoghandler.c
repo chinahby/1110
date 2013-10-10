@@ -1437,6 +1437,7 @@ static boolean  dialog_handler_of_state_record( Recorder* pme, AEEEvent evt, uin
 	{
 		case EVT_DIALOG_INIT:
 		{    
+			IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_CLEARSCREEN_ONREDRAW|DLG_NOT_UPDATE_ONREDRAW);
 			pStatic = (IStatic*)IDIALOG_GetControl( pme->m_pActiveDialog, IDC_RECORDER_RECORD_STATIC);
 
 
@@ -1595,8 +1596,6 @@ __dialog_handler_of_state_record_stop__:
 #else
 			IIMAGE_Draw( pme->m_pImage[pme->m_Media.m_bRecorder ? RECORDER_IMAGE_BG_RECORD : RECORDER_IMAGE_BG_PLAY], 0, 0);
 #endif
-
-
 			IDISPLAY_SetColor( pme->m_pDisplay, CLR_USER_TEXT, pme->m_ThemeTextColor);
 			IDISPLAY_DrawText( pme->m_pDisplay, AEE_FONT_NORMAL, pme->m_Title, -1, pme->m_nTitleX, 0, 0, IDF_TEXT_TRANSPARENT);
 
@@ -1659,7 +1658,7 @@ __dialog_handler_of_state_record_stop__:
 			{
 				drawModalDialog( pme->m_pDisplay, pStatic, IDS_RECORD_CANCEL_CONFIRM, TRUE);
 			}
-			IDISPLAY_UpdateEx( pme->m_pDisplay, FALSE);
+			IDISPLAY_UpdateEx( pme->m_pDisplay, TRUE);
 			MSG_FATAL("pme->m_bAppIsReady=%d ---- pme->m_bLockkey=%d",pme->m_bAppIsReady, pme->m_bLockkey,0);
             //Add by pyuangui 2013-01-07
             #ifdef FEATURE_VERSION_C316
