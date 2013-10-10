@@ -1982,9 +1982,6 @@ static boolean  HandlePhoneSettingDialogEvent(CSettingMenu *pMe,
 			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_YUYIIN_PACKGE, IDS_YUYIIN_PACKGE, NULL, 0);
 #endif
 #endif
-#ifndef FEATURE_VERSION_K212_ND
-			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SET_SOS, IDS_SET_SOS, NULL, 0);
-#endif
 
             return TRUE;
 
