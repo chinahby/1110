@@ -113,7 +113,7 @@
 		<Text>急救设置</Text>
 	</String>
 	<String Id="1041" Name="IDS_SOS_INPUT">
-		<Text>请输入急救号码</Text>
+		<Text>输入急救号码</Text>
 	</String>
 </Strings>
 <Dialogs>

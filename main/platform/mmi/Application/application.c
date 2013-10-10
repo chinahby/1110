@@ -1865,17 +1865,18 @@ static boolean  Application_KeyTimeHandler(Application *pMe, AEEEvent eCode, uin
         	break;						
 				}	
 }
+char  wstrNum[MAX_EMERGENCY_NUM_LEN+1];
+AECHAR  W_wstrNum[MAX_EMERGENCY_NUM_LEN+1] ;
 static boolean  Application_SOSSetHandler(Application *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
 {
 	PARAM_NOT_REF(dwParam)
 	int            nLen = 0;	
-	char  wstrNum[MAX_EMERGENCY_NUM_LEN+1];
-	AECHAR  W_wstrNum[MAX_EMERGENCY_NUM_LEN+1] ;
-	MEMSET(wstrNum,0,sizeof(wstrNum));
-	MEMSET(W_wstrNum,0,sizeof(W_wstrNum));
+	
 	switch (eCode)
     {
         case EVT_DIALOG_INIT:   
+			 MEMSET(wstrNum,0,sizeof(wstrNum));
+			 MEMSET(W_wstrNum,0,sizeof(W_wstrNum));
 			 return TRUE;
         case EVT_DIALOG_START:
    			(void) ISHELL_PostEvent(pMe->m_pShell,
@@ -2042,7 +2043,7 @@ static boolean  Application_SOSSetHandler(Application *pMe, AEEEvent eCode, uint
                     case AVK_INFO:
 					{
                         EmergencyNum_Table m_entable = {0};
-                        if (wstrNum == NULL || STRLEN(wstrNum) < 1)
+                        if (STRLEN(wstrNum) < 1)
                         {
                             return TRUE;
                         }
@@ -2061,7 +2062,7 @@ static boolean  Application_SOSSetHandler(Application *pMe, AEEEvent eCode, uint
                 default:
                     return TRUE;
                 }
-                nLen = (wstrNum == NULL)?(0):(STRLEN(wstrNum));
+                nLen = (STRLEN(wstrNum));
                 if (chEnter == 0)
                 {
                     // É¾³ý×Ö·û
