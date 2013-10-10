@@ -60,6 +60,7 @@ typedef enum ApplicationState
 #endif
 #if defined(FEATURE_VERSION_K212_ND)
 		APPLICATIONST_KEY_TIME,
+		APPLICATIONST_SOS_SET,
 #endif
 
     APPLICATIONST_EXIT
@@ -82,6 +83,7 @@ typedef enum DLGRetValue
 #endif
 #if defined(FEATURE_VERSION_K212_ND)
 	DLGRET_KEY_TIME,
+	DLGRET_SOS_SET,
 #endif
     DLGRET_CANCELED
 }DLGRetValue;

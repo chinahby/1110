@@ -112,6 +112,12 @@
 	<String Id="1039" Name="IDS_SOS1">
 		<Text>The emergency setting</Text>
 	</String>
+	<String Id="1040" Name="IDS_SET_SOS">
+		<Text>SOS Settings</Text>
+	</String>
+	<String Id="1041" Name="IDS_SOS_INPUT">
+		<Text>Pls input SOS Num</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<Dialog Id="6001" Name="IDD_FLASHLIGHT_SETTING" Focus="7002">
@@ -142,6 +148,9 @@
 				<Items/>
 			</Menu>
 		</Controls>
+	</Dialog>
+	<Dialog Id="6006" Name="IDD_SOS" Focus="0">
+		<Controls/>
 	</Dialog>
 </Dialogs>
 </BREWRes>

@@ -122,6 +122,7 @@ static NextFSMAction APPLICATIONST_PCMODEM_Handler(Application *pMe);
 #endif
 #if defined(FEATURE_VERSION_K212_ND)
 static NextFSMAction APPLICATIONST_KEY_TIME_Handler(Application * pMe);
+static NextFSMAction APPLICATIONST_SOS_SET_Handler(Application * pMe);
 #endif
 
 
@@ -131,6 +132,7 @@ static boolean  Application_ListMenuHandler(Application *pMe, AEEEvent eCode, ui
 static boolean  Application_FlashlightMenuHandler(Application *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam);
 #if defined(FEATURE_VERSION_K212_ND)
 static boolean  Application_KeyTimeHandler(Application *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam);
+static boolean  Application_SOSSetHandler(Application *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam);
 #endif
 #if defined(FEATURE_VERSION_W317A)
 static boolean  Application_PcModemHandler(Application *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam);
@@ -852,6 +854,8 @@ NextFSMAction Application_ProcessState(Application *pMe)
 #if defined(FEATURE_VERSION_K212_ND)
 				case APPLICATIONST_KEY_TIME:
 					return APPLICATIONST_KEY_TIME_Handler(pMe);
+				case APPLICATIONST_SOS_SET:
+					return APPLICATIONST_SOS_SET_Handler(pMe);
 #endif
 
         case APPLICATIONST_EXIT:
@@ -908,6 +912,11 @@ static NextFSMAction APPLICATIONST_MAIN_Handler(Application *pMe)
 				MOVE_TO_STATE(APPLICATIONST_KEY_TIME)
             	return NFSMACTION_CONTINUE;
 			}
+		case DLGRET_SOS_SET:
+			{
+				MOVE_TO_STATE(APPLICATIONST_SOS_SET)
+            	return NFSMACTION_CONTINUE;
+			}
 #endif
 #if defined(FEATURE_VERSION_W317A)
 		case DLGRET_PCMODEM:
@@ -947,6 +956,34 @@ static NextFSMAction APPLICATIONST_KEY_TIME_Handler(Application *pMe)
             return NFSMACTION_CONTINUE;
     }
 }
+
+
+static NextFSMAction APPLICATIONST_SOS_SET_Handler(Application * pMe)
+{
+	if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+    switch (pMe->m_eDlgReturn)
+    {
+        // 进入主界面
+        case DLGRET_CREATE:
+            {
+            	  MSG_FATAL("APPLICATIONST_KEY_TIME_Handler DLGRET_CREATE",0,0,0);
+                  Application_ShowDialog(pMe, IDD_SOS);
+
+            }
+            return NFSMACTION_WAIT;
+         case DLGRET_CANCELED:         
+            MOVE_TO_STATE(APPLICATIONST_MAIN)
+            return NFSMACTION_CONTINUE;
+        default:
+            MOVE_TO_STATE(APPLICATIONST_EXIT)
+            return NFSMACTION_CONTINUE;
+    }
+}
+
+
 #endif
 
 static NextFSMAction APPLICATIONST_FLASHLIGHT_Handler(Application *pMe)
@@ -1119,6 +1156,9 @@ boolean Application_RouteDialogEvt(Application *pMe,
 #if defined(FEATURE_VERSION_K212_ND)
 		case IDD_KEY_TIME_SETTING:
 			return Application_KeyTimeHandler(pMe, eCode, wParam,dwParam);
+		case IDD_SOS:
+			return Application_SOSSetHandler(pMe, eCode, wParam,dwParam);
+			
 #endif
         default:
             return FALSE;
@@ -1312,6 +1352,7 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_ALARM, IDS_APPLICATION_ALARM, NULL, 0);
 			//IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_WORLDTIME, IDS_APPLICATION_WORLDTIME, NULL, 0);
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_MUTIMED, IDS_APPLICATION_MUTIMED, NULL, 0);
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_SET_SOS, IDS_SET_SOS, NULL, 0);
 #elif defined(FEATURE_VERSION_K212)
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_MUTIMED, IDS_APPLICATION_MUTIMED, NULL, 0); 
 			//IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_BROWSER, IDS_APPLICATION_BROWSER, NULL, 0); 
@@ -1824,6 +1865,237 @@ static boolean  Application_KeyTimeHandler(Application *pMe, AEEEvent eCode, uin
         	break;						
 				}	
 }
+static boolean  Application_SOSSetHandler(Application *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
+{
+	PARAM_NOT_REF(dwParam)
+	int            nLen = 0;	
+	char  wstrNum[MAX_EMERGENCY_NUM_LEN+1];
+	AECHAR  W_wstrNum[MAX_EMERGENCY_NUM_LEN+1] ;
+	switch (eCode)
+    {
+        case EVT_DIALOG_INIT:   
+			 return TRUE;
+        case EVT_DIALOG_START:
+   			(void) ISHELL_PostEvent(pMe->m_pShell,
+                                    AEECLSID_APPLICATION,
+                                    EVT_USER_REDRAW,
+                                    NULL,
+                                    NULL);
+            return TRUE;
+
+		case EVT_USER_REDRAW:
+            // 绘制相关信息
+            {
+            	AECHAR      text[32] = {0};
+            	RGBVAL nOldFontColor;
+                TitleBar_Param_type  TitleBar_Param = {0};
+                
+                // 先清屏
+                Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
+                //IDISPLAY_FillRect  (pMe->m_pDisplay,&pMe->m_rc, RGB_BLACK);
+                (void)ISHELL_LoadResString(pMe->m_pShell, 
+                                                APPLICATION_RES_FILE_LANG,
+                                                IDS_SET_SOS, 
+                                                text,
+                                                sizeof(text));
+                // 画标题条
+                TitleBar_Param.pwszTitle = text;
+                TitleBar_Param.dwAlignFlags = IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
+                #if 0
+                DrawTitleBar(pMe->m_pDisplay, &TitleBar_Param);
+				#else
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,text);
+				#endif
+               (void)ISHELL_LoadResString(pMe->m_pShell, 
+                                                APPLICATION_RES_FILE_LANG,
+                                                IDS_SOS_INPUT, 
+                                                text,
+                                                sizeof(text));
+                nOldFontColor = IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
+                IDISPLAY_DrawText(pMe->m_pDisplay, 
+                                    AEE_FONT_BOLD, 
+                                    text,
+                                    -1, 
+                                    5, 
+                                    MENUITEM_HEIGHT*1/2, 
+                                    NULL, 
+                                    IDF_TEXT_TRANSPARENT);
+                   
+                nLen = (wstrNum == NULL)?(0):(STRLEN(wstrNum)); 
+                
+                (void) STRTOWSTR(wstrNum, W_wstrNum, sizeof(W_wstrNum));
+                IDISPLAY_DrawText(pMe->m_pDisplay, 
+                                AEE_FONT_BOLD, 
+                                W_wstrNum,
+                                -1, 
+                                2*5, 
+                                MENUITEM_HEIGHT*3/2,
+                                NULL, 
+                                IDF_TEXT_TRANSPARENT);
+                (void)IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, nOldFontColor);
+            	#ifndef FEATURE_ALL_KEY_PAD
+                // 绘制底条提示
+                if(nLen > 0)
+                {// 删除
+                    
+					BottomBar_Param_type BarParam;                  
+				    MEMSET(&BarParam, 0, sizeof(BarParam));         
+				    BarParam.eBBarType = BTBAR_OK_DELETE;                         
+				    DrawBottomBar(pMe->m_pDisplay, &BarParam);  
+                }
+                else
+                #else
+                 // 绘制底条提示
+                if(nLen > 0)
+                {// 删除
+                	BottomBar_Param_type BarParam;                  
+				    MEMSET(&BarParam, 0, sizeof(BarParam));         
+				    BarParam.eBBarType = BTBAR_OK_BACK;                         
+				    DrawBottomBar(pMe->m_pDisplay, &BarParam); 
+                }
+                else
+                #endif
+                {// 取消
+                	BottomBar_Param_type BarParam;                  
+				    MEMSET(&BarParam, 0, sizeof(BarParam));         
+				    BarParam.eBBarType = BTBAR_CANCEL;                         
+				    DrawBottomBar(pMe->m_pDisplay, &BarParam); 
+                }
+                // 更新显示
+                IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE); 
+        
+                return TRUE;
+            }
+			
+
+        case EVT_DIALOG_END:
+            return TRUE;
+
+       case EVT_KEY:
+            {
+                char  chEnter = 0;
+                int   nLen = 0;
+                boolean bRedraw = FALSE;
+                
+                switch (wParam)
+                {
+                    case AVK_0:
+                    case AVK_1:
+                    case AVK_2:
+                    case AVK_3:
+                    case AVK_4:
+                    case AVK_5:
+                    case AVK_6:
+                    case AVK_7:
+                    case AVK_8:
+                    case AVK_9:
+                        chEnter = '0' + (wParam - AVK_0);
+                        break;
+
+                    case AVK_STAR:
+                        chEnter = '*';
+                        break;
+ 
+                    case AVK_POUND:
+                        chEnter = '#';
+                        break;
+                        
+                    case AVK_CLR:
+                        chEnter = 0;
+                        #ifndef FEATURE_ALL_KEY_PAD
+                        if (wstrNum == NULL || STRLEN(wstrNum) == 0)
+                        {
+                            CLOSE_DIALOG(DLGRET_CANCELED)
+                            return TRUE;
+                        }
+                        #else
+                        if(dwParam == 0)
+                        {
+                            CLOSE_DIALOG(DLGRET_CANCELED)
+                            return TRUE;
+                        }
+                        else
+                        {
+                        	if (wstrNum == NULL || STRLEN(wstrNum) == 0)
+                        	{
+                            	CLOSE_DIALOG(DLGRET_CANCELED)
+                            	return TRUE;
+                        	}
+                        }
+                        #endif
+                        break;
+
+                    case AVK_DEL:    
+                        chEnter = 0;
+#ifdef FEATURE_ALL_KEY_PAD 
+                        if (wstrNum == NULL || STRLEN(wstrNum) == 0)
+                        {
+                            CLOSE_DIALOG(DLGRET_CANCELED)
+                            return TRUE;
+                        }
+#endif
+                    break;
+
+                    case AVK_SELECT:
+                    case AVK_INFO:
+					{
+                        EmergencyNum_Table m_entable = {0};
+                        if (wstrNum == NULL || STRLEN(wstrNum) < 1)
+                        {
+                            return TRUE;
+                        }
+                        else
+                        {
+                            uint16 wPWD=0;
+				       	   	m_entable.emerg_num[0].num_len = nLen;
+				       	   	STRCPY(m_entable.emerg_num[0].num_buf,wstrNum);
+				       	   	(void)OEM_SetConfig(CFGI_EMERGENCYNUM_TABLE,
+					                          (void*)&m_entable,
+					                          sizeof(EmergencyNum_Table));
+                        }
+                    }
+             
+                    return TRUE;
+                        
+                default:
+                    return TRUE;
+                }
+                nLen = (wstrNum == NULL)?(0):(STRLEN(wstrNum));
+                if (chEnter == 0)
+                {
+                    // 删除字符
+                    if (nLen > 0)
+                    {
+                        bRedraw = TRUE;
+                        wstrNum[nLen-1] = chEnter;
+                    }
+                }
+                else if (nLen < MAX_EMERGENCY_NUM_LEN)
+                {
+                    wstrNum[nLen] = chEnter;
+                    nLen++;
+                    wstrNum[nLen] = 0;
+                    bRedraw = TRUE;
+                }
+                
+                if (bRedraw)
+                {
+                    (void) ISHELL_PostEvent(pMe->m_pShell,
+                                            AEECLSID_APPLICATION,
+                                            EVT_USER_REDRAW,
+                                            NULL,
+                                            NULL);
+                }
+            }
+            return TRUE;
+
+        case EVT_COMMAND:
+        default:
+            break;
+    }
+    return FALSE;	
+}
+
 #endif
 #endif
 
@@ -2066,7 +2338,10 @@ static int StartApplet(Application *pMe, int i)
 #endif 
 #ifdef FEATURE_VERSION_K212_ND
     case IDS_KEY_TIME:
-	CLOSE_DIALOG(DLGRET_KEY_TIME)
+		CLOSE_DIALOG(DLGRET_KEY_TIME)
+        break;	
+	case IDS_SET_SOS:
+		CLOSE_DIALOG(DLGRET_SOS_SET)
         break;	
 #endif
 

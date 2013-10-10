@@ -109,11 +109,14 @@
 	<String Id="1038" Name="IDS_KEY_TIME">
 		<Text>一键报时</Text>
 	</String>
-	<String Id="1039" Name="IDS_SOS1">
-		<Text>紧急求救</Text>
+	<String Id="1040" Name="IDS_SET_SOS">
+		<Text>急救设置</Text>
+	</String>
+	<String Id="1041" Name="IDS_SOS_INPUT">
+		<Text>请输入急救号码</Text>
 	</String>
 </Strings>
-<Dialogs>		
+<Dialogs>
 	<Dialog Id="6001" Name="IDD_FLASHLIGHT_SETTING" Focus="7002">
 		<Controls>
 			<Menu Id="7002" Name="IDC_FLASHLIGHT_SET">
@@ -125,7 +128,6 @@
 		<Controls/>
 		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</Dialog>
-	
 	<Dialog Id="6003" Name="IDD_LIST_APPLICATION" Focus="7001">
 		<Controls>
 			<Menu Id="7001" Name="IDC_APPLICATION_LIST">
@@ -133,7 +135,6 @@
 			</Menu>
 		</Controls>
 	</Dialog>
-	
 	<Dialog Id="6004" Name="IDD_PC_MODEM" Focus="0">
 		<Controls/>
 		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
@@ -144,6 +145,9 @@
 				<Items/>
 			</Menu>
 		</Controls>
-	</Dialog>g>
+	</Dialog>
+	<Dialog Id="6006" Name="IDD_SOS" Focus="0">
+		<Controls/>
+	</Dialog>
 </Dialogs>
 </BREWRes>
