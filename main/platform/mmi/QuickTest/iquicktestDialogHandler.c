@@ -432,6 +432,7 @@ static boolean  QuickTest_MainMenuHandler(CQuickTest *pMe,
     {
         case EVT_DIALOG_INIT:
 			//add by yangdecai
+			/*
 			{
 				AECHAR WTitle[40] = {0};
 				(void)ISHELL_LoadResString(pMe->m_pShell,
@@ -441,7 +442,8 @@ static boolean  QuickTest_MainMenuHandler(CQuickTest *pMe,
                         sizeof(WTitle));
 				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
             }
-              IMENUCTL_AddItem(pMenu, AEE_QUICKTEST_RES_FILE, IDS_START, IDS_START, NULL, 0);
+            */
+            IMENUCTL_AddItem(pMenu, AEE_QUICKTEST_RES_FILE, IDS_START, IDS_START, NULL, 0);
             (void)IMENUCTL_Redraw(pMenu);
             return TRUE;
 
@@ -3071,6 +3073,7 @@ static boolean  QuickTest_SDTestHandler(CQuickTest *pMe,
     {
         case EVT_DIALOG_INIT:
             //重新绘制标题add by xuke 2012.12.17
+            /*
             {
                 AECHAR newWTitle[40] = {0};
 				(void)ISHELL_LoadResString(pMe->m_pShell,
@@ -3080,6 +3083,7 @@ static boolean  QuickTest_SDTestHandler(CQuickTest *pMe,
                         sizeof(newWTitle));
 				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, newWTitle);
             }
+            */
             return TRUE;
 
         case EVT_DIALOG_START:
