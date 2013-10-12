@@ -3373,7 +3373,11 @@ static int DBToLevel (int nDBVal)
     else if (nDBVal < 108)
         return ANNUN_STATE_RSSI_1;
     else
+	#ifdef FEATURE_VERSION_K212
+		return ANNUN_STATE_RSSI_1;
+	#else
         return ANNUN_STATE_RSSI_0;
+	#endif
 	#endif
 }
 
