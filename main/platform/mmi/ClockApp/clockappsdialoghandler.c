@@ -1852,8 +1852,12 @@ static boolean  HandleAlarmTimeReachDialogEvent(CClockApps *pMe,
     uint32 dwParam
 )
 {
-
     static byte keyBeepVolumeSetting = 0;
+
+#ifdef FEATURE_VERSION_EC99   
+    static byte alert_type, ringer_vol;              
+#endif  
+
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
 			if (eCode == EVT_PEN_UP)
 			{
@@ -1887,6 +1891,8 @@ static boolean  HandleAlarmTimeReachDialogEvent(CClockApps *pMe,
 			}
 #endif
 
+    MSG_FATAL("***zzg ClockApp eCode=%x***", eCode, 0, 0);
+
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
@@ -1900,6 +1906,25 @@ static boolean  HandleAlarmTimeReachDialogEvent(CClockApps *pMe,
                 ICONFIG_GetItem( pMe->m_pConfig, CFGI_BEEP_VOL, &keyBeepVolumeSetting, sizeof(byte));
                 ICONFIG_SetItem( pMe->m_pConfig, CFGI_BEEP_VOL, &mute, sizeof(byte));
             }
+#ifdef FEATURE_VERSION_EC99     
+            {
+                byte     tmptype = OEMNV_ALERTTYPE_RINGER;
+                byte     tmpvol = OEMSOUND_4TH_VOL;   
+
+                (void)ICONFIG_GetItem(pMe->m_pConfig, CFGI_ALERT_TYPE, &alert_type, sizeof(alert_type));  
+                (void)ICONFIG_GetItem(pMe->m_pConfig, CFGI_RINGER_VOL, &ringer_vol, sizeof(ringer_vol));   
+
+                MSG_FATAL("***zzg ClockApp EVT_START alert_type=%x, ringer_vol=%x***", alert_type, ringer_vol, 0);   
+
+                if ((alert_type == 0) && (ringer_vol == 0))
+                {
+                    (void)ICONFIG_SetItem(pMe->m_pConfig, CFGI_ALERT_TYPE, &tmptype, sizeof(tmptype));                  
+                    (void)ICONFIG_SetItem(pMe->m_pConfig, CFGI_RINGER_VOL, &tmpvol, sizeof(tmpvol));    
+                }
+            }
+#endif  
+
+            
             if( !pMe->m_bAlarmOff)
             {
 
@@ -2000,6 +2025,7 @@ static boolean  HandleAlarmTimeReachDialogEvent(CClockApps *pMe,
 
                     ICONFIG_GetItem(pMe->m_pConfig, CFGI_PROFILE_CUR_NUMBER, &profilenum, sizeof(profilenum));
                     ICONFIG_GetItem(pMe->m_pConfig, CFGI_PROFILE_ALARM_RINGER, (void*)ringid, sizeof(ringid));
+                    
                     if(ringid[profilenum].ringType == OEMNV_MID_RINGER)
                     {
                         IALERT_StartRingerAlert(pMe->m_pAlert, ring_id);
@@ -2027,7 +2053,22 @@ static boolean  HandleAlarmTimeReachDialogEvent(CClockApps *pMe,
             }
             return TRUE;
 
-        case EVT_DIALOG_END:
+        case EVT_DIALOG_END:            
+#ifdef FEATURE_VERSION_EC99
+            {
+                if (alert_type < OEMNV_ALERTTYPE_OFF)   alert_type = OEMNV_ALERTTYPE_OFF;
+                if (alert_type > OEMNV_ALERTTYPE_VIBANDRINGER)   alert_type = OEMNV_ALERTTYPE_VIBANDRINGER;
+
+                if (ringer_vol < OEMSOUND_MUTE_VOL)   ringer_vol = OEMSOUND_MUTE_VOL;
+                if (ringer_vol > OEMSOUND_ESCALATING_VOL)   ringer_vol = OEMSOUND_ESCALATING_VOL;
+
+                MSG_FATAL("***zzg ClockAPp End alert_type=%x, ringer_vol=%x***", alert_type, ringer_vol, 0);
+                
+                (void)ICONFIG_SetItem(pMe->m_pConfig, CFGI_ALERT_TYPE, &alert_type, sizeof(alert_type));                  
+                (void)ICONFIG_SetItem(pMe->m_pConfig, CFGI_RINGER_VOL, &ringer_vol, sizeof(ringer_vol));
+            }            
+#endif            
+
 #if 0
             IBACKLIGHT_Enable(pMe->m_pBacklight);
 #endif

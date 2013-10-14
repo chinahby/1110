@@ -1356,7 +1356,12 @@ static boolean  IDD_ALARM_Handler(void       *pUser,
     static byte keyBeepVolumeSetting = 0;
     static PowerDown_Alarm_Cfg time = {0};
 
-    CCoreApp *pMe = (CCoreApp *)pUser;
+    CCoreApp *pMe = (CCoreApp *)pUser;    
+
+#ifdef FEATURE_VERSION_EC99    
+    static byte alert_type, ringer_vol;       
+#endif  
+
     MSG_FATAL("IDD_ALARM_Handler-----eCode=%d---wParam=%d",eCode,wParam,0);
     
 #ifdef FEATURE_LCD_TOUCH_ENABLE
@@ -1387,6 +1392,9 @@ static boolean  IDD_ALARM_Handler(void       *pUser,
             } 
         }                             
 #endif            
+
+    MSG_FATAL("***zzg IDD_ALARM_Handler eCode=%x***", eCode, 0, 0);     
+
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
@@ -1427,6 +1435,27 @@ static boolean  IDD_ALARM_Handler(void       *pUser,
 
             ICONFIG_GetItem(pMe->m_pConfig, CFGI_PROFILE_CUR_NUMBER, &profilenum, sizeof(profilenum));
             ICONFIG_GetItem(pMe->m_pConfig, CFGI_PROFILE_ALARM_RINGER, (void*)ringid, sizeof(ringid));
+
+            MSG_FATAL("***zzg Alarm profilename=%x, ringType =%x", profilenum, ringid[profilenum].ringType, 0);
+
+#ifdef FEATURE_VERSION_EC99
+            {
+			    byte     tmptype = OEMNV_ALERTTYPE_RINGER;
+                byte     tmpvol = OEMSOUND_4TH_VOL;
+
+                (void)ICONFIG_GetItem(pMe->m_pConfig, CFGI_ALERT_TYPE, &alert_type, sizeof(alert_type));  
+                (void)ICONFIG_GetItem(pMe->m_pConfig, CFGI_RINGER_VOL, &ringer_vol, sizeof(ringer_vol));   
+
+                MSG_FATAL("***zzg IDD_ALARM_Handler EVT_START alert_type=%x, ringer_vol=%x***", alert_type, ringer_vol, 0);               
+                
+                if ((alert_type == 0) && (ringer_vol == 0))
+                {
+    			    (void)ICONFIG_SetItem(pMe->m_pConfig, CFGI_ALERT_TYPE, &tmptype, sizeof(tmptype));                  
+                    (void)ICONFIG_SetItem(pMe->m_pConfig, CFGI_RINGER_VOL, &tmpvol, sizeof(tmpvol));
+                }
+            }            
+#endif                
+            
             if(ringid[profilenum].ringType == OEMNV_MID_RINGER)
             {
                 IALERT_StartRingerAlert(pMe->m_pAlert, ring_id);
@@ -1498,6 +1527,22 @@ static boolean  IDD_ALARM_Handler(void       *pUser,
 			IDISPLAY_Update( pMe->a.m_pIDisplay);
 			return TRUE;
         case EVT_DIALOG_END:
+            
+#ifdef FEATURE_VERSION_EC99
+            {
+                if (alert_type < OEMNV_ALERTTYPE_OFF)   alert_type = OEMNV_ALERTTYPE_OFF;
+                if (alert_type > OEMNV_ALERTTYPE_VIBANDRINGER)   alert_type = OEMNV_ALERTTYPE_VIBANDRINGER;
+
+                if (ringer_vol < OEMSOUND_MUTE_VOL)   ringer_vol = OEMSOUND_MUTE_VOL;
+                if (ringer_vol > OEMSOUND_ESCALATING_VOL)   ringer_vol = OEMSOUND_ESCALATING_VOL;
+
+                MSG_FATAL("***zzg IDD_ALARM_Handler End alert_type=%x, ringer_vol=%x***", alert_type, ringer_vol, 0);
+                
+                (void)ICONFIG_SetItem(pMe->m_pConfig, CFGI_ALERT_TYPE, &alert_type, sizeof(alert_type));                  
+                (void)ICONFIG_SetItem(pMe->m_pConfig, CFGI_RINGER_VOL, &ringer_vol, sizeof(ringer_vol));
+            }            
+#endif  
+            
             IBACKLIGHT_Enable(pMe->m_pBacklight);
 #ifdef FEATURE_LED_CONTROL
             IBACKLIGHT_SigLedDisable( pMe->m_pBacklight);
