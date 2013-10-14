@@ -425,7 +425,9 @@ static boolean  HandleMainDialogEvent(CSoundMenu *pMe,
             }
             Sound_App_Add_Menu(pMenu,IDS_NORMALMODE);
             Sound_App_Add_Menu(pMenu,IDS_QUIETMODE);
+#if !defined(FEATURE_NO_VIBRATE)
             Sound_App_Add_Menu(pMenu,IDS_MEETING);
+#endif
             Sound_App_Add_Menu(pMenu,IDS_NOISEMODE);
 /*            
 #ifdef FEATURE_VERSION_C316

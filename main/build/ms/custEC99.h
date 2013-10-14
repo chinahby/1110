@@ -12,6 +12,9 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_VERSION_EC99
 #define FEATURE_VERSION_NO_BG
 
+#define FEATURE_NO_VIBRATE
+
+
 //LM129C
 //#define FEATURE_VERSION_LM126C    //FOR LM126C
 #define FEATURE_SOUND_BO
