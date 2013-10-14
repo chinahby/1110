@@ -65,7 +65,7 @@ endif
 
 ifeq ($(RESOURCEDIR),EC99)
     CONSTFILE_FILES+=\
-		Aishiniwo.mp3|fs:/hsmm/music/Aishiniwo.mp3
+		jnstyle.mp3|fs:/hsmm/music/jnstyle.mp3
 endif
 
 ifeq ($(RESOURCEDIR),W516)
