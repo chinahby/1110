@@ -170,6 +170,7 @@ static AlarmInfo *CAlarm_FindAlarm(CAlarm *pMe,
                                         uint32  *idx);
 static void       CAlarm_ScheduleAlarms(CAlarm *pMe,uint16 nUserCode);
 static void       CAlarm_TimerCB(void *pUser);
+static void       CAlarm_RemAllAlarm(IAlarm *p);
 
 
 /*===========================================================================
@@ -185,7 +186,8 @@ static const VTBL(IAlarm) gAlarmMethods =
    CAlarm_SetAlarm,
    CAlarm_CancelAlarm,
    CAlarm_SuspendAlarms,
-   CAlarm_ResumeAlarms
+   CAlarm_ResumeAlarms,
+   CAlarm_RemAllAlarm
 };
 
 static CAlarm gAlarm;   
@@ -890,6 +892,11 @@ static void CAlarm_ScheduleAlarms(CAlarm *pMe,uint16 nUserCode)
     }
 }
 
+static void       CAlarm_RemAllAlarm(IAlarm *p)
+{
+	CAlarm *pMe = (CAlarm*)p;
+	(void) IVector_RemoveAllElements(pMe->m_alarms);
+}
 
 /*=============================================================================
 FUNCTION:  CAlarm_TimerCB

@@ -93,6 +93,7 @@ QINTERFACE(IAlarm)
    int (*CancelAlarm)(IAlarm *p, AEECLSID cls, uint16 nUserCode);
    void (*SuspendAlarms)(IAlarm *p);
    void (*ResumeAlarms)(IAlarm *p);
+   void (*RemAllAlarm)(IAlarm *p);
 };
 
 
@@ -261,5 +262,8 @@ SEE ALSO:
 
 =============================================================================*/
 #define IAlarm_ResumeAlarms(p)          GET_PVTBL(p,IAlarm)->ResumeAlarms(p)
+
+#define IAlarm_RemAllAlarm(p)     GET_PVTBL(p,IAlarm)->RemAllAlarm(p)
+
 
 #endif 
