@@ -18,6 +18,59 @@
 #include "MusicPlayer.h"
 #endif 
 #include "appscommonimages.brh"
+#define CLOCK_CFG_VERSION       0x1002
+#define NUM_OF_ALARMCLOCK       6   //闹钟数目
+#define MAX_ALARM_INFO          8   //提示信息最大字符数
+
+typedef enum _RepModeType
+{
+   // 每天
+   WEEK_ALARM_REP1 = 3,
+
+   // 周一~~周五
+   WEEK_ALARM_REP2,
+
+   // 周一~~周六
+   WEEK_ALARM_REP3,
+
+   // 周一
+   WEEK_ALARM_REP4,
+
+   // 周二
+   WEEK_ALARM_REP5,
+
+   // 周三
+   WEEK_ALARM_REP6,
+
+   // 周四
+   WEEK_ALARM_REP7,
+
+   // 周五
+   WEEK_ALARM_REP8,
+
+   // 周六
+   WEEK_ALARM_REP9,
+
+   // 周日
+   WEEK_ALARM_REP10,
+
+   // 一次
+   WEEK_ALARM_REP11,
+} RepModeType;
+
+//闹钟首选项的数据结构
+typedef struct _ClockAppCfg
+{
+    boolean     bStateOn[NUM_OF_ALARMCLOCK];        //闹钟状态
+    RepModeType RepMode[NUM_OF_ALARMCLOCK];         //重复方式
+    uint32      Snooze[NUM_OF_ALARMCLOCK];          //SNOOZE  再响时间
+    uint32      dwWATime[NUM_OF_ALARMCLOCK];        //闹钟时间,毫秒表示
+#if 1
+    AECHAR      wszInfo[NUM_OF_ALARMCLOCK][MAX_ALARM_INFO + 1]; //闹钟提示信息
+#endif
+} ClockAppCfg;
+
+
 
 #define CLOSE_DIALOG(DlgRet)                         \
         {                                            \
@@ -809,6 +862,7 @@ static void deleteEventsOfThisMonthFromDB( CCalApp *pme)
     int i = 0;
     //debug( ";------------------------------------------------------------------------");
     //debug( ";deleteEventsOfThisMonthFromDB, %d.%02d", pme->m_julianCurrentDay.wYear, pme->m_julianCurrentDay.wMonth);
+    
     for( i = 1; i < 32; i ++)
     {
         deleteEventsOfTodayFromDB( pme, i);
@@ -1727,6 +1781,7 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
                             break;
                         case SUBSTATE_DELETE_ALL_CONFIRM:
                             drawModalDialog( pme->m_pDisplay, pStatic, IDS_OPTION_DELETE_ALL_CONFIRM, TRUE);
+							
                             break;
                     }
                 }
@@ -1777,6 +1832,33 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
                                 deleteEventsOfTodayFromDB( &pme->m_CalMgr, pme->m_CalMgr.m_julianCurrentDay.wDay);
                                 break;
                             case SUBSTATE_DELETE_MONTH_CONFIRM:
+								{
+									int     i           = 0;
+									boolean allClosed   = TRUE;
+									ClockAppCfg     m_ClockCfg;  
+									(void) ISHELL_SetPrefs(pme->m_pShell,
+								       AEECLSID_ALARMCLOCK,
+								       CLOCK_CFG_VERSION,
+								       &m_ClockCfg,
+								       sizeof(ClockAppCfg)
+								    );
+
+								    for( i = 0; i < NUM_OF_ALARMCLOCK; i ++)
+								    {
+								        if( m_ClockCfg.bStateOn[i])
+								        {
+								            allClosed = FALSE;
+								        }
+								    }
+									if(allClosed)
+									{
+										if(pme->m_pIAnn != NULL)
+								        {
+										    IANNUNCIATOR_SetFieldIsActiveEx(pme->m_pIAnn,FALSE);
+								            IANNUNCIATOR_SetField(pme->m_pIAnn, ANNUN_FIELD_ALARM, ANNUN_STATE_ALARM_OFF/*ANNUN_STATE_OFF*/);
+								        }
+									}
+								}
                                 deleteEventsOfThisMonthFromDB( &pme->m_CalMgr);
                                 break;
                         }
