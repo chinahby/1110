@@ -194,12 +194,11 @@
 		<Text>号码太长，无法保存</Text>
 	</STRING>
 	<STRING Id="1115" Name="IDS_NOOMH_CARD">
-		<Text>This is non-OMH Card, please upgrade to OMH R-UIM</Text>
+		<Text>非OMH卡, 请升级到OMH模式的UIM卡</Text>
 	</STRING>
 	<STRING Id="1117" Name="IDS_INVALID">
 		<Text>无效密码</Text>
-	</STRING>
-	
+	</STRING>	
 	<String Id="1120" Name="IDS_MAIN_MENU_TORCHON">
 		<Text>手电筒开启</Text>
 	</String>
@@ -222,7 +221,7 @@
 		<Text>SAR: CDMA800 Head:0.565W/Kg  Body:1.080W/Kg</Text>
 	</String>	
 	<STRING Id="1127" Name="IDS_MSG_CURPROFILE_MEETING_NO_VIBRATE">
-		<Text>Meeting mode activated</Text>
+		<Text>振动模式</Text>
 	</STRING>	
 	<String Id="1128" Name="IDS_SAR_C260_IC18">
 		<Text>SAR: 0.21W/kg@1g(Head)   0.16W/kg@1g(Body).</Text>
