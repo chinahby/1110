@@ -247,6 +247,9 @@
 	<String Id="1135" Name="IDS_SAR_CT100_VERSION_C444">
 		<Text>SAR:CDMA800 Head:0.744W/Kg; Body:0.666W/Kg</Text>
 	</String>		
+	<String Id="1136" Name="IDS_MSG_SILENT">
+		<Text>静音模式</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_NUMEDIT" Focus="0">

@@ -12377,6 +12377,20 @@ static void CallApp_ShortcutQuiet(CCallApp *pMe)
 #endif
 */
 
+#ifdef FEATURE_VERSION_EC99
+    if(curProfile == OEMNV_PROFILE_QUIETMODE)
+    {
+        curProfile = OEMNV_PROFILE_NORMALMODE;
+        pMe->m_Profile=OEMNV_PROFILE_NORMALMODE;
+        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_ALERT);
+    }
+    else
+    {
+        curProfile = OEMNV_PROFILE_QUIETMODE;
+        pMe->m_Profile=OEMNV_PROFILE_QUIETMODE;
+        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_SILENT);
+    }
+#else
     if(curProfile == OEMNV_PROFILE_MEETING)
     {
         curProfile = OEMNV_PROFILE_NORMALMODE;
@@ -12389,6 +12403,9 @@ static void CallApp_ShortcutQuiet(CCallApp *pMe)
         pMe->m_Profile=OEMNV_PROFILE_MEETING;
         IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_VIBRATOR);
     }
+#endif
+
+    
     ICONFIG_SetItem(pMe->m_pConfig,
                         CFGI_PROFILE_CUR_NUMBER,
                         &curProfile,
@@ -13226,7 +13243,11 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
             {
             #ifdef FEATURE_NO_VIBRATE            
                 //ISOUND_Vibrate(pMe->m_pSound, 2000);   //客户未要求不加振动提示  
+#ifdef FEATURE_VERSION_EC99
+                pMe->m_msg_text_id = IDS_MSG_SILENT;
+#else
                 pMe->m_msg_text_id = IDS_MSG_CURPROFILE_MEETING_NO_VIBRATE;
+#endif
             #else
                 pMe->m_msg_text_id = IDS_MSG_CURPROFILE_MEETING;
             #endif
