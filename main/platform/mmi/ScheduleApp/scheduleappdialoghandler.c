@@ -1826,12 +1826,6 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
                         switch( pme->m_subStateViewMonth)
                         {
                             case SUBSTATE_DELETE_ALL_CONFIRM:
-                                deleteAllEventsFromDB( &pme->m_CalMgr);
-                                break;
-                            case SUBSTATE_DELETE_TODAY_CONFIRM:
-                                deleteEventsOfTodayFromDB( &pme->m_CalMgr, pme->m_CalMgr.m_julianCurrentDay.wDay);
-                                break;
-                            case SUBSTATE_DELETE_MONTH_CONFIRM:
 								{
 									int     i           = 0;
 									boolean allClosed   = TRUE;
@@ -1859,6 +1853,13 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
 								        }
 									}
 								}
+                                deleteAllEventsFromDB( &pme->m_CalMgr);
+                                break;
+                            case SUBSTATE_DELETE_TODAY_CONFIRM:
+                                deleteEventsOfTodayFromDB( &pme->m_CalMgr, pme->m_CalMgr.m_julianCurrentDay.wDay);
+                                break;
+                            case SUBSTATE_DELETE_MONTH_CONFIRM:
+								
                                 deleteEventsOfThisMonthFromDB( &pme->m_CalMgr);
                                 break;
                         }
