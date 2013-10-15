@@ -866,6 +866,7 @@ static void CAlarm_ScheduleAlarms(CAlarm *pMe,uint16 nUserCode)
         (void) ISHELL_SetTimer(pMe->m_pShell, (int32) nNextTimerMS, CAlarm_TimerCB, pMe);
         AEE_LeaveAppContext(pOldContext);
 		MSG_FATAL("nUserCode============%d",nUserCode,0,0);
+        
 		if(nUserCode != 21)
         {
             IAnnunciator *pIAnn;
@@ -874,16 +875,18 @@ static void CAlarm_ScheduleAlarms(CAlarm *pMe,uint16 nUserCode)
                 IANNUNCIATOR_SetField(pIAnn, ANNUN_FIELD_ALARM, ANNUN_STATE_ALARM_ON/*ANNUN_STATE_OFF*/);
                 IANNUNCIATOR_Release(pIAnn);
             }
-        }
-		else
+        }       
+		else if (bAlarmSalesTracker)
 		{
 			IAnnunciator *pIAnn;
             if (SUCCESS == ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_ANNUNCIATOR, (void**)&pIAnn)) 
             {
-                IANNUNCIATOR_SetField(pIAnn, ANNUN_FIELD_ALARM, ANNUN_STATE_ALARM_OFF/*ANNUN_STATE_OFF*/);
+                IANNUNCIATOR_SetField(pIAnn, ANNUN_FIELD_ALARM, ANNUN_STATE_ALARM_OFF);
                 IANNUNCIATOR_Release(pIAnn);
             }
-		}
+
+            bAlarmSalesTracker = FALSE;
+		}       
     }
 
     if (bAlarmsChanged) 
