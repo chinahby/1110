@@ -10593,7 +10593,7 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_0_cal = {
 #elif defined FEATURE_VERSION_EC99
   0x956F,                        /* Tx Voice Volume          */
   0x2000,                        /* Tx DTMF gain            */
-  0x4800,                        /* CODEC Tx gain           */
+  0x3000,                        /* CODEC Tx gain           */
   0x6000,                        /* CODEC Rx gain           */ 
 #else
   0x956F,                        /* Tx Voice Volume          */
@@ -11236,7 +11236,7 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_0_cal_wb = {
 #elif defined FEATURE_VERSION_EC99
   0x5000,						 /* Tx Voice Volume 		*/
   0x1000,						 /* Tx DTMF gain			*/
-  0x4600,						 /* CODEC Tx gain			*/
+  0x3000,						 /* CODEC Tx gain			*/
   0x5000,						 /* CODEC Rx gain			*/
 #else
   0x5000,						 /* Tx Voice Volume 		*/
@@ -13826,7 +13826,7 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_1_cal  = {
 #elif defined FEATURE_VERSION_EC99
   0x5000,						 /* Tx Voice Volume 		*/
   0x1000,						 /* Tx DTMF gain			*/
-  0x4846,						 /* CODEC Tx gain			*/
+  0x3030,						 /* CODEC Tx gain			*/
   0x5000,						 /* CODEC Rx gain			*/
 #else
   0x5000,						 /* Tx Voice Volume 		*/
@@ -14452,7 +14452,7 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_1_cal_wb  = {
 #elif defined FEATURE_VERSION_EC99
   0x5000,						 /* Tx Voice Volume 		*/
   0x1000,						 /* Tx DTMF gain			*/
-  0x4686,						 /* CODEC Tx gain			*/
+  0x3030,						 /* CODEC Tx gain			*/
   0x5000,						 /* CODEC Rx gain			*/
 #else
   0x5000,						 /* Tx Voice Volume 		*/
@@ -15244,7 +15244,7 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_speaker_cal = {
 #elif defined(FEATURE_VERSION_EC99)
   0x5000,						   /* Tx Voice Volume 		*/
   0x1000,						   /* Tx DTMF gain			*/
-  0x3800,						   /* CODEC Tx gain			*/
+  0x2600,						   /* CODEC Tx gain			*/
   0x5000,						   /* CODEC Rx gain			*/
 #else
   0x5000,						   /* Tx Voice Volume 		*/
@@ -15831,7 +15831,7 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_speaker_cal_wb = {
 #elif defined FEATURE_VERSION_EC99
   0x5000,						   /* Tx Voice Volume 		*/
   0x1000,						   /* Tx DTMF gain			*/
-  0x3800,						   /* CODEC Tx gain			*/
+  0x2600,						   /* CODEC Tx gain			*/
   0x5000,						   /* CODEC Rx gain			*/
 #else
   0x5000,						   /* Tx Voice Volume 		*/
