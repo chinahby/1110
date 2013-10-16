@@ -7851,7 +7851,7 @@ static void CScheduleApp_DrawLunarStr(CScheduleApp *pme)
     OEM_GetConfig( CFGI_LANGUAGE_SELECTION, &language, sizeof(language));
 	#endif
 #if defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_20D)
-    if (WSTRLEN(pme->m_LunarString) > 4
+    if (WSTRLEN(pme->m_LunarString) > 4)
     {
         IANNUNCIATOR_SetFieldTextEx(pme->m_pIAnn, pme->m_LunarString,FALSE);
         IANNUNCIATOR_Redraw(pme->m_pIAnn);    
