@@ -1830,7 +1830,7 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
 									int     i           = 0;
 									boolean allClosed   = TRUE;
 									ClockAppCfg     m_ClockCfg;  
-									(void) ISHELL_SetPrefs(pme->m_pShell,
+									(void) ISHELL_GetPrefs(pme->m_pShell,
 								       AEECLSID_ALARMCLOCK,
 								       CLOCK_CFG_VERSION,
 								       &m_ClockCfg,
