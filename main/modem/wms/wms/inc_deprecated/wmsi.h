@@ -211,13 +211,13 @@ enum { WMS_MAX_RAM_STATUS_REPORTS = 10 };
 #ifdef FEATURE_VERSION_EC99
     enum 
     { 
-        IN_WATERMARK = 90,
-        IN_MAX = 100  
+        IN_WATERMARK = 70,
+        IN_MAX = 80  
     };
     enum 
     { 
-        OUT_WATERMARK = 70,
-        OUT_MAX = 80
+        OUT_WATERMARK = 40,
+        OUT_MAX = 50
     };
 
     enum { MAX_OEMTEMPLATES = 10};// OEM 消息常用语条数
