@@ -2914,15 +2914,26 @@ static boolean  dialog_handler_of_state_gotodate( CScheduleApp* pme,
 
                 case AVK_INFO:
                 case AVK_SELECT:
-                    if (WSTRLEN(pme->wstrYear) < 4)
                     {
-                        CLOSE_DIALOG(DLGRET_TO_SHOWALERT)
-                    }
-                    else
-                    {
-                        pme->update = TRUE;
-                        CLOSE_DIALOG(DLGRET_OPTION_VIEWMONTH_VIEW)
-                    }
+					 	uint32   year, month, day;
+		                char     strTep[5] = {0};
+		                (void)WSTRTOSTR(pme->wstrYear, strTep, sizeof(strTep));
+		                year = STRTOUL(strTep, NULL, 10);
+		                (void)WSTRTOSTR(pme->wstrMonth, strTep, sizeof(strTep));
+		                month = STRTOUL(strTep, NULL, 10);
+		                (void)WSTRTOSTR(pme->wstrDay, strTep, sizeof(strTep));
+		                day = STRTOUL(strTep, NULL, 10);
+						
+	                    if (WSTRLEN(pme->wstrYear) < 4 || (month<1) ||(day<1))
+	                    {
+	                        CLOSE_DIALOG(DLGRET_TO_SHOWALERT)
+	                    }
+	                    else
+	                    {
+	                        pme->update = TRUE;
+	                        CLOSE_DIALOG(DLGRET_OPTION_VIEWMONTH_VIEW)
+	                    }
+                	}
                     return TRUE;
 
                 case AVK_LEFT:
@@ -7835,18 +7846,10 @@ void CScheduleApp_GetLunarStr(CScheduleApp *pme)
 static void CScheduleApp_DrawLunarStr(CScheduleApp *pme)
 {
     AEERect rc;
-	#ifdef FEATURE_VERSION_K212_ND
-    nv_language_enum_type language;		
+    nv_language_enum_type language;	
     OEM_GetConfig( CFGI_LANGUAGE_SELECTION, &language, sizeof(language));
-	#endif
-#if defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_20D)
-    if (WSTRLEN(pme->m_LunarString) > 4
-    {
-        IANNUNCIATOR_SetFieldTextEx(pme->m_pIAnn, pme->m_LunarString,FALSE);
-        IANNUNCIATOR_Redraw(pme->m_pIAnn);    
-    }
-	#elif defined(FEATURE_VERSION_K212_ND)
-	 if ((WSTRLEN(pme->m_LunarString) > 4)&&(language==NV_LANGUAGE_CHINESE))
+#if defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
+    if ((WSTRLEN(pme->m_LunarString) > 4)&&(language==NV_LANGUAGE_CHINESE))
     {
         IANNUNCIATOR_SetFieldTextEx(pme->m_pIAnn, pme->m_LunarString,FALSE);
         IANNUNCIATOR_Redraw(pme->m_pIAnn);    
