@@ -1032,7 +1032,23 @@ static NextFSMAction WMSST_CHKPWD_Handler(WmsApp *pMe)
                 MOVE_TO_STATE(WMSST_EXIT)
             }
             return NFSMACTION_CONTINUE;
-
+            
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;  
+            
         default:
             // 用退出程序代替宏断言
             MOVE_TO_STATE(WMSST_EXIT)
@@ -1081,6 +1097,22 @@ static NextFSMAction WMSST_INBOXES_Handler(WmsApp *pMe)
         case DLGRET_CANCELED:
             MOVE_TO_STATE(WMSST_MAIN)
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
 
         case DLGRET_LOADOK:
             if (pMe->m_eOptType == OPT_VIA_VIEWMSG)
@@ -1147,6 +1179,22 @@ static NextFSMAction WMSST_VIEWINBOXMSG_Handler(WmsApp *pMe)
         case DLGRET_CANCELED:
             MOVE_TO_STATE(WMSST_INBOXES)
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
 
         case DLGRET_OK:
             pMe->m_eOptType = OPT_VIA_VIEWMSG;
@@ -1277,6 +1325,22 @@ static NextFSMAction WMSST_INBOXMSGOPTS_Handler(WmsApp *pMe)
                 MOVE_TO_STATE(WMSST_INBOXES)
             }
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
 
         case DLGRET_REPLY:
             {// 对于回复操作不再进入地址列表输入界面
@@ -1666,6 +1730,22 @@ static NextFSMAction WMSST_MSGCOPYCONFIRM_Handler(WmsApp *pMe)
                 MOVE_TO_STATE(pMe->m_prevState)
             }
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
     
         case DLGRET_OK:
             MOVE_TO_STATE(WMSST_MSGCOPY)
@@ -1864,6 +1944,22 @@ static NextFSMAction WMSST_VOICEMAIL_Handler(WmsApp *pMe)
 #endif            
             return NFSMACTION_CONTINUE;
 
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;  
+
         default:
             // 用退出程序代替宏断言
             MOVE_TO_STATE(WMSST_EXIT)
@@ -1936,6 +2032,22 @@ static NextFSMAction WMSST_VIEWVOICEMAIL_Handler(WmsApp *pMe)
             MOVE_TO_STATE(WMSST_VOICEMAIL)
             return NFSMACTION_CONTINUE;
 
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
+
         default:
             // 用退出程序代替宏断言
             MOVE_TO_STATE(WMSST_EXIT)
@@ -1981,6 +2093,22 @@ static NextFSMAction WMSST_VMNUMALERT_Handler(WmsApp *pMe)
             pMe->m_bCallVMNum = FALSE;
             MOVE_TO_STATE(WMSST_VOICEMAIL)
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
 
         default:
             // 用退出程序代替宏断言
@@ -2047,6 +2175,22 @@ static NextFSMAction WMSST_VMNUM_Handler(WmsApp *pMe)
             MOVE_TO_STATE(WMSST_VOICEMAIL)
             return NFSMACTION_CONTINUE;
 
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
+
         default:
             // 用退出程序代替宏断言
             MOVE_TO_STATE(WMSST_EXIT)
@@ -2095,6 +2239,22 @@ static NextFSMAction WMSST_DRAFT_Handler(WmsApp *pMe)
         case DLGRET_CANCELED:
             MOVE_TO_STATE(WMSST_MAIN)
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
 
         case DLGRET_LOADOK:
             if (pMe->m_eOptType == OPT_VIA_VIEWMSG)
@@ -2160,6 +2320,22 @@ static NextFSMAction WMSST_VIEWDRAFTMSG_Handler(WmsApp *pMe)
         case DLGRET_CANCELED:
             MOVE_TO_STATE(WMSST_DRAFT)
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
 
         case DLGRET_OK:
             pMe->m_eOptType = OPT_VIA_VIEWMSG;
@@ -2240,6 +2416,22 @@ static NextFSMAction WMSST_DRAFTMSGOPTS_Handler(WmsApp *pMe)
                 MOVE_TO_STATE(WMSST_DRAFT)
             }
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
             
         case DLGRET_EDIT:          // DLGRET_FORWARD
             // 清空群发地址链表
@@ -2326,6 +2518,22 @@ static NextFSMAction WMSST_TEMPLATES_Handler(WmsApp *pMe)
                 MOVE_TO_STATE(WMSST_MAIN)
             }
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
 
         case DLGRET_OPT:
             pMe->m_eOptType = OPT_VIA_LISTMSG;
@@ -2430,6 +2638,22 @@ static NextFSMAction WMSST_TEMPLATESOPTS_Handler(WmsApp *pMe)
             }
             return NFSMACTION_CONTINUE;
 
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
+
         case DLGRET_VIEW:
             MOVE_TO_STATE(WMSST_VIEWTEMPLATE)
             return NFSMACTION_CONTINUE;
@@ -2525,6 +2749,22 @@ static NextFSMAction WMSST_VIEWTEMPLATE_Handler(WmsApp *pMe)
             MOVE_TO_STATE(WMSST_TEMPLATES)
             return NFSMACTION_CONTINUE;
 
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
+
         case DLGRET_OK:
             pMe->m_eOptType = OPT_VIA_VIEWMSG;
             MOVE_TO_STATE(WMSST_TEMPLATESOPTS)
@@ -2579,6 +2819,22 @@ static NextFSMAction WMSST_EDITTEMPLATE_Handler(WmsApp *pMe)
             // 回到编辑前的状态
             MOVE_TO_STATE(WMSST_TEMPLATES)
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
 
         case DLGRET_SAVE:
             if (pMe->m_msSend.m_szMessage == NULL)
@@ -2825,6 +3081,22 @@ static NextFSMAction WMSST_TONUMLIST_Handler(WmsApp *pMe)
                 pMe->m_dwInsertPos = 0;         
             }
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
 
         case DLGRET_SENDOPT:
             MSG_FATAL("WMSST_TONUMLIST_Handler DLGRET_SENDOPT",0,0,0);
@@ -3404,6 +3676,22 @@ static NextFSMAction WMSST_WRITEMSG_Handler(WmsApp *pMe)
             }
             return NFSMACTION_CONTINUE;
 
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
+
         case DLGRET_TEXTFULL:
             pMe->m_ePMsgType = MESSAGE_INFORMATIVE;
             WmsApp_ShowMsgBox(pMe, IDS_INBOXSFULL);
@@ -3610,6 +3898,22 @@ static NextFSMAction WMSST_SENDOPTS_Handler(WmsApp *pMe)
         case DLGRET_CANCELED:
             MOVE_TO_STATE(WMSST_WRITEMSG)//WMSST_TONUMLIST
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
             
         case DLGRET_OK:
             MOVE_TO_STATE(WMSST_WRITEMSG)
@@ -3876,6 +4180,22 @@ static NextFSMAction WMSST_OUTBOX_Handler(WmsApp *pMe)
             MOVE_TO_STATE(WMSST_MAIN)
             return NFSMACTION_CONTINUE;
 
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
+
         case DLGRET_LOADOK:
             MSG_FATAL("WMSST_OUTBOX_Handler DLGRET_LOADOK m_eOptType=%d",pMe->m_eOptType,0,0);
             if (pMe->m_eOptType == OPT_VIA_VIEWMSG)
@@ -3946,6 +4266,22 @@ static NextFSMAction WMSST_VIEWOUTBOXMSG_Handler(WmsApp *pMe)
             MOVE_TO_STATE(WMSST_OUTBOX)
             return NFSMACTION_CONTINUE;
 
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
+
         case DLGRET_OK:
             pMe->m_eOptType = OPT_VIA_VIEWMSG;
             MOVE_TO_STATE(WMSST_OUTMSGOPTS)
@@ -4011,6 +4347,22 @@ static NextFSMAction WMSST_OUTMSGOPTS_Handler(WmsApp *pMe)
                 MOVE_TO_STATE(WMSST_OUTBOX)
             }
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
 
         case DLGRET_FORWARD:
             // 清空群发地址链表
@@ -4161,6 +4513,22 @@ static NextFSMAction WMSST_DELETEMSGS_Handler(WmsApp *pMe)
         case DLGRET_CANCELED:
             MOVE_TO_STATE(WMSST_MANAGEMENT)
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
             
         case DLGRET_CLEARINBOXES:
         case DLGRET_CLEAROUTBOX:
@@ -4441,6 +4809,22 @@ static NextFSMAction WMSST_DELMSGCONFIRM_Handler(WmsApp *pMe)
                     MOVE_TO_STATE(pMe->m_prevState)
             }
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
     
         case DLGRET_OK:
             WmsApp_ShowDialog(pMe, IDD_DELETING);
@@ -4661,6 +5045,22 @@ static NextFSMAction WMSST_MSGSETTING_Handler(WmsApp *pMe)
         case DLGRET_CANCELED:
             MOVE_TO_STATE(WMSST_MAIN)
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
             
         case DLGRET_SETTINGAUTOSAVE:
             MOVE_TO_STATE(WMSST_AUTOSAVE)
@@ -4781,6 +5181,22 @@ static NextFSMAction WMSST_RESERVEDMSG_Handler(WmsApp *pMe)
         case DLGRET_CANCELED:
             MOVE_TO_STATE(WMSST_MAIN)
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
             
         case DLGRET_NEWRESERVEDMSG:
             pMe->m_bTextFullAlert = FALSE;
@@ -4868,6 +5284,22 @@ static NextFSMAction WMSST_RSVDMSGTIME_Handler(WmsApp *pMe)
         case DLGRET_CANCELED:
             MOVE_TO_STATE(WMSST_TONUMLIST)          
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;       
                         
         case DLGRET_YEARERR:
             pMe->m_ePMsgType = MESSAGE_INFORMATION;
@@ -5050,6 +5482,22 @@ static NextFSMAction WMSST_RESERVEDMSGS_Handler(WmsApp *pMe)
             MOVE_TO_STATE(WMSST_RESERVEDMSG)
             return NFSMACTION_CONTINUE;
 
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
+
         case DLGRET_LOADOK:
             if (pMe->m_eOptType == OPT_VIA_VIEWMSG)
             {
@@ -5107,6 +5555,22 @@ static NextFSMAction WMSST_VIEWRESERVEDMSG_Handler(WmsApp *pMe)
         case DLGRET_CANCELED:
             MOVE_TO_STATE(WMSST_RESERVEDMSGS)
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
 
         case DLGRET_OK:
             pMe->m_eOptType = OPT_VIA_VIEWMSG;
@@ -5171,6 +5635,22 @@ static NextFSMAction WMSST_RESERVEDMSGOPT_Handler(WmsApp *pMe)
                 MOVE_TO_STATE(WMSST_RESERVEDMSGS)
             }
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
 
         case DLGRET_EDIT:
             // 拷贝消息
@@ -5374,6 +5854,22 @@ static NextFSMAction WMSST_RESERVEDMSGALERT_Handler(WmsApp *pMe)
                 MOVE_TO_STATE(WMSST_EXIT)
             }
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
             
         case DLGRET_OK:
             // 重置当前消息列表
@@ -5505,6 +6001,22 @@ static NextFSMAction WMSST_AUTOSAVE_Handler(WmsApp *pMe)
         case DLGRET_MSGBOX_OK:
             MOVE_TO_STATE(WMSST_MSGSETTING)
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
             
         case DLGRET_OK:
             pMe->m_ePMsgType = MESSAGE_INFORMATIVE;
@@ -5552,6 +6064,22 @@ static NextFSMAction WMSST_PRIORITY_Handler(WmsApp *pMe)
         case DLGRET_MSGBOX_OK:
             MOVE_TO_STATE(WMSST_MSGSETTING)
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
             
         case DLGRET_OK:
             pMe->m_ePMsgType = MESSAGE_INFORMATIVE;
@@ -5599,6 +6127,22 @@ static NextFSMAction WMSST_SENDMODE_Handler(WmsApp *pMe)
         case DLGRET_MSGBOX_OK:
             MOVE_TO_STATE(WMSST_MSGSETTING)
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
             
         case DLGRET_OK:
             pMe->m_ePMsgType = MESSAGE_INFORMATIVE;
@@ -5646,6 +6190,22 @@ static NextFSMAction WMSST_MMSOPTION_YESNO_Handler(WmsApp *pMe)
         case DLGRET_MSGBOX_OK:
             MOVE_TO_STATE(WMSST_MSGSETTING)
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
             
         case DLGRET_OK:
             pMe->m_ePMsgType = MESSAGE_INFORMATIVE;
@@ -5694,6 +6254,22 @@ static NextFSMAction WMSST_REPORTS_Handler(WmsApp *pMe)
         case DLGRET_MSGBOX_OK:
             MOVE_TO_STATE(WMSST_MSGSETTING)
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
             
         case DLGRET_OK:
             pMe->m_ePMsgType = MESSAGE_INFORMATIVE;
@@ -5742,6 +6318,22 @@ static NextFSMAction WMSST_AUTOREPLACE_Handler(WmsApp *pMe)
         case DLGRET_MSGBOX_OK:
             MOVE_TO_STATE(WMSST_MSGSETTING)
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
             
         case DLGRET_OK:
             pMe->m_ePMsgType = MESSAGE_INFORMATIVE;
@@ -5790,6 +6382,22 @@ static NextFSMAction WMSST_CALLBACKNUMSWITCH_Handler(WmsApp *pMe)
         case DLGRET_MSGBOX_OK:
             MOVE_TO_STATE(WMSST_MSGSETTING)
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
             
         case DLGRET_OK:
             pMe->m_ePMsgType = MESSAGE_INFORMATIVE;
@@ -5840,6 +6448,22 @@ static NextFSMAction WMSST_CALLBACKNUMSET_Handler(WmsApp *pMe)
         case DLGRET_CANCELED:
             MOVE_TO_STATE(WMSST_MSGSETTING)
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
             
         case DLGRET_MSGBOX_OK:
             MOVE_TO_STATE(WMSST_MSGSETTING)
@@ -5891,6 +6515,22 @@ static NextFSMAction WMSST_AUTODELETE_Handler(WmsApp *pMe)
         case DLGRET_MSGBOX_OK:
             MOVE_TO_STATE(WMSST_MSGSETTING)
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
             
         case DLGRET_OK:
             pMe->m_ePMsgType = MESSAGE_INFORMATIVE;
@@ -5938,6 +6578,22 @@ static NextFSMAction WMSST_RESERVEDMSGALERTTIMEOUT_Handler(WmsApp *pMe)
         case DLGRET_MSGBOX_OK:
             MOVE_TO_STATE(WMSST_MSGSETTING)
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
             
         case DLGRET_OK:
             pMe->m_ePMsgType = MESSAGE_INFORMATIVE;
@@ -5986,6 +6642,22 @@ static NextFSMAction WMSST_STORAGE_Handler(WmsApp *pMe)
         case DLGRET_MSGBOX_OK:
             MOVE_TO_STATE(WMSST_MANAGEMENT)
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;       
             
         case DLGRET_OK:
             pMe->m_ePMsgType = MESSAGE_INFORMATIVE;
@@ -6034,6 +6706,22 @@ static NextFSMAction WMSST_MSGVALIDITY_Handler(WmsApp *pMe)
         case DLGRET_MSGBOX_OK:
             MOVE_TO_STATE(WMSST_MSGSETTING)
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
             
         case DLGRET_OK:
             pMe->m_ePMsgType = MESSAGE_INFORMATIVE;
@@ -6082,6 +6770,22 @@ static NextFSMAction WMSST_TIME_STAMP_Handler(WmsApp *pMe)
         case DLGRET_MSGBOX_OK:
             MOVE_TO_STATE(WMSST_MSGSETTING)
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
             
         case DLGRET_OK:
             pMe->m_ePMsgType = MESSAGE_INFORMATIVE;
@@ -6131,6 +6835,22 @@ static NextFSMAction WMSST_VOICEMAILOPTS_Handler(WmsApp *pMe)
             MOVE_TO_STATE(WMSST_VOICEMAIL)
             return NFSMACTION_CONTINUE;
 
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
+
         case DLGRET_DELETE:
             pMe->m_eEraseWMSType = ERASE_VOICEMAIL_ONE;
             MOVE_TO_STATE(WMSST_DELMSGCONFIRM)
@@ -6179,6 +6899,22 @@ static NextFSMAction WMSST_EXTARCTDETAILS_Handler(WmsApp *pMe)
         case DLGRET_CANCELED:
             MOVE_TO_STATE(WMSST_VIEWINBOXMSG)//WMSST_INBOXMSGOPTS
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
 
         case DLGRET_SAVENUM:
             pMe->m_ExtractType = EXTRACT_NUM;
@@ -6331,6 +7067,22 @@ static NextFSMAction WMSST_EXTARCTEDITEMLIST_Handler(WmsApp *pMe)
             MOVE_TO_STATE(WMSST_VIEWINBOXMSG)
             return NFSMACTION_CONTINUE;
 
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
+
         case DLGRET_OK:
             MOVE_TO_STATE(WMSST_EXTARCTEDITEMOPT)
             return NFSMACTION_CONTINUE;
@@ -6375,6 +7127,22 @@ static NextFSMAction WMSST_EXTARCTEDITEMOPT_Handler(WmsApp *pMe)
         case DLGRET_CANCELED:
             MOVE_TO_STATE(WMSST_EXTARCTEDITEMLIST)
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
 
         case DLGRET_WRITEMSG:
             {
@@ -6454,6 +7222,22 @@ static NextFSMAction WMSST_MEMSTATUS_Handler(WmsApp *pMe)
             MOVE_TO_STATE(WMSST_MANAGEMENT)   
             return NFSMACTION_CONTINUE;
 
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
+
         default:
             // 用退出程序代替宏断言
             MOVE_TO_STATE(WMSST_EXIT)
@@ -6507,6 +7291,22 @@ static NextFSMAction WMSST_CONTINUESEND_QUERY_Handler(WmsApp *pMe)
             pMe->m_ContinueSendType = NONE_CONTINUE;
                 
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
 
         case DLGRET_OK:
             pMe->m_bNeedContinueSend = FALSE;
@@ -6571,6 +7371,22 @@ static NextFSMAction WMSST_MANAGEMENT_Handler(WmsApp *pMe)
         case DLGRET_CANCELED:
             MOVE_TO_STATE(WMSST_MAIN)    
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
             
         case DLGRET_DELETEMSGS:
             {
@@ -6669,6 +7485,22 @@ static NextFSMAction WMSST_COPYINBOX_Handler(WmsApp *pMe)
         case DLGRET_CANCELED:
             MOVE_TO_STATE(WMSST_MANAGEMENT)    
             return NFSMACTION_CONTINUE;  
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
 
         case DLGRET_COPYINBOXMSGTORUIM:
             {
@@ -6781,6 +7613,22 @@ static NextFSMAction WMSST_MOVEINBOX_Handler(WmsApp *pMe)
             MOVE_TO_STATE(WMSST_MANAGEMENT)    
             return NFSMACTION_CONTINUE;
 
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
+
         case DLGRET_MOVEINBOXMSGTORUIM:
             {
                 uint16 wMsgs = 0;
@@ -6890,6 +7738,22 @@ static NextFSMAction WMSST_SELECTFROM_Handler(WmsApp *pMe)
         case DLGRET_CANCELED:
             MOVE_TO_STATE(WMSST_TONUMLIST);
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
           
         default:
             // 用退出程序代替宏断言
@@ -6913,6 +7777,23 @@ static NextFSMAction WMSST_RESENDCONFIRM_Handler(WmsApp *pMe)
 		case DLGRET_CANCELED:
 			MOVE_TO_STATE(WMSST_MAIN)
 		    break;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;  
+            
 		case DLGRET_OK:
 			if(SEND_MSG_NEW == pMe->m_eCreateWMSType)
 			{
@@ -7167,6 +8048,22 @@ static NextFSMAction WMSST_OUTBOX_MMS_Handler(WmsApp *pMe)
             MSG_FATAL("WMSST_OUTBOX_MMS_Handler 2",0,0,0);
             MOVE_TO_STATE(WMSST_MAIN)
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
         
         case DLGRET_LOADOK:
             MSG_FATAL("WMSST_OUTBOX_MMS_Handler 3",0,0,0);
@@ -7233,6 +8130,22 @@ static NextFSMAction WMSST_VIEWOUTBOXMSG_MMS_Handler(WmsApp *pMe)
             MOVE_TO_STATE(WMSST_OUTBOX_MMS)
             return NFSMACTION_CONTINUE;
 
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
+
         case DLGRET_OK:
             MSG_FATAL("WMSST_VIEWOUTBOXMSG_MMS_Handler DLGRET_OK",0,0,0);
             pMe->m_eOptType = OPT_VIA_VIEWMSG;
@@ -7290,6 +8203,22 @@ static NextFSMAction WMSST_INBOX_MMS_Handler(WmsApp *pMe)
         case DLGRET_CANCELED:
             MOVE_TO_STATE(WMSST_MAIN)
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
 
         case DLGRET_LOADOK:
 
@@ -7357,6 +8286,22 @@ static NextFSMAction WMSST_DRAFTBOX_MMS_Handler(WmsApp *pMe)
             MOVE_TO_STATE(WMSST_MAIN)
             return NFSMACTION_CONTINUE;
 
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
+
         case DLGRET_LOADOK:
 
             MOVE_TO_STATE(WMSST_VIEWDRAFTBOXMSG_MMS)
@@ -7422,6 +8367,22 @@ static NextFSMAction WMSST_VIEWINBOXMSG_MMS_Handler(WmsApp *pMe)
             MSG_FATAL("WMSST_VIEWINBOXMSG_MMS_Handler DLGRET_CANCELED",0,0,0);
             MOVE_TO_STATE(WMSST_INBOX_MMS)
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
 
         case DLGRET_OK:
             MSG_FATAL("WMSST_VIEWINBOXMSG_MMS_Handler DLGRET_OK",0,0,0);
@@ -7606,6 +8567,22 @@ static NextFSMAction WMSST_OUTMSGOPTS_MMS_Handler(WmsApp *pMe)
                 MOVE_TO_STATE(WMSST_OUTBOX_MMS)
             }
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
 /*
         case DLGRET_FORWARD:
             添加函数
@@ -7741,6 +8718,22 @@ static NextFSMAction WMSST_INMSGOPTS_MMS_Handler(WmsApp *pMe)
                 MOVE_TO_STATE(WMSST_INBOX_MMS)
             }
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
 /*
         case DLGRET_FORWARD:
             添加函数
@@ -7852,6 +8845,22 @@ static NextFSMAction WMSST_VIEWDRAFTBOXMSG_MMS_Handler(WmsApp *pMe)
             MSG_FATAL("WMSST_VIEWDRAFTBOXMSG_MMS_Handler DLGRET_CANCELED",0,0,0);
             MOVE_TO_STATE(WMSST_DRAFTBOX_MMS)
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
 
         case DLGRET_OK:
             MSG_FATAL("WMSST_VIEWDRAFTBOXMSG_MMS_Handler DLGRET_OK",0,0,0);
@@ -8041,6 +9050,22 @@ static NextFSMAction WMSST_DRAFTMSGOPTS_MMS_Handler(WmsApp *pMe)
             }
             return NFSMACTION_CONTINUE;
 
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
+
         case DLGRET_DELETE:
 			
             pMe->m_eEraseWMSType = ERASE_DRAFTBOX_MMS_ONE;
@@ -8154,6 +9179,22 @@ static NextFSMAction WMSST_EDIT_ALBUMOREMAIN_Handler(WmsApp *pMe)
         case DLGRET_CANCELED:
             MOVE_TO_STATE(WMSST_TONUMLIST)
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
             
         default:
             // 用退出程序代替宏断言
@@ -8203,6 +9244,22 @@ static NextFSMAction WMSST_MMS_SERVER_ADDRESS_Handler(WmsApp *pMe)
         case DLGRET_CANCELED:
             MOVE_TO_STATE(WMSST_MSGSETTING)
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
             
         default:
             // 用退出程序代替宏断言
@@ -8251,6 +9308,22 @@ static NextFSMAction WMSST_MMS_PROXY_Handler(WmsApp *pMe)
         case DLGRET_CANCELED:
             MOVE_TO_STATE(WMSST_MSGSETTING)
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
             
         default:
             // 用退出程序代替宏断言
@@ -8299,6 +9372,22 @@ static NextFSMAction WMSST_MMS_PORT_Handler(WmsApp *pMe)
         case DLGRET_CANCELED:
             MOVE_TO_STATE(WMSST_MSGSETTING)
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
             
         default:
             // 用退出程序代替宏断言
@@ -8325,6 +9414,22 @@ static NextFSMAction WMSST_MMS_MEMSTATUS_Handler(WmsApp * pMe)
         case DLGRET_CANCELED:              
             MOVE_TO_STATE(WMSST_MANAGEMENT)   
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_INBOXES:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            {
+                uint16  nMsgID = 0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_INBOX);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)            
+            return NFSMACTION_CONTINUE;      
 
         default:
             // 用退出程序代替宏断言

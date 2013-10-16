@@ -1991,13 +1991,14 @@ Exit:
                                 CLOSE_DIALOG(DLGRET_CREATE)
                             }
         				    else
-        				    {
+        				    {        				        
 							    if(pMe->m_currState != WMSST_INBOXES && pMe->m_currState != WMSST_VIEWINBOXMSG
 								   && pMe->m_currState !=	WMSST_INBOXMSGOPTS && pMe->m_currState !=	WMSST_WRITEMSG
 								   && pMe->m_currState != WMSST_SENDING)
 							    {
-							    	CLOSE_DIALOG(DLGRET_INBOXES)
-                                    gbWmsSMSNtf = FALSE;
+							    	CLOSE_DIALOG(DLGRET_INBOXES)	
+							    	
+                                    //gbWmsSMSNtf = FALSE;
 									gbWmsVMailNtf = FALSE;
 									gbWmsSMSNtf = FALSE;
 							    }
@@ -2017,7 +2018,7 @@ Exit:
 	                                }
 									gbWmsVMailNtf = FALSE;
 									gbWmsSMSNtf = FALSE;
-								}
+								}                                
 							}
         				}
 	                    
