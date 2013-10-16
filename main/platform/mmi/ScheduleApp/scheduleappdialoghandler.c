@@ -7835,10 +7835,18 @@ void CScheduleApp_GetLunarStr(CScheduleApp *pme)
 static void CScheduleApp_DrawLunarStr(CScheduleApp *pme)
 {
     AEERect rc;
-    nv_language_enum_type language;	
+	#ifdef FEATURE_VERSION_K212_ND
+    nv_language_enum_type language;		
     OEM_GetConfig( CFGI_LANGUAGE_SELECTION, &language, sizeof(language));
-#if defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
-    if ((WSTRLEN(pme->m_LunarString) > 4)&&(language==NV_LANGUAGE_CHINESE))
+	#endif
+#if defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_20D)
+    if (WSTRLEN(pme->m_LunarString) > 4
+    {
+        IANNUNCIATOR_SetFieldTextEx(pme->m_pIAnn, pme->m_LunarString,FALSE);
+        IANNUNCIATOR_Redraw(pme->m_pIAnn);    
+    }
+	#elif defined(FEATURE_VERSION_K212_ND)
+	 if ((WSTRLEN(pme->m_LunarString) > 4)&&(language==NV_LANGUAGE_CHINESE))
     {
         IANNUNCIATOR_SetFieldTextEx(pme->m_pIAnn, pme->m_LunarString,FALSE);
         IANNUNCIATOR_Redraw(pme->m_pIAnn);    
