@@ -362,9 +362,9 @@ typedef struct _CFmRadio
 //状态指示灯大小
 #define FMRADIO_LED_LIGHT_SIZE          12
 #elif defined(FEATURE_DISP_160X128)
-//当前操作字符串显示y偏移
+//当前操作字符串显示y偏移 
 #ifdef FEATURE_VERSION_K212_ND
-#define FMRADIO_OPERATION_YOFFSET   	7
+#define FMRADIO_OPERATION_YOFFSET   	10
 #else
 #define FMRADIO_OPERATION_YOFFSET   	14
 #endif

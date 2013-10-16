@@ -755,9 +755,9 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
 			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_DISPLAY_TITLE, IDS_DISPLAY_TITLE, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_CALLSETTING_TITLE, IDS_CALLSETTING_TITLE, NULL, 0);
 			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SECURITY_TITLE, IDS_SECURITY_TITLE, NULL, 0);
-			#ifdef FEATURE_SET_SCENEMODE
-			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SCENEMODE_TITLE, IDS_SCENEMODE_TITLE, NULL, 0);
-			#endif
+			//#ifdef FEATURE_SET_SCENEMODE
+			//IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SCENEMODE_TITLE, IDS_SCENEMODE_TITLE, NULL, 0);
+			//#endif
 			#ifdef FEATRUE_AUTO_POWER
 			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_AUTO_POWER_TITLE, IDS_AUTO_POWER_TITLE, NULL, 0);
 			#endif
@@ -5333,8 +5333,8 @@ static boolean  HandleSpeechDialogEvent(CSettingMenu *pMe,
 			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_MAIN_SPEECH, IDS_MAIN_SPEECH, NULL, 0);
 			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_TIME_SPEECH, IDS_TIME_SPEECH, NULL, 0);
  #ifdef FEATURE_VERSION_K212_ND			
-			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_INDIAL_SPEECH, IDS_INDIAL_SPEECH, NULL, 0);
-			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_PHONEBOOK_SPEECH, IDS_PHONEBOOK_SPEECH, NULL, 0);
+			///IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_INDIAL_SPEECH, IDS_INDIAL_SPEECH, NULL, 0);
+			//IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_PHONEBOOK_SPEECH, IDS_PHONEBOOK_SPEECH, NULL, 0);
 #endif			
             return TRUE;
 
@@ -5353,10 +5353,10 @@ static boolean  HandleSpeechDialogEvent(CSettingMenu *pMe,
 			(void) ICONFIG_GetItem(pMe->m_pConfig,CFGI_SOUND_BO_CORE,&bData,sizeof(bData));
                 SetCheckBoxItem(pMenu, IDS_TIME_SPEECH, bData);
  #ifdef FEATURE_VERSION_K212_ND				
-			(void) ICONFIG_GetItem(pMe->m_pConfig,CFGI_SOUND_BO_INDIAL,&bData,sizeof(bData));
-                SetCheckBoxItem(pMenu, IDS_INDIAL_SPEECH, bData);
-			(void) ICONFIG_GetItem(pMe->m_pConfig,CFGI_SOUND_BO_PHONEBOOK,&bData,sizeof(bData));
-                SetCheckBoxItem(pMenu, IDS_PHONEBOOK_SPEECH, bData);
+			//(void) ICONFIG_GetItem(pMe->m_pConfig,CFGI_SOUND_BO_INDIAL,&bData,sizeof(bData));
+               // SetCheckBoxItem(pMenu, IDS_INDIAL_SPEECH, bData);
+			//(void) ICONFIG_GetItem(pMe->m_pConfig,CFGI_SOUND_BO_PHONEBOOK,&bData,sizeof(bData));
+               // SetCheckBoxItem(pMenu, IDS_PHONEBOOK_SPEECH, bData);
 #endif				
 		    IMENUCTL_SetSel(pMenu, IDS_DIA_SPEECH);
             return TRUE;
@@ -5389,10 +5389,10 @@ static boolean  HandleSpeechDialogEvent(CSettingMenu *pMe,
 					    bData = GetCheckBoxVal(pMenu, IDS_TIME_SPEECH);
 					   (void) ICONFIG_SetItem(pMe->m_pConfig,CFGI_SOUND_BO_CORE,&bData,sizeof(bData));
 					    #ifdef FEATURE_VERSION_K212_ND
-						bData = GetCheckBoxVal(pMenu, IDS_INDIAL_SPEECH);
-					   (void) ICONFIG_SetItem(pMe->m_pConfig,CFGI_SOUND_BO_INDIAL,&bData,sizeof(bData));
-						bData = GetCheckBoxVal(pMenu, IDS_PHONEBOOK_SPEECH);
-					   (void) ICONFIG_SetItem(pMe->m_pConfig,CFGI_SOUND_BO_PHONEBOOK,&bData,sizeof(bData));
+					//	bData = GetCheckBoxVal(pMenu, IDS_INDIAL_SPEECH);
+					//   (void) ICONFIG_SetItem(pMe->m_pConfig,CFGI_SOUND_BO_INDIAL,&bData,sizeof(bData));
+					//	bData = GetCheckBoxVal(pMenu, IDS_PHONEBOOK_SPEECH);
+					  // (void) ICONFIG_SetItem(pMe->m_pConfig,CFGI_SOUND_BO_PHONEBOOK,&bData,sizeof(bData));
 					   #endif
 						CLOSE_DIALOG(DLGRET_WARNING)
 					}

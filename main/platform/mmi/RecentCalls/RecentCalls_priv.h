@@ -280,8 +280,13 @@ typedef struct _CRecentCalls
 #define STARTARG_ONECALL     ((char) 'D') //获取一个通话记录
 #define SATRTARG_REDIAL      "Redial"       //Add By zzg 2013_01_17
 #define MAX_STRING_LEN       (38)
+#ifdef FEATURE_VERSION_K212_ND
+#define PIXELS_TO_EDGE          (2)
+#define BETWEEN_LINE_PIXELS    (0)
+#else
 #define BETWEEN_LINE_PIXELS (3)
 #define PIXELS_TO_EDGE          (6)
+#endif
 
 /*==============================================================================
                                  全局数据

@@ -1760,7 +1760,13 @@ static int OEMPriv_SetItem_CFGI_SOUND_BO_DIA(void *pBuff);
 static int OEMPriv_GetItem_CFGI_SOUND_BO_MAIN(void *pBuff);
 static int OEMPriv_SetItem_CFGI_SOUND_BO_MAIN(void *pBuff);
 static int OEMPriv_GetItem_CFGI_SOUND_BO_CORE(void *pBuff);
- static int OEMPriv_SetItem_CFGI_SOUND_BO_CORE(void *pBuff);
+static int OEMPriv_SetItem_CFGI_SOUND_BO_CORE(void *pBuff);
+#ifdef FEATURE_VERSION_K212_ND
+static int OEMPriv_GetItem_CFGI_SOUND_BO_INDIAL(void *pBuff);
+static int OEMPriv_SetItem_CFGI_SOUND_BO_INDIAL(void *pBuff);
+static int OEMPriv_GetItem_CFGI_SOUND_BO_PHONEBOOK(void *pBuff);
+static int OEMPriv_SetItem_CFGI_SOUND_BO_PHONEBOOK(void *pBuff);
+#endif
 #endif 
 
 #ifdef FEATURE_SHORTCUT_IN_SETTINGS
@@ -2785,9 +2791,11 @@ static ConfigItemTableEntry const customOEMItemTable[] =
 #ifdef FEATURE_SOUND_BO
    CFGTABLEITEM(CFGI_SOUND_BO_DIA,sizeof(boolean)),		    //CFGI_SOUND_BO_DIA,
    CFGTABLEITEM(CFGI_SOUND_BO_MAIN,sizeof(boolean)),		//CFGI_SOUND_BO_MAIN,
-   CFGTABLEITEM(CFGI_SOUND_BO_CORE,sizeof(boolean)),		//CFGI_SOUND_BO_CORE,
-   //CFGTABLEITEM(CFGI_SOUND_BO_INDIAL,sizeof(boolean)),		//CFGI_SOUND_BO_INDIAL,
-   //CFGTABLEITEM(CFGI_SOUND_BO_PHONEBOOK,sizeof(boolean)),	//CFGI_SOUND_BO_PHONEBOOK,
+   CFGTABLEITEM(CFGI_SOUND_BO_CORE,sizeof(boolean)),		//CFGI_SOUND_BO_CORE,   
+    #ifdef FEATURE_VERSION_K212_ND
+   CFGTABLEITEM(CFGI_SOUND_BO_INDIAL,sizeof(boolean)),		//CFGI_SOUND_BO_INDIAL,
+   CFGTABLEITEM(CFGI_SOUND_BO_PHONEBOOK,sizeof(boolean)),	//CFGI_SOUND_BO_PHONEBOOK,
+   #endif
 #endif 
 #ifdef FEATURE_SHORTCUT_IN_SETTINGS   
    CFGTABLEITEM(CFGI_KEYPAD_SHORTCUTS_TABLE,sizeof(keypad_shortcuts_t)*MAX_SHORTCUTS_SIZE),
@@ -3685,7 +3693,7 @@ void OEM_RestoreFactorySetting( void )
    nvi_cache.set_time_format = (byte)NV_SET_TIME_FORMAT_24_HOUR;
 #endif   
 #ifdef FEATURE_TIME_DATA_SETTING
-#ifdef FEATURE_VERSION_K202_LM129C //xxzhen
+#if defined(FEATURE_VERSION_K202_LM129C)||defined(FEATURE_VERSION_K212_ND) //xxzhen
     nvi.set_date_format = NV_SET_DATE_FORMAT_YYYY_MM_DD_1;
     (void) OEMNV_Put( NV_SET_DATE_FORMAT_I, &nvi);
     nvi_cache.set_date_format = (byte)NV_SET_DATE_FORMAT_YYYY_MM_DD_1;
@@ -11540,6 +11548,32 @@ static int OEMPriv_SetItem_CFGI_SOUND_BO_CORE(void *pBuff)
 	 OEMPriv_WriteOEMConfigList(); 
 	 return SUCCESS;
 }
+
+#ifdef FEATURE_VERSION_K212_ND
+static int OEMPriv_GetItem_CFGI_SOUND_BO_INDIAL(void *pBuff)
+{
+	MEMCPY(pBuff, (void*) &oemi_cache.m_sound_bo_indial, sizeof(boolean));
+	 return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_SOUND_BO_INDIAL(void *pBuff)
+{
+	MEMCPY((void*) &oemi_cache.m_sound_bo_indial, pBuff, sizeof(boolean));
+	 OEMPriv_WriteOEMConfigList(); 
+	 return SUCCESS;
+}
+static int OEMPriv_GetItem_CFGI_SOUND_BO_PHONEBOOK(void *pBuff)
+{
+	MEMCPY(pBuff, (void*) &oemi_cache.m_sound_bo_phonebook, sizeof(boolean));
+	 return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_SOUND_BO_PHONEBOOK(void *pBuff)
+{
+	MEMCPY((void*) &oemi_cache.m_sound_bo_phonebook, pBuff, sizeof(boolean));
+	 OEMPriv_WriteOEMConfigList(); 
+	 return SUCCESS;
+}
+#endif
+
 #endif 
 
 

@@ -2740,7 +2740,7 @@ static boolean  dialog_handler_of_state_gotodate( CScheduleApp* pme,
 				#ifdef FEATURE_VERSION_K212
 				dateFormatType = OEMNV_DATEFORM_YMD;
 				#elif defined(FEATURE_VERSION_K212_ND)
-				dateFormatType = OEMNV_DATEFORM_YMD;
+				dateFormatType = OEMNV_DATEFORM_MDY;
 				#else
 				OEM_GetConfig( CFGI_DATE_FORMAT, &dateFormatType, sizeof( byte));
 				#endif
@@ -7835,9 +7835,10 @@ void CScheduleApp_GetLunarStr(CScheduleApp *pme)
 static void CScheduleApp_DrawLunarStr(CScheduleApp *pme)
 {
     AEERect rc;
-    
+    nv_language_enum_type language;	
+    OEM_GetConfig( CFGI_LANGUAGE_SELECTION, &language, sizeof(language));
 #if defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
-    if (WSTRLEN(pme->m_LunarString) > 4)
+    if ((WSTRLEN(pme->m_LunarString) > 4)&&(language==NV_LANGUAGE_CHINESE))
     {
         IANNUNCIATOR_SetFieldTextEx(pme->m_pIAnn, pme->m_LunarString,FALSE);
         IANNUNCIATOR_Redraw(pme->m_pIAnn);    

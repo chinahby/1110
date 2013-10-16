@@ -269,6 +269,8 @@ static void CallApp_DrawDialerString(CCallApp *pMe,AECHAR const *dialStr);
 //Converts  AVKType to the ASCII equivalent
 static char CallApp_AVKType2ASCII(AVKType key);
 static void CallApp_keypadtimer(void *pUser);
+
+static void CallApp_keypadtimer1(void *pUser);
 static boolean CallApp_FindMemoryCardExist(CCallApp *pMe);  //Add by pyuangui 2013-01-10
 static AECHAR CallApp_AVKSTAR_2ASCII(CCallApp *pMe);
 static AECHAR CallApp_AVK0_2ASCII(CCallApp *pMe);
@@ -2049,7 +2051,12 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 				}
             }
 #endif
-            if((AVKType)wParam != AVK_STAR)
+			if((AVKType)wParam != AVK_0)
+            {
+			   CallApp_keypadtimer1(pMe);
+            }
+
+			if((AVKType)wParam != AVK_STAR)
             {
 			   CallApp_keypadtimer(pMe);
             }	
@@ -7792,7 +7799,7 @@ void CallApp_SetupCallAudio(CCallApp *pMe)
 	{
 		ISOUND_SetVolume(pMe->m_pSound, GET_ISOUND_VOL_LEVEL(pMe->m_CallVolume)*4/5);
 	}
-    #elif defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
+    #elif defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)
 	if(pMe->m_bHandFree)
 	{
     	ISOUND_SetVolume(pMe->m_pSound, GET_ISOUND_VOL_LEVEL(pMe->m_CallVolume)*3/5);
@@ -8874,6 +8881,14 @@ static void CallApp_keypadtimer(void *pUser)
 	
     MSG_FATAL("****CallApp_keypadtimer****",0,0,0);
 }
+static void CallApp_keypadtimer1(void *pUser)
+{
+	CCallApp *pMe = (CCallApp *)pUser;
+	pMe->m_curpros1 = 0;
+	pMe->b_multenter1 = FALSE;
+	
+    MSG_FATAL("****CallApp_keypadtimer1****",0,0,0);
+}
 static AECHAR CallApp_AVKSTAR_2ASCII(CCallApp *pMe)
 {
 	if(pMe->m_curpros == 0)
@@ -8892,7 +8907,7 @@ static AECHAR CallApp_AVKSTAR_2ASCII(CCallApp *pMe)
 //add by wenyu £¬¸ø¡°0¡±¼üÌí¼Ó¡°+¡±
 static AECHAR CallApp_AVK0_2ASCII(CCallApp *pMe)
 {
-	if(pMe->m_curpros == 0)
+	if(pMe->m_curpros1 == 0)
 	{
 		return L'0';
 	}
@@ -13385,9 +13400,14 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
             CallApp_LaunchApplet(pMe,  AEECLSID_APP_FMRADIO);  // add by pyuangui 20121220
             #elif defined FEATURE_VERSION_K212_ND
 			{
-					   pMe->m_msg_text_id = IDS_MSG_TIME_DETAIL;			
-					   CLOSE_DIALOG(DLGRET_MSGBOX);
-					   MSG_FATAL("SOS........................",0,0,0);
+			   boolean bData=FALSE;                
+			   (void) OEM_GetConfig(CFGI_SOUND_BO_INDIAL,&bData,sizeof(bData));
+               if(bData==TRUE)
+               {
+			     pMe->m_msg_text_id = IDS_MSG_TIME_DETAIL;			
+			     CLOSE_DIALOG(DLGRET_MSGBOX);
+    			 MSG_FATAL("SOS........................",0,0,0);
+               }
 					   //return TRUE;
 			}
 			#else
@@ -13687,43 +13707,46 @@ if(wp == AVK_0)
        			int len=0;
 				uint16 Temp_wp = 0;
        			len = WSTRLEN(pMe->m_DialString);
-        		AEE_CancelTimer(CallApp_keypadtimer,pMe);
+        		AEE_CancelTimer(CallApp_keypadtimer1,pMe);
         		szStr = CallApp_AVK0_2ASCII(pMe);
-				if(pMe->b_multenter)
+				MSG_FATAL("=====pMe->m_curpros1=%d,==pMe->b_multenter1====%d",pMe->m_curpros1,pMe->b_multenter1,0);
+				//if(pMe->m_curpros1>0 ||(pMe->m_curpros1==0 && pMe->b_multenter1))
+				if(pMe->b_multenter1)
 				{
 				
-        		AECHAR wstrTemp[MAX_SIZE_DIALER_TEXT] = {0};
-        		AECHAR tempwStr = 0;
-       		    if (pMe->m_nCursorPos == 0)
-				{
-        			//(void)WSTRCPY(&pMe->m_DialString[len-pMe->m_nCursorPoS], &szStr);	    
-        			if(pMe->m_curpros == 0)
-					{
-						//return L'*';
-						WSTRCPY(&pMe->m_DialString[len-1], L"0");
-						Temp_wp = AVK_0;
+        			AECHAR wstrTemp[MAX_SIZE_DIALER_TEXT] = {0};
+        			AECHAR tempwStr = 0;
+					MSG_FATAL("==pMe->m_nCursorPos====%d",pMe->m_nCursorPos,0,0);
+       		    	if (pMe->m_nCursorPos == 0)
+						{
+        					//(void)WSTRCPY(&pMe->m_DialString[len-pMe->m_nCursorPoS], &szStr);	    
+        					if(pMe->m_curpros1 == 0)
+							{
+								//return L'*';
+								WSTRCPY(&pMe->m_DialString[len-1], L"0");
+								Temp_wp = AVK_0;
 						
-					}
-					if(pMe->m_curpros == 1)
-					{
-						//return L'p';
-						WSTRCPY(&pMe->m_DialString[len-1], L"+");	
-						MSG_FATAL("+++++++++++++++++++++",0,0,0);
-					}
-				}
+							}
+							if(pMe->m_curpros1 == 1)
+							{
+								//return L'p';
+								WSTRCPY(&pMe->m_DialString[len-1], L"+");	
+								MSG_FATAL("+++++++++++++++++++++",0,0,0);
+							}
+						}
 					else
 						{
 							//(void)WSTRCPY(wstrTemp, &pMe->m_DialString[len-pMe->m_nCursorPos]);
         					//(void)WSTRCPY(&pMe->m_DialString[len-pMe->m_nCursorPos-1], &szStr);
         					//(void)WSTRCPY(&pMe->m_DialString[len-pMe->m_nCursorPos], wstrTemp);
-        					if(pMe->m_curpros == 0)
+        					if(pMe->m_curpros1 == 0)
 								{
 									//return L'*';
 									//WSTRCPY(&pMe->m_DialString[len-1], L"*");
 									pMe->m_DialString[len-pMe->m_nCursorPos-1] = L'0';
 									Temp_wp = AVK_0;
 								}
-							if(pMe->m_curpros == 1)
+							if(pMe->m_curpros1 == 1)
 								{
 									//return L'p';
 									//WSTRCPY(&pMe->m_DialString[len-1], L"p");
@@ -13747,17 +13770,18 @@ if(wp == AVK_0)
         			(void)WSTRCPY(&pMe->m_DialString[len-pMe->m_nCursorPos+1], wstrTemp);
 				}
         	}	
-        	if(pMe->m_curpros<1)
+        	if(pMe->m_curpros1<1)
         	{
-        		pMe->m_curpros ++;
+        		pMe->m_curpros1 ++;
+				MSG_FATAL("m_curpros1+++++++++++++++++++++++++,m_curpros1===%d",pMe->m_curpros1,0,0);
         	}
         	else
         	{
-        		pMe->m_curpros = 0;
+        		pMe->m_curpros1 = 0;
         	}
-        	pMe->b_multenter = TRUE;		
-            AEE_SetTimer(1000,CallApp_keypadtimer,pMe);	
-			MSG_FATAL("CallApp_keypadtimer is uping uping uping ",0,0,0);
+        	pMe->b_multenter1= TRUE;	
+            AEE_SetTimer(1000,CallApp_keypadtimer1,pMe);	
+			MSG_FATAL("CallApp_keypadtimer1 is uping uping uping ",0,0,0);
 	}
         #else 
 		 if((pMe->m_btime_out % MAX_COUNT_TO_CHANGE ) == 0)//need change

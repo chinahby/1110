@@ -1342,7 +1342,7 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_SCHEDULER, IDS_APPLICATION_SCHEDULER, NULL, 0);	
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CALCULATOR, IDS_APPLICATION_CALCULATOR, NULL, 0);
 #elif defined(FEATURE_VERSION_K212_ND)
-			//IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_SOS, IDS_SOS, NULL, 0);
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_SET_SOS, IDS_SET_SOS, NULL, 0);
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_KEY_TIME, IDS_KEY_TIME, NULL, 0);
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_TORCH, IDS_TORCH, NULL, 0);
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CALCULATOR, IDS_APPLICATION_CALCULATOR, NULL, 0);
@@ -1352,7 +1352,7 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_ALARM, IDS_APPLICATION_ALARM, NULL, 0);
 			//IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_WORLDTIME, IDS_APPLICATION_WORLDTIME, NULL, 0);
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_MUTIMED, IDS_APPLICATION_MUTIMED, NULL, 0);
-			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_SET_SOS, IDS_SET_SOS, NULL, 0);
+			
 #elif defined(FEATURE_VERSION_K212)
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_MUTIMED, IDS_APPLICATION_MUTIMED, NULL, 0); 
 			//IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_BROWSER, IDS_APPLICATION_BROWSER, NULL, 0); 
@@ -1800,10 +1800,13 @@ static boolean  Application_KeyTimeHandler(Application *pMe, AEEEvent eCode, uin
 				uint16 wItemID;
 	  			boolean Is_on = FALSE;
 				//设定标题格式
-				IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_MULTI_SEL|MP_ACTIVE_NO_REDRAW);
-				IMENUCTL_SetOemProperties(pMenu, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY | OEMMP_USE_MENU_STYLE);
+				IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
+                IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
+				//IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_MULTI_SEL|MP_ACTIVE_NO_REDRAW);
+				//IMENUCTL_SetOemProperties(pMenu, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY | OEMMP_USE_MENU_STYLE);
 				IMENUCTL_SetBottomBarType(pMenu,BTBAR_SAVE_BACK);
-				(void) ICONFIG_GetItem(pMe->m_pConfig,CFGI_SOUND_BO_CORE,&bData,sizeof(bData));
+
+				(void) OEM_GetConfig(CFGI_SOUND_BO_INDIAL,&bData,sizeof(bData));
                 if(bData)
                 {
                 	wItemID = IDS_DIAG_AND_DATA;
@@ -1852,7 +1855,7 @@ static boolean  Application_KeyTimeHandler(Application *pMe, AEEEvent eCode, uin
                        break;
 
                 }
-                OEM_SetConfig(CFGI_SOUND_BO_CORE,&bytNewData, sizeof(bytNewData));
+                OEM_SetConfig(CFGI_SOUND_BO_INDIAL,&bytNewData, sizeof(bytNewData));
                 InitMenuIcons(pMenu);
                 SetMenuIcon(pMenu, wParam, TRUE);
                 (void) ISHELL_PostEvent( pMe->m_pShell,

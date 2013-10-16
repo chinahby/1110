@@ -321,9 +321,6 @@ typedef struct _Application
 	#if defined(FEATURE_VERSION_W317A)
     IStatic    						*m_pIStatic;      // Static for displaying information
     #endif
-	#if defined(FEATURE_VERSION_K212_ND)
-	IConfig         *m_pConfig;
-	#endif
     IBacklight     *m_pBacklight;       //背光接口指针
     boolean        m_StartCore;
 #ifdef FEATURE_OEMOMH

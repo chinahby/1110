@@ -3216,6 +3216,7 @@ static void RecentCalls_RecordDetail(CRecentCalls   *pMe)
                        PIXELS_TO_EDGE  + ((1 + nSinkingLines)*nLineHeight),	//+ TITLEBAR_HEIGHT
                        NULL,
                        IDF_TEXT_TRANSPARENT);
+   MSG_FATAL("====nSinkingLines=====%d,=====nLineHeight=====%d",nSinkingLines,nLineHeight,0);
    /*如果一行显示不下，再显示第二行*/
    if (nlen > ncharsInLine)
    {
@@ -3227,6 +3228,7 @@ static void RecentCalls_RecordDetail(CRecentCalls   *pMe)
                        PIXELS_TO_EDGE  + ((2 + nSinkingLines)*nLineHeight),	//+ TITLEBAR_HEIGHT
                        NULL,
                        IDF_TEXT_TRANSPARENT);
+	MSG_FATAL("====nSinkingLines=====%d,=====nLineHeight=====%d",nSinkingLines,nLineHeight,0);
       nSinkingLines++;
    }
    /*显示通话次数*/
@@ -3371,6 +3373,7 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines)
                     NULL,
                     IDF_TEXT_TRANSPARENT
                 );
+	MSG_FATAL("====nSinkingLines=====%d,=====nLineHeight=====%d",nSinkingLines,nLineHeight,0);
   //画出"日期/时间"字符串
 
 	nCallTimeTextWidth = IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL, buffer);
@@ -3455,6 +3458,7 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines)
                       NULL,
                       IDF_TEXT_TRANSPARENT
                   );
+	MSG_FATAL("====nSinkingLines=====%d,=====nLineHeight=====%d",nSinkingLines,nLineHeight,0);
 #endif
 #endif
     }

@@ -183,63 +183,106 @@ if(!(x))         \
 
 //进度条
 #define SCHEDULEBAR_X 5
+#ifdef FEATURE_VERSION_K212_ND
+#define SCHEDULEBAR_Y 23
+#else
 #define SCHEDULEBAR_Y 43
+#endif
 #define SCHEDULEBAR_W 150 //94
 #define SCHEDULEBAR_H 7
 
 //进度条(简单播放)
 #define SIMSCHEDULEBAR_X 5
+#ifdef FEATURE_VERSION_K212_ND
+#define SIMSCHEDULEBAR_Y 88
+#else
 #define SIMSCHEDULEBAR_Y 94
+#endif
 #define SIMSCHEDULEBAR_W 145
 #define SIMSCHEDULEBAR_H 7
 
 //播放按钮
-#define PLAY_X 80 //66
-#define PLAY_Y 65 //55
+#define PLAY_X 80
+#ifdef FEATURE_VERSION_K212_ND
+#define PLAY_Y 47 //55
+#else
+#define PLAY_Y 65
+#endif
 #define PLAY_W 26 //45
 #define PLAY_H 26 //44
 
 //前一个曲目
-#define PREVIOUSPRESS_X 40 //37
-#define PREVIOUSPRESS_Y 65 //60
+#define PREVIOUSPRESS_X 40
+#ifdef FEATURE_VERSION_K212_ND 
+#define PREVIOUSPRESS_Y 47 //60
+#else
+#define PREVIOUSPRESS_Y 65
+#endif
 #define PREVIOUSPRESS_W 26 //31
 #define PREVIOUSPRESS_H 26 //32
 
 //后一个曲目
-#define NEXTPRESS_X 125 //107
-#define NEXTPRESS_Y 65 //60
+#define NEXTPRESS_X 125
+#ifdef FEATURE_VERSION_K212_ND
+#define NEXTPRESS_Y 47 //60
+#else
+#define NEXTPRESS_Y 65
+#endif
 #define NEXTPRESS_W 26 //31
 #define NEXTPRESS_H 26 //32
 
 //降低音量
 #define DECREASEVOLUMEPRESS_X 2
+#ifdef FEATURE_VERSION_K212_ND
+#define DECREASEVOLUMEPRESS_Y 69
+#else
 #define DECREASEVOLUMEPRESS_Y 79
+
+#endif
 #define DECREASEVOLUMEPRESS_W 21
 #define DECREASEVOLUMEPRESS_H 17
 
 //增加音量
 #define ADDVOLUMEPRESS_X 2
+#ifdef FEATURE_VERSION_K212_ND
+#define ADDVOLUMEPRESS_Y 33
+#else
 #define ADDVOLUMEPRESS_Y 43
+#endif
 #define ADDVOLUMEPRESS_W 18
 #define ADDVOLUMEPRESS_H 18
 
 //音量
 #define VOLUME_X 5
+#ifdef FEATURE_VERSION_K212_ND
+#define VOLUME_Y 37
+#else
 #define VOLUME_Y 57
+#endif
 #define VOLUME_W 12
 #define VOLUME_H 18
 
 //当前序号/总数量
 #define LISTINDEX_X 60 //5
-#define LISTINDEX_Y 46 //95
-
+#ifdef FEATURE_VERSION_K212_ND
+#define LISTINDEX_Y 28 //95
+#else
+#define LISTINDEX_Y 46
+#endif
 //当前歌曲的总时间
 #define TOTALTIME_X 120
+#ifdef FEATURE_VERSION_K212_ND
+#define TOTALTIME_Y 28 
+#else
 #define TOTALTIME_Y 46 
-
+#endif
 //当前播放时间
 #define PLAYINGTICK_X 25 //117
-#define PLAYINGTICK_Y 46 //47
+#ifdef FEATURE_VERSION_K212_ND
+#define PLAYINGTICK_Y 28 //47
+#else
+#define PLAYINGTICK_Y 46
+#endif
 
 //当前播放时间（简单播放）
 #define SIMPLAYINGTICK_X 60
@@ -251,7 +294,11 @@ if(!(x))         \
 
 //播放区域，包含前一首，播放，下一首
 #define OLDPLAY_X 30
+#ifdef FEATURE_VERSION_K212_ND
+#define OLDPLAY_Y 56
+#else
 #define OLDPLAY_Y 68
+#endif
 #define OLDPLAY_W 114
 #define OLDPLAY_H 45
 
@@ -901,7 +948,11 @@ if(!(x))         \
 #if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_QVGA_INHERIT_K212)
 #define RFIMG_WIDTH 16
 #define REWIND_X    (((SCREEN_WIDTH-4)-(RFIMG_WIDTH*2))/2)
+#ifdef FEATURE_VERSION_K212_ND
+#define REWIND_Y    79
+#else
 #define REWIND_Y    (SCHEDULEBAR_Y-9)
+#endif
 #define FORWARD_X   (REWIND_X+RFIMG_WIDTH+4)
 #define FORWARD_Y   REWIND_Y
 #else

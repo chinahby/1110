@@ -12209,7 +12209,7 @@ static void T9_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext )
 #endif
        // IDISPLAY_InvertRect ( pContext->pIDisplay, &invertRect );
        #ifdef FEATURE_VERSION_K212_ND
-       IDISPLAY_DrawRect(pContext->pIDisplay,&invertRect,RGB_DARK_GREY,RGB_DARK_GREY,IDF_RECT_FILL);
+       IDISPLAY_DrawRect(pContext->pIDisplay,&invertRect,RGB_RED,RGB_RED,IDF_RECT_FILL);
 	   #else
 	   IDISPLAY_InvertRect ( pContext->pIDisplay, &invertRect );
 	   #endif
@@ -12383,7 +12383,7 @@ static void T9_CJK_CHINESE_DisplaySelection(TextCtlContext *pContext)
 			//IDISPLAY_FillRect(pContext->pIDisplay, &invertRect, RGB_LIGHT_GREY);
 			
 		#ifdef FEATURE_VERSION_K212_ND
-			IDISPLAY_DrawRect(pContext->pIDisplay,&invertRect,RGB_DARK_GREY,RGB_DARK_GREY,IDF_RECT_FILL);
+			IDISPLAY_DrawRect(pContext->pIDisplay,&invertRect,RGB_RED,RGB_RED,IDF_RECT_FILL);
 		#else
 			IDISPLAY_InvertRect(pContext->pIDisplay, &invertRect);
 		#endif

@@ -916,6 +916,10 @@ static int CallApp_InitAppData(CCallApp *pMe)
     pMe->m_b_draw_dot = TRUE;
     pMe->m_curpros = 0;
     pMe->b_multenter = FALSE;
+#ifdef FEATURE_VERSION_K212_ND
+	pMe->m_curpros1 = 0;
+	pMe->b_multenter1 = FALSE;
+#endif
 #ifdef FEATRUE_AUTO_POWER
     pMe->m_b_powerdown = FALSE;
 #endif

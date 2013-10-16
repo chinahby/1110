@@ -5447,7 +5447,9 @@ static boolean IDD_SENDMODE_Handler(void *pUser,
             MENU_ADDITEM(pMenu, IDS_SENDANDSAVE);
             MENU_ADDITEM(pMenu, IDS_SENDONLY);
 #ifndef FEATURE_VERSION_K212
+#ifndef FEATURE_VERSION_K212_ND
             MENU_ADDITEM(pMenu, IDS_SAVEONLY);
+#endif
 #endif
             {
                 AECHAR WTitle[40] = {0};
@@ -9781,8 +9783,11 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
 				IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,wstrTitle,FALSE);
 				#endif
 				}
-                
-                y = y+ 3;
+          #ifdef FEATURE_VERSION_K212_ND      
+                y = y;
+		  #else
+		  		y = y+ 3;
+		  #endif
 				
 #if defined(FEATURE_DISP_160X128)
                 dy = nLineHeight; // + 2; 
@@ -9820,8 +9825,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                     {
                         ry=y;
                     }
-                    
-                    SETAEERECT(&rect, 2, ry, pMe->m_rc.dx- 2, dy);
+					SETAEERECT(&rect, 2, ry, pMe->m_rc.dx- 2, dy);		
                     pControl = IDIALOG_GetControl(pMe->m_pActiveIDlg, wControls[i]);
                     
                     if (NULL == pControl)
@@ -9886,7 +9890,8 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                                         -1, 2, ry, 
                                         &rect, 
                                         IDF_TEXT_TRANSPARENT);
-
+						//IMenuCtl_SetItemText(IMenuCtl * po,uint16 nItemID,const char * pszResFile,uint16 wResID,AECHAR * pText)
+						//IMenuCtl_SetItem((IMenuCtl *)pControl,IDS_SENDMODE,MSIF_FONT,AEE_FONT_LARGE_ITALIC);
                         IMENUCTL_SetOemProperties((IMenuCtl *)pControl, OEMMP_SWITCHNAVIGATIONKEY|
                                                                         OEMMP_DISTINGUISH_INFOKEY_SELECTKEY|
                                                                         OEMMP_IDF_ALIGN_CENTER);
@@ -9944,27 +9949,34 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                             MENU_SETBOTTOMBAR((IMenuCtl *)pControl, BTBAR_NONE);
 
                             MENU_ADDITEM((IMenuCtl *)pControl, IDS_SENDONLY);
+							#ifndef FEATURE_VERSION_K212_ND
                             MENU_ADDITEM((IMenuCtl *)pControl, IDS_SAVEONLY);
+							#endif
                             MENU_ADDITEM((IMenuCtl *)pControl, IDS_SENDOPT_SAVEANDSEND_SHORT);
                             
                             {// 需根据具体配置选择相应菜单项
                                 uint16 nSelID = IDS_SENDOPT_SAVEANDSEND_SHORT;
-                                
+
                                 switch (sendmode)
                                 {
                                     case SENDOPT_SEND://只发送
                                         nSelID = IDS_SENDONLY;
+										
                                         break;
                                         
                                     case SENDOPT_SAVE://只保存
                                         nSelID = IDS_SAVEONLY;
+										
                                         break;
                                         
                                     default://发送并保存
                                         sendmode = IDS_SENDOPT_SAVEANDSEND_SHORT;
+										
                                         break;
                                 }
+							
                                 IMENUCTL_SetSel((IMenuCtl *)pControl, nSelID);
+								
                             }
                             
                             break;
@@ -9979,21 +9991,26 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                             
                             {// 需根据具体配置选择相应菜单项
                                 uint16 nSelID = IDS_NORMAL;
+								
                                 
                                 switch (priority)
                                 {
                                     case WMS_PRIORITY_URGENT://紧急
                                         nSelID = IDS_URGENT;
+										
                                         break;
                                         
                                     case WMS_PRIORITY_EMERGENCY://特急
                                         nSelID = IDS_EMERGENCY;
+										
                                         break;
                                         
                                     default:
                                         break;
                                 }
+								
                                 IMENUCTL_SetSel((IMenuCtl *)pControl, nSelID);
+								
                             }
                             break;
                             
@@ -10003,7 +10020,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                             
                             {
                                 uint16 nSelID;
-                                                                
+                            
                                 MENU_SETBOTTOMBAR((IMenuCtl *)pControl, BTBAR_NONE);
                                 
                                 MENU_ADDITEM((IMenuCtl *)pControl, IDS_ENABLEREPORT_SHORT);
@@ -10013,12 +10030,14 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                                 if (report)
                                 {
                                     nSelID = IDS_ENABLEREPORT_SHORT;
+									
                                 }
                                 else
                                 {
                                     nSelID = IDS_DISABLEREPORT;
+								
                                 }
-                                
+                             
                                 IMENUCTL_SetSel((IMenuCtl *)pControl, nSelID);
                             }
                             break;
@@ -10029,6 +10048,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
 
                             {
                                 uint16 nSelID = IDS_ENABLE_SHORT;
+								
 
                                 MENU_SETBOTTOMBAR((IMenuCtl *)pControl, BTBAR_NONE);
 
@@ -10038,13 +10058,16 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                                 if(cbval)
                                 {
                                     nSelID = IDS_ENABLE_SHORT;
+									
                                 }
                                 else
                                 {
                                     nSelID = IDS_DISABLE;
+									
                                 }
 
                                 IMENUCTL_SetSel((IMenuCtl *)pControl, nSelID);
+							
                             }
                             break;
                             
@@ -11498,8 +11521,8 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     rc.dy = GetBottomBarHeight(pMe->m_pDisplay);
                     rc.x = 0;//大概的一个数字
                     rc.dx = pMe->m_rc.dx;//five pixels for right edge, 
-                    ITEXTCTL_SetRect( pIText, &rc);
-                    MSG_FATAL("EVT_USER_REDRAW rc.x=%d, rc.y=%d, rc.dy=%d", rc.x, rc.y, rc.dy);
+                   // ITEXTCTL_SetRect( pIText, &rc);
+                    //MSG_FATAL("EVT_USER_REDRAW rc.x=%d, rc.y=%d, rc.dy=%d", rc.x, rc.y, rc.dy);
 					#ifdef FEATURE_VERSION_C316
 					ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BGBLUE|TP_FIXSETRECT |TP_EDITNUMBER_PTSTRING |TP_FIXOEM | TP_USELESS_UPDOWN | TP_GRAPHIC_BG | TP_FOCUS_NOSEL| TP_STARKEY_SWITCH);
 					#else
@@ -11525,13 +11548,19 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                         Annstr,
                         sizeof(Annstr));
 #else
+
 			(void)ISHELL_LoadResString(pMe->m_pShell,
                         AEE_WMSAPPRES_LANGFILE,                                
                         IDS_EDIT,
                         Annstr,
                         sizeof(Annstr));
+
 #endif
+		//	#ifdef FEATURE_VERSION_K212_ND
+		//	IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,pIText,FALSE);
+		//	#else
 			IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,Annstr,FALSE);
+			//#endif
             if (pMe->m_dwInsertPos == 0)
             {
                 ITEXTCTL_SetCursorPos(pIText, TC_CURSOREND);

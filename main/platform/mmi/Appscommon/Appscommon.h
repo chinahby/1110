@@ -75,12 +75,12 @@
     #define SCREEN_WIDTH            160
     #define SCREEN_HEIGHT           128
 	#ifdef FEATURE_VERSION_K212_ND
-    #define STATEBAR_HEIGHT         25
-    #define BOTTOMBAR_HEIGHT        25
-    #define TITLEBAR_HEIGHT         25
-    #define MENUITEM_HEIGHT         25
+    #define STATEBAR_HEIGHT         21
+    #define BOTTOMBAR_HEIGHT        21
+    #define TITLEBAR_HEIGHT         21
+    #define MENUITEM_HEIGHT         24
     #define SCROLLBAR_WIDTH         5
-    #define STATUSBAR_HEIGHT        25
+    #define STATUSBAR_HEIGHT        21
 	#else
 	#define STATEBAR_HEIGHT         16
     #define BOTTOMBAR_HEIGHT        16

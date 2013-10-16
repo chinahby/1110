@@ -1592,7 +1592,7 @@ int CContApp_BuildOneDialMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
             continue;
         }
 
-#if defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_ND)
+#if defined(FEATURE_VERSION_EC99) 
         if ((i == CONTCFG_ONEDIAL5) || (i == CONTCFG_ONEDIAL6))
         {
             continue;

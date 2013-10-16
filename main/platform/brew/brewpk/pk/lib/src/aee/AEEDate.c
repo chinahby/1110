@@ -958,7 +958,9 @@ static boolean IDateCtl_GetDateString(IDateCtl * po, AECHAR * pBuffer, int nMaxS
 		dwFormat = DFMT_MON_DD_YY;
 	}
 #endif
-
+#ifdef FEATURE_VERSION_K212_ND
+	dwFormat=DFMT_YYYY_MM_DD;
+#endif
    switch(dwFormat){
       case DFMT_DD_MONTH_YYYY:
       case DFMT_DD_MON_YYYY:

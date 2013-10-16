@@ -4063,6 +4063,8 @@ static void CameraApp_PopMenu_ResetCFGInit(CCameraApp *pMe, IMenuCtl *popMenu)
     IMENUCTL_DeleteAll(popMenu);   
 	#ifdef FEATURE_VERSION_K212
     CameraApp_SetPopMenuRect(pMe, popMenu, 2);
+	#elif defined(FEATURE_VERSION_K212_ND)
+	CameraApp_SetPopMenuRect(pMe, popMenu, 2);
 	#else
 	CameraApp_SetPopMenuRect(pMe, popMenu, 1);
 	#endif
@@ -4435,6 +4437,32 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
 	        break;
     }
 #endif
+
+#ifdef FEATURE_VERSION_K212_ND
+    // size cfgID
+    (void)ICONFIG_GetItem(pMe->m_pConfig,
+                          CFGI_CAMERA_SIZE,
+                         &pMe->m_nCameraSize,
+                          sizeof(pMe->m_nCameraSize));
+
+    switch(pMe->m_nCameraSize)
+    {
+	    case OEMNV_CAMERA_SIZE_INDEX_1:
+	        nResID[CAMERACFGSIZE] = IDI_SIZE_160_128;
+	        break;
+
+	    case OEMNV_CAMERA_SIZE_INDEX_2:
+	        nResID[CAMERACFGSIZE] = IDI_SIZE_220_176;
+	        break;
+		case OEMNV_CAMERA_SIZE_INDEX_3:
+	        nResID[CAMERACFGSIZE] = IDI_SIZE_320_240;
+	        break;
+	    default:
+	        nResID[CAMERACFGSIZE] = IDI_SIZE_160_128;
+	        break;
+    }
+#endif
+
 
 #ifdef FEATURE_VERSION_1110W516
     // size cfgID
@@ -4990,8 +5018,10 @@ static void CameraApp_DrawCFGPromptText(CCameraApp *pMe)
         
         DrawTextWithProfile(pMe->m_pShell, 
                             pMe->m_pDisplay, 
-                            WHITE_TEXT, 
-                            AEE_FONT_NORMAL, 
+                            WHITE_TEXT,
+                           
+							AEE_FONT_NORMAL,
+						
                             pcText, 
                             -1, 
                             0, 
@@ -5008,7 +5038,9 @@ static void CameraApp_DrawCFGPromptText(CCameraApp *pMe)
         DrawTextWithProfile(pMe->m_pShell, 
                             pMe->m_pDisplay, 
                             RGB_BLACK, 
-                            AEE_FONT_NORMAL, 
+                     
+							AEE_FONT_NORMAL,
+						
                             pcText, 
                             -1, 
                             0, 

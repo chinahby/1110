@@ -405,12 +405,19 @@ static boolean InitAppTimer(CAppTimer *pme)
                             0);
 #else
 #if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_12832)||defined(FEATURE_QVGA_INHERIT_K212)
-#if defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
+#if defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_20D)
         SETAEERECT( &rect, 
                             (pme->cxScreen - TIMER_IMAGE_WIDTH)/2 + TIMER_SCREEN_XOFFSET+7,
                             MENUITEM_HEIGHT*TIMER_HEIGHT_N +  TIMER_SCREEN_YOFFSET - 17,
                             TIMER_SCREEN_WIDTH,
                             0);
+#elif defined(FEATURE_VERSION_K212_ND)
+SETAEERECT( &rect, 
+                            (pme->cxScreen - TIMER_IMAGE_WIDTH)/2 + TIMER_SCREEN_XOFFSET+2,
+                            MENUITEM_HEIGHT*TIMER_HEIGHT_N +  TIMER_SCREEN_YOFFSET - 42,
+                            TIMER_SCREEN_WIDTH,
+                            0);
+
 #else
         SETAEERECT( &rect, 
                             (pme->cxScreen - TIMER_IMAGE_WIDTH)/2 + TIMER_SCREEN_XOFFSET+2,
@@ -604,9 +611,9 @@ static int32 AppTimerPromptMessage(CAppTimer *pme)
         parm.eBBarType  = BTBAR_PROMPT_OK;
 #endif
         ISHELL_LoadResString(pme->a.m_pIShell, AEE_APPTIMER_RES_FILE, IDS_APPTIMER_PROMPT, wszTitle, sizeof(wszTitle));
-        //parm.pwszTitle = wszTitle;
+       
         prompt = ISHELL_LoadResImage(pme->a.m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TIMER);
-
+		
 //        parm.pwszMsg = wszTitle;
         
         //ISHELL_CreateDialog( pme->a.m_pIShell,AEE_APPTIMER_RES_FILE,IDD_DIALOG_6001,NULL);
@@ -663,7 +670,7 @@ static int32 AppTimerPromptMessage(CAppTimer *pme)
             IIMAGE_GetInfo(prompt, &ImageInfo);
             //IIMAGE_Draw(prompt, 0, TITLEBAR_HEIGHT);
             #ifdef FEATURE_VERSION_K212_ND
-            IIMAGE_Draw(prompt, (pme->cxScreen - ImageInfo.cx)/2,(pme->cyScreen - BOTTOMBAR_HEIGHT - ImageInfo.cy)/2);
+            IIMAGE_Draw(prompt, (pme->cxScreen - ImageInfo.cx)/2, 10+(pme->cyScreen - BOTTOMBAR_HEIGHT - ImageInfo.cy)/2);
 			//MSG_FATAL(".....prompt will be drawing......",0,0,0);
 			#else
 			IIMAGE_Draw(prompt, (pme->cxScreen - ImageInfo.cx)/2, TITLEBAR_HEIGHT + (pme->cyScreen - BOTTOMBAR_HEIGHT - ImageInfo.cy)/2);

@@ -848,6 +848,10 @@ typedef struct _CCallApp
     boolean  m_bShift;
     boolean  b_multenter;
     char    *m_strPhonePWD;
+#ifdef FEATURE_VERSION_K212_ND
+    uint16   m_curpros1;
+	boolean  b_multenter1;
+#endif
 #ifdef FEATURE_OEMOMH
     AEECLSID  m_clsOMHApplet;
 #endif
