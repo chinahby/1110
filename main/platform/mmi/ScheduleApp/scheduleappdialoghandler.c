@@ -2924,7 +2924,7 @@ static boolean  dialog_handler_of_state_gotodate( CScheduleApp* pme,
 		                (void)WSTRTOSTR(pme->wstrDay, strTep, sizeof(strTep));
 		                day = STRTOUL(strTep, NULL, 10);
 						
-	                    if (WSTRLEN(pme->wstrYear) < 4 || (month<1) ||(day<1))
+	                     if (WSTRLEN(pme->wstrYear) < 4 || (month<1) ||(day<1)|| (year<1981))
 	                    {
 	                        CLOSE_DIALOG(DLGRET_TO_SHOWALERT)
 	                    }
