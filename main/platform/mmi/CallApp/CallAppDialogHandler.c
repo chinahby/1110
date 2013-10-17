@@ -269,8 +269,9 @@ static void CallApp_DrawDialerString(CCallApp *pMe,AECHAR const *dialStr);
 //Converts  AVKType to the ASCII equivalent
 static char CallApp_AVKType2ASCII(AVKType key);
 static void CallApp_keypadtimer(void *pUser);
-
+#ifdef FEATURE_VERSION_K212_ND
 static void CallApp_keypadtimer1(void *pUser);
+#endif
 static boolean CallApp_FindMemoryCardExist(CCallApp *pMe);  //Add by pyuangui 2013-01-10
 static AECHAR CallApp_AVKSTAR_2ASCII(CCallApp *pMe);
 static AECHAR CallApp_AVK0_2ASCII(CCallApp *pMe);
@@ -2051,11 +2052,12 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 				}
             }
 #endif
+			#ifdef FEATURE_VERSION_K212_ND
 			if((AVKType)wParam != AVK_0)
             {
 			   CallApp_keypadtimer1(pMe);
             }
-
+			#endif
 			if((AVKType)wParam != AVK_STAR)
             {
 			   CallApp_keypadtimer(pMe);
@@ -2581,7 +2583,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 #ifndef FEATURE_ALL_KEY_PAD
                        if(len == 0)
                        {
-                            #if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_QVGA_INHERIT_K212)
+                            #if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_QVGA_INHERIT_K212)&&!defined(FEATURE_VERSION_K212_ND)
                        		CallApp_Draw_NumEdit_SoftKey(pMe);
                     		CallApp_Display_Number(pMe);
                     		// Draw it now!
@@ -2620,7 +2622,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                     {
                        // Clearing the last digit exits the dialog
                        pMe->m_DialString[0] = 0;
-                        #if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_QVGA_INHERIT_K212)
+                        #if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_QVGA_INHERIT_K212)&&!defined(FEATURE_VERSION_K212_ND)
 					   CallApp_Draw_NumEdit_SoftKey(pMe);
               		   CallApp_Display_Number(pMe);
               		   // Draw it now!
@@ -8881,6 +8883,7 @@ static void CallApp_keypadtimer(void *pUser)
 	
     MSG_FATAL("****CallApp_keypadtimer****",0,0,0);
 }
+#ifdef FEATURE_VERSION_K212_ND
 static void CallApp_keypadtimer1(void *pUser)
 {
 	CCallApp *pMe = (CCallApp *)pUser;
@@ -8889,6 +8892,7 @@ static void CallApp_keypadtimer1(void *pUser)
 	
     MSG_FATAL("****CallApp_keypadtimer1****",0,0,0);
 }
+#endif
 static AECHAR CallApp_AVKSTAR_2ASCII(CCallApp *pMe)
 {
 	if(pMe->m_curpros == 0)
@@ -8904,6 +8908,7 @@ static AECHAR CallApp_AVKSTAR_2ASCII(CCallApp *pMe)
 		return L'W';
 	}
 }
+#ifdef FEATURE_VERSION_K212_ND
 //add by wenyu £¬¸ø¡°0¡±¼üÌí¼Ó¡°+¡±
 static AECHAR CallApp_AVK0_2ASCII(CCallApp *pMe)
 {
@@ -8912,7 +8917,7 @@ static AECHAR CallApp_AVK0_2ASCII(CCallApp *pMe)
 		return L'0';
 	}
 }
-
+#endif
 
 //Add by pyuangui 2013-01-10
 #ifdef FEATURE_VERSION_C316
