@@ -2151,6 +2151,85 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
     }
 #endif
 
+#ifdef FEATURE_VERSION_K212_20D
+   if(!IsMp3PlayerStatusNone())
+   	{
+   case AVK_PAUSE:
+    {
+        MSG_FATAL("***zzg core_ui AVK_PAUSE cls=%x***", cls, 0, 0);   
+
+        if (cls == AEECLSID_QUICKTEST)
+        {
+            return FALSE;
+        }
+
+		if (cls == AEECLSID_APP_FMRADIO)
+        {
+            break;
+        }
+		
+        if ((cls != AEECLSID_APP_MUSICPLAYER) && (cls != AEECLSID_DIALER) && (!brewui_isincall()) )	//0x1006126	
+		{
+            ISHELL_StartApplet(AEE_GetShell(), AEECLSID_APP_MUSICPLAYER);				
+		}
+        else 
+        {
+            ISHELL_PostEvent( AEE_GetShell(),
+                              AEECLSID_APP_MUSICPLAYER,
+                              EVT_USER,
+                              AVK_PAUSE,
+                              0);
+        }
+        return TRUE;
+    }
+    case AVK_FFWD:  
+    {
+        if (cls == AEECLSID_QUICKTEST)
+        {
+            return FALSE;
+        }
+
+        if (cls == AEECLSID_APP_FMRADIO)
+        {
+            break;
+        }
+        
+        //if (cls == AEECLSID_APP_MUSICPLAYER)	//pre //maybe background
+		{
+            ISHELL_PostEvent( AEE_GetShell(),
+                              AEECLSID_APP_MUSICPLAYER,
+                              EVT_USER,
+                              AVK_FFWD,
+                              0);	
+            return TRUE;
+		}
+        break;
+    }
+    case AVK_RWD:    
+    {
+        if (cls == AEECLSID_QUICKTEST)
+        {
+            return FALSE;
+        }
+
+        if (cls == AEECLSID_APP_FMRADIO)
+        {
+            break;
+        }
+        
+        //if (cls == AEECLSID_APP_MUSICPLAYER)    //next
+		{
+            ISHELL_PostEvent( AEE_GetShell(),
+                              AEECLSID_APP_MUSICPLAYER,
+                              EVT_USER,
+                              AVK_RWD,
+                              0);
+            return TRUE;
+		}
+        break; 
+    }
+   	}
+#endif
 
 #ifdef FEATURE_SMARTFREN_STATIC_BREW_APP 
 	case AVK_CLR:			
