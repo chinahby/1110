@@ -2060,7 +2060,7 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
 //#endif
 //Add End
 
-#ifdef FEATURE_VERSION_EC99   
+#ifdef FEATURE_VERSION_EC99      
     case AVK_FM:	
     {
         if (cls == AEECLSID_QUICKTEST)
@@ -2087,9 +2087,14 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
         if (cls == AEECLSID_QUICKTEST)
         {
             return FALSE;
+        }       
+
+        if (cls == AEECLSID_APP_FMRADIO)
+        {
+            break;
         }
-        
-        if (cls != AEECLSID_APP_MUSICPLAYER)	//0x1006126	
+
+        if ((cls != AEECLSID_APP_MUSICPLAYER) && (cls != AEECLSID_DIALER) && (!brewui_isincall()) )	//0x1006126	
 		{
             ISHELL_StartApplet(AEE_GetShell(), AEECLSID_APP_MUSICPLAYER);				
 		}
@@ -2148,7 +2153,7 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
             return TRUE;
 		}
         break;   
-    }
+    }    
 #endif
 
 #ifdef FEATURE_VERSION_K212_20D
