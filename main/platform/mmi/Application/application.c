@@ -2052,6 +2052,7 @@ static boolean  Application_SOSSetHandler(Application *pMe, AEEEvent eCode, uint
                         }
                         else
                         {
+                        	(void)OEM_GetConfig(CFGI_EMERGENCYNUM_TABLE, (void*)&m_entable, sizeof(EmergencyNum_Table));
 				       	   	m_entable.emerg_num[0].num_len = nLen;
 				       	   	STRCPY(m_entable.emerg_num[0].num_buf,wstrNum);
 				       	   	(void)OEM_SetConfig(CFGI_EMERGENCYNUM_TABLE,
