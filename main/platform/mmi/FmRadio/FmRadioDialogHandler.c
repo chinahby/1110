@@ -456,7 +456,7 @@ static boolean  HandleFmRadioMainDialogEvent(CFmRadio *pMe,
                 }
 			}
 #endif
-#ifdef FEATURE_VERSION_K212_20D
+#ifdef FEATURE_VERSION_K212_20D1
 			if (eCode ==EVT_KEY && wParam == AVK_FFWD)
 			{
 				wParam = AVK_RIGHT;//AVK_UP;
@@ -1377,7 +1377,9 @@ __handleKeyEvent_input_channel_done__:
 				if(pMe->tuneVolumeByLeftRightArrowKey)
 			    #endif
 				{
+				    #if 0 //defined( FEATURE_FMRADIO_NO_MODE_SELECT)
 					ISHELL_CancelTimer( pMe->m_pShell, (PFNNOTIFY)tuneVolumeByLeftRightArrowKeyCloseCb, pMe);
+					#endif
                     pMe->fmVolumeStop=TRUE;
 #if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_LM126C)||defined(FEATURE_VERSION_K212)
 					if (key == AVK_STAR)
@@ -1402,8 +1404,9 @@ __handleKeyEvent_input_channel_done__:
 #endif
 					changeVolume( pMe, key);
 					repaint( pMe, TRUE);
+					#if 0 // defined( FEATURE_FMRADIO_NO_MODE_SELECT)
 					ISHELL_SetTimer( pMe->m_pShell, 3000, (PFNNOTIFY)tuneVolumeByLeftRightArrowKeyCloseCb, pMe);
-
+                    #endif
 				}
 				else
 #endif                   
@@ -1786,6 +1789,11 @@ static void changeVolume( CFmRadio *pMe, uint16 keyCode)
 	theKey = keyCode == AVK_STAR ? 1 : 0;
 #endif
 #endif
+#ifdef FEATURE_VERSION_K212_20D
+	   if(pMe->byVolumeLevel == 1)
+		  pMe->byVolumeLevel = 3;
+#endif
+
    // if( pMe->byVolumeLevel != limitValue[theKey])
     if((pMe->byVolumeLevel == 0) && (theKey == 1))
     {
@@ -1810,7 +1818,12 @@ static void changeVolume( CFmRadio *pMe, uint16 keyCode)
     {
         pMe->byVolumeLevel = 0;
     }
-    
+
+#ifdef FEATURE_VERSION_K212_20D
+    if(pMe->byVolumeLevel == 3)
+	   pMe->byVolumeLevel = 1;
+#endif
+
 #if !defined( AEE_SIMULATOR)
     //Call driver to set Volume
     #ifndef FEATURE_VERSION_SKY
@@ -3820,6 +3833,10 @@ static void FmRadio_DrawVolumeImage(CFmRadio *pMe, uint16 ResID, int x, int y)
 static void FmRadio_RefreshVolumeImage(CFmRadio *pMe)
 {
     uint16 ResID = IDI_FM_SIMPLEVOL_THREE;
+	#ifdef FEATURE_VERSION_K212_20D
+	   if(pMe->byVolumeLevel == 1)
+		  pMe->byVolumeLevel = 3;
+    #endif
     switch (pMe->byVolumeLevel)
     {
         case 0:
