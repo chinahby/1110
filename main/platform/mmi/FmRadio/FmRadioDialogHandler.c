@@ -1014,6 +1014,7 @@ static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier)
                     WarT_Fm_Mute(FALSE);
 #else
 			        fm_mute(FALSE,pMe->fmSpeaker);
+                    fm_set_volume( pMe->byVolumeLevel,pMe->fmSpeaker);
 #endif
 			    }
 				ISHELL_CancelTimer( pMe->m_pShell, refreshChannelListCB, (void*)pMe);
