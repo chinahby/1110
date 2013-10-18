@@ -443,12 +443,15 @@ int32 recorder_set_media_device( Media* pme, int32 device)
 {
 	int result = 0;
 
-	if( ( result = IMEDIA_SetMediaParm( pme->m_pMedia, MM_PARM_AUDIO_DEVICE, device, 0)) != SUCCESS &&
-			 result != MM_PENDING
-	)
-	{
-		debug( ";recorder_set_media_device failed, 0x%x", result);
-	}
+    if( pme->m_pMedia)
+    {
+    	if( ( result = IMEDIA_SetMediaParm( pme->m_pMedia, MM_PARM_AUDIO_DEVICE, device, 0)) != SUCCESS &&
+    			 result != MM_PENDING
+    	)
+    	{
+    		debug( ";recorder_set_media_device failed, 0x%x", result);
+    	}
+    }
 	return result;
 }
 static void recorder_set_media_path( Media* pme, boolean reverse)
