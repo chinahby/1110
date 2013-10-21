@@ -23,7 +23,7 @@
 		<Text>YYYY : MM : DD</Text>
 	</STRING>
 	<STRING Id="1008" Name="IDS_INVALID_YEAR">
-		<Text>Введите год от 1900 до 2051</Text>
+		<Text>Введите год от 1981 до 2051</Text>
 	</STRING>
 	<STRING Id="1009" Name="IDS_DONE">
 		<Text>Сделано</Text>

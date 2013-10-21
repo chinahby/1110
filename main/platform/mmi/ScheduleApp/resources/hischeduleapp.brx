@@ -23,7 +23,7 @@
 		<Text>YYYY : MM : DD</Text>
 	</STRING>
 	<STRING Id="1008" Name="IDS_INVALID_YEAR">
-		<Text>वर्ष 1980 से 2051 तक दर्ज करें</Text>
+		<Text>वर्ष 1981 से 2051 तक दर्ज करें</Text>
 	</STRING>
 	<STRING Id="1009" Name="IDS_DONE">
 		<Text>किया है</Text>

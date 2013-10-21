@@ -23,7 +23,7 @@
 		<Text>MM : DD : YYYY</Text>
 	</STRING>
 	<STRING Id="1008" Name="IDS_INVALID_YEAR">
-		<Text>Enter year from 1980 to 2050</Text>
+		<Text>Enter year from 1981 to 2050</Text>
 	</STRING>
 	<STRING Id="1009" Name="IDS_DONE">
 		<Text>Done</Text>

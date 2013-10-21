@@ -23,7 +23,7 @@
 		<Text> ปี : เดือน : วัน</Text>
 	</STRING>
 	<STRING Id="1008" Name="IDS_INVALID_YEAR">
-		<Text>ใส่ปีจาก 1980 ถึง 2050</Text>
+		<Text>ใส่ปีจาก 1981 ถึง 2050</Text>
 	</STRING>
 	<STRING Id="1009" Name="IDS_DONE">
 		<Text>ทำงาน</Text>
