@@ -4217,6 +4217,11 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
 
         case EVT_DIALOG_END:
           //  (void)ISHELL_CancelTimer(pMe->m_pShell, CallApp_SetPauseControl, pMe);   
+
+          if (pMe->m_Media) 
+          {
+            recorder_stop_if( &pMe->m_Media);
+          }
           
           //Add By zzg 2010_08_03		
 #ifdef FEATURE_FRENDUO
