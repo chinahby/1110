@@ -579,6 +579,9 @@
 	<STRING Id="1403" Name="IDS_KEYPAD_RIGHT">
 		<Text>Right key</Text>
 	</STRING>
+	<String Id="1404" Name="IDS_AKG_15SEC">
+		<Text>15 sec</Text>
+	</String>		
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="7001">

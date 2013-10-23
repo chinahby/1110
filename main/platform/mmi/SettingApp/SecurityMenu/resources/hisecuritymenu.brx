@@ -226,6 +226,12 @@
 	<STRING Id="1178" Name="IDS_MG_MEDIAGALLERY">
 		<Text>फाइल मेनेजर</Text>
 	</STRING>
+	<String Id="1179" Name="IDS_AKG_15SEC">
+		<Text>15 sec</Text>
+	</String>
+	<String Id="1180" Name="IDS_AKG_1MIN">
+		<Text>1 Min</Text>	
+	</String>		
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_PHONELOCK_DIALOG" Focus="7001">

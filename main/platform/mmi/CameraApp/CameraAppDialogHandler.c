@@ -403,10 +403,12 @@ static const CCameraSize g_CameraSizeCFG_10[] =
 	//{120,160,L"240*320"}, // VGA
 	{180,240,L"480*640"}, // VGA
 #else
+	{180,240,L"240*320"}, // VGA
+
     //{128,160,L"128*160"}, // FULL Screen
     //{176,220,L"176*220"}, // QCIF
-    {480,640,L"480*640"}, // VGA 
-    {600,800,L"600*800"}, // VGA  
+    //{480,640,L"480*640"}, // VGA 
+    //{600,800,L"600*800"}, // VGA  
 #endif
 #elif defined(FEATURE_DISP_320X240)
     //{128,160,L"128*160"}, // FULL Screen
@@ -451,8 +453,12 @@ static const CCameraSize g_VideoSizeCFG_10[] =
 #elif defined(FEATURE_DISP_240X320)
 	//{128,160,L"128*160"}, // FULL Screen
     //{176,220,L"176*220"}, // QCIF
+#ifdef FEATURE_CAMERA_8W       
+    {144,176,L"144*176"}, // QCIF
+#else
     {480,640,L"480*640"}, // VGA 
     {600,800,L"600*800"}, // VGA
+#endif
 #elif defined(FEATURE_DISP_320X240)
 	//{128,160,L"128*160"}, // FULL Screen
     //{144,176,L"144*176"}, // QCIF
@@ -3791,7 +3797,7 @@ static void CameraApp_PopMenu_SizeInit(CCameraApp *pMe, IMenuCtl *popMenu)
         #endif
         }
          MSG_FATAL("CameraApp_SetPopMenuRect",0,0,0);
-		#ifdef FEATURE_VERSION_K212
+		#if defined (FEATURE_VERSION_K212)|| defined (FEATURE_QVGA_INHERIT_K212)
 		CameraApp_SetPopMenuRect(pMe, popMenu, i+1);
 		#else
         CameraApp_SetPopMenuRect(pMe, popMenu, i);
@@ -3924,7 +3930,7 @@ static void CameraApp_PopMenu_SizeInit(CCameraApp *pMe, IMenuCtl *popMenu)
 static void CameraApp_PopMenu_ShutterToneInit(CCameraApp *pMe, IMenuCtl *popMenu)  
 {
     IMENUCTL_DeleteAll(popMenu);   
-	#ifdef FEATURE_VERSION_K212
+    #if defined (FEATURE_VERSION_K212)||defined(FEATURE_DISP_240X320)
 	CameraApp_SetPopMenuRect(pMe, popMenu, 3);
 	#else
     CameraApp_SetPopMenuRect(pMe, popMenu, 2);
@@ -4061,7 +4067,7 @@ static void CameraApp_PopMenu_BandingInit(CCameraApp *pMe, IMenuCtl *popMenu)
 static void CameraApp_PopMenu_ResetCFGInit(CCameraApp *pMe, IMenuCtl *popMenu)
 {
     IMENUCTL_DeleteAll(popMenu);   
-	#ifdef FEATURE_VERSION_K212
+    #if defined (FEATURE_VERSION_K212)||defined(FEATURE_DISP_240X320)
     CameraApp_SetPopMenuRect(pMe, popMenu, 2);
 	#elif defined(FEATURE_VERSION_K212_ND)
 	CameraApp_SetPopMenuRect(pMe, popMenu, 2);
@@ -4702,6 +4708,63 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
     }
 #endif
 
+#if defined(FEATURE_CAMERA_8W) 
+(void)ICONFIG_GetItem(pMe->m_pConfig,
+                          CFGI_CAMERA_SIZE,
+                         &pMe->m_nCameraSize,
+                          sizeof(pMe->m_nCameraSize));
+    if(pMe->m_isRecordMode == FALSE)
+    {
+
+        switch(pMe->m_nCameraSize)
+        {
+#if !defined(FEATURE_DISP_240X320)
+            case OEMNV_CAMERA_SIZE_INDEX_0:
+    		        nResID[CAMERACFGSIZE] = IDI_SIZE_128_160;
+    		        break;
+    		case OEMNV_CAMERA_SIZE_INDEX_1:
+    		        nResID[CAMERACFGSIZE] = IDI_SIZE_176_220;
+    		        break;
+    	    case OEMNV_CAMERA_SIZE_INDEX_2:
+    		        nResID[CAMERACFGSIZE] = IDI_SIZE_240_320;
+    		        break;	
+                   
+    	    default:
+    		        nResID[CAMERACFGSIZE] = IDI_SIZE_128_160;
+    		        break;
+#else 
+            default:
+                    nResID[CAMERACFGSIZE] = IDI_SIZE_240_320;
+                    break;
+
+#endif
+        }
+    }
+    else
+    {
+         switch(pMe->m_nCameraSize)
+        {
+#if !defined(FEATURE_DISP_240X320)
+            case OEMNV_CAMERA_SIZE_INDEX_0:
+    		        nResID[CAMERACFGSIZE] = IDI_SIZE_128_160;
+    		        break;
+    		case OEMNV_CAMERA_SIZE_INDEX_1:
+    		        nResID[CAMERACFGSIZE] = IDI_SIZE_144_176;
+    		        break;   
+    	    default:
+    		        nResID[CAMERACFGSIZE] = IDI_SIZE_128_160;
+    		        break;
+#else
+            default:
+    		        nResID[CAMERACFGSIZE] = IDI_SIZE_144_176;
+    		        break;
+
+#endif
+        }
+    }
+#endif
+
+
 #if  defined(FEATURE_VERSION_C01) ||defined(FEATURE_VERSION_C11)||defined(FEATURE_VERSION_C180)
     // size cfgID
     (void)ICONFIG_GetItem(pMe->m_pConfig,
@@ -5138,7 +5201,7 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
 			captureSize.cx = g_CameraSizeCFG_10[pMe->m_nCameraSize].dx;
 	        captureSize.cy = g_CameraSizeCFG_10[pMe->m_nCameraSize].dy;
 #ifndef FEATURE_CAMERA_NOFULLSCREEN
-#ifdef FEATURE_VERSION_K212
+#if defined (FEATURE_VERSION_K212)||defined(FEATURE_DISP_240X320)
 			displaySize.cx = 240;
 	        displaySize.cy = 320;
 #else
@@ -5151,7 +5214,7 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
 		captureSize.cx = g_CameraSizeCFG_10[pMe->m_nCameraSize].dx;
         captureSize.cy = g_CameraSizeCFG_10[pMe->m_nCameraSize].dy;
 #ifndef FEATURE_CAMERA_NOFULLSCREEN
-#ifdef FEATURE_VERSION_K212
+#if defined (FEATURE_VERSION_K212)||defined(FEATURE_DISP_240X320)
 					displaySize.cx = 240;
 					displaySize.cy = 320;
 #else
@@ -5828,7 +5891,8 @@ static void CameraApp_SetCameraCaptureSize(CCameraApp *pMe, uint16 wParam)
 	        displaySize.cx = g_CameraSizeCFG_10[1].dx;
 	        displaySize.cy = g_CameraSizeCFG_10[1].dy;
 	        #else
-			#ifdef FEATURE_VERSION_K212
+			
+            #if defined (FEATURE_VERSION_K212)||defined(FEATURE_DISP_240X320)			
 			displaySize.cx = 240;
 	        displaySize.cy = 320;
 			#else
@@ -5849,7 +5913,7 @@ static void CameraApp_SetCameraCaptureSize(CCameraApp *pMe, uint16 wParam)
         displaySize.cx = g_CameraSizeCFG_10[1].dx;
         displaySize.cy = g_CameraSizeCFG_10[1].dy;
         #else
-		#ifdef FEATURE_VERSION_K212
+		#if defined (FEATURE_VERSION_K212)||defined(FEATURE_DISP_240X320)
 		displaySize.cx = 240;
 	    displaySize.cy = 320;
 		#else

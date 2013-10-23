@@ -3647,14 +3647,25 @@ static boolean  HandleAKGDialogEvent(CSettingMenu *pMe,
 		    #ifdef FEATURE_5SEC_AUTOLOCK_KEYPAD //xxzhen
 			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_AKG_5SEC, IDS_AKG_5SEC, NULL, 0);
 			#endif
-
+            
+            #ifdef FEATURE_VERSION_W021_CT100_QVGA            
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_AKG_5SEC, IDS_AKG_5SEC, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_AKG_10SEC, IDS_AKG_10SEC, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_AKG_15SEC, IDS_AKG_15SEC, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_AKG_30SEC, IDS_AKG_30SEC, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_AKG_1MIN, IDS_AKG_1MIN, NULL, 0);               
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_OFF, IDS_OFF, NULL, 0);
+            #else
+           IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_AKG_30SEC, IDS_AKG_30SEC, NULL, 0);
             #ifdef FEATURE_VERSION_W208S
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_AKG_1MIN, IDS_AKG_1MIN, NULL, 0);
             #endif
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_AKG_2MIN, IDS_AKG_2MIN, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_AKG_5MIN, IDS_AKG_5MIN, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_OFF, IDS_OFF, NULL, 0);
+            #endif
+
+            
             return TRUE;
 
         case EVT_DIALOG_START:
@@ -3690,6 +3701,29 @@ static boolean  HandleAKGDialogEvent(CSettingMenu *pMe,
 	                      ui16_return = IDS_OFF;
 	                      break;
 	                }
+                #elif defined(FEATURE_VERSION_W021_CT100_QVGA) 
+					switch (AKG)
+	                {
+                        case 1:   //10秒
+							ui16_return = IDS_AKG_5SEC;
+							break;
+						case 2:    // 30秒
+							ui16_return = IDS_AKG_10SEC;
+							break;
+						case 3:    // 两分钟
+							ui16_return = IDS_AKG_15SEC;
+							break;
+						case 4:    // 五分钟
+							ui16_return = IDS_AKG_30SEC;
+							break;
+	                    case 5:    // 五分钟
+							ui16_return = IDS_AKG_1MIN;
+							break;                            
+						default:
+						case 0: //关
+							ui16_return = IDS_OFF;
+						break;      
+					}              
 				#elif defined (FEATURE_5SEC_AUTOLOCK_KEYPAD)//xxzhen
 					switch (AKG)
 	                {
@@ -3794,6 +3828,31 @@ static boolean  HandleAKGDialogEvent(CSettingMenu *pMe,
 	                    default:
 	                        ASSERT_NOT_REACHABLE;
 	                }
+                    #elif defined(FEATURE_VERSION_W021_CT100_QVGA) //xxzhen
+					switch (wParam)
+	                {
+	                	case IDS_AKG_5SEC:     //10miao
+	                        AKG = 1;
+	                        break;
+	                    case IDS_AKG_10SEC:     //30miao
+	                        AKG = 2;
+	                        break;
+	                    case IDS_AKG_15SEC:     // 2minute
+	                        AKG = 3;
+	                        break;
+	                    case IDS_AKG_30SEC:     //5minute
+	                        AKG = 4;
+	                        break;
+                        case IDS_AKG_1MIN:     // 2minute
+	                        AKG = 5;
+	                        break;                            
+	                    case IDS_OFF:     //关
+	                        AKG = 0;
+	                        break;
+
+	                    default:
+	                        ASSERT_NOT_REACHABLE;
+	                }     
 				#elif defined(FEATURE_5SEC_AUTOLOCK_KEYPAD) //xxzhen
 					switch (wParam)
 	                {

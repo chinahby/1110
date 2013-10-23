@@ -1931,6 +1931,8 @@ static OEMConfigListType oemi_cache = {
 #endif
 #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)|| defined (FEATURE_VERSION_K212_ND)
    1,											//CFGI_KEY_LOCK_CHECK			
+#elif defined(FEATURE_VERSION_W021_CT100_QVGA)
+   4, 
 #elif defined(FEATURE_VERSION_K202_LM129C)//xxzhen
    0,
 #else
@@ -3020,6 +3022,8 @@ void OEM_RestoreFactorySetting( void )
 
 #ifdef FEATURE_PEKTEST
     oemi_cache.b_key_lock       =  0;
+#elif defined(FEATURE_VERSION_W021_CT100_QVGA)
+    oemi_cache.b_key_lock       =  4; 
 #elif defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM) ||defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_KEY_LOCK_DEFAULT_30S)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
 	oemi_cache.b_key_lock       =  1; 
 #elif defined(FEATURE_VERSION_K202_LM129C)//xxzhen

@@ -88,5 +88,8 @@
 	<Object Id="5057" Name="IDI_COUNT_DOWN">
 		<File>..\..\Appscommon\images\240x320\common\CameraApp\countdown.png</File>
 	</Object>
+	<Object Id="5061" Name="IDI_SIZE_144_176">
+		<File>..\..\Appscommon\images\176x220\common\CameraApp\144_176.PNG</File>
+	</Object>	
 </Objects>
 </BREWRes>

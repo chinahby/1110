@@ -26,7 +26,8 @@ LCD_SURF_C_SOURCES= \
 	disp_ic_rm68090_tft24_rot.c \
 	disp_ic_rm68130_tft22_rot.c \
 	disp_ic_st7775r_tft20_rot.c \
-	disp_ic_7789S_tft24_rot.c
+	disp_ic_7789S_tft24_rot.c \
+	disp_ic_st7789s_tft24.c
 
 LCD_SURF_C_SOURCES += disp_epson_S1D19120_bootscreen.c
 

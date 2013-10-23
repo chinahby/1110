@@ -4105,6 +4105,56 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 	                            default:
 	                        	break;
 	                    	}
+                        #elif defined(FEATURE_VERSION_W021_CT100_QVGA)
+                        switch(bData)
+                		{
+                			case 1:
+                			{
+                    			(void)ISHELL_SetTimer(pMe->a.m_pIShell,
+                                    5*1000,
+                                    CoreApp_TimeKeyguard,
+                                    pMe);
+                        	}
+                        	break;
+							
+                			case 2:
+                			{
+                    			(void)ISHELL_SetTimer(pMe->a.m_pIShell,
+                                    10*1000,
+                                    CoreApp_TimeKeyguard,
+                                    pMe);
+                        	}
+                        	break;
+							
+                        	case 3:
+                			{
+                    			(void)ISHELL_SetTimer(pMe->a.m_pIShell,
+                                    15*1000,
+                                    CoreApp_TimeKeyguard,
+                                    pMe);
+                        	}
+                        	break;
+							
+                        	case 4:
+                			{
+                    			(void)ISHELL_SetTimer(pMe->a.m_pIShell,
+                                    30*1000,
+                                    CoreApp_TimeKeyguard,
+                                    pMe);
+                        	}
+							break;
+							case 5:
+                			{
+                    			(void)ISHELL_SetTimer(pMe->a.m_pIShell,
+                                    60*1000,
+                                    CoreApp_TimeKeyguard,
+                                    pMe);
+                        	}
+							break;
+                            
+                            default:
+                        	break;
+                    	}
 						#elif defined(FEATURE_5SEC_AUTOLOCK_KEYPAD) //xxzhen
 						switch(bData)
 	                		{

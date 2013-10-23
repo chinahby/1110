@@ -45,6 +45,23 @@ typedef struct IAnnunciator IAnnunciator;
 //---------------------------------------------------------------------
 // Annunciator Fields
 /*fields that locate at the same place are merged, and use the states ID to dicide which icon to display*/
+#ifdef FEATURE_VERSION_W021_CT100_QVGA
+enum
+{
+    ANNUN_FIELD_RSSI,
+    ANNUN_FIELD_WAP,
+    ANNUN_FIELD_TCARD ,
+    ANNUN_FIELD_CALL, 
+    ANNUN_FIELD_SMS ,
+    ANNUN_FIELD_FMRADIO ,
+    ANNUN_FIELD_ALARM,    
+    ANNUN_FIELD_RINGTONE, 
+    ANNUN_FIELD_BATT , 
+    ANNUN_FIELD_BLUETOOTH,
+    ANNUN_FIELD_LOCKSTATUS,
+    ANNUN_FIELD_MMS,
+};
+#else
 
 #if defined(FEATURE_VERSION_K212)
 #define ANNUN_FIELD_RSSI                       0   /*Airplane Mode/RSSI*/
@@ -62,6 +79,7 @@ typedef struct IAnnunciator IAnnunciator;
 #define ANNUN_FIELD_LOCKSTATUS           11  /*Voice Privacy/Lockstatus*/
 #define ANNUN_FIELD_MMS                       12   /*MMS Full/MMS Unread/MMS Unreceive/Push*/
 #define ANNUN_FIELD_WAP                       13   /*Wap/1x/Roam*/
+
 #else
 #define ANNUN_FIELD_RSSI                       0   /*Airplane Mode/RSSI*/
 #define ANNUN_FIELD_WAP                       1   /*Wap/1x/Roam*/
@@ -79,6 +97,7 @@ typedef struct IAnnunciator IAnnunciator;
 #define ANNUN_FIELD_TCARD						2		//Add By zzg 2012_10_30
 #endif
 
+#endif
 
 // Possible State of each annunciator field
 #define ANNUN_STATE_OFF       0

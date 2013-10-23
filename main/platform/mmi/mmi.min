@@ -99,7 +99,9 @@ endif
 ifneq ($(USES_RESDIR),K212)
 ifeq ($(MMI_ADD_GAME),yes)
 include $(BRICKATTACK)/brickattack.min
+ifneq ($(USES_RESDIR),CT100_QVGA)
 include $(BLACKJACK)/blackjack.min
+endif
 ifeq ($(USES_RESDIR),X3) 
 include $(PINTU)/Pintu.min
 include $(TETRIS)/Tetris.min

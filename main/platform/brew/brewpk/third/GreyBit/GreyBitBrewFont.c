@@ -59,7 +59,7 @@ static int ArphicMeasureNChars(const AECHAR *pcText, int nChars);
 static int OEMFont_MeasureTextCursorPos(IFont *pMe, int x, const AECHAR *pcText, int nChars, 
                                                         const AEERect *prcClip, int* curx, int LineCursor, uint32 dwFlags);
 #endif
-#define FEATURE_VERSION_K212
+//#define FEATURE_VERSION_K212
 #define MMI_GREYBITTYPE_FONTS_PATH     AEEFS_SYS_DIR"systemfont.gvf"
 
 #if defined(FEATURE_DISP_320X240) || defined(FEATURE_DISP_240X320)

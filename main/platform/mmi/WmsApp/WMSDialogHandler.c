@@ -123,7 +123,10 @@ extern uint8  g_mmsDataInfoMax;
 #define SENDOPT_TITLELONGER   80
 
 #else
-#define SENDOPT_TITLELONGER   110
+#ifdef FEATURE_VERSION_W021_CT100_QVGA
+#define SENDOPT_TITLELONGER   180
+#endif
+
 #endif
 
 // 画界面底部提示条宏定义
@@ -3615,7 +3618,10 @@ static boolean IDD_SETTING_Handler(void   *pUser,
 #endif                   
 #if 1//def FEATURE_CARRIER_TAIWAN_APBW        //add by yangdecai   2010-08-23 
             MSG_FATAL("IDD_SETTING_Handler EVT_DIALOG_INIT IDS_CALLBACKNUM", 0, 0, 0);
-#if !defined(FEATURE_VERSION_C316)&&!defined(FEATURE_VERSION_K202_LM129C)&&!defined(FEATURE_VERSION_W021_CT100)&&!defined(FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_VERSION_K212_20D)&&!defined(FEATURE_VERSION_K212_ND)
+#if !defined(FEATURE_VERSION_C316)&&!defined(FEATURE_VERSION_K202_LM129C)\
+    &&!defined(FEATURE_VERSION_W021_CT100)&&!defined(FEATURE_VERSION_K212)\
+    &&!defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_VERSION_K212_20D)\
+    &&!defined(FEATURE_VERSION_K212_ND)&&!defined(FEATURE_VERSION_W021_CT100_QVGA)
             MENU_ADDITEM(pMenu, IDS_CALLBACKNUM);
 #endif
 #endif 
@@ -9642,7 +9648,9 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                 }
 #endif
 
-#if !defined(FEATURE_VERSION_C316)&&!defined(FEATURE_VERSION_K202_LM129C)&&!defined(FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_VERSION_K212_20D)&&!defined(FEATURE_VERSION_K212_ND) //xxzhen
+#if !defined(FEATURE_VERSION_C316)&&!defined(FEATURE_VERSION_K202_LM129C)&&!defined(FEATURE_VERSION_K212) \
+      &&!defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_VERSION_K212_20D)&&!defined(FEATURE_VERSION_K212_ND) \
+      &&!defined(FEATURE_VERSION_W021_CT100_QVGA)
                 if (mask & 0x10)
                 {
                     wControls[nControls] = IDC_MENU_CBNUM;
@@ -9812,7 +9820,9 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                 {
                     AEERect rect;
                     int ry=0;
-                    #if defined(FEATURE_VERSION_C01) || defined(FEATURE_VERSION_1110W516)||defined(FEATURE_VERSION_C11)||defined(FEATURE_VERSION_C180)||defined(FEATURE_VERSION_C100)|| defined(FEATURE_VERSION_W027)||defined(FEATURE_VERSION_W021_CT100)
+                    #if (defined(FEATURE_VERSION_C01) || defined(FEATURE_VERSION_1110W516)||defined(FEATURE_VERSION_C11)\
+                        ||defined(FEATURE_VERSION_C180)||defined(FEATURE_VERSION_C100)|| defined(FEATURE_VERSION_W027)\
+                        ||defined(FEATURE_VERSION_W021_CT100))&&!defined(FEATURE_VERSION_W021_CT100_QVGA)                    
                     if(i<4 && i != 2)
                     #else
                     if(i<4)

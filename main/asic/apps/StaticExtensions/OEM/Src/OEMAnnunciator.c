@@ -361,7 +361,7 @@ static OEMState_data ringtone_image_data[]=
 #if /*defined(FEATURE_VERSION_LM126C)||*/defined(FEATURE_5_LEVEL_BATTERY)//xxzhen
 static OEMState_data batt5_image_data[]=
 {
-#ifdef FEATURE_VERSION_K212
+#if defined (FEATURE_VERSION_K212)||defined(FEATURE_VERSION_W021_CT100_QVGA)
   {ANNUN_STATE_BATT_LOW, IDB_BATT_LOW, NULL},
   {ANNUN_STATE_BATT_1, IDB_BATT1, NULL},
   {ANNUN_STATE_BATT_2, IDB_BATT2, NULL},
@@ -671,7 +671,7 @@ OEMAnnun_content batt_content =
  */
 static OEMAnnun_data Annunciators[] =
 {
-#ifdef FEATURE_VERSION_K212
+#if defined (FEATURE_VERSION_K212)
     {ANNUN_FIELD_RSSI,                ANNUN_ICON_POSITION_1,     ROW1_Y,  LG_IMG_WIDTH, IMG_HEIGHT,  &rssi_content}, 	   
     //{ANNUN_FIELD_WAP,                ANNUN_ICON_POSITION_2,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &wap_content},     
     {ANNUN_FIELD_HEADSET,                ANNUN_ICON_POSITION_2,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &headset_content},     
@@ -683,6 +683,20 @@ static OEMAnnun_data Annunciators[] =
     {ANNUN_FIELD_ALARM,              ANNUN_ICON_POSITION_7,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &alarm_content},    
     {ANNUN_FIELD_RINGTONE,         ANNUN_ICON_POSITION_8,    ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &ringtone_content},
     {ANNUN_FIELD_BATT,             ANNUN_ICON_POSITION_END, ROW1_Y,  LG_IMG_WIDTH, IMG_HEIGHT,  &batt_content}
+#elif defined(FEATURE_VERSION_W021_CT100_QVGA)
+    {ANNUN_FIELD_RSSI,                ANNUN_ICON_POSITION_1,     ROW1_Y,  LG_IMG_WIDTH, IMG_HEIGHT,  &rssi_content}, 	   
+    //{ANNUN_FIELD_WAP,                ANNUN_ICON_POSITION_2,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &wap_content},     
+    {ANNUN_FIELD_WAP,                ANNUN_ICON_POSITION_2,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &headset_content},     
+
+    {ANNUN_FIELD_TCARD,               ANNUN_ICON_POSITION_3,      ROW1_Y,  IMG_WIDTH,       IMG_HEIGHT,  &tcard_content},  
+    {ANNUN_FIELD_CALL,                ANNUN_ICON_POSITION_4,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &call_content}, 
+    {ANNUN_FIELD_SMS,                ANNUN_ICON_POSITION_5,      ROW1_Y,  IMG_WIDTH,       IMG_HEIGHT,  &sms_content}, 
+    {ANNUN_FIELD_FMRADIO,          ANNUN_ICON_POSITION_6,      ROW1_Y,  IMG_WIDTH,       IMG_HEIGHT,  &fmradio_content},
+        
+    {ANNUN_FIELD_ALARM,              ANNUN_ICON_POSITION_7,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &alarm_content},    
+    {ANNUN_FIELD_RINGTONE,         ANNUN_ICON_POSITION_8,    ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &ringtone_content},
+    {ANNUN_FIELD_BATT,             ANNUN_ICON_POSITION_END, ROW1_Y,  LG_IMG_WIDTH, IMG_HEIGHT,  &batt_content}
+
 #else
 
 #ifdef FEATURE_VERSION_EC99
@@ -748,7 +762,7 @@ static OEMAnnun_data Annunciators[] =
 #if  0//def FEATURE_VERSION_LM126C
 #define ANNUN_MAX_STATES     (8)
 #else
-#ifdef FEATURE_VERSION_K212
+#if defined (FEATURE_VERSION_K212)|defined(FEATURE_VERSION_W021_CT100_QVGA)
 #define ANNUN_MAX_STATES     (9)
 #else
 #define ANNUN_MAX_STATES     (7)
