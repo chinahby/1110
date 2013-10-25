@@ -76,98 +76,85 @@ static void disp_ic_mdp_scrupdate(uint32 *scr, uint32 start_row, uint32 start_co
 
 static void disp_ic_init(void)
 {
-#if 0
-        LCD_WRITE_CMD(0x11); //Exit Sleep
-        LCD_DELAY(120);
-    
-        LCD_WRITE_CMD(0xEC);
-        LCD_WRITE_DATA(0x02);  //0x0C
-    
-        LCD_WRITE_CMD(0x26); //Set Default Gamma
-        LCD_WRITE_DATA(0x04);
-    
-        LCD_WRITE_CMD(0xB1);
-        LCD_WRITE_DATA(0x08);
-        LCD_WRITE_DATA(0x14);
-    
-        LCD_WRITE_CMD(0xC0); //Set VRH1[4:0] & VC[2:0] for VCI1 & GVDD
-        LCD_WRITE_DATA(0x08);
-        LCD_WRITE_DATA(0x00);
-    
-        LCD_WRITE_CMD(0xC1); //Set BT[2:0] for AVDD & VCL & VGH & VGL
-        LCD_WRITE_DATA(0x05);
-    
-        LCD_WRITE_CMD(0xC5); //Set VMH[6:0] & VML[6:0] for VOMH & VCOML
-        LCD_WRITE_DATA(0x46);//0x46
-        LCD_WRITE_DATA(0x40);//0x40
-    
-        LCD_WRITE_CMD(0xC7); 
-        LCD_WRITE_DATA(0xBD);  //0xC2
-    
-    
-    
-    
-        LCD_WRITE_CMD(0x3a); //Set Color Format
-        LCD_WRITE_DATA(0x05);
-    
-        LCD_WRITE_CMD(0x2A); //Set Column Address
-        LCD_WRITE_DATA(0x00);
-        LCD_WRITE_DATA(0x00);
-        LCD_WRITE_DATA(0x00);
-        LCD_WRITE_DATA(0x7F);
-        LCD_WRITE_CMD(0x2B); //Set Page Address
-        LCD_WRITE_DATA(0x00);
-        LCD_WRITE_DATA(0x00);
-        LCD_WRITE_DATA(0x00);
-        LCD_WRITE_DATA(0x9F);
-    
-        LCD_WRITE_CMD(0xB4); //Set Source Output Direction
-        LCD_WRITE_DATA(0x06);
-    
-        LCD_WRITE_CMD(0xf2); //Enable Gamma bit
-        LCD_WRITE_DATA(0x01);
-    
-    
-        LCD_WRITE_CMD(0x36); //Set Scanning Direction
-        LCD_WRITE_DATA(0x08);  //0xc0
-    
-        LCD_WRITE_CMD(0xE0);
-        LCD_WRITE_DATA(0x3F);//p1
-        LCD_WRITE_DATA(0x24);//p2
-        LCD_WRITE_DATA(0x22);//p3
-        LCD_WRITE_DATA(0x2f);//p4
-        LCD_WRITE_DATA(0x28);//p5
-        LCD_WRITE_DATA(0x0b);//p6
-        LCD_WRITE_DATA(0x4f);//p7
-        LCD_WRITE_DATA(0xB7);//p8
-        LCD_WRITE_DATA(0x3c);//p9
-        LCD_WRITE_DATA(0x19);//p10
-        LCD_WRITE_DATA(0x15);//p11
-        LCD_WRITE_DATA(0x08);//p12
-        LCD_WRITE_DATA(0x02);//p13
-        LCD_WRITE_DATA(0x01);//p14
-        LCD_WRITE_DATA(0x00);//p15
-    
-        LCD_WRITE_CMD(0xE1);
-        LCD_WRITE_DATA(0x00);//p1
-        LCD_WRITE_DATA(0x1b);//p2
-        LCD_WRITE_DATA(0x1d);//p3
-        LCD_WRITE_DATA(0x10);//p4
-        LCD_WRITE_DATA(0x17);//p5
-        LCD_WRITE_DATA(0x14);//p6
-        LCD_WRITE_DATA(0x30);//p7
-        LCD_WRITE_DATA(0x48);//p8
-        LCD_WRITE_DATA(0x43);//p9
-        LCD_WRITE_DATA(0x07);//p10
-        LCD_WRITE_DATA(0x1a);//p11
-        LCD_WRITE_DATA(0x37);//p12
-        LCD_WRITE_DATA(0x3D);//p13
-        LCD_WRITE_DATA(0x3E);//p14
-        LCD_WRITE_DATA(0x3F);//p15
-    
-        LCD_WRITE_CMD(0x29); // Display On
-        
-        LCD_WRITE_CMD(0x2C);//Memory Write
+#if defined (FEATURE_VERSION_IC241A_MMX)
+        //--************ Start Initial Sequence **********--/
+	    //LCD_WRITE_CMD(0x01);
+		LCD_DELAY(1); // Delay 1ms
+		LCD_DELAY(10); // Delay 10ms, This delay time is necessary
+		LCD_DELAY(120); // Delay 50 ms
+		//************* Start Initial Sequence **********//
+		//************* Start Initial Sequence **********//
+
+
+		//************* Start Initial Sequence **********//
+		
+		//-----------------------------------ST7789S reset sequence------------------------------------//
+		
+		LCD_WRITE_CMD(0x11);
+		LCD_DELAY(120); //Delay 120ms
+		//--------------------------------------Display Setting------------------------------------------//
+		LCD_WRITE_CMD(0x36);
+		LCD_WRITE_DATA(0x88);       
+		LCD_WRITE_CMD(0x3a);
+		LCD_WRITE_DATA(0x55);
+		//--------------------------------ST7789S Frame rate setting----------------------------------//
+		LCD_WRITE_CMD(0xb2);
+		LCD_WRITE_DATA(0x0c);
+		LCD_WRITE_DATA(0x0c);
+		LCD_WRITE_DATA(0x00);
+		LCD_WRITE_DATA(0x33);
+		LCD_WRITE_DATA(0x33);
+		LCD_WRITE_CMD(0xb7);
+		LCD_WRITE_DATA(0x35);
+		//---------------------------------ST7789S Power setting--------------------------------------//
+		LCD_WRITE_CMD(0xbb);
+		LCD_WRITE_DATA(0x0e);
+		LCD_WRITE_CMD(0xc0);
+		LCD_WRITE_DATA(0x2c);
+		LCD_WRITE_CMD(0xc2);
+		LCD_WRITE_DATA(0x01);
+		LCD_WRITE_CMD(0xc3);
+		LCD_WRITE_DATA(0x12);
+		LCD_WRITE_CMD(0xc4);
+		LCD_WRITE_DATA(0x20);
+		LCD_WRITE_CMD(0xc6);
+		LCD_WRITE_DATA(0x0f);
+		LCD_WRITE_CMD(0xd0);
+		LCD_WRITE_DATA(0xa4);
+		LCD_WRITE_DATA(0xa1);
+		//--------------------------------ST7789S gamma setting---------------------------------------//
+		LCD_WRITE_CMD(0xe0);
+		LCD_WRITE_DATA(0xd0);
+		LCD_WRITE_DATA(0x00);
+		LCD_WRITE_DATA(0x05);
+		LCD_WRITE_DATA(0x0d);
+		LCD_WRITE_DATA(0x0f);
+		LCD_WRITE_DATA(0x2b);
+		LCD_WRITE_DATA(0x3b);
+		LCD_WRITE_DATA(0x44);
+		LCD_WRITE_DATA(0x4a);
+		LCD_WRITE_DATA(0x18);
+		LCD_WRITE_DATA(0x0f);
+		LCD_WRITE_DATA(0x0b);
+		LCD_WRITE_DATA(0x1f);
+		LCD_WRITE_DATA(0x22);
+		
+		LCD_WRITE_CMD(0xe1);
+		LCD_WRITE_DATA(0xd0);
+		LCD_WRITE_DATA(0x00);
+		LCD_WRITE_DATA(0x05);
+		LCD_WRITE_DATA(0x0d);
+		LCD_WRITE_DATA(0x10);
+		LCD_WRITE_DATA(0x2b);
+		LCD_WRITE_DATA(0x3d);
+		LCD_WRITE_DATA(0x54);
+		LCD_WRITE_DATA(0x50);
+		LCD_WRITE_DATA(0x2f);
+		LCD_WRITE_DATA(0x1f);
+		LCD_WRITE_DATA(0x1f);
+		LCD_WRITE_DATA(0x1f);
+		LCD_WRITE_DATA(0x23);
+		LCD_WRITE_CMD(0x29);	
 #else
 	//----------------------------------End ST7775R Reset Sequence ------------------------------------// 
 	//------------------------------------Display Control Setting----------------------------------------------// 
@@ -274,7 +261,7 @@ static void disp_ic_rot(uint16 degree)
     return;
 }
 
-boolean disp_st7789s_tft20_rot(disp_drv_ic_type *pdispic)
+boolean disp_st7789s_tft24_rot(disp_drv_ic_type *pdispic)
 {
 
 	uint8 tid3,tid4;
