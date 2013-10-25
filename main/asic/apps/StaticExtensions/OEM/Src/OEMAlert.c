@@ -127,7 +127,7 @@ when       who     what, where, why
                            ( (vol) = (OEMSound_Volume_Type)((int)(vol) + 2) )
                            
 // How long the phone vibrates for each "ring"
-#ifdef FEATURE_VERSION_C260_IC18
+#if defined (FEATURE_VERSION_C260_IC18) || defined (FEATURE_VERSION_IC241A_MMX)
 #define TIME_MS_RINGERVIBRATE_DURATION          1000
 #else
 #define TIME_MS_RINGERVIBRATE_DURATION          2000
@@ -139,7 +139,7 @@ when       who     what, where, why
 #ifdef FEATURE_VERSION_W317A
 #define TIME_MS_RINGERVIBRATE_ALERT_DURATION    4000
 #else
-#ifdef FEATURE_VERSION_C260_IC18
+#if defined (FEATURE_VERSION_C260_IC18) || defined (FEATURE_VERSION_IC241A_MMX)
 #define TIME_MS_RINGERVIBRATE_ALERT_DURATION    6000
 #else
 #define TIME_MS_RINGERVIBRATE_ALERT_DURATION    12000
@@ -162,7 +162,7 @@ when       who     what, where, why
 #define TIME_MS_SMSVIBRATE_DURATION             8000
 #define COUNT_SMSVIBRATE_ALERTS_THEN_RING       2
 #else
-#ifdef FEATURE_VERSION_C260_IC18
+#if defined (FEATURE_VERSION_C260_IC18) || defined (FEATURE_VERSION_IC241A_MMX)
 #define TIME_MS_SMSVIBRATE_DURATION             1000
 #else
 #define TIME_MS_SMSVIBRATE_DURATION             2000
@@ -1993,7 +1993,7 @@ static int OEMALERT_PlayRinger
 	#ifndef FEATURE_VERSION_K212
     OEMALERT_GetRingerVol(pMe);
 	#endif
-    #ifdef FEATURE_VERSION_C337
+    #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
     pMe->m_ringCurVol = OEMSOUND_1ST_VOL;
     pMe->m_ringEndVol = OEMSOUND_1ST_VOL;
     #endif
@@ -2459,10 +2459,12 @@ static int OEMALERT_StartMp3Alert(IALERT * pMe, char *id, ALERT_SND_TYPE type)
             if (gCurStatus.m_pCurRingerMgr != NULL &&
                 gCurStatus.m_bplaying)
             {
-            	#ifdef FEATURE_VERSION_C337
+            	#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
                 #ifndef FEATURE_VERSION_C260_IC18
+                #ifndef FEATURE_VERSION_IC241A_MMX
 			 	INCREMENT_ESCALATING_RINGER(pMe->m_ringCurVol);
              	OEMALERT_SetRingerVol(pMe, TRUE);
+                #endif
                 #endif
              	#endif
                 ISOUND_Vibrate(pMe->m_pSound,TIME_MS_SMSVIBRATE_DURATION); 
@@ -2539,10 +2541,12 @@ static int OEMALERT_StartMp3Alert(IALERT * pMe, char *id, ALERT_SND_TYPE type)
                 if(type == ALERT_SMS_SND)
                 {
                     pMe->m_ringVibCount = 2;
-					#ifdef FEATURE_VERSION_C337
+					#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
                     #ifndef FEATURE_VERSION_C260_IC18
+                    #ifndef FEATURE_VERSION_IC241A_MMX
 			 		INCREMENT_ESCALATING_RINGER(pMe->m_ringCurVol);
              		OEMALERT_SetRingerVol(pMe, TRUE);
+                    #endif
                     #endif
              		#endif
 					ISOUND_Vibrate(pMe->m_pSound,TIME_MS_SMSVIBRATE_DURATION);
@@ -2869,10 +2873,12 @@ static void OEMALERT_HandleRingerAlertTimer(void *pUser)
                 ISOUND_Vibrate(pMe->m_pSound,TIME_MS_RINGERVIBRATE_DURATION/2);
                 #else
                 //ISOUND_Vibrate(pMe->m_pSound,TIME_MS_RINGERVIBRATE_DURATION);
-                #ifdef FEATURE_VERSION_C337
+                #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
                 #ifndef FEATURE_VERSION_C260_IC18
+                #ifndef FEATURE_VERSION_IC241A_MMX
 			 	INCREMENT_ESCALATING_RINGER(pMe->m_ringCurVol);
              	OEMALERT_SetRingerVol(pMe, TRUE);
+                #endif
                 #endif
              	#endif
 #if defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)
@@ -2901,10 +2907,12 @@ static void OEMALERT_HandleRingerAlertTimer(void *pUser)
                 if (pMe->m_ringVibCount % 2) 
                 {
                     //ISOUND_Vibrate(pMe->m_pSound,TIME_MS_RINGERVIBRATE_DURATION);
-                    #ifdef FEATURE_VERSION_C337
+                    #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
                     #ifndef FEATURE_VERSION_C260_IC18
+                    #ifndef FEATURE_VERSION_IC241A_MMX
 			 		INCREMENT_ESCALATING_RINGER(pMe->m_ringCurVol);
              		OEMALERT_SetRingerVol(pMe, TRUE);
+                    #endif
                     #endif
              		#endif
 					
@@ -2983,10 +2991,12 @@ static void OEMALERT_HandleRingerAlertTimer(void *pUser)
                 vib = !vib;
                 if( vib == TRUE ) 
                 {
-                	#ifdef FEATURE_VERSION_C337
+                	#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
                     #ifndef FEATURE_VERSION_C260_IC18
+                    #ifndef FEATURE_VERSION_IC241A_MMX
 			 		INCREMENT_ESCALATING_RINGER(pMe->m_ringCurVol);
              		OEMALERT_SetRingerVol(pMe, TRUE);
+                    #endif
                     #endif
              		#endif
                 }      
@@ -3018,7 +3028,7 @@ static void OEMALERT_HandleRingerAlertTimer(void *pUser)
             break;
     }   
 
-    #ifdef FEATURE_VERSION_C260_IC18
+    #if defined (FEATURE_VERSION_C260_IC18) || defined (FEATURE_VERSION_IC241A_MMX)
     (void) ISHELL_SetTimer(pMe->m_pIShell,
                             (TIMEOUT_MS_RINGERVIB_TIMER*2),
                             OEMALERT_HandleRingerAlertTimer,
@@ -3217,10 +3227,12 @@ static void OEMALERT_StartSMSAlert (IALERT *pMe, int ring_id)
                                     NULL);
             if(OEMNV_SMS_RING != sms_size)
             {
-            	#ifdef FEATURE_VERSION_C337
+            	#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
                 #ifndef FEATURE_VERSION_C260_IC18
+                #ifndef FEATURE_VERSION_IC241A_MMX
 			 	INCREMENT_ESCALATING_RINGER(pMe->m_ringCurVol);
              	OEMALERT_SetRingerVol(pMe, TRUE);
+                #endif
                 #endif
              	#endif
                 ISOUND_Vibrate(pMe->m_pSound,TIME_MS_SMSVIBRATE_DURATION); 
@@ -3242,10 +3254,12 @@ static void OEMALERT_StartSMSAlert (IALERT *pMe, int ring_id)
             //IRINGERMGR_Stop(gCurStatus.m_pCurRingerMgr);
             //gCurStatus.m_bplaying = FALSE;
             //gCurStatus.m_pCurRingerMgr = NULL;
-             #ifdef FEATURE_VERSION_C337
+             #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
              #ifndef FEATURE_VERSION_C260_IC18
+             #ifndef FEATURE_VERSION_IC241A_MMX
 			 INCREMENT_ESCALATING_RINGER(pMe->m_ringCurVol);
              OEMALERT_SetRingerVol(pMe, TRUE);
+             #endif
              #endif
              #endif
              ISOUND_Vibrate(pMe->m_pSound,TIME_MS_SMSVIBRATE_DURATION); 
@@ -3282,10 +3296,12 @@ static void OEMALERT_StartSMSAlert (IALERT *pMe, int ring_id)
     }
     else if(OEMNV_SMS_VIBONLY == sms_size)
     {
-    	 #ifdef FEATURE_VERSION_C337
+    	 #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
          #ifndef FEATURE_VERSION_C260_IC18
+         #ifndef FEATURE_VERSION_IC241A_MMX
 		 INCREMENT_ESCALATING_RINGER(pMe->m_ringCurVol);
          OEMALERT_SetRingerVol(pMe, TRUE);
+         #endif
          #endif
          #endif
          ISOUND_Vibrate(pMe->m_pSound,TIME_MS_SMSVIBRATE_DURATION); 
@@ -3301,10 +3317,12 @@ static void OEMALERT_StartSMSAlert (IALERT *pMe, int ring_id)
             (void)ISHELL_SetTimer(pMe->m_pIShell, 2000, (PFNNOTIFY)OEMALERT_NotifyMP3PlayerCB, pMe);
         }
 #endif       
-		 #ifdef FEATURE_VERSION_C337
+		 #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
          #ifndef FEATURE_VERSION_C260_IC18
+         #ifndef FEATURE_VERSION_IC241A_MMX
 		 INCREMENT_ESCALATING_RINGER(pMe->m_ringCurVol);
          OEMALERT_SetRingerVol(pMe, TRUE);
+         #endif
          #endif
 		 #endif
          ISOUND_Vibrate(pMe->m_pSound,TIME_MS_SMSVIBRATE_DURATION);     
@@ -3330,10 +3348,12 @@ static void OEMALERT_StartSMSAlert (IALERT *pMe, int ring_id)
             (void)ISHELL_SetTimer(pMe->m_pIShell, 2000, (PFNNOTIFY)OEMALERT_NotifyMP3PlayerCB, pMe);
         }
 #endif    
-         #ifdef FEATURE_VERSION_C337
+         #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
          #ifndef FEATURE_VERSION_C260_IC18
+         #ifndef FEATURE_VERSION_IC241A_MMX
 		 INCREMENT_ESCALATING_RINGER(pMe->m_ringCurVol);
          OEMALERT_SetRingerVol(pMe, TRUE);
+         #endif
          #endif
 		 #endif
          ISOUND_Vibrate(pMe->m_pSound,TIME_MS_SMSVIBRATE_DURATION);     

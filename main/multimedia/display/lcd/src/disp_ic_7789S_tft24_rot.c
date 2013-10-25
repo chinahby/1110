@@ -93,7 +93,7 @@ static void disp_ic_init(void)
 		LCD_DELAY(120); //Delay 120ms
 		//--------------------------------------Display Setting------------------------------------------//
 		LCD_WRITE_CMD(0x36);
-		LCD_WRITE_DATA(0x08);
+		LCD_WRITE_DATA(0x88);       
 		LCD_WRITE_CMD(0x3a);
 		LCD_WRITE_DATA(0x55);
 		//--------------------------------ST7789S Frame rate setting----------------------------------//

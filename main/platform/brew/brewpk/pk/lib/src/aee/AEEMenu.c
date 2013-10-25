@@ -4807,7 +4807,7 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
 #else
         //下面的20 和12可能要改成公式计算
 
-		#if defined( FEATURE_VERSION_C337)||defined( FEATURE_VERSION_K202)	
+		#if defined( FEATURE_VERSION_C337)||defined( FEATURE_VERSION_K202)||defined( FEATURE_VERSION_IC241A_MMX)
 		SETAEERECT( &rect, ps->xOffset/*prc->x*/,prc->y + ps->yOffset, 3*pme->m_cyFont/2, prc->dy);
 		#else
 		SETAEERECT( &rect, ps->xOffset/*prc->x*/,prc->y + ps->yOffset, pme->m_cyFont, prc->dy);
@@ -4816,15 +4816,15 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
         STRTOWSTR("%d.", wszFmt, sizeof(wszFmt));				
 		
         WSPRINTF(wszIndex,sizeof(wszIndex),wszFmt,pme->theDrawnItem);
-		
-#ifdef FEATURE_VERSION_C337		
+	
+#if defined( FEATURE_VERSION_C337)||defined( FEATURE_VERSION_IC241A_MMX)
 		{
 			IImage      *pBarImg = NULL;
 
             if (IS_PROP_SET( pme->m_dwProps, MP_ICON_ANIMATED))
             {
             
-#if defined (FEATURE_DISP_176X220) || defined (FEATURE_DISP_128X160)
+#if defined (FEATURE_DISP_176X220) || defined (FEATURE_DISP_128X160)|| defined (FEATURE_DISP_240X320)
                 switch(pme->theDrawnItem)
                 {
                     case 1:

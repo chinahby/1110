@@ -262,6 +262,23 @@ static const hs_key_type keys[ KEYPAD_ROWS ][ KEYPAD_COLUMNS ] = {
    /* KEYSENSE_4 */
    /* 9,17          9,15        9,11        9,9          9,Memo*/
    { HS_3_K,   HS_LEFT_K,   HS_INFO_K,     HS_RIGHT_K,     HS_MUSIC_K}
+   #elif defined(FEATURE_VERSION_IC241A_MMX)
+   { HS_3_K,   HS_6_K,  HS_9_K,  HS_POUND_K,  HS_NONE_K},
+   /* KEYSENSE_1 */
+   /* 3,17          3,15        3,11        3,9          3,Memo*/
+   { HS_LEFT_K,  HS_SEL_K,    HS_UP_K, HS_CLR_K,      HS_VOL_UP_K},
+
+   /* KEYSENSE_2 */
+   /* 5,17          5,15        5,11        5,9          5,Memo*/
+   { HS_1_K,     HS_4_K,      HS_7_K,      HS_STAR_K,      HS_SEND_K},
+
+   /* KEYSENSE_3 */
+   /* 7,17          7,15        7,11        7,9          7,Memo*/
+   { HS_2_K,     HS_5_K,      HS_8_K,      HS_0_K,         HS_DOWN_K},
+
+   /* KEYSENSE_4 */
+   /* 9,17          9,15        9,11        9,9          9,Memo*/
+   { HS_3_K,   HS_LEFT_K,   HS_INFO_K,     HS_RIGHT_K,     HS_MUSIC_K}
    #elif defined(FEATURE_VERSION_K212_12832)
 #ifdef FEATURE_VERSION_K212_20D
    { HS_PAUSE_K,   HS_6_K,  HS_9_K,  HS_POUND_K,  HS_FFWD_K},
@@ -414,7 +431,7 @@ static const hs_key_type keys[ KEYPAD_ROWS ][ KEYPAD_COLUMNS ] = {
 #define INFO_KEY_COLUMN 1
 #endif
 
-#if defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_K212_12832)
+#if defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_K212_12832) || defined(FEATURE_VERSION_IC241A_MMX)
 /* '1' Key */
 #define ONE_KEY_ROW      2
 #define ONE_KEY_COLUMN   0
@@ -2336,6 +2353,9 @@ void keypad_clear_headset_key(void)
 #elif defined(FEATURE_VERSION_K202)
 #define DLOAD_KEY_ROW  4
 #define DLOAD_KEY_COL  1
+#elif defined(FEATURE_VERSION_IC241A_MMX)
+#define DLOAD_KEY_ROW  4
+#define DLOAD_KEY_COL  3
 #else
 #define DLOAD_KEY_ROW  3
 #define DLOAD_KEY_COL  0

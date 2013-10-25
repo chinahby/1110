@@ -123,7 +123,7 @@
 #define OEMNV_CALLFORWARD_VOICEMAIL_ENABLE          "0"                         //CFGI_CALLFORWARD_VOICEMAIL_ENABLE 
 #define OEMNV_VOICEMAIL_NUMBER                      L"91122"                         //NV_SMS_VM_NUMBER_I 
 
-#elif defined(FEATURE_VERSION_C337)
+#elif defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 //Operator parameters
 #define OEMNV_EMERGENCYNUM_TABLE_NUM                {{{"100",3},{"101",3},{"102",3},{"108",3},{"",0},{"",0},{"",0},{"",0},{"",0},{"",0}},4} //CFGI_EMERGENCYNUM_TABLE
 #define OEMNV_CALLFORWARD_BUSY_ENABLE               "*75"                       //CFGI_CALLFORWARD_BUSY_ENABLE

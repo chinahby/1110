@@ -679,7 +679,7 @@ static boolean Application_HandleEvent( IApplication *pi,
                                         WTitle,
                                         sizeof(WTitle));
 #else
-				#if defined(FEATURE_VERSION_C337)
+				#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 				(void)ISHELL_LoadResString(pMe->m_pShell,
 											APPLICATION_RES_FILE_LANG,								  
 											IDS_APPLICATION_LIST_C337,
@@ -1203,7 +1203,7 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
                                     WTitle,
                                     sizeof(WTitle));
 #else
-			#if defined( FEATURE_VERSION_C337)
+			#if defined( FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 			(void)ISHELL_LoadResString(pMe->m_pShell,
 	                                    APPLICATION_RES_FILE_LANG,                                
 	                                    IDS_APPLICATION_LIST_C337,
@@ -1263,12 +1263,12 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
 			#endif
 			{
 
-#if defined (FEATURE_VERSION_C260_IC18)
+#if defined (FEATURE_VERSION_C260_IC18) || defined(FEATURE_VERSION_IC241A_MMX)
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_UTK, IDS_APPLICATION_UTK, NULL, 0);
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CALCULATOR, IDS_APPLICATION_CALCULATOR, NULL, 0);
 #endif
                 
-#ifdef FEATURE_VERSION_C337
+#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_IC241A_MMX)
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CALENDAR, IDS_APPLICATION_CALENDAR, NULL, 0);
 #endif
 			
@@ -1389,7 +1389,7 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CONVERTER, IDS_APPLICATION_CONVERTER, NULL, 0);
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_WORLDTIME, IDS_APPLICATION_WORLDTIME, NULL, 0);
             #ifndef FEATURE_VERSION_C01
-                #if defined (FEATURE_VERSION_C260_IC18)
+                #if defined (FEATURE_VERSION_C260_IC18) 
                 IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_TORCH, IDS_TORCH, NULL, 0);
                 #else
                 IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_FLASHLIGHT, IDS_APPLICATION_FLASHLIGHT, NULL, 0);
@@ -1406,7 +1406,7 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_BAM, IDS_APPLICATION_BAM, NULL, 0);
 #endif
 #endif
-            #if defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_C310)
+            #if defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_C310) || defined (FEATURE_VERSION_IC241A_MMX)
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_UTK, IDS_APPLICATION_UTK, NULL, 0);
             #endif
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TIMER, IDS_APPLICATION_TIMER, NULL, 0);
@@ -1420,7 +1420,7 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
             #ifndef FEATURE_VERSION_W027
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_WORLDTIME, IDS_APPLICATION_WORLDTIME, NULL, 0);
             #endif
-#ifdef FEATURE_VERSION_C337	
+#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_IC241A_MMX)
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_WORLDTIME, IDS_APPLICATION_WORLDTIME, NULL, 0);
 #endif
 
@@ -1442,6 +1442,9 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
 #else
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_SCHEDULER, IDS_APPLICATION_SCHEDULER, NULL, 0); 
 #endif
+#endif
+#if defined(FEATURE_VERSION_IC241A_MMX)
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_TORCH, IDS_TORCH, NULL, 0);
 #endif
 #ifdef FEATURE_VERSION_C316
 #else
@@ -1485,7 +1488,8 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
                 AECHAR  AppLabel[33];
                 MEMSET(AppLabel, 0x00, sizeof(AppLabel));
 #endif
-#ifndef FEATURE_VERSION_C337
+//#ifndef FEATURE_VERSION_C337
+#if  !(defined FEATURE_VERSION_C337) && !(defined FEATURE_VERSION_IC241A_MMX)
                 (void)STRTOWSTR("%d. ",wsFmt,sizeof(wsFmt));
                 for (i=0;i<IMENUCTL_GetItemCount(pMenu);i++)
                 {
@@ -1617,7 +1621,7 @@ static boolean  Application_FlashlightMenuHandler(Application *pMe, AEEEvent eCo
      switch (eCode)
     {
         case EVT_DIALOG_INIT:	
-#if defined (FEATURE_VERSION_C260_IC18) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
+#if defined (FEATURE_VERSION_C260_IC18) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND) || defined(FEATURE_VERSION_IC241A_MMX)
             (void)ISHELL_LoadResString(pMe->m_pShell,
                                     APPLICATION_RES_FILE_LANG,                                
                                     IDS_TORCH,
@@ -2285,7 +2289,7 @@ static int StartApplet(Application *pMe, int i)
 	   }
 	   break;
 
-	#ifdef FEATURE_VERSION_C337
+	#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_IC241A_MMX)
 	case IDS_APPLICATION_CALENDAR:
 	#endif
 	case IDS_CALENDAR:
@@ -2354,7 +2358,7 @@ static int StartApplet(Application *pMe, int i)
 #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_DISP_128X160) \
    ||defined(FEAUTRE_VERSION_N450)||defined(FEATURE_VERSION_EC99) \
    ||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND) \
-   ||defined(FEATURE_VERSION_W021_CT100_QVGA)
+   ||defined(FEATURE_VERSION_W021_CT100_QVGA)||defined(FEATURE_VERSION_IC241A_MMX)
     case IDS_TORCH:
 	case IDS_APPLICATION_FLASHLIGHT:      
     	MSG_FATAL("IDS_APPLICATION_FLASHLIGHT...........START",0,0,0);

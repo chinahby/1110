@@ -10,6 +10,8 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #endif
 #define FEATURE_OEMOMH
 //#define FEATURE_VERSION_K212_12832
+#define FEATURE_K_AMPLIFIER
+
 #define FEATURE_QVGA_INHERIT_K212
 #define FEATURE_VERSION_IC241A_MMX
 #define FEATURE_OEMOMH

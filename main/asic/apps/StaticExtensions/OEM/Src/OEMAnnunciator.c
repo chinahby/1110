@@ -707,7 +707,7 @@ static OEMAnnun_data Annunciators[] =
   {ANNUN_FIELD_WAP,                ANNUN_ICON_POSITION_2,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &wap_content},     
  // {ANNUN_FIELD_QQ,               ANNUN_ICON_POSITION_3,      ROW1_Y,  IMG_WIDTH,       IMG_HEIGHT,  &qq_content},  
 
-#if (defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_C337))
+#if (defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX))
   {ANNUN_FIELD_TCARD, 			  ANNUN_ICON_POSITION_3,	 ROW1_Y,  IMG_WIDTH,	  IMG_HEIGHT,  &tcard_content}, 
 #else  
   {ANNUN_FIELD_LOCKSTATUS,     ANNUN_ICON_POSITION_3,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &lockstatus_content},
@@ -716,7 +716,7 @@ static OEMAnnun_data Annunciators[] =
   {ANNUN_FIELD_SMS,                ANNUN_ICON_POSITION_5,      ROW1_Y,  IMG_WIDTH,       IMG_HEIGHT,  &sms_content}, 
   {ANNUN_FIELD_FMRADIO,          ANNUN_ICON_POSITION_6,      ROW1_Y,  IMG_WIDTH,       IMG_HEIGHT,  &fmradio_content},
 #ifndef FEATURE_USES_LOWMEM
-#if defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W027)
+#if defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_IC241A_MMX)
   {ANNUN_FIELD_BLUETOOTH,       ANNUN_ICON_POSITION_2,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &bluetooth_content},
 #else
   {ANNUN_FIELD_BLUETOOTH,       ANNUN_ICON_POSITION_7,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &bluetooth_content},
@@ -727,6 +727,11 @@ static OEMAnnun_data Annunciators[] =
 
 #ifndef FEATURE_DISP_128X160
 #if defined(FEATURE_DISP_176X220)
+    {ANNUN_FIELD_ALARM,              ANNUN_ICON_POSITION_7,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &alarm_content},
+    {ANNUN_FIELD_MMS,                ANNUN_ICON_POSITION_9,    ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &mms_content},
+    {ANNUN_FIELD_RINGTONE,         ANNUN_ICON_POSITION_8,    ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &ringtone_content},
+    {ANNUN_FIELD_BATT,             ANNUN_ICON_POSITION_END, ROW1_Y,  LG_IMG_WIDTH, IMG_HEIGHT,  &batt_content}
+#elif defined(FEATURE_VERSION_IC241A_MMX)
     {ANNUN_FIELD_ALARM,              ANNUN_ICON_POSITION_7,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &alarm_content},
     {ANNUN_FIELD_MMS,                ANNUN_ICON_POSITION_9,    ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &mms_content},
     {ANNUN_FIELD_RINGTONE,         ANNUN_ICON_POSITION_8,    ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &ringtone_content},
@@ -2594,7 +2599,7 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
 					//DBGPRINTF("***zzg bgRect:%d,%d,%d,%d***", bgRect.x, bgRect.y, bgRect.dx, bgRect.dy);
 
 					
-					#if defined(FEATURE_VERSION_C337) //|| defined(FEATURE_VERSION_K212)
+					#if defined(FEATURE_VERSION_C337)  || defined(FEATURE_VERSION_IC241A_MMX)//|| defined(FEATURE_VERSION_K212)
 					{
 						IImage      *pBarImg = NULL;
 
@@ -2624,7 +2629,7 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
 	                rc.dx = SCREEN_WIDTH;
 	                rc.dy = STATEBAR_HEIGHT;
 
-					#if defined(FEATURE_VERSION_C337) || defined(FEATURE_WHITE_BG)
+					#if defined(FEATURE_VERSION_C337) || defined(FEATURE_WHITE_BG) || defined(FEATURE_VERSION_IC241A_MMX)
 					IDISPLAY_SetColor(pMe->m_coreObj->m_piDisplay, CLR_USER_TEXT, RGB_BLACK);
 					#else
 					IDISPLAY_SetColor(pMe->m_coreObj->m_piDisplay, CLR_USER_TEXT, RGB_WHITE);

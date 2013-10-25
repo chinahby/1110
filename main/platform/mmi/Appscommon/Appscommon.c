@@ -697,7 +697,9 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
 
          case BTBAR_GALLERY_PLAY_BACK:
 #ifndef FEATURE_VERSION_C337
+#ifndef FEATURE_VERSION_IC241A_MMX
             nResID_L = IDS_GALLERY;
+#endif
 #endif
             nResID_M = IDS_PLAY;            
             nResID_R = IDS_BACK;
@@ -822,7 +824,7 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
             nResID_R = IDS_STRING_UNLOCK;
             nResID_L = IDS_SOS;
             break;
-#if (defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_C316))
+#if (defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_IC241A_MMX))
 		case BTBAR_UNLOCK_M:
             nResID_L = IDS_STRING_UNLOCK;
             break; 
@@ -948,7 +950,9 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
             
          case BTBAR_FULLSCREEN_PAUSE_STOP:
 		 	#ifndef FEATURE_VERSION_C337
+            #ifndef FEATURE_VERSION_IC241A_MMX
             nResID_L = IDS_FULLSCREEN; 
+            #endif
 			#endif
             nResID_M = IDS_PAUSE;            
             nResID_R = IDS_STOP;
@@ -1020,7 +1024,7 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
          case BTBAR_OPTION_SAVE_DEL:
             nResID_L = IDS_OPTION;
             nResID_M = IDS_SAVE;
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A)
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_IC241A_MMX)
             nResID_R = IDS_CLEAR_EX;	
 #else
             nResID_R = IDS_DEL;	
@@ -1890,7 +1894,7 @@ void DrawTitleBar(IDisplay  * pIDisplay, TitleBar_Param_type *TParam)
         else
         #endif
 
-		#ifdef FEATURE_VERSION_C337
+		#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_IC241A_MMX)
 		{
           IDISPLAY_SetColor(pIDisplay, CLR_USER_TEXT, RGB_BLACK);
         }
@@ -3012,8 +3016,8 @@ void DrawPromptMessage (IDisplay *pIDisplay,
 #endif
 */
 
-#if defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_EC99) 
-#ifdef FEATURE_VERSION_C260_IC18
+#if defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_IC241A_MMX)
+#if defined (FEATURE_VERSION_C260_IC18) || defined(FEATURE_VERSION_IC241A_MMX)
         strrect.x += 5;
         strrect.y += 15;
         strrect.dx -= 10;        
@@ -3063,7 +3067,7 @@ void DrawPromptMessage (IDisplay *pIDisplay,
         if (TRUE== drawbgimage)
         {
         	DBGPRINTF("***zzg Appscommon DrawPromptMessage***");                 
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_EC99)            
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_IC241A_MMX)         
             ISTATIC_SetProperties(pStatic, ST_CENTERTEXT|ST_MIDDLETEXT|ST_TRANSPARENTBACK|ST_SPECIAL_BG);   	//Modify by zzg 2011_12_31
 #else
             ISTATIC_SetProperties(pStatic, ST_CENTERTEXT|ST_MIDDLETEXT|ST_TRANSPARENTBACK);   
@@ -3519,7 +3523,7 @@ void DrawBottomBar_Ex(IShell    *m_pIShell, IDisplay  * pIDisplay, BottomBar_e_T
 			//#ifdef FEATURE_VERSION_C337
 			//nResID_R = IDS_PHONE_BOOK;
 			//#else
-#ifdef FEATURE_VERSION_C337
+#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_IC241A_MMX)
 			nResID_R = IDS_NAMES;
 #else
 			nResID_R = IDS_STRING_CONTACTS;
@@ -3592,7 +3596,7 @@ void DrawBottomBar_Ex(IShell    *m_pIShell, IDisplay  * pIDisplay, BottomBar_e_T
             nResID_R = IDS_STRING_UNLOCK;
             nResID_L = IDS_SOS;
             break;
-#if (defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_C316))
+#if (defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_C316) || defined (FEATURE_VERSION_IC241A_MMX))
 		case BTBAR_UNLOCK_M:
             nResID_L = IDS_STRING_UNLOCK;
             break; 
