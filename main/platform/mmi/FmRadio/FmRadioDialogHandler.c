@@ -660,7 +660,7 @@ static void tuneVolumeStop(CFmRadio* pMe)
 						   CFGI_FMRADIO_VOLUME,
 						   &pMe->byVolumeLevel,
 						   sizeof(byte));
-        #if defined(FEATURE_VERSION_C337)
+        #if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 		pMe->byVolumeLevel = (pMe->byVolumeLevel*3)/5;
 		#endif
         newvolumeLevel = pMe->byVolumeLevel;
@@ -921,7 +921,7 @@ static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier)
             SETAEERECT( &rect, ( 128 - width) / 2, ( 160 - fontHeight) / 2, width, fontHeight);	
 		#elif defined(FEATURE_DISP_176X220)			
 			width = 40;
-			#ifdef FEATURE_VERSION_C337
+			#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 			width = 80;
 			#endif
             SETAEERECT( &rect, ( 176 - width) / 2, ( 220 - fontHeight) / 2, width, fontHeight);	
@@ -1060,7 +1060,7 @@ static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier)
         {            
             if( pMe->opMode == FM_RADIO_OPMODE_PLAY)
             {
-                #if (defined( FEATURE_VERSION_1110W516) || defined( FEATURE_VERSION_W317A) || defined( FEATURE_VERSION_C337) || defined( FEATURE_VERSION_C316)||defined( FEATURE_VERSION_M74)|| defined( FEATURE_VERSION_C310)|| defined( FEATURE_VERSION_K202_LM129C) || defined(FEATURE_VERSION_EC99)|| defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_FM_PAUSE))
+                #if (defined( FEATURE_VERSION_1110W516) || defined( FEATURE_VERSION_W317A) || defined( FEATURE_VERSION_C337) || defined( FEATURE_VERSION_C316)||defined( FEATURE_VERSION_M74)|| defined( FEATURE_VERSION_C310)|| defined( FEATURE_VERSION_K202_LM129C) || defined(FEATURE_VERSION_EC99)|| defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_FM_PAUSE) || defined(FEATURE_VERSION_IC241A_MMX))
                  tuneVolumeStop(pMe);
                  repaint( pMe, TRUE);
                  return TRUE;
@@ -1358,7 +1358,7 @@ __handleKeyEvent_input_channel_done__:
 		case AVK_DOWN:
 		case AVK_I:
 		case AVK_O:
-	#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_LM126C)||defined(FEATURE_VERSION_K212)
+	#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_LM126C)||defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_IC241A_MMX)
 		case AVK_STAR:
 		case AVK_POUND:
 	#endif
@@ -1372,7 +1372,7 @@ __handleKeyEvent_input_channel_done__:
 			{
 #if defined( FEATURE_FMRADIO_NO_MODE_SELECT) 
                 #if (defined(FEATURE_VERSION_1110W516)||defined( FEATURE_VERSION_W317A)||defined( FEATURE_VERSION_C337) || defined(FEATURE_VERSION_C316)||defined( FEATURE_VERSION_M74)||defined( FEATURE_VERSION_C310))\
-					 ||defined(FEATURE_ADD_VOLUP_VOLDN)||defined(FEATURE_VERSION_LM126C)||defined(FEATURE_FM_PAUSE)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
+					 ||defined(FEATURE_ADD_VOLUP_VOLDN)||defined(FEATURE_VERSION_LM126C)||defined(FEATURE_FM_PAUSE)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND) || defined(FEATURE_VERSION_IC241A_MMX)
                 if(1)
 				#else
 				if(pMe->tuneVolumeByLeftRightArrowKey)
@@ -1382,7 +1382,7 @@ __handleKeyEvent_input_channel_done__:
 					ISHELL_CancelTimer( pMe->m_pShell, (PFNNOTIFY)tuneVolumeByLeftRightArrowKeyCloseCb, pMe);
 					#endif
                     pMe->fmVolumeStop=TRUE;
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_LM126C)||defined(FEATURE_VERSION_K212)
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_LM126C)||defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_IC241A_MMX)
 					if (key == AVK_STAR)
 					{
 						key = AVK_DOWN;
@@ -1423,7 +1423,7 @@ __handleKeyEvent_input_channel_done__:
 						changeChannelClockwise( pMe);
 					}
 #endif
-					#ifdef FEATURE_VERSION_C337
+					#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 					if (key == AVK_STAR)
 					{
 						key = AVK_DOWN;
@@ -1545,7 +1545,7 @@ else if( itemId == IDS_FMRADIO_OPTION_MENU_GLOBAL_SEARCH)
 						   &pMe->byVolumeLevel,
 						   sizeof(byte));
 	   MSG_FATAL("pMe->byVolumeLevel====%d",pMe->byVolumeLevel,0,0);
-	   #if defined(FEATURE_VERSION_C337)
+	   #if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 	   pMe->byVolumeLevel = (pMe->byVolumeLevel*3)/5;
 	   #endif
        fm_set_volume( pMe->byVolumeLevel,pMe->fmSpeaker);
@@ -1564,7 +1564,7 @@ else if( itemId == IDS_FMRADIO_OPTION_MENU_GLOBAL_SEARCH)
 						   CFGI_FMRADIO_VOLUME,
 						   &pMe->byVolumeLevel,
 						   sizeof(byte));
-	   #if defined(FEATURE_VERSION_C337)
+	   #if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 	   pMe->byVolumeLevel = (pMe->byVolumeLevel*3)/5;
 	   #endif
        fm_set_volume( pMe->byVolumeLevel,pMe->fmSpeaker);
@@ -2041,7 +2041,7 @@ static void popOptionMenu( CFmRadio *pMe)
 		}
 #endif
 
-#ifdef FEATURE_VERSION_C337
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
         if(resId[i]==IDS_FMRADIO_SPEAKER)
         {
           continue;
@@ -2238,8 +2238,8 @@ static void refreshChannelListCB( void *pme)
         ready = FALSE;        
     }
 
-#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A)
-#ifdef FEATURE_VERSION_C260_IC18
+#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined (FEATURE_VERSION_C260_IC18) || defined (FEATURE_VERSION_IC241A_MMX)
     if( !FmRadio_FindChanListNode(60))        //94.3
     {
         sChanInfo info = { 0};
@@ -3161,7 +3161,7 @@ static void paint( CFmRadio *pMe)
 		#elif defined(FEATURE_DISP_176X220)
             int         width       = 70;
 
-			#ifdef FEATURE_VERSION_C337
+			#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 			width = 120;
 			#endif
 		

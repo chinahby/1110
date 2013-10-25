@@ -497,7 +497,7 @@ static boolean  IDD_WMSTIPS_Handler(void *pUser,
                                  uint16     wParam,
                                  uint32     dwParam);
 #endif
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER) || defined(FEATURE_VERSION_IC241A_MMX)
 #ifndef FEATURE_VERSION_C316
 // 对话框 IDD_SALESTRACKER 事件处理函数
 static boolean  IDD_SALESTRACKER_Handler(void *pUser,
@@ -737,7 +737,7 @@ void CoreApp_SetDialogHandler(CCoreApp *pMe)
             pMe->m_pDialogHandler = IDD_WMSTIPS_Handler;
             break;
 #endif    
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER) || defined(FEATURE_VERSION_IC241A_MMX)
 #ifndef FEATURE_VERSION_C316
 		case IDD_SALESTRACKER:
 			pMe->m_pDialogHandler = IDD_SALESTRACKER_Handler;
@@ -1272,7 +1272,7 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
                 }
                 else if(pMe->m_sPinActionStatus.sStatus.sw1 == 0x98 && pMe->m_sPinActionStatus.sStatus.sw2 == 0x04)
                 {
-                	#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202_LM129C)||defined(FEATURE_VERSION_K212)//xxzhen
+                	#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202_LM129C)||defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_IC241A_MMX)//xxzhen
 					pMe->m_nMsgID = IDS_INVALIDPIN;
 					#else
                     pMe->m_nMsgID = IDS_MSG_SECISSUE;
@@ -1999,7 +1999,7 @@ static boolean  IDD_EMERGENCYNUMLIST_Handler(void  *pUser,
 } // IDD_EMERGENCYNUMLIST_Handler
 
 
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER) || defined(FEATURE_VERSION_IC241A_MMX)
 
 /*==============================================================================
 函数:
@@ -4253,7 +4253,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
         {   
 			
 			//Add By zzg 2012_10_29
-			#if (defined (FEATURE_VERSION_W317A)||defined (FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_K212))
+			#if (defined (FEATURE_VERSION_W317A)||defined (FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_IC241A_MMX))
 			IFileMgr *pFileMgr = NULL;
 		    ISHELL_CreateInstance(pMe->a.m_pIShell, AEECLSID_FILEMGR, (void **)&pFileMgr);
 			
@@ -4548,7 +4548,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                                       CoreApp_SearchingTimer,
                                       pMe);
 			 AEE_CancelTimer((PFNNOTIFY)CoreApp_DrawUpdate,pMe);
-             #if defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_1110W516)|| defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_C316)|| defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)//|| defined(FEATURE_VERSION_K212)
+             #if defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_1110W516)|| defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_C316)|| defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)|| defined(FEATURE_VERSION_IC241A_MMX)//|| defined(FEATURE_VERSION_K212)
              IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
              #endif
 //Add by pyuangui 20121220			 
@@ -4811,7 +4811,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 						//AEE_CancelTimer(CoreApp_keypadtimer,pMe);
 						//ISHELL_CancelTimer(pMe->a.m_pIShell,CoreApp_keypadtimer,pMe);
 					}
-#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202_LM129C)   //add by yangdecai
+#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202_LM129C) || defined(FEATURE_VERSION_IC241A_MMX)   //add by yangdecai
             	    return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
 #elif defined (FEATURE_VERSION_W208S)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
@@ -4873,7 +4873,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     return CoreApp_LaunchApplet(pMe, AEECLSID_WORLDTIME);
     #elif defined(FEATURE_VERSION_W317A)
                     return CoreApp_LaunchApplet(pMe, AEECLSID_SCHEDULEAPP);
-    #elif defined(FEATURE_VERSION_C337)
+    #elif defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
                     return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 	#elif defined(FEATURE_VERSION_C316)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_VIDEOPLAYER);
@@ -4942,7 +4942,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					return CoreApp_LaunchApplet(pMe, AEECLSID_SCHEDULEAPP);
 #elif defined(FEATURE_VERSION_W208S)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APPMANAGER);
-#elif defined(FEATURE_VERSION_C337)
+#elif defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);
 #elif defined(FEATURE_VERSION_K212_ND)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_SOUNDMENU);
@@ -5013,7 +5013,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 				    	}
 						#elif defined(FEATURE_VERSION_K202_LM129C)//xxzhen
                             return CoreApp_LaunchApplet(pMe, AEECLSID_APP_SOUNDMENU);
-                        #elif defined(FEATURE_VERSION_VG68)||defined(FEATURE_VERSION_C337)
+                        #elif defined(FEATURE_VERSION_VG68)||defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
                             return CoreApp_LaunchApplet(pMe, AEECLSID_ALARMCLOCK);
                         #elif defined(FEATURE_VERSION_C11)||defined(FEATURE_VERSION_W027V3)
                             return CoreApp_LaunchApplet(pMe, AEECLSID_APP_SETTINGMENU);
@@ -5040,7 +5040,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     {
                         #if defined( FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_K202)|| defined(FEATURE_VERSION_K212)
                            Mainmenu_KeypadLock(TRUE);
-			            #elif defined ( FEATURE_VERSION_C337)
+			            #elif defined ( FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 						   WMSDialog_KeypadLock(TRUE);
 						#elif defined (FEATURE_VERSION_C316)
 						   APPDialog_KeypadLock(TRUE);
@@ -5217,7 +5217,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 							//ISHELL_CancelTimer(pMe->a.m_pIShell,CoreApp_keypadtimer,pMe);
 						}
 #if defined(FEATURE_VERSION_W027)  
-#if (defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_C316))
+#if (defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_IC241A_MMX))
 			  ;
 #else
                         Mainmenu_KeypadLock(TRUE);
@@ -5779,7 +5779,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
     }
     return TRUE;
 } // IDD_IDLE_Handler
-#if defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)
+#if defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER) || defined(FEATURE_VERSION_IC241A_MMX)
 /*==============================================================================
 函数:
     IDD_SALESTRACKER_Handler
@@ -5855,7 +5855,7 @@ static boolean	IDD_SALESTRACKER_Handler(void *pUser,
                                 IDS_SALES_TRACKER,
                                 wstrText,
                                 sizeof(wstrText));
-				#elif defined(FEATURE_VERSION_C337)
+				#elif defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 				(void)ISHELL_LoadResString(pMe->a.m_pIShell,
                                 AEE_COREAPPRES_LANGFILE,                                
                                 IDS_MMX_SELES_TRACK,
@@ -6776,7 +6776,7 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
 #ifdef FEATURE_VERSION_W208S
 				//Do Nothing
 #else
-#ifdef FEATURE_VERSION_C337
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 				//STRTOWSTR("C260", wszBuf, nSize);
 				STRTOWSTR("", wszBuf, nSize);
 #else
@@ -8464,11 +8464,13 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
             #elif defined(FEATURE_VERSION_W027)
             #ifdef FEATURE_VERSION_W317A
                 eBBarType = BTBAR_UNLOCK_L;
-	        #elif defined(FEATURE_VERSION_C337)
+	        #elif defined(FEATURE_VERSION_C337) 
                 eBBarType = BTBAR_UNLOCK_M;
             #else
                 eBBarType = BTBAR_UNLOCK_M;			
             #endif
+            #elif defined(FEATURE_VERSION_IC241A_MMX)
+                eBBarType = BTBAR_UNLOCK_M;
         	#elif defined(FEATURE_VERSION_VERYKOOL)
         		eBBarType = BTBAR_UNLOCK_SOS;
     		#else
@@ -8525,9 +8527,9 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 	    eBBarType = BTBAR_RECENTCALLS_CONTACTS; 
     #elif defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
 	    eBBarType = BTBAR_MENU_CONTACTS;      
-        #else
-		   eBBarType = BTBAR_MESSAGES_CONTACTS; //add by yangdecai  BTBAR_MESSAGES_CONTACTS
-		#endif
+    #else
+        eBBarType = BTBAR_MESSAGES_CONTACTS; //add by yangdecai  BTBAR_MESSAGES_CONTACTS
+	#endif
 	#endif
 #endif
 	
@@ -9104,7 +9106,7 @@ void CoreApp_UpdateAnnunciator(CCoreApp *pMe)
 	
 
 	//Add By zzg 2012_10_29
-	#if (defined (FEATURE_VERSION_W317A)||defined (FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_K212))
+	#if (defined (FEATURE_VERSION_W317A)||defined (FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_IC241A_MMX))
 	IFileMgr *pFileMgr = NULL;
     ISHELL_CreateInstance(pMe->a.m_pIShell, AEECLSID_FILEMGR, (void **)&pFileMgr);
 	
@@ -9353,7 +9355,7 @@ void CoreApp_UpdateAnnunciator(CCoreApp *pMe)
 #endif
     if((missed_call_icon) && (pMe->m_pIAnn != NULL))
     {
-    	#ifdef FEATURE_VERSION_C337
+    	#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 		if (pMe->m_pIRUIM != NULL)
 		{
 			if(IRUIM_IsCardConnected(pMe->m_pIRUIM))

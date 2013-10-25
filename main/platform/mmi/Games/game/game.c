@@ -985,7 +985,7 @@ static boolean Game_ListMenuHandler(Game *pMe, AEEEvent eCode, uint16 wParam, ui
                 AECHAR pwsz[67] = {0};
                 AECHAR pstr[64] = {0};
                 AECHAR wsFmt[5] = {0};
-#ifndef FEATURE_VERSION_C337
+#if !defined (FEATURE_VERSION_C337) &&  !defined (FEATURE_VERSION_IC241A_MMX)
                 (void)STRTOWSTR("%d. ",wsFmt,sizeof(wsFmt));
                 for (i=0;i<IMENUCTL_GetItemCount(pMenu);i++)
                 {

@@ -6476,7 +6476,7 @@ static void BTApp_HandleEventButtonPressed( CBTApp* pMe )
   else
   {
 //Add By zzg 2013_01_17  
-#ifdef FEATURE_VERSION_C337     
+#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_IC241A_MMX)
     BTApp_HandleEventDevRedial(pMe); 
 #endif    
 //Add End
@@ -6648,7 +6648,7 @@ static void BTApp_HandleEventDevRedial( CBTApp* pMe )
   {
      MSG_FATAL( "DevRedial - Call history instance failed", 0, 0, 0 );
   }
-#ifdef FEATURE_VERSION_C337
+#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_IC241A_MMX)
   else if(ICALLHISTORY_EnumInit(pCallHist) != SUCCESS)
   {
      MSG_FATAL( "DevRedial - EnumInitByCallType failed, "
@@ -16545,6 +16545,7 @@ static void BTApp_BuildMyInfoMenu( CBTApp* pMe)
                                 pMe->mRM.myInfo.wName );
 #ifdef FEATURE_BT_2_1
 #ifndef FEATURE_VERSION_C337
+#ifndef FEATURE_VERSION_IC241A_MMX
     // BT ShortName
     if ( WSTRCMP (pMe->mRM.myInfo.wName , pMe->mRM.myInfo.wShortName ) == 0 )
     {
@@ -16554,6 +16555,7 @@ static void BTApp_BuildMyInfoMenu( CBTApp* pMe)
                                      LONG_TEXT_BUF_LEN - uLen, 
                                      pMe->mRM.myInfo.wShortName,
                                      bNameSame ); 
+#endif    
 #endif
 #endif /* FEATURE_BT_2_1 */
     // BD address
@@ -16561,6 +16563,7 @@ static void BTApp_BuildMyInfoMenu( CBTApp* pMe)
                                    LONG_TEXT_BUF_LEN - uLen, 
                                    &pMe->mRM.myInfo.bdAddr );
 #ifndef FEATURE_VERSION_C337
+#ifndef FEATURE_VERSION_IC241A_MMX
     // Security Level
     uLen += BTApp_FormatSecurity( pMe, &pMe->pText1[ uLen], 
                                   LONG_TEXT_BUF_LEN - uLen, 
@@ -16569,6 +16572,7 @@ static void BTApp_BuildMyInfoMenu( CBTApp* pMe)
     uLen += BTApp_FormatBondable( pMe, &pMe->pText1[ uLen], 
                                   LONG_TEXT_BUF_LEN - uLen, 
                                   pMe->mRM.bBondable );
+#endif    
 #endif
 	
     // Discoverable status
@@ -16576,6 +16580,7 @@ static void BTApp_BuildMyInfoMenu( CBTApp* pMe)
                                       LONG_TEXT_BUF_LEN - uLen, 
                                       pMe->mSD.bDiscoverable );
 #ifndef FEATURE_VERSION_C337
+#ifndef FEATURE_VERSION_IC241A_MMX
     // Service Class
     uLen += BTApp_FormatSvcCls( pMe, &pMe->pText1[ uLen], 
                                 LONG_TEXT_BUF_LEN - uLen, 
@@ -16616,6 +16621,7 @@ static void BTApp_BuildMyInfoMenu( CBTApp* pMe)
                                   pMe->mRM.wManuData );
 #endif /* FEATURE_BT_2_1 */
 #endif
+#endif
 
 
     // display text
@@ -16637,8 +16643,10 @@ static void BTApp_BuildMyInfoMenu( CBTApp* pMe)
     BTApp_AddMenuItem( pMe, pMe->m_pISoftMenu, &ai, IDS_EDIT_NAME, 0 );
 #ifdef FEATURE_BT_2_1
 #ifndef FEATURE_VERSION_C337
+#ifndef FEATURE_VERSION_IC241A_MMX
     BTApp_AddMenuItem( pMe, pMe->m_pISoftMenu, &ai, IDS_EDIT_SHORT_NAME, 0 );
     BTApp_AddMenuItem( pMe, pMe->m_pISoftMenu, &ai, IDS_EDIT_MANU_DATA, 0 );
+#endif    
 #endif	
 #endif /* FEATURE_BT_2_1 */
 #ifndef FEATURE_BT_2_1
@@ -18802,7 +18810,8 @@ static void BTApp_BuildDevInfo( CBTApp* pMe )
   {
       pDev->uValue1 = 0;
   }
-#ifndef FEATURE_VERSION_C337	  
+//#ifndef FEATURE_VERSION_C337	  
+#if !defined (FEATURE_VERSION_C337) && !defined (FEATURE_VERSION_IC241A_MMX)
 #ifdef FEATURE_BT_2_1
   // manufacturer data
   if (  pDev->EIRData.uManufDataSize > 0  )
@@ -18847,6 +18856,7 @@ static void BTApp_BuildDevInfo( CBTApp* pMe )
 #endif
 
 #ifndef FEATURE_VERSION_C337
+#ifndef FEATURE_VERSION_IC241A_MMX
 #ifdef FEATURE_BT_2_1
    uLen += BTApp_FormatSSPCapable( pMe, &pMe->pText1[ uLen], 
                                    LONG_TEXT_BUF_LEN - uLen, 
@@ -18859,12 +18869,14 @@ static void BTApp_BuildDevInfo( CBTApp* pMe )
                                 pDev->linkKeyStatus );
 #endif /* FEATURE_BT_2_1 */
 #endif
+#endif
 
   // BD address
   uLen += BTApp_FormatBDAddress( pMe, &pMe->pText1[ uLen], 
                                  LONG_TEXT_BUF_LEN - uLen, &pDev->bdAddr );
 
 #ifndef FEATURE_VERSION_C337
+#ifndef FEATURE_VERSION_IC241A_MMX
   // Security Level
   uLen += BTApp_FormatSecurity( pMe, &pMe->pText1[ uLen], 
                                 LONG_TEXT_BUF_LEN - uLen, pDev->security );
@@ -18910,6 +18922,7 @@ static void BTApp_BuildDevInfo( CBTApp* pMe )
                             LONG_TEXT_BUF_LEN - uLen,
                             pDev );
 #endif /* FEATURE_BT_2_1 */
+#endif
 #endif
 
   // display text

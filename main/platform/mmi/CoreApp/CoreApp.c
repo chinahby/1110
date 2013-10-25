@@ -373,7 +373,7 @@ void CoreApp_FreeAppData(IApplet* po)
         pMe->m_pIPhoneCtl = NULL;
     }
 #endif
-	#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)
+	#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER) || defined(FEATURE_VERSION_IC241A_MMX)
 	if(pMe->m_pSmsTrackTime != NULL)
 	   {
 		   (void)IMENUCTL_Release(pMe->m_pSmsTrackTime);
@@ -486,7 +486,7 @@ void CoreApp_FreeAppData(IApplet* po)
 	}
 #endif
 #endif
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)||defined(FEATURE_SOUND_BO)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)||defined(FEATURE_SOUND_BO) || defined(FEATURE_VERSION_IC241A_MMX)
 #ifdef FEATURE_UIALARM
 	IAlarm_CancelAlarm(pMe->m_pIAlarm,
                        		AEECLSID_CORE_APP,
@@ -608,7 +608,7 @@ boolean CoreApp_InitAppData(IApplet* po)
         return FALSE;
     }
 
-	#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)
+	#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER) || defined(FEATURE_VERSION_IC241A_MMX)
 	  //闹钟开或关LIST 控件
     if(AEE_SUCCESS != ISHELL_CreateInstance(pMe->a.m_pIShell,
                          AEECLSID_LISTCTL,
@@ -640,7 +640,7 @@ boolean CoreApp_InitAppData(IApplet* po)
     pMe->m_b_needclose_core = FALSE;
 #endif
     MEMSET(pMe->m_strPhonePWD, 0, PINCODE_LENGTH + 1);
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER) || defined(FEATURE_VERSION_IC241A_MMX)
     MEMSET(pMe->m_strPhoneNUM, 0, PHONENUMBER);
 #endif
 
@@ -733,7 +733,7 @@ boolean CoreApp_InitAppData(IApplet* po)
     CoreApp_InitdataTouch(pMe);
 #endif
 
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)||defined(FEATURE_SOUND_BO)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)||defined(FEATURE_SOUND_BO) || defined(FEATURE_VERSION_IC241A_MMX)
 #if defined( FEATURE_UIALARM)
 		if (ISHELL_CreateInstance(pMe->a.m_pIShell,
 								  AEECLSID_UIALARM,
@@ -1103,7 +1103,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             pMe->m_bSuspended = FALSE;
             pMe->m_bActive = TRUE;
 //Add by pyuangui 2013-01-08 
-#ifdef FEATURE_VERSION_C337
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 			if(pMe->m_bemergencymode)
 			{
 			  ICM_SetSystemPreference(pMe->m_pCM,
@@ -1684,7 +1684,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 	         }
 	         return TRUE;
 #endif
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER) || defined(FEATURE_VERSION_IC241A_MMX)
 
 		case EVT_MOBILE_TRACKER:
 			{
@@ -1746,7 +1746,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 		
 		
 #endif
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)||defined(FEATURE_SOUND_BO)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)||defined(FEATURE_SOUND_BO) || defined(FEATURE_VERSION_IC241A_MMX)
 case EVT_ALARM:
 		{
 				MSG_FATAL("EVT_ALARM...................................",0,0,0);
@@ -1788,7 +1788,7 @@ case EVT_ALARM:
             return TRUE;
 #endif
 
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER) || defined(FEATURE_VERSION_IC241A_MMX)
 		case EVT_SMS_TRACKER:
 			// 先改变当前状态
             MOVE_TO_STATE(COREST_SALES_EDIT)
@@ -3671,7 +3671,7 @@ static void CoreApp_Process_Batty_Msg(CCoreApp   *pMe, uint16  msg_id)
 }
 static void CoreApp_Process_BattyLow_Msg(CCoreApp   *pMe, uint16  msg_id)
 {
-#ifdef FEATURE_VERSION_C337
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
     if(pMe->m_battery_state)
 #endif
     {
@@ -3707,7 +3707,7 @@ static void CoreApp_Process_BattyLow_Msg(CCoreApp   *pMe, uint16  msg_id)
            pMe->m_nMsgID = msg_id;
            MSG_FATAL("CoreApp_Process_Batty_Msg 1",0,0,0); 
            pMe->m_battery_state = FALSE ;
-           #ifdef FEATURE_VERSION_C337
+           #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
            AEE_SetSysTimer(10000, CoreApp_Process_Batty_Msg_CB, (void*)pMe);
            #endif
            CLOSE_DIALOG(DLGRET_BATT_INFO)
@@ -3736,7 +3736,7 @@ static void CoreApp_Process_Charger_Msg(CCoreApp   *pMe)
         MSG_FATAL("CoreApp_Process_Charger_Msg Start",0,0,0); 
         if(pMe->m_bExtPwrState)
         {
-            #if defined(FEATURE_VERSION_C337)
+            #if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
             pMe->m_nMsgID = IDS_CHARGER_CONNECTED;
 			#elif defined(FEATURE_VERSION_W317A)
 			pMe->m_nMsgID = IDS_CHARGING_CONNECTED;
@@ -3750,7 +3750,7 @@ static void CoreApp_Process_Charger_Msg(CCoreApp   *pMe)
         } 
        else
        {
-          #if (defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_W317A)|| defined(FEATURE_VERSION_C316))
+          #if (defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_W317A)|| defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_IC241A_MMX))
           pMe->m_nMsgID = IDS_CHARGER_REMOVED;
 		  #elif defined(FEATURE_VERSION_K202)
 		  pMe->m_nMsgID = IDS_CHARGER_FINISH;
@@ -3970,7 +3970,7 @@ int CoreApp_SendReginfosms(CCoreApp *pme)
 
 #endif
 
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER) || defined(FEATURE_VERSION_IC241A_MMX)
 /*==============================================================================
 函数：
     CoreApp_MobileTracker
@@ -4528,7 +4528,7 @@ static uint32 CoreApp_ConvertBattLvToAnnunState(int nBattLevel)
     }
 	#endif
 	*/
-#ifdef FEATURE_VERSION_K212
+#ifdef FEATURE_5_LEVEL_BATTERY  //FEATURE_VERSION_K212
     else if(nBattLevel == 4)
     {
         nState = ANNUN_STATE_BATT_4;

@@ -1328,11 +1328,14 @@ static boolean  HandleAlarmSubDialogEvent(CClockApps *pMe,
             //根据重复方式选择方式List选项
 #if defined( FEATURE_ONCE_ALARM)         
 #ifndef FEATURE_VERSION_C337  
+#ifndef FEATURE_VERSION_IC241A_MMX
+
             if(IMENUCTL_GetSel(pMe->m_pRepMode) == WEEK_ALARM_REP11)
             {
                 IMENUCTL_SetSel(pMe->m_pSnooze,ITEM_SNOOZE_4);
             }
             else
+#endif                
 #endif				
 #endif //defined( FEATURE_ONCE_ALARM)         
             {
@@ -1354,7 +1357,7 @@ static boolean  HandleAlarmSubDialogEvent(CClockApps *pMe,
                 }
             }
             
-#if defined(FEATURE_VERSION_C337)       
+#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)       
             IMENUCTL_SetSel( pMe->m_pRepMode, WEEK_ALARM_REP11);		
 #else
             IMENUCTL_SetSel( pMe->m_pRepMode, pMe->m_ClockCfg.RepMode[pMe->m_eCurAlarmType]);	    
@@ -2145,7 +2148,7 @@ static boolean  HandleAlarmTimeReachDialogEvent(CClockApps *pMe,
                     CClockApps_DeActivate( pMe);
 #endif
 
-#ifdef FEATURE_VERSION_C337
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 #ifdef FEATURE_ONCE_ALARM  
                     if (pMe->m_ClockCfg.RepMode[pMe->m_eCurAlarmType] == WEEK_ALARM_REP11)
                     {
@@ -3081,6 +3084,7 @@ static boolean CClockApps_HandleKeyEvent(CClockApps *pMe, uint16 wParam)
             }
 #if defined( FEATURE_ONCE_ALARM)         
 #ifndef FEATURE_VERSION_C337  
+#ifndef FEATURE_VERSION_IC241A_MMX
             if(pMe->m_nCtlID == IDC_CLOCK_SNOOZE)
             {
                 if(IMENUCTL_GetSel(pMe->m_pRepMode) == ITEM_REP_MODE_11)
@@ -3096,6 +3100,7 @@ static boolean CClockApps_HandleKeyEvent(CClockApps *pMe, uint16 wParam)
                     IMENUCTL_SetSel(pMe->m_pSnooze,ITEM_SNOOZE_4);
                 }
             }  
+#endif            
 #endif			
 #endif //defined( FEATURE_ONCE_ALARM)         
             return TRUE;

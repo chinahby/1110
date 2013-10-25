@@ -567,7 +567,7 @@ static boolean  HandleMainDialogEvent(CBTApp *pMe,
 				titleID = IDS_ON;
 			} 
 
-			#if defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_C337)
+			#if defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_IC241A_MMX)
 			titleID = IDS_BT_TITLE;
 			#endif
 
@@ -1792,7 +1792,8 @@ static boolean HandleDeviceInfoDialogEvent(CBTApp *pMe,
 			  pDev->uValue1 = 0;
 			}
 			
-#ifndef FEATURE_VERSION_C337			
+//#ifndef FEATURE_VERSION_C337
+#if !defined (FEATURE_VERSION_C337) && !defined (FEATURE_VERSION_IC241A_MMX)
 #ifdef FEATURE_BT_2_1
 			// manufacturer data
 			if ( pDev->EIRData.uManufDataSize > 0)
@@ -1841,6 +1842,7 @@ static boolean HandleDeviceInfoDialogEvent(CBTApp *pMe,
 #endif
 
 #ifndef FEATURE_VERSION_C337	
+#ifndef FEATURE_VERSION_IC241A_MMX
 #ifdef FEATURE_BT_2_1
 			uLen += BTApp_FormatSSPCapable( pMe, &pMe->pText1[ uLen], 
 			                                LONG_TEXT_BUF_LEN - uLen, 
@@ -1854,6 +1856,7 @@ static boolean HandleDeviceInfoDialogEvent(CBTApp *pMe,
 			                             pDev->linkKeyStatus );
 #endif /* FEATURE_BT_2_1 */
 #endif
+#endif
 
 			// BD address
 			uLen += BTApp_FormatBDAddress(pMe, &pMe->pText1[ uLen], 
@@ -1863,6 +1866,7 @@ static boolean HandleDeviceInfoDialogEvent(CBTApp *pMe,
 			MSG_FATAL("***zzg DeviceInfo mRM.uCurDevIdx=%d, security=%d***", pMe->mRM.uCurDevIdx, pDev->security, 0);
 
 #ifndef FEATURE_VERSION_C337	
+#ifndef FEATURE_VERSION_IC241A_MMX
 			// Security Level
 			uLen += BTApp_FormatSecurity(pMe, &pMe->pText1[ uLen], 
 			                             LONG_TEXT_BUF_LEN - uLen, pDev->security );
@@ -1909,6 +1913,7 @@ static boolean HandleDeviceInfoDialogEvent(CBTApp *pMe,
 			                         LONG_TEXT_BUF_LEN - uLen,
 			                         pDev);
 #endif /* FEATURE_BT_2_1 */
+#endif
 #endif
 
 			// display text
@@ -2101,7 +2106,7 @@ static boolean HandleDeviceInfoOpitionDialogEvent(CBTApp *pMe,
 				
 				IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, pDev->bBonded ? IDS_UNBOND : IDS_BOND, pDev->bBonded ? IDS_UNBOND : IDS_BOND, NULL, 0);				
 #ifdef FEATURE_BT_2_1			
-#ifdef FEATURE_VERSION_C337                		
+#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_IC241A_MMX)
 				IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_READ_OOB, IDS_READ_OOB, NULL, 0);
 #else
 				IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_BOND_OPTIONS, IDS_BOND_OPTIONS, NULL, 0);			
@@ -2117,7 +2122,9 @@ static boolean HandleDeviceInfoOpitionDialogEvent(CBTApp *pMe,
 				IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, pDev->bBonded ? IDS_UNBOND : IDS_BOND, pDev->bBonded ? IDS_UNBOND : IDS_BOND, NULL, 0);
 #ifdef FEATURE_BT_2_1	
 #ifndef FEATURE_VERSION_C337  
+#ifndef FEATURE_VERSION_IC241A_MMX  
 				IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_BOND_OPTIONS, IDS_BOND_OPTIONS, NULL, 0);	
+#endif
 #endif
 				//IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_READ_OOB, IDS_READ_OOB, NULL, 0);
 #endif			
@@ -3136,6 +3143,7 @@ static boolean HandleMyInfoDialogEvent(CBTApp *pMe,
 
 #ifdef FEATURE_BT_2_1
 #ifndef FEATURE_VERSION_C337
+#ifndef FEATURE_VERSION_IC241A_MMX
 				// BT ShortName
 				if (WSTRCMP(pMe->mRM.myInfo.wName , pMe->mRM.myInfo.wShortName) == 0)
 				{
@@ -3145,6 +3153,7 @@ static boolean HandleMyInfoDialogEvent(CBTApp *pMe,
 												LONG_TEXT_BUF_LEN - uLen, 
 												pMe->mRM.myInfo.wShortName,
 												bNameSame); 
+#endif                
 #endif				
 #endif 
 				// BD address
@@ -3153,6 +3162,7 @@ static boolean HandleMyInfoDialogEvent(CBTApp *pMe,
 											  &pMe->mRM.myInfo.bdAddr);
 
 #ifndef FEATURE_VERSION_C337
+#ifndef FEATURE_VERSION_IC241A_MMX
 				// Security Level
 				uLen += BTApp_FormatSecurity(pMe, &pMe->pText1[uLen], 
 											 LONG_TEXT_BUF_LEN - uLen, 
@@ -3161,12 +3171,14 @@ static boolean HandleMyInfoDialogEvent(CBTApp *pMe,
 				uLen += BTApp_FormatBondable(pMe, &pMe->pText1[uLen], 
 											 LONG_TEXT_BUF_LEN - uLen, 
 											 pMe->mRM.bBondable);
+#endif                
 #endif				
 				// Discoverable status
 				uLen += BTApp_FormatDiscoverable(pMe, &pMe->pText1[uLen], 
 												 LONG_TEXT_BUF_LEN - uLen, 
 												 pMe->mSD.bDiscoverable);
 #ifndef FEATURE_VERSION_C337
+#ifndef FEATURE_VERSION_IC241A_MMX
 				// Service Class
 				uLen += BTApp_FormatSvcCls(pMe, &pMe->pText1[uLen], 
 										   LONG_TEXT_BUF_LEN - uLen, 
@@ -3203,6 +3215,7 @@ static boolean HandleMyInfoDialogEvent(CBTApp *pMe,
 											  LONG_TEXT_BUF_LEN - uLen, 
 											  pMe->mRM.wManuData );
 #endif /* FEATURE_BT_2_1 */
+#endif
 #endif
 
 #endif
@@ -3305,7 +3318,7 @@ static boolean HandleMyInfoOpitionDialogEvent(CBTApp *pMe,
   			IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_EDIT_NAME, IDS_EDIT_NAME, NULL, 0);
 #endif
             
-			#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A)
+			#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_IC241A_MMX)
             #else
 			IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_EDIT_SHORT_NAME, IDS_EDIT_SHORT_NAME, NULL, 0);			
             IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_EDIT_MANU_DATA, IDS_EDIT_MANU_DATA, NULL, 0);
@@ -7442,7 +7455,7 @@ static boolean HandleSendFileDialogEvent(CBTApp *pMe,
 		{			
 			AECHAR 		WTitle[40] = {0};			
 
-			#if defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_C337)
+			#if defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_IC241A_MMX)
 			(void)ISHELL_LoadResString(pMe->m_pShell,
 				                       AEE_APPSBTAPP_RES_FILE,                                
 				                       IDS_BT_TITLE,

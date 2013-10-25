@@ -1139,7 +1139,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                      case IDS_MUTE:
                      case IDS_UNMUTE:
 //Add by pyuangui 2013-01-17					
-#ifdef FEATURE_VERSION_C337
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
                      if(wParam == IDS_MUTE) 
 					 	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL/*ANNUN_FIELD_MUTE*/, ANNUN_STATE_CALL_MUTE_ON/*ANNUN_STATE_ON*/);
 					 else
@@ -1539,6 +1539,13 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 							return TRUE;
                         }     
 #endif   
+#elif defined (FEATURE_VERSION_IC241A_MMX)
+                        if (WSTRCMP(pMe->m_DialString, L"*#07#") == 0)       	//SAR                 	
+                        { 
+							pMe->m_msg_text_id = IDS_SAR;	
+        					CLOSE_DIALOG(DLGRET_MSGBOX);
+							return TRUE;
+                        }   
 #elif defined(FEATURE_VERSION_W021_CT100_SALES_TRACK)                        
                         if (WSTRCMP(pMe->m_DialString, L"*#07#") == 0)       	//SAR                 	
                         { 
@@ -1928,7 +1935,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                         }
 #endif
 
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)||defined(FEATURE_VERSION_IC241A_MMX)
 						else if (WSTRCMP(pMe->m_DialString, L"*#5374#") == 0
 #if defined(FEATURE_VERSION_W021_CT100_SALES_TRACK)                            
                             ||WSTRCMP(pMe->m_DialString, L"*#4695#") == 0
@@ -3339,7 +3346,7 @@ static boolean  CallApp_Dialer_Calling_DlgHandler(CCallApp *pMe,
             //CallApp_Draw_Softkey(pMe, 0, IDS_CANCEL);
             //drawBottomBar(pMe->m_pDisplay, AEE_FONT_NORMAL,BTBAR_END);
 
-			#ifdef FEATURE_VERSION_C337
+			#if defined (FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_IC241A_MMX)
 			REFUI_DRAW_BOTTOMBAR(BTBAR_END_CALL)
 			#else
             REFUI_DRAW_BOTTOMBAR(BTBAR_CANCEL)
@@ -3560,7 +3567,7 @@ static void CallApp_Dialer_Show_Animation(void *pUser)
 		#else
         SETAEERECT(&rect,CALL_TEXT_X,CALL_FIRST_LINE_Y,CALL_TEXT_DX,CALL_LINE_HIGHT);
 		#endif
-		#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)    
+		#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212) ||defined(FEATURE_VERSION_IC241A_MMX)    
 		if(pMe->m_isIncoming)
 		{
 			(void) ISHELL_LoadResString(pMe->m_pShell,
@@ -4217,14 +4224,12 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
 
         case EVT_DIALOG_END:
           //  (void)ISHELL_CancelTimer(pMe->m_pShell, CallApp_SetPauseControl, pMe);   
-
 #ifdef FEATURE_CALL_RECORDER
           if (pMe->m_Media) 
           {
             recorder_stop_if( &pMe->m_Media);
           }
-#endif  
-          
+#endif          
           //Add By zzg 2010_08_03		
 #ifdef FEATURE_FRENDUO
 			{
@@ -4399,7 +4404,7 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
 
         case EVT_KEY_HELD:
             switch ((AVKType)wParam){
-            #ifdef FEATURE_VERSION_C337
+            #if defined (FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_IC241A_MMX)
             case AVK_STAR:
                 CallApp_Process_HeldKey_Event(pMe,eCode,wParam,dwParam);
                 return TRUE;
@@ -4785,7 +4790,7 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
                 case IDS_MUTE:
                 case IDS_UNMUTE:
 //Add by pyuangui 2013-01-17					
-#ifdef FEATURE_VERSION_C337
+#if defined (FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_IC241A_MMX)
                      if(wParam == IDS_MUTE) 
 					 	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL/*ANNUN_FIELD_MUTE*/, ANNUN_STATE_CALL_MUTE_ON/*ANNUN_STATE_ON*/);
 					 else
@@ -4921,7 +4926,7 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
             CallApp_Dialer_Connect_Turn_Off_Recorder( pMe);
 #endif
 
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)    	
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212) ||defined(FEATURE_VERSION_IC241A_MMX)	
             pMe->m_isIncoming = FALSE;
 #endif
             return TRUE;
@@ -4939,7 +4944,7 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
 			IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL/*ANNUN_FIELD_CALLFORWARD*/, ANNUN_STATE_CALL_INUSE_OFF/*ANNUN_STATE_OFF*/);
 
 			//Add By pyuangui 2013-01-17
-			#ifdef FEATURE_VERSION_C337
+			#if defined (FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_IC241A_MMX)
 			IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL/*ANNUN_FIELD_MUTE*/, ANNUN_STATE_CALL_MUTE_OFF/*ANNUN_STATE_OFF*/);
             #endif
 			//Add End
@@ -5149,7 +5154,7 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
                 //  Position NAME
                 // Display on secend line
                 AECHAR mui_call[MAX_SIZE_NAME_TEXT] ={0};
-#if defined(FEATURE_VERSION_C337)  				
+#if defined(FEATURE_VERSION_C337)  ||defined(FEATURE_VERSION_IC241A_MMX) 				
                 (void) ISHELL_LoadResString(pMe->m_pShell,
                                                         AEE_APPSCALLAPP_RES_FILE,
 							    IDS_MULTICALL,                                                       
@@ -6056,7 +6061,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
             
 		case EVT_NO_CLOSEBACKLIGHT:
 			//wParam 1:±³¹â°ëÁÁ, 0: ±³¹âÃð	
-#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A)
+#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A) ||defined(FEATURE_VERSION_IC241A_MMX)
 			return TRUE;
 #else
 			if(wParam == 0)			
@@ -6365,7 +6370,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
             }
             else if (pMe->m_CallMuted == TRUE)
             {
-            	#ifdef FEATURE_VERSION_C337
+            	#if defined (FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_IC241A_MMX)
 				REFUI_DRAW_BOTTOMBAR(BTBAR_ANSWER_SILENT);
 				#else
                	REFUI_DRAW_BOTTOMBAR(BTBAR_ANSWER_MUTE);
@@ -7367,7 +7372,7 @@ static boolean  CallApp_Missedcall_DlgHandler(CCallApp *pMe,
 			#ifdef FEATURE_VERSION_W317A
 			REFUI_DRAW_BOTTOMBAR(BTBAR_VIEW_CANCEL);
 			#else
-			#ifdef FEATURE_VERSION_C337
+			#if defined (FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_IC241A_MMX)
 			REFUI_DRAW_BOTTOMBAR(BTBAR_OK);
 			#else
             REFUI_DRAW_BOTTOMBAR(BTBAR_OK_CANCEL);
@@ -7380,7 +7385,9 @@ static boolean  CallApp_Missedcall_DlgHandler(CCallApp *pMe,
             //                                        NULL, AEEALERT_ALERT_BUSY);
             if(pMe->m_b_miss_notify)
             {
-#ifndef FEATURE_VERSION_C337            
+#ifndef FEATURE_VERSION_C337   
+#ifndef FEATURE_VERSION_IC241A_MMX
+
                 notifyFMRadioAlertEvent( pMe, TRUE);
                 //CallAppNotifyMP3PlayerAlertEvent(pMe,TRUE);
                 IALERT_StartMissedCallAlert(pMe->m_pAlert);
@@ -7388,6 +7395,7 @@ static boolean  CallApp_Missedcall_DlgHandler(CCallApp *pMe,
                                                         3000,
                                                         CallApp_HandleStopMissedAlertTimer,
                                                         pMe);
+#endif
 #endif				
             }
             return TRUE;
@@ -7435,6 +7443,7 @@ static boolean  CallApp_Missedcall_DlgHandler(CCallApp *pMe,
 								
                 case AVK_CLR:
 					#ifndef FEATURE_VERSION_C337
+                    #ifndef FEATURE_VERSION_IC241A_MMX
                     if (NULL != pMe->m_pwstrDialStringkeep)
                     {
                         pMe->m_DialString[0] = 0;
@@ -7446,6 +7455,7 @@ static boolean  CallApp_Missedcall_DlgHandler(CCallApp *pMe,
                     {
                         CLOSE_DIALOG(DLGRET_BACK_TO_IDLE)
                     }
+                    #endif
 					#endif                    
                     return TRUE;			
                 case AVK_ENDCALL:					
@@ -7878,7 +7888,7 @@ static void CallApp_MakeSpeedDialCall(CCallApp  *pMe)
             return;
         }
         //load the speed dial empty resource string
-        #if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
+        #if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)||defined(FEATURE_VERSION_IC241A_MMX)
 		pMe->m_prompt_id = IDS_SPEED_DIAL_QUERY;
 		CLOSE_DIALOG(DLGRET_PROMPT)
 		#else
@@ -8015,7 +8025,7 @@ MAKE_CALL_VALUE CallApp_MakeCall(CCallApp *pMe)
 #ifndef FEATURE_ICM
 	AEETCalls po;
 #endif
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)  	
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212) ||defined(FEATURE_VERSION_IC241A_MMX) 	
     pMe->m_isIncoming 	= FALSE;
 #endif
 	MSG_FATAL("***zzg CallApp_MakeCall cls=%x***", cls, 0, 0);
@@ -8255,7 +8265,7 @@ MAKE_CALL_VALUE CallApp_MakeCall(CCallApp *pMe)
         &&!b_energency)
     {
     //Add by pyuangui 2013-01-08
-    #ifdef FEATURE_VERSION_C337
+    #if defined (FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_IC241A_MMX)
         ICM_SetSystemPreference(pMe->m_pICM,
                             AEECM_MODE_PREF_PERSISTENT, AEECM_PREF_TERM_PERMANENT, 0,
                             AEECM_GW_ACQ_ORDER_PREF_NO_CHANGE, AEECM_BAND_PREF_NO_CHANGE,
@@ -10595,7 +10605,7 @@ static void CallApp_Draw_Connect_Time(void *pUser)
                             IDF_TEXT_TRANSPARENT|IDF_ALIGN_LEFT);
     IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_BLACK);
 
-#if defined(FEATURE_VERSION_C337)   
+#if defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_IC241A_MMX)  
     MSG_FATAL("CallApp_Draw_Connect_Time m_isIncoming=%d",pMe->m_isIncoming,0,0);
     if(!pMe->m_isIncoming)
     {
@@ -10913,7 +10923,7 @@ static void CallApp_Draw_Connect_Number_and_Name(CCallApp *pMe)
         if(!b_cdg)
         {
             AECHAR mui_call[MAX_SIZE_NAME_TEXT] ={0};
-#if defined(FEATURE_VERSION_C337) 			
+#if defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_IC241A_MMX)			
             (void) ISHELL_LoadResString(pMe->m_pShell,
                                                 AEE_APPSCALLAPP_RES_FILE,
 							    IDS_MULTICALL,
@@ -11253,7 +11263,7 @@ static void CallApp_Draw_Connect_Number_and_Name(CCallApp *pMe)
             }
         }
     }
-#if defined(FEATURE_VERSION_C337)   
+#if defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_IC241A_MMX)  
     if(pMe->m_isIncoming)
     {
         AECHAR         szText[20];  
@@ -12991,7 +13001,7 @@ static void CallApp_Draw_Connect_Softkey(CCallApp *pMe)
 		}
 		else if (pMe->m_bHandFree)
 		{
-			#ifdef FEATURE_VERSION_C337
+			#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 			REFUI_DRAW_BOTTOMBAR(BTBAR_OPTION_HANDS_HELD)
 			#elif defined FEATURE_VERSION_W317A
 			REFUI_DRAW_BOTTOMBAR(BTBAR_OPTION_NORMAL)
@@ -13001,7 +13011,7 @@ static void CallApp_Draw_Connect_Softkey(CCallApp *pMe)
 		}
 		else
 		{
-			#ifdef FEATURE_VERSION_C337
+			#if defined (FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_IC241A_MMX)
 			REFUI_DRAW_BOTTOMBAR(BTBAR_OPTION_HANDS_FREE)
 			#else
 			REFUI_DRAW_BOTTOMBAR(BTBAR_OPTION_HANDSFREEON)
@@ -13150,7 +13160,7 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
 #endif /*FEATRUE_SET_IP_NUMBER*/
         if ( (AVKType)wParam == AVK_STAR)
         {
-#if !defined(FEATURE_DISP_128X160)&&!defined(FEATURE_DISP_176X220)
+#if !defined(FEATURE_DISP_128X160)&&!defined(FEATURE_DISP_176X220)&&!defined(FEATURE_VERSION_IC241A_MMX)
 #ifdef FEATURE_KEYGUARD
             if(WSTRLEN(pMe->m_DialString) == 1)
             {
@@ -13298,6 +13308,7 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
 
         //long key "1" to call voice mail
 #ifndef FEATURE_VERSION_C337  
+#ifndef FEATURE_VERSION_IC241A_MMX
 #ifndef FEATURE_VERSION_EC99
 #ifndef FEATURE_VERSION_K212_20D
 #ifndef FEATURE_VERSION_K212_ND 
@@ -13308,6 +13319,7 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
                 CallApp_MakeVoiceMailCall(pMe);
             }
         }
+#endif
 #endif
 #endif        
 #endif
@@ -13404,7 +13416,7 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
 
 		//Add By zzg 2010_09_10
 		#if defined(FEATURE_VERSION_C316)||defined(FEAUTRE_VERSION_N450)||defined(FEATURE_VERSION_W0216A)|| defined(FEATURE_VERSION_C306)|| defined (FEATURE_VERSION_K212_20D)|| defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_N68)||defined(FEATURE_LCD_TOUCH_ENABLE)||defined(FEATURE_VERSION_W516)||defined(FEATURE_VERSION_W208S)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_H1201)|| defined(FEATURE_VERSION_W027)\
-			||defined(FEATURE_VERSION_W0216A_T18)||defined(FEATURE_VERSION_K212_ND)//xxzhen
+			||defined(FEATURE_VERSION_W0216A_T18)||defined(FEATURE_VERSION_K212_ND)|| defined(FEATURE_VERSION_IC241A_MMX)//xxzhen
         #ifndef FEATURE_TORCH_KEY_INFO
 		else if (((AVKType)wParam == AVK_0) && (WSTRLEN(pMe->m_DialString) == 1))
 	{	
@@ -13482,7 +13494,7 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
         #else
         else if (((AVKType)wParam == AVK_0) && (WSTRLEN(pMe->m_DialString) == 1))
 		{	
-#ifdef FEATURE_VERSION_C260_IC18		    
+#if defined (FEATURE_VERSION_C260_IC18) || defined(FEATURE_VERSION_IC241A_MMX)
             OEM_SetUCBROWSER_ADSAccount();		
             SetBrowserArr_Main_CallApp(pMe,(char*)"http://mimicromax.com");    
 #endif		    

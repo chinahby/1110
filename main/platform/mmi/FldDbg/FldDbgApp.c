@@ -6964,7 +6964,7 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
     {
     	;
     }
-	#if defined(FEATURE_VERSION_C337)
+	#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 	STRCPY(fmt_tstr, "%06X");
     SPRINTF((tstrbuf),
             fmt_tstr,

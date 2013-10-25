@@ -171,7 +171,7 @@
 #define CALL_NAME_DX                          (pMe->m_rc.dx- 2*CALL_TEXT_X -CALL_ANIMATION_WIDTH)
 #define CALL_NUM_DX                            (pMe->m_rc.dx- 2*CALL_TEXT_X -CALL_ANIMATION_WIDTH)
 /*两边各空2个像素*/
-#if defined(FEATURE_VERSION_C337)   
+#if defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_IC241A_MMX)
 #define CALL_TEXT_X                             (2)
 #else
 #define CALL_TEXT_X                             (3)
@@ -185,7 +185,7 @@
 #define CALL_NUM_DX                            (pMe->m_rc.dx- 4*CALL_TEXT_X -CALL_ANIMATION_WIDTH)
 /*两边各空2个像素*/
 
-#if defined(FEATURE_VERSION_C337)   
+#if defined(FEATURE_VERSION_C337)  ||defined(FEATURE_VERSION_IC241A_MMX)  
 #define CALL_TEXT_X                             (2)
 #else
 #define CALL_TEXT_X                             (3)
@@ -225,7 +225,7 @@
 #endif 
 #define CALL_FIRST_LINE_Y                   (CALL_ANNU_HEIGHT)
 
-#if defined(FEATURE_VERSION_C337) 
+#if defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_IC241A_MMX)
 #define CALL_SECOND_UP_LINE_Y               (CALL_FIRST_LINE_Y +    CALL_LINE_HIGHT)
 #define CALL_SECOND_LINE_Y               (CALL_FIRST_LINE_Y +    2*CALL_LINE_HIGHT)
 #define CALL_THIRD_LINE_Y                  (CALL_FIRST_LINE_Y +3*CALL_LINE_HIGHT )
@@ -860,7 +860,7 @@ typedef struct _CCallApp
 	int16   m_i;
 #endif
 	boolean            m_penup;
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)    
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)  ||defined(FEATURE_VERSION_IC241A_MMX)  
        boolean                    m_isIncoming;
 #endif
 #if defined(FEATURE_VERSION_K212)    

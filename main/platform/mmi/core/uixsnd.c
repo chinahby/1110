@@ -2720,7 +2720,7 @@ void uisnd_vibrate(uint16 wDuration,
 	              0,
 	              FALSE );
 #else
-#if  defined FEATURE_VERSION_C337
+#if  defined FEATURE_VERSION_C337 || defined(FEATURE_VERSION_IC241A_MMX)
 MSG_FATAL("***zzg uisnd_vibrate FEATURE_VERSION_C337***",0,0,0);
 /*
 				//NV_REPEATED_ACCH_I
@@ -2744,7 +2744,7 @@ snd_freq_tone_start(SND_DEVICE_CURRENT,
 				}
 				else
 					*/				
-#ifdef FEATURE_VERSION_C260_IC18
+#if defined (FEATURE_VERSION_C260_IC18) || defined (FEATURE_VERSION_IC241A_MMX)
 uisnd_vibrate_cmd(TRUE);
     clk_reg( &uisnd_vibrator_clk,
               uisnd_vibrator_cb,

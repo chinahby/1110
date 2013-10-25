@@ -162,7 +162,7 @@ extern sSelectFieldListNode* pCurSelectFieldNode;
 #define MAX_INPUT_NAME_CARD             (28)
 #define MAX_INPUT_NAME_CN               (28)
 #define MAX_INPUT_NAME_EN               (28)
-#elif defined (FEATURE_VERSION_C337)
+#elif defined (FEATURE_VERSION_C337)  || defined(FEATURE_VERSION_IC241A_MMX)
 #define MAX_INPUT_NAME_CARD             (20)
 #define MAX_INPUT_NAME_CN               (20)
 #define MAX_INPUT_NAME_EN               (20)
@@ -182,7 +182,7 @@ extern sSelectFieldListNode* pCurSelectFieldNode;
 
 #ifdef FEATURE_VERSION_1110W516
 #define MAX_PHONEBOOK_CAPACITY          (1000)
-#elif defined (FEATURE_VERSION_C337)
+#elif defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 #define MAX_PHONEBOOK_CAPACITY          (1000)
 #elif defined (FEATURE_VERSION_EC99)
 #define MAX_PHONEBOOK_CAPACITY          (150)  /*(300)*/

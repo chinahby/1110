@@ -34,6 +34,15 @@
 	<Object Id="5014" Name="IDB_PROMPT_MSG_STATIC_BG">
 		<File>..\images\240x320\common\Appscommon\MessageBox\background_static.bmp</File>
 	</Object>
+	<Object Id="5015" Name="IDB_MAINMENU_BG" MimeType="image/png">
+		<File>..\images\240x320\common\Appscommon\Menu\background\background.png</File>
+	</Object>
+	<Object Id="5016" Name="IDI_MENU_ITEM" MimeType="image/png">
+		<File>..\images\240x320\common\Appscommon\Menu\menu\menu_icon.png</File>
+	</Object>
+	<Object Id="5017" Name="IDI_MENU_ITEM_FOCUS" MimeType="image/png">
+		<File>..\images\240x320\common\Appscommon\Menu\menu\menu_icon_focus.png</File>
+	</Object>
 	<Object Id="5021" Name="IDB_CHECK_ON" MimeType="image/png">
 		<File>..\images\240x320\common\Appscommon\Icon\check_yes.png</File>
 	</Object>
@@ -424,6 +433,18 @@
 	<Object Id="7102" Name="IDB_MMS_SPACE" MimeType="image/png">
 		<File>..\images\240x320\common\Appscommon\Icon\space.png</File>
 	</Object>
+	<Object Id="7103" Name="IDI_MENU_ITEM_PROFILE_ALERT" MimeType="image/png">
+		<File>..\images\240x320\common\Appscommon\Menu\menu\alert.png</File>
+	</Object>
+	<Object Id="7104" Name="IDI_MENU_ITEM_PROFILE_SILENCE" MimeType="image/png">
+		<File>..\images\240x320\common\Appscommon\Menu\menu\silence.png</File>
+	</Object>
+	<Object Id="7105" Name="IDI_MENU_ITEM_PROFILE_MEETING" MimeType="image/png">
+		<File>..\images\240x320\common\Appscommon\Menu\menu\vibrator.png</File>
+	</Object>
+	<Object Id="7106" Name="IDI_MENU_ITEM_PROFILE_OUTDOOR" MimeType="image/png">
+		<File>..\images\240x320\common\Appscommon\Menu\menu\vibring.png</File>
+	</Object>	
 	<Object Id="8001" Name="IDI_TIME_0" MimeType="image/png">
 		<File>..\images\240x320\common\core\TIME_0.png</File>
 	</Object>
@@ -457,12 +478,9 @@
 	<Object Id="8011" Name="IDI_TIME_POINT" MimeType="image/png">
 		<File>..\images\240x320\common\core\TIME_POINT.png</File>
 	</Object>
-	
 	<Object Id="8050" Name="IDB_BATT5">
 		<File>..\images\240x320\common\Annunciator\batt5.bmp</File>
 	</Object>
-		
-	
 	<Object Id="9100" Name="IDB_MODE_NUMBERS_BLACK" MimeType="image/png">
 		<File>..\images\240x320\common\IME\123_black.png</File>
 	</Object>
@@ -496,14 +514,14 @@
 	<Object Id="9110" Name="IDB_EDIT_UP_DOWN_BMP_BLACK" MimeType="image/png">
 		<File>..\images\240x320\common\IME\arrow_black.png</File>
 	</Object>
-	<Object Id="9111" Name="IDB_MMS_FULL" >
+	<Object Id="9111" Name="IDB_MMS_FULL">
 		<File>..\images\240x320\common\Annunciator\mms_full.bmp</File>
 	</Object>
-	<Object Id="9112" Name="IDB_MMS_UNREAD" >
+	<Object Id="9112" Name="IDB_MMS_UNREAD">
 		<File>..\images\240x320\common\Annunciator\mms_unread.bmp</File>
 	</Object>
-	<Object Id="9113" Name="IDB_MMS_UNRECEIVED" >
+	<Object Id="9113" Name="IDB_MMS_UNRECEIVED">
 		<File>..\images\240x320\common\Annunciator\mms_unreceived.bmp</File>
-	</Object>	
+	</Object>
 </Objects>
 </BREWRes>

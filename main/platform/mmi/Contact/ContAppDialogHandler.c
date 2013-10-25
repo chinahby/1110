@@ -3795,7 +3795,7 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                 ITEXTCTL_SetProperties(pTextCtl, TP_FIXOEM|TP_FOCUS_NOSEL | TP_GRAPHIC_BG);
             }
 #else
-			#ifdef FEATURE_VERSION_C337
+			#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 			ITEXTCTL_SetProperties(pTextCtl, TP_STARKEY_SWITCH | TP_FIXOEM|TP_FOCUS_NOSEL);
 			#else
             ITEXTCTL_SetProperties(pTextCtl, TP_STARKEY_SWITCH | TP_FIXOEM|TP_FOCUS_NOSEL |TP_GRAPHIC_BG);
@@ -5130,7 +5130,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
                 AECHAR WTitle[40] = {0};
                 //IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
 
-				#ifdef FEATURE_VERSION_C337
+				#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 				(void)ISHELL_LoadResString(pMe->m_pShell,
                         CONTAPP_RES_FILE_LANG,                                
                         IDS_PHONEBOOK,
@@ -5305,7 +5305,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
 			}
 			//Add End
 			
-			#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
+			#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND) || defined(FEATURE_VERSION_IC241A_MMX)
 			if (pMe->m_bSpeedDialParam == TRUE)
 			{
 				CONTAPP_DRAW_BOTTOMBAR(BTBAR_OK_BACK);
@@ -5465,7 +5465,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
 
 					MSG_FATAL("***zzg pMe->m_eCurState=%x", pMe->m_eCurState, 0, 0);
 					
-                    #if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
+                    #if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND) || defined(FEATURE_VERSION_IC241A_MMX)
 					MSG_FATAL("***zzg pMe->m_bSpeedDialParam=%x", pMe->m_bSpeedDialParam, 0, 0);
 					if (pMe->m_bSpeedDialParam == TRUE)
 					{						
@@ -7458,7 +7458,7 @@ static boolean  CContApp_HandleMainMenuDlgEvent( CContApp  *pMe,
                 AECHAR WTitle[40] = {0};
                 //IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
 
-				#ifdef FEATURE_VERSION_C337
+				#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 				(void)ISHELL_LoadResString(pMe->m_pShell,
 							                CONTAPP_RES_FILE_LANG,                                
 							                IDS_PHONEBOOK,
@@ -8081,7 +8081,7 @@ static boolean  CContApp_HandleFldOptsDlgEvent( CContApp  *pMe,
             {
                 AECHAR WTitle[40] = {0};
                 //IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
-                #ifdef FEATURE_VERSION_C337
+                #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 				(void)ISHELL_LoadResString(pMe->m_pShell,
 							                CONTAPP_RES_FILE_LANG,                                
 							                IDS_PHONEBOOK,
@@ -8509,7 +8509,7 @@ static boolean  CContApp_HandleGroupDlgEvent( CContApp  *pMe,
                 //IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
 
                 
-#ifdef FEATURE_VERSION_C337
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 				(void)ISHELL_LoadResString(pMe->m_pShell,
 							                CONTAPP_RES_FILE_LANG, 
 											IDS_CALLER_GROUPS,
@@ -11544,7 +11544,7 @@ static boolean  CContApp_HandleInputDlgEvent( CContApp  *pMe,
             }
 			 {
 			 	AECHAR  text[32] = {0}; 
-                #ifdef FEATURE_VERSION_C337
+                #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 				(void)ISHELL_LoadResString(pMe->m_pShell, 
                                             CONTAPP_RES_FILE_LANG,
                                             IDS_PHONEBOOK, 
@@ -11592,7 +11592,7 @@ static boolean  CContApp_HandleInputDlgEvent( CContApp  *pMe,
                 IDISPLAY_FillRect  (pMe->m_pDisplay,&pMe->m_rc, RGB_BLACK);
                     
                 // 画标题条
-                #ifdef FEATURE_VERSION_C337
+                #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 				(void)ISHELL_LoadResString(pMe->m_pShell, 
                                             CONTAPP_RES_FILE_LANG,
                                             IDS_PHONEBOOK, 
@@ -11708,7 +11708,7 @@ static boolean  CContApp_HandleInputDlgEvent( CContApp  *pMe,
                 IDISPLAY_FillRect  (pMe->m_pDisplay,&pMe->m_rc, RGB_BLACK);
                     
                 // 画标题条
-                #ifdef FEATURE_VERSION_C337
+                #if defined (FEATURE_VERSION_C337)  || defined(FEATURE_VERSION_IC241A_MMX)
 				(void)ISHELL_LoadResString(pMe->m_pShell, 
                                             CONTAPP_RES_FILE_LANG,
                                             IDS_PHONEBOOK, 
@@ -12027,7 +12027,7 @@ static boolean  CContApp_HandleSearchDlgEvent( CContApp  *pMe,
                 AECHAR WTitle[40] = {0};
                 //IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
 
-				#ifdef FEATURE_VERSION_C337
+				#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 				(void)ISHELL_LoadResString(pMe->m_pShell,
 							                CONTAPP_RES_FILE_LANG,                                
 							                IDS_PHONEBOOK,
@@ -13287,7 +13287,7 @@ static boolean  CContApp_HandleSelectDlgEvent( CContApp  *pMe,
                 AECHAR WTitle[40] = {0};
                 //IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
 
-				#ifdef FEATURE_VERSION_C337
+				#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 				(void)ISHELL_LoadResString(pMe->m_pShell,
 							                CONTAPP_RES_FILE_LANG,                                
 							                IDS_PHONEBOOK,
@@ -13775,7 +13775,7 @@ static boolean  CContApp_HandleDetailDlgEvent( CContApp  *pMe,
             
             // Draw prompt bar here
             CONTAPP_DRAW_BOTTOMBAR(BTBAR_BACK);	
-#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
+#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND) || defined(FEATURE_VERSION_IC241A_MMX)
             if (pMe->m_bSpeedDialParam == TRUE)
             {
             	CONTAPP_DRAW_BOTTOMBAR(BTBAR_OK_CANCEL);	
@@ -13791,7 +13791,7 @@ static boolean  CContApp_HandleDetailDlgEvent( CContApp  *pMe,
         {
         	 switch (wParam)
              {
-             	#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
+             	#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND) || defined(FEATURE_VERSION_IC241A_MMX)
 				case AVK_SELECT:					
 					if ((pMe->m_bSpeedDialParam == TRUE) && (pMe->m_nSpeedDialNumber != 0))
 					{
@@ -13879,7 +13879,7 @@ static boolean  CContApp_HandleDetailDlgEvent( CContApp  *pMe,
                     CLOSE_DIALOG(DLGRET_CANCELED);
                     return TRUE;		
 
-				#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
+				#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND) || defined(FEATURE_VERSION_IC241A_MMX)
 				case AVK_INFO:
 				case AVK_SELECT:
                     MSG_FATAL("***zzg Detail m_bSpeedDialParam=%x",pMe->m_bSpeedDialParam,0,0);
@@ -14779,7 +14779,7 @@ static boolean  CContApp_HandleGroupOptEditDlgEvent( CContApp  *pMe,
                 AECHAR WTitle[40] = {0};
                 //IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
                 
-#ifdef FEATURE_VERSION_C337
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 				(void)ISHELL_LoadResString(pMe->m_pShell,
 							                CONTAPP_RES_FILE_LANG,
 											IDS_CALLER_GROUPS,
@@ -17479,6 +17479,8 @@ static boolean  CContApp_HandleEmergencyCallDlgEvent(CContApp  *pMe,
             }
 
 #ifndef FEATURE_VERSION_C337
+#ifndef FEATURE_VERSION_IC241A_MMX
+
             // ADD RUIM Number
             {
                 byte  Assnum[RUIM_ECC_NUMBER][RUIM_ECC_MAXSIZE+1];
@@ -17509,6 +17511,7 @@ static boolean  CContApp_HandleEmergencyCallDlgEvent(CContApp  *pMe,
                 }
 #endif//WIN32                
             }
+#endif
 #endif
             
             IMENUCTL_Redraw(pMenu);

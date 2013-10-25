@@ -792,7 +792,7 @@ uint16  CContApp_GetFldTitleID(AEEAddrFieldID wFldID)
             return IDS_ADDRESS;
 
         case AEE_ADDRFIELD_GROUP:
-#ifdef FEATURE_VERSION_C337
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 			return IDS_CALLER_GROUPS;
 #else
             return IDS_INPUT_GROUP;
@@ -1029,7 +1029,7 @@ uint16 CContApp_SetFldMaxSize(CContApp *pMe,ITextCtl *pIText,AEEAddrFieldID wFld
 #ifndef WIN32
                 nMaxchars = OEMRUIMAddr_GetRUIMMaxNumberSize();
 #else
-#ifdef FEATURE_VERSION_C337
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 				nMaxchars = MAX_INPUT_NAME_EN;
 #else
                 nMaxchars = MAX_INPUT_NUM;
@@ -1038,7 +1038,7 @@ uint16 CContApp_SetFldMaxSize(CContApp *pMe,ITextCtl *pIText,AEEAddrFieldID wFld
             }
             else
             {
-#ifdef FEATURE_VERSION_C337
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 				nMaxchars = MAX_INPUT_NAME_EN;
 #else            
                 nMaxchars = MAX_INPUT_NUM;
@@ -4527,7 +4527,7 @@ int CContApp_CreateDefaultCont( CContApp *pMe)
                                              IADDRREC_GetRecID(pAddrRec),
                                              FALSE);
 
-	#ifdef FEATURE_VERSION_C337
+	#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 	m_bdftcont = TRUE;
 	ICONFIG_SetItem(pMe->m_pConfig, CFGI_DEFAULTCONT, &m_bdftcont, sizeof(m_bdftcont));
 
@@ -6052,7 +6052,7 @@ int CContApp_GetPrimaryNumFld(CContApp *pMe)
 Numbermatch_e_Type ContApp_NumberMatch(const AECHAR * wstrNum1, const AECHAR * wstrNum2, int *pMatchChars)
 {
 
-#ifdef FEATURE_VERSION_C337
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
     int nLen1, nLen2;
     AECHAR wstrNum1cmpbuff[MAX_INPUT_NUM + 1] = {(AECHAR)'\0'};
     AECHAR wstrNum2cmpbuff[MAX_INPUT_NUM + 1] = {(AECHAR)'\0'};

@@ -282,7 +282,7 @@ int CContApp_BuildMainMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
     ai.pszResText = CONTAPP_RES_FILE_LANG;
 
 // 1
-	#ifdef FEATURE_VERSION_C337
+	#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 	ai.wText       = IDS_PHONEBOOK;
 	#else
 	ai.wText       = IDS_APPLET;
@@ -340,7 +340,7 @@ int CContApp_BuildMainMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
         }  
  }
 #endif *//* FEATURE_RUIM_PHONEBOOK */    
-#ifdef FEATURE_VERSION_C337
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 	ai.wText       = IDS_CALLER_GROUPS;
 #else
     ai.wText       = IDS_INPUT_GROUP;
@@ -1189,7 +1189,7 @@ int CContApp_BuildEditMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl, boolean bAll)
 
                 if(pMe->m_wSelectGroup != 0)
                 {
-#ifdef FEATURE_VERSION_C337
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 				   ai.wText       = IDS_CALLER_GROUPS;
 #else
 				   ai.wText       = IDS_INPUT_GROUP;
@@ -1359,7 +1359,7 @@ int CContApp_BuildListMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
         return EBADPARM;
     }
 
-	#ifdef FEATURE_VERSION_C337
+	#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 	{
 		boolean b_defaultcont = FALSE;	  
 	    OEM_GetConfig(CFGI_DEFAULTCONT,&b_defaultcont, sizeof(b_defaultcont));

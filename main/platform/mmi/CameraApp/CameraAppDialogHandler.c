@@ -319,14 +319,14 @@ static const CCameraSize g_CameraSizeCFG[] =
     {176,220,L"176*220"}, // QCIF
     {240,320,L"240*320"}, // QVGA
 #if !defined(FEATURE_VERSION_VG68)&&!defined(FEATURE_VERSION_K202_LM129C)
-#ifdef FEATURE_VERSION_C337
+#if defined (FEATURE_VERSION_C337)
     {352,464,L"352*464"}, // VGA    
 #else
     {480,640,L"480*640"}, // VGA    
 #endif    
 #endif
 #elif defined(FEATURE_DISP_240X320)
-#if defined(FEATURE_VERSION_K212)
+#if defined(FEATURE_VERSION_K212) 
 	{240,304,L"240*320"}, // VGA
 	{324,432,L"480*640"}, // VGA
 #else
@@ -391,7 +391,7 @@ static const CCameraSize g_CameraSizeCFG_10[] =
     {176,220,L"176*220"}, // QCIF
     {240,320,L"240*320"}, // QVGA
 #if !defined (FEATURE_VERSION_VG68)&&!defined(FEATURE_VERSION_K202_LM129C)
-#ifdef FEATURE_VERSION_C337
+#if defined (FEATURE_VERSION_C337)
     {352,464,L"352*464"}, // VGA    
 #else
     {480,640,L"480*640"}, // VGA    
@@ -455,9 +455,9 @@ static const CCameraSize g_VideoSizeCFG_10[] =
     //{176,220,L"176*220"}, // QCIF
 #ifdef FEATURE_CAMERA_8W       
     {144,176,L"144*176"}, // QCIF
-#else
+#else  
     {480,640,L"480*640"}, // VGA 
-    {600,800,L"600*800"}, // VGA
+    {600,800,L"600*800"}, // VGA   
 #endif
 #elif defined(FEATURE_DISP_320X240)
 	//{128,160,L"128*160"}, // FULL Screen
@@ -1302,7 +1302,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
 	                {
 	                	if ( pMe->m_isStartFromFacebook == TRUE)
 	                	{
-#if defined(FEATURE_VERSION_C337)   	 
+#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)   	 
 				            pMe->m_wMsgID = IDS_NOMEMORY;
 #else
 	                    	pMe->m_wMsgID = IDS_MSG_NOMEMORY;
@@ -1312,7 +1312,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
 	                    {
 							if(pMe->m_bMemoryCardExist)
 		                    {
-#if defined(FEATURE_VERSION_C337)   	 
+#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)   	 
     				            pMe->m_wMsgID = IDS_NOMEMORY;
 #else
     	                    	pMe->m_wMsgID = IDS_MSG_NOMEMORY;
@@ -1399,7 +1399,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
 	                {
 						if(pMe->m_bMemoryCardExist)
 	                    {
-#if defined(FEATURE_VERSION_C337)   	 
+#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)   	 
 				pMe->m_wMsgID = IDS_NOMEMORY;
 #else
 	                    	pMe->m_wMsgID = IDS_MSG_NOMEMORY;
@@ -1639,7 +1639,28 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
                     {
                         pMe->m_nCameraCFG--;
                     }
+#ifdef FEATURE_VERSION_IC241A_MMX
+                    if(pMe->m_nCameraCFG == CAMERACFGSELFTIME )
+                    {
+                        if(pMe->m_isRecordMode == TRUE)
+                        {                           
+                            pMe->m_nCameraCFG -= 3;
+                        }
+                    }
 					
+					if(pMe->m_nCameraCFG == CAMERACFGTONE )
+                    {
+                        if(pMe->m_isRecordMode == TRUE)
+                        {
+                            pMe->m_nCameraCFG -= 2;                            
+                        }
+                    }
+
+                    if(pMe->m_nCameraCFG == CAMERACFGSIZE )
+                    {
+                        pMe->m_nCameraCFG -= 1;  
+                    }
+#else					
                     if(pMe->m_nCameraCFG == CAMERACFGSELFTIME )
                     {
                         if(pMe->m_isRecordMode == TRUE)
@@ -1656,6 +1677,7 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
                             pMe->m_nCameraCFG--;                            
                         }
                     }
+#endif                    
                     break;
    
                 case AVK_RIGHT:
@@ -1668,6 +1690,36 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
                     {
                         pMe->m_nCameraCFG++;
                     }
+#ifdef FEATURE_VERSION_IC241A_MMX
+                    if(pMe->m_nCameraCFG == CAMERACFGSIZE )
+                    {
+                        if(pMe->m_isRecordMode == TRUE)
+                        {
+                            pMe->m_nCameraCFG += 3;  
+                        }
+                        else
+                        {
+                            pMe->m_nCameraCFG += 1;  
+                        }
+                    }
+
+                    if(pMe->m_nCameraCFG == CAMERACFGTONE )
+                    {
+                        if(pMe->m_isRecordMode == TRUE)
+                        {
+                            pMe->m_nCameraCFG += 2;
+                        }
+                    }
+                    
+                    if(pMe->m_nCameraCFG == CAMERACFGSELFTIME )
+                    {
+                        if(pMe->m_isRecordMode == TRUE)
+                        {
+                            pMe->m_nCameraCFG += 1;
+                        }
+                    }
+                    
+#else                    
                     if(pMe->m_nCameraCFG == CAMERACFGSELFTIME )
                     {
                         if(pMe->m_isRecordMode == TRUE)
@@ -1683,11 +1735,12 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
                             pMe->m_nCameraCFG+=2;
                         }
                     }
+#endif                    
 					
                     MSG_FATAL("CameraApp_CameraCFGHandleEvent RIGHT END:%d",pMe->m_nCameraCFG,0,0);
                     break;
 
-                #ifdef FEATURE_VERSION_C337
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
                 case AVK_1:
                      pMe->m_nCameraCFG=CAMERACFGENVIRMENT;
                      break;
@@ -1695,7 +1748,20 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
                 case AVK_2:
                      pMe->m_nCameraCFG=CAMERACFGQUALITY;
                      break;
+
+#if defined(FEATURE_VERSION_IC241A_MMX)     
+                case AVK_3:
+                     pMe->m_nCameraCFG=CAMERACFGTONE;
+                     break;
    
+                case AVK_4:
+                     pMe->m_nCameraCFG=CAMERACFGSELFTIME;
+                     break;
+   
+                case AVK_5:
+                     pMe->m_nCameraCFG=CAMERACFGRESET;
+                     break;
+#else
                 case AVK_3:
                      pMe->m_nCameraCFG=CAMERACFGSIZE;
                      break;
@@ -1711,7 +1777,8 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
                 case AVK_6:
                      pMe->m_nCameraCFG=CAMERACFGRESET;
                      break;
-                #endif
+#endif                     
+#endif
                 
                 case AVK_UP:
                 case AVK_DOWN:   
@@ -2080,7 +2147,7 @@ static boolean CameraApp_VideoHandleEvent(CCameraApp *pMe, AEEEvent eCode, uint1
            
 			if (WSTRLEN(wfileName)>0)
 			{      
-#ifdef FEATURE_VERSION_C337
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
             pMe->m_rc.y += 20;    
             DrawTextWithProfile(pMe->m_pShell, 
 			                        pMe->m_pDisplay, 
@@ -2285,7 +2352,7 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
 				pMe->m_bIsPreview = FALSE;
 	            pMe->m_nCameraState = CAM_START;
                 //Add By zzg 2013_03_28
-#ifdef FEATURE_VERSION_C337                
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
                 if (pMe->m_wMsgID  != IDS_MSG_NOSDCARD)             
                 {
                     pMe->m_wMsgID = IDS_MSG_WAITING; 
@@ -2446,7 +2513,7 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
                     case IDS_MSG_NOSDCARD:
                     case IDS_MSG_NOCAMERA:
                     case IDS_MSG_NOMEMORY:
-#if defined(FEATURE_VERSION_C337)   
+#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)   
 		     case IDS_NOMEMORY:	
 #endif
                     case IDS_MSG_CAPTURE_FAILED:
@@ -2481,7 +2548,7 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
 #ifdef FEATURE_DSP
             if(pMe->m_wMsgID == IDS_MSG_WAITING || pMe->m_wMsgID == IDS_DONE
                || pMe->m_wMsgID == IDS_MSG_NOSDCARD || pMe->m_wMsgID == IDS_MSG_NOMEMORY
-#if defined(FEATURE_VERSION_C337)      
+#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)      
 		|| pMe->m_wMsgID == IDS_NOMEMORY
 #endif
                ) // &&(!pMe->m_pCamera)
@@ -2497,7 +2564,7 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
 #else                 
             
              //Add By zzg 2013_03_28
-#ifdef FEATURE_VERSION_C337  
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
             if(((pMe->m_wMsgID == IDS_MSG_WAITING) || pMe->m_wMsgID == IDS_MSG_NOSDCARD) &&(!pMe->m_pCamera))
 #else
             if((pMe->m_wMsgID == IDS_MSG_WAITING) &&(!pMe->m_pCamera))
@@ -3798,7 +3865,11 @@ static void CameraApp_PopMenu_SizeInit(CCameraApp *pMe, IMenuCtl *popMenu)
         }
          MSG_FATAL("CameraApp_SetPopMenuRect",0,0,0);
 		#if defined (FEATURE_VERSION_K212)|| defined (FEATURE_QVGA_INHERIT_K212)
+        #if defined (FEATURE_VERSION_IC241A_MMX)
+        CameraApp_SetPopMenuRect(pMe, popMenu, i);
+        #else
 		CameraApp_SetPopMenuRect(pMe, popMenu, i+1);
+        #endif
 		#else
         CameraApp_SetPopMenuRect(pMe, popMenu, i);
 		#endif
@@ -3931,7 +4002,11 @@ static void CameraApp_PopMenu_ShutterToneInit(CCameraApp *pMe, IMenuCtl *popMenu
 {
     IMENUCTL_DeleteAll(popMenu);   
     #if defined (FEATURE_VERSION_K212)||defined(FEATURE_DISP_240X320)
+    #if defined (FEATURE_VERSION_IC241A_MMX)
+    CameraApp_SetPopMenuRect(pMe, popMenu, 2);
+    #else
 	CameraApp_SetPopMenuRect(pMe, popMenu, 3);
+    #endif
 	#else
     CameraApp_SetPopMenuRect(pMe, popMenu, 2);
 	#endif
@@ -4067,8 +4142,12 @@ static void CameraApp_PopMenu_BandingInit(CCameraApp *pMe, IMenuCtl *popMenu)
 static void CameraApp_PopMenu_ResetCFGInit(CCameraApp *pMe, IMenuCtl *popMenu)
 {
     IMENUCTL_DeleteAll(popMenu);   
-    #if defined (FEATURE_VERSION_K212)||defined(FEATURE_DISP_240X320)
-    CameraApp_SetPopMenuRect(pMe, popMenu, 2);
+    #if defined (FEATURE_VERSION_K212) || defined(FEATURE_DISP_240X320)
+    #if defined(FEATURE_VERSION_IC241A_MMX)
+    CameraApp_SetPopMenuRect(pMe, popMenu, 1);
+    #else
+    CameraApp_SetPopMenuRect(pMe, popMenu, 2);  
+    #endif
 	#elif defined(FEATURE_VERSION_K212_ND)
 	CameraApp_SetPopMenuRect(pMe, popMenu, 2);
 	#else
@@ -4230,7 +4309,11 @@ static void CameraApp_SetPopMenuRect(CCameraApp *pMe, IMenuCtl* popMenu, int men
     
     dx = POPMENU_WIDTH;
     #ifdef FEATURE_DISP_240X320
+    #ifdef FEATURE_VERSION_IC241A_MMX
+    pMe->m_nItemH = 38;
+    #else
 	pMe->m_nItemH = 28;
+    #endif
 	#endif
 	#if defined( FEATURE_VERSION_K202)&&defined(FEATURE_LANG_CHINESE)
 	pMe->m_nItemH = 16;
@@ -4242,7 +4325,7 @@ static void CameraApp_SetPopMenuRect(CCameraApp *pMe, IMenuCtl* popMenu, int men
         #ifdef FEATURE_VERSION_K202
         dy = menuItemSum*(pMe->m_nItemH+6);
 		#else
-        #ifdef FEATURE_VERSION_C260_IC18
+        #if defined (FEATURE_VERSION_C260_IC18) || defined(FEATURE_VERSION_IC241A_MMX)
         dy = menuItemSum*(pMe->m_nItemH+2);
         #else
 		dy = menuItemSum*(pMe->m_nItemH+2);
@@ -4255,7 +4338,7 @@ static void CameraApp_SetPopMenuRect(CCameraApp *pMe, IMenuCtl* popMenu, int men
         #ifdef FEATURE_VERSION_K202
         dy = 4*(pMe->m_nItemH+6);
 		#else
-        #ifdef FEATURE_VERSION_C260_IC18
+        #if defined (FEATURE_VERSION_C260_IC18) || defined(FEATURE_VERSION_IC241A_MMX)
         dy = 4*(pMe->m_nItemH+2);
         #else
 		dy = 4*(pMe->m_nItemH+2);
@@ -4367,6 +4450,7 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
 	        break;
 	}
 
+#if !defined (FEATURE_VERSION_IC241A_MMX)
 #if defined(FEATURE_VERSION_X3)
 	// size cfgID
 	(void)ICONFIG_GetItem(pMe->m_pConfig,
@@ -4512,8 +4596,8 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
 #endif	
 
 //Add By zzg 2012_10_30
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
-#ifdef FEATURE_VERSION_C260_IC18
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337) 
+#if defined (FEATURE_VERSION_C260_IC18)
     // size cfgID
     (void)ICONFIG_GetItem(pMe->m_pConfig,
                           CFGI_CAMERA_SIZE,
@@ -4764,7 +4848,6 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
     }
 #endif
 
-
 #if  defined(FEATURE_VERSION_C01) ||defined(FEATURE_VERSION_C11)||defined(FEATURE_VERSION_C180)
     // size cfgID
     (void)ICONFIG_GetItem(pMe->m_pConfig,
@@ -4814,6 +4897,8 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
 #endif
 
 #endif
+
+#endif      //!defined FEATURE_VERSION_IC241A_MMX
 //#endif
     // sound cfgID
     (void)ICONFIG_GetItem(pMe->m_pConfig,
@@ -4905,14 +4990,44 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
                 continue;
             }
         }
-        
+
+#ifdef FEATURE_VERSION_IC241A_MMX
+        if (i == CAMERACFGSIZE)
+        {
+            continue;
+        }
+#endif
         pTopBarImage = ISHELL_LoadResImage(pMe->m_pShell, 
                                            CAMERAAPP_IMAGE_RES_FILE, 
                                            nResID[i]);
         if(pTopBarImage)
         {
         	//IIMAGE_Draw(pTopBarImage, i*(TOPBAR_ICON_WIDTH+TOPBAR_ICON_SPACE), TOPBAR_ICON_Y);	// + 5
-        	
+
+#ifdef FEATURE_VERSION_IC241A_MMX
+            if (pMe->m_isRecordMode == TRUE) 
+        	{
+        	    if (i == CAMERACFGRESET)
+				{
+				    IIMAGE_Draw(pTopBarImage, (i-3)*(TOPBAR_ICON_WIDTH+TOPBAR_ICON_SPACE), TOPBAR_ICON_Y);	// + 5				
+                }                
+                else
+                {
+				    IIMAGE_Draw(pTopBarImage, i*(TOPBAR_ICON_WIDTH+TOPBAR_ICON_SPACE), TOPBAR_ICON_Y);	// + 5			
+                }    
+			}
+			else
+			{
+			    if ((i == CAMERACFGRESET) || (i == CAMERACFGSELFTIME) || (i == CAMERACFGTONE))
+				{
+				    IIMAGE_Draw(pTopBarImage, (i-1)*(TOPBAR_ICON_WIDTH+TOPBAR_ICON_SPACE), TOPBAR_ICON_Y);	// + 5				
+                }                
+                else
+                {
+				    IIMAGE_Draw(pTopBarImage, i*(TOPBAR_ICON_WIDTH+TOPBAR_ICON_SPACE), TOPBAR_ICON_Y);	// + 5			
+                }                
+			}
+#else
         	if ((pMe->m_isRecordMode == TRUE) && (i == CAMERACFGRESET))
         	{
 				IIMAGE_Draw(pTopBarImage, (i-2)*(TOPBAR_ICON_WIDTH+TOPBAR_ICON_SPACE), TOPBAR_ICON_Y);	// + 5				
@@ -4921,6 +5036,7 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
 			{
 				IIMAGE_Draw(pTopBarImage, i*(TOPBAR_ICON_WIDTH+TOPBAR_ICON_SPACE), TOPBAR_ICON_Y);	// + 5
 			}
+#endif            
             
             IIMAGE_Release(pTopBarImage);
             pTopBarImage = NULL;
@@ -4938,6 +5054,30 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
 			#if defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_S1000T)
 			IIMAGE_Draw(pCameraCFGChooseIcon, (TOPBAR_ICON_SPACE+TOPBAR_ICON_WIDTH)*(pMe->m_nCameraCFG-1), TOPBAR_ICON_Y);	//Add By zzg 2010_07_25
 			#else
+#ifdef FEATURE_VERSION_IC241A_MMX
+            if (pMe->m_isRecordMode == TRUE) 
+        	{
+        	    if (pMe->m_nCameraCFG == CAMERACFGRESET)
+				{
+				    IIMAGE_Draw(pCameraCFGChooseIcon, (pMe->m_nCameraCFG-3)*(TOPBAR_ICON_WIDTH+TOPBAR_ICON_SPACE), TOPBAR_ICON_Y);	// + 5			
+                }                
+                else
+                {
+				    IIMAGE_Draw(pCameraCFGChooseIcon, (TOPBAR_ICON_SPACE+TOPBAR_ICON_WIDTH)*(pMe->m_nCameraCFG), TOPBAR_ICON_Y);			
+                }    
+			}
+			else
+			{
+			    if ((pMe->m_nCameraCFG == CAMERACFGRESET) || (pMe->m_nCameraCFG == CAMERACFGSELFTIME) || (pMe->m_nCameraCFG == CAMERACFGTONE))
+				{
+				    IIMAGE_Draw(pCameraCFGChooseIcon, (TOPBAR_ICON_SPACE+TOPBAR_ICON_WIDTH)*(pMe->m_nCameraCFG-1), TOPBAR_ICON_Y);
+                }                
+                else
+                {
+				    IIMAGE_Draw(pCameraCFGChooseIcon, (TOPBAR_ICON_SPACE+TOPBAR_ICON_WIDTH)*(pMe->m_nCameraCFG), TOPBAR_ICON_Y);			
+                }                
+			}
+#else            
 			if ((pMe->m_isRecordMode == TRUE) && (pMe->m_nCameraCFG == CAMERACFGRESET))
         	{
 				IIMAGE_Draw(pCameraCFGChooseIcon, (pMe->m_nCameraCFG-2)*(TOPBAR_ICON_WIDTH+TOPBAR_ICON_SPACE), TOPBAR_ICON_Y);	// + 5				
@@ -4946,6 +5086,7 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
             {
             	IIMAGE_Draw(pCameraCFGChooseIcon, (TOPBAR_ICON_SPACE+TOPBAR_ICON_WIDTH)*(pMe->m_nCameraCFG), TOPBAR_ICON_Y);
 			}
+#endif            
             #endif
 	        IIMAGE_Release(pCameraCFGChooseIcon);
 	        pCameraCFGChooseIcon = NULL;
