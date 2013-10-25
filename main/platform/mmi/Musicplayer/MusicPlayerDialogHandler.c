@@ -667,7 +667,7 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
 
 #endif//FEATURE_LCD_TOUCH_ENABLE
 
-#ifdef FEATURE_VERSION_C337
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
         case EVT_KEY_PRESS:	
 			if((wParam == AVK_LEFT) ||(wParam == AVK_RIGHT))
 			{
@@ -722,7 +722,7 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
 			 break;
 #endif						
         case EVT_KEY:
-#ifdef FEATURE_VERSION_C337
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
             {
                 uint32 keycurrent_time= GETUPTIMEMS();	
 			     if(keycurrent_time - pMe->keystart_time > 1000)//long press	
@@ -3036,7 +3036,7 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
         ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_DrawImageWithOffset,pMe);
 		ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_Next_Space,pMe);
 
-		#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_K202_LM129C)
+		#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_K202_LM129C) || defined(FEATURE_VERSION_IC241A_MMX)
 		#else
         ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_DrawForwardImage, pMe);
         ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_DrawRewindImage, pMe);
@@ -3127,7 +3127,7 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
 		return TRUE;
 	 }        
 
-	#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+	#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_IC241A_MMX)
 	case AVK_POUND:
 	#elif defined(FEATURE_VERSION_K202_LM129C) //compatiable with lm126c
 	case AVK_POUND:
@@ -3177,7 +3177,7 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
          IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);//wlh 20090415 mod true -> false
          return TRUE;
 
-	#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+	#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_IC241A_MMX)
 	case AVK_STAR:
 	#elif defined(FEATURE_VERSION_K202_LM129C) //compatiable with lm126c
 	case AVK_STAR:
@@ -3271,7 +3271,7 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
     case AVK_FFWD:
 #endif		
     case AVK_LEFT:
-#ifdef FEATURE_VERSION_C337
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
         if(pMe->m_bPlaying && pMe->m_pMedia)
         {
             //MP3_DrawImage(pMe, IDI_REWIND_PRESS, REWIND_X,REWIND_Y);
@@ -3316,7 +3316,7 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
     case AVK_RWD:
 #endif		    
     case AVK_RIGHT:    
-#ifdef FEATURE_VERSION_C337	
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
         if(pMe->m_bPlaying && pMe->m_pMedia)
         {
             //MP3_DrawImage(pMe, IDI_FORWARD_PRESS, FORWARD_X,FORWARD_Y);
@@ -3356,7 +3356,7 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
 #endif				
         return TRUE;
 
-#ifdef FEATURE_VERSION_C337
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 	case AVK_DOWN:	
 #else
 	case AVK_CLR:	
@@ -3379,8 +3379,10 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
             ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_DrawImageWithOffset,pMe);
 
 			#ifndef FEATURE_VERSION_C337
+            #ifndef FEATURE_VERSION_IC241A_MMX
             ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_DrawForwardImage, pMe);
             ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_DrawRewindImage, pMe);
+            #endif
 			#endif
 			
 			ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_EnableKey, pMe);		//Add By zzg 2010_08_18
@@ -3402,15 +3404,17 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
                 }
             }
        	}       
-#ifndef FEATURE_VERSION_C337    
+#ifndef FEATURE_VERSION_C337  
+#ifndef FEATURE_VERSION_IC241A_MMX
 	   else
        {
           CLOSE_DIALOG(DLGRET_CANCELED);
        }
+#endif       
 #endif
 	   return TRUE;
 	   
-#ifdef FEATURE_VERSION_C337
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 	case AVK_CLR:		
        if(pMe->m_bPlaying||pMe->m_bPaused)
        {
@@ -3420,9 +3424,11 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
             ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_DrawImageWithOffset,pMe);
 
 			#ifndef FEATURE_VERSION_C337
+            #ifndef FEATURE_VERSION_IC241A_MMX
             ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_DrawForwardImage, pMe);
             ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_DrawRewindImage, pMe);
 			#endif
+            #endif
 			
 			ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_EnableKey, pMe);		//Add By zzg 2010_08_18
             //ֹͣ
@@ -3450,7 +3456,7 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
 #endif
 	   
 
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_K202_LM129C)//xxzhen
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_K202_LM129C) || defined(FEATURE_VERSION_IC241A_MMX)//xxzhen
 #else
     case AVK_POUND:
         if(pMe->m_bPlaying && pMe->m_pMedia)
@@ -3505,7 +3511,7 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
 #endif
 
 	//Add By zzg 2012_11_10
-#ifdef FEATURE_VERSION_C337
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 	case AVK_UP:
 	{
 		switch (pMe->m_nPlayMode)
@@ -6158,7 +6164,7 @@ static void MP3_DrawPlayerWindows(CMusicPlayer *pMe)
         MSG_FATAL("PLAY_X=%d----PLAY_Y=%d",PLAY_X,PLAY_Y,0);  
 	}
 
-	#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_K202_LM129C)
+	#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_K202_LM129C) || defined(FEATURE_VERSION_IC241A_MMX)
 	#else
 	MP3_DrawRewindImage(pMe);
     MP3_DrawForwardImage(pMe);

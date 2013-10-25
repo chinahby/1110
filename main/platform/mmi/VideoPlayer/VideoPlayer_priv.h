@@ -40,7 +40,7 @@
       #error AEECLSID_VIDEOPLAYER must be defined
    #endif
 #endif
-#if defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_C337)
+#if defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 #else
 #define VIDEOPLAYER_HELP
 #endif
@@ -331,7 +331,7 @@
 #define VIDEOPLAYER_NAMEPART_Y 0
 
 //Ê±¼ä
-#if defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_C337)
+#if defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 #define VIDEOPLAYER_TIME_W 50
 #define VIDEOPLAYER_TIME_H 20
 #define VIDEOPLAYER_TIME_X (SCR_W - 100)//50
@@ -1096,7 +1096,7 @@ typedef struct _CVideoPlayer
 
 	CHelpPtr         m_pHelp;
 
-#ifdef FEATURE_VERSION_C337		
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 	uint32 keystart_time;	
     uint32 keyend_time;	
 #endif	

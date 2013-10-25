@@ -122,7 +122,7 @@ static NextFSMAction SettingMenu_StateDateHandler(CSettingMenu *pMe);
 static NextFSMAction SettingMenu_StateLanguageHandler(CSettingMenu *pMe);
 #endif
 
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A)
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)
 static NextFSMAction SettingMenu_StateTrackSmsHandler(CSettingMenu *pMe);
 #endif
 
@@ -319,7 +319,7 @@ NextFSMAction SettingMenu_ProcessState(CSettingMenu *pMe)
             break;
 #endif
 
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A)
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)
    	   case	SETTINGMENUST_TRACKERSMSSETTING: 	//TRRACK SMS…Ë÷√
    	   		retVal = SettingMenu_StateTrackSmsHandler(pMe);
             break;
@@ -1087,7 +1087,7 @@ static NextFSMAction SettingMenu_StatePhoneSettingHandler(CSettingMenu *pMe)
             MOVE_TO_STATE(SETTINGMENUST_DATESETTING)
             return NFSMACTION_CONTINUE;
          #endif
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A)
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)
 		case DLGRET_TRACKERSMSSETTING: 	//TRRACK SMS…Ë÷√
 			MOVE_TO_STATE(SETTINGMENUST_TRACKERSMSSETTING)
             return NFSMACTION_CONTINUE;
@@ -1648,7 +1648,7 @@ static NextFSMAction SettingMenu_StateDateHandler(CSettingMenu *pMe)
 } // StatedateHandler
 
 #endif
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A)
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)
 /*==============================================================================
 ∫Ø ˝£∫
        SettingMenu_StateTrackSmsHandler

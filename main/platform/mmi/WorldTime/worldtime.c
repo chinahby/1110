@@ -449,7 +449,7 @@ static boolean InitWorldTime(CWorldTime *pme)
                                                 NULL,
                                                 0);
             }
-           #if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_REGION_INDIA)
+           #if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_REGION_INDIA) || defined(FEATURE_VERSION_IC241A_MMX)
             if(i == 4)
             {
             	(void)IMENUCTL_AddItem( pme->m_pMenuCity,
@@ -1038,7 +1038,7 @@ static void Draw_TimeZone(CWorldTime *pme)
 		WSTRCPY(Temp,L"6.5");
 	#endif
 	}
-    #if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_REGION_INDIA)
+    #if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_REGION_INDIA) || defined(FEATURE_VERSION_IC241A_MMX)
     else if (pme->m_isIndia)
     {
     
@@ -1172,7 +1172,7 @@ static void WorldTime_DrawNextCity(CWorldTime * pme, boolean left)
         }
 		//Add End
 		
-#if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_REGION_INDIA)
+#if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_REGION_INDIA) || defined(FEATURE_VERSION_IC241A_MMX)
         else if((pme->m_isIndia) && ((pme->m_timeZone == 6)&& (left)))
         {
             pme->m_timeZone = pme->m_timeZone -1 ;
@@ -1204,7 +1204,7 @@ static void WorldTime_DrawNextCity(CWorldTime * pme, boolean left)
         }
 		//Add End
 
-#if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_REGION_INDIA)
+#if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_REGION_INDIA) || defined(FEATURE_VERSION_IC241A_MMX)
         else if((pme->m_isIndia) && ((pme->m_timeZone == 5)&& !(left)))
         {
             pme->m_timeZone = pme->m_timeZone +1 ;
@@ -1232,7 +1232,7 @@ static void WorldTime_DrawNextCity(CWorldTime * pme, boolean left)
 		//Add End
 		*/
 
-#if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_REGION_INDIA)
+#if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_REGION_INDIA) || defined(FEATURE_VERSION_IC241A_MMX)
         else if((pme->m_isIndia) && (((pme->m_timeZone == 5)&&(left))||(((pme->m_timeZone == 6)&& !(left)))))
        
         {
@@ -1261,7 +1261,7 @@ static void WorldTime_DrawNextCity(CWorldTime * pme, boolean left)
         }
 		//Add End
 
-#if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_REGION_INDIA)
+#if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_REGION_INDIA) || defined(FEATURE_VERSION_IC241A_MMX)
         else if(!(pme->m_isIndia)&&(((pme->m_timeZone == 6)&&(left)))||((pme->m_timeZone == 5)&& !(left)))
         {
         	MSG_FATAL("ii.cy:::::%d",pme->m_yBg,0,0);

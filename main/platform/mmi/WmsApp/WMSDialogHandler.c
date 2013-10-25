@@ -125,6 +125,10 @@ extern uint8  g_mmsDataInfoMax;
 #else
 #ifdef FEATURE_VERSION_W021_CT100_QVGA
 #define SENDOPT_TITLELONGER   180
+#elif defined(FEATURE_VERSION_IC241A_MMX)
+#define SENDOPT_TITLELONGER   180
+#else
+#define SENDOPT_TITLELONGER   110
 #endif
 
 #endif
@@ -1082,7 +1086,9 @@ static boolean IDD_MAIN_Handler(void        *pUser,
 #if (!defined FEATURE_CARRIER_THAILAND_HUTCH)
 #if( !defined FEATURE_VERSION_C337)
 #if( !defined FEATURE_VERSION_EC99)
+#if( !defined FEATURE_VERSION_IC241A_MMX)
             MENU_ADDITEM(pMenu, IDS_VOICEMAIL);
+#endif
 #endif
 #endif
 #endif //!defined FEATURE_CARRIER_THAILAND_HUTCH
@@ -1309,7 +1315,7 @@ static boolean IDD_MAIN_Handler(void        *pUser,
                     if(gbWMSDialogLock)
                     {
                         OEMKeyguard_SetState(TRUE);	
-#ifdef FEATURE_VERSION_C337
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 						MSLEEP(500);
 #endif
                         ISHELL_CloseApplet(pMe->m_pShell, TRUE); 
@@ -2753,7 +2759,7 @@ static boolean IDD_MESSAGELIST_Handler(void        *pUser,
 
 						MSG_FATAL("***zzg AVK_SEND CallPhoneNumber 111 m_eMBoxType=%x", pMe->m_eMBoxType, 0, 0);
 
-						#ifdef FEATURE_VERSION_C337
+						#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 						if ((pMe->m_eMBoxType == WMS_MB_INBOX) || (pMe->m_eMBoxType == WMS_MB_OUTBOX))						
 						#else
 						if (pMe->m_eMBoxType == WMS_MB_INBOX)
@@ -3238,7 +3244,7 @@ static boolean IDD_VIEWMSG_Handler(void         *pUser,
 
 					MSG_FATAL("***zzg AVK_SEND CallPhoneNumber 222 m_currState=%x", pMe->m_currState, 0, 0);
 
-					#ifdef FEATURE_VERSION_C337
+					#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 					if ((pMe->m_currState == WMSST_VIEWINBOXMSG) || (pMe->m_currState == WMSST_VIEWOUTBOXMSG))	
 					#else
 					if (pMe->m_currState == WMSST_VIEWINBOXMSG)
@@ -12930,7 +12936,7 @@ static boolean IDD_TEMPLATES_Handler(void   *pUser,
                                               IDS_TEMPLATEHITZ8,
                                               IDS_TEMPLATEHITZ9,
                                               0};
-                #elif defined(FEATURE_VERSION_C337)
+                #elif defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
                 uint16  nCmdID[PHRASE_MAX] = {IDS_TEMPLATETATA1,
                                               IDS_TEMPLATETATA2,
                                               IDS_TEMPLATETATA3,

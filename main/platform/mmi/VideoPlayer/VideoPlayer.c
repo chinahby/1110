@@ -367,7 +367,7 @@ static int VideoPlayer_InitAppData(CVideoPlayer *pMe)
     pMe->Is848Busy      = FALSE;
 	pMe->m_InitFailed   = TRUE;
 
-#ifdef FEATURE_VERSION_C337		
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 	pMe->keystart_time = 0;	
     pMe->keyend_time = 0;
 #endif

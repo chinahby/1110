@@ -403,7 +403,7 @@ static  boolean VPDVideoPlayer_HandleEvent(CVideoPlayer *pMe,AEEEvent eCode,uint
             return TRUE;
 
 
-#ifdef FEATURE_VERSION_C337
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
         case EVT_KEY_PRESS:	
 			if((wParam == AVK_LEFT) ||(wParam == AVK_RIGHT))
 			{
@@ -487,7 +487,7 @@ static  boolean VPDVideoPlayer_HandleEvent(CVideoPlayer *pMe,AEEEvent eCode,uint
         case EVT_KEY: 
             if(pMe->IsGallery)
             {
-#ifdef FEATURE_VERSION_C337
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
             {
                 uint32 keycurrent_time= GETUPTIMEMS();	
 			     if(keycurrent_time - pMe->keystart_time > 1000)//long press	
@@ -1139,7 +1139,7 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
             return TRUE;
 			                           
         //前进
-#if defined(FEATURE_VERSION_C337) 
+#if defined(FEATURE_VERSION_C337)  || defined(FEATURE_VERSION_IC241A_MMX)
 		case AVK_RIGHT:
 #elif defined(FEATURE_VERSION_C316) 
 		case AVK_DOWN:
@@ -1174,7 +1174,7 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
             return TRUE;
                 
         //后退
-#if defined(FEATURE_VERSION_C337)
+#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 		case AVK_LEFT:
 #elif defined(FEATURE_VERSION_C316) 
 	    case AVK_UP:
@@ -1208,7 +1208,7 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
             return TRUE;     		
                
         //播放上一首   
-#ifdef FEATURE_VERSION_C337
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 		case AVK_UP:
 #else
         case AVK_LEFT:
@@ -1254,7 +1254,7 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
             return TRUE;
        
         //播放下一首   
-#ifdef FEATURE_VERSION_C337
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 		case AVK_DOWN:
 #else        
         case AVK_RIGHT:  
@@ -1302,7 +1302,7 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
             return TRUE;          
           
         //增大音量   
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316) 
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_IC241A_MMX) 
 		case AVK_POUND:
 #else
         case AVK_UP: 
@@ -1341,7 +1341,7 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
             return TRUE;          
           
         //减小音量  
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316) 
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)  || defined(FEATURE_VERSION_IC241A_MMX)
 		case AVK_STAR:
 #else
         case AVK_DOWN: 
@@ -1394,7 +1394,7 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
         case AVK_GSENSOR_LEFT:
         case AVK_GSENSOR_RIGHT: 
 
-#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_C316)
+#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_IC241A_MMX)
 		case AVK_0:
 		case AVK_SELECT:
 #else

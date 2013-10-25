@@ -501,7 +501,7 @@ static boolean dialog_handler_of_state_main( Recorder* pme, AEEEvent evt, uint16
 			{
 				AECHAR wszTitle[40] = {0};
 
-				#ifdef FEATURE_VERSION_C337
+				#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 				ISHELL_LoadResString( pme->a.m_pIShell,
                                       AEE_RECORDER_RES_FILE,
                                       IDS_TITLE_C337,
@@ -4704,7 +4704,7 @@ static boolean dialog_handler_of_state_storage_setup( Recorder* pme, AEEEvent ev
     			#else
     			{
     				AECHAR wszTitle[16] = {0};
-					#ifdef FEATURE_VERSION_C337
+					#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 					ISHELL_LoadResString( pme->a.m_pIShell,
                                           AEE_RECORDER_RES_FILE,
                                           IDS_TITLE_C337,

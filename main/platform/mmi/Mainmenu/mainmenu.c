@@ -910,7 +910,7 @@ static boolean MainMenu_ListMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
             }
      //       ERR("MainMenu_ListMenuHandler EVT_DIALOG_INIT",0,0,0);
             //IMENUCTL_SetTitle(pMenu, MAINMENU_RES_FILE_LANG, IDS_MENU_LIST, NULL);                
-            #ifdef FEATURE_VERSION_C337
+            #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 			IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_PHONEBOOK, IDS_PHONEBOOK, NULL, 0);
 			#else
             IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_CONTACTS, IDS_MAIN_MENU_CONTACTS, NULL, 0);
@@ -1023,7 +1023,7 @@ static int StartApplet(MainMenu *pMe, int i)
     int Result = EUNSUPPORTED;
     switch(i)
     {
-    	#ifdef FEATURE_VERSION_C337
+    	#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 		case IDS_PHONEBOOK:
 		#endif
         case IDS_MAIN_MENU_CONTACTS:

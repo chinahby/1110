@@ -207,7 +207,7 @@ static boolean  HandleDateDialogEvent(CSettingMenu *pMe,
 );
 #endif
 
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A)
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)
 static boolean   HandleTrackSmsDialogEvent(CSettingMenu *pMe,
     AEEEvent eCode,
     uint16 wParam,
@@ -590,7 +590,7 @@ boolean SettingMenu_RouteDialogEvent(CSettingMenu *pMe,
         case IDD_DATESETTING:
             return HandleDateDialogEvent(pMe,eCode,wParam,dwParam);
 #endif
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A)
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)
 		case IDD_TRACKSMSTIME_MENU:
 			return HandleTrackSmsDialogEvent(pMe,eCode,wParam,dwParam);
 #endif
@@ -787,9 +787,11 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
 
 #ifndef FEATURE_VERSION_H19C 
 #ifndef FEATURE_VERSION_C337
+#ifndef FEATURE_VERSION_IC241A_MMX
 #ifndef FEATURE_VERSION_K212
 #ifndef FEATURE_VERSION_EC99
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SCENEMODE_TITLE, IDS_SCENEMODE_TITLE, NULL, 0);
+#endif
 #endif
 #endif
 #endif
@@ -2062,7 +2064,7 @@ static boolean  HandlePhoneSettingDialogEvent(CSettingMenu *pMe,
                     CLOSE_DIALOG(DLGRET_DATESETTING)
                     break;
 #endif
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A)
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)
 		 	   case IDS_SMS_TREACKER_TIME:     //TRRACK SMSÉèÖÃ
 			   		CLOSE_DIALOG(DLGRET_TRACKERSMSSETTING)
 			   		break;
@@ -2975,7 +2977,7 @@ static boolean  HandleCallForwardSelDialogEvent(CSettingMenu *pMe,
         case EVT_DIALOG_INIT:
             pMe->m_input_mode = 0;
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_CALLFORWARD_START, IDS_CALLFORWARD_START, NULL, 0);
-            #ifdef FEATURE_VERSION_C337
+            #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_CALLFORWARD_DEACTIVATE, IDS_CALLFORWARD_DEACTIVATE, NULL, 0);
             #else
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_CALLFORWARD_CANCEL, IDS_CALLFORWARD_CANCEL, NULL, 0);
@@ -4381,7 +4383,7 @@ static boolean  HandleDateDialogEvent(CSettingMenu *pMe,
 
 #endif
 
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A)
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)
 
 
 static boolean   HandleTrackSmsDialogEvent(CSettingMenu *pMe,

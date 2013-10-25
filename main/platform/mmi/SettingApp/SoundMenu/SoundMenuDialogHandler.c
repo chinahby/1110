@@ -479,7 +479,7 @@ static boolean  HandleMainDialogEvent(CSoundMenu *pMe,
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
 #endif
-#ifdef FEATURE_VERSION_C337
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY|MP_ACTIVE_NO_REDRAW|MP_ICON_ANIMATED);
 #else
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY|MP_ACTIVE_NO_REDRAW);
@@ -1093,7 +1093,9 @@ static boolean  HandleSoundMenuProfilesDialogEvent(CSoundMenu *pMe,
 #endif
 #if !defined(FEATURE_LANG_ARABIC)
 #ifndef FEATURE_VERSION_C337
+#ifndef FEATURE_VERSION_IC241A_MMX
             Sound_App_Add_Menu(pMenu,IDS_MISSEDCALL_ALERT);
+#endif
 #endif
 #endif
             //if (pMe->m_bNaturalStart == NORMAL_ENTRY)
@@ -1104,7 +1106,7 @@ static boolean  HandleSoundMenuProfilesDialogEvent(CSoundMenu *pMe,
             //Sound_App_Add_Menu(pMenu,IDS_KEYTONE_LENGTH);
 
 	
-			#if defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_C316)
+			#if defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_C316) || defined(FEATURE_VERSION_IC241A_MMX)
 			/*
 			if (pMe->m_ePreState != DLGRET_SCENEMODESUB)
 			{
@@ -1118,7 +1120,9 @@ static boolean  HandleSoundMenuProfilesDialogEvent(CSoundMenu *pMe,
 			#endif            
 
 #ifndef FEATURE_VERSION_C337
+#ifndef FEATURE_VERSION_IC241A_MMX
             Sound_App_Add_Menu(pMenu,IDS_POWERONOFF_ALERT);
+#endif
 #endif
            // Sound_App_Add_Menu(pMenu,IDS_FMRADIO_OPTION_MENU_PLAY_MODLE);
             return TRUE;
@@ -1407,7 +1411,7 @@ static boolean  HandleHintDialogEvent(CSoundMenu *pMe,
             }
 #else
            #if defined(FEATURE_VERSION_W027)||defined(FEATURE_VERSION_C117)||defined(FEATURE_VERSION_M74)
-           #ifdef FEATURE_VERSION_C260_IC18
+           #if defined (FEATURE_VERSION_C260_IC18) || defined (FEATURE_VERSION_IC241A_MMX)
           	Sound_App_Add_Menu(pMenu,IDS_ALERTTYPE_VIBANDRING); 
            #endif
            #elif defined(FEATURE_VERSION_V3CM301)
@@ -3868,7 +3872,7 @@ static void VolumePreview(void *pUser)
             pMe->m_RingerID[pMe->m_CurProfile].midID = OEMNV_DEFAULTRINGER;
         }
 #endif
-		#if defined( FEATURE_VERSION_K202_LM129C)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_20D)
+		#if defined( FEATURE_VERSION_K202_LM129C)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_IC241A_MMX)
 		//IALERT_StartRingerAlert(pMe->m_pAlert, OEMNV_DEFAULTRINGER);
 		IALERT_StartRingerAlert(pMe->m_pAlert, pMe->m_RingerID[pMe->m_CurProfile].midID);
 		#else

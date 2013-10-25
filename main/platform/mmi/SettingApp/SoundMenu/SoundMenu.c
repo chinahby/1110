@@ -1254,7 +1254,7 @@ void SoundMenu_InitRingerList(CSoundMenu *pMe)
                    {
                        AECHAR memo[64] = {0};
 
-					   #ifdef FEATURE_VERSION_C337
+					   #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 					   if( ISHELL_LoadResString( pMe->m_pShell,
                                              APP_RECORDER_RES_FILE,
                                              IDS_RECORDER_MEMO_RINGER_NAME_C337,
@@ -1284,7 +1284,7 @@ void SoundMenu_InitRingerList(CSoundMenu *pMe)
                        }
                        else
                        {
-                       		#ifdef FEATURE_VERSION_C337
+                       		#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 							(void)WSTRCPY( ri.szName, L"Record");
 							#else
                            (void)WSTRCPY( ri.szName, L"Voice memo");

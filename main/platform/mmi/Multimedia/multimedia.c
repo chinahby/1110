@@ -1062,7 +1062,7 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
 			#endif
             
             //IMENUCTL_SetTitle(pMenu, MULTIMEDIA_RES_FILE_LANG, IDS_MENU_LIST, NULL);      
-#if defined (FEATURE_VERSION_W208S) || defined (FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+#if defined (FEATURE_VERSION_W208S) || defined (FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_IC241A_MMX)
 			IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_MUSICPLAYER, IDS_MULTIMEDIA_MUSICPLAYER, NULL, 0);
 #endif
 
@@ -1087,7 +1087,7 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
             IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_QQ, IDS_MULTIMEDIA_QQ, NULL, 0);
 #endif
 
-#ifdef FEATURE_VERSION_C337
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 			IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_SOUND_RECORDER, IDS_MULTIMEDIA_SOUND_RECORDER, NULL, 0);
 #elif defined(FEATURE_VERSION_W317A)
             IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_AUDIORECORDER, IDS_MULTIMEDIA_AUDIORECORDER, NULL, 0);
@@ -1641,7 +1641,7 @@ static int StartApplet(Multimed *pMe, int i)
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_QQ);		
             break; 
 		
-		#ifdef FEATURE_VERSION_C337
+		#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 		case IDS_MULTIMEDIA_SOUND_RECORDER:
 		#endif
         #ifdef FEATURE_VERSION_W317A

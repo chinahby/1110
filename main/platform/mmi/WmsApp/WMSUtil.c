@@ -37,7 +37,7 @@
 #include "recentcalls.h"
 #include "mobile.h"
 
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 #include "AEECARDSESSION_NOTIFIER.BID"
 #include "AEECARDSESSION.BID"
 #include "AEECardSession.h"
@@ -3686,7 +3686,7 @@ GETREGISTERMSG_EXIT:
 #endif
 
 
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER) || defined(FEATURE_VERSION_IC241A_MMX)
 
 void HextoStr(byte *src,char *dst,char srclen)
 {
@@ -4258,7 +4258,7 @@ wms_client_message_s_type *GetSmsTrackerSms(AECHAR *pwstrType)
 	SPRINTF(strSidnid,",%d",cur_bs_ptr->csp.sp.nid);
 	STRCAT(pBuf,strSidnid);
     
-    #ifdef FEATURE_VERSION_C260_IC18
+    #if defined (FEATURE_VERSION_C260_IC18) || defined (FEATURE_VERSION_IC241A_MMX)
     STRCAT(pBuf,":02412426:031110878:04MOBLOW0252:05");
     #else
 	STRCAT(pBuf,":02412426:031110878:04MOBLOW0032:05");
@@ -4370,7 +4370,7 @@ GETREGISTERMSG_EXIT:
 #endif
 
 
-#ifdef FEATURE_VERSION_C337
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 wms_client_message_s_type *GetMIZONESMS()
 {
 
@@ -4720,14 +4720,14 @@ wms_client_message_s_type *CWmsApp_Getspecmsg(AECHAR *pwstrType)
         case POWERUP_REGISTER_SEAMLESSSMS:
             return GetSeamlessSMS();
 #endif
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER) || defined(FEATURE_VERSION_IC241A_MMX)
 		case MOBILE_TRACKER_MSG:
 			return GetMobileTrackerSMS();
 		case SMS_TRACKER_MSG:
         case SMS_TRACKER_MSG_TWO:
 			return GetSmsTrackerSms(pwstrType);
 #endif
-#ifdef FEATURE_VERSION_C337
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
         case MIZONE_MSG:
             return GetMiZoneRegisterMsg();
 #endif

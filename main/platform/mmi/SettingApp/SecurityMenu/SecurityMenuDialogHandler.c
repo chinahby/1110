@@ -152,7 +152,7 @@ static boolean  HandleChangeCodeDialogEvent(CSecurityMenu *pMe,
                                         AEEEvent eCode,
                                         uint16 wParam,
                                         uint32 dwParam);
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_IC241A_MMX)
 static boolean  SecurityMobileTrackerHandler(CSecurityMenu *pMe,
                                         AEEEvent eCode,
                                         uint16 wParam,
@@ -369,7 +369,7 @@ boolean SecurityMenu_RouteDialogEvent(CSecurityMenu *pMe,
 
         case IDD_CHANGE_CODE:
             return HandleChangeCodeDialogEvent(pMe,eCode,wParam,dwParam);
-		#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+		#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_IC241A_MMX)
 		case  IDD_MOBILE_TRACKER_DIALOG:
 			return SecurityMobileTrackerHandler(pMe,eCode,wParam,dwParam);
 		#endif
@@ -574,7 +574,7 @@ static boolean  SecurityMainDlgHandler(CSecurityMenu *pMe,
                 case IDS_DELETE:
                     CLOSE_DIALOG(DLGRET_DELETE)
                     break;
-				#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+				#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_IC241A_MMX)
 				case IDS_MOBILE_TRACKER:
 					CLOSE_DIALOG(DLGRET_MOBILE_TRACKER)
 					break;
@@ -2766,7 +2766,7 @@ static boolean  SecurityPinChangeDlgHandler(CSecurityMenu *pMe,
 
 }
 
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_IC241A_MMX)
 /*==============================================================================
 º¯Êý£º
        SecurityMobileTrackerHandler
