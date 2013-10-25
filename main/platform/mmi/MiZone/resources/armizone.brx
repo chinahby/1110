@@ -1,0 +1,421 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="armizone" VERSION="1">
+<Strings Encoding="ISOLATIN1">
+	<STRING Id="1" Name="IDS_MIZONETITLE">
+		<Text>Fun Zone</Text>
+	</STRING>
+	<STRING Id="2" Name="IDS_FUNZONE_1">
+		<Text>Cricket Alerts</Text>
+	</STRING>
+	<STRING Id="3" Name="IDS_FUNZONE_2">
+		<Text>Love Guru</Text>
+	</STRING>
+	<STRING Id="4" Name="IDS_FUNZONE_3">
+		<Text>Naughty Jokes </Text>
+	</STRING>
+	<STRING Id="5" Name="IDS_FUNZONE_4">
+		<Text>Mehfil-e-Timepass</Text>
+	</STRING>
+	<STRING Id="6" Name="IDS_FUNZONE_5">
+		<Text>Astrology</Text>
+	</STRING>
+	<STRING Id="7" Name="IDS_FUNZONE_6">
+		<Text>Art of Living</Text>
+	</STRING>
+	<STRING Id="8" Name="IDS_FUNZONE_7">
+		<Text>Daal Mein Kala</Text>
+	</STRING>
+	<STRING Id="9" Name="IDS_FUNZONE_8">
+		<Text>Friends Chat</Text>
+	</STRING>
+	<STRING Id="10" Name="IDS_FUNZONE_9">
+		<Text>Devotional</Text>
+	</STRING>
+	<STRING Id="11" Name="IDS_FUNZONE_10">
+		<Text>Wellness</Text>
+	</STRING>
+	<STRING Id="12" Name="IDS_FUNZONE_11">
+		<Text>News</Text>
+	</STRING>
+	<STRING Id="13" Name="IDS_FUNZONE_12">
+		<Text>Pull Services</Text>
+	</STRING>
+	<STRING Id="14" Name="IDS_AVK5">
+		<Text>5 key</Text>
+	</STRING>
+	<STRING Id="15" Name="IDS_AVK6">
+		<Text>6 key</Text>
+	</STRING>
+	<STRING Id="16" Name="IDS_AVK7">
+		<Text>7 key</Text>
+	</STRING>
+	<STRING Id="17" Name="IDS_AVK8">
+		<Text>8 key</Text>
+	</STRING>
+	<STRING Id="18" Name="IDS_AVK9">
+		<Text>9 key</Text>
+	</STRING>
+	<STRING Id="19" Name="IDS_STAR">
+		<Text>* key</Text>
+	</STRING>
+	<STRING Id="20" Name="IDS_POUND">
+		<Text># key</Text>
+	</STRING>
+	<STRING Id="21" Name="IDS_AVKOK">
+		<Text>Ok key</Text>
+	</STRING>
+	<STRING Id="22" Name="IDS_AVKSEND">
+		<Text>Call key</Text>
+	</STRING>
+	<STRING Id="23" Name="IDS_CALLTEST">
+		<Text>Call test</Text>
+	</STRING>
+	<STRING Id="24" Name="IDS_YAMAHAINTEST">
+		<Text>Sound is testing...</Text>
+	</STRING>
+	<STRING Id="25" Name="IDS_AVKUP">
+		<Text>Up Key</Text>
+	</STRING>
+	<STRING Id="26" Name="IDS_AVKDOWN">
+		<Text>Down Key</Text>
+	</STRING>
+	<STRING Id="27" Name="IDS_AVKLEFT">
+		<Text>Left key</Text>
+	</STRING>
+	<STRING Id="28" Name="IDS_AVKRIGHT">
+		<Text>Right key</Text>
+	</STRING>
+	<STRING Id="29" Name="IDS_RESTORE_FACTORY">
+		<Text>Restore fac. setting</Text>
+	</STRING>
+	<STRING Id="35" Name="IDS_KEYPRESS">
+		<Text>Press any key test</Text>
+	</STRING>
+	<STRING Id="36" Name="IDS_VIBRATEINTEST">
+		<Text>Vibration is testing...</Text>
+	</STRING>
+	<STRING Id="37" Name="IDS_BACKLIGHTON">
+		<Text>1: open backlight</Text>
+	</STRING>
+	<STRING Id="38" Name="IDS_BACKLIGHTOFF">
+		<Text>2: close backlight</Text>
+	</STRING>
+	<STRING Id="39" Name="IDS_LEDLIGHTON">
+		<Text>3: open LED</Text>
+	</STRING>
+	<STRING Id="40" Name="IDS_LEDLIGHTOFF">
+		<Text>4: close LED</Text>
+	</STRING>
+	<STRING Id="41" Name="IDS_RED">
+		<Text>Red</Text>
+	</STRING>
+	<STRING Id="42" Name="IDS_GREEN">
+		<Text>Green</Text>
+	</STRING>
+	<STRING Id="43" Name="IDS_BLUE">
+		<Text>Blue</Text>
+	</STRING>
+	<STRING Id="45" Name="IDS_WHITE">
+		<Text>White</Text>
+	</STRING>
+	<STRING Id="46" Name="IDS_YELLOW">
+		<Text>Yellow</Text>
+	</STRING>
+	<STRING Id="47" Name="IDS_PURPLE">
+		<Text>Purple</Text>
+	</STRING>
+	<STRING Id="48" Name="IDS_FM_ON">
+		<Text>(Press 1)FM playing!</Text>
+	</STRING>
+	<STRING Id="49" Name="IDS_FM_OFF">
+		<Text>(Press 2)FM stop!</Text>
+	</STRING>
+	<STRING Id="50" Name="IDS_FM_TEST">
+		<Text>FM test</Text>
+	</STRING>
+	<STRING Id="51" Name="IDS_VERSION_TEST">
+		<Text>Version test</Text>
+	</STRING>
+	<STRING Id="52" Name="IDS_SW_VERSION">
+		<Text>SW ver:</Text>
+	</STRING>
+	<STRING Id="53" Name="IDS_ESN">
+		<Text>ESN:</Text>
+	</STRING>
+	<STRING Id="54" Name="IDS_UIM">
+		<Text>UIM card:I'm here!</Text>
+	</STRING>
+	<STRING Id="55" Name="IDS_NOUIM">
+		<Text>NO UIM CARD!</Text>
+	</STRING>
+	<STRING Id="56" Name="IDS_NOCARD_VER">
+		<Text>NO UIM VER!</Text>
+	</STRING>
+	<STRING Id="57" Name="IDS_AVKINFO">
+		<Text>Center Key</Text>
+	</STRING>
+	<STRING Id="58" Name="IDS_LEDON">
+		<Text>3: open three Led</Text>
+	</STRING>
+	<STRING Id="59" Name="IDS_LEDOFF">
+		<Text>4: close three Led</Text>
+	</STRING>
+	<STRING Id="60" Name="IDS_FLIPTEST">
+		<Text>Close and open flip</Text>
+	</STRING>
+	<STRING Id="61" Name="IDS_FLIPTEST_PASS">
+		<Text>Flip test is pass</Text>
+	</STRING>
+	<STRING Id="62" Name="IDS_FLIPTEST_FAIL">
+		<Text>Flip test is fail</Text>
+	</STRING>
+	<STRING Id="63" Name="IDS_FLIPTEST_TITLE">
+		<Text>Flip test</Text>
+	</STRING>
+	<STRING Id="101" Name="IDS_FUNZONE_ACTIVATE1">
+		<Text>Welcome to Cricket Alerts. Herein you will get Cricket score updates on SMS for all India matches. During non-match days, you will receive Cricket News and Cricket Trivia. \\Subscription charges: Rs.30 for 30 days and Rs.3 for request initiation.</Text>
+	</STRING>
+	<STRING Id="102" Name="IDS_FUNZONE_ACTIVATE2">
+		<Text>Welcome to Love Guru. Herein, you will get collection of love shayari, impressive pick up lines and love tips to help you amuse your loved one. From friends to romantics, everyone can express their feelings through this pack. \\Subscription charges: Rs.30 for 30 days and Rs.3 for request initiation.</Text>
+	</STRING>
+	<STRING Id="103" Name="IDS_FUNZONE_ACTIVATE3">
+		<Text>Welcome to Naughty Jokes. Herein, you will get a collection of jokes containing some truly dirty works of humor that will make you wet yourself laughing. \\Subscription charges: Rs.30 for 30 days and Rs.3 for request initiation.</Text>
+	</STRING>
+	<STRING Id="104" Name="IDS_FUNZONE_ACTIVATE4">
+		<Text>Welcome to Mehfil-Timepass. If comedy is king then this pack rules. It is a complete comedy package on SMS aimed at tickling funny bone of a subscriber.Here in you will get collection of shayari ranging from Love, Friendship to Funny! \\Subscription charges: Rs.30 for 30 days and Rs.3 for request initiation.</Text>
+	</STRING>
+	<STRING Id="105" Name="IDS_FUNZONE_ACTIVATE5">
+		<Text>Welcome to the Astrology pack. Herein, subscribers would get his/ her daily Astrology based predictions basis his sun sign/ moon sign, which will be based on his/ her Date of Birth. \\Subscription charges: Rs.30 for 30 days and Rs.3 for request initiation.</Text>
+	</STRING>
+	<STRING Id="106" Name="IDS_FUNZONE_ACTIVATE6">
+		<Text>Welcome to Art of Living pack. With Art of Living SMS pack, you will get motivational quotes from Sri Sri Ravi Shankar, benefits of meditation, various kriyas and yoga etc; which include breathing techniques, meditation and yoga. \\Subscription charges: Rs.30 for 30 days and Rs.3 for request initiation.</Text>
+	</STRING>
+	<STRING Id="107" Name="IDS_FUNZONE_ACTIVATE7">
+		<Text>Welcome to Daal Mein Kala pack. Herein, you will be getting exciting Movie goof ups, mistakes in Print Headlines, unrelated quotes; senseless trivia on screen etc. \\Subscription charges: Rs.30 for 30 days and Rs.3 for request initiation.</Text>
+	</STRING>
+	<STRING Id="108" Name="IDS_FUNZONE_ACTIVATE8">
+		<Text>Welcome to Friends Chat. An exciting and groovy service where you can make new friends and connect with them. A service which allows you to create your own profile, surf through profiles wherein you would be able to talk to desired profile one to one anonymously. \\Subscription charges: Rs.30 for 30 days and Rs.3 for request initiation. Call charges: Upto Rs.3 per minute.</Text>
+	</STRING>
+	<STRING Id="109" Name="IDS_FUNZONE_ACTIVATE9">
+		<Text>Welcome to Devotional pack. Herein, you will get your daily dose of bhakti and devotion. A service where you can get Mantras, Shalokas, Chalisas and Trivias of various Gods like Sai Baba, Lord Krishna, Shiva, Ganesha, Hanumana and versus of Geeta Saar. \\Subscription charges: Rs.30 for 30 days and Rs.3 for request initiation. </Text>
+	</STRING>
+	<STRING Id="110" Name="IDS_FUNZONE_ACTIVATE10">
+		<Text>Welcome to Wellness pack. So now you can pamper yourself wherein, you will get tips on grooming, fashion, skin care, health, style, home décor and much more.  \\Subscription charges: Rs.30 for 30 days and Rs.3 for request initiation.</Text>
+	</STRING>
+	<STRING Id="111" Name="IDS_FUNZONE_ACTIVATE11">
+		<Text>Welcome to News pack. Herein, you will get latest news from all over the world. So keep yourself updated with latest happenings around you.  \\Subscription charges: Rs.30 for 30 days and Rs.3 for request initiation.</Text>
+	</STRING>
+	<STRING Id="112" Name="IDS_FUNZONE_ACTIVATE12">
+		<Text>1</Text>
+	</STRING>
+	<STRING Id="151" Name="IDS_FUNZONE_ENDACTIVATE1_1">
+		<Text>Thanks for subscribing to Cricket alerts. \\You will be charged Rs.30 for 30 days. To unsubscribe SMS STOPCRI to %s. \\Cost of SMS: Rs.3 per SMS.</Text>
+	</STRING>
+	<STRING Id="152" Name="IDS_FUNZONE_ENDACTIVATE1_2">
+		<Text>Thanks for subscribing to Love Guru pack. \\You will be charged Rs.30 for 30 days. To unsubscribe SMS STOPLG to %s. \\Cost of SMS: Rs.3 per SMS.</Text>
+	</STRING>
+	<STRING Id="153" Name="IDS_FUNZONE_ENDACTIVATE1_3">
+		<Text>Thanks for subscribing to Naughty Jokes pack. \\You will be charged Rs.30 for 30 days. To unsubscribe SMS STOPNJ to %s. \\Cost of SMS: Rs.3 per SMS.</Text>
+	</STRING>
+	<STRING Id="154" Name="IDS_FUNZONE_ENDACTIVATE1_4">
+		<Text>Thanks for subscribing to Mehfil-E-Timpass pack. \\You will be charged Rs.30 for 30 days. To unsubscribe SMS STOPMET to %s. \\Cost of SMS: Rs.3 per SMS.</Text>
+	</STRING>
+	<STRING Id="155" Name="IDS_FUNZONE_ENDACTIVATE1_5">
+		<Text>Thanks for subscribing to Astrology pack. \\You will be charged Rs.30 for 30 days. \\To unsubscribe SMS STOPAST to %s.  Cost of SMS: Rs.3 per SMS.</Text>
+	</STRING>
+	<STRING Id="156" Name="IDS_FUNZONE_ENDACTIVATE1_6">
+		<Text>Thanks for subscribing to Art of Living pack. \\You will be charged Rs.30 for 30 days. To unsubscribe SMS STOPAOL to %s. \\Cost of SMS: Rs.3 per SMS</Text>
+	</STRING>
+	<STRING Id="157" Name="IDS_FUNZONE_ENDACTIVATE1_7">
+		<Text>Thanks for subscribing to Daal Mein Kala pack. \\You will be charged Rs.30 for 30 days. To unsubscribe SMS STOPDMK to %s. \\Cost of SMS: Rs.3 per SMS</Text>
+	</STRING>
+	<STRING Id="158" Name="IDS_FUNZONE_ENDACTIVATE1_8">
+		<Text>Thanks for subscribing to Friends Chat pack. \\You will be charged Rs.30 for 30 days. \\To unsubscribe SMS STOPVCHAT to %s. \\Cost of SMS: Rs.3 per SMS.</Text>
+	</STRING>
+	<STRING Id="159" Name="IDS_FUNZONE_ENDACTIVATE1_9">
+		<Text>Thanks for subscribing to Devotional pack. \\You will be charged Rs.30 for 30 days. \\To unsubscribe SMS STOPDEVO to %s. \\Cost of SMS: Rs.3 per SMS.</Text>
+	</STRING>
+	<STRING Id="160" Name="IDS_FUNZONE_ENDACTIVATE1_10">
+		<Text>Thanks for subscribing to Wellness pack. \\You will be charged Rs.30 for 30 days. \\To unsubscribe SMS STOPWELL to %s. \\Cost of SMS: Rs.3 per SMS.</Text>
+	</STRING>
+	<STRING Id="161" Name="IDS_FUNZONE_ENDACTIVATE1_11">
+		<Text>Thanks for subscribing to News pack. \\You will be charged Rs.30 for 30 days. \\To unsubscribe SMS STOPNEWS to %s. \\Cost of SMS: Rs.3 per SMS.</Text>
+	</STRING>
+	<STRING Id="162" Name="IDS_FUNZONE_ENDACTIVATE1_12">
+		<Text>2</Text>
+	</STRING>
+	<STRING Id="163" Name="IDS_FUNZONE_ASTROLOGY">
+		<Text>Please enter your Date of Birth in DDMM format and click OK. \\For e.g. if your DOB is 1st April, type 0104 and click OK. \\Type your DOB in DDMM format:</Text>
+	</STRING>
+	<STRING Id="200" Name="IDS_FUNZONE_PULLSERVICES_1">
+		<Text>Cricket updates</Text>
+	</STRING>
+	<STRING Id="201" Name="IDS_FUNZONE_PULLSERVICES_2">
+		<Text>Breaking News</Text>
+	</STRING>
+	<STRING Id="202" Name="IDS_FUNZONE_PULLSERVICES_3">
+		<Text>Flames</Text>
+	</STRING>
+	<STRING Id="203" Name="IDS_FUNZONE_PULLSERVICES_4">
+		<Text>Astrology</Text>
+	</STRING>
+	<STRING Id="204" Name="IDS_FUNZONE_PULLSERVICES_5">
+		<Text>Fascinating Facts</Text>
+	</STRING>
+	<STRING Id="205" Name="IDS_FUNZONE_PULLSERVICES_6">
+		<Text>Health Tips</Text>
+	</STRING>
+	<STRING Id="206" Name="IDS_FUNZONE_PULLSERVICES_7">
+		<Text>Personality Tips</Text>
+	</STRING>
+	<STRING Id="210" Name="IDS_FUNZONE_ENDPULL_1">
+		<Text>Welcome to Cricket updates. Herein, you will get Cricket score updates on SMS for all India matches. During non-match days, you will receive Cricket News and Cricket Trivia. \\Cost of request: Rs.3 per SMS.</Text>
+	</STRING>
+	<STRING Id="211" Name="IDS_FUNZONE_ENDPULL_2">
+		<Text>Welcome to Breaking News. Herein, you will get latest news from all over the world. So keep yourself updated with latest happenings around you. \\Cost of request: Rs.3 per SMS.</Text>
+	</STRING>
+	<STRING Id="212" Name="IDS_FUNZONE_Flames">
+		<Text>Welcome to Flames. Ever wondered how compatible you are with your dream partner? We give you an easy way to find out if you are a perfect match.Check your Love Compatibility. \\To enter your name and your partners name press Ok.</Text>
+	</STRING>
+	<STRING Id="213" Name="IDS_FUNZONE_ENDPULLAstrology">
+		<Text>Welcome to the Astrology pack. Herein, subscribers would get his/her Astrology based predictions basis his/her sun sign/moon sign, which will be based on his/her Date of Birth.  \\To enter your Date of Birth in DDMM format and know your prediction click OK.</Text>
+	</STRING>
+	<STRING Id="214" Name="IDS_FUNZONE_ENDPULL_5">
+		<Text>Welcome to Fascinating Facts. Herein, user gets interesting facts. Facts could be from different fields like, Science, History, Maths, Places, Funny Movies etc. \\Cost of request: Rs.3 per SMS.</Text>
+	</STRING>
+	<STRING Id="215" Name="IDS_FUNZONE_ENDPULL_6">
+		<Text>Welcome to Health Tips. This service helps you to maintain your health and diet. Get a healthy and good lifestyle by getting health and diet tips. Now you can pamper yourself in new ways. \\Cost of request: Rs.3 per SMS.</Text>
+	</STRING>
+	<STRING Id="216" Name="IDS_FUNZONE_ENDPULL_7">
+		<Text>Welcome to Personality Test. Do you want to know your inner self? Want to know more about you? This test will help you analyze the kind of persona you have. \\Cost of request: Rs.3 per SMS.</Text>
+	</STRING>
+	<String Id="217" Name="IDS_FUNZONE_ASTROLOGYSEND">
+		<Text>Please enter your Date of Birth in DDMM format and click OK. \\For e.g. if your DOB is 1st April, type 0104 and click OK. \\Type your DOB in DDMM format:\\Cost of request: Rs.3 per SMS. </Text>
+	</String>
+	<String Id="218" Name="IDS_FLAMES_FIRSTNAME">
+		<Text>Type your first name:</Text>
+	</String>
+	<String Id="219" Name="IDS_FLAMES_PARTNERNAME">
+		<Text>Type your partner's first name:</Text>
+	</String>
+	<String Id="220" Name="IDS_FLAMES_TIP">
+		<Text>Cost of request: Rs.3 per SMS.</Text>
+	</String>
+	<String Id="1001" Name="IDS_AVK_T">
+		<Text>T key</Text>
+	</String>
+	<String Id="1002" Name="IDS_AVK_Y">
+		<Text>Y key</Text>
+	</String>
+	<String Id="1003" Name="IDS_AVK_U">
+		<Text>U key</Text>
+	</String>
+	<String Id="1004" Name="IDS_AVK_I">
+		<Text>I key</Text>
+	</String>
+	<String Id="1005" Name="IDS_AVK_O">
+		<Text>O key</Text>
+	</String>
+	<String Id="1006" Name="IDS_AVK_G">
+		<Text>G key</Text>
+	</String>
+	<String Id="1007" Name="IDS_AVK_H">
+		<Text>H key</Text>
+	</String>
+	<String Id="1008" Name="IDS_AVK_J">
+		<Text>J key</Text>
+	</String>
+	<String Id="1009" Name="IDS_AVK_K">
+		<Text>K key</Text>
+	</String>
+	<String Id="1010" Name="IDS_AVK_L">
+		<Text>L key</Text>
+	</String>
+	<String Id="1011" Name="IDS_AVK_DEL">
+		<Text>delete key</Text>
+	</String>
+	<String Id="1012" Name="IDS_AVK_V">
+		<Text>V key</Text>
+	</String>
+	<String Id="1013" Name="IDS_AVK_B">
+		<Text>B key</Text>
+	</String>
+	<String Id="1014" Name="IDS_AVK_N">
+		<Text>N key</Text>
+	</String>
+	<String Id="1015" Name="IDS_AVK_M">
+		<Text>M key</Text>
+	</String>
+	<String Id="1016" Name="IDS_AVK_DOLAER">
+		<Text>$ key</Text>
+	</String>
+	<String Id="1017" Name="IDS_AVK_ENTER">
+		<Text>enter key</Text>
+	</String>
+	<String Id="1018" Name="IDS_AVK_ALT">
+		<Text>shift key</Text>
+	</String>
+	<String Id="1019" Name="IDS_AVK_CAPLK">
+		<Text>caps key</Text>
+	</String>
+	<String Id="1020" Name="IDS_AVK_SPACE">
+		<Text>space key</Text>
+	</String>
+	<String Id="1021" Name="IDS_AVK_SYMBOL">
+		<Text>symbol key</Text>
+	</String>
+	<String Id="1022" Name="IDS_AVK_LCTRL">
+		<Text>lctrl key</Text>
+	</String>
+	<String Id="1023" Name="IDS_AVK_P">
+		<Text>P key</Text>
+	</String>
+</Strings>
+<Dialogs>
+	<DIALOG Id="1" Name="IDD_MAINMENU" Focus="7001">
+		<Controls>
+			<Menu Id="7001" Name="IDC_MAINMENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<Dialog Id="6002" Name="IDD_MIZONEACTIVATE" Focus="0">
+		<Controls/>
+	</Dialog>
+	<Dialog Id="6003" Name="IDD_ENDACTIVATE" Focus="0">
+		<Controls/>
+	</Dialog>
+	<Dialog Id="6004" Name="IDD_ASTROLOGY" Focus="0">
+		<Controls>
+			<Text Id="7003" Name="IDC_DDMM_TEXT">
+				<Items/></Text>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6005" Name="IDD_SERVICESMENU" Focus="0">
+		<Controls>
+			<Menu Id="7004" Name="IDC_SERVICESMENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6006" Name="IDD_ENDPULL" Focus="0">
+		<Controls/>
+	</Dialog>
+	<Dialog Id="6007" Name="IDD_INPUTSEND" Focus="0">
+		<Controls>
+			<Text Id="7005" Name="IDC_DATEINPUTTEXT">
+				<Items/></Text>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6008" Name="IDD_SENDNAME" Focus="0">
+		<Controls>
+			<Text Id="7006" Name="IDC_FIRSTNAMETEXT">
+				<Position PosX="-1" PosW="176" PosY="-1" PosH="22"/>
+				<Items/></Text>
+			<Text Id="7007" Name="IDC_PARTNERNAMETEXT">
+				<Position PosX="-1" PosW="176" PosY="-1" PosH="22"/>
+				<Items/></Text>
+		</Controls>
+	</Dialog>
+</Dialogs>
+</BREWRes>
