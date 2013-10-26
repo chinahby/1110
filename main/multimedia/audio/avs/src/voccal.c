@@ -15236,7 +15236,7 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_speaker_cal = {
   0x1000,						   /* Tx DTMF gain			*/
   0x5000,						   /* CODEC Tx gain			*/
   0x5000,						   /* CODEC Rx gain			*/
-#if defined (FEATURE_VERSION_K212) || defined (FEATURE_VERSION_IC241A_MMX)
+#elif defined (FEATURE_VERSION_K212) || defined (FEATURE_VERSION_IC241A_MMX)
   0x5000,						   /* Tx Voice Volume 		*/
   0x1000,						   /* Tx DTMF gain			*/
   0x5000,						   /* CODEC Tx gain			*/
