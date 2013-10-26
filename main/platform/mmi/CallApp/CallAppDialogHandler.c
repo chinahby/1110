@@ -9542,7 +9542,7 @@ void CallApp_ChangeCallVolume(CCallApp  *pMe,
 		MSG_FATAL("pMe->m_CallVolume=====%d",pMe->m_CallVolume,0,0);
 		#if defined(FEATURE_VERSION_K202)
 		ISOUND_SetVolume(pMe->m_pSound, GET_ISOUND_VOL_LEVEL(pMe->m_CallVolume)*3/5);
-		#elif defined(FEATURE_VERSION_K212)
+		#elif defined(FEATURE_VERSION_K212)|| defined(FEATURE_QVGA_INHERIT_K212)
 	    if(pMe->m_bHandFree)
 	    {
 	    	ISOUND_SetVolume(pMe->m_pSound,GET_ISOUND_VOL_LEVEL(pMe->m_CallVolume));
