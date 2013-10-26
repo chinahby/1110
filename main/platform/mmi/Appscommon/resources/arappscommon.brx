@@ -145,8 +145,20 @@
 	<STRING Id="48" Name="IDS_CALL">
 		<Text>اتصال</Text>
 	</STRING>
+	<STRING Id="49" Name="IDS_MIZONEACTIVATE">
+		<Text>تفعيل</Text>
+	</STRING>
+	<STRING Id="50" Name="IDS_FUNZONE">
+		<Text>M المنطقة!</Text>
+	</STRING>
+	<STRING Id="51" Name="IDS_SENDREQUEST">
+		<Text>إرسال طلب</Text>
+	</STRING>
 	<STRING Id="114" Name="IDS_OPTION_FM">
 		<Text>خيار</Text>
+	</STRING>
+	<STRING Id="115" Name="IDS_BAROPTIONS">
+		<Text>خيارات</Text>
 	</STRING>
 	<STRING Id="1001" Name="IDS_RECORD">
 		<Text>تسجيل</Text>
@@ -224,10 +236,10 @@
 		<Text>لا</Text>
 	</STRING>
 	<String Id="1026" Name="IDS_LOCK">
-		<Text>Lock Keypad</Text>
+		<Text>قفل لوحة المفاتيح</Text>
 	</String>
 	<String Id="1027" Name="IDS_FACEBOOK">
-		<Text>Facebook</Text>
+		<Text>الفيسبوك</Text>
 	</String>
 	<String Id="1028" Name="IDS_FRENDUO_LIST">
 		<Text>FrenDuo</Text>
@@ -245,22 +257,46 @@
 		<Text>يؤدي الضغط الطويل على مفتاح المسافة إلى فتح قفل واقي المفاتيح</Text>
 	</String>
 	<String Id="1033" Name="IDS_SHIFT">
-		<Text>Shift</Text>
+		<Text>نقل</Text>
 	</String>
 	<String Id="1034" Name="IDS_ALT">
 		<Text>Alt</Text>
 	</String>
 	<String Id="1035" Name="IDS_CAP">
-		<Text>Cap</Text>
+		<Text>قبعة</Text>
 	</String>
-	<String Id="1036" Name="IDS_MULTICALL">
-		<Text>Multi call</Text>
+	<String Id="1036" Name="IDS_END_CALL">
+		<Text>إنهاء المكالمة</Text>
 	</String>
-	<String Id="1037" Name="IDS_CLEAR_EX">
-		<Text>Clear</Text>
+	<String Id="1037" Name="IDS_HANDS_FREE">
+		<Text>H-الحرة</Text>
 	</String>
-	<String Id="1038" Name="IDS_SHORTCUT">
-		<Text>Shortcut</Text>
+	<String Id="1038" Name="IDS_HANDS_HELD">
+		<Text>H-المعقودة</Text>
+	</String>
+	<String Id="1039" Name="IDS_SILENT">
+		<Text>صامت</Text>
+	</String>
+	<String Id="1040" Name="IDS_MULTICALL" Encoding="Unicode">
+		<Text>مكالمة متعددة</Text>
+	</String>
+	<String Id="1041" Name="IDS_CLEAR_EX">
+		<Text>مسح</Text>
+	</String>
+	<String Id="1042" Name="IDS_MSG_KEYGUARD_C337" Encoding="Unicode">
+		<Text>الصحافة إفتح وثم مفتاح *</Text>
+	</String>
+	<String Id="1043" Name="IDS_UNLOCK" Encoding="Unicode">
+		<Text>لوحة المفاتيح مقفلة</Text>
+	</String>
+	<String Id="1044" Name="IDS_SHORTCUT">
+		<Text>الاختصار</Text>
+	</String>
+	<String Id="1045" Name="IDS_CONTINUE">
+		<Text>استمر</Text>
+	</String>
+	<String Id="1046" Name="IDS_CONTANT_K212">
+		<Text>اتصالات</Text>
 	</String>
 	<STRING Id="2001" Name="IDS_SNOOZE">
 		<Text>انتظار</Text>
@@ -292,5 +328,29 @@
 	<String Id="2010" Name="IDS_FMENU">
 		<Text>MyFlexi</Text>
 	</String>
+	<STRING Id="2011" Name="IDS_PHONE_BOOK">
+		<Text>دليل الهاتف</Text>
+	</STRING>
+	<STRING Id="2012" Name="IDS_FILE_MANAGER">
+		<Text>مدير الملفات</Text>
+	</STRING>
+	<STRING Id="2013" Name="IDS_SEARCH">
+		<Text>بحث</Text>
+	</STRING>
+	<STRING Id="2014" Name="IDS_NAMES">
+		<Text>أسماء</Text>
+	</STRING>
+	<STRING Id="2015" Name="IDS_KEYPAD_LOCKED">
+		<Text>لوحة المفاتيح مقفل</Text>
+	</STRING>
+	<STRING Id="2016" Name="IDS_KEYPAD_UNLOCKED">
+		<Text>لوحة المفاتيح مقفلة</Text>
+	</STRING>
+	<STRING Id="2017" Name="IDS_COMMON_HELP">
+		<Text>مساعدة</Text>
+	</STRING>
+	<STRING Id="2018" Name="IDS_RECENTCALLS">
+		<Text>المكالمات الأخيرة</Text>
+	</STRING>
 </Strings>
 </BREWRes>

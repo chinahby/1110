@@ -4,6 +4,33 @@
 	<String Id="1001" Name="IDS_MAIN_MENU_STATIC_APPLICATION">
 		<Text>التطبيقات</Text>
 	</String>
+	<String Id="1002" Name="IDS_MAIN_MENU_FM">
+		<Text>راديو</Text>
+	</String>
+	<String Id="1003" Name="IDS_MAIN_MENU_BT">
+		<Text>BT</Text>
+	</String>
+	<String Id="1004" Name="IDS_MAIN_MENU_UNIT">
+		<Text>وحدة</Text>
+	</String>
+	<String Id="1005" Name="IDS_MAIN_MENU_WORLDCLO">
+		<Text>التوقيت العالمي</Text>
+	</String>
+	<String Id="1006" Name="IDS_MAIN_MENU_PINTU">
+		<Text>Pintu</Text>
+	</String>
+	<String Id="1007" Name="IDS_MAIN_MENU_TETIRS">
+		<Text>Tetirs</Text>
+	</String>
+	<String Id="1008" Name="IDS_MAIN_MENU_BRICKATTACK">
+		<Text>Brickattack</Text>
+	</String>
+	<String Id="1009" Name="IDS_MAIN_MENU_BLACKJACK">
+		<Text>لعبة ورق</Text>
+	</String>
+	<String Id="1010" Name="IDS_MAIN_MENU_CALIBRA">
+		<Text>معايرة</Text>
+	</String>	
 	<String Id="1011" Name="IDS_MAIN_MENU_MEDIAGALLERY">
 		<Text>مدير الملفات</Text>
 	</String>
@@ -40,14 +67,44 @@
 	<String Id="1022" Name="IDS_MAIN_MENU_CAMERA">
 		<Text>الكاميرا</Text>
 	</String>
+	<String Id="1023" Name="IDS_MAIN_MENU_RECORDER">
+		<Text>مسجل</Text>
+	</String>	
+	<String Id="1025" Name="IDS_MAIN_MENU_CONVERTER">
+		<Text>محول</Text>
+	</String>
+	<String Id="1026" Name="IDS_MAIN_MENU_STOPWATCH">
+		<Text>ساعة التوقيف</Text>
+	</String>
+	<String Id="1027" Name="IDS_MAIN_MENU_WORLDTIME">
+		<Text>التوقيت العالمي</Text>
+	</String>
+	<String Id="1028" Name="IDS_MAIN_MENU_ALARM">
+		<Text>إنذار</Text>
+	</String>
+	<String Id="1029" Name="IDS_MAIN_MENU_VIDEOPLAYER">
+		<Text>VideoPlayer</Text>
+	</String>
 	<String Id="1030" Name="IDS_MAIN_MENU_FILEMGR">
 		<Text>معرض الوسائط</Text>
+	</String>
+	<String Id="1031" Name="IDS_MAIN_MENU_MAP">
+		<Text>خريطة</Text>
+	</String>
+	<String Id="1032" Name="IDS_MAIN_MENU_NEO_APP">
+		<Text>التطبيق الجدد</Text>
+	</String>
+	<String Id="1033" Name="IDS_MAIN_MENU_NEO_NAV">
+		<Text>الجدد ملاحة</Text>
 	</String>
 	<String Id="1034" Name="IDS_MENU_LIST">
 		<Text>القائمة</Text>
 	</String>
 	<String Id="1035" Name="IDS_MAIN_MENU_CALL_LOGS">
 		<Text>سجلات المكالمات</Text>
+	</String>
+	<String Id="1036" Name="IDS_SHORT_CUT">
+		<Text>قص قصيرة</Text>
 	</String>
 	<String Id="1043" Name="IDS_MAIN_MENU_CALCULATOR">
 		<Text>الآلة الحاسبة</Text>
@@ -59,10 +116,10 @@
 		<Text>مشغل الموسيقى</Text>
 	</String>
 	<String Id="1061" Name="IDS_MAIN_MENU_SMARTWORLD">
-		<Text>Smart World</Text>
+		<Text>عالم الذكية</Text>
 	</String>
 	<String Id="1062" Name="IDS_MAIN_MENU_SMARTFRENACCESS">
-		<Text>Smartfren Access</Text>
+		<Text>Smartfren الدخول</Text>
 	</String>
 	<String Id="1065" Name="IDS_MAIN_MENU_CALENDAR">
 		<Text>التقويم</Text>
@@ -88,23 +145,47 @@
 	<String Id="1086" Name="IDS_MAIN_WAPBROWSER">
 		<Text>المتصفح</Text>
 	</String>
+	<STRING Id="1087" Name="IDS_PHONEBOOK">
+		<Text>دليل الهاتف</Text>
+	</STRING>
+	<STRING Id="1088" Name="IDS_MAIN_MENU_USER_PROFILE">
+		<Text>نبذة عن المستخدم</Text>
+	</STRING>
+	<STRING Id="1089" Name="IDS_MAIN_MENU_MSTORE">
+		<Text>M! Live</Text>
+	</STRING>
+	<STRING Id="1090" Name="IDS_MAIN_MENU_MZONE">
+		<Text>M! Zone</Text>
+	</STRING>
+	<STRING Id="1091" Name="IDS_MAIN_MENU_ORGANIZER">
+		<Text>منظم</Text>
+	</STRING>
+	<STRING Id="1092" Name="IDS_MAIN_MENU_SERVICES">
+		<Text>الاتصال</Text>
+	</STRING>
+	<STRING Id="1093" Name="IDS_MAIN_MENU_MEDIAGALLERY_C337">
+		<Text>إدارة الملفات</Text>
+	</STRING>
+	<STRING Id="1094" Name="IDS_MAIN_MENU_RECENTCALLS_C337">
+		<Text>سجلات المكالمات</Text>
+	</STRING>
 	<STRING Id="1095" Name="IDS_MAIN_MENU_SERVICES_C316">
-		<Text>Services</Text>
+		<Text>الخدمات</Text>
 	</STRING>
 	<STRING Id="1096" Name="IDS_MAIN_MENU_INTEXZONE">
-		<Text>Intex Zone</Text>
+		<Text>المنطقة انتكس</Text>
 	</STRING>
 	<String Id="1110" Name="IDS_MAIN_MENU_TIMER">
 		<Text>الموقت</Text>
 	</String>
 	<STRING Id="1097" Name="IDS_MAIN_MENU_TORCH">
-		<Text>Torch</Text>
+		<Text>شعلة</Text>
 	</STRING>
 	<STRING Id="1098" Name="IDS_MAIN_MENU_TORCH_ON">
-		<Text>On</Text>
+		<Text>في</Text>
 	</STRING>
 	<STRING Id="1099" Name="IDS_MAIN_MENU_TORCH_OFF">
-		<Text>Off</Text>
+		<Text>بعيدا</Text>
 	</STRING>
 </Strings>
 <Dialogs>

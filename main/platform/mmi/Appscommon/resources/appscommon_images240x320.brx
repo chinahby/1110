@@ -172,6 +172,12 @@
 	<Object Id="5409" Name="IDB_MODE_T9_RAPID_INDONESIAN" MimeType="image/png">
 		<File>..\images\240x320\common\IME\T9In.png</File>
 	</Object>
+	<Object Id="5413" Name="IDB_MODE_T9_MT_ARABIC" MimeType="image/png">
+		<File>..\images\240x320\common\IME\Ar.png</File>
+	</Object>
+	<Object Id="5414" Name="IDB_MODE_T9_RAPID_ARABIC" MimeType="image/png">
+		<File>..\images\240x320\common\IME\T9Ar.png</File>
+	</Object>
 	<Object Id="5417" Name="IDB_MODE_T9_MT_HINDI" MimeType="image/png">
 		<File>..\images\128x160\common\IME\hi.png</File>
 	</Object>
