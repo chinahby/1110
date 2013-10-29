@@ -184,7 +184,7 @@ if(!(x))         \
 //进度条
 #define SCHEDULEBAR_X 5
 #ifdef FEATURE_VERSION_K212_ND
-#define SCHEDULEBAR_Y 23
+#define SCHEDULEBAR_Y 40
 #else
 #define SCHEDULEBAR_Y 43
 #endif
@@ -204,7 +204,7 @@ if(!(x))         \
 //播放按钮
 #define PLAY_X 80
 #ifdef FEATURE_VERSION_K212_ND
-#define PLAY_Y 47 //55
+#define PLAY_Y 59 //55
 #else
 #define PLAY_Y 65
 #endif
@@ -214,7 +214,7 @@ if(!(x))         \
 //前一个曲目
 #define PREVIOUSPRESS_X 40
 #ifdef FEATURE_VERSION_K212_ND 
-#define PREVIOUSPRESS_Y 47 //60
+#define PREVIOUSPRESS_Y 59 //60
 #else
 #define PREVIOUSPRESS_Y 65
 #endif
@@ -224,7 +224,7 @@ if(!(x))         \
 //后一个曲目
 #define NEXTPRESS_X 125
 #ifdef FEATURE_VERSION_K212_ND
-#define NEXTPRESS_Y 47 //60
+#define NEXTPRESS_Y 59 //60
 #else
 #define NEXTPRESS_Y 65
 #endif
@@ -234,7 +234,7 @@ if(!(x))         \
 //降低音量
 #define DECREASEVOLUMEPRESS_X 2
 #ifdef FEATURE_VERSION_K212_ND
-#define DECREASEVOLUMEPRESS_Y 69
+#define DECREASEVOLUMEPRESS_Y 79
 #else
 #define DECREASEVOLUMEPRESS_Y 79
 
@@ -245,7 +245,7 @@ if(!(x))         \
 //增加音量
 #define ADDVOLUMEPRESS_X 2
 #ifdef FEATURE_VERSION_K212_ND
-#define ADDVOLUMEPRESS_Y 33
+#define ADDVOLUMEPRESS_Y 43
 #else
 #define ADDVOLUMEPRESS_Y 43
 #endif
@@ -255,7 +255,7 @@ if(!(x))         \
 //音量
 #define VOLUME_X 5
 #ifdef FEATURE_VERSION_K212_ND
-#define VOLUME_Y 37
+#define VOLUME_Y 47
 #else
 #define VOLUME_Y 57
 #endif
@@ -265,21 +265,21 @@ if(!(x))         \
 //当前序号/总数量
 #define LISTINDEX_X 60 //5
 #ifdef FEATURE_VERSION_K212_ND
-#define LISTINDEX_Y 28 //95
+#define LISTINDEX_Y 43 //95
 #else
 #define LISTINDEX_Y 46
 #endif
 //当前歌曲的总时间
 #define TOTALTIME_X 120
 #ifdef FEATURE_VERSION_K212_ND
-#define TOTALTIME_Y 28 
+#define TOTALTIME_Y 43 
 #else
 #define TOTALTIME_Y 46 
 #endif
 //当前播放时间
 #define PLAYINGTICK_X 25 //117
 #ifdef FEATURE_VERSION_K212_ND
-#define PLAYINGTICK_Y 28 //47
+#define PLAYINGTICK_Y 43 //47
 #else
 #define PLAYINGTICK_Y 46
 #endif
@@ -295,7 +295,7 @@ if(!(x))         \
 //播放区域，包含前一首，播放，下一首
 #define OLDPLAY_X 30
 #ifdef FEATURE_VERSION_K212_ND
-#define OLDPLAY_Y 56
+#define OLDPLAY_Y 66
 #else
 #define OLDPLAY_Y 68
 #endif
@@ -949,7 +949,7 @@ if(!(x))         \
 #define RFIMG_WIDTH 16
 #define REWIND_X    (((SCREEN_WIDTH-4)-(RFIMG_WIDTH*2))/2)
 #ifdef FEATURE_VERSION_K212_ND
-#define REWIND_Y    79
+#define REWIND_Y    33
 #else
 #define REWIND_Y    (SCHEDULEBAR_Y-9)
 #endif

@@ -1862,11 +1862,7 @@ static boolean  Application_KeyTimeHandler(Application *pMe, AEEEvent eCode, uin
                 OEM_SetConfig(CFGI_SOUND_BO_INDIAL,&bytNewData, sizeof(bytNewData));
                 InitMenuIcons(pMenu);
                 SetMenuIcon(pMenu, wParam, TRUE);
-                (void) ISHELL_PostEvent( pMe->m_pShell,
-                                         AEECLSID_MAIN_MENU,
-                                         EVT_USER_REDRAW,
-                                         0,
-                                         0);
+                CLOSE_DIALOG(DLGRET_CANCELED);
             }
         default:
         	break;						

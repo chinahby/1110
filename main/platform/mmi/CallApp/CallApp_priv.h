@@ -212,6 +212,9 @@
 #ifdef FEATURE_VERSION_C310
 #define CALL_LINE_HIGHT                      (22) //18为NORMAL字体高度，目前只需要这个高度就够了
 #else
+#ifdef FEATURE_VERSION_K212_ND
+#define CALL_LINE_HIGHT                      (21)
+#else
 #if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
 #define CALL_LINE_HIGHT                      (38)
 #else
@@ -219,6 +222,7 @@
 #define CALL_LINE_HIGHT                      (25)
 #else
 #define CALL_LINE_HIGHT                      (20) //18为NORMAL字体高度，目前只需要这个高度就够了
+#endif
 #endif
 #endif
 #endif

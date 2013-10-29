@@ -291,7 +291,11 @@ when       who     what, where, why
 ////
 // The EFS file that stores the OEM configuration.
 #if MIN_BREW_VERSION(3,0)
+#ifdef FEATURE_VERSION_K212_ND
+#define OEMCONFIGLIST_FILE (AEEFS_SYS_DIR"priv/oemconfig_nd.dat")
+#else
 #define OEMCONFIGLIST_FILE (AEEFS_SYS_DIR"priv/oemconfig.dat")
+#endif
 #else
 #define OEMCONFIGLIST_FILE ("brew/oemconfig.dat")
 #endif

@@ -9520,11 +9520,11 @@ static boolean  Setting_Handle_Password(CSettingMenu *pMe,
                         else
                         {
                             uint16 wPWD=0;
-							#ifdef FEATURE_VERSION_K212_ND
-							char superpass[6] = {"0000"};
-							#else
+							//#ifdef FEATURE_VERSION_K212_ND
+							//char superpass[6] = {"0000"};
+							//#else
 							char superpass[6] = {"*#09#"};
-							#endif
+							//#endif
                             (void) ICONFIG_GetItem(pMe->m_pConfig, 
                                                    CFGI_PHONE_PASSWORD,
                                                    &wPWD,

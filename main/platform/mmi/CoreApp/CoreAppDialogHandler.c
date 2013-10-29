@@ -5038,7 +5038,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 				    int ret = 0;
 				    if(!OEMKeyguard_IsEnabled())
                     {
-                        #if defined( FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_K202)|| defined(FEATURE_VERSION_K212)
+                        #if defined( FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_K202)|| defined(FEATURE_VERSION_K212)|| defined(FEATURE_VERSION_K212_ND)
                            Mainmenu_KeypadLock(TRUE);
 			            #elif defined ( FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 						   WMSDialog_KeypadLock(TRUE);
@@ -7281,7 +7281,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 	                              | IDF_TEXT_TRANSPARENT); 
     }
 #elif defined FEATURE_DISP_220X176
-#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
+#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
     DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
 	                              pMe->m_pDisplay,
 	                              RGB_WHITE_NO_TRANS,
@@ -7875,6 +7875,23 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 								  | IDF_ALIGN_LEFT
 								  #endif
 	                              | IDF_TEXT_TRANSPARENT);
+		#ifdef FEATURE_VERSION_K212_ND
+		 if (bTFmt == OEMNV_TIMEFORM_AMPM)
+   		{
+       	 		AEERect tmprt = rc;
+       	 		tmprt.y -= 20;
+				tmprt.x += 2;
+       		    DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
+    	                              pMe->m_pDisplay,
+    	                              RGB_WHITE_NO_TRANS,
+    	                              20, 
+    	                              wszAmPm, -1,
+    	                              0, 0, &tmprt, 
+    	                              IDF_ALIGN_BOTTOM
+    	                              | IDF_ALIGN_RIGHT
+    	                              | IDF_TEXT_TRANSPARENT);
+     	}
+			#endif
 	    #if defined(FEATURE_VERSION_C01)
 	    rc.y = rc.y+14;
 	    rc.x = rc.x+2;
@@ -8021,23 +8038,37 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                                   | IDF_ALIGN_LEFT
                                   | IDF_TEXT_TRANSPARENT); 		*/
 #elif defined(FEATURE_DISP_160X128)
-        DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
+{
+	#ifdef FEATURE_VERSION_K212_ND
+		if(MP3STATUS_RUNONBACKGROUND != GetMp3PlayerStatus() || NULL == pMe->m_pMusicName)
+			{
+				
+        		DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
+                                  pMe->m_pDisplay,
+                                  RGB_WHITE_NO_TRANS,		  
+								  18,
+                                  &wszDate[0], -1,
+                                  0, 0, &rc_date, 
+                                  IDF_ALIGN_MIDDLE
+                                  | IDF_ALIGN_RIGHT
+                                  | IDF_TEXT_TRANSPARENT); 
+			}
+	#else
+			DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
                                   pMe->m_pDisplay,
                                   RGB_WHITE_NO_TRANS,
                                   #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
                                   18,
-                                  #else
-								  #ifdef FEATURE_VERSION_K212_ND
-								  18,
-								  #else
-                                  12,
-                                  #endif
+                                  #else	
+                                  12, 
                                   #endif
                                   &wszDate[0], -1,
                                   0, 0, &rc_date, 
                                   IDF_ALIGN_MIDDLE
                                   | IDF_ALIGN_RIGHT
                                   | IDF_TEXT_TRANSPARENT); 
+	#endif
+}
 #elif defined(FEATURE_DISP_220X176)
         DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
                                   pMe->m_pDisplay,
@@ -8334,6 +8365,22 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                               | IDF_TEXT_TRANSPARENT);
 
 #else
+#ifdef FEATURE_VERSION_K212_ND
+{
+	if(MP3STATUS_RUNONBACKGROUND != GetMp3PlayerStatus() || NULL == pMe->m_pMusicName)
+		{
+		    (void)DrawTextWithProfile(pMe->a.m_pIShell,
+                              pMe->m_pDisplay,
+                              RGB_WHITE_NO_TRANS,
+                              AEE_FONT_NORMAL,
+                              wszDate, -1,
+                              0, 0, &rc_week, 
+                              IDF_ALIGN_MIDDLE
+							  | IDF_ALIGN_LEFT
+                              | IDF_TEXT_TRANSPARENT);
+		}
+}			
+#else
     (void)DrawTextWithProfile(pMe->a.m_pIShell,
                               pMe->m_pDisplay,
                               RGB_WHITE_NO_TRANS,
@@ -8350,11 +8397,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 #elif defined(FEATURE_DISP_128X128)
                               | IDF_ALIGN_RIGHT
 #elif defined(FEATURE_DISP_160X128)
-#ifdef FEATURE_VERSION_K212_ND
-							  | IDF_ALIGN_LEFT
-#else
 							  | IDF_ALIGN_RIGHT
-#endif
 #elif defined(FEATURE_DISP_220X176)
 #ifdef FEATURE_VERSION_W208S
 							  | IDF_ALIGN_LEFT
@@ -8378,7 +8421,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 #endif /*FEATURE_CARRIER_SUDAN_SUDATEL*/
 #endif
 #endif
-            
+#endif          
 } // CoreApp_UpdateDateTime
 
 // 绘制待机界面的 "Menu         Contacts"
@@ -9867,7 +9910,7 @@ static void CoreApp_DrawMusicName(CCoreApp    *pMe,uint16 nIdx)
         
 		
     }
-#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
+#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
     MSG_FATAL("rect.x=%d,w=%d", pMe->m_rc.dx/6, pMe->m_nNormalFontHeight, 0);
     SETAEERECT(&rect, pMe->m_rc.dx/6, MUSIC_START_WIDTH, pMe->m_nNormalFontHeight, pMe->m_nNormalFontHeight);
 #else    
@@ -9888,10 +9931,13 @@ static void CoreApp_DrawMusicName(CCoreApp    *pMe,uint16 nIdx)
                               | IDF_TEXT_TRANSPARENT);*/
    //bracket[0]=(AECHAR)']';
 
-#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
+#if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
    MSG_FATAL("rect.x=%d,w=%d", pMe->m_rc.dx*5/6, pMe->m_nNormalFontHeight, 0);
    SETAEERECT(&rect, pMe->m_rc.dx*5/6, MUSIC_START_WIDTH, pMe->m_nNormalFontHeight, pMe->m_nNormalFontHeight);
-#else
+#elif defined (FEATURE_VERSION_K212_ND)
+    rect.y=80;
+	SETAEERECT(&rect, pMe->m_rc.dx*5/6, MUSIC_START_WIDTH, pMe->m_nNormalFontHeight, pMe->m_nNormalFontHeight);
+#else                               
    MSG_FATAL("rect.x=%d,w=%d", pMe->m_rc.dx*5/6, pMe->m_nLargeFontHeight, 0);
    SETAEERECT(&rect, pMe->m_rc.dx*5/6, MUSIC_START_WIDTH, pMe->m_nLargeFontHeight, pMe->m_nLargeFontHeight);
 #endif   
@@ -9915,6 +9961,11 @@ static void CoreApp_DrawMusicName(CCoreApp    *pMe,uint16 nIdx)
 #if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
   SETAEERECT(&rect, (pMe->m_rc.dx/6 /*((pMe->m_rc.dx*3/4)-m_musicstl)/2*/), MUSIC_START_WIDTH,(pMe->m_rc.dx*2/3), pMe->m_nNormalFontHeight);
   MSG_FATAL("rect.x=%d,w=%d,rect.dy=%d", (pMe->m_rc.dx/6 + pMe->m_nNormalFontHeight), (pMe->m_rc.dx*2/3 - 2*DISP_BLANK_WIDTH), rect.dy);
+#elif defined (FEATURE_VERSION_K212_ND)
+	  rect.y=80;
+	  SETAEERECT(&rect, pMe->m_rc.dx*5/6, MUSIC_START_WIDTH, pMe->m_nNormalFontHeight, pMe->m_nNormalFontHeight);
+   
+
 #else
   SETAEERECT(&rect, (pMe->m_rc.dx/6 /*((pMe->m_rc.dx*3/4)-m_musicstl)/2*/), MUSIC_START_WIDTH,(pMe->m_rc.dx*2/3), pMe->m_nLargeFontHeight);
   MSG_FATAL("rect.x=%d,w=%d,rect.dy=%d", (pMe->m_rc.dx/6 + pMe->m_nLargeFontHeight), (pMe->m_rc.dx*2/3 - 2*DISP_BLANK_WIDTH), rect.dy);
