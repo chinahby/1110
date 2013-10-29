@@ -3872,7 +3872,7 @@ static void VolumePreview(void *pUser)
             pMe->m_RingerID[pMe->m_CurProfile].midID = OEMNV_DEFAULTRINGER;
         }
 #endif
-		#if defined( FEATURE_VERSION_K202_LM129C)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_20D)defined(FEATURE_VERSION_K212_ND)||defined(FEATURE_VERSION_IC241A_MMX)
+		#if defined( FEATURE_VERSION_K202_LM129C)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)||defined(FEATURE_VERSION_IC241A_MMX)
 		//IALERT_StartRingerAlert(pMe->m_pAlert, OEMNV_DEFAULTRINGER);
 		IALERT_StartRingerAlert(pMe->m_pAlert, pMe->m_RingerID[pMe->m_CurProfile].midID);
 		#else
