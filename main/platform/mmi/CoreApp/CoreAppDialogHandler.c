@@ -3957,6 +3957,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #if defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_V3CM301)   
     static IStatic * pStatic = NULL;
 #endif
+	
 //Add End
     if (NULL == pMe)
     {

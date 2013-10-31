@@ -55,7 +55,7 @@
 #define  MAX_MATRIX_ROWS 3
 #define  MAX_MATRIX_COLS 3
 #elif defined (FEATURE_DISP_128X160)
-#if defined(FEATURE_VERSION_C01) ||defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_W450_JFY)
+#if defined(FEATURE_VERSION_C01) ||defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_W450_JFY)||defined(FEATURE_VERSION_W021_C11)
 #define  MAX_MATRIX_ITEMS 9
 #define  MAX_MATRIX_ROWS 3
 #define  MAX_MATRIX_COLS 3
@@ -283,6 +283,11 @@ typedef struct _MainMenu
 #define ICON_HEIGHT             40
 #define ICON_ANIMATED_WIDTH     40
 #define ICON_ANIMATED_HEIGHT    40
+#elif defined(FEATURE_VERSION_W021_C11)
+#define ICON_WIDTH              42
+#define ICON_HEIGHT             40
+#define ICON_ANIMATED_WIDTH     42
+#define ICON_ANIMATED_HEIGHT    40
 #else
 #define ICON_WIDTH              40
 #define ICON_HEIGHT             32
@@ -370,6 +375,8 @@ typedef struct _MainMenu
     #define ICON8_ANI      "fs:/image/mainmenu/Intex_zone.png"
 	#define ICON9_ANI      "fs:/image/mainmenu/Browser.png"
 // add end	
+#elif defined(FEATURE_VERSION_W021_C11)
+	#define ICON_ANI_BG "fs:/image/mainmenu/qsc1100_backgroup.png"
 #elif defined(FEATURE_VERSION_K212)
 	#define ICON_ANI_BG    "fs:/image/mainmenu/BG.png"
 	#define ICON_ANI_BAR   "fs:/image/mainmenu/BAR.png"
@@ -506,6 +513,16 @@ typedef struct _MainMenu
     #define ICON8_ANI_1      "fs:/image/mainmenu/Intex_zone_focus.png"
 	#define ICON9_ANI_1      "fs:/image/mainmenu/Browser_focus.png"
 // add end	
+#elif defined(FEATURE_VERSION_W021_C11)
+	#define ICON1_ANI_1      "fs:/image/mainmenu/qsc1100_01_focus.png"
+    #define ICON2_ANI_1      "fs:/image/mainmenu/qsc1100_02_focus.png"
+    #define ICON3_ANI_1      "fs:/image/mainmenu/qsc1100_03_focus.png"
+    #define ICON4_ANI_1      "fs:/image/mainmenu/qsc1100_04_focus.png"
+    #define ICON5_ANI_1      "fs:/image/mainmenu/qsc1100_05_focus.png"
+    #define ICON6_ANI_1      "fs:/image/mainmenu/qsc1100_06_focus.png"
+    #define ICON7_ANI_1      "fs:/image/mainmenu/qsc1100_07_focus.png"
+    #define ICON8_ANI_1      "fs:/image/mainmenu/qsc1100_08_focus.png"
+    #define ICON9_ANI_1      "fs:/image/mainmenu/qsc1100_09_focus.png"
 #elif defined (FEATURE_VERSION_SKY)
     #define ICON1_ANI_1    "fs:/image/mainmenu/Messages.gif"
     #define ICON2_ANI_1    "fs:/image/mainmenu/contacts.gif"

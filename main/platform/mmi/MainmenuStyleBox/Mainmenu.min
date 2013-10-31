@@ -242,7 +242,20 @@ CONSTFILE_FILES+=\
 		settings.mp3|fs:/hsmm/mainmenu/settings.mp3 \
 		recentcall.mp3|fs:/hsmm/mainmenu/recentcall.mp3 \
 		suafer.mp3|fs:/hsmm/mainmenu/suafer.mp3	
-else		
+else	
+ifeq ($(USES_RESDIR),W021C11)	
+CONSTFILE_FILES+=\
+    qsc1100_backgroup.png|fs:/image/mainmenu/qsc1100_backgroup.png \
+	qsc1100_01_focus.png|fs:/image/mainmenu/qsc1100_01_focus.png \
+	qsc1100_02_focus.png|fs:/image/mainmenu/qsc1100_02_focus.png \
+	qsc1100_03_focus.png|fs:/image/mainmenu/qsc1100_03_focus.png \
+	qsc1100_04_focus.png|fs:/image/mainmenu/qsc1100_04_focus.png \
+	qsc1100_05_focus.png|fs:/image/mainmenu/qsc1100_05_focus.png \
+	qsc1100_06_focus.png|fs:/image/mainmenu/qsc1100_06_focus.png \
+	qsc1100_07_focus.png|fs:/image/mainmenu/qsc1100_07_focus.png \
+	qsc1100_08_focus.png|fs:/image/mainmenu/qsc1100_08_focus.png \
+	qsc1100_09_focus.png|fs:/image/mainmenu/qsc1100_09_focus.png 
+else	
 CONSTFILE_FILES+=\
 	qsc1100_01.png|fs:/image/mainmenu/qsc1100_01.png \
 	qsc1100_02.png|fs:/image/mainmenu/qsc1100_02.png \
@@ -274,6 +287,7 @@ endif
 endif
 endif
 endif	
+endif
 endif
 endif
 endif

@@ -10804,7 +10804,7 @@ static boolean  MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 w
 ==============================================================================*/
 static char* ICON_ANI[] =
 {
-#if defined (FEATURE_VERSION_H19C) || defined (FEATURE_VERSION_C01) || defined (FEATURE_VERSION_SKY)  
+#if defined (FEATURE_VERSION_H19C) || defined (FEATURE_VERSION_C01) || defined (FEATURE_VERSION_SKY) || defined(FEATURE_VERSION_W021_C11) 
     ICON_ANI_BG,
 #else
     ICON1_ANI,
@@ -10871,12 +10871,14 @@ static char* ICON_ANI_1[] =
 #ifndef FEATURE_VERSION_C01
 #ifndef FEATURE_VERSION_C316
 #ifndef FEATURE_VERSION_W450_JFY
+#ifndef FEATURE_VERSION_W021_C11
     ICON10_ANI_1,
     ICON11_ANI_1,
     ICON12_ANI_1,
 #endif
 #endif    
-#endif    
+#endif 
+#endif
 #elif defined (FEATURE_DISP_176X220)
 #if !defined( FEATURE_VERSION_VG68)&&!defined(FEATURE_VERSION_SKY)&&!defined(FEATURE_VERSION_K202_LM129C)
     ICON10_ANI_1,
@@ -11423,6 +11425,16 @@ as
     pMe->m_IconTitle[6]     = IDS_MAIN_MENU_SETTINGS;
     pMe->m_IconTitle[7]     = IDS_MAIN_MENU_GAMES;
     pMe->m_IconTitle[8]     = IDS_MAIN_MENU_UTK;
+	#elif defined (FEATURE_VERSION_W021_C11)
+	pMe->m_IconTitle[0]     = IDS_MAIN_MENU_RECENTCALLS;
+    pMe->m_IconTitle[1]     = IDS_MAIN_MENU_MULTIMEDIA;
+    pMe->m_IconTitle[2]     = IDS_MAIN_MENU_CONTACTS;
+    pMe->m_IconTitle[3]     = IDS_MAIN_MENU_USERPROFILE;
+    pMe->m_IconTitle[4]     = IDS_MAIN_MENU_MESSAGES;
+    pMe->m_IconTitle[5]     = IDS_MAIN_MENU_SCHEDULER;
+    pMe->m_IconTitle[6]     = IDS_MAIN_MENU_SETTINGS;
+    pMe->m_IconTitle[7]     = IDS_MAIN_MENU_GAMES;
+    pMe->m_IconTitle[8]     = IDS_MAIN_MENU_GALLERY;
 	#elif defined (FEATURE_VERSION_C316)
     pMe->m_IconTitle[0]     = IDS_MAIN_MENU_CONTACTS;
     pMe->m_IconTitle[1]     = IDS_MAIN_MENU_MESSAGES;
@@ -12098,7 +12110,7 @@ void MainMenu_ShowDialog(MainMenu  *pMe,  uint16 dlgResId)
         }
 #endif
         ISHELL_GetDeviceInfo(pMe->m_pShell, &di);
-#if defined (FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_VG68)|| defined (FEATURE_VERSION_SKY)||defined(FEATURE_VERSION_K202_LM129C)
+#if defined (FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_VG68)|| defined (FEATURE_VERSION_SKY)||defined(FEATURE_VERSION_K202_LM129C) || defined(FEATURE_VERSION_W021_C11)
         pMe->m_rc.x = 0;
         pMe->m_rc.y = 0;
         
@@ -12198,7 +12210,7 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 				#endif 
 #endif
                 {
-#if defined (FEATURE_VERSION_H19C) || defined (FEATURE_VERSION_C01)|| defined (FEATURE_VERSION_SKY)
+#if defined (FEATURE_VERSION_H19C) || defined (FEATURE_VERSION_C01)|| defined (FEATURE_VERSION_SKY)|| defined(FEATURE_VERSION_W021_C11)
                     pMe->m_pImageBg = ISHELL_LoadImage(pMe->m_pShell,ICON_ANI[0]);
 //Add by pyuangui 20121221
 #elif defined(FEATURE_VERSION_W317A)
@@ -12632,6 +12644,7 @@ static void DrawMatrix(MainMenu *pMe)
 #ifndef FEATURE_VERSION_H19C  
 #ifndef FEATURE_VERSION_C01 
 #ifndef FEATURE_VERSION_SKY
+#ifndef FEATURE_VERSION_W021_C11
     //Draw icon
     for (i = 0; i < MAX_MATRIX_ITEMS; i ++)
     {
@@ -12651,8 +12664,13 @@ static void DrawMatrix(MainMenu *pMe)
 #endif    
 #endif
 #endif
+#endif
     BarParam.eBBarType = BTBAR_SELECT_BACK;
-    DrawBottomBar(pMe->m_pDisplay, &BarParam);//wlh 20090412 add
+#ifdef FEATURE_VERSION_W021_C11
+    DrawBottomBar_Ex(pMe->m_pShell,pMe->m_pDisplay, BTBAR_SELECT_BACK);//wlh 20090412 add
+#else
+	DrawBottomBar(pMe->m_pDisplay, &BarParam);//wlh 20090412 add
+#endif
 }
 
 /*=============================================================================
@@ -12896,7 +12914,11 @@ static int StartApplet(MainMenu *pMe, int i)
     case IDS_MAIN_MENU_GALLERY:
 	case IDS_MAIN_MENU_MEDIAGALLERY_C337:	
     case IDS_MAIN_MENU_MEDIAGALLERY:
+		#ifdef FEATURE_VERSION_W021_C11
+		Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPLICATION);
+		#else
         Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MEDIAGALLERY);
+		#endif
         break;
         
     case IDS_MAIN_MENU_CONTACT:

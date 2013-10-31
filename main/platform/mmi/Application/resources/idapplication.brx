@@ -43,6 +43,9 @@
 	<String Id="1022" Name="IDS_APPLICATION_FMRADIO">
 		<Text>FM</Text>
 	</String>
+	<String Id="1023" Name="IDS_APPLICATION_MUTIMED">
+		<Text>File Manager</Text>
+	</String>
 	<String Id="1024" Name="IDS_APPLICATION_BROWSER">
 		<Text>Browser</Text>
 	</String>
