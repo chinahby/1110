@@ -230,7 +230,7 @@ when       who     what, where, why
 #define OEMNV_KEYTONE_LENGTH_INIT {OEMNV_KEYTONE_NORMAL,OEMNV_KEYTONE_NORMAL,OEMNV_KEYTONE_NORMAL,OEMNV_KEYTONE_NORMAL,OEMNV_KEYTONE_NORMAL} 
 #endif //
 
-#ifdef FEATURE_VERSION_W021_CT100
+#if defined(FEATURE_VERSION_W021_CT100) || defined(FEATURE_VERSION_W021_C11)
 // ¡Â…˘“Ù¡ø     
 #define OEMNV_RINGER_VOL_INIT {5,0,0,4,4}  
 #elif defined (FEATURE_VERSION_EC99)
@@ -243,7 +243,7 @@ when       who     what, where, why
 #define OEMNV_RINGER_VOL_INIT {3,0,0,4,4}  
 #endif
 
-#ifdef FEATURE_VERSION_W021_CT100
+#if defined (FEATURE_VERSION_W021_CT100) || defined(FEATURE_VERSION_W021_C11)
 // ∂˙ª˙“Ù¡ø    
 #define OEMNV_EAR_VOL_INIT {5,3,3,4,4}  
 #else
@@ -253,7 +253,7 @@ when       who     what, where, why
 // º¸≈Ã“Ù¡ø     
 #ifdef FEATURE_VERSION_W317A
 #define OEMNV_BEEP_VOL_INIT {0,0,0,1,1} 
-#elif defined (FEATURE_VERSION_W021_CT100)
+#elif defined (FEATURE_VERSION_W021_CT100)|| defined(FEATURE_VERSION_W021_C11)
 #define OEMNV_BEEP_VOL_INIT {5,0,0,1,1} 
 #else
 #define OEMNV_BEEP_VOL_INIT {1,0,0,1,1}     

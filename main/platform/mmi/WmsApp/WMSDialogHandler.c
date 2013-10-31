@@ -3627,7 +3627,8 @@ static boolean IDD_SETTING_Handler(void   *pUser,
 #if !defined(FEATURE_VERSION_C316)&&!defined(FEATURE_VERSION_K202_LM129C)\
     &&!defined(FEATURE_VERSION_W021_CT100)&&!defined(FEATURE_VERSION_K212)\
     &&!defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_VERSION_K212_20D)\
-    &&!defined(FEATURE_VERSION_K212_ND)&&!defined(FEATURE_VERSION_W021_CT100_QVGA)
+    &&!defined(FEATURE_VERSION_K212_ND)&&!defined(FEATURE_VERSION_W021_CT100_QVGA)\
+    &&!defined(FEATURE_VERSION_W021_C11)
             MENU_ADDITEM(pMenu, IDS_CALLBACKNUM);
 #endif
 #endif 
@@ -9828,7 +9829,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                     int ry=0;
                     #if (defined(FEATURE_VERSION_C01) || defined(FEATURE_VERSION_1110W516)||defined(FEATURE_VERSION_C11)\
                         ||defined(FEATURE_VERSION_C180)||defined(FEATURE_VERSION_C100)|| defined(FEATURE_VERSION_W027)\
-                        ||defined(FEATURE_VERSION_W021_CT100))&&!defined(FEATURE_VERSION_W021_CT100_QVGA)                    
+                        ||defined(FEATURE_VERSION_W021_CT100)|| defined(FEATURE_VERSION_W021_C11))&&!defined(FEATURE_VERSION_W021_CT100_QVGA)                    
                     if(i<4 && i != 2)
                     #else
                     if(i<4)

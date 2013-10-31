@@ -1933,7 +1933,7 @@ static OEMConfigListType oemi_cache = {
    {L"Mobile Tracker Alert!:The sender of this SMS is using your phone."},
    FALSE,
 #endif
-#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)|| defined (FEATURE_VERSION_K212_ND) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined(FEATURE_VERSION_HITZ181)|| defined(FEATURE_VERSION_W021_C11)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)|| defined (FEATURE_VERSION_K212_ND) || defined(FEATURE_VERSION_IC241A_MMX)
    1,											//CFGI_KEY_LOCK_CHECK			
 #elif defined(FEATURE_VERSION_W021_CT100_QVGA)
    4, 
@@ -1989,7 +1989,7 @@ static OEMConfigListType oemi_cache = {
    ,{TRUE,KEY_PDA_CTL_FROM_TIME,KEY_PDA_CTL_TO_TIME}
 #endif
    
-#ifdef FEATURE_VERSION_W021_CT100	
+#if defined(FEATURE_VERSION_W021_CT100)|| defined(FEATURE_VERSION_W021_C11)	
    , MAX_FMRADIO_VOLUME/5 *5                   //CFGI_FMRADIO_VOLUME
 #else
    , MAX_FMRADIO_VOLUME/5 *3                   //CFGI_FMRADIO_VOLUME
@@ -3342,7 +3342,7 @@ void OEM_RestoreFactorySetting( void )
    oemi_cache.restrict_incoming = 0;
    oemi_cache.restrict_outgoing = 0;
 
-#ifdef FEATURE_VERSION_W021_CT100	
+#if defined (FEATURE_VERSION_W021_CT100)|| defined(FEATURE_VERSION_W021_C11)	
    oemi_cache.fmRadio_volume = MAX_FMRADIO_VOLUME/5*5;     
 #else
    oemi_cache.fmRadio_volume = MAX_FMRADIO_VOLUME/5*3;     
@@ -3506,7 +3506,7 @@ void OEM_RestoreFactorySetting( void )
    (void) OEMNV_Put( NV_RINGER_LVL_I, &nvi );
    nvi_cache.ringer_level = OEMNV_VOLUME_MAX;
 
-#ifdef FEATURE_VERSION_W021_CT100
+#if defined(FEATURE_VERSION_W021_CT100) || defined(FEATURE_VERSION_W021_C11)
    // CFGI_EAR_VOL:  
    nvi.ear_level = OEMNV_VOLUME_MAX;
    (void) OEMNV_Put( NV_EAR_LVL_I, &nvi );
@@ -3521,7 +3521,7 @@ void OEM_RestoreFactorySetting( void )
 	nvi.beep_level = OEMNV_VOLUME_OFF;
    (void) OEMNV_Put( NV_BEEP_LVL_I, &nvi );
    nvi_cache.beep_level = OEMNV_VOLUME_OFF;
-#elif defined (FEATURE_VERSION_W021_CT100)
+#elif defined (FEATURE_VERSION_W021_CT100) || defined(FEATURE_VERSION_W021_C11)
 	nvi.beep_level = OEMNV_VOLUME_MAX;
    (void) OEMNV_Put( NV_BEEP_LVL_I, &nvi );
    nvi_cache.beep_level = OEMNV_VOLUME_MAX;

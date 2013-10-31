@@ -13523,7 +13523,7 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
 			
 			{
 				AECHAR wstrTemp[MAX_SIZE_DIALER_TEXT] = {0};
-				#if defined (FEATURE_VERSION_K202)||defined(FEATURE_VERSION_W021_CT100)
+				#if defined (FEATURE_VERSION_K202)||defined(FEATURE_VERSION_W021_CT100)|| defined(FEATURE_VERSION_W021_C11)
 				if (pMe->m_nCursorPos == 0)
 				{
 	                (void)WSTRCPY(&pMe->m_DialString[len-pMe->m_nCursorPos-1], L"0");	               
@@ -14042,7 +14042,7 @@ if(wp == AVK_0)
         			(void)WSTRCPY(&pMe->m_DialString[len-pMe->m_nCursorPos+1], wstrTemp);
 				}
         	}
-            #if defined(FEATURE_VERSION_X3)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_K212_20D)
+            #if defined(FEATURE_VERSION_X3)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_K212_20D)|| defined(FEATURE_VERSION_W021_C11)
             if(pMe->m_curpros<3)
             #else
         	if(pMe->m_curpros<2)
