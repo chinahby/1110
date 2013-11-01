@@ -23,7 +23,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_CAMERA_8W
 #define FEATURE_FM_PAUSE
 //#define FEATURE_OEMOMH
-#define FEATURE_NO_VIBRATE
+//#define FEATURE_NO_VIBRATE
 
 //#define FEATURE_SALESTRACKER
 //#define FEATURE_VERSION_W021_CT100_SALES_TRACK
