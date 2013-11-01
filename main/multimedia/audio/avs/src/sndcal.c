@@ -556,6 +556,15 @@ VOL_MEMORY snd_gen_level_voc_type snd_cal_handset_midi_vol[] = {
   {            -200 , VOC_VOL_SILENCE ,  0 },
   {             100 , VOC_VOL_SILENCE ,  0 }
   #endif
+#elif defined (FEATURE_VERSION_IC241A_MMX)
+  { VOC_VOL_SILENCE , VOC_VOL_SILENCE ,  0 },
+  {           -1600 , VOC_VOL_SILENCE ,  0 },
+  {           -1200 , VOC_VOL_SILENCE ,  0 },
+  {            -900 , VOC_VOL_SILENCE ,  0 },
+  {            -700 , VOC_VOL_SILENCE ,  0 },
+  {            -400 , VOC_VOL_SILENCE ,  0 },
+  {            -200 , VOC_VOL_SILENCE ,  0 },
+  {             100 , VOC_VOL_SILENCE ,  0 }
 #else
   /* Internal CODEC - no pad values    */
   /*  rx                dtmf            pad        */
@@ -1046,7 +1055,7 @@ VOL_MEMORY snd_gen_level_voc_type snd_cal_headset_voice_vol[] = {
   /* Internal CODEC - no pad values    */
 #if defined(CUST_EDITION) && !defined(FEATURE_OEMOMH)
 #ifndef FEATURE_VERSION_S1000T
-#ifdef FEATURE_VERSION_K212
+#if defined (FEATURE_VERSION_K212)
 /*	rx				  dtmf			  pad		 */
 { VOC_VOL_SILENCE , VOC_VOL_SILENCE ,  0 },
 {		   -2200  , 		  -3000 ,  0 },
@@ -1087,6 +1096,15 @@ VOL_MEMORY snd_gen_level_voc_type snd_cal_headset_voice_vol[] = {
   {            500  ,           -2000 ,  0 },
   {            800  ,           -1800 ,  0 }
 #endif
+#elif defined (FEATURE_VERSION_IC241A_MMX)
+  { VOC_VOL_SILENCE , VOC_VOL_SILENCE ,  0 },
+  {		   -2200  , 		  -3000 ,  0 },
+  {		   -1900  , 		  -2800 ,  0 },
+  {		   -1600  , 		  -2600 ,  0 },
+  {		   -1300  , 		  -2400 ,  0 },
+  {		   -1000  , 		  -2200 ,  0 },
+  {			-700  , 		  -2000 ,  0 },
+  {			-400  , 		  -1800 ,  0 }
 #else
   /*  rx                dtmf            pad        */
   { VOC_VOL_SILENCE , VOC_VOL_SILENCE ,  0 },
@@ -2192,7 +2210,7 @@ VOL_MEMORY snd_gen_level_voc_type snd_cal_sp_voice_vol[] = {
   {		       400  , 		     -400 ,  0 },
   {		       600  , 		     -200 ,  0 }
   #else
-  #ifdef FEATURE_VERSION_K212
+  #if defined (FEATURE_VERSION_K212)
   /*  rx                dtmf            pad        */
   { VOC_VOL_SILENCE , VOC_VOL_SILENCE ,  0 },
   {		      -800  , 		    -1400 ,  0 },
@@ -2213,6 +2231,15 @@ VOL_MEMORY snd_gen_level_voc_type snd_cal_sp_voice_vol[] = {
   {		       400  , 		     -200 ,  0 }
   #endif
   #endif
+#elif defined (FEATURE_VERSION_IC241A_MMX)  
+  { VOC_VOL_SILENCE , VOC_VOL_SILENCE ,  0 },
+  {		      -800  , 		    -1400 ,  0 },
+  {		      -600  , 		    -1200 ,  0 },
+  {		      -400  , 		    -1000 ,  0 },
+  {			  -200  , 		     -800 ,  0 },
+  {		         0  , 		     -600 ,  0 },
+  {		       200  , 		     -400 ,  0 },
+  {		       400  , 		     -200 ,  0 }
 #else
   /*  rx                dtmf            pad        */
   { VOC_VOL_SILENCE , VOC_VOL_SILENCE ,  0 },
