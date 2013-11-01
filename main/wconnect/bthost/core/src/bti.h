@@ -1420,7 +1420,11 @@ typedef struct bt_event_q_info_struct
   #define DEFAULT_BT_NAME         "Micromax C260"   
 #endif
 #elif defined(FEATURE_VERSION_IC241A_MMX)
+#if defined(FEATURE_VERSION_IN50_MMX)
+  #define DEFAULT_BT_NAME         "Micromax IN50"  
+#else
   #define DEFAULT_BT_NAME         "Micromax IC241A"
+#endif  
 #else
   #define DEFAULT_BT_NAME         "Hitz 233C"
 #endif

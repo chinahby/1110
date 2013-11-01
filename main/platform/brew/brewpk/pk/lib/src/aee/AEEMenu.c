@@ -4808,7 +4808,11 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
         //下面的20 和12可能要改成公式计算
 
 		#if defined( FEATURE_VERSION_C337)||defined( FEATURE_VERSION_K202)||defined( FEATURE_VERSION_IC241A_MMX)
+        #ifdef FEATURE_VERSION_IC241A_MMX
+        SETAEERECT( &rect, ps->xOffset/*prc->x*/,prc->y + ps->yOffset, 35, prc->dy);
+        #else
 		SETAEERECT( &rect, ps->xOffset/*prc->x*/,prc->y + ps->yOffset, 3*pme->m_cyFont/2, prc->dy);
+        #endif
 		#else
 		SETAEERECT( &rect, ps->xOffset/*prc->x*/,prc->y + ps->yOffset, pme->m_cyFont, prc->dy);
 		#endif
@@ -5045,25 +5049,25 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
 
       // determine the direction of this menu item's text
       dwItemTextAlignment = ParagraphAlignment(pText, WSTRLEN(pText));
-
+       
       // determine start position of text based on auto scroll, clipping rectangle and alignment
       if (Menu_ItemScrolls(pme, p, 0)) {
          if (dwItemTextAlignment == IDF_ALIGN_LEFT) {
             // adjust the start position of the text only if it's selected
-            if (bSel)
-            x -= pme->m_nAutoScrollIdx;
+            if (bSel)            
+                x -= pme->m_nAutoScrollIdx;            
          } else {
             // right aligned text, always adjust the start position.  But don't
             // factor in the auto scroll index if we're not selected.
             x -= IDISPLAY_MeasureText(pme->m_pIDisplay, p->nFont, pText) - rcText.dx - (bSel ? pme->m_nAutoScrollIdx : 0);
          }
-      }       
+      }            
+        
         // draw the entire text.  Align it unless it's scrolling or a softkey.
 #if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
 	
     if(Menu_ItemScrolls(pme, p, 0) || (pme->m_cls == AEECLSID_SOFTKEYCTL))
-    {
-    	
+    {         
          IDISPLAY_DrawText( pd, 
                  p->nFont, 
                  pText, 
@@ -5092,8 +5096,8 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
 #else
             dwItemTextAlignment = IDF_TEXT_TRANSPARENT;
 #endif            
-        }
-		 
+        }        
+		
         IDISPLAY_DrawText(pd,
                 p->nFont,
                 pText,
@@ -5102,7 +5106,7 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
                 y,
                 &rcText,
                 dwItemTextAlignment
-            );
+            );      
     }
     
 #else
