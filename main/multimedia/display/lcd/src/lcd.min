@@ -30,7 +30,9 @@ LCD_SURF_C_SOURCES= \
 	disp_ic_st7735s_tft177_rot.c \
 	disp_ic_gc9101_tft177_rot.c \
 	disp_ic_st7789s_tft24.c \
-	disp_ic_zc948_tft177.c
+	disp_ic_zc948_tft177.c \
+	disp_ic_nv3038_tft20.c \
+	disp_ic_rm68130_tft20.c
 
 LCD_SURF_C_SOURCES += disp_epson_S1D19120_bootscreen.c
 

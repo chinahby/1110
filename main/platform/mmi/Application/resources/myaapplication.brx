@@ -82,7 +82,7 @@
 	<String Id="1038" Name="IDS_APPLICATION_FLASHLIGHT">
 		<Text></Text>
 	</String>
-	<String Id="1037" Name="IDS_TORCH">
+	<String Id="1039" Name="IDS_TORCH">
 		<Text>Torch</Text>
 	</String>
 </Strings>
