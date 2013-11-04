@@ -4409,11 +4409,19 @@ static void CMusicPlayer_Set_CTL(CMusicPlayer *pMe)
    	//要和MP3_Draw_SettingsText里的坐标对应好
     for( i = 0; i < 3; i ++)			
     {
+#if defined (FEATURE_VERSION_IC241A_MMX) && defined (FEATURE_DISP_240X320)
+    SETAEERECT( &rects[i],
+                CONTROL_RECT_START_X + 39,
+                title_height + lineSpace  * (i + 1)  + itemheight*i- 1,
+                pMe->m_rc.dx - CONTROL_RECT_START_X - 49,
+                itemheight + 2); //10);	//高度要比控件高1个像素
+#else
      SETAEERECT( &rects[i],
                 CONTROL_RECT_START_X + 9,
                 title_height + lineSpace  * (i + 1)  + itemheight*i- 1,
                 pMe->m_rc.dx - CONTROL_RECT_START_X - 19,
                 itemheight + 2); //10);	//高度要比控件高1个像素
+#endif                
     }
 
     //设置控件焦点
@@ -4458,7 +4466,7 @@ static void CMusicPlayer_Draw_Arrow(CMusicPlayer *pMe,int title_hight, int lineS
         IIMAGE_Draw( pR_ResImg, pMe->m_rc.dx - 9, title_hight + lineSpace + 4);
         //IIMAGE_Draw( pR_ResImg, pMe->m_rc.dx - 9, title_hight + lineSpace * 2 + itemheight + 4);
         IIMAGE_Draw( pR_ResImg, pMe->m_rc.dx - 9, title_hight + lineSpace * 2 + itemheight + 1);	//4
-        IIMAGE_Draw( pR_ResImg, pMe->m_rc.dx - 9, title_hight + lineSpace * 3 + itemheight * 2 + 1);
+        IIMAGE_Draw( pR_ResImg, pMe->m_rc.dx - 9, title_hight + lineSpace * 3 + itemheight * 2 + 1);        
 #ifdef FEATURE_LCD_TOUCH_ENABLE        
         SETAEERECT(&pMe->RMode,pMe->m_rc.dx - 15,title_hight + lineSpace + 4,16, 15);
         SETAEERECT(&pMe->RVolume,pMe->m_rc.dx - 15,title_hight + lineSpace * 2 + itemheight + 1,16, 15);
@@ -4471,9 +4479,16 @@ static void CMusicPlayer_Draw_Arrow(CMusicPlayer *pMe,int title_hight, int lineS
     if(pL_ResImg != NULL)
     {
         //在状态和重复模式后面画该ICON,表示上下键改变值
+#if defined (FEATURE_VERSION_IC241A_MMX) && defined (FEATURE_DISP_240X320)
+        IIMAGE_Draw( pL_ResImg, CONTROL_RECT_START_X+30, title_hight + lineSpace + 7);
+        IIMAGE_Draw( pL_ResImg, CONTROL_RECT_START_X+30, title_hight + lineSpace * 2 + itemheight + 6);
+        IIMAGE_Draw( pL_ResImg, CONTROL_RECT_START_X+30, title_hight + lineSpace * 3 + itemheight * 2 + 6);
+#else
         IIMAGE_Draw( pL_ResImg, CONTROL_RECT_START_X, title_hight + lineSpace + 4);
         IIMAGE_Draw( pL_ResImg, CONTROL_RECT_START_X, title_hight + lineSpace * 2 + itemheight + 1);
         IIMAGE_Draw( pL_ResImg, CONTROL_RECT_START_X, title_hight + lineSpace * 3 + itemheight * 2 + 1);
+#endif
+
 #ifdef FEATURE_LCD_TOUCH_ENABLE        
         SETAEERECT(&pMe->LMode,CONTROL_RECT_START_X-10,title_hight + lineSpace + 4,20, 15);
         SETAEERECT(&pMe->LVolume,CONTROL_RECT_START_X-10,title_hight + lineSpace * 2 + itemheight + 1,20, 15);
@@ -6666,7 +6681,7 @@ static void MP3_Build_MainOpts_Menu(CMusicPlayer *pMe,IMenuCtl *pMenuCtl)
     MP3MENU_ADDITEM(pMenuCtl,IDS_PLAYLIST_ADDMUSIC);
 #if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_QVGA_INHERIT_K212)
     MP3MENU_ADDITEM(pMenuCtl,IDS_SET_AS_RINGTONE);
-	#endif
+#endif
     MP3MENU_ADDITEM(pMenuCtl,IDS_SETTINGS);
     if(pMe->m_bPlaying==TRUE)
     {
@@ -6781,6 +6796,35 @@ static void MP3_Draw_SettingsText(CMusicPlayer *pMe)
     //IDISPLAY_FillRect(pMe->m_pDisplay, &pMe->m_rc, 0);
     Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
 
+#if defined (FEATURE_VERSION_IC241A_MMX) && defined (FEATURE_DISP_240X320)
+    //play mode LIST控件的矩形
+    SETAEERECT( &rc,
+                CONTROL_RECT_START_X+40,
+                lineSpace,
+                pMe->m_rc.dx - CONTROL_RECT_START_X - 50,
+                itemheight + 1//8
+            );
+    IDISPLAY_EraseRect(pMe->m_pDisplay,&rc);
+    IMENUCTL_SetRect(pMe->m_pMode, &rc);
+    //volume list控件的矩形
+    SETAEERECT( &rc,
+                CONTROL_RECT_START_X+40,
+                lineSpace*2+itemheight,
+                pMe->m_rc.dx - CONTROL_RECT_START_X - 50,
+                itemheight + 1//8
+            );
+    IDISPLAY_EraseRect( pMe->m_pDisplay,&rc);
+    IMENUCTL_SetRect(pMe->m_pVolume, &rc);
+    // sort by list控件矩形
+    SETAEERECT( &rc,
+                CONTROL_RECT_START_X+40,
+                lineSpace*3+itemheight*2,
+                pMe->m_rc.dx - CONTROL_RECT_START_X - 50,
+                itemheight + 1//8
+            );
+    IDISPLAY_EraseRect( pMe->m_pDisplay,&rc);
+    IMENUCTL_SetRect(pMe->m_pSort, &rc);
+#else
     //play mode LIST控件的矩形
     SETAEERECT( &rc,
                 CONTROL_RECT_START_X+10,
@@ -6808,6 +6852,8 @@ static void MP3_Draw_SettingsText(CMusicPlayer *pMe)
             );
     IDISPLAY_EraseRect( pMe->m_pDisplay,&rc);
     IMENUCTL_SetRect(pMe->m_pSort, &rc);
+#endif
+
    //模式标题
     (void) ISHELL_LoadResString(pMe->m_pShell,
                                 MUSICPLAYER_RES_FILE_LANG,

@@ -4879,16 +4879,19 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
     		                                      IDI_MENU_ITEM);
     			}		
             }
-
+            
 			if (NULL != pBarImg)
 	        {	        	
 	            IIMAGE_Draw(pBarImg, rect.x, rect.y);
 	            IIMAGE_Release(pBarImg);
 	            pBarImg = NULL;
 	        }
-
 			prc->x  += rect.dx;
         	prc->dx -= rect.dx;
+            
+#ifdef FEATURE_VERSION_IC241A_MMX
+            prc->dx += rect.x;
+#endif
 		}		
 #else		
 
@@ -5036,6 +5039,7 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
 
       // adjust the clipping rectangle for the text
       rcText = *prc;
+      
       if (IS_MENU(pme) && p->pImage) {
          if (!bTitleRightAligned)
          {
@@ -5046,28 +5050,30 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
          }
          rcText.dx -= p->cxImage + MENU_IMAGE_PAD;  
       }
-
+     
       // determine the direction of this menu item's text
-      dwItemTextAlignment = ParagraphAlignment(pText, WSTRLEN(pText));
+      dwItemTextAlignment = ParagraphAlignment(pText, WSTRLEN(pText));      
        
       // determine start position of text based on auto scroll, clipping rectangle and alignment
       if (Menu_ItemScrolls(pme, p, 0)) {
          if (dwItemTextAlignment == IDF_ALIGN_LEFT) {
             // adjust the start position of the text only if it's selected
             if (bSel)            
-                x -= pme->m_nAutoScrollIdx;            
+            {
+                x -= pme->m_nAutoScrollIdx;                   
+            }
          } else {
             // right aligned text, always adjust the start position.  But don't
             // factor in the auto scroll index if we're not selected.
-            x -= IDISPLAY_MeasureText(pme->m_pIDisplay, p->nFont, pText) - rcText.dx - (bSel ? pme->m_nAutoScrollIdx : 0);
+            x -= IDISPLAY_MeasureText(pme->m_pIDisplay, p->nFont, pText) - rcText.dx - (bSel ? pme->m_nAutoScrollIdx : 0);            
          }
-      }            
-        
+      }    
+       
         // draw the entire text.  Align it unless it's scrolling or a softkey.
 #if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
 	
     if(Menu_ItemScrolls(pme, p, 0) || (pme->m_cls == AEECLSID_SOFTKEYCTL))
-    {         
+    {     
          IDISPLAY_DrawText( pd, 
                  p->nFont, 
                  pText, 
@@ -5096,8 +5102,8 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
 #else
             dwItemTextAlignment = IDF_TEXT_TRANSPARENT;
 #endif            
-        }        
-		
+        }   
+        
         IDISPLAY_DrawText(pd,
                 p->nFont,
                 pText,
@@ -5322,7 +5328,7 @@ static boolean Menu_ItemScrolls(CMenuCtl * pme, CMenuItem *pi, int nIdx)
          cx += MENU_IMAGE_PAD;
       cx += pi->cxImage;
    }
-
+   
    cxMax = pme->m_rc.dx;   // Max Width
    
 // add these @08.01.15
@@ -5334,7 +5340,11 @@ static boolean Menu_ItemScrolls(CMenuCtl * pme, CMenuItem *pi, int nIdx)
         )
     )
     {
+#ifdef FEATURE_VERSION_IC241A_MMX
+        cxMax -= 30;
+#else
         cxMax -= 13;
+#endif
     }
 
    if( !pme->userSetStyle && (IS_PROP_SET( pme->m_dwProps, MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT) ) )
@@ -5344,11 +5354,11 @@ static boolean Menu_ItemScrolls(CMenuCtl * pme, CMenuItem *pi, int nIdx)
     }
 
 #endif//#if defined( FEATURE_CUSTOMIZED_MENU_STYLE) 
-    
+   
    // Adjust Max Width for scroll bar
    if (pme->m_nItems > pme->m_nPageItems) 
       cxMax -= pme->m_nSBWidth;
-
+   
    return(cx > cxMax);
 }
 
