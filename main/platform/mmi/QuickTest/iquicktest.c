@@ -620,7 +620,7 @@ static boolean CQuickTest_HandleEvent(IQuickTest *pi,
             return TRUE;
 
         case EVT_KEY_PRESS:
-			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)
+			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99) && !defined(FEATURE_QVGA_INHERIT_K212)
             if (!pMe->m_bAppIsReady)
             {
                 return TRUE;
