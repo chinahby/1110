@@ -75,7 +75,120 @@ static void disp_ic_init(void)
 {
     /************以下代码为68110初始化************/
 //厂商调试的版本“
+#if defined(FEATURE_LCD_68110_QM)
+	LCD_WRITE_CMD(0x01); 	  // Software Reset
+	LCD_DELAY(120); //Delay 120ms
+	LCD_WRITE_CMD(0x11); 	  // Sleep Out
+	LCD_DELAY(120); //Delay 120ms
 
+	LCD_WRITE_CMD(0xC0); 	  // Power Control 1
+	LCD_WRITE_DATA(0xD6); 	  // GVDD Setting//0xF1//调节亮度，值越大越亮，颜色就越淡，
+	LCD_WRITE_DATA(0x16); 	  // GVCL Setting//0x11//以上面同步
+
+
+	LCD_WRITE_CMD(0xC1); 	  //Set VMH[6:0] & VML[6:0] for VOMH & VCOML
+	LCD_WRITE_DATA(0x09);	 
+
+	LCD_WRITE_CMD(0xB4);
+	LCD_WRITE_DATA(0x03);//0x07
+
+	LCD_WRITE_CMD(0xC5); 	  //Set VMH[6:0] & VML[6:0] for VOMH & VCOML
+	LCD_WRITE_DATA(0x0B);	 
+
+	LCD_WRITE_CMD(0x36); 	  // Memory Data Access Control
+	LCD_WRITE_DATA(0xC0); 	  // RGB Color Filter Setting
+
+	LCD_WRITE_CMD(0xC7);
+	LCD_WRITE_DATA(0x10); 		  //VCOM offset 微调Fincker//0x19
+
+	LCD_WRITE_CMD(0x3A); 	  //设置色位;
+	LCD_WRITE_DATA(0x05);
+
+	LCD_WRITE_CMD(0xF8);
+	LCD_WRITE_DATA(0x01);
+
+	//************* Start Gamma Setting **********//
+
+	LCD_WRITE_CMD(0xE0); 	  // Gamma Command
+	LCD_WRITE_DATA(0x00); 	 
+	LCD_WRITE_DATA(0x0C);
+	LCD_WRITE_DATA(0x18);
+	LCD_WRITE_DATA(0x23);
+	LCD_WRITE_DATA(0x20);
+	LCD_WRITE_DATA(0x01);
+	LCD_WRITE_DATA(0x01);
+	LCD_WRITE_DATA(0x0F);
+	LCD_WRITE_DATA(0x08);
+	LCD_WRITE_DATA(0x03);
+	LCD_WRITE_DATA(0x07);
+	LCD_WRITE_DATA(0x07);
+	LCD_WRITE_DATA(0x06);
+	LCD_WRITE_DATA(0x0B);
+	LCD_WRITE_DATA(0x04);
+	LCD_WRITE_DATA(0x08);
+	LCD_WRITE_CMD(0xE1); 	  // Gamma Command
+	LCD_WRITE_DATA(0x00); 	 
+	LCD_WRITE_DATA(0x0C);
+	LCD_WRITE_DATA(0x18);
+	LCD_WRITE_DATA(0x23);
+	LCD_WRITE_DATA(0x20);
+	LCD_WRITE_DATA(0x01);
+	LCD_WRITE_DATA(0x01);
+	LCD_WRITE_DATA(0x0F);
+	LCD_WRITE_DATA(0x08);
+	LCD_WRITE_DATA(0x03);
+	LCD_WRITE_DATA(0x07);
+	LCD_WRITE_DATA(0x07);
+	LCD_WRITE_DATA(0x06);
+	LCD_WRITE_DATA(0x0B);
+	LCD_WRITE_DATA(0x04);
+	LCD_WRITE_DATA(0x08);
+
+	LCD_WRITE_CMD(0xFE);
+	LCD_WRITE_DATA(0x09); 	 
+	LCD_WRITE_DATA(0xB0);
+	LCD_WRITE_DATA(0x10);
+	LCD_WRITE_DATA(0x48);
+
+	LCD_WRITE_CMD(0xB1);
+	LCD_WRITE_DATA(0x0F);   
+	LCD_WRITE_DATA(0x00);
+	LCD_WRITE_DATA(0x04);
+
+	LCD_WRITE_CMD(0xFD);
+	LCD_WRITE_DATA(0x10); 	 
+	LCD_WRITE_DATA(0xDF);
+	LCD_WRITE_DATA(0x60);
+	LCD_WRITE_DATA(0xD0);
+
+	LCD_WRITE_CMD(0xF4);
+	LCD_WRITE_DATA(0x00);
+	LCD_WRITE_DATA(0x0C);
+
+	LCD_WRITE_CMD(0xC2);
+	LCD_WRITE_DATA(0x02);
+	LCD_WRITE_DATA(0x84);
+
+	LCD_WRITE_CMD(0xF8);
+	LCD_WRITE_DATA(0x00);
+
+	LCD_WRITE_CMD(0x2A);
+	LCD_WRITE_DATA(0x00);
+	LCD_WRITE_DATA(0x00);
+	LCD_WRITE_DATA(0x00);
+	LCD_WRITE_DATA(0x7F);
+
+	LCD_WRITE_CMD(0x2B);
+	LCD_WRITE_DATA(0x00);
+	LCD_WRITE_DATA(0x00);
+	LCD_WRITE_DATA(0x00);
+	LCD_WRITE_DATA(0x9F);
+
+	LCD_WRITE_CMD(0x29);	   // Display Ondelay(20);
+	LCD_DELAY(20); //Delay 20ms
+	LCD_WRITE_CMD(0x2C);
+	LCD_DELAY(20); //Delay 20ms
+#else
 	LCD_WRITE_CMD(0x01);       // Software Reset
 	LCD_WRITE_CMD(0x11);       // Sleep Out
 	LCD_DELAY(120); 	            // Must Delay At Least 100 ms
@@ -172,6 +285,7 @@ static void disp_ic_init(void)
 	LCD_DELAY(20);
 	LCD_WRITE_CMD(0x2C);
 	LCD_DELAY(20); 
+#endif
 }
 
 static void disp_ic_setwindow(uint32 start_row, uint32 start_col, uint32 end_row, uint32 end_col)
@@ -195,6 +309,38 @@ static void disp_ic_setwindow(uint32 start_row, uint32 start_col, uint32 end_row
 
 static void disp_ic_sleep(boolean bin)
 {
+#if defined(FEATURE_LCD_68110_QM)
+	if(bin)
+	{
+        LCD_WRITE_CMD(0x28);//Sleep in        
+	    LCD_DELAY(10);
+	    LCD_WRITE_CMD(0x10);
+	    LCD_DELAY(120);
+	}
+	else
+	{
+	/*	//如果睡眠唤醒后，又有抖动的话，就重设VCOM电压
+			LCD_WRITE_CMD(0x11);
+			LCD_DELAY(120);
+		//重设vcom电压
+//如果唤醒睡眠后VCOM电压没跑，就可以不做这个操作
+		
+		//start
+			LCD_WRITE_CMD(0xF8);
+			LCD_WRITE_DATA(0x01);
+			LCD_DELAY(20);
+			LCD_WRITE_CMD(0xF4);
+			LCD_WRITE_DATA(0x00);
+			LCD_WRITE_DATA(0x08);
+			LCD_DELAY(20);
+			LCD_WRITE_CMD(0xC7);
+			LCD_WRITE_DATA(0x19);
+		//end
+	        LCD_WRITE_CMD(0x29);
+	        LCD_DELAY(20);*/
+        disp_ic_init();
+	}
+#else
     if(bin)
     {
         LCD_WRITE_CMD(0x28);//Sleep in        
@@ -227,6 +373,7 @@ static void disp_ic_sleep(boolean bin)
         LCD_WRITE_CMD(0x29);
         LCD_DELAY(20);
     }
+#endif
 }
 
 static void disp_ic_rot(uint16 degree)
