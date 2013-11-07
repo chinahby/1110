@@ -467,9 +467,7 @@ static const CCameraSize g_VideoSizeCFG_10[] =
     {144,176,L"144*176"}, // QCIF
 #elif defined(FEATURE_VERSION_IC241A_MMX)
     {128,160,L"128*160"}, // FULL Screen
-    {176,220,L"176*220"}, // QCIF
-    {240,320,L"240*320"},
-    {352,464,L"352*464"}, // VGA 
+    {144,176,L"144*176"}, // QCIF
 #else  
     {480,640,L"480*640"}, // VGA 
     {600,800,L"600*800"}, // VGA   
@@ -4927,28 +4925,47 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
                          &pMe->m_nCameraSize,
                           sizeof(pMe->m_nCameraSize));
 
-    switch(pMe->m_nCameraSize)
+    if(pMe->m_isRecordMode == FALSE)
     {
-        case OEMNV_CAMERA_SIZE_INDEX_0:
-            nResID[CAMERACFGSIZE] = IDI_SIZE_128_160;
-            break;
+        switch(pMe->m_nCameraSize)
+        {
+            case OEMNV_CAMERA_SIZE_INDEX_0:
+                nResID[CAMERACFGSIZE] = IDI_SIZE_128_160;
+                break;
 
-        case OEMNV_CAMERA_SIZE_INDEX_1:
-            nResID[CAMERACFGSIZE] = IDI_SIZE_176_220;
-            break;       
-		
-        case OEMNV_CAMERA_SIZE_INDEX_2:
-            nResID[CAMERACFGSIZE] = IDI_SIZE_240_320;
-            break;  
-            
-        case OEMNV_CAMERA_SIZE_INDEX_3:
-            nResID[CAMERACFGSIZE] = IDI_SIZE_480_640;
-            break;     
-       
-        default:
-            nResID[CAMERACFGSIZE] = IDI_SIZE_240_320;
-            break;
+            case OEMNV_CAMERA_SIZE_INDEX_1:
+                nResID[CAMERACFGSIZE] = IDI_SIZE_176_220;
+                break;       
+    		
+            case OEMNV_CAMERA_SIZE_INDEX_2:
+                nResID[CAMERACFGSIZE] = IDI_SIZE_240_320;
+                break;  
+                
+            case OEMNV_CAMERA_SIZE_INDEX_3:
+                nResID[CAMERACFGSIZE] = IDI_SIZE_480_640;
+                break;     
+           
+            default:
+                nResID[CAMERACFGSIZE] = IDI_SIZE_240_320;
+                break;
+        }
     }
+    else
+    {
+        switch(pMe->m_nCameraSize)
+        {
+            case OEMNV_CAMERA_SIZE_INDEX_0:
+                nResID[CAMERACFGSIZE] = IDI_SIZE_128_160;
+                break;
+
+            case OEMNV_CAMERA_SIZE_INDEX_1:
+                nResID[CAMERACFGSIZE] = IDI_SIZE_144_176;
+                break;                         
+            default:
+                nResID[CAMERACFGSIZE] = IDI_SIZE_128_160;
+                break;
+        }
+    }    
 #endif
 
 //#endif      //!defined FEATURE_VERSION_IC241A_MMX
