@@ -1196,7 +1196,7 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
             IMENUCTL_SetTitle(pMenu, APPLICATION_RES_FILE_LANG, IDS_APPLICATION_LIST, NULL);
 			#else
 #if defined	(FEATURE_VERSION_FLEXI203)||defined(FEATURE_VERSION_IVIO203) ||defined(FEATURE_VERSION_C500BE)||defined	(FEATURE_VERSION_FLEXI203P)||defined (FEATURE_VERSION_VG68)\
-	||defined(FEATURE_VERSION_K202_LM129C)//xxzhen
+	||defined(FEATURE_VERSION_K202_LM129C)||defined(FEATURE_VERSION_W021_C11) //xxzhen
 			(void)ISHELL_LoadResString(pMe->m_pShell,
                                     APPLICATION_RES_FILE_LANG,                                
                                     IDS_TOOLS_LIST,
@@ -1383,6 +1383,7 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
 			//IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_BROWSER, IDS_APPLICATION_BROWSER, NULL, 0); 
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CALCULATOR, IDS_APPLICATION_CALCULATOR, NULL, 0); 
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_SCHEDULER, IDS_APPLICATION_SCHEDULER, NULL, 0);
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_TORCH, IDS_TORCH, NULL, 0);
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_ALARM, IDS_APPLICATION_ALARM, NULL, 0);
 			//IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_WORLDTIME, IDS_APPLICATION_WORLDTIME, NULL, 0);
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TIMER, IDS_APPLICATION_TIMER, NULL, 0);
@@ -1635,7 +1636,7 @@ static boolean  Application_FlashlightMenuHandler(Application *pMe, AEEEvent eCo
      switch (eCode)
     {
         case EVT_DIALOG_INIT:	
-#if defined (FEATURE_VERSION_C260_IC18) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined (FEATURE_VERSION_C260_IC18) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND) ||defined(FEATURE_VERSION_W021_C11)|| defined(FEATURE_VERSION_IC241A_MMX)
             (void)ISHELL_LoadResString(pMe->m_pShell,
                                     APPLICATION_RES_FILE_LANG,                                
                                     IDS_TORCH,
