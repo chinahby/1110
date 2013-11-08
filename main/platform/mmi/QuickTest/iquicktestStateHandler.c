@@ -941,7 +941,11 @@ static NextFSMAction QUICKTESTSTCallTestHandler(CQuickTest *pMe)
 #endif			
 #else
 #if defined( FEATURE_FM_RADIO)
+#if defined(FEATURE_VERSION_W021_WSF_CN)
+			MOVE_TO_STATE(QUICKTESTST_CAMERATEST)
+#else
             MOVE_TO_STATE(QUICKTESTST_FMTEST)
+#endif
 #else
             MOVE_TO_STATE(QUICKTESTST_SDTEST)
 #endif
