@@ -5045,6 +5045,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 						   WMSDialog_KeypadLock(TRUE);
 						#elif defined (FEATURE_VERSION_C316)
 						   APPDialog_KeypadLock(TRUE);
+						#elif defined(FEATURE_VERSION_W021_WSF_CN)
+							WMSDialog_KeypadLock(TRUE);
                         #endif
 						
                         #if defined(FEATURE_VERSION_MYANMAR) || defined( FEATURE_VERSION_C11) || defined(FEATURE_VERSION_C180) \
