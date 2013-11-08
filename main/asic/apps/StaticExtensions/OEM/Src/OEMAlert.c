@@ -2384,7 +2384,7 @@ static void OEMALERT_StartRingerAlert(IALERT *pMe,uint32 id,ALERT_SND_TYPE type)
                 gCurStatus.m_pCurRingerMgr = pMe->m_pRingerMgr;
                 gCurStatus.m_bplaying = TRUE;
             }		
-#if defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)
+#if defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_W021_WSF_CN)
 			MSG_FATAL("pMe->m_iAlert..................00000000",0,0,0);
 				if(!pMe->m_iAlert)
 				{
@@ -2583,7 +2583,7 @@ static int OEMALERT_StartMp3Alert(IALERT * pMe, char *id, ALERT_SND_TYPE type)
                     (void) IMEDIA_Play(pMe->m_pMedia);
                     (void)IMEDIA_RegisterNotify(pMe->m_pMedia, OEMALERT_MediaNotify, pMe);
                 }      
-#if defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)
+#if defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_W021_WSF_CN)
 
 				MSG_FATAL("pMe->m_iAlert..................111111",0,0,0);
 				if(!pMe->m_iAlert)
@@ -2881,7 +2881,7 @@ static void OEMALERT_HandleRingerAlertTimer(void *pUser)
                 #endif
                 #endif
              	#endif
-#if defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)
+#if defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_W021_WSF_CN)
 				if(!pMe->m_iAlert)
 				{
 					ISOUND_Vibrate(pMe->m_pSound,TIME_MS_RINGERVIBRATE_DURATION);
@@ -2916,7 +2916,7 @@ static void OEMALERT_HandleRingerAlertTimer(void *pUser)
                     #endif
              		#endif
 					
-#if defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)
+#if defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_W021_WSF_CN)
 					if(!pMe->m_iAlert)
 					{
 						ISOUND_Vibrate(pMe->m_pSound,TIME_MS_RINGERVIBRATE_DURATION);
@@ -3000,7 +3000,7 @@ static void OEMALERT_HandleRingerAlertTimer(void *pUser)
                     #endif
              		#endif
                 }      
-#if defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)
+#if defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_W021_WSF_CN)
 				MSG_FATAL("pMe->m_iAlert..................2222222",0,0,0);
 				if(!pMe->m_iAlert)
 				{
