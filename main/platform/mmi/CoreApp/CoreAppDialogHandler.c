@@ -5028,6 +5028,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 							return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 						 #elif defined(FEATURE_VERSION_K212_ND)
 						 	return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
+						 #elif defined(FEATURE_VERSION_W021_WSF_CN)
+						 return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
 						#else
 							return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);//
 						#endif
