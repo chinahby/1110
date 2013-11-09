@@ -2220,6 +2220,15 @@ VOL_MEMORY snd_gen_level_voc_type snd_cal_sp_voice_vol[] = {
   {		         0  , 		     -600 ,  0 },
   {		       200  , 		     -400 ,  0 },
   {		       400  , 		     -200 ,  0 }
+  #elif defined FEATURE_VERSION_W021_WSF_CN
+    { VOC_VOL_SILENCE , VOC_VOL_SILENCE ,  0 },
+  {		      -400  , 		    -1400 ,  0 },
+  {		      -200  , 		    -1200 ,  0 },
+  {		         0  , 		    -1000 ,  0 },
+  {			   200  , 		     -800 ,  0 },
+  {		       400  , 		     -600 ,  0 },
+  {		       600  , 		     -400 ,  0 },
+  {		       800  , 		     -200 ,  0 }
   #else
   { VOC_VOL_SILENCE , VOC_VOL_SILENCE ,  0 },
   {		      -800  , 		    -1400 ,  0 },
