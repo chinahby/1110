@@ -95,9 +95,9 @@
 #define SMS_TRACKER_THREE               'Z'
 #endif
 
-#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+//#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 #define  MIZONE_MSG             'Z'
-#endif
+//#endif
 
 #if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212)
 #define REG_SERVERNUM       "10659401" //"18126010560"

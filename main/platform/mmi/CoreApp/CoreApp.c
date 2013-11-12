@@ -1748,8 +1748,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 #endif
 #if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)||defined(FEATURE_SOUND_BO) || defined(FEATURE_VERSION_IC241A_MMX)
 case EVT_ALARM:
-		{
-				MSG_FATAL("EVT_ALARM...................................",0,0,0);
+		{				
 				#ifdef FEATURE_SOUND_BO
 				CoreApp_SoundBoAlarm(pMe, wParam);
 				#else

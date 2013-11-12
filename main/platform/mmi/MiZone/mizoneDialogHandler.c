@@ -543,7 +543,9 @@ static boolean  MiZone_ACTIVATEHandler(CMiZone *pMe,
                              STRCPY(SMSINFO,"MMWELL");
                              else if(pMe->m_pActiveitem == IDS_FUNZONE_11)
                              STRCPY(SMSINFO,"MMNEWS");
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)                             
                             ICONFIG_SetItem(pMe->m_pConfig, CFGI_MIZONE_SMSINFO,SMSINFO, sizeof(SMSINFO)); 
+#endif
                             if(Mizone_SendSms(pMe)==SUCCESS)
                             {
                                CLOSE_DIALOG(DLGRET_ENDACTIVATE)
@@ -641,10 +643,11 @@ static boolean  MiZone_ENDACTIVATEHandler(CMiZone *pMe,
                                       ActivateId, 
                                       ActivateTEXT, 
                                       sizeof(ActivateTEXT));     
-
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
            OEM_GetConfig(CFGI_MIZONE_NUM, strDate, sizeof(strDate));           
            STRTOWSTR(strDate, fmt_str, sizeof(fmt_str));            
            WSPRINTF(text, sizeof(text), ActivateTEXT,  fmt_str);
+#endif           
                                        
            //pTemp = WSTRCHR(ActivateTEXT,(AECHAR)'\\');
            pTemp = WSTRCHR(text,(AECHAR)'\\');
@@ -830,7 +833,9 @@ static boolean  MiZone_ASTROLOGYHandler(CMiZone *pMe,
                        
                        STRCPY(SMSINFO,"MMDOB");
                        STRCAT(SMSINFO, strBuf);
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)                       
                        ICONFIG_SetItem(pMe->m_pConfig, CFGI_MIZONE_SMSINFO,SMSINFO, sizeof(SMSINFO)); 
+#endif
                       
                       if(Mizone_SendSms(pMe)==SUCCESS)
                       {
@@ -1119,7 +1124,9 @@ static boolean  MiZone_ENDPULLHandler(CMiZone *pMe,
                             STRCPY(SMSINFO,"MMP2AHEALTH"); 
                             else if(pMe->m_pActiveitem == IDS_FUNZONE_PULLSERVICES_7)
                             STRCPY(SMSINFO,"MMP2APTEST"); 
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)                            
                             ICONFIG_SetItem(pMe->m_pConfig, CFGI_MIZONE_SMSINFO,SMSINFO, sizeof(SMSINFO)); 
+#endif
                             if(Mizone_SendSms(pMe)==SUCCESS)
                             {
                                CLOSE_DIALOG(DLGRET_CANCELED)
@@ -1273,7 +1280,10 @@ static boolean  MiZone_INPUTSENDHandler(CMiZone *pMe,
                       
                       STRCPY(SMSINFO,"MMP2AAST");
                       STRCAT(SMSINFO, strBuf);
+                      
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)                       
                       ICONFIG_SetItem(pMe->m_pConfig, CFGI_MIZONE_SMSINFO,SMSINFO, sizeof(SMSINFO)); 
+#endif
                       
                       if(Mizone_SendSms(pMe)==SUCCESS)
                       {
@@ -1476,7 +1486,9 @@ static boolean  MiZone_SENDNAMEHandler(CMiZone *pMe,
                       STRCPY(SMSINFO,"MMP2AFLAME");
                       STRCAT(SMSINFO,strFirstName);
                       STRCAT(SMSINFO,strpartnerName);
+#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)                       
                       ICONFIG_SetItem(pMe->m_pConfig, CFGI_MIZONE_SMSINFO,SMSINFO, sizeof(SMSINFO)); 
+#endif
                  
                      if(Mizone_SendSms(pMe)==SUCCESS)
                      {

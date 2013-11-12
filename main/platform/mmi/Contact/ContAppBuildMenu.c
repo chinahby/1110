@@ -1363,9 +1363,7 @@ int CContApp_BuildListMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
 	{
 		boolean b_defaultcont = FALSE;	  
 	    OEM_GetConfig(CFGI_DEFAULTCONT,&b_defaultcont, sizeof(b_defaultcont));
-
-		MSG_FATAL("***zzg CContApp_BuildListMenu CFGI_DEFAULTCONT=%x***", b_defaultcont, 0, 0);
-
+	
 		if (b_defaultcont == FALSE)
 		{
 			CContApp_CreateDefaultCont(pMe);	
