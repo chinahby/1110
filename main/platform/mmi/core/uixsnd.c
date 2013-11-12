@@ -2744,7 +2744,7 @@ snd_freq_tone_start(SND_DEVICE_CURRENT,
 				}
 				else
 					*/				
-#if defined (FEATURE_VERSION_C260_IC18) || defined (FEATURE_VERSION_IC241A_MMX)
+#if (defined (FEATURE_VERSION_C260_IC18)&&!defined(FEATURE_VERSION_C260_IC19)) || defined (FEATURE_VERSION_IC241A_MMX)
 uisnd_vibrate_cmd(TRUE);
     clk_reg( &uisnd_vibrator_clk,
               uisnd_vibrator_cb,
