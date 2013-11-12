@@ -32,7 +32,7 @@
 		<File>..\images\240x320\common\QuickTest\down.png</File>
 	</Object>
 	<Object Id="5014" Name="IDB_PROMPT_MSG_STATIC_BG">
-		<File>..\images\240x320\common\Appscommon\MessageBox\background_static.bmp</File>
+		<File>..\images\240x320\common\Appscommon\MessageBox\background_static.png</File>
 	</Object>
 	<Object Id="5015" Name="IDB_MAINMENU_BG" MimeType="image/png">
 		<File>..\images\240x320\common\Appscommon\Menu\background\background.png</File>
