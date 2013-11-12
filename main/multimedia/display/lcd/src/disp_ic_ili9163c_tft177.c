@@ -71,6 +71,7 @@ static void disp_ic_mdp_scrupdate(uint32 *scr, uint32 start_row, uint32 start_co
 }
 #endif
 
+
 void disp_ic_init_w021_ct100_9163C_F1N9_AGA22_2013_07_22(void)
 {
     LCD_WRITE_CMD(0x11); //Exit Sleep
@@ -584,7 +585,7 @@ static void disp_ic_init(void)
     LCD_DELAY(120);
     LCD_WRITE_CMD(0x29);    //Display on 
     LCD_WRITE_CMD(0x2C);     
-    #elif defined(FEATURE_VERSION_W022_CT100)    
+    #elif defined(FEATURE_VERSION_W022_CT100) 
     disp_ic_init_w021_ct100_9163C_F1N9_AGA22_2013_07_22();
     #elif defined(FEATURE_VERSION_W021_CT100_X2)||defined(FEATURE_VERSION_W021_CT100_VERSION_02)
     disp_ic_init_w021_ct100_9163C_F1N9_AGA22_2013_07_22();
@@ -692,7 +693,7 @@ static void disp_ic_init(void)
 	LCD_WRITE_DATA(0x10);
 
 	LCD_WRITE_CMD(0xB4);
-	LCD_WRITE_DATA(0x07);
+	LCD_WRITE_DATA(0x06);
 
 
 	LCD_WRITE_CMD(0xC0); //Set VRH1[4:0] & VC[2:0] for VCI1 & GVDD
