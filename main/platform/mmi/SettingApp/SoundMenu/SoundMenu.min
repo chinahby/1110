@@ -519,7 +519,21 @@ else
             midi_05.mid|fs:/ringers/midi_05.mid \
             sms_01.mid|fs:/ringers/sms_01.mid \
             sms_02.mid|fs:/ringers/sms_02.mid \
-            sms_03.mid|fs:/ringers/sms_03.mid                            
+            sms_03.mid|fs:/ringers/sms_03.mid    
+    else ifeq ($(USES_RESDIR),IN50_MMX)                                           
+        CONSTFILE_FILES+=\
+            alarm_default.mid|fs:/ringers/alarm_default.mid \
+            alarm_01.mid|fs:/ringers/alarm_01.mid \
+            alarm_02.mid|fs:/ringers/alarm_02.mid \
+            can.mp3|fs:/ringers/can.mp3 \
+            midi_01.mid|fs:/ringers/midi_01.mid \
+            midi_02.mid|fs:/ringers/midi_02.mid \
+            midi_03.mid|fs:/ringers/midi_03.mid \
+            midi_04.mid|fs:/ringers/midi_04.mid \
+            midi_05.mid|fs:/ringers/midi_05.mid \
+            sms_01.mid|fs:/ringers/sms_01.mid \
+            sms_02.mid|fs:/ringers/sms_02.mid \
+            sms_03.mid|fs:/ringers/sms_03.mid                                     
     else ifeq ($(USES_RESDIR),C180)                                           
         CONSTFILE_FILES+=\
             blues.mid|fs:/ringers/blues.mid \

@@ -315,6 +315,14 @@ typedef struct _MainMenu
 #define BOTTOM_ICON_WIDTH       45
 #define BOTTOM_ICON_HEIGHT      45
 #define BOTTOM_MID_SPACE        11
+#elif defined (FEATURE_VERSION_IN50_MMX)
+#define ICON_WIDTH              60
+#define ICON_HEIGHT             60
+#define ICON_ANIMATED_WIDTH     60
+#define ICON_ANIMATED_HEIGHT    60
+#define BOTTOM_ICON_WIDTH       45
+#define BOTTOM_ICON_HEIGHT      45
+#define BOTTOM_MID_SPACE        11
 #else
 #define ICON_WIDTH              70
 #define ICON_HEIGHT             60
@@ -429,6 +437,19 @@ typedef struct _MainMenu
 	#define ICON5_ANI      "fs:/image/mainmenu/Icon_tianyi.png"
     #define ICON6_ANI      "fs:/image/mainmenu/Icon_tools.png"
     #define ICON7_ANI      "fs:/image/mainmenu/Icon_wms.png"
+#elif defined(FEATURE_VERSION_IN50_MMX)
+    #define ICON1_ANI      "fs:/image/mainmenu/qsc1100_01.png"
+    #define ICON2_ANI      "fs:/image/mainmenu/qsc1100_02.png"
+    #define ICON3_ANI      "fs:/image/mainmenu/qsc1100_03.png"
+    #define ICON4_ANI      "fs:/image/mainmenu/qsc1100_04.png"
+    #define ICON5_ANI      "fs:/image/mainmenu/qsc1100_05.png"
+    #define ICON6_ANI      "fs:/image/mainmenu/qsc1100_06.png"
+    #define ICON7_ANI      "fs:/image/mainmenu/qsc1100_07.png"
+    #define ICON8_ANI      "fs:/image/mainmenu/qsc1100_08.png"
+    #define ICON9_ANI      "fs:/image/mainmenu/qsc1100_09.png"
+    #define ICON10_ANI     "fs:/image/mainmenu/qsc1100_10.png"
+    #define ICON11_ANI     "fs:/image/mainmenu/qsc1100_11.png"
+    #define ICON12_ANI     "fs:/image/mainmenu/qsc1100_12.png"   
 #else  
 	
 	#ifdef FEATURE_LCD_TOUCH_ENABLE
@@ -546,6 +567,33 @@ typedef struct _MainMenu
 	#define ICON10_ANI_1   "fs:/image/mainmenu/ARROW_LEFT.png"
     #define ICON11_ANI_1   "fs:/image/mainmenu/ARROW_RIGHT.png"
     #define ICON12_ANI_1   "fs:/image/mainmenu/SEL.png"	
+#elif defined(FEATURE_VERSION_IN50_MMX)    
+    #define ICON1_ANI_1      "fs:/image/mainmenu/qsc1100_01_focus.gif"
+    #define ICON2_ANI_1      "fs:/image/mainmenu/qsc1100_02_focus.gif"
+    #define ICON3_ANI_1      "fs:/image/mainmenu/qsc1100_03_focus.gif"
+    #define ICON4_ANI_1      "fs:/image/mainmenu/qsc1100_04_focus.gif"
+    #define ICON5_ANI_1      "fs:/image/mainmenu/qsc1100_05_focus.gif"
+    #define ICON6_ANI_1      "fs:/image/mainmenu/qsc1100_06_focus.gif"
+    #define ICON7_ANI_1      "fs:/image/mainmenu/qsc1100_07_focus.gif"
+    #define ICON8_ANI_1      "fs:/image/mainmenu/qsc1100_08_focus.gif"
+    #define ICON9_ANI_1      "fs:/image/mainmenu/qsc1100_09_focus.gif"
+    #define ICON10_ANI_1     "fs:/image/mainmenu/qsc1100_10_focus.gif"
+    #define ICON11_ANI_1     "fs:/image/mainmenu/qsc1100_11_focus.gif"
+    #define ICON12_ANI_1     "fs:/image/mainmenu/qsc1100_12_focus.gif"   
+    /*
+    #define ICON1_ANI_1      "fs:/image/mainmenu/qsc1100_01_focus.png"
+    #define ICON2_ANI_1      "fs:/image/mainmenu/qsc1100_02_focus.png"
+    #define ICON3_ANI_1      "fs:/image/mainmenu/qsc1100_03_focus.png"
+    #define ICON4_ANI_1      "fs:/image/mainmenu/qsc1100_04_focus.png"
+    #define ICON5_ANI_1      "fs:/image/mainmenu/qsc1100_05_focus.png"
+    #define ICON6_ANI_1      "fs:/image/mainmenu/qsc1100_06_focus.png"
+    #define ICON7_ANI_1      "fs:/image/mainmenu/qsc1100_07_focus.png"
+    #define ICON8_ANI_1      "fs:/image/mainmenu/qsc1100_08_focus.png"
+    #define ICON9_ANI_1      "fs:/image/mainmenu/qsc1100_09_focus.png"
+    #define ICON10_ANI_1     "fs:/image/mainmenu/qsc1100_10_focus.png"
+    #define ICON11_ANI_1     "fs:/image/mainmenu/qsc1100_11_focus.png"
+    #define ICON12_ANI_1     "fs:/image/mainmenu/qsc1100_12_focus.png" 
+    */
 #else
 	#ifdef FEATURE_LCD_TOUCH_ENABLE
 

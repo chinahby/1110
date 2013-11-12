@@ -11262,7 +11262,6 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
 	pMe->m_IconTitle[10]	= IDS_MAIN_MENU_APPLICATION;
 	pMe->m_IconTitle[11]	= IDS_MAIN_MENU_SETTINGS;
 #else
-as
     pMe->m_IconTitle[0]     = IDS_MAIN_MENU_MEDIAGALLERY;
     pMe->m_IconTitle[1]     = IDS_MAIN_MENU_CONTACTS;
     pMe->m_IconTitle[2]     = IDS_MAIN_MENU_UTK;
@@ -11579,6 +11578,22 @@ as
     pMe->m_IconTitle[10]    = IDS_MAIN_MENU_SCHEDULER;
     pMe->m_IconTitle[11]    = IDS_MAIN_MENU_CALCULATOR;
 #elif defined(FEATURE_VERSION_IC241A_MMX)
+#ifdef FEATURE_VERSION_IN50_MMX
+    pMe->m_IconTitle[0]     = IDS_MAIN_MENU_MULTIMEDIA;	//IDS_MAIN_MENU_MUSICPLAYER;	
+	pMe->m_IconTitle[1]     = IDS_PHONEBOOK;	
+    pMe->m_IconTitle[2]     = IDS_MAIN_MENU_RECENTCALLS_C337;	//IDS_MAIN_MENU_RECENTCALLS;
+    pMe->m_IconTitle[3]     = IDS_MAIN_MENU_SERVICES;	//IDS_MAIN_WAPBROWSER;
+    pMe->m_IconTitle[4]     = IDS_MAIN_MENU_MESSAGES;
+    pMe->m_IconTitle[5]     = IDS_MAIN_MENU_MUSICPLAYER;	//IDS_MAIN_MENU_MEDIAGALLERY;
+	
+    pMe->m_IconTitle[6]     = IDS_MAIN_MENU_FMRADIO;	//IDS_MAIN_MENU_MULTIMEDIA;		//m! STORE
+    pMe->m_IconTitle[7]     = IDS_MAIN_MENU_ORGANIZER;	//IDS_MAIN_MENU_APPLICATION;
+    pMe->m_IconTitle[8]     = IDS_MAIN_MENU_MEDIAGALLERY_C337;	//IDS_MAIN_MENU_APPLICATION;		//m! ZONE
+	
+    pMe->m_IconTitle[9]     = IDS_MAIN_MENU_CAMERA;	//IDS_MAIN_MENU_USERPROFILE;	//IDS_MAIN_MENU_APPLICATION;
+    pMe->m_IconTitle[10]    = IDS_MAIN_MENU_GAMES;
+    pMe->m_IconTitle[11]    = IDS_MAIN_MENU_SETTINGS;
+#else
     pMe->m_IconTitle[0]     = IDS_MAIN_MENU_MULTIMEDIA;	//IDS_MAIN_MENU_MUSICPLAYER;	
 	pMe->m_IconTitle[1]     = IDS_PHONEBOOK;	
     pMe->m_IconTitle[2]     = IDS_MAIN_MENU_RECENTCALLS_C337;	//IDS_MAIN_MENU_RECENTCALLS;
@@ -11592,7 +11607,8 @@ as
 	
     pMe->m_IconTitle[9]     = IDS_MAIN_MENU_USER_PROFILE;	//IDS_MAIN_MENU_USERPROFILE;	//IDS_MAIN_MENU_APPLICATION;
     pMe->m_IconTitle[10]    = IDS_MAIN_MENU_GAMES;
-    pMe->m_IconTitle[11]    = IDS_MAIN_MENU_SETTINGS;	    
+    pMe->m_IconTitle[11]    = IDS_MAIN_MENU_SETTINGS;	  
+#endif    
 #else
     pMe->m_IconTitle[0]     = IDS_MAIN_MENU_MEDIAGALLERY;
     pMe->m_IconTitle[1]     = IDS_MAIN_MENU_CONTACTS;
@@ -12579,6 +12595,7 @@ static void CalculateScreenParameters(MainMenu *pMe)
         iconSpaceVertical = 0;
     }
 #endif
+
     for( i = 0; i < MAX_MATRIX_ITEMS; i ++)
     {
         pMe->m_Icondefault_Pt[i].x = iconSpaceHorizontal +
@@ -12587,14 +12604,19 @@ static void CalculateScreenParameters(MainMenu *pMe)
         pMe->m_Icondefault_Pt[i].y = TITLEBAR_HEIGHT + iconSpaceVertical +
             ( imageInfoIcon.cy + iconSpaceVertical) * ( i / MAX_MATRIX_COLS);
 
+#ifdef FEATURE_VERSION_IN50_MMX
+        pMe->m_Icondefault_Pt[i].x += 10;
+        //pMe->m_Icondefault_Pt[i].y -= 5;        
+#endif
+
         //计算焦点图片的坐标
         pMe->m_IconFocus_Pt[i].x = pMe->m_Icondefault_Pt[i].x - (ICON_ANIMATED_WIDTH - imageInfoIcon.cx)/2;
 
         pMe->m_IconFocus_Pt[i].y = pMe->m_Icondefault_Pt[i].y - (ICON_ANIMATED_HEIGHT- imageInfoIcon.cy)/2;
         //end added
 
-        MSG_FATAL("***zzg m_Icondefault_Pt[%d].x=%d, m_Icondefault_Pt.y=%d", i, pMe->m_Icondefault_Pt[i].x, pMe->m_Icondefault_Pt[i].y);
-        MSG_FATAL("***zzg m_IconFocus_Pt[%d].x=%d, m_IconFocus_Pt.y=%d", i, pMe->m_IconFocus_Pt[i].x, pMe->m_IconFocus_Pt[i].y);
+        //MSG_FATAL("***zzg m_Icondefault_Pt[%d].x=%d, m_Icondefault_Pt.y=%d", i, pMe->m_Icondefault_Pt[i].x, pMe->m_Icondefault_Pt[i].y);
+        //MSG_FATAL("***zzg m_IconFocus_Pt[%d].x=%d, m_IconFocus_Pt.y=%d", i, pMe->m_IconFocus_Pt[i].x, pMe->m_IconFocus_Pt[i].y);
     }
 #endif    
 }
@@ -12703,7 +12725,7 @@ static void DrawFocusIcon(MainMenu *pMe)
 	titleBarParms.nTitleResID   = pMe->m_IconTitle[theFocus];
     DrawTitleBar(pMe->m_pDisplay, &titleBarParms);
     
- #if defined (FEATURE_VERSION_H19C) || defined (FEATURE_VERSION_C01) || defined(FEATURE_VERSION_SKY)
+ #if defined (FEATURE_VERSION_H19C) || defined (FEATURE_VERSION_C01) || defined(FEATURE_VERSION_SKY)|| defined(FEATURE_VERSION_IN50_MMX)
     if(pMe->m_pAnimate != NULL)
     {
         IIMAGE_Stop(pMe->m_pAnimate);
@@ -12718,7 +12740,7 @@ static void DrawFocusIcon(MainMenu *pMe)
 
 	if( pMe->m_pAnimate != NULL)
     {
-#if defined (FEATURE_VERSION_H19C) || defined (FEATURE_VERSION_C01)
+#if defined (FEATURE_VERSION_H19C) || defined (FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_IN50_MMX)
         IIMAGE_Start(pMe->m_pAnimate,
                      pMe->m_IconFocus_Pt[theFocus].x, 
                      pMe->m_IconFocus_Pt[theFocus].y);

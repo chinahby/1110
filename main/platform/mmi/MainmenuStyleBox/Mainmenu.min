@@ -256,6 +256,33 @@ CONSTFILE_FILES+=\
 	qsc1100_08_focus.png|fs:/image/mainmenu/qsc1100_08_focus.png \
 	qsc1100_09_focus.png|fs:/image/mainmenu/qsc1100_09_focus.png 
 else	
+ifeq ($(USES_RESDIR),IN50_MMX)	
+CONSTFILE_FILES+=\
+	qsc1100_01.png|fs:/image/mainmenu/qsc1100_01.png \
+	qsc1100_02.png|fs:/image/mainmenu/qsc1100_02.png \
+	qsc1100_03.png|fs:/image/mainmenu/qsc1100_03.png \
+	qsc1100_04.png|fs:/image/mainmenu/qsc1100_04.png \
+	qsc1100_05.png|fs:/image/mainmenu/qsc1100_05.png \
+	qsc1100_06.png|fs:/image/mainmenu/qsc1100_06.png \
+	qsc1100_07.png|fs:/image/mainmenu/qsc1100_07.png \
+	qsc1100_08.png|fs:/image/mainmenu/qsc1100_08.png \
+	qsc1100_09.png|fs:/image/mainmenu/qsc1100_09.png \
+	qsc1100_10.png|fs:/image/mainmenu/qsc1100_10.png \
+	qsc1100_11.png|fs:/image/mainmenu/qsc1100_11.png \
+	qsc1100_12.png|fs:/image/mainmenu/qsc1100_12.png \
+	qsc1100_01_focus.gif|fs:/image/mainmenu/qsc1100_01_focus.gif \
+	qsc1100_02_focus.gif|fs:/image/mainmenu/qsc1100_02_focus.gif \
+	qsc1100_03_focus.gif|fs:/image/mainmenu/qsc1100_03_focus.gif \
+	qsc1100_04_focus.gif|fs:/image/mainmenu/qsc1100_04_focus.gif \
+	qsc1100_05_focus.gif|fs:/image/mainmenu/qsc1100_05_focus.gif \
+	qsc1100_06_focus.gif|fs:/image/mainmenu/qsc1100_06_focus.gif \
+	qsc1100_07_focus.gif|fs:/image/mainmenu/qsc1100_07_focus.gif \
+	qsc1100_08_focus.gif|fs:/image/mainmenu/qsc1100_08_focus.gif \
+	qsc1100_09_focus.gif|fs:/image/mainmenu/qsc1100_09_focus.gif \
+	qsc1100_10_focus.gif|fs:/image/mainmenu/qsc1100_10_focus.gif \
+	qsc1100_11_focus.gif|fs:/image/mainmenu/qsc1100_11_focus.gif \
+	qsc1100_12_focus.gif|fs:/image/mainmenu/qsc1100_12_focus.gif 	
+else	
 CONSTFILE_FILES+=\
 	qsc1100_01.png|fs:/image/mainmenu/qsc1100_01.png \
 	qsc1100_02.png|fs:/image/mainmenu/qsc1100_02.png \
@@ -281,6 +308,7 @@ CONSTFILE_FILES+=\
 	qsc1100_10_focus.png|fs:/image/mainmenu/qsc1100_10_focus.png \
 	qsc1100_11_focus.png|fs:/image/mainmenu/qsc1100_11_focus.png \
 	qsc1100_12_focus.png|fs:/image/mainmenu/qsc1100_12_focus.png
+endif	
 endif
 endif	
 endif

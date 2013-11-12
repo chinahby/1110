@@ -9351,10 +9351,18 @@ static boolean MGAppUtil_OnMediaMenuEmpty(CMediaGalleryApp *pMe, uint8 nType)
             sizeof(wstrText));
       fontColor = IDISPLAY_SetColor(piDisp, CLR_USER_TEXT, RGB_WHITE);
 
+        /*
       IDISPLAY_DrawText(piDisp, AEE_FONT_NORMAL, wstrText, -1, 6,
             6 + TITLEBAR_HEIGHT,
             NULL,
             IDF_TEXT_TRANSPARENT);
+      */
+
+         IDISPLAY_DrawText(piDisp, AEE_FONT_NORMAL, wstrText, -1, 6,
+            6,
+            NULL,
+            IDF_TEXT_TRANSPARENT);
+        
       IDISPLAY_SetColor(piDisp, CLR_USER_TEXT, fontColor);
       IDISPLAY_UpdateEx(piDisp, FALSE);
    }

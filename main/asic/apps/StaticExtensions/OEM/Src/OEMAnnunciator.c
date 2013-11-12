@@ -2628,15 +2628,20 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
 	                rc.y = 0;
 	                rc.dx = SCREEN_WIDTH;
 	                rc.dy = STATEBAR_HEIGHT;
-
-					#if defined(FEATURE_VERSION_C337) || defined(FEATURE_WHITE_BG) || defined(FEATURE_VERSION_IC241A_MMX)
-					IDISPLAY_SetColor(pMe->m_coreObj->m_piDisplay, CLR_USER_TEXT, RGB_BLACK);
+                    
+					#if defined(FEATURE_VERSION_C337) || defined(FEATURE_WHITE_BG) || defined(FEATURE_VERSION_IC241A_MMX)    
+                    #ifdef FEATURE_VERSION_IN50_MMX
+                    IDISPLAY_SetColor(pMe->m_coreObj->m_piDisplay, CLR_USER_TEXT, RGB_WHITE);
+                    #else
+					IDISPLAY_SetColor(pMe->m_coreObj->m_piDisplay, CLR_USER_TEXT, RGB_BLACK);  
+                    #endif
 					#else
 					IDISPLAY_SetColor(pMe->m_coreObj->m_piDisplay, CLR_USER_TEXT, RGB_WHITE);
-					#endif					
+					#endif		                    
 	                
 	                // 绘制标题文本
 	                //DBGPRINTF("IAnnunCoreObj->m_Title:::::::::::::::::%s",IAnnunCoreObj->m_Title);
+                    
 	                (void) IDISPLAY_DrawText(pMe->m_coreObj->m_piDisplay, 
 	                AEE_FONT_NORMAL, 
 	                (const AECHAR*)IAnnunCoreObj->m_Title, 
@@ -2644,7 +2649,8 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
 	                0, 
 	                0, 
 	                &rc, 
-	                dwFlags);					
+	                dwFlags);	                    
+                    
 	                (void)IDISPLAY_SetColor(pMe->m_coreObj->m_piDisplay, CLR_USER_TEXT, RGB_BLACK);					
 
                     if(pMe->m_coreObj->m_bNotUpdate == FALSE)
