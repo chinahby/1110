@@ -340,5 +340,8 @@
 	<STRING Id="2017" Name="IDS_COMMON_HELP">
 		<Text>मदद</Text>
 	</STRING>
+	<STRING Id="2018" Name="IDS_OPTION_EX">
+		<Text>विकल्प</Text>
+	</STRING>
 </Strings>
 </BREWRes>

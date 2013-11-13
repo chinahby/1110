@@ -592,7 +592,13 @@ if(!(x))         \
 
 //½ø¶ÈÌõ
 #define SCHEDULEBAR_X 2
+
+#if defined (FEATURE_VERSION_C260_IC18)
+#define SCHEDULEBAR_Y 49
+#else
 #define SCHEDULEBAR_Y 50
+#endif
+
 #define SCHEDULEBAR_W 123
 #define SCHEDULEBAR_H 3
 

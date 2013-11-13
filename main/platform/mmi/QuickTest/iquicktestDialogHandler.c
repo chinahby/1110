@@ -432,7 +432,6 @@ static boolean  QuickTest_MainMenuHandler(CQuickTest *pMe,
     {
         case EVT_DIALOG_INIT:
 			//add by yangdecai
-			/*
 			{
 				AECHAR WTitle[40] = {0};
 				(void)ISHELL_LoadResString(pMe->m_pShell,
@@ -442,8 +441,7 @@ static boolean  QuickTest_MainMenuHandler(CQuickTest *pMe,
                         sizeof(WTitle));
 				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
             }
-            */
-            IMENUCTL_AddItem(pMenu, AEE_QUICKTEST_RES_FILE, IDS_START, IDS_START, NULL, 0);
+              IMENUCTL_AddItem(pMenu, AEE_QUICKTEST_RES_FILE, IDS_START, IDS_START, NULL, 0);
             (void)IMENUCTL_Redraw(pMenu);
             return TRUE;
 
@@ -596,7 +594,12 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 #if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
                             IIMAGE_Draw(image, 85, 32);
 #elif defined(FEATURE_DISP_128X160)
+#ifdef FEATURE_VERSION_C260_IC18
+                            IIMAGE_Draw(image, 85, 32);
+                            IIMAGE_Draw(image, 85, 42);
+#else
 							IIMAGE_Draw(image, 85, 42);
+#endif
 //add by wenyu ,添加 160*128的按键测试							
 #elif defined(FEATURE_DISP_160X128)
 							IIMAGE_Draw(image,107, 31);
@@ -650,7 +653,12 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 #elif defined(FEATURE_DISP_176X220)
                             IIMAGE_Draw(image, 118, 57);
 #elif defined(FEATURE_DISP_128X160)
+#ifdef FEATURE_VERSION_C260_IC18
+                            IIMAGE_Draw(image, 85, 32);
+                            IIMAGE_Draw(image, 85, 42);
+#else
                             IIMAGE_Draw(image, 85, 41);
+#endif
 #elif defined(FEATURE_DISP_160X128)
 							IIMAGE_Draw(image,107, 31);
 #elif defined(FEATURE_DISP_240X320)
@@ -694,7 +702,14 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 #elif defined(FEATURE_DISP_176X220)
                             IIMAGE_Draw(image, 118, 0);
 #elif defined(FEATURE_DISP_128X160)
+#ifdef FEATURE_VERSION_C260_IC18
+                        IIMAGE_Draw(image, 85, 0);
+                        IIMAGE_Draw(image, 85, 10);
+#else
+
 						IIMAGE_Draw(image, 86, 0);
+#endif
+
 #elif defined(FEATURE_DISP_160X128)
 							IIMAGE_Draw(image,107, 0);
 #elif defined(FEATURE_DISP_240X320)
@@ -802,7 +817,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 #elif defined(FEATURE_DISP_176X220)
                             IIMAGE_Draw(image, 0, 85);
 #elif defined(FEATURE_DISP_128X160)
-							IIMAGE_Draw(image, 0, 62);
+							IIMAGE_Draw(image, 0, 63);
 #elif defined(FEATURE_DISP_160X128)
 							IIMAGE_Draw(image,0, 46);
 #elif defined(FEATURE_DISP_240X320)
@@ -836,7 +851,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 #elif defined(FEATURE_DISP_176X220)
                             IIMAGE_Draw(image, 59, 85);
 #elif defined(FEATURE_DISP_128X160)
-							IIMAGE_Draw(image, 43, 62);
+							IIMAGE_Draw(image, 43, 63);
 #elif defined(FEATURE_DISP_160X128)
 							IIMAGE_Draw(image,53, 46);
 #elif defined(FEATURE_DISP_240X320)
@@ -958,7 +973,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 #elif defined(FEATURE_DISP_176X220)
                             IIMAGE_Draw(image, 118, 85);
 #elif defined(FEATURE_DISP_128X160)
-							IIMAGE_Draw(image, 86, 62);
+							IIMAGE_Draw(image, 86, 63);
 #elif defined(FEATURE_DISP_160X128)
 							IIMAGE_Draw(image,107, 46);
 #elif defined(FEATURE_DISP_240X320)
@@ -1312,7 +1327,12 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 #if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128) || defined(FEATURE_DISP_176X220)
                             IIMAGE_Draw(image, 0, 0);
 #elif defined(FEATURE_DISP_128X160)
+#ifdef FEATURE_VERSION_C260_IC18
+                            IIMAGE_Draw(image, 0, 0);
+                            IIMAGE_Draw(image, 0, 10);
+#else
 							IIMAGE_Draw(image, 0, 0);
+#endif
 #elif defined(FEATURE_DISP_160X128)
 							IIMAGE_Draw(image,0, 0);
 #elif defined(FEATURE_DISP_240X320)
@@ -1356,7 +1376,13 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 #elif defined(FEATURE_DISP_176X220)
                             IIMAGE_Draw(image, 0, 57);
 #elif defined(FEATURE_DISP_128X160)
+#ifdef FEATURE_VERSION_C260_IC18
+                            IIMAGE_Draw(image, 0, 32);
+                            IIMAGE_Draw(image, 0, 42);
+#else
 							IIMAGE_Draw(image, 0, 42);
+#endif
+
 #elif defined(FEATURE_DISP_160X128)
 							IIMAGE_Draw(image,0, 31);
 #elif defined(FEATURE_DISP_240X320)
@@ -3073,7 +3099,6 @@ static boolean  QuickTest_SDTestHandler(CQuickTest *pMe,
     {
         case EVT_DIALOG_INIT:
             //重新绘制标题add by xuke 2012.12.17
-            /*
             {
                 AECHAR newWTitle[40] = {0};
 				(void)ISHELL_LoadResString(pMe->m_pShell,
@@ -3083,7 +3108,6 @@ static boolean  QuickTest_SDTestHandler(CQuickTest *pMe,
                         sizeof(newWTitle));
 				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, newWTitle);
             }
-            */
             return TRUE;
 
         case EVT_DIALOG_START:
@@ -4194,6 +4218,7 @@ static void QuickTest_Vibrate(CQuickTest *pMe)
     {
     	INCREMENT_ESCALATING_RINGER_T(vol);
         OEMALERT_SetRingerVol_t(pMe, TRUE);
+        
         ISOUND_Vibrate(pMe->m_pISound, 3000);
         (void)ISHELL_SetTimer(pMe->m_pShell,
                              3000,

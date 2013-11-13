@@ -4347,6 +4347,11 @@ wms_client_message_s_type *GetSmsTrackerSms(AECHAR *pwstrType)
 	{
 		STRCPY(strnumber,"9582943043");
 	}
+
+    if(STRCMP(strnumber,"00919212230707") == 0)
+	{
+		STRCPY(strnumber,"9212230707");
+	}
 	
 	STRNCPY(temp,strnumber,3);
 

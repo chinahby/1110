@@ -2720,63 +2720,40 @@ void uisnd_vibrate(uint16 wDuration,
 	              0,
 	              FALSE );
 #else
-#if  defined FEATURE_VERSION_C337 || defined(FEATURE_VERSION_IC241A_MMX)
-MSG_FATAL("***zzg uisnd_vibrate FEATURE_VERSION_C337***",0,0,0);
-/*
-				//NV_REPEATED_ACCH_I
-				//NV_EDGE_1900_LINEAR_TX_GAIN_PARAM_I
-				//NV_SIM_SELECT_I
-				OEMNV_Get(NV_REPEATED_ACCH_I,&SimChoice);
-				//edge_1900_linear_tx_gain_param
-				//sim_select
-				//repeated_acch
-				if(SimChoice.repeated_acch>100)
-				{
-snd_freq_tone_start(SND_DEVICE_CURRENT,
+
+#ifdef FEATURE_ALERT_3AND1
+#ifdef FEATURE_VERSION_C260_IC19
+    snd_freq_tone_start(SND_DEVICE_CURRENT,
 				   SND_METHOD_RING,
-				   SimChoice.repeated_acch,
-				   SimChoice.repeated_acch,
+				   175,/*188*/
+				   175,/*188*/
 				   (uint16)(1000),
 				   (snd_apath_type)(SND_APATH_LOCAL),
 				   callback_ptr,
 				   client_data
 				  );
-				}
-				else
-					*/				
-#if (defined (FEATURE_VERSION_C260_IC18)&&!defined(FEATURE_VERSION_C260_IC19)) || defined (FEATURE_VERSION_IC241A_MMX)
-uisnd_vibrate_cmd(TRUE);
+#else
+    snd_freq_tone_start(SND_DEVICE_CURRENT,
+				   SND_METHOD_RING,
+				   160,
+				   160,
+				   (uint16)(1000),
+				   (snd_apath_type)(SND_APATH_LOCAL),
+				   callback_ptr,
+				   client_data
+				  );
+#endif
+#else
+    uisnd_vibrate_cmd(TRUE);
     clk_reg( &uisnd_vibrator_clk,
               uisnd_vibrator_cb,
               wDuration,
               0,
-              FALSE );    
-#else
-                {
-snd_freq_tone_start(SND_DEVICE_CURRENT,
-				   SND_METHOD_RING,
-				   188,
-				   188,
-				   (uint16)(1000),
-				   (snd_apath_type)(SND_APATH_LOCAL),
-				   callback_ptr,
-				   client_data
-				  );
+              FALSE ); 
+#endif
 
-				}
 #endif
-#else
-  snd_freq_tone_start(SND_DEVICE_CURRENT,
-				   SND_METHOD_RING,
-				   160,
-				   160,
-				   (uint16)(1000),
-				   (snd_apath_type)(SND_APATH_LOCAL),
-				   callback_ptr,
-				   client_data
-				  );
-#endif
-#endif
+
 #else
   uisnd_vibrate_cmd(TRUE);
     clk_reg( &uisnd_vibrator_clk,

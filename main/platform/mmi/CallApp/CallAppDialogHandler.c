@@ -12997,7 +12997,8 @@ static void CallApp_Draw_Connect_Softkey(CCallApp *pMe)
 		//Add By zzg 2010_09_16: Headset > anyother
 		if (HS_HEADSET_ON())
 		{
-			DrawBottomBar_Ex(AEE_GetShell(),pMe->m_pDisplay,BTBAR_OPTION_ENDCALL);
+			//DrawBottomBar_Ex(AEE_GetShell(),pMe->m_pDisplay,BTBAR_OPTION_ENDCALL);
+			REFUI_DRAW_BOTTOMBAR(BTBAR_OPTION_ENDCALL)
 		}
 		else if (pMe->m_bHandFree)
 		{

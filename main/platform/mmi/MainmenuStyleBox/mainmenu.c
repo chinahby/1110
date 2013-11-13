@@ -11454,7 +11454,11 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
 	
     pMe->m_IconTitle[6]     = IDS_MAIN_MENU_MSTORE;	//IDS_MAIN_MENU_MULTIMEDIA;		//m! STORE
     pMe->m_IconTitle[7]     = IDS_MAIN_MENU_ORGANIZER;	//IDS_MAIN_MENU_APPLICATION;
+#ifdef FEATURE_VERSION_C260_IC19
+    pMe->m_IconTitle[8]     = IDS_MAIN_MENU_MUSICPLAYER;
+#else
     pMe->m_IconTitle[8]     = IDS_MAIN_MENU_MZONE;	//IDS_MAIN_MENU_APPLICATION;		//m! ZONE
+#endif  
 	
     pMe->m_IconTitle[9]     = IDS_MAIN_MENU_USER_PROFILE;	//IDS_MAIN_MENU_USERPROFILE;	//IDS_MAIN_MENU_APPLICATION;
     pMe->m_IconTitle[10]    = IDS_MAIN_MENU_GAMES;
@@ -11530,8 +11534,7 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
 	
     pMe->m_IconTitle[6]     = IDS_MAIN_MENU_MSTORE;	//IDS_MAIN_MENU_MULTIMEDIA;		//m! STORE
     pMe->m_IconTitle[7]     = IDS_MAIN_MENU_ORGANIZER;	//IDS_MAIN_MENU_APPLICATION;
-    pMe->m_IconTitle[8]     = IDS_MAIN_MENU_MZONE;	//IDS_MAIN_MENU_APPLICATION;		//m! ZONE
-	
+    pMe->m_IconTitle[8]     = IDS_MAIN_MENU_MZONE;	//IDS_MAIN_MENU_APPLICATION;		//m! ZONE	
     pMe->m_IconTitle[9]     = IDS_MAIN_MENU_USER_PROFILE;	//IDS_MAIN_MENU_USERPROFILE;	//IDS_MAIN_MENU_APPLICATION;
     pMe->m_IconTitle[10]    = IDS_MAIN_MENU_GAMES;
     pMe->m_IconTitle[11]    = IDS_MAIN_MENU_SETTINGS;	
@@ -12203,6 +12206,7 @@ PARAMETERS:
 static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
 {
     PARAM_NOT_REF( dwParam)
+        
     switch ( eCode)
     {
         case EVT_DIALOG_INIT:			
@@ -12286,8 +12290,15 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
             return TRUE;
 
         case EVT_KEY_HELD:
-            
+        {                
         #if defined(FEATURE_TORCH_KEY_INFO)
+            int nFocus = pMe->m_nRow * MAX_MATRIX_COLS + pMe->m_nColumn;      
+        
+            if ((nFocus == 3) || (nFocus == 6))
+            {
+                return TRUE;
+            }
+            
            if((AVKType)wParam == AVK_INFO)
             {
                 boolean TorchOn = FALSE;
@@ -12341,6 +12352,7 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
         #endif
 
             return TRUE;
+        }
         case EVT_KEY:
             //ISHELL_CancelTimer(pMe->m_pShell, NULL, (void**)pMe);
             switch( wParam)

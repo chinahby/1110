@@ -86,10 +86,10 @@
 		<Text>औजार</Text>
 	</String>
 	<String Id="1032" Name="IDS_STR_TRUNONTORCH">
-		<Text>TurnOn मशाल</Text>
+		<Text>TurnOn टॉर्च</Text>
 	</String>
 	<String Id="1033" Name="IDS_STR_TRUNOFFFTORCH">
-		<Text>TurnOff मशाल</Text>
+		<Text>TurnOff टॉर्च</Text>
 	</String>
 	<String Id="1034" Name="IDS_APPLICATION_LIST_C337">
 		<Text>आयोजक</Text>
@@ -101,7 +101,7 @@
 		<Text>PC Modem help</Text>
 	</String>
 	<String Id="1037" Name="IDS_TORCH">
-		<Text>Torch</Text>
+		<Text>टॉर्च</Text>
 	</String>
 </Strings>
 <Dialogs>

@@ -352,5 +352,8 @@
 	<STRING Id="2018" Name="IDS_RECENTCALLS">
 		<Text>Recentcalls</Text>
 	</STRING>
+	<STRING Id="2019" Name="IDS_OPTION_EX">
+		<Text>Option</Text>
+	</STRING>
 </Strings>
 </BREWRes>

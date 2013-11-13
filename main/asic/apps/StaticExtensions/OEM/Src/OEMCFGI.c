@@ -3705,6 +3705,10 @@ void OEM_RestoreFactorySetting( void )
     nvi.set_date_format = NV_SET_DATE_FORMAT_YYYY_MM_DD_1;
     (void) OEMNV_Put( NV_SET_DATE_FORMAT_I, &nvi);
     nvi_cache.set_date_format = (byte)NV_SET_DATE_FORMAT_YYYY_MM_DD_1;
+#elif defined (FEATURE_VERSION_C260_IC19)    
+    nvi.set_date_format = NV_SET_DATE_FORMAT_DD_MM_YYYY;
+    (void) OEMNV_Put( NV_SET_DATE_FORMAT_I, &nvi);
+    nvi_cache.set_date_format = (byte)NV_SET_DATE_FORMAT_DD_MM_YYYY;
 #else
     nvi.set_date_format = NV_SET_DATE_FORMAT_MM_DD_YYYY;
     (void) OEMNV_Put( NV_SET_DATE_FORMAT_I, &nvi);

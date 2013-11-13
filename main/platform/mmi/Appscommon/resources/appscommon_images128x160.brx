@@ -502,6 +502,25 @@
 	<Object Id="7108" Name="IDI_KEY_TEST_6" MimeType="image/png">
 		<File>..\images\128x160\common\QuickTest\keytest_6.png</File>
 	</Object>	
+	
+	<Object Id="7109" Name="IDI_MENU_ITEM_PROFILE_ALERT" MimeType="image/png">
+		<File>..\images\128x160\common\Appscommon\Menu\menu\alert.png</File>
+	</Object>
+	<Object Id="7110" Name="IDI_MENU_ITEM_PROFILE_SILENCE" MimeType="image/png">
+		<File>..\images\128x160\common\Appscommon\Menu\menu\silence.png</File>
+	</Object>
+	<Object Id="7111" Name="IDI_MENU_ITEM_PROFILE_MEETING" MimeType="image/png">
+		<File>..\images\128x160\common\Appscommon\Menu\menu\vibrator.png</File>
+	</Object>
+	<Object Id="7112" Name="IDI_MENU_ITEM_PROFILE_OUTDOOR" MimeType="image/png">
+		<File>..\images\128x160\common\Appscommon\Menu\menu\vibring.png</File>
+	</Object>
+	<Object Id="7113" Name="IDI_MENU_ITEM" MimeType="image/png">
+		<File>..\images\128x160\common\Appscommon\Menu\menu\menu_icon.png</File>
+	</Object>
+	<Object Id="7114" Name="IDI_MENU_ITEM_FOCUS" MimeType="image/png">
+		<File>..\images\128x160\common\Appscommon\Menu\menu\menu_icon_focus.png</File>
+	</Object>
 
 </Objects>
 </BREWRes>
