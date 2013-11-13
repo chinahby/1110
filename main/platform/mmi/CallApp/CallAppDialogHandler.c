@@ -7385,6 +7385,16 @@ static boolean  CallApp_Missedcall_DlgHandler(CCallApp *pMe,
             //                                        NULL, AEEALERT_ALERT_BUSY);
             if(pMe->m_b_miss_notify)
             {
+#ifdef FEATURE_ALERT_3AND1   
+                notifyFMRadioAlertEvent( pMe, TRUE);
+                //CallAppNotifyMP3PlayerAlertEvent(pMe,TRUE);
+                IALERT_StartMissedCallAlert(pMe->m_pAlert);
+                (void) ISHELL_SetTimer(pMe->m_pShell,
+                                                        3000,
+                                                        CallApp_HandleStopMissedAlertTimer,
+                                                        pMe);
+#else
+
 #ifndef FEATURE_VERSION_C337   
 #ifndef FEATURE_VERSION_IC241A_MMX
 
@@ -7396,7 +7406,11 @@ static boolean  CallApp_Missedcall_DlgHandler(CCallApp *pMe,
                                                         CallApp_HandleStopMissedAlertTimer,
                                                         pMe);
 #endif
-#endif				
+#endif			
+
+#endif
+
+
             }
             return TRUE;
 

@@ -2460,8 +2460,8 @@ static int OEMALERT_StartMp3Alert(IALERT * pMe, char *id, ALERT_SND_TYPE type)
                 gCurStatus.m_bplaying)
             {
 #ifdef FEATURE_ALERT_3AND1
-                //INCREMENT_ESCALATING_RINGER(pMe->m_ringCurVol);
-             	//OEMALERT_SetRingerVol(pMe, TRUE);
+                INCREMENT_ESCALATING_RINGER(pMe->m_ringCurVol);
+             	OEMALERT_SetRingerVol(pMe, TRUE);
 #endif
                 ISOUND_Vibrate(pMe->m_pSound,TIME_MS_SMSVIBRATE_DURATION); 
                 return SUCCESS;
@@ -2539,8 +2539,8 @@ static int OEMALERT_StartMp3Alert(IALERT * pMe, char *id, ALERT_SND_TYPE type)
                     pMe->m_ringVibCount = 2;
 
 #ifdef FEATURE_ALERT_3AND1
-                    //INCREMENT_ESCALATING_RINGER(pMe->m_ringCurVol);
-                 	//OEMALERT_SetRingerVol(pMe, TRUE);
+                    INCREMENT_ESCALATING_RINGER(pMe->m_ringCurVol);
+                 	OEMALERT_SetRingerVol(pMe, TRUE);
 #endif             
 					ISOUND_Vibrate(pMe->m_pSound,TIME_MS_SMSVIBRATE_DURATION);
 	        	 	if(OEMSOUND_MUTE_VOL != pMe->m_ringCurVol)
@@ -2869,9 +2869,9 @@ static void OEMALERT_HandleRingerAlertTimer(void *pUser)
                 //ISOUND_Vibrate(pMe->m_pSound,TIME_MS_RINGERVIBRATE_DURATION);
                 
 #ifdef FEATURE_ALERT_3AND1
-                //INCREMENT_ESCALATING_RINGER(pMe->m_ringCurVol);
+                INCREMENT_ESCALATING_RINGER(pMe->m_ringCurVol);
                 MSG_FATAL("***zzg OEMALERT_HandleRingerAlertTimer 222 m_ringCurVol=%x***", pMe->m_ringCurVol, 0, 0);
-             	//OEMALERT_SetRingerVol(pMe, TRUE);
+             	OEMALERT_SetRingerVol(pMe, TRUE);
 #endif             
 #if defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_W021_WSF_CN)
 				if(!pMe->m_iAlert)
@@ -2900,8 +2900,8 @@ static void OEMALERT_HandleRingerAlertTimer(void *pUser)
                 {
                     //ISOUND_Vibrate(pMe->m_pSound,TIME_MS_RINGERVIBRATE_DURATION);
 #ifdef FEATURE_ALERT_3AND1
-                    //INCREMENT_ESCALATING_RINGER(pMe->m_ringCurVol);
-                 	//OEMALERT_SetRingerVol(pMe, TRUE);
+                    INCREMENT_ESCALATING_RINGER(pMe->m_ringCurVol);
+                 	OEMALERT_SetRingerVol(pMe, TRUE);
 #endif                 					
 #if defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_W021_WSF_CN)
 					if(!pMe->m_iAlert)
@@ -2979,8 +2979,8 @@ static void OEMALERT_HandleRingerAlertTimer(void *pUser)
                 if( vib == TRUE ) 
                 {
 #ifdef FEATURE_ALERT_3AND1
-                    //INCREMENT_ESCALATING_RINGER(pMe->m_ringCurVol);
-                 	//OEMALERT_SetRingerVol(pMe, TRUE);
+                    INCREMENT_ESCALATING_RINGER(pMe->m_ringCurVol);
+                 	OEMALERT_SetRingerVol(pMe, TRUE);
 #endif               
                 }      
 #if defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_W021_WSF_CN)
@@ -3211,8 +3211,8 @@ static void OEMALERT_StartSMSAlert (IALERT *pMe, int ring_id)
             if(OEMNV_SMS_RING != sms_size)
             {
 #ifdef FEATURE_ALERT_3AND1
-                //INCREMENT_ESCALATING_RINGER(pMe->m_ringCurVol);
-             	//OEMALERT_SetRingerVol(pMe, TRUE);
+                INCREMENT_ESCALATING_RINGER(pMe->m_ringCurVol);
+             	OEMALERT_SetRingerVol(pMe, TRUE);
 #endif          
                 ISOUND_Vibrate(pMe->m_pSound,TIME_MS_SMSVIBRATE_DURATION); 
                 
@@ -3235,8 +3235,8 @@ static void OEMALERT_StartSMSAlert (IALERT *pMe, int ring_id)
             //gCurStatus.m_pCurRingerMgr = NULL;
             
 #ifdef FEATURE_ALERT_3AND1
-             //INCREMENT_ESCALATING_RINGER(pMe->m_ringCurVol);
-          	 //OEMALERT_SetRingerVol(pMe, TRUE);
+             INCREMENT_ESCALATING_RINGER(pMe->m_ringCurVol);
+          	 OEMALERT_SetRingerVol(pMe, TRUE);
 #endif           
              ISOUND_Vibrate(pMe->m_pSound,TIME_MS_SMSVIBRATE_DURATION); 
             
@@ -3273,8 +3273,8 @@ static void OEMALERT_StartSMSAlert (IALERT *pMe, int ring_id)
     else if(OEMNV_SMS_VIBONLY == sms_size)
     {
 #ifdef FEATURE_ALERT_3AND1
-         //INCREMENT_ESCALATING_RINGER(pMe->m_ringCurVol);
-      	 //OEMALERT_SetRingerVol(pMe, TRUE);
+         INCREMENT_ESCALATING_RINGER(pMe->m_ringCurVol);
+      	 OEMALERT_SetRingerVol(pMe, TRUE);
 #endif        	 
          ISOUND_Vibrate(pMe->m_pSound,TIME_MS_SMSVIBRATE_DURATION); 
        
@@ -3291,8 +3291,8 @@ static void OEMALERT_StartSMSAlert (IALERT *pMe, int ring_id)
 #endif       
 
 #ifdef FEATURE_ALERT_3AND1
-         //INCREMENT_ESCALATING_RINGER(pMe->m_ringCurVol);
-         //OEMALERT_SetRingerVol(pMe, TRUE);
+         INCREMENT_ESCALATING_RINGER(pMe->m_ringCurVol);
+         OEMALERT_SetRingerVol(pMe, TRUE);
 #endif
          ISOUND_Vibrate(pMe->m_pSound,TIME_MS_SMSVIBRATE_DURATION);     
       
@@ -3319,8 +3319,8 @@ static void OEMALERT_StartSMSAlert (IALERT *pMe, int ring_id)
 #endif    
 
 #ifdef FEATURE_ALERT_3AND1
-         //INCREMENT_ESCALATING_RINGER(pMe->m_ringCurVol);
-         //OEMALERT_SetRingerVol(pMe, TRUE);
+         INCREMENT_ESCALATING_RINGER(pMe->m_ringCurVol);
+         OEMALERT_SetRingerVol(pMe, TRUE);
 #endif         
          ISOUND_Vibrate(pMe->m_pSound,TIME_MS_SMSVIBRATE_DURATION);     
          
@@ -3976,7 +3976,11 @@ static void OEMALERT_SetRingerVol(IALERT *pMe, boolean bEscalate)
     {
         vol = OEMSOUND_AVG_VOL;
     }
-    
+
+#ifdef FEATURE_ALERT_3AND1
+    vol = OEMSOUND_5TH_VOL;
+#endif
+
     si.eDevice = AEE_SOUND_DEVICE_HANDSET;
     si.eMethod = AEE_SOUND_METHOD_MIDI; 
     (void) ISOUND_Set(pMe->m_pSound, &si);
