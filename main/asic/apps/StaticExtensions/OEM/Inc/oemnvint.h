@@ -108,7 +108,7 @@ when       who     what, where, why
 */
 #define PROFILENUMBER                     5                          // Çé¾°Ä£Ê½ÖÖÀà
 //#endif
-//Ä¬ÈÏµÄ¶ÌÐÅÁåÉ
+//Ä¬ÈÏµÄ¶ÌÐÅÁå?
 #ifdef FEATURE_VERSION_V3CM301
 #define OEMNV_SMS_RINGER_ID 77
 #else
@@ -444,6 +444,8 @@ typedef PACKED struct _Key_pad_Cfg
 #define OEMNV_DEFAULT_BANNER "V-HOPE E102"
 #elif defined(FEATURE_VERSION_K212_LD)
 #define OEMNV_DEFAULT_BANNER "JM-NAIDE XG308"
+#elif defined(FEATURE_VERSION_K212_HUALU)
+#define OEMNV_DEFAULT_BANNER "CHL-E-5300"
 #else
 #define OEMNV_DEFAULT_BANNER  PROJECTNAME
 #endif

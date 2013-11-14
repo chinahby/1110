@@ -1533,12 +1533,19 @@ static void AStatic_RedrawText(AStatic * pme)
 		 //Ë¢ÐÂSTATICµÄ±³¾°ÇøÓò (·ÀÖ¹Auto_scrollµÄË¢ÐÂ»ìÂÒ)
 		 else  if(pme->m_dwProps & ST_SPECIAL_BG)
 		 {
-		 	
+		 	#if defined(FEATURE_VERSION_K212_HUALU)
+			
+			IImage *      pFrame;
+			AEEBitmapInfo  bi;
+
+			pFrame = ISHELL_LoadResImage(pme->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_PROMPT_MSG_BG);
+			#else
+
 			IBitmap *      pFrame;
 			AEEBitmapInfo  bi;
 
 			pFrame = ISHELL_LoadResBitmap(pme->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_PROMPT_MSG_STATIC_BG);
-            
+			#endif
 #ifdef FEATURE_VERSION_C260_IC18
             //rc.x += 5;
             //rc.y += 6;
@@ -1549,10 +1556,14 @@ static void AStatic_RedrawText(AStatic * pme)
 			    DBGPRINTF("***zzg AStatic_RedrawText bi.cx=%d, bi.cy=%d***", bi.cx, bi.cy);
                 DBGPRINTF("***zzg AStatic_RedrawText rc.x=%d, rc.y=%d***", rc.x, rc.y);
                 DBGPRINTF("***zzg AStatic_RedrawText rc.dx=%d, rc.dy=%d***", rc.dx, rc.dy);
-                
+				#if !defined(FEATURE_VERSION_K212_HUALU)
 				IBITMAP_GetInfo(pFrame, &bi, sizeof(bi));
 				IDISPLAY_BitBlt(pd, rc.x, rc.y, rc.dx, rc.dy, pFrame, 0, 0, AEE_RO_COPY);
 				IBITMAP_Release(pFrame);
+				#else
+				IIMAGE_Draw(pFrame, rc.x, rc.y);
+        		IIMAGE_Release(pFrame);
+				#endif
 				pFrame = NULL;
 		 	}
 #ifdef FEATURE_VERSION_C260_IC18

@@ -101,7 +101,7 @@ when       who     what, where, why
 #define FEATURE_T9_RAPID_ENGLISH
 #endif
 #else
-#ifdef FEATURE_VERSION_K212
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_LOWER_MEM)
 #define FEATURE_MT_ENGLISH_NEW
 #define FEATURE_T9_RAPID_ENGLISH
 #define FEATURE_MT_ENGLISH_UP

@@ -203,7 +203,7 @@ typedef struct {
  /*RSSI/Airplane Mode*/
  static OEMState_data rssi_image_data[]=
 {
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
   {ANNUN_STATE_AIR_MODE_ON, IDB_AIR_MODE, NULL},
 #endif
 #ifdef FEATURE_VERSION_K212
@@ -236,7 +236,7 @@ typedef struct {
 #ifdef FEATURE_VERSION_EC99
 static OEMState_data rssi_3g_image_data[]=
 {
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
   {ANNUN_STATE_AIR_MODE_ON, IDB_AIR_MODE, NULL},
 #endif
   {ANNUN_STATE_RSSI_NO_SERV, IDB_3G_NO_SERVICE, NULL},
@@ -312,7 +312,7 @@ static OEMState_data headset_image_data[]=
 };
 //Add End
 
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
 /*BT Trans/BT Headset/BT On*/
 static OEMState_data bluetooth_image_data[]=
 {
@@ -337,9 +337,11 @@ static OEMState_data alarm_image_data[]=
 /*MMS Full/MMS Unread/MMS Unreceive/Push*/
 static OEMState_data mms_image_data[]=
 {
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
     {ANNUN_MMS_FULL_ON, IDB_MMS_FULL, NULL},
     {ANNUN_MMS_UNREAD_ON, IDB_MMS_UNREAD, NULL},
     {ANNUN_MMS_UNRECEIVE_ON, IDB_MMS_UNRECEIVED, NULL},
+#endif
     {ANNUN_STATE_PUSH_ON, IDB_PUSH_MSG, NULL}
 };
 #endif
@@ -487,7 +489,7 @@ OEMAnnun_content qq_content =
 #endif
 
 /*ANNUN_FIELD_BLUETOOTH*/
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
 OEMAnnun_content bluetooth_content =
      {ANNUN_TYPE_IMAGE, 3, ANNUN_STATE_OFF, (void *)bluetooth_image_data};
 #endif
@@ -672,17 +674,17 @@ OEMAnnun_content batt_content =
 static OEMAnnun_data Annunciators[] =
 {
 #if defined (FEATURE_VERSION_K212)
-    {ANNUN_FIELD_RSSI,                ANNUN_ICON_POSITION_1,     ROW1_Y,  LG_IMG_WIDTH, IMG_HEIGHT,  &rssi_content}, 	   
-    //{ANNUN_FIELD_WAP,                ANNUN_ICON_POSITION_2,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &wap_content},     
-    {ANNUN_FIELD_HEADSET,                ANNUN_ICON_POSITION_2,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &headset_content},     
+    {ANNUN_FIELD_RSSI,             ANNUN_ICON_POSITION_1,      ROW1_Y,  LG_IMG_WIDTH,   IMG_HEIGHT,  &rssi_content}, 	   
+    //{ANNUN_FIELD_WAP,                   ANNUN_ICON_POSITION_2,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &wap_content},     
+    {ANNUN_FIELD_HEADSET,          ANNUN_ICON_POSITION_2,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &headset_content},     
 
-    {ANNUN_FIELD_TCARD,               ANNUN_ICON_POSITION_3,      ROW1_Y,  IMG_WIDTH,       IMG_HEIGHT,  &tcard_content},  
-    {ANNUN_FIELD_CALL,                ANNUN_ICON_POSITION_4,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &call_content}, 
-    {ANNUN_FIELD_SMS,                ANNUN_ICON_POSITION_5,      ROW1_Y,  IMG_WIDTH,       IMG_HEIGHT,  &sms_content}, 
-    {ANNUN_FIELD_QQ, 			  ANNUN_ICON_POSITION_6,	 ROW1_Y,  IMG_WIDTH,	  IMG_HEIGHT,  &qq_content},      
-    {ANNUN_FIELD_ALARM,              ANNUN_ICON_POSITION_7,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &alarm_content},    
-    {ANNUN_FIELD_RINGTONE,         ANNUN_ICON_POSITION_8,    ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &ringtone_content},
-    {ANNUN_FIELD_BATT,             ANNUN_ICON_POSITION_END, ROW1_Y,  LG_IMG_WIDTH, IMG_HEIGHT,  &batt_content}
+    {ANNUN_FIELD_TCARD,            ANNUN_ICON_POSITION_3,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &tcard_content},  
+    {ANNUN_FIELD_CALL,             ANNUN_ICON_POSITION_4,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &call_content}, 
+    {ANNUN_FIELD_SMS,              ANNUN_ICON_POSITION_5,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &sms_content}, 
+    {ANNUN_FIELD_QQ, 			   ANNUN_ICON_POSITION_6,	   ROW1_Y,  IMG_WIDTH,	    IMG_HEIGHT,  &qq_content},      
+    {ANNUN_FIELD_ALARM,            ANNUN_ICON_POSITION_7,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &alarm_content},    
+    {ANNUN_FIELD_RINGTONE,         ANNUN_ICON_POSITION_8,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &ringtone_content},
+    {ANNUN_FIELD_BATT,             ANNUN_ICON_POSITION_END,    ROW1_Y,  LG_IMG_WIDTH,   IMG_HEIGHT,  &batt_content}
 #elif defined(FEATURE_VERSION_W021_CT100_QVGA)
     {ANNUN_FIELD_RSSI,                ANNUN_ICON_POSITION_1,     ROW1_Y,  LG_IMG_WIDTH, IMG_HEIGHT,  &rssi_content}, 	   
     //{ANNUN_FIELD_WAP,                ANNUN_ICON_POSITION_2,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &wap_content},     
@@ -704,33 +706,33 @@ static OEMAnnun_data Annunciators[] =
 #else
   {ANNUN_FIELD_RSSI,                ANNUN_ICON_POSITION_1,     ROW1_Y,  LG_IMG_WIDTH, IMG_HEIGHT,  &rssi_content},
 #endif
-  {ANNUN_FIELD_WAP,                ANNUN_ICON_POSITION_2,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &wap_content},     
+  {ANNUN_FIELD_WAP,                 ANNUN_ICON_POSITION_2,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &wap_content},     
  // {ANNUN_FIELD_QQ,               ANNUN_ICON_POSITION_3,      ROW1_Y,  IMG_WIDTH,       IMG_HEIGHT,  &qq_content},  
 
 #if (defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX))
-  {ANNUN_FIELD_TCARD, 			  ANNUN_ICON_POSITION_3,	 ROW1_Y,  IMG_WIDTH,	  IMG_HEIGHT,  &tcard_content}, 
+  {ANNUN_FIELD_TCARD, 			    ANNUN_ICON_POSITION_3,	 ROW1_Y,  IMG_WIDTH,	  IMG_HEIGHT,  &tcard_content}, 
 #else  
-  {ANNUN_FIELD_LOCKSTATUS,     ANNUN_ICON_POSITION_3,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &lockstatus_content},
+  {ANNUN_FIELD_LOCKSTATUS,          ANNUN_ICON_POSITION_3,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &lockstatus_content},
 #endif  
   {ANNUN_FIELD_CALL,                ANNUN_ICON_POSITION_4,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &call_content}, 
-  {ANNUN_FIELD_SMS,                ANNUN_ICON_POSITION_5,      ROW1_Y,  IMG_WIDTH,       IMG_HEIGHT,  &sms_content}, 
-  {ANNUN_FIELD_FMRADIO,          ANNUN_ICON_POSITION_6,      ROW1_Y,  IMG_WIDTH,       IMG_HEIGHT,  &fmradio_content},
-#ifndef FEATURE_USES_LOWMEM
+  {ANNUN_FIELD_SMS,                 ANNUN_ICON_POSITION_5,      ROW1_Y,  IMG_WIDTH,       IMG_HEIGHT,  &sms_content}, 
+  {ANNUN_FIELD_FMRADIO,             ANNUN_ICON_POSITION_6,      ROW1_Y,  IMG_WIDTH,       IMG_HEIGHT,  &fmradio_content},
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
 #if defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_IC241A_MMX)
-  {ANNUN_FIELD_BLUETOOTH,       ANNUN_ICON_POSITION_2,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &bluetooth_content},
+  {ANNUN_FIELD_BLUETOOTH,           ANNUN_ICON_POSITION_2,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &bluetooth_content},
 #else
-  {ANNUN_FIELD_BLUETOOTH,       ANNUN_ICON_POSITION_7,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &bluetooth_content},
+  {ANNUN_FIELD_BLUETOOTH,           ANNUN_ICON_POSITION_7,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &bluetooth_content},
 #endif
 #else
-  {ANNUN_FIELD_BLUETOOTH,       ANNUN_ICON_POSITION_7,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  NULL},
+  {ANNUN_FIELD_BLUETOOTH,           ANNUN_ICON_POSITION_7,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  NULL},
 #endif
 
 #ifndef FEATURE_DISP_128X160
 #if defined(FEATURE_DISP_176X220)
-    {ANNUN_FIELD_ALARM,              ANNUN_ICON_POSITION_7,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &alarm_content},
-    {ANNUN_FIELD_MMS,                ANNUN_ICON_POSITION_9,    ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &mms_content},
-    {ANNUN_FIELD_RINGTONE,         ANNUN_ICON_POSITION_8,    ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &ringtone_content},
-    {ANNUN_FIELD_BATT,             ANNUN_ICON_POSITION_END, ROW1_Y,  LG_IMG_WIDTH, IMG_HEIGHT,  &batt_content}
+    {ANNUN_FIELD_ALARM,             ANNUN_ICON_POSITION_7,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &alarm_content},
+    {ANNUN_FIELD_MMS,               ANNUN_ICON_POSITION_9,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &mms_content},
+    {ANNUN_FIELD_RINGTONE,          ANNUN_ICON_POSITION_8,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &ringtone_content},
+    {ANNUN_FIELD_BATT,              ANNUN_ICON_POSITION_END,    ROW1_Y,  LG_IMG_WIDTH, IMG_HEIGHT,  &batt_content}
 #elif defined(FEATURE_VERSION_IC241A_MMX)
     {ANNUN_FIELD_ALARM,              ANNUN_ICON_POSITION_7,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &alarm_content},
     {ANNUN_FIELD_MMS,                ANNUN_ICON_POSITION_9,    ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &mms_content},
@@ -739,23 +741,23 @@ static OEMAnnun_data Annunciators[] =
 #else
   {ANNUN_FIELD_ALARM,               ANNUN_ICON_POSITION_8,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &alarm_content},
 #if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_VERSION_K212)
-  {ANNUN_FIELD_MMS,                ANNUN_ICON_POSITION_9,    ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &mms_content},
+  {ANNUN_FIELD_MMS,                 ANNUN_ICON_POSITION_9,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &mms_content},
 #else
-  {ANNUN_FIELD_MMS,                ANNUN_ICON_POSITION_9,    ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  NULL},
+  {ANNUN_FIELD_MMS,                 ANNUN_ICON_POSITION_9,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  NULL},
 #endif
-  {ANNUN_FIELD_RINGTONE,            ANNUN_ICON_POSITION_10,    ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &ringtone_content},
-  {ANNUN_FIELD_BATT,                ANNUN_ICON_POSITION_END, ROW1_Y,  LG_IMG_WIDTH, IMG_HEIGHT,  &batt_content}
+  {ANNUN_FIELD_RINGTONE,            ANNUN_ICON_POSITION_10,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &ringtone_content},
+  {ANNUN_FIELD_BATT,                ANNUN_ICON_POSITION_END,    ROW1_Y,  LG_IMG_WIDTH, IMG_HEIGHT,  &batt_content}
 #ifdef FEATURE_VERSION_EC99 
-  , {ANNUN_FIELD_3G_RSSI,                ANNUN_ICON_POSITION_1,     ROW1_Y,  LG_IMG_WIDTH, (IMG_HEIGHT/2),  &rssi_3g_content} 
+  , {ANNUN_FIELD_3G_RSSI,           ANNUN_ICON_POSITION_1,      ROW1_Y,  LG_IMG_WIDTH, (IMG_HEIGHT/2),  &rssi_3g_content} 
 #endif
 
 #endif
 #else
  
-  {ANNUN_FIELD_ALARM,              ANNUN_ICON_POSITION_7,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &alarm_content},
-  {ANNUN_FIELD_MMS,                ANNUN_ICON_POSITION_9,    ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &mms_content},
-  {ANNUN_FIELD_RINGTONE,         ANNUN_ICON_POSITION_8,    ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &ringtone_content},
-  {ANNUN_FIELD_BATT,             ANNUN_ICON_POSITION_END, ROW1_Y,  LG_IMG_WIDTH, IMG_HEIGHT,  &batt_content}
+  {ANNUN_FIELD_ALARM,              ANNUN_ICON_POSITION_7,       ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &alarm_content},
+  {ANNUN_FIELD_MMS,                ANNUN_ICON_POSITION_9,       ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &mms_content},
+  {ANNUN_FIELD_RINGTONE,           ANNUN_ICON_POSITION_8,       ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &ringtone_content},
+  {ANNUN_FIELD_BATT,               ANNUN_ICON_POSITION_END,     ROW1_Y,  LG_IMG_WIDTH, IMG_HEIGHT,  &batt_content}
 #endif
 #endif
 };
@@ -1433,7 +1435,7 @@ static int ModifyAnnunStateSchedule(IAnnunciator * pMe, uint32 nAnnunID, uint32 
     else
     {
         uint32 tempState = 0;
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
         /*deal with bluetooth close*/
         if(nAnnunID == ANNUN_FIELD_BLUETOOTH && *nState == ANNUN_STATE_BT_OFF)
         {

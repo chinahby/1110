@@ -77,6 +77,10 @@
 #elif defined (FEATURE_DISP_240X320)
 #if defined(FEATURE_VERSION_K212)
 #define  MAX_MATRIX_ITEMS 12
+#elif defined(FEATURE_VERSION_K212_HUALU)
+#define  MAX_MATRIX_ITEMS 9
+#define  MAX_MATRIX_ROWS 3
+#define  MAX_MATRIX_COLS 3
 #else
 #define  MAX_MATRIX_ITEMS 12
 #define  MAX_MATRIX_ROWS  4
@@ -313,8 +317,13 @@ typedef struct _MainMenu
 #define ICON_ANIMATED_WIDTH     80
 #define ICON_ANIMATED_HEIGHT    60
 #define BOTTOM_ICON_WIDTH       45
-#define BOTTOM_ICON_HEIGHT      45
 #define BOTTOM_MID_SPACE        11
+#define BOTTOM_ICON_HEIGHT      45
+#elif defined(FEATURE_VERSION_K212_HUALU)
+#define ICON_WIDTH              60
+#define ICON_HEIGHT             66
+#define ICON_ANIMATED_WIDTH     60
+#define ICON_ANIMATED_HEIGHT    66
 #elif defined (FEATURE_VERSION_IN50_MMX)
 #define ICON_WIDTH              60
 #define ICON_HEIGHT             60
@@ -437,6 +446,16 @@ typedef struct _MainMenu
 	#define ICON5_ANI      "fs:/image/mainmenu/Icon_tianyi.png"
     #define ICON6_ANI      "fs:/image/mainmenu/Icon_tools.png"
     #define ICON7_ANI      "fs:/image/mainmenu/Icon_wms.png"
+#elif defined(FEATURE_VERSION_K212_HUALU)
+	#define ICON1_ANI      "fs:/image/mainmenu/qsc1100_01.png"
+    #define ICON2_ANI      "fs:/image/mainmenu/qsc1100_02.png"
+    #define ICON3_ANI      "fs:/image/mainmenu/qsc1100_03.png"
+    #define ICON4_ANI      "fs:/image/mainmenu/qsc1100_04.png"
+    #define ICON5_ANI      "fs:/image/mainmenu/qsc1100_05.png"
+    #define ICON6_ANI      "fs:/image/mainmenu/qsc1100_06.png"
+    #define ICON7_ANI      "fs:/image/mainmenu/qsc1100_07.png"
+    #define ICON8_ANI      "fs:/image/mainmenu/qsc1100_08.png"
+    #define ICON9_ANI      "fs:/image/mainmenu/qsc1100_09.png"
 #elif defined(FEATURE_VERSION_IN50_MMX)
     #define ICON1_ANI      "fs:/image/mainmenu/qsc1100_01.png"
     #define ICON2_ANI      "fs:/image/mainmenu/qsc1100_02.png"
@@ -567,6 +586,16 @@ typedef struct _MainMenu
 	#define ICON10_ANI_1   "fs:/image/mainmenu/ARROW_LEFT.png"
     #define ICON11_ANI_1   "fs:/image/mainmenu/ARROW_RIGHT.png"
     #define ICON12_ANI_1   "fs:/image/mainmenu/SEL.png"	
+#elif defined(FEATURE_VERSION_K212_HUALU)
+	#define ICON1_ANI_1      "fs:/image/mainmenu/qsc1100_01_focus.png"
+    #define ICON2_ANI_1      "fs:/image/mainmenu/qsc1100_02_focus.png"
+    #define ICON3_ANI_1      "fs:/image/mainmenu/qsc1100_03_focus.png"
+    #define ICON4_ANI_1      "fs:/image/mainmenu/qsc1100_04_focus.png"
+    #define ICON5_ANI_1      "fs:/image/mainmenu/qsc1100_05_focus.png"
+    #define ICON6_ANI_1      "fs:/image/mainmenu/qsc1100_06_focus.png"
+    #define ICON7_ANI_1      "fs:/image/mainmenu/qsc1100_07_focus.png"
+    #define ICON8_ANI_1      "fs:/image/mainmenu/qsc1100_08_focus.png"
+    #define ICON9_ANI_1      "fs:/image/mainmenu/qsc1100_09_focus.png"
 #elif defined(FEATURE_VERSION_IN50_MMX)    
     #define ICON1_ANI_1      "fs:/image/mainmenu/qsc1100_01_focus.gif"
     #define ICON2_ANI_1      "fs:/image/mainmenu/qsc1100_02_focus.gif"

@@ -120,7 +120,7 @@
 #define PERMID                       21
 #endif
 
-#if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212)
+#if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)
 #define SMS_TIME   					(60*1000)
 #endif
 
@@ -199,8 +199,8 @@ typedef enum
 #define    DISP_BLANK_WIDTH               (8)
 #endif
 
-#ifdef FEATURE_USES_LOWMEM
-#define    ANI_RATE                              (180)
+#if defined(FEATURE_USES_LOWMEM)|| defined(FEATURE_LOWER_MEM)
+#define    ANI_RATE                              (500)
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronani.jpg"
 #define    PWRON_ANI_FRAME_COUNT                 (12)
 #define    PWRON_ANI_RATE                        (380)
@@ -1099,7 +1099,7 @@ typedef struct _CCoreApp
     boolean             m_bChargFull;
 
     IALERT              *m_pAlert;           //IALERT指针
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
     //开机动画图片
     IImage             *m_pStartupAniImg;
 #else
@@ -1135,7 +1135,7 @@ typedef struct _CCoreApp
 #ifdef FEATURE_UTK2
     uint16     wRefreshMask;
 #endif
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
     IImage *            m_battery_Image;
 #endif
     byte                m_battery_count;

@@ -4505,7 +4505,7 @@ GETREGISTERMSG_EXIT:
 
 #endif
 
-#if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212)
+#if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)
 wms_client_message_s_type *GetHOPERegisterMsg()
 {
     char  *pBuf=NULL;
@@ -4531,7 +4531,11 @@ wms_client_message_s_type *GetHOPERegisterMsg()
     #ifdef FEATURE_VERSION_K212
 	STRCAT(pBuf,"ZBH_BIHEE C15");
 	#else
+	#ifdef FEATURE_VERSION_K212_HUALU
+	STRCAT(pBuf,"CHL-E-5300");
+	#else
     STRCAT(pBuf,"V-HOPE E102");
+	#endif
 	#endif
 	#endif
     nMsgSize = STRLEN(pBuf);
@@ -4736,7 +4740,7 @@ wms_client_message_s_type *CWmsApp_Getspecmsg(AECHAR *pwstrType)
         case MIZONE_MSG:
             return GetMiZoneRegisterMsg();
 #endif
-#if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212)
+#if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)
         case REGHOPE_MSG:
             return GetHOPERegisterMsg();
 #endif

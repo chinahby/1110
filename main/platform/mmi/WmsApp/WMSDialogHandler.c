@@ -64,7 +64,7 @@ extern uint8  g_mmsDataInfoMax;
 #define CONTAPP_RES_FILE_LANG  AEE_RES_LANGDIR CONTACTAPP_RES_FILE
 
 // 发送短信动画图片文件定义
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
 #define SENDINGSMS_ANI      "fs:/image/notice/sendingsms.png"
 // 动画帧数
 #define SENDINGSMS_ANI_N    7
@@ -3694,7 +3694,7 @@ static boolean IDD_SETTING_Handler(void   *pUser,
 #if 1//def FEATURE_CARRIER_TAIWAN_APBW        //add by yangdecai   2010-08-23 
                 // 发出短信是否带回叫号码
                 MSG_FATAL("IDD_SETTING_Handler EVT_COMMAND IDS_CALLBACKNUM", 0, 0, 0);
-#if !defined(FEATURE_VERSION_C316)&&!defined(FEATURE_VERSION_K202_LM129C)&&!defined(FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_VERSION_K212_20D)&&!defined(FEATURE_VERSION_K212_ND)
+#if !defined(FEATURE_VERSION_C316)&&!defined(FEATURE_VERSION_K202_LM129C)&&!defined(FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_VERSION_K212_20D)&&!defined(FEATURE_VERSION_K212_ND)&&!defined(FEATURE_VERSION_K212_HUALU)
                 case IDS_CALLBACKNUM:
                     CLOSE_DIALOG(DLGRET_CALLBACKNUM)
                     return TRUE;
@@ -5459,7 +5459,7 @@ static boolean IDD_SENDMODE_Handler(void *pUser,
             // 菜单项初始化
             MENU_ADDITEM(pMenu, IDS_SENDANDSAVE);
             MENU_ADDITEM(pMenu, IDS_SENDONLY);
-#ifndef FEATURE_VERSION_K212
+#if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_K212_HUALU)
 #ifndef FEATURE_VERSION_K212_ND
             MENU_ADDITEM(pMenu, IDS_SAVEONLY);
 #endif
@@ -12146,7 +12146,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 #endif                       
                         MENU_ADDITEM(pMe->m_pMenu, IDS_INSERTTEMPLATES);
 						MENU_ADDITEM(pMe->m_pMenu, IDS_SAVETODRAFT);	//Add By zzg 2010_09_11		
-						#ifndef FEATURE_VERSION_K212
+						#if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_K212_HUALU)
                         MENU_ADDITEM(pMe->m_pMenu, IDS_SAVEASPRESET);
 						#endif
                         MENU_ADDITEM(pMe->m_pMenu, IDS_EXIT_EDITOR);
@@ -13444,7 +13444,7 @@ static boolean IDD_MSGOPTS_Handler(void *pUser,
 #endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH
                     MENU_ADDITEM(pMenu, IDS_SEND);
                     //MENU_ADDITEM(pMenu, IDS_EDIT);
-                    #ifndef FEATURE_VERSION_K212
+                    #if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_K212_HUALU)
                     MENU_ADDITEM(pMenu, IDS_ADDNEW);
                     if (pMe->m_wCurTemplate>=MSG_CMD_BASE)
                     {
@@ -13796,7 +13796,7 @@ static boolean IDD_MSGOPTS_Handler(void *pUser,
                 case IDS_EDIT:
                     CLOSE_DIALOG(DLGRET_EDIT)
                     return TRUE;
-#ifndef FEATURE_VERSION_K212
+#if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_K212_HUALU)
                 case IDS_ADDNEW:
                     CLOSE_DIALOG(DLGRET_ADDNEW)
                     return TRUE;

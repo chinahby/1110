@@ -797,7 +797,7 @@ static boolean SettingMenu_HandleEvent(ISettingMenu *pi,
         case EVT_KEY_RELEASE:
         case EVT_KEY:
         case EVT_COMMAND:
-			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_QVGA_INHERIT_K212)
+			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_QVGA_INHERIT_K212)&&!defined(FEATURE_VERSION_K212_HUALU)
             if (!pMe->m_bAppIsReady)
             {
                 return TRUE;

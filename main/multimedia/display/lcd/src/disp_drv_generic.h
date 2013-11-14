@@ -538,7 +538,7 @@ static void disp_drv_update
         (!(((uint32)buf_ptr) & 0x3)))
     {
         rex_enter_crit_sect(&disp_drv_crit_sect);    
-#if (defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)) && !defined(T_QSC1110)
+#if (defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)) //&& !defined(T_QSC1110)
         if(disp_drv_state.lock_row_num == 0 || disp_drv_state.lock_col_num == 0)
         {
 #endif
@@ -571,7 +571,7 @@ static void disp_drv_update
                 src_ptr += src_width;
             }
         }
-#if (defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)) && !defined(T_QSC1110)
+#if (defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)) //&& !defined(T_QSC1110)
         }
         else
         {
@@ -644,7 +644,7 @@ static void disp_drv_update
     }  
 } /* disp_drv_update() */
 
-#if (defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)) && !defined(T_QSC1110)
+#if (defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)) //&& !defined(T_QSC1110)
 static void disp_drv_lock_screen(word start_row, word start_col, word num_row, word num_col)
 {
     if (disp_drv_state.disp_initialized)
@@ -654,6 +654,7 @@ static void disp_drv_lock_screen(word start_row, word start_col, word num_row, w
         {
             word temp;
             disp_drv_ic.disp_ic_rot(90);
+			//MSG_FATAL("FEATURE_CAMERA_NOFULLSCREEN......90",0,0,0);
             temp = num_row;
             num_row = num_col;
             num_col = temp;
@@ -661,6 +662,7 @@ static void disp_drv_lock_screen(word start_row, word start_col, word num_row, w
         else
         {
             disp_drv_ic.disp_ic_rot(0);
+			//MSG_FATAL("FEATURE_CAMERA_NOFULLSCREEN......0",0,0,0);
         }
         
         if ((start_row + num_row) > disp_drv_info.disp_height)
@@ -869,7 +871,7 @@ static int disp_drv_ioctl ( int cmd, void *arg )
     disp_update_type *disp_update_cmd;
 
     switch (cmd) {
-#if (defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)) && !defined(T_QSC1110)
+#if (defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)) //&& !defined(T_QSC1110)
     case IOCTL_DISP_UPDATE_LOCK:
         disp_update_cmd = (disp_update_type*)arg;
         /* bitwise OR all int16 together. If the result is

@@ -2242,6 +2242,14 @@ static boolean  QuickTest_HeadTestHandler(CQuickTest *pMe,
 					}
                     break;
 
+				case AVK_STAR:
+						(void)IRINGERMGR_Stop(pMe->m_pRingerMgr);
+                    	(void)ISHELL_CancelTimer(pMe->m_pShell,
+                                 (PFNNOTIFY)(QuickTest_Ringer),
+                                  pMe);
+                    	CLOSE_DIALOG(DLGRET_CANCELED)
+						break;
+
                 default:
                     break;
             }

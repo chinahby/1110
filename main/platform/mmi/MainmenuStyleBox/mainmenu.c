@@ -10837,9 +10837,11 @@ static char* ICON_ANI[] =
     ICON12_ANI,
 #endif
 #elif defined (FEATURE_DISP_240X320)
+#if !defined(FEATURE_VERSION_K212_HUALU)
     ICON10_ANI,
     ICON11_ANI,
-    ICON12_ANI,    
+    ICON12_ANI,
+#endif
 #elif defined (FEATURE_DISP_320X240)
     ICON10_ANI,
     ICON11_ANI,
@@ -10886,9 +10888,11 @@ static char* ICON_ANI_1[] =
     ICON12_ANI_1,
 #endif    
 #elif defined (FEATURE_DISP_240X320)
+#if !defined(FEATURE_VERSION_K212_HUALU)
     ICON10_ANI_1,
     ICON11_ANI_1,
     ICON12_ANI_1,     
+#endif
 #elif defined (FEATURE_DISP_320X240)
     ICON10_ANI_1,
     ICON11_ANI_1,
@@ -11612,6 +11616,16 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_IconTitle[10]    = IDS_MAIN_MENU_GAMES;
     pMe->m_IconTitle[11]    = IDS_MAIN_MENU_SETTINGS;	  
 #endif    
+#elif defined(FEATURE_VERSION_K212_HUALU)
+	pMe->m_IconTitle[0]     = IDS_MAIN_MENU_CONTACTS;//IDS_MAIN_MENU_MEDIAGALLERY;
+    pMe->m_IconTitle[1]     = IDS_MAIN_MENU_RECENTCALLS;//IDS_MAIN_MENU_CONTACTS;
+    pMe->m_IconTitle[2]     = IDS_MAIN_MENU_MESSAGES;//IDS_MAIN_MENU_UTK;
+    pMe->m_IconTitle[3]     = IDS_MAIN_MENU_MULTIMEDIA;//IDS_MAIN_MENU_RECENTCALLS;
+    pMe->m_IconTitle[4]     = IDS_MAIN_MENU_UTK;//IDS_MAIN_MENU_MESSAGES;
+    pMe->m_IconTitle[5]     = IDS_MAIN_MENU_APPLICATION;//IDS_MAIN_MENU_MULTIMEDIA;
+    pMe->m_IconTitle[6]     = IDS_MAIN_MENU_SETTINGS;//IDS_MAIN_MENU_MUSICPLAYER;
+    pMe->m_IconTitle[7]     = IDS_MAIN_MENU_GAMES;
+    pMe->m_IconTitle[8]     = IDS_MAIN_MENU_MEDIAGALLERY;
 #else
     pMe->m_IconTitle[0]     = IDS_MAIN_MENU_MEDIAGALLERY;
     pMe->m_IconTitle[1]     = IDS_MAIN_MENU_CONTACTS;

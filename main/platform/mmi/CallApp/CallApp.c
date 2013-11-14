@@ -894,7 +894,7 @@ static int CallApp_InitAppData(CCallApp *pMe)
     pMe->m_CallsTable = NULL;
     pMe->m_CallsTable_Count =0;
     pMe->m_bReceiveCallerID     = FALSE;
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
     pMe->m_pConvImage = NULL;
 #endif
     pMe->m_btime_out = 0;
@@ -1422,7 +1422,7 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
             pMe->m_ePreState = STATE_NULL;
             pMe->m_nStartCallType = START_MAX;
             pMe->m_bHandFree = FALSE;
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
             if(pMe->m_pConvImage)
             {
                 IIMAGE_Release(pMe->m_pConvImage);

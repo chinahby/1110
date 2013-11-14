@@ -511,7 +511,9 @@ static NextFSMAction COREST_LPM_Handler(CCoreApp *pMe)
             }
             else
             {
+            #ifdef FEATRUE_AUTO_POWER	
 				OEMRTC_Process_Auto_Power_On();
+			#endif
 				CoreApp_ShowDialog(pMe, IDD_LPM);
                 return NFSMACTION_WAIT;
             }

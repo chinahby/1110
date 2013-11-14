@@ -41,7 +41,7 @@ when       who     what, where, why
 /* -----------------------------------------------------------------------
 ** Data Services
 ** ----------------------------------------------------------------------- */
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
 #define FEATURE_DS
 #endif
 

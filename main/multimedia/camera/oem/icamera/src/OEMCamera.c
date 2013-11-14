@@ -1782,7 +1782,8 @@ int OEMCamera_SetParm(OEMINSTANCE h, int16 nParmID, int32 p1, int32 p2)
       //No callback required for this SetParm.
       nRet = OEMCamera_AEEError(nRet);
       break;
-#endif
+#else
+
 #ifdef FEATURE_CAMERA_LCD_DIRECT_MODE
       //Suggest using CAM_PARM_LCD_DIRECT_ACCESS_EX to replace this
       case CAM_PARM_LCD_DIRECT_ACCESS:
@@ -1814,9 +1815,10 @@ int OEMCamera_SetParm(OEMINSTANCE h, int16 nParmID, int32 p1, int32 p2)
           nRet = CAMERA_INVALID_PARM;
         }
       }
-      //No callback required for this SetParm.
+	  //No callback required for this SetParm.
       nRet = OEMCamera_AEEError(nRet);
       break;
+#endif
 
       case CAM_PARM_LCD_DIRECT_ACCESS_EX:
       {

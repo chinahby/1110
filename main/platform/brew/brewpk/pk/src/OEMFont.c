@@ -53,9 +53,13 @@ when          who   what, where, why
 #ifdef FEATURE_VERSION_K212_ND 
 #define  CH_NORMAL_HEIGHT       12          // Normal font height in pixel unit
 #else
-#define  CH_NORMAL_HEIGHT       16 
+#define  CH_NORMAL_HEIGHT       16
 #endif
+#if defined(FEATURE_VERSION_K212_HUALU)
+#define  CH_SMALL_HEIGHT        78
+#else
 #define  CH_SMALL_HEIGHT        8
+#endif
 #define  CH_NORMAL_WIDTH_PIXEL  16          // Normal font width in pixel unit
 #define  CH_USER1_HEIGHT        16          // User1 font height in pixel unit
 #define  CH_USER1_WIDTH_PIXEL   12          // User1 font width in pixel unit

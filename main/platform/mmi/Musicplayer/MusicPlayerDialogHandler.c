@@ -3162,7 +3162,7 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
                 	(void)IMEDIA_SetVolume(pMe->m_pMedia,pMe->m_nCurrentVolume); 
                  }
             } 
-                #if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+                #if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_VERSION_K212_HUALU)
 			     (void)ISHELL_PostEvent(pMe->m_pShell,
                                                AEECLSID_APP_MUSICPLAYER,
                                                EVT_USER_REDRAW,
@@ -3211,7 +3211,7 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
 					(void)IMEDIA_SetVolume(pMe->m_pMedia,pMe->m_nCurrentVolume); 
 				 }
             } 
-                #if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+                #if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_VERSION_K212_HUALU)
 			   (void)ISHELL_PostEvent(pMe->m_pShell,
                                                AEECLSID_APP_MUSICPLAYER,
                                                EVT_USER_REDRAW,
@@ -6077,7 +6077,7 @@ static void MP3_DrawMusicName(CMusicPlayer *pMe ,int index)
 		clip.dy = SIMMUSICNAME_H;
 		
         oldColor = IDISPLAY_SetColor(pMe->m_pDisplay,CLR_USER_TEXT,RGB_WHITE);
-        #if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+        #if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_VERSION_K212_HUALU)
 		MP3_drawClipRectWithOffset(pMe, IDI_BACKGROUND,&clip);
 		#else
         MP3_drawClipRectWithOffset(pMe, IDI_SIMPLEPLAYER,&clip);
@@ -6197,7 +6197,7 @@ static void MP3_DrawSimplePlayerFace(CMusicPlayer *pMe)
  #ifdef FEATURE_DISP_240X320
     MP3_DrawImage(pMe, IDI_BACKGROUND, 0, 0);//»­±³¾°	
  #endif
-#if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_QVGA_INHERIT_K212)
+#if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_VERSION_K212_HUALU)
     MP3_DrawImage(pMe, IDI_SIMPLEPLAYER, 0, 0);
  #endif
  #ifdef FEATURE_DISP_240X320
@@ -6679,7 +6679,7 @@ static void MP3_Build_MainOpts_Menu(CMusicPlayer *pMe,IMenuCtl *pMenuCtl)
     }
     MP3MENU_ADDITEM(pMenuCtl,IDS_PLAYLIST);
     MP3MENU_ADDITEM(pMenuCtl,IDS_PLAYLIST_ADDMUSIC);
-#if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_QVGA_INHERIT_K212)
+#if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_QVGA_INHERIT_K212)&&!defined(FEATURE_VERSION_K212_HUALU)
     MP3MENU_ADDITEM(pMenuCtl,IDS_SET_AS_RINGTONE);
 #endif
     MP3MENU_ADDITEM(pMenuCtl,IDS_SETTINGS);

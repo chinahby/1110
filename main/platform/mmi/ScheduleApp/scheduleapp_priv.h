@@ -85,7 +85,7 @@
 #ifdef FEATURE_VERSION_X3
 #define     LUNAR_RECT_HEIGHT              24
 #else
-#ifdef FEATURE_VERSION_K212
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)
 #define     LUNAR_RECT_HEIGHT              32
 #else
 #define     LUNAR_RECT_HEIGHT              14

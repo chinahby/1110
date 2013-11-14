@@ -14021,6 +14021,7 @@ static boolean  CContApp_HandleDetailDlgEvent( CContApp  *pMe,
 						}
 					}
 					#endif
+					
                     if ( SUCCESS != ISHELL_CreateInstance( pMe->m_pShell,
                                                            AEECLSID_DIALER,
                                                            (void **)&pMe->m_pCallApp))

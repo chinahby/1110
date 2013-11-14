@@ -145,7 +145,7 @@
 
 #define TIMEOUT_MS_QUICK               (500)
 #define MP3APPISREADY_TIME             (50)
-#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_VERSION_K212_HUALU)
 #define MS_FASTFORWARDREWIND_TIME      (10000)  // ∫¡√Î
 #else
 #define MS_FASTFORWARDREWIND_TIME      (5000)  // ∫¡√Î
@@ -951,7 +951,7 @@ if(!(x))         \
 #endif
 
 
-#if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_QVGA_INHERIT_K212)
+#if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_QVGA_INHERIT_K212)&&!defined(FEATURE_VERSION_K212_HUALU)
 #define RFIMG_WIDTH 16
 #define REWIND_X    (((SCREEN_WIDTH-4)-(RFIMG_WIDTH*2))/2)
 #ifdef FEATURE_VERSION_K212_ND

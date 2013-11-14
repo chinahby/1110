@@ -1105,7 +1105,7 @@ static boolean  dialog_handler_of_state_msgbox(CScheduleApp* pme,
             return TRUE;
 
         case EVT_DIALOG_START:
-			#ifdef FEATURE_VERSION_K212
+			#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)
 			ISHELL_SetTimer(pme->m_pShell,2000,Schedule_DialogTimeout,pme);
 			#else
             ISHELL_SetTimer(pme->m_pShell,1000,Schedule_DialogTimeout,pme);
@@ -1560,7 +1560,7 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
             
 			#if defined(FEATURE_VERSION_X3)
 			rc.dy -= (HEIGHT_PROMPT_BAR);
-			#elif defined(FEATURE_VERSION_K212)
+			#elif defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)
 			rc.dy -= (HEIGHT_PROMPT_BAR+32);
 			#else
             
@@ -1788,7 +1788,7 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
             }
 			else
 			{
-				#if defined(FEATURE_VERSION_K212)
+				#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)
 					drawBottomBar(BTBAR_OPTION_BACK);
 				#endif
 			}
@@ -2737,7 +2737,7 @@ static boolean  dialog_handler_of_state_gotodate( CScheduleApp* pme,
 #if defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
                 y = TITLEBAR_HEIGHT * 2;
 #endif
-				#ifdef FEATURE_VERSION_K212
+				#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)
 				dateFormatType = OEMNV_DATEFORM_YMD;
 				#elif defined(FEATURE_VERSION_K212_ND)
 				dateFormatType = OEMNV_DATEFORM_MDY;
@@ -4371,7 +4371,7 @@ _scheduleapp_event_edit_save_:
                 case AVK_7:
                 case AVK_8:
                 case AVK_9:
-				#if defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)
+				#if defined(FEATURE_VERSION_K202)|| defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)
 				if( (wParam == AVK_0 ||wParam == AVK_1 ||wParam == AVK_2
                 	||wParam == AVK_3 || wParam == AVK_4 ||wParam == AVK_5 ||wParam == AVK_6 ||wParam == AVK_7 
                 	||wParam == AVK_8 || wParam == AVK_9) && (currentItem == 0 || currentItem == 1))
@@ -6230,7 +6230,7 @@ void Cal_HandleAlarm(CScheduleApp* pme, uint16 permId)
 
 }
 
-#ifdef FEATURE_VERSION_K212
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)
 static boolean ScheduleApp_DrawText_Ex(CScheduleApp *pMe, AEEFont fnt,
                   AECHAR *wStr, AEERect  *rect,  uint32 mask)
 {
@@ -6445,7 +6445,7 @@ static boolean  dialog_handler_of_state_showalert( CScheduleApp* pme,
                     
                     IIMAGE_GetInfo(AlertImage, &ImageInfo);
                     //IIMAGE_Draw(AlertImage, 0, TITLEBAR_HEIGHT);
-#if defined(FEATURE_VERSION_K212)
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)
                     IIMAGE_Draw(AlertImage, (pme->m_rc.dx - ImageInfo.cx)/2,(pme->m_rc.dy - ImageInfo.cy)-BOTTOMBAR_HEIGHT);
 #else
 					IIMAGE_Draw(AlertImage, (pme->m_rc.dx - ImageInfo.cx)/2, TITLEBAR_HEIGHT/2 + BOTTOMBAR_HEIGHT/2 + (pme->m_rc.dy - ImageInfo.cy)/2);
@@ -6462,7 +6462,7 @@ static boolean  dialog_handler_of_state_showalert( CScheduleApp* pme,
 					
                     AEERect rc;
                     int length;
-                    #if defined(FEATURE_VERSION_K212)
+                    #if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)
                     SETAEERECT(&rc, 0, TITLEBAR_HEIGHT, pme->m_rc.dx, BOTTOMBAR_HEIGHT*2);
 					#else
 					SETAEERECT(&rc, 0, TITLEBAR_HEIGHT, pme->m_rc.dx, BOTTOMBAR_HEIGHT);
@@ -6497,7 +6497,7 @@ static boolean  dialog_handler_of_state_showalert( CScheduleApp* pme,
                         //AlertText[length++] = '\n';
                         //WSTRNCOPY(d,dlen,s)
                         WSTRCPY(AlertText + length, theLast->subject);
-						#if defined(FEATURE_VERSION_K212)
+						#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)
 						rc.dy = MENUITEM_HEIGHT*2;
 						ScheduleApp_DrawText_Ex(pme,AEE_FONT_NORMAL,AlertText,&rc,IDF_TEXT_TRANSPARENT);
 						#else																
@@ -6509,7 +6509,7 @@ static boolean  dialog_handler_of_state_showalert( CScheduleApp* pme,
 						
 					    #endif
 						//rc.y = rc.y + TITLEBAR_HEIGHT;	
-						#if defined(FEATURE_VERSION_K212)
+						#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)
 						rc.y = rc.y + MENUITEM_HEIGHT*2;  //Add By zzg 2012_03_08;	
 						rc.dy = MENUITEM_HEIGHT*3;
 						ScheduleApp_DrawText_Ex(pme,AEE_FONT_NORMAL,theLast->location,&rc,IDF_TEXT_TRANSPARENT);
@@ -7816,7 +7816,7 @@ void CScheduleApp_GetLunarStr(CScheduleApp *pme)
    nLen = WSTRNCOPYN(strTep,nCount, pme->m_calendar.m_pResGz,2);
    nCount -= nLen;
    strTep += nLen;
-#ifndef FEATURE_VERSION_K212
+#if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_K212_HUALU)
    //¼ÓÈëÉúÐ¤×Ö·û
    nLen = WSTRNCOPYN(strTep,nCount, pme->m_calendar.m_pResSx,2);
    nCount -= nLen;

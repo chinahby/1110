@@ -179,7 +179,7 @@ GENERAL DESCRIPTION:
 
 #define FEATURE_ANNUNCIATOR
 
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
 #ifndef FEATURE_BREW_DOWNLOAD
 #define FEATURE_BREW_DOWNLOAD
 #endif
@@ -210,7 +210,7 @@ GENERAL DESCRIPTION:
 
 //#define FEATURE_DEFAULT_VIEW_APP  // Use ViewApp.c as default view applet.
 #ifndef FEATURE_MANGO_BREW
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
 #define FEATURE_GIF_DECODE
 #define FEATURE_BCI_DECODE
 #endif
@@ -435,7 +435,7 @@ GENERAL DESCRIPTION:
 
 // Disabled image scaling support for now
 #ifndef FEATURE_PEKTEST
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
 #define FEATURE_BREW_SCALE       // turn on image scaling in BREW viewers
 #endif
 #endif
@@ -511,7 +511,7 @@ GENERAL DESCRIPTION:
 // network coverage.
 #ifndef FEATURE_MANGO_BREW
 #ifndef FEATURE_WLAN
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
   #define CLOSE_PPP_ON_OUT_OF_NETWORK_COVERAGE
 #endif
 #endif //FEATURE_WLAN
@@ -527,14 +527,14 @@ GENERAL DESCRIPTION:
 
 #if !defined( AEE_SIMULATOR)
     #define FEATURE_APP_DIALER
-#ifndef FEATURE_USES_LOWMEM	
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
     #define FEATURE_ICM
 #endif	
     #undef FEATURE_APP_RECENTCALLS
     #define FEATURE_CALLLIST
 #endif
 
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
 #define FEATURE_APP_SVCPRG
 #endif
 
@@ -586,7 +586,7 @@ GENERAL DESCRIPTION:
 //#define FEATURE_FUNCS_THEME
 #define FEATURE_MENUTITLE_AUTOSCROLL
 /*define OEMCFGI FEATURE*/
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
 #define FEATRUE_AUTO_POWER
 #endif
 #define FEATURE_TIME_DATA_SETTING

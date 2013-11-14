@@ -96,7 +96,7 @@ static disp_update_type dup_arg_capture;
 #endif
 
 static disp_cls_type cls_arg;
-#if (defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)) && !defined(T_QSC1110)
+#if (defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)) //&& !defined(T_QSC1110)
 static disp_update_type duplock_arg;
 static disp_update_type dupyuv_arg;
 static disp_lock_type lock_arg;
@@ -577,7 +577,7 @@ static void mdp_init(void)
 }
 #endif /* FEATURE_MDP */
 
-#if (defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)) && !defined(T_QSC1110)
+#if (defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)) //&& !defined(T_QSC1110)
 void disp_update_lock
 (
   /* The buffer pointer point to the first byte of the whole buffer.

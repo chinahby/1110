@@ -3078,7 +3078,7 @@ static boolean  CallApp_Dialer_Calling_DlgHandler(CCallApp *pMe,
             pMe->m_cdg_row    = 0;
             //pMe->m_b_show_cdg = TRUE;
             ISHELL_CancelTimer(pMe->m_pShell,(PFNNOTIFY)CallApp_MakeCall, pMe);
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
             if(pMe->m_pConvImage)
             {
                 IIMAGE_Release(pMe->m_pConvImage);
@@ -3224,7 +3224,7 @@ static boolean  CallApp_Dialer_Calling_DlgHandler(CCallApp *pMe,
                     pMe->m_CallsTable->in_phonebook = TRUE;
                 }
             }
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
             //DRAW ANIMATION
             if(pMe->m_pConvImage == NULL)
             {
@@ -3397,7 +3397,7 @@ static boolean  CallApp_Dialer_Calling_DlgHandler(CCallApp *pMe,
             //(void) ISHELL_CancelTimer(pMe->m_pShell,
             //                                            (PFNNOTIFY)CallApp_NotifyDisp_CB,
             //                                            pMe);
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
             if(pMe->m_pConvImage)
             {
                 IIMAGE_Release(pMe->m_pConvImage);
@@ -4085,7 +4085,7 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
             //pMe->m_b_show_cdg = TRUE;
             pMe->m_dtmf_length = OEMNV_KEYTONE_NORMAL;
             ICONFIG_GetItem(pMe->m_pConfig,CFGI_KEYTONE_LENGTH,&pMe->m_dtmf_length,sizeof(keyToneLength));
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
             if(pMe->m_pConvImage)
             {
                 IIMAGE_Release(pMe->m_pConvImage);
@@ -4272,7 +4272,7 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
 
             pMe->m_bShowPopMenu = FALSE;
             IMENUCTL_SetActive ( pMe->m_pMenu, FALSE );
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
             if(pMe->m_pConvImage)
             {
                 IIMAGE_Release(pMe->m_pConvImage);
@@ -4913,7 +4913,7 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
             }
 
             CallApp_Free_All_Call_Table(pMe);
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
             if(pMe->m_pConvImage)
             {
                 IIMAGE_Release(pMe->m_pConvImage);
@@ -5124,7 +5124,7 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
 
             ITIMECTL_SetRect(pTimerCtl, &rect);
             ITIMECTL_SetProperties(pTimerCtl, TP_NO_MSECONDS);
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
             if(pMe->m_pConvImage == NULL)
             {
                 pMe->m_pConvImage = ISHELL_LoadResImage( pMe->m_pShell,
@@ -5360,7 +5360,7 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
             // Cancel blink timer
             (void) ISHELL_CancelTimer(pMe->m_pShell,
                                                         CallApp_HandleEndCallBlinkTimer, pMe);
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
             if(pMe->m_pConvImage)
             {
                 IIMAGE_Release(pMe->m_pConvImage);
@@ -5996,7 +5996,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
                 IBACKLIGHT_SigLedEnable( pMe->m_pBacklight, SIG_LED_INCOMING_CALL);
 #endif
             }
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
             if(pMe->m_pConvImage)
             {
                 IIMAGE_Release(pMe->m_pConvImage);
@@ -6282,7 +6282,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
                 	}
                 }
             }
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
             // NAME
             // set rect.
             // first line used for title
@@ -6437,7 +6437,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
             (void) ISHELL_CancelTimer(pMe->m_pShell,
                                                     (PFNNOTIFY)CallApp_HandleAutoAnswerTimer,
                                                     pMe);
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
             if(pMe->m_pConvImage)
             {
                 IIMAGE_Release(pMe->m_pConvImage);
@@ -7280,7 +7280,7 @@ static boolean  CallApp_Missedcall_DlgHandler(CCallApp *pMe,
                 IBACKLIGHT_SigLedEnable(pMe->m_pBacklight,SIG_LED_MISSED_CALL);
             }
 #endif
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
             if(pMe->m_pConvImage)
             {
                 IIMAGE_Release(pMe->m_pConvImage);
@@ -7310,7 +7310,7 @@ static boolean  CallApp_Missedcall_DlgHandler(CCallApp *pMe,
             Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
 
             ASSERT(IDD_MISSED == pMe->m_pActiveDlgID);
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
             //First line
             if(pMe->m_pConvImage == NULL)
             {
@@ -7423,7 +7423,7 @@ static boolean  CallApp_Missedcall_DlgHandler(CCallApp *pMe,
 #else
             pMe->m_lastCallState = AEET_CALL_STATE_IDLE;
 #endif
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
             if(pMe->m_pConvImage)
             {
                 IIMAGE_Release(pMe->m_pConvImage);
@@ -10899,7 +10899,7 @@ static void CallApp_Draw_Connect_Number_and_Name(CCallApp *pMe)
         CallApp_NotifyDisp(pMe);
         b_cdg = TRUE ;
     }
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
     //pMe->m_pConvImage
     if(pMe->m_pConvImage == NULL)
     {
@@ -11768,7 +11768,7 @@ static void  CallApp_SetTimerControl(void *pUser)
         CALL_ERR("CallsTable == NULL CallApp_SetTimerControl",0,0,0);
         return;
     }
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
     if (pMe->m_pConvImage)
     {
         IIMAGE_SetOffset(pMe->m_pConvImage, 0, pMe->m_rc.dy -

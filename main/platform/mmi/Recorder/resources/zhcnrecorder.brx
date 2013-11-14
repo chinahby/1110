@@ -136,9 +136,12 @@
 	<STRING Id="1043" Name="IDS_STORAGE_SETUP_PHONE">
 		<Text>手机</Text>
 	</STRING>
-	<STRING Id="1044" Name="IDS_STORAGE_SETUP_CARD0" Encoding="Unicode">
+	<STRING Id="1044" Name="IDS_STORAGE_SETUP_CARD0">
 		<Text>存储卡</Text>
 	</STRING>
+	<String Id="1046" Name="IDS_FMRADIO_CHANNEL_LIST_IS_EMPTY">
+		<Text>列表为空</Text>
+	</String>
 	<STRING Id="1100" Name="IDS_RECORD_MEDIA_ERROR">
 		<Text>错误</Text>
 	</STRING>

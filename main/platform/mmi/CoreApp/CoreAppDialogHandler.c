@@ -1589,7 +1589,7 @@ static boolean  IDD_ALARM_Handler(void       *pUser,
 
 #endif
 
-#ifdef FEATURE_USES_LOWMEM
+#if defined(FEATURE_USES_LOWMEM) || defined(FEATURE_LOWER_MEM)
 #include "AEERGBVAL.h"
 #define BATT_HEIGHT     80
 #define BATT_WIDTH      60
@@ -1654,7 +1654,7 @@ static boolean  IDD_LPM_Handler(void       *pUser,
     {
         case EVT_DIALOG_INIT:
             pMe->m_battery_count = 0;
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
             pMe->m_battery_Image = ISHELL_LoadImage(pMe->a.m_pIShell, CHARGING_ANIFILE "charge.png");
             IIMAGE_SetParm(pMe->m_battery_Image, IPARM_NFRAMES, CHARGING_FRAME_COUNT, 0);
 #endif
@@ -1703,7 +1703,7 @@ static boolean  IDD_LPM_Handler(void       *pUser,
             if (AEEBATTERY_CHARGERSTATUS_FULLY_CHARGE == status)
             {                
                 ISHELL_CancelTimer(pMe->a.m_pIShell, CoreApp_Draw_Charger_image, pMe);
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
                 if (NULL != pMe->m_battery_Image)
                 {
                     IIMAGE_DrawFrame(pMe->m_battery_Image, CHARGING_FRAME_COUNT - 1, 0, 0);
@@ -1751,7 +1751,7 @@ static boolean  IDD_LPM_Handler(void       *pUser,
         {
             //int i = 0;
             ISHELL_CancelTimer(pMe->a.m_pIShell, CoreApp_Draw_Charger_image, pMe);
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
             if (NULL != pMe->m_battery_Image)
             {
                 IIMAGE_Release(pMe->m_battery_Image);
@@ -3488,7 +3488,7 @@ static boolean  IDD_STARTUPANI_Handler(void       *pUser,
         case EVT_DIALOG_START:			
             if(pMe->m_wStartupAniTime == 0)
             {
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
                 if ( NULL == pMe->m_pStartupAniImg )
                 {
                     pMe->m_pStartupAniImg = ISHELL_LoadImage( pMe->a.m_pIShell, PWRON_ANI_FILE);
@@ -3528,13 +3528,13 @@ static boolean  IDD_STARTUPANI_Handler(void       *pUser,
 
                 // 播放开机动画
                 //pMe->m_wStartupAniTime = 0;
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
                 if ( NULL != pMe->m_pStartupAniImg )
 #endif
                 {     
                     CoreApp_PlayPwrOnAni(pMe);
                 }
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
                 else
                 {
                     CLOSE_DIALOG( DLGRET_OK ); 
@@ -3548,7 +3548,7 @@ static boolean  IDD_STARTUPANI_Handler(void       *pUser,
             //IALERT_StopRingerAlert(pMe->m_pAlert);
             if (pMe->m_eDlgRet != DLGRET_OK)
             {// 开机动画播放过程中被其他应用启动时中断
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
                 if (NULL != pMe->m_pStartupAniImg)
                 {     
                     MSG_FATAL("IDD_STARTUPANI_Handler EVT_DIALOG_END 1",0,0,0);
@@ -6345,7 +6345,7 @@ static boolean  IDD_POWERDOWN_Handler(void *pUser,
                                 IALERT_StartRingerAlert_Ex( pMe->m_pAlert, (uint32)aRing_type[Ring_Cur_Music] );
                             }
                             
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
                             pMe->m_pStartupAniImg = ISHELL_LoadImage( pMe->a.m_pIShell, PWROFF_ANI_FILE);
                             if ( NULL != pMe->m_pStartupAniImg )
 #endif
@@ -6355,7 +6355,7 @@ static boolean  IDD_POWERDOWN_Handler(void *pUser,
                         }
                         else
                         {
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
                             if ( NULL != pMe->m_pStartupAniImg )
                             {     
                                 IIMAGE_Stop(pMe->m_pStartupAniImg);
@@ -8621,13 +8621,13 @@ static void CoreApp_PlayPwrOnAni(CCoreApp *pMe)
 
     ASSERT(pMe != NULL);
     MSG_FATAL("CoreApp_PlayPwrOnAni Start",0,0,0);
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
     if ( (NULL != pMe->m_pStartupAniImg) && (pMe->m_wStartupAniTime < 1)  )
 #else
     if (pMe->m_wStartupAniTime < PWRON_ANI_FRAME_COUNT )
 #endif
     {
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
         IIMAGE_GetInfo( pMe->m_pStartupAniImg, &ImgInfo );
 
         // 设置动画速度(毫秒)
@@ -8674,7 +8674,7 @@ static void CoreApp_PlayPwrOnAni(CCoreApp *pMe)
         MSG_FATAL("CoreApp_PlayPwrOnAni 4",0,0,0);
         IBACKLIGHT_Enable(pMe->m_pBacklight);
         IALERT_StopRingerAlert(pMe->m_pAlert);
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
         if ( NULL != pMe->m_pStartupAniImg )
         {     
             MSG_FATAL("CoreApp_PlayPwrOnAni 5",0,0,0);
@@ -8706,13 +8706,13 @@ static void CoreApp_PlayPwrOffAni(CCoreApp *pMe)
     AEEImageInfo  ImgInfo;  //Gets the information about an image
 
     ASSERT(pMe != NULL);
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
     if ( (NULL != pMe->m_pStartupAniImg) && (pMe->m_wStartupAniTime < 1)  ) 
 #else
     if (pMe->m_wStartupAniTime < PWRON_ANI_FRAME_COUNT) 
 #endif
     {
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
         IIMAGE_GetInfo( pMe->m_pStartupAniImg, &ImgInfo );
         
         // 设置动画速度(毫秒)
@@ -8752,7 +8752,7 @@ static void CoreApp_PlayPwrOffAni(CCoreApp *pMe)
     }
     else
     {
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
         if ( NULL != pMe->m_pStartupAniImg )
         {     
             IIMAGE_Stop(pMe->m_pStartupAniImg);
@@ -9586,7 +9586,7 @@ void CoreApp_Draw_Charger_image(void *pp)
     {
         pMe->m_battery_count = 0;
     }
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
     if(NULL != pMe->m_battery_Image)
     {
         IIMAGE_DrawFrame(pMe->m_battery_Image, pMe->m_battery_count, 0, 0);

@@ -142,6 +142,9 @@
 	<STRING Id="1045" Name="IDS_RECORD_START">
 		<Text>Start</Text>
 	</STRING>
+	<String Id="1046" Name="IDS_FMRADIO_CHANNEL_LIST_IS_EMPTY">
+		<Text>No record</Text>
+	</String>
 	<STRING Id="1100" Name="IDS_RECORD_MEDIA_ERROR">
 		<Text>Error</Text>
 	</STRING>

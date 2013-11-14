@@ -126,6 +126,27 @@ ifeq ($(USES_RESDIR),C316)
 	Browser.png|fs:/image/mainmenu/Browser.png \
 	Browser_focus.png|fs:/image/mainmenu/Browser_focus.png
 else
+ifeq ($(USES_RESDIR),hualu)
+CONSTFILE_FILES+=\
+	qsc1100_01.png|fs:/image/mainmenu/qsc1100_01.png \
+	qsc1100_02.png|fs:/image/mainmenu/qsc1100_02.png \
+	qsc1100_03.png|fs:/image/mainmenu/qsc1100_03.png \
+	qsc1100_04.png|fs:/image/mainmenu/qsc1100_04.png \
+	qsc1100_05.png|fs:/image/mainmenu/qsc1100_05.png \
+	qsc1100_06.png|fs:/image/mainmenu/qsc1100_06.png \
+	qsc1100_07.png|fs:/image/mainmenu/qsc1100_07.png \
+	qsc1100_08.png|fs:/image/mainmenu/qsc1100_08.png \
+	qsc1100_09.png|fs:/image/mainmenu/qsc1100_09.png \
+	qsc1100_01_focus.png|fs:/image/mainmenu/qsc1100_01_focus.png \
+	qsc1100_02_focus.png|fs:/image/mainmenu/qsc1100_02_focus.png \
+	qsc1100_03_focus.png|fs:/image/mainmenu/qsc1100_03_focus.png \
+	qsc1100_04_focus.png|fs:/image/mainmenu/qsc1100_04_focus.png \
+	qsc1100_05_focus.png|fs:/image/mainmenu/qsc1100_05_focus.png \
+	qsc1100_06_focus.png|fs:/image/mainmenu/qsc1100_06_focus.png \
+	qsc1100_07_focus.png|fs:/image/mainmenu/qsc1100_07_focus.png \
+	qsc1100_08_focus.png|fs:/image/mainmenu/qsc1100_08_focus.png \
+	qsc1100_09_focus.png|fs:/image/mainmenu/qsc1100_09_focus.png
+else
 ifeq ($(USES_RESDIR),K212)
 CONSTFILE_FILES+=\
 	ARROW_LEFT.png|fs:/image/mainmenu/ARROW_LEFT.png \
@@ -319,7 +340,7 @@ endif
 endif
 endif
 endif
-
+endif
 INC  += $(MAINMENU_INC) $(MAINMENU_RES)
 #SRC  += $(MAINMENU_SOURCES)
 OBJECTS+=$(MAINMENU_OBJS)

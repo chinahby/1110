@@ -663,7 +663,7 @@ typedef struct _CCallApp
     AEERect                m_RectSub;
     IBitmap                *m_pWallSubImage;
 #endif
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
     IImage                 *m_pConvImage;
 #endif
 #ifdef Temp_remove

@@ -11,8 +11,8 @@ WMSAPP_SOURCES=\
 	WMSStateMachine.c \
 	WMSDialogHandler.c \
 	WMSUtil.c \
-	OEMWMS.c \
-	WMSMms.c #\
+	OEMWMS.c #\
+#	WMSMms.c \
 #	WMSMmsTest.c
 	
 WMSAPP_OBJS :=  $(addprefix $(TARGETDIR)/, $(WMSAPP_SOURCES:%.c=%.o))

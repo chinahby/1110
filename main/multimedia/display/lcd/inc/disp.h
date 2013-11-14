@@ -274,7 +274,7 @@ enum
   IOCTL_DISP_ENABLE_CAPTURE_MODE,
   IOCTL_DISP_CAPTURE_SCREEN,
 #endif
-#if (defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)) && !defined(T_QSC1110)
+#if (defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)) //&& !defined(T_QSC1110)
   IOCTL_DISP_LOCK_SCR,
   IOCTL_DISP_UPDATE_LOCK_YUV,
   IOCTL_DISP_UPDATE_LOCK,
@@ -309,7 +309,7 @@ typedef struct
   LCD_TYPE dest;
 } disp_cls_type;
 
-#if (defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)) && !defined(T_QSC1110)
+#if (defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)) //&& !defined(T_QSC1110)
 typedef struct
 {
   word start_row;
@@ -787,7 +787,7 @@ void disp_capture32
 void disp_set_torch(void);
 void disp_clear_torch(void);
 #endif
-#if (defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)) && !defined(T_QSC1110)
+#if (defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)) //&& !defined(T_QSC1110)
 void disp_update_lock
 (
   /* The buffer pointer point to the first byte of the whole buffer.

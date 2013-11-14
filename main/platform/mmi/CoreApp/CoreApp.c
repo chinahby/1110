@@ -52,7 +52,7 @@
 #include "OEMDeviceNotifier.h"
 #include "gsdi.h"
 #include "Msg.h"
-
+#include "AEETelDef.h"
 /*==============================================================================
                                  
                                  宏定义和常数
@@ -138,8 +138,9 @@ static void    CoreApp_ResetRing(CCoreApp *pMe);
 extern int CCoreApp_ChangePIN(CCoreApp *pMe, uint8 byPinID, AECHAR *pOldPIN, AECHAR *pNewPIN);
 extern int CCoreApp_UnblockPIN(CCoreApp *pMe, uint8 byPinID, AECHAR *pPUK, AECHAR *pPIN);
 extern int CCoreApp_DisplayADN(CCoreApp *pMe, uint16 wRecID);
+#ifndef FEATURE_USES_LOWMEM
 static boolean Coreapp_CanAlert(CCoreApp *pme);
-
+#endif
 /*==============================================================================
 
                                  函数定义
@@ -656,7 +657,7 @@ boolean CoreApp_InitAppData(IApplet* po)
     
     pMe->m_SYS_MODE_NO_SRV = TRUE;
     MEMSET(pMe->svc_p_name, 0, UIM_CDMA_HOME_SERVICE_SIZE + 1); 
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
     pMe->m_pStartupAniImg = NULL;
 #endif
     pMe->m_battery_time = 0;
@@ -752,8 +753,7 @@ boolean CoreApp_InitAppData(IApplet* po)
     return TRUE;
 } /* End CoreApp_InitAppData */
 
-
-
+#ifndef FEATURE_USES_LOWMEM
 static boolean Coreapp_CanAlert(CCoreApp *pme)
 {    
     ICM *pICM = NULL;
@@ -786,6 +786,7 @@ static boolean Coreapp_CanAlert(CCoreApp *pme)
         return TRUE;
     }
 }
+#endif
 
 #ifdef FEATURE_SOUND_BO
 void  CoreApp_SoundBoAlarm(CCoreApp *pme, uint16 wParam)
@@ -798,16 +799,10 @@ void  CoreApp_SoundBoAlarm(CCoreApp *pme, uint16 wParam)
 	JulianType  julian;
 	nv_item_type	SimChoice;
 	boolean     m_sound_bo_core = FALSE;
-	(void) ICONFIG_GetItem(pMe->m_pConfig,
-								 CFGI_SOUND_BO_CORE,
-								 &m_sound_bo_core,
-								 sizeof(boolean));
-  
 #ifdef FEATURE_ICM
     if (AEECM_IS_VOICECALL_CONNECTED(pMe->m_pCM))
 #else
     AEETCalls po;
-    
     if(SUCCESS != ITELEPHONE_GetCalls(pMe->m_pITelephone, &po,sizeof(AEETCalls)))
     {
         return;
@@ -818,6 +813,10 @@ void  CoreApp_SoundBoAlarm(CCoreApp *pme, uint16 wParam)
     {
         bIsInCall = TRUE;
     }
+	(void) ICONFIG_GetItem(pMe->m_pConfig,
+									 CFGI_SOUND_BO_CORE,
+									 &m_sound_bo_core,
+									 sizeof(boolean));
 	GetJulianDate(GETTIMESECONDS(), &julian);
     MSG_FATAL("m_sound_bo_core====%d,bIsInCall=====%d",m_sound_bo_core,bIsInCall,0);
 
@@ -1752,7 +1751,9 @@ case EVT_ALARM:
 				#ifdef FEATURE_SOUND_BO
 				CoreApp_SoundBoAlarm(pMe, wParam);
 				#else
+				#ifndef FEATURE_USES_LOWMEM
 				if(Coreapp_CanAlert(pMe))
+				#endif
 				{
 					CoreApp_HandleAlarm(pMe, wParam);
 				}

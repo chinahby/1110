@@ -608,7 +608,9 @@ extern int CWMSMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
 extern int MainMenuMod_Load( IShell *pIShell, void *ph, IModule **ppMod);
 extern int ExtraMenuMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
 #ifdef FEATURE_APP_STOPWATCH
+#if !defined(FEATURE_LOWER_MEM)
 extern int StopWatchMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
+#endif
 #endif
 extern int ClockAppsMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
 #ifdef FEATURE_APP_CALC
@@ -838,7 +840,9 @@ extern int SoundMenuMod_Load(IShell   *pIShell, void *ph, IModule **ppMod);
 extern int DisplayMenuMod_Load(IShell   *pIShell, void *ph, IModule **ppMod);
 
 #if defined( FEATURE_FM_RADIO)
+#if !defined(FEATURE_VERSION_K212_HUALU)
 extern int FmRadioMod_Load(IShell   *pIShell, void  *ph,  IModule  **ppMod);
+#endif
 #endif
 // Svc Programming
 #if defined (FEATURE_APP_SVCPRG)
@@ -994,9 +998,10 @@ extern int nemobrew_Load(IShell *ps, void *pHelpers, IModule **pMod);
 #endif
 
 #if defined(FEATURE_CONVERTER)
+#if !defined(FEATURE_VERSION_K212_HUALU)
 extern int  ConverterMod_Load(IShell* ps, void* pHelpers, IModule** ppMod);
 #endif
-
+#endif
 #ifdef FEATURE_SPORTS_APP
 //extern int SportsMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
 #endif
@@ -1064,8 +1069,10 @@ static const AEEStaticMod gOEMStaticModList[] =
     {AEEFS_MIF_DIR"worldtime.mif", WorldTimeMod_Load},
 #endif
 #ifdef FEATURE_APP_STOPWATCH
+#if !defined(FEATURE_VERSION_K212_HUALU)
     {AEEFS_MIF_DIR"stopwatch.mif", StopWatchMod_Load},
 #endif    
+#endif
 #ifdef FEATURE_APP_SCHEDULE
     {AEEFS_MIF_DIR"scheduleapp.mif", ScheduleApp_Load},
 #endif
@@ -1307,7 +1314,9 @@ static const AEEStaticMod gOEMStaticModList[] =
 
 
 #if defined( FEATURE_FM_RADIO)
+#if !defined(FEATURE_VERSION_K212_HUALU)
     {AEEFS_MIF_DIR"fmradio.mif", FmRadioMod_Load},
+#endif
 #endif
 #if defined (FEATURE_SECSERVICES_TESTAPP)
       {AEEFS_MIF_DIR"securityservices.mif", SecurityServices_Load},
@@ -1423,9 +1432,10 @@ static const AEEStaticMod gOEMStaticModList[] =
 //#endif
 
 #if defined(FEATURE_CONVERTER)
+#if !defined(FEATURE_VERSION_K212_HUALU)
          {AEEFS_MIF_DIR"converter.mif", ConverterMod_Load},
 #endif
-
+#endif
 #ifdef FEATURE_SPORTS_APP
 //{ AEEFS_MIF_DIR"sportsapp.mif",SportsMod_Load},
 #endif

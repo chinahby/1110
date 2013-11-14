@@ -58,6 +58,8 @@
 #define  WMS_MSG_MAXCHARS       1537
 #elif defined(FEATURE_VERSION_C316) //Add by pyuangui 20121226
 #define  WMS_MSG_MAXCHARS       918
+#elif defined(FEATURE_VERSION_K212_HUALU)
+#define  WMS_MSG_MAXCHARS       512
 #else
 #define  WMS_MSG_MAXCHARS       1024
 #endif
@@ -69,7 +71,18 @@
 #define MAX_PH_DIGITS                  WMS_ADDRESS_MAX       // Maximum phone number digits
 
 #define MAX_TITLE_LEN                  WMS_ADDRESS_MAX       // Maximum title AECHARs
+#if defined(FEATURE_VERSION_K212_HUALU)
+#define MAX_EMAILADD_LEN               32       // 电子邮件地址最大允许长度
+#define MAX_URL_LEN                    128      // URL最大允许长度
 
+#define WMSAPP_RELATIVE_VALIDITY_IMMEDIATE          246
+
+// 每条用户定制消息模板最大允许字符数
+#define  MAX_TEMPLATECHARS      50
+
+//预约失败短信最大条数
+#define  MAX_RSVFAILD        5
+#else
 #define MAX_EMAILADD_LEN               64       // 电子邮件地址最大允许长度
 #define MAX_URL_LEN                    256      // URL最大允许长度
 
@@ -80,7 +93,7 @@
 
 //预约失败短信最大条数
 #define  MAX_RSVFAILD        10
-
+#endif
 #ifdef FEATURE_POWERUP_REGISTER_CHINAUNICOM
 // 接收注册信息的服务器号码
 #define REG_SERVERNUM  "10659401"
@@ -99,7 +112,7 @@
 #define  MIZONE_MSG             'Z'
 //#endif
 
-#if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212)
+#if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)
 #define REG_SERVERNUM       "10659401" //"18126010560"
 #define REGHOPE_MSG         'Z'
 #endif

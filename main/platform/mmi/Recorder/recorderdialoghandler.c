@@ -41,10 +41,10 @@
 #ifdef FEATURE_LCD_TOUCH_ENABLE 
 #include "AEEPointerHelpers.h"
 #endif
-
+#ifndef FEATURE_VERSION_K212_HUALU
 #include "fmradiols.brh"
 #define FMRADIO_RES_FILE ("fs:/mod/fmradio/" AEE_RES_LANGDIR "fmradiols.bar")
-
+#endif
 #include "AEECM.h"
 #include "AEEBatt.h"
 Recorder* pRecorder;
@@ -2736,12 +2736,21 @@ static boolean  dialog_handler_of_state_record_list( Recorder* pme, AEEEvent evt
 				{
 					AEERect rect = pme->m_rc;
 					rect.y += GetTitleBarHeight( pme->m_pDisplay);
+					#ifdef FEATURE_VERSION_K212_HUALU
+					drawText5( pme,
+							AEE_RECORDER_RES_FILE,
+							IDS_FMRADIO_CHANNEL_LIST_IS_EMPTY,
+							&rect,
+							0
+						  );
+					#else
 					drawText5( pme,
 							FMRADIO_RES_FILE,
 							IDS_FMRADIO_CHANNEL_LIST_IS_EMPTY,
 							&rect,
 							0
 						  );
+					#endif
 				}
 			}
 			else if( subState == 1)

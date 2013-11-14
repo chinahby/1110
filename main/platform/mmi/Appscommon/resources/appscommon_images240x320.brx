@@ -32,16 +32,7 @@
 		<File>..\images\240x320\common\QuickTest\down.png</File>
 	</Object>
 	<Object Id="5014" Name="IDB_PROMPT_MSG_STATIC_BG">
-		<File>..\images\240x320\common\Appscommon\MessageBox\background_static.png</File>
-	</Object>
-	<Object Id="5015" Name="IDB_MAINMENU_BG" MimeType="image/png">
-		<File>..\images\240x320\common\Appscommon\Menu\background\background.png</File>
-	</Object>
-	<Object Id="5016" Name="IDI_MENU_ITEM" MimeType="image/png">
-		<File>..\images\240x320\common\Appscommon\Menu\menu\menu_icon.png</File>
-	</Object>
-	<Object Id="5017" Name="IDI_MENU_ITEM_FOCUS" MimeType="image/png">
-		<File>..\images\240x320\common\Appscommon\Menu\menu\menu_icon_focus.png</File>
+		<File>..\images\240x320\common\Appscommon\MessageBox\background_static.bmp</File>
 	</Object>
 	<Object Id="5021" Name="IDB_CHECK_ON" MimeType="image/png">
 		<File>..\images\240x320\common\Appscommon\Icon\check_yes.png</File>
@@ -172,18 +163,6 @@
 	<Object Id="5409" Name="IDB_MODE_T9_RAPID_INDONESIAN" MimeType="image/png">
 		<File>..\images\240x320\common\IME\T9In.png</File>
 	</Object>
-	<Object Id="5413" Name="IDB_MODE_T9_MT_ARABIC" MimeType="image/png">
-		<File>..\images\240x320\common\IME\Ar.png</File>
-	</Object>
-	<Object Id="5414" Name="IDB_MODE_T9_RAPID_ARABIC" MimeType="image/png">
-		<File>..\images\240x320\common\IME\T9Ar.png</File>
-	</Object>
-	<Object Id="5417" Name="IDB_MODE_T9_MT_HINDI" MimeType="image/png">
-		<File>..\images\128x160\common\IME\hi.png</File>
-	</Object>
-	<Object Id="5418" Name="IDB_MODE_ZI_RAPID_HINDI" MimeType="image/png">
-		<File>..\images\128x160\common\IME\zihi.png</File>
-	</Object>
 	<Object Id="5426" Name="IDB_EDIT_UP_DOWN_BMP" MimeType="image/png">
 		<File>..\images\240x320\common\IME\arrow.png</File>
 	</Object>
@@ -291,6 +270,57 @@
 	</Object>
 	<Object Id="6026" Name="IDI_REFUI_LOUDSPEAKER" MimeType="image/png">
 		<File>..\images\240x320\common\CallApp\Call\loudspeaker.png</File>
+	</Object>
+	<Object Id="6041" Name="IDI_NUMBER_0" MimeType="image/png">
+		<File>..\images\240x320\common\CallApp\DialedNumber\0.png</File>
+	</Object>
+	<Object Id="6042" Name="IDI_NUMBER_1" MimeType="image/png">
+		<File>..\images\240x320\common\CallApp\DialedNumber\1.png</File>
+	</Object>
+	<Object Id="6043" Name="IDI_NUMBER_2" MimeType="image/png">
+		<File>..\images\240x320\common\CallApp\DialedNumber\2.png</File>
+	</Object>
+	<Object Id="6044" Name="IDI_NUMBER_3" MimeType="image/png">
+		<File>..\images\240x320\common\CallApp\DialedNumber\3.png</File>
+	</Object>
+	<Object Id="6045" Name="IDI_NUMBER_4" MimeType="image/png">
+		<File>..\images\240x320\common\CallApp\DialedNumber\4.png</File>
+	</Object>
+	<Object Id="6046" Name="IDI_NUMBER_5" MimeType="image/png">
+		<File>..\images\240x320\common\CallApp\DialedNumber\5.png</File>
+	</Object>
+	<Object Id="6047" Name="IDI_NUMBER_6" MimeType="image/png">
+		<File>..\images\240x320\common\CallApp\DialedNumber\6.png</File>
+	</Object>
+	<Object Id="6048" Name="IDI_NUMBER_7" MimeType="image/png">
+		<File>..\images\240x320\common\CallApp\DialedNumber\7.png</File>
+	</Object>
+	<Object Id="6049" Name="IDI_NUMBER_8" MimeType="image/png">
+		<File>..\images\240x320\common\CallApp\DialedNumber\8.png</File>
+	</Object>
+	<Object Id="6050" Name="IDI_NUMBER_9" MimeType="image/png">
+		<File>..\images\240x320\common\CallApp\DialedNumber\9.png</File>
+	</Object>
+	<Object Id="6051" Name="IDI_NUMBER_STAR" MimeType="image/png">
+		<File>..\images\240x320\common\CallApp\DialedNumber\Star.png</File>
+	</Object>
+	<Object Id="6052" Name="IDI_NUMBER_POUND" MimeType="image/png">
+		<File>..\images\240x320\common\CallApp\DialedNumber\Pound.png</File>
+	</Object>
+	<Object Id="6053" Name="IDI_NUMBER_P" MimeType="image/png">
+		<File>..\images\240x320\common\CallApp\DialedNumber\P.png</File>
+	</Object>
+	<Object Id="6054" Name="IDI_NUMBER_T" MimeType="image/png">
+		<File>..\images\240x320\common\CallApp\DialedNumber\T.png</File>
+	</Object>
+	<Object Id="6055" Name="IDI_NUMBER_PLUS" MimeType="image/png">
+		<File>..\images\240x320\common\CallApp\DialedNumber\+.png</File>
+	</Object>
+	<Object Id="6056" Name="IDI_NUMBER_SUB" MimeType="image/png">
+		<File>..\images\240x320\common\CallApp\DialedNumber\-.png</File>
+	</Object>
+	<Object Id="6057" Name="IDI_NUMBER_W" MimeType="image/png">
+		<File>..\images\240x320\common\CallApp\DialedNumber\W.png</File>
 	</Object>
 	<Object Id="6201" Name="IDB_UTKMENU">
 		<File>..\images\240x320\common\UTK\utkmenu.bmp</File>
@@ -439,51 +469,6 @@
 	<Object Id="7102" Name="IDB_MMS_SPACE" MimeType="image/png">
 		<File>..\images\240x320\common\Appscommon\Icon\space.png</File>
 	</Object>
-	<Object Id="7103" Name="IDI_MENU_ITEM_PROFILE_ALERT" MimeType="image/png">
-		<File>..\images\240x320\common\Appscommon\Menu\menu\alert.png</File>
-	</Object>
-	<Object Id="7104" Name="IDI_MENU_ITEM_PROFILE_SILENCE" MimeType="image/png">
-		<File>..\images\240x320\common\Appscommon\Menu\menu\silence.png</File>
-	</Object>
-	<Object Id="7105" Name="IDI_MENU_ITEM_PROFILE_MEETING" MimeType="image/png">
-		<File>..\images\240x320\common\Appscommon\Menu\menu\vibrator.png</File>
-	</Object>
-	<Object Id="7106" Name="IDI_MENU_ITEM_PROFILE_OUTDOOR" MimeType="image/png">
-		<File>..\images\240x320\common\Appscommon\Menu\menu\vibring.png</File>
-	</Object>	
-	<Object Id="8001" Name="IDI_TIME_0" MimeType="image/png">
-		<File>..\images\240x320\common\core\TIME_0.png</File>
-	</Object>
-	<Object Id="8002" Name="IDI_TIME_1" MimeType="image/png">
-		<File>..\images\240x320\common\core\TIME_1.png</File>
-	</Object>
-	<Object Id="8003" Name="IDI_TIME_2" MimeType="image/png">
-		<File>..\images\240x320\common\core\TIME_2.png</File>
-	</Object>
-	<Object Id="8004" Name="IDI_TIME_3" MimeType="image/png">
-		<File>..\images\240x320\common\core\TIME_3.png</File>
-	</Object>
-	<Object Id="8005" Name="IDI_TIME_4" MimeType="image/png">
-		<File>..\images\240x320\common\core\TIME_4.png</File>
-	</Object>
-	<Object Id="8006" Name="IDI_TIME_5" MimeType="image/png">
-		<File>..\images\240x320\common\core\TIME_5.png</File>
-	</Object>
-	<Object Id="8007" Name="IDI_TIME_6" MimeType="image/png">
-		<File>..\images\240x320\common\core\TIME_6.png</File>
-	</Object>
-	<Object Id="8008" Name="IDI_TIME_7" MimeType="image/png">
-		<File>..\images\240x320\common\core\TIME_7.png</File>
-	</Object>
-	<Object Id="8009" Name="IDI_TIME_8" MimeType="image/png">
-		<File>..\images\240x320\common\core\TIME_8.png</File>
-	</Object>
-	<Object Id="8010" Name="IDI_TIME_9" MimeType="image/png">
-		<File>..\images\240x320\common\core\TIME_9.png</File>
-	</Object>
-	<Object Id="8011" Name="IDI_TIME_POINT" MimeType="image/png">
-		<File>..\images\240x320\common\core\TIME_POINT.png</File>
-	</Object>
 	<Object Id="8050" Name="IDB_BATT5">
 		<File>..\images\240x320\common\Annunciator\batt5.bmp</File>
 	</Object>
@@ -519,15 +504,6 @@
 	</Object>
 	<Object Id="9110" Name="IDB_EDIT_UP_DOWN_BMP_BLACK" MimeType="image/png">
 		<File>..\images\240x320\common\IME\arrow_black.png</File>
-	</Object>
-	<Object Id="9111" Name="IDB_MMS_FULL">
-		<File>..\images\240x320\common\Annunciator\mms_full.bmp</File>
-	</Object>
-	<Object Id="9112" Name="IDB_MMS_UNREAD">
-		<File>..\images\240x320\common\Annunciator\mms_unread.bmp</File>
-	</Object>
-	<Object Id="9113" Name="IDB_MMS_UNRECEIVED">
-		<File>..\images\240x320\common\Annunciator\mms_unreceived.bmp</File>
 	</Object>
 </Objects>
 </BREWRes>

@@ -925,7 +925,7 @@ static boolean  SecurityOneKeyLockKeypadDlgHandler(CSecurityMenu *pMe,
             }
 
 			MSG_FATAL("***xuhui SecurityOneKeyLockKeypadDlgHandler ISHELL_SetTimer CSecurtyMenu_DialogTimeout 111***", 0, 0, 0);
-#ifdef FEATURE_VERSION_K212
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)
             (void) ISHELL_SetTimer(pMe->m_pShell,
                                     500,
                                     CSecurtyMenu_DialogTimeout,
@@ -1146,7 +1146,7 @@ static boolean  SecurityPassWordDlgHandler(CSecurityMenu *pMe,
             }
 
 			MSG_FATAL("***zzg SecurityPassWorldDlg ISHELL_SetTimer CSecurtyMenu_DialogTimeout 111***", 0, 0, 0);
-#ifdef FEATURE_VERSION_K212
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)
             (void) ISHELL_SetTimer(pMe->m_pShell,
                                     500,
                                     CSecurtyMenu_DialogTimeout,

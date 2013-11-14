@@ -773,12 +773,13 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
 #ifdef FEATRUE_AUTO_POWER
 #ifndef FEATURE_VERSION_C310
 #ifndef FEATURE_VERSION_K212
+#ifndef FEATURE_VERSION_K212_HUALU
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_AUTO_POWER_TITLE, IDS_AUTO_POWER_TITLE, NULL, 0);
  //           IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_AUTO_POWER_OFF_TIME, IDS_AUTO_POWER_OFF_TIME, NULL, 0);
 #endif
 #endif
 #endif
-
+#endif
 #ifdef FEATURE_SUPPORT_G_SENSOR
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SHAKE_TITLE, IDS_SHAKE_TITLE, NULL, 0);
 #endif
@@ -790,7 +791,9 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
 #ifndef FEATURE_VERSION_IC241A_MMX
 #ifndef FEATURE_VERSION_K212
 #ifndef FEATURE_VERSION_EC99
+#ifndef FEATURE_VERSION_K212_HUALU
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SCENEMODE_TITLE, IDS_SCENEMODE_TITLE, NULL, 0);
+#endif
 #endif
 #endif
 #endif
@@ -998,10 +1001,12 @@ static boolean  HandleCallSettingDialogEvent(CSettingMenu *pMe,
             }
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_ANSWER_MODE, IDS_ANSWER_MODE, NULL, 0);
 			#ifndef FEATURE_VERSION_K212
+			#ifndef FEATURE_VERSION_K212_HUALU
 			#if defined( FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_K202_LM129C)
 			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_CALL_TIME_REMINDER, IDS_CALL_TIME_REMINDER, NULL, 0);
 			#else
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_MINUTE_ALERT, IDS_MINUTE_ALERT, NULL, 0);
+			#endif
 			#endif
 			#endif
 #ifndef FEATURE_CARRIER_TAIWAN_APBW
@@ -3549,7 +3554,7 @@ static boolean  HandleWarningMessegeDialogEvent(CSettingMenu *pMe,
             return TRUE;
 
         case EVT_DIALOG_START:
-#ifdef FEATURE_VERSION_K212
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)
             ISHELL_SetTimer(pMe->m_pShell,500,SettingMenu_DialogTimeout,pMe);
 #else
 			ISHELL_SetTimer(pMe->m_pShell,1000,SettingMenu_DialogTimeout,pMe);
@@ -10008,7 +10013,6 @@ static boolean  Setting_Handle_SMSRestrict(CSettingMenu *pMe,
     }
     return FALSE;
 } // HandleRestrictDialogEvent
-
 /*==============================================================================
 º¯Êý£º
        Setting_Handle_SMSRestrict_RECEIVE

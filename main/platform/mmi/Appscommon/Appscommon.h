@@ -119,7 +119,7 @@
     #define SCROLLBAR_WIDTH         5
     #define STATUSBAR_HEIGHT        16
 #elif defined(FEATURE_DISP_240X320)	
-#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_VERSION_K212_HUALU)
 	#define SCREEN_WIDTH            240
     #define SCREEN_HEIGHT           320
     #define STATEBAR_HEIGHT         32
