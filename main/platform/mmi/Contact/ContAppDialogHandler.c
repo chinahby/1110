@@ -13774,7 +13774,11 @@ static boolean  CContApp_HandleDetailDlgEvent( CContApp  *pMe,
             }
             
             // Draw prompt bar here
+            #if defined(FEATURE_VERSION_W021_WSF_CN)
+            CONTAPP_DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);	
+			#else
             CONTAPP_DRAW_BOTTOMBAR(BTBAR_BACK);	
+			#endif
 #if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND) || defined(FEATURE_VERSION_IC241A_MMX)
             if (pMe->m_bSpeedDialParam == TRUE)
             {
