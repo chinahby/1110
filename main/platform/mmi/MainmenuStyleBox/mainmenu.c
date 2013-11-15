@@ -1178,7 +1178,9 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 			}
 			if(pMe->m_pImageBgblack ==NULL)
 			{
+				#ifndef FEATURE_VERSION_NO_BG
 				pMe->m_pImageBgblack  = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);
+				#endif
 			}
             
             // 初始整个背景及全部初始图标	
@@ -12251,8 +12253,10 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
                     pMe->m_pImageBg = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_MAINMENU_BG);
 //Add by pyuangui 20121221
 #else
+#ifndef FEATURE_LOW_MEM_BIGFONT
                     pMe->m_pImageBg = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);//modi by yangdecai
-#endif                    
+#endif            
+#endif
                 }
             }
 			AEE_CancelTimer(Main_keypadtimer,pMe);

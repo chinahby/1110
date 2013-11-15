@@ -8634,6 +8634,7 @@ static void Menu_DrawBackGround(CMenuCtl * pme, AEERect *pRect)
     #endif
 #endif 
     {
+       #ifndef FEATURE_VERSION_NO_BG 
        if(pme->m_pBgImage == NULL)
        {
             if(STRLEN(pme->strBgImgResFile) != 0 && pme->nBgImgResID != 0)
@@ -8649,6 +8650,7 @@ static void Menu_DrawBackGround(CMenuCtl * pme, AEERect *pRect)
                                    IDB_BACKGROUND);  //modi by yangdecai
             }
        }
+	   #endif
        Appscommon_ResetBackground(pme->m_pIDisplay, pme->m_pBgImage, pme->m_c.cBack, pRect, 0, 0);
     }
 }

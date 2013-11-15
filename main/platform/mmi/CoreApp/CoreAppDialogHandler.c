@@ -8651,8 +8651,11 @@ static void CoreApp_PlayPwrOnAni(CCoreApp *pMe)
 #else
         {
             #define PWRON_STR L"Welcome"
+			#ifndef FEATURE_LOW_MEM_BIGFONT
             extern int GreyBitBrewFont_DrawText(IDisplay *p, int nSize, const AECHAR *psz, int nl, int x, int y, const AEERect *prcb, uint32 flags);
-            IDISPLAY_ClearScreen(pMe->m_pDisplay);
+            #endif
+			IDISPLAY_ClearScreen(pMe->m_pDisplay);
+			#ifndef FEATURE_LOW_MEM_BIGFONT
             GreyBitBrewFont_DrawText(pMe->m_pDisplay, 
                                      8+2*pMe->m_wStartupAniTime,
                                      PWRON_STR,
@@ -8660,7 +8663,8 @@ static void CoreApp_PlayPwrOnAni(CCoreApp *pMe)
                                      0,0,
                                      NULL,
                                      IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE);
-            IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+            #endif
+			IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
         }
         pMe->m_wStartupAniTime++; // 滚动播放次数
        (void) ISHELL_SetTimer(pMe->a.m_pIShell,
@@ -8735,8 +8739,11 @@ static void CoreApp_PlayPwrOffAni(CCoreApp *pMe)
 #else
         {
             #define PWROFF_STR L"Bye-Bye"
+			#ifndef FEATURE_LOW_MEM_BIGFONT
             extern int GreyBitBrewFont_DrawText(IDisplay *p, int nSize, const AECHAR *psz, int nl, int x, int y, const AEERect *prcb, uint32 flags);
-            IDISPLAY_ClearScreen(pMe->m_pDisplay);
+            #endif
+			IDISPLAY_ClearScreen(pMe->m_pDisplay);
+			#ifndef FEATURE_LOW_MEM_BIGFONT
             GreyBitBrewFont_DrawText(pMe->m_pDisplay, 
                                      8+2*(PWRON_ANI_FRAME_COUNT-pMe->m_wStartupAniTime),
                                      PWROFF_STR,
@@ -8744,7 +8751,8 @@ static void CoreApp_PlayPwrOffAni(CCoreApp *pMe)
                                      0,0,
                                      NULL,
                                      IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE);
-            IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+            #endif
+			IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
         }
         pMe->m_wStartupAniTime++; // 滚动播放次数
         AEE_SetSysTimer( ANI_RATE,  (PFNNOTIFY)CoreApp_PlayPwrOffAni,  (void*)pMe);

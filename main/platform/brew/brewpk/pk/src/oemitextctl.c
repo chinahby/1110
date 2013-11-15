@@ -2472,7 +2472,9 @@ static void CTextCtl_SetProperties(ITextCtl * pITextCtl, uint32 nProperties)
 
             if(pme->m_nBgImgResID != 0 && STRLEN(pme->m_strBgImgResFile) != 0)
             {
+            	#ifndef FEATURE_LOW_MEM_BIGFONT
                 pme->m_pImageBg = ISHELL_LoadResImage(pme->m_pIShell, pme->m_strBgImgResFile, pme->m_nBgImgResID);
+				#endif
             }
             else
             {
@@ -2486,7 +2488,9 @@ static void CTextCtl_SetProperties(ITextCtl * pITextCtl, uint32 nProperties)
 					pme->m_pImageBg = ISHELL_LoadResImage(pme->m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);
 				}
 				#else
+				#ifndef FEATURE_LOW_MEM_BIGFONT
                 pme->m_pImageBg = ISHELL_LoadResImage(pme->m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);
+				#endif
 				#endif
             }
         }
@@ -7903,7 +7907,9 @@ static void TextCtl_DrawBackGround(CTextCtl * pme, AEERect *pRect)
     {
         if(pme->m_nBgImgResID != 0 && STRLEN(pme->m_strBgImgResFile) != 0)
         {
+        	#ifndef FEATURE_LOW_MEM_BIGFONT
             pme->m_pImageBg = ISHELL_LoadResImage(pme->m_pIShell, pme->m_strBgImgResFile, pme->m_nBgImgResID);
+			#endif
         }
         else
         {
@@ -7918,7 +7924,9 @@ static void TextCtl_DrawBackGround(CTextCtl * pme, AEERect *pRect)
 				pme->m_pImageBg = ISHELL_LoadResImage(pme->m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);
 			}
 			#else
+			#ifndef FEATURE_LOW_MEM_BIGFONT
 			pme->m_pImageBg = ISHELL_LoadResImage(pme->m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);
+			#endif
 			#endif
         }
         OEM_TextSetBackGround(pme->m_pText, pme->m_pImageBg);

@@ -1973,6 +1973,8 @@ SEE ALSO:
 =============================================================================*/
 
 int CContApp_CopyMultipe(CContApp *pMe);
+#ifndef FEATURE_LOW_MEM_BIGFONT
 extern void OEM_SetNotUpdateScreen(boolean bOn);
+#endif
 #endif// CONTAPP_PRIV_H
 

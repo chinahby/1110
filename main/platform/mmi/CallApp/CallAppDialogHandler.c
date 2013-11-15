@@ -14220,8 +14220,11 @@ static boolean CallApp_DrawNameText(CCallApp *pMe, AEEFont fnt,
         
         ISTATIC_SetRect(pMe->pStatic, rect);  
         ISTATIC_SetProperties(pMe->pStatic, ST_MIDDLETEXT|ST_GRAPHIC_BG);
+		#ifdef FEATURE_VERSION_NO_BG
+		ISTATIC_SetBackGround(pMe->pStatic, AEE_APPSCOMMONRES_IMAGESFILE, -1);
+		#else
         ISTATIC_SetBackGround(pMe->pStatic, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND); //modified by yangdecai
-        
+        #endif
         ISTATIC_SetText(pMe->pStatic, NULL, wBuf, AEE_FONT_BOLD, AEE_FONT_BOLD);
         ISTATIC_Redraw(pMe->pStatic);
         ISTATIC_SetActive(pMe->pStatic, TRUE);

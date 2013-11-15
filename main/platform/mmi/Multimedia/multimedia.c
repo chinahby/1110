@@ -1062,7 +1062,7 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
 			#endif
             
             //IMENUCTL_SetTitle(pMenu, MULTIMEDIA_RES_FILE_LANG, IDS_MENU_LIST, NULL);      
-#if defined (FEATURE_VERSION_W208S) || defined (FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_IC241A_MMX) || defined(FEATURE_VERSION_W021_C11)
+#if defined (FEATURE_VERSION_W208S) || defined (FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_IC241A_MMX) || defined(FEATURE_VERSION_W021_C11)|| defined(FEATURE_VERSION_K212_HUALU)
 			IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_MUSICPLAYER, IDS_MULTIMEDIA_MUSICPLAYER, NULL, 0);
 #endif
 
@@ -1074,8 +1074,10 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
 #endif
 //#ifndef FEATURE_VERSION_C180
 #ifndef FEATURE_VERSION_W208S
+#ifndef FEATURE_VERSION_K212_HUALU
 #if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_W021_WSF_CN)//ndef FEATURE_VERSION_K212
             IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_FMRADIO, IDS_MULTIMEDIA_FMRADIO, NULL, 0);
+#endif
 #endif
 #endif
 //#endif

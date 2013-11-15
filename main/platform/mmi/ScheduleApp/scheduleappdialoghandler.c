@@ -6850,8 +6850,12 @@ static boolean  dialog_handler_of_state_viewevent( CScheduleApp* pme,
                 return FALSE;
             }
             ISTATIC_SetProperties( pStatic, ST_GRAPHIC_BG|ST_NOSCROLL);
+			#ifndef FEATURE_LOW_MEM_BIGFONT
             ISTATIC_SetBackGround(pStatic, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);//modified by yangdecai
-            {
+			#else
+			ISTATIC_SetBackGround(pStatic, AEE_APPSCOMMONRES_IMAGESFILE, -1);
+			#endif
+			{
                 AEERect rect = pme->m_rc;
 
                 rect.dy -= BOTTOMBAR_HEIGHT;

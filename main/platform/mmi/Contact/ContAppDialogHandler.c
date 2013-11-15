@@ -5055,7 +5055,9 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
             
         case EVT_DIALOG_START:
         {
+			#ifndef FEATURE_LOW_MEM_BIGFONT
             OEM_SetNotUpdateScreen(TRUE);
+			#endif
             //IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
 #ifdef FEATURE_VERSION_K202
             ITEXTCTL_SetProperties(pTextCtl, TP_FIXSETRECT|TP_FIXOEM|TP_USELESS_UPDOWN|TP_FOCUS_NOSEL);
@@ -5122,7 +5124,9 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
             uint32    dwMask = IMENUCTL_GetProperties(pMenuCtl);
             IMENUCTL_SetProperties(pMenuCtl, dwMask & (~MP_NO_REDRAW));
             MSG_FATAL("--pMenuCtl=%x",IMENUCTL_GetSel(pMenuCtl),0,0);
-            OEM_SetNotUpdateScreen(FALSE);
+            #ifndef FEATURE_LOW_MEM_BIGFONT
+			OEM_SetNotUpdateScreen(FALSE);
+			#endif
 			MSG_FATAL("***zzg contack list EVT_USER_REDRAW***", 0,0,0);
             
 			{
@@ -5151,8 +5155,12 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
             }
             #ifdef FEATURE_VERSION_SKY
             {
+            #ifdef FEATURE_LOW_MEM_BIGFONT
+			IImage *image = NULL;
+			#else
             IImage *image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);
-            Appscommon_ResetBackground(pMe->m_pDisplay,image, APPSCOMMON_BG_COLOR, 
+			#endif
+			Appscommon_ResetBackground(pMe->m_pDisplay,image, APPSCOMMON_BG_COLOR, 
                                                     &pMe->m_rc, 0, 0);
              if( image != NULL)
              {
@@ -15360,6 +15368,14 @@ static boolean  CContApp_HandlePopNumFldDlgEvent( CContApp  *pMe,
             //这个判断是为了避免重复绘画背影图片IDB_BGMASK
             //if(pMe->m_ePreState != STATE_POPNUMFLD)
             {
+            	#ifdef FEATURE_LOW_MEM_BIGFONT
+				AEERect rect ;
+				rect.x = 0;
+				rect.y = 0;
+				rect.dx = devinfo.cxScreen;
+				rect.dy = devinfo.cyScreen - GetBottomBarHeight(pMe->m_pDisplay);
+				IDisplay_FillRect(pMe->m_pDisplay, &rect, RGB_BLACK);
+				#else
                 IImage*    BgImg;
                 //Draw shadow for screen
                 BgImg = ISHELL_LoadResImage(pMe->m_pShell,
@@ -15397,6 +15413,7 @@ static boolean  CContApp_HandlePopNumFldDlgEvent( CContApp  *pMe,
                     CLOSE_DIALOG(DLGRET_ERR);
                     return TRUE;
                 }
+				#endif
             }
 
 			//IDisplay_FillRect(pMe->m_pDisplay, &topLine, RGB_WHITE);
@@ -15618,8 +15635,8 @@ static void CContApp_ShowEditItem(CContApp  *pMe, IMenuCtl  *pMenuCtl, ITextCtl 
     rect.x  = 38;//大概的一个数字
     rect.dx = pMe->m_rc.dx - 44;//five pixels for right edge, 
     #elif defined(FEATURE_DISP_240X320)
-	rect.x  = 23;//大概的一个数字
-    rect.dx = pMe->m_rc.dx - 28;//five pixels for right edge, 
+	rect.x  = 32;//大概的一个数字
+    rect.dx = pMe->m_rc.dx - 37;//five pixels for right edge, 
     #else
     rect.x  = 23;//大概的一个数字
     rect.dx = pMe->m_rc.dx - 27;//five pixels for right edge, 
@@ -15879,8 +15896,13 @@ static void CContApp_ShowGroupSelect(CContApp  *pMe, IMenuCtl  *pMenuCtl, IMenuC
     IMENUCTL_SetActive(groupList, TRUE);
 
     IMENUCTL_GetSelItemRect( pMenuCtl, &rect);
+    #if defined(FEATURE_DISP_240X320)
+	rect.x  = 32;//20是大概的一个数字,一个偏移值，是群组那张图片的宽度
+    rect.dx = pMe->m_rc.dx - 37;
+	#else
     rect.x  = 20;//20是大概的一个数字,一个偏移值，是群组那张图片的宽度
     rect.dx = pMe->m_rc.dx - 25;
+	#endif
     rect.dy -= 1;
     IDISPLAY_FillRect(pMe->m_pDisplay, &rect, RGB_BLACK);
     if( NULL == (left_arrow  = ISHELL_LoadResImage(pMe->m_pShell,AEE_APPSCOMMONRES_IMAGESFILE,IDB_LEFTARROW) ) )

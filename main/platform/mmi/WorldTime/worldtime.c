@@ -382,6 +382,7 @@ static boolean InitWorldTime(CWorldTime *pme)
         return EFAILED;
     }
 	IANNUNCIATOR_SetFieldIsActiveEx(pme->m_pIAnn,FALSE); 
+	#ifndef FEATURE_VERSION_K212_HUALU
     if( SUCCESS != ISHELL_CreateInstance(pme->a.m_pIShell, AEECLSID_LISTCTL, (void **) &pme->m_pMenuCity) ||
         NULL    == ( pme->m_pImageBg = ISHELL_LoadResImage(pme->a.m_pIShell, WORLDTIME_IMAGES_RES_FILE, IDI_MAP)) ||
         NULL    == ( pme->m_pImageBar = ISHELL_LoadResImage(pme->a.m_pIShell, WORLDTIME_IMAGES_RES_FILE, IDI_BAR)) ||
@@ -415,7 +416,7 @@ static boolean InitWorldTime(CWorldTime *pme)
 		SETAEERECT(&pme->LeftrowRect, SPACE_BETWEEN_MENU_AND_EDGE, yArrow-5, iInfo.cx+10, iInfo.cy+10); 
 		SETAEERECT(&pme->RightrowRect, di.cxScreen - SPACE_BETWEEN_MENU_AND_EDGE - iInfo.cx, yArrow-5,  iInfo.cx+10, iInfo.cy+10); 
     }
-
+#endif
 
     {
         AEEMenuColors color  = {0};

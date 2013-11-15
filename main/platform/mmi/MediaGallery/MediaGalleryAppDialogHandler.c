@@ -2016,7 +2016,11 @@ static boolean MediaGalleryApp_MemStatDlg_HandleEvent(CMediaGalleryApp* pMe,
 
          ISTATIC_SetRect(pStatic, &rc);
          ISTATIC_SetProperties(pStatic, ST_MIDDLETEXT|ST_GRAPHIC_BG);
+		 #ifndef FEATURE_VERSION_NO_BG
          ISTATIC_SetBackGround(pStatic, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND); //modified by yangdecai
+         #else
+		 ISTATIC_SetBackGround(pStatic, AEE_APPSCOMMONRES_IMAGESFILE, -1); //modified by yangdecai
+         #endif
          return TRUE;
       }
 
@@ -2296,7 +2300,11 @@ static boolean MediaGalleryApp_UDiskDlg_HandleEvent(CMediaGalleryApp* pMe,
 
          ISTATIC_SetRect(pText, &rc);
          ISTATIC_SetProperties(pText, ST_MIDDLETEXT|ST_GRAPHIC_BG);
+		 #ifndef FEATURE_VERSION_NO_BG
          ISTATIC_SetBackGround(pText, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);//modified by yangdecai
+         #else
+		 ISTATIC_SetBackGround(pText, AEE_APPSCOMMONRES_IMAGESFILE, -1);//modified by yangdecai
+		 #endif
          return TRUE;
       }
 
@@ -5790,8 +5798,11 @@ static boolean MGAppPopupMenu_OnDetail(CMediaGalleryApp* pMe,
          
          ISTATIC_SetRect(pDetailText, &rc);
          ISTATIC_SetProperties(pDetailText, ST_MIDDLETEXT|ST_GRAPHIC_BG);
+		 #ifndef FEATURE_VERSION_NO_BG
          ISTATIC_SetBackGround(pDetailText, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);//modified by yangdecai
-         
+         #else
+		 ISTATIC_SetBackGround(pDetailText, AEE_APPSCOMMONRES_IMAGESFILE, -1);//modified by yangdecai
+		 #endif
          RELEASEIF(pMe->m_pDetailText);
          pMe->m_pDetailText = pDetailText;
          ISTATIC_AddRef(pMe->m_pDetailText);
@@ -10208,6 +10219,7 @@ static boolean MGAppUtil_SetWallpaper(CMediaGalleryApp *pMe,
  */
 static boolean MGAppUtil_DrawImageViewerBG(CMediaGalleryApp *pMe)
 {
+   #ifndef FEATURE_VERSION_NO_BG
    IImage *pImage = NULL;
    MSG_FATAL("MGAppUtil_DrawImageViewerBG Start",0,0,0);
    if(!pMe)
@@ -10226,6 +10238,17 @@ static boolean MGAppUtil_DrawImageViewerBG(CMediaGalleryApp *pMe)
    }
 
    RELEASEIF(pImage);
+   #else
+   {
+        AEERect rt;
+        rt.x = 0;
+        rt.y = 0;
+        rt.dx = SCREEN_WIDTH;
+        rt.dy = SCREEN_HEIGHT;
+
+        IDisplay_FillRect(pMe->m_pDisplay,  &rt, RGB_BLACK);
+    }  
+   #endif
    MSG_FATAL("MGAppUtil_DrawImageViewerBG End",0,0,0);
    return TRUE;
 }

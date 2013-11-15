@@ -14415,7 +14415,11 @@ static boolean IDD_MEMSTATUS_Handler(void *pUser,
 
                 ISTATIC_SetRect(pStatic, &rc);
                 ISTATIC_SetProperties(pStatic, ST_MIDDLETEXT|ST_GRAPHIC_BG);
+				#ifndef FEATURE_LOW_MEM_BIGFONT
                 ISTATIC_SetBackGround(pStatic, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND); //modified by yangdecai
+                #else
+				ISTATIC_SetBackGround(pStatic, AEE_APPSCOMMONRES_IMAGESFILE, -1); 
+				#endif
             }
             //Add End
             #endif
@@ -19786,7 +19790,11 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                         if (NULL != pViewText)
                         {
                             ISTATIC_SetProperties(pStatic, ST_GRAPHIC_BG);  
+							#ifndef FEATURE_LOW_MEM_BIGFONT
                             ISTATIC_SetBackGround(pStatic, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);
+							#else
+							ISTATIC_SetBackGround(pStatic, AEE_APPSCOMMONRES_IMAGESFILE, -1);
+							#endif
                             hasIStatic = TRUE;
                           //  pMe->m_ResData.textData.nCount++;
                         }

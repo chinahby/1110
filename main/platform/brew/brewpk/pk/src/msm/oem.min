@@ -145,7 +145,7 @@ OEM_LIB_SOURCES=\
 	OEMBitmap_common.c \
 	OEMBN.c \
 	OEMCall.c \
-        OEMCallHistory.c \
+    OEMCallHistory.c \
 	OEMConfig.c \
 	OEMConstFiles_Dynamic.c \
 	OEMCriticalSection.c \
@@ -157,7 +157,6 @@ OEM_LIB_SOURCES=\
 	OEMDisp.c \
 	OEMDSS.c \
 	OEMFlip.c \
-	OEMFOTA.c \
 	OEMFS.c \
 	OEMFSPath.c \
 	OEMHeap.c \
@@ -167,21 +166,6 @@ OEM_LIB_SOURCES=\
 	OEMLoggerBTIL.c \
 	OEMLoggerDMSS.c \
 	OEMLoggerFile.c \
-	OEMMCFMIF_10888.c \
-	OEMMCFMIF_10889.c \
-	OEMMCFMIF_10890.c \
-	OEMMCFMIF_10891.c \
-	OEMMCFMIF_10892.c \
-	OEMMCFMIF_16225.c \
-	OEMMCFMIF_18067.c \
-	OEMMCFMIF_19240.c \
-	OEMMCFMIF_19917.c \
-	OEMMCFMIF_19918.c \
-	OEMMCFMIF_19919.c \
-	OEMMCFMIF_19920.c \
-	OEMMCFMIF_19922.c \
-	OEMMCFMIF_19923.c \
-	OEMMCFMIF_19924.c \
 	OEMMD5.c \
 	OEMMedia.c \
 	OEMMediaFormats.c \
@@ -216,21 +200,43 @@ OEM_LIB_SOURCES=\
 	OEMUSBHMSMIF_26108.c \
 	OEMUSBHMSMIF_26109.c \
 	OEMVocoder.c \
-	OEMWIFI.c \
 	OEMWSMS.c \
 	OEMAuth.c \
 	OEMAddrBookRUIM.c \
 	OEMServingNetworks.c \
-    	OEMKeysMapping.c \
+    OEMKeysMapping.c \
 	OEMFMRadio.c \
-	OEMFMRDS.c \
-	OEMOMH.c
-
+	OEMFMRDS.c 
 endif
+endif
+ifneq ($(USE_LOW_MEM_BIGFONT),yes)
+OEM_LIB_SOURCES +=OEMFOTA.c \
+	OEMMCFMIF_10888.c \
+	OEMMCFMIF_10889.c \
+	OEMMCFMIF_10890.c \
+	OEMMCFMIF_10891.c \
+	OEMMCFMIF_10892.c \
+	OEMMCFMIF_16225.c \
+	OEMMCFMIF_18067.c \
+	OEMMCFMIF_19240.c \
+	OEMMCFMIF_19917.c \
+	OEMMCFMIF_19918.c \
+	OEMMCFMIF_19919.c \
+	OEMMCFMIF_19920.c \
+	OEMMCFMIF_19922.c \
+	OEMMCFMIF_19923.c \
+	OEMMCFMIF_19924.c \
+	OEMWIFI.c \
+	OEMOMH.c
 endif
 ifeq ($(NOGREYBIT),yes) 
+ifeq ($(USE_LOW_MEM_BIGFONT),yes)
+OEM_LIB_SOURCES +=OEMLowBigFont.c \
+		  OEMDisplayDevLowBigFont.c
+else
 OEM_LIB_SOURCES +=OEMFont.c \
 		  OEMFontData.c
+endif
 endif
 ifeq ($(USES_ZI),yes)
   OEM_LIB_SOURCES+=OEMZIText.c
@@ -336,9 +342,9 @@ endif
 
 ifeq ($(USES_UIONE),yes)
     OEM_LIB_SOURCES += \
-        AEESignalTone.c \
-        OEMSignalTone.c \
-        ModuleBaseImpl.c
+    AEESignalTone.c \
+    OEMSignalTone.c \
+    ModuleBaseImpl.c
 endif
 endif
 

@@ -92,7 +92,6 @@ include $(WORLDTIME)/worldtime.min
 endif
 endif
 
-
 #include $(NOTEBOOK)/notebook.min
 
 ifeq ($(BUILD),Esia021)

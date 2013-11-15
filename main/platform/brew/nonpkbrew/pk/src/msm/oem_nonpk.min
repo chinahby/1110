@@ -3,12 +3,16 @@
 #
 #
 #-------------------------------------------------------------
-
+ifeq ($(USE_LOW_MEM_BIGFONT),yes)
+OEM_NONPK_LIB_SOURCES=\
+	oemheap3x.c \
+	AEEMediaUtil.c
+else
 OEM_NONPK_LIB_SOURCES=\
 	OEMDisplayDev.c \
 	oemheap3x.c \
 	AEEMediaUtil.c
-
+endif
 ifeq ($(USES_ARM_STACKTRACE),yes)
     OEM_NONPK_LIB_A_SOURCES += \
 	OEMARMFastBacktrace.s

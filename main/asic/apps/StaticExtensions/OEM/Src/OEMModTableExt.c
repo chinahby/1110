@@ -608,9 +608,7 @@ extern int CWMSMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
 extern int MainMenuMod_Load( IShell *pIShell, void *ph, IModule **ppMod);
 extern int ExtraMenuMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
 #ifdef FEATURE_APP_STOPWATCH
-#if !defined(FEATURE_LOWER_MEM)
 extern int StopWatchMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
-#endif
 #endif
 extern int ClockAppsMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
 #ifdef FEATURE_APP_CALC
@@ -621,8 +619,10 @@ extern int ApplicationMod_Load( IShell *pIShell, void *ph, IModule **ppMod);
 #endif
 
 #ifdef FEATURE_APP_WORLDTIME
+#ifndef FEATURE_VERSION_K212_HUALU
 extern int WorldTimeMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
 #endif /*FEATURE_APP_WORLDTIME*/
+#endif
 
 #ifdef FEATURE_APP_SCHEDULE
 extern int ScheduleApp_Load(IShell *ps, void * pHelpers, IModule ** pMod);
@@ -986,9 +986,10 @@ extern int  VideoPlayerMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 #endif
 
 #if defined(FEATURE_APP_TIMERAPP)
+#ifndef FEATURE_VERSION_K212_HUALU
 extern int AppTimerMod_Load(IShell *ps, void *pHelpers, IModule **pMod);
 #endif
-
+#endif
 #if defined(FEATURE_SUPPORT_WAP_APP)
 extern int CNetFront3_Load(IShell *ps, void *pHelpers, IModule **pMod);
 #endif
@@ -1066,12 +1067,12 @@ static const AEEStaticMod gOEMStaticModList[] =
     {AEEFS_MIF_DIR"calcapp.mif", CalcMod_Load},
 #endif
 #ifdef FEATURE_APP_WORLDTIME	
+#ifndef FEATURE_VERSION_K212_HUALU
     {AEEFS_MIF_DIR"worldtime.mif", WorldTimeMod_Load},
 #endif
+#endif
 #ifdef FEATURE_APP_STOPWATCH
-#if !defined(FEATURE_VERSION_K212_HUALU)
-    {AEEFS_MIF_DIR"stopwatch.mif", StopWatchMod_Load},
-#endif    
+    {AEEFS_MIF_DIR"stopwatch.mif", StopWatchMod_Load}, 
 #endif
 #ifdef FEATURE_APP_SCHEDULE
     {AEEFS_MIF_DIR"scheduleapp.mif", ScheduleApp_Load},
@@ -1400,9 +1401,10 @@ static const AEEStaticMod gOEMStaticModList[] =
 #endif
 
 #if defined(FEATURE_APP_TIMERAPP)
+#ifndef FEATURE_VERSION_K212_HUALU
       {AEEFS_MIF_DIR"apptimer.mif", AppTimerMod_Load},//wu raojin add
 #endif
-
+#endif
 #ifndef WIN32
 #ifndef CUST_EDITION
 #if defined FEATURE_SUPPORT_BT_APP

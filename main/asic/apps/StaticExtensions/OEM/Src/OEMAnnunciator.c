@@ -783,8 +783,9 @@ static IANNUNCore *IAnnunCoreObj = NULL;
 // 用于保存待机界面墙纸顶层图标栏覆盖部分墙纸的图片数据
 static IDIB *pgWallpaperBarDDB=NULL;
 #endif
-
+#ifndef FEATURE_LOW_MEM_BIGFONT
 void OEM_EnableAnuuUpdate(void);
+#endif
 
 /*
   ||
@@ -2665,7 +2666,9 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
 		  // IIMAGE_Release( pBackBmp);
 		}
 #endif
+#ifndef FEATURE_LOW_MEM_BIGFONT
       OEM_EnableAnuuUpdate();
+#endif
       //DBGPRINTF("IAnnunciator_Redraw %d",pMe->m_coreObj->m_bNotUpdate);		
       // 待机界面下不必跟新显示，待机界面绘制完显示信息后再统一更新显示，如此可避免进入待机界面的闪屏
       if ((need_capture.b_capture != DB_CAPTURE_INIDLE) && (pMe->m_coreObj->m_bNotUpdate == FALSE))

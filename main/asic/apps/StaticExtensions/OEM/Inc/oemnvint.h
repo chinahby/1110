@@ -655,7 +655,7 @@ typedef PACKED struct _Key_pad_Cfg
 #define   OEMNV_SHUTDOWN_MUSIC 11
 #endif
 #else
-#ifdef FEATURE_USES_LOWMEM
+#if defined(FEATURE_USES_LOWMEM)||defined(FEATURE_LOW_MEM_BIGFONT)
 #define   OEMNV_STARTUP_MUSIC 4
 #define   OEMNV_SHUTDOWN_MUSIC 5
 #else

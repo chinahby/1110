@@ -1533,7 +1533,7 @@ static void AStatic_RedrawText(AStatic * pme)
 		 //Ë¢ÐÂSTATICµÄ±³¾°ÇøÓò (·ÀÖ¹Auto_scrollµÄË¢ÐÂ»ìÂÒ)
 		 else  if(pme->m_dwProps & ST_SPECIAL_BG)
 		 {
-		 	#if defined(FEATURE_VERSION_K212_HUALU)
+		 	#if defined(FEATURE_LOW_MEM_BIGFONT)
 			
 			IImage *      pFrame;
 			AEEBitmapInfo  bi;
@@ -1556,7 +1556,7 @@ static void AStatic_RedrawText(AStatic * pme)
 			    DBGPRINTF("***zzg AStatic_RedrawText bi.cx=%d, bi.cy=%d***", bi.cx, bi.cy);
                 DBGPRINTF("***zzg AStatic_RedrawText rc.x=%d, rc.y=%d***", rc.x, rc.y);
                 DBGPRINTF("***zzg AStatic_RedrawText rc.dx=%d, rc.dy=%d***", rc.dx, rc.dy);
-				#if !defined(FEATURE_VERSION_K212_HUALU)
+				#if !defined(FEATURE_LOW_MEM_BIGFONT)
 				IBITMAP_GetInfo(pFrame, &bi, sizeof(bi));
 				IDISPLAY_BitBlt(pd, rc.x, rc.y, rc.dx, rc.dy, pFrame, 0, 0, AEE_RO_COPY);
 				IBITMAP_Release(pFrame);
@@ -2614,7 +2614,7 @@ static void     AStatic_DrawBackground(AStatic * pme, AEERect *rc)
     IImage *pImageBg = NULL;
 
     DBGPRINTF("***zzg AStatic_DrawBackground***");
-
+#ifndef FEATURE_LOW_MEM_BIGFONT
     if(pme->m_nBgImgResID != 0 && STRLEN(pme->m_strBgImgResFile) != 0)
     {
         pImageBg = ISHELL_LoadResImage(pme->m_pShell, pme->m_strBgImgResFile, pme->m_nBgImgResID);
@@ -2633,7 +2633,7 @@ static void     AStatic_DrawBackground(AStatic * pme, AEERect *rc)
 		}
              
     }
-    
+#endif
     Appscommon_ResetBackground(pme->m_pDisplay, pImageBg, APPSCOMMON_BG_COLOR, rc, 0, 0);
 
     if(pImageBg != NULL)
