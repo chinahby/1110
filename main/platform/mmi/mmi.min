@@ -51,7 +51,9 @@ include $(BLUETOOTH)/bthoststatapp.min
 endif
 
 ifeq ($(MMI_ADD_FM),yes)
-#include $(FMRADIOAPP)/FmRadio.min
+ifneq ($(USE_LOW_MEM_BIGFONT),yes)
+include $(FMRADIOAPP)/FmRadio.min
+endif
 endif
 
 #Phone Setting
@@ -69,11 +71,11 @@ endif
 include $(CLOCKAPP)/clockapps.min
 
 ifneq ($(USES_LOWMEM),yes)
-ifneq ($(USES_RESDIR),hualu)
+ifneq ($(USE_LOW_MEM_BIGFONT),yes)
 include $(CONVERTER)/converter.min
-include $(STOPWATCH)/stopwatch.min
-endif
 include $(TIMERAPP)/timerapp.min
+endif
+include $(STOPWATCH)/stopwatch.min
 include $(SCHEDULEAPP)/scheduleapp.min
 include $(CALCAPP)/calcapp.min
 endif
