@@ -3567,7 +3567,7 @@ static void CallApp_Dialer_Show_Animation(void *pUser)
 		#else
         SETAEERECT(&rect,CALL_TEXT_X,CALL_FIRST_LINE_Y,CALL_TEXT_DX,CALL_LINE_HIGHT);
 		#endif
-		#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212) ||defined(FEATURE_VERSION_IC241A_MMX)    
+		#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212) ||defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_W021_WSF_CN)    
 		if(pMe->m_isIncoming)
 		{
 			(void) ISHELL_LoadResString(pMe->m_pShell,
@@ -4926,7 +4926,7 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
             CallApp_Dialer_Connect_Turn_Off_Recorder( pMe);
 #endif
 
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212) ||defined(FEATURE_VERSION_IC241A_MMX)	
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212) ||defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_W021_WSF_CN)	
             pMe->m_isIncoming = FALSE;
 #endif
             return TRUE;
@@ -8039,7 +8039,7 @@ MAKE_CALL_VALUE CallApp_MakeCall(CCallApp *pMe)
 #ifndef FEATURE_ICM
 	AEETCalls po;
 #endif
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212) ||defined(FEATURE_VERSION_IC241A_MMX) 	
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212) ||defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_W021_WSF_CN) 	
     pMe->m_isIncoming 	= FALSE;
 #endif
 	MSG_FATAL("***zzg CallApp_MakeCall cls=%x***", cls, 0, 0);
