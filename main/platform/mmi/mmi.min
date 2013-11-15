@@ -22,9 +22,9 @@ include $(RECENTCALLS)/recentcalls.min
 
 #MultiMedia
 
-ifeq ($(MMI_ADD_MUSICPLAYER),yes)
+#ifeq ($(MMI_ADD_MUSICPLAYER),yes)
 include $(MUSICPLAYER)/MusicPlayer.min
-endif
+#endif
 
 ifeq ($(MMI_ADD_VIDEOPLAYER),yes)
 include $(VIDEOPLAYER)/VideoPlayer.min
