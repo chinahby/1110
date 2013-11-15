@@ -11288,6 +11288,8 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 						//nInputMode = ITEXTCTL_GetInputMode (pIText, NULL);
 						(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_PINYIN);
 					}
+					#elif defined(FEATURE_VERSION_W021_WSF_CN)
+					(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_PINYIN);
 		         	#else
 					#ifdef FEATURE_ALL_KEY_PAD
         	    	(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_RAPID);
