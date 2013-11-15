@@ -44,10 +44,17 @@ CONSTFILE_FILES+=\
 	sendingsms.png|fs:/image/notice/sendingsms.png \
 	volume.png|fs:/image/notice/volume.png
 else
+ifeq ($(USE_LOW_MEM_BIGFONT),yes)
+CONSTFILE_FILES+=\
+	appscommon_images$(USES_LCD_SIZE)_low.bar|fs:/sys/appscommonimages.bar \
+	sendingsms.png|fs:/image/notice/sendingsms.png \
+	volume.png|fs:/image/notice/volume.png 
+else
 CONSTFILE_FILES+=\
 	appscommon_images$(USES_LCD_SIZE).bar|fs:/sys/appscommonimages.bar \
 	sendingsms.png|fs:/image/notice/sendingsms.png \
 	volume.png|fs:/image/notice/volume.png 
+endif
 endif
 else	
 CONSTFILE_FILES+=\

@@ -1969,11 +1969,15 @@ void drawTheImage( IImage *image, AEERect *pRect)
 }
 
 void DrawBackground( IDisplay *pDisplay, AEERect *pRect)
-{     
+{   
+	#ifdef FEATURE_LOW_MEM_BIGFONT
+	IImage *image = NULL;
+	#else
     IImage *image = ISHELL_LoadResImage( AEE_GetShell(),
                             AEE_APPSCOMMONRES_IMAGESFILE,
                             IDB_BACKGROUND
                            );
+	#endif
     if( image == NULL)
     {
         MSG_FATAL( ";DrawBackground, load wall paper failed",0,0,0);
@@ -2018,6 +2022,7 @@ void DrawGreyBitTextWithProfile(IShell* pShell,
     uint32 dwFlags
 )
 {
+#ifndef FEATURE_LOW_MEM_BIGFONT
 	RGBVAL oldTextClr;
 	AEERect ClipRc;
 	AEERect rc;
@@ -2206,6 +2211,7 @@ void DrawGreyBitTextWithProfile(IShell* pShell,
 				dwFlags);
 	// 恢复初始文本颜色
 	(void)IDISPLAY_SetColor(pDisplay, CLR_USER_TEXT, oldTextClr);
+	#endif
 }
 
 /*==============================================================================
