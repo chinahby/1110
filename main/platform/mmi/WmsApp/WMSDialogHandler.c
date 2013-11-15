@@ -9655,7 +9655,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                 }
 #endif
 
-#if !defined(FEATURE_VERSION_C316)&&!defined(FEATURE_VERSION_K202_LM129C)&&!defined(FEATURE_VERSION_K212) \
+/*#if !defined(FEATURE_VERSION_C316)&&!defined(FEATURE_VERSION_K202_LM129C)&&!defined(FEATURE_VERSION_K212) \
       &&!defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_VERSION_K212_20D)&&!defined(FEATURE_VERSION_K212_ND) \
       &&!defined(FEATURE_VERSION_W021_CT100_QVGA)
                 if (mask & 0x10)
@@ -9670,7 +9670,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                     wControls[nControls] = IDC_TEXT_CBNUM;
                     nControls++;
                 }
-#endif 
+#endif */
             }			
 				
             // 解决闪屏问题，从start移动到此处 
@@ -9735,7 +9735,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                                                              NULL,
                                                              NULL);				
 
-                if(cbval == TRUE && wControls[nControls - 1] != IDC_TEXT_CBNUM)
+                /*if(cbval == TRUE && wControls[nControls - 1] != IDC_TEXT_CBNUM)
                 {
                     wControls[nControls] = IDC_TEXT_CBNUM;
                     nControls++;
@@ -9745,7 +9745,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                     wControls[nControls - 1] = NULL;
                     nControls--;
                 }
-			
+			*/
                 //初始化List Menu的颜色及清屏
                 #ifdef FEATURE_VERSION_W317A
                 color.wMask = MC_SEL_TEXT | MC_SEL_BACK | MC_TEXT | MC_BACK;
