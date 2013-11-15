@@ -4968,6 +4968,53 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
     }    
 #endif
 
+
+#if defined (FEATURE_VERSION_W027_IC18) || defined (FEATURE_VERSION_W027_IC18_YINNI)
+    // size cfgID
+    (void)ICONFIG_GetItem(pMe->m_pConfig,
+                          CFGI_CAMERA_SIZE,
+                         &pMe->m_nCameraSize,
+                          sizeof(pMe->m_nCameraSize));
+
+    if(pMe->m_isRecordMode == FALSE)
+    {
+        switch(pMe->m_nCameraSize)
+        {
+            case OEMNV_CAMERA_SIZE_INDEX_0:
+                nResID[CAMERACFGSIZE] = IDI_SIZE_128_160;
+                break;
+
+            case OEMNV_CAMERA_SIZE_INDEX_1:
+                nResID[CAMERACFGSIZE] = IDI_SIZE_176_220;
+                break;       
+    		
+            case OEMNV_CAMERA_SIZE_INDEX_2:
+                nResID[CAMERACFGSIZE] = IDI_SIZE_240_320;
+                break;             
+            default:
+                nResID[CAMERACFGSIZE] = IDI_SIZE_128_160;
+                break;
+        }
+    }
+    else
+    {
+        switch(pMe->m_nCameraSize)
+        {
+            case OEMNV_CAMERA_SIZE_INDEX_0:
+                nResID[CAMERACFGSIZE] = IDI_SIZE_128_160;
+                break;
+
+            case OEMNV_CAMERA_SIZE_INDEX_1:
+                nResID[CAMERACFGSIZE] = IDI_SIZE_144_176;
+                break;                         
+            default:
+                nResID[CAMERACFGSIZE] = IDI_SIZE_128_160;
+                break;
+        }
+    }    
+#endif
+
+
 //#endif      //!defined FEATURE_VERSION_IC241A_MMX
 
 //#endif
