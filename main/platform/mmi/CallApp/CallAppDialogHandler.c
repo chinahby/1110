@@ -2590,7 +2590,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 #ifndef FEATURE_ALL_KEY_PAD
                        if(len == 0)
                        {
-                            #if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_QVGA_INHERIT_K212)&&!defined(FEATURE_VERSION_K212_ND)
+                            #if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_QVGA_INHERIT_K212)&&!defined(FEATURE_VERSION_K212_ND)&&!defined(FEATURE_VERSION_W021_WSF_CN)
                        		CallApp_Draw_NumEdit_SoftKey(pMe);
                     		CallApp_Display_Number(pMe);
                     		// Draw it now!
@@ -2604,7 +2604,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 						{
 							// Clearing the last digit exits the dialog
 							pMe->m_DialString[0] = 0;
-                            #if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_QVGA_INHERIT_K212)
+                            #if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_QVGA_INHERIT_K212)&&!defined(FEATURE_VERSION_W021_WSF_CN)
 							CallApp_Draw_NumEdit_SoftKey(pMe);
 							CallApp_Display_Number(pMe);
 							
@@ -2629,7 +2629,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                     {
                        // Clearing the last digit exits the dialog
                        pMe->m_DialString[0] = 0;
-                        #if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_QVGA_INHERIT_K212)&&!defined(FEATURE_VERSION_K212_ND)
+                        #if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_QVGA_INHERIT_K212)&&!defined(FEATURE_VERSION_K212_ND)&&!defined(FEATURE_VERSION_W021_WSF_CN)
 					   CallApp_Draw_NumEdit_SoftKey(pMe);
               		   CallApp_Display_Number(pMe);
               		   // Draw it now!
