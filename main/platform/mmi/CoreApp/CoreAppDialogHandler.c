@@ -7422,7 +7422,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 		}
 	
 	}
-    #elif defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+    #elif defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_VERSION_K212_HUALU) 
 	#if !defined(FEATURE_VERSION_K212_HUALU) 
 	{
 		 AEERect rect = {0};
