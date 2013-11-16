@@ -3942,7 +3942,7 @@ static boolean  CMusicPlayer_HandleMsgBoxDlgEvent( CMusicPlayer  *pMe,
 
         case EVT_USER_REDRAW:
             
-            
+            IANNUNCIATOR_Redraw(pMe->m_pIAnn);
             // 启动发送关闭对话框事件的定时器
             (void) ISHELL_SetTimer(pMe->m_pShell,
                                 PROMPTMSG_TIMER,

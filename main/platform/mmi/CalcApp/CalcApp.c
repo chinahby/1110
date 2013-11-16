@@ -57,7 +57,7 @@ when         who            what, where, why
 
 #define MAX_CALC_TEXT         9
 /*小数部分最大个数*/
-#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
 #define MAX_CALC_DECIMAL_NUMBER 3
 #else
 #define MAX_CALC_DECIMAL_NUMBER 4

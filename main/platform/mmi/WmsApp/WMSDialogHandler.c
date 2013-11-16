@@ -1261,7 +1261,7 @@ static boolean IDD_MAIN_Handler(void        *pUser,
             // 绘制底条提示
             // Select       Back
             //DRAW_BOTTOMBAR(BTBAR_SELECT_BACK)
-            
+            IANNUNCIATOR_Redraw(pMe->m_pIAnn);
             // 更新界面
             //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);  
             //(void)IMENUCTL_Redraw(pMenu);   //dele by yangdecai

@@ -904,7 +904,7 @@ static int CallApp_InitAppData(CCallApp *pMe)
     pMe->m_cdg_row = 0;
     pMe->m_anykey_answer = OEM_AUTO_ANSWER_MODE;
     pMe->m_b_incoming = FALSE;
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212) ||defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_W021_WSF_CN)   	
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212) ||defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_LOW_MEM_BIGFONT)   	
     pMe->m_isIncoming 	= FALSE;
 #endif
     pMe->m_b_auto_redial = FALSE;
@@ -3400,7 +3400,7 @@ static void CallApp_ProcessCallStateVoice_Incoming(CCallApp      *pMe,
     pMe->m_auto_redial_count = 0;
     ICONFIG_GetItem(pMe->m_pConfig, CFGI_ANYKEY_ANSWER, &pMe->m_anykey_answer, sizeof(byte));
     pMe->m_b_incoming = TRUE;
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_W021_WSF_CN)   	
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_LOW_MEM_BIGFONT)   	
     pMe->m_isIncoming = TRUE;
 #endif
 #ifdef FEATURE_ICM

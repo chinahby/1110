@@ -320,10 +320,10 @@ typedef struct _MainMenu
 #define BOTTOM_MID_SPACE        11
 #define BOTTOM_ICON_HEIGHT      45
 #elif defined(FEATURE_VERSION_K212_HUALU)
-#define ICON_WIDTH              60
-#define ICON_HEIGHT             66
-#define ICON_ANIMATED_WIDTH     60
-#define ICON_ANIMATED_HEIGHT    66
+#define ICON_WIDTH              80
+#define ICON_HEIGHT             84
+#define ICON_ANIMATED_WIDTH     80
+#define ICON_ANIMATED_HEIGHT    84
 #elif defined (FEATURE_VERSION_IN50_MMX)
 #define ICON_WIDTH              60
 #define ICON_HEIGHT             60

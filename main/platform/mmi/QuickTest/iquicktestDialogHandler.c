@@ -4673,7 +4673,7 @@ static void quicktest_fm_paint( CQuickTest* pMe)
                         NULL,
                         IDF_ALIGN_CENTER | IDF_TEXT_TRANSPARENT
                     );
-#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
             y += 36;
 #else
             y += 16;

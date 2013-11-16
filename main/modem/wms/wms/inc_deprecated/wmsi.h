@@ -208,7 +208,7 @@ enum { WMS_MAX_RAM_STATUS_REPORTS = 10 };
 //  以前是提前5条提示，现在是提前10条提示 
 #ifdef FEATURE_ONEMSG_USE_ONEFILE
 
-#ifdef FEATURE_VERSION_EC99
+#if defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_HUALU)
     enum 
     { 
         IN_WATERMARK = 70,

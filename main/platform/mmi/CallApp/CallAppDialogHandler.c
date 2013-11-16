@@ -3252,7 +3252,7 @@ static boolean  CallApp_Dialer_Calling_DlgHandler(CCallApp *pMe,
             {
                 /*预留出动画的宽度*/
 				MSG_FATAL("CallApp_Dialer_Calling_DlgHandler....ok",0,0,0);
-                #if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+                #if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
                 SETAEERECT(&rect,
                                                         5,
                                                         CALL_SECOND_LINE_Y,
@@ -3294,7 +3294,7 @@ static boolean  CallApp_Dialer_Calling_DlgHandler(CCallApp *pMe,
                     {
                         dy = 0;
                     }
-					#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+					#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
                     SETAEERECT(&rect,
                                 5, //CALL_TEXT_X,
                                 CALL_FOURTH_LINE_Y,
@@ -3324,7 +3324,7 @@ static boolean  CallApp_Dialer_Calling_DlgHandler(CCallApp *pMe,
                     {
                         dy = CALL_LINE_HIGHT;
                     }
-					#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+					#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
                     SETAEERECT(&rect,
                                 5,
                                 CALL_THIRD_LINE_Y,
@@ -3555,7 +3555,7 @@ static void CallApp_Dialer_Show_Animation(void *pUser)
     {
         RGBVAL     oldColor = 0;
         //calling.....
-        #if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+        #if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
 		if(pMe->m_isIncoming)
 		{
 			SETAEERECT(&rect,CALL_TEXT_X,CALL_FIRST_LINE_Y,230,CALL_LINE_HIGHT);
@@ -3567,7 +3567,7 @@ static void CallApp_Dialer_Show_Animation(void *pUser)
 		#else
         SETAEERECT(&rect,CALL_TEXT_X,CALL_FIRST_LINE_Y,CALL_TEXT_DX,CALL_LINE_HIGHT);
 		#endif
-		#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212) ||defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_W021_WSF_CN)    
+		#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212) ||defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_LOW_MEM_BIGFONT)    
 		if(pMe->m_isIncoming)
 		{
 			(void) ISHELL_LoadResString(pMe->m_pShell,
@@ -3608,7 +3608,7 @@ static void CallApp_Dialer_Show_Animation(void *pUser)
         Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &rect, TRUE);
 
         oldColor = IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, CALLAPP_TEXT_COLOR);
-		#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+		#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
 		if(pMe->m_isIncoming)
 		{
 			(void)IDISPLAY_DrawText(pMe->m_pDisplay,
@@ -4835,7 +4835,7 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
 
                 case IDS_CONTACT: 
 				case IDS_PHONE_BOOKS:
-					#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+					#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
 					if (!ISHELL_CanStartApplet(pMe->m_pShell, AEECLSID_APP_CONTACT))
 				    {
 				        // 当前不能启动 指定 Applet
@@ -4926,7 +4926,7 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
             CallApp_Dialer_Connect_Turn_Off_Recorder( pMe);
 #endif
 
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212) ||defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_W021_WSF_CN)	
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212) ||defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_LOW_MEM_BIGFONT)	
             pMe->m_isIncoming = FALSE;
 #endif
             return TRUE;
@@ -5145,7 +5145,7 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
                 //CALL_ERR("Draw call end  image",0,0,0);
             }
 #endif
-#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
 			if(FALSE)
 #else
             if(pMe->m_Is3Way)
@@ -5219,7 +5219,7 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
                 {
                     //  Position NAME
                     // Display on secend line
-					#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+					#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
                     SETAEERECT(&rect,
                                                         5,
                                                         CALL_THIRD_LINE_Y,
@@ -5248,7 +5248,7 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
                 //}
                 if(p_temp->in_phonebook)
                 {
-					#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+					#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
                     SETAEERECT(&rect,
                                                         5, //CALL_TEXT_X, 
                                                         CALL_FOURTH_LINE_Y+CALL_LINE_HIGHT,
@@ -5264,7 +5264,7 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
                 }
                 else
                 {
-                	#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+                	#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
 					SETAEERECT(&rect,
                                                         0,
                                                         CALL_THIRD_LINE_Y,
@@ -6167,7 +6167,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
                     {
                         dy = 0;
                     }
-					#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+					#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
                     SETAEERECT(&rect,
                                5, //CALL_TEXT_X,
                                CALL_FOURTH_LINE_Y,
@@ -6197,7 +6197,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
                     {
                         dy = CALL_LINE_HIGHT;
                     }
-					#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+					#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
                     SETAEERECT(&rect,
                                                         5,
                                                         CALL_SECOND_LINE_Y,
@@ -6233,7 +6233,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
                 }
                 else
                 {
-                	#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+                	#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
 					if(!pMe->m_CallsTable->in_phonebook)
 					#endif
                 	{
@@ -6268,7 +6268,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
 	                        // MSG_FATAL("pMe->m_CallsTable->call_number---=%d",pMe->m_CallsTable->call_number,0,0);
 	                       CallApp_DrawText_Ex(pMe, AEE_FONT_NORMAL,Temp_Number, &rect, IDF_TEXT_TRANSPARENT);
 	                      #else
-						  #if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+						  #if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
 						  CallApp_DrawText_Ex(pMe, AEE_FONT_LARGE,
 	                                          pMe->m_CallsTable->call_number, &rect, IDF_ALIGN_CENTER|IDF_TEXT_TRANSPARENT);
 						  #else
@@ -6310,7 +6310,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
             if(pMe->m_CallsTable->in_phonebook && !b_cdg)
             {
                 /*预留出动画的宽度*/
-                #if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+                #if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
 				SETAEERECT(&rect,
                                                     0,
                                                     CALL_SECOND_LINE_Y,
@@ -6324,7 +6324,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
                                                     CALL_NAME_DX,
                                                     CALL_LINE_HIGHT);
 				#endif
-				#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+				#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
 				CallApp_DrawText_Ex(pMe, AEE_FONT_LARGE, pMe->m_CallsTable->call_name, &rect, IDF_ALIGN_CENTER|IDF_TEXT_TRANSPARENT);
 				#else
                 CallApp_DrawText_Ex(pMe, AEE_FONT_NORMAL, pMe->m_CallsTable->call_name, &rect, IDF_TEXT_TRANSPARENT);
@@ -7822,7 +7822,7 @@ void CallApp_SetupCallAudio(CCallApp *pMe)
 	ISOUND_SetVolume(pMe->m_pSound,
                                             GET_ISOUND_VOL_LEVEL(pMe->m_CallVolume)*3/5);
 	#else
-	#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+	#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
 	if(pMe->m_bHandFree)
 	{
     	//fm_set_volume( 3,TRUE);
@@ -8039,7 +8039,7 @@ MAKE_CALL_VALUE CallApp_MakeCall(CCallApp *pMe)
 #ifndef FEATURE_ICM
 	AEETCalls po;
 #endif
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212) ||defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_W021_WSF_CN) 	
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212) ||defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_LOW_MEM_BIGFONT) 	
     pMe->m_isIncoming 	= FALSE;
 #endif
 	MSG_FATAL("***zzg CallApp_MakeCall cls=%x***", cls, 0, 0);
@@ -8778,7 +8778,7 @@ static void CallApp_DrawDialerString(CCallApp   *pMe,  AECHAR const *dialStr)
         MSG_FATAL("CallApp_DrawDialerString....................1",0,0,0);
         nLineMax    = dialerRect.dy/pMe->m_nCurrNumHeight;
 		#ifndef FEATURE_LCD_TOUCH_ENABLE
-		#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+		#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
         pMe->m_nCurrLineSpace = (dialerRect.dy - pMe->m_nCurrNumHeight*nLineMax)/(nLineMax+1);
 		#else
 		pMe->m_nCurrLineSpace = (dialerRect.dy - pMe->m_nCurrNumHeight*nLineMax)/(nLineMax-1);
@@ -8892,7 +8892,7 @@ static void CallApp_DrawDialerString(CCallApp   *pMe,  AECHAR const *dialStr)
         #endif
         IFONT_DrawText(pMe->m_pCurrNumFont, pBmp, 0, tempy, srcStr, pMe->m_nCurrLineFits[i], clrFG, 0, &dialerRect, IDF_TEXT_TRANSPARENT|IDF_ALIGN_RIGHT);
         #ifndef FEATURE_LCD_TOUCH_ENABLE		
-        #if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_QVGA_INHERIT_K212)
+        #if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
         y -= pMe->m_nCurrLineSpace;
 		#endif
 		#endif
@@ -9556,7 +9556,7 @@ void CallApp_ChangeCallVolume(CCallApp  *pMe,
 		MSG_FATAL("pMe->m_CallVolume=====%d",pMe->m_CallVolume,0,0);
 		#if defined(FEATURE_VERSION_K202)
 		ISOUND_SetVolume(pMe->m_pSound, GET_ISOUND_VOL_LEVEL(pMe->m_CallVolume)*3/5);
-		#elif defined(FEATURE_VERSION_K212)|| defined(FEATURE_QVGA_INHERIT_K212)
+		#elif defined(FEATURE_VERSION_K212)|| defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
 	    if(pMe->m_bHandFree)
 	    {
 	    	ISOUND_SetVolume(pMe->m_pSound,GET_ISOUND_VOL_LEVEL(pMe->m_CallVolume));
@@ -10219,7 +10219,7 @@ static void CallApp_Build_NumEdit_Option_Menu(CCallApp *pMe,IMenuCtl   *pMenuCtl
 #endif //FEATURE_APP_PAUSE_TIMER
             {
 #if defined(FEATURE_VERSION_W208S)||defined(FEATURE_VERSION_1110W516) ||defined(FEATURE_VERSION_C180) ||defined(FEATURE_VERSION_W027V3) \
-|| defined(FEATURE_VERSION_H1201)|| defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+|| defined(FEATURE_VERSION_H1201)|| defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
 #else
                 if(!pMe->m_call_info.b_emerg)
                 {
@@ -10479,7 +10479,7 @@ static void CallApp_Draw_Connect_Time(void *pUser)
         return;
     }
 
-#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
 	{
 		  nv_item_type	SimChoice;
 		  SimChoice.sim_select =1;
@@ -10972,7 +10972,7 @@ static void CallApp_Draw_Connect_Number_and_Name(CCallApp *pMe)
                                                 &rect,
                                                 IDF_TEXT_TRANSPARENT);
 #else
-#if !(defined( FEATURE_VERSION_C316))&&!(defined(FEATURE_VERSION_K212))&&!defined(FEATURE_QVGA_INHERIT_K212)
+#if !(defined( FEATURE_VERSION_C316))&&!(defined(FEATURE_VERSION_K212))&&!defined(FEATURE_QVGA_INHERIT_K212)&&!defined(FEATURE_LOW_MEM_BIGFONT)
             (void)IDISPLAY_DrawText(pMe->m_pDisplay,
                                                 AEE_FONT_NORMAL,
                                                 mui_call,
@@ -10982,7 +10982,7 @@ static void CallApp_Draw_Connect_Number_and_Name(CCallApp *pMe)
                                                 &rect,
                                                 IDF_TEXT_TRANSPARENT);
 #endif
-#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
 {
 	Dialer_call_table * temp = NULL;
 	temp = CallApp_Get_First_Entry_In_Call_Table(pMe);
@@ -10990,7 +10990,7 @@ static void CallApp_Draw_Connect_Number_and_Name(CCallApp *pMe)
       {
                 //draw call name
                 /*预留出动画的宽度*/
-                #if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+                #if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
 				SETAEERECT(&rect,
                                             0,
                                             CALL_SECOND_LINE_Y,
@@ -11030,7 +11030,7 @@ static void CallApp_Draw_Connect_Number_and_Name(CCallApp *pMe)
                     {
                         dy = 0;
                     }
-					#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+					#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
                     SETAEERECT(&rect,
                                                 5, //CALL_TEXT_X,
                                                 CALL_FOURTH_LINE_Y,
@@ -11060,7 +11060,7 @@ static void CallApp_Draw_Connect_Number_and_Name(CCallApp *pMe)
                     {
                         dy = CALL_LINE_HIGHT;
                     }
-                    #if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+                    #if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
                     SETAEERECT(&rect,
                                                 5,
                                                 CALL_THIRD_LINE_Y,
@@ -11140,7 +11140,7 @@ static void CallApp_Draw_Connect_Number_and_Name(CCallApp *pMe)
             {
                 //draw call name
                 /*预留出动画的宽度*/
-                #if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+                #if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
 				SETAEERECT(&rect,
                                             0,
                                             CALL_SECOND_LINE_Y,
@@ -11180,7 +11180,7 @@ static void CallApp_Draw_Connect_Number_and_Name(CCallApp *pMe)
                     {
                         dy = 0;
                     }
-					#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+					#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
                     SETAEERECT(&rect,
                                                 5, //CALL_TEXT_X,
                                                 CALL_FOURTH_LINE_Y,
@@ -11210,7 +11210,7 @@ static void CallApp_Draw_Connect_Number_and_Name(CCallApp *pMe)
                     {
                         dy = CALL_LINE_HIGHT;
                     }
-					#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+					#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
                     SETAEERECT(&rect,
                                                 5,
                                                 CALL_THIRD_LINE_Y,
@@ -13135,7 +13135,7 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
 	MSG_FATAL("***zzg CallApp_Process_HeldKey_Event wParam=%x***", wParam,0,0);
 
     //if ((AVKType)wParam == AVK_CLR)
-    #if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+    #if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
 	if (!(AEECM_IS_VOICECALL_CONNECTED(pMe->m_pICM))&&((AVKType)wParam == AVK_DEL || (AVKType)wParam == AVK_CLR))   	//Modify by zzg 2012_02_22
 	#else
 	if ((AVKType)wParam == AVK_DEL)
@@ -14057,7 +14057,7 @@ if(wp == AVK_0)
         			(void)WSTRCPY(&pMe->m_DialString[len-pMe->m_nCursorPos+1], wstrTemp);
 				}
         	}
-            #if defined(FEATURE_VERSION_X3)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_K212_20D)|| defined(FEATURE_VERSION_W021_C11)||defined(FEATURE_VERSION_W021_WSF_CN)
+            #if defined(FEATURE_VERSION_X3)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_HUALU)|| defined(FEATURE_VERSION_W021_C11)||defined(FEATURE_VERSION_W021_WSF_CN)
             if(pMe->m_curpros<3)
             #else
         	if(pMe->m_curpros<2)
@@ -15270,7 +15270,7 @@ static void CallApp_Calc_Cursor_Rect(CCallApp* pMe, AEERect *pRect)
             
             nCurrLineMaxPos -= pMe->m_nCurrLineFits[i];
 			#ifndef FEATURE_LCD_TOUCH_ENABLE			
-            #if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_QVGA_INHERIT_K212)
+            #if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
             y -= pMe->m_nCurrLineSpace;
 			#endif
 			#endif
@@ -15333,7 +15333,7 @@ static void CallApp_Calc_Cursor_Rect(CCallApp* pMe, AEERect *pRect)
             
             nCurrLineMaxPos -= pMe->m_nCurrLineFits[i];
 			#ifndef FEATURE_LCD_TOUCH_ENABLE            
-            #if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_QVGA_INHERIT_K212)
+            #if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
             y -= pMe->m_nCurrLineSpace;
 			#endif
 			#endif

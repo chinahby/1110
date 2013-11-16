@@ -694,7 +694,7 @@ static boolean CameraApp_MainMenuHandleEvent(CCameraApp *pMe, AEEEvent eCode, ui
 			}
             IMENUCTL_SetSel(pMenu, pMe->m_nMainMenuItemSel);
             IMENUCTL_SetBottomBarType(pMenu, BTBAR_SELECT_BACK);
-            
+            IANNUNCIATOR_Redraw(pMe->m_pIAnn);
             return TRUE;
      
         case EVT_DIALOG_START:
@@ -1239,7 +1239,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                 }
                 else
                 {
-                		#ifdef FEATURE_VERSION_K212
+                		#if defined(FEATURE_VERSION_K212) || defined(FEATURE_LOW_MEM_BIGFONT)
                 	     nv_item_type	SimChoice;
 						(void)OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
 						if(SimChoice.sim_select != 1)
@@ -1828,7 +1828,7 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
             ISHELL_SendEvent(pMe->m_pShell, AEECLSID_APP_CAMERA, EVT_USER_REDRAW, NULL, NULL);
 #endif
             return TRUE;//ISHELL_SendEvent(pMe->m_pShell, AEECLSID_APP_CAMERA, EVT_USER_REDRAW, NULL, NULL);
-#if defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_K212)
+#if defined (FEATURE_VERSION_W317A) || defined (FEATURE_VERSION_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
         case EVT_APP_RESUME:    
             CLOSE_DIALOG(DLGRET_CANCELED);
             return TRUE;
@@ -2761,10 +2761,11 @@ static boolean CameraApp_RoutePopMenuCommandEvent(CCameraApp *pMe, uint16 wParam
                 return CameraApp_PopMenu_QualityCommandHandleEvent(pMe, wParam);
 
             #ifndef FEATURE_VERSION_K212
+			#ifndef FEATURE_LOW_MEM_BIGFONT
             case CAMERACFGSIZE:
                 return CameraApp_PopMenu_SizeCommandHandleEvent(pMe, wParam);
             #endif
-            
+			#endif
             case CAMERACFGTONE:
                 return CameraApp_PopMenu_ShutterToneCommandHandleEvent(pMe, wParam);
    
@@ -3335,10 +3336,12 @@ static boolean CameraApp_InitpopMenu(CCameraApp *pMe, IMenuCtl *popMenu)
                 CameraApp_PopMenu_QualityInit(pMe, popMenu);
                 break;
 #ifndef FEATURE_VERSION_K212
+#ifndef FEATURE_LOW_MEM_BIGFONT
             case CAMERACFGSIZE:
                 MSG_FATAL("CAMERACFGSIZE",0,0,0);
                 CameraApp_PopMenu_SizeInit(pMe, popMenu);
                 break;
+#endif
 #endif
             case CAMERACFGTONE:
             	MSG_FATAL("CAMERACFGQUALITY",0,0,0);
@@ -3882,7 +3885,7 @@ static void CameraApp_PopMenu_SizeInit(CCameraApp *pMe, IMenuCtl *popMenu)
         #endif
         }
          MSG_FATAL("CameraApp_SetPopMenuRect",0,0,0);
-		#if defined (FEATURE_VERSION_K212)|| defined (FEATURE_QVGA_INHERIT_K212)
+		#if defined (FEATURE_VERSION_K212)|| defined (FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
         #if defined (FEATURE_VERSION_IC241A_MMX)
         CameraApp_SetPopMenuRect(pMe, popMenu, i);
         #else
@@ -4019,7 +4022,7 @@ static void CameraApp_PopMenu_SizeInit(CCameraApp *pMe, IMenuCtl *popMenu)
 static void CameraApp_PopMenu_ShutterToneInit(CCameraApp *pMe, IMenuCtl *popMenu)  
 {
     IMENUCTL_DeleteAll(popMenu);   
-    #if defined (FEATURE_VERSION_K212)||defined(FEATURE_DISP_240X320)
+    #if defined (FEATURE_VERSION_K212)||defined(FEATURE_DISP_240X320)||defined(FEATURE_LOW_MEM_BIGFONT)
     #if defined (FEATURE_VERSION_IC241A_MMX)
     CameraApp_SetPopMenuRect(pMe, popMenu, 2);
     #else
@@ -5296,6 +5299,7 @@ static void CameraApp_DrawCFGPromptText(CCameraApp *pMe)
                 break;
 
             #ifndef FEATURE_VERSION_K212      
+			#ifndef FEATURE_LOW_MEM_BIGFONT
             case CAMERACFGSIZE:
                 #ifdef FEATURE_VERSION_W317A
                 nResID = IDS_CFG_IMAGESIZE;
@@ -5304,7 +5308,7 @@ static void CameraApp_DrawCFGPromptText(CCameraApp *pMe)
                 #endif
                 break;
             #endif    
-                
+            #endif
             case CAMERACFGTONE:
                 #ifdef FEATURE_VERSION_W317A
                 nResID = IDS_CFG_SOUND;

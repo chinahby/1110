@@ -1117,7 +1117,7 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
 #endif/*FEATURE_APP_MPEG4*/
 #endif
 
-#ifdef FEATURE_VERSION_K212
+#if defined(FEATURE_VERSION_K212) ||defined(FEATURE_VERSION_K212_HUALU)
 			IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_GAME, IDS_MULTIMEDIA_GAME, NULL, 0);
 #endif
             return TRUE;

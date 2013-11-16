@@ -607,7 +607,7 @@ typedef enum
 
 #define IDS_CORE_DISPADN        0xFFFE
 
-#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_VERSION_K212_HUALU)
 #define    IDLE_TIME_COUNT                    13
 #define    IDLE_TIME_X1                       15
 #define    IDLE_TIME_X2                       56
@@ -732,7 +732,7 @@ typedef enum
 #define MUSIC_WIDTH            (SCREEN_HEIGHT-137) //78
 #define MUSIC_START_WIDTH      (SCREEN_HEIGHT-135) //80
 #else
-#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_VERSION_K212_HUALU)
 #define MUSIC_WIDTH            178 //78
 #define MUSIC_START_WIDTH      180 //80
 #else

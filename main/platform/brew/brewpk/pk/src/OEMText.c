@@ -180,7 +180,7 @@ static uint16 StrokeMap[]=
 
 #ifndef AEE_SIMULATOR
 #ifdef FEATURE_DISP_240X320
-#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
 #define SYLLABLEWIDTH  32
 #define SEPARATORWIDTH 16
 #define PSYLLABLEWIDTH  6   
@@ -2376,6 +2376,8 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
 #ifndef FEATURE_VERSION_EC99
 #ifndef FEATURE_VERSION_K212_20D
 #ifndef FEATURE_VERSION_K212_ND
+#ifndef FEATURE_LOW_MEM_BIGFONT
+
                     AECHAR   * pszText;
                     pszText = OEM_TextGet(pContext);
                     szsmscount = 1;
@@ -2410,6 +2412,7 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
                                     wRemainingChars,
                                     szsmscount);
                     */
+#endif
 #endif
 #endif
 #endif

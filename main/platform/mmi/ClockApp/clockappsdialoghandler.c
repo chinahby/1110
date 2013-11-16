@@ -516,7 +516,7 @@ static boolean  HandleAlarmMainDialogEvent(CClockApps *pMe,
             }
             else
             {
-				#ifdef FEATURE_VERSION_K212
+				#if defined (FEATURE_VERSION_K212) ||defined(FEATURE_LOW_MEM_BIGFONT)
 				IMENUCTL_SetBottomBarType( pMenuAlarmList, BTBAR_EDIT_BACK);
 				#else
                 IMENUCTL_SetBottomBarType( pMenuAlarmList, BTBAR_ADD_BACK);
@@ -544,7 +544,7 @@ static boolean  HandleAlarmMainDialogEvent(CClockApps *pMe,
                 }
                 else
                 {
-					#ifdef FEATURE_VERSION_K212
+					#if defined(FEATURE_VERSION_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
                     IMENUCTL_SetBottomBarType( pMenuAlarmList, BTBAR_EDIT_BACK);
 					#else
                     IMENUCTL_SetBottomBarType( pMenuAlarmList, BTBAR_ADD_BACK);

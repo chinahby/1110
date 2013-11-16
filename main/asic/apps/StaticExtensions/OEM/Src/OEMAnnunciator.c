@@ -206,7 +206,7 @@ typedef struct {
 #if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
   {ANNUN_STATE_AIR_MODE_ON, IDB_AIR_MODE, NULL},
 #endif
-#ifdef FEATURE_VERSION_K212
+#if defined( FEATURE_VERSION_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
   {ANNUN_STATE_RSSI_NO_SERV, IDB_NO_SERVICE, NULL},
   {ANNUN_STATE_RSSI_0, IDB_RSSI4, NULL},
   {ANNUN_STATE_RSSI_1, IDB_RSSI4, NULL},
@@ -363,7 +363,7 @@ static OEMState_data ringtone_image_data[]=
 #if /*defined(FEATURE_VERSION_LM126C)||*/defined(FEATURE_5_LEVEL_BATTERY)//xxzhen
 static OEMState_data batt5_image_data[]=
 {
-#if defined (FEATURE_VERSION_K212)||defined(FEATURE_VERSION_W021_CT100_QVGA)
+#if defined (FEATURE_VERSION_K212)||defined(FEATURE_VERSION_W021_CT100_QVGA)||defined(FEATURE_LOW_MEM_BIGFONT)
   {ANNUN_STATE_BATT_LOW, IDB_BATT_LOW, NULL},
   {ANNUN_STATE_BATT_1, IDB_BATT1, NULL},
   {ANNUN_STATE_BATT_2, IDB_BATT2, NULL},
@@ -769,7 +769,7 @@ static OEMAnnun_data Annunciators[] =
 #if  0//def FEATURE_VERSION_LM126C
 #define ANNUN_MAX_STATES     (8)
 #else
-#if defined (FEATURE_VERSION_K212)|defined(FEATURE_VERSION_W021_CT100_QVGA)
+#if defined (FEATURE_VERSION_K212)|defined(FEATURE_VERSION_W021_CT100_QVGA)||defined(FEATURE_LOW_MEM_BIGFONT)
 #define ANNUN_MAX_STATES     (9)
 #else
 #define ANNUN_MAX_STATES     (7)
@@ -2087,7 +2087,7 @@ static int IAnnunciator_SetFieldText(IAnnunciator * pMe ,uint16 *cText, boolean 
 	{
       return EFAILED;
     }
-#ifndef FEATURE_VERSION_K212
+#if !defined( FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_K212_HUALU)
     if(cText)
     {
 	    WSTRLCPY(IAnnunCoreObj->m_Title, cText, ANN_TEXT_MAX_LEN);
@@ -2454,7 +2454,7 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
 #endif        
 
         //MSG_FATAL("***zzg OEMAnnunciator m_bActive=%d, m_hasTitleText=%d***", IAnnunCoreObj->m_bActive, IAnnunCoreObj->m_hasTitleText, 0);
-#ifndef FEATURE_VERSION_K212
+#if !defined( FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_K212_HUALU)
 	    if(!IAnnunCoreObj->m_bActive)
 		{			
 			/*
@@ -2602,7 +2602,7 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
 					//DBGPRINTF("***zzg bgRect:%d,%d,%d,%d***", bgRect.x, bgRect.y, bgRect.dx, bgRect.dy);
 
 					
-					#if defined(FEATURE_VERSION_C337)  || defined(FEATURE_VERSION_IC241A_MMX)//|| defined(FEATURE_VERSION_K212)
+					#if defined(FEATURE_VERSION_C337)  || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_LOW_MEM_BIGFONT)//|| defined(FEATURE_VERSION_K212)
 					{
 						IImage      *pBarImg = NULL;
 

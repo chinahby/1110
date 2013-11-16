@@ -5127,6 +5127,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
             #ifndef FEATURE_LOW_MEM_BIGFONT
 			OEM_SetNotUpdateScreen(FALSE);
 			#endif
+			IANNUNCIATOR_Redraw(pMe->m_pIAnn);
 			MSG_FATAL("***zzg contack list EVT_USER_REDRAW***", 0,0,0);
             
 			{
@@ -6336,7 +6337,7 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
                     }
                     
                     CContApp_SetGroupItemText(pMe, pMenuCtl);
-					#ifndef FEATURE_VERSION_K212
+					#if !defined(FEATURE_VERSION_K212)&& !defined(FEATURE_LOW_MEM_BIGFONT)
                     if (pMe->m_nRingToneID && pMe->m_nRingToneID[0] != (AECHAR)'\0')
                     {
                         AECHAR name[128]={0};
@@ -7422,7 +7423,9 @@ static boolean  CContApp_HandleMainMenuDlgEvent( CContApp  *pMe,
         return FALSE;
     }
 #ifndef FEATURE_VERSION_K212
+#ifndef FEATURE_LOW_MEM_BIGFONT
     MENU_AUTO_SCROLL(pMenuCtl, eCode, wParam);
+#endif
 #endif
     switch (eCode)
     {
@@ -7528,7 +7531,7 @@ static boolean  CContApp_HandleMainMenuDlgEvent( CContApp  *pMe,
              }
             }
             #endif
-            
+            IANNUNCIATOR_Redraw(pMe->m_pIAnn);
             // Draw prompt bar here
             CONTAPP_DRAW_BOTTOMBAR(BTBAR_SELECT_BACK);
             IDISPLAY_Update(pMe->m_pDisplay);  
@@ -10594,7 +10597,7 @@ static boolean  CContApp_HandleEditDlgEvent( CContApp  *pMe,
                     }
                         
                     CContApp_SetGroupItemText(pMe, pMenuCtl);
-    				#ifndef FEATURE_VERSION_K212
+    				#if !defined( FEATURE_VERSION_K212)&&!defined(FEATURE_LOW_MEM_BIGFONT)
                     if (pMe->m_nRingToneID && pMe->m_nRingToneID[0] != (AECHAR)'\0')
                     {
                         AECHAR name[128]={0};

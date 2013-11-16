@@ -1019,10 +1019,12 @@ int CContApp_BuildEditMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl, boolean bAll)
        
            
            #ifndef FEATURE_VERSION_K212
+		   #ifndef FEATURE_LOW_MEM_BIGFONT
            //ai.wText       = IDS_RING;
            ai.wItemID   = IDI_EDIT_MENU_RINGTONE;
            ai.wImage    = IDB_RING;
-           #endif       
+           #endif  
+		   #endif
            if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
            {
                FARF(ADDR, ("Failed to Add Opts item %d", ai.wItemID));
@@ -1273,6 +1275,7 @@ int CContApp_BuildEditMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl, boolean bAll)
            }
 
             #ifndef FEATURE_VERSION_K212
+			#ifndef FEATURE_LOW_MEM_BIGFONT
 
                 // ringtone     
                 if (pMe->m_nRingToneID && pMe->m_nRingToneID[0] != (AECHAR)'\0')
@@ -1308,6 +1311,7 @@ int CContApp_BuildEditMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl, boolean bAll)
                     }
                     IMENUCTL_SetItemText(pMenuCtl, IDI_EDIT_MENU_RINGTONE, NULL, 0, name);
                 }
+				#endif
 				#endif
             }
         }

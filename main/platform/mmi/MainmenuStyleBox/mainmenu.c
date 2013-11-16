@@ -11626,7 +11626,7 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_IconTitle[4]     = IDS_MAIN_MENU_UTK;//IDS_MAIN_MENU_MESSAGES;
     pMe->m_IconTitle[5]     = IDS_MAIN_MENU_APPLICATION;//IDS_MAIN_MENU_MULTIMEDIA;
     pMe->m_IconTitle[6]     = IDS_MAIN_MENU_SETTINGS;//IDS_MAIN_MENU_MUSICPLAYER;
-    pMe->m_IconTitle[7]     = IDS_MAIN_MENU_GAMES;
+    pMe->m_IconTitle[7]     = IDS_MAIN_MENU_USERPROFILE;
     pMe->m_IconTitle[8]     = IDS_MAIN_MENU_MEDIAGALLERY;
 #else
     pMe->m_IconTitle[0]     = IDS_MAIN_MENU_MEDIAGALLERY;
@@ -12625,6 +12625,7 @@ static void CalculateScreenParameters(MainMenu *pMe)
         iconSpaceVertical = 0;
     }
 #endif
+	MSG_FATAL("iconSpaceHorizontal====%d,iconSpaceVertical===%d",iconSpaceHorizontal,iconSpaceVertical,0);
 
     for( i = 0; i < MAX_MATRIX_ITEMS; i ++)
     {
@@ -12645,8 +12646,8 @@ static void CalculateScreenParameters(MainMenu *pMe)
         pMe->m_IconFocus_Pt[i].y = pMe->m_Icondefault_Pt[i].y - (ICON_ANIMATED_HEIGHT- imageInfoIcon.cy)/2;
         //end added
 
-        //MSG_FATAL("***zzg m_Icondefault_Pt[%d].x=%d, m_Icondefault_Pt.y=%d", i, pMe->m_Icondefault_Pt[i].x, pMe->m_Icondefault_Pt[i].y);
-        //MSG_FATAL("***zzg m_IconFocus_Pt[%d].x=%d, m_IconFocus_Pt.y=%d", i, pMe->m_IconFocus_Pt[i].x, pMe->m_IconFocus_Pt[i].y);
+        MSG_FATAL("***zzg m_Icondefault_Pt[%d].x=%d, m_Icondefault_Pt.y=%d", i, pMe->m_Icondefault_Pt[i].x, pMe->m_Icondefault_Pt[i].y);
+        MSG_FATAL("***zzg m_IconFocus_Pt[%d].x=%d, m_IconFocus_Pt.y=%d", i, pMe->m_IconFocus_Pt[i].x, pMe->m_IconFocus_Pt[i].y);
     }
 #endif    
 }
@@ -12667,6 +12668,7 @@ static void MainMenu_DrawBackGround(MainMenu *pMe, AEERect *pRect)
     else
 #endif
     {
+    	MSG_FATAL("pRect.dx  ===%d,,,dy===%d,=====x==%d",pRect->dx,pRect->dy,pRect->x);
         Appscommon_ResetBackground(pMe->m_pDisplay, 
                                                     pMe->m_pImageBg, 
                                                     APPSCOMMON_BG_COLOR, 

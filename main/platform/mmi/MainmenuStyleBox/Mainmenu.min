@@ -23,8 +23,13 @@ CONSTFILE_FILES+=\
 	mainmenu.bar|fs:/mod/mainmenu/en/mainmenu.bar
 
 ifneq ($(EXTLANG1),NO)
+ifeq ($(USE_LOW_MEM_BIGFONT),yes)
+CONSTFILE_FILES+=\
+	$(EXTLANG1)mainmenu_low.bar|fs:/mod/mainmenu/$(EXTLANG1)/mainmenu.bar
+else
 CONSTFILE_FILES+=\
 	$(EXTLANG1)mainmenu.bar|fs:/mod/mainmenu/$(EXTLANG1)/mainmenu.bar
+endif
 endif
 ifneq ($(EXTLANG2),NO)
 CONSTFILE_FILES+=\

@@ -204,7 +204,7 @@ boolean bIsPowerUp = FALSE;     //Add By zzg 2013_03_29
 #define WEEK_Y              (DATA_Y + 25) 
 
 #elif defined(FEATURE_DISP_240X320)
-#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_VERSION_K212_HUALU)
 #define IDLE_D_CLOCK_X 		15
 #define IDLE_D_CLOCK_Y 		25
 
@@ -4822,7 +4822,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);
 #elif defined(FEATURE_VERSION_W021_CT100)|| defined(FEATURE_VERSION_W021_C11)||defined(FEATURE_VERSION_K212_ND)
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CAMERA);
-#elif defined(FEATURE_VERSION_K212)
+#elif defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #else
                 	return CoreApp_LaunchApplet(pMe, AEECLSID_MEDIAGALLERY);
@@ -4878,7 +4878,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 	#elif defined(FEATURE_VERSION_C316)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_VIDEOPLAYER);
-	#elif defined(FEATURE_VERSION_K212)
+	#elif defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_SOUNDMENU);
 	#else
 					return CoreApp_LaunchApplet(pMe, AEECLSID_ALARMCLOCK); 
@@ -4956,7 +4956,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					return TRUE;
 				else 
 					return FALSE;
-#elif defined(FEATURE_VERSION_K212) 
+#elif defined(FEATURE_VERSION_K212) ||defined(FEATURE_VERSION_K212_HUALU)
 				return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CAMERA);
 #else
 			    return CoreApp_LaunchApplet(pMe, AEECLSID_APP_SETTINGMENU);
@@ -5020,7 +5020,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                             return CoreApp_LaunchApplet(pMe, AEECLSID_APP_SETTINGMENU);
 						#elif defined(FEATURE_VERSION_C316)|| defined(FEATURE_VERSION_W021_C11)||defined(FEATURE_VERSION_W021_CT100)
 							return CoreApp_LaunchApplet(pMe, AEECLSID_SCHEDULEAPP);
-						#elif defined(FEATURE_VERSION_K212)
+						#elif defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)
 							return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
                         #elif defined(FEATURE_VERSION_EC99)
 							return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
@@ -6841,7 +6841,7 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
         MSG_FATAL("str_lenth=%d, rc.x=%d", str_lenth, rc.x, 0);
      }
 #elif defined (FEATURE_DISP_240X320) 
-#if defined( FEATURE_LCD_TOUCH_ENABLE)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+#if defined( FEATURE_LCD_TOUCH_ENABLE)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_VERSION_K212_HUALU)
 	str_lenth = IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL, (const AECHAR *)wszBuf);
 #ifdef FEATURE_OEMOMH    
         if(hasGetSPN && (str_lenth > 176))
@@ -6851,7 +6851,7 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
         }
         else
 #endif     
-#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_VERSION_K212_HUALU)
 		rc.y = 232;
         rc.x = 15;
         rc.dx = 210;
@@ -7423,7 +7423,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 	
 	}
     #elif defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
-	#if 1
+	#if !defined(FEATURE_VERSION_K212_HUALU) 
 	{
 		 AEERect rect = {0};
 		 int16    wHour,len,wMinute;
@@ -7749,8 +7749,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 		//rc.y = 20;
 		#if defined(FEATURE_VERSION_MYANMAR)
 		{
-			int         nLineWidth = 4, nNumberWidth = 20, nNumberHeight = 40, nOffset = 5,
-	                xStartPos = 0, yStartPos = 0, nTextLen = 0;
+			int  nLineWidth = 4, nNumberWidth = 20, nNumberHeight = 40, nOffset = 5,   xStartPos = 0, yStartPos = 0, nTextLen = 0;
 	        AEERect rect = {0};
 	        uint16    wHour,len; 
 	        byte Timefontmode = 0;
@@ -7832,28 +7831,28 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (jDate.wMinute%10), nLineWidth, &rect, RGB_WHITE);
 		    	rect.x += nNumberWidth;
 		     	rect.y = rect.y +12;
-		    	DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
-		                              pMe->m_pDisplay,
-		                              RGB_WHITE_NO_TRANS,
-		                              18, 
-		                              wszDatemat, -1,
-		                              0, 0, &rect, 
-		                              IDF_ALIGN_MIDDLE
-		                              | IDF_ALIGN_LEFT
-		                              | IDF_TEXT_TRANSPARENT);
+				DrawTextWithProfile(pMe->a.m_pIShell,
+                                  pMe->m_pDisplay,
+                                  RGB_WHITE_NO_TRANS,
+                                  AEE_FONT_NORMAL,
+                                  wszDatemat, -1,
+                                  0, 0, &rect, 
+                                  IDF_ALIGN_MIDDLE
+                                  | IDF_ALIGN_CENTER
+                                  | IDF_TEXT_TRANSPARENT);  
 	        }
 	        else
 	        {
 	        	rc.y = rc.y+60;
-	        	DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
-	                              pMe->m_pDisplay,
-	                              RGB_WHITE_NO_TRANS,
-	                              18, 
-	                              wszDate, -1,
-	                              0, 0, &rc, 
-	                              IDF_ALIGN_MIDDLE
-	                              | IDF_ALIGN_CENTER
-	                              | IDF_TEXT_TRANSPARENT);
+				DrawTextWithProfile(pMe->a.m_pIShell,
+                                  pMe->m_pDisplay,
+                                  RGB_WHITE_NO_TRANS,
+                                  AEE_FONT_NORMAL,
+                                  wszDate, -1,
+                                  0, 0, &rc, 
+                                  IDF_ALIGN_MIDDLE
+                                  | IDF_ALIGN_CENTER
+                                  | IDF_TEXT_TRANSPARENT); 
 	           rc.y = rc.y-60;
 	        }
 	    	IDISPLAY_Update(pMe->m_pDisplay);
@@ -8121,7 +8120,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                                   | IDF_TEXT_TRANSPARENT); 
 		
 #else
-#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_VERSION_K212_HUALU)
         MSG_FATAL("DrawGreyBitTextWithProfile FEATURE_VERSION_K212",0,0,0);
 		rc_date.x = rc_date.x - 9; 
 		DrawTextWithProfile(pMe->a.m_pIShell,
@@ -8504,11 +8503,10 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 		#else
     		#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_S1000T)
     			eBBarType = BTBAR_UNLOCK_SOS;
-			#elif defined(FEATURE_VERSION_C316)||defined(FEATURE_LEFT_SOFTKEY_AND_STAR_UNLOCK)|| defined(FEATURE_VERSION_K212)|| defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
+			#elif defined(FEATURE_VERSION_C316)||defined(FEATURE_LEFT_SOFTKEY_AND_STAR_UNLOCK)|| defined(FEATURE_VERSION_K212)|| defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)||defined(FEATURE_VERSION_K212_HUALU)
 			    eBBarType = BTBAR_UNLOCK_L;
         	#elif defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_1110W516) 
         		eBBarType = BTBAR_LUNLOCK;
-            
             #elif defined(FEATURE_VERSION_W027)
             #ifdef FEATURE_VERSION_W317A
                 eBBarType = BTBAR_UNLOCK_L;
@@ -8663,6 +8661,16 @@ static void CoreApp_PlayPwrOnAni(CCoreApp *pMe)
                                      0,0,
                                      NULL,
                                      IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE);
+			#else
+			DrawTextWithProfile(pMe->a.m_pIShell,
+                                  pMe->m_pDisplay,
+                                  RGB_WHITE_NO_TRANS,
+                                  AEE_FONT_NORMAL,
+                                  PWRON_STR, -1,
+                                  0, 0, NULL, 
+                                  IDF_ALIGN_MIDDLE
+                                  | IDF_ALIGN_CENTER
+                                  | IDF_TEXT_TRANSPARENT);
             #endif
 			IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
         }
@@ -8751,6 +8759,16 @@ static void CoreApp_PlayPwrOffAni(CCoreApp *pMe)
                                      0,0,
                                      NULL,
                                      IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE);
+			#else
+			DrawTextWithProfile(pMe->a.m_pIShell,
+                                  pMe->m_pDisplay,
+                                  RGB_WHITE_NO_TRANS,
+                                  AEE_FONT_NORMAL,
+                                  PWROFF_STR, -1,
+                                  0, 0, NULL, 
+                                  IDF_ALIGN_MIDDLE
+                                  | IDF_ALIGN_CENTER
+                                  | IDF_TEXT_TRANSPARENT); 
             #endif
 			IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
         }

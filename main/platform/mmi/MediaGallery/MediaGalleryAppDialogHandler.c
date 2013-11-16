@@ -3059,7 +3059,7 @@ static boolean MediaGalleryApp_OnPopupMenuCommand(CMediaGalleryApp* pMe,
                                                  wParam,
                                                  dwParam); 
 		 // add by pyuangui 2013-08-29  K212–Ë«Û∑¿…¡∆¡
-#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
          {
 		 static IStatic * torch_pStatic = NULL;
          PromptMsg_Param_type m_PromptMsg;
@@ -3338,7 +3338,7 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
          MSG_FATAL("MGAppPopupMenu_OnImageViewer EVT_DIALOG_START",0,0,0);
          pCurNode = MediaGalleryApp_GetCurrentNode(pMe);
 
-#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
          {
 		 static IStatic * torch_pStatic = NULL;
          PromptMsg_Param_type m_PromptMsg;
@@ -3513,7 +3513,7 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
                       {IDS_MG_SETWALLPAPER, TRUE},
                      {IDS_MG_DELETE, TRUE}, {IDS_MG_DETAIL, TRUE}
                   };
-				#elif defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_20D)|| defined(FEATURE_VERSION_EC99)
+				#elif defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_20D)|| defined(FEATURE_VERSION_EC99)||defined(FEATURE_LOW_MEM_BIGFONT)
 				  MenuInsItem ImgViewOptions[] =
 				  {
 					 {IDS_MG_ZOOM, TRUE},{IDS_MG_DETAIL, TRUE}
@@ -6782,7 +6782,7 @@ static boolean MediaGalleryApp_ImageSettingDlg_HandleEvent(
                      {IDS_MG_VIEW, TRUE}, {IDS_MG_SETWALLPAPER, TRUE},
                      {IDS_MG_SORT, TRUE}, {IDS_MG_DETAILS, TRUE}
                   };
-				#elif defined(FEATURE_VERSION_LM126C)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_20D)|| defined(FEATURE_VERSION_EC99)
+				#elif defined(FEATURE_VERSION_LM126C)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_20D)|| defined(FEATURE_VERSION_EC99)||defined(FEATURE_LOW_MEM_BIGFONT)
 				  MenuInsItem OptItems[] =
 				  {
 					 {IDS_MG_VIEW, TRUE}, {IDS_MG_SORT, TRUE}, 
@@ -7546,7 +7546,7 @@ static int MGAppUtil_BuildPopupMenuItems(CMediaGalleryApp* pMe,
          /*Check whether can slide*/
          //if(TRUE  == MGAppUtil_ImageSlideCheck(pMe, pItemData))
          //MGMENU_ADDITEM(*ppPopupMenu, IDS_MG_SLIDE);
-         #if defined(FEATURE_VERSION_LM126C)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_20D)|| defined(FEATURE_VERSION_EC99)
+         #if defined(FEATURE_VERSION_LM126C)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_20D)|| defined(FEATURE_VERSION_EC99)||defined(FEATURE_LOW_MEM_BIGFONT)
 		 #else
          MGMENU_ADDITEM(*ppPopupMenu, IDS_MG_SETWALLPAPER);
 		 #endif

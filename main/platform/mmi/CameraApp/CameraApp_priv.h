@@ -461,8 +461,10 @@ typedef enum
     CAMERACFGQUALITY,
     #endif
     #ifndef FEATURE_VERSION_K212
+	#ifndef FEATURE_LOW_MEM_BIGFONT
     CAMERACFGSIZE,
     #endif
+	#endif
     CAMERACFGTONE,
     CAMERACFGSELFTIME,
     //CAMERACFGBANDING,

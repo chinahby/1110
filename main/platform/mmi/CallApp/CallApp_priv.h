@@ -142,7 +142,7 @@
 #define CALL_PICTURE_NAME_LENTH      64
 //#define DIALOG_SOFTKEY_HIGH        (pMe->m_LineHeight + 2)
 #define DIALERAPP_NUM_CALLHISTORY_FIELDS 5
-#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
 #define CALL_ANIMATION_WIDTH           88
 #else
 #define CALL_ANIMATION_WIDTH           36
@@ -215,7 +215,7 @@
 #ifdef FEATURE_VERSION_K212_ND
 #define CALL_LINE_HIGHT                      (21)
 #else
-#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
 #define CALL_LINE_HIGHT                      (38)
 #else
 #if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
@@ -234,7 +234,7 @@
 #define CALL_SECOND_LINE_Y               (CALL_FIRST_LINE_Y +    2*CALL_LINE_HIGHT)
 #define CALL_THIRD_LINE_Y                  (CALL_FIRST_LINE_Y +3*CALL_LINE_HIGHT )
 #define CALL_FOURTH_LINE_Y               (CALL_FIRST_LINE_Y +4*CALL_LINE_HIGHT )
-#elif defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212) 
+#elif defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
 #define CALL_SECOND_UP_LINE_Y               (CALL_FIRST_LINE_Y +    CALL_LINE_HIGHT)
 #define CALL_SECOND_LINE_Y               (CALL_FIRST_LINE_Y +    2*CALL_LINE_HIGHT)
 #define CALL_THIRD_LINE_Y                  (CALL_FIRST_LINE_Y +3*CALL_LINE_HIGHT )
@@ -864,7 +864,7 @@ typedef struct _CCallApp
 	int16   m_i;
 #endif
 	boolean            m_penup;
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)  ||defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_W021_WSF_CN)  
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)  ||defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_LOW_MEM_BIGFONT)  
        boolean                    m_isIncoming;
 #endif
 #if defined(FEATURE_VERSION_K212)    

@@ -1358,7 +1358,7 @@ __handleKeyEvent_input_channel_done__:
 		case AVK_DOWN:
 		case AVK_I:
 		case AVK_O:
-	#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_LM126C)||defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_IC241A_MMX)
+	#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_LM126C)||defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_LOW_MEM_BIGFONT)
 		case AVK_STAR:
 		case AVK_POUND:
 	#endif

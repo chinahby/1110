@@ -1991,14 +1991,18 @@ static int OEMALERT_PlayRinger
   case AEEALERT_ALERT_LOW_BATTERY: 
     IBACKLIGHT_Enable(pMe->m_pBacklight);
 	#ifndef FEATURE_VERSION_K212
+	#ifndef FEATURE_LOW_MEM_BIGFONT
     OEMALERT_GetRingerVol(pMe);
+	#endif
 	#endif
     #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
     pMe->m_ringCurVol = OEMSOUND_1ST_VOL;
     pMe->m_ringEndVol = OEMSOUND_1ST_VOL;
     #endif
 	#ifndef FEATURE_VERSION_K212
+	#ifndef FEATURE_LOW_MEM_BIGFONT
     OEMALERT_SetRingerVol(pMe, FALSE);
+	#endif
 	#endif
     OEMSOUND_Sound_Id_Start(SND_DEVICE_CURRENT,
                            (OEMALERT_InCall(pMe) || OEMALERT_RingInHeadset(pMe)) ?
@@ -2384,7 +2388,7 @@ static void OEMALERT_StartRingerAlert(IALERT *pMe,uint32 id,ALERT_SND_TYPE type)
                 gCurStatus.m_pCurRingerMgr = pMe->m_pRingerMgr;
                 gCurStatus.m_bplaying = TRUE;
             }		
-#if defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_W021_WSF_CN)
+#if defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_LOW_MEM_BIGFONT)
 			MSG_FATAL("pMe->m_iAlert..................00000000",0,0,0);
 				if(!pMe->m_iAlert)
 				{
@@ -2576,7 +2580,7 @@ static int OEMALERT_StartMp3Alert(IALERT * pMe, char *id, ALERT_SND_TYPE type)
                     (void) IMEDIA_Play(pMe->m_pMedia);
                     (void)IMEDIA_RegisterNotify(pMe->m_pMedia, OEMALERT_MediaNotify, pMe);
                 }      
-#if defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_W021_WSF_CN)
+#if defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_LOW_MEM_BIGFONT)
 
 				MSG_FATAL("pMe->m_iAlert..................111111",0,0,0);
 				if(!pMe->m_iAlert)
@@ -2873,7 +2877,7 @@ static void OEMALERT_HandleRingerAlertTimer(void *pUser)
                 MSG_FATAL("***zzg OEMALERT_HandleRingerAlertTimer 222 m_ringCurVol=%x***", pMe->m_ringCurVol, 0, 0);
              	OEMALERT_SetRingerVol(pMe, TRUE);
 #endif             
-#if defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_W021_WSF_CN)
+#if defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_LOW_MEM_BIGFONT)
 				if(!pMe->m_iAlert)
 				{
 					ISOUND_Vibrate(pMe->m_pSound,TIME_MS_RINGERVIBRATE_DURATION);
@@ -2903,7 +2907,7 @@ static void OEMALERT_HandleRingerAlertTimer(void *pUser)
                     INCREMENT_ESCALATING_RINGER(pMe->m_ringCurVol);
                  	OEMALERT_SetRingerVol(pMe, TRUE);
 #endif                 					
-#if defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_W021_WSF_CN)
+#if defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_LOW_MEM_BIGFONT)
 					if(!pMe->m_iAlert)
 					{
 						ISOUND_Vibrate(pMe->m_pSound,TIME_MS_RINGERVIBRATE_DURATION);
@@ -2983,7 +2987,7 @@ static void OEMALERT_HandleRingerAlertTimer(void *pUser)
                  	OEMALERT_SetRingerVol(pMe, TRUE);
 #endif               
                 }      
-#if defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_W021_WSF_CN)
+#if defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_LOW_MEM_BIGFONT)
 				MSG_FATAL("pMe->m_iAlert..................2222222",0,0,0);
 				if(!pMe->m_iAlert)
 				{
@@ -3477,14 +3481,14 @@ static void OEMALERT_StartMissedCallAlert(IALERT *pMe)
    if (OEMNV_ALERT_ENABLE == missedCallAlert) 
    {
       OEMALERT_GetRingerVol(pMe);
-#if defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212) || defined (FEATURE_VERSION_K212_20D)|| defined (FEATURE_VERSION_K212_ND)
+#if defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212) || defined (FEATURE_VERSION_K212_20D)|| defined (FEATURE_VERSION_K212_ND)||defined(FEATURE_LOW_MEM_BIGFONT)
       OEMALERT_SetRingerVolEx(pMe, OEMSOUND_1ST_VOL);
 #else
       OEMALERT_SetRingerVol(pMe, FALSE);
 #endif
       pMe->alert_count = 0; 
       OEMALERT_HandleMissedCallTimer(pMe);
-#if defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212) || defined (FEATURE_VERSION_K212_20D)|| defined (FEATURE_VERSION_K212_ND)
+#if defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212) || defined (FEATURE_VERSION_K212_20D)|| defined (FEATURE_VERSION_K212_ND)||defined(FEATURE_LOW_MEM_BIGFONT)
       OEMALERT_SetRingerVol(pMe, FALSE);
 #endif
    }
@@ -3567,7 +3571,7 @@ static void OEMALERT_HandleMissedCallTimer(void *pUser)
                                 OEMALERT_RingInHeadset(pMe) ?
                                 SND_METHOD_VOICE :
                                 SND_METHOD_RING,
-								#if defined(FEATURE_VERSION_K212)
+								#if defined(FEATURE_VERSION_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
                                 (int) SND_PIP_TONE,
                                 #else
 								(int) SND_MESSAGE_ALERT,
