@@ -7,7 +7,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 =========================================================================== */
 
 #define T_QSC1100
-#ifdef FEATURE_VERSION_X3
+#if defined(FEATURE_VERSION_X3)||defined(FEATURE_VERSION_W516_C260)
 #define FLASH_NOR_EFS2_START_BYTE_OFFSET 0x00E00000   //内存分区
 #else
 #define FLASH_NOR_EFS2_START_BYTE_OFFSET 0x00C00000   //内存分区

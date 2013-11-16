@@ -268,6 +268,27 @@ CONSTFILE_FILES+=\
 		settings.mp3|fs:/hsmm/mainmenu/settings.mp3 \
 		recentcall.mp3|fs:/hsmm/mainmenu/recentcall.mp3 \
 		suafer.mp3|fs:/hsmm/mainmenu/suafer.mp3	
+else
+ifeq ($(USES_RESDIR),W516_C260)
+CONSTFILE_FILES+=\
+	file_manger.png|fs:/image/mainmenu/file_manger.png \
+	file_manger_focus.png|fs:/image/mainmenu/file_manger_focus.png \
+	phonebook.png|fs:/image/mainmenu/phonebook.png \
+	phonebook_focus.png|fs:/image/mainmenu/phonebook_focus.png \
+	Call_history.png|fs:/image/mainmenu/Call_history.png \
+	Call_history_focus.png|fs:/image/mainmenu/Call_history_focus.png \
+	multimedia.png|fs:/image/mainmenu/multimedia.png \
+	multimedia_focus.png|fs:/image/mainmenu/multimedia_focus.png \
+	message.png|fs:/image/mainmenu/message.png \
+	message_focus.png|fs:/image/mainmenu/message_focus.png \
+	Setting.png|fs:/image/mainmenu/Setting.png \
+	Setting_focus.png|fs:/image/mainmenu/Setting_focus.png \
+	organizer.png|fs:/image/mainmenu/organizer.png \
+	organizer_focus.png|fs:/image/mainmenu/organizer_focus.png \
+	Game.png|fs:/image/mainmenu/Game.png \
+	Game_focus.png|fs:/image/mainmenu/Game_focus.png \
+	Browser.png|fs:/image/mainmenu/Browser.png \
+	Browser_focus.png|fs:/image/mainmenu/Browser_focus.png
 else	
 ifeq ($(USES_RESDIR),W021C11)	
 CONSTFILE_FILES+=\
@@ -341,6 +362,7 @@ endif
 endif
 endif
 endif	
+endif
 endif
 endif
 endif

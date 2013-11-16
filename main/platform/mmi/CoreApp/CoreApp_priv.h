@@ -595,6 +595,13 @@ typedef enum
 #define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweron.gif"
 #define    PWROFF_ANI_FRAME_COUNT                PWRON_ANI_FRAME_COUNT
 #define    PWROFF_ANI_RATE                       (7000) //(9000)
+#elif defined FEATURE_VERSION_W516_C260
+#define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronoff.gif"
+#define    PWRON_ANI_FRAME_COUNT                 (1)
+#define    PWRON_ANI_RATE                        (5000)
+#define    PWROFF_ANI_FILE                       PWRON_ANI_FILE
+#define    PWROFF_ANI_FRAME_COUNT                PWRON_ANI_FRAME_COUNT
+#define    PWROFF_ANI_RATE                       PWRON_ANI_RATE
 #else
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronoff.gif"
 #define    PWRON_ANI_FRAME_COUNT                 (1)
@@ -739,6 +746,9 @@ typedef enum
 #if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
 #define MUSIC_WIDTH            (SCREEN_HEIGHT-53) //78
 #define MUSIC_START_WIDTH      (SCREEN_HEIGHT-51) //80
+#elif defined(FEATURE_VERSION_W516_C260)
+#define MUSIC_WIDTH            (SCREEN_HEIGHT-62) //78
+#define MUSIC_START_WIDTH      (SCREEN_HEIGHT-60) //80
 #else
 #define MUSIC_WIDTH            (SCREEN_HEIGHT-52) //78
 #define MUSIC_START_WIDTH      (SCREEN_HEIGHT-50) //80

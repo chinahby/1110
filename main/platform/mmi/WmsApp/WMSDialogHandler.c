@@ -3616,7 +3616,9 @@ static boolean IDD_SETTING_Handler(void   *pUser,
 #endif            
 #ifndef FEATURE_CARRIER_THAILAND_HUTCH
 #ifndef FEATURE_VERSION_K212_ND
+#ifndef FEATURE_VERSION_W516_C260
             MENU_ADDITEM(pMenu, IDS_PRIORITY);
+#endif
 #endif
 #endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH
             MENU_ADDITEM(pMenu, IDS_SENDMODE);
@@ -3628,7 +3630,7 @@ static boolean IDD_SETTING_Handler(void   *pUser,
     &&!defined(FEATURE_VERSION_W021_CT100)&&!defined(FEATURE_VERSION_K212)\
     &&!defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_VERSION_K212_20D)\
     &&!defined(FEATURE_VERSION_K212_ND)&&!defined(FEATURE_VERSION_W021_CT100_QVGA)\
-    &&!defined(FEATURE_VERSION_W021_C11)
+    &&!defined(FEATURE_VERSION_W021_C11)&&!defined(FEATURE_VERSION_W516_C260)
             MENU_ADDITEM(pMenu, IDS_CALLBACKNUM);
 #endif
 #endif 
@@ -3675,11 +3677,13 @@ static boolean IDD_SETTING_Handler(void   *pUser,
                     CLOSE_DIALOG(DLGRET_SETTINGAUTOSAVE)
                     return TRUE;
 #ifndef FEATURE_VERSION_K212_ND
+#ifndef FEATURE_VERSION_W516_C260
                 // 发出短信的优先级设置
                 case IDS_PRIORITY:
                     CLOSE_DIALOG(DLGRET_PRIORITY)
                     return TRUE;
-#endif    
+#endif   
+#endif
                 // 发出短信是否需要递交报告
                 case IDS_REPORTTITLE: //IDS_DELIVERYREPORTS:
                     CLOSE_DIALOG(DLGRET_REPORTS)
@@ -3694,7 +3698,7 @@ static boolean IDD_SETTING_Handler(void   *pUser,
 #if 1//def FEATURE_CARRIER_TAIWAN_APBW        //add by yangdecai   2010-08-23 
                 // 发出短信是否带回叫号码
                 MSG_FATAL("IDD_SETTING_Handler EVT_COMMAND IDS_CALLBACKNUM", 0, 0, 0);
-#if !defined(FEATURE_VERSION_C316)&&!defined(FEATURE_VERSION_K202_LM129C)&&!defined(FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_VERSION_K212_20D)&&!defined(FEATURE_VERSION_K212_ND)&&!defined(FEATURE_VERSION_K212_HUALU)
+#if !defined(FEATURE_VERSION_C316)&&!defined(FEATURE_VERSION_K202_LM129C)&&!defined(FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_VERSION_K212_20D)&&!defined(FEATURE_VERSION_K212_ND)&&!defined(FEATURE_VERSION_K212_HUALU)&&!defined(FEATURE_VERSION_W516_C260)
                 case IDS_CALLBACKNUM:
                     CLOSE_DIALOG(DLGRET_CALLBACKNUM)
                     return TRUE;
@@ -5461,7 +5465,9 @@ static boolean IDD_SENDMODE_Handler(void *pUser,
             MENU_ADDITEM(pMenu, IDS_SENDONLY);
 #if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_K212_HUALU)
 #ifndef FEATURE_VERSION_K212_ND
+#ifndef FEATURE_VERSION_W516_C260
             MENU_ADDITEM(pMenu, IDS_SAVEONLY);
+#endif
 #endif
 #endif
             {
@@ -9639,12 +9645,14 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                     nControls++;
                 }
 #if !defined(FEATURE_VERSION_K212_ND)
+#if !defined(FEATURE_VERSION_W516_C260)
                 if (mask & 0x04)
                 {
                     wControls[nControls] = IDC_MENU_PRI;
                     ISHELL_LoadResString(pMe->m_pShell, AEE_WMSAPPRES_LANGFILE, IDS_PRIORITY, wstrText[nControls], sizeof(wstrText));
                     nControls++;
                 }
+#endif
 #endif
 #if !defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_VERSION_K212_20D)              
                 if (mask & 0x02)
@@ -9967,7 +9975,9 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
 
                             MENU_ADDITEM((IMenuCtl *)pControl, IDS_SENDONLY);
 							#ifndef FEATURE_VERSION_K212_ND
+							#ifndef FEATURE_VERSION_W516_C260
                             MENU_ADDITEM((IMenuCtl *)pControl, IDS_SAVEONLY);
+							#endif
 							#endif
                             MENU_ADDITEM((IMenuCtl *)pControl, IDS_SENDOPT_SAVEANDSEND_SHORT);
                             

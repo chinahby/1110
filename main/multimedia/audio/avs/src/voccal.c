@@ -10579,7 +10579,7 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_0_cal = {
   VOC_NS_ON,                     /* Noise suppressor enable */
 #if defined(CUST_EDITION) && !defined(FEATURE_OEMOMH)
 //#ifdef FEATURE_VERSION_1110W516
-#if defined(FEATURE_VERSION_K202)
+#if defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_W516_C260)
   0xF56F,                        /* Tx Voice Volume         */
   0x3000,                        /* Tx DTMF gain            */
   0x9B00,                        /* CODEC Tx gain           */   //ÌýÍ²
@@ -15270,12 +15270,12 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_speaker_cal = {
   #endif /* FEATURE_AVS_NEXTGEN_EC */
   VOC_NS_ON,                       /* Noise suppressor enable */
 #if defined(CUST_EDITION) && !defined(FEATURE_OEMOMH)
-#if defined (FEATURE_VERSION_W516) || defined (FEATURE_VERSION_W208S) || defined(FEATURE_VERSION_W027)
+#if defined (FEATURE_VERSION_W516) || defined (FEATURE_VERSION_W208S)
   0x9000,						   /* Tx Voice Volume 		*/
   0x1000,						   /* Tx DTMF gain			*/
   0x5000,						   /* CODEC Tx gain			*/
   0x5000,						   /* CODEC Rx gain			*/
-#elif defined(FEATURE_VERSION_K202)
+#elif defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_W516_C260)
   0xF000,						   /* Tx Voice Volume 		*/
   0x1000,						   /* Tx DTMF gain			*/
   0x5000,						   /* CODEC Tx gain			*/

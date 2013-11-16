@@ -65,7 +65,7 @@
 #define  MAX_MATRIX_COLS 3
 #endif
 #elif defined (FEATURE_DISP_176X220)
-#if defined(FEATURE_VERSION_VG68) || defined(FEATURE_VERSION_SKY)||defined(FEATURE_VERSION_K202_LM129C)
+#if defined(FEATURE_VERSION_VG68) || defined(FEATURE_VERSION_SKY)||defined(FEATURE_VERSION_K202_LM129C)||defined(FEATURE_VERSION_W516_C260)
 #define  MAX_MATRIX_ITEMS 9
 #define  MAX_MATRIX_ROWS 3
 #define  MAX_MATRIX_COLS 3
@@ -299,7 +299,7 @@ typedef struct _MainMenu
 #define ICON_ANIMATED_HEIGHT    32
 #endif
 #elif defined (FEATURE_DISP_176X220)
-#ifdef FEATURE_VERSION_K202_LM129C //xxzhen
+#if defined(FEATURE_VERSION_K202_LM129C)||defined(FEATURE_VERSION_W516_C260) //xxzhen
 #define ICON_WIDTH              50 //40
 #define ICON_HEIGHT             50 //32
 #define ICON_ANIMATED_WIDTH     50 //40
@@ -380,6 +380,16 @@ typedef struct _MainMenu
     #define ICON7_ANI      "fs:/image/mainmenu/qsc1100_07.png"
     #define ICON8_ANI      "fs:/image/mainmenu/qsc1100_08.png"
     #define ICON9_ANI      "fs:/image/mainmenu/qsc1100_09.png"
+#elif defined(FEATURE_VERSION_W516_C260)
+    #define ICON1_ANI      "fs:/image/mainmenu/file_manger.png" //"fs:/image/mainmenu/phonebook.png"
+    #define ICON2_ANI      "fs:/image/mainmenu/phonebook.png"  //"fs:/image/mainmenu/message.png"
+    #define ICON3_ANI      "fs:/image/mainmenu/Call_history.png"
+    #define ICON4_ANI      "fs:/image/mainmenu/multimedia.png" //"fs:/image/mainmenu/Setting.png"
+    #define ICON5_ANI      "fs:/image/mainmenu/message.png"   //"fs:/image/mainmenu/multimedia.png"
+    #define ICON6_ANI      "fs:/image/mainmenu/Setting.png"		//"fs:/image/mainmenu/file_manger.png"
+    #define ICON7_ANI      "fs:/image/mainmenu/organizer.png"
+    #define ICON8_ANI      "fs:/image/mainmenu/Game.png"
+	#define ICON9_ANI      "fs:/image/mainmenu/Browser.png"
 // add by pyuangui	
 #elif defined(FEATURE_VERSION_C316)
     #define ICON1_ANI      "fs:/image/mainmenu/phonebook.png"
@@ -541,6 +551,16 @@ typedef struct _MainMenu
     #define ICON7_ANI_1      "fs:/image/mainmenu/qsc1100_07_focus.png"
     #define ICON8_ANI_1      "fs:/image/mainmenu/qsc1100_08_focus.png"
     #define ICON9_ANI_1      "fs:/image/mainmenu/qsc1100_09_focus.png"
+#elif defined(FEATURE_VERSION_W516_C260)
+    #define ICON1_ANI_1     "fs:/image/mainmenu/file_manger_focus.png"// "fs:/image/mainmenu/phonebook_focus.png"
+    #define ICON2_ANI_1      "fs:/image/mainmenu/phonebook_focus.png"//"fs:/image/mainmenu/message_focus.png"
+    #define ICON3_ANI_1      "fs:/image/mainmenu/Call_history_focus.png"
+    #define ICON4_ANI_1      "fs:/image/mainmenu/multimedia_focus.png"//"fs:/image/mainmenu/Setting_focus.png"
+    #define ICON5_ANI_1    	"fs:/image/mainmenu/message_focus.png"	 // "fs:/image/mainmenu/multimedia_focus.png"
+    #define ICON6_ANI_1      "fs:/image/mainmenu/Setting_focus.png"	//"fs:/image/mainmenu/file_manger_focus.png"
+    #define ICON7_ANI_1      "fs:/image/mainmenu/organizer_focus.png"
+    #define ICON8_ANI_1      "fs:/image/mainmenu/Game_focus.png"
+	#define ICON9_ANI_1      "fs:/image/mainmenu/Browser_focus.png"
 // add by pyuangui	
 #elif defined(FEATURE_VERSION_C316)
     #define ICON1_ANI_1      "fs:/image/mainmenu/phonebook_focus.png"

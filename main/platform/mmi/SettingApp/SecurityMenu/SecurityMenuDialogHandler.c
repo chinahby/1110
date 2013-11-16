@@ -1570,7 +1570,7 @@ static boolean  SecurityCallPassWordInputDlgHandler(CSecurityMenu *pMe,
                                 text,
                                 -1, 
                                 xOffset, 
-#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_W516_C260)
                                 0,
 #else
                                 MENUITEM_HEIGHT*1/2,
@@ -1587,7 +1587,7 @@ static boolean  SecurityCallPassWordInputDlgHandler(CSecurityMenu *pMe,
                                 wstrDisplay,
                                 -1, 
                                 2*xOffset, 
-#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_W516_C260)
                                 MENUITEM_HEIGHT,
 #else
                                 MENUITEM_HEIGHT*3/2,
@@ -1606,7 +1606,7 @@ static boolean  SecurityCallPassWordInputDlgHandler(CSecurityMenu *pMe,
                                 text,
                                 -1, 
                                 xOffset, 
-#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_W516_C260)
                                 MENUITEM_HEIGHT*2,
 #else
                                 MENUITEM_HEIGHT*5/2,
@@ -1625,7 +1625,7 @@ static boolean  SecurityCallPassWordInputDlgHandler(CSecurityMenu *pMe,
                                 wstrDisplay,
                                 -1, 
                                 2*xOffset, 
-#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_W516_C260)
                                 MENUITEM_HEIGHT*3,
 #else
                                 MENUITEM_HEIGHT*7/2,
@@ -1640,6 +1640,8 @@ static boolean  SecurityCallPassWordInputDlgHandler(CSecurityMenu *pMe,
                                                    sizeof(text));
 #ifndef FEATURE_VERSION_K212_20D
 #ifndef FEATURE_VERSION_EC99
+#ifndef FEATURE_VERSION_W516_C260
+
                 IDISPLAY_DrawText(pMe->m_pDisplay, 
                                 AEE_FONT_BOLD, 
                                 text,
@@ -1650,6 +1652,7 @@ static boolean  SecurityCallPassWordInputDlgHandler(CSecurityMenu *pMe,
                                 IDF_TEXT_TRANSPARENT);
 #endif
 #endif
+#endif
             
 
                 (void)IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, nOldFontColor);
@@ -1658,7 +1661,7 @@ static boolean  SecurityCallPassWordInputDlgHandler(CSecurityMenu *pMe,
                 // 绘制底条提示
                 if (nLen > 3)
                 {// 确定-----删除
-#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_W516_C260)
                     SEC_MENU_DRAW_BOTTOMBAR(BTBAR_NEXT_DEL)
 #else
                     SEC_MENU_DRAW_BOTTOMBAR(BTBAR_OK_DELETE)
@@ -1765,7 +1768,7 @@ static boolean  SecurityCallPassWordInputDlgHandler(CSecurityMenu *pMe,
                     break;
 
                     case AVK_DOWN:
-#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_W516_C260)
                     case AVK_SELECT:
                     case AVK_INFO:
 #endif                        
@@ -2440,7 +2443,7 @@ static boolean  SecurityPinChangeDlgHandler(CSecurityMenu *pMe,
                                 text,
                                 -1, 
                                 xOffset, 
-#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_W516_C260)
                                 0,
 #else
                                 MENUITEM_HEIGHT*1/2,
@@ -2457,7 +2460,7 @@ static boolean  SecurityPinChangeDlgHandler(CSecurityMenu *pMe,
                                 wstrDisplay,
                                 -1, 
                                 2*xOffset, 
-#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_W516_C260)
                                 MENUITEM_HEIGHT,
 #else
                                 MENUITEM_HEIGHT*3/2,
@@ -2476,7 +2479,7 @@ static boolean  SecurityPinChangeDlgHandler(CSecurityMenu *pMe,
                                     text,
                                     -1, 
                                     xOffset, 
-#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_W516_C260)
                                     MENUITEM_HEIGHT*2,
 #else
                                     MENUITEM_HEIGHT*5/2,
@@ -2497,7 +2500,7 @@ static boolean  SecurityPinChangeDlgHandler(CSecurityMenu *pMe,
                                 wstrDisplay,
                                 -1, 
                                 2*xOffset, 
-#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_W516_C260)
                                 MENUITEM_HEIGHT*3,
 #else
                                 MENUITEM_HEIGHT*7/2,
@@ -2513,6 +2516,8 @@ static boolean  SecurityPinChangeDlgHandler(CSecurityMenu *pMe,
 												sizeof(text));
 #ifndef FEATURE_VERSION_EC99
 #ifndef FEATURE_VERSION_K212_20D
+#ifndef FEATURE_VERSION_W516_C260
+
                 IDISPLAY_DrawText(pMe->m_pDisplay, 
                                     AEE_FONT_BOLD, 
                                     text,
@@ -2523,6 +2528,7 @@ static boolean  SecurityPinChangeDlgHandler(CSecurityMenu *pMe,
                                     IDF_TEXT_TRANSPARENT);
 #endif
 #endif
+#endif
 
                 IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, nOldFontColor);
 
@@ -2531,7 +2537,7 @@ static boolean  SecurityPinChangeDlgHandler(CSecurityMenu *pMe,
                 // 绘制底条提示
                 if (nLen > 3)
                 {// 确定-----删除
-#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_W516_C260)
                     SEC_MENU_DRAW_BOTTOMBAR(BTBAR_NEXT_DEL)
 #else                
                     SEC_MENU_DRAW_BOTTOMBAR(BTBAR_OK_DELETE)
@@ -2638,7 +2644,7 @@ static boolean  SecurityPinChangeDlgHandler(CSecurityMenu *pMe,
                     break;
 
                     case AVK_DOWN:
-#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_W516_C260)
                     case AVK_SELECT:
                     case AVK_INFO:
 #endif                        
@@ -4151,7 +4157,7 @@ static boolean  SecurityAskPinDlgHandler(CSecurityMenu *pMe,
                             text,
                             -1, 
                             xOffset, 
-#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_W516_C260)
                             0,
 #else
                             MENUITEM_HEIGHT*1/2,
@@ -4171,7 +4177,7 @@ static boolean  SecurityAskPinDlgHandler(CSecurityMenu *pMe,
                                 wstrDisplay,
                                 -1, 
                                 2*xOffset, 
-#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_W516_C260)
                                 MENUITEM_HEIGHT,
 #else
                                 MENUITEM_HEIGHT*3/2,
@@ -4193,7 +4199,7 @@ static boolean  SecurityAskPinDlgHandler(CSecurityMenu *pMe,
                                         text,
                                         -1, 
                                         xOffset, 
-#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_W516_C260)
                                         MENUITEM_HEIGHT*2,
 #else
                                         MENUITEM_HEIGHT*5/2,
@@ -4213,7 +4219,7 @@ static boolean  SecurityAskPinDlgHandler(CSecurityMenu *pMe,
                                         text,
                                         -1, 
                                         xOffset, 
-#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_W516_C260)
                                         MENUITEM_HEIGHT*3,
 #else
                                         MENUITEM_HEIGHT*9/2,
@@ -4640,7 +4646,7 @@ static boolean  SecurityAskCallPasswordDlgHandler(CSecurityMenu *pMe,
                                     text,
                                     -1, 
                                     xOffset, 
-#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_W516_C260)
                                     0,
 #else
                                     MENUITEM_HEIGHT*1/2,
@@ -4660,7 +4666,7 @@ static boolean  SecurityAskCallPasswordDlgHandler(CSecurityMenu *pMe,
                                 wstrDisplay,
                                 -1, 
                                 2*xOffset, 
-#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_W516_C260)
                                 MENUITEM_HEIGHT,
 #else
                                 MENUITEM_HEIGHT*3/2,
@@ -4680,7 +4686,7 @@ static boolean  SecurityAskCallPasswordDlgHandler(CSecurityMenu *pMe,
                                     text,
                                     -1, 
                                     xOffset, 
-#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_W516_C260)
                                     MENUITEM_HEIGHT*2,
 #else
                                     MENUITEM_HEIGHT*5/2,
@@ -4699,7 +4705,7 @@ static boolean  SecurityAskCallPasswordDlgHandler(CSecurityMenu *pMe,
                                     text,
                                     -1, 
                                     xOffset, 
-#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_W516_C260)
                                     MENUITEM_HEIGHT*3,
 #else
                                     MENUITEM_HEIGHT*9/2,
@@ -4714,7 +4720,7 @@ static boolean  SecurityAskCallPasswordDlgHandler(CSecurityMenu *pMe,
                 // 绘制底条提示
                 if (nLen > 3)
                 {// 确定-----删除
-#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_W516_C260)
                     SEC_MENU_DRAW_BOTTOMBAR(BTBAR_NEXT_DEL)
 #else                
                     SEC_MENU_DRAW_BOTTOMBAR(BTBAR_OK_DELETE)
@@ -4821,7 +4827,7 @@ static boolean  SecurityAskCallPasswordDlgHandler(CSecurityMenu *pMe,
                    break;
 
                    case AVK_DOWN:
-#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_W516_C260)
                     case AVK_SELECT:
                     case AVK_INFO:
 #endif                     
@@ -5341,6 +5347,8 @@ static boolean  SecurityAffirmPassWordHandler(CSecurityMenu *pMe,
 
 #ifndef FEATURE_VERSION_EC99
 #ifndef FEATURE_VERSION_K212_20D
+#ifndef FEATURE_VERSION_W516_C260
+
                 IDISPLAY_DrawText(pMe->m_pDisplay, 
                                     AEE_FONT_BOLD, 
                                     text,
@@ -5351,6 +5359,7 @@ static boolean  SecurityAffirmPassWordHandler(CSecurityMenu *pMe,
                                     IDF_TEXT_TRANSPARENT);
 #endif
 #endif
+#endif
 
 
                 MEMSET(strDisplay, '*', pMe->nOldPSWLength);
@@ -5359,6 +5368,8 @@ static boolean  SecurityAffirmPassWordHandler(CSecurityMenu *pMe,
 
 #ifndef FEATURE_VERSION_EC99
 #ifndef FEATURE_VERSION_K212_20D
+#ifndef FEATURE_VERSION_W516_C260
+
                 IDISPLAY_DrawText(pMe->m_pDisplay, 
                                 AEE_FONT_BOLD, 
                                 wstrDisplay,
@@ -5367,6 +5378,7 @@ static boolean  SecurityAffirmPassWordHandler(CSecurityMenu *pMe,
                                 MENUITEM_HEIGHT*3/2,
                                 NULL, 
                                 IDF_TEXT_TRANSPARENT);
+#endif
 #endif
 #endif
 
@@ -5394,7 +5406,7 @@ static boolean  SecurityAffirmPassWordHandler(CSecurityMenu *pMe,
                                     text,
                                     -1, 
                                     xOffset, 
-#if defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_W516_C260)
                                     0,
 #else
                                     MENUITEM_HEIGHT*5/2,
@@ -5412,7 +5424,7 @@ static boolean  SecurityAffirmPassWordHandler(CSecurityMenu *pMe,
                                 wstrDisplay,
                                 -1, 
                                 2*xOffset, 
-#if defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_W516_C260)
                                 MENUITEM_HEIGHT,
 #else
                                 MENUITEM_HEIGHT*7/2,
@@ -5432,7 +5444,7 @@ static boolean  SecurityAffirmPassWordHandler(CSecurityMenu *pMe,
                                     text,
                                     -1, 
                                     xOffset, 
-#if defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_W516_C260)
                                     MENUITEM_HEIGHT*2,
 #else
                                     MENUITEM_HEIGHT*9/2,
@@ -5453,7 +5465,7 @@ static boolean  SecurityAffirmPassWordHandler(CSecurityMenu *pMe,
                                 wstrDisplay,
                                 -1, 
                                 2*xOffset, 
-#if defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_W516_C260)
                                 MENUITEM_HEIGHT*3,
 #else
                                 MENUITEM_HEIGHT*11/2,
@@ -5821,6 +5833,8 @@ static boolean  SecurityAskPUKPassWordHandler(CSecurityMenu *pMe,
 
 #ifndef FEATURE_VERSION_EC99
 #ifndef FEATURE_VERSION_K212_20D
+#ifndef FEATURE_VERSION_W516_C260
+
                 IDISPLAY_DrawText(pMe->m_pDisplay, 
                                     AEE_FONT_BOLD, 
                                     text,
@@ -5829,6 +5843,7 @@ static boolean  SecurityAskPUKPassWordHandler(CSecurityMenu *pMe,
                                     MENUITEM_HEIGHT*1/2, 
                                     NULL, 
                                     IDF_TEXT_TRANSPARENT);
+#endif
 #endif
 #endif
 
@@ -5840,6 +5855,8 @@ static boolean  SecurityAskPUKPassWordHandler(CSecurityMenu *pMe,
 
 #ifndef FEATURE_VERSION_EC99
 #ifndef FEATURE_VERSION_K212_20D
+#ifndef FEATURE_VERSION_W516_C260
+
                     IDISPLAY_DrawText(pMe->m_pDisplay, 
                                     AEE_FONT_BOLD, 
                                     wstrDisplay,
@@ -5848,6 +5865,7 @@ static boolean  SecurityAskPUKPassWordHandler(CSecurityMenu *pMe,
                                     MENUITEM_HEIGHT*3/2,
                                     NULL, 
                                     IDF_TEXT_TRANSPARENT);
+#endif
 #endif
 #endif
 
@@ -5863,6 +5881,7 @@ static boolean  SecurityAskPUKPassWordHandler(CSecurityMenu *pMe,
 
 #ifndef FEATURE_VERSION_EC99
 #ifndef FEATURE_VERSION_K212_20D
+#ifndef FEATURE_VERSION_W516_C260
                     IDISPLAY_DrawText(pMe->m_pDisplay, 
                                     AEE_FONT_BOLD, 
                                     wstrDisplay,
@@ -5871,6 +5890,7 @@ static boolean  SecurityAskPUKPassWordHandler(CSecurityMenu *pMe,
                                     MENUITEM_HEIGHT*3/2,
                                     NULL, 
                                     IDF_TEXT_TRANSPARENT);
+#endif
 #endif
 #endif
                 }
@@ -5886,7 +5906,7 @@ static boolean  SecurityAskPUKPassWordHandler(CSecurityMenu *pMe,
                                     text,
                                     -1, 
                                     xOffset, 
-#if defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_W516_C260)
                                     0,
 #else
                                     MENUITEM_HEIGHT*5/2,
@@ -5906,7 +5926,7 @@ static boolean  SecurityAskPUKPassWordHandler(CSecurityMenu *pMe,
                                     wstrDisplay,
                                     -1, 
                                     2*xOffset, 
-#if defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_W516_C260)
                                     MENUITEM_HEIGHT,
 #else
                                     MENUITEM_HEIGHT*7/2,
@@ -5928,7 +5948,7 @@ static boolean  SecurityAskPUKPassWordHandler(CSecurityMenu *pMe,
                                     wstrDisplay,
                                     -1, 
                                     2*xOffset, 
-#if defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_W516_C260)
                                     MENUITEM_HEIGHT,
 #else
                                     MENUITEM_HEIGHT*7/2,
@@ -5949,7 +5969,7 @@ static boolean  SecurityAskPUKPassWordHandler(CSecurityMenu *pMe,
                                     text,
                                     -1, 
                                     xOffset,                                     
-#if defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_W516_C260)
                                     MENUITEM_HEIGHT*2,
 #else
                                     MENUITEM_HEIGHT*9/2,
@@ -5971,7 +5991,7 @@ static boolean  SecurityAskPUKPassWordHandler(CSecurityMenu *pMe,
                                     wstrDisplay,
                                     -1, 
                                     2*xOffset, 
-#if defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_W516_C260)
                                     MENUITEM_HEIGHT*3,
 #else
                                     MENUITEM_HEIGHT*11/2,

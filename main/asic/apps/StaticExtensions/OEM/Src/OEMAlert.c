@@ -2311,6 +2311,10 @@ static void OEMALERT_StartRingerAlert(IALERT *pMe,uint32 id,ALERT_SND_TYPE type)
         pMe->m_ringCurVol = OEMSOUND_2ND_VOL;
         pMe->m_ringEndVol = OEMSOUND_2ND_VOL;
     #endif
+	#if defined(FEATURE_VERSION_W516_C260)
+			pMe->m_ringCurVol = OEMSOUND_5TH_VOL;
+		   pMe->m_ringEndVol  = OEMSOUND_5TH_VOL;
+	#endif
     }
 #ifdef FEATURE_SMSTONETYPE_MID      
     else if(type == ALERT_SMS_SND)

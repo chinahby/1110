@@ -318,7 +318,7 @@ static const CCameraSize g_CameraSizeCFG[] =
 #elif defined(FEATURE_DISP_176X220)
     {176,220,L"176*220"}, // QCIF
     {240,320,L"240*320"}, // QVGA
-#if !defined(FEATURE_VERSION_VG68)&&!defined(FEATURE_VERSION_K202_LM129C)
+#if !defined(FEATURE_VERSION_VG68)&&!defined(FEATURE_VERSION_K202_LM129C)&&!defined(FEATURE_VERSION_W516_C260)
 #if defined (FEATURE_VERSION_C337)
     {352,464,L"352*464"}, // VGA    
 #else
@@ -395,7 +395,7 @@ static const CCameraSize g_CameraSizeCFG_10[] =
 #else
     {176,220,L"176*220"}, // QCIF
     {240,320,L"240*320"}, // QVGA
-#if !defined (FEATURE_VERSION_VG68)&&!defined(FEATURE_VERSION_K202_LM129C)
+#if !defined (FEATURE_VERSION_VG68)&&!defined(FEATURE_VERSION_K202_LM129C)&&!defined(FEATURE_VERSION_W516_C260)
 #if defined (FEATURE_VERSION_C337)
     {352,464,L"352*464"}, // VGA    
 #else
@@ -4169,7 +4169,7 @@ static void CameraApp_PopMenu_ResetCFGInit(CCameraApp *pMe, IMenuCtl *popMenu)
     #else
     CameraApp_SetPopMenuRect(pMe, popMenu, 2);  
     #endif
-	#elif defined(FEATURE_VERSION_K212_ND)
+	#elif defined(FEATURE_VERSION_K212_ND)||defined(FEATURE_VERSION_W516_C260)
 	CameraApp_SetPopMenuRect(pMe, popMenu, 2);
 	#else
 	CameraApp_SetPopMenuRect(pMe, popMenu, 1);
@@ -4550,7 +4550,6 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
 	        break;
     }
 #endif
-
 #ifdef FEATURE_VERSION_K212_ND
     // size cfgID
     (void)ICONFIG_GetItem(pMe->m_pConfig,
@@ -4763,7 +4762,7 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
 #endif	
 //Add End
 
-#if defined (FEATURE_VERSION_VG68)||defined(FEATURE_VERSION_K202_LM129C)
+#if defined (FEATURE_VERSION_VG68)||defined(FEATURE_VERSION_K202_LM129C)||defined(FEATURE_VERSION_W516_C260)
     // size cfgID
     (void)ICONFIG_GetItem(pMe->m_pConfig,
                           CFGI_CAMERA_SIZE,

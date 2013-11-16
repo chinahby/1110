@@ -247,6 +247,8 @@ when       who     what, where, why
 #define OEMNV_RINGER_VOL_INIT {4,0,0,4,4} 
 #elif defined(FEATURE_VERSION_K212_20D)
 #define OEMNV_RINGER_VOL_INIT {5,0,0,4,4} 
+#elif defined(FEATURE_VERSION_W516_C260)
+#define OEMNV_RINGER_VOL_INIT {5,0,0,4,4} 
 #elif defined(FEATURE_ALERT_3AND1)
 #define OEMNV_RINGER_VOL_INIT {5,0,4,4,4} 
 #else
@@ -323,6 +325,8 @@ when       who     what, where, why
 #endif
 
 #ifdef FEATURE_VERSION_EC99
+#define OEMNV_BACKLIGHT_LEVEL       (OEMNV_BACKLIGHT_LEVEL_BRIGHT)
+#elif defined(FEATURE_VERSION_W516_C260)
 #define OEMNV_BACKLIGHT_LEVEL       (OEMNV_BACKLIGHT_LEVEL_BRIGHT)
 #elif defined(FEATURE_VERSION_K212_ND)
 #define OEMNV_BACKLIGHT_LEVEL       (OEMNV_BACKLIGHT_LEVEL_NORMAL)
@@ -559,6 +563,8 @@ typedef PACKED struct _Key_pad_Cfg
 #define   OEMNV_DEFAULTRINGER       11
 #elif defined(FEATURE_VERSION_K212_20D)
 #define   OEMNV_DEFAULTRINGER       10
+#elif defined(FEATURE_VERSION_W516_C260)
+#define   OEMNV_DEFAULTRINGER       12
 #else
 #define   OEMNV_DEFAULTRINGER       4
 #endif
@@ -646,6 +652,9 @@ typedef PACKED struct _Key_pad_Cfg
 #elif defined(FEATURE_VERSION_K212_20D)
 #define   OEMNV_STARTUP_MUSIC 11
 #define   OEMNV_SHUTDOWN_MUSIC 12
+#elif defined(FEATURE_VERSION_W516_C260)
+#define   OEMNV_STARTUP_MUSIC 10
+#define   OEMNV_SHUTDOWN_MUSIC 11
 #elif defined(FEATURE_VERSION_W027) 
 #ifdef FEATURE_VERSION_W317A
 #define   OEMNV_STARTUP_MUSIC 12
