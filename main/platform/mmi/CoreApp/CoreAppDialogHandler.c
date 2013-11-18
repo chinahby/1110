@@ -4254,7 +4254,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
         {   
 			
 			//Add By zzg 2012_10_29
-			#if (defined (FEATURE_VERSION_W317A)||defined (FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_IC241A_MMX))
+			#if (defined (FEATURE_VERSION_W317A)||defined (FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K212_HUALU))
 			IFileMgr *pFileMgr = NULL;
 		    ISHELL_CreateInstance(pMe->a.m_pIShell, AEECLSID_FILEMGR, (void **)&pFileMgr);
 			
@@ -9180,7 +9180,7 @@ void CoreApp_UpdateAnnunciator(CCoreApp *pMe)
 	
 
 	//Add By zzg 2012_10_29
-	#if (defined (FEATURE_VERSION_W317A)||defined (FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_IC241A_MMX))
+	#if (defined (FEATURE_VERSION_W317A)||defined (FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)||defined(FEATURE_VERSION_IC241A_MMX))
 	IFileMgr *pFileMgr = NULL;
     ISHELL_CreateInstance(pMe->a.m_pIShell, AEECLSID_FILEMGR, (void **)&pFileMgr);
 	
@@ -9228,7 +9228,7 @@ void CoreApp_UpdateAnnunciator(CCoreApp *pMe)
     {
 	    if (b_headset)
 	    {
-#ifdef FEATURE_VERSION_K212
+#if defined(FEATURE_VERSION_K212)|| defined(FEATURE_VERSION_K212)
             IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_HEADSET, ANNUN_STATE_HEADSET_ON);
 #else
 	        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_HEADSET*/, ANNUN_STATE_HEADSET_ON/*ANNUN_STATE_ON*/);
@@ -9241,7 +9241,7 @@ void CoreApp_UpdateAnnunciator(CCoreApp *pMe)
 	    else
 	    {
 	        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO, ANNUN_STATE_FMRADIO_OFF/*ANNUN_STATE_OFF*/);
-#ifdef FEATURE_VERSION_K212
+#if defined(FEATURE_VERSION_K212)|| defined(FEATURE_VERSION_K212)
             IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_HEADSET, ANNUN_STATE_HEADSET_OFF);
 #else            
 	        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_HEADSET*/, ANNUN_STATE_HEADSET_OFF/*ANNUN_STATE_OFF*/);

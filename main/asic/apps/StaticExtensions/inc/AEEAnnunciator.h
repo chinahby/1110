@@ -64,15 +64,15 @@ enum
 #else
 
 #if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)
-#define ANNUN_FIELD_RSSI                       0   /*Airplane Mode/RSSI*/
-#define ANNUN_FIELD_HEADSET                       1   /*Wap/1x/Roam*/
-#define ANNUN_FIELD_TCARD						2		//Add By zzg 2012_10_30
+#define ANNUN_FIELD_RSSI                      0   /*Airplane Mode/RSSI*/
+#define ANNUN_FIELD_HEADSET                   1   /*Wap/1x/Roam*/
+#define ANNUN_FIELD_TCARD					  2		//Add By zzg 2012_10_30
 #define ANNUN_FIELD_CALL                      3   /*Loudspeaker/Mute/Emergency/Inuse/Missed Call*/
 #define ANNUN_FIELD_SMS                       4   /*VMail/SMS/SMS Memory Full*/
-#define ANNUN_FIELD_QQ                     5   /*QQ*/
-#define ANNUN_FIELD_ALARM                    6   /*Timer/Alarm/Schedule*/
-#define ANNUN_FIELD_RINGTONE              7   /*Ringtone*/
-#define ANNUN_FIELD_BATT                     8   /*Battery*/
+#define ANNUN_FIELD_QQ                        5   /*QQ*/
+#define ANNUN_FIELD_ALARM                     6   /*Timer/Alarm/Schedule*/
+#define ANNUN_FIELD_RINGTONE                  7   /*Ringtone*/
+#define ANNUN_FIELD_BATT                      8   /*Battery*/
 
 #define ANNUN_FIELD_FMRADIO                9   /*FMRadio/Headset*/
 #define ANNUN_FIELD_BLUETOOTH            10   /*BT Trans/BT Headset/BT On*/
