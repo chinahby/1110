@@ -8664,11 +8664,7 @@ static void CoreApp_PlayPwrOnAni(CCoreApp *pMe)
                              (void*)pMe);
 #else
         {
-        	#ifdef FEATURE_VERSION_K212_HUALU
-			 #define PWRON_STR L"中国电信"
-			#else
             #define PWRON_STR L"Welcome"
-			#endif
 			#ifndef FEATURE_LOW_MEM_BIGFONT
             extern int GreyBitBrewFont_DrawText(IDisplay *p, int nSize, const AECHAR *psz, int nl, int x, int y, const AEERect *prcb, uint32 flags);
             #endif
@@ -8766,11 +8762,7 @@ static void CoreApp_PlayPwrOffAni(CCoreApp *pMe)
         AEE_SetSysTimer( PWROFF_ANI_TIME,  (PFNNOTIFY)CoreApp_PlayPwrOffAni,  (void*)pMe);
 #else
         {
-        	#ifdef FEATURE_VERSION_K212_HUALU
-			#define PWROFF_STR L"中国电信"
-			#else
             #define PWROFF_STR L"Bye-Bye"
-			#endif
 			#ifndef FEATURE_LOW_MEM_BIGFONT
             extern int GreyBitBrewFont_DrawText(IDisplay *p, int nSize, const AECHAR *psz, int nl, int x, int y, const AEERect *prcb, uint32 flags);
             #endif
