@@ -316,9 +316,7 @@ CONSTFILE_FILES+=\
     wallpaper6.png|fs:/image/wallpaper/wallpaper6.png    
 else ifeq ($(USES_RESDIR),hualu)   
 CONSTFILE_FILES+=\
-    wallpaper1.png|fs:/image/wallpaper/wallpaper1.png \
-    wallpaper2.png|fs:/image/wallpaper/wallpaper2.png \
-    wallpaper3.png|fs:/image/wallpaper/wallpaper3.png
+    wallpaper1.png|fs:/image/wallpaper/wallpaper1.png 
 else
 CONSTFILE_FILES+=\
     wallpaper1.png|fs:/image/wallpaper/wallpaper1.png \
