@@ -203,7 +203,7 @@ typedef struct {
  /*RSSI/Airplane Mode*/
  static OEMState_data rssi_image_data[]=
 {
-#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
+#if !defined(FEATURE_USES_LOWMEM)//&&!defined(FEATURE_LOWER_MEM)
   {ANNUN_STATE_AIR_MODE_ON, IDB_AIR_MODE, NULL},
 #endif
 #if defined( FEATURE_VERSION_K212)||defined(FEATURE_LOW_MEM_BIGFONT)

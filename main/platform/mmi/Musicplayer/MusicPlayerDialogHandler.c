@@ -460,7 +460,9 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
              #endif
              
 			MP3_DrawPlayerWindows(pMe);
-
+			#ifdef FEATURE_VERSION_K212_HUALU
+			MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
+			#else
 			if(pMe->m_bPaused || pMe->m_bPlaying)
 			{
 			    MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_STOP);
@@ -473,6 +475,7 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
 				MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
                 #endif
 			}
+			#endif
 			IDISPLAY_Update(pMe->m_pDisplay); //刷屏
 			return TRUE;
             
@@ -506,8 +509,10 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
 
 						    MSG_FATAL("***zzg MP3_DrawImage IDI_PLAY***", 0, 0, 0);
 							
-							MP3_DrawImage(pMe, IDI_PLAY, PLAY_X, PLAY_Y);	                       
-							MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_STOP);            
+							MP3_DrawImage(pMe, IDI_PLAY, PLAY_X, PLAY_Y);	  
+							#ifndef FEATURE_VERSION_K212_HUALU
+							MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_STOP);    
+							#endif
 							IDISPLAY_Update(pMe->m_pDisplay);							
 						}
 					}     
@@ -529,7 +534,9 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
 						MSG_FATAL("***zzg MP3_DrawImage IDI_PAUSE***", 0, 0, 0);
 						
 						MP3_DrawImage(pMe, IDI_PAUSE, PLAY_X, PLAY_Y);	
-						MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_STOP);            
+						#ifndef FEATURE_VERSION_K212_HUALU
+						MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_STOP);       
+						#endif
 		            	IDISPLAY_Update(pMe->m_pDisplay);
 						
 		            }
@@ -3074,7 +3081,9 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
 
 					//Add By zzg 2010_08_18
 					MP3_DrawImage(pMe, IDI_PAUSE, PLAY_X, PLAY_Y);	
-					MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_STOP);            
+					#ifndef FEATURE_VERSION_K212_HUALU
+					MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_STOP);   
+					#endif
 	            	IDISPLAY_Update(pMe->m_pDisplay);
 					//Add End                
 	            }   
@@ -3091,7 +3100,9 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
 
 					//Add By zzg 2010_08_18
 					MP3_DrawImage(pMe, IDI_PAUSE, PLAY_X, PLAY_Y);	
-					MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_STOP);            
+					#ifndef FEATURE_VERSION_K212_HUALU
+					MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_STOP);       
+					#endif
 	            	IDISPLAY_Update(pMe->m_pDisplay);
 					//Add End
 	            }
@@ -3116,7 +3127,9 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
 						//Add By zzg 2010_08_18
 						MP3_DrawImage(pMe, IDI_PLAY, PLAY_X, PLAY_Y);
                         MSG_FATAL("PLAY_X=%d----PLAY_Y=%d",PLAY_X,PLAY_Y,0);
-						MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_STOP);            
+						#ifndef FEATURE_VERSION_K212_HUALU
+						MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_STOP);      
+						#endif
 						IDISPLAY_Update(pMe->m_pDisplay);
 						//Add End
 					}
@@ -3396,11 +3409,16 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
                     pMe->m_nCurrentTime = 0;
                     pMe->m_bPlaying = FALSE;
                     pMe->m_bPaused= FALSE;
+					#ifdef FEATURE_VERSION_K212_HUALU
+					CLOSE_DIALOG(DLGRET_CANCELED);
+					return TRUE;
+					#else
                     (void) ISHELL_PostEvent(pMe->m_pShell, 
                                             AEECLSID_APP_MUSICPLAYER,
                                             EVT_USER_REDRAW,
                                             0,
-                                            0);       
+                                            0);    
+					#endif
                 }
             }
        	}       
@@ -3413,6 +3431,43 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
 #endif       
 #endif
 	   return TRUE;
+	#ifdef FEATURE_VERSION_K212_HUALU
+	case AVK_0:
+		if(pMe->m_bPlaying||pMe->m_bPaused)
+       {
+            ISHELL_CancelTimer(pMe->m_pShell,(PFNNOTIFY)CMusicPlayer_InitMusic,pMe);
+            ISHELL_CancelTimer(pMe->m_pShell,(PFNNOTIFY) CMusicPlayer_PlayMusic,pMe);
+			  pMe->m_rtype = TYPE_PLAYER;//wlh 20090415 mod 为了区别播放区域，加音量，减音量的刷新，加了个参数
+            ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_DrawImageWithOffset,pMe);
+
+			#ifndef FEATURE_VERSION_C337
+            #ifndef FEATURE_VERSION_IC241A_MMX
+            ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_DrawForwardImage, pMe);
+            ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_DrawRewindImage, pMe);
+            #endif
+			#endif
+			
+			ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)MP3_EnableKey, pMe);		//Add By zzg 2010_08_18
+            //停止
+            if(pMe->m_pMedia)
+            {  
+                if(SUCCESS == IMEDIA_Stop(pMe->m_pMedia))
+                {
+                	MSG_FATAL("***zzg IMEDIA_Stop==SUCCESS***", 0, 0, 0);
+                    pMe->m_bUserStopped= TRUE;
+                    pMe->m_nCurrentTime = 0;
+                    pMe->m_bPlaying = FALSE;
+                    pMe->m_bPaused= FALSE;
+                    (void) ISHELL_PostEvent(pMe->m_pShell, 
+                                            AEECLSID_APP_MUSICPLAYER,
+                                            EVT_USER_REDRAW,
+                                            0,
+                                            0);    
+                }
+            }
+       	}     
+		return TRUE;
+#endif
 	   
 #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 	case AVK_CLR:		
