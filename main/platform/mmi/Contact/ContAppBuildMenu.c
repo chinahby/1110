@@ -540,6 +540,7 @@ int CContApp_BuildManagementMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
 #ifdef FEATURE_RUIM_PHONEBOOK
     if( IsRunAsUIMVersion() && pMe->m_bADNRUIMSupport )
     {
+#ifndef FEATURE_VERSION_K212_HUALU
         ai.wText       = IDS_MOVE_CONTACTS;
         ai.wItemID   = IDS_MOVE_CONTACTS;
         //ai.wImage    = IDB_PHONE;
@@ -558,7 +559,8 @@ int CContApp_BuildManagementMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
         {
             FARF(ADDR, ("Failed to Add Opts item %d", ai.wItemID));
             return EFAILED;
-        }        
+        }   
+#endif
     }
 #endif
 

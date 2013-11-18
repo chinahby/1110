@@ -334,6 +334,7 @@ static OEMState_data alarm_image_data[]=
 };
 #ifndef FEATURE_USES_LOWMEM
 #ifndef FEATURE_VERSION_K212
+#ifndef FEATURE_VERSION_K212_HUALU
 /*MMS Full/MMS Unread/MMS Unreceive/Push*/
 static OEMState_data mms_image_data[]=
 {
@@ -344,6 +345,7 @@ static OEMState_data mms_image_data[]=
 #endif
     {ANNUN_STATE_PUSH_ON, IDB_PUSH_MSG, NULL}
 };
+#endif
 #endif
 #endif
 /*Ringtone*/
@@ -390,7 +392,7 @@ static OEMState_data batt_image_data[]=
 };
 #endif
 
-#ifdef FEATURE_VERSION_K212
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)
 static OEMState_data qq_image_data[]=
 {  
     {ANNUN_STATE_QQ_MSG_ON, IDB_QQMSG, NULL},
@@ -478,7 +480,7 @@ OEMAnnun_content fmradio_content =
      {ANNUN_TYPE_IMAGE, 1, ANNUN_STATE_OFF, (void *)fmradio_image_data};
 #endif
 
-#ifdef FEATURE_VERSION_K212
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)
 OEMAnnun_content qq_content =
      {ANNUN_TYPE_IMAGE, 4, ANNUN_STATE_OFF, (void *)qq_image_data};
 #else
@@ -503,8 +505,10 @@ OEMAnnun_content alarm_content =
 /*ANNUN_FIELD_MMS*/
 #ifndef FEATURE_USES_LOWMEM
 #ifndef FEATURE_VERSION_K212
+#ifndef FEATURE_VERSION_K212_HUALU
 OEMAnnun_content mms_content =
      {ANNUN_TYPE_IMAGE, 4, ANNUN_STATE_OFF, (void *)mms_image_data};
+#endif
 #endif
 #endif
 /*ANNUN_FIELD_RINGTONE*/
@@ -673,11 +677,9 @@ OEMAnnun_content batt_content =
  */
 static OEMAnnun_data Annunciators[] =
 {
-#if defined (FEATURE_VERSION_K212)
-    {ANNUN_FIELD_RSSI,             ANNUN_ICON_POSITION_1,      ROW1_Y,  LG_IMG_WIDTH,   IMG_HEIGHT,  &rssi_content}, 	   
-    //{ANNUN_FIELD_WAP,                   ANNUN_ICON_POSITION_2,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &wap_content},     
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)
+    {ANNUN_FIELD_RSSI,             ANNUN_ICON_POSITION_1,      ROW1_Y,  LG_IMG_WIDTH,   IMG_HEIGHT,  &rssi_content}, 	      
     {ANNUN_FIELD_HEADSET,          ANNUN_ICON_POSITION_2,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &headset_content},     
-
     {ANNUN_FIELD_TCARD,            ANNUN_ICON_POSITION_3,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &tcard_content},  
     {ANNUN_FIELD_CALL,             ANNUN_ICON_POSITION_4,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &call_content}, 
     {ANNUN_FIELD_SMS,              ANNUN_ICON_POSITION_5,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &sms_content}, 
@@ -740,7 +742,7 @@ static OEMAnnun_data Annunciators[] =
     {ANNUN_FIELD_BATT,             ANNUN_ICON_POSITION_END, ROW1_Y,  LG_IMG_WIDTH, IMG_HEIGHT,  &batt_content}
 #else
   {ANNUN_FIELD_ALARM,               ANNUN_ICON_POSITION_8,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &alarm_content},
-#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_VERSION_K212)
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_K212_HUALU)
   {ANNUN_FIELD_MMS,                 ANNUN_ICON_POSITION_9,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &mms_content},
 #else
   {ANNUN_FIELD_MMS,                 ANNUN_ICON_POSITION_9,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  NULL},
@@ -769,7 +771,7 @@ static OEMAnnun_data Annunciators[] =
 #if  0//def FEATURE_VERSION_LM126C
 #define ANNUN_MAX_STATES     (8)
 #else
-#if defined (FEATURE_VERSION_K212)|defined(FEATURE_VERSION_W021_CT100_QVGA)||defined(FEATURE_LOW_MEM_BIGFONT)
+#if defined (FEATURE_VERSION_K212)|defined(FEATURE_VERSION_W021_CT100_QVGA)||defined(FEATURE_VERSION_K212_HUALU)
 #define ANNUN_MAX_STATES     (9)
 #else
 #define ANNUN_MAX_STATES     (7)
@@ -2602,7 +2604,7 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
 					//DBGPRINTF("***zzg bgRect:%d,%d,%d,%d***", bgRect.x, bgRect.y, bgRect.dx, bgRect.dy);
 
 					
-					#if defined(FEATURE_VERSION_C337)  || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_LOW_MEM_BIGFONT)//|| defined(FEATURE_VERSION_K212)
+					#if defined(FEATURE_VERSION_C337)  || defined(FEATURE_VERSION_IC241A_MMX)//||defined(FEATURE_LOW_MEM_BIGFONT)//|| defined(FEATURE_VERSION_K212)
 					{
 						IImage      *pBarImg = NULL;
 

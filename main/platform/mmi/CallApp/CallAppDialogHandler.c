@@ -1014,6 +1014,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 #endif
 							CallApp_Set_Cursor_Blink (pMe);
 #endif
+				IANNUNCIATOR_Redraw(pMe->m_pIAnn);
 				IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
             return TRUE;
 /*

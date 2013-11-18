@@ -18174,8 +18174,10 @@ static boolean IDD_MANAGEMENT_Handler(void   *pUser,
             MENU_ADDITEM(pMenu, IDS_DELETEMSGS);
             if (IsRunAsUIMVersion())
             {
+            	#ifndef FEATURE_VERSION_K212_HUALU
                 MENU_ADDITEM(pMenu, IDS_COPYINBOX);
                 MENU_ADDITEM(pMenu, IDS_MOVEINBOX);
+				#endif
 #ifdef FEATURE_CDSMS_RUIM
                 MENU_ADDITEM(pMenu, IDS_STORAGE);
 #endif       
