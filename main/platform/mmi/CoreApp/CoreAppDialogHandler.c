@@ -4947,7 +4947,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);
 #elif defined(FEATURE_VERSION_K212_ND)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_SOUNDMENU);
-#elif defined(FEATURE_VERSION_W317A)
+#elif defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_K212_HUALU)
                     return CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 
 					return TRUE;
@@ -4956,7 +4956,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					return TRUE;
 				else 
 					return FALSE;
-#elif defined(FEATURE_VERSION_K212) ||defined(FEATURE_VERSION_K212_HUALU)
+#elif defined(FEATURE_VERSION_K212) 
 				return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CAMERA);
 #else
 			    return CoreApp_LaunchApplet(pMe, AEECLSID_APP_SETTINGMENU);
@@ -5043,7 +5043,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     {
                         #if defined( FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_K202)|| defined(FEATURE_VERSION_K212)|| defined(FEATURE_VERSION_K212_ND)
                            Mainmenu_KeypadLock(TRUE);
-			            #elif defined ( FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+			            #elif defined ( FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K212_HUALU)
 						   WMSDialog_KeypadLock(TRUE);
 						#elif defined (FEATURE_VERSION_C316)
 						   APPDialog_KeypadLock(TRUE);
@@ -7644,32 +7644,48 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
             }
             if(bMode)
             {
+            	if (bTFmt == OEMNV_TIMEFORM_AMPM)
+    	 		{
+            	wHour = jDate.wHour > 12 ? (jDate.wHour - 12) : jDate.wHour;
+				if(jDate.wHour >= 12)
+	    		{
+	    	   		wszDatemat[0] = (AECHAR)'P';
+	    	   		wszDatemat[1] = (AECHAR)'M';
+	    	   		wszDatemat[2] = 0;
+	    		}
+	    		else
+	    		{
+	    	   		wszDatemat[0] = (AECHAR)'A';
+	    	   		wszDatemat[1] = (AECHAR)'M';
+	    	   		wszDatemat[2] = 0;
+	    		}
+            	}
 				xStartPos = 30;
 				yStartPos = 45;
 		    	SETAEERECT(&rect, xStartPos, yStartPos, nNumberWidth, nNumberHeight);
-		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (wHour/10), nLineWidth, &rect, RGB_WHITE);
+		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (wHour/10), nLineWidth, &rect, RGB_BLACK);
 		    	rect.x += nNumberWidth + nOffset;
-		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (wHour%10), nLineWidth, &rect, RGB_WHITE);
+		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (wHour%10), nLineWidth, &rect, RGB_BLACK);
 
 		   		 // draw colon
 		    	SETAEERECT(&rect, xStartPos + 2*(nNumberWidth + nOffset), yStartPos + nNumberHeight/2 - nLineWidth, nLineWidth, nLineWidth);
-		    	IDISPLAY_FillRect(pMe->m_pDisplay, &rect, RGB_WHITE);
+		    	IDISPLAY_FillRect(pMe->m_pDisplay, &rect, RGB_BLACK);
 		    	rect.y = yStartPos + nNumberHeight*3/5 +10 - nLineWidth;
-		    	IDISPLAY_FillRect(pMe->m_pDisplay, &rect, RGB_WHITE);
+		    	IDISPLAY_FillRect(pMe->m_pDisplay, &rect, RGB_BLACK);
 		    
 		   		// draw minute
 		    	SETAEERECT(&rect, xStartPos + 2*(nNumberWidth + nOffset) + nLineWidth + nOffset, yStartPos, nNumberWidth, nNumberHeight);
-		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (jDate.wMinute/10), nLineWidth, &rect, RGB_WHITE);
+		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (jDate.wMinute/10), nLineWidth, &rect, RGB_BLACK);
 		    	rect.x += nNumberWidth + nOffset;
-		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (jDate.wMinute%10), nLineWidth, &rect, RGB_WHITE);
+		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (jDate.wMinute%10), nLineWidth, &rect, RGB_BLACK);
 		    	rect.x += nNumberWidth;
 		     	rect.y = rect.y +12;
 				rect.x = rect.x+2;
 				rect.dx = rect.dx +5;
-		    	DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
+				DrawTextWithProfile(pMe->a.m_pIShell,
 		                              pMe->m_pDisplay,
 		                              RGB_WHITE_NO_TRANS,
-		                              32, 
+		                              AEE_FONT_NORMAL, 
 		                              wszDatemat, -1,
 		                              0, 0, &rect, 
 		                              IDF_ALIGN_MIDDLE
@@ -8648,7 +8664,11 @@ static void CoreApp_PlayPwrOnAni(CCoreApp *pMe)
                              (void*)pMe);
 #else
         {
+        	#ifdef FEATURE_VERSION_K212_HUALU
+			 #define PWRON_STR L"中国电信"
+			#else
             #define PWRON_STR L"Welcome"
+			#endif
 			#ifndef FEATURE_LOW_MEM_BIGFONT
             extern int GreyBitBrewFont_DrawText(IDisplay *p, int nSize, const AECHAR *psz, int nl, int x, int y, const AEERect *prcb, uint32 flags);
             #endif
@@ -8746,7 +8766,11 @@ static void CoreApp_PlayPwrOffAni(CCoreApp *pMe)
         AEE_SetSysTimer( PWROFF_ANI_TIME,  (PFNNOTIFY)CoreApp_PlayPwrOffAni,  (void*)pMe);
 #else
         {
+        	#ifdef FEATURE_VERSION_K212_HUALU
+			#define PWROFF_STR L"中国电信"
+			#else
             #define PWROFF_STR L"Bye-Bye"
+			#endif
 			#ifndef FEATURE_LOW_MEM_BIGFONT
             extern int GreyBitBrewFont_DrawText(IDisplay *p, int nSize, const AECHAR *psz, int nl, int x, int y, const AEERect *prcb, uint32 flags);
             #endif

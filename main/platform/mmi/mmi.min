@@ -191,8 +191,10 @@ ifeq ($(USES_ATV),yes)
 include $(TVAPP)/TVApp.min
 endif
 
+ifneq ($(USES_RESDIR),hualu)
 ifneq ($(USES_RESDIR),K212)
 include $(UCWEB)/UCWEB.min
+endif
 endif
 
 ifeq ($(USES_ZI),yes)

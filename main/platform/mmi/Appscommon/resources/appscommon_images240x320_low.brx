@@ -4,6 +4,9 @@
 	<Object Id="5001" Name="IDB_MODE_T9_PINYIN" MimeType="image/png">
 		<File>..\images\240x320\common\IME\T9pin.png</File>
 	</Object>
+	<Object Id="5002" Name="IDB_BACKGROUND" MimeType="image/png">
+		<File>..\images\240x320\common\Appscommon\Menu\background\background.png</File>
+	</Object>
 	<Object Id="5003" Name="IDB_CALCAPP" MimeType="image/png">
 		<File>..\images\240x320\common\Calculator\Calculator.png</File>
 	</Object>
@@ -150,6 +153,12 @@
 	</Object>
 	<Object Id="5407" Name="IDB_MODE_T9_RAPID_ENGLISH" MimeType="image/png">
 		<File>..\images\240x320\common\IME\ezenglish.png</File>
+	</Object>
+	<Object Id="5408" Name="IDB_MODE_T9_MT_INDONESIAN" MimeType="image/png">
+		<File>..\images\240x320\common\IME\Indo.png</File>
+	</Object>
+	<Object Id="5409" Name="IDB_MODE_T9_RAPID_INDONESIAN" MimeType="image/png">
+		<File>..\images\240x320\common\IME\T9In.png</File>
 	</Object>
 	<Object Id="5426" Name="IDB_EDIT_UP_DOWN_BMP" MimeType="image/png">
 		<File>..\images\240x320\common\IME\arrow.png</File>
