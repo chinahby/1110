@@ -180,7 +180,111 @@ static void disp_ic_init(void)
     */
     
     //--************ Start Initial Sequence **********--/
-    
+ #if defined(FEATURE_VERSION_K212_HUALU)
+ 	LCD_DELAY(120);      // Delay 120 ms 
+ 
+	//************* Start Initial Sequence **********// 
+	LCD_WRITE_CMD(0xCF);  
+	LCD_WRITE_DATA(0x00); 
+	LCD_WRITE_DATA(0xC1); 
+	LCD_WRITE_DATA(0X30); 
+	 
+	LCD_WRITE_CMD(0xED);  
+	LCD_WRITE_DATA(0x64); 
+	LCD_WRITE_DATA(0x03); 
+	LCD_WRITE_DATA(0X12); 
+	LCD_WRITE_DATA(0X81); 
+	 
+	LCD_WRITE_CMD(0xE8);  
+	LCD_WRITE_DATA(0x85); 
+	LCD_WRITE_DATA(0x10); 
+	LCD_WRITE_DATA(0x78); 
+	 
+	LCD_WRITE_CMD(0xCB);  
+	LCD_WRITE_DATA(0x39); 
+	LCD_WRITE_DATA(0x2C); 
+	LCD_WRITE_DATA(0x00); 
+	LCD_WRITE_DATA(0x34); 
+	LCD_WRITE_DATA(0x02); 
+	 
+	LCD_WRITE_CMD(0xF7);  
+	LCD_WRITE_DATA(0x20); 
+	 
+	LCD_WRITE_CMD(0xEA);  
+	LCD_WRITE_DATA(0x00); 
+	LCD_WRITE_DATA(0x00); 
+	 
+	LCD_WRITE_CMD(0xC0);    //Power control 
+	LCD_WRITE_DATA(0x21);   //VRH[5:0] 
+	 
+	LCD_WRITE_CMD(0xC1);    //Power control 
+	LCD_WRITE_DATA(0x12);   //SAP[2:0];BT[3:0] 
+	 
+	LCD_WRITE_CMD(0xC5);    //VCM control 
+	LCD_WRITE_DATA(0x32); 
+	LCD_WRITE_DATA(0x3C); 
+	 
+	LCD_WRITE_CMD(0xC7);    //VCM control2 
+	LCD_WRITE_DATA(0XB2); 
+	 
+	LCD_WRITE_CMD(0x36);    // Memory Access Control 
+	LCD_WRITE_DATA(0x08); 
+	 
+	LCD_WRITE_CMD(0x3A);   
+	LCD_WRITE_DATA(0x55); 
+
+	LCD_WRITE_CMD(0xB1);   
+	LCD_WRITE_DATA(0x00);   
+	LCD_WRITE_DATA(0x17); 
+	 
+	LCD_WRITE_CMD(0xB6);    // Display Function Control 
+	LCD_WRITE_DATA(0x0A); 
+	LCD_WRITE_DATA(0xA2); 
+
+	LCD_WRITE_CMD(0xF6);    
+	LCD_WRITE_DATA(0x01); 
+	LCD_WRITE_DATA(0x30); 
+	 
+	LCD_WRITE_CMD(0xF2);    // 3Gamma Function Disable 
+	LCD_WRITE_DATA(0x00); 
+	 
+	LCD_WRITE_CMD(0x26);    //Gamma curve selected 
+	LCD_WRITE_DATA(0x01); 
+	 
+	LCD_WRITE_CMD(0xE0);    //Set Gamma 
+	LCD_WRITE_DATA(0x0F); 
+	LCD_WRITE_DATA(0x20); 
+	LCD_WRITE_DATA(0x1E); 
+	LCD_WRITE_DATA(0x07); 
+	LCD_WRITE_DATA(0x0A); 
+	LCD_WRITE_DATA(0x03); 
+	LCD_WRITE_DATA(0x52); 
+	LCD_WRITE_DATA(0X63); 
+	LCD_WRITE_DATA(0x44); 
+	LCD_WRITE_DATA(0x08); 
+	LCD_WRITE_DATA(0x17); 
+	LCD_WRITE_DATA(0x09); 
+	LCD_WRITE_DATA(0x19); 
+	LCD_WRITE_DATA(0x13); 
+	LCD_WRITE_DATA(0x00); 
+	 
+	LCD_WRITE_CMD(0XE1);    //Set Gamma 
+	LCD_WRITE_DATA(0x00); 
+	LCD_WRITE_DATA(0x16); 
+	LCD_WRITE_DATA(0x19); 
+	LCD_WRITE_DATA(0x02); 
+	LCD_WRITE_DATA(0x0F); 
+	LCD_WRITE_DATA(0x03); 
+	LCD_WRITE_DATA(0x2F); 
+	LCD_WRITE_DATA(0x13); 
+	LCD_WRITE_DATA(0x40); 
+	LCD_WRITE_DATA(0x01); 
+	LCD_WRITE_DATA(0x08); 
+	LCD_WRITE_DATA(0x07); 
+	LCD_WRITE_DATA(0x2E); 
+	LCD_WRITE_DATA(0x3C); 
+	LCD_WRITE_DATA(0x0F); 
+ #else
 	LCD_WRITE_CMD(0xCB);
     LCD_WRITE_DATA(0x39);
     LCD_WRITE_DATA(0x2C); 
@@ -225,7 +329,7 @@ static void disp_ic_init(void)
     LCD_WRITE_DATA(0xAA); // µ÷FILCK
 
     LCD_WRITE_CMD(0x36);
-#ifdef FEATURE_VERSION_IC241A_MMX
+#if defined(FEATURE_VERSION_IC241A_MMX) || defined(FEATURE_VERSION_K212_HUALU)
     LCD_WRITE_DATA(0x88);   //0x48
 #else
     LCD_WRITE_DATA(0x48);  
@@ -290,9 +394,9 @@ static void disp_ic_init(void)
     LCD_WRITE_DATA(0x34);
     LCD_WRITE_DATA(0x39);
     LCD_WRITE_DATA(0x0F);
-
+#endif
     LCD_WRITE_CMD(0x11);
-    LCD_DELAY(60);  // Delay 60ms
+    LCD_DELAY(120);  // Delay 60ms
 
     LCD_WRITE_CMD(0x29);    
 }
