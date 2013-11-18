@@ -45,6 +45,10 @@ typedef struct IAnnunciator IAnnunciator;
 //---------------------------------------------------------------------
 // Annunciator Fields
 /*fields that locate at the same place are merged, and use the states ID to dicide which icon to display*/
+
+#ifdef FEATURE_VERSION_K212_HUALU
+#define FEATURE_5_LEVEL_BATTERY
+#endif
 #ifdef FEATURE_VERSION_W021_CT100_QVGA
 enum
 {
