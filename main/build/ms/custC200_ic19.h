@@ -16,6 +16,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_OEMOMH
 
 #define FEATURE_SALESTRACKER
+#define FEATURE_IC19_ESN_TRACKER
 
 #define FEATURE_ALERT_3AND1
 

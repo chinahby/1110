@@ -772,8 +772,9 @@ static void CAlarm_ScheduleAlarms(CAlarm *pMe,uint16 nUserCode)
     uint32   nNextMin;
     boolean  bAlarmsChanged;
     void    *pOldContext;
-	boolean  bAlarmSalesTracker = FALSE;
-
+    
+	//boolean  bAlarmSalesTracker = FALSE;
+    
     pOldContext = AEE_EnterAppContext(NULL);
     (void) ISHELL_CancelTimer(pMe->m_pShell, CAlarm_TimerCB, NULL);
     AEE_LeaveAppContext(pOldContext);
@@ -797,14 +798,19 @@ static void CAlarm_ScheduleAlarms(CAlarm *pMe,uint16 nUserCode)
     bAlarmsChanged = FALSE;
     nNextMin = 0xFFFFFFFF;
     i = 0;
+    
     while (i < IVector_Size(pMe->m_alarms)) 
     {
         AlarmInfo *pai = IVector_ElementAt(pMe->m_alarms, i);
-		if((pai->nUserCode == 21) &&(IVector_Size(pMe->m_alarms) ==1))
+
+        /*
+		if((pai->nUserCode == 21) &&(IVector_Size(pMe->m_alarms) ==1))  
 		{
 			bAlarmSalesTracker = TRUE;
 			nUserCode = 21;
-		}
+		}       
+        */
+        
         DBGPRINTF( "pai->nExpireMin = %d nCurrMin = %d---pai->nUserCode=%d",pai->nExpireMin,nCurrMin,pai->nUserCode);
         DBGPRINTF( "i = %d ---IVector_Size(pMe->m_alarms = %d",i,IVector_Size(pMe->m_alarms)); 
         if (pai->nExpireMin <= nCurrMin) 
@@ -867,12 +873,13 @@ static void CAlarm_ScheduleAlarms(CAlarm *pMe,uint16 nUserCode)
         AEE_LeaveAppContext(pOldContext);
 		MSG_FATAL("nUserCode============%d",nUserCode,0,0);
         
-		if(nUserCode != 21)
+        /*
+        if (nUserCode != 21) //PERMID   21     
         {
             IAnnunciator *pIAnn;
             if (SUCCESS == ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_ANNUNCIATOR, (void**)&pIAnn)) 
             {
-                IANNUNCIATOR_SetField(pIAnn, ANNUN_FIELD_ALARM, ANNUN_STATE_ALARM_ON/*ANNUN_STATE_OFF*/);
+                IANNUNCIATOR_SetField(pIAnn, ANNUN_FIELD_ALARM, ANNUN_STATE_ALARM_ON/);
                 IANNUNCIATOR_Release(pIAnn);
             }
         }       
@@ -887,6 +894,26 @@ static void CAlarm_ScheduleAlarms(CAlarm *pMe,uint16 nUserCode)
 
             bAlarmSalesTracker = FALSE;
 		}       
+        */
+
+        if ((nUserCode == 22) || (nUserCode == 23) || (nUserCode == 24))    //SOUND_BO_ALARM /SALE_TRACKER_ALARM / ESN_TRACKER_ALARM
+        {
+            IAnnunciator *pIAnn;
+            if (SUCCESS == ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_ANNUNCIATOR, (void**)&pIAnn)) 
+            {
+                IANNUNCIATOR_SetField(pIAnn, ANNUN_FIELD_ALARM, ANNUN_STATE_ALARM_OFF);
+                IANNUNCIATOR_Release(pIAnn);
+            }
+        }
+        else
+        {
+            IAnnunciator *pIAnn;
+            if (SUCCESS == ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_ANNUNCIATOR, (void**)&pIAnn)) 
+            {
+                IANNUNCIATOR_SetField(pIAnn, ANNUN_FIELD_ALARM, ANNUN_STATE_ALARM_ON/*ANNUN_STATE_OFF*/);
+                IANNUNCIATOR_Release(pIAnn);
+            }
+        }
     }
 
     if (bAlarmsChanged) 

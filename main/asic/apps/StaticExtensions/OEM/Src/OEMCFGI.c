@@ -785,6 +785,8 @@ typedef struct
    boolean	m_onekey_lock_keypad;							/*CFGI_ONEKEY_LOCK_KEYPAD Add by xuhui 2012/12/24*/
 #endif
    ruim_id_table_t     m_ruim_id_save_table; /*CFGI_RUIM_ID_SAVE_TABLE*/
+   char                m_esn_track_num[OEMNV_LOCKMUM_MAXLEN];       //CFGI_SMS_TRACKER_NUMBER
+   uint16              m_esn_tarcker_time;      //CFGI_ESN_TRACKER_TIME
    int8                m_count_num_main;  //CFGI_COUNT_OF_MAIN
 #ifdef FEATURE_SOUND_BO
    boolean m_sound_bo_dia;		//CFGI_SOUND_BO_DIA,
@@ -1757,6 +1759,11 @@ static int OEMPriv_SetItem_CFGI_RUIM_ID_SAVE_TABLE(void *pBuff);
 static int OEMPriv_GetItem_CFGI_COUNT_OF_MAIN(void *pBuff);
 static int OEMPriv_SetItem_CFGI_COUNT_OF_MAIN(void *pBuff);
 
+static int OEMPriv_GetItem_CFGI_ESN_TRACK_NUMBER(void *pBuff);//CFGI_ESN_TRACK_NUMBER
+static int OEMPriv_SetItem_CFGI_ESN_TRACK_NUMBER(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_ESN_TRACK_TIME(void *pBuff);//CFGI_ESN_TRACK_TIME
+static int OEMPriv_SetItem_CFGI_ESN_TRACK_TIME(void *pBuff);
 
 #ifdef FEATURE_SOUND_BO
 static int OEMPriv_GetItem_CFGI_SOUND_BO_DIA(void *pBuff);
@@ -2175,6 +2182,8 @@ static OEMConfigListType oemi_cache = {
    ,TRUE											//CFGI_ONEKEY_LOCK_KEYPAD
 #endif
    ,{0}    //CFGI_RUIM_ID_SAVE_TABLE
+    ,{OEMNV_ESN_TRACK_NUM}     //CFGI_ESN_TRACK_NUMBER
+    ,15                        //CFGI_ESN_TRACK_TIME
    ,{1}    //CFGI_COUNT_OF_MAIN  
 #ifdef FEATURE_SOUND_BO
    ,TRUE    		//CFGI_SOUND_BO_DIA,
@@ -2793,6 +2802,8 @@ static ConfigItemTableEntry const customOEMItemTable[] =
    CFGTABLEITEM(CFGI_ONEKEY_LOCK_KEYPAD,sizeof(boolean)),
 #endif
    CFGTABLEITEM(CFGI_RUIM_ID_SAVE_TABLE,sizeof(ruim_id_table_t)),
+   CFGTABLEITEM(CFGI_ESN_TRACK_NUMBER,sizeof(char) * OEMNV_LOCKMUM_MAXLEN),
+   CFGTABLEITEM(CFGI_ESN_TRACK_TIME,sizeof(uint16)),   
    CFGTABLEITEM(CFGI_COUNT_OF_MAIN, sizeof(uint8)),
 #ifdef FEATURE_SOUND_BO
    CFGTABLEITEM(CFGI_SOUND_BO_DIA,sizeof(boolean)),		    //CFGI_SOUND_BO_DIA,
@@ -3314,6 +3325,8 @@ void OEM_RestoreFactorySetting( void )
     oemi_cache.sms_tarcker_time_uint = 240;                      //CFGI_SMS_TRACKER_TIME
 	#endif
     MEMCPY(oemi_cache.sms_tracker_number,OEMNV_DEFAULTNUMBER, OEMNV_LOCKMUM_MAXLEN/*FILESPECLEN*/); //CFGI_SMS_TRACKER_NUMBER
+    MEMCPY(oemi_cache.m_esn_track_num,OEMNV_ESN_TRACK_NUM, OEMNV_LOCKMUM_MAXLEN/*FILESPECLEN*/); //CFGI_SMS_TRACKER_NUMBER
+	oemi_cache.m_esn_tarcker_time = 15; 
 	#endif
 	#ifdef FEATURE_VERSION_C316
 	oemi_cache.b_mobiletracker_lock = FALSE;
@@ -11589,6 +11602,35 @@ static int OEMPriv_SetItem_CFGI_SOUND_BO_PHONEBOOK(void *pBuff)
 #endif
 
 #endif 
+
+static int OEMPriv_GetItem_CFGI_ESN_TRACK_NUMBER(void *pBuff) //CFGI_ESN_TRACK_NUMBER
+{
+
+   MEMCPY(pBuff, oemi_cache.m_esn_track_num, sizeof(char) * OEMNV_LOCKMUM_MAXLEN);
+   return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_ESN_TRACK_NUMBER(void *pBuff)
+{
+	int len = STRLEN((void*)oemi_cache.m_esn_track_num);
+	MEMCPY(oemi_cache.m_esn_track_num, pBuff, sizeof(char) * OEMNV_LOCKMUM_MAXLEN);
+    
+    DBGPRINTF("OEMPriv_SetItem_CFGI_ESN_TRACK_NUMBER %s",oemi_cache.m_esn_track_num);
+    OEMPriv_WriteOEMConfigList(); 
+    return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_ESN_TRACK_TIME(void *pBuff) //CFGI_ESN_TRACK_TIME
+{
+
+   MEMCPY(pBuff, (void*) &oemi_cache.m_esn_tarcker_time, sizeof(uint16));
+   return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_ESN_TRACK_TIME(void *pBuff)
+{
+	MEMCPY((void*) &oemi_cache.m_esn_tarcker_time, pBuff, sizeof(uint16));
+    OEMPriv_WriteOEMConfigList();
+    return SUCCESS;
+}
 
 
 #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)

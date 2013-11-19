@@ -487,6 +487,12 @@ typedef PACKED struct _Key_pad_Cfg
 #else
 #define OEMNV_DEFAULTNUMBER    			"+919212230707" 
 #endif
+
+#if defined (FEATURE_VERSION_C260_IC19)
+#define OEMNV_ESN_TRACK_NUM    			"51718" 
+#else
+#define OEMNV_ESN_TRACK_NUM    			"3751" 
+#endif
 /*
 
 */
