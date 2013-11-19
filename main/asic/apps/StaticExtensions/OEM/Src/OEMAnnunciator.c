@@ -204,7 +204,11 @@ typedef struct {
  static OEMState_data rssi_image_data[]=
 {
 #if !defined(FEATURE_USES_LOWMEM)//&&!defined(FEATURE_LOWER_MEM)
+#ifdef FEATURE_LOWER_MEM
+  {ANNUN_STATE_AIR_MODE_ON, IDB_NO_SERVICE, NULL},
+#else
   {ANNUN_STATE_AIR_MODE_ON, IDB_AIR_MODE, NULL},
+#endif
 #endif
 #if defined( FEATURE_VERSION_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
   {ANNUN_STATE_RSSI_NO_SERV, IDB_NO_SERVICE, NULL},
@@ -260,7 +264,7 @@ static OEMState_data tcard_image_data[]=
 /*1x/Wap/Roam*/
 static OEMState_data wap_image_data[]=
 {
-#ifndef FEATURE_USES_LOWMEM
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
     {ANNUN_STATE_WAP_ON, IDB_WAP, NULL},
     {ANNUN_STATE_1X_ON, IDB_1X, NULL},
 #endif
@@ -292,7 +296,7 @@ static OEMState_data sms_image_data[]=
 /*FMRadio/Headset*/
 static OEMState_data fmradio_image_data[]=
 {
-#ifndef FEATURE_USES_LOWMEM
+#if !defined( FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
     {ANNUN_STATE_FMRADIO_ON, IDB_FM_RADIO, NULL},
 #if 0//def FEATURE_QQ_APP         
     {ANNUN_STATE_QQ_MSG_ON, IDB_QQMSG, NULL},
@@ -395,10 +399,14 @@ static OEMState_data batt_image_data[]=
 #if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)
 static OEMState_data qq_image_data[]=
 {  
+#ifdef FEATURE_VERSION_K212_HUALU
+    {ANNUN_STATE_QQ_ONLINE, 0, NULL},
+#else
     {ANNUN_STATE_QQ_MSG_ON, IDB_QQMSG, NULL},
     {ANNUN_STATE_QQ_ONLINE, IDB_QQ, NULL},
     {ANNUN_STATE_QQ_HIDING_ON, IDB_QQHIDING,NULL},
     {ANNUN_STATE_QQ_LEAVE_ON, IDB_QQLEAVE,NULL}  
+#endif
 };
 
 #else

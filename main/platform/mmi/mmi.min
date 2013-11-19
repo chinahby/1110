@@ -85,7 +85,6 @@ include $(SPORTS)/sports.min
 endif
 
 
-
 ifneq ($(USES_LOWMEM),yes)
 ifeq ($(MMI_ADD_WORLDTIME),yes)
 include $(WORLDTIME)/worldtime.min
@@ -122,10 +121,12 @@ endif
 
 #Apps
 #include $(EXTRAMENU)/extramenu.min
+ifneq ($(USES_RESDIR),hualu)
 ifneq ($(USES_LOW),yes)
 include $(OEMEXTFOR3PART)/OEMExtFor3Part.min
 include $(EDITAPPLET)/EditApplet.min
 include $(EDITEXTENTSION)/EditExtension.min
+endif
 endif
 
 ifeq ($(USES_BREW_APPMGR), yes)
@@ -177,12 +178,12 @@ endif
 ifeq ($(USES_SERVICE),yes)
 include $(SERVICE)/service.min
 endif
-
+ifneq ($(USES_RESDIR),hualu)
 ifneq ($(USES_LOWMEM),yes)
 include $(STATIC_BREW_APP)/staticbrewapp.min
 include $(STATIC_APP)/staticapp.min
 endif
-
+endif
 ifeq ($(USES_WAPBROWSER),yes)
 include $(WAPBROWSER)/WapBrowser.min
 endif

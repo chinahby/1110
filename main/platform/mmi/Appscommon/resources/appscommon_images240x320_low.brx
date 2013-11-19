@@ -4,9 +4,6 @@
 	<Object Id="5001" Name="IDB_MODE_T9_PINYIN" MimeType="image/png">
 		<File>..\images\240x320\common\IME\T9pin.png</File>
 	</Object>
-	<Object Id="5002" Name="IDB_BACKGROUND" MimeType="image/png">
-		<File>..\images\240x320\common\Appscommon\Menu\background\background.png</File>
-	</Object>
 	<Object Id="5003" Name="IDB_CALCAPP" MimeType="image/png">
 		<File>..\images\240x320\common\Calculator\Calculator.png</File>
 	</Object>
@@ -77,7 +74,7 @@
 		<File>..\images\240x320\common\Appscommon\MessageBox\informative.png</File>
 	</Object>
 	<Object Id="5047" Name="IDB_PROMPT_MSG_BG" MimeType="image/png">
-		<File>..\images\240x320\common\Appscommon\MessageBox\background.png</File>
+		<File>..\images\240x320\common\Appscommon\MessageBox\background_static.png</File>
 	</Object>
 	<Object Id="5060" Name="IDB_CALCAPP_GROUND" MimeType="image/png">
 		<File>..\images\240x320\common\Calculator\background.png</File>
@@ -87,9 +84,6 @@
 	</Object>
 	<Object Id="5081" Name="IDI_BOTTOMBAR" MimeType="image/png">
 		<File>..\images\240x320\common\Appscommon\Menu\bottombar\bottombar.png</File>
-	</Object>
-	<Object Id="5101" Name="IDI_TITLEBAR" MimeType="image/png">
-		<File>..\images\240x320\common\Appscommon\Menu\titlebar\titlebar.png</File>
 	</Object>
 	<Object Id="5121" Name="IDB_SELECT_BAR" MimeType="image/png">
 		<File>..\images\240x320\common\Appscommon\Menu\selectbar\selectbar.png</File>
@@ -322,12 +316,6 @@
 	<Object Id="6201" Name="IDB_UTKMENU">
 		<File>..\images\240x320\common\UTK\utkmenu.bmp</File>
 	</Object>
-	<Object Id="6421" Name="IDI_TIMER" MimeType="image/png">
-		<File>..\images\240x320\common\Timer\timer.png</File>
-	</Object>
-	<Object Id="6422" Name="IDI_TIMER_CLOCK" MimeType="image/png">
-		<File>..\images\240x320\common\Timer\timer_clock.png</File>
-	</Object>
 	<Object Id="6444" Name="IDI_DATE_BAR" MimeType="image/png">
 		<File>..\images\240x320\common\Calendar\bar.png</File>
 	</Object>
@@ -388,9 +376,6 @@
 	<Object Id="7019" Name="IDB_ALARM">
 		<File>..\images\240x320\common\Annunciator\alarm.bmp</File>
 	</Object>
-	<Object Id="7020" Name="IDB_FM_RADIO">
-		<File>..\images\240x320\common\Annunciator\fm_radio.bmp</File>
-	</Object>
 	<Object Id="7021" Name="IDB_HEADSET">
 		<File>..\images\240x320\common\Annunciator\headset.bmp</File>
 	</Object>
@@ -418,21 +403,6 @@
 	<Object Id="7029" Name="IDB_TIMER">
 		<File>..\images\240x320\common\Annunciator\timer.bmp</File>
 	</Object>
-	<Object Id="7030" Name="IDB_BLUETOOTH">
-		<File>..\images\240x320\common\Annunciator\bluetooth.bmp</File>
-	</Object>
-	<Object Id="7031" Name="IDB_BT_TRANS">
-		<File>..\images\240x320\common\Annunciator\bt_trans.bmp</File>
-	</Object>
-	<Object Id="7032" Name="IDB_BT_HEADSET">
-		<File>..\images\240x320\common\Annunciator\bt_headset.bmp</File>
-	</Object>
-	<Object Id="7033" Name="IDB_AIR_MODE">
-		<File>..\images\240x320\common\Annunciator\airplane_mode.bmp</File>
-	</Object>
-	<Object Id="7034" Name="IDB_WAP">
-		<File>..\images\240x320\common\Annunciator\wap.bmp</File>
-	</Object>
 	<Object Id="7035" Name="IDB_LOADSPEAKER">
 		<File>..\images\240x320\common\Annunciator\loadspeaker.bmp</File>
 	</Object>
@@ -447,18 +417,6 @@
 	</Object>
 	<Object Id="7040" Name="IDB_NO_SERVICE">
 		<File>..\images\240x320\common\Annunciator\no_service.bmp</File>
-	</Object>
-	<Object Id="7044" Name="IDB_QQ">
-		<File>..\images\240x320\common\Annunciator\qq.bmp</File>
-	</Object>
-	<Object Id="7045" Name="IDB_QQMSG">
-		<File>..\images\240x320\common\Annunciator\qqmsg.bmp</File>
-	</Object>
-	<Object Id="7046" Name="IDB_QQHIDING">
-		<File>..\images\240x320\common\Annunciator\qqhiding.bmp</File>
-	</Object>
-	<Object Id="7047" Name="IDB_QQLEAVE">
-		<File>..\images\240x320\common\Annunciator\qqleave.bmp</File>
 	</Object>
 	<Object Id="7101" Name="IDB_MMS_ENTER" MimeType="image/png">
 		<File>..\images\240x320\common\Appscommon\Icon\enter.png</File>
@@ -490,17 +448,11 @@
 	<Object Id="9106" Name="IDB_MODE_T9_RAPID_ENGLISH_BLACK" MimeType="image/png">
 		<File>..\images\240x320\common\IME\ezenglish_black.png</File>
 	</Object>
-	<Object Id="9107" Name="IDB_MODE_T9_MT_INDONESIAN_BLACK" MimeType="image/png">
-		<File>..\images\240x320\common\IME\Indo_black.png</File>
-	</Object>
 	<Object Id="9108" Name="IDB_MODE_T9_RAPID_INDONESIAN_BLACK" MimeType="image/png">
 		<File>..\images\240x320\common\IME\T9In_black.png</File>
 	</Object>
 	<Object Id="9109" Name="IDB_MODE_T9_MT_ENGLISH_UP_BLACK" MimeType="image/png">
 		<File>..\images\240x320\common\IME\upabc_black.png</File>
-	</Object>
-	<Object Id="9110" Name="IDB_EDIT_UP_DOWN_BMP_BLACK" MimeType="image/png">
-		<File>..\images\240x320\common\IME\arrow_black.png</File>
 	</Object>
 </Objects>
 </BREWRes>

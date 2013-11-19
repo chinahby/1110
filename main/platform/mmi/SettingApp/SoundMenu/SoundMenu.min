@@ -856,10 +856,10 @@ else
 	 else ifeq ($(USES_RESDIR),hualu)
 CONSTFILE_FILES+=\
             blues.mid|fs:/ringers/blues.mid \
-            blue_load.mid|fs:/ringers/blue_load.mid \
-            champagne.mid|fs:/ringers/champagne.mid \
-            poweronoff.mp3|fs:/ringers/poweronoff.mp3 \
-			poweronoff.mp3|fs:/ringers/poweronoff.mp3
+            clock.mid|fs:/ringers/clock.mid \
+            ring1.mp3|fs:/ringers/ring1.mp3 \
+            ring2.mp3|fs:/ringers/ring2.mp3 \
+						poweronoff.mp3|fs:/ringers/poweronoff.mp3
 	   else                                            
         CONSTFILE_FILES+=\
             blues.mid|fs:/ringers/blues.mid \

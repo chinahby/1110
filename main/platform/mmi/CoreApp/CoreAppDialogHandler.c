@@ -5494,7 +5494,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     return TRUE;
 
                 case AVK_SELECT:
-                #ifndef FEATURE_VERSION_W027     
+                #ifndef FEATURE_VERSION_W027   
+                #ifndef FEATURE_VERSION_K212_HUALU
                 #ifdef FEATURE_KEYGUARD
                  if(pMe->m_IsSametime)
 				    {
@@ -5513,6 +5514,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     }
                     }
 				#endif
+                #endif
                 #endif
                     //return   CoreApp_LaunchApplet(pMe, AEECLSID_DIALER);
                     return TRUE;
@@ -7663,21 +7665,21 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 				xStartPos = 30;
 				yStartPos = 45;
 		    	SETAEERECT(&rect, xStartPos, yStartPos, nNumberWidth, nNumberHeight);
-		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (wHour/10), nLineWidth, &rect, RGB_BLACK);
+		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (wHour/10), nLineWidth, &rect, MAKE_RGB(88,88,88));
 		    	rect.x += nNumberWidth + nOffset;
-		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (wHour%10), nLineWidth, &rect, RGB_BLACK);
+		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (wHour%10), nLineWidth, &rect, MAKE_RGB(88,88,88));
 
 		   		 // draw colon
 		    	SETAEERECT(&rect, xStartPos + 2*(nNumberWidth + nOffset), yStartPos + nNumberHeight/2 - nLineWidth, nLineWidth, nLineWidth);
-		    	IDISPLAY_FillRect(pMe->m_pDisplay, &rect, RGB_BLACK);
+		    	IDISPLAY_FillRect(pMe->m_pDisplay, &rect, MAKE_RGB(88,88,88));
 		    	rect.y = yStartPos + nNumberHeight*3/5 +10 - nLineWidth;
-		    	IDISPLAY_FillRect(pMe->m_pDisplay, &rect, RGB_BLACK);
+		    	IDISPLAY_FillRect(pMe->m_pDisplay, &rect, MAKE_RGB(88,88,88));
 		    
 		   		// draw minute
 		    	SETAEERECT(&rect, xStartPos + 2*(nNumberWidth + nOffset) + nLineWidth + nOffset, yStartPos, nNumberWidth, nNumberHeight);
-		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (jDate.wMinute/10), nLineWidth, &rect, RGB_BLACK);
+		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (jDate.wMinute/10), nLineWidth, &rect, MAKE_RGB(88,88,88));
 		    	rect.x += nNumberWidth + nOffset;
-		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (jDate.wMinute%10), nLineWidth, &rect, RGB_BLACK);
+		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (jDate.wMinute%10), nLineWidth, &rect, MAKE_RGB(88,88,88));
 		    	rect.x += nNumberWidth;
 		     	rect.y = rect.y +12;
 				rect.x = rect.x+2;

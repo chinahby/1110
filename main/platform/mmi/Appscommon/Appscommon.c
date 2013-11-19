@@ -1807,6 +1807,7 @@ void DrawTitleBar(IDisplay  * pIDisplay, TitleBar_Param_type *TParam)
 #else
         else
         {
+            #ifndef FEATURE_VERSION_K212_HUALU
             //Add by pyuangui 20121221
             #ifdef FEATURE_VERSION_W317A
             if(AEE_Active()==AEECLSID_MAIN_MENU)
@@ -1822,16 +1823,32 @@ void DrawTitleBar(IDisplay  * pIDisplay, TitleBar_Param_type *TParam)
                                           AEE_APPSCOMMONRES_IMAGESFILE,
                                           IDI_TITLEBAR);
             }
+            #endif
         }
 #endif /* FEATURE_FUNCS_THEME */    
 //IDISPLAY_UpdateEx(pIDisplay, FALSE);//wlh
         // 绘制标题条背景
+        #ifndef FEATURE_VERSION_K212_HUALU
         if (NULL != pBarImg)
         {
             IIMAGE_Draw(pBarImg, 0, rc.y);
             IIMAGE_Release(pBarImg);
             pBarImg = NULL;
         }
+        #else
+        {
+            AEERect bgRect;
+            bgRect.y = rc.y;
+            bgRect.dy = STATEBAR_HEIGHT;  
+            bgRect.x = 0;
+            bgRect.dx = 320;
+            IDISPLAY_DrawRect(pIDisplay,
+                              &bgRect,
+                              RGB_NONE,
+                              MAKE_RGB(0,0,0),
+                              IDF_RECT_FILL);
+        }
+        #endif
 //IDISPLAY_UpdateEx(pIDisplay, FALSE);//wlh 
 #ifdef FEATURE_FUNCS_THEME    
         else
