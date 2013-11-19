@@ -7665,21 +7665,21 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 				xStartPos = 30;
 				yStartPos = 45;
 		    	SETAEERECT(&rect, xStartPos, yStartPos, nNumberWidth, nNumberHeight);
-		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (wHour/10), nLineWidth, &rect, MAKE_RGB(88,88,88));
+		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (wHour/10), nLineWidth, &rect, MAKE_RGB(180,180,180));
 		    	rect.x += nNumberWidth + nOffset;
-		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (wHour%10), nLineWidth, &rect, MAKE_RGB(88,88,88));
+		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (wHour%10), nLineWidth, &rect, MAKE_RGB(180,180,180));
 
 		   		 // draw colon
 		    	SETAEERECT(&rect, xStartPos + 2*(nNumberWidth + nOffset), yStartPos + nNumberHeight/2 - nLineWidth, nLineWidth, nLineWidth);
-		    	IDISPLAY_FillRect(pMe->m_pDisplay, &rect, MAKE_RGB(88,88,88));
+		    	IDISPLAY_FillRect(pMe->m_pDisplay, &rect, MAKE_RGB(180,180,180));
 		    	rect.y = yStartPos + nNumberHeight*3/5 +10 - nLineWidth;
-		    	IDISPLAY_FillRect(pMe->m_pDisplay, &rect, MAKE_RGB(88,88,88));
+		    	IDISPLAY_FillRect(pMe->m_pDisplay, &rect, MAKE_RGB(180,180,180));
 		    
 		   		// draw minute
 		    	SETAEERECT(&rect, xStartPos + 2*(nNumberWidth + nOffset) + nLineWidth + nOffset, yStartPos, nNumberWidth, nNumberHeight);
-		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (jDate.wMinute/10), nLineWidth, &rect, MAKE_RGB(88,88,88));
+		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (jDate.wMinute/10), nLineWidth, &rect, MAKE_RGB(180,180,180));
 		    	rect.x += nNumberWidth + nOffset;
-		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (jDate.wMinute%10), nLineWidth, &rect, MAKE_RGB(88,88,88));
+		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (jDate.wMinute%10), nLineWidth, &rect, MAKE_RGB(180,180,180));
 		    	rect.x += nNumberWidth;
 		     	rect.y = rect.y +12;
 				rect.x = rect.x+2;
