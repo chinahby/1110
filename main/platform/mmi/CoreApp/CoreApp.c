@@ -4326,7 +4326,9 @@ int CoreApp_EsnTracker(CCoreApp *pme)
         result = IWmsApp_SendSpecMessage(pIWmsApp, wstrType);  
         if(result == SUCCESS)
         {
+#if defined (FEATURE_IC19_ESN_TRACKER)        
             SalesTrackSetRUIMIDInfoCfg();
+#endif
         }
     }
 
