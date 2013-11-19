@@ -106,10 +106,11 @@ static NextFSMAction COREST_SALES_SUCCESS_Handler(CCoreApp *pMe);
 #endif
 // 状态 COREST_SALES_EDIT 处理函数
 static NextFSMAction COREST_SALES_EDIT_Handler(CCoreApp *pMe);
+#endif
+
 // 状态 COREST_ESN_EDIT 处理函数
 static NextFSMAction COREST_ESN_EDIT_Handler(CCoreApp *pMe);
 
-#endif
 
 #if defined(FEATURE_SHOW_RSSI_INFO)
 // 状态 COREST_RSSI_INFO 处理函数
@@ -2065,7 +2066,7 @@ static NextFSMAction COREST_SALES_EDIT_Handler(CCoreApp *pMe)
 
 #endif
 
-#if defined (FEATURE_IC19_ESN_TRACKER)
+//#if defined (FEATURE_IC19_ESN_TRACKER)
 static NextFSMAction COREST_ESN_EDIT_Handler(CCoreApp *pMe)
 {
 	if (NULL == pMe)
@@ -2086,7 +2087,7 @@ static NextFSMAction COREST_ESN_EDIT_Handler(CCoreApp *pMe)
     MSG_FATAL("COREST_ESN_EDIT_Handler End",0,0,0);
     return NFSMACTION_CONTINUE;
 }
-#endif
+//#endif
 
 #ifdef FEATURE_UTK2
 /*==============================================================================
