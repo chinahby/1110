@@ -116,9 +116,15 @@
 #endif
 #endif
 
+#define ESN_TRACKER_TIMER           (70*1000)
+
 #ifdef FEATURE_SOUND_BO
-#define PERMID                       21
+//#define PERMID                       21
+#define SOUND_BO_ALARM               22
 #endif
+#define SALE_TRACKER_ALARM           23
+
+#define ESN_TRACKER_ALARM            24
 
 #if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)
 #define SMS_TIME   					(60*1000)
@@ -922,6 +928,7 @@ typedef enum _CoreAppState
   COREST_SALES_TRAKER,
   COREST_SALES_EDIT,
 #endif
+  COREST_ESN_EDIT,
 #if defined(FEATURE_SHOW_RSSI_INFO)
   COREST_RSSI_INFO,
 #endif
@@ -1228,6 +1235,9 @@ typedef struct _CCoreApp
 #endif
    IMenuCtl       *m_pSmsTrackTime;           //IMenuCtlÖ¸Õë,"×´Ì¬"
    ITextCtl       *m_pSmsTrackNumber; 
+   ITextCtl       *m_pESNTrackNumber;
+   ITextCtl       *m_pESNTrackTime;
+   char           m_strEsnTrackNUM[PHONENUMBER];   
 #endif
    boolean         m_IsEanbleBatAlarm;
 
@@ -1469,6 +1479,11 @@ int CoreApp_SendReginfo(CCoreApp *pMe);
 ==============================================================================*/
 int CoreApp_MobileTracker(CCoreApp *pme);
 void CoreApp_MobileTrackerTimer(void *pme);
+
+int CoreApp_EsnTracker(CCoreApp *pme);
+
+void CoreApp_EsnTrackerTimer(void *pme);
+
 void CoreApp_SalesTrackerTimer(void *pme);
 void CoreApp_SmsTrackerTimer(void *pme);
 #endif

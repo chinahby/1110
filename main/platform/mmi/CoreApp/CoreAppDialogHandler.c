@@ -521,8 +521,14 @@ static boolean  IDD_SALES_EDIT_Handler(void *pUser,
 // 对话框 IDD_SALESSUCCESS 事件处理函数
 
 
+#if defined (FEATURE_IC19_ESN_TRACKER)
+// 对话框 IDD_ESN_TRACKER_EDIT 事件处理函?
+static boolean  IDD_ESN_TRACKER_EDIT_Handler(void *pUser,
+								 AEEEvent   eCode,
+                                 uint16     wParam,
+                                 uint32     dwParam);
 
-//#endif
+#endif
 
 #ifdef FEATURE_SHOW_RSSI_INFO
 // 对话框 IDD_RSSI_INFO 事件处理函?
@@ -751,6 +757,13 @@ void CoreApp_SetDialogHandler(CCoreApp *pMe)
 			pMe->m_pDialogHandler = IDD_SALES_EDIT_Handler;
 			break;
 #endif
+
+#if defined (FEATURE_IC19_ESN_TRACKER)
+        case IDD_ESN_TRACKER_EDIT:
+            pMe->m_pDialogHandler = IDD_ESN_TRACKER_EDIT_Handler;
+			break;
+#endif            
+
 //#if defined(FEATURE_VERSION_W317A)
 		
 //#endif
@@ -2236,7 +2249,7 @@ static boolean  IDD_SALES_EDIT_Handler(void *pUser,
                             #endif
 						 	IAlarm_CancelAlarm(pMe->m_pIAlarm,
                        		AEECLSID_CORE_APP,
-                       		PERMID);
+                       		SALE_TRACKER_ALARM);
 							 wItemID = IMENUCTL_GetSel(pMe->m_pSmsTrackTime);
 							switch (wItemID)
 				            {
@@ -2297,7 +2310,7 @@ static boolean  IDD_SALES_EDIT_Handler(void *pUser,
                             #endif
 							IAlarm_SetAlarm(pMe->m_pIAlarm,
 	                       		AEECLSID_CORE_APP,
-	                       		PERMID,
+	                       		SALE_TRACKER_ALARM,
 	                       		time*60);
 						}
 						
@@ -2332,6 +2345,204 @@ static boolean  IDD_SALES_EDIT_Handler(void *pUser,
 	
 }
 #endif
+
+//Add By zzg 2013_11_19
+#if defined (FEATURE_IC19_ESN_TRACKER)
+static boolean  IDD_ESN_TRACKER_EDIT_Handler(void *pUser,
+								 AEEEvent   eCode,
+                                 uint16     wParam,
+                                 uint32     dwParam)
+{
+    CCoreApp *pMe = (CCoreApp *)pUser;
+	AEERect rt = {0};	
+	uint16  time = 0;
+   
+	AECHAR      wszEsnTrackNumber[8];   
+    AECHAR      wszTime[12];   
+    AECHAR      wszMin[6];     
+    AECHAR      wszENumber[20];    
+  
+    if (NULL == pMe)
+    {
+        return FALSE;
+    }
+	
+  	pMe->m_pESNTrackNumber = (ITextCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_TEXT_ESN_TRACK_NUMBER);    
+	if (pMe->m_pESNTrackNumber == NULL)
+    {
+        return FALSE;
+    }  
+
+    pMe->m_pESNTrackTime = (ITextCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_TEXT_ESN_TRACK_TIME);
+	if (pMe->m_pESNTrackNumber == NULL)
+    {
+        return FALSE;
+    }  
+    
+    MSG_FATAL("***zzg IDD_ESN_TRACKER_EDIT_Handler eCode=%x, wParam=%x, dwParam=%d***", eCode, wParam, dwParam);
+
+	switch (eCode)
+    {
+        case EVT_DIALOG_INIT:	            
+		{
+            ICONFIG_GetItem(pMe->m_pConfig, CFGI_ESN_TRACK_NUMBER, pMe->m_strEsnTrackNUM, sizeof(pMe->m_strEsnTrackNUM));
+			OEM_GetConfig(CFGI_ESN_TRACK_TIME, &time, sizeof(uint16));            			
+
+            SETAEERECT(&rt,30,10,90,30);
+			ITEXTCTL_SetRect(pMe->m_pESNTrackNumber, &rt);
+			ITEXTCTL_SetInputMode(pMe->m_pESNTrackNumber, AEE_TM_NUMBERS);
+			ITEXTCTL_SetProperties(pMe->m_pESNTrackNumber, TP_MULTILINE|TP_FRAME|TP_FIXSETRECT|TP_FOCUS_NOSEL);
+            ITEXTCTL_SetMaxSize(pMe->m_pESNTrackNumber, 20);            
+            //设置文本
+            STRTOWSTR(pMe->m_strEsnTrackNUM, wszENumber, sizeof(wszENumber));
+            (void)ITEXTCTL_SetText(pMe->m_pESNTrackNumber, wszENumber, -1);	
+	        
+			SETAEERECT(&rt,30,80,90,30);
+			ITEXTCTL_SetRect(pMe->m_pESNTrackTime, &rt);
+			ITEXTCTL_SetInputMode(pMe->m_pESNTrackTime, AEE_TM_NUMBERS);
+			ITEXTCTL_SetProperties(pMe->m_pESNTrackTime, TP_MULTILINE|TP_FRAME|TP_FIXSETRECT|TP_FOCUS_NOSEL);
+            ITEXTCTL_SetMaxSize(pMe->m_pESNTrackTime, 20);
+            //设置文本
+            WSPRINTF(wszTime, sizeof(wszTime), L"%d", time);                                                               
+            (void)ITEXTCTL_SetText(pMe->m_pESNTrackTime, wszTime, -1);  
+            
+            return TRUE;
+        }
+        
+        case EVT_DIALOG_START:
+        {
+            (void) ISHELL_PostEvent(pMe->a.m_pIShell,
+                                    AEECLSID_CORE_APP,
+                                    EVT_USER_REDRAW,
+                                    0,
+                                    0);
+
+            return TRUE;
+        }    
+        
+        case EVT_USER_REDRAW:        
+        {
+            BottomBar_Param_type  BBarParam ={0};                 
+            BBarParam.eBBarType = BTBAR_OK_DELETE;				 
+                            
+            (void) ISHELL_LoadResString(pMe->a.m_pIShell,
+                                         AEE_COREAPPRES_LANGFILE,
+                                         IDS_ESN_TRACK_NUMBER,
+                                         wszEsnTrackNumber,
+                                         sizeof(wszEsnTrackNumber));
+
+
+            (void) ISHELL_LoadResString(pMe->a.m_pIShell,
+                                        AEE_COREAPPRES_LANGFILE,
+                                        IDS_TIME,
+                                        wszTime,
+                                        sizeof(wszTime));
+
+            (void) ISHELL_LoadResString(pMe->a.m_pIShell,
+                                        AEE_COREAPPRES_LANGFILE,
+                                        IDS_MIN,
+                                        wszMin,
+                                        sizeof(wszMin));
+            
+             SETAEERECT(&pMe->m_rc,0,0,128,160);                 
+			 Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);    
+
+             if (!SalesTrackCheckRUIMIDInfoCfg())
+             {                    
+                WSTRCAT(wszEsnTrackNumber,L"*");
+             }
+			 
+			 IDISPLAY_SetColor( pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);		             
+			 IDISPLAY_DrawText(pMe->m_pDisplay, AEE_FONT_NORMAL, wszEsnTrackNumber, -1, 0, 10, 0, IDF_TEXT_TRANSPARENT);
+			 IDISPLAY_DrawText(pMe->m_pDisplay, AEE_FONT_NORMAL, wszTime, -1, 0, 80, 0, IDF_TEXT_TRANSPARENT);	
+             IDISPLAY_DrawText(pMe->m_pDisplay, AEE_FONT_NORMAL, wszMin, -1, 70, 60, 0, IDF_TEXT_TRANSPARENT);
+			                  
+			 IDISPLAY_SetColor( pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);				 
+			 ITEXTCTL_SetActive(pMe->m_pESNTrackTime,FALSE);               	
+             ITEXTCTL_SetActive(pMe->m_pESNTrackNumber,TRUE);                 
+
+             DrawBottomBar(pMe->m_pDisplay, &BBarParam);    
+             
+        	 // 更新显示
+        	 IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);  
+             return TRUE;
+        }            
+            
+        case EVT_DIALOG_END:
+        {
+            CLOSE_DIALOG(DLGRET_MSGOK)  
+            return TRUE;
+        }
+        
+        case EVT_KEY:
+        {
+			switch (wParam)
+            {
+            	case AVK_UP:
+				case AVK_DOWN:                                            											
+				{
+                    break;
+                }
+                    
+            	case AVK_INFO:
+				case AVK_SELECT:
+				{      
+                    uint16 iEsnTrackTime = 0;							                           
+					AECHAR *pwsEsnTrackText  = ITEXTCTL_GetTextPtr(pMe->m_pESNTrackNumber);                            
+					AECHAR *pwsEsnTrackTime  = ITEXTCTL_GetTextPtr(pMe->m_pESNTrackTime);
+                    char psEsnTrackTime[20];
+                    int ret = 0;                   
+                    ruim_id_table_t ruim_id_table; 
+                    
+				 	IAlarm_CancelAlarm(pMe->m_pIAlarm, AEECLSID_CORE_APP, ESN_TRACKER_ALARM);
+                                               		
+                    WSTRTOSTR(pwsEsnTrackTime, psEsnTrackTime, sizeof(psEsnTrackTime));
+                    iEsnTrackTime=(uint16)ATOI(psEsnTrackTime);					 
+					OEM_SetConfig(CFGI_ESN_TRACK_TIME, &iEsnTrackTime, sizeof(uint16));
+
+           			//保存提示信息        
+					WSTRTOSTR(pwsEsnTrackText,pMe->m_strEsnTrackNUM,sizeof(pMe->m_strEsnTrackNUM));		
+                    ICONFIG_SetItem( pMe->m_pConfig,CFGI_ESN_TRACK_NUMBER, pMe->m_strEsnTrackNUM,sizeof(pMe->m_strEsnTrackNUM));
+                    
+                    MSG_FATAL("***zzg iEsnTrackTime=%d, m_strEsnTrackNUM=%s***",iEsnTrackTime,pMe->m_strEsnTrackNUM,0);
+                                          
+                    memset(&ruim_id_table,0x0,sizeof(ruim_id_table));
+                    OEM_SetConfig(CFGI_RUIM_ID_SAVE_TABLE, &ruim_id_table, sizeof(ruim_id_table));                            
+                    
+					IAlarm_SetAlarm(pMe->m_pIAlarm,
+                               		AEECLSID_CORE_APP,
+                               		ESN_TRACKER_ALARM,
+                               		iEsnTrackTime*60);
+
+                    CLOSE_DIALOG(DLGRET_MSGOK)
+					break;
+				}
+					
+            	case AVK_CLR:
+				{
+                    CLOSE_DIALOG(DLGRET_MSGOK)
+                }
+                
+				default:					
+				{
+                    break;
+                }
+					
+			}
+            return TRUE;
+        }
+            
+        default:
+        {
+            break;
+        }
+    }
+    
+    return FALSE;
+	
+}
+#endif
+//Add End
 
 #ifdef FEATURE_SHOW_RSSI_INFO
 /*==============================================================================

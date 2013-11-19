@@ -106,6 +106,8 @@ static NextFSMAction COREST_SALES_SUCCESS_Handler(CCoreApp *pMe);
 #endif
 // 状态 COREST_SALES_EDIT 处理函数
 static NextFSMAction COREST_SALES_EDIT_Handler(CCoreApp *pMe);
+// 状态 COREST_ESN_EDIT 处理函数
+static NextFSMAction COREST_ESN_EDIT_Handler(CCoreApp *pMe);
 
 #endif
 
@@ -285,6 +287,9 @@ NextFSMAction CoreApp_ProcessState(CCoreApp *pMe)
 		case COREST_SALES_EDIT:
 			retVal = COREST_SALES_EDIT_Handler(pMe);
 			break;
+        case COREST_ESN_EDIT:
+			retVal = COREST_ESN_EDIT_Handler(pMe);
+			break;    
 #endif
 #ifdef FEATURE_SHOW_RSSI_INFO
         case COREST_RSSI_INFO:
@@ -1063,7 +1068,11 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
                     char EFmodelBuf[127];
                     #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
                     #ifdef FEATURE_VERSION_C260_IC18
+                    #ifdef FEATURE_VERSION_C260_IC19
+                    static const char mnBuf[] = "MMX C200"; //MOBLOW0283
+                    #else
                     static const char mnBuf[] = "MMX C210";
+                    #endif
                     #elif defined (FEATURE_VERSION_IC241A_MMX)
                     static const char mnBuf[] = "MMX IC241A";
                     #else
@@ -1204,13 +1213,21 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
 		                              CoreApp_MobileTrackerTimer, 
 		                              pMe);
 #endif                
+
+#if defined (FEATURE_IC19_ESN_TRACKER)
+                (void)ISHELL_SetTimer(pMe->a.m_pIShell, 
+		                              ESN_TRACKER_TIMER,
+		                              CoreApp_EsnTrackerTimer, 
+		                              pMe);
+#endif
+
 				(void) ICONFIG_GetItem(pMe->m_pConfig,	
 										   CFGI_SMS_TRACKER_SEND_B,
 										   &m_bsendsalessms, 
 										   sizeof(m_bsendsalessms));
 
 				MSG_FATAL("m_bsendsalessms======%d",m_bsendsalessms,0,0);
-#if defined(FEATURE_VERSION_W021_CT100_SALES_TRACK_RUIM_ID)	                
+#if defined(FEATURE_VERSION_W021_CT100_ESN_TRACK)             
                 if(TRUE)	
 #else
                 if(!m_bsendsalessms)
@@ -2046,6 +2063,29 @@ static NextFSMAction COREST_SALES_EDIT_Handler(CCoreApp *pMe)
 }
 
 
+#endif
+
+#if defined (FEATURE_IC19_ESN_TRACKER)
+static NextFSMAction COREST_ESN_EDIT_Handler(CCoreApp *pMe)
+{
+	if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+    MSG_FATAL("COREST_ESN_EDIT_Handler Start",0,0,0);
+    switch (pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            CoreApp_ShowDialog(pMe, IDD_ESN_TRACKER_EDIT);
+            return NFSMACTION_WAIT;
+            
+        case DLGRET_MSGOK:
+        default:
+            MOVE_TO_STATE(COREST_STANDBY)
+    }
+    MSG_FATAL("COREST_ESN_EDIT_Handler End",0,0,0);
+    return NFSMACTION_CONTINUE;
+}
 #endif
 
 #ifdef FEATURE_UTK2

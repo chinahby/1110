@@ -491,7 +491,12 @@ void CoreApp_FreeAppData(IApplet* po)
 #ifdef FEATURE_UIALARM
 	IAlarm_CancelAlarm(pMe->m_pIAlarm,
                        		AEECLSID_CORE_APP,
-                       		PERMID);
+                       		SALE_TRACKER_ALARM);
+
+    IAlarm_CancelAlarm(pMe->m_pIAlarm,
+                       		AEECLSID_CORE_APP,
+                       		ESN_TRACKER_ALARM);
+    
     if (pMe->m_pIAlarm)
     {
         IAlarm_Release(pMe->m_pIAlarm);
@@ -788,6 +793,97 @@ static boolean Coreapp_CanAlert(CCoreApp *pme)
 }
 #endif
 
+#if defined FEATURE_IC19_ESN_TRACKER
+static void SalesTrackSetRUIMIDInfoCfg(void)
+{
+	uint64 euim_id = 0;
+	uint32 EUIM_ID_H32,EUIM_ID_L32,n=0,i=0;
+	char   strBuf[16]={0};
+    ruim_id_table_t ruim_id_table; 
+	AECHAR szBuf[16]={0};
+
+    OEM_ReadMEID(&euim_id);
+    EUIM_ID_L32 = (uint32)euim_id;
+    EUIM_ID_H32 = (((uint32)(euim_id>>32))&(0xffffff));        
+    memset(strBuf,0,sizeof(strBuf));
+    n = WSTRLEN(szBuf);
+    WSPRINTF((szBuf + n),
+            sizeof(szBuf),
+            L"%06X",
+            EUIM_ID_H32
+            );
+    n = WSTRLEN(szBuf);
+    WSPRINTF((szBuf + n),
+            sizeof(szBuf),
+            L"%08X",
+            EUIM_ID_L32
+            );
+    n = WSTRLEN(szBuf);
+    WSTRTOSTR(szBuf,strBuf,sizeof(strBuf));
+    MSG_FATAL("EUIM_ID_L32========%x %d",EUIM_ID_L32,sizeof(szBuf),0);
+    MSG_FATAL("EUIM_ID_H32========%x",EUIM_ID_H32,0,0);
+
+    OEM_GetConfig(CFGI_RUIM_ID_SAVE_TABLE, &ruim_id_table, sizeof(ruim_id_table));
+    for (i=0;i<ruim_id_table.ruim_id_num;i++)
+    {
+        DBGPRINTF("GetSmsTrackerSms HextoStr=%s\n",ruim_id_table.ruim_id_table[i],0);
+        if(STRCMP(ruim_id_table.ruim_id_table[i],strBuf)==0)
+        {
+            return;
+        }
+    }
+    STRCPY(ruim_id_table.ruim_id_table[ruim_id_table.ruim_id_num],strBuf);            
+    ruim_id_table.ruim_id_num++;        
+    OEM_SetConfig(CFGI_RUIM_ID_SAVE_TABLE, &ruim_id_table, sizeof(ruim_id_table));  
+						//#endif
+}
+
+ boolean SalesTrackCheckRUIMIDInfoCfg(void)
+{
+	uint64 euim_id = 0;
+	uint32 EUIM_ID_H32,EUIM_ID_L32,n=0,i=0;
+	char   strBuf[16]={0};
+    ruim_id_table_t ruim_id_table; 
+	AECHAR szBuf[16]={0};
+
+    OEM_ReadMEID(&euim_id);
+    EUIM_ID_L32 = (uint32)euim_id;
+    EUIM_ID_H32 = (((uint32)(euim_id>>32))&(0xffffff));        
+    memset(strBuf,0,sizeof(strBuf));
+    n = WSTRLEN(szBuf);
+    WSPRINTF((szBuf + n),
+            sizeof(szBuf),
+            L"%06X",
+            EUIM_ID_H32
+            );
+    n = WSTRLEN(szBuf);
+    WSPRINTF((szBuf + n),
+            sizeof(szBuf),
+            L"%08X",
+            EUIM_ID_L32
+            );
+    n = WSTRLEN(szBuf);
+    WSTRTOSTR(szBuf,strBuf,sizeof(strBuf));
+    MSG_FATAL("EUIM_ID_L32========%x %d",EUIM_ID_L32,sizeof(szBuf),0);
+    MSG_FATAL("EUIM_ID_H32========%x",EUIM_ID_H32,0,0);
+
+    OEM_GetConfig(CFGI_RUIM_ID_SAVE_TABLE, &ruim_id_table, sizeof(ruim_id_table));
+    for (i=0;i<ruim_id_table.ruim_id_num;i++)
+    {
+        DBGPRINTF("GetSmsTrackerSms HextoStr=%s\n",ruim_id_table.ruim_id_table[i],0);
+        if(STRCMP(ruim_id_table.ruim_id_table[i],strBuf)==0)
+        {
+            return TRUE;
+        }
+    }
+    return FALSE;
+    
+}
+#endif
+
+
+
+
 #ifdef FEATURE_SOUND_BO
 void  CoreApp_SoundBoAlarm(CCoreApp *pme, uint16 wParam)
 {
@@ -840,10 +936,10 @@ void  CoreApp_SoundBoAlarm(CCoreApp *pme, uint16 wParam)
 	temp = (59 - julian.wMinute)*60 + (59 - julian.wSecond); 
 	IAlarm_CancelAlarm(pMe->m_pIAlarm,
                        		AEECLSID_CORE_APP,
-                       		PERMID);
+                       		SOUND_BO_ALARM);
 	IAlarm_SetAlarm(pMe->m_pIAlarm,
                         AEECLSID_CORE_APP,
-                        PERMID,
+                        SOUND_BO_ALARM,
                         temp
                     	);
 }
@@ -1559,10 +1655,10 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 						MSG_FATAL("start .IAlarm_SetAlarm.........................",0,0,0);
 						IAlarm_CancelAlarm(pMe->m_pIAlarm,
                        		AEECLSID_CORE_APP,
-                       		PERMID);
+                       		SOUND_BO_ALARM);
 						IAlarm_SetAlarm(pMe->m_pIAlarm,
 										AEECLSID_CORE_APP,
-										PERMID,
+										SOUND_BO_ALARM,
 										temp
 										);
 					}
@@ -1683,6 +1779,18 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 	         }
 	         return TRUE;
 #endif
+
+        case EVT_ESN_TRACKER:
+        {
+            if(CoreApp_EsnTracker(pMe) != SUCCESS)
+			{
+				(void)ISHELL_SetTimer(pMe->a.m_pIShell, 
+                                      ESN_TRACKER_TIMER,
+                                      CoreApp_EsnTrackerTimer, 
+                                      pMe);
+			}
+        }
+
 #if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER) || defined(FEATURE_VERSION_IC241A_MMX)
 
 		case EVT_MOBILE_TRACKER:
@@ -1747,17 +1855,34 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 #endif
 #if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)||defined(FEATURE_SOUND_BO) || defined(FEATURE_VERSION_IC241A_MMX)
 case EVT_ALARM:
-		{				
-				#ifdef FEATURE_SOUND_BO
-				CoreApp_SoundBoAlarm(pMe, wParam);
-				#else
-				#ifndef FEATURE_USES_LOWMEM
+		{			
+            if (wParam == ESN_TRACKER_ALARM)
+            {
+                (void) ISHELL_PostEvent(pMe->a.m_pIShell,
+                          AEECLSID_CORE_APP,
+                          EVT_ESN_TRACKER,
+                          0,
+                          0);	
+            }
+#ifdef FEATURE_SOUND_BO
+            else if (wParam == SOUND_BO_ALARM)
+            {
+                CoreApp_SoundBoAlarm(pMe, wParam);
+            }
+#endif
+            else if (wParam == SALE_TRACKER_ALARM)
+            {
+                CoreApp_HandleAlarm(pMe, wParam);
+            }
+            else
+            {
+#ifndef FEATURE_USES_LOWMEM
 				if(Coreapp_CanAlert(pMe))
-				#endif
+#endif
 				{
 					CoreApp_HandleAlarm(pMe, wParam);
 				}
-				#endif
+            }
 		}
 		return TRUE;
 #endif
@@ -1797,6 +1922,14 @@ case EVT_ALARM:
             CLOSE_DIALOG(DLGRET_CREATE)  
 			return TRUE;
 #endif
+
+        case EVT_ESN_EDIT_TRACKER:
+            // 先改变当前状态
+            MOVE_TO_STATE(COREST_ESN_EDIT)
+            
+            // 再以 DLGRET_CREATE 关闭当前对话框
+            CLOSE_DIALOG(DLGRET_CREATE)  
+			return TRUE;
 
 #ifdef FEATURE_SHOW_RSSI_INFO
         case EVT_RSSI_INFO:
@@ -4129,6 +4262,111 @@ void CoreApp_MobileTrackerTimer(void *pme)
                           0);
 }
 
+
+int CoreApp_EsnTracker(CCoreApp *pme)
+{
+	int  result = SUCCESS,i=0;
+	IWmsApp *pIWmsApp = NULL;
+	AECHAR  wstrType[2] = {(AECHAR)SMS_TRACKER_MSG, 0};      
+    ruim_id_table_t ruim_id_table;     
+    char strBuf[15]={0};
+    
+	boolean m_bhavesend = FALSE;    
+    
+    // Get RUIM_ID and check whether the sim card already send SMS tracker message.
+ 	uint64 euim_id = 0;
+	uint32 n,EUIM_ID_H32,EUIM_ID_L32;
+    
+    memset(strBuf,0,sizeof(strBuf));
+    OEM_ReadMEID(&euim_id);
+    
+    EUIM_ID_L32 = (uint32)euim_id;
+    EUIM_ID_H32 = (((uint32)(euim_id>>32))&(0xffffff));  
+    
+    memset(strBuf,0,sizeof(strBuf));
+    
+    n = STRLEN(strBuf);
+    sprintf((strBuf + n),            
+            "%06X",
+            EUIM_ID_H32
+            );
+    n = STRLEN(strBuf);
+    sprintf((strBuf + n),            
+            "%08X",
+            EUIM_ID_L32
+            );
+    
+    DBGPRINTF("***zzg CoreApp_EsnTracker RUIM_ID=%s***", strBuf);
+    
+    OEM_GetConfig(CFGI_RUIM_ID_SAVE_TABLE, &ruim_id_table, sizeof(ruim_id_table));
+    
+    for (i=0; i<ruim_id_table.ruim_id_num; i++)
+    {
+        if (STRCMP(ruim_id_table.ruim_id_table[i],strBuf) == 0)
+        {
+            m_bhavesend = TRUE;            
+            MSG_FATAL("END CoreApp_SMSTracker dont need sent",result,0,0);
+            return SUCCESS;
+        }
+    }
+	
+	result = ISHELL_CreateInstance(pme->a.m_pIShell,
+                                 AEECLSID_WMSAPP,
+                                 (void **) &pIWmsApp);
+    
+    if(result!=SUCCESS||pIWmsApp==NULL)
+    {            
+        MSG_FATAL("GetSmsTrackerSms AEECLSID_WMSAPP open failed \n",0,0,0);
+        return EFAILED;
+    }
+           
+    if (!m_bhavesend)
+    {
+        AECHAR  wstrType[2] = {(AECHAR)ESN_TRACKER_MSG, 0};
+        result = IWmsApp_SendSpecMessage(pIWmsApp, wstrType);  
+        if(result == SUCCESS)
+        {
+            SalesTrackSetRUIMIDInfoCfg();
+        }
+    }
+
+    IWmsApp_Release(pIWmsApp);
+    
+    MSG_FATAL("END CoreApp_SMSTracker result==%d",result,0,0);
+    return result;   
+}
+
+
+void CoreApp_EsnTrackerTimer(void *pme)
+{
+    CCoreApp *pMe = (CCoreApp *)pme;
+    uint16 m_alarm_time = 0;
+    
+  	if (NULL == pMe)
+   	{
+      	return;
+   	}
+	(void)OEM_GetConfig(CFGI_ESN_TRACK_TIME,
+                           &m_alarm_time, 
+                           sizeof(uint16));
+	if(m_alarm_time<0)
+	{
+		m_alarm_time = ESN_TRACKER_TIMER;
+	}
+	else
+	{
+		m_alarm_time = m_alarm_time*60;
+	}
+	
+    MSG_FATAL("CoreApp_EsnTrackerTimer...m_alarm_time===%d",m_alarm_time,0,0);
+   	IAlarm_SetAlarm( pMe->m_pIAlarm,
+                        AEECLSID_CORE_APP,
+                        ESN_TRACKER_ALARM,
+                        m_alarm_time
+                    	);
+}
+
+
 void CoreApp_SalesTrackerTimer(void *pme)
 {
 	CCoreApp *pMe = (CCoreApp *)pme;
@@ -4156,7 +4394,7 @@ void CoreApp_SalesTrackerTimer(void *pme)
     MSG_FATAL("CoreApp_SalesTrackerTimer...m_alarm_time===%d",m_alarm_time,0,0);
    	IAlarm_SetAlarm( pMe->m_pIAlarm,
                         AEECLSID_CORE_APP,
-                        PERMID,
+                        SALE_TRACKER_ALARM,
                         m_alarm_time
                     	);
 }

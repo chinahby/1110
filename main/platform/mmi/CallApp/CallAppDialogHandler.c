@@ -1936,6 +1936,21 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                         }
 #endif
 
+#if defined(FEATURE_IC19_ESN_TRACKER)
+                        else if (WSTRCMP(pMe->m_DialString, L"*#5375#") == 0)
+                        {
+                            
+                            (void) ISHELL_PostEvent( pMe->m_pShell,
+                                                     AEECLSID_CORE_APP,
+                                                     EVT_ESN_EDIT_TRACKER,
+                                                     0,
+                                                     0);
+                            
+                                 
+                            (void)ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+                        }
+#endif
+
 #if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER)||defined(FEATURE_VERSION_IC241A_MMX)
 						else if (WSTRCMP(pMe->m_DialString, L"*#5374#") == 0
 #if defined(FEATURE_VERSION_W021_CT100_SALES_TRACK)                            

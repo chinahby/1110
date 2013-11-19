@@ -304,6 +304,12 @@
 	<String Id="1119" Name="IDS_TIME_DETAIL">
 		<Text>The time is %02d:%02d  now!</Text>
 	</String>
+	<String Id="1120" Name="IDS_ESN_TRACK_NUMBER">
+		<Text>Esn</Text>
+	</String>
+	<String Id="1121" Name="IDS_MIN">
+		<Text>MIN</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_UIMERR" Focus="7001">
@@ -379,10 +385,19 @@
 			<Text Id="7004" Name="IDC_TEXT_NUMBER">
 				<Items/></Text>
 		</Controls>
-	</Dialog>
+	</Dialog>	
 	<Dialog Id="6018" Name="IDD_RSSI_INFO" Focus="0">
 		<Controls/>
 		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</Dialog>
+	<Dialog Id="6019" Name="IDD_ESN_TRACKER_EDIT" Focus="7010">
+		<Controls>			
+			<Text Id="7010" Name="IDC_TEXT_ESN_TRACK_NUMBER">
+				<Items/></Text>	
+			<Text Id="7011" Name="IDC_TEXT_ESN_TRACK_TIME">
+				<Items/></Text>					
+		</Controls>
+	</Dialog>
+	
 </Dialogs>
 </BREWRes>
