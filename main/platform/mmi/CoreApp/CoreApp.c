@@ -1779,6 +1779,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 	         }
 	         return TRUE;
 #endif
+#if defined(FEATURE_SALESTRACKER)
 
         case EVT_ESN_TRACKER:
         {
@@ -1790,7 +1791,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                                       pMe);
 			}
         }
-
+#endif
 #if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER) || defined(FEATURE_VERSION_IC241A_MMX)
 
 		case EVT_MOBILE_TRACKER:
