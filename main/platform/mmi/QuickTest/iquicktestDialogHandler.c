@@ -3854,6 +3854,13 @@ static boolean  QuickTest_RestoreFactory_Handler(CQuickTest *pMe,
 				//ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_BLUETOOTH_APP, "ResetBT");
 #endif
 //Add End   
+
+#ifdef FEATURE_APP_MEDIAGALLERY
+                // 删除文件夹内的文件 (存储在手机上的)
+                {
+                    CMediaGallery_ClearMediaFiles(pMe);
+                }
+#endif           
                 OEM_RestoreFactorySetting();   
                 
 #ifdef FEATURE_DUAL_UIMCARD

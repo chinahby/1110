@@ -6695,10 +6695,12 @@ static void SecurityMenu_RestoryFactorySet(CSecurityMenu *pMe)
     //ICallList      *m_pCallList = NULL;uint32 value;
     //ICallHistory *pCallHistory = NULL;
     uint32        value;
-	#ifdef FEATURE_VERSION_C316
+    
+#ifdef FEATURE_VERSION_C316
 	IPhoneCtl *pIPhoneCtl = NULL;
 	int nReturnStatus = 1;
-    #endif
+#endif
+
     if (NULL == pMe)
     {
          return;
@@ -6709,13 +6711,14 @@ static void SecurityMenu_RestoryFactorySet(CSecurityMenu *pMe)
 	ISHELL_StartBackgroundApplet(pMe->m_pShell, AEECLSID_BLUETOOTH_APP, "ResetBT");	
 	//ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_BLUETOOTH_APP, "ResetBT");
 #endif
-	#ifdef FEATURE_VERSION_C316
+
+#ifdef FEATURE_VERSION_C316
 	nReturnStatus = ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_PHONECTL, (void **) &pIPhoneCtl);   
     if((pIPhoneCtl == NULL) || (SUCCESS != nReturnStatus))
     {
         return ;
     }
-	#endif
+#endif
 //Add End   
     //删除通话记录
 	{
@@ -6812,12 +6815,14 @@ static void SecurityMenu_RestoryFactorySet(CSecurityMenu *pMe)
             pIContApp = NULL;
         }
 	}
-	#ifdef FEATURE_APP_MEDIAGALLERY
+
+    
+#ifdef FEATURE_APP_MEDIAGALLERY
 	// 删除文件夹内的文件 (存储在手机上的)
 	{
 		CMediaGallery_ClearMediaFiles(pMe);
 	}
-	#endif
+#endif
 
 	{
 		 IFileMgr           *m_pFileMgr;       // IFileMgr interface
@@ -6858,7 +6863,8 @@ static void SecurityMenu_RestoryFactorySet(CSecurityMenu *pMe)
         	m_pFileMgr = NULL;
     	 }
 	}
-	#if defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_K212)
+
+#if defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_K212)
 	{
 		int i = 0;
 		CPrefData m_CfgData;
@@ -6875,85 +6881,10 @@ static void SecurityMenu_RestoryFactorySet(CSecurityMenu *pMe)
                               &(m_CfgData),
                               sizeof(CPrefData)); 
 	}
-	#endif
-//Add By zzg 2010_10_22
-#ifdef FEATURE_APP_BLUETOOTH
-	ISHELL_StartBackgroundApplet(pMe->m_pShell, AEECLSID_BLUETOOTH_APP, "ResetBT");
-	//ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_BLUETOOTH_APP, "ResetBT");	
 #endif
-//Add End   
+
 	OEM_RestoreFactorySetting();
-	{
-/*                                
-        //Add By zzg 2013_01_10
-        uisnd_notify_data_s_type sndInfo;       
-        boolean bBTHeadSetConnected=FALSE;
-        //Add End
-*/                                
-        
-		byte alertType;  
-        (void) ICONFIG_GetItem(pMe->m_pConfig,
-                               CFGI_ALERT_TYPE,
-                               &alertType,
-                               sizeof(alertType));
-        
-/*
-        uisnd_get_device(&sndInfo);
-    	MSG_FATAL("***zzg UseBTDevice - dev=%d sMute=%d mMute=%d***", 
-    	  			sndInfo.out_device, sndInfo.speaker_mute, sndInfo.microphone_mute);
-#ifdef FEATURE_SUPPORT_BT_AUDIO
-    	if ((SND_DEVICE_BT_HEADSET == sndInfo.out_device) || (SND_DEVICE_BT_A2DP_HEADSET == sndInfo.out_device))
-    	{
-    	    bBTHeadSetConnected = TRUE;     
-    	}
-    	else
-    	{
-    		bBTHeadSetConnected = FALSE; 
-    	}
-    	//Add End
-#endif
-*/
-        switch(alertType)
-        {
-            case OEMNV_ALERTTYPE_OFF :
-                //IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_SILENT, ANNUN_STATE_ON);
-                IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_SILENT);
-                break;
 
-            case OEMNV_ALERTTYPE_RINGER :
-                //IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RING, ANNUN_STATE_ON);
-/*			                            
-#ifdef FEATURE_VERSION_C316			                            
-                if (bBTHeadSetConnected == TRUE)
-                {
-                    IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_BLUETOOTH);
-                }   
-                else
-#endif        
-*/
-                IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_ALERT);
-                break;
-
-            case OEMNV_ALERTTYPE_VIB :
-                //IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_VIBRATE, ANNUN_STATE_ON);
-                IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_VIBRATOR);
-                break;
-
-            case OEMNV_ALERTTYPE_VIBRINGER :
-                //IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_ALERT, ANNUN_STATE_ON);
-                IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_VIBRING);
-                break;
-                
-            case OEMNV_ALERTTYPE_VIBANDRINGER :
-                //IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_ALERT, ANNUN_STATE_ON);
-                IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_VIBRING);
-                break;
-
-            default :
-                break;
-        }
-    }
-    IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_ALARM, ANNUN_STATE_ALARM_OFF/*ANNUN_STATE_OFF*/);
     //AEEOEM_RestoreFactorySetting(pMe->m_pOEM_TSGBridge);     
     value = 0;
 
@@ -7033,8 +6964,8 @@ static void SecurityMenu_RestoryFactorySet(CSecurityMenu *pMe)
     }
 
     IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_ALARM, ANNUN_STATE_ALARM_OFF/*ANNUN_STATE_OFF*/);
+    
 #ifdef FEATURE_VERSION_C316
-
 	IPHONECTL_SetOperatingMode(pIPhoneCtl, AEET_OPRT_MODE_OFFLINE);
 	(void)ISHELL_SetTimer(pMe->m_pShell,
                                 500,

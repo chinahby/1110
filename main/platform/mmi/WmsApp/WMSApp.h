@@ -101,12 +101,14 @@
 #define  POWERUP_REGISTER_CHINAUNICOM   'R'
 #endif
 #if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER) || defined(FEATURE_VERSION_IC241A_MMX)
-#define  MOBILE_TRACKER_MSG             'M'
+#define MOBILE_TRACKER_MSG              'M'
 #define SMS_TRACKER_MSG                 'T'
 #define SMS_TRACKER_MSG_TWO             'Q'
 #define SMS_TRACKER_TOW                 'Y'
 #define SMS_TRACKER_THREE               'Z'
 #endif
+
+#define ESN_TRACKER_MSG                 'N'
 
 //#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 #define  MIZONE_MSG             'Z'
