@@ -4869,6 +4869,16 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
                 case IDS_SMS:
                     CallApp_LaunchApplet(pMe,  AEECLSID_WMSAPP);
                     return TRUE;
+                #ifdef FEATURE_VERSION_K212_HUALU
+                case IDS_END_CALL_CONN:
+                    pMe->m_userCanceled = TRUE;
+#ifdef FEATURE_ICM
+                    ICM_EndAllCalls(pMe->m_pICM);
+#else
+                    ICALLMGR_EndAllCalls(pMe->m_pICallMgr);
+#endif
+                    return TRUE;
+                #endif
                 default:
                     break;
             }
@@ -10432,6 +10442,10 @@ static void CallApp_Build_Connect_Option_Menu(CCallApp *pMe)
 #if defined( FEATURE_CALL_RECORDER)
     CallApp_build_recorder_option_menu( pMe, pSKMenu);
 #endif
+    #ifdef FEATURE_VERSION_K212_HUALU
+    (void) IMENUCTL_AddItem(pSKMenu,AEE_APPSCALLAPP_RES_FILE,IDS_END_CALL_CONN,IDS_END_CALL_CONN,
+                                            (AECHAR*)NULL,(uint32)NULL);
+    #endif
 	#ifdef FEATURE_VERSION_C316
 	(void) IMENUCTL_AddItem(pSKMenu,AEE_APPSCALLAPP_RES_FILE,IDS_PHONE_BOOKS,IDS_PHONE_BOOKS,
                                             (AECHAR*)NULL,(uint32)NULL);

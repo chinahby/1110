@@ -172,6 +172,9 @@
 	<String Id="1057" Name="IDS_PWDTIPS">
 		<Text>输入密码</Text>
 	</String>
+	<String Id="1064" Name="IDS_END_CALL_CON">
+		<Text>挂断</Text>
+	</String>
 	<STRING Id="1100" Name="IDS_OPTION_RECORDER_ON">
 		<Text>录音</Text>
 	</STRING>
@@ -198,7 +201,7 @@
 	</STRING>
 	<STRING Id="1117" Name="IDS_INVALID">
 		<Text>无效密码</Text>
-	</STRING>	
+	</STRING>
 	<String Id="1120" Name="IDS_MAIN_MENU_TORCHON">
 		<Text>手电筒开启</Text>
 	</String>
@@ -219,25 +222,25 @@
 	</String>
 	<String Id="1126" Name="IDS_SAR_CT100">
 		<Text>SAR: CDMA800 Head:0.565W/Kg  Body:1.080W/Kg</Text>
-	</String>	
+	</String>
 	<STRING Id="1127" Name="IDS_MSG_CURPROFILE_MEETING_NO_VIBRATE">
 		<Text>振动模式</Text>
-	</STRING>	
+	</STRING>
 	<String Id="1128" Name="IDS_SAR_C260_IC18">
 		<Text>SAR: 0.21W/kg@1g(Head)   0.16W/kg@1g(Body).</Text>
 	</String>
 	<String Id="1129" Name="IDS_SAR_CT100_X2">
 		<Text>SAR:CDMA800  Head: 0.636 W/kg    Body: 0.942 W/kg</Text>
-	</String>	
+	</String>
 	<String Id="1130" Name="IDS_SAR_CT100_VERSION_02">
 		<Text>SAR:CDMA800 Head:0.506W/Kg; Body:0.565W/Kg</Text>
-	</String>	
+	</String>
 	<String Id="1131" Name="IDS_MSG_TIME_AM">
 		<Text>现在是北京时间上午%02d:%02d分！</Text>
-	</String>	
+	</String>
 	<String Id="1132" Name="IDS_MSG_TIME_PM">
 		<Text>现在是北京时间下午%02d:%02d分！</Text>
-	</String>	
+	</String>
 	<String Id="1133" Name="IDS_MSG_TIME_DETAIL">
 		<Text>现在是北京时间%02d:%02d分！</Text>
 	</String>
@@ -246,7 +249,7 @@
 	</String>
 	<String Id="1135" Name="IDS_SAR_CT100_VERSION_C444">
 		<Text>SAR:CDMA800 Head:0.744W/Kg; Body:0.666W/Kg</Text>
-	</String>		
+	</String>
 	<String Id="1136" Name="IDS_MSG_SILENT">
 		<Text>静音模式</Text>
 	</String>

@@ -6381,6 +6381,7 @@ static boolean IDD_WMSTIPS_Handler(void        *pUser,
                     IDISPLAY_BitBlt(pMe->m_pDisplay, 0, 0, pMe->m_rc.dx, pMe->m_rc.dy, 
                             pDevBmp, 0, 0, AEE_RO_COPY);
                 }
+                IANNUNCIATOR_Redraw(pMe->m_pIAnn);
                 DrawPromptMessage(pMe->m_pDisplay, pStatic, &Msg_Param);
             }
             //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
