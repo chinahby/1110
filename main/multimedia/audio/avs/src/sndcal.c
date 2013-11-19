@@ -2249,6 +2249,16 @@ VOL_MEMORY snd_gen_level_voc_type snd_cal_sp_voice_vol[] = {
   {		         0  , 		     -600 ,  0 },
   {		       200  , 		     -400 ,  0 },
   {		       400  , 		     -200 ,  0 }
+#elif defined (FEATURE_VERSION_C260_IC19)  
+  { VOC_VOL_SILENCE , VOC_VOL_SILENCE ,  0 },
+  {		      -800  , 		    -1400 ,  0 },
+  {		      -600  , 		    -1200 ,  0 },
+  {		      -400  , 		    -1000 ,  0 },
+  {			  -200  , 		     -800 ,  0 },
+  {		         0  , 		     -600 ,  0 },
+  {		       200  , 		     -400 ,  0 },
+  {		       400  , 		     -200 ,  0 }
+
 #else
   /*  rx                dtmf            pad        */
   { VOC_VOL_SILENCE , VOC_VOL_SILENCE ,  0 },

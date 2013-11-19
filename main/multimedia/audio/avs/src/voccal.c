@@ -10624,7 +10624,7 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_0_cal = {
   0x3000, 					   /* Tx DTMF gain		        */
   0xCB00, 					   /* CODEC Tx gain 		 */
 #ifdef FEATURE_VERSION_C260_IC19
-  0xFFF0, 					   /* CODEC Rx gain 		 */  
+  0xE000,    					/* CODEC Rx gain 		 */  
 #else
   0x8000, 					   /* CODEC Rx gain 		 */ 
 #endif   
@@ -15307,11 +15307,15 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_speaker_cal = {
   0x5000,                          /* CODEC Tx gain         */
   0x5000,                          /* CODEC Rx gain         */
 #elif defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316) 
+#if defined  (FEATURE_VERSION_C260_IC18) 
+  0xF000, 						   /* Tx Voice Volume 	  */
+#else
   0x7000, 						   /* Tx Voice Volume 	  */
+#endif  
   0x1000, 						   /* Tx DTMF gain		  */
   0x5000, 						   /* CODEC Tx gain		  */
 #if defined  (FEATURE_VERSION_C260_IC18) 
-  0xFFF0, 						   /* CODEC Rx gain		  */  
+  0x6000,  						   /* CODEC Rx gain		  */  
 #else
   0x5000, 						   /* CODEC Rx gain		  */
 #endif  
