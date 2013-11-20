@@ -1093,7 +1093,7 @@ typedef struct _OEMErrLogType {
 #define OEMNV_EMERG_NUM_TWO                    "110"
 #define OEMNV_EMERG_NUM_TRE                    "120"
 #define OEMNV_EMERG_NUM_FOR                    "999"
-#elif defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
+#elif defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)||defined(FEATURE_VERSION_K212_HUALU)
 #define OEMNV_EMERT_SEZE                       3
 #define OEMNV_EMERG_NUM_LEN                    3
 #define OEMNV_EMERG_NUM_ONE                    "119"
