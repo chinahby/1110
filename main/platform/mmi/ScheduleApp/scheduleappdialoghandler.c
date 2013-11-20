@@ -2705,11 +2705,18 @@ static boolean  dialog_handler_of_state_gotodate( CScheduleApp* pme,
                 AECHAR  dwsz[16];
                 
                 SETAEERECT(&rc, 0, TITLEBAR_HEIGHT, di.cxScreen, TITLEBAR_HEIGHT);
+				#ifndef FEATURE_VERSION_K212_HUALU                
                 ISHELL_LoadResString(pme->m_pShell, 
                                         AEE_SCHEDULEAPP_RES_FILE, 
                                         IDS_DATE, 
                                         dwsz, sizeof(dwsz));
-#if defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
+				#else
+                ISHELL_LoadResString(pme->m_pShell, 
+                                        AEE_SCHEDULEAPP_RES_FILE, 
+                                        IDS_DATE_CN, 
+                                        dwsz, sizeof(dwsz));
+				#endif
+#if defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND) ||defined(FEATURE_VERSION_K212_HUALU)
                 nOldFontColor = IDISPLAY_SetColor(pme->m_pDisplay, CLR_USER_TEXT, RGB_BLACK);
 #else
                  nOldFontColor = IDISPLAY_SetColor(pme->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);

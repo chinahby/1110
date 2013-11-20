@@ -67,6 +67,9 @@
 	<String Id="1022" Name="IDS_DELETE" Encoding="Unicode">
 		<Text>delete</Text>
 	</String>
+	<STRING Id="1023" Name="IDS_DATE_CN">
+		<Text>YYYY : MM : DD</Text>
+	</STRING>
 	<STRING Id="1030" Name="IDS_EVENT_EDIT_TITLE_SUBJECT">
 		<Text>Subject</Text>
 	</STRING>

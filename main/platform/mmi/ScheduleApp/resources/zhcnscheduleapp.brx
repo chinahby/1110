@@ -61,6 +61,9 @@
 	<STRING Id="1021" Name="IDS_OPTION_VIEWDAY_DELETE">
 		<Text>删除</Text>
 	</STRING>
+	<STRING Id="1023" Name="IDS_DATE_CN">
+		<Text>年 : 月 : 日 </Text>
+	</STRING>
 	<STRING Id="1030" Name="IDS_EVENT_EDIT_TITLE_SUBJECT">
 		<Text>主题</Text>
 	</STRING>
