@@ -3690,8 +3690,15 @@ static void OEMALERT_KeyBeep(IALERT *pMe, AVKType key, boolean bPressed)
             si.eMethod = AEE_SOUND_METHOD_CLICK;   
             td.eTone     = AEE_TONE_2;     // tone doesn't matter
             td.wDuration = NORMAL_TONE_MS; // duration doesn't matter            
-            ISOUND_Set(pMe->m_pSound, &si);    
+            ISOUND_Set(pMe->m_pSound, &si);   
+            #ifdef FEATURE_VERSION_K212_HUALU
+            {
+                uint16 btKeyVoltemp = GET_ISOUND_VOL_LEVEL(btKeyVol);
+                ISOUND_SetVolume(pMe->m_pSound, btKeyVoltemp*3/5);
+            }
+            #else
             ISOUND_SetVolume(pMe->m_pSound, GET_ISOUND_VOL_LEVEL(btKeyVol));
+            #endif
             if((btKeyVol != OEMSOUND_MUTE_VOL)&&(!headsetPresent))
             {            
                 ISOUND_PlayTone( pMe->m_pSound, td); 
@@ -3730,7 +3737,14 @@ static void OEMALERT_KeyBeep(IALERT *pMe, AVKType key, boolean bPressed)
                   td.wDuration = 1000;
                }               
                ISOUND_Set(pMe->m_pSound, &si);    
+               #ifdef FEATURE_VERSION_K212_HUALU
+               {
+                   uint16 btKeyVoltemp = GET_ISOUND_VOL_LEVEL(btKeyVol);
+                   ISOUND_SetVolume(pMe->m_pSound, btKeyVoltemp*3/5);
+               }
+               #else
                ISOUND_SetVolume(pMe->m_pSound, GET_ISOUND_VOL_LEVEL(btKeyVol));
+               #endif
 
 			   
                if((btKeyVol != OEMSOUND_MUTE_VOL)&&(!headsetPresent))
@@ -3758,7 +3772,16 @@ static void OEMALERT_KeyBeep(IALERT *pMe, AVKType key, boolean bPressed)
                   td.wDuration = (uint16)(LONG_TONE_MS - tone_time); 
    
                   ISOUND_Set(pMe->m_pSound, &si);    
-                  ISOUND_SetVolume(pMe->m_pSound, GET_ISOUND_VOL_LEVEL(btKeyVol));
+                  
+                  #ifdef FEATURE_VERSION_K212_HUALU
+                  {
+                      uint16 btKeyVoltemp = GET_ISOUND_VOL_LEVEL(btKeyVol);
+                      ISOUND_SetVolume(pMe->m_pSound, btKeyVoltemp*3/5);
+                  }
+                  #else
+                      ISOUND_SetVolume(pMe->m_pSound, GET_ISOUND_VOL_LEVEL(btKeyVol));
+                  #endif
+                  
 
 				  
                   if((btKeyVol != OEMSOUND_MUTE_VOL)&&(!headsetPresent))
@@ -3776,7 +3799,16 @@ static void OEMALERT_KeyBeep(IALERT *pMe, AVKType key, boolean bPressed)
                td.wDuration = NORMAL_TONE_MS; 
    
                ISOUND_Set(pMe->m_pSound, &si);    
-               ISOUND_SetVolume(pMe->m_pSound, GET_ISOUND_VOL_LEVEL(btKeyVol));
+               
+               #ifdef FEATURE_VERSION_K212_HUALU
+               {
+                   uint16 btKeyVoltemp = GET_ISOUND_VOL_LEVEL(btKeyVol);
+                   ISOUND_SetVolume(pMe->m_pSound, btKeyVoltemp*3/5);
+               }
+               #else
+                   ISOUND_SetVolume(pMe->m_pSound, GET_ISOUND_VOL_LEVEL(btKeyVol));
+               #endif
+               
 
 			   
               // if((btKeyVol != OEMSOUND_MUTE_VOL)&&(!headsetPresent))
