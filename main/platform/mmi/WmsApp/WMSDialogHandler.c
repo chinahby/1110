@@ -3630,7 +3630,7 @@ static boolean IDD_SETTING_Handler(void   *pUser,
     &&!defined(FEATURE_VERSION_W021_CT100)&&!defined(FEATURE_VERSION_K212)\
     &&!defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_VERSION_K212_20D)\
     &&!defined(FEATURE_VERSION_K212_ND)&&!defined(FEATURE_VERSION_W021_CT100_QVGA)\
-    &&!defined(FEATURE_VERSION_W021_C11)&&!defined(FEATURE_VERSION_W516_C260)
+    &&!defined(FEATURE_VERSION_W021_C11)&&!defined(FEATURE_VERSION_W516_C260)&&!defined(FEATURE_VERSION_K212_HUALU)
             MENU_ADDITEM(pMenu, IDS_CALLBACKNUM);
 #endif
 #endif 

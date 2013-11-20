@@ -396,6 +396,7 @@ int CContApp_ShowDialog(CContApp *pMe, uint16  dlgResId)
     {
         IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
     }
+    IANNUNCIATOR_Redraw(pMe->m_pIAnn);
 #if defined(AEE_STATIC)
     if (nRet != SUCCESS)
     {

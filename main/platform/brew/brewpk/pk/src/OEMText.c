@@ -187,8 +187,13 @@ static uint16 StrokeMap[]=
 #define PSEPARATORWIDTH 3   // 4
 #define SPELLMAX  10
 #define SPACESIZE  5  //6
+#ifdef FEATURE_VERSION_K212_HUALU
+#define CHINESE_FONT_HEIGHT 28
+#define CHINESE_FONT_WIDTH 32 
+#else
 #define CHINESE_FONT_HEIGHT 32
 #define CHINESE_FONT_WIDTH 32 
+#endif
 #else
 #define SYLLABLEWIDTH  24
 #define SEPARATORWIDTH 16

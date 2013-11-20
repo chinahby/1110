@@ -140,6 +140,8 @@ static boolean              gbNameSearch;     // Flag to indicate if its a name-
 #define OEMPHONEBOOK_CAPACITY  300 
 #elif defined(FEATURE_VERSION_EC99)
 #define OEMPHONEBOOK_CAPACITY  150  /*300 */
+#elif defined(FEATURE_VERSION_K212_HUALU)
+#define OEMPHONEBOOK_CAPACITY 200  /*(200)*/
 #else
 #define OEMPHONEBOOK_CAPACITY  500 
 #endif

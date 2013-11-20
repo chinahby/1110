@@ -1176,7 +1176,18 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
         IBACKLIGHT_Release(Backlight);
 	}
 #endif
-
+#if defined(FEATURE_VERSION_K212_HUALU)
+    if((wParam == AVK_CLR)||(wParam == AVK_END))
+    {
+        IBacklight  *Backlight;
+        (void)ISHELL_CreateInstance(sgpShell,AEECLSID_BACKLIGHT,(void **)&Backlight);
+        if(!IBACKLIGHT_IsEnabled(Backlight))
+        {
+            IBACKLIGHT_Enable(Backlight);
+        } 
+        IBACKLIGHT_Release(Backlight);
+    }
+#endif
 #if  defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W027)||defined(FEATURE_LEFT_SOFTKEY_AND_STAR_UNLOCK)|| defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)|| defined(FEATURE_VERSION_EC99)
 #if defined(FEATURE_VERSION_C310)//||defined(FEATURE_LEFT_SOFTKEY_AND_STAR_UNLOCK)
 		if((wParam == AVK_CLR)||(wParam == AVK_INFO)||(wParam == AVK_SEND)||(wParam == AVK_1)||
