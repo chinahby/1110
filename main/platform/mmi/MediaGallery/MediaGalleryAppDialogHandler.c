@@ -2015,7 +2015,11 @@ static boolean MediaGalleryApp_MemStatDlg_HandleEvent(CMediaGalleryApp* pMe,
          rc.dy =  DevInfo.cyScreen - rc.y - GetBottomBarHeight(pMe->m_pDisplay);
 
          ISTATIC_SetRect(pStatic, &rc);
-         ISTATIC_SetProperties(pStatic, ST_MIDDLETEXT|ST_GRAPHIC_BG);
+		 #ifdef FEATURE_VERSION_K212_HUALU
+         ISTATIC_SetProperties(pStatic, ST_MIDDLETEXT|ST_GRAPHIC_BG|ST_NOSCROLL);
+		 #else
+		 ISTATIC_SetProperties(pStatic, ST_MIDDLETEXT|ST_GRAPHIC_BG);
+		 #endif
 		 #ifndef FEATURE_VERSION_NO_BG
          ISTATIC_SetBackGround(pStatic, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND); //modified by yangdecai
          #else
