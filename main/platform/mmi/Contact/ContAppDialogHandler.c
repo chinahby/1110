@@ -394,6 +394,9 @@ int CContApp_ShowDialog(CContApp *pMe, uint16  dlgResId)
                                 NULL);
     if(pMe->m_pIAnn != NULL)
     {
+        #ifdef FEATURE_VERSION_K212_HUALU
+        IANNUNCIATOR_Redraw(pMe->m_pIAnn);
+		#endif
         IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
     }
     IANNUNCIATOR_Redraw(pMe->m_pIAnn);
