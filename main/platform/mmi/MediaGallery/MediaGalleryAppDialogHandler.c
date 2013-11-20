@@ -1407,6 +1407,7 @@ static boolean MediaGalleryApp_MainMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
       {
          int nBackground;
          uint8 nState;
+         IANNUNCIATOR_Redraw(pMe->m_pIAnn);
 #ifndef FEATURE_VERSION_C337  
 #ifndef FEATURE_VERSION_IC241A_MMX
          if((nBackground = app_media_scheduler()) != APP_MEDIA_ALLOW)

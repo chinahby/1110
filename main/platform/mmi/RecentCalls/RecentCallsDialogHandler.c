@@ -922,6 +922,7 @@ static boolean RecentCalls_MainMenuEvent(CRecentCalls *pMe,
       
       case EVT_DIALOG_START:
         //IMENUCTL_SetProperties(pMe->pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
+        IANNUNCIATOR_Redraw(pMe->m_pIAnn);
         IMENUCTL_SetProperties(pMe->pMenu, MP_BIND_ITEM_TO_NUMBER_KEY |MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_ACTIVE_NO_REDRAW);
         IMENUCTL_SetOemProperties( pMe->pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU

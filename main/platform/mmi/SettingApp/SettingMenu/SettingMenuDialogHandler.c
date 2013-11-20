@@ -822,6 +822,7 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
         case EVT_DIALOG_START:
             // 给菜单各菜单项加数字编号图标
             MSG_FATAL("HandleMainDialogEvent......EVT_DIALOG_START",0,0,0);
+            IANNUNCIATOR_Redraw(pMe->m_pAnn);
             SettingMenu_SetItemNumIcon(pMenu);
 #ifdef FEATRUE_AUTO_POWER
             pMe->m_auto_power = 0;
