@@ -119,6 +119,10 @@ static void SP0A19_config_window(uint16 startx,uint16 starty,uint16 width, uint1
 /*============================================================================
                           EXTERNAL API DEFINITIONS
 ============================================================================*/
+
+#if defined (FEATURE_VERSION_IC241A_MMX)
+#include "camsensor_sp0a19_sensor_init_ic241a_mmx.h"
+#else
 LOCAL boolean camsensor_sp0a19_sensor_init(void)
 {
 		MSG_FATAL("-----camsensor_SP0A19_sensor_init-----enter",0,0,0);
@@ -548,7 +552,7 @@ LOCAL boolean camsensor_sp0a19_sensor_init(void)
   	  camsensor_SP0A19_ycbcr_i2c_write_byte(0x5f,0x51);          
 	return  TRUE;
 } /* camsensor_ov7690_write_sensor */
-
+#endif
 
 
 uint8 camsensor_sp0a19_ycbcr_active(void)
