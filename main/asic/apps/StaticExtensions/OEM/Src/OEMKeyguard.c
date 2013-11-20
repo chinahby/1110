@@ -1241,9 +1241,13 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
         }
 #endif
         MSG_FATAL("***zzg OEMKeyguard_HandleEvent 3 wParam=%x, cls=%x***", wParam, cls, 0);
-        if((cls == AEECLSID_ALARMCLOCK) || (cls == AEECLSID_SCHEDULEAPP))
+        if((cls == AEECLSID_ALARMCLOCK) || (cls == AEECLSID_SCHEDULEAPP)|| (cls == AEECLSID_WMSAPP))
         {
+            #ifdef FEATURE_VERSION_K212_HUALU
+            if(wParam == AVK_CLR || wParam == AVK_SELECT|| wParam == AVK_INFO)
+            #else
             if(wParam == AVK_CLR || wParam == AVK_SELECT)
+            #endif
             {
             	OEMPriv_ResumeBREW();
                 return FALSE;            
