@@ -1796,7 +1796,11 @@ static void DateCtl_GetGridRect(DateCtl * pme, AEERect * prc, int nGridIndex)
    #endif
    #endif
 #else
+   #ifdef FEATURE_VERSION_K212_HUALU
+   SETAEERECT(prc, x+1, y+1, pme->m_rcGrid.dx-2, pme->m_rcGrid.dy-4);
+   #else
    SETAEERECT(prc, x, y, pme->m_rcGrid.dx, pme->m_rcGrid.dy);
+   #endif
 #endif
 }
 
@@ -2416,12 +2420,13 @@ static void DateCtl_DrawDayEx(DateCtl * pme, int nDay, AEERect * prc)
             {
                 (void)IDISPLAY_DrawText(pme->m_pIDisplay, pme->m_fntText, sz, -1, 0, 0, prc, properties);               
             }
-
+            MSG_FATAL("****pyg*** pme->m_nDay =%d nDay =%d",pme->m_nDay,nDay,0);
             if (nDay == pme->m_nDay)
             {
                 AEERect rc = { 0 };
-
+                
                 SETAEERECT( &rc, prc->x, prc->y + prc->dy, prc->dx, 1);   //modi by yangdecai 2010.06.15
+                 MSG_FATAL("****pyg*** prc->x =%d prc->y + prc->dy =%d prc->dx =%d",prc->x,prc->y + prc->dy,prc->dx);
                 IDISPLAY_FillRect(pme->m_pIDisplay, &rc, DATECTL_UNDELINE_COLOR);
             }
         }
