@@ -3689,17 +3689,25 @@ static boolean  IDD_STARTUPANI_Handler(void       *pUser,
                                        uint32     dwParam)
 {
     CCoreApp *pMe = (CCoreApp *)pUser;
+	
+	uint32  dwTotal = 0;
+	uint32 free = 0;
+	
     MSG_FATAL("IDD_STARTUPANI_Handler Start",0,0,0);
     switch (eCode) 
     {
         case EVT_DIALOG_INIT:
+			
             IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
             return TRUE;
 
         case EVT_DIALOG_START:			
             if(pMe->m_wStartupAniTime == 0)
             {
-#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
+            GETFSFREE(&dwTotal);
+			free = GETRAMFREE(NULL,NULL);
+			MSG_FATAL("EVT_DIALOG_INIT CameraApp dwTotal======%d,free====%d",dwTotal,free,0);
+#if !defined(FEATURE_USES_LOWMEM)//&&!defined(FEATURE_LOWER_MEM)
                 if ( NULL == pMe->m_pStartupAniImg )
                 {
                     pMe->m_pStartupAniImg = ISHELL_LoadImage( pMe->a.m_pIShell, PWRON_ANI_FILE);
@@ -3709,6 +3717,7 @@ static boolean  IDD_STARTUPANI_Handler(void       *pUser,
                     }
                 }
 #endif
+				MSG_FATAL("EVT_DIALOG_INIT CameraApp over dwTotal======%d,free====%d",dwTotal,free,0);
                 (void) ISHELL_PostEvent(pMe->a.m_pIShell, AEECLSID_CORE_APP, EVT_USER_REDRAW, 0, 0);
             }
             return TRUE;
@@ -3739,11 +3748,16 @@ static boolean  IDD_STARTUPANI_Handler(void       *pUser,
 
                 // 播放开机动画
                 //pMe->m_wStartupAniTime = 0;
-#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
+#if !defined(FEATURE_USES_LOWMEM)//&&!defined(FEATURE_LOWER_MEM)
                 if ( NULL != pMe->m_pStartupAniImg )
 #endif
                 {     
                     CoreApp_PlayPwrOnAni(pMe);
+					GETFSFREE(&dwTotal);
+					free = GETRAMFREE(NULL,NULL);
+					GETFSFREE(&dwTotal);
+					free = GETRAMFREE(NULL,NULL);
+					MSG_FATAL("EVT_USER_REDRAW CameraApp dwTotal======%d,free====%d",dwTotal,free,0);
                 }
 #if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
                 else
@@ -3759,7 +3773,7 @@ static boolean  IDD_STARTUPANI_Handler(void       *pUser,
             //IALERT_StopRingerAlert(pMe->m_pAlert);
             if (pMe->m_eDlgRet != DLGRET_OK)
             {// 开机动画播放过程中被其他应用启动时中断
-#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
+#if !defined(FEATURE_USES_LOWMEM)//&&!defined(FEATURE_LOWER_MEM)
                 if (NULL != pMe->m_pStartupAniImg)
                 {     
                     MSG_FATAL("IDD_STARTUPANI_Handler EVT_DIALOG_END 1",0,0,0);
@@ -6559,7 +6573,7 @@ static boolean  IDD_POWERDOWN_Handler(void *pUser,
                                 IALERT_StartRingerAlert_Ex( pMe->m_pAlert, (uint32)aRing_type[Ring_Cur_Music] );
                             }
                             
-#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
+#if !defined(FEATURE_USES_LOWMEM)//&&!defined(FEATURE_LOWER_MEM)
                             pMe->m_pStartupAniImg = ISHELL_LoadImage( pMe->a.m_pIShell, PWROFF_ANI_FILE);
                             if ( NULL != pMe->m_pStartupAniImg )
 #endif
@@ -6569,7 +6583,7 @@ static boolean  IDD_POWERDOWN_Handler(void *pUser,
                         }
                         else
                         {
-#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
+#if !defined(FEATURE_USES_LOWMEM)//&&!defined(FEATURE_LOWER_MEM)
                             if ( NULL != pMe->m_pStartupAniImg )
                             {     
                                 IIMAGE_Stop(pMe->m_pStartupAniImg);
@@ -8849,15 +8863,16 @@ static void CoreApp_PlayPwrOnAni(CCoreApp *pMe)
 
     ASSERT(pMe != NULL);
     MSG_FATAL("CoreApp_PlayPwrOnAni Start",0,0,0);
-#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
+#if !defined(FEATURE_USES_LOWMEM)//&&!defined(FEATURE_LOWER_MEM)
     if ( (NULL != pMe->m_pStartupAniImg) && (pMe->m_wStartupAniTime < 1)  )
 #else
     if (pMe->m_wStartupAniTime < PWRON_ANI_FRAME_COUNT )
 #endif
     {
-#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
+#if !defined(FEATURE_USES_LOWMEM)//&&!defined(FEATURE_LOWER_MEM)
+		//MSG_FATAL("CoreApp_PlayPwrOnAni.........",0,0,0);
         IIMAGE_GetInfo( pMe->m_pStartupAniImg, &ImgInfo );
-
+		MSG_FATAL("CoreApp_PlayPwrOnAni.....CX==%d,CY====%d",ImgInfo.cx,ImgInfo.cy,0);
         // 设置动画速度(毫秒)
         IIMAGE_SetAnimationRate(pMe->m_pStartupAniImg, PWRON_ANI_RATE);
         IIMAGE_SetParm(pMe->m_pStartupAniImg, IPARM_PLAYTIMES, 1, 0);
@@ -8916,15 +8931,21 @@ static void CoreApp_PlayPwrOnAni(CCoreApp *pMe)
         MSG_FATAL("CoreApp_PlayPwrOnAni 4",0,0,0);
         IBACKLIGHT_Enable(pMe->m_pBacklight);
         IALERT_StopRingerAlert(pMe->m_pAlert);
-#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
+#if !defined(FEATURE_USES_LOWMEM)//&&!defined(FEATURE_LOWER_MEM)
         if ( NULL != pMe->m_pStartupAniImg )
         {     
+        	uint32  dwTotal = 0;
+			uint32 free = 0;
             MSG_FATAL("CoreApp_PlayPwrOnAni 5",0,0,0);
+			GETFSFREE(&dwTotal);
+			free = GETRAMFREE(NULL,NULL);
+			MSG_FATAL("EVT_USER_REDRAW start CameraApp dwTotal======%d,free====%d",dwTotal,free,0);
             IIMAGE_Stop(pMe->m_pStartupAniImg);
             IIMAGE_Release(pMe->m_pStartupAniImg);
             pMe->m_pStartupAniImg = NULL;
         }
 #endif
+	
         CLOSE_DIALOG(DLGRET_OK)
     }
 
@@ -8948,13 +8969,13 @@ static void CoreApp_PlayPwrOffAni(CCoreApp *pMe)
     AEEImageInfo  ImgInfo;  //Gets the information about an image
 
     ASSERT(pMe != NULL);
-#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
+#if !defined(FEATURE_USES_LOWMEM)//&&!defined(FEATURE_LOWER_MEM)
     if ( (NULL != pMe->m_pStartupAniImg) && (pMe->m_wStartupAniTime < 1)  ) 
 #else
     if (pMe->m_wStartupAniTime < PWRON_ANI_FRAME_COUNT) 
 #endif
     {
-#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
+#if !defined(FEATURE_USES_LOWMEM)//&&!defined(FEATURE_LOWER_MEM)
         IIMAGE_GetInfo( pMe->m_pStartupAniImg, &ImgInfo );
         
         // 设置动画速度(毫秒)
@@ -9008,7 +9029,7 @@ static void CoreApp_PlayPwrOffAni(CCoreApp *pMe)
     }
     else
     {
-#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
+#if !defined(FEATURE_USES_LOWMEM)//&&!defined(FEATURE_LOWER_MEM)
         if ( NULL != pMe->m_pStartupAniImg )
         {     
             IIMAGE_Stop(pMe->m_pStartupAniImg);

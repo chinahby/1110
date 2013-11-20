@@ -662,7 +662,7 @@ boolean CoreApp_InitAppData(IApplet* po)
     
     pMe->m_SYS_MODE_NO_SRV = TRUE;
     MEMSET(pMe->svc_p_name, 0, UIM_CDMA_HOME_SERVICE_SIZE + 1); 
-#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
+#if !defined(FEATURE_USES_LOWMEM)//&&!defined(FEATURE_LOWER_MEM)
     pMe->m_pStartupAniImg = NULL;
 #endif
     pMe->m_battery_time = 0;

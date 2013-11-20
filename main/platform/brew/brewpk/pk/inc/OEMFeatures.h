@@ -210,9 +210,11 @@ GENERAL DESCRIPTION:
 
 //#define FEATURE_DEFAULT_VIEW_APP  // Use ViewApp.c as default view applet.
 #ifndef FEATURE_MANGO_BREW
-#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
+#if !defined(FEATURE_USES_LOWMEM)
 #define FEATURE_GIF_DECODE
+#if !defined(FEATURE_LOWER_MEM)
 #define FEATURE_BCI_DECODE
+#endif
 #endif
 #define FEATURE_BREW_PNG_DECODE
 #endif
