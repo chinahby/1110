@@ -6252,7 +6252,7 @@ static void MP3_DrawSimplePlayerFace(CMusicPlayer *pMe)
  #ifdef FEATURE_DISP_240X320
     MP3_DrawImage(pMe, IDI_BACKGROUND, 0, 0);//»­±³¾°	
  #endif
-#if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_VERSION_K212_HUALU)
+#if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_QVGA_INHERIT_K212)&&!defined(FEATURE_VERSION_K212_HUALU)
     MP3_DrawImage(pMe, IDI_SIMPLEPLAYER, 0, 0);
  #endif
  #ifdef FEATURE_DISP_240X320

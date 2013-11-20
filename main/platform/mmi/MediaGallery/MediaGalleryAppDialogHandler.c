@@ -7560,7 +7560,9 @@ static int MGAppUtil_BuildPopupMenuItems(CMediaGalleryApp* pMe,
       }
       else if(MG_BETWEEN(eMimeBase, MG_MIME_VIDEOBASE, MG_MIME_VIDEOMAX))
       {
+         #ifdef FEATURE_APP_MPEG4
          MGMENU_ADDITEM(*ppPopupMenu, IDS_MG_PLAY);
+         #endif
       }
 
       if(bProtect == FALSE)

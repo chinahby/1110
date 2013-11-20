@@ -19,12 +19,17 @@ vpath %.c $(MUSICPLAYER_SRC)
 vpath %.bar $(MUSICPLAYER_RES)
 vpath %.brx $(MUSICPLAYER_RES)
 vpath %.mp3 $(MUSICPLAYER_RES)
-
+ifneq ($(RESOURCEDIR),hualu)
 CONSTFILE_FILES+=\
 	musicplayer.mif|fs:/mif/musicplayer.mif \
 	musicplayer.bar|fs:/mod/musicplayer/en/musicplayer.bar \
 	musicplayerimage$(USES_LCD_SIZE).bar|fs:/mod/musicplayer/musicplayerimage.bar 
-	
+else
+CONSTFILE_FILES+=\
+	musicplayer.mif|fs:/mif/musicplayer.mif \
+	musicplayer.bar|fs:/mod/musicplayer/en/musicplayer.bar \
+	musicplayerimage$(USES_LCD_SIZE)_low.bar|fs:/mod/musicplayer/musicplayerimage.bar 
+endif
 ifneq ($(USES_RESDIR), Flexi203)
 ifneq ($(RESOURCEDIR),C306)
 ifneq ($(RESOURCEDIR),W515V3)
