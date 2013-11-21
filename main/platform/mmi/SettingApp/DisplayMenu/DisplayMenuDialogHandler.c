@@ -745,11 +745,13 @@ static boolean  HandlePictureDialogEvent(CDisplayMenu *pMe,
 
             //显示墙纸或动画 
             DisplayMenu_DisplayImg(pMe, pMe->m_PICType);
+            #if !defined(FEATURE_LOW_MEM_BIGFONT)
             WSTRCAT(lBuf, L"<");
             WSTRCAT(rBuf, L">");
             SETAEERECT( &clip, pMe->m_rc.x, (pMe->m_rc.dy/2)-10, pMe->m_rc.dx, pMe->m_rc.dy/2);
             DrawTextWithProfile(pMe->m_pShell, pMe->m_pDisplay, RGB_WHITE_NO_TRANS, AEE_FONT_LARGE, lBuf,-1,clip.x,clip.y,&clip, IDF_ALIGN_LEFT|IDF_TEXT_TRANSPARENT);
-            DrawTextWithProfile(pMe->m_pShell, pMe->m_pDisplay, RGB_WHITE_NO_TRANS, AEE_FONT_LARGE, rBuf,-1,clip.x,clip.y,&clip,IDF_ALIGN_RIGHT|IDF_TEXT_TRANSPARENT);          
+            DrawTextWithProfile(pMe->m_pShell, pMe->m_pDisplay, RGB_WHITE_NO_TRANS, AEE_FONT_LARGE, rBuf,-1,clip.x,clip.y,&clip,IDF_ALIGN_RIGHT|IDF_TEXT_TRANSPARENT);   
+            #endif
 			#if defined(FEATURE_VERSION_K202_LM129C)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_LOW_MEM_BIGFONT)
 			DrawBottomBar_Ex(pMe->m_pShell,pMe->m_pDisplay, BTBAR_SELECT_BACK);	
 			#else
@@ -2118,20 +2120,9 @@ static void DisplayMenu_DisplayImg(CDisplayMenu *pMe, PICTURE_TYPE PICType)
         MSG_FATAL("Warning pMe->m_CurPaper == NULL", 0, 0 ,0);
         return;
     }
-    // 画title底条
-    //pMe->m_pTitleImg = NULL//ISHELL_LoadImage(pMe->m_pShell,"\\image\\sm_bgwall.bmp");
 
-    //if(pMe->m_pTitleImg != NULL)
-    //{
-    //    IIMAGE_Draw(pMe->m_pTitleImg, 0, 0);
-    //    IIMAGE_Release(pMe->m_pTitleImg);
-    //    pMe->m_pTitleImg = NULL;
-    //}
-    //else
-    //{
     SETAEERECT(&rc, 0, 0, pMe->m_rc.dx, WALLPAPER_TOP_BAR_HIGHT);
     IDISPLAY_FillRect(pMe->m_pDisplay, &rc, MAKE_RGB(80, 176, 235));
-    //}
 
     switch(PICType)
     {
