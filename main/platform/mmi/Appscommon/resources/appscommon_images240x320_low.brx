@@ -16,14 +16,11 @@
 	<Object Id="5006" Name="IDB_MODE_T9_STROKE" MimeType="image/png">
 		<File>..\images\240x320\common\IME\T9str.png</File>
 	</Object>
-	<Object Id="5007" Name="IDI_OBJECT_5007" MimeType="image/png">
-		<File>..\images\240x320\common\Appscommon\Icon\music.png</File>
-	</Object>
 	<Object Id="5009" Name="IDI_PLAYLISTMG">
 		<File>..\images\240x320\common\mediagallery\playlistplaying.bmp</File>
 	</Object>
 	<Object Id="5010" Name="IDI_KEY_TEST" MimeType="image/png">
-		<File>..\images\240x320\common\QuickTest\keytest.png</File>
+		<File>..\images\240x320\common\QuickTest\keytest_hualu.png</File>
 	</Object>
 	<Object Id="5011" Name="IDI_TEST_DOWN" MimeType="image/png">
 		<File>..\images\240x320\common\QuickTest\down.png</File>
@@ -142,21 +139,6 @@
 	<Object Id="5404" Name="IDB_MODE_NUMBERS" MimeType="image/png">
 		<File>..\images\240x320\common\IME\123.png</File>
 	</Object>
-	<Object Id="5405" Name="IDB_MODE_T9_ZHUYIN">
-		<File>..\images\240x320\common\IME\T9zhu.png</File>
-	</Object>
-	<Object Id="5407" Name="IDB_MODE_T9_RAPID_ENGLISH" MimeType="image/png">
-		<File>..\images\240x320\common\IME\ezenglish.png</File>
-	</Object>
-	<Object Id="5408" Name="IDB_MODE_T9_MT_INDONESIAN" MimeType="image/png">
-		<File>..\images\240x320\common\IME\Indo.png</File>
-	</Object>
-	<Object Id="5409" Name="IDB_MODE_T9_RAPID_INDONESIAN" MimeType="image/png">
-		<File>..\images\240x320\common\IME\T9In.png</File>
-	</Object>
-	<Object Id="5426" Name="IDB_EDIT_UP_DOWN_BMP" MimeType="image/png">
-		<File>..\images\240x320\common\IME\arrow.png</File>
-	</Object>
 	<Object Id="5801" Name="IDB_TEMPLATE">
 		<File>..\images\240x320\common\Message\Icon\Template.bmp</File>
 	</Object>
@@ -243,24 +225,6 @@
 	</Object>
 	<Object Id="6003" Name="IDB_MISS_CALL">
 		<File>..\images\240x320\common\CallApp\Calltype\miss_call.bmp</File>
-	</Object>
-	<Object Id="6021" Name="IDI_REFUI_INCOMING" MimeType="image/png">
-		<File>..\images\240x320\common\CallApp\Call\incoming_call.png</File>
-	</Object>
-	<Object Id="6022" Name="IDI_REFUI_OUTGOING" MimeType="image/png">
-		<File>..\images\240x320\common\CallApp\Call\outgoing_call.png</File>
-	</Object>
-	<Object Id="6023" Name="IDI_REFUI_CALLING" MimeType="image/png">
-		<File>..\images\240x320\common\CallApp\Call\calling.png</File>
-	</Object>
-	<Object Id="6024" Name="IDI_REFUI_ENDCALL" MimeType="image/png">
-		<File>..\images\240x320\common\CallApp\Call\end_call.png</File>
-	</Object>
-	<Object Id="6025" Name="IDI_REFUI_MISSEDCALL" MimeType="image/png">
-		<File>..\images\240x320\common\CallApp\Call\missed_call.png</File>
-	</Object>
-	<Object Id="6026" Name="IDI_REFUI_LOUDSPEAKER" MimeType="image/png">
-		<File>..\images\240x320\common\CallApp\Call\loudspeaker.png</File>
 	</Object>
 	<Object Id="6041" Name="IDI_NUMBER_0" MimeType="image/png">
 		<File>..\images\240x320\common\CallApp\DialedNumber\0.png</File>
@@ -418,41 +382,8 @@
 	<Object Id="7040" Name="IDB_NO_SERVICE">
 		<File>..\images\240x320\common\Annunciator\no_service.bmp</File>
 	</Object>
-	<Object Id="7101" Name="IDB_MMS_ENTER" MimeType="image/png">
-		<File>..\images\240x320\common\Appscommon\Icon\enter.png</File>
-	</Object>
-	<Object Id="7102" Name="IDB_MMS_SPACE" MimeType="image/png">
-		<File>..\images\240x320\common\Appscommon\Icon\space.png</File>
-	</Object>
 	<Object Id="8050" Name="IDB_BATT5">
 		<File>..\images\240x320\common\Annunciator\batt5.bmp</File>
-	</Object>
-	<Object Id="9100" Name="IDB_MODE_NUMBERS_BLACK" MimeType="image/png">
-		<File>..\images\240x320\common\IME\123_black.png</File>
-	</Object>
-	<Object Id="9101" Name="IDB_MODE_T9_MT_ENGLISH_BLACK" MimeType="image/png">
-		<File>..\images\240x320\common\IME\Abc_black.png</File>
-	</Object>
-	<Object Id="9102" Name="IDB_MODE_T9_MT_ENGLISH_LOW_BLACK" MimeType="image/png">
-		<File>..\images\240x320\common\IME\lowabc_black.png</File>
-	</Object>
-	<Object Id="9103" Name="IDB_MODE_T9_PINYIN_BLACK" MimeType="image/png">
-		<File>..\images\240x320\common\IME\T9pin_black.png</File>
-	</Object>
-	<Object Id="9104" Name="IDB_MODE_T9_STROKE_BLACK" MimeType="image/png">
-		<File>..\images\240x320\common\IME\T9str_black.png</File>
-	</Object>
-	<Object Id="9105" Name="IDB_MODE_T9_ZHUYIN_BLACK">
-		<File>..\images\240x320\common\IME\T9zhu_black.png</File>
-	</Object>
-	<Object Id="9106" Name="IDB_MODE_T9_RAPID_ENGLISH_BLACK" MimeType="image/png">
-		<File>..\images\240x320\common\IME\ezenglish_black.png</File>
-	</Object>
-	<Object Id="9108" Name="IDB_MODE_T9_RAPID_INDONESIAN_BLACK" MimeType="image/png">
-		<File>..\images\240x320\common\IME\T9In_black.png</File>
-	</Object>
-	<Object Id="9109" Name="IDB_MODE_T9_MT_ENGLISH_UP_BLACK" MimeType="image/png">
-		<File>..\images\240x320\common\IME\upabc_black.png</File>
 	</Object>
 </Objects>
 </BREWRes>

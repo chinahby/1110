@@ -4108,9 +4108,10 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
                 pMe->m_pConvImage = NULL;
             }
 #endif
+            IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START|DLG_NOT_SET_FOCUS_AUTO);
             if(pMe->m_pActiveDlg)
             {
-                IDIALOG_SetProperties(pMe->m_pActiveDlg,DLG_NOT_SET_FOCUS_AUTO);
+                //IDIALOG_SetProperties(pMe->m_pActiveDlg,DLG_NOT_SET_FOCUS_AUTO);
             }
 			
             return TRUE;
@@ -13162,7 +13163,7 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
     //    return FALSE;
     //}
 
-	MSG_FATAL("***zzg CallApp_Process_HeldKey_Event wParam=%x***", wParam,0,0);
+	MSG_FATAL("***zzg CallApp_Process_HeldKey_Event wParam=%x***,pMe->m_b_incall==%d", wParam,pMe->m_b_incall,0);
 
     //if ((AVKType)wParam == AVK_CLR)
     #if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
@@ -13205,6 +13206,26 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
 #endif /*FEATRUE_SET_IP_NUMBER*/
         if ( (AVKType)wParam == AVK_STAR)
         {
+#ifdef FEATURE_VERSION_K212_HUALU
+            {
+                int len = 0;
+                AECHAR wstrTemp[MAX_SIZE_DIALER_TEXT] = {0};
+                len = WSTRLEN(pMe->m_DialString);
+                MSG_FATAL("pMe->m_nCursorPos===============%d\n",pMe->m_nCursorPos,0,0);
+    			if (pMe->m_nCursorPos == 0)
+    			{
+                    (void)WSTRCPY(&pMe->m_DialString[len-pMe->m_nCursorPos-1], L"+");	               
+    			}
+    			else
+    			{
+    				(void)WSTRCPY(wstrTemp, &pMe->m_DialString[len-pMe->m_nCursorPos]);
+                    (void)WSTRCPY(&pMe->m_DialString[len-pMe->m_nCursorPos-1], L"+");
+                    (void)WSTRCPY(&pMe->m_DialString[len-pMe->m_nCursorPos], wstrTemp);
+    			}								
+                MSG_FATAL("AVK_STAR===========Draw......\n",0,0,0);
+    			(void) ISHELL_PostEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_USER_REDRAW,0,0);	
+            }
+#else
 #if !defined(FEATURE_DISP_128X160)&&!defined(FEATURE_DISP_176X220)&&!defined(FEATURE_VERSION_IC241A_MMX)
 #ifdef FEATURE_KEYGUARD
             if(WSTRLEN(pMe->m_DialString) == 1)
@@ -13257,6 +13278,7 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
 	            //CallApp_Draw_NumEdit_SoftKey(pMe);
 	            //CallApp_Display_Number(pMe);
 			}
+#endif
 #endif
         }
 
