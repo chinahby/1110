@@ -5818,29 +5818,13 @@ static boolean CameraApp_FindMemoryCardExist(CCameraApp *pMe)
 // ¼ì²âÅÄÕÕ£¬ÉãÏñÊÇ·ñÓÐ×ã¹»Ê£Óà¿Õ¼äÈÝÁ¿
 static boolean CameraApp_IsEnoughfMemorySpace(CCameraApp * pMe)
 {
-    //Add By zzg 2013_11_21
-    AEEFSFreeSpace FSSpace;
-    int pnSize;
-    pnSize = sizeof(AEEFSFreeSpace);  
-    //Add End
-        
     if ( pMe->m_isStartFromFacebook == TRUE)
 	{
-//Add By zzg 2013_11_21	
-#if 0
 		IFILEMGR_GetFreeSpaceEx(pMe->m_pFileMgr, 
 	                                MG_PHONE_ROOTDIR, 
 	                                &pMe->m_dwMemTotal, 
 	                                &pMe->m_dwMemFree);
-#else
-        ISHELL_GetDeviceInfoEx(pMe->m_pShell,
-                                   AEE_DEVICEITEM_FSSPACE_ROOT,
-                                   (void *)&FSSpace,
-                                   &pnSize);
-        pMe->m_dwMemTotal = FSSpace.qwTotalSpace;
-        pMe->m_dwMemFree = FSSpace.qwFreeSpace;        
-#endif   
-//Add End
+
         if((pMe->m_dwMemFree/(2*BYTE_SIZE) < MIN_FREE_PHONE_SPACE) 
            ||(pMe->m_dwMemFree/(2*BYTE_SIZE) == MIN_FREE_PHONE_SPACE))
         {               
@@ -5855,21 +5839,10 @@ static boolean CameraApp_IsEnoughfMemorySpace(CCameraApp * pMe)
 	{
 	    if(pMe->m_nCameraStorage == OEMNV_CAMERA_STORAGE_MEMORY_CARD)
 	    {
-//Add By zzg 2013_11_21	    
-#if 0
 	        IFILEMGR_GetFreeSpaceEx(pMe->m_pFileMgr, 
 	                                MG_MASSCARD_ROOTDIR, 
 	                                &pMe->m_dwMemTotal, 
 	                                &pMe->m_dwMemFree);
-#else
-            ISHELL_GetDeviceInfoEx(pMe->m_pShell,
-                                   AEE_DEVICEITEM_FSSPACE_CARD0 ,
-                                   (void *)&FSSpace,
-                                   &pnSize);
-            pMe->m_dwMemTotal = FSSpace.qwTotalSpace;
-            pMe->m_dwMemFree = FSSpace.qwFreeSpace; 
-#endif  
-//Add End
 
 	        if((pMe->m_dwMemFree/(2*BYTE_SIZE) < MIN_FREE_MEMORY_CARD_SPACE) 
 	           ||(pMe->m_dwMemFree/(2*BYTE_SIZE) == MIN_FREE_MEMORY_CARD_SPACE))
@@ -5883,21 +5856,10 @@ static boolean CameraApp_IsEnoughfMemorySpace(CCameraApp * pMe)
 	    }
 	    else
 	    {
-//Add By zzg 2013_11_21	    
-#if 0
 	        IFILEMGR_GetFreeSpaceEx(pMe->m_pFileMgr, 
 	                                MG_PHONE_ROOTDIR, 
 	                                &pMe->m_dwMemTotal, 
 	                                &pMe->m_dwMemFree);
-#else
-            ISHELL_GetDeviceInfoEx(pMe->m_pShell,
-                                   AEE_DEVICEITEM_FSSPACE_ROOT,
-                                   (void *)&FSSpace,
-                                   &pnSize);
-            pMe->m_dwMemTotal = FSSpace.qwTotalSpace;
-            pMe->m_dwMemFree = FSSpace.qwFreeSpace;   
-#endif   
-//Add End
 
 	        if((pMe->m_dwMemFree/(2*BYTE_SIZE) < MIN_FREE_PHONE_SPACE) 
 	           ||(pMe->m_dwMemFree/(2*BYTE_SIZE) == MIN_FREE_PHONE_SPACE))

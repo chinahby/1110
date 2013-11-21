@@ -626,8 +626,8 @@ typedef struct _CCameraApp
     uint32               m_nTicks;               // tick时间
     uint32               m_nNumDays;             // 跑表跑的天数
     uint32               m_dwDispTime;           // 显示时间
-    uint64               m_dwMemTotal;   //uint32        // 存储空间总容量
-    uint64               m_dwMemFree;    //uint32        // 存储空间剩余容量
+    uint32               m_dwMemTotal;           // 存储空间总容量
+    uint32               m_dwMemFree;            // 存储空间剩余容量
 
 	MMIRecordTime  		 RecordingTime;
 	MMICam_RecTime_Parm  RecordingTime_parm;
