@@ -129,6 +129,9 @@ static void    OEMPriv_DrawPenMoveBar(uint16 x,uint16 y);
 static void    OEMPriv_DrawTouchBackgroundBar(uint16 x,uint16 y);
 static void    OEMPriv_DrawTouchBackground(uint16 x,uint16 y);
 #endif
+#ifdef FEATURE_VERSION_K212_HUALU
+static void    OEMPriv_AutoTurnOffBackLightTimerCB(void *pUser);
+#endif
 /*===========================================================================
 
                     STATIC/LOCAL DATA
@@ -378,6 +381,18 @@ static void OEMPriv_ResetMessageTimer(void)
                           OEMPriv_MessageTimerCB,
                           NULL);
 }
+#ifdef FEATURE_VERSION_K212_HUALU
+static void    OEMPriv_AutoTurnOffBackLightTimerCB(void *pUser)
+{
+    IBacklight  *Backlight;
+    (void)ISHELL_CreateInstance(sgpShell,AEECLSID_BACKLIGHT,(void **)&Backlight);
+    if(IBACKLIGHT_IsEnabled(Backlight))
+    {
+       IBACKLIGHT_Disable(Backlight);							  
+    } 
+    IBACKLIGHT_Release(Backlight);
+}
+#endif
 
 #ifdef FEATURE_SET_AUTOKEYGUARD
 /*=============================================================================
@@ -669,6 +684,10 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
                         #else
                             // Unlock the keyguard
                             OEMKeyguard_SetState(FALSE);							
+                        #endif
+                        
+                        #ifdef FEATURE_VERSION_K212_HUALU
+                        AEE_CancelTimer(OEMPriv_AutoTurnOffBackLightTimerCB,NULL);
                         #endif
                         OEMPriv_ResumeBREW();
 						MSG_FATAL("OEMPriv_ResumeBREW.....................",0,0,0);
@@ -1146,6 +1165,17 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
         //    db_value.db_backlight_level = TRUE;
         //    db_put(DB_BACKLIGHT_LEVEL, &db_value);
         //}
+        #ifdef FEATURE_VERSION_K212_HUALU
+        {
+            IBacklight  *Backlight;
+            (void)ISHELL_CreateInstance(sgpShell,AEECLSID_BACKLIGHT,(void **)&Backlight);
+            if(IBACKLIGHT_IsEnabled(Backlight))
+            {
+                  (void) AEE_SetSysTimer(5000, OEMPriv_AutoTurnOffBackLightTimerCB,NULL);
+            } 
+            IBACKLIGHT_Release(Backlight);
+        }
+        #endif
         
 #if (defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_IC241A_MMX))
           {
