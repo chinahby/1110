@@ -1842,11 +1842,22 @@ void DrawTitleBar(IDisplay  * pIDisplay, TitleBar_Param_type *TParam)
             bgRect.dy = STATEBAR_HEIGHT;  
             bgRect.x = 0;
             bgRect.dx = 320;
-            IDISPLAY_DrawRect(pIDisplay,
+            if(AEE_Active()==AEECLSID_MAIN_MENU)
+            {
+                 IDISPLAY_DrawRect(pIDisplay,
+                              &bgRect,
+                              RGB_NONE,
+                              MAKE_RGB(255,255,255),
+                              IDF_RECT_FILL);
+            }
+            else
+            {
+                IDISPLAY_DrawRect(pIDisplay,
                               &bgRect,
                               RGB_NONE,
                               MAKE_RGB(0,0,0),
                               IDF_RECT_FILL);
+            }
         }
         #endif
 //IDISPLAY_UpdateEx(pIDisplay, FALSE);//wlh 
@@ -1907,7 +1918,7 @@ void DrawTitleBar(IDisplay  * pIDisplay, TitleBar_Param_type *TParam)
 #ifdef FEATURE_FUNCS_THEME    
         RGBVAL oldColor = IDISPLAY_SetColor(pIDisplay, CLR_USER_TEXT, Theme_Param.textColor);
 #else
-        #ifdef FEATURE_VERSION_W317A
+        #if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_K212_HUALU)
         if(AEE_Active()==AEECLSID_MAIN_MENU)
         {
           IDISPLAY_SetColor(pIDisplay, CLR_USER_TEXT, RGB_BLACK);

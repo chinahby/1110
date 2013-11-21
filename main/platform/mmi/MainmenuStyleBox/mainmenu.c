@@ -12283,9 +12283,14 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
             // 初始整个背景及全部初始图标
            // ERR("EVT_USER_REDRAW:::::::::::1111111111",0,0,0);
             {
+                uint32  dwTotal = 0;
+    			uint32 free = 0;
             	DrawMatrix(pMe);
             	// 绘制聚焦过程动画
             	MoveCursorTo(pMe, pMe->m_nRow, pMe->m_nColumn);
+    			GETFSFREE(&dwTotal);
+    			free = GETRAMFREE(NULL,NULL);
+    			MSG_FATAL("MainMenu_IconMenuHandler dwTotal======%d,free====%d",dwTotal,free,0);
             	return TRUE;
             }
             
@@ -12679,12 +12684,21 @@ static void MainMenu_DrawBackGround(MainMenu *pMe, AEERect *pRect)
 #endif
     {
     	MSG_FATAL("pRect.dx  ===%d,,,dy===%d,=====x==%d",pRect->dx,pRect->dy,pRect->x);
+        #ifdef FEATURE_VERSION_K212_HUALU
+        Appscommon_ResetBackground(pMe->m_pDisplay, 
+                                                    pMe->m_pImageBg, 
+                                                    RGB_WHITE, 
+                                                    pRect, 
+                                                    0, 
+                                                    0);
+        #else
         Appscommon_ResetBackground(pMe->m_pDisplay, 
                                                     pMe->m_pImageBg, 
                                                     APPSCOMMON_BG_COLOR, 
                                                     pRect, 
                                                     0, 
                                                     0);
+        #endif
     } 
 }
 
