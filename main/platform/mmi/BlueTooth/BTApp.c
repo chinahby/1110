@@ -15273,7 +15273,6 @@ static boolean BTApp_HandleSelection( CBTApp* pMe, uint16 selection )
 	  ICONFIG_GetItem(pMe->m_pConfig, CFGI_BT_STATUS, &bt_status, sizeof(bt_status));
 
 	  if (bt_status == FALSE)
-	  //if (bIsBTOn == FALSE)	  
 	  {
 	  	BTApp_ShowMessage( pMe, IDS_BT_CLOSED, NULL, 5);
 		return built;
@@ -15296,8 +15295,7 @@ static boolean BTApp_HandleSelection( CBTApp* pMe, uint16 selection )
 	{
 	  boolean bt_status = FALSE;
 	  //ICONFIG_GetItem(pMe->m_pConfig, CFGI_BT_STATUS, &bt_status, sizeof(bt_status));
-	  if (bt_status == FALSE)	  
-	  //if (bIsBTOn == FALSE)	  
+	  if (bt_status == FALSE)  
 	  {
 	  	BTApp_ShowMessage( pMe, IDS_BT_CLOSED, NULL, 5);
 		return built;
@@ -15314,7 +15312,6 @@ static boolean BTApp_HandleSelection( CBTApp* pMe, uint16 selection )
 	  boolean bt_status = FALSE;
 	  ICONFIG_GetItem(pMe->m_pConfig, CFGI_BT_STATUS, &bt_status, sizeof(bt_status));
 	 if (bt_status == FALSE)
-	 //if (bIsBTOn == FALSE)	  
 	  {
 	  	BTApp_ShowMessage( pMe, IDS_BT_CLOSED, NULL, 5);
 		return built;
@@ -15340,7 +15337,6 @@ static boolean BTApp_HandleSelection( CBTApp* pMe, uint16 selection )
 		boolean bt_status = FALSE;
    	    ICONFIG_GetItem(pMe->m_pConfig, CFGI_BT_STATUS, &bt_status, sizeof(bt_status));
    	    if (bt_status == FALSE)
-   	    //if (bIsBTOn == FALSE)	  
     	{
     		BTApp_ShowMessage( pMe, IDS_BT_CLOSED, NULL, 5);
     		return built;
@@ -16259,7 +16255,6 @@ static void BTApp_BuildMainMenu( CBTApp* pMe)
   //Add By zzg 2010_11_16  
   ICONFIG_GetItem(pMe->m_pConfig, CFGI_BT_STATUS, &bt_status, sizeof(bt_status));
   if (bt_status == TRUE)  
-  //if (bIsBTOn == TRUE)	  
   {
 	nzStatus[ 3 ] = 'O';
     nzStatus[ 4 ] = 'N';    

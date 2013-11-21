@@ -4444,12 +4444,21 @@ wms_client_message_s_type *GetEsnTrackerSms(AECHAR *pwstrType)
 	MSG_FATAL("***zzg GetEsnTrackerSms H32=%d",H32,0,0);
 
 	if((char)(*pwstrType)==ESN_TRACKER_MSG)
-    {    
+    {       
         ruim_id_table_t ruim_id_table; 
         memset(strnumber,0,sizeof(strnumber));
         OEM_GetConfig(CFGI_ESN_TRACK_NUMBER, strnumber, sizeof(strnumber));        
-        
-        STRCPY(pBuf, "ESNTRACK MTS C200 IC19 PU RUIM_ID: ");        
+
+#ifdef FEATURE_OEMOMH
+        if(gsdi_uim_omh_cap.omh_enabled)
+        {
+            STRCPY(pBuf, "*ESNTRACK MTS C200_IC19 PU RUIM_ID: ");  
+        }
+        else
+#endif            
+        {
+            STRCPY(pBuf, "*ESNTRACK C200_IC19 PU RUIM_ID: ");        
+        }
               
         OEM_ReadMEID(&euim_id);
         EUIM_ID_L32 = (uint32)euim_id;
@@ -4508,53 +4517,24 @@ wms_client_message_s_type *GetEsnTrackerSms(AECHAR *pwstrType)
     	n = WSTRLEN(szBuf);
     	WSTRTOSTR(szBuf,strBuf,sizeof(strBuf));
     	STRCAT(pBuf,strBuf);
-        
-        /*
-        #if !defined(FEATURE_VERSION_W021_CT100_QVGA)
-        STRCAT(pBuf," W021_CT100_SC_FM_V01_12832_130627");
-        #else
-    	STRCAT(pBuf," W02116EC30SCFM V1");
-        #endif
-        */
-        
-        DBGPRINTF("GetSmsTrackerSms pBuf=%s\n",pBuf);          
-    }
-    /*
-    else //format for 51718        
-    {   
-        //format for 8800933044
-#ifdef FEATURE_VERSION_W021_CT100_X2
-        STRCPY(pBuf, "*TRACK*MOD:JV C3 ");
-#elif defined(FEATURE_VERSION_W021_CT100_QVGA)
-        STRCPY(pBuf, "*TRACK*MOD:JV C30 ");
-#elif defined(FEATURE_VERSION_W022_CT100_C444)
-        STRCPY(pBuf, "*TRACK*MOD:JV C444 ");
-#elif defined (FEATURE_VERSION_W022_CT100)
-        STRCPY(pBuf, "*TRACK*MOD:JV C3i "); 
-#else
-    	STRCPY(pBuf, "*TRACK*MOD:JV C201 ");
+
+#ifdef FEATURE_OEMOMH
+        if(gsdi_uim_omh_cap.omh_enabled)
+        {
+            STRCAT(pBuf," V1");  
+        }
+        else
 #endif
-    	n = WSTRLEN(szBuf);
-        WSPRINTF((szBuf + n),
-                sizeof(szBuf),
-                L"%06X",
-                H32
-                );
-        n = WSTRLEN(szBuf);
-        WSPRINTF((szBuf + n),
-                sizeof(szBuf),
-                L"%08X",
-                L32
-                );
-    	WSTRTOSTR(szBuf,strBuf,sizeof(strBuf));
-    	STRCAT(pBuf,strBuf);
-        DBGPRINTF("GetSmsTrackerSms pBuf=%s\n",pBuf); 
+        {
+            STRCAT(pBuf," V1");       
+        }
+        
+        DBGPRINTF("GetSmsTrackerSms pBuf=%s\n",pBuf);     
+        
     }
-    */
-
-
+   
     nMsgSize = STRLEN(pBuf);
-	//nMsgSize = nMsgSize;
+	
     if (nMsgSize<=0)
     {
         goto GETREGISTERMSG_EXIT;
