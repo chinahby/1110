@@ -3685,7 +3685,7 @@ static boolean  dialog_handler_of_state_event_edit( CScheduleApp* pme,
             }
             else
             {
-#if defined(FEATURE_VERSION_C337)  || defined(FEATURE_VERSION_IC241A_MMX)   
+#if defined(FEATURE_VERSION_C337)  || defined(FEATURE_VERSION_IC241A_MMX) || defined(FEATURE_VERSION_K212_HUALU)  
                 IMENUCTL_SetSel( pAlarm, IDS_EVENT_EDIT_ALARM_OPTION_ON_TIME);                		 
 #else
                 IMENUCTL_SetSel( pAlarm, IDS_EVENT_EDIT_ALARM_OPTION_15_MIN_BEFORE);
