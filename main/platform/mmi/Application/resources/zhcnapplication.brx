@@ -53,7 +53,7 @@
 		<Text>录音机</Text>
 	</String>
 	<String Id="1018" Name="IDS_APPLICATION_SCHEDULER">
-		<Text>日程表</Text>
+		<Text>日历</Text>
 	</String>
 	<String Id="1019" Name="IDS_APPLICATION_GAME">
 		<Text>游戏</Text>
