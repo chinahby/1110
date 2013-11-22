@@ -13876,6 +13876,7 @@ static boolean  CContApp_HandleDetailDlgEvent( CContApp  *pMe,
 					break;
 				#else
 				#ifndef FEATURE_VERSION_K212
+				#ifndef FEATURE_VERSION_K212_HUALU
              	case AVK_SELECT:
 					//CLOSE_DIALOG(DLGRET_OK);
               		MSG_FATAL("AVK_SELECT........",0,0,0);
@@ -13883,6 +13884,7 @@ static boolean  CContApp_HandleDetailDlgEvent( CContApp  *pMe,
                     CLOSE_DIALOG(DLGRET_SELECT);
                     return TRUE;
 				#endif	
+				#endif
                 #endif
                 default:
                     break; 
