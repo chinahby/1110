@@ -1181,11 +1181,20 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                         return TRUE;
                         
                       case IDS_SEND_MESSAGE:
+					  	#ifdef FEATURE_VERSION_K212_HUALU
+					  	if(WSTRLEN(pMe->m_DialString) > (32))
+                        {
+                            CLOSE_DIALOG(DLGRET_NUM_INVALID);
+                            return TRUE;
+                        }
+                        else
+						#endif	
+                        {
 #if defined(FEATURE_WMS_APP) && !defined(FEATURE_WMSAPP_ONLYSUPPORTVMAIL)					  	
                         return CallApp_SendSMS(pMe);
 #endif
 							break;
-                        
+                        }
                       case IDS_CALL:
                         return CallApp_Process_Send_Key_Release_Event(pMe);
 #ifdef FEATURE_SUPPORT_WAP_APP

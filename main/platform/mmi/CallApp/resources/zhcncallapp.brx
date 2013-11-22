@@ -202,6 +202,9 @@
 	<STRING Id="1117" Name="IDS_INVALID">
 		<Text>无效密码</Text>
 	</STRING>
+	<STRING Id="1118" Name="IDS_INVALID_NUM">
+		<Text>无效号码</Text>
+	</STRING>
 	<String Id="1120" Name="IDS_MAIN_MENU_TORCHON">
 		<Text>手电筒开启</Text>
 	</String>

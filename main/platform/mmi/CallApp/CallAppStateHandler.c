@@ -634,7 +634,7 @@ static NextFSMAction STATE_NUMBER_FROM_COREHandler(CCallApp *pMe)
             return NFSMACTION_WAIT;
 
         case DLGRET_OK:
-            if(pMe->m_msg_text_id != IDS_NUM_TOO_LONG)
+            if(pMe->m_msg_text_id != IDS_NUM_TOO_LONG  && pMe->m_msg_text_id != IDS_INVALID_NUM)
             {
                 MOVE_TO_STATE(STATE_EXIT)
             }
@@ -698,6 +698,11 @@ static NextFSMAction STATE_NUMBER_FROM_COREHandler(CCallApp *pMe)
         case DLGRET_NUM_TOO_LONG:
             CallApp_ShowMsgBox(pMe, IDS_NUM_TOO_LONG);
             return NFSMACTION_WAIT;
+
+		case DLGRET_NUM_INVALID:
+			CallApp_ShowMsgBox(pMe, IDS_INVALID_NUM);
+            return NFSMACTION_WAIT;
+			
 #ifdef FEATURE_SUPPORT_WAP_APP
 #ifdef FEATURE_CARRIER_CHINA_TELCOM
         case DLGRET_INVALID_LINK_NUM:
@@ -923,7 +928,7 @@ static NextFSMAction STATE_CONV_DIALERHandler(CCallApp *pMe)
             return NFSMACTION_WAIT;
 
         case DLGRET_OK:
-            if(pMe->m_msg_text_id != IDS_NUM_TOO_LONG)
+            if(pMe->m_msg_text_id != IDS_NUM_TOO_LONG && pMe->m_msg_text_id != IDS_INVALID_NUM)
             {
                 MOVE_TO_STATE(STATE_CONVERSATION)
             }
@@ -946,6 +951,11 @@ static NextFSMAction STATE_CONV_DIALERHandler(CCallApp *pMe)
         case DLGRET_NUM_TOO_LONG:
             CallApp_ShowMsgBox(pMe, IDS_NUM_TOO_LONG);
             return NFSMACTION_WAIT;
+
+		case DLGRET_NUM_INVALID:
+			CallApp_ShowMsgBox(pMe, IDS_INVALID_NUM);
+            return NFSMACTION_WAIT;
+			
         default:
             break;
     }
@@ -1635,7 +1645,7 @@ static NextFSMAction STATE_EDIT_REC_NUMBERHandler(CCallApp *pMe)
             return NFSMACTION_WAIT;
 
         case DLGRET_OK:
-            if(pMe->m_msg_text_id != IDS_NUM_TOO_LONG)
+            if(pMe->m_msg_text_id != IDS_NUM_TOO_LONG  && pMe->m_msg_text_id != IDS_INVALID_NUM)
             {
                 MOVE_TO_STATE(STATE_EXIT)
             }
@@ -1654,6 +1664,10 @@ static NextFSMAction STATE_EDIT_REC_NUMBERHandler(CCallApp *pMe)
         case DLGRET_NUM_TOO_LONG:
             CallApp_ShowMsgBox(pMe, IDS_NUM_TOO_LONG);
             return NFSMACTION_WAIT;
+
+		case DLGRET_NUM_INVALID:
+			CallApp_ShowMsgBox(pMe, IDS_INVALID_NUM);
+            return NFSMACTION_WAIT;	
 
 #ifdef FEATURE_SUPPORT_WAP_APP
 #ifdef FEATURE_CARRIER_CHINA_TELCOM

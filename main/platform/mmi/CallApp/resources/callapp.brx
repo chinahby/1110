@@ -220,6 +220,9 @@
 	<STRING Id="1117" Name="IDS_INVALID">
 		<Text>Invalid password</Text>
 	</STRING>
+	<STRING Id="1118" Name="IDS_INVALID_NUM">
+		<Text>Invalid Number</Text>
+	</STRING>
 	<String Id="1120" Name="IDS_MAIN_MENU_TORCHON">
 		<Text>Torch On</Text>
 	</String>
