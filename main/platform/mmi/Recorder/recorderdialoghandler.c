@@ -1312,6 +1312,7 @@ static void recorder_Sleep( Recorder* pme)
 //Add end
 static void recorder_out( Recorder* pme)
 {
+    pme->m_bSelect = FALSE;
 	CLOSE_DIALOG( DLGRET_CANCELED);
 }
 
@@ -1651,7 +1652,7 @@ __dialog_handler_of_state_record_stop__:
 				}
 			}
 
-			if( subState == 1 || subState == 3)
+			if(( subState == 1 || subState == 3) && !pme->m_bSelect)
 			{
 				drawModalDialog( pme->m_pDisplay, pStatic, IDS_RECORD_CANCEL_CONFIRM, TRUE);
 			}
@@ -1691,6 +1692,7 @@ __dialog_handler_of_state_record_stop__:
 						recorder_stop_if( &pme->m_Media);
 						drawModalDialog( pme->m_pDisplay, pStatic, IDS_RECORDER_DONE, FALSE);
 						ISHELL_SetTimer( pme->m_pShell, 1000, (PFNNOTIFY)recorder_out, pme);
+						pme->m_bSelect = TRUE;
 						reserve = TRUE;
 						return TRUE;
 					}

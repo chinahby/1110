@@ -164,6 +164,7 @@ typedef struct
 	boolean					m_bSuspended;
 	boolean 				m_bAppIsReady;
 	boolean					m_bLockkey;
+	boolean                 m_bSelect;
     #ifdef FEATURE_VERSION_C316
 	boolean                 m_bFristStart;   //Add by pyuangui 2013-01-07
 	#endif

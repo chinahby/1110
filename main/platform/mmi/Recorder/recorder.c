@@ -201,6 +201,7 @@ static boolean Recorder_HandleEvent( Recorder* pme, AEEEvent evt, uint16 wParam,
 			pme->m_bAppIsReady 			= FALSE;
 			pme->m_bInactive 			= FALSE;
 			pme->m_bSuspended			= FALSE;
+			pme->m_bSelect              = FALSE;
 
 			pAppStart = (AEEAppStart*)dwParam;
 			pme->m_rc = pAppStart->rc;
