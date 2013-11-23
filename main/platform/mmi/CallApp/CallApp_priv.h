@@ -296,9 +296,15 @@
     #define NUM_IMAGE_WIDTH               (20)
     #define REFUI_CALL_MAX_IMAGSIZE       (17)
 #elif defined(FEATURE_DISP_240X320)
+#if defined (FEATURE_VERSION_K212_HUALU)
+    #define NUM_IMAGE_HIGHT               (50)
+    #define NUM_IMAGE_WIDTH               (34)
+    #define REFUI_CALL_MAX_IMAGSIZE       (17)
+#else
 	#define NUM_IMAGE_HIGHT               (25)
     #define NUM_IMAGE_WIDTH               (20)
-    #define REFUI_CALL_MAX_IMAGSIZE       (17)	
+    #define REFUI_CALL_MAX_IMAGSIZE       (17)
+#endif	
 #elif defined(FEATURE_DISP_320X240)
 	#define NUM_IMAGE_HIGHT               (25)
     #define NUM_IMAGE_WIDTH               (20)

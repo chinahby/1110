@@ -14796,7 +14796,7 @@ static void CallApp_Draw_Numer_Img(CCallApp   *pMe,  AECHAR const *dialStr)
 	for(k=0;k<nLineCount;k++)
 	{
 	    #ifdef FEATURE_VERSION_K212_HUALU
-        pMe->m_nCurrLineFits[linefor] = 12;
+        pMe->m_nCurrLineFits[linefor] = 7;
         #else
 		pMe->m_nCurrLineFits[linefor] = 8;
         #endif
