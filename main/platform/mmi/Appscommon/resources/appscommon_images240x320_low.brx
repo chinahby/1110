@@ -139,6 +139,9 @@
 	<Object Id="5404" Name="IDB_MODE_NUMBERS" MimeType="image/png">
 		<File>..\images\240x320\common\IME\123.png</File>
 	</Object>
+	<Object Id="5407" Name="IDB_MODE_T9_RAPID_ENGLISH" MimeType="image/png">
+		<File>..\images\240x320\common\IME\ezenglish.png</File>
+	</Object>
 	<Object Id="5801" Name="IDB_TEMPLATE">
 		<File>..\images\240x320\common\Message\Icon\Template.bmp</File>
 	</Object>

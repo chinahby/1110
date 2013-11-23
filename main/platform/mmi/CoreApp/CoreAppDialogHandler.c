@@ -4497,6 +4497,13 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 			#endif
 			//Add End
             CoreApp_DrawWallPaper(pMe); // debug for wallpaper update issue
+            {
+                uint32  dwTotal = 0;
+    			uint32 free = 0;
+    			GETFSFREE(&dwTotal);
+    			free = GETRAMFREE(NULL,NULL);
+    			MSG_FATAL("CoreApp_DrawWallPaper dwTotal======%d,free====%d",dwTotal,free,0);
+            }
             if(pWallPaper)
             {
                 bImageDecoded = FALSE;
@@ -5172,7 +5179,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);
 #elif defined(FEATURE_VERSION_K212_ND)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_SOUNDMENU);
-#elif defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_K212_HUALU)
+#elif defined(FEATURE_VERSION_W317A)
                     return CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 
 					return TRUE;
@@ -5181,7 +5188,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					return TRUE;
 				else 
 					return FALSE;
-#elif defined(FEATURE_VERSION_K212) 
+#elif defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU) 
 				return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CAMERA);
 #else
 			    return CoreApp_LaunchApplet(pMe, AEECLSID_APP_SETTINGMENU);
@@ -5377,7 +5384,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
     				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 #elif defined (FEATURE_VERSION_S600S)
     				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_APP_RECENTCALL);
-#elif defined (FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
+#elif defined (FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)||defined(FEATURE_VERSION_K212_HUALU)
     				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 #else
                         ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
@@ -7837,7 +7844,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 						xStartPos = 5;
 						wHour = jDate.wHour > 12 ? (jDate.wHour - 12) : jDate.wHour;
 		       			if(jDate.wHour == 0)
-		        			{
+		        		{
 		            			wHour = 12;
 		       			}
 					}
@@ -7859,7 +7866,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 						xStartPos = 20;
 						wHour = jDate.wHour > 12 ? (jDate.wHour - 12) : jDate.wHour;
 		       			if(jDate.wHour == 0)
-		        			{
+		        		{
 		            			wHour = 12;
 		       			}
 					}
@@ -7877,39 +7884,51 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
             	wHour = jDate.wHour > 12 ? (jDate.wHour - 12) : jDate.wHour;
 				if(jDate.wHour >= 12)
 	    		{
-	    	   		wszDatemat[0] = (AECHAR)'P';
-	    	   		wszDatemat[1] = (AECHAR)'M';
-	    	   		wszDatemat[2] = 0;
+	    		    (void) ISHELL_LoadResString(pMe->a.m_pIShell,
+                                    AEE_COREAPPRES_LANGFILE,
+                                    IDS_STR_PM,
+                                    wszDatemat,
+                                    sizeof(wszDatemat));
+	    		    
+	    	   		//wszDatemat[0] = (AECHAR)'P';
+	    	   		//wszDatemat[1] = (AECHAR)'M';
+	    	   		//wszDatemat[2] = 0;
 	    		}
 	    		else
 	    		{
-	    	   		wszDatemat[0] = (AECHAR)'A';
-	    	   		wszDatemat[1] = (AECHAR)'M';
-	    	   		wszDatemat[2] = 0;
+	    		    (void) ISHELL_LoadResString(pMe->a.m_pIShell,
+                                    AEE_COREAPPRES_LANGFILE,
+                                    IDS_STR_AM,
+                                    wszDatemat,
+                                    sizeof(wszDatemat));
+	    		    
+	    	   		//wszDatemat[0] = (AECHAR)'A';
+	    	   		//wszDatemat[1] = (AECHAR)'M';
+	    	   		//wszDatemat[2] = 0;
 	    		}
             	}
 				xStartPos = 30;
 				yStartPos = 45;
 		    	SETAEERECT(&rect, xStartPos, yStartPos, nNumberWidth, nNumberHeight);
-		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (wHour/10), nLineWidth, &rect, MAKE_RGB(180,180,180));
+		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (wHour/10), nLineWidth, &rect, MAKE_RGB(160,160,160));
 		    	rect.x += nNumberWidth + nOffset;
-		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (wHour%10), nLineWidth, &rect, MAKE_RGB(180,180,180));
+		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (wHour%10), nLineWidth, &rect, MAKE_RGB(160,160,160));
 
 		   		 // draw colon
 		    	SETAEERECT(&rect, xStartPos + 2*(nNumberWidth + nOffset), yStartPos + nNumberHeight/2 - nLineWidth, nLineWidth, nLineWidth);
-		    	IDISPLAY_FillRect(pMe->m_pDisplay, &rect, MAKE_RGB(180,180,180));
+		    	IDISPLAY_FillRect(pMe->m_pDisplay, &rect, MAKE_RGB(160,160,160));
 		    	rect.y = yStartPos + nNumberHeight*3/5 +10 - nLineWidth;
-		    	IDISPLAY_FillRect(pMe->m_pDisplay, &rect, MAKE_RGB(180,180,180));
+		    	IDISPLAY_FillRect(pMe->m_pDisplay, &rect, MAKE_RGB(160,160,160));
 		    
 		   		// draw minute
 		    	SETAEERECT(&rect, xStartPos + 2*(nNumberWidth + nOffset) + nLineWidth + nOffset, yStartPos, nNumberWidth, nNumberHeight);
-		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (jDate.wMinute/10), nLineWidth, &rect, MAKE_RGB(180,180,180));
+		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (jDate.wMinute/10), nLineWidth, &rect, MAKE_RGB(160,160,160));
 		    	rect.x += nNumberWidth + nOffset;
-		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (jDate.wMinute%10), nLineWidth, &rect, MAKE_RGB(180,180,180));
+		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (jDate.wMinute%10), nLineWidth, &rect, MAKE_RGB(160,160,160));
 		    	rect.x += nNumberWidth;
 		     	rect.y = rect.y +12;
-				rect.x = rect.x+2;
-				rect.dx = rect.dx +5;
+				rect.x = rect.x-2;
+				rect.dx = rect.dx +25;
 				DrawTextWithProfile(pMe->a.m_pIShell,
 		                              pMe->m_pDisplay,
 		                              RGB_WHITE_NO_TRANS,
@@ -7925,15 +7944,15 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 	        else
 	        {
 	        	
-	        	DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
-	                              pMe->m_pDisplay,
-	                              RGB_WHITE_NO_TRANS,
-	                              32, 
-	                              wszDate, -1,
-	                              0, 0, &rc, 
-	                              IDF_ALIGN_MIDDLE
-	                              | IDF_ALIGN_CENTER
-	                              | IDF_TEXT_TRANSPARENT);
+	        	DrawTextWithProfile(pMe->a.m_pIShell,
+		                              pMe->m_pDisplay,
+		                              RGB_WHITE_NO_TRANS,
+		                              AEE_FONT_NORMAL, 
+		                              wszDatemat, -1,
+		                              0, 0, &rect, 
+		                              IDF_ALIGN_MIDDLE
+		                              | IDF_ALIGN_CENTER
+		                              | IDF_TEXT_TRANSPARENT);
 			   
 	        }
 	    	IDISPLAY_Update(pMe->m_pDisplay);
@@ -8815,7 +8834,7 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 	    eBBarType = BTBAR_SHORTCUT_CONTACTS;
 	#elif defined(FEATURE_VERSION_S600S)
 	    eBBarType = BTBAR_RECENTCALLS_CONTACTS; 
-    #elif defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
+    #elif defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)||defined(FEATURE_VERSION_K212_HUALU)
 	    eBBarType = BTBAR_MENU_CONTACTS;      
     #else
         eBBarType = BTBAR_MESSAGES_CONTACTS; //add by yangdecai  BTBAR_MESSAGES_CONTACTS

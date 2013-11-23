@@ -3011,6 +3011,9 @@ void OEM_RestoreFactorySetting( void )
 #ifndef CUST_EDITION
    oemi_cache.time_format         = OEMNV_TIMEFORM_AMPM;
 #endif
+#ifdef FEATURE_VERSION_K212_HUALU
+   oemi_cache.time_format         = OEMNV_TIMEFORM_AMPM;
+#endif
    MEMSET((void *)&oemi_cache.cug, 0, sizeof(OEMConfigCugInfo));
 
    oemi_cache.vr = 0;

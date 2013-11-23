@@ -40,7 +40,7 @@ vpath %.png $(APPSCOMMON)/images/$(USES_LCD_SIZE)/common/GraphicNotice
 ifneq ($(USES_LOWMEM),yes)
 ifeq ($(USES_OLDMEN),yes)
 CONSTFILE_FILES+=\
-    appscommon_images$(USES_LCD_SIZE)_oldmen.bar|fs:/sys/appscommonimages.bar \
+  appscommon_images$(USES_LCD_SIZE)_oldmen.bar|fs:/sys/appscommonimages.bar \
 	sendingsms.png|fs:/image/notice/sendingsms.png \
 	volume.png|fs:/image/notice/volume.png
 else

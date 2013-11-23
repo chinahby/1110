@@ -1207,7 +1207,7 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
 	}
 #endif
 #if defined(FEATURE_VERSION_K212_HUALU)
-    if((wParam == AVK_CLR)||(wParam == AVK_END))
+    if((wParam == AVK_SELECT)||(wParam == AVK_END))
     {
         IBacklight  *Backlight;
         (void)ISHELL_CreateInstance(sgpShell,AEECLSID_BACKLIGHT,(void **)&Backlight);
@@ -1271,7 +1271,7 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
         }
 #endif
         MSG_FATAL("***zzg OEMKeyguard_HandleEvent 3 wParam=%x, cls=%x***", wParam, cls, 0);
-        if((cls == AEECLSID_ALARMCLOCK) || (cls == AEECLSID_SCHEDULEAPP)|| (cls == AEECLSID_WMSAPP))
+        if((cls == AEECLSID_ALARMCLOCK) || (cls == AEECLSID_SCHEDULEAPP))
         {
             #ifdef FEATURE_VERSION_K212_HUALU
             if(wParam == AVK_CLR || wParam == AVK_SELECT|| wParam == AVK_INFO)

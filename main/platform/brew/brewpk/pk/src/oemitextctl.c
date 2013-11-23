@@ -4099,6 +4099,7 @@ static void TextCtl_ShowSymbolPage(CTextCtl * pme, int nDir)
            // szbuf[1] = (AECHAR)'\0';
            // AECHAR szbuf[] = {'E', 'n', 't', 'e', 'r', '\0'};
            // IDISPLAY_DrawText(pd, AEE_FONT_NORMAL, szbuf, -1, rc.x+10, y, NULL,IDF_TEXT_TRANSPARENT/*0*/);
+           	  #ifdef FEATURE_USES_MMS
               IImage *enterImg; 
               enterImg = NULL;   
               enterImg = ISHELL_LoadResImage(pme->m_pIShell,
@@ -4110,11 +4111,13 @@ static void TextCtl_ShowSymbolPage(CTextCtl * pme, int nDir)
                   IIMAGE_Release(enterImg);
                   enterImg = NULL;
               } 
+			  #endif
          }
          else if(*pszSym == ' ')
          {
             //AECHAR szbuf[] = {'S', 'P','\0'};
             //IDISPLAY_DrawText(pd, AEE_FONT_NORMAL, szbuf, -1, rc.x+10, y, NULL,IDF_TEXT_TRANSPARENT/*0*/);
+            #ifdef FEATURE_USES_MMS
              IImage *spaceImg; 
               spaceImg = NULL;   
               spaceImg = ISHELL_LoadResImage(pme->m_pIShell,
@@ -4126,6 +4129,7 @@ static void TextCtl_ShowSymbolPage(CTextCtl * pme, int nDir)
                   IIMAGE_Release(spaceImg);
                   spaceImg = NULL;
               } 
+			 #endif
          }
          else
          {
