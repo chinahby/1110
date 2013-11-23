@@ -1940,7 +1940,7 @@ static OEMConfigListType oemi_cache = {
    {L"Mobile Tracker Alert!:The sender of this SMS is using your phone."},
    FALSE,
 #endif
-#if defined(FEATURE_VERSION_HITZ181)|| defined(FEATURE_VERSION_W021_C11)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)|| defined (FEATURE_VERSION_K212_ND) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined(FEATURE_VERSION_HITZ181)|| defined(FEATURE_VERSION_W021_C11)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)|| defined (FEATURE_VERSION_K212_ND)|| defined (FEATURE_VERSION_K212_HUALU) || defined(FEATURE_VERSION_IC241A_MMX)
    1,											//CFGI_KEY_LOCK_CHECK			
 #elif defined(FEATURE_VERSION_W021_CT100_QVGA)
    4, 
@@ -3042,7 +3042,7 @@ void OEM_RestoreFactorySetting( void )
     oemi_cache.b_key_lock       =  0;
 #elif defined(FEATURE_VERSION_W021_CT100_QVGA)
     oemi_cache.b_key_lock       =  4; 
-#elif defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM) ||defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_KEY_LOCK_DEFAULT_30S)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)|| defined(FEATURE_VERSION_IC241A_MMX)
+#elif defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM) ||defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_KEY_LOCK_DEFAULT_30S)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)|| defined (FEATURE_VERSION_K212_HUALU)|| defined(FEATURE_VERSION_IC241A_MMX)
 	oemi_cache.b_key_lock       =  1; 
 #elif defined(FEATURE_VERSION_K202_LM129C)//xxzhen
 	oemi_cache.b_key_lock       =  2; 
