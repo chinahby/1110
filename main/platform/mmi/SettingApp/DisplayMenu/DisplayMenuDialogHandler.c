@@ -745,7 +745,7 @@ static boolean  HandlePictureDialogEvent(CDisplayMenu *pMe,
 
             //ÏÔÊ¾Ç½Ö½»ò¶¯»­ 
             DisplayMenu_DisplayImg(pMe, pMe->m_PICType);
-            #if !defined(FEATURE_LOW_MEM_BIGFONT)
+            #if !defined(FEATURE_LOW_MEM_BIGFONT1)
             WSTRCAT(lBuf, L"<");
             WSTRCAT(rBuf, L">");
             SETAEERECT( &clip, pMe->m_rc.x, (pMe->m_rc.dy/2)-10, pMe->m_rc.dx, pMe->m_rc.dy/2);
