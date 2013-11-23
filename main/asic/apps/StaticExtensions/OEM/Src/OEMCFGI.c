@@ -7470,7 +7470,11 @@ static int OEMPriv_SetItem_CFGI_MENU_FORMAT(void *pBuff)
 static int OEMPriv_GetItem_CFGI_TIME_FORMAT(void *pBuff)
 {
 #ifdef CUST_EDITION
+#ifdef FEATURE_VERSION_K212_HUALU
+   *(byte *) pBuff = oemi_cache.time_format;
+#else
    *(byte *) pBuff = nvi_cache.set_time_format;
+#endif
 #else
    *(byte *) pBuff = oemi_cache.time_format;
 #endif
@@ -7480,6 +7484,12 @@ static int OEMPriv_GetItem_CFGI_TIME_FORMAT(void *pBuff)
 static int OEMPriv_SetItem_CFGI_TIME_FORMAT(void *pBuff)
 {
 #ifdef CUST_EDITION
+#ifdef FEATURE_VERSION_K212_HUALU
+    if (oemi_cache.time_format != *(boolean *)pBuff) {
+      oemi_cache.time_format = *(boolean *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+#else
 #ifndef WIN32
     nv_item_type nvi;
 
@@ -7488,6 +7498,7 @@ static int OEMPriv_SetItem_CFGI_TIME_FORMAT(void *pBuff)
       nvi.set_time_format = *((nv_set_time_format_enum_type *)pBuff);
       (void) OEMNV_Put( NV_SET_TIME_FORMAT_I,  &nvi);
    }
+#endif
 #endif
 #else
    if (oemi_cache.time_format != *(boolean *)pBuff) {
