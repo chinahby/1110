@@ -38,6 +38,8 @@ extern boolean disp_ili9325d_tft26_rot(disp_drv_ic_type *pdispic);
 extern boolean disp_ili9341_tft23_rot(disp_drv_ic_type *pdispic);
 extern boolean disp_rm68090_tft24_rot(disp_drv_ic_type *pdispic);
 extern boolean disp_st7789s_tft24_rot(disp_drv_ic_type *pdispic);
+extern boolean disp_gc9312ds_tft23_rot(disp_drv_ic_type *pdispic);
+
 
 /*============================================================================
 
@@ -52,8 +54,9 @@ static disp_ic_install_type     disp_ic_install[] =
    // 
     disp_rm68090_tft24_rot,
     disp_ili9341_tft23_rot,
+    disp_gc9312ds_tft23_rot,
     disp_st7789s_tft24_rot,
-    disp_ili9325d_tft26_rot,
+    disp_ili9325d_tft26_rot,    
     NULL
 };
 
