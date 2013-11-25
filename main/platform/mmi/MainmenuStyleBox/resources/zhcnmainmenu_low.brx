@@ -11,7 +11,7 @@
 		<Text>文件管理</Text>
 	</STRING>
 	<STRING Id="1012" Name="IDS_MAIN_MENU_CONTACTS">
-		<Text>电话簙</Text>
+		<Text>电话簿</Text>
 	</STRING>
 	<STRING Id="1013" Name="IDS_MAIN_MENU_UTK">
 		<Text>天翼</Text>
