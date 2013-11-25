@@ -467,7 +467,15 @@ static NextFSMAction COREST_LPM_Handler(CCoreApp *pMe)
     switch (pMe->m_eDlgRet)
     {
         case DLGRET_CREATE:
-            tepState = COREST_NONE;
+             {
+                extern boolean bIsLowMemery; 
+                tepState = COREST_NONE;
+                if(bIsLowMemery)
+                {
+                    tepState = COREST_VERIFYUIM;
+                }
+                else
+                {
             if(CoreApp_Start_Alarm(pMe))
             {
                 tepState = COREST_ALARM;
@@ -507,7 +515,8 @@ static NextFSMAction COREST_LPM_Handler(CCoreApp *pMe)
             else
             {
                 // 到手机密码验证状态
-                tepState = COREST_VERIFYPHONEPWD;
+                        tepState = COREST_VERIFYPHONEPWD;
+                    }
             }
             MSG_FATAL("LPM test:new state is %d",tepState,0,0);
             if (tepState != COREST_NONE)
@@ -520,8 +529,9 @@ static NextFSMAction COREST_LPM_Handler(CCoreApp *pMe)
             #ifdef FEATRUE_AUTO_POWER	
 				OEMRTC_Process_Auto_Power_On();
 			#endif
-				CoreApp_ShowDialog(pMe, IDD_LPM);
-                return NFSMACTION_WAIT;
+    				CoreApp_ShowDialog(pMe, IDD_LPM);
+                    return NFSMACTION_WAIT;
+                }
             }
             break;
             

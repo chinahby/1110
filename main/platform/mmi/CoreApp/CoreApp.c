@@ -76,6 +76,8 @@ static boolean bNotInitedAlarm = TRUE;
 static boolean b_low = FALSE;
 static boolean b_lowTimes = 0;
 boolean	bIsPPPAuthEnabled = FALSE;	//Add By zzg 2012_03_07
+static boolean bIsStarton = TRUE;   //ADD By ydecai 20131125
+boolean bIsLowMemery = FALSE;   //ADD By ydecai 20131125
 /*==============================================================================
 
                                  º¯ÊýÉùÃ÷
@@ -1035,6 +1037,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 	uint32 tot = 0;
 	uint32 larg = 0;
 	JulianType  jDate;
+    boolean bLowMemery = FALSE;
 	if (NULL == pMe)
 	{
 		return;
@@ -1046,6 +1049,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 	{
 		IPhoneCtl *pIPhoneCtl = NULL;
 		int nReturnStatus = 1;
+        bLowMemery = TRUE;
 		nReturnStatus = ISHELL_CreateInstance(pMe->a.m_pIShell, AEECLSID_PHONECTL, (void **) &pIPhoneCtl);   
     	if((pIPhoneCtl == NULL) || (SUCCESS != nReturnStatus))
 	    {
@@ -1054,10 +1058,39 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 
 		IPHONECTL_SetOperatingMode(pIPhoneCtl, AEET_OPRT_MODE_OFFLINE);
 		(void)ISHELL_SetTimer(pMe->a.m_pIShell,
-                                18000,
+                                500,
                               	 (PFNNOTIFY)Core_HandleTimer,
                                 pIPhoneCtl);
+         ICONFIG_SetItem(pMe->m_pConfig, CFGI_LOW_MEMERY_FEATURE, &bLowMemery, sizeof(boolean));
+        
 	}
+    else
+    {
+        if(bIsStarton)
+        {
+            
+            ICONFIG_GetItem(pMe->m_pConfig, CFGI_LOW_MEMERY_FEATURE, &bLowMemery, sizeof(boolean));
+            MSG_FATAL("***ydc CoreApp_HandleEvent 1 bLowMemery======%d\n",bLowMemery,0,0);
+            if(bLowMemery)
+            {
+                IBacklight  *Backlight;
+                (void)ISHELL_CreateInstance(pMe->a.m_pIShell,AEECLSID_BACKLIGHT,(void **)&Backlight);
+                if(IBACKLIGHT_IsEnabled(Backlight))
+                {
+                    IBACKLIGHT_Disable(Backlight);
+                } 
+                bLowMemery = FALSE;
+                bIsLowMemery= TRUE;
+                ICONFIG_SetItem(pMe->m_pConfig, CFGI_LOW_MEMERY_FEATURE, &bLowMemery, sizeof(boolean));
+                IBACKLIGHT_Release(Backlight);  
+            }
+            else
+            {
+                bIsLowMemery= FALSE;
+            }
+            bIsStarton = FALSE;
+        }
+    }
 	//MSG_FATAL("***ydc CoreApp_HandleEvent 1 dwTotal======%d,free====%d\n",dwTotal,free,0);
 	//MSG_FATAL("***ydc CoreApp_HandleEvent 1 tot======%d,larg====%d\n",tot,larg,0);
 	//MSG_FATAL("***zzg CoreApp_HandleEvent eCode=%x, wParam=%x, dwParam=%x***", eCode, wParam, dwParam);

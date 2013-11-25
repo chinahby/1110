@@ -8947,8 +8947,12 @@ static void CoreApp_PlayPwrOnAni(CCoreApp *pMe)
     }
     else
     {
+        extern boolean bIsLowMemery; 
         MSG_FATAL("CoreApp_PlayPwrOnAni 4",0,0,0);
-        IBACKLIGHT_Enable(pMe->m_pBacklight);
+        if(!bIsLowMemery)
+        {
+            IBACKLIGHT_Enable(pMe->m_pBacklight);
+        }
         IALERT_StopRingerAlert(pMe->m_pAlert);
 #if !defined(FEATURE_USES_LOWMEM)//&&!defined(FEATURE_LOWER_MEM)
         if ( NULL != pMe->m_pStartupAniImg )
