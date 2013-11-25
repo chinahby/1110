@@ -32,6 +32,8 @@
 #include "AEEModTable.h"
 #include "AEEAppGen.h"
 #include "AEEAnnunciator.h"
+#include "ContApp.h"
+#include "AEETelephone.h"
 
 #include "CoreApp_priv.h"        /* CoreApp external data and function prototypes */
 
@@ -992,6 +994,14 @@ static void SalesTrackSetRUIMIDInfoCfg(void)
 #endif
 
 
+void Core_HandleTimer(IPhoneCtl *m_pIPhoneCtl)
+{
+	IPHONECTL_SetOperatingMode(m_pIPhoneCtl, AEET_OPRT_MODE_RESET);
+    IPHONECTL_Release(m_pIPhoneCtl);
+    m_pIPhoneCtl = NULL;
+}
+
+
 /*==============================================================================
 º¯Êý:
     CoreApp_HandleEvent
@@ -1020,8 +1030,37 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                                    uint32 dwParam)
 {
     CCoreApp * pMe = (CCoreApp *)pi;
+	uint32	dwTotal = 0;
+	uint32 free = 0;
+	uint32 tot = 0;
+	uint32 larg = 0;
+	JulianType  jDate;
+	if (NULL == pMe)
+	{
+		return;
+	}
+	GETFSFREE(&dwTotal);
+	free = GETRAMFREE(&tot,&larg);
+	GetJulianDate(GETTIMESECONDS(), &jDate);
+	if((free<300000) &&(jDate.wHour>0)&&(jDate.wHour<4))
+	{
+		IPhoneCtl *pIPhoneCtl = NULL;
+		int nReturnStatus = 1;
+		nReturnStatus = ISHELL_CreateInstance(pMe->a.m_pIShell, AEECLSID_PHONECTL, (void **) &pIPhoneCtl);   
+    	if((pIPhoneCtl == NULL) || (SUCCESS != nReturnStatus))
+	    {
+	        return ;
+	    }
 
-	MSG_FATAL("***zzg CoreApp_HandleEvent eCode=%x, wParam=%x, dwParam=%x***", eCode, wParam, dwParam);
+		IPHONECTL_SetOperatingMode(pIPhoneCtl, AEET_OPRT_MODE_OFFLINE);
+		(void)ISHELL_SetTimer(pMe->a.m_pIShell,
+                                18000,
+                              	 (PFNNOTIFY)Core_HandleTimer,
+                                pIPhoneCtl);
+	}
+	//MSG_FATAL("***ydc CoreApp_HandleEvent 1 dwTotal======%d,free====%d\n",dwTotal,free,0);
+	//MSG_FATAL("***ydc CoreApp_HandleEvent 1 tot======%d,larg====%d\n",tot,larg,0);
+	//MSG_FATAL("***zzg CoreApp_HandleEvent eCode=%x, wParam=%x, dwParam=%x***", eCode, wParam, dwParam);
 	
     switch (eCode)
     {
