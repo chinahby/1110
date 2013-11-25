@@ -155,7 +155,23 @@
 #define OEMNV_CALLFORWARD_WAIT_DISABLE              "*119"                      //CFGI_CALLFORWARD_WAIT_DISABLE
 #define OEMNV_CALLFORWARD_VOICEMAIL_ENABLE          "0"                         //CFGI_CALLFORWARD_VOICEMAIL_ENABLE 
 #define OEMNV_VOICEMAIL_NUMBER                      L"0"                          //NV_SMS_VM_NUMBER_I 
-#elif defined(FEATURE_VERSION_W021_CT100)|| defined(FEATURE_VERSION_W021_C11)
+#elif defined(FEATURE_VERSION_W021_C11)
+//Operator parameters
+#define OEMNV_EMERGENCYNUM_TABLE_NUM                {{{"110",3},{"112",3},{"911",3},{"999",3},{"",0},{"",0},{"",0},{"",0},{"",0},{"",0}},4} //CFGI_EMERGENCYNUM_TABLE
+#define OEMNV_CALLFORWARD_BUSY_ENABLE               "*19"                       //CFGI_CALLFORWARD_BUSY_ENABLE
+#define OEMNV_CALLFORWARD_BUSY_DISABLE              "*190"                      //CFGI_CALLFORWARD_BUSY_DISABLE
+#define OEMNV_CALLFORWARD_NOANSWER_ENABLE           "*10"                       //CFGI_CALLFORWARD_NOANSWER_ENABLE
+#define OEMNV_CALLFORWARD_NOANSWER_DISABLE          "*100"                      //CFGI_CALLFORWARD_NOANSWER_DISABLE
+#define OEMNV_CALLFORWARD_UNCONDITIONAL_ENABLE      "*12"                       //CFGI_CALLFORWARD_UNCONDITIONAL_ENABLE
+#define OEMNV_CALLFORWARD_UNCONDITIONAL_DISABLE     "*120"                      //CFGI_CALLFORWARD_UNCONDITIONAL_DISABLE
+#define OEMNV_CALLFORWARD_UNREACHABLE_ENABLE        "*72"                       //CFGI_CALLFORWARD_UNREACHABLE_ENABLE
+#define OEMNV_CALLFORWARD_UNREACHABLE_DISABLE       "*720"                      //CFGI_CALLFORWARD_UNREACHABLE_DISABLE
+#define OEMNV_CALLFORWARD_DISABLE_ALL               "*115"                      //CFGI_CALLFORWARD_DISABLE_ALL
+#define OEMNV_CALLFORWARD_WAIT_ENABLE               "*13"                       //CFGI_CALLFORWARD_WAIT_ENABLE
+#define OEMNV_CALLFORWARD_WAIT_DISABLE              "*130"                      //CFGI_CALLFORWARD_WAIT_DISABLE
+#define OEMNV_CALLFORWARD_VOICEMAIL_ENABLE          "0"                         //CFGI_CALLFORWARD_VOICEMAIL_ENABLE 
+#define OEMNV_VOICEMAIL_NUMBER                      L"*922"                          //NV_SMS_VM_NUMBER_I  
+#elif defined(FEATURE_VERSION_W021_CT100)
 //Operator parameters
 #define OEMNV_EMERGENCYNUM_TABLE_NUM                {{{"110",3},{"112",3},{"911",3},{"999",3},{"",0},{"",0},{"",0},{"",0},{"",0},{"",0}},4} //CFGI_EMERGENCYNUM_TABLE
 #define OEMNV_CALLFORWARD_BUSY_ENABLE               "*136"                       //CFGI_CALLFORWARD_BUSY_ENABLE
