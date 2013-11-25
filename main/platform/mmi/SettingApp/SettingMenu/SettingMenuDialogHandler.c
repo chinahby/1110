@@ -2813,7 +2813,9 @@ static boolean  HandleDivertDialogEvent(CSettingMenu *pMe,
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_CALLFORWARD_NOCONNECT, IDS_CALLFORWARD_NOCONNECT, NULL, 0);
 #endif
 #endif
+#ifndef FEATURE_VERSION_W021_C11
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_CALLFORWARD_ANYWAY, IDS_CALLFORWARD_ANYWAY, NULL, 0);
+#endif
 #if (!defined FEATURE_CARRIER_VENEZUELA_MOVILNET) && (!defined FEATURE_CARRIER_THAILAND_HUTCH)    
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_CALLFORWARD_CANCELALL, IDS_CALLFORWARD_CANCELALL, NULL, 0);
 #endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH  
@@ -2877,7 +2879,11 @@ static boolean  HandleDivertDialogEvent(CSettingMenu *pMe,
 
                 case IDS_CALLFORWARD_CANCELALL: //取消全部转移
                 {
+					#ifdef FEATURE_VERSION_W021_C11
+					STRCPY(pMe->m_callnumber,OEMNV_CALLFORWARD_UNCONDITIONAL_DISABLE); 
+					#else
                     SettingMenu_Process_Feature_Code(pMe,CFGI_CALLFORWARD_DISABLE_ALL);
+					#endif
                     if(STRLEN(pMe->m_callnumber) == 0)
                     {
 #ifdef FEATURE_CALL_FORWARD_USER_INPUT					
@@ -3010,11 +3016,17 @@ static boolean  HandleCallForwardSelDialogEvent(CSettingMenu *pMe,
                     MSG_FATAL("CALLFORWARD_BUSY",0,0,0);
                     pMe->m_nResID = IDS_CALLFORWARD_BUSY;
                     selete_item = CFGI_CALLFORWARD_BUSY_ENABLE;
+					#ifdef FEATURE_VERSION_W021_C11
+					STRCPY(pMe->m_callnumber,OEMNV_CALLFORWARD_BUSY_ENABLE); 
+					#endif
                     break;
 
                 case CALLFORWARD_NOANSWER:  //无应答转移
                     pMe->m_nResID = IDS_CALLFORWARD_NOANSWER;
                     selete_item = CFGI_CALLFORWARD_NOANSWER_ENABLE;
+					#ifdef FEATURE_VERSION_W021_C11
+					STRCPY(pMe->m_callnumber,OEMNV_CALLFORWARD_NOANSWER_ENABLE);
+					#endif
                     break;
 
                 case CALLFORWARD_NOCONNECT: //未接通转移
@@ -3025,6 +3037,10 @@ static boolean  HandleCallForwardSelDialogEvent(CSettingMenu *pMe,
 					#endif
                     //selete_item = CFGI_CALLFORWARD_UNCONDITIONAL_ENABLE;
                     selete_item = CFGI_CALLFORWARD_UNREACHABLE_ENABLE;
+					
+                    #ifdef FEATURE_VERSION_W021_C11
+					STRCPY(pMe->m_callnumber,OEMNV_CALLFORWARD_UNCONDITIONAL_ENABLE);
+                    #endif
                     break;
 
                 case CALLFORWARD_ANYWAY:    //无条件转移
@@ -3036,6 +3052,9 @@ static boolean  HandleCallForwardSelDialogEvent(CSettingMenu *pMe,
                 case CALLFORWARD_WAIT:      //呼叫等待
                     pMe->m_nResID = IDS_CALLFORWARD_WAIT;
                     selete_item = CFGI_CALLFORWARD_WAIT_ENABLE;
+					#ifdef FEATURE_VERSION_W021_C11
+					STRCPY(pMe->m_callnumber,OEMNV_CALLFORWARD_WAIT_ENABLE);
+					#endif
                     break;
 #ifdef FEATURE_CARRIER_SUDAN_SUDATEL
                 //case CALLFORWARD_CNIR:
@@ -3051,7 +3070,9 @@ static boolean  HandleCallForwardSelDialogEvent(CSettingMenu *pMe,
                 default:
                     return FALSE;
             }
+			#ifndef FEATURE_VERSION_W021_C11
             SettingMenu_Process_Feature_Code(pMe,selete_item);
+			#endif
             // 给菜单各菜单项加数字编号图标
             SettingMenu_SetItemNumIcon(pMenu);
 
@@ -3151,15 +3172,24 @@ static boolean  HandleCallForwardSelDialogEvent(CSettingMenu *pMe,
                         {
                             case CALLFORWARD_BUSY:      //遇忙转移
                                 selete_item = CFGI_CALLFORWARD_BUSY_DISABLE;
+								#ifdef FEATURE_VERSION_W021_C11
+								STRCPY(pMe->m_callnumber,OEMNV_CALLFORWARD_BUSY_DISABLE);
+								#endif
                                 break;
 
                             case CALLFORWARD_NOANSWER:  //无应答转移
                                 selete_item = CFGI_CALLFORWARD_NOANSWER_DISABLE;
+								#ifdef FEATURE_VERSION_W021_C11
+								STRCPY(pMe->m_callnumber,OEMNV_CALLFORWARD_NOANSWER_DISABLE);
+								#endif
                                 break;
 
                             case CALLFORWARD_NOCONNECT: //未接通转移
                                 //selete_item = CFGI_CALLFORWARD_UNCONDITIONAL_DISABLE;
                                 selete_item = CFGI_CALLFORWARD_UNREACHABLE_DISABLE;
+								#ifdef FEATURE_VERSION_W021_C11
+								STRCPY(pMe->m_callnumber,OEMNV_CALLFORWARD_UNCONDITIONAL_DISABLE);
+								#endif
                                 break;
 
                             case CALLFORWARD_ANYWAY:    //无条件转移
@@ -3169,6 +3199,9 @@ static boolean  HandleCallForwardSelDialogEvent(CSettingMenu *pMe,
 
                             case CALLFORWARD_WAIT:      //呼叫等待
                                 selete_item = CFGI_CALLFORWARD_WAIT_DISABLE;
+								#ifdef FEATURE_VERSION_W021_C11
+								STRCPY(pMe->m_callnumber,OEMNV_CALLFORWARD_WAIT_DISABLE);
+								#endif
                                 break;
 #ifdef FEATURE_CARRIER_SUDAN_SUDATEL
                             case CALLFORWARD_DND:
@@ -3182,7 +3215,9 @@ static boolean  HandleCallForwardSelDialogEvent(CSettingMenu *pMe,
                             default:
                                 return FALSE;
                         }
+						#ifndef FEATURE_VERSION_W021_C11
                         SettingMenu_Process_Feature_Code(pMe,selete_item);
+						#endif
                         if(STRLEN(pMe->m_callnumber) == 0)
                         {
 #ifdef 	FEATURE_CALL_FORWARD_USER_INPUT					
