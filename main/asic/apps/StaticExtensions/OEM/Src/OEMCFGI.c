@@ -796,7 +796,8 @@ typedef struct
    boolean m_sound_bo_indial;	//CFGI_SOUND_BO_INDIAL,
    boolean m_sound_bo_phonebook;//CFGI_SOUND_BO_PHONEBOOK,
    #endif
-#endif 
+#endif
+   boolean m_lowMemery;//CFGI_LOW_MEMERY_FEATURE, //add by ydecai 20131125
 #ifdef FEATURE_SHORTCUT_IN_SETTINGS   
    keypad_shortcuts_t m_keypad_shortcuts_table[MAX_SHORTCUTS_SIZE]; /*CFGI_KEYPAD_SHORTCUTS_TABLE*/
 #endif
@@ -1779,6 +1780,8 @@ static int OEMPriv_GetItem_CFGI_SOUND_BO_PHONEBOOK(void *pBuff);
 static int OEMPriv_SetItem_CFGI_SOUND_BO_PHONEBOOK(void *pBuff);
 #endif
 #endif 
+static int OEMPriv_GetItem_CFGI_LOW_MEMERY_FEATURE(void *pBuff);//add by ydecai 20131125
+static int OEMPriv_SetItem_CFGI_LOW_MEMERY_FEATURE(void *pBuff);//add by ydecai 20131125
 
 #ifdef FEATURE_SHORTCUT_IN_SETTINGS
 static int OEMPriv_GetItem_CFGI_KEYPAD_SHORTCUTS_TABLE(void *pBuff);
@@ -2194,6 +2197,7 @@ static OEMConfigListType oemi_cache = {
    ,TRUE			//CFGI_SOUND_BO_PHONEBOOK,
    #endif
 #endif 
+   ,FALSE                //CFGI_LOW_MEMERY_FEATURE, //add by ydecai 20131125
 #ifdef FEATURE_SHORTCUT_IN_SETTINGS   
    ,{{AEECLSID_APP_CAMERA,{0}},{AEECLSID_APP_FMRADIO,{0}},{AEECLSID_APP_SETTINGMENU,{0}},{AEECLSID_SCHEDULEAPP,{0}}}    //CFGI_KEYPAD_SHORTCUTS_TABLE
 #endif   
@@ -2814,6 +2818,7 @@ static ConfigItemTableEntry const customOEMItemTable[] =
    CFGTABLEITEM(CFGI_SOUND_BO_PHONEBOOK,sizeof(boolean)),	//CFGI_SOUND_BO_PHONEBOOK,
    #endif
 #endif 
+   CFGTABLEITEM(CFGI_LOW_MEMERY_FEATURE,sizeof(boolean)),	//CFGI_LOW_MEMERY_FEATURE,add by ydecai 20131125
 #ifdef FEATURE_SHORTCUT_IN_SETTINGS   
    CFGTABLEITEM(CFGI_KEYPAD_SHORTCUTS_TABLE,sizeof(keypad_shortcuts_t)*MAX_SHORTCUTS_SIZE),
 #endif
@@ -2950,9 +2955,8 @@ void OEM_RestoreFactorySetting( void )
    oemi_cache.m_sound_bo_indial= TRUE;		//CFGI_SOUND_BO_INDIAL, 
    oemi_cache.m_sound_bo_phonebook=TRUE;	//CFGI_SOUND_BO_PHONEBOOK,
    #endif
-#endif 
-
-   
+#endif  
+   oemi_cache.m_lowMemery = FALSE;          //CFGI_LOW_MEMERY_FEATURE, //add by ydecai 20131125
 #endif
    oemi_cache.silence_all         = OEMNV_SA_NORMAL;
    oemi_cache.headset_ringer      = OEMNV_HEADSET_RNG_ON;
@@ -11616,6 +11620,17 @@ static int OEMPriv_SetItem_CFGI_SOUND_BO_PHONEBOOK(void *pBuff)
 #endif
 
 #endif 
+static int OEMPriv_GetItem_CFGI_LOW_MEMERY_FEATURE(void *pBuff)//add by ydecai 20131125
+{
+    MEMCPY(pBuff, (void*) &oemi_cache.m_lowMemery, sizeof(boolean));
+	return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_LOW_MEMERY_FEATURE(void *pBuff)//add by ydecai 20131125
+{
+    MEMCPY((void*) &oemi_cache.m_lowMemery, pBuff, sizeof(boolean));
+	OEMPriv_WriteOEMConfigList(); 
+	return SUCCESS;
+}
 
 static int OEMPriv_GetItem_CFGI_ESN_TRACK_NUMBER(void *pBuff) //CFGI_ESN_TRACK_NUMBER
 {
