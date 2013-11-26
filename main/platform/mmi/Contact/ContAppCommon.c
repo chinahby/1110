@@ -901,7 +901,7 @@ AEETextInputMode CContApp_GetFldInputMode(AEEAddrFieldID wFldID)
 	         		return AEE_TM_LETTERS;
 	         	}
 	         	}
-				#elif defined(FEATURE_VERSION_K202) || defined(FEATURE_VERSION_K212_20D)
+				#elif defined(FEATURE_VERSION_K202) || defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_HUALU)
 				{
 					return AEE_TM_PINYIN;
 				}
@@ -2579,7 +2579,7 @@ int CContApp_SetGroupMenuSel(CContApp *pMe, IMenuCtl *pMenuCtl)
             wSel = IDS_GROUP_PERSONAL;
             pMe->m_wSelectGroup = CONTCFG_GROUP1;
             break;
-            
+        //#if !defined(FEATURE_VERSION_K212_HUALU)
         case AEE_ADDR_CAT_BUSINESS:
             wSel = IDS_GROUP_BUSINESS;
             pMe->m_wSelectGroup = CONTCFG_GROUP2;
@@ -2589,7 +2589,7 @@ int CContApp_SetGroupMenuSel(CContApp *pMe, IMenuCtl *pMenuCtl)
             wSel = IDS_GROUP_VIP;
             pMe->m_wSelectGroup = CONTCFG_GROUP3;
             break;
-            
+        //#endif
         case AEE_ADDR_CAT_HOME:
             wSel = IDS_GROUP_HOME;
             pMe->m_wSelectGroup = CONTCFG_GROUP4;
@@ -7704,11 +7704,12 @@ int CContApp_GetGroupCat(CContApp* pMe, int16 groupId)
 {
     switch(groupId)
     { 
+        //#if !defined(FEATURE_VERSION_K212_HUALU)
         case IDS_GROUP_VIP:
             pMe->m_nGroupCat = AEE_ADDR_CAT_VIP;
             pMe->m_wSelectGroup = CONTCFG_GROUP1;
             break;
-            
+        //#endif
         case IDS_GROUP_HOME:
             pMe->m_nGroupCat = AEE_ADDR_CAT_HOME;
             pMe->m_wSelectGroup = CONTCFG_GROUP2;
@@ -7728,12 +7729,12 @@ int CContApp_GetGroupCat(CContApp* pMe, int16 groupId)
             pMe->m_nGroupCat = AEE_ADDR_CAT_PERSONAL;
             pMe->m_wSelectGroup = CONTCFG_GROUP5;
             break;
-            
+        //#if !defined(FEATURE_VERSION_K212_HUALU)
         case IDS_GROUP_BUSINESS:
             pMe->m_nGroupCat = AEE_ADDR_CAT_BUSINESS;
             pMe->m_wSelectGroup = CONTCFG_GROUP6;
             break;
-            
+        //#endif
         case IDS_GROUP_NONE_STRING:
             pMe->m_nGroupCat = AEE_ADDR_CAT_OTHER;
             pMe->m_wSelectGroup = CONTCFG_GROUP7;

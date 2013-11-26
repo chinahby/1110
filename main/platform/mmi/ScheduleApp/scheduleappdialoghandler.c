@@ -3778,7 +3778,7 @@ static boolean  dialog_handler_of_state_event_edit( CScheduleApp* pme,
                 		(void)ITEXTCTL_SetInputMode( pSubject, AEE_TM_LETTERS);
 	        	    }
                 }
-				#elif defined(FEATURE_VERSION_K202)
+				#elif defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212_HUALU)
 				{
 					(void)ITEXTCTL_SetInputMode( pNote, AEE_TM_PINYIN);
                 	(void)ITEXTCTL_SetInputMode( pSubject, AEE_TM_PINYIN);
@@ -6428,6 +6428,7 @@ static boolean  dialog_handler_of_state_showalert( CScheduleApp* pme,
                 IImage *AlertImage = NULL;
                 AECHAR wstrTitle[MAX_INPUT_SUBJECT] = {0};
                 MSG_FATAL("EVT_USER_REDRAW...end======%d",end,0,0);
+                IANNUNCIATOR_Redraw(pme->m_pIAnn);
 
                 for( i = 1; i <= end; i ++)
                 {
@@ -6607,7 +6608,7 @@ static boolean  dialog_handler_of_state_showalert( CScheduleApp* pme,
             {            
                 if(g_nCurEvtStyle == 0)
                 {
-                    if(wParam == AVK_SELECT)
+                    if(wParam == AVK_SELECT && pme->m_CalMgr.m_cfg.nSnooze != 0)
                     {
                     
                         char     args[20] = {0};

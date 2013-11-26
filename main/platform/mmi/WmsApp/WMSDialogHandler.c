@@ -11293,7 +11293,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 					(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_PINYIN);	
 		         	#elif defined(FEATURE_VERSION_K202_LM129C)
 					(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_PINYIN);
-					#elif defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_K212_20D)
+					#elif defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_HUALU) 
 					{
 						//nInputMode = ITEXTCTL_GetInputMode (pIText, NULL);
 						(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_PINYIN);

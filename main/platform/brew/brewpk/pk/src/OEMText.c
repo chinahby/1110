@@ -149,7 +149,7 @@ static uint16 StrokeMap[]=
 #define T9KEYTYPE_CONTROL       (2)
 #define T9KEYTYPE_UNKNOWN       (6)
 #define T9_FONT_WIDTH           (32)
-#define T9_STROKE_FONT_WIDTH    (16) // (10) 
+#define T9_STROKE_FONT_WIDTH    (28) // (10) 
 #define T9_STROKE_LEFT_ARROW    (10) 
 #define MAX_STROKES             (9) // (10) // the max count which display in the screen
 #elif defined(FEATURE_DISP_220X176)
@@ -2316,7 +2316,9 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
         return;
     }	
 
-    MSG_FATAL("***zzg OEM_TextDraw***", 0,0,0);
+    
+
+    MSG_FATAL("***zzg OEM_TextDraw***=pContext->byMode%d", pContext->byMode,0,0);
     
     if (pContext->bValid)
     {
@@ -2381,7 +2383,7 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
 #ifndef FEATURE_VERSION_EC99
 #ifndef FEATURE_VERSION_K212_20D
 #ifndef FEATURE_VERSION_K212_ND
-#ifndef FEATURE_LOW_MEM_BIGFONT
+//#ifndef FEATURE_LOW_MEM_BIGFONT
 
                     AECHAR   * pszText;
                     pszText = OEM_TextGet(pContext);
@@ -2421,7 +2423,7 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
 #endif
 #endif
 #endif
-#endif
+//#endif
                 }
                 else
 #endif

@@ -540,7 +540,7 @@ int CContApp_BuildManagementMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
 #ifdef FEATURE_RUIM_PHONEBOOK
     if( IsRunAsUIMVersion() && pMe->m_bADNRUIMSupport )
     {
-#ifndef FEATURE_VERSION_K212_HUALU
+//#ifndef FEATURE_VERSION_K212_HUALU
         ai.wText       = IDS_MOVE_CONTACTS;
         ai.wItemID   = IDS_MOVE_CONTACTS;
         //ai.wImage    = IDB_PHONE;
@@ -560,7 +560,7 @@ int CContApp_BuildManagementMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
             FARF(ADDR, ("Failed to Add Opts item %d", ai.wItemID));
             return EFAILED;
         }   
-#endif
+//#endif
     }
 #endif
 
@@ -1137,10 +1137,12 @@ int CContApp_BuildEditMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl, boolean bAll)
                 MSG_FATAL("pGroup[0] = ONEDIAL_NULL",0,0,0);
                 switch(pMe->m_nGroupCat)
                 {
+                    //#if !defined(FEATURE_VERSION_K212_HUALU)
                     case AEE_ADDR_CAT_VIP:
                         pMe->m_wSelectGroup = CONTCFG_GROUP1;
                         ResID = IDS_GROUP_VIP;
                         break;
+                    //#endif
                     case AEE_ADDR_CAT_HOME:
                         pMe->m_wSelectGroup = CONTCFG_GROUP2;
                         ResID = IDS_GROUP_HOME;
@@ -1157,10 +1159,12 @@ int CContApp_BuildEditMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl, boolean bAll)
                         pMe->m_wSelectGroup = CONTCFG_GROUP5;                       
                         ResID = IDS_GROUP_PERSONAL;  
                         break;
+                    //#if !defined(FEATURE_VERSION_K212_HUALU)
                     case AEE_ADDR_CAT_BUSINESS:
                         pMe->m_wSelectGroup = CONTCFG_GROUP6;                       
                         ResID = IDS_GROUP_BUSINESS;  
                         break;
+                    //#endif
                     default:
                         pMe->m_wSelectGroup = 0;                      
                         ResID = IDS_GROUP_NONE_STRING;
@@ -3031,7 +3035,7 @@ int CContApp_BuildGroupMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
     }
 #endif
 
-    for( i = CONTCFG_GROUP1; i <= CONTCFG_GROUP6; i++)
+    for( i = CONTCFG_GROUP2; i <= CONTCFG_GROUP5; i++)
     {
         pGroup[0] = ONEDIAL_NULL;
         MSG_FATAL("pGroup[0] = ONEDIAL_NULL",0,0,0);
@@ -3047,11 +3051,12 @@ int CContApp_BuildGroupMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
         // set menu item id
         switch(i)
         {
+            //#if !defined(FEATURE_VERSION_K212_HUALU)
             case CONTCFG_GROUP1:
                 ai.wItemID = IDS_GROUP_VIP;
                 ResID = IDS_GROUP_VIP;
                 break;
-
+            //#endif
             case CONTCFG_GROUP2:
                 ai.wItemID = IDS_GROUP_HOME;
                 ResID = IDS_GROUP_HOME;
@@ -3071,11 +3076,12 @@ int CContApp_BuildGroupMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
                 ai.wItemID = IDS_GROUP_PERSONAL;
                 ResID = IDS_GROUP_PERSONAL;
                 break;
-
+            //#if !defined(FEATURE_VERSION_K212_HUALU)
             case CONTCFG_GROUP6:
                 ai.wItemID = IDS_GROUP_BUSINESS;
                 ResID = IDS_GROUP_BUSINESS;
-                break;                
+                break;             
+            //#endif
         }  
              
         if(pGroup[0] == ONEDIAL_NULL)
@@ -3348,7 +3354,7 @@ int CContApp_BuildGroupList(CContApp  *pMe, IMenuCtl  *groupList)
         return EFAILED;
     }
     
-    for( i = CONTCFG_GROUP1; i <= CONTCFG_GROUP6; i++)
+    for( i = CONTCFG_GROUP2; i <= CONTCFG_GROUP5; i++)
     {
         pGroup[0] = ONEDIAL_NULL;
         MSG_FATAL("pGroup[0] = ONEDIAL_NULL",0,0,0);
@@ -3364,11 +3370,12 @@ int CContApp_BuildGroupList(CContApp  *pMe, IMenuCtl  *groupList)
         // set menu item id
         switch(i)
         {
+            //#if !defined(FEATURE_VERSION_K212_HUALU)
             case CONTCFG_GROUP1:
                 ai.wItemID = IDS_GROUP_VIP;
                 ResID = IDS_GROUP_VIP;
                 break;
-
+            //#endif
             case CONTCFG_GROUP2:
                 ai.wItemID = IDS_GROUP_HOME;
                 ResID = IDS_GROUP_HOME;
@@ -3388,11 +3395,12 @@ int CContApp_BuildGroupList(CContApp  *pMe, IMenuCtl  *groupList)
                 ai.wItemID = IDS_GROUP_PERSONAL;
                 ResID = IDS_GROUP_PERSONAL;
                 break;
-
+            //#if !defined(FEATURE_VERSION_K212_HUALU)
             case CONTCFG_GROUP6:
                 ai.wItemID = IDS_GROUP_BUSINESS;
                 ResID = IDS_GROUP_BUSINESS;
-                break;                
+                break;  
+            //#endif
         }  
              
         if(pGroup[0] == ONEDIAL_NULL)

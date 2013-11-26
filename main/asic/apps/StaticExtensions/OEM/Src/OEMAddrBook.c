@@ -92,12 +92,16 @@ uint32            gwProps;
 //List of supported categories
 static const SupportedCat gSupportedCatList[] =
 {
+   #ifndef FEATURE_VERSION_K212_HUALU
    { AEE_ADDR_CAT_VIP, "VIP" },
+   #endif
    { AEE_ADDR_CAT_HOME, "Family" },
    { AEE_ADDR_CAT_WORK, "Colleague" },
    { AEE_ADDR_CAT_FRIEND, "Friends" },
-   { AEE_ADDR_CAT_PERSONAL, "Schoolmates" },
-   { AEE_ADDR_CAT_BUSINESS, "Business" }
+   { AEE_ADDR_CAT_PERSONAL, "Schoolmates" }
+   #ifndef FEATURE_VERSION_K212_HUALU
+   ,{ AEE_ADDR_CAT_BUSINESS, "Business" }
+   #endif
 };
 
 //List of supported fields

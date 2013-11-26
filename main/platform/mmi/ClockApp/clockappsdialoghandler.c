@@ -2172,7 +2172,10 @@ static boolean  HandleAlarmTimeReachDialogEvent(CClockApps *pMe,
                 case AVK_SELECT:
                 {
                     MSG_FATAL("CClockApps_Snooze-----AVK_SELECT",0,0,0);
-                    CClockApps_Snooze(pMe);
+                    if(0 != pMe->m_ClockCfg.Snooze[pMe->m_eCurAlarmType])
+                    {
+                         CClockApps_Snooze(pMe);
+                    }
                     return TRUE;
                 }
                 
