@@ -2743,6 +2743,16 @@ void uisnd_vibrate(uint16 wDuration,
 				   client_data
 				  );
 #endif
+#elif defined(FEATURE_VERSION_W027_HC_KK3)
+	snd_freq_tone_start(SND_DEVICE_CURRENT,
+			   SND_METHOD_RING,
+			   175,
+			   175,
+			   (uint16)(1000),
+			   (snd_apath_type)(SND_APATH_LOCAL),
+			   callback_ptr,
+			   client_data
+			  );
 #else
     uisnd_vibrate_cmd(TRUE);
     clk_reg( &uisnd_vibrator_clk,
