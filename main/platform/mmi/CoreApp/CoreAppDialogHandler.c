@@ -3957,24 +3957,9 @@ static void CoreApp_ImageNotify(void *po, IImage *pIImage, AEEImageInfo *pii, in
     db_items_value_type  need_capture;
 #endif
     MSG_FATAL("CoreApp_ImageNotify start",0,0,0);
-    //MSG_ERROR("CoreApp_ImageNotify, nErr:%d",nErr, 0, 0);
     if(SUCCESS == nErr) 
     {
-    	 #if 0//def FEATURE_VERSION_K212
-    	 if(OEMKeyguard_IsEnabled())
-    	 {
-    	 	//AEE_CancelTimer(CoreApp_MessageTimerCB,pMe);
-    	 	Appscommon_Draw_Keyguard_Time(pMe->m_pDisplay);
-			CoreApp_UpdateBottomBar(pMe);
-			IDISPLAY_UpdateEx(pMe->m_pDisplay,TRUE);
-			//(void) AEE_SetSysTimer(3000, CoreApp_MessageTimerCB, pMe);
-    	 }
-		 else
-		 #endif
 		 {
-		 	#if 0//def FEATURE_VERSION_K212
-		 	(void) AEE_CancelTimer(CoreApp_MessageTimerCB,pMe);
-			#endif
 			IDISPLAY_Update(pMe->m_pDisplay);
 #ifdef FEATRUE_SET_ANN_FULL_SCREEN
         if (pMe->m_capture == DB_CAPTURE_NEED)
@@ -3993,7 +3978,7 @@ static void CoreApp_ImageNotify(void *po, IImage *pIImage, AEEImageInfo *pii, in
                 {
                     IBITMAP_CreateCompatibleBitmap(pDevBmp, &pBmp, rc.dx, rc.dy);
                     IBITMAP_Release(pDevBmp);
-                    
+                    pDevBmp = NULL;
                     IDISPLAY_SetDestination(pMe->m_pDisplay, pBmp);
                     if ( NULL != pWallPaper )
                     {
@@ -4011,6 +3996,7 @@ static void CoreApp_ImageNotify(void *po, IImage *pIImage, AEEImageInfo *pii, in
                     IDISPLAY_SetDestination(pMe->m_pDisplay, NULL);
                     (void)IBITMAP_QueryInterface(pBmp, AEECLSID_DIB, (void **) ppDIB);
                     IBITMAP_Release (pBmp);
+                    pBmp=NULL;
                 }
             }
         }
@@ -4480,12 +4466,9 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 			
 			//Add By zzg 2012_10_29
 			#if (defined (FEATURE_VERSION_W317A)||defined (FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K212_HUALU))
-			IFileMgr *pFileMgr = NULL;
-		    ISHELL_CreateInstance(pMe->a.m_pIShell, AEECLSID_FILEMGR, (void **)&pFileMgr);
-			
-		    if (pFileMgr)
+		    if (pMe->pFileMgr)
 		    {
-				if (IFILEMGR_Test(pFileMgr, AEEFS_CARD0_DIR)==SUCCESS)		
+				if (IFILEMGR_Test(pMe->pFileMgr, AEEFS_CARD0_DIR)==SUCCESS)		
 				{
 					IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_TCARD, ANNUN_STATE_TCARD_ON);
 				}
@@ -4493,7 +4476,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 				{
 					IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_TCARD, ANNUN_STATE_TCARD_OFF);
 				}
-		    }			
+                
+		    }	
 			#endif
 			//Add End
             CoreApp_DrawWallPaper(pMe); // debug for wallpaper update issue
@@ -6701,7 +6685,6 @@ static void CoreApp_UpdateIdleTimer(void *pUser)
     pm_rtc_rw_cmd (PM_RTC_SET_CMD, (pm_rtc_julian_type*)(&julian));
     if (FALSE == pMe->m_bAcquiredTime) 
     {
-        // 20x365x24x60x60 = 630720000
         if (dwSeconds > 630720000) 
         {
             pMe->m_bAcquiredTime = TRUE;
@@ -9289,11 +9272,10 @@ static void CoreApp_DrawWallPaper(CCoreApp *pMe)
 
         // test the file existed or not, if not existed, load the default wallpaper.
         {
-            IFileMgr *pFileMgr = NULL;
-            ISHELL_CreateInstance(pMe->a.m_pIShell, AEECLSID_FILEMGR, (void **)&pFileMgr);
-            if(pFileMgr)
+            
+            if(pMe->pFileMgr)
             {
-                if(IFILEMGR_Test(pFileMgr, szWallPaperName) == SUCCESS)
+                if(IFILEMGR_Test(pMe->pFileMgr, szWallPaperName) == SUCCESS)
                 {
                     pWallPaper = ISHELL_LoadImage(pMe->a.m_pIShell, szWallPaperName);
                 }
@@ -9301,8 +9283,6 @@ static void CoreApp_DrawWallPaper(CCoreApp *pMe)
                 {
                     pWallPaper = ISHELL_LoadImage(pMe->a.m_pIShell, OEMNV_WALLPAPER);
                 }
-                IFILEMGR_Release(pFileMgr);
-                pFileMgr = NULL;
             }
         }
         
@@ -9329,14 +9309,13 @@ static void CoreApp_DrawWallPaper(CCoreApp *pMe)
             
             // 释放先前图片占用的资源
             IIMAGE_Release(pWallPaper);
-            
+            pWallPaper = NULL;
             // test the file existed or not, if not existed, load the default wallpaper.
             {
-                IFileMgr *pFileMgr = NULL;
-                ISHELL_CreateInstance(pMe->a.m_pIShell, AEECLSID_FILEMGR, (void **)&pFileMgr);
-                if(pFileMgr)
+                
+                if(pMe->pFileMgr)
                 {
-                    if(IFILEMGR_Test(pFileMgr, szWallPaperName) == SUCCESS)
+                    if(IFILEMGR_Test(pMe->pFileMgr, szWallPaperName) == SUCCESS)
                     {
                         pWallPaper = ISHELL_LoadImage(pMe->a.m_pIShell, szWallPaperName);
                     }
@@ -9344,8 +9323,7 @@ static void CoreApp_DrawWallPaper(CCoreApp *pMe)
                     {
                         pWallPaper = ISHELL_LoadImage(pMe->a.m_pIShell, OEMNV_WALLPAPER);
                     }
-                    IFILEMGR_Release(pFileMgr);
-                    pFileMgr = NULL;
+                    
                 }
             }
 #ifdef FEATRUE_SET_ANN_FULL_SCREEN
@@ -9353,25 +9331,6 @@ static void CoreApp_DrawWallPaper(CCoreApp *pMe)
 #endif
         }
     }
-#if 0
-    if ( NULL != pWallPaper )
-    {
-        IIMAGE_GetInfo(pWallPaper, &ImgInfo);
-        
-        nX = (ImgInfo.cx >= pMe->m_rc.dx)?  0 : ( (pMe->m_rc.dx - ImgInfo.cx)/2 );
-        //#if !defined(LCD_OPIMIZE_ICON)
-        //nY = (ImgInfo.cy >= pMe->m_rc.dy)?  12 : ( (pMe->m_rc.dy - ImgInfo.cy - 12)/2 + 12 );
-        //#else   
-        nY = (ImgInfo.cy >= pMe->m_rc.dy)?  0 : ( (pMe->m_rc.dy - ImgInfo.cy )/2 );
-        //#endif 
-        
-        IIMAGE_Draw(pWallPaper, nX, nY);
-    }
-    else
-    {
-        IDISPLAY_EraseRect(pMe->m_pDisplay, &pMe->m_rc);
-    }
-#endif
 }
 
 
@@ -9455,12 +9414,9 @@ void CoreApp_UpdateAnnunciator(CCoreApp *pMe)
 
 	//Add By zzg 2012_10_29
 	#if (defined (FEATURE_VERSION_W317A)||defined (FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)||defined(FEATURE_VERSION_IC241A_MMX))
-	IFileMgr *pFileMgr = NULL;
-    ISHELL_CreateInstance(pMe->a.m_pIShell, AEECLSID_FILEMGR, (void **)&pFileMgr);
-	
-    if (pFileMgr)
+    if (pMe->pFileMgr)
     {
-		if (IFILEMGR_Test(pFileMgr, AEEFS_CARD0_DIR)==SUCCESS)		
+		if (IFILEMGR_Test(pMe->pFileMgr, AEEFS_CARD0_DIR)==SUCCESS)		
 		{
 			IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_TCARD, ANNUN_STATE_TCARD_ON);
 		}
@@ -9470,23 +9426,7 @@ void CoreApp_UpdateAnnunciator(CCoreApp *pMe)
 		}
     }
 	#endif
-	//Add End
 
-    /*
-    //Add for test
-	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RSSI, ANNUN_STATE_RSSI_4);
-	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_HEADSET, ANNUN_STATE_HEADSET_ON);
-	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_TCARD, ANNUN_STATE_TCARD_ON);
-	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL, ANNUN_STATE_CALL_MISSEDCALL_ON);
-	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_SMS, ANNUN_STATE_SMS_SMAIL_ON);
-    IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_QQ, ANNUN_STATE_QQ_ONLINE);
-	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_ALARM, ANNUN_STATE_ALARM_ON);
-	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_VIBRING);
-	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_BATT, ANNUN_STATE_BATT_FULL);   
-    
-	return;
-	//Add End
-	*/
   
     ICONFIG_GetItem(pMe->m_pConfig, CFGI_HEADSET_PRESENT, &b_headset, sizeof(b_headset));
     ICONFIG_GetItem(pMe->m_pConfig, CFGI_FM_BACKGROUND, &b_FMBackground, sizeof(b_FMBackground));

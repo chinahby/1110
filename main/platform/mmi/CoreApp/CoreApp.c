@@ -507,6 +507,12 @@ void CoreApp_FreeAppData(IApplet* po)
     }
 #endif
 #endif
+#if (defined (FEATURE_VERSION_W317A)||defined (FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K212_HUALU)) 
+    if (pMe->pFileMgr)
+    {
+         IFILEMGR_Release(pMe->pFileMgr);
+    }
+#endif
 
 } /* End CoreApp_FreeAppData */
 
@@ -753,6 +759,9 @@ boolean CoreApp_InitAppData(IApplet* po)
 			return FALSE;
 		}
 #endif
+#endif
+#if (defined (FEATURE_VERSION_W317A)||defined (FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K212_HUALU)) 
+    ISHELL_CreateInstance(pMe->a.m_pIShell, AEECLSID_FILEMGR, (void **)&pMe->pFileMgr);
 #endif
 
     ISHELL_RegisterHandler(pMe->a.m_pIShell, HTYPE_BROWSE, "http*", 0);

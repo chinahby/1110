@@ -1257,7 +1257,9 @@ typedef struct _CCoreApp
 #ifdef FEATURE_SOUND_BO
    IMedia *              m_pMedia;
 #endif
-
+#if (defined (FEATURE_VERSION_W317A)||defined (FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K212_HUALU))
+   IFileMgr *pFileMgr ;
+#endif
 } CCoreApp;
 
 /*==============================================================================
