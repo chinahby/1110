@@ -3150,7 +3150,7 @@ static void RecentCalls_RecordDetail(CRecentCalls   *pMe)
             (WSTRLEN(pMe->list_record[pMe->record_selected].number) != 0))
        {
            nCount = pMe->list_record[pMe->record_selected].counter; 
-           MEMSET(wszRawNum, 0, sizeof(wszRawNum));
+           MEMSET(wszRawNum, 0, sizeof(wszRawNum));              
            WSTRCPY(wszRawNum, pMe->list_record[pMe->record_selected].number);
            RecentCalls_GetContactName(pMe, wszRawNum, 
                          wszName, MAX_STRING_LEN); 
@@ -3209,28 +3209,32 @@ static void RecentCalls_RecordDetail(CRecentCalls   *pMe)
    /* 显示号码*/
    ncharsInLine = (pMe->m_rc.dx - 2*PIXELS_TO_EDGE) / nNumberWidth;
    nlen = WSTRLEN(wszRawNum);
-   (void)IDISPLAY_DrawText(pMe->m_pDisplay,
-                       AEE_FONT_BOLD,
-                       wszRawNum,
-                       nlen<ncharsInLine?nlen:ncharsInLine,
-                       PIXELS_TO_EDGE,
-                       PIXELS_TO_EDGE  + ((1 + nSinkingLines)*nLineHeight),	//+ TITLEBAR_HEIGHT
-                       NULL,
-                       IDF_TEXT_TRANSPARENT);
-   MSG_FATAL("====nSinkingLines=====%d,=====nLineHeight=====%d",nSinkingLines,nLineHeight,0);
-   /*如果一行显示不下，再显示第二行*/
-   if (nlen > ncharsInLine)
+   if((pMe->list_record[pMe->record_selected].number != NULL) &&
+            (WSTRLEN(pMe->list_record[pMe->record_selected].number) != 0))
    {
-      (void)IDISPLAY_DrawText(pMe->m_pDisplay,
-                       AEE_FONT_BOLD,
-                       wszRawNum + ncharsInLine, 
-                       -1, 
-                       PIXELS_TO_EDGE,
-                       PIXELS_TO_EDGE  + ((2 + nSinkingLines)*nLineHeight),	//+ TITLEBAR_HEIGHT
-                       NULL,
-                       IDF_TEXT_TRANSPARENT);
-	MSG_FATAL("====nSinkingLines=====%d,=====nLineHeight=====%d",nSinkingLines,nLineHeight,0);
-      nSinkingLines++;
+	   (void)IDISPLAY_DrawText(pMe->m_pDisplay,
+	                       AEE_FONT_BOLD,
+	                       wszRawNum,
+	                       nlen<ncharsInLine?nlen:ncharsInLine,
+	                       PIXELS_TO_EDGE,
+	                       PIXELS_TO_EDGE  + ((1 + nSinkingLines)*nLineHeight),	//+ TITLEBAR_HEIGHT
+	                       NULL,
+	                       IDF_TEXT_TRANSPARENT);
+	   MSG_FATAL("====nSinkingLines=====%d,=====nLineHeight=====%d",nSinkingLines,nLineHeight,0);
+	   /*如果一行显示不下，再显示第二行*/
+	   if (nlen > ncharsInLine)
+	   {
+	      (void)IDISPLAY_DrawText(pMe->m_pDisplay,
+	                       AEE_FONT_BOLD,
+	                       wszRawNum + ncharsInLine, 
+	                       -1, 
+	                       PIXELS_TO_EDGE,
+	                       PIXELS_TO_EDGE  + ((2 + nSinkingLines)*nLineHeight),	//+ TITLEBAR_HEIGHT
+	                       NULL,
+	                       IDF_TEXT_TRANSPARENT);
+		MSG_FATAL("====nSinkingLines=====%d,=====nLineHeight=====%d",nSinkingLines,nLineHeight,0);
+	      nSinkingLines++;
+	   }
    }
    /*显示通话次数*/
    MEMSET(wszText, 0, sizeof(wszText));
