@@ -7687,7 +7687,6 @@ static boolean  CContApp_HandleViewDlgEvent( CContApp  *pMe,
 
     pMenuCtl = (IMenuCtl*)IDIALOG_GetControl( pMe->m_pActiveDlg,
                                               IDC_VIEW_MENU);
-
     MENU_AUTO_SCROLL(pMenuCtl, eCode, wParam);
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
     if(eCode==EVT_PEN_UP)
@@ -7852,8 +7851,10 @@ static boolean  CContApp_HandleViewDlgEvent( CContApp  *pMe,
 	                        uint16   wID;
 	                            
 	                        wID = IMENUCTL_GetSel(pMenuCtl);
+
 	                        if (IMENUCTL_GetItem(pMenuCtl, wID, &ai))
 	                        {
+	                            
 	                            switch(pMe->m_wFiledOptState) 
 	                            {
 #if defined(FEATURE_WMS_APP) && !defined(FEATURE_WMSAPP_ONLYSUPPORTVMAIL)
@@ -7915,14 +7916,17 @@ static boolean  CContApp_HandleViewDlgEvent( CContApp  *pMe,
 						}
 					}
 					#endif
+                    
                     if(pMe->m_wSelectOpts != IDI_OPTS_MENU_VIEW)
                     {
                         CtlAddItem ai;
                         uint16   wID;
                             
                         wID = IMENUCTL_GetSel(pMenuCtl);
+                        
                         if (IMENUCTL_GetItem(pMenuCtl, wID, &ai))
                         {
+                            
                             switch(pMe->m_wFiledOptState) 
                             {
 #if defined(FEATURE_WMS_APP) && !defined(FEATURE_WMSAPP_ONLYSUPPORTVMAIL)
@@ -14069,7 +14073,8 @@ static boolean  CContApp_HandleDetailDlgEvent( CContApp  *pMe,
                             break;
 
                         default:
-                            return TRUE;
+                            callNum = pMe->m_pAddNewMobile;
+                            break;
                     }
 
                     // Make a voice call
@@ -14849,7 +14854,6 @@ static boolean  CContApp_HandleGroupOptEditDlgEvent( CContApp  *pMe,
                     case CONTCFG_GROUP1:
                         ResID = IDS_GROUP_VIP;
                         break;
-                        
                     case CONTCFG_GROUP2:
                         ResID = IDS_GROUP_HOME;
                         break;
@@ -14865,7 +14869,7 @@ static boolean  CContApp_HandleGroupOptEditDlgEvent( CContApp  *pMe,
                     case CONTCFG_GROUP5:
                         ResID = IDS_GROUP_PERSONAL;
                         break;
-                        
+
                     case CONTCFG_GROUP6:
                         ResID = IDS_GROUP_BUSINESS;
                         break;
@@ -15866,10 +15870,11 @@ static void CContApp_ShowGroupSelect(CContApp  *pMe, IMenuCtl  *pMenuCtl, IMenuC
     MSG_FATAL("CContApp_ShowGroupSelect m_nGroupCat=%d",pMe->m_nGroupCat,0,0);
     switch(pMe->m_nGroupCat)
     {
+      
         case AEE_ADDR_CAT_VIP:
             curGroup = IDS_GROUP_VIP;
             break;
-            
+     
         case AEE_ADDR_CAT_HOME:
             curGroup = IDS_GROUP_HOME;
             break;
@@ -15889,7 +15894,7 @@ static void CContApp_ShowGroupSelect(CContApp  *pMe, IMenuCtl  *pMenuCtl, IMenuC
         case AEE_ADDR_CAT_BUSINESS:
             curGroup = IDS_GROUP_BUSINESS;
             break;
-
+ 
         case AEE_ADDR_CAT_OTHER:
         default:
             curGroup = IDS_GROUP_NONE_STRING;
@@ -16899,10 +16904,12 @@ static void CContApp_SetGroupItemText(CContApp *pMe, IMenuCtl *pMenuCtl)
     MSG_FATAL("CContApp_SetGroupItemText m_nGroupCat=%d",pMe->m_nGroupCat,0,0);
     switch(pMe->m_nGroupCat)
     {
+        
         case AEE_ADDR_CAT_VIP:
             pMe->m_wSelectGroup = CONTCFG_GROUP1;
             ResID = IDS_GROUP_VIP;
             break;
+     
         case AEE_ADDR_CAT_HOME:
             pMe->m_wSelectGroup = CONTCFG_GROUP2;
             ResID = IDS_GROUP_HOME;
@@ -16919,10 +16926,12 @@ static void CContApp_SetGroupItemText(CContApp *pMe, IMenuCtl *pMenuCtl)
             pMe->m_wSelectGroup = CONTCFG_GROUP5;                       
             ResID = IDS_GROUP_PERSONAL;  
             break;
+ 
         case AEE_ADDR_CAT_BUSINESS:
             pMe->m_wSelectGroup = CONTCFG_GROUP6;                       
             ResID = IDS_GROUP_BUSINESS;  
             break;
+
         case AEE_ADDR_CAT_OTHER:
             pMe->m_wSelectGroup = CONTCFG_GROUP7;                       
             ResID = IDS_GROUP_NONE_STRING;  
@@ -16970,10 +16979,11 @@ static void CContApp_SetEditGroup(CContApp *pMe, IMenuCtl *pMenuCtl, boolean onl
     MSG_FATAL("CContApp_SetEditGroup selectGroup=%d",selectGroup,0,0);
     switch(selectGroup)
     { 
+        
         case IDS_GROUP_VIP:
             pMe->m_nGroupCat = AEE_ADDR_CAT_VIP;
             break;
-            
+       
         case IDS_GROUP_HOME:
             pMe->m_nGroupCat = AEE_ADDR_CAT_HOME;
             break;
@@ -16989,11 +16999,11 @@ static void CContApp_SetEditGroup(CContApp *pMe, IMenuCtl *pMenuCtl, boolean onl
         case IDS_GROUP_PERSONAL:
             pMe->m_nGroupCat = AEE_ADDR_CAT_PERSONAL;
             break;
-            
+      
         case IDS_GROUP_BUSINESS:
             pMe->m_nGroupCat = AEE_ADDR_CAT_BUSINESS;
             break;
-            
+        
         case IDS_GROUP_NONE_STRING:
             pMe->m_nGroupCat = AEE_ADDR_CAT_OTHER;
             break;
