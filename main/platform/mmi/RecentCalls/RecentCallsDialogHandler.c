@@ -1415,6 +1415,7 @@ static boolean RecentCalls_ListRecordEvent(CRecentCalls *pMe,
           
         case EVT_USER_REDRAW:
             {
+                IANNUNCIATOR_Redraw(pMe->m_pIAnn);
 				 //add by yangdecai
 				{
 					AECHAR WTitle[40] = {0};
