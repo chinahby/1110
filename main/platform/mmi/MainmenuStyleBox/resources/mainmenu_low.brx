@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="mainmenu_low" VERSION="1">
+<Strings Encoding="ISOLATIN1">
+	<STRING Id="1011" Name="IDS_MAIN_MENU_MEDIAGALLERY">
+		<Text>File Manager</Text>
+	</STRING>
+	<STRING Id="1012" Name="IDS_MAIN_MENU_CONTACTS">
+		<Text>PhoneBook</Text>
+	</STRING>
+	<STRING Id="1013" Name="IDS_MAIN_MENU_UTK">
+		<Text>Surfing</Text>
+	</STRING>
+	<STRING Id="1015" Name="IDS_MAIN_MENU_RECENTCALLS">
+		<Text>Call Center</Text>
+	</STRING>
+	<STRING Id="1016" Name="IDS_MAIN_MENU_MESSAGES">
+		<Text>Messages</Text>
+	</STRING>
+	<STRING Id="1017" Name="IDS_MAIN_MENU_MULTIMEDIA">
+		<Text>Multimedia</Text>
+	</STRING>
+	<STRING Id="1018" Name="IDS_MAIN_MENU_APPLICATION">
+		<Text>Organizer</Text>
+	</STRING>
+	<STRING Id="1020" Name="IDS_MAIN_MENU_SETTINGS">
+		<Text>Settings</Text>
+	</STRING>
+	<STRING Id="1021" Name="IDS_MAIN_MENU_USERPROFILE">
+		<Text>User profiles</Text>
+	</STRING>
+</Strings>
+<Dialogs>
+	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</DIALOG>
+	<Dialog Id="6002" Name="IDD_FLASHLIGHT_SETTING" Focus="7002">
+		<Controls>
+			<Menu Id="7002" Name="IDC_FLASHLIGHT_SET">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6003" Name="IDD_VIEW_TIME" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+</Dialogs>
+</BREWRes>
