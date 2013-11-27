@@ -78,6 +78,7 @@ static boolean b_lowTimes = 0;
 boolean	bIsPPPAuthEnabled = FALSE;	//Add By zzg 2012_03_07
 static boolean bIsStarton = TRUE;   //ADD By ydecai 20131125
 boolean bIsLowMemery = FALSE;   //ADD By ydecai 20131125
+
 /*==============================================================================
 
                                  º¯ÊýÉùÃ÷
@@ -507,12 +508,13 @@ void CoreApp_FreeAppData(IApplet* po)
     }
 #endif
 #endif
-#if (defined (FEATURE_VERSION_W317A)||defined (FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K212_HUALU)) 
+//#if (defined (FEATURE_VERSION_W317A)||defined (FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K212_HUALU)) 
     if (pMe->pFileMgr)
     {
          IFILEMGR_Release(pMe->pFileMgr);
     }
-#endif
+//#endif
+
 
 } /* End CoreApp_FreeAppData */
 
@@ -760,9 +762,9 @@ boolean CoreApp_InitAppData(IApplet* po)
 		}
 #endif
 #endif
-#if (defined (FEATURE_VERSION_W317A)||defined (FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K212_HUALU)) 
+//#if (defined (FEATURE_VERSION_W317A)||defined (FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K212_HUALU)) 
     ISHELL_CreateInstance(pMe->a.m_pIShell, AEECLSID_FILEMGR, (void **)&pMe->pFileMgr);
-#endif
+//#endif
 
     ISHELL_RegisterHandler(pMe->a.m_pIShell, HTYPE_BROWSE, "http*", 0);
 	ISHELL_RegisterHandler(pMe->a.m_pIShell, HTYPE_BROWSE, "http*", AEECLSID_CORE_APP);
@@ -1064,10 +1066,9 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 	    {
 	        return ;
 	    }
-
 		IPHONECTL_SetOperatingMode(pIPhoneCtl, AEET_OPRT_MODE_OFFLINE);
 		(void)ISHELL_SetTimer(pMe->a.m_pIShell,
-                                500,
+                                150000,
                               	 (PFNNOTIFY)Core_HandleTimer,
                                 pIPhoneCtl);
          ICONFIG_SetItem(pMe->m_pConfig, CFGI_LOW_MEMERY_FEATURE, &bLowMemery, sizeof(boolean));
@@ -1100,6 +1101,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             bIsStarton = FALSE;
         }
     }
+    
 	//MSG_FATAL("***ydc CoreApp_HandleEvent 1 dwTotal======%d,free====%d\n",dwTotal,free,0);
 	//MSG_FATAL("***ydc CoreApp_HandleEvent 1 tot======%d,larg====%d\n",tot,larg,0);
 	//MSG_FATAL("***zzg CoreApp_HandleEvent eCode=%x, wParam=%x, dwParam=%x***", eCode, wParam, dwParam);
