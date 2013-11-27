@@ -1353,7 +1353,11 @@ static boolean  HandleAlarmSubDialogEvent(CClockApps *pMe,
                 }
                 else
                 {
-                    IMENUCTL_SetSel( pMe->m_pSnooze, ITEM_SNOOZE_4);
+                    #ifdef FEATURE_VERSION_K212_HUALU
+                        IMENUCTL_SetSel( pMe->m_pSnooze, ITEM_SNOOZE_1);
+                    #else
+                        IMENUCTL_SetSel( pMe->m_pSnooze, ITEM_SNOOZE_4);
+                    #endif
                 }
             }
             

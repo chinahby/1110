@@ -7740,7 +7740,9 @@ static boolean Handle_ANSWER_MODE_DialogEveng(CSettingMenu *pMe,
             }
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SEND_ANSWER, IDS_SEND_ANSWER, NULL, 0);            
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_ANYKEY_ANSWER_TITLE, IDS_ANYKEY_ANSWER_TITLE, NULL, 0);
+            #if !defined(FEATURE_VERSION_K212_HUALU)
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_AUTOANSWER_TITLE, IDS_AUTOANSWER_TITLE, NULL, 0);
+            #endif
             return TRUE;
 
         case EVT_DIALOG_START:
@@ -7765,7 +7767,11 @@ static boolean Handle_ANSWER_MODE_DialogEveng(CSettingMenu *pMe,
                 }
                 else
                 {
+                    #if !defined(FEATURE_VERSION_K212_HUALU)
                     ui16_return = IDS_AUTOANSWER_TITLE;
+                    #else
+                    ui16_return = IDS_ANYKEY_ANSWER_TITLE;
+                    #endif
                 }
 
                 InitMenuIcons(pMenu);

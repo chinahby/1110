@@ -1056,7 +1056,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 	GETFSFREE(&dwTotal);
 	free = GETRAMFREE(&tot,&larg);
 	GetJulianDate(GETTIMESECONDS(), &jDate);
-	if((free<300000) &&(jDate.wHour>0)&&(jDate.wHour<4))
+	if((free<300000) &&(jDate.wHour>2)&&(jDate.wHour<4))
 	{
 		IPhoneCtl *pIPhoneCtl = NULL;
 		int nReturnStatus = 1;
