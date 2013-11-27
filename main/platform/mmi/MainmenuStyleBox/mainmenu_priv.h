@@ -193,7 +193,11 @@ typedef struct _MainMenu
 	boolean         m_bReraw;
 	#else
     IImage         *m_pImageBg;
+ #ifdef FEATURE_VERSION_K212_HUALU
+    IImage         *m_pImageIcon;
+ #else
     IImage         *m_pImageIcon[MAX_MATRIX_ITEMS];
+ #endif
 	#endif
 	uint16          m_PrsentPage;           
     IImage         *m_pAnimate;
@@ -466,6 +470,15 @@ typedef struct _MainMenu
     #define ICON7_ANI      "fs:/image/mainmenu/qsc1100_07.png"
     #define ICON8_ANI      "fs:/image/mainmenu/qsc1100_08.png"
     #define ICON9_ANI      "fs:/image/mainmenu/qsc1100_09.png"
+    #define ICON1_EN_ANI      "fs:/image/mainmenu/qsc1100_en_01.png"
+    #define ICON2_EN_ANI      "fs:/image/mainmenu/qsc1100_en_02.png"
+    #define ICON3_EN_ANI      "fs:/image/mainmenu/qsc1100_en_03.png"
+    #define ICON4_EN_ANI      "fs:/image/mainmenu/qsc1100_en_04.png"
+    #define ICON5_EN_ANI      "fs:/image/mainmenu/qsc1100_en_05.png"
+    #define ICON6_EN_ANI      "fs:/image/mainmenu/qsc1100_en_06.png"
+    #define ICON7_EN_ANI      "fs:/image/mainmenu/qsc1100_en_07.png"
+    #define ICON8_EN_ANI      "fs:/image/mainmenu/qsc1100_en_08.png"
+    #define ICON9_EN_ANI      "fs:/image/mainmenu/qsc1100_en_09.png"
 #elif defined(FEATURE_VERSION_IN50_MMX)
     #define ICON1_ANI      "fs:/image/mainmenu/qsc1100_01.png"
     #define ICON2_ANI      "fs:/image/mainmenu/qsc1100_02.png"
@@ -616,6 +629,15 @@ typedef struct _MainMenu
     #define ICON7_ANI_1      "fs:/image/mainmenu/qsc1100_07_focus.png"
     #define ICON8_ANI_1      "fs:/image/mainmenu/qsc1100_08_focus.png"
     #define ICON9_ANI_1      "fs:/image/mainmenu/qsc1100_09_focus.png"
+    #define ICON1_EN_ANI_1      "fs:/image/mainmenu/qsc1100_en_01_focus.png"
+    #define ICON2_EN_ANI_1      "fs:/image/mainmenu/qsc1100_en_02_focus.png"
+    #define ICON3_EN_ANI_1      "fs:/image/mainmenu/qsc1100_en_03_focus.png"
+    #define ICON4_EN_ANI_1      "fs:/image/mainmenu/qsc1100_en_04_focus.png"
+    #define ICON5_EN_ANI_1      "fs:/image/mainmenu/qsc1100_en_05_focus.png"
+    #define ICON6_EN_ANI_1      "fs:/image/mainmenu/qsc1100_en_06_focus.png"
+    #define ICON7_EN_ANI_1      "fs:/image/mainmenu/qsc1100_en_07_focus.png"
+    #define ICON8_EN_ANI_1      "fs:/image/mainmenu/qsc1100_en_08_focus.png"
+    #define ICON9_EN_ANI_1      "fs:/image/mainmenu/qsc1100_en_09_focus.png"
 #elif defined(FEATURE_VERSION_IN50_MMX)    
     #define ICON1_ANI_1      "fs:/image/mainmenu/qsc1100_01_focus.gif"
     #define ICON2_ANI_1      "fs:/image/mainmenu/qsc1100_02_focus.gif"

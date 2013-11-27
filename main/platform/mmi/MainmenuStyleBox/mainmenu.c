@@ -10901,7 +10901,31 @@ static char* ICON_ANI_1[] =
     ICON12_ANI_1,      
 #endif
 };
+static char* ICON_EN_ANI[] =
+{
+    ICON1_EN_ANI,
+    ICON2_EN_ANI,
+    ICON3_EN_ANI,
+    ICON4_EN_ANI,
+    ICON5_EN_ANI,
+    ICON6_EN_ANI,
+    ICON7_EN_ANI,
+    ICON8_EN_ANI,
+    ICON9_EN_ANI,
+};
 
+static char* ICON_EN_ANI_1[] =
+{
+    ICON1_EN_ANI_1,
+    ICON2_EN_ANI_1,
+    ICON3_EN_ANI_1,
+    ICON4_EN_ANI_1,
+    ICON5_EN_ANI_1,
+    ICON6_EN_ANI_1,
+    ICON7_EN_ANI_1,
+    ICON8_EN_ANI_1,
+    ICON9_EN_ANI_1,
+};
 /*=============================================================================
 FUNCTION:  MainMenuMod_Load
 
@@ -11725,6 +11749,13 @@ static void CMainMenu_FreeAppData(MainMenu *pMe)
             pMe->m_pImageBg = NULL;
         }
         
+        #ifdef FEATURE_VERSION_K212_HUALU
+        if(pMe->m_pImageIcon != NULL)
+        {
+            (void)IIMAGE_Release(pMe->m_pImageIcon);
+             pMe->m_pImageIcon = NULL;
+        }
+        #else
         for(i=0;i<MAX_MATRIX_ITEMS;i++)
         {
             if(pMe->m_pImageIcon[i] != NULL)
@@ -11733,6 +11764,7 @@ static void CMainMenu_FreeAppData(MainMenu *pMe)
                 pMe->m_pImageIcon[i] = NULL;
             }
         } 
+		    #endif
 		
 
         if(pMe->m_pAnimate != NULL)
@@ -12304,6 +12336,13 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
                     pMe->m_pImageBg = NULL;
                 }
 
+                #ifdef FEATURE_VERSION_K212_HUALU
+                if(pMe->m_pImageIcon != NULL)
+                {
+                    (void)IIMAGE_Release(pMe->m_pImageIcon);
+                     pMe->m_pImageIcon = NULL;
+                }
+                #else
                 for(i=0;i<MAX_MATRIX_ITEMS;i++)
                 {
                     if(pMe->m_pImageIcon[i] != NULL)
@@ -12312,6 +12351,7 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
                         pMe->m_pImageIcon[i] = NULL;
                     }
                 } 
+                #endif
                 
                 if(pMe->m_pAnimate != NULL)
                 {
@@ -12711,14 +12751,18 @@ DESCRIPTION: // 初始整个背景及全部初始图标
 static void DrawMatrix(MainMenu *pMe)
 {
     int i = 0;
-	BottomBar_Param_type BarParam={0};//wlh add
-    
+	  BottomBar_Param_type BarParam={0};//wlh add
+    nv_language_enum_type language;
     if (NULL == pMe)
     {
         return;
     }
     //draw bg image
     MainMenu_DrawBackGround(pMe, &pMe->m_rc);
+    (void) ICONFIG_GetItem(pMe->m_pConfig,
+                                   CFGI_LANGUAGE_SELECTION,
+                                   &language,
+                                   sizeof(language));
 #ifndef FEATURE_VERSION_H19C  
 #ifndef FEATURE_VERSION_C01 
 #ifndef FEATURE_VERSION_SKY
@@ -12726,6 +12770,32 @@ static void DrawMatrix(MainMenu *pMe)
     //Draw icon
     for (i = 0; i < MAX_MATRIX_ITEMS; i ++)
     {
+        #ifdef FEATURE_VERSION_K212_HUALU
+        if(language == NV_LANGUAGE_ENGLISH)
+        {
+
+                pMe->m_pImageIcon = ISHELL_LoadImage(pMe->m_pShell,
+                                                        ICON_EN_ANI[i]);
+                IIMAGE_Draw(pMe->m_pImageIcon,
+                            pMe->m_Icondefault_Pt[i].x,
+                            pMe->m_Icondefault_Pt[i].y);
+        }
+        else
+        {
+
+                pMe->m_pImageIcon = ISHELL_LoadImage(pMe->m_pShell,
+                                                        ICON_ANI[i]);
+                IIMAGE_Draw(pMe->m_pImageIcon,
+                            pMe->m_Icondefault_Pt[i].x,
+                            pMe->m_Icondefault_Pt[i].y);
+
+        }
+        if(pMe->m_pImageIcon != NULL)
+        {
+            (void)IIMAGE_Release(pMe->m_pImageIcon);
+             pMe->m_pImageIcon = NULL;
+        }
+        #else
         if (pMe->m_pImageIcon[i] == NULL)
         {
             pMe->m_pImageIcon[i] = ISHELL_LoadImage(pMe->m_pShell,
@@ -12738,6 +12808,8 @@ static void DrawMatrix(MainMenu *pMe)
                         pMe->m_Icondefault_Pt[i].x,
                         pMe->m_Icondefault_Pt[i].y);
         }
+        #endif
+
     }  
 #endif    
 #endif
@@ -12791,11 +12863,26 @@ static void DrawFocusIcon(MainMenu *pMe)
 #endif    
     if(pMe->m_pAnimate == NULL)
     {
-        pMe->m_pAnimate = ISHELL_LoadImage(pMe->m_pShell, ICON_ANI_1[theFocus]);
+    		nv_language_enum_type language;
+    	  (void) ICONFIG_GetItem(pMe->m_pConfig,
+                                   CFGI_LANGUAGE_SELECTION,
+                                   &language,
+                                   sizeof(language));
+        #ifdef FEATURE_VERSION_K212_HUALU
+        if(language == NV_LANGUAGE_ENGLISH)
+        {
+            pMe->m_pAnimate = ISHELL_LoadImage(pMe->m_pShell, ICON_EN_ANI_1[theFocus]);
+        }
+        else
+        #endif
+        {
+        	  pMe->m_pAnimate = ISHELL_LoadImage(pMe->m_pShell, ICON_ANI_1[theFocus]);
+        }
     }
 
 	if( pMe->m_pAnimate != NULL)
     {
+    		
 #if defined (FEATURE_VERSION_H19C) || defined (FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_IN50_MMX)
         IIMAGE_Start(pMe->m_pAnimate,
                      pMe->m_IconFocus_Pt[theFocus].x, 
@@ -12846,27 +12933,55 @@ static void MoveCursorTo(MainMenu *pMe, int row, int column)
 #ifndef FEATURE_VERSION_SKY
     int theFocus = pMe->m_nRow * MAX_MATRIX_COLS + pMe->m_nColumn;
     AEERect rect;
+    nv_language_enum_type language;
 	//uint32  dwTotal = 0;
 	//uint32 free = 0;
 	//GETFSFREE(&dwTotal);
 	//free = GETRAMFREE(NULL,NULL);
 	//MSG_FATAL("MoveCursorTodwTotal======%d,free===%d",dwTotal,free,0);
-    
+    (void) ICONFIG_GetItem(pMe->m_pConfig,
+                                   CFGI_LANGUAGE_SELECTION,
+                                   &language,
+                                   sizeof(language));
     // 绘制聚焦后矩阵初始界面
     SETAEERECT(&rect, pMe->m_IconFocus_Pt[theFocus].x, 
                       pMe->m_IconFocus_Pt[theFocus].y, 
                       ICON_ANIMATED_WIDTH, 
                       ICON_ANIMATED_HEIGHT);
-	MSG_FATAL("***pyg***pMe->m_IconFocus_Pt[theFocus].x=%d---pMe->m_IconFocus_Pt[theFocus].y=%d",pMe->m_IconFocus_Pt[theFocus].x,pMe->m_IconFocus_Pt[theFocus].y,0);
+	  MSG_FATAL("***pyg***pMe->m_IconFocus_Pt[theFocus].x=%d---pMe->m_IconFocus_Pt[theFocus].y=%d",pMe->m_IconFocus_Pt[theFocus].x,pMe->m_IconFocus_Pt[theFocus].y,0);
     MSG_FATAL("***pyg***ICON_ANIMATED_WIDTH=%d---ICON_ANIMATED_HEIGHT=%d",ICON_ANIMATED_WIDTH,ICON_ANIMATED_HEIGHT,0);
     MainMenu_DrawBackGround(pMe, &rect);
     
+    #ifdef FEATURE_VERSION_K212_HUALU
+    if(language == NV_LANGUAGE_ENGLISH)
+    {
+        pMe->m_pImageIcon = ISHELL_LoadImage(pMe->m_pShell,
+                                                        ICON_EN_ANI[theFocus]);
+        IIMAGE_Draw(pMe->m_pImageIcon,
+                    pMe->m_Icondefault_Pt[theFocus].x, 
+                    pMe->m_Icondefault_Pt[theFocus].y);
+    }
+    else
+    {
+        pMe->m_pImageIcon = ISHELL_LoadImage(pMe->m_pShell,
+                                                        ICON_ANI[theFocus]);
+        IIMAGE_Draw(pMe->m_pImageIcon,
+                    pMe->m_Icondefault_Pt[theFocus].x, 
+                    pMe->m_Icondefault_Pt[theFocus].y);
+    }
+    if(pMe->m_pImageIcon != NULL)
+    {
+        (void)IIMAGE_Release(pMe->m_pImageIcon);
+         pMe->m_pImageIcon = NULL;
+    }
+    #else
     if (pMe->m_pImageIcon[theFocus])
     {
         IIMAGE_Draw(pMe->m_pImageIcon[theFocus],
                     pMe->m_Icondefault_Pt[theFocus].x, 
                     pMe->m_Icondefault_Pt[theFocus].y);
     }
+    #endif
 #endif
 #endif
 #endif

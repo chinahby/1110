@@ -17,10 +17,15 @@ vpath %.png $(APPSCOMMON)/images/$(USES_LCD_SIZE)/$(USES_RESDIR)/Mainmenu/focus
 vpath %.gif $(APPSCOMMON)/images/$(USES_LCD_SIZE)/$(USES_RESDIR)/Mainmenu/focus
 vpath %.bmp $(APPSCOMMON)/images/$(USES_LCD_SIZE)/$(USES_RESDIR)/Mainmenu/focus
 vpath %.mp3 $(MAINMENU_RES)
-
+ifeq ($(USE_LOW_MEM_BIGFONT),yes)
+CONSTFILE_FILES+=\
+	mainmenu.mif|fs:/mif/mainmenu.mif \
+	mainmenu_low.bar|fs:/mod/mainmenu/en/mainmenu.bar
+else
 CONSTFILE_FILES+=\
 	mainmenu.mif|fs:/mif/mainmenu.mif \
 	mainmenu.bar|fs:/mod/mainmenu/en/mainmenu.bar
+endif
 
 ifneq ($(EXTLANG1),NO)
 ifeq ($(USE_LOW_MEM_BIGFONT),yes)
@@ -150,7 +155,25 @@ CONSTFILE_FILES+=\
 	qsc1100_06_focus.png|fs:/image/mainmenu/qsc1100_06_focus.png \
 	qsc1100_07_focus.png|fs:/image/mainmenu/qsc1100_07_focus.png \
 	qsc1100_08_focus.png|fs:/image/mainmenu/qsc1100_08_focus.png \
-	qsc1100_09_focus.png|fs:/image/mainmenu/qsc1100_09_focus.png
+	qsc1100_09_focus.png|fs:/image/mainmenu/qsc1100_09_focus.png \
+	qsc1100_en_01.png|fs:/image/mainmenu/qsc1100_en_01.png \
+	qsc1100_en_02.png|fs:/image/mainmenu/qsc1100_en_02.png \
+	qsc1100_en_03.png|fs:/image/mainmenu/qsc1100_en_03.png \
+	qsc1100_en_04.png|fs:/image/mainmenu/qsc1100_en_04.png \
+	qsc1100_en_05.png|fs:/image/mainmenu/qsc1100_en_05.png \
+	qsc1100_en_06.png|fs:/image/mainmenu/qsc1100_en_06.png \
+	qsc1100_en_07.png|fs:/image/mainmenu/qsc1100_en_07.png \
+	qsc1100_en_08.png|fs:/image/mainmenu/qsc1100_en_08.png \
+	qsc1100_en_09.png|fs:/image/mainmenu/qsc1100_en_09.png \
+	qsc1100_en_01_focus.png|fs:/image/mainmenu/qsc1100_en_01_focus.png \
+	qsc1100_en_02_focus.png|fs:/image/mainmenu/qsc1100_en_02_focus.png \
+	qsc1100_en_03_focus.png|fs:/image/mainmenu/qsc1100_en_03_focus.png \
+	qsc1100_en_04_focus.png|fs:/image/mainmenu/qsc1100_en_04_focus.png \
+	qsc1100_en_05_focus.png|fs:/image/mainmenu/qsc1100_en_05_focus.png \
+	qsc1100_en_06_focus.png|fs:/image/mainmenu/qsc1100_en_06_focus.png \
+	qsc1100_en_07_focus.png|fs:/image/mainmenu/qsc1100_en_07_focus.png \
+	qsc1100_en_08_focus.png|fs:/image/mainmenu/qsc1100_en_08_focus.png \
+	qsc1100_en_09_focus.png|fs:/image/mainmenu/qsc1100_en_09_focus.png
 else
 ifeq ($(USES_RESDIR),K212)
 CONSTFILE_FILES+=\
