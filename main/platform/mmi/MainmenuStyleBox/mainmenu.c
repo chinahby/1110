@@ -10901,6 +10901,8 @@ static char* ICON_ANI_1[] =
     ICON12_ANI_1,      
 #endif
 };
+
+#if defined (FEATURE_VERSION_K212_HUALU)
 static char* ICON_EN_ANI[] =
 {
     ICON1_EN_ANI,
@@ -10926,6 +10928,7 @@ static char* ICON_EN_ANI_1[] =
     ICON8_EN_ANI_1,
     ICON9_EN_ANI_1,
 };
+#endif
 /*=============================================================================
 FUNCTION:  MainMenuMod_Load
 
