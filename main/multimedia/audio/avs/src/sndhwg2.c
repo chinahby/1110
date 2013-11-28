@@ -1032,7 +1032,7 @@ void sndhw_kamp_cmd(boolean on)
         gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
         clk_busy_wait(1);
         gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_HIGH_VALUE);        
-#if defined(FEATURE_VERSION_K212_HUALU)
+#if defined(FEATURE_VERSION_K212_HUALU) || defined(FEATURE_VERSION_IC241A_MMX)
         clk_busy_wait(1);
         gpio_out(GPIO_OUTPUT_10,(GPIO_ValueType)GPIO_LOW_VALUE);
         clk_busy_wait(1);
