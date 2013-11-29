@@ -194,7 +194,9 @@ endif
 
 ifneq ($(USES_RESDIR),hualu)
 ifneq ($(USES_RESDIR),K212)
+ifneq ($(USES_RESDIR),K232_X3)
 include $(UCWEB)/UCWEB.min
+endif
 endif
 endif
 
