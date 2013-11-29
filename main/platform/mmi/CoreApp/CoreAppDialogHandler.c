@@ -3708,7 +3708,7 @@ static boolean  IDD_STARTUPANI_Handler(void       *pUser,
             if(pMe->m_wStartupAniTime == 0)
             {
             GETFSFREE(&dwTotal);
-			free = GETRAMFREE(&tot,&larg);
+			free = GETRAMFREE(NULL,NULL);
 			MSG_FATAL("EVT_DIALOG_INIT CameraApp dwTotal======%d,free====%d",dwTotal,free,0);
 			//MSG_FATAL("EVT_DIALOG_INIT tot======%d,larg====%d\n",tot,larg,0);
 #if !defined(FEATURE_USES_LOWMEM)//&&!defined(FEATURE_LOWER_MEM)
