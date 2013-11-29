@@ -310,6 +310,9 @@
 	<String Id="1121" Name="IDS_MIN">
 		<Text>MIN</Text>
 	</String>
+	<String Id="1122" Name="IDS_MMX_SALES_SUCCESS">
+		<Text>Thank you for registering with Micromax</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_UIMERR" Focus="7001">
