@@ -7866,7 +7866,11 @@ void CallApp_SetupCallAudio(CCallApp *pMe)
 	}
 	else
 	{
+	    #if defined(FEATURE_VERSION_K212_HUALU)||defined(FEATURE_VERSION_K212)
+        ISOUND_SetVolume(pMe->m_pSound, GET_ISOUND_VOL_LEVEL(pMe->m_CallVolume)*3/5);
+        #else
 		ISOUND_SetVolume(pMe->m_pSound, GET_ISOUND_VOL_LEVEL(pMe->m_CallVolume)*4/5);
+        #endif
 	}
     #elif defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)
 	if(pMe->m_bHandFree)
