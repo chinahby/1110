@@ -1624,7 +1624,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 						}
                         if(WSTRCMP(pMe->m_DialString, L"*#0000#") == 0)   //add by yangdecai 2010-11-16
                         {
-                        	#if defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_W515V3)
+                        	#if defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_K212_HUALU)
                         	ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_FIELDDEBUGAPP, "*#0000#");
                         	#else
                         	nv_language_enum_type language = NV_LANGUAGE_ENGLISH;
@@ -2526,7 +2526,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                         
                         if(WSTRCMP(pMe->m_DialString, L"*#0000#") == 0)   //add by yangdecai 2010-11-16
                         {
-                        	#if defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_W515V3)
+                        	#if defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_K212_HUALU)
                         	ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_FIELDDEBUGAPP, "*#0000#");
                         	#else
                         	nv_language_enum_type language = NV_LANGUAGE_ENGLISH;
@@ -9599,7 +9599,11 @@ void CallApp_ChangeCallVolume(CCallApp  *pMe,
 	    }
 		else
 		{
+		    #if defined(FEATURE_VERSION_K212_HUALU)
+            ISOUND_SetVolume(pMe->m_pSound, GET_ISOUND_VOL_LEVEL(pMe->m_CallVolume)*3/5);
+            #else
 			ISOUND_SetVolume(pMe->m_pSound,GET_ISOUND_VOL_LEVEL(pMe->m_CallVolume));
+            #endif
 		}
 		#else
         ISOUND_SetVolume(pMe->m_pSound, GET_ISOUND_VOL_LEVEL(pMe->m_CallVolume));

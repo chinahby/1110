@@ -4126,6 +4126,8 @@ boolean Appscommon_DrawDigitalNumber (IDisplay *pDisplay, int number, int nLineW
     else
     {
         AEERect rect = {0};
+        AEERect rect_temp = {0};
+        AEERect rect_point = {0};
         int i = 0;
         int nWidth = nLineWidth;
         int nLength = fontRect->dx - 2;
@@ -4142,13 +4144,27 @@ boolean Appscommon_DrawDigitalNumber (IDisplay *pDisplay, int number, int nLineW
             number == 9)
         {
             SETAEERECT(&rect, fontRect->x + 1, fontRect->y, nLength, 1);
+            rect_temp.x = rect.x-2;
+            rect_temp.y = rect.y-1;
+            rect_temp.dx = rect.dx+4;
+            rect_temp.dy = rect.dy;
+            IDISPLAY_FillRect(pDisplay, &rect_temp, MAKE_RGB(0,0,0));
             for(i = 0; i < nWidth; i++)
             {
+                rect_point.x = rect.x-1;
+                rect_point.dx = 1;
+                rect_point.y = rect.y;
+                rect_point.dy = 1;
+                IDISPLAY_FillRect(pDisplay, &rect_point, MAKE_RGB(0,0,0));
+                rect_point.x = rect.x+rect.dx+1;
+                IDISPLAY_FillRect(pDisplay, &rect_point, MAKE_RGB(0,0,0));
+                
                 IDISPLAY_FillRect(pDisplay, &rect, fontColor);
                 rect.x++;
                 rect.y++;
                 rect.dx -= 2;
             }
+            IDISPLAY_FillRect(pDisplay, &rect, MAKE_RGB(0,0,0));
         }
         if(number == 2 ||
             number == 3 ||
@@ -4168,15 +4184,38 @@ boolean Appscommon_DrawDigitalNumber (IDisplay *pDisplay, int number, int nLineW
                 rect.x -=  (nWidth - 1)/2;
                 rect.dx +=  ((nWidth - 1)/2)*2;
             }
+            rect_temp.x = rect.x+1;
+            rect_temp.y = rect.y-1;
+            rect_temp.dx = rect.dx-2;
+            rect_temp.dy = rect.dy;
+            IDISPLAY_FillRect(pDisplay, &rect_temp, MAKE_RGB(0,0,0));
             for(i = 0; i < ((nWidth + 1)/2); i++)
             {
+                rect_point.x = rect.x-1;
+                rect_point.dx = 1;
+                rect_point.y = rect.y;
+                rect_point.dy = 1;
+                IDISPLAY_FillRect(pDisplay, &rect_point, MAKE_RGB(0,0,0));
+                rect_point.x = rect.x+rect.dx+1;
+                IDISPLAY_FillRect(pDisplay, &rect_point, MAKE_RGB(0,0,0));
+                
                 IDISPLAY_FillRect(pDisplay, &rect, fontColor);
                 rect.y += (nWidth - 2*i - 1);
+
+                rect_point.x = rect.x-1;
+                rect_point.dx = 1;
+                rect_point.y = rect.y;
+                rect_point.dy = 1;
+                IDISPLAY_FillRect(pDisplay, &rect_point, MAKE_RGB(0,0,0));
+                rect_point.x = rect.x+rect.dx+1;
+                IDISPLAY_FillRect(pDisplay, &rect_point, MAKE_RGB(0,0,0));
                 IDISPLAY_FillRect(pDisplay, &rect, fontColor);
                 rect.y -= (nWidth - 2*i - 2);
                 rect.x--;
                 rect.dx += 2;
             }
+            rect.y += (nWidth - 2*i + 1);
+            IDISPLAY_FillRect(pDisplay, &rect, MAKE_RGB(0,0,0));
         }
         if(number == 0 ||
             number == 2 ||
@@ -4187,13 +4226,26 @@ boolean Appscommon_DrawDigitalNumber (IDisplay *pDisplay, int number, int nLineW
             number == 9)
         {
             SETAEERECT(&rect, fontRect->x + 1, fontRect->y + fontRect->dy - 1, nLength, 1);
+            rect_temp.x = rect.x-2;
+            rect_temp.y = rect.y+1;
+            rect_temp.dx = rect.dx+4;
+            rect_temp.dy = rect.dy;
+            IDISPLAY_FillRect(pDisplay, &rect_temp, MAKE_RGB(0,0,0));
             for(i = 0; i < nWidth; i++)
             {
+                rect_point.x = rect.x-1;
+                rect_point.dx = 1;
+                rect_point.y = rect.y;
+                rect_point.dy = 1;
+                IDISPLAY_FillRect(pDisplay, &rect_point, MAKE_RGB(0,0,0));
+                rect_point.x = rect.x+rect.dx+1;
+                IDISPLAY_FillRect(pDisplay, &rect_point, MAKE_RGB(0,0,0));
                 IDISPLAY_FillRect(pDisplay, &rect, fontColor);
                 rect.x++;
                 rect.y--;
                 rect.dx -= 2;
             }
+            IDISPLAY_FillRect(pDisplay, &rect, MAKE_RGB(0,0,0));
         }
         if(number == 0 ||
             number == 4 ||
@@ -4203,13 +4255,30 @@ boolean Appscommon_DrawDigitalNumber (IDisplay *pDisplay, int number, int nLineW
             number == 9)
         {
             SETAEERECT(&rect, fontRect->x, fontRect->y + 1, 1, nHeight);
+            rect_temp.x = rect.x-1;
+            rect_temp.y = rect.y-2;
+            rect_temp.dx = rect.dx;
+            rect_temp.dy = rect.dy+4;
+            IDISPLAY_FillRect(pDisplay, &rect_temp, MAKE_RGB(0,0,0));
             for(i = 0; i < nWidth; i++)
             {
+                rect_point.x = rect.x;
+                rect_point.dx = 1;
+                rect_point.y = rect.y-1;
+                rect_point.dy = 1;
+                IDISPLAY_FillRect(pDisplay, &rect_point, MAKE_RGB(0,0,0));
+                rect_point.y = rect.y+rect.dy+1;
+                IDISPLAY_FillRect(pDisplay, &rect_point, MAKE_RGB(0,0,0));
                 IDISPLAY_FillRect(pDisplay, &rect, fontColor);
                 rect.x++;
                 rect.y++;
                 rect.dy -= 2;
             }
+            rect_temp.x = rect.x;
+            rect_temp.y = rect.y;
+            rect_temp.dx = rect.dx;
+            rect_temp.dy = rect.dy+1;
+            IDISPLAY_FillRect(pDisplay, &rect, MAKE_RGB(0,0,0));
         }
         if(number == 0 ||
             number == 2 ||
@@ -4227,13 +4296,30 @@ boolean Appscommon_DrawDigitalNumber (IDisplay *pDisplay, int number, int nLineW
                     rect.dy++;
                 }
             }
+            rect_temp.x = rect.x-1;
+            rect_temp.y = rect.y-2;
+            rect_temp.dx = rect.dx;
+            rect_temp.dy = rect.dy+4;
+            IDISPLAY_FillRect(pDisplay, &rect_temp, MAKE_RGB(0,0,0));
             for(i = 0; i < nWidth; i++)
             {
+                rect_point.x = rect.x;
+                rect_point.dx = 1;
+                rect_point.y = rect.y-1;
+                rect_point.dy = 1;
+                IDISPLAY_FillRect(pDisplay, &rect_point, MAKE_RGB(0,0,0));
+                rect_point.y = rect.y+rect.dy+1;
+                IDISPLAY_FillRect(pDisplay, &rect_point, MAKE_RGB(0,0,0));
                 IDISPLAY_FillRect(pDisplay, &rect, fontColor);
                 rect.x++;
                 rect.y++;
                 rect.dy -= 2;
             }
+            rect_temp.x = rect.x;
+            rect_temp.y = rect.y;
+            rect_temp.dx = rect.dx;
+            rect_temp.dy = rect.dy+1;
+            IDISPLAY_FillRect(pDisplay, &rect, MAKE_RGB(0,0,0));
         }
         if(number == 0 ||
             number == 1 ||
@@ -4245,13 +4331,30 @@ boolean Appscommon_DrawDigitalNumber (IDisplay *pDisplay, int number, int nLineW
             number == 9)
         {
             SETAEERECT(&rect, fontRect->x + nLength + 1, fontRect->y + 1, 1, nHeight);
+            rect_temp.x = rect.x+1;
+            rect_temp.y = rect.y-2;
+            rect_temp.dx = rect.dx;
+            rect_temp.dy = rect.dy+4;
+            IDISPLAY_FillRect(pDisplay, &rect_temp, MAKE_RGB(0,0,0));
             for(i = 0; i < nWidth; i++)
             {
+                rect_point.x = rect.x;
+                rect_point.dx = 1;
+                rect_point.y = rect.y-1;
+                rect_point.dy = 1;
+                IDISPLAY_FillRect(pDisplay, &rect_point, MAKE_RGB(0,0,0));
+                rect_point.y = rect.y+rect.dy+1;
+                IDISPLAY_FillRect(pDisplay, &rect_point, MAKE_RGB(0,0,0));
                 IDISPLAY_FillRect(pDisplay, &rect, fontColor);
                 rect.x--;
                 rect.y++;
                 rect.dy -= 2;
             }
+            rect_temp.x = rect.x;
+            rect_temp.y = rect.y;
+            rect_temp.dx = rect.dx;
+            rect_temp.dy = rect.dy+1;
+            IDISPLAY_FillRect(pDisplay, &rect, MAKE_RGB(0,0,0));
         }
         if(number == 0 ||
             number == 1 ||
@@ -4274,13 +4377,30 @@ boolean Appscommon_DrawDigitalNumber (IDisplay *pDisplay, int number, int nLineW
                     rect.dy++;
                 }
             }
+            rect_temp.x = rect.x+1;
+            rect_temp.y = rect.y-2;
+            rect_temp.dx = rect.dx;
+            rect_temp.dy = rect.dy+4;
+            IDISPLAY_FillRect(pDisplay, &rect_temp, MAKE_RGB(0,0,0));
             for(i = 0; i < nWidth; i++)
             {
+                rect_point.x = rect.x;
+                rect_point.dx = 1;
+                rect_point.y = rect.y-1;
+                rect_point.dy = 1;
+                IDISPLAY_FillRect(pDisplay, &rect_point, MAKE_RGB(0,0,0));
+                rect_point.y = rect.y+rect.dy+1;
+                IDISPLAY_FillRect(pDisplay, &rect_point, MAKE_RGB(0,0,0));
                 IDISPLAY_FillRect(pDisplay, &rect, fontColor);
                 rect.x--;
                 rect.y++;
                 rect.dy -= 2;
             }
+            rect_temp.x = rect.x;
+            rect_temp.y = rect.y;
+            rect_temp.dx = rect.dx;
+            rect_temp.dy = rect.dy+1;
+            IDISPLAY_FillRect(pDisplay, &rect, MAKE_RGB(0,0,0));
         }
     }
     return TRUE;

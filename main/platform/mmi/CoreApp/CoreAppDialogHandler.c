@@ -695,6 +695,7 @@ void CoreApp_ShowMsgDialog(CCoreApp *pMe,uint16  nResId)
 ==============================================================================*/
 void CoreApp_SetDialogHandler(CCoreApp *pMe)
 {
+    //MSG_FATAL("pMe->m_wActiveDlgID========%d",pMe->m_wActiveDlgID,0,0);
     switch (pMe->m_wActiveDlgID)
     {
 #if defined( FEATURE_POWERDOWN_ALARM)
@@ -3248,7 +3249,7 @@ static boolean  IDD_UIMSECCODE_Handler(void       *pUser,
                     CoreDrawBottomBar(BTBAR_SOS)
                 }
             }
-            
+           
             // 更新显示
             //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);  
             return TRUE;
@@ -3692,6 +3693,8 @@ static boolean  IDD_STARTUPANI_Handler(void       *pUser,
 	
 	uint32  dwTotal = 0;
 	uint32 free = 0;
+	//uint32 tot = 0;
+	//uint32 larg = 0;
 	
     MSG_FATAL("IDD_STARTUPANI_Handler Start",0,0,0);
     switch (eCode) 
@@ -3705,8 +3708,9 @@ static boolean  IDD_STARTUPANI_Handler(void       *pUser,
             if(pMe->m_wStartupAniTime == 0)
             {
             GETFSFREE(&dwTotal);
-			free = GETRAMFREE(NULL,NULL);
+			free = GETRAMFREE(&tot,&larg);
 			MSG_FATAL("EVT_DIALOG_INIT CameraApp dwTotal======%d,free====%d",dwTotal,free,0);
+			//MSG_FATAL("EVT_DIALOG_INIT tot======%d,larg====%d\n",tot,larg,0);
 #if !defined(FEATURE_USES_LOWMEM)//&&!defined(FEATURE_LOWER_MEM)
                 if ( NULL == pMe->m_pStartupAniImg )
                 {
@@ -3752,12 +3756,16 @@ static boolean  IDD_STARTUPANI_Handler(void       *pUser,
                 if ( NULL != pMe->m_pStartupAniImg )
 #endif
                 {     
+                	//GETFSFREE(&dwTotal);
+					//free = GETRAMFREE(&tot,&larg);
+					//MSG_FATAL("CoreApp_PlayPwrOnAni CameraApp dwTotal======%d,free====%d",dwTotal,free,0);
+					//MSG_FATAL("CoreApp_PlayPwrOnAni tot======%d,larg====%d\n",tot,larg,0);
                     CoreApp_PlayPwrOnAni(pMe);
-					GETFSFREE(&dwTotal);
-					free = GETRAMFREE(NULL,NULL);
-					GETFSFREE(&dwTotal);
-					free = GETRAMFREE(NULL,NULL);
-					MSG_FATAL("EVT_USER_REDRAW CameraApp dwTotal======%d,free====%d",dwTotal,free,0);
+					
+					//GETFSFREE(&dwTotal);
+					//free = GETRAMFREE(&tot,&larg);
+					//MSG_FATAL("CoreApp_PlayPwrOnAni before CameraApp dwTotal======%d,free====%d",dwTotal,free,0);
+					//MSG_FATAL("CoreApp_PlayPwrOnAni before tot======%d,larg====%d\n",tot,larg,0);
                 }
 #if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
                 else
@@ -4190,7 +4198,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
               //  #else
               //  IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);//返回待机界面时，要把显示titlebar标志还原成TRUE
               //  #endif
-	       }
+	        }
           //Add by pyuangui 20121220
           #if defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_W021_C11) || defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_V3CM301)
            if (NULL == pStatic)
@@ -7862,6 +7870,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
             }
             if(bMode)
             {
+                AEERect rc = {0};
             	if (bTFmt == OEMNV_TIMEFORM_AMPM)
     	 		{
             	wHour = jDate.wHour > 12 ? (jDate.wHour - 12) : jDate.wHour;
@@ -7893,21 +7902,33 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 				xStartPos = 30;
 				yStartPos = 45;
 		    	SETAEERECT(&rect, xStartPos, yStartPos, nNumberWidth, nNumberHeight);
-		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (wHour/10), nLineWidth, &rect, MAKE_RGB(160,160,160));
+		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (wHour/10), nLineWidth, &rect, MAKE_RGB(255,255,255));
 		    	rect.x += nNumberWidth + nOffset;
-		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (wHour%10), nLineWidth, &rect, MAKE_RGB(160,160,160));
+		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (wHour%10), nLineWidth, &rect, MAKE_RGB(255,255,255));
 
 		   		 // draw colon
 		    	SETAEERECT(&rect, xStartPos + 2*(nNumberWidth + nOffset), yStartPos + nNumberHeight/2 - nLineWidth, nLineWidth, nLineWidth);
-		    	IDISPLAY_FillRect(pMe->m_pDisplay, &rect, MAKE_RGB(160,160,160));
+
+                rc.x = rect.x-1;
+                rc.dx = rect.dx+2;
+                rc.y = rect.y-1;
+                rc.dy = rect.dy+2;
+                IDISPLAY_FrameRect(pMe->m_pDisplay, &rc);
+		    	IDISPLAY_FillRect(pMe->m_pDisplay, &rect, MAKE_RGB(255,255,255));
 		    	rect.y = yStartPos + nNumberHeight*3/5 +10 - nLineWidth;
-		    	IDISPLAY_FillRect(pMe->m_pDisplay, &rect, MAKE_RGB(160,160,160));
+
+                rc.x = rect.x-1;
+                rc.dx = rect.dx+2;
+                rc.y = rect.y-1;
+                rc.dy = rect.dy+2;
+                IDISPLAY_FrameRect(pMe->m_pDisplay, &rc);
+		    	IDISPLAY_FillRect(pMe->m_pDisplay, &rect, MAKE_RGB(255,255,255));
 		    
 		   		// draw minute
 		    	SETAEERECT(&rect, xStartPos + 2*(nNumberWidth + nOffset) + nLineWidth + nOffset, yStartPos, nNumberWidth, nNumberHeight);
-		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (jDate.wMinute/10), nLineWidth, &rect, MAKE_RGB(160,160,160));
+		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (jDate.wMinute/10), nLineWidth, &rect, MAKE_RGB(255,255,255));
 		    	rect.x += nNumberWidth + nOffset;
-		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (jDate.wMinute%10), nLineWidth, &rect, MAKE_RGB(160,160,160));
+		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (jDate.wMinute%10), nLineWidth, &rect, MAKE_RGB(255,255,255));
 		    	rect.x += nNumberWidth;
 		     	rect.y = rect.y +12;
 				rect.x = rect.x-2;
@@ -9304,6 +9325,7 @@ static void CoreApp_DrawWallPaper(CCoreApp *pMe)
         if ( 0 != STRCMP(szNewWallPaperName, szWallPaperName) )
         {   
             // 墙纸设置已变
+            MSG_FATAL("pWallPaper is change.............",0,0,0);
             MEMSET( szWallPaperName, 0x00, sizeof(szWallPaperName) );
             (void)STRCPY( szWallPaperName, szNewWallPaperName );
             

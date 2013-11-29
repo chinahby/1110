@@ -4556,7 +4556,7 @@ static boolean CFieldDebug_HandleEvent(CFieldDebug  *pme,
            } 
            else
            //pme->m_dlgID = IDD_TOP_DIALOG;
-#if defined (FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)
+#if defined (FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_K212_HUALU)
                if(STRNCMP(args->pszArgs,"*#0000#",7) == 0)
                {
                   pme->m_dlgID = IDD_VERSION_DIALOG;
