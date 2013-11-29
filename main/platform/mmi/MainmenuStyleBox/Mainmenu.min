@@ -292,6 +292,36 @@ CONSTFILE_FILES+=\
 		recentcall.mp3|fs:/hsmm/mainmenu/recentcall.mp3 \
 		suafer.mp3|fs:/hsmm/mainmenu/suafer.mp3	
 else
+ifeq ($(USES_RESDIR),K232_X3)	
+CONSTFILE_FILES+=\
+	Icon_calllog.png|fs:/image/mainmenu/Icon_calllog.png \
+	Icon_multimedia.png|fs:/image/mainmenu/Icon_multimedia.png \
+	Icon_phonebook.png|fs:/image/mainmenu/Icon_phonebook.png \
+	Icon_settings.png|fs:/image/mainmenu/Icon_settings.png \
+	Icon_tianyi.png|fs:/image/mainmenu/Icon_tianyi.png \
+	Icon_tools.png|fs:/image/mainmenu/Icon_tools.png \
+	Icon_camera.png|fs:/image/mainmenu/Icon_camera.png \
+	Icon_profile.png|fs:/image/mainmenu/Icon_profile.png \
+	Icon_wms.png|fs:/image/mainmenu/Icon_wms.png \
+	Icon_calllog_cn.png|fs:/image/mainmenu/Icon_calllog_cn.png \
+    Icon_multimedia_cn.png|fs:/image/mainmenu/Icon_multimedia_cn.png \
+    Icon_phonebook_cn.png|fs:/image/mainmenu/Icon_phonebook_cn.png \
+    Icon_settings_cn.png|fs:/image/mainmenu/Icon_settings_cn.png \
+	Icon_tianyi_cn.png|fs:/image/mainmenu/Icon_tianyi_cn.png \
+    Icon_tools_cn.png|fs:/image/mainmenu/Icon_tools_cn.png \
+    Icon_wms_cn.png|fs:/image/mainmenu/Icon_wms_cn.png \
+	Icon_camera_cn.png|fs:/image/mainmenu/Icon_camera_cn.png \
+    Icon_profile_cn.png|fs:/image/mainmenu/Icon_profile_cn.png \
+	Icon_calllog_en.png|fs:/image/mainmenu/Icon_calllog_en.png \
+    Icon_multimedia_en.png|fs:/image/mainmenu/Icon_multimedia_en.png \
+    Icon_phonebook_en.png|fs:/image/mainmenu/Icon_phonebook_en.png \
+    Icon_settings_en.png|fs:/image/mainmenu/Icon_settings_en.png \
+	Icon_tianyi_en.png|fs:/image/mainmenu/Icon_tianyi_en.png \
+    Icon_tools_en.png|fs:/image/mainmenu/Icon_tools_en.png \
+    Icon_wms_en.png|fs:/image/mainmenu/Icon_wms_en.png \
+	Icon_camera_en.png|fs:/image/mainmenu/Icon_camera_en.png \
+    Icon_profile_en.png|fs:/image/mainmenu/Icon_profile_en.png
+else
 ifeq ($(USES_RESDIR),W516_C260)
 CONSTFILE_FILES+=\
 	file_manger.png|fs:/image/mainmenu/file_manger.png \
@@ -381,6 +411,7 @@ CONSTFILE_FILES+=\
 endif	
 endif
 endif	
+endif
 endif
 endif
 endif

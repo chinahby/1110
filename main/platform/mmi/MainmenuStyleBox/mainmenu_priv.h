@@ -81,6 +81,8 @@
 #define  MAX_MATRIX_ITEMS 9
 #define  MAX_MATRIX_ROWS 3
 #define  MAX_MATRIX_COLS 3
+#elif defined(FEATURE_VERSION_K232_X3)
+#define MAX_MATRIX_ITEMS 9
 #else
 #define  MAX_MATRIX_ITEMS 12
 #define  MAX_MATRIX_ROWS  4
@@ -178,7 +180,7 @@ typedef struct _MainMenu
 #ifdef FEATURE_VERSION_K212_ND
     int             m_index;
 #endif
-#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K232_X3)
     int             m_index;
 #endif
     
@@ -244,7 +246,7 @@ typedef struct _MainMenu
 	IMedia *              m_pMedia;
 	boolean   	    m_bChangeL; 
 #endif
-#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D) 
+#if defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_K212_20D) ||defined(FEATURE_VERSION_K232_X3)
     //IImage          *m_pImageSelectEC99[8];
     IImage          *m_pImageSelectEC99;
 	nv_language_enum_type language;
@@ -461,6 +463,17 @@ typedef struct _MainMenu
     #define ICON6_ANI      "fs:/image/mainmenu/Icon_tools.png"
     #define ICON7_ANI      "fs:/image/mainmenu/Icon_wms.png"
 #elif defined(FEATURE_VERSION_K212_HUALU)
+#ifdef FEATURE_VERSION_K232_X3
+    #define ICON1_ANI      "fs:/image/mainmenu/Icon_calllog.png"
+    #define ICON2_ANI      "fs:/image/mainmenu/Icon_multimedia.png"
+    #define ICON3_ANI      "fs:/image/mainmenu/Icon_phonebook.png"
+    #define ICON4_ANI      "fs:/image/mainmenu/Icon_settings.png"
+	#define ICON5_ANI      "fs:/image/mainmenu/Icon_tianyi.png"
+    #define ICON6_ANI      "fs:/image/mainmenu/Icon_tools.png"
+    #define ICON7_ANI      "fs:/image/mainmenu/Icon_wms.png"
+	#define ICON8_ANI      "fs:/image/mainmenu/Icon_camera.png"
+    #define ICON9_ANI      "fs:/image/mainmenu/Icon_profile.png"
+#else
 	#define ICON1_ANI      "fs:/image/mainmenu/qsc1100_01.png"
     #define ICON2_ANI      "fs:/image/mainmenu/qsc1100_02.png"
     #define ICON3_ANI      "fs:/image/mainmenu/qsc1100_03.png"
@@ -479,6 +492,7 @@ typedef struct _MainMenu
     #define ICON7_EN_ANI      "fs:/image/mainmenu/qsc1100_en_07.png"
     #define ICON8_EN_ANI      "fs:/image/mainmenu/qsc1100_en_08.png"
     #define ICON9_EN_ANI      "fs:/image/mainmenu/qsc1100_en_09.png"
+#endif	
 #elif defined(FEATURE_VERSION_IN50_MMX)
     #define ICON1_ANI      "fs:/image/mainmenu/qsc1100_01.png"
     #define ICON2_ANI      "fs:/image/mainmenu/qsc1100_02.png"
@@ -620,6 +634,26 @@ typedef struct _MainMenu
     #define ICON11_ANI_1   "fs:/image/mainmenu/ARROW_RIGHT.png"
     #define ICON12_ANI_1   "fs:/image/mainmenu/SEL.png"	
 #elif defined(FEATURE_VERSION_K212_HUALU)
+#ifdef FEATURE_VERSION_K232_X3
+    #define ICON1_ANI_cn      "fs:/image/mainmenu/Icon_calllog_cn.png"
+    #define ICON2_ANI_cn      "fs:/image/mainmenu/Icon_multimedia_cn.png"
+    #define ICON3_ANI_cn      "fs:/image/mainmenu/Icon_phonebook_cn.png"
+    #define ICON4_ANI_cn      "fs:/image/mainmenu/Icon_settings_cn.png"
+	#define ICON5_ANI_cn      "fs:/image/mainmenu/Icon_tianyi_cn.png"
+    #define ICON6_ANI_cn      "fs:/image/mainmenu/Icon_tools_cn.png"
+    #define ICON7_ANI_cn      "fs:/image/mainmenu/Icon_wms_cn.png"
+	#define ICON8_ANI_cn      "fs:/image/mainmenu/Icon_camera_cn.png"
+    #define ICON9_ANI_cn      "fs:/image/mainmenu/Icon_profile_cn.png"
+	#define ICON1_ANI_en      "fs:/image/mainmenu/Icon_calllog_en.png"
+    #define ICON2_ANI_en      "fs:/image/mainmenu/Icon_multimedia_en.png"
+    #define ICON3_ANI_en      "fs:/image/mainmenu/Icon_phonebook_en.png"
+    #define ICON4_ANI_en      "fs:/image/mainmenu/Icon_settings_en.png"
+	#define ICON5_ANI_en      "fs:/image/mainmenu/Icon_tianyi_en.png"
+    #define ICON6_ANI_en      "fs:/image/mainmenu/Icon_tools_en.png"
+    #define ICON7_ANI_en      "fs:/image/mainmenu/Icon_wms_en.png"
+	#define ICON8_ANI_en      "fs:/image/mainmenu/Icon_camera_en.png"
+    #define ICON9_ANI_en      "fs:/image/mainmenu/Icon_profile_en.png" 
+#else
 	#define ICON1_ANI_1      "fs:/image/mainmenu/qsc1100_01_focus.png"
     #define ICON2_ANI_1      "fs:/image/mainmenu/qsc1100_02_focus.png"
     #define ICON3_ANI_1      "fs:/image/mainmenu/qsc1100_03_focus.png"
@@ -638,6 +672,7 @@ typedef struct _MainMenu
     #define ICON7_EN_ANI_1      "fs:/image/mainmenu/qsc1100_en_07_focus.png"
     #define ICON8_EN_ANI_1      "fs:/image/mainmenu/qsc1100_en_08_focus.png"
     #define ICON9_EN_ANI_1      "fs:/image/mainmenu/qsc1100_en_09_focus.png"
+#endif	
 #elif defined(FEATURE_VERSION_IN50_MMX)    
     #define ICON1_ANI_1      "fs:/image/mainmenu/qsc1100_01_focus.gif"
     #define ICON2_ANI_1      "fs:/image/mainmenu/qsc1100_02_focus.gif"
