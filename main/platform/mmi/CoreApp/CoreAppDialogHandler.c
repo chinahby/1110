@@ -4800,6 +4800,11 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 }
             }
 #endif
+            if(pWallPaper)
+            {
+                IIMAGE_Release(pWallPaper);
+                pWallPaper = NULL;
+            }
             return TRUE;
 
 
