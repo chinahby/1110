@@ -609,11 +609,12 @@ static void CCoreApp_TorchTipTimeOut(CCoreApp *pMe);
 
 static void CoreApp_ImageNotify(void *po, IImage *pIImage, AEEImageInfo *pii, int nErr);
 #ifdef FEATURE_SOUND_BO
+#ifndef FEATURE_VERSION_K212_HUALU
 static void CoreApp_MediaNotify(void *pUser, AEEMediaCmdNotify *pCmdNotify);
 static void CoreApp_PlayShutterSound(CCoreApp *pMe,uint16 key);
 static void CoreApp_Media_time_Notify(void *pUser, AEEMediaCmdNotify *pCmdNotify);
 #endif
-
+#endif
 /*==============================================================================
 
                                  º¯Êý¶¨Òå
@@ -10765,6 +10766,7 @@ void CoreApp_HandleAlarm(CCoreApp  *pme, uint16 wPermID)
 #endif
 }
 #ifdef FEATURE_SOUND_BO
+#ifndef FEATURE_VERSION_K212_HUALU
 static void CoreApp_PlayShutterSound(CCoreApp *pMe,uint16 key)
 {
     AEEMediaCmdNotify cmd;
@@ -11033,6 +11035,7 @@ static void CoreApp_Media_time_Notify(void *pUser, AEEMediaCmdNotify *pCmdNotify
     }
 }
 
+#endif
 #endif
 #ifdef FEATURE_KEYGUARD
 static void CoreApp_keypadtimer(void *pUser)

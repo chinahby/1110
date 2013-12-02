@@ -2190,8 +2190,13 @@ static OEMConfigListType oemi_cache = {
    ,{1}    //CFGI_COUNT_OF_MAIN  
 #ifdef FEATURE_SOUND_BO
    ,TRUE    		//CFGI_SOUND_BO_DIA,
+#ifdef FEATURE_VERSION_K212_HUALU
+   ,FALSE		       //CFGI_SOUND_BO_MAIN,
+   ,FALSE   		   //CFGI_SOUND_BO_CORE,
+#else
    ,TRUE		    //CFGI_SOUND_BO_MAIN,
    ,TRUE   		   //CFGI_SOUND_BO_CORE,
+#endif
   #ifdef FEATURE_VERSION_K212_ND
    ,TRUE			//CFGI_SOUND_BO_INDIAL,
    ,TRUE			//CFGI_SOUND_BO_PHONEBOOK,

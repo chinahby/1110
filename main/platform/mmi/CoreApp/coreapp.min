@@ -313,7 +313,9 @@ ifeq ($(USES_LCD_TOUCH),yes)
 		idle_time_bg.png|fs:/image/core/idle_time_bg.png \
 		night.png|fs:/image/core/night.png
 endif
+
 ifeq ($(USES_BOHAO),yes)
+ifneq ($(USE_LOW_MEM_BIGFONT),yes)
 CONSTFILE_FILES+=\
 	one_1.mp3|fs:/hsmm/coreapp/one_1.mp3 \
 	tow_2.mp3|fs:/hsmm/coreapp/tow_2.mp3 \
@@ -323,7 +325,7 @@ CONSTFILE_FILES+=\
 	Ten.mp3|fs:/hsmm/coreapp/Ten.mp3 \
 	liang.mp3|fs:/hsmm/coreapp/liang.mp3
 endif
-
+endif
 # 加入另外一种语言资源文件
 ifneq ($(EXTLANG1),NO)
 CONSTFILE_FILES+=\

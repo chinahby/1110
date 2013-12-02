@@ -176,7 +176,7 @@
 #define CORE_NUM_PUND  "fs:/hsmm/callapp/pund.mp3"
 #define CORE_NUM_STAR  "fs:/hsmm/callapp/star.mp3"
 
-
+#ifndef FEATURE_VERSION_K212_HUALU
 #define CORE_ONE_1	"fs:/hsmm/coreapp/one_1.mp3"
 #define CORE_TWO_2	"fs:/hsmm/coreapp/tow_2.mp3"
 #define CORE_THR_31	"fs:/hsmm/coreapp/morning.mp3"
@@ -184,7 +184,7 @@
 #define CORE_FOR_41	"fs:/hsmm/coreapp/Ten.mp3"
 #define CORE_FIVE_5	"fs:/hsmm/coreapp/five_5.mp3"
 #define CORE_LIANG  "fs:/hsmm/coreapp/liang.mp3"
-
+#endif
 static boolean m_bStart_speech_timer = FALSE;
 
 
@@ -1429,8 +1429,10 @@ void CoreApp_Draw_Charger_image(void *pp);
 void CoreApp_Poweroff_Phone(void *pp);
 
 #ifdef FEATURE_SOUND_BO
+#ifndef FEATURE_VERSION_K212_HUALU
 void  CoreApp_SoundBoAlarm(CCoreApp *pme, uint16 wParam);		
 void CoreApp_PlayTimeSound(CCoreApp *pMe,uint16 Status);
+#endif
 #endif
 
 #ifdef FEATURE_POWERUP_REGISTER_CHINAUNICOM

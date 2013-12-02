@@ -900,6 +900,7 @@ static void SalesTrackSetRUIMIDInfoCfg(void)
 
 
 #ifdef FEATURE_SOUND_BO
+#ifndef FEATURE_VERSION_K212_HUALU
 void  CoreApp_SoundBoAlarm(CCoreApp *pme, uint16 wParam)
 {
 	CCoreApp    *pMe = (CCoreApp *)pme;
@@ -958,6 +959,7 @@ void  CoreApp_SoundBoAlarm(CCoreApp *pme, uint16 wParam)
                         temp
                     	);
 }
+#endif
 #endif
 
 #ifdef FEATURE_VERSION_W021_CT100_SALES_TRACK_RUIM_ID
@@ -1721,6 +1723,8 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                 }
 #endif
 #ifdef FEATURE_SOUND_BO	
+#ifndef FEATURE_VERSION_K212_HUALU
+
 				{
 					uint32		   dwSeconds;
 					int temp = 0;
@@ -1747,7 +1751,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 					}
 				}
 #endif
-
+#endif
 				
             }      
             return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
@@ -1949,10 +1953,12 @@ case EVT_ALARM:
                           0);	
             }
 #ifdef FEATURE_SOUND_BO
+#ifndef FEATURE_VERSION_K212_HUALU
             else if (wParam == SOUND_BO_ALARM)
             {
                 CoreApp_SoundBoAlarm(pMe, wParam);
             }
+#endif
 #endif
             else if (wParam == SALE_TRACKER_ALARM)
             {
