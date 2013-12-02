@@ -161,7 +161,7 @@
 		<Text>多媒体文件夹</Text>
 	</STRING>
 	<STRING Id="1063" Name="IDS_CALENDARLOCK">
-		<Text>日程表</Text>
+		<Text>日历</Text>
 	</STRING>
 	<STRING Id="1064" Name="IDS_SAVED">
 		<Text>完成</Text>

@@ -353,6 +353,7 @@ static boolean  HandleAlarmMainDialogEvent(CClockApps *pMe,
             {
 			    IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);	
             }
+            IANNUNCIATOR_Redraw(pMe->m_pIAnn);
             //获取闹钟首选项的数据结构
             (void) ISHELL_GetPrefs( pMe->m_pShell,
                                     AEECLSID_ALARMCLOCK,

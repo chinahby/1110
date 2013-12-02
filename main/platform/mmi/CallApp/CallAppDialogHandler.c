@@ -660,7 +660,7 @@ static void CALLApp_PlayShutterSound(CCallApp *pMe,uint16 key)
             CALLApp_MediaNotify((void *)pMe, &cmd);
             return;
         }
-
+        
         if(IMEDIA_Play(pMe->m_pMedia) != SUCCESS)
         {
             cmd.nCmd    = MM_CMD_PLAY;
@@ -2123,41 +2123,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                     }
                     return TRUE;
 
-#ifdef FEATURE_SOUND_BO
-                case AVK_0:
-                case AVK_1:
-                case AVK_2:
-                case AVK_3:
-                case AVK_4:
-                case AVK_5:
-                case AVK_6:
-                case AVK_7:
-                case AVK_8:
-                case AVK_9:
-                case AVK_STAR:
-                case AVK_POUND:
-				{	
-					boolean m_sound_bo_dia = FALSE;
-   					(void) ICONFIG_GetItem(pMe->m_pConfig,
-                                                 CFGI_SOUND_BO_DIA,
-                                                 &m_sound_bo_dia,
-                                                 sizeof(boolean));                    
-					if(m_sound_bo_dia)
-					{
-					    /*
-						nv_item_type	SimChoice;
-						(void)OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);                        
-						if((SimChoice.sim_select != 1) && (!pMe->m_b_incall))
-                        */    
-                        if ((GetMp3PlayerStatus() == MP3STATUS_NONE) &&  (!pMe->m_b_incall))
-						{
-                    		CALLApp_PlayShutterSound(pMe,wParam);
-						}
-					}
-                   //CallApp_SpecialKeySnd(pMe,wParam);//多彩按键音
-                   return TRUE;
-                }
-#endif /* KEYSND_ZY */
+
                 default:
                     break;
             }
@@ -2343,6 +2309,33 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                 {
                     char   szStr[2];
                     AECHAR wStr[2];
+
+#ifdef FEATURE_SOUND_BO
+                if((wParam == AVK_1)||(wParam == AVK_2)||(wParam == AVK_3)||(wParam == AVK_4)||(wParam == AVK_5)||
+                   (wParam == AVK_6)||(wParam == AVK_7)||(wParam == AVK_8)||(wParam == AVK_9)||(wParam == AVK_0)||
+                   (wParam == AVK_POUND))
+				{	
+					boolean m_sound_bo_dia = FALSE;
+   					(void) ICONFIG_GetItem(pMe->m_pConfig,
+                                                 CFGI_SOUND_BO_DIA,
+                                                 &m_sound_bo_dia,
+                                                 sizeof(boolean));                    
+					if(m_sound_bo_dia)
+					{
+					    /*
+						nv_item_type	SimChoice;
+						(void)OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);                        
+						if((SimChoice.sim_select != 1) && (!pMe->m_b_incall))
+                        */    
+                        if ((GetMp3PlayerStatus() == MP3STATUS_NONE) &&  (!pMe->m_b_incall))
+						{
+						    MSG_FATAL("CALLApp_PlayShutterSound..............",0,0,0);
+                    		CALLApp_PlayShutterSound(pMe,wParam);
+						}
+					}
+                   //CallApp_SpecialKeySnd(pMe,wParam);//多彩按键音
+                }
+#endif /* KEYSND_ZY */
 					
                     if ((dwParam & KB_AUTOREPEAT) != 0 && (AVKType)wParam != AVK_0&& (AVKType)wParam != AVK_STAR&& (AVKType)wParam != AVK_POUND)
                     {
@@ -14067,7 +14060,7 @@ if(wp == AVK_0)
 					{
 						//return L'W';
 						WSTRCPY(&pMe->m_DialString[len-1], L"+");
-						#if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_W021_WSF_CN) 
+						#if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_VERSION_K212_HUALU)
 						Temp_wp = AVK_Z;
 						#endif
 					}
@@ -14106,7 +14099,7 @@ if(wp == AVK_0)
 						//return L'W';
 						//WSTRCPY(&pMe->m_DialString[len-1], L"w");
 						pMe->m_DialString[len-pMe->m_nCursorPos-1] = L'+';
-						#if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_W021_WSF_CN)
+						#if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_VERSION_K212_HUALU)
 						Temp_wp = AVK_Z;
 						#endif
 					}
@@ -14138,10 +14131,15 @@ if(wp == AVK_0)
         	{
         		pMe->m_curpros = 0;
         	}
-        	pMe->b_multenter = TRUE;
+            
+        	
 			#ifdef FEATURE_SOUND_BO        //0
 			{
 				boolean m_sound_bo_dia = FALSE;
+                if(!pMe->b_multenter)
+                {
+                    Temp_wp = wp;
+                }
    				(void) ICONFIG_GetItem(pMe->m_pConfig,
                                                  CFGI_SOUND_BO_DIA,
                                                  &m_sound_bo_dia,
@@ -14162,6 +14160,7 @@ if(wp == AVK_0)
 				}
         	}
 			#endif
+            pMe->b_multenter = TRUE;
 #if defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)
             AEE_SetTimer(1500,CallApp_keypadtimer,pMe);
 #else

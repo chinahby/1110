@@ -424,9 +424,9 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
             {
                 IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
             }
-			
 			IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn,TRUE);
-			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,Title);			
+			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,Title);
+            IANNUNCIATOR_Redraw(pMe->m_pIAnn);
 			//Add End
 
             MSG_FATAL("***zzg MP3_PlayMusic_Windows_HandleEvent m_bPlaying=%x, m_bPaused=%x",pMe->m_bPlaying,pMe->m_bPaused,0);
@@ -3402,6 +3402,19 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
             //Í£Ö¹
             if(pMe->m_pMedia)
             {  
+                #ifdef FEATURE_VERSION_K212_HUALU
+				if(pMe->m_bPlaying)
+                {
+                    //´¦Àí±³¾°²¥·Å
+                    SetMp3PlayerStatus(pMe, MP3STATUS_RUNONBACKGROUND);
+                    ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+                }
+                else
+                {
+                 ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+                }
+				return TRUE;
+				#endif
                 if(SUCCESS == IMEDIA_Stop(pMe->m_pMedia))
                 {
                 	MSG_FATAL("***zzg IMEDIA_Stop==SUCCESS***", 0, 0, 0);
@@ -3409,16 +3422,12 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
                     pMe->m_nCurrentTime = 0;
                     pMe->m_bPlaying = FALSE;
                     pMe->m_bPaused= FALSE;
-					#ifdef FEATURE_VERSION_K212_HUALU
-					CLOSE_DIALOG(DLGRET_CANCELED);
-					return TRUE;
-					#else
+					
                     (void) ISHELL_PostEvent(pMe->m_pShell, 
                                             AEECLSID_APP_MUSICPLAYER,
                                             EVT_USER_REDRAW,
                                             0,
                                             0);    
-					#endif
                 }
             }
        	}       

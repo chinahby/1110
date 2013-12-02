@@ -5186,8 +5186,10 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					return TRUE;
 				else 
 					return FALSE;
-#elif defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU) 
+#elif defined(FEATURE_VERSION_K212)
 				return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CAMERA);
+#elif defined(FEATURE_VERSION_K212_HUALU) 
+                return CoreApp_LaunchApplet(pMe, AEECLSID_ALARMCLOCK);
 #else
 			    return CoreApp_LaunchApplet(pMe, AEECLSID_APP_SETTINGMENU);
 #endif					                    
