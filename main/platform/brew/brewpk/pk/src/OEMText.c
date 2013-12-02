@@ -11329,6 +11329,10 @@ if(AEE_Active()==AEECLSID_WMSAPP)
              * we already reach the first page, we'll just set the status to end
              * and do nothing
              */
+            if(pContext->sT9ccFieldInfo.nKeyBufLen < 1)
+            {
+                T9TextCtl_CJK_CHINESE_Restart(pContext);
+            }
              
             pContext->nSelectionSelectd = 0;
             
