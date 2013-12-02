@@ -5805,7 +5805,7 @@ static boolean  CContApp_HandleInputFldDlgEvent( CContApp  *pMe,
             ITEXTCTL_SetRect(pTextCtl, &rc);
          
             ITEXTCTL_SetProperties( pTextCtl, 
-                     CContApp_GetFldInputProp(pMe,pMe->m_nFldInputID)|TP_FOCUS_NOSEL);
+                     CContApp_GetFldInputProp(pMe,pMe->m_nFldInputID)|TP_NOUPDATE|TP_FOCUS_NOSEL);
                      
             (void)ITEXTCTL_SetInputMode(pTextCtl,
                      CContApp_GetFldInputMode(pMe->m_nFldInputID));
