@@ -2091,7 +2091,11 @@ static const AECHAR sszT9Multitap1SpecialUnicom[] =
 #ifdef FEATURE_SUPPORT_ID
 #define MAX_INPUTTEXT_SIZE      1537
 #else
+#ifdef FEATURE_VERSION_K212_HUALU
+#define MAX_INPUTTEXT_SIZE      512
+#else
 #define MAX_INPUTTEXT_SIZE      1024
+#endif
 #endif
 
 typedef struct
