@@ -242,8 +242,16 @@ CONSTFILE_FILES+=\
 else ifeq ($(USES_RESDIR), K212_20D)
 CONSTFILE_FILES+=\
 	poweron.gif|fs:/image/pwronoffani/poweron.gif \
+	poweroff.gif|fs:/image/pwronoffani/poweroff.gif	
+else ifeq ($(USES_RESDIR), K252_JT)
+CONSTFILE_FILES+=\
+	poweron.gif|fs:/image/pwronoffani/poweron.gif \
 	poweroff.gif|fs:/image/pwronoffani/poweroff.gif		
 else ifeq ($(USES_RESDIR), K212_LD)
+CONSTFILE_FILES+=\
+	poweron.gif|fs:/image/pwronoffani/poweron.gif \
+	poweroff.gif|fs:/image/pwronoffani/poweroff.gif		
+else ifeq ($(USES_RESDIR), K212_HL)
 CONSTFILE_FILES+=\
 	poweron.gif|fs:/image/pwronoffani/poweron.gif \
 	poweroff.gif|fs:/image/pwronoffani/poweroff.gif		
@@ -265,12 +273,7 @@ CONSTFILE_FILES+=\
 	poweronoff.gif|fs:/image/pwronoffani/poweronoff.gif
 else
 CONSTFILE_FILES+=\
-	poweron.gif|fs:/image/pwronoffani/poweron.gif \
-	poweroff.gif|fs:/image/pwronoffani/poweroff.gif \
-	poweronoff.gif|fs:/image/pwronoffani/poweronoff.gif\
-#	poweronoff.jpg|fs:/image/pwronoffani/poweronoff.jpg
-    #poweronani.jpg|fs:/image/pwronoffani/poweronani.jpg \
-    #poweroffani.jpg|fs:/image/pwronoffani/poweroffani.jpg
+	poweronoff.gif|fs:/image/pwronoffani/poweronoff.gif
 endif
 endif 
 ifeq ($(USES_BLACKBERRY),yes)

@@ -100,8 +100,11 @@ static void disp_ic_init(void)
 	LCD_DELAY (10); 
 	//----------------------------------End ST7775R Reset Sequence ------------------------------------// 
 	//------------------------------------Display Control Setting----------------------------------------------// 
-
-	LCD_WRITE_CMD(0x0001); LCD_WRITE_DATA16(0x001c); 
+   #ifdef FEATURE_VERSION_K252_JT
+	LCD_WRITE_CMD(0x0001); LCD_WRITE_DATA16(0x031C); 
+   #else
+    LCD_WRITE_CMD(0x0001); LCD_WRITE_DATA16(0x001c); 
+   #endif
 	LCD_WRITE_CMD(0x0002); LCD_WRITE_DATA16(0x0000); 
 	LCD_WRITE_CMD(0x0003); LCD_WRITE_DATA16(0x1038); 
 	LCD_WRITE_CMD(0x0008); LCD_WRITE_DATA16(0x0808); 

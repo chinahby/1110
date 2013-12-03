@@ -596,7 +596,7 @@ static void CoreApp_Issametimer(void *pUser);
 
 static void CoreApp_UpdateBottomBar(CCoreApp    *pMe); 
 //Add by pyuangui 20121220
-#if defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_W021_C11) || defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_V3CM301)
+#if defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_W021_C11) || defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_V3CM301)||defined(FEATURE_VERSION_K252_JT)
 static void CCoreApp_TorchTipTimeOut(CCoreApp *pMe);
 #endif
 //Add End
@@ -4571,6 +4571,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             }
 #endif
 #if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
+#ifndef FEATURE_VERSION_K252_JT 
                         if(wParam == AVK_INFO)
 			            {
 			                pMe->m_keyinfoheld=TRUE;
@@ -4587,7 +4588,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 						   }
                         }
 #endif
-
+#endif
 #ifdef FEATURE_VERSION_W317A
 			if(wParam == AVK_CLR)
             {
@@ -4649,7 +4650,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #endif	
 				return TRUE;
             }
-#if defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_W317A)
+#if defined(FEATURE_VERSION_C11) || defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_K252_JT)
 #else
 #if defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_HITZ181)
 	     if(wParam == AVK_SHIFT)
@@ -4958,7 +4959,9 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 						//AEE_CancelTimer(CoreApp_keypadtimer,pMe);
 						//ISHELL_CancelTimer(pMe->a.m_pIShell,CoreApp_keypadtimer,pMe);
 					}
+					//if ((AEE_Active() != AEECLSID_APP_FMRADIO) && (AEE_Active() != AEECLSID_DIALER) && (!brewui_isincall()) )
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);
+					
                 case AVK_CAMERA:
                 	
                 	#if defined(FEATURE_VERSION_C306) ||defined(FEATURE_VERSION_W0216A)|| defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W027)
@@ -5726,7 +5729,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     return TRUE;
 
                 case AVK_SELECT:
-                #ifndef FEATURE_VERSION_W027   
+                #ifndef FEATURE_VERSION_W027 
+				#ifndef FEATURE_VERSION_K252_JT
                 #ifndef FEATURE_VERSION_K212_HUALU
                 #ifdef FEATURE_KEYGUARD
                  if(pMe->m_IsSametime)
@@ -5748,6 +5752,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 				#endif
                 #endif
                 #endif
+				#endif
                     //return   CoreApp_LaunchApplet(pMe, AEECLSID_DIALER);
                     return TRUE;
                  // ÖØ²¦

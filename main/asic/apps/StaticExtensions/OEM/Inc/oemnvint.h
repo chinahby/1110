@@ -242,7 +242,9 @@ when       who     what, where, why
 
 #if defined(FEATURE_VERSION_W021_CT100) || defined(FEATURE_VERSION_W021_C11)
 // ¡Â…˘“Ù¡ø     
-#define OEMNV_RINGER_VOL_INIT {5,0,0,4,4}  
+#define OEMNV_RINGER_VOL_INIT {5,0,0,4,4} 
+#elif defined(FEATURE_VERSION_K272_HP)
+#define OEMNV_RINGER_VOL_INIT {4,0,0,4,4}
 #elif defined (FEATURE_VERSION_EC99)
 #define OEMNV_RINGER_VOL_INIT {4,0,0,4,4} 
 #elif defined (FEATURE_VERSION_K212_ND)
@@ -447,11 +449,17 @@ typedef PACKED struct _Key_pad_Cfg
 #ifdef FEATURE_VERSION_K212
 #define OEMNV_DEFAULT_BANNER "ZBH-BIHEE C15"
 #elif defined(FEATURE_VERSION_K212_20D)
-#define OEMNV_DEFAULT_BANNER "V-HOPE E102"
-#elif defined(FEATURE_VERSION_K212_LD)
+#if defined(FEATURE_VERSION_K212_LD)
 #define OEMNV_DEFAULT_BANNER "JM-NAIDE XG308"
+#elif defined(FEATURE_VERSION_K212_HL)
+#define OEMNV_DEFAULT_BANNER "CHL-E5700"
+#elif defined(FEATURE_VERSION_K252_JT)
+#define OEMNV_DEFAULT_BANNER "JST-J530"
 #elif defined(FEATURE_VERSION_K212_HUALU)
 #define OEMNV_DEFAULT_BANNER "CHL-E-5300"
+#else
+#define OEMNV_DEFAULT_BANNER "V-HOPE E102"
+#endif
 #else
 #define OEMNV_DEFAULT_BANNER  PROJECTNAME
 #endif
@@ -566,13 +574,21 @@ typedef PACKED struct _Key_pad_Cfg
 #elif defined(FEATURE_VERSION_K212)
 #define   OEMNV_DEFAULTRINGER       10
 #elif defined (FEATURE_VERSION_K212_ND)
-#define   OEMNV_DEFAULTRINGER       10   
+#define   OEMNV_DEFAULTRINGER       10 
+#elif defined(FEATURE_VERSION_W516_C260)
+#define   OEMNV_DEFAULTRINGER       12  
 #elif defined(FEATURE_VERSION_EC99)
 #define   OEMNV_DEFAULTRINGER       11
 #elif defined(FEATURE_VERSION_K212_20D)
+#ifdef FEATURE_VERSION_K252_JT
 #define   OEMNV_DEFAULTRINGER       10
-#elif defined(FEATURE_VERSION_W516_C260)
-#define   OEMNV_DEFAULTRINGER       12
+#else
+#ifdef FEATURE_VERSION_K212_HL
+#define   OEMNV_DEFAULTRINGER       8
+#else
+#define   OEMNV_DEFAULTRINGER       10
+#endif
+#endif
 #else
 #define   OEMNV_DEFAULTRINGER       4
 #endif
@@ -658,8 +674,18 @@ typedef PACKED struct _Key_pad_Cfg
 #define   OEMNV_STARTUP_MUSIC 11
 #define   OEMNV_SHUTDOWN_MUSIC 12
 #elif defined(FEATURE_VERSION_K212_20D)
+#ifdef FEATURE_VERSION_K252_JT
 #define   OEMNV_STARTUP_MUSIC 11
 #define   OEMNV_SHUTDOWN_MUSIC 12
+#else
+#ifdef FEATURE_VERSION_K212_HL
+#define   OEMNV_STARTUP_MUSIC 9
+#define   OEMNV_SHUTDOWN_MUSIC 9
+#else
+#define   OEMNV_STARTUP_MUSIC 11
+#define   OEMNV_SHUTDOWN_MUSIC 12
+#endif
+#endif
 #elif defined(FEATURE_VERSION_W516_C260)
 #define   OEMNV_STARTUP_MUSIC 10
 #define   OEMNV_SHUTDOWN_MUSIC 11
