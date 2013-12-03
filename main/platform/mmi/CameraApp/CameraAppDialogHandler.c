@@ -5515,8 +5515,8 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
     displaySize.cy = 128;
 #elif defined(FEATURE_DISP_240X320)
 #ifdef FEATURE_VERSION_K212_HUALU
-	displaySize.cx = 160;
-    displaySize.cy = 180;
+	displaySize.cx = 180;
+    displaySize.cy = 240;
 #else
 	displaySize.cx = 96;
     displaySize.cy = 96;
@@ -6246,6 +6246,7 @@ static void CameraApp_HandleSnapshotPic(CCameraApp *pMe)
                                myInfo.cy);
             }
 #endif
+            #ifndef FEATURE_VERSION_K212_HUALU
             x = (myInfo.cx-pMe->m_rc.dx)/2;
             y = (myInfo.cy-pMe->m_rc.dy)/2;
 			MSG_FATAL("myInfo.cx=====%d,myInfo.cy===%d",myInfo.cx,myInfo.cy,0);
@@ -6280,6 +6281,11 @@ static void CameraApp_HandleSnapshotPic(CCameraApp *pMe)
 			MSG_FATAL("x=========%d,y=========%d",x,y,0);
             IImage_SetOffset(pImage,x,y);
             IImage_Draw(pImage,0,0);
+            #else
+            x = (240 - myInfo.cx)/2;
+            y = (320 - myInfo.cy)/2;
+            IImage_Draw(pImage,x,y);
+            #endif
            
             //IDISPLAY_BitBlt(pMe->m_pDisplay, pMe->m_rc.x, pMe->m_rc.y, pMe->m_rc.dx, pMe->m_rc.dy, pMe->m_pIBitmap, 0, 0, AEE_RO_COPY);
             IImage_Release(pImage);
