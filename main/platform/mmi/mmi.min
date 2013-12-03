@@ -122,10 +122,12 @@ endif
 #Apps
 #include $(EXTRAMENU)/extramenu.min
 ifneq ($(USES_RESDIR),hualu)
+ifneq ($(USES_RESDIR),VHOPE)
 ifneq ($(USES_LOW),yes)
 include $(OEMEXTFOR3PART)/OEMExtFor3Part.min
 include $(EDITAPPLET)/EditApplet.min
 include $(EDITEXTENTSION)/EditExtension.min
+endif
 endif
 endif
 
@@ -179,9 +181,11 @@ ifeq ($(USES_SERVICE),yes)
 include $(SERVICE)/service.min
 endif
 ifneq ($(USES_RESDIR),hualu)
+ifneq ($(USES_RESDIR),VHOPE)
 ifneq ($(USES_LOWMEM),yes)
 include $(STATIC_BREW_APP)/staticbrewapp.min
 include $(STATIC_APP)/staticapp.min
+endif
 endif
 endif
 ifeq ($(USES_WAPBROWSER),yes)
@@ -193,9 +197,11 @@ include $(TVAPP)/TVApp.min
 endif
 
 ifneq ($(USES_RESDIR),hualu)
+ifneq ($(USES_RESDIR),VHOPE)
 ifneq ($(USES_RESDIR),K212)
 ifneq ($(USES_RESDIR),K232_X3)
 include $(UCWEB)/UCWEB.min
+endif
 endif
 endif
 endif

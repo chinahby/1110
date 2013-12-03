@@ -896,7 +896,15 @@ CONSTFILE_FILES+=\
             ring1.mp3|fs:/ringers/ring1.mp3 \
             ring2.mp3|fs:/ringers/ring2.mp3 \
 			poweronoff.mp3|fs:/ringers/poweronoff.mp3 \
-			ring3.mp3|fs:/ringers/ring3.mp3					
+			ring3.mp3|fs:/ringers/ring3.mp3	
+else ifeq ($(USES_RESDIR),VHOPE)
+  				CONSTFILE_FILES+=\
+            blues.mid|fs:/ringers/blues.mid \
+            clock.mid|fs:/ringers/clock.mid \
+            ring1.mp3|fs:/ringers/ring1.mp3 \
+            ring2.mp3|fs:/ringers/ring2.mp3 \
+						poweron.mp3|fs:/ringers/poweron.mp3 \
+						poweroff.mp3|fs:/ringers/poweroff.mp3				
 	   else                                            
         CONSTFILE_FILES+=\
             blues.mid|fs:/ringers/blues.mid \

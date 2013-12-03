@@ -456,7 +456,11 @@ typedef PACKED struct _Key_pad_Cfg
 #elif defined(FEATURE_VERSION_K252_JT)
 #define OEMNV_DEFAULT_BANNER "JST-J530"
 #elif defined(FEATURE_VERSION_K212_HUALU)
+#if defined(FEATURE_VERSION_K212_VHOPE)
+#define OEMNV_DEFAULT_BANNER "WB-V HOPE E102"
+#else
 #define OEMNV_DEFAULT_BANNER "CHL-E-5300"
+#endif
 #else
 #define OEMNV_DEFAULT_BANNER "V-HOPE E102"
 #endif
@@ -703,7 +707,11 @@ typedef PACKED struct _Key_pad_Cfg
 #define   OEMNV_SHUTDOWN_MUSIC 5
 #elif defined(FEATURE_LOW_MEM_BIGFONT)
 #define   OEMNV_STARTUP_MUSIC 5
+#if defined(FEATURE_VERSION_K212_VHOPE)
+#define   OEMNV_SHUTDOWN_MUSIC 6
+#else
 #define   OEMNV_SHUTDOWN_MUSIC 5
+#endif
 #else
 #define   OEMNV_STARTUP_MUSIC 11
 #define   OEMNV_SHUTDOWN_MUSIC 12
