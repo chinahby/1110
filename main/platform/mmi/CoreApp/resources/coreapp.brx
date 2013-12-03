@@ -155,7 +155,7 @@
 		<Text>Memory problem</Text>
 	</String>
 	<String Id="1052" Name="IDS_MSG_SECISSUE">
-		<Text>Access security policy not fulfilled or secret code rejected</Text>
+		<Text>Wrong PIN code</Text>
 	</String>
 	<String Id="1053" Name="IDS_MSG_ACCEPTED">
 		<Text>The new PIN is accepted</Text>
@@ -294,13 +294,13 @@
 	</String>
 	<String Id="1116" Name="IDS_20_MIN">
 		<Text>20 MIN</Text>
-	</String>	
+	</String>
 	<String Id="1117" Name="IDS_TIME_AM">
 		<Text>The time is %02d:%02d am now!</Text>
-	</String>	
+	</String>
 	<String Id="1118" Name="IDS_TIME_PM">
 		<Text>The time is %02d:%02d pm now!</Text>
-	</String>	
+	</String>
 	<String Id="1119" Name="IDS_TIME_DETAIL">
 		<Text>The time is %02d:%02d  now!</Text>
 	</String>
@@ -388,19 +388,18 @@
 			<Text Id="7004" Name="IDC_TEXT_NUMBER">
 				<Items/></Text>
 		</Controls>
-	</Dialog>	
+	</Dialog>
 	<Dialog Id="6018" Name="IDD_RSSI_INFO" Focus="0">
 		<Controls/>
 		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</Dialog>
 	<Dialog Id="6019" Name="IDD_ESN_TRACKER_EDIT" Focus="7010">
-		<Controls>			
+		<Controls>
 			<Text Id="7010" Name="IDC_TEXT_ESN_TRACK_NUMBER">
-				<Items/></Text>	
+				<Items/></Text>
 			<Text Id="7011" Name="IDC_TEXT_ESN_TRACK_TIME">
-				<Items/></Text>					
+				<Items/></Text>
 		</Controls>
 	</Dialog>
-	
 </Dialogs>
 </BREWRes>
