@@ -143,8 +143,11 @@ GENERAL DESCRIPTION:
 #define AEECLSID_UCWEB				0x20068888            //add by pengyuangui 2012/09/06
 #define AEECLSID_MiZone				0x20121106            //add by pengyuangui 2012/11/06
 #define AEECLSID_MOBILETRACKER      0x20131313            //add by yangdecai 2012/12/29
+#if defined(FEATURE_DISP_128X160)&& defined(FEATURE_QQ_APP)
+#define AEECLSID_QQ                 0x0109A277 //0x0109A277            //add by pengyuangui 2013/08/07
+#else
 #define AEECLSID_QQ                 0x0109EB13 //0x0109A277            //add by pengyuangui 2013/08/07
-
+#endif
 
 #define AEECLSID_BLUETOOTH_APP    	0x01015223
 #define AEECLSID_NF3				0x01007016
