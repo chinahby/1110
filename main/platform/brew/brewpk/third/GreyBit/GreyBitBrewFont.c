@@ -135,6 +135,9 @@ static int OEMFont_MeasureTextCursorPos(IFont *pMe, int x, const AECHAR *pcText,
 #ifdef FEATURE_VERSION_K212_ND
 #define SMALL_FONT_SIZE     16
 #define LARGE_FONT_SIZE     25
+#elif defined(FEATURE_DISP_128X160)&& defined(FEATURE_QQ_APP)
+#define SMALL_FONT_SIZE     15
+#define LARGE_FONT_SIZE     20
 #else
 #define SMALL_FONT_SIZE     4
 #define LARGE_FONT_SIZE     20
