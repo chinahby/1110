@@ -13015,6 +13015,10 @@ void OEM_SetUCBROWSER_ADSAccount(void)
 
     OEMPriv_GetItem_CFGI_BREWSET_USENAME((void*)username);
     OEMPriv_GetItem_CFGI_BREWSET_PASSWORD((void*)password);
+	#if defined(FEATURE_DISP_128X160)&& defined(FEATURE_QQ_APP)
+	MEMCPY(username,"ctwap@mycdma.cn",15);	
+	MEMCPY(password,"vnet.mobi",9);
+	#endif
     DBGPRINTF("OEM_SetBROWSER_ADSAccount username=%s ",username);
     DBGPRINTF("OEM_SetBROWSER_ADSAccoun passwordt=%s",password);
 
