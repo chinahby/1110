@@ -385,6 +385,12 @@
 	<Object Id="7040" Name="IDB_NO_SERVICE">
 		<File>..\images\240x320\common\Annunciator\no_service.bmp</File>
 	</Object>
+	<Object Id="7101" Name="IDB_MMS_ENTER" MimeType="image/png">
+		<File>..\images\240x320\common\Appscommon\Icon\enter.png</File>
+	</Object>
+	<Object Id="7102" Name="IDB_MMS_SPACE" MimeType="image/png">
+		<File>..\images\240x320\common\Appscommon\Icon\space.png</File>
+	</Object>
 	<Object Id="8050" Name="IDB_BATT5">
 		<File>..\images\240x320\common\Annunciator\batt5.bmp</File>
 	</Object>
