@@ -1844,11 +1844,19 @@ void DrawTitleBar(IDisplay  * pIDisplay, TitleBar_Param_type *TParam)
             bgRect.dx = 320;
             if(AEE_Active()==AEECLSID_MAIN_MENU)
             {
+                 #ifdef FEATURE_VERSION_K212_VHOPE
+                 IDISPLAY_DrawRect(pIDisplay,
+                              &bgRect,
+                              RGB_NONE,
+                              MAKE_RGB(0,0,0),
+                              IDF_RECT_FILL);
+                 #else
                  IDISPLAY_DrawRect(pIDisplay,
                               &bgRect,
                               RGB_NONE,
                               MAKE_RGB(255,255,255),
                               IDF_RECT_FILL);
+                 #endif
             }
             else
             {
@@ -1921,7 +1929,11 @@ void DrawTitleBar(IDisplay  * pIDisplay, TitleBar_Param_type *TParam)
         #if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_K212_HUALU)
         if(AEE_Active()==AEECLSID_MAIN_MENU)
         {
+          #ifdef FEATURE_VERSION_K212_VHOPE
+          IDISPLAY_SetColor(pIDisplay, CLR_USER_TEXT, RGB_WHITE);
+          #else
           IDISPLAY_SetColor(pIDisplay, CLR_USER_TEXT, RGB_BLACK);
+          #endif
         }
         else
         #endif

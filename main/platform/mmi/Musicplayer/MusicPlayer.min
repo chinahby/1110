@@ -47,8 +47,13 @@ ifneq ($(RESOURCEDIR),EC99)
 ifneq ($(RESOURCEDIR),K212_ND)
 ifneq ($(RESOURCEDIR),IC241A_MMX)
 ifneq ($(RESOURCEDIR),IN50_MMX)
+ifeq ($(RESOURCEDIR),VHOPE)
+	CONSTFILE_FILES+=\
+		music.mp3|fs:/hsmm/music/music.mp3
+else
 	CONSTFILE_FILES+=\
 		Away.mp3|fs:/hsmm/music/Away.mp3	
+endif
 endif		
 endif
 endif

@@ -14736,12 +14736,21 @@ static void MainMenu_DrawBackGround(MainMenu *pMe, AEERect *pRect)
     {
     	MSG_FATAL("pRect.dx  ===%d,,,dy===%d,=====x==%d",pRect->dx,pRect->dy,pRect->x);
         #ifdef FEATURE_VERSION_K212_HUALU
+        #ifdef FEATURE_VERSION_K212_VHOPE
+        Appscommon_ResetBackground(pMe->m_pDisplay, 
+                                                    pMe->m_pImageBg, 
+                                                    RGB_BLACK, 
+                                                    pRect, 
+                                                    0, 
+                                                    0);
+        #else
         Appscommon_ResetBackground(pMe->m_pDisplay, 
                                                     pMe->m_pImageBg, 
                                                     RGB_WHITE, 
                                                     pRect, 
                                                     0, 
                                                     0);
+        #endif
         #else
         Appscommon_ResetBackground(pMe->m_pDisplay, 
                                                     pMe->m_pImageBg, 

@@ -7020,7 +7020,7 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
 				//STRTOWSTR("C260", wszBuf, nSize);
 				STRTOWSTR("", wszBuf, nSize);
 #else
-	            STRTOWSTR(ver_modelname, wszBuf, nSize);
+	            STRTOWSTR("No UIM card", wszBuf, nSize);//STRTOWSTR(ver_modelname, wszBuf, nSize);
 #endif
 #endif
 #endif
