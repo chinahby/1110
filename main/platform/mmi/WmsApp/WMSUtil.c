@@ -3524,6 +3524,82 @@ GETREGISTERMSG_EXIT:
     
     return pCltMsg;
 }
+#ifdef FEATURE_VERSION_K212_HUALU
+int GetHuluRegisterInfo(char *szRegInfo, int nSize)
+{
+    int  nlen;
+    AEEMobileInfo     mi;
+    uint32 dwCRC32;
+	uint64 meid = 0;
+	uint32 H32,L32;
+    
+    if (NULL == szRegInfo  || nSize<140)
+    {
+        return -1;
+    }
+	{
+		#ifdef FEATURE_VERSION_W515V3
+        extern int OEM_ReadMEID(uint64 *meid);
+    	OEM_ReadMEID(&meid);
+        #else
+        tmc_get_stored_meid_me((qword *)&meid);
+        #endif
+    	
+        L32 = (uint32)meid;
+        H32 = (((uint32)(meid>>32))&(0xffffff));
+    }
+    MEMSET(szRegInfo, 0, nSize);
+    // 格式化数据：机型、手机ESN、IMSI号码、当前软件版本
+    //OEM_GetConfig (CFGI_MOBILEINFO, &mi, sizeof(AEEMobileInfo));
+    GetMobileInfo(&mi);
+    SPRINTF(szRegInfo, "60500702A1;VK232_HL_131202;I%06x%08x;M%s;K;L;P358715;S;",H32,L32, mi.szMobileID);
+    nlen = STRLEN(szRegInfo);    
+    return (nlen);
+}
+
+wms_client_message_s_type *GetHuluRegisterMsg()
+{
+    char  *pBuf=NULL;
+    int   nMsgSize = 0;
+    int   nSize;
+    wms_cdma_user_data_s_type    *pUserdata = NULL;
+    wms_client_message_s_type    *pCltMsg = NULL;
+
+    
+    nSize = sizeof(char)*150;
+    pBuf = (char *)sys_malloc(nSize);
+    if (NULL == pBuf)
+    {
+        goto GETREGISTERMSG_EXIT;
+    }
+    nMsgSize = GetHuluRegisterInfo(pBuf, 150);
+    if (nMsgSize<0)
+    {
+        goto GETREGISTERMSG_EXIT;
+    }
+    
+    nSize = sizeof(wms_cdma_user_data_s_type);
+    pUserdata = (wms_cdma_user_data_s_type *)sys_malloc(nSize);
+    if (NULL == pUserdata)
+    {
+        goto GETREGISTERMSG_EXIT;
+    }
+    MEMSET(pUserdata, 0, nSize);
+    pUserdata->encoding = WMS_ENCODING_OCTET;
+    pUserdata->number_of_digits = nMsgSize;
+    pUserdata->data_len = nMsgSize;
+    pUserdata->padding_bits = 0;
+    MEMCPY(pUserdata->data, pBuf, nMsgSize);
+    
+    pCltMsg = GetMOClientMsg(HUALU_SERVERNUM, pUserdata, TRUE);
+    
+GETREGISTERMSG_EXIT:
+    SYS_FREEIF(pBuf);
+    SYS_FREEIF(pUserdata);
+    
+    return pCltMsg;
+}
+#endif
 #endif
 
 #ifdef FEATURE_SEAMLESS_SMS
@@ -4953,6 +5029,10 @@ wms_client_message_s_type *CWmsApp_Getspecmsg(AECHAR *pwstrType)
 #ifdef FEATURE_POWERUP_REGISTER_CHINAUNICOM
         case POWERUP_REGISTER_CHINAUNICOM:
             return GetRegisterMsg();
+#ifdef FEATURE_VERSION_K212_HUALU
+        case POWERUP_HUALU:
+            return GetHuluRegisterMsg();
+#endif
 #endif        
 #ifdef FEATURE_SEAMLESS_SMS
         case POWERUP_REGISTER_SEAMLESSSMS:

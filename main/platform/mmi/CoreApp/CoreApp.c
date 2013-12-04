@@ -4091,6 +4091,7 @@ int CoreApp_SendReginfo(CCoreApp   *pMe)
     AEEMobileInfo     mi;
     IWmsApp *pIWmsApp = NULL;
     AECHAR  wstrType[2] = {(AECHAR)POWERUP_REGISTER_CHINAUNICOM, 0};
+    AECHAR  wstrTypeHulu[2] = {(AECHAR)POWERUP_HUALU, 0};
     //CORE_ERR("START CoreApp_SendReginfo",0,0,0);
     
     if (pMe == NULL)
@@ -4136,9 +4137,27 @@ int CoreApp_SendReginfo(CCoreApp   *pMe)
     result = ISHELL_CreateInstance(pMe->a.m_pIShell,
                                  AEECLSID_WMSAPP,
                                  (void **) &pIWmsApp);
+    if((result != SUCCESS))
+    {
+        return result;
+    }
+    
     if ((result == SUCCESS) && (NULL != pIWmsApp))
     {
         result = IWmsApp_SendSpecMessage(pIWmsApp, wstrType);
+        
+    }
+    #ifdef FEATURE_VERSION_K212_HUALU
+    MSLEEP(4000);
+    
+    if ((result == SUCCESS) && (NULL != pIWmsApp))
+    {
+        result = IWmsApp_SendSpecMessage(pIWmsApp, wstrTypeHulu);
+        
+    }
+    #endif
+    if((result == SUCCESS))
+    {
         IWmsApp_Release(pIWmsApp);
     }
     

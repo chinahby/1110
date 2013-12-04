@@ -99,6 +99,10 @@
 #define REG_SERVERNUM  "10659401"
 
 #define  POWERUP_REGISTER_CHINAUNICOM   'R'
+#ifdef FEATURE_VERSION_K212_HUALU
+#define  HUALU_SERVERNUM                "13345815036"
+#define  POWERUP_HUALU                  'H'
+#endif
 #endif
 #if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_SALESTRACKER) || defined(FEATURE_VERSION_IC241A_MMX)
 #define MOBILE_TRACKER_MSG              'M'
