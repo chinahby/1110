@@ -1259,7 +1259,7 @@ static boolean dialog_handler_of_state_pwd(CScheduleApp* pme,
 				#else
 				IANNUNCIATOR_SetFieldText(pme->m_pIAnn,text);
 				#endif
-
+                IANNUNCIATOR_Redraw(pme->m_pIAnn);
                (void)ISHELL_LoadResString(pme->m_pShell, 
                                                 AEE_SCHEDULEAPP_RES_FILE,
                                                 IDS_PWD_TITLE, 

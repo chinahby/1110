@@ -1734,7 +1734,7 @@ static boolean  IDD_PWD_Handler(void       *pUser,
                 AECHAR  text[32] = {0};
                 RGBVAL nOldFontColor;
                 TitleBar_Param_type  TitleBar_Param = {0};
-                
+                IANNUNCIATOR_Redraw(pMe->m_pIAnn);
                 // œ»«Â∆¡
 #ifdef FEATURE_CARRIER_CHINA_VERTU
                 {

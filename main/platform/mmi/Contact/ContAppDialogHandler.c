@@ -11593,7 +11593,7 @@ static boolean  CContApp_HandleInputDlgEvent( CContApp  *pMe,
                 int xOffset = 5;
                 RGBVAL nOldFontColor;
                 TitleBar_Param_type  TitleBar_Param = {0};
-                
+                IANNUNCIATOR_Redraw(pMe->m_pIAnn);
                 // 先清屏
 #ifdef FEATURE_CARRIER_CHINA_VERTU
                 {
@@ -11709,7 +11709,7 @@ static boolean  CContApp_HandleInputDlgEvent( CContApp  *pMe,
                 int xOffset = 5;
                 RGBVAL nOldFontColor;
                 TitleBar_Param_type  TitleBar_Param = {0};
-                
+                IANNUNCIATOR_Redraw(pMe->m_pIAnn);
                 // 先清屏
 #ifdef FEATURE_CARRIER_CHINA_VERTU
                 {

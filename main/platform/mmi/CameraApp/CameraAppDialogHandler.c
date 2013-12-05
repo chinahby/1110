@@ -2699,6 +2699,10 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
 					CLOSE_DIALOG(DLGRET_CANCELED);	
 				}
             }
+            else if(pMe->m_wMsgID == IDS_MSG_NOMEMORY)
+            {
+                (void)ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+            }
             else
             {
                 CLOSE_DIALOG(DLGRET_CANCELED);
@@ -6635,7 +6639,13 @@ void CameraApp_AppEventNotify(CCameraApp *pMe, int16 nCmd, int16 nStatus)
 	            }
 	        #endif
 	            break;
-	            
+	        case CAM_STATUS_SPACE_ERROR:
+                {
+                    pMe->m_wMsgID = IDS_MSG_NOMEMORY;
+    	            pMe->m_nMsgTimeout = TIMEOUT_MS_MSGBOX;
+    	            CLOSE_DIALOG(DLGRET_POPMSG);
+               }
+                break;
 	        default:
 	            break;
         }

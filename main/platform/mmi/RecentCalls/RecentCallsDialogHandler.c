@@ -575,7 +575,7 @@ static boolean  RecentCalls_VerifyPasswordEvent(CRecentCalls *pMe,
       //          int xOffset = 5;
                 RGBVAL nOldFontColor;
                 TitleBar_Param_type  TitleBar_Param = {0};
-                
+                IANNUNCIATOR_Redraw(pMe->m_pIAnn);
                 // œ»«Â∆¡
 #ifdef FEATURE_CARRIER_CHINA_VERTU
                 {
