@@ -217,7 +217,7 @@ uint8 RDA5802N_initialization_reg[]={
 #ifdef FEATURE_VERSION_REGION_INDIA	
 	0x86,0xED, //05h //87 88 89 83
 #else
-    0xC6,0xED, //05h //87 88 89 83
+    0x86,0xED, //05h //87 88 89 83
 #endif
 	0x60,0x00,
 	0x42,0x16,
@@ -611,14 +611,17 @@ static  uint8 RDA5802_ValidStop(int16 freq)
 	
 	clk_busy_wait(50*1000);  	//at least Delay 25ms
 
+	clk_busy_wait(100*1000); 
+
 	OperationRDAFM_2w(FM_I2C_READ,&(RDA5802_reg_data[0]), 4);
-	clk_busy_wait(100*1000);  	//at least Delay 25ms
+
 	//check whether STC=1
-	
+	/*
 	if((RDA5802_reg_data[0]&0x40)==0)
 	{
 		falseStation=1;
 	}
+	*/
 	//check FM_TURE
 	if((RDA5802_reg_data[2] &0x01)==0)
 	{
@@ -893,7 +896,7 @@ void fm_mute(boolean on,boolean speaker)
 	if ( ( on == TRUE) && (fm_playing_mute == FALSE) )
 	{
 		fm_playing_mute = TRUE;
-#if defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
+#if defined(FEATURE_VERSION_EC99) || defined(FEATURE_VERSION_K212_20D)
 #else
         if (HS_HEADSET_ON())
 #endif		
@@ -935,4 +938,7 @@ void RD5802FM_Register(WarT_Fm_t *gFm)
 	gFm->fm_get_status = fm_get_status;
 }
 #endif
+
+
+
 
