@@ -15654,7 +15654,7 @@ static void CContApp_ShowEditItem(CContApp  *pMe, IMenuCtl  *pMenuCtl, ITextCtl 
     rect.x  = 23;//大概的一个数字
     rect.dx = pMe->m_rc.dx - 27;//five pixels for right edge, 
     #endif
-    #if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)//add by yangdecai 2011-01-06
+    #if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)||defined(FEATURE_LANG_ARABIC)//add by yangdecai 2011-01-06
 	{
 	   	nv_language_enum_type language;
        	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
