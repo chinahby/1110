@@ -535,7 +535,7 @@ static void disp_ic_sleep(boolean bin)
         LCD_DELAY(120); 
         LCD_WRITE_CMD(0x29);	// Display on
       //reg++;
-      //disp_ic_init();
+        disp_ic_init();
     }
 }
 
