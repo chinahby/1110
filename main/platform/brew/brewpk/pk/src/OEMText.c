@@ -3833,7 +3833,7 @@ static void TextCtl_DrawCursor(TextCtlContext *pContext,
                                              -1,
                                              -1,
                                              NULL);
-		    	//draw.x = (clipRect->x+clipRect->dx)-2-(Strlen-temp+2);
+		    	draw.x = (clipRect->x+clipRect->dx)-2-(Strlen-temp+2);
 		    }
         }
 		#endif
@@ -3990,9 +3990,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
             cursRect,
             rectClip;
    AECHAR  *wszHide = NULL;
-#if defined(FEATURE_LANG_ARABIC)
-  nv_language_enum_type lang;
-#endif
+
 #ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
    //IBitmap       *pDestBmp = NULL;
    int            cursorx1    = 0,  cursorx2    = 0;
@@ -4014,12 +4012,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
    }
 
    memset(&cursRect, 0, sizeof(cursRect));
-#if defined(FEATURE_LANG_ARABIC)
-   OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&lang,sizeof(lang));
-   if(NV_LANGUAGE_ARABIC == lang)
-	   rectClip.x  = 1;//pContext->rectDisplay.x;
-   else
-#endif
+
    rectClip.x  = pContext->rectDisplay.x;
    rectClip.y  = pContext->rectDisplay.y;
    rectClip.dx = pContext->rectDisplay.dx;
@@ -4195,8 +4188,6 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
                        
 				    	rectText.x = rectClip.x+rectClip.dx - temp-4;
 				    	rectText.dx = temp;
-						if(rectClip.dx < temp)
-							rectText.dx = rectClip.dx;
 				    	if(rectText.x<rectClip.x)
 				    	{
 				    		rectText.x = rectClip.x;
