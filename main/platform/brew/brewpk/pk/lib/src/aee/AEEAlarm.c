@@ -772,7 +772,8 @@ static void CAlarm_ScheduleAlarms(CAlarm *pMe,uint16 nUserCode)
     uint32   nNextMin;
     boolean  bAlarmsChanged;
     void    *pOldContext;
-    
+    // liyz add for test @131205
+    boolean bUserSetALARM = FALSE;
 	//boolean  bAlarmSalesTracker = FALSE;
     
     pOldContext = AEE_EnterAppContext(NULL);
@@ -799,6 +800,7 @@ static void CAlarm_ScheduleAlarms(CAlarm *pMe,uint16 nUserCode)
     nNextMin = 0xFFFFFFFF;
     i = 0;
     
+	bUserSetALARM = FALSE; // liyz add for test @131205
     while (i < IVector_Size(pMe->m_alarms)) 
     {
         AlarmInfo *pai = IVector_ElementAt(pMe->m_alarms, i);
@@ -810,7 +812,11 @@ static void CAlarm_ScheduleAlarms(CAlarm *pMe,uint16 nUserCode)
 			nUserCode = 21;
 		}       
         */
-        
+        // liyz add for test @131205
+        if(pai->nUserCode <= 20)
+        {
+           bUserSetALARM = TRUE;
+        }
         DBGPRINTF( "pai->nExpireMin = %d nCurrMin = %d---pai->nUserCode=%d",pai->nExpireMin,nCurrMin,pai->nUserCode);
         DBGPRINTF( "i = %d ---IVector_Size(pMe->m_alarms = %d",i,IVector_Size(pMe->m_alarms)); 
         if (pai->nExpireMin <= nCurrMin) 
@@ -895,7 +901,7 @@ static void CAlarm_ScheduleAlarms(CAlarm *pMe,uint16 nUserCode)
             bAlarmSalesTracker = FALSE;
 		}       
         */
-
+#if 0 // liyz modify for test @131205
         if ((nUserCode == 22) || (nUserCode == 23) || (nUserCode == 24))    //SOUND_BO_ALARM /SALE_TRACKER_ALARM / ESN_TRACKER_ALARM
         {
             IAnnunciator *pIAnn;
@@ -914,6 +920,26 @@ static void CAlarm_ScheduleAlarms(CAlarm *pMe,uint16 nUserCode)
                 IANNUNCIATOR_Release(pIAnn);
             }
         }
+#else
+     if (!bUserSetALARM)	//SOUND_BO_ALARM /SALE_TRACKER_ALARM / ESN_TRACKER_ALARM
+	 {
+		 IAnnunciator *pIAnn;
+		 if (SUCCESS == ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_ANNUNCIATOR, (void**)&pIAnn)) 
+		 {
+			 IANNUNCIATOR_SetField(pIAnn, ANNUN_FIELD_ALARM, ANNUN_STATE_ALARM_OFF);
+			 IANNUNCIATOR_Release(pIAnn);
+		 }
+	 }
+	 else
+	 {
+		 IAnnunciator *pIAnn;
+		 if (SUCCESS == ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_ANNUNCIATOR, (void**)&pIAnn)) 
+		 {
+			 IANNUNCIATOR_SetField(pIAnn, ANNUN_FIELD_ALARM, ANNUN_STATE_ALARM_ON/*ANNUN_STATE_OFF*/);
+			 IANNUNCIATOR_Release(pIAnn);
+		 }
+	 }
+#endif
     }
 
     if (bAlarmsChanged) 
