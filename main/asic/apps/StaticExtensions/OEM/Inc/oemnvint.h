@@ -504,6 +504,7 @@ typedef PACKED struct _Key_pad_Cfg
 
 #if defined (FEATURE_VERSION_C260_IC19)
 #define OEMNV_ESN_TRACK_NUM    			"51718" 
+#define OEMNV_ESN_TRACK_NUM_TWO    		"09223053751" 
 #else
 #define OEMNV_ESN_TRACK_NUM    			"3751" 
 #endif
@@ -1206,7 +1207,14 @@ typedef struct
     byte ruim_id_num;
     char ruim_id_table[MAX_RUIM_ID_SAVE][MAX_RUIM_ID_LENGTH];              //phoneNumber
 }ruim_id_table_t;
-
+// liyz add for test @131202
+#ifdef FEATURE_IC19_ESN_TRACKER
+typedef struct 
+{
+    char meid_me[MAX_RUIM_ID_LENGTH];
+    char ruim_id[MAX_RUIM_ID_LENGTH];              //phoneNumber
+}esn_track_combination;
+#endif
 #ifdef FEATURE_SHORTCUT_IN_SETTINGS
 enum
 {

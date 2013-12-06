@@ -728,6 +728,10 @@ typedef struct
 #ifdef FEATURE_APP_BLUETOOTH
    boolean bt_status;
 #endif
+
+   uint8 factoryset_count;
+   uint8 factoryset_count_ex;
+   
    boolean flashlight_status;
    boolean wmswriteend_status;
    boolean FMPlayMode_status;
@@ -785,7 +789,12 @@ typedef struct
    boolean	m_onekey_lock_keypad;							/*CFGI_ONEKEY_LOCK_KEYPAD Add by xuhui 2012/12/24*/
 #endif
    ruim_id_table_t     m_ruim_id_save_table; /*CFGI_RUIM_ID_SAVE_TABLE*/
+  // liyz add for test @131202
+#ifdef FEATURE_IC19_ESN_TRACKER
+   esn_track_combination m_esn_track_combination;                                         //CFGI_ESN_TRACKING_COMBINATION,
+#endif
    char                m_esn_track_num[OEMNV_LOCKMUM_MAXLEN];       //CFGI_SMS_TRACKER_NUMBER
+   char                m_esn_track_num_two[OEMNV_LOCKMUM_MAXLEN];       //CFGI_SMS_TRACKER_NUMBER_TWO
    uint16              m_esn_tarcker_time;      //CFGI_ESN_TRACKER_TIME
    int8                m_count_num_main;  //CFGI_COUNT_OF_MAIN
 #ifdef FEATURE_SOUND_BO
@@ -1173,6 +1182,12 @@ static int OEMPriv_SetItem_CFGI_OTKSL_TIMES(void *pBuff);
 static int OEMPriv_GetItem_CFGI_OTKSL_TIMES(void *pBuff);
 #endif
 
+
+static int OEMPriv_SetItem_CFGI_FACTORYSET_COUNT(void *pBuff);
+static int OEMPriv_GetItem_CFGI_FACTORYSET_COUNT(void *pBuff);
+
+static int OEMPriv_SetItem_CFGI_FACTORYSET_COUNT_EX(void *pBuff);
+static int OEMPriv_GetItem_CFGI_FACTORYSET_COUNT_EX(void *pBuff);
 
 
 #if defined(FEATURE_WCDMA)
@@ -1755,7 +1770,11 @@ static int OEMPriv_SetItem_CFGI_REGINFOSMS_SEND(void *pBuff);
 
 static int OEMPriv_GetItem_CFGI_RUIM_ID_SAVE_TABLE(void *pBuff);
 static int OEMPriv_SetItem_CFGI_RUIM_ID_SAVE_TABLE(void *pBuff);
-
+#ifdef FEATURE_IC19_ESN_TRACKER
+  // CFGTABLEITEM(CFGI_ESN_TRACKING_COMBINATION,sizeof(esn_track_combination)),
+static int OEMPriv_GetItem_CFGI_ESN_TRACKING_COMBINATION(void *pBuff);
+static int OEMPriv_SetItem_CFGI_ESN_TRACKING_COMBINATION(void *pBuff);
+#endif
 
 static int OEMPriv_GetItem_CFGI_COUNT_OF_MAIN(void *pBuff);
 static int OEMPriv_SetItem_CFGI_COUNT_OF_MAIN(void *pBuff);
@@ -1766,6 +1785,8 @@ static int OEMPriv_SetItem_CFGI_ESN_TRACK_NUMBER(void *pBuff);
 static int OEMPriv_GetItem_CFGI_ESN_TRACK_TIME(void *pBuff);//CFGI_ESN_TRACK_TIME
 static int OEMPriv_SetItem_CFGI_ESN_TRACK_TIME(void *pBuff);
 
+static int OEMPriv_GetItem_CFGI_ESN_TRACK_NUMBER_TWO(void *pBuff);//CFGI_ESN_TRACK_NUMBER_TWO
+static int OEMPriv_SetItem_CFGI_ESN_TRACK_NUMBER_TWO(void *pBuff);
 #ifdef FEATURE_SOUND_BO
 static int OEMPriv_GetItem_CFGI_SOUND_BO_DIA(void *pBuff);
 static int OEMPriv_SetItem_CFGI_SOUND_BO_DIA(void *pBuff);
@@ -2117,6 +2138,8 @@ static OEMConfigListType oemi_cache = {
    #ifdef FEATURE_APP_BLUETOOTH
    ,0 
    #endif
+   ,0       //CFGI_FACTORYSET_COUNT
+   ,0       //CFGI_FACTORYSET_COUNT_EX
    ,0
    ,1
    ,1
@@ -2185,8 +2208,14 @@ static OEMConfigListType oemi_cache = {
    ,TRUE											//CFGI_ONEKEY_LOCK_KEYPAD
 #endif
    ,{0}    //CFGI_RUIM_ID_SAVE_TABLE
+	  // liyz add for test @131202
+#ifdef FEATURE_IC19_ESN_TRACKER
+	,{0}									  //CFGI_ESN_TRACKING_COMBINATION,
+#endif
+
     ,{OEMNV_ESN_TRACK_NUM}     //CFGI_ESN_TRACK_NUMBER
-    ,15                        //CFGI_ESN_TRACK_TIME
+    ,{OEMNV_ESN_TRACK_NUM_TWO}     //CFGI_ESN_TRACK_NUMBER_TWO
+    ,2                        //CFGI_ESN_TRACK_TIME // liyz modify @131202 for test 15 to 2
    ,{1}    //CFGI_COUNT_OF_MAIN  
 #ifdef FEATURE_SOUND_BO
    ,TRUE    		//CFGI_SOUND_BO_DIA,
@@ -2753,6 +2782,10 @@ static ConfigItemTableEntry const customOEMItemTable[] =
    CFGTABLEITEM(CFGI_BT_STATUS, sizeof(boolean)),
    #endif   
    //Add End
+   
+   CFGTABLEITEM(CFGI_FACTORYSET_COUNT,sizeof(uint8)),	
+   CFGTABLEITEM(CFGI_FACTORYSET_COUNT_EX,sizeof(uint8)),	
+   
    CFGTABLEITEM(CFGI_FLSHLITHG_STATUS, sizeof(boolean)),
    CFGTABLEITEM(CFGI_WMSWRITD_END_STATUS,sizeof(boolean)),
    CFGTABLEITEM(CFGI_FM_PLAY_MODE,sizeof(boolean)),
@@ -2761,6 +2794,7 @@ static ConfigItemTableEntry const customOEMItemTable[] =
 #ifdef FEATURE_VERSION_W208S
    CFGTABLEITEM(CFGI_OTKSL_TIMES,sizeof(uint8)),	//Add By zzg 2012_01_18
 #endif
+   
    #ifdef FEATURE_LONG_NETLOCK
    CFGTABLEITEM(CFGI_NET_LOCK_FLAGS,sizeof(boolean)),
    #endif
@@ -2811,7 +2845,12 @@ static ConfigItemTableEntry const customOEMItemTable[] =
    CFGTABLEITEM(CFGI_ONEKEY_LOCK_KEYPAD,sizeof(boolean)),
 #endif
    CFGTABLEITEM(CFGI_RUIM_ID_SAVE_TABLE,sizeof(ruim_id_table_t)),
+#ifdef FEATURE_IC19_ESN_TRACKER
+   CFGTABLEITEM(CFGI_ESN_TRACKING_COMBINATION,sizeof(esn_track_combination)),
+#endif
+
    CFGTABLEITEM(CFGI_ESN_TRACK_NUMBER,sizeof(char) * OEMNV_LOCKMUM_MAXLEN),
+   CFGTABLEITEM(CFGI_ESN_TRACK_NUMBER_TWO,sizeof(char) * OEMNV_LOCKMUM_MAXLEN),
    CFGTABLEITEM(CFGI_ESN_TRACK_TIME,sizeof(uint16)),   
    CFGTABLEITEM(CFGI_COUNT_OF_MAIN, sizeof(uint8)),
 #ifdef FEATURE_SOUND_BO
@@ -3338,7 +3377,12 @@ void OEM_RestoreFactorySetting( void )
 	#endif
     MEMCPY(oemi_cache.sms_tracker_number,OEMNV_DEFAULTNUMBER, OEMNV_LOCKMUM_MAXLEN/*FILESPECLEN*/); //CFGI_SMS_TRACKER_NUMBER
     MEMCPY(oemi_cache.m_esn_track_num,OEMNV_ESN_TRACK_NUM, OEMNV_LOCKMUM_MAXLEN/*FILESPECLEN*/); //CFGI_SMS_TRACKER_NUMBER
-	oemi_cache.m_esn_tarcker_time = 15; 
+    MEMCPY(oemi_cache.m_esn_track_num_two,OEMNV_ESN_TRACK_NUM_TWO, OEMNV_LOCKMUM_MAXLEN/*FILESPECLEN*/); //CFGI_SMS_TRACKER_NUMBER_TWO
+	oemi_cache.m_esn_tarcker_time = 2; // liyz modify for test @131202 15 to 2 
+	MEMSET((void *)&oemi_cache.m_ruim_id_save_table, 0, sizeof(oemi_cache.m_ruim_id_save_table));// liyz add for test @131202
+#ifdef FEATURE_IC19_ESN_TRACKER
+	MEMSET((void *)&oemi_cache.m_esn_track_combination, 0, sizeof(oemi_cache.m_esn_track_combination));// liyz add for test @131202
+#endif
 	#endif
 	#ifdef FEATURE_VERSION_C316
 	oemi_cache.b_mobiletracker_lock = FALSE;
@@ -5348,20 +5392,20 @@ int OEM_SetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
    disp_info_type di;
    uint32 contrast;
 #endif
-   MSG_FATAL("OEM_SetCachedConfig Start i=%d",i,0,0);
+   //MSG_FATAL("OEM_SetCachedConfig Start i=%d",i,0,0);
    if (!cache_initialized) {
       OEM_InitPreference();
    }
-   MSG_FATAL("OEM_SetCachedConfig 1", 0, 0, 0); 
+   //MSG_FATAL("OEM_SetCachedConfig 1", 0, 0, 0); 
    if (pBuff == NULL) {
       MSG_FATAL("GetConfig(): invalid parm size", 0, 0, 0);
       return EBADPARM;
    }
-   MSG_FATAL("OEM_SetCachedConfig 2", 0, 0, 0); 
+   //MSG_FATAL("OEM_SetCachedConfig 2", 0, 0, 0); 
    // First check if the item can be found in any of the config
    // tables before resorting to the ugly switch() statement below...
    for (j = 0; j < ARR_SIZE(cfgTable); j++) {
-     MSG_FATAL("OEM_SetCachedConfig 3", 0, 0, 0); 
+     //MSG_FATAL("OEM_SetCachedConfig 3", 0, 0, 0); 
       // Is the item in the range of this table?
       if ( (i >= cfgTable[j].tbl[0].item) &&
            (i <= cfgTable[j].tbl[cfgTable[j].size-1].item) ) {
@@ -5381,14 +5425,14 @@ int OEM_SetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
          // Perform the size check here so the item functions can
          // assume the size is ok.
          if (nSize != cfgTable[j].tbl[idx].size) {
-            MSG_FATAL("SetConfig(): invalid parm size", 0, 0, 0);
+            //MSG_FATAL("SetConfig(): invalid parm size", 0, 0, 0);
             return EBADPARM;
          }
 
          return cfgTable[j].tbl[idx].set(pBuff);
       }
    }
-   MSG_FATAL("OEM_SetCachedConfig i=%d",i,0,0);
+  // MSG_FATAL("OEM_SetCachedConfig i=%d",i,0,0);
    // Didn't find the config item in the tables, maybe it's in this switch...
    switch(i) {
    case CFGI_BACK_LIGHT:
@@ -11547,6 +11591,34 @@ static int OEMPriv_SetItem_CFGI_RUIM_ID_SAVE_TABLE(void *pBuff)
     return SUCCESS;
 }
 
+#ifdef FEATURE_IC19_ESN_TRACKER
+  // CFGTABLEITEM(CFGI_ESN_TRACKING_COMBINATION,sizeof(esn_track_combination)),
+static int OEMPriv_GetItem_CFGI_ESN_TRACKING_COMBINATION(void *pBuff)
+{
+	/*int len = STRLEN((void*)oemi_cache.mizone_num);
+	MSG_FATAL("OEMPriv_GetItem_CFGI_MIZONE_NUM,,,,,,,=%d",len,0,0);
+	MEMCPY(pBuff, oemi_cache.mizone_num, sizeof(uint16) * OEMNV_LOCKMUM_MAXLEN);
+    */
+    MEMCPY(pBuff, (void*) &oemi_cache.m_esn_track_combination, sizeof(esn_track_combination));
+	
+    DBGPRINTF("OEMPriv_GetItem_CFGI_ESN_TRACKING_COMBINATION meid %s,ruimid %s",oemi_cache.m_esn_track_combination.meid_me,oemi_cache.m_esn_track_combination.ruim_id);
+    return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_ESN_TRACKING_COMBINATION(void *pBuff)
+{
+
+	/* int len = STRLEN((void*)oemi_cache.mizone_num);
+	MSG_FATAL("OEMPriv_SetItem_CFGI_MIZONE_NUM,,,,,,,len==%d",len,0,0);
+	MEMCPY(oemi_cache.mizone_num, pBuff, sizeof(uint16) * OEMNV_LOCKMUM_MAXLEN);
+    OEMPriv_WriteOEMConfigList(); 
+    */
+    MEMCPY((void*) &oemi_cache.m_esn_track_combination, pBuff, sizeof(esn_track_combination));
+	
+    DBGPRINTF("OEMPriv_SetItem_CFGI_ESN_TRACKING_COMBINATION meid %s,ruimid %s",oemi_cache.m_esn_track_combination.meid_me,oemi_cache.m_esn_track_combination.ruim_id);
+    OEMPriv_WriteOEMConfigList(); 
+    return SUCCESS;
+}
+#endif
 
 
 static int OEMPriv_GetItem_CFGI_COUNT_OF_MAIN(void *pBuff)
@@ -11652,6 +11724,22 @@ static int OEMPriv_SetItem_CFGI_ESN_TRACK_NUMBER(void *pBuff)
     OEMPriv_WriteOEMConfigList(); 
     return SUCCESS;
 }
+
+static int OEMPriv_GetItem_CFGI_ESN_TRACK_NUMBER_TWO(void *pBuff) //CFGI_ESN_TRACK_NUMBER_TWO
+{
+   MEMCPY(pBuff, oemi_cache.m_esn_track_num_two, sizeof(char) * OEMNV_LOCKMUM_MAXLEN);
+   return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_ESN_TRACK_NUMBER_TWO(void *pBuff)
+{
+	int len = STRLEN((void*)oemi_cache.m_esn_track_num_two);
+	MEMCPY(oemi_cache.m_esn_track_num_two, pBuff, sizeof(char) * OEMNV_LOCKMUM_MAXLEN);
+    
+    DBGPRINTF("OEMPriv_SetItem_CFGI_ESN_TRACK_NUMBER_TWO %s",oemi_cache.m_esn_track_num_two);
+    OEMPriv_WriteOEMConfigList(); 
+    return SUCCESS;
+}
+
 
 static int OEMPriv_GetItem_CFGI_ESN_TRACK_TIME(void *pBuff) //CFGI_ESN_TRACK_TIME
 {
@@ -11801,6 +11889,41 @@ static int OEMPriv_SetItem_CFGI_BT_STATUS(void *pBuff)
     return SUCCESS;
 }
 #endif
+
+static int OEMPriv_GetItem_CFGI_FACTORYSET_COUNT(void *pBuff) 
+{
+    *(uint8 *) pBuff = oemi_cache.factoryset_count;
+    return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_FACTORYSET_COUNT(void *pBuff) 
+{
+    if (oemi_cache.factoryset_count != *(uint8 *)pBuff)
+	{
+		oemi_cache.factoryset_count = *(uint8 *)pBuff;
+		OEMPriv_WriteOEMConfigList();
+	}
+    return SUCCESS;
+}   
+
+static int OEMPriv_GetItem_CFGI_FACTORYSET_COUNT_EX(void *pBuff) 
+{
+    *(uint8 *) pBuff = oemi_cache.factoryset_count_ex;
+	return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_FACTORYSET_COUNT_EX(void *pBuff) 
+{
+    if (oemi_cache.factoryset_count_ex != *(uint8 *)pBuff)
+    {
+        oemi_cache.factoryset_count_ex = *(uint8 *)pBuff;
+        OEMPriv_WriteOEMConfigList();
+    }
+
+    return SUCCESS;
+}  
+
+
 //Add End
 static int OEMPriv_GetItem_CFGI_FLSHLITHG_STATUS(void *pBuff)
 {
