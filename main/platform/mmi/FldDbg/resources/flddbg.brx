@@ -358,6 +358,15 @@
 	<String Id="1020" Name="IDS_NV_VALUE" Encoding="Unicode">
 		<Text>NV Value</Text>
 	</String>
+	<String Id="1021" Name="IDS_FACTORY_COUNT" Encoding="Unicode">
+		<Text>FactorySet Count</Text>
+	</String>
+	<String Id="1022" Name="IDS_FROM_QUICKTEST" Encoding="Unicode">
+		<Text>From Quicktest:</Text>
+	</String>
+	<String Id="1023" Name="IDS_FROM_SETTING" Encoding="Unicode">
+		<Text>From Setting:</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="1" Name="IDD_TOP_DIALOG" Focus="1">
@@ -649,5 +658,14 @@
 				<Items/></Text>
 		</Controls>
 	</Dialog>
+	<DIALOG Id="36" Name="IDD_FACTORY_COUNT" Focus="7036">
+		<Controls>
+			<Static Id="7036" Name="IDC_COUNT_STAT" Flags="40000">
+				<Items/></Static>
+			<SoftKey Id="7076" Name="IDC_COUNT_SOFTKEY">
+				<Items/>
+			</SoftKey>
+		</Controls>
+	</DIALOG>
 </Dialogs>
 </BREWRes>

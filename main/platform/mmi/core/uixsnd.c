@@ -2725,8 +2725,8 @@ void uisnd_vibrate(uint16 wDuration,
 #ifdef FEATURE_VERSION_C260_IC19
     snd_freq_tone_start(SND_DEVICE_CURRENT,
 				   SND_METHOD_RING,
-				   180,/*188*/
-				   180,/*188*/
+				   175,/*188*/
+				   175,/*188*/
 				   (uint16)(1000),
 				   (snd_apath_type)(SND_APATH_LOCAL),
 				   callback_ptr,

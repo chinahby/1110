@@ -391,6 +391,11 @@ static boolean CFieldDebug_VersionMenuHandleEvent(CFieldDebug *pme,
                                                AEEEvent  eCode,
                                                uint16    wParam,
                                                uint32    dwParam);
+static boolean CFieldDebug_FactorySetCountHandleEvent(CFieldDebug *pme,
+                                               AEEEvent  eCode,
+                                               uint16    wParam,
+                                               uint32    dwParam);
+
 static boolean CFieldDebug_MMCHandleEvent(CFieldDebug *pme,
                                                AEEEvent  eCode,
                                                uint16    wParam,
@@ -443,6 +448,7 @@ static void CFieldDebug_DrawSMSMOSOScreen(CFieldDebug *pme);
 static void CFieldDebug_DrawVoicePrivScreen(CFieldDebug *pme);
 static AECHAR* CFieldDebug_DebugScreenReadItem(CFieldDebug *pme);
 static void CFieldDebug_DrawVersionScreen(CFieldDebug *pme);
+static void CFieldDebug_DrawFactorySetCountScreen(CFieldDebug *pme);
 static void CFieldDebug_ClearCallBackFn(IShell *ps);
 static boolean CFieldDebug_ClearFPLMN(CFieldDebug* pme);
 static boolean CFieldDebug_NET_LOCK_HandleEvent(CFieldDebug *pme,
@@ -645,7 +651,8 @@ static const PFNAEEEVENT sDialogEventHandlers[] =
    (PFNAEEEVENT) CFieldDebug_MNC_HandleEvent,
    (PFNAEEEVENT) CFieldDebug_MCC_HandleEvent,
    (PFNAEEEVENT) CFieldDebug_SID_HandleEvent,
-   (PFNAEEEVENT) CFieldDebug_NVSETTINGHandleEvent
+   (PFNAEEEVENT) CFieldDebug_NVSETTINGHandleEvent,
+   (PFNAEEEVENT) CFieldDebug_FactorySetCountHandleEvent
 };
 
 
@@ -1089,6 +1096,7 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
       IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_JPEG_DECODE,  IDS_JPEG_DECODE, NULL, 0);
       IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_RATS_TITLE,  IDS_RATS_TITLE, NULL, 0);   
       IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_STRING_NET_LOCK,  IDS_STRING_NET_LOCK, NULL, 0);  
+      IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_FACTORY_COUNT,  IDS_FACTORY_COUNT, NULL, 0);      
       MENU_SETBOTTOMBAR(pm,BTBAR_OK_CANCEL); 
       }                                     
       break;
@@ -1160,7 +1168,14 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
 			MENU_SETBOTTOMBAR(pm,BTBAR_OK_CANCEL); 
 			MSG_FATAL ("EVT_DIALOG_START wParam == IDD_NET_LOCK_DIALOG222222222", 0, 0, 0);
        }                                    
-      break;      
+      break;    
+    case IDD_FACTORY_COUNT:
+    {
+        psk = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam, IDC_COUNT_STAT);     
+        IMENUCTL_AddItem(psk, FLDDBG_RES_FILE, IDS_CANCEL,  IDS_CANCEL, NULL, 0);  
+        break;
+    }
+        
     case IDD_VERSION_DIALOG:
     	{
 	    
@@ -1575,6 +1590,51 @@ static boolean CFieldDebug_VersionMenuHandleEvent(CFieldDebug *pme,
    return FALSE;
 }
 
+
+static boolean CFieldDebug_FactorySetCountHandleEvent(CFieldDebug *pme,
+                                                                       AEEEvent  eCode,
+                                                                       uint16    wParam,
+                                                                       uint32    dwParam)
+{
+   PARAM_NOT_REF(dwParam)
+
+   switch (eCode) {
+
+   case EVT_COMMAND:
+      if (wParam == IDS_DONE_SK) {
+         (void) CFieldDebug_MoveToDialog(pme, IDD_TOP_DIALOG);
+         return TRUE;
+      }
+      return FALSE;
+
+   case EVT_KEY:
+      switch (wParam) {
+
+      case AVK_CLR:
+         if (pme->m_dlgID == IDD_TOP_DIALOG)
+         {
+            (void) CFieldDebug_MoveToDialog(pme, IDD_TOP_DIALOG);
+         }  
+         return TRUE;
+
+      default:
+         break;
+      }
+      return FALSE;
+
+   case EVT_DIALOG_START:
+      (void) CFieldDebug_OnDialogStart (pme, wParam, dwParam);
+      CFieldDebug_DrawFactorySetCountScreen(pme);
+      return TRUE;
+
+   case EVT_DIALOG_END:
+      return TRUE;
+
+   default:
+      break;
+   }
+   return FALSE;
+}
 
 
 /*=============================================================================
@@ -3613,7 +3673,13 @@ static boolean CFieldDebug_TopMenuHandleEvent(CFieldDebug * pme,
 	  	 MSG_FATAL ("CFieldDebug_TopMenuHandleEvent wParam == IDS_BREWSETTUBG_TITLE", 0, 0, 0);
 	  	(void) CFieldDebug_MoveToDialog(pme, IDD_NET_LOCK_DIALOG);//进入BREWSETING 菜单
          return TRUE;
-	  }      
+	  }    
+      if (wParam == IDS_FACTORY_COUNT)     
+	  {
+	  	 MSG_FATAL ("CFieldDebug_TopMenuHandleEvent wParam == IDS_FACTORY_COUNT", 0, 0, 0);
+	  	(void) CFieldDebug_MoveToDialog(pme, IDD_FACTORY_COUNT);//进入BREWSETING 菜单
+         return TRUE;
+	  } 
 
       //Create JPEG Dialog
       if (wParam == IDS_JPEG_DECODE)
@@ -5498,6 +5564,74 @@ static void CFieldDebug_DrawVersionScreen(CFieldDebug * pme)
  //currentLine = ISTATIC_GoToLine(p_stk, currentLine);
    (void) ISTATIC_Redraw(p_stk);
 }
+
+
+
+static void CFieldDebug_DrawFactorySetCountScreen(CFieldDebug * pme)
+{
+    AECHAR szBuf[64];
+    AECHAR str[32];
+    AECHAR strct1[10];
+    AECHAR strct2[10];
+    IDialog *p_dlg;
+    IStatic *p_stk;
+    int ret = 0;  
+    uint8 factoryset_count = 0;
+    uint8 factoryset_count_ex = 0;
+    
+    MSG_FATAL("CFieldDebug_DrawFactorySetCountScreen Start", 0, 0, 0);
+ 
+    MEMSET(szBuf,  0, sizeof(szBuf));    
+    
+    OEM_GetConfig(CFGI_FACTORYSET_COUNT, &factoryset_count, sizeof(uint8));  
+    OEM_GetConfig(CFGI_FACTORYSET_COUNT_EX, &factoryset_count_ex, sizeof(uint8)); 
+    
+    ISHELL_LoadResString(pme->a.m_pIShell,
+                               FLDDBG_RES_FILE,
+                               IDS_FROM_QUICKTEST,
+                               szBuf,
+                               sizeof(szBuf));  
+
+    ISHELL_LoadResString(pme->a.m_pIShell,
+                               FLDDBG_RES_FILE,
+                               IDS_FROM_SETTING,
+                               str,
+                               sizeof(str));
+    
+
+    WSPRINTF(strct1, sizeof(strct1), L"%d", factoryset_count); 
+    WSPRINTF(strct2, sizeof(strct2), L"%d", factoryset_count_ex); 
+   
+    WSTRCAT(szBuf,L"\n");  
+    WSTRCAT(szBuf, strct1);
+    WSTRCAT(szBuf, L"\n");
+    
+    WSTRCAT(szBuf, str);
+    WSTRCAT(szBuf,L"\n");   
+    WSTRCAT(szBuf, strct2);
+    WSTRCAT(szBuf, L"\n");
+    
+   
+   p_dlg = ISHELL_GetActiveDialog(pme->a.m_pIShell);
+   p_stk = (IStatic *) IDIALOG_GetControl(p_dlg, IDC_COUNT_STAT);
+
+   if(p_stk == NULL)
+   {
+       MSG_FATAL("CFieldDebug_DrawEsnScreen 2 p_stk == NULL", 0, 0, 0);
+   }
+   // Set the values of the title and text strings for this control
+    ISTATIC_SetProperties(p_stk, ST_UNDERLINE|ST_NOSCROLL|ST_CENTERTITLE);
+   (void) ISTATIC_SetText(p_stk,
+                          NULL,
+                          szBuf,
+                          AEE_FONT_NORMAL,
+                          AEE_FONT_NORMAL);
+   
+   (void) ISTATIC_Redraw(p_stk);
+   MSG_FATAL("CFieldDebug_DrawEsnScreen End", 0, 0, 0);
+
+}
+
 /*===========================================================================
 FUNCTION CFieldDebug_DrawSMSMOSOScreen
 

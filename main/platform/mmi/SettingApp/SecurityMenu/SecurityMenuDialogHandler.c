@@ -6963,6 +6963,13 @@ static void SecurityMenu_RestoryFactorySet(CSecurityMenu *pMe)
         }
     }
 
+    {
+        uint8 count = 0;       
+        OEM_GetConfig(CFGI_FACTORYSET_COUNT_EX, &count, sizeof(uint8));    
+        count++;
+        OEM_SetConfig(CFGI_FACTORYSET_COUNT_EX, &count, sizeof(uint8)); 
+    }
+
     IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_ALARM, ANNUN_STATE_ALARM_OFF/*ANNUN_STATE_OFF*/);
     
 #ifdef FEATURE_VERSION_C316

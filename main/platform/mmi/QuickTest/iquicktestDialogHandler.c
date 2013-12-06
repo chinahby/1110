@@ -4026,7 +4026,14 @@ static boolean  QuickTest_RestoreFactory_Handler(CQuickTest *pMe,
             return TRUE;
 
         case EVT_DIALOG_END:
+        {
+            uint8 count = 0;	   
+            OEM_GetConfig(CFGI_FACTORYSET_COUNT, &count, sizeof(uint8)); 	
+            count++;
+            OEM_SetConfig(CFGI_FACTORYSET_COUNT, &count, sizeof(uint8)); 	
+            
             return TRUE;
+        }
 
         case EVT_KEY:
             switch(wParam)
