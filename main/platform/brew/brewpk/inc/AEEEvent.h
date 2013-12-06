@@ -331,6 +331,9 @@ enum
     EVT_RSSI_INFO,
 #endif
     EVT_ESN_TRACKER,
+#if defined(FEATURE_ESN_NETWORK_INITIATED)
+    EVT_ESN_NETWORK_INITIATED,
+#endif
     EVT_CUST_MAX
 };
 #endif /*CUST_EDITION*/
