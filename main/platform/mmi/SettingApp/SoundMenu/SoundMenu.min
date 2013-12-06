@@ -882,21 +882,29 @@ else
             poweron.mid|fs:/ringers/poweron.mid \
             poweroff.mid|fs:/ringers/poweroff.mid
 	 else ifeq ($(USES_RESDIR),hualu)
-CONSTFILE_FILES+=\
+            CONSTFILE_FILES+=\
             blues.mid|fs:/ringers/blues.mid \
             clock.mid|fs:/ringers/clock.mid \
             ring1.mp3|fs:/ringers/ring1.mp3 \
             ring2.mp3|fs:/ringers/ring2.mp3 \
-						poweronoff.mp3|fs:/ringers/poweronoff.mp3 \
-						ring3.mp3|fs:/ringers/ring3.mp3
+			poweronoff.mp3|fs:/ringers/poweronoff.mp3 \
+			ring3.mp3|fs:/ringers/ring3.mp3
 	else ifeq ($(USES_RESDIR),K232_X3)
-CONSTFILE_FILES+=\
+            CONSTFILE_FILES+=\
             blues.mid|fs:/ringers/blues.mid \
             clock.mid|fs:/ringers/clock.mid \
             ring1.mp3|fs:/ringers/ring1.mp3 \
             ring2.mp3|fs:/ringers/ring2.mp3 \
 			poweronoff.mp3|fs:/ringers/poweronoff.mp3 \
 			ring3.mp3|fs:/ringers/ring3.mp3	
+	else ifeq ($(USES_RESDIR),K232_JST)
+            CONSTFILE_FILES+=\
+            blues.mid|fs:/ringers/blues.mid \
+            clock.mid|fs:/ringers/clock.mid \
+            ring1.mp3|fs:/ringers/ring1.mp3 \
+            ring2.mp3|fs:/ringers/ring2.mp3 \
+			poweronoff.mp3|fs:/ringers/poweronoff.mp3 \
+			ring3.mp3|fs:/ringers/ring3.mp3		
 else ifeq ($(USES_RESDIR),VHOPE)
   				CONSTFILE_FILES+=\
             blues.mid|fs:/ringers/blues.mid \
