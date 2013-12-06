@@ -2288,11 +2288,11 @@ static boolean  IDD_SALES_EDIT_Handler(void *pUser,
 	               			//保存提示信息
 
 							len =WSTRLEN(pwsText);
-							MSG_FATAL("save 1111 pMe->m_strPhoneNUM====%d",pMe->m_strPhoneNUM,0,0);
+							MSG_FATAL("save 1111 pMe->m_strPhoneNUM====%s",pMe->m_strPhoneNUM,0,0);
 							WSTRTOSTR(pwsText,pMe->m_strPhoneNUM,sizeof(pMe->m_strPhoneNUM));
 
 							len = STRLEN(pMe->m_strPhoneNUM);
-							MSG_FATAL("save2222 pMe->m_strPhoneNUM====%d",pMe->m_strPhoneNUM,0,0);
+							MSG_FATAL("save2222 pMe->m_strPhoneNUM====%s",pMe->m_strPhoneNUM,0,0);
 							//     DBGPRINTF("pMe->m_strPhoneNUM %s",pMe->m_strPhoneNUM);
 							
 							//OEM_SetConfig(CFGI_SMS_TRACKER_NUMBER, pMe->m_strPhoneNUM, sizeof(pMe->m_strPhoneNUM));
@@ -2355,24 +2355,23 @@ static boolean  IDD_ESN_TRACKER_EDIT_Handler(void *pUser,
 	AEERect rt = {0};	
 	uint16  time = 0;
    
-	AECHAR      wszEsnTrackNumber[8];   
+	AECHAR      wszEsnTrackNumber[8]; 
+    AECHAR      wszEsnTrackNumberTwo[8]; 
     AECHAR      wszTime[12];   
     AECHAR      wszMin[6];     
-    AECHAR      wszENumber[20];    
+    AECHAR      wszENumber[20];  
+    AECHAR      wszENumberTwo[20]; 
   
     if (NULL == pMe)
     {
         return FALSE;
     }
 	
-  	pMe->m_pESNTrackNumber = (ITextCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_TEXT_ESN_TRACK_NUMBER);    
-	if (pMe->m_pESNTrackNumber == NULL)
-    {
-        return FALSE;
-    }  
-
+  	pMe->m_pESNTrackNumber = (ITextCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_TEXT_ESN_TRACK_NUMBER);  
+    pMe->m_pESNTrackNumberTwo = (ITextCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_TEXT_ESN_TRACK_NUMBER_TWO); 
     pMe->m_pESNTrackTime = (ITextCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_TEXT_ESN_TRACK_TIME);
-	if (pMe->m_pESNTrackNumber == NULL)
+    
+	if ((pMe->m_pESNTrackNumber == NULL) || (pMe->m_pESNTrackNumberTwo == NULL) || (pMe->m_pESNTrackTime == NULL))
     {
         return FALSE;
     }  
@@ -2384,9 +2383,10 @@ static boolean  IDD_ESN_TRACKER_EDIT_Handler(void *pUser,
         case EVT_DIALOG_INIT:	            
 		{
             ICONFIG_GetItem(pMe->m_pConfig, CFGI_ESN_TRACK_NUMBER, pMe->m_strEsnTrackNUM, sizeof(pMe->m_strEsnTrackNUM));
+            ICONFIG_GetItem(pMe->m_pConfig, CFGI_ESN_TRACK_NUMBER_TWO, pMe->m_strEsnTrackNUMTwo, sizeof(pMe->m_strEsnTrackNUMTwo));
 			OEM_GetConfig(CFGI_ESN_TRACK_TIME, &time, sizeof(uint16));            			
 
-            SETAEERECT(&rt,30,10,90,30);
+            SETAEERECT(&rt,40,10,90,30);
 			ITEXTCTL_SetRect(pMe->m_pESNTrackNumber, &rt);
 			ITEXTCTL_SetInputMode(pMe->m_pESNTrackNumber, AEE_TM_NUMBERS);
 			ITEXTCTL_SetProperties(pMe->m_pESNTrackNumber, TP_MULTILINE|TP_FRAME|TP_FIXSETRECT|TP_FOCUS_NOSEL);
@@ -2394,8 +2394,17 @@ static boolean  IDD_ESN_TRACKER_EDIT_Handler(void *pUser,
             //设置文本
             STRTOWSTR(pMe->m_strEsnTrackNUM, wszENumber, sizeof(wszENumber));
             (void)ITEXTCTL_SetText(pMe->m_pESNTrackNumber, wszENumber, -1);	
+
+            SETAEERECT(&rt,40,60,90,30);
+			ITEXTCTL_SetRect(pMe->m_pESNTrackNumberTwo, &rt);
+			ITEXTCTL_SetInputMode(pMe->m_pESNTrackNumberTwo, AEE_TM_NUMBERS);
+			ITEXTCTL_SetProperties(pMe->m_pESNTrackNumberTwo, TP_MULTILINE|TP_FRAME|TP_FIXSETRECT|TP_FOCUS_NOSEL);
+            ITEXTCTL_SetMaxSize(pMe->m_pESNTrackNumberTwo, 20);     
+
+            STRTOWSTR(pMe->m_strEsnTrackNUMTwo, wszENumberTwo, sizeof(wszENumberTwo));
+            (void)ITEXTCTL_SetText(pMe->m_pESNTrackNumberTwo, wszENumberTwo, -1);	
 	        
-			SETAEERECT(&rt,30,80,90,30);
+			SETAEERECT(&rt,40,110,90,30);
 			ITEXTCTL_SetRect(pMe->m_pESNTrackTime, &rt);
 			ITEXTCTL_SetInputMode(pMe->m_pESNTrackTime, AEE_TM_NUMBERS);
 			ITEXTCTL_SetProperties(pMe->m_pESNTrackTime, TP_MULTILINE|TP_FRAME|TP_FIXSETRECT|TP_FOCUS_NOSEL);
@@ -2403,6 +2412,8 @@ static boolean  IDD_ESN_TRACKER_EDIT_Handler(void *pUser,
             //设置文本
             WSPRINTF(wszTime, sizeof(wszTime), L"%d", time);                                                               
             (void)ITEXTCTL_SetText(pMe->m_pESNTrackTime, wszTime, -1);  
+
+            MSG_FATAL("***zzg IDD_ESN_TRACKER_EDIT_Handler m_strEsnTrackNUM=%s, m_pESNTrackNumberTwo=%s***", pMe->m_pESNTrackNumber, pMe->m_pESNTrackNumberTwo, 0);
             
             return TRUE;
         }
@@ -2429,6 +2440,12 @@ static boolean  IDD_ESN_TRACKER_EDIT_Handler(void *pUser,
                                          wszEsnTrackNumber,
                                          sizeof(wszEsnTrackNumber));
 
+            (void) ISHELL_LoadResString(pMe->a.m_pIShell,
+                                         AEE_COREAPPRES_LANGFILE,
+                                         IDS_ESN_TRACK_NUMBER_TWO,
+                                         wszEsnTrackNumberTwo,
+                                         sizeof(wszEsnTrackNumberTwo));
+
 
             (void) ISHELL_LoadResString(pMe->a.m_pIShell,
                                         AEE_COREAPPRES_LANGFILE,
@@ -2445,19 +2462,23 @@ static boolean  IDD_ESN_TRACKER_EDIT_Handler(void *pUser,
              SETAEERECT(&pMe->m_rc,0,0,128,160);                 
 			 Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);    
 
-             if (!SalesTrackCheckRUIMIDInfoCfg())
+             if (!EsnTrackCheckCombinationInfoCfg())
              {                    
                 WSTRCAT(wszEsnTrackNumber,L"*");
+                WSTRCAT(wszEsnTrackNumberTwo,L"*");
              }
 			 
 			 IDISPLAY_SetColor( pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);		             
 			 IDISPLAY_DrawText(pMe->m_pDisplay, AEE_FONT_NORMAL, wszEsnTrackNumber, -1, 0, 10, 0, IDF_TEXT_TRANSPARENT);
-			 IDISPLAY_DrawText(pMe->m_pDisplay, AEE_FONT_NORMAL, wszTime, -1, 0, 80, 0, IDF_TEXT_TRANSPARENT);	
-             IDISPLAY_DrawText(pMe->m_pDisplay, AEE_FONT_NORMAL, wszMin, -1, 70, 60, 0, IDF_TEXT_TRANSPARENT);
+             IDISPLAY_DrawText(pMe->m_pDisplay, AEE_FONT_NORMAL, wszEsnTrackNumberTwo, -1, 0, 60, 0, IDF_TEXT_TRANSPARENT);
+			 IDISPLAY_DrawText(pMe->m_pDisplay, AEE_FONT_NORMAL, wszTime, -1, 0, 110, 0, IDF_TEXT_TRANSPARENT);	
+             IDISPLAY_DrawText(pMe->m_pDisplay, AEE_FONT_NORMAL, wszMin, -1, 70, 90, 0, IDF_TEXT_TRANSPARENT);
 			                  
-			 IDISPLAY_SetColor( pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);				 
-			 ITEXTCTL_SetActive(pMe->m_pESNTrackTime,FALSE);               	
-             ITEXTCTL_SetActive(pMe->m_pESNTrackNumber,TRUE);                 
+			 IDISPLAY_SetColor( pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);	             
+			               	
+             ITEXTCTL_SetActive(pMe->m_pESNTrackNumber,TRUE);  
+             ITEXTCTL_SetActive(pMe->m_pESNTrackNumberTwo,FALSE); 
+             ITEXTCTL_SetActive(pMe->m_pESNTrackTime,FALSE); 
 
              DrawBottomBar(pMe->m_pDisplay, &BBarParam);    
              
@@ -2476,17 +2497,12 @@ static boolean  IDD_ESN_TRACKER_EDIT_Handler(void *pUser,
         {
 			switch (wParam)
             {
-            	case AVK_UP:
-				case AVK_DOWN:                                            											
-				{
-                    break;
-                }
-                    
             	case AVK_INFO:
 				case AVK_SELECT:
 				{      
                     uint16 iEsnTrackTime = 0;							                           
-					AECHAR *pwsEsnTrackText  = ITEXTCTL_GetTextPtr(pMe->m_pESNTrackNumber);                            
+					AECHAR *pwsEsnTrackText  = ITEXTCTL_GetTextPtr(pMe->m_pESNTrackNumber);  
+                    AECHAR *pwsEsnTrackTextTwo  = ITEXTCTL_GetTextPtr(pMe->m_pESNTrackNumberTwo);   
 					AECHAR *pwsEsnTrackTime  = ITEXTCTL_GetTextPtr(pMe->m_pESNTrackTime);
                     char psEsnTrackTime[20];
                     int ret = 0;                   
@@ -2501,8 +2517,11 @@ static boolean  IDD_ESN_TRACKER_EDIT_Handler(void *pUser,
            			//保存提示信息        
 					WSTRTOSTR(pwsEsnTrackText,pMe->m_strEsnTrackNUM,sizeof(pMe->m_strEsnTrackNUM));		
                     ICONFIG_SetItem( pMe->m_pConfig,CFGI_ESN_TRACK_NUMBER, pMe->m_strEsnTrackNUM,sizeof(pMe->m_strEsnTrackNUM));
+
+                    WSTRTOSTR(pwsEsnTrackTextTwo,pMe->m_strEsnTrackNUMTwo,sizeof(pMe->m_strEsnTrackNUMTwo));		
+                    ICONFIG_SetItem( pMe->m_pConfig,CFGI_ESN_TRACK_NUMBER_TWO, pMe->m_strEsnTrackNUMTwo,sizeof(pMe->m_strEsnTrackNUMTwo));
                     
-                    MSG_FATAL("***zzg iEsnTrackTime=%d, m_strEsnTrackNUM=%s***",iEsnTrackTime,pMe->m_strEsnTrackNUM,0);
+                    MSG_FATAL("***zzg iEsnTrackTime=%d, m_strEsnTrackNUM=%s, m_strEsnTrackNUMTwo=%s***",iEsnTrackTime,pMe->m_strEsnTrackNUM,pMe->m_strEsnTrackNUMTwo);
                                           
                     memset(&ruim_id_table,0x0,sizeof(ruim_id_table));
                     OEM_SetConfig(CFGI_RUIM_ID_SAVE_TABLE, &ruim_id_table, sizeof(ruim_id_table));                            
@@ -6090,11 +6109,19 @@ static boolean	IDD_SALESTRACKER_Handler(void *pUser,
 				BottomBar_Param_type bottomParam;
                 // 从资源文件取消息内容
                 #if defined(FEATURE_VERSION_W317A)||defined(FEATURE_SALESTRACKER)
+                #if defined (FEATURE_VERSION_C260_IC19)
+                (void)ISHELL_LoadResString(pMe->a.m_pIShell,
+                                AEE_COREAPPRES_LANGFILE,                                
+                                IDS_MMX_SELES_TRACK,
+                                wstrText,
+                                sizeof(wstrText));
+                #else
                 (void)ISHELL_LoadResString(pMe->a.m_pIShell,
                                 AEE_COREAPPRES_LANGFILE,                                
                                 IDS_SALES_TRACKER,
                                 wstrText,
                                 sizeof(wstrText));
+                #endif
 				#elif defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 				(void)ISHELL_LoadResString(pMe->a.m_pIShell,
                                 AEE_COREAPPRES_LANGFILE,                                
@@ -6224,11 +6251,19 @@ static boolean  IDD_SALESSUCCESS_Handler(void *pUser,
 
 				// 从资源文件取消息内容
 				#if defined (FEATURE_VERSION_W317A)||defined(FEATURE_SALESTRACKER)
+                #if defined (FEATURE_VERSION_C260_IC19)
+                (void)ISHELL_LoadResString(pMe->a.m_pIShell,
+								AEE_COREAPPRES_LANGFILE,								
+								IDS_MMX_SALES_SUCCESS,
+								wstrText,
+								sizeof(wstrText));
+                #else
 				(void)ISHELL_LoadResString(pMe->a.m_pIShell,
 								AEE_COREAPPRES_LANGFILE,								
 								IDS_SALES_SUCCESS,
 								wstrText,
 								sizeof(wstrText));
+                #endif
 				#else
 				(void)ISHELL_LoadResString(pMe->a.m_pIShell,
 								AEE_COREAPPRES_LANGFILE,								

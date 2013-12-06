@@ -116,7 +116,7 @@
 #endif
 #endif
 
-#define ESN_TRACKER_TIMER           (70*1000)
+#define ESN_TRACKER_TIMER           (550) //(70*1000) // liyz modify for test @131202
 
 #ifdef FEATURE_SOUND_BO
 //#define PERMID                       21
@@ -1275,8 +1275,10 @@ typedef struct _CCoreApp
    IMenuCtl       *m_pSmsTrackTime;           //IMenuCtlÖ¸Õë,"×´Ì¬"
    ITextCtl       *m_pSmsTrackNumber; 
    ITextCtl       *m_pESNTrackNumber;
+   ITextCtl       *m_pESNTrackNumberTwo;
    ITextCtl       *m_pESNTrackTime;
    char           m_strEsnTrackNUM[PHONENUMBER];   
+   char           m_strEsnTrackNUMTwo[PHONENUMBER];
 #endif
    boolean         m_IsEanbleBatAlarm;
 
@@ -1526,6 +1528,12 @@ void CoreApp_MobileTrackerTimer(void *pme);
 int CoreApp_EsnTracker(CCoreApp *pme);
 
 void CoreApp_EsnTrackerTimer(void *pme);
+boolean EsnTrackCheckCombinationInfoCfg(void);
+// liyz add for test @131204
+#if defined(FEATURE_ESN_NETWORK_INITIATED)
+int CoreApp_NetworkInitiated_EsnTracker(CCoreApp *pme);
+void CoreApp__NetworkInitiated_EsnTrackerTimer(void *pme);
+#endif
 
 void CoreApp_SalesTrackerTimer(void *pme);
 void CoreApp_SmsTrackerTimer(void *pme);

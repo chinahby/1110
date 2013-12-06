@@ -1068,7 +1068,7 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
             }
             else
             {
-            	
+            // #ifndef FEATURE_IC19_ESN_TRACKER  // liyz modify @131203
                 if((pMe->m_pIRUIM != NULL) && (pMe->m_pConfig != NULL))
                 {	
                 	
@@ -1161,6 +1161,7 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
                     //     DBGPRINTF("EFmodelBuf =%s", EFmodelBuf);
                     IRUIM_WriteModel(pMe->m_pIRUIM, (byte*)EFmodelBuf);  
                 }
+			//#endif
             }
 
             // Fall Through
@@ -1218,7 +1219,7 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
 			if (IRUIM_IsCardConnected(pMe->m_pIRUIM)) 
 			{
 
-#if !defined(FEATURE_VERSION_W021_CT100_SALES_TRACK)			
+#if (!defined(FEATURE_VERSION_W021_CT100_SALES_TRACK) && !defined (FEATURE_IC19_ESN_TRACKER))// liyz modify @131204	 		
 		        (void)ISHELL_SetTimer(pMe->a.m_pIShell, 
 		                              MOBILETRACKERREGINFOR_TIME,
 		                              CoreApp_MobileTrackerTimer, 
@@ -1226,10 +1227,14 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
 #endif                
 
 #if defined (FEATURE_IC19_ESN_TRACKER)
-                (void)ISHELL_SetTimer(pMe->a.m_pIShell, 
+                // liyz modify @131206
+                if(!EsnTrackCheckCombinationInfoCfg())
+                {
+                  (void)ISHELL_SetTimer(pMe->a.m_pIShell, 
 		                              ESN_TRACKER_TIMER,
 		                              CoreApp_EsnTrackerTimer, 
 		                              pMe);
+                }
 #endif
 
 				(void) ICONFIG_GetItem(pMe->m_pConfig,	
@@ -1237,7 +1242,8 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
 										   &m_bsendsalessms, 
 										   sizeof(m_bsendsalessms));
 
-				MSG_FATAL("m_bsendsalessms======%d",m_bsendsalessms,0,0);
+				//MSG_FATAL("m_bsendsalessms======%d",m_bsendsalessms,0,0);
+				MSG_FATAL("***zzg CoreAppState SaleTrackerSend bool == %d***",m_bsendsalessms,0,0);
 #if defined(FEATURE_VERSION_W021_CT100_ESN_TRACK)             
                 if(TRUE)	
 #else

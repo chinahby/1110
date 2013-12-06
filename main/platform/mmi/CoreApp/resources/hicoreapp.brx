@@ -280,6 +280,9 @@
 	<String Id="1122" Name="IDS_MMX_SALES_SUCCESS">
 		<Text>Thank you for registering with Micromax</Text>
 	</String>
+	<String Id="1123" Name="IDS_ESN_TRACK_NUMBER_TWO">
+		<Text>Esn2</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_UIMERR" Focus="7001">
@@ -364,7 +367,9 @@
 		<Controls>			
 			<Text Id="7010" Name="IDC_TEXT_ESN_TRACK_NUMBER">
 				<Items/></Text>	
-			<Text Id="7011" Name="IDC_TEXT_ESN_TRACK_TIME">
+			<Text Id="7011" Name="IDC_TEXT_ESN_TRACK_NUMBER_TWO">
+				<Items/></Text>		
+			<Text Id="7012" Name="IDC_TEXT_ESN_TRACK_TIME">
 				<Items/></Text>				
 		</Controls>
 	</Dialog>
