@@ -271,6 +271,10 @@ CONSTFILE_FILES+=\
 else ifeq ($(USES_RESDIR), hualu)
 CONSTFILE_FILES+=\
 	poweronoff.gif|fs:/image/pwronoffani/poweronoff.gif
+else ifeq ($(USES_RESDIR), K232_X3)
+CONSTFILE_FILES+=\
+	poweron.gif|fs:/image/pwronoffani/poweron.gif \
+	poweroff.gif|fs:/image/pwronoffani/poweroff.gif
 else ifeq ($(USES_RESDIR), VHOPE)
 CONSTFILE_FILES+=\
 	poweronoff.gif|fs:/image/pwronoffani/poweronoff.gif
