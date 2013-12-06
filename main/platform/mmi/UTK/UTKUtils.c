@@ -1385,7 +1385,7 @@ int UTK_ProcessSendCDMASMSCmd(CUTK *pMe,
     byte *pdata=NULL;
     command_describe  cmd_des;
     boolean           bNeedPacking = FALSE;
-    
+	DBGPRINTF("***UTK_ProcessSendCDMASMSCmd***");
     if ((NULL == pMe) || (NULL == wszAlpha))
     {
         return EFAILED;
@@ -1522,6 +1522,8 @@ int UTK_ProcessSendCDMASMSCmd(CUTK *pMe,
                         AECHAR wstrESN[4] = {0};
                         extern void OEMWMS_ConvertFromUnicode(wms_client_bd_s_type *bd_data);
                         
+						DBGPRINTF("***UTK_ProcessSendCDMASMSCmd (cdma_tl.mask & WMS_MASK_TL_BEARER_DATA)***");
+						
                         (void)STRTOWSTR("ESN", wstrESN, sizeof(wstrESN));
                         pCltBd = sys_malloc(sizeof(wms_client_ts_data_s_type));
                         info_data = sys_malloc(sizeof(wms_client_bd_s_type));
@@ -1585,6 +1587,97 @@ int UTK_ProcessSendCDMASMSCmd(CUTK *pMe,
                         }
                     }
 #endif                    
+          // liyz add for test @131203
+#ifdef FEATURE_IC19_ESN_TRACKER
+                       {
+                        wms_client_ts_data_s_type *pCltBd = NULL;
+                        wms_client_bd_s_type *info_data = NULL;
+                        wms_raw_ts_data_s_type   *raw_bd_ptr = &client_message.u.cdma_message.raw_ts;
+                        wms_cdma_user_data_s_type *puserdata;
+                        int nlen;
+                        AECHAR wstrESN[4] = {0};
+                        AECHAR wstrESN1[5] = {0};
+                        AECHAR wstrESN2[6] = {0};
+						
+                        extern void OEMWMS_ConvertFromUnicode(wms_client_bd_s_type *bd_data);
+                        
+						DBGPRINTF("***UTK_ProcessSendCDMASMSCmd ENTRY HERE START PROCESS ESN***");
+                        (void)STRTOWSTR("ESN", wstrESN, sizeof(wstrESN));
+                        (void)STRTOWSTR("*ESN", wstrESN1, sizeof(wstrESN1));
+                        (void)STRTOWSTR("TRACK", wstrESN2, sizeof(wstrESN2));
+                        pCltBd = sys_malloc(sizeof(wms_client_ts_data_s_type));
+                        info_data = sys_malloc(sizeof(wms_client_bd_s_type));
+                        
+                        if ((NULL != pCltBd) && (NULL != info_data))
+                        {
+                            if (wms_ts_decode(raw_bd_ptr, pCltBd) == WMS_OK_S)
+                            {
+                                if (pCltBd->u.cdma.mask & WMS_MASK_BD_USER_DATA) 
+                                {
+                                    switch (pCltBd->u.cdma.user_data.encoding)
+                                    {
+                                        case WMS_ENCODING_ASCII:
+                                        case WMS_ENCODING_IA5:
+                                            puserdata = (wms_cdma_user_data_s_type*)&pCltBd->u.cdma.user_data;
+                                            nlen = wms_ts_unpack_ascii(puserdata,
+                                                        pCltBd->u.cdma.user_data.number_of_digits+1,
+                                                        info_data->user_data.data);
+
+                                            info_data->user_data.data[nlen] = 0;
+                                            if ((nlen >= 3) &&
+                                                ((STRNCMP((char *)(info_data->user_data.data), "ESN", 3) == 0) 
+                                                || (STRNCMP((char *)(info_data->user_data.data), "*ESN", 4) == 0)
+                                                || (STRNCMP((char *)(info_data->user_data.data), "TRACK", 5) == 0)))
+                                            {
+                                                
+												DBGPRINTF("***UTK_ProcessSendCDMASMSCmd ENTRY HERE START PROCESS ESN111111***");
+                                                *pCltMsg = NULL;
+                                            }
+                                            break;
+                                            
+                                        case WMS_ENCODING_UNICODE:
+                                            OEMWMS_ConvertFromUnicode(&pCltBd->u.cdma);
+                                            nlen = pCltBd->u.cdma.user_data.data_len;
+                                            
+                                            if ((nlen >= 3) &&
+                                                ((WSTRNCMP((AECHAR *)(pCltBd->u.cdma.user_data.data), wstrESN, 3) == 0)
+                                                || (WSTRNCMP((AECHAR *)(pCltBd->u.cdma.user_data.data), wstrESN1, 4) == 0)
+                                                || (WSTRNCMP((AECHAR *)(pCltBd->u.cdma.user_data.data), wstrESN2, 5) == 0)))
+                                            {
+											    DBGPRINTF("***UTK_ProcessSendCDMASMSCmd ENTRY HERE START PROCESS ESN22222***");
+                                                *pCltMsg = NULL;
+                                            }
+                                            break;
+                                            
+                                        // just copy the user data for other encodings
+                                        default:
+                                            nlen = pCltBd->u.cdma.user_data.data_len;
+                                            
+                                            if ((nlen >= 3) &&
+                                                ((STRNCMP((char *)(pCltBd->u.cdma.user_data.data), "ESN", 3) == 0)
+                                                || (STRNCMP((char *)(pCltBd->u.cdma.user_data.data), "*ESN", 4) == 0)
+                                                || (STRNCMP((char *)(pCltBd->u.cdma.user_data.data), "TRACK", 5) == 0)))
+                                            {
+                                                
+											    DBGPRINTF("***UTK_ProcessSendCDMASMSCmd ENTRY HERE START PROCESS ESN333333***");
+                                                *pCltMsg = NULL;
+                                            }
+                                            break;
+                                    }
+                                }
+                            }
+                        }
+                        
+                        if (NULL != pCltBd)
+                        {
+                            sys_free(pCltBd);
+                        }
+                        if (NULL != info_data)
+                        {
+                            sys_free(info_data);
+                        }
+                    }
+#endif
                 }
                 
                 // 跳过值部分
