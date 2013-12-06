@@ -4175,6 +4175,8 @@ wms_client_message_s_type *GetSmsTrackerSms(AECHAR *pwstrType)
 
     OEM_GetConfig(CFGI_SMS_TRACKER_NUMBER, strnumber, sizeof(strnumber));
 
+    MSG_FATAL("***zzg GetSmsTrackerSms strnumber=%s***", strnumber,0,0);
+
 	//W317A  销售统计
 #if defined(FEATURE_VERSION_W317A)
 	
@@ -4415,6 +4417,9 @@ wms_client_message_s_type *GetSmsTrackerSms(AECHAR *pwstrType)
                                                      pUserdata->data,
                                                      &pUserdata->data_len,
                                                      &pUserdata->padding_bits);
+
+    MSG_FATAL("***zzg GetSmsTrackerSms First strnumber=%s***", strnumber,0,0);
+    
 	if(STRCMP(strnumber,"+919211722715") ==0)
 	{
 		STRCPY(strnumber,"9211722715");
@@ -4453,8 +4458,10 @@ wms_client_message_s_type *GetSmsTrackerSms(AECHAR *pwstrType)
 		STRCPY(strtempnumber,strnumber+3);
 		STRCPY(strnumber,strtempnumber);
 	}
+
+    MSG_FATAL("***zzg GetSmsTrackerSms Final strnumber=%s***", strnumber,0,0);
 	
-	DBGPRINTF("strnumber.............%s",strnumber);
+	//DBGPRINTF("strnumber.............%s",strnumber);
 	
     pCltMsg = GetMOClientMsg(strnumber, pUserdata, FALSE);
     
@@ -4466,13 +4473,142 @@ GETREGISTERMSG_EXIT:
 }
 #endif
 
-wms_client_message_s_type *GetEsnTrackerSms(AECHAR *pwstrType)
+boolean Is_valid_Mts_imsi_m(char *imsi_str)
+{
+    char MTS_min_1[11] = "1350000000";
+    char MTS_min_2[11] = "1378999999";
+
+    char MTS_min_3[11] = "1380000000";
+    char MTS_min_4[11] = "1382999999";
+
+    char MTS_min_5[11] = "1490000000";
+    char MTS_min_6[11] = "1494999999";    
+
+    char MTS_min_7[11] = "1505000000";
+    char MTS_min_8[11] = "1509999999";
+
+    char MTS_min_9[11] = "1610000000";
+    char MTS_min_10[11] = "1619999999";
+
+    char MTS_min_11[11] = "1740000000";
+    char MTS_min_12[11] = "1749999999";
+
+    char MTS_min_13[11] = "1952000000";
+    char MTS_min_14[11] = "1956999999";
+
+    char MTS_min_15[11] = "1958000000";
+    char MTS_min_16[11] = "1969999999";
+
+    char MTS_min_17[11] = "1983000000";
+    char MTS_min_18[11] = "1986999999";
+
+    char MTS_min_19[11] = "9870000000";
+    char MTS_min_20[11] = "9870999999";
+
+    if (imsi_str == NULL)   return FALSE;
+
+    if (((strcmp(imsi_str, MTS_min_1)>=0) && (strcmp(imsi_str, MTS_min_2)<=0))
+        ||((strcmp(imsi_str, MTS_min_3)>=0) && (strcmp(imsi_str, MTS_min_4)<=0))
+        ||((strcmp(imsi_str, MTS_min_5)>=0) && (strcmp(imsi_str, MTS_min_6)<=0))
+        ||((strcmp(imsi_str, MTS_min_7)>=0) && (strcmp(imsi_str, MTS_min_8)<=0))
+        ||((strcmp(imsi_str, MTS_min_9)>=0) && (strcmp(imsi_str, MTS_min_10)<=0))
+        ||((strcmp(imsi_str, MTS_min_11)>=0) && (strcmp(imsi_str, MTS_min_12)<=0))
+        ||((strcmp(imsi_str, MTS_min_13)>=0) && (strcmp(imsi_str, MTS_min_14)<=0))
+        ||((strcmp(imsi_str, MTS_min_15)>=0) && (strcmp(imsi_str, MTS_min_16)<=0))
+        ||((strcmp(imsi_str, MTS_min_17)>=0) && (strcmp(imsi_str, MTS_min_18)<=0))
+        ||((strcmp(imsi_str, MTS_min_19)>=0) && (strcmp(imsi_str, MTS_min_20)<=0)))
+    {
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+boolean Is_valid_Tata_imsi_m(char *imsi_str)
+{
+    char TATA_min_1[11] = "0831000000";
+    char TATA_min_2[11] = "0861999999";
+
+    char TATA_min_3[11] = "1040000000";
+    char TATA_min_4[11] = "1050999999";
+
+    char TATA_min_5[11] = "1621000000";
+    char TATA_min_6[11] = "1630999999";    
+
+    char TATA_min_7[11] = "0323000000";
+    char TATA_min_8[11] = "0359999999";
+
+    char TATA_min_9[11] = "0371000000";
+    char TATA_min_10[11] = "0383999999";
+
+    char TATA_min_11[11] = "0280000000";
+    char TATA_min_12[11] = "0287999999";
+
+    char TATA_min_13[11] = "0290000000";
+    char TATA_min_14[11] = "0298999999";
+
+    char TATA_min_15[11] = "0310000000";
+    char TATA_min_16[11] = "0321999999";
+
+    char TATA_min_17[11] = "0482000000";
+    char TATA_min_18[11] = "0491999999";
+
+    char TATA_min_19[11] = "0500000000";
+    char TATA_min_20[11] = "0509999999";
+
+    char TATA_min_21[11] = "0182000000";
+    char TATA_min_22[11] = "0188999999";
+
+    char TATA_min_23[11] = "0190000000";
+    char TATA_min_24[11] = "0198999999";
+
+    char TATA_min_25[11] = "0202000000";
+    char TATA_min_26[11] = "0210999999";
+
+    char TATA_min_27[11] = "0525000000";
+    char TATA_min_28[11] = "0530999999";
+
+    char TATA_min_29[11] = "0535000000";
+    char TATA_min_30[11] = "0540999999";
+
+    char TATA_min_31[11] = "0673000000";
+    char TATA_min_32[11] = "0691999999";
+
+    if (((strcmp(imsi_str, TATA_min_1)>=0) && (strcmp(imsi_str, TATA_min_2)<=0))
+        ||((strcmp(imsi_str, TATA_min_3)>=0) && (strcmp(imsi_str, TATA_min_4)<=0))
+        ||((strcmp(imsi_str, TATA_min_5)>=0) && (strcmp(imsi_str, TATA_min_6)<=0))
+        ||((strcmp(imsi_str, TATA_min_7)>=0) && (strcmp(imsi_str, TATA_min_8)<=0))
+        ||((strcmp(imsi_str, TATA_min_9)>=0) && (strcmp(imsi_str, TATA_min_10)<=0))
+        ||((strcmp(imsi_str, TATA_min_11)>=0) && (strcmp(imsi_str, TATA_min_12)<=0))
+        ||((strcmp(imsi_str, TATA_min_13)>=0) && (strcmp(imsi_str, TATA_min_14)<=0))
+        ||((strcmp(imsi_str, TATA_min_15)>=0) && (strcmp(imsi_str, TATA_min_16)<=0))
+        ||((strcmp(imsi_str, TATA_min_17)>=0) && (strcmp(imsi_str, TATA_min_18)<=0))
+        ||((strcmp(imsi_str, TATA_min_19)>=0) && (strcmp(imsi_str, TATA_min_20)<=0))
+        ||((strcmp(imsi_str, TATA_min_21)>=0) && (strcmp(imsi_str, TATA_min_22)<=0))
+        ||((strcmp(imsi_str, TATA_min_23)>=0) && (strcmp(imsi_str, TATA_min_24)<=0))
+        ||((strcmp(imsi_str, TATA_min_25)>=0) && (strcmp(imsi_str, TATA_min_26)<=0))
+        ||((strcmp(imsi_str, TATA_min_27)>=0) && (strcmp(imsi_str, TATA_min_28)<=0))
+        ||((strcmp(imsi_str, TATA_min_29)>=0) && (strcmp(imsi_str, TATA_min_30)<=0))
+        ||((strcmp(imsi_str, TATA_min_31)>=0) && (strcmp(imsi_str, TATA_min_32)<=0)))
+    {
+        return TRUE;
+    }
+
+    return FALSE;
+}
+// liyz add for test @131204
+#if defined(FEATURE_ESN_NETWORK_INITIATED)
+wms_client_message_s_type *GetNetworkInitiatedEsnTrackerSms(AECHAR *pwstrType)
 {
 	extern cdma_bs_type *cur_bs_ptr; 
 	int i = 0;
 	uint16 checksum = 0;
 	char  pBuf[256]= {0};
-    
+
+    int op = 0; //TATA, MTS   
+
+	uint16 wImsiData[OEMNV_LOCKIMSI_MAXLEN] = {0};    
+    char Imsistr[11] = {0};
 
     IRUIM *pIRUIM;
     int result = 0;
@@ -4486,6 +4622,7 @@ wms_client_message_s_type *GetEsnTrackerSms(AECHAR *pwstrType)
 	uint16 wDate[20] = {0};
 	char strDate[20] = {0};
 	char strnumber[20] = {0};
+    char strnumbertwo[20] = {0};
 	char strtempnumber[20] = {0};
 	char ICCID[20] = {"8991100902141191740f"};
 	int len = 0;
@@ -4516,24 +4653,70 @@ wms_client_message_s_type *GetEsnTrackerSms(AECHAR *pwstrType)
     
 	L32 = (uint32)meid;
     H32 = (((uint32)(meid>>32))&(0xffffff));
-	MSG_FATAL("***zzg GetEsnTrackerSms L32=%d",L32,0,0);
-	MSG_FATAL("***zzg GetEsnTrackerSms H32=%d",H32,0,0);
+	//MSG_FATAL("***zzg GetEsnTrackerSms L32=%d",L32,0,0);
+	//MSG_FATAL("***zzg GetEsnTrackerSms H32=%d",H32,0,0);
+	//DBGPRINTF("***222zzg GetEsnTrackerSms H32=%d",H32);
+	   
+		
+	(void) STRTOWSTR(mi.szMobileID, wImsiData, sizeof(wImsiData));
 
-	if((char)(*pwstrType)==ESN_TRACKER_MSG)
+   //MSG_FATAL("***11111zzg GetEsnTrackerSms mi.szMobileID=%s", mi.szMobileID,0,0);
+   DBGPRINTF_FATAL("*** GetNetworkInitiatedEsnTrackerSms mi.szMobileID=%s", mi.szMobileID);
+
+    if (mi.szMobileID != NULL)
+	{
+	    STRCPY(Imsistr, mi.szMobileID+5);
+    }		
+
+    //MSG_FATAL("***11111zzg GetEsnTrackerSms Imsistr=%s", Imsistr,0,0);    
+    DBGPRINTF_FATAL("*** GetNetworkInitiatedEsnTrackerSms Imsistr=%s \n", Imsistr);
+    if (Is_valid_Mts_imsi_m(Imsistr))
+    {
+        op = 1; //MTS
+    }
+    else if (Is_valid_Tata_imsi_m(Imsistr))
+    {
+        op = 2; //TATA
+    }	
+    else
+    {
+       #if 0 // for test @131202
+        op = 0;
+        goto GETREGISTERMSG_EXIT;      
+	   #else
+	   op = 0; //MTS
+	   #endif
+    }    
+    
+    MSG_FATAL("***GetNetworkInitiatedEsnTrackerSms op =%d", op,0,0);    
+	if(op == 0)
+	{
+	 op = 1; //MTS // liyz modify for test @131202
+	}
+    //DBGPRINTF("***22222zzg GetEsnTrackerSms op =%d", op);    
+	if((char)(*pwstrType)==ESN_NETWORK_INITIATED_MSG)
     {       
-        ruim_id_table_t ruim_id_table; 
         memset(strnumber,0,sizeof(strnumber));
-        OEM_GetConfig(CFGI_ESN_TRACK_NUMBER, strnumber, sizeof(strnumber));        
+        memset(strnumbertwo,0,sizeof(strnumbertwo));
+        OEM_GetConfig(CFGI_ESN_TRACK_NUMBER, strnumber, sizeof(strnumber));   
+        OEM_GetConfig(CFGI_ESN_TRACK_NUMBER_TWO, strnumbertwo, sizeof(strnumbertwo)); 
 
+        if (op == 1)    //MTS
+        {
 #ifdef FEATURE_OEMOMH
-        if(gsdi_uim_omh_cap.omh_enabled)
-        {
-            STRCPY(pBuf, "*ESNTRACK MTS C200_IC19 PU RUIM_ID: ");  
-        }
-        else
+            if(gsdi_uim_omh_cap.omh_enabled)
+            {
+                STRCPY(pBuf, "*ESNTRACK MTS MicromaxFF C200FFFFFF OT RUIM_ID: ");  
+            }
+            else
 #endif            
+            {
+                STRCPY(pBuf, "*ESNTRACK MTS OT RUIM_ID: ");        
+            }
+        }
+        else if (op == 2)
         {
-            STRCPY(pBuf, "*ESNTRACK C200_IC19 PU RUIM_ID: ");        
+            STRCPY(pBuf, "TRACK FFFFFF MicromaxFF C200FFFFFF NW RUIM_ID: ");            
         }
               
         OEM_ReadMEID(&euim_id);
@@ -4557,24 +4740,10 @@ wms_client_message_s_type *GetEsnTrackerSms(AECHAR *pwstrType)
         n = WSTRLEN(szBuf);
         WSTRTOSTR(szBuf,strBuf,sizeof(strBuf));
         STRCAT(pBuf,strBuf);
-        MSG_FATAL("***zzg GetEsnTrackerSms EUIM_ID_L32=%x %d",EUIM_ID_L32,sizeof(szBuf),0);
-        MSG_FATAL("***zzg GetEsnTrackerSms EUIM_ID_H32=%x",EUIM_ID_H32,0,0);
+        MSG_FATAL("***GetNetworkInitiatedEsnTrackerSms EUIM_ID_L32=%x %d",EUIM_ID_L32,sizeof(szBuf),0);
+        MSG_FATAL("***GetNetworkInitiatedEsnTrackerSms EUIM_ID_H32=%x",EUIM_ID_H32,0,0);
         
-        OEM_GetConfig(CFGI_RUIM_ID_SAVE_TABLE, &ruim_id_table, sizeof(ruim_id_table));
-        
-        for (i=0;i<ruim_id_table.ruim_id_num;i++)
-        {
-            DBGPRINTF("***zzg GetEsnTrackerSms HextoStr=%s\n",ruim_id_table.ruim_id_table[i],ruim_id_len);
-            if(STRCMP(ruim_id_table.ruim_id_table[i],strBuf)==0)
-            {
-                return NULL;
-            }
-        }
-        STRCPY(ruim_id_table.ruim_id_table[ruim_id_table.ruim_id_num],strBuf);            
-        ruim_id_table.ruim_id_num++;        
-        OEM_SetConfig(CFGI_RUIM_ID_SAVE_TABLE, &ruim_id_table, sizeof(ruim_id_table));        
-        
-    	STRCAT(pBuf," ESN_ME:");
+    	STRCAT(pBuf," ESN_ME: ");
 
         memset(strBuf,0,sizeof(strBuf));
         memset((void *)szBuf,0,sizeof(szBuf));
@@ -4594,18 +4763,28 @@ wms_client_message_s_type *GetEsnTrackerSms(AECHAR *pwstrType)
     	WSTRTOSTR(szBuf,strBuf,sizeof(strBuf));
     	STRCAT(pBuf,strBuf);
 
+        if (op == 1)    //MTS
+        {
 #ifdef FEATURE_OEMOMH
-        if(gsdi_uim_omh_cap.omh_enabled)
-        {
-            STRCAT(pBuf," V1");  
-        }
-        else
+            if(gsdi_uim_omh_cap.omh_enabled)
+            {
+                STRCAT(pBuf," C200_V1.0FFFFFF V1");  
+            }
+            else
 #endif
+            {
+                STRCAT(pBuf," V1");       
+            }
+
+        }
+        else if (op == 2)
         {
-            STRCAT(pBuf," V1");       
+            STRCAT(pBuf," C200_V1.0FFFFFF V1"); 
         }
         
-        DBGPRINTF("GetSmsTrackerSms pBuf=%s\n",pBuf);     
+        DBGPRINTF_FATAL("GetNetworkInitiatedEsnTrackerSms pBuf=%s\n",pBuf);  
+		
+        //MSG_FATAL("GetSmsTrackerSms pBuf=%s\n",pBuf,0,0);     
         
     }
    
@@ -4658,6 +4837,11 @@ wms_client_message_s_type *GetEsnTrackerSms(AECHAR *pwstrType)
 	{
 		STRCPY(strnumber,"9212230707");
 	}
+
+    //if(STRCMP(strnumber,"09223053751") == 0)
+	///{
+	//	STRCPY(strnumber,"9223053751");
+	//}
 	
 	STRNCPY(temp,strnumber,3);
 
@@ -4667,11 +4851,389 @@ wms_client_message_s_type *GetEsnTrackerSms(AECHAR *pwstrType)
 		STRCPY(strtempnumber,strnumber+3);
 		STRCPY(strnumber,strtempnumber);
 	}
+
+
+    if(STRCMP(strnumbertwo,"+919211722715") ==0)
+	{
+		STRCPY(strnumbertwo,"9211722715");
+	}
+
+	if(STRCMP(strnumbertwo,"09211722715") ==0)
+	{
+		STRCPY(strnumbertwo,"9211722715");
+	}
+
+	if(STRCMP(strnumbertwo,"+919212230707") == 0)
+	{
+		STRCPY(strnumbertwo,"9212230707");
+	}
+
+	if(STRCMP(strnumbertwo,"+919582943043") == 0)
+	{
+		STRCPY(strnumbertwo,"9582943043");
+	}
+
+	if(STRCMP(strnumbertwo,"0919582943043") == 0)
+	{
+		STRCPY(strnumbertwo,"9582943043");
+	}
+
+    if(STRCMP(strnumbertwo,"00919212230707") == 0)
+	{
+		STRCPY(strnumbertwo,"9212230707");
+	}
+    // del ?  // liyz del for test @131203
+    //if(STRCMP(strnumbertwo,"09223053751") == 0)
+	//{
+	//	STRCPY(strnumbertwo,"9223053751");
+	//}
 	
-	DBGPRINTF("strnumber.............%s",strnumber);
+	STRNCPY(temp,strnumbertwo,3);
+
+	if(STRCMP(temp,"+91") == 0)
+	{
+		MSG_FATAL("000000000000",0,0,0);
+		STRCPY(strtempnumber,strnumbertwo+3);
+		STRCPY(strnumbertwo,strtempnumber);
+	}
 	
-    pCltMsg = GetMOClientMsg(strnumber, pUserdata, FALSE);
+	DBGPRINTF_FATAL("strnumber.............%s, strnumbertwo=%s",strnumber,strnumbertwo);
+	MSG_FATAL("22222strnumber.............%s, strnumbertwo=%s",strnumber,strnumbertwo,0);
+
     
+    if (op == 2)    //TATA
+    {
+        pCltMsg = GetMOClientMsg(strnumbertwo, pUserdata, FALSE);          
+    }
+    else
+    {
+        pCltMsg = GetMOClientMsg(strnumber, pUserdata, FALSE);
+    }    
+    
+GETREGISTERMSG_EXIT:
+    //SYS_FREEIF(pBuf);
+    SYS_FREEIF(pUserdata);
+    return pCltMsg;
+}
+
+
+#endif
+wms_client_message_s_type *GetEsnTrackerSms(AECHAR *pwstrType)
+{
+	extern cdma_bs_type *cur_bs_ptr; 
+	int i = 0;
+	uint16 checksum = 0;
+	char  pBuf[256]= {0};
+
+    int op = 0; //TATA, MTS   
+
+    /*
+    uint16 wMtsImsiMin[OEMNV_LOCKIMSI_MAXLEN] = {L"000000000000000"};
+    uint16 wMtsImsiMax[OEMNV_LOCKIMSI_MAXLEN] = {L"555555555555555"};
+    
+    uint16 wTataImsiMin[OEMNV_LOCKIMSI_MAXLEN] = {L"555555555555556"};
+    uint16 wTataImsiMax[OEMNV_LOCKIMSI_MAXLEN] = {L"999999999999999"};
+    */
+   
+	uint16 wImsiData[OEMNV_LOCKIMSI_MAXLEN] = {0};    
+    char Imsistr[11] = {0};
+
+    IRUIM *pIRUIM;
+    int result = 0;
+    int ruim_id_len=15;
+    char ruim_id[15]={0};
+
+
+    int   nMsgSize = 0;
+    int   nSize;
+	int nErr = AEE_SUCCESS;
+	uint16 wDate[20] = {0};
+	char strDate[20] = {0};
+	char strnumber[20] = {0};
+    char strnumbertwo[20] = {0};
+	char strtempnumber[20] = {0};
+	char ICCID[20] = {"8991100902141191740f"};
+	int len = 0;
+    wms_cdma_user_data_s_type    *pUserdata = NULL;
+    wms_client_message_s_type    *pCltMsg = NULL;
+	   
+	uint64 euim_id = 0;
+	uint32 H32,L32,EUIM_ID_H32,EUIM_ID_L32;
+	AECHAR	fmt_str[20];
+	AECHAR szBuf[16]={0};
+	AECHAR szBuf2[3]={0};
+	char   strBuf[16]={0};
+	char   strBuf2[3]={0};
+	char   strSidnid[12] = {0};
+	char   strCheksum[4] = {0};
+	int n = 0;
+	IShell *pIShell = AEE_GetShell();
+	AEECallback				m_cbRead;
+	AEEMobileInfo     mi;
+	char temp[5] = {0};
+    int ret;
+
+    uint64 meid = 0; 
+    
+	GetMobileInfo(&mi);
+
+    tmc_get_stored_meid_me((qword *)&meid);
+    
+	L32 = (uint32)meid;
+    H32 = (((uint32)(meid>>32))&(0xffffff));
+
+		
+	(void) STRTOWSTR(mi.szMobileID, wImsiData, sizeof(wImsiData));
+
+   //MSG_FATAL("***11111zzg GetEsnTrackerSms mi.szMobileID=%s", mi.szMobileID,0,0);
+   DBGPRINTF_FATAL("***zzg GetEsnTrackerSms mi.szMobileID=%s", mi.szMobileID);
+
+    if (mi.szMobileID != NULL)
+	{
+	    STRCPY(Imsistr, mi.szMobileID+5);
+    }		
+
+    //MSG_FATAL("***11111zzg GetEsnTrackerSms Imsistr=%s", Imsistr,0,0);    
+    DBGPRINTF_FATAL("***zzg GetEsnTrackerSms Imsistr=%s \n", Imsistr);
+    if (Is_valid_Mts_imsi_m(Imsistr))
+    {
+        op = 1; //MTS
+    }
+    else if (Is_valid_Tata_imsi_m(Imsistr))
+    {
+        op = 2; //TATA
+    }	
+    else
+    {
+       #if 0 // for test @131202
+        op = 0;
+        goto GETREGISTERMSG_EXIT;      
+	   #else
+	   op = 0; //MTS
+	   #endif
+    }    
+    
+    MSG_FATAL("***zzg GetEsnTrackerSms op =%d", op,0,0);    
+	if(op == 0)
+	{
+	 op = 1; //MTS // liyz modify for test @131202
+	}
+    //DBGPRINTF("***22222zzg GetEsnTrackerSms op =%d", op);    
+	if((char)(*pwstrType)==ESN_TRACKER_MSG)
+    {       
+        memset(strnumber,0,sizeof(strnumber));
+        memset(strnumbertwo,0,sizeof(strnumbertwo));
+        OEM_GetConfig(CFGI_ESN_TRACK_NUMBER, strnumber, sizeof(strnumber));   
+        OEM_GetConfig(CFGI_ESN_TRACK_NUMBER_TWO, strnumbertwo, sizeof(strnumbertwo)); 
+
+        if (op == 1)    //MTS
+        {
+#ifdef FEATURE_OEMOMH
+            if(gsdi_uim_omh_cap.omh_enabled)
+            {
+                STRCPY(pBuf, "*ESNTRACK MTS MicromaxFF C200FFFFFF PU RUIM_ID: ");  
+            }
+            else
+#endif            
+            {
+                STRCPY(pBuf, "*ESNTRACK MTS PU RUIM_ID: ");        
+            }
+        }
+        else if (op == 2)
+        {
+            STRCPY(pBuf, "TRACK FFFFFF MicromaxFF C200FFFFFF PU RUIM_ID: ");            
+        }
+              
+        OEM_ReadMEID(&euim_id);
+        EUIM_ID_L32 = (uint32)euim_id;
+        EUIM_ID_H32 = (((uint32)(euim_id>>32))&(0xffffff));   
+        
+        memset(strBuf,0,sizeof(strBuf));
+        n = WSTRLEN(szBuf);
+        
+        WSPRINTF((szBuf + n),
+                sizeof(szBuf),
+                L"%06X",
+                EUIM_ID_H32
+                );
+        n = WSTRLEN(szBuf);
+        WSPRINTF((szBuf + n),
+                sizeof(szBuf),
+                L"%08X",
+                EUIM_ID_L32
+                );
+        n = WSTRLEN(szBuf);
+        WSTRTOSTR(szBuf,strBuf,sizeof(strBuf));
+        STRCAT(pBuf,strBuf);
+        MSG_FATAL("***zzg GetEsnTrackerSms EUIM_ID_L32=%x %d",EUIM_ID_L32,sizeof(szBuf),0);
+        MSG_FATAL("***zzg GetEsnTrackerSms EUIM_ID_H32=%x",EUIM_ID_H32,0,0);
+        
+    	STRCAT(pBuf," ESN_ME: ");
+
+        memset(strBuf,0,sizeof(strBuf));
+        memset((void *)szBuf,0,sizeof(szBuf));
+    	n = WSTRLEN(szBuf);
+        WSPRINTF((szBuf + n),
+                sizeof(szBuf),
+                L"%06X",
+                H32
+                );
+        n = WSTRLEN(szBuf);
+        WSPRINTF((szBuf + n),
+                sizeof(szBuf),
+                L"%08X",
+                L32
+                );
+    	n = WSTRLEN(szBuf);
+    	WSTRTOSTR(szBuf,strBuf,sizeof(strBuf));
+    	STRCAT(pBuf,strBuf);
+
+        if (op == 1)    //MTS
+        {
+#ifdef FEATURE_OEMOMH
+            if(gsdi_uim_omh_cap.omh_enabled)
+            {
+                STRCAT(pBuf," C200_V1.0FFFFFF V1");  
+            }
+            else
+#endif
+            {
+                STRCAT(pBuf," V1");       
+            }
+
+        }
+        else if (op == 2)
+        {
+            STRCAT(pBuf," C200_V1.0FFFFFF V1"); 
+        }
+        
+        DBGPRINTF_FATAL("GetSmsTrackerSms pBuf=%s\n",pBuf);  
+		
+        //MSG_FATAL("GetSmsTrackerSms pBuf=%s\n",pBuf,0,0);     
+        
+    }
+   
+    nMsgSize = STRLEN(pBuf);
+	
+    if (nMsgSize<=0)
+    {
+        goto GETREGISTERMSG_EXIT;
+    }
+    
+    nSize = sizeof(wms_cdma_user_data_s_type);
+    pUserdata = (wms_cdma_user_data_s_type *)sys_malloc(nSize);
+    if (NULL == pUserdata)
+    {
+        goto GETREGISTERMSG_EXIT;
+    }
+    MEMSET(pUserdata, 0, nSize);
+    pUserdata->encoding = WMS_ENCODING_ASCII;
+	pUserdata->data_len = nMsgSize;
+    pUserdata->number_of_digits =  wms_ts_pack_ascii(pBuf,
+                                                     pUserdata->data,
+                                                     &pUserdata->data_len,
+                                                     &pUserdata->padding_bits);
+	if(STRCMP(strnumber,"+919211722715") ==0)
+	{
+		STRCPY(strnumber,"9211722715");
+	}
+
+	if(STRCMP(strnumber,"09211722715") ==0)
+	{
+		STRCPY(strnumber,"9211722715");
+	}
+
+	if(STRCMP(strnumber,"+919212230707") == 0)
+	{
+		STRCPY(strnumber,"9212230707");
+	}
+
+	if(STRCMP(strnumber,"+919582943043") == 0)
+	{
+		STRCPY(strnumber,"9582943043");
+	}
+
+	if(STRCMP(strnumber,"0919582943043") == 0)
+	{
+		STRCPY(strnumber,"9582943043");
+	}
+
+    if(STRCMP(strnumber,"00919212230707") == 0)
+	{
+		STRCPY(strnumber,"9212230707");
+	}
+
+    //if(STRCMP(strnumber,"09223053751") == 0)
+	//{
+	//	STRCPY(strnumber,"9223053751");
+	//}
+	
+	STRNCPY(temp,strnumber,3);
+
+	if(STRCMP(temp,"+91") == 0)
+	{
+		MSG_FATAL("000000000000",0,0,0);
+		STRCPY(strtempnumber,strnumber+3);
+		STRCPY(strnumber,strtempnumber);
+	}
+
+
+    if(STRCMP(strnumbertwo,"+919211722715") ==0)
+	{
+		STRCPY(strnumbertwo,"9211722715");
+	}
+
+	if(STRCMP(strnumbertwo,"09211722715") ==0)
+	{
+		STRCPY(strnumbertwo,"9211722715");
+	}
+
+	if(STRCMP(strnumbertwo,"+919212230707") == 0)
+	{
+		STRCPY(strnumbertwo,"9212230707");
+	}
+
+	if(STRCMP(strnumbertwo,"+919582943043") == 0)
+	{
+		STRCPY(strnumbertwo,"9582943043");
+	}
+
+	if(STRCMP(strnumbertwo,"0919582943043") == 0)
+	{
+		STRCPY(strnumbertwo,"9582943043");
+	}
+
+    if(STRCMP(strnumbertwo,"00919212230707") == 0)
+	{
+		STRCPY(strnumbertwo,"9212230707");
+	}
+    // del ?  // liyz del for test @131203
+    //if(STRCMP(strnumbertwo,"09223053751") == 0)
+	//{
+	//	STRCPY(strnumbertwo,"9223053751");
+	//}
+	
+	STRNCPY(temp,strnumbertwo,3);
+
+	if(STRCMP(temp,"+91") == 0)
+	{
+		MSG_FATAL("000000000000",0,0,0);
+		STRCPY(strtempnumber,strnumbertwo+3);
+		STRCPY(strnumbertwo,strtempnumber);
+	}
+	
+	DBGPRINTF_FATAL("strnumber.............%s, strnumbertwo=%s",strnumber,strnumbertwo);
+	MSG_FATAL("22222strnumber.............%s, strnumbertwo=%s",strnumber,strnumbertwo,0);
+
+    
+    if (op == 2)    //TATA
+    {
+        pCltMsg = GetMOClientMsg(strnumbertwo, pUserdata, FALSE);          
+    }
+    else
+    {
+        pCltMsg = GetMOClientMsg(strnumber, pUserdata, FALSE);
+    }    
     
 GETREGISTERMSG_EXIT:
     //SYS_FREEIF(pBuf);
@@ -5047,6 +5609,11 @@ wms_client_message_s_type *CWmsApp_Getspecmsg(AECHAR *pwstrType)
 #endif
         case ESN_TRACKER_MSG:
             return GetEsnTrackerSms(pwstrType);
+// liyz add for test @131204
+#if defined(FEATURE_ESN_NETWORK_INITIATED)
+       case ESN_NETWORK_INITIATED_MSG:
+	        return GetNetworkInitiatedEsnTrackerSms(pwstrType);
+#endif
 #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
         case MIZONE_MSG:
             return GetMiZoneRegisterMsg();

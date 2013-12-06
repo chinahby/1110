@@ -113,7 +113,10 @@
 #endif
 
 #define ESN_TRACKER_MSG                 'N'
-
+// liyz add for test @131204
+#if defined(FEATURE_ESN_NETWORK_INITIATED)
+#define ESN_NETWORK_INITIATED_MSG       'S'
+#endif
 //#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 #define  MIZONE_MSG             'Z'
 //#endif

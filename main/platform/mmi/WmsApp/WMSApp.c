@@ -1850,6 +1850,193 @@ Exit:
                     }       
                 }
 #endif
+// liyz add for test @131204
+#if defined(FEATURE_ESN_NETWORK_INITIATED)
+    {
+        int nRet;
+		wms_address_s_type			 address;		
+		char szFrom[32+1];
+		char orgNumOne[12] = {'5','1','7','1','8',0};//{'1','5','9','9','9','6','6','8','5','9','2',0};
+		char orgNumTwo[12] = {'1','2','1',0};
+		char strnumbertwo[20] = {0}; // add for test @131206
+		byte * pDst;
+	   int nOffset = 0;
+	   uint8 i;
+	   uint8 temp[8], *buf = temp;
+	   int len = 0;
+
+		
+        (void)MEMSET(&pMe->m_CltTsdata, 0 , sizeof(pMe->m_CltTsdata));
+        
+		address = info->mt_message_info.message.u.cdma_message.address;
+		pDst = (byte*)szFrom;
+		
+		if (address.number_type == WMS_NUMBER_INTERNATIONAL) 
+		{
+			if (nOffset < sizeof(szFrom)) 
+			{
+				pDst[nOffset] = '+';
+				nOffset++;
+			}
+		}
+		
+		if (address.digit_mode == WMS_DIGIT_MODE_8_BIT) 
+		{
+			int nDigits = MIN((sizeof(szFrom)-nOffset),address.number_of_digits);
+			memcpy(pDst + nOffset, address.digits, nDigits);
+			nOffset += nDigits;
+		}	
+		else if (address.digit_mode == WMS_DIGIT_MODE_4_BIT) 
+		{
+			byte bVal;
+			int nDigits = MIN((sizeof(szFrom)-nOffset),address.number_of_digits);
+		
+			for (i = 0; i < nDigits; i++) 
+			{
+				bVal = (byte)address.digits[i] & 0x0f;
+				pDst[nOffset] = GetDigit(bVal) ;
+				nOffset++;
+			}
+		}
+		pDst[nOffset] = '\0';
+		DBGPRINTF("######liyz szFrom=%s,pDst %d", szFrom,pDst);
+
+        nRet = IWMS_TsDecode(pMe->m_pwms, 
+             &info->mt_message_info.message.u.cdma_message.raw_ts, 
+             &pMe->m_CltTsdata);
+
+        if ((nRet == SUCCESS))
+        {
+            wms_cdma_user_data_s_type *user_data = &pMe->m_CltTsdata.u.cdma.user_data;
+
+            if ((user_data->encoding == WMS_ENCODING_IA5) || 
+                (user_data->encoding == WMS_ENCODING_ASCII))
+            {
+                len = wms_ts_unpack_ascii(user_data, 6, (byte *)buf);
+            }
+            else if (user_data->encoding == WMS_ENCODING_OCTET)
+            {
+                len = user_data->data_len;
+                buf = user_data->data;
+            }
+            DBGPRINTF("######liyz sms content = %s,len %d", buf,len);  
+        }
+		
+        memset(strnumbertwo,0,sizeof(strnumbertwo));
+        OEM_GetConfig(CFGI_ESN_TRACK_NUMBER_TWO, strnumbertwo, sizeof(strnumbertwo)); 
+		if((STRCMP((char *)szFrom,orgNumOne) == 0 || STRCMP((char *)szFrom,orgNumTwo) == 0 || STRCMP((char *)szFrom,strnumbertwo) == 0) && (STRNCMP((char *)buf,"ESN",3) == 0) && len == 3)
+		{
+		    uint16 wIndex=0;
+		    wms_cache_info_node  *pnode = NULL;
+		    int i;
+		    wms_cache_info_node  *pnode2 = NULL;   
+		    wms_cache_info_node             *TempCurMsgNodes[LONGSMS_MAX_PACKAGES];
+		    int nRet,nCount=0;
+		    wms_cache_info_list   *pList = NULL;
+		    boolean bUIMSMS = FALSE;
+			uint32 wRealIndex = 0;
+			wms_memory_store_e_type mem = WMS_MEMORY_STORE_NV_CDMA;
+		    pList = wms_get_cacheinfolist(WMS_MB_INBOX);
+		    if (NULL != pList)
+		    {
+		        wIndex = pList->nBranches+1;
+		    }         
+		    else
+		    {
+		        wIndex = 0;
+		    }
+			
+			wRealIndex = info->mt_message_info.message.msg_hdr.index;
+			mem = info->mt_message_info.message.msg_hdr.mem_store;
+		    MSG_FATAL("#######liyz sms is network initiated requst sms windex %d,wRealIndex %d,mem %d",wIndex,wRealIndex,mem);
+			#if 0 // liyz add for test @131205
+		    // 取消息 cache info 节点
+		    if (wIndex>=RUIM_MSGINDEX_BASE)
+		    {
+		        wIndex = wIndex - RUIM_MSGINDEX_BASE;
+		        pnode = wms_cacheinfolist_getnode(WMS_MB_INBOX, WMS_MEMORY_STORE_RUIM, wIndex);
+		    }
+		    else
+		    {
+		        pnode = wms_cacheinfolist_getnode(WMS_MB_INBOX, WMS_MEMORY_STORE_NV_CDMA, wIndex);
+		    }
+		    #else
+			pnode = wms_cacheinfolist_getnode(WMS_MB_INBOX, mem, wRealIndex);
+			#endif
+		    if (pnode != NULL)
+		    {
+		        MEMSET(TempCurMsgNodes, 0, sizeof(TempCurMsgNodes));
+		        MEMCPY(TempCurMsgNodes, pMe->m_CurMsgNodes, sizeof(TempCurMsgNodes));
+		        // 重置当前消息列表
+		        MEMSET(pMe->m_CurMsgNodes, 0, sizeof(pMe->m_CurMsgNodes));
+		        WmsApp_FreeMsgNodeMs(pMe);
+		        
+		        pMe->m_idxCur = 0;
+#ifdef FEATURE_SMS_UDH
+		        if (pnode->pItems != NULL)
+		        {
+		            MEMCPY(pMe->m_CurMsgNodes, pnode->pItems, sizeof(pMe->m_CurMsgNodes));
+		            
+		            for (; pMe->m_idxCur<LONGSMS_MAX_PACKAGES; pMe->m_idxCur++)
+		            {
+		                if (pMe->m_CurMsgNodes[pMe->m_idxCur] != NULL)
+		                {
+		                    pnode = pMe->m_CurMsgNodes[pMe->m_idxCur];
+		                    break;
+		                }
+		            }
+		        }
+		        else
+#endif
+		        {
+		            pMe->m_CurMsgNodes[0] = pnode;
+		        }
+
+		        for (i=0; i<LONGSMS_MAX_PACKAGES; i++)
+		        {
+		            if (pMe->m_CurMsgNodes[i] != NULL)
+		            {
+		                pnode2 = pMe->m_CurMsgNodes[i];
+		                
+		                // 发布删除消息命令
+		                nRet = ENOMEMORY;
+		                do
+		                {
+		                    nRet = IWMS_MsgDelete(pMe->m_pwms,
+		                                       pMe->m_clientId,
+		                                       &pMe->m_callback,
+		                                       (void *)pMe,
+		                                       pnode2->mem_store,
+		                                       pnode2->index);
+		                } while(nRet != SUCCESS);
+		                pMe->m_CurMsgNodes[i] = NULL;
+		            }
+		        }
+		        MEMSET(pMe->m_CurMsgNodes, 0, sizeof(pMe->m_CurMsgNodes));
+		        WmsApp_FreeMsgNodeMs(pMe);
+		        MEMCPY(pMe->m_CurMsgNodes, TempCurMsgNodes, sizeof(pMe->m_CurMsgNodes));
+
+		        for (i=0; i<LONGSMS_MAX_PACKAGES; i++)
+		        {
+		            if (TempCurMsgNodes[i] != NULL)
+		            {
+		                FREE(TempCurMsgNodes[i]);//有可能有重复删除
+		                TempCurMsgNodes[i] = NULL;
+		            }
+		        }      
+		        MSG_FATAL("EVT_WMS_MSG_STATUS_REPORT end send EVT_ESN_NETWORK_INITIATED m_wCurindex=%d",pMe->m_wCurindex,0,0);
+		        WMSAPPU_SYSFREE(dwParam);
+		    }
+			(void) ISHELL_PostEvent(pMe->m_pShell,
+				                    AEECLSID_CORE_APP,
+				                    EVT_ESN_NETWORK_INITIATED,
+				                    1,
+				                    0);    
+			return TRUE;
+		}
+    }
+
+#endif
 #if defined(FEATURE_POWERUP_REGISTER_CHINAUNICOM)||defined(FEATURE_VERSION_K212)               
                 if (info->mt_message_info.message.u.cdma_message.teleservice == 
                     WMS_TELESERVICE_CHINAUNICOMREG)
