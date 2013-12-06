@@ -15,8 +15,12 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_VERSION_C260_IC19
 #define FEATURE_OEMOMH
 
+#define FEATURE_SALESTRACK_CONFIRM_DIALOG
+
 #define FEATURE_SALESTRACKER
 #define FEATURE_IC19_ESN_TRACKER
+
+#define FEATURE_ESN_NETWORK_INITIATED // liyz add for test @131204
 
 #define FEATURE_ALERT_3AND1
 
