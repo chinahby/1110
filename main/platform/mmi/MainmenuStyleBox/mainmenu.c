@@ -10480,7 +10480,8 @@ static int StartApplet(MainMenu *pMe, int i)
 		break;
 	case IDS_MAIN_MENU_MSTORE:
 #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
-        Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");      
+
+        Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
 #else
         Result = SetBrowserArr_Main(pMe->m_pShell,NULL);//ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
 #endif
@@ -15207,14 +15208,32 @@ static int StartApplet(MainMenu *pMe, int i)
 	//Add By zzg 2012_11_08 for C337 
 	case IDS_MAIN_MENU_SERVICES:
 	    #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+		 // liyz add for test @131206
+       {
+        
+		AECHAR WBrowserTitle[40] = {0};
+		(void)ISHELL_LoadResString(pMe->m_pShell,
+									MAINMENU_RES_FILE_LANG, 							   
+									IDS_MAIN_MENU_SERVICES,
+									WBrowserTitle,
+									sizeof(WBrowserTitle));
+		if(pMe->m_pIAnn != NULL)
+		{
+		
+		    DBGPRINTF("IDS_MAIN_MENU_MSTORE IANNUNCIATOR_Redraw");
+			IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WBrowserTitle,FALSE);
+			IANNUNCIATOR_Redraw(pMe->m_pIAnn);
+		}
         Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
-        #else
+	   }
+		#else
         Result = SetBrowserArr_Main(pMe->m_pShell,NULL);//ISHELL_StartApplet(pMe->m_pShell, AEECLSID_UCWEB);
         #endif
 		break;
 	case IDS_MAIN_MENU_MSTORE:
 #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
-        Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");      
+       
+        Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");     
 #else
         Result = SetBrowserArr_Main(pMe->m_pShell,NULL);//ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
 #endif
