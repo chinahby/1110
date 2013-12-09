@@ -2212,9 +2212,10 @@ static OEMConfigListType oemi_cache = {
 #ifdef FEATURE_IC19_ESN_TRACKER
 	,{0}									  //CFGI_ESN_TRACKING_COMBINATION,
 #endif
-
+#if defined (FEATURE_VERSION_C260_IC19)
     ,{OEMNV_ESN_TRACK_NUM}     //CFGI_ESN_TRACK_NUMBER
     ,{OEMNV_ESN_TRACK_NUM_TWO}     //CFGI_ESN_TRACK_NUMBER_TWO
+#endif    
     ,2                        //CFGI_ESN_TRACK_TIME // liyz modify @131202 for test 15 to 2
    ,{1}    //CFGI_COUNT_OF_MAIN  
 #ifdef FEATURE_SOUND_BO
@@ -3376,8 +3377,10 @@ void OEM_RestoreFactorySetting( void )
     oemi_cache.sms_tarcker_time_uint = 240;                      //CFGI_SMS_TRACKER_TIME
 	#endif
     MEMCPY(oemi_cache.sms_tracker_number,OEMNV_DEFAULTNUMBER, OEMNV_LOCKMUM_MAXLEN/*FILESPECLEN*/); //CFGI_SMS_TRACKER_NUMBER
+#if defined (FEATURE_VERSION_C260_IC19)    
     MEMCPY(oemi_cache.m_esn_track_num,OEMNV_ESN_TRACK_NUM, OEMNV_LOCKMUM_MAXLEN/*FILESPECLEN*/); //CFGI_SMS_TRACKER_NUMBER
     MEMCPY(oemi_cache.m_esn_track_num_two,OEMNV_ESN_TRACK_NUM_TWO, OEMNV_LOCKMUM_MAXLEN/*FILESPECLEN*/); //CFGI_SMS_TRACKER_NUMBER_TWO
+#endif
 	oemi_cache.m_esn_tarcker_time = 2; // liyz modify for test @131202 15 to 2 
 	MEMSET((void *)&oemi_cache.m_ruim_id_save_table, 0, sizeof(oemi_cache.m_ruim_id_save_table));// liyz add for test @131202
 #ifdef FEATURE_IC19_ESN_TRACKER
