@@ -191,7 +191,11 @@ static void disp_drv_clear_screen_area(word start_row, word start_col,
                                                   word end_row, word end_col)
 {
     uint32 count = (end_row - start_row + 1) * (end_col - start_col + 1);
+    #ifdef FEATURE_VERSION_K212_VHOPE
+    static uint32 whitebpp = 0xFFFFFF;
+    #else
     static uint32 whitebpp = 0x00;
+    #endif
     
     if (disp_drv_state.disp_initialized &&
         disp_drv_state.disp_powered_up  &&
