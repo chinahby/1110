@@ -17412,8 +17412,22 @@ static void CContApp_SetInputMode(CContApp *pMe)
 //Add By zzg 2011_12_15
 static boolean CContApp_CheckNumberIsInValid(CContApp  *pMe, ITextCtl *pTextCtl)
 {
+    AEETextInputMode nInputMode; 
+    
 	FREEIF(pMe->m_pFldInputBuf);
-	pMe->m_pFldInputBuf = WSTRDUP(ITEXTCTL_GetTextPtr(pTextCtl));
+	pMe->m_pFldInputBuf = WSTRDUP(ITEXTCTL_GetTextPtr(pTextCtl));    
+
+    if (pTextCtl != NULL)
+    {
+        nInputMode = ITEXTCTL_GetInputMode(pTextCtl,NULL); 
+
+        DBGPRINTF("***zzg CContApp_CheckNumberIsInValid InputMode=%x***", nInputMode);   
+        
+        if (nInputMode != AEE_TM_NUMBERS)
+        {
+            return FALSE;
+        }
+    }             
 
 	return CContApp_Search_HasExceptionalChar(pMe->m_pFldInputBuf);	                  	
 }
@@ -17421,10 +17435,15 @@ static boolean CContApp_CheckNumberIsInValid(CContApp  *pMe, ITextCtl *pTextCtl)
 
 static boolean CContApp_Search_HasExceptionalChar(AECHAR * szContNumber)
 {
+    char nametemp[50] = {0};
     int   len = 0;
     int i;
     boolean have = FALSE;
     len = WSTRLEN(szContNumber);
+
+    WSTRTOSTR(szContNumber,nametemp,50);
+
+    DBGPRINTF("***zzg CContApp_Search_HasExceptionalChar nametemp=%s***", nametemp);
 
     for(i = 0; i < len; i++)
     {
