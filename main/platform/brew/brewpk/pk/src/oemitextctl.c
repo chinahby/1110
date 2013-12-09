@@ -4101,9 +4101,26 @@ static void TextCtl_ShowSymbolPage(CTextCtl * pme, int nDir)
            // IDISPLAY_DrawText(pd, AEE_FONT_NORMAL, szbuf, -1, rc.x+10, y, NULL,IDF_TEXT_TRANSPARENT/*0*/);
               IImage *enterImg; 
               enterImg = NULL;   
-              enterImg = ISHELL_LoadResImage(pme->m_pIShell,
+#if defined (FEATURE_DISP_128X160)
+            if(pme->m_dwProps & TP_GRAPHIC_BG)
+           {
+                enterImg = ISHELL_LoadResImage(pme->m_pIShell,
                                   AEE_APPSCOMMONRES_IMAGESFILE,
                                   IDB_MMS_ENTER);
+           }
+           else
+           {
+                enterImg = ISHELL_LoadResImage(pme->m_pIShell,
+                                  AEE_APPSCOMMONRES_IMAGESFILE,
+                                  IDI_ENTER_BLACK);
+           }
+            
+#else
+             enterImg = ISHELL_LoadResImage(pme->m_pIShell,
+                                  AEE_APPSCOMMONRES_IMAGESFILE,
+                                  IDB_MMS_ENTER); 
+#endif              
+              
               if(enterImg != NULL)
               {
                   IIMAGE_Draw(enterImg, rc.x+10, y + 1);
@@ -4117,9 +4134,26 @@ static void TextCtl_ShowSymbolPage(CTextCtl * pme, int nDir)
             //IDISPLAY_DrawText(pd, AEE_FONT_NORMAL, szbuf, -1, rc.x+10, y, NULL,IDF_TEXT_TRANSPARENT/*0*/);
              IImage *spaceImg; 
               spaceImg = NULL;   
-              spaceImg = ISHELL_LoadResImage(pme->m_pIShell,
+#if defined (FEATURE_DISP_128X160)
+            if(pme->m_dwProps & TP_GRAPHIC_BG)
+           {
+                spaceImg = ISHELL_LoadResImage(pme->m_pIShell,
                                   AEE_APPSCOMMONRES_IMAGESFILE,
                                   IDB_MMS_SPACE);
+           }
+           else
+           {
+                spaceImg = ISHELL_LoadResImage(pme->m_pIShell,
+                                  AEE_APPSCOMMONRES_IMAGESFILE,
+                                  IDI_SPACE_BLACK);
+           }
+            
+#else
+             spaceImg = ISHELL_LoadResImage(pme->m_pIShell,
+                                  AEE_APPSCOMMONRES_IMAGESFILE,
+                                  IDB_MMS_SPACE);   
+#endif
+              
               if(spaceImg != NULL)
               {
                   IIMAGE_Draw(spaceImg, rc.x+10, y + 1);
