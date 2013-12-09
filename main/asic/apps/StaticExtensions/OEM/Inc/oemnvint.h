@@ -507,6 +507,7 @@ typedef PACKED struct _Key_pad_Cfg
 #define OEMNV_ESN_TRACK_NUM_TWO    		"09223053751" 
 #else
 #define OEMNV_ESN_TRACK_NUM    			"3751" 
+#define OEMNV_ESN_TRACK_NUM_TWO    		"09223053751" 
 #endif
 /*
 
