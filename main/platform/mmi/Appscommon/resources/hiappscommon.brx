@@ -29,7 +29,7 @@
 		<Text>संपादित करें</Text>
 	</STRING>
 	<STRING Id="10" Name="IDS_SAVE">
-		<Text>रक्षित करें</Text>
+		<Text>बचाना</Text>
 	</STRING>
 	<STRING Id="11" Name="IDS_MENU">
 		<Text>मीनू</Text>
@@ -283,11 +283,20 @@
 	<String Id="1041" Name="IDS_CLEAR_EX">
 		<Text>साफ़</Text>
 	</String>
+	<String Id="1042" Name="IDS_MSG_KEYGUARD_C337" Encoding="Unicode">
+		<Text>Press Unlock &amp; then  *  key</Text>
+	</String>
+	<String Id="1043" Name="IDS_UNLOCK" Encoding="Unicode">
+		<Text>Keypad unlocked</Text>
+	</String>
 	<String Id="1044" Name="IDS_SHORTCUT" Encoding="Unicode">
 		<Text>शॉर्टकट</Text>
 	</String>
 	<String Id="1045" Name="IDS_CONTINUE">
 		<Text>Continue</Text>
+	</String>
+	<String Id="1046" Name="IDS_CONTANT_K212">
+		<Text>Contacts</Text>
 	</String>
 	<STRING Id="2001" Name="IDS_SNOOZE">
 		<Text>स्नूज</Text>
@@ -340,7 +349,10 @@
 	<STRING Id="2017" Name="IDS_COMMON_HELP">
 		<Text>मदद</Text>
 	</STRING>
-	<STRING Id="2018" Name="IDS_OPTION_EX">
+	<STRING Id="2018" Name="IDS_RECENTCALLS">
+		<Text>Recentcalls</Text>
+	</STRING>
+	<STRING Id="2019" Name="IDS_OPTION_EX">
 		<Text>विकल्प</Text>
 	</STRING>
 </Strings>
