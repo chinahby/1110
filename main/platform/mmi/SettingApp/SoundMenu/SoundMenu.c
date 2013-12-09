@@ -1075,9 +1075,9 @@ static boolean SoundMenu_HandleEvent(ISoundMenu *pi,
         case EVT_KEY:
         case EVT_COMMAND:
 			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_QVGA_INHERIT_K212)&&!defined(FEATURE_VERSION_K212_ND)&&!defined(FEATURE_VERSION_W021_WSF_CN)&&!defined(FEATURE_LOW_MEM_BIGFONT)&&!defined(FEATURE_VERSION_W516_C260)
-            if (!pMe->m_bAppIsReady)
+            //if (!pMe->m_bAppIsReady)
             {
-				return TRUE;
+				//return TRUE;
             }
 			#endif
             return SoundMenu_RouteDialogEvent(pMe,eCode,wParam,dwParam);
