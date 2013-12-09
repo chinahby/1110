@@ -53,16 +53,16 @@
 		<Text>डिस्प्ले</Text>
 	</STRING>
 	<STRING Id="1018" Name="IDS_YMD">
-		<Text>yy/mm/dd</Text>
+		<Text>YYYY/MM/DD</Text>
 	</STRING>
 	<STRING Id="1019" Name="IDS_SECURITY_TITLE">
 		<Text>सुरक्षा</Text>
 	</STRING>
 	<STRING Id="1020" Name="IDS_DMY">
-		<Text>dd/mm/yy</Text>
+		<Text>DD/MM/YYYY</Text>
 	</STRING>
 	<STRING Id="1021" Name="IDS_MDY">
-		<Text>mm/dd/yy</Text>
+		<Text>MM/DD/YYYY</Text>
 	</STRING>
 	<STRING Id="1022" Name="IDS_TIMESETTING">
 		<Text>समय प्रारूप</Text>
