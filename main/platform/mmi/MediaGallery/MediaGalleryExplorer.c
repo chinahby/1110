@@ -2751,6 +2751,8 @@ boolean MGAppUtil_SpaceUnitConvert(IShell *pShell,
       pMuTemp++;
    }
 
+   MSG_FATAL("***zzg MGAppUtil_SpaceUnitConvert pMuTemp=%d, dConvertData=%lu***", pMuTemp, dConvertData, 0);
+
    if(0 != ISHELL_LoadResString(pShell, MGRES_LANGFILE,
             nUnitID[*pMuTemp], szUnit, sizeof(szUnit)))
    {
@@ -2805,6 +2807,98 @@ boolean MGAppUtil_SpaceUnitConvert(IShell *pShell,
 
    return FALSE;
 }/*MGAppUtil_SpaceUnitConvert*/
+
+
+boolean MGAppUtil_SpaceUnitConvertEx(IShell *pShell,
+                        uint64 MemByte, AECHAR *pszUnit, size_t nUnitLen)
+{
+   uint64 MemConv = MemByte;
+   double dConvertData = (double)MemByte;
+   char szConBuf[MG_CONVERT_DATALEN];
+   AECHAR wszConBuf[MG_CONVERT_DATALEN];
+   AECHAR szUnit[MG_MEMUNIT_STRLENMAX];
+   int16 nUnitID[MG_MENUNIT_MAX]={
+      IDS_MG_BYTE,
+      IDS_MG_KILOBYTE,
+      IDS_MG_MEGABYTE,
+      IDS_MG_GIGABYTE
+   };
+   MG_MEMUNIT Units[] = {
+      MG_MEMUNIT_BYTE,
+      MG_MEMUNIT_KILO,
+      MG_MEMUNIT_MEGA,
+      MG_MEMUNIT_GIGA,};
+   MG_MEMUNIT* pMuTemp = Units;
+
+   if(!pShell || !pszUnit)
+   {
+      MG_FARF(ADDR, ("Warming: bad parameter!"));
+      return FALSE;
+   }
+
+   while(MemConv >= MG_CONVERT_CRITICAL)
+   {
+      MemConv >>= MG_CONVERT_SHIFTBITS;
+      dConvertData = FDIV(dConvertData,MG_CONVERT_CRITICAL);
+      pMuTemp++;
+   }
+
+   MSG_FATAL("***zzg MGAppUtil_SpaceUnitConvertEx pMuTemp=%d, dConvertData=%lu***", pMuTemp, dConvertData, 0);
+
+   if(0 != ISHELL_LoadResString(pShell, MGRES_LANGFILE,
+            nUnitID[*pMuTemp], szUnit, sizeof(szUnit)))
+   {
+      /*       AECHAR szNum[MG_MEMUNIT_STRLENMAX];
+       *       double dNum = 0;
+       *
+       *       dNum += (double)(SubMemConv / 1000);
+       *       dNum += MemConv;
+       *       MEMSET(szNum, 0, sizeof(szNum));
+       *       MEMSET(pszUnit, 0, nUnitLen);
+       *       if(TRUE == FLOATTOWSTR(dNum, szNum, sizeof(szNum)))
+       *       {
+       *          WSPRINTF(pszUnit, nUnitLen, L"%S %S", szNum, szUnit);
+       *       }
+       *       else
+       */
+      {
+         /*for either SPRINTF nor SNPRINTF SUPPORT %f print format, we have to
+          * use sprintf, and then convert string to wide-string.*/
+         if(nUnitID[*pMuTemp] != IDS_MG_BYTE)
+         {
+            snprintf( szConBuf, MG_CONVERT_DATALEN, " %4.3f ", dConvertData);
+         }
+         else
+         {
+            snprintf( szConBuf, MG_CONVERT_DATALEN, " %4.0f ", dConvertData);
+         }
+         STRTOWSTR(szConBuf, wszConBuf, sizeof(wszConBuf));
+
+         WSTRCPY(pszUnit, wszConBuf);
+         WSTRCAT(pszUnit, szUnit);
+         /*
+         if(SubMemConv != 0)
+         {
+            SubMemConv *= 1000;
+            ///there are a little fault: if suMemConv is less then a hundred,
+            //it can not display leading zero(s).
+            SubMemConv >>= MG_CONVERT_SHIFTBITS;
+            WSPRINTF(pszUnit, nUnitLen, L" %d.%3d %S",
+                  MemConv, SubMemConv, szUnit);
+         }
+         else
+         {
+            WSPRINTF(pszUnit, nUnitLen, L"%S%S",
+                  wszConBuf, szUnit);
+         }
+         */
+      }
+
+      return TRUE;
+   }
+
+   return FALSE;
+}/*M
 
 /*===========================================================================
  * FUNCTION: MGAppUtil_FileAttribConvert

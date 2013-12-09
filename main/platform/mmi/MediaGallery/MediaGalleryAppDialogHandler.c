@@ -2040,6 +2040,7 @@ static boolean MediaGalleryApp_MemStatDlg_HandleEvent(CMediaGalleryApp* pMe,
          AECHAR szTotal[MG_MAX_LINETEXTNUM];
          AECHAR szMemUnit[MG_MEMUNIT_STRLENMAX];
          MG_MemStat MemStats[MG_MEMSTAT_ITEMMAX];
+         MG_MemStatEx MemStatsEx[MG_MEMSTAT_ITEMMAX];
          int16 nCount;
          boolean bRet;
          int16 nItemID[MG_MEMSTAT_ITEMMAX]={
@@ -2047,42 +2048,52 @@ static boolean MediaGalleryApp_MemStatDlg_HandleEvent(CMediaGalleryApp* pMe,
             IDS_MG_CARDMEMSTAT,
             IDS_MG_TOTALMEMSTAT};
 
+        AEEFSFreeSpace FSSpace;
+        int pnSize;
+        pnSize = sizeof(AEEFSFreeSpace);    
+
          //GETFSFREE(&dwTotal);
          MEMSET(MemStats, 0, sizeof(MemStats));
-
+         MEMSET(MemStatsEx, 0, sizeof(MemStatsEx));
+         
          if(SUCCESS == ISHELL_CreateInstance(pMe->m_pShell,
                                              AEECLSID_FILEMGR,
                                              (void**)&pIFileMgr))
          {
-            IFILEMGR_GetFreeSpaceEx(pIFileMgr, MG_PHONE_ROOTDIR,
-                                    &MemStats[0].m_dwTotal, &MemStats[0].m_dwFree);
+            ISHELL_GetDeviceInfoEx(pMe->m_pShell,
+                                   AEE_DEVICEITEM_FSSPACE_ROOT ,
+                                   (void *)&FSSpace,
+                                   &pnSize);
 
-            //f = IFILEMGR_GetFreeSpace(pIFileMgr, &t);
-
-            MemStats[0].m_dwUsed = MemStats[0].m_dwTotal - MemStats[0].m_dwFree;
-
+            MemStatsEx[0].m_dwFree = FSSpace.qwFreeSpace;
+            MemStatsEx[0].m_dwTotal = FSSpace.qwTotalSpace;
+            MemStatsEx[0].m_dwUsed = MemStatsEx[0].m_dwTotal - MemStatsEx[0].m_dwFree;
+       
             if(pMe->m_bCardExist)
             {
-               nStatus = IFILEMGR_GetFreeSpaceEx(pIFileMgr,
-                                                 MG_MASSCARD_ROOTDIR,
-                                                 &MemStats[1].m_dwTotal,
-                                                 &MemStats[1].m_dwFree);
+               nStatus = ISHELL_GetDeviceInfoEx (pMe->m_pShell,
+                                                  AEE_DEVICEITEM_FSSPACE_CARD0 ,
+                                                  (void *)&FSSpace,
+                                                  &pnSize);
+                                                      
                if(SUCCESS != nStatus)
                {
-                  MG_FARF(ADDR, ("Error! Get SD CARD MEM FAILED"));
-                  //return FALSE;
+                    FSSpace.qwFreeSpace = 0;
+                    MG_FARF(ADDR, ("Error! Get SD CARD MEM FAILED"));
                }
                else
                {
-                  MemStats[1].m_dwUsed = MemStats[1].m_dwTotal - MemStats[1].m_dwFree;
+                    MemStatsEx[1].m_dwFree = FSSpace.qwFreeSpace;
+                    MemStatsEx[1].m_dwTotal = FSSpace.qwTotalSpace;  
+                    MemStatsEx[1].m_dwUsed = MemStatsEx[1].m_dwTotal - MemStatsEx[1].m_dwFree;
 
-                  /*total memory status*/
-                  MemStats[2].m_dwTotal = MemStats[0].m_dwTotal + MemStats[1].m_dwTotal;
-                  MemStats[2].m_dwFree = MemStats[0].m_dwFree + MemStats[1].m_dwFree;
-                  MemStats[2].m_dwUsed = MemStats[0].m_dwUsed + MemStats[1].m_dwUsed;
+                    //total memory status
+                    MemStatsEx[2].m_dwTotal = MemStatsEx[0].m_dwTotal + MemStatsEx[1].m_dwTotal;
+                    MemStatsEx[2].m_dwFree = MemStatsEx[0].m_dwFree + MemStatsEx[1].m_dwFree;
+                    MemStatsEx[2].m_dwUsed = MemStatsEx[0].m_dwUsed + MemStatsEx[1].m_dwUsed;
                }
             }
-
+         
             pszBuffer = (AECHAR*) MALLOC(sizeof(AECHAR) * MG_MAX_TEXT_SIZE);
 
             if(!pszBuffer)
@@ -2119,8 +2130,8 @@ static boolean MediaGalleryApp_MemStatDlg_HandleEvent(CMediaGalleryApp* pMe,
             //WSTRCAT(pszBuffer, MG_DOUBLELINEBREK_WSTR);
             WSTRCAT(pszBuffer, MG_LINEBREAK_WSTR);
 
-            bRet = MGAppUtil_SpaceUnitConvert(pMe->m_pShell,
-                                              MemStats[nCount].m_dwUsed,
+            bRet = MGAppUtil_SpaceUnitConvertEx(pMe->m_pShell,
+                                              MemStatsEx[nCount].m_dwUsed,
                                               szMemUnit, sizeof(szMemUnit));
             if(TRUE == bRet)
             {
@@ -2129,8 +2140,8 @@ static boolean MediaGalleryApp_MemStatDlg_HandleEvent(CMediaGalleryApp* pMe,
                WSTRCAT(pszBuffer, MG_LINEBREAK_WSTR);
             }
 
-            bRet = MGAppUtil_SpaceUnitConvert(pMe->m_pShell,
-                                              MemStats[nCount].m_dwFree,
+            bRet = MGAppUtil_SpaceUnitConvertEx(pMe->m_pShell,
+                                              MemStatsEx[nCount].m_dwFree,
                                               szMemUnit, sizeof(szMemUnit));
             if(TRUE == bRet)
             {
@@ -2139,8 +2150,8 @@ static boolean MediaGalleryApp_MemStatDlg_HandleEvent(CMediaGalleryApp* pMe,
                WSTRCAT(pszBuffer, MG_LINEBREAK_WSTR);
             }
 
-            bRet = MGAppUtil_SpaceUnitConvert(pMe->m_pShell,
-                                              MemStats[nCount].m_dwTotal,
+            bRet = MGAppUtil_SpaceUnitConvertEx(pMe->m_pShell,
+                                              MemStatsEx[nCount].m_dwTotal,
                                               szMemUnit, sizeof(szMemUnit));
             if(TRUE == bRet)
             {
@@ -2158,6 +2169,7 @@ static boolean MediaGalleryApp_MemStatDlg_HandleEvent(CMediaGalleryApp* pMe,
 
          ISTATIC_SetText(pStatic, NULL, pszBuffer,
                          AEE_FONT_NORMAL, AEE_FONT_NORMAL);
+         
 
          /* KLUDGE! Need to wait for the Dialog to draw itself before the
           * MGAppUtil_DrawSoftkey() command can be issued ,
@@ -8576,10 +8588,18 @@ static void MGAppUtil_GetFolderInfoNotify(void *po)
    WSTRCAT(pszBuffer, szCont);
    WSTRCAT(pszBuffer, MG_LINEBREAK_WSTR);
 
+    /*
    MGAppUtil_SpaceUnitConvert(pMe->m_pShell,
                               (uint32)pDirInfo->lDirSize,
                               szMemUnit,
                               sizeof(szMemUnit));
+   */
+
+    MGAppUtil_SpaceUnitConvertEx(pMe->m_pShell,
+                              pDirInfo->lDirSize,
+                              szMemUnit,
+                              sizeof(szMemUnit));
+    
    ISHELL_LoadResString(pMe->m_pShell,
                         MGRES_LANGFILE,
                         IDS_MG_SIZE,

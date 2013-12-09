@@ -497,6 +497,13 @@ boolean MGAppUtil_SpaceUnitConvert(IShell *pShell,
                                    AECHAR *pszUnit,
                                    size_t nUnitLen);
 
+
+boolean MGAppUtil_SpaceUnitConvertEx(IShell *pShell,
+                                   uint64 MemByte,
+                                   AECHAR *pszUnit,
+                                   size_t nUnitLen);
+
+
 /*===========================================================================
  * FUNCTION:MGAppUtil_FileAttribConvert
  *

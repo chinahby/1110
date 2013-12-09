@@ -234,6 +234,14 @@ typedef struct MG_MemStat{
    uint32 m_dwUsed;  /*used space */
 }MG_MemStat;
 
+
+typedef struct MG_MemStatEx{
+   uint64 m_dwTotal; /*total capacity*/
+   uint64 m_dwFree;  /*free capacity*/
+   uint64 m_dwUsed;  /*used space */
+}MG_MemStatEx;
+
+
 /**************************macro & typdef for media list menu****************/
 /*enumeration for media dialog status*/
 typedef enum _MediaDialogStat
