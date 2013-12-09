@@ -7040,7 +7040,14 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
 	            //     DBGPRINTF("svc_p_name s=%S", pMe->svc_p_name);
 	            hasGetSPN = TRUE;
 #endif
-	            WSTRCPY(wszBuf,pMe->svc_p_name);
+                if (IRUIM_IsCardConnected(pMe->m_pIRUIM))
+                {
+	                WSTRCPY(wszBuf,pMe->svc_p_name);
+                }
+                else
+                {
+                    STRTOWSTR("No UIM card", wszBuf, nSize);
+                }
 	        }
 	        else
 	        {

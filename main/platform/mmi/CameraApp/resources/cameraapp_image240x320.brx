@@ -73,6 +73,18 @@
 	<Object Id="5024" Name="IDI_BANDING_60">
 		<File>..\..\Appscommon\images\240x320\common\CameraApp\60_Hz.PNG</File>
 	</Object>
+	<Object Id="5026" Name="IDI_FRAME_11">
+		<File>..\..\Appscommon\images\240x320\common\CameraApp\frame11.png</File>
+	</Object>
+	<Object Id="5027" Name="IDI_FRAME_12">
+		<File>..\..\Appscommon\images\240x320\common\CameraApp\frame12.png</File>
+	</Object>
+	<Object Id="5028" Name="IDI_FRAME_13">
+		<File>..\..\Appscommon\images\240x320\common\CameraApp\frame13.png</File>
+	</Object>
+	<Object Id="5029" Name="IDI_FRAME_14">
+		<File>..\..\Appscommon\images\240x320\common\CameraApp\frame14.png</File>
+	</Object>
 	<Object Id="5037" Name="IDI_MID_CAMERA">
 		<File>..\..\Appscommon\images\240x320\common\CameraApp\camera.png</File>
 	</Object>

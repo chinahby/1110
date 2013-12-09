@@ -81,7 +81,7 @@ when       who     what, where, why
 #include "fs_public.h"
 #include "nv_items.h"
 #include "fs_diag_access.h"
-
+#include "oem_common_nv.h"
 #ifdef FEATURE_CDMA1X
   #include "mc.h"
 #else
@@ -3218,7 +3218,14 @@ LOCAL nv_stat_enum_type nv_auto_set_need_value(void)
         }
         table_index++;
     }
-
+	//add by yangdecai 20131207
+    {
+        char Nv_language_defalut[2] = {OEMNV_LANGUAGE_DEFULT};
+        local_cmd.item = NV_LANGUAGE_SELECTION_I;
+        local_cmd.data_ptr = (nv_item_type*)Nv_language_defalut;
+        local_cmd.status = nvio_write(&local_cmd);
+    }
+    
     /*--------------------------------------------------------------
                        Write Pre-Defined PRL to NV
     --------------------------------------------------------------*/
