@@ -521,6 +521,11 @@
 	<Object Id="7114" Name="IDI_MENU_ITEM_FOCUS" MimeType="image/png">
 		<File>..\images\128x160\common\Appscommon\Menu\menu\menu_icon_focus.png</File>
 	</Object>
-
+	<Object Id="7115" Name="IDI_SPACE_BLACK" MimeType="image/png">
+		<File>..\images\128x160\common\Appscommon\Icon\space_black.png</File>
+	</Object>
+	<Object Id="7116" Name="IDI_ENTER_BLACK" MimeType="image/png">
+		<File>..\images\128x160\common\Appscommon\Icon\enter_black.png</File>
+	</Object>
 </Objects>
 </BREWRes>

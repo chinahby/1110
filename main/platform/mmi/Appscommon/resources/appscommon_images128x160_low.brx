@@ -295,5 +295,11 @@
 	<Object Id="7040" Name="IDB_NO_SERVICE">
 		<File>..\images\128x160\common\Annunciator\no_service.bmp</File>
 	</Object>
+	<Object Id="7115" Name="IDI_SPACE_BLACK" MimeType="image/png">
+		<File>..\images\128x160\common\Appscommon\Icon\space_black.png</File>
+	</Object>
+	<Object Id="7116" Name="IDI_ENTER_BLACK" MimeType="image/png">
+		<File>..\images\128x160\common\Appscommon\Icon\enter_black.png</File>
+	</Object>
 </Objects>
 </BREWRes>
