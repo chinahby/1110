@@ -298,7 +298,7 @@ static OEMState_data fmradio_image_data[]=
 {
 #if !defined( FEATURE_USES_LOWMEM)&&!defined(FEATURE_LOWER_MEM)
     {ANNUN_STATE_FMRADIO_ON, IDB_FM_RADIO, NULL},
-#if 0//def FEATURE_QQ_APP         
+#if defined(FEATURE_QQ_APP)&&defined(FEATURE_DISP_128X160)//def FEATURE_QQ_APP         
     {ANNUN_STATE_QQ_MSG_ON, IDB_QQMSG, NULL},
     {ANNUN_STATE_QQ_ONLINE, IDB_QQ, NULL},
     {ANNUN_STATE_QQ_HIDING_ON, IDB_QQHIDING,NULL},
@@ -479,7 +479,7 @@ OEMAnnun_content sms_content =
 /*ANNUN_FIELD_FMRADIO*/
 OEMAnnun_content fmradio_content =
 #ifndef FEATURE_USES_LOWMEM
-#if 0//def FEATURE_QQ_APP 
+#if defined(FEATURE_QQ_APP)&&defined(FEATURE_DISP_128X160)//def FEATURE_QQ_APP 
      {ANNUN_TYPE_IMAGE, 6, ANNUN_STATE_OFF, (void *)fmradio_image_data};
 #else
      {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)fmradio_image_data};
