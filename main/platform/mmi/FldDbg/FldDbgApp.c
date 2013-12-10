@@ -7110,6 +7110,7 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
             fmt_tstr,
             L32);
    tn = STRLEN(tstrbuf);
+#ifndef FEATURE_VERSION_C260_IC19
    if (tn>13)
    {
    temp = CalcMEIDDSP(tstrbuf);
@@ -7167,6 +7168,7 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
 	  	break;
    	}
    }
+#endif   
    #endif
 
    
