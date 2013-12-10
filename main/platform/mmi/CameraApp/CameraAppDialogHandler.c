@@ -1622,6 +1622,24 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
                 pFrameImage = ISHELL_LoadResImage(pMe->m_pShell, CAMERAAPP_IMAGE_RES_FILE, IDI_FRAME_11);
                 if(pFrameImage)
                 {
+                    IImage_Draw(pFrameImage, 20, 0);
+                    IImage_Draw(pFrameImage, 20, 280);
+                    IImage_Release(pFrameImage);
+                    pFrameImage = NULL;
+                }
+                 pFrameImage = ISHELL_LoadResImage(pMe->m_pShell, CAMERAAPP_IMAGE_RES_FILE, IDI_FRAME_12);
+                if(pFrameImage)
+                {
+                    IImage_Draw(pFrameImage, 0, 0);
+                    IImage_Draw(pFrameImage, 220, 0);
+                    IImage_Release(pFrameImage);
+                    pFrameImage = NULL;
+                }
+                #else
+                IImage *pFrameImage = NULL;
+                pFrameImage = ISHELL_LoadResImage(pMe->m_pShell, CAMERAAPP_IMAGE_RES_FILE, IDI_FRAME_11);
+                if(pFrameImage)
+                {
                     IImage_Draw(pFrameImage, 0, 275);
                     IImage_Release(pFrameImage);
                     pFrameImage = NULL;
@@ -5285,54 +5303,54 @@ static void CameraApp_DrawMidPic(CCameraApp *pMe)
         	{
                 {
                     #ifdef FEATURE_LOW_MEM_BIGFONT
-					#ifdef FEATURE_VERSION_K212_VHOPE
-                        IImage *pFrameImage = NULL;
-                        uint32 dwTotal = 0;
-                        uint32 free = 0;
-                        GETFSFREE(&dwTotal);
-            			free = GETRAMFREE(NULL,NULL);
-            			MSG_FATAL("1preview CameraApp update dwTotal======%d,free===%d",dwTotal,free,0);
-                        MSG_FATAL("1pMe->m_bIsPreview====%d",pMe->m_bIsPreview,0,0);
-                        pFrameImage = ISHELL_LoadResImage(pMe->m_pShell, CAMERAAPP_IMAGE_RES_FILE, IDI_FRAME_11);
-                        if(pFrameImage)
-                        {
-                            IImage_Draw(pFrameImage, 0, 275);
-                            IImage_Release(pFrameImage);
-                            pFrameImage = NULL;
-                        }
-                        GETFSFREE(&dwTotal);
-            			free = GETRAMFREE(NULL,NULL);
-            			MSG_FATAL("2preview CameraApp update dwTotal======%d,free===%d",dwTotal,free,0);
-                        MSG_FATAL("2pMe->m_bIsPreview====%d",pMe->m_bIsPreview,0,0);
-                         pFrameImage = ISHELL_LoadResImage(pMe->m_pShell, CAMERAAPP_IMAGE_RES_FILE, IDI_FRAME_12);
-                        if(pFrameImage)
-                        {
-                            IImage_Draw(pFrameImage, 0, 0);
-                            IImage_Release(pFrameImage);
-                            pFrameImage = NULL;
-                        }
-                        GETFSFREE(&dwTotal);
-            			free = GETRAMFREE(NULL,NULL);
-            			MSG_FATAL("3preview CameraApp update dwTotal======%d,free===%d",dwTotal,free,0);
-                        MSG_FATAL("3pMe->m_bIsPreview====%d",pMe->m_bIsPreview,0,0);
-                         pFrameImage = ISHELL_LoadResImage(pMe->m_pShell, CAMERAAPP_IMAGE_RES_FILE, IDI_FRAME_13);
-                        if(pFrameImage)
-                        {
-                            IImage_Draw(pFrameImage, 0, 0);
-                            IImage_Release(pFrameImage);
-                            pFrameImage = NULL;
-                        }
-                        GETFSFREE(&dwTotal);
-            			free = GETRAMFREE(NULL,NULL);
-            			MSG_FATAL("4preview CameraApp update dwTotal======%d,free===%d",dwTotal,free,0);
-                        MSG_FATAL("4pMe->m_bIsPreview====%d",pMe->m_bIsPreview,0,0);
-                        pFrameImage = ISHELL_LoadResImage(pMe->m_pShell, CAMERAAPP_IMAGE_RES_FILE, IDI_FRAME_14);
-                        if(pFrameImage)
-                        {
-                            IImage_Draw(pFrameImage, 203, 0);
-                            IImage_Release(pFrameImage);
-                            pFrameImage = NULL;
-                        }
+                    #ifdef FEATURE_VERSION_K212_VHOPE
+                    IImage *pFrameImage = NULL;
+                    pFrameImage = ISHELL_LoadResImage(pMe->m_pShell, CAMERAAPP_IMAGE_RES_FILE, IDI_FRAME_11);
+                    if(pFrameImage)
+                    {
+                        IImage_Draw(pFrameImage, 20, 0);
+                        IImage_Draw(pFrameImage, 20, 300);
+                        IImage_Release(pFrameImage);
+                        pFrameImage = NULL;
+                    }
+                     pFrameImage = ISHELL_LoadResImage(pMe->m_pShell, CAMERAAPP_IMAGE_RES_FILE, IDI_FRAME_12);
+                    if(pFrameImage)
+                    {
+                        IImage_Draw(pFrameImage, 0, 0);
+                        IImage_Draw(pFrameImage, 220, 0);
+                        IImage_Release(pFrameImage);
+                        pFrameImage = NULL;
+                    }
+                    #else
+                    IImage *pFrameImage = NULL;
+                    pFrameImage = ISHELL_LoadResImage(pMe->m_pShell, CAMERAAPP_IMAGE_RES_FILE, IDI_FRAME_11);
+                    if(pFrameImage)
+                    {
+                        IImage_Draw(pFrameImage, 0, 275);
+                        IImage_Release(pFrameImage);
+                        pFrameImage = NULL;
+                    }
+                     pFrameImage = ISHELL_LoadResImage(pMe->m_pShell, CAMERAAPP_IMAGE_RES_FILE, IDI_FRAME_12);
+                    if(pFrameImage)
+                    {
+                        IImage_Draw(pFrameImage, 0, 0);
+                        IImage_Release(pFrameImage);
+                        pFrameImage = NULL;
+                    }
+                     pFrameImage = ISHELL_LoadResImage(pMe->m_pShell, CAMERAAPP_IMAGE_RES_FILE, IDI_FRAME_13);
+                    if(pFrameImage)
+                    {
+                        IImage_Draw(pFrameImage, 0, 0);
+                        IImage_Release(pFrameImage);
+                        pFrameImage = NULL;
+                    }
+                     pFrameImage = ISHELL_LoadResImage(pMe->m_pShell, CAMERAAPP_IMAGE_RES_FILE, IDI_FRAME_14);
+                    if(pFrameImage)
+                    {
+                        IImage_Draw(pFrameImage, 203, 0);
+                        IImage_Release(pFrameImage);
+                        pFrameImage = NULL;
+                    }
                     #endif
 					#endif
                     pImage = ISHELL_LoadResImage(pMe->m_pShell,
@@ -5606,8 +5624,13 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
     displaySize.cy = 128;
 #elif defined(FEATURE_DISP_240X320)
 #ifdef FEATURE_VERSION_K212_HUALU
+#if defined(FEATURE_VERSION_K212_VHOPE)
+    displaySize.cx = 200;  //200
+    displaySize.cy = 280;  //270
+#else
 	displaySize.cx = 190;  //200
     displaySize.cy = 260;  //270
+#endif
 #else
 	displaySize.cx = 96;
     displaySize.cy = 96;
