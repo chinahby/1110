@@ -3089,7 +3089,13 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
 	            }   
 	        }
 	        else if (pMe->m_bPaused)
-	        {            
+	        {                  
+	            if (pMe->bFromResume == TRUE)
+                {
+                    pMe->bFromResume = FALSE;
+                    MSLEEP(1000);
+                }   
+                
 	            if (pMe->m_pMedia)
 	            {              	
 	                (void)IMEDIA_Resume(pMe->m_pMedia);

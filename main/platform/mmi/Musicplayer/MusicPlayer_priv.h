@@ -1286,6 +1286,7 @@ typedef struct _CMusicPlayer
 #endif
 	boolean      m_Next;
     uint8        m_times;
+    boolean      bFromResume;
 } CMusicPlayer;
 
 void CMusicPlayer_GetTimeBack(CMusicPlayer *pMe);

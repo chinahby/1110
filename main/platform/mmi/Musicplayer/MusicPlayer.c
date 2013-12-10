@@ -432,6 +432,8 @@ static int CMusicPlayer_InitAppData(CMusicPlayer *pMe)
 	pMe->m_bBtHSConnected = FALSE;	  //Add By zzg 2011_10_27
 #endif
 	pMe->m_Next = TRUE;
+    pMe->bFromResume = FALSE;
+
 
   if(SUCCESS != ISHELL_GetPrefs(pMe->m_pShell,
                                AEECLSID_APP_MUSICPLAYER,
@@ -1435,6 +1437,10 @@ static void MP3_ResumeHandle(CMusicPlayer *pMe)
     {
         g_nInterruptRef = 0;
     }
+
+    
+    pMe->bFromResume = TRUE;
+    
     pMe->m_bInterrupt = TRUE;
     MP3_CloseKeyBeepVol(pMe);  //close keybeepvol again 防止是由于进入设置按键音引起的
     Music_Shake_Open(); // open again if be closed by other app
