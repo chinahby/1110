@@ -101,6 +101,10 @@ ifeq ($(RESOURCEDIR),WSF_CN_P3)
     CONSTFILE_FILES+=\
 		Zadangbingderen.mp3|fs:/hsmm/music/Zadangbingderen.mp3
 endif
+ifeq ($(RESOURCEDIR),WSF_CN_P5)
+    CONSTFILE_FILES+=\
+		Zadangbingderen.mp3|fs:/hsmm/music/Zadangbingderen.mp3
+endif
 # 加入另外一种语言资源文件
 ifneq ($(EXTLANG1),NO)
 CONSTFILE_FILES+=\
