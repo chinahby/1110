@@ -1153,7 +1153,11 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
 	boolean b2 = OEMPriv_IsPhoneIdle();
 	MSG_FATAL("OEMKeyguard_HandleEvent........000000",0,0,0);
 	MSG_FATAL("b====%d...b2======%d.....",b,b2,0);
+	#if defined(FEATURE_QQ_APP)&& defined(FEATURE_DISP_128X160)
+    if ((OEMKeyguard_IsEnabled() && OEMPriv_IsPhoneIdle())|| (OEMKeyguard_IsEnabled() && (AEE_Active()!= AEECLSID_DIALER)))
+	#else
     if (OEMKeyguard_IsEnabled() && OEMPriv_IsPhoneIdle())
+	#endif
     {
         boolean bKeyPress = FALSE;
         AEECLSID cls = AEE_Active(); 
