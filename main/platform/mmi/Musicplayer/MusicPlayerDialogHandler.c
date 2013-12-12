@@ -1625,7 +1625,7 @@ static boolean MP3_Settings_HandleEvent(CMusicPlayer *pMe,
 #if defined(AEE_STATIC)
     ASSERT(pMe != NULL);
 #endif
-    MSG_FATAL("MP3_Settings_HandleEvent Start",0,0,0);
+    MSG_FATAL("MP3_Settings_HandleEvent Start eCode=%x, wParam=%x",eCode,wParam,0);
  switch (eCode)
     {
         case EVT_DIALOG_INIT:   
@@ -1670,6 +1670,15 @@ static boolean MP3_Settings_HandleEvent(CMusicPlayer *pMe,
         case EVT_USER_REDRAW:
         {    
             MP3_Draw_SettingsText(pMe);
+
+            //Add By zzg 2013_12_12
+            if (pMe->m_pMedia) 
+            {
+                pMe->m_nCurrentVolume= (pMe->m_nVolume)*AEE_MAX_VOLUME/5;                
+                (void)IMEDIA_SetVolume(pMe->m_pMedia, pMe->m_nCurrentVolume); 
+            }
+            //Add End
+            
             return TRUE;
          }
         case EVT_DIALOG_END:
