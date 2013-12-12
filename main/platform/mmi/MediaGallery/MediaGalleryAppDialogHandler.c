@@ -3076,7 +3076,7 @@ static boolean MediaGalleryApp_OnPopupMenuCommand(CMediaGalleryApp* pMe,
                                                  wParam,
                                                  dwParam); 
 		 // add by pyuangui 2013-08-29  K212–Ë«Û∑¿…¡∆¡
-#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)//||defined(FEATURE_LOW_MEM_BIGFONT)
          {
 		 static IStatic * torch_pStatic = NULL;
          PromptMsg_Param_type m_PromptMsg;
@@ -3355,7 +3355,7 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
          MSG_FATAL("MGAppPopupMenu_OnImageViewer EVT_DIALOG_START",0,0,0);
          pCurNode = MediaGalleryApp_GetCurrentNode(pMe);
 
-#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)//||defined(FEATURE_LOW_MEM_BIGFONT)
          {
 		 static IStatic * torch_pStatic = NULL;
          PromptMsg_Param_type m_PromptMsg;

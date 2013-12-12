@@ -728,13 +728,22 @@ static void recorder_show_media_spec( Media* pme)
 	)
 	{
 		uint32 total = pme->m_bRecorder ? pme->m_nTimeLimit : pme->m_nDuration;
-
-		SETAEERECT( &rect,
-					0,
-					0,
-					pme->m_eState == MEDIA_STATE_DONE ? info.cx : ( ( pme->m_nElapsedTime * info.cx) / total),
-					1
-				);
+		#ifdef FEATURE_DISP_240X320
+        SETAEERECT( &rect,
+		0,
+		0,
+		pme->m_eState == MEDIA_STATE_DONE ? info.cx : ( ( pme->m_nElapsedTime * info.cx) / total),
+        3
+        );
+        #else
+        SETAEERECT( &rect,
+		0,
+		0,
+		pme->m_eState == MEDIA_STATE_DONE ? info.cx : ( ( pme->m_nElapsedTime * info.cx) / total),
+		1
+		);
+		#endif
+				
 		drawImageWithOffset( pRecorder, pRecorder->m_pImage[RECORDER_IMAGE_PROGRESSBAR2], x, y, &rect);
 	}
 

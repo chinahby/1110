@@ -3061,7 +3061,12 @@ void DrawPromptMessage (IDisplay *pIDisplay,
         }  
 		
     }
-    DrawBottomBar(pIDisplay, &bottomParam);  
+    #ifdef FEATURE_VERSION_K212_HUALU
+    if(bottomParam.eBBarType != BTBAR_NONE)
+    #endif
+    {
+        DrawBottomBar(pIDisplay, &bottomParam);  
+    }
  }
 	
 /*

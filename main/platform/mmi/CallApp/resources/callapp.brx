@@ -245,7 +245,7 @@
 		<Text>SAR: CDMA800 Head:0.565W/Kg  Body:1.080W/Kg</Text>
 	</String>
 	<STRING Id="1127" Name="IDS_MSG_CURPROFILE_MEETING_NO_VIBRATE">
-		<Text>Meeting mode activated</Text>
+		<Text>Silent Mode</Text>
 	</STRING>
 	<String Id="1128" Name="IDS_SAR_C260_IC18">
 		<Text>SAR: 0.21W/kg@1g(Head)   0.16W/kg@1g(Body).</Text>

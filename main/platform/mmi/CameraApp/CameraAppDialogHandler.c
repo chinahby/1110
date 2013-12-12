@@ -412,12 +412,10 @@ static const CCameraSize g_CameraSizeCFG_10[] =
     {176,220,L"176*220"}, // QCIF
     {240,320,L"240*320"},
     {352,464,L"352*464"}, // VGA 
+#elif defined(FEATURE_VERSION_K212_VHOPE)
+    {200,240,L"240*320"}, // VGA
 #else
 	{200,240,L"240*320"}, // VGA
-    //{128,160,L"128*160"}, // FULL Screen
-    //{176,220,L"176*220"}, // QCIF
-    //{480,640,L"480*640"}, // VGA 
-    //{600,800,L"600*800"}, // VGA  
 #endif
 #elif defined(FEATURE_DISP_320X240)
     //{128,160,L"128*160"}, // FULL Screen
