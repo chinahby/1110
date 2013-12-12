@@ -660,9 +660,11 @@ static void tuneVolumeStop(CFmRadio* pMe)
 						   CFGI_FMRADIO_VOLUME,
 						   &pMe->byVolumeLevel,
 						   sizeof(byte));
-        #if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
-		pMe->byVolumeLevel = (pMe->byVolumeLevel*3)/5;
-		#endif
+        
+        //#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+		//pMe->byVolumeLevel = (pMe->byVolumeLevel*3)/5;
+		//#endif
+		
         newvolumeLevel = pMe->byVolumeLevel;
 #if !defined( AEE_SIMULATOR)        
         #if defined (FEATURE_VERSION_SKY) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
@@ -1545,9 +1547,11 @@ else if( itemId == IDS_FMRADIO_OPTION_MENU_GLOBAL_SEARCH)
 						   &pMe->byVolumeLevel,
 						   sizeof(byte));
 	   MSG_FATAL("pMe->byVolumeLevel====%d",pMe->byVolumeLevel,0,0);
-	   #if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
-	   pMe->byVolumeLevel = (pMe->byVolumeLevel*3)/5;
-	   #endif
+       
+	   //#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+	   //pMe->byVolumeLevel = (pMe->byVolumeLevel*3)/5;
+	   //#endif
+       
        fm_set_volume( pMe->byVolumeLevel,pMe->fmSpeaker);
        repaint( pMe, TRUE);
     }
@@ -1564,9 +1568,11 @@ else if( itemId == IDS_FMRADIO_OPTION_MENU_GLOBAL_SEARCH)
 						   CFGI_FMRADIO_VOLUME,
 						   &pMe->byVolumeLevel,
 						   sizeof(byte));
-	   #if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
-	   pMe->byVolumeLevel = (pMe->byVolumeLevel*3)/5;
-	   #endif
+       
+	   //#if defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+	   //pMe->byVolumeLevel = (pMe->byVolumeLevel*3)/5;
+	   //#endif
+       
        fm_set_volume( pMe->byVolumeLevel,pMe->fmSpeaker);
 	   repaint( pMe, TRUE);
 

@@ -400,9 +400,9 @@
 		<Controls>
 			<Text Id="7010" Name="IDC_TEXT_ESN_TRACK_NUMBER">
 				<Items/></Text>
-			<Text Id="7011" Name="IDC_TEXT_ESN_TRACK_NUMBER_TWO">
-				<Items/></Text>		
-			<Text Id="7012" Name="IDC_TEXT_ESN_TRACK_TIME">
+			<Text Id="7011" Name="IDC_TEXT_ESN_TRACK_TIME">
+				<Items/></Text>
+			<Text Id="7012" Name="IDC_TEXT_ESN_TRACK_NUMBER_TWO">
 				<Items/></Text>
 		</Controls>
 	</Dialog>
