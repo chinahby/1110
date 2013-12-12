@@ -3465,7 +3465,7 @@ int GetRegisterInfo(char *szRegInfo, int nSize)
     // 格式化数据：机型、手机ESN、IMSI号码、当前软件版本
     //OEM_GetConfig (CFGI_MOBILEINFO, &mi, sizeof(AEEMobileInfo));
     GetMobileInfo(&mi);
-    SPRINTF(&szRegInfo[4], "<a1><b1>%s</b1><b2>%06x%08x</b2><b3>%s</b3><b4>%s</b4></a1>",
+    SPRINTF(&szRegInfo[4], "<a1><b1>%s</b1><b2>%06X%08X</b2><b3>%s</b3><b4>%s</b4></a1>",
             OEMNV_DEFAULT_BANNER, H32,L32, mi.szMobileID, ver_modelversion);
     
     nlen = STRLEN(&szRegInfo[4]);
@@ -3552,7 +3552,7 @@ int GetHuluRegisterInfo(char *szRegInfo, int nSize)
     // 格式化数据：机型、手机ESN、IMSI号码、当前软件版本
     //OEM_GetConfig (CFGI_MOBILEINFO, &mi, sizeof(AEEMobileInfo));
     GetMobileInfo(&mi);
-    SPRINTF(szRegInfo, "60500702A1;VK232_HL_131202;I%06x%08x;M%s;K;L;P358715;S;",H32,L32, mi.szMobileID);
+    SPRINTF(szRegInfo, "60500702A1;VK232_HL_131202;I%06x%08x;M%s;K;L;PE-5300;S;",H32,L32, mi.szMobileID);
     nlen = STRLEN(szRegInfo);    
     return (nlen);
 }
