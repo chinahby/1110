@@ -134,7 +134,7 @@
 		<Text>Done</Text>
 	</String>
 	<String Id="1069" Name="IDS_MSG_NOMEMORY">
-		<Text>Phone memory full</Text>
+		<Text>Phone memory full,Pls Restart!</Text>
 	</String>
 	<String Id="1070" Name="IDS_MSG_WAITING">
 		<Text>Waiting</Text>
@@ -163,7 +163,7 @@
 	<String Id="1080" Name="IDS_CAMERA_SAVE_VIDEOFILE">
 		<Text>Save recorded file?</Text>
 	</String>
-		<String Id="1081" Name="IDS_ITEM_CAMERA1">
+	<String Id="1081" Name="IDS_ITEM_CAMERA1">
 		<Text>Camera</Text>
 	</String>
 </Strings>

@@ -116,7 +116,7 @@
 		<Text>完成</Text>
 	</STRING>
 	<STRING Id="1069" Name="IDS_MSG_NOMEMORY">
-		<Text>内存不足</Text>
+		<Text>内存不足,请重启!</Text>
 	</STRING>
 	<STRING Id="1070" Name="IDS_MSG_WAITING">
 		<Text>请稍等</Text>
@@ -139,7 +139,7 @@
 	<String Id="1078" Name="IDS_CAMERA_RECORD_STOP">
 		<Text>停止</Text>
 	</String>
-		<String Id="1081" Name="IDS_ITEM_CAMERA1">
+	<String Id="1081" Name="IDS_ITEM_CAMERA1">
 		<Text>照相机</Text>
 	</String>
 </Strings>
