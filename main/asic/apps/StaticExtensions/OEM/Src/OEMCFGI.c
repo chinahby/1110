@@ -3826,10 +3826,8 @@ void OEM_RestoreFactorySetting( void )
 #ifndef WIN32//wlh ÁÙÊ±ÐÞ¸Ä
    {
 #ifdef FEATURE_APP_STOPWATCH  
-#if !defined(FEATURE_LOWER_MEM) 
 	   extern void StopWatch_ClearData(void);	   
 	   StopWatch_ClearData();
-#endif
 #endif	   
    }
 #endif//WIN32
