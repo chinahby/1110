@@ -13377,6 +13377,9 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
                 pMe->m_msg_text_id = IDS_MSG_CURPROFILE_MEETING_NO_VIBRATE;
 #endif
             #else
+#ifdef FEATURE_VERSION_K232_JST
+               ISOUND_Vibrate(pMe->m_pSound, 2000);  
+#endif
                 pMe->m_msg_text_id = IDS_MSG_CURPROFILE_MEETING;
             #endif
             }
