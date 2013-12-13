@@ -339,6 +339,8 @@ static OEMState_data alarm_image_data[]=
 #ifndef FEATURE_USES_LOWMEM
 #ifndef FEATURE_VERSION_K212
 #ifndef FEATURE_VERSION_K212_HUALU
+#ifndef FEATURE_VERSION_K232_JST
+#ifndef FEATURE_VERSION_K232_X3
 /*MMS Full/MMS Unread/MMS Unreceive/Push*/
 static OEMState_data mms_image_data[]=
 {
@@ -349,6 +351,8 @@ static OEMState_data mms_image_data[]=
 #endif
     {ANNUN_STATE_PUSH_ON, IDB_PUSH_MSG, NULL}
 };
+#endif
+#endif
 #endif
 #endif
 #endif
@@ -396,7 +400,7 @@ static OEMState_data batt_image_data[]=
 };
 #endif
 
-#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)||defined(FEATURE_VERSION_K232_JST)||defined(FEATURE_VERSION_K232_X3)
 static OEMState_data qq_image_data[]=
 {  
 #ifdef FEATURE_VERSION_K212_HUALU
@@ -488,7 +492,7 @@ OEMAnnun_content fmradio_content =
      {ANNUN_TYPE_IMAGE, 1, ANNUN_STATE_OFF, (void *)fmradio_image_data};
 #endif
 
-#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)||defined(FEATURE_VERSION_K232_JST)||defined(FEATURE_VERSION_K232_X3)
 OEMAnnun_content qq_content =
      {ANNUN_TYPE_IMAGE, 4, ANNUN_STATE_OFF, (void *)qq_image_data};
 #else
@@ -514,8 +518,12 @@ OEMAnnun_content alarm_content =
 #ifndef FEATURE_USES_LOWMEM
 #ifndef FEATURE_VERSION_K212
 #ifndef FEATURE_VERSION_K212_HUALU
+#ifndef FEATURE_VERSION_K232_JST
+#ifndef FEATURE_VERSION_K232_X3
 OEMAnnun_content mms_content =
      {ANNUN_TYPE_IMAGE, 4, ANNUN_STATE_OFF, (void *)mms_image_data};
+#endif
+#endif
 #endif
 #endif
 #endif
@@ -582,7 +590,11 @@ OEMAnnun_content batt_content =
 #elif defined(FEATURE_DISP_240X320)
     #define IMG_WIDTH        25 //18
     #define IMG_HEIGHT       25 //18
+    #ifdef FEATURE_VERSION_K232_JST
+	#define LG_IMG_WIDTH     36
+	#else
     #define LG_IMG_WIDTH     32 //29
+    #endif
     #define TEXT_HEIGHT      11
     #define ROW1_Y           0
     #define BETWEEN_ICON_PIXEL 0 // 1 	
@@ -610,7 +622,11 @@ OEMAnnun_content batt_content =
 #define ANNUN_ICON_POSITION_5      (LG_IMG_WIDTH + 3*IMG_WIDTH + 4*BETWEEN_ICON_PIXEL)
 #define ANNUN_ICON_POSITION_6      (LG_IMG_WIDTH + 4*IMG_WIDTH + 5*BETWEEN_ICON_PIXEL)
 #define ANNUN_ICON_POSITION_7      (LG_IMG_WIDTH + 5*IMG_WIDTH + 6*BETWEEN_ICON_PIXEL)
+#ifdef FEATURE_VERSION_K232_JST
+#define ANNUN_ICON_POSITION_8      (LG_IMG_WIDTH + 6*IMG_WIDTH + 7*BETWEEN_ICON_PIXEL -2)
+#else
 #define ANNUN_ICON_POSITION_8      (LG_IMG_WIDTH + 6*IMG_WIDTH + 7*BETWEEN_ICON_PIXEL)
+#endif
 #define ANNUN_ICON_POSITION_9      (LG_IMG_WIDTH + 7*IMG_WIDTH + 8*BETWEEN_ICON_PIXEL)
 #if defined(FEATURE_DISP_128X128)
 #define ANNUN_ICON_POSITION_10     (DISP_WIDTH - LG_IMG_WIDTH - IMG_WIDTH - BETWEEN_ICON_PIXEL)
@@ -627,7 +643,11 @@ OEMAnnun_content batt_content =
 #else
 #define ANNUN_ICON_POSITION_10    (LG_IMG_WIDTH + 8*IMG_WIDTH + 9*BETWEEN_ICON_PIXEL)
 #endif
+#ifdef FEATURE_VERSION_K232_JST
+#define ANNUN_ICON_POSITION_END  ((DISP_WIDTH) - (LG_IMG_WIDTH)+4)
+#else
 #define ANNUN_ICON_POSITION_END  ((DISP_WIDTH) - (LG_IMG_WIDTH))
+#endif
 
 /* Row layouts for annunciator, assuming 40-row annunciator region
  * Pixel rows:  First        Last        Annunciator content
@@ -685,7 +705,7 @@ OEMAnnun_content batt_content =
  */
 static OEMAnnun_data Annunciators[] =
 {
-#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)
+#if defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)||defined(FEATURE_VERSION_K232_JST)||defined(FEATURE_VERSION_K232_X3)
     {ANNUN_FIELD_RSSI,             ANNUN_ICON_POSITION_1,      ROW1_Y,  LG_IMG_WIDTH,   IMG_HEIGHT,  &rssi_content}, 	      
     {ANNUN_FIELD_HEADSET,          ANNUN_ICON_POSITION_2,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &headset_content},     
     {ANNUN_FIELD_TCARD,            ANNUN_ICON_POSITION_3,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &tcard_content},  
@@ -750,7 +770,7 @@ static OEMAnnun_data Annunciators[] =
     {ANNUN_FIELD_BATT,             ANNUN_ICON_POSITION_END, ROW1_Y,  LG_IMG_WIDTH, IMG_HEIGHT,  &batt_content}
 #else
   {ANNUN_FIELD_ALARM,               ANNUN_ICON_POSITION_8,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &alarm_content},
-#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_K212_HUALU)
+#if !defined(FEATURE_USES_LOWMEM)&&!defined(FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_K212_HUALU)&&!defined(FEATURE_VERSION_K232_JST)&&!defined(FEATURE_VERSION_K232_X3)
   {ANNUN_FIELD_MMS,                 ANNUN_ICON_POSITION_9,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &mms_content},
 #else
   {ANNUN_FIELD_MMS,                 ANNUN_ICON_POSITION_9,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  NULL},
@@ -779,7 +799,7 @@ static OEMAnnun_data Annunciators[] =
 #if  0//def FEATURE_VERSION_LM126C
 #define ANNUN_MAX_STATES     (8)
 #else
-#if defined (FEATURE_VERSION_K212)|defined(FEATURE_VERSION_W021_CT100_QVGA)||defined(FEATURE_VERSION_K212_HUALU)
+#if defined (FEATURE_VERSION_K212)|defined(FEATURE_VERSION_W021_CT100_QVGA)||defined(FEATURE_VERSION_K212_HUALU)||defined(FEATURE_VERSION_K232_JST)||defined(FEATURE_VERSION_K232_X3)
 #define ANNUN_MAX_STATES     (9)
 #else
 #define ANNUN_MAX_STATES     (7)
@@ -2097,7 +2117,7 @@ static int IAnnunciator_SetFieldText(IAnnunciator * pMe ,uint16 *cText, boolean 
 	{
       return EFAILED;
     }
-#if !defined( FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_K212_HUALU)
+#if !defined( FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_K212_HUALU)&&!defined(FEATURE_VERSION_K232_JST)
     if(cText)
     {
 	    WSTRLCPY(IAnnunCoreObj->m_Title, cText, ANN_TEXT_MAX_LEN);
@@ -2464,7 +2484,7 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
 #endif        
 
         //MSG_FATAL("***zzg OEMAnnunciator m_bActive=%d, m_hasTitleText=%d***", IAnnunCoreObj->m_bActive, IAnnunCoreObj->m_hasTitleText, 0);
-#if !defined( FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_K212_HUALU)
+#if !defined( FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_K212_HUALU)&&!defined(FEATURE_VERSION_K232_JST)
 	    if(!IAnnunCoreObj->m_bActive)
 		{			
 			/*
