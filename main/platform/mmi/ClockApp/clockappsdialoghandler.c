@@ -2001,7 +2001,7 @@ static boolean  HandleAlarmTimeReachDialogEvent(CClockApps *pMe,
 #endif
                 //画活动的闹钟图标
                 CClockApps_AniClockImg(pMe);
-
+                IANNUNCIATOR_Redraw(pMe->m_pIAnn);
 #if 0  //这里不画闹钟设定时间，画当前时间，在上面 CClockApps_AniclockImg 里实现
                 IDISPLAY_SetColor( pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
                 

@@ -1501,7 +1501,7 @@ static boolean  IDD_ALARM_Handler(void       *pUser,
                 int len = 0;
 				AEERect rc = {0};
             	RGBVAL nOldFontColor;
-
+                IANNUNCIATOR_Redraw(pMe->m_pIAnn);
 				MEMSET(wszTime,0,sizeof(wszTime));
             	dwAlarmTime = time.dwWATime;
             	Appscommon_FormatTimeString(dwAlarmTime, wszTime, sizeof(wszTime));

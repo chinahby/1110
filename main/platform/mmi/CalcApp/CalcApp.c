@@ -524,11 +524,11 @@ when         who            what, where, why
 //显示数字高度
 #define CALC_NUMBER_HEIGHT            24
 //显示计算区域X坐标原点
-#define CALC_VAL_RECT_X              10
+#define CALC_VAL_RECT_X              8
 //显示计算区域最底行Y坐标原点
 #define CALC_VAL_RECT_Y              50
 //显示计算区域宽度
-#define CALC_VAL_RECT_WIDTH          212
+#define CALC_VAL_RECT_WIDTH          220
 //显示单行计算区域高度
 #define CALC_VAL_RECT_HEIGHT         32
 
