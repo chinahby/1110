@@ -125,7 +125,7 @@
 		<Text>拍照失败</Text>
 	</STRING>
 	<String Id="1074" Name="IDS_CAMERA_PHOTO_MODE">
-		<Text>图片路径</Text>
+		<Text>拍照图片路径</Text>
 	</String>
 	<String Id="1075" Name="IDS_CAMERA_PHOTO_PHONE">
 		<Text>手机</Text>
