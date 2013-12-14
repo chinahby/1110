@@ -7021,7 +7021,8 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
 	MSG_FATAL("CFieldDebug_DrawEsnScreen Start", 0, 0, 0);
     MEMSET (sTitle, 0, sizeof(sTitle));
 
-    (void)MEMSET( szBuf,(AECHAR) 0, sizeof(szBuf));    
+    (void)MEMSET( szBuf,(AECHAR) 0, sizeof(szBuf));   
+    #ifndef FEATURE_VERSION_K212_VHOPE
     ret = ISHELL_LoadResString(pme->a.m_pIShell,
                                FLDDBG_RES_FILE,
                                IDS_ESN,
@@ -7061,6 +7062,10 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
    
     n = WSTRLEN(szBuf);
     szBuf[n++] = (AECHAR) '\n';
+    #else
+    n = WSTRLEN(szBuf);
+    szBuf[n++] = (AECHAR) '\n';
+    #endif
     (void) ISHELL_LoadResString(pme->a.m_pIShell,
                                FLDDBG_RES_FILE,
                                IDS_STRING_MEID,
@@ -7249,6 +7254,14 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
    {
        MSG_FATAL("CFieldDebug_DrawEsnScreen 2 p_stk == NULL", 0, 0, 0);
    }
+   #ifdef FEATURE_VERSION_K212_VHOPE
+   {
+            AEERect prc = {0};
+            ISTATIC_GetRect(p_stk,&prc);
+            prc.x = prc.x+5;
+            ISTATIC_SetRect(p_stk,&prc); 
+   }
+   #endif
    // Set the values of the title and text strings for this control
     ISTATIC_SetProperties(p_stk, ST_UNDERLINE|ST_NOSCROLL|ST_CENTERTITLE);
    (void) ISTATIC_SetText(p_stk,

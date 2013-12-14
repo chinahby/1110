@@ -20,7 +20,7 @@
 		<Text>PRL Vers</Text>
 	</STRING>
 	<STRING Id="7" Name="IDS_ESN">
-		<Text>ESN </Text>
+		<Text>ESN :</Text>
 	</STRING>
 	<STRING Id="8" Name="IDS_CARKIT_VERSION">
 		<Text>CarKit Ver:</Text>
@@ -344,7 +344,7 @@
 		<Text>SID</Text>
 	</String>
 	<String Id="1016" Name="IDS_STRING_MEID" Encoding="Unicode">
-		<Text>MEID</Text>
+		<Text>MEID:</Text>
 	</String>
 	<String Id="1017" Name="IDS_BLANK">
 		<Text>   </Text>
