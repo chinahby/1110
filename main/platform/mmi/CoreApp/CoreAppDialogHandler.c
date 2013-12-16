@@ -9588,6 +9588,27 @@ void CoreApp_UpdateAnnunciator(CCoreApp *pMe)
 #endif        
 #endif        
     }
+
+    if(pMe->m_pIAnn != NULL)
+    {
+#if !defined (FEATURE_VERSION_SKY) && !defined (FEATURE_VERSION_EC99) && !defined (FEATURE_VERSION_K212_20D) && !defined (FEATURE_VERSION_K212_ND)
+        if (b_headset)
+        {
+#endif
+            if (b_FMBackground)
+    	    {
+    	        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO, ANNUN_STATE_FMRADIO_ON);
+    	    }
+            else
+            {
+                IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO, ANNUN_STATE_FMRADIO_OFF);    
+            }
+#if !defined (FEATURE_VERSION_SKY) && !defined (FEATURE_VERSION_EC99) && !defined (FEATURE_VERSION_K212_20D) && !defined (FEATURE_VERSION_K212_ND)
+         }
+#endif            
+    }
+    
+    
     MSG_FATAL("alertType=%d",alertType,0,0);
     switch(alertType)
     {
