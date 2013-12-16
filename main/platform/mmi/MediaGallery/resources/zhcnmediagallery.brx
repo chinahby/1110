@@ -352,6 +352,9 @@
 	<String Id="1116" Name="IDS_MG_ANIMATE_CANNOTSET_WALLPAPER">
 		<Text>不能将动画设置为墙纸！</Text>
 	</String>
+	<String Id="1118" Name="IDS_MG_VHOPE_RUNUDISK">
+		<Text>U盘连接中</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<Dialog Id="6001" Name="IDD_MG_MAINMENU" Focus="7001">

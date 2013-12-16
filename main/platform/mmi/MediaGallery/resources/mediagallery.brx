@@ -355,6 +355,9 @@
 	<STRING Id="1117" Name="IDS_MG_MEDIAGALLERY_C337">
 		<Text>File Manager</Text>
 	</STRING>
+	<String Id="1118" Name="IDS_MG_VHOPE_RUNUDISK">
+		<Text>U-disk running</Text>
+	</String>
 	<STRING Id="1120" Name="IDS_MG_DISSTORAGE">
 		<Text>Mass storage is disconnected</Text>
 	</STRING>

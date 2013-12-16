@@ -2328,9 +2328,12 @@ static boolean MediaGalleryApp_UDiskDlg_HandleEvent(CMediaGalleryApp* pMe,
       case EVT_DIALOG_START:
       {
          AECHAR szBuffer[50];
-         #ifdef FEATURE_VERSION_W317A
+         #if defined(FEATURE_VERSION_W317A)
           ISHELL_LoadResString(pMe->m_pShell, MGRES_LANGFILE,
                IDS_MG_CONSTORAGE, szBuffer, sizeof(szBuffer));
+         #elif defined(FEATURE_VERSION_K212_VHOPE)
+         ISHELL_LoadResString(pMe->m_pShell, MGRES_LANGFILE,
+               IDS_MG_VHOPE_RUNUDISK, szBuffer, sizeof(szBuffer));
          #else
          ISHELL_LoadResString(pMe->m_pShell, MGRES_LANGFILE,
                IDS_MG_RUNUDISK, szBuffer, sizeof(szBuffer));
