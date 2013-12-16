@@ -8821,6 +8821,8 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 		#else
     		#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_S1000T)
     			eBBarType = BTBAR_UNLOCK_SOS;
+			#elif defined(FEATURE_VERSION_W021_DX_POWERTEL)
+				eBBarType = BTBAR_LUNLOCK;
 			#elif defined(FEATURE_VERSION_C316)||defined(FEATURE_LEFT_SOFTKEY_AND_STAR_UNLOCK)|| defined(FEATURE_VERSION_K212)|| defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)||defined(FEATURE_VERSION_K212_HUALU)
 			    eBBarType = BTBAR_UNLOCK_L;
         	#elif defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180)|| defined(FEATURE_VERSION_1110W516) 
