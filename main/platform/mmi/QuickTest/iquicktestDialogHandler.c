@@ -558,7 +558,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     #if defined (FEATURE_VERSION_C180)||defined(FEATURE_KEYTEST_NO_CAMERA_MUSIC)//xxzhen for 128x160 resource
 					image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_KEY_TEST12);
 					#else
-                    #if defined(FEATURE_QUICK_TEST_KEY_4)||defined(FEATURE_VERSION_W021_WSF_CN)//def FEATURE_QUICK_TEST_KEY_4
+                    #if defined(FEATURE_QUICK_TEST_KEY_4)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_VERSION_W021_DX_POWERTEL)//def FEATURE_QUICK_TEST_KEY_4
                     image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_KEY_TEST_4);
                     #else                    
 					image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_KEY_TEST);
@@ -2579,7 +2579,7 @@ static boolean  QuickTest_BackLightTestHandler(CQuickTest *pMe,
                                     NULL,
                                     IDF_TEXT_TRANSPARENT);
 
-#if defined(FEATURE_VERSION_W027V3)|| defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_M74)           
+#if defined(FEATURE_VERSION_W027V3)|| defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_M74)||defined(FEATURE_VERSION_W021_DX_POWERTEL)           
 
             MEMSET(string, 0, sizeof(string));              
             (void)ISHELL_LoadResString(pMe->m_pShell,
@@ -2713,7 +2713,7 @@ static boolean  QuickTest_BackLightTestHandler(CQuickTest *pMe,
                     IBACKLIGHT_TurnOff(pMe->m_pIBacklight);
                     break;
 
-#if defined(FEATURE_VERSION_W027V3)|| defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_M74)   
+#if defined(FEATURE_VERSION_W027V3)|| defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_M74) ||defined(FEATURE_VERSION_W021_DX_POWERTEL)  
 
                case AVK_3:
                     IBACKLIGHT_TurnOnTorch(pMe->m_pIBacklight);
