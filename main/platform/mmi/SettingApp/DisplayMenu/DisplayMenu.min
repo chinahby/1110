@@ -133,6 +133,12 @@ CONSTFILE_FILES+=\
     wallpaper1.png|fs:/image/wallpaper/wallpaper1.png \
     wallpaper2.png|fs:/image/wallpaper/wallpaper2.png \
     wallpaper3.png|fs:/image/wallpaper/wallpaper3.png 
+else ifeq ($(USES_RESDIR), DX_POWERTEL)
+CONSTFILE_FILES+=\
+    wallpaper1.png|fs:/image/wallpaper/wallpaper1.png \
+    wallpaper2.png|fs:/image/wallpaper/wallpaper2.png \
+    wallpaper3.png|fs:/image/wallpaper/wallpaper3.png \
+    wallpaper4.png|fs:/image/wallpaper/wallpaper4.png
 else ifeq ($(USES_RESDIR), C306)
 CONSTFILE_FILES+=\
     wallpaper1.png|fs:/image/wallpaper/wallpaper1.png \
