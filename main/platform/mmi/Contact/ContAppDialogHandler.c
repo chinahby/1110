@@ -13793,7 +13793,7 @@ static boolean  CContApp_HandleDetailDlgEvent( CContApp  *pMe,
             }
             
             // Draw prompt bar here
-            #if defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_VERSION_W021_C11)||defined(FEATURE_VERSION_W027_HC_KK3)
+            #if defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_VERSION_W021_C11)||defined(FEATURE_VERSION_W027_HC_KK3)||defined(FEATURE_VERSION_W021_DX_POWERTEL)
             CONTAPP_DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);	
 			#else
             CONTAPP_DRAW_BOTTOMBAR(BTBAR_BACK);	
