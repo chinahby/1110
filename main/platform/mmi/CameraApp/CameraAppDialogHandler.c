@@ -5624,10 +5624,10 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
 #ifdef FEATURE_VERSION_K212_HUALU
 #if defined(FEATURE_VERSION_K212_VHOPE)
     displaySize.cx = 240;  //200
-    displaySize.cy = 300;  //270
+    displaySize.cy = 296;  //270
 #else
 	displaySize.cx = 240;  //200
-    displaySize.cy = 300;  //270
+    displaySize.cy = 296;  //270
 #endif
 #else
 	displaySize.cx = 96;
