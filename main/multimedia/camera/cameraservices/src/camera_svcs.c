@@ -1300,6 +1300,7 @@ MCNs 10-VF130-21/-22/-23 with new 3MP (Micron sensor) camera, from branch to mai
 #include "camerai.h"
 #include "camera_svcs.h"
 #include "mobile.h"
+#include "AEEStdLib.h"
 #ifdef FEATURE_PNG_ENCODER
 #include "pnge.h"
 #endif /* FEATURE_PNG_ENCODER */
@@ -1859,7 +1860,7 @@ static VFE_SkipBitMaskType runningOutput2SkipPattern = 0;
 
 /* New preview buffer scheme */
 #ifdef FEATURE_VERSION_K212_HUALU//yangdecai modify 
-#define CAMERA_NUM_OF_PREVIEW_BUFFERS_WITH_VFE     3
+#define CAMERA_NUM_OF_PREVIEW_BUFFERS_WITH_VFE     2
 #define CAMERA_NUM_OF_PREVIEW_BUFFERS_WITH_DISPLAY    1
 #else
 #define CAMERA_NUM_OF_PREVIEW_BUFFERS_WITH_VFE     3
@@ -13300,8 +13301,23 @@ static void  camera_process_qdsp_output1_msg (Camera_EndOfFrameMessageType *msg)
 
   qcamrawHeaderType *header = (qcamrawHeaderType *)
     ((uint32)eof_msg->output_Y_Address - qcamraw_header_size);
-
-
+#ifdef FEATURE_LOW_MEM_BIGFONT
+  if(camera_preview_buffers.buffers[header->buffer_index].status!= BUSY_WITH_VFE)
+  {
+       if(camera_preview_buffers.buffers[0].status == BUSY_WITH_VFE)
+       {
+          header->buffer_index = 0;          
+       }
+       if(camera_preview_buffers.buffers[1].status == BUSY_WITH_VFE)
+       {
+          header->buffer_index = 1;          
+       }
+       if(camera_preview_buffers.buffers[2].status == BUSY_WITH_VFE)
+       {
+          header->buffer_index = 2;          
+       }
+  }
+#endif
 #ifdef FEATURE_CAMERA_MOBICAT_PREVIEW
   if (mpp_is_ready())
   {
@@ -14601,11 +14617,19 @@ boolean camera_svcs_setparam_vfe_video (void)
     (VFE_AddressType) qcamrawGetDataCbCrPtr (camera_preview_buffers.buffers[1].buf_ptr);
   camera_preview_set_buffer_status(1, BUSY_WITH_VFE);
   MSG_CAMERAPBUF("PBUF setparam_vfe_video, SET buffer 1 BUSY_WITH_VFE", 0, 0, 0);
+#ifdef FEATURE_LOW_MEM_BIGFONT
+  vfeVideoConfig.output1Buffer.Y_OutputTripleBuffer2   =
+    (VFE_AddressType) qcamrawGetDataYPtr    (camera_preview_buffers.buffers[0].buf_ptr);
+  vfeVideoConfig.output1Buffer.CbCrOutputTripleBuffer2 =
+    (VFE_AddressType) qcamrawGetDataCbCrPtr (camera_preview_buffers.buffers[0].buf_ptr);
+  //camera_preview_set_buffer_status(0, BUSY_WITH_VFE);
+#else
   vfeVideoConfig.output1Buffer.Y_OutputTripleBuffer2   =
     (VFE_AddressType) qcamrawGetDataYPtr    (camera_preview_buffers.buffers[2].buf_ptr);
   vfeVideoConfig.output1Buffer.CbCrOutputTripleBuffer2 =
     (VFE_AddressType) qcamrawGetDataCbCrPtr (camera_preview_buffers.buffers[2].buf_ptr);
   camera_preview_set_buffer_status(2, BUSY_WITH_VFE);
+#endif
   MSG_CAMERAPBUF("PBUF setparam_vfe_video, SET buffer 2 BUSY_WITH_VFE", 0, 0, 0);
 
   vfeUpdate.defectPixelCorrection = vfeVideoConfig.defectPixelCorrection;

@@ -1395,7 +1395,11 @@ extern rex_tcb_type           hs_tcb;
 
 /* Size (in units of rex_stack_word_type) of Diagnostic Task stack         */
 #ifdef FEATURE_STACK_REDUCTION
+#ifdef FEATURE_LOW_MEM_BIGFONT
+#define  DIAG_STACK_SIZ (2048*STACK_SIZ_FACTOR/sizeof(rex_stack_word_type))
+#else
 #define  DIAG_STACK_SIZ (4096*STACK_SIZ_FACTOR/sizeof(rex_stack_word_type))
+#endif
 #else
 #define  DIAG_STACK_SIZ (8192*STACK_SIZ_FACTOR/sizeof(rex_stack_word_type))
 #endif
@@ -1542,7 +1546,11 @@ extern rex_tcb_type           cm_tcb;
 
 /* Size (in units of rex_stack_word_type) of Bluetooth Task stack          */
 #ifdef FEATURE_STACK_REDUCTION
+#ifdef FEATURE_LOW_MEM_BIGFONT
+#define  BT_STACK_SIZ   (1024*STACK_SIZ_FACTOR/sizeof(rex_stack_word_type))
+#else
 #define  BT_STACK_SIZ   (2048*STACK_SIZ_FACTOR/sizeof(rex_stack_word_type))
+#endif
 #else
 #define  BT_STACK_SIZ   (4096*STACK_SIZ_FACTOR/sizeof(rex_stack_word_type))
 #endif
@@ -1561,7 +1569,11 @@ extern rex_tcb_type           bt_tcb;
 
 /* Size (in units of rex_stack_word_type) of BT External Profile Task stack*/
 #ifdef FEATURE_STACK_REDUCTION
+#ifdef FEATURE_LOW_MEM_BIGFONT
+#define  BT_PF_STACK_SIZ  (1024*STACK_SIZ_FACTOR/sizeof(rex_stack_word_type))
+#else
 #define  BT_PF_STACK_SIZ  (2048*STACK_SIZ_FACTOR/sizeof(rex_stack_word_type))
+#endif
 #else
 #define  BT_PF_STACK_SIZ  (4096*STACK_SIZ_FACTOR/sizeof(rex_stack_word_type))
 #endif
@@ -1825,7 +1837,11 @@ extern rex_tcb_type           ps_tcb;
 
 /* Size (in units of rex_stack_word_type) of Security Services stack       */
 #ifdef FEATURE_STACK_REDUCTION
+#ifdef FEATURE_LOW_MEM_BIGFONT
+#define  SEC_STACK_SIZ  (1024*STACK_SIZ_FACTOR/sizeof(rex_stack_word_type))
+#else
 #define  SEC_STACK_SIZ  (2048*STACK_SIZ_FACTOR/sizeof(rex_stack_word_type))
+#endif
 #else
 #define  SEC_STACK_SIZ  (4096*STACK_SIZ_FACTOR/sizeof(rex_stack_word_type))
 #endif
@@ -1853,7 +1869,11 @@ extern rex_tcb_type           contentagentdiag_tcb;
 
 /* Size (in units of rex_stack_word_type) of Security Services stack       */
 #ifdef FEATURE_STACK_REDUCTION
+#ifdef FEATURE_LOW_MEM_BIGFONT
+#define  SECRND_STACK_SIZ  (1024*STACK_SIZ_FACTOR/sizeof(rex_stack_word_type))
+#else
 #define  SECRND_STACK_SIZ  (2048*STACK_SIZ_FACTOR/sizeof(rex_stack_word_type))
+#endif
 #else
 #define  SECRND_STACK_SIZ  (4096*STACK_SIZ_FACTOR/sizeof(rex_stack_word_type))
 #endif
@@ -1867,7 +1887,11 @@ extern rex_tcb_type           secrnd_tcb;
 
 /* Size (in units of rex_stack_word_type) of Security Services stack       */
 #ifdef FEATURE_STACK_REDUCTION
+#ifdef FEATURE_LOW_MEM_BIGFONT
+#define  SFS_STACK_SIZ  (1024*STACK_SIZ_FACTOR/sizeof(rex_stack_word_type))
+#else
 #define  SFS_STACK_SIZ  (2048*STACK_SIZ_FACTOR/sizeof(rex_stack_word_type))
+#endif
 #else
 #define  SFS_STACK_SIZ  (4096*STACK_SIZ_FACTOR/sizeof(rex_stack_word_type))
 #endif
@@ -1884,7 +1908,11 @@ extern rex_tcb_type           sfs_tcb;
 /* REX priority for the Sec Srvcs ARM crunching task  */
 #define  SECCRYPTARM_PRI         TASK_PRIORITY(SECCRYPTARM_PRI_ORDER)
 #ifdef FEATURE_STACK_REDUCTION
+#ifdef FEATURE_LOW_MEM_BIGFONT
+#define  SECCRYPTARM_STACK_SIZ   (1024*STACK_SIZ_FACTOR/sizeof(rex_stack_word_type))
+#else
 #define  SECCRYPTARM_STACK_SIZ   (1024*2*STACK_SIZ_FACTOR/sizeof(rex_stack_word_type))
+#endif
 #else
 #define  SECCRYPTARM_STACK_SIZ   (1024*4*STACK_SIZ_FACTOR/sizeof(rex_stack_word_type))
 #endif
@@ -1901,7 +1929,11 @@ extern   rex_tcb_type            seccryptarm_tcb;
 /* REX priority for the IPSec (IKE) task  */
 #define  SECIPS_PRI              TASK_PRIORITY(SECIPS_PRI_ORDER)
 #ifdef FEATURE_STACK_REDUCTION
+#ifdef FEATURE_LOW_MEM_BIGFONT
+#define  SECIPS_STACK_SIZ        (1024*STACK_SIZ_FACTOR/sizeof(rex_stack_word_type))
+#else
 #define  SECIPS_STACK_SIZ        (1024*2*STACK_SIZ_FACTOR/sizeof(rex_stack_word_type))
+#endif
 #else
 #define  SECIPS_STACK_SIZ        (1024*4*STACK_SIZ_FACTOR/sizeof(rex_stack_word_type))
 #endif
@@ -1921,7 +1953,11 @@ extern   rex_tcb_type            secips_tcb;
 
 /* Size (in units of rex_stack_word_type) of Security Services stack       */
 #ifdef FEATURE_STACK_REDUCTION
+#ifdef FEATURE_LOW_MEM_BIGFONT
+#define  SECSSL_STACK_SIZ  (1024*STACK_SIZ_FACTOR/sizeof(rex_stack_word_type))
+#else
 #define  SECSSL_STACK_SIZ  (2048*STACK_SIZ_FACTOR/sizeof(rex_stack_word_type))
+#endif
 #else
 #define  SECSSL_STACK_SIZ  (4096*STACK_SIZ_FACTOR/sizeof(rex_stack_word_type))
 #endif
@@ -2939,8 +2975,13 @@ extern rex_tcb_type        qdjtest_tcb;
 #define QTV_VIDEO_RENDERER_PRI \
   TASK_PRIORITY(MPEG4_PV_TASK4_PRI_ORDER)
 #ifdef FEATURE_STACK_REDUCTION
+#ifdef FEATURE_LOW_MEM_BIGFONT
+#define QTV_VIDEO_RENDERER_STACK_SIZ \
+  (2*1024*STACK_SIZ_FACTOR/sizeof(rex_stack_word_type))
+#else
 #define QTV_VIDEO_RENDERER_STACK_SIZ \
   (4*1024*STACK_SIZ_FACTOR/sizeof(rex_stack_word_type))
+#endif
 #else
 #define QTV_VIDEO_RENDERER_STACK_SIZ \
   (8*1024*STACK_SIZ_FACTOR/sizeof(rex_stack_word_type))
@@ -2951,8 +2992,13 @@ extern rex_tcb_type        qtv_video_renderer_tcb;
 #define QTV_AUDIO_PRI \
   TASK_PRIORITY(MPEG4_PV_TASK5_PRI_ORDER)
 #ifdef FEATURE_STACK_REDUCTION
+#ifdef FEATURE_LOW_MEM_BIGFONT
 #define QTV_AUDIO_STACK_SIZ \
+  (2*1024*STACK_SIZ_FACTOR/sizeof(rex_stack_word_type))
+#else
+ #define QTV_AUDIO_STACK_SIZ \
   (4*1024*STACK_SIZ_FACTOR/sizeof(rex_stack_word_type))
+#endif
 #else
 #define QTV_AUDIO_STACK_SIZ \
   (8*1024*STACK_SIZ_FACTOR/sizeof(rex_stack_word_type))
@@ -2963,8 +3009,13 @@ extern rex_tcb_type        qtv_audio_tcb;
 #define QTV_TASK10_PRI \
   TASK_PRIORITY(MPEG4_PV_TASK10_PRI_ORDER)
 #ifdef FEATURE_STACK_REDUCTION
+#ifdef FEATURE_LOW_MEM_BIGFONT
+#define QTV_TASK10_STACK_SIZ \
+  (2*1024*STACK_SIZ_FACTOR/sizeof(rex_stack_word_type))
+#else
 #define QTV_TASK10_STACK_SIZ \
   (4*1024*STACK_SIZ_FACTOR/sizeof(rex_stack_word_type))
+#endif
 #else
 #define QTV_TASK10_STACK_SIZ \
   (8*1024*STACK_SIZ_FACTOR/sizeof(rex_stack_word_type))

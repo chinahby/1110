@@ -682,7 +682,7 @@ static boolean CameraApp_MainMenuHandleEvent(CCameraApp *pMe, AEEEvent eCode, ui
             	    IMENUCTL_AddItem(pMenu, AEE_APPSCAMERAAPP_RES_FILE, IDS_ITEM_CAMERA_GALLERY, IDS_ITEM_CAMERA_GALLERY, NULL, NULL);
                 }
 			}            
-            #if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T)
+            #if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_K212_VHOPE)
             IMENUCTL_AddItem(pMenu, AEE_APPSCAMERAAPP_RES_FILE, IDS_CAMERA_PHOTO_MODE, IDS_CAMERA_PHOTO_MODE, NULL, NULL);
             #endif
 			if(pMe->m_bIsbackMed)
@@ -710,7 +710,7 @@ static boolean CameraApp_MainMenuHandleEvent(CCameraApp *pMe, AEEEvent eCode, ui
             {
             	case IDS_VIDEO_CAMERA:
                 case IDS_ITEM_CAMERA: 
-#if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T)
+#if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T)||defined(FEATURE_VERSION_K212_VHOPE)
                     {
                       boolean cameraphotopath = FALSE;
                       OEM_GetConfig(CFGI_CAMERA_PHOTO_MODE,&cameraphotopath, sizeof(cameraphotopath));
@@ -763,7 +763,7 @@ static boolean CameraApp_MainMenuHandleEvent(CCameraApp *pMe, AEEEvent eCode, ui
                     pMe->m_nMainMenuItemSel = IDS_ITEM_CAMERA_GALLERY;
                     CMediaGallery_FileExplorer(GALLERY_PHOTO_BROWSE, NULL);
                     break;
-#if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T)                 
+#if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_K212_VHOPE)                 
                 case IDS_CAMERA_PHOTO_MODE:
                     pMe->m_nMainMenuItemSel = IDS_CAMERA_PHOTO_MODE;
                     MSG_FATAL("IDS_CAMERA_PHOTO_MODE-------------",0,0,0);
@@ -1614,7 +1614,7 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
 #endif
             IDISPLAY_SetClipRect(pMe->m_pDisplay, NULL);
             {
-                #ifdef FEATURE_LOW_MEM_BIGFONT
+                #ifdef FEATURE_LOW_MEM_BIGFONT1
 				#ifdef FEATURE_VERSION_K212_VHOPE
                 IImage *pFrameImage = NULL;
                 pFrameImage = ISHELL_LoadResImage(pMe->m_pShell, CAMERAAPP_IMAGE_RES_FILE, IDI_FRAME_11);
@@ -5300,7 +5300,7 @@ static void CameraApp_DrawMidPic(CCameraApp *pMe)
         #endif
         	{
                 {
-                    #ifdef FEATURE_LOW_MEM_BIGFONT
+                    #ifdef FEATURE_LOW_MEM_BIGFONT1
                     #ifdef FEATURE_VERSION_K212_VHOPE
                     IImage *pFrameImage = NULL;
                     pFrameImage = ISHELL_LoadResImage(pMe->m_pShell, CAMERAAPP_IMAGE_RES_FILE, IDI_FRAME_11);
@@ -5623,11 +5623,11 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
 #elif defined(FEATURE_DISP_240X320)
 #ifdef FEATURE_VERSION_K212_HUALU
 #if defined(FEATURE_VERSION_K212_VHOPE)
-    displaySize.cx = 200;  //200
-    displaySize.cy = 280;  //270
+    displaySize.cx = 240;  //200
+    displaySize.cy = 300;  //270
 #else
-	displaySize.cx = 190;  //200
-    displaySize.cy = 260;  //270
+	displaySize.cx = 240;  //200
+    displaySize.cy = 300;  //270
 #endif
 #else
 	displaySize.cx = 96;
@@ -5637,8 +5637,13 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
     displaySize.cx = 96;
     displaySize.cy = 96;
 #endif
+#ifdef FEATURE_LOW_MEM_BIGFONT
+    pMe->m_rcPreview.x=0; 
+    pMe->m_rcPreview.y=0; 
+#else
     pMe->m_rcPreview.x  = pMe->m_rc.x+(pMe->m_rc.dx-displaySize.cx)/2;
     pMe->m_rcPreview.y  = pMe->m_rc.y+(pMe->m_rc.dy-displaySize.cy)/2;
+#endif
     pMe->m_rcPreview.dx = displaySize.cx;
     pMe->m_rcPreview.dy = displaySize.cy;
 
