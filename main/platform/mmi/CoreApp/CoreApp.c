@@ -4247,6 +4247,7 @@ int CoreApp_SendReginfo(CCoreApp   *pMe)
         
     }
     #ifdef FEATURE_VERSION_K212_HUALU
+    #ifndef FEATURE_VERSION_K212_VHOPE
     MSLEEP(4000);
     
     if ((result == SUCCESS) && (NULL != pIWmsApp))
@@ -4254,6 +4255,7 @@ int CoreApp_SendReginfo(CCoreApp   *pMe)
         result = IWmsApp_SendSpecMessage(pIWmsApp, wstrTypeHulu);
         
     }
+    #endif
     #endif
     if((result == SUCCESS))
     {

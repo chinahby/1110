@@ -7263,7 +7263,7 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
    }
    #endif
    // Set the values of the title and text strings for this control
-    ISTATIC_SetProperties(p_stk, ST_UNDERLINE|ST_NOSCROLL|ST_CENTERTITLE);
+   ISTATIC_SetProperties(p_stk, ST_UNDERLINE|ST_NOSCROLL|ST_CENTERTITLE);
    (void) ISTATIC_SetText(p_stk,
                           NULL,
                           szBuf,
