@@ -3128,6 +3128,7 @@ static boolean  QuickTest_SDTestHandler(CQuickTest *pMe,
 
         case EVT_USER_REDRAW:
         {
+            IANNUNCIATOR_Redraw(pMe->m_pIAnn);
             if(uim < 2)
             {
                 //»æÖÆ²âÊÔÌáÊ¾Óï
