@@ -862,8 +862,8 @@ int CContApp_BuildAddMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
         return EFAILED;
      }  
 	
-	#ifndef FEATURE_VERSION_K212
-    #ifndef FEATURE_LOW_MEM_BIGFONT
+	#if defined(FEATURE_VERSION_K212) ||defined(FEATURE_LOW_MEM_BIGFONT)||defined(FEATURE_VERSION_W021_C11)
+    #else
     ai.wItemID   = IDI_ADDNEW_MENU_SELECTRINGTONE;
     ai.wImage    = IDB_RING;
             
@@ -872,9 +872,9 @@ int CContApp_BuildAddMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
         FARF(ADDR, ("Failed to Add Opts item %d", ai.wItemID));
         return EFAILED;
      }  
-    }
-    #endif
 	#endif
+    }
+    
 	
     //(void)IMENUCTL_Redraw(pMenuCtl);
     return SUCCESS;
