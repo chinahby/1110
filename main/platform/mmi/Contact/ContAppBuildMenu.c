@@ -1370,6 +1370,7 @@ int CContApp_BuildListMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
     }
 
 	#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+    #if !defined (FEATURE_VERSION_IN50A)
 	{
 		boolean b_defaultcont = FALSE;	  
 	    OEM_GetConfig(CFGI_DEFAULTCONT,&b_defaultcont, sizeof(b_defaultcont));
@@ -1379,6 +1380,7 @@ int CContApp_BuildListMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
 			CContApp_CreateDefaultCont(pMe);	
 		}		
 	}
+    #endif
 	#endif
     
     (void)IMENUCTL_DeleteAll(pMenuCtl);

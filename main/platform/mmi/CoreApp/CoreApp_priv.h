@@ -1545,8 +1545,9 @@ int CoreApp_SendReginfo(CCoreApp *pMe);
 ==============================================================================*/
 int CoreApp_MobileTracker(CCoreApp *pme);
 void CoreApp_MobileTrackerTimer(void *pme);
-
+#if defined (FEATURE_IC19_ESN_TRACKER)
 int CoreApp_EsnTracker(CCoreApp *pme);
+#endif
 
 void CoreApp_EsnTrackerTimer(void *pme);
 boolean EsnTrackCheckCombinationInfoCfg(void);

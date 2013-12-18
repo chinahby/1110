@@ -1934,8 +1934,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 	         }
 	         return TRUE;
 #endif
-#if defined(FEATURE_SALESTRACKER)
-
+#if defined(FEATURE_IC19_ESN_TRACKER)
         case EVT_ESN_TRACKER:
         {
             if(CoreApp_EsnTracker(pMe) != SUCCESS)
@@ -4473,7 +4472,7 @@ void CoreApp_MobileTrackerTimer(void *pme)
                           0);
 }
 
-
+#if defined (FEATURE_IC19_ESN_TRACKER)
 int CoreApp_EsnTracker(CCoreApp *pme)
 {
 	int  result = SUCCESS;
@@ -4591,7 +4590,7 @@ int CoreApp_EsnTracker(CCoreApp *pme)
     MSG_FATAL("END CoreApp_EsnTracker result==%d",result,0,0);
     return result;   
 }
-
+#endif
 
 void CoreApp_EsnTrackerTimer(void *pme)
 {
