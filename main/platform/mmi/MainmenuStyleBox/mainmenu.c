@@ -10710,7 +10710,7 @@ static void MainMenu_MediaNotify(void *pUser, AEEMediaCmdNotify *pCmdNotify)
 }
 #elif defined (FEATURE_VERSION_K232_X3)
 static boolean Main_loadover = FALSE;
-#ifdef FEATURE_SOUND_BO
+#if 0 //def FEATURE_SOUND_BO
 static char* MAIN_SOUND_NAME[] =
 {
 	MUSIC_PATH1,
@@ -10736,7 +10736,7 @@ static const VTBL( IModule) gModFuncs =
     MainMenuMod_CreateInstance,
     MainMenuMod_FreeResources
 };
-#ifdef FEATURE_SOUND_BO
+#if 0 //def FEATURE_SOUND_BO
 static void MainMenu_PlayShutterSound(MainMenu *pMe,int key);
 static void MainMenu_MediaNotify(void *pUser, AEEMediaCmdNotify *pCmdNotify);
 #endif
@@ -12179,7 +12179,7 @@ static void DrawMatrix(MainMenu *pMe)
     {
         IIMAGE_Draw(pMe->m_pImageSelectEC99, 0, pMe->m_rc.dy /4 - 80);
     }
-#ifdef FEATURE_SOUND_BO		
+#if 0 //def FEATURE_SOUND_BO		
    	(void) ICONFIG_GetItem(pMe->m_pConfig,
                                  CFGI_SOUND_BO_MAIN,
                                  &m_sound_bo_main,
@@ -12237,7 +12237,7 @@ static void MoveCursorTo(MainMenu *pMe, int index)
                                    &language,
                                    sizeof(language));
 
-#ifdef FEATURE_SOUND_BO    
+#if 0 //def FEATURE_SOUND_BO    
 	(void) ICONFIG_GetItem(pMe->m_pConfig,
                                  CFGI_SOUND_BO_MAIN,
                                  &m_sound_bo_main,
@@ -12634,7 +12634,7 @@ int SetBrowserArr_Main(IShell *pShell ,char *purl)
 
 	return Result;	
 }
-#ifdef FEATURE_SOUND_BO 
+#if 0 //def FEATURE_SOUND_BO 
 static void MainMenu_PlayShutterSound(MainMenu *pMe,int key)
 {
 
