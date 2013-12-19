@@ -13128,6 +13128,7 @@ static boolean IDD_EDITTEMPLATE_Handler(void *pUser,
         case EVT_DIALOG_INIT:
             // add the code on 080818
             ITEXTCTL_SetMaxSize(pIText, WMS_TEMPMSG_MAXCHARS);
+            IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
 			#ifdef FEATURE_VERSION_C316
 			ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BGBLUE|TP_GRAPHIC_BG| TP_FRAME | TP_MULTILINE|TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
 			#else
