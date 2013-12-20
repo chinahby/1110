@@ -3077,15 +3077,22 @@ void DrawPromptMessage (IDisplay *pIDisplay,
 */
 
 #if defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_IC241A_MMX)
-#if defined (FEATURE_VERSION_C260_IC18) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined (FEATURE_VERSION_C260_IC18) || defined(FEATURE_VERSION_IC241A_MMX)     
+#if defined (FEATURE_VERSION_IN50A)    
         strrect.x += 5;
+        strrect.y += 40;
+        strrect.dx -= 10;        
+        strrect.dy -= 20;   
+#else
+		strrect.x += 5;
         strrect.y += 15;
         strrect.dx -= 10;        
         strrect.dy -= 35;
+#endif		      
 #elif defined (FEATURE_VERSION_K212_20D) || defined(FEATURE_VERSION_EC99)    
         strrect.x += 10;       
         strrect.dx -= 20;        
-        strrect.dy -= 30;
+        strrect.dy -= 30;     
 #else
         strrect.x += 5;
         strrect.dx -= 10;        

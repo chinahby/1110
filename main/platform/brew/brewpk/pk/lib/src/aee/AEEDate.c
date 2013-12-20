@@ -1690,7 +1690,9 @@ static void DateCtl_DisplayDateText(DateCtl * pme)
 #ifndef FEATURE_VERSION_EC99
 #ifndef FEATURE_VERSION_K212_20D
 #ifndef FEATURE_VERSION_K212_ND
+#ifndef FEATURE_VERSION_IN50A
    drawImage(pme, AEE_APPSCOMMONRES_IMAGESFILE, IDI_DATE_BAR, pme->m_rc.x, pme->m_rc.y);
+#endif
 #endif   
 #endif
 #endif
