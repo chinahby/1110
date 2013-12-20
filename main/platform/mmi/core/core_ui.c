@@ -2037,7 +2037,7 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
 //Add by pyuangui 20121220
 //#ifdef FEATURE_VERSION_W317A
      case AVK_CLR:			
-	 	#if defined(FEATURE_DISP_128X160)&& defined(FEATURE_QQ_APP)
+	 	#if (defined(FEATURE_DISP_128X160)&& defined(FEATURE_QQ_APP))||(defined(FEATURE_DISP_128X128)&& defined(FEATURE_QQ_APP))
 		if (cls == AEECLSID_UCWEB)
 		#else
 		if (cls == AEECLSID_UCWEB || cls == AEECLSID_QQ)		
@@ -2048,7 +2048,7 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
 		}
         break;
      case AVK_SELECT:		
-	 	#if defined(FEATURE_DISP_128X160)&& defined(FEATURE_QQ_APP)
+	 	#if (defined(FEATURE_DISP_128X160)&& defined(FEATURE_QQ_APP))||(defined(FEATURE_DISP_128X128)&& defined(FEATURE_QQ_APP))
 		if (cls == AEECLSID_UCWEB)
 		#else
         if (cls == AEECLSID_UCWEB || cls == AEECLSID_QQ)		
@@ -2059,7 +2059,7 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
 		}
         break; 
     case AVK_INFO:			
-		#if defined(FEATURE_DISP_128X160)&& defined(FEATURE_QQ_APP)
+		#if (defined(FEATURE_DISP_128X160)&& defined(FEATURE_QQ_APP))||(defined(FEATURE_DISP_128X128)&& defined(FEATURE_QQ_APP))
 		if (cls == AEECLSID_UCWEB)
 		#else
 		if (cls == AEECLSID_UCWEB || cls == AEECLSID_QQ)		

@@ -1964,7 +1964,7 @@ static OEMConfigListType oemi_cache = {
    {L"Mobile Tracker Alert!:The sender of this SMS is using your phone."},
    FALSE,
 #endif
-#if defined(FEATURE_VERSION_HITZ181)|| defined(FEATURE_VERSION_W021_C11)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)|| defined (FEATURE_VERSION_K212_ND)|| defined (FEATURE_VERSION_K212_HUALU) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_K292)|| defined(FEATURE_VERSION_W021_C11)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)|| defined (FEATURE_VERSION_K212_ND)|| defined (FEATURE_VERSION_K212_HUALU) || defined(FEATURE_VERSION_IC241A_MMX)
    1,											//CFGI_KEY_LOCK_CHECK			
 #elif defined(FEATURE_VERSION_W021_CT100_QVGA)
    4, 
@@ -13139,7 +13139,7 @@ void OEM_SetUCBROWSER_ADSAccount(void)
 
     OEMPriv_GetItem_CFGI_BREWSET_USENAME((void*)username);
     OEMPriv_GetItem_CFGI_BREWSET_PASSWORD((void*)password);
-	#if defined(FEATURE_DISP_128X160)&& defined(FEATURE_QQ_APP)
+	#if (defined(FEATURE_DISP_128X160)&& defined(FEATURE_QQ_APP))||(defined(FEATURE_DISP_128X128)&& defined(FEATURE_QQ_APP))
 	MEMCPY(username,"ctwap@mycdma.cn",15);	
 	MEMCPY(password,"vnet.mobi",9);
 	#endif

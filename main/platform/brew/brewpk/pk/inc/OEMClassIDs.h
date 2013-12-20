@@ -145,6 +145,8 @@ GENERAL DESCRIPTION:
 #define AEECLSID_MOBILETRACKER      0x20131313            //add by yangdecai 2012/12/29
 #if defined(FEATURE_DISP_128X160)&& defined(FEATURE_QQ_APP)
 #define AEECLSID_QQ                 0x0109A277 //0x0109A277            //add by pengyuangui 2013/08/07
+#elif defined(FEATURE_DISP_128X128)&& defined(FEATURE_QQ_APP)
+#define AEECLSID_QQ                 0x0109A277 //0x0109A277            //add by pengyuangui 2013/08/07
 #else
 #define AEECLSID_QQ                 0x0109EB13 //0x0109A277            //add by pengyuangui 2013/08/07
 #endif

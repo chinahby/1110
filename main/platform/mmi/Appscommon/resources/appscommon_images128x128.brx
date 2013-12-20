@@ -34,8 +34,25 @@
 	<Object Id="5011" Name="IDI_TEST_DOWN" MimeType="image/png">
 		<File>..\images\128x128\common\QuickTest\down.png</File>
 	</Object>
-	<Object Id="5014" Name="IDB_PROMPT_MSG_STATIC_BG">
+	
+	<Object Id="5012" Name="IDB_MODE_T9_MT_ENGLISH_UP" MimeType="image/png">
+		<File>..\images\128x128\common\IME\upabc.png</File>
+	</Object>
+	
+	<Object Id="5016" Name="IDB_PROMPT_MSG_STATIC_BG">
 		<File>..\images\128x128\common\Appscommon\MessageBox\background_static.bmp</File>
+	</Object>
+	<Object Id="5017" Name="IDB_MODE_T9_MT_SPANISH" MimeType="image/png">
+		<File>..\images\128x128\common\IME\T9sp.png</File>
+	</Object>
+	<Object Id="5018" Name="IDB_MODE_T9_RAPID_SPANISH" MimeType="image/png">
+		<File>..\images\128x128\common\IME\sp_1.png</File>
+	</Object>
+	<Object Id="5019" Name="IDB_MODE_T9_MT_SPANISH_LOW" MimeType="image/png">
+		<File>..\images\128x128\common\IME\sp_2.png</File>
+	</Object>
+	<Object Id="5020" Name="IDB_MODE_T9_MT_SPANISH_UP" MimeType="image/png">
+		<File>..\images\128x128\common\IME\sp_3.png</File>
 	</Object>
 	<Object Id="5021" Name="IDB_CHECK_ON" MimeType="image/png">
 		<File>..\images\128x128\common\Appscommon\Icon\check_yes.png</File>
@@ -64,6 +81,13 @@
 	<Object Id="5029" Name="IDB_RIGHTARROW" MimeType="image/png">
 		<File>..\images\128x128\common\Appscommon\Icon\RightArrow.png</File>
 	</Object>
+	<Object Id="5030" Name="IDB_MODE_T9_RAPID_SPANISH_LOW" MimeType="image/png">
+		<File>..\images\128x128\common\IME\sp_4.png</File>
+	</Object>
+	<Object Id="5031" Name="IDB_MODE_T9_RAPID_SPANISH_UP" MimeType="image/png">
+		<File>..\images\128x128\common\IME\sp_5.png</File>
+	</Object>
+
 	<Object Id="5041" Name="IDB_ERROR" MimeType="image/png">
 		<File>..\images\128x128\common\Appscommon\MessageBox\error.png</File>
 	</Object>
@@ -148,11 +172,20 @@
 	<Object Id="5407" Name="IDB_MODE_T9_RAPID_ENGLISH" MimeType="image/png">
 		<File>..\images\128x128\common\IME\ezenglish.png</File>
 	</Object>
-	<Object Id="5413" Name="IDB_MODE_T9_MT_INDONESIAN" MimeType="image/png">
+	<Object Id="5408" Name="IDB_MODE_T9_MT_INDONESIAN" MimeType="image/png">
 		<File>..\images\128x128\common\IME\Indo.png</File>
 	</Object>
-	<Object Id="5414" Name="IDB_MODE_T9_RAPID_INDONESIAN" MimeType="image/png">
+	<Object Id="5409" Name="IDB_MODE_T9_RAPID_INDONESIAN" MimeType="image/png">
 		<File>..\images\128x128\common\IME\T9In.png</File>
+	</Object>
+	<Object Id="5412" Name="IDB_MODE_T9_RAPID_ENGLISH_UP" MimeType="image/png">
+		<File>..\images\128x128\common\IME\upezenglish.png</File>
+	</Object>
+	<Object Id="5417" Name="IDB_MODE_T9_MT_HINDI" MimeType="image/png">
+		<File>..\images\128x128\common\IME\hi.png</File>
+	</Object>
+	<Object Id="5418" Name="IDB_MODE_T9_RAPID_HINDI" MimeType="image/png">
+		<File>..\images\128x128\common\IME\zihi.png</File>
 	</Object>
 	<Object Id="5801" Name="IDB_TEMPLATE">
 		<File>..\images\128x128\common\Message\Icon\Template.bmp</File>

@@ -245,7 +245,7 @@ static const hs_key_type keys[ KEYPAD_ROWS ][ KEYPAD_COLUMNS ] = {
 
    /* KEYSENSE_0 */
    /* 1,17          1,15        1,11        1,9          1,Memo*/
-   #if defined( FEATURE_VERSION_K212)
+   #if defined( FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K292)
    { HS_3_K,   HS_6_K,  HS_9_K,  HS_POUND_K,  HS_NONE_K},
    /* KEYSENSE_1 */
    /* 3,17          3,15        3,11        3,9          3,Memo*/
@@ -447,7 +447,7 @@ static const hs_key_type keys[ KEYPAD_ROWS ][ KEYPAD_COLUMNS ] = {
 #define INFO_KEY_COLUMN 1
 #endif
 
-#if defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_K212_12832) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_K212_12832) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_K292)
 /* '1' Key */
 #define ONE_KEY_ROW      2
 #define ONE_KEY_COLUMN   0

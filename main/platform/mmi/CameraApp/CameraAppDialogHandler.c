@@ -347,10 +347,12 @@ static const CCameraSize g_CameraSizeCFG[] =
     {480,640,L"640*480"}, // VGA       
 #else
     {128,128,L"128*128"}, // FULL Screen
-    {160,120,L"160*120"}, // QQVGA
+    {160,120,L"160*128"}, // QQVGA
     {220,176,L"220*176"}, // QCIF
     {320,240,L"320*240"}, // QVGA
+   #ifndef FEATURE_VERSION_K292
     {640,480,L"640*480"}, // VGA
+   #endif
 #endif
     {0,0,NULL}
 };
@@ -423,7 +425,7 @@ static const CCameraSize g_CameraSizeCFG_10[] =
     {240,320,L"320*240"}, // QVGA        
 #else
     {128,128,L"128*128"}, // FULL Screen
-    {160,120,L"160*120"}, // QQVGA
+    {160,120,L"160*128"}, // QQVGA
     {220,176,L"220*176"}, // QCIF
     {320,240,L"320*240"}, // QVGA
 #endif
@@ -4836,7 +4838,34 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
 	        nResID[CAMERACFGSIZE] = IDI_SIZE_176_220;
 	        break;
     }
-#endif	
+#endif
+
+#if defined(FEATURE_VERSION_K292)
+(void)ICONFIG_GetItem(pMe->m_pConfig,
+                          CFGI_CAMERA_SIZE,
+                         &pMe->m_nCameraSize,
+                          sizeof(pMe->m_nCameraSize));
+switch(pMe->m_nCameraSize)
+    {
+		case OEMNV_CAMERA_SIZE_INDEX_0:
+		        nResID[CAMERACFGSIZE] = IDI_SIZE_128_128;
+		        break;
+		case OEMNV_CAMERA_SIZE_INDEX_1:
+		        nResID[CAMERACFGSIZE] = IDI_SIZE_160_128;
+		        break;  
+	    case OEMNV_CAMERA_SIZE_INDEX_2:
+		        nResID[CAMERACFGSIZE] = IDI_SIZE_220_176;
+		        break;	
+		case OEMNV_CAMERA_SIZE_INDEX_3:
+		        nResID[CAMERACFGSIZE] = IDI_SIZE_320_240;
+		        break;
+	    default:
+		        nResID[CAMERACFGSIZE] = IDI_SIZE_128_128;
+		        break;	      
+    }
+#endif
+
+	
 
 #if defined(FEATURE_CAMERA_8W) 
 (void)ICONFIG_GetItem(pMe->m_pConfig,

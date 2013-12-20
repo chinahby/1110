@@ -128,9 +128,12 @@ extern uint8  g_mmsDataInfoMax;
 #elif defined(FEATURE_VERSION_IC241A_MMX)
 #define SENDOPT_TITLELONGER   180
 #else
+#ifdef FEATURE_VERSION_K292
+#define SENDOPT_TITLELONGER   80
+#else
 #define SENDOPT_TITLELONGER   110
 #endif
-
+#endif
 #endif
 
 // 画界面底部提示条宏定义
@@ -3611,13 +3614,15 @@ static boolean IDD_SETTING_Handler(void   *pUser,
             // 菜单项初始化
             MENU_ADDITEM(pMenu, IDS_MSGVALIDITY);
 			//MENU_ADDITEM(pMenu, IDS_TIME_STAMP);	//Add By zzg 2012_02_04
-#if (!defined FEATURE_CARRIER_TAIWAN_APBW) && (!defined FEATURE_CARRIER_THAILAND_HUTCH)&&!defined(FEATURE_VERSION_W021_CT100)
+#if (!defined FEATURE_CARRIER_TAIWAN_APBW) && (!defined FEATURE_CARRIER_THAILAND_HUTCH)&&!defined(FEATURE_VERSION_W021_CT100)&&!defined(FEATURE_VERSION_K292)
             MENU_ADDITEM(pMenu, IDS_REPORTTITLE); //IDS_DELIVERYREPORTS);
 #endif            
 #ifndef FEATURE_CARRIER_THAILAND_HUTCH
 #ifndef FEATURE_VERSION_K212_ND
 #ifndef FEATURE_VERSION_W516_C260
+#ifndef FEATURE_VERSION_K292
             MENU_ADDITEM(pMenu, IDS_PRIORITY);
+#endif
 #endif
 #endif
 #endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH
@@ -3630,7 +3635,8 @@ static boolean IDD_SETTING_Handler(void   *pUser,
     &&!defined(FEATURE_VERSION_W021_CT100)&&!defined(FEATURE_VERSION_K212)\
     &&!defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_VERSION_K212_20D)\
     &&!defined(FEATURE_VERSION_K212_ND)&&!defined(FEATURE_VERSION_W021_CT100_QVGA)\
-    &&!defined(FEATURE_VERSION_W021_C11)&&!defined(FEATURE_VERSION_W516_C260)&&!defined(FEATURE_VERSION_K212_HUALU)
+    &&!defined(FEATURE_VERSION_W021_C11)&&!defined(FEATURE_VERSION_W516_C260)&&!defined(FEATURE_VERSION_K212_HUALU)\
+    &&!defined(FEATURE_VERSION_K292)
             MENU_ADDITEM(pMenu, IDS_CALLBACKNUM);
 #endif
 #endif 
@@ -3698,7 +3704,7 @@ static boolean IDD_SETTING_Handler(void   *pUser,
 #if 1//def FEATURE_CARRIER_TAIWAN_APBW        //add by yangdecai   2010-08-23 
                 // 发出短信是否带回叫号码
                 MSG_FATAL("IDD_SETTING_Handler EVT_COMMAND IDS_CALLBACKNUM", 0, 0, 0);
-#if !defined(FEATURE_VERSION_C316)&&!defined(FEATURE_VERSION_K202_LM129C)&&!defined(FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_VERSION_K212_20D)&&!defined(FEATURE_VERSION_K212_ND)&&!defined(FEATURE_VERSION_K212_HUALU)&&!defined(FEATURE_VERSION_W516_C260)
+#if !defined(FEATURE_VERSION_C316)&&!defined(FEATURE_VERSION_K202_LM129C)&&!defined(FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_VERSION_K212_20D)&&!defined(FEATURE_VERSION_K212_ND)&&!defined(FEATURE_VERSION_K212_HUALU)&&!defined(FEATURE_VERSION_W516_C260)&&!defined(FEATURE_VERSION_K292)
                 case IDS_CALLBACKNUM:
                     CLOSE_DIALOG(DLGRET_CALLBACKNUM)
                     return TRUE;
@@ -5466,7 +5472,9 @@ static boolean IDD_SENDMODE_Handler(void *pUser,
 #if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_K212_HUALU)
 #ifndef FEATURE_VERSION_K212_ND
 #ifndef FEATURE_VERSION_W516_C260
+#ifndef FEATURE_VERSION_K292
             MENU_ADDITEM(pMenu, IDS_SAVEONLY);
+#endif
 #endif
 #endif
 #endif
@@ -9646,12 +9654,14 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                 }
 #if !defined(FEATURE_VERSION_K212_ND)
 #if !defined(FEATURE_VERSION_W516_C260)
+#if !defined(FEATURE_VERSION_K292)
                 if (mask & 0x04)
                 {
                     wControls[nControls] = IDC_MENU_PRI;
                     ISHELL_LoadResString(pMe->m_pShell, AEE_WMSAPPRES_LANGFILE, IDS_PRIORITY, wstrText[nControls], sizeof(wstrText));
                     nControls++;
                 }
+#endif
 #endif
 #endif
 #if !defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_VERSION_K212_20D)              
@@ -9728,7 +9738,11 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
 #elif defined(FEATURE_DISP_320X240)
                 int  i,y = 0,dy=0,ygap = 1;	//Add By zzg 2010_07_10                                
 #else
+	#ifdef FEATURE_VERSION_K292
+				int  i,y = 0,dy=0,ygap = 1;
+	#else
 				int  i,y = 0,dy=0,ygap = 10;
+	#endif
 #endif
                 AEERect rc;
                 IImage  *pLeftImg = NULL;
@@ -9825,7 +9839,11 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
 #elif defined(FEATURE_DISP_320X240)
                 dy = nLineHeight; // + 2;                   
 #else
+			#ifdef FEATURE_VERSION_K292
+				dy = nLineHeight;
+			#else
 				dy = nLineHeight + 2; 
+			#endif
 #endif
                 
                 pLeftImg = ISHELL_LoadResImage(pMe->m_pShell,AEE_APPSCOMMONRES_IMAGESFILE,IDB_LEFTARROW);
@@ -9837,7 +9855,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                     int ry=0;
                     #if (defined(FEATURE_VERSION_C01) || defined(FEATURE_VERSION_1110W516)||defined(FEATURE_VERSION_C11)\
                         ||defined(FEATURE_VERSION_C180)||defined(FEATURE_VERSION_C100)|| defined(FEATURE_VERSION_W027)\
-                        ||defined(FEATURE_VERSION_W021_CT100)|| defined(FEATURE_VERSION_W021_C11))&&!defined(FEATURE_VERSION_W021_CT100_QVGA)                    
+                        ||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_K292)|| defined(FEATURE_VERSION_W021_C11))&&!defined(FEATURE_VERSION_W021_CT100_QVGA)                    
                     if(i<4 && i != 2)
                     #else
                     if(i<4)
@@ -9937,7 +9955,9 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
 #elif defined(FEATURE_DISP_240X320)						
 						rc.dy += 2;	//Add By zzg 2010_07_13			
 #elif defined(FEATURE_DISP_320X240)						
-						rc.dy += 2;	//Add By zzg 2010_07_13								
+						rc.dy += 2;	//Add By zzg 2010_07_13	
+#elif defined(FEATURE_VERSION_K292)
+						rc.dy += 2;	
 #endif
                         IDISPLAY_SetColor( pMe->m_pDisplay, CLR_USER_TEXT, RGB_BLACK);
 						MSG_FATAL("IDC_TEXT_CBNUM.........",0,0,0);
@@ -9976,7 +9996,9 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                             MENU_ADDITEM((IMenuCtl *)pControl, IDS_SENDONLY);
 							#ifndef FEATURE_VERSION_K212_ND
 							#ifndef FEATURE_VERSION_W516_C260
+							#ifndef FEATURE_VERSION_K292
                             MENU_ADDITEM((IMenuCtl *)pControl, IDS_SAVEONLY);
+							#endif
 							#endif
 							#endif
                             MENU_ADDITEM((IMenuCtl *)pControl, IDS_SENDOPT_SAVEANDSEND_SHORT);

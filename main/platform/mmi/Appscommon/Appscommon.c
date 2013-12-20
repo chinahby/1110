@@ -2985,7 +2985,7 @@ void DrawPromptMessage (IDisplay *pIDisplay,
             #if defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_W516)||defined(FEATURE_VERSION_W208S)|| \
             defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_W027)|| \
             defined(FEATURE_VERSION_C316)|| defined(FEATURE_VERSION_W021_CT100)|| defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_EC99)|| \
-            defined(FEATURE_VERSION_W021_C11)
+            defined(FEATURE_VERSION_W021_C11)||defined(FEATURE_VERSION_K292)
             strrect.dy = StringBgImgInfo.cy/2 + 30;
 			#ifdef FEATURE_VERSION_W317A   // add by pyuangui 20121225
 			strrect.dy = StringBgImgInfo.cy/2 + 40;
