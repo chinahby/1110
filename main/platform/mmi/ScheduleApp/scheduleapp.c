@@ -754,7 +754,7 @@ static boolean  IScheduleApp_HandleEvent( IScheduleApp   *pi,
         case EVT_KEY:
         case EVT_KEY_PRESS:
             //debug( ";---------------EVT_KEY");
-            #if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_QVGA_INHERIT_K212)&&!defined(FEATURE_VERSION_K212_HUALU)
+            #if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_QVGA_INHERIT_K212)&&!defined(FEATURE_VERSION_K212_HUALU)&&!defined(FEATURE_VERSION_IN50A)
             if (!pme->m_bAppIsReady)
             {
                 return TRUE;
@@ -770,7 +770,7 @@ static boolean  IScheduleApp_HandleEvent( IScheduleApp   *pi,
 
 
         case EVT_COMMAND:
-			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_QVGA_INHERIT_K212)&&!defined(FEATURE_VERSION_K212_HUALU)
+			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_QVGA_INHERIT_K212)&&!defined(FEATURE_VERSION_K212_HUALU)&&!defined(FEATURE_VERSION_IN50A)
             if (!pme->m_bAppIsReady)
             {
                 return TRUE;

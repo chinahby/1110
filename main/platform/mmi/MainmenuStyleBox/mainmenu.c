@@ -4526,14 +4526,22 @@ static int StartApplet(MainMenu *pMe, int i)
 	//Add By zzg 2012_11_08 for C337 
 	case IDS_MAIN_MENU_SERVICES:		
 	    #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+        #if defined (FEATURE_VERSION_IN50A)
+        Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://www.google.com.hk/"); 
+        #else
         Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
+        #endif
         #else
         Result = SetBrowserArr_Main(pMe->m_pShell,NULL);//ISHELL_StartApplet(pMe->m_pShell, AEECLSID_UCWEB);
         #endif
 		break;
 	case IDS_MAIN_MENU_MSTORE:
 #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined (FEATURE_VERSION_IN50A)
+        Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://www.google.com.hk/");
+#else
         Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");      
+#endif
 #else
         Result = Result = SetBrowserArr_Main(pMe->m_pShell,NULL);//ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
 #endif
@@ -4565,7 +4573,11 @@ static int StartApplet(MainMenu *pMe, int i)
 		#endif
 
         #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+        #if defined (FEATURE_VERSION_IN50A)
+        Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://www.google.com.hk/"); 
+        #else
         Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
+        #endif        
         #else
         Result = SetBrowserArr_Main(pMe->m_pShell,(char*)""); //ISHELL_StartApplet(pMe->m_pShell, AEECLSID_UCWEB);
         #endif
@@ -6525,14 +6537,22 @@ static boolean  MainMenu_FlashlightMenuHandler(MainMenu *pMe, AEEEvent eCode, ui
 		//Add By zzg 2012_11_08 for C337 
 		case IDS_MAIN_MENU_SERVICES:		
 	    #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
-			Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
+        #if defined (FEATURE_VERSION_IN50A)
+        Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://www.google.com.hk/"); 
+        #else
+        Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
+        #endif			
         #else
 			Result = SetBrowserArr_Main(pMe->m_pShell,NULL);//ISHELL_StartApplet(pMe->m_pShell, AEECLSID_UCWEB);
         #endif
 			break;
 		case IDS_MAIN_MENU_MSTORE:
 #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
-			Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");	   
+#if defined (FEATURE_VERSION_IN50A)
+            Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://www.google.com.hk/"); 
+#else
+            Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
+#endif			
 #else
 			Result = SetBrowserArr_Main(pMe->m_pShell,NULL);//ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
 #endif
@@ -6564,7 +6584,11 @@ static boolean  MainMenu_FlashlightMenuHandler(MainMenu *pMe, AEEEvent eCode, ui
 		#endif
 	
         #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
-			Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
+        #if defined (FEATURE_VERSION_IN50A)
+        Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://www.google.com.hk/"); 
+        #else
+        Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
+        #endif			
         #else
 			Result = SetBrowserArr_Main(pMe->m_pShell,(char*)""); //ISHELL_StartApplet(pMe->m_pShell, AEECLSID_UCWEB);
         #endif
@@ -8540,14 +8564,22 @@ static int StartApplet(MainMenu *pMe, int i)
 	//Add By zzg 2012_11_08 for C337 
 	case IDS_MAIN_MENU_SERVICES:		
 	    #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+        #if defined (FEATURE_VERSION_IN50A)
+        Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://www.google.com.hk/"); 
+        #else
         Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
+        #endif        
         #else
         Result = SetBrowserArr_Main(pMe->m_pShell,NULL);//ISHELL_StartApplet(pMe->m_pShell, AEECLSID_UCWEB);
         #endif
 		break;
 	case IDS_MAIN_MENU_MSTORE:
 #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
-        Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");      
+#if defined (FEATURE_VERSION_IN50A)
+        Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://www.google.com.hk/"); 
+#else
+        Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
+#endif        
 #else
         Result = SetBrowserArr_Main(pMe->m_pShell,NULL);//ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
 #endif
@@ -8579,7 +8611,11 @@ static int StartApplet(MainMenu *pMe, int i)
 		#endif
 
         #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+        #if defined (FEATURE_VERSION_IN50A)
+        Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://www.google.com.hk/"); 
+        #else
         Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
+        #endif        
         #else
         Result = SetBrowserArr_Main(pMe->m_pShell,(char*)""); //ISHELL_StartApplet(pMe->m_pShell, AEECLSID_UCWEB);
         #endif
@@ -10473,15 +10509,22 @@ static int StartApplet(MainMenu *pMe, int i)
 	//Add By zzg 2012_11_08 for C337 
 	case IDS_MAIN_MENU_SERVICES:		
 	    #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+        #if defined (FEATURE_VERSION_IN50A)
+        Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://www.google.com.hk/"); 
+        #else
         Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
+        #endif        
         #else
         Result = SetBrowserArr_Main(pMe->m_pShell,NULL);//ISHELL_StartApplet(pMe->m_pShell, AEECLSID_UCWEB);
         #endif
 		break;
 	case IDS_MAIN_MENU_MSTORE:
 #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
-
+#if defined (FEATURE_VERSION_IN50A)
+        Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://www.google.com.hk/"); 
+#else
         Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
+#endif        
 #else
         Result = SetBrowserArr_Main(pMe->m_pShell,NULL);//ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
 #endif
@@ -10513,7 +10556,11 @@ static int StartApplet(MainMenu *pMe, int i)
 		#endif
 
         #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+        #if defined (FEATURE_VERSION_IN50A)
+        Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://www.google.com.hk/"); 
+        #else
         Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
+        #endif        
         #else
         Result = SetBrowserArr_Main(pMe->m_pShell,(char*)""); //ISHELL_StartApplet(pMe->m_pShell, AEECLSID_UCWEB);
         #endif
@@ -12480,14 +12527,22 @@ static int StartApplet(MainMenu *pMe, int i)
 	//Add By zzg 2012_11_08 for C337 
 	case IDS_MAIN_MENU_SERVICES:		
 	    #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+        #if defined (FEATURE_VERSION_IN50A)
+        Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://www.google.com.hk/"); 
+        #else
         Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
+        #endif        
         #else
         Result = SetBrowserArr_Main(pMe->m_pShell,NULL);//ISHELL_StartApplet(pMe->m_pShell, AEECLSID_UCWEB);
         #endif
 		break;
 	case IDS_MAIN_MENU_MSTORE:
 #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
-        Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");      
+#if defined (FEATURE_VERSION_IN50A)
+        Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://www.google.com.hk/"); 
+#else
+        Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
+#endif
 #else
         Result = SetBrowserArr_Main(pMe->m_pShell,NULL);//ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
 #endif
@@ -12519,7 +12574,11 @@ static int StartApplet(MainMenu *pMe, int i)
 		#endif
 
         #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+        #if defined (FEATURE_VERSION_IN50A)
+        Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://www.google.com.hk/"); 
+        #else
         Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
+        #endif        
         #else
         Result = SetBrowserArr_Main(pMe->m_pShell,(char*)""); //ISHELL_StartApplet(pMe->m_pShell, AEECLSID_UCWEB);
         #endif
@@ -15239,16 +15298,23 @@ static int StartApplet(MainMenu *pMe, int i)
 			IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WBrowserTitle,FALSE);
 			IANNUNCIATOR_Redraw(pMe->m_pIAnn);
 		}
+        #ifdef FEATURE_VERSION_IN50A
+        Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://www.google.com.hk/"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
+        #else
         Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
-	   }
+        #endif
+       }
 		#else
         Result = SetBrowserArr_Main(pMe->m_pShell,NULL);//ISHELL_StartApplet(pMe->m_pShell, AEECLSID_UCWEB);
         #endif
 		break;
 	case IDS_MAIN_MENU_MSTORE:
 #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
-       
-        Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");     
+#if defined (FEATURE_VERSION_IN50A)
+        Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://www.google.com.hk/"); 
+#else
+        Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
+#endif        
 #else
         Result = SetBrowserArr_Main(pMe->m_pShell,NULL);//ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
 #endif
@@ -15279,7 +15345,11 @@ static int StartApplet(MainMenu *pMe, int i)
 		IANNUNCIATOR_Redraw(pMe->m_pIAnn);
 		#endif
         #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+        #if defined (FEATURE_VERSION_IN50A)
+        Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://www.google.com.hk/"); 
+        #else
         Result = SetBrowserArr_Main(pMe->m_pShell,(char*)"http://mimicromax.com"); //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_UCWEB, (char*)"call_ucweb:setmainpageurl:http://mimicromax.com");
+        #endif        
         #else
         Result = SetBrowserArr_Main(pMe->m_pShell,(char*)""); //ISHELL_StartApplet(pMe->m_pShell, AEECLSID_UCWEB);
         #endif

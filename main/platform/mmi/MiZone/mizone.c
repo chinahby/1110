@@ -544,7 +544,7 @@ static boolean CMiZone_HandleEvent(IMiZone *pi,
             return TRUE;
 
         case EVT_KEY_PRESS:
-			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_QVGA_INHERIT_K212)&& !defined(FEATURE_LOW_MEM_BIGFONT)
+			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_QVGA_INHERIT_K212)&& !defined(FEATURE_LOW_MEM_BIGFONT)&&!defined(FEATURE_VERSION_IN50A)
             if (!pMe->m_bAppIsReady)
             {
                 return TRUE;
@@ -554,7 +554,7 @@ static boolean CMiZone_HandleEvent(IMiZone *pi,
             return MiZone_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_KEY_RELEASE:
-			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_QVGA_INHERIT_K212)&& !defined(FEATURE_LOW_MEM_BIGFONT)
+			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_QVGA_INHERIT_K212)&& !defined(FEATURE_LOW_MEM_BIGFONT)&&!defined(FEATURE_VERSION_IN50A)
             if (!pMe->m_bAppIsReady)
             {
                 return TRUE;
@@ -564,7 +564,7 @@ static boolean CMiZone_HandleEvent(IMiZone *pi,
             return MiZone_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_KEY:
-			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_QVGA_INHERIT_K212)&& !defined(FEATURE_LOW_MEM_BIGFONT)
+			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_QVGA_INHERIT_K212)&& !defined(FEATURE_LOW_MEM_BIGFONT)&&!defined(FEATURE_VERSION_IN50A)
             if (!pMe->m_bAppIsReady)
             {
             	MSG_FATAL("CMiZone_HandleEvent EVT_KEY",0,0,0);
@@ -575,7 +575,7 @@ static boolean CMiZone_HandleEvent(IMiZone *pi,
             return MiZone_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_COMMAND:
-			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_QVGA_INHERIT_K212)&& !defined(FEATURE_LOW_MEM_BIGFONT)
+			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_QVGA_INHERIT_K212)&& !defined(FEATURE_LOW_MEM_BIGFONT)&&!defined(FEATURE_VERSION_IN50A)
             if (!pMe->m_bAppIsReady)
             {
                 return TRUE;

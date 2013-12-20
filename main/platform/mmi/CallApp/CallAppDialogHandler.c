@@ -8804,7 +8804,11 @@ static void CallApp_DrawDialerString(CCallApp   *pMe,  AECHAR const *dialStr)
         pMe->m_pCurrNumFont = pMe->m_pBigNumFont;
         MSG_FATAL(" pMe->m_large_Num_Height=%d", pMe->m_large_Num_Height,0,0);
         #if defined(FEATURE_LANG_ARABIC)
+        #ifdef FEATURE_VERSION_IN50A
+        pMe->m_nCurrNumHeight = 70;
+        #else
         pMe->m_nCurrNumHeight =30;// pMe->m_large_Num_Height;
+        #endif
         #else
         pMe->m_nCurrNumHeight =pMe->m_large_Num_Height;
         #endif
@@ -13590,7 +13594,11 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
 		{	
 #if defined (FEATURE_VERSION_C260_IC18) || defined(FEATURE_VERSION_IC241A_MMX)
             OEM_SetUCBROWSER_ADSAccount();		
-            SetBrowserArr_Main_CallApp(pMe,(char*)"http://mimicromax.com");    
+#if defined (FEATURE_VERSION_IN50A)
+            SetBrowserArr_Main_CallApp(pMe,(char*)"http://www.google.com.hk/"); 
+#else
+            SetBrowserArr_Main_CallApp(pMe,(char*)"http://mimicromax.com"); 
+#endif
 #endif		    
     	}    
         #endif

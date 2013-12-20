@@ -343,7 +343,7 @@ static boolean Recorder_HandleEvent( Recorder* pme, AEEEvent evt, uint16 wParam,
 		case EVT_KEY:
 		case EVT_COMMAND:
 		{  
-			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_QVGA_INHERIT_K212)&&!defined(FEATURE_LOW_MEM_BIGFONT)
+			#if !defined(FEATURE_VERSION_K212) && !defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_QVGA_INHERIT_K212)&&!defined(FEATURE_LOW_MEM_BIGFONT)&&!defined(FEATURE_VERSION_IN50A)
 			if( !pme->m_bAppIsReady || pme->m_bLockkey)
 			{
 				return TRUE;
