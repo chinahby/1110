@@ -66,7 +66,16 @@ static void disp_ic_mdp_scrupdate(uint32 *scr, uint32 start_row, uint32 start_co
 		start_row=+3;
 		end_row=+3;
 	}*/
-	
+	#if defined(_LKD_LCD)
+    scr[7] = SEND_LCD_DATA(DISP_LCD_18BPP((start_col)>>8)+ 2);
+    scr[8] = SEND_LCD_DATA(DISP_LCD_18BPP(start_col)+ 2);
+    scr[9] = SEND_LCD_DATA(DISP_LCD_18BPP((end_col)>>8)+ 2);
+    scr[10] = SEND_LCD_DATA(DISP_LCD_18BPP(end_col)+ 2);
+    scr[12] = SEND_LCD_DATA(DISP_LCD_18BPP((start_row)>>8)+ 2);
+    scr[13] = SEND_LCD_DATA(DISP_LCD_18BPP(start_row)+ 2);
+    scr[14] = SEND_LCD_DATA(DISP_LCD_18BPP((end_row)>>8)+ 2);
+    scr[15] = SEND_LCD_DATA(DISP_LCD_18BPP(end_row)+ 2);
+	#else
     scr[7] = SEND_LCD_DATA(DISP_LCD_18BPP((start_col)>>8));
     scr[8] = SEND_LCD_DATA(DISP_LCD_18BPP(start_col));
     scr[9] = SEND_LCD_DATA(DISP_LCD_18BPP((end_col)>>8));
@@ -75,12 +84,101 @@ static void disp_ic_mdp_scrupdate(uint32 *scr, uint32 start_row, uint32 start_co
     scr[13] = SEND_LCD_DATA(DISP_LCD_18BPP(start_row)+32);
     scr[14] = SEND_LCD_DATA(DISP_LCD_18BPP((end_row)>>8)+32);//+32
     scr[15] = SEND_LCD_DATA(DISP_LCD_18BPP(end_row)+32);//+32
+    #endif
 }
 #endif
 //static uint8 gcC5=0x08;
 static void disp_ic_init(void)
 {
 #ifdef FEATURE_VERSION_K292
+#if defined(_LKD_LCD)
+//--------------------------------End ST7735S Reset Sequence --------------------------------------//
+LCD_WRITE_CMD(0x11); //Sleep out
+LCD_DELAY (120); //Delay 120ms
+//------------------------------------ST7735S Frame rate-----------------------------------------//
+LCD_WRITE_CMD(0xB1); //Frame rate 80Hz
+LCD_WRITE_DATA(0x02);
+LCD_WRITE_DATA(0x35);
+LCD_WRITE_DATA(0x36);
+LCD_WRITE_CMD(0xB2); //Frame rate 80Hz
+LCD_WRITE_DATA(0x02);
+LCD_WRITE_DATA(0x35);
+LCD_WRITE_DATA(0x36);
+LCD_WRITE_CMD(0xB3); //Frame rate 80Hz
+LCD_WRITE_DATA(0x02);
+LCD_WRITE_DATA(0x35);
+LCD_WRITE_DATA(0x36);
+LCD_WRITE_DATA(0x02);
+LCD_WRITE_DATA(0x35);
+LCD_WRITE_DATA(0x36);
+//------------------------------------End ST7735S Frame rate-----------------------------------------//
+LCD_WRITE_CMD(0xB4); //Dot inversion
+LCD_WRITE_DATA(0x03);
+
+
+//------------------------------------ST7735S Power Sequence-----------------------------------------//
+LCD_WRITE_CMD(0xC0);
+LCD_WRITE_DATA(0xA2);
+LCD_WRITE_DATA(0x02);
+LCD_WRITE_DATA(0x84);
+LCD_WRITE_CMD(0xC1);
+LCD_WRITE_DATA(0xC5);
+LCD_WRITE_CMD(0xC2);
+LCD_WRITE_DATA(0x0D);
+LCD_WRITE_DATA(0x00);
+LCD_WRITE_CMD(0xC3);
+LCD_WRITE_DATA(0x8D);
+LCD_WRITE_DATA(0x2A);
+LCD_WRITE_CMD(0xC4);
+LCD_WRITE_DATA(0x8D);
+LCD_WRITE_DATA(0xEE);
+//---------------------------------End ST7735S Power Sequence-------------------------------------//
+LCD_WRITE_CMD(0xC5); //VCOM
+LCD_WRITE_DATA(0x03);
+LCD_WRITE_CMD(0x36); //MX, MY, RGB mode
+LCD_WRITE_DATA(0xC8);
+//------------------------------------ST7735S Gamma Sequence-----------------------------------------//
+LCD_WRITE_CMD(0XE0);
+LCD_WRITE_DATA(0x12);
+LCD_WRITE_DATA(0x1C);
+LCD_WRITE_DATA(0x10);
+LCD_WRITE_DATA(0x18);
+LCD_WRITE_DATA(0x33);
+LCD_WRITE_DATA(0x2C);
+LCD_WRITE_DATA(0x25);
+LCD_WRITE_DATA(0x28);
+LCD_WRITE_DATA(0x28);
+LCD_WRITE_DATA(0x27);
+LCD_WRITE_DATA(0x2F);
+LCD_WRITE_DATA(0x3C);
+
+LCD_WRITE_DATA(0x00);
+LCD_WRITE_DATA(0x03);
+LCD_WRITE_DATA(0x03);
+LCD_WRITE_DATA(0x10);
+LCD_WRITE_CMD(0XE1);
+LCD_WRITE_DATA(0x12);
+LCD_WRITE_DATA(0x1C);
+LCD_WRITE_DATA(0x10);
+LCD_WRITE_DATA(0x18);
+LCD_WRITE_DATA(0x2D);
+LCD_WRITE_DATA(0x28);
+LCD_WRITE_DATA(0x23);
+LCD_WRITE_DATA(0x28);
+LCD_WRITE_DATA(0x28);
+LCD_WRITE_DATA(0x26);
+LCD_WRITE_DATA(0x2F);
+LCD_WRITE_DATA(0x3B);
+LCD_WRITE_DATA(0x00);
+LCD_WRITE_DATA(0x03);
+LCD_WRITE_DATA(0x03);
+LCD_WRITE_DATA(0x10);
+//------------------------------------End ST7735S Gamma Sequence-----------------------------------------//
+LCD_WRITE_CMD(0x3A); //65k mode
+LCD_WRITE_DATA(0x05);
+LCD_WRITE_CMD(0x29); //Display on
+LCD_WRITE_CMD(0x2c);
+#else
 LCD_WRITE_CMD(0x11); 
 LCD_DELAY(120);
 LCD_WRITE_CMD(0xB1); 
@@ -167,6 +265,7 @@ LCD_WRITE_DATA(0x05);
 LCD_WRITE_CMD(0x29); //Display on 
 LCD_WRITE_CMD(0x2c);
 #endif
+#endif
 
 }
 
@@ -179,6 +278,22 @@ static void disp_ic_setwindow(uint32 start_row, uint32 start_col, uint32 end_row
 		end_row=+3;
 	}
      */
+	#if defined(_LKD_LCD)
+	LCD_WRITE_CMD(0x2A);
+    LCD_WRITE_DATA(0x0);
+    LCD_WRITE_DATA((uint8)start_col + 2);
+    LCD_WRITE_DATA(0x0);
+    LCD_WRITE_DATA((uint8)end_col + 2);
+    
+    /* Set LCD hardware to set start address */
+    /* Transfer command to display hardware */
+    LCD_WRITE_CMD(0x2B);
+    LCD_WRITE_DATA(0x0);        
+    LCD_WRITE_DATA((uint8)start_row + 3);
+    LCD_WRITE_DATA(0x0);        
+    LCD_WRITE_DATA((uint8)end_row + 3);
+    LCD_WRITE_CMD(0x2C);
+	#else
     LCD_WRITE_CMD(0x2A);
     LCD_WRITE_DATA(0x0);
     LCD_WRITE_DATA((uint8)start_col);
@@ -194,6 +309,7 @@ static void disp_ic_setwindow(uint32 start_row, uint32 start_col, uint32 end_row
     LCD_WRITE_DATA((uint8)end_row+32);//+32
     
     LCD_WRITE_CMD(0x2C);
+	#endif
 }
 
 static void disp_ic_sleep(boolean bin)
