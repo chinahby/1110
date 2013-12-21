@@ -38,7 +38,9 @@
 	<Object Id="5012" Name="IDB_MODE_T9_MT_ENGLISH_UP" MimeType="image/png">
 		<File>..\images\128x128\common\IME\upabc.png</File>
 	</Object>
-	
+	<Object Id="5013" Name="IDI_KEY_TEST1" MimeType="image/png">
+		<File>..\images\128x128\common\QuickTest\keytest1.png</File>
+	</Object>
 	<Object Id="5016" Name="IDB_PROMPT_MSG_STATIC_BG">
 		<File>..\images\128x128\common\Appscommon\MessageBox\background_static.bmp</File>
 	</Object>
