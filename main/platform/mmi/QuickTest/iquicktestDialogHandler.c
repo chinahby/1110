@@ -560,6 +560,8 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 					#else
                     #if defined(FEATURE_QUICK_TEST_KEY_4)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_VERSION_W021_DX_POWERTEL)//def FEATURE_QUICK_TEST_KEY_4
                     image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_KEY_TEST_4);
+					#elif defined(FEATURE_DISP_128X128)&&defined(FEATURE_VERSION_K292_WSF_CN)
+					image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_KEY_TEST1);
                     #else                    
 					image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_KEY_TEST);
                     #endif
