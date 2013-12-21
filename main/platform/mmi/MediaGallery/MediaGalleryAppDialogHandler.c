@@ -2277,12 +2277,10 @@ static boolean MediaGalleryApp_UDiskDlg_HandleEvent(CMediaGalleryApp* pMe,
    switch(eCode)
    {
       case EVT_DIALOG_INIT:
-      {
-         IMenuCtl* pMenuCtl;
+      {         
          AEERect rc;
          AEEDeviceInfo DevInfo;
-
-         pMenuCtl = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_MG_UDISK);
+         
 		 //add by yangdecai
 			{
 				AECHAR WTitle[40] = {0};
@@ -2303,18 +2301,11 @@ static boolean MediaGalleryApp_UDiskDlg_HandleEvent(CMediaGalleryApp* pMe,
             }
 
          ISHELL_GetDeviceInfo(pMe->m_pShell, &DevInfo);
-         rc = pMe->m_rc;
-         rc.dy =  GetTitleBarHeight(pMe->m_pDisplay);
-         if(pMenuCtl)
-         {
-
-            IMENUCTL_SetRect(pMenuCtl, &rc);
-            IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE | MP_WRAPSCROLL);
-         }
-
-         rc.y += rc.dy;
+         
+         rc = pMe->m_rc;  
          rc.dy =  DevInfo.cyScreen - rc.y - GetBottomBarHeight(pMe->m_pDisplay);
 
+         
          ISTATIC_SetRect(pText, &rc);
          ISTATIC_SetProperties(pText, ST_MIDDLETEXT|ST_GRAPHIC_BG);
 		 #ifndef FEATURE_VERSION_NO_BG

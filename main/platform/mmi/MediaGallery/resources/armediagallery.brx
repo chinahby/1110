@@ -431,10 +431,7 @@
 		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</Dialog>
 	<Dialog Id="6023" Name="IDD_MG_UDISK" Focus="7020">
-		<Controls>
-			<Menu Id="7019" Name="IDC_MG_UDISK">
-				<Items/>
-			</Menu>
+		<Controls>			
 			<Static Id="7020" Name="IDC_MG_UDISKRUN">
 				<Items/></Static>
 		</Controls>
