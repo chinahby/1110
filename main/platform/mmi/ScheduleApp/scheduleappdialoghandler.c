@@ -1558,7 +1558,7 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
             //MSG_FATAL("***zzg sche viewmonth 111 rc.x=%d,rc.y=%d***",rc.x,rc.y,0);
             //MSG_FATAL("***zzg sche viewmonth 111 rc.dx=%d,rc.dy=%d***",rc.dx,rc.dy,0);
             
-			#if defined(FEATURE_VERSION_X3)
+			#if defined(FEATURE_VERSION_X3)||defined(FEATURE_VERSION_K292_WSF_CN)
 			rc.dy -= (HEIGHT_PROMPT_BAR);
 			#elif defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_HUALU)
 			rc.dy -= (HEIGHT_PROMPT_BAR+32);
@@ -1685,7 +1685,7 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
         {
             AECHAR WTitle[20] = {0};
 
-#if defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
+#if defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)||defined(FEATURE_VERSION_K292_WSF_CN)
             CScheduleApp_DrawLunarStr(pme);
 #else
 			#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_IC241A_MMX)
@@ -7862,7 +7862,7 @@ static void CScheduleApp_DrawLunarStr(CScheduleApp *pme)
     nv_language_enum_type language;		
     OEM_GetConfig( CFGI_LANGUAGE_SELECTION, &language, sizeof(language));
 	#endif
-#if defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_20D)
+#if defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K292_WSF_CN)
     if (WSTRLEN(pme->m_LunarString) > 4)
     {
         IANNUNCIATOR_SetFieldTextEx(pme->m_pIAnn, pme->m_LunarString,FALSE);
