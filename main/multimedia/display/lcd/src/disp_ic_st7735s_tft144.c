@@ -71,10 +71,10 @@ static void disp_ic_mdp_scrupdate(uint32 *scr, uint32 start_row, uint32 start_co
     scr[8] = SEND_LCD_DATA(DISP_LCD_18BPP(start_col)+ 2);
     scr[9] = SEND_LCD_DATA(DISP_LCD_18BPP((end_col)>>8)+ 2);
     scr[10] = SEND_LCD_DATA(DISP_LCD_18BPP(end_col)+ 2);
-    scr[12] = SEND_LCD_DATA(DISP_LCD_18BPP((start_row)>>8)+ 2);
-    scr[13] = SEND_LCD_DATA(DISP_LCD_18BPP(start_row)+ 2);
-    scr[14] = SEND_LCD_DATA(DISP_LCD_18BPP((end_row)>>8)+ 2);
-    scr[15] = SEND_LCD_DATA(DISP_LCD_18BPP(end_row)+ 2);
+    scr[12] = SEND_LCD_DATA(DISP_LCD_18BPP((start_row)>>8)+ 3);
+    scr[13] = SEND_LCD_DATA(DISP_LCD_18BPP(start_row)+ 3);
+    scr[14] = SEND_LCD_DATA(DISP_LCD_18BPP((end_row)>>8)+ 3);
+    scr[15] = SEND_LCD_DATA(DISP_LCD_18BPP(end_row)+ 3);
 	#else
     scr[7] = SEND_LCD_DATA(DISP_LCD_18BPP((start_col)>>8));
     scr[8] = SEND_LCD_DATA(DISP_LCD_18BPP(start_col));
