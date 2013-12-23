@@ -71,10 +71,87 @@ static void disp_ic_mdp_scrupdate(uint32 *scr, uint32 start_row, uint32 start_co
 }
 #endif
 
+
 static void disp_ic_init(void)
 {
     ///////////////CMO2.4//////////
     LCD_DELAY(120);
+    #ifdef FEATURE_VERSION_K212_VHOPE
+    LCD_WRITE_CMD(0x36);
+	LCD_WRITE_DATA(0x48);	
+	
+    LCD_WRITE_CMD(0x3a);
+	LCD_WRITE_DATA(0x05);	
+	
+	LCD_WRITE_CMD(0xfe);
+	LCD_WRITE_CMD(0xef);
+
+	LCD_WRITE_CMD(0xE2);
+	LCD_WRITE_DATA(0x80);
+
+	LCD_WRITE_CMD(0xE0);
+	LCD_WRITE_DATA(0x63);
+
+	LCD_WRITE_CMD(0xE4);
+	LCD_WRITE_DATA(0x10);
+
+	LCD_WRITE_CMD(0xEB);
+	LCD_WRITE_DATA(0x04);
+
+	LCD_WRITE_CMD(0xE8);
+	LCD_WRITE_DATA(0x09);
+
+
+	LCD_WRITE_CMD(0xa3); //frame
+	LCD_WRITE_DATA(0x0c);	   //0a
+
+	LCD_WRITE_CMD(0xa4); 
+	LCD_WRITE_DATA(0x96);	   
+	
+	LCD_WRITE_CMD(0xff);  //vdv[4:0]  
+	LCD_WRITE_DATA(0x15);	   //15
+		
+	LCD_WRITE_CMD(0xfd);  //vcm[5:0]  flicker
+	LCD_WRITE_DATA(0x00);	 
+
+	//================gamma test=============//
+
+	LCD_WRITE_CMD(0xf0);   //kp1[]  kp0
+	LCD_WRITE_DATA(0x00);
+
+	LCD_WRITE_CMD(0xf1);	  //kp3 kp2
+	LCD_WRITE_DATA(0x57); //52
+
+	LCD_WRITE_CMD(0xf2);	 //kp5 kp4
+	LCD_WRITE_DATA(0x04);  //07  05  14
+
+	LCD_WRITE_CMD(0xf3);	  //rp1 rp0	 ok
+	LCD_WRITE_DATA(0x52);    //52
+
+	LCD_WRITE_CMD(0xf4);
+	LCD_WRITE_DATA(0x00); 
+
+	LCD_WRITE_CMD(0xf5);
+	LCD_WRITE_DATA(0x00); 
+
+	LCD_WRITE_CMD(0xf7);		 //kn1 kn0
+	LCD_WRITE_DATA(0x37); //07  27 36 
+
+	LCD_WRITE_CMD(0xf8);		//kn3 kn2
+	LCD_WRITE_DATA(0x02); 
+
+	LCD_WRITE_CMD(0xf9);		//kn5 kn4
+	LCD_WRITE_DATA(0x77); 
+
+	LCD_WRITE_CMD(0xfa);		//rn1 rn0  ok
+	LCD_WRITE_DATA(0x25);   //25
+
+	LCD_WRITE_CMD(0xfb);
+	LCD_WRITE_DATA(0x00); 
+
+	LCD_WRITE_CMD(0xfc);
+	LCD_WRITE_DATA(0x00);
+    #else
     LCD_WRITE_CMD(0xfe);
     LCD_WRITE_CMD(0xef);
 
@@ -137,8 +214,7 @@ static void disp_ic_init(void)
 
     LCD_WRITE_CMD(0xfc);
     LCD_WRITE_DATA(0x00);
-
-
+    #endif
     LCD_WRITE_CMD(0x11);
     LCD_DELAY(120);
     LCD_WRITE_CMD(0x29);
@@ -176,6 +252,7 @@ static void disp_ic_sleep(boolean bin)
     }
     else
     {
+
     	LCD_WRITE_CMD(0x11); // Standby out
 		LCD_DELAY(10);
 		LCD_WRITE_CMD(0x11); //Exit Sleep
@@ -195,6 +272,11 @@ boolean disp_gc9312ds_tft23_rot(disp_drv_ic_type *pdispic)
     uint8 id1,id2,id3;
     
     // Read ID
+    LCD_WRITE_CMD(0xfe);
+	LCD_WRITE_CMD(0xef);
+
+	LCD_WRITE_CMD(0xE2);
+	LCD_WRITE_DATA(0x80);
     LCD_WRITE_CMD(0x00);
     id1 = LCD_READ_DATA();    
     id2 = LCD_READ_DATA();
