@@ -1412,7 +1412,7 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
 #if defined( AEE_SIMULATOR)
                 case AVK_SOFT1:
 #else
-#if defined(FEATURE_DISP_220X176)||defined(FEATURE_DISP_128X160)||defined(FEATURE_DISP_160X128) || defined(FEATURE_DISP_176X220)|| defined(FEATURE_DISP_240X320)
+#if defined(FEATURE_DISP_220X176)||defined(FEATURE_DISP_128X160)||defined(FEATURE_DISP_160X128) || defined(FEATURE_DISP_176X220)|| defined(FEATURE_DISP_240X320)||defined(FEATURE_DISP_128X128)
 #ifdef FEATURE_VERSION_SKY
 				case AVK_POUND:
 #else
@@ -1459,7 +1459,7 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
                     break;
 //#if defined(FEATURE_DISP_176X220)
 //				case AVK_STAR:
-#if defined(FEATURE_DISP_220X176)||defined(FEATURE_DISP_128X160)||defined(FEATURE_DISP_160X128) || defined(FEATURE_DISP_176X220)|| defined(FEATURE_DISP_240X320)
+#if defined(FEATURE_DISP_220X176)||defined(FEATURE_DISP_128X160)||defined(FEATURE_DISP_160X128) || defined(FEATURE_DISP_176X220)|| defined(FEATURE_DISP_240X320)||defined(FEATURE_DISP_128X128)
 #ifdef FEATURE_VERSION_SKY
                 case AVK_STAR:
 #else
@@ -1469,7 +1469,7 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
                 case AVK_M:
                     Calc_AddChar(pme, (AECHAR)'.', TRUE);
                     break;
-#if !(defined(FEATURE_DISP_220X176)||defined(FEATURE_DISP_128X160)||defined(FEATURE_DISP_160X128) || defined(FEATURE_DISP_176X220)|| defined(FEATURE_DISP_240X320))
+#if !(defined(FEATURE_DISP_220X176)||defined(FEATURE_DISP_128X160)||defined(FEATURE_DISP_160X128) || defined(FEATURE_DISP_176X220)|| defined(FEATURE_DISP_240X320)||defined(FEATURE_DISP_128X128))
                 case AVK_POUND:
                     Calc_Reset( pme);
                     break;
