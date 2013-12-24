@@ -1,0 +1,35 @@
+################################################################################
+# main menu gnumake variable definition
+################################################################################
+CAMERALIST_INC = $(CAMERALIST)
+CAMERALIST_RES = $(CAMERALIST)/resources
+CAMERALIST_SRC = $(CAMERALIST)
+CAMERALIST_LIB = $(CAMERALIST)
+CAMERALIST_SOURCES = cameralist.c
+
+CAMERALIST_OBJS :=  $(addprefix $(TARGETDIR)/, $(CAMERALIST_SOURCES:%.c=%.o))
+$(CAMERALIST_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
+
+vpath %.c $(CAMERALIST_SRC)
+vpath %.bar $(CAMERALIST_RES)
+vpath %.brx $(CAMERALIST_RES)
+
+CONSTFILE_FILES+=\
+cameralist.mif|fs:/mif/cameralist.mif \
+cameralist.bar|fs:/mod/cameralist/en/cameralist.bar
+
+
+ifneq ($(EXTLANG1),NO)
+CONSTFILE_FILES+=\
+$(EXTLANG1)cameralist.bar|fs:/mod/cameralist/$(EXTLANG1)/cameralist.bar
+endif
+ifneq ($(EXTLANG2),NO)
+CONSTFILE_FILES+=\
+$(EXTLANG2)cameralist.bar|fs:/mod/cameralist/$(EXTLANG2)/cameralist.bar
+endif
+
+
+INC  += $(CAMERALIST_INC) $(CAMERALIST_RES)
+#SRC  += $(CAMERALIST_SOURCES)
+OBJECTS+=$(CAMERALIST_OBJS)
+#LIBS += 

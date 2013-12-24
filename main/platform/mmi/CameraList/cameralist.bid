@@ -1,0 +1,6 @@
+#ifndef CAMERALIST_BID
+#define CAMERALIST_BID
+
+#define AEECLSID_CAMERA_LIST        0x01006605
+
+#endif //CAMERALIST_BID
