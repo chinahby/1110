@@ -1114,6 +1114,10 @@ static boolean  HandleSoundMenuProfilesDialogEvent(CSoundMenu *pMe,
             	Sound_App_Add_Menu(pMenu,IDS_SHUTDOWN_RINGER);	
 			}
 			*/
+			#if defined (FEATURE_VERSION_IN50A)
+            Sound_App_Add_Menu(pMenu,IDS_STARTUP_RINGER);
+            Sound_App_Add_Menu(pMenu,IDS_SHUTDOWN_RINGER);
+            #endif
 			#else
 			Sound_App_Add_Menu(pMenu,IDS_STARTUP_RINGER);
             Sound_App_Add_Menu(pMenu,IDS_SHUTDOWN_RINGER);
@@ -1123,6 +1127,10 @@ static boolean  HandleSoundMenuProfilesDialogEvent(CSoundMenu *pMe,
 #ifndef FEATURE_VERSION_IC241A_MMX
             Sound_App_Add_Menu(pMenu,IDS_POWERONOFF_ALERT);
 #endif
+#endif
+
+#if defined (FEATURE_VERSION_IN50A)
+            Sound_App_Add_Menu(pMenu,IDS_POWERONOFF_ALERT);
 #endif
            // Sound_App_Add_Menu(pMenu,IDS_FMRADIO_OPTION_MENU_PLAY_MODLE);
             return TRUE;

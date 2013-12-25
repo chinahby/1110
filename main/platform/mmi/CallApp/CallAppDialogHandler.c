@@ -8805,7 +8805,7 @@ static void CallApp_DrawDialerString(CCallApp   *pMe,  AECHAR const *dialStr)
         MSG_FATAL(" pMe->m_large_Num_Height=%d", pMe->m_large_Num_Height,0,0);
         #if defined(FEATURE_LANG_ARABIC)
         #ifdef FEATURE_VERSION_IN50A
-        pMe->m_nCurrNumHeight = 70;
+        pMe->m_nCurrNumHeight = 75; //70;
         #else
         pMe->m_nCurrNumHeight =30;// pMe->m_large_Num_Height;
         #endif
@@ -15446,7 +15446,11 @@ static void CallApp_Calc_Cursor_Rect(CCallApp* pMe, AEERect *pRect)
 		x = pMe->m_rc.dx-2;
 	}
 	#endif
+#if defined (FEATURE_VERSION_IN50A)
+    SETAEERECT(pRect, x, y, 2, pMe->m_nCurrNumHeight);
+#else
     SETAEERECT(pRect, x, y, 1, pMe->m_nCurrNumHeight);
+#endif
 #endif //FEATURE_VERSION_W208S
 
 	

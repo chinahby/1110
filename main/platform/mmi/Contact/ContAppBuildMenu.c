@@ -388,7 +388,7 @@ int CContApp_BuildMainMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
             FARF(ADDR, ("Failed to Add Opts item %d", ai.wItemID));
             return EFAILED;
         }      
-#if (defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_C316))    //add by yangdecai 07-19
+#if (defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_IN50A))    //add by yangdecai 07-19
 		;
 #else
 #ifdef FEATURE_OEMOMH 

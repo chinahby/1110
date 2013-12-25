@@ -13713,7 +13713,7 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_IconTitle[2]     = IDS_MAIN_MENU_RECENTCALLS_C337;	//IDS_MAIN_MENU_RECENTCALLS;
     pMe->m_IconTitle[3]     = IDS_MAIN_MENU_SERVICES;	//IDS_MAIN_WAPBROWSER;
     pMe->m_IconTitle[4]     = IDS_MAIN_MENU_MESSAGES;
-    pMe->m_IconTitle[5]     = IDS_MAIN_MENU_CAMERA;
+    pMe->m_IconTitle[5]     = IDS_MAIN_MENU_CAMERA_LIST;    //IDS_MAIN_MENU_CAMERA;
 	
     pMe->m_IconTitle[6]     = IDS_MAIN_MENU_FMRADIO;	//IDS_MAIN_MENU_MULTIMEDIA;		//m! STORE
     pMe->m_IconTitle[7]     = IDS_MAIN_MENU_ORGANIZER;	//IDS_MAIN_MENU_APPLICATION;
@@ -15397,6 +15397,13 @@ static int StartApplet(MainMenu *pMe, int i)
 		Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_CAMERA);
 		break;
 	}  
+
+    case IDS_MAIN_MENU_CAMERA_LIST:
+    {		
+        MSG_FATAL("***zzg Start AEECLSID_CAMERA_LIST***", 0, 0, 0);
+		Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CAMERA_LIST);
+		break;
+	}      
     
     default:
         break;

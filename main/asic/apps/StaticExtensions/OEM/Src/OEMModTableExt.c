@@ -975,6 +975,7 @@ extern int MediaGalleryApp_Load(IShell* ps, void* pHelpers, IModule** ppMod);
 
 #if defined(FEATURE_APP_CAMERA)
 extern int  CCameraAppMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
+extern int CameralistMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 #endif
 
 #if defined(FEATURE_APP_MUSICPLAYER)
@@ -1382,6 +1383,7 @@ static const AEEStaticMod gOEMStaticModList[] =
 
 #ifdef FEATURE_APP_CAMERA
     {AEEFS_MIF_DIR"cameraapp.mif", CCameraAppMod_Load}, 
+    {AEEFS_MIF_DIR"cameralist.mif", CameralistMod_Load},
 #endif
 
 #if defined(FEATURE_APP_MUSICPLAYER)

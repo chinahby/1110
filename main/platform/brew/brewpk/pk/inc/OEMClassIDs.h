@@ -138,6 +138,7 @@ GENERAL DESCRIPTION:
 #define AEECLSID_TVAPP            (AEECLSID_OEM + 0x602)   //add by pengyuangui  AEECLSID_Tv_APP
 #define MMI_CLSID_IMMITV          (AEECLSID_OEM + 0x603)   
 #define AEECLSID_TLG_ATV          (AEECLSID_OEM +0x604)
+#define AEECLSID_CAMERA_LIST        (AEECLSID_OEM + 0x605)  
 #define AEECLSID_BRW_APP    	    0x2104c960
 #define AEECLSID_NF3				0x01007016
 #define AEECLSID_UCWEB				0x20068888            //add by pengyuangui 2012/09/06

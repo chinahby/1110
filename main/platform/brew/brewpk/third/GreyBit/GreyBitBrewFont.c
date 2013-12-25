@@ -11,6 +11,11 @@
 #include "OEMHeap.h"
 #include "AEE_OEMFile.h"
 
+#if !defined( AEE_SIMULATOR)
+#include "OEMCFGI.h"
+#endif
+#include "nv.h"
+
 #ifndef RELEASEIF
 #define RELEASEIF(p) do { if (p) { IBASE_Release((IBase*)(p)); p = 0; } } while (0)
 #endif
@@ -68,7 +73,9 @@ static int OEMFont_MeasureTextCursorPos(IFont *pMe, int x, const AECHAR *pcText,
 #else
 #define BIGNUMBER_FONT_SIZE 48 
 #endif
+
 #define NORMAL_FONT_SIZE    32 
+
 #if defined(FEATURE_VERSION_K212)||defined(FEATURE_QVGA_INHERIT_K212)
 #define LARGE_FONT_SIZE     38
 #else
@@ -298,365 +305,118 @@ static boolean GetCombineOffSet(IFont *pMe, uint16 ch1, uint16 ch2, int *pOff)
     return bRet;
 }
 #ifndef FEATURE_DISP_128X160
-#define NEW_SIZE  17
+#define NEW_SIZE  25   //17
 #define MATH_FACTOR_BIT         10
-#define SCALE_V_ONLY 
+//#define SCALE_V_ONLY 
 #endif
 //#include "err.h"
 static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, int nChars,
 	int x, int xMin, int xMax, int sy, int oy, int dy, NativeColor clrText, NativeColor clrBack,
 	boolean bTransparency, int *pOutWidth)
 {
-#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
-    if(pMe->wSize != BIGNUMBER_FONT_SIZE)
+    nv_language_enum_type lang;
+        
+    OEM_GetConfig(CFGI_LANGUAGE_SELECTION, &lang, sizeof(lang));
+
+    if (NV_LANGUAGE_ARABIC != lang)   
     {
-        AleFontMetrics fm;   //metics of the entrie string
-        int kmask, j, yend, sx, xend, i, xloop,ii=0,jj=0;
-        byte m,n;
-        unsigned char *p;
-        word *dp,*dbase;
-        char *pfont;
-        AleGetStringFontInfo getfont_info;  //structure for retrieve font
-        word cText, cBack;
-        uint32 bmp_offset = 0;
-        AECHAR nCharsContent = 0;
-        AECHAR *pText = (AECHAR *)pcText,pTemp=NULL;
-        int16 nRealSize = WSTRLEN(pcText);
-#ifndef FEATURE_DISP_128X160
-			   //第一步, 进行参数合法性检测
-		//宽度缩放比
-		uint32 fScalex =0;
-		uint32 fScaley =0;
-		//指向目标数据
-		uint16* pbyDst = NULL;
-		uint16* pbySrc = NULL;
-		uint32 xx=0,yy=0,xx_last=0;
-	//	uint16 Position[100] = {0};
-#endif
-        if(nRealSize > nChars)
-        {
-            nCharsContent = *(pcText + nChars - 1 + 1);
-            pText[nChars] = 0;
-        }
-       
-        /* current line being edited
-          ---------------------------------------- */
-        memset (&getfont_info, 0, sizeof (getfont_info));
-        getfont_info. CodeType = 1;  /* use Unicode */
-        getfont_info. String = (ALE_UINT16 *)pText;
-        getfont_info. FontMetrics = &fm;
-        getfont_info. FontBuffer = gFontDataBuffer;
-        getfont_info. BufferRowByteTotal = SCREENBYTEWIDTH;
-        getfont_info. BufferColumnByteTotal = SCREENHEIGHT;
-        //getfont_info. CharPosition = Position;
-		
-        //all the remain fields are unchanged
-        AleGetStringFont (&getfont_info, gAleWorkBuffer);		
-		
-		//MSG_FATAL("position %d %d %d",Position[0],Position[1],Position[2]);
-		//MSG_FATAL("position %d %d %d",Position[3],Position[4],Position[5]);
-		
-        if(nRealSize > nChars)
-        {
-            pText[nChars] = nCharsContent;
-        }
-       
-        xend = fm.horiAdvance;
-        if(xend == 0)
-        {
-            goto FONT_NO_EXIST;
-        }
-        //yend = fm. outBufHeight;
-#ifdef FEATURE_ARPHIC_ARABIC_M16X16P_FONT        
-        yend = (dy > 16)?(16):(dy);
-#else        
-        yend = (dy > 14)?(14):(dy);
-#endif        
-        pfont = gFontDataBuffer;
-#ifndef FEATURE_DISP_128X160
-		fScalex =(yend<<MATH_FACTOR_BIT) / NEW_SIZE;
-        fScaley =(yend<<MATH_FACTOR_BIT) / NEW_SIZE;
-#ifndef SCALE_V_ONLY			
-		xend = fScalex*NEW_SIZE/14;
-#endif
-#endif
-        if(x < xMin)
-        {
-            m = (xMin - x) / 8;
-            n = (xMin - x) % 8;
-            sx = xMin;
-            if((x + xend) > xMax)
-            {
-                xloop = xMax - xMin;
-            }
-            else
-            {
-                xloop = xend - (xMin - x);
-            }
-        }
-        else if((x + xend) > xMax)
-        {
-            m = n = 0;
-            sx = x;
-            xloop = xMax - x;
-        }
-        else
-        {
-            m = n = 0;
-            sx = x;
-            xloop = xend;
-        }
-		
+        int xSrc, i;
+        byte xWidth, xWidthOrig, xxDisp, *sp, *pFontData;
+        int bytes_per_row, dispWidth = 0;
+        word *dp, *dpBase, cText, cBack;
+        unsigned int y1;
+        AECHAR ch,ch1;
+        int bmp_offset;
+        GB_Bitmap charBmp;
+        int16 foreR, foreG, foreB, backR, backG, backB, diffR, diffG, diffB;
+        int xCombOff = 0;
+        
+        bmp_offset = sy * nPitch;
+        
         cText = (word)(clrText & 0xFFFF);
         cBack = (word)(clrBack & 0xFFFF);
+     
+        nPitch >>= 1;
         
-        bmp_offset = sy*nPitch;
-        dp = dbase = (word*)(pBmp + bmp_offset + (sx<<1));
-		
-#ifndef FEATURE_DISP_128X160
-		//MSG_FATAL("xloop=%d bTransparency=%d EngCount=%d",xloop,bTransparency,EngCount);
-        for ( j = 0; j < NEW_SIZE; j++ )
-        {        	
-			yy = (j * fScaley)>>MATH_FACTOR_BIT;
-			
-            if (bTransparency)
-            {
-                for ( xx=0,xx_last=0,p = (unsigned char*) (pfont + m + oy*SCREENBYTEWIDTH + yy*SCREENBYTEWIDTH), 
-                        dp = dbase + j*(nPitch>>1),kmask = (0x80>>n), i = 0;i < xloop;i++)
-                {    
-#ifdef SCALE_V_ONLY							
-					xx = i;
-#else						
-					xx = (i * fScalex)>>MATH_FACTOR_BIT;
-#endif
-					
-					if(xx_last!=xx)
-					{
-						xx_last=xx;
-	                    kmask >>= 1;
-					}
-					
-					if ( !(kmask) )
-                    {
-                        kmask = 0x80;
-                        p++;
-                    }
-					
-                    if ( (*p) & (kmask) )
-                    {
-                        *dp = cText;  //this pixel contains font
-                    }
-                    dp++;
-
-
-                }
-            }
-            else
-            {
-                for ( xx=0,xx_last=0,p = (unsigned char*) (pfont + m +  oy*SCREENBYTEWIDTH + yy*SCREENBYTEWIDTH), 
-					dp = dbase + j*(nPitch>>1),kmask = (0x80>>n), i = 0;i < xloop;i++)
-                {
-                	
-#ifdef SCALE_V_ONLY							
-					xx = i;
-#else						
-					xx = (i * fScalex)>>MATH_FACTOR_BIT;
-#endif
-					if(xx_last!=xx)
-					{
-						xx_last=xx;
-	                    kmask >>= 1;
-					}
-					
-					if ( !(kmask) )
-                    {
-                        kmask = 0x80;
-                        p++;
-                    }
-					
-                    *dp++ = (*p & (kmask) )?(cText):(cBack);
-   
-                }
-            }
-        }
-#else
-        for ( j = 0; j < yend; j++ )
-        {
-            if (bTransparency)
-            {
-                for ( p = (unsigned char*) (pfont + m + oy*SCREENBYTEWIDTH + j*SCREENBYTEWIDTH), 
-                       dp = dbase + j*(nPitch>>1), kmask = (0x80>>n), i = 0;         i < xloop;         i++)
-                {
-                    if ( (*p) & kmask )
-                    {
-                        *dp = cText;  //this pixel contains font
-                    }
-                    dp++;
-                    
-                    kmask >>= 1;
-                    if ( !kmask )
-                    {
-                        kmask = 0x80;
-                        p++;
-                    }
-                }
-            }
-            else
-            {
-                for ( p = (unsigned char*) (pfont + m +  oy*SCREENBYTEWIDTH + j*SCREENBYTEWIDTH), 
-                         dp = dbase + j*(nPitch>>1), kmask = (0x80>>n), i = 0;        i < xloop;       i++)
-                {
-                    *dp++ = (*p & kmask)?(cText):(cBack);
-                    
-                    kmask >>= 1;
-                    if ( !kmask )
-                    {
-                        kmask = 0x80;
-                        p++;
-                    }
-                }
-            }
-        }
-
-#endif		
-        *pOutWidth = xloop;
-        return;
-    }
-    else
-    {
-FONT_NO_EXIST:
-#endif
-{
-    int xSrc, i;
-    byte xWidth, xWidthOrig, xxDisp, *sp, *pFontData;
-    int bytes_per_row, dispWidth = 0;
-    word *dp, *dpBase, cText, cBack;
-    unsigned int y1;
-    AECHAR ch,ch1;
-    int bmp_offset;
-    GB_Bitmap charBmp;
-    int16 foreR, foreG, foreB, backR, backG, backB, diffR, diffG, diffB;
-    int xCombOff = 0;
-    
-    bmp_offset = sy * nPitch;
-    
-    cText = (word)(clrText & 0xFFFF);
-    cBack = (word)(clrBack & 0xFFFF);
- 
-    nPitch >>= 1;
-    
-    foreR = CGreyBit_COLORSCHEME565_GET_R(cText);
-	foreG = CGreyBit_COLORSCHEME565_GET_G(cText);
-	foreB = CGreyBit_COLORSCHEME565_GET_B(cText);
-    backR = CGreyBit_COLORSCHEME565_GET_R(cBack);
-    backG = CGreyBit_COLORSCHEME565_GET_G(cBack);
-    backB = CGreyBit_COLORSCHEME565_GET_B(cBack);
-    diffR = foreR-backR;
-    diffG = foreG-backG;
-    diffB = foreB-backB;
-    
-    for (i=0; i<nChars && pcText[i]; i++)
-    {
-	    ch = pcText[i];
-		if(ch < ' ') continue;
+        foreR = CGreyBit_COLORSCHEME565_GET_R(cText);
+    	foreG = CGreyBit_COLORSCHEME565_GET_G(cText);
+    	foreB = CGreyBit_COLORSCHEME565_GET_B(cText);
+        backR = CGreyBit_COLORSCHEME565_GET_R(cBack);
+        backG = CGreyBit_COLORSCHEME565_GET_G(cBack);
+        backB = CGreyBit_COLORSCHEME565_GET_B(cBack);
+        diffR = foreR-backR;
+        diffG = foreG-backG;
+        diffB = foreB-backB;
         
-        if(xCombOff == 0)
+        for (i=0; i<nChars && pcText[i]; i++)
         {
-            ch1 = (i+1)<nChars?pcText[i+1]:0;
-            if(GetCombineOffSet(pMe, ch, ch1, &xCombOff))
-            {
-                ch  = ch1;
-                ch1 = pcText[i];
-            }
+    	    ch = pcText[i];
+    		if(ch < ' ') continue;
             
-            if(0 != GreyBitType_Layout_LoadChar(pMe->pLayout, ch, &charBmp))
-    	    {
-    	        continue;
-    	    }
-        }
-        else
-        {
-    		if(0 != GreyBitType_Layout_LoadChar(pMe->pLayout, ch1, &charBmp))
-    	    {
+            if(xCombOff == 0)
+            {
+                ch1 = (i+1)<nChars?pcText[i+1]:0;
+                if(GetCombineOffSet(pMe, ch, ch1, &xCombOff))
+                {
+                    ch  = ch1;
+                    ch1 = pcText[i];
+                }
+                
+                if(0 != GreyBitType_Layout_LoadChar(pMe->pLayout, ch, &charBmp))
+        	    {
+        	        continue;
+        	    }
+            }
+            else
+            {
+        		if(0 != GreyBitType_Layout_LoadChar(pMe->pLayout, ch1, &charBmp))
+        	    {
+                    xCombOff = 0;
+        	        continue;
+        	    }
+                
+                charBmp->horioff += xCombOff;
                 xCombOff = 0;
-    	        continue;
-    	    }
-            
-            charBmp->horioff += xCombOff;
-            xCombOff = 0;
-        }
-        
-        xWidth = (byte)charBmp->width;
-        bytes_per_row = charBmp->pitch;
-        
- 	    // Clip x coordinate
-        xWidthOrig = xWidth;
-        x += charBmp->horioff;
- 	    xSrc = 0;
-        
-        if (x > xMax)
-        {
-            break;
-        }
-        else if (x < xMin)
-  	    {
- 		    if ((x+xWidth) < xMin)
- 		    {
- 			    x += xWidth;
- 			    continue;
- 		    }
- 
- 		    xSrc = xMin - x;
- 		    xWidth -= xSrc;
- 		    x = xMin;
-   	    }
- 	    else if ((x+xWidth) > xMax)
- 	    {
- 	        xWidth = xMax - x + 1;
- 	    }
-        
-        xxDisp = (xWidth > xWidthOrig) ? xWidthOrig : xWidth;
-        
-        pFontData = charBmp->buffer + oy * bytes_per_row;
-        dp = dpBase = (word*)(pBmp + bmp_offset + (x<<1));
-        
-        y1 = dy;
-        if (bTransparency){
-            while (y1--){
-                unsigned int x1 = xxDisp;
-                sp = pFontData;
-                sp += xSrc;
-                
-                // draw only foreground color                
-                while (x1--){
-                    switch(*sp){
-                    case 0:
-                        break;
-                    case 0xFF:
-                        *dp = cText;
-                        break;
-                    default:
-                        backR = CGreyBit_COLORSCHEME565_GET_R(*dp);
-                        backG = CGreyBit_COLORSCHEME565_GET_G(*dp);
-                        backB = CGreyBit_COLORSCHEME565_GET_B(*dp);
-                        backR = (((foreR - backR) * (*sp)) >> 8) + backR;
-                        backG = (((foreG - backG) * (*sp)) >> 8) + backG;
-                        backB = (((foreB - backB) * (*sp)) >> 8) + backB;
-                        *dp = (unsigned short)CGreyBit_COLORSCHEME565_GET_RGB(backR, backG, backB);
-                        break;
-                    }
-                    dp++;
-                    sp++;
-                }  // for loop            
-                
-                pFontData += bytes_per_row;
-                dp = dpBase += nPitch;
             }
-        }else{
-            if(charBmp->horioff < 0) //如泰语等语言
+            
+            xWidth = (byte)charBmp->width;
+            bytes_per_row = charBmp->pitch;
+            
+     	    // Clip x coordinate
+            xWidthOrig = xWidth;
+            x += charBmp->horioff;
+     	    xSrc = 0;
+            
+            if (x > xMax)
             {
+                break;
+            }
+            else if (x < xMin)
+      	    {
+     		    if ((x+xWidth) < xMin)
+     		    {
+     			    x += xWidth;
+     			    continue;
+     		    }
+     
+     		    xSrc = xMin - x;
+     		    xWidth -= xSrc;
+     		    x = xMin;
+       	    }
+     	    else if ((x+xWidth) > xMax)
+     	    {
+     	        xWidth = xMax - x + 1;
+     	    }
+            
+            xxDisp = (xWidth > xWidthOrig) ? xWidthOrig : xWidth;
+            
+            pFontData = charBmp->buffer + oy * bytes_per_row;
+            dp = dpBase = (word*)(pBmp + bmp_offset + (x<<1));
+            
+            y1 = dy;
+            if (bTransparency){
                 while (y1--){
-                    unsigned int x1 = -charBmp->horioff;
+                    unsigned int x1 = xxDisp;
                     sp = pFontData;
                     sp += xSrc;
                     
@@ -682,74 +442,552 @@ FONT_NO_EXIST:
                         sp++;
                     }  // for loop            
                     
-                    backR = CGreyBit_COLORSCHEME565_GET_R(cBack);
-                    backG = CGreyBit_COLORSCHEME565_GET_G(cBack);
-                    backB = CGreyBit_COLORSCHEME565_GET_B(cBack);
-                    x1 = xxDisp+charBmp->horioff;
-                    while (x1--){
-                        switch(*sp){
-                        case 0:
-                            *dp = cBack;
-                            break;
-                        case 0xFF:
-                            *dp = cText;
-                            break;
-                        default:
-                            foreR = ((diffR * (*sp)) >> 8) + backR;
-                            foreG = ((diffG * (*sp)) >> 8) + backG;
-                            foreB = ((diffB * (*sp)) >> 8) + backB;
-                            *dp = (unsigned short)CGreyBit_COLORSCHEME565_GET_RGB(foreR, foreG, foreB);
-                            break;
-                        }
-                        dp++;
-                        sp++;
-                    }  // for loop
-                    
                     pFontData += bytes_per_row;
                     dp = dpBase += nPitch;
                 }
+            }else{
+                if(charBmp->horioff < 0) //如泰语等语言
+                {
+                    while (y1--){
+                        unsigned int x1 = -charBmp->horioff;
+                        sp = pFontData;
+                        sp += xSrc;
+                        
+                        // draw only foreground color                
+                        while (x1--){
+                            switch(*sp){
+                            case 0:
+                                break;
+                            case 0xFF:
+                                *dp = cText;
+                                break;
+                            default:
+                                backR = CGreyBit_COLORSCHEME565_GET_R(*dp);
+                                backG = CGreyBit_COLORSCHEME565_GET_G(*dp);
+                                backB = CGreyBit_COLORSCHEME565_GET_B(*dp);
+                                backR = (((foreR - backR) * (*sp)) >> 8) + backR;
+                                backG = (((foreG - backG) * (*sp)) >> 8) + backG;
+                                backB = (((foreB - backB) * (*sp)) >> 8) + backB;
+                                *dp = (unsigned short)CGreyBit_COLORSCHEME565_GET_RGB(backR, backG, backB);
+                                break;
+                            }
+                            dp++;
+                            sp++;
+                        }  // for loop            
+                        
+                        backR = CGreyBit_COLORSCHEME565_GET_R(cBack);
+                        backG = CGreyBit_COLORSCHEME565_GET_G(cBack);
+                        backB = CGreyBit_COLORSCHEME565_GET_B(cBack);
+                        x1 = xxDisp+charBmp->horioff;
+                        while (x1--){
+                            switch(*sp){
+                            case 0:
+                                *dp = cBack;
+                                break;
+                            case 0xFF:
+                                *dp = cText;
+                                break;
+                            default:
+                                foreR = ((diffR * (*sp)) >> 8) + backR;
+                                foreG = ((diffG * (*sp)) >> 8) + backG;
+                                foreB = ((diffB * (*sp)) >> 8) + backB;
+                                *dp = (unsigned short)CGreyBit_COLORSCHEME565_GET_RGB(foreR, foreG, foreB);
+                                break;
+                            }
+                            dp++;
+                            sp++;
+                        }  // for loop
+                        
+                        pFontData += bytes_per_row;
+                        dp = dpBase += nPitch;
+                    }
+                }
+                else
+                {
+                    while (y1--){
+                        unsigned int x1 = xxDisp;
+                        sp = pFontData;
+                        sp += xSrc;
+                        
+                        while (x1--){
+                            switch(*sp){
+                            case 0:
+                                *dp = cBack;
+                                break;
+                            case 0xFF:
+                                *dp = cText;
+                                break;
+                            default:
+                                foreR = ((diffR * (*sp)) >> 8) + backR;
+                                foreG = ((diffG * (*sp)) >> 8) + backG;
+                                foreB = ((diffB * (*sp)) >> 8) + backB;
+                                *dp = (unsigned short)CGreyBit_COLORSCHEME565_GET_RGB(foreR, foreG, foreB);
+                                break;
+                            }
+                            dp++;
+                            sp++;
+                        }  // for loop
+                        
+                        pFontData += bytes_per_row;
+                        dp = dpBase += nPitch;
+                    }
+                }
+            }
+            
+     	    dispWidth += xWidth;
+            x += xWidth;
+        }
+     
+        *pOutWidth = dispWidth;  
+    }
+    else
+    {
+#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE    
+        if(pMe->wSize != BIGNUMBER_FONT_SIZE)
+        {
+            AleFontMetrics fm;   //metics of the entrie string
+            int kmask, j, yend, sx, xend, i, xloop,ii=0,jj=0;
+            byte m,n;
+            unsigned char *p;
+            word *dp,*dbase;
+            char *pfont;
+            AleGetStringFontInfo getfont_info;  //structure for retrieve font
+            word cText, cBack;
+            uint32 bmp_offset = 0;
+            AECHAR nCharsContent = 0;
+            AECHAR *pText = (AECHAR *)pcText,pTemp=NULL;
+            int16 nRealSize = WSTRLEN(pcText);
+#ifndef FEATURE_DISP_128X160
+    		//第一步, 进行参数合法性检测
+    		//宽度缩放比
+    		uint32 fScalex =0;
+    		uint32 fScaley =0;
+    		//指向目标数据
+    		uint16* pbyDst = NULL;
+    		uint16* pbySrc = NULL;
+    		uint32 xx=0,yy=0,xx_last=0;
+    	//	uint16 Position[100] = {0};
+#endif
+            if(nRealSize > nChars)
+            {
+                nCharsContent = *(pcText + nChars - 1 + 1);
+                pText[nChars] = 0;
+            }
+           
+            /* current line being edited
+              ---------------------------------------- */
+            memset (&getfont_info, 0, sizeof (getfont_info));
+            getfont_info. CodeType = 1;  /* use Unicode */
+            getfont_info. String = (ALE_UINT16 *)pText;
+            getfont_info. FontMetrics = &fm;
+            getfont_info. FontBuffer = gFontDataBuffer;
+            getfont_info. BufferRowByteTotal = SCREENBYTEWIDTH;
+            getfont_info. BufferColumnByteTotal = SCREENHEIGHT;
+            //getfont_info. CharPosition = Position;
+    		
+            //all the remain fields are unchanged
+            AleGetStringFont (&getfont_info, gAleWorkBuffer);		
+    		
+    		//MSG_FATAL("position %d %d %d",Position[0],Position[1],Position[2]);
+    		//MSG_FATAL("position %d %d %d",Position[3],Position[4],Position[5]);
+    		
+            if(nRealSize > nChars)
+            {
+                pText[nChars] = nCharsContent;
+            }
+           
+            xend = fm.horiAdvance;
+            if(xend == 0)
+            {
+                goto FONT_NO_EXIST;
+            }
+            //yend = fm. outBufHeight;
+#ifdef FEATURE_ARPHIC_ARABIC_M16X16P_FONT        
+            yend = (dy > 16)?(16):(dy);
+#else        
+            yend = (dy > 14)?(14):(dy);
+#endif        
+            pfont = gFontDataBuffer;
+#ifndef FEATURE_DISP_128X160
+    		fScalex =(yend<<MATH_FACTOR_BIT) / NEW_SIZE;
+            fScaley =(yend<<MATH_FACTOR_BIT) / NEW_SIZE;
+#ifndef SCALE_V_ONLY			
+    		xend = fScalex*NEW_SIZE/14;
+#endif
+#endif
+            if(x < xMin)
+            {
+                m = (xMin - x) / 8;
+                n = (xMin - x) % 8;
+                sx = xMin;
+                if((x + xend) > xMax)
+                {
+                    xloop = xMax - xMin;
+                }
+                else
+                {
+                    xloop = xend - (xMin - x);
+                }
+            }
+            else if((x + xend) > xMax)
+            {
+                m = n = 0;
+                sx = x;
+                xloop = xMax - x;
             }
             else
             {
+                m = n = 0;
+                sx = x;
+                xloop = xend;
+            }
+    		
+            cText = (word)(clrText & 0xFFFF);
+            cBack = (word)(clrBack & 0xFFFF);
+            
+            bmp_offset = sy*nPitch;
+            dp = dbase = (word*)(pBmp + bmp_offset + (sx<<1));
+    		
+#ifndef FEATURE_DISP_128X160
+    		//MSG_FATAL("xloop=%d bTransparency=%d EngCount=%d",xloop,bTransparency,EngCount);
+            for ( j = 0; j < NEW_SIZE; j++ )
+            {        	
+    			yy = (j * fScaley)>>MATH_FACTOR_BIT;
+    			
+                if (bTransparency)
+                {
+                    for ( xx=0,xx_last=0,p = (unsigned char*) (pfont + m + oy*SCREENBYTEWIDTH + yy*SCREENBYTEWIDTH), 
+                            dp = dbase + j*(nPitch>>1),kmask = (0x80>>n), i = 0;i < xloop;i++)
+                    {    
+#ifdef SCALE_V_ONLY							
+    					xx = i;
+#else						
+    					xx = (i * fScalex)>>MATH_FACTOR_BIT;
+#endif
+    					
+    					if(xx_last!=xx)
+    					{
+    						xx_last=xx;
+    	                    kmask >>= 1;
+    					}
+    					
+    					if ( !(kmask) )
+                        {
+                            kmask = 0x80;
+                            p++;
+                        }
+    					
+                        if ( (*p) & (kmask) )
+                        {
+                            *dp = cText;  //this pixel contains font
+                        }
+                        dp++;
+
+
+                    }
+                }
+                else
+                {
+                    for ( xx=0,xx_last=0,p = (unsigned char*) (pfont + m +  oy*SCREENBYTEWIDTH + yy*SCREENBYTEWIDTH), 
+    					dp = dbase + j*(nPitch>>1),kmask = (0x80>>n), i = 0;i < xloop;i++)
+                    {
+                    	
+#ifdef SCALE_V_ONLY							
+    					xx = i;
+#else						
+    					xx = (i * fScalex)>>MATH_FACTOR_BIT;
+#endif
+    					if(xx_last!=xx)
+    					{
+    						xx_last=xx;
+    	                    kmask >>= 1;
+    					}
+    					
+    					if ( !(kmask) )
+                        {
+                            kmask = 0x80;
+                            p++;
+                        }
+    					
+                        *dp++ = (*p & (kmask) )?(cText):(cBack);
+       
+                    }
+                }
+            }
+#else
+            for ( j = 0; j < yend; j++ )
+            {
+                if (bTransparency)
+                {
+                    for ( p = (unsigned char*) (pfont + m + oy*SCREENBYTEWIDTH + j*SCREENBYTEWIDTH), 
+                           dp = dbase + j*(nPitch>>1), kmask = (0x80>>n), i = 0;         i < xloop;         i++)
+                    {
+                        if ( (*p) & kmask )
+                        {
+                            *dp = cText;  //this pixel contains font
+                        }
+                        dp++;
+                        
+                        kmask >>= 1;
+                        if ( !kmask )
+                        {
+                            kmask = 0x80;
+                            p++;
+                        }
+                    }
+                }
+                else
+                {
+                    for ( p = (unsigned char*) (pfont + m +  oy*SCREENBYTEWIDTH + j*SCREENBYTEWIDTH), 
+                             dp = dbase + j*(nPitch>>1), kmask = (0x80>>n), i = 0;        i < xloop;       i++)
+                    {
+                        *dp++ = (*p & kmask)?(cText):(cBack);
+                        
+                        kmask >>= 1;
+                        if ( !kmask )
+                        {
+                            kmask = 0x80;
+                            p++;
+                        }
+                    }
+                }
+            }
+
+#endif		
+            *pOutWidth = xloop;
+            return;
+        }        
+        else
+        {
+    FONT_NO_EXIST:
+#endif
+    {
+        int xSrc, i;
+        byte xWidth, xWidthOrig, xxDisp, *sp, *pFontData;
+        int bytes_per_row, dispWidth = 0;
+        word *dp, *dpBase, cText, cBack;
+        unsigned int y1;
+        AECHAR ch,ch1;
+        int bmp_offset;
+        GB_Bitmap charBmp;
+        int16 foreR, foreG, foreB, backR, backG, backB, diffR, diffG, diffB;
+        int xCombOff = 0;
+        
+        bmp_offset = sy * nPitch;
+        
+        cText = (word)(clrText & 0xFFFF);
+        cBack = (word)(clrBack & 0xFFFF);
+     
+        nPitch >>= 1;
+        
+        foreR = CGreyBit_COLORSCHEME565_GET_R(cText);
+    	foreG = CGreyBit_COLORSCHEME565_GET_G(cText);
+    	foreB = CGreyBit_COLORSCHEME565_GET_B(cText);
+        backR = CGreyBit_COLORSCHEME565_GET_R(cBack);
+        backG = CGreyBit_COLORSCHEME565_GET_G(cBack);
+        backB = CGreyBit_COLORSCHEME565_GET_B(cBack);
+        diffR = foreR-backR;
+        diffG = foreG-backG;
+        diffB = foreB-backB;
+        
+        for (i=0; i<nChars && pcText[i]; i++)
+        {
+    	    ch = pcText[i];
+    		if(ch < ' ') continue;
+            
+            if(xCombOff == 0)
+            {
+                ch1 = (i+1)<nChars?pcText[i+1]:0;
+                if(GetCombineOffSet(pMe, ch, ch1, &xCombOff))
+                {
+                    ch  = ch1;
+                    ch1 = pcText[i];
+                }
+                
+                if(0 != GreyBitType_Layout_LoadChar(pMe->pLayout, ch, &charBmp))
+        	    {
+        	        continue;
+        	    }
+            }
+            else
+            {
+        		if(0 != GreyBitType_Layout_LoadChar(pMe->pLayout, ch1, &charBmp))
+        	    {
+                    xCombOff = 0;
+        	        continue;
+        	    }
+                
+                charBmp->horioff += xCombOff;
+                xCombOff = 0;
+            }
+            
+            xWidth = (byte)charBmp->width;
+            bytes_per_row = charBmp->pitch;
+            
+     	    // Clip x coordinate
+            xWidthOrig = xWidth;
+            x += charBmp->horioff;
+     	    xSrc = 0;
+            
+            if (x > xMax)
+            {
+                break;
+            }
+            else if (x < xMin)
+      	    {
+     		    if ((x+xWidth) < xMin)
+     		    {
+     			    x += xWidth;
+     			    continue;
+     		    }
+     
+     		    xSrc = xMin - x;
+     		    xWidth -= xSrc;
+     		    x = xMin;
+       	    }
+     	    else if ((x+xWidth) > xMax)
+     	    {
+     	        xWidth = xMax - x + 1;
+     	    }
+            
+            xxDisp = (xWidth > xWidthOrig) ? xWidthOrig : xWidth;
+            
+            pFontData = charBmp->buffer + oy * bytes_per_row;
+            dp = dpBase = (word*)(pBmp + bmp_offset + (x<<1));
+            
+            y1 = dy;
+            if (bTransparency){
                 while (y1--){
                     unsigned int x1 = xxDisp;
                     sp = pFontData;
                     sp += xSrc;
                     
+                    // draw only foreground color                
                     while (x1--){
                         switch(*sp){
                         case 0:
-                            *dp = cBack;
                             break;
                         case 0xFF:
                             *dp = cText;
                             break;
                         default:
-                            foreR = ((diffR * (*sp)) >> 8) + backR;
-                            foreG = ((diffG * (*sp)) >> 8) + backG;
-                            foreB = ((diffB * (*sp)) >> 8) + backB;
-                            *dp = (unsigned short)CGreyBit_COLORSCHEME565_GET_RGB(foreR, foreG, foreB);
+                            backR = CGreyBit_COLORSCHEME565_GET_R(*dp);
+                            backG = CGreyBit_COLORSCHEME565_GET_G(*dp);
+                            backB = CGreyBit_COLORSCHEME565_GET_B(*dp);
+                            backR = (((foreR - backR) * (*sp)) >> 8) + backR;
+                            backG = (((foreG - backG) * (*sp)) >> 8) + backG;
+                            backB = (((foreB - backB) * (*sp)) >> 8) + backB;
+                            *dp = (unsigned short)CGreyBit_COLORSCHEME565_GET_RGB(backR, backG, backB);
                             break;
                         }
                         dp++;
                         sp++;
-                    }  // for loop
+                    }  // for loop            
                     
                     pFontData += bytes_per_row;
                     dp = dpBase += nPitch;
                 }
+            }else{
+                if(charBmp->horioff < 0) //如泰语等语言
+                {
+                    while (y1--){
+                        unsigned int x1 = -charBmp->horioff;
+                        sp = pFontData;
+                        sp += xSrc;
+                        
+                        // draw only foreground color                
+                        while (x1--){
+                            switch(*sp){
+                            case 0:
+                                break;
+                            case 0xFF:
+                                *dp = cText;
+                                break;
+                            default:
+                                backR = CGreyBit_COLORSCHEME565_GET_R(*dp);
+                                backG = CGreyBit_COLORSCHEME565_GET_G(*dp);
+                                backB = CGreyBit_COLORSCHEME565_GET_B(*dp);
+                                backR = (((foreR - backR) * (*sp)) >> 8) + backR;
+                                backG = (((foreG - backG) * (*sp)) >> 8) + backG;
+                                backB = (((foreB - backB) * (*sp)) >> 8) + backB;
+                                *dp = (unsigned short)CGreyBit_COLORSCHEME565_GET_RGB(backR, backG, backB);
+                                break;
+                            }
+                            dp++;
+                            sp++;
+                        }  // for loop            
+                        
+                        backR = CGreyBit_COLORSCHEME565_GET_R(cBack);
+                        backG = CGreyBit_COLORSCHEME565_GET_G(cBack);
+                        backB = CGreyBit_COLORSCHEME565_GET_B(cBack);
+                        x1 = xxDisp+charBmp->horioff;
+                        while (x1--){
+                            switch(*sp){
+                            case 0:
+                                *dp = cBack;
+                                break;
+                            case 0xFF:
+                                *dp = cText;
+                                break;
+                            default:
+                                foreR = ((diffR * (*sp)) >> 8) + backR;
+                                foreG = ((diffG * (*sp)) >> 8) + backG;
+                                foreB = ((diffB * (*sp)) >> 8) + backB;
+                                *dp = (unsigned short)CGreyBit_COLORSCHEME565_GET_RGB(foreR, foreG, foreB);
+                                break;
+                            }
+                            dp++;
+                            sp++;
+                        }  // for loop
+                        
+                        pFontData += bytes_per_row;
+                        dp = dpBase += nPitch;
+                    }
+                }
+                else
+                {
+                    while (y1--){
+                        unsigned int x1 = xxDisp;
+                        sp = pFontData;
+                        sp += xSrc;
+                        
+                        while (x1--){
+                            switch(*sp){
+                            case 0:
+                                *dp = cBack;
+                                break;
+                            case 0xFF:
+                                *dp = cText;
+                                break;
+                            default:
+                                foreR = ((diffR * (*sp)) >> 8) + backR;
+                                foreG = ((diffG * (*sp)) >> 8) + backG;
+                                foreB = ((diffB * (*sp)) >> 8) + backB;
+                                *dp = (unsigned short)CGreyBit_COLORSCHEME565_GET_RGB(foreR, foreG, foreB);
+                                break;
+                            }
+                            dp++;
+                            sp++;
+                        }  // for loop
+                        
+                        pFontData += bytes_per_row;
+                        dp = dpBase += nPitch;
+                    }
+                }
             }
+            
+     	    dispWidth += xWidth;
+            x += xWidth;
         }
-        
- 	    dispWidth += xWidth;
-        x += xWidth;
+     
+        *pOutWidth = dispWidth;  
     }
- 
-    *pOutWidth = dispWidth;  
-}
 #ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
-    }
+        }
 #endif
+    }
+    
+
 }
 
 static int DrawTextEx(IFont *pMe, IBitmap *pDst, const AECHAR * pcText, int nChars,
@@ -994,201 +1232,284 @@ static int OEMFont_GetInfo(IFont *pMe, AEEFontInfo *pInfo, int nSize)
 
 static int OEMFont_MeasureText(IFont *pMe, const AECHAR *pcText, int nChars, int nMaxWidth, int *pnCharFits, int *pnPixels)
 {
-#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
-    if(pMe->wSize != BIGNUMBER_FONT_SIZE)
+    nv_language_enum_type lang;
+        
+    OEM_GetConfig(CFGI_LANGUAGE_SELECTION, &lang, sizeof(lang));
+
+    if (NV_LANGUAGE_ARABIC != lang)   
     {
-        int nRealStrLen, nTotalWidth = 0;
-        int nCharFitsTemp = 0;
-        int nPixelsTemp = 0;
-    
-        if ( 0 != HebrewArabicLangInit() )
-        {
-           return EFAILED;
+        int nRet = SUCCESS;
+        int nRealStrLen, nFits, nTotalWidth = 0;
+        AECHAR ch,ch1;
+        int xCombOff = 0;
+        
+        if(pMe->pLayout == NULL){
+            return EFAILED;
         }
         
         // Let's perform some sanity checks first
-        if (!pcText)
-        {
+        if (!pcText){
             return SUCCESS;
         }
         
-        if (!pnCharFits)
-        {
-            pnCharFits = &nCharFitsTemp;
-        }
-        if(!pnPixels)
-        {
-            pnPixels = &nPixelsTemp;
-        }
-    
         nRealStrLen = WSTRLEN(pcText);
-    
-        if ((nChars < 0 || nRealStrLen <= nChars) && (nMaxWidth < 0))
-        {
-            nTotalWidth = ArphicMeasureNChars(pcText, nRealStrLen);
-            *pnPixels = nTotalWidth;
-            *pnCharFits = nRealStrLen;
-            
-            return SUCCESS;
-        }
-    
-        if((nRealStrLen > nChars) && (nMaxWidth < 0) )
-        {
-            nTotalWidth = ArphicMeasureNChars(pcText, nChars);
-            *pnPixels = nTotalWidth;
-            *pnCharFits = nChars;
-            return SUCCESS;
-        }
         
         if (nChars < 0 || nRealStrLen < nChars)
         {
             nChars = nRealStrLen;
         }
+        
         if (nMaxWidth <= 0)
         {
             nMaxWidth = 0x0FFFFFFF;
         }
         
-        if(0 == nChars)
+        for (nFits = 0; nFits < nChars; nFits++)
         {
-            *pnPixels = 0;
-            *pnCharFits = 0;
-            return SUCCESS;
-        }
-    
-        if(nMaxWidth >= (nTotalWidth = ArphicMeasureNChars(pcText, nChars)))
-        {
-            *pnPixels = nTotalWidth;
-            *pnCharFits = nChars;
-            return SUCCESS;
-        }
-    
-        {
-           int start = 0;
-           int end = nChars;
-           int mid;
-           
-           while(start <= end)
-           {
-                mid = (start + end)/2;
-                if(-1 != (nTotalWidth = ArphicMeasureNChars(pcText, mid)))
-                {
-                    // 4,7 is OK, 2 not OK
-                    if(ABS(nTotalWidth - nMaxWidth) <= 4)
-                    {
-                        if(nTotalWidth <= nMaxWidth)
-                        {
-                            *pnPixels = nTotalWidth;
-                            *pnCharFits = mid;
-                        }
-                        else
-                        {
-                            *pnCharFits = mid - 1;
-                            *pnPixels = nMaxWidth;
-                        }
-                        return SUCCESS;
-                    }
-                    else if(nTotalWidth > nMaxWidth)
-                    {
-                        end = mid -1;
-                    }
-                    else
-                    {
-                        start = mid + 1;
-                    }
-                }
-                else
-                {
-                    return -1;
-                }
-             }//end while
-             
-            nTotalWidth = ArphicMeasureNChars(pcText, (start + end)/2);
-            *pnPixels = (nTotalWidth > 0)?(nTotalWidth):(0);
-            *pnCharFits = (start + end)/2;
-        }
-    
-        return SUCCESS;
-    }
-    else
-    {
-#endif
-    int nRet = SUCCESS;
-    int nRealStrLen, nFits, nTotalWidth = 0;
-    AECHAR ch,ch1;
-    int xCombOff = 0;
-    
-    if(pMe->pLayout == NULL){
-        return EFAILED;
-    }
-    
-    // Let's perform some sanity checks first
-    if (!pcText){
-        return SUCCESS;
-    }
-    
-    nRealStrLen = WSTRLEN(pcText);
-    
-    if (nChars < 0 || nRealStrLen < nChars)
-    {
-        nChars = nRealStrLen;
-    }
-    
-    if (nMaxWidth <= 0)
-    {
-        nMaxWidth = 0x0FFFFFFF;
-    }
-    
-    for (nFits = 0; nFits < nChars; nFits++)
-    {
-        ch = *pcText++;
-        if(ch < ' ') {
-            continue;
-        }
+            ch = *pcText++;
+            if(ch < ' ') {
+                continue;
+            }
 
-        if(xCombOff == 0)
-        {
-            ch1 = (nFits+1)<nChars?(*(pcText+1)):0;
-            if(GetCombineOffSet(pMe, ch, ch1, &xCombOff))
+            if(xCombOff == 0)
             {
-                ch  = ch1;
-                ch1 = *pcText;
+                ch1 = (nFits+1)<nChars?(*(pcText+1)):0;
+                if(GetCombineOffSet(pMe, ch, ch1, &xCombOff))
+                {
+                    ch  = ch1;
+                    ch1 = *pcText;
+                }
+                
+                nTotalWidth += GreyBitType_Layout_GetWidth(pMe->pLayout, ch) + xCombOff;
+            }
+            else
+            {
+        		nTotalWidth += GreyBitType_Layout_GetWidth(pMe->pLayout, ch1);
+                xCombOff = 0;
             }
             
-            nTotalWidth += GreyBitType_Layout_GetWidth(pMe->pLayout, ch) + xCombOff;
+    	    //nTotalWidth += GreyBitType_Layout_GetWidth(pMe->pLayout, ch);
+            if (nTotalWidth >= nMaxWidth)
+            {
+                nTotalWidth = nMaxWidth;
+                break;
+            }
+        }
+        
+        if (!pnCharFits)
+        {
+            pnCharFits = &nFits;
         }
         else
         {
-    		nTotalWidth += GreyBitType_Layout_GetWidth(pMe->pLayout, ch1);
-            xCombOff = 0;
+            *pnCharFits = nFits;
+        }
+
+        if(pnPixels)
+        {
+            *pnPixels = nTotalWidth;
         }
         
-	    //nTotalWidth += GreyBitType_Layout_GetWidth(pMe->pLayout, ch);
-        if (nTotalWidth >= nMaxWidth)
-        {
-            nTotalWidth = nMaxWidth;
-            break;
-        }
-    }
-    
-    if (!pnCharFits)
-    {
-        pnCharFits = &nFits;
+        return nRet;  
     }
     else
     {
-        *pnCharFits = nFits;
-    }
-
-    if(pnPixels)
-    {
-        *pnPixels = nTotalWidth;
-    }
-    
-    return nRet;
 #ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
-    }
+        if(pMe->wSize != BIGNUMBER_FONT_SIZE)
+        {
+            int nRealStrLen, nTotalWidth = 0;
+            int nCharFitsTemp = 0;
+            int nPixelsTemp = 0;
+        
+            if ( 0 != HebrewArabicLangInit() )
+            {
+               return EFAILED;
+            }
+            
+            // Let's perform some sanity checks first
+            if (!pcText)
+            {
+                return SUCCESS;
+            }
+            
+            if (!pnCharFits)
+            {
+                pnCharFits = &nCharFitsTemp;
+            }
+            if(!pnPixels)
+            {
+                pnPixels = &nPixelsTemp;
+            }
+        
+            nRealStrLen = WSTRLEN(pcText);
+        
+            if ((nChars < 0 || nRealStrLen <= nChars) && (nMaxWidth < 0))
+            {
+                nTotalWidth = ArphicMeasureNChars(pcText, nRealStrLen);
+                *pnPixels = nTotalWidth;
+                *pnCharFits = nRealStrLen;
+                
+                return SUCCESS;
+            }
+        
+            if((nRealStrLen > nChars) && (nMaxWidth < 0) )
+            {
+                nTotalWidth = ArphicMeasureNChars(pcText, nChars);
+                *pnPixels = nTotalWidth;
+                *pnCharFits = nChars;
+                return SUCCESS;
+            }
+            
+            if (nChars < 0 || nRealStrLen < nChars)
+            {
+                nChars = nRealStrLen;
+            }
+            if (nMaxWidth <= 0)
+            {
+                nMaxWidth = 0x0FFFFFFF;
+            }
+            
+            if(0 == nChars)
+            {
+                *pnPixels = 0;
+                *pnCharFits = 0;
+                return SUCCESS;
+            }
+        
+            if(nMaxWidth >= (nTotalWidth = ArphicMeasureNChars(pcText, nChars)))
+            {
+                *pnPixels = nTotalWidth;
+                *pnCharFits = nChars;
+                return SUCCESS;
+            }
+        
+            {
+               int start = 0;
+               int end = nChars;
+               int mid;
+               
+               while(start <= end)
+               {
+                    mid = (start + end)/2;
+                    if(-1 != (nTotalWidth = ArphicMeasureNChars(pcText, mid)))
+                    {
+                        // 4,7 is OK, 2 not OK
+                        if(ABS(nTotalWidth - nMaxWidth) <= 4)
+                        {
+                            if(nTotalWidth <= nMaxWidth)
+                            {
+                                *pnPixels = nTotalWidth;
+                                *pnCharFits = mid;
+                            }
+                            else
+                            {
+                                *pnCharFits = mid - 1;
+                                *pnPixels = nMaxWidth;
+                            }
+                            return SUCCESS;
+                        }
+                        else if(nTotalWidth > nMaxWidth)
+                        {
+                            end = mid -1;
+                        }
+                        else
+                        {
+                            start = mid + 1;
+                        }
+                    }
+                    else
+                    {
+                        return -1;
+                    }
+                 }//end while
+                 
+                nTotalWidth = ArphicMeasureNChars(pcText, (start + end)/2);
+                *pnPixels = (nTotalWidth > 0)?(nTotalWidth):(0);
+                *pnCharFits = (start + end)/2;
+            }
+        
+            return SUCCESS;
+        }
+        else
+        {
+#endif
+        int nRet = SUCCESS;
+        int nRealStrLen, nFits, nTotalWidth = 0;
+        AECHAR ch,ch1;
+        int xCombOff = 0;
+        
+        if(pMe->pLayout == NULL){
+            return EFAILED;
+        }
+        
+        // Let's perform some sanity checks first
+        if (!pcText){
+            return SUCCESS;
+        }
+        
+        nRealStrLen = WSTRLEN(pcText);
+        
+        if (nChars < 0 || nRealStrLen < nChars)
+        {
+            nChars = nRealStrLen;
+        }
+        
+        if (nMaxWidth <= 0)
+        {
+            nMaxWidth = 0x0FFFFFFF;
+        }
+        
+        for (nFits = 0; nFits < nChars; nFits++)
+        {
+            ch = *pcText++;
+            if(ch < ' ') {
+                continue;
+            }
+
+            if(xCombOff == 0)
+            {
+                ch1 = (nFits+1)<nChars?(*(pcText+1)):0;
+                if(GetCombineOffSet(pMe, ch, ch1, &xCombOff))
+                {
+                    ch  = ch1;
+                    ch1 = *pcText;
+                }
+                
+                nTotalWidth += GreyBitType_Layout_GetWidth(pMe->pLayout, ch) + xCombOff;
+            }
+            else
+            {
+        		nTotalWidth += GreyBitType_Layout_GetWidth(pMe->pLayout, ch1);
+                xCombOff = 0;
+            }
+            
+    	    //nTotalWidth += GreyBitType_Layout_GetWidth(pMe->pLayout, ch);
+            if (nTotalWidth >= nMaxWidth)
+            {
+                nTotalWidth = nMaxWidth;
+                break;
+            }
+        }
+        
+        if (!pnCharFits)
+        {
+            pnCharFits = &nFits;
+        }
+        else
+        {
+            *pnCharFits = nFits;
+        }
+
+        if(pnPixels)
+        {
+            *pnPixels = nTotalWidth;
+        }
+        
+        return nRet;
+#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
+        }
 #endif    
+    }
 }
 
 int GreyBitBrewFont_New(IShell *piShell, AEECLSID cls, void **ppif)

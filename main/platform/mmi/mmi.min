@@ -46,6 +46,11 @@ ifeq ($(USES_CAMERA),yes)
 include $(CAMERAAPP)/CameraApp.min
 endif
 
+ifeq ($(USES_CAMERA),yes)
+include $(CAMERALIST)/cameralist.min
+endif
+
+
 ifeq ($(USES_BT), yes)
 include $(BLUETOOTH)/bthoststatapp.min
 endif
