@@ -565,6 +565,11 @@ static void FmRadio_InitFmRadioResource(CFmRadio *pMe)
 	if( pMe->byVolumeLevel > MAX_FMRADIO_VOLUME || pMe->byVolumeLevel == 0)
 	{
 		pMe->byVolumeLevel = 3;//(MAX_FMRADIO_VOLUME + 1) / 2;
+	    (void) ICONFIG_SetItem(pMe->m_pConfig,
+                   CFGI_FMRADIO_VOLUME,
+                   &pMe->byVolumeLevel,
+                   sizeof(byte)
+               );
 	}
 
 #if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
@@ -896,6 +901,7 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
 			
 #endif//#if !defined( AEE_SIMULATOR)
 #if FEATURE_FMRADIO_SUPPORT_BACKGROUND 
+            MSG_FATAL("pMe->runOnBackground = FALSE====111",0,0,0);
             pMe->runOnBackground = FALSE;
 #endif            
             if(NULL != as->pszArgs)
@@ -912,13 +918,13 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
             FmRadio_RunFSM( pMe);
         }
         return TRUE;
-        case EVT_APP_STOP:			
+        case EVT_APP_STOP:		
+            MSG_FATAL("pMe->startFromBackground========%d",pMe->startFromBackground,0,0);
             if( pMe->startFromBackground) 
             {
             	ISHELL_CancelTimer( pMe->m_pShell, 0, pMe);
             	return TRUE;
             }
-			
 #if !defined( AEE_SIMULATOR)
 #if FEATURE_FMRADIO_SUPPORT_BACKGROUND 
             if( !pMe->runOnBackground)
@@ -949,7 +955,8 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
             (void)ISHELL_CancelTimer( pMe->m_pShell,FmRadio_AppIsReadyCB,pMe);
             return TRUE;
 
-        case EVT_APP_SUSPEND:			
+        case EVT_APP_SUSPEND:	
+            MSG_FATAL("EVT_APP_SUSPENDpMe->startFromBackground========%d",pMe->startFromBackground,0,0);
 #if !defined( AEE_SIMULATOR)
             FmRadio_PowerDown( pMe);			
 #endif//#if !defined( AEE_SIMULATOR)
@@ -1033,14 +1040,16 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
 					&& (pMe->refuseReason != FM_RADIO_REFUSE_REASON_HEADSET_PLUG_OUT))
 				{
 					pMe->runOnBackground = (wParam == AVK_END);
+                    pMe->startFromBackground = (wParam == AVK_END);
 				}
 				else
 				{
-					pMe->runOnBackground = FALSE;
+					pMe->runOnBackground = (wParam == AVK_END);
+                    pMe->startFromBackground = (wParam == AVK_END);
 				}
 				//Add End
 #endif				
-				
+				MSG_FATAL("pMe->runOnBackground =====%d",pMe->runOnBackground,0,0);
                 pMe->opMode = FM_RADIO_OPMODE_PLAY;
                 ISHELL_CloseApplet( pMe->m_pShell, wParam == AVK_END ? TRUE : FALSE);
                 return TRUE;
@@ -1062,7 +1071,8 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
             
             return FmRadio_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
-        case EVT_DIALOG_END:			
+        case EVT_DIALOG_END:	
+            MSG_FATAL("EVT_DIALOG_END========%d",0,0,0);
             if (wParam == 0)
             {
                 return TRUE;
@@ -1126,8 +1136,10 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
 
         case EVT_CLOSEAPP:
         {			
+            MSG_FATAL("EVT_CLOSEAPP========%d",0,0,0);
             pMe->startFromBackground = FALSE;
-#if FEATURE_FMRADIO_SUPPORT_BACKGROUND             
+#if FEATURE_FMRADIO_SUPPORT_BACKGROUND    
+            MSG_FATAL("pMe->runOnBackground = FALSE====2222",0,0,0);
             pMe->runOnBackground = FALSE;
 #endif
             ISHELL_CloseApplet( pMe->m_pShell, FALSE);           
@@ -1263,7 +1275,8 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
                 case EVT_UI_EXIT:            
                     /* AEE is about to exit, set the exit flag to TRUE */
                     pMe->startFromBackground = FALSE;
-#if FEATURE_FMRADIO_SUPPORT_BACKGROUND                     
+#if FEATURE_FMRADIO_SUPPORT_BACKGROUND     
+                    MSG_FATAL("pMe->runOnBackground = FALSE====333",0,0,0);
                     pMe->runOnBackground = FALSE;
 #endif
                     ISHELL_CloseApplet( pMe->m_pShell, FALSE);
@@ -1383,11 +1396,13 @@ void Fm_Shake_Close(void)
 
 static void FmRadio_PowerDown( CFmRadio *pMe)
 {
- #if FEATURE_FMRADIO_SUPPORT_BACKGROUND     
+ #if FEATURE_FMRADIO_SUPPORT_BACKGROUND   
+    boolean b_FMBackground = FALSE;
     ICONFIG_SetItem( pMe->m_pConfig, CFGI_FM_BACKGROUND, &b_FMBackground, sizeof(b_FMBackground));
 #endif 
     IANNUNCIATOR_SetField( pMe->m_pIAnn, ANNUN_FIELD_FMRADIO, ANNUN_STATE_FMRADIO_OFF/*ANNUN_STATE_OFF*/);
     g_m_fm_is_on = FALSE;
+    MSG_FATAL("FmRadio_PowerDown..................",0,0,0);
 #ifndef WIN32
 
     //Del By zzg 2010_08_11
@@ -1881,7 +1896,8 @@ boolean FmRadio_FindChanListNode(int channel)
 void closeApp( void *pme) //bw:
 {
     CFmRadio *pMe = pme;   
-#if FEATURE_FMRADIO_SUPPORT_BACKGROUND     
+#if FEATURE_FMRADIO_SUPPORT_BACKGROUND  
+    MSG_FATAL("pMe->runOnBackground = FALSE====4444",0,0,0);
     pMe->runOnBackground = FALSE;
 #endif
     ISHELL_CloseApplet( pMe->m_pShell, FALSE);
