@@ -28,7 +28,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 
 #define FEATURE_TORCH_KEY_INFO			//Add By zzg 2013_06_15
 
-#define FEATURE_LANG_DEFAULT_ENGLISH
+//#define FEATURE_LANG_DEFAULT_ENGLISH
 #define FEATURE_ENABLE_OTKSL
 //#define BT_QSC1110//FEATURE_BT_QSC1100
 //#define FEATURE_BT_QSOC_BTS4025_B2   //this is now we used  bluetooth  ÐÍºÅ
