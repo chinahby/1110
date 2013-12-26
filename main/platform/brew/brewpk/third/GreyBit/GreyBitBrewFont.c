@@ -305,7 +305,7 @@ static boolean GetCombineOffSet(IFont *pMe, uint16 ch1, uint16 ch2, int *pOff)
     return bRet;
 }
 #ifndef FEATURE_DISP_128X160
-#define NEW_SIZE  25   //17
+#define NEW_SIZE  30   //17
 #define MATH_FACTOR_BIT         10
 //#define SCALE_V_ONLY 
 #endif
@@ -318,6 +318,7 @@ static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, i
         
     OEM_GetConfig(CFGI_LANGUAGE_SELECTION, &lang, sizeof(lang));
 
+#ifndef FEATURE_DISP_128X160
     if (NV_LANGUAGE_ARABIC != lang)   
     {
         int xSrc, i;
@@ -541,6 +542,7 @@ static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, i
         *pOutWidth = dispWidth;  
     }
     else
+#endif        
     {
 #ifdef FEATURE_ARPHIC_LAYOUT_ENGINE    
         if(pMe->wSize != BIGNUMBER_FONT_SIZE)
@@ -1236,6 +1238,7 @@ static int OEMFont_MeasureText(IFont *pMe, const AECHAR *pcText, int nChars, int
         
     OEM_GetConfig(CFGI_LANGUAGE_SELECTION, &lang, sizeof(lang));
 
+#ifndef FEATURE_DISP_128X160
     if (NV_LANGUAGE_ARABIC != lang)   
     {
         int nRet = SUCCESS;
@@ -1313,6 +1316,7 @@ static int OEMFont_MeasureText(IFont *pMe, const AECHAR *pcText, int nChars, int
         return nRet;  
     }
     else
+#endif        
     {
 #ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
         if(pMe->wSize != BIGNUMBER_FONT_SIZE)

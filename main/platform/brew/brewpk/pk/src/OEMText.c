@@ -3793,158 +3793,197 @@ static void TextCtl_DrawCursor(TextCtlContext *pContext,
                                const AEERect  *cursRect,
                                const AEERect  *clipRect)
 {
-#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
-    AEERect draw, scratch  = *cursRect;
-    scratch.dx = 1;
-	#if defined(FEATURE_VERSION_1110W516) //|| defined(FEATURE_VERSION_W027)
-	scratch.dy = 14; 
-	#elif defined(FEATURE_LANG_ARABIC)&&defined(FEATURE_DISP_128X160)
-	scratch.dy = 15;
-	#else
-    scratch.dy = 17; 
-	#endif
-    
-    if (IntersectRect(&draw, &scratch, clipRect))
+    nv_language_enum_type lang;
+            
+    OEM_GetConfig(CFGI_LANGUAGE_SELECTION, &lang, sizeof(lang));
+
+#ifndef FEATURE_DISP_128X160
+    if (NV_LANGUAGE_ARABIC != lang)   
     {
-    	#if defined(FEATURE_LANG_ARABIC)
-		{
-		   	nv_language_enum_type language;
-           	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
-           	MSG_FATAL("........................0=%d",pContext->byMode,0,0);
-           	if(NV_LANGUAGE_ARABIC == language && (!(pContext->dwProperties & TP_MULTILINE))&&
-		      (/*pContext->byMode != TEXT_MODE_T9_RAPID_ARABIC ||*/ pContext->byMode != TEXT_MODE_T9_MT_ARABIC))
-           	{
-		    	
-		    	int temp = 0;
-		    	int Strlen = 0;
-		        int j = 0;
-           		MSG_FATAL("........draw.x-%d.1",draw.x,0,0);
-           		MSG_FATAL("pContext->wSelStart=%d",pContext->wSelStart,0,0);
-           		temp=IDISPLAY_MeasureTextEx(pContext->pIDisplay,
-                                             pContext->font,
-                                             pContext->pwLineStarts[pContext->wDisplayStartLine] + pContext->pszContents,
-                                             pContext->wSelStart -
-                                             pContext->pwLineStarts[pContext->wDisplayStartLine],
-                                             -1,
-                                             NULL);
-                Strlen = IDISPLAY_MeasureTextEx(pContext->pIDisplay,
-                                             pContext->font,
-                                             pContext->pwLineStarts[pContext->wDisplayStartLine] + pContext->pszContents,
-                                             -1,
-                                             -1,
-                                             NULL);
-		    	draw.x = (clipRect->x+clipRect->dx)-2-(Strlen-temp+2);
-		    }
-        }
-		#endif
-        pContext->CursorDrawRectTimerPara = draw;
-        
-        //MSG_FATAL("2draw.x=%d,draw.y=%d",draw.x,draw.y,0);
-	   	//MSG_FATAL("2draw.dx=%d,draw.dy=%d",draw.dx,draw.dy,0);
-        TextCtl_DrawCursorTimer(pContext);
+       AEERect draw, scratch = *cursRect;
+
+       scratch.x += (int16)( (uint16) scratch.dx >> 1 ) + 1;
+       scratch.dx = 1;
+       scratch.dy = pContext->nFontAscent + pContext->nFontDescent; 
+       // Vertical bar
+       // 单行垂直方向居中对齐
+       if (IntersectRect(&draw, &scratch, clipRect))
+       {
+           if(!(pContext->dwProperties & TP_MULTILINE) && 
+                             (pContext->dwProperties & TP_FIXOEM))
+           {
+                draw.x++;
+                draw.y += pContext->nExtraPixels;
+           }
+           if(pContext->dwProperties & TP_GRAPHIC_BG)
+           {
+               IDISPLAY_FillRect(pContext->pIDisplay, &draw, TEXT_GRAPHIC_FONT_COLOR); 
+           }
+           else
+           {
+               IDISPLAY_FillRect(pContext->pIDisplay, &draw, TEXT_FONT_COLOR/*RGB_BLACK*/); 
+           }
+       }
     }
     else
+#endif        
     {
-	   AEERect draw, scratch = *cursRect;
-	   MSG_FATAL("...............................2",0,0,0);
-	   scratch.x += (int16)( (uint16) scratch.dx >> 1 ) + 1;
-	   scratch.dx = 1;
-       #if defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W027)
-	   scratch.dy = 17;
-	   #else
-       scratch.dy =  pContext->nFontAscent + pContext->nFontDescent; 
-       #endif
-	   // Vertical bar
-	   // 单行垂直方向居中对齐
-	   
-	   if (IntersectRect(&draw, &scratch, clipRect))
-	   {
-	       if(!(pContext->dwProperties & TP_MULTILINE) && 
-	                         (pContext->dwProperties & TP_FIXOEM))
-	       {
-	            draw.x++;
-	            draw.y += pContext->nExtraPixels;
-	       }
-	       MSG_FATAL("draw.x=%d,draw.y=%d",draw.x,draw.y,0);
-	   	   MSG_FATAL("draw.dx=%d,draw.dy=%d",draw.dx,draw.dy,0);
-	   	   #if defined(FEATURE_LANG_ARABIC)
-		   {
-			   	nv_language_enum_type language;
-	           	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
-	           	MSG_FATAL("...............................1=%d",pContext->byMode,0,0);
-	           	if(NV_LANGUAGE_ARABIC == language && (!(pContext->dwProperties & TP_MULTILINE))&&
-		          (/*pContext->byMode != TEXT_MODE_T9_RAPID_ARABIC ||*/ pContext->byMode != TEXT_MODE_T9_MT_ARABIC))
-	           	{
-			    	MSG_FATAL("...............................1",0,0,0);
-			    	draw.x = (clipRect->x+clipRect->dx)-2;
-			    }
-	       }
-		   #endif
-	       if(pContext->dwProperties & TP_GRAPHIC_BG)
-	       {
-	           IDISPLAY_FillRect(pContext->pIDisplay, &draw, TEXT_GRAPHIC_FONT_COLOR); 
-	       }
-	       else
-	       {
-	           IDISPLAY_FillRect(pContext->pIDisplay, &draw, TEXT_FONT_COLOR/*RGB_BLACK*/); 
-	       }
-	   }
-    }
+#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
+        AEERect draw, scratch  = *cursRect;
+        scratch.dx = 1;
+    	#if defined(FEATURE_VERSION_1110W516) //|| defined(FEATURE_VERSION_W027)
+    	scratch.dy = 14; 
+    	#elif defined(FEATURE_LANG_ARABIC)&&defined(FEATURE_DISP_128X160)
+    	scratch.dy = 15;
+        #elif defined(FEATURE_VERSION_IN50A)&&defined(FEATURE_DISP_240X320)
+        scratch.dy = 30;
+    	#else
+        scratch.dy = 17; 
+    	#endif
+        
+        if (IntersectRect(&draw, &scratch, clipRect))
+        {
+        	#if defined(FEATURE_LANG_ARABIC)
+    		{
+    		   	nv_language_enum_type language;
+               	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
+               	MSG_FATAL("........................0=%d",pContext->byMode,0,0);
+               	if(NV_LANGUAGE_ARABIC == language && (!(pContext->dwProperties & TP_MULTILINE))&&
+    		      (/*pContext->byMode != TEXT_MODE_T9_RAPID_ARABIC ||*/ pContext->byMode != TEXT_MODE_T9_MT_ARABIC))
+               	{
+    		    	
+    		    	int temp = 0;
+    		    	int Strlen = 0;
+    		        int j = 0;
+               		MSG_FATAL("........draw.x-%d.1",draw.x,0,0);
+               		MSG_FATAL("pContext->wSelStart=%d",pContext->wSelStart,0,0);
+               		temp=IDISPLAY_MeasureTextEx(pContext->pIDisplay,
+                                                 pContext->font,
+                                                 pContext->pwLineStarts[pContext->wDisplayStartLine] + pContext->pszContents,
+                                                 pContext->wSelStart -
+                                                 pContext->pwLineStarts[pContext->wDisplayStartLine],
+                                                 -1,
+                                                 NULL);
+                    Strlen = IDISPLAY_MeasureTextEx(pContext->pIDisplay,
+                                                 pContext->font,
+                                                 pContext->pwLineStarts[pContext->wDisplayStartLine] + pContext->pszContents,
+                                                 -1,
+                                                 -1,
+                                                 NULL);
+    		    	draw.x = (clipRect->x+clipRect->dx)-2-(Strlen-temp+2);
+    		    }
+            }
+    		#endif
+            pContext->CursorDrawRectTimerPara = draw;
+            
+            //MSG_FATAL("2draw.x=%d,draw.y=%d",draw.x,draw.y,0);
+    	   	//MSG_FATAL("2draw.dx=%d,draw.dy=%d",draw.dx,draw.dy,0);
+            TextCtl_DrawCursorTimer(pContext);
+        }
+        else
+        {
+    	   AEERect draw, scratch = *cursRect;
+    	   MSG_FATAL("...............................2",0,0,0);
+    	   scratch.x += (int16)( (uint16) scratch.dx >> 1 ) + 1;
+    	   scratch.dx = 1;
+           #if defined(FEATURE_VERSION_1110W516) || defined(FEATURE_VERSION_W027)
+    	   scratch.dy = 17;
+    	   #else
+           scratch.dy =  pContext->nFontAscent + pContext->nFontDescent; 
+           #endif
+    	   // Vertical bar
+    	   // 单行垂直方向居中对齐
+    	   
+    	   if (IntersectRect(&draw, &scratch, clipRect))
+    	   {
+    	       if(!(pContext->dwProperties & TP_MULTILINE) && 
+    	                         (pContext->dwProperties & TP_FIXOEM))
+    	       {
+    	            draw.x++;
+    	            draw.y += pContext->nExtraPixels;
+    	       }
+    	       MSG_FATAL("draw.x=%d,draw.y=%d",draw.x,draw.y,0);
+    	   	   MSG_FATAL("draw.dx=%d,draw.dy=%d",draw.dx,draw.dy,0);
+    	   	   #if defined(FEATURE_LANG_ARABIC)
+    		   {
+    			   	nv_language_enum_type language;
+    	           	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
+    	           	MSG_FATAL("...............................1=%d",pContext->byMode,0,0);
+    	           	if(NV_LANGUAGE_ARABIC == language && (!(pContext->dwProperties & TP_MULTILINE))&&
+    		          (/*pContext->byMode != TEXT_MODE_T9_RAPID_ARABIC ||*/ pContext->byMode != TEXT_MODE_T9_MT_ARABIC))
+    	           	{
+    			    	MSG_FATAL("...............................1",0,0,0);
+    			    	draw.x = (clipRect->x+clipRect->dx)-2;
+    			    }
+    	       }
+    		   #endif
+    	       if(pContext->dwProperties & TP_GRAPHIC_BG)
+    	       {
+    	           IDISPLAY_FillRect(pContext->pIDisplay, &draw, TEXT_GRAPHIC_FONT_COLOR); 
+    	       }
+    	       else
+    	       {
+    	           IDISPLAY_FillRect(pContext->pIDisplay, &draw, TEXT_FONT_COLOR/*RGB_BLACK*/); 
+    	       }
+    	   }
+        }
 #else    
 
-   // Draw a cursor by drawing a horizontal line at the top and bottom of cursRect,
-   // A vertical line in the middle of cursRect with a 1-pixel hole poked out on
-   //   the top and bottom of it.
+       // Draw a cursor by drawing a horizontal line at the top and bottom of cursRect,
+       // A vertical line in the middle of cursRect with a 1-pixel hole poked out on
+       //   the top and bottom of it.
 
-   // Unfortunately, this drawing needs to be clipped to the display
-   // rectangle and there's no easy way to do it.
+       // Unfortunately, this drawing needs to be clipped to the display
+       // rectangle and there's no easy way to do it.
 
-   AEERect draw, scratch = *cursRect;
-/*  
-   scratch.dy = 1;
+       AEERect draw, scratch = *cursRect;
+    /*  
+       scratch.dy = 1;
 
-   // Top bar
-   if (IntersectRect(&draw, &scratch, clipRect))
-      IDISPLAY_FillRect(pContext->pIDisplay, &draw, RGB_BLACK);
-   scratch.y = cursRect->y + cursRect->dy - 1;
-   // Bottom bar
-   if (IntersectRect(&draw, &scratch, clipRect))
-      IDISPLAY_FillRect(pContext->pIDisplay, &draw, RGB_BLACK);
-   scratch.x += (int16)( (uint16) scratch.dx >> 1 );
-   scratch.dx = 1;
-   // Bottom hole
-   if (IntersectRect(&draw, &scratch, clipRect))
-      IDISPLAY_FillRect(pContext->pIDisplay, &draw, RGB_WHITE);
-   scratch.y = cursRect->y;
-   // Top hole
-   if (IntersectRect(&draw, &scratch, clipRect))
-      IDISPLAY_FillRect(pContext->pIDisplay, &draw, RGB_WHITE);
-   ++scratch.y;
-   scratch.dy = cursRect->dy - 2;
-*/ 
-   scratch.x += (int16)( (uint16) scratch.dx >> 1 ) + 1;
-   scratch.dx = 1;
-   scratch.dy = pContext->nFontAscent + pContext->nFontDescent; 
-   // Vertical bar
-   // 单行垂直方向居中对齐
-   if (IntersectRect(&draw, &scratch, clipRect))
-   {
-       if(!(pContext->dwProperties & TP_MULTILINE) && 
-                         (pContext->dwProperties & TP_FIXOEM))
+       // Top bar
+       if (IntersectRect(&draw, &scratch, clipRect))
+          IDISPLAY_FillRect(pContext->pIDisplay, &draw, RGB_BLACK);
+       scratch.y = cursRect->y + cursRect->dy - 1;
+       // Bottom bar
+       if (IntersectRect(&draw, &scratch, clipRect))
+          IDISPLAY_FillRect(pContext->pIDisplay, &draw, RGB_BLACK);
+       scratch.x += (int16)( (uint16) scratch.dx >> 1 );
+       scratch.dx = 1;
+       // Bottom hole
+       if (IntersectRect(&draw, &scratch, clipRect))
+          IDISPLAY_FillRect(pContext->pIDisplay, &draw, RGB_WHITE);
+       scratch.y = cursRect->y;
+       // Top hole
+       if (IntersectRect(&draw, &scratch, clipRect))
+          IDISPLAY_FillRect(pContext->pIDisplay, &draw, RGB_WHITE);
+       ++scratch.y;
+       scratch.dy = cursRect->dy - 2;
+    */ 
+       scratch.x += (int16)( (uint16) scratch.dx >> 1 ) + 1;
+       scratch.dx = 1;
+       scratch.dy = pContext->nFontAscent + pContext->nFontDescent; 
+       // Vertical bar
+       // 单行垂直方向居中对齐
+       if (IntersectRect(&draw, &scratch, clipRect))
        {
-            draw.x++;
-            draw.y += pContext->nExtraPixels;
+           if(!(pContext->dwProperties & TP_MULTILINE) && 
+                             (pContext->dwProperties & TP_FIXOEM))
+           {
+                draw.x++;
+                draw.y += pContext->nExtraPixels;
+           }
+           if(pContext->dwProperties & TP_GRAPHIC_BG)
+           {
+               IDISPLAY_FillRect(pContext->pIDisplay, &draw, TEXT_GRAPHIC_FONT_COLOR); 
+           }
+           else
+           {
+               IDISPLAY_FillRect(pContext->pIDisplay, &draw, TEXT_FONT_COLOR/*RGB_BLACK*/); 
+           }
        }
-       if(pContext->dwProperties & TP_GRAPHIC_BG)
-       {
-           IDISPLAY_FillRect(pContext->pIDisplay, &draw, TEXT_GRAPHIC_FONT_COLOR); 
-       }
-       else
-       {
-           IDISPLAY_FillRect(pContext->pIDisplay, &draw, TEXT_FONT_COLOR/*RGB_BLACK*/); 
-       }
-   }
 #endif //FEATURE_ARPHIC_LAYOUT_ENGINE
+    }
+
 }
 
 /*=============================================================================
@@ -3991,724 +4030,1190 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
             rectClip;
    AECHAR  *wszHide = NULL;
 
-#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
-   //IBitmap       *pDestBmp = NULL;
-   int            cursorx1    = 0,  cursorx2    = 0;
-   int            LineCursor1 = -1, LineCursor2 = -1;
-   pContext->dwAlignFlags = ParagraphAlignment(pContext->pszContents, WSTRLEN(pContext->pszContents)); 
-   //pDestBmp = IDISPLAY_GetDestination ( pContext->pIDisplay );
+    nv_language_enum_type lang;
+        
+    OEM_GetConfig(CFGI_LANGUAGE_SELECTION, &lang, sizeof(lang));
 
-   (void) ISHELL_CancelTimer((IShell *) (pContext->pIShell), 
-                                         (PFNNOTIFY)TextCtl_DrawCursorTimer, 
-                                         pContext);
-#endif //#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
+#ifndef FEATURE_DISP_128X160
+    if (NV_LANGUAGE_ARABIC != lang)
+    {
+           /*因为当字符串超过一行或者在行尾时，向字符串插入空格
+           会把很长的空间反显(multitap input mode)*/
+           if ( (wSelEndLine != wSelStartLine) &&
+                ((pContext->sT9awFieldInfo.G.dwStateBits & T9STATEMULTITAPMASK) == T9STATEMULTITAPMASK))
+           {
+              wSelEndLine = wSelStartLine;
+           }
 
-   /*因为当字符串超过一行或者在行尾时，向字符串插入空格
-   会把很长的空间反显(multitap input mode)*/
-   if ( (wSelEndLine != wSelStartLine) &&
-        ((pContext->sT9awFieldInfo.G.dwStateBits & T9STATEMULTITAPMASK) == T9STATEMULTITAPMASK))
-   {
-      wSelEndLine = wSelStartLine;
-   }
+           memset(&cursRect, 0, sizeof(cursRect));
 
-   memset(&cursRect, 0, sizeof(cursRect));
+           rectClip.x  = pContext->rectDisplay.x;
+           rectClip.y  = pContext->rectDisplay.y;
+           rectClip.dx = pContext->rectDisplay.dx;
+           rectClip.dy = pContext->rectDisplay.dy; 
+           if (bFrame) {
+              rectClip.x  += 1;
+              rectClip.y  += 1;
+              rectClip.dx -= 2;
+              rectClip.dy -= 2;
 
-   rectClip.x  = pContext->rectDisplay.x;
-   rectClip.y  = pContext->rectDisplay.y;
-   rectClip.dx = pContext->rectDisplay.dx;
-   rectClip.dy = pContext->rectDisplay.dy; 
-   if (bFrame) {
-      rectClip.x  += 1;
-      rectClip.y  += 1;
-      rectClip.dx -= 2;
-      rectClip.dy -= 2;
+              // If we have a frame, the scroll bar overlaps it by 2 pixels
+              if (bScroll) {
+                 rectClip.dx -= (int16) (pContext->wScrollBarWidth - 2);
+              }
 
-      // If we have a frame, the scroll bar overlaps it by 2 pixels
-      if (bScroll) {
-         rectClip.dx -= (int16) (pContext->wScrollBarWidth - 2);
-      }
+           } else {
+              if (bScroll) {
+                 rectClip.dx -= (int16) pContext->wScrollBarWidth;
+              }
+           }
+           rectText = rectClip;
+           rectText.dy = MIN(rectClip.dy,(pContext->nFontAscent + pContext->nFontDescent));
+           rectLeading = rectText;
+           rectLeading.y += rectText.dy;
+           rectLeading.dy = pContext->nFontLeading;
+           
+           if(pContext->dwProperties & TP_GRAPHIC_BG)
+           {
+               dwOldBkClr = TEXT_GRAPHIC_BG_COLOR;
+           }
+           else
+           {
+               dwOldBkClr = TEXT_BG_COLOR;
+           }
+           dwOldBkClr = IDISPLAY_SetColor((IDisplay *)pContext->pIDisplay,CLR_USER_BACKGROUND,
+                                dwOldBkClr);//MAKE_RGB(255,255,255)); 
+           for (; cnt > 0; ++i, --cnt) 
+           {
+              if (cnt > 1 && pContext->nFontLeading) 
+              {
+                 // Draw the leading area first so it's ready to be inverted if
+                 // we need to draw a selection
+                 if(pContext->dwProperties & TP_GRAPHIC_BG)
+                 {
+                    TextCtl_DrawBackGround(pContext, &rectLeading);
+                 }
+                 else
+                 {
+                    IDISPLAY_FillRect(pContext->pIDisplay, &rectLeading, RGB_WHITE);
+                 }
+              }
+              if (i < pContext->wLines) 
+              {
+                 unsigned short lineChars = pContext->pwLineStarts[i+1] -
+                                            pContext->pwLineStarts[i];
+                 if (pContext->pszContents[pContext->pwLineStarts[i+1]-1]
+                     == LINEBREAK) 
+                 {
+                    // Don't include the line break character in the count!
+                    --lineChars;
+                 }
 
-   } else {
-      if (bScroll) {
-         rectClip.dx -= (int16) pContext->wScrollBarWidth;
-      }
-   }
-   rectText = rectClip;
-   rectText.dy = MIN(rectClip.dy,(pContext->nFontAscent + pContext->nFontDescent));
-   rectLeading = rectText;
-   rectLeading.y += rectText.dy;
-   rectLeading.dy = pContext->nFontLeading;
-   
-   if(pContext->dwProperties & TP_GRAPHIC_BG)
-   {
-       dwOldBkClr = TEXT_GRAPHIC_BG_COLOR;
-   }
-   else
-   {
-       dwOldBkClr = TEXT_BG_COLOR;
-   }
-   dwOldBkClr = IDISPLAY_SetColor((IDisplay *)pContext->pIDisplay,CLR_USER_BACKGROUND,
-                        dwOldBkClr);//MAKE_RGB(255,255,255)); 
-   for (; cnt > 0; ++i, --cnt) 
-   {
-      if (cnt > 1 && pContext->nFontLeading) 
-      {
-         // Draw the leading area first so it's ready to be inverted if
-         // we need to draw a selection
-         if(pContext->dwProperties & TP_GRAPHIC_BG)
-         {
-            TextCtl_DrawBackGround(pContext, &rectLeading);
-         }
-         else
-         {
-            IDISPLAY_FillRect(pContext->pIDisplay, &rectLeading, RGB_WHITE);
-         }
-      }
-      if (i < pContext->wLines) 
-      {
-         unsigned short lineChars = pContext->pwLineStarts[i+1] -
-                                    pContext->pwLineStarts[i];
-         if (pContext->pszContents[pContext->pwLineStarts[i+1]-1]
-             == LINEBREAK) 
-         {
-            // Don't include the line break character in the count!
-            --lineChars;
-         }
+                 if( pContext->dwProperties & TP_PASSWORD ) 
+                 {
+                    wszHide = WSTRDUP(pContext->pwLineStarts[i] +
+                                             pContext->pszContents);
+                    if (wszHide) 
+                    {
+                       int     q;
+                       boolean bShowLast = FALSE;
 
-         if( pContext->dwProperties & TP_PASSWORD ) 
-         {
-            wszHide = WSTRDUP(pContext->pwLineStarts[i] +
-                                     pContext->pszContents);
-            if (wszHide) 
-            {
-               int     q;
-               boolean bShowLast = FALSE;
-
-               // If in multitap mode show the last character while the
-               // selection is active (so they can see what has been entered)
-               
-               // if (sTextModes[pContext->byMode].info.wID == TEXT_MODE_MULTITAP)
-              if ((sTextModes[pContext->byMode].info.wID == TEXT_MODE_MULTITAP)
+                       // If in multitap mode show the last character while the
+                       // selection is active (so they can see what has been entered)
+                       
+                       // if (sTextModes[pContext->byMode].info.wID == TEXT_MODE_MULTITAP)
+                      if ((sTextModes[pContext->byMode].info.wID == TEXT_MODE_MULTITAP)
 #ifdef FEATURE_MT_ENGLISH_UP
-                ||(sTextModes[pContext->byMode].info.wID == TEXT_MODE_MULTITAP_UP)
+                        ||(sTextModes[pContext->byMode].info.wID == TEXT_MODE_MULTITAP_UP)
 #endif
 #ifdef FEATURE_MT_ENGLISH_LOW
-                ||(sTextModes[pContext->byMode].info.wID == TEXT_MODE_MULTITAP_LOW)
+                        ||(sTextModes[pContext->byMode].info.wID == TEXT_MODE_MULTITAP_LOW)
 #endif
 #ifdef FEATURE_T9_MT_SPANISH
-			  	||(sTextModes[pContext->byMode].info.wID == TEXT_MODE_T9_MT_SPANISH)
+        			  	||(sTextModes[pContext->byMode].info.wID == TEXT_MODE_T9_MT_SPANISH)
 #endif
 #ifdef FEATURE_T9_MT_FRENCH
-                ||(sTextModes[pContext->byMode].info.wID == TEXT_MODE_T9_MT_FRENCH)
+                        ||(sTextModes[pContext->byMode].info.wID == TEXT_MODE_T9_MT_FRENCH)
 #endif
 
-                )
-               {
-                  bShowLast = !bCursor;
-               }
-			   
-			   
-               for(q = 0;
-                   //q < (bShowLast ? WSTRLEN(wszHide) - 1 : WSTRLEN(wszHide));
-                   q<WSTRLEN(wszHide);
-                   q++ ) 
-               {
-               	  if((!bCursor))
-               	  {
-               	  	if(pContext->wSelStart !=q)
-					{
-						wszHide[q]  = '*';
-					}
-               	  }
-				  else
-				  {
-                  	wszHide[q]  = '*';
-				  }
-               }
-               if(pContext->dwProperties & TP_GRAPHIC_BG)
-               {
-                   TextCtl_DrawBackGround(pContext, &rectText);
-                   //MSG_FATAL("IDISPLAY_DrawText.............1",0,0,0);
-                   (void) IDISPLAY_DrawText(pContext->pIDisplay,
-                                       pContext->font,
-                                       wszHide,
-                                       lineChars,
-                                       rectText.x,
-                                       rectText.y,
-                                       &rectText,
-                                       IDF_TEXT_TRANSPARENT);
-               }
-               else
-               {
-               		//MSG_FATAL("IDISPLAY_DrawText.............2",0,0,0);
-                    (void) IDISPLAY_DrawText(pContext->pIDisplay,
-                                        pContext->font,
-                                        wszHide,
-                                        lineChars,
-                                        rectText.x,
-                                        rectText.y/*+pContext->nFontAscent*/,
-                                        &rectText,
-                                        IDF_RECT_FILL);//dwFlags);
-               }
-            }
-         } 
-         // 单行垂直方向居中对齐
-         else if (!(pContext->dwProperties & TP_MULTILINE) &&
-                  (pContext->dwProperties & TP_FIXOEM))
-         {
-         #ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
-          		if(pContext->dwProperties & TP_GRAPHIC_BG)
-                {
-                    TextCtl_DrawBackGround(pContext, &rectText);
-                }
-               // MSG_FATAL("rectText.x=%d,rectText.y=%d",rectText.x,rectText.y,0);
-               // MSG_FATAL("rectText.dx=%d,rectText.dy=%d",rectText.dx,rectText.dy,0);
-				//MSG_FATAL("rectClipx=%d,rectClip.y=%d",rectClip.x,rectClip.y,0);
-   				//MSG_FATAL("rectClipdx=%d,rectClip.dy=%d",rectClip.dx,rectClip.dy,0);
-               // MSG_FATAL("",0,0,0);
-                #if defined(FEATURE_LANG_ARABIC)
-				{
-				   	nv_language_enum_type language;
-		           	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
-		           	MSG_FATAL("IDISPLAY_DrawText..................1=%d",pContext->byMode,0,0);
-		           	if(NV_LANGUAGE_ARABIC == language && (!(pContext->dwProperties & TP_MULTILINE))&&
-		           	  (/*pContext->byMode != TEXT_MODE_T9_RAPID_ARABIC ||*/ pContext->byMode != TEXT_MODE_T9_MT_ARABIC))
-		           	{
-		           		int temp = 0;
-		           		int j = 0;
-		           		MSG_FATAL("pContext->wSelStart=%d",pContext->wSelStart,0,0);
-		           		temp=IDISPLAY_MeasureTextEx(pContext->pIDisplay,
-                                                     pContext->font,
-                                                     pContext->pwLineStarts[i] + pContext->pszContents,
-                                                     //pContext->wSelStart -
-                                                     //pContext->pwLineStarts[i],
-                                                     -1,
-                                                     -1,
-                                                     NULL);
-                       
-				    	rectText.x = rectClip.x+rectClip.dx - temp-4;
-				    	rectText.dx = temp;
-				    	if(rectText.x<rectClip.x)
-				    	{
-				    		rectText.x = rectClip.x;
-				    	}
-				    	MSG_FATAL("rectText.x=%d,temp=%d i=%d",rectText.x,temp,i);
-				    }
-		        }
-				#endif
-                (void) IDISPLAY_DrawText(pContext->pIDisplay,
-                                         pContext->font,
-                                         pContext->pwLineStarts[i] + pContext->pszContents,
-                                         lineChars,
-                                         rectText.x,
-                                         rectText.y/*+pContext->nFontAscent*/,
-                                         &rectText,
-                                        IDF_RECT_FILL | pContext->dwAlignFlags);
+                        )
+                       {
+                          bShowLast = !bCursor;
+                       }
+        			   
+        			   
+                       for(q = 0;
+                           //q < (bShowLast ? WSTRLEN(wszHide) - 1 : WSTRLEN(wszHide));
+                           q<WSTRLEN(wszHide);
+                           q++ ) 
+                       {
+                       	  if((!bCursor))
+                       	  {
+                       	  	if(pContext->wSelStart !=q)
+        					{
+        						wszHide[q]  = '*';
+        					}
+                       	  }
+        				  else
+        				  {
+                          	wszHide[q]  = '*';
+        				  }
+                       }
+                       if(pContext->dwProperties & TP_GRAPHIC_BG)
+                       {
+                           TextCtl_DrawBackGround(pContext, &rectText);
+                           //MSG_FATAL("IDISPLAY_DrawText.............1",0,0,0);
+                           (void) IDISPLAY_DrawText(pContext->pIDisplay,
+                                               pContext->font,
+                                               wszHide,
+                                               lineChars,
+                                               rectText.x,
+                                               rectText.y,
+                                               &rectText,
+                                               IDF_TEXT_TRANSPARENT);
+                       }
+                       else
+                       {
+                       		//MSG_FATAL("IDISPLAY_DrawText.............2",0,0,0);
+                            (void) IDISPLAY_DrawText(pContext->pIDisplay,
+                                                pContext->font,
+                                                wszHide,
+                                                lineChars,
+                                                rectText.x,
+                                                rectText.y/*+pContext->nFontAscent*/,
+                                                &rectText,
+                                                IDF_RECT_FILL);//dwFlags);
+                       }
+                    }
+                 } 
+                 // 单行垂直方向居中对齐
+                 else if (!(pContext->dwProperties & TP_MULTILINE) &&
+                          (pContext->dwProperties & TP_FIXOEM))
+                 {
+                 
+                    if(pContext->dwProperties & TP_GRAPHIC_BG)
+                    {
+                        TextCtl_DrawBackGround(pContext, &rectClip);
+        				//MSG_FATAL("IDISPLAY_DrawText.............3",0,0,0);
+                        (void) IDISPLAY_DrawText(pContext->pIDisplay,
+                                              pContext->font,
+                                              pContext->pwLineStarts[i] +
+                                              pContext->pszContents,
+                                              lineChars,
+                                              rectText.x,
+                                              rectText.y + pContext->nExtraPixels,
+                                              &rectClip,
+                                              IDF_TEXT_TRANSPARENT);
+                    }
+                    else
+                    {
+                    	//MSG_FATAL("IDISPLAY_DrawText.............4",0,0,0);
+                        (void) IDISPLAY_DrawText(pContext->pIDisplay,
+                                              pContext->font,
+                                              pContext->pwLineStarts[i] +
+                                              pContext->pszContents,
+                                              lineChars,
+                                              rectText.x,
+                                              rectText.y + pContext->nExtraPixels,
+                                              &rectClip,
+                                              IDF_RECT_FILL);
+                    }
+                    
+                 }
+                 else 
+                 {
 
-                if ( NULL != pContext->m_pMyFont )
-                {
-                    LineCursor1 = pContext->wSelStart - pContext->pwLineStarts[i];
-                    IFONT_MeasureTextCursorPos(pContext->m_pMyFont, rectText.x, 
-                                                         pContext->pszContents+pContext->pwLineStarts[i], 
-                                                        lineChars, &rectText, &cursorx1, LineCursor1, pContext->dwAlignFlags);
-                }
-         #else
-            if(pContext->dwProperties & TP_GRAPHIC_BG)
-            {
-                TextCtl_DrawBackGround(pContext, &rectClip);
-				//MSG_FATAL("IDISPLAY_DrawText.............3",0,0,0);
-                (void) IDISPLAY_DrawText(pContext->pIDisplay,
-                                      pContext->font,
-                                      pContext->pwLineStarts[i] +
-                                      pContext->pszContents,
-                                      lineChars,
-                                      rectText.x,
-                                      rectText.y + pContext->nExtraPixels,
-                                      &rectClip,
-                                      IDF_TEXT_TRANSPARENT);
-            }
-            else
-            {
-            	//MSG_FATAL("IDISPLAY_DrawText.............4",0,0,0);
-                (void) IDISPLAY_DrawText(pContext->pIDisplay,
-                                      pContext->font,
-                                      pContext->pwLineStarts[i] +
-                                      pContext->pszContents,
-                                      lineChars,
-                                      rectText.x,
-                                      rectText.y + pContext->nExtraPixels,
-                                      &rectClip,
-                                      IDF_RECT_FILL);
-            }
-            #endif
-         }
-         else 
-         {
+                        if(pContext->dwProperties & TP_GRAPHIC_BG)
+                        {
+                            TextCtl_DrawBackGround(pContext, &rectText);
+                          	//MSG_FATAL("IDISPLAY_DrawText.............6",0,0,0);
+                            (void) IDISPLAY_DrawText(pContext->pIDisplay,
+                                                     pContext->font,
+                                                     pContext->pwLineStarts[i] +
+                                                     pContext->pszContents,
+                                                     lineChars,
+                                                     rectText.x,
+                                                     rectText.y,
+                                                     &rectText,
+                                                     IDF_TEXT_TRANSPARENT);
+                        }
+                        else
+                        {
+                        	//MSG_FATAL("IDISPLAY_DrawText.............7",0,0,0);
+                            (void) IDISPLAY_DrawText(pContext->pIDisplay,
+                                                     pContext->font,
+                                                     pContext->pwLineStarts[i] +
+                                                     pContext->pszContents,
+                                                     lineChars,
+                                                     rectText.x,
+                                                     rectText.y/*+pContext->nFontAscent*/,
+                                                     &rectText,
+                                                     IDF_RECT_FILL);//dwFlags);
+                        }
+
+                 }
+
+                 if ( bCursor ) 
+                 {
+                    if (wSelStartLine == i && pContext->bEditable) 
+                    {
+                       /* Must draw a cursor now */
+                       int32 cursX = rectText.x;
+                       if (pContext->wSelStart > pContext->pwLineStarts[i]) 
+                       {
+                          if( pContext->dwProperties & TP_PASSWORD ) 
+                          {
+                             cursX += IDISPLAY_MeasureTextEx(pContext->pIDisplay,
+                                                             pContext->font,
+                                                             wszHide,
+                                                             pContext->wSelStart -
+                                                             pContext->pwLineStarts[i],
+                                                             -1,
+                                                             NULL);
+
+                          } 
+                          else 
+                          {
+                             cursX += IDISPLAY_MeasureTextEx(pContext->pIDisplay,
+                                                             pContext->font,
+                                                             pContext->pszContents +
+                                                             pContext->pwLineStarts[i],
+                                                             pContext->wSelStart -
+                                                             pContext->pwLineStarts[i],
+                                                             -1,
+                                                             NULL);
+                          }
+
+                          --cursX; // Take advantage of knowledge about where to find
+                                   // horizontal leading in our fonts.  If we didn't do
+                                   // this, we'd have to do it anyway for the special
+                                   // case of ending up 1-pixel outside of the clipping
+                                   // rectangle.
+                          if (cursX >= rectText.x + rectText.dx) 
+                          {
+                             // If the line ends with a lot of spaces, they will
+                             // stick to the end of the line even though technically
+                             // they exceed the displayable width, so we can greatly
+                             // exceed the displayable pixels when we MeasureText
+                             // although what gets chopped is only blank space.
+                             // If this happens, we just stick the cursor at the
+                             // right edge.
+                             cursX = rectText.x + rectText.dx - 1;
+                          }
+                       }
+                       // else We compromise a bit if we're at the left edge and
+                       //     don't move left 1 pixel since it would leave the vertical
+                       //     bar of the cursor outside the clipping rectangle!
+        			  // MSG_FATAL("bCursor.......................8",0,0,0);
+                       cursRect.x = (int16) (cursX-2);
+                       cursRect.y = rectText.y; // Would subtract 1, but vertical leading
+                                                // is embedded in our fonts too
+                       cursRect.dx = 5;
+                       cursRect.dy = pContext->nFontAscent + pContext->nFontDescent;
+                       bDrawCursor = TRUE;  // Draw the cursor at the end
+                    }
+                 } 
+                 else 
+                 {
+                    if (wSelStartLine <= i && i <= wSelEndLine) 
+                    {
+                       /* Must draw some kind of selection on this line */
+                       int32 startX = rectText.x;
+                       int32 endX = rectText.x + (int16) rectText.dx;
+                       int16 dy = rectText.dy;
+                       AEERect invertRect;
+
+                       if (wSelEndLine == i) 
+                       {
+                          /* Must adjust the right edge */
+                          /* We MUST adjust the right edge BEFORE the left edge because
+                           * the forumula uses startX and gets the wrong answer if
+                           * the select starts and ends on the same line because startX
+                           * would then be adjusted first and throw off this calculation
+                           */
+                          if (pContext->wSelEnd > pContext->pwLineStarts[i]) 
+                          {
+                             if( pContext->dwProperties & TP_PASSWORD )
+                             {
+                                endX = startX +
+                                       IDISPLAY_MeasureTextEx(pContext->pIDisplay,
+                                                              pContext->font,
+                                                              wszHide,
+                                                              pContext->wSelEnd -
+                                                              pContext->pwLineStarts[i],
+                                                              -1,
+                                                              NULL);
+                             } 
+                             else 
+                             {
+                                endX = startX +
+                                       IDISPLAY_MeasureTextEx(pContext->pIDisplay,
+                                                              pContext->font,
+                                                              pContext->pszContents +
+                                                              pContext->pwLineStarts[i],
+                                                              pContext->wSelEnd -
+                                                              pContext->pwLineStarts[i],
+                                                              -1,
+                                                              NULL);
+                             }
+                          } 
+                          else
+                             endX = startX;
+                       }
+
+                       if (wSelStartLine == i &&
+                           pContext->wSelStart > pContext->pwLineStarts[i]) 
+                       {
+
+                          if( pContext->dwProperties & TP_PASSWORD )
+                          {
+                             /* Must adjust the left edge */
+                             startX += IDISPLAY_MeasureTextEx(pContext->pIDisplay,
+                                                              pContext->font,
+                                                              wszHide,
+                                                              pContext->wSelStart -
+                                                              pContext->pwLineStarts[i],
+                                                              -1,
+                                                              NULL)
+                                                      - 1; /* Include 1-pixel leading */
+                          } 
+                          else 
+                          {
+                             /* Must adjust the left edge */
+                             startX += IDISPLAY_MeasureTextEx(pContext->pIDisplay,
+                                                              pContext->font,
+                                                              pContext->pszContents +
+                                                              pContext->pwLineStarts[i],
+                                                              pContext->wSelStart -
+                                                              pContext->pwLineStarts[i],
+                                                              -1,
+                                                              NULL)
+                                                         - 1; // Include 1-pixel leading
+                          }
+                       }
+
+                       if (i < wSelEndLine) 
+                       {
+                          /* Must include the leading */
+                          dy += rectLeading.dy;
+                       }
+                       invertRect.x = (int16) startX;
+                       invertRect.y = rectText.y; 
+                       if((!(pContext->dwProperties & TP_MULTILINE) && 
+                                   (pContext->dwProperties & TP_FIXOEM)))
+                       {
+                            invertRect.x++;
+                            invertRect.y = (invertRect.y + pContext->nExtraPixels - 1);
+                       }
+                       invertRect.dx = (int16)(endX - startX);
+                       invertRect.dy = dy;
+                       
+                       IDISPLAY_InvertRect(pContext->pIDisplay, &invertRect);
+                    }
+                 }
+
+              } 
+              else
+              {
+                 // Draw an empty box, there's no text
+                 if (!(pContext->dwProperties & TP_MULTILINE) && 
+                          (pContext->dwProperties & TP_FIXOEM))
+                 {
+                     if(pContext->dwProperties & TP_GRAPHIC_BG)
+                     {
+                        TextCtl_DrawBackGround(pContext, &rectClip);
+                     }
+                     else
+                     {
+                        IDISPLAY_FillRect(pContext->pIDisplay, &rectClip, RGB_WHITE);
+                     }
+                 }
+                 else
+                 {
+                     if(pContext->dwProperties & TP_GRAPHIC_BG)
+                     {
+                        TextCtl_DrawBackGround(pContext, &rectText);
+                     }
+                     else
+                     {
+                        IDISPLAY_FillRect(pContext->pIDisplay, &rectText, RGB_WHITE);
+                     }
+                 }
+
+                 if (bCursor && wSelStartLine == i && pContext->bEditable) 
+                 {
+                    // Must draw a cursor.  We can only get here if the text
+                    // is completely empty, so just use a nice cursor rectangle
+                    // at where the start of the text would be
+        			//MSG_FATAL("bCursorrectText.x=%d,rectText.y=%d",rectText.x,rectText.y,0);
+                    cursRect.x = rectText.x - 2;
+                    cursRect.y = rectText.y;
+                    cursRect.dx = 5;
+                    cursRect.dy = pContext->nFontAscent + pContext->nFontDescent;
+                    bDrawCursor = TRUE;
+                 }
+              }
+              // Adjust rects for next line
+              rectText.y += rectText.dy + rectLeading.dy;
+              rectLeading.y = rectText.y + rectText.dy;
+        // v2.0.2 Add
+              // Free Hide Buffer
+              if( wszHide )
+              {
+                 FREE( wszHide );
+                 wszHide = NULL;
+              }
+        // End Add
+           }//end for
+
+           if (pContext->nExtraPixels) 
+           {
+              // Draw the area at the bottom that was left over
+              rectText.y -= rectLeading.dy;
+              rectText.dy = pContext->nExtraPixels;
+              if(!(!(pContext->dwProperties & TP_MULTILINE) && 
+                          (pContext->dwProperties & TP_FIXOEM)))
+              {
+                 if(pContext->dwProperties & TP_GRAPHIC_BG)
+                 {
+                     TextCtl_DrawBackGround(pContext, &rectText);
+                 }
+                 else
+                 {
+                     IDISPLAY_FillRect(pContext->pIDisplay, &rectText, RGB_WHITE);
+                 }
+              }
+           }
+           if (bDrawCursor) 
+           {
+              TextCtl_DrawCursor(pContext, &cursRect, &rectClip);
+           }
+           
+           (void) IDISPLAY_SetColor((IDisplay *)pContext->pIDisplay,CLR_USER_BACKGROUND,dwOldBkClr);
+    }
+    else
+#endif        
+    {
 #ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
-                if(pContext->dwProperties & TP_GRAPHIC_BG)
-                {
-                    TextCtl_DrawBackGround(pContext, &rectText);
-                }
-                #if defined(FEATURE_LANG_ARABIC)
-				{
-				   	nv_language_enum_type language;
-		           	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
-		           	IDISPLAY_FillRect(pContext->pIDisplay, &rectText, RGB_WHITE);
-		           	MSG_FATAL("IDISPLAY_DrawText..................2=%d",pContext->byMode,0,0);
-		           	MSG_FATAL("IDISPLAY_DrawText.............language=%d",language,0,0);
-		           	
-		           	if(NV_LANGUAGE_ARABIC == language && (!(pContext->dwProperties & TP_MULTILINE))&&
-		           	  (/*pContext->byMode != TEXT_MODE_T9_RAPID_ARABIC ||*/ pContext->byMode != TEXT_MODE_T9_MT_ARABIC))
-		           	{
-		           		int temp = 0;
-		           		int j = 0;
-		           		temp=IDISPLAY_MeasureTextEx(pContext->pIDisplay,
-                                                     pContext->font,
-                                                     pContext->pwLineStarts[i] + pContext->pszContents,
-                                                     -1,
-                                                     -1,
-                                                     NULL);
-                       
-				    	rectText.x = rectClip.x+rectClip.dx - temp-4;
-				    	rectText.dx = temp;
-				    	if(rectText.x<rectClip.x)
-				    	{
-				    		rectText.x = rectClip.x;
-				    	}
-				    	MSG_FATAL("rectText.x=%d,temp=%d i=%d",rectText.x,temp,i);
-				    }
-		        }
-				#endif
-                //MSG_FATAL("IDISPLAY_DrawText.............5",0,0,0);
-                (void) IDISPLAY_DrawText(pContext->pIDisplay,
-                                         pContext->font,
-                                         pContext->pwLineStarts[i] + pContext->pszContents,
-                                         lineChars,
-                                         rectText.x,
-                                         rectText.y/*+pContext->nFontAscent*/,
-                                         &rectText,
-                                        IDF_RECT_FILL | pContext->dwAlignFlags);
+           //IBitmap       *pDestBmp = NULL;
+           int            cursorx1    = 0,  cursorx2    = 0;
+           int            LineCursor1 = -1, LineCursor2 = -1;
+           pContext->dwAlignFlags = ParagraphAlignment(pContext->pszContents, WSTRLEN(pContext->pszContents)); 
+           //pDestBmp = IDISPLAY_GetDestination ( pContext->pIDisplay );
 
-                if ( NULL != pContext->m_pMyFont )
-                {
-                    LineCursor1 = pContext->wSelStart - pContext->pwLineStarts[i];
-                    IFONT_MeasureTextCursorPos(pContext->m_pMyFont, rectText.x, 
-                                                         pContext->pszContents+pContext->pwLineStarts[i], 
-                                                        lineChars, &rectText, &cursorx1, LineCursor1, pContext->dwAlignFlags);
-                }
-#else //#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
-                if(pContext->dwProperties & TP_GRAPHIC_BG)
-                {
-                    TextCtl_DrawBackGround(pContext, &rectText);
-                  	//MSG_FATAL("IDISPLAY_DrawText.............6",0,0,0);
-                    (void) IDISPLAY_DrawText(pContext->pIDisplay,
-                                             pContext->font,
-                                             pContext->pwLineStarts[i] +
-                                             pContext->pszContents,
-                                             lineChars,
-                                             rectText.x,
-                                             rectText.y,
-                                             &rectText,
-                                             IDF_TEXT_TRANSPARENT);
-                }
-                else
-                {
-                	//MSG_FATAL("IDISPLAY_DrawText.............7",0,0,0);
-                    (void) IDISPLAY_DrawText(pContext->pIDisplay,
-                                             pContext->font,
-                                             pContext->pwLineStarts[i] +
-                                             pContext->pszContents,
-                                             lineChars,
-                                             rectText.x,
-                                             rectText.y/*+pContext->nFontAscent*/,
-                                             &rectText,
-                                             IDF_RECT_FILL);//dwFlags);
-                }
+           (void) ISHELL_CancelTimer((IShell *) (pContext->pIShell), 
+                                                 (PFNNOTIFY)TextCtl_DrawCursorTimer, 
+                                                 pContext);
 #endif //#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
-         }
-#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
 
-         if ( bCursor ) 
-         {
-            if (wSelStartLine == i && pContext->bEditable) 
-            {
-              // MSG_FATAL("bCursor.......................7",0,0,0);
-               cursRect.x = (int16)cursorx1;//rectText.x + (int16)(cursorx1);
-               cursRect.y = rectText.y; // Would subtract 1, but vertical leading
-                                        // is embedded in our fonts too
-               cursRect.dx = 1;
-               cursRect.dy = pContext->nFontAscent + pContext->nFontDescent;
-              
-               bDrawCursor = TRUE;  // Draw the cursor at the end
-            }
-         }
-         else 
-         {
-         
-            if (wSelStartLine <= i && i <= wSelEndLine) 
-            {
-               /* Must draw some kind of selection on this line */
-               AEERect invertRect;
-               int16 dy = rectText.dy;
-               uint32 cur_text_mode = OEM_TextGetCurrentMode(pContext);
-               uint32 startAlign = ParagraphAlignment(pContext->wSelStart + pContext->pszContents, 
-                                    lineChars - (pContext->wSelStart - pContext->pwLineStarts[i]));
-               uint32 endAlign = ParagraphAlignment(pContext->pwLineStarts[i] + pContext->pszContents, 
-                                    pContext->wSelEnd - pContext->pwLineStarts[i]);
-               
-               int32 startX = (IDF_ALIGN_LEFT == startAlign)?(rectText.x):(rectText.x + (int16) rectText.dx);
-               int32 endX = (wSelEndLine == wSelStartLine)
-                                    ?((IDF_ALIGN_LEFT == startAlign)?(rectText.x + (int16) rectText.dx):(rectText.x))
-                                    :((IDF_ALIGN_LEFT == endAlign)?(rectText.x + (int16) rectText.dx):(rectText.x));
-             
-               if (wSelEndLine == i) 
-               {
-                  if (pContext->wSelEnd > pContext->pwLineStarts[i]) 
-                  {
+           /*因为当字符串超过一行或者在行尾时，向字符串插入空格
+           会把很长的空间反显(multitap input mode)*/
+           if ( (wSelEndLine != wSelStartLine) &&
+                ((pContext->sT9awFieldInfo.G.dwStateBits & T9STATEMULTITAPMASK) == T9STATEMULTITAPMASK))
+           {
+              wSelEndLine = wSelStartLine;
+           }
+
+           memset(&cursRect, 0, sizeof(cursRect));
+
+           rectClip.x  = pContext->rectDisplay.x;
+           rectClip.y  = pContext->rectDisplay.y;
+           rectClip.dx = pContext->rectDisplay.dx;
+           rectClip.dy = pContext->rectDisplay.dy; 
+           if (bFrame) {
+              rectClip.x  += 1;
+              rectClip.y  += 1;
+              rectClip.dx -= 2;
+              rectClip.dy -= 2;
+
+              // If we have a frame, the scroll bar overlaps it by 2 pixels
+              if (bScroll) {
+                 rectClip.dx -= (int16) (pContext->wScrollBarWidth - 2);
+              }
+
+           } else {
+              if (bScroll) {
+                 rectClip.dx -= (int16) pContext->wScrollBarWidth;
+              }
+           }
+           rectText = rectClip;
+           rectText.dy = MIN(rectClip.dy,(pContext->nFontAscent + pContext->nFontDescent));
+           rectLeading = rectText;
+           rectLeading.y += rectText.dy;
+           rectLeading.dy = pContext->nFontLeading;
+           
+           if(pContext->dwProperties & TP_GRAPHIC_BG)
+           {
+               dwOldBkClr = TEXT_GRAPHIC_BG_COLOR;
+           }
+           else
+           {
+               dwOldBkClr = TEXT_BG_COLOR;
+           }
+           dwOldBkClr = IDISPLAY_SetColor((IDisplay *)pContext->pIDisplay,CLR_USER_BACKGROUND,
+                                dwOldBkClr);//MAKE_RGB(255,255,255)); 
+           for (; cnt > 0; ++i, --cnt) 
+           {
+              if (cnt > 1 && pContext->nFontLeading) 
+              {
+                 // Draw the leading area first so it's ready to be inverted if
+                 // we need to draw a selection
+                 if(pContext->dwProperties & TP_GRAPHIC_BG)
+                 {
+                    TextCtl_DrawBackGround(pContext, &rectLeading);
+                 }
+                 else
+                 {
+                    IDISPLAY_FillRect(pContext->pIDisplay, &rectLeading, RGB_WHITE);
+                 }
+              }
+              if (i < pContext->wLines) 
+              {
+                 unsigned short lineChars = pContext->pwLineStarts[i+1] -
+                                            pContext->pwLineStarts[i];
+                 if (pContext->pszContents[pContext->pwLineStarts[i+1]-1]
+                     == LINEBREAK) 
+                 {
+                    // Don't include the line break character in the count!
+                    --lineChars;
+                 }
+
+                 if( pContext->dwProperties & TP_PASSWORD ) 
+                 {
+                    wszHide = WSTRDUP(pContext->pwLineStarts[i] +
+                                             pContext->pszContents);
+                    if (wszHide) 
+                    {
+                       int     q;
+                       boolean bShowLast = FALSE;
+
+                       // If in multitap mode show the last character while the
+                       // selection is active (so they can see what has been entered)
+                       
+                       // if (sTextModes[pContext->byMode].info.wID == TEXT_MODE_MULTITAP)
+                      if ((sTextModes[pContext->byMode].info.wID == TEXT_MODE_MULTITAP)
+#ifdef FEATURE_MT_ENGLISH_UP
+                        ||(sTextModes[pContext->byMode].info.wID == TEXT_MODE_MULTITAP_UP)
+#endif
+#ifdef FEATURE_MT_ENGLISH_LOW
+                        ||(sTextModes[pContext->byMode].info.wID == TEXT_MODE_MULTITAP_LOW)
+#endif
+#ifdef FEATURE_T9_MT_SPANISH
+        			  	||(sTextModes[pContext->byMode].info.wID == TEXT_MODE_T9_MT_SPANISH)
+#endif
+#ifdef FEATURE_T9_MT_FRENCH
+                        ||(sTextModes[pContext->byMode].info.wID == TEXT_MODE_T9_MT_FRENCH)
+#endif
+
+                        )
+                       {
+                          bShowLast = !bCursor;
+                       }
+        			   
+        			   
+                       for(q = 0;
+                           //q < (bShowLast ? WSTRLEN(wszHide) - 1 : WSTRLEN(wszHide));
+                           q<WSTRLEN(wszHide);
+                           q++ ) 
+                       {
+                       	  if((!bCursor))
+                       	  {
+                       	  	if(pContext->wSelStart !=q)
+        					{
+        						wszHide[q]  = '*';
+        					}
+                       	  }
+        				  else
+        				  {
+                          	wszHide[q]  = '*';
+        				  }
+                       }
+                       if(pContext->dwProperties & TP_GRAPHIC_BG)
+                       {
+                           TextCtl_DrawBackGround(pContext, &rectText);
+                           //MSG_FATAL("IDISPLAY_DrawText.............1",0,0,0);
+                           (void) IDISPLAY_DrawText(pContext->pIDisplay,
+                                               pContext->font,
+                                               wszHide,
+                                               lineChars,
+                                               rectText.x,
+                                               rectText.y,
+                                               &rectText,
+                                               IDF_TEXT_TRANSPARENT);
+                       }
+                       else
+                       {
+                       		//MSG_FATAL("IDISPLAY_DrawText.............2",0,0,0);
+                            (void) IDISPLAY_DrawText(pContext->pIDisplay,
+                                                pContext->font,
+                                                wszHide,
+                                                lineChars,
+                                                rectText.x,
+                                                rectText.y/*+pContext->nFontAscent*/,
+                                                &rectText,
+                                                IDF_RECT_FILL);//dwFlags);
+                       }
+                    }
+                 } 
+                 // 单行垂直方向居中对齐
+                 else if (!(pContext->dwProperties & TP_MULTILINE) &&
+                          (pContext->dwProperties & TP_FIXOEM))
+                 {
+                 #ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
+                  		if(pContext->dwProperties & TP_GRAPHIC_BG)
+                        {
+                            TextCtl_DrawBackGround(pContext, &rectText);
+                        }
+                       // MSG_FATAL("rectText.x=%d,rectText.y=%d",rectText.x,rectText.y,0);
+                       // MSG_FATAL("rectText.dx=%d,rectText.dy=%d",rectText.dx,rectText.dy,0);
+        				//MSG_FATAL("rectClipx=%d,rectClip.y=%d",rectClip.x,rectClip.y,0);
+           				//MSG_FATAL("rectClipdx=%d,rectClip.dy=%d",rectClip.dx,rectClip.dy,0);
+                       // MSG_FATAL("",0,0,0);
+                        #if defined(FEATURE_LANG_ARABIC)
+        				{
+        				   	nv_language_enum_type language;
+        		           	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
+        		           	MSG_FATAL("IDISPLAY_DrawText..................1=%d",pContext->byMode,0,0);
+        		           	if(NV_LANGUAGE_ARABIC == language && (!(pContext->dwProperties & TP_MULTILINE))&&
+        		           	  (/*pContext->byMode != TEXT_MODE_T9_RAPID_ARABIC ||*/ pContext->byMode != TEXT_MODE_T9_MT_ARABIC))
+        		           	{
+        		           		int temp = 0;
+        		           		int j = 0;
+        		           		MSG_FATAL("pContext->wSelStart=%d",pContext->wSelStart,0,0);
+        		           		temp=IDISPLAY_MeasureTextEx(pContext->pIDisplay,
+                                                             pContext->font,
+                                                             pContext->pwLineStarts[i] + pContext->pszContents,
+                                                             //pContext->wSelStart -
+                                                             //pContext->pwLineStarts[i],
+                                                             -1,
+                                                             -1,
+                                                             NULL);
+                               
+        				    	rectText.x = rectClip.x+rectClip.dx - temp-4;
+        				    	rectText.dx = temp;
+        				    	if(rectText.x<rectClip.x)
+        				    	{
+        				    		rectText.x = rectClip.x;
+        				    	}
+        				    	MSG_FATAL("rectText.x=%d,temp=%d i=%d",rectText.x,temp,i);
+        				    }
+        		        }
+        				#endif
+                        (void) IDISPLAY_DrawText(pContext->pIDisplay,
+                                                 pContext->font,
+                                                 pContext->pwLineStarts[i] + pContext->pszContents,
+                                                 lineChars,
+                                                 rectText.x,
+                                                 rectText.y/*+pContext->nFontAscent*/,
+                                                 &rectText,
+                                                IDF_RECT_FILL | pContext->dwAlignFlags);
+
                         if ( NULL != pContext->m_pMyFont )
                         {
-                            LineCursor2 = pContext->wSelEnd - pContext->pwLineStarts[i];
+                            LineCursor1 = pContext->wSelStart - pContext->pwLineStarts[i];
                             IFONT_MeasureTextCursorPos(pContext->m_pMyFont, rectText.x, 
-                                                                    pContext->pwLineStarts[i] + pContext->pszContents, 
-                                                                    lineChars, &rectText, &cursorx2, LineCursor2, pContext->dwAlignFlags);
+                                                                 pContext->pszContents+pContext->pwLineStarts[i], 
+                                                                lineChars, &rectText, &cursorx1, LineCursor1, pContext->dwAlignFlags);
                         }
-                        endX = (int16)cursorx2;
-                  } 
-                  else
-                        endX = startX;
-               }
-               if ((wSelStartLine == i) && (pContext->wSelStart > pContext->pwLineStarts[i])) 
-               {
-                    if ( NULL != pContext->m_pMyFont )
+                 #else
+                    if(pContext->dwProperties & TP_GRAPHIC_BG)
                     {
-                        LineCursor1 = pContext->wSelStart - pContext->pwLineStarts[i];
-                        IFONT_MeasureTextCursorPos(pContext->m_pMyFont, rectText.x, 
-                                                            pContext->pwLineStarts[i] + pContext->pszContents, 
-                                                            lineChars, &rectText, &cursorx1, LineCursor1, pContext->dwAlignFlags);
+                        TextCtl_DrawBackGround(pContext, &rectClip);
+        				//MSG_FATAL("IDISPLAY_DrawText.............3",0,0,0);
+                        (void) IDISPLAY_DrawText(pContext->pIDisplay,
+                                              pContext->font,
+                                              pContext->pwLineStarts[i] +
+                                              pContext->pszContents,
+                                              lineChars,
+                                              rectText.x,
+                                              rectText.y + pContext->nExtraPixels,
+                                              &rectClip,
+                                              IDF_TEXT_TRANSPARENT);
                     }
-                    /* Must adjust the left edge */
-                    startX = (int16)cursorx1;
-               }
+                    else
+                    {
+                    	//MSG_FATAL("IDISPLAY_DrawText.............4",0,0,0);
+                        (void) IDISPLAY_DrawText(pContext->pIDisplay,
+                                              pContext->font,
+                                              pContext->pwLineStarts[i] +
+                                              pContext->pszContents,
+                                              lineChars,
+                                              rectText.x,
+                                              rectText.y + pContext->nExtraPixels,
+                                              &rectClip,
+                                              IDF_RECT_FILL);
+                    }
+                    #endif
+                 }
+                 else 
+                 {
+#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
+                        if(pContext->dwProperties & TP_GRAPHIC_BG)
+                        {
+                            TextCtl_DrawBackGround(pContext, &rectText);
+                        }
+                        #if defined(FEATURE_LANG_ARABIC)
+        				{
+        				   	nv_language_enum_type language;
+        		           	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
+        		           	IDISPLAY_FillRect(pContext->pIDisplay, &rectText, RGB_WHITE);
+        		           	MSG_FATAL("IDISPLAY_DrawText..................2=%d",pContext->byMode,0,0);
+        		           	MSG_FATAL("IDISPLAY_DrawText.............language=%d",language,0,0);
+        		           	
+        		           	if(NV_LANGUAGE_ARABIC == language && (!(pContext->dwProperties & TP_MULTILINE))&&
+        		           	  (/*pContext->byMode != TEXT_MODE_T9_RAPID_ARABIC ||*/ pContext->byMode != TEXT_MODE_T9_MT_ARABIC))
+        		           	{
+        		           		int temp = 0;
+        		           		int j = 0;
+        		           		temp=IDISPLAY_MeasureTextEx(pContext->pIDisplay,
+                                                             pContext->font,
+                                                             pContext->pwLineStarts[i] + pContext->pszContents,
+                                                             -1,
+                                                             -1,
+                                                             NULL);
+                               
+        				    	rectText.x = rectClip.x+rectClip.dx - temp-4;
+        				    	rectText.dx = temp;
+        				    	if(rectText.x<rectClip.x)
+        				    	{
+        				    		rectText.x = rectClip.x;
+        				    	}
+        				    	MSG_FATAL("rectText.x=%d,temp=%d i=%d",rectText.x,temp,i);
+        				    }
+        		        }
+        				#endif
+                        //MSG_FATAL("IDISPLAY_DrawText.............5",0,0,0);
+                        (void) IDISPLAY_DrawText(pContext->pIDisplay,
+                                                 pContext->font,
+                                                 pContext->pwLineStarts[i] + pContext->pszContents,
+                                                 lineChars,
+                                                 rectText.x,
+                                                 rectText.y/*+pContext->nFontAscent*/,
+                                                 &rectText,
+                                                IDF_RECT_FILL | pContext->dwAlignFlags);
 
-               if (i < wSelEndLine) 
-               {
-                  /* Must include the leading */
-                  dy += rectLeading.dy;
-               }
-               
-               if ( startX > endX )
-               {
-                  int32 tmp = endX;
-                  endX = startX;
-                  startX = tmp;
-               }
-               
+                        if ( NULL != pContext->m_pMyFont )
+                        {
+                            LineCursor1 = pContext->wSelStart - pContext->pwLineStarts[i];
+                            IFONT_MeasureTextCursorPos(pContext->m_pMyFont, rectText.x, 
+                                                                 pContext->pszContents+pContext->pwLineStarts[i], 
+                                                                lineChars, &rectText, &cursorx1, LineCursor1, pContext->dwAlignFlags);
+                        }
+#else //#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
+                        if(pContext->dwProperties & TP_GRAPHIC_BG)
+                        {
+                            TextCtl_DrawBackGround(pContext, &rectText);
+                          	//MSG_FATAL("IDISPLAY_DrawText.............6",0,0,0);
+                            (void) IDISPLAY_DrawText(pContext->pIDisplay,
+                                                     pContext->font,
+                                                     pContext->pwLineStarts[i] +
+                                                     pContext->pszContents,
+                                                     lineChars,
+                                                     rectText.x,
+                                                     rectText.y,
+                                                     &rectText,
+                                                     IDF_TEXT_TRANSPARENT);
+                        }
+                        else
+                        {
+                        	//MSG_FATAL("IDISPLAY_DrawText.............7",0,0,0);
+                            (void) IDISPLAY_DrawText(pContext->pIDisplay,
+                                                     pContext->font,
+                                                     pContext->pwLineStarts[i] +
+                                                     pContext->pszContents,
+                                                     lineChars,
+                                                     rectText.x,
+                                                     rectText.y/*+pContext->nFontAscent*/,
+                                                     &rectText,
+                                                     IDF_RECT_FILL);//dwFlags);
+                        }
+#endif //#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
+                 }
+#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
+
+                 if ( bCursor ) 
+                 {
+                    if (wSelStartLine == i && pContext->bEditable) 
+                    {
+                      // MSG_FATAL("bCursor.......................7",0,0,0);
+                       cursRect.x = (int16)cursorx1;//rectText.x + (int16)(cursorx1);
+                       cursRect.y = rectText.y; // Would subtract 1, but vertical leading
+                                                // is embedded in our fonts too
+                       cursRect.dx = 1;
+                       cursRect.dy = pContext->nFontAscent + pContext->nFontDescent;
+                      
+                       bDrawCursor = TRUE;  // Draw the cursor at the end
+                    }
+                 }
+                 else 
+                 {
+                 
+                    if (wSelStartLine <= i && i <= wSelEndLine) 
+                    {
+                       /* Must draw some kind of selection on this line */
+                       AEERect invertRect;
+                       int16 dy = rectText.dy;
+                       uint32 cur_text_mode = OEM_TextGetCurrentMode(pContext);
+                       uint32 startAlign = ParagraphAlignment(pContext->wSelStart + pContext->pszContents, 
+                                            lineChars - (pContext->wSelStart - pContext->pwLineStarts[i]));
+                       uint32 endAlign = ParagraphAlignment(pContext->pwLineStarts[i] + pContext->pszContents, 
+                                            pContext->wSelEnd - pContext->pwLineStarts[i]);
+                       
+                       int32 startX = (IDF_ALIGN_LEFT == startAlign)?(rectText.x):(rectText.x + (int16) rectText.dx);
+                       int32 endX = (wSelEndLine == wSelStartLine)
+                                            ?((IDF_ALIGN_LEFT == startAlign)?(rectText.x + (int16) rectText.dx):(rectText.x))
+                                            :((IDF_ALIGN_LEFT == endAlign)?(rectText.x + (int16) rectText.dx):(rectText.x));
+                     
+                       if (wSelEndLine == i) 
+                       {
+                          if (pContext->wSelEnd > pContext->pwLineStarts[i]) 
+                          {
+                                if ( NULL != pContext->m_pMyFont )
+                                {
+                                    LineCursor2 = pContext->wSelEnd - pContext->pwLineStarts[i];
+                                    IFONT_MeasureTextCursorPos(pContext->m_pMyFont, rectText.x, 
+                                                                            pContext->pwLineStarts[i] + pContext->pszContents, 
+                                                                            lineChars, &rectText, &cursorx2, LineCursor2, pContext->dwAlignFlags);
+                                }
+                                endX = (int16)cursorx2;
+                          } 
+                          else
+                                endX = startX;
+                       }
+                       if ((wSelStartLine == i) && (pContext->wSelStart > pContext->pwLineStarts[i])) 
+                       {
+                            if ( NULL != pContext->m_pMyFont )
+                            {
+                                LineCursor1 = pContext->wSelStart - pContext->pwLineStarts[i];
+                                IFONT_MeasureTextCursorPos(pContext->m_pMyFont, rectText.x, 
+                                                                    pContext->pwLineStarts[i] + pContext->pszContents, 
+                                                                    lineChars, &rectText, &cursorx1, LineCursor1, pContext->dwAlignFlags);
+                            }
+                            /* Must adjust the left edge */
+                            startX = (int16)cursorx1;
+                       }
+
+                       if (i < wSelEndLine) 
+                       {
+                          /* Must include the leading */
+                          dy += rectLeading.dy;
+                       }
+                       
+                       if ( startX > endX )
+                       {
+                          int32 tmp = endX;
+                          endX = startX;
+                          startX = tmp;
+                       }
+                       
 #ifdef TEXT_MODE_MULTITAP
-               if((TEXT_MODE_MULTITAP == cur_text_mode
+                       if((TEXT_MODE_MULTITAP == cur_text_mode
 #ifdef FEATURE_MT_ENGLISH_UP
-                  || TEXT_MODE_MULTITAP_UP == cur_text_mode
+                          || TEXT_MODE_MULTITAP_UP == cur_text_mode
 #endif
 #ifdef FEATURE_MT_ENGLISH_LOW
-                  || TEXT_MODE_MULTITAP_LOW == cur_text_mode
+                          || TEXT_MODE_MULTITAP_LOW == cur_text_mode
 #endif
-                ) 
-                    && (IDF_ALIGN_RIGHT == pContext->dwAlignFlags) 
-                    && (startX == rectText.x))
-               {
-                    startX = (rectText.x + (int16) rectText.dx) -  IDISPLAY_MeasureTextEx(pContext->pIDisplay, 
-                                                                                            pContext->font,
-                                                                                            pContext->pszContents + pContext->pwLineStarts[i],
-                                                                                            lineChars,
-                                                                                            -1,
-                                                                                            NULL);
-               }
+                        ) 
+                            && (IDF_ALIGN_RIGHT == pContext->dwAlignFlags) 
+                            && (startX == rectText.x))
+                       {
+                            startX = (rectText.x + (int16) rectText.dx) -  IDISPLAY_MeasureTextEx(pContext->pIDisplay, 
+                                                                                                    pContext->font,
+                                                                                                    pContext->pszContents + pContext->pwLineStarts[i],
+                                                                                                    lineChars,
+                                                                                                    -1,
+                                                                                                    NULL);
+                       }
 #endif
 #ifdef TEXT_MODE_T9_RAPID_ENGLISH
-               if((TEXT_MODE_T9_RAPID_ENGLISH == cur_text_mode) 
-                   && (IDF_ALIGN_RIGHT == pContext->dwAlignFlags) 
-                   && (startX == rectText.x))
-               {
-                    startX = (rectText.x + (int16) rectText.dx) -  IDISPLAY_MeasureTextEx(pContext->pIDisplay, 
-                                                                                            pContext->font,
-                                                                                            pContext->pszContents + pContext->pwLineStarts[i],
-                                                                                            lineChars,
-                                                                                            -1,
-                                                                                            NULL);
-               }
+                       if((TEXT_MODE_T9_RAPID_ENGLISH == cur_text_mode) 
+                           && (IDF_ALIGN_RIGHT == pContext->dwAlignFlags) 
+                           && (startX == rectText.x))
+                       {
+                            startX = (rectText.x + (int16) rectText.dx) -  IDISPLAY_MeasureTextEx(pContext->pIDisplay, 
+                                                                                                    pContext->font,
+                                                                                                    pContext->pszContents + pContext->pwLineStarts[i],
+                                                                                                    lineChars,
+                                                                                                    -1,
+                                                                                                    NULL);
+                       }
 #endif
 
-               invertRect.x = (int16) startX;
-               invertRect.y = rectText.y;
-               invertRect.dx = (int16)(endX - startX);
-               invertRect.dy = dy;
-               if(0
+                       invertRect.x = (int16) startX;
+                       invertRect.y = rectText.y;
+                       invertRect.dx = (int16)(endX - startX);
+                       invertRect.dy = dy;
+                       if(0
 #ifdef TEXT_MODE_MULTITAP               
-               || ((TEXT_MODE_MULTITAP == cur_text_mode
+                       || ((TEXT_MODE_MULTITAP == cur_text_mode
 #ifdef FEATURE_MT_ENGLISH_UP
-                  || TEXT_MODE_MULTITAP_UP == cur_text_mode
+                          || TEXT_MODE_MULTITAP_UP == cur_text_mode
 #endif
 #ifdef FEATURE_MT_ENGLISH_LOW
-                  || TEXT_MODE_MULTITAP_LOW == cur_text_mode
+                          || TEXT_MODE_MULTITAP_LOW == cur_text_mode
 #endif
-               ) && ((int16)cursorx1 > (int16)cursorx2) && (wSelEndLine == wSelStartLine))
+                       ) && ((int16)cursorx1 > (int16)cursorx2) && (wSelEndLine == wSelStartLine))
 #endif
 #ifdef TEXT_MODE_T9_MT_HEBREW               
-               || ((TEXT_MODE_T9_MT_HEBREW == cur_text_mode) && ((int16)cursorx1 < (int16)cursorx2) && (wSelEndLine == wSelStartLine))
+                       || ((TEXT_MODE_T9_MT_HEBREW == cur_text_mode) && ((int16)cursorx1 < (int16)cursorx2) && (wSelEndLine == wSelStartLine))
 #endif
 #ifdef TEXT_MODE_T9_MT_ARABIC
-               || ((TEXT_MODE_T9_MT_ARABIC == cur_text_mode)  && ((int16)cursorx1 < (int16)cursorx2) && (wSelEndLine == wSelStartLine))
+                       || ((TEXT_MODE_T9_MT_ARABIC == cur_text_mode)  && ((int16)cursorx1 < (int16)cursorx2) && (wSelEndLine == wSelStartLine))
 #endif               
-               )
-               {
-               		;// no invert
-               }
-               else
-               {
-               		//MSG_FATAL("invertRectx=%d,invertRecty=%d",invertRect.x,invertRect.y,0);
-               		//MSG_FATAL("invertRectx=%dx,invertRecty=%dy",invertRect.dx,invertRect.dy,0);
-                    IDISPLAY_InvertRect(pContext->pIDisplay, &invertRect);
-               }
-            }
-         }
+                       )
+                       {
+                       		;// no invert
+                       }
+                       else
+                       {
+                       		//MSG_FATAL("invertRectx=%d,invertRecty=%d",invertRect.x,invertRect.y,0);
+                       		//MSG_FATAL("invertRectx=%dx,invertRecty=%dy",invertRect.dx,invertRect.dy,0);
+                            IDISPLAY_InvertRect(pContext->pIDisplay, &invertRect);
+                       }
+                    }
+                 }
 #else //#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
 
-         if ( bCursor ) 
-         {
-            if (wSelStartLine == i && pContext->bEditable) 
-            {
-               /* Must draw a cursor now */
-               int32 cursX = rectText.x;
-               if (pContext->wSelStart > pContext->pwLineStarts[i]) 
-               {
-                  if( pContext->dwProperties & TP_PASSWORD ) 
-                  {
-                     cursX += IDISPLAY_MeasureTextEx(pContext->pIDisplay,
-                                                     pContext->font,
-                                                     wszHide,
-                                                     pContext->wSelStart -
-                                                     pContext->pwLineStarts[i],
-                                                     -1,
-                                                     NULL);
+                 if ( bCursor ) 
+                 {
+                    if (wSelStartLine == i && pContext->bEditable) 
+                    {
+                       /* Must draw a cursor now */
+                       int32 cursX = rectText.x;
+                       if (pContext->wSelStart > pContext->pwLineStarts[i]) 
+                       {
+                          if( pContext->dwProperties & TP_PASSWORD ) 
+                          {
+                             cursX += IDISPLAY_MeasureTextEx(pContext->pIDisplay,
+                                                             pContext->font,
+                                                             wszHide,
+                                                             pContext->wSelStart -
+                                                             pContext->pwLineStarts[i],
+                                                             -1,
+                                                             NULL);
 
-                  } 
-                  else 
-                  {
-                     cursX += IDISPLAY_MeasureTextEx(pContext->pIDisplay,
-                                                     pContext->font,
-                                                     pContext->pszContents +
-                                                     pContext->pwLineStarts[i],
-                                                     pContext->wSelStart -
-                                                     pContext->pwLineStarts[i],
-                                                     -1,
-                                                     NULL);
-                  }
+                          } 
+                          else 
+                          {
+                             cursX += IDISPLAY_MeasureTextEx(pContext->pIDisplay,
+                                                             pContext->font,
+                                                             pContext->pszContents +
+                                                             pContext->pwLineStarts[i],
+                                                             pContext->wSelStart -
+                                                             pContext->pwLineStarts[i],
+                                                             -1,
+                                                             NULL);
+                          }
 
-                  --cursX; // Take advantage of knowledge about where to find
-                           // horizontal leading in our fonts.  If we didn't do
-                           // this, we'd have to do it anyway for the special
-                           // case of ending up 1-pixel outside of the clipping
-                           // rectangle.
-                  if (cursX >= rectText.x + rectText.dx) 
-                  {
-                     // If the line ends with a lot of spaces, they will
-                     // stick to the end of the line even though technically
-                     // they exceed the displayable width, so we can greatly
-                     // exceed the displayable pixels when we MeasureText
-                     // although what gets chopped is only blank space.
-                     // If this happens, we just stick the cursor at the
-                     // right edge.
-                     cursX = rectText.x + rectText.dx - 1;
-                  }
-               }
-               // else We compromise a bit if we're at the left edge and
-               //     don't move left 1 pixel since it would leave the vertical
-               //     bar of the cursor outside the clipping rectangle!
-			  // MSG_FATAL("bCursor.......................8",0,0,0);
-               cursRect.x = (int16) (cursX-2);
-               cursRect.y = rectText.y; // Would subtract 1, but vertical leading
-                                        // is embedded in our fonts too
-               cursRect.dx = 5;
-               cursRect.dy = pContext->nFontAscent + pContext->nFontDescent;
-               bDrawCursor = TRUE;  // Draw the cursor at the end
-            }
-         } 
-         else 
-         {
-            if (wSelStartLine <= i && i <= wSelEndLine) 
-            {
-               /* Must draw some kind of selection on this line */
-               int32 startX = rectText.x;
-               int32 endX = rectText.x + (int16) rectText.dx;
-               int16 dy = rectText.dy;
-               AEERect invertRect;
+                          --cursX; // Take advantage of knowledge about where to find
+                                   // horizontal leading in our fonts.  If we didn't do
+                                   // this, we'd have to do it anyway for the special
+                                   // case of ending up 1-pixel outside of the clipping
+                                   // rectangle.
+                          if (cursX >= rectText.x + rectText.dx) 
+                          {
+                             // If the line ends with a lot of spaces, they will
+                             // stick to the end of the line even though technically
+                             // they exceed the displayable width, so we can greatly
+                             // exceed the displayable pixels when we MeasureText
+                             // although what gets chopped is only blank space.
+                             // If this happens, we just stick the cursor at the
+                             // right edge.
+                             cursX = rectText.x + rectText.dx - 1;
+                          }
+                       }
+                       // else We compromise a bit if we're at the left edge and
+                       //     don't move left 1 pixel since it would leave the vertical
+                       //     bar of the cursor outside the clipping rectangle!
+        			  // MSG_FATAL("bCursor.......................8",0,0,0);
+                       cursRect.x = (int16) (cursX-2);
+                       cursRect.y = rectText.y; // Would subtract 1, but vertical leading
+                                                // is embedded in our fonts too
+                       cursRect.dx = 5;
+                       cursRect.dy = pContext->nFontAscent + pContext->nFontDescent;
+                       bDrawCursor = TRUE;  // Draw the cursor at the end
+                    }
+                 } 
+                 else 
+                 {
+                    if (wSelStartLine <= i && i <= wSelEndLine) 
+                    {
+                       /* Must draw some kind of selection on this line */
+                       int32 startX = rectText.x;
+                       int32 endX = rectText.x + (int16) rectText.dx;
+                       int16 dy = rectText.dy;
+                       AEERect invertRect;
 
-               if (wSelEndLine == i) 
-               {
-                  /* Must adjust the right edge */
-                  /* We MUST adjust the right edge BEFORE the left edge because
-                   * the forumula uses startX and gets the wrong answer if
-                   * the select starts and ends on the same line because startX
-                   * would then be adjusted first and throw off this calculation
-                   */
-                  if (pContext->wSelEnd > pContext->pwLineStarts[i]) 
-                  {
-                     if( pContext->dwProperties & TP_PASSWORD )
-                     {
-                        endX = startX +
-                               IDISPLAY_MeasureTextEx(pContext->pIDisplay,
-                                                      pContext->font,
-                                                      wszHide,
-                                                      pContext->wSelEnd -
-                                                      pContext->pwLineStarts[i],
-                                                      -1,
-                                                      NULL);
-                     } 
-                     else 
-                     {
-                        endX = startX +
-                               IDISPLAY_MeasureTextEx(pContext->pIDisplay,
-                                                      pContext->font,
-                                                      pContext->pszContents +
-                                                      pContext->pwLineStarts[i],
-                                                      pContext->wSelEnd -
-                                                      pContext->pwLineStarts[i],
-                                                      -1,
-                                                      NULL);
-                     }
-                  } 
-                  else
-                     endX = startX;
-               }
+                       if (wSelEndLine == i) 
+                       {
+                          /* Must adjust the right edge */
+                          /* We MUST adjust the right edge BEFORE the left edge because
+                           * the forumula uses startX and gets the wrong answer if
+                           * the select starts and ends on the same line because startX
+                           * would then be adjusted first and throw off this calculation
+                           */
+                          if (pContext->wSelEnd > pContext->pwLineStarts[i]) 
+                          {
+                             if( pContext->dwProperties & TP_PASSWORD )
+                             {
+                                endX = startX +
+                                       IDISPLAY_MeasureTextEx(pContext->pIDisplay,
+                                                              pContext->font,
+                                                              wszHide,
+                                                              pContext->wSelEnd -
+                                                              pContext->pwLineStarts[i],
+                                                              -1,
+                                                              NULL);
+                             } 
+                             else 
+                             {
+                                endX = startX +
+                                       IDISPLAY_MeasureTextEx(pContext->pIDisplay,
+                                                              pContext->font,
+                                                              pContext->pszContents +
+                                                              pContext->pwLineStarts[i],
+                                                              pContext->wSelEnd -
+                                                              pContext->pwLineStarts[i],
+                                                              -1,
+                                                              NULL);
+                             }
+                          } 
+                          else
+                             endX = startX;
+                       }
 
-               if (wSelStartLine == i &&
-                   pContext->wSelStart > pContext->pwLineStarts[i]) 
-               {
+                       if (wSelStartLine == i &&
+                           pContext->wSelStart > pContext->pwLineStarts[i]) 
+                       {
 
-                  if( pContext->dwProperties & TP_PASSWORD )
-                  {
-                     /* Must adjust the left edge */
-                     startX += IDISPLAY_MeasureTextEx(pContext->pIDisplay,
-                                                      pContext->font,
-                                                      wszHide,
-                                                      pContext->wSelStart -
-                                                      pContext->pwLineStarts[i],
-                                                      -1,
-                                                      NULL)
-                                              - 1; /* Include 1-pixel leading */
-                  } 
-                  else 
-                  {
-                     /* Must adjust the left edge */
-                     startX += IDISPLAY_MeasureTextEx(pContext->pIDisplay,
-                                                      pContext->font,
-                                                      pContext->pszContents +
-                                                      pContext->pwLineStarts[i],
-                                                      pContext->wSelStart -
-                                                      pContext->pwLineStarts[i],
-                                                      -1,
-                                                      NULL)
-                                                 - 1; // Include 1-pixel leading
-                  }
-               }
+                          if( pContext->dwProperties & TP_PASSWORD )
+                          {
+                             /* Must adjust the left edge */
+                             startX += IDISPLAY_MeasureTextEx(pContext->pIDisplay,
+                                                              pContext->font,
+                                                              wszHide,
+                                                              pContext->wSelStart -
+                                                              pContext->pwLineStarts[i],
+                                                              -1,
+                                                              NULL)
+                                                      - 1; /* Include 1-pixel leading */
+                          } 
+                          else 
+                          {
+                             /* Must adjust the left edge */
+                             startX += IDISPLAY_MeasureTextEx(pContext->pIDisplay,
+                                                              pContext->font,
+                                                              pContext->pszContents +
+                                                              pContext->pwLineStarts[i],
+                                                              pContext->wSelStart -
+                                                              pContext->pwLineStarts[i],
+                                                              -1,
+                                                              NULL)
+                                                         - 1; // Include 1-pixel leading
+                          }
+                       }
 
-               if (i < wSelEndLine) 
-               {
-                  /* Must include the leading */
-                  dy += rectLeading.dy;
-               }
-               invertRect.x = (int16) startX;
-               invertRect.y = rectText.y; 
-               if((!(pContext->dwProperties & TP_MULTILINE) && 
-                           (pContext->dwProperties & TP_FIXOEM)))
-               {
-                    invertRect.x++;
-                    invertRect.y = (invertRect.y + pContext->nExtraPixels - 1);
-               }
-               invertRect.dx = (int16)(endX - startX);
-               invertRect.dy = dy;
-               
-               IDISPLAY_InvertRect(pContext->pIDisplay, &invertRect);
-            }
-         }
+                       if (i < wSelEndLine) 
+                       {
+                          /* Must include the leading */
+                          dy += rectLeading.dy;
+                       }
+                       invertRect.x = (int16) startX;
+                       invertRect.y = rectText.y; 
+                       if((!(pContext->dwProperties & TP_MULTILINE) && 
+                                   (pContext->dwProperties & TP_FIXOEM)))
+                       {
+                            invertRect.x++;
+                            invertRect.y = (invertRect.y + pContext->nExtraPixels - 1);
+                       }
+                       invertRect.dx = (int16)(endX - startX);
+                       invertRect.dy = dy;
+                       
+                       IDISPLAY_InvertRect(pContext->pIDisplay, &invertRect);
+                    }
+                 }
 #endif //#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
-      } 
-      else
-      {
-         // Draw an empty box, there's no text
-         if (!(pContext->dwProperties & TP_MULTILINE) && 
-                  (pContext->dwProperties & TP_FIXOEM))
-         {
-             if(pContext->dwProperties & TP_GRAPHIC_BG)
-             {
-                TextCtl_DrawBackGround(pContext, &rectClip);
-             }
-             else
-             {
-                IDISPLAY_FillRect(pContext->pIDisplay, &rectClip, RGB_WHITE);
-             }
-         }
-         else
-         {
-             if(pContext->dwProperties & TP_GRAPHIC_BG)
-             {
-                TextCtl_DrawBackGround(pContext, &rectText);
-             }
-             else
-             {
-                IDISPLAY_FillRect(pContext->pIDisplay, &rectText, RGB_WHITE);
-             }
-         }
+              } 
+              else
+              {
+                 // Draw an empty box, there's no text
+                 if (!(pContext->dwProperties & TP_MULTILINE) && 
+                          (pContext->dwProperties & TP_FIXOEM))
+                 {
+                     if(pContext->dwProperties & TP_GRAPHIC_BG)
+                     {
+                        TextCtl_DrawBackGround(pContext, &rectClip);
+                     }
+                     else
+                     {
+                        IDISPLAY_FillRect(pContext->pIDisplay, &rectClip, RGB_WHITE);
+                     }
+                 }
+                 else
+                 {
+                     if(pContext->dwProperties & TP_GRAPHIC_BG)
+                     {
+                        TextCtl_DrawBackGround(pContext, &rectText);
+                     }
+                     else
+                     {
+                        IDISPLAY_FillRect(pContext->pIDisplay, &rectText, RGB_WHITE);
+                     }
+                 }
 
-         if (bCursor && wSelStartLine == i && pContext->bEditable) 
-         {
-            // Must draw a cursor.  We can only get here if the text
-            // is completely empty, so just use a nice cursor rectangle
-            // at where the start of the text would be
-			//MSG_FATAL("bCursorrectText.x=%d,rectText.y=%d",rectText.x,rectText.y,0);
-            cursRect.x = rectText.x - 2;
-            cursRect.y = rectText.y;
-            cursRect.dx = 5;
-            cursRect.dy = pContext->nFontAscent + pContext->nFontDescent;
-            bDrawCursor = TRUE;
-         }
-      }
-      // Adjust rects for next line
-      rectText.y += rectText.dy + rectLeading.dy;
-      rectLeading.y = rectText.y + rectText.dy;
-// v2.0.2 Add
-      // Free Hide Buffer
-      if( wszHide )
-      {
-         FREE( wszHide );
-         wszHide = NULL;
-      }
-// End Add
-   }//end for
+                 if (bCursor && wSelStartLine == i && pContext->bEditable) 
+                 {
+                    // Must draw a cursor.  We can only get here if the text
+                    // is completely empty, so just use a nice cursor rectangle
+                    // at where the start of the text would be
+        			//MSG_FATAL("bCursorrectText.x=%d,rectText.y=%d",rectText.x,rectText.y,0);
+                    cursRect.x = rectText.x - 2;
+                    cursRect.y = rectText.y;
+                    cursRect.dx = 5;
+                    cursRect.dy = pContext->nFontAscent + pContext->nFontDescent;
+                    bDrawCursor = TRUE;
+                 }
+              }
+              // Adjust rects for next line
+              rectText.y += rectText.dy + rectLeading.dy;
+              rectLeading.y = rectText.y + rectText.dy;
+        // v2.0.2 Add
+              // Free Hide Buffer
+              if( wszHide )
+              {
+                 FREE( wszHide );
+                 wszHide = NULL;
+              }
+        // End Add
+           }//end for
 
-   if (pContext->nExtraPixels) 
-   {
-      // Draw the area at the bottom that was left over
-      rectText.y -= rectLeading.dy;
-      rectText.dy = pContext->nExtraPixels;
-      if(!(!(pContext->dwProperties & TP_MULTILINE) && 
-                  (pContext->dwProperties & TP_FIXOEM)))
-      {
-         if(pContext->dwProperties & TP_GRAPHIC_BG)
-         {
-             TextCtl_DrawBackGround(pContext, &rectText);
-         }
-         else
-         {
-             IDISPLAY_FillRect(pContext->pIDisplay, &rectText, RGB_WHITE);
-         }
-      }
-   }
-   if (bDrawCursor) 
-   {
-      TextCtl_DrawCursor(pContext, &cursRect, &rectClip);
-   }
-   
-   (void) IDISPLAY_SetColor((IDisplay *)pContext->pIDisplay,CLR_USER_BACKGROUND,dwOldBkClr);
+           if (pContext->nExtraPixels) 
+           {
+              // Draw the area at the bottom that was left over
+              rectText.y -= rectLeading.dy;
+              rectText.dy = pContext->nExtraPixels;
+              if(!(!(pContext->dwProperties & TP_MULTILINE) && 
+                          (pContext->dwProperties & TP_FIXOEM)))
+              {
+                 if(pContext->dwProperties & TP_GRAPHIC_BG)
+                 {
+                     TextCtl_DrawBackGround(pContext, &rectText);
+                 }
+                 else
+                 {
+                     IDISPLAY_FillRect(pContext->pIDisplay, &rectText, RGB_WHITE);
+                 }
+              }
+           }
+           if (bDrawCursor) 
+           {
+              TextCtl_DrawCursor(pContext, &cursRect, &rectClip);
+           }
+           
+           (void) IDISPLAY_SetColor((IDisplay *)pContext->pIDisplay,CLR_USER_BACKGROUND,dwOldBkClr);
+    }
+
 }
 
 /*=============================================================================
