@@ -99,6 +99,9 @@ static NextFSMAction QUICKTESTSTCAMERATestHandler(CQuickTest *pMe);
 //状态QUICKTESTST_HEADSETTEST 处理函数
 static NextFSMAction QUICKTESTSTHEADSETTestHandler(CQuickTest *pMe);
 
+//状态QUICKTESTST_MANUALTEST 处理函数
+static NextFSMAction QUICKTESTSTMANUALTESTTestHandler(CQuickTest *pMe);
+
 /*==============================================================================
                                  全局数据
 ==============================================================================*/
@@ -218,7 +221,8 @@ NextFSMAction QuickTest_ProcessState(CQuickTest *pMe)
         case QUICKTESTST_EXIT:
             retVal = QUICKTESTSTExitHandler(pMe);
             break;
-
+        case QUICKTESTST_MANUALTEST:
+            retVal = QUICKTESTSTMANUALTESTTestHandler(pMe);
         default:
             break;
     }
@@ -404,12 +408,19 @@ static NextFSMAction QUICKTESTSTKeyTestHandler(CQuickTest *pMe)
             return NFSMACTION_WAIT;
 
         case DLGRET_CANCELED:
+            if(pMe->m_ManualTest)
+            {
+                MOVE_TO_STATE(QUICKTESTST_MANUALTEST)
+            }
+            else
+            {
 #ifdef FEATURE_SUPPORT_BT_APP
             pMe->m_dilag_type = BT_TEST;
             MOVE_TO_STATE(QUICKTESTST_LCDTEST) //BT +LCD
 #else
             MOVE_TO_STATE(QUICKTESTST_CALLTEST)
 #endif
+            }
             return NFSMACTION_CONTINUE;
 
         default:
@@ -449,11 +460,18 @@ static NextFSMAction QUICKTESTSTYAMAHATestHandler(CQuickTest *pMe)
             return NFSMACTION_WAIT;
 
         case DLGRET_CANCELED:
+            if(pMe->m_ManualTest)
+            {
+                MOVE_TO_STATE(QUICKTESTST_MANUALTEST)
+            }
+            else
+            {
 #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
             MOVE_TO_STATE(QUICKTESTST_VIBRATETEST)
 #else
             MOVE_TO_STATE(QUICKTESTST_HEADSETTEST)
 #endif            
+            }
             return NFSMACTION_CONTINUE;
 
         default:
@@ -493,11 +511,18 @@ static NextFSMAction QUICKTESTSTHEADSETTestHandler(CQuickTest *pMe)
             return NFSMACTION_WAIT;
 
         case DLGRET_CANCELED:
+            if(pMe->m_ManualTest)
+            {
+                MOVE_TO_STATE(QUICKTESTST_MANUALTEST)
+            }
+            else
+            {
 #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
             MOVE_TO_STATE(QUICKTESTST_VIBRATETEST)
 #else
             MOVE_TO_STATE(QUICKTESTST_KEYTEST)
 #endif            
+            }
             return NFSMACTION_CONTINUE;
 
         default:
@@ -538,11 +563,18 @@ static NextFSMAction QUICKTESTSTVibrateTestHandler(CQuickTest *pMe)
             return NFSMACTION_WAIT;
 
         case DLGRET_CANCELED:
+            if(pMe->m_ManualTest)
+            {
+                MOVE_TO_STATE(QUICKTESTST_MANUALTEST)
+            }
+            else
+            {
 #if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
             MOVE_TO_STATE(QUICKTESTST_KEYTEST)
 #else
             MOVE_TO_STATE(QUICKTESTST_YAMAHATEST)
 #endif            
+            }
             return NFSMACTION_CONTINUE;
 
         default:
@@ -582,6 +614,12 @@ static NextFSMAction QUICKTESTSTBackLightTestHandler(CQuickTest *pMe)
             return NFSMACTION_WAIT;
 
         case DLGRET_CANCELED:
+            if(pMe->m_ManualTest)
+            {
+                MOVE_TO_STATE(QUICKTESTST_MANUALTEST)
+            }
+            else
+            {
 #ifdef FEATRUE_DEVICETYPE_FLIP               
             MOVE_TO_STATE(QUICKTESTST_FLIPTEST)
 #else //FEATRUE_DEVICETYPE_FLIP  
@@ -595,6 +633,7 @@ static NextFSMAction QUICKTESTSTBackLightTestHandler(CQuickTest *pMe)
             MOVE_TO_STATE(QUICKTESTST_YAMAHATEST)
 #endif
 #endif //FEATRUE_DEVICETYPE_FLIP  
+            }
             return NFSMACTION_CONTINUE;
 
         default:
@@ -634,7 +673,14 @@ static NextFSMAction QUICKTESTSTFlipTestHandler(CQuickTest *pMe)
             return NFSMACTION_WAIT;
 
         case DLGRET_CANCELED:
-            MOVE_TO_STATE(QUICKTESTST_VIBRATETEST)
+            if(pMe->m_ManualTest)
+            {
+                MOVE_TO_STATE(QUICKTESTST_MANUALTEST)
+            }
+            else
+            {
+                MOVE_TO_STATE(QUICKTESTST_VIBRATETEST)
+            }
             return NFSMACTION_CONTINUE;
 
         default:
@@ -673,6 +719,12 @@ static NextFSMAction QUICKTESTSTFMTestHandler(CQuickTest *pMe)
             return NFSMACTION_WAIT;
 
         case DLGRET_CANCELED:
+            if(pMe->m_ManualTest)
+            {
+                MOVE_TO_STATE(QUICKTESTST_MANUALTEST)
+            }
+            else
+            {
 #ifdef FEATURE_VERSION_EC99
             MOVE_TO_STATE(QUICKTESTST_SDTEST)
 #else
@@ -683,6 +735,7 @@ static NextFSMAction QUICKTESTSTFMTestHandler(CQuickTest *pMe)
             MOVE_TO_STATE(QUICKTESTST_SDTEST)
 #endif      
 #endif
+            }
             return NFSMACTION_CONTINUE;
 
         default:
@@ -708,7 +761,18 @@ static NextFSMAction QUICKTESTSTCAMERATestHandler(CQuickTest *pMe)
             return NFSMACTION_WAIT;
 
         case DLGRET_CANCELED:
-            MOVE_TO_STATE(QUICKTESTST_SDTEST)
+            {
+             extern boolean bManualTest;
+             if(bManualTest)
+             {
+                bManualTest = FALSE;
+                MOVE_TO_STATE(QUICKTESTST_MANUALTEST)
+             }
+             else
+             {
+                MOVE_TO_STATE(QUICKTESTST_SDTEST)
+             }
+            }
             return NFSMACTION_CONTINUE;
 
         default:
@@ -747,8 +811,15 @@ static NextFSMAction QUICKTESTSTSDTestHandler(CQuickTest *pMe)
             return NFSMACTION_WAIT;
 
         case DLGRET_CANCELED:
+            if(pMe->m_ManualTest)
+            {
+                MOVE_TO_STATE(QUICKTESTST_MANUALTEST)
+            }
+            else
+            {
             //MOVE_TO_STATE(QUICKTESTST_RESTOREFACTORY)
-            MOVE_TO_STATE(QUICKTESTST_REGULATE)
+                MOVE_TO_STATE(QUICKTESTST_REGULATE)
+            }
             return NFSMACTION_CONTINUE;
 
         default:
@@ -786,12 +857,19 @@ static NextFSMAction QUICKTESTSTVERTestHandler(CQuickTest *pMe)
             QuickTest_ShowDialog(pMe, IDD_VERTEST);
             return NFSMACTION_WAIT;
 
-        case DLGRET_CANCELED:            
+        case DLGRET_CANCELED:
+            if(pMe->m_ManualTest)
+            {
+                MOVE_TO_STATE(QUICKTESTST_MANUALTEST)
+            }
+            else
+            {
 #ifdef FEATURE_SUPPORT_BT_APP
             pMe->m_dilag_type = LCD_TEST;
 #endif
             MOVE_TO_STATE(QUICKTESTST_LCDTEST)           
             //MOVE_TO_STATE(QUICKTESTST_RESTOREFACTORY)       //QUICKTESTST_EXIT
+            }
             return NFSMACTION_CONTINUE;
 
         default:
@@ -830,6 +908,12 @@ static NextFSMAction QUICKTESTSTLCDTestHandler(CQuickTest *pMe)
             return NFSMACTION_WAIT;
 
         case DLGRET_CANCELED:
+            if(pMe->m_ManualTest)
+            {
+                MOVE_TO_STATE(QUICKTESTST_MANUALTEST)
+            }
+            else
+            {
 #ifdef FEATURE_SUPPORT_BT_APP
             if(pMe->m_dilag_type == BT_TEST)
             {
@@ -839,6 +923,7 @@ static NextFSMAction QUICKTESTSTLCDTestHandler(CQuickTest *pMe)
 #endif
             {
                 MOVE_TO_STATE(QUICKTESTST_BACKLIGHTTEST)
+            }
             }
             return NFSMACTION_CONTINUE;
 
@@ -881,7 +966,14 @@ static NextFSMAction QUICKTESTSTTouchScreenTestHandler(CQuickTest *pMe)
             return NFSMACTION_WAIT;
 
         case DLGRET_CANCELED:
-            MOVE_TO_STATE(QUICKTESTST_MAIN)
+            if(pMe->m_ManualTest)
+            {
+                MOVE_TO_STATE(QUICKTESTST_MANUALTEST)
+            }
+            else
+            {
+                MOVE_TO_STATE(QUICKTESTST_MAIN)
+            }
             return NFSMACTION_CONTINUE;
 
         default:
@@ -923,6 +1015,12 @@ static NextFSMAction QUICKTESTSTCallTestHandler(CQuickTest *pMe)
             return NFSMACTION_WAIT;
 
         case DLGRET_CANCELED:
+            if(pMe->m_ManualTest)
+            {
+                MOVE_TO_STATE(QUICKTESTST_MANUALTEST)
+            }
+            else
+            {
 			if(pMe->m_quicktestmic )
 			{
 				 MOVE_TO_STATE(QUICKTESTST_EXIT)
@@ -951,6 +1049,7 @@ static NextFSMAction QUICKTESTSTCallTestHandler(CQuickTest *pMe)
 #endif
 #endif
 			}
+            }
             return NFSMACTION_CONTINUE;
 
         default:
@@ -959,6 +1058,110 @@ static NextFSMAction QUICKTESTSTCallTestHandler(CQuickTest *pMe)
 
     return NFSMACTION_WAIT;
 }// QUICKTESTSTCallTestHandler
+
+/*==============================================================================
+QUICKTESTSTMANUALTESTTestHandler
+
+说明：
+       设置状态QUICKTESTST_MANUALTEST时函数被调用。函数处理状态
+       QUICKTESTST_MANUALTEST的相关操作。
+
+参数：
+       pMe [in]：指向CQuickTest Applet对象结构的指针。该结构包含小程序的特定信息。
+
+返回值：
+        无
+
+备注：:
+
+==============================================================================*/
+static NextFSMAction QUICKTESTSTMANUALTESTTestHandler(CQuickTest *pMe)
+{
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+    
+    switch (pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            QuickTest_ShowDialog(pMe, IDD_MANUNALTEST);
+            return NFSMACTION_WAIT;
+        case DLGRET_KEYTEST:
+            MOVE_TO_STATE(QUICKTESTST_KEYTEST)
+            return NFSMACTION_CONTINUE;
+
+        case DLGRET_TOUCHSCREENTEST:
+            MOVE_TO_STATE(QUICKTESTST_TOUCHSCREENTEST)
+            return NFSMACTION_CONTINUE;
+
+        case DLGRET_YAMAHATEST:
+            MOVE_TO_STATE(QUICKTESTST_YAMAHATEST)
+            return NFSMACTION_CONTINUE;
+
+        case DLGRET_VIBRATETEST:
+            MOVE_TO_STATE(QUICKTESTST_VIBRATETEST)
+            return NFSMACTION_CONTINUE;
+
+        case DLGRET_BACKLIGHTTEST:
+            MOVE_TO_STATE(QUICKTESTST_BACKLIGHTTEST)
+            return NFSMACTION_CONTINUE;
+            
+        case DLGRET_FLIPTEST:
+            MOVE_TO_STATE(QUICKTESTST_FLIPTEST)
+            return NFSMACTION_CONTINUE;            
+
+        case DLGRET_FMTEST:
+            MOVE_TO_STATE(QUICKTESTST_FMTEST)
+            return NFSMACTION_CONTINUE;
+#ifdef FEATURE_BREW_CAMERA
+        case DLGRET_CAMERATEST:
+            MOVE_TO_STATE(QUICKTESTST_CAMERATEST)
+            return NFSMACTION_CONTINUE;            
+#endif
+        case DLGRET_SDTEST:
+            MOVE_TO_STATE(QUICKTESTST_SDTEST)
+            return NFSMACTION_CONTINUE;
+
+        case DLGRET_VERTEST:
+            MOVE_TO_STATE(QUICKTESTST_VERTEST)
+            return NFSMACTION_CONTINUE;
+
+        case DLGRET_LCDTEST:
+            MOVE_TO_STATE(QUICKTESTST_LCDTEST)
+            return NFSMACTION_CONTINUE;
+
+        case DLGRET_CALLTEST:
+            MOVE_TO_STATE(QUICKTESTST_CALLTEST)
+            return NFSMACTION_CONTINUE;
+
+        case DLGRET_REGULATE:
+            MOVE_TO_STATE(QUICKTESTST_REGULATE)
+            return NFSMACTION_CONTINUE;     
+
+        case DLGRET_RESTOREFACTORY:
+            MOVE_TO_STATE(QUICKTESTST_RESTOREFACTORY)
+            return NFSMACTION_CONTINUE;
+           
+		case DLGRET_HEADSETTEST:
+			MOVE_TO_STATE(QUICKTESTST_HEADSETTEST)
+            return NFSMACTION_CONTINUE;
+            
+        case DLGRET_CANCELED:
+            {
+                extern boolean bManualTest;
+                bManualTest = FALSE;
+		        MOVE_TO_STATE(QUICKTESTST_EXIT)
+                return NFSMACTION_CONTINUE;
+            }
+
+        default:
+            break;
+    }
+
+    return NFSMACTION_WAIT;
+}//QUICKTESTSTMANUALTESTTestHandler
 
 /*==============================================================================
 QUICKTESTSTRestoreFactoryHandler
@@ -991,7 +1194,14 @@ static NextFSMAction QUICKTESTSTRestoreFactoryHandler(CQuickTest *pMe)
             return NFSMACTION_WAIT;
 
         case DLGRET_CANCELED:
-            MOVE_TO_STATE(QUICKTESTST_EXIT)            
+            if(pMe->m_ManualTest)
+            {
+                MOVE_TO_STATE(QUICKTESTST_MANUALTEST)
+            }
+            else
+            {
+                MOVE_TO_STATE(QUICKTESTST_EXIT) 
+            }
             return NFSMACTION_CONTINUE;
 
         default:
@@ -1017,7 +1227,14 @@ static NextFSMAction QUICKTESTSTRegulateHandler(CQuickTest * pMe)
             return NFSMACTION_WAIT;
 
         case DLGRET_CANCELED:
+            if(pMe->m_ManualTest)
+            {
+                MOVE_TO_STATE(QUICKTESTST_MANUALTEST)
+            }
+            else
+            {
             MOVE_TO_STATE(QUICKTESTST_RESTOREFACTORY)
+            }
             return NFSMACTION_CONTINUE;
 
         default:

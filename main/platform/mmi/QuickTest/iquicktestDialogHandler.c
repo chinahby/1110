@@ -158,6 +158,12 @@ static boolean  QuickTest_CallHandler(CQuickTest *pMe,
                                       uint32 dwParam
 );
 
+static boolean  QuickTest_ManualTest_Handler(CQuickTest *pMe,
+                                      AEEEvent eCode,
+                                      uint16 wParam,
+                                      uint32 dwParam
+);
+
 
 //对话框IDD_REGULATE事件处理函数
 static boolean  QuickTest_Regulate_Handler(CQuickTest *pMe,
@@ -264,6 +270,7 @@ void QuickTest_UpdateActiveDialogInfo
         case IDD_REGULATE:     
         case IDD_RESTORE_FACTORY:
 		case IDD_HEADSETTEST:
+        case IDD_MANUNALTEST:
             pMe->m_pActiveDlg = (IDialog*)dwParam;
             pMe->m_pActiveDlgID = wParam;
             return;
@@ -388,7 +395,8 @@ boolean QuickTest_RouteDialogEvent(CQuickTest *pMe,
 
         case IDD_RESTORE_FACTORY:
             return QuickTest_RestoreFactory_Handler(pMe,eCode,wParam,dwParam);
-
+        case IDD_MANUNALTEST:
+            return QuickTest_ManualTest_Handler(pMe,eCode,wParam,dwParam);
         default:
             return FALSE;
     }
@@ -3665,6 +3673,148 @@ static boolean  QuickTest_TouchScreenTestHandler(CQuickTest *pMe,
     return FALSE;
 } // QuickTest_TouchScreenTestHandler
 #endif // FEATURE_TOUCHPANEL
+/*==============================================================================
+函数：
+       QuickTest_ManualTest_Handler
+说明：
+       IDD_MANUNALTEST对话框事件处理函数
+
+参数：
+       pMe [in]：指向CQuickTest Applet对象结构的指针。该结构包含小程序的特定信息。
+       eCode [in]：事件代码。
+       wParam：事件相关数据。
+       dwParam：事件相关数据。
+
+返回值：
+       TRUE：传入事件被处理。
+       FALSE：传入事件被忽略。
+
+备注：
+
+==============================================================================*/
+
+static boolean  QuickTest_ManualTest_Handler(CQuickTest *pMe,
+                                      AEEEvent eCode,
+                                      uint16 wParam,
+                                      uint32 dwParam
+)
+{
+    PARAM_NOT_REF(dwParam)
+    IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,IDC_MENU_MANUAL);
+    if (pMenu == NULL)
+    {
+        return FALSE;
+    }
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT:
+			//add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+                extern boolean bManualTest;
+                bManualTest = TRUE;
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_QUICKTEST_RES_FILE,                                
+                        IDS_QUICKTEST,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
+            pMe->m_ManualTest = TRUE;
+            IMENUCTL_AddItem(pMenu, AEE_QUICKTEST_RES_FILE, IDS_KEYTEST, IDS_KEYTEST, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_QUICKTEST_RES_FILE, IDS_YAMAHATEST, IDS_YAMAHATEST, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_QUICKTEST_RES_FILE, IDS_LCDTEST, IDS_LCDTEST, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_QUICKTEST_RES_FILE, IDS_BACKLIGHTTEST, IDS_BACKLIGHTTEST, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_QUICKTEST_RES_FILE, IDS_CALLTEST, IDS_CALLTEST, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_QUICKTEST_RES_FILE, IDS_HEADSET_TEST, IDS_HEADSET_TEST, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_QUICKTEST_RES_FILE, IDS_CAM_TEST, IDS_CAM_TEST, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_QUICKTEST_RES_FILE, IDS_UIM_TEST, IDS_UIM_TEST, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_QUICKTEST_RES_FILE, IDS_QCN_TEST, IDS_QCN_TEST, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_QUICKTEST_RES_FILE, IDS_FACTORY_TEST, IDS_FACTORY_TEST, NULL, 0);
+            #if !defined(FEATURE_VERSION_K212_VHOPE)
+            IMENUCTL_AddItem(pMenu, AEE_QUICKTEST_RES_FILE, IDS_FM_TEST, IDS_FM_TEST, NULL, 0);
+            #endif
+            (void)IMENUCTL_Redraw(pMenu);
+            return TRUE;
+
+        case EVT_DIALOG_START:
+            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
+            IANNUNCIATOR_Redraw(pMe->m_pIAnn);
+            IMENUCTL_SetSel(pMenu, pMe->m_manutalSel);
+
+            (void) ISHELL_PostEvent( pMe->m_pShell,
+                                     AEECLSID_QUICKTEST,
+                                     EVT_USER_REDRAW,
+                                     0,
+                                     0);
+            return TRUE;
+
+        case EVT_USER_REDRAW:
+            (void)IMENUCTL_Redraw(pMenu);    //dele by yangdecai
+            return TRUE;
+
+        case EVT_DIALOG_END:
+            return TRUE;
+
+        case EVT_KEY:
+            switch(wParam)
+            {
+                case AVK_CLR:
+                    CLOSE_DIALOG(DLGRET_CANCELED)
+                    return TRUE;
+
+                default:
+                    break;
+            }
+            return TRUE;
+
+        case EVT_COMMAND:
+            pMe->m_manutalSel = IMENUCTL_GetSel(pMenu);
+            switch (wParam)
+            {
+                case IDS_KEYTEST:       //按键测试
+                    CLOSE_DIALOG(DLGRET_KEYTEST)
+                    return TRUE;   
+                case IDS_YAMAHATEST:      
+                    CLOSE_DIALOG(DLGRET_YAMAHATEST)
+                    return TRUE;   
+                case IDS_BACKLIGHTTEST:      
+                    CLOSE_DIALOG(DLGRET_BACKLIGHTTEST)
+                    return TRUE;   
+                case IDS_CALLTEST:       
+                    CLOSE_DIALOG(DLGRET_CALLTEST)
+                    return TRUE;   
+                case IDS_HEADSET_TEST:       
+                    CLOSE_DIALOG(DLGRET_HEADSETTEST)
+                    return TRUE;   
+                case IDS_CAM_TEST:       
+                    CLOSE_DIALOG(DLGRET_CAMERATEST)
+                    return TRUE;   
+                case IDS_UIM_TEST:       
+                    CLOSE_DIALOG(DLGRET_SDTEST)
+                    return TRUE;   
+                case IDS_QCN_TEST:       
+                    CLOSE_DIALOG(DLGRET_REGULATE)
+                    return TRUE;   
+                case IDS_FACTORY_TEST:      
+                    CLOSE_DIALOG(DLGRET_RESTOREFACTORY)
+                    return TRUE;   
+                case IDS_FM_TEST:       
+                    CLOSE_DIALOG(DLGRET_FMTEST)
+                    return TRUE;   
+                case IDS_LCDTEST:
+                    CLOSE_DIALOG(DLGRET_LCDTEST)
+                    return TRUE;   
+                default:
+                    ASSERT_NOT_REACHABLE;
+            }
+            return TRUE;
+
+        default:
+            break;
+    }
+    return FALSE;
+}
 
 /*==============================================================================
 函数：
@@ -3695,6 +3845,17 @@ static boolean  QuickTest_CallHandler(CQuickTest *pMe,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
+            if(pMe->m_ManualTest)
+            {
+                IALERT_StartRingerPreview(pMe->m_pIAlert, 0);
+                QuickTest_Ringer(pMe);
+                MSLEEP(200);
+                (void)ISHELL_CancelTimer(pMe->m_pShell,
+                                 (PFNNOTIFY)(QuickTest_Ringer),
+                                  pMe);
+                (void)IRINGERMGR_Stop(pMe->m_pRingerMgr);
+                MSLEEP(4000);
+            }
             return TRUE;
 
         case EVT_DIALOG_START:
@@ -3766,6 +3927,10 @@ static boolean  QuickTest_CallHandler(CQuickTest *pMe,
                     voc_release(VOC_ACQ_TEST);
                     qdsp_cmd_set_isr(pMe->m_qdspisr);
 #endif
+                    (void)ISHELL_CancelTimer(pMe->m_pShell,
+                                 (PFNNOTIFY)(QuickTest_Ringer),
+                                  pMe);
+                    (void)IRINGERMGR_Stop(pMe->m_pRingerMgr);
                     CLOSE_DIALOG(DLGRET_CANCELED)
                     break;
 

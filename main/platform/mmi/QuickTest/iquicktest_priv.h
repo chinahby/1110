@@ -142,7 +142,8 @@ typedef enum DLGRetValue
    DLGRET_CALLTEST,           //mic测试
    DLGRET_REGULATE,           //检查是否已经校准
    DLGRET_RESTOREFACTORY,      //恢复出厂设置
-   DLGRET_HEADSETTEST
+   DLGRET_HEADSETTEST,
+   DLGRET_MANUALTEST,
 } DLGRet_Value_e_Type;
 
 /*----------------------状态机相关数据类型声明---------------------*/
@@ -167,6 +168,7 @@ typedef enum _QuickTestState
    QUICKTESTST_REGULATE,
    QUICKTESTST_RESTOREFACTORY,   
    QUICKTESTST_HEADSETTEST,
+   QUICKTESTST_MANUALTEST,
    QUICKTESTST_EXIT
 } QuickTestState;
 
@@ -206,7 +208,7 @@ typedef struct _CQuickTest {
 
    // 主菜单选择项
    uint16         m_mainMenuSel;
-
+   uint16         m_manutalSel;
    // 当前活动对话框ID
    uint16         m_pActiveDlgID;
 
@@ -251,6 +253,7 @@ typedef struct _CQuickTest {
 #endif
     uint32  m_testkeycount;
     boolean m_quicktestmic;
+    boolean m_ManualTest;
 } CQuickTest;
 /*==============================================================================
                                  宏定义和常数

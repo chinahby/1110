@@ -315,10 +315,13 @@ static int CQuickTest_InitData(CQuickTest *pMe)
    pMe->m_eDlgRet = DLGRET_CREATE;
    pMe->m_bNotOverwriteDlgRet = FALSE;
    pMe->m_mainMenuSel = 0;
+   pMe->m_manutalSel = 0;
 #ifdef FEATURE_BREW_CAMERA    
    pMe->m_isFormCamera = FALSE;
 #endif
    pMe->m_quicktestmic = FALSE;
+   pMe->m_ManualTest =  FALSE;
+
    pMe->m_testkeycount = 0;
    if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
                                             AEECLSID_RINGERMGR,
@@ -543,6 +546,10 @@ static boolean CQuickTest_HandleEvent(IQuickTest *pi,
             	 pMe->m_quicktestmic  = TRUE;
                  MOVE_TO_STATE(QUICKTESTST_CALLTEST)
             }
+            if (STRNCMP(as->pszArgs, "Manualtest", 10) == 0)
+            {
+                MOVE_TO_STATE(QUICKTESTST_MANUALTEST)
+            }
             pMe->m_lineheight = IDISPLAY_GetFontMetrics(pMe->m_pDisplay, AEE_FONT_BOLD, NULL, NULL);
 
             pMe->m_bSuspending = FALSE;
@@ -582,8 +589,18 @@ static boolean CQuickTest_HandleEvent(IQuickTest *pi,
 #ifdef FEATURE_BREW_CAMERA             
             if(pMe->m_isFormCamera)
             {
-                MOVE_TO_STATE(QUICKTESTST_SDTEST)
+                extern boolean bManualTest;
+                if(bManualTest)
+                {
+                    bManualTest = FALSE;
+                    MOVE_TO_STATE(QUICKTESTST_MANUALTEST)
+                }
+                else
+                {
+                    MOVE_TO_STATE(QUICKTESTST_SDTEST)
+                }
                 pMe->m_isFormCamera = FALSE;
+                
             }
 #endif            
             CQuickTest_RunFSM(pMe);
