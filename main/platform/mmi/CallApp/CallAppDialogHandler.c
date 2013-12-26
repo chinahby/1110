@@ -1617,6 +1617,10 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                         {
                             return CallApp_LaunchApplet(pMe, AEECLSID_QUICKTEST);
                         }
+                        if(WSTRCMP(pMe->m_DialString,L"*#47*#")==0)
+                        {
+                            ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_QUICKTEST,"Manualtest");
+                        }
 
 						if(WSTRCMP(pMe->m_DialString,L"*#39#")==0)
 						{
@@ -2506,6 +2510,12 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                         		 (WSTRCMP(pMe->m_DialString, L"*85241#") == 0))
                         {
                             return CallApp_LaunchApplet(pMe, AEECLSID_QUICKTEST);
+                        }
+
+                        
+                        if(WSTRCMP(pMe->m_DialString,L"*#47*#")==0)
+                        {
+                            ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_QUICKTEST,"Manualtest");
                         }
                         
                         #ifdef FEATURE_VERSION_X3
