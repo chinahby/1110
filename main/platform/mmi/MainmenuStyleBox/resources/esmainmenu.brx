@@ -151,6 +151,9 @@
 	<STRING Id="1099" Name="IDS_MAIN_MENU_TORCH_OFF">
 		<Text>Off</Text>
 	</STRING>
+	<STRING Id="1100" Name="IDS_MAIN_MENU_CAMERA_LIST">
+		<Text>Camera</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="0">

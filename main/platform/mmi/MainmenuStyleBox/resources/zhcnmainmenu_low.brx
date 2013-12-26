@@ -58,6 +58,9 @@
 	<STRING Id="1070" Name="IDS_MAIN_MENU_GALLERY">
 		<Text>管理器</Text>
 	</STRING>
+	<STRING Id="1100" Name="IDS_MAIN_MENU_CAMERA_LIST">
+		<Text>摄像头</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="0">
