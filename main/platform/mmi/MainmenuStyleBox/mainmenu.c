@@ -15398,12 +15398,13 @@ static int StartApplet(MainMenu *pMe, int i)
 		break;
 	}  
 
+#if defined(FEATURE_VERSION_IN50A)
     case IDS_MAIN_MENU_CAMERA_LIST:
     {		
-        MSG_FATAL("***zzg Start AEECLSID_CAMERA_LIST***", 0, 0, 0);
-		Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CAMERA_LIST);
+        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CAMERA_LIST);
 		break;
-	}      
+	}  
+#endif    
     
     default:
         break;
