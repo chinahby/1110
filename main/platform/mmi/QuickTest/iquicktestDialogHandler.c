@@ -2195,6 +2195,13 @@ static boolean  QuickTest_HeadTestHandler(CQuickTest *pMe,
 
         case EVT_USER_REDRAW:
             //»æÖÆ²âÊÔÌáÊ¾Óï
+            {
+            AEERect temp = {0};
+            temp.x = 0;
+            temp.y = 0;
+            temp.dx = 240;
+            temp.dy = 288;
+            IDisplay_FillRect(pMe->m_pDisplay,&temp,RGB_WHITE);
             if (HS_HEADSET_ON())
             {
             	(void)ISHELL_LoadResString(pMe->m_pShell,
@@ -2232,6 +2239,7 @@ static boolean  QuickTest_HeadTestHandler(CQuickTest *pMe,
             	QuickTest_Ringer(pMe);
 				m_testend = TRUE;
 			}
+            }
             return TRUE;
 
         case EVT_DIALOG_END:
