@@ -78,7 +78,7 @@ static boolean b_lowTimes = 0;
 boolean	bIsPPPAuthEnabled = FALSE;	//Add By zzg 2012_03_07
 static boolean bIsStarton = TRUE;   //ADD By ydecai 20131125
 boolean bIsLowMemery = FALSE;   //ADD By ydecai 20131125
-
+boolean bManualTest = FALSE;
 /*==============================================================================
 
                                  º¯ÊýÉùÃ÷
