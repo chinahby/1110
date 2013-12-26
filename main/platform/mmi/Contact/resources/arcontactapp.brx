@@ -112,12 +112,12 @@
 	<STRING Id="66" Name="IDS_CAPACITY">
 		<Text>حالة الذاكرة</Text>
 	</STRING>
-	<String Id="67" Name="IDS_CAPACITY_PHONE">
+	<STRING Id="67" Name="IDS_CAPACITY_PHONE">
 		<Text>الهاتف:%d  (%d)</Text>
-	</String>
-	<String Id="68" Name="IDS_CAPACITY_RUIM">
+	</STRING>
+	<STRING Id="68" Name="IDS_CAPACITY_RUIM">
 		<Text>UIMبطاقة:%d  (%d)</Text>
-	</String>
+	</STRING>
 	<STRING Id="69" Name="IDS_ERR_LOAD">
 		<Text>تهيئة. يرجى الانتظار...</Text>
 	</STRING>
@@ -464,11 +464,26 @@
 		<Text>رقم خطأ</Text>
 	</STRING>
 	<String Id="1090" Name="IDS_NAME_MODIFIED">
-		<Text>Name Modified</Text>
+		<Text>تسمية معدلة</Text>
 	</String>
 	<String Id="1091" Name="IDS_CALLER_GROUPS">
-		<Text>Caller Groups</Text>
+		<Text>المجموعات المتصل</Text>
 	</String>
+	<STRING Id="1092" Name="IDS_PHONEBOOK">
+		<Text>دليل الهاتف</Text>
+	</STRING>
+	<STRING Id="1093" Name="IDS_DISPLAY_OPTION">
+		<Text>خيار العرض</Text>
+	</STRING>
+	<STRING Id="1094" Name="IDS_ALWAYS_ASK">
+		<Text>نسأل دائما</Text>
+	</STRING>
+	<STRING Id="1095" Name="IDS_STORAGE">
+		<Text>الاتصالات التخزين</Text>
+	</STRING>
+	<STRING Id="1096" Name="IDS_PHONEBOOK_SETTINGS">
+		<Text>إعدادات دليل الهاتف</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MSGBOX" Focus="0">
