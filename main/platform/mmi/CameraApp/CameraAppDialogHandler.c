@@ -684,7 +684,7 @@ static boolean CameraApp_MainMenuHandleEvent(CCameraApp *pMe, AEEEvent eCode, ui
             	    IMENUCTL_AddItem(pMenu, AEE_APPSCAMERAAPP_RES_FILE, IDS_ITEM_CAMERA_GALLERY, IDS_ITEM_CAMERA_GALLERY, NULL, NULL);
                 }
 			}            
-            #if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_K212_VHOPE)
+            #if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_K212_VHOPE)|| defined(FEATURE_VERSION_K232_Y100A)
             IMENUCTL_AddItem(pMenu, AEE_APPSCAMERAAPP_RES_FILE, IDS_CAMERA_PHOTO_MODE, IDS_CAMERA_PHOTO_MODE, NULL, NULL);
             #endif
 			if(pMe->m_bIsbackMed)
@@ -712,7 +712,7 @@ static boolean CameraApp_MainMenuHandleEvent(CCameraApp *pMe, AEEEvent eCode, ui
             {
             	case IDS_VIDEO_CAMERA:
                 case IDS_ITEM_CAMERA: 
-#if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T)||defined(FEATURE_VERSION_K212_VHOPE)
+#if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T)||defined(FEATURE_VERSION_K212_VHOPE)|| defined(FEATURE_VERSION_K232_Y100A)
                     {
                       boolean cameraphotopath = FALSE;
                       OEM_GetConfig(CFGI_CAMERA_PHOTO_MODE,&cameraphotopath, sizeof(cameraphotopath));
@@ -765,7 +765,7 @@ static boolean CameraApp_MainMenuHandleEvent(CCameraApp *pMe, AEEEvent eCode, ui
                     pMe->m_nMainMenuItemSel = IDS_ITEM_CAMERA_GALLERY;
                     CMediaGallery_FileExplorer(GALLERY_PHOTO_BROWSE, NULL);
                     break;
-#if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_K212_VHOPE)                 
+#if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_K212_VHOPE)|| defined(FEATURE_VERSION_K232_Y100A)                 
                 case IDS_CAMERA_PHOTO_MODE:
                     pMe->m_nMainMenuItemSel = IDS_CAMERA_PHOTO_MODE;
                     MSG_FATAL("IDS_CAMERA_PHOTO_MODE-------------",0,0,0);

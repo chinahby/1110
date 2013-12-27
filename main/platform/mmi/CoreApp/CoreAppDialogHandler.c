@@ -4790,7 +4790,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                                       CoreApp_SearchingTimer,
                                       pMe);
 			 AEE_CancelTimer((PFNNOTIFY)CoreApp_DrawUpdate,pMe);
-             #if defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_1110W516)|| defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_C316)|| defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)|| defined(FEATURE_VERSION_IC241A_MMX)//|| defined(FEATURE_VERSION_K212)
+             #if defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_1110W516)|| defined(FEATURE_VERSION_W027)|| defined(FEATURE_VERSION_C316)|| defined(FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)|| defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)//|| defined(FEATURE_VERSION_K212)
              IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
              #endif
 //Add by pyuangui 20121220			 

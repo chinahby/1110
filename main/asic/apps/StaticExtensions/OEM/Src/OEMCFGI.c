@@ -2211,8 +2211,6 @@ static OEMConfigListType oemi_cache = {
 	  // liyz add for test @131202
 #ifdef FEATURE_IC19_ESN_TRACKER
 	,{0}									  //CFGI_ESN_TRACKING_COMBINATION,
-#endif
-#if defined (FEATURE_VERSION_C260_IC19)
     ,{OEMNV_ESN_TRACK_NUM}     //CFGI_ESN_TRACK_NUMBER
     ,{OEMNV_ESN_TRACK_NUM_TWO}     //CFGI_ESN_TRACK_NUMBER_TWO
 #endif    
@@ -3377,7 +3375,7 @@ void OEM_RestoreFactorySetting( void )
     oemi_cache.sms_tarcker_time_uint = 240;                      //CFGI_SMS_TRACKER_TIME
 	#endif
     MEMCPY(oemi_cache.sms_tracker_number,OEMNV_DEFAULTNUMBER, OEMNV_LOCKMUM_MAXLEN/*FILESPECLEN*/); //CFGI_SMS_TRACKER_NUMBER
-#if defined (FEATURE_VERSION_C260_IC19)    
+#if defined (FEATURE_IC19_ESN_TRACKER)    
     MEMCPY(oemi_cache.m_esn_track_num,OEMNV_ESN_TRACK_NUM, OEMNV_LOCKMUM_MAXLEN/*FILESPECLEN*/); //CFGI_SMS_TRACKER_NUMBER
     MEMCPY(oemi_cache.m_esn_track_num_two,OEMNV_ESN_TRACK_NUM_TWO, OEMNV_LOCKMUM_MAXLEN/*FILESPECLEN*/); //CFGI_SMS_TRACKER_NUMBER_TWO
 #endif
@@ -3777,7 +3775,7 @@ void OEM_RestoreFactorySetting( void )
     nvi.set_date_format = NV_SET_DATE_FORMAT_YYYY_MM_DD_1;
     (void) OEMNV_Put( NV_SET_DATE_FORMAT_I, &nvi);
     nvi_cache.set_date_format = (byte)NV_SET_DATE_FORMAT_YYYY_MM_DD_1;
-#elif defined (FEATURE_VERSION_C260_IC19)    
+#elif defined (FEATURE_VERSION_C260_IC19) ||defined(FEATURE_VERSION_K232_Y100A)   
     nvi.set_date_format = NV_SET_DATE_FORMAT_DD_MM_YYYY;
     (void) OEMNV_Put( NV_SET_DATE_FORMAT_I, &nvi);
     nvi_cache.set_date_format = (byte)NV_SET_DATE_FORMAT_DD_MM_YYYY;

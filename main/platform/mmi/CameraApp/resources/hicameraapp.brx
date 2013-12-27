@@ -143,13 +143,13 @@
 		<Text>कैप्चर में विफल रहा</Text>
 	</String>
 	<String Id="1074" Name="IDS_CAMERA_PHOTO_MODE">
-		<Text>Photo Path</Text>
+		<Text>फोटो प</Text>
 	</String>
 	<String Id="1075" Name="IDS_CAMERA_PHOTO_PHONE">
-		<Text>Phone</Text>
+		<Text>फ़ो</Text>
 	</String>
 	<String Id="1076" Name="IDS_CAMERA_PHOTO_TFCARD">
-		<Text>memory card</Text>
+		<Text>स्मृति </Text>
 	</String>
 	<String Id="1077" Name="IDS_CAMERA_RECORD_FAILED">
 		<Text>रिकॉर्ड में विफल रहा है</Text>

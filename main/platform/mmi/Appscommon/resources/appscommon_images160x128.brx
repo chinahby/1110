@@ -184,6 +184,12 @@
 	<Object Id="5416" Name="IDB_MODE_T9_RAPID_THAI" MimeType="image/png">
 		<File>..\images\160x128\common\IME\T9th.png</File>
 	</Object>
+	<Object Id="5417" Name="IDB_MODE_T9_MT_HINDI" MimeType="image/png">
+		<File>..\images\160x128\common\IME\hi.png</File>
+	</Object>
+	<Object Id="5418" Name="IDB_MODE_T9_RAPID_HINDI" MimeType="image/png">
+		<File>..\images\160x128\common\IME\zihi.png</File>
+	</Object>
 	<Object Id="5426" Name="IDB_EDIT_UP_DOWN_BMP" MimeType="image/png">
 		<File>..\images\160x128\common\IME\arrow.png</File>
 	</Object>
@@ -489,13 +495,13 @@
 	</Object>
 	<Object Id="7045" Name="IDB_QQMSG">
 		<File>..\images\128x160\common\Annunciator\qqmsg.bmp</File>
-	</Object>	
+	</Object>
 	<Object Id="7046" Name="IDB_QQHIDING">
 		<File>..\images\128x160\common\Annunciator\qqhiding.bmp</File>
 	</Object>
 	<Object Id="7047" Name="IDB_QQLEAVE">
 		<File>..\images\128x160\common\Annunciator\qqleave.bmp</File>
-	</Object>			
+	</Object>
 	<Object Id="7101" Name="IDB_MMS_ENTER" MimeType="image/png">
 		<File>..\images\160x128\common\Appscommon\Icon\enter.png</File>
 	</Object>

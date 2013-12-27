@@ -1099,10 +1099,11 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
 #else
             IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_RECORDER, IDS_MULTIMEDIA_RECORDER, NULL, 0);
 #endif
-
+#if !defined(FEATURE_VERSION_K232_Y100)&&!defined(FEATURE_VERSION_K232_Y100A)
 #ifdef FEATURE_APP_MPEG4
 #if !defined(FEATURE_PEKTEST)
 		IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_VIDEOPLAYER, IDS_MULTIMEDIA_VIDEOPLAYER, NULL, 0);
+#endif
 #endif
 #endif
 #ifdef FEATURE_ANALOG_TV
@@ -1111,7 +1112,7 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
 #if defined (FEATURE_VERSION_VG68) ||defined(FEATURE_VERSION_C01)
             IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_MEDIAGALLERY,IDS_MULTIMEDIA_MEDIAGALLERY, NULL, 0);
 #endif
-
+#if !defined(FEATURE_VERSION_K232_Y100)&&!defined(FEATURE_VERSION_K232_Y100A)
 #if defined (FEATURE_BREW_CAMERA)&&defined(FEATURE_MOVIE_RECORD_SUPPORT)
 #ifdef FEATURE_APP_MPEG4
 #if !defined(FEATURE_PEKTEST)
@@ -1119,7 +1120,7 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
 #endif
 #endif/*FEATURE_APP_MPEG4*/
 #endif
-
+#endif
 #if defined(FEATURE_VERSION_K212) ||defined(FEATURE_VERSION_K212_HUALU)
 			IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_GAME, IDS_MULTIMEDIA_GAME, NULL, 0);
 #endif

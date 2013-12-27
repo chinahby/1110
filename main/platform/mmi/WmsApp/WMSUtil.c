@@ -37,7 +37,7 @@
 #include "recentcalls.h"
 #include "mobile.h"
 
-#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX) || defined(FEATURE_OEMOMH)
 #include "AEECARDSESSION_NOTIFIER.BID"
 #include "AEECARDSESSION.BID"
 #include "AEECardSession.h"

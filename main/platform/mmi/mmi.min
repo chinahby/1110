@@ -179,11 +179,14 @@ include $(FRENDUO)/frenduo.min
 endif
 
 ifeq ($(USES_INDEXZONE),yes)
+ifneq ($(USES_RESDIR),Y100)
 include $(INDEXZONE)/indexzone.min
 endif
-
+endif
+ifneq ($(USES_RESDIR),Y100)
 ifeq ($(USES_SERVICE),yes)
 include $(SERVICE)/service.min
+endif
 endif
 ifneq ($(USES_RESDIR),hualu)
 ifneq ($(USES_RESDIR),VHOPE)
@@ -233,7 +236,8 @@ include $(QQ)/qq.min
 endif
 
 ifeq ($(USES_MOBILETRACKER),yes)
+ifneq ($(USES_RESDIR),Y100)
 include $(MOBILETRACKER)/mobileTracker.min
 endif
-
+endif
 #include $(MMIDIR)/Extend/Extend.min

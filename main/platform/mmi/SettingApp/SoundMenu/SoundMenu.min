@@ -506,6 +506,15 @@ else
             midi_03.mid|fs:/ringers/midi_03.mid \
             midi_04.mid|fs:/ringers/midi_04.mid \
             midi_05.mid|fs:/ringers/midi_05.mid  
+  else ifeq ($(USES_RESDIR),Y100)                                           
+        CONSTFILE_FILES+=\
+            alarm_default.mid|fs:/ringers/alarm_default.mid \
+            alarm_01.mid|fs:/ringers/alarm_01.mid \
+            midi_01.mid|fs:/ringers/midi_01.mid \
+            midi_02.mid|fs:/ringers/midi_02.mid \
+            midi_03.mid|fs:/ringers/midi_03.mid \
+            midi_04.mid|fs:/ringers/midi_04.mid \
+            midi_05.mid|fs:/ringers/midi_05.mid  
 	else ifeq ($(USES_RESDIR),C260_IC19)                                           
         CONSTFILE_FILES+=\
             alarm_default.mid|fs:/ringers/alarm_default.mid \

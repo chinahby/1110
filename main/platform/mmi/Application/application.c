@@ -1482,8 +1482,10 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
 #endif
 #ifdef FEATURE_VERSION_C316
 #else
+#if !defined(FEATURE_VERSION_K232_Y100)&&!defined(FEATURE_VERSION_K232_Y100A)
 #ifdef	FEATURE_APP_BLUETOOTH  //add by yangdecai
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_BLUETOOTH, IDS_APPLICATION_BLUETOOTH, NULL, 0); 
+#endif
 #endif
 #endif
 

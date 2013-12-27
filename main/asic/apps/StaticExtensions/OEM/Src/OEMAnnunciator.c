@@ -739,7 +739,7 @@ static OEMAnnun_data Annunciators[] =
   {ANNUN_FIELD_WAP,                 ANNUN_ICON_POSITION_2,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &wap_content},     
  // {ANNUN_FIELD_QQ,               ANNUN_ICON_POSITION_3,      ROW1_Y,  IMG_WIDTH,       IMG_HEIGHT,  &qq_content},  
 
-#if (defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX))
+#if (defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A))
   {ANNUN_FIELD_TCARD, 			    ANNUN_ICON_POSITION_3,	 ROW1_Y,  IMG_WIDTH,	  IMG_HEIGHT,  &tcard_content}, 
 #else  
   {ANNUN_FIELD_LOCKSTATUS,          ANNUN_ICON_POSITION_3,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &lockstatus_content},
@@ -2632,7 +2632,7 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
 					//DBGPRINTF("***zzg bgRect:%d,%d,%d,%d***", bgRect.x, bgRect.y, bgRect.dx, bgRect.dy);
 
 					
-					#if defined(FEATURE_VERSION_C337)  || defined(FEATURE_VERSION_IC241A_MMX)//||defined(FEATURE_LOW_MEM_BIGFONT)//|| defined(FEATURE_VERSION_K212)
+					#if defined(FEATURE_VERSION_C337)  || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)//||defined(FEATURE_LOW_MEM_BIGFONT)//|| defined(FEATURE_VERSION_K212)
 					{
 						IImage      *pBarImg = NULL;
 
@@ -2662,7 +2662,7 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
 	                rc.dx = SCREEN_WIDTH;
 	                rc.dy = STATEBAR_HEIGHT;
                     
-					#if defined(FEATURE_VERSION_C337) || defined(FEATURE_WHITE_BG) || defined(FEATURE_VERSION_IC241A_MMX)    
+					#if defined(FEATURE_VERSION_C337) || defined(FEATURE_WHITE_BG) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K232_Y100A)    
                     #ifdef FEATURE_VERSION_IN50_MMX
                     IDISPLAY_SetColor(pMe->m_coreObj->m_piDisplay, CLR_USER_TEXT, RGB_WHITE);
                     #else
