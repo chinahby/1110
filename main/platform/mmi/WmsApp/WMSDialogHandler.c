@@ -1272,7 +1272,7 @@ static boolean IDD_MAIN_Handler(void        *pUser,
 			
 		case EVT_KEY_HELD:
             
-        #if defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_12832)
+        #if defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K212)||defined(FEATURE_VERSION_K212_12832)||defined(FEATURE_VERSION_K232_X3)
            if((AVKType)wParam == AVK_SELECT)
             {
                 boolean TorchOn = FALSE;
@@ -3635,7 +3635,7 @@ static boolean IDD_SETTING_Handler(void   *pUser,
     &&!defined(FEATURE_VERSION_W021_CT100)&&!defined(FEATURE_VERSION_K212)\
     &&!defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_VERSION_K212_20D)\
     &&!defined(FEATURE_VERSION_K212_ND)&&!defined(FEATURE_VERSION_W021_CT100_QVGA)\
-    &&!defined(FEATURE_VERSION_W021_C11)&&!defined(FEATURE_VERSION_W516_C260)&&!defined(FEATURE_VERSION_K212_HUALU)\
+    &&!defined(FEATURE_VERSION_W021_C11)&&!defined(FEATURE_VERSION_W516_C260)&&!defined(FEATURE_VERSION_K212_HUALU)&&!defined(FEATURE_VERSION_K232_X3)\
     &&!defined(FEATURE_VERSION_K292)
             MENU_ADDITEM(pMenu, IDS_CALLBACKNUM);
 #endif
@@ -3704,7 +3704,7 @@ static boolean IDD_SETTING_Handler(void   *pUser,
 #if 1//def FEATURE_CARRIER_TAIWAN_APBW        //add by yangdecai   2010-08-23 
                 // 发出短信是否带回叫号码
                 MSG_FATAL("IDD_SETTING_Handler EVT_COMMAND IDS_CALLBACKNUM", 0, 0, 0);
-#if !defined(FEATURE_VERSION_C316)&&!defined(FEATURE_VERSION_K202_LM129C)&&!defined(FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_VERSION_K212_20D)&&!defined(FEATURE_VERSION_K212_ND)&&!defined(FEATURE_VERSION_K212_HUALU)&&!defined(FEATURE_VERSION_W516_C260)&&!defined(FEATURE_VERSION_K292)
+#if !defined(FEATURE_VERSION_C316)&&!defined(FEATURE_VERSION_K202_LM129C)&&!defined(FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_EC99)&&!defined(FEATURE_VERSION_K212_20D)&&!defined(FEATURE_VERSION_K212_ND)&&!defined(FEATURE_VERSION_K212_HUALU)&&!defined(FEATURE_VERSION_W516_C260)&&!defined(FEATURE_VERSION_K232_X3)&&!defined(FEATURE_VERSION_K292)
                 case IDS_CALLBACKNUM:
                     CLOSE_DIALOG(DLGRET_CALLBACKNUM)
                     return TRUE;
@@ -5469,7 +5469,7 @@ static boolean IDD_SENDMODE_Handler(void *pUser,
             // 菜单项初始化
             MENU_ADDITEM(pMenu, IDS_SENDANDSAVE);
             MENU_ADDITEM(pMenu, IDS_SENDONLY);
-#if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_K212_HUALU)
+#if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_K212_HUALU)&&!defined(FEATURE_VERSION_K232_X3)
 #ifndef FEATURE_VERSION_K212_ND
 #ifndef FEATURE_VERSION_W516_C260
 #ifndef FEATURE_VERSION_K292
@@ -11315,7 +11315,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 					(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_PINYIN);	
 		         	#elif defined(FEATURE_VERSION_K202_LM129C)
 					(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_PINYIN);
-					#elif defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_HUALU) 
+					#elif defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_HUALU) ||defined(FEATURE_VERSION_K232_X3)
 					{
 						//nInputMode = ITEXTCTL_GetInputMode (pIText, NULL);
 						(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_PINYIN);
@@ -12180,7 +12180,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 #endif                       
                         MENU_ADDITEM(pMe->m_pMenu, IDS_INSERTTEMPLATES);
 						MENU_ADDITEM(pMe->m_pMenu, IDS_SAVETODRAFT);	//Add By zzg 2010_09_11		
-						#if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_K212_HUALU)
+						#if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_K212_HUALU)&&!defined(FEATURE_VERSION_K232_X3)
                         MENU_ADDITEM(pMe->m_pMenu, IDS_SAVEASPRESET);
 						#endif
                         MENU_ADDITEM(pMe->m_pMenu, IDS_EXIT_EDITOR);
@@ -13479,7 +13479,7 @@ static boolean IDD_MSGOPTS_Handler(void *pUser,
 #endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH
                     MENU_ADDITEM(pMenu, IDS_SEND);
                     //MENU_ADDITEM(pMenu, IDS_EDIT);
-                    #if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_K212_HUALU)
+                    #if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_K212_HUALU)&&!defined(FEATURE_VERSION_K232_X3)
                     MENU_ADDITEM(pMenu, IDS_ADDNEW);
                     if (pMe->m_wCurTemplate>=MSG_CMD_BASE)
                     {
@@ -13831,7 +13831,7 @@ static boolean IDD_MSGOPTS_Handler(void *pUser,
                 case IDS_EDIT:
                     CLOSE_DIALOG(DLGRET_EDIT)
                     return TRUE;
-#if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_K212_HUALU)
+#if !defined(FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_K212_HUALU)&&!defined(FEATURE_VERSION_K232_X3)
                 case IDS_ADDNEW:
                     CLOSE_DIALOG(DLGRET_ADDNEW)
                     return TRUE;
@@ -18897,11 +18897,20 @@ static boolean	IDD_WMSNEWMSG_Handler(void *pUser,
                                     
                     WSPRINTF(wstrText, sizeof(wstrText), wstrFMT, nNewsSMS);
                 }
-  
                 Msg_Param.ePMsgType = MESSAGE_INFORMATION;
                 Msg_Param.pwszMsg = wstrText;
-                Msg_Param.eBBarType = BTBAR_READ_BACK;
 
+				// add by pyuangui 201312277
+				#ifdef FEATURE_VERSION_K232_X3
+				if (OEMKeyguard_IsEnabled())
+				{
+                   Msg_Param.eBBarType = BTBAR_UNLOCK_L;
+			    }  
+				else
+				#endif	
+				{
+                   Msg_Param.eBBarType = BTBAR_READ_BACK;
+				}
                 if(pDevBmp != NULL)
                 {
                     IDISPLAY_BitBlt(pMe->m_pDisplay, 0, 0, pMe->m_rc.dx, pMe->m_rc.dy, 
@@ -18942,7 +18951,8 @@ static boolean	IDD_WMSNEWMSG_Handler(void *pUser,
 			{
 				
 				switch(wParam)
-            	{
+            	{   
+            	    #ifndef FEATURE_VERSION_K232_X3
 					case AVK_CLR:
 		            case AVK_END:
 						{
@@ -18950,6 +18960,7 @@ static boolean	IDD_WMSNEWMSG_Handler(void *pUser,
                     		return TRUE;
 						}
 						break;
+					#endif	
 					case AVK_SELECT:
 						{
 							CLOSE_DIALOG(DLGRET_SMSVIEWS)
