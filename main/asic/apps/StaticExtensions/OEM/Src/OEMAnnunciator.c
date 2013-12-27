@@ -212,10 +212,10 @@ typedef struct {
 #endif
 #if defined( FEATURE_VERSION_K212)||defined(FEATURE_LOW_MEM_BIGFONT)
   {ANNUN_STATE_RSSI_NO_SERV, IDB_NO_SERVICE, NULL},
-  {ANNUN_STATE_RSSI_0, IDB_RSSI4, NULL},
-  {ANNUN_STATE_RSSI_1, IDB_RSSI4, NULL},
-  {ANNUN_STATE_RSSI_2, IDB_RSSI4, NULL},
-  {ANNUN_STATE_RSSI_3, IDB_RSSI4, NULL},
+  {ANNUN_STATE_RSSI_0, IDB_RSSI0, NULL},
+  {ANNUN_STATE_RSSI_1, IDB_RSSI1, NULL},
+  {ANNUN_STATE_RSSI_2, IDB_RSSI2, NULL},
+  {ANNUN_STATE_RSSI_3, IDB_RSSI3, NULL},
   {ANNUN_STATE_RSSI_4, IDB_RSSI4, NULL},  
 #else
   {ANNUN_STATE_RSSI_NO_SERV, IDB_NO_SERVICE, NULL},
@@ -2117,7 +2117,7 @@ static int IAnnunciator_SetFieldText(IAnnunciator * pMe ,uint16 *cText, boolean 
 	{
       return EFAILED;
     }
-#if !defined( FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_K212_HUALU)&&!defined(FEATURE_VERSION_K232_JST)
+#if !defined( FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_K212_HUALU)&&!defined(FEATURE_VERSION_K232_JST)&&!defined(FEATURE_VERSION_K232_X3)
     if(cText)
     {
 	    WSTRLCPY(IAnnunCoreObj->m_Title, cText, ANN_TEXT_MAX_LEN);
@@ -2484,7 +2484,7 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
 #endif        
 
         //MSG_FATAL("***zzg OEMAnnunciator m_bActive=%d, m_hasTitleText=%d***", IAnnunCoreObj->m_bActive, IAnnunCoreObj->m_hasTitleText, 0);
-#if !defined( FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_K212_HUALU)&&!defined(FEATURE_VERSION_K232_JST)
+#if !defined( FEATURE_VERSION_K212)&&!defined(FEATURE_VERSION_K212_HUALU)&&!defined(FEATURE_VERSION_K232_JST)&&!defined(FEATURE_VERSION_K232_X3)
 	    if(!IAnnunCoreObj->m_bActive)
 		{			
 			/*
