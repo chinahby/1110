@@ -524,5 +524,11 @@
 	<Object Id="7108" Name="IDB_3G_RSSI4">
 		<File>..\images\220x176\common\Annunciator\rssi4_3g.bmp</File>
 	</Object>
+	<Object Id="7109" Name="IDI_SPACE_BLACK" MimeType="image/png">
+		<File>..\images\220x176\common\Appscommon\Icon\space_black.png</File>
+	</Object>
+	<Object Id="7110" Name="IDI_ENTER_BLACK" MimeType="image/png">
+		<File>..\images\220x176\common\Appscommon\Icon\enter_black.png</File>
+	</Object>
 </Objects>
 </BREWRes>

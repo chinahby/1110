@@ -574,5 +574,11 @@
 	<Object Id="7111" Name="IDB_BATT5_4">
 		<File>..\images\176x220\common\Annunciator\batt5_4.bmp</File>
 	</Object>
+	<Object Id="7112" Name="IDI_SPACE_BLACK" MimeType="image/png">
+		<File>..\images\176x220\common\Appscommon\Icon\space_black.png</File>
+	</Object>
+	<Object Id="7113" Name="IDI_ENTER_BLACK" MimeType="image/png">
+		<File>..\images\176x220\common\Appscommon\Icon\enter_black.png</File>
+	</Object>
 </Objects>
 </BREWRes>

@@ -4102,7 +4102,7 @@ static void TextCtl_ShowSymbolPage(CTextCtl * pme, int nDir)
            // IDISPLAY_DrawText(pd, AEE_FONT_NORMAL, szbuf, -1, rc.x+10, y, NULL,IDF_TEXT_TRANSPARENT/*0*/);
               IImage *enterImg; 
               enterImg = NULL;   
-#if defined (FEATURE_DISP_128X160)
+#if defined (FEATURE_DISP_128X160) || defined (FEATURE_DISP_240X320)
             if(pme->m_dwProps & TP_GRAPHIC_BG)
            {
                 enterImg = ISHELL_LoadResImage(pme->m_pIShell,
@@ -4135,7 +4135,7 @@ static void TextCtl_ShowSymbolPage(CTextCtl * pme, int nDir)
             //IDISPLAY_DrawText(pd, AEE_FONT_NORMAL, szbuf, -1, rc.x+10, y, NULL,IDF_TEXT_TRANSPARENT/*0*/);
              IImage *spaceImg; 
               spaceImg = NULL;   
-#if defined (FEATURE_DISP_128X160)
+#if defined (FEATURE_DISP_128X160) || defined (FEATURE_DISP_240X320)
             if(pme->m_dwProps & TP_GRAPHIC_BG)
            {
                 spaceImg = ISHELL_LoadResImage(pme->m_pIShell,

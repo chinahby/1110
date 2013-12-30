@@ -32,7 +32,7 @@
 		<File>..\images\240x320\common\QuickTest\down.png</File>
 	</Object>
 	<Object Id="5014" Name="IDB_PROMPT_MSG_STATIC_BG">
-		<File>..\images\240x320\common\Appscommon\MessageBox\background_static.png</File>
+		<File>..\images\240x320\common\Appscommon\MessageBox\background_static.bmp</File>
 	</Object>
 	<Object Id="5015" Name="IDB_MAINMENU_BG" MimeType="image/png">
 		<File>..\images\240x320\common\Appscommon\Menu\background\background.png</File>
@@ -528,6 +528,12 @@
 	</Object>
 	<Object Id="9113" Name="IDB_MMS_UNRECEIVED">
 		<File>..\images\240x320\common\Annunciator\mms_unreceived.bmp</File>
+	</Object>
+	<Object Id="9114" Name="IDI_SPACE_BLACK" MimeType="image/png">
+		<File>..\images\240x320\common\Appscommon\Icon\space_black.png</File>
+	</Object>
+	<Object Id="9115" Name="IDI_ENTER_BLACK" MimeType="image/png">
+		<File>..\images\240x320\common\Appscommon\Icon\enter_black.png</File>
 	</Object>
 </Objects>
 </BREWRes>

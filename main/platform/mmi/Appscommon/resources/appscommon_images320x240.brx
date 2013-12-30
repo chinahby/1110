@@ -424,5 +424,11 @@
 	<Object Id="7102" Name="IDB_MMS_SPACE" MimeType="image/png">
 		<File>..\images\320x240\common\Appscommon\Icon\space.png</File>
 	</Object>
+	<Object Id="7103" Name="IDI_SPACE_BLACK" MimeType="image/png">
+		<File>..\images\320x240\common\Appscommon\Icon\space_black.png</File>
+	</Object>
+	<Object Id="7104" Name="IDI_ENTER_BLACK" MimeType="image/png">
+		<File>..\images\320x240\common\Appscommon\Icon\enter_black.png</File>
+	</Object>
 </Objects>
 </BREWRes>
