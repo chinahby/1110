@@ -40,6 +40,7 @@ extern boolean disp_st7735r_tft177(disp_drv_ic_type *pdispic);
 extern boolean disp_st7735s_tft177(disp_drv_ic_type * pdispic);
 extern boolean disp_gc9101_tft177(disp_drv_ic_type *pdispic);
 extern boolean disp_zc948_tft177(disp_drv_ic_type *pdispic);
+extern boolean disp_NV3021_tft177(disp_drv_ic_type *pdispic);
 
 /*============================================================================
 
@@ -58,6 +59,7 @@ static disp_ic_install_type     disp_ic_install[] =
     disp_st7735s_tft177,
     disp_st7735r_tft177,//默认驱动，需放到最后，并且不检查IC的ID    
     disp_zc948_tft177,
+    disp_NV3021_tft177,
     disp_ili9163c_tft177,
     NULL
 };
