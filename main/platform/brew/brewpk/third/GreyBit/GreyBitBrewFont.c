@@ -308,9 +308,15 @@ static boolean GetCombineOffSet(IFont *pMe, uint16 ch1, uint16 ch2, int *pOff)
     return bRet;
 }
 #ifndef FEATURE_DISP_128X160
+#if defined (FEATURE_VERSION_IN50A)
 #define NEW_SIZE  30   //17
 #define MATH_FACTOR_BIT         10
 //#define SCALE_V_ONLY 
+#else
+#define NEW_SIZE  17
+#define MATH_FACTOR_BIT         10
+#define SCALE_V_ONLY 
+#endif
 #endif
 //#include "err.h"
 static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, int nChars,
