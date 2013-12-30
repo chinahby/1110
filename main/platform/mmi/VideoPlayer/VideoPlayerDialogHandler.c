@@ -1753,9 +1753,11 @@ static  void VideoPlayer_PlayNext(CVideoPlayer *pMe, boolean bDirection)
     MGFileInfo  pInfo;
     
     videoID=VideoPlayer_GetFileID(pMe);
+    
     //video放置在指定文件夹外
-    MSG_FATAL("videoID=%d,pMe->m_RecordCount=%d",videoID,pMe->m_RecordCount,0);
-    MSG_FATAL("pMe->IsPause=%d,pMe->UserStop=%d",pMe->IsPause,pMe->UserStop,0);
+    MSG_FATAL("***zzg VideoPlayer_PlayNext videoID=%d, pMe->m_RecordCount=%d***",videoID,pMe->m_RecordCount,0);
+    MSG_FATAL("***zzg VideoPlayer_PlayNext pMe->IsPause=%d, pMe->UserStop=%d***",pMe->IsPause,pMe->UserStop,0);
+    
     if(videoID >= pMe->m_RecordCount)
     {  
         return ;
@@ -1795,6 +1797,24 @@ static  void VideoPlayer_PlayNext(CVideoPlayer *pMe, boolean bDirection)
                 // 如果当前视频为播放状态,则下一首视频也直接置为播放状态;不是,则手动播放                
                
                 VideoPlayer_PlayVideo(pMe); 
+
+                MSG_FATAL("***zzg VideoPlayer_PlayNext 1 VideoCount pMe->IsPause=%d, pMe->UserStop=%d***",pMe->IsPause,pMe->UserStop,0);
+
+                //视频播放器/存储卡上选择一视频加载完成后，
+                //播放界面按ok键选择暂停在选择停止，
+                //然后按右方向键切换到下个视频，无法选择播放和Gallery功能，
+                //该界面来电拒接后就会提示：播放失败                
+#if defined (FEATURE_VERSION_IN50A)     
+                //延时200MS，不然IMedia_Stop失败
+                MSLEEP(200); 
+
+                //IN50A先测试性的修改，因为是播放下一首，所以如果之前是Pause或UserStop
+                //不需要使用Pause,而是直接Stop.
+                if ((pMe->IsPause) || (pMe->UserStop))
+                {
+                    IMedia_Stop((IMedia*)pMe->m_pMedia);                    
+                }
+#else
                 if(pMe->IsPause)
                 {
                     IMedia_Pause((IMedia*)pMe->m_pMedia);                    
@@ -1803,6 +1823,8 @@ static  void VideoPlayer_PlayNext(CVideoPlayer *pMe, boolean bDirection)
                 {
                     IMedia_Stop((IMedia*)pMe->m_pMedia);                   
                 }
+#endif                
+                
                 if(!pMe->IsFullScreen)
                 {
                     if(pMe->m_PlayFailed == SUCCESS)
@@ -1854,6 +1876,24 @@ static  void VideoPlayer_PlayNext(CVideoPlayer *pMe, boolean bDirection)
                 // 如果当前视频为播放状态,则下一首视频也直接置为播放状态;不是,则手动播放                
                
                 VideoPlayer_PlayVideo(pMe); 
+
+                MSG_FATAL("***zzg VideoPlayer_PlayNext many VideoCount pMe->IsPause=%d, pMe->UserStop=%d***",pMe->IsPause,pMe->UserStop,0);
+
+                //视频播放器/存储卡上选择一视频加载完成后，
+                //播放界面按ok键选择暂停在选择停止，
+                //然后按右方向键切换到下个视频，无法选择播放和Gallery功能，
+                //该界面来电拒接后就会提示：播放失败                
+#if defined (FEATURE_VERSION_IN50A)     
+                //延时200MS，不然IMedia_Stop失败
+                MSLEEP(200); 
+
+                //IN50A先测试性的修改，因为是播放下一首，所以如果之前是Pause或UserStop
+                //不需要使用Pause,而是直接Stop.
+                if ((pMe->IsPause) || (pMe->UserStop))
+                {
+                    IMedia_Stop((IMedia*)pMe->m_pMedia);                    
+                }
+#else
                 if(pMe->IsPause)
                 {
                     IMedia_Pause((IMedia*)pMe->m_pMedia);                    
@@ -1862,6 +1902,8 @@ static  void VideoPlayer_PlayNext(CVideoPlayer *pMe, boolean bDirection)
                 {
                     IMedia_Stop((IMedia*)pMe->m_pMedia);                   
                 }
+#endif  
+                                   
                 if(pMe->IsFullScreen)
                 {
 					//MMD_LCDRotate(0);
