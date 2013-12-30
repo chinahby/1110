@@ -11352,11 +11352,19 @@ static void CallApp_Draw_Connect_Number_and_Name(CCallApp *pMe)
                                     szText,
                                     sizeof(szText));		
         bWidth = IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL,szText);	
+#ifdef FEATURE_VERSION_IN50A
+        SETAEERECT(&rect,
+                                                pMe->m_rc.dx-bWidth-2,
+                                                CALL_SECOND_LINE_Y+CALL_LINE_HIGHT*3+2,
+                                                CALL_TEXT_DX + 4,
+                                                CALL_LINE_HIGHT);	
+#else
         SETAEERECT(&rect,
                                                 pMe->m_rc.dx-bWidth-2,
                                                 CALL_SECOND_LINE_Y+CALL_LINE_HIGHT*2+2,
                                                 CALL_TEXT_DX + 4,
                                                 3*CALL_LINE_HIGHT);	
+#endif
         IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, CALLAPP_TEXT_COLOR);
         
         (void)IDISPLAY_DrawText(pMe->m_pDisplay,
