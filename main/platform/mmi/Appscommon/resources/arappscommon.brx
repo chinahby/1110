@@ -352,5 +352,14 @@
 	<STRING Id="2018" Name="IDS_RECENTCALLS">
 		<Text>المكالمات الأخيرة</Text>
 	</STRING>
+	<STRING Id="2019" Name="IDS_OPTION_EX">
+		<Text>خيار</Text>
+	</STRING>
+	<String Id="2020" Name="IDS_OPTION_Y100A">
+		<Text>خيار</Text>
+	</String>
+	<String Id="2021" Name="IDS_TODAY_Y100A">
+		<Text>اليوم</Text>
+	</String>
 </Strings>
 </BREWRes>

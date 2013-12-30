@@ -3155,7 +3155,7 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
 		return TRUE;
 	 }        
 
-	#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_IC241A_MMX)
+	#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316) || (defined(FEATURE_VERSION_IC241A_MMX) && !defined(FEATURE_VERSION_IN50A))
 	case AVK_POUND:
 	#elif defined(FEATURE_VERSION_K202_LM129C) //compatiable with lm126c
 	case AVK_POUND:
@@ -3205,7 +3205,7 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
          IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);//wlh 20090415 mod true -> false
          return TRUE;
 
-	#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316) || defined(FEATURE_VERSION_IC241A_MMX)
+	#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316) || (defined(FEATURE_VERSION_IC241A_MMX) && !defined(FEATURE_VERSION_IN50A))
 	case AVK_STAR:
 	#elif defined(FEATURE_VERSION_K202_LM129C) //compatiable with lm126c
 	case AVK_STAR:
@@ -3384,7 +3384,7 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
 #endif				
         return TRUE;
 
-#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined (FEATURE_VERSION_C337) || (defined(FEATURE_VERSION_IC241A_MMX) && !defined(FEATURE_VERSION_IN50A))
 	case AVK_DOWN:	
 #else
 	case AVK_CLR:	
@@ -3445,6 +3445,13 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
        }
 #endif       
 #endif
+
+#if defined (FEATURE_VERSION_IN50A)
+       else
+       {
+          CLOSE_DIALOG(DLGRET_CANCELED);
+       }
+#endif
 	   return TRUE;
 	#ifdef FEATURE_VERSION_K212_HUALU
 	case AVK_0:
@@ -3484,7 +3491,7 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
 		return TRUE;
 #endif
 	   
-#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined (FEATURE_VERSION_C337) || (defined(FEATURE_VERSION_IC241A_MMX) && !defined(FEATURE_VERSION_IN50A))
 	case AVK_CLR:		
        if(pMe->m_bPlaying||pMe->m_bPaused)
        {
@@ -3526,7 +3533,7 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
 #endif
 	   
 
-#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_K202_LM129C) || defined(FEATURE_VERSION_IC241A_MMX)//xxzhen
+#if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_C316)||defined(FEATURE_VERSION_K202_LM129C) || (defined(FEATURE_VERSION_IC241A_MMX) && !defined(FEATURE_VERSION_IN50A))//xxzhen
 #else
     case AVK_POUND:
         if(pMe->m_bPlaying && pMe->m_pMedia)
@@ -3581,7 +3588,7 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
 #endif
 
 	//Add By zzg 2012_11_10
-#if defined (FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined (FEATURE_VERSION_C337) || (defined(FEATURE_VERSION_IC241A_MMX) && !defined(FEATURE_VERSION_IN50A))
 	case AVK_UP:
 	{
 		switch (pMe->m_nPlayMode)

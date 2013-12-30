@@ -862,7 +862,7 @@ int CContApp_BuildAddMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
         return EFAILED;
      }  
 	
-	#if defined(FEATURE_VERSION_K212) ||defined(FEATURE_LOW_MEM_BIGFONT)||defined(FEATURE_VERSION_W021_C11)
+	#if defined(FEATURE_VERSION_K212) ||defined(FEATURE_LOW_MEM_BIGFONT)||defined(FEATURE_VERSION_W021_C11)||defined(FEATURE_VERSION_IN50A)
     #else
     ai.wItemID   = IDI_ADDNEW_MENU_SELECTRINGTONE;
     ai.wImage    = IDB_RING;
@@ -1027,11 +1027,13 @@ int CContApp_BuildEditMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl, boolean bAll)
            
            #ifndef FEATURE_VERSION_K212
 		   #ifndef FEATURE_LOW_MEM_BIGFONT
+           #ifndef FEATURE_VERSION_IN50A
            //ai.wText       = IDS_RING;
            ai.wItemID   = IDI_EDIT_MENU_RINGTONE;
            ai.wImage    = IDB_RING;
            #endif  
 		   #endif
+           #endif
            if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
            {
                FARF(ADDR, ("Failed to Add Opts item %d", ai.wItemID));
@@ -1287,6 +1289,7 @@ int CContApp_BuildEditMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl, boolean bAll)
 
             #ifndef FEATURE_VERSION_K212
 			#ifndef FEATURE_LOW_MEM_BIGFONT
+            #ifndef FEATURE_VERSION_IN50A
 
                 // ringtone     
                 if (pMe->m_nRingToneID && pMe->m_nRingToneID[0] != (AECHAR)'\0')
@@ -1322,8 +1325,9 @@ int CContApp_BuildEditMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl, boolean bAll)
                     }
                     IMENUCTL_SetItemText(pMenuCtl, IDI_EDIT_MENU_RINGTONE, NULL, 0, name);
                 }
-				#endif
-				#endif
+			#endif
+			#endif
+            #endif
             }
         }
     }

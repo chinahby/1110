@@ -28,6 +28,9 @@
 #include "AEEShell.h"
 #include "AEE_OEM.h"
 
+#include "OEMClassIDs.h"
+
+
 #define __RBMP_PURE_MEMORY_VERSION__
 
 #define SCREENWIDTH (512)
@@ -319,7 +322,7 @@ static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, i
     OEM_GetConfig(CFGI_LANGUAGE_SELECTION, &lang, sizeof(lang));
 
 #ifndef FEATURE_DISP_128X160
-    if (NV_LANGUAGE_ARABIC != lang)   
+    if ((NV_LANGUAGE_ARABIC != lang) || (AEE_Active() == AEECLSID_UCWEB))
     {
         int xSrc, i;
         byte xWidth, xWidthOrig, xxDisp, *sp, *pFontData;
@@ -1239,7 +1242,7 @@ static int OEMFont_MeasureText(IFont *pMe, const AECHAR *pcText, int nChars, int
     OEM_GetConfig(CFGI_LANGUAGE_SELECTION, &lang, sizeof(lang));
 
 #ifndef FEATURE_DISP_128X160
-    if (NV_LANGUAGE_ARABIC != lang)   
+    if ((NV_LANGUAGE_ARABIC != lang) || (AEE_Active() == AEECLSID_UCWEB))
     {
         int nRet = SUCCESS;
         int nRealStrLen, nFits, nTotalWidth = 0;
@@ -1782,11 +1785,17 @@ static void ArphicLineCursorMeasure (const AECHAR *pcText, int nChars,
 #ifdef FEATURE_DISP_128X160
       *curx = xstart + cursorpos;
 #else
+
+#ifdef FEATURE_VERSION_IN50A
+        *curx = (xstart + cursorpos);
+#else
 #ifdef SCALE_V_ONLY      
       *curx = (xstart + cursorpos);
 #else
 	  *curx = (xstart + cursorpos)*NEW_SIZE/14;
 #endif
+#endif
+    
 #endif
       if ( *curx < 0 )
          *curx = 0;

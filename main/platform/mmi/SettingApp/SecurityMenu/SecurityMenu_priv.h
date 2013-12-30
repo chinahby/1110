@@ -316,6 +316,8 @@ typedef struct _CSecurityMenu
     char                  *m_strPhonePWD;
     char                  m_strPIN[UIM_MAX_CHV_DIGITS + 1]; 
 	char                  *m_strPhoneNUM;
+
+    IBacklight          *m_pBacklight;       //背光接口指针
 } CSecurityMenu;
 
 

@@ -6016,6 +6016,8 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
+            IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
+            
             //pMe->IncomIsready = FALSE;
             pMe->m_cdg_row = 0;
             pMe->m_bincoming_rsk = IDS_MUTE;

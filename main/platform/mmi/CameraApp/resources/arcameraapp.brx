@@ -106,6 +106,18 @@
 	<String Id="1037" Name="IDS_CFG_RESET">
 		<Text>إعادة التعيين</Text>
 	</String>
+	<String Id="1038" Name="IDS_CFG_SCENEMODE">
+		<Text>الوضع المشهد</Text>
+	</String>
+	<String Id="1039" Name="IDS_CFG_IMAGEQUALITY">
+		<Text>جودة الصورة</Text>
+	</String>
+	<String Id="1040" Name="IDS_CFG_IMAGESIZE">
+		<Text>حجم الصورة</Text>
+	</String>
+	<String Id="1041" Name="IDS_CFG_SOUND">
+		<Text>مصراع الصوت</Text>
+	</String>
 	<String Id="1058" Name="IDS_NORMAL">
 		<Text>عادي</Text>
 	</String>
@@ -150,6 +162,9 @@
 	</String>
 	<String Id="1080" Name="IDS_CAMERA_SAVE_VIDEOFILE">
 		<Text>Save recorded file?</Text>
+	</String>
+	<String Id="1081" Name="IDS_ITEM_CAMERA1">
+		<Text>كاميرا</Text>
 	</String>
 </Strings>
 <Dialogs>

@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="stringres_id" VERSION="1">
+<BREWRes Name="arvideoplayer" VERSION="1">
 <Strings Encoding="Unicode">
-    <String Id="1" Name= "IDS_TITLE">
+    <String Id="1001" Name= "IDS_TITLE">
         <Text>مشغل الفيديو</Text>
     </String>
 
-    <String Id="2" Name= "IDS_DELETE">
+    <String Id="1004" Name= "IDS_DELETE">
         <Text>حذف</Text>
     </String>
 
-    <String Id="3" Name= "IDS_PLAYFAILED">
+    <String Id="1008" Name= "IDS_PLAYFAILED">
         <Text>فشل التشغيل</Text>
     </String>
 
-    <String Id="4" Name= "IDS_HELPTITLE">
+    <String Id="1012" Name= "IDS_HELPTITLE">
         <Text>تعليمات</Text>
     </String>
 
-    <String Id="5" Name= "IDS_HELP">
+    <String Id="1013" Name= "IDS_HELP">
         <Text>"المفتاح لأعلى ولأسفل: ضبط مستوى الصوت.\nالمعرض: البحث عن ملفات الفيديو في الدليل.\nملاحظة: في وضع ملء الشاشة، اضغط على أي مفتاح للرجوع."</Text>
     </String>
     <String Id="1014" Name="IDS_FILENAMETOOLONG">

@@ -6712,6 +6712,10 @@ static void SecurityMenu_RestoryFactorySet(CSecurityMenu *pMe)
 	//ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_BLUETOOTH_APP, "ResetBT");
 #endif
 
+#ifdef  FEATURE_TORCH_SUPPORT
+    IBACKLIGHT_TurnOffTorch(pMe->m_pBacklight);
+#endif
+
 #ifdef FEATURE_VERSION_C316
 	nReturnStatus = ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_PHONECTL, (void **) &pIPhoneCtl);   
     if((pIPhoneCtl == NULL) || (SUCCESS != nReturnStatus))

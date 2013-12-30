@@ -11,7 +11,7 @@
         <Text>غير متطابقة</Text>
 	</STRING>
 	<String Id="1004" Name="IDS_AKG_30SEC">
-		<Text>30 Sec</Text>
+		<Text>30 ثانية</Text>
 	</String>
 	<STRING Id="1005" Name="IDS_PHONE_PASSWORD_INPUT_TITLE">
         <Text>تغيير الرموز</Text>
@@ -55,6 +55,9 @@
 	<STRING Id="1018" Name="IDS_NEWPIN">
         <Text>أدخل رمز PIN جديد:</Text>
 	</STRING>
+	<String Id="1019" Name="IDS_ENTER_PHONENUMBER">
+		<Text>إدخال رقم الهاتف</Text>
+	</String>
 	<STRING Id="1020" Name="IDS_ENTERPIN">
         <Text>أدخل رمز PIN:</Text>
 	</STRING>
@@ -203,8 +206,23 @@
         <Text>"رمز غير صالح، أدخل رمز PUK"</Text>
 	</STRING>
 	<String Id="1077" Name="IDS_AKG_10SEC">
-		<Text>10 Sec</Text>
+		<Text>10 ثانية</Text>
 	</String>
+	<String Id="1078" Name="IDS_MOBILE_TRACKER">
+		<Text>تعقب المحمول</Text>
+	</String>
+	<String Id="1079" Name="IDS_AKG_5SEC">
+		<Text>5 ثانية</Text>
+	</String>
+	<STRING Id="1178" Name="IDS_MG_MEDIAGALLERY">
+		<Text>إدارة الملفات</Text>
+	</STRING>
+	<String Id="1179" Name="IDS_AKG_15SEC">
+		<Text>15 ثانية</Text> 
+	</String>
+	<String Id="1180" Name="IDS_AKG_1MIN">
+		<Text>1 دقيقة</Text>
+	</String>	
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_PHONELOCK_DIALOG" Focus="7001">

@@ -574,7 +574,11 @@ typedef PACKED struct _Key_pad_Cfg
 #elif defined(FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_K232_Y100A)  
 #define   OEMNV_DEFAULTRINGER       4
 #elif defined(FEATURE_VERSION_IC241A_MMX)
+#if defined (FEATURE_VERSION_IN50A)
+#define   OEMNV_DEFAULTRINGER       4
+#else
 #define   OEMNV_DEFAULTRINGER       12
+#endif
 #elif defined(FEATURE_VERSION_W317A)
 #define   OEMNV_DEFAULTRINGER       5
 #elif defined(FEATURE_VERSION_C316)

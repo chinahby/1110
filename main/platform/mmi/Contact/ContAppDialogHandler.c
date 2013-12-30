@@ -6341,7 +6341,9 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
                     }
                     
                     CContApp_SetGroupItemText(pMe, pMenuCtl);
+                    
 					#if !defined(FEATURE_VERSION_K212)&& !defined(FEATURE_LOW_MEM_BIGFONT)
+                    #ifndef FEATURE_VERSION_IN50A
                     if (pMe->m_nRingToneID && pMe->m_nRingToneID[0] != (AECHAR)'\0')
                     {
                         AECHAR name[128]={0};
@@ -6371,7 +6373,9 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
                     {
                         IMENUCTL_SetItemText(pMenuCtl, IDI_ADDNEW_MENU_SELECTRINGTONE, CONTAPP_RES_FILE_LANG, IDS_RING, NULL);
                     }
+                    #endif
 					#endif
+                    
                 }
             }
 
@@ -10461,14 +10465,14 @@ static boolean  CContApp_HandleEditDlgEvent( CContApp  *pMe,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
-            #if defined(FEATURE_VERSION_S1000T)||defined(FEATURE_VERSION_W021_WSF_CN)//def FEATURE_VERSION_S1000T
+            #if defined(FEATURE_VERSION_S1000T)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_VERSION_IN50A)//def FEATURE_VERSION_S1000T
             IMENUCTL_SetActive(pMenuCtl, TRUE);
             ITEXTCTL_SetActive(pTextCtl, FALSE);
             #endif
             dwMask = IDIALOG_GetProperties(pMe->m_pActiveDlg);
             dwMask |= DLG_NOT_SET_FOCUS_AUTO;
             IDIALOG_SetProperties(pMe->m_pActiveDlg, dwMask);
-            #if defined(FEATURE_VERSION_S1000T)||defined(FEATURE_VERSION_W021_WSF_CN)//def FEATURE_VERSION_S1000T
+            #if defined(FEATURE_VERSION_S1000T)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_VERSION_IN50A)//def FEATURE_VERSION_S1000T
             IDIALOG_SetFocus(pMe->m_pActiveDlg, IDC_EDIT_MENU);
             #endif
             pMe->m_nInputMode =  EDIT_MENU_MODE; 
@@ -10606,6 +10610,7 @@ static boolean  CContApp_HandleEditDlgEvent( CContApp  *pMe,
                         
                     CContApp_SetGroupItemText(pMe, pMenuCtl);
     				#if !defined( FEATURE_VERSION_K212)&&!defined(FEATURE_LOW_MEM_BIGFONT)
+                    #ifndef FEATURE_VERSION_IN50A
                     if (pMe->m_nRingToneID && pMe->m_nRingToneID[0] != (AECHAR)'\0')
                     {
                         AECHAR name[128]={0};
@@ -10631,6 +10636,7 @@ static boolean  CContApp_HandleEditDlgEvent( CContApp  *pMe,
                     {
                         IMENUCTL_SetItemText(pMenuCtl, IDI_EDIT_MENU_RINGTONE, CONTAPP_RES_FILE_LANG, IDS_RING, NULL);
                     }
+                    #endif
 					#endif
                 }
             }

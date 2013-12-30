@@ -13,6 +13,24 @@
 	<String Id="1004" Name="IDS_APPLICATION_WAPBROWSER">
 		<Text>المتصفح</Text>
 	</String>
+	<String Id="1005" Name="IDS_PC_MODEM_STEP">
+		<Text>الخطوة PC المودم: 1: مع USB إلى جهاز الكمبيوتر متصلا الهاتف المحمول وفقا لنظام يطالبك لتثبيت مجلد سائق، وسائق في (محددة)، حتى success2: حدد الجهاز PC على اتصال الشبكة 3: إنشاء اتصال جديد 4: اختر المقبل 5: اختر للاتصال بالإنترنت (C)، بعد اختيار، انقر فوق next.6: اختر دليل وضع اتصالي (M)، بعد اختيار، انقر فوق next.7: اختيار اتصالات مودم الطلب الهاتفي ثم انقر فوق التالي 8 : أدخل اسم ISP، ثم انقر فوق التالي (9): أدخل رقم الهاتف (P)، وانقر فوق التالي (10): أدخل اسم المستخدم وكلمة المرور، ثم انقر فوق التالي، ومن ثم اختيار لإكمال 11: انقر على اتصال وخلق، والاتصال الهاتفي، يمكنك تصفح الانترنت.</Text>
+	</String>
+	<String Id="1006" Name="IDS_SHORT_CUT">
+		<Text>الاختصار</Text>
+	</String>
+	<String Id="1007" Name="IDS_USER_PROFILES">
+		<Text>التشكيلات الجانبية للمستخدم</Text>
+	</String>
+	<String Id="1008" Name="IDS_VIDEO_PLAYER">
+		<Text>جهاز عرض فيديو</Text>
+	</String>
+	<String Id="1009" Name="IDS_CALENDAR">
+		<Text>تقويم</Text>
+	</String>
+	<String Id="1010" Name="IDS_IMAGE_VIEWER">
+		<Text>عارض الصور</Text>
+	</String>
  	<STRING Id="1011" Name="IDS_APPLICATION_BAM">
  		<Text>BAM</Text>
  	</STRING>
@@ -49,6 +67,9 @@
  	<STRING Id="1022" Name="IDS_APPLICATION_FMRADIO">
  		<Text>راديو FM</Text>
  	</STRING>
+	<String Id="1023" Name="IDS_APPLICATION_MUTIMED">
+		<Text>إدارة الملفات</Text>
+	</String>
  	<STRING Id="1024" Name="IDS_APPLICATION_BROWSER">
  		<Text>المتصفح</Text>
  	</STRING>
@@ -58,14 +79,44 @@
  	<STRING Id="1026" Name="IDS_APPLICATION_FLASHLIGHT">
  		<Text>مصباح يدوي</Text>
  	</STRING>
+	<String Id="1027" Name="IDS_APPLICATION_MMS">
+		<Text>رسائل الوسائط المتعددة</Text>
+	</String>
  	<String Id="1028" Name="IDS_APPLICATION_UTK">
 		<Text>خدمات البطاقة</Text>
 	</String>
  	<STRING Id="1031" Name="IDS_TOOLS_LIST">
  		<Text>الأدوات</Text>
  	</STRING>
- 	<String Id="1037" Name="IDS_TORCH">
-		<Text>Torch</Text>
+	<String Id="1032" Name="IDS_STR_TRUNONTORCH">
+		<Text>بدوره على الشعلة</Text>
+	</String>
+	<String Id="1033" Name="IDS_STR_TRUNOFFFTORCH">
+		<Text>إيقاف الشعلة</Text>
+	</String>
+	<String Id="1034" Name="IDS_APPLICATION_LIST_C337">
+		<Text>منظم</Text>
+	</String>
+	<String Id="1035" Name="IDS_APPLICATION_CALENDAR">
+		<Text>تقويم</Text>
+	</String>
+	<String Id="1036" Name="IDS_PC_MODEM_HELP">
+		<Text>مساعدة PC مودم</Text>
+	</String>
+	<String Id="1037" Name="IDS_TORCH">
+		<Text>شعلة</Text>
+	</String>
+	<String Id="1038" Name="IDS_KEY_TIME">
+		<Text>زمن الرئيسية</Text>
+	</String>
+	<String Id="1039" Name="IDS_SOS1">
+		<Text>الإعداد الطوارئ</Text>
+	</String>
+	<String Id="1040" Name="IDS_SET_SOS">
+		<Text>إعدادات SOS</Text>
+	</String>
+	<String Id="1041" Name="IDS_SOS_INPUT">
+		<Text>الرجاء إدخال SOS الأسطوانات</Text>
 	</String>
  </Strings>
  <Dialogs>
@@ -76,12 +127,30 @@
  			</Menu>
  		</Controls>
  	</Dialog>
- 	<Dialog Id="6003" Name="IDD_LIST_APPLICATION" Focus="7001">
- 		<Controls>
- 			<Menu Id="7001" Name="IDC_APPLICATION_LIST">
- 				<Items/>
- 			</Menu>
- 		</Controls>
- 	</Dialog>
+	<Dialog Id="6002" Name="IDD_MSGBOX" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<Dialog Id="6003" Name="IDD_LIST_APPLICATION" Focus="7001">
+		<Controls>
+			<Menu Id="7001" Name="IDC_APPLICATION_LIST">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6004" Name="IDD_PC_MODEM" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<Dialog Id="6005" Name="IDD_KEY_TIME_SETTING" Focus="7005">
+		<Controls>
+			<Menu Id="7005" Name="IDC_KEY_TIME_SET">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6006" Name="IDD_SOS" Focus="0">
+		<Controls/>
+	</Dialog>
  </Dialogs>
  </BREWRes>

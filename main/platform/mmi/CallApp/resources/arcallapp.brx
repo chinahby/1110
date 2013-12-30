@@ -167,13 +167,31 @@
 		<Text>كلمة سر خطأ</Text>
 	</String>
 	<String Id="1056" Name="IDS_SPEED_DIAL_QUERY">
-		<Text>Speed Dial %s is Off,Set it On?</Text>
+		<Text>سرعة الاتصال الهاتفي٪ ق معطلة، وضعها على؟</Text>
 	</String>
 	<String Id="1057" Name="IDS_PWDTIPS">
 		<Text>ادخل كلمة السر</Text>
 	</String>
 	<String Id="1058" Name="IDS_MULTICALL">
-		<Text>Multi call</Text>
+		<Text>مكالمة متعددة</Text>
+	</String>
+	<String Id="1059" Name="IDS_MUTE_ON">
+		<Text>كتم الصوت (على)</Text>
+	</String>
+	<String Id="1060" Name="IDS_MUTE_OFF">
+		<Text>كتم الصوت (إيقاف)</Text>
+	</String>
+	<String Id="1061" Name="IDS_PHONE_BOOKS">
+		<Text>دليل الهاتف</Text>
+	</String>
+	<String Id="1062" Name="IDS_END_CALL" Encoding="Unicode">
+		<Text>نهاية المكالمات</Text>
+	</String>
+	<String Id="1063" Name="IDS_END_WITH_SMS" Encoding="Unicode">
+		<Text>ينتهي الرسائل القصيرة</Text>
+	</String>
+	<String Id="1064" Name="IDS_END_CALL_CONN">
+		<Text>إنهاء المكالمة</Text>
 	</String>
 	<STRING Id="1100" Name="IDS_OPTION_RECORDER_ON">
 		<Text>تسغيل</Text>
@@ -197,10 +215,13 @@
 		<Text>الرقم طويل جدًا بحيث يتعذر حفظه</Text>
 	</STRING>
 	<STRING Id="1115" Name="IDS_NOOMH_CARD">
-		<Text>This is non-OMH Card, please upgrade to OMH R-UIM</Text>
+		<Text>هذا هو غير OMH بطاقة، الرجاء الترقية إلى OMH R-UIM</Text>
 	</STRING>
 	<STRING Id="1117" Name="IDS_INVALID">
 		<Text>كلمة سر خطأ</Text>
+	</STRING>
+	<STRING Id="1118" Name="IDS_INVALID_NUM">
+		<Text>عدد غير صالحة</Text>
 	</STRING>
 	<String Id="1120" Name="IDS_MAIN_MENU_TORCHON">
 		<Text>الشعلة</Text>
@@ -215,10 +236,10 @@
 		<Text>SAR: 0.212W/kg@1g(Head)   0.169W/kg@1g(Body)</Text>
 	</String>
 	<String Id="1124" Name="IDS_REGULATE_SUCCEED">
-		<Text>Regulate Succeed!</Text>
+		<Text>تنظيم تنجح!!</Text>
 	</String>
 	<String Id="1125" Name="IDS_REGULATE_FAIL">
-		<Text>Regulate Fail!</Text>
+		<Text>تنظيم فشل!</Text>
 	</String>
 	<String Id="1126" Name="IDS_SAR_CT100">
 		<Text>SAR: CDMA800 Head:0.565W/Kg  Body:1.080W/Kg</Text>
@@ -235,11 +256,23 @@
 	<String Id="1130" Name="IDS_SAR_CT100_VERSION_02">
 		<Text>SAR:CDMA800 Head:0.506W/Kg; Body:0.565W/Kg</Text>
 	</String>	
+	<String Id="1131" Name="IDS_MSG_TIME_AM">
+		<Text>الوقت هو٪ 02D:٪ 02D أنا الآن!</Text>
+	</String>
+	<String Id="1132" Name="IDS_MSG_TIME_PM">
+		<Text>الوقت هو٪ 02D:٪ 02D مساء الآن!</Text>
+	</String>
+	<String Id="1133" Name="IDS_MSG_TIME_DETAIL">
+		<Text>الوقت هو٪ 02D:٪ 02D الآن!</Text>
+	</String>
 	<String Id="1134" Name="IDS_SAR_CT100_VERSION_I225C">
 		<Text>SAR:CDMA800 Head:0.654W/Kg; Body:0.452W/Kg</Text>
 	</String>
 	<String Id="1135" Name="IDS_SAR_CT100_VERSION_C444">
 		<Text>SAR:CDMA800 Head:0.744W/Kg; Body:0.666W/Kg</Text>
+	</String>
+	<String Id="1136" Name="IDS_MSG_SILENT">
+		<Text>الوضع الصامت</Text>
 	</String>		
 </Strings>
 <Dialogs>
@@ -283,6 +316,9 @@
 		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</DIALOG>
 	<Dialog Id="6009" Name="IDD_IP_NUMBER" Focus="0">
+		<Controls/>
+	</Dialog>
+	<Dialog Id="6010" Name="IDD_PWD" Focus="0">
 		<Controls/>
 	</Dialog>
 	<Dialog Id="6011" Name="IDD_PROMPT" Focus="0">

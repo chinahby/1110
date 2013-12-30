@@ -558,6 +558,13 @@ static int SecurityMenu_InitAppData(CSecurityMenu *pMe)
     }
 #endif//WIN32 
     //pMe->m_pPhoneLockPassword = NULL;
+
+    if (ISHELL_CreateInstance( pMe->m_pShell, AEECLSID_BACKLIGHT, (void **)&pMe->m_pBacklight)!=AEE_SUCCESS)
+    {
+        SecurityMenu_FreeAppData(pMe);
+        return FALSE;
+    }
+
     
     pMe->nOldPSWLength = 0;
     pMe->nNewPSWLength = 0;
@@ -628,6 +635,12 @@ static void SecurityMenu_FreeAppData(CSecurityMenu *pMe)
 	{
 		FREEIF(pMe->m_strPhoneNUM);
 	}
+
+    if(pMe->m_pBacklight)
+    {
+        IBACKLIGHT_Release(pMe->m_pBacklight);
+        pMe->m_pBacklight=NULL;
+    }
     /*if(pMe->m_oldPassword)
     {
         ISTATIC_Release(pMe->m_oldPassword);

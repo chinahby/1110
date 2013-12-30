@@ -388,20 +388,23 @@
 	<String Id="1129" Name="IDS_MYANMAR">
 		<Text>myanmar</Text>
 	</String>
-	<String Id="1130" Name="IDS_SMS_RESTRICT">
-		<Text>حظر الرسائل</Text>
+	<String Id="1130" Name="IDS_SEARCHNET_MODE">
+		<Text>وضع البحث</Text>
 	</String>
-	<String Id="1131" Name="IDS_SMS_RESTRICT_SEND">
-		<Text>حظر الارسال</Text>
+	<String Id="1131" Name="IDS_AUTO_SEARCH">
+		<Text>بحث السيارات</Text>
 	</String>
-	<String Id="1132" Name="IDS_SMS_RESTRICT_RECEIVE">
-		<Text>حظر الاستقبال</Text>
+	<String Id="1132" Name="IDS_SEARCH_FIVEMINTU">
+		<Text>5 دقائق</Text>
 	</String>
-	<String Id="1133" Name="IDS_ADD">
-		<Text>اضافة</Text>
+	<String Id="1133" Name="IDS_SEARCH_TENMIINUTES">
+		<Text>10 دقيقة</Text>
 	</String>
-	<String Id="1134" Name="IDS_DELETE">
-		<Text>حذف</Text>
+	<String Id="1134" Name="IDS_SEARCH_TENTY">
+		<Text>15 دقيقة</Text>
+	</String>
+	<String Id="1135" Name="IDS_SEARCH_THIRTYMINUTE">
+		<Text>30 دقيقة</Text>
 	</String>
 	<STRING Id="1136" Name="IDS_FMRADIO_OPTION_MENU_PLAY_MODLE">
 		<Text>وضع نغمات</Text>
@@ -424,8 +427,176 @@
 	<String Id="1142" Name="IDS_FONT_SMALL">
 		<Text>الصغيرة</Text>
 	</String>
-	<String Id="1143" Name="IDS_AKG_10SEC">
-		<Text>10 Sec</Text>
+	<String Id="1143" Name="IDS_AKG_1MIN">
+		<Text>1 دقيقة</Text>
+	</String>
+	<String Id="1144" Name="IDS_SMS_RESTRICT" Encoding="Unicode">
+		<Text>SMS تقييد</Text>
+	</String>
+	<String Id="1145" Name="IDS_SMS_RESTRICT_SEND" Encoding="Unicode">
+		<Text>تقييد الإرسال</Text>
+	</String>
+	<String Id="1146" Name="IDS_SMS_RESTRICT_RECEIVE" Encoding="Unicode">
+		<Text>تقييد الحصول على</Text>
+	</String>
+	<String Id="1147" Name="IDS_ADD" Encoding="Unicode">
+		<Text>إضافة</Text>
+	</String>
+	<String Id="1148" Name="IDS_DELETE" Encoding="Unicode">
+		<Text>حذف</Text>
+	</String>
+	<String Id="1149" Name="IDS_AKG_10SEC" Encoding="Unicode">
+		<Text>10 ثانية</Text>
+	</String>
+	<STRING Id="1150" Name="IDS_CALL_TIME_REMINDER">
+		<Text>استدعاء تذكير مرة</Text>
+	</STRING>
+	<String Id="1151" Name="IDS_ONEKEYLOCKKEYPAD_TITLE" Encoding="Unicode">
+		<Text>أقفال مفتاح أحمر لوحة المفاتيح</Text>
+	</String>
+	<String Id="1152" Name="IDS_YUYIIN_PACKGE">
+		<Text>ضبط خطاب</Text>
+	</String>
+	<String Id="1153" Name="IDS_DIA_SPEECH">
+		<Text>خطاب الطلب</Text>
+	</String>
+	<String Id="1154" Name="IDS_MAIN_SPEECH">
+		<Text>خطاب القائمة الرئيسية</Text>
+	</String>
+	<String Id="1155" Name="IDS_TIME_SPEECH">
+		<Text>خطاب الوقت</Text>
+	</String>
+	<String Id="1156" Name="IDS_INDIAL_SPEECH">
+		<Text>خطاب الطلب واردة</Text>
+	</String>
+	<String Id="1157" Name="IDS_PHONEBOOK_SPEECH">
+		<Text>خطاب دفتر الهاتف</Text>
+	</String>
+	<String Id="1158" Name="IDS_SET_SOS">
+		<Text>إعدادات SOS</Text>
+	</String>
+	<String Id="1159" Name="IDS_SOS">
+		<Text>يرجى إدخال SOS الأسطوانات</Text>
+	</String>
+	<String Id="1160" Name="IDS_CALLFORWARD_DEACTIVATE">
+		<Text>عطل</Text>
+	</String>
+	<String Id="1161" Name="IDS_SMS_TREACKER_TIME">
+		<Text>تعقب الوقت الرسائل القصيرة</Text>
+	</String>
+	<String Id="1162" Name="IDS_SMS_TREACKER_TIME_5">
+		<Text>5 دقيقة</Text>
+	</String>
+	<String Id="1163" Name="IDS_SMS_TREACKER_TIME_10">
+		<Text>10 دقيقة</Text>
+	</String>
+	<String Id="1164" Name="IDS_SMS_TREACKER_TIME_15">
+		<Text>15 دقيقة</Text>
+	</String>
+	<String Id="1165" Name="IDS_SMS_TREACKER_TIME_30">
+		<Text>30 دقيقة</Text>
+	</String>
+	<String Id="1166" Name="IDS_SMS_TREACKER_TIME_60">
+		<Text>60 دقيقة</Text>
+	</String>
+	<String Id="1167" Name="IDS_SMS_TREACKER_TIME_240">
+		<Text>240 دقيقة</Text>
+	</String>
+	<String Id="1168" Name="IDS_CALLSETTING_CALLRECORD">
+		<Text>سجل مكالمة السيارات</Text>
+	</String>
+	<String Id="1169" Name="IDS_CALLSETTING__YES">
+		<Text>في</Text>
+	</String>
+	<String Id="1170" Name="IDS_CALLSETTING__NO">
+		<Text>بعيدا</Text>
+	</String>
+	<String Id="1171" Name="IDS_AKG_5SEC" Encoding="Unicode">
+		<Text>5 ثانية</Text>
+	</String>
+	<STRING Id="1172" Name="IDS_CALLFORWARD_NOCONNECT_UNCONDITIONAL">
+		<Text>دون شروط</Text>
+	</STRING>
+	<STRING Id="1173" Name="IDS_PHONE_INFO_TITLE">
+		<Text>معلومات الهاتف</Text>
+	</STRING>
+	<STRING Id="1174" Name="IDS_SOFTWARE_VERSION_TITLE">
+		<Text>SW النسخة</Text>
+	</STRING>
+	<STRING Id="1175" Name="IDS_HARDWARE_VERSION_TITLE">
+		<Text>HW النسخة</Text>
+	</STRING>
+	<STRING Id="1176" Name="IDS_PRL_VERSION_TITLE">
+		<Text>الإصدار PRL</Text>
+	</STRING>
+	<STRING Id="1372" Name="IDS_SHORTCUTS_MENU_TITLE">
+		<Text>اختصارات</Text>
+	</STRING>
+	<STRING Id="1373" Name="IDS_SHORTCUTS_SELECT_MENU_TITLE">
+		<Text>اختصارات</Text>
+	</STRING>
+	<STRING Id="1374" Name="IDS_SHORTCUTS_MESSAGE">
+		<Text>رسالة</Text>
+	</STRING>
+	<STRING Id="1375" Name="IDS_SHORTCUTS_MUSICPLAYER">
+		<Text>مشغل الموسيقى</Text>
+	</STRING>
+	<STRING Id="1376" Name="IDS_SHORTCUTS_FM">
+		<Text>راديو FM</Text>
+	</STRING>
+	<STRING Id="1377" Name="IDS_SHORTCUTS_CAMERA">
+		<Text>كاميرا</Text>
+	</STRING>
+	<STRING Id="1378" Name="IDS_SHORTCUTS_CALLLOG">
+		<Text>المكالمات الأخيرة</Text>
+	</STRING>
+	<STRING Id="1379" Name="IDS_SHORTCUTS_SETTINGS">
+		<Text>إعدادات</Text>
+	</STRING>
+	<STRING Id="1380" Name="IDS_SHORTCUTS_APPS">
+		<Text>تطبيق</Text>
+	</STRING>
+	<STRING Id="1381" Name="IDS_SHORTCUTS_GAMES">
+		<Text>ألعاب</Text>
+	</STRING>
+	<STRING Id="1382" Name="IDS_SHORTCUTS_SCHEDULER">
+		<Text>جدولة</Text>
+	</STRING>
+	<STRING Id="1383" Name="IDS_SHORTCUTS_CALCULATOR">
+		<Text>آلة حاسبة</Text>
+	</STRING>
+	<STRING Id="1384" Name="IDS_SHORTCUTS_CONTACTS">
+		<Text>اتصالات</Text>
+	</STRING>
+	<STRING Id="1385" Name="IDS_SHORTCUTS_EXPLORER">
+		<Text>إدارة ملف</Text>
+	</STRING>
+	<STRING Id="1386" Name="IDS_SHORTCUTS_VIDEOPLAYER">
+		<Text>جهاز عرض فيديو</Text>
+	</STRING>
+	<STRING Id="1387" Name="IDS_SHORTCUTS_VOICERECORDER">
+		<Text>تسجيل صوتي</Text>
+	</STRING>
+	<STRING Id="1388" Name="IDS_SHORTCUTS_VIDEORECORDER">
+		<Text>جهاز تسجيل فيديو</Text>
+	</STRING>
+	<STRING Id="1389" Name="IDS_SHORTCUTS_ALARM">
+		<Text>إنذار</Text>
+	</STRING>
+	<STRING Id="1400" Name="IDS_KEYPAD_UP">
+		<Text>مفتاح رفع</Text>
+	</STRING>
+	<STRING Id="1401" Name="IDS_KEYPAD_DOWN">
+		<Text>مفتاح خفض</Text>
+	</STRING>
+	<STRING Id="1402" Name="IDS_KEYPAD_LEFT">
+		<Text>مفتاح اليسار</Text>
+	</STRING>
+	<STRING Id="1403" Name="IDS_KEYPAD_RIGHT">
+		<Text>المفتاح الصحيح</Text>
+	</STRING>
+	<String Id="1404" Name="IDS_AKG_15SEC">
+		<Text>15 ثانية</Text>
 	</String>
 </Strings>
 <Dialogs>
@@ -654,7 +825,7 @@
 			</Menu>
 		</Controls>
 	</Dialog>
-	<Dialog Id="6036" Name="IDD_SMS_RESTRICT" Focus="7031">
+	<Dialog Id="6036" Name="IDD_SMS_RESTRICT" Focus="0">
 		<Controls>
 			<Menu Id="7031" Name="IDC_SMS_RESTRICT">
 				<Items/>
@@ -673,6 +844,69 @@
 			<Text Id="7033" Name="IDC_TEXT_SMS_RESTRICT_RECEIVE">
 				<Items/></Text>
 		</Controls>
+	</Dialog>
+	<DIALOG Id="6039" Name="IDD_TRACKSMSTIME_MENU" Focus="7034">
+		<Controls>
+			<Menu Id="7034" Name="IDC_TRACKSMSTIME">
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<Dialog Id="6040" Name="IDD_SETTING_CALLRECORD" Focus="0">
+		<Controls>
+			<Menu Id="7035" Name="IDC_MENU_AUTOCALLRECORD">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<DIALOG Id="6041" Name="IDD_PHONE_INFO_MENU" Focus="7036">
+		<Controls>
+			<Menu Id="7036" Name="IDC_PHONE_INFO_MENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6042" Name="IDD_PHONE_INFO_MENU_SW" Focus="0">
+		<Controls>
+			<Static Id="7037" Name="IDC_SW_STAT" Flags="40000">
+				<Items/></Static>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6043" Name="IDD_PHONE_INFO_MENU_HW" Focus="0">
+		<Controls>
+			<Static Id="7038" Name="IDC_HW_STAT" Flags="40000">
+				<Items/></Static>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6044" Name="IDD_PHONE_INFO_MENU_PRL" Focus="0">
+		<Controls>
+			<Static Id="7039" Name="IDC_PRL_STAT" Flags="40000">
+				<Items/></Static>
+		</Controls>
+	</DIALOG>
+	<Dialog Id="6045" Name="IDD_SPEECH_MENU" Focus="7040">
+		<Controls>
+			<Menu Id="7040" Name="IDC_SPEECH">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<DIALOG Id="6046" Name="IDD_SHORTCUTS_MENU" Focus="7046">
+		<Controls>
+			<Menu Id="7046" Name="IDC_SHORTCUTS_MENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6047" Name="IDD_SHORTCUTS_SELECT_MENU" Focus="7047">
+		<Controls>
+			<Menu Id="7047" Name="IDC_SHORTCUTS_SELECT">
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<Dialog Id="6048" Name="IDD_SOS" Focus="0">
+		<Controls/>
 	</Dialog>
 </Dialogs>
 </BREWRes>
