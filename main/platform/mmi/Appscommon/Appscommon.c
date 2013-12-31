@@ -1943,7 +1943,7 @@ void DrawTitleBar(IDisplay  * pIDisplay, TitleBar_Param_type *TParam)
         else
         #endif
 
-		#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_IC241A_MMX)
+		#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_K232_Y100A)|| defined (FEATURE_VERSION_K232_Y101)
 		{
 #ifdef FEATURE_VERSION_IN50_MMX
             IDISPLAY_SetColor(pIDisplay, CLR_USER_TEXT, RGB_WHITE);
