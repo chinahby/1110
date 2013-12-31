@@ -1037,7 +1037,7 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
             break;
             // option---½ñÌì---·µ»Ø
          case BTBAR_OPTION_TODAY_BACK:
-#ifdef FEATURE_VERSION_K232_Y100A
+#if defined (FEATURE_VERSION_K232_Y100A) || defined (FEATURE_VERSION_K232_Y101)
             nResID_L = IDS_OPTION_Y100A;
             nResID_M = IDS_TODAY_Y100A;
 #else

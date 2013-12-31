@@ -506,7 +506,7 @@ typedef PACKED struct _Key_pad_Cfg
 #define OEMNV_DEFAULTNUMBER    			"+919212230707" 
 #endif
 
-#if defined (FEATURE_VERSION_C260_IC19)||defined (FEATURE_VERSION_K232_Y100A)
+#if defined (FEATURE_VERSION_C260_IC19)||defined (FEATURE_VERSION_K232_Y100A)||defined (FEATURE_VERSION_K232_Y101)
 #define OEMNV_ESN_TRACK_NUM    			"51718" 
 #define OEMNV_ESN_TRACK_NUM_TWO    		"09223053751" 
 #else
@@ -571,7 +571,7 @@ typedef PACKED struct _Key_pad_Cfg
 #endif
 #elif defined(FEATURE_VERSION_M74)
 #define   OEMNV_DEFAULTRINGER       11
-#elif defined(FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_K232_Y100A)  
+#elif defined(FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_K232_Y100A) || defined(FEATURE_VERSION_K232_Y101)   
 #define   OEMNV_DEFAULTRINGER       4
 #elif defined(FEATURE_VERSION_IC241A_MMX)
 #if defined (FEATURE_VERSION_IN50A)
@@ -1113,7 +1113,7 @@ typedef struct _OEMErrLogType {
 #define OEMNV_EMERG_NUM_ONE                    "*1"
 #define OEMNV_EMERG_NUM_TWO                    "911"
 #define OEMNV_EMERG_NUM_TRE                    "*171"
-#elif defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_K232_Y100A)
+#elif defined(FEATURE_VERSION_C337) || defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_K232_Y100A)|| defined(FEATURE_VERSION_K232_Y101)
 #define OEMNV_EMERT_SEZE                       4
 #define OEMNV_EMERG_NUM_LEN                    3
 #define OEMNV_EMERG_NUM_ONE                    "100"
