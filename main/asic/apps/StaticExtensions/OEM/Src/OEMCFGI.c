@@ -2116,7 +2116,7 @@ static OEMConfigListType oemi_cache = {
 #if defined (FEATURE_VERSION_K212) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)|| defined (FEATURE_VERSION_K212_ND)
 	,DISPLAYREND_TYPE_MAX
 #else
-#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_C316) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_C316) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_W027_HC_KK3)
    ,DISPLAYREND_TYPE_MAX
 #else
    ,DISPLAYREND_TYPE_ONEBYONE
@@ -3540,7 +3540,7 @@ void OEM_RestoreFactorySetting( void )
 #if defined (FEATURE_VERSION_K212) || defined (FEATURE_VERSION_EC99) || defined (FEATURE_VERSION_K212_20D)|| defined (FEATURE_VERSION_K212_ND)
 	oemi_cache.m_nrendstate = DISPLAYREND_TYPE_MAX;
 #else
-#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_C316) || defined(FEATURE_VERSION_IC241A_MMX)
+#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_C316) || defined(FEATURE_VERSION_IC241A_MMX)||defined(FEATURE_VERSION_W027_HC_KK3)
      oemi_cache.m_nrendstate = DISPLAYREND_TYPE_MAX;
 #else
      oemi_cache.m_nrendstate = DISPLAYREND_TYPE_ONEBYONE;
