@@ -190,7 +190,7 @@ static void disp_ic_rot(uint16 degree)
     return;
 }
 
-boolean disp_gc9102_tft177(disp_drv_ic_type *pdispic)
+boolean disp_gc9102_tft177_kr(disp_drv_ic_type *pdispic)
 {
     uint8 id1,id2,id3;
     
