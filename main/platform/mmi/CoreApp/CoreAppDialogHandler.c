@@ -4544,7 +4544,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 			}
 #else
 // Add by pyuangui 20121220
-#if defined (FEATURE_VERSION_C11)||defined(FEATURE_VERSION_K292)|| defined(FEATURE_VERSION_W021_C11)||defined(FEATURE_VERSION_W021_CT100)
+#if defined (FEATURE_VERSION_C11)||defined(FEATURE_VERSION_K292)|| defined(FEATURE_VERSION_W021_C11)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_W027_HC_KK3)
             if(wParam == AVK_INFO)
             {
                 boolean TorchOn = FALSE;
@@ -4604,7 +4604,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                         }
 #endif
 #endif
-#ifdef FEATURE_VERSION_W317A
+#if defined(FEATURE_VERSION_W317A)&& !defined(FEATURE_VERSION_W027_HC_KK3)//def FEATURE_VERSION_W317A
 			if(wParam == AVK_CLR)
             {
                 boolean TorchOn = FALSE;
@@ -4882,7 +4882,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #endif					
 #endif		 
 			
-		#if defined (FEATURE_VERSION_C11)||defined(FEATURE_VERSION_K292)|| defined(FEATURE_VERSION_W021_C11)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
+		#if defined (FEATURE_VERSION_C11)||defined(FEATURE_VERSION_K292)|| defined(FEATURE_VERSION_W021_C11)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)||defined(FEATURE_VERSION_W027_HC_KK3)
         if((AVKType)wParam == AVK_INFO)
         {
             if(pMe->m_keyinfoheld)
@@ -5064,6 +5064,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             	    return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
 #elif defined (FEATURE_VERSION_W208S)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
+#elif defined(FEATURE_VERSION_W027_HC_KK3)
+					return CoreApp_LaunchApplet(pMe, AEECLSID_ALARMCLOCK); 
 #elif defined(FEATURE_VERSION_C11)||defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_C316)
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CAMERA);
 #elif defined(FEATURE_VERSION_W027V3)
@@ -5461,7 +5463,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
         			   }
                     
 						return TRUE;
-#elif defined (FEATURE_VERSION_C11)||defined(FEATURE_VERSION_K292)|| defined(FEATURE_VERSION_W021_C11)||defined(FEATURE_VERSION_W021_CT100) || defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
+#elif defined (FEATURE_VERSION_C11)||defined(FEATURE_VERSION_K292)|| defined(FEATURE_VERSION_W021_C11)||defined(FEATURE_VERSION_W021_CT100) || defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)||defined(FEATURE_VERSION_W027_HC_KK3)
                         pMe->m_keyinfoheld=FALSE;
                         return TRUE;
 #else
