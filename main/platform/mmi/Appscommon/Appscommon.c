@@ -2991,12 +2991,19 @@ void DrawPromptMessage (IDisplay *pIDisplay,
             defined(FEATURE_VERSION_C11)|| defined(FEATURE_VERSION_C180) || defined(FEATURE_VERSION_W027)|| \
             defined(FEATURE_VERSION_C316)|| defined(FEATURE_VERSION_W021_CT100)|| defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_EC99)|| \
             defined(FEATURE_VERSION_W021_C11)||defined(FEATURE_VERSION_K292)
+            #if defined(FEATURE_VERSION_W027_HC_KK3)
+            strrect.dy = StringBgImgInfo.cy/2;
+			strrect.dx = StringBgImgInfo.cx;
+            strrect.x = totalrect.x - StringBgImgInfo.cx/2;
+            strrect.y = totalrect.y;  
+			#else
             strrect.dy = StringBgImgInfo.cy/2 + 30;
 			#ifdef FEATURE_VERSION_W317A   // add by pyuangui 20121225
 			strrect.dy = StringBgImgInfo.cy/2 + 40;
 			strrect.dx = StringBgImgInfo.cx+10;
 			#else
             strrect.dx = StringBgImgInfo.cx;
+			#endif
 			#endif
             strrect.x = totalrect.x - StringBgImgInfo.cx/2;            
 			strrect.y = totalrect.y - 15;	
@@ -3080,7 +3087,7 @@ void DrawPromptMessage (IDisplay *pIDisplay,
 	strrect.dx -= 10;
 #endif
 */
-
+#if !defined(FEATURE_VERSION_W027_HC_KK3)
 #if defined(FEATURE_VERSION_C337) ||defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_EC99) ||defined(FEATURE_VERSION_IC241A_MMX)
 #if defined (FEATURE_VERSION_C260_IC18) || defined(FEATURE_VERSION_IC241A_MMX)     
 #if defined (FEATURE_VERSION_IN50A)    
@@ -3104,7 +3111,7 @@ void DrawPromptMessage (IDisplay *pIDisplay,
         strrect.dy -= 20;
 #endif        
 #endif
-
+#endif
     MSG_FATAL("***zzg DrawPromptMessage strrect.x=%d, strrect.y=%d***",strrect.x,strrect.y,0);
     MSG_FATAL("***zzg DrawPromptMessage strrect.dx=%d, strrect.dy=%d***",strrect.dx,strrect.dy,0);
      
@@ -3140,7 +3147,11 @@ void DrawPromptMessage (IDisplay *pIDisplay,
         {
         	DBGPRINTF("***zzg Appscommon DrawPromptMessage***");                 
 #if defined(FEATURE_VERSION_C337)||defined(FEATURE_VERSION_W317A)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_EC99)||defined(FEATURE_VERSION_IC241A_MMX)         
+#if defined(FEATURE_VERSION_W027_HC_KK3)
+			ISTATIC_SetProperties(pStatic, ST_CENTERTEXT|ST_MIDDLETEXT|ST_TRANSPARENTBACK);   
+#else
             ISTATIC_SetProperties(pStatic, ST_CENTERTEXT|ST_MIDDLETEXT|ST_TRANSPARENTBACK|ST_SPECIAL_BG);   	//Modify by zzg 2011_12_31
+#endif
 #else
             ISTATIC_SetProperties(pStatic, ST_CENTERTEXT|ST_MIDDLETEXT|ST_TRANSPARENTBACK);   
 #endif
