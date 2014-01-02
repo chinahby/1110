@@ -487,6 +487,20 @@ else
             ringtone6.mp3|fs:/ringers/ringtone6.mp3 \
             ringtone7.mp3|fs:/ringers/ringtone7.mp3 \
             poweronoff.mp3|fs:/ringers/poweronoff.mp3
+	else ifeq ($(USES_RESDIR), HC_KK3)
+        CONSTFILE_FILES+=\
+		    alarm1.mid|fs:/ringers/alarm1.mid \
+            alarm2.mp3|fs:/ringers/alarm2.mp3 \
+            alarm3.mp3|fs:/ringers/alarm3.mp3 \
+            alarm4.mp3|fs:/ringers/alarm4.mp3 \
+            ringtone1.mp3|fs:/ringers/ringtone1.mp3 \
+            ringtone2.mp3|fs:/ringers/ringtone2.mp3 \
+            ringtone3.mp3|fs:/ringers/ringtone3.mp3 \
+            ringtone4.mp3|fs:/ringers/ringtone4.mp3 \
+            ringtone5.mp3|fs:/ringers/ringtone5.mp3 \
+            ringtone6.mp3|fs:/ringers/ringtone6.mp3 \
+            ringtone7.mp3|fs:/ringers/ringtone7.mp3 \
+            poweronoff.mp3|fs:/ringers/poweronoff.mp3
 	else ifeq ($(USES_RESDIR),C337)                                           
         CONSTFILE_FILES+=\
             alarm_default.mid|fs:/ringers/alarm_default.mid \
