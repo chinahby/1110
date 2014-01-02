@@ -12,6 +12,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_VERSION_W027
 #define FEATURE_VERSION_W317A
 #define FEATURE_VERSION_W027_HC_KK3
+#define LCD_KR
 #define FEATURE_OEMOMH
 #define FEATRUE_MG_COPYMOVE		//Add By zzg 2012_11_19
 #define FEATURE_ALERT_3AND1
