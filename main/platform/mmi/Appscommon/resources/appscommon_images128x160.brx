@@ -527,5 +527,8 @@
 	<Object Id="7116" Name="IDI_ENTER_BLACK" MimeType="image/png">
 		<File>..\images\128x160\common\Appscommon\Icon\enter_black.png</File>
 	</Object>
+	<Object Id="7118" Name="IDI_KEY_TEST_2" MimeType="image/png">
+		<File>..\images\128x160\common\QuickTest\keytest_2.png</File>
+	</Object>
 </Objects>
 </BREWRes>
