@@ -530,5 +530,14 @@
 	<Object Id="7118" Name="IDI_KEY_TEST_2" MimeType="image/png">
 		<File>..\images\128x160\common\QuickTest\keytest_2.png</File>
 	</Object>
+	<Object Id="7119" Name="IDI_MAINMENU_BOTTOMBAR" MimeType="image/png">
+		<File>..\images\128x160\common\Appscommon\Menu\bottombar\mmbottombar.png</File>
+	</Object>
+	<Object Id="7120" Name="IDI_MAINMENU_TITLEBAR" MimeType="image/png">
+		<File>..\images\128x160\common\Appscommon\Menu\titlebar\mmtitlebar.png</File>
+	</Object>
+	<Object Id="7121" Name="IDB_MAINMENU_BG" MimeType="image/png">
+		<File>..\images\128x160\common\Appscommon\Menu\background\mainmenubg.png</File>
+	</Object>
 </Objects>
 </BREWRes>
