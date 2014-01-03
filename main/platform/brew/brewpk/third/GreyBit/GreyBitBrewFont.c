@@ -10,6 +10,7 @@
 #include "GreyBitType.h"
 #include "OEMHeap.h"
 #include "AEE_OEMFile.h"
+#include "OEMClassIDs.h"
 
 #if !defined( AEE_SIMULATOR)
 #include "OEMCFGI.h"
@@ -28,7 +29,6 @@
 #include "AEEShell.h"
 #include "AEE_OEM.h"
 
-#include "OEMClassIDs.h"
 
 
 #define __RBMP_PURE_MEMORY_VERSION__
