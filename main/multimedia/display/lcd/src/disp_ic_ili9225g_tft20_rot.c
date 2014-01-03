@@ -304,17 +304,18 @@ static void disp_ic_sleep(boolean bin)
     }
     else
     {
-        LCD_WRITE_CMD(0x10);
-        LCD_WRITE_DATA16(0x0000);
-        LCD_DELAY(50);
+        //LCD_WRITE_CMD(0x10);
+        //LCD_WRITE_DATA16(0x0000);
+        //LCD_DELAY(50);
         /*
             LCD_WRITE_CMD(0x0012); LCD_WRITE_DATA16(0x200E); // Internal reference voltage= Vci;
             LCD_WRITE_CMD(0x0013); LCD_WRITE_DATA16(0x003E); //5D Set GVDD   //0x0064
             LCD_WRITE_CMD(0x0014); LCD_WRITE_DATA16(kk); //0x6561 // Set VCOMH/VCOML voltage   //4d5f  0x4B50  0x5150
 */
-        LCD_WRITE_CMD(0x07);
-        LCD_WRITE_DATA16(0x1017); //Exit Sleep
-        LCD_DELAY(50);
+        //LCD_WRITE_CMD(0x07);
+        //LCD_WRITE_DATA16(0x1017); //Exit Sleep
+        //LCD_DELAY(50);
+        disp_ic_init();
   // kk=kk+0x0001;
     }
 }
