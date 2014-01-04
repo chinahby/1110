@@ -200,7 +200,7 @@ static boolean initialize_sp0828_registers(uint16 dx, uint16 dy)
 	sp0828_i2c_write_byte(0x32,0x00);
 
 	sp0828_i2c_write_byte(0xfd,0x00);
-	#if defined(FEATURE_VERSION_K292)
+	#if defined(FEATURE_VERSION_K292)&&!defined(FEATURE_VERSION_K292_WSF_CN)
 	sp0828_i2c_write_byte(0x31,0x50);   //Upside/mirr/Pclk inv/sub
 	#else
 	sp0828_i2c_write_byte(0x31,0x10);   //Upside/mirr/Pclk inv/sub
