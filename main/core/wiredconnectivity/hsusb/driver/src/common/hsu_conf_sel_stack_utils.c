@@ -190,8 +190,11 @@ Constants and Macros
 #define HSU_MANUFACTURER_STRING  "Qualcomm, Incorporated"
 
 /* Taken from services\dload\dloadusb.c line 447 */
+#ifdef FEATURE_VERSION_K232_Y100A
+#define HSU_PRODUCT_STRING       "Micromax C205"
+#else
 #define HSU_PRODUCT_STRING       "Qualcomm CDMA Technologies MSM"
-
+#endif
 /* String describing the configuration */
 #define HSU_CONFIGURATION_STRING  "Qualcomm Configuration"
 

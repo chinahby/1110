@@ -1268,7 +1268,7 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CALCULATOR, IDS_APPLICATION_CALCULATOR, NULL, 0);
 #endif
                 
-#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_IC241A_MMX)
+#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_IC241A_MMX)|| defined (FEATURE_VERSION_K232_Y100A)
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CALENDAR, IDS_APPLICATION_CALENDAR, NULL, 0);
 #endif
 			
@@ -2327,9 +2327,7 @@ static int StartApplet(Application *pMe, int i)
 	   }
 	   break;
 
-	#if defined (FEATURE_VERSION_C337) || defined (FEATURE_VERSION_IC241A_MMX)
 	case IDS_APPLICATION_CALENDAR:
-	#endif
 	case IDS_CALENDAR:
     case IDS_APPLICATION_SCHEDULER:
         Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SCHEDULEAPP);
