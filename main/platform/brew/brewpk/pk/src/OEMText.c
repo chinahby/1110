@@ -163,7 +163,17 @@ static uint16 StrokeMap[]=
 #define T9_STROKE_FONT_WIDTH    (16) // (10) 
 #define T9_STROKE_LEFT_ARROW    (10) 
 #define MAX_STROKES             (9) // (10) // the max count which display in the screen
-
+#elif defined(FEATURE_DISP_128X128)
+#define SELECTION_BUFFER_SIZE   (6)
+#define CAUDB_SIZE              (110)
+#define T9KEYTYPE_NORMAL        (0)
+#define T9KEYTYPE_SELECT        (1)
+#define T9KEYTYPE_CONTROL       (2)
+#define T9KEYTYPE_UNKNOWN       (6)
+#define T9_FONT_WIDTH           (20)
+#define T9_STROKE_FONT_WIDTH    (12) // (10) 
+#define T9_STROKE_LEFT_ARROW    (10) 
+#define MAX_STROKES             (8) // (10) // the max count which display in the screen
 #else
 #define SELECTION_BUFFER_SIZE   (8)
 #define CAUDB_SIZE              (110)
