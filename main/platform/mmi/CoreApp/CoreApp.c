@@ -4189,7 +4189,9 @@ int CoreApp_SendReginfo(CCoreApp   *pMe)
     AEEMobileInfo     mi;
     IWmsApp *pIWmsApp = NULL;
     AECHAR  wstrType[2] = {(AECHAR)POWERUP_REGISTER_CHINAUNICOM, 0};
+	#if defined(FEATURE_VERSION_K212_HUALU)
     AECHAR  wstrTypeHulu[2] = {(AECHAR)POWERUP_HUALU, 0};
+	#endif
     //CORE_ERR("START CoreApp_SendReginfo",0,0,0);
     
     if (pMe == NULL)
