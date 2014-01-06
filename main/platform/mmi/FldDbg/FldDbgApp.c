@@ -7177,7 +7177,7 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
    #endif
 
    
- #if defined(FEATURE_VERSION_K212_20D)|| defined(FEATURE_VERSION_K212_VHOPE)
+ #if defined(FEATURE_VERSION_K212_20D)|| defined(FEATURE_VERSION_K212_VHOPE)|| defined(FEATURE_VERSION_K232_JST)
 	STRCPY(fmt_tstr, "%06X");
     SPRINTF((tstrbuf),
             fmt_tstr,
