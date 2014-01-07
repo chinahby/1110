@@ -86,13 +86,13 @@ static void disp_ic_init(void)
 	LCD_WRITE_DATA(0x00);
 
 	LCD_WRITE_CMD(0xff);
-	LCD_WRITE_DATA(0x16);
+	LCD_WRITE_DATA(0x12);
 
 	LCD_WRITE_CMD(0xfd);	
-	LCD_WRITE_DATA(0x15);
+	LCD_WRITE_DATA(0x0c);
 
 	LCD_WRITE_CMD(0xa4);	
-	LCD_WRITE_DATA(0x96);
+	LCD_WRITE_DATA(0x90);
 
 	LCD_WRITE_CMD(0xe7);	
 	LCD_WRITE_DATA(0x94);
@@ -108,7 +108,7 @@ static void disp_ic_init(void)
 	LCD_WRITE_DATA(0x80);//80
 
 	LCD_WRITE_CMD(0xa3);	
-	LCD_WRITE_DATA(0x12); 
+	LCD_WRITE_DATA(0x0a); 
 
 	LCD_WRITE_CMD(0xe3);
 	LCD_WRITE_DATA(0x07); //07
@@ -148,7 +148,7 @@ static void disp_ic_init(void)
 	LCD_WRITE_DATA(0x00);
 	//********************************************//
 	LCD_WRITE_CMD(0x11);
-	LCD_DELAY(200);   
+	LCD_DELAY(300);   
 	LCD_WRITE_CMD(0x29); // Display On  
 	LCD_WRITE_CMD(0x2C);//Memory Write
 }
@@ -176,12 +176,42 @@ static void disp_ic_sleep(boolean bin)
 {
     if(bin)
     {
-        LCD_WRITE_CMD(0x10); //Sleep in
+        //LCD_WRITE_CMD(0x10); //Sleep in
+		LCD_WRITE_CMD(0x28);
+	   	
+		LCD_DELAY(200);
+		LCD_WRITE_CMD(0xfe);
+		LCD_WRITE_CMD(0xef);
+
+		LCD_WRITE_CMD(0xe9);
+		LCD_WRITE_DATA(0x08);     //RN1+RN0
+		LCD_DELAY(20);
+		LCD_WRITE_CMD(0xe9);
+		LCD_WRITE_DATA(0x0c);     //RN1+RN0
+		LCD_DELAY(20);
+		LCD_WRITE_CMD(0xe9);
+		LCD_WRITE_DATA(0x0e);     //RN1+RN0
+		LCD_DELAY(20);
+		LCD_WRITE_CMD(0xe9);
+		LCD_WRITE_DATA(0x0f);     //RN1+RN0
+		LCD_DELAY(20);
+		LCD_WRITE_CMD(0x10);
+		LCD_DELAY(120);
     }
     else
     {
-        LCD_WRITE_CMD(0x11); //Exit Sleep
-        LCD_DELAY(120);
+        //LCD_WRITE_CMD(0x11); //Exit Sleep
+        //LCD_DELAY(120);
+		LCD_WRITE_CMD(0xfe);
+		LCD_WRITE_CMD(0xef);
+		LCD_WRITE_CMD(0xe9);
+		LCD_WRITE_DATA(0x00);    
+		LCD_DELAY(50);
+
+		//LCD_WRITE_CMD(0x11);
+		//LCD_DELAY(120);
+		//LCD_WRITE_CMD(0x29);	
+	    disp_ic_init();
     }
 }
 
@@ -195,7 +225,7 @@ boolean disp_gc9102_tft177_kr(disp_drv_ic_type *pdispic)
     uint8 id1,id2,id3;
     
     // Read ID
-    LCD_WRITE_CMD(0x00);
+    LCD_WRITE_CMD(0x04);
     LCD_READ_DATA();
     LCD_READ_DATA();
     id2 = LCD_READ_DATA();
