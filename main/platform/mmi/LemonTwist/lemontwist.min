@@ -1,0 +1,35 @@
+################################################################################
+# lemontwist gnumake variable definition
+################################################################################
+LEMONTWIST_INC = $(LEMONTWIST)
+LEMONTWIST_RES = $(LEMONTWIST)/resources
+LEMONTWIST_SRC = $(LEMONTWIST)
+LEMONTWIST_LIB = $(LEMONTWIST)
+LEMONTWIST_SOURCES = lemontwist.c
+
+LEMONTWIST_OBJS :=  $(addprefix $(TARGETDIR)/, $(LEMONTWIST_SOURCES:%.c=%.o))
+$(LEMONTWIST_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
+
+vpath %.c $(LEMONTWIST_SRC)
+vpath %.bar $(LEMONTWIST_RES)
+vpath %.brx $(LEMONTWIST_RES)
+
+CONSTFILE_FILES+=\
+lemontwist.mif|fs:/mif/lemontwist.mif \
+lemontwist.bar|fs:/mod/lemontwist/en/lemontwist.bar
+
+
+ifneq ($(EXTLANG1),NO)
+CONSTFILE_FILES+=\
+$(EXTLANG1)lemontwist.bar|fs:/mod/lemontwist/$(EXTLANG1)/lemontwist.bar
+endif
+ifneq ($(EXTLANG2),NO)
+CONSTFILE_FILES+=\
+$(EXTLANG2)lemontwist.bar|fs:/mod/lemontwist/$(EXTLANG2)/lemontwist.bar
+endif
+
+
+INC  += $(LEMONTWIST_INC) $(LEMONTWIST_RES)
+#SRC  += $(LEMONTWIST_SOURCES)
+OBJECTS+=$(LEMONTWIST_OBJS)
+#LIBS += 

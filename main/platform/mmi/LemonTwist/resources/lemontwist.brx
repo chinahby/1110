@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="lemontwist" VERSION="1">
+<Strings Encoding="ISOLATIN1">
+	<String Id="1001" Name="IDS_LEMONTWIST_TITLE">
+		<Text>Lemon Twist</Text>
+	</String>	
+	<String Id="1002" Name="IDS_LEMON_ZONE">
+		<Text>Lemon Zone</Text>
+	</String>	
+	<STRING Id="1013" Name="IDS_LEMON_LIVE">
+		<Text>Lemon Live</Text>
+	</STRING>	
+	<STRING Id="1014" Name="IDS_INTERNET">
+		<Text>Internet</Text>
+	</STRING>	
+	<STRING Id="1015" Name="IDS_LEMON_ZONE_LIST_LEMON_ZONE">
+		<Text>Lemon Zone</Text>
+	</STRING>	
+	<STRING Id="1016" Name="IDS_LEMON_ZONE_LIST_TWITTER">
+		<Text>Twitter</Text>
+	</STRING>	
+	<STRING Id="1017" Name="IDS_LEMON_ZONE_LIST_FACEBOOK">
+		<Text>Face book</Text>
+	</STRING>	
+	<STRING Id="1018" Name="IDS_LEMON_ZONE_LIST_YAHOO_MAIL">
+		<Text>Yahoo mail</Text>
+	</STRING>	
+	<STRING Id="1019" Name="IDS_LEMON_ZONE_LIST_YAHOO_FRONT_PAGE">
+		<Text>Yahoo Front page</Text>
+	</STRING>	
+	<STRING Id="1020" Name="IDS_LEMON_LIVE_LIST_PULL_SERVICES">
+		<Text>Pull Services</Text>
+	</STRING>	
+	<STRING Id="1021" Name="IDS_LEMON_LIVE_LIST_EMPLOYMENT_NEWS">
+		<Text>Employment News</Text>
+	</STRING>	
+	<STRING Id="1022" Name="IDS_LEMON_LIVE_LIST_VOICE_CHAT">
+		<Text>Voice Chat</Text>
+	</STRING>	
+	<STRING Id="1023" Name="IDS_LEMON_LIVE_LIST_FUN_LIVE">
+		<Text>Fun Live</Text>
+	</STRING>	
+	<STRING Id="1024" Name="IDS_LEMON_LIVE_LIST_MULTIMEDIA">
+		<Text>Multimedia</Text>
+	</STRING>	
+	<STRING Id="1025" Name="IDS_LEMON_LIVE_LIST_MVDO">
+		<Text>MVDO</Text>
+	</STRING>	
+	<STRING Id="1026" Name="IDS_LEMON_LIVE_LIST_HELP">
+		<Text>Help</Text>
+	</STRING>		
+	<STRING Id="1027" Name="IDS_LEMON_PULL_CRICKET">
+		<Text>Cricket updates</Text>
+	</STRING>	
+	<STRING Id="1028" Name="IDS_LEMON_PULL_BREAKING">
+		<Text>Breaking News</Text>
+	</STRING>	
+	<STRING Id="1029" Name="IDS_LEMON_PULL_HEALTH">
+		<Text>Health Tips</Text>
+	</STRING>	
+	<STRING Id="1030" Name="IDS_LEMON_PULL_JOKES">
+		<Text>Jokes</Text>
+	</STRING>	
+	<STRING Id="1031" Name="IDS_LEMON_PULL_BEAUTY">
+		<Text>Beauty Tips</Text>
+	</STRING>	
+	<STRING Id="1032" Name="IDS_LEMON_PULL_SAI">
+		<Text>Sai Baba</Text>
+	</STRING>	
+	<STRING Id="1033" Name="IDS_LEMON_PULL_ASTROLOGY">
+		<Text>Astrology</Text>
+	</STRING>	
+	<STRING Id="1034" Name="IDS_LEMON_PULL_SHAYARI">
+		<Text>Shayari</Text>
+	</STRING>	
+	<STRING Id="1035" Name="IDS_LEMON_EMPLOYMENT">
+		<Text>Employment News</Text>
+	</STRING>	
+	<STRING Id="1036" Name="IDS_LEMON_VOICE_CHAT">
+		<Text>Voice Chat</Text>
+	</STRING>
+	<STRING Id="1037" Name="IDS_LEMON_FUNLIVE_JOKES">
+		<Text>Jokes</Text>
+	</STRING>	
+	<STRING Id="1038" Name="IDS_LEMON_FUNLIVE_MEHFIL">
+		<Text>Mehfil-e-timepass</Text>
+	</STRING>	
+	<STRING Id="1039" Name="IDS_LEMON_FUNLIVE_LOVE">
+		<Text>Love Guru</Text>
+	</STRING>	
+	<STRING Id="1040" Name="IDS_LEMON_FUNLIVE_ART">
+		<Text>Art of Living</Text>
+	</STRING>	
+	<STRING Id="1041" Name="IDS_LEMON_FUNLIVE_CRICKET">
+		<Text>Cricket Alerts</Text>
+	</STRING>	
+	<STRING Id="1042" Name="IDS_LEMON_FUNLIVE_DAAL">
+		<Text>Daal Mein Kala</Text>
+	</STRING>	
+	<STRING Id="1043" Name="IDS_LEMON_MULTI_MODELS">
+		<Text>Models</Text>
+	</STRING>	
+	<STRING Id="1044" Name="IDS_LEMON_MULTI_FUNNY">
+		<Text>Funny</Text>
+	</STRING>	
+	<STRING Id="1045" Name="IDS_LEMON_MULTI_FASHION">
+		<Text>Fashion</Text>
+	</STRING>	
+	<STRING Id="1046" Name="IDS_LEMON_MULTI_DEVOTIONAL">
+		<Text>Devotional</Text>
+	</STRING>	
+	<STRING Id="1047" Name="IDS_LEMON_MULTI_AMAZING">
+		<Text>Amazing</Text>
+	</STRING>
+	<STRING Id="1048" Name="IDS_LEMON_MVDO">
+		<Text>MVDO</Text>
+	</STRING>
+	<STRING Id="1049" Name="IDS_LEMON_LIVE_HELP">
+		<Text>Help</Text>
+	</STRING>	
+	<STRING Id="1050" Name="IDS_LEMON_PULL_CRICKET_INFO">
+		<Text>Welcome to Cricket updates. Get Cricket score updates on SMS for all India matches.\\Cost of request: Rs.3 per SMS.</Text>
+	</STRING>	
+	<STRING Id="1051" Name="IDS_LEMON_PULL_BREAKING_INFO">
+		<Text>Welcome to Breaking News. Get latest news from all over the world.\\Cost of request: Rs.3 per SMS.</Text>
+	</STRING>	
+	<STRING Id="1052" Name="IDS_LEMON_PULL_HEALTH_INFO">
+		<Text>Welcome to Health Tips. Maintain health and diet. Get healthy lifestyle by getting health and diet tips.\\Cost of request: Rs.3 per SMS.</Text>
+	</STRING>	
+	<STRING Id="1053" Name="IDS_LEMON_PULL_JOKES_INFO">
+		<Text>Enjoy every movement of laughter, with the funniest Jokes ever.\\Cost of request: Rs.3 per SMS.</Text>
+	</STRING>	
+	<STRING Id="1054" Name="IDS_LEMON_PULL_BEAUTY_INFO">
+		<Text>Welcome to Beauty Tips. Now you can pamper yourself in new ways.\\Cost of request: Rs.3 per SMS.</Text>
+	</STRING>	
+	<STRING Id="1055" Name="IDS_LEMON_PULL_SAI_INFO">
+		<Text>Relieve your stress and get involved with almighty.\\Cost of request: Rs.3 per SMS.</Text>
+	</STRING>	
+	<STRING Id="1056" Name="IDS_LEMON_PULL_ASTROLOGY_INFO">
+		<Text>Predictions for your Bright Day and Future\\Cost of request: Rs.3 per SMS.</Text>
+	</STRING>	
+	<STRING Id="1057" Name="IDS_LEMON_PULL_SHAYARI_INFO">
+		<Text>Shayari for all occassions.\\Cost of request: Rs.3 per SMS.</Text>
+	</STRING>	
+	<STRING Id="1058" Name="IDS_LEMON_EMPLOYMENT_INFO">
+		<Text>Get Job updates all over india and achieve success. Service cost Rs 30/month. Press confirm sub button just once.\\Charges Rs 3/click.</Text>
+	</STRING>	
+	<STRING Id="1059" Name="IDS_LEMON_VOICE_CHAT_INFO">
+		<Text>Welcome to Friends Chat. Service will cost you Rs 30/month and Browsing Charges Rs 2/min. Rs30 for 30days and Rs 3 for request. \\Click Confirm.</Text>
+	</STRING>
+	<STRING Id="1060" Name="IDS_LEMON_FUNLIVE_JOKES_INFO">
+		<Text>Welcome to  Jokes Corner. Humor and Laughter. Subscription Rs30 for 30days and Rs 3 for request. \\Click Confirm to subscribe.</Text>
+	</STRING>	
+	<STRING Id="1061" Name="IDS_LEMON_FUNLIVE_MEHFIL_INFO">
+		<Text>Welcome to MehfileTimePass. Shayari for all occassions.  Subscription Rs30 for 30days and Rs 3 for request. \\Click Confirm to subscribe.</Text>
+	</STRING>	
+	<STRING Id="1062" Name="IDS_LEMON_FUNLIVE_LOVE_INFO">
+		<Text>Welcome to Love Guru Section. Collection of love tips and shayari. Subscription Rs30 for 30days and Rs 3 for request. \\Click Confirm to subscribe.</Text>
+	</STRING>	
+	<STRING Id="1063" Name="IDS_LEMON_FUNLIVE_ART_INFO">
+		<Text>Welcome to Art of Living: meditation and yoga. Subscription: Rs30 for 30Days and Rs 3 for request. Press confirm button once. \\Charges Rs 3/click.</Text>
+	</STRING>	
+	<STRING Id="1064" Name="IDS_LEMON_FUNLIVE_CRICKET_INFO">
+		<Text>Welcome to Cricket Alerts.Get Cricket score updates and news on SMS. Subs Rs30 for 30days and Rs 3 for request. \\Click Confirm to subscribe.</Text>
+	</STRING>	
+	<STRING Id="1065" Name="IDS_LEMON_FUNLIVE_DAAL_INFO">
+		<Text>Welcome to Daal Mein Kala. Movie goof-ups, mistakes in Headlines.Subscription Rs30 for 30days. Rs3 for request. \\Click Confirm to subscribe.</Text>
+	</STRING>	
+	<STRING Id="1066" Name="IDS_LEMON_MULTI_MODELS_INFO">
+		<Text>Get the latest Models Video MMS alerts.\\Service cost Rs 2/day. Press confirm sub button just once. \\Charges Rs 3/click.</Text>
+	</STRING>	
+	<STRING Id="1067" Name="IDS_LEMON_MULTI_FUNNY_INFO">
+		<Text>Get the latest Funny Video MMS alerts.\\Service cost Rs 2/day. Press confirm sub button just once. \\Charges Rs 3/click.</Text>
+	</STRING>	
+	<STRING Id="1068" Name="IDS_LEMON_MULTI_FASHION_INFO">
+		<Text>Get the latest Fashion Video MMS alerts.\\Service cost Rs 2/day. Press confirm sub button just once. \\Charges Rs 3/click.</Text>
+	</STRING>	
+	<STRING Id="1069" Name="IDS_LEMON_MULTI_DEVOTIONAL_INFO">
+		<Text>Get the latest Devotional MMS alerts.\\Service cost Rs 2/day. Press confirm sub button just once. \\Charges Rs 3/click.</Text>
+	</STRING>	
+	<STRING Id="1070" Name="IDS_LEMON_MULTI_AMAZING_INFO">
+		<Text>Get the latest Amazing MMS alerts.\\Service cost Rs 2/day. Press confirm sub button just once. \\Charges Rs 3/click.</Text>
+	</STRING>
+	<STRING Id="1071" Name="IDS_LEMON_MVDO_INFO">
+		<Text>Upload, Share, Download and Play unlimited videos with our MVDO WAP service.\\Service cost Rs 2/day. Press confirm sub button just once. \\Charges Rs 3/click.</Text>
+	</STRING>
+	<STRING Id="1072" Name="IDS_LEMON_LIVE_HELP_INFO">
+		<Text>To stop the active services on your mobile dial 155223(Toll free).</Text>
+	</STRING>
+  <STRING Id="1073" Name="IDS_NOUIM_CARD">
+		<Text>No Card!</Text>
+	</STRING>
+</Strings>
+<Dialogs>	
+	<Dialog Id="6003" Name="IDD_LEMONTWIST_DIALOGS" Focus="7001">
+		<Controls>
+			<Menu Id="7001" Name="IDC_LEMONTWIST">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6004" Name="IDD_LEMONTWIST_ZONE" Focus="7002">
+		<Controls>
+			<Menu Id="7002" Name="IDC_LEMONTWIST_ZONE">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6005" Name="IDD_LEMONTWIST_LIVE" Focus="7003">
+		<Controls>
+			<Menu Id="7003" Name="IDC_LEMONTWIST_LIVE">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>	
+	<Dialog Id="6006" Name="IDD_LEMONTWIST_PULL" Focus="7004">
+		<Controls>
+			<Menu Id="7004" Name="IDC_LEMONTWIST_PULL">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6007" Name="IDD_LEMONTWIST_EMPLOYMENT" Focus="7005">
+		<Controls>
+			<Menu Id="7005" Name="IDC_LEMONTWIST_EMPLOYMENT">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6008" Name="IDD_LEMONTWIST_VOICE" Focus="7006">
+		<Controls>
+			<Menu Id="7006" Name="IDC_LEMONTWIST_VOICE">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6009" Name="IDD_LEMONTWIST_FUN" Focus="7007">
+		<Controls>
+			<Menu Id="7007" Name="IDC_LEMONTWIST_FUN">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6010" Name="IDD_LEMONTWIST_MULTI" Focus="7008">
+		<Controls>
+			<Menu Id="7008" Name="IDC_LEMONTWIST_MULTI">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6011" Name="IDD_LEMONTWIST_MVDO" Focus="7009">
+		<Controls>
+			<Menu Id="7009" Name="IDC_LEMONTWIST_MVDO">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6012" Name="IDD_LEMONTWIST_HELP" Focus="7010">
+		<Controls>
+			<Menu Id="7010" Name="IDC_LEMONTWIST_HELP">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6013" Name="IDD_LEMONTWIST_LIVE_MSG" Focus="7011">		
+		<Controls>			
+			<Static Id="7011" Name="IDC_LEMONTWIST_LIVE_MSG">
+				<Items/></Static>
+		</Controls>
+	</Dialog>
+</Dialogs>
+</BREWRes>

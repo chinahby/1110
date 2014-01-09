@@ -1,0 +1,6 @@
+#ifndef LEMONTWIST_BID
+#define LEMONTWIST_BID
+
+#define AEECLSID_LEMON_TWIST        0x01006606
+
+#endif //LEMONTWIST_BID
