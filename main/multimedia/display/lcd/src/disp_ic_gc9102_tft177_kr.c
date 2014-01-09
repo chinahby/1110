@@ -86,10 +86,10 @@ static void disp_ic_init(void)
 	LCD_WRITE_DATA(0x00);
 
 	LCD_WRITE_CMD(0xff);
-	LCD_WRITE_DATA(0x12);
+	LCD_WRITE_DATA(0x16);
 
 	LCD_WRITE_CMD(0xfd);	
-	LCD_WRITE_DATA(0x0c);
+	LCD_WRITE_DATA(0x0d);
 
 	LCD_WRITE_CMD(0xa4);	
 	LCD_WRITE_DATA(0x90);
@@ -108,7 +108,7 @@ static void disp_ic_init(void)
 	LCD_WRITE_DATA(0x80);//80
 
 	LCD_WRITE_CMD(0xa3);	
-	LCD_WRITE_DATA(0x0a); 
+	LCD_WRITE_DATA(0x09); 
 
 	LCD_WRITE_CMD(0xe3);
 	LCD_WRITE_DATA(0x07); //07
@@ -148,7 +148,7 @@ static void disp_ic_init(void)
 	LCD_WRITE_DATA(0x00);
 	//********************************************//
 	LCD_WRITE_CMD(0x11);
-	LCD_DELAY(300);   
+	LCD_DELAY(500);   
 	LCD_WRITE_CMD(0x29); // Display On  
 	LCD_WRITE_CMD(0x2C);//Memory Write
 }
@@ -206,7 +206,7 @@ static void disp_ic_sleep(boolean bin)
 		LCD_WRITE_CMD(0xef);
 		LCD_WRITE_CMD(0xe9);
 		LCD_WRITE_DATA(0x00);    
-		LCD_DELAY(50);
+		LCD_DELAY(100);
 
 		//LCD_WRITE_CMD(0x11);
 		//LCD_DELAY(120);
