@@ -12851,9 +12851,12 @@ static void Main_keypadtimer(void *pUser);
 
 // MAINST_MAIN 状态处理函数
 static NextFSMAction MAINST_MAIN_Handler(MainMenu *pMe);
+static NextFSMAction MAINST_FLASHLIGHT_Handler(MainMenu *pMe);        //Add By zzg 2013_08_20
+
 //MAINST_EXIT  状态处理函数
 static NextFSMAction MAINST_EXIT_Handler(MainMenu *pMe);
 static boolean  MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam);
+static boolean  MainMenu_FlashlightMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam); 
 
 /*==============================================================================
                               
@@ -12888,6 +12891,11 @@ static char* ICON_ANI[] =
     ICON11_ANI,
     ICON12_ANI,
 #endif    
+#ifdef FEATURE_VERSION_K232_Y101
+    ICON13_ANI,
+    ICON14_ANI,
+    ICON15_ANI,
+#endif
 #elif defined (FEATURE_DISP_176X220)
 #if !defined( FEATURE_VERSION_VG68) && !defined(FEATURE_VERSION_K202_LM129C)&&!defined(FEATURE_VERSION_W516_C260)
     ICON10_ANI,
@@ -12939,6 +12947,13 @@ static char* ICON_ANI_1[] =
 #endif    
 #endif 
 #endif
+
+#ifdef FEATURE_VERSION_K232_Y101
+    ICON13_ANI_1,
+    ICON14_ANI_1,
+    ICON15_ANI_1,
+#endif
+
 #elif defined (FEATURE_DISP_176X220)
 #if !defined( FEATURE_VERSION_VG68)&&!defined(FEATURE_VERSION_SKY)&&!defined(FEATURE_VERSION_K202_LM129C)&&!defined(FEATURE_VERSION_W516_C260)
     ICON10_ANI_1,
@@ -13559,6 +13574,22 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_IconTitle[9]     = IDS_MAIN_MENU_USER_PROFILE;	//IDS_MAIN_MENU_USERPROFILE;	//IDS_MAIN_MENU_APPLICATION;
     pMe->m_IconTitle[10]    = IDS_MAIN_MENU_GAMES;
     pMe->m_IconTitle[11]    = IDS_MAIN_MENU_SETTINGS;	
+    #elif defined (FEATURE_VERSION_K232_Y101)
+    pMe->m_IconTitle[0]     = IDS_MAIN_MENU_CONTACTS;      
+    pMe->m_IconTitle[1]     = IDS_MAIN_MENU_MESSAGES;      
+    pMe->m_IconTitle[2]     = IDS_MAIN_MENU_USER_PROFILE;   
+    pMe->m_IconTitle[3]     = IDS_MAIN_MENU_RECENTCALLS;    
+    pMe->m_IconTitle[4]     = IDS_MAIN_MENU_MY_MTS;                        
+    pMe->m_IconTitle[5]     = IDS_MAIN_MENU_TOOLS;          
+    pMe->m_IconTitle[6]     = IDS_MAIN_MENU_MUSICPLAYER;
+    pMe->m_IconTitle[7]     = IDS_MAIN_MENU_MTS_INFO;                     
+    pMe->m_IconTitle[8]     = IDS_MAIN_MENU_FMRADIO;        
+    pMe->m_IconTitle[9]     = IDS_MAIN_MENU_FACEBOOK;                     
+    pMe->m_IconTitle[10]    = IDS_MAIN_MENU_CAMERA;         
+    pMe->m_IconTitle[11]    = IDS_MAIN_MENU_TORCH;
+    pMe->m_IconTitle[12]    = IDS_MAIN_MENU_MEDIAGALLERY;   
+    pMe->m_IconTitle[13]    = IDS_MAIN_MENU_SETTINGS;
+    pMe->m_IconTitle[14]    = IDS_MAIN_MENU_GAMES;
 	#elif defined(FEATURE_VERSION_W317A)
     pMe->m_IconTitle[0]     = IDS_MAIN_MENU_CONTACTS;
     pMe->m_IconTitle[1]     = IDS_MAIN_MENU_RECENTCALLS_C337;	//IDS_MAIN_MENU_RECENTCALLS;
@@ -14151,6 +14182,8 @@ NextFSMAction MainMenu_ProcessState(MainMenu *pMe)
     {
         case MAINST_MAIN:
             return MAINST_MAIN_Handler(pMe);
+        case MAINST_FLASHLIGHT:
+        	return MAINST_FLASHLIGHT_Handler(pMe);    
         case MAINST_EXIT:
             return MAINST_EXIT_Handler(pMe);  
         default:
@@ -14192,6 +14225,12 @@ static NextFSMAction MAINST_MAIN_Handler(MainMenu *pMe)
             }
             return NFSMACTION_WAIT;
             
+        case DLGRET_FLASHLITHT:
+		{
+			MOVE_TO_STATE(MAINST_FLASHLIGHT)
+			return NFSMACTION_CONTINUE;
+		}    
+            
         case DLGRET_CANCELED:
             MOVE_TO_STATE(MAINST_EXIT)
             return NFSMACTION_CONTINUE;
@@ -14201,6 +14240,30 @@ static NextFSMAction MAINST_MAIN_Handler(MainMenu *pMe)
             return NFSMACTION_CONTINUE;
     }
 }
+
+static NextFSMAction MAINST_FLASHLIGHT_Handler(MainMenu *pMe)
+{
+	if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+    switch (pMe->m_eDlgReturn)
+    {
+        // 进入主界面
+        case DLGRET_CREATE:
+            {
+                MainMenu_ShowDialog(pMe, IDD_FLASHLIGHT_SETTING);
+            }
+            return NFSMACTION_WAIT;
+         case DLGRET_CANCELED:         
+            MOVE_TO_STATE(MAINST_MAIN)
+            return NFSMACTION_CONTINUE;
+        default:
+            MOVE_TO_STATE(MAINST_EXIT)
+            return NFSMACTION_CONTINUE;
+    }
+}
+
 
 /*==============================================================================
 函数:
@@ -14342,6 +14405,8 @@ boolean MainMenu_RouteDialogEvt(MainMenu *pMe,
         case IDD_MAIN_MENU:
             return MainMenu_IconMenuHandler(pMe, eCode, wParam, dwParam);
             
+        case IDD_FLASHLIGHT_SETTING:
+            return MainMenu_FlashlightMenuHandler(pMe, eCode, wParam,dwParam);    
         default:
             return FALSE;
     }
@@ -14681,6 +14746,147 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 
     return FALSE;
 }
+
+//Add By zzg 2013_08_20
+static boolean MainMenu_FlashlightMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
+{
+    PARAM_NOT_REF(dwParam)
+    IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveIDlg,IDC_FLASHLIGHT_SET);
+    AECHAR WTitle[40] = {0};
+    if (pMenu == NULL)
+    {
+        return FALSE;
+    }
+    if(pMe->m_pIAnn != NULL)
+    {
+	    IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+    }
+     switch (eCode)
+    {
+        case EVT_DIALOG_INIT:
+			(void)ISHELL_LoadResString(pMe->m_pShell,
+                                        MAINMENU_RES_FILE_LANG,                                
+                                        IDS_MAIN_MENU_TORCH,
+                                        WTitle,
+                                        sizeof(WTitle));
+
+            if(pMe->m_pIAnn != NULL)
+            {
+			    IANNUNCIATOR_SetFieldTextEx(pMe->m_pIAnn,WTitle,FALSE);
+            }
+            IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG, IDS_MAIN_MENU_TORCH_ON, IDS_MAIN_MENU_TORCH_ON, NULL, 0);
+            IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG, IDS_MAIN_MENU_TORCH_OFF, IDS_MAIN_MENU_TORCH_OFF, NULL, 0);
+            return TRUE;
+            
+        case EVT_DIALOG_START:
+            {
+            	uint16 wItemID;
+                boolean Is_on = FALSE;
+                IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
+                IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
+
+                IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
+                OEM_GetConfig(CFGI_FLSHLITHG_STATUS,&Is_on, sizeof(Is_on));
+                if(Is_on)
+                {
+                	wItemID = IDS_MAIN_MENU_TORCH_ON;
+                }
+                else
+                {
+                	wItemID = IDS_MAIN_MENU_TORCH_OFF;
+                }
+
+                InitMenuIcons(pMenu);
+                SetMenuIcon(pMenu, wItemID, TRUE);
+                IMENUCTL_SetSel(pMenu, wItemID);
+            }
+            return TRUE;
+
+        case EVT_DIALOG_END:
+            return TRUE;
+
+        case EVT_KEY:
+            switch(wParam)
+            {
+                case AVK_CLR:
+                    CLOSE_DIALOG(DLGRET_CANCELED)
+                    return TRUE;
+
+                  default:
+                    break;
+            }
+            return TRUE;
+#ifdef FEATURE_LCD_TOUCH_ENABLE//andrew add for LCD touch
+		case EVT_PEN_UP:
+			{
+				AEEDeviceInfo devinfo;
+				int nBarH ;
+				AEERect rc;
+				int16 wXPos = (int16)AEE_GET_X(dwParam);
+				int16 wYPos = (int16)AEE_GET_Y(dwParam);
+
+				nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+        
+				MEMSET(&devinfo, 0, sizeof(devinfo));
+				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+
+				if(TOUCH_PT_IN_RECT(wXPos,wYPos,rc))
+				{
+					if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//左
+					{
+						boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APPLICATION,EVT_KEY,AVK_SELECT,0);
+						return rt;
+					}
+					else if(wXPos >= rc.x + (rc.dx/3)   && wXPos < rc.x + (rc.dx/3)*2 )//左
+					{
+						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APPLICATION,EVT_KEY,AVK_INFO,0);
+						 return rt;
+					}
+					else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//左
+					{						
+						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APPLICATION,EVT_KEY,AVK_CLR,0);
+						 return rt;
+					}
+				}
+
+			}
+			break;
+#endif 
+        case EVT_COMMAND:
+            {
+                boolean bytNewData = 0;
+
+                switch (wParam)
+                {
+                    case  IDS_MAIN_MENU_TORCH_ON:
+                       bytNewData = TRUE;
+                       IBACKLIGHT_TurnOnTorch(pMe->m_pBacklight);
+                       break;
+
+                    case IDS_MAIN_MENU_TORCH_OFF:
+                       bytNewData = FALSE;
+                       IBACKLIGHT_TurnOffTorch(pMe->m_pBacklight);
+                       break;
+
+                    default:
+                       break;
+
+                }
+                OEM_SetConfig(CFGI_FLSHLITHG_STATUS,&bytNewData, sizeof(bytNewData));
+                InitMenuIcons(pMenu);
+                SetMenuIcon(pMenu, wParam, TRUE);
+                (void) ISHELL_PostEvent( pMe->m_pShell,
+                                         AEECLSID_MAIN_MENU,
+                                         EVT_USER_REDRAW,
+                                         0,
+                                         0);
+            }
+        default:
+        	break;
+	}
+}
+//Add End
 
 static void Main_keypadtimer(void *pUser)
 {
@@ -15403,6 +15609,32 @@ static int StartApplet(MainMenu *pMe, int i)
 		Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_CAMERA);
 		break;
 	}  
+
+    case IDS_MAIN_MENU_MY_MTS:
+	{		
+        OEM_SetUCBROWSER_ADSAccount();
+		Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MY_MTS);
+		break;
+	}
+
+    case IDS_MAIN_MENU_MTS_INFO:
+	{		
+		Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_UTK);
+		break;
+	}
+
+    case IDS_MAIN_MENU_FACEBOOK:
+	{		
+        OEM_SetUCBROWSER_ADSAccount();
+		Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FACEBOOK);
+		break;
+	}
+
+    case IDS_MAIN_MENU_TORCH:
+    {
+        CLOSE_DIALOG(DLGRET_FLASHLITHT)
+		break;
+    }
 
 #if defined(FEATURE_VERSION_IN50A)
     case IDS_MAIN_MENU_CAMERA_LIST:
