@@ -13545,7 +13545,7 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
         #ifndef FEATURE_TORCH_KEY_INFO
 		else if (((AVKType)wParam == AVK_0) && (WSTRLEN(pMe->m_DialString) == 1))
 	{	
-		    #ifdef FEATURE_VERSION_W317A
+		    #if defined(FEATURE_VERSION_W317A)&&!defined(FEATURE_VERSION_W027_HC_KK3)//def FEATURE_VERSION_W317A
             CallApp_LaunchApplet(pMe,  AEECLSID_APP_FMRADIO);  // add by pyuangui 20121220
             #elif defined FEATURE_VERSION_K212_ND
 			{
