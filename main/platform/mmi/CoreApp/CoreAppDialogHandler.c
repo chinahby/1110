@@ -4544,7 +4544,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 			}
 #else
 // Add by pyuangui 20121220
-#if defined (FEATURE_VERSION_C11)||defined(FEATURE_VERSION_K292)|| defined(FEATURE_VERSION_W021_C11)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_W027_HC_KK3)
+#if defined (FEATURE_VERSION_C11)||defined(FEATURE_VERSION_K292)|| defined(FEATURE_VERSION_W021_C11)||defined(FEATURE_VERSION_W021_CT100)//||defined(FEATURE_VERSION_W027_HC_KK3)
             if(wParam == AVK_INFO)
             {
                 boolean TorchOn = FALSE;
