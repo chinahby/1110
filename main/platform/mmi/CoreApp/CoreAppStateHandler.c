@@ -2093,7 +2093,11 @@ static NextFSMAction COREST_ESN_EDIT_Handler(CCoreApp *pMe)
     switch (pMe->m_eDlgRet)
     {
         case DLGRET_CREATE:
+#ifdef FEATURE_VERSION_K232_Y101
+            CoreApp_ShowDialog(pMe, IDD_ESN_TRACKER_EDIT_EX);
+#else
             CoreApp_ShowDialog(pMe, IDD_ESN_TRACKER_EDIT);
+#endif
             return NFSMACTION_WAIT;
             
         case DLGRET_MSGOK:

@@ -12,6 +12,10 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_VERSION_W516
 #define FEATURE_OEMOMH
 #define FEATURE_VERSION_K232_Y101
+
+//#define FEATURE_K_AMPLIFIER
+//#define FEATURE_KAMP_ON_OFF_DELAY
+
 #ifdef CUST_EDITION
 
 #define FEATURE_SALESTRACKER

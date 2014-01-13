@@ -40,8 +40,13 @@ const nv_auto_set_type nv_auto_set_svc_list[] =
 {
     {NV_SLOT_CYCLE_INDEX_I,             {0x02}},
     {NV_PREF_MODE_I,                    {0x00, 0x04}},
+#ifdef FEATURE_VERSION_K232_Y101
+    {NV_PCDMACH_I,                      {0x00, 0x77, 0x00, 0x29, 0x02}},
+    {NV_SCDMACH_I,                      {0x00, 0xc9, 0x00, 0x52, 0x02}},
+#else
     {NV_PCDMACH_I,                      {0x00, 0x1b, 0x01, 0x80, 0x01}},
     {NV_SCDMACH_I,                      {0x00, 0xb3, 0x02, 0x09, 0x03}},
+#endif    
     //IMSI_S is store as MIN1 and MIN2
     {NV_MIN1_I,                         {0x00, 0xe7, 0xeb, 0xf9, 0x00, 0xe7, 0xeb, 0xf9, 0x00}},
     {NV_MIN2_I,                         {0x00, 0xe7, 0x03, 0xe7, 0x03}},
@@ -57,6 +62,11 @@ const nv_auto_set_type nv_auto_set_svc_list[] =
 	{NV_NAME_NAM_I,                     {0x00, ' ', 0x00}},     
     //change for certain opeartor                     
     {NV_BANNER_I,                       {' ', 0x00}}, 
+#elif defined FEATURE_VERSION_K232_Y101
+    {NV_NAME_NAM_I,                     {0x00, 'M', 'T', 'S', 0x00}},    
+    {NV_BANNER_I,                       {'M', 'T', 'S', 0x00}},    
+    {NV_PREF_FOR_RC_I,                  {0x03}},
+    {NV_CDMA_SO68_ENABLED_I,            {0x01}}, 
 #else
     {NV_NAME_NAM_I,                     {0x00, 'N', 'o', ' ', 'C', 'a', 'r', 'd', 0x00}},     
     //change for certain opeartor                     

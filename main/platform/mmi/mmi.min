@@ -120,6 +120,11 @@ endif
 endif
 endif
 
+ifeq ($(USES_RESDIR),Y101) 
+include $(FACEBOOK)/facebook.min
+include $(MYMTS)/mymts.min
+endif
+
 ifeq ($(USES_RESDIR),K212)
 include $(TETRIS)/Tetris.min
 endif 

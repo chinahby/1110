@@ -59,6 +59,10 @@
 #define  MAX_MATRIX_ITEMS 9
 #define  MAX_MATRIX_ROWS 3
 #define  MAX_MATRIX_COLS 3
+#elif defined (FEATURE_VERSION_K232_Y101)
+#define  MAX_MATRIX_ITEMS 15
+#define  MAX_MATRIX_ROWS 5
+#define  MAX_MATRIX_COLS 3
 #else
 #define  MAX_MATRIX_ITEMS 12
 #define  MAX_MATRIX_ROWS 4
@@ -298,6 +302,11 @@ typedef struct _MainMenu
 #define ICON_HEIGHT             40
 #define ICON_ANIMATED_WIDTH     42
 #define ICON_ANIMATED_HEIGHT    40
+#elif defined(FEATURE_VERSION_K232_Y101)
+#define ICON_WIDTH              40
+#define ICON_HEIGHT             24
+#define ICON_ANIMATED_WIDTH     40
+#define ICON_ANIMATED_HEIGHT    24
 #else
 #define ICON_WIDTH              40
 #define ICON_HEIGHT             32
@@ -761,6 +770,18 @@ typedef struct _MainMenu
 	//#define ICON13_ANI           "fs:/image/mainmenu/qsc1100_13.png"
 	//#define ICON13_ANI_1         "fs:/image/mainmenu/qsc1100_13_focus.png"
 #endif
+
+#ifdef FEATURE_VERSION_K232_Y101
+#define ICON13_ANI     "fs:/image/mainmenu/qsc1100_13.png"
+#define ICON14_ANI     "fs:/image/mainmenu/qsc1100_14.png"
+#define ICON15_ANI     "fs:/image/mainmenu/qsc1100_15.png"	
+
+#define ICON13_ANI_1     "fs:/image/mainmenu/qsc1100_13_focus.png"
+#define ICON14_ANI_1     "fs:/image/mainmenu/qsc1100_14_focus.png"
+#define ICON15_ANI_1     "fs:/image/mainmenu/qsc1100_15_focus.png"	
+#endif
+
+
 
 
 #ifdef FEATURE_VERSION_K212

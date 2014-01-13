@@ -189,6 +189,15 @@
 	</STRING>
 	<STRING Id="1100" Name="IDS_MAIN_MENU_CAMERA_LIST">
 		<Text>Camera</Text>
+	</STRING>	
+	<STRING Id="1101" Name="IDS_MAIN_MENU_MY_MTS">
+		<Text>My MTS</Text>
+	</STRING>
+	<STRING Id="1102" Name="IDS_MAIN_MENU_MTS_INFO">
+		<Text>MTS Info</Text>
+	</STRING>
+	<STRING Id="1103" Name="IDS_MAIN_MENU_FACEBOOK">
+		<Text>Facebook</Text>
 	</STRING>
 </Strings>
 <Dialogs>

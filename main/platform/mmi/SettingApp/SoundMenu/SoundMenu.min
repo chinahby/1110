@@ -537,7 +537,9 @@ else
             midi_02.mid|fs:/ringers/midi_02.mid \
             midi_03.mid|fs:/ringers/midi_03.mid \
             midi_04.mid|fs:/ringers/midi_04.mid \
-            midi_05.mid|fs:/ringers/midi_05.mid            
+            midi_05.mid|fs:/ringers/midi_05.mid \
+            poweronoff.mid|fs:/ringers/poweronoff.mid \
+            jab_chaye.mid|fs:/ringers/jab_chaye.mid
 	else ifeq ($(USES_RESDIR),C260_IC19)                                           
         CONSTFILE_FILES+=\
             alarm_default.mid|fs:/ringers/alarm_default.mid \

@@ -862,6 +862,8 @@ GAME     =              $(MMIDIR)/Games/game
 NEMOMBREW_PATH  =       $(MMIDIR)/nemobrew
 TVAPP = 		$(MMIDIR)/TvApp
 MOBILETRACKER =         $(MMIDIR)/MobileTracker
+FACEBOOK=               $(MMIDIR)/FaceBook
+MYMTS=                  $(MMIDIR)/MyMts
 
 ifeq ($(USES_FRENDUO),yes)
 FRENDUO  =         		$(MMIDIR)/FrenDuo

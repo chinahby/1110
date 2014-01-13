@@ -152,6 +152,9 @@ GENERAL DESCRIPTION:
 #define AEECLSID_QQ                 0x0109EB13 //0x0109A277            //add by pengyuangui 2013/08/07
 #endif
 
+#define AEECLSID_FACEBOOK           0x01146921
+#define AEECLSID_MY_MTS             0x010D793F
+
 #define AEECLSID_BLUETOOTH_APP    	0x01015223
 #define AEECLSID_NF3				0x01007016
 #define AEECLSID_TETRIS             0x01007239

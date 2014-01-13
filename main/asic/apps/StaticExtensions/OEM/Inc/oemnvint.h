@@ -571,8 +571,10 @@ typedef PACKED struct _Key_pad_Cfg
 #endif
 #elif defined(FEATURE_VERSION_M74)
 #define   OEMNV_DEFAULTRINGER       11
-#elif defined(FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_K232_Y100A) || defined(FEATURE_VERSION_K232_Y101)   
+#elif defined(FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_K232_Y100A)   
 #define   OEMNV_DEFAULTRINGER       4
+#elif defined(FEATURE_VERSION_K232_Y101)
+#define   OEMNV_DEFAULTRINGER       9
 #elif defined(FEATURE_VERSION_IC241A_MMX)
 #if defined (FEATURE_VERSION_IN50A)
 #define   OEMNV_DEFAULTRINGER       4
@@ -637,6 +639,9 @@ typedef PACKED struct _Key_pad_Cfg
 #elif defined FEATURE_VERSION_H19C
 #define   OEMNV_STARTUP_MUSIC 11 
 #define   OEMNV_SHUTDOWN_MUSIC 11 
+#elif defined FEATURE_VERSION_K232_Y101
+#define   OEMNV_STARTUP_MUSIC 8 
+#define   OEMNV_SHUTDOWN_MUSIC 8 
 #elif defined FEATURE_VERSION_ITEL
 #define   OEMNV_STARTUP_MUSIC 13 
 #define   OEMNV_SHUTDOWN_MUSIC 13 

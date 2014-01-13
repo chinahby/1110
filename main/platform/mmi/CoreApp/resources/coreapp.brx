@@ -406,5 +406,13 @@
 				<Items/></Text>
 		</Controls>
 	</Dialog>
+	<Dialog Id="6020" Name="IDD_ESN_TRACKER_EDIT_EX" Focus="7015">
+		<Controls>
+			<Text Id="7015" Name="IDC_TEXT_ESN_TRACK_NUMBER_EX">
+				<Items/></Text>
+			<Text Id="7016" Name="IDC_TEXT_ESN_TRACK_TIME_EX">
+				<Items/></Text>
+		</Controls>
+	</Dialog>
 </Dialogs>
 </BREWRes>
