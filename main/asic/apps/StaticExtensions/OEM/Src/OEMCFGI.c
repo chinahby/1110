@@ -2221,6 +2221,9 @@ static OEMConfigListType oemi_cache = {
 #ifdef FEATURE_VERSION_K212_HUALU
    ,FALSE		       //CFGI_SOUND_BO_MAIN,
    ,FALSE   		   //CFGI_SOUND_BO_CORE,
+#elif defined(FEATURE_VERSION_K292_WSF_CN)
+	,FALSE				//CFGI_SOUND_BO_MAIN,
+	,FALSE				//CFGI_SOUND_BO_CORE,
 #else
    ,TRUE		    //CFGI_SOUND_BO_MAIN,
    ,TRUE   		   //CFGI_SOUND_BO_CORE,
@@ -2992,8 +2995,13 @@ void OEM_RestoreFactorySetting( void )
 
 #ifdef FEATURE_SOUND_BO
    oemi_cache.m_sound_bo_dia =  TRUE;		//CFGI_SOUND_BO_DIA,
+   #if  defined(FEATURE_VERSION_K292_WSF_CN)
+   oemi_cache.m_sound_bo_main = FALSE;		//CFGI_SOUND_BO_MAIN,
+   oemi_cache.m_sound_bo_core = FALSE;  		//CFGI_SOUND_BO_CORE,
+   #else
    oemi_cache.m_sound_bo_main = TRUE;		//CFGI_SOUND_BO_MAIN,
    oemi_cache.m_sound_bo_core = TRUE;  		//CFGI_SOUND_BO_CORE,
+   #endif
    #ifdef FEATURE_VERSION_K212_ND
    oemi_cache.m_sound_bo_indial= TRUE;		//CFGI_SOUND_BO_INDIAL, 
    oemi_cache.m_sound_bo_phonebook=TRUE;	//CFGI_SOUND_BO_PHONEBOOK,
