@@ -615,6 +615,9 @@ static void CoreApp_PlayShutterSound(CCoreApp *pMe,uint16 key);
 static void CoreApp_Media_time_Notify(void *pUser, AEEMediaCmdNotify *pCmdNotify);
 #endif
 #endif
+
+static void CCoreApp_LaunchApplication(CCoreApp *pMe);
+
 /*==============================================================================
 
                                  º¯Êý¶¨Òå
@@ -4764,6 +4767,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 return TRUE;
             }
 #endif
+
 #if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_ND)
 #ifndef FEATURE_VERSION_K252_JT 
                         if(wParam == AVK_INFO)
@@ -5097,6 +5101,23 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
         return TRUE;
 #endif
 // Add End 
+
+#ifdef FEATURE_VERSION_K232_Y101
+        case EVT_KEY_RELEASE:
+        {
+            pMe->keyend_time= GETUPTIMEMS();					
+            MSG_FATAL("***zzg CoreApp EVT_KEY_RELEASE keystart_time=%d, keyend_time=%d***", pMe->keystart_time,pMe->keyend_time,0);      
+
+            ISHELL_CancelTimer(pMe->a.m_pIShell,(PFNNOTIFY)CCoreApp_LaunchApplication,pMe);
+            
+            if(pMe->keyend_time - pMe->keystart_time < 1000)
+            {
+                CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
+            }
+            return TRUE;
+        }
+#endif
+
         case EVT_KEY: 
             if(pMe->m_bemergencymode)
             {
@@ -5472,7 +5493,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 				    int ret = 0;
 				    if(!OEMKeyguard_IsEnabled())
                     {
-                        #if defined( FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K292)|| defined(FEATURE_VERSION_K212)|| defined(FEATURE_VERSION_K212_HUALU)|| defined(FEATURE_VERSION_K212_ND)
+                        #if defined( FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_W317A) || defined(FEATURE_VERSION_K202)||defined(FEATURE_VERSION_K292)|| defined(FEATURE_VERSION_K212)|| defined(FEATURE_VERSION_K212_HUALU)|| defined(FEATURE_VERSION_K212_ND)|| defined(FEATURE_VERSION_K232_Y101)
                            Mainmenu_KeypadLock(TRUE);
 			            #elif defined ( FEATURE_VERSION_C337) || defined(FEATURE_VERSION_IC241A_MMX)
 						   WMSDialog_KeypadLock(TRUE);
@@ -5669,7 +5690,14 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 						}
 #endif
 
-						return CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
+#ifdef FEATURE_VERSION_K232_Y101
+                        (void)ISHELL_SetTimer(pMe->a.m_pIShell, 1000, (PFNNOTIFY)CCoreApp_LaunchApplication, pMe);                     
+#else
+                        return CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
+#endif
+                        
+
+						
 #endif
 #endif	
 
@@ -5833,6 +5861,16 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 boolean b_FMBackground = FALSE;
                 dword shake;
 #endif
+
+#ifdef FEATURE_VERSION_K232_Y101
+                if(wParam == AVK_INFO)
+                {
+                    pMe->keystart_time = GETUPTIMEMS(); 
+                    MSG_FATAL("pMe->keystart_time1=%d",pMe->keystart_time,0,0);
+                    return TRUE;
+                }        
+#endif
+
 #ifndef CUST_EDITION
                 if((wParam != AVK_END)&&(wParam != AVK_GSENSOR_FORWARD)&&(wParam != AVK_GSENSOR_BACKWARD))
                 {
@@ -10766,6 +10804,16 @@ static void CCoreApp_TorchTipTimeOut(CCoreApp *pMe)
                             0);
 }
 #endif
+
+
+static void CCoreApp_LaunchApplication(CCoreApp *pMe)
+{
+#ifdef FEATURE_VERSION_K232_Y101
+    OEM_SetUCBROWSER_ADSAccount();
+    ISHELL_StartApplet(pMe->a.m_pIShell, AEECLSID_MY_MTS);   
+#endif
+}
+
 
 static int CoreApp_GetSpnFromMCCMNC(CCoreApp *pMe)
 {

@@ -1321,6 +1321,11 @@ typedef struct _CCoreApp
 //#if (defined (FEATURE_VERSION_W317A)||defined (FEATURE_VERSION_C337)|| defined(FEATURE_VERSION_K212) || defined(FEATURE_VERSION_IC241A_MMX)|| defined(FEATURE_VERSION_K212_HUALU))
    IFileMgr *pFileMgr ;
 //#endif
+#if defined (FEATURE_VERSION_K232_Y101)
+    uint32 keystart_time;	
+    uint32 keyend_time;	
+#endif
+
 } CCoreApp;
 
 /*==============================================================================
