@@ -13281,7 +13281,7 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
     			(void) ISHELL_PostEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_USER_REDRAW,0,0);	
             }
 #else
-#if !defined(FEATURE_DISP_128X160)&&!defined(FEATURE_DISP_176X220)&&!defined(FEATURE_VERSION_IC241A_MMX)
+#if !defined(FEATURE_DISP_128X160)&&!defined(FEATURE_DISP_176X220)&&!defined(FEATURE_VERSION_IC241A_MMX)&&!defined(FEATURE_VERSION_K292_WSF_CN)
 #ifdef FEATURE_KEYGUARD
             if(WSTRLEN(pMe->m_DialString) == 1)
             {
@@ -14112,7 +14112,7 @@ if(wp == AVK_0)
 					{
 						//return L'W';
 						WSTRCPY(&pMe->m_DialString[len-1], L"+");
-						#if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_VERSION_K212_HUALU)
+						#if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_VERSION_K212_HUALU)||defined(FEATURE_PRESS_STAR_ADD)
 						Temp_wp = AVK_Z;
 						#endif
 					}
@@ -14151,7 +14151,7 @@ if(wp == AVK_0)
 						//return L'W';
 						//WSTRCPY(&pMe->m_DialString[len-1], L"w");
 						pMe->m_DialString[len-pMe->m_nCursorPos-1] = L'+';
-						#if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_VERSION_K212_HUALU)
+						#if defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_VERSION_K212_HUALU)||defined(FEATURE_PRESS_STAR_ADD)
 						Temp_wp = AVK_Z;
 						#endif
 					}
@@ -14171,7 +14171,7 @@ if(wp == AVK_0)
         			(void)WSTRCPY(&pMe->m_DialString[len-pMe->m_nCursorPos+1], wstrTemp);
 				}
         	}
-            #if defined(FEATURE_VERSION_X3)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_HUALU)||defined(FEATURE_VERSION_K292)|| defined(FEATURE_VERSION_W021_C11)||defined(FEATURE_VERSION_W021_WSF_CN)
+            #if defined(FEATURE_VERSION_X3)||defined(FEATURE_VERSION_W021_CT100)||defined(FEATURE_VERSION_K212_20D)||defined(FEATURE_VERSION_K212_HUALU)||defined(FEATURE_VERSION_K292)|| defined(FEATURE_VERSION_W021_C11)||defined(FEATURE_VERSION_W021_WSF_CN)||defined(FEATURE_PRESS_STAR_ADD)
             if(pMe->m_curpros<3)
             #else
         	if(pMe->m_curpros<2)
