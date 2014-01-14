@@ -11325,6 +11325,8 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 		         	#else
 					#ifdef FEATURE_ALL_KEY_PAD
         	    	(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_RAPID);
+					#elif defined(FEATURE_LANG_CHINESE)
+					(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_PINYIN);
         	    	#else
 					#ifdef FEATURE_VERSION_C316
 					(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_CAPLOWER);
