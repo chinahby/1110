@@ -22,6 +22,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define CONTAPP_OPTION_BACK
 #define FEATURE_PRESS_STAR_ADD
 #define _LKD_LCD
+#define FEATURE_SOUND_BO
 //#define FEATURE_K_AMPLIFIER
 #define FEATURE_KEY_LOCK_DEFAULT_30S
 #define FEATURE_CALL_FORWARD_USER_INPUT
