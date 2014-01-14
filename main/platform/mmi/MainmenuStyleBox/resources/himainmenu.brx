@@ -199,6 +199,9 @@
 	<STRING Id="1103" Name="IDS_MAIN_MENU_FACEBOOK">
 		<Text>Facebook</Text>
 	</STRING>
+	<STRING Id="1110" Name="IDS_MAIN_MENU_LEMON_TWIST">
+		<Text>Lemon twist</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="0">
