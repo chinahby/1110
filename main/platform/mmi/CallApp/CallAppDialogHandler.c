@@ -13333,6 +13333,34 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
 	            //CallApp_Draw_NumEdit_SoftKey(pMe);
 	            //CallApp_Display_Number(pMe);
 			}
+#ifdef FEATURE_SOUND_BO 	   //0
+			{
+				boolean m_sound_bo_dia = FALSE;
+				uint16 Temp_wp = 0;
+                if(!pMe->b_multenter)
+                {
+                    Temp_wp = AVK_Z;
+                }
+   				(void) ICONFIG_GetItem(pMe->m_pConfig,
+                                                 CFGI_SOUND_BO_DIA,
+                                                 &m_sound_bo_dia,
+                                                 sizeof(boolean));
+                
+				if(m_sound_bo_dia)
+				{
+				    /*
+					nv_item_type	SimChoice;
+					(void)OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+                    
+					if ((SimChoice.sim_select != 1) && (!pMe->m_b_incall))
+                    */    
+                    if ((GetMp3PlayerStatus() == MP3STATUS_NONE) && (!pMe->m_b_incall))
+					{
+						CALLApp_PlayShutterSound(pMe,Temp_wp);
+					}
+				}
+        	}
+#endif
 #endif
 #endif
         }
