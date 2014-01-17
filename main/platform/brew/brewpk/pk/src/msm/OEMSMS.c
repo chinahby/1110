@@ -47,8 +47,11 @@ struct _OEMSMSMgr
 
 // The number of entries in the cache for Mobile terminated SMS. 25 value is chosen
 // keeping in mind that inbox of native client have limit of 20 messages.
+#if defined(FEATURE_VERSION_K212_12832)
+#define MAX_SMS_CACHE   5
+#else
 #define MAX_SMS_CACHE   25
-
+#endif
 // Array of OEM defined handlers.  This list contains OEM defined handlers
 // which dont need the typical BREW handler pattern BREWHANDLER:Payload
 // So for example if Java requires  all //WMA messages without the :, they

@@ -1131,7 +1131,12 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 	GETFSFREE(&dwTotal);
 	free = GETRAMFREE(&tot,&larg);
 	GetJulianDate(GETTIMESECONDS(), &jDate);
-	if((free<300000) &&(jDate.wHour>2)&&(jDate.wHour<4))
+    MSG_FATAL("larg=======%d,,,free==%d",larg,free,0);
+    #ifdef FEATURE_DISP_240X320
+	if((free<260000) &&(jDate.wHour>2)&&(jDate.wHour<4))
+    #else
+    if((free<260000) &&(jDate.wHour>2)&&(jDate.wHour<4))
+    #endif
 	{
 		IPhoneCtl *pIPhoneCtl = NULL;
 		int nReturnStatus = 1;
