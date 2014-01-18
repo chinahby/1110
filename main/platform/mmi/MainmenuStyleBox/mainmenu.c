@@ -14476,12 +14476,15 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
             {
                 uint32  dwTotal = 0;
     			uint32 free = 0;
+                uint32 MAxfree = 0;
+                uint32 allfree = 0;
             	DrawMatrix(pMe);
             	// 绘制聚焦过程动画
             	MoveCursorTo(pMe, pMe->m_nRow, pMe->m_nColumn);
     			GETFSFREE(&dwTotal);
-    			free = GETRAMFREE(NULL,NULL);
+    			free = GETRAMFREE(&allfree,&MAxfree);
     			MSG_FATAL("MainMenu_IconMenuHandler dwTotal======%d,free====%d",dwTotal,free,0);
+                MSG_FATAL("MainMenu_IconMenuHandler allfree======%d,MAxfree====%d",allfree,MAxfree,0);
             	return TRUE;
             }
             
@@ -15243,11 +15246,11 @@ static void MoveCursorTo(MainMenu *pMe, int row, int column)
     int theFocus = pMe->m_nRow * MAX_MATRIX_COLS + pMe->m_nColumn;
     AEERect rect;
     nv_language_enum_type language;
-	//uint32  dwTotal = 0;
-	//uint32 free = 0;
-	//GETFSFREE(&dwTotal);
-	//free = GETRAMFREE(NULL,NULL);
-	//MSG_FATAL("MoveCursorTodwTotal======%d,free===%d",dwTotal,free,0);
+	uint32  dwTotal = 0;
+	uint32 free = 0;
+	GETFSFREE(&dwTotal);
+	free = GETRAMFREE(NULL,NULL);
+	MSG_FATAL("MoveCursorTodwTotal======%d,free===%d",dwTotal,free,0);
     (void) ICONFIG_GetItem(pMe->m_pConfig,
                                    CFGI_LANGUAGE_SELECTION,
                                    &language,
@@ -15609,14 +15612,14 @@ static int StartApplet(MainMenu *pMe, int i)
 		Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_CAMERA);
 		break;
 	}  
-
+    #if defined (FEATURE_VERSION_K232_Y101)
     case IDS_MAIN_MENU_MY_MTS:
 	{		
         OEM_SetUCBROWSER_ADSAccount();
 		Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MY_MTS);
 		break;
 	}
-
+    
     case IDS_MAIN_MENU_MTS_INFO:
 	{		
 		Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_UTK);
@@ -15629,6 +15632,7 @@ static int StartApplet(MainMenu *pMe, int i)
 		Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FACEBOOK);
 		break;
 	}
+    #endif
 
     case IDS_MAIN_MENU_TORCH:
     {
