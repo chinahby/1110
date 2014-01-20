@@ -133,6 +133,7 @@ OEM_LIB_SOURCES=\
 	OEMOMH.c
 else
 OEM_LIB_SOURCES=\
+    OEMDisplayDev.c \
 	AEEPhone.c \
 	AEETSupps.c \
 	OEMAnnunciatorControl.c \
