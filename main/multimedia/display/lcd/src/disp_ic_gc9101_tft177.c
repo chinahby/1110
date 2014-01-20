@@ -267,16 +267,22 @@ boolean disp_gc9101_tft177(disp_drv_ic_type *pdispic)
     uint8 id1,id2,id3;
     
     // Read ID
-    LCD_WRITE_CMD(0xDA);
-    id1 = LCD_READ_DATA();
-    id1 = LCD_READ_DATA();
-    LCD_WRITE_CMD(0xDB);
+    //LCD_WRITE_CMD(0xDA);
+    //id1 = LCD_READ_DATA();
+    //id1 = LCD_READ_DATA();
+    //LCD_WRITE_CMD(0xDB);
+    //id2 = LCD_READ_DATA();
+    //id2 = LCD_READ_DATA();
+    //LCD_WRITE_CMD(0xDC);
+    //id3 = LCD_READ_DATA();
+    //id3 = LCD_READ_DATA();
+    LCD_WRITE_CMD(0x04);
+    LCD_READ_DATA();
+    LCD_READ_DATA();
     id2 = LCD_READ_DATA();
-    id2 = LCD_READ_DATA();
-    LCD_WRITE_CMD(0xDC);
-    id3 = LCD_READ_DATA();
     id3 = LCD_READ_DATA();
     
+    if(id2 == 0x91 &&  id3 == 0x01)
     //if(id1 == 0x54 && id2 == 0x80 && id3 == 0x66)
     {
         DISP_IC_INIT_TBL(pdispic);
