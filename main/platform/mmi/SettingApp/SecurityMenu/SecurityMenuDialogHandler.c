@@ -29,7 +29,9 @@
 #include "ContApp.h"
 #include "AEETelephone.h"
 #include "AEETelDef.h"
-//#include "tetris.h"
+#ifdef FEATURE_VERSION_K212
+#include "tetris.h"
+#endif
 #define FILE_CONTAPP_CFG                (AEE_ADDRBOOK_DIR"\\contapp.cfg")
 #define CAL_DATABASE_PATH           	"fs:/mod/scheduleapp"     //数据库的路径名
 #define FILE_SCHEDULE_CFG           	"schedulecfg"  //日程表的配置文件?
