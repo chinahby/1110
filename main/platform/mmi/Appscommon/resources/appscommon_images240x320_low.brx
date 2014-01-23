@@ -400,5 +400,38 @@
 	<Object Id="9115" Name="IDI_ENTER_BLACK" MimeType="image/png">
 		<File>..\images\240x320\common\Appscommon\Icon\enter_black.png</File>
 	</Object>
+	<Object Id="8001" Name="IDI_TIME_0" MimeType="image/png">
+		<File>..\images\240x320\common\core\TIME_0.png</File>
+	</Object>
+	<Object Id="8002" Name="IDI_TIME_1" MimeType="image/png">
+		<File>..\images\240x320\common\core\TIME_1.png</File>
+	</Object>
+	<Object Id="8003" Name="IDI_TIME_2" MimeType="image/png">
+		<File>..\images\240x320\common\core\TIME_2.png</File>
+	</Object>
+	<Object Id="8004" Name="IDI_TIME_3" MimeType="image/png">
+		<File>..\images\240x320\common\core\TIME_3.png</File>
+	</Object>
+	<Object Id="8005" Name="IDI_TIME_4" MimeType="image/png">
+		<File>..\images\240x320\common\core\TIME_4.png</File>
+	</Object>
+	<Object Id="8006" Name="IDI_TIME_5" MimeType="image/png">
+		<File>..\images\240x320\common\core\TIME_5.png</File>
+	</Object>
+	<Object Id="8007" Name="IDI_TIME_6" MimeType="image/png">
+		<File>..\images\240x320\common\core\TIME_6.png</File>
+	</Object>
+	<Object Id="8008" Name="IDI_TIME_7" MimeType="image/png">
+		<File>..\images\240x320\common\core\TIME_7.png</File>
+	</Object>
+	<Object Id="8009" Name="IDI_TIME_8" MimeType="image/png">
+		<File>..\images\240x320\common\core\TIME_8.png</File>
+	</Object>
+	<Object Id="8010" Name="IDI_TIME_9" MimeType="image/png">
+		<File>..\images\240x320\common\core\TIME_9.png</File>
+	</Object>
+	<Object Id="8011" Name="IDI_TIME_POINT" MimeType="image/png">
+		<File>..\images\240x320\common\core\TIME_POINT.png</File>
+	</Object>
 </Objects>
 </BREWRes>
